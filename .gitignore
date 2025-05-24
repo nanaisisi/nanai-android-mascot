@@ -2,3 +2,8 @@
 /target/
 /Cargo.lock
 sample
+<<<<<<< HEAD
+=======
+app-universal-release-signed.apk.idsig
+app-universal-release-signed.apk
+>>>>>>> 1a687d6 (ok)

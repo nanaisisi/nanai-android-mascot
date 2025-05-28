@@ -2,28 +2,21 @@
 
 use dioxus::prelude::*;
 use serde::{Deserialize, Serialize};
+use wasm_bindgen::prelude::*;
 
-#[derive(Clone, Debug)]
-struct FileContent {
-    path: String,
-    content: Option<String>,
-    error: Option<String>,
-}
-
-#[derive(Clone, Debug, Default)]
-struct AppState {
-    files: Vec<FileContent>,
-    current_file: Option<usize>,
-    recent_files: Vec<String>,
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "core"])]
+    async fn invoke(cmd: &str, args: JsValue) -> JsValue;
 }
 
 #[derive(Serialize, Deserialize)]
-struct OpenFileResult {
-    content: Option<String>,
-    error: Option<String>,
+struct GreetArgs<'a> {
+    name: &'a str,
 }
 
 pub fn App() -> Element {
+<<<<<<< HEAD
     let state = use_signal(|| AppState::default());
     let loading = use_signal(|| false);
 
@@ -164,29 +157,22 @@ pub fn App() -> Element {
                             }
                         }
                     }
+=======
+    // shell画像のテスト表示（sample/ghost/emily4/shell/master/surface0000.png）
+    rsx! {
+        link { rel: "stylesheet", href: "styles.css" }
+        main { class: "container",
+            h1 { "ゴーストキャラクター表示テスト" }
+            div { style: "background: #222; padding: 2em; border-radius: 1em; width: fit-content; margin: 2em auto;",
+                img {
+                    src: "/sample/ghost/emily4/shell/master/surface0000.png",
+                    style: "image-rendering: pixelated; background: transparent; width: 320px; height: 320px;",
+>>>>>>> 8f44c9b (ok)
                 }
             }
+            p {
+                "surface0000.png（キャラクター本体画像）が透過PNGとして正しく表示されていればOKです。"
+            }
         }
-    };
-}
-
-// ファイル名のみを抽出する関数
-pub fn extract_filename(path: &str) -> String {
-    std::path::Path::new(path)
-        .file_name()
-        .and_then(|name| name.to_str())
-        .unwrap_or(path)
-        .to_string()
-}
-
-// ファイル選択ダイアログを開く関数
-#[allow(unused)]
-pub async fn open_file_dialog(_state: Signal<AppState>) {
-    // Webビルドでは未実装
-}
-
-// ファイルを開く関数
-#[allow(unused)]
-pub fn open_file(_path: String, _state: Signal<AppState>) {
-    // Webビルドでは未実装
+    }
 }

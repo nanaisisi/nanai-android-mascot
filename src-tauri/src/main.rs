@@ -77,6 +77,12 @@ fn main() {
                     _ => {}
                 })
                 .build(app)?;
+            let menu = MenuBuilder::new(app)
+                .text("open", "Open")
+                .text("close", "Close")
+                .build()?;
+
+            app.set_menu(menu)?;
             Ok(())
         })
         .manage(AppState::default())

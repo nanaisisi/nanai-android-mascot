@@ -93,4 +93,5 @@ fn main() {
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+    mascot_nanai_lib::run()
 }

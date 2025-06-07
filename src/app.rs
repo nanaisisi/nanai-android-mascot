@@ -1,6 +1,4 @@
 #![allow(non_snake_case)]
-
-use dioxus::prelude::*;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
@@ -14,6 +12,7 @@ extern "C" {
 struct GreetArgs<'a> {
     name: &'a str,
 }
+<<<<<<< HEAD
 
 pub fn App() -> Element {
 <<<<<<< HEAD
@@ -176,3 +175,5 @@ pub fn App() -> Element {
         }
     }
 }
+=======
+>>>>>>> 9265ca1 (ok)

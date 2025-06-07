@@ -1,6 +1,4 @@
 #![allow(non_snake_case)]
-
-use dioxus::prelude::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug)]
@@ -22,6 +20,7 @@ struct OpenFileResult {
     content: Option<String>,
     error: Option<String>,
 }
+<<<<<<< HEAD
 
 pub fn App() -> Element {
     let state = use_signal(|| AppState::default());
@@ -190,3 +189,5 @@ pub async fn open_file_dialog(_state: Signal<AppState>) {
 pub fn open_file(_path: String, _state: Signal<AppState>) {
     // Webビルドでは未実装
 }
+=======
+>>>>>>> 9265ca1 (ok)

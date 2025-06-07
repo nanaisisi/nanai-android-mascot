@@ -10,7 +10,8 @@ Android向けの互換環境です。デスクトップ環境での動作確認�
 
 # 実装
 
-src内にcppディレクトリを配置
+Androidでdllを代替するために<br> src内にcppディレクトリを配置、<br>
+内部に各shiori。<br> 内部的に呼び出して使用<br>
 
 # Tauri + Vanilla
 

@@ -1,53 +1,53 @@
-ƒlƒbƒgƒ[ƒNXV—p
+ï¿½lï¿½bï¿½gï¿½ï¿½ï¿½[ï¿½Nï¿½Xï¿½Vï¿½p
 
-‚Ù‚Ú•K{A‚È‚¢‚Æƒ†[ƒU[‚³‚ñ‚É•seØ
-Ready/Complete/Failure‚Ìi‚q‚OjƒŠƒXƒg‚ÍˆÈ‰º
-none/changed/timeout/md5 miss/404,403“™ƒXƒe[ƒ^ƒXƒR[ƒh
-SSP‚Å‚Íã‹L‚É‰Á‚¦fileio/readonly
-
-
-—homeurl
-http://XVŒ³url
-
-”ƒlƒbƒgƒ[ƒNXV‚ÉƒAƒNƒZƒX‚·‚éƒAƒhƒŒƒX‚Å‚·B
-”ƒtƒHƒ‹ƒ_–¼‚ğ‹LqAÅŒã‚Éu•K‚¸vA/‚ğ‚Â‚¯‚Ä‚­‚¾‚³‚¢B
-”ƒlƒbƒgƒ[ƒNXV‹@”\‚ğÀ‘•‚µ‚È‚¢ê‡Aã‚Ìs‚ğ‚©‚ç‚Á‚Û‚É‚·‚é–‚Å‘Îˆ‰Â”\
-”—ájhttp://satolist.sakura.ne.jp/satolist_template/
+ï¿½Ù‚Ú•Kï¿½{ï¿½Aï¿½È‚ï¿½ï¿½Æƒï¿½ï¿½[ï¿½Uï¿½[ï¿½ï¿½ï¿½ï¿½É•sï¿½eï¿½ï¿½
+Ready/Complete/Failureï¿½ï¿½ï¿½Ìiï¿½qï¿½Oï¿½jï¿½ï¿½ï¿½Xï¿½gï¿½ÍˆÈ‰ï¿½
+none/changed/timeout/md5 miss/404,403ï¿½ï¿½ï¿½Xï¿½eï¿½[ï¿½^ï¿½Xï¿½Rï¿½[ï¿½h
+SSPï¿½Å‚Íï¿½Lï¿½É‰ï¿½ï¿½ï¿½fileio/readonly
 
 
-–OnUpdateBegin
-Fiƒlƒbƒgƒ[ƒNXVŠJnj
+ï¿½ï¿½homeurl
+http://ï¿½Xï¿½Vï¿½ï¿½url
 
-–OnUpdateReady
-FiXVƒtƒ@ƒCƒ‹Šm”F...j
-
-–OnUpdateComplete
-„ƒlƒbƒgƒ[ƒNXVi‚q‚Oj
-FiXV¬Œ÷AŠ®—¹j
-
-–OnUpdateFailure
-FiXV¸”sj
-i——RƒÓFi‚q‚Ojj
-
-–ƒlƒbƒgƒ[ƒNXVnone
-FiXV‚Í‚ ‚è‚Ü‚¹‚ñj
-
-–ƒlƒbƒgƒ[ƒNXVchanged
-FiXVŠ®—¹j
+ï¿½ï¿½ï¿½lï¿½bï¿½gï¿½ï¿½ï¿½[ï¿½Nï¿½Xï¿½Vï¿½ï¿½ï¿½ÉƒAï¿½Nï¿½Zï¿½Xï¿½ï¿½ï¿½ï¿½Aï¿½hï¿½ï¿½ï¿½Xï¿½Å‚ï¿½ï¿½B
+ï¿½ï¿½ï¿½tï¿½Hï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½ï¿½ï¿½Lï¿½qï¿½Aï¿½ÅŒï¿½Éuï¿½Kï¿½ï¿½ï¿½vï¿½A/ï¿½ï¿½ï¿½Â‚ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½B
+ï¿½ï¿½ï¿½lï¿½bï¿½gï¿½ï¿½ï¿½[ï¿½Nï¿½Xï¿½Vï¿½@ï¿½\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È‚ï¿½ï¿½ê‡ï¿½Aï¿½ï¿½Ìsï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Û‚É‚ï¿½ï¿½é–ï¿½Å‘Îï¿½ï¿½Â”\
+ï¿½ï¿½ï¿½ï¿½jhttp://satolist.sakura.ne.jp/satolist_template/
 
 
+ï¿½ï¿½OnUpdateBegin
+ï¿½Fï¿½iï¿½lï¿½bï¿½gï¿½ï¿½ï¿½[ï¿½Nï¿½Xï¿½Vï¿½Jï¿½nï¿½j
+
+ï¿½ï¿½OnUpdateReady
+ï¿½Fï¿½iï¿½Xï¿½Vï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½mï¿½F...ï¿½j
+
+ï¿½ï¿½OnUpdateComplete
+ï¿½ï¿½ï¿½lï¿½bï¿½gï¿½ï¿½ï¿½[ï¿½Nï¿½Xï¿½Vï¿½iï¿½qï¿½Oï¿½j
+ï¿½Fï¿½iï¿½Xï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½j
+
+ï¿½ï¿½OnUpdateFailure
+ï¿½Fï¿½iï¿½Xï¿½Vï¿½ï¿½ï¿½sï¿½j
+ï¿½iï¿½ï¿½ï¿½Rï¿½ÓFï¿½iï¿½qï¿½Oï¿½jï¿½j
+
+ï¿½ï¿½ï¿½lï¿½bï¿½gï¿½ï¿½ï¿½[ï¿½Nï¿½Xï¿½Vnone
+ï¿½Fï¿½iï¿½Xï¿½Vï¿½Í‚ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½j
+
+ï¿½ï¿½ï¿½lï¿½bï¿½gï¿½ï¿½ï¿½[ï¿½Nï¿½Xï¿½Vchanged
+ï¿½Fï¿½iï¿½Xï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½j
 
 
-–OnUpdate.OnDownloadBegin
-Fii‚q‚Oj‚ğƒ_ƒEƒ“ƒ[ƒhŠJnj
 
-” ˆÈ‰º‚ÍAíœ‚µ‚Ä‚à–â‘è‚ ‚è‚Ü‚¹‚ñ
 
-–OnUpdate.OnMD5CompareBegin
-FiMD5Æ‡ŠJnj
+ï¿½ï¿½OnUpdate.OnDownloadBegin
+ï¿½Fï¿½iï¿½iï¿½qï¿½Oï¿½jï¿½ï¿½ï¿½_ï¿½Eï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½hï¿½Jï¿½nï¿½j
 
-–OnUpdate.OnMD5CompareComplete
-FiMD5ˆê’vj
+ï¿½ï¿½ ï¿½È‰ï¿½ï¿½ÍAï¿½íœï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½è‚ ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½
 
-–OnUpdate.OnMD5CompareFailure
-FiMD5•sˆê’vj
+ï¿½ï¿½OnUpdate.OnMD5CompareBegin
+ï¿½Fï¿½iMD5ï¿½Æï¿½ï¿½Jï¿½nï¿½j
+
+ï¿½ï¿½OnUpdate.OnMD5CompareComplete
+ï¿½Fï¿½iMD5ï¿½ï¿½vï¿½j
+
+ï¿½ï¿½OnUpdate.OnMD5CompareFailure
+ï¿½Fï¿½iMD5ï¿½sï¿½ï¿½vï¿½j

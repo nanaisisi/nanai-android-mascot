@@ -1,45 +1,45 @@
-‹N“®I—¹Ø‚è‘Ö‚¦Á–ÅŽwŽ¦‚È‚Ç
+ï¿½Nï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½Ø‚ï¿½Ö‚ï¿½ï¿½ï¿½ï¿½ÅŽwï¿½ï¿½ï¿½È‚ï¿½
 
-–OnFirstBoot
-F‰‰ñ‹N“®
+ï¿½ï¿½OnFirstBoot
+ï¿½Fï¿½ï¿½ï¿½ï¿½Nï¿½ï¿½
 
-–OnBoot
-„iŒ»ÝŒŽjŒŽiŒ»Ý“új“ú
-F‹N“®
+ï¿½ï¿½OnBoot
+ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½ÝŒï¿½ï¿½jï¿½ï¿½ï¿½iï¿½ï¿½ï¿½Ý“ï¿½ï¿½jï¿½ï¿½
+ï¿½Fï¿½Nï¿½ï¿½
 
-–OnClose
-FI—¹
+ï¿½ï¿½OnClose
+ï¿½Fï¿½Iï¿½ï¿½
 
-–OnGhostChanged
-„i‚q‚Oj‚©‚ç•ÏX
-„OnBoot
+ï¿½ï¿½OnGhostChanged
+ï¿½ï¿½ï¿½iï¿½qï¿½Oï¿½jï¿½ï¿½ï¿½ï¿½ÏX
+ï¿½ï¿½OnBoot
 
-–OnGhostChanging
-„i‚q‚Oj‚Ö•ÏX
-„OnClose
-
-
+ï¿½ï¿½OnGhostChanging
+ï¿½ï¿½ï¿½iï¿½qï¿½Oï¿½jï¿½Ö•ÏX
+ï¿½ï¿½OnClose
 
 
 
-–OnVanished
-„OnBoot
 
-”Á–ÅŽwŽ¦ŠÖ˜A
 
-–OnVanishSelecting
-FiÁ–ÅŽwŽ¦‚ª‘I‘ð‚³‚ê‚½j
+ï¿½ï¿½OnVanished
+ï¿½ï¿½OnBoot
 
-–OnVanishSelected
-FiÁ–ÅŽwŽ¦u‚Í‚¢v‘I‘ðj
+ï¿½ï¿½ï¿½ï¿½ï¿½ÅŽwï¿½ï¿½ï¿½Ö˜A
 
-–OnVanishCancel
-FiÁ–ÅŽwŽ¦u‚¢‚¢‚¦v‘I‘ðj
+ï¿½ï¿½OnVanishSelecting
+ï¿½Fï¿½iï¿½ï¿½ï¿½ÅŽwï¿½ï¿½ï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½ê‚½ï¿½j
 
-–OnVanishButtonHold
-Fiƒ_ƒuƒ‹ƒNƒŠƒbƒN‚È‚Ç‚É‚æ‚éÁ–ÅŽwŽ¦’†’fj
+ï¿½ï¿½OnVanishSelected
+ï¿½Fï¿½iï¿½ï¿½ï¿½ÅŽwï¿½ï¿½ï¿½uï¿½Í‚ï¿½ï¿½vï¿½Iï¿½ï¿½ï¿½j
 
-–OnOtherGhostVanish
-Fi—×‚Å‘¼‚ÌƒS[ƒXƒg‚ªÁ–Å‚µ‚Ü‚µ‚½j
+ï¿½ï¿½OnVanishCancel
+ï¿½Fï¿½iï¿½ï¿½ï¿½ÅŽwï¿½ï¿½ï¿½uï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½vï¿½Iï¿½ï¿½ï¿½j
+
+ï¿½ï¿½OnVanishButtonHold
+ï¿½Fï¿½iï¿½_ï¿½uï¿½ï¿½ï¿½Nï¿½ï¿½ï¿½bï¿½Nï¿½È‚Ç‚É‚ï¿½ï¿½ï¿½ï¿½ÅŽwï¿½ï¿½ï¿½ï¿½ï¿½fï¿½j
+
+ï¿½ï¿½OnOtherGhostVanish
+ï¿½Fï¿½iï¿½×‚Å‘ï¿½ï¿½ÌƒSï¿½[ï¿½Xï¿½gï¿½ï¿½ï¿½ï¿½ï¿½Å‚ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½j
 
 

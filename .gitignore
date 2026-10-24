@@ -30,3 +30,4 @@ dist-ssr
 *.sw?
 *.lock
 target_tauri
+/local/

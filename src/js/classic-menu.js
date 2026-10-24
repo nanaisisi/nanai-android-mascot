@@ -121,6 +121,7 @@ document.addEventListener("keydown", (e) => {
   // 単一アクセラレータキー
   const keyMap = {
     t: "talk",
+    u: "update",
     b: "balloon",
     r: "scan",
     p: "plugins",

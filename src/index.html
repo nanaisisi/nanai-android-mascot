@@ -19,162 +19,8 @@
     <!-- 透過マスコットアプリスタイル -->
     <link rel="stylesheet" href="styles.css" />
 
-    <!-- メインコントローラ -->
+    <!-- メインコントローラ（ESモジュール） -->
     <script type="module" src="/main.js"></script>
-
-    <!-- iframeメニュー制御スクリプト -->
-    <script>
-      // iframeメニューの制御関数
-      function toggleIframeMenu() {
-        console.log("=== iframeメニューボタンがクリックされました ===");
-        const menuContainer = document.getElementById("menu-iframe-container");
-        if (menuContainer) {
-          const isVisible = menuContainer.style.display !== "none";
-          console.log(`現在の表示状態: ${isVisible ? "表示中" : "非表示"}`);
-
-          if (isVisible) {
-            menuContainer.style.display = "none";
-            console.log("iframeメニューを非表示にしました");
-          } else {
-            menuContainer.style.display = "block";
-            console.log("iframeメニューを表示しました");
-          }
-        } else {
-          console.error("❌ iframeメニューコンテナが見つかりません");
-        }
-      }
-
-      // iframe内からのメッセージを受信
-      window.addEventListener("message", (event) => {
-        console.log("=== 親ウィンドウでメッセージ受信 ===");
-        console.log("受信データ:", event.data);
-
-        if (event.data.type === "menu-action") {
-          const action = event.data.action;
-          console.log(`メニューアクション実行: ${action}`);
-
-          // メニューを非表示にする
-          const menuContainer = document.getElementById(
-            "menu-iframe-container"
-          );
-          if (menuContainer) {
-            menuContainer.style.display = "none";
-            console.log("iframeメニューを非表示にしました");
-          }
-
-          // アクションに応じてモーダルを開く
-          const contentId = action + "-modal-content";
-          console.log(`モーダルを開きます: ${contentId}`);
-          openModal(contentId);
-        }
-      });
-
-      // 旧メニュー関数（後方互換性）
-      function toggleMenuDirect() {
-        console.log(
-          "旧メニュー関数が呼び出されました - iframeメニューにリダイレクト"
-        );
-        toggleIframeMenu();
-      }
-
-      // モーダルを開く直接関数
-      function openModal(contentId) {
-        console.log("=== モーダルを開きます ===");
-        console.log("コンテンツID:", contentId);
-        const modalOverlay = document.getElementById("modal-overlay");
-        const modalContent = document.getElementById("modal-content");
-        const sourceContent = document.getElementById(contentId);
-
-        // iframeメニューを閉じる
-        const menuContainer = document.getElementById("menu-iframe-container");
-        if (menuContainer) {
-          menuContainer.style.display = "none";
-          console.log("iframeメニューを閉じました");
-        }
-
-        if (modalOverlay && modalContent && sourceContent) {
-          modalContent.innerHTML = sourceContent.innerHTML;
-          modalOverlay.style.display = "flex";
-          console.log("モーダルを表示しました");
-        } else {
-          console.error("モーダル要素が見つかりません");
-        }
-      }
-
-      // モーダルを閉じる関数
-      function closeModal() {
-        console.log("モーダルを閉じます");
-        const modalOverlay = document.getElementById("modal-overlay");
-        if (modalOverlay) {
-          modalOverlay.style.display = "none";
-        }
-      }
-
-      // ページ読み込み後の初期化
-      document.addEventListener("DOMContentLoaded", function () {
-        console.log("DOM読み込み完了");
-
-        // メニューボタンのテスト
-        const menuBtn = document.getElementById("menu-btn");
-        const dropdown = document.getElementById("menu-dropdown");
-
-        if (!menuBtn) {
-          console.error("メニューボタンが見つかりません");
-        } else {
-          console.log("メニューボタンが見つかりました");
-
-          // デバッグ用のスタイル追加
-          menuBtn.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
-          menuBtn.style.border = "2px solid red"; // デバッグ用に赤枠追加
-
-          // 強制的にイベントリスナーを追加
-          menuBtn.addEventListener("click", function (e) {
-            console.log("追加のクリックイベント");
-            toggleMenuDirect();
-          });
-        }
-
-        if (!dropdown) {
-          console.error("メニュードロップダウンが見つかりません");
-        } else {
-          console.log("メニュードロップダウンが見つかりました");
-          // デバッグ用のスタイル追加
-          dropdown.style.border = "2px solid blue"; // デバッグ用に青枠追加
-        }
-
-        // モーダル閉じるボタンの設定
-        const modalClose = document.getElementById("modal-close");
-        if (modalClose) {
-          modalClose.onclick = closeModal;
-        }
-
-        // モーダルオーバーレイクリックで閉じる
-        const modalOverlay = document.getElementById("modal-overlay");
-        if (modalOverlay) {
-          modalOverlay.onclick = function (e) {
-            if (e.target === modalOverlay) {
-              closeModal();
-            }
-          };
-        }
-
-        // メニュー外クリックで閉じる
-        document.onclick = function (e) {
-          const menu = document.getElementById("menu-dropdown");
-          const menuBtn = document.getElementById("menu-btn");
-          if (
-            menu &&
-            menuBtn &&
-            !menuBtn.contains(e.target) &&
-            !menu.contains(e.target)
-          ) {
-            menu.classList.remove("show");
-          }
-        };
-
-        console.log("メニューとモーダルの初期化完了");
-      });
-    </script>
   </head>
 
   <body>
@@ -187,7 +33,6 @@
           class="menu-btn"
           id="menu-btn"
           title="メニュー"
-          onclick="toggleIframeMenu()"
         >
           ☰
         </button>
@@ -212,11 +57,15 @@
 
       <!-- メイン表示エリア（ゴースト・バルーン表示） -->
       <div class="main-display">
-        <!-- ゴーストキャラクター表示 -->
+        <!-- ゴーストキャラクター表示（ドラッグ可能コンテナ） -->
         <div class="ghost-display" id="ghost-display">
           <div class="ghost-character" id="ghost-character">
             <span class="character-placeholder"></span>
           </div>
+          <!-- モバイル向けクイックバブル（タップでメニュー表示） -->
+          <button class="quick-bubble" id="quick-bubble" title="クイックメニュー">
+            💬
+          </button>
         </div>
 
         <!-- バルーン表示 -->

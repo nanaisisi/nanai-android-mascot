@@ -331,7 +331,7 @@ fn detect_shiori_type(ghost_path: &Path) -> SHIORIType {
 
 ### クロスプラットフォーム対応（多層フォールバック）
 
-Windows 以外の環境（Android / Web / ARM）における動的 DLL ロード制限を回避するため、多層フォールバック戦略（詳細は [plugin-and-shiori-fallback-spec.md](plugin-and-shiori-fallback-spec.md) 参照）を適用します。
+Windows 以外の環境（Android / Web / ARM）における動的 DLL ロード制限を回避するため、多層フォールバック戦略（詳細は [plugin-and-shiori-fallback-spec.md](../spec/plugin-and-shiori-fallback-spec.md) 参照）を適用します。
 
 1. **Windows 環境**: ネイティブ DLL（`satori.dll`, `yaya.dll`）を直接ロード
 2. **Android / Web 環境**:

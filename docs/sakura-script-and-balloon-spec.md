@@ -48,6 +48,7 @@ flowchart LR
 ## 3. 文字送り（タイピング演出）エンジン仕様
 
 ### 3.1 描画タイミング制御
+
 - **デフォルト文字送り間隔**: **40ms / 文字**
 - **句読点ディレイ**: `、` または `。` `！` `？` の後は自動的に **+100ms** の微小ウェイトを付与。
 - **キュー処理方式**:
@@ -55,6 +56,7 @@ flowchart LR
   - `async/await` ループにより、ウェイトやタグの副作用（画像切り替え）を順次実行。
 
 ### 3.2 ユーザースキップ（早送り）仕様
+
 - 文字送りアニメーションの再生中にユーザーがバルーンまたはマスコットを **タップ／クリック** した場合：
   - 残りのウェイト（`\w`）をすべて 0ms としてスキップ。
   - 全文および選択肢ボタンを即座に最終状態まで表示。
@@ -86,6 +88,6 @@ flowchart LR
 
 フロントエンドに以下の専用モジュールを追加します：
 
-* [src/js/sakura-script.js](file:///e:/project/rust/nanai-android-mascot/src/js/sakura-script.js):
-  * `parseSakuraScript(rawText)`: 文字列をトークン列に変換
-  * `SakuraScriptPlayer`: キューを非同期ループで再生し、バルーン表示および表情切り替えを同期実行
+- [src/js/sakura-script.js](file:///e:/project/rust/nanai-android-mascot/src/js/sakura-script.js):
+  - `parseSakuraScript(rawText)`: 文字列をトークン列に変換
+  - `SakuraScriptPlayer`: キューを非同期ループで再生し、バルーン表示および表情切り替えを同期実行

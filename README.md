@@ -1,55 +1,109 @@
-# Mascot Nanai (Android)
+# AI 生成です。
 
-Android 向け伺か（ゴースト）互換デスクトップマスコットアプリケーションです。Kotlin と Jetpack Compose でネイティブ実装されており、画面上で浮遊するマスコットキャラクター「なない (Nanai)」とのふれあい、吹き出しバルーン会話、SHIORI 3.0 プロトコルイベント連携を提供します。
+> **AI 関与について**: このドキュメントは GitHub
+> Copilot の支援により作成されました。キャラクター設定・仕様はオーナーユーザーと AI の協議により決定されています。
 
-## 🌟 主な機能
+# 概要
 
-- 👻 **インタラクティブマスコット表示**:
-  - 画面上をふわふわ浮遊するマスコット少女「なない」
-  - タップによるリアクション（跳ねるスプリングアニメーションと表情変化）
-  - ドラッグ＆ドロップによる自由な画面上の位置移動と「位置リセット」機能
-  - サーフェス表情切り替え: 素（Normal）、照れ（Blushing）、驚き（Surprised）、不安（Anxious）、笑顔、ウインク、大喜び、相棒（てすとくん）など計14種
-- 💭 **バルーン（吹き出し）表示システム**:
-  - なないの標準バルーン（Nanai Std）、グラスモーフィズム、コミックポップ、ミッドナイト（Dark）など多彩なテーマ
-  - バルーン倍率（70%〜150%）およびフォント拡大縮小対応
-- 🎭 **ゴースト管理**:
-  - ゴーストの切り替え（`mock_nanai`, `test_ghost`）
-  - ゴースト詳細情報の閲覧とサーフェス表情一覧パレット
-- 🔍 **ファイルスキャンと検出**:
-  - ゴーストディレクトリ（`assets/ghost`）の走査、辞書ファイル、サーフェス定義、SHIORI DLLの検出
-- 🧪 **SHIORI 3.0 テスト機能**:
-  - `OnBoot`, `OnMouseClick`, `OnTalk`, `OnSecondChange` などの SHIORI イベント手動送信
-  - 任意のメッセージ送信テストとリクエスト／レスポンス生ログのリアルタイム表示
-- ⚙️ **設定機能**:
-  - 自動ゴースト読み込み、定時トーク有効化、トーク頻度（15秒／30秒／60秒／タップ時のみ）
-  - ゴーストサイズ（小／中／大／特大）、シェル倍率（60%〜160%）、バルーン倍率
-  - 背景テーマ（透過デスクトップ風、コージールーム、パステルスカイ、ミッドナイト）
-  - ダークモード、最前面表示、デバッグレベル切り替え
-- 🐛 **デバッグ情報 & リアルタイムログ**:
-  - システム情報表示、イベント種別バッジ（INFO, SHIORI, DEBUG, WARN, ERROR）付きログコンソール
-  - ログクリアおよびクリップボードへのエクスポート
-- ❓ **ヘルプ & ガイド**:
-  - 操作方法、Ukagaka / SHIORI 3.0 仕様解説、ライセンス案内
+Android 向けの互換環境です。デスクトップ環境での動作確認を行って開発しています。
 
-## 🛠️ 技術スタック
+# 呼び出し実装
 
-- **言語**: Kotlin
-- **UI フレームワーク**: Jetpack Compose (Material Design 3)
-- **ビルドシステム**: Gradle (Kotlin DSL) / AGP
-- **アーキテクチャ**: Clean MVVM (Model-View-ViewModel) + StateFlow / Coroutines
-- **画像・アセット**: Android Vector & Drawable Resources, Adaptive Icons
+<<<<<<< HEAD
+<<<<<<< HEAD
+呼び出し実装は未完了です。
+=======
+### 🌟 特徴
+- 🤖 **AI主導開発** - GitHub Copilotを活用した高品質な実装
+- 📱 **クロスプラットフォーム** - Android/Windows対応
+- 🔧 **モダンな技術** - Tauri + Rust + Web技術
+- 🎭 **伺か互換** - 既存の伺かゴーストとの互換性
+- 🎨 **拡張性** - Web技術によるカスタマイズ性
+>>>>>>> 193540d (Complete comprehensive documentation proposal with user guides and updated README)
+=======
+呼び出し実装は未完了です。
+DLL の代わりに、内部的に呼び出して処理したらいいかなと。
+>>>>>>> 65022c1 (back)
 
-## 📱 ビルド方法
+「なし」
 
-```bash
-# デバッグAPKのビルド
-gradle assembleDebug
+# 実装
 
-# ビルド成果物
-app/build/outputs/apk/debug/app-debug.apk
-```
+Android で dll を代替するために<br> src 内に cpp ディレクトリを配置、<br>
+内部に各 shiori。<br> 内部的に呼び出して使用<br>
 
-## 📜 ライセンス
+# Tauri + Vanilla
 
-このソフトウェアは **Apache-2.0** および **MIT** のデュアルライセンスの下で提供されています。
-詳細は `LICENSE-APACHE` および `LICENSE-MIT` をご覧ください。
+This template should help get you started developing with Tauri in vanilla HTML,
+CSS and Javascript.
+
+## Recommended IDE Setup
+
+- [VS Code](https://code.visualstudio.com/) +
+  [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) +
+  [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+
+# How to build
+
+<code>cargo tauri dev</code>
+
+#署名無視 build、apk<br><code>cargo tauri android build -d -t aarch64</code>
+
+# ライセンス
+
+## 本ソフトウェア
+
+デュアルライセンスからライセンスを選択してご使用ください。
+
+Licensed under either of
+
+Apache License, Version 2.0, (LICENSE-APACHE or
+https://www.apache.org/licenses/LICENSE-2.0) MIT license (LICENSE-MIT or
+https://opensource.org/licenses/MIT) at your option.
+
+## [SATORI-SHIORI](https://github.com/ukatech/satoriya-shiori)
+
+BSD 2-Clause License
+
+Copyright (c) 2001-2005, Kusigahama Yagi. Copyright (c) 2006-, SEIBIHAN. All
+rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+## [YAYA-SHIORI](https://github.com/YAYA-shiori/yaya-shiori)
+
+修正 BSD ライセンス
+
+Copyright (c) 2007-, 整備班 All rights reserved. http://ms.shillest.net/
+
+ソースコード形式かバイナリ形式か、変更するかしないかを問わず、以下の条件を満たす場合に限り、再頒布および使用が許可されます。
+
+・ソースコードを再頒布する場合、上記の著作権表示、本条件一覧、および下記免責条項を含めること。
+・バイナリ形式で再頒布する場合、頒布物に付属のドキュメント等の資料に、上記の著作権表示、本条件一覧、および下記免責条項を含めること。
+・書面による特別の許可なしに、本ソフトウェアから派生した製品の宣伝または販売促進に、「整備班」の名前または貢献者の名前を使用してはならない。
+
+<<<<<<< HEAD
+本ソフトウェアは、著作権者および貢献者によって「現状のまま」提供されており、明示黙示を問わず、商業的な使用可能性、および特定の目的に対する適合性に関する暗黙の保証も含め、またそれに限定されない、いかなる保証もありません。著作権者も貢献者も、事由のいかんを問わず、 損害発生の原因いかんを問わず、かつ責任の根拠が契約であるか厳格責任であるか（過失その他の）不法行為であるかを問わず、仮にそのような損害が発生する可能性を知らされていたとしても、本ソフトウェアの使用によって発生した（代替品または代用サービスの調達、使用の喪失、データの喪失、利益の喪失、業務の中断も含め、またそれに限定されない）直接損害、間接損害、偶発的な損害、特別損害、懲罰的損害、または結果損害について、一切責任を負わないものとします。
+=======
+本ソフトウェアは、著作権者および貢献者によって「現状のまま」提供されており、明示黙示を問わず、商業的な使用可能性、および特定の目的に対する適合性に関する暗黙の保証も含め、またそれに限定されない、いかなる保証もありません。著作権者も貢献者も、事由のいかんを問わず、
+損害発生の原因いかんを問わず、かつ責任の根拠が契約であるか厳格責任であるか（過失その他の）不法行為であるかを問わず、仮にそのような損害が発生する可能性を知らされていたとしても、本ソフトウェアの使用によって発生した（代替品または代用サービスの調達、使用の喪失、データの喪失、利益の喪失、業務の中断も含め、またそれに限定されない）直接損害、間接損害、偶発的な損害、特別損害、懲罰的損害、または結果損害について、一切責任を負わないものとします。
+>>>>>>> 7a0fa03 (yet)

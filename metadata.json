@@ -1,6 +1,0 @@
-{
-  "name": "Mascot Nanai",
-  "description": "Desktop mascot and ghost character companion for Android with speech balloons, touch interactions, and SHIORI events.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

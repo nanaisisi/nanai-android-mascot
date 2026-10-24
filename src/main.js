@@ -161,6 +161,12 @@ export class MascotNanaiApp {
           return;
         }
 
+        // 個別ゴーストへの直接切り替え
+        if (action === "switch-to-ghost" && event.data.payload) {
+          this.ghostController.selectGhost(event.data.payload);
+          return;
+        }
+
         // ゴースト切り替え / 汎用モーダル
         const modalKey = action === "ghost-switch" ? "ghost" : action;
         const contentId = `${modalKey}-modal-content`;
@@ -199,7 +205,26 @@ export class MascotNanaiApp {
   toggleMenu() {
     if (!this.elements.menuContainer) return;
     const isVisible = this.elements.menuContainer.style.display !== "none";
-    this.elements.menuContainer.style.display = isVisible ? "none" : "block";
+    const nextState = isVisible ? "none" : "block";
+    this.elements.menuContainer.style.display = nextState;
+
+    if (nextState === "block") {
+      this.syncMenuGhosts();
+    }
+  }
+
+  syncMenuGhosts() {
+    const iframe = document.getElementById("menu-iframe");
+    if (iframe?.contentWindow) {
+      iframe.contentWindow.postMessage(
+        {
+          type: "sync-ghosts",
+          ghosts: this.ghostController.ghosts || [{ name: "mock_nanai" }],
+          currentGhost: this.ghostController.currentGhost,
+        },
+        "*"
+      );
+    }
   }
 
   hideMenu() {

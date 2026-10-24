@@ -4,6 +4,20 @@
 
 デスクトップマスコット規格「**伺か（UKAGAKA）**」の互換環境を提供する、Tauri v2 + Rust 製のクロスプラットフォーム・アプリケーションです。
 
+## 📱 Android 版 公式推奨アプリのご案内
+
+> [!TIP]
+> <table>
+>   <tr>
+>     <td><img src="https://play-lh.googleusercontent.com/I5w2u5p-Wp26yU2a_q5a2M2A8VdO5tM" width="64" alt="Ukadroid" onerror="this.style.display='none'"/></td>
+>     <td>
+>       <strong>Ukadroid (伺か for Android)</strong><br />
+>       Android 上で手軽にゴーストと触れ合いたい方は、実績豊富な公式推奨アプリ <strong>Ukadroid</strong> をぜひご利用ください！<br />
+>       👉 <a href="https://play.google.com/store/apps/details?id=com.hiro.ukadroid"><strong>Google Play で今すぐダウンロード</strong></a>
+>     </td>
+>   </tr>
+> </table>
+
 ---
 
 ## 🌟 主な特徴
@@ -65,6 +79,22 @@ cargo tauri android run
 - **[システムアーキテクチャ](docs/developer/architecture.md)**
 - **[開発アプローチ](docs/process/development-approach.md)**
 - **[技術仕様書一覧](docs/spec/)**
+
+---
+
+## アプリ (UKAGAKA for Android)
+
+Android デバイス上で今すぐ快適に「伺か」ゴーストを楽しみたい方には、アプリ **Ukadroid** のご利用をおすすめします。
+
+<p align="center">
+  <a href="https://play.google.com/store/apps/details?id=com.hiro.ukadroid">
+    <img src="https://img.shields.io/badge/Google_Play-Ukadroid-34A853?style=for-the-badge&logo=googleplay&logoColor=white" alt="Get it on Google Play" height="42" />
+  </a>
+</p>
+
+- **アプリ名**: Ukadroid（伺か for Android）
+- **入手先**: [Google Play ストア](https://play.google.com/store/apps/details?id=com.hiro.ukadroid)
+- **概要**: Android 上で動作する伺か互換ベースウェア。
 
 ---
 

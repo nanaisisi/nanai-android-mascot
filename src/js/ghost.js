@@ -78,6 +78,7 @@ export class GhostController {
     localStorage.setItem("mascot-nanai-current-ghost", JSON.stringify(ghost));
 
     this.initializeGhostSHIORI(ghost);
+    this.app.surfaceManager.loadSurfacesTxt(ghost.path || `assets/ghost/${ghostName}`);
     this.app.showBalloon(`ゴースト「${ghostName}」を選択しました。`);
     setTimeout(() => this.app.hideBalloon(), 2000);
   }
@@ -115,6 +116,15 @@ export class GhostController {
         } else {
           this.app.playSakuraScript("\\0\\s0こんにちは！\\w5\\n\\q[話しかける,Talk]\\n\\q[なでる,Stroke]\\e");
         }
+      } else if (eventName === "OnMouseMove") {
+        const part = args[1];
+        if (part === "head") {
+          this.app.playSakuraScript("\\0\\s0ん…なでなで、きもちいい…♪\\e");
+        } else if (part === "bust") {
+          this.app.playSakuraScript("\\0\\s10触りすぎだよっ、もう…！\\e");
+        } else {
+          this.app.playSakuraScript("\\0\\s0くすぐったいよ〜！\\e");
+        }
       } else {
         this.app.playSakuraScript("\\0\\s0こんにちは！\\w5\\n\\q[話しかける,Talk]\\n\\q[なでる,Stroke]\\e");
       }
@@ -136,6 +146,7 @@ export class GhostController {
   }
 
   updateSurface(surfaceId) {
+    this.app.surfaceManager.setSurfaceId(surfaceId);
     const ghostName = this.currentGhost?.name || "mock_nanai";
     const img = document.querySelector(".character-placeholder img");
     if (img) {

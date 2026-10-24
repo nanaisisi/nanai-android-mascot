@@ -60,11 +60,14 @@ export class MascotNanaiApp {
   }
 
   setupEventListeners() {
-    // ドラッグ & タップインタラクション（当たり判定連動）
+    // ドラッグ & タップ & 撫でインタラクション（当たり判定連動）
     this.interactionManager.setupDragging(
       this.elements.ghostDisplay,
       (clientX, clientY, rect) => {
         this.onGhostClick(clientX, clientY, rect);
+      },
+      (clientX, clientY, rect) => {
+        this.onGhostStroke(clientX, clientY, rect);
       }
     );
 
@@ -115,19 +118,20 @@ export class MascotNanaiApp {
 
         if (action.startsWith("scale-")) {
           const scaleMap = {
-            "scale-50": "60px",
-            "scale-75": "90px",
-            "scale-100": "120px",
-            "scale-125": "150px",
-            "scale-150": "180px",
-            "scale-200": "240px",
+            "scale-50": { width: "100px", height: "200px" },
+            "scale-75": { width: "150px", height: "300px" },
+            "scale-100": { width: "200px", height: "400px" },
+            "scale-125": { width: "250px", height: "500px" },
+            "scale-150": { width: "300px", height: "600px" },
+            "scale-200": { width: "400px", height: "800px" },
           };
-          const newSize = scaleMap[action] || "120px";
+          const scaleConf = scaleMap[action] || { width: "200px", height: "400px" };
           if (this.elements.ghostDisplay) {
-            this.elements.ghostDisplay.style.width = newSize;
-            this.elements.ghostDisplay.style.height = newSize;
+            this.elements.ghostDisplay.style.width = scaleConf.width;
+            this.elements.ghostDisplay.style.height = scaleConf.height;
           }
-          this.showBalloon(`シェル倍率を変更しました`);
+          const percent = action.replace("scale-", "");
+          this.showBalloon(`シェル倍率を ${percent}% に変更しました`);
           setTimeout(() => this.hideBalloon(), 1500);
           return;
         }
@@ -178,6 +182,18 @@ export class MascotNanaiApp {
     }
     // SHIORIイベント送信 (イベント名, [選択肢ID/引数, 部位名])
     this.ghostController.sendShioriEvent("OnMouseClick", ["", partName]);
+  }
+
+  onGhostStroke(clientX, clientY, rect) {
+    let partName = "";
+    if (clientX !== undefined && clientY !== undefined && rect) {
+      const result = this.surfaceManager.detectCollision(clientX, clientY, rect);
+      partName = result.name;
+    }
+
+    console.log(`🖐️ ゴースト撫で（Stroke）: 部位=${partName || "なし"}`);
+    // SHIORIイベント送信 (OnMouseMove: 撫で)
+    this.ghostController.sendShioriEvent("OnMouseMove", ["", partName]);
   }
 
   toggleMenu() {

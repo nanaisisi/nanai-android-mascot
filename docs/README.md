@@ -7,33 +7,37 @@
 
 ### 📖 ユーザー向けドキュメント (`user/`)
 
-- **[installation.md](user/installation.md)** - インストール手順
-- **[user-guide.md](user/user-guide.md)** - 基本的な使用方法
+- **[installation.md](user/installation.md)** - インストール手順・ビルドガイド（Windows / Android）
+- **[user-guide.md](user/user-guide.md)** - 基本的な使用方法・操作ガイド
 - **[troubleshooting.md](user/troubleshooting.md)** - トラブルシューティング
 
 ### 🛠️ 開発者向けドキュメント (`developer/`)
 
-- **[architecture.md](developer/architecture.md)** - システムアーキテクチャ
-- **[setup.md](developer/setup.md)** - 開発環境構築 _(予定)_
-- **[api-reference.md](developer/api-reference.md)** - API 仕様 _(予定)_
+- **[architecture.md](developer/architecture.md)** - システムアーキテクチャ（Frontend / Tauri Bridge / Rust Backend）
 
-### 🔧 技術仕様 (`technical/`)
+### 🔧 技術仕様書・詳細仕様
 
-- **[shiori-integration.md](shiori-integration.md)** - SHIORI 連携の詳細
-- **[standard-ghost-spec.md](standard-ghost-spec.md)** - 伺か標準仕様
-- **[window-design.md](window-design.md)** - ウィンドウ設計
+- **[implementation-plan-and-spec.md](implementation-plan-and-spec.md)** - 次期フェーズ実装計画 & 統合技術仕様書 (Phase 2+)
+- **[pending-issues-and-roadmap.md](pending-issues-and-roadmap.md)** - 検討事項・仕様化ロードマップ（全体概要）
+- **[standard-ghost-spec.md](standard-ghost-spec.md)** - 公式サンプルキャラクター仕様書（モック & プチ）
+- **[mockup-and-android-spec.md](mockup-and-android-spec.md)** - UI/UX & モックアップ仕様書（PCシミュレーション・モバイル画面設計）
+- **[classic-ui-and-menu-spec.md](classic-ui-and-menu-spec.md)** - クラシックUI & 拡張メニュー仕様書
+- **[sakura-script-and-balloon-spec.md](sakura-script-and-balloon-spec.md)** - さくらスクリプトパーサー & バルーン文字送り仕様書
+- **[surfaces-and-collision-spec.md](surfaces-and-collision-spec.md)** - surfaces.txt アニメーション合成 & 当たり判定仕様書
+- **[encoding-and-vfs-spec.md](encoding-and-vfs-spec.md)** - 文字コード変換 (Shift_JIS ↔ UTF-8) & 仮想ファイルシステム (VFS) 仕様書
+- **[android-overlay-and-service-spec.md](android-overlay-and-service-spec.md)** - Android システムオーバーレイ & 常駐生存仕様書
+- **[plugin-and-shiori-fallback-spec.md](plugin-and-shiori-fallback-spec.md)** - プラグイン & SHIORI 読込み・代替読込み (Fallback) 仕様書
+- **[wasm-and-plugin-extensibility.md](wasm-and-plugin-extensibility.md)** - WASM化指針 & JavaScript拡張システム仕様書
+- **[shiori-integration.md](shiori-integration.md)** - SHIORI 組み込み統合技術仕様
+- **[window-design.md](window-design.md)** - ウィンドウ設計（Windows検証 / Android Single Container）
 
-### 📋 開発プロセス (`process/`)
+### 📋 開発プロセス & 背景
 
-- **[AI_driven.md](AI_driven.md)** - AI 主導開発の手法
-- **[development-approach.md](development-approach.md)** - 開発アプローチ
-- **[quality-assurance.md](process/quality-assurance.md)** - 品質管理 _(予定)_
-
-### 🎨 その他
-
-- **[documentation-proposal.md](documentation-proposal.md)** - ドキュメント戦略
-- **[doc_history.md](doc_history.md)** - ドキュメント更新履歴
-- **比較分析ドキュメント**: 既存ソフトウェアとの比較
+- **[AI_driven.md](AI_driven.md)** - AI 駆動開発の手法と実践記録
+- **[development-approach.md](development-approach.md)** - 開発アプローチ・技術選定
+- **[doc_history.md](doc_history.md)** - ドキュメント変更履歴
+- **[documentation-proposal.md](documentation-proposal.md)** - ドキュメント戦略・提案
+- **[all_desktopmascot.md](all_desktopmascot.md)** - デスクトップマスコットの立ち位置・原理検討メモ
 
 ## 🚀 クイックスタート
 
@@ -98,10 +102,10 @@
 
 ### 技術レベル別
 
-- **初心者** → user/ ディレクトリ
-- **中級者** → technical/ ディレクトリ
-- **上級者** → developer/ ディレクトリ
-- **研究者** → process/ ディレクトリ
+- **初心者・ユーザー** → [ユーザー向けガイド](user/user-guide.md) (`user/` ディレクトリ)
+- **開発者・コントリビューター** → [システムアーキテクチャ](developer/architecture.md) (`developer/` ディレクトリ)
+- **仕様策定・互換レイヤー実装** → 各種技術仕様書（[実装計画](implementation-plan-and-spec.md)、[文字コード/VFS仕様](encoding-and-vfs-spec.md)、[SHIORIフォールバック仕様](plugin-and-shiori-fallback-spec.md)等）
+- **開発プロセス・背景設計** → [AI主導開発](AI_driven.md)、[開発アプローチ](development-approach.md)
 
 ## 🤝 ドキュメントの改善
 
@@ -140,6 +144,11 @@
 
 ## 📅 更新履歴
 
+### 2026 年 10 月 24 日
+
+- ドキュメントインデックス（README.md）を再編し、全詳細仕様書へのリンクおよび実装状況を最新化
+- 実装フェーズ（Tauri v2、mock_nanai 構成、フォールバック機構、VFS/文字コード仕様）の反映
+
 ### 2025 年 7 月 11 日
 
 - 初期ドキュメント構成の作成
@@ -149,13 +158,12 @@
 
 ### 今後の予定
 
-- API 仕様書の作成
-- 開発環境セットアップガイド
-- 品質管理ドキュメント
+- 各プラットフォーム向け実機テストログの拡充
+- WASM SHIORI ビルド・実行手順の追記
 - 多言語対応
 
 ---
 
 _このドキュメントは継続的に更新され、プロジェクトの成長と共に改善されます。_
 
-_最終更新: 2025 年 7 月 11 日_
+_最終更新: 2026 年 10 月 24 日_

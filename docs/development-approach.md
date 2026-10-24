@@ -111,15 +111,23 @@ fn main() {
 
 ```
 assets/ghost/
-└── mock_nanai/           # テンプレートベースゴースト
+└── mock_nanai/           # テンプレートベース公式モックゴースト
+    ├── install.txt
     ├── ghost/
     │   └── master/
-    │       └── descript.txt
+    │       ├── descript.txt
+    │       ├── satori.dll        # Windows Win32用 (フォールバック検証用)
+    │       ├── dic_*.txt         # 会話辞書 (base, menu, resource, talk 等)
+    │       └── satori_*.txt      # 設定・セーブデータ
     └── shell/
         └── master/
             ├── descript.txt
-            ├── surface0.png
-            └── surfaces.txt
+            ├── readme.txt
+            ├── surfaces.txt      # 当たり判定・アニメーション定義
+            ├── surfacetable.txt
+            ├── surface0.png      # 基本待機サーフィス
+            ├── surface10.png     # サブ・表情差分サーフィス
+            └── surface*.svg
 ```
 
 ### 著作権対応
@@ -220,10 +228,10 @@ jobs:
 
 ### プラットフォーム拡張
 
-1. **Windows 対応** Windows 対応
-2. **iOS 対応**: Tauri の iOS サポート活用
-3. **Web 版**: WASM でのブラウザ版
-4. **デスクトップ**: Windows/Linux/macOS 対応、UI 最適化
+1. **Windows 対応**: デスクトップ検証環境（Windows First、常駐・透過・トレイ機能）
+2. **Android 対応**: システムオーバーレイ・常駐サービス・タッチ透過
+3. **iOS 対応**: Tauri の iOS サポート活用（将来検討）
+4. **Web 版**: WASM / WebAssembly でのブラウザプレビュー版
 
 ### 技術的改善
 
@@ -321,12 +329,17 @@ fn detect_shiori_type(ghost_path: &Path) -> SHIORIType {
 }
 ```
 
-### クロスプラットフォーム対応
+### クロスプラットフォーム対応（多層フォールバック）
 
-#### 本ソフトウェア専用 SHIORI
+Windows 以外の環境（Android / Web / ARM）における動的 DLL ロード制限を回避するため、多層フォールバック戦略（詳細は [plugin-and-shiori-fallback-spec.md](plugin-and-shiori-fallback-spec.md) 参照）を適用します。
 
-- **特徴**:
-  - Rust 文法
+1. **Windows 環境**: ネイティブ DLL（`satori.dll`, `yaya.dll`）を直接ロード
+2. **Android / Web 環境**:
+   - **WASM SHIORI**: Emscripten / Clang でコンパイルされた WebAssembly 版（`satori.wasm`, `yaya.wasm`）の実行
+   - **JavaScript / TypeScript フォールバック**: フロントエンド内蔵の対話パーサーおよびモック SHIORI
+3. **本ソフトウェア専用 SHIORI / 拡張**:
+   - Web 標準（JS/TS）プラグイン API
+   - Rust ネイティブ統合 SHIORI
 
 ## 開発体制
 

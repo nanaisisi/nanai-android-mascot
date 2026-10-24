@@ -33,6 +33,7 @@
 - **[plugin-and-shiori-fallback-spec.md](spec/plugin-and-shiori-fallback-spec.md)** - プラグイン & SHIORI 読込み・代替読込み (Fallback) 仕様書
 - **[wasm-and-plugin-extensibility.md](spec/wasm-and-plugin-extensibility.md)** - WASM化指針 & JavaScript拡張システム仕様書
 - **[shiori-integration.md](spec/shiori-integration.md)** - SHIORI 組み込み統合技術仕様
+- **[ssp-compatibility-reference.md](spec/ssp-compatibility-reference.md)** - SSP 仕様ベース 統合互換リファレンスマニュアル
 
 ### 📋 開発プロセス & 履歴 (`process/`)
 

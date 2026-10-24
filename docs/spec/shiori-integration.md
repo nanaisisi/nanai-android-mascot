@@ -14,11 +14,16 @@ Android およびクロスプラットフォーム向け伺か（UKAGAKA）互�
 Ukagaka Tech Team（`ukatech`）および公式ドキュメントプロジェクト（`ukadoc`）を調査した結果、エコシステムの現状は以下の通りです：
 
 - **公式仕様の基準**:
-  - [ukatech/ukadoc-spec](https://github.com/ukatech/ukadoc-spec) - UKADOC 公式仕様書リポジトリ（さくらスクリプト、SHIORI 3.0 プロトコル、surfaces.txt 等の基幹仕様）
-  - [ukatech/ukadoc-ssp](https://github.com/ukatech/ukadoc-ssp) - SSP 固有仕様・拡張リファレンスリポジトリ
+  - [ukatech/ukadoc-spec](https://github.com/ukatech/ukadoc-spec) - UKADOC 公式仕様書リポジトリ（[ローカル参照: local/ukadoc-spec](file:///e:/project/rust/nanai-android-mascot/local/ukadoc-spec/INDEX.md)）
+  - [ukatech/ukadoc-ssp](https://github.com/ukatech/ukadoc-ssp) - SSP 固有仕様・拡張リファレンスリポジトリ（[ローカル参照: local/ukadoc-ssp](file:///e:/project/rust/nanai-android-mascot/local/ukadoc-ssp/INDEX.md)）
   - Web 版公式マニュアル: [UKADOC Project (ssp.shillest.net/ukadoc/)](https://ssp.shillest.net/ukadoc/)
+  > [!NOTE]
+  > `/local/` は `.gitignore` に指定されたローカル開発専用ディレクトリ（実体: `E:\project\reference\ukagaka` へのジャンクション）です。公式リポジトリの仕様書をローカルで高速に突き合わせ参照できます。
 - **公式 SHIORI 実装の現状**:
-  - 里々（`ukatech/satoriya-shiori`）や YAYA（`YAYA-shiori/yaya-shiori`）の公式リポジトリは、Windows / MSVC を主軸としつつ Linux/POSIX 向けビルドテスト等のクロスプラットフォーム化を進めている**「移植・整備の途上」**にある。
+  - 里々（[src/cpp/satoriya-shiori](file:///e:/project/rust/nanai-android-mascot/src/cpp/satoriya-shiori) / 公式マニュアル: [satori-docs](https://github.com/ukatech/satori-docs) / [ローカル参照: local/satori-docs](file:///e:/project/rust/nanai-android-mascot/local/satori-docs/INDEX.md)）
+  - YAYA（[src/cpp/yaya-shiori](file:///e:/project/rust/nanai-android-mascot/src/cpp/yaya-shiori) / 公式マニュアル: [yaya-docs](https://github.com/YAYA-shiori/yaya-docs) / [ローカル参照: local/yaya-docs](file:///e:/project/rust/nanai-android-mascot/local/yaya-docs/manual/index.md)）
+  - 華和梨（[src/cpp/kawari](file:///e:/project/rust/nanai-android-mascot/src/cpp/kawari) / 付属ドキュメント: [src/cpp/kawari/document/index.html](file:///e:/project/rust/nanai-android-mascot/src/cpp/kawari/document/index.html)）
+  - 各公式リポジトリは、Windows / MSVC を主軸としつつ Linux/POSIX 向けビルドテスト等のクロスプラットフォーム化を進めている**「移植・整備の途上」**にある。
   - 公式リポジトリ単体での Android NDK / WebAssembly (WASM) 向けビルド済みパッケージや完全移植版はまだ提供されていない。
 
 ### 2. 本プロジェクトにおける解決戦略（3層ハイブリッド構造）

@@ -10,8 +10,7 @@
 # See Cargo.toml.orig for the original contents.
 
 [package]
-edition = "2021"
-rust-version = "1.73"
+edition = "2024"
 name = "dpi"
 version = "0.1.2"
 build = false
@@ -22,24 +21,14 @@ autotests = false
 autobenches = false
 description = "Types for handling UI scaling"
 readme = "README.md"
-keywords = [
-    "DPI",
-    "HiDPI",
-    "scale-factor",
-]
+keywords = ["DPI", "HiDPI", "scale-factor"]
 categories = ["gui"]
 license = "Apache-2.0 AND MIT"
 repository = "https://github.com/rust-windowing/winit"
 
 [package.metadata.docs.rs]
-features = [
-    "mint",
-    "serde",
-]
-rustdoc-args = [
-    "--cfg",
-    "docsrs",
-]
+features = ["mint", "serde"]
+rustdoc-args = ["--cfg", "docsrs"]
 targets = [
     "i686-pc-windows-msvc",
     "x86_64-pc-windows-msvc",
@@ -63,10 +52,10 @@ name = "dpi"
 path = "src/lib.rs"
 
 [dependencies.mint]
-version = "0.5.6"
+version = "0.5.9"
 optional = true
 
 [dependencies.serde]
-version = "1"
+version = "1.0.229"
 features = ["serde_derive"]
 optional = true

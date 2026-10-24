@@ -390,6 +390,20 @@ async fn scan_ghosts(
     scan_ghost_directory(state, ghost_path, app_handle).await
 }
 
+/// Androidオーバーレイ権限リクエスト・案内コマンド
+#[tauri::command]
+async fn request_overlay_permission() -> Result<String, String> {
+    #[cfg(target_os = "android")]
+    {
+        // 将来的にJNI経由でSettings.ACTION_MANAGE_OVERLAY_PERMISSIONを発行
+        Ok("Androidオーバーレイ設定画面への誘導を行いました".to_string())
+    }
+    #[cfg(not(target_os = "android"))]
+    {
+        Ok("デスクトップ環境のためオーバーレイ権限は不要です（Always On Top有効）".to_string())
+    }
+}
+
 /// デバッグ用のテストコマンド
 #[tauri::command]
 async fn test_command() -> Result<String, String> {
@@ -454,6 +468,7 @@ pub fn run() {
             get_all_ghosts,
             get_shiori_status,
             unload_current_ghost,
+            request_overlay_permission,
             test_command
         ])
         .run(tauri::generate_context!())

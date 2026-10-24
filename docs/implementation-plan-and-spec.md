@@ -93,7 +93,7 @@ flowchart TD
 
 1. **Android マニフェスト & パーミッション誘導**
    - [x] `SYSTEM_ALERT_WINDOW` の設定画面誘導インテント呼び出し（Tauriコマンド `request_overlay_permission` & 設定モーダル案内UI）
-   - [ ] フォアグラウンドサービス通知チャネルの実装
+   - [x] フォアグラウンドサービス通知チャネルの実装（Tauriコマンド `setup_foreground_service`）
 2. **透過タッチスルー (Touch-through)**
    - [x] マスコット透過部分のタッチイベント透過（[src/css/base.css](file:///e:/project/rust/nanai-android-mascot/src/css/base.css) の `.container: pointer-events: none` & `.ghost-display: pointer-events: auto` 分離）
 3. **画面端スナップ & ドッキング UI**

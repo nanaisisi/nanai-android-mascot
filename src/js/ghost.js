@@ -104,7 +104,15 @@ export class GhostController {
     if (!globalThis.__TAURI__) {
       // モック対話（さくらスクリプトテスト用）
       if (eventName === "OnChoiceSelect") {
-        this.app.playSakuraScript(`\\0\\s0選択肢「${args[1] || args[0]}」が選ばれたよ！\\w5\\nありがとう♪\\e`);
+        const choiceId = args[0];
+        const choiceText = args[1] || choiceId;
+        if (choiceId === "Talk") {
+          this.triggerRandomTalk();
+        } else if (choiceId === "Stroke") {
+          this.app.playSakuraScript("\\0\\s0あたまを優しくなでてみてね♪\\e");
+        } else {
+          this.app.playSakuraScript(`\\0\\s0選択肢「${choiceText}」が選ばれたよ！\\w5\\nありがとう♪\\e`);
+        }
       } else if (eventName === "OnMouseClick") {
         const part = args[1];
         if (part === "head") {
@@ -113,8 +121,10 @@ export class GhostController {
           this.app.playSakuraScript("\\0\\s10ちょ、ちょっと…！\\w5\\nどこ触ってるの…！\\e");
         } else if (part === "skirt") {
           this.app.playSakuraScript("\\0\\s10きゃっ！\\w5\\nめくっちゃダメだよ！\\e");
+        } else if (part === "hand") {
+          this.app.playSakuraScript("\\0\\s0てをつないでくれるの？\\w5\\nあったかいね。\\e");
         } else {
-          this.app.playSakuraScript("\\0\\s0こんにちは！\\w5\\n\\q[話しかける,Talk]\\n\\q[なでる,Stroke]\\e");
+          this.app.playSakuraScript("\\0\\s0こんにちは！\\w5\\n何かご用事かな？\\w3\\n\\q[お話しする,Talk]\\n\\q[なでる,Stroke]\\e");
         }
       } else if (eventName === "OnMouseMove") {
         const part = args[1];
@@ -125,8 +135,10 @@ export class GhostController {
         } else {
           this.app.playSakuraScript("\\0\\s0くすぐったいよ〜！\\e");
         }
+      } else if (eventName === "OnSecondChange") {
+        this.triggerRandomTalk();
       } else {
-        this.app.playSakuraScript("\\0\\s0こんにちは！\\w5\\n\\q[話しかける,Talk]\\n\\q[なでる,Stroke]\\e");
+        this.app.playSakuraScript("\\0\\s0こんにちは！\\w5\\n\\q[お話しする,Talk]\\n\\q[なでる,Stroke]\\e");
       }
       return;
     }
@@ -143,6 +155,18 @@ export class GhostController {
     } catch (_error) {
       this.app.playSakuraScript("\\0\\s0エラーが発生したよ。\\e");
     }
+  }
+
+  triggerRandomTalk() {
+    const talks = [
+      "\\0\\s0今日はいいお天気だね！\\w5\\n何か楽しいことないかな〜。\\e",
+      "\\0\\s0ぼーっとしてたら、\\w3少し眠くなっちゃった…\\w8ふぁぁ。\\e",
+      "\\0\\s0画面の端っこにいるから、\\w4邪魔なときは端に寄せてね♪\\e",
+      "\\0\\s0開発が進むと、\\w3いろんなゴーストさんと交代できるようになるんだって！\\w5楽しみだね。\\e",
+      "\\0\\s0\\q[お話しする,Talk]\\n\\q[あたまをなでる,Stroke]\\e",
+    ];
+    const picked = talks[Math.floor(Math.random() * talks.length)];
+    this.app.playSakuraScript(picked);
   }
 
   updateSurface(surfaceId) {

@@ -28,15 +28,15 @@
 
 ### 3. さくらスクリプト再生キューとサーフィスの完全連動
 
-- [ ] `\s[ID]` による [src/js/surface.js](file:///e:/project/rust/nanai-android-mascot/src/js/surface.js) のリアルタイム表情切り替え接続
-- [ ] `\w`, `\_w` ウェイトとバルーンタイピング表示の非同期実行
-- [ ] クリックによる全文スキップ機能のバルーンUI組み込み
+- [x] `\s[ID]` による [src/js/surface.js](file:///e:/project/rust/nanai-android-mascot/src/js/surface.js) のリアルタイム表情切り替え接続
+- [x] `\w`, `\_w` ウェイトとバルーンタイピング表示の非同期実行
+- [x] クリックによる全文スキップ機能のバルーンUI組み込み
 
 ### 4. 当たり判定（Collision）からの SHIORI イベント発火
 
-- [ ] 各部位タッチ時の `OnMouseClick`（Reference4: 部位ID）生成
-- [ ] 選択肢 `\q[ラベル,ID]` クリック時の `OnChoiceSelect` イベント返送パイプライン構築
-- [ ] 定期タイマー（OnSecondChange）とランダムトーク発生
+- [x] 各部位タッチ時の `OnMouseClick`（Reference4: 部位ID）生成
+- [x] 選択肢 `\q[ラベル,ID]` クリック時の `OnChoiceSelect` イベント返送パイプライン構築
+- [x] 定期タイマー（OnSecondChange）とランダムトーク発生
 
 ## 🎯 優先度：高
 

@@ -149,28 +149,26 @@ export class GhostController {
         const part = args[1];
         const scope = args[2] || 0;
         if (scope === 1) {
-          // 1番手（kero）がタップされた場合: sakuraとの掛け合い
-          this.app.playSakuraScript("\\1\\s10ボクをつついたな〜！\\w5\\0\\s0ふふ、仲良しだね♪\\e");
+          // 1番手（プチ）がタップされた場合
+          this.app.playSakuraScript("\\1\\s10ピピッ！ボクをつついたね！\\w6\\0\\s0ふふ、プチが反応してるよ。\\e");
         } else if (part === "head") {
-          this.app.playSakuraScript("\\0\\s0あたまをなでてくれたの？\\w5\\nえへへ…♪\\e");
-        } else if (part === "bust") {
-          this.app.playSakuraScript("\\0\\s10ちょ、ちょっと…！\\w5\\nどこ触ってるの…！\\e");
-        } else if (part === "skirt") {
-          this.app.playSakuraScript("\\0\\s10きゃっ！\\w5\\nめくっちゃダメだよ！\\e");
-        } else if (part === "hand") {
-          this.app.playSakuraScript("\\0\\s0てをつないでくれるの？\\w5\\nあったかいね。\\e");
+          this.app.playSakuraScript("\\0\\s1頭部アンテナ、感度良好です♪\\w6\\nなでてくれてありがとう！\\e");
+        } else if (part === "face") {
+          this.app.playSakuraScript("\\0\\s2画面タップを検出しました！\\w5\\n\\s1ピカピカ表示中だよ。\\e");
+        } else if (part === "body") {
+          this.app.playSakuraScript("\\0\\s0四角いボディは頑丈設計だよ！\\w6\\nトントンしても大丈夫♪\\e");
         } else {
-          this.app.playSakuraScript("\\0\\s0こんにちは！\\w5\\n何かご用事かな？\\w3\\n\\q[お話しする,Talk]\\n\\q[なでる,Stroke]\\e");
+          this.app.playSakuraScript("\\0\\s0モックだよ！\\w5\\n何かご用事かな？\\w3\\n\\q[お話しする,Talk]\\n\\q[アンテナ確認,CheckAntenna]\\e");
         }
       } else if (eventName === "OnMouseMove") {
         const part = args[1];
         const scope = args[2] || 0;
         if (scope === 1) {
-          this.app.playSakuraScript("\\1\\s10わわ、くすぐったいぞ！\\w5\\0\\s0楽しそうだね。\\e");
+          this.app.playSakuraScript("\\1\\s10ピピピ〜！くすぐったいよ！\\e");
         } else if (part === "head") {
-          this.app.playSakuraScript("\\0\\s0ん…なでなで、きもちいい…♪\\e");
-        } else if (part === "bust") {
-          this.app.playSakuraScript("\\0\\s10触りすぎだよっ、もう…！\\e");
+          this.app.playSakuraScript("\\0\\s1あたまをなでなで…\\w4通信感度アップ中♪\\e");
+        } else if (part === "face") {
+          this.app.playSakuraScript("\\0\\s1画面を拭いてくれてるの？\\w4ありがとう！\\e");
         } else {
           this.app.playSakuraScript("\\0\\s0くすぐったいよ〜！\\e");
         }
@@ -227,11 +225,11 @@ export class GhostController {
 
   triggerRandomTalk() {
     const talks = [
-      "\\0\\s0今日はいいお天気だね！\\w5\\n何か楽しいことないかな〜。\\e",
-      "\\0\\s0ぼーっとしてたら、\\w3少し眠くなっちゃった…\\w8ふぁぁ。\\e",
-      "\\0\\s0画面の端っこにいるから、\\w4邪魔なときは端に寄せてね♪\\e",
-      "\\0\\s0開発が進むと、\\w3いろんなゴーストさんと交代できるようになるんだって！\\w5楽しみだね。\\e",
-      "\\0\\s0\\q[お話しする,Talk]\\n\\q[あたまをなでる,Stroke]\\e",
+      "\\0\\s0モックは今日も画面の隅っこで稼働中だよ！\\w6\\1\\s10ピピッ！異常なし！\\e",
+      "\\0\\s0四角い箱型ボディは、\\w4画面端にスナップしてもぴったり収まるんだ。\\e",
+      "\\0\\s2おっと！\\w4\\s1びっくりしたけど、\\w3バッテリーも通信も良好だよ♪\\e",
+      "\\0\\s0タップされた場所によって、\\w4頭部アンテナや画面、ボディが反応するよ。\\w6\\n色々さわってみてね！\\e",
+      "\\0\\s0\\q[お話しする,Talk]\\n\\q[アンテナ確認,CheckAntenna]\\e",
     ];
     const picked = talks[Math.floor(Math.random() * talks.length)];
     this.app.playSakuraScript(picked);
@@ -282,10 +280,11 @@ export class GhostController {
       return;
     }
 
-    sakuraPlaceholder.innerHTML = `<img src="assets/ghost/${ghostName}/shell/master/surface0.png" 
+    const imgPath = `assets/ghost/${ghostName}/shell/master/surface0.png`;
+    sakuraPlaceholder.innerHTML = `<img src="${imgPath}" 
                                    alt="${ghostName}" 
-                                   style="width: 100%; height: 100%; object-fit: contain;" 
-                                   onerror="console.error('画像読み込みエラー'); this.style.display='none';">`;
+                                   style="width: 100%; height: 100%; object-fit: contain; pointer-events: auto;" 
+                                   onerror="console.error('❌ 画像読み込み失敗: ' + this.src); this.src='assets/ghost/${ghostName}/shell/master/surface0.svg';">`;
     sakuraPlaceholder.title = ghostName || "";
   }
 

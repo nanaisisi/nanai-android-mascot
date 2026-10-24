@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 400" width="200" height="400">
+  <defs>
+    <!-- 相方プチ (Petit): コンパクトなキューブユニット -->
+    <linearGradient id="petitBody" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E0F2FE" />
+      <stop offset="100%" stop-color="#BAE6FD" />
+    </linearGradient>
+    <linearGradient id="petitScreen" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A" />
+      <stop offset="100%" stop-color="#0284C7" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- 上部フロートリング（浮遊演出） -->
+  <ellipse cx="100" cy="180" rx="36" ry="8" fill="none" stroke="#38BDF8" stroke-width="2" opacity="0.6" filter="url(#glow)" />
+
+  <!-- プチのキューブボディ (100x100) -->
+  <rect x="50" y="200" width="100" height="100" rx="20" fill="url(#petitBody)" stroke="#38BDF8" stroke-width="3" />
+
+  <!-- 小型アンテナ -->
+  <rect x="97" y="180" width="6" height="22" rx="3" fill="#64748B" />
+  <circle cx="100" cy="176" r="6" fill="#F43F5E" filter="url(#glow)" />
+
+  <!-- 前面単眼・インジケーターディスプレイ -->
+  <rect x="62" y="222" width="76" height="56" rx="12" fill="url(#petitScreen)" />
+  <!-- 単眼コア (サイクロプス風の愛嬌あるアイ) -->
+  <circle cx="100" cy="250" r="14" fill="#38BDF8" filter="url(#glow)" />
+  <circle cx="100" cy="250" r="7" fill="#FFFFFF" />
+
+  <!-- 浮遊スラスター光（下部） -->
+  <polygon points="85,302 115,302 100,324" fill="#38BDF8" opacity="0.8" filter="url(#glow)" />
+</svg>

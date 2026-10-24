@@ -1,74 +1,80 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 400" width="200" height="400">
+  <defs>
+    <!-- メタリック・クリーングラデーション -->
+    <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F3F4F6" />
+      <stop offset="100%" stop-color="#D1D5DB" />
+    </linearGradient>
+    <linearGradient id="screenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#0284C7" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
 
-<svg
-   width="400"
-   height="600"
-   viewBox="0 0 210 297"
-   version="1.1"
-   id="svg1"
-   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
-   sodipodi:docname="surface0.svg"
-   inkscape:export-filename="surface0.png"
-   inkscape:export-xdpi="96"
-   inkscape:export-ydpi="96"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:dc="http://purl.org/dc/elements/1.1/">
-  <defs
-     id="defs1" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#000000"
-     borderopacity="0.3"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="0.7"
-     inkscape:cx="52.142857"
-     inkscape:cy="395"
-     inkscape:document-units="mm"
-     inkscape:showpageshadow="0"
-     inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#505050"
-     inkscape:window-width="1920"
-     inkscape:window-height="1009"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="svg1"
-     showgrid="false" />
-  <metadata
-     id="metadata1">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <defs
-     id="defs2" />
-  <g
-     id="g1">
-    <path
-       id="body"
-       d="M 50 130 L 60 100 180 50 150 100 300 500 100 500"
-       fill="#333333"
-       stroke-width="0" />
-    <path
-       id="body_outline1"
-       d="M 49 131 L 59 99 151 99 151 101 61 100 51 131"
-       fill="#000000"
-       stroke-width="0" />
-    <path
-       id="body_outline2"
-       d="M 60 60 L 39 39" />
+  <!-- アンテナ（頭部） -->
+  <g id="antenna">
+    <rect x="96" y="24" width="8" height="40" rx="4" fill="#9CA3AF" />
+    <circle cx="100" cy="20" r="12" fill="url(#accentGrad)" filter="url(#glow)" />
+    <circle cx="100" cy="20" r="6" fill="#BAE6FD" />
   </g>
+
+  <!-- 脚部 -->
+  <g id="legs">
+    <rect x="56" y="328" width="24" height="40" rx="10" fill="#4B5563" />
+    <rect x="120" y="328" width="24" height="40" rx="10" fill="#4B5563" />
+    <rect x="50" y="358" width="36" height="16" rx="8" fill="#1F2937" />
+    <rect x="114" y="358" width="36" height="16" rx="8" fill="#1F2937" />
+  </g>
+
+  <!-- メイン四角ボディ -->
+  <rect x="25" y="60" width="150" height="270" rx="28" fill="url(#bodyGrad)" stroke="#9CA3AF" stroke-width="4" />
+  
+  <!-- 上部アクセントライン -->
+  <rect x="45" y="74" width="110" height="6" rx="3" fill="#9CA3AF" opacity="0.6" />
+
+  <!-- ディスプレイ画面 (Face / Screen) -->
+  <rect x="40" y="92" width="120" height="108" rx="16" fill="url(#screenGrad)" stroke="#475569" stroke-width="3" />
+  <rect x="43" y="95" width="114" height="20" rx="8" fill="#FFFFFF" opacity="0.06" />
+
+  <!-- 表情: 通常 (●  ●) -->
+  <g id="face_normal">
+    <!-- 目 (左・右) -->
+    <circle cx="76" cy="144" r="10" fill="#38BDF8" filter="url(#glow)" />
+    <circle cx="79" cy="141" r="3" fill="#FFFFFF" />
+    <circle cx="124" cy="144" r="10" fill="#38BDF8" filter="url(#glow)" />
+    <circle cx="127" cy="141" r="3" fill="#FFFFFF" />
+    <!-- ほっぺ -->
+    <ellipse cx="62" cy="162" rx="7" ry="4" fill="#F43F5E" opacity="0.6" />
+    <ellipse cx="138" cy="162" rx="7" ry="4" fill="#F43F5E" opacity="0.6" />
+    <!-- 口 (控えめなドットライン) -->
+    <rect x="94" y="160" width="12" height="3" rx="1.5" fill="#38BDF8" />
+  </g>
+
+  <!-- 胴体 (Body / Chest) -->
+  <g id="body_panel">
+    <!-- 胸部スロット / 通気口 -->
+    <rect x="46" y="218" width="108" height="54" rx="10" fill="#E5E7EB" stroke="#CBD5E1" stroke-width="2" />
+    <rect x="56" y="228" width="88" height="6" rx="3" fill="#9CA3AF" />
+    <rect x="56" y="242" width="88" height="6" rx="3" fill="#9CA3AF" />
+    <rect x="56" y="256" width="88" height="6" rx="3" fill="#9CA3AF" />
+
+    <!-- 状態インジケーターランプ -->
+    <circle cx="60" cy="294" r="6" fill="#10B981" filter="url(#glow)" />
+    <circle cx="78" cy="294" r="6" fill="#38BDF8" />
+    <circle cx="96" cy="294" r="6" fill="#9CA3AF" />
+  </g>
+
+  <!-- 小型アーム（左右） -->
+  <rect x="15" y="180" width="12" height="60" rx="6" fill="#6B7280" />
+  <circle cx="21" cy="242" r="8" fill="#4B5563" />
+  <rect x="173" y="180" width="12" height="60" rx="6" fill="#6B7280" />
+  <circle cx="179" cy="242" r="8" fill="#4B5563" />
 </svg>

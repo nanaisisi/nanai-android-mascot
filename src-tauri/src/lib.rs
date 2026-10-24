@@ -42,17 +42,17 @@ impl AppState {
 
 // エラーメッセージを全ウィンドウにemitするヘルパー関数
 fn emit_error_to_all(app_handle: &tauri::AppHandle<tauri::Wry>, msg: String) {
-    if let Some(window) = app_handle.get_webview_window("main") {
-        if let Err(err) = window.emit("error", msg.clone()) {
-            eprintln!("emit failed: {err}");
-        }
+    if let Some(window) = app_handle.get_webview_window("main")
+        && let Err(err) = window.emit("error", msg.clone())
+    {
+        eprintln!("emit failed: {err}");
     }
 }
 // ファイルを開くコマンド
 #[tauri::command]
 fn open_file(path: String, app_handle: tauri::AppHandle<tauri::Wry>) -> Result<String, String> {
-    let resolved_path = resolve_asset_path(&path, &app_handle)
-        .unwrap_or_else(|_| PathBuf::from(&path));
+    let resolved_path =
+        resolve_asset_path(&path, &app_handle).unwrap_or_else(|_| PathBuf::from(&path));
 
     match open_shift_jis_file(&resolved_path.to_string_lossy()) {
         Ok(content) => Ok(content),
@@ -229,16 +229,14 @@ fn resolve_asset_path(
         }
 
         // 大文字・小文字差異の解決を試行
-        if let Some(parent) = candidate.parent() {
-            if parent.exists() {
-                if let Some(file_name) = candidate.file_name().and_then(|n| n.to_str()) {
-                    if let Some(resolved) = resolve_vfs_path(parent, file_name) {
-                        let normalized = normalize_path(&resolved);
-                        println!("✅ Found path via VFS (case-insensitive): {:?}", resolved);
-                        return Ok(normalized);
-                    }
-                }
-            }
+        if let Some(parent) = candidate.parent()
+            && parent.exists()
+            && let Some(file_name) = candidate.file_name().and_then(|n| n.to_str())
+            && let Some(resolved) = resolve_vfs_path(parent, file_name)
+        {
+            let normalized = normalize_path(&resolved);
+            println!("✅ Found path via VFS (case-insensitive): {:?}", resolved);
+            return Ok(normalized);
         }
     }
 
@@ -446,8 +444,8 @@ pub fn run() {
                 let app_handle = app.app_handle().clone();
                 let _tray = TrayIconBuilder::new()
                     .icon(icon)
-                    .on_tray_icon_event(move |_tray, event| match event {
-                        TrayIconEvent::Click { .. } => {
+                    .on_tray_icon_event(move |_tray, event| {
+                        if let TrayIconEvent::Click { .. } = event {
                             if let Some(window) = app_handle.get_webview_window("main") {
                                 if let Err(e) =
                                     window.emit("error", "Failed to show window".to_string())
@@ -460,7 +458,6 @@ pub fn run() {
                                 emit_error_to_all(&app_handle, msg.clone());
                             }
                         }
-                        _ => {}
                     })
                     .build(app)?;
                 let menu = MenuBuilder::new(app)

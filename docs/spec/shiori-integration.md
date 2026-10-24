@@ -66,10 +66,13 @@ src/cpp/
 ├── satoriya-shiori/     # SATORI SHIORI (ukatech/satoriya-shiori submodule)
 │   ├── satoriya/        # コアソース (POSIX/Windows 互換)
 │   └── LICENSE          # BSD 2-Clause
-└── yaya-shiori/         # YAYA SHIORI (YAYA-shiori/yaya-shiori submodule)
-    ├── *.cpp            # 実装ファイル群
-    ├── *.h              # ヘッダーファイル群
-    └── LICENSE          # 修正BSD
+├── yaya-shiori/         # YAYA SHIORI (YAYA-shiori/yaya-shiori submodule)
+│   ├── *.cpp            # 実装ファイル群
+│   ├── *.h              # ヘッダーファイル群
+│   └── LICENSE          # 修正BSD
+└── kawari/              # 華和梨 KAWARI (ukatech/kawari submodule)
+    ├── *.cpp / *.h      # KIS インタプリタ実装
+    └── LICENSE          # BSD 3-Clause
 ```
 
 ### 2. 統合レイヤー構成

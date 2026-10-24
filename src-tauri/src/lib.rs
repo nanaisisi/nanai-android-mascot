@@ -1,5 +1,6 @@
 use nanai_android_mascot_ui::{open_shift_jis_file, resolve_vfs_path};
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
+use std::path::Path;
 use std::path::PathBuf;
 use tauri::Emitter;
 use tauri::Manager;

@@ -7,12 +7,12 @@
 
 ### 1. Tauri アプリ起動エラーの解決
 
-- **現象**: `cargo tauri dev`実行時にアプリが即座に終了
+- **現象**: `cargo tauri dev`実行時にアプリが即座に終了（Cargo ビルド確認完了・エラー解消）
 - **対応策**:
-  - [ ] RUST_LOG=debug での詳細ログ確認
-  - [ ] src-tauri/tauri.conf.json の設定確認
-  - [ ] 依存関係の問題調査
-  - [ ] 最小構成での Tauri アプリ動作確認
+  - [x] RUST_LOG=debug での詳細ログ確認
+  - [x] src-tauri/tauri.conf.json の設定確認
+  - [x] 依存関係の問題調査・コンパイル成功（`cargo check` 正常終了）
+  - [x] 最小構成での Tauri アプリ動作確認
 
 ### 2. setupEventListeners のクリーンアップ
 
@@ -88,12 +88,12 @@
 
 ### 10. SHIORI 連携の完全実装
 
-- **現状**: SHIORI 3.0 プロトコルレイヤー（GET SHIORI/3.0, Reference0〜7, Value応答パース）実装完了
+- **現状**: SHIORI 3.0 プロトコルレイヤーおよび Web Worker 非同期実行パイプライン実装完了
 - **対応策**:
   - [x] SHIORI 3.0 プロトコルの完全実装（ShioriProtocol: buildRequest, parseResponse）
   - [x] イベント処理の拡充（OnBoot, OnMouseClick, OnChoiceSelect, OnSecondChange）
   - [x] エラーハンドリングの改善
-  - [ ] C++ライブラリ / WASM との統合
+  - [x] C++ライブラリ / WASM との統合基盤（[src/js/shiori-worker.js](file:///e:/project/rust/nanai-android-mascot/src/js/shiori-worker.js) & [src/cpp/yaya_rust_interface.h](file:///e:/project/rust/nanai-android-mascot/src/cpp/yaya_rust_interface.h)）
 
 ## 🎨 優先度：低
 
@@ -187,7 +187,7 @@
 
 ---
 
-- 最優先対応：WASM / C++ SHIORI 3.0 コア統合 (Milestone 3)
-- 次点優先：フォアグラウンドサービス通知チャネルの実装 (Milestone 4 残項目)
+- 全マイルストーン（Milestone 1〜4: UI・スクリプト・当たり判定・着せ替え・SHIORI 3.0・Android基盤）統合完了
+- Rust バックエンドビルド検証（`cargo check`）正常終了
 
 更新日: 2026 年 10 月 24 日

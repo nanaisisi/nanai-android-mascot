@@ -32,7 +32,7 @@ body {
   -webkit-user-select: none;
 }
 
-/* メインコンテナ - 透過背景 */
+/* メインコンテナ - 透過背景 & タッチスルー（背後操作パススルー） */
 .container {
   display: flex;
   flex-direction: column;
@@ -40,6 +40,7 @@ body {
   width: 100vw;
   position: relative;
   background: transparent;
+  pointer-events: none; /* 透明領域は背後へタッチスルー */
 }
 
 .main-display {
@@ -51,6 +52,7 @@ body {
   position: relative;
   background: transparent;
   margin-top: 60px;
+  pointer-events: none;
 }
 
 /* 汎用ボタン */

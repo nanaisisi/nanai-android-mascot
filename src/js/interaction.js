@@ -71,11 +71,32 @@ export class InteractionManager {
       isDragging = false;
       target.classList.remove("is-dragging");
 
-      if (!hasMoved && onGhostClick) {
-        const clientX = e.clientX ?? startX;
-        const clientY = e.clientY ?? startY;
+      if (hasMoved) {
+        // 画面端スナップ（ドッキング退避判定: 画面幅の 10% 以内）
         const rect = target.getBoundingClientRect();
-        onGhostClick(clientX, clientY, rect);
+        const currentCenterX = rect.left + rect.width / 2;
+        const screenWidth = globalThis.innerWidth;
+
+        target.classList.remove("is-docked-left", "is-docked-right");
+        if (currentCenterX < screenWidth * 0.12) {
+          target.classList.add("is-docked-left");
+        } else if (currentCenterX > screenWidth * 0.88) {
+          target.classList.add("is-docked-right");
+        }
+      } else {
+        // ドッキング中のタップで復帰
+        if (target.classList.contains("is-docked-left") || target.classList.contains("is-docked-right")) {
+          target.classList.remove("is-docked-left", "is-docked-right");
+          target.style.left = target.classList.contains("is-docked-left") ? "120px" : `${globalThis.innerWidth - 120}px`;
+          return;
+        }
+
+        if (onGhostClick) {
+          const clientX = e.clientX ?? startX;
+          const clientY = e.clientY ?? startY;
+          const rect = target.getBoundingClientRect();
+          onGhostClick(clientX, clientY, rect);
+        }
       }
     };
 

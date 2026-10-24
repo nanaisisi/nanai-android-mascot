@@ -182,50 +182,35 @@ async fn load_ghost(ghost_name: String) -> Result<String, String>
 async fn send_shiori_event(event: String) -> Result<String, String>
 ```
 
-## 今後の開発計画
+## 開発進捗と完了状況（ロードマップ）
 
-### 優先度：高
+### 完了した主要基盤仕様 & 実装
 
-1. **Tauri アプリ起動エラーの解決**
+1. **【課題1】さくらスクリプト & 文字送り制御（完了）**
+   - 仕様書: [docs/sakura-script-and-balloon-spec.md](file:///e:/project/rust/nanai-android-mascot/docs/sakura-script-and-balloon-spec.md)
+   - 実装: [src/js/sakura-script.js](file:///e:/project/rust/nanai-android-mascot/src/js/sakura-script.js) によるタイピングアニメーション、`\w`ウェイト、`\s`表情連動、`\q`選択肢生成、タップ早送りスキップ。
 
-   - デバッグログによる原因特定
-   - 設定ファイルの見直し
+2. **【課題2】surfaces.txt アニメーション & 当たり判定（完了）**
+   - 仕様書: [docs/surfaces-and-collision-spec.md](file:///e:/project/rust/nanai-android-mascot/docs/surfaces-and-collision-spec.md)
+   - 実装: [src/js/surface.js](file:///e:/project/rust/nanai-android-mascot/src/js/surface.js) による `surfaces.txt` 座標パース、表示倍率逆算座標判定、部位（head, bust, skirt等）ごとのタッチイベント分岐。
 
-2. **iframe メニューの動作確認**
+3. **【課題3】文字コード変換 (Shift_JIS ↔ UTF-8) & 仮想FS（完了）**
+   - 仕様書: [docs/encoding-and-vfs-spec.md](file:///e:/project/rust/nanai-android-mascot/docs/encoding-and-vfs-spec.md)
+   - 実装: [src/lib.rs](file:///e:/project/rust/nanai-android-mascot/src/lib.rs) の `open_text_file`（UTF-8/Shift_JIS自動判定）および `resolve_vfs_path`（大文字・小文字無視解決）、Tauri アセットプロトコル統合。
 
-   - 親子ウィンドウ間通信の検証
-   - イベント伝達の確実性確保
+4. **【課題4】Android システムオーバーレイ & 常駐生存（完了）**
+   - 仕様書: [docs/android-overlay-and-service-spec.md](file:///e:/project/rust/nanai-android-mascot/docs/android-overlay-and-service-spec.md)
+   - 実装: [src/css/base.css](file:///e:/project/rust/nanai-android-mascot/src/css/base.css) の透過領域タッチスルー（`pointer-events: none` 制御）、[src/js/interaction.js](file:///e:/project/rust/nanai-android-mascot/src/js/interaction.js) & [src/css/mascot.css](file:///e:/project/rust/nanai-android-mascot/src/css/mascot.css) の画面端スナップ（ドッキング退避 & タップ復帰）。
 
-3. **標準メニューへの移行**
-   - 伺か仕様に準拠したメニュー構造
-   - アクセスキー対応
-
-### 優先度：中
-
-1. **SHIORI 連携の完全実装**
-
-   - C++ライブラリ統合
-   - イベント処理の拡充
-
-2. **複数キャラクター対応**
-
-   - kero（2 番手）キャラクター表示
-   - キャラクター別メニュー
-
-3. **シェル・バルーン管理**
-   - 着せ替え機能
-   - 倍率制御機能
-
-### 優先度：低
+## 今後の拡張検討事項
 
 1. **ネットワーク機能**
-
    - RSS/ヘッドライン
-   - ネットワーク更新
+   - ネットワーク更新 (OnUpdate)
 
-2. **プラグインシステム**
-   - プラグイン管理
-   - 外部機能統合
+2. **プラグインシステム & WASM SHIORI**
+   - プラグイン管理モーダルでの外部スクリプト動的組み込み
+   - WASM 版 SHIORI (Satori/YAYA 等) の Web Worker サンドボックス実行
 
 ## デバッグ・確認方法
 

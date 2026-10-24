@@ -134,6 +134,11 @@ export class NanaiAndroidMascotApp {
           return;
         }
 
+        if (action === "update") {
+          this.ghostController.sendShioriEvent("OnUpdate");
+          return;
+        }
+
         if (action.startsWith("scale-")) {
           const scaleMap = {
             "scale-50": { width: "100px", height: "200px" },

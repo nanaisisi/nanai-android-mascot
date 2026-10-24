@@ -13,4 +13,6 @@ inherits = "dev"
 inherits = "dev"
 
 [patch.crates-io]
-dpi = { path = "patches/dpi" }
+dpi = { git = "https://github.com/nanaisisi/winit.git", branch = "fix-windows-scale-factor" }
+
+

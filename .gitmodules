@@ -4,3 +4,6 @@
 [submodule "src/cpp/satoriya-shiori"]
 	path = src/cpp/satoriya-shiori
 	url = https://github.com/ukatech/satoriya-shiori.git
+[submodule "src/cpp/kawari"]
+	path = src/cpp/kawari
+	url = https://github.com/ukatech/kawari.git

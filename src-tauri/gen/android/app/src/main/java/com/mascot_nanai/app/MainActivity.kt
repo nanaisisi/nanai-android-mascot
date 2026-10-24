@@ -1,3 +1,3 @@
-package com.mascot_nanai.app
+package com.nanai_android_mascot.app
 
 class MainActivity : TauriActivity()

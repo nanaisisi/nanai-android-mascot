@@ -25,7 +25,7 @@
 #### 方法1: プリビルドバイナリ（推奨）
 
 1. **リリースページから Download**
-   - [Releases](https://github.com/nanaisisi/android-mascot-nanai/releases)
+   - [Releases](https://github.com/nanaisisi/nanai-android-mascot/releases)
    - 最新の `mascot-nanai-windows-x64.msi` をダウンロード
 
 2. **インストーラーの実行**
@@ -55,8 +55,8 @@
 
 2. **ソースコードの取得**
    ```bash
-   git clone https://github.com/nanaisisi/android-mascot-nanai.git
-   cd android-mascot-nanai
+   git clone https://github.com/nanaisisi/nanai-android-mascot.git
+   cd nanai-android-mascot
    git submodule update --init
    ```
 
@@ -77,7 +77,7 @@
 #### 方法1: APKファイル（推奨）
 
 1. **APKファイルの取得**
-   - [Releases](https://github.com/nanaisisi/android-mascot-nanai/releases)
+   - [Releases](https://github.com/nanaisisi/nanai-android-mascot/releases)
    - 最新の `mascot-nanai-android.apk` をダウンロード
 
 2. **不明なソースの許可**
@@ -112,8 +112,8 @@
 
 2. **ソースコードの取得**
    ```bash
-   git clone https://github.com/nanaisisi/android-mascot-nanai.git
-   cd android-mascot-nanai
+   git clone https://github.com/nanaisisi/nanai-android-mascot.git
+   cd nanai-android-mascot
    git submodule update --init
    ```
 
@@ -215,8 +215,8 @@ assets/ghost/mock_nanai/
 ## サポート
 
 ### 公式サポート
-- **GitHub Issues**: https://github.com/nanaisisi/android-mascot-nanai/issues
-- **Discussions**: https://github.com/nanaisisi/android-mascot-nanai/discussions
+- **GitHub Issues**: https://github.com/nanaisisi/nanai-android-mascot/issues
+- **Discussions**: https://github.com/nanaisisi/nanai-android-mascot/discussions
 
 ### コミュニティサポート
 - **Wiki**: プロジェクトWikiページ

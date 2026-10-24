@@ -1,3 +1,5 @@
+import { invoke, isTauriAvailable } from "./tauri-helper.js";
+
 /**
  * Nanai Android Mascot - surfaces.txt パーサー & 当たり判定（Collision）マネージャー
  */
@@ -28,9 +30,9 @@ export class SurfaceManager {
       let content = "";
       const surfacesPath = `${ghostPath}/shell/master/surfaces.txt`;
 
-      if (globalThis.__TAURI__) {
+      if (isTauriAvailable()) {
         try {
-          content = await globalThis.__TAURI__.invoke("open_file", { path: surfacesPath });
+          content = await invoke("open_file", { path: surfacesPath });
         } catch (_e) {
           console.warn(`Tauri open_file 失敗、fetchを試行: ${surfacesPath}`);
           const res = await fetch(surfacesPath);

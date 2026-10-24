@@ -129,6 +129,7 @@ document.addEventListener("keydown", (e) => {
     o: "settings",
     d: "debug",
     a: "help",
+    l: "license",
     i: "minimize",
     w: "close",
   };

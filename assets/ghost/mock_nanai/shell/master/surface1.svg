@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 400" width="200" height="400">
+  <defs>
+    <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F3F4F6" />
+      <stop offset="100%" stop-color="#D1D5DB" />
+    </linearGradient>
+    <linearGradient id="screenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#0284C7" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- アンテナ（頭部） -->
+  <g id="antenna">
+    <rect x="96" y="24" width="8" height="40" rx="4" fill="#9CA3AF" />
+    <circle cx="100" cy="20" r="12" fill="url(#accentGrad)" filter="url(#glow)" />
+    <circle cx="100" cy="20" r="6" fill="#BAE6FD" />
+  </g>
+
+  <!-- 脚部 -->
+  <g id="legs">
+    <rect x="56" y="328" width="24" height="40" rx="10" fill="#4B5563" />
+    <rect x="120" y="328" width="24" height="40" rx="10" fill="#4B5563" />
+    <rect x="50" y="358" width="36" height="16" rx="8" fill="#1F2937" />
+    <rect x="114" y="358" width="36" height="16" rx="8" fill="#1F2937" />
+  </g>
+
+  <!-- メイン四角ボディ -->
+  <rect x="25" y="60" width="150" height="270" rx="28" fill="url(#bodyGrad)" stroke="#9CA3AF" stroke-width="4" />
+  <rect x="45" y="74" width="110" height="6" rx="3" fill="#9CA3AF" opacity="0.6" />
+
+  <!-- ディスプレイ画面 (Face / Screen) -->
+  <rect x="40" y="92" width="120" height="108" rx="16" fill="url(#screenGrad)" stroke="#475569" stroke-width="3" />
+  <rect x="43" y="95" width="114" height="20" rx="8" fill="#FFFFFF" opacity="0.06" />
+
+  <!-- 表情: 笑顔 (^  ^) -->
+  <g id="face_smile">
+    <path d="M 66 148 Q 76 134 86 148" stroke="#38BDF8" stroke-width="4" fill="none" stroke-linecap="round" filter="url(#glow)" />
+    <path d="M 114 148 Q 124 134 134 148" stroke="#38BDF8" stroke-width="4" fill="none" stroke-linecap="round" filter="url(#glow)" />
+    <ellipse cx="62" cy="162" rx="8" ry="5" fill="#F43F5E" opacity="0.8" />
+    <ellipse cx="138" cy="162" rx="8" ry="5" fill="#F43F5E" opacity="0.8" />
+    <!-- にっこり口 -->
+    <path d="M 92 158 Q 100 166 108 158" stroke="#38BDF8" stroke-width="3" fill="none" stroke-linecap="round" />
+  </g>
+
+  <!-- 胴体 (Body / Chest) -->
+  <g id="body_panel">
+    <rect x="46" y="218" width="108" height="54" rx="10" fill="#E5E7EB" stroke="#CBD5E1" stroke-width="2" />
+    <rect x="56" y="228" width="88" height="6" rx="3" fill="#9CA3AF" />
+    <rect x="56" y="242" width="88" height="6" rx="3" fill="#9CA3AF" />
+    <rect x="56" y="256" width="88" height="6" rx="3" fill="#9CA3AF" />
+
+    <circle cx="60" cy="294" r="6" fill="#10B981" filter="url(#glow)" />
+    <circle cx="78" cy="294" r="6" fill="#38BDF8" />
+    <circle cx="96" cy="294" r="6" fill="#9CA3AF" />
+  </g>
+
+  <!-- アーム（バンザイ風または微上げ） -->
+  <rect x="15" y="160" width="12" height="60" rx="6" fill="#6B7280" />
+  <circle cx="21" cy="158" r="8" fill="#4B5563" />
+  <rect x="173" y="160" width="12" height="60" rx="6" fill="#6B7280" />
+  <circle cx="179" cy="158" r="8" fill="#4B5563" />
+</svg>

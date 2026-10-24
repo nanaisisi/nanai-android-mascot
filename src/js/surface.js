@@ -7,13 +7,12 @@ import { invoke, isTauriAvailable } from "./tauri-helper.js";
 export class SurfaceManager {
   constructor(app) {
     this.app = app;
-    // デフォルト当たり判定（mock_nanai の代表的定義）
+    // デフォルト当たり判定（四角い箱型マスコット mock_nanai 200x400 想定）
     this.collisions = {
       default: [
-        { id: 0, name: "head", shape: "rect", x1: 34, y1: 20, x2: 157, y2: 72 },
-        { id: 1, name: "bust", shape: "rect", x1: 63, y1: 159, x2: 122, y2: 198 },
-        { id: 2, name: "skirt", shape: "rect", x1: 24, y1: 301, x2: 163, y2: 383 },
-        { id: 3, name: "hand", shape: "rect", x1: 132, y1: 252, x2: 157, y2: 304 },
+        { id: 0, name: "head", shape: "rect", x1: 26, y1: 10, x2: 174, y2: 90 },     // アンテナ・天板
+        { id: 1, name: "face", shape: "rect", x1: 40, y1: 92, x2: 160, y2: 200 },    // ディスプレイ画面
+        { id: 2, name: "body", shape: "rect", x1: 26, y1: 202, x2: 174, y2: 380 },   // 胴体パネル・脚
       ],
     };
     // ベース画像の元解像度 (mock_nanai surface0.png: 200x400 想定)

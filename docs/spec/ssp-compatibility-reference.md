@@ -1,7 +1,7 @@
 # SSP 仕様ベース 統合互換リファレンスマニュアル
 
 > **リファレンス基準**: [ukatech/ukadoc-ssp](https://github.com/ukatech/ukadoc-ssp) (SSP 2.7.x) / [ukatech/ukadoc-spec](https://github.com/ukatech/ukadoc-spec)  
-> **ローカル原典**: [local/ukadoc-ssp/INDEX.md](file:///e:/project/rust/nanai-android-mascot/local/ukadoc-ssp/INDEX.md) / [local/ukadoc-spec/INDEX.md](file:///e:/project/rust/nanai-android-mascot/local/ukadoc-spec/INDEX.md)  
+> **Web 版公式マニュアル**: [UKADOC Project (ssp.shillest.net/ukadoc/)](https://ssp.shillest.net/ukadoc/)  
 > **本プロジェクトでの位置づけ**: デスクトップ版の基準実装である SSP の全機能・階層メニュー・設定・イベント体系をカタログ化し、**Nanai Android Mascot** における実装優先度・モバイル適応仕様を定めたサイト型統合リファレンス。
 
 ---
@@ -39,16 +39,16 @@ flowchart TD
 
 ## 2. 右クリックメニュー（オーナードローメニュー）互換仕様
 
-SSP の標準右クリックメニュー（[local/ukadoc-ssp/howto/rclick.md](file:///e:/project/rust/nanai-android-mascot/local/ukadoc-ssp/howto/rclick.md)）に対する、本プロジェクトでの対応状況およびモバイル向け再設計。
+SSP の標準右クリックメニュー（`howto/rclick.md`）に対する、本プロジェクトでの対応状況およびモバイル向け再設計。
 
 | # | SSP 標準メニュー項目 | サブキャラ表示 | 本プロジェクト（Nanai）実装仕様 | モバイル（Android）適応方針 |
 | :-: | :--- | :-: | :--- | :--- |
-| **1** | おすすめ | ◯ | [docs/spec/classic-ui-and-menu-spec.md](file:///e:/project/rust/nanai-android-mascot/docs/design/classic-ui-and-menu-spec.md) にてブラウザ起動連携 | Android 標準インテント (`ACTION_VIEW`) でブラウザ起動 |
+| **1** | おすすめ | ◯ | [classic-ui-and-menu-spec.md](../design/classic-ui-and-menu-spec.md) にてブラウザ起動連携 | Android 標準インテント (`ACTION_VIEW`) でブラウザ起動 |
 | **2** | ポータルサイト | - | ゴースト/シェル作者サイトへの URL 起動 | 同上 |
 | **3** | ネットワーク更新 | - | `updates2.dau` / `updates.txt` によるオンライン差分取得 | Wi-Fi 接続時更新・バックグラウンド更新 |
 | **4** | アンインストール (Vanish) | - | ゴーストディレクトリ削除ダイアログ | アプリ内部データ領域からの安全な削除 |
 | **5** | RSS/ヘッドライン | - | ヘッドラインセンサ（Plugin）連携 | Web 標準 Fetch による RSS/Atom リーダーシム |
-| **6** | プラグイン | - | JS / WASM プラグイン一覧実行 ([docs/spec/wasm-and-plugin-extensibility.md](file:///e:/project/rust/nanai-android-mascot/docs/spec/wasm-and-plugin-extensibility.md)) | サンドボックス内 WebExtension 型プラグイン |
+| **6** | プラグイン | - | JS / WASM プラグイン一覧実行 ([wasm-and-plugin-extensibility.md](wasm-and-plugin-extensibility.md)) | サンドボックス内 WebExtension 型プラグイン |
 | **7** | メールチェック | - | POP3 メール着信確認 | 将来拡張（優先度: Low） |
 | **8** | シェル倍率 | - | **50% / 75% / 100% / 125% / 150% / 200%** | ピンチイン/アウト操作およびスライダー調整 |
 | **9** | 機能 | - | サブメニュー展開（カレンダー、バックログ等） | モーダルパネル形式での一覧展開 |
@@ -69,9 +69,10 @@ SSP の標準右クリックメニュー（[local/ukadoc-ssp/howto/rclick.md](fi
 
 ## 3. 機能（Functions）サブメニュー仕様
 
-SSP の「機能」項目（[local/ukadoc-ssp/functions/index.md](file:///e:/project/rust/nanai-android-mascot/local/ukadoc-ssp/functions/index.md)）に対する互換・再実装。
+SSP の「機能」項目（`functions/index.md`）に対する互換・再実装。
 
 ### 3.1 優先実装機能（Core Functions）
+
 1. **バックログ（発言履歴） (`Ctrl+B`)**:
    - 会話ログをキャラクターアイコン・タイムスタンプ付きで保持・スクロール表示。
    - スクリプト再生中でも過去ログを遡れる独立ビュー。
@@ -84,6 +85,7 @@ SSP の「機能」項目（[local/ukadoc-ssp/functions/index.md](file:///e:/pro
    - 画面を塞ぐバルーンをワンタップ／ショートカットで強制クリア。
 
 ### 3.2 モバイル向け再設計機能（Mobile Adapted）
+
 - **エクスプローラ (`Ctrl+E`)**:
   - ファイルマネージャではなく、モバイルに適した「ゴースト管理・NAR インストーラ・アセットブラウザ」として実装。
 - **音声認識 & 音声合成**:
@@ -93,7 +95,7 @@ SSP の「機能」項目（[local/ukadoc-ssp/functions/index.md](file:///e:/pro
 
 ## 4. 本体設定（Configuration）体系
 
-SSP の設定ダイアログ群（[local/ukadoc-ssp/config/index.md](file:///e:/project/rust/nanai-android-mascot/local/ukadoc-ssp/config/index.md)）に対応する設定マトリクス。
+SSP の設定ダイアログ群（`config/index.md`）に対応する設定マトリクス。
 
 ```text
 設定カテゴリ
@@ -111,20 +113,20 @@ SSP の設定ダイアログ群（[local/ukadoc-ssp/config/index.md](file:///e:/
 
 | 規格 | 参照公式仕様 (ukadoc-spec) | Nanai 実装仕様書 | 互換目標 |
 | :--- | :--- | :--- | :--- |
-| **SHIORI/3.0** | [spec/shiori3](file:///e:/project/rust/nanai-android-mascot/local/ukadoc-spec/spec/shiori3/index.md) | [shiori-integration.md](file:///e:/project/rust/nanai-android-mascot/docs/spec/shiori-integration.md) | 100% (Event & Response ヘッダ完全準拠) |
-| **SakuraScript** | [list/sakura-script](file:///e:/project/rust/nanai-android-mascot/local/ukadoc-spec/list/sakura-script/index.md) | [sakura-script-and-balloon-spec.md](file:///e:/project/rust/nanai-android-mascot/docs/spec/sakura-script-and-balloon-spec.md) | `\0`, `\1`, `\s`, `\w`, `\q`, `\n`, `\c`, `\e` 等主要タグ完全対応 |
-| **surfaces.txt** | [descript/shell-surfaces](file:///e:/project/rust/nanai-android-mascot/local/ukadoc-spec/descript/shell-surfaces/index.md) | [surfaces-and-collision-spec.md](file:///e:/project/rust/nanai-android-mascot/docs/spec/surfaces-and-collision-spec.md) | Canvas 2D レイヤー合成、アニメーション、Collision 判定 |
-| **descript.txt** | [descript/ghost](file:///e:/project/rust/nanai-android-mascot/local/ukadoc-spec/descript/ghost/index.md) | [encoding-and-vfs-spec.md](file:///e:/project/rust/nanai-android-mascot/docs/spec/encoding-and-vfs-spec.md) | Shift_JIS/UTF-8 自動判別、定義パース |
+| **SHIORI/3.0** | [spec/shiori3 (UKADOC)](https://ssp.shillest.net/ukadoc/manual/spec_shiori3.html) | [shiori-integration.md](shiori-integration.md) | 100% (Event & Response ヘッダ完全準拠) |
+| **SakuraScript** | [list/sakura-script (UKADOC)](https://ssp.shillest.net/ukadoc/manual/spec_sakura_script.html) | [sakura-script-and-balloon-spec.md](sakura-script-and-balloon-spec.md) | `\0`, `\1`, `\s`, `\w`, `\q`, `\n`, `\c`, `\e` 等主要タグ完全対応 |
+| **surfaces.txt** | [descript/shell-surfaces (UKADOC)](https://ssp.shillest.net/ukadoc/manual/descript_surfaces.html) | [surfaces-and-collision-spec.md](surfaces-and-collision-spec.md) | Canvas 2D レイヤー合成、アニメーション、Collision 判定 |
+| **descript.txt** | [descript/ghost (UKADOC)](https://ssp.shillest.net/ukadoc/manual/descript_ghost.html) | [encoding-and-vfs-spec.md](encoding-and-vfs-spec.md) | Shift_JIS/UTF-8 自動判別、定義パース |
 
 ---
 
 ## 6. ドキュメント連携と関連リソース
 
-- **原典リポジトリ（ローカル）**:
-  - SSP ヘルプ原典: [local/ukadoc-ssp/INDEX.md](file:///e:/project/rust/nanai-android-mascot/local/ukadoc-ssp/INDEX.md)
-  - UKADOC 仕様原典: [local/ukadoc-spec/INDEX.md](file:///e:/project/rust/nanai-android-mascot/local/ukadoc-spec/INDEX.md)
-  - 里々公式マニュアル: [local/satori-docs/INDEX.md](file:///e:/project/rust/nanai-android-mascot/local/satori-docs/INDEX.md)
-  - YAYA 公式マニュアル: [local/yaya-docs/manual/index.md](file:///e:/project/rust/nanai-android-mascot/local/yaya-docs/manual/index.md)
+- **公式リポジトリ・マニュアル**:
+  - SSP 拡張仕様: [ukatech/ukadoc-ssp](https://github.com/ukatech/ukadoc-ssp)
+  - UKADOC 公式仕様書: [ukatech/ukadoc-spec](https://github.com/ukatech/ukadoc-spec)
+  - 里々公式マニュアル: [ukatech/satori-docs](https://github.com/ukatech/satori-docs)
+  - YAYA 公式マニュアル: [YAYA-shiori/yaya-docs](https://github.com/YAYA-shiori/yaya-docs)
 - **プロジェクト詳細仕様**:
-  - UI/メニュー設計: [classic-ui-and-menu-spec.md](file:///e:/project/rust/nanai-android-mascot/docs/design/classic-ui-and-menu-spec.md)
-  - Android 固有常駐仕様: [android-overlay-and-service-spec.md](file:///e:/project/rust/nanai-android-mascot/docs/spec/android-overlay-and-service-spec.md)
+  - UI/メニュー設計: [classic-ui-and-menu-spec.md](../design/classic-ui-and-menu-spec.md)
+  - Android 固有常駐仕様: [android-overlay-and-service-spec.md](android-overlay-and-service-spec.md)

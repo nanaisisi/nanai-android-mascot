@@ -293,11 +293,20 @@ export class MascotNanaiApp {
       document.body.classList.remove("dark-mode");
     }
 
-    const sizes = { small: "80px", medium: "120px", large: "160px" };
-    const size = sizes[this.settings.ghostSize] || sizes.medium;
+    // シェル倍率 (パーセンテージ指定: 50%〜200%)
+    const scalePercent = parseInt(this.settings.shellScale, 10) || 100;
+    const baseW = 200;
+    const baseH = 400;
     if (this.elements.ghostDisplay) {
-      this.elements.ghostDisplay.style.width = size;
-      this.elements.ghostDisplay.style.height = size;
+      this.elements.ghostDisplay.style.width = `${Math.round((baseW * scalePercent) / 100)}px`;
+      this.elements.ghostDisplay.style.height = `${Math.round((baseH * scalePercent) / 100)}px`;
+    }
+
+    // バルーン倍率
+    const balloonPercent = parseInt(this.settings.balloonScale, 10) || 100;
+    if (this.elements.balloonDisplay) {
+      this.elements.balloonDisplay.style.transform = `translateX(-50%) scale(${balloonPercent / 100})`;
+      this.elements.balloonDisplay.style.transformOrigin = "bottom center";
     }
   }
 }

@@ -51,10 +51,13 @@ fn emit_error_to_all(app_handle: &tauri::AppHandle<tauri::Wry>, msg: String) {
 // ファイルを開くコマンド
 #[tauri::command]
 fn open_file(path: String, app_handle: tauri::AppHandle<tauri::Wry>) -> Result<String, String> {
-    match open_shift_jis_file(&path) {
+    let resolved_path = resolve_asset_path(&path, &app_handle)
+        .unwrap_or_else(|_| PathBuf::from(&path));
+
+    match open_shift_jis_file(&resolved_path.to_string_lossy()) {
         Ok(content) => Ok(content),
         Err(e) => {
-            let msg = e.to_string();
+            let msg = format!("{}: {:?}", e, resolved_path);
             eprintln!("open_file error: {msg}");
             emit_error_to_all(&app_handle, msg.clone());
             Err(msg)
@@ -135,16 +138,34 @@ async fn scan_ghost_directory(
     println!("🔍 Input path: {}", ghost_dir);
     println!("🔍 Resolved absolute path: {:?}", ghost_path);
 
-    // 簡易ゴーストスキャン（mock_nanaiのみ検出）
+    // ゴーストスキャン（ディレクトリ巡回）
     let mut ghosts = Vec::new();
 
-    // mock_nanaiが存在するかチェック
-    let mock_nanai_path = ghost_path.join("mock_nanai");
-    if mock_nanai_path.exists() {
-        ghosts.push(GhostInfo {
-            name: "mock_nanai".to_string(),
-            path: mock_nanai_path.to_string_lossy().to_string(),
-        });
+    if let Ok(entries) = std::fs::read_dir(&ghost_path) {
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if path.is_dir() {
+                let name = entry.file_name().to_string_lossy().to_string();
+                // .gitや隠しフォルダを除外
+                if !name.starts_with('.') {
+                    ghosts.push(GhostInfo {
+                        name,
+                        path: path.to_string_lossy().to_string(),
+                    });
+                }
+            }
+        }
+    }
+
+    // fallback: ディレクトリ走査で見つからずmock_nanaiが存在する場合
+    if ghosts.is_empty() {
+        let mock_nanai_path = ghost_path.join("mock_nanai");
+        if mock_nanai_path.exists() {
+            ghosts.push(GhostInfo {
+                name: "mock_nanai".to_string(),
+                path: mock_nanai_path.to_string_lossy().to_string(),
+            });
+        }
     }
 
     let result = ScanResult {

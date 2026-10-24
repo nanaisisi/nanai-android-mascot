@@ -81,18 +81,21 @@ export class ModalManager {
     const form = {
       autoLoad: document.getElementById("auto-load-ghost"),
       darkMode: document.getElementById("dark-mode"),
-      ghostSize: document.getElementById("ghost-size"),
+      shellScale: document.getElementById("shell-scale"),
+      balloonScale: document.getElementById("balloon-scale"),
       saveBtn: document.getElementById("save-settings-btn"),
     };
 
     if (form.autoLoad) form.autoLoad.checked = this.app.settings.autoLoadGhost;
     if (form.darkMode) form.darkMode.checked = this.app.settings.darkMode;
-    if (form.ghostSize) form.ghostSize.value = this.app.settings.ghostSize;
+    if (form.shellScale) form.shellScale.value = this.app.settings.shellScale || "100";
+    if (form.balloonScale) form.balloonScale.value = this.app.settings.balloonScale || "100";
 
     form.saveBtn?.addEventListener("click", () => {
       this.app.settings.autoLoadGhost = form.autoLoad?.checked ?? true;
       this.app.settings.darkMode = form.darkMode?.checked ?? false;
-      this.app.settings.ghostSize = form.ghostSize?.value ?? "medium";
+      this.app.settings.shellScale = form.shellScale?.value ?? "100";
+      this.app.settings.balloonScale = form.balloonScale?.value ?? "100";
 
       localStorage.setItem("mascot-nanai-settings", JSON.stringify(this.app.settings));
       this.app.applySettings();

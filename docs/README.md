@@ -15,29 +15,38 @@
 
 - **[architecture.md](developer/architecture.md)** - システムアーキテクチャ（Frontend / Tauri Bridge / Rust Backend）
 
-### 🔧 技術仕様書・詳細仕様
+### 📐 設計・ロードマップ (`design/`)
 
-- **[implementation-plan-and-spec.md](implementation-plan-and-spec.md)** - 次期フェーズ実装計画 & 統合技術仕様書 (Phase 2+)
-- **[pending-issues-and-roadmap.md](pending-issues-and-roadmap.md)** - 検討事項・仕様化ロードマップ（全体概要）
-- **[standard-ghost-spec.md](standard-ghost-spec.md)** - 公式サンプルキャラクター仕様書（モック & プチ）
-- **[mockup-and-android-spec.md](mockup-and-android-spec.md)** - UI/UX & モックアップ仕様書（PCシミュレーション・モバイル画面設計）
-- **[classic-ui-and-menu-spec.md](classic-ui-and-menu-spec.md)** - クラシックUI & 拡張メニュー仕様書
-- **[sakura-script-and-balloon-spec.md](sakura-script-and-balloon-spec.md)** - さくらスクリプトパーサー & バルーン文字送り仕様書
-- **[surfaces-and-collision-spec.md](surfaces-and-collision-spec.md)** - surfaces.txt アニメーション合成 & 当たり判定仕様書
-- **[encoding-and-vfs-spec.md](encoding-and-vfs-spec.md)** - 文字コード変換 (Shift_JIS ↔ UTF-8) & 仮想ファイルシステム (VFS) 仕様書
-- **[android-overlay-and-service-spec.md](android-overlay-and-service-spec.md)** - Android システムオーバーレイ & 常駐生存仕様書
-- **[plugin-and-shiori-fallback-spec.md](plugin-and-shiori-fallback-spec.md)** - プラグイン & SHIORI 読込み・代替読込み (Fallback) 仕様書
-- **[wasm-and-plugin-extensibility.md](wasm-and-plugin-extensibility.md)** - WASM化指針 & JavaScript拡張システム仕様書
-- **[shiori-integration.md](shiori-integration.md)** - SHIORI 組み込み統合技術仕様
-- **[window-design.md](window-design.md)** - ウィンドウ設計（Windows検証 / Android Single Container）
+- **[implementation-plan-and-spec.md](design/implementation-plan-and-spec.md)** - 次期フェーズ実装計画 & 統合技術仕様書 (Phase 2+)
+- **[pending-issues-and-roadmap.md](design/pending-issues-and-roadmap.md)** - 検討事項・仕様化ロードマップ（全体概要）
+- **[mockup-and-android-spec.md](design/mockup-and-android-spec.md)** - UI/UX & モックアップ仕様書（PCシミュレーション・モバイル画面設計）
+- **[classic-ui-and-menu-spec.md](design/classic-ui-and-menu-spec.md)** - クラシックUI & 拡張メニュー仕様書
+- **[window-design.md](design/window-design.md)** - ウィンドウ設計（Windows検証 / Android Single Container）
 
-### 📋 開発プロセス & 背景
+### 🔧 詳細技術仕様書 (`spec/`)
 
-- **[AI_driven.md](AI_driven.md)** - AI 駆動開発の手法と実践記録
-- **[development-approach.md](development-approach.md)** - 開発アプローチ・技術選定
-- **[doc_history.md](doc_history.md)** - ドキュメント変更履歴
-- **[documentation-proposal.md](documentation-proposal.md)** - ドキュメント戦略・提案
-- **[all_desktopmascot.md](all_desktopmascot.md)** - デスクトップマスコットの立ち位置・原理検討メモ
+- **[standard-ghost-spec.md](spec/standard-ghost-spec.md)** - 公式サンプルキャラクター仕様書（モック & プチ）
+- **[sakura-script-and-balloon-spec.md](spec/sakura-script-and-balloon-spec.md)** - さくらスクリプトパーサー & バルーン文字送り仕様書
+- **[surfaces-and-collision-spec.md](spec/surfaces-and-collision-spec.md)** - surfaces.txt アニメーション合成 & 当たり判定仕様書
+- **[encoding-and-vfs-spec.md](spec/encoding-and-vfs-spec.md)** - 文字コード変換 (Shift_JIS ↔ UTF-8) & 仮想ファイルシステム (VFS) 仕様書
+- **[android-overlay-and-service-spec.md](spec/android-overlay-and-service-spec.md)** - Android システムオーバーレイ & 常駐生存仕様書
+- **[plugin-and-shiori-fallback-spec.md](spec/plugin-and-shiori-fallback-spec.md)** - プラグイン & SHIORI 読込み・代替読込み (Fallback) 仕様書
+- **[wasm-and-plugin-extensibility.md](spec/wasm-and-plugin-extensibility.md)** - WASM化指針 & JavaScript拡張システム仕様書
+- **[shiori-integration.md](spec/shiori-integration.md)** - SHIORI 組み込み統合技術仕様
+
+### 📋 開発プロセス & 履歴 (`process/`)
+
+- **[AI_driven.md](process/AI_driven.md)** - AI 駆動開発の手法と実践記録
+- **[development-approach.md](process/development-approach.md)** - 開発アプローチ・技術選定
+- **[doc_history.md](process/doc_history.md)** - ドキュメント変更履歴
+- **[documentation-proposal.md](process/documentation-proposal.md)** - ドキュメント戦略・提案
+
+### 🔬 調査・研究メモ (`research/`)
+
+- **[all_desktopmascot.md](research/all_desktopmascot.md)** - デスクトップマスコットの立ち位置・原理検討メモ
+- **[compare_baseware.md](research/compare_baseware.md)** - 互換ベースウェア比較
+- **[compare_chara_solution.md](research/compare_chara_solution.md)** - キャラクターソリューション比較
+- **[compare_device_solution.md](research/compare_device_solution.md)** - 音声アシスタント・スマートデバイス比較
 
 ## 🚀 クイックスタート
 
@@ -51,7 +60,7 @@
 
 1. **[貢献ガイド](../CONTRIBUTING.md)** で貢献方法を確認
 2. **[システムアーキテクチャ](developer/architecture.md)** でシステム構成を理解
-3. **[AI 主導開発](AI_driven.md)** で開発手法を把握
+3. **[AI 主導開発](process/AI_driven.md)** で開発手法を把握
 
 ## 📝 ドキュメントの特徴
 
@@ -98,14 +107,15 @@
 - **問題を解決したい** → [トラブルシューティング](user/troubleshooting.md)
 - **開発に参加したい** → [貢献ガイド](../CONTRIBUTING.md)
 - **システムを理解したい** → [アーキテクチャ](developer/architecture.md)
-- **AI 開発に興味がある** → [AI 主導開発](AI_driven.md)
+- **AI 開発に興味がある** → [AI 主導開発](process/AI_driven.md)
 
 ### 技術レベル別
 
 - **初心者・ユーザー** → [ユーザー向けガイド](user/user-guide.md) (`user/` ディレクトリ)
 - **開発者・コントリビューター** → [システムアーキテクチャ](developer/architecture.md) (`developer/` ディレクトリ)
-- **仕様策定・互換レイヤー実装** → 各種技術仕様書（[実装計画](implementation-plan-and-spec.md)、[文字コード/VFS仕様](encoding-and-vfs-spec.md)、[SHIORIフォールバック仕様](plugin-and-shiori-fallback-spec.md)等）
-- **開発プロセス・背景設計** → [AI主導開発](AI_driven.md)、[開発アプローチ](development-approach.md)
+- **設計・ロードマップ確認** → [実装計画](design/implementation-plan-and-spec.md)、[ロードマップ](design/pending-issues-and-roadmap.md) (`design/` ディレクトリ)
+- **仕様策定・互換レイヤー実装** → 各種技術仕様書（[文字コード/VFS仕様](spec/encoding-and-vfs-spec.md)、[SHIORIフォールバック仕様](spec/plugin-and-shiori-fallback-spec.md)等、`spec/` ディレクトリ）
+- **開発プロセス・背景設計** → [AI主導開発](process/AI_driven.md)、[開発アプローチ](process/development-approach.md) (`process/` ディレクトリ)
 
 ## 🤝 ドキュメントの改善
 

@@ -46,10 +46,33 @@ export class ModalManager {
       this.setupSettingsListeners();
     } else if (contentId === "balloon-modal-content") {
       this.renderBalloonList();
+    } else if (contentId === "plugins-modal-content") {
+      this.setupPluginListeners();
     } else if (contentId === "debug-modal-content") {
       this.setupDebugListeners();
     }
   }
+
+  setupPluginListeners() {
+    const addBtn = document.getElementById("add-plugin-btn");
+    addBtn?.addEventListener("click", () => {
+      this.showNotification(
+        "プラグイン管理",
+        "プラグイン（.js / WASM）の追加は、`plugins/` ディレクトリにフォルダを配置することで自動認識されます。"
+      );
+    });
+
+    const pluginItems = document.querySelectorAll("#plugin-list .ghost-item");
+    pluginItems.forEach((item) => {
+      item.addEventListener("click", () => {
+        const isActive = item.classList.toggle("active");
+        const title = item.querySelector("strong")?.textContent || "プラグイン";
+        this.app.showBalloon(`${title} を${isActive ? "有効化" : "無効化"}しました。`);
+        setTimeout(() => this.app.hideBalloon(), 1500);
+      });
+    });
+  }
+
 
   renderBalloonList() {
     const list = document.getElementById("balloon-list");

@@ -173,11 +173,14 @@ export class GhostController {
         } else {
           this.app.playSakuraScript("\\0\\s0くすぐったいよ〜！\\e");
         }
+      } else if (eventName === "OnUpdate" || eventName === "OnUpdateCheck") {
+        this.app.playSakuraScript("\\0\\s0ネットワーク更新を確認中…\\w8\\n\\s0更新ファイルはありませんでした。\\w5最新の状態です♪\\e");
       } else if (eventName === "OnSecondChange") {
         this.triggerRandomTalk();
       } else {
         this.app.playSakuraScript("\\0\\s0こんにちは！\\w5\\n\\q[お話しする,Talk]\\n\\q[なでる,Stroke]\\e");
       }
+
       return;
     }
 

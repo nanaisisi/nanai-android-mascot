@@ -3,139 +3,114 @@
 
 # dpi クレート改変仕様・記録書 (patches/dpi)
 
-## 1. 概要と本質的な導入背景（なぜローカルパッチ化したのか）
+## 1. 核心的背景：なぜパッチが必要だったのか（本題）
 
-Nanai Android Mascot では、Tauri v2 (`tauri-runtime`, `tao`, `wry`, `muda` 等) のウィンドウ制御およびマルチプラットフォーム UI スケーリング（高 DPI ディスプレイ・Android ディスプレイメトリクス）において、Rust-windowing グループの [`dpi`](https://crates.io/crates/dpi) クレート（v0.1.2）に依存しています。
-
-本プロジェクトのルート [`Cargo.toml`](file:///e:/project/rust/nanai-android-mascot/Cargo.toml) では、`[patch.crates-io]` ディレクティブにより crates.io の `dpi` をローカルの [`patches/dpi`](file:///e:/project/rust/nanai-android-mascot/patches/dpi) で上書き（オーバーライド）しています。
-
-```toml
-# e:/project/rust/nanai-android-mascot/Cargo.toml
-[patch.crates-io]
-dpi = { path = "patches/dpi" }
-```
-
-### 1.1 本題：crates.io 版のままだとビルドエラー／バグが発生する原因
-
-アップストリーム（crates.io の原本 `Cargo.toml.orig`）の `dpi 0.1.2` は、本来 **winit のマルチクレートリポジトリ（workspace）内でビルドされる前提** で設計されています：
-
-```toml
-# dpi 0.1.2 の Cargo.toml.orig より
-[package]
-edition.workspace = true
-repository.workspace = true
-rust-version.workspace = true
-
-[dependencies]
-mint = { workspace = true, optional = true }
-serde = { workspace = true, optional = true }
-```
-
-crates.io への公開時に正規化（normalization）されたファイルは生成されているものの、スタンドアロンや本プロジェクトのワークスペース（Rust 2024 / ナイトリーツールチェーン環境、Android ターゲットクロスコンパイル環境）に取り込んだ際、以下の問題を引き起こします：
-
-1. **ワークスペース / エディション不整合によるビルドクラッシュ・警告**:
-   - 本プロジェクトはワークスペース全体で `edition = "2024"`（Rust 1.101.0-nightly）を採用。
-   - crates.io の正規化版に残る `edition = "2021"` や `rust-version = "1.73"` 制約が、最新コンパイラ機能やワークスペース解決（resolver = "2"）と衝突し、ビルドエラー・警告の原因となる。
-2. **Android ターゲット (aarch64 等) クロスコンパイル時の libm / 依存不整合**:
-   - `dpi` は `libm` による数学関数の自己実装と `std` 機能の切り替えを行っており、Android ターゲットや WebAssembly ビルド時に外部クレート（`mint`, `serde`）の依存バージョンが古いと型解決やフィーチャー解決で不整合を起こす。
-3. **ベンダー固定化による即時トラブルシュート**:
-   - Tauri v2 のウィンドウ／WebView 座標系（物理ピクセル `PhysicalPosition/Size` と論理ピクセル `LogicalPosition/Size`）の変換ロジックをプロジェクト直下（`patches/dpi`）に抱え込むことで、Android 画面密度や透過キャンバスの座標計算で予期せぬ挙動が発生した場合に、即座に修正・検証・パッチ適用できるようにする。
-
----
-
-## 2. 依存関係ツリーでの位置づけ
+Windows 環境において、Tauri v2 (`tao` / `wry`) がウィンドウサイズやマウスクリック座標を物理ピクセル・論理ピクセル間で変換する際、アップストリーム（crates.io 版 `dpi 0.1.2`）では以下の**致命的なパニック（クラッシュ）**が発生していました：
 
 ```text
-dpi v0.1.2 (patches/dpi)
-├── muda v0.20.0 (トレイメニュー / コンテキストメニュー座標系)
-├── tao v0.37.2 (ウィンドウ作成 / イベントループ / HiDPI スケールファクター計算)
-├── tauri-runtime v2.12.2 (ウィンドウ・ディスプレイサイズ抽象化)
-└── wry v0.57.1 (WebView の物理ピクセル / 論理ピクセル変換)
+thread 'main' panicked at ...\dpi-0.1.2\src\lib.rs:636:9:
+assertion failed: validate_scale_factor(scale_factor)
+```
+
+### 1.1 パニックの根本原因
+
+アップストリームの `dpi` では、スケールファクター変換を行うすべての関数（`to_logical`, `to_physical` 等）の冒頭で以下の厳格なアサーションが実行されていました：
+
+```rust
+// 原本 (crates.io dpi 0.1.2) の実装
+#[inline]
+pub fn validate_scale_factor(scale_factor: f64) -> bool {
+    scale_factor.is_sign_positive() && scale_factor.is_normal() && scale_factor > 0.0
+}
+
+// 例: to_logical 等の内部
+assert!(validate_scale_factor(scale_factor));
+```
+
+しかし、特定の条件下で `scale_factor` に一時的に `0.0`、非正規化数（サブノーマル）、`NaN`、あるいは極小値が渡ると、このアサーションに引っかかりアプリ全体が即死・クラッシュしていました。
+
+---
+
+## 2. なぜ「他の環境・一般的なアプリ」では起きず、ここで直撃したのか？
+
+「なぜ他の Tauri アプリや、macOS / Android / Linux ではこの問題が顕在化していないのか？」という疑問に対する技術的な要因は以下の通りです。
+
+### 2.1 デスクトップマスコット特有の「枠なし＋透過ウィンドウ」構成
+
+[tauri.conf.json](file:///e:/project/rust/nanai-android-mascot/src-tauri/tauri.conf.json#L16-L18) にある通り、本プロジェクトは伺かマスコットとして以下の特殊なウィンドウ属性を持っています：
+
+```json
+"transparent": true,
+"decorations": false,
+"alwaysOnTop": true
+```
+
+- **Win32 API (DWM) の挙動差異**:
+  - **一般的なアプリ**: タイトルバーやウィンドウ枠（非クライアント領域）を持つ通常のウィンドウは、OS がウィンドウハンドル（`HWND`）を生成した直後に所属モニターの DPI（`GetDpiForWindow` / `MonitorFromWindow`）を即座に確定できます。
+  - **枠なし透過アプリ**: `decorations: false` かつ `transparent: true`（DWM アクリル・アルファ合成）の場合、ウィンドウバッファが割り当てられる前や、DWM との合成バインドが完了するごく初期のミリ秒未満の隙間で、モニター判定が一時的に `NULL`（または `0`）を返すタイミングが存在します。
+  - この一瞬の未確定ステートで `tao` を経由して `scale_factor = 0.0` が渡り、`assert!` に直撃していました。
+
+### 2.2 OS アーキテクチャの根本的な違い
+
+- **macOS (Cocoa / AppKit)**:
+  - ポイント（Points）とピクセルのスケーリングが OS レベルで完全に抽象化されており、ウィンドウ生成時から `backingScaleFactor` が常に最低でも `1.0` または `2.0` を返します。`0.0` になる構造が存在しません。
+- **Android**:
+  - Android には「マルチモニター間を跨ぐ自由ドラッグ」や「Win32 式の DWM 透過フレーム」の概念がなく、`DisplayMetrics.density`（例: 2.75, 3.0 等）は Activity 生成時から常に固定の正の値として確定しています。
+- **Linux (Wayland / X11)**:
+  - スケールファクターの通知はプロトコルイベントベースであり、未初期化の `0.0` が送出されるケースが極めて稀です。
+
+### 2.3 初期化レースコンディション
+
+本アプリは起動時にトレイアイコン生成、透過 WebView のロード、複数モジュールの初期化を非同期かつ高速に実行しています。Win32 のメッセージループ（`WM_CREATE`, `WM_NCCREATE`, `WM_DPICHANGED`）が完全に整う前に、透過 WebView の初期レイアウト計算が走って座標変換を呼び出すことで、未確定の `0.0` を拾ってしまうレースコンディションが発生していました。
+
+---
+
+## 3. 現状のローカルパッチでの対症療法 (`patches/dpi`)
+
+クラッシュを回避するため、[`patches/dpi/src/lib.rs`](file:///e:/project/rust/nanai-android-mascot/patches/dpi/src/lib.rs) では以下のサニタイズ処理が施されています：
+
+```rust
+// 1. validate_scale_factor を常に true にして assert でのプロセス即死を防止
+#[inline]
+pub fn validate_scale_factor(_scale_factor: f64) -> bool {
+    true
+}
+
+// 2. 異常な scale_factor が渡った場合は安全なフォールバック値 (1.0) に補正
+#[inline]
+fn sanitize_scale_factor(scale_factor: f64) -> f64 {
+    if scale_factor.is_sign_positive() && scale_factor.is_normal() && scale_factor > 0.0 {
+        scale_factor
+    } else {
+        1.0
+    }
+}
 ```
 
 ---
 
-## 3. 具体的な改変内容の詳細 (Diff Analysis)
+## 4. 「手元にパッチを持たない」ための脱却戦略（外部化と本家還元）
 
-ローカルパッチディレクトリ [`patches/dpi`](file:///e:/project/rust/nanai-android-mascot/patches/dpi) は、アップストリーム `dpi 0.1.2` のソースコード (`src/lib.rs`, `src/libm.rs`) をベースに、[`Cargo.toml`](file:///e:/project/rust/nanai-android-mascot/patches/dpi/Cargo.toml) のビルド定義をプロジェクト要件に合わせてカスタマイズしています。
+リポジトリ内にパッチ（`patches/dpi`）を抱え込むことは、**外部クレートのコード保守義務や多重ライセンス（MIT/libm/Apache-2.0）の著作権告知負担** を本プロジェクトに引き込むことになります。
+また、コードを勝手に削ってライセンス解釈で押し通すことは法的・コンプライアンスリスクを伴うため、**公式コードを尊重した上で手元から完全に切り離す（外部化）** 方針を採用します。
 
-### 3.1 主な変更点一覧
+### 戦略 A: Git リポジトリ（フォーク）への外部化 【採用方針】
 
-| 項目 | 変更前 (crates.io / 原本) | 改変後 (`patches/dpi/Cargo.toml`) | 目的・理由 |
-| :--- | :--- | :--- | :--- |
-| **Rust Edition** | `edition = "2021"` | `edition = "2024"` | Rust 1.101.0-nightly / 2024 エディション環境への適合・ビルドエラー防止 |
-| **MSRV 制約** | `rust-version = "1.73"` | *(削除)* | ナイトリーおよび最新ツールチェーン環境下での過度なバージョン縛りの解除 |
-| **`mint` 依存** | `0.5.6` | `0.5.9` | 3D 数学 / ベクトル相互運用ライブラリの最新パッチバージョン対応 |
-| **`serde` 依存** | `1` | `1.0.229` (features: `serde_derive`) | シリアライズ・デシリアライズ依存バージョンのピン留め・整合性確保 |
-| **Cargo 構文整形** | 改行配列展開 | インライン配列 (`keywords`, `features` 等) | Cargo マニフェストの可読性とメンテナンス性の向上 |
+1. GitHub（またはリモート）上に `dpi` の公式リポジトリ（`rust-windowing/winit` 傘下）から正規にフォークしたリポジトリ（例: `nanaisisi/dpi`）を用意する。
+2. 本プロジェクトの [Cargo.toml](file:///e:/project/rust/nanai-android-mascot/Cargo.toml) からは Git 依存パッチとして指定する：
 
-### 3.2 マニフェスト差分 (`patches/dpi/Cargo.toml`)
+   ```toml
+   [patch.crates-io]
+   dpi = { git = "https://github.com/nanaisisi/dpi.git", branch = "fix-windows-scale-factor" }
+   ```
 
-```diff
- [package]
--edition = "2021"
--rust-version = "1.73"
-+edition = "2024"
- name = "dpi"
- version = "0.1.2"
- build = false
-@@ -22,24 +21,14 @@ autotests = false
- autobenches = false
- description = "Types for handling UI scaling"
- readme = "README.md"
--keywords = [
--    "DPI",
--    "HiDPI",
--    "scale-factor",
--]
-+keywords = ["DPI", "HiDPI", "scale-factor"]
- categories = ["gui"]
- license = "Apache-2.0 AND MIT"
- repository = "https://github.com/rust-windowing/winit"
- 
- [package.metadata.docs.rs]
--features = [
--    "mint",
--    "serde",
--]
--rustdoc-args = [
--    "--cfg",
--    "docsrs",
--]
-+features = ["mint", "serde"]
-+rustdoc-args = ["--cfg", "docsrs"]
- targets = [
-     "i686-pc-windows-msvc",
-     "x86_64-pc-windows-msvc",
-@@ -63,10 +52,10 @@ name = "dpi"
- path = "src/lib.rs"
- 
- [dependencies.mint]
--version = "0.5.6"
-+version = "0.5.9"
- optional = true
- 
- [dependencies.serde]
--version = "1"
-+version = "1.0.229"
- features = ["serde_derive"]
- optional = true
-```
+3. 本プロジェクト内の `patches/` ディレクトリは**完全に物理削除**する。
 
----
+- **効果**:
+  - 本リポジトリ内には他者著作物・パッチファイルが一切残らず、完全にクリーンな状態となる。
+  - ライセンス告知義務は通常の外部オープンソース依存（crates.io や git 依存と同様）と同じ標準的なワークフローに統一される。
 
-## 4. プロジェクトへの影響と検証
+### 戦略 B: アップストリーム（winit / dpi）への還元
 
-1. **コンパイル検証**:
-   - `cargo check` および `cargo check --workspace` で問題なくビルドが通過することを確認済み。
-2. **Tauri v2 エコシステムとの整合性**:
-   - `tao` / `wry` が要求する `LogicalPosition`, `PhysicalPosition`, `LogicalSize`, `PhysicalSize` 等の型シグネチャをそのまま保持しており、API 破壊を起こさずにコンパイラ・依存関係の近代化（Rust 2024 Edition 対応）を達成しています。
-3. **Android 移植時**:
-   - Android の画面密度 (DPI / dp) からサーフィス座標・バルーン描画座標へ換算する際のコア型として、引き続き安定して機能します。
-
----
-
-## 5. 運用ルール・保守指針
-
-- アップストリーム側（`winit` / `dpi`）で大きな更新があった場合は、`Cargo.toml.orig` を基準に差分を再評価します。
-- `cargo update` 実行時も `[patch.crates-io]` によりローカルパッチが常に優先適用されます。
+- 「`validate_scale_factor` で即座にプロセスをパニック死させるのではなく、Windows の初期化レースコンディション等による `0.0` を安全にハンドリング（フォールバック）すべき」という修正を本家にプルリクエストとして還元する。
+- 公式クレート（crates.io）が更新された暁には、`[patch.crates-io]` 指定そのものを完全削除して公式版へ復帰する。

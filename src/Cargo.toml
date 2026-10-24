@@ -21,5 +21,5 @@ encoding_rs = "0.8.42"
 
 
 [[bin]]
-name = "mascot_nanai_ui_bin"
+name = "nanai_android_mascot_ui_bin"
 path = "main.rs"

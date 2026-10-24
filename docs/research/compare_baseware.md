@@ -9,13 +9,13 @@
 
 - **サイト**: [Ukagaka Tech Team (ukatech)](https://ukatech.shillest.net/)
 - **公式仕様・ドキュメントリポジトリ**:
-  - [ukatech/ukadoc-spec](https://github.com/ukatech/ukadoc-spec) - UKADOC 公式仕様書リポジトリ（[ローカル参照: local/ukadoc-spec](file:///e:/project/rust/nanai-android-mascot/local/ukadoc-spec/INDEX.md)）
-  - [ukatech/ukadoc-ssp](https://github.com/ukatech/ukadoc-ssp) - SSP 固有機能および拡張仕様リポジトリ（[ローカル参照: local/ukadoc-ssp](file:///e:/project/rust/nanai-android-mascot/local/ukadoc-ssp/INDEX.md)）
+  - [ukatech/ukadoc-spec](https://github.com/ukatech/ukadoc-spec) - UKADOC 公式仕様書リポジトリ（さくらスクリプト・SHIORIプロトコル・サーフィス定義等の標準仕様）
+  - [ukatech/ukadoc-ssp](https://github.com/ukatech/ukadoc-ssp) - SSP 固有機能および拡張仕様リポジトリ
   - [UKADOC Project マニュアル](https://ssp.shillest.net/ukadoc/) - Web 公開版マニュアル
 - **主な保守プロジェクト**:
-  - **YAYA**: 汎用スクリプトSHIORI（[yaya-shiori](https://github.com/YAYA-shiori/yaya-shiori) / [src/cpp/yaya-shiori](file:///e:/project/rust/nanai-android-mascot/src/cpp/yaya-shiori)）
-  - **里々 (SATORI)**: 台本形式SHIORI（[satoriya-shiori](https://github.com/ukatech/satoriya-shiori) / [src/cpp/satoriya-shiori](file:///e:/project/rust/nanai-android-mascot/src/cpp/satoriya-shiori)）
-  - **華和梨 (KAWARI)**: KISインタプリタSHIORI（[ukatech/kawari](https://github.com/ukatech/kawari) / [src/cpp/kawari](file:///e:/project/rust/nanai-android-mascot/src/cpp/kawari)）
+  - **YAYA**: 汎用スクリプトSHIORI（[YAYA-shiori/yaya-shiori](https://github.com/YAYA-shiori/yaya-shiori)）
+  - **里々 (SATORI)**: 台本形式SHIORI（[ukatech/satoriya-shiori](https://github.com/ukatech/satoriya-shiori)）
+  - **華和梨 (KAWARI)**: KISインタプリタSHIORI（[ukatech/kawari](https://github.com/ukatech/kawari)）
 
 ---
 

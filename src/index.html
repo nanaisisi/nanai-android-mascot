@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <title>Mascot Nanai</title>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes, viewport-fit=cover"
+    />
+
+    <!-- Android向け最適化 -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+
+    <!-- 透過マスコットアプリスタイル -->
+    <link rel="stylesheet" href="styles.css" />
+
+    <!-- メインコントローラ -->
+    <script type="module" src="/main.js"></script>
+
+    <!-- iframeメニュー制御スクリプト -->
+    <script>
+      // iframeメニューの制御関数
+      function toggleIframeMenu() {
+        console.log("=== iframeメニューボタンがクリックされました ===");
+        const menuContainer = document.getElementById("menu-iframe-container");
+        if (menuContainer) {
+          const isVisible = menuContainer.style.display !== "none";
+          console.log(`現在の表示状態: ${isVisible ? "表示中" : "非表示"}`);
+
+          if (isVisible) {
+            menuContainer.style.display = "none";
+            console.log("iframeメニューを非表示にしました");
+          } else {
+            menuContainer.style.display = "block";
+            console.log("iframeメニューを表示しました");
+          }
+        } else {
+          console.error("❌ iframeメニューコンテナが見つかりません");
+        }
+      }
+
+      // iframe内からのメッセージを受信
+      window.addEventListener("message", (event) => {
+        console.log("=== 親ウィンドウでメッセージ受信 ===");
+        console.log("受信データ:", event.data);
+
+        if (event.data.type === "menu-action") {
+          const action = event.data.action;
+          console.log(`メニューアクション実行: ${action}`);
+
+          // メニューを非表示にする
+          const menuContainer = document.getElementById(
+            "menu-iframe-container"
+          );
+          if (menuContainer) {
+            menuContainer.style.display = "none";
+            console.log("iframeメニューを非表示にしました");
+          }
+
+          // アクションに応じてモーダルを開く
+          const contentId = action + "-modal-content";
+          console.log(`モーダルを開きます: ${contentId}`);
+          openModal(contentId);
+        }
+      });
+
+      // 旧メニュー関数（後方互換性）
+      function toggleMenuDirect() {
+        console.log(
+          "旧メニュー関数が呼び出されました - iframeメニューにリダイレクト"
+        );
+        toggleIframeMenu();
+      }
+
+      // モーダルを開く直接関数
+      function openModal(contentId) {
+        console.log("=== モーダルを開きます ===");
+        console.log("コンテンツID:", contentId);
+        const modalOverlay = document.getElementById("modal-overlay");
+        const modalContent = document.getElementById("modal-content");
+        const sourceContent = document.getElementById(contentId);
+
+        // iframeメニューを閉じる
+        const menuContainer = document.getElementById("menu-iframe-container");
+        if (menuContainer) {
+          menuContainer.style.display = "none";
+          console.log("iframeメニューを閉じました");
+        }
+
+        if (modalOverlay && modalContent && sourceContent) {
+          modalContent.innerHTML = sourceContent.innerHTML;
+          modalOverlay.style.display = "flex";
+          console.log("モーダルを表示しました");
+        } else {
+          console.error("モーダル要素が見つかりません");
+        }
+      }
+
+      // モーダルを閉じる関数
+      function closeModal() {
+        console.log("モーダルを閉じます");
+        const modalOverlay = document.getElementById("modal-overlay");
+        if (modalOverlay) {
+          modalOverlay.style.display = "none";
+        }
+      }
+
+      // ページ読み込み後の初期化
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("DOM読み込み完了");
+
+        // メニューボタンのテスト
+        const menuBtn = document.getElementById("menu-btn");
+        const dropdown = document.getElementById("menu-dropdown");
+
+        if (!menuBtn) {
+          console.error("メニューボタンが見つかりません");
+        } else {
+          console.log("メニューボタンが見つかりました");
+
+          // デバッグ用のスタイル追加
+          menuBtn.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
+          menuBtn.style.border = "2px solid red"; // デバッグ用に赤枠追加
+
+          // 強制的にイベントリスナーを追加
+          menuBtn.addEventListener("click", function (e) {
+            console.log("追加のクリックイベント");
+            toggleMenuDirect();
+          });
+        }
+
+        if (!dropdown) {
+          console.error("メニュードロップダウンが見つかりません");
+        } else {
+          console.log("メニュードロップダウンが見つかりました");
+          // デバッグ用のスタイル追加
+          dropdown.style.border = "2px solid blue"; // デバッグ用に青枠追加
+        }
+
+        // モーダル閉じるボタンの設定
+        const modalClose = document.getElementById("modal-close");
+        if (modalClose) {
+          modalClose.onclick = closeModal;
+        }
+
+        // モーダルオーバーレイクリックで閉じる
+        const modalOverlay = document.getElementById("modal-overlay");
+        if (modalOverlay) {
+          modalOverlay.onclick = function (e) {
+            if (e.target === modalOverlay) {
+              closeModal();
+            }
+          };
+        }
+
+        // メニュー外クリックで閉じる
+        document.onclick = function (e) {
+          const menu = document.getElementById("menu-dropdown");
+          const menuBtn = document.getElementById("menu-btn");
+          if (
+            menu &&
+            menuBtn &&
+            !menuBtn.contains(e.target) &&
+            !menu.contains(e.target)
+          ) {
+            menu.classList.remove("show");
+          }
+        };
+
+        console.log("メニューとモーダルの初期化完了");
+      });
+    </script>
+  </head>
+
+  <body>
+    <!-- 透過背景マスコットアプリ -->
+    <h1 class="visually-hidden">Mascot Nanai - 透過マスコットアプリ</h1>
+    <div class="container">
+      <!-- 右上メニューボタンのみ -->
+      <div class="top-right-menu">
+        <button
+          class="menu-btn"
+          id="menu-btn"
+          title="メニュー"
+          onclick="toggleIframeMenu()"
+        >
+          ☰
+        </button>
+        <!-- iframeメニュー -->
+        <div
+          class="menu-iframe-container"
+          id="menu-iframe-container"
+          style="display: none"
+        >
+          <iframe
+            id="menu-iframe"
+            src="menu-iframe.html"
+            width="200"
+            height="280"
+            title="メニューオプション"
+            loading="lazy"
+            style="border: none"
+          >
+          </iframe>
+        </div>
+      </div>
+
+      <!-- メイン表示エリア（ゴースト・バルーン表示） -->
+      <div class="main-display">
+        <!-- ゴーストキャラクター表示 -->
+        <div class="ghost-display" id="ghost-display">
+          <div class="ghost-character" id="ghost-character">
+            <span class="character-placeholder"></span>
+          </div>
+        </div>
+
+        <!-- バルーン表示 -->
+        <div class="balloon-display" id="balloon-display" style="display: none">
+          <div class="balloon">
+            <div class="balloon-text" id="balloon-text">
+              こんにちは！マスコットナナイです。
+            </div>
+          </div>
+        </div>
+
+        <!-- ステータス表示 -->
+        <div class="status-bar" id="status-bar" style="display: none">
+          <span class="status-indicator" id="connection-status"></span>
+          <span id="status-text"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- モーダルオーバーレイ -->
+    <div class="modal-overlay" id="modal-overlay" style="display: none">
+      <div class="modal">
+        <button class="close-btn" id="modal-close">&times;</button>
+        <div id="modal-content">
+          <!-- モーダル内容がここに表示される -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 隠されたモーダル内容テンプレート -->
+    <div id="ghost-modal-content" style="display: none">
+      <h2>👻 ゴースト管理</h2>
+      <div class="form-section">
+        <span class="form-label">現在のゴースト:</span>
+        <div class="current-ghost" id="current-ghost">未選択</div>
+      </div>
+      <div class="form-section">
+        <span class="form-label">利用可能なゴースト:</span>
+        <div class="ghost-list" id="ghost-list">
+          <div class="loading">ゴーストを読み込み中...</div>
+        </div>
+      </div>
+      <div class="form-section">
+        <span class="form-label">ゴーストディレクトリ:</span>
+        <input type="text" id="ghost-directory" value="assets/ghost" />
+        <button id="refresh-ghosts-btn">更新</button>
+      </div>
+    </div>
+
+    <div id="balloon-modal-content" style="display: none">
+      <h2>💭 バルーン管理</h2>
+      <div class="form-section">
+        <span class="form-label">現在のバルーン:</span>
+        <div class="current-balloon" id="current-balloon">デフォルト</div>
+      </div>
+      <div class="form-section">
+        <span class="form-label">利用可能なバルーン:</span>
+        <div class="balloon-list" id="balloon-list">
+          <div class="balloon-item active" data-balloon="default">
+            <span>デフォルト</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-section">
+        <span class="form-label">バルーンディレクトリ:</span>
+        <input type="text" id="balloon-directory" value="assets/balloon" />
+        <button id="refresh-balloons-btn">更新</button>
+      </div>
+    </div>
+
+    <div id="scan-modal-content" style="display: none">
+      <h2>🔍 スキャンと検出</h2>
+      <div class="form-section">
+        <span class="form-label">スキャン対象:</span>
+        <input type="text" id="scan-path" value="assets/" />
+        <button id="start-scan-btn">スキャン開始</button>
+      </div>
+      <div class="form-section">
+        <span class="form-label">スキャン結果:</span>
+        <div class="scan-results" id="scan-results">
+          <div class="info">
+            スキャンボタンを押してファイルを検出してください。
+          </div>
+        </div>
+      </div>
+      <div class="form-section">
+        <span class="form-label">デバッグ情報:</span>
+        <div class="debug-info" id="scan-debug-info">
+          <div class="info">スキャン時のデバッグ情報がここに表示されます。</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="test-modal-content" style="display: none">
+      <h2>🧪 テスト機能</h2>
+      <div class="form-section">
+        <span class="form-label">SHIORI テスト:</span>
+        <div class="test-controls">
+          <button id="test-shiori-init">SHIORI初期化</button>
+          <button id="test-shiori-request">リクエスト送信</button>
+          <button id="test-shiori-finalize">SHIORI終了</button>
+        </div>
+      </div>
+      <div class="form-section">
+        <span class="form-label">テストメッセージ:</span>
+        <input
+          type="text"
+          id="test-message"
+          value="hello"
+          placeholder="テストメッセージ"
+        />
+        <button id="send-test-message">メッセージ送信</button>
+      </div>
+      <div class="form-section">
+        <span class="form-label">パステスト:</span>
+        <div class="path-test-controls">
+          <input
+            type="text"
+            id="path-test-input"
+            value="../assets/ghost"
+            placeholder="テストパス"
+          />
+          <button id="test-path-resolve">パス解決テスト</button>
+        </div>
+      </div>
+      <div class="form-section">
+        <span class="form-label">テスト結果:</span>
+        <div class="test-results" id="test-results">
+          <div class="info">テストボタンを押して結果を確認してください。</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="settings-modal-content" style="display: none">
+      <h2>⚙️ 設定</h2>
+      <div class="form-section">
+        <span class="form-label">
+          <input type="checkbox" id="auto-load-ghost" checked />
+          自動ゴースト読み込み
+        </span>
+      </div>
+      <div class="form-section">
+        <span class="form-label">
+          <input type="checkbox" id="enable-notifications" checked />
+          通知を有効化
+        </span>
+      </div>
+      <div class="form-section">
+        <span class="form-label">
+          <input type="checkbox" id="dark-mode" />
+          ダークモード
+        </span>
+      </div>
+      <div class="form-section">
+        <span class="form-label">
+          <input type="checkbox" id="always-on-top" checked />
+          常に最前面に表示
+        </span>
+      </div>
+      <div class="form-section">
+        <span class="form-label">ゴースト表示サイズ:</span>
+        <select id="ghost-size">
+          <option value="small">小</option>
+          <option value="medium" selected>中</option>
+          <option value="large">大</option>
+        </select>
+      </div>
+      <div class="form-section">
+        <span class="form-label">デバッグレベル:</span>
+        <select id="debug-level">
+          <option value="error">エラーのみ</option>
+          <option value="warn">警告以上</option>
+          <option value="info" selected>情報以上</option>
+          <option value="debug">デバッグ全て</option>
+        </select>
+      </div>
+      <div class="form-section">
+        <button id="save-settings-btn" class="primary">設定保存</button>
+        <button id="reset-settings-btn">設定リセット</button>
+      </div>
+    </div>
+
+    <div id="debug-modal-content" style="display: none">
+      <h2>🐛 デバッグ情報</h2>
+      <div class="form-section">
+        <span class="form-label">システム情報:</span>
+        <div class="debug-info" id="system-info">
+          <div class="info-item">OS: <span id="os-info">取得中...</span></div>
+          <div class="info-item">
+            アプリバージョン: <span id="app-version">v1.0.0</span>
+          </div>
+          <div class="info-item">
+            Tauri バージョン: <span id="tauri-version">取得中...</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-section">
+        <span class="form-label">ログレベル:</span>
+        <select id="log-level">
+          <option value="trace">詳細</option>
+          <option value="debug" selected>デバッグ</option>
+          <option value="info">情報</option>
+          <option value="warn">警告</option>
+          <option value="error">エラー</option>
+        </select>
+        <button id="apply-log-level">適用</button>
+      </div>
+      <div class="form-section">
+        <span class="form-label">ログ出力:</span>
+        <div class="log-output" id="log-output">
+          <div class="log-entry info">デバッグログがここに表示されます。</div>
+        </div>
+        <div class="log-controls">
+          <button id="clear-logs">ログクリア</button>
+          <button id="export-logs">ログエクスポート</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="help-modal-content" style="display: none">
+      <h2>❓ ヘルプ</h2>
+      <div class="help-section">
+        <h3>使い方</h3>
+        <p>
+          Mascot
+          Nanaiは、デスクトップマスコット(ゴースト)を表示するアプリケーションです。
+        </p>
+        <ul>
+          <li>
+            <strong>ゴースト:</strong>
+            右上メニューからゴーストを選択・管理できます
+          </li>
+          <li><strong>バルーン:</strong> 吹き出しスタイルを変更できます</li>
+          <li><strong>表示:</strong> キャラクターをクリックして操作できます</li>
+          <li><strong>設定:</strong> 右上メニューで各種設定を変更できます</li>
+        </ul>
+      </div>
+      <div class="help-section">
+        <h3>キーボードショートカット</h3>
+        <ul>
+          <li><kbd>Esc</kbd>: モーダルを閉じる</li>
+          <li><kbd>Ctrl+R</kbd>: ゴースト更新</li>
+          <li><kbd>右クリック</kbd>: メニュー表示</li>
+        </ul>
+      </div>
+      <div class="help-section">
+        <h3>トラブルシューティング</h3>
+        <ul>
+          <li>
+            <strong>ゴーストが読み込めない:</strong>
+            ゴーストディレクトリのパスを確認してください
+          </li>
+          <li>
+            <strong>表示が見えない:</strong>
+            設定で「常に最前面に表示」を有効にしてください
+          </li>
+          <li>
+            <strong>ファイルが見つからない:</strong>
+            スキャン機能で利用可能なファイルを確認してください
+          </li>
+        </ul>
+      </div>
+      <div class="help-section">
+        <h3>ライセンス情報</h3>
+        <p>
+          このソフトウェアは Apache-2.0 と MIT
+          のデュアルライセンスの下で提供されています。
+        </p>
+        <p>
+          詳細は <code>LICENSE-APACHE</code> と
+          <code>LICENSE-MIT</code> ファイルをご覧ください。
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

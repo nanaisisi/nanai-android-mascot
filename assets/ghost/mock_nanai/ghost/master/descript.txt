@@ -1,10 +1,10 @@
 charset,Shift_JIS
 type,ghost
-name,ï¿½Sï¿½[ï¿½Xï¿½gï¿½Lï¿½bï¿½gï¿½ï¿½ï¿½Ç”ï¿½Plusï¿½iï¿½ï¿½ï¿½Æ‚è‚·ï¿½Æ—pï¿½j
+name,ƒS[ƒXƒgƒLƒbƒg‰ü—Ç”ÅPlusi‚³‚Æ‚è‚·‚Æ—pj
 craftman,ghostmaster
-craftmanw,ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½Æ‚Ü‚ï¿½ï¿½ï¿½ï¿½[
-sakura.name,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-kero.name,ï¿½Ä‚ï¿½ï¿½ï¿½
+craftmanw,‚²[‚·‚Æ‚Ü‚·‚½[
+sakura.name,‚¿‚¥‚Á‚©
+kero.name,‚Ä‚·‚½
 
 
 

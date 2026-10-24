@@ -1,3 +1,5 @@
+import { invoke, isTauriAvailable } from "./tauri-helper.js";
+
 /**
  * Nanai Android Mascot - モーダル & UIダイアログ管理
  */
@@ -157,9 +159,9 @@ export class ModalManager {
 
     const overlayBtn = document.getElementById("open-overlay-settings-btn");
     overlayBtn?.addEventListener("click", async () => {
-      if (globalThis.__TAURI__) {
+      if (isTauriAvailable()) {
         try {
-          await globalThis.__TAURI__.invoke("request_overlay_permission");
+          await invoke("request_overlay_permission");
         } catch (_e) {
           this.showNotification(
             "Android 設定案内",

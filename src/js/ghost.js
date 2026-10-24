@@ -1,4 +1,5 @@
 import { ShioriProtocol } from "./shiori-protocol.js";
+import { invoke, isTauriAvailable } from "./tauri-helper.js";
 
 /**
  * Nanai Android Mascot - ゴースト & SHIORI 管理モジュール
@@ -35,9 +36,9 @@ export class GhostController {
   }
 
   async verifyGhostExists(ghostInfo) {
-    if (!globalThis.__TAURI__) return false;
+    if (!isTauriAvailable()) return false;
     try {
-      const result = await globalThis.__TAURI__.invoke("scan_ghosts", {
+      const result = await invoke("scan_ghosts", {
         ghostPath: ghostInfo.path || "assets/ghost",
       });
       return result.ghosts?.some((g) => g.name === ghostInfo.name) || false;
@@ -48,14 +49,14 @@ export class GhostController {
   }
 
   async scanAndLoadFirstGhost() {
-    if (!globalThis.__TAURI__) {
+    if (!isTauriAvailable()) {
       console.log("Tauri環境ではありません - デフォルトmock_nanaiを使用");
       this.selectGhost("mock_nanai");
       return;
     }
 
     try {
-      const result = await globalThis.__TAURI__.invoke("scan_ghosts", {
+      const result = await invoke("scan_ghosts", {
         ghostPath: "assets/ghost",
       });
       this.ghosts = result.ghosts || [];
@@ -115,10 +116,10 @@ export class GhostController {
 
 
   async initializeGhostSHIORI(ghost) {
-    if (!globalThis.__TAURI__) return;
+    if (!isTauriAvailable()) return;
     try {
       console.log(`🎭 SHIORI初期化開始: ${ghost.name}`);
-      await globalThis.__TAURI__.invoke("load_ghost", { ghostName: ghost.name });
+      await invoke("load_ghost", { ghostName: ghost.name });
       setTimeout(async () => {
         try {
           await this.sendShioriEvent("OnBoot");
@@ -132,7 +133,7 @@ export class GhostController {
   }
 
   async sendShioriEvent(eventName, args = []) {
-    if (!globalThis.__TAURI__) {
+    if (!isTauriAvailable()) {
       // モック対話（さくらスクリプトテスト用）
       if (eventName === "OnChoiceSelect") {
         const choiceId = args[0];
@@ -198,11 +199,11 @@ export class GhostController {
       // send_shiori_request または send_shiori_event への送信
       let response = "";
       try {
-        response = await globalThis.__TAURI__.invoke("send_shiori_request", {
+        response = await invoke("send_shiori_request", {
           request: requestText,
         });
       } catch (_e) {
-        response = await globalThis.__TAURI__.invoke("send_shiori_event", {
+        response = await invoke("send_shiori_event", {
           event: eventName,
         });
       }

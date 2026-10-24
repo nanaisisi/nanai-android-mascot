@@ -3,6 +3,7 @@ import { InteractionManager } from "./js/interaction.js";
 import { ModalManager } from "./js/modal.js";
 import { SakuraScriptPlayer } from "./js/sakura-script.js";
 import { SurfaceManager } from "./js/surface.js";
+import { invoke, isTauriAvailable } from "./js/tauri-helper.js";
 
 export class NanaiAndroidMascotApp {
   constructor() {
@@ -80,9 +81,9 @@ export class NanaiAndroidMascotApp {
 
       this.showBalloon("さようなら…！");
       setTimeout(async () => {
-        if (globalThis.__TAURI__) {
+        if (isTauriAvailable()) {
           try {
-            await globalThis.__TAURI__.invoke("exit_app");
+            await invoke("exit_app");
           } catch (_e) {
             globalThis.window.close();
           }
@@ -91,8 +92,8 @@ export class NanaiAndroidMascotApp {
         }
       }, 1000);
     } catch (_err) {
-      if (globalThis.__TAURI__) {
-        globalThis.__TAURI__.invoke("exit_app").catch(() => globalThis.window.close());
+      if (isTauriAvailable()) {
+        invoke("exit_app").catch(() => globalThis.window.close());
       } else {
         globalThis.window.close();
       }
@@ -256,8 +257,8 @@ export class NanaiAndroidMascotApp {
     }
 
     console.log(`🖱️ ゴーストタップ: スコープ=${scopeId}, 部位=${partName || "なし"}`);
-    if (globalThis.__TAURI__) {
-      globalThis.__TAURI__.invoke("on_mouse_click").catch(() => {});
+    if (isTauriAvailable()) {
+      invoke("on_mouse_click").catch(() => {});
     }
     // SHIORIイベント送信 (イベント名, [選択肢ID/引数, 部位名, スコープID])
     this.ghostController.sendShioriEvent("OnMouseClick", ["", partName, scopeId]);
@@ -341,9 +342,9 @@ export class NanaiAndroidMascotApp {
       secondCounter++;
 
       if (this.ghostController.currentGhost) {
-        if (globalThis.__TAURI__) {
+        if (isTauriAvailable()) {
           try {
-            await globalThis.__TAURI__.invoke("on_second_change");
+            await invoke("on_second_change");
           } catch (_error) {
             // SHIORI未ロードまたは非サポート時は無視
           }

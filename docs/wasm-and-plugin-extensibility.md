@@ -67,9 +67,9 @@ export interface WasmShioriEngine {
 }
 ```
 
-* **メリット**:
-  * 辞書ファイル（`.txt`）をメモリ上の Virtual FS（仮想ファイルシステム）に展開可能。
-  * 端末ローカルのファイルシステム差異（Android の Scoped Storage 等）に影響されない。
+- **メリット**:
+  - 辞書ファイル（`.txt`）をメモリ上の Virtual FS（仮想ファイルシステム）に展開可能。
+  - 端末ローカルのファイルシステム差異（Android の Scoped Storage 等）に影響されない。
 
 ---
 
@@ -90,6 +90,7 @@ plugins/
 ```
 
 #### `plugin.json`（マニフェスト定義）
+
 ```json
 {
   "id": "nanai-weather-plugin",
@@ -162,13 +163,16 @@ export default class WeatherPlugin {
 ## 5. ロードマップと実装ステップ
 
 ### フェーズ 1: JS 拡張基盤（Plugin Manager）のプロトタイプ
+
 - [ ] ES モジュール動的インポート（`import()`）によるプラグイン読み込み基盤の作成。
 - [ ] イベントバス（`EventEmitter`）の実装と、コアイベントのフック機能。
 
 ### フェーズ 2: WASM SHIORI / Virtual FS プロトタイプ
+
 - [ ] Emscripten による C++ SHIORI（Satori / YAYA）の WASM ビルド検証。
 - [ ] メモリ上仮想ファイルシステム（MemFS）による辞書ロード・パース検証。
 
 ### フェーズ 3: プラグイン SDK & サンプル公開
+
 - [ ] サンプル拡張機能（天気予報、RSSリーダー、AIトーク連携）の作成。
 - [ ] プラグインの有効化・無効化を行える UI モーダルの実装。

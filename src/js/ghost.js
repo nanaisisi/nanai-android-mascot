@@ -1,3 +1,5 @@
+import { ShioriProtocol } from "./shiori-protocol.js";
+
 /**
  * Mascot Nanai - ゴースト & SHIORI 管理モジュール
  */
@@ -115,7 +117,11 @@ export class GhostController {
         }
       } else if (eventName === "OnMouseClick") {
         const part = args[1];
-        if (part === "head") {
+        const scope = args[2] || 0;
+        if (scope === 1) {
+          // 1番手（kero）がタップされた場合: sakuraとの掛け合い
+          this.app.playSakuraScript("\\1\\s10ボクをつついたな〜！\\w5\\0\\s0ふふ、仲良しだね♪\\e");
+        } else if (part === "head") {
           this.app.playSakuraScript("\\0\\s0あたまをなでてくれたの？\\w5\\nえへへ…♪\\e");
         } else if (part === "bust") {
           this.app.playSakuraScript("\\0\\s10ちょ、ちょっと…！\\w5\\nどこ触ってるの…！\\e");
@@ -128,7 +134,10 @@ export class GhostController {
         }
       } else if (eventName === "OnMouseMove") {
         const part = args[1];
-        if (part === "head") {
+        const scope = args[2] || 0;
+        if (scope === 1) {
+          this.app.playSakuraScript("\\1\\s10わわ、くすぐったいぞ！\\w5\\0\\s0楽しそうだね。\\e");
+        } else if (part === "head") {
           this.app.playSakuraScript("\\0\\s0ん…なでなで、きもちいい…♪\\e");
         } else if (part === "bust") {
           this.app.playSakuraScript("\\0\\s10触りすぎだよっ、もう…！\\e");
@@ -144,11 +153,31 @@ export class GhostController {
     }
 
     try {
-      const response = await globalThis.__TAURI__.invoke("send_shiori_event", {
-        event: eventName,
-      });
+      // SHIORI/3.0 標準リクエストの構築
+      const requestText = ShioriProtocol.buildRequest(eventName, args);
+      console.log(`📤 送信 SHIORI/3.0 リクエスト:\n${requestText}`);
+
+      // send_shiori_request または send_shiori_event への送信
+      let response = "";
+      try {
+        response = await globalThis.__TAURI__.invoke("send_shiori_request", {
+          request: requestText,
+        });
+      } catch (_e) {
+        response = await globalThis.__TAURI__.invoke("send_shiori_event", {
+          event: eventName,
+        });
+      }
+
+      // SHIORI/3.0 レスポンスのパース
       if (response && response.trim()) {
-        this.app.playSakuraScript(response);
+        const parsed = ShioriProtocol.parseResponse(response);
+        const script = parsed.value || response;
+        if (script.trim()) {
+          this.app.playSakuraScript(script);
+        } else {
+          this.app.playSakuraScript("\\0\\s0……\\e");
+        }
       } else {
         this.app.playSakuraScript("\\0\\s0……\\e");
       }
@@ -169,32 +198,56 @@ export class GhostController {
     this.app.playSakuraScript(picked);
   }
 
-  updateSurface(surfaceId) {
-    this.app.surfaceManager.setSurfaceId(surfaceId);
+  updateSurface(surfaceId, scopeId = 0) {
     const ghostName = this.currentGhost?.name || "mock_nanai";
-    const img = document.querySelector(".character-placeholder img");
+    const selector = scopeId === 1 ? "#kero-placeholder img" : "#sakura-placeholder img";
+    const placeholder = scopeId === 1 ? document.getElementById("kero-placeholder") : document.getElementById("sakura-placeholder");
+    const container = scopeId === 1 ? document.getElementById("kero-display") : document.getElementById("ghost-display");
+
+    if (scopeId === 0) {
+      this.app.surfaceManager.setSurfaceId(surfaceId);
+    }
+
+    if (scopeId === 1 && container && container.style.display === "none") {
+      container.style.display = "flex";
+      // keroをsakuraの少し左下に配置
+      const sakuraRect = this.app.elements.ghostDisplay?.getBoundingClientRect();
+      if (sakuraRect) {
+        container.style.left = `${Math.max(80, sakuraRect.left - 100)}px`;
+        container.style.top = `${sakuraRect.top + 60}px`;
+      }
+    }
+
+    const img = document.querySelector(selector);
+    if (!img && placeholder) {
+      placeholder.innerHTML = `<img src="assets/ghost/${ghostName}/shell/master/surface${surfaceId}.png" 
+                                     alt="scope${scopeId}" 
+                                     style="width: 100%; height: 100%; object-fit: contain;">`;
+      return;
+    }
+
     if (img) {
       img.src = `assets/ghost/${ghostName}/shell/master/surface${surfaceId}.png`;
       img.onerror = () => {
-        img.src = `assets/ghost/${ghostName}/shell/master/surface0.png`;
+        img.src = `assets/ghost/${ghostName}/shell/master/surface${scopeId === 1 ? 10 : 0}.png`;
       };
     }
   }
 
   updateGhostCharacter(ghostName) {
-    const placeholder = document.querySelector(".character-placeholder");
-    if (!placeholder) return;
+    const sakuraPlaceholder = document.getElementById("sakura-placeholder") || document.querySelector(".character-placeholder");
+    if (!sakuraPlaceholder) return;
 
     if (!ghostName) {
-      placeholder.innerHTML = "";
+      sakuraPlaceholder.innerHTML = "";
       return;
     }
 
-    placeholder.innerHTML = `<img src="assets/ghost/${ghostName}/shell/master/surface0.png" 
+    sakuraPlaceholder.innerHTML = `<img src="assets/ghost/${ghostName}/shell/master/surface0.png" 
                                    alt="${ghostName}" 
                                    style="width: 100%; height: 100%; object-fit: contain;" 
                                    onerror="console.error('画像読み込みエラー'); this.style.display='none';">`;
-    placeholder.title = ghostName || "";
+    sakuraPlaceholder.title = ghostName || "";
   }
 
   updateCurrentGhostDisplay() {

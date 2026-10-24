@@ -289,14 +289,38 @@ async fn load_ghost(
     ))
 }
 
-/// SHIORIにリクエストを送信（簡易版）
+/// SHIORIにリクエストを送信（SHIORI/3.0 プロトコル準拠）
 #[tauri::command]
 async fn send_shiori_request(
     _state: tauri::State<'_, AppState>,
     request: String,
 ) -> Result<String, String> {
-    println!("📤 SHIORI Request: {}", request);
-    Ok("Hello from simplified SHIORI!".to_string())
+    println!("📤 SHIORI 3.0 Request:\n{}", request);
+
+    // リクエストからIDヘッダーを簡易抽出
+    let event_id = request
+        .lines()
+        .find_map(|line| {
+            if line.to_uppercase().starts_with("ID:") {
+                Some(line[3..].trim().to_string())
+            } else {
+                None
+            }
+        })
+        .unwrap_or_else(|| "Unknown".to_string());
+
+    let script = match event_id.as_str() {
+        "OnBoot" => "\\0\\s0マスコットナナイが起動したよ！\\e",
+        "OnMouseClick" => "\\0\\s0つんつん、何かご用事かな？\\e",
+        "OnChoiceSelect" => "\\0\\s0了解だよ！\\e",
+        _ => "\\0\\s0……\\e",
+    };
+
+    let response = format!(
+        "SHIORI/3.0 200 OK\r\nSender: NanaiRustCore\r\nCharset: UTF-8\r\nValue: {}\r\n\r\n",
+        script
+    );
+    Ok(response)
 }
 
 /// SHIORIにイベントを送信（簡易版）

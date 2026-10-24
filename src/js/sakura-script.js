@@ -130,13 +130,20 @@ export class SakuraScriptPlayer {
     const currentId = this.playbackId;
     this.isPlaying = true;
     this.skipRequested = false;
+    this.currentScope = 0;
 
-    const balloonText = this.app.elements.balloonText;
-    const balloonDisplay = this.app.elements.balloonDisplay;
-    if (!balloonText || !balloonDisplay) return;
+    const sakuraText = this.app.elements.balloonText;
+    const sakuraDisplay = this.app.elements.balloonDisplay;
+    const keroText = this.app.elements.keroBalloonText;
+    const keroDisplay = this.app.elements.keroBalloonDisplay;
 
-    balloonText.innerHTML = "";
-    balloonDisplay.style.display = "block";
+    if (!sakuraText || !sakuraDisplay) return;
+
+    sakuraText.innerHTML = "";
+    sakuraDisplay.style.display = "block";
+    if (keroText) keroText.innerHTML = "";
+
+    let currentBalloonText = sakuraText;
 
     for (let j = 0; j < tokens.length; j++) {
       if (this.playbackId !== currentId) break; // 新しい再生で中断
@@ -144,8 +151,19 @@ export class SakuraScriptPlayer {
       const token = tokens[j];
 
       switch (token.type) {
+        case "scope":
+          this.currentScope = token.value;
+          if (this.currentScope === 1 && keroText && keroDisplay) {
+            currentBalloonText = keroText;
+            keroDisplay.style.display = "block";
+          } else {
+            currentBalloonText = sakuraText;
+            sakuraDisplay.style.display = "block";
+          }
+          break;
+
         case "char":
-          balloonText.appendChild(document.createTextNode(token.value));
+          currentBalloonText.appendChild(document.createTextNode(token.value));
           if (!this.skipRequested) {
             const delay = /^[、。！？\.\?!]/.test(token.value) ? 120 : 40;
             await this.sleep(delay);
@@ -155,12 +173,12 @@ export class SakuraScriptPlayer {
         case "newline": {
           const br = document.createElement("br");
           if (token.half) br.className = "half-br";
-          balloonText.appendChild(br);
+          currentBalloonText.appendChild(br);
           break;
         }
 
         case "clear":
-          balloonText.innerHTML = "";
+          currentBalloonText.innerHTML = "";
           break;
 
         case "wait":
@@ -170,8 +188,8 @@ export class SakuraScriptPlayer {
           break;
 
         case "surface":
-          // 表情切り替え
-          this.app.ghostController.updateSurface(token.value);
+          // 表情切り替え（スコープ別）
+          this.app.ghostController.updateSurface(token.value, this.currentScope);
           break;
 
         case "choice": {

@@ -51,8 +51,12 @@ export class MascotNanaiApp {
     this.elements = {
       ghostDisplay: document.getElementById("ghost-display"),
       ghostCharacter: document.getElementById("ghost-character"),
+      keroDisplay: document.getElementById("kero-display"),
+      keroCharacter: document.getElementById("kero-character"),
       balloonDisplay: document.getElementById("balloon-display"),
       balloonText: document.getElementById("balloon-text"),
+      keroBalloonDisplay: document.getElementById("kero-balloon-display"),
+      keroBalloonText: document.getElementById("kero-balloon-text"),
       menuContainer: document.getElementById("menu-iframe-container"),
       menuBtn: document.getElementById("menu-btn"),
       quickBubble: document.getElementById("quick-bubble"),
@@ -60,16 +64,30 @@ export class MascotNanaiApp {
   }
 
   setupEventListeners() {
-    // ドラッグ & タップ & 撫でインタラクション（当たり判定連動）
+    // ドラッグ & タップ & 撫でインタラクション（当たり判定連動: sakura）
     this.interactionManager.setupDragging(
       this.elements.ghostDisplay,
       (clientX, clientY, rect) => {
-        this.onGhostClick(clientX, clientY, rect);
+        this.onGhostClick(clientX, clientY, rect, 0);
       },
       (clientX, clientY, rect) => {
-        this.onGhostStroke(clientX, clientY, rect);
+        this.onGhostStroke(clientX, clientY, rect, 0);
       }
     );
+
+    // ドラッグ & タップ & 撫でインタラクション（kero）
+    if (this.elements.keroDisplay) {
+      this.interactionManager.setupDragging(
+        this.elements.keroDisplay,
+        (clientX, clientY, rect) => {
+          this.onGhostClick(clientX, clientY, rect, 1);
+        },
+        (clientX, clientY, rect) => {
+          this.onGhostStroke(clientX, clientY, rect, 1);
+        }
+      );
+    }
+
 
     // メニュー表示切り替え
     this.elements.menuBtn?.addEventListener("click", (e) => {
@@ -175,31 +193,31 @@ export class MascotNanaiApp {
     });
   }
 
-  onGhostClick(clientX, clientY, rect) {
+  onGhostClick(clientX, clientY, rect, scopeId = 0) {
     let partName = "";
     if (clientX !== undefined && clientY !== undefined && rect) {
       const result = this.surfaceManager.detectCollision(clientX, clientY, rect);
       partName = result.name;
     }
 
-    console.log(`🖱️ ゴーストタップ: 部位=${partName || "なし"}`);
+    console.log(`🖱️ ゴーストタップ: スコープ=${scopeId}, 部位=${partName || "なし"}`);
     if (globalThis.__TAURI__) {
       globalThis.__TAURI__.invoke("on_mouse_click").catch(() => {});
     }
-    // SHIORIイベント送信 (イベント名, [選択肢ID/引数, 部位名])
-    this.ghostController.sendShioriEvent("OnMouseClick", ["", partName]);
+    // SHIORIイベント送信 (イベント名, [選択肢ID/引数, 部位名, スコープID])
+    this.ghostController.sendShioriEvent("OnMouseClick", ["", partName, scopeId]);
   }
 
-  onGhostStroke(clientX, clientY, rect) {
+  onGhostStroke(clientX, clientY, rect, scopeId = 0) {
     let partName = "";
     if (clientX !== undefined && clientY !== undefined && rect) {
       const result = this.surfaceManager.detectCollision(clientX, clientY, rect);
       partName = result.name;
     }
 
-    console.log(`🖐️ ゴースト撫で（Stroke）: 部位=${partName || "なし"}`);
+    console.log(`🖐️ ゴースト撫で（Stroke）: スコープ=${scopeId}, 部位=${partName || "なし"}`);
     // SHIORIイベント送信 (OnMouseMove: 撫で)
-    this.ghostController.sendShioriEvent("OnMouseMove", ["", partName]);
+    this.ghostController.sendShioriEvent("OnMouseMove", ["", partName, scopeId]);
   }
 
   toggleMenu() {

@@ -84,6 +84,7 @@ export class ModalManager {
       shellScale: document.getElementById("shell-scale"),
       balloonScale: document.getElementById("balloon-scale"),
       saveBtn: document.getElementById("save-settings-btn"),
+      resetBtn: document.getElementById("reset-settings-btn"),
     };
 
     if (form.autoLoad) form.autoLoad.checked = this.app.settings.autoLoadGhost;
@@ -103,6 +104,28 @@ export class ModalManager {
       setTimeout(() => this.app.hideBalloon(), 2000);
       this.hide();
     });
+
+    form.resetBtn?.addEventListener("click", () => {
+      if (confirm("設定を初期値に戻しますか？")) {
+        localStorage.removeItem("mascot-nanai-settings");
+        this.app.settings = {
+          autoLoadGhost: true,
+          enableNotifications: true,
+          darkMode: false,
+          alwaysOnTop: true,
+          shellScale: "100",
+          balloonScale: "100",
+          debugLevel: "info",
+        };
+        this.app.applySettings();
+        if (form.autoLoad) form.autoLoad.checked = true;
+        if (form.darkMode) form.darkMode.checked = false;
+        if (form.shellScale) form.shellScale.value = "100";
+        if (form.balloonScale) form.balloonScale.value = "100";
+        this.app.showBalloon("設定を初期化しました。");
+        setTimeout(() => this.app.hideBalloon(), 2000);
+      }
+    });
   }
 
   setupDebugListeners() {
@@ -110,5 +133,36 @@ export class ModalManager {
       const output = document.getElementById("log-output");
       if (output) output.innerHTML = '<div class="log-entry info">ログをクリアしました</div>';
     });
+
+    document.getElementById("export-logs")?.addEventListener("click", () => {
+      const output = document.getElementById("log-output");
+      const text = output?.innerText || "";
+      const blob = new Blob([text], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `mascot-nanai-debug-${Date.now()}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  /**
+   * 共通エラー・情報通知モーダル表示ヘルパー
+   */
+  showNotification(title, message, isError = false) {
+    if (!this.content || !this.overlay) return;
+    this.content.innerHTML = `
+      <h2>${isError ? "⚠️ " : "ℹ️ "}${title}</h2>
+      <div class="form-section">
+        <p style="${isError ? "color: #d32f2f;" : ""}">${message}</p>
+      </div>
+      <div class="form-section" style="text-align: right;">
+        <button id="modal-ok-btn" class="primary">OK</button>
+      </div>
+    `;
+    this.overlay.style.display = "flex";
+    document.getElementById("modal-ok-btn")?.addEventListener("click", () => this.hide());
   }
 }
+

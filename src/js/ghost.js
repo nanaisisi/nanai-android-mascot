@@ -1,7 +1,7 @@
 import { ShioriProtocol } from "./shiori-protocol.js";
 
 /**
- * Mascot Nanai - ゴースト & SHIORI 管理モジュール
+ * Nanai Android Mascot - ゴースト & SHIORI 管理モジュール
  */
 
 export class GhostController {
@@ -9,12 +9,15 @@ export class GhostController {
     this.app = app;
     this.ghosts = [];
     this.currentGhost = null;
+    this.shells = ["master"];
+    this.currentShell = "master";
   }
+
 
   async autoLoadGhost() {
     console.log("🔄 自動ゴースト読み込み開始...");
     try {
-      const savedGhost = localStorage.getItem("mascot-nanai-current-ghost");
+      const savedGhost = localStorage.getItem("nanai-android-mascot-current-ghost");
       if (savedGhost) {
         const ghostInfo = JSON.parse(savedGhost);
         const exists = await this.verifyGhostExists(ghostInfo);
@@ -77,13 +80,39 @@ export class GhostController {
     this.currentGhost = ghost;
     this.updateCurrentGhostDisplay();
     this.updateGhostCharacter(ghostName);
-    localStorage.setItem("mascot-nanai-current-ghost", JSON.stringify(ghost));
+    localStorage.setItem("nanai-android-mascot-current-ghost", JSON.stringify(ghost));
 
     this.initializeGhostSHIORI(ghost);
+    this.currentShell = "master";
     this.app.surfaceManager.loadSurfacesTxt(ghost.path || `assets/ghost/${ghostName}`);
     this.app.showBalloon(`ゴースト「${ghostName}」を選択しました。`);
     setTimeout(() => this.app.hideBalloon(), 2000);
   }
+
+  selectShell(shellName) {
+    this.currentShell = shellName;
+    const ghostName = this.currentGhost?.name || "mock_nanai";
+    console.log(`👗 シェル切り替え: ${shellName}`);
+
+    // サーフィス画像の更新
+    const img = document.querySelector("#sakura-placeholder img");
+    if (img) {
+      img.src = `assets/ghost/${ghostName}/shell/${shellName}/surface0.png`;
+      img.onerror = () => {
+        img.src = `assets/ghost/${ghostName}/shell/master/surface0.png`;
+      };
+    }
+
+    // surfaces.txt の再読み込み
+    const ghostPath = this.currentGhost?.path || `assets/ghost/${ghostName}`;
+    this.app.surfaceManager.loadSurfacesTxt(`${ghostPath}/shell/${shellName}`);
+
+    // SHIORIへの通知
+    this.sendShioriEvent("OnShellChanged", [shellName]);
+    this.app.showBalloon(`シェルを「${shellName}」に変更しました。`);
+    setTimeout(() => this.app.hideBalloon(), 1500);
+  }
+
 
   async initializeGhostSHIORI(ghost) {
     if (!globalThis.__TAURI__) return;

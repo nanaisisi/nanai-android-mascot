@@ -1,5 +1,5 @@
 /**
- * Mascot Nanai - surfaces.txt パーサー & 当たり判定（Collision）マネージャー
+ * Nanai Android Mascot - surfaces.txt パーサー & 当たり判定（Collision）マネージャー
  */
 
 export class SurfaceManager {

@@ -193,7 +193,7 @@ charset,UTF-8
 name,うだろぼ&フェリス
 description,技術とユーモアの箱型ロボットコンビ
 version,1.0.0
-author,Mascot Nanai Project
+author,Nanai Android Mascot Project
 shiori,rustshiori.dll
 ```
 
@@ -214,7 +214,7 @@ shiori,rustshiori.dll
 
 ```
 うだろぼ&フェリス ゴーストパッケージ
-Copyright (c) 2025 Mascot Nanai Project
+Copyright (c) 2025 Nanai Android Mascot Project
 
 本ゴーストは以下のライセンスで配布されます：
 - MIT License または Apache 2.0 License（選択可能）

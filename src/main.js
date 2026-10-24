@@ -4,7 +4,7 @@ import { ModalManager } from "./js/modal.js";
 import { SakuraScriptPlayer } from "./js/sakura-script.js";
 import { SurfaceManager } from "./js/surface.js";
 
-export class MascotNanaiApp {
+export class NanaiAndroidMascotApp {
   constructor() {
     this.isInitialized = false;
     this.settings = {
@@ -27,7 +27,7 @@ export class MascotNanaiApp {
   }
 
   async init() {
-    console.log("=== Mascot Nanai 初期化開始 ===");
+    console.log("=== Nanai Android Mascot 初期化開始 ===");
 
     this.initUIEnvironment();
     this.modalManager = new ModalManager(this);
@@ -44,7 +44,7 @@ export class MascotNanaiApp {
 
     this.startSecondTimer();
     this.isInitialized = true;
-    console.log("✅ Mascot Nanai 初期化完了");
+    console.log("✅ Nanai Android Mascot 初期化完了");
   }
 
   initUIEnvironment() {
@@ -185,6 +185,12 @@ export class MascotNanaiApp {
           return;
         }
 
+        // シェル（着せ替え）の直接切り替え
+        if (action === "switch-to-shell" && event.data.payload) {
+          this.ghostController.selectShell(event.data.payload);
+          return;
+        }
+
         // ゴースト切り替え / 汎用モーダル
         const modalKey = action === "ghost-switch" ? "ghost" : action;
         const contentId = `${modalKey}-modal-content`;
@@ -234,11 +240,21 @@ export class MascotNanaiApp {
   syncMenuGhosts() {
     const iframe = document.getElementById("menu-iframe");
     if (iframe?.contentWindow) {
+      // ゴースト一覧同期
       iframe.contentWindow.postMessage(
         {
           type: "sync-ghosts",
           ghosts: this.ghostController.ghosts || [{ name: "mock_nanai" }],
           currentGhost: this.ghostController.currentGhost,
+        },
+        "*"
+      );
+      // シェル一覧同期
+      iframe.contentWindow.postMessage(
+        {
+          type: "sync-shells",
+          shells: this.ghostController.shells || ["master"],
+          currentShell: this.ghostController.currentShell || "master",
         },
         "*"
       );
@@ -295,7 +311,7 @@ export class MascotNanaiApp {
 
   loadSettings() {
     try {
-      const saved = localStorage.getItem("mascot-nanai-settings");
+      const saved = localStorage.getItem("nanai-android-mascot-settings");
       if (saved) {
         this.settings = { ...this.settings, ...JSON.parse(saved) };
       }
@@ -331,5 +347,5 @@ export class MascotNanaiApp {
 
 // アプリケーション起動
 globalThis.addEventListener("DOMContentLoaded", () => {
-  globalThis.mascotApp = new MascotNanaiApp();
+  globalThis.mascotApp = new NanaiAndroidMascotApp();
 });

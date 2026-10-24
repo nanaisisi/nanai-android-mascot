@@ -128,7 +128,7 @@ src/windows/               (Windows固有機能検証時のみ)
       {
         "label": "main",
         "url": "index.html",
-        "title": "Mascot Nanai",
+        "title": "Nanai Android Mascot",
         "width": 400,
         "height": 600,
         "transparent": false,

@@ -1,5 +1,5 @@
 /**
- * Mascot Nanai - SHIORI 3.0 プロトコルパーサー & ビルダー
+ * Nanai Android Mascot - SHIORI 3.0 プロトコルパーサー & ビルダー
  * SHIORI/3.0 リクエストおよびレスポンスの生成・解釈
  */
 
@@ -11,7 +11,7 @@ export class ShioriProtocol {
    * @param {string} sender - 送信元ベースウェア名
    * @returns {string} SHIORI/3.0 リクエスト
    */
-  static buildRequest(id, references = [], sender = "MascotNanai") {
+  static buildRequest(id, references = [], sender = "NanaiAndroidMascot") {
     let req = `GET SHIORI/3.0\r\n`;
     req += `Sender: ${sender}\r\n`;
     req += `ID: ${id}\r\n`;

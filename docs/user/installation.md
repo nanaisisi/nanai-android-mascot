@@ -1,18 +1,20 @@
-# インストールガイド - Mascot Nanai
+# インストールガイド - Nanai Android Mascot
 
 > **AI関与について**: このドキュメントはGitHub Copilotの支援により作成されました。
 
-このガイドでは、Mascot Nanaiをお使いのデバイスにインストールする方法を説明します。
+このガイドでは、Nanai Android Mascotをお使いのデバイスにインストールする方法を説明します。
 
 ## システム要件
 
 ### 最小要件
+
 - **OS**: Windows 10 (64-bit) / Android 8.0 (API 26) 以上
 - **RAM**: 4GB以上
 - **ストレージ**: 1GB以上の空き容量
 - **ネットワーク**: インターネット接続（初回セットアップ時）
 
 ### 推奨要件
+
 - **OS**: Windows 11 / Android 11 以上
 - **RAM**: 8GB以上
 - **ストレージ**: 2GB以上の空き容量
@@ -26,22 +28,24 @@
 
 1. **リリースページから Download**
    - [Releases](https://github.com/nanaisisi/nanai-android-mascot/releases)
-   - 最新の `mascot-nanai-windows-x64.msi` をダウンロード
+   - 最新の `nanai-android-mascot-windows-x64.msi` をダウンロード
 
 2. **インストーラーの実行**
-   ```
-   mascot-nanai-windows-x64.msi を実行
+
+   ```text
+   nanai-android-mascot-windows-x64.msi を実行
    → インストールウィザードに従って進める
    → インストール完了
    ```
 
 3. **アプリケーションの起動**
-   - スタートメニューから「Mascot Nanai」を検索
+   - スタートメニューから「Nanai Android Mascot」を検索
    - または、デスクトップのショートカットをダブルクリック
 
-#### 方法2: ソースからビルド
+#### 方法2: ソースからビルド（Windows）
 
 1. **開発環境のセットアップ**
+
    ```bash
    # Rust のインストール
    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -54,6 +58,7 @@
    ```
 
 2. **ソースコードの取得**
+
    ```bash
    git clone https://github.com/nanaisisi/nanai-android-mascot.git
    cd nanai-android-mascot
@@ -61,6 +66,7 @@
    ```
 
 3. **ビルドと実行**
+
    ```bash
    # 依存関係のインストール
    cargo build --release
@@ -78,10 +84,11 @@
 
 1. **APKファイルの取得**
    - [Releases](https://github.com/nanaisisi/nanai-android-mascot/releases)
-   - 最新の `mascot-nanai-android.apk` をダウンロード
+   - 最新の `nanai-android-mascot-android.apk` をダウンロード
 
 2. **不明なソースの許可**
-   ```
+
+   ```text
    設定 → セキュリティ → 不明なソースを許可
    または
    設定 → アプリと通知 → 特別なアプリアクセス → 不明なアプリのインストール
@@ -91,9 +98,10 @@
    - ダウンロードした `.apk` ファイルをタップ
    - インストール確認ダイアログで「インストール」をタップ
 
-#### 方法2: ソースからビルド
+#### 方法2: ソースからビルド（Android）
 
 1. **開発環境のセットアップ**
+
    ```bash
    # Android Studio のインストール
    # https://developer.android.com/studio
@@ -111,6 +119,7 @@
    ```
 
 2. **ソースコードの取得**
+
    ```bash
    git clone https://github.com/nanaisisi/nanai-android-mascot.git
    cd nanai-android-mascot
@@ -118,6 +127,7 @@
    ```
 
 3. **Android用ビルド**
+
    ```bash
    # デバッグビルド
    cargo tauri android build -d -t aarch64
@@ -129,18 +139,20 @@
 ## 初回セットアップ
 
 ### 1. アプリケーションの起動
+
 - Windows: スタートメニューから起動
 - Android: アプリドロワーから起動
 
 ### 2. 初期設定
 
 #### 基本設定
+
 1. **言語設定**
    - 日本語（デフォルト）
    - English（将来対応予定）
 
 2. **ゴーストディレクトリの設定**
-   - Windows: `C:\Users\[ユーザー名]\Documents\Mascot Nanai\ghost`
+   - Windows: `C:\Users\[ユーザー名]\Documents\Nanai Android Mascot\ghost`
    - Android: `/storage/emulated/0/Android/data/com.mascot.nanai/ghost`
 
 3. **権限の確認**
@@ -151,7 +163,7 @@
 
 初回起動時に、テスト用のゴーストが自動的に読み込まれます：
 
-```
+```text
 assets/ghost/mock_nanai/
 ├── ghost/master/
 │   ├── descript.txt      # ゴースト基本情報
@@ -186,28 +198,34 @@ assets/ghost/mock_nanai/
 #### よくある問題
 
 ##### 1. アプリが起動しない
+
 **症状**: アプリケーションが起動せず、すぐに終了する
 
 **原因と対処法**:
-- **Windows**: 
+
+- **Windows**:
   - Microsoft Visual C++ 再頒布可能パッケージのインストール
   - Windows Defender の除外設定
-- **Android**: 
+- **Android**:
   - Android バージョンの確認（8.0以上）
   - ストレージ容量の確認
 
 ##### 2. ゴーストが表示されない
+
 **症状**: アプリは起動するが、キャラクターが表示されない
 
 **原因と対処法**:
+
 - ゴーストファイルの存在確認
 - ファイルパスの確認
 - 権限設定の確認
 
 ##### 3. メニューが動作しない
+
 **症状**: メニューボタンを押しても反応しない
 
 **原因と対処法**:
+
 - ブラウザコンポーネントの確認
 - JavaScript の有効化
 - セキュリティ設定の確認
@@ -215,14 +233,17 @@ assets/ghost/mock_nanai/
 ## サポート
 
 ### 公式サポート
-- **GitHub Issues**: https://github.com/nanaisisi/nanai-android-mascot/issues
-- **Discussions**: https://github.com/nanaisisi/nanai-android-mascot/discussions
+
+- **GitHub Issues**: <https://github.com/nanaisisi/nanai-android-mascot/issues>
+- **Discussions**: <https://github.com/nanaisisi/nanai-android-mascot/discussions>
 
 ### コミュニティサポート
+
 - **Wiki**: プロジェクトWikiページ
 - **FAQ**: よくある質問集
 
 ### 問題報告時の情報
+
 - OS バージョン
 - アプリバージョン
 - エラーメッセージ
@@ -230,6 +251,6 @@ assets/ghost/mock_nanai/
 
 ---
 
-*このガイドは継続的に更新されます。問題や改善提案があれば、Issue でお知らせください。*
+このガイドは継続的に更新されます。問題や改善提案があれば、Issue でお知らせください。
 
-*最終更新: 2025年7月11日*
+最終更新: 2026年10月24日

@@ -10,7 +10,7 @@
 		"withGlobalTauri": true,
 		"windows": [
 			{
-				"title": "Mascot Nanai",
+				"title": "Nanai Android Mascot",
 				"width": 400,
 				"height": 600,
 				"transparent": true,

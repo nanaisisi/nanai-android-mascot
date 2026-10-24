@@ -1,8 +1,8 @@
-# トラブルシューティング - Mascot Nanai
+# トラブルシューティング - Nanai Android Mascot
 
 > **AI関与について**: このドキュメントはGitHub Copilotの支援により作成されました。
 
-このドキュメントでは、Mascot Nanaiの使用中に発生する可能性のある問題とその解決方法について説明します。
+このドキュメントでは、Nanai Android Mascotの使用中に発生する可能性のある問題とその解決方法について説明します。
 
 ## よくある問題
 
@@ -199,10 +199,10 @@
 
    ```bash
    # Windows
-   %APPDATA%\mascot-nanai\settings.json
+   %APPDATA%\nanai-android-mascot\settings.json
    
    # Linux
-   ~/.local/share/mascot-nanai/settings.json
+   ~/.local/share/nanai-android-mascot/settings.json
    ```
 
 2. **権限の確認**:
@@ -267,8 +267,8 @@ RUST_LOG=nanai_android_mascot::ghost=debug cargo tauri dev
 
 ```bash
 # ログファイルの場所
-# Windows: %APPDATA%\mascot-nanai\logs\
-# Linux: ~/.local/share/mascot-nanai/logs/
+# Windows: %APPDATA%\nanai-android-mascot\logs\
+# Linux: ~/.local/share/nanai-android-mascot/logs/
 ```
 
 ### ブラウザ開発者ツール
@@ -291,10 +291,10 @@ RUST_LOG=nanai_android_mascot::ghost=debug cargo tauri dev
 
 ```bash
 # 設定ファイルの削除
-rm -rf ~/.local/share/mascot-nanai/
+rm -rf ~/.local/share/nanai-android-mascot/
 
 # キャッシュの削除
-rm -rf ~/.cache/mascot-nanai/
+rm -rf ~/.cache/nanai-android-mascot/
 
 # 再起動
 cargo tauri dev
@@ -316,7 +316,7 @@ cargo tauri dev
 
    ```bash
    # プロセス監視
-   top -p $(pgrep mascot-nanai)
+   top -p $(pgrep nanai-android-mascot)
    ```
 
 2. **ファイルアクセスの最適化**:
@@ -337,7 +337,7 @@ cargo tauri dev
 
 ```bash
 # メモリ使用量の監視
-watch -n 1 'ps aux | grep mascot-nanai'
+watch -n 1 'ps aux | grep nanai-android-mascot'
 
 # ヒープの確認（開発時）
 cargo tauri dev --features=heap-profiling
@@ -358,7 +358,7 @@ reg query "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\
 
 Windows Defender ファイアウォール
 → アプリの許可
-→ mascot-nanai.exe を許可
+→ nanai-android-mascot.exe を許可
 
 ### Linux固有の問題
 
@@ -366,7 +366,7 @@ Windows Defender ファイアウォール
 
 ```bash
 # 必要なライブラリの確認
-ldd target/release/mascot-nanai
+ldd target/release/nanai-android-mascot
 
 # 不足している場合
 sudo apt-get install libwebkit2gtk-4.0-dev

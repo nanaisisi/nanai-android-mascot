@@ -2,20 +2,67 @@
  * Mascot Nanai - クラシックメニューイベント制御
  */
 
-function dispatchAction(action) {
+function dispatchAction(action, payload = null) {
   if (!action) return;
-  console.log(`Classic Menu Action: ${action}`);
+  console.log(`Classic Menu Action: ${action}`, payload || "");
 
   if (globalThis.parent && globalThis.parent !== globalThis) {
     globalThis.parent.postMessage(
       {
         type: "menu-action",
         action: action,
+        payload: payload,
         timestamp: Date.now(),
       },
       "*"
     );
   }
+}
+
+// 親ウィンドウからの状態同期メッセージ受信
+globalThis.addEventListener("message", (event) => {
+  if (event.data?.type === "sync-ghosts") {
+    const ghosts = event.data.ghosts || [];
+    const currentGhost = event.data.currentGhost;
+    renderGhostSubmenu(ghosts, currentGhost);
+  }
+});
+
+function renderGhostSubmenu(ghosts, currentGhost) {
+  const container = document.getElementById("ghost-submenu");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  // 検出されたゴースト一覧
+  ghosts.forEach((ghost) => {
+    const isCurrent = currentGhost && currentGhost.name === ghost.name;
+    const btn = document.createElement("button");
+    btn.className = `menu-item ${isCurrent ? "is-current" : ""}`;
+    btn.dataset.ghostName = ghost.name;
+    btn.innerHTML = `<span>${isCurrent ? "✓ " : "　"}${ghost.name}</span>`;
+    btn.addEventListener("click", () => {
+      dispatchAction("switch-to-ghost", ghost.name);
+    });
+    container.appendChild(btn);
+  });
+
+  // セパレータ
+  if (ghosts.length > 0) {
+    const sep = document.createElement("div");
+    sep.className = "menu-separator";
+    container.appendChild(sep);
+  }
+
+  // ゴースト管理モーダルを開くボタン
+  const manageBtn = document.createElement("button");
+  manageBtn.className = "menu-item";
+  manageBtn.id = "ghost-btn";
+  manageBtn.innerHTML = `<span>📂 ゴースト管理...</span>`;
+  manageBtn.addEventListener("click", () => {
+    dispatchAction("ghost");
+  });
+  container.appendChild(manageBtn);
 }
 
 document.addEventListener("click", (e) => {

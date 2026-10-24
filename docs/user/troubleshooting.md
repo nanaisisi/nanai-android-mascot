@@ -9,11 +9,14 @@
 ### 🚨 起動関連の問題
 
 #### 問題1: アプリケーションが起動しない
-**症状**: 
+
+**症状**:
+
 - アプリケーションを起動しようとすると即座に終了する
 - エラーメッセージが表示されない
 
 **原因**:
+
 - Tauri ランタイムの問題
 - 依存関係の不足
 - 権限の問題
@@ -21,6 +24,7 @@
 **解決方法**:
 
 1. **Windows**:
+
    ```bash
    # デバッグモードで起動してログを確認
    RUST_LOG=debug cargo tauri dev
@@ -35,30 +39,36 @@
    - ファイアウォールの除外設定
 
 #### 問題2: 起動時にエラーメッセージが表示される
+
 **症状**:
+
 - "Failed to load ghost" エラー
 - "Configuration error" エラー
 
 **解決方法**:
+
 1. **ゴーストディレクトリの確認**:
-   ```
+
    assets/ghost/mock_nanai/ が存在するか確認
-   ```
 
 2. **設定ファイルの初期化**:
+
    ```bash
    # 設定ファイルの削除（初期化）
-   rm -rf ~/.local/share/mascot-nanai/
+   rm -rf ~/.local/share/nanai-android-mascot/
    ```
 
 ### 🎭 ゴースト関連の問題
 
 #### 問題3: ゴーストが表示されない
+
 **症状**:
+
 - アプリは起動するが、キャラクターが表示されない
 - 透明なウィンドウのみ表示される
 
 **原因**:
+
 - ゴーストファイルの破損
 - 画像ファイルの読み込み失敗
 - パスの問題
@@ -66,6 +76,7 @@
 **解決方法**:
 
 1. **ゴーストファイルの確認**:
+
    ```bash
    # ゴーストディレクトリの構造確認
    ls -la assets/ghost/mock_nanai/
@@ -73,19 +84,23 @@
    ```
 
 2. **画像ファイルの確認**:
+
    ```bash
    # 画像ファイルが存在するか確認
    ls -la assets/ghost/mock_nanai/shell/master/surface*.png
    ```
 
 3. **descript.txt の確認**:
-   ```
+
+   ```bash
    # ファイルの内容を確認
    cat assets/ghost/mock_nanai/shell/master/descript.txt
    ```
 
 #### 問題4: ゴーストの切り替えができない
+
 **症状**:
+
 - ゴースト管理画面でゴーストを選択しても変更されない
 - エラーメッセージが表示される
 
@@ -95,6 +110,7 @@
    - 設定 → デバッグ → スキャン実行
 
 2. **ログの確認**:
+
    ```bash
    # デバッグログの確認
    RUST_LOG=debug cargo tauri dev
@@ -107,11 +123,14 @@
 ### 🖱️ UI関連の問題
 
 #### 問題5: メニューが表示されない
+
 **症状**:
+
 - 右上のメニューボタンをクリックしても何も起こらない
 - メニューが部分的にしか表示されない
 
 **原因**:
+
 - iframe 通信の問題
 - JavaScript エラー
 - CSS の問題
@@ -119,24 +138,27 @@
 **解決方法**:
 
 1. **ブラウザコンソールの確認**:
-   ```
+
    F12 → Console タブ → エラーメッセージを確認
-   ```
 
 2. **iframe 通信の確認**:
+
    ```javascript
    // メニューiframeの読み込み確認
    console.log(document.getElementById('menu-iframe'));
    ```
 
 3. **キャッシュのクリア**:
+
    ```bash
    # アプリの再起動
    Ctrl+R でリロード
    ```
 
 #### 問題6: モーダルが正しく動作しない
+
 **症状**:
+
 - モーダルが開かない
 - モーダルの内容が表示されない
 - 背景が透過されない
@@ -144,6 +166,7 @@
 **解決方法**:
 
 1. **CSS の確認**:
+
    ```css
    /* モーダルの表示設定確認 */
    .modal {
@@ -153,6 +176,7 @@
    ```
 
 2. **JavaScript イベントの確認**:
+
    ```javascript
    // イベントリスナーの確認
    document.addEventListener('DOMContentLoaded', function() {
@@ -163,13 +187,16 @@
 ### 🔧 設定関連の問題
 
 #### 問題7: 設定が保存されない
+
 **症状**:
+
 - 設定を変更しても次回起動時に元に戻る
 - 設定画面でエラーが発生する
 
 **解決方法**:
 
 1. **設定ファイルの場所確認**:
+
    ```bash
    # Windows
    %APPDATA%\mascot-nanai\settings.json
@@ -183,6 +210,7 @@
    - ファイルの読み取り専用属性
 
 3. **設定の手動修正**:
+
    ```json
    {
        "ghost_directory": "assets/ghost",
@@ -195,7 +223,9 @@
 ### 📱 Android関連の問題
 
 #### 問題8: Android版が正しく動作しない
+
 **症状**:
+
 - アプリがクラッシュする
 - 一部の機能が使用できない
 
@@ -205,18 +235,18 @@
    - Android 8.0 (API 26) 以上が必要
 
 2. **権限の確認**:
-   ```
-   設定 → アプリ → Mascot Nanai → 権限
+
+   設定 → アプリ → Nanai-Android-Mascot → 権限
    → ストレージ権限を許可
-   ```
 
 3. **ストレージ容量の確認**:
    - 最低1GB以上の空き容量が必要
 
 4. **ログの確認**:
+
    ```bash
    # Android Debug Bridge でログ確認
-   adb logcat | grep mascot-nanai
+   adb logcat | grep nanai-android-mascot
    ```
 
 ## デバッグ方法
@@ -224,15 +254,17 @@
 ### ログの取得
 
 #### 開発環境でのログ
+
 ```bash
 # 詳細ログで起動
 RUST_LOG=debug cargo tauri dev
 
 # 特定のモジュールのログ
-RUST_LOG=mascot_nanai::ghost=debug cargo tauri dev
+RUST_LOG=nanai_android_mascot::ghost=debug cargo tauri dev
 ```
 
 #### 本番環境でのログ
+
 ```bash
 # ログファイルの場所
 # Windows: %APPDATA%\mascot-nanai\logs\
@@ -242,23 +274,21 @@ RUST_LOG=mascot_nanai::ghost=debug cargo tauri dev
 ### ブラウザ開発者ツール
 
 1. **コンソールの確認**:
-   ```
+
    F12 → Console タブ
-   ```
 
 2. **ネットワークの確認**:
-   ```
+
    F12 → Network タブ
-   ```
 
 3. **要素の確認**:
-   ```
+
    F12 → Elements タブ
-   ```
 
 ### 設定の初期化
 
 #### 完全な初期化
+
 ```bash
 # 設定ファイルの削除
 rm -rf ~/.local/share/mascot-nanai/
@@ -275,12 +305,15 @@ cargo tauri dev
 ### 重い・遅い場合
 
 #### 原因
+
 - メモリ不足
 - CPU使用率の高い処理
 - 大量のファイルアクセス
 
 #### 対策
+
 1. **メモリ使用量の確認**:
+
    ```bash
    # プロセス監視
    top -p $(pgrep mascot-nanai)
@@ -291,6 +324,7 @@ cargo tauri dev
    - キャッシュの活用
 
 3. **設定の調整**:
+
    ```json
    {
        "animation_fps": 30,
@@ -314,21 +348,22 @@ cargo tauri dev --features=heap-profiling
 ### Windows固有の問題
 
 #### WebView2の問題
+
 ```bash
 # WebView2 ランタイムの確認
 reg query "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}"
 ```
 
 #### ファイアウォールの問題
-```
+
 Windows Defender ファイアウォール
 → アプリの許可
 → mascot-nanai.exe を許可
-```
 
 ### Linux固有の問題
 
 #### 依存関係の問題
+
 ```bash
 # 必要なライブラリの確認
 ldd target/release/mascot-nanai
@@ -356,8 +391,10 @@ sudo apt-get install libwebkit2gtk-4.0-dev
 
 ## エラーログ
 ```
+
 RUST_LOG=debug の出力結果
-```
+
+```output
 
 ## 期待される動作
 ...

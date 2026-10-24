@@ -1,4 +1,4 @@
-/src/main/java/com/mascot_nanai/app/generated
+/src/main/java/com/nanai_android_mascot/app/generated
 /src/main/jniLibs/**/*.so
 /src/main/assets/tauri.conf.json
 /tauri.build.gradle.kts

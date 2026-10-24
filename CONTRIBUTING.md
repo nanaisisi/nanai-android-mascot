@@ -1,9 +1,10 @@
-> **AI 関与について**: このドキュメントは GitHub
-> Copilot の支援により作成されました。キャラクター設定・仕様はオーナーユーザーと AI の協議により決定されています。
 
 # 貢献ガイド - Mascot Nanai
 
 このプロジェクトへの貢献をお考えいただき、ありがとうございます。Mascot Nanai は AI 主導開発を採用したプロジェクトですが、コミュニティからの貢献を歓迎します。
+
+> **AI 関与について**: このドキュメントは GitHub
+> Copilot の支援により作成されました。キャラクター設定・仕様はオーナーユーザーと AI の協議により決定されています。
 
 ## 貢献の種類
 
@@ -53,8 +54,8 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 ```bash
 # リポジトリのクローン
-git clone https://github.com/nanaisisi/android-mascot-nanai.git
-cd android-mascot-nanai
+git clone https://github.com/nanaisisi/nanai-android-mascot.git
+cd nanai-android-mascot
 
 # サブモジュールの初期化
 git submodule update --init
@@ -98,7 +99,7 @@ cargo tauri dev
 
 #### プロンプトの例
 
-```
+```md
 # 機能実装時
 現在のプロジェクト: Tauri + Rust のデスクトップマスコット
 実装箇所: [具体的な場所]
@@ -111,20 +112,20 @@ cargo tauri dev
 
 ### Rust
 
-#### 基本方針
+#### Rust の基本方針
 
 - `cargo fmt` によるフォーマット
 - `cargo clippy` による lint チェック
 - `cargo test` による単体テスト
 
-#### 命名規則
+#### Rust の命名規則
 
 - 関数名: `snake_case`
 - 構造体名: `PascalCase`
 - 定数名: `UPPER_SNAKE_CASE`
 - モジュール名: `snake_case`
 
-#### コメント
+#### Rust のコメント
 
 - 公開 API には必ず doc コメント
 - 複雑な処理には説明コメント
@@ -145,20 +146,20 @@ pub fn get_ghost_info(ghost_name: &str) -> Result<GhostInfo, Error> {
 
 ### JavaScript
 
-#### 基本方針
+#### JavaScript の基本方針
 
 - ES6+ の使用
 - async/await の活用
 - エラーハンドリングの徹底
 
-#### 命名規則
+#### JavaScript の命名規則
 
 - 変数名: `camelCase`
 - 関数名: `camelCase`
 - クラス名: `PascalCase`
 - 定数名: `UPPER_SNAKE_CASE`
 
-#### コメント
+#### JavaScript のコメント
 
 - 関数には JSDoc コメント
 - 複雑な処理には説明コメント
@@ -343,6 +344,5 @@ A: バグ報告、ドキュメント改善、テストの追加など、品質�
 
 ---
 
-_このプロジェクトは AI 主導開発の実践例として、継続的に改善していきます。皆様の貢献をお待ちしています。_
-
+_このプロジェクトは AI 主導開発の実践例として、継続的に改善していきます。皆様の貢献をお待ちしています。_  
 _最終更新: 2025 年 7 月 11 日_

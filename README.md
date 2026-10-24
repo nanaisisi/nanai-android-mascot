@@ -1,118 +1,74 @@
 # Nanai Android Mascot
 
-> **AI 関与について**: このドキュメントは GitHub Copilot の支援により作成されました。キャラクター設定・仕様はオーナーユーザーと AI の協議により決定されています。
+> **AI 関与について**: このドキュメントは GitHub Copilot / Antigravity の支援により作成・更新されました。キャラクター設定・仕様はオーナーユーザーと AI の協議により決定されています。
 
-## 概要
+デスクトップマスコット規格「**伺か（UKAGAKA）**」の互換環境を提供する、Tauri v2 + Rust 製のクロスプラットフォーム・アプリケーションです。
 
-Android 向けの互換環境です。デスクトップ環境での動作確認を行って開発しています。
+---
 
-## 呼び出し実装
+## 🌟 主な特徴
 
-呼び出し実装は未完了です
+- 🤖 **AI 駆動開発** - GitHub Copilot / Antigravity との緊密な協調による設計・実装
+- 📱 **クロスプラットフォーム** - Windows デスクトップ検証（Windows First）から段階的に Android 環境へ適応
+- 🔧 **Tauri v2 + Rust + Web 技術** - 軽量・省メモリ・高速起動と、Web 標準（HTML5/Canvas/CSS/Modern JS）による高い拡張性を両立
+- 🎭 **高水準な伺か互換性** - さくらスクリプト、`surfaces.txt` 合成、当たり判定、標準クラシックメニュー、Shift_JIS 自動変換・VFS 対応
+- 🛡️ **SHIORI 多層フォールバック** - ネイティブ DLL、WebAssembly（WASM）、内蔵辞書パーサー/モックの多層連携
 
-### 🌟 特徴
+---
 
-- 🤖 **AI主導開発** - GitHub Copilotを活用した高品質な実装
-- 📱 **クロスプラットフォーム** - Android/Windows対応
-- 🔧 **モダンな技術** - Tauri + Rust + Web技術
-- 🎭 **伺か互換** - 既存の伺かゴーストとの互換性
-- 🎨 **拡張性** - Web技術によるカスタマイズ性
+## 🛠️ 技術構成
 
-呼び出し実装は未完了です。
-DLL の代わりに、内部的に呼び出して処理したらいいかなと。
+- **バックエンド**: Rust 2021, Tauri v2, `encoding_rs`
+- **フロントエンド**: Vanilla HTML5, Canvas 2D, Modern JavaScript, CSS3
+- **ゴーストデータ**: 公式モックキャラクター `mock_nanai` 同梱（`assets/ghost/mock_nanai`）
 
-## 実装
+---
 
-Android で dll を代替するために src 内に cpp ディレクトリを配置、 内部に各 shiori。 内部的に呼び出して使用
+## 🚀 クイックスタート
 
-## Tauri + Vanilla
+### 開発環境のセットアップ
 
-This template should help get you started developing with Tauri in vanilla HTML,
-CSS and Javascript.
+- [Rust](https://www.rust-lang.org/) (最新 stable)
+- [Node.js](https://nodejs.org/) (LTS 版)
+- [VS Code](https://code.visualstudio.com/) または [Antigravity IDE](https://antigravity.google/)
+- 推奨拡張機能: `rust-analyzer`, `Tauri`
 
-## Recommended IDE Setup
-
-- [VS Code](https://code.visualstudio.com/) +
-  [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) +
-  [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
-
-## How to build
+### ビルド & 実行 (Windows)
 
 ```bash
+# 開発モード起動
 cargo tauri dev
+
+# リリースビルド
+cargo tauri build
 ```
 
-## 署名無視 build、apk
+### ビルド & 実行 (Android)
 
 ```bash
+# デバッグビルド (aarch64)
+cargo tauri android build -d -t aarch64
+
+# 実機実行
 cargo tauri android run
 ```
 
-もしくは
+---
 
-```bash
-cargo tauri android build -d -t aarch64
-```
+## 📚 ドキュメント
 
-など
+プロジェクトの詳細な技術仕様書、設計書、ユーザーガイドは [`docs/`](docs/README.md) ディレクトリに体系的にまとめられています。
 
-## ライセンス
+- **[ドキュメント総合案内](docs/README.md)**
+- **[ユーザーガイド](docs/user/user-guide.md)**
+- **[インストール手順](docs/user/installation.md)**
+- **[システムアーキテクチャ](docs/developer/architecture.md)**
+- **[開発アプローチ](docs/process/development-approach.md)**
+- **[技術仕様書一覧](docs/spec/)**
 
-## 本ソフトウェア
+---
 
-デュアルライセンスからライセンスを選択してご使用ください。
+## 📄 ライセンス
 
-Licensed under either of
-
-Apache License, Version 2.0, (LICENSE-APACHE or
-<https://www.apache.org/licenses/LICENSE-2.0>) MIT license (LICENSE-MIT or
-<https://opensource.org/licenses/MIT>) at your option.
-
-## [SATORI-SHIORI](https://github.com/ukatech/satoriya-shiori)
-
-'''text
-BSD 2-Clause License
-
-Copyright (c) 2001-2005, Kusigahama Yagi. Copyright (c) 2006-, SEIBIHAN. All
-rights reserved.
-
-Redistribution and use in source and binary forms, with or without modification,
-are permitted provided that the following conditions are met:
-
-1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer.
-
-2. Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
-ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-'''
-
-## [YAYA-SHIORI](https://github.com/YAYA-shiori/yaya-shiori)
-
-'''text
-修正 BSD ライセンス
-
-Copyright (c) 2007-, 整備班 All rights reserved. <http://ms.shillest.net/>
-
-ソースコード形式かバイナリ形式か、変更するかしないかを問わず、以下の条件を満たす場合に限り、再頒布および使用が許可されます。
-
-・ソースコードを再頒布する場合、上記の著作権表示、本条件一覧、および下記免責条項を含めること。
-・バイナリ形式で再頒布する場合、頒布物に付属のドキュメント等の資料に、上記の著作権表示、本条件一覧、および下記免責条項を含めること。
-・書面による特別の許可なしに、本ソフトウェアから派生した製品の宣伝または販売促進に、「整備班」の名前または貢献者の名前を使用してはならない。
-
-本ソフトウェアは、著作権者および貢献者によって「現状のまま」提供されており、明示黙示を問わず、商業的な使用可能性、および特定の目的に対する適合性に関する暗黙の保証も含め、またそれに限定されない、いかなる保証もありません。著作権者も貢献者も、事由のいかんを問わず、
-損害発生の原因いかんを問わず、かつ責任の根拠が契約であるか厳格責任であるか（過失その他の）不法行為であるかを問わず、仮にそのような損害が発生する可能性を知らされていたとしても、本ソフトウェアの使用によって発生した（代替品または代用サービスの調達、使用の喪失、データの喪失、利益の喪失、業務の中断も含め、またそれに限定されない）直接損害、間接損害、偶発的な損害、特別損害、懲罰的損害、または結果損害について、一切責任を負わないものとします。
-
-'''
-  
+本ソフトウェアは Apache License 2.0 または MIT License のデュアルライセンスの元で提供されています。
+同梱されている外部 SHIORI や各アセットのライセンスについては、各ディレクトリ内のライセンスファイルを参照してください。

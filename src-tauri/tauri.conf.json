@@ -8,7 +8,7 @@
 	},
 	"app": {
 		"withGlobalTauri": true,
-		"windows": [	
+		"windows": [
 			{
 				"title": "Mascot Nanai",
 				"width": 400,

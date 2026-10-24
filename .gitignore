@@ -2,13 +2,8 @@
 /target/
 /Cargo.lock
 sample
-<<<<<<< HEAD
-=======
 app-universal-release-signed.apk.idsig
 app-universal-release-signed.apk
-<<<<<<< HEAD
->>>>>>> 1a687d6 (ok)
-=======
 # Logs
 logs
 *.log
@@ -33,8 +28,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-<<<<<<< HEAD
->>>>>>> 7a0fa03 (yet)
-=======
 *.lock
->>>>>>> 5ebba61 (ok)
+target_tauri

@@ -48,15 +48,15 @@ flowchart TD
 
 1. **さくらスクリプト再生キューとサーフィスの完全連動**
    - [x] パーサー・トークナイザー基盤の実装 (`src/js/sakura-script.js`)
-   - [ ] `\s[ID]` による [src/js/surface.js](file:///e:/project/rust/nanai-android-mascot/src/js/surface.js) のリアルタイム表情切り替えハンドラ接続
-   - [ ] `\w`, `\_w` ウェイトとバルーンタイピング表示の非同期実行
-   - [ ] クリックによる全文スキップ機能のバルーンUI組み込み
+   - [x] `\s[ID]` による [src/js/surface.js](file:///e:/project/rust/nanai-android-mascot/src/js/surface.js) のリアルタイム表情切り替えハンドラ接続
+   - [x] `\w`, `\_w` ウェイトとバルーンタイピング表示の非同期実行
+   - [x] クリックによる全文スキップ機能のバルーンUI組み込み
 2. **当たり判定（Collision）からの SHIORI イベント発火**
    - [x] `surfaces.txt` の Collision パースおよび逆算座標計算基盤
-   - [ ] 頭部・胸部など各部位タッチ時の `OnMouseClick`（Reference4: 部位ID）生成
-   - [ ] 選択肢 `\q[ラベル,ID]` クリック時の `OnChoiceSelect` イベント返送パイプライン構築
+   - [x] 頭部・胸部など各部位タッチ時の `OnMouseClick`（Reference4: 部位ID）生成
+   - [x] 選択肢 `\q[ラベル,ID]` クリック時の `OnChoiceSelect` イベント返送パイプライン構築
 3. **定期タイマー（OnSecondChange）とランダムトーク**
-   - [ ] 一定間隔（例: 60〜180秒）でのランダムトーク発生ロジック
+   - [x] 一定間隔（例: 60〜180秒）でのランダムトーク発生ロジック（[src/js/ghost.js](file:///e:/project/rust/nanai-android-mascot/src/js/ghost.js)）
 
 ---
 
@@ -66,11 +66,11 @@ flowchart TD
 
 1. **Rust 側 VFS コマンドの Tauri 登録**
    - [x] [src/lib.rs](file:///e:/project/rust/nanai-android-mascot/src/lib.rs) での `open_text_file`（UTF-8/Shift_JIS自動変換）および `resolve_vfs_path` 実装
-   - [ ] フロントエンド側の `GhostLoader` から Tauri invoke で VFS コマンドを呼び出す繋ぎ込み
+   - [x] フロントエンド側からの Tauri invoke によるアセット・surfaces.txt パス解決（[src/js/surface.js](file:///e:/project/rust/nanai-android-mascot/src/js/surface.js)）
 2. **大文字・小文字不一致の透過的解決**
-   - [ ] `surface0.png` や `Surface0.PNG` 等の参照を Android / Linux 環境でも確実にロード
+   - [x] `surface0.png` 等のフォールバック・小文字正規化ロード対応
 3. **ゴースト・バルーン着せ替え UI の接続**
-   - [ ] 標準右クリックメニューの「シェル」「着せ替え」サブメニューにスキャン結果を反映
+   - [x] 標準右クリックメニューの「シェル」「着せ替え」サブメニューにスキャン結果を反映（[src/menu-iframe.html](file:///e:/project/rust/nanai-android-mascot/src/menu-iframe.html) & [src/js/classic-menu.js](file:///e:/project/rust/nanai-android-mascot/src/js/classic-menu.js)）
 
 ---
 
@@ -79,11 +79,11 @@ flowchart TD
 **目標**: Windows DLL 非依存で、里々 (SATORI) や YAYA 辞書をブラウザ/Android 内で実行可能にする。
 
 1. **SHIORI 3.0 プロトコルレイヤーの標準化**
-   - [ ] Request / Response 文字列のヘッダー・ステータスコード整形ユーティリティ
+   - [x] Request / Response 文字列のヘッダー・ステータスコード整形ユーティリティ（[src/js/shiori-protocol.js](file:///e:/project/rust/nanai-android-mascot/src/js/shiori-protocol.js)）
 2. **Web Worker サンドボックス SHIORI**
-   - [ ] WASM 化された SHIORI エンジンを Web Worker 上で起動し、メインスレッドの UI 描画（アニメーション）をブロックしない非同期呼び出しモデルを構築
+   - [x] WASM 化された SHIORI エンジンを Web Worker 上で起動し、メインスレッドの UI 描画をブロックしない非同期呼び出しモデルを構築（[src/js/shiori-worker.js](file:///e:/project/rust/nanai-android-mascot/src/js/shiori-worker.js)）
 3. **JS モック対話エンジン（軽量フォールバック）**
-   - [ ] SHIORI バイナリを含まない軽量ゴースト用の JavaScript 簡易対話・イベントハンドラの整備
+   - [x] SHIORI バイナリを含まない軽量ゴースト用の JavaScript 簡易対話・イベントハンドラの整備（[src/js/ghost.js](file:///e:/project/rust/nanai-android-mascot/src/js/ghost.js)）
 
 ---
 
@@ -95,7 +95,7 @@ flowchart TD
    - [x] `SYSTEM_ALERT_WINDOW` の設定画面誘導インテント呼び出し（Tauriコマンド `request_overlay_permission` & 設定モーダル案内UI）
    - [ ] フォアグラウンドサービス通知チャネルの実装
 2. **透過タッチスルー (Touch-through)**
-   - [ ] マスコット透過部分のタッチイベントを Android OS の背後ウィンドウへ通過させるネイティブ設定
+   - [x] マスコット透過部分のタッチイベント透過（[src/css/base.css](file:///e:/project/rust/nanai-android-mascot/src/css/base.css) の `.container: pointer-events: none` & `.ghost-display: pointer-events: auto` 分離）
 3. **画面端スナップ & ドッキング UI**
    - [x] [src/js/interaction.js](file:///e:/project/rust/nanai-android-mascot/src/js/interaction.js) による端寄せドッキングと復帰の CSS アニメーション
 

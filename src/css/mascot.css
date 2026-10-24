@@ -128,10 +128,38 @@
 
 .balloon-text {
   color: #333;
-  text-align: center;
+  text-align: left;
   margin: 0;
-  font-size: 14px;
-  line-height: 1.4;
+  font-size: 13px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+/* バルーン内の選択肢ボタン */
+.balloon-choice-btn {
+  display: inline-block;
+  margin-top: 6px;
+  margin-right: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: #0078d7;
+  background: rgba(0, 120, 215, 0.08);
+  border: 1px solid rgba(0, 120, 215, 0.3);
+  border-radius: 4px;
+  cursor: pointer;
+  min-height: auto;
+  min-width: auto;
+  transition: all 0.15s ease;
+}
+
+.balloon-choice-btn:hover {
+  background: #0078d7;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.balloon-choice-btn:active {
+  transform: translateY(0);
 }
 
 /* ステータスバー（常駐インジケータ） */

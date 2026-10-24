@@ -97,10 +97,14 @@ export class GhostController {
     }
   }
 
-  async sendShioriEvent(eventName) {
+  async sendShioriEvent(eventName, args = []) {
     if (!globalThis.__TAURI__) {
-      this.app.showBalloon("こんにちは！(モック)");
-      setTimeout(() => this.app.hideBalloon(), 3000);
+      // モック対話（さくらスクリプトテスト用）
+      if (eventName === "OnChoiceSelect") {
+        this.app.playSakuraScript(`\\0\\s0選択肢「${args[1] || args[0]}」が選ばれたよ！\\w5\\nありがとう♪\\e`);
+      } else {
+        this.app.playSakuraScript("\\0\\s0こんにちは！\\w5\\n\\q[話しかける,Talk]\\n\\q[なでる,Stroke]\\e");
+      }
       return;
     }
 
@@ -109,15 +113,23 @@ export class GhostController {
         event: eventName,
       });
       if (response && response.trim()) {
-        this.app.showBalloon(response);
+        this.app.playSakuraScript(response);
       } else {
-        this.app.showBalloon("こんにちは！");
+        this.app.playSakuraScript("\\0\\s0……\\e");
       }
-      setTimeout(() => this.app.hideBalloon(), 3000);
-    } catch (error) {
-      console.error("❌ SHIORIイベントエラー:", error);
-      this.app.showBalloon("こんにちは！");
-      setTimeout(() => this.app.hideBalloon(), 3000);
+    } catch (_error) {
+      this.app.playSakuraScript("\\0\\s0エラーが発生したよ。\\e");
+    }
+  }
+
+  updateSurface(surfaceId) {
+    const ghostName = this.currentGhost?.name || "mock_nanai";
+    const img = document.querySelector(".character-placeholder img");
+    if (img) {
+      img.src = `assets/ghost/${ghostName}/shell/master/surface${surfaceId}.png`;
+      img.onerror = () => {
+        img.src = `assets/ghost/${ghostName}/shell/master/surface0.png`;
+      };
     }
   }
 
@@ -130,17 +142,10 @@ export class GhostController {
       return;
     }
 
-    if (ghostName === "mock_nanai") {
-      placeholder.innerHTML = `<img src="assets/ghost/mock_nanai/shell/master/surface0.png" 
-                                     alt="${ghostName}" 
-                                     style="width: 100%; height: 100%; object-fit: contain;" 
-                                     onerror="console.error('画像読み込みエラー');">`;
-    } else {
-      placeholder.innerHTML = `<img src="assets/ghost/${ghostName}/shell/master/surface0.png" 
-                                     alt="${ghostName}" 
-                                     style="width: 100%; height: 100%; object-fit: contain;" 
-                                     onerror="this.parentNode.innerHTML='👻';">`;
-    }
+    placeholder.innerHTML = `<img src="assets/ghost/${ghostName}/shell/master/surface0.png" 
+                                   alt="${ghostName}" 
+                                   style="width: 100%; height: 100%; object-fit: contain;" 
+                                   onerror="console.error('画像読み込みエラー'); this.style.display='none';">`;
     placeholder.title = ghostName || "";
   }
 

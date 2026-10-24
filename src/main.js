@@ -1,10 +1,7 @@
-/**
- * Mascot Nanai - メインコントローラー（エントリーポイント）
- */
-
 import { GhostController } from "./js/ghost.js";
 import { InteractionManager } from "./js/interaction.js";
 import { ModalManager } from "./js/modal.js";
+import { SakuraScriptPlayer } from "./js/sakura-script.js";
 
 export class MascotNanaiApp {
   constructor() {
@@ -20,6 +17,7 @@ export class MascotNanaiApp {
 
     this.ghostController = new GhostController(this);
     this.interactionManager = new InteractionManager(this);
+    this.sakuraPlayer = new SakuraScriptPlayer(this);
     this.modalManager = null;
 
     this.elements = {};
@@ -78,6 +76,11 @@ export class MascotNanaiApp {
 
     document.addEventListener("click", () => {
       this.hideMenu();
+    });
+
+    // バルーンクリックで文字送りスキップ
+    this.elements.balloonDisplay?.addEventListener("click", () => {
+      this.sakuraPlayer.skip();
     });
 
     document.addEventListener("contextmenu", (e) => {
@@ -176,6 +179,10 @@ export class MascotNanaiApp {
       this.elements.balloonText.textContent = text;
       this.elements.balloonDisplay.style.display = "block";
     }
+  }
+
+  playSakuraScript(script) {
+    return this.sakuraPlayer.play(script);
   }
 
   hideBalloon() {

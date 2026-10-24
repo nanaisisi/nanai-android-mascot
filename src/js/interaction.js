@@ -21,6 +21,11 @@ export class InteractionManager {
     let initialTop = 0;
     let hasMoved = false;
 
+    // 長押し（Long Press）によるモバイルメニュー表示
+    let longPressTimer = null;
+    let longPressTriggered = false;
+    const LONG_PRESS_DELAY = 600; // 600ms 長押しでメニュー表示
+
     // 撫で判定用
     let strokeDistance = 0;
     let strokeTriggered = false;
@@ -34,6 +39,7 @@ export class InteractionManager {
       hasMoved = false;
       strokeDistance = 0;
       strokeTriggered = false;
+      longPressTriggered = false;
 
       const clientX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
       const clientY = e.clientY ?? e.touches?.[0]?.clientY ?? 0;
@@ -46,6 +52,15 @@ export class InteractionManager {
       const rect = target.getBoundingClientRect();
       initialLeft = rect.left + rect.width / 2;
       initialTop = rect.top + rect.height / 2;
+
+      // 長押しタイマー開始
+      if (longPressTimer) clearTimeout(longPressTimer);
+      longPressTimer = setTimeout(() => {
+        if (isInteracting && !hasMoved && !strokeTriggered) {
+          longPressTriggered = true;
+          this.app?.toggleMenu();
+        }
+      }, LONG_PRESS_DELAY);
     };
 
     const onPointerMove = (e) => {
@@ -63,6 +78,10 @@ export class InteractionManager {
       // 初期の遊び（微小な手振れ）を超えたら動作判定開始
       if (!hasMoved && Math.hypot(deltaX, deltaY) > 5) {
         hasMoved = true;
+        if (longPressTimer) {
+          clearTimeout(longPressTimer);
+          longPressTimer = null;
+        }
       }
 
       // ドッキング中でない場合、ドラッグ移動または撫で判定
@@ -109,8 +128,13 @@ export class InteractionManager {
       isInteracting = false;
       target.classList.remove("is-dragging");
 
-      // 撫で判定が発火していた場合はタップやドラッグ確定を行わない
-      if (strokeTriggered) {
+      if (longPressTimer) {
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+      }
+
+      // 長押し発火後や撫で判定が発火していた場合はタップやドラッグ確定を行わない
+      if (longPressTriggered || strokeTriggered) {
         return;
       }
 

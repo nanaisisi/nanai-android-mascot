@@ -98,6 +98,10 @@
    - ダウンロードした `.apk` ファイルをタップ
    - インストール確認ダイアログで「インストール」をタップ
 
+> [!TIP]
+> **公式推奨アプリ（既存互換ベースウェア）**:  
+> Android 環境における既存の伺か互換アプリとして **[Ukadroid（伺か for Android）](https://play.google.com/store/apps/details?id=com.hiro.ukadroid)** が Google Play にて配信されています。
+
 #### 方法2: ソースからビルド（Android）
 
 1. **開発環境のセットアップ**

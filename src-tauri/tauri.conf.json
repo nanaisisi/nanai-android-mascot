@@ -1,14 +1,14 @@
 {
 	"$schema": "https://schema.tauri.app/config/2",
-	"productName": "mascot_nanai",
+	"productName": "nanai-android-mascot",
 	"version": "0.1.0",
-	"identifier": "com.mascot_nanai.app",
+	"identifier": "com.nanai-android-mascot.app",
 	"build": {
 		"frontendDist": "../src"
 	},
 	"app": {
 		"withGlobalTauri": true,
-		"windows": [
+		"windows": [	
 			{
 				"title": "Mascot Nanai",
 				"width": 400,

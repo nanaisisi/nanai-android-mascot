@@ -1,8 +1,8 @@
 {
 	"$schema": "https://schema.tauri.app/config/2",
-	"productName": "mascot_nanai-test",
+	"productName": "nanai-android-mascot-test",
 	"version": "0.1.0-test",
-	"identifier": "com.mascot_nanai.test.app",
+	"identifier": "com.nanai-android-mascot.test.app",
 	"build": {
 		"beforeDevCommand": "dx serve --port 1421",
 		"devUrl": "http://localhost:1421",
@@ -13,7 +13,7 @@
 		"withGlobalTauri": true,
 		"windows": [
 			{
-				"title": "mascot_nanai-test",
+				"title": "nanai-android-mascot-test",
 				"width": 800,
 				"height": 600
 			}

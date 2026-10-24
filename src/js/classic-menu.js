@@ -122,6 +122,7 @@ document.addEventListener("keydown", (e) => {
   const keyMap = {
     t: "talk",
     u: "update",
+    h: "headline",
     b: "balloon",
     r: "scan",
     p: "plugins",

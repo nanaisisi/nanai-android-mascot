@@ -16,10 +16,10 @@ pub fn get_ghost_dir_list() -> Vec<String> {
     let mut list = Vec::new();
     if let Ok(entries) = fs::read_dir(&ghost_dir) {
         for entry in entries.flatten() {
-            if entry.path().is_dir() {
-                if let Some(name) = entry.file_name().to_str() {
-                    list.push(name.to_string());
-                }
+            if entry.path().is_dir()
+                && let Some(name) = entry.file_name().to_str()
+            {
+                list.push(name.to_string());
             }
         }
     }

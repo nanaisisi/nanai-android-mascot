@@ -10,10 +10,10 @@ pub fn open_text_file(path: &Path) -> Result<String, io::Error> {
     file.read_to_end(&mut buffer)?;
 
     // 1. UTF-8 BOM チェック (0xEF, 0xBB, 0xBF)
-    if buffer.starts_with(&[0xEF, 0xBB, 0xBF]) {
-        if let Ok(utf8_str) = std::str::from_utf8(&buffer[3..]) {
-            return Ok(utf8_str.to_string());
-        }
+    if buffer.starts_with(&[0xEF, 0xBB, 0xBF])
+        && let Ok(utf8_str) = std::str::from_utf8(&buffer[3..])
+    {
+        return Ok(utf8_str.to_string());
     }
 
     // 2. 標準 UTF-8 としてのパース試行
@@ -24,7 +24,10 @@ pub fn open_text_file(path: &Path) -> Result<String, io::Error> {
     // 3. Shift_JIS / CP932 フォールバックデコード
     let (cow, _encoding_used, had_errors) = SHIFT_JIS.decode(&buffer);
     if had_errors {
-        eprintln!("Warning: Some Shift_JIS characters couldn't be decoded properly in {:?}", path);
+        eprintln!(
+            "Warning: Some Shift_JIS characters couldn't be decoded properly in {:?}",
+            path
+        );
     }
 
     Ok(cow.into_owned())
@@ -66,9 +69,9 @@ pub fn resolve_vfs_path(base_dir: &Path, relative_path: &str) -> Option<PathBuf>
             }
         });
 
-        match found {
-            Some(p) => current = p,
-            None => return None,
+        {
+            let p = found?;
+            current = p
         }
     }
     Some(current)
@@ -93,16 +96,20 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
                     if chars.next() == Some('[') {
                         let mut num = String::new();
                         while let Some(&nc) = chars.peek() {
-                            if nc == ']' { chars.next(); break; }
-                            num.push(nc); chars.next();
+                            if nc == ']' {
+                                chars.next();
+                                break;
+                            }
+                            num.push(nc);
+                            chars.next();
                         }
                         if let Ok(n) = num.parse() {
                             callback(SakuraCommand::Surface(n));
                         }
                     }
-                },
+                }
                 Some('e') => callback(SakuraCommand::End),
-                Some(_) | None => {},
+                Some(_) | None => {}
             }
         } else {
             buffer.push(c);
@@ -116,10 +123,10 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
 /// さくらスクリプトの内部コマンド列挙
 #[derive(Debug, Clone)]
 pub enum SakuraCommand {
-    Target(u8),      // \0, \1 など
-    Surface(u32),    // \s[0] など
-    Text(String),    // 通常テキスト
-    End,             // \e
+    Target(u8),   // \0, \1 など
+    Surface(u32), // \s[0] など
+    Text(String), // 通常テキスト
+    End,          // \e
 }
 
 #[cfg(test)]

@@ -1,7 +1,6 @@
 mod app;
 
 use rust_i18n::i18n;
-use sys_locale;
 
 // 翻訳リソースの設定
 i18n!("locales");

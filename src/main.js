@@ -59,8 +59,44 @@ export class NanaiAndroidMascotApp {
       keroBalloonText: document.getElementById("kero-balloon-text"),
       menuContainer: document.getElementById("menu-iframe-container"),
       menuBtn: document.getElementById("menu-btn"),
+      quickExitBtn: document.getElementById("quick-exit-btn"),
       quickBubble: document.getElementById("quick-bubble"),
     };
+  }
+
+  /**
+   * アプリケーションを安全に終了
+   */
+  async closeApp() {
+    try {
+      this.hideMenu();
+      this.modalManager?.hide();
+      // SHIORI OnCloseイベント通知
+      try {
+        await this.ghostController.sendShioriEvent("OnClose");
+      } catch (_e) {
+        // エラー無視
+      }
+
+      this.showBalloon("さようなら…！");
+      setTimeout(async () => {
+        if (globalThis.__TAURI__) {
+          try {
+            await globalThis.__TAURI__.invoke("exit_app");
+          } catch (_e) {
+            globalThis.window.close();
+          }
+        } else {
+          globalThis.window.close();
+        }
+      }, 1000);
+    } catch (_err) {
+      if (globalThis.__TAURI__) {
+        globalThis.__TAURI__.invoke("exit_app").catch(() => globalThis.window.close());
+      } else {
+        globalThis.window.close();
+      }
+    }
   }
 
   setupEventListeners() {
@@ -88,6 +124,12 @@ export class NanaiAndroidMascotApp {
       );
     }
 
+
+    // クイック終了ボタン
+    this.elements.quickExitBtn?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.closeApp();
+    });
 
     // メニュー表示切り替え
     this.elements.menuBtn?.addEventListener("click", (e) => {
@@ -119,6 +161,9 @@ export class NanaiAndroidMascotApp {
       if (e.key === "Escape") {
         this.modalManager?.hide();
         this.hideMenu();
+      } else if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === "w" || e.key.toLowerCase() === "q")) {
+        e.preventDefault();
+        this.closeApp();
       }
     });
 
@@ -165,13 +210,7 @@ export class NanaiAndroidMascotApp {
         }
 
         if (action === "close") {
-          this.showBalloon("さようなら…！");
-          setTimeout(() => {
-            if (globalThis.__TAURI__) {
-              // Tauriウィンドウ閉じる
-              globalThis.window.close();
-            }
-          }, 1000);
+          this.closeApp();
           return;
         }
 

@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">nanai_android_mascot</string>
-    <string name="main_activity_title">nanai_android_mascot</string>
+    <string name="app_name">"nanai-android-mascot"</string>
+    <string name="main_activity_title">"nanai-android-mascot"</string>
 </resources>

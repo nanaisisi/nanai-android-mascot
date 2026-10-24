@@ -129,6 +129,8 @@ document.addEventListener("keydown", (e) => {
     o: "settings",
     d: "debug",
     a: "help",
+    i: "minimize",
+    w: "close",
   };
 
   const action = keyMap[e.key.toLowerCase()];

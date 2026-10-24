@@ -424,6 +424,13 @@ async fn test_command() -> Result<String, String> {
     Ok("SHIORI統合テスト成功!".to_string())
 }
 
+/// アプリケーション終了コマンド
+#[tauri::command]
+async fn exit_app(app_handle: tauri::AppHandle) -> Result<(), String> {
+    app_handle.exit(0);
+    Ok(())
+}
+
 // ========================================
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -484,7 +491,8 @@ pub fn run() {
             unload_current_ghost,
             request_overlay_permission,
             setup_foreground_service,
-            test_command
+            test_command,
+            exit_app
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

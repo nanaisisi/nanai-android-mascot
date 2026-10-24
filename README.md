@@ -53,6 +53,7 @@ cargo tauri android run
 ```bash
 cargo tauri android build -d -t aarch64
 ```
+
 など
 
 ## ライセンス

@@ -9,7 +9,7 @@ Nanai Android Mascot は、Tauri フレームワークを使用したクロス�
 
 ## 全体アーキテクチャ
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                    Nanai Android Mascot                            │
 ├─────────────────────────────────────────────────────────────┤
@@ -79,7 +79,7 @@ Nanai Android Mascot は、Tauri フレームワークを使用したクロス�
 
 #### データフロー
 
-```
+```text
 User Interaction → JavaScript Event → Tauri Command → Rust Backend
                                                             ↓
 UI Update ← JavaScript Handler ← Tauri Event ← Rust Response
@@ -240,7 +240,7 @@ pub struct AppSettings {
 
 ### フロントエンド
 
-```
+```text
 src/
 ├── index.html              # メインHTML
 ├── main.js                 # メインJavaScript
@@ -252,7 +252,7 @@ src/
 
 ### バックエンド
 
-```
+```text
 src-tauri/
 ├── src/
 │   ├── main.rs            # アプリケーションエントリポイント

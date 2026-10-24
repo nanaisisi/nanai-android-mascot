@@ -99,8 +99,10 @@
    - インストール確認ダイアログで「インストール」をタップ
 
 > [!TIP]
-> **公式推奨アプリ（既存互換ベースウェア）**:  
-> Android 環境における既存の伺か互換アプリとして **[Ukadroid（伺か for Android）](https://play.google.com/store/apps/details?id=com.hiro.ukadroid)** が Google Play にて配信されています。
+> **コミュニティ・既存互換ベースウェア**:  
+>
+> - 伺かの主要 SHIORI や技術仕様については、公式的な開発コミュニティ **[Ukagaka Tech Team (ukatech)](https://ukatech.shillest.net/)** を参照してください。
+> - Android 環境ですでに広く利用されている既存互換アプリとしては **[Ukadroid（伺か for Android）](https://play.google.com/store/apps/details?id=com.hiro.ukadroid)** が Google Play にて提供されています。
 
 #### 方法2: ソースからビルド（Android）
 

@@ -45,6 +45,18 @@
   opacity: 1;
 }
 
+/* 1番手キャラクター（kero）のスタイル */
+.ghost-display.kero-display {
+  width: 140px;
+  height: 280px;
+  z-index: 49;
+}
+
+.balloon-display.kero-balloon .balloon {
+  background: rgba(240, 248, 255, 0.95);
+  border: 1px solid rgba(100, 149, 237, 0.3);
+}
+
 .ghost-character {
   width: 100%;
   height: 100%;

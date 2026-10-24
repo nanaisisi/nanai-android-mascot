@@ -57,10 +57,10 @@
 
       <!-- メイン表示エリア（ゴースト・バルーン表示） -->
       <div class="main-display">
-        <!-- ゴーストキャラクター表示（ドラッグ可能コンテナ） -->
+        <!-- ゴーストキャラクター表示（0番: sakura） -->
         <div class="ghost-display" id="ghost-display">
           <div class="ghost-character" id="ghost-character">
-            <span class="character-placeholder"></span>
+            <span class="character-placeholder" id="sakura-placeholder"></span>
           </div>
           <!-- モバイル向けクイックバブル（タップでメニュー表示） -->
           <button class="quick-bubble" id="quick-bubble" title="クイックメニュー">
@@ -68,12 +68,26 @@
           </button>
         </div>
 
-        <!-- バルーン表示 -->
+        <!-- サブキャラクター表示（1番: kero） -->
+        <div class="ghost-display kero-display" id="kero-display" style="display: none;">
+          <div class="ghost-character" id="kero-character">
+            <span class="character-placeholder" id="kero-placeholder"></span>
+          </div>
+        </div>
+
+        <!-- バルーン表示 (0番: sakura用) -->
         <div class="balloon-display" id="balloon-display" style="display: none">
           <div class="balloon">
             <div class="balloon-text" id="balloon-text">
               こんにちは！マスコットナナイです。
             </div>
+          </div>
+        </div>
+
+        <!-- バルーン表示 (1番: kero用) -->
+        <div class="balloon-display kero-balloon" id="kero-balloon-display" style="display: none">
+          <div class="balloon">
+            <div class="balloon-text" id="kero-balloon-text"></div>
           </div>
         </div>
 

@@ -90,6 +90,7 @@ JavaScript / WebView Layer
 ### 3. インターフェース仕様（公式実装のエクスポート仕様）
 
 #### 従来の Windows DLL API
+
 ```c
 HGLOBAL __declspec(dllexport) __cdecl request(HGLOBAL h, long *len);
 BOOL __declspec(dllexport) __cdecl load(HGLOBAL h, long len);
@@ -97,6 +98,7 @@ BOOL __declspec(dllexport) __cdecl unload();
 ```
 
 #### POSIX / WASM / C++ 直接リンク時の API (公式実装準拠)
+
 公式リポジトリ（`satoriya-shiori`, `yaya-shiori`, `kawari`）の POSIX / Emscripten 実装では、Windows の `GlobalAlloc` / `GlobalFree` の代わりに標準の `malloc` / `free` またはバッファポインタ渡しが採用されています。
 
 - **`load(char* h, long len) -> int`**:
@@ -109,6 +111,7 @@ BOOL __declspec(dllexport) __cdecl unload();
   - 辞書や仮想マシンの解放を行い、終了コード（1: 成功）を返却。
 
 #### Rust FFI バインディング仕様
+
 ```rust
 use std::os::raw::{c_char, c_int, c_long};
 
@@ -127,16 +130,19 @@ extern "C" {
 ## 実装段階
 
 ### Phase 1: 基本統合
+
 1. **C++ビルド環境**: CMake / Cargo `cc` クレートによるサブモジュール直接ビルド
 2. **FFI Bridge**: Rust-C++ 間のメモリ管理（`malloc`/`free`）および文字コード変換（UTF-8 ↔ CP932）
 3. **最小動作**: `load` → `request("GET SHIORI/3.0...")` → `unload` パイプライン
 
 ### Phase 2: SHIORI 機能
+
 1. **ゴーストローディング**: `descript.txt` 解析（`shiori` 定義に基づくディスパッチ）
 2. **メッセージ処理**: SakuraScript のパースとバルーン表示キューの同期
 3. **状態管理**: セッション・変数の永続化およびセーブデータ保護
 
 ### Phase 3: 多層フォールバック & プラグイン
+
 1. **エンジン自動切替**: SATORI / YAYA / KAWARI / JS フォールバックの透過切り替え
 2. **WASM サンドボックス**: Emscripten / Wasmtime による Android / Web セキュア実行
 3. **パフォーマンス最適化**: メモリ使用量と起動遅延の削減

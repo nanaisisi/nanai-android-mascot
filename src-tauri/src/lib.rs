@@ -250,7 +250,7 @@ fn resolve_asset_path(
 }
 
 /// パスを正規化（../などを解決）
-fn normalize_path(path: &PathBuf) -> PathBuf {
+fn normalize_path(path: &Path) -> PathBuf {
     // canonicalize()でパスを正規化を試みる
     if let Ok(canonical) = path.canonicalize() {
         canonical

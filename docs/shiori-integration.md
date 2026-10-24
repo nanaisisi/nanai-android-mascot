@@ -29,7 +29,7 @@ DLL ベースの SHIORI 実装をネイティブコードとして組み込む�
 
 Windows DLL の代替として、SHIORI ソースコードを直接アプリケーションに組み込む。
 
-```
+```text
 従来: SSP.exe → SHIORI.dll
 新方式: Tauri App → 組み込みSHIORI
 ```
@@ -38,7 +38,7 @@ Windows DLL の代替として、SHIORI ソースコードを直接アプリケ�
 
 ### 1. ソースコード配置
 
-```
+```text
 src/cpp/
 ├── satoriya-shiori/     # SATORI SHIORI実装
 │   ├── satoriya/        # コア
@@ -51,7 +51,7 @@ src/cpp/
 
 ### 2. 統合レイヤー構成
 
-```
+```text
 JavaScript/WebView Layer
          ↕
     Tauri Commands
@@ -140,19 +140,19 @@ fn main() {
 
 ### 1. ゴースト初期化
 
-```
+```text
 User Input → JavaScript → Tauri Command → Rust → C++ SHIORI Load
 ```
 
 ### 2. メッセージ処理
 
-```
+```text
 User Click → JavaScript Event → Tauri Request → Rust FFI → C++ Process → Response
 ```
 
 ### 3. 状態同期
 
-```
+```text
 SHIORI State ↔ Rust Storage ↔ JavaScript State ↔ UI Update
 ```
 

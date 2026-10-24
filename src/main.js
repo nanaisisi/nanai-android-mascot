@@ -94,7 +94,7 @@ export class MascotNanaiApp {
     });
 
     // iframe メニューからの postMessage 受信
-    window.addEventListener("message", (event) => {
+    globalThis.addEventListener("message", (event) => {
       if (event.data?.type === "menu-action") {
         this.hideMenu();
         const contentId = `${event.data.action}-modal-content`;
@@ -141,7 +141,9 @@ export class MascotNanaiApp {
       if (this.ghostController.currentGhost && globalThis.__TAURI__) {
         try {
           await globalThis.__TAURI__.invoke("on_second_change");
-        } catch (_) {}
+        } catch (_error) {
+          // SHIORI未ロードまたは非サポート時は無視
+        }
       }
     }, 1000);
   }
@@ -152,7 +154,9 @@ export class MascotNanaiApp {
       if (saved) {
         this.settings = { ...this.settings, ...JSON.parse(saved) };
       }
-    } catch (_) {}
+    } catch (_error) {
+      // 設定未保存またはパース失敗時はデフォルト維持
+    }
   }
 
   applySettings() {

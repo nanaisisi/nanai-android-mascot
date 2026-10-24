@@ -8,11 +8,14 @@
 伺かのベースウェア周辺技術（SHIORI、各種仕様、ツール群）を現在開発・保守している中核コミュニティとして **Ukagaka Tech Team** が存在します。
 
 - **サイト**: [Ukagaka Tech Team (ukatech)](https://ukatech.shillest.net/)
+- **公式仕様・ドキュメントリポジトリ**:
+  - [ukatech/ukadoc-spec](https://github.com/ukatech/ukadoc-spec) - UKADOC 公式仕様書リポジトリ（さくらスクリプト・SHIORIプロトコル・サーフィス定義等の標準仕様）
+  - [ukatech/ukadoc-ssp](https://github.com/ukatech/ukadoc-ssp) - SSP 固有機能および拡張仕様リポジトリ
+  - [UKADOC Project マニュアル](https://ssp.shillest.net/ukadoc/) - Web 公開版マニュアル
 - **主な保守プロジェクト**:
   - **YAYA**: 汎用スクリプトSHIORI（[yaya-shiori](https://github.com/YAYA-shiori/yaya-shiori)）
   - **里々 (SATORI)**: 台本形式SHIORI（[satoriya-shiori](https://github.com/ukatech/satoriya-shiori)）
   - **華和梨 (KAWARI)**: KISインタプリタSHIORI
-  - 仕様ドキュメント・各種テンプレートの保守
 
 ---
 

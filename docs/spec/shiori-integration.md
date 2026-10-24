@@ -5,34 +5,57 @@
 
 ## 概要
 
-Android 向け SSP 互換環境において、Windows
-DLL ベースの SHIORI 実装をネイティブコードとして組み込む技術仕様。
+Android およびクロスプラットフォーム向け伺か（UKAGAKA）互換環境において、**[UKADOC (Ukagaka Documentation Project)](https://ssp.shillest.net/ukadoc/)** の公式仕様に準拠しつつ、Windows DLL 依存から脱却するための統合技術仕様。
 
-## 背景と課題
+## 背景と移植ステータス分析（2026年現状）
 
-### 従来の SHIORI システム
+### 1. 公式エコシステムの移植ステータス
 
-- **SHIORI**: ゴーストの人工知能を担う DLL
-- **Windows DLL**: Windows 固有の動的ライブラリ形式
-- **API 呼び出し**: SSP（本体）から DLL 関数を直接呼び出し
+Ukagaka Tech Team（`ukatech`）および公式ドキュメントプロジェクト（`ukadoc`）を調査した結果、エコシステムの現状は以下の通りです：
 
-### Android 環境での課題
+- **公式仕様の基準**:
+  - [ukatech/ukadoc-spec](https://github.com/ukatech/ukadoc-spec) - UKADOC 公式仕様書リポジトリ（さくらスクリプト、SHIORI 3.0 プロトコル、surfaces.txt 等の基幹仕様）
+  - [ukatech/ukadoc-ssp](https://github.com/ukatech/ukadoc-ssp) - SSP 固有仕様・拡張リファレンスリポジトリ
+  - Web 版公式マニュアル: [UKADOC Project (ssp.shillest.net/ukadoc/)](https://ssp.shillest.net/ukadoc/)
+- **公式 SHIORI 実装の現状**:
+  - 里々（`ukatech/satoriya-shiori`）や YAYA（`YAYA-shiori/yaya-shiori`）の公式リポジトリは、Windows / MSVC を主軸としつつ Linux/POSIX 向けビルドテスト等のクロスプラットフォーム化を進めている**「移植・整備の途上」**にある。
+  - 公式リポジトリ単体での Android NDK / WebAssembly (WASM) 向けビルド済みパッケージや完全移植版はまだ提供されていない。
 
-1. **DLL 非対応**: Android は Windows DLL を実行できない
-2. **セキュリティ制約**: Mobile OS のサンドボックス制約
-3. **エミュレーション限界**: wine 等のエミュレーターは非現実的
-4. **パフォーマンス**: 仮想化オーバーヘッドの問題
+### 2. 本プロジェクトにおける解決戦略（3層ハイブリッド構造）
 
-## 解決アプローチ
+公式リポジトリが移植途上であることを前提とし、開発の停滞を防ぎつつ安定した動作を確保するため、以下の **3層多層フォールバック** を採用します。
 
-### コード組み込み方式
+```mermaid
+flowchart TD
+    Req[ユーザー操作 / タイマー発火] --> Router{SHIORI エンジンルーター}
+    
+    Router -->|優先度 1: 内蔵 JS/TS エンジン| L1[Layer 1: JavaScript 軽量 SHIORI<br>・WASM/ネイティブ不要で 100% 稼働<br>・モバイル省電力 & mock_nanai 即時対話]
+    
+    Router -->|優先度 2: C++ 直接組み込み / WASM| L2[Layer 2: C++ ソース統合 (里々 / YAYA)<br>・Android NDK / Rust build.rs 直接コンパイル<br>・または Emscripten WASM Worker]
+    
+    Router -->|優先度 3: Win32 DLL (Windows のみ)| L3[Layer 3: ネイティブ DLL 直接呼出<br>・Windows デスクトップ検証時の互換リファレンス]
 
-Windows DLL の代替として、SHIORI ソースコードを直接アプリケーションに組み込む。
-
-```text
-従来: SSP.exe → SHIORI.dll
-新方式: Tauri App → 組み込みSHIORI
+    L1 --> Resp[さくらスクリプト応答]
+    L2 --> Resp
+    L3 --> Resp
 ```
+
+---
+
+## UKADOC 標準イベントとモバイル操作のマッピング仕様
+
+[UKADOC SHIORI/3.0 Event](https://ssp.shillest.net/ukadoc/manual/spec_shiori3.html) に完全準拠したイベント送受信パイプラインを定義します。
+
+| モバイル操作 | 送信 SHIORI イベント | ヘッダ・パラメータ仕様 (Reference) | 動作・備考 |
+| :--- | :--- | :--- | :--- |
+| **単発タップ（つつき）** | `OnMouseClick` | `Reference0: X座標`<br>`Reference1: Y座標`<br>`Reference2: 0 (左クリック相当)`<br>`Reference3: 0 (sakura) / 1 (kero)`<br>`Reference4: 当たり判定ID (head, bust等)` | `surfaces.txt` の Collision 矩形から逆算判定 |
+| **スワイプ移動（なで）** | `OnMouseMove` | `Reference0: X座標`<br>`Reference1: Y座標`<br>`Reference2: 0`<br>`Reference3: 0 (sakura) / 1 (kero)`<br>`Reference4: 当たり判定ID` | 一定回数・距離のストローク検知で「なで」反応 |
+| **長押し（600ms）** | `OnMouseDoubleClick` または メニュー | `Reference4: 当たり判定ID` | 部位固有のダブルクリック応答、またはクラシックメニュー展開 |
+| **定期タイマー** | `OnSecondChange` | `Reference0: 起動時からの秒数`<br>`Reference1: 重複不可フラグ`<br>`Reference2: 最小化中フラグ (0/1)` | 自発トーク（ランダムトーク）周期駆動 |
+| **選択肢タップ** | `OnChoiceSelect` | `Reference0: 選択肢ID` (`\q[ラベル,ID]`) | スクリプト対話分岐の進行 |
+| **起動・終了** | `OnBoot` / `OnClose` | `Reference0: シェル名` | 起動挨拶、終了前トーク処理 |
+
+---
 
 ## 技術アーキテクチャ
 
@@ -40,10 +63,10 @@ Windows DLL の代替として、SHIORI ソースコードを直接アプリケ�
 
 ```text
 src/cpp/
-├── satoriya-shiori/     # SATORI SHIORI実装
-│   ├── satoriya/        # コア
+├── satoriya-shiori/     # SATORI SHIORI (ukatech/satoriya-shiori submodule)
+│   ├── satoriya/        # コアソース (POSIX/Windows 互換)
 │   └── LICENSE          # BSD 2-Clause
-└── yaya-shiori/         # YAYA SHIORI実装
+└── yaya-shiori/         # YAYA SHIORI (YAYA-shiori/yaya-shiori submodule)
     ├── *.cpp            # 実装ファイル群
     ├── *.h              # ヘッダーファイル群
     └── LICENSE          # 修正BSD
@@ -52,15 +75,13 @@ src/cpp/
 ### 2. 統合レイヤー構成
 
 ```text
-JavaScript/WebView Layer
+JavaScript / WebView Layer
+         ↕ (Tauri Commands / Events)
+    Tauri Bridge (Rust)
+         ↕ (Rust FFI & build.rs cc)
+    C++ SHIORI Engine (里々 / YAYA)  OR  JS Fallback Engine
          ↕
-    Tauri Commands
-         ↕
-    Rust FFI Bridge
-         ↕
-    C++ SHIORI Engine
-         ↕
-    Ghost Data Files
+    Ghost Files (descript.txt / 辞書ファイル)
 ```
 
 ### 3. インターフェース変換

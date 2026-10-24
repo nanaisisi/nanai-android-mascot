@@ -143,6 +143,10 @@ export class MascotNanaiApp {
           return;
         }
 
+        if (action === "close-menu") {
+          return;
+        }
+
         if (action === "minimize") {
           this.showBalloon("また呼んでね！");
           setTimeout(() => {
@@ -153,7 +157,9 @@ export class MascotNanaiApp {
           return;
         }
 
-        const contentId = `${action}-modal-content`;
+        // ゴースト切り替え / 汎用モーダル
+        const modalKey = action === "ghost-switch" ? "ghost" : action;
+        const contentId = `${modalKey}-modal-content`;
         this.modalManager?.show(contentId);
       }
     });

@@ -1,5 +1,5 @@
 /**
- * Mascot Nanai - さくらスクリプト（SakuraScript）パーサー & プレイヤー
+ * Nanai Android Mascot - さくらスクリプト（SakuraScript）パーサー & プレイヤー
  */
 
 export class SakuraScriptPlayer {

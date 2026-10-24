@@ -1,5 +1,5 @@
 /**
- * Mascot Nanai - モーダル & UIダイアログ管理
+ * Nanai Android Mascot - モーダル & UIダイアログ管理
  */
 
 export class ModalManager {
@@ -98,7 +98,7 @@ export class ModalManager {
       this.app.settings.shellScale = form.shellScale?.value ?? "100";
       this.app.settings.balloonScale = form.balloonScale?.value ?? "100";
 
-      localStorage.setItem("mascot-nanai-settings", JSON.stringify(this.app.settings));
+      localStorage.setItem("nanai-android-mascot-settings", JSON.stringify(this.app.settings));
       this.app.applySettings();
       this.app.showBalloon("設定を保存しました。");
       setTimeout(() => this.app.hideBalloon(), 2000);
@@ -107,7 +107,7 @@ export class ModalManager {
 
     form.resetBtn?.addEventListener("click", () => {
       if (confirm("設定を初期値に戻しますか？")) {
-        localStorage.removeItem("mascot-nanai-settings");
+        localStorage.removeItem("nanai-android-mascot-settings");
         this.app.settings = {
           autoLoadGhost: true,
           enableNotifications: true,
@@ -141,7 +141,7 @@ export class ModalManager {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `mascot-nanai-debug-${Date.now()}.txt`;
+      a.download = `nanai-android-mascot-debug-${Date.now()}.txt`;
       a.click();
       URL.revokeObjectURL(url);
     });

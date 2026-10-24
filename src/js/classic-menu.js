@@ -1,5 +1,5 @@
 /**
- * Mascot Nanai - クラシックメニューイベント制御
+ * Nanai Android Mascot - クラシックメニューイベント制御
  */
 
 function dispatchAction(action, payload = null) {
@@ -25,8 +25,32 @@ globalThis.addEventListener("message", (event) => {
     const ghosts = event.data.ghosts || [];
     const currentGhost = event.data.currentGhost;
     renderGhostSubmenu(ghosts, currentGhost);
+  } else if (event.data?.type === "sync-shells") {
+    const shells = event.data.shells || ["master"];
+    const currentShell = event.data.currentShell || "master";
+    renderShellSubmenu(shells, currentShell);
   }
 });
+
+function renderShellSubmenu(shells, currentShell) {
+  const container = document.getElementById("shell-submenu");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  shells.forEach((shellName) => {
+    const isCurrent = currentShell === shellName;
+    const btn = document.createElement("button");
+    btn.className = `menu-item ${isCurrent ? "is-current" : ""}`;
+    btn.dataset.shellName = shellName;
+    btn.innerHTML = `<span>${isCurrent ? "✓ " : "　"}${shellName}</span>`;
+    btn.addEventListener("click", () => {
+      dispatchAction("switch-to-shell", shellName);
+    });
+    container.appendChild(btn);
+  });
+}
+
 
 function renderGhostSubmenu(ghosts, currentGhost) {
   const container = document.getElementById("ghost-submenu");

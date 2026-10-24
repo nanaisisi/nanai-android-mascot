@@ -7,7 +7,7 @@
     "withGlobalTauri": true
   },
   "package": {
-    "productName": "Mascot Nanai Desktop",
+    "productName": "Nanai Android Mascot Desktop",
     "version": "0.1.0"
   },
   "tauri": {
@@ -77,7 +77,7 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "com.mascotnanai.desktop",
+      "identifier": "com.nanaiandroidmascot.desktop",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -98,7 +98,7 @@
       {
         "fullscreen": false,
         "resizable": false,
-        "title": "Mascot Nanai - スプラッシュ",
+        "title": "Nanai Android Mascot - スプラッシュ",
         "width": 400,
         "height": 300,
         "center": true,
@@ -113,7 +113,7 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "Mascot Nanai - ウィンドウ管理",
+        "title": "Nanai Android Mascot - ウィンドウ管理",
         "width": 900,
         "height": 700,
         "minWidth": 600,
@@ -130,7 +130,7 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "Mascot Nanai - デスクトップ機能",
+        "title": "Nanai Android Mascot - デスクトップ機能",
         "width": 1000,
         "height": 800,
         "minWidth": 700,
@@ -166,7 +166,7 @@
       "iconPath": "icons/icon.png",
       "iconAsTemplate": true,
       "menuOnLeftClick": false,
-      "tooltip": "Mascot Nanai Desktop"
+      "tooltip": "Nanai Android Mascot Desktop"
     }
   }
 }

@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mascot Nanai Classic Menu</title>
+    <title>Nanai Android Mascot Classic Menu</title>
     <link rel="stylesheet" href="css/classic-menu.css" />
     <script type="module" src="js/classic-menu.js"></script>
   </head>
   <body>
-    <h1 class="visually-hidden">Mascot Nanai クラシックメニュー</h1>
+    <h1 class="visually-hidden">Nanai Android Mascot クラシックメニュー</h1>
     <div class="menu-container" role="menu">
       <!-- ゴースト動的アクション -->
       <button class="menu-item" id="talk-btn" role="menuitem">
@@ -25,6 +25,17 @@
         <div class="submenu-container" id="ghost-submenu">
           <button class="menu-item" id="ghost-btn">
             <span>📂 ゴースト一覧・管理...</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="menu-item-wrapper">
+        <button class="menu-item has-submenu" id="shell-switch-btn" role="menuitem">
+          <span>👗 着せ替え・シェル (C)</span>
+        </button>
+        <div class="submenu-container" id="shell-submenu">
+          <button class="menu-item is-current" id="shell-master-btn">
+            <span>✓ master (通常)</span>
           </button>
         </div>
       </div>

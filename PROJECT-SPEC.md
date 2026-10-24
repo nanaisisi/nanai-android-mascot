@@ -1,11 +1,11 @@
-# Mascot Nanai - プロジェクト仕様書
+# Nanai Android Mascot - プロジェクト仕様書
 
 > **AI 関与について**: このドキュメントは GitHub
 > Copilot の支援により作成されました。キャラクター設定・仕様はオーナーユーザーと AI の協議により決定されています。
 
 ## プロジェクト概要
 
-**Mascot Nanai**は、伺か（ゴースト）システムを基盤とした透過マスコットアプリケーションです。Tauri + Rust + JavaScript/HTML の構成で、モダンな UI と SHIORI 連携機能を提供します。
+**Nanai Android Mascot**は、伺か（ゴースト）システムを基盤とした透過マスコットアプリケーションです。Tauri + Rust + JavaScript/HTML の構成で、モダンな UI と SHIORI 連携機能を提供します。
 
 ## 現在の開発状況
 
@@ -142,10 +142,10 @@ Language(メニュー)
 
 ### 主要クラス・構造
 
-#### JavaScript (`MascotNanaiApp`)
+#### JavaScript (`NanaiAndroidMascotApp`)
 
 ```javascript
-class MascotNanaiApp {
+class NanaiAndroidMascotApp {
   // 初期化・設定
   constructor()
   init()

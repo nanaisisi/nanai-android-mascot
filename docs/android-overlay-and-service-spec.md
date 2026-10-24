@@ -98,9 +98,9 @@ WindowManager.LayoutParams params = new WindowManager.LayoutParams(
 
 Android OS（特に Xiaomi、Huawei、Samsung 等のバッテリー最適化）によるプロセスキルを回避するため、`ForegroundService` を実行します。
 
-- **通知チャネル名**: `Mascot Nanai 常駐サービス`
+- **通知チャネル名**: `Nanai Android Mascot 常駐サービス`
 - **通知表示内容**:
-  - タイトル: `Mascot Nanai が常駐中`
+  - タイトル: `Nanai Android Mascot が常駐中`
   - テキスト: `ゴースト: ナナイ (タップでメニュー表示)`
 - **通知アクションボタン**:
   - `[ 隠す / 表示 ]`: 一時的に画面からマスコットを退避

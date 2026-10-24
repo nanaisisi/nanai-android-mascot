@@ -52,8 +52,9 @@ fn emit_error_to_all(app_handle: &tauri::AppHandle<tauri::Wry>, msg: String) {
 // ファイルを開くコマンド
 #[tauri::command]
 fn open_file(path: String, app_handle: tauri::AppHandle<tauri::Wry>) -> Result<String, String> {
+    let clean_path = clean_verbatim_path(&path);
     let resolved_path =
-        resolve_asset_path(&path, &app_handle).unwrap_or_else(|_| PathBuf::from(&path));
+        resolve_asset_path(&clean_path, &app_handle).unwrap_or_else(|_| PathBuf::from(&clean_path));
 
     match open_shift_jis_file(&resolved_path.to_string_lossy()) {
         Ok(content) => Ok(content),
@@ -185,9 +186,13 @@ fn resolve_asset_path(
     relative_path: &str,
     app_handle: &tauri::AppHandle,
 ) -> Result<PathBuf, String> {
-    let path = PathBuf::from(relative_path);
+    let clean = clean_verbatim_path(relative_path);
+    let path = PathBuf::from(&clean);
 
     if path.is_absolute() {
+        if path.exists() {
+            return Ok(normalize_path(&path));
+        }
         return Ok(path);
     }
 
@@ -198,7 +203,13 @@ fn resolve_asset_path(
             let current_dir = std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
             let project_root = current_dir
                 .ancestors()
-                .find(|p| p.join("Cargo.toml").exists() || p.join("src").exists())
+                .find(|p| p.join("assets").exists())
+                .or_else(|| {
+                    current_dir.ancestors().find(|p| {
+                        p.join("Cargo.toml").exists()
+                            && p.file_name().map_or(true, |n| n != "src-tauri")
+                    })
+                })
                 .unwrap_or(&current_dir);
             project_root.join(&path)
         },
@@ -250,10 +261,18 @@ fn resolve_asset_path(
     Ok(normalize_path(&fallback))
 }
 
+/// Windows の拡張プレフィックス (\\?\) を除去し、スラッシュを正規化
+fn clean_verbatim_path(path_str: &str) -> String {
+    let mut s = path_str.to_string();
+    if let Some(stripped) = s.strip_prefix(r"\\?\") {
+        s = stripped.to_string();
+    }
+    s.replace('/', std::path::MAIN_SEPARATOR_STR)
+}
+
 /// パスを正規化（../などを解決）
 fn normalize_path(path: &Path) -> PathBuf {
-    // canonicalize()でパスを正規化を試みる
-    if let Ok(canonical) = path.canonicalize() {
+    let canonical = if let Ok(canonical) = path.canonicalize() {
         canonical
     } else {
         // canonicalize()が失敗した場合は手動でパスを正規化
@@ -272,6 +291,14 @@ fn normalize_path(path: &Path) -> PathBuf {
             }
         }
         components.iter().collect()
+    };
+
+    // Windows環境で \\?\ プレフィックスが付いていたら除去して通常のパスにする
+    let path_str = canonical.to_string_lossy();
+    if let Some(stripped) = path_str.strip_prefix(r"\\?\") {
+        PathBuf::from(stripped)
+    } else {
+        canonical
     }
 }
 

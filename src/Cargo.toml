@@ -8,7 +8,6 @@ name = "nanai_android_mascot_ui"
 path = "lib.rs"
 
 [dependencies]
-wasm-bindgen = "0.2.129"
 serde = { version = "1.0.229", features = ["derive"] }
 rust-i18n = "4.2.4"
 sys-locale = "0.3.2"

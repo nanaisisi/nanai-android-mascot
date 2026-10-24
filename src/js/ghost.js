@@ -175,6 +175,10 @@ export class GhostController {
         }
       } else if (eventName === "OnUpdate" || eventName === "OnUpdateCheck") {
         this.app.playSakuraScript("\\0\\s0ネットワーク更新を確認中…\\w8\\n\\s0更新ファイルはありませんでした。\\w5最新の状態です♪\\e");
+      } else if (eventName === "OnHeadline" || eventName === "OnHeadlineFeed") {
+        this.app.playSakuraScript("\\0\\s0最新のヘッドラインニュースをお知らせするね！\\w6\\n\\1\\s10今日の天気は概ね良好、\\w4\\0\\s0デスクトップマスコット日和だよ♪\\e");
+      } else if (eventName === "OnBIFF" || eventName === "OnBIFFComplete") {
+        this.app.playSakuraScript("\\0\\s0メールボックスを確認したよ。\\w5新着メッセージは0通です。\\e");
       } else if (eventName === "OnSecondChange") {
         this.triggerRandomTalk();
       } else {

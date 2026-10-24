@@ -1,4 +1,4 @@
-use nanai_android_mascot_ui::open_shift_jis_file;
+use nanai_android_mascot_ui::{open_shift_jis_file, resolve_vfs_path};
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 use std::path::PathBuf;
 use tauri::Emitter;
@@ -198,15 +198,26 @@ fn resolve_asset_path(
             .join(&path),
     ];
 
-    // 存在するパスを見つける
-    for candidate in path_candidates {
+    // 存在するパスを見つける (直接またはVFS大文字小文字吸収)
+    for candidate in &path_candidates {
         println!("🔍 Checking path candidate: {:?}", candidate);
         if candidate.exists() {
-            // パスを正規化（../などを解決）
-            let normalized = normalize_path(&candidate);
+            let normalized = normalize_path(candidate);
             println!("✅ Found valid path: {:?}", candidate);
-            println!("🔧 Normalized path: {:?}", normalized);
             return Ok(normalized);
+        }
+
+        // 大文字・小文字差異の解決を試行
+        if let Some(parent) = candidate.parent() {
+            if parent.exists() {
+                if let Some(file_name) = candidate.file_name().and_then(|n| n.to_str()) {
+                    if let Some(resolved) = resolve_vfs_path(parent, file_name) {
+                        let normalized = normalize_path(&resolved);
+                        println!("✅ Found path via VFS (case-insensitive): {:?}", resolved);
+                        return Ok(normalized);
+                    }
+                }
+            }
         }
     }
 

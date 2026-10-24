@@ -52,8 +52,8 @@ export class InteractionManager {
       let newY = initialTop + deltaY;
 
       const padding = 40;
-      newX = Math.max(padding, Math.min(window.innerWidth - padding, newX));
-      newY = Math.max(padding, Math.min(window.innerHeight - padding, newY));
+      newX = Math.max(padding, Math.min(globalThis.innerWidth - padding, newX));
+      newY = Math.max(padding, Math.min(globalThis.innerHeight - padding, newY));
 
       target.style.left = `${newX}px`;
       target.style.top = `${newY}px`;
@@ -66,22 +66,25 @@ export class InteractionManager {
       }
     };
 
-    const onPointerUp = () => {
+    const onPointerUp = (e) => {
       if (!isDragging) return;
       isDragging = false;
       target.classList.remove("is-dragging");
 
       if (!hasMoved && onGhostClick) {
-        onGhostClick();
+        const clientX = e.clientX ?? startX;
+        const clientY = e.clientY ?? startY;
+        const rect = target.getBoundingClientRect();
+        onGhostClick(clientX, clientY, rect);
       }
     };
 
     target.addEventListener("mousedown", onPointerDown);
-    window.addEventListener("mousemove", onPointerMove);
-    window.addEventListener("mouseup", onPointerUp);
+    globalThis.addEventListener("mousemove", onPointerMove);
+    globalThis.addEventListener("mouseup", onPointerUp);
 
     target.addEventListener("touchstart", onPointerDown, { passive: true });
-    window.addEventListener("touchmove", onPointerMove, { passive: true });
-    window.addEventListener("touchend", onPointerUp);
+    globalThis.addEventListener("touchmove", onPointerMove, { passive: true });
+    globalThis.addEventListener("touchend", onPointerUp);
   }
 }

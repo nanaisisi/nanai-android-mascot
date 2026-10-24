@@ -90,7 +90,9 @@ export class GhostController {
       setTimeout(async () => {
         try {
           await this.sendShioriEvent("OnBoot");
-        } catch (_) {}
+        } catch (_error) {
+          // OnBoot送信失敗時はスキップ
+        }
       }, 1000);
     } catch (error) {
       console.error("❌ SHIORI初期化エラー:", error);
@@ -102,6 +104,17 @@ export class GhostController {
       // モック対話（さくらスクリプトテスト用）
       if (eventName === "OnChoiceSelect") {
         this.app.playSakuraScript(`\\0\\s0選択肢「${args[1] || args[0]}」が選ばれたよ！\\w5\\nありがとう♪\\e`);
+      } else if (eventName === "OnMouseClick") {
+        const part = args[1];
+        if (part === "head") {
+          this.app.playSakuraScript("\\0\\s0あたまをなでてくれたの？\\w5\\nえへへ…♪\\e");
+        } else if (part === "bust") {
+          this.app.playSakuraScript("\\0\\s10ちょ、ちょっと…！\\w5\\nどこ触ってるの…！\\e");
+        } else if (part === "skirt") {
+          this.app.playSakuraScript("\\0\\s10きゃっ！\\w5\\nめくっちゃダメだよ！\\e");
+        } else {
+          this.app.playSakuraScript("\\0\\s0こんにちは！\\w5\\n\\q[話しかける,Talk]\\n\\q[なでる,Stroke]\\e");
+        }
       } else {
         this.app.playSakuraScript("\\0\\s0こんにちは！\\w5\\n\\q[話しかける,Talk]\\n\\q[なでる,Stroke]\\e");
       }

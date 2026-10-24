@@ -2,6 +2,7 @@ import { GhostController } from "./js/ghost.js";
 import { InteractionManager } from "./js/interaction.js";
 import { ModalManager } from "./js/modal.js";
 import { SakuraScriptPlayer } from "./js/sakura-script.js";
+import { SurfaceManager } from "./js/surface.js";
 
 export class MascotNanaiApp {
   constructor() {
@@ -17,6 +18,7 @@ export class MascotNanaiApp {
 
     this.ghostController = new GhostController(this);
     this.interactionManager = new InteractionManager(this);
+    this.surfaceManager = new SurfaceManager(this);
     this.sakuraPlayer = new SakuraScriptPlayer(this);
     this.modalManager = null;
 
@@ -58,10 +60,13 @@ export class MascotNanaiApp {
   }
 
   setupEventListeners() {
-    // ドラッグ & タップインタラクション
-    this.interactionManager.setupDragging(this.elements.ghostDisplay, () => {
-      this.onGhostClick();
-    });
+    // ドラッグ & タップインタラクション（当たり判定連動）
+    this.interactionManager.setupDragging(
+      this.elements.ghostDisplay,
+      (clientX, clientY, rect) => {
+        this.onGhostClick(clientX, clientY, rect);
+      }
+    );
 
     // メニュー表示切り替え
     this.elements.menuBtn?.addEventListener("click", (e) => {
@@ -154,12 +159,19 @@ export class MascotNanaiApp {
     });
   }
 
-  onGhostClick() {
-    console.log("🖱️ ゴーストをつつきました");
+  onGhostClick(clientX, clientY, rect) {
+    let partName = "";
+    if (clientX !== undefined && clientY !== undefined && rect) {
+      const result = this.surfaceManager.detectCollision(clientX, clientY, rect);
+      partName = result.name;
+    }
+
+    console.log(`🖱️ ゴーストタップ: 部位=${partName || "なし"}`);
     if (globalThis.__TAURI__) {
       globalThis.__TAURI__.invoke("on_mouse_click").catch(() => {});
     }
-    this.ghostController.sendShioriEvent("OnMouseClick");
+    // SHIORIイベント送信 (イベント名, [選択肢ID/引数, 部位名])
+    this.ghostController.sendShioriEvent("OnMouseClick", ["", partName]);
   }
 
   toggleMenu() {

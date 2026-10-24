@@ -4,19 +4,17 @@
 
 デスクトップマスコット規格「**伺か（UKAGAKA）**」の互換環境を提供する、Tauri v2 + Rust 製のクロスプラットフォーム・アプリケーションです。
 
-## 📱 Android 版 公式推奨アプリのご案内
+## 🌐 伺かコミュニティ・エコシステム & 参考情報
 
-> [!TIP]
-> <table>
->   <tr>
->     <td><img src="https://play-lh.googleusercontent.com/I5w2u5p-Wp26yU2a_q5a2M2A8VdO5tM" width="64" alt="Ukadroid" onerror="this.style.display='none'"/></td>
->     <td>
->       <strong>Ukadroid (伺か for Android)</strong><br />
->       Android 上で手軽にゴーストと触れ合いたい方は、実績豊富な公式推奨アプリ <strong>Ukadroid</strong> をぜひご利用ください！<br />
->       👉 <a href="https://play.google.com/store/apps/details?id=com.hiro.ukadroid"><strong>Google Play で今すぐダウンロード</strong></a>
->     </td>
->   </tr>
-> </table>
+本プロジェクトは、伺か技術の発展とオープンソースコミュニティの成果を尊重し、参考にしています。
+
+> [!NOTE]
+> **Ukagaka Tech Team (ukatech)**  
+> 伺かのベースウェア周辺で利用される主要 SHIORI（YAYA, 里々, 華和梨）やツール類を現代向けに開発・保守している公式的な技術コミュニティです。  
+> 🔗 **公式サイト**: [Ukagaka Tech Team (ukatech.shillest.net)](https://ukatech.shillest.net/)
+>
+> **Android 環境での互換ベースウェア**:  
+> Android デバイス上で実績のある既存の伺か互換ベースウェアをお探しの方は、**[Ukadroid（伺か for Android）](https://play.google.com/store/apps/details?id=com.hiro.ukadroid)** も合わせてご参照ください。
 
 ---
 
@@ -82,19 +80,13 @@ cargo tauri android run
 
 ---
 
-## アプリ (UKAGAKA for Android)
+## 🔗 関連リンク・参考コミュニティ
 
-Android デバイス上で今すぐ快適に「伺か」ゴーストを楽しみたい方には、アプリ **Ukadroid** のご利用をおすすめします。
-
-<p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.hiro.ukadroid">
-    <img src="https://img.shields.io/badge/Google_Play-Ukadroid-34A853?style=for-the-badge&logo=googleplay&logoColor=white" alt="Get it on Google Play" height="42" />
-  </a>
-</p>
-
-- **アプリ名**: Ukadroid（伺か for Android）
-- **入手先**: [Google Play ストア](https://play.google.com/store/apps/details?id=com.hiro.ukadroid)
-- **概要**: Android 上で動作する伺か互換ベースウェア。
+- **技術コミュニティ**:
+  - [Ukagaka Tech Team (ukatech)](https://ukatech.shillest.net/) - SHIORI（YAYA, 里々, 華和梨）やツール類を保守・公開するコミュニティ
+  - [SSP 公式サイト (BUGFIX)](http://ssp.shillest.net/) - Windows 向け代表的伺かベースウェア
+- **Android 既存互換ベースウェア**:
+  - [Ukadroid（伺か for Android）](https://play.google.com/store/apps/details?id=com.hiro.ukadroid) - Google Play にて配信中の Android 向け互換ベースウェア
 
 ---
 

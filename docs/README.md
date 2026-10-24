@@ -14,6 +14,7 @@
 ### 🛠️ 開発者向けドキュメント (`developer/`)
 
 - **[architecture.md](developer/architecture.md)** - システムアーキテクチャ（Frontend / Tauri Bridge / Rust Backend）
+- **[dpi-patch-spec.md](developer/dpi-patch-spec.md)** - dpi クレート改変仕様・記録書 (patches/dpi)
 
 ### 📐 設計・ロードマップ (`design/`)
 

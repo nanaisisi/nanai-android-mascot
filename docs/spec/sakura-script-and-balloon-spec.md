@@ -6,6 +6,8 @@
 
 ## 1. さくらスクリプト処理パイプライン
 
+本仕様は、公式仕様書 **[ukatech/ukadoc-spec: さくらスクリプト仕様](https://ssp.shillest.net/ukadoc/manual/spec_sakura_script.html)** および **[ukatech/ukadoc-ssp: SSP 拡張タグ仕様](https://ssp.shillest.net/ukadoc/manual/spec_sakura_script.html)** に準拠しています。
+
 ```mermaid
 flowchart LR
     A["SHIORI レスポンス文字列<br>例: \\0\\s0こんにちは！\\w5\\nナナイだよ。\\e"] --> B[SakuraScript パーサー]

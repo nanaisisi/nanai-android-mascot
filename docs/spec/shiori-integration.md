@@ -87,47 +87,63 @@ JavaScript / WebView Layer
     Ghost Files (descript.txt / 辞書ファイル)
 ```
 
-### 3. インターフェース変換
+### 3. インターフェース仕様（公式実装のエクスポート仕様）
 
-#### 従来の DLL API
-
+#### 従来の Windows DLL API
 ```c
 HGLOBAL __declspec(dllexport) __cdecl request(HGLOBAL h, long *len);
 BOOL __declspec(dllexport) __cdecl load(HGLOBAL h, long len);
 BOOL __declspec(dllexport) __cdecl unload();
 ```
 
-#### 新しい Rust FFI
+#### POSIX / WASM / C++ 直接リンク時の API (公式実装準拠)
+公式リポジトリ（`satoriya-shiori`, `yaya-shiori`, `kawari`）の POSIX / Emscripten 実装では、Windows の `GlobalAlloc` / `GlobalFree` の代わりに標準の `malloc` / `free` またはバッファポインタ渡しが採用されています。
 
+- **`load(char* h, long len) -> int`**:
+  - `h`: ゴーストディレクトリの絶対パス（Shift_JIS または UTF-8、末尾セパレータ付き）を格納したメモリバッファ。
+  - **重要**: POSIX版の実装（YAYA等）では、渡された `h` を SHIORI 内部で `free(h)` する仕様になっているため、Rust/呼び出し元は `libc::malloc` で確保したポインタを渡す必要があります。
+- **`request(char* h, long* len) -> char*`**:
+  - `h`: `GET SHIORI/3.0` 等のリクエスト文字列バッファ。
+  - 戻り値: SHIORI レスポンス文字列へのポインタ。処理完了後、呼び出し元が `free` または SHIORI 側の規約に従って解放。
+- **`unload() -> int`**:
+  - 辞書や仮想マシンの解放を行い、終了コード（1: 成功）を返却。
+
+#### Rust FFI バインディング仕様
 ```rust
+use std::os::raw::{c_char, c_int, c_long};
+
 extern "C" {
-    fn shiori_request(input: *const c_char, len: usize) -> *mut c_char;
-    fn shiori_load(ghost_path: *const c_char) -> bool;
-    fn shiori_unload() -> bool;
+    /// SHIORI 初期化 (ghost path を渡す)
+    pub fn load(h: *mut c_char, len: c_long) -> c_int;
+
+    /// SHIORI プロトコル要求処理
+    pub fn request(h: *mut c_char, len: *mut c_long) -> *mut c_char;
+
+    /// SHIORI 終了・解放
+    pub fn unload() -> c_int;
 }
 ```
 
 ## 実装段階
 
 ### Phase 1: 基本統合
-
-1. **C++ビルド環境**: CMake/Cargo での統合ビルド
-2. **FFI Bridge**: Rust-C++間の基本的なデータ交換
-3. **最小動作**: 単純なリクエスト/レスポンス
+1. **C++ビルド環境**: CMake / Cargo `cc` クレートによるサブモジュール直接ビルド
+2. **FFI Bridge**: Rust-C++ 間のメモリ管理（`malloc`/`free`）および文字コード変換（UTF-8 ↔ CP932）
+3. **最小動作**: `load` → `request("GET SHIORI/3.0...")` → `unload` パイプライン
 
 ### Phase 2: SHIORI 機能
+1. **ゴーストローディング**: `descript.txt` 解析（`shiori` 定義に基づくディスパッチ）
+2. **メッセージ処理**: SakuraScript のパースとバルーン表示キューの同期
+3. **状態管理**: セッション・変数の永続化およびセーブデータ保護
 
-1. **ゴーストローディング**: descript.txt 解析と SHIORI 初期化
-2. **メッセージ処理**: SAKURA Script の処理とレスポンス生成
-3. **状態管理**: セッション・変数の永続化
+### Phase 3: 多層フォールバック & プラグイン
+1. **エンジン自動切替**: SATORI / YAYA / KAWARI / JS フォールバックの透過切り替え
+2. **WASM サンドボックス**: Emscripten / Wasmtime による Android / Web セキュア実行
+3. **パフォーマンス最適化**: メモリ使用量と起動遅延の削減
 
-### Phase 3: 高度機能
+## ビルド統合仕様
 
-1. **複数 SHIORI 対応**: SATORI・YAYA 等の切り替え
-2. **プラグイン機能**: 追加 SHIORI の動的ロード
-3. **パフォーマンス最適化**: メモリ管理・処理速度向上
-
-## ビルド統合
+公式リポジトリの makefile（`makefile.emscripten`, `makefile.posix`）およびソース構成に基づき、`build.rs` または CMakeLists.txt を構成します。
 
 ### Cargo.toml 設定
 
@@ -136,27 +152,61 @@ extern "C" {
 cc = "1.0"
 
 [dependencies]
-# FFI関連
 libc = "0.2"
+encoding_rs = "0.8"
 ```
 
-### build.rs スクリプト
+### build.rs スクリプト仕様（各 SHIORI のコンパイル）
 
 ```rust
 use cc::Build;
 
 fn main() {
-    // SATORI SHIORI のビルド
-    Build::new()
-        .cpp(true)
-        .files(&["src/cpp/satoriya-shiori/satoriya/*.cpp"])
-        .compile("satori_shiori");
-
-    // YAYA SHIORI のビルド
-    Build::new()
-        .cpp(true)
-        .files(&["src/cpp/yaya-shiori/*.cpp"])
-        .compile("yaya_shiori");
+    // ターゲット OS が Windows ネイティブ DLL を使う場合以外は C++ ソースから直接コンパイル
+    #[cfg(feature = "native-shiori")]
+    {
+        // 1. YAYA SHIORI のビルド
+        // 公式 yaya-shiori/makefile.emscripten / makefile.posix 準拠
+        Build::new()
+            .cpp(true)
+            .flag_if_supported("-std=c++11")
+            .define("POSIX", None)
+            .include("src/cpp/yaya-shiori")
+            .include("src/cpp/yaya-shiori/babel")
+            .files(&[
+                "src/cpp/yaya-shiori/aya5.cpp",
+                "src/cpp/yaya-shiori/ayavm.cpp",
+                "src/cpp/yaya-shiori/basis.cpp",
+                "src/cpp/yaya-shiori/babel/babel.cpp",
+                "src/cpp/yaya-shiori/ccct.cpp",
+                "src/cpp/yaya-shiori/comment.cpp",
+                "src/cpp/yaya-shiori/crc32.c",
+                "src/cpp/yaya-shiori/duplevinfo.cpp",
+                "src/cpp/yaya-shiori/file.cpp",
+                "src/cpp/yaya-shiori/file1.cpp",
+                "src/cpp/yaya-shiori/function.cpp",
+                "src/cpp/yaya-shiori/globalvariable.cpp",
+                "src/cpp/yaya-shiori/lib.cpp",
+                "src/cpp/yaya-shiori/lib1.cpp",
+                "src/cpp/yaya-shiori/localvariable.cpp",
+                "src/cpp/yaya-shiori/log.cpp",
+                "src/cpp/yaya-shiori/logexcode.cpp",
+                "src/cpp/yaya-shiori/manifest.cpp",
+                "src/cpp/yaya-shiori/md5c.c",
+                "src/cpp/yaya-shiori/misc.cpp",
+                "src/cpp/yaya-shiori/mt19937ar.cpp",
+                "src/cpp/yaya-shiori/parser0.cpp",
+                "src/cpp/yaya-shiori/parser1.cpp",
+                "src/cpp/yaya-shiori/selecter.cpp",
+                "src/cpp/yaya-shiori/sha1.c",
+                "src/cpp/yaya-shiori/sysfunc.cpp",
+                "src/cpp/yaya-shiori/value.cpp",
+                "src/cpp/yaya-shiori/valuesub.cpp",
+                "src/cpp/yaya-shiori/wsex.cpp",
+                "src/cpp/yaya-shiori/posix_utils.cpp",
+            ])
+            .compile("yaya_shiori");
+    }
 }
 ```
 

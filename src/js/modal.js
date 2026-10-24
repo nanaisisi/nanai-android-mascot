@@ -44,10 +44,50 @@ export class ModalManager {
       });
     } else if (contentId === "settings-modal-content") {
       this.setupSettingsListeners();
+    } else if (contentId === "balloon-modal-content") {
+      this.renderBalloonList();
     } else if (contentId === "debug-modal-content") {
       this.setupDebugListeners();
     }
   }
+
+  renderBalloonList() {
+    const list = document.getElementById("balloon-list");
+    const currentLabel = document.getElementById("current-balloon");
+    if (!list) return;
+
+    const balloonThemes = [
+      { id: "default", name: "標準モダン (デフォルト)", desc: "半透明の角丸バルーン" },
+      { id: "classic", name: "クラシック伺か", desc: "歴史的なレトロクリーム調枠線" },
+      { id: "comic", name: "コミック", desc: "ポップな太枠吹き出し" },
+      { id: "dark", name: "ダークモダン", desc: "シックな黒基調スタイル" },
+    ];
+
+    const currentTheme = this.app.settings.balloonTheme || "default";
+    if (currentLabel) {
+      const activeObj = balloonThemes.find((b) => b.id === currentTheme);
+      currentLabel.textContent = activeObj ? activeObj.name : currentTheme;
+    }
+
+    list.innerHTML = balloonThemes
+      .map(
+        (b) => `
+        <div class="ghost-item ${currentTheme === b.id ? "active" : ""}" data-theme="${b.id}" style="cursor: pointer;">
+          <strong>${currentTheme === b.id ? "✓ " : ""}${b.name}</strong><br>
+          <small>${b.desc}</small>
+        </div>`
+      )
+      .join("");
+
+    list.querySelectorAll(".ghost-item").forEach((item) => {
+      item.addEventListener("click", () => {
+        const selected = item.dataset.theme;
+        this.app.setBalloonTheme(selected);
+        this.renderBalloonList();
+      });
+    });
+  }
+
 
   renderGhostList() {
     const ghostList = document.getElementById("ghost-list");

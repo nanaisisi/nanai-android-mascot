@@ -82,8 +82,10 @@ cargo tauri android run
 
 ## 🔗 関連リンク・参考コミュニティ
 
-- **技術コミュニティ**:
-  - [Ukagaka Tech Team (ukatech)](https://ukatech.shillest.net/) - SHIORI（YAYA, 里々, 華和梨）やツール類を保守・公開するコミュニティ
+- **技術コミュニティ・公式仕様リポジトリ**:
+  - [Ukagaka Tech Team (ukatech)](https://ukatech.shillest.net/) - 伺か周辺ツール・SHIORI を保守・開発するコミュニティ
+  - [ukadoc-spec (GitHub)](https://github.com/ukatech/ukadoc-spec) - UKADOC 公式伺か仕様リポジトリ（プロトコル、さくらスクリプト等）
+  - [ukadoc-ssp (GitHub)](https://github.com/ukatech/ukadoc-ssp) - SSP 固有仕様・拡張機能リファレンス
   - [SSP 公式サイト (BUGFIX)](http://ssp.shillest.net/) - Windows 向け代表的伺かベースウェア
 - **Android 既存互換ベースウェア**:
   - [Ukadroid（伺か for Android）](https://play.google.com/store/apps/details?id=com.hiro.ukadroid) - Google Play にて配信中の Android 向け互換ベースウェア

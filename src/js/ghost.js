@@ -179,6 +179,8 @@ export class GhostController {
         this.app.playSakuraScript("\\0\\s0最新のヘッドラインニュースをお知らせするね！\\w6\\n\\1\\s10今日の天気は概ね良好、\\w4\\0\\s0デスクトップマスコット日和だよ♪\\e");
       } else if (eventName === "OnBIFF" || eventName === "OnBIFFComplete") {
         this.app.playSakuraScript("\\0\\s0メールボックスを確認したよ。\\w5新着メッセージは0通です。\\e");
+      } else if (eventName === "OnClose") {
+        this.app.playSakuraScript("\\0\\s0また一緒に遊ぼうね！\\w8\\nさようなら…！\\e");
       } else if (eventName === "OnSecondChange") {
         this.triggerRandomTalk();
       } else {

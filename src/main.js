@@ -342,6 +342,32 @@ export class NanaiAndroidMascotApp {
       this.elements.balloonDisplay.style.transform = `translateX(-50%) scale(${balloonPercent / 100})`;
       this.elements.balloonDisplay.style.transformOrigin = "bottom center";
     }
+
+    // バルーンテーマ適用
+    this.applyBalloonTheme();
+  }
+
+  setBalloonTheme(themeId) {
+    this.settings.balloonTheme = themeId;
+    localStorage.setItem("mascot-nanai-settings", JSON.stringify(this.settings));
+    this.applyBalloonTheme();
+    this.showBalloon(`バルーンを「${themeId}」に変更しました。`);
+    setTimeout(() => this.hideBalloon(), 1500);
+  }
+
+  applyBalloonTheme() {
+    const theme = this.settings.balloonTheme || "default";
+    const balloonEls = document.querySelectorAll(".balloon");
+    balloonEls.forEach((el) => {
+      el.classList.remove(
+        "balloon-theme-classic",
+        "balloon-theme-comic",
+        "balloon-theme-dark"
+      );
+      if (theme !== "default") {
+        el.classList.add(`balloon-theme-${theme}`);
+      }
+    });
   }
 }
 

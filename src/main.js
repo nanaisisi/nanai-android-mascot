@@ -226,12 +226,25 @@ export class MascotNanaiApp {
   }
 
   startSecondTimer() {
+    let secondCounter = 0;
+    const talkInterval = 60 + Math.floor(Math.random() * 30); // 60〜90秒ごとにランダムトーク
+
     setInterval(async () => {
-      if (this.ghostController.currentGhost && globalThis.__TAURI__) {
-        try {
-          await globalThis.__TAURI__.invoke("on_second_change");
-        } catch (_error) {
-          // SHIORI未ロードまたは非サポート時は無視
+      secondCounter++;
+
+      if (this.ghostController.currentGhost) {
+        if (globalThis.__TAURI__) {
+          try {
+            await globalThis.__TAURI__.invoke("on_second_change");
+          } catch (_error) {
+            // SHIORI未ロードまたは非サポート時は無視
+          }
+        } else if (secondCounter >= talkInterval) {
+          // ブラウザ/モック環境でのランダムトーク
+          secondCounter = 0;
+          if (!this.sakuraPlayer.isPlaying) {
+            this.ghostController.sendShioriEvent("OnSecondChange");
+          }
         }
       }
     }, 1000);

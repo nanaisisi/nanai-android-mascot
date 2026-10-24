@@ -96,15 +96,17 @@ fn sanitize_scale_factor(scale_factor: f64) -> f64 {
 
 ### 戦略 A: Git リポジトリ（フォーク）への外部化 【採用方針】
 
-1. GitHub（またはリモート）上に `dpi` の公式リポジトリ（`rust-windowing/winit` 傘下）から正規にフォークしたリポジトリ（例: `nanaisisi/dpi`）を用意する。
-2. 本プロジェクトの [Cargo.toml](file:///e:/project/rust/nanai-android-mascot/Cargo.toml) からは Git 依存パッチとして指定する：
+1. GitHub 上で公式本家（`rust-windowing/winit`）から正式にフォークしたリポジトリ [nanaisisi/winit](https://github.com/nanaisisi/winit) を用意する。
+2. 修正ブランチ（`fix-windows-scale-factor`）を作成・プッシュする。
+3. 本プロジェクトの [Cargo.toml](file:///e:/project/rust/nanai-android-mascot/Cargo.toml) からは以下のように正規フォークを指定する：
 
    ```toml
    [patch.crates-io]
-   dpi = { git = "https://github.com/nanaisisi/dpi.git", branch = "fix-windows-scale-factor" }
+   dpi = { git = "https://github.com/nanaisisi/winit.git", branch = "fix-windows-scale-factor" }
    ```
 
-3. 本プロジェクト内の `patches/` ディレクトリは**完全に物理削除**する。
+4. 本プロジェクト内の `patches/` ディレクトリは**完全に物理削除**する。
+
 
 - **効果**:
   - 本リポジトリ内には他者著作物・パッチファイルが一切残らず、完全にクリーンな状態となる。

@@ -121,8 +121,8 @@ flowchart TD
 
 - **現状**: デスクトップでは右クリックで標準伺かメニューを表示。
 - **対応方針**:
-  - 長押し（Long Press: 600ms）または 2本指タップでメニューをトグル。
-  - 画面上部の固定クイックボタンからの展開もサポート。
+  - 長押し（Long Press: 600ms）または 2本指タップでメニューをトグル（[src/js/interaction.js](file:///e:/project/rust/nanai-android-mascot/src/js/interaction.js) に実装完了）。
+  - 画面上部の固定クイックボタンからの展開もサポート（実装完了）。
 
 ---
 

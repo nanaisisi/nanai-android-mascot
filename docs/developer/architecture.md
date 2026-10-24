@@ -1,441 +1,102 @@
-> **AI 関与について**: このドキュメントは GitHub
-> Copilot の支援により作成されました。キャラクター設定・仕様はオーナーユーザーと AI の協議により決定されています。
+> **AI 関与について**: このドキュメントは GitHub Copilot / Antigravity の支援により作成・更新されました。キャラクター設定・仕様はオーナーユーザーと AI の協議により決定されています。
 
 # システムアーキテクチャ - Nanai Android Mascot
 
-## 概要
-
-Nanai Android Mascot は、Tauri フレームワークを使用したクロスプラットフォーム・デスクトップマスコットアプリケーションです。フロントエンドに Web 技術（HTML/CSS/JavaScript）、バックエンドに Rust を使用し、AI 主導開発により構築されています。
-
-## 全体アーキテクチャ
-
-```text
-┌─────────────────────────────────────────────────────────────┐
-│                    Nanai Android Mascot                            │
-├─────────────────────────────────────────────────────────────┤
-│                  Frontend (Web)                            │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │
-│  │   Main UI       │  │   Menu System   │  │   Modals        │ │
-│  │  (index.html)   │  │ (menu-iframe)   │  │   (overlays)    │ │
-│  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
-│           │                     │                     │        │
-│           └─────────────────────┼─────────────────────┘        │
-│                                 │                              │
-├─────────────────────────────────┼─────────────────────────────┤
-│                  Tauri Bridge   │                              │
-│                                 │                              │
-├─────────────────────────────────┼─────────────────────────────┤
-│                  Backend (Rust) │                              │
-│  ┌─────────────────────────────────────────────────────────────┐ │
-│  │                Application Core                             │ │
-│  │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │ │
-│  │  │   Ghost Manager │  │   SHIORI Engine │  │   UI Controller │ │ │
-│  │  └─────────────────┘  └─────────────────┘  └─────────────────┘ │ │
-│  │           │                     │                     │        │ │
-│  │           └─────────────────────┼─────────────────────┘        │ │
-│  │                                 │                              │ │
-│  │  ┌─────────────────────────────────────────────────────────────┐ │ │
-│  │  │                    File System                             │ │ │
-│  │  │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │ │ │
-│  │  │  │   Ghost Files   │  │   Config Files  │  │   Asset Files   │ │ │ │
-│  │  │  └─────────────────┘  └─────────────────┘  └─────────────────┘ │ │ │
-│  │  └─────────────────────────────────────────────────────────────┘ │ │
-│  └─────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────┘
-```
-
-## レイヤー構成
-
-### 1. フロントエンド レイヤー
-
-#### 主要コンポーネント
-
-##### Main UI (`src/index.html`)
-
-- **責務**: メインアプリケーション UI
-- **技術**: HTML5 + CSS3 + Vanilla JavaScript
-- **機能**:
-  - ゴースト表示
-  - 基本的なユーザーインタラクション
-  - モーダル制御
-
-##### Menu System (`src/menu-iframe.html`)
-
-- **責務**: 独立したメニューシステム
-- **技術**: iframe ベースの独立 UI
-- **機能**:
-  - 伺か標準メニューの表示
-  - 親ウィンドウとの通信
-  - メニュー項目の動的生成
-
-##### Modal System
-
-- **責務**: オーバーレイ UI
-- **技術**: CSS + JavaScript
-- **機能**:
-  - ゴースト管理
-  - 設定画面
-  - デバッグコンソール
-
-#### データフロー
-
-```text
-User Interaction → JavaScript Event → Tauri Command → Rust Backend
-                                                            ↓
-UI Update ← JavaScript Handler ← Tauri Event ← Rust Response
-```
-
-### 2. Tauri Bridge レイヤー
-
-#### Tauri Commands
-
-```rust
-// ゴースト管理
-#[tauri::command]
-async fn scan_ghosts(ghost_path: String) -> Result<ScanResult, String>
-
-#[tauri::command]
-async fn load_ghost(ghost_name: String) -> Result<String, String>
-
-// SHIORI連携
-#[tauri::command]
-async fn send_shiori_event(event: String) -> Result<String, String>
-
-// 設定管理
-#[tauri::command]
-async fn save_settings(settings: String) -> Result<(), String>
-```
-
-#### Tauri Events
-
-```rust
-// UI更新イベント
-emit("ghost-loaded", ghost_info);
-emit("settings-changed", new_settings);
-emit("error-occurred", error_details);
-```
-
-### 3. バックエンド レイヤー
-
-#### Application Core
-
-##### Ghost Manager
-
-- **責務**: ゴースト管理
-- **機能**:
-  - ゴーストファイルのスキャン
-  - ゴースト情報の解析
-  - ゴーストの読み込み・切り替え
-
-```rust
-pub struct GhostManager {
-    current_ghost: Option<GhostInfo>,
-    ghost_list: Vec<GhostInfo>,
-    ghost_directory: PathBuf,
-}
-
-impl GhostManager {
-    pub fn scan_ghosts(&mut self) -> Result<Vec<GhostInfo>, Error> { ... }
-    pub fn load_ghost(&mut self, name: &str) -> Result<GhostInfo, Error> { ... }
-    pub fn get_ghost_info(&self, name: &str) -> Option<&GhostInfo> { ... }
-}
-```
-
-##### SHIORI Engine
-
-- **責務**: SHIORI 連携
-- **機能**:
-  - SHIORI DLL の識別
-  - SHIORI プロトコルの実装
-  - イベント処理
-
-```rust
-pub struct ShioriEngine {
-    shiori_type: ShioriType,
-    current_ghost: Option<String>,
-}
-
-pub enum ShioriType {
-    Satori,
-    Yaya,
-    Static,
-}
-
-impl ShioriEngine {
-    pub fn detect_shiori_type(&self, ghost_path: &Path) -> ShioriType { ... }
-    pub fn send_event(&mut self, event: &str) -> Result<String, Error> { ... }
-}
-```
-
-##### UI Controller
-
-- **責務**: UI 状態管理
-- **機能**:
-  - ウィンドウ管理
-  - イベント処理
-  - 設定管理
-
-```rust
-pub struct UIController {
-    window_state: WindowState,
-    settings: AppSettings,
-}
-
-impl UIController {
-    pub fn update_window_state(&mut self, state: WindowState) { ... }
-    pub fn save_settings(&self) -> Result<(), Error> { ... }
-    pub fn load_settings(&mut self) -> Result<(), Error> { ... }
-}
-```
-
-## データ構造
-
-### ゴースト情報
-
-```rust
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GhostInfo {
-    pub name: String,
-    pub path: PathBuf,
-    pub description: Option<String>,
-    pub author: Option<String>,
-    pub version: Option<String>,
-    pub shiori_type: ShioriType,
-    pub shells: Vec<ShellInfo>,
-    pub balloons: Vec<BalloonInfo>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ShellInfo {
-    pub name: String,
-    pub path: PathBuf,
-    pub surfaces: Vec<SurfaceInfo>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct SurfaceInfo {
-    pub id: u32,
-    pub file_path: PathBuf,
-    pub collision_areas: Vec<CollisionArea>,
-}
-```
-
-### 設定データ
-
-```rust
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct AppSettings {
-    pub ghost_directory: PathBuf,
-    pub current_ghost: Option<String>,
-    pub window_position: (i32, i32),
-    pub window_size: (u32, u32),
-    pub always_on_top: bool,
-    pub click_through: bool,
-    pub shell_scale: f64,
-    pub balloon_scale: f64,
-}
-```
-
-## ファイル構成
-
-### フロントエンド
-
-```text
-src/
-├── index.html              # メインHTML
-├── main.js                 # メインJavaScript
-├── styles.css              # メインスタイル
-├── menu-iframe.html        # メニューHTML
-├── menu-iframe.js          # メニューJavaScript
-└── menu-iframe.css         # メニュースタイル
-```
-
-### バックエンド
-
-```text
-src-tauri/
-├── src/
-│   ├── main.rs            # アプリケーションエントリポイント
-│   ├── lib.rs             # ライブラリルート
-│   ├── ghost/             # ゴースト管理
-│   │   ├── mod.rs
-│   │   ├── manager.rs
-│   │   └── types.rs
-│   ├── shiori/            # SHIORI連携
-│   │   ├── mod.rs
-│   │   ├── engine.rs
-│   │   └── protocol.rs
-│   └── ui/                # UI制御
-│       ├── mod.rs
-│       ├── controller.rs
-│       └── events.rs
-├── tauri.conf.json        # Tauri設定
-└── Cargo.toml            # Rust依存関係
-```
-
-## 通信プロトコル
-
-### JavaScript → Rust
-
-```javascript
-// Tauri コマンドの呼び出し
-import { invoke } from "@tauri-apps/api/tauri";
-
-// ゴーストスキャン
-const result = await invoke("scan_ghosts", {
-  ghostPath: "/path/to/ghosts",
-});
-
-// ゴースト読み込み
-const ghost = await invoke("load_ghost", {
-  ghostName: "example_ghost",
-});
-```
-
-### Rust → JavaScript
-
-```rust
-// イベントの発行
-use tauri::Manager;
-
-app.emit_all("ghost-loaded", GhostLoadedPayload {
-    name: ghost.name.clone(),
-    surfaces: ghost.surfaces.clone(),
-})?;
-```
-
-### iframe 通信
-
-```javascript
-// 親ウィンドウ → iframe
-iframe.contentWindow.postMessage(
-  {
-    type: "ghost-changed",
-    data: ghostInfo,
-  },
-  "*"
-);
-
-// iframe → 親ウィンドウ
-window.parent.postMessage(
-  {
-    type: "menu-selected",
-    data: { action: "open-settings" },
-  },
-  "*"
-);
-```
-
-## セキュリティ
-
-### Tauri セキュリティ
-
-- **CSP (Content Security Policy)**: 厳格な CSP 設定
-- **API 制限**: 必要最小限の API 露出
-- **サンドボックス**: フロントエンドのサンドボックス実行
-
-### ファイルアクセス
-
-```rust
-// 安全なファイルアクセス
-pub fn safe_read_file(path: &Path) -> Result<String, Error> {
-    // パスの検証
-    if !path.starts_with(&app_data_dir()) {
-        return Err(Error::InvalidPath);
-    }
-
-    // ファイル読み込み
-    std::fs::read_to_string(path)
-        .map_err(|e| Error::FileRead(e))
-}
-```
-
-## パフォーマンス
-
-### 最適化戦略
-
-1. **遅延読み込み**: 大きなリソースの遅延読み込み
-2. **キャッシュ**: 頻繁にアクセスするデータのキャッシュ
-3. **非同期処理**: 重い処理の非同期実行
-4. **リソース管理**: メモリ使用量の最適化
-
-### 監視
-
-```rust
-// パフォーマンス監視
-#[cfg(debug_assertions)]
-mod perf {
-    use std::time::Instant;
-
-    pub fn measure_time<F, R>(name: &str, f: F) -> R
-    where
-        F: FnOnce() -> R,
-    {
-        let start = Instant::now();
-        let result = f();
-        let duration = start.elapsed();
-        println!("{}: {:?}", name, duration);
-        result
-    }
-}
-```
-
-## 拡張性
-
-### プラグインシステム（将来対応）
-
-```rust
-pub trait Plugin {
-    fn name(&self) -> &str;
-    fn version(&self) -> &str;
-    fn init(&mut self) -> Result<(), Error>;
-    fn handle_event(&mut self, event: &Event) -> Result<(), Error>;
-}
-```
-
-### カスタム SHIORI
-
-```rust
-pub trait CustomShiori {
-    fn process_request(&mut self, request: &str) -> Result<String, Error>;
-    fn get_random_talk(&self) -> Result<String, Error>;
-    fn update_aitalk_interval(&mut self, interval: u32);
-}
-```
-
-## 開発・デバッグ
-
-### ログシステム
-
-```rust
-use log::{info, warn, error, debug};
-
-// ログレベル設定
-#[cfg(debug_assertions)]
-const LOG_LEVEL: log::LevelFilter = log::LevelFilter::Debug;
-
-#[cfg(not(debug_assertions))]
-const LOG_LEVEL: log::LevelFilter = log::LevelFilter::Info;
-```
-
-### エラーハンドリング
-
-```rust
-#[derive(Debug, thiserror::Error)]
-pub enum AppError {
-    #[error("Ghost not found: {0}")]
-    GhostNotFound(String),
-
-    #[error("SHIORI error: {0}")]
-    ShioriError(String),
-
-    #[error("File system error: {0}")]
-    FileSystemError(#[from] std::io::Error),
-}
+## 1. 概要
+
+Nanai Android Mascot は、Tauri v2 + Rust をコアブリッジとし、フロントエンドにモダンな Web 標準技術（HTML5 Canvas 2D / CSS3 / Vanilla JavaScript）を採用したクロスプラットフォーム・デスクトップマスコット環境です。
+
+---
+
+## 2. 全体アーキテクチャ図
+
+```mermaid
+flowchart TB
+    subgraph Frontend ["フロントエンド層 (WebView / Single Container)"]
+        direction TB
+        MainUI["メインビュー (index.html)<br>透過キャンバス & キャラクターコンテナ"]
+        ClassicMenu["クラシックメニュー (menu-iframe.html)<br>伺か標準階層メニュー"]
+        ModalUI["管理モーダル (modal-manager.js)<br>設定 / ゴースト一覧 / デバッグ"]
+        
+        Canvas2D["サーフィス描画 (surface.js)<br>Canvas 2D レイヤー合成 / Collision逆算"]
+        ScriptEngine["さくらスクリプトエンジン (sakura-script.js)<br>トークナイズ / キュー制御 / タイピング"]
+        GhostState["ゴースト状態管理 (ghost.js)<br>タイマー / ランダムトーク / スコープ管理"]
+        Interaction["操作制御 (interaction.js)<br>ドラッグ / スワイプ / 画面端スナップ"]
+        
+        ShioriWorker["SHIORI ワーカー (shiori-worker.js)<br>WebAssembly (WASM) / JSモック"]
+    end
+
+    subgraph TauriBridge ["Tauri / IPC ブリッジ層 (Rust)"]
+        direction TB
+        Commands["Tauri Commands<br>open_text_file, resolve_vfs_path, scan_ghosts"]
+        Events["Tauri Event Dispatcher<br>ウィンドウ制御 / ショートカット / トレイ"]
+    end
+
+    subgraph BackendCore ["バックエンド・ネイティブ層 (Rust 2021)"]
+        direction TB
+        VFS["VFS & 文字コード変換 (encoding_rs)<br>Shift_JIS ↔ UTF-8 自動判別 / 表記揺れ解決"]
+        GhostScanner["ゴーストスキャナー (GhostManager)<br>descript.txt / surfaces.txt 走査"]
+        PlatformNative["プラットフォーム抽象化<br>Windows透過ウィンドウ / Androidオーバーレイ"]
+    end
+
+    MainUI <--> ClassicMenu
+    MainUI <--> ModalUI
+    MainUI --- Canvas2D
+    MainUI --- ScriptEngine
+    MainUI --- GhostState
+    MainUI --- Interaction
+    ScriptEngine <--> ShioriWorker
+
+    Frontend <-->|Tauri IPC (invoke / emit)| TauriBridge
+    TauriBridge <--> BackendCore
 ```
 
 ---
 
-_このドキュメントは継続的に更新され、システムの進化に合わせて改善されます。_
+## 3. レイヤー構成と責務
 
-_最終更新: 2025 年 7 月 11 日_
+### 3.1 フロントエンド層 (`src/`)
+
+- **`index.html`**:
+  - 単一の Activity / Window 内で透過表示されるメインコンテナ。
+  - キャラクター（\0 sakura, \1 kero）の DOM 要素、Canvas、バルーン吹き出しを保持。
+- **`src/js/surface.js`**:
+  - `surfaces.txt` のパースおよび HTML5 Canvas 2D によるベース画像＋アニメーション差分レイヤーの合成。
+  - 現在の表示倍率（シェルスケール）に応じた当たり判定（Collision）逆算座標計算。
+- **`src/js/sakura-script.js`**:
+  - `\0`, `\1`, `\s[ID]`, `\w[N]`, `\q[ラベル,ID]`, `\e` 等のタグを字句解析（トークナイズ）。
+  - タイピングアニメーション、ウェイト制御、表情連動、全文早送りスキップキューの非同期管理。
+- **`src/js/ghost.js`**:
+  - ゴーストのメタデータ、状態、定期タイマー（`OnSecondChange`）およびランダムトークのトリガー制御。
+- **`src/js/interaction.js`**:
+  - マウスドラッグ、モバイルタッチスワイプ、画面端ドッキング退避アニメーション。
+- **`src/js/shiori-worker.js` & `shiori-protocol.js`**:
+  - SHIORI 3.0 プロトコルのヘッダーパース・構築。
+  - Web Worker によるサンドボックス化された SHIORI 実行（メインスレッドをブロックしない非同期処理）。
+- **`menu-iframe.html`**:
+  - 伺か標準の右クリックメニュー。iframe 分離により、メイン描画とスタイル干渉を起こさずセキュアに動作。
+
+### 3.2 Tauri IPC & バックエンド層 (`src-tauri/`)
+
+- **仮想ファイルシステム (VFS) & 文字コード変換**:
+  - `encoding_rs` を用いて、歴史的な伺かアセット（Shift_JIS / CP932）とモダン環境（UTF-8）を自動判別して透過読込。
+  - Windows と Linux/Android で異なるファイル名の大文字小文字表記揺れを透過解決。
+- **Tauri Commands**:
+  - `open_text_file(path)`: 自動文字コード判別付きテキスト取得。
+  - `resolve_vfs_path(base, relative)`: 大文字小文字を許容する安全なパス解決。
+  - `scan_ghosts()`: インストール済みゴーストディレクトリの巡回取得。
+
+---
+
+## 4. SHIORI 連携の多層フォールバック機構
+
+多様な環境（Windows / Android / Web）において確実にゴーストを動作させるため、SHIORI のロード機構は以下の順序で多層フォールバックします。
+
+1. **Win32 ネイティブ DLL (Windows 環境)**:
+   - 既存の 32bit/64bit ネイティブ DLL（`satori.dll`, `yaya.dll`）をロード。
+2. **WASM SHIORI (Android / Web / クロスプラットフォーム)**:
+   - WebAssembly にコンパイルされた SHIORI エンジンを Web Worker 内で実行。
+3. **内蔵 JS/TS 簡易フォールバック**:
+   - ネイティブバイナリが存在しない環境でも、辞書テキスト（`dic_*.txt` 等）を直接解釈して基本対話を継続。
+4. **モダン Web プラグイン**:
+   - JavaScript / Web 標準 API を利用した本アプリ専用の拡張機能。

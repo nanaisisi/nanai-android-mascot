@@ -1,207 +1,78 @@
-> **AI 関与について**: このドキュメントは GitHub
-> Copilot の支援により作成されました。キャラクター設定・仕様はオーナーユーザーと AI の協議により決定されています。
+> **AI 関与について**: このドキュメントは GitHub Copilot / Antigravity の支援により作成・更新されました。キャラクター設定・仕様はオーナーユーザーと AI の協議により決定されています。
 
-# ウィンドウ設計
+# ウィンドウ & コンテナ設計 (window-design)
 
-## 概要
+## 1. 概要
 
-Android 向けマスコットアプリケーションにおける UI 構成設計。 SSP（原意 Sakura
-Script Player）のコンセプトを Android 環境に適応させる。
+本ドキュメントは、**nanai-android-mascot** におけるウィンドウ構成、コンテナ設計、および透過表示制御のアーキテクチャを定義します。
+従来のデスクトップ環境（SSP）におけるマルチウィンドウ（本体、相方、バルーン、メニューが独立した OS ウィンドウ）の表現力を、モダンな **Single Activity / Single Transparent Window** 内で高度にエミュレート・再現するアプローチを採用しています。
 
-> **注**:
-> Windows プラットフォームは Android 向け UI の検証用として使用し、将来的な Windows 固有機能（Splashscreen 等）は別途検討・分離して記載する。
+---
 
-## 開発段階
+## 2. ウィンドウ・コンテナ構成
 
-1. **Windows 検証**: Android 向け UI の動作検証（技術検証・デバッグ用）
-2. **Android 本実装**: System Overlay での本格実装
+### 2.1 アーキテクチャ概念
 
-## UI 構成（Android 向け）
+PC（Windows）環境および Android モバイル環境の双方で統一したレンダリングを行うため、メインウィンドウは **完全透過のルートコンテナ** として起動し、その内部で各コンポーネントを DOM / Canvas レイヤーとして配置します。
 
-### 1. Single Activity Container (index.html)
+```mermaid
+flowchart TD
+    OSWindow["Tauri ルートウィンドウ (Transparent / Frameless)"]
+    RootContainer["Single Container (#app-container)"]
+    
+    SakuraScope["メインキャラクター (\0 sakura)<br>Canvas 2D + 表情/当たり判定"]
+    KeroScope["二番キャラクター (\1 kero)<br>Canvas 2D + 表情/当たり判定"]
+    BalloonScope["バルーン吹き出しコンテナ<br>スコープ別独立配置 / 早送りスキップ"]
+    IframeMenu["クラシックメニュー (menu-iframe.html)<br>右クリック / 階層サブメニュー"]
+    ModalOverlay["モーダルオーバーレイ<br>設定 / ゴースト切替 / デバッグ"]
 
-- **用途**: アプリケーション全体の制御・表示領域
-- **特徴**:
-  - Android Activity 内の WebView
-  - 全ての機能を包含するコンテナ
-  - View 切り替えによる画面遷移
-- **機能**:
-  - View 管理・切り替え
-  - Android 権限管理
-  - システムオーバーレイ制御
-
-### 2. ゴーストビュー (#ghost-view)
-
-- **用途**: キャラクター表示
-- **実装**: CSS Transform + position:fixed
-- **特徴**:
-  - 画面内フローティング表示
-  - タッチ・ドラッグ対応
-  - アニメーション表示
-- **機能**:
-  - キャラクター画像表示
-  - タッチインタラクション
-  - 位置記憶・復元
-
-### 3. 設定ビュー (#settings-view)
-
-- **用途**: アプリケーション設定
-- **実装**: スライドイン/モーダルオーバーレイ
-- **特徴**:
-  - ネイティブ Android UI 風デザイン
-  - スワイプ・タップ操作
-- **機能**:
-  - ゴースト選択・切り替え
-  - 表示設定
-  - 権限設定
-
-### 4. バルーンビュー (#balloon-view)
-
-- **用途**: メッセージ・台詞表示
-- **実装**: 動的生成オーバーレイ
-- **特徴**:
-  - ゴーストに連動した位置表示
-  - 自動消去タイマー
-- **機能**:
-  - テキスト表示
-  - 選択肢ボタン
-  - 音声再生連動
-
-## Android 技術制約
-
-### 権限要件
-
-- `SYSTEM_ALERT_WINDOW`: 他アプリ上表示（要ユーザー許可）
-- `FOREGROUND_SERVICE`: バックグラウンド動作
-- `WAKE_LOCK`: 画面表示維持（オプション）
-
-### 実装制限
-
-- **複数ウィンドウ**: Android 標準では不可
-- **透過表示**: WebView 内での CSS 透過のみ
-- **システムオーバーレイ**: 非常に制限的、権限必要
-- **フローティング**: CSS Transform による疑似実装
-
-## ファイル配置
-
-### メイン構成（Android 向け、Windows 検証用に同等実装）
-
-```text
-src/
-├── index.html              (Single Activity Container / Windows検証用UI)
-├── main.js                 (App Controller)
-├── styles.css              (Global Styles)
-├── views/
-│   ├── ghost.css          (ゴーストビュー)
-│   ├── settings.css       (設定ビュー)
-│   └── balloon.css        (バルーンビュー)
-├── scripts/
-│   ├── ghost-controller.js     (ゴースト制御)
-│   ├── settings-controller.js  (設定制御)
-│   ├── balloon-controller.js   (バルーン制御)
-│   └── android-adapter.js      (Android固有処理)
-└── assets/                 (既存のまま)
-    └── ghost/
-        └── mock_nanai/
+    OSWindow --> RootContainer
+    RootContainer --> SakuraScope
+    RootContainer --> KeroScope
+    RootContainer --> BalloonScope
+    RootContainer --> IframeMenu
+    RootContainer --> ModalOverlay
 ```
 
-### 将来的な Windows 固有構成（参考・分離検討対象）
+### 2.2 透過・ポインタ制御（タッチスルー）
 
-```text
-src/windows/               (Windows固有機能検証時のみ)
-├── splashscreen.html     (スプラッシュ画面)
-├── multi-window.html     (複数ウィンドウ管理)
-└── desktop-features.html (デスクトップ固有機能)
-```
+マスコット以外の背景領域をクリック・タップした際に、背後のデスクトップ画面や他アプリの邪魔をしないよう、以下のポインタ制御を行っています：
 
-> **注**: Windows 固有の機能（複数ウィンドウ、透過、Always On
-> Top 等）は将来的な検討事項として分離。現在は Android 向け UI の検証に集中。
+- **ルートコンテナ / 背景領域**: `pointer-events: none;` により透過
+- **キャラクター本体 / バルーン / メニュー**: `pointer-events: auto;` によりイベント捕捉
+- **Android オーバーレイ適応時**: 必要に応じてウィンドウ全体のタッチ透過フラグをネイティブ連携
 
-## Tauri 設定
+---
 
-### メイン設定（Android 向け、Windows 検証用に同等）
+## 3. レイヤー別設計
 
-```json
-{
-  "app": {
-    "windows": [
-      {
-        "label": "main",
-        "url": "index.html",
-        "title": "Nanai Android Mascot",
-        "width": 400,
-        "height": 600,
-        "transparent": false,
-        "decorations": true,
-        "resizable": false,
-        "fullscreen": false
-      }
-    ]
-  },
-  "bundle": {
-    "android": {
-      "permissions": [
-        "android.permission.SYSTEM_ALERT_WINDOW",
-        "android.permission.FOREGROUND_SERVICE"
-      ]
-    }
-  }
-}
-```
+### 3.1 キャラクタービュー (`#character-container`)
 
-### 将来的な Windows 固有設定（分離検討対象）
+- **レンダリング**: HTML5 Canvas 2D
+- **インタラクション**:
+  - マウスドラッグ & タッチスワイプによる任意移動
+  - 画面端スナップ（ドッキング退避 & タップ復帰）
+  - 表示倍率（50%〜200%）のリアルタイム動的拡縮
 
-```json
-{
-  "app": {
-    "windows": [
-      {
-        "label": "splashscreen",
-        "url": "windows/splashscreen.html",
-        "transparent": true,
-        "decorations": false,
-        "alwaysOnTop": true
-      }
-    ]
-  }
-}
-```
+### 3.2 バルーンビュー (`#balloon-container`)
 
-> **注**: Windows 固有の設定は将来的な検討事項。現在は Android 向け UI の検証に集中。
+- **配置制御**: キャラクターの位置・拡縮率に追従して自動計算配置
+- **スコープ分離**: `\0` (sakura) と `\1` (kero) それぞれの吹き出しを独立表示
 
-## 実装順序
+### 3.3 メニュービュー (`menu-iframe.html`)
 
-### Phase 1: Android 向け UI 基本実装（Windows 検証用でも同等実装）
+- **分離理由**: CSS 干渉の防止、セキュアなコンテキスト分離
+- **通信**: 親子間の `postMessage` API による完全双方向通信（メニュー開閉、アクション返送）
 
-- **目標**: WebView 内でのキャラクター表示（Android 本番・Windows 検証両用）
-- **内容**:
-  - Single Activity Container 構築
-  - ゴーストビューの基本表示
-  - タッチインタラクション
+---
 
-### Phase 2: Android 向け UI 拡張（Windows 検証用でも同等実装）
+## 4. プラットフォーム別適応方針
 
-- **目標**: 設定画面・メッセージ機能（Android 本番・Windows 検証両用）
-- **内容**:
-  - 設定ビューの実装
-  - バルーンビューの実装
-  - ビュー切り替え機能
+### 4.1 Windows (Windows First)
 
-### Phase 3: Android 高度機能
+- デスクトップ常駐、透明ウィンドウ（`transparent: true`）、タスクバー/トレイ連携、キーボードショートカット（Ctrl+W, Ctrl+I 等）のフルサポート。
 
-- **目標**: システムオーバーレイ・サービス化（Android 専用）
-- **内容**:
-  - SYSTEM_ALERT_WINDOW 権限対応
-  - フォアグラウンドサービス実装
-  - より高度なインタラクション
+### 4.2 Android (Android Adaptation)
 
-### 将来的検討事項: Windows 固有機能
-
-- **目標**: デスクトップ固有機能の検証（分離検討対象）
-- **内容**:
-  - 複数ウィンドウ版の作成
-  - 透過・フローティング検証
-  - Splashscreen 等の実装
-
-> **注**:
-> Windows 固有機能は現在の開発スコープ外。Android 向け UI の検証完了後に別途検討。
+- **Single Activity Container**: Android の単一 Activity 内で WebView を透過表示。
+- **システムオーバーレイ**: `SYSTEM_ALERT_WINDOW` 権限と常駐サービス（Foreground Service）の連携により、他アプリ利用中も画面上にマスコットをオーバーレイ表示。

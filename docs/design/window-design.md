@@ -86,7 +86,7 @@ Script Player）のコンセプトを Android 環境に適応させる。
 
 ### メイン構成（Android 向け、Windows 検証用に同等実装）
 
-```
+```text
 src/
 ├── index.html              (Single Activity Container / Windows検証用UI)
 ├── main.js                 (App Controller)
@@ -107,7 +107,7 @@ src/
 
 ### 将来的な Windows 固有構成（参考・分離検討対象）
 
-```
+```text
 src/windows/               (Windows固有機能検証時のみ)
 ├── splashscreen.html     (スプラッシュ画面)
 ├── multi-window.html     (複数ウィンドウ管理)

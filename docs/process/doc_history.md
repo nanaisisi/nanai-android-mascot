@@ -58,7 +58,6 @@ Android 特化による不明瞭さ、Windows 環境での機能実装を優先�
 - システムオーバーレイ対応
 ```
 
-````
 **変更後:**
 
 ```markdown
@@ -82,9 +81,8 @@ Android 特化による不明瞭さ、Windows 環境での機能実装を優先�
 
 ### Phase 4: Android高度機能
 
-
 - Android固有機能の活用
-````
+```
 
 **変更理由**:
 Windows 環境を主軸とした段階的開発に変更、Android 移植は後続フェーズに
@@ -190,4 +188,3 @@ Android 向け UI の検証・実装に集中し、将来的な話は分離す�
 2. **実装状況・アセット構成との整合性確保（`development-approach.md`）**
    - 公式サンプルゴースト（`mock_nanai`）の最新ディレクトリ構成（`surfaces.txt`, `surfacetable.txt`, `satori.dll`, `dic_*.txt` 等）を正確に反映。
    - プラットフォーム拡張方針および多層フォールバック機構（ネイティブ DLL → WASM → JS/TS モック）の連携を明記。
-

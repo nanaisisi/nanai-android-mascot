@@ -44,7 +44,7 @@ Android 向け SSP 互換環境の開発における技術選択と開発手法�
 
 #### 技術構成
 
-```
+```text
 Frontend: Vanilla HTML + CSS + JavaScript
 ├── HTML: 基本的な構造とマークアップ
 ├── CSS: スタイリングとアニメーション
@@ -109,7 +109,7 @@ fn main() {
 
 ### ディレクトリ構造
 
-```
+```text
 assets/ghost/
 └── mock_nanai/           # テンプレートベース公式モックゴースト
     ├── install.txt
@@ -138,7 +138,7 @@ assets/ghost/
 
 #### テンプレート化
 
-```
+```text
 Template Ghost Structure:
 ├── 基本設定 (descript.txt)
 ├── サンプル画像 (surface*.png)
@@ -156,7 +156,7 @@ Template Ghost Structure:
 
 ### 必要ツール
 
-```
+```text
 開発環境:
 ├── Rust (最新 stable)
 ├── Node.js (LTS版)
@@ -297,7 +297,7 @@ jobs:
 
 #### DLL 識別方式
 
-```
+```text
 ゴーストディレクトリ/ghost/master/ 内での DLL 検索:
 ├── satori.dll → SATORI SHIORI 使用
 ├── yaya.dll   → YAYA SHIORI 使用
@@ -343,7 +343,7 @@ Windows 以外の環境（Android / Web / ARM）における動的 DLL ロード
 
 ## 開発体制
 
-#### AI 支援開発
+### AI 支援開発
 
 - **主要ツール**: GitHub Copilot
 - **役割分担**:
@@ -355,7 +355,7 @@ Windows 以外の環境（Android / Web / ARM）における動的 DLL ロード
   - AI によるコード実装支援
   - オーナーによる方針確認・品質管理
 
-#### AI 関与範囲
+### AI 関与範囲
 
 - **コード実装**: AI が主要な実装を担当
 - **ドキュメント**: AI が作成または大幅に関与

@@ -97,7 +97,55 @@ export class MascotNanaiApp {
     globalThis.addEventListener("message", (event) => {
       if (event.data?.type === "menu-action") {
         this.hideMenu();
-        const contentId = `${event.data.action}-modal-content`;
+        const action = event.data.action;
+
+        // 特殊アクションのハンドリング
+        if (action === "talk") {
+          this.onGhostClick();
+          return;
+        }
+
+        if (action.startsWith("scale-")) {
+          const scaleMap = {
+            "scale-50": "60px",
+            "scale-75": "90px",
+            "scale-100": "120px",
+            "scale-125": "150px",
+            "scale-150": "180px",
+            "scale-200": "240px",
+          };
+          const newSize = scaleMap[action] || "120px";
+          if (this.elements.ghostDisplay) {
+            this.elements.ghostDisplay.style.width = newSize;
+            this.elements.ghostDisplay.style.height = newSize;
+          }
+          this.showBalloon(`シェル倍率を変更しました`);
+          setTimeout(() => this.hideBalloon(), 1500);
+          return;
+        }
+
+        if (action === "close") {
+          this.showBalloon("さようなら…！");
+          setTimeout(() => {
+            if (globalThis.__TAURI__) {
+              // Tauriウィンドウ閉じる
+              globalThis.window.close();
+            }
+          }, 1000);
+          return;
+        }
+
+        if (action === "minimize") {
+          this.showBalloon("また呼んでね！");
+          setTimeout(() => {
+            if (this.elements.ghostDisplay) {
+              this.elements.ghostDisplay.style.opacity = "0.2";
+            }
+          }, 1000);
+          return;
+        }
+
+        const contentId = `${action}-modal-content`;
         this.modalManager?.show(contentId);
       }
     });

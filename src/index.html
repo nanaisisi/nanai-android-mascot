@@ -45,8 +45,8 @@
           <iframe
             id="menu-iframe"
             src="menu-iframe.html"
-            width="200"
-            height="280"
+            width="240"
+            height="390"
             title="メニューオプション"
             loading="lazy"
             style="border: none"
@@ -245,6 +245,26 @@
       <div class="form-section">
         <button id="save-settings-btn" class="primary">設定保存</button>
         <button id="reset-settings-btn">設定リセット</button>
+      </div>
+    </div>
+
+    <div id="plugins-modal-content" style="display: none">
+      <h2>🧩 プラグイン・拡張機能</h2>
+      <div class="form-section">
+        <span class="form-label">インストール済み拡張機能 (JS/WASM):</span>
+        <div class="ghost-list" id="plugin-list">
+          <div class="ghost-item active">
+            <strong>sample-clock-plugin (内蔵)</strong><br>
+            <small>定時トーク・時報通知プラグイン (v1.0.0)</small>
+          </div>
+          <div class="ghost-item">
+            <strong>mock-weather-shim (内蔵)</strong><br>
+            <small>お天気取得エミュレーション (v1.0.0)</small>
+          </div>
+        </div>
+      </div>
+      <div class="form-section">
+        <button id="add-plugin-btn" class="primary">新しいプラグインを追加...</button>
       </div>
     </div>
 

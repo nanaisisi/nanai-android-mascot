@@ -3,9 +3,131 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mascot Nanai Menu</title>
+    <title>Mascot Nanai Classic Menu</title>
     <style>
-      /* アクセシビリティ用の非表示要素 */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "MS UI Gothic", "Meiryo", sans-serif;
+        background: #f0f0f0;
+        border: 1px solid #7a7a7a;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.35);
+        color: #000;
+        user-select: none;
+        -webkit-user-select: none;
+        overflow: hidden;
+      }
+
+      .menu-container {
+        padding: 3px 0;
+        min-width: 220px;
+        background: #f9f9f9;
+      }
+
+      .menu-item {
+        width: 100%;
+        padding: 6px 14px;
+        background: none;
+        border: none;
+        text-align: left;
+        cursor: pointer;
+        font-size: 13px;
+        color: #111;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background-color 0.1s, color 0.1s;
+      }
+
+      .menu-item:hover, .menu-item:focus {
+        background-color: #0078d7;
+        color: #fff;
+        outline: none;
+      }
+
+      .menu-item.has-submenu::after {
+        content: "▶";
+        font-size: 9px;
+        opacity: 0.7;
+        margin-left: 8px;
+      }
+
+      .menu-item:hover.has-submenu::after {
+        color: #fff;
+      }
+
+      .shortcut-key {
+        font-size: 11px;
+        color: #666;
+        margin-left: 12px;
+      }
+
+      .menu-item:hover .shortcut-key {
+        color: #eee;
+      }
+
+      .menu-separator {
+        height: 1px;
+        background-color: #dcdcdc;
+        margin: 4px 6px;
+      }
+
+      /* サブメニュー */
+      .submenu-container {
+        display: none;
+        position: absolute;
+        left: 100%;
+        top: 0;
+        background: #f9f9f9;
+        border: 1px solid #7a7a7a;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.35);
+        min-width: 160px;
+        padding: 3px 0;
+        z-index: 1000;
+      }
+
+      .menu-item-wrapper {
+        position: relative;
+      }
+
+      .menu-item-wrapper:hover > .submenu-container {
+        display: block;
+      }
+
+      /* ダークモード対応 */
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: #252526;
+          border-color: #454545;
+          color: #eee;
+        }
+
+        .menu-container, .submenu-container {
+          background: #2d2d30;
+        }
+
+        .menu-item {
+          color: #eee;
+        }
+
+        .menu-item:hover, .menu-item:focus {
+          background-color: #094771;
+          color: #fff;
+        }
+
+        .shortcut-key {
+          color: #999;
+        }
+
+        .menu-separator {
+          background-color: #3e3e42;
+        }
+      }
+
       .visually-hidden {
         position: absolute;
         width: 1px;
@@ -17,145 +139,97 @@
         white-space: nowrap;
         border: 0;
       }
-
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          Arial, sans-serif;
-        background: white;
-        border: 2px solid #ddd;
-        border-radius: 8px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        overflow: hidden;
-      }
-
-      .menu-container {
-        padding: 8px 0;
-        min-width: 180px;
-      }
-
-      .menu-item {
-        padding: 10px 16px;
-        cursor: pointer;
-        transition: background-color 0.2s;
-        font-size: 14px;
-        color: #333;
-        border: none;
-        width: 100%;
-        text-align: left;
-        background: none;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .menu-item:hover {
-        background-color: #f0f0f0;
-      }
-
-      .menu-item:active {
-        background-color: #e0e0e0;
-      }
-
-      .menu-separator {
-        height: 1px;
-        background-color: #e0e0e0;
-        margin: 4px 0;
-      }
-
-      .menu-icon {
-        font-size: 16px;
-        width: 20px;
-        text-align: center;
-      }
-
-      .menu-debug {
-        opacity: 0.7;
-        font-size: 12px;
-      }
-
-      /* ダークモード対応 */
-      @media (prefers-color-scheme: dark) {
-        body {
-          background: #2b2b2b;
-          border-color: #555;
-          color: #fff;
-        }
-
-        .menu-item {
-          color: #fff;
-        }
-
-        .menu-item:hover {
-          background-color: #404040;
-        }
-
-        .menu-item:active {
-          background-color: #505050;
-        }
-
-        .menu-separator {
-          background-color: #555;
-        }
-      }
     </style>
   </head>
   <body>
-    <h1 class="visually-hidden">Mascot Nanai メニュー</h1>
-    <div class="menu-container">
-      <button class="menu-item" id="ghost-btn">
-        <span class="menu-icon">👻</span>
-        <span>ゴースト管理</span>
-      </button>
-
-      <button class="menu-item" id="balloon-btn">
-        <span class="menu-icon">💭</span>
-        <span>バルーン管理</span>
+    <h1 class="visually-hidden">Mascot Nanai クラシックメニュー</h1>
+    <div class="menu-container" role="menu">
+      <!-- ゴースト動的アクション -->
+      <button class="menu-item" id="talk-btn" role="menuitem">
+        <span>💬 もう一度話す (T)</span>
       </button>
 
       <div class="menu-separator"></div>
 
-      <button class="menu-item" id="scan-btn">
-        <span class="menu-icon">🔍</span>
-        <span>スキャン</span>
-      </button>
+      <!-- 伺か標準機能メニュー群 -->
+      <div class="menu-item-wrapper">
+        <button class="menu-item has-submenu" id="ghost-switch-btn" role="menuitem">
+          <span>👻 ゴースト切り替え (G)</span>
+        </button>
+        <div class="submenu-container" id="ghost-submenu">
+          <button class="menu-item" id="ghost-btn">
+            <span>📂 ゴースト一覧・管理...</span>
+          </button>
+        </div>
+      </div>
 
-      <button class="menu-item" id="test-btn">
-        <span class="menu-icon">🧪</span>
-        <span>テスト</span>
+      <div class="menu-item-wrapper">
+        <button class="menu-item has-submenu" id="scale-menu-btn" role="menuitem">
+          <span>🔍 シェル倍率 (S)</span>
+        </button>
+        <div class="submenu-container">
+          <button class="menu-item" id="scale-50-btn"><span>50%</span></button>
+          <button class="menu-item" id="scale-75-btn"><span>75%</span></button>
+          <button class="menu-item" id="scale-100-btn"><span>100% (標準)</span></button>
+          <button class="menu-item" id="scale-125-btn"><span>125%</span></button>
+          <button class="menu-item" id="scale-150-btn"><span>150%</span></button>
+          <button class="menu-item" id="scale-200-btn"><span>200%</span></button>
+        </div>
+      </div>
+
+      <button class="menu-item" id="balloon-btn" role="menuitem">
+        <span>💭 バルーン設定 (B)</span>
       </button>
 
       <div class="menu-separator"></div>
 
-      <button class="menu-item" id="settings-btn">
-        <span class="menu-icon">⚙️</span>
-        <span>設定</span>
+      <!-- 拡張・ツール系 -->
+      <button class="menu-item" id="scan-btn" role="menuitem">
+        <span>📂 フォルダ再スキャン (R)</span>
       </button>
 
-      <button class="menu-item menu-debug" id="debug-btn">
-        <span class="menu-icon">🐛</span>
-        <span>デバッグ</span>
+      <button class="menu-item" id="plugins-btn" role="menuitem">
+        <span>🧩 プラグイン・拡張機能 (P)</span>
       </button>
 
-      <button class="menu-item" id="help-btn">
-        <span class="menu-icon">❓</span>
-        <span>ヘルプ</span>
+      <button class="menu-item" id="settings-btn" role="menuitem">
+        <span>⚙️ 設定 (O)</span>
+      </button>
+
+      <button class="menu-item" id="debug-btn" role="menuitem">
+        <span>🐛 デバッグログ (D)</span>
+      </button>
+
+      <button class="menu-item" id="help-btn" role="menuitem">
+        <span>❓ 情報・ヘルプ (A)</span>
+      </button>
+
+      <div class="menu-separator"></div>
+
+      <!-- 終了・最小化 -->
+      <button class="menu-item" id="minimize-btn" role="menuitem">
+        <span>➖ アイコン化・隠す (I)</span>
+        <span class="shortcut-key">Ctrl+I</span>
+      </button>
+
+      <button class="menu-item" id="close-btn" role="menuitem">
+        <span>✖ 終了 (W)</span>
+        <span class="shortcut-key">Ctrl+W</span>
       </button>
     </div>
 
     <script>
-      console.log("=== Menu iframe 初期化 ===");
-
       // メニューアイテムのクリックイベント
       document.addEventListener("click", (e) => {
         const menuItem = e.target.closest(".menu-item");
         if (!menuItem) return;
 
-        const action = menuItem.id.replace("-btn", "");
-        console.log(`Menu iframe: ${action} クリック`);
+        // サブメニュー展開用の親ボタンはクリックで閉じない
+        if (menuItem.classList.contains("has-submenu")) return;
 
-        // 親ウィンドウにメッセージを送信
+        const action = menuItem.id.replace("-btn", "");
+        console.log(`Classic Menu Action: ${action}`);
+
         if (window.parent && window.parent !== window) {
           window.parent.postMessage(
             {
@@ -165,28 +239,8 @@
             },
             "*"
           );
-          console.log(`親ウィンドウにメッセージ送信: ${action}`);
-        } else {
-          console.error("親ウィンドウが見つかりません");
         }
       });
-
-      // 親ウィンドウからのメッセージを受信
-      window.addEventListener("message", (event) => {
-        console.log("Menu iframe メッセージ受信:", event.data);
-
-        if (event.data.type === "hide-menu") {
-          // メニューを隠す処理（親が制御するのでここでは特に何もしない）
-          console.log("メニュー非表示要求を受信");
-        }
-      });
-
-      // デバッグ用：すべてのメニューアイテムを列挙
-      document.querySelectorAll(".menu-item").forEach((item) => {
-        console.log(`Menu item registered: ${item.id}`);
-      });
-
-      console.log("=== Menu iframe 初期化完了 ===");
     </script>
   </body>
 </html>

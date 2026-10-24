@@ -155,6 +155,25 @@ export class ModalManager {
     if (form.shellScale) form.shellScale.value = this.app.settings.shellScale || "100";
     if (form.balloonScale) form.balloonScale.value = this.app.settings.balloonScale || "100";
 
+    const overlayBtn = document.getElementById("open-overlay-settings-btn");
+    overlayBtn?.addEventListener("click", async () => {
+      if (globalThis.__TAURI__) {
+        try {
+          await globalThis.__TAURI__.invoke("request_overlay_permission");
+        } catch (_e) {
+          this.showNotification(
+            "Android 設定案内",
+            "Androidの『設定』→『アプリ』→『特別なアプリアクセス』→『他のアプリの上に重ねて表示』から Nanai Mascot を許可してください。"
+          );
+        }
+      } else {
+        this.showNotification(
+          "Android 設定案内",
+          "Android環境で実行時に『他のアプリの上に重ねて表示（SYSTEM_ALERT_WINDOW）』設定画面へ案内されます。"
+        );
+      }
+    });
+
     form.saveBtn?.addEventListener("click", () => {
       this.app.settings.autoLoadGhost = form.autoLoad?.checked ?? true;
       this.app.settings.darkMode = form.darkMode?.checked ?? false;

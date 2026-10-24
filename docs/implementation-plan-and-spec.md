@@ -92,7 +92,7 @@ flowchart TD
 **目標**: Android 実機上で他アプリの上に浮遊常駐し、邪魔にならないスマートなデスクトップマスコット体験を提供する。
 
 1. **Android マニフェスト & パーミッション誘導**
-   - [ ] `SYSTEM_ALERT_WINDOW` の設定画面誘導インテント呼び出し
+   - [x] `SYSTEM_ALERT_WINDOW` の設定画面誘導インテント呼び出し（Tauriコマンド `request_overlay_permission` & 設定モーダル案内UI）
    - [ ] フォアグラウンドサービス通知チャネルの実装
 2. **透過タッチスルー (Touch-through)**
    - [ ] マスコット透過部分のタッチイベントを Android OS の背後ウィンドウへ通過させるネイティブ設定

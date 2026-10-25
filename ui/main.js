@@ -124,7 +124,13 @@ export class NanaiAndroidMascotApp {
 	 */
 	async closeApp() {
 		const exit = async () => {
+			this.ghostController?.stopSecondChangeTimer?.();
 			if (isTauriAvailable()) {
+				try {
+					await invoke("unload_current_ghost");
+				} catch (_e) {
+					// unload失敗時は継続
+				}
 				try {
 					await invoke("close_ghost", { ghostId: this.ghostId });
 					return;

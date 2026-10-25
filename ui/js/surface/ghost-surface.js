@@ -30,6 +30,11 @@ export const ghostSurfaceMethods = {
       return;
     }
 
+    // サーフィスIDを SurfaceManager に常に通知（当たり判定とアニメーションのため）
+    if (!isSubchar) {
+      this.app?.surfaceManager?.setSurfaceId(surfaceId, scopeId);
+    }
+
     if (isTauriAvailable()) {
       // デスクトップ(Tauri)環境では、スコープ0(メイン)・スコープ1以降(サブ)問わず
       // 独立した透過キャラクターウィンドウで描画・移動を行う
@@ -42,7 +47,6 @@ export const ghostSurfaceMethods = {
       if (container && container.style.display === "none") container.style.display = "flex";
       if (!isSubchar) {
         if (container) container.style.visibility = "visible";
-        this.app?.surfaceManager?.setSurfaceId(surfaceId);
       }
     }
 

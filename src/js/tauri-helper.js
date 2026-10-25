@@ -51,3 +51,12 @@ export async function listen(event, handler) {
   }
   return () => {};
 }
+
+export async function emit(event, payload) {
+  const tauri = globalThis.__TAURI__;
+  if (!tauri) return;
+  const emitFn = tauri.event?.emit || tauri.emit;
+  if (typeof emitFn === "function") {
+    return await emitFn(event, payload);
+  }
+}

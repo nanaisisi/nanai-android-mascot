@@ -6,6 +6,7 @@ function dispatchAction(action, payload = null) {
   if (!action) return;
   console.log(`Classic Menu Action: ${action}`, payload || "");
 
+  // iframe 環境の場合
   if (globalThis.parent && globalThis.parent !== globalThis) {
     globalThis.parent.postMessage(
       {
@@ -17,9 +18,44 @@ function dispatchAction(action, payload = null) {
       "*"
     );
   }
+
+  // 独立ウィンドウ（WebviewWindow）環境の場合
+  if (globalThis.__TAURI__) {
+    const emitFn = globalThis.__TAURI__.event?.emit || globalThis.__TAURI__.emit;
+    const invokeFn = globalThis.__TAURI__.core?.invoke || globalThis.__TAURI__.invoke;
+    if (typeof emitFn === "function") {
+      emitFn("menu-action", { action, payload });
+    }
+    if (typeof invokeFn === "function" && action !== "request-sync") {
+      invokeFn("hide_menu_window").catch(() => {});
+    }
+  }
 }
 
-// 親ウィンドウからの状態同期メッセージ受信
+// 独立ウィンドウ環境での Tauri イベント受信 (ゴースト・シェル・バルーンテーマ同期)
+if (globalThis.__TAURI__) {
+  const listenFn = globalThis.__TAURI__.event?.listen || globalThis.__TAURI__.listen;
+  if (typeof listenFn === "function") {
+    listenFn("sync-ghosts", (event) => {
+      const data = event.payload;
+      if (data) {
+        renderGhostSubmenu(data.ghosts || [], data.currentGhost);
+        if (data.shells) {
+          renderShellSubmenu(data.shells, data.currentShell);
+        }
+      }
+    });
+    listenFn("sync-theme", (event) => {
+      const theme = event.payload;
+      if (theme) {
+        document.documentElement.setAttribute("data-balloon-theme", theme);
+        document.body.className = `balloon-theme-${theme}`;
+      }
+    });
+  }
+}
+
+// 親ウィンドウからの状態同期メッセージ受信 (iframeフォールバック時)
 globalThis.addEventListener("message", (event) => {
   if (event.data?.type === "sync-ghosts") {
     const ghosts = event.data.ghosts || [];
@@ -29,6 +65,12 @@ globalThis.addEventListener("message", (event) => {
     const shells = event.data.shells || ["master"];
     const currentShell = event.data.currentShell || "master";
     renderShellSubmenu(shells, currentShell);
+  } else if (event.data?.type === "sync-theme") {
+    const theme = event.data.theme;
+    if (theme) {
+      document.documentElement.setAttribute("data-balloon-theme", theme);
+      document.body.className = `balloon-theme-${theme}`;
+    }
   }
 });
 

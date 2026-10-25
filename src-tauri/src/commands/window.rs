@@ -153,13 +153,14 @@ pub async fn show_context_menu(
 /// バルーンスキン連動の独立ポップアップメニューウィンドウ表示コマンド (ウィンドウ枠外にはみ出して表示可能)
 #[tauri::command]
 #[allow(unused_variables)]
-pub async fn show_menu_window(app_handle: tauri::AppHandle, x: f64, y: f64) -> Result<(), String> {
+pub async fn show_menu_window(app_handle: tauri::AppHandle, x: f64, y: f64, scope: Option<i32>) -> Result<(), String> {
     #[cfg(desktop)]
     {
         use tauri::Manager;
-        // メインメニューの実寸 (240x540: 終了ボタン・フッターまで収まるサイズ)
+        let menu_scope = scope.unwrap_or(0);
+        // メインメニューの実寸 (240x540: 終了ボタン・フッターまで収まるサイズ, サブキャラ用は420)
         let win_width = 240.0;
-        let win_height = 540.0;
+        let win_height = if menu_scope > 0 { 420.0 } else { 540.0 };
 
         let mut target_x = x;
         let mut target_y = y;
@@ -190,11 +191,12 @@ pub async fn show_menu_window(app_handle: tauri::AppHandle, x: f64, y: f64) -> R
             }));
             let _ = menu_win.show();
             let _ = menu_win.set_focus();
+            let _ = menu_win.emit("sync-menu-scope", menu_scope);
         } else {
             let menu_win = tauri::WebviewWindowBuilder::new(
                 &app_handle,
                 "menu_window",
-                tauri::WebviewUrl::App("menu-iframe.html".into()),
+                tauri::WebviewUrl::App(format!("menu-iframe.html?scope={}", menu_scope).into()),
             )
             .title("Nanai Menu")
             .inner_size(win_width, win_height)
@@ -209,6 +211,7 @@ pub async fn show_menu_window(app_handle: tauri::AppHandle, x: f64, y: f64) -> R
 
             let _ = menu_win.show();
             let _ = menu_win.set_focus();
+            let _ = menu_win.emit("sync-menu-scope", menu_scope);
         }
     }
     Ok(())

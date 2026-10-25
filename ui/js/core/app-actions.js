@@ -37,7 +37,10 @@ export const actionMethods = {
     if (!action) return;
     const gc = this.ghostController;
 
-    if (action === "talk") return this.onGhostClick();
+    if (action === "talk") {
+      const scopeId = (payload && typeof payload === "object" && "scope" in payload) ? payload.scope : 0;
+      return this.onGhostClick(undefined, undefined, undefined, scopeId);
+    }
 
     if (SHIORI_ACTIONS[action]) {
       gc.sendShioriEvent(...SHIORI_ACTIONS[action]);

@@ -1,6 +1,7 @@
 import { actionMethods } from "./js/core/app-actions.js";
 import { eventMethods } from "./js/core/app-events.js";
 import { settingsMethods } from "./js/core/app-settings.js";
+import { updateMethods } from "./js/core/app-update.js";
 import { AppConfig, loadAppConfig } from "./js/core/config.js";
 import { invoke, isTauriAvailable } from "./js/core/tauri-helper.js";
 import { GhostController } from "./js/ghost/ghost.js";
@@ -162,6 +163,7 @@ Object.assign(
 	actionMethods,
 	eventMethods,
 	settingsMethods,
+	updateMethods,
 );
 
 // アプリケーション起動

@@ -298,6 +298,8 @@ export class SakuraScriptPlayer {
 		const [cmd, sub, value] = args.map((a) => (a ?? "").toLowerCase());
 		if (cmd === "set" && sub === "alignmenttodesktop") {
 			await this.setAlignmentToDesktop(value);
+		} else if (cmd === "update" || cmd === "updatebymyself") {
+			await this.app.startNetworkUpdate?.();
 		} else {
 			console.debug("未対応の \\! コマンド:", args);
 		}

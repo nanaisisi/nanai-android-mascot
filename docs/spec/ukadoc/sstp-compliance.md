@@ -1,6 +1,7 @@
-# SSTP/1.x 規格対応仕様 (SSTP Compliance)
+﻿# SSTP/1.x 規格対応仕様 (SSTP Compliance)
 
 - **仕様リファレンス**: [ukatech/ukadoc-spec: SSTP/1.x](https://ukatech.shillest.net/ukadoc-spec/spec/sstp/)
+- **元ドキュメント・権利者**: [ukatech/ukadoc-spec: SSTP](https://ukatech.shillest.net/ukadoc-spec/spec/sstp/) - © MATERIA開発チーム / ukadoc プロジェクト (ukadoc 仕様 / パブリックリファレンス)
 - **プロトコル**: SSTP/1.1, SSTP/1.2, SSTP/1.3, SSTP/1.4, DirectSSTP
 - **対応ステータス**: **設計・計画済（30%）**
 

@@ -1,5 +1,6 @@
-# SHIORI 規格対応仕様 (SHIORI Compliance)
+﻿# SHIORI 規格対応仕様 (SHIORI Compliance)
 
+- **元ドキュメント・権利者**: [ukatech/ukadoc-spec: SHIORI/3.0 & SHIORI/2.x](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/) - © MATERIA開発チーム / 里々開発チーム / YAYA開発チーム / 華和梨開発チーム / ukadoc プロジェクト (ukadoc 仕様 / 各コミュニティライセンス)
 Nanai Android Mascot における「SHIORI プロトコル」およびイベント通信規格への個別対応仕様です。
 
 ## 1. 概要と対応度

@@ -1,5 +1,6 @@
-# SSP 操作系・メニュー規格対応仕様 (SSP Menu & Interaction Compliance)
+﻿# SSP 操作系・メニュー規格対応仕様 (SSP Menu & Interaction Compliance)
 
+- **元ドキュメント・権利者**: [SSP仕様リファレンス / ポップアップメニュー規格](http://ssp.shillest.net/) - © PONapook 氏 / SSP開発チーム (SSP リファレンス仕様)
 Nanai Android Mascot における「SSP 互換右クリックメニュー（オーナードローメニュー）」および操作系規格への個別対応仕様です。
 
 ## 1. 概要と対応度

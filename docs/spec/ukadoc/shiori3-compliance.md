@@ -1,6 +1,7 @@
-# SHIORI/3.0 規格対応仕様 (SHIORI/3.0 Compliance)
+﻿# SHIORI/3.0 規格対応仕様 (SHIORI/3.0 Compliance)
 
 - **仕様リファレンス**: [ukatech/ukadoc-spec: SHIORI/3.0](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/)
+- **元ドキュメント・権利者**: [ukatech/ukadoc-spec: SHIORI/3.0](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/) - © MATERIA開発チーム / ukadoc プロジェクト (ukadoc 仕様 / パブリックリファレンス)
 - **プロトコル**: SHIORI/3.0 (テキストベース HTTPライク通信)
 - **対応ステータス**: **対応済（85%）**
 

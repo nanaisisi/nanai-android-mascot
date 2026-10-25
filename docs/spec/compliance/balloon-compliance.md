@@ -1,5 +1,6 @@
-# バルーン規格対応仕様 (Balloon Compliance)
+﻿# バルーン規格対応仕様 (Balloon Compliance)
 
+- **元ドキュメント・権利者**: [ukatech/ukadoc-spec: surfaces.txt / balloon](https://ukatech.shillest.net/ukadoc-spec/) - © MATERIA開発チーム / SSP開発チーム / ukadoc プロジェクト (ukadoc 仕様 / パブリックリファレンス)
 Nanai Android Mascot における「バルーン（吹き出し）スキン規格（`balloon/descript.txt`）」および表示制御への個別対応仕様です。
 
 ## 1. 概要と対応度

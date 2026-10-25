@@ -1,5 +1,6 @@
-# サーフィス規格対応仕様 (Surfaces & Collision Compliance)
+﻿# サーフィス規格対応仕様 (Surfaces & Collision Compliance)
 
+- **元ドキュメント・権利者**: [ukatech/ukadoc-spec: surfaces.txt](https://ukatech.shillest.net/ukadoc-spec/spec/surfaces/) - © MATERIA開発チーム / SSP開発チーム / ukadoc プロジェクト (ukadoc 仕様 / パブリックリファレンス)
 Nanai Android Mascot における「サーフィス定義（`surfaces.txt`）」、画像合成、および当たり判定（Collision）規格への個別対応仕様です。
 
 ## 1. 概要と対応度

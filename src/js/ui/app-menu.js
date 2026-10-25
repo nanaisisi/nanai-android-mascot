@@ -3,6 +3,12 @@ import { emit, invoke, isTauriAvailable } from "../core/tauri-helper.js";
 
 /** メニュー/クイックパネル関連メソッド (NanaiAndroidMascotApp に mixin) */
 export const menuMethods = {
+  /**
+   * メニューの表示/非表示を切り替え
+   * @this {import('../../main.js').NanaiAndroidMascotApp}
+   * @param {number|null} [screenX]
+   * @param {number|null} [screenY]
+   */
   toggleMenu(screenX = null, screenY = null) {
     if (isTauriAvailable()) {
       const sX = globalThis.screenX ?? 0;

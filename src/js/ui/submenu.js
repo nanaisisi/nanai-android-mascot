@@ -2,12 +2,22 @@
  * Nanai Android Mascot - 独立サブメニューウィンドウ制御
  */
 
+/** @type {string} */
 let currentSubmenuType = "ghost";
+/** @type {string[]} */
 let cachedGhosts = [];
+/** @type {string|null} */
 let currentGhostName = null;
+/** @type {string[]} */
 let cachedShells = [];
+/** @type {string|null} */
 let currentShellName = null;
 
+/**
+ * サブメニューのアクションをイベントとして送信
+ * @param {string} action
+ * @param {any} [payload]
+ */
 function dispatchSubmenuAction(action, payload = null) {
   if (globalThis.__TAURI__) {
     const emitFn = globalThis.__TAURI__.event?.emit || globalThis.__TAURI__.emit;

@@ -4,10 +4,21 @@
  * 両方のバージョンおよび Web/モック環境に対応するためのラッパー関数を提供します。
  */
 
+/**
+ * Tauri環境で動作しているかどうかを判定
+ * @returns {boolean}
+ */
 export function isTauriAvailable() {
   return typeof globalThis !== "undefined" && !!globalThis.__TAURI__;
 }
 
+/**
+ * Tauri IPCコマンドの呼び出しラッパー
+ * @template T
+ * @param {string} cmd - 実行するTauriコマンド名
+ * @param {Record<string, any>} [args] - コマンド引数
+ * @returns {Promise<T>}
+ */
 export async function invoke(cmd, args = {}) {
   const tauri = globalThis.__TAURI__;
   if (!tauri) {
@@ -23,6 +34,12 @@ export async function invoke(cmd, args = {}) {
   throw new TypeError(`Tauri invoke function is not available on globalThis.__TAURI__ (cmd: ${cmd})`);
 }
 
+/**
+ * ローカルファイルパスをアセットURLに変換
+ * @param {string} filePath - ローカルパス
+ * @param {string} [protocol] - プロトコル名 (デフォルト: 'asset')
+ * @returns {string}
+ */
 export function convertFileSrc(filePath, protocol = "asset") {
   if (!filePath) return "";
   const tauri = globalThis.__TAURI__;

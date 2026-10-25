@@ -58,21 +58,19 @@
   top: 100%;
   right: 0;
   z-index: 10000 !important;
-  width: 440px;
+  width: 460px;
   overflow: visible;
   background: transparent;
   border: none;
   box-shadow: none;
-  max-height: calc(100vh - 80px);
 }
 
 .menu-iframe-container iframe {
   display: block;
   border: none;
-  width: 440px;
-  height: 480px;
+  width: 460px;
+  height: 580px;
   background: transparent;
-  max-height: calc(100vh - 80px);
 }
 
 /* モーダルオーバーレイ */

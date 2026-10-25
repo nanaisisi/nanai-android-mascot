@@ -27,8 +27,7 @@ body {
   border: 1px solid #7a7a7a;
   border-radius: 6px;
   box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.35);
-  max-height: calc(100vh - 90px);
-  overflow-y: auto;
+  overflow: visible;
 }
 
 .menu-item {

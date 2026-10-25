@@ -1,8 +1,8 @@
 ﻿# Android システムオーバーレイ & 常駐生存（Background Service）仕様書
 
 - **言及規格の元ドキュメント・権利者・ライセンス**:
-  - **伺か (Ukagaka) / ゴースト / シェル**: [伺か / 偽春菜 / あれ以外の何か with「何か」](https://ukatech.shillest.net/ukadoc-spec/) - © MATERIA開発チーム / うさださくら 氏 / コミュニティ有志 (コミュニティ規格 / オープンドキュメント)
-  - **バルーン仕様 (Balloon)**: [ukadoc: surfaces.txt / balloon](https://ukatech.shillest.net/ukadoc-spec/) - © MATERIA開発チーム / SSP開発チーム / ukadoc プロジェクト (ukadoc 仕様 / パブリックリファレンス)
+  - **バルーン仕様 (Balloon)**: [ukadoc-spec: balloon](https://ukatech.shillest.net/ukadoc-spec/) - © UKADOC project / Ukagaka Tech Team (CC BY 4.0)
+  - **伺か標準仕様 / ゴースト / シェル**: [ukatech/ukadoc-spec (UKADOC project)](https://ukatech.shillest.net/ukadoc-spec/) - © UKADOC project / Ukagaka Tech Team (CC BY 4.0)
 
 本仕様書は、**nanai-android-mascot** が Android 端末上において、ホーム画面や他の起動中アプリの前面に **透過フローティングマスコットとして常駐** し、OS の省電力タスクキラーから生存して動作し続けるためのシステム連携仕様を定義します。
 

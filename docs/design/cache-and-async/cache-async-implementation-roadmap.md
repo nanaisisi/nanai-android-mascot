@@ -1,7 +1,7 @@
 ﻿# キャッシュ・非同期・Web/WASM連携 実装ロードマップ
 
 - **言及規格の元ドキュメント・権利者・ライセンス**:
-  - **surfaces.txt / アニメーション合成 / 当たり判定**: [ukadoc: surfaces.txt](https://ukatech.shillest.net/ukadoc-spec/spec/surfaces/) - © MATERIA開発チーム / SSP開発チーム / ukadoc プロジェクト (ukadoc 仕様 / パブリックリファレンス)
+  - **surfaces.txt / アニメーション合成 / 当たり判定**: [ukadoc-spec: surfaces.txt](https://ukatech.shillest.net/ukadoc-spec/spec/surfaces/) - © UKADOC project / Ukagaka Tech Team (CC BY 4.0)
 
 本ドキュメントでは、[Androidキャッシュ・非同期設計](./android-cache-and-async-architecture.md)および[Web/WASM/Rust連携設計](./web-wasm-rust-integration-spec.md)を具現化するための実装フェーズとタスク分割を整理します。
 

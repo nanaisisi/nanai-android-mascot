@@ -16,19 +16,18 @@
 
 本プロジェクトのドキュメントおよび仕様書で言及・準拠している用語・規格の権利者および参照情報です。
 
-| 用語・規格・ソフトウェア | 権利者 / 開発元 / 提唱者 | 概要・備考 |
-| --- | --- | --- |
-| **伺か (Ukagaka)** | （旧：偽春菜／あれ以外の何か with「何か」） | デスクトップマスコット文化・ソフトウェアの総称。伺か関連の各名称・文化はコミュニティ各氏の貢献によります。 |
-| **SSP (SSP BUG-SLIK-PRACTICE)** | PONapook 氏 / SSP開発チーム | Windows向け伺かベースウェア実装。互換機能・拡張仕様の標準。 |
-| **MATERIA** | MATERIA開発チーム / うさださくら 氏 | 伺かの原型となった公式ベースウェア。 |
-| **CROW** | CROW開発チーム | 伺かベースウェア実装。 |
-| **ukadoc (伺か公式ドキュメント)** | ukadoc プロジェクト / コミュニティ有志 | SHIORI、SSTP、SAORI、Plugin、Surfaces等の仕様策定・ドキュメント。 |
-| **SSTP (Sakura Script Transfer Protocol)** | MATERIA開発チーム / ukadoc プロジェクト | 伺かにおける外部連携プロトコル。 |
-| **さくらスクリプト (Sakura Script)** | MATERIA開発チーム / ukadoc プロジェクト | ゴーストの発話・動作を制御する制御構文。 |
-| **SHIORI / SAORI / MAKOTO / PLUGIN** | 各規格策定チーム / ukadoc プロジェクト | 伺かのモジュール拡張・DLL仕様群。 |
-| **里々 (SATO-SATO)** | サンデープログラマ 氏 / 里々開発チーム | 代表的な SHIORI サブシステム。 |
-| **YAYA / AYA** | くー 氏 / 梅林堂 氏 / YAYA開発チーム | 代表的な SHIORI サブシステム。 |
-| **華和梨 (Kawari)** | 華和梨開発チーム | 代表的な SHIORI サブシステム。 |
+| 用語・規格・ソフトウェア | 権利者 / 開発元 / 提唱者 | ライセンス / 権利形態 | 概要・備考 |
+| --- | --- | --- | --- |
+| **伺か標準仕様 / SSP 拡張仕様** | UKADOC project / Ukagaka Tech Team (ukatech) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.ja) | [ukatech/ukadoc-spec](https://github.com/ukatech/ukadoc-spec), [ukatech/ukadoc-ssp](https://github.com/ukatech/ukadoc-ssp) |
+| **さくらスクリプト (Sakura Script)** | UKADOC project / Ukagaka Tech Team | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.ja) | 発話・動作を制御する制御構文仕様 |
+| **surfaces.txt / アニメーション・当たり判定** | UKADOC project / Ukagaka Tech Team | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.ja) | サーフィス定義・アニメーション合成・当たり判定仕様 |
+| **バルーン仕様 (Balloon)** | UKADOC project / Ukagaka Tech Team | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.ja) | `descript.txt` / 吹き出しスキン仕様 |
+| **SSTP (Sakura Script Transfer Protocol)** | UKADOC project / Ukagaka Tech Team | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.ja) | プロトコル規格（1.1〜1.4, DirectSSTP） |
+| **SHIORI/3.0 / SAORI / PLUGIN** | UKADOC project / Ukagaka Tech Team | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.ja) | モジュール拡張・DLLインターフェース規格 |
+| **里々 (SATORI) 公式マニュアル・仕様書** | Kusigahama Yagi / SEIBIHAN | [BSD 2-Clause License](https://github.com/ukatech/satori-docs/blob/main/LICENSE) | [ukatech/satori-docs](https://github.com/ukatech/satori-docs) |
+| **YAYA 公式マニュアル・仕様書** | YAYA-shiori / コミュニティ有志 | [The Unlicense](https://github.com/YAYA-shiori/yaya-docs/blob/main/LICENSE) (パブリックドメイン) | [YAYA-shiori/yaya-docs](https://github.com/YAYA-shiori/yaya-docs) |
+| **華和梨 (KAWARI) 公式マニュアル・仕様書** | KAWARI Development Team | [BSD 2-Clause License](https://github.com/ukatech/kawari-docs/blob/main/LICENSE) | [ukatech/kawari-docs](https://github.com/ukatech/kawari-docs) |
+| **SSP (SSP BUG-SLIK-PRACTICE)** | PONapook 氏 / SSP開発チーム | フリーウェア公開仕様（開発参照自由） | Windows向け伺かベースウェア実装。拡張メニュー・機能の標準 |
 
 ---
 

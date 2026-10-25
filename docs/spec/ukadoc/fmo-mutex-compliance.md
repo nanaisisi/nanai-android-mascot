@@ -2,10 +2,10 @@
 
 - **仕様リファレンス**: [ukatech/ukadoc-spec: FMO/Mutex](https://ukatech.shillest.net/ukadoc-spec/spec/fmo-mutex/)
 - **言及規格の元ドキュメント・権利者・ライセンス**:
-  - **SSTP (Sakura Script Transfer Protocol)**: [ukadoc: SSTP](https://ukatech.shillest.net/ukadoc-spec/spec/sstp/) - © MATERIA開発チーム / ukadoc プロジェクト (ukadoc 仕様 / パブリックリファレンス)
-  - **SSP 互換拡張 / ポップアップメニュー規格**: [SSP BUG-SLIK-PRACTICE / 仕様リファレンス](http://ssp.shillest.net/) - © PONapook 氏 / SSP開発チーム (SSP リファレンス仕様)
-  - **伺か (Ukagaka) / ゴースト / シェル**: [伺か / 偽春菜 / あれ以外の何か with「何か」](https://ukatech.shillest.net/ukadoc-spec/) - © MATERIA開発チーム / うさださくら 氏 / コミュニティ有志 (コミュニティ規格 / オープンドキュメント)
-  - **FMO (File Mapping Object) / Mutex 規格**: [ukadoc: FMO/Mutex](https://ukatech.shillest.net/ukadoc-spec/spec/fmo-mutex/) - © MATERIA開発チーム / ukadoc プロジェクト / コミュニティ有志 (ukadoc 仕様 / パブリックリファレンス)
+  - **SSP 拡張仕様 / メニュー規格**: [ukatech/ukadoc-ssp](https://github.com/ukatech/ukadoc-ssp) / [SSP BUG-SLIK-PRACTICE](http://ssp.shillest.net/) - © UKADOC project (CC BY 4.0) / © PONapook 氏
+  - **SSTP (Sakura Script Transfer Protocol)**: [ukadoc-spec: sstp](https://ukatech.shillest.net/ukadoc-spec/spec/sstp/) - © UKADOC project / Ukagaka Tech Team (CC BY 4.0)
+  - **伺か標準仕様 / ゴースト / シェル**: [ukatech/ukadoc-spec (UKADOC project)](https://ukatech.shillest.net/ukadoc-spec/) - © UKADOC project / Ukagaka Tech Team (CC BY 4.0)
+  - **FMO / Mutex 規格**: [ukadoc-spec: fmo-mutex](https://ukatech.shillest.net/ukadoc-spec/spec/fmo-mutex/) - © UKADOC project / Ukagaka Tech Team (CC BY 4.0)
 
 - **インターフェース**: Windows File Mapping Object (FMO), 名前付きミューテックス, プロセス間排他
 - **対応ステータス**: **設計・一部実装（50%）**

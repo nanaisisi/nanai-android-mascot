@@ -6,11 +6,9 @@
 
 ## 🌐 伺かコミュニティ・エコシステム & 参考情報
 
-本プロジェクトは、伺か技術の発展とオープンソースコミュニティの成果を尊重し、参考にしています。
-
 > [!NOTE]
-> **Android 環境での互換ベースウェア**:  
-> Android デバイス上で実績のある既存の伺か互換ベースウェアをお探しの方は、**[Ukadroid（伺か for Android）](https://play.google.com/store/apps/details?id=com.hiro.ukadroid)** も合わせてご参照ください。
+> **Android環境の既存の伺か互換ベースウェア**:  
+> Android デバイス上で既存の伺か互換ベースウェアをお探しの方は、**[UKA-droid - 「伺か」互換マスコットアプリ](https://play.google.com/store/apps/details?id=com.hiro.ukadroid)** も合わせてご参照ください。
 
 ---
 

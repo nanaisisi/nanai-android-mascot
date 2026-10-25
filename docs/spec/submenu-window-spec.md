@@ -77,7 +77,7 @@ sequenceDiagram
 2. **Phase 2: サブメニュー用フロントエンドの実装** [完了]:
    - `submenu-iframe.html` および `submenu.js` の作成。
    - バルーンスキン連動テーマ（`balloon-theme.css`）の適用。
-3. **Phase 3: メインメニュー (`classic-menu.js`) との結合** [完了]:
+3. **Phase 3: メインメニュー (`context-menu.js`) との結合** [完了]:
    - ホバー／クリック時にスクリーン座標を算出して `show_submenu_window` を呼び出し。
    - 非Tauri/iframe環境での左右反転表示フォールバック（`checkSubmenuFlip`）の実装。
 4. **Phase 4: 動作検証と実機結合テスト** [進行中]:

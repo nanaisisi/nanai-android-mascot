@@ -36,10 +36,10 @@
    - `\s[ID]` によるリアルタイム表情切り替え
    - `\w[N]`, `\_w[N]` ウェイト制御、`\q[ラベル,ID]` 選択肢ボタン生成
    - クリック・タップによる全文早送りスキップ機能
-   - バルーンテーマ着せ替え（モダン、クラシック伺か、コミック、ダーク）
+   - バルーンテーマ着せ替え（モダン、アイボリー、コミック、ダーク）
 
 4. **UI & 伺か標準メニューシステム**
-   - 伺か標準スタイルのクラシック右クリックメニュー（`menu-iframe.html`）
+   - 伺か標準スタイルの右クリックメニュー（`menu-iframe.html`）
    - 親子双方向通信（postMessage API）による安全な状態同期
    - 多階層サブメニュー対応（シェル倍率、ゴースト一覧、バルーン着せ替え）
    - アクセスキー（括弧内アルファベット）対応
@@ -101,7 +101,7 @@ nanai-android-mascot/
 ├── src/                      # フロントエンド (Vanilla Web)
 │   ├── index.html            # メイン Single Activity Container
 │   ├── main.js               # アプリケーションエントリ
-│   ├── menu-iframe.html      # 伺か標準クラシックメニュー (独立UI)
+│   ├── menu-iframe.html      # 伺か標準右クリックメニュー (独立UI)
 │   ├── js/
 │   │   ├── surface.js        # Canvas 2D サーフィス合成 & Collision判定
 │   │   ├── sakura-script.js  # さくらスクリプトトークナイザ & 文字送り
@@ -113,7 +113,7 @@ nanai-android-mascot/
 │   └── css/
 │       ├── base.css          # 透過・基本レイアウト
 │       ├── mascot.css        # マスコット配置・バルーン装飾
-│       ├── menu.css          # クラシックメニュー装飾
+│       ├── menu.css          # 右クリックメニュー装飾
 │       └── modal.css         # モーダル共通スタイル
 ├── src-tauri/                # バックエンド (Rust / Tauri v2)
 │   ├── src/

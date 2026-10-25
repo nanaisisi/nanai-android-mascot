@@ -1,8 +1,8 @@
-# クラシック右クリックメニュー・サブメニュー仕様書 (Classic Menu Specification)
+# 右クリックメニュー・サブメニュー仕様書 (Context Menu Specification)
 
 ## 1. 概要
 
-伺か（SSP）互換の右クリック操作により展開される、クラシックポップアップメニューの表示制御およびサブメニューの展開仕様を定めます。
+伺か（SSP）互換の右クリック操作により展開される、ポップアップメニューの表示制御およびサブメニューの展開仕様を定めます。
 本機能は、マスコットウィンドウ枠外へのはみ出し表示を可能とする独立Tauriウィンドウ、およびブラウザ/Android環境向けのインラインiframeフォールバックの双方で共通のデザイン・挙動を提供します。
 
 ## 2. メニュー本体の画面内収束 (SSP準拠)
@@ -34,7 +34,7 @@ SSP標準のUI体験に基づき、確定的かつ自然な横展開を提供し
 - **マークアップ**:
   `src/menu-iframe.html`
 - **スタイル (CSS)**:
-  `src/css/classic-menu.css`
+  `src/css/context-menu.css`
   `src/css/menu-modal.css`
 - **スクリプト (JS)**:
-  `src/js/classic-menu.js`
+  `src/js/context-menu.js`

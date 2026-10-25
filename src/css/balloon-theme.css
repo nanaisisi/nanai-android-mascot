@@ -21,9 +21,9 @@
   --balloon-tail-color: #f9f9f9;
 }
 
-/* 象牙色レトロ伺かスキン (クラシックSSP風) */
-[data-balloon-theme="classic"],
-body.balloon-theme-classic {
+/* 象牙色レトロ伺かスキン (SSP風) */
+[data-balloon-theme="ivory"],
+body.balloon-theme-ivory {
   --balloon-bg: #ffffea;
   --balloon-pattern: none;
   --balloon-border-color: #555555;

@@ -70,7 +70,7 @@ flowchart TD
 2. **大文字・小文字不一致の透過的解決**
    - [x] `surface0.png` 等のフォールバック・小文字正規化ロード対応
 3. **ゴースト・バルーン着せ替え UI の接続**
-   - [x] 標準右クリックメニューの「シェル」「着せ替え」サブメニューにスキャン結果を反映（[src/menu-iframe.html](../../src/menu-iframe.html) & [src/js/classic-menu.js](../../src/js/classic-menu.js)）
+   - [x] 標準右クリックメニューの「シェル」「着せ替え」サブメニューにスキャン結果を反映（[src/menu-iframe.html](../../src/menu-iframe.html) & [src/js/context-menu.js](../../src/js/context-menu.js)）
 
 ---
 
@@ -125,7 +125,7 @@ flowchart TD
    - `install.txt`（Shift_JIS / UTF-8 両対応）の自動パースによるゴースト名・展開ディレクトリ判定。
    - Zip Slip 脆弱性を防止するパス正規化と安全なディレクトリ解決。
 2. **メニュー導線 & 取り込みモーダル UI**
-   - クラシックメニュー（[src/menu-iframe.html](../../src/menu-iframe.html) & [src/js/classic-menu.js](../../src/js/classic-menu.js)）への「ファイル取り込み・導入 (I)」項目追加。
+   - 右クリックメニュー（[src/menu-iframe.html](../../src/menu-iframe.html) & [src/js/context-menu.js](../../src/js/context-menu.js)）への「ファイル取り込み・導入 (I)」項目追加。
    - 取り込み専用モーダル（[src/index.html](../../src/index.html) & [src/js/modal.js](../../src/js/modal.js)）およびゴースト管理モーダルからの 2 系統の取り込み UI 連携。
    - 取り込み完了後のゴースト一覧再スキャン・自動選択・バルーン通知パイプライン。
 

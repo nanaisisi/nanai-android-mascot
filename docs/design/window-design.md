@@ -23,7 +23,7 @@ flowchart TD
     SakuraScope["メインキャラクター (\0 sakura)<br>Canvas 2D + 表情/当たり判定"]
     KeroScope["二番キャラクター (\1 kero)<br>Canvas 2D + 表情/当たり判定"]
     BalloonScope["バルーン吹き出しコンテナ<br>スコープ別独立配置 / 早送りスキップ"]
-    IframeMenu["クラシックメニュー (menu-iframe.html)<br>右クリック / 階層サブメニュー"]
+    IframeMenu["右クリックメニュー (menu-iframe.html)<br>右クリック / 階層サブメニュー"]
     ModalOverlay["モーダルオーバーレイ<br>設定 / ゴースト切替 / デバッグ"]
 
     OSWindow --> RootContainer

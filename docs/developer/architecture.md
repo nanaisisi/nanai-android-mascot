@@ -15,7 +15,7 @@ flowchart TB
     subgraph Frontend ["フロントエンド層 (WebView / Single Container)"]
         direction TB
         MainUI["メインビュー (index.html)<br>透過キャンバス & キャラクターコンテナ"]
-        ClassicMenu["クラシックメニュー (menu-iframe.html)<br>伺か標準階層メニュー"]
+        ContextMenu["右クリックメニュー (menu-iframe.html)<br>伺か標準階層メニュー"]
         ModalUI["管理モーダル (modal-manager.js)<br>設定 / ゴースト一覧 / デバッグ"]
         
         Canvas2D["サーフィス描画 (surface.js)<br>Canvas 2D レイヤー合成 / Collision逆算"]
@@ -39,7 +39,7 @@ flowchart TB
         PlatformNative["プラットフォーム抽象化<br>Windows透過ウィンドウ / Androidオーバーレイ"]
     end
 
-    MainUI <--> ClassicMenu
+    MainUI <--> ContextMenu
     MainUI <--> ModalUI
     MainUI --- Canvas2D
     MainUI --- ScriptEngine

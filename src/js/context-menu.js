@@ -4,7 +4,7 @@
 
 function dispatchAction(action, payload = null) {
   if (!action) return;
-  console.log(`Classic Menu Action: ${action}`, payload || "");
+  console.log(`Context Menu Action: ${action}`, payload || "");
 
   // iframe 環境の場合
   if (globalThis.parent && globalThis.parent !== globalThis) {

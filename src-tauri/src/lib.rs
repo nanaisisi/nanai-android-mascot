@@ -93,22 +93,23 @@ fn load_surface_image(
     ];
 
     for candidate in candidates {
-        if candidate.exists() && candidate.is_file() {
-            if let Ok(bytes) = fs::read(&candidate) {
-                let ext = candidate
-                    .extension()
-                    .and_then(|e| e.to_str())
-                    .unwrap_or("png")
-                    .to_lowercase();
-                let mime = match ext.as_str() {
-                    "svg" => "image/svg+xml",
-                    "pna" => "image/png",
-                    _ => "image/png",
-                };
-                use base64::Engine;
-                let b64 = base64::engine::general_purpose::STANDARD.encode(&bytes);
-                return Ok(format!("data:{mime};base64,{b64}"));
-            }
+        if candidate.exists()
+            && candidate.is_file()
+            && let Ok(bytes) = fs::read(&candidate)
+        {
+            let ext = candidate
+                .extension()
+                .and_then(|e| e.to_str())
+                .unwrap_or("png")
+                .to_lowercase();
+            let mime = match ext.as_str() {
+                "svg" => "image/svg+xml",
+                "pna" => "image/png",
+                _ => "image/png",
+            };
+            use base64::Engine;
+            let b64 = base64::engine::general_purpose::STANDARD.encode(&bytes);
+            return Ok(format!("data:{mime};base64,{b64}"));
         }
     }
 
@@ -257,7 +258,7 @@ fn resolve_asset_path(
                 .or_else(|| {
                     current_dir.ancestors().find(|p| {
                         p.join("Cargo.toml").exists()
-                            && p.file_name().map_or(true, |n| n != "src-tauri")
+                            && p.file_name().is_none_or(|n| n != "src-tauri")
                     })
                 })
                 .unwrap_or(&current_dir);
@@ -515,7 +516,10 @@ fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
 
     for i in 0..zip.len() {
         if let Ok(entry) = zip.by_index(i) {
-            let name = entry.name().replace('\\', "/");
+            let Ok(raw_name) = entry.name() else {
+                continue;
+            };
+            let name = raw_name.replace('\\', "/");
             let lower = name.to_lowercase();
             if lower.ends_with("install.txt") || lower.ends_with("descript.txt") {
                 // ファイル内容をShift_JIS / UTF-8で読み取り
@@ -579,7 +583,10 @@ fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
             .by_index(i)
             .map_err(|e| format!("Failed to read archive entry #{}: {}", i, e))?;
 
-        let entry_name = entry.name().replace('\\', "/");
+        let entry_name = entry
+            .name()
+            .map_err(|e| format!("Failed to read entry name #{}: {}", i, e))?
+            .replace('\\', "/");
 
         // root_prefixの除去
         let relative_path = if !root_prefix.is_empty() && entry_name.starts_with(&root_prefix) {

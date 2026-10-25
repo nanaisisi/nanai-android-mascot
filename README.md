@@ -88,7 +88,11 @@ cargo tauri android run
 
 ---
 
-## 📄 ライセンス
+## 📄 ライセンス & クレジット
 
-本ソフトウェアは Apache License 2.0 または MIT License のデュアルライセンスの元で提供されています。
-同梱されている外部 SHIORI や各アセットのライセンスについては、各ディレクトリ内のライセンスファイルを参照してください。
+- **本ソフトウェア (Nanai Android Mascot)**:
+  - Apache License 2.0 または MIT License のデュアルライセンスのもとで提供されています。
+- **仕様書リファレンス・原著作者クレジット**:
+  - 伺か関連の標準仕様リファレンスとして、[UKADOC project](https://ukatech.shillest.net/ukadoc-spec/) の [ukatech/ukadoc-spec](https://github.com/ukatech/ukadoc-spec)（[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.ja)）に準拠・クレジット表記を行っています。
+- **外部モジュール・同梱アセット**:
+  - 同梱されている外部 SHIORI や各アセットのライセンスについては、各ディレクトリ内のライセンスファイルを参照してください。

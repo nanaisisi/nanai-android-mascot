@@ -309,6 +309,44 @@ struct ScanResult {
     input_path: String,
 }
 
+/// descript.txt からゴースト正式名を取得（Shift_JIS / UTF-8 両対応）
+fn read_ghost_name_from_dir(ghost_dir: &Path) -> Option<String> {
+    let candidates = [
+        ghost_dir.join("ghost").join("master").join("descript.txt"),
+        ghost_dir.join("descript.txt"),
+        ghost_dir.join("install.txt"),
+    ];
+
+    for candidate in &candidates {
+        if candidate.exists()
+            && let Ok(bytes) = std::fs::read(candidate)
+        {
+            let (decoded, _, _) = encoding_rs::SHIFT_JIS.decode(&bytes);
+            let text = if decoded.contains("name,") || decoded.contains("name:") {
+                decoded.into_owned()
+            } else {
+                String::from_utf8_lossy(&bytes).into_owned()
+            };
+
+            for line in text.lines() {
+                let trimmed = line.trim();
+                if let Some(val) = trimmed.strip_prefix("name,") {
+                    let cleaned = val.trim();
+                    if !cleaned.is_empty() {
+                        return Some(cleaned.to_string());
+                    }
+                } else if let Some(val) = trimmed.strip_prefix("name:") {
+                    let cleaned = val.trim();
+                    if !cleaned.is_empty() {
+                        return Some(cleaned.to_string());
+                    }
+                }
+            }
+        }
+    }
+    None
+}
+
 /// ゴーストディレクトリをスキャンしてSHIORIを検出
 #[tauri::command]
 async fn scan_ghost_directory(
@@ -329,11 +367,13 @@ async fn scan_ghost_directory(
         for entry in entries.flatten() {
             let path = entry.path();
             if path.is_dir() {
-                let name = entry.file_name().to_string_lossy().to_string();
+                let dir_name = entry.file_name().to_string_lossy().to_string();
                 // .gitや隠しフォルダを除外
-                if !name.starts_with('.') {
+                if !dir_name.starts_with('.') {
+                    // descript.txt から正式ゴースト名を取得（なければディレクトリ名）
+                    let display_name = read_ghost_name_from_dir(&path).unwrap_or(dir_name);
                     ghosts.push(GhostInfo {
-                        name,
+                        name: display_name,
                         path: path.to_string_lossy().to_string(),
                     });
                 }
@@ -995,10 +1035,14 @@ fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
 
     for i in 0..zip.len() {
         if let Ok(entry) = zip.by_index(i) {
-            let Ok(raw_name) = entry.name() else {
-                continue;
+            let raw_bytes = entry.name_raw();
+            let decoded_name = if let Ok(s) = std::str::from_utf8(raw_bytes) {
+                s.to_string()
+            } else {
+                let (cow, _, _) = encoding_rs::SHIFT_JIS.decode(raw_bytes);
+                cow.into_owned()
             };
-            let name = raw_name.replace('\\', "/");
+            let name = decoded_name.replace('\\', "/");
             let lower = name.to_lowercase();
             if lower.ends_with("install.txt") || lower.ends_with("descript.txt") {
                 // ファイル内容をShift_JIS / UTF-8で読み取り
@@ -1062,10 +1106,14 @@ fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
             .by_index(i)
             .map_err(|e| format!("Failed to read archive entry #{}: {}", i, e))?;
 
-        let entry_name = entry
-            .name()
-            .map_err(|e| format!("Failed to read entry name #{}: {}", i, e))?
-            .replace('\\', "/");
+        let raw_bytes = entry.name_raw();
+        let decoded_name = if let Ok(s) = std::str::from_utf8(raw_bytes) {
+            s.to_string()
+        } else {
+            let (cow, _, _) = encoding_rs::SHIFT_JIS.decode(raw_bytes);
+            cow.into_owned()
+        };
+        let entry_name = decoded_name.replace('\\', "/");
 
         // root_prefixの除去
         let relative_path = if !root_prefix.is_empty() && entry_name.starts_with(&root_prefix) {

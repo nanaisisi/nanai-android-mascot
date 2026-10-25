@@ -107,11 +107,70 @@ Cargo.toml (workspace)
 
 ---
 
-## 6. 進捗・タスク管理
+## 6. 品質管理・検証ツールチェーン（Linter / Fmt / Clippy / Coupling / Audit）
+
+開発効率と安全性を高水準で両立するため、Rust層およびWeb/npm層における検証・静的解析ツールを以下の通り体系化します。
+
+### 6.1 ツール体系一覧
+
+| 分類 / 目的 | Rust 側ツール | Web / npm / ドキュメント側ツール | 役割・検査内容 |
+| :--- | :--- | :--- | :--- |
+| **フォーマッタ（fmt）** | `cargo fmt` | `@biomejs/biome format` | コードスタイルの統一・自動整形 |
+| **リンター（linter）** | `cargo check` | `@biomejs/biome lint`<br>`markuplint` | 構文エラー・非推奨記法・HTML標準準拠チェック |
+| **静的解析・イディオム** | `cargo clippy -- -D warnings` | Biome 推奨ルール群 | パフォーマンス低下・潜在的バグ・Rustイディオムの遵守 |
+| **依存関係・結合度（coupling）** | `cargo modules structure`<br>`cargo-deny` / `cargo-tree` | `biome`（未利用インポート検知） | ワークスペース境界・不要結合・循環参照の防止 |
+| **セキュリティ監査（audit）** | `cargo audit` | `npm audit` | 既知の脆弱性（CVE）検知と依存バージョン管理 |
+
+### 6.2 各ツールの活用方針とコマンド
+
+1. **Rust 層**
+   - **フォーマット & スタイル**:
+
+     ```bash
+     cargo fmt --all --check
+     ```
+
+   - **高度な静的解析（Clippy）**:
+
+     ```bash
+     cargo clippy --all-targets --all-features -- -D warnings
+     ```
+
+   - **モジュール結合度・依存グラフ（Coupling / Modularity）**:
+     - `cargo-deny`: 意図しないライセンス混入や重複依存・非推奨クレートの持ち込みをCIでブロック。
+     - `cargo tree -d`: 重複してビルドされている推移的依存クレートを可視化・排除。
+   - **セキュリティ監査（Audit）**:
+
+     ```bash
+     cargo audit
+     ```
+
+2. **Web / フロントエンド層**
+   - **高速統合検証（Biome）**:
+
+     ```bash
+     npx @biomejs/biome check src/
+     ```
+
+   - **マークアップ整合性（Markuplint）**:
+
+     ```bash
+     npx markuplint "src/**/*.html"
+     ```
+
+   - **パッケージセキュリティ（Audit）**:
+
+     ```bash
+     npm audit --audit-level=high
+     ```
+
+---
+
+## 7. 進捗・タスク管理
 
 - [ ] `src-tauri` 内の `once_cell` 利用箇所を `std::sync::LazyLock` に移行
 - [ ] `sys-locale` 依存の整理（フロントエンド渡しへの一本化）
-- [ ] npm/Rust 依存関係のセキュリティ監査（audit）体制確立
+- [ ] CI/ローカル開発におけるツールチェーン（fmt / clippy / biome / audit）スクリプト整備
 - [ ] Android OSキャッシュディレクトリ連携インターフェースの追加
 - [ ] `onTrimMemory` 連携イベントハンドラの設計・実装
 - [ ] クレート分割（`shiori-core` 等）のディレクトリ構成移行

@@ -1,6 +1,6 @@
-import { ShioriProtocol } from "./shiori-protocol.js";
-import { invoke, isTauriAvailable, convertFileSrc } from "./tauri-helper.js";
 import { AppConfig } from "./config.js";
+import { ShioriProtocol } from "./shiori-protocol.js";
+import { convertFileSrc, invoke, isTauriAvailable } from "./tauri-helper.js";
 
 /**
  * Nanai Android Mascot - ゴースト & SHIORI 管理モジュール
@@ -113,7 +113,6 @@ export class GhostController {
     this.currentShell = shellName;
     const ghostName = this.currentGhost?.name || AppConfig.paths.fallbackGhostName;
     const ghostPath = this.currentGhost?.path || `${AppConfig.paths.defaultGhostDir}/${ghostName}`;
-    const fallbackShell = AppConfig.paths.fallbackShellName;
     console.log(`👗 シェル切り替え: ${shellName}`);
 
     // サーフィス画像の更新
@@ -169,10 +168,10 @@ export class GhostController {
       }
 
       // SHIORI/3.0 レスポンスのパース (200 OK 且つスクリプトが存在する場合のみ再生)
-      if (response && response.trim()) {
+      if (response?.trim()) {
         const parsed = ShioriProtocol.parseResponse(response);
         const script = parsed.value || (parsed.status === 200 ? response : "");
-        if (script && script.trim()) {
+        if (script?.trim()) {
           this.app.playSakuraScript(script);
         }
       }
@@ -259,7 +258,7 @@ export class GhostController {
     applyImageSrc(imgUrl, fallbackSvgUrl);
   }
 
-  async updateGhostCharacter(ghostName) {
+  updateGhostCharacter(ghostName) {
     const sakuraPlaceholder = document.getElementById("sakura-placeholder") || document.querySelector(".character-placeholder");
     if (!sakuraPlaceholder) return;
 

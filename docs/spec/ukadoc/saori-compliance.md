@@ -1,7 +1,13 @@
 ﻿# SAORI over DirectSSTP 規格対応仕様 (SAORI over DirectSSTP Compliance)
 
 - **仕様リファレンス**: [ukatech/ukadoc-spec: SAORI over DirectSSTP](https://ukatech.shillest.net/ukadoc-spec/spec/saori-ex/)
-- **元ドキュメント・権利者**: [ukatech/ukadoc-spec: SAORI](https://ukatech.shillest.net/ukadoc-spec/spec/saori/) - © SAORI 規格策定チーム / ukadoc プロジェクト (ukadoc 仕様 / パブリックリファレンス)
+- **言及規格の元ドキュメント・権利者・ライセンス**:
+  - **SSTP (Sakura Script Transfer Protocol)**: [ukadoc: SSTP](https://ukatech.shillest.net/ukadoc-spec/spec/sstp/) - © MATERIA開発チーム / ukadoc プロジェクト (ukadoc 仕様 / パブリックリファレンス)
+  - **SAORI 規格**: [ukadoc: SAORI](https://ukatech.shillest.net/ukadoc-spec/spec/saori/) - © SAORI 規格策定チーム / ukadoc プロジェクト (ukadoc 仕様 / パブリックリファレンス)
+  - **PLUGIN 規格**: [ukadoc: PLUGIN](https://ukatech.shillest.net/ukadoc-spec/spec/plugin/) - © MATERIA開発チーム / SSP開発チーム / ukadoc プロジェクト (ukadoc 仕様 / パブリックリファレンス)
+  - **伺か (Ukagaka) / ゴースト / シェル**: [伺か / 偽春菜 / あれ以外の何か with「何か」](https://ukatech.shillest.net/ukadoc-spec/) - © MATERIA開発チーム / うさださくら 氏 / コミュニティ有志 (コミュニティ規格 / オープンドキュメント)
+  - **SHIORI / 各SHIORIサブシステム (里々, YAYA, 華和梨 等)**: [ukadoc: SHIORI/3.0](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/) - © MATERIA開発チーム / 里々開発チーム / YAYA開発チーム / 華和梨開発チーム / ukadoc プロジェクト (ukadoc 仕様 / 各コミュニティライセンス)
+
 - **プロトコル**: SAORI-basic (DLL) / SAORI-universal (DirectSSTP)
 - **対応ステータス**: **設計・一部実装（40%）**
 

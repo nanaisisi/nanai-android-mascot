@@ -1,4 +1,8 @@
-# 右クリックメニュー・サブメニュー仕様書 (Context Menu Specification)
+﻿# 右クリックメニュー・サブメニュー仕様書 (Context Menu Specification)
+
+- **言及規格の元ドキュメント・権利者・ライセンス**:
+  - **SSP 互換拡張 / ポップアップメニュー規格**: [SSP BUG-SLIK-PRACTICE / 仕様リファレンス](http://ssp.shillest.net/) - © PONapook 氏 / SSP開発チーム (SSP リファレンス仕様)
+  - **伺か (Ukagaka) / ゴースト / シェル**: [伺か / 偽春菜 / あれ以外の何か with「何か」](https://ukatech.shillest.net/ukadoc-spec/) - © MATERIA開発チーム / うさださくら 氏 / コミュニティ有志 (コミュニティ規格 / オープンドキュメント)
 
 ## 1. 概要
 

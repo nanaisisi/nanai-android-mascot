@@ -12,7 +12,7 @@
 
 ### 2.1 開発戦略: Windows First から段階的 Android 適応へ
 
-当初は Android 向けに特化した開発を進めていましたが、プラットフォーム制約と実装の混在による複雑化を回避するため、開発方針を以下のように再定義しました（詳細は [doc_history.md](file:///e:/project/rust/nanai-android-mascot/docs/process/doc_history.md) 参照）。
+当初は Android 向けに特化した開発を進めていましたが、プラットフォーム制約と実装の混在による複雑化を回避するため、開発方針を以下のように再定義しました（詳細は [doc_history.md](doc_history.md) 参照）。
 
 ```mermaid
 flowchart LR
@@ -73,7 +73,7 @@ Frontend Architecture:
 
 伺かゴーストの中核である「SHIORI」は、伝統的に Windows ネイティブ 32bit DLL（`satori.dll`, `yaya.dll` など）として配布されています。Android や 64bit/ARM 環境でこれを稼働させるため、**多層フォールバック機構** を採用しています。
 
-詳細な仕様は [plugin-and-shiori-fallback-spec.md](file:///e:/project/rust/nanai-android-mascot/docs/spec/plugin-and-shiori-fallback-spec.md) および [wasm-and-plugin-extensibility.md](file:///e:/project/rust/nanai-android-mascot/docs/spec/wasm-and-plugin-extensibility.md) を参照してください。
+詳細な仕様は [plugin-and-shiori-fallback-spec.md](../spec/plugin-and-shiori-fallback-spec.md) および [wasm-and-plugin-extensibility.md](../spec/wasm-and-plugin-extensibility.md) を参照してください。
 
 ```mermaid
 flowchart TD
@@ -98,7 +98,7 @@ flowchart TD
 
 ## 5. ゴーストデータ管理とアセット構造
 
-公式サンプルキャラクター（`mock_nanai`）および外部ゴーストのアセットは、標準的な伺かディレクトリ構造を準拠して管理します（詳細は [standard-ghost-spec.md](file:///e:/project/rust/nanai-android-mascot/docs/spec/standard-ghost-spec.md) 参照）。
+公式サンプルキャラクター（`mock_nanai`）および外部ゴーストのアセットは、標準的な伺かディレクトリ構造を準拠して管理します（詳細は [standard-ghost-spec.md](../spec/standard-ghost-spec.md) 参照）。
 
 ```text
 assets/ghost/
@@ -162,7 +162,7 @@ assets/ghost/
 
 ### 7.1 AI 駆動開発 (AI-Driven Development)
 
-本プロジェクトは、AI アシスタント（GitHub Copilot / Antigravity）との協調を前提とした開発体制を採用しています（詳細は [AI_driven.md](file:///e:/project/rust/nanai-android-mascot/docs/process/AI_driven.md) 参照）。
+本プロジェクトは、AI アシスタント（GitHub Copilot / Antigravity）との協調を前提とした開発体制を採用しています（詳細は [AI_driven.md](AI_driven.md) 参照）。
 
 - **オーナーユーザー**:
   - プロジェクトのビジョン策定、要件定義、アーキテクチャの妥当性評価、ライセンス確認

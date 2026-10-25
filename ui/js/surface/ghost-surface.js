@@ -38,10 +38,13 @@ export const ghostSurfaceMethods = {
       if (container) container.style.visibility = "visible";
       this.app.surfaceManager.setSurfaceId(surfaceId);
     } else {
-      if (slot && slot.style.display === "none") slot.style.display = "flex";
-      if (container && container.style.display === "none") container.style.display = "flex";
+      // デスクトップ(Tauri)環境下ではメインウィンドウのインラインスロットは非表示にし、独立サブウィンドウ側で表示
       if (isTauriAvailable()) {
+        if (slot) slot.style.display = "none";
         invoke("show_subchar_window", { scopeId }).catch(() => {});
+      } else {
+        if (slot && slot.style.display === "none") slot.style.display = "flex";
+        if (container && container.style.display === "none") container.style.display = "flex";
       }
     }
 
@@ -94,6 +97,7 @@ export const ghostSurfaceMethods = {
             .then((fallbackUrl) => applyImageSrc(fallbackUrl))
             .catch(() => {
               if (img) img.style.display = "none";
+              if (isSubchar && slot) slot.style.display = "none";
             });
         });
       return;
@@ -108,18 +112,30 @@ export const ghostSurfaceMethods = {
     const sakuraPlaceholder =
       byId("sakura-placeholder") || document.querySelector(".character-placeholder");
     const keroPlaceholder = byId("kero-placeholder");
+    const keroSlot = byId("kero-slot");
     if (!sakuraPlaceholder) return;
 
     if (!ghostName) {
       sakuraPlaceholder.innerHTML = "";
       if (keroPlaceholder) keroPlaceholder.innerHTML = "";
+      if (keroSlot) keroSlot.style.display = "none";
       return;
     }
     sakuraPlaceholder.title = ghostName;
-    // 0: メインキャラクター (sakura) の初期サーフェス \s0
+    // メインキャラの初期化時にサブキャラ枠がメイン画面背後に残らないよう初期非表示
+    if (keroSlot) keroSlot.style.display = "none";
+    if (keroPlaceholder) keroPlaceholder.innerHTML = "";
+
+    // 0: メインキャラクター (sakura) の初期サーフェス \s0 のみ表示
     this.updateSurface(0, 0);
-    // 1: サブキャラクター (kero) の初期サーフェス \s10 (伺か標準)
-    this.updateSurface(10, 1);
+
+    // ゴースト側に kero.name 等のサブキャラ設定が存在する場合のみ、またはスクリプトからの明示呼び出し時にサブウィンドウで表示
+    const hasKero = Boolean(this.currentGhost?.kero_name);
+    if (hasKero) {
+      this.updateSurface(10, 1);
+    } else if (isTauriAvailable()) {
+      invoke("hide_subchar_window", { scopeId: 1 }).catch(() => {});
+    }
   },
 
   updateCurrentGhostDisplay() {

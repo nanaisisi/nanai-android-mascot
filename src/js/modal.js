@@ -56,13 +56,18 @@ export class ModalManager {
           return;
         }
 
-        // Webview / Tauri環境でのファイルパス取得または通知
-        const archivePath = file.path || file.name;
         if (statusEl) statusEl.textContent = `取り込み中: ${file.name}...`;
 
         if (isTauriAvailable()) {
           try {
-            const res = await invoke("install_ghost_archive", { archivePath });
+            let res;
+            if (file.path) {
+              res = await invoke("install_ghost_archive", { archivePath: file.path });
+            } else {
+              const arrayBuffer = await file.arrayBuffer();
+              const bytes = Array.from(new Uint8Array(arrayBuffer));
+              res = await invoke("install_ghost_archive_bytes", { fileName: file.name, bytes });
+            }
             if (statusEl) statusEl.textContent = `✅ 「${res.name}」を取り込みました！`;
             await this.app.ghostController.scanAndLoadFirstGhost();
             this.renderGhostList();
@@ -75,6 +80,8 @@ export class ModalManager {
           if (statusEl) statusEl.textContent = "※ ブラウザ環境ではアーカイブ展開はサポートされていません";
         }
       });
+    } else if (contentId === "install-modal-content") {
+      this.setupInstallListeners();
     } else if (contentId === "settings-modal-content") {
       this.setupSettingsListeners();
     } else if (contentId === "balloon-modal-content") {
@@ -84,6 +91,61 @@ export class ModalManager {
     } else if (contentId === "debug-modal-content") {
       this.setupDebugListeners();
     }
+  }
+
+  setupInstallListeners() {
+    const fileInput = document.getElementById("modal-install-file-input");
+    const submitBtn = document.getElementById("modal-install-submit-btn");
+    const statusEl = document.getElementById("modal-install-status");
+
+    submitBtn?.addEventListener("click", async () => {
+      const file = fileInput?.files?.[0];
+      if (!file) {
+        if (statusEl) {
+          statusEl.textContent = "ファイルを選択してください。";
+          statusEl.style.color = "#c0392b";
+        }
+        return;
+      }
+
+      if (statusEl) {
+        statusEl.textContent = `⏳ 取り込み処理中: ${file.name}...`;
+        statusEl.style.color = "#2980b9";
+      }
+
+      if (isTauriAvailable()) {
+        try {
+          let res;
+          if (file.path) {
+            res = await invoke("install_ghost_archive", { archivePath: file.path });
+          } else {
+            const arrayBuffer = await file.arrayBuffer();
+            const bytes = Array.from(new Uint8Array(arrayBuffer));
+            res = await invoke("install_ghost_archive_bytes", { fileName: file.name, bytes });
+          }
+
+          if (statusEl) {
+            statusEl.textContent = `✅ ゴースト「${res.name}」を取り込みました！`;
+            statusEl.style.color = "#27ae60";
+          }
+          await this.app.ghostController.scanAndLoadFirstGhost();
+          this.app.ghostController.selectGhost(res.name);
+          this.app.showBalloon(`「${res.name}」をインストールして切り替えました！`);
+          setTimeout(() => this.app.hideBalloon(), 2500);
+        } catch (err) {
+          console.error("アーカイブ取り込み失敗:", err);
+          if (statusEl) {
+            statusEl.textContent = `❌ 取り込み失敗: ${err}`;
+            statusEl.style.color = "#c0392b";
+          }
+        }
+      } else {
+        if (statusEl) {
+          statusEl.textContent = "※ ブラウザ環境ではネイティブアーカイブ展開はサポートされていません（Tauri環境で実行してください）";
+          statusEl.style.color = "#e67e22";
+        }
+      }
+    });
   }
 
   setupPluginListeners() {

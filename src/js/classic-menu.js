@@ -124,13 +124,13 @@ document.addEventListener("keydown", (e) => {
     u: "update",
     h: "headline",
     b: "balloon",
+    i: "install",
     r: "scan",
     p: "plugins",
     o: "settings",
     d: "debug",
     a: "help",
     l: "license",
-    i: "minimize",
     w: "close",
   };
 

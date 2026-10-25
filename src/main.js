@@ -4,6 +4,7 @@ import { ModalManager } from "./js/modal.js";
 import { SakuraScriptPlayer } from "./js/sakura-script.js";
 import { SurfaceManager } from "./js/surface.js";
 import { invoke, isTauriAvailable } from "./js/tauri-helper.js";
+import { AppConfig } from "./js/config.js";
 
 export class NanaiAndroidMascotApp {
   constructor() {
@@ -40,7 +41,7 @@ export class NanaiAndroidMascotApp {
     if (this.settings.autoLoadGhost) {
       await this.ghostController.autoLoadGhost();
     } else {
-      this.ghostController.selectGhost("mock_nanai");
+      this.ghostController.selectGhost(AppConfig.paths.fallbackGhostName);
     }
 
     this.startSecondTimer();
@@ -294,7 +295,7 @@ export class NanaiAndroidMascotApp {
       iframe.contentWindow.postMessage(
         {
           type: "sync-ghosts",
-          ghosts: this.ghostController.ghosts || [{ name: "mock_nanai" }],
+          ghosts: this.ghostController.ghosts || [{ name: AppConfig.paths.fallbackGhostName }],
           currentGhost: this.ghostController.currentGhost,
         },
         "*"
@@ -303,8 +304,8 @@ export class NanaiAndroidMascotApp {
       iframe.contentWindow.postMessage(
         {
           type: "sync-shells",
-          shells: this.ghostController.shells || ["master"],
-          currentShell: this.ghostController.currentShell || "master",
+          shells: this.ghostController.shells || [AppConfig.paths.fallbackShellName],
+          currentShell: this.ghostController.currentShell || AppConfig.paths.fallbackShellName,
         },
         "*"
       );

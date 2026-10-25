@@ -1,5 +1,6 @@
 import { ShioriProtocol } from "./shiori-protocol.js";
 import { invoke, isTauriAvailable } from "./tauri-helper.js";
+import { AppConfig } from "./config.js";
 
 /**
  * Nanai Android Mascot - ゴースト & SHIORI 管理モジュール
@@ -10,15 +11,15 @@ export class GhostController {
     this.app = app;
     this.ghosts = [];
     this.currentGhost = null;
-    this.shells = ["master"];
-    this.currentShell = "master";
+    this.shells = [AppConfig.paths.fallbackShellName];
+    this.currentShell = AppConfig.paths.fallbackShellName;
   }
 
 
   async autoLoadGhost() {
     console.log("🔄 自動ゴースト読み込み開始...");
     try {
-      const savedGhost = localStorage.getItem("nanai-android-mascot-current-ghost");
+      const savedGhost = localStorage.getItem(AppConfig.storageKeys.lastGhost);
       if (savedGhost) {
         const ghostInfo = JSON.parse(savedGhost);
         const exists = await this.verifyGhostExists(ghostInfo);
@@ -31,7 +32,7 @@ export class GhostController {
       await this.scanAndLoadFirstGhost();
     } catch (error) {
       console.error("❌ 自動ゴースト読み込みエラー:", error);
-      this.updateGhostCharacter("mock_nanai");
+      this.updateGhostCharacter(AppConfig.paths.fallbackGhostName);
     }
   }
 
@@ -39,7 +40,7 @@ export class GhostController {
     if (!isTauriAvailable()) return false;
     try {
       const result = await invoke("scan_ghosts", {
-        ghostPath: ghostInfo.path || "assets/ghost",
+        ghostPath: ghostInfo.path || AppConfig.paths.defaultGhostDir,
       });
       return result.ghosts?.some((g) => g.name === ghostInfo.name) || false;
     } catch (error) {
@@ -50,49 +51,51 @@ export class GhostController {
 
   async scanAndLoadFirstGhost() {
     if (!isTauriAvailable()) {
-      console.log("Tauri環境ではありません - デフォルトmock_nanaiを使用");
-      this.selectGhost("mock_nanai");
+      console.log(`Tauri環境ではありません - デフォルト${AppConfig.paths.fallbackGhostName}を使用`);
+      this.selectGhost(AppConfig.paths.fallbackGhostName);
       return;
     }
 
     try {
       const result = await invoke("scan_ghosts", {
-        ghostPath: "assets/ghost",
+        ghostPath: AppConfig.paths.defaultGhostDir,
       });
       this.ghosts = result.ghosts || [];
       if (this.ghosts.length > 0) {
-        const defaultGhost = this.ghosts.find((g) => g.name === "mock_nanai") || this.ghosts[0];
+        const defaultGhost = this.ghosts.find((g) => g.name === AppConfig.paths.fallbackGhostName) || this.ghosts[0];
         this.selectGhost(defaultGhost.name);
       } else {
-        this.selectGhost("mock_nanai");
+        this.selectGhost(AppConfig.paths.fallbackGhostName);
       }
     } catch (error) {
       console.error("❌ ゴーストスキャンエラー:", error);
-      this.selectGhost("mock_nanai");
+      this.selectGhost(AppConfig.paths.fallbackGhostName);
     }
   }
 
   selectGhost(ghostName) {
     const ghost = this.ghosts.find((g) => g.name === ghostName) || {
       name: ghostName,
-      path: `assets/ghost/${ghostName}`,
+      path: `${AppConfig.paths.defaultGhostDir}/${ghostName}`,
     };
 
     this.currentGhost = ghost;
     this.updateCurrentGhostDisplay();
     this.updateGhostCharacter(ghostName);
-    localStorage.setItem("nanai-android-mascot-current-ghost", JSON.stringify(ghost));
+    localStorage.setItem(AppConfig.storageKeys.lastGhost, JSON.stringify(ghost));
 
     this.initializeGhostSHIORI(ghost);
-    this.currentShell = "master";
-    this.app.surfaceManager.loadSurfacesTxt(ghost.path || `assets/ghost/${ghostName}`);
+    this.currentShell = AppConfig.paths.fallbackShellName;
+    this.app.surfaceManager.loadSurfacesTxt(ghost.path || `${AppConfig.paths.defaultGhostDir}/${ghostName}`);
     this.app.showBalloon(`ゴースト「${ghostName}」を選択しました。`);
     setTimeout(() => this.app.hideBalloon(), 2000);
   }
 
   selectShell(shellName) {
     this.currentShell = shellName;
-    const ghostName = this.currentGhost?.name || "mock_nanai";
+    const ghostName = this.currentGhost?.name || AppConfig.paths.fallbackGhostName;
+    const ghostPath = this.currentGhost?.path || `${AppConfig.paths.defaultGhostDir}/${ghostName}`;
+    const fallbackShell = AppConfig.paths.fallbackShellName;
     console.log(`👗 シェル切り替え: ${shellName}`);
 
     // サーフィス画像の更新
@@ -101,15 +104,14 @@ export class GhostController {
       img.onerror = () => {
         img.onerror = () => {
           img.onerror = null;
-          img.src = `assets/ghost/${ghostName}/shell/master/surface0.svg`;
+          img.src = `${ghostPath}/shell/${fallbackShell}/surface0.svg`;
         };
-        img.src = `assets/ghost/${ghostName}/shell/master/surface0.png`;
+        img.src = `${ghostPath}/shell/${fallbackShell}/surface0.png`;
       };
-      img.src = `assets/ghost/${ghostName}/shell/${shellName}/surface0.png`;
+      img.src = `${ghostPath}/shell/${shellName}/surface0.png`;
     }
 
     // surfaces.txt の再読み込み
-    const ghostPath = this.currentGhost?.path || `assets/ghost/${ghostName}`;
     this.app.surfaceManager.loadSurfacesTxt(`${ghostPath}/shell/${shellName}`);
 
     // SHIORIへの通知
@@ -177,7 +179,9 @@ export class GhostController {
   }
 
   updateSurface(surfaceId, scopeId = 0) {
-    const ghostName = this.currentGhost?.name || "mock_nanai";
+    const ghostName = this.currentGhost?.name || AppConfig.paths.fallbackGhostName;
+    const ghostPath = this.currentGhost?.path || `${AppConfig.paths.defaultGhostDir}/${ghostName}`;
+    const shell = this.currentShell || AppConfig.paths.fallbackShellName;
     const selector = scopeId === 1 ? "#kero-placeholder img" : "#sakura-placeholder img";
     const placeholder = scopeId === 1 ? document.getElementById("kero-placeholder") : document.getElementById("sakura-placeholder");
     const container = scopeId === 1 ? document.getElementById("kero-display") : document.getElementById("ghost-display");
@@ -196,12 +200,13 @@ export class GhostController {
       }
     }
 
+    const fallbackSurface = scopeId === 1 ? 10 : 0;
     const img = document.querySelector(selector);
     if (!img && placeholder) {
-      placeholder.innerHTML = `<img src="assets/ghost/${ghostName}/shell/master/surface${surfaceId}.png" 
+      placeholder.innerHTML = `<img src="${ghostPath}/shell/${shell}/surface${surfaceId}.png" 
                                      alt="scope${scopeId}" 
                                      style="width: 100%; height: 100%; object-fit: contain;"
-                                     onerror="this.onerror=null; this.src='assets/ghost/${ghostName}/shell/master/surface${scopeId === 1 ? 10 : 0}.svg';">`;
+                                     onerror="this.onerror=null; this.src='${ghostPath}/shell/${shell}/surface${fallbackSurface}.svg';">`;
       return;
     }
 
@@ -209,11 +214,11 @@ export class GhostController {
       img.onerror = () => {
         img.onerror = () => {
           img.onerror = null;
-          img.src = `assets/ghost/${ghostName}/shell/master/surface${scopeId === 1 ? 10 : 0}.svg`;
+          img.src = `${ghostPath}/shell/${shell}/surface${fallbackSurface}.svg`;
         };
-        img.src = `assets/ghost/${ghostName}/shell/master/surface${scopeId === 1 ? 10 : 0}.png`;
+        img.src = `${ghostPath}/shell/${shell}/surface${fallbackSurface}.png`;
       };
-      img.src = `assets/ghost/${ghostName}/shell/master/surface${surfaceId}.png`;
+      img.src = `${ghostPath}/shell/${shell}/surface${surfaceId}.png`;
     }
   }
 
@@ -226,8 +231,10 @@ export class GhostController {
       return;
     }
 
-    const imgPath = `assets/ghost/${ghostName}/shell/master/surface0.png`;
-    const svgPath = `assets/ghost/${ghostName}/shell/master/surface0.svg`;
+    const ghostPath = this.currentGhost?.path || `${AppConfig.paths.defaultGhostDir}/${ghostName}`;
+    const shell = this.currentShell || AppConfig.paths.fallbackShellName;
+    const imgPath = `${ghostPath}/shell/${shell}/surface0.png`;
+    const svgPath = `${ghostPath}/shell/${shell}/surface0.svg`;
     sakuraPlaceholder.innerHTML = `<img src="${imgPath}" 
                                    alt="${ghostName}" 
                                    style="width: 100%; height: 100%; object-fit: contain; pointer-events: auto;" 

@@ -444,20 +444,11 @@ async fn exit_app(app_handle: tauri::AppHandle) -> Result<(), String> {
     Ok(())
 }
 
-/// ゴーストアーカイブ (.nar / .zip) の取り込み・解凍コマンド
-#[tauri::command]
-async fn install_ghost_archive(
-    archive_path: String,
-    app_handle: tauri::AppHandle,
+fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
+    mut zip: zip::ZipArchive<R>,
+    fallback_name: &str,
+    app_handle: &tauri::AppHandle,
 ) -> Result<GhostInfo, String> {
-    println!("📦 Installing ghost archive: {}", archive_path);
-    let clean = clean_verbatim_path(&archive_path);
-    let file = std::fs::File::open(&clean)
-        .map_err(|e| format!("Failed to open archive '{}': {}", clean, e))?;
-
-    let mut zip = zip::ZipArchive::new(file)
-        .map_err(|e| format!("Invalid zip/nar archive: {}", e))?;
-
     // アーカイブ内のinstall.txtまたはdescript.txtを検索してゴースト名を特定
     let mut ghost_name = String::new();
     let mut root_prefix = String::new();
@@ -503,13 +494,9 @@ async fn install_ghost_archive(
         }
     }
 
-    // ゴースト名が見つからない場合はアーカイブファイル名を使用
+    // ゴースト名が見つからない場合はフォールバック名を使用
     if ghost_name.is_empty() {
-        let p = Path::new(&clean);
-        ghost_name = p
-            .file_stem()
-            .map(|s| s.to_string_lossy().to_string())
-            .unwrap_or_else(|| "imported_ghost".to_string());
+        ghost_name = fallback_name.to_string();
     }
 
     // サニタイズ（フォルダ名に使用できない文字を除去）
@@ -518,7 +505,7 @@ async fn install_ghost_archive(
         .map(|c| if r#"\/:*?"<>| "#.contains(c) { '_' } else { c })
         .collect();
 
-    let target_ghost_base = resolve_asset_path("assets/ghost", &app_handle)?;
+    let target_ghost_base = resolve_asset_path("assets/ghost", app_handle)?;
     let target_dir = target_ghost_base.join(&safe_dir_name);
 
     if !target_dir.exists() {
@@ -568,9 +555,53 @@ async fn install_ghost_archive(
     println!("✅ Ghost successfully installed to: {:?}", target_dir);
 
     Ok(GhostInfo {
-        name: safe_dir_name.clone(),
+        name: safe_dir_name,
         path: target_dir.to_string_lossy().to_string(),
     })
+}
+
+/// ゴーストアーカイブ (.nar / .zip) のパス指定取り込み・解凍コマンド
+#[tauri::command]
+async fn install_ghost_archive(
+    archive_path: String,
+    app_handle: tauri::AppHandle,
+) -> Result<GhostInfo, String> {
+    println!("📦 Installing ghost archive from path: {}", archive_path);
+    let clean = clean_verbatim_path(&archive_path);
+    let file = std::fs::File::open(&clean)
+        .map_err(|e| format!("Failed to open archive '{}': {}", clean, e))?;
+
+    let zip = zip::ZipArchive::new(file)
+        .map_err(|e| format!("Invalid zip/nar archive: {}", e))?;
+
+    let p = Path::new(&clean);
+    let fallback = p
+        .file_stem()
+        .map(|s| s.to_string_lossy().to_string())
+        .unwrap_or_else(|| "imported_ghost".to_string());
+
+    extract_ghost_archive_from_reader(zip, &fallback, &app_handle)
+}
+
+/// ゴーストアーカイブ (.nar / .zip) のバイナリ直接取り込み・解凍コマンド
+#[tauri::command]
+async fn install_ghost_archive_bytes(
+    file_name: String,
+    bytes: Vec<u8>,
+    app_handle: tauri::AppHandle,
+) -> Result<GhostInfo, String> {
+    println!("📦 Installing ghost archive from memory bytes: {} ({} bytes)", file_name, bytes.len());
+    let reader = std::io::Cursor::new(bytes);
+    let zip = zip::ZipArchive::new(reader)
+        .map_err(|e| format!("Invalid zip/nar archive: {}", e))?;
+
+    let p = Path::new(&file_name);
+    let fallback = p
+        .file_stem()
+        .map(|s| s.to_string_lossy().to_string())
+        .unwrap_or_else(|| "imported_ghost".to_string());
+
+    extract_ghost_archive_from_reader(zip, &fallback, &app_handle)
 }
 
 // ========================================
@@ -634,7 +665,8 @@ pub fn run() {
             setup_foreground_service,
             test_command,
             exit_app,
-            install_ghost_archive
+            install_ghost_archive,
+            install_ghost_archive_bytes
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

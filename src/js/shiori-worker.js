@@ -1,5 +1,3 @@
-import { DefaultResponses } from "./shiori-dictionary.js";
-
 const _shioriModule = null;
 let isLoaded = false;
 
@@ -34,7 +32,7 @@ self.addEventListener("message", (e) => {
           return;
         }
 
-        // WASM / JS SHIORI ハンドラによるリクエスト処理
+        // WASM / Native SHIORI ハンドラによるリクエスト処理（未ロード時は204 No Content）
         const requestText = payload?.request || "";
         const responseText = processShioriRequest(requestText);
 
@@ -53,7 +51,6 @@ self.addEventListener("message", (e) => {
       break;
 
     case "UNLOAD":
-      shioriModule = null;
       isLoaded = false;
       self.postMessage({ type: "UNLOAD_RESULT", id, success: true });
       break;
@@ -64,25 +61,8 @@ self.addEventListener("message", (e) => {
 });
 
 /**
- * 簡易 SHIORI 3.0 パース & 応答生成（WASM 未初期化時の高速フォールバック）
+ * SHIORI 3.0 リクエスト処理（エンジン未処理時は 204 No Content を返却）
  */
-function processShioriRequest(request) {
-  const idMatch = request.match(/ID:\s*([^\r\n]+)/i);
-  const eventId = idMatch ? idMatch[1].trim() : "";
-
-  // 外部辞書データからの応答取得
-  if (eventId && DefaultResponses[eventId]) {
-    const val = DefaultResponses[eventId];
-    const script = Array.isArray(val)
-      ? val[Math.floor(Math.random() * val.length)]
-      : typeof val === "string"
-      ? val
-      : val.Default || "";
-
-    if (script) {
-      return `SHIORI/3.0 200 OK\r\nCharset: UTF-8\r\nValue: ${script}\r\n\r\n`;
-    }
-  }
-
+function processShioriRequest(_request) {
   return "SHIORI/3.0 204 No Content\r\nCharset: UTF-8\r\n\r\n";
 }

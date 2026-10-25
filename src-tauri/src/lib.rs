@@ -153,7 +153,9 @@ pub fn run() {
             commands::window::hide_subchar_window,
             commands::install::install_ghost_archive,
             commands::install::install_ghost_archive_bytes,
-            commands::file::load_surface_image
+            commands::file::load_surface_image,
+            commands::update::check_ghost_update,
+            commands::update::execute_ghost_update
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

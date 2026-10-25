@@ -57,9 +57,12 @@ export const ghostShioriMethods = {
         if (script?.trim()) {
           this.app.playSakuraScript(script);
         }
+        return { response, script, status: parsed.status };
       }
+      return null;
     } catch (error) {
       console.warn(`SHIORIイベント送信失敗 (${eventName}):`, error);
+      return null;
     }
   },
 

@@ -41,4 +41,9 @@ impl Descript {
     pub fn kero_name(&self) -> Option<&String> {
         self.get("kero.name")
     }
+
+    /// ネットワーク更新URL（`homeurl` キー）
+    pub fn homeurl(&self) -> Option<&String> {
+        self.get("homeurl")
+    }
 }

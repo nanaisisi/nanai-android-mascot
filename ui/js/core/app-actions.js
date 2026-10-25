@@ -42,6 +42,10 @@ export const actionMethods = {
       return this.onGhostClick(undefined, undefined, undefined, scopeId);
     }
 
+    if (action === "update") {
+      return this.startNetworkUpdate();
+    }
+
     if (SHIORI_ACTIONS[action]) {
       gc.sendShioriEvent(...SHIORI_ACTIONS[action]);
       return;

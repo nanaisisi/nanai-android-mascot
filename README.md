@@ -2,7 +2,7 @@
 
 > **AI 関与について**: このドキュメントは GitHub Copilot / Antigravity の支援により作成・更新されました。キャラクター設定・仕様はオーナーユーザーと AI の協議により決定されています。粗製です。
 
-デスクトップマスコット規格「**伺か（UKAGAKA）**」の互換環境を提供する、Tauri v2 + Rust 製のクロスプラットフォーム・アプリケーションです。
+デスクトップマスコット規格「**伺か（UKAGAKA）**」のAndroid向け互換環境を提供する、Tauri v2 + Rust 製のクロスプラットフォーム・アプリケーションです。
 
 ## 🌐 伺かコミュニティ・エコシステム & 参考情報
 
@@ -21,7 +21,7 @@
 ## 🌟 主な特徴(目標と現実)
 
 - 🤖 **AI 駆動開発** - GitHub Copilot / Antigravity との緊密な協調による設計・実装
-- 📱 **クロスプラットフォーム** - Windows デスクトップ検証（Windows First）から段階的に Android 環境へ適応
+- 📱 **クロスプラットフォーム** - Android OS向け互換ベースウェアとして、Windows デスクトップ検証（Windows First）から段階的に Android 環境へ適応
 - 🔧 **Tauri v2 + Rust + Web 技術** - 軽量・省メモリ・高速起動と、Web 標準（HTML5/Canvas/CSS/Modern JS）による高い拡張性を両立
 - 🎭 **高水準な伺か互換性** - さくらスクリプト、`surfaces.txt` 合成、当たり判定、伺か標準メニュー、Shift_JIS 自動変換・VFS 対応
 - 🛡️ **SHIORI 多層フォールバック** - ネイティブ DLL、WebAssembly（WASM）、内蔵辞書パーサー/モックの多層連携

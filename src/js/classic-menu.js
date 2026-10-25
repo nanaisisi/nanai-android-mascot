@@ -1,5 +1,5 @@
 /**
- * Nanai Android Mascot - クラシックメニューイベント制御
+ * Nanai Android Mascot - 標準メニューイベント制御
  */
 
 function dispatchAction(action, payload = null) {
@@ -223,20 +223,20 @@ document.addEventListener("keydown", (e) => {
     return;
   }
 
-  // 単一アクセラレータキー
+  // 単一アクセラレータキー (SSP標準キーバインド準拠)
   const keyMap = {
-    t: "talk",
-    u: "update",
-    h: "headline",
-    b: "balloon",
-    i: "install",
-    r: "scan",
-    p: "plugins",
-    o: "settings",
-    d: "debug",
-    a: "help",
-    l: "license",
-    w: "close",
+    a: "talk",       // もう一度話す (Again)
+    r: "recommend",  // おすすめサイト (Recommend)
+    t: "portal",     // ポータル (Portal)
+    u: "update",     // ネットワーク更新 (Update)
+    b: "balloon",    // バルーン (Balloon)
+    f: "tools",      // ツール
+    i: "install",    // ファイル導入
+    o: "settings",   // 設定 (Options)
+    h: "help",       // 情報・ヘルプ (Help)
+    l: "license",    // 著作権・ライセンス (License)
+    m: "minimize",   // 最小化 (Minimize)
+    w: "close",      // 終了
   };
 
   const action = keyMap[e.key.toLowerCase()];

@@ -229,17 +229,37 @@ export class NanaiAndroidMascotApp {
   handleMenuAction(action, payload = null) {
     if (!action) return;
 
+    // --- 1. ゴースト側対話アクション ---
     if (action === "talk") {
       this.onGhostClick();
       return;
     }
 
+    // [SHIORI連携] おすすめサイト (OnChoiceSelect / \![open,recommendlink])
+    // ※ベースウェア側未実装: 外部ブラウザ自動起動・ブックマーク同期は今後のフェーズで拡張
+    if (action === "recommend") {
+      this.ghostController.sendShioriEvent("OnChoiceSelect", ["recommendlink"]);
+      return;
+    }
+
+    // [SHIORI連携] ポータルサイト (OnChoiceSelect / \![open,portal])
+    // ※ベースウェア側未実装: descript.txt内のportalurl自動オープンは今後のフェーズで拡張
+    if (action === "portal") {
+      this.ghostController.sendShioriEvent("OnChoiceSelect", ["portal"]);
+      return;
+    }
+
+    // --- 2. ツール・更新・メンテナンス系 ---
     if (action === "update") {
+      // [SHIORI連携] OnUpdate イベント送出
+      // ※ベースウェア側未実装: updates2.dau MD5ハッシュ照合・自動ダウンロードエンジン
       this.ghostController.sendShioriEvent("OnUpdate");
       return;
     }
 
     if (action === "headline") {
+      // [SHIORI連携] OnHeadline イベント送出
+      // ※ベースウェア側未実装: 外部RSS/Atomフィードパーサー
       this.ghostController.sendShioriEvent("OnHeadline");
       return;
     }

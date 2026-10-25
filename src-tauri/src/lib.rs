@@ -579,13 +579,7 @@ async fn send_shiori_request(
     if let Some(ref engine) = *engine_lock {
         engine.request(&request)
     } else {
-        eprintln!("⚠️ No active SHIORI engine loaded for request (fallback response):\n{}", request);
-        // フォールバック: OnBoot やメニュー関連のリクエストに対して正常終了(200 OK)を返す
-        if request.contains("OnBoot") || request.contains("OnFirstBoot") {
-            Ok("SHIORI/3.0 200 OK\r\nSender: NanaiFallback\r\nCharset: UTF-8\r\nValue: \\0\\s[0]こんにちは！\\e\r\n\r\n".to_string())
-        } else {
-            Ok("SHIORI/3.0 204 No Content\r\nSender: NanaiFallback\r\nCharset: UTF-8\r\n\r\n".to_string())
-        }
+        Err("No active SHIORI engine loaded".to_string())
     }
 }
 

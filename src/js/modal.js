@@ -45,18 +45,21 @@ export class ModalManager {
         this.renderGhostList();
       });
 
-      const fileInput = document.getElementById("ghost-archive-input");
-      const importBtn = document.getElementById("import-ghost-btn");
-      const statusEl = document.getElementById("import-ghost-status");
+      const fileInput = this.content.querySelector("#ghost-archive-input");
+      const importBtn = this.content.querySelector("#import-ghost-btn");
+      const statusEl = this.content.querySelector("#import-ghost-status");
 
-      importBtn?.addEventListener("click", async () => {
+      const handleGhostImport = async () => {
         const file = fileInput?.files?.[0];
         if (!file) {
           if (statusEl) statusEl.textContent = "ファイルを選択してください。";
           return;
         }
 
-        if (statusEl) statusEl.textContent = `取り込み中: ${file.name}...`;
+        if (statusEl) {
+          statusEl.textContent = `⏳ 取り込み中: ${file.name}...`;
+          statusEl.style.color = "#2980b9";
+        }
 
         if (isTauriAvailable()) {
           try {
@@ -68,18 +71,27 @@ export class ModalManager {
               const bytes = Array.from(new Uint8Array(arrayBuffer));
               res = await invoke("install_ghost_archive_bytes", { fileName: file.name, bytes });
             }
-            if (statusEl) statusEl.textContent = `✅ 「${res.name}」を取り込みました！`;
-            await this.app.ghostController.scanAndLoadFirstGhost();
-            this.renderGhostList();
+            if (statusEl) {
+              statusEl.textContent = `✅ 「${res.name}」を取り込みました！`;
+              statusEl.style.color = "#27ae60";
+            }
+            await this.app.ghostController.scanGhosts();
             this.app.ghostController.selectGhost(res.name);
+            this.renderGhostList();
           } catch (err) {
             console.error("アーカイブ取り込み失敗:", err);
-            if (statusEl) statusEl.textContent = `❌ 失敗: ${err}`;
+            if (statusEl) {
+              statusEl.textContent = `❌ 失敗: ${err}`;
+              statusEl.style.color = "#c0392b";
+            }
           }
         } else {
           if (statusEl) statusEl.textContent = "※ ブラウザ環境ではアーカイブ展開はサポートされていません";
         }
-      });
+      };
+
+      importBtn?.addEventListener("click", handleGhostImport);
+      fileInput?.addEventListener("change", handleGhostImport);
     } else if (contentId === "install-modal-content") {
       this.setupInstallListeners();
     } else if (contentId === "settings-modal-content") {
@@ -94,11 +106,11 @@ export class ModalManager {
   }
 
   setupInstallListeners() {
-    const fileInput = document.getElementById("modal-install-file-input");
-    const submitBtn = document.getElementById("modal-install-submit-btn");
-    const statusEl = document.getElementById("modal-install-status");
+    const fileInput = this.content.querySelector("#modal-install-file-input");
+    const submitBtn = this.content.querySelector("#modal-install-submit-btn");
+    const statusEl = this.content.querySelector("#modal-install-status");
 
-    submitBtn?.addEventListener("click", async () => {
+    const doInstall = async () => {
       const file = fileInput?.files?.[0];
       if (!file) {
         if (statusEl) {
@@ -128,7 +140,7 @@ export class ModalManager {
             statusEl.textContent = `✅ ゴースト「${res.name}」を取り込みました！`;
             statusEl.style.color = "#27ae60";
           }
-          await this.app.ghostController.scanAndLoadFirstGhost();
+          await this.app.ghostController.scanGhosts();
           this.app.ghostController.selectGhost(res.name);
           this.app.showBalloon(`「${res.name}」をインストールして切り替えました！`);
           setTimeout(() => this.app.hideBalloon(), 2500);
@@ -145,7 +157,10 @@ export class ModalManager {
           statusEl.style.color = "#e67e22";
         }
       }
-    });
+    };
+
+    submitBtn?.addEventListener("click", doInstall);
+    fileInput?.addEventListener("change", doInstall);
   }
 
   setupPluginListeners() {
@@ -208,8 +223,13 @@ export class ModalManager {
 
 
   renderGhostList() {
-    const ghostList = document.getElementById("ghost-list");
+    const ghostList = this.content ? this.content.querySelector("#ghost-list") : document.getElementById("ghost-list");
+    const currentGhostLabel = this.content ? this.content.querySelector("#current-ghost") : document.getElementById("current-ghost");
     if (!ghostList) return;
+
+    if (currentGhostLabel) {
+      currentGhostLabel.textContent = this.app.ghostController.currentGhost?.name || "未選択";
+    }
 
     const ghosts = this.app.ghostController.ghosts;
     if (!ghosts || ghosts.length === 0) {
@@ -220,16 +240,17 @@ export class ModalManager {
     ghostList.innerHTML = ghosts
       .map(
         (ghost) => `
-        <div class="ghost-item ${this.app.ghostController.currentGhost?.name === ghost.name ? "active" : ""}" data-ghost="${ghost.name}">
-          <strong>${ghost.name}</strong><br>
-          <small>${ghost.path}</small>
+        <div class="ghost-item ${this.app.ghostController.currentGhost?.name === ghost.name ? "active" : ""}" data-ghost="${ghost.name}" style="cursor: pointer; padding: 6px; border-bottom: 1px solid rgba(0,0,0,0.05);">
+          <strong>${this.app.ghostController.currentGhost?.name === ghost.name ? "✓ " : ""}${ghost.name}</strong><br>
+          <small style="color: #666;">${ghost.path}</small>
         </div>`
       )
       .join("");
 
     ghostList.querySelectorAll(".ghost-item").forEach((item) => {
       item.addEventListener("click", () => {
-        this.app.ghostController.selectGhost(item.dataset.ghost);
+        const ghostName = item.dataset.ghost;
+        this.app.ghostController.selectGhost(ghostName);
         this.renderGhostList();
       });
     });

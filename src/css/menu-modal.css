@@ -63,12 +63,14 @@
   overflow: hidden;
   background: white;
   border: 2px solid #ddd;
+  max-height: calc(100vh - 80px);
 }
 
 .menu-iframe-container iframe {
   display: block;
   border: none;
   border-radius: 6px;
+  max-height: calc(100vh - 80px);
 }
 
 /* モーダルオーバーレイ */

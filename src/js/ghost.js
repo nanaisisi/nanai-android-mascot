@@ -49,6 +49,23 @@ export class GhostController {
     }
   }
 
+  async scanGhosts() {
+    if (!isTauriAvailable()) {
+      return this.ghosts;
+    }
+    try {
+      const result = await invoke("scan_ghosts", {
+        ghostPath: AppConfig.paths.defaultGhostDir,
+      });
+      this.ghosts = result.ghosts || [];
+      this.syncWithMenu();
+      return this.ghosts;
+    } catch (error) {
+      console.error("❌ ゴーストスキャンエラー:", error);
+      return this.ghosts;
+    }
+  }
+
   async scanAndLoadFirstGhost() {
     if (!isTauriAvailable()) {
       console.log(`Tauri環境ではありません - デフォルト${AppConfig.paths.fallbackGhostName}を使用`);
@@ -61,6 +78,7 @@ export class GhostController {
         ghostPath: AppConfig.paths.defaultGhostDir,
       });
       this.ghosts = result.ghosts || [];
+      this.syncWithMenu();
       if (this.ghosts.length > 0) {
         const defaultGhost = this.ghosts.find((g) => g.name === AppConfig.paths.fallbackGhostName) || this.ghosts[0];
         this.selectGhost(defaultGhost.name);

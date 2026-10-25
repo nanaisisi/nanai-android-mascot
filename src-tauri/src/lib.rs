@@ -437,6 +437,15 @@ async fn test_command() -> Result<String, String> {
     Ok("SHIORI統合テスト成功!".to_string())
 }
 
+/// アプリケーション最小化コマンド
+#[tauri::command]
+async fn minimize_app(app_handle: tauri::AppHandle) -> Result<(), String> {
+    if let Some(window) = app_handle.get_webview_window("main") {
+        window.minimize().map_err(|e| e.to_string())?;
+    }
+    Ok(())
+}
+
 /// アプリケーション終了コマンド
 #[tauri::command]
 async fn exit_app(app_handle: tauri::AppHandle) -> Result<(), String> {
@@ -664,6 +673,7 @@ pub fn run() {
             request_overlay_permission,
             setup_foreground_service,
             test_command,
+            minimize_app,
             exit_app,
             install_ghost_archive,
             install_ghost_archive_bytes

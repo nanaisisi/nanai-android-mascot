@@ -61,7 +61,6 @@ export class NanaiAndroidMascotApp {
       keroBalloonText: document.getElementById("kero-balloon-text"),
       menuContainer: document.getElementById("menu-iframe-container"),
       menuBtn: document.getElementById("menu-btn"),
-      quickExitBtn: document.getElementById("quick-exit-btn"),
       quickBubble: document.getElementById("quick-bubble"),
     };
   }
@@ -126,12 +125,6 @@ export class NanaiAndroidMascotApp {
       );
     }
 
-
-    // クイック終了ボタン
-    this.elements.quickExitBtn?.addEventListener("click", (e) => {
-      e.stopPropagation();
-      this.closeApp();
-    });
 
     // メニュー表示切り替え
     this.elements.menuBtn?.addEventListener("click", (e) => {
@@ -221,12 +214,10 @@ export class NanaiAndroidMascotApp {
         }
 
         if (action === "minimize") {
-          this.showBalloon("また呼んでね！");
-          setTimeout(() => {
-            if (this.elements.ghostDisplay) {
-              this.elements.ghostDisplay.style.opacity = "0.2";
-            }
-          }, 1000);
+          this.hideMenu();
+          if (isTauriAvailable()) {
+            invoke("minimize_app").catch((err) => console.error("minimize_app failed:", err));
+          }
           return;
         }
 

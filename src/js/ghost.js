@@ -117,17 +117,7 @@ export class GhostController {
     console.log(`👗 シェル切り替え: ${shellName}`);
 
     // サーフィス画像の更新
-    const img = document.querySelector("#sakura-placeholder img");
-    if (img) {
-      img.onerror = () => {
-        img.onerror = () => {
-          img.onerror = null;
-          img.src = `${ghostPath}/shell/${fallbackShell}/surface0.svg`;
-        };
-        img.src = `${ghostPath}/shell/${fallbackShell}/surface0.png`;
-      };
-      img.src = `${ghostPath}/shell/${shellName}/surface0.png`;
-    }
+    this.updateSurface(0, 0);
 
     // surfaces.txt の再読み込み
     this.app.surfaceManager.loadSurfacesTxt(`${ghostPath}/shell/${shellName}`);
@@ -221,13 +211,23 @@ export class GhostController {
     const fallbackSurface = scopeId === 1 ? 10 : 0;
     const img = document.querySelector(selector);
 
-    const applyImageSrc = (src) => {
+    const applyImageSrc = (src, fallbackSrc = null) => {
       if (img) {
         img.style.display = "block";
+        if (fallbackSrc) {
+          img.onerror = () => {
+            img.onerror = null;
+            img.src = fallbackSrc;
+          };
+        } else {
+          img.onerror = null;
+        }
         img.src = src;
       } else if (placeholder) {
+        const errorAttr = fallbackSrc ? `onerror="this.onerror=null; this.src='${fallbackSrc}';"` : "";
         placeholder.innerHTML = `<img src="${src}" 
                                        alt="scope${scopeId}" 
+                                       ${errorAttr}
                                        style="width: 100%; height: 100%; object-fit: contain; pointer-events: auto;">`;
       }
     };
@@ -256,7 +256,7 @@ export class GhostController {
 
     const imgUrl = convertFileSrc(`${ghostPath}/shell/${shell}/surface${surfaceId}.png`);
     const fallbackSvgUrl = convertFileSrc(`${ghostPath}/shell/${shell}/surface${fallbackSurface}.svg`);
-    applyImageSrc(imgUrl);
+    applyImageSrc(imgUrl, fallbackSvgUrl);
   }
 
   async updateGhostCharacter(ghostName) {
@@ -267,34 +267,8 @@ export class GhostController {
       sakuraPlaceholder.innerHTML = "";
       return;
     }
-
-    const ghostPath = this.currentGhost?.path || `${AppConfig.paths.defaultGhostDir}/${ghostName}`;
-    const shell = this.currentShell || AppConfig.paths.fallbackShellName;
-
-    if (isTauriAvailable()) {
-      try {
-        const dataUrl = await invoke("load_surface_image", {
-          ghostPath,
-          shellName: shell,
-          surfaceId: "0",
-        });
-        sakuraPlaceholder.innerHTML = `<img src="${dataUrl}" 
-                                       alt="${ghostName}" 
-                                       style="width: 100%; height: 100%; object-fit: contain; pointer-events: auto;">`;
-        sakuraPlaceholder.title = ghostName || "";
-        return;
-      } catch (err) {
-        console.warn("updateGhostCharacter: load_surface_image 失敗:", err);
-      }
-    }
-
-    const imgUrl = convertFileSrc(`${ghostPath}/shell/${shell}/surface0.png`);
-    const svgUrl = convertFileSrc(`${ghostPath}/shell/${shell}/surface0.svg`);
-    sakuraPlaceholder.innerHTML = `<img src="${imgUrl}" 
-                                   alt="${ghostName}" 
-                                   style="width: 100%; height: 100%; object-fit: contain; pointer-events: auto;" 
-                                   onerror="console.warn('画像フォールバック適用:', this.src); this.onerror=() => { this.style.display='none'; }; this.src='${svgUrl}';">`;
     sakuraPlaceholder.title = ghostName || "";
+    this.updateSurface(0, 0);
   }
 
   updateCurrentGhostDisplay() {

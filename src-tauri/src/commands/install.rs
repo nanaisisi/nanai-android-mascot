@@ -138,7 +138,7 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
 
     println!("✅ Ghost successfully installed to: {:?}", target_dir);
 
-    let shells = crate::ghost_scan::scan_shells_from_ghost(&target_dir);
+    let shells = crate::ghost::scan::scan_shells_from_ghost(&target_dir);
     let descript_candidates = [
         target_dir.join("ghost").join("master").join("descript.txt"),
         target_dir.join("descript.txt"),
@@ -146,7 +146,7 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
     ];
     let mut meta_map = None;
     for cand in &descript_candidates {
-        if let Some(map) = crate::ghost_scan::read_descript_file(cand) {
+        if let Some(map) = crate::ghost::scan::read_descript_file(cand) {
             meta_map = Some(map);
             break;
         }

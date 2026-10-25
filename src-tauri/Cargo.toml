@@ -24,7 +24,7 @@ tauri-plugin-opener = "2.7.2"
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.154"
 encoding_rs = "0.8.42"
-nanai_android_mascot_ui = { package = "nanai-android-mascot-ui", path = "../src" }
+nanai_android_mascot_ui = { package = "nanai-android-mascot-ui", path = "../crates/ui" }
 # SHIORI連携用 - C++統合
 libc = "0.2.191"
 regex = "1.13.1"

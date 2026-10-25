@@ -5,7 +5,7 @@ edition = "2024"
 
 [lib]
 name = "nanai_android_mascot_ui"
-path = "lib.rs"
+path = "src/lib.rs"
 
 [dependencies]
 serde = { version = "1.0.229", features = ["derive"] }
@@ -16,4 +16,4 @@ encoding_rs = "0.8.42"
 
 [[bin]]
 name = "nanai_android_mascot_ui_bin"
-path = "main.rs"
+path = "src/main.rs"

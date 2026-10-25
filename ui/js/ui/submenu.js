@@ -172,8 +172,13 @@ if (globalThis.__TAURI__) {
         if (activeShell?.menu_theme) {
           const mt = activeShell.menu_theme;
           const rootStyle = document.documentElement.style;
-          if (mt.background_font_color) rootStyle.setProperty("--balloon-text-color", mt.background_font_color);
+          if (mt.background_color) rootStyle.setProperty("--balloon-bg", mt.background_color);
+          if (mt.foreground_color) rootStyle.setProperty("--balloon-highlight-bg", mt.foreground_color);
+          if (mt.background_font_color || mt.font_color) {
+            rootStyle.setProperty("--balloon-text-color", mt.background_font_color || mt.font_color);
+          }
           if (mt.foreground_font_color) rootStyle.setProperty("--balloon-highlight-text", mt.foreground_font_color);
+          if (mt.disable_font_color) rootStyle.setProperty("--balloon-disable-text", mt.disable_font_color);
           if (mt.separator_color) rootStyle.setProperty("--balloon-separator-color", mt.separator_color);
         }
         renderContent();

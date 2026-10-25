@@ -70,28 +70,51 @@ pub fn scan_shells_from_ghost(ghost_dir: &Path) -> Vec<ShellInfo> {
                         display_name = map.get("name").cloned();
 
                         // メニュー配色・画像情報の抽出
-                        let parse_rgb = |prefix: &str| -> Option<String> {
-                            let r = map.get(&format!("{}.r", prefix))?;
-                            let g = map.get(&format!("{}.g", prefix))?;
-                            let b = map.get(&format!("{}.b", prefix))?;
-                            Some(format!("rgb({}, {}, {})", r, g, b))
+                        let parse_color = |key_base: &str| -> Option<String> {
+                            if let (Some(r), Some(g), Some(b)) = (
+                                map.get(&format!("{}.r", key_base)),
+                                map.get(&format!("{}.g", key_base)),
+                                map.get(&format!("{}.b", key_base)),
+                            ) {
+                                return Some(format!("rgb({}, {}, {})", r, g, b));
+                            }
+                            if let Some(val) = map.get(key_base) {
+                                let parts: Vec<&str> = val.split(',').map(|s| s.trim()).collect();
+                                if parts.len() == 3 {
+                                    return Some(format!("rgb({}, {}, {})", parts[0], parts[1], parts[2]));
+                                } else if val.starts_with('#') || val.starts_with("rgb") {
+                                    return Some(val.clone());
+                                }
+                            }
+                            None
                         };
 
-                        let bg_color = parse_rgb("menu.background.font.color");
-                        let fg_color = parse_rgb("menu.foreground.font.color");
-                        let dis_color = parse_rgb("menu.disable.font.color");
-                        let sep_color = parse_rgb("menu.separator.color");
+                        let bg_color = parse_color("menu.background.color");
+                        let fg_color = parse_color("menu.foreground.color");
+                        let font_col = parse_color("font.color");
+                        let bg_font_col = parse_color("menu.background.font.color").or_else(|| font_col.clone());
+                        let fg_font_col = parse_color("menu.foreground.font.color");
+                        let dis_font_col = parse_color("menu.disable.font.color");
+                        let sep_col = parse_color("menu.separator.color");
 
                         let bg_bmp = map.get("menu.background.bitmap.filename").cloned();
                         let fg_bmp = map.get("menu.foreground.bitmap.filename").cloned();
                         let side_bmp = map.get("menu.sidebar.bitmap.filename").cloned();
 
-                        if bg_color.is_some() || fg_color.is_some() || bg_bmp.is_some() {
+                        if bg_color.is_some()
+                            || fg_color.is_some()
+                            || bg_font_col.is_some()
+                            || fg_font_col.is_some()
+                            || bg_bmp.is_some()
+                        {
                             menu_theme = Some(ShellMenuTheme {
-                                background_font_color: bg_color,
-                                foreground_font_color: fg_color,
-                                disable_font_color: dis_color,
-                                separator_color: sep_color,
+                                background_color: bg_color,
+                                foreground_color: fg_color,
+                                font_color: font_col,
+                                background_font_color: bg_font_col,
+                                foreground_font_color: fg_font_col,
+                                disable_font_color: dis_font_col,
+                                separator_color: sep_col,
                                 background_bitmap: bg_bmp,
                                 foreground_bitmap: fg_bmp,
                                 sidebar_bitmap: side_bmp,

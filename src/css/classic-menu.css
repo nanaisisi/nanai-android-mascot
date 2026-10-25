@@ -16,7 +16,9 @@ body {
   color: #000;
   user-select: none;
   -webkit-user-select: none;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 100vh;
 }
 
 .menu-container {

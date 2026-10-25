@@ -50,4 +50,37 @@ mod tests {
         );
         assert_eq!(commands[6], SakuraCommand::End);
     }
+
+    #[test]
+    fn test_sakura_script_new_tags() {
+        let script = r"\0\_q\x\_a[anchor01]リンク\_a\![raise,OnTest,1,2]\![bind,clothing,ribbon,1]";
+        let mut commands = Vec::new();
+        execute_sakura_script(script, |cmd| commands.push(cmd));
+
+        assert_eq!(commands[0], SakuraCommand::Target(0));
+        assert_eq!(commands[1], SakuraCommand::Quick(true));
+        assert_eq!(commands[2], SakuraCommand::ClickWait);
+        assert_eq!(
+            commands[3],
+            SakuraCommand::Anchor {
+                id: "anchor01".into(),
+                text: "リンク".into(),
+            }
+        );
+        assert_eq!(
+            commands[4],
+            SakuraCommand::Raise {
+                event: "OnTest".into(),
+                references: vec!["1".into(), "2".into()],
+            }
+        );
+        assert_eq!(
+            commands[5],
+            SakuraCommand::Bind {
+                category: "clothing".into(),
+                part: "ribbon".into(),
+                status: Some(true),
+            }
+        );
+    }
 }

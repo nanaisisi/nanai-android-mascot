@@ -9,6 +9,12 @@ export class SurfaceManager {
 		this.app = app;
 		// surfaces.txt から動的に読み込まれた当たり判定（Collision）マップ
 		this.collisions = {};
+		// surfaces.txt の差分パーツ定義 (element): { [surfaceId]: [{ type, file, x, y }] }
+		this.elements = {};
+		// surfaces.txt のアニメーション定義 (animation): { [surfaceId]: [{ id, interval, patterns: [{ surface, wait, type, x, y }] }] }
+		this.animations = {};
+		// 動作中のアニメーションタイマーマップ
+		this.activeAnimationTimers = [];
 		// ベース画像の元解像度 (surfaces.txt または画像から取得)
 		this.baseWidth = 200;
 		this.baseHeight = 400;
@@ -19,11 +25,15 @@ export class SurfaceManager {
 
 	/**
 	 * ゴーストの surfaces.txt を読み込んでパース
+	 * @param {string} ghostPath
+	 * @param {string} shellName
 	 */
-	async loadSurfacesTxt(ghostPath) {
+	async loadSurfacesTxt(ghostPath, shellName = "master") {
 		try {
 			let content = "";
-			const surfacesPath = `${ghostPath}/shell/master/surfaces.txt`;
+			// shell/master などのパス形式に対応
+			const basePath = ghostPath.includes("/shell/") ? ghostPath : `${ghostPath}/shell/${shellName}`;
+			const surfacesPath = `${basePath}/surfaces.txt`;
 
 			if (isTauriAvailable()) {
 				try {
@@ -102,11 +112,65 @@ export class SurfaceManager {
 						this.collisions[s].push({ name, shape: "rect", x1, y1, x2, y2 });
 					});
 				}
+			} else if (trimmed.startsWith("element")) {
+				const parts = trimmed.split(",");
+				if (parts.length >= 5) {
+					const type = parts[1].trim().toLowerCase();
+					const file = parts[2].trim();
+					const x = parseInt(parts[3], 10) || 0;
+					const y = parseInt(parts[4], 10) || 0;
+
+					currentSurfaces.forEach((s) => {
+						if (!this.elements[s]) this.elements[s] = [];
+						this.elements[s].push({ type, file, x, y });
+					});
+				}
+			} else if (trimmed.includes(".interval,")) {
+				// animation[ID].interval,[interval]
+				const match = trimmed.match(/^animation(\d+)\.interval,\s*(.+)$/);
+				if (match) {
+					const animId = parseInt(match[1], 10);
+					const interval = match[2].trim();
+					currentSurfaces.forEach((s) => {
+						if (!this.animations[s]) this.animations[s] = [];
+						let anim = this.animations[s].find((a) => a.id === animId);
+						if (!anim) {
+							anim = { id: animId, interval, patterns: [] };
+							this.animations[s].push(anim);
+						} else {
+							anim.interval = interval;
+						}
+					});
+				}
+			} else if (trimmed.includes(".pattern")) {
+				// animation[ID].pattern[P],[surface],[wait],[type],[x],[y]
+				const match = trimmed.match(/^animation(\d+)\.pattern\d*,\s*(.+)$/);
+				if (match) {
+					const animId = parseInt(match[1], 10);
+					const pParts = match[2].split(",");
+					if (pParts.length >= 2) {
+						const patSurface = pParts[0].trim();
+						const wait = parseInt(pParts[1], 10) || 100;
+						const type = pParts[2] ? pParts[2].trim().toLowerCase() : "overlay";
+						const x = pParts[3] ? parseInt(pParts[3], 10) || 0 : 0;
+						const y = pParts[4] ? parseInt(pParts[4], 10) || 0 : 0;
+
+						currentSurfaces.forEach((s) => {
+							if (!this.animations[s]) this.animations[s] = [];
+							let anim = this.animations[s].find((a) => a.id === animId);
+							if (!anim) {
+								anim = { id: animId, interval: "sometimes", patterns: [] };
+								this.animations[s].push(anim);
+							}
+							anim.patterns.push({ surface: patSurface, wait, type, x, y });
+						});
+					}
+				}
 			}
 		});
 
 		console.log(
-			`🎯 当たり判定登録完了: ${Object.keys(this.collisions).length} サーフィス登録済み`,
+			`🎯 当たり判定・合成要素登録完了: ${Object.keys(this.collisions).length} サーフィス登録済み`,
 		);
 	}
 

@@ -138,9 +138,40 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
 
     println!("✅ Ghost successfully installed to: {:?}", target_dir);
 
+    let shells = crate::ghost_scan::scan_shells_from_ghost(&target_dir);
+    let descript_candidates = [
+        target_dir.join("ghost").join("master").join("descript.txt"),
+        target_dir.join("descript.txt"),
+        target_dir.join("install.txt"),
+    ];
+    let mut meta_map = None;
+    for cand in &descript_candidates {
+        if let Some(map) = crate::ghost_scan::read_descript_file(cand) {
+            meta_map = Some(map);
+            break;
+        }
+    }
+
+    let display_name = meta_map
+        .as_ref()
+        .and_then(|m| m.get("name").cloned())
+        .unwrap_or_else(|| safe_dir_name.clone());
+
+    let sakura_name = meta_map.as_ref().and_then(|m| m.get("sakura.name").cloned());
+    let kero_name = meta_map.as_ref().and_then(|m| m.get("kero.name").cloned());
+    let shiori = meta_map.as_ref().and_then(|m| m.get("shiori").cloned());
+    let craftman = meta_map.as_ref().and_then(|m| m.get("craftman").cloned());
+    let craftman_url = meta_map.as_ref().and_then(|m| m.get("craftmanurl").cloned());
+
     Ok(GhostInfo {
-        name: safe_dir_name,
+        name: display_name,
         path: target_dir.to_string_lossy().to_string(),
+        sakura_name,
+        kero_name,
+        shiori,
+        craftman,
+        craftman_url,
+        shells,
     })
 }
 

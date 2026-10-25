@@ -5,12 +5,27 @@ use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 use tauri::{Emitter, Manager};
 
-// 簡易ゴースト情報
-#[derive(Debug, Clone, serde::Serialize)]
+// シェル情報
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct ShellInfo {
+    pub name: String,
+    pub path: String,
+    pub display_name: Option<String>,
+}
+
+// フル規格対応ゴースト情報
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct GhostInfo {
     pub name: String,
     pub path: String,
+    pub sakura_name: Option<String>,
+    pub kero_name: Option<String>,
+    pub shiori: Option<String>,
+    pub craftman: Option<String>,
+    pub craftman_url: Option<String>,
+    pub shells: Vec<ShellInfo>,
 }
+
 
 // アプリケーション状態を定義
 pub struct AppState {

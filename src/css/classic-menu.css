@@ -17,13 +17,13 @@ body {
   user-select: none;
   -webkit-user-select: none;
   overflow: visible;
-  padding: 6px;
+  padding: 2px;
 }
 
 .menu-container {
   padding: 4px 0;
   width: 100%;
-  max-width: 260px;
+  max-width: 100%;
   background-color: var(--balloon-bg);
   background-image: var(--balloon-pattern);
   border: var(--balloon-border-width) var(--balloon-border-style) var(--balloon-border-color);

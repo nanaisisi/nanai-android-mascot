@@ -21,7 +21,6 @@ export const ghostSurfaceMethods = {
     const container = byId(isSubchar ? "kero-display" : "ghost-display");
     const slot = byId(isSubchar ? "kero-slot" : "ghost-container");
 
-    // \s[-1]: キャラクターサーフェス消去指示
     if (surfaceId === -1 || surfaceId === "-1") {
       if (slot) slot.style.display = "none";
       if (container) container.style.visibility = "hidden";
@@ -31,23 +30,20 @@ export const ghostSurfaceMethods = {
       return;
     }
 
-    if (isSubchar) {
-      if (isTauriAvailable()) {
-        if (slot) slot.style.display = "none";
-        if (container) container.style.display = "none";
-        invoke("show_subchar_window", { scopeId }).catch(() => {});
-      } else {
-        if (slot && slot.style.display === "none") slot.style.display = "flex";
-        if (container && container.style.display === "none") container.style.display = "flex";
-      }
+    if (isTauriAvailable()) {
+      // デスクトップ(Tauri)環境では、スコープ0(メイン)・スコープ1以降(サブ)問わず
+      // 独立した透過キャラクターウィンドウで描画・移動を行う
+      if (slot) slot.style.display = "none";
+      if (container) container.style.display = "none";
+      invoke("show_subchar_window", { scopeId }).catch(() => {});
     } else {
-      // メインキャラクター (スコープ0) は常にメインウィンドウで表示
+      // Webブラウザ / Android等のシングルコンテナ環境ではメインウィンドウ内で描画
       if (slot && slot.style.display === "none") slot.style.display = "flex";
-      if (container) {
-        container.style.display = "flex";
-        container.style.visibility = "visible";
+      if (container && container.style.display === "none") container.style.display = "flex";
+      if (!isSubchar) {
+        if (container) container.style.visibility = "visible";
+        this.app?.surfaceManager?.setSurfaceId(surfaceId);
       }
-      this.app.surfaceManager.setSurfaceId(surfaceId);
     }
 
     const fallbackSurface = isSubchar ? 10 : 0;

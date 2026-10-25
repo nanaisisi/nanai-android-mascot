@@ -1,4 +1,4 @@
-﻿- **言及規格の元ドキュメント・権利者・ライセンス**:
+- **言及規格の元ドキュメント・権利者・ライセンス**:
   - **SHIORI 仕様 / 各種サブシステム**:
     - **SHIORI/3.0 規格**: [ukadoc-spec: shiori3](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/) - © UKADOC project (CC BY 4.0)
     - **里々 (SATORI)**: [ukatech/satori-docs](https://ukatech.shillest.net/satori-docs/) - © Kusigahama Yagi / SEIBIHAN (BSD 2-Clause License)
@@ -67,14 +67,17 @@ flowchart TB
 
 ## 3. レイヤー構成と責務
 
-### 3.1 フロントエンド層 (`src/`)
+### 3.1 フロントエンド層 (`ui/`)
 
 - **`index.html`**:
-  - 単一の Activity / Window 内で透過表示されるメインコンテナ。
-  - キャラクター（\0 sakura, \1 kero）の DOM 要素、Canvas、バルーン吹き出しを保持。
-- **`src/js/surface.js`**:
+  - メインコンテナ。Android環境では単一Activity内で透過キャンバス・キャラクター・UIコンテナを一括提供。
+  - デスクトップ環境（Tauri / Windows等）では、常駐コントローラー・メニュー・各種モーダル管理基盤として機能。
+- **`subcharacter.html` / `subcharacter.js` (キャラクターウィンドウ)**:
+  - 透過キャラクター描画専用ウィンドウ。
+  - デスクトップ環境ではスコープ0（メインキャラ/さくら）およびスコープ1以降（サブキャラ/うにゅう等）の双方が独立した透過ウィンドウ（`subchar_window_0`, `subchar_window_1`, ...）として生成・表示され、それぞれ個別にドラッグ移動および右クリックメニューの展開が可能。
+- **`ui/js/surface/surface.js` / `ghost-surface.js`**:
   - `surfaces.txt` のパースおよび HTML5 Canvas 2D によるベース画像＋アニメーション差分レイヤーの合成。
-  - 現在の表示倍率（シェルスケール）に応じた当たり判定（Collision）逆算座標計算。
+  - スコープごとの独立した透過キャラクターウィンドウへの画像配信イベントディスパッチ。
 - **`src/js/sakura-script.js`**:
   - `\0`, `\1`, `\s[ID]`, `\w[N]`, `\q[ラベル,ID]`, `\e` 等のタグを字句解析（トークナイズ）。
   - タイピングアニメーション、ウェイト制御、表情連動、全文早送りスキップキューの非同期管理。

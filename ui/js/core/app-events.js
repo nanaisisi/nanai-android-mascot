@@ -120,24 +120,40 @@ export const eventMethods = {
   },
 
   onGhostClick(clientX, clientY, rect, scopeId = 0) {
-    const partName = this.detectPart(clientX, clientY, rect);
-    console.log(`🖱️ ゴーストタップ: スコープ=${scopeId}, 部位=${partName || "なし"}`);
+    const col = this.getCollisionInfo(clientX, clientY, rect);
+    console.log(`🖱️ ゴーストタップ: スコープ=${scopeId}, 部位=${col.name || "なし"} (X:${col.canvasX}, Y:${col.canvasY})`);
     if (isTauriAvailable()) {
       invoke("on_mouse_click").catch(() => {});
     }
-    this.ghostController.sendShioriEvent("OnMouseClick", ["", partName, scopeId]);
+
+    // SHIORI/3.0 標準準拠引数
+    // Reference0: X座標, Reference1: Y座標, Reference2: ホイール, Reference3: スコープ, Reference4: 部位名, Reference5: ボタン(0:左)
+    const args = [col.canvasX, col.canvasY, 0, scopeId, col.name || "", 0];
+
+    // まず OnMouseDoubleClick (つつき) を送信 (多くのゴーストがつつきトークを定義)
+    this.ghostController.sendShioriEvent("OnMouseDoubleClick", args).then((res) => {
+      // つつき反応が無かった場合は OnMouseClick もフォールバック送信
+      if (!res?.script) {
+        this.ghostController.sendShioriEvent("OnMouseClick", args);
+      }
+    });
   },
 
   onGhostStroke(clientX, clientY, rect, scopeId = 0) {
-    const partName = this.detectPart(clientX, clientY, rect);
-    console.log(`🖐️ ゴースト撫で（Stroke）: スコープ=${scopeId}, 部位=${partName || "なし"}`);
-    this.ghostController.sendShioriEvent("OnMouseMove", ["", partName, scopeId]);
+    const col = this.getCollisionInfo(clientX, clientY, rect);
+    console.log(`🖐️ ゴースト撫で（Stroke）: スコープ=${scopeId}, 部位=${col.name || "なし"}`);
+    // Reference0: X座標, Reference1: Y座標, Reference2: ホイール/移動, Reference3: スコープ, Reference4: 部位名
+    this.ghostController.sendShioriEvent("OnMouseMove", [col.canvasX, col.canvasY, 0, scopeId, col.name || ""]);
+  },
+
+  getCollisionInfo(clientX, clientY, rect) {
+    if (clientX !== undefined && clientY !== undefined && rect && this.surfaceManager) {
+      return this.surfaceManager.detectCollision(clientX, clientY, rect);
+    }
+    return { name: "", canvasX: 0, canvasY: 0 };
   },
 
   detectPart(clientX, clientY, rect) {
-    if (clientX !== undefined && clientY !== undefined && rect) {
-      return this.surfaceManager.detectCollision(clientX, clientY, rect).name;
-    }
-    return "";
+    return this.getCollisionInfo(clientX, clientY, rect).name;
   },
 };

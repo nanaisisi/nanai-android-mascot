@@ -1,4 +1,4 @@
-﻿- **言及規格の元ドキュメント・権利者・ライセンス**:
+- **言及規格の元ドキュメント・権利者・ライセンス**:
   - **SHIORI 仕様 / 各種サブシステム**:
     - **SHIORI/3.0 規格**: [ukadoc-spec: shiori3](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/) - © UKADOC project (CC BY 4.0)
     - **里々 (SATORI)**: [ukatech/satori-docs](https://ukatech.shillest.net/satori-docs/) - © Kusigahama Yagi / SEIBIHAN (BSD 2-Clause License)
@@ -50,6 +50,9 @@
 - **[shiori-integration.md](spec/shiori-integration.md)** - SHIORI 組み込み統合技術仕様
 - **[ssp-compatibility-reference.md](spec/ssp-compatibility-reference.md)** - SSP 仕様ベース 統合互換リファレンスマニュアル
 - **[local-reference-and-test-spec.md](spec/local-reference-and-test-spec.md)** - ローカル外部仕様・試験環境（local/）連携仕様書
+- **[ghost-compatibility-gap-and-roadmap.md](spec/ghost-compatibility-gap-and-roadmap.md)** - 伺かゴースト互換性ギャップ分析と実装改善ロードマップ仕様書
+- **[compatibility-implementation-plan.md](spec/compatibility-implementation-plan.md)** - 互換実装計画仕様書
+- **[specification-compliance-matrix.md](spec/specification-compliance-matrix.md)** - 仕様適合マトリクス
 
 ### 📋 開発プロセス & 履歴 (`process/`)
 

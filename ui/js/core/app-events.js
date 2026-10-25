@@ -93,6 +93,19 @@ export const eventMethods = {
     listen("menu-action", forward);
     listen("native-menu-action", forward);
 
+    // サブキャラクターウィンドウ初期ロード時の画像同期要求を受信
+    listen("request-subchar-image", (event) => {
+      const scopeId = event.payload?.scopeId;
+      if (typeof scopeId === "number") {
+        const cachedSrc = this.ghostController?.currentSurfaces?.get(scopeId);
+        if (cachedSrc) {
+          import("./tauri-helper.js").then(({ emit }) => {
+            emit(`update-subchar-image-${scopeId}`, { src: cachedSrc });
+          });
+        }
+      }
+    });
+
     // iframe メニューからの postMessage 受信
     globalThis.addEventListener("message", (event) => {
       if (event.data?.type !== "menu-action") return;

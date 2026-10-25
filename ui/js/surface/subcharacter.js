@@ -28,6 +28,12 @@ if (globalThis.__TAURI__) {
 		});
 	}
 
+	// ウィンドウ読み込み完了時に親側へ現在のサーフェス画像を要求
+	const emitFn = globalThis.__TAURI__.event?.emit || globalThis.__TAURI__.emit;
+	if (typeof emitFn === "function") {
+		emitFn("request-subchar-image", { scopeId });
+	}
+
 	// デスクトップ上でのドラッグ移動
 	root?.addEventListener("mousedown", (e) => {
 		if (e.button === 0 && typeof invokeFn === "function") {

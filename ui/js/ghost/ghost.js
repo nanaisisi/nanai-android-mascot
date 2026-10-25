@@ -176,6 +176,8 @@ export class GhostController {
 				this.app.setBalloonTheme?.(this.app.settings?.balloonTheme || "default");
 			}
 		}
+		// メニュー側の選択状態表示（✓マーク等）を最新状態に同期
+		this.app.syncMenuGhosts?.();
 	}
 
 	selectShell(shellName) {
@@ -190,6 +192,9 @@ export class GhostController {
 		this.updateSurface(0, 0);
 		this.app.surfaceManager.loadSurfacesTxt(`${ghostPath}/shell/${shellName}`);
 		this.sendShioriEvent("OnShellChanged", [shellName]);
+
+		// メニュー側の選択状態表示（✓マーク等）を最新状態に同期
+		this.app.syncMenuGhosts?.();
 	}
 }
 

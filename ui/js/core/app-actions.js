@@ -72,9 +72,18 @@ export const actionMethods = {
 		if (action === "close" || action === "exit") return this.closeApp();
 		if (action === "close-menu") return;
 		if (action === "minimize") return this.minimizeApp();
-		if (action === "switch-to-ghost" && payload) return gc.selectGhost(payload);
-		if (action === "call-ghost" && payload) return this.callGhost(payload);
-		if (action === "switch-to-shell" && payload) return gc.selectShell(payload);
+		if ((action === "switch-to-ghost" || action === "switch-ghost") && payload) {
+			const ghostName = typeof payload === "string" ? payload : payload.name || payload.ghostName;
+			if (ghostName) return gc.selectGhost(ghostName);
+		}
+		if (action === "call-ghost" && payload) {
+			const ghostName = typeof payload === "string" ? payload : payload.name || payload.ghostName;
+			if (ghostName) return this.callGhost(ghostName);
+		}
+		if ((action === "switch-to-shell" || action === "switch-shell") && payload) {
+			const shellName = typeof payload === "string" ? payload : payload.name || payload.shellName;
+			if (shellName) return gc.selectShell(shellName);
+		}
 
 		// ゴースト切り替え / 汎用モーダル
 		const modalKey = action === "ghost-switch" ? "ghost" : action;

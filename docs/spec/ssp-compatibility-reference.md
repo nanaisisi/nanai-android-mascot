@@ -128,5 +128,6 @@ SSP の設定ダイアログ群（`config/index.md`）に対応する設定マ�
   - 里々公式マニュアル: [ukatech/satori-docs](https://github.com/ukatech/satori-docs)
   - YAYA 公式マニュアル: [YAYA-shiori/yaya-docs](https://github.com/YAYA-shiori/yaya-docs)
 - **プロジェクト詳細仕様**:
+  - ゴースト取り込み & アセット分離: [ghost-import-and-asset-separation-spec.md](ghost-import-and-asset-separation-spec.md)
   - UI/メニュー設計: [classic-ui-and-menu-spec.md](../design/classic-ui-and-menu-spec.md)
   - Android 固有常駐仕様: [android-overlay-and-service-spec.md](android-overlay-and-service-spec.md)

@@ -121,6 +121,14 @@ export class GhostController {
 		};
 
 		this.currentGhost = ghost;
+		// 検出されたシェル一覧を同期
+		if (ghost.shells && ghost.shells.length > 0) {
+			this.shells = ghost.shells.map((s) => s.name);
+		} else {
+			this.shells = [AppConfig.paths.fallbackShellName];
+		}
+		this.currentShell = this.shells[0] || AppConfig.paths.fallbackShellName;
+
 		this.updateCurrentGhostDisplay();
 		this.updateGhostCharacter(ghostName);
 		localStorage.setItem(
@@ -136,9 +144,9 @@ export class GhostController {
 		}
 
 		this.initializeGhostSHIORI(ghost);
-		this.currentShell = AppConfig.paths.fallbackShellName;
 		this.app.surfaceManager.loadSurfacesTxt(
 			ghost.path || `${AppConfig.paths.defaultGhostDir}/${ghostName}`,
+			this.currentShell,
 		);
 
 		// ゴースト連動のバルーン自動切り替え（設定が有効な場合、デフォルト有効）

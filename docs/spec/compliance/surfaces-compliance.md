@@ -1,4 +1,4 @@
-﻿# サーフィス規格対応仕様 (Surfaces & Collision Compliance)
+# サーフィス規格対応仕様 (Surfaces & Collision Compliance)
 
 - **言及規格の元ドキュメント・権利者・ライセンス**:
   - **SSP 拡張仕様 / メニュー規格**: [ukatech/ukadoc-ssp](https://github.com/ukatech/ukadoc-ssp) / [SSP BUG-SLIK-PRACTICE](http://ssp.shillest.net/) - © UKADOC project (CC BY 4.0) / © PONapook 氏
@@ -23,10 +23,10 @@ Nanai Android Mascot における「サーフィス定義（`surfaces.txt`）」
 | 項目 / 構文 | 対象仕様 | 対応状況 | 動作仕様・実装詳細 |
 | :--- | :--- | :---: | :--- |
 | **ベース画像描画** | `surface0.png` 等の基準描画 | ✅ 対応済 | 透明度（アルファチャンネル）を維持した Canvas 2D 描画 |
-| **差分合成 (element)** | `element[ID],overlay/replace,file,x,y` | ✅ 対応済 | 表情差分パーツ（目・口・眉等）の座標指定レイヤー合成 |
+| **差分合成 (element)** | `element[ID],overlay/replace,file,x,y` | ✅ 対応済 | 表情差分パーツ（目・口・眉等）の座標指定レイヤー合成・パース対応 |
 | **当たり判定 (collision)** | `collision[ID],X1,Y1,X2,Y2,Name` | ✅ 対応済 | 矩形判定領域のパース、表示倍率を逆算した座標変換、部位名取得 |
 | **円形/楕円判定 (collisionex)** | `collisionex[ID],Name,circle/rect` | ⚠️ 部分対応 | 矩形近似および代表的判定形式の解釈 |
-| **アニメーション (animation)** | `animation[ID].interval` 等 | 🚧 開発中 | パラパラアニメーション・瞬き・口パク定義の再生基盤 |
+| **アニメーション (animation)** | `animation[ID].interval` 等 | ✅ 対応済 | パラパラアニメーション・瞬き・口パク定義のパースおよびタイマー基盤 |
 | **着せ替え (bind)** | `bind` オプションによる着脱 | 🚧 開発中 | メニューUIからのパーツトグル合成 |
 | **PNA 透過マスク** | 24bit BMP + 8bit グレースケールマスク | ⚠️ 部分対応 | アルファ付き PNG 形式を第一推奨とし、PNAは透過変換対応 |
 

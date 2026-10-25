@@ -106,6 +106,22 @@ export class SakuraScriptPlayer {
 					tokens.push({ type: "clear" });
 					i++;
 				}
+				// \![command,arg,...] (内部コマンド)
+				else if (char === "!" && script[i + 1] === "[") {
+					let j = i + 2;
+					let content = "";
+					while (j < len && script[j] !== "]") {
+						// \] はエスケープされた ]
+						if (script[j] === "\\" && script[j + 1] === "]") j++;
+						content += script[j];
+						j++;
+					}
+					const args = content
+						.split(",")
+						.map((s) => s.trim().replace(/^"|"$/g, ""));
+					tokens.push({ type: "command", args });
+					i = j + 1;
+				}
 				// \q[テキスト,ID] (選択肢)
 				else if (char === "q" && script[i + 1] === "[") {
 					const start = i + 2;
@@ -129,6 +145,17 @@ export class SakuraScriptPlayer {
 				// その他タグはスキップ
 				else {
 					i++;
+					// \_x のような2文字タグ
+					if (char === "_" && i < len && script[i] !== "[") i++;
+					// 引数 [ ... ] があれば本文に出さず読み飛ばす
+					if (script[i] === "[") {
+						let j = i + 1;
+						while (j < len && script[j] !== "]") {
+							if (script[j] === "\\" && script[j + 1] === "]") j++;
+							j++;
+						}
+						i = j + 1;
+					}
 				}
 			} else {
 				// 通常テキスト文字
@@ -228,10 +255,14 @@ export class SakuraScriptPlayer {
 						e.stopPropagation();
 						this.onChoiceSelected(token.id, token.text);
 					});
-					balloonText.appendChild(document.createElement("br"));
-					balloonText.appendChild(choiceBtn);
+					currentBalloonText.appendChild(document.createElement("br"));
+					currentBalloonText.appendChild(choiceBtn);
 					break;
 				}
+
+				case "command":
+					await this.runCommand(token.args);
+					break;
 
 				case "end":
 					break;
@@ -239,6 +270,46 @@ export class SakuraScriptPlayer {
 		}
 
 		this.isPlaying = false;
+	}
+
+	/**
+	 * \![...] 内部コマンドの実行
+	 */
+	async runCommand(args) {
+		const [cmd, sub, value] = args.map((a) => (a ?? "").toLowerCase());
+		if (cmd === "set" && sub === "alignmenttodesktop") {
+			await this.setAlignmentToDesktop(value);
+		} else {
+			console.debug("未対応の \\! コマンド:", args);
+		}
+	}
+
+	/**
+	 * ウィンドウをデスクトップの端に揃える (free / top / bottom / left / right)
+	 */
+	async setAlignmentToDesktop(mode) {
+		this.app.alignmentToDesktop = mode;
+		if (mode === "free") return; // 自由配置: 何もしない
+		try {
+			const api = globalThis.__TAURI__?.window;
+			if (!api) return;
+			const win = api.getCurrentWindow();
+			const monitor = await api.currentMonitor();
+			if (!monitor) return;
+			const size = await win.outerSize();
+			const pos = await win.outerPosition();
+			const { x: mx, y: my } = monitor.position;
+			const { width: mw, height: mh } = monitor.size;
+			let x = pos.x;
+			let y = pos.y;
+			if (mode === "bottom") y = my + mh - size.height;
+			else if (mode === "top") y = my;
+			else if (mode === "left") x = mx;
+			else if (mode === "right") x = mx + mw - size.width;
+			await win.setPosition(new api.PhysicalPosition(x, y));
+		} catch (e) {
+			console.warn("alignmenttodesktop 失敗:", e);
+		}
 	}
 
 	/**

@@ -36,12 +36,11 @@ impl HostProc {
     fn find_exe() -> Option<PathBuf> {
         let name = "shiori-host32.exe";
         let mut cands = Vec::new();
-        if let Ok(exe) = std::env::current_exe() {
-            if let Some(d) = exe.parent() {
+        if let Ok(exe) = std::env::current_exe()
+            && let Some(d) = exe.parent() {
                 cands.push(d.join(name));
                 cands.push(d.join("resources").join(name));
             }
-        }
         // 開発時
         for prof in ["release", "debug"] {
             cands.push(PathBuf::from(format!(

@@ -1,7 +1,4 @@
-/**
- * Nanai Android Mascot - Web Worker SHIORI サンドボックス
- * UIのメインスレッドをブロックせずに辞書スクリプトやWASM SHIORIを実行する非同期ワーカー
- */
+import { DefaultResponses } from "./shiori-dictionary.js";
 
 let shioriModule = null;
 let isLoaded = false;
@@ -73,9 +70,18 @@ function processShioriRequest(request) {
   const idMatch = request.match(/ID:\s*([^\r\n]+)/i);
   const eventId = idMatch ? idMatch[1].trim() : "";
 
-  // 簡易応答ディスパッチ
-  if (eventId === "OnBoot") {
-    return "SHIORI/3.0 200 OK\r\nCharset: UTF-8\r\nValue: \\0\\s0Worker版SHIORIコアが起動しました。\\e\r\n\r\n";
+  // 外部辞書データからの応答取得
+  if (eventId && DefaultResponses[eventId]) {
+    const val = DefaultResponses[eventId];
+    const script = Array.isArray(val)
+      ? val[Math.floor(Math.random() * val.length)]
+      : typeof val === "string"
+      ? val
+      : val.Default || "";
+
+    if (script) {
+      return `SHIORI/3.0 200 OK\r\nCharset: UTF-8\r\nValue: ${script}\r\n\r\n`;
+    }
   }
 
   return "SHIORI/3.0 204 No Content\r\nCharset: UTF-8\r\n\r\n";

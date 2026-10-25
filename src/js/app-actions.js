@@ -1,7 +1,8 @@
 import { emit, invoke, isTauriAvailable } from "./tauri-helper.js";
 
-const BALLOON_THEMES = ["ivory", "pixel", "comic", "dark"];
+const BALLOON_THEMES = ["emily4", "ivory", "pixel", "comic", "dark"];
 const THEME_LABELS = {
+  emily4: "Emily/Phase4 クラシックバルーン",
   ivory: "アイボリー（象牙色レトロ）",
   pixel: "ドット絵・ピクセル風（レトロゲーム）",
   comic: "ポップコミック（太枠丸み）",

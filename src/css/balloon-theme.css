@@ -96,3 +96,40 @@ body.balloon-theme-dark {
   --balloon-separator-color: rgba(255, 255, 255, 0.12);
   --balloon-tail-color: rgba(26, 28, 36, 0.95);
 }
+
+/* Emily/Phase4 専用バルーンスキン (descript.txt & balloons0.png/balloonk0.png 準拠) */
+[data-balloon-theme="emily4"],
+body.balloon-theme-emily4 {
+  --balloon-bg: #fffdf5;
+  --balloon-pattern: none;
+  --balloon-border-color: #691919;
+  --balloon-border-width: 16px;
+  --balloon-border-style: solid;
+  --balloon-border-radius: 4px;
+  --balloon-box-shadow: 0 4px 12px rgba(105, 25, 25, 0.25);
+  --balloon-font-family: "MS UI Gothic", "Meiryo", sans-serif;
+  --balloon-font-size: 12px;
+  --balloon-text-color: rgb(105, 25, 25);
+  --balloon-highlight-bg: rgb(180, 40, 40);
+  --balloon-highlight-text: #ffffff;
+  --balloon-separator-color: #d8c2b5;
+  --balloon-tail-color: #fffdf5;
+}
+
+[data-balloon-theme="emily4"] .balloon,
+body.balloon-theme-emily4 .balloon {
+  border-image-source: url("../assets/balloon/emily4/balloons0.png");
+  border-image-slice: 16 16 16 16 fill;
+  border-image-width: 16px;
+  border-image-repeat: repeat;
+  background-color: transparent;
+  color: rgb(105, 25, 25);
+}
+
+[data-balloon-theme="emily4"] .kero-balloon .balloon,
+body.balloon-theme-emily4 .kero-balloon .balloon {
+  border-image-source: url("../assets/balloon/emily4/balloonk0.png");
+  border-image-slice: 16 16 16 16 fill;
+  border-image-width: 16px;
+  border-image-repeat: repeat;
+}

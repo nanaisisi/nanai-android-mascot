@@ -146,15 +146,14 @@ pub async fn spawn_ghost(
     }
 
     for cand in candidates {
-        if cand.exists() {
-            if let Ok(mut engine) = ShioriDynamicEngine::load_library(&cand) {
-                if let Ok(_) = engine.initialize(&ghost_master_dir) {
-                    if let Ok(mut engines) = state.ghost_engines.lock() {
-                        engines.insert(instance_id.clone(), engine);
-                    }
-                    break;
-                }
+        if cand.exists()
+            && let Ok(mut engine) = ShioriDynamicEngine::load_library(&cand)
+            && engine.initialize(&ghost_master_dir).is_ok()
+        {
+            if let Ok(mut engines) = state.ghost_engines.lock() {
+                engines.insert(instance_id.clone(), engine);
             }
+            break;
         }
     }
 
@@ -175,9 +174,12 @@ pub async fn spawn_ghost(
                 }
             })
             .collect();
-        let url = format!("index.html?ghost_id={}&ghost_name={}", instance_id, encoded_name);
+        let url = format!(
+            "index.html?ghost_id={}&ghost_name={}",
+            instance_id, encoded_name
+        );
         let win_label = format!("window_{}", instance_id);
-        
+
         let builder = tauri::WebviewWindowBuilder::new(
             &app_handle,
             &win_label,
@@ -207,17 +209,16 @@ pub async fn close_ghost(
     println!("❌ Closing ghost instance: {}", target_id);
 
     // エンジン解放
-    if let Ok(mut engines) = state.ghost_engines.lock() {
-        if let Some(mut engine) = engines.remove(&target_id) {
-            let _ = engine.unload();
-        }
+    if let Ok(mut engines) = state.ghost_engines.lock()
+        && let Some(mut engine) = engines.remove(&target_id)
+    {
+        let _ = engine.unload();
     }
-    if target_id == "main" {
-        if let Ok(mut engine_lock) = state.shiori_engine.lock()
-            && let Some(mut engine) = engine_lock.take()
-        {
-            let _ = engine.unload();
-        }
+    if target_id == "main"
+        && let Ok(mut engine_lock) = state.shiori_engine.lock()
+        && let Some(mut engine) = engine_lock.take()
+    {
+        let _ = engine.unload();
     }
 
     // アクティブゴーストから削除
@@ -259,12 +260,11 @@ pub async fn send_shiori_request(
 ) -> Result<String, String> {
     let gid = ghost_id.unwrap_or_else(|| "main".to_string());
 
-    if gid != "main" {
-        if let Ok(engines) = state.ghost_engines.lock() {
-            if let Some(engine) = engines.get(&gid) {
-                return engine.request(&request);
-            }
-        }
+    if gid != "main"
+        && let Ok(engines) = state.ghost_engines.lock()
+        && let Some(engine) = engines.get(&gid)
+    {
+        return engine.request(&request);
     }
 
     // デフォルト/メインのネイティブSHIORIエンジンへ委譲

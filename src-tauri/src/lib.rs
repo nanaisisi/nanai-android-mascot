@@ -17,7 +17,6 @@ mod shiori;
 
 use common::*;
 
-
 // ========================================
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -104,8 +103,14 @@ pub fn run() {
                 let label = window.label();
                 if label == "menu_window" || label == "submenu_window" {
                     let app = window.app_handle();
-                    let menu_focused = app.get_webview_window("menu_window").map(|w| w.is_focused().unwrap_or(false)).unwrap_or(false);
-                    let sub_focused = app.get_webview_window("submenu_window").map(|w| w.is_focused().unwrap_or(false)).unwrap_or(false);
+                    let menu_focused = app
+                        .get_webview_window("menu_window")
+                        .map(|w| w.is_focused().unwrap_or(false))
+                        .unwrap_or(false);
+                    let sub_focused = app
+                        .get_webview_window("submenu_window")
+                        .map(|w| w.is_focused().unwrap_or(false))
+                        .unwrap_or(false);
 
                     // メニューとサブメニューの双方がフォーカスを失った場合のみ非表示化
                     if !menu_focused && !sub_focused {

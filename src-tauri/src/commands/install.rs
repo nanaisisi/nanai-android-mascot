@@ -157,11 +157,15 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
         .and_then(|m| m.get("name").cloned())
         .unwrap_or_else(|| safe_dir_name.clone());
 
-    let sakura_name = meta_map.as_ref().and_then(|m| m.get("sakura.name").cloned());
+    let sakura_name = meta_map
+        .as_ref()
+        .and_then(|m| m.get("sakura.name").cloned());
     let kero_name = meta_map.as_ref().and_then(|m| m.get("kero.name").cloned());
     let shiori = meta_map.as_ref().and_then(|m| m.get("shiori").cloned());
     let craftman = meta_map.as_ref().and_then(|m| m.get("craftman").cloned());
-    let craftman_url = meta_map.as_ref().and_then(|m| m.get("craftmanurl").cloned());
+    let craftman_url = meta_map
+        .as_ref()
+        .and_then(|m| m.get("craftmanurl").cloned());
 
     Ok(GhostInfo {
         name: display_name,

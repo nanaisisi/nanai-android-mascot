@@ -81,7 +81,10 @@ pub fn scan_shells_from_ghost(ghost_dir: &Path) -> Vec<ShellInfo> {
                             if let Some(val) = map.get(key_base) {
                                 let parts: Vec<&str> = val.split(',').map(|s| s.trim()).collect();
                                 if parts.len() == 3 {
-                                    return Some(format!("rgb({}, {}, {})", parts[0], parts[1], parts[2]));
+                                    return Some(format!(
+                                        "rgb({}, {}, {})",
+                                        parts[0], parts[1], parts[2]
+                                    ));
                                 } else if val.starts_with('#') || val.starts_with("rgb") {
                                     return Some(val.clone());
                                 }
@@ -92,7 +95,8 @@ pub fn scan_shells_from_ghost(ghost_dir: &Path) -> Vec<ShellInfo> {
                         let bg_color = parse_color("menu.background.color");
                         let fg_color = parse_color("menu.foreground.color");
                         let font_col = parse_color("font.color");
-                        let bg_font_col = parse_color("menu.background.font.color").or_else(|| font_col.clone());
+                        let bg_font_col =
+                            parse_color("menu.background.font.color").or_else(|| font_col.clone());
                         let fg_font_col = parse_color("menu.foreground.font.color");
                         let dis_font_col = parse_color("menu.disable.font.color");
                         let sep_col = parse_color("menu.separator.color");
@@ -182,11 +186,15 @@ pub async fn scan_ghost_directory(
                         .and_then(|m| m.get("name").cloned())
                         .unwrap_or_else(|| dir_name.clone());
 
-                    let sakura_name = meta_map.as_ref().and_then(|m| m.get("sakura.name").cloned());
+                    let sakura_name = meta_map
+                        .as_ref()
+                        .and_then(|m| m.get("sakura.name").cloned());
                     let kero_name = meta_map.as_ref().and_then(|m| m.get("kero.name").cloned());
                     let shiori = meta_map.as_ref().and_then(|m| m.get("shiori").cloned());
                     let craftman = meta_map.as_ref().and_then(|m| m.get("craftman").cloned());
-                    let craftman_url = meta_map.as_ref().and_then(|m| m.get("craftmanurl").cloned());
+                    let craftman_url = meta_map
+                        .as_ref()
+                        .and_then(|m| m.get("craftmanurl").cloned());
 
                     // 全シェルをスキャン
                     let shells = scan_shells_from_ghost(&path);

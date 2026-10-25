@@ -41,7 +41,6 @@ pub struct GhostInfo {
     pub shells: Vec<ShellInfo>,
 }
 
-
 // アプリケーション状態を定義
 pub struct AppState {
     pub recent_files: Mutex<Vec<String>>,

@@ -324,7 +324,7 @@ async fn send_shiori_request(
     println!("📤 SHIORI 3.0 Request:\n{}", request);
 
     // リクエストからIDヘッダーを簡易抽出
-    let event_id = request
+    let _event_id = request
         .lines()
         .find_map(|line| {
             if line.to_uppercase().starts_with("ID:") {
@@ -335,17 +335,8 @@ async fn send_shiori_request(
         })
         .unwrap_or_else(|| "Unknown".to_string());
 
-    let script = match event_id.as_str() {
-        "OnBoot" => "\\0\\s0マスコットナナイが起動したよ！\\e",
-        "OnMouseClick" => "\\0\\s0つんつん、何かご用事かな？\\e",
-        "OnChoiceSelect" => "\\0\\s0了解だよ！\\e",
-        _ => "\\0\\s0……\\e",
-    };
-
-    let response = format!(
-        "SHIORI/3.0 200 OK\r\nSender: NanaiRustCore\r\nCharset: UTF-8\r\nValue: {}\r\n\r\n",
-        script
-    );
+    // SHIORIモジュールがロードされていない場合は 311 No Content を返却
+    let response = "SHIORI/3.0 311 No Content\r\nSender: NanaiRustCore\r\nCharset: UTF-8\r\n\r\n".to_string();
     Ok(response)
 }
 
@@ -356,11 +347,7 @@ async fn send_shiori_event(
     event: String,
 ) -> Result<String, String> {
     println!("📤 SHIORI Event: {}", event);
-    match event.as_str() {
-        "OnMouseClick" => Ok("クリックされました！".to_string()),
-        "OnBoot" => Ok("こんにちは！マスコットナナイです。".to_string()),
-        _ => Ok("こんにちは！".to_string()),
-    }
+    Ok(String::new())
 }
 
 /// マウスクリックイベントを送信（簡易版）
@@ -457,6 +444,135 @@ async fn exit_app(app_handle: tauri::AppHandle) -> Result<(), String> {
     Ok(())
 }
 
+/// ゴーストアーカイブ (.nar / .zip) の取り込み・解凍コマンド
+#[tauri::command]
+async fn install_ghost_archive(
+    archive_path: String,
+    app_handle: tauri::AppHandle,
+) -> Result<GhostInfo, String> {
+    println!("📦 Installing ghost archive: {}", archive_path);
+    let clean = clean_verbatim_path(&archive_path);
+    let file = std::fs::File::open(&clean)
+        .map_err(|e| format!("Failed to open archive '{}': {}", clean, e))?;
+
+    let mut zip = zip::ZipArchive::new(file)
+        .map_err(|e| format!("Invalid zip/nar archive: {}", e))?;
+
+    // アーカイブ内のinstall.txtまたはdescript.txtを検索してゴースト名を特定
+    let mut ghost_name = String::new();
+    let mut root_prefix = String::new();
+
+    for i in 0..zip.len() {
+        if let Ok(entry) = zip.by_index(i) {
+            let name = entry.name().replace('\\', "/");
+            let lower = name.to_lowercase();
+            if lower.ends_with("install.txt") || lower.ends_with("descript.txt") {
+                // ファイル内容をShift_JIS / UTF-8で読み取り
+                let mut reader = entry;
+                let mut bytes = Vec::new();
+                use std::io::Read;
+                if reader.read_to_end(&mut bytes).is_ok() {
+                    let (decoded, _, _) = encoding_rs::SHIFT_JIS.decode(&bytes);
+                    let text = if decoded.contains("name,") || decoded.contains("name:") {
+                        decoded.into_owned()
+                    } else {
+                        String::from_utf8_lossy(&bytes).into_owned()
+                    };
+
+                    for line in text.lines() {
+                        let trimmed = line.trim();
+                        if let Some(val) = trimmed.strip_prefix("name,") {
+                            ghost_name = val.trim().to_string();
+                            break;
+                        } else if let Some(val) = trimmed.strip_prefix("name:") {
+                            ghost_name = val.trim().to_string();
+                            break;
+                        }
+                    }
+                }
+
+                if lower.ends_with("install.txt") {
+                    if let Some(idx) = name.rfind('/') {
+                        root_prefix = name[..=idx].to_string();
+                    }
+                    if !ghost_name.is_empty() {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    // ゴースト名が見つからない場合はアーカイブファイル名を使用
+    if ghost_name.is_empty() {
+        let p = Path::new(&clean);
+        ghost_name = p
+            .file_stem()
+            .map(|s| s.to_string_lossy().to_string())
+            .unwrap_or_else(|| "imported_ghost".to_string());
+    }
+
+    // サニタイズ（フォルダ名に使用できない文字を除去）
+    let safe_dir_name: String = ghost_name
+        .chars()
+        .map(|c| if r#"\/:*?"<>| "#.contains(c) { '_' } else { c })
+        .collect();
+
+    let target_ghost_base = resolve_asset_path("assets/ghost", &app_handle)?;
+    let target_dir = target_ghost_base.join(&safe_dir_name);
+
+    if !target_dir.exists() {
+        std::fs::create_dir_all(&target_dir)
+            .map_err(|e| format!("Failed to create destination dir: {}", e))?;
+    }
+
+    // アーカイブを展開
+    for i in 0..zip.len() {
+        let mut entry = zip
+            .by_index(i)
+            .map_err(|e| format!("Failed to read archive entry #{}: {}", i, e))?;
+
+        let entry_name = entry.name().replace('\\', "/");
+
+        // root_prefixの除去
+        let relative_path = if !root_prefix.is_empty() && entry_name.starts_with(&root_prefix) {
+            &entry_name[root_prefix.len()..]
+        } else {
+            &entry_name
+        };
+
+        if relative_path.is_empty() {
+            continue;
+        }
+
+        // パストラバーサル防止 (Zip Slip)
+        let out_path = target_dir.join(relative_path);
+        let normalized = normalize_path(&out_path);
+        if !normalized.starts_with(&target_dir) {
+            return Err(format!("Illegal path in archive: {}", entry_name));
+        }
+
+        if entry.is_dir() {
+            std::fs::create_dir_all(&out_path).ok();
+        } else {
+            if let Some(parent) = out_path.parent() {
+                std::fs::create_dir_all(parent).ok();
+            }
+            let mut outfile = std::fs::File::create(&out_path)
+                .map_err(|e| format!("Failed to extract '{}': {}", out_path.display(), e))?;
+            std::io::copy(&mut entry, &mut outfile)
+                .map_err(|e| format!("Failed writing file '{}': {}", out_path.display(), e))?;
+        }
+    }
+
+    println!("✅ Ghost successfully installed to: {:?}", target_dir);
+
+    Ok(GhostInfo {
+        name: safe_dir_name.clone(),
+        path: target_dir.to_string_lossy().to_string(),
+    })
+}
+
 // ========================================
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -517,7 +633,8 @@ pub fn run() {
             request_overlay_permission,
             setup_foreground_service,
             test_command,
-            exit_app
+            exit_app,
+            install_ghost_archive
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

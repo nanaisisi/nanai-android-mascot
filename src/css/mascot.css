@@ -79,68 +79,75 @@
 }
 
 .quick-bubble {
-  width: 32px;
-  height: 32px;
+  padding: 4px 10px;
+  height: 28px;
   background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 50%;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #333;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
   backdrop-filter: blur(8px);
   transition: transform 0.2s ease, background-color 0.2s;
+  white-space: nowrap;
 }
 
 .quick-bubble:hover {
-  transform: scale(1.15);
+  transform: scale(1.05);
   background: #ffffff;
 }
 
 .quick-bubble:active {
-  transform: scale(0.9);
+  transform: scale(0.95);
 }
 
 .quick-actions-panel {
   position: absolute;
-  top: 38px;
+  top: 34px;
   right: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  background: rgba(255, 255, 255, 0.92);
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  border-radius: 8px;
   padding: 6px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
   animation: fadeInDown 0.15s ease-out;
+  min-width: 130px;
+  z-index: 1000;
 }
 
 .quick-action-btn {
-  width: 32px;
   height: 32px;
-  border-radius: 50%;
+  padding: 0 10px;
+  border-radius: 6px;
   border: none;
-  background: rgba(240, 240, 240, 0.85);
+  background: transparent;
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 15px;
-  transition: transform 0.15s ease, background-color 0.15s;
+  justify-content: flex-start;
+  font-size: 13px;
+  color: #333;
+  white-space: nowrap;
+  transition: background-color 0.15s;
 }
 
 .quick-action-btn:hover {
-  transform: scale(1.18);
   background: #0078d7;
   color: white;
 }
 
 .quick-action-btn:active {
-  transform: scale(0.92);
+  background: #005a9e;
+  color: white;
 }
 
 @keyframes fadeInDown {

@@ -20,6 +20,12 @@
 - **[ghost-compatibility-gap-and-roadmap.md](../spec/ghost-compatibility-gap-and-roadmap.md)**:
   - 32bit DLL読み込み・差分表示の現状実装を踏まえ、一般的な伺かゴースト資産の再現に必要な不足機能（ウェイト制御・SERIKOアニメーション・当たり判定・自律発話タイマー・バルーンスキン・VFS）のギャップ一覧化と、依存関係に基づく4段階の実装優先順位ロードマップを策定。
 
+### 機能更新
+- **サーフィス多重画像合成 (lement0〜lementN)**:
+  - surfaces.txt 内の element 重ね合わせ指定（overlay, eplace 等）を Canvas レイヤーで事前自動合成する composeSurfaceElements を実装。
+- **バルーンスキン仕様拡張**:
+  - descript.rs にバルーン定義用アクセサ（origin.x, origin.y, alidrect, ont.color）を追加。
+
 ## 2025 年 6 月 30 日 - 開発方針の大幅変更
 
 ### window-design.md の変更

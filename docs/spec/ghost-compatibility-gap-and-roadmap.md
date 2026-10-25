@@ -196,11 +196,15 @@ AndroidやWeb環境でも同一ゴースト資産を安定して動作させま�
 
 ---
 
-## 5. 次の具体的アクション（即時着手推奨項目）
+## 5. 現在の進捗状況と次の具体的アクション
 
-1. **さくらスクリプトのウェイトエンジン (`\_w[t]`, `\wN`, `\x`, `\c`) の実装**:
-   - [sakura-script.js](ui/js/ghost/sakura-script.js) にキューイング・ウェイト処理を組み込み、文字が自然なテンポで表示されるようにする。
-2. **タイマーイベント (`OnSecondChange`) の導入**:
-   - [ghost-shiori.js](ui/js/ghost/ghost-shiori.js) から1秒毎に `NOTIFY OnSecondChange` を送出し、ゴーストが自律的に話し出すようにする。
-3. **サーフィス当たり判定（Collision）の基礎実装**:
-   - クリックされた座標から頭・胸などの判定を計算し、`OnMouseDoubleClick` を送れるようにする。
+これまでの実装セッションにより、**Phase 1 ～ Phase 4 の主要基盤（自律発話タイマー、終了時セーブ、さくらスクリプト制御・選択肢・入力ボックス、SERIKO interval/talk、PNAアルファマスク透過、ケースインセンシティブVFS、WASM SHIORIワーカー）は実装・検証済み**です。
+
+### 現在着手中の項目（実機ゴースト表現の完全再現）
+
+1. **`surfaces.txt` 多重要素合成 (`element0`〜`elementN`)**:
+   - `overlay`, `replace`, `asis` 等のパーツ多重重ね合わせを Canvas レイヤーで事前合成する機能。
+2. **バルーンスキン動的反映 (`balloon/*/descript.txt`)**:
+   - `origin.x`, `origin.y`, `validrect` のCSS/レイアウトへの動的適用。
+3. **実機（`cargo tauri dev`）における実ゴースト総合動作確認**:
+   - 実機環境での自律トーク・当たり判定イベント・バルーン表示の検証。

@@ -23,25 +23,23 @@ export const ghostSurfaceMethods = {
 
     // \s[-1]: キャラクターサーフェス消去指示
     if (surfaceId === -1 || surfaceId === "-1") {
-      if (isSubchar) {
-        if (slot) slot.style.display = "none";
-        if (isTauriAvailable()) {
-          invoke("hide_subchar_window", { scopeId }).catch(() => {});
-        }
-      } else if (!isSubchar && container) {
-        container.style.visibility = "hidden";
+      if (slot) slot.style.display = "none";
+      if (container) container.style.visibility = "hidden";
+      if (isTauriAvailable()) {
+        invoke("hide_subchar_window", { scopeId }).catch(() => {});
       }
       return;
     }
 
-    if (!isSubchar) {
-      if (container) container.style.visibility = "visible";
-      this.app.surfaceManager.setSurfaceId(surfaceId);
+    if (isTauriAvailable()) {
+      // デスクトップ(Tauri)環境下では、メインキャラ(scope 0)・サブキャラ(scope 1+)ともに独立サブウィンドウ側で表示
+      if (slot) slot.style.display = "none";
+      if (container) container.style.display = "none";
+      invoke("show_subchar_window", { scopeId }).catch(() => {});
     } else {
-      // デスクトップ(Tauri)環境下ではメインウィンドウのインラインスロットは非表示にし、独立サブウィンドウ側で表示
-      if (isTauriAvailable()) {
-        if (slot) slot.style.display = "none";
-        invoke("show_subchar_window", { scopeId }).catch(() => {});
+      if (!isSubchar) {
+        if (container) container.style.visibility = "visible";
+        this.app.surfaceManager.setSurfaceId(surfaceId);
       } else {
         if (slot && slot.style.display === "none") slot.style.display = "flex";
         if (container && container.style.display === "none") container.style.display = "flex";
@@ -62,7 +60,7 @@ export const ghostSurfaceMethods = {
         }
       }
 
-      if (isSubchar && isTauriAvailable()) {
+      if (isTauriAvailable()) {
         emit(`update-subchar-image-${scopeId}`, { src: transparentSrc });
       }
 

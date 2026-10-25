@@ -341,14 +341,20 @@ pub async fn show_subchar_window(
             }
             let _ = sub_win.show();
         } else {
-            // スコープ番号に応じて横に並べるデフォルト配置
-            let mut target_x = 300.0 + ((scope_id - 1) as f64 * 210.0);
-            let mut target_y = 200.0;
+            // スコープ番号に応じた配置 (スコープ0: メイン位置、スコープ1以降: その横へ配置)
+            let (mut target_x, mut target_y) = if scope_id == 0 {
+                (200.0, 200.0)
+            } else {
+                (200.0 + (scope_id as f64 * 220.0), 200.0)
+            };
 
-            if let Some(main_win) = app_handle.get_webview_window("main") {
-                if let Ok(pos) = main_win.outer_position() {
-                    target_x = (pos.x + 360) as f64 + ((scope_id - 1) as f64 * 210.0);
-                    target_y = pos.y as f64 + 40.0;
+            // スコープ0が既に存在する場合はそれを基準に横に並べる
+            if scope_id > 0 {
+                if let Some(char0_win) = app_handle.get_webview_window("subchar_window_0") {
+                    if let Ok(pos) = char0_win.outer_position() {
+                        target_x = (pos.x as f64) + (scope_id as f64 * 220.0);
+                        target_y = pos.y as f64;
+                    }
                 }
             }
 
@@ -357,12 +363,18 @@ pub async fn show_subchar_window(
                 target_y = py;
             }
 
+            let title = if scope_id == 0 {
+                "Nanai Mascot - Main Character".to_string()
+            } else {
+                format!("Nanai Mascot - Subcharacter {}", scope_id)
+            };
+
             let sub_win = tauri::WebviewWindowBuilder::new(
                 &app_handle,
                 &label,
                 tauri::WebviewUrl::App(format!("subcharacter.html?scope={}", scope_id).into()),
             )
-            .title(format!("Nanai Mascot - Subcharacter {}", scope_id))
+            .title(title)
             .inner_size(win_width, win_height)
             .transparent(true)
             .decorations(false)

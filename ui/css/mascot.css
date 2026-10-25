@@ -93,6 +93,16 @@
   transition: transform 0.2s ease;
   background: transparent;
   user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+}
+
+.ghost-character img,
+.character-placeholder img {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
 }
 
 .ghost-character:active {

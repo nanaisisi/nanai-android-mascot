@@ -38,6 +38,11 @@ export class InteractionManager {
     const onPointerDown = (e) => {
       if (e.button !== undefined && e.button !== 0) return;
 
+      // ブラウザデフォルトの画像ドラッグやテキスト選択を防止
+      if (e.cancelable) {
+        e.preventDefault();
+      }
+
       isInteracting = true;
       isDragging = false;
       hasMoved = false;
@@ -107,6 +112,22 @@ export class InteractionManager {
       if (!strokeTriggered && hasMoved) {
         isDragging = true;
         target.classList.add("is-dragging");
+
+        // デスクトップ環境（Windows等）の場合はネイティブウィンドウ自体を移動
+        const isDesktop = globalThis.__TAURI__ && !navigator.userAgent.includes("Android");
+        if (isDesktop) {
+          const tauriWindow = globalThis.__TAURI__.window?.getCurrentWindow?.() || globalThis.__TAURI__.getCurrentWindow?.();
+          if (tauriWindow && typeof tauriWindow.startDragging === "function") {
+            try {
+              tauriWindow.startDragging();
+              isInteracting = false;
+              isDragging = false;
+              return;
+            } catch (err) {
+              console.warn("startDragging failed:", err);
+            }
+          }
+        }
 
         let newX = initialLeft + deltaX;
         let newY = initialTop + deltaY;

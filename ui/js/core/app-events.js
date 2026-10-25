@@ -78,7 +78,12 @@ export const eventMethods = {
   setupExternalMenuListeners() {
     const forward = (event) => {
       const data = event.payload;
-      if (data) this.handleMenuAction(data.action, data.payload);
+      if (!data) return;
+      if (data.action === "request-sync") {
+        this.syncMenuGhosts();
+        return;
+      }
+      this.handleMenuAction(data.action, data.payload);
     };
     listen("menu-action", forward);
     listen("native-menu-action", forward);

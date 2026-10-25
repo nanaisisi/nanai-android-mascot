@@ -47,6 +47,7 @@ if (globalThis.__TAURI__) {
       const data = event.payload;
       if (data) {
         renderGhostSubmenu(data.ghosts || [], data.currentGhost);
+        renderCallGhostSubmenu(data.ghosts || []);
         if (data.shells) {
           renderShellSubmenu(data.shells, data.currentShell);
         }
@@ -101,12 +102,14 @@ function renderShellSubmenu(shells, currentShell) {
 
   container.innerHTML = "";
 
-  shells.forEach((shellName) => {
+  shells.forEach((shellItem) => {
+    const shellName = typeof shellItem === "string" ? shellItem : shellItem?.name || "master";
+    const displayName = typeof shellItem === "object" && shellItem?.display_name ? shellItem.display_name : shellName;
     const isCurrent = currentShell === shellName;
     const btn = document.createElement("button");
     btn.className = `menu-item ${isCurrent ? "is-current" : ""}`;
     btn.dataset.shellName = shellName;
-    btn.innerHTML = `<span>${isCurrent ? "✓ " : "　"}${shellName}</span>`;
+    btn.innerHTML = `<span>${isCurrent ? "✓ " : "　"}${displayName}</span>`;
     btn.addEventListener("click", () => {
       dispatchAction("switch-to-shell", shellName);
     });
@@ -160,6 +163,31 @@ function renderGhostSubmenu(ghosts, currentGhost) {
     dispatchAction("install");
   });
   container.appendChild(installBtn);
+}
+
+function renderCallGhostSubmenu(ghosts) {
+  const container = document.getElementById("call-ghost-submenu");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  ghosts.forEach((ghost) => {
+    const btn = document.createElement("button");
+    btn.className = "menu-item";
+    btn.dataset.ghostName = ghost.name;
+    btn.innerHTML = `<span>➕ ${ghost.name}</span>`;
+    btn.addEventListener("click", () => {
+      dispatchAction("call-ghost", ghost.name);
+    });
+    container.appendChild(btn);
+  });
+
+  if (ghosts.length === 0) {
+    const emptySpan = document.createElement("div");
+    emptySpan.className = "menu-item is-disabled";
+    emptySpan.innerHTML = `<span>(ゴーストがありません)</span>`;
+    container.appendChild(emptySpan);
+  }
 }
 
 // 独立サブメニューウィンドウを開く補助関数 (デスクトップ環境用)

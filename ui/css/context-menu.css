@@ -26,8 +26,9 @@ body {
 .menu-container {
   padding: 0.25rem 0;
   width: clamp(11rem, 280px, 16rem);
-  max-height: calc(100vh - 1rem);
-  overflow: visible;
+  max-height: calc(100vh - 0.5rem);
+  overflow-y: auto;
+  overflow-x: visible;
   background-color: var(--balloon-bg);
   background-image: var(--balloon-pattern);
   border: var(--balloon-border-width) var(--balloon-border-style) var(--balloon-border-color);
@@ -55,8 +56,8 @@ body {
   text-align: left;
   cursor: pointer;
   font-family: inherit;
-  font-size: var(--balloon-font-size);
-  color: var(--balloon-text-color);
+  font-size: var(--balloon-font-size, 0.8125rem);
+  color: var(--balloon-text-color, #111111);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -65,8 +66,8 @@ body {
 
 .menu-item:hover,
 .menu-item:focus {
-  background-color: var(--balloon-highlight-bg);
-  color: var(--balloon-highlight-text);
+  background-color: var(--balloon-highlight-bg, #0078d7);
+  color: var(--balloon-highlight-text, #ffffff);
   outline: none;
 }
 
@@ -153,40 +154,16 @@ body {
   right: -20px;
 }
 
-/* ダークモード対応 */
-@media (prefers-color-scheme: dark) {
-  body {
-    background: #252526;
-    border-color: #454545;
-    color: #eee;
-  }
+/* ダークモード対応 (バルーンテーマが dark の場合、または明示的にダーク指定された場合のみ) */
+[data-balloon-theme="dark"] .menu-item,
+body.balloon-theme-dark .menu-item {
+  color: #eee;
+}
 
-  .menu-container,
-  .submenu-container {
-    background: #2d2d30;
-  }
-
-  .menu-item {
-    color: #eee;
-  }
-
-  .menu-item:hover,
-  .menu-item:focus {
-    background-color: #094771;
-    color: #fff;
-  }
-
-  .shortcut-key {
-    color: #999;
-  }
-
-  .menu-separator {
-    background-color: #3e3e42;
-  }
-
-  .menu-footer-copyright {
-    color: #888;
-  }
+[data-balloon-theme="dark"] .menu-item:hover,
+body.balloon-theme-dark .menu-item:hover {
+  background-color: #094771;
+  color: #fff;
 }
 
 .menu-footer-copyright {

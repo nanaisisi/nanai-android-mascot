@@ -38,11 +38,13 @@ export class GhostController {
 			// 1. スキャンを実行して利用可能なゴースト一覧を取得
 			await this.scanGhosts();
 
-			// 2. config.local.toml 由来の state.last_ghost を確認
-			const configLastGhost = AppConfig.state?.last_ghost;
-			const savedGhost = localStorage.getItem(AppConfig.storageKeys.lastGhost);
+			// 2. 新規起動パラメータ (initialGhostName) または config.local.toml 由来の state.last_ghost を確認
 			const targetGhostName =
-				configLastGhost || (savedGhost ? JSON.parse(savedGhost)?.name : null);
+				this.app.initialGhostName ||
+				AppConfig.state?.last_ghost ||
+				(localStorage.getItem(AppConfig.storageKeys.lastGhost)
+					? JSON.parse(localStorage.getItem(AppConfig.storageKeys.lastGhost) || "{}")?.name
+					: null);
 
 			if (targetGhostName) {
 				const found = this.ghosts.find((g) => g.name === targetGhostName);

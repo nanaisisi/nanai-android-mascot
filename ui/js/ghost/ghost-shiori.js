@@ -43,10 +43,11 @@ export const ghostShioriMethods = {
       console.log(`📤 送信 SHIORI/3.0 リクエスト:\n${requestText}`);
 
       let response = "";
+      const ghostId = this.app.ghostId || "main";
       try {
-        response = await invoke("send_shiori_request", { request: requestText });
+        response = await invoke("send_shiori_request", { request: requestText, ghostId });
       } catch (_e) {
-        response = await invoke("send_shiori_event", { event: eventName });
+        response = await invoke("send_shiori_event", { event: eventName, ghostId });
       }
 
       // 200 OK 且つスクリプトが存在する場合のみ再生

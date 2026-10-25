@@ -38,13 +38,15 @@ function renderContent() {
   container.innerHTML = "";
 
   if (currentSubmenuType === "ghost") {
-    cachedGhosts.forEach((ghost) => {
+    cachedGhosts.forEach((ghostItem) => {
+      const ghostName = typeof ghostItem === "string" ? ghostItem : ghostItem?.name || "";
+      const isCurrent = ghostName === currentGhostName;
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.className = `menu-item${ghost === currentGhostName ? " is-current" : ""}`;
-      btn.innerHTML = `<span>${ghost === currentGhostName ? "✓ " : ""}${ghost}</span>`;
+      btn.className = `menu-item${isCurrent ? " is-current" : ""}`;
+      btn.innerHTML = `<span>${isCurrent ? "✓ " : ""}${ghostName}</span>`;
       btn.addEventListener("click", () => {
-        dispatchSubmenuAction("switch-ghost", ghost);
+        dispatchSubmenuAction("switch-ghost", ghostName);
       });
       container.appendChild(btn);
     });
@@ -69,13 +71,15 @@ function renderContent() {
     });
     container.appendChild(installBtn);
   } else if (currentSubmenuType === "shell") {
-    (cachedShells.length > 0 ? cachedShells : ["master"]).forEach((shell) => {
+    (cachedShells.length > 0 ? cachedShells : ["master"]).forEach((shellItem) => {
+      const shellName = typeof shellItem === "string" ? shellItem : shellItem?.name || "master";
+      const displayName = typeof shellItem === "object" && shellItem?.display_name ? shellItem.display_name : shellName;
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.className = `menu-item${shell === currentShellName ? " is-current" : ""}`;
-      btn.innerHTML = `<span>${shell === currentShellName ? "✓ " : ""}${shell}</span>`;
+      btn.className = `menu-item${shellName === currentShellName ? " is-current" : ""}`;
+      btn.innerHTML = `<span>${shellName === currentShellName ? "✓ " : ""}${displayName}</span>`;
       btn.addEventListener("click", () => {
-        dispatchSubmenuAction("switch-shell", shell);
+        dispatchSubmenuAction("switch-shell", shellName);
       });
       container.appendChild(btn);
     });

@@ -32,7 +32,7 @@ flowchart TB
         Events["Tauri Event Dispatcher<br>ウィンドウ制御 / ショートカット / トレイ"]
     end
 
-    subgraph BackendCore ["バックエンド・ネイティブ層 (Rust 2021)"]
+    subgraph BackendCore ["バックエンド・ネイティブ層 (Rust 2024)"]
         direction TB
         VFS["VFS & 文字コード変換 (encoding_rs)<br>Shift_JIS ↔ UTF-8 自動判別 / 表記揺れ解決"]
         GhostScanner["ゴーストスキャナー (GhostManager)<br>descript.txt / surfaces.txt 走査"]

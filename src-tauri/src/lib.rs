@@ -13,11 +13,9 @@ use tauri::menu::{MenuBuilder, SubmenuBuilder};
 #[cfg(desktop)]
 use tauri::tray::{TrayIconBuilder, TrayIconEvent};
 
-// SHIORI関連モジュール（一時的にコメントアウト）
-// mod shiori_cpp_integration;
-// mod shiori_manager;
-
-// use shiori_manager::{GhostInfo, ShioriManager};
+mod shiori_dynamic;
+use shiori_dynamic::ShioriDynamicEngine;
+use std::sync::Mutex;
 
 // 簡易ゴースト情報
 #[derive(Debug, Clone, serde::Serialize)]
@@ -28,18 +26,21 @@ struct GhostInfo {
 
 // アプリケーション状態を定義
 struct AppState {
-    recent_files: std::sync::Mutex<Vec<String>>,
-    // shiori_manager: Arc<ShioriManager>,
+    recent_files: Mutex<Vec<String>>,
+    current_ghost_name: Mutex<Option<String>>,
+    shiori_engine: Mutex<Option<ShioriDynamicEngine>>,
 }
 
 impl AppState {
     fn new() -> Self {
         AppState {
-            recent_files: std::sync::Mutex::new(Vec::new()),
-            // shiori_manager: ShioriManager::new(),
+            recent_files: Mutex::new(Vec::new()),
+            current_ghost_name: Mutex::new(None),
+            shiori_engine: Mutex::new(None),
         }
     }
 }
+
 
 // エラーメッセージを全ウィンドウにemitするヘルパー関数
 fn emit_error_to_all(app_handle: &tauri::AppHandle<tauri::Wry>, msg: String) {
@@ -49,9 +50,126 @@ fn emit_error_to_all(app_handle: &tauri::AppHandle<tauri::Wry>, msg: String) {
         eprintln!("emit failed: {err}");
     }
 }
+// 設定読み込みコマンド（config.local.toml優先、フォールバックconfig.initial.toml）
+#[tauri::command]
+fn get_app_config(app_handle: tauri::AppHandle<tauri::Wry>) -> Result<serde_json::Value, String> {
+    use std::fs;
+
+    let initial_path = resolve_asset_path("config.initial.toml", &app_handle)
+        .unwrap_or_else(|_| PathBuf::from("config.initial.toml"));
+    let local_path = resolve_asset_path("config.local.toml", &app_handle)
+        .unwrap_or_else(|_| PathBuf::from("config.local.toml"));
+
+    // config.initial.toml のパース
+    let mut config_value: toml::Value = if initial_path.exists() {
+        let content = fs::read_to_string(&initial_path)
+            .map_err(|e| format!("Failed to read initial config: {}", e))?;
+        toml::from_str(&content).unwrap_or(toml::Value::Table(toml::map::Map::new()))
+    } else {
+        toml::Value::Table(toml::map::Map::new())
+    };
+
+    // config.local.toml が存在しない場合は初期設定から自動複製生成
+    if !local_path.exists() && initial_path.exists() {
+        if let Ok(content) = fs::read_to_string(&initial_path) {
+            let _ = fs::write(&local_path, content);
+            println!("📄 Initialized config.local.toml from config.initial.toml");
+        }
+    }
+
+    // config.local.toml の読み込みとマージ
+    if local_path.exists() {
+        if let Ok(local_str) = fs::read_to_string(&local_path) {
+            if let Ok(toml::Value::Table(local_map)) = toml::from_str::<toml::Value>(&local_str) {
+                if let toml::Value::Table(ref mut base_map) = config_value {
+                    for (k, v) in local_map {
+                        match (base_map.get_mut(&k), v) {
+                            (Some(toml::Value::Table(target_sub)), toml::Value::Table(source_sub)) => {
+                                for (sub_k, sub_v) in source_sub {
+                                    target_sub.insert(sub_k, sub_v);
+                                }
+                            }
+                            (_, other) => {
+                                base_map.insert(k, other);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // toml::Value -> serde_json::Value へ変換
+    let json_val = serde_json::to_value(config_value)
+        .map_err(|e| format!("Failed to convert TOML config to JSON: {}", e))?;
+
+    Ok(json_val)
+}
+
+// ゴースト読み込み順序・前回ゴーストを config.local.toml に記録
+#[tauri::command]
+fn record_ghost_loaded(ghost_name: String, app_handle: tauri::AppHandle<tauri::Wry>) -> Result<(), String> {
+    use std::fs;
+
+    let initial_path = resolve_asset_path("config.initial.toml", &app_handle)
+        .unwrap_or_else(|_| PathBuf::from("config.initial.toml"));
+    let local_path = resolve_asset_path("config.local.toml", &app_handle)
+        .unwrap_or_else(|_| PathBuf::from("config.local.toml"));
+
+    // ファイルが存在しなければ初期ファイルから作成
+    if !local_path.exists() && initial_path.exists() {
+        if let Ok(content) = fs::read_to_string(&initial_path) {
+            let _ = fs::write(&local_path, content);
+        }
+    }
+
+    let content = if local_path.exists() {
+        fs::read_to_string(&local_path).unwrap_or_default()
+    } else {
+        String::new()
+    };
+
+    let mut toml_val: toml::Value = toml::from_str(&content)
+        .unwrap_or_else(|_| toml::Value::Table(toml::map::Map::new()));
+
+    if let toml::Value::Table(ref mut root) = toml_val {
+        let state_val = root.entry("state".to_string()).or_insert_with(|| {
+            toml::Value::Table(toml::map::Map::new())
+        });
+
+        if let toml::Value::Table(state_table) = state_val {
+            // last_ghost を更新
+            state_table.insert("last_ghost".to_string(), toml::Value::String(ghost_name.clone()));
+
+            // last_ghosts のリストを更新（先頭に追加し重複排除）
+            let mut list: Vec<String> = if let Some(toml::Value::Array(arr)) = state_table.get("last_ghosts") {
+                arr.iter().filter_map(|v| v.as_str().map(|s| s.to_string())).collect()
+            } else {
+                Vec::new()
+            };
+
+            list.retain(|name| name != &ghost_name);
+            list.insert(0, ghost_name);
+            list.truncate(20); // 直近20件
+
+            let toml_arr = list.into_iter().map(toml::Value::String).collect();
+            state_table.insert("last_ghosts".to_string(), toml::Value::Array(toml_arr));
+        }
+    }
+
+    if let Ok(serialized) = toml::to_string_pretty(&toml_val) {
+        fs::write(&local_path, serialized)
+            .map_err(|e| format!("Failed to save config.local.toml: {}", e))?;
+    }
+
+    Ok(())
+}
+
+
 // ファイルを開くコマンド
 #[tauri::command]
 fn open_file(path: String, app_handle: tauri::AppHandle<tauri::Wry>) -> Result<String, String> {
+
     let clean_path = clean_verbatim_path(&path);
     let resolved_path =
         resolve_asset_path(&clean_path, &app_handle).unwrap_or_else(|_| PathBuf::from(&clean_path));
@@ -360,70 +478,126 @@ fn normalize_path(path: &Path) -> PathBuf {
     }
 }
 
-/// ゴーストを読み込み（簡易版）
+/// ゴーストを読み込み（動的SHIORIローダー対応）
 #[tauri::command]
 async fn load_ghost(
-    _state: tauri::State<'_, AppState>,
+    state: tauri::State<'_, AppState>,
     ghost_name: String,
+    app_handle: tauri::AppHandle,
 ) -> Result<String, String> {
     println!("📥 Loading ghost: {}", ghost_name);
-    Ok(format!(
-        "Ghost '{}' loaded successfully (simplified)",
-        ghost_name
-    ))
+
+    // 既存のSHIORIをアンロード
+    if let Ok(mut engine_lock) = state.shiori_engine.lock() {
+        if let Some(mut engine) = engine_lock.take() {
+            let _ = engine.unload();
+        }
+    }
+
+    if let Ok(mut ghost_lock) = state.current_ghost_name.lock() {
+        *ghost_lock = Some(ghost_name.clone());
+    }
+
+    // ゴーストディレクトリの解決 (assets/ghost/名 または ghost/名)
+    let candidate_dirs = vec![
+        format!("assets/ghost/{}", ghost_name),
+        format!("ghost/{}", ghost_name),
+    ];
+
+    let mut ghost_dir = PathBuf::from(format!("assets/ghost/{}", ghost_name));
+    for rel in candidate_dirs {
+        if let Ok(resolved) = resolve_asset_path(&rel, &app_handle) {
+            if resolved.exists() {
+                ghost_dir = resolved;
+                break;
+            }
+        }
+    }
+
+    let ghost_master_dir = ghost_dir.join("ghost").join("master");
+
+    // SHIORIライブラリ（DLL / .so）の探索候補
+    let mut candidates = Vec::new();
+    #[cfg(windows)]
+    {
+        candidates.push(ghost_master_dir.join("yaya.dll"));
+        candidates.push(ghost_master_dir.join("shiori.dll"));
+        candidates.push(ghost_master_dir.join("satoriya.dll"));
+    }
+    #[cfg(not(windows))]
+    {
+        candidates.push(ghost_master_dir.join("yaya.so"));
+        candidates.push(ghost_master_dir.join("shiori.so"));
+        candidates.push(ghost_master_dir.join("libyaya.so"));
+    }
+
+
+    let mut loaded = false;
+    for cand in candidates {
+        if cand.exists() {
+            println!("🔍 Attempting to load SHIORI binary: {:?}", cand);
+            match ShioriDynamicEngine::load_library(&cand) {
+                Ok(mut engine) => {
+                    if let Err(e) = engine.initialize(&ghost_master_dir) {
+                        eprintln!("⚠️ Failed to initialize SHIORI at {:?}: {}", cand, e);
+                    } else {
+                        if let Ok(mut engine_lock) = state.shiori_engine.lock() {
+                            *engine_lock = Some(engine);
+                        }
+                        loaded = true;
+                        println!("🎉 Native SHIORI activated: {:?}", cand);
+                        break;
+                    }
+                }
+                Err(e) => {
+                    eprintln!("⚠️ Failed to load library {:?}: {}", cand, e);
+                }
+            }
+        }
+    }
+
+    if loaded {
+        Ok(format!("Ghost '{}' loaded with native SHIORI", ghost_name))
+    } else {
+        println!("ℹ️ No native SHIORI library found or loaded; fallback mode enabled for '{}'", ghost_name);
+        Ok(format!("Ghost '{}' loaded (fallback mode)", ghost_name))
+    }
 }
 
 /// SHIORIにリクエストを送信（SHIORI/3.0 プロトコル準拠）
 #[tauri::command]
 async fn send_shiori_request(
-    _state: tauri::State<'_, AppState>,
+    state: tauri::State<'_, AppState>,
     request: String,
 ) -> Result<String, String> {
-    println!("📤 SHIORI 3.0 Request:\n{}", request);
+    // ネイティブSHIORIエンジンへ委譲
+    let engine_lock = state
+        .shiori_engine
+        .lock()
+        .map_err(|e| format!("Failed to lock SHIORI engine: {}", e))?;
 
-    // リクエストからIDヘッダーを簡易抽出
-    let event_id = request
-        .lines()
-        .find_map(|line| {
-            if line.to_uppercase().starts_with("ID:") {
-                Some(line[3..].trim().to_string())
-            } else {
-                None
-            }
-        })
-        .unwrap_or_else(|| "Unknown".to_string());
-
-    // SHIORIモジュール未ロード時のフォールバック応答（さくらスクリプト）
-    let script = match event_id.as_str() {
-        "OnBoot" | "OnFirstBoot" => "\\0\\s[0]起動したよ！よろしくね。\\e",
-        "OnMouseDoubleClick" | "OnMouseClick" => "\\0\\s[0]なにか御用ですか？\\e",
-        "OnSecondChange" => "",
-        _ => "",
-    };
-
-    if script.is_empty() {
-        let response =
-            "SHIORI/3.0 311 No Content\r\nSender: NanaiRustCore\r\nCharset: UTF-8\r\n\r\n"
-                .to_string();
-        Ok(response)
+    if let Some(ref engine) = *engine_lock {
+        engine.request(&request)
     } else {
-        let response = format!(
-            "SHIORI/3.0 200 OK\r\nSender: NanaiRustCore\r\nCharset: UTF-8\r\nValue: {}\r\n\r\n",
-            script
-        );
-        Ok(response)
+        eprintln!("⚠️ No active SHIORI engine loaded for request:\n{}", request);
+        Err("SHIORI/3.0 404 Not Found\r\nSender: NanaiRustCore\r\nCharset: UTF-8\r\n\r\n".to_string())
     }
 }
+
 
 /// SHIORIにイベントを送信（簡易版）
 #[tauri::command]
 async fn send_shiori_event(
-    _state: tauri::State<'_, AppState>,
+    state: tauri::State<'_, AppState>,
     event: String,
 ) -> Result<String, String> {
-    println!("📤 SHIORI Event: {}", event);
-    Ok(String::new())
+    let req = format!(
+        "GET SHIORI/3.0\r\nID: {}\r\nSender: NanaiMascot\r\nCharset: UTF-8\r\n\r\n",
+        event
+    );
+    send_shiori_request(state, req).await
 }
+
 
 /// マウスクリックイベントを送信（簡易版）
 #[tauri::command]
@@ -455,16 +629,28 @@ async fn get_all_ghosts(_state: tauri::State<'_, AppState>) -> Result<Vec<GhostI
     Ok(vec![])
 }
 
-/// SHIORIの状態を取得（簡易版）
+/// SHIORIの状態を取得
 #[tauri::command]
-async fn get_shiori_status(_state: tauri::State<'_, AppState>) -> Result<bool, String> {
-    Ok(true) // 常にロード済みとする
+async fn get_shiori_status(state: tauri::State<'_, AppState>) -> Result<bool, String> {
+    if let Ok(lock) = state.shiori_engine.lock() {
+        Ok(lock.is_some())
+    } else {
+        Ok(false)
+    }
 }
 
-/// 現在のゴーストを終了（簡易版）
+/// 現在のゴーストを終了
 #[tauri::command]
-async fn unload_current_ghost(_state: tauri::State<'_, AppState>) -> Result<String, String> {
-    Ok("Ghost unloaded successfully (simplified)".to_string())
+async fn unload_current_ghost(state: tauri::State<'_, AppState>) -> Result<String, String> {
+    if let Ok(mut engine_lock) = state.shiori_engine.lock() {
+        if let Some(mut engine) = engine_lock.take() {
+            let _ = engine.unload();
+        }
+    }
+    if let Ok(mut ghost_lock) = state.current_ghost_name.lock() {
+        *ghost_lock = None;
+    }
+    Ok("Ghost unloaded successfully".to_string())
 }
 
 /// 簡易ゴーストスキャン（JavaScriptから呼び出し用）
@@ -947,6 +1133,8 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             open_file,
+            get_app_config,
+            record_ghost_loaded,
             add_to_recent_files,
             get_recent_files,
             scan_ghost_directory,

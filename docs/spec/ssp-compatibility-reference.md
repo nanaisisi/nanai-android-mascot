@@ -53,7 +53,7 @@ SSP の標準右クリックメニュー（`howto/rclick.md`）に対する、�
 
 | # | SSP 標準メニュー項目 | サブキャラ表示 | 本プロジェクト（Nanai）実装仕様 | モバイル（Android）適応方針 |
 | :-: | :--- | :-: | :--- | :--- |
-| **1** | おすすめ | ◯ | [classic-ui-and-menu-spec.md](../design/classic-ui-and-menu-spec.md) にてブラウザ起動連携 | Android 標準インテント (`ACTION_VIEW`) でブラウザ起動 |
+| **1** | おすすめ | ◯ | [ui-and-menu-spec.md](../design/ui-and-menu-spec.md) にてブラウザ起動連携 | Android 標準インテント (`ACTION_VIEW`) でブラウザ起動 |
 | **2** | ポータルサイト | - | ゴースト/シェル作者サイトへの URL 起動 | 同上 |
 | **3** | ネットワーク更新 | - | `updates2.dau` / `updates.txt` によるオンライン差分取得 | Wi-Fi 接続時更新・バックグラウンド更新 |
 | **4** | アンインストール (Vanish) | - | ゴーストディレクトリ削除ダイアログ | アプリ内部データ領域からの安全な削除 |
@@ -139,5 +139,5 @@ SSP の設定ダイアログ群（`config/index.md`）に対応する設定マ�
   - YAYA 公式マニュアル: [YAYA-shiori/yaya-docs](https://github.com/YAYA-shiori/yaya-docs)
 - **プロジェクト詳細仕様**:
   - ゴースト取り込み & アセット分離: [ghost-import-and-asset-separation-spec.md](ghost-import-and-asset-separation-spec.md)
-  - UI/メニュー設計: [classic-ui-and-menu-spec.md](../design/classic-ui-and-menu-spec.md)
+  - UI/メニュー設計: [ui-and-menu-spec.md](../design/ui-and-menu-spec.md)
   - Android 固有常駐仕様: [android-overlay-and-service-spec.md](android-overlay-and-service-spec.md)

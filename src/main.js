@@ -13,7 +13,7 @@ import { invoke, isTauriAvailable } from "./js/tauri-helper.js";
 export class NanaiAndroidMascotApp {
 	constructor() {
 		this.isInitialized = false;
-		this.currentBalloonTheme = "classic";
+		this.currentBalloonTheme = "ivory";
 		this.settings = {
 			autoLoadGhost: true,
 			enableNotifications: true,

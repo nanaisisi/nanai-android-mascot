@@ -21,7 +21,7 @@
 - **[implementation-plan-and-spec.md](design/implementation-plan-and-spec.md)** - 次期フェーズ実装計画 & 統合技術仕様書 (Phase 2+)
 - **[pending-issues-and-roadmap.md](design/pending-issues-and-roadmap.md)** - 検討事項・仕様化ロードマップ（全体概要）
 - **[mockup-and-android-spec.md](design/mockup-and-android-spec.md)** - UI/UX & モックアップ仕様書（PCシミュレーション・モバイル画面設計）
-- **[classic-ui-and-menu-spec.md](design/classic-ui-and-menu-spec.md)** - クラシックUI & 拡張メニュー仕様書
+- **[ui-and-menu-spec.md](design/ui-and-menu-spec.md)** - 標準UI & 拡張メニュー仕様書
 - **[window-design.md](design/window-design.md)** - ウィンドウ設計（Windows検証 / Android Single Container）
 
 ### 🔧 詳細技術仕様書 (`spec/`)

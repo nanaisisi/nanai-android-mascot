@@ -58,7 +58,7 @@
 
 - 小型端末では画面幅の80%（`80vw`）で柔軟に折り返し、大画面でも `22.5rem`（約360px相当）までに制限して読みやすさを維持。
 
-### 3.3 コンテキストメニュー & サブメニュー (`classic-menu.css`)
+### 3.3 コンテキストメニュー & サブメニュー (`context-menu.css`)
 
 ```css
 .menu-container {
@@ -100,7 +100,7 @@
 デザインシステムのトークン（CSS変数）も `rem` に統一されています。
 
 - `--balloon-font-size`: `0.8125rem` (13px相当) 〜 `0.875rem` (14px相当)
-- `--balloon-border-radius`: `0.25rem` (クラシック) 〜 `1.25rem` (コミック)
+- `--balloon-border-radius`: `0.25rem` (アイボリー) 〜 `1.25rem` (コミック)
 - `--balloon-box-shadow`: 相対距離とぼかし量（`0.125rem` 〜 `0.5rem`）
 
 ---

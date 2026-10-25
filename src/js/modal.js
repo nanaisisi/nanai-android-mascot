@@ -191,7 +191,7 @@ export class ModalManager {
 
     const balloonThemes = [
       { id: "default", name: "標準モダン (デフォルト)", desc: "半透明の角丸バルーン" },
-      { id: "classic", name: "クラシック伺か", desc: "歴史的なレトロクリーム調枠線" },
+      { id: "ivory", name: "アイボリー", desc: "歴史的なレトロクリーム調枠線" },
       { id: "comic", name: "コミック", desc: "ポップな太枠吹き出し" },
       { id: "dark", name: "ダークモダン", desc: "シックな黒基調スタイル" },
     ];

@@ -5,12 +5,25 @@ use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 use tauri::{Emitter, Manager};
 
+// メニュー色・スキン情報（descript.txt 由来）
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]
+pub struct ShellMenuTheme {
+    pub background_font_color: Option<String>,
+    pub foreground_font_color: Option<String>,
+    pub disable_font_color: Option<String>,
+    pub separator_color: Option<String>,
+    pub background_bitmap: Option<String>,
+    pub foreground_bitmap: Option<String>,
+    pub sidebar_bitmap: Option<String>,
+}
+
 // シェル情報
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ShellInfo {
     pub name: String,
     pub path: String,
     pub display_name: Option<String>,
+    pub menu_theme: Option<ShellMenuTheme>,
 }
 
 // フル規格対応ゴースト情報

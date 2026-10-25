@@ -33,7 +33,7 @@ export const settingsMethods = {
   },
 
   applyBalloonTheme() {
-    this.setBalloonTheme(this.settings.balloonTheme || this.currentBalloonTheme || "ivory");
+    this.setBalloonTheme(this.settings.balloonTheme || this.currentBalloonTheme || "default");
   },
 
   showBalloon(text) {

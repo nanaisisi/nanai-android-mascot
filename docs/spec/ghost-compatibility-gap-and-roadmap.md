@@ -26,10 +26,10 @@
 
 | 分類 | 実装済み項目 | 現状の実装水準と制約 |
 | :--- | :--- | :--- |
-| **SHIORI通信** | SHIORI/3.0 基本プロトコル・定期イベント | `GET Version`, `NOTIFY OnBoot`, `OnSecondChange`(毎秒タイマー), `OnClose`, `OnSurfaceRestore` の送受信 |
+| **SHIORI通信** | SHIORI/3.0 基本プロトコル・定期イベント | `GET Version`, `NOTIFY OnBoot`, `OnSecondChange`(毎秒タイマー), `OnClose`, `OnSurfaceRestore`, `OnDressupChanged` の送受信 |
 | **バイナリ実行** | 32bit DLLのプロセス間実行・安全終了 | `shiori-host32` (IPC) 経由での yaya.dll / satori.dll ロード、終了時の `unload()` 確実実行による辞書セーブ保持 |
-| **スクリプト解釈** | さくらスクリプト制御・ウェイト・演出 | `\0`, `\1`, `\s[ID]`, `\w1`〜`\w9`, `\_w[ms]`, `\x`(クリック待ち), `\_q`(高速描画切替), `\c`, `\i[ID]`(アニメ呼出), `\q`(選択肢), `\_a`〜`\_a`(アンカー), `\![open,inputbox]`, `\![raise]` |
-| **サーフィス描画** | SERIKOアニメーション & 当たり判定 | UKADOC準拠の interval（periodic, sometimes, rarely, random, runonce, always）、talk口パク連動、当たり判定（Head, Face等）付き `OnMouseDoubleClick` / `OnMouseMove` |
+| **スクリプト解釈** | さくらスクリプト制御・ウェイト・演出 | `\0`, `\1`, `\s[ID]`, `\w1`〜`\w9`, `\_w[ms]`, `\x`(クリック待ち), `\_q`(高速描画切替), `\c`, `\i[ID]`(アニメ呼出), `\q`(選択肢), `\_a`〜`\_a`(アンカー), `\![open,inputbox]`, `\![bind]`, `\![raise]` |
+| **サーフィス描画** | SERIKOアニメーション & PNA透過 & 着せ替え | UKADOC準拠の interval、talk口パク連動、PNAアルファマスク合成＋クロマキー自動切替、着せ替えパーツ状態管理（`bind`）、当たり判定付き `OnMouseDoubleClick` / `OnMouseMove` |
 | **ウィンドウ制御** | マルチウィンドウ / メニュー | メインキャラクターウィンドウ、サブウィンドウ、右クリックメニューの基礎配置 |
 
 ---

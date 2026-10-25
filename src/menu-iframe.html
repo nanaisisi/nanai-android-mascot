@@ -11,7 +11,7 @@
     <h1 class="visually-hidden">Nanai Android Mascot クラシックメニュー</h1>
     <div class="menu-container" role="menu">
       <!-- ゴースト動的アクション -->
-      <button class="menu-item" id="talk-btn" role="menuitem">
+      <button type="button" class="menu-item" id="talk-btn" role="menuitem">
         <span>💬 もう一度話す (T)</span>
       </button>
 
@@ -19,93 +19,93 @@
 
       <!-- 伺か標準機能メニュー群 -->
       <div class="menu-item-wrapper">
-        <button class="menu-item has-submenu" id="ghost-switch-btn" role="menuitem">
+        <button type="button" class="menu-item has-submenu" id="ghost-switch-btn" role="menuitem">
           <span>👻 ゴースト切り替え (G)</span>
         </button>
         <div class="submenu-container" id="ghost-submenu">
-          <button class="menu-item" id="ghost-btn">
+          <button type="button" class="menu-item" id="ghost-btn">
             <span>📂 ゴースト一覧・管理...</span>
           </button>
         </div>
       </div>
 
       <div class="menu-item-wrapper">
-        <button class="menu-item has-submenu" id="shell-switch-btn" role="menuitem">
+        <button type="button" class="menu-item has-submenu" id="shell-switch-btn" role="menuitem">
           <span>👗 着せ替え・シェル (C)</span>
         </button>
         <div class="submenu-container" id="shell-submenu">
-          <button class="menu-item is-current" id="shell-master-btn">
+          <button type="button" class="menu-item is-current" id="shell-master-btn">
             <span>✓ master (通常)</span>
           </button>
         </div>
       </div>
 
       <div class="menu-item-wrapper">
-        <button class="menu-item has-submenu" id="scale-menu-btn" role="menuitem">
+        <button type="button" class="menu-item has-submenu" id="scale-menu-btn" role="menuitem">
           <span>🔍 シェル倍率 (S)</span>
         </button>
         <div class="submenu-container">
-          <button class="menu-item" id="scale-50-btn"><span>50%</span></button>
-          <button class="menu-item" id="scale-75-btn"><span>75%</span></button>
-          <button class="menu-item" id="scale-100-btn"><span>100% (標準)</span></button>
-          <button class="menu-item" id="scale-125-btn"><span>125%</span></button>
-          <button class="menu-item" id="scale-150-btn"><span>150%</span></button>
-          <button class="menu-item" id="scale-200-btn"><span>200%</span></button>
+          <button type="button" class="menu-item" id="scale-50-btn"><span>50%</span></button>
+          <button type="button" class="menu-item" id="scale-75-btn"><span>75%</span></button>
+          <button type="button" class="menu-item" id="scale-100-btn"><span>100% (標準)</span></button>
+          <button type="button" class="menu-item" id="scale-125-btn"><span>125%</span></button>
+          <button type="button" class="menu-item" id="scale-150-btn"><span>150%</span></button>
+          <button type="button" class="menu-item" id="scale-200-btn"><span>200%</span></button>
         </div>
       </div>
 
-      <button class="menu-item" id="balloon-btn" role="menuitem">
+      <button type="button" class="menu-item" id="balloon-btn" role="menuitem">
         <span>💭 バルーン設定 (B)</span>
       </button>
 
       <div class="menu-separator"></div>
 
       <!-- 拡張・ツール系 -->
-      <button class="menu-item" id="update-btn" role="menuitem">
+      <button type="button" class="menu-item" id="update-btn" role="menuitem">
         <span>🌐 ネットワーク更新 (U)</span>
       </button>
 
-      <button class="menu-item" id="headline-btn" role="menuitem">
+      <button type="button" class="menu-item" id="headline-btn" role="menuitem">
         <span>📰 ヘッドライン/ニュース (H)</span>
       </button>
 
-      <button class="menu-item" id="install-btn" role="menuitem">
+      <button type="button" class="menu-item" id="install-btn" role="menuitem">
         <span>📥 ファイル取り込み・導入 (I)</span>
       </button>
 
-      <button class="menu-item" id="scan-btn" role="menuitem">
+      <button type="button" class="menu-item" id="scan-btn" role="menuitem">
         <span>📂 フォルダ再スキャン (R)</span>
       </button>
 
-      <button class="menu-item" id="plugins-btn" role="menuitem">
+      <button type="button" class="menu-item" id="plugins-btn" role="menuitem">
         <span>🧩 プラグイン・拡張機能 (P)</span>
       </button>
 
-      <button class="menu-item" id="settings-btn" role="menuitem">
+      <button type="button" class="menu-item" id="settings-btn" role="menuitem">
         <span>⚙️ 設定 (O)</span>
       </button>
 
-      <button class="menu-item" id="debug-btn" role="menuitem">
+      <button type="button" class="menu-item" id="debug-btn" role="menuitem">
         <span>🐛 デバッグログ (D)</span>
       </button>
 
-      <button class="menu-item" id="help-btn" role="menuitem">
+      <button type="button" class="menu-item" id="help-btn" role="menuitem">
         <span>❓ 情報・ヘルプ (A)</span>
       </button>
 
-      <button class="menu-item" id="license-btn" role="menuitem">
+      <button type="button" class="menu-item" id="license-btn" role="menuitem">
         <span>📜 著作権・ライセンス表示 (L)</span>
       </button>
 
       <div class="menu-separator"></div>
 
       <!-- 終了・最小化 -->
-      <button class="menu-item" id="minimize-btn" role="menuitem">
+      <button type="button" class="menu-item" id="minimize-btn" role="menuitem">
         <span>➖ アイコン化・隠す (I)</span>
         <span class="shortcut-key">Ctrl+I</span>
       </button>
 
-      <button class="menu-item" id="close-btn" role="menuitem">
+      <button type="button" class="menu-item" id="close-btn" role="menuitem">
         <span>✖ 終了 (W)</span>
         <span class="shortcut-key">Ctrl+W</span>
       </button>

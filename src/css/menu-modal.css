@@ -5,18 +5,18 @@
 /* 右上メニュー & 終了ボタン */
 .top-right-menu {
   position: fixed;
-  top: 15px;
-  right: 15px;
+  top: clamp(0.5rem, 2vh, 1rem);
+  right: clamp(0.5rem, 2vw, 1rem);
   z-index: 9999;
   pointer-events: auto;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .menu-btn {
-  width: 40px;
-  height: 40px;
+  width: 2.5rem;
+  height: 2.5rem;
   background-color: rgba(255, 255, 255, 0.95);
   border: 2px solid rgba(0, 0, 0, 0.3);
   border-radius: 50%;
@@ -24,11 +24,11 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: bold;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(0.625rem);
 }
 
 .menu-btn:hover {
@@ -43,7 +43,7 @@
 
 .menu-btn.exit-btn {
   color: #d32f2f;
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 .menu-btn.exit-btn:hover {
@@ -57,8 +57,8 @@
   position: absolute;
   top: 100%;
   right: 0;
-  z-index: 10000 !important;
-  width: 460px;
+  z-index: 10000;
+  width: clamp(15rem, 80vw, 28.75rem);
   overflow: visible;
   background: transparent;
   border: none;
@@ -68,8 +68,8 @@
 .menu-iframe-container iframe {
   display: block;
   border: none;
-  width: 460px;
-  height: 580px;
+  width: 100%;
+  height: clamp(20rem, 70vh, 36.25rem);
   background: transparent;
 }
 
@@ -85,29 +85,29 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
-  backdrop-filter: blur(5px);
+  padding: clamp(0.5rem, 3vw, 1.25rem);
+  backdrop-filter: blur(0.3125rem);
   pointer-events: auto;
 }
 
 .modal {
   background: rgba(255, 255, 255, 0.98);
-  border-radius: 12px;
-  max-width: 600px;
-  max-height: 80vh;
+  border-radius: 0.75rem;
+  max-width: clamp(17.5rem, 90vw, 37.5rem);
+  max-height: 85vh;
   width: 100%;
   overflow-y: auto;
   position: relative;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.3);
   animation: modalFadeIn 0.3s ease;
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(1.25rem);
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 @keyframes modalFadeIn {
   from {
     opacity: 0;
-    transform: scale(0.9) translateY(-20px);
+    transform: scale(0.9) translateY(-1.25rem);
   }
   to {
     opacity: 1;
@@ -116,21 +116,21 @@
 }
 
 #modal-content {
-  padding: 24px;
+  padding: clamp(1rem, 3vw, 1.5rem);
   overflow-y: auto;
-  max-height: calc(80vh - 60px);
+  max-height: calc(85vh - 3.75rem);
 }
 
 .close-btn {
   position: absolute;
-  top: 15px;
-  right: 15px;
+  top: 0.875rem;
+  right: 0.875rem;
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 1.5rem;
   cursor: pointer;
-  width: 30px;
-  height: 30px;
+  width: 2rem;
+  height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -146,13 +146,13 @@
 
 /* フォーム要素 */
 .form-section {
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
 }
 
 .form-section label,
 .form-section .form-label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 0.5rem;
   font-weight: 500;
   color: #333;
 }
@@ -160,17 +160,17 @@
 .form-section input[type="text"],
 .form-section select {
   width: 100%;
-  padding: 10px 12px;
+  padding: 0.625rem 0.75rem;
   border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 14px;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
   background: rgba(255, 255, 255, 0.9);
 }
 
 .form-section input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  margin-right: 8px;
+  width: 1.125rem;
+  height: 1.125rem;
+  margin-right: 0.5rem;
   cursor: pointer;
 }
 
@@ -182,20 +182,20 @@
 .test-results,
 .log-output {
   border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 12px;
-  max-height: 200px;
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  max-height: 12.5rem;
   overflow-y: auto;
   background: rgba(249, 249, 249, 0.9);
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .ghost-item,
 .balloon-item {
-  padding: 8px 12px;
-  margin-bottom: 6px;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.375rem;
   background: rgba(255, 255, 255, 0.9);
-  border-radius: 4px;
+  border-radius: 0.25rem;
   cursor: pointer;
   transition: background-color 0.2s;
 }
@@ -208,9 +208,9 @@
 
 .current-ghost,
 .current-balloon {
-  padding: 12px;
+  padding: 0.75rem;
   background: rgba(232, 245, 232, 0.9);
-  border-radius: 6px;
+  border-radius: 0.375rem;
   border: 1px solid rgba(200, 230, 201, 0.9);
   color: #2e7d32;
   font-weight: 500;
@@ -220,8 +220,8 @@
 .path-test-controls,
 .log-controls {
   display: flex;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 /* ダークモード & レスポンシブ */
@@ -236,12 +236,12 @@ body.dark-mode .menu-iframe-container {
   color: #fff;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .character-placeholder {
-    font-size: 80px;
+    font-size: clamp(3rem, 15vmin, 5rem);
   }
   .modal {
-    margin: 10px;
+    margin: 0.625rem;
     max-height: 90vh;
   }
 }
@@ -250,43 +250,43 @@ body.dark-mode .menu-iframe-container {
 .license-scroll-container {
   max-height: 60vh;
   overflow-y: auto;
-  padding-right: 6px;
+  padding-right: 0.375rem;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .license-block {
   border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  padding: 12px 14px;
+  border-radius: 0.375rem;
+  padding: 0.75rem 0.875rem;
   background: rgba(250, 250, 250, 0.9);
 }
 
 .license-block h3 {
-  font-size: 15px;
-  margin-bottom: 6px;
+  font-size: 0.9375rem;
+  margin-bottom: 0.375rem;
   color: #1976d2;
 }
 
 .license-block p,
 .license-block ul {
-  font-size: 12px;
+  font-size: 0.75rem;
   line-height: 1.5;
-  margin-bottom: 6px;
+  margin-bottom: 0.375rem;
 }
 
 .license-pre {
   background: #2b2b2b;
   color: #f1f1f1;
-  padding: 10px;
-  border-radius: 4px;
+  padding: 0.625rem;
+  border-radius: 0.25rem;
   font-family: Consolas, monospace;
-  font-size: 11px;
+  font-size: 0.6875rem;
   line-height: 1.4;
   white-space: pre-wrap;
   word-break: break-word;
-  max-height: 180px;
+  max-height: 11.25rem;
   overflow-y: auto;
 }
 

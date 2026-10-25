@@ -1,0 +1,136 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", "Meiryo", sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  overflow: hidden;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.splash-container {
+  text-align: center;
+  animation: fadeInUp 1s ease-out;
+}
+
+.logo {
+  width: clamp(5rem, 20vmin, 8.75rem);
+  height: clamp(5rem, 20vmin, 8.75rem);
+  margin-bottom: 1.25rem;
+  animation: pulse 2s infinite;
+  filter: drop-shadow(0 0.5rem 1rem rgba(0, 0, 0, 0.3));
+}
+
+.app-title {
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  font-weight: 300;
+  margin-bottom: 0.625rem;
+  letter-spacing: 0.125rem;
+}
+
+.app-subtitle {
+  font-size: clamp(0.875rem, 3vw, 1rem);
+  opacity: 0.8;
+  margin-bottom: 2.5rem;
+  font-weight: 300;
+}
+
+.loading-bar {
+  width: clamp(12.5rem, 70vw, 20rem);
+  height: 0.25rem;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 0.125rem;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+}
+
+.loading-progress {
+  height: 100%;
+  background: linear-gradient(90deg, #a8edea 0%, #fed6e3 100%);
+  border-radius: 0.125rem;
+  width: 0%;
+  animation: loading 3s ease-in-out forwards;
+}
+
+.loading-text {
+  font-size: 0.875rem;
+  opacity: 0.7;
+  animation: blink 1.5s infinite;
+}
+
+.version-info {
+  position: absolute;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  font-size: 0.75rem;
+  opacity: 0.6;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(1.875rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes loading {
+  0% {
+    width: 0%;
+  }
+  30% {
+    width: 30%;
+  }
+  60% {
+    width: 60%;
+  }
+  90% {
+    width: 90%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 0.7;
+  }
+  25%,
+  75% {
+    opacity: 1;
+  }
+}
+
+/* 将来的な機能プレビュー */
+.feature-preview {
+  position: absolute;
+  bottom: 3.75rem;
+  left: 1.25rem;
+  font-size: 0.6875rem;
+  opacity: 0.5;
+  max-width: 12.5rem;
+  line-height: 1.4;
+}

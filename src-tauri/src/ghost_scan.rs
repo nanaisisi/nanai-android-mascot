@@ -64,14 +64,45 @@ pub fn scan_shells_from_ghost(ghost_dir: &Path) -> Vec<ShellInfo> {
                 let shell_name = entry.file_name().to_string_lossy().to_string();
                 if !shell_name.starts_with('.') {
                     let mut display_name = None;
+                    let mut menu_theme = None;
                     let descript_path = path.join("descript.txt");
                     if let Some(map) = read_descript_file(&descript_path) {
                         display_name = map.get("name").cloned();
+
+                        // メニュー配色・画像情報の抽出
+                        let parse_rgb = |prefix: &str| -> Option<String> {
+                            let r = map.get(&format!("{}.r", prefix))?;
+                            let g = map.get(&format!("{}.g", prefix))?;
+                            let b = map.get(&format!("{}.b", prefix))?;
+                            Some(format!("rgb({}, {}, {})", r, g, b))
+                        };
+
+                        let bg_color = parse_rgb("menu.background.font.color");
+                        let fg_color = parse_rgb("menu.foreground.font.color");
+                        let dis_color = parse_rgb("menu.disable.font.color");
+                        let sep_color = parse_rgb("menu.separator.color");
+
+                        let bg_bmp = map.get("menu.background.bitmap.filename").cloned();
+                        let fg_bmp = map.get("menu.foreground.bitmap.filename").cloned();
+                        let side_bmp = map.get("menu.sidebar.bitmap.filename").cloned();
+
+                        if bg_color.is_some() || fg_color.is_some() || bg_bmp.is_some() {
+                            menu_theme = Some(ShellMenuTheme {
+                                background_font_color: bg_color,
+                                foreground_font_color: fg_color,
+                                disable_font_color: dis_color,
+                                separator_color: sep_color,
+                                background_bitmap: bg_bmp,
+                                foreground_bitmap: fg_bmp,
+                                sidebar_bitmap: side_bmp,
+                            });
+                        }
                     }
                     shells.push(ShellInfo {
                         name: shell_name,
                         path: path.to_string_lossy().to_string(),
                         display_name,
+                        menu_theme,
                     });
                 }
             }
@@ -83,6 +114,7 @@ pub fn scan_shells_from_ghost(ghost_dir: &Path) -> Vec<ShellInfo> {
             name: "master".to_string(),
             path: shell_base.join("master").to_string_lossy().to_string(),
             display_name: Some("master".to_string()),
+            menu_theme: None,
         });
     }
     shells

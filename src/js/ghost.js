@@ -154,7 +154,7 @@ export class GhostController {
 			if (ghostName.includes("Emily") || ghostName.includes("emily")) {
 				this.app.setBalloonTheme?.("emily4");
 			} else {
-				this.app.setBalloonTheme?.(this.app.settings?.balloonTheme || "ivory");
+				this.app.setBalloonTheme?.(this.app.settings?.balloonTheme || "default");
 			}
 		}
 	}

@@ -50,6 +50,15 @@ if (globalThis.__TAURI__) {
         if (data.shells) {
           renderShellSubmenu(data.shells, data.currentShell);
         }
+        // ゴースト/シェルの descript.txt 由来のメニュー配色を適用
+        const activeShell = data.shells?.find((s) => s.name === data.currentShell) || data.shells?.[0];
+        if (activeShell?.menu_theme) {
+          const mt = activeShell.menu_theme;
+          const rootStyle = document.documentElement.style;
+          if (mt.background_font_color) rootStyle.setProperty("--balloon-text-color", mt.background_font_color);
+          if (mt.foreground_font_color) rootStyle.setProperty("--balloon-highlight-text", mt.foreground_font_color);
+          if (mt.separator_color) rootStyle.setProperty("--balloon-separator-color", mt.separator_color);
+        }
       }
     });
     listenFn("sync-theme", (event) => {

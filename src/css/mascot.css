@@ -4,25 +4,54 @@
 @import "balloon-theme.css";
 
 /* ゴースト表示コンテナ（ドラッグ移動対応） */
+.main-display {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* キャラクタースロット（キャラとバルーンを1つの単位として管理） */
+.character-slot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  pointer-events: none;
+  z-index: 50;
+  transition: transform 0.05s ease-out, left 0.3s ease, top 0.3s ease, opacity 0.3s ease;
+}
+
+.character-slot.kero-slot {
+  left: calc(50% + clamp(6.25rem, 20vw, 12rem));
+  z-index: 49;
+}
+
+.character-slot.is-dragging {
+  transition: none;
+}
+
+/* ゴースト表示コンテナ */
 .ghost-display {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  position: absolute;
+  position: relative;
   /* 画面の最小幅・高さ（vmin）に応じたレスポンシブなサイズ設定 */
   width: clamp(8.75rem, 35vmin, 16.25rem);
   aspect-ratio: 1 / 2;
   height: auto;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
   cursor: grab;
   user-select: none;
   touch-action: none;
-  z-index: 50;
   pointer-events: auto; /* マスコット本体はタッチ・クリックを受け付ける */
-  transition: transform 0.05s ease-out, left 0.3s ease, top 0.3s ease, opacity 0.3s ease, width 0.3s ease, height 0.3s ease;
+  transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease;
 }
 
 .ghost-display.is-dragging {

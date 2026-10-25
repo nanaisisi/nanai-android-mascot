@@ -58,45 +58,51 @@
 
       <!-- メイン表示エリア（ゴースト・バルーン表示） -->
       <div class="main-display">
-        <!-- ゴーストキャラクター表示（0番: sakura） -->
-        <div class="ghost-display" id="ghost-display">
-          <div class="ghost-character" id="ghost-character">
-            <span class="character-placeholder" id="sakura-placeholder"></span>
+        <!-- 0番手: sakura スロット（キャラ + バルーン） -->
+        <div class="character-slot sakura-slot" id="sakura-slot">
+          <!-- バルーン表示 (0番: sakura用) -->
+          <div class="balloon-display" id="balloon-display" style="display: none">
+            <div class="balloon">
+              <div class="balloon-text" id="balloon-text">
+                こんにちは！マスコットナナイです。
+              </div>
+            </div>
           </div>
-          <!-- クイックアクション（簡易ミニ操作パレット） -->
-          <div class="quick-bubble-wrapper">
-            <button type="button" class="quick-bubble" id="quick-bubble" title="クイックメニュー">
-              ⚡ 操作
-            </button>
-            <div class="quick-actions-panel" id="quick-actions-panel" style="display: none;">
-              <button type="button" class="quick-action-btn" id="qa-talk-btn"><span>💬 話しかける</span></button>
-              <button type="button" class="quick-action-btn" id="qa-ghost-btn"><span>👻 ゴースト切替</span></button>
-              <button type="button" class="quick-action-btn" id="qa-balloon-btn"><span>💭 バルーン変更</span></button>
-              <button type="button" class="quick-action-btn" id="qa-minimize-btn"><span>🗕 最小化</span></button>
+
+          <!-- ゴーストキャラクター表示（0番: sakura） -->
+          <div class="ghost-display" id="ghost-display">
+            <div class="ghost-character" id="ghost-character">
+              <span class="character-placeholder" id="sakura-placeholder"></span>
+            </div>
+            <!-- クイックアクション（簡易ミニ操作パレット） -->
+            <div class="quick-bubble-wrapper">
+              <button type="button" class="quick-bubble" id="quick-bubble" title="クイックメニュー">
+                ⚡ 操作
+              </button>
+              <div class="quick-actions-panel" id="quick-actions-panel" style="display: none;">
+                <button type="button" class="quick-action-btn" id="qa-talk-btn"><span>💬 話しかける</span></button>
+                <button type="button" class="quick-action-btn" id="qa-ghost-btn"><span>👻 ゴースト切替</span></button>
+                <button type="button" class="quick-action-btn" id="qa-balloon-btn"><span>💭 バルーン変更</span></button>
+                <button type="button" class="quick-action-btn" id="qa-minimize-btn"><span>🗕 最小化</span></button>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- サブキャラクター表示（1番: kero） -->
-        <div class="ghost-display kero-display" id="kero-display" style="display: none;">
-          <div class="ghost-character" id="kero-character">
-            <span class="character-placeholder" id="kero-placeholder"></span>
-          </div>
-        </div>
-
-        <!-- バルーン表示 (0番: sakura用) -->
-        <div class="balloon-display" id="balloon-display" style="display: none">
-          <div class="balloon">
-            <div class="balloon-text" id="balloon-text">
-              こんにちは！マスコットナナイです。
+        <!-- 1番手: kero スロット（サブキャラ + バルーン） -->
+        <div class="character-slot kero-slot" id="kero-slot" style="display: none;">
+          <!-- バルーン表示 (1番: kero用) -->
+          <div class="balloon-display kero-balloon" id="kero-balloon-display" style="display: none">
+            <div class="balloon">
+              <div class="balloon-text" id="kero-balloon-text"></div>
             </div>
           </div>
-        </div>
 
-        <!-- バルーン表示 (1番: kero用) -->
-        <div class="balloon-display kero-balloon" id="kero-balloon-display" style="display: none">
-          <div class="balloon">
-            <div class="balloon-text" id="kero-balloon-text"></div>
+          <!-- サブキャラクター表示（1番: kero） -->
+          <div class="ghost-display kero-display" id="kero-display">
+            <div class="ghost-character" id="kero-character">
+              <span class="character-placeholder" id="kero-placeholder"></span>
+            </div>
           </div>
         </div>
 

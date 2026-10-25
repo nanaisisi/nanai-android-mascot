@@ -10,6 +10,7 @@
 - **[installation.md](user/installation.md)** - インストール手順・ビルドガイド（Windows / Android）
 - **[user-guide.md](user/user-guide.md)** - 基本的な使用方法・操作ガイド
 - **[troubleshooting.md](user/troubleshooting.md)** - トラブルシューティング
+- **[credits-and-license.md](credits-and-license.md)** - 権利表記・著作権・ライセンス（使用単語・規格等の権利者表記）
 
 ### 🛠️ 開発者向けドキュメント (`developer/`)
 

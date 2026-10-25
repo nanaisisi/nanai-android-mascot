@@ -165,8 +165,14 @@ export class NanaiAndroidMascotApp {
     // iframe メニューからの postMessage 受信
     globalThis.addEventListener("message", (event) => {
       if (event.data?.type === "menu-action") {
-        this.hideMenu();
         const action = event.data.action;
+
+        if (action === "request-sync") {
+          this.syncMenuGhosts();
+          return;
+        }
+
+        this.hideMenu();
 
         // 特殊アクションのハンドリング
         if (action === "talk") {

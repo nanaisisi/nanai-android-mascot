@@ -31,3 +31,17 @@ dist-ssr
 *.lock
 target_tauri
 /local/
+
+# Ghost & Balloon Assets separation
+# Only keep minimal mock_nanai and default balloon in git, ignore all other local/imported ghosts
+assets/ghost/*
+!assets/ghost/mock_nanai/
+!assets/ghost/.gitkeep
+assets/balloon/*
+!assets/balloon/default/
+!assets/balloon/.gitkeep
+
+# User & temporary import data
+userData/
+imported_ghosts/
+

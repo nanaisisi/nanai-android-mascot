@@ -98,10 +98,14 @@ export class GhostController {
     // サーフィス画像の更新
     const img = document.querySelector("#sakura-placeholder img");
     if (img) {
-      img.src = `assets/ghost/${ghostName}/shell/${shellName}/surface0.png`;
       img.onerror = () => {
+        img.onerror = () => {
+          img.onerror = null;
+          img.src = `assets/ghost/${ghostName}/shell/master/surface0.svg`;
+        };
         img.src = `assets/ghost/${ghostName}/shell/master/surface0.png`;
       };
+      img.src = `assets/ghost/${ghostName}/shell/${shellName}/surface0.png`;
     }
 
     // surfaces.txt の再読み込み
@@ -259,15 +263,20 @@ export class GhostController {
     if (!img && placeholder) {
       placeholder.innerHTML = `<img src="assets/ghost/${ghostName}/shell/master/surface${surfaceId}.png" 
                                      alt="scope${scopeId}" 
-                                     style="width: 100%; height: 100%; object-fit: contain;">`;
+                                     style="width: 100%; height: 100%; object-fit: contain;"
+                                     onerror="this.onerror=null; this.src='assets/ghost/${ghostName}/shell/master/surface${scopeId === 1 ? 10 : 0}.svg';">`;
       return;
     }
 
     if (img) {
-      img.src = `assets/ghost/${ghostName}/shell/master/surface${surfaceId}.png`;
       img.onerror = () => {
+        img.onerror = () => {
+          img.onerror = null;
+          img.src = `assets/ghost/${ghostName}/shell/master/surface${scopeId === 1 ? 10 : 0}.svg`;
+        };
         img.src = `assets/ghost/${ghostName}/shell/master/surface${scopeId === 1 ? 10 : 0}.png`;
       };
+      img.src = `assets/ghost/${ghostName}/shell/master/surface${surfaceId}.png`;
     }
   }
 
@@ -281,10 +290,11 @@ export class GhostController {
     }
 
     const imgPath = `assets/ghost/${ghostName}/shell/master/surface0.png`;
+    const svgPath = `assets/ghost/${ghostName}/shell/master/surface0.svg`;
     sakuraPlaceholder.innerHTML = `<img src="${imgPath}" 
                                    alt="${ghostName}" 
                                    style="width: 100%; height: 100%; object-fit: contain; pointer-events: auto;" 
-                                   onerror="console.error('❌ 画像読み込み失敗: ' + this.src); this.src='assets/ghost/${ghostName}/shell/master/surface0.svg';">`;
+                                   onerror="console.error('❌ 画像読み込み失敗: ' + this.src); this.onerror=null; this.src='${svgPath}';">`;
     sakuraPlaceholder.title = ghostName || "";
   }
 

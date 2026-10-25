@@ -16,6 +16,11 @@ export const eventMethods = {
         (x, y, rect) => this.onGhostClick(x, y, rect, scopeId),
         (x, y, rect) => this.onGhostStroke(x, y, rect, scopeId)
       );
+      el.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.toggleMenu(e.screenX, e.screenY, scopeId);
+      });
     };
     bind(this.elements.ghostDisplay, 0);
     bind(this.elements.keroDisplay, 1);

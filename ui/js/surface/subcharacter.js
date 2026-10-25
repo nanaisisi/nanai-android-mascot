@@ -47,4 +47,18 @@ if (globalThis.__TAURI__) {
 			emitFn("menu-action", { action: "talk", payload: { scope: scopeId } });
 		}
 	});
+
+	// 右クリックでサブキャラクター用メニューを表示
+	root?.addEventListener("contextmenu", (e) => {
+		e.preventDefault();
+		if (typeof invokeFn === "function") {
+			invokeFn("show_menu_window", {
+				x: e.screenX,
+				y: e.screenY,
+				scope: scopeId,
+			}).catch((err) => {
+				console.warn("Failed to open subchar menu:", err);
+			});
+		}
+	});
 }

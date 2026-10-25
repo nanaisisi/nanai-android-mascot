@@ -8,8 +8,9 @@ export const menuMethods = {
    * @this {import('../../main.js').NanaiAndroidMascotApp}
    * @param {number|null} [screenX]
    * @param {number|null} [screenY]
+   * @param {number} [scope]
    */
-  toggleMenu(screenX = null, screenY = null) {
+  toggleMenu(screenX = null, screenY = null, scope = 0) {
     if (isTauriAvailable()) {
       const sX = globalThis.screenX ?? 0;
       const sY = globalThis.screenY ?? 0;
@@ -17,7 +18,7 @@ export const menuMethods = {
       const posY = screenY !== null ? screenY : sY + 100;
 
       // 独立したバルーンスキン連動メニューウィンドウを表示 (枠外にはみ出して表示可能)
-      invoke("show_menu_window", { x: posX, y: posY })
+      invoke("show_menu_window", { x: posX, y: posY, scope })
         .then(() => this.syncMenuGhosts())
         .catch((err) => {
           console.warn("show_menu_window failed, fallback to show_context_menu:", err);

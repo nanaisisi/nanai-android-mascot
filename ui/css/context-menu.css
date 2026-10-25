@@ -23,6 +23,10 @@ body {
   min-height: 100vh;
 }
 
+body.subchar-mode .main-only {
+  display: none;
+}
+
 .menu-container {
   padding: 0.25rem 0;
   width: clamp(11rem, 280px, 16rem);

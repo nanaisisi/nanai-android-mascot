@@ -9,7 +9,7 @@ use tauri::Manager;
 #[cfg(desktop)]
 use tauri::image::Image;
 #[cfg(desktop)]
-use tauri::menu::MenuBuilder;
+use tauri::menu::{MenuBuilder, SubmenuBuilder};
 #[cfg(desktop)]
 use tauri::tray::{TrayIconBuilder, TrayIconEvent};
 
@@ -505,6 +505,49 @@ async fn exit_app(app_handle: tauri::AppHandle) -> Result<(), String> {
     Ok(())
 }
 
+/// OSネイティブのコンテキストメニュー表示コマンド (ウィンドウ枠にとらわれず自由に展開)
+#[tauri::command]
+async fn show_context_menu(
+    app_handle: tauri::AppHandle,
+    ghosts: Vec<String>,
+    current_ghost: Option<String>,
+) -> Result<(), String> {
+    #[cfg(desktop)]
+    {
+        let window = app_handle
+            .get_webview_window("main")
+            .ok_or("main window not found")?;
+
+        let mut ghost_submenu_builder = SubmenuBuilder::new(&app_handle, "👻 ゴースト切り替え");
+
+        for g in &ghosts {
+            let label = if current_ghost.as_ref() == Some(g) {
+                format!("✓ {}", g)
+            } else {
+                format!("   {}", g)
+            };
+            ghost_submenu_builder = ghost_submenu_builder.text(format!("ghost:{}", g), label);
+        }
+        let ghost_submenu = ghost_submenu_builder.build().map_err(|e| e.to_string())?;
+
+        let menu = MenuBuilder::new(&app_handle)
+            .text("talk", "💬 もう一度話す (T)")
+            .separator()
+            .item(&ghost_submenu)
+            .separator()
+            .text("install", "📥 ファイル取り込み・導入 (I)")
+            .text("scan", "📂 フォルダ再スキャン (R)")
+            .separator()
+            .text("minimize", "🗕 最小化")
+            .text("exit", "❌ 終了")
+            .build()
+            .map_err(|e| e.to_string())?;
+
+        window.popup_menu(&menu).map_err(|e| e.to_string())?;
+    }
+    Ok(())
+}
+
 fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
     mut zip: zip::ZipArchive<R>,
     fallback_name: &str,
@@ -715,6 +758,32 @@ pub fn run() {
             Ok(())
         })
         .manage(AppState::new())
+        .on_menu_event(move |app_handle, event| {
+            let id = event.id().as_ref();
+            if let Some(ghost_name) = id.strip_prefix("ghost:") {
+                let _ = app_handle.emit(
+                    "native-menu-action",
+                    serde_json::json!({
+                        "action": "switch-to-ghost",
+                        "payload": ghost_name
+                    }),
+                );
+            } else if id == "open" {
+                if let Some(window) = app_handle.get_webview_window("main") {
+                    let _ = window.show();
+                    let _ = window.set_focus();
+                }
+            } else if id == "close" || id == "exit" {
+                app_handle.exit(0);
+            } else {
+                let _ = app_handle.emit(
+                    "native-menu-action",
+                    serde_json::json!({
+                        "action": id
+                    }),
+                );
+            }
+        })
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             open_file,
@@ -736,6 +805,7 @@ pub fn run() {
             test_command,
             minimize_app,
             exit_app,
+            show_context_menu,
             install_ghost_archive,
             install_ghost_archive_bytes,
             load_surface_image

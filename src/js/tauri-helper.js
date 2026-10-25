@@ -41,3 +41,13 @@ export function convertFileSrc(filePath, protocol = "asset") {
   const normalized = filePath.replace(/\\/g, "/");
   return `asset://localhost/${encodeURI(normalized)}`;
 }
+
+export async function listen(event, handler) {
+  const tauri = globalThis.__TAURI__;
+  if (!tauri) return () => {};
+  const listenFn = tauri.event?.listen || tauri.listen;
+  if (typeof listenFn === "function") {
+    return await listenFn(event, handler);
+  }
+  return () => {};
+}

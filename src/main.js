@@ -3,7 +3,7 @@ import { InteractionManager } from "./js/interaction.js";
 import { ModalManager } from "./js/modal.js";
 import { SakuraScriptPlayer } from "./js/sakura-script.js";
 import { SurfaceManager } from "./js/surface.js";
-import { invoke, isTauriAvailable } from "./js/tauri-helper.js";
+import { invoke, isTauriAvailable, listen } from "./js/tauri-helper.js";
 import { AppConfig } from "./js/config.js";
 
 export class NanaiAndroidMascotApp {
@@ -162,6 +162,14 @@ export class NanaiAndroidMascotApp {
       }
     });
 
+    // OSネイティブコンテキストメニューからのイベント受信
+    listen("native-menu-action", (event) => {
+      const data = event.payload;
+      if (data) {
+        this.handleMenuAction(data.action, data.payload);
+      }
+    });
+
     // iframe メニューからの postMessage 受信
     globalThis.addEventListener("message", (event) => {
       if (event.data?.type === "menu-action") {
@@ -173,78 +181,92 @@ export class NanaiAndroidMascotApp {
         }
 
         this.hideMenu();
-
-        // 特殊アクションのハンドリング
-        if (action === "talk") {
-          this.onGhostClick();
-          return;
-        }
-
-        if (action === "update") {
-          this.ghostController.sendShioriEvent("OnUpdate");
-          return;
-        }
-
-        if (action === "headline") {
-          this.ghostController.sendShioriEvent("OnHeadline");
-          return;
-        }
-
-        if (action.startsWith("scale-")) {
-          const scaleMap = {
-            "scale-50": { width: "100px", height: "200px" },
-            "scale-75": { width: "150px", height: "300px" },
-            "scale-100": { width: "200px", height: "400px" },
-            "scale-125": { width: "250px", height: "500px" },
-            "scale-150": { width: "300px", height: "600px" },
-            "scale-200": { width: "400px", height: "800px" },
-          };
-          const scaleConf = scaleMap[action] || { width: "200px", height: "400px" };
-          if (this.elements.ghostDisplay) {
-            this.elements.ghostDisplay.style.width = scaleConf.width;
-            this.elements.ghostDisplay.style.height = scaleConf.height;
-          }
-          const percent = action.replace("scale-", "");
-          this.showBalloon(`シェル倍率を ${percent}% に変更しました`);
-          setTimeout(() => this.hideBalloon(), 1500);
-          return;
-        }
-
-        if (action === "close") {
-          this.closeApp();
-          return;
-        }
-
-        if (action === "close-menu") {
-          return;
-        }
-
-        if (action === "minimize") {
-          this.hideMenu();
-          if (isTauriAvailable()) {
-            invoke("minimize_app").catch((err) => console.error("minimize_app failed:", err));
-          }
-          return;
-        }
-
-        // 個別ゴーストへの直接切り替え
-        if (action === "switch-to-ghost" && event.data.payload) {
-          this.ghostController.selectGhost(event.data.payload);
-          return;
-        }
-
-        // シェル（着せ替え）の直接切り替え
-        if (action === "switch-to-shell" && event.data.payload) {
-          this.ghostController.selectShell(event.data.payload);
-          return;
-        }
-
-        // ゴースト切り替え / 汎用モーダル
-        const modalKey = action === "ghost-switch" ? "ghost" : action;
-        const contentId = `${modalKey}-modal-content`;
-        this.modalManager?.show(contentId);
+        this.handleMenuAction(action, event.data.payload);
       }
     });
+  }
+
+  handleMenuAction(action, payload = null) {
+    if (!action) return;
+
+    if (action === "talk") {
+      this.onGhostClick();
+      return;
+    }
+
+    if (action === "update") {
+      this.ghostController.sendShioriEvent("OnUpdate");
+      return;
+    }
+
+    if (action === "headline") {
+      this.ghostController.sendShioriEvent("OnHeadline");
+      return;
+    }
+
+    if (action === "scan") {
+      this.ghostController.scanGhosts();
+      return;
+    }
+
+    if (action === "install") {
+      this.modalManager?.openModal("install");
+      return;
+    }
+
+    if (action.startsWith("scale-")) {
+      const scaleMap = {
+        "scale-50": { width: "100px", height: "200px" },
+        "scale-75": { width: "150px", height: "300px" },
+        "scale-100": { width: "200px", height: "400px" },
+        "scale-125": { width: "250px", height: "500px" },
+        "scale-150": { width: "300px", height: "600px" },
+        "scale-200": { width: "400px", height: "800px" },
+      };
+      const scaleConf = scaleMap[action] || { width: "200px", height: "400px" };
+      if (this.elements.ghostDisplay) {
+        this.elements.ghostDisplay.style.width = scaleConf.width;
+        this.elements.ghostDisplay.style.height = scaleConf.height;
+      }
+      const percent = action.replace("scale-", "");
+      this.showBalloon(`シェル倍率を ${percent}% に変更しました`);
+      setTimeout(() => this.hideBalloon(), 1500);
+      return;
+    }
+
+    if (action === "close" || action === "exit") {
+      this.closeApp();
+      return;
+    }
+
+    if (action === "close-menu") {
+      return;
+    }
+
+    if (action === "minimize") {
+      this.hideMenu();
+      if (isTauriAvailable()) {
+        invoke("minimize_app").catch((err) => console.error("minimize_app failed:", err));
+      }
+      return;
+    }
+
+    // 個別ゴーストへの直接切り替え
+    if (action === "switch-to-ghost" && payload) {
+      this.ghostController.selectGhost(payload);
+      return;
+    }
+
+    // シェル（着せ替え）の直接切り替え
+    if (action === "switch-to-shell" && payload) {
+      this.ghostController.selectShell(payload);
+      return;
+    }
+
+    // ゴースト切り替え / 汎用モーダル
+    const modalKey = action === "ghost-switch" ? "ghost" : action;
+    const contentId = `${modalKey}-modal-content`;
+    this.modalManager?.show(contentId);
   }
 
   onGhostClick(clientX, clientY, rect, scopeId = 0) {
@@ -275,6 +297,22 @@ export class NanaiAndroidMascotApp {
   }
 
   toggleMenu() {
+    if (isTauriAvailable()) {
+      const ghostNames = (this.ghostController.ghosts || []).map((g) => g.name);
+      const currentGhostName = this.ghostController.currentGhost?.name || null;
+      invoke("show_context_menu", {
+        ghosts: ghostNames,
+        currentGhost: currentGhostName,
+      }).catch((err) => {
+        console.warn("show_context_menu failed, fallback to HTML menu:", err);
+        this.toggleHtmlMenu();
+      });
+      return;
+    }
+    this.toggleHtmlMenu();
+  }
+
+  toggleHtmlMenu() {
     if (!this.elements.menuContainer) return;
     const isVisible = this.elements.menuContainer.style.display !== "none";
     const nextState = isVisible ? "none" : "block";

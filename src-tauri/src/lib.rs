@@ -591,16 +591,23 @@ async fn send_shiori_request(
     }
 }
 
-/// SHIORIにイベントを送信（簡易版）
+/// SHIORIにイベントを送信（簡易版・パラメータ指定対応）
 #[tauri::command]
 async fn send_shiori_event(
     state: tauri::State<'_, AppState>,
     event: String,
+    references: Option<Vec<String>>,
 ) -> Result<String, String> {
-    let req = format!(
-        "GET SHIORI/3.0\r\nID: {}\r\nSender: NanaiMascot\r\nCharset: UTF-8\r\n\r\n",
+    let mut req = format!(
+        "GET SHIORI/3.0\r\nID: {}\r\nSender: NanaiMascot\r\nCharset: UTF-8\r\n",
         event
     );
+    if let Some(refs) = references {
+        for (i, ref_val) in refs.iter().enumerate() {
+            req.push_str(&format!("Reference{}: {}\r\n", i, ref_val));
+        }
+    }
+    req.push_str("\r\n");
     send_shiori_request(state, req).await
 }
 

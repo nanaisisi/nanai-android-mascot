@@ -235,4 +235,58 @@ impl ShioriRequestBuilder {
             .header("Event", "OnSecondChange")
             .charset("UTF-8")
     }
+
+    /// OnMinuteChangeイベントのリクエストを作成
+    pub fn on_minute_change() -> Self {
+        ShioriRequestBuilder::new()
+            .method("NOTIFY")
+            .header("Event", "OnMinuteChange")
+            .charset("UTF-8")
+    }
+
+    /// OnWindowStateMinimizeイベントのリクエストを作成
+    pub fn on_window_state_minimize() -> Self {
+        ShioriRequestBuilder::new()
+            .method("NOTIFY")
+            .header("Event", "OnWindowStateMinimize")
+            .charset("UTF-8")
+    }
+
+    /// OnWindowStateRestoreイベントのリクエストを作成
+    pub fn on_window_state_restore() -> Self {
+        ShioriRequestBuilder::new()
+            .method("NOTIFY")
+            .header("Event", "OnWindowStateRestore")
+            .charset("UTF-8")
+    }
+
+    /// OnBIFFBeginイベントのリクエストを作成 (メールチェック開始)
+    pub fn on_biff_begin() -> Self {
+        ShioriRequestBuilder::new()
+            .method("NOTIFY")
+            .header("Event", "OnBIFFBegin")
+            .charset("UTF-8")
+    }
+
+    /// OnBIFFCompleteイベントのリクエストを作成 (メールチェック完了)
+    pub fn on_biff_complete(count: u32, size_bytes: u64) -> Self {
+        ShioriRequestBuilder::new()
+            .method("NOTIFY")
+            .header("Event", "OnBIFFComplete")
+            .reference(0, &count.to_string())
+            .reference(1, &size_bytes.to_string())
+            .charset("UTF-8")
+    }
+
+    /// 任意のイベント名と参照引数から汎用リクエストを作成
+    pub fn generic_event(event_name: &str, references: &[&str]) -> Self {
+        let mut builder = ShioriRequestBuilder::new()
+            .method("GET")
+            .header("Event", event_name)
+            .charset("UTF-8");
+        for (i, ref_val) in references.iter().enumerate() {
+            builder = builder.reference(i, ref_val);
+        }
+        builder
+    }
 }

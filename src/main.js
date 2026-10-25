@@ -322,6 +322,11 @@ export class NanaiAndroidMascotApp {
 
     if (action === "minimize") {
       this.hideMenu();
+      try {
+        this.ghostController.sendShioriEvent("OnWindowStateMinimize");
+      } catch (_e) {
+        // エラー無視
+      }
       if (isTauriAvailable()) {
         invoke("minimize_app").catch((err) => console.error("minimize_app failed:", err));
       }
@@ -524,10 +529,26 @@ export class NanaiAndroidMascotApp {
     let secondCounter = 0;
     const talkInterval = 60 + Math.floor(Math.random() * 30); // 60〜90秒ごとにランダムトーク
 
+    // ウィンドウ表示・復帰時のOnWindowStateRestoreハンドリング
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
+        this.ghostController.sendShioriEvent("OnWindowStateRestore");
+      }
+    });
+
     setInterval(async () => {
       secondCounter++;
 
       if (this.ghostController.currentGhost) {
+        // 60秒ごとのOnMinuteChange通知
+        if (secondCounter % 60 === 0) {
+          try {
+            await this.ghostController.sendShioriEvent("OnMinuteChange");
+          } catch (_e) {
+            // エラー無視
+          }
+        }
+
         if (isTauriAvailable()) {
           try {
             await invoke("on_second_change");

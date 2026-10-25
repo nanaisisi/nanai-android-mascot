@@ -6,19 +6,18 @@ use libloading::{Library, Symbol};
 use std::ffi::c_void;
 use std::path::{Path, PathBuf};
 
-pub type HGLOBAL = *mut c_void;
-type ShioriLoadFn = unsafe extern "C" fn(h: HGLOBAL, len: i64) -> i32;
+pub type Hglobal = *mut c_void;
+type ShioriLoadFn = unsafe extern "C" fn(h: Hglobal, len: i64) -> i32;
 type ShioriUnloadFn = unsafe extern "C" fn() -> i32;
-type ShioriRequestFn = unsafe extern "C" fn(h: HGLOBAL, len: *mut i64) -> HGLOBAL;
+type ShioriRequestFn = unsafe extern "C" fn(h: Hglobal, len: *mut i64) -> Hglobal;
 
 #[cfg(windows)]
 unsafe extern "system" {
-    fn GlobalAlloc(uFlags: u32, dwBytes: usize) -> HGLOBAL;
-    fn GlobalFree(hMem: HGLOBAL) -> HGLOBAL;
+    fn GlobalAlloc(uFlags: u32, dwBytes: usize) -> Hglobal;
+    fn GlobalFree(hMem: Hglobal) -> Hglobal;
 }
 
-
-
+#[allow(dead_code)]
 const GMEM_FIXED: u32 = 0x0000;
 
 pub struct ShioriDynamicEngine {
@@ -38,7 +37,8 @@ impl ShioriDynamicEngine {
     /// SHIORI DLL / .so を動的ロード
     pub fn load_library(dll_path: &Path) -> Result<Self, String> {
         let lib = unsafe {
-            Library::new(dll_path).map_err(|e| format!("Failed to load library {:?}: {}", dll_path, e))?
+            Library::new(dll_path)
+                .map_err(|e| format!("Failed to load library {:?}: {}", dll_path, e))?
         };
 
         let fn_load: ShioriLoadFn = unsafe {
@@ -103,7 +103,7 @@ impl ShioriDynamicEngine {
         unsafe {
             let mut buf = bytes.to_vec();
             buf.push(0);
-            let ptr = buf.as_mut_ptr() as HGLOBAL;
+            let ptr = buf.as_mut_ptr() as Hglobal;
             let res = (self.fn_load)(ptr, len);
             if res == 0 {
                 return Err("SHIORI load returned 0 (failed)".to_string());
@@ -158,7 +158,7 @@ impl ShioriDynamicEngine {
         unsafe {
             let mut buf = bytes.to_vec();
             buf.push(0);
-            let ptr = buf.as_mut_ptr() as HGLOBAL;
+            let ptr = buf.as_mut_ptr() as Hglobal;
             let result_ptr = (self.fn_request)(ptr, &mut len);
 
             if result_ptr.is_null() || len <= 0 {

@@ -1,7 +1,7 @@
+use encoding_rs::SHIFT_JIS;
 use std::fs::File;
 use std::io::{self, Read};
 use std::path::{Path, PathBuf};
-use encoding_rs::SHIFT_JIS;
 
 /// テキストファイルを自動判定（UTF-8 / BOM / Shift_JIS）で開き、UTF-8文字列として返す
 pub fn open_text_file(path: &Path) -> Result<String, io::Error> {

@@ -5,7 +5,7 @@ pub mod vfs;
 
 // 外部公開・後方互換のための再エクスポート
 pub use descript::Descript;
-pub use script::{execute_sakura_script, SakuraCommand};
+pub use script::{SakuraCommand, execute_sakura_script};
 pub use vfs::{open_shift_jis_file, open_text_file, resolve_vfs_path};
 
 #[cfg(test)]
@@ -22,7 +22,8 @@ mod tests {
 
     #[test]
     fn test_descript_parse() {
-        let sample = "charset,Shift_JIS\r\nname,SampleGhost\r\nsakura.name,Nanai\r\nkero.name,Mini\r\n";
+        let sample =
+            "charset,Shift_JIS\r\nname,SampleGhost\r\nsakura.name,Nanai\r\nkero.name,Mini\r\n";
         let desc = Descript::parse(sample);
         assert_eq!(desc.name().map(|s| s.as_str()), Some("SampleGhost"));
         assert_eq!(desc.sakura_name().map(|s| s.as_str()), Some("Nanai"));

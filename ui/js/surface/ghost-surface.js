@@ -60,6 +60,10 @@ export const ghostSurfaceMethods = {
         }
       }
 
+      if (this.currentSurfaces) {
+        this.currentSurfaces.set(scopeId, transparentSrc);
+      }
+
       if (isTauriAvailable()) {
         emit(`update-subchar-image-${scopeId}`, { src: transparentSrc });
       }

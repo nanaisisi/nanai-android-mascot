@@ -36,7 +36,7 @@ pub fn load_surface_image(
     let master_dir = base_ghost_path.join("shell").join("master");
 
     let surface_id_num = surface_id.parse::<u32>().unwrap_or(0);
-    let candidates = vec![
+    let mut candidates = vec![
         shell_dir.join(format!("surface{surface_id}.png")),
         shell_dir.join(format!("surface{surface_id_num:04}.png")),
         shell_dir.join(format!("surface{surface_id_num:02}.png")),
@@ -44,17 +44,28 @@ pub fn load_surface_image(
         shell_dir.join(format!("surface{surface_id}.pna")),
         shell_dir.join(format!("Surface{surface_id}.png")),
         shell_dir.join(format!("Surface{surface_id_num:04}.png")),
-        shell_dir.join("surface0.png"),
-        shell_dir.join("surface0000.png"),
-        shell_dir.join("surface0.svg"),
         master_dir.join(format!("surface{surface_id}.png")),
         master_dir.join(format!("surface{surface_id_num:04}.png")),
         master_dir.join(format!("surface{surface_id_num:02}.png")),
         master_dir.join(format!("surface{surface_id}.svg")),
-        master_dir.join("surface0.png"),
-        master_dir.join("surface0000.png"),
-        master_dir.join("surface0.svg"),
     ];
+
+    // surface_id が 0 または 10 の場合のみ、基本フォールバック (surface0.png / surface10.png) を候補末尾に追加
+    if surface_id_num == 0 {
+        candidates.push(shell_dir.join("surface0.png"));
+        candidates.push(shell_dir.join("surface0000.png"));
+        candidates.push(shell_dir.join("surface0.svg"));
+        candidates.push(master_dir.join("surface0.png"));
+        candidates.push(master_dir.join("surface0000.png"));
+        candidates.push(master_dir.join("surface0.svg"));
+    } else if surface_id_num == 10 {
+        candidates.push(shell_dir.join("surface10.png"));
+        candidates.push(shell_dir.join("surface0010.png"));
+        candidates.push(shell_dir.join("surface10.svg"));
+        candidates.push(master_dir.join("surface10.png"));
+        candidates.push(master_dir.join("surface0010.png"));
+        candidates.push(master_dir.join("surface10.svg"));
+    }
 
     for candidate in candidates {
         if candidate.exists()

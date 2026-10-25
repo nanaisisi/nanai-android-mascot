@@ -30,6 +30,8 @@ export class GhostController {
 		this.shells = [AppConfig.paths.fallbackShellName];
 		/** @type {string} */
 		this.currentShell = AppConfig.paths.fallbackShellName;
+		/** @type {Map<number, string>} 各スコープの最新サーフェス画像Srcキャッシュ */
+		this.currentSurfaces = new Map();
 	}
 
 	async autoLoadGhost() {

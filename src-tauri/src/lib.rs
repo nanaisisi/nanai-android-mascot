@@ -137,6 +137,8 @@ pub fn run() {
             window_cmds::hide_menu_window,
             window_cmds::show_submenu_window,
             window_cmds::hide_submenu_window,
+            window_cmds::show_subchar_window,
+            window_cmds::hide_subchar_window,
             install_cmds::install_ghost_archive,
             install_cmds::install_ghost_archive_bytes,
             file_cmds::load_surface_image

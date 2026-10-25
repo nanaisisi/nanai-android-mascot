@@ -313,3 +313,83 @@ pub async fn hide_submenu_window(app_handle: tauri::AppHandle) -> Result<(), Str
     }
     Ok(())
 }
+
+/// 汎用サブキャラクター（スコープ N）ウィンドウ表示コマンド
+#[tauri::command]
+#[allow(unused_variables)]
+pub async fn show_subchar_window(
+    app_handle: tauri::AppHandle,
+    scope_id: i32,
+    x: Option<f64>,
+    y: Option<f64>,
+    width: Option<f64>,
+    height: Option<f64>,
+) -> Result<(), String> {
+    #[cfg(desktop)]
+    {
+        use tauri::Manager;
+        let win_width = width.unwrap_or(200.0);
+        let win_height = height.unwrap_or(360.0);
+        let label = format!("subchar_window_{}", scope_id);
+
+        if let Some(sub_win) = app_handle.get_webview_window(&label) {
+            if let (Some(px), Some(py)) = (x, y) {
+                let _ = sub_win.set_position(tauri::Position::Physical(tauri::PhysicalPosition {
+                    x: px as i32,
+                    y: py as i32,
+                }));
+            }
+            let _ = sub_win.show();
+        } else {
+            // スコープ番号に応じて横に並べるデフォルト配置
+            let mut target_x = 300.0 + ((scope_id - 1) as f64 * 210.0);
+            let mut target_y = 200.0;
+
+            if let Some(main_win) = app_handle.get_webview_window("main") {
+                if let Ok(pos) = main_win.outer_position() {
+                    target_x = (pos.x + 360) as f64 + ((scope_id - 1) as f64 * 210.0);
+                    target_y = pos.y as f64 + 40.0;
+                }
+            }
+
+            if let (Some(px), Some(py)) = (x, y) {
+                target_x = px;
+                target_y = py;
+            }
+
+            let sub_win = tauri::WebviewWindowBuilder::new(
+                &app_handle,
+                &label,
+                tauri::WebviewUrl::App(format!("subcharacter.html?scope={}", scope_id).into()),
+            )
+            .title(format!("Nanai Mascot - Subcharacter {}", scope_id))
+            .inner_size(win_width, win_height)
+            .transparent(true)
+            .decorations(false)
+            .always_on_top(true)
+            .resizable(false)
+            .position(target_x, target_y)
+            .build()
+            .map_err(|e| e.to_string())?;
+
+            let _ = sub_win.show();
+        }
+    }
+    Ok(())
+}
+
+/// 汎用サブキャラクター（スコープ N）ウィンドウ非表示コマンド (\s[-1])
+#[tauri::command]
+#[allow(unused_variables)]
+pub async fn hide_subchar_window(app_handle: tauri::AppHandle, scope_id: i32) -> Result<(), String> {
+    #[cfg(desktop)]
+    {
+        let label = format!("subchar_window_{}", scope_id);
+        if let Some(sub_win) = app_handle.get_webview_window(&label) {
+            let _ = sub_win.hide();
+        }
+    }
+    Ok(())
+}
+
+

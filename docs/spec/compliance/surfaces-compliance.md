@@ -12,8 +12,8 @@ Nanai Android Mascot における「サーフィス定義（`surfaces.txt`）」
 - **規格**: surfaces.txt (SSP 2.x 互換仕様), PNA / アルファPNG
 - **対応度**: **85%**
 - **主要実装ファイル**:
-  - `src/js/surface.js`: HTML5 Canvas 2D による合成・拡大縮小・当たり判定
-  - `src/js/interaction.js`: タッチ/クリック座標変換および部位判定
+  - `src/js/surface/surface.js`: HTML5 Canvas 2D による合成・拡大縮小・当たり判定
+  - `src/js/surface/interaction.js`: タッチ/クリック座標変換および部位判定
   - `src-tauri/src/lib.rs`: 画像ファイル・`surfaces.txt` のエンコード自動判別読込
 
 ---

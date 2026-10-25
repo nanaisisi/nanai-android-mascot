@@ -64,18 +64,22 @@ sequenceDiagram
 - `src/submenu-iframe.html`: サブメニュー描画用HTML
 - `src/js/submenu.js`: サブメニュー項目レンダリングと選択時イベント通知
 - `src-tauri/src/lib.rs`: `show_submenu_window`, `hide_submenu_window` コマンドの実装
+- `src-tauri/capabilities/default.json`: `core:webview:allow-create-webview-window` 権限の付与
 
 ---
 
 ## 4. 段階的実装計画
 
-1. **Phase 1: Tauri側ウィンドウ管理コマンドの追加**:
+1. **Phase 1: Tauri側ウィンドウ管理コマンドの追加** [完了]:
    - `show_submenu_window(menu_type, screen_x, screen_y, items)` コマンドの実装。
    - `hide_submenu_window()` コマンドの実装。
-2. **Phase 2: サブメニュー用フロントエンドの実装**:
+   - WebviewWindow 生成権限（`core:webview:allow-create-webview-window`）の追加。
+2. **Phase 2: サブメニュー用フロントエンドの実装** [完了]:
    - `submenu-iframe.html` および `submenu.js` の作成。
    - バルーンスキン連動テーマ（`balloon-theme.css`）の適用。
-3. **Phase 3: メインメニュー (`classic-menu.js`) との結合**:
+3. **Phase 3: メインメニュー (`classic-menu.js`) との結合** [完了]:
    - ホバー／クリック時にスクリーン座標を算出して `show_submenu_window` を呼び出し。
-4. **Phase 4: 動作検証**:
+   - 非Tauri/iframe環境での左右反転表示フォールバック（`checkSubmenuFlip`）の実装。
+4. **Phase 4: 動作検証と実機結合テスト** [進行中]:
    - ウィンドウ吸着位置、クリック選択、自動消退（Auto-Dismiss）のテスト。
+   - デスクトップ環境での動作確認と実ゴーストデータ同期の安定性向上。

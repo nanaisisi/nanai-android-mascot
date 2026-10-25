@@ -26,13 +26,35 @@ fn build_yaya_shiori_stub() {
             .define("_WINDOWS", None)
             .define("_CRT_SECURE_NO_WARNINGS", None)
             .flag_if_supported("/EHsc"); // C++例外処理を有効化
-    } else if target.contains("android") || target.contains("linux") {
-        // Android/Linux固有の設定
+    } else if target.contains("android") {
+        // Android固有の設定
         build
             .define("POSIX", None)
             .define("ANDROID", None)
-            .flag_if_supported("-fexceptions") // C++例外処理を有効化
-            .flag_if_supported("-frtti"); // RTTI有効化
+            .define("__ANDROID__", None)
+            .flag_if_supported("-fexceptions")
+            .flag_if_supported("-frtti")
+            .flag_if_supported("-Wno-deprecated-declarations")
+            .flag_if_supported("-Wno-unused-parameter")
+            .flag_if_supported("-Wno-sign-compare");
+
+        // Android NDK のヘッダーパス自動探索
+        if let Ok(ndk) = std::env::var("NDK_HOME").or_else(|_| std::env::var("ANDROID_NDK_ROOT")) {
+            let ndk_path = Path::new(&ndk);
+            let sysroot_inc = ndk_path.join("toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/include");
+            let cxx_inc = sysroot_inc.join("c++/v1");
+            if cxx_inc.exists() {
+                build.include(&cxx_inc);
+            }
+            if sysroot_inc.exists() {
+                build.include(&sysroot_inc);
+            }
+        }
+    } else if target.contains("linux") {
+        build
+            .define("POSIX", None)
+            .flag_if_supported("-fexceptions")
+            .flag_if_supported("-frtti");
     }
 
     let cpp_interface_dir = Path::new("../src/cpp");
@@ -47,9 +69,8 @@ fn build_yaya_shiori_stub() {
     // Rust統合インターフェイスファイル
     build.file(cpp_interface_dir.join("yaya_rust_interface.cpp"));
 
-    // YAYAの基本ファイルを段階的に追加
-    if yaya_dir.exists() {
-        // 基本的なユーティリティファイル
+    // Windows環境でのみ段階的追加用の本家YAYA基本ファイルをコンパイル
+    if target.contains("windows") && yaya_dir.exists() {
         let basic_files = [
             "globalvariable.cpp",
             "basis.cpp",

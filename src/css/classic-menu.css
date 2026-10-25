@@ -134,6 +134,25 @@ body {
   display: block;
 }
 
+/* サブメニュー周辺の開き続ける当たり判定（セーフエリア・ブリッジ）: 
+   親ボタンからサブメニューへの移動時や、上下1〜2ボタン分（約30px）斜めに動かしても閉じないよう透明なヒット判定を配置 */
+.submenu-container::before {
+  content: "";
+  position: absolute;
+  top: -1.5rem;
+  bottom: -1.5rem;
+  left: -20px;
+  right: -10px;
+  z-index: -1;
+  pointer-events: auto;
+}
+
+.submenu-container.flip-left::before,
+.menu-item-wrapper.flip-left > .submenu-container::before {
+  left: -10px;
+  right: -20px;
+}
+
 /* ダークモード対応 */
 @media (prefers-color-scheme: dark) {
   body {

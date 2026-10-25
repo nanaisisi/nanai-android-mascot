@@ -131,8 +131,8 @@ function renderGhostSubmenu(ghosts, currentGhost) {
   container.appendChild(manageBtn);
 }
 
-// 独立サブメニューウィンドウを開く補助関数
-function triggerSubmenuWindow(menuType, buttonEl) {
+// 独立サブメニューウィンドウを開く補助関数 (必要時のオプション用)
+function _triggerSubmenuWindow(menuType, buttonEl) {
   if (globalThis.__TAURI__) {
     const invokeFn = globalThis.__TAURI__.core?.invoke || globalThis.__TAURI__.invoke;
     if (typeof invokeFn === "function") {
@@ -156,16 +156,10 @@ document.addEventListener("click", (e) => {
   const menuItem = e.target.closest(".menu-item");
   if (!menuItem) return;
 
-  // サブメニュー展開用の親ボタンはクリックで独立ウィンドウを開く
+  // サブメニュー展開用の親ボタンはクリックで開閉をトグル
   if (menuItem.classList.contains("has-submenu")) {
     const wrapper = menuItem.closest(".menu-item-wrapper");
-    let menuType = "ghost";
-    if (menuItem.id === "shell-switch-btn") menuType = "shell";
-    if (menuItem.id === "scale-menu-btn") menuType = "scale";
-
-    if (globalThis.__TAURI__) {
-      triggerSubmenuWindow(menuType, menuItem);
-    } else if (wrapper) {
+    if (wrapper) {
       const isAlreadyOpen = wrapper.classList.contains("open");
       document.querySelectorAll(".menu-item-wrapper.open").forEach((el) => {
         el.classList.remove("open");

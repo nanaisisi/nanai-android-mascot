@@ -144,6 +144,7 @@ document.addEventListener("click", (e) => {
         el.classList.remove("open");
       });
       if (!isAlreadyOpen) {
+        checkSubmenuFlip(wrapper);
         wrapper.classList.add("open");
       }
     }
@@ -152,6 +153,30 @@ document.addEventListener("click", (e) => {
 
   const action = menuItem.id.replace("-btn", "");
   dispatchAction(action);
+});
+
+// SSP準拠: サブメニューが画面右端を超える場合は左側へ反転展開
+function checkSubmenuFlip(wrapper) {
+  const container = document.querySelector(".menu-container");
+  if (!container) return;
+
+  const containerRect = container.getBoundingClientRect();
+  const submenuWidth = 240; // およそのサブメニュー幅
+  const spaceOnRight = window.innerWidth - containerRect.right;
+
+  // 右側にサブメニューを出す十分なスペースがない場合は左側に展開
+  if (spaceOnRight < submenuWidth) {
+    wrapper.classList.add("flip-left");
+  } else {
+    wrapper.classList.remove("flip-left");
+  }
+}
+
+// ホバー時にも右/左展開を判定
+document.querySelectorAll(".menu-item-wrapper").forEach((wrapper) => {
+  wrapper.addEventListener("mouseenter", () => {
+    checkSubmenuFlip(wrapper);
+  });
 });
 
 // 初期化時に親ウィンドウへ同期リクエスト

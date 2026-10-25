@@ -1,5 +1,5 @@
 import { ShioriProtocol } from "./shiori-protocol.js";
-import { invoke, isTauriAvailable } from "./tauri-helper.js";
+import { invoke, isTauriAvailable, convertFileSrc } from "./tauri-helper.js";
 import { AppConfig } from "./config.js";
 
 /**
@@ -219,12 +219,16 @@ export class GhostController {
     }
 
     const fallbackSurface = scopeId === 1 ? 10 : 0;
+    const imgUrl = convertFileSrc(`${ghostPath}/shell/${shell}/surface${surfaceId}.png`);
+    const fallbackPngUrl = convertFileSrc(`${ghostPath}/shell/${shell}/surface${fallbackSurface}.png`);
+    const fallbackSvgUrl = convertFileSrc(`${ghostPath}/shell/${shell}/surface${fallbackSurface}.svg`);
+
     const img = document.querySelector(selector);
     if (!img && placeholder) {
-      placeholder.innerHTML = `<img src="${ghostPath}/shell/${shell}/surface${surfaceId}.png" 
+      placeholder.innerHTML = `<img src="${imgUrl}" 
                                      alt="scope${scopeId}" 
                                      style="width: 100%; height: 100%; object-fit: contain;"
-                                     onerror="this.onerror=null; this.src='${ghostPath}/shell/${shell}/surface${fallbackSurface}.svg';">`;
+                                     onerror="this.onerror=null; this.src='${fallbackSvgUrl}';">`;
       return;
     }
 
@@ -232,11 +236,11 @@ export class GhostController {
       img.onerror = () => {
         img.onerror = () => {
           img.onerror = null;
-          img.src = `${ghostPath}/shell/${shell}/surface${fallbackSurface}.svg`;
+          img.src = fallbackSvgUrl;
         };
-        img.src = `${ghostPath}/shell/${shell}/surface${fallbackSurface}.png`;
+        img.src = fallbackPngUrl;
       };
-      img.src = `${ghostPath}/shell/${shell}/surface${surfaceId}.png`;
+      img.src = imgUrl;
     }
   }
 
@@ -251,12 +255,13 @@ export class GhostController {
 
     const ghostPath = this.currentGhost?.path || `${AppConfig.paths.defaultGhostDir}/${ghostName}`;
     const shell = this.currentShell || AppConfig.paths.fallbackShellName;
-    const imgPath = `${ghostPath}/shell/${shell}/surface0.png`;
-    const svgPath = `${ghostPath}/shell/${shell}/surface0.svg`;
-    sakuraPlaceholder.innerHTML = `<img src="${imgPath}" 
+    const imgUrl = convertFileSrc(`${ghostPath}/shell/${shell}/surface0.png`);
+    const svgUrl = convertFileSrc(`${ghostPath}/shell/${shell}/surface0.svg`);
+
+    sakuraPlaceholder.innerHTML = `<img src="${imgUrl}" 
                                    alt="${ghostName}" 
                                    style="width: 100%; height: 100%; object-fit: contain; pointer-events: auto;" 
-                                   onerror="console.error('❌ 画像読み込み失敗: ' + this.src); this.onerror=null; this.src='${svgPath}';">`;
+                                   onerror="console.warn('画像フォールバック適用:', this.src); this.onerror=() => { this.style.display='none'; }; this.src='${svgUrl}';">`;
     sakuraPlaceholder.title = ghostName || "";
   }
 

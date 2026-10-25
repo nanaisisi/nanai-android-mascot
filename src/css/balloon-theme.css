@@ -1,0 +1,94 @@
+/* ====================================================
+   Nanai Android Mascot - バルーン & メニュー統合デザインシステム
+   SSP / ukadoc オーナードローメニュー互換トークン
+   ==================================================== */
+
+:root {
+  /* デフォルト（モダンニュートラル） */
+  --balloon-bg: #f9f9f9;
+  --balloon-pattern: none;
+  --balloon-border-color: #7a7a7a;
+  --balloon-border-width: 1px;
+  --balloon-border-style: solid;
+  --balloon-border-radius: 6px;
+  --balloon-box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.35);
+  --balloon-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Meiryo", sans-serif;
+  --balloon-font-size: 13px;
+  --balloon-text-color: #111111;
+  --balloon-highlight-bg: #0078d7;
+  --balloon-highlight-text: #ffffff;
+  --balloon-separator-color: #dcdcdc;
+  --balloon-tail-color: #f9f9f9;
+}
+
+/* 象牙色レトロ伺かスキン (クラシックSSP風) */
+[data-balloon-theme="classic"],
+body.balloon-theme-classic {
+  --balloon-bg: #ffffea;
+  --balloon-pattern: none;
+  --balloon-border-color: #555555;
+  --balloon-border-width: 2px;
+  --balloon-border-style: solid;
+  --balloon-border-radius: 4px;
+  --balloon-box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.45);
+  --balloon-font-family: "MS UI Gothic", "Meiryo", sans-serif;
+  --balloon-text-color: #000000;
+  --balloon-highlight-bg: #000080;
+  --balloon-highlight-text: #ffffff;
+  --balloon-separator-color: #777777;
+  --balloon-tail-color: #ffffea;
+}
+
+/* ドット絵・ピクセル風スキン (レトロゲームドットデザイン) */
+[data-balloon-theme="pixel"],
+body.balloon-theme-pixel {
+  --balloon-bg: #222228;
+  --balloon-pattern: radial-gradient(#33333d 15%, transparent 16%);
+  --balloon-border-color: #00ffcc;
+  --balloon-border-width: 3px;
+  --balloon-border-style: solid;
+  --balloon-border-radius: 0px;
+  --balloon-box-shadow: 4px 4px 0px #005544;
+  --balloon-font-family: "Consolas", "Courier New", monospace;
+  --balloon-text-color: #ffffff;
+  --balloon-highlight-bg: #00ffcc;
+  --balloon-highlight-text: #000000;
+  --balloon-separator-color: #00ffcc;
+  --balloon-tail-color: #222228;
+}
+
+/* ポップコミック風スキン (太枠 & 丸み) */
+[data-balloon-theme="comic"],
+body.balloon-theme-comic {
+  --balloon-bg: #ffffff;
+  --balloon-pattern: none;
+  --balloon-border-color: #222222;
+  --balloon-border-width: 3px;
+  --balloon-border-style: solid;
+  --balloon-border-radius: 20px;
+  --balloon-box-shadow: 4px 4px 0px #222222;
+  --balloon-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --balloon-text-color: #111111;
+  --balloon-highlight-bg: #ffbb00;
+  --balloon-highlight-text: #000000;
+  --balloon-separator-color: #222222;
+  --balloon-tail-color: #ffffff;
+}
+
+/* サイバーダークスキン (夜間・ハイコントラスト) */
+[data-balloon-theme="dark"],
+body.balloon-theme-dark {
+  --balloon-bg: rgba(26, 28, 36, 0.95);
+  --balloon-pattern: none;
+  --balloon-border-color: rgba(255, 255, 255, 0.18);
+  --balloon-border-width: 1px;
+  --balloon-border-style: solid;
+  --balloon-border-radius: 8px;
+  --balloon-box-shadow: 0 8px 32px rgba(0, 0, 0, 0.65);
+  --balloon-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --balloon-text-color: #f0f0f0;
+  --balloon-highlight-bg: #4a69bd;
+  --balloon-highlight-text: #ffffff;
+  --balloon-separator-color: rgba(255, 255, 255, 0.12);
+  --balloon-tail-color: rgba(26, 28, 36, 0.95);
+}

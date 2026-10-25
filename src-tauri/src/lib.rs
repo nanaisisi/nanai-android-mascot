@@ -505,12 +505,14 @@ async fn exit_app(app_handle: tauri::AppHandle) -> Result<(), String> {
     Ok(())
 }
 
-/// OSネイティブのコンテキストメニュー表示コマンド (ウィンドウ枠にとらわれず自由に展開)
+/// OSネイティブのコンテキストメニュー表示コマンド (SSP / ukadoc 仕様準拠のメニュー再編)
 #[tauri::command]
 async fn show_context_menu(
     app_handle: tauri::AppHandle,
     ghosts: Vec<String>,
     current_ghost: Option<String>,
+    shells: Vec<String>,
+    current_shell: Option<String>,
 ) -> Result<(), String> {
     #[cfg(desktop)]
     {
@@ -518,8 +520,8 @@ async fn show_context_menu(
             .get_webview_window("main")
             .ok_or("main window not found")?;
 
-        let mut ghost_submenu_builder = SubmenuBuilder::new(&app_handle, "👻 ゴースト切り替え");
-
+        // 1. ゴースト切り替えサブメニュー
+        let mut ghost_submenu_builder = SubmenuBuilder::new(&app_handle, "👻 ゴースト切り替え (G)");
         for g in &ghosts {
             let label = if current_ghost.as_ref() == Some(g) {
                 format!("✓ {}", g)
@@ -528,22 +530,115 @@ async fn show_context_menu(
             };
             ghost_submenu_builder = ghost_submenu_builder.text(format!("ghost:{}", g), label);
         }
+        if !ghosts.is_empty() {
+            ghost_submenu_builder = ghost_submenu_builder.separator();
+        }
+        ghost_submenu_builder = ghost_submenu_builder.text("ghost", "📂 ゴースト一覧・管理...");
         let ghost_submenu = ghost_submenu_builder.build().map_err(|e| e.to_string())?;
 
+        // 2. 着せ替え・シェル切り替えサブメニュー
+        let mut shell_submenu_builder = SubmenuBuilder::new(&app_handle, "👗 着せ替え・シェル (C)");
+        let active_shell = current_shell.as_deref().unwrap_or("master");
+        for s in &shells {
+            let label = if s == active_shell {
+                format!("✓ {}", s)
+            } else {
+                format!("   {}", s)
+            };
+            shell_submenu_builder = shell_submenu_builder.text(format!("shell:{}", s), label);
+        }
+        let shell_submenu = shell_submenu_builder.build().map_err(|e| e.to_string())?;
+
+        // 3. シェル倍率サブメニュー
+        let scale_submenu = SubmenuBuilder::new(&app_handle, "🔍 シェル倍率 (S)")
+            .text("scale-50", "50%")
+            .text("scale-75", "75%")
+            .text("scale-100", "100% (標準)")
+            .text("scale-125", "125%")
+            .text("scale-150", "150%")
+            .text("scale-200", "200%")
+            .build()
+            .map_err(|e| e.to_string())?;
+
+        // SSP標準階層メニュー構築
         let menu = MenuBuilder::new(&app_handle)
+            // トーク
             .text("talk", "💬 もう一度話す (T)")
             .separator()
+            // ゴースト・外観
             .item(&ghost_submenu)
+            .item(&shell_submenu)
+            .item(&scale_submenu)
+            .text("balloon", "💭 バルーン設定 (B)")
             .separator()
+            // ツール・拡張
+            .text("update", "🌐 ネットワーク更新 (U)")
+            .text("headline", "📰 ヘッドライン/ニュース (H)")
             .text("install", "📥 ファイル取り込み・導入 (I)")
             .text("scan", "📂 フォルダ再スキャン (R)")
+            .text("plugins", "🧩 プラグイン・拡張機能 (P)")
             .separator()
-            .text("minimize", "🗕 最小化")
-            .text("exit", "❌ 終了")
+            // 設定・ヘルプ
+            .text("settings", "⚙️ 設定 (O)")
+            .text("debug", "🐛 デバッグログ (D)")
+            .text("help", "❓ 情報・ヘルプ (A)")
+            .text("license", "📜 著作権・ライセンス表示 (L)")
+            .separator()
+            // ウィンドウ操作・終了
+            .text("minimize", "🗕 アイコン化・隠す (I)")
+            .text("exit", "❌ 終了 (W)")
             .build()
             .map_err(|e| e.to_string())?;
 
         window.popup_menu(&menu).map_err(|e| e.to_string())?;
+    }
+    Ok(())
+}
+
+/// バルーンスキン連動の独立ポップアップメニューウィンドウ表示コマンド (ウィンドウ枠外にはみ出して表示可能)
+#[tauri::command]
+async fn show_menu_window(app_handle: tauri::AppHandle, x: f64, y: f64) -> Result<(), String> {
+    #[cfg(desktop)]
+    {
+        if let Some(menu_win) = app_handle.get_webview_window("menu_window") {
+            let _ = menu_win.set_position(tauri::Position::Physical(tauri::PhysicalPosition {
+                x: x as i32,
+                y: y as i32,
+            }));
+            let _ = menu_win.show();
+            let _ = menu_win.set_focus();
+        } else {
+            let menu_win = tauri::WebviewWindowBuilder::new(
+                &app_handle,
+                "menu_window",
+                tauri::WebviewUrl::App("menu-iframe.html".into()),
+            )
+            .title("Nanai Menu")
+            .inner_size(460.0, 560.0)
+            .transparent(true)
+            .decorations(false)
+            .always_on_top(true)
+            .skip_taskbar(true)
+            .resizable(false)
+            .position(x, y)
+            .build()
+            .map_err(|e| e.to_string())?;
+
+            let _ = menu_win.show();
+            let _ = menu_win.set_focus();
+        }
+    }
+    Ok(())
+}
+
+/// メニューウィンドウ非表示コマンド
+#[tauri::command]
+async fn hide_menu_window(app_handle: tauri::AppHandle) -> Result<(), String> {
+    #[cfg(desktop)]
+    {
+        if let Some(menu_win) = app_handle.get_webview_window("menu_window") {
+            let _ = menu_win.hide();
+        }
     }
     Ok(())
 }
@@ -768,6 +863,14 @@ pub fn run() {
                         "payload": ghost_name
                     }),
                 );
+            } else if let Some(shell_name) = id.strip_prefix("shell:") {
+                let _ = app_handle.emit(
+                    "native-menu-action",
+                    serde_json::json!({
+                        "action": "switch-to-shell",
+                        "payload": shell_name
+                    }),
+                );
             } else if id == "open" {
                 if let Some(window) = app_handle.get_webview_window("main") {
                     let _ = window.show();
@@ -782,6 +885,13 @@ pub fn run() {
                         "action": id
                     }),
                 );
+            }
+        })
+        .on_window_event(|window, event| {
+            if window.label() == "menu_window"
+                && let tauri::WindowEvent::Focused(false) = event
+            {
+                let _ = window.hide();
             }
         })
         .plugin(tauri_plugin_opener::init())
@@ -806,6 +916,8 @@ pub fn run() {
             minimize_app,
             exit_app,
             show_context_menu,
+            show_menu_window,
+            hide_menu_window,
             install_ghost_archive,
             install_ghost_archive_bytes,
             load_surface_image

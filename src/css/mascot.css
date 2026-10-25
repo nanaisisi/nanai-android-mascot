@@ -128,6 +128,8 @@
   }
 }
 
+@import "balloon-theme.css";
+
 /* バルーン表示 */
 .balloon-display {
   position: absolute;
@@ -139,48 +141,17 @@
 }
 
 .balloon {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 20px;
-  padding: 15px 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  background-color: var(--balloon-bg);
+  background-image: var(--balloon-pattern);
+  border-radius: var(--balloon-border-radius);
+  border: var(--balloon-border-width) var(--balloon-border-style) var(--balloon-border-color);
+  box-shadow: var(--balloon-box-shadow);
+  padding: 14px 18px;
   position: relative;
   max-width: 280px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-/* バルーンテーマ: クラシック伺か */
-.balloon.balloon-theme-classic {
-  background: #ffffea;
-  border: 2px solid #555555;
-  border-radius: 6px;
-  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.4);
-}
-.balloon.balloon-theme-classic::before {
-  border-top-color: #ffffea;
-}
-
-/* バルーンテーマ: コミック（丸み & 太枠） */
-.balloon.balloon-theme-comic {
-  background: #ffffff;
-  border: 3px solid #222222;
-  border-radius: 24px;
-  box-shadow: 4px 4px 0px #222222;
-}
-
-/* バルーンテーマ: ダークモダン */
-.balloon.balloon-theme-dark {
-  background: rgba(30, 30, 35, 0.92);
-  color: #eeeeee;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
-}
-.balloon.balloon-theme-dark .balloon-text {
-  color: #f0f0f0;
-}
-.balloon.balloon-theme-dark::before {
-  border-top-color: rgba(30, 30, 35, 0.92);
+  font-family: var(--balloon-font-family);
+  color: var(--balloon-text-color);
+  transition: all 0.25s ease;
 }
 
 .balloon::before {
@@ -192,14 +163,15 @@
   height: 0;
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
-  border-top: 10px solid rgba(255, 255, 255, 0.95);
+  border-top: 10px solid var(--balloon-tail-color);
 }
 
 .balloon-text {
-  color: #333;
+  color: var(--balloon-text-color);
+  font-family: inherit;
+  font-size: var(--balloon-font-size);
   text-align: left;
   margin: 0;
-  font-size: 13px;
   line-height: 1.5;
   word-break: break-word;
 }

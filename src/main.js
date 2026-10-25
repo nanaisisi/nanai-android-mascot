@@ -3,12 +3,13 @@ import { InteractionManager } from "./js/interaction.js";
 import { ModalManager } from "./js/modal.js";
 import { SakuraScriptPlayer } from "./js/sakura-script.js";
 import { SurfaceManager } from "./js/surface.js";
-import { invoke, isTauriAvailable, listen } from "./js/tauri-helper.js";
+import { emit, invoke, isTauriAvailable, listen } from "./js/tauri-helper.js";
 import { AppConfig } from "./js/config.js";
 
 export class NanaiAndroidMascotApp {
   constructor() {
     this.isInitialized = false;
+    this.currentBalloonTheme = "classic";
     this.settings = {
       autoLoadGhost: true,
       enableNotifications: true,
@@ -129,12 +130,13 @@ export class NanaiAndroidMascotApp {
     // メニュー表示切り替え
     this.elements.menuBtn?.addEventListener("click", (e) => {
       e.stopPropagation();
-      this.toggleMenu();
+      const rect = this.elements.menuBtn.getBoundingClientRect();
+      this.toggleMenu(e.screenX || (window.screenX + rect.right), e.screenY || (window.screenY + rect.bottom));
     });
 
     this.elements.quickBubble?.addEventListener("click", (e) => {
       e.stopPropagation();
-      this.toggleMenu();
+      this.toggleMenu(e.screenX, e.screenY);
     });
 
     document.addEventListener("click", () => {
@@ -148,7 +150,7 @@ export class NanaiAndroidMascotApp {
 
     document.addEventListener("contextmenu", (e) => {
       e.preventDefault();
-      this.toggleMenu();
+      this.toggleMenu(e.screenX, e.screenY);
     });
 
     // キーボードショートカット
@@ -162,7 +164,14 @@ export class NanaiAndroidMascotApp {
       }
     });
 
-    // OSネイティブコンテキストメニューからのイベント受信
+    // 独立メニューウィンドウ / ネイティブメニューからのイベント受信
+    listen("menu-action", (event) => {
+      const data = event.payload;
+      if (data) {
+        this.handleMenuAction(data.action, data.payload);
+      }
+    });
+
     listen("native-menu-action", (event) => {
       const data = event.payload;
       if (data) {
@@ -211,6 +220,23 @@ export class NanaiAndroidMascotApp {
 
     if (action === "install") {
       this.modalManager?.openModal("install");
+      return;
+    }
+
+    if (action === "balloon") {
+      const themes = ["classic", "pixel", "comic", "dark"];
+      const currentIndex = themes.indexOf(this.currentBalloonTheme);
+      const nextTheme = themes[(currentIndex + 1) % themes.length];
+      this.setBalloonTheme(nextTheme);
+
+      const themeLabels = {
+        classic: "クラシック伺か（象牙色レトロ）",
+        pixel: "ドット絵・ピクセル風（レトロゲーム）",
+        comic: "ポップコミック（太枠丸み）",
+        dark: "サイバーダーク（夜間・ハイコントラスト）",
+      };
+      this.showBalloon(`バルーンスキンを「${themeLabels[nextTheme] || nextTheme}」に変更しました`);
+      setTimeout(() => this.hideBalloon(), 2000);
       return;
     }
 
@@ -269,6 +295,19 @@ export class NanaiAndroidMascotApp {
     this.modalManager?.show(contentId);
   }
 
+  setBalloonTheme(themeName) {
+    this.currentBalloonTheme = themeName;
+    document.documentElement.setAttribute("data-balloon-theme", themeName);
+    document.body.className = `balloon-theme-${themeName}`;
+    if (this.elements.balloonDisplay) {
+      this.elements.balloonDisplay.setAttribute("data-balloon-theme", themeName);
+    }
+    // メニューウィンドウへもテーマ同期
+    if (isTauriAvailable()) {
+      emit("sync-theme", themeName);
+    }
+  }
+
   onGhostClick(clientX, clientY, rect, scopeId = 0) {
     let partName = "";
     if (clientX !== undefined && clientY !== undefined && rect) {
@@ -296,16 +335,29 @@ export class NanaiAndroidMascotApp {
     this.ghostController.sendShioriEvent("OnMouseMove", ["", partName, scopeId]);
   }
 
-  toggleMenu() {
+  toggleMenu(screenX = null, screenY = null) {
     if (isTauriAvailable()) {
-      const ghostNames = (this.ghostController.ghosts || []).map((g) => g.name);
-      const currentGhostName = this.ghostController.currentGhost?.name || null;
-      invoke("show_context_menu", {
-        ghosts: ghostNames,
-        currentGhost: currentGhostName,
+      const posX = screenX !== null ? screenX : (window.screenX + 200);
+      const posY = screenY !== null ? screenY : (window.screenY + 100);
+
+      // 独立したバルーンスキン連動メニューウィンドウを表示 (枠外にはみ出して表示可能)
+      invoke("show_menu_window", {
+        x: posX,
+        y: posY,
+      }).then(() => {
+        this.syncMenuGhosts();
       }).catch((err) => {
-        console.warn("show_context_menu failed, fallback to HTML menu:", err);
-        this.toggleHtmlMenu();
+        console.warn("show_menu_window failed, fallback to show_context_menu:", err);
+        const ghostNames = (this.ghostController.ghosts || []).map((g) => g.name);
+        const currentGhostName = this.ghostController.currentGhost?.name || null;
+        const shellNames = this.ghostController.shells || ["master"];
+        const currentShellName = this.ghostController.currentShell || "master";
+        invoke("show_context_menu", {
+          ghosts: ghostNames,
+          currentGhost: currentGhostName,
+          shells: shellNames,
+          currentShell: currentShellName,
+        }).catch(() => this.toggleHtmlMenu());
       });
       return;
     }
@@ -324,9 +376,25 @@ export class NanaiAndroidMascotApp {
   }
 
   syncMenuGhosts() {
+    const ghostNames = (this.ghostController.ghosts || []).map((g) => g.name);
+    const currentGhostName = this.ghostController.currentGhost?.name || null;
+    const shellNames = this.ghostController.shells || ["master"];
+    const currentShellName = this.ghostController.currentShell || "master";
+
+    // 独立メニューウィンドウへの状態同期
+    if (isTauriAvailable()) {
+      emit("sync-ghosts", {
+        ghosts: this.ghostController.ghosts || [{ name: AppConfig.paths.fallbackGhostName }],
+        currentGhost: this.ghostController.currentGhost,
+        shells: shellNames,
+        currentShell: currentShellName,
+      });
+      emit("sync-theme", this.currentBalloonTheme);
+    }
+
+    // iframe メニューへの同期 (フォールバック)
     const iframe = document.getElementById("menu-iframe");
     if (iframe?.contentWindow) {
-      // ゴースト一覧同期
       iframe.contentWindow.postMessage(
         {
           type: "sync-ghosts",
@@ -335,12 +403,18 @@ export class NanaiAndroidMascotApp {
         },
         "*"
       );
-      // シェル一覧同期
       iframe.contentWindow.postMessage(
         {
           type: "sync-shells",
-          shells: this.ghostController.shells || [AppConfig.paths.fallbackShellName],
-          currentShell: this.ghostController.currentShell || AppConfig.paths.fallbackShellName,
+          shells: shellNames,
+          currentShell: currentShellName,
+        },
+        "*"
+      );
+      iframe.contentWindow.postMessage(
+        {
+          type: "sync-theme",
+          theme: this.currentBalloonTheme,
         },
         "*"
       );

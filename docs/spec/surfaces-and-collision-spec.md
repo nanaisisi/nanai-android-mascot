@@ -1,4 +1,10 @@
-# surfaces.txt アニメーション合成 & 当たり判定（Collision）仕様書
+﻿# surfaces.txt アニメーション合成 & 当たり判定（Collision）仕様書
+
+- **言及規格の元ドキュメント・権利者・ライセンス**:
+  - **SSP 互換拡張 / ポップアップメニュー規格**: [SSP BUG-SLIK-PRACTICE / 仕様リファレンス](http://ssp.shillest.net/) - © PONapook 氏 / SSP開発チーム (SSP リファレンス仕様)
+  - **伺か (Ukagaka) / ゴースト / シェル**: [伺か / 偽春菜 / あれ以外の何か with「何か」](https://ukatech.shillest.net/ukadoc-spec/) - © MATERIA開発チーム / うさださくら 氏 / コミュニティ有志 (コミュニティ規格 / オープンドキュメント)
+  - **surfaces.txt / アニメーション合成 / 当たり判定**: [ukadoc: surfaces.txt](https://ukatech.shillest.net/ukadoc-spec/spec/surfaces/) - © MATERIA開発チーム / SSP開発チーム / ukadoc プロジェクト (ukadoc 仕様 / パブリックリファレンス)
+  - **SHIORI / 各SHIORIサブシステム (里々, YAYA, 華和梨 等)**: [ukadoc: SHIORI/3.0](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/) - © MATERIA開発チーム / 里々開発チーム / YAYA開発チーム / 華和梨開発チーム / ukadoc プロジェクト (ukadoc 仕様 / 各コミュニティライセンス)
 
 本仕様書は、**nanai-android-mascot** におけるゴーストのシェル定義ファイル（`surfaces.txt`）の解析、複数画像のレイヤー合成・アニメーション再生、およびタッチ・マウスクリック時の部位判定（Collision）の仕様を定義します。
 

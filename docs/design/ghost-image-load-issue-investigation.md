@@ -1,4 +1,8 @@
-# ゴースト・シェル画像未描画（壊れた画像アイコン表示）の修正検討書
+﻿# ゴースト・シェル画像未描画（壊れた画像アイコン表示）の修正検討書
+
+- **言及規格の元ドキュメント・権利者・ライセンス**:
+  - **伺か (Ukagaka) / ゴースト / シェル**: [伺か / 偽春菜 / あれ以外の何か with「何か」](https://ukatech.shillest.net/ukadoc-spec/) - © MATERIA開発チーム / うさださくら 氏 / コミュニティ有志 (コミュニティ規格 / オープンドキュメント)
+  - **surfaces.txt / アニメーション合成 / 当たり判定**: [ukadoc: surfaces.txt](https://ukatech.shillest.net/ukadoc-spec/spec/surfaces/) - © MATERIA開発チーム / SSP開発チーム / ukadoc プロジェクト (ukadoc 仕様 / パブリックリファレンス)
 
 ## 1. 概要と現象
 

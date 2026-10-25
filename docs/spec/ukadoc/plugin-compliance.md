@@ -1,7 +1,10 @@
 ﻿# PLUGIN/2.0 規格対応仕様 (PLUGIN/2.0 Compliance)
 
 - **仕様リファレンス**: [ukatech/ukadoc-spec: PLUGIN/2.0](https://ukatech.shillest.net/ukadoc-spec/spec/plugin/)
-- **元ドキュメント・権利者**: [ukatech/ukadoc-spec: PLUGIN](https://ukatech.shillest.net/ukadoc-spec/spec/plugin/) - © MATERIA開発チーム / SSP開発チーム / ukadoc プロジェクト (ukadoc 仕様 / パブリックリファレンス)
+- **言及規格の元ドキュメント・権利者・ライセンス**:
+  - **PLUGIN 規格**: [ukadoc: PLUGIN](https://ukatech.shillest.net/ukadoc-spec/spec/plugin/) - © MATERIA開発チーム / SSP開発チーム / ukadoc プロジェクト (ukadoc 仕様 / パブリックリファレンス)
+  - **伺か (Ukagaka) / ゴースト / シェル**: [伺か / 偽春菜 / あれ以外の何か with「何か」](https://ukatech.shillest.net/ukadoc-spec/) - © MATERIA開発チーム / うさださくら 氏 / コミュニティ有志 (コミュニティ規格 / オープンドキュメント)
+
 - **プロトコル**: PLUGIN/2.0 (DLL / WASM / WebWorker)
 - **対応ステータス**: **設計・一部実装（50%）**
 

@@ -72,8 +72,8 @@ fn load_surface_image(
 ) -> Result<String, String> {
     use std::fs;
     let clean_gp = clean_verbatim_path(&ghost_path);
-    let base_ghost_path = resolve_asset_path(&clean_gp, &app_handle)
-        .unwrap_or_else(|_| PathBuf::from(&clean_gp));
+    let base_ghost_path =
+        resolve_asset_path(&clean_gp, &app_handle).unwrap_or_else(|_| PathBuf::from(&clean_gp));
 
     let shell_dir = base_ghost_path.join("shell").join(&shell_name);
     let master_dir = base_ghost_path.join("shell").join("master");
@@ -386,7 +386,8 @@ async fn send_shiori_request(
         .unwrap_or_else(|| "Unknown".to_string());
 
     // SHIORIモジュールがロードされていない場合は 311 No Content を返却
-    let response = "SHIORI/3.0 311 No Content\r\nSender: NanaiRustCore\r\nCharset: UTF-8\r\n\r\n".to_string();
+    let response =
+        "SHIORI/3.0 311 No Content\r\nSender: NanaiRustCore\r\nCharset: UTF-8\r\n\r\n".to_string();
     Ok(response)
 }
 
@@ -630,8 +631,7 @@ async fn install_ghost_archive(
     let file = std::fs::File::open(&clean)
         .map_err(|e| format!("Failed to open archive '{}': {}", clean, e))?;
 
-    let zip = zip::ZipArchive::new(file)
-        .map_err(|e| format!("Invalid zip/nar archive: {}", e))?;
+    let zip = zip::ZipArchive::new(file).map_err(|e| format!("Invalid zip/nar archive: {}", e))?;
 
     let p = Path::new(&clean);
     let fallback = p
@@ -649,10 +649,14 @@ async fn install_ghost_archive_bytes(
     bytes: Vec<u8>,
     app_handle: tauri::AppHandle,
 ) -> Result<GhostInfo, String> {
-    println!("📦 Installing ghost archive from memory bytes: {} ({} bytes)", file_name, bytes.len());
+    println!(
+        "📦 Installing ghost archive from memory bytes: {} ({} bytes)",
+        file_name,
+        bytes.len()
+    );
     let reader = std::io::Cursor::new(bytes);
-    let zip = zip::ZipArchive::new(reader)
-        .map_err(|e| format!("Invalid zip/nar archive: {}", e))?;
+    let zip =
+        zip::ZipArchive::new(reader).map_err(|e| format!("Invalid zip/nar archive: {}", e))?;
 
     let p = Path::new(&file_name);
     let fallback = p

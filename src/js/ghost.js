@@ -131,8 +131,6 @@ export class GhostController {
     this.initializeGhostSHIORI(ghost);
     this.currentShell = AppConfig.paths.fallbackShellName;
     this.app.surfaceManager.loadSurfacesTxt(ghost.path || `${AppConfig.paths.defaultGhostDir}/${ghostName}`);
-    this.app.showBalloon(`ゴースト「${ghostName}」を選択しました。`);
-    setTimeout(() => this.app.hideBalloon(), 2000);
   }
 
 
@@ -150,8 +148,6 @@ export class GhostController {
 
     // SHIORIへの通知
     this.sendShioriEvent("OnShellChanged", [shellName]);
-    this.app.showBalloon(`シェルを「${shellName}」に変更しました。`);
-    setTimeout(() => this.app.hideBalloon(), 1500);
   }
 
 

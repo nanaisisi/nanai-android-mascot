@@ -83,7 +83,8 @@ export class NanaiAndroidMascotApp {
         // エラー無視
       }
 
-      this.showBalloon("さようなら…！");
+      // SHIORIのさくらスクリプト再生を待機（または少し余韻を設けて終了）
+      const exitDelay = this.sakuraPlayer?.isPlaying ? 1500 : 400;
       setTimeout(async () => {
         if (isTauriAvailable()) {
           try {
@@ -94,7 +95,7 @@ export class NanaiAndroidMascotApp {
         } else {
           globalThis.window.close();
         }
-      }, 1000);
+      }, exitDelay);
     } catch (_err) {
       if (isTauriAvailable()) {
         invoke("exit_app").catch(() => globalThis.window.close());

@@ -321,11 +321,18 @@ fn read_ghost_name_from_dir(ghost_dir: &Path) -> Option<String> {
         if candidate.exists()
             && let Ok(bytes) = std::fs::read(candidate)
         {
-            let (decoded, _, _) = encoding_rs::SHIFT_JIS.decode(&bytes);
-            let text = if decoded.contains("name,") || decoded.contains("name:") {
-                decoded.into_owned()
+            // 1. UTF-8判定（明示的なcharset,UTF-8宣言、またはValid UTF-8かつShift_JIS特有エラーがない場合）
+            let text = if let Ok(utf8_str) = std::str::from_utf8(&bytes) {
+                // charset,Shift_JIS 指定が明記されていない限り、有効なUTF-8であればUTF-8を優先
+                if utf8_str.to_lowercase().contains("charset,shift_jis") || utf8_str.to_lowercase().contains("charset,sjis") {
+                    let (sjis_decoded, _, _) = encoding_rs::SHIFT_JIS.decode(&bytes);
+                    sjis_decoded.into_owned()
+                } else {
+                    utf8_str.to_string()
+                }
             } else {
-                String::from_utf8_lossy(&bytes).into_owned()
+                let (sjis_decoded, _, _) = encoding_rs::SHIFT_JIS.decode(&bytes);
+                sjis_decoded.into_owned()
             };
 
             for line in text.lines() {
@@ -1050,11 +1057,17 @@ fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
                 let mut bytes = Vec::new();
                 use std::io::Read;
                 if reader.read_to_end(&mut bytes).is_ok() {
-                    let (decoded, _, _) = encoding_rs::SHIFT_JIS.decode(&bytes);
-                    let text = if decoded.contains("name,") || decoded.contains("name:") {
-                        decoded.into_owned()
+                    // 1. UTF-8判定（有効なUTF-8であればUTF-8を優先、不正バイト時のみShift_JIS）
+                    let text = if let Ok(utf8_str) = std::str::from_utf8(&bytes) {
+                        if utf8_str.to_lowercase().contains("charset,shift_jis") || utf8_str.to_lowercase().contains("charset,sjis") {
+                            let (sjis_decoded, _, _) = encoding_rs::SHIFT_JIS.decode(&bytes);
+                            sjis_decoded.into_owned()
+                        } else {
+                            utf8_str.to_string()
+                        }
                     } else {
-                        String::from_utf8_lossy(&bytes).into_owned()
+                        let (sjis_decoded, _, _) = encoding_rs::SHIFT_JIS.decode(&bytes);
+                        sjis_decoded.into_owned()
                     };
 
                     for line in text.lines() {

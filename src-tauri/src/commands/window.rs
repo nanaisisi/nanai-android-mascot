@@ -367,9 +367,9 @@ pub async fn show_subchar_window(
             }
 
             let title = if scope_id == 0 {
-                "Nanai Mascot - Main Character".to_string()
+                "Nanai Android Mascot - Main Character".to_string()
             } else {
-                format!("Nanai Mascot - Subcharacter {}", scope_id)
+                format!("Nanai Android Mascot - Character {}", scope_id)
             };
 
             let sub_win = tauri::WebviewWindowBuilder::new(

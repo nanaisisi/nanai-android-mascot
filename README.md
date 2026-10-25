@@ -87,6 +87,10 @@ cargo tauri android run
   - [ukadoc-spec (GitHub)](https://github.com/ukatech/ukadoc-spec) - UKADOC 公式伺か仕様リポジトリ（プロトコル、さくらスクリプト等）
   - [ukadoc-ssp (GitHub)](https://github.com/ukatech/ukadoc-ssp) - SSP 固有仕様・拡張機能リファレンス
   - [SSP 公式サイト (BUGFIX)](http://ssp.shillest.net/) - Windows 向け代表的伺かベースウェア
+- **SHIORI 系ドキュメント・仕様リポジトリ**:
+  - [YAYA Docs (GitHub: YAYA-shiori/yaya-docs)](https://github.com/YAYA-shiori/yaya-docs) - YAYA 公式マニュアル・仕様リポジトリ（Unlicense / パブリックドメイン）
+  - [SATORI Docs (GitHub: ukatech/satori-docs)](https://github.com/ukatech/satori-docs) - 里々（SATORI）公式マニュアル・仕様リポジトリ（里々開発チーム / ukatech）
+  - [KAWARI (GitHub: ukatech/kawari)](https://github.com/ukatech/kawari) - 華和梨（KAWARI）公式エンジン・マニュアル・リポジトリ（華和梨開発チーム / ukatech）
 - **Android 既存互換ベースウェア**:
   - [Ukadroid（伺か for Android）](https://play.google.com/store/apps/details?id=com.hiro.ukadroid) - Google Play にて配信中の Android 向け互換ベースウェア
 
@@ -94,9 +98,69 @@ cargo tauri android run
 
 ## 📄 ライセンス & クレジット
 
-- **本ソフトウェア (Nanai Android Mascot)**:
-  - Apache License 2.0 または MIT License のデュアルライセンスのもとで提供されています。
-- **仕様書リファレンス・原著作者クレジット**:
-  - 伺か関連の標準仕様リファレンスとして、[UKADOC project](https://ukatech.shillest.net/ukadoc-spec/) の [ukatech/ukadoc-spec](https://github.com/ukatech/ukadoc-spec)（[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.ja)）に準拠・クレジット表記を行っています。
-- **外部モジュール・同梱アセット**:
-  - 同梱されている外部 SHIORI や各アセットのライセンスについては、各ディレクトリ内のライセンスファイルを参照してください。
+### 1. 本ソフトウェア本体 (Nanai Android Mascot)
+
+本プロジェクトのオリジナルコードおよびリポジトリ成果物は、以下のデュアルライセンスのもとで公開されています。利用者の要件に応じていずれかのライセンスを選択可能です。
+
+- [Apache License, Version 2.0](LICENSE-APACHE)
+- [MIT License](LICENSE-MIT)
+
+---
+
+### 2. 伺か仕様書・公式ドキュメントリファレンス
+
+本ソフトウェアの互換実装にあたり、コミュニティ有志によって策定・保守されている以下の仕様書・公式ドキュメントを広く参照・準拠しています。長年にわたり規格を整備・公開してこられた各執筆者・開発チームの皆様に深く感謝いたします。
+
+- **伺か標準仕様 / SSP 拡張仕様**:
+  - **リポジトリ**: [ukatech/ukadoc-spec](https://github.com/ukatech/ukadoc-spec) / [ukatech/ukadoc-ssp](https://github.com/ukatech/ukadoc-ssp)
+  - **プロジェクト**: [UKADOC project](https://ukatech.shillest.net/ukadoc-spec/)
+  - **ライセンス**: [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/deed.ja)
+  - **クレジット**: UKADOC project / Ukagaka Tech Team (ukatech)
+- **YAYA 公式マニュアル・仕様書**:
+  - **リポジトリ**: [YAYA-shiori/yaya-docs](https://github.com/YAYA-shiori/yaya-docs)
+  - **公開サイト**: [YAYA マニュアル (GitHub Pages)](https://yaya-shiori.github.io/yaya-docs/)
+  - **ライセンス**: [The Unlicense](https://github.com/YAYA-shiori/yaya-docs/blob/main/LICENSE)（パブリックドメイン）
+  - **特記事項**: `other/` と `tips/` には旧 [AYAYA Wiki](https://emily.shillest.net/ayayaold/) から転載したページが含まれ、匿名を含む多数の編集者の協力により作成されています。
+- **里々（SATORI）公式マニュアル・仕様書**:
+  - **リポジトリ**: [ukatech/satori-docs](https://github.com/ukatech/satori-docs)
+  - **公開サイト**: [里々マニュアル (GitHub Pages)](https://ukatech.shillest.net/satori-docs/)
+  - **ライセンス**: [BSD 2-Clause License](https://github.com/ukatech/satori-docs/blob/main/LICENSE)（里々本体 [satoriya-shiori](https://github.com/ukatech/satoriya-shiori) と同一）
+  - **著作権表示**:
+    - Copyright (c) 2001-2005, Kusigahama Yagi.
+    - Copyright (c) 2006-, SEIBIHAN.
+- **華和梨（KAWARI）公式マニュアル・仕様書**:
+  - **リポジトリ**: [ukatech/kawari-docs](https://github.com/ukatech/kawari-docs)
+  - **公開サイト**: [華和梨マニュアル (GitHub Pages)](https://ukatech.shillest.net/kawari-docs/)
+  - **ライセンス**: [BSD 2-Clause License](https://github.com/ukatech/kawari-docs/blob/main/LICENSE)（華和梨本体 [kawari](https://github.com/ukatech/kawari) と同一）
+  - **著作権表示**:
+    - Copyright (c) 2001-2015, KAWARI Development Team
+
+---
+
+### 3. SHIORI サブシステム & 外部連携エンジン（同梱・再配布）
+
+本プロジェクトで実行・連携対象とする各種 SHIORI エンジンおよび関連バイナリ・ライブラリの著作権は、それぞれの原著作者および開発元コミュニティに帰属します。
+
+バイナリやソースコードを本リポジトリまたは配布パッケージに同梱・組み込み利用する場合は、各ソフトウェアのライセンス条項に則り、以下の著作権表示および許諾条件を厳格に維持・遵守します。
+
+- **里々（SATORI）本体・同梱 SAORI (ssu)**:
+  - **著作権**: Copyright (c) 2001-2005, Kusigahama Yagi. / Copyright (c) 2006-, SEIBIHAN.
+  - **ライセンス**: [BSD 2-Clause License](https://opensource.org/licenses/BSD-2-Clause)
+  - **遵守事項**: ソースコードまたはバイナリの再配布時に上記の著作権表示、条件リスト、および免責条項を維持すること。
+- **YAYA (yaya-shiori)**:
+  - **著作権**: Copyright (c) 2007-, 整備班 (SEIBIHAN) All rights reserved.
+  - **ライセンス**: 修正 BSD ライセンス ([BSD 3-Clause License](https://opensource.org/licenses/BSD-3-Clause))
+  - **遵守事項**: 再配布時に著作権表示、条件リスト、免責条項の維持、および書面による事前許可のない派生著作物の宣伝・推薦への無断利用禁止条項を遵守すること。
+- **華和梨（KAWARI）**:
+  - **著作権**: Copyright (c) 2001-2015, KAWARI Development Team (Meister (original works) / Nie / Nise-Meister / Sato / Shino / Suikyo) All rights reserved.
+  - **ライセンス**: [BSD 2-Clause License](https://opensource.org/licenses/BSD-2-Clause)
+  - **遵守事項**: ソースコードまたはバイナリの再配布時に上記の著作権表示、条件リスト、および免責条項を維持すること。
+- **その他の外部モジュール / プラグイン**:
+  - 将来的に同梱または動的連携する SHIORI・SAORI・プラグインについては、各配置ディレクトリ（`assets/` や専用ライブラリフォルダ）内にそれぞれの正規 `LICENSE` / `README` ファイルを同梱・配置し、各原著作者の権利表示を尊重します。
+
+---
+
+### 4. 同梱アセット & キャラクターデータ
+
+- 本リポジトリにテスト用・動作検証用として同梱されている公式モックキャラクター（`mock_nanai` 等）および各種グラフィック・音声等のアセットは、本リポジトリのデュアルライセンス（Apache 2.0 / MIT）または同梱ディレクトリ内で明示された個別利用規定に従います。
+- サードパーティ製のゴースト・シェル・バルーンデータをインポートして使用する場合の著作権および使用許諾条件は、各コンテンツの原著作者・制作者の配布規定に準拠します。

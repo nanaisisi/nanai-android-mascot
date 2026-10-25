@@ -153,7 +153,12 @@ pub async fn show_context_menu(
 /// バルーンスキン連動の独立ポップアップメニューウィンドウ表示コマンド (ウィンドウ枠外にはみ出して表示可能)
 #[tauri::command]
 #[allow(unused_variables)]
-pub async fn show_menu_window(app_handle: tauri::AppHandle, x: f64, y: f64, scope: Option<i32>) -> Result<(), String> {
+pub async fn show_menu_window(
+    app_handle: tauri::AppHandle,
+    x: f64,
+    y: f64,
+    scope: Option<i32>,
+) -> Result<(), String> {
     #[cfg(desktop)]
     {
         use tauri::Manager;
@@ -352,13 +357,12 @@ pub async fn show_subchar_window(
             };
 
             // スコープ0が既に存在する場合はそれを基準に横に並べる
-            if scope_id > 0 {
-                if let Some(char0_win) = app_handle.get_webview_window("subchar_window_0") {
-                    if let Ok(pos) = char0_win.outer_position() {
-                        target_x = (pos.x as f64) + (scope_id as f64 * 220.0);
-                        target_y = pos.y as f64;
-                    }
-                }
+            if scope_id > 0
+                && let Some(char0_win) = app_handle.get_webview_window("subchar_window_0")
+                && let Ok(pos) = char0_win.outer_position()
+            {
+                target_x = (pos.x as f64) + (scope_id as f64 * 220.0);
+                target_y = pos.y as f64;
             }
 
             if let (Some(px), Some(py)) = (x, y) {
@@ -396,7 +400,10 @@ pub async fn show_subchar_window(
 /// 汎用サブキャラクター（スコープ N）ウィンドウ非表示コマンド (\s[-1])
 #[tauri::command]
 #[allow(unused_variables)]
-pub async fn hide_subchar_window(app_handle: tauri::AppHandle, scope_id: i32) -> Result<(), String> {
+pub async fn hide_subchar_window(
+    app_handle: tauri::AppHandle,
+    scope_id: i32,
+) -> Result<(), String> {
     #[cfg(desktop)]
     {
         let label = format!("subchar_window_{}", scope_id);
@@ -406,5 +413,3 @@ pub async fn hide_subchar_window(app_handle: tauri::AppHandle, scope_id: i32) ->
     }
     Ok(())
 }
-
-

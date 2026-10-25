@@ -37,10 +37,11 @@ impl HostProc {
         let name = "shiori-host32.exe";
         let mut cands = Vec::new();
         if let Ok(exe) = std::env::current_exe()
-            && let Some(d) = exe.parent() {
-                cands.push(d.join(name));
-                cands.push(d.join("resources").join(name));
-            }
+            && let Some(d) = exe.parent()
+        {
+            cands.push(d.join(name));
+            cands.push(d.join("resources").join(name));
+        }
         // 開発時
         for prof in ["release", "debug"] {
             cands.push(PathBuf::from(format!(
@@ -67,20 +68,29 @@ impl HostProc {
             .map_err(|e| format!("host spawn failed: {e}"))?;
         let stdin = child.stdin.take().ok_or("no stdin")?;
         let stdout = child.stdout.take().ok_or("no stdout")?;
-        let mut h = HostProc { child, stdin, stdout };
+        let mut h = HostProc {
+            child,
+            stdin,
+            stdout,
+        };
         // 起動通知 (ready) を待つ
-        h.read_reply().map_err(|e| format!("host did not start (DLL load failed?): {e}"))?;
+        h.read_reply()
+            .map_err(|e| format!("host did not start (DLL load failed?): {e}"))?;
         Ok(h)
     }
 
     fn read_reply(&mut self) -> Result<(i32, Vec<u8>), String> {
         use std::io::Read;
         let mut head = [0u8; 8];
-        self.stdout.read_exact(&mut head).map_err(|e| e.to_string())?;
+        self.stdout
+            .read_exact(&mut head)
+            .map_err(|e| e.to_string())?;
         let status = i32::from_le_bytes(head[0..4].try_into().unwrap());
         let len = u32::from_le_bytes(head[4..8].try_into().unwrap()) as usize;
         let mut buf = vec![0u8; len];
-        self.stdout.read_exact(&mut buf).map_err(|e| e.to_string())?;
+        self.stdout
+            .read_exact(&mut buf)
+            .map_err(|e| e.to_string())?;
         Ok((status, buf))
     }
 
@@ -113,7 +123,9 @@ impl HostProc {
 /// PE ヘッダから x86 (0x14C) DLL かどうか判定
 #[cfg(windows)]
 fn is_x86_dll(path: &Path) -> bool {
-    let Ok(b) = std::fs::read(path) else { return false };
+    let Ok(b) = std::fs::read(path) else {
+        return false;
+    };
     if b.len() < 0x40 {
         return false;
     }
@@ -139,7 +151,10 @@ impl ShioriDynamicEngine {
         #[cfg(windows)]
         if cfg!(target_pointer_width = "64") && is_x86_dll(dll_path) {
             let host = HostProc::spawn(dll_path)?;
-            println!("🧩 32bit SHIORI DLL を shiori-host32 経由でロード: {:?}", dll_path);
+            println!(
+                "🧩 32bit SHIORI DLL を shiori-host32 経由でロード: {:?}",
+                dll_path
+            );
             return Ok(Self {
                 _lib: None,
                 dll_path: dll_path.to_path_buf(),

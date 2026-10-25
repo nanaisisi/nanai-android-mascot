@@ -1,7 +1,7 @@
+use md5::{Digest, Md5};
+use nanai_android_mascot_ui::{Descript, open_text_file};
 use std::fs;
 use std::path::{Path, PathBuf};
-use md5::{Md5, Digest};
-use nanai_android_mascot_ui::{Descript, open_text_file};
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct UpdateEntry {
@@ -71,10 +71,10 @@ pub fn parse_update_definition(content: &str) -> Vec<UpdateEntry> {
         let mut size = None;
         for &extra in parts.iter().skip(2) {
             let extra_trimmed = extra.trim();
-            if let Some(s) = extra_trimmed.strip_prefix("size=") {
-                if let Ok(val) = s.parse::<u64>() {
-                    size = Some(val);
-                }
+            if let Some(s) = extra_trimmed.strip_prefix("size=")
+                && let Ok(val) = s.parse::<u64>()
+            {
+                size = Some(val);
             }
         }
 
@@ -164,8 +164,12 @@ pub async fn check_ghost_update(
         }
     }
 
-    let homeurl = get_ghost_homeurl(&ghost_dir)
-        .ok_or_else(|| format!("ゴースト「{}」に homeurl が設定されていません", target_ghost))?;
+    let homeurl = get_ghost_homeurl(&ghost_dir).ok_or_else(|| {
+        format!(
+            "ゴースト「{}」に homeurl が設定されていません",
+            target_ghost
+        )
+    })?;
 
     let client = reqwest::Client::builder()
         .user_agent("NanaiAndroidMascot/1.0 (SSP Compatible)")
@@ -176,29 +180,31 @@ pub async fn check_ghost_update(
     // updates2.dau を試行、無ければ updates.txt を試行
     let mut update_content = None;
     let url_dau = format!("{}updates2.dau", homeurl);
-    if let Ok(resp) = client.get(&url_dau).send().await {
-        if resp.status().is_success() {
-            if let Ok(bytes) = resp.bytes().await {
-                let (decoded, _, _) = encoding_rs::SHIFT_JIS.decode(&bytes);
-                update_content = Some(decoded.to_string());
-            }
-        }
+    if let Ok(resp) = client.get(&url_dau).send().await
+        && resp.status().is_success()
+        && let Ok(bytes) = resp.bytes().await
+    {
+        let (decoded, _, _) = encoding_rs::SHIFT_JIS.decode(&bytes);
+        update_content = Some(decoded.to_string());
     }
 
     if update_content.is_none() {
         let url_txt = format!("{}updates.txt", homeurl);
-        if let Ok(resp) = client.get(&url_txt).send().await {
-            if resp.status().is_success() {
-                if let Ok(bytes) = resp.bytes().await {
-                    let (decoded, _, _) = encoding_rs::SHIFT_JIS.decode(&bytes);
-                    update_content = Some(decoded.to_string());
-                }
-            }
+        if let Ok(resp) = client.get(&url_txt).send().await
+            && resp.status().is_success()
+            && let Ok(bytes) = resp.bytes().await
+        {
+            let (decoded, _, _) = encoding_rs::SHIFT_JIS.decode(&bytes);
+            update_content = Some(decoded.to_string());
         }
     }
 
-    let content = update_content
-        .ok_or_else(|| format!("更新情報ファイル (updates2.dau / updates.txt) の取得に失敗しました ({})", homeurl))?;
+    let content = update_content.ok_or_else(|| {
+        format!(
+            "更新情報ファイル (updates2.dau / updates.txt) の取得に失敗しました ({})",
+            homeurl
+        )
+    })?;
 
     let entries = parse_update_definition(&content);
     let mut diff_files = Vec::new();
@@ -249,7 +255,8 @@ pub async fn execute_ghost_update(
     app_handle: tauri::AppHandle,
     ghost_name: Option<String>,
 ) -> Result<UpdateExecutionResult, String> {
-    let check_result = check_ghost_update(state.clone(), app_handle.clone(), ghost_name.clone()).await?;
+    let check_result =
+        check_ghost_update(state.clone(), app_handle.clone(), ghost_name.clone()).await?;
 
     if !check_result.has_update {
         return Ok(UpdateExecutionResult {
@@ -316,9 +323,16 @@ pub async fn execute_ghost_update(
         if !entry.md5.is_empty() {
             let mut hasher = Md5::new();
             hasher.update(&bytes);
-            let downloaded_md5: String = hasher.finalize().iter().map(|b| format!("{:02x}", b)).collect();
+            let downloaded_md5: String = hasher
+                .finalize()
+                .iter()
+                .map(|b| format!("{:02x}", b))
+                .collect();
             if downloaded_md5 != entry.md5 {
-                println!("❌ MD5 mismatch for {}: expected {}, got {}", entry.path, entry.md5, downloaded_md5);
+                println!(
+                    "❌ MD5 mismatch for {}: expected {}, got {}",
+                    entry.path, entry.md5, downloaded_md5
+                );
                 return Ok(UpdateExecutionResult {
                     success: false,
                     reason: "md5 miss".to_string(),
@@ -354,4 +368,3 @@ pub async fn execute_ghost_update(
         ghost_name: check_result.ghost_name,
     })
 }
-

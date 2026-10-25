@@ -1,6 +1,6 @@
 # Web / WASM / Rustクレート連携アーキテクチャ設計
 
-本ドキュメントでは、nanai-android-mascotにおけるWebベースUI（HTML/CSS/JS/Dioxus）、WebAssembly (WASM)、およびネイティブRustクレート間の連携整合性とデータフローを定義します。
+本ドキュメントでは、nanai-android-mascotにおけるWebベースUI（HTML/CSS/JS）、WebAssembly (WASM)、およびネイティブRustクレート間の連携整合性とデータフローを定義します。
 
 ---
 

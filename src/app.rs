@@ -34,26 +34,3 @@ pub fn extract_filename(path: &str) -> String {
         .unwrap_or(path)
         .to_string()
 }
-
-/*
-// --- 未実装 / Dioxus UI関連コード（依存関係整理まで一時コメントアウト） ---
-#[derive(Clone, Debug)]
-struct FileContent {
-    path: String,
-    content: Option<String>,
-    error: Option<String>,
-}
-
-#[derive(Clone, Debug, Default)]
-struct AppState {
-    files: Vec<FileContent>,
-    current_file: Option<usize>,
-    recent_files: Vec<String>,
-}
-
-#[derive(serde::Serialize, serde::Deserialize)]
-struct OpenFileResult {
-    content: Option<String>,
-    error: Option<String>,
-}
-*/

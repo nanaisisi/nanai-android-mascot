@@ -157,9 +157,9 @@ pub async fn show_menu_window(app_handle: tauri::AppHandle, x: f64, y: f64) -> R
     #[cfg(desktop)]
     {
         use tauri::Manager;
-        // メインメニュー + サブメニュー横展開用領域 (500x520)
-        let win_width = 500.0;
-        let win_height = 520.0;
+        // メインメニューのコンパクトな実寸 (240x460)
+        let win_width = 240.0;
+        let win_height = 460.0;
 
         let mut target_x = x;
         let mut target_y = y;
@@ -244,8 +244,8 @@ pub async fn show_submenu_window(
     #[cfg(desktop)]
     {
         use tauri::Manager;
-        let win_width = width.unwrap_or(240.0);
-        let win_height = height.unwrap_or(360.0);
+        let win_width = width.unwrap_or(220.0);
+        let win_height = height.unwrap_or(320.0);
 
         let mut target_x = x;
         let mut target_y = y;
@@ -257,8 +257,8 @@ pub async fn show_submenu_window(
             let max_y = (screen_pos.y + screen_size.height as i32) as f64 - win_height;
 
             if target_x > max_x {
-                // 右端を超える場合は左側へ反転 (親メニューの左へ)
-                target_x = (x - win_width - 280.0).max(screen_pos.x as f64);
+                // 右端を超える場合は左側へ反転 (親メニューの左横へ)
+                target_x = (x - win_width - 240.0).max(screen_pos.x as f64);
             }
             if target_y > max_y {
                 target_y = max_y.max(screen_pos.y as f64);

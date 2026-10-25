@@ -18,7 +18,8 @@
 				"alwaysOnTop": true,
 				"resizable": true,
 				"minimizable": false,
-				"maximizable": false
+				"maximizable": false,
+				"visible": false
 			}
 		],
 		"security": {

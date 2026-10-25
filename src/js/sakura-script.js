@@ -145,10 +145,14 @@ export class SakuraScriptPlayer {
 				// その他タグはスキップ
 				else {
 					i++;
-					// \_x のような2文字タグ
-					if (char === "_" && i < len && script[i] !== "[") i++;
+					// \_x や \__v のようなアンダースコアで始まるタグ名（[ 直前まで）をスキップ
+					if (char === "_") {
+						while (i < len && script[i] !== "[" && script[i] !== "\\") {
+							i++;
+						}
+					}
 					// 引数 [ ... ] があれば本文に出さず読み飛ばす
-					if (script[i] === "[") {
+					if (i < len && script[i] === "[") {
 						let j = i + 1;
 						while (j < len && script[j] !== "]") {
 							if (script[j] === "\\" && script[j + 1] === "]") j++;

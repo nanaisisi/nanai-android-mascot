@@ -183,6 +183,19 @@ body {
   .menu-separator {
     background-color: #3e3e42;
   }
+
+  .menu-footer-copyright {
+    color: #888;
+  }
+}
+
+.menu-footer-copyright {
+  padding: 4px 8px;
+  font-size: 10px;
+  color: #777;
+  text-align: center;
+  user-select: none;
+  white-space: nowrap;
 }
 
 .visually-hidden {

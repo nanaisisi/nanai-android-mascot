@@ -7,15 +7,9 @@ import { invoke, isTauriAvailable } from "./tauri-helper.js";
 export class SurfaceManager {
   constructor(app) {
     this.app = app;
-    // デフォルト当たり判定（四角い箱型マスコット mock_nanai 200x400 想定）
-    this.collisions = {
-      default: [
-        { id: 0, name: "head", shape: "rect", x1: 26, y1: 10, x2: 174, y2: 90 },     // アンテナ・天板
-        { id: 1, name: "face", shape: "rect", x1: 40, y1: 92, x2: 160, y2: 200 },    // ディスプレイ画面
-        { id: 2, name: "body", shape: "rect", x1: 26, y1: 202, x2: 174, y2: 380 },   // 胴体パネル・脚
-      ],
-    };
-    // ベース画像の元解像度 (mock_nanai surface0.png: 200x400 想定)
+    // surfaces.txt から動的に読み込まれた当たり判定（Collision）マップ
+    this.collisions = {};
+    // ベース画像の元解像度 (surfaces.txt または画像から取得)
     this.baseWidth = 200;
     this.baseHeight = 400;
     this.currentSurfaceId = 0;

@@ -138,58 +138,7 @@ export class GhostController {
 
   async sendShioriEvent(eventName, args = []) {
     if (!isTauriAvailable()) {
-      // モック対話（さくらスクリプトテスト用）
-      if (eventName === "OnChoiceSelect") {
-        const choiceId = args[0];
-        const choiceText = args[1] || choiceId;
-        if (choiceId === "Talk") {
-          this.triggerRandomTalk();
-        } else if (choiceId === "Stroke") {
-          this.app.playSakuraScript("\\0\\s0あたまを優しくなでてみてね♪\\e");
-        } else {
-          this.app.playSakuraScript(`\\0\\s0選択肢「${choiceText}」が選ばれたよ！\\w5\\nありがとう♪\\e`);
-        }
-      } else if (eventName === "OnMouseClick") {
-        const part = args[1];
-        const scope = args[2] || 0;
-        if (scope === 1) {
-          // 1番手（プチ）がタップされた場合
-          this.app.playSakuraScript("\\1\\s10ピピッ！ボクをつついたね！\\w6\\0\\s0ふふ、プチが反応してるよ。\\e");
-        } else if (part === "head") {
-          this.app.playSakuraScript("\\0\\s1頭部アンテナ、感度良好です♪\\w6\\nなでてくれてありがとう！\\e");
-        } else if (part === "face") {
-          this.app.playSakuraScript("\\0\\s2画面タップを検出しました！\\w5\\n\\s1ピカピカ表示中だよ。\\e");
-        } else if (part === "body") {
-          this.app.playSakuraScript("\\0\\s0四角いボディは頑丈設計だよ！\\w6\\nトントンしても大丈夫♪\\e");
-        } else {
-          this.app.playSakuraScript("\\0\\s0モックだよ！\\w5\\n何かご用事かな？\\w3\\n\\q[お話しする,Talk]\\n\\q[アンテナ確認,CheckAntenna]\\e");
-        }
-      } else if (eventName === "OnMouseMove") {
-        const part = args[1];
-        const scope = args[2] || 0;
-        if (scope === 1) {
-          this.app.playSakuraScript("\\1\\s10ピピピ〜！くすぐったいよ！\\e");
-        } else if (part === "head") {
-          this.app.playSakuraScript("\\0\\s1あたまをなでなで…\\w4通信感度アップ中♪\\e");
-        } else if (part === "face") {
-          this.app.playSakuraScript("\\0\\s1画面を拭いてくれてるの？\\w4ありがとう！\\e");
-        } else {
-          this.app.playSakuraScript("\\0\\s0くすぐったいよ〜！\\e");
-        }
-      } else if (eventName === "OnUpdate" || eventName === "OnUpdateCheck") {
-        this.app.playSakuraScript("\\0\\s0ネットワーク更新を確認中…\\w8\\n\\s0更新ファイルはありませんでした。\\w5最新の状態です♪\\e");
-      } else if (eventName === "OnHeadline" || eventName === "OnHeadlineFeed") {
-        this.app.playSakuraScript("\\0\\s0最新のヘッドラインニュースをお知らせするね！\\w6\\n\\1\\s10今日の天気は概ね良好、\\w4\\0\\s0デスクトップマスコット日和だよ♪\\e");
-      } else if (eventName === "OnBIFF" || eventName === "OnBIFFComplete") {
-        this.app.playSakuraScript("\\0\\s0メールボックスを確認したよ。\\w5新着メッセージは0通です。\\e");
-      } else if (eventName === "OnClose") {
-        this.app.playSakuraScript("\\0\\s0また一緒に遊ぼうね！\\w8\\nさようなら…！\\e");
-      } else if (eventName === "OnSecondChange") {
-        this.triggerRandomTalk();
-      } else {
-        this.app.playSakuraScript("\\0\\s0こんにちは！\\w5\\n\\q[お話しする,Talk]\\n\\q[なでる,Stroke]\\e");
-      }
-
+      console.log(`[Web/Mock] SHIORIイベントスキップ (Tauri未検出): ${eventName}`);
       return;
     }
 
@@ -198,7 +147,6 @@ export class GhostController {
       const requestText = ShioriProtocol.buildRequest(eventName, args);
       console.log(`📤 送信 SHIORI/3.0 リクエスト:\n${requestText}`);
 
-      // send_shiori_request または send_shiori_event への送信
       let response = "";
       try {
         response = await invoke("send_shiori_request", {
@@ -210,33 +158,22 @@ export class GhostController {
         });
       }
 
-      // SHIORI/3.0 レスポンスのパース
+      // SHIORI/3.0 レスポンスのパース (200 OK 且つスクリプトが存在する場合のみ再生)
       if (response && response.trim()) {
         const parsed = ShioriProtocol.parseResponse(response);
-        const script = parsed.value || response;
-        if (script.trim()) {
+        const script = parsed.value || (parsed.status === 200 ? response : "");
+        if (script && script.trim()) {
           this.app.playSakuraScript(script);
-        } else {
-          this.app.playSakuraScript("\\0\\s0……\\e");
         }
-      } else {
-        this.app.playSakuraScript("\\0\\s0……\\e");
       }
-    } catch (_error) {
-      this.app.playSakuraScript("\\0\\s0エラーが発生したよ。\\e");
+    } catch (error) {
+      console.warn(`SHIORIイベント送信失敗 (${eventName}):`, error);
     }
   }
 
   triggerRandomTalk() {
-    const talks = [
-      "\\0\\s0モックは今日も画面の隅っこで稼働中だよ！\\w6\\1\\s10ピピッ！異常なし！\\e",
-      "\\0\\s0四角い箱型ボディは、\\w4画面端にスナップしてもぴったり収まるんだ。\\e",
-      "\\0\\s2おっと！\\w4\\s1びっくりしたけど、\\w3バッテリーも通信も良好だよ♪\\e",
-      "\\0\\s0タップされた場所によって、\\w4頭部アンテナや画面、ボディが反応するよ。\\w6\\n色々さわってみてね！\\e",
-      "\\0\\s0\\q[お話しする,Talk]\\n\\q[アンテナ確認,CheckAntenna]\\e",
-    ];
-    const picked = talks[Math.floor(Math.random() * talks.length)];
-    this.app.playSakuraScript(picked);
+    // SHIORI の OnRandomTalk / OnSecondChange に委譲
+    this.sendShioriEvent("OnRandomTalk");
   }
 
   updateSurface(surfaceId, scopeId = 0) {

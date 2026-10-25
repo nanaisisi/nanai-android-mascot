@@ -44,6 +44,37 @@ export class ModalManager {
         await this.app.ghostController.scanAndLoadFirstGhost();
         this.renderGhostList();
       });
+
+      const fileInput = document.getElementById("ghost-archive-input");
+      const importBtn = document.getElementById("import-ghost-btn");
+      const statusEl = document.getElementById("import-ghost-status");
+
+      importBtn?.addEventListener("click", async () => {
+        const file = fileInput?.files?.[0];
+        if (!file) {
+          if (statusEl) statusEl.textContent = "ファイルを選択してください。";
+          return;
+        }
+
+        // Webview / Tauri環境でのファイルパス取得または通知
+        const archivePath = file.path || file.name;
+        if (statusEl) statusEl.textContent = `取り込み中: ${file.name}...`;
+
+        if (isTauriAvailable()) {
+          try {
+            const res = await invoke("install_ghost_archive", { archivePath });
+            if (statusEl) statusEl.textContent = `✅ 「${res.name}」を取り込みました！`;
+            await this.app.ghostController.scanAndLoadFirstGhost();
+            this.renderGhostList();
+            this.app.ghostController.selectGhost(res.name);
+          } catch (err) {
+            console.error("アーカイブ取り込み失敗:", err);
+            if (statusEl) statusEl.textContent = `❌ 失敗: ${err}`;
+          }
+        } else {
+          if (statusEl) statusEl.textContent = "※ ブラウザ環境ではアーカイブ展開はサポートされていません";
+        }
+      });
     } else if (contentId === "settings-modal-content") {
       this.setupSettingsListeners();
     } else if (contentId === "balloon-modal-content") {

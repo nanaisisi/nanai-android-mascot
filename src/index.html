@@ -130,6 +130,14 @@
         </div>
       </div>
       <div class="form-section">
+        <span class="form-label">ゴースト取り込み (.nar / .zip):</span>
+        <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
+          <input type="file" id="ghost-archive-input" accept=".nar,.zip" style="flex: 1; padding: 6px; font-size: 13px;" />
+          <button id="import-ghost-btn" class="primary" style="white-space: nowrap;">取り込み</button>
+        </div>
+        <div id="import-ghost-status" style="font-size: 12px; margin-top: 4px; color: #666;"></div>
+      </div>
+      <div class="form-section">
         <span class="form-label">ゴーストディレクトリ:</span>
         <input type="text" id="ghost-directory" value="assets/ghost" />
         <button id="refresh-ghosts-btn">更新</button>

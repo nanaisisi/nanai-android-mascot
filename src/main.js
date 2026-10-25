@@ -21,6 +21,7 @@ export class NanaiAndroidMascotApp {
 			alwaysOnTop: true,
 			ghostSize: "medium",
 			debugLevel: "info",
+			autoSwitchBalloonWithGhost: true,
 		};
 
 		this.ghostController = new GhostController(this);

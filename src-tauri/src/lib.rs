@@ -29,28 +29,39 @@ pub fn run() {
                     .default_window_icon()
                     .cloned()
                     .unwrap_or_else(|| Image::new_owned(vec![0, 0, 0, 0], 1, 1));
-                let app_handle = app.app_handle().clone();
                 let _tray = TrayIconBuilder::new()
                     .icon(icon)
-                    .on_tray_icon_event(move |_tray, event| {
-                        if let TrayIconEvent::Click { .. } = event {
-                            if let Some(window) = app_handle.get_webview_window("main") {
-                                if let Err(e) =
-                                    window.emit("error", "Failed to show window".to_string())
+                    .on_tray_icon_event(move |tray, event| {
+                        if let TrayIconEvent::Click {
+                            button: tauri::tray::MouseButton::Left,
+                            button_state: tauri::tray::MouseButtonState::Up,
+                            ..
+                        }
+                        | TrayIconEvent::DoubleClick { .. } = event
+                        {
+                            let app_handle = tray.app_handle().clone();
+                            tauri::async_runtime::spawn(async move {
+                                let (x, y) = if let Ok(Some(monitor)) = app_handle.primary_monitor()
                                 {
-                                    eprintln!("emit failed: {e}");
-                                }
-                            } else {
-                                let msg = "main window not found".to_string();
-                                eprintln!("{msg}");
-                                emit_error_to_all(&app_handle, msg.clone());
-                            }
+                                    let size = monitor.size();
+                                    let pos = monitor.position();
+                                    (
+                                        (pos.x + size.width as i32) as f64 - 260.0,
+                                        (pos.y + size.height as i32) as f64 - 560.0,
+                                    )
+                                } else {
+                                    (100.0, 100.0)
+                                };
+                                let _ =
+                                    commands::window::show_menu_window(app_handle, x, y, Some(0))
+                                        .await;
+                            });
                         }
                     })
                     .build(app)?;
                 let menu = MenuBuilder::new(app)
-                    .text("open", "Open")
-                    .text("close", "Close")
+                    .text("open_menu", "メニューを開く")
+                    .text("close", "終了")
                     .build()?;
 
                 app.set_menu(menu)?;
@@ -80,11 +91,21 @@ pub fn run() {
                     "payload": shell_name
                 }),
             );
-        } else if id == "open" {
-            if let Some(window) = app_handle.get_webview_window("main") {
-                let _ = window.show();
-                let _ = window.set_focus();
-            }
+        } else if id == "open" || id == "open_menu" {
+            let app_h = app_handle.clone();
+            tauri::async_runtime::spawn(async move {
+                let (x, y) = if let Ok(Some(monitor)) = app_h.primary_monitor() {
+                    let size = monitor.size();
+                    let pos = monitor.position();
+                    (
+                        (pos.x + size.width as i32) as f64 - 260.0,
+                        (pos.y + size.height as i32) as f64 - 560.0,
+                    )
+                } else {
+                    (100.0, 100.0)
+                };
+                let _ = commands::window::show_menu_window(app_h, x, y, Some(0)).await;
+            });
         } else if id == "close" || id == "exit" {
             app_handle.exit(0);
         } else {

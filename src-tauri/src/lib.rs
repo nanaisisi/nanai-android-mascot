@@ -58,13 +58,63 @@ fn open_file(path: String, app_handle: tauri::AppHandle<tauri::Wry>) -> Result<S
 
     match open_shift_jis_file(&resolved_path.to_string_lossy()) {
         Ok(content) => Ok(content),
-        Err(e) => {
-            let msg = format!("{}: {:?}", e, resolved_path);
-            eprintln!("open_file error: {msg}");
-            emit_error_to_all(&app_handle, msg.clone());
-            Err(msg)
+        Err(e) => Err(format!("ファイルの読み込みに失敗しました: {e}")),
+    }
+}
+
+// サーフィス画像を読み込んでData URL (Base64) として返すコマンド
+#[tauri::command]
+fn load_surface_image(
+    ghost_path: String,
+    shell_name: String,
+    surface_id: String,
+    app_handle: tauri::AppHandle<tauri::Wry>,
+) -> Result<String, String> {
+    use std::fs;
+    let clean_gp = clean_verbatim_path(&ghost_path);
+    let base_ghost_path = resolve_asset_path(&clean_gp, &app_handle)
+        .unwrap_or_else(|_| PathBuf::from(&clean_gp));
+
+    let shell_dir = base_ghost_path.join("shell").join(&shell_name);
+    let master_dir = base_ghost_path.join("shell").join("master");
+
+    // 探索する候補リスト (指定シェル -> masterシェル、png -> svg -> pna)
+    let candidates = vec![
+        shell_dir.join(format!("surface{surface_id}.png")),
+        shell_dir.join(format!("surface{surface_id}.svg")),
+        shell_dir.join(format!("surface{surface_id}.pna")),
+        shell_dir.join(format!("Surface{surface_id}.png")),
+        shell_dir.join("surface0.png"),
+        shell_dir.join("surface0.svg"),
+        master_dir.join(format!("surface{surface_id}.png")),
+        master_dir.join(format!("surface{surface_id}.svg")),
+        master_dir.join("surface0.png"),
+        master_dir.join("surface0.svg"),
+    ];
+
+    for candidate in candidates {
+        if candidate.exists() && candidate.is_file() {
+            if let Ok(bytes) = fs::read(&candidate) {
+                let ext = candidate
+                    .extension()
+                    .and_then(|e| e.to_str())
+                    .unwrap_or("png")
+                    .to_lowercase();
+                let mime = match ext.as_str() {
+                    "svg" => "image/svg+xml",
+                    "pna" => "image/png",
+                    _ => "image/png",
+                };
+                use base64::Engine;
+                let b64 = base64::engine::general_purpose::STANDARD.encode(&bytes);
+                return Ok(format!("data:{mime};base64,{b64}"));
+            }
         }
     }
+
+    Err(format!(
+        "Surface image not found for surface_id: {surface_id} in shell: {shell_name}"
+    ))
 }
 
 // 最近開いたファイル履歴を管理するための関数
@@ -676,7 +726,8 @@ pub fn run() {
             minimize_app,
             exit_app,
             install_ghost_archive,
-            install_ghost_archive_bytes
+            install_ghost_archive_bytes,
+            load_surface_image
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -219,32 +219,47 @@ export class GhostController {
     }
 
     const fallbackSurface = scopeId === 1 ? 10 : 0;
-    const imgUrl = convertFileSrc(`${ghostPath}/shell/${shell}/surface${surfaceId}.png`);
-    const fallbackPngUrl = convertFileSrc(`${ghostPath}/shell/${shell}/surface${fallbackSurface}.png`);
-    const fallbackSvgUrl = convertFileSrc(`${ghostPath}/shell/${shell}/surface${fallbackSurface}.svg`);
-
     const img = document.querySelector(selector);
-    if (!img && placeholder) {
-      placeholder.innerHTML = `<img src="${imgUrl}" 
-                                     alt="scope${scopeId}" 
-                                     style="width: 100%; height: 100%; object-fit: contain;"
-                                     onerror="this.onerror=null; this.src='${fallbackSvgUrl}';">`;
+
+    const applyImageSrc = (src) => {
+      if (img) {
+        img.style.display = "block";
+        img.src = src;
+      } else if (placeholder) {
+        placeholder.innerHTML = `<img src="${src}" 
+                                       alt="scope${scopeId}" 
+                                       style="width: 100%; height: 100%; object-fit: contain; pointer-events: auto;">`;
+      }
+    };
+
+    if (isTauriAvailable()) {
+      invoke("load_surface_image", {
+        ghostPath,
+        shellName: shell,
+        surfaceId: String(surfaceId),
+      })
+        .then((dataUrl) => applyImageSrc(dataUrl))
+        .catch((err) => {
+          console.warn("load_surface_image 失敗、フォールバック:", err);
+          invoke("load_surface_image", {
+            ghostPath,
+            shellName: shell,
+            surfaceId: String(fallbackSurface),
+          })
+            .then((fallbackUrl) => applyImageSrc(fallbackUrl))
+            .catch(() => {
+              if (img) img.style.display = "none";
+            });
+        });
       return;
     }
 
-    if (img) {
-      img.onerror = () => {
-        img.onerror = () => {
-          img.onerror = null;
-          img.src = fallbackSvgUrl;
-        };
-        img.src = fallbackPngUrl;
-      };
-      img.src = imgUrl;
-    }
+    const imgUrl = convertFileSrc(`${ghostPath}/shell/${shell}/surface${surfaceId}.png`);
+    const fallbackSvgUrl = convertFileSrc(`${ghostPath}/shell/${shell}/surface${fallbackSurface}.svg`);
+    applyImageSrc(imgUrl);
   }
 
-  updateGhostCharacter(ghostName) {
+  async updateGhostCharacter(ghostName) {
     const sakuraPlaceholder = document.getElementById("sakura-placeholder") || document.querySelector(".character-placeholder");
     if (!sakuraPlaceholder) return;
 
@@ -255,9 +270,26 @@ export class GhostController {
 
     const ghostPath = this.currentGhost?.path || `${AppConfig.paths.defaultGhostDir}/${ghostName}`;
     const shell = this.currentShell || AppConfig.paths.fallbackShellName;
+
+    if (isTauriAvailable()) {
+      try {
+        const dataUrl = await invoke("load_surface_image", {
+          ghostPath,
+          shellName: shell,
+          surfaceId: "0",
+        });
+        sakuraPlaceholder.innerHTML = `<img src="${dataUrl}" 
+                                       alt="${ghostName}" 
+                                       style="width: 100%; height: 100%; object-fit: contain; pointer-events: auto;">`;
+        sakuraPlaceholder.title = ghostName || "";
+        return;
+      } catch (err) {
+        console.warn("updateGhostCharacter: load_surface_image 失敗:", err);
+      }
+    }
+
     const imgUrl = convertFileSrc(`${ghostPath}/shell/${shell}/surface0.png`);
     const svgUrl = convertFileSrc(`${ghostPath}/shell/${shell}/surface0.svg`);
-
     sakuraPlaceholder.innerHTML = `<img src="${imgUrl}" 
                                    alt="${ghostName}" 
                                    style="width: 100%; height: 100%; object-fit: contain; pointer-events: auto;" 

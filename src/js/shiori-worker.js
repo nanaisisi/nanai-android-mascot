@@ -1,10 +1,10 @@
 import { DefaultResponses } from "./shiori-dictionary.js";
 
-let shioriModule = null;
+const _shioriModule = null;
 let isLoaded = false;
 
 // メインスレッドからのメッセージ待受
-self.addEventListener("message", async (e) => {
+self.addEventListener("message", (e) => {
   const { type, id, payload } = e.data || {};
 
   switch (type) {

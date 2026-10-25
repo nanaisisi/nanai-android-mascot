@@ -22,3 +22,22 @@ export async function invoke(cmd, args = {}) {
 
   throw new TypeError(`Tauri invoke function is not available on globalThis.__TAURI__ (cmd: ${cmd})`);
 }
+
+export function convertFileSrc(filePath, protocol = "asset") {
+  if (!filePath) return "";
+  const tauri = globalThis.__TAURI__;
+  if (!tauri) {
+    return filePath;
+  }
+  const convertFn = tauri.core?.convertFileSrc || tauri.tauri?.convertFileSrc || tauri.convertFileSrc;
+  if (typeof convertFn === "function") {
+    return convertFn(filePath, protocol);
+  }
+  // 相対パスまたはWeb URLはそのまま
+  if (filePath.startsWith("http://") || filePath.startsWith("https://") || filePath.startsWith("asset://") || filePath.startsWith("./") || filePath.startsWith("/")) {
+    return filePath;
+  }
+  // Windows絶対パスなどをアセットプロトコル形式に変換
+  const normalized = filePath.replace(/\\/g, "/");
+  return `asset://localhost/${encodeURI(normalized)}`;
+}

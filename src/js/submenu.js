@@ -172,6 +172,15 @@ if (globalThis.__TAURI__) {
 }
 
 globalThis.addEventListener("DOMContentLoaded", () => {
+  try {
+    const savedTheme = localStorage.getItem("nanai_balloon_theme");
+    if (savedTheme) {
+      document.documentElement.setAttribute("data-balloon-theme", savedTheme);
+      document.body.className = `balloon-theme-${savedTheme}`;
+    }
+  } catch (_err) {
+    // LocalStorage access restricted or unavailable
+  }
   renderContent();
   if (globalThis.__TAURI__) {
     const emitFn = globalThis.__TAURI__.event?.emit || globalThis.__TAURI__.emit;

@@ -606,4 +606,63 @@ export class SurfaceManager {
 			}
 		}
 	}
+
+	/**
+	 * element0〜elementN で定義されたレイヤー画像をベース画像上に合成 (UKADOC準拠)
+	 * @param {number|string} surfaceId
+	 * @param {string} baseImgSrc
+	 * @param {Function} resolveImagePath - ファイル名から画像URL/DataURLを解決する関数
+	 * @returns {Promise<string>} - 合成後のDataURL (PNG)
+	 */
+	composeSurfaceElements(surfaceId, baseImgSrc, resolveImagePath) {
+		const sid = String(surfaceId);
+		const elementList = this.elements[sid] || this.elements.default || [];
+		if (!elementList || elementList.length === 0) {
+			return Promise.resolve(baseImgSrc);
+		}
+
+		return new Promise((resolve) => {
+			const baseImg = new Image();
+			baseImg.crossOrigin = "anonymous";
+			baseImg.onload = async () => {
+				try {
+					const width = baseImg.naturalWidth || baseImg.width;
+					const height = baseImg.naturalHeight || baseImg.height;
+					const canvas = document.createElement("canvas");
+					canvas.width = width;
+					canvas.height = height;
+					const ctx = canvas.getContext("2d");
+					if (!ctx) return resolve(baseImgSrc);
+
+					ctx.drawImage(baseImg, 0, 0);
+
+					for (const elem of elementList) {
+						if (!elem.file) continue;
+						const elemSrc = await resolveImagePath(elem.file);
+						if (!elemSrc) continue;
+
+						await new Promise((imgResolve) => {
+							const partImg = new Image();
+							partImg.crossOrigin = "anonymous";
+							partImg.onload = () => {
+								if (elem.type === "replace") {
+									ctx.clearRect(elem.x, elem.y, partImg.naturalWidth || partImg.width, partImg.naturalHeight || partImg.height);
+								}
+								ctx.drawImage(partImg, elem.x, elem.y);
+								imgResolve();
+							};
+							partImg.onerror = () => imgResolve();
+							partImg.src = elemSrc;
+						});
+					}
+
+					resolve(canvas.toDataURL("image/png"));
+				} catch (_err) {
+					resolve(baseImgSrc);
+				}
+			};
+			baseImg.onerror = () => resolve(baseImgSrc);
+			baseImg.src = baseImgSrc;
+		});
+	}
 }

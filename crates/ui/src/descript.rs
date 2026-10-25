@@ -46,4 +46,25 @@ impl Descript {
     pub fn homeurl(&self) -> Option<&String> {
         self.get("homeurl")
     }
+
+    /// バルーン用原点座標 (origin.x, origin.y)
+    pub fn origin(&self) -> (Option<i32>, Option<i32>) {
+        let x = self.get("origin.x").and_then(|v| v.parse().ok());
+        let y = self.get("origin.y").and_then(|v| v.parse().ok());
+        (x, y)
+    }
+
+    /// バルーン有効テキスト領域 (validrect.left, top, right, bottom)
+    pub fn validrect(&self) -> (Option<i32>, Option<i32>, Option<i32>, Option<i32>) {
+        let l = self.get("validrect.left").and_then(|v| v.parse().ok());
+        let t = self.get("validrect.top").and_then(|v| v.parse().ok());
+        let r = self.get("validrect.right").and_then(|v| v.parse().ok());
+        let b = self.get("validrect.bottom").and_then(|v| v.parse().ok());
+        (l, t, r, b)
+    }
+
+    /// バルーンフォント色 (`font.color.r,g,b` または `font.color`)
+    pub fn font_color(&self) -> Option<&String> {
+        self.get("font.color")
+    }
 }

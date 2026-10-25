@@ -64,6 +64,28 @@ export const ghostSurfaceMethods = {
         }
       }
 
+      // element0〜N の多重パーツ合成処理
+      if (transparentSrc && this.app?.surfaceManager?.composeSurfaceElements) {
+        try {
+          transparentSrc = await this.app.surfaceManager.composeSurfaceElements(
+            surfaceId,
+            transparentSrc,
+            (fileName) => {
+              if (isTauriAvailable()) {
+                return invoke("load_surface_image", {
+                  ghostPath,
+                  shell,
+                  surfaceId: fileName.replace(/\.[^/.]+$/, ""),
+                }).catch(() => null);
+              }
+              return Promise.resolve(convertFileSrc(`${ghostPath}/shell/${shell}/${fileName}`));
+            }
+          );
+        } catch (_e) {
+          // 合成エラー時はベース画像をそのまま使用
+        }
+      }
+
       if (this.currentSurfaces) {
         this.currentSurfaces.set(scopeId, transparentSrc);
       }

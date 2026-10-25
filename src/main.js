@@ -63,6 +63,7 @@ export class NanaiAndroidMascotApp {
       menuContainer: document.getElementById("menu-iframe-container"),
       menuBtn: document.getElementById("menu-btn"),
       quickBubble: document.getElementById("quick-bubble"),
+      quickActionsPanel: document.getElementById("quick-actions-panel"),
     };
   }
 
@@ -136,13 +137,39 @@ export class NanaiAndroidMascotApp {
       this.toggleMenu(e.screenX || (sX + rect.right), e.screenY || (sY + rect.bottom));
     });
 
+    // クイックアクションパネル表示切り替え
     this.elements.quickBubble?.addEventListener("click", (e) => {
       e.stopPropagation();
-      this.toggleMenu(e.screenX, e.screenY);
+      this.toggleQuickActionsPanel();
+    });
+
+    document.getElementById("qa-talk-btn")?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.hideQuickActionsPanel();
+      this.onGhostClick();
+    });
+
+    document.getElementById("qa-ghost-btn")?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.hideQuickActionsPanel();
+      this.switchToNextGhost();
+    });
+
+    document.getElementById("qa-balloon-btn")?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.hideQuickActionsPanel();
+      this.handleMenuAction("balloon");
+    });
+
+    document.getElementById("qa-minimize-btn")?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.hideQuickActionsPanel();
+      this.handleMenuAction("minimize");
     });
 
     document.addEventListener("click", () => {
       this.hideMenu();
+      this.hideQuickActionsPanel();
     });
 
     // バルーンクリックで文字送りスキップ
@@ -426,6 +453,31 @@ export class NanaiAndroidMascotApp {
   hideMenu() {
     if (this.elements.menuContainer) {
       this.elements.menuContainer.style.display = "none";
+    }
+    this.hideQuickActionsPanel();
+  }
+
+  toggleQuickActionsPanel() {
+    if (!this.elements.quickActionsPanel) return;
+    const isVisible = this.elements.quickActionsPanel.style.display !== "none";
+    this.elements.quickActionsPanel.style.display = isVisible ? "none" : "flex";
+  }
+
+  hideQuickActionsPanel() {
+    if (this.elements.quickActionsPanel) {
+      this.elements.quickActionsPanel.style.display = "none";
+    }
+  }
+
+  switchToNextGhost() {
+    const ghosts = this.ghostController.ghosts || [];
+    if (ghosts.length <= 1) return;
+    const currentName = this.ghostController.currentGhost?.name;
+    const currentIndex = ghosts.findIndex((g) => g.name === currentName);
+    const nextIndex = (currentIndex + 1) % ghosts.length;
+    const nextGhost = ghosts[nextIndex];
+    if (nextGhost) {
+      this.ghostController.selectGhost(nextGhost.name);
     }
   }
 

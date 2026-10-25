@@ -614,7 +614,7 @@ async fn show_menu_window(app_handle: tauri::AppHandle, x: f64, y: f64) -> Resul
                 tauri::WebviewUrl::App("menu-iframe.html".into()),
             )
             .title("Nanai Menu")
-            .inner_size(460.0, 560.0)
+            .inner_size(240.0, 460.0)
             .transparent(true)
             .decorations(false)
             .always_on_top(true)

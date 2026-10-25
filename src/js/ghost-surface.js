@@ -91,14 +91,19 @@ export const ghostSurfaceMethods = {
   updateGhostCharacter(ghostName) {
     const sakuraPlaceholder =
       byId("sakura-placeholder") || document.querySelector(".character-placeholder");
+    const keroPlaceholder = byId("kero-placeholder");
     if (!sakuraPlaceholder) return;
 
     if (!ghostName) {
       sakuraPlaceholder.innerHTML = "";
+      if (keroPlaceholder) keroPlaceholder.innerHTML = "";
       return;
     }
     sakuraPlaceholder.title = ghostName;
+    // 0: メインキャラクター (sakura) の初期サーフェス \s0
     this.updateSurface(0, 0);
+    // 1: サブキャラクター (kero) の初期サーフェス \s10 (伺か標準)
+    this.updateSurface(10, 1);
   },
 
   updateCurrentGhostDisplay() {

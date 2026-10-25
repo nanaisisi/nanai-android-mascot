@@ -74,18 +74,7 @@
             <div class="ghost-character" id="ghost-character">
               <span class="character-placeholder" id="sakura-placeholder"></span>
             </div>
-            <!-- クイックアクション（簡易ミニ操作パレット） -->
-            <div class="quick-bubble-wrapper">
-              <button type="button" class="quick-bubble" id="quick-bubble" title="クイックメニュー">
-                ⚡ 操作
-              </button>
-              <div class="quick-actions-panel" id="quick-actions-panel" style="display: none;">
-                <button type="button" class="quick-action-btn" id="qa-talk-btn"><span>💬 話しかける</span></button>
-                <button type="button" class="quick-action-btn" id="qa-ghost-btn"><span>👻 ゴースト切替</span></button>
-                <button type="button" class="quick-action-btn" id="qa-balloon-btn"><span>💭 バルーン変更</span></button>
-                <button type="button" class="quick-action-btn" id="qa-minimize-btn"><span>🗕 最小化</span></button>
-              </div>
-            </div>
+            <!-- クイックメニューはゴーストタップや右上メニューから十分利用可能なため常時ボタンを撤去 -->
           </div>
         </div>
 
@@ -139,11 +128,11 @@
       </div>
       <div class="form-section">
         <span class="form-label">ゴースト取り込み (.nar / .zip):</span>
-        <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
-          <input type="file" id="ghost-archive-input" accept=".nar,.zip" style="flex: 1; padding: 6px; font-size: 13px;" />
-          <button type="button" id="import-ghost-btn" class="primary" style="white-space: nowrap;">取り込み</button>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; margin-top: 4px;">
+          <input type="file" id="ghost-archive-input" accept=".nar,.zip" style="flex: 1 1 180px; min-width: 0; max-width: 100%; padding: 6px; font-size: 13px; box-sizing: border-box;" />
+          <button type="button" id="import-ghost-btn" class="primary" style="flex: 0 0 auto; white-space: nowrap; padding: 6px 14px; font-size: 13px; cursor: pointer;">取り込み</button>
         </div>
-        <div id="import-ghost-status" style="font-size: 12px; margin-top: 4px; color: #666;"></div>
+        <div id="import-ghost-status" style="font-size: 12px; margin-top: 4px; color: #666; word-break: break-all;"></div>
       </div>
       <div class="form-section">
         <span class="form-label">ゴーストディレクトリ:</span>
@@ -510,11 +499,11 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
           取り込んだゴーストは <code>assets/ghost/</code> 配下に自動展開され、すぐに切り替えて遊ぶことができます。
         </p>
         <span class="form-label">アーカイブファイルを選択:</span>
-        <div style="display: flex; gap: 8px; align-items: center; margin-top: 6px;">
-          <input type="file" id="modal-install-file-input" accept=".nar,.zip" style="flex: 1; padding: 6px; font-size: 13px;" />
-          <button type="button" id="modal-install-submit-btn" class="primary" style="white-space: nowrap;">取り込み実行</button>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; margin-top: 6px;">
+          <input type="file" id="modal-install-file-input" accept=".nar,.zip" style="flex: 1 1 200px; min-width: 0; max-width: 100%; padding: 6px; font-size: 13px; box-sizing: border-box;" />
+          <button type="button" id="modal-install-submit-btn" class="primary" style="flex: 0 0 auto; white-space: nowrap; padding: 6px 16px; font-size: 13px; cursor: pointer;">取り込み実行</button>
         </div>
-        <div id="modal-install-status" style="font-size: 12px; margin-top: 8px; min-height: 18px; color: #666;"></div>
+        <div id="modal-install-status" style="font-size: 12px; margin-top: 8px; min-height: 18px; color: #666; word-break: break-all;"></div>
       </div>
       <div class="help-section" style="margin-top: 15px;">
         <h3>対応形式と仕様</h3>

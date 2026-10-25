@@ -39,8 +39,15 @@ export const actionMethods = {
     }
 
     if (action === "scan") return gc.scanGhosts();
-    if (action === "install") return this.modalManager?.openModal("install");
-    if (action === "balloon") return this.cycleBalloonTheme();
+    if (action === "install") return this.modalManager?.show("install-modal-content");
+    if (action === "balloon" || action === "balloon-cycle") return this.cycleBalloonTheme();
+    if (action.startsWith("balloon-theme-")) {
+      const theme = action.replace("balloon-theme-", "");
+      this.setBalloonTheme(theme);
+      this.showBalloon(`バルーンスキンを「${THEME_LABELS[theme] || theme}」に変更しました`);
+      setTimeout(() => this.hideBalloon(), 2000);
+      return;
+    }
     if (action.startsWith("scale-")) return this.applyShellScaleAction(action);
     if (action === "close" || action === "exit") return this.closeApp();
     if (action === "close-menu") return;

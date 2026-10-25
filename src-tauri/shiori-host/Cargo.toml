@@ -1,0 +1,15 @@
+[package]
+name = "shiori-host32"
+version = "0.1.0"
+edition = "2021"
+description = "32bit SHIORI DLL host process (stdio bridge for the 64bit main app)"
+
+# 親(src-tauri)のワークスペースに含めない
+[workspace]
+
+[dependencies]
+libloading = "0.8"
+
+[profile.release]
+opt-level = "s"
+strip = true

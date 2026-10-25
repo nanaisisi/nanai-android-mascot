@@ -121,6 +121,16 @@ export class SakuraScriptPlayer {
 					tokens.push({ type: "clear" });
 					i++;
 				}
+				// \x (クリック待ち・改ページ)
+				else if (char === "x") {
+					tokens.push({ type: "pause" });
+					i++;
+				}
+				// \_q (クイック描画切替)
+				else if (char === "_" && script[i + 1] === "q") {
+					tokens.push({ type: "quick_toggle" });
+					i += 2;
+				}
 				// \![command,arg,...] (内部コマンド)
 				else if (char === "!" && script[i + 1] === "[") {
 					let j = i + 2;
@@ -209,6 +219,7 @@ export class SakuraScriptPlayer {
 		if (keroText) keroText.innerHTML = "";
 
 		let currentBalloonText = sakuraText;
+		let isQuickMode = false;
 
 		for (let j = 0; j < tokens.length; j++) {
 			if (this.playbackId !== currentId) break; // 新しい再生で中断
@@ -235,7 +246,7 @@ export class SakuraScriptPlayer {
 
 				case "char":
 					currentBalloonText.appendChild(document.createTextNode(token.value));
-					if (!this.skipRequested) {
+					if (!this.skipRequested && !isQuickMode) {
 						const delay = /^[、。！？.?!]/.test(token.value) ? 120 : 40;
 						await this.sleep(delay);
 					}
@@ -252,8 +263,21 @@ export class SakuraScriptPlayer {
 					currentBalloonText.innerHTML = "";
 					break;
 
-				case "wait":
+				case "pause":
+					// \x: クリック待ち（またはスキップ/タイムアウト）
 					if (!this.skipRequested) {
+						await this.waitForClickOrTimeout(currentBalloonText, 10000);
+					}
+					currentBalloonText.innerHTML = "";
+					break;
+
+				case "quick_toggle":
+					// \_q: クイック描画トグル
+					isQuickMode = !isQuickMode;
+					break;
+
+				case "wait":
+					if (!this.skipRequested && !isQuickMode) {
 						await this.sleep(token.value);
 					}
 					break;
@@ -289,6 +313,25 @@ export class SakuraScriptPlayer {
 		}
 
 		this.isPlaying = false;
+		this.scheduleSurfaceRestore(currentId);
+	}
+
+	/**
+	 * 発話終了後のサーフィス自動復帰タイマー (OnSurfaceRestore)
+	 */
+	scheduleSurfaceRestore(targetPlaybackId) {
+		if (this._restoreTimer) {
+			clearTimeout(this._restoreTimer);
+		}
+		this._restoreTimer = setTimeout(async () => {
+			if (this.playbackId === targetPlaybackId && !this.isPlaying) {
+				try {
+					await this.app.ghostController.sendShioriEvent("OnSurfaceRestore");
+				} catch (_e) {
+					// 復帰エラーは無視
+				}
+			}
+		}, 8000);
 	}
 
 	/**
@@ -356,5 +399,37 @@ export class SakuraScriptPlayer {
 
 	sleep(ms) {
 		return new Promise((resolve) => setTimeout(resolve, ms));
+	}
+
+	/**
+	 * バルーンのクリックまたはタイムアウトを待つ (\x 制御)
+	 */
+	waitForClickOrTimeout(element, timeoutMs = 10000) {
+		return new Promise((resolve) => {
+			let timer = null;
+			const cleanup = () => {
+				if (timer) clearTimeout(timer);
+				element?.removeEventListener("click", onClick);
+				document.removeEventListener("keydown", onKey);
+			};
+			const onClick = (e) => {
+				e.stopPropagation();
+				cleanup();
+				resolve();
+			};
+			const onKey = (e) => {
+				if (e.key === "Enter" || e.key === " ") {
+					cleanup();
+					resolve();
+				}
+			};
+
+			element?.addEventListener("click", onClick);
+			document.addEventListener("keydown", onKey);
+			timer = setTimeout(() => {
+				cleanup();
+				resolve();
+			}, timeoutMs);
+		});
 	}
 }

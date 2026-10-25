@@ -71,7 +71,9 @@ export class SurfaceManager {
 		try {
 			let content = "";
 			// shell/master などのパス形式に対応
-			const basePath = ghostPath.includes("/shell/") ? ghostPath : `${ghostPath}/shell/${shellName}`;
+			const basePath = ghostPath.includes("/shell/")
+				? ghostPath
+				: `${ghostPath}/shell/${shellName}`;
 			const surfacesPath = `${basePath}/surfaces.txt`;
 
 			if (isTauriAvailable()) {
@@ -237,7 +239,10 @@ export class SurfaceManager {
 	 */
 	stopAnimations(scopeId = 0) {
 		const timers = this.activeAnimationTimers[scopeId] || [];
-		timers.forEach((t) => clearTimeout(t));
+		timers.forEach((t) => {
+			clearTimeout(t);
+			clearInterval(t);
+		});
 		this.activeAnimationTimers[scopeId] = [];
 	}
 
@@ -311,7 +316,11 @@ export class SurfaceManager {
 		} else if (intervalStr.startsWith("random")) {
 			const n = parseInt(intervalStr.split(",")[1], 10) || 2;
 			probability = 1.0 / n;
-		} else if (intervalStr.startsWith("talk") || intervalStr === "never" || intervalStr === "bind") {
+		} else if (
+			intervalStr.startsWith("talk") ||
+			intervalStr === "never" ||
+			intervalStr === "bind"
+		) {
 			return; // 発話時口パク、着せ替え、スクリプト直接呼出 (\i) は別トリガー
 		}
 
@@ -330,7 +339,7 @@ export class SurfaceManager {
 	 * アニメーションパターンの順次実行
 	 */
 	async playAnimationPatterns(anim, baseSurfaceId, scopeId) {
-		if (!anim.patterns || !anim.patterns.length) return;
+		if (!anim.patterns?.length) return;
 		const gc = this.app?.ghostController;
 		if (!gc) return;
 
@@ -350,6 +359,43 @@ export class SurfaceManager {
 
 		if (String(this.currentSurfaceId) === String(baseSurfaceId)) {
 			await gc.updateSurface(baseSurfaceId, scopeId);
+		}
+	}
+
+	/**
+	 * さくらスクリプト \i[ID] による明示的なアニメーション再生
+	 */
+	async playAnimationById(animId, scopeId = 0, waitForComplete = false) {
+		const sid = String(this.currentSurfaceId);
+		const animList = this.animations[sid] || this.animations.default || [];
+		const anim = animList.find(
+			(a) => a.id === animId || String(a.id) === String(animId),
+		);
+		if (!anim) return;
+
+		const playPromise = this.playAnimationPatterns(anim, sid, scopeId);
+		if (waitForComplete) {
+			await playPromise;
+		}
+	}
+
+	/**
+	 * 発話（文字送り）時の口パク連動 (interval talk,N 準拠)
+	 */
+	onCharSpoken(scopeId = 0) {
+		const sid = String(this.currentSurfaceId);
+		const animList = this.animations[sid] || this.animations.default || [];
+		const talkAnim = animList.find((a) =>
+			(a.interval || "").startsWith("talk"),
+		);
+		if (!talkAnim) return;
+
+		if (!this._spokenCount) this._spokenCount = {};
+		this._spokenCount[scopeId] = (this._spokenCount[scopeId] || 0) + 1;
+
+		const n = parseInt(talkAnim.interval.split(",")[1], 10) || 1;
+		if (this._spokenCount[scopeId] % n === 0) {
+			this.playAnimationPatterns(talkAnim, sid, scopeId).catch(() => {});
 		}
 	}
 

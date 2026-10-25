@@ -83,6 +83,34 @@ export class SakuraScriptPlayer {
 						i++;
 					}
 				}
+				// \i (アニメーション呼出: \i[ID], \i[ID,wait], \i1〜\i9)
+				else if (char === "i") {
+					i++;
+					if (script[i] === "[") {
+						const end = script.indexOf("]", i);
+						if (end !== -1) {
+							const val = script.substring(i + 1, end).trim();
+							const parts = val.split(",");
+							const animId = parseInt(parts[0], 10);
+							const wait = parts[1]?.trim().toLowerCase() === "wait";
+							tokens.push({
+								type: "animation",
+								animId: Number.isNaN(animId) ? 0 : animId,
+								wait,
+							});
+							i = end + 1;
+						} else {
+							i++;
+						}
+					} else if (/\d/.test(script[i])) {
+						tokens.push({
+							type: "animation",
+							animId: parseInt(script[i], 10),
+							wait: false,
+						});
+						i++;
+					}
+				}
 				// \w1 〜 \w9 (ウェイト)
 				else if (char === "w" && /\d/.test(script[i + 1])) {
 					i++;
@@ -246,6 +274,8 @@ export class SakuraScriptPlayer {
 
 				case "char":
 					currentBalloonText.appendChild(document.createTextNode(token.value));
+					// 発話連動の口パク (SERIKO talk,N)
+					this.app.surfaceManager?.onCharSpoken(this.currentScope);
 					if (!this.skipRequested && !isQuickMode) {
 						const delay = /^[、。！？.?!]/.test(token.value) ? 120 : 40;
 						await this.sleep(delay);
@@ -287,6 +317,15 @@ export class SakuraScriptPlayer {
 					this.app.ghostController.updateSurface(
 						token.value,
 						this.currentScope,
+					);
+					break;
+
+				case "animation":
+					// \i[ID] / \i[ID,wait]: アニメーション直接再生
+					await this.app.surfaceManager?.playAnimationById(
+						token.animId,
+						this.currentScope,
+						token.wait,
 					);
 					break;
 

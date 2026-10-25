@@ -1,5 +1,5 @@
+import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 import { ShioriProtocol } from "./shiori-protocol.js";
-import { invoke, isTauriAvailable } from "./tauri-helper.js";
 
 /** SHIORI 通信関連メソッド (GhostController に mixin) */
 export const ghostShioriMethods = {

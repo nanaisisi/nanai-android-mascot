@@ -1,7 +1,7 @@
-import { AppConfig } from "./config.js";
+import { AppConfig } from "../core/config.js";
+import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
+import { ghostSurfaceMethods } from "../surface/ghost-surface.js";
 import { ghostShioriMethods } from "./ghost-shiori.js";
-import { ghostSurfaceMethods } from "./ghost-surface.js";
-import { invoke, isTauriAvailable } from "./tauri-helper.js";
 
 /**
  * Nanai Android Mascot - ゴースト管理モジュール

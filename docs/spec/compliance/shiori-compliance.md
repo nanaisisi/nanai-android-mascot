@@ -1,4 +1,4 @@
-﻿# SHIORI 規格対応仕様 (SHIORI Compliance)
+# SHIORI 規格対応仕様 (SHIORI Compliance)
 
 - **言及規格の元ドキュメント・権利者・ライセンス**:
   - **SHIORI 仕様 / 各種サブシステム**:
@@ -16,9 +16,9 @@ Nanai Android Mascot における「SHIORI プロトコル」およびイベン�
 - **プロトコル規格**: SHIORI/3.0（および SHIORI/2.x エミュレーション）
 - **対応度**: **85%**
 - **主要実装ファイル**:
-  - `src/js/shiori-protocol.js`: SHIORI 3.0 リクエスト/レスポンスパーサー
-  - `src/js/shiori-worker.js`: 非同期 Web Worker サンドボックス実行環境
-  - `src/js/ghost.js`: イベントパイプライン・キューイング制御
+  - `src/js/ghost/shiori-protocol.js`: SHIORI 3.0 リクエスト/レスポンスパーサー
+  - `src/js/ghost/shiori-worker.js`: 非同期 Web Worker サンドボックス実行環境
+  - `src/js/ghost/ghost.js`: イベントパイプライン・キューイング制御
 
 ---
 

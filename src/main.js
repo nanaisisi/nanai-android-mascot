@@ -1,14 +1,14 @@
-import { actionMethods } from "./js/app-actions.js";
-import { eventMethods } from "./js/app-events.js";
-import { menuMethods } from "./js/app-menu.js";
-import { settingsMethods } from "./js/app-settings.js";
-import { AppConfig, loadAppConfig } from "./js/config.js";
-import { GhostController } from "./js/ghost.js";
-import { InteractionManager } from "./js/interaction.js";
-import { ModalManager } from "./js/modal.js";
-import { SakuraScriptPlayer } from "./js/sakura-script.js";
-import { SurfaceManager } from "./js/surface.js";
-import { invoke, isTauriAvailable } from "./js/tauri-helper.js";
+import { actionMethods } from "./js/core/app-actions.js";
+import { eventMethods } from "./js/core/app-events.js";
+import { settingsMethods } from "./js/core/app-settings.js";
+import { AppConfig, loadAppConfig } from "./js/core/config.js";
+import { invoke, isTauriAvailable } from "./js/core/tauri-helper.js";
+import { GhostController } from "./js/ghost/ghost.js";
+import { SakuraScriptPlayer } from "./js/ghost/sakura-script.js";
+import { InteractionManager } from "./js/surface/interaction.js";
+import { SurfaceManager } from "./js/surface/surface.js";
+import { menuMethods } from "./js/ui/app-menu.js";
+import { ModalManager } from "./js/ui/modal.js";
 
 export class NanaiAndroidMascotApp {
 	constructor() {

@@ -1,5 +1,5 @@
-import { emit, invoke, isTauriAvailable } from "./tauri-helper.js";
-import { AppConfig } from "./config.js";
+import { AppConfig } from "../core/config.js";
+import { emit, invoke, isTauriAvailable } from "../core/tauri-helper.js";
 
 /** メニュー/クイックパネル関連メソッド (NanaiAndroidMascotApp に mixin) */
 export const menuMethods = {

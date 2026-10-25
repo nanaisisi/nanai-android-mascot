@@ -1,5 +1,5 @@
-import { AppConfig } from "./config.js";
-import { convertFileSrc, invoke, isTauriAvailable } from "./tauri-helper.js";
+import { AppConfig } from "../core/config.js";
+import { convertFileSrc, emit, invoke, isTauriAvailable } from "../core/tauri-helper.js";
 
 const byId = (id) => document.getElementById(id);
 
@@ -54,7 +54,6 @@ export const ghostSurfaceMethods = {
       }
 
       if (isSubchar && isTauriAvailable()) {
-        const { emit } = await import("./tauri-helper.js");
         emit(`update-subchar-image-${scopeId}`, { src: transparentSrc });
       }
 

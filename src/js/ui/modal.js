@@ -1,4 +1,4 @@
-import { invoke, isTauriAvailable } from "./tauri-helper.js";
+import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 
 /**
  * Nanai Android Mascot - モーダル & UIダイアログ管理
@@ -334,7 +334,7 @@ export class ModalManager {
 
     document.getElementById("export-logs")?.addEventListener("click", () => {
       const output = document.getElementById("log-output");
-      const text = output?.innerText || "";
+      const text = output?.textContent || "";
       const blob = new Blob([text], { type: "text/plain" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");

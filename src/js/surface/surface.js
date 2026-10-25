@@ -1,4 +1,4 @@
-import { invoke, isTauriAvailable } from "./tauri-helper.js";
+import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 
 /**
  * Nanai Android Mascot - surfaces.txt パーサー & 当たり判定（Collision）マネージャー

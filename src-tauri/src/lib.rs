@@ -78,17 +78,24 @@ fn load_surface_image(
     let shell_dir = base_ghost_path.join("shell").join(&shell_name);
     let master_dir = base_ghost_path.join("shell").join("master");
 
-    // 探索する候補リスト (指定シェル -> masterシェル、png -> svg -> pna)
-    let candidates = vec![
+    let surface_id_num = surface_id.parse::<u32>().unwrap_or(0);
+    let mut candidates = vec![
         shell_dir.join(format!("surface{surface_id}.png")),
+        shell_dir.join(format!("surface{surface_id_num:04}.png")),
+        shell_dir.join(format!("surface{surface_id_num:02}.png")),
         shell_dir.join(format!("surface{surface_id}.svg")),
         shell_dir.join(format!("surface{surface_id}.pna")),
         shell_dir.join(format!("Surface{surface_id}.png")),
+        shell_dir.join(format!("Surface{surface_id_num:04}.png")),
         shell_dir.join("surface0.png"),
+        shell_dir.join("surface0000.png"),
         shell_dir.join("surface0.svg"),
         master_dir.join(format!("surface{surface_id}.png")),
+        master_dir.join(format!("surface{surface_id_num:04}.png")),
+        master_dir.join(format!("surface{surface_id_num:02}.png")),
         master_dir.join(format!("surface{surface_id}.svg")),
         master_dir.join("surface0.png"),
+        master_dir.join("surface0000.png"),
         master_dir.join("surface0.svg"),
     ];
 
@@ -375,7 +382,7 @@ async fn send_shiori_request(
     println!("📤 SHIORI 3.0 Request:\n{}", request);
 
     // リクエストからIDヘッダーを簡易抽出
-    let _event_id = request
+    let event_id = request
         .lines()
         .find_map(|line| {
             if line.to_uppercase().starts_with("ID:") {
@@ -386,10 +393,25 @@ async fn send_shiori_request(
         })
         .unwrap_or_else(|| "Unknown".to_string());
 
-    // SHIORIモジュールがロードされていない場合は 311 No Content を返却
-    let response =
-        "SHIORI/3.0 311 No Content\r\nSender: NanaiRustCore\r\nCharset: UTF-8\r\n\r\n".to_string();
-    Ok(response)
+    // SHIORIモジュール未ロード時のフォールバック応答（さくらスクリプト）
+    let script = match event_id.as_str() {
+        "OnBoot" | "OnFirstBoot" => "\\0\\s[0]起動したよ！よろしくね。\\e",
+        "OnMouseDoubleClick" | "OnMouseClick" => "\\0\\s[0]なにか御用ですか？\\e",
+        "OnSecondChange" => "",
+        _ => "",
+    };
+
+    if script.is_empty() {
+        let response =
+            "SHIORI/3.0 311 No Content\r\nSender: NanaiRustCore\r\nCharset: UTF-8\r\n\r\n".to_string();
+        Ok(response)
+    } else {
+        let response = format!(
+            "SHIORI/3.0 200 OK\r\nSender: NanaiRustCore\r\nCharset: UTF-8\r\nValue: {}\r\n\r\n",
+            script
+        );
+        Ok(response)
+    }
 }
 
 /// SHIORIにイベントを送信（簡易版）

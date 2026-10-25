@@ -45,3 +45,4 @@ assets/balloon/*
 userData/
 imported_ghosts/
 
+package-lock.json

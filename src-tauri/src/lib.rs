@@ -103,10 +103,23 @@ pub fn run() {
 
     builder
         .on_window_event(|window, event| {
-            if (window.label() == "menu_window" || window.label() == "submenu_window")
-                && let tauri::WindowEvent::Focused(false) = event
-            {
-                let _ = window.hide();
+            if let tauri::WindowEvent::Focused(false) = event {
+                let label = window.label();
+                if label == "menu_window" || label == "submenu_window" {
+                    let app = window.app_handle();
+                    let menu_focused = app.get_webview_window("menu_window").map(|w| w.is_focused().unwrap_or(false)).unwrap_or(false);
+                    let sub_focused = app.get_webview_window("submenu_window").map(|w| w.is_focused().unwrap_or(false)).unwrap_or(false);
+
+                    // メニューとサブメニューの双方がフォーカスを失った場合のみ非表示化
+                    if !menu_focused && !sub_focused {
+                        if let Some(m) = app.get_webview_window("menu_window") {
+                            let _ = m.hide();
+                        }
+                        if let Some(s) = app.get_webview_window("submenu_window") {
+                            let _ = s.hide();
+                        }
+                    }
+                }
             }
         })
         .plugin(tauri_plugin_opener::init())

@@ -148,7 +148,7 @@ function renderGhostSubmenu(ghosts, currentGhost) {
   container.appendChild(installBtn);
 }
 
-// 独立サブメニューウィンドウを開く補助関数 (必要時のオプション用)
+// 独立サブメニューウィンドウを開く補助関数 (デスクトップ環境用)
 function _triggerSubmenuWindow(menuType, buttonEl) {
   if (globalThis.__TAURI__) {
     const invokeFn = globalThis.__TAURI__.core?.invoke || globalThis.__TAURI__.invoke;
@@ -196,45 +196,61 @@ document.addEventListener("click", (e) => {
     return;
   }
 
-  const action = menuItem.id.replace("-btn", "");
-  dispatchAction(action);
-});
-
-// SSP準拠: サブメニューが画面右端を超える場合は左側へ反転展開
-function checkSubmenuFlip(wrapper) {
-  const container = document.querySelector(".menu-container");
-  if (!container) return;
-
-  const containerRect = container.getBoundingClientRect();
-  const submenuWidth = 240; // およそのサブメニュー幅
-  const spaceOnRight = (globalThis.innerWidth ?? 800) - containerRect.right;
-
-  // 右側にサブメニューを出す十分なスペースがない場合は左側に展開
-  if (spaceOnRight < submenuWidth) {
-    wrapper.classList.add("flip-left");
-  } else {
-    wrapper.classList.remove("flip-left");
-  }
-}
-
-// ホバー時にも右/左展開を判定 & 独立サブメニューウィンドウ呼び出し
-document.querySelectorAll(".menu-item-wrapper").forEach((wrapper) => {
-  wrapper.addEventListener("mouseenter", () => {
-    checkSubmenuFlip(wrapper);
-    if (globalThis.__TAURI__) {
-      const btn = wrapper.querySelector(".menu-item.has-submenu");
-      if (btn) {
-        const menuType = btn.id.replace("-menu-btn", "").replace("-switch-btn", "");
-        _triggerSubmenuWindow(menuType, btn);
-      }
-    }
+    const action = menuItem.dataset.action || menuItem.id.replace("-btn", "");
+    dispatchAction(action);
   });
-});
 
-// 初期化時に親ウィンドウへ同期リクエスト
-globalThis.addEventListener("DOMContentLoaded", () => {
-  dispatchAction("request-sync");
-});
+  // SSP準拠: サブメニューが画面右端を超える場合は左側へ反転展開
+  function checkSubmenuFlip(wrapper) {
+    const container = document.querySelector(".menu-container");
+    if (!container) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const submenuWidth = 240; // およそのサブメニュー幅
+    const spaceOnRight = (globalThis.innerWidth ?? 800) - containerRect.right;
+
+    // 右側にサブメニューを出す十分なスペースがない場合は左側に展開
+    if (spaceOnRight < submenuWidth) {
+      wrapper.classList.add("flip-left");
+    } else {
+      wrapper.classList.remove("flip-left");
+    }
+  }
+
+  // ホバー時にも右/左展開を判定 & 独立サブメニューウィンドウ呼び出し
+  document.querySelectorAll(".menu-item-wrapper").forEach((wrapper) => {
+    wrapper.addEventListener("mouseenter", () => {
+      checkSubmenuFlip(wrapper);
+      if (globalThis.__TAURI__) {
+        const btn = wrapper.querySelector(".menu-item.has-submenu");
+        if (btn) {
+          const menuType = btn.id.replace("-menu-btn", "").replace("-switch-btn", "");
+          _triggerSubmenuWindow(menuType, btn);
+        }
+      } else {
+        wrapper.classList.add("open");
+      }
+    });
+    wrapper.addEventListener("mouseleave", () => {
+      if (!globalThis.__TAURI__) {
+        wrapper.classList.remove("open");
+      }
+    });
+  });
+
+  // 初期化時に親ウィンドウへ同期リクエスト & 保存済みテーマの即時適用
+  globalThis.addEventListener("DOMContentLoaded", () => {
+    try {
+      const savedTheme = localStorage.getItem("nanai_balloon_theme");
+      if (savedTheme) {
+        document.documentElement.setAttribute("data-balloon-theme", savedTheme);
+        document.body.className = `balloon-theme-${savedTheme}`;
+      }
+    } catch (_err) {
+      // LocalStorage access restricted or unavailable
+    }
+    dispatchAction("request-sync");
+  });
 
 // ショートカットキー対応 (T, B, R, P, O, D, A, Ctrl+I, Ctrl+W, Escape)
 document.addEventListener("keydown", (e) => {

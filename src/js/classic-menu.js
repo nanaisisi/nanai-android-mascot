@@ -93,11 +93,28 @@ document.addEventListener("click", (e) => {
   const menuItem = e.target.closest(".menu-item");
   if (!menuItem) return;
 
-  // サブメニュー展開用の親ボタンはクリックで閉じない
-  if (menuItem.classList.contains("has-submenu")) return;
+  // サブメニュー展開用の親ボタンはクリックで開閉トグル（他は閉じる）
+  if (menuItem.classList.contains("has-submenu")) {
+    const wrapper = menuItem.closest(".menu-item-wrapper");
+    if (wrapper) {
+      const isAlreadyOpen = wrapper.classList.contains("open");
+      document.querySelectorAll(".menu-item-wrapper.open").forEach((el) => {
+        el.classList.remove("open");
+      });
+      if (!isAlreadyOpen) {
+        wrapper.classList.add("open");
+      }
+    }
+    return;
+  }
 
   const action = menuItem.id.replace("-btn", "");
   dispatchAction(action);
+});
+
+// 初期化時に親ウィンドウへ同期リクエスト
+globalThis.addEventListener("DOMContentLoaded", () => {
+  dispatchAction("request-sync");
 });
 
 // ショートカットキー対応 (T, B, R, P, O, D, A, Ctrl+I, Ctrl+W, Escape)

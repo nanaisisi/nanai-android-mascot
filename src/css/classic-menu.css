@@ -16,27 +16,24 @@ body {
   color: var(--balloon-text-color);
   user-select: none;
   -webkit-user-select: none;
-  overflow: hidden;
+  overflow: visible;
   padding: 0.25rem;
   display: flex;
   justify-content: flex-start;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .menu-container {
   padding: 0.25rem 0;
   width: clamp(11rem, 280px, 16rem);
   max-height: calc(100vh - 1rem);
-  overflow-y: auto;
-  overflow-x: visible;
+  overflow: visible;
   background-color: var(--balloon-bg);
   background-image: var(--balloon-pattern);
   border: var(--balloon-border-width) var(--balloon-border-style) var(--balloon-border-color);
   border-radius: var(--balloon-border-radius);
   box-shadow: var(--balloon-box-shadow);
   position: relative;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(128, 128, 128, 0.4) transparent;
 }
 
 .menu-container::-webkit-scrollbar,

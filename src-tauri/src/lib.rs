@@ -579,8 +579,13 @@ async fn send_shiori_request(
     if let Some(ref engine) = *engine_lock {
         engine.request(&request)
     } else {
-        eprintln!("⚠️ No active SHIORI engine loaded for request:\n{}", request);
-        Err("SHIORI/3.0 404 Not Found\r\nSender: NanaiRustCore\r\nCharset: UTF-8\r\n\r\n".to_string())
+        eprintln!("⚠️ No active SHIORI engine loaded for request (fallback response):\n{}", request);
+        // フォールバック: OnBoot やメニュー関連のリクエストに対して正常終了(200 OK)を返す
+        if request.contains("OnBoot") || request.contains("OnFirstBoot") {
+            Ok("SHIORI/3.0 200 OK\r\nSender: NanaiFallback\r\nCharset: UTF-8\r\nValue: \\0\\s[0]こんにちは！\\e\r\n\r\n".to_string())
+        } else {
+            Ok("SHIORI/3.0 204 No Content\r\nSender: NanaiFallback\r\nCharset: UTF-8\r\n\r\n".to_string())
+        }
     }
 }
 
@@ -875,6 +880,91 @@ async fn hide_menu_window(app_handle: tauri::AppHandle) -> Result<(), String> {
         if let Some(menu_win) = app_handle.get_webview_window("menu_window") {
             let _ = menu_win.hide();
         }
+        if let Some(sub_win) = app_handle.get_webview_window("submenu_window") {
+            let _ = sub_win.hide();
+        }
+    }
+    Ok(())
+}
+
+/// 独立サブメニューウィンドウ表示コマンド
+#[tauri::command]
+async fn show_submenu_window(
+    app_handle: tauri::AppHandle,
+    menu_type: String,
+    x: f64,
+    y: f64,
+    width: Option<f64>,
+    height: Option<f64>,
+) -> Result<(), String> {
+    #[cfg(desktop)]
+    {
+        use tauri::Manager;
+        let win_width = width.unwrap_or(240.0);
+        let win_height = height.unwrap_or(360.0);
+
+        let mut target_x = x;
+        let mut target_y = y;
+
+        if let Ok(Some(monitor)) = app_handle.primary_monitor() {
+            let screen_size = monitor.size();
+            let screen_pos = monitor.position();
+            let max_x = (screen_pos.x + screen_size.width as i32) as f64 - win_width;
+            let max_y = (screen_pos.y + screen_size.height as i32) as f64 - win_height;
+
+            if target_x > max_x {
+                // 右端を超える場合は左側へ反転 (親メニューの左へ)
+                target_x = (x - win_width - 280.0).max(screen_pos.x as f64);
+            }
+            if target_y > max_y {
+                target_y = max_y.max(screen_pos.y as f64);
+            }
+        }
+
+        if let Some(sub_win) = app_handle.get_webview_window("submenu_window") {
+            let _ = sub_win.set_size(tauri::Size::Logical(tauri::LogicalSize {
+                width: win_width,
+                height: win_height,
+            }));
+            let _ = sub_win.set_position(tauri::Position::Physical(tauri::PhysicalPosition {
+                x: target_x as i32,
+                y: target_y as i32,
+            }));
+            let _ = sub_win.show();
+        } else {
+            let sub_win = tauri::WebviewWindowBuilder::new(
+                &app_handle,
+                "submenu_window",
+                tauri::WebviewUrl::App("submenu-iframe.html".into()),
+            )
+            .title("Nanai Submenu")
+            .inner_size(win_width, win_height)
+            .transparent(true)
+            .decorations(false)
+            .always_on_top(true)
+            .skip_taskbar(true)
+            .resizable(false)
+            .position(target_x, target_y)
+            .build()
+            .map_err(|e| e.to_string())?;
+
+            let _ = sub_win.show();
+        }
+
+        // サブメニュータイプを通知
+        let _ = app_handle.emit("set-submenu-type", serde_json::json!({ "type": menu_type }));
+    }
+    Ok(())
+}
+
+/// サブメニューウィンドウ非表示コマンド
+#[tauri::command]
+async fn hide_submenu_window(app_handle: tauri::AppHandle) -> Result<(), String> {
+    #[cfg(desktop)]
+    {
+        if let Some(sub_win) = app_handle.get_webview_window("submenu_window") {
+            let _ = sub_win.hide();
+        }
     }
     Ok(())
 }
@@ -1124,7 +1214,7 @@ pub fn run() {
             }
         })
         .on_window_event(|window, event| {
-            if window.label() == "menu_window"
+            if (window.label() == "menu_window" || window.label() == "submenu_window")
                 && let tauri::WindowEvent::Focused(false) = event
             {
                 let _ = window.hide();
@@ -1156,6 +1246,8 @@ pub fn run() {
             show_context_menu,
             show_menu_window,
             hide_menu_window,
+            show_submenu_window,
+            hide_submenu_window,
             install_ghost_archive,
             install_ghost_archive_bytes,
             load_surface_image

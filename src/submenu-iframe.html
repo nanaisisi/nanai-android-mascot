@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nanai Submenu</title>
+    <link rel="stylesheet" href="css/classic-menu.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 0.25rem;
+        background: transparent;
+        overflow: hidden;
+      }
+      .submenu-window-container {
+        width: 100%;
+        max-height: calc(100vh - 0.5rem);
+        overflow-y: auto;
+        background-color: var(--balloon-bg);
+        background-image: var(--balloon-pattern);
+        border: var(--balloon-border-width) var(--balloon-border-style) var(--balloon-border-color);
+        border-radius: var(--balloon-border-radius);
+        box-shadow: var(--balloon-box-shadow);
+        padding: 0.25rem 0;
+      }
+      .submenu-window-container::-webkit-scrollbar {
+        width: 4px;
+      }
+      .submenu-window-container::-webkit-scrollbar-thumb {
+        background: rgba(128, 128, 128, 0.4);
+        border-radius: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="visually-hidden">Nanai Android Mascot サブメニュー</h1>
+    <div class="submenu-window-container" id="submenu-content" role="menu" aria-busy="true">
+      <!-- 動的サブメニュー項目挿入エリア -->
+    </div>
+    <script type="module" src="js/submenu.js"></script>
+  </body>
+</html>

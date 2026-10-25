@@ -26,6 +26,13 @@ function dispatchAction(action, payload = null) {
     if (typeof emitFn === "function") {
       emitFn("menu-action", { action, payload });
     }
+    // 終了（close/exit）の場合は直接 exit_app を呼び出して確実にプロセスを落とす
+    if (action === "close" || action === "exit") {
+      if (typeof invokeFn === "function") {
+        invokeFn("exit_app").catch(() => {});
+      }
+      return;
+    }
     if (typeof invokeFn === "function" && action !== "request-sync") {
       invokeFn("hide_menu_window").catch(() => {});
     }
@@ -149,14 +156,15 @@ function _triggerSubmenuWindow(menuType, buttonEl) {
       const rect = buttonEl.getBoundingClientRect();
       const sX = globalThis.screenX ?? 0;
       const sY = globalThis.screenY ?? 0;
-      const posX = sX + rect.right + 2;
+      // メニューウィンドウの右横 (+2px) かつボタンの上下位置に合わせる
+      const posX = sX + 240 + 2;
       const posY = sY + rect.top;
       invokeFn("show_submenu_window", {
         menuType: menuType,
         x: posX,
         y: posY,
-        width: 240,
-        height: 360,
+        width: 220,
+        height: 320,
       }).catch((e) => console.error("Failed to show submenu window:", e));
     }
   }

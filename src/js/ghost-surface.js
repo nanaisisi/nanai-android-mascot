@@ -9,31 +9,37 @@ export const ghostSurfaceMethods = {
     const ghostName = this.currentGhost?.name || AppConfig.paths.fallbackGhostName;
     const ghostPath = this.currentGhost?.path || `${AppConfig.paths.defaultGhostDir}/${ghostName}`;
     const shell = this.currentShell || AppConfig.paths.fallbackShellName;
-    const isKero = scopeId === 1;
-    const selector = isKero ? "#kero-placeholder img" : "#sakura-placeholder img";
-    const placeholder = byId(isKero ? "kero-placeholder" : "sakura-placeholder");
-    const container = byId(isKero ? "kero-display" : "ghost-display");
-    const slot = byId(isKero ? "kero-slot" : "ghost-container");
+    const isSubchar = scopeId >= 1;
+    const selector = isSubchar ? "#kero-placeholder img" : "#sakura-placeholder img";
+    const placeholder = byId(isSubchar ? "kero-placeholder" : "sakura-placeholder");
+    const container = byId(isSubchar ? "kero-display" : "ghost-display");
+    const slot = byId(isSubchar ? "kero-slot" : "ghost-container");
 
     // \s[-1]: キャラクターサーフェス消去指示
     if (surfaceId === -1 || surfaceId === "-1") {
-      if (isKero && slot) {
-        slot.style.display = "none";
-      } else if (!isKero && container) {
+      if (isSubchar) {
+        if (slot) slot.style.display = "none";
+        if (isTauriAvailable()) {
+          invoke("hide_subchar_window", { scopeId }).catch(() => {});
+        }
+      } else if (!isSubchar && container) {
         container.style.visibility = "hidden";
       }
       return;
     }
 
-    if (!isKero) {
+    if (!isSubchar) {
       if (container) container.style.visibility = "visible";
       this.app.surfaceManager.setSurfaceId(surfaceId);
     } else {
       if (slot && slot.style.display === "none") slot.style.display = "flex";
       if (container && container.style.display === "none") container.style.display = "flex";
+      if (isTauriAvailable()) {
+        invoke("show_subchar_window", { scopeId }).catch(() => {});
+      }
     }
 
-    const fallbackSurface = isKero ? 10 : 0;
+    const fallbackSurface = isSubchar ? 10 : 0;
     const img = document.querySelector(selector);
 
     const applyImageSrc = async (src, fallbackSrc = null) => {
@@ -45,6 +51,11 @@ export const ghostSurfaceMethods = {
         } catch (_e) {
           transparentSrc = src;
         }
+      }
+
+      if (isSubchar && isTauriAvailable()) {
+        const { emit } = await import("./tauri-helper.js");
+        emit(`update-subchar-image-${scopeId}`, { src: transparentSrc });
       }
 
       if (img) {

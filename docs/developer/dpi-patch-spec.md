@@ -1,5 +1,5 @@
 ﻿- **言及規格の元ドキュメント・権利者・ライセンス**:
-  - **伺か (Ukagaka) / ゴースト / シェル**: [伺か / 偽春菜 / あれ以外の何か with「何か」](https://ukatech.shillest.net/ukadoc-spec/) - © MATERIA開発チーム / うさださくら 氏 / コミュニティ有志 (コミュニティ規格 / オープンドキュメント)
+  - **伺か標準仕様 / ゴースト / シェル**: [ukatech/ukadoc-spec (UKADOC project)](https://ukatech.shillest.net/ukadoc-spec/) - © UKADOC project / Ukagaka Tech Team (CC BY 4.0)
 
 > **AI 関与について**: このドキュメントは AI アシスタントの支援により作成されました。
 > 関連コミット: `0c34f2d` (ローカルパッチ導入), `96f769a` (Rust 2024 / 最新依存対応)

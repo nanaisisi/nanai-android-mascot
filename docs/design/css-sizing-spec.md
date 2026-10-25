@@ -1,7 +1,7 @@
 ﻿# CSSサイズ設計・レスポンシブスケーリング仕様書
 
 - **言及規格の元ドキュメント・権利者・ライセンス**:
-  - **バルーン仕様 (Balloon)**: [ukadoc: surfaces.txt / balloon](https://ukatech.shillest.net/ukadoc-spec/) - © MATERIA開発チーム / SSP開発チーム / ukadoc プロジェクト (ukadoc 仕様 / パブリックリファレンス)
+  - **バルーン仕様 (Balloon)**: [ukadoc-spec: balloon](https://ukatech.shillest.net/ukadoc-spec/) - © UKADOC project / Ukagaka Tech Team (CC BY 4.0)
 
 ## 1. 概要
 

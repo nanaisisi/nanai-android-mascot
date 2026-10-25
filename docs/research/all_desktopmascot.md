@@ -1,5 +1,5 @@
 ﻿- **言及規格の元ドキュメント・権利者・ライセンス**:
-  - **伺か (Ukagaka) / ゴースト / シェル**: [伺か / 偽春菜 / あれ以外の何か with「何か」](https://ukatech.shillest.net/ukadoc-spec/) - © MATERIA開発チーム / うさださくら 氏 / コミュニティ有志 (コミュニティ規格 / オープンドキュメント)
+  - **伺か標準仕様 / ゴースト / シェル**: [ukatech/ukadoc-spec (UKADOC project)](https://ukatech.shillest.net/ukadoc-spec/) - © UKADOC project / Ukagaka Tech Team (CC BY 4.0)
 
 > **AI 関与について**: このドキュメントは GitHub
 > Copilot の支援により作成されました。オーナーユーザーは主に方針決定と技術検討を担当し、コード実装やドキュメント作成は AI が主要な役割を果たしています。

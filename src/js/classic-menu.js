@@ -131,14 +131,41 @@ function renderGhostSubmenu(ghosts, currentGhost) {
   container.appendChild(manageBtn);
 }
 
+// 独立サブメニューウィンドウを開く補助関数
+function triggerSubmenuWindow(menuType, buttonEl) {
+  if (globalThis.__TAURI__) {
+    const invokeFn = globalThis.__TAURI__.core?.invoke || globalThis.__TAURI__.invoke;
+    if (typeof invokeFn === "function") {
+      const rect = buttonEl.getBoundingClientRect();
+      const sX = globalThis.screenX ?? 0;
+      const sY = globalThis.screenY ?? 0;
+      const posX = sX + rect.right + 2;
+      const posY = sY + rect.top;
+      invokeFn("show_submenu_window", {
+        menuType: menuType,
+        x: posX,
+        y: posY,
+        width: 240,
+        height: 360,
+      }).catch((e) => console.error("Failed to show submenu window:", e));
+    }
+  }
+}
+
 document.addEventListener("click", (e) => {
   const menuItem = e.target.closest(".menu-item");
   if (!menuItem) return;
 
-  // サブメニュー展開用の親ボタンはクリックで開閉トグル（他は閉じる）
+  // サブメニュー展開用の親ボタンはクリックで独立ウィンドウを開く
   if (menuItem.classList.contains("has-submenu")) {
     const wrapper = menuItem.closest(".menu-item-wrapper");
-    if (wrapper) {
+    let menuType = "ghost";
+    if (menuItem.id === "shell-switch-btn") menuType = "shell";
+    if (menuItem.id === "scale-menu-btn") menuType = "scale";
+
+    if (globalThis.__TAURI__) {
+      triggerSubmenuWindow(menuType, menuItem);
+    } else if (wrapper) {
       const isAlreadyOpen = wrapper.classList.contains("open");
       document.querySelectorAll(".menu-item-wrapper.open").forEach((el) => {
         el.classList.remove("open");
@@ -162,7 +189,7 @@ function checkSubmenuFlip(wrapper) {
 
   const containerRect = container.getBoundingClientRect();
   const submenuWidth = 240; // およそのサブメニュー幅
-  const spaceOnRight = window.innerWidth - containerRect.right;
+  const spaceOnRight = (globalThis.innerWidth ?? 800) - containerRect.right;
 
   // 右側にサブメニューを出す十分なスペースがない場合は左側に展開
   if (spaceOnRight < submenuWidth) {

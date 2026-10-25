@@ -5,6 +5,12 @@ const byId = (id) => document.getElementById(id);
 
 /** サーフェス/キャラクター表示メソッド (GhostController に mixin) */
 export const ghostSurfaceMethods = {
+  /**
+   * サーフェス表示を更新
+   * @this {import('../ghost/ghost.js').GhostController}
+   * @param {number|string} surfaceId
+   * @param {number} [scopeId]
+   */
   updateSurface(surfaceId, scopeId = 0) {
     const ghostName = this.currentGhost?.name || AppConfig.paths.fallbackGhostName;
     const ghostPath = this.currentGhost?.path || `${AppConfig.paths.defaultGhostDir}/${ghostName}`;

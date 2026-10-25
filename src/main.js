@@ -10,10 +10,24 @@ import { SurfaceManager } from "./js/surface/surface.js";
 import { menuMethods } from "./js/ui/app-menu.js";
 import { ModalManager } from "./js/ui/modal.js";
 
+/**
+ * @typedef {Object} AppSettings
+ * @property {boolean} autoLoadGhost
+ * @property {boolean} enableNotifications
+ * @property {boolean} darkMode
+ * @property {boolean} alwaysOnTop
+ * @property {string} ghostSize
+ * @property {string} debugLevel
+ * @property {boolean} autoSwitchBalloonWithGhost
+ */
+
 export class NanaiAndroidMascotApp {
 	constructor() {
+		/** @type {boolean} */
 		this.isInitialized = false;
+		/** @type {string} */
 		this.currentBalloonTheme = "ivory";
+		/** @type {AppSettings} */
 		this.settings = {
 			autoLoadGhost: true,
 			enableNotifications: true,
@@ -24,12 +38,18 @@ export class NanaiAndroidMascotApp {
 			autoSwitchBalloonWithGhost: true,
 		};
 
+		/** @type {GhostController} */
 		this.ghostController = new GhostController(this);
+		/** @type {InteractionManager} */
 		this.interactionManager = new InteractionManager(this);
+		/** @type {SurfaceManager} */
 		this.surfaceManager = new SurfaceManager(this);
+		/** @type {SakuraScriptPlayer} */
 		this.sakuraPlayer = new SakuraScriptPlayer(this);
+		/** @type {ModalManager|null} */
 		this.modalManager = null;
 
+		/** @type {Record<string, HTMLElement|null>} */
 		this.elements = {};
 		this.init();
 	}

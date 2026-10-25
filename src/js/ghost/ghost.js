@@ -8,12 +8,27 @@ import { ghostShioriMethods } from "./ghost-shiori.js";
  * (SHIORI通信は ghost-shiori.js、サーフェス表示は ghost-surface.js)
  */
 
+/**
+ * @typedef {Object} GhostInfo
+ * @property {string} name
+ * @property {string} [path]
+ * @property {string[]} [shells]
+ */
+
 export class GhostController {
+	/**
+	 * @param {import('../../main.js').NanaiAndroidMascotApp} app
+	 */
 	constructor(app) {
+		/** @type {import('../../main.js').NanaiAndroidMascotApp} */
 		this.app = app;
+		/** @type {GhostInfo[]} */
 		this.ghosts = [];
+		/** @type {GhostInfo|null} */
 		this.currentGhost = null;
+		/** @type {string[]} */
 		this.shells = [AppConfig.paths.fallbackShellName];
+		/** @type {string} */
 		this.currentShell = AppConfig.paths.fallbackShellName;
 	}
 

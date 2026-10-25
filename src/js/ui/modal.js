@@ -5,10 +5,17 @@ import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
  */
 
 export class ModalManager {
+  /**
+   * @param {import('../../main.js').NanaiAndroidMascotApp} app
+   */
   constructor(app) {
+    /** @type {import('../../main.js').NanaiAndroidMascotApp} */
     this.app = app;
+    /** @type {HTMLElement|null} */
     this.overlay = document.getElementById("modal-overlay");
+    /** @type {HTMLElement|null} */
     this.content = document.getElementById("modal-content");
+    /** @type {HTMLElement|null} */
     this.closeBtn = document.getElementById("modal-close");
     this.init();
   }

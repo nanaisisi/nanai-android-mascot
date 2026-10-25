@@ -27,6 +27,12 @@ const SHIORI_ACTIONS = {
 };
 
 export const actionMethods = {
+  /**
+   * メニューアクションを処理
+   * @this {import('../../main.js').NanaiAndroidMascotApp}
+   * @param {string} action
+   * @param {any} [payload]
+   */
   handleMenuAction(action, payload = null) {
     if (!action) return;
     const gc = this.ghostController;

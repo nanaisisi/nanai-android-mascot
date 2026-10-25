@@ -4,22 +4,61 @@ import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
  * Nanai Android Mascot - surfaces.txt パーサー & 当たり判定（Collision）マネージャー
  */
 
+/**
+ * @typedef {Object} CollisionArea
+ * @property {number} x0
+ * @property {number} y0
+ * @property {number} x1
+ * @property {number} y1
+ * @property {string} id
+ */
+
+/**
+ * @typedef {Object} SurfaceElement
+ * @property {string} type
+ * @property {string} file
+ * @property {number} x
+ * @property {number} y
+ */
+
+/**
+ * @typedef {Object} AnimationPattern
+ * @property {number} surface
+ * @property {number} wait
+ * @property {string} type
+ * @property {number} x
+ * @property {number} y
+ */
+
+/**
+ * @typedef {Object} SurfaceAnimation
+ * @property {number} id
+ * @property {string} interval
+ * @property {AnimationPattern[]} patterns
+ */
+
 export class SurfaceManager {
+	/**
+	 * @param {import('../../main.js').NanaiAndroidMascotApp} app
+	 */
 	constructor(app) {
+		/** @type {import('../../main.js').NanaiAndroidMascotApp} */
 		this.app = app;
-		// surfaces.txt から動的に読み込まれた当たり判定（Collision）マップ
+		/** @type {Record<number, CollisionArea[]>} */
 		this.collisions = {};
-		// surfaces.txt の差分パーツ定義 (element): { [surfaceId]: [{ type, file, x, y }] }
+		/** @type {Record<number, SurfaceElement[]>} */
 		this.elements = {};
-		// surfaces.txt のアニメーション定義 (animation): { [surfaceId]: [{ id, interval, patterns: [{ surface, wait, type, x, y }] }] }
+		/** @type {Record<number, SurfaceAnimation[]>} */
 		this.animations = {};
-		// 動作中のアニメーションタイマーマップ
+		/** @type {number[]} */
 		this.activeAnimationTimers = [];
-		// ベース画像の元解像度 (surfaces.txt または画像から取得)
+		/** @type {number} */
 		this.baseWidth = 200;
+		/** @type {number} */
 		this.baseHeight = 400;
+		/** @type {number} */
 		this.currentSurfaceId = 0;
-		// クロマキー透過済み画像のキャッシュ (高速化・ちらつき防止)
+		/** @type {Map<string, string>} */
 		this.chromaKeyCache = new Map();
 	}
 

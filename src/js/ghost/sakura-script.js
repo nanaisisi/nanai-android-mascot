@@ -2,12 +2,27 @@
  * Nanai Android Mascot - さくらスクリプト（SakuraScript）パーサー & プレイヤー
  */
 
+/**
+ * @typedef {Object} SakuraScriptToken
+ * @property {string} type - トークン種別 ('scope'|'surface'|'wait'|'text'|'balloon'|'choice'|'reset'|'sync'等)
+ * @property {any} [value] - トークンの値 (スコープ番号、サーフェス番号、テキスト等)
+ * @property {Record<string, any>} [params] - オプションパラメータ
+ */
+
 export class SakuraScriptPlayer {
+	/**
+	 * @param {import('../../main.js').NanaiAndroidMascotApp} app
+	 */
 	constructor(app) {
+		/** @type {import('../../main.js').NanaiAndroidMascotApp} */
 		this.app = app;
+		/** @type {boolean} */
 		this.isPlaying = false;
+		/** @type {boolean} */
 		this.skipRequested = false;
+		/** @type {number} */
 		this.currentScope = 0; // 0: sakura, 1: kero
+		/** @type {number} */
 		this.playbackId = 0;
 	}
 

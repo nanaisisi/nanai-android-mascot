@@ -4,7 +4,11 @@
  */
 
 export class InteractionManager {
+  /**
+   * @param {import('../../main.js').NanaiAndroidMascotApp} app
+   */
   constructor(app) {
+    /** @type {import('../../main.js').NanaiAndroidMascotApp} */
     this.app = app;
   }
 

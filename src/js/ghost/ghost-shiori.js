@@ -3,6 +3,11 @@ import { ShioriProtocol } from "./shiori-protocol.js";
 
 /** SHIORI 通信関連メソッド (GhostController に mixin) */
 export const ghostShioriMethods = {
+  /**
+   * ゴーストの SHIORI を初期化
+   * @this {import('./ghost.js').GhostController}
+   * @param {import('./ghost.js').GhostInfo} ghost
+   */
   async initializeGhostSHIORI(ghost) {
     if (!isTauriAvailable()) return;
     try {
@@ -20,6 +25,12 @@ export const ghostShioriMethods = {
     }
   },
 
+  /**
+   * SHIORI イベントを送信
+   * @this {import('./ghost.js').GhostController}
+   * @param {string} eventName
+   * @param {any[]} [args]
+   */
   async sendShioriEvent(eventName, args = []) {
     if (!isTauriAvailable()) {
       console.log(`[Web/Mock] SHIORIイベントスキップ (Tauri未検出): ${eventName}`);

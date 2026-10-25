@@ -129,6 +129,16 @@ function renderGhostSubmenu(ghosts, currentGhost) {
     dispatchAction("ghost");
   });
   container.appendChild(manageBtn);
+
+  // ゴースト取り込みモーダルを開くボタン
+  const installBtn = document.createElement("button");
+  installBtn.className = "menu-item";
+  installBtn.id = "install-btn";
+  installBtn.innerHTML = `<span>📥 ゴーストの取り込み...</span>`;
+  installBtn.addEventListener("click", () => {
+    dispatchAction("install");
+  });
+  container.appendChild(installBtn);
 }
 
 // 独立サブメニューウィンドウを開く補助関数 (必要時のオプション用)
@@ -156,8 +166,14 @@ document.addEventListener("click", (e) => {
   const menuItem = e.target.closest(".menu-item");
   if (!menuItem) return;
 
-  // サブメニュー展開用の親ボタンはクリックで開閉をトグル
+  // サブメニュー展開用の親ボタン
   if (menuItem.classList.contains("has-submenu")) {
+    const menuType = menuItem.id.replace("-menu-btn", "").replace("-switch-btn", "");
+    if (globalThis.__TAURI__) {
+      _triggerSubmenuWindow(menuType, menuItem);
+      return;
+    }
+
     const wrapper = menuItem.closest(".menu-item-wrapper");
     if (wrapper) {
       const isAlreadyOpen = wrapper.classList.contains("open");
@@ -193,10 +209,17 @@ function checkSubmenuFlip(wrapper) {
   }
 }
 
-// ホバー時にも右/左展開を判定
+// ホバー時にも右/左展開を判定 & 独立サブメニューウィンドウ呼び出し
 document.querySelectorAll(".menu-item-wrapper").forEach((wrapper) => {
   wrapper.addEventListener("mouseenter", () => {
     checkSubmenuFlip(wrapper);
+    if (globalThis.__TAURI__) {
+      const btn = wrapper.querySelector(".menu-item.has-submenu");
+      if (btn) {
+        const menuType = btn.id.replace("-menu-btn", "").replace("-switch-btn", "");
+        _triggerSubmenuWindow(menuType, btn);
+      }
+    }
   });
 });
 

@@ -50,6 +50,9 @@
           <button type="button" class="menu-item" id="ghost-btn">
             <span>📂 ゴースト一覧・管理...</span>
           </button>
+          <button type="button" class="menu-item" id="install-btn">
+            <span>📥 ゴーストの取り込み...</span>
+          </button>
         </div>
       </div>
 
@@ -81,9 +84,22 @@
       </div>
 
       <!-- [実装済] CSSバルーンスキン切り替え (ivory, pixel, comic, dark) -->
-      <button type="button" class="menu-item" id="balloon-btn" role="menuitem">
-        <span>💭 バルーン設定 (B)</span>
-      </button>
+      <div class="menu-item-wrapper">
+        <button type="button" class="menu-item has-submenu" id="balloon-menu-btn" role="menuitem">
+          <span>💭 バルーン切り替え (B)</span>
+        </button>
+        <div class="submenu-container" id="balloon-submenu">
+          <button type="button" class="menu-item" id="balloon-cycle-btn">
+            <span>🔄 次のスキンへ切り替え</span>
+          </button>
+          <div class="menu-separator"></div>
+          <button type="button" class="menu-item" id="balloon-theme-emily4-btn"><span>クラシック (Emily)</span></button>
+          <button type="button" class="menu-item" id="balloon-theme-ivory-btn"><span>アイボリー (Ivory)</span></button>
+          <button type="button" class="menu-item" id="balloon-theme-pixel-btn"><span>ピクセル (Pixel)</span></button>
+          <button type="button" class="menu-item" id="balloon-theme-comic-btn"><span>コミック (Comic)</span></button>
+          <button type="button" class="menu-item" id="balloon-theme-dark-btn"><span>ダーク (Dark)</span></button>
+        </div>
+      </div>
 
       <div class="menu-separator"></div>
 

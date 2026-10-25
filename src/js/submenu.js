@@ -50,7 +50,14 @@ function renderContent() {
     manageBtn.addEventListener("click", () => {
       dispatchSubmenuAction("ghost");
     });
-    container.appendChild(manageBtn);
+    const installBtn = document.createElement("button");
+    installBtn.type = "button";
+    installBtn.className = "menu-item";
+    installBtn.innerHTML = `<span>📥 ゴーストの取り込み...</span>`;
+    installBtn.addEventListener("click", () => {
+      dispatchSubmenuAction("install");
+    });
+    container.appendChild(installBtn);
   } else if (currentSubmenuType === "shell") {
     (cachedShells.length > 0 ? cachedShells : ["master"]).forEach((shell) => {
       const btn = document.createElement("button");
@@ -62,14 +69,63 @@ function renderContent() {
       });
       container.appendChild(btn);
     });
+  } else if (currentSubmenuType === "balloon") {
+    const themes = [
+      { id: "emily4", label: "クラシック (Emily)" },
+      { id: "ivory", label: "アイボリー (Ivory)" },
+      { id: "pixel", label: "ピクセル (Pixel)" },
+      { id: "comic", label: "コミック (Comic)" },
+      { id: "dark", label: "ダーク (Dark)" },
+    ];
+    const cycleBtn = document.createElement("button");
+    cycleBtn.type = "button";
+    cycleBtn.className = "menu-item";
+    cycleBtn.innerHTML = `<span>🔄 次のスキンへ切り替え</span>`;
+    cycleBtn.addEventListener("click", () => {
+      dispatchSubmenuAction("balloon-cycle");
+    });
+    container.appendChild(cycleBtn);
+
+    const sep = document.createElement("div");
+    sep.className = "menu-separator";
+    container.appendChild(sep);
+
+    themes.forEach((t) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "menu-item";
+      btn.innerHTML = `<span>${t.label}</span>`;
+      btn.addEventListener("click", () => {
+        dispatchSubmenuAction(`balloon-theme-${t.id}`);
+      });
+      container.appendChild(btn);
+    });
+  } else if (currentSubmenuType === "tools") {
+    const tools = [
+      { id: "install", label: "📥 ファイル取り込み・導入..." },
+      { id: "scan", label: "📂 ゴーストフォルダ再スキャン" },
+      { id: "headline", label: "📰 ヘッドライン/ニュース" },
+      { id: "plugins", label: "🧩 プラグイン・拡張機能" },
+      { id: "debug", label: "🐛 デバッグログ" },
+    ];
+    tools.forEach((t) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "menu-item";
+      btn.innerHTML = `<span>${t.label}</span>`;
+      btn.addEventListener("click", () => {
+        dispatchSubmenuAction(t.id);
+      });
+      container.appendChild(btn);
+    });
   } else if (currentSubmenuType === "scale") {
     const scales = [
-      { label: "50%", val: 0.5 },
-      { label: "75%", val: 0.75 },
-      { label: "100% (標準)", val: 1.0 },
-      { label: "125%", val: 1.25 },
-      { label: "150%", val: 1.5 },
-      { label: "200%", val: 2.0 },
+      { label: "50%", val: "scale-50" },
+      { label: "75%", val: "scale-75" },
+      { label: "100% (標準)", val: "scale-100" },
+      { label: "125%", val: "scale-125" },
+      { label: "150%", val: "scale-150" },
+      { label: "200%", val: "scale-200" },
     ];
     scales.forEach((s) => {
       const btn = document.createElement("button");
@@ -77,7 +133,7 @@ function renderContent() {
       btn.className = "menu-item";
       btn.innerHTML = `<span>${s.label}</span>`;
       btn.addEventListener("click", () => {
-        dispatchSubmenuAction("scale", s.val);
+        dispatchSubmenuAction(s.val);
       });
       container.appendChild(btn);
     });

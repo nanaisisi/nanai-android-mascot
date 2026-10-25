@@ -281,7 +281,7 @@ export class SakuraScriptPlayer {
 				case "scope":
 					this.currentScope = token.value;
 					currentAnchor = null;
-					if (this.currentScope === 1) {
+					if (this.currentScope >= 1) {
 						const keroSlot = document.getElementById("kero-slot");
 						if (keroSlot && keroSlot.style.display === "none") {
 							keroSlot.style.display = "flex";

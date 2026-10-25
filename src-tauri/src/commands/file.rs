@@ -6,6 +6,16 @@ use std::sync::Mutex;
 #[cfg(desktop)]
 use tauri::menu::{MenuBuilder, SubmenuBuilder};
 use tauri::{Emitter, Manager};
+/// 大文字・小文字の差異を吸収して実在するファイルを探索するヘルパー
+fn find_file_case_insensitive(path: &Path) -> Option<PathBuf> {
+    if path.exists() && path.is_file() {
+        return Some(path.to_path_buf());
+    }
+    let parent = path.parent()?;
+    let file_name = path.file_name()?.to_str()?;
+    resolve_vfs_path(parent, file_name)
+}
+
 // ファイルを開くコマンド
 #[tauri::command]
 pub fn open_file(path: String, app_handle: tauri::AppHandle<tauri::Wry>) -> Result<String, String> {
@@ -13,7 +23,9 @@ pub fn open_file(path: String, app_handle: tauri::AppHandle<tauri::Wry>) -> Resu
     let resolved_path =
         resolve_asset_path(&clean_path, &app_handle).unwrap_or_else(|_| PathBuf::from(&clean_path));
 
-    match open_shift_jis_file(&resolved_path.to_string_lossy()) {
+    let final_path = find_file_case_insensitive(&resolved_path).unwrap_or(resolved_path);
+
+    match open_shift_jis_file(&final_path.to_string_lossy()) {
         Ok(content) => Ok(content),
         Err(e) => Err(format!("ファイルの読み込みに失敗しました: {e}")),
     }
@@ -68,11 +80,11 @@ pub fn load_surface_image(
     }
 
     for candidate in candidates {
-        if candidate.exists()
-            && candidate.is_file()
-            && let Ok(bytes) = fs::read(&candidate)
+        if let Some(target) = find_file_case_insensitive(&candidate)
+            && target.is_file()
+            && let Ok(bytes) = fs::read(&target)
         {
-            let ext = candidate
+            let ext = target
                 .extension()
                 .and_then(|e| e.to_str())
                 .unwrap_or("png")
@@ -121,9 +133,9 @@ pub fn load_surface_pna(
     ];
 
     for candidate in candidates {
-        if candidate.exists()
-            && candidate.is_file()
-            && let Ok(bytes) = fs::read(&candidate)
+        if let Some(target) = find_file_case_insensitive(&candidate)
+            && target.is_file()
+            && let Ok(bytes) = fs::read(&target)
         {
             use base64::Engine;
             let b64 = base64::engine::general_purpose::STANDARD.encode(&bytes);

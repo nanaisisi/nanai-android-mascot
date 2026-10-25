@@ -51,3 +51,5 @@ userData/
 imported_ghosts/
 
 package-lock.json
+
+src-tauri\shiori-host\target

@@ -623,10 +623,37 @@ async fn show_context_menu(
 async fn show_menu_window(app_handle: tauri::AppHandle, x: f64, y: f64) -> Result<(), String> {
     #[cfg(desktop)]
     {
+        use tauri::Manager;
+        // メインメニュー + サブメニュー横展開用領域 (500x520)
+        let win_width = 500.0;
+        let win_height = 520.0;
+
+        let mut target_x = x;
+        let mut target_y = y;
+
+        // モニター境界を取得して画面内に収める
+        if let Ok(Some(monitor)) = app_handle.primary_monitor() {
+            let screen_size = monitor.size();
+            let screen_pos = monitor.position();
+            let max_x = (screen_pos.x + screen_size.width as i32) as f64 - win_width;
+            let max_y = (screen_pos.y + screen_size.height as i32) as f64 - win_height;
+
+            if target_x > max_x {
+                target_x = max_x.max(screen_pos.x as f64);
+            }
+            if target_y > max_y {
+                target_y = max_y.max(screen_pos.y as f64);
+            }
+        }
+
         if let Some(menu_win) = app_handle.get_webview_window("menu_window") {
+            let _ = menu_win.set_size(tauri::Size::Logical(tauri::LogicalSize {
+                width: win_width,
+                height: win_height,
+            }));
             let _ = menu_win.set_position(tauri::Position::Physical(tauri::PhysicalPosition {
-                x: x as i32,
-                y: y as i32,
+                x: target_x as i32,
+                y: target_y as i32,
             }));
             let _ = menu_win.show();
             let _ = menu_win.set_focus();
@@ -637,13 +664,13 @@ async fn show_menu_window(app_handle: tauri::AppHandle, x: f64, y: f64) -> Resul
                 tauri::WebviewUrl::App("menu-iframe.html".into()),
             )
             .title("Nanai Menu")
-            .inner_size(240.0, 460.0)
+            .inner_size(win_width, win_height)
             .transparent(true)
             .decorations(false)
             .always_on_top(true)
             .skip_taskbar(true)
             .resizable(false)
-            .position(x, y)
+            .position(target_x, target_y)
             .build()
             .map_err(|e| e.to_string())?;
 

@@ -52,25 +52,28 @@
   color: #b71c1c;
 }
 
-/* iframe メニューコンテナ */
+/* iframe メニューコンテナ (メインメニュー + 横展開サブメニューを余裕を持って収める) */
 .menu-iframe-container {
   position: absolute;
   top: 100%;
   right: 0;
   z-index: 10000;
-  width: clamp(15rem, 80vw, 28.75rem);
+  width: min(32rem, 96vw);
+  max-width: 96vw;
   overflow: visible;
   background: transparent;
   border: none;
   box-shadow: none;
+  pointer-events: none;
 }
 
 .menu-iframe-container iframe {
   display: block;
   border: none;
   width: 100%;
-  height: clamp(20rem, 70vh, 36.25rem);
+  height: clamp(22rem, 85vh, 42rem);
   background: transparent;
+  pointer-events: auto;
 }
 
 /* モーダルオーバーレイ */

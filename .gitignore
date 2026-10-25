@@ -17,6 +17,11 @@ node_modules
 dist
 dist-ssr
 *.local
+*.local.json
+config.local.json
+*.local.toml
+config.local.toml
+
 
 # Editor directories and files
 .vscode/*

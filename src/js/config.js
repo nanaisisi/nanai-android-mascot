@@ -41,3 +41,29 @@ export const AppConfig = {
     settings: "nanai_app_settings"
   }
 };
+
+/**
+ * TauriバックエンドまたはJSONファイルから設定を非同期ロードして反映
+ */
+export async function loadAppConfig() {
+  try {
+    const tauriInternals = globalThis.__TAURI_INTERNALS__;
+    if (tauriInternals?.invoke) {
+      const config = await tauriInternals.invoke("get_app_config");
+
+
+      if (config) {
+        if (config.paths) Object.assign(AppConfig.paths, config.paths);
+        if (config.timing) Object.assign(AppConfig.timing, config.timing);
+        if (config.scale) Object.assign(AppConfig.scale, config.scale);
+        if (config.shiori) AppConfig.shiori = Object.assign({}, config.shiori);
+        if (config.state) AppConfig.state = Object.assign({}, config.state);
+        console.log("⚙️ AppConfig synchronized with backend config (local/initial):", AppConfig);
+
+      }
+    }
+  } catch (err) {
+    console.warn("⚠️ Could not load remote/file config, using defaults:", err);
+  }
+}
+

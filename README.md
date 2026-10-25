@@ -30,7 +30,7 @@
 
 ## 🛠️ 技術構成
 
-- **バックエンド**: Rust 2021, Tauri v2, `encoding_rs`
+- **バックエンド**: Rust 2024, Tauri v2, `encoding_rs`
 - **フロントエンド**: Vanilla HTML5, Canvas 2D, Modern JavaScript, CSS3
 - **ゴーストデータ**: 公式モックキャラクター `mock_nanai` 同梱（`assets/ghost/mock_nanai`）
 

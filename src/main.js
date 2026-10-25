@@ -4,7 +4,7 @@ import { ModalManager } from "./js/modal.js";
 import { SakuraScriptPlayer } from "./js/sakura-script.js";
 import { SurfaceManager } from "./js/surface.js";
 import { emit, invoke, isTauriAvailable, listen } from "./js/tauri-helper.js";
-import { AppConfig } from "./js/config.js";
+import { AppConfig, loadAppConfig } from "./js/config.js";
 
 export class NanaiAndroidMascotApp {
   constructor() {
@@ -32,7 +32,9 @@ export class NanaiAndroidMascotApp {
   async init() {
     console.log("=== Nanai Android Mascot 初期化開始 ===");
 
+    await loadAppConfig();
     this.initUIEnvironment();
+
     this.modalManager = new ModalManager(this);
     this.loadSettings();
     this.setupEventListeners();

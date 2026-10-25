@@ -1,0 +1,7 @@
+{
+	"bundle": {
+		"resources": {
+			"shiori-host/target/i686-pc-windows-msvc/release/shiori-host32.exe": "shiori-host32.exe"
+		}
+	}
+}

@@ -1,11 +1,48 @@
 use std::path::Path;
 
 fn main() {
+    // 32bit SHIORI ホスト (tauri_build が bundle resources を検証する前に用意する)
+    build_shiori_host32();
+
     // Tauri build
     tauri_build::build();
 
     // YAYA C++統合スタブのビルド
     build_yaya_shiori_stub();
+}
+
+/// Windows 64bit ターゲット時のみ、32bit DLL 用ヘルパー shiori-host32.exe をビルドする
+fn build_shiori_host32() {
+    println!("cargo:rerun-if-changed=shiori-host/src");
+    println!("cargo:rerun-if-changed=shiori-host/Cargo.toml");
+
+    let target = std::env::var("TARGET").unwrap_or_default();
+    if !target.contains("windows") || !target.starts_with("x86_64") {
+        return;
+    }
+
+    let status = std::process::Command::new(std::env::var("CARGO").unwrap_or("cargo".into()))
+        .args([
+            "build",
+            "--release",
+            "--target",
+            "i686-pc-windows-msvc",
+            "--manifest-path",
+            "shiori-host/Cargo.toml",
+        ])
+        // 親ビルドの設定を引き継がない
+        .env_remove("CARGO_ENCODED_RUSTFLAGS")
+        .env_remove("RUSTFLAGS")
+        .env_remove("CARGO_BUILD_TARGET")
+        .env_remove("TARGET")
+        .status();
+
+    match status {
+        Ok(s) if s.success() => {}
+        _ => println!(
+            "cargo:warning=shiori-host32 のビルドに失敗: `rustup target add i686-pc-windows-msvc` を実行してください (32bit SHIORI DLL が使えません)"
+        ),
+    }
 }
 
 fn build_yaya_shiori_stub() {

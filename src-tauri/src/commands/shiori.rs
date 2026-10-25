@@ -1,7 +1,8 @@
 #![allow(unused_imports)]
 use crate::common::*;
-use crate::ghost_scan::*;
-use crate::shiori_dynamic::ShioriDynamicEngine;
+use crate::ghost::scan::*;
+use crate::shiori::dynamic::ShioriDynamicEngine;
+
 use nanai_android_mascot_ui::{open_shift_jis_file, resolve_vfs_path};
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;

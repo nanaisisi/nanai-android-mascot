@@ -46,7 +46,7 @@ fn build_shiori_host32() {
 }
 
 fn build_yaya_shiori_stub() {
-    println!("cargo:rerun-if-changed=../src/cpp");
+    println!("cargo:rerun-if-changed=../cpp");
 
     let mut build = cc::Build::new();
 
@@ -103,8 +103,8 @@ fn build_yaya_shiori_stub() {
             .flag_if_supported("-frtti");
     }
 
-    let cpp_interface_dir = Path::new("../src/cpp");
-    let yaya_dir = Path::new("../src/cpp/yaya-shiori");
+    let cpp_interface_dir = Path::new("../cpp");
+    let yaya_dir = Path::new("../cpp/yaya-shiori");
 
     // YAYAディレクトリをインクルードパスに追加
     if yaya_dir.exists() {

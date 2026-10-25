@@ -10,16 +10,13 @@ use tauri::menu::MenuBuilder;
 #[cfg(desktop)]
 use tauri::tray::{TrayIconBuilder, TrayIconEvent};
 
+mod commands;
 mod common;
-mod config_cmds;
-mod file_cmds;
-mod ghost_scan;
-mod install_cmds;
-mod shiori_cmds;
-mod shiori_dynamic;
-mod window_cmds;
+mod ghost;
+mod shiori;
 
 use common::*;
+
 
 // ========================================
 
@@ -124,37 +121,37 @@ pub fn run() {
         })
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
-            file_cmds::open_file,
-            config_cmds::get_app_config,
-            config_cmds::record_ghost_loaded,
-            file_cmds::add_to_recent_files,
-            file_cmds::get_recent_files,
-            ghost_scan::scan_ghost_directory,
-            shiori_cmds::scan_ghosts,
-            shiori_cmds::load_ghost,
-            shiori_cmds::send_shiori_request,
-            shiori_cmds::send_shiori_event,
-            shiori_cmds::on_mouse_click,
-            shiori_cmds::on_second_change,
-            shiori_cmds::get_current_ghost,
-            shiori_cmds::get_all_ghosts,
-            shiori_cmds::get_shiori_status,
-            shiori_cmds::unload_current_ghost,
-            window_cmds::request_overlay_permission,
-            window_cmds::setup_foreground_service,
-            window_cmds::test_command,
-            window_cmds::minimize_app,
-            window_cmds::exit_app,
-            window_cmds::show_context_menu,
-            window_cmds::show_menu_window,
-            window_cmds::hide_menu_window,
-            window_cmds::show_submenu_window,
-            window_cmds::hide_submenu_window,
-            window_cmds::show_subchar_window,
-            window_cmds::hide_subchar_window,
-            install_cmds::install_ghost_archive,
-            install_cmds::install_ghost_archive_bytes,
-            file_cmds::load_surface_image
+            commands::file::open_file,
+            commands::config::get_app_config,
+            commands::config::record_ghost_loaded,
+            commands::file::add_to_recent_files,
+            commands::file::get_recent_files,
+            ghost::scan::scan_ghost_directory,
+            commands::shiori::scan_ghosts,
+            commands::shiori::load_ghost,
+            commands::shiori::send_shiori_request,
+            commands::shiori::send_shiori_event,
+            commands::shiori::on_mouse_click,
+            commands::shiori::on_second_change,
+            commands::shiori::get_current_ghost,
+            commands::shiori::get_all_ghosts,
+            commands::shiori::get_shiori_status,
+            commands::shiori::unload_current_ghost,
+            commands::window::request_overlay_permission,
+            commands::window::setup_foreground_service,
+            commands::window::test_command,
+            commands::window::minimize_app,
+            commands::window::exit_app,
+            commands::window::show_context_menu,
+            commands::window::show_menu_window,
+            commands::window::hide_menu_window,
+            commands::window::show_submenu_window,
+            commands::window::hide_submenu_window,
+            commands::window::show_subchar_window,
+            commands::window::hide_subchar_window,
+            commands::install::install_ghost_archive,
+            commands::install::install_ghost_archive_bytes,
+            commands::file::load_surface_image
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -41,7 +41,6 @@ impl AppState {
     }
 }
 
-
 // エラーメッセージを全ウィンドウにemitするヘルパー関数
 fn emit_error_to_all(app_handle: &tauri::AppHandle<tauri::Wry>, msg: String) {
     if let Some(window) = app_handle.get_webview_window("main")
@@ -70,30 +69,29 @@ fn get_app_config(app_handle: tauri::AppHandle<tauri::Wry>) -> Result<serde_json
     };
 
     // config.local.toml が存在しない場合は初期設定から自動複製生成
-    if !local_path.exists() && initial_path.exists() {
-        if let Ok(content) = fs::read_to_string(&initial_path) {
-            let _ = fs::write(&local_path, content);
-            println!("📄 Initialized config.local.toml from config.initial.toml");
-        }
+    if !local_path.exists()
+        && initial_path.exists()
+        && let Ok(content) = fs::read_to_string(&initial_path)
+    {
+        let _ = fs::write(&local_path, content);
+        println!("📄 Initialized config.local.toml from config.initial.toml");
     }
 
     // config.local.toml の読み込みとマージ
-    if local_path.exists() {
-        if let Ok(local_str) = fs::read_to_string(&local_path) {
-            if let Ok(toml::Value::Table(local_map)) = toml::from_str::<toml::Value>(&local_str) {
-                if let toml::Value::Table(ref mut base_map) = config_value {
-                    for (k, v) in local_map {
-                        match (base_map.get_mut(&k), v) {
-                            (Some(toml::Value::Table(target_sub)), toml::Value::Table(source_sub)) => {
-                                for (sub_k, sub_v) in source_sub {
-                                    target_sub.insert(sub_k, sub_v);
-                                }
-                            }
-                            (_, other) => {
-                                base_map.insert(k, other);
-                            }
-                        }
+    if local_path.exists()
+        && let Ok(local_str) = fs::read_to_string(&local_path)
+        && let Ok(toml::Value::Table(local_map)) = toml::from_str::<toml::Value>(&local_str)
+        && let toml::Value::Table(ref mut base_map) = config_value
+    {
+        for (k, v) in local_map {
+            match (base_map.get_mut(&k), v) {
+                (Some(toml::Value::Table(target_sub)), toml::Value::Table(source_sub)) => {
+                    for (sub_k, sub_v) in source_sub {
+                        target_sub.insert(sub_k, sub_v);
                     }
+                }
+                (_, other) => {
+                    base_map.insert(k, other);
                 }
             }
         }
@@ -108,7 +106,10 @@ fn get_app_config(app_handle: tauri::AppHandle<tauri::Wry>) -> Result<serde_json
 
 // ゴースト読み込み順序・前回ゴーストを config.local.toml に記録
 #[tauri::command]
-fn record_ghost_loaded(ghost_name: String, app_handle: tauri::AppHandle<tauri::Wry>) -> Result<(), String> {
+fn record_ghost_loaded(
+    ghost_name: String,
+    app_handle: tauri::AppHandle<tauri::Wry>,
+) -> Result<(), String> {
     use std::fs;
 
     let initial_path = resolve_asset_path("config.initial.toml", &app_handle)
@@ -117,10 +118,11 @@ fn record_ghost_loaded(ghost_name: String, app_handle: tauri::AppHandle<tauri::W
         .unwrap_or_else(|_| PathBuf::from("config.local.toml"));
 
     // ファイルが存在しなければ初期ファイルから作成
-    if !local_path.exists() && initial_path.exists() {
-        if let Ok(content) = fs::read_to_string(&initial_path) {
-            let _ = fs::write(&local_path, content);
-        }
+    if !local_path.exists()
+        && initial_path.exists()
+        && let Ok(content) = fs::read_to_string(&initial_path)
+    {
+        let _ = fs::write(&local_path, content);
     }
 
     let content = if local_path.exists() {
@@ -129,24 +131,30 @@ fn record_ghost_loaded(ghost_name: String, app_handle: tauri::AppHandle<tauri::W
         String::new()
     };
 
-    let mut toml_val: toml::Value = toml::from_str(&content)
-        .unwrap_or_else(|_| toml::Value::Table(toml::map::Map::new()));
+    let mut toml_val: toml::Value =
+        toml::from_str(&content).unwrap_or_else(|_| toml::Value::Table(toml::map::Map::new()));
 
     if let toml::Value::Table(ref mut root) = toml_val {
-        let state_val = root.entry("state".to_string()).or_insert_with(|| {
-            toml::Value::Table(toml::map::Map::new())
-        });
+        let state_val = root
+            .entry("state".to_string())
+            .or_insert_with(|| toml::Value::Table(toml::map::Map::new()));
 
         if let toml::Value::Table(state_table) = state_val {
             // last_ghost を更新
-            state_table.insert("last_ghost".to_string(), toml::Value::String(ghost_name.clone()));
+            state_table.insert(
+                "last_ghost".to_string(),
+                toml::Value::String(ghost_name.clone()),
+            );
 
             // last_ghosts のリストを更新（先頭に追加し重複排除）
-            let mut list: Vec<String> = if let Some(toml::Value::Array(arr)) = state_table.get("last_ghosts") {
-                arr.iter().filter_map(|v| v.as_str().map(|s| s.to_string())).collect()
-            } else {
-                Vec::new()
-            };
+            let mut list: Vec<String> =
+                if let Some(toml::Value::Array(arr)) = state_table.get("last_ghosts") {
+                    arr.iter()
+                        .filter_map(|v| v.as_str().map(|s| s.to_string()))
+                        .collect()
+                } else {
+                    Vec::new()
+                };
 
             list.retain(|name| name != &ghost_name);
             list.insert(0, ghost_name);
@@ -165,11 +173,9 @@ fn record_ghost_loaded(ghost_name: String, app_handle: tauri::AppHandle<tauri::W
     Ok(())
 }
 
-
 // ファイルを開くコマンド
 #[tauri::command]
 fn open_file(path: String, app_handle: tauri::AppHandle<tauri::Wry>) -> Result<String, String> {
-
     let clean_path = clean_verbatim_path(&path);
     let resolved_path =
         resolve_asset_path(&clean_path, &app_handle).unwrap_or_else(|_| PathBuf::from(&clean_path));
@@ -488,10 +494,10 @@ async fn load_ghost(
     println!("📥 Loading ghost: {}", ghost_name);
 
     // 既存のSHIORIをアンロード
-    if let Ok(mut engine_lock) = state.shiori_engine.lock() {
-        if let Some(mut engine) = engine_lock.take() {
-            let _ = engine.unload();
-        }
+    if let Ok(mut engine_lock) = state.shiori_engine.lock()
+        && let Some(mut engine) = engine_lock.take()
+    {
+        let _ = engine.unload();
     }
 
     if let Ok(mut ghost_lock) = state.current_ghost_name.lock() {
@@ -506,11 +512,11 @@ async fn load_ghost(
 
     let mut ghost_dir = PathBuf::from(format!("assets/ghost/{}", ghost_name));
     for rel in candidate_dirs {
-        if let Ok(resolved) = resolve_asset_path(&rel, &app_handle) {
-            if resolved.exists() {
-                ghost_dir = resolved;
-                break;
-            }
+        if let Ok(resolved) = resolve_asset_path(&rel, &app_handle)
+            && resolved.exists()
+        {
+            ghost_dir = resolved;
+            break;
         }
     }
 
@@ -530,7 +536,6 @@ async fn load_ghost(
         candidates.push(ghost_master_dir.join("shiori.so"));
         candidates.push(ghost_master_dir.join("libyaya.so"));
     }
-
 
     let mut loaded = false;
     for cand in candidates {
@@ -559,7 +564,10 @@ async fn load_ghost(
     if loaded {
         Ok(format!("Ghost '{}' loaded with native SHIORI", ghost_name))
     } else {
-        println!("ℹ️ No native SHIORI library found or loaded; fallback mode enabled for '{}'", ghost_name);
+        println!(
+            "ℹ️ No native SHIORI library found or loaded; fallback mode enabled for '{}'",
+            ghost_name
+        );
         Ok(format!("Ghost '{}' loaded (fallback mode)", ghost_name))
     }
 }
@@ -583,7 +591,6 @@ async fn send_shiori_request(
     }
 }
 
-
 /// SHIORIにイベントを送信（簡易版）
 #[tauri::command]
 async fn send_shiori_event(
@@ -596,7 +603,6 @@ async fn send_shiori_event(
     );
     send_shiori_request(state, req).await
 }
-
 
 /// マウスクリックイベントを送信（簡易版）
 #[tauri::command]
@@ -641,10 +647,10 @@ async fn get_shiori_status(state: tauri::State<'_, AppState>) -> Result<bool, St
 /// 現在のゴーストを終了
 #[tauri::command]
 async fn unload_current_ghost(state: tauri::State<'_, AppState>) -> Result<String, String> {
-    if let Ok(mut engine_lock) = state.shiori_engine.lock() {
-        if let Some(mut engine) = engine_lock.take() {
-            let _ = engine.unload();
-        }
+    if let Ok(mut engine_lock) = state.shiori_engine.lock()
+        && let Some(mut engine) = engine_lock.take()
+    {
+        let _ = engine.unload();
     }
     if let Ok(mut ghost_lock) = state.current_ghost_name.lock() {
         *ghost_lock = None;
@@ -700,9 +706,12 @@ async fn test_command() -> Result<String, String> {
 /// アプリケーション最小化コマンド
 #[tauri::command]
 async fn minimize_app(app_handle: tauri::AppHandle) -> Result<(), String> {
+    #[cfg(desktop)]
     if let Some(window) = app_handle.get_webview_window("main") {
         window.minimize().map_err(|e| e.to_string())?;
     }
+    #[cfg(not(desktop))]
+    let _ = app_handle;
     Ok(())
 }
 
@@ -715,6 +724,7 @@ async fn exit_app(app_handle: tauri::AppHandle) -> Result<(), String> {
 
 /// OSネイティブのコンテキストメニュー表示コマンド (SSP / ukadoc 仕様準拠のメニュー再編)
 #[tauri::command]
+#[allow(unused_variables)]
 async fn show_context_menu(
     app_handle: tauri::AppHandle,
     ghosts: Vec<String>,
@@ -805,6 +815,7 @@ async fn show_context_menu(
 
 /// バルーンスキン連動の独立ポップアップメニューウィンドウ表示コマンド (ウィンドウ枠外にはみ出して表示可能)
 #[tauri::command]
+#[allow(unused_variables)]
 async fn show_menu_window(app_handle: tauri::AppHandle, x: f64, y: f64) -> Result<(), String> {
     #[cfg(desktop)]
     {
@@ -868,6 +879,7 @@ async fn show_menu_window(app_handle: tauri::AppHandle, x: f64, y: f64) -> Resul
 
 /// メニューウィンドウ非表示コマンド
 #[tauri::command]
+#[allow(unused_variables)]
 async fn hide_menu_window(app_handle: tauri::AppHandle) -> Result<(), String> {
     #[cfg(desktop)]
     {
@@ -883,6 +895,7 @@ async fn hide_menu_window(app_handle: tauri::AppHandle) -> Result<(), String> {
 
 /// 独立サブメニューウィンドウ表示コマンド
 #[tauri::command]
+#[allow(unused_variables)]
 async fn show_submenu_window(
     app_handle: tauri::AppHandle,
     menu_type: String,
@@ -953,6 +966,7 @@ async fn show_submenu_window(
 
 /// サブメニューウィンドウ非表示コマンド
 #[tauri::command]
+#[allow(unused_variables)]
 async fn hide_submenu_window(app_handle: tauri::AppHandle) -> Result<(), String> {
     #[cfg(desktop)]
     {
@@ -1136,7 +1150,7 @@ async fn install_ghost_archive_bytes(
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    tauri::Builder::default()
+    let builder = tauri::Builder::default()
         .setup(|app| {
             #[cfg(desktop)]
             {
@@ -1170,43 +1184,49 @@ pub fn run() {
 
                 app.set_menu(menu)?;
             }
+            #[cfg(not(desktop))]
+            let _ = app;
             Ok(())
         })
-        .manage(AppState::new())
-        .on_menu_event(move |app_handle, event| {
-            let id = event.id().as_ref();
-            if let Some(ghost_name) = id.strip_prefix("ghost:") {
-                let _ = app_handle.emit(
-                    "native-menu-action",
-                    serde_json::json!({
-                        "action": "switch-to-ghost",
-                        "payload": ghost_name
-                    }),
-                );
-            } else if let Some(shell_name) = id.strip_prefix("shell:") {
-                let _ = app_handle.emit(
-                    "native-menu-action",
-                    serde_json::json!({
-                        "action": "switch-to-shell",
-                        "payload": shell_name
-                    }),
-                );
-            } else if id == "open" {
-                if let Some(window) = app_handle.get_webview_window("main") {
-                    let _ = window.show();
-                    let _ = window.set_focus();
-                }
-            } else if id == "close" || id == "exit" {
-                app_handle.exit(0);
-            } else {
-                let _ = app_handle.emit(
-                    "native-menu-action",
-                    serde_json::json!({
-                        "action": id
-                    }),
-                );
+        .manage(AppState::new());
+
+    #[cfg(desktop)]
+    let builder = builder.on_menu_event(move |app_handle, event| {
+        let id = event.id().as_ref();
+        if let Some(ghost_name) = id.strip_prefix("ghost:") {
+            let _ = app_handle.emit(
+                "native-menu-action",
+                serde_json::json!({
+                    "action": "switch-to-ghost",
+                    "payload": ghost_name
+                }),
+            );
+        } else if let Some(shell_name) = id.strip_prefix("shell:") {
+            let _ = app_handle.emit(
+                "native-menu-action",
+                serde_json::json!({
+                    "action": "switch-to-shell",
+                    "payload": shell_name
+                }),
+            );
+        } else if id == "open" {
+            if let Some(window) = app_handle.get_webview_window("main") {
+                let _ = window.show();
+                let _ = window.set_focus();
             }
-        })
+        } else if id == "close" || id == "exit" {
+            app_handle.exit(0);
+        } else {
+            let _ = app_handle.emit(
+                "native-menu-action",
+                serde_json::json!({
+                    "action": id
+                }),
+            );
+        }
+    });
+
+    builder
         .on_window_event(|window, event| {
             if (window.label() == "menu_window" || window.label() == "submenu_window")
                 && let tauri::WindowEvent::Focused(false) = event

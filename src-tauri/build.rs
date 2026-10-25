@@ -41,10 +41,19 @@ fn build_yaya_shiori_stub() {
         // Android NDK のヘッダーパス自動探索
         if let Ok(ndk) = std::env::var("NDK_HOME").or_else(|_| std::env::var("ANDROID_NDK_ROOT")) {
             let ndk_path = Path::new(&ndk);
-            let sysroot_inc = ndk_path.join("toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/include");
+            let sysroot = ndk_path.join("toolchains/llvm/prebuilt/windows-x86_64/sysroot");
+            let sysroot_inc = sysroot.join("usr/include");
             let cxx_inc = sysroot_inc.join("c++/v1");
+            let arch_inc = sysroot_inc.join("aarch64-linux-android");
+
+            if sysroot.exists() {
+                build.flag(format!("--sysroot={}", sysroot.display()));
+            }
             if cxx_inc.exists() {
                 build.include(&cxx_inc);
+            }
+            if arch_inc.exists() {
+                build.include(&arch_inc);
             }
             if sysroot_inc.exists() {
                 build.include(&sysroot_inc);

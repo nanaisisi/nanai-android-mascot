@@ -1,7 +1,4 @@
 {
-  "dependencies": {
-    "biome": "^0.2.2"
-  },
   "devDependencies": {
     "@biomejs/biome": "2.6.3",
     "markuplint": "^5.3.0"

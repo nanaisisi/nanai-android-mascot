@@ -131,7 +131,9 @@ export class NanaiAndroidMascotApp {
     this.elements.menuBtn?.addEventListener("click", (e) => {
       e.stopPropagation();
       const rect = this.elements.menuBtn.getBoundingClientRect();
-      this.toggleMenu(e.screenX || (window.screenX + rect.right), e.screenY || (window.screenY + rect.bottom));
+      const sX = globalThis.screenX ?? 0;
+      const sY = globalThis.screenY ?? 0;
+      this.toggleMenu(e.screenX || (sX + rect.right), e.screenY || (sY + rect.bottom));
     });
 
     this.elements.quickBubble?.addEventListener("click", (e) => {
@@ -337,8 +339,10 @@ export class NanaiAndroidMascotApp {
 
   toggleMenu(screenX = null, screenY = null) {
     if (isTauriAvailable()) {
-      const posX = screenX !== null ? screenX : (window.screenX + 200);
-      const posY = screenY !== null ? screenY : (window.screenY + 100);
+      const sX = globalThis.screenX ?? 0;
+      const sY = globalThis.screenY ?? 0;
+      const posX = screenX !== null ? screenX : (sX + 200);
+      const posY = screenY !== null ? screenY : (sY + 100);
 
       // 独立したバルーンスキン連動メニューウィンドウを表示 (枠外にはみ出して表示可能)
       invoke("show_menu_window", {
@@ -376,8 +380,6 @@ export class NanaiAndroidMascotApp {
   }
 
   syncMenuGhosts() {
-    const ghostNames = (this.ghostController.ghosts || []).map((g) => g.name);
-    const currentGhostName = this.ghostController.currentGhost?.name || null;
     const shellNames = this.ghostController.shells || ["master"];
     const currentShellName = this.ghostController.currentShell || "master";
 
@@ -507,27 +509,9 @@ export class NanaiAndroidMascotApp {
     this.applyBalloonTheme();
   }
 
-  setBalloonTheme(themeId) {
-    this.settings.balloonTheme = themeId;
-    localStorage.setItem("mascot-nanai-settings", JSON.stringify(this.settings));
-    this.applyBalloonTheme();
-    this.showBalloon(`バルーンを「${themeId}」に変更しました。`);
-    setTimeout(() => this.hideBalloon(), 1500);
-  }
-
   applyBalloonTheme() {
-    const theme = this.settings.balloonTheme || "default";
-    const balloonEls = document.querySelectorAll(".balloon");
-    balloonEls.forEach((el) => {
-      el.classList.remove(
-        "balloon-theme-classic",
-        "balloon-theme-comic",
-        "balloon-theme-dark"
-      );
-      if (theme !== "default") {
-        el.classList.add(`balloon-theme-${theme}`);
-      }
-    });
+    const theme = this.settings.balloonTheme || this.currentBalloonTheme || "classic";
+    this.setBalloonTheme(theme);
   }
 }
 

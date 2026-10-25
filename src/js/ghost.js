@@ -220,24 +220,46 @@ export class GhostController {
     const placeholder = scopeId === 1 ? document.getElementById("kero-placeholder") : document.getElementById("sakura-placeholder");
     const container = scopeId === 1 ? document.getElementById("kero-display") : document.getElementById("ghost-display");
 
+    const slot = scopeId === 1 ? document.getElementById("kero-slot") : document.getElementById("ghost-container");
+
+    // \s[-1]: キャラクターサーフェス消去指示
+    if (surfaceId === -1 || surfaceId === "-1") {
+      if (scopeId === 1 && slot) {
+        slot.style.display = "none";
+      } else if (scopeId === 0 && container) {
+        container.style.visibility = "hidden";
+      }
+      return;
+    }
+
     if (scopeId === 0) {
+      if (container) container.style.visibility = "visible";
       this.app.surfaceManager.setSurfaceId(surfaceId);
     }
 
-    if (scopeId === 1 && container && container.style.display === "none") {
-      container.style.display = "flex";
-      // keroをsakuraの少し左下に配置
-      const sakuraRect = this.app.elements.ghostDisplay?.getBoundingClientRect();
-      if (sakuraRect) {
-        container.style.left = `${Math.max(80, sakuraRect.left - 100)}px`;
-        container.style.top = `${sakuraRect.top + 60}px`;
+    if (scopeId === 1) {
+      if (slot && slot.style.display === "none") {
+        slot.style.display = "flex";
+      }
+      if (container && container.style.display === "none") {
+        container.style.display = "flex";
       }
     }
 
     const fallbackSurface = scopeId === 1 ? 10 : 0;
     const img = document.querySelector(selector);
 
-    const applyImageSrc = (src, fallbackSrc = null) => {
+    const applyImageSrc = async (src, fallbackSrc = null) => {
+      // 伺かの伝統的な緑背景（#00FF00 / 左上色）を透過処理
+      let transparentSrc = src;
+      if (src && this.app?.surfaceManager?.processChromaKey) {
+        try {
+          transparentSrc = await this.app.surfaceManager.processChromaKey(src);
+        } catch (_e) {
+          transparentSrc = src;
+        }
+      }
+
       if (img) {
         img.style.display = "block";
         if (fallbackSrc) {
@@ -248,10 +270,10 @@ export class GhostController {
         } else {
           img.onerror = null;
         }
-        img.src = src;
+        img.src = transparentSrc;
       } else if (placeholder) {
         const errorAttr = fallbackSrc ? `onerror="this.onerror=null; this.src='${fallbackSrc}';"` : "";
-        placeholder.innerHTML = `<img src="${src}" 
+        placeholder.innerHTML = `<img src="${transparentSrc}" 
                                        alt="scope${scopeId}" 
                                        ${errorAttr}
                                        style="width: 100%; height: 100%; object-fit: contain; pointer-events: auto;">`;

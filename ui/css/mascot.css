@@ -311,6 +311,25 @@
   transform: translateY(0);
 }
 
+/* バルーン内のアンカーリンク (\_a) */
+.balloon-anchor {
+  color: var(--balloon-highlight-bg, #0078d7);
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0 1px;
+  border-radius: 2px;
+  transition: all 0.15s ease;
+}
+
+.balloon-anchor:hover {
+  background: var(--balloon-highlight-bg, #0078d7);
+  color: var(--balloon-highlight-text, #ffffff);
+}
+
+.balloon-anchor:active {
+  opacity: 0.8;
+}
+
 /* ステータスバー（常駐インジケータ） */
 .status-bar {
   position: fixed;

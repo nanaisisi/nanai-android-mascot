@@ -159,6 +159,7 @@ pub fn run() {
             commands::install::install_ghost_archive,
             commands::install::install_ghost_archive_bytes,
             commands::file::load_surface_image,
+            commands::file::load_surface_pna,
             commands::update::check_ghost_update,
             commands::update::execute_ghost_update
         ])

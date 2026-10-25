@@ -53,12 +53,12 @@ export const ghostSurfaceMethods = {
     const fallbackSurface = isSubchar ? 10 : 0;
     const img = document.querySelector(selector);
 
-    const applyImageSrc = async (src, fallbackSrc = null) => {
-      // 伺かの伝統的な緑背景（#00FF00 / 左上色）を透過処理
+    const applyImageSrc = async (src, fallbackSrc = null, pnaSrc = null) => {
+      // 伺かの伝統的な PNA アルファマスク合成または緑背景（#00FF00 / 左上色）クロマキー透過処理
       let transparentSrc = src;
       if (src && this.app?.surfaceManager?.processChromaKey) {
         try {
-          transparentSrc = await this.app.surfaceManager.processChromaKey(src);
+          transparentSrc = await this.app.surfaceManager.processChromaKey(src, pnaSrc);
         } catch (_e) {
           transparentSrc = src;
         }
@@ -95,8 +95,11 @@ export const ghostSurfaceMethods = {
     if (isTauriAvailable()) {
       const load = (id) =>
         invoke("load_surface_image", { ghostPath, shellName: shell, surfaceId: String(id) });
-      load(surfaceId)
-        .then((dataUrl) => applyImageSrc(dataUrl))
+      const loadPna = (id) =>
+        invoke("load_surface_pna", { ghostPath, shellName: shell, surfaceId: String(id) }).catch(() => null);
+
+      Promise.all([load(surfaceId), loadPna(surfaceId)])
+        .then(([dataUrl, pnaUrl]) => applyImageSrc(dataUrl, null, pnaUrl))
         .catch((err) => {
           console.warn("load_surface_image 失敗、フォールバック:", err);
           load(fallbackSurface)
@@ -110,8 +113,9 @@ export const ghostSurfaceMethods = {
     }
 
     const imgUrl = convertFileSrc(`${ghostPath}/shell/${shell}/surface${surfaceId}.png`);
+    const pnaUrl = convertFileSrc(`${ghostPath}/shell/${shell}/surface${surfaceId}.pna`);
     const fallbackSvgUrl = convertFileSrc(`${ghostPath}/shell/${shell}/surface${fallbackSurface}.svg`);
-    applyImageSrc(imgUrl, fallbackSvgUrl);
+    applyImageSrc(imgUrl, fallbackSvgUrl, pnaUrl);
   },
 
   updateGhostCharacter(ghostName) {

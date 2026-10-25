@@ -93,6 +93,47 @@ pub fn load_surface_image(
     ))
 }
 
+// サーフィスに対応する PNA (アルファマスク) 画像を読み込んで返すコマンド
+#[tauri::command]
+pub fn load_surface_pna(
+    ghost_path: String,
+    shell_name: String,
+    surface_id: String,
+    app_handle: tauri::AppHandle<tauri::Wry>,
+) -> Result<String, String> {
+    use std::fs;
+    let clean_gp = clean_verbatim_path(&ghost_path);
+    let base_ghost_path =
+        resolve_asset_path(&clean_gp, &app_handle).unwrap_or_else(|_| PathBuf::from(&clean_gp));
+
+    let shell_dir = base_ghost_path.join("shell").join(&shell_name);
+    let master_dir = base_ghost_path.join("shell").join("master");
+    let surface_id_num = surface_id.parse::<u32>().unwrap_or(0);
+
+    let candidates = vec![
+        shell_dir.join(format!("surface{surface_id}.pna")),
+        shell_dir.join(format!("surface{surface_id_num:04}.pna")),
+        shell_dir.join(format!("surface{surface_id_num:02}.pna")),
+        shell_dir.join(format!("Surface{surface_id}.pna")),
+        master_dir.join(format!("surface{surface_id}.pna")),
+        master_dir.join(format!("surface{surface_id_num:04}.pna")),
+        master_dir.join(format!("surface{surface_id_num:02}.pna")),
+    ];
+
+    for candidate in candidates {
+        if candidate.exists()
+            && candidate.is_file()
+            && let Ok(bytes) = fs::read(&candidate)
+        {
+            use base64::Engine;
+            let b64 = base64::engine::general_purpose::STANDARD.encode(&bytes);
+            return Ok(format!("data:image/png;base64,{b64}"));
+        }
+    }
+
+    Err(format!("PNA file not found for surface_id: {surface_id}"))
+}
+
 // 最近開いたファイル履歴を管理するための関数
 #[tauri::command]
 pub fn add_to_recent_files(

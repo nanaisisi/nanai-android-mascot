@@ -159,6 +159,28 @@ export class SakuraScriptPlayer {
 					tokens.push({ type: "quick_toggle" });
 					i += 2;
 				}
+				// \_a[ID,arg...] / \_a (アンカーリンク)
+				else if (char === "_" && script[i + 1] === "a") {
+					if (script[i + 2] === "[") {
+						const start = i + 3;
+						const end = script.indexOf("]", start);
+						if (end !== -1) {
+							const content = script.substring(start, end);
+							const args = content.split(",").map((s) => s.trim());
+							tokens.push({
+								type: "anchor_begin",
+								id: args[0] || "",
+								args,
+							});
+							i = end + 1;
+						} else {
+							i += 2;
+						}
+					} else {
+						tokens.push({ type: "anchor_end" });
+						i += 2;
+					}
+				}
 				// \![command,arg,...] (内部コマンド)
 				else if (char === "!" && script[i + 1] === "[") {
 					let j = i + 2;
@@ -248,6 +270,7 @@ export class SakuraScriptPlayer {
 
 		let currentBalloonText = sakuraText;
 		let isQuickMode = false;
+		let currentAnchor = null;
 
 		for (let j = 0; j < tokens.length; j++) {
 			if (this.playbackId !== currentId) break; // 新しい再生で中断
@@ -257,6 +280,7 @@ export class SakuraScriptPlayer {
 			switch (token.type) {
 				case "scope":
 					this.currentScope = token.value;
+					currentAnchor = null;
 					if (this.currentScope === 1) {
 						const keroSlot = document.getElementById("kero-slot");
 						if (keroSlot && keroSlot.style.display === "none") {
@@ -273,7 +297,9 @@ export class SakuraScriptPlayer {
 					break;
 
 				case "char":
-					currentBalloonText.appendChild(document.createTextNode(token.value));
+					(currentAnchor || currentBalloonText).appendChild(
+						document.createTextNode(token.value),
+					);
 					// 発話連動の口パク (SERIKO talk,N)
 					this.app.surfaceManager?.onCharSpoken(this.currentScope);
 					if (!this.skipRequested && !isQuickMode) {
@@ -283,6 +309,7 @@ export class SakuraScriptPlayer {
 					break;
 
 				case "newline": {
+					currentAnchor = null;
 					const br = document.createElement("br");
 					if (token.half) br.className = "half-br";
 					currentBalloonText.appendChild(br);
@@ -291,6 +318,7 @@ export class SakuraScriptPlayer {
 
 				case "clear":
 					currentBalloonText.innerHTML = "";
+					currentAnchor = null;
 					break;
 
 				case "pause":
@@ -299,6 +327,33 @@ export class SakuraScriptPlayer {
 						await this.waitForClickOrTimeout(currentBalloonText, 10000);
 					}
 					currentBalloonText.innerHTML = "";
+					currentAnchor = null;
+					break;
+
+				case "anchor_begin": {
+					const anchorSpan = document.createElement("span");
+					anchorSpan.className = "balloon-anchor";
+					anchorSpan.setAttribute("data-id", token.id);
+					anchorSpan.addEventListener("click", (e) => {
+						e.stopPropagation();
+						if (token.id.startsWith("On")) {
+							this.app.ghostController.sendShioriEvent(
+								token.id,
+								token.args ? token.args.slice(1) : [],
+							);
+						} else {
+							this.app.ghostController.sendShioriEvent("OnAnchorSelect", [
+								token.id,
+							]);
+						}
+					});
+					currentBalloonText.appendChild(anchorSpan);
+					currentAnchor = anchorSpan;
+					break;
+				}
+
+				case "anchor_end":
+					currentAnchor = null;
 					break;
 
 				case "quick_toggle":
@@ -377,13 +432,139 @@ export class SakuraScriptPlayer {
 	 * \![...] 内部コマンドの実行
 	 */
 	async runCommand(args) {
-		const [cmd, sub, value] = args.map((a) => (a ?? "").toLowerCase());
-		if (cmd === "set" && sub === "alignmenttodesktop") {
-			await this.setAlignmentToDesktop(value);
-		} else if (cmd === "update" || cmd === "updatebymyself") {
+		const rawCmd = (args[0] ?? "").toLowerCase();
+		const rawSub = (args[1] ?? "").toLowerCase();
+
+		if (rawCmd === "open" && rawSub === "inputbox") {
+			this.openInputBox(args.slice(2));
+		} else if (rawCmd === "raise") {
+			// \![raise,EventName,Ref0,Ref1...]
+			const eventName = args[1];
+			if (eventName) {
+				await this.app.ghostController.sendShioriEvent(eventName, args.slice(2));
+			}
+		} else if (rawCmd === "bind" || rawCmd === "bind-noevent") {
+			// \![bind,category,part,status]
+			const [category, part, statusVal] = args.slice(1);
+			await this.app.surfaceManager?.bindDressup(
+				category,
+				part,
+				statusVal,
+				this.currentScope,
+				rawCmd !== "bind-noevent",
+			);
+		} else if (rawCmd === "set" && rawSub === "alignmenttodesktop") {
+			await this.setAlignmentToDesktop(args[2]);
+		} else if (rawCmd === "update" || rawCmd === "updatebymyself") {
 			await this.app.startNetworkUpdate?.();
 		} else {
 			console.debug("未対応の \\! コマンド:", args);
+		}
+	}
+
+	/**
+	 * \![open,inputbox,ID,...] の処理 (UKADOC準拠)
+	 */
+	openInputBox(params) {
+		const id = params[0] || "UserInput";
+		let timeoutMs = 0;
+		let defaultText = "";
+		let placeholder = "";
+
+		for (let i = 1; i < params.length; i++) {
+			const p = params[i] ?? "";
+			if (p.startsWith("--timeout=")) {
+				timeoutMs = parseInt(p.replace("--timeout=", ""), 10) || 0;
+			} else if (p.startsWith("--text=")) {
+				defaultText = p.replace("--text=", "");
+			} else if (p.startsWith("--placeholder=")) {
+				placeholder = p.replace("--placeholder=", "");
+			} else if (i === 1 && !p.startsWith("--")) {
+				timeoutMs = parseInt(p, 10) || 0;
+			} else if (i === 2 && !p.startsWith("--")) {
+				defaultText = p;
+			}
+		}
+
+		const balloon =
+			this.currentScope === 1
+				? this.app.elements.keroBalloonText
+				: this.app.elements.balloonText;
+		if (!balloon) return;
+
+		const form = document.createElement("div");
+		form.className = "balloon-inputbox-form";
+		form.style.marginTop = "0.5rem";
+		form.style.display = "flex";
+		form.style.gap = "0.25rem";
+
+		const input = document.createElement("input");
+		input.type = "text";
+		input.className = "balloon-input";
+		input.value = defaultText;
+		input.placeholder = placeholder;
+		input.style.flex = "1";
+		input.style.fontSize = "0.8rem";
+		input.style.padding = "0.2rem 0.4rem";
+		input.style.borderRadius = "0.25rem";
+		input.style.border = "1px solid var(--balloon-border-color, #888)";
+		input.style.background = "var(--balloon-bg, #fff)";
+		input.style.color = "var(--balloon-text-color, #000)";
+
+		const submitBtn = document.createElement("button");
+		submitBtn.textContent = "OK";
+		submitBtn.className = "balloon-choice-btn";
+		submitBtn.style.marginTop = "0";
+
+		let timer = null;
+		const cleanup = () => {
+			if (timer) clearTimeout(timer);
+			form.remove();
+		};
+
+		const submit = async () => {
+			const val = input.value;
+			cleanup();
+			if (id.startsWith("On")) {
+				await this.app.ghostController.sendShioriEvent(id, [val]);
+			} else {
+				await this.app.ghostController.sendShioriEvent("OnUserInput", [
+					id,
+					val,
+				]);
+			}
+		};
+
+		const cancel = async () => {
+			cleanup();
+			await this.app.ghostController.sendShioriEvent("OnUserInputCancel", [id]);
+		};
+
+		submitBtn.addEventListener("click", (e) => {
+			e.stopPropagation();
+			submit();
+		});
+
+		input.addEventListener("keydown", (e) => {
+			if (e.key === "Enter") {
+				e.stopPropagation();
+				submit();
+			} else if (e.key === "Escape") {
+				e.stopPropagation();
+				cancel();
+			}
+		});
+
+		form.appendChild(input);
+		form.appendChild(submitBtn);
+		balloon.appendChild(form);
+		setTimeout(() => input.focus(), 50);
+
+		if (timeoutMs > 0) {
+			timer = setTimeout(() => {
+				cleanup();
+				this.app.ghostController.sendShioriEvent("OnUserInputCancel", [id]);
+			}, timeoutMs);
 		}
 	}
 
@@ -429,11 +610,15 @@ export class SakuraScriptPlayer {
 	 */
 	async onChoiceSelected(choiceId, choiceText) {
 		console.log(`🎯 選択肢選択: ${choiceId} (${choiceText})`);
-		// SHIORIにOnChoiceSelectイベント送信
-		await this.app.ghostController.sendShioriEvent("OnChoiceSelect", [
-			choiceId,
-			choiceText,
-		]);
+		if (choiceId.startsWith("On")) {
+			// SSP拡張: Onで始まるIDは直接そのイベントを発行
+			await this.app.ghostController.sendShioriEvent(choiceId, [choiceText]);
+		} else {
+			await this.app.ghostController.sendShioriEvent("OnChoiceSelect", [
+				choiceId,
+				choiceText,
+			]);
+		}
 	}
 
 	sleep(ms) {

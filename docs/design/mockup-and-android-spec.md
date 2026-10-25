@@ -31,12 +31,12 @@ PC 開発環境（ブラウザ / Tauri デスクトップ版）において、An
 
 ### 2.2 公式モックゴースト（`mock_nanai`）
 
-[assets/ghost/mock_nanai](file:///e:/project/rust/nanai-android-mascot/assets/ghost/mock_nanai) を、仕様検証・UI 開発用公式モックアップアセットとして位置付ける。
+`assets/ghost/mock_nanai/` を、仕様検証・UI 開発用公式モックアップアセットとして位置付ける。
 
 - **サーフィス構成**:
-  - [surface0.png](file:///e:/project/rust/nanai-android-mascot/assets/ghost/mock_nanai/shell/master/surface0.png)（基本待機状態）
-  - [surface10.png](file:///e:/project/rust/nanai-android-mascot/assets/ghost/mock_nanai/shell/master/surface10.png)（サブ・表情差分）
-  - [surfaces.txt](file:///e:/project/rust/nanai-android-mascot/assets/ghost/mock_nanai/shell/master/surfaces.txt)（当たり判定・アニメーション定義）
+  - `surface0.png`（基本待機状態）
+  - `surface10.png`（サブ・表情差分）
+  - `surfaces.txt`（当たり判定・アニメーション定義）
 - **モック対話（Mock SHIORI）**:
   - DLL ロードが不可能な環境（WebView 単体やモバイル開発初期）向けに、TypeScript/Rust 内部で以下のような主要イベントをシミュレート応答するフォールバックを実装:
     - `OnBoot`（起動挨拶）

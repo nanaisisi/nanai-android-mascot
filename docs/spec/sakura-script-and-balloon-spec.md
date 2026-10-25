@@ -90,6 +90,6 @@ flowchart LR
 
 フロントエンドに以下の専用モジュールを追加します：
 
-- [src/js/sakura-script.js](file:///e:/project/rust/nanai-android-mascot/src/js/sakura-script.js):
+- [`src/js/sakura-script.js`](../../src/js/sakura-script.js):
   - `parseSakuraScript(rawText)`: 文字列をトークン列に変換
   - `SakuraScriptPlayer`: キューを非同期ループで再生し、バルーン表示および表情切り替えを同期実行

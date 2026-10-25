@@ -4,9 +4,9 @@
 > **対象バージョン**: Nanai Android Mascot v0.2.0+  
 > **関連仕様書**:
 >
-> - [standard-ghost-spec.md](file:///e:/project/rust/nanai-android-mascot/docs/spec/standard-ghost-spec.md)
-> - [shiori-integration.md](file:///e:/project/rust/nanai-android-mascot/docs/spec/shiori-integration.md)
-> - [encoding-and-vfs-spec.md](file:///e:/project/rust/nanai-android-mascot/docs/spec/encoding-and-vfs-spec.md)
+> - [standard-ghost-spec.md](standard-ghost-spec.md)
+> - [shiori-integration.md](shiori-integration.md)
+> - [encoding-and-vfs-spec.md](encoding-and-vfs-spec.md)
 
 ---
 
@@ -143,7 +143,7 @@ sequenceDiagram
 
 | フェーズ | 作業内容 | 対象成果物 |
 | :--- | :--- | :--- |
-| **Phase 1** | **Git 管理除外の適用**<br>・`.gitignore` の更新<br>・不要なローカルゴースト追跡の解除 | [.gitignore](file:///e:/project/rust/nanai-android-mascot/.gitignore) |
-| **Phase 2** | **埋め込みハードコードの廃止**<br>・`src/js/ghost.js` の固定セリフ・モック撤廃<br>・`src/js/surface.js` の固定判定撤廃<br>・`src-tauri/src/lib.rs` の固定文字列撤廃 | [ghost.js](file:///e:/project/rust/nanai-android-mascot/src/js/ghost.js)<br>[surface.js](file:///e:/project/rust/nanai-android-mascot/src/js/surface.js)<br>[lib.rs](file:///e:/project/rust/nanai-android-mascot/src-tauri/src/lib.rs) |
-| **Phase 3** | **ゴースト取り込みバックエンド実装**<br>・`zip` クレート導入<br>・`install_ghost_archive` Tauriコマンド実装 | [Cargo.toml](file:///e:/project/rust/nanai-android-mascot/src-tauri/Cargo.toml)<br>[lib.rs](file:///e:/project/rust/nanai-android-mascot/src-tauri/src/lib.rs) |
-| **Phase 4** | **ゴースト取り込み UI 実装**<br>・モーダルに「ゴースト取り込み (.nar/.zip)」UI追加<br>・D&D対応と自動再読み込み接続 | [index.html](file:///e:/project/rust/nanai-android-mascot/src/index.html)<br>[modal.js](file:///e:/project/rust/nanai-android-mascot/src/js/modal.js) |
+| **Phase 1** | **Git 管理除外の適用**<br>・`.gitignore` の更新<br>・不要なローカルゴースト追跡の解除 | [.gitignore](../../.gitignore) |
+| **Phase 2** | **埋め込みハードコードの廃止**<br>・`src/js/ghost.js` の固定セリフ・モック撤廃<br>・`src/js/surface.js` の固定判定撤廃<br>・`src-tauri/src/lib.rs` の固定文字列撤廃 | [ghost.js](../../src/js/ghost.js)<br>[surface.js](../../src/js/surface.js)<br>[lib.rs](../../src-tauri/src/lib.rs) |
+| **Phase 3** | **ゴースト取り込みバックエンド実装**<br>・`zip` クレート導入<br>・`install_ghost_archive` Tauriコマンド実装 | [Cargo.toml](../../src-tauri/Cargo.toml)<br>[lib.rs](../../src-tauri/src/lib.rs) |
+| **Phase 4** | **ゴースト取り込み UI 実装**<br>・モーダルに「ゴースト取り込み (.nar/.zip)」UI追加<br>・D&D対応と自動再読み込み接続 | [index.html](../../src/index.html)<br>[modal.js](../../src/js/modal.js) |

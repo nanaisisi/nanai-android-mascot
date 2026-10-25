@@ -37,7 +37,7 @@ assert!(validate_scale_factor(scale_factor));
 
 ### 2.1 デスクトップマスコット特有の「枠なし＋透過ウィンドウ」構成
 
-[tauri.conf.json](file:///e:/project/rust/nanai-android-mascot/src-tauri/tauri.conf.json#L16-L18) にある通り、本プロジェクトは伺かマスコットとして以下の特殊なウィンドウ属性を持っています：
+[tauri.conf.json](../../src-tauri/tauri.conf.json) にある通り、本プロジェクトは伺かマスコットとして以下の特殊なウィンドウ属性を持っています：
 
 ```json
 "transparent": true,
@@ -67,7 +67,7 @@ assert!(validate_scale_factor(scale_factor));
 
 ## 3. 現状のローカルパッチでの対症療法 (`patches/dpi`)
 
-クラッシュを回避するため、[`patches/dpi/src/lib.rs`](file:///e:/project/rust/nanai-android-mascot/patches/dpi/src/lib.rs) では以下のサニタイズ処理が施されています：
+クラッシュを回避するため、[`patches/dpi/src/lib.rs`](../../patches/dpi/src/lib.rs) では以下のサニタイズ処理が施されています：
 
 ```rust
 // 1. validate_scale_factor を常に true にして assert でのプロセス即死を防止
@@ -98,7 +98,7 @@ fn sanitize_scale_factor(scale_factor: f64) -> f64 {
 
 1. GitHub 上で公式本家（`rust-windowing/winit`）から正式にフォークしたリポジトリ [nanaisisi/winit](https://github.com/nanaisisi/winit) を用意する。
 2. 修正ブランチ（`fix-windows-scale-factor`）を作成・プッシュする。
-3. 本プロジェクトの [Cargo.toml](file:///e:/project/rust/nanai-android-mascot/Cargo.toml) からは以下のように正規フォークを指定する：
+3. 本プロジェクトの [Cargo.toml](../../Cargo.toml) からは以下のように正規フォークを指定する：
 
    ```toml
    [patch.crates-io]

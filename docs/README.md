@@ -35,6 +35,7 @@
 - **[wasm-and-plugin-extensibility.md](spec/wasm-and-plugin-extensibility.md)** - WASM化指針 & JavaScript拡張システム仕様書
 - **[shiori-integration.md](spec/shiori-integration.md)** - SHIORI 組み込み統合技術仕様
 - **[ssp-compatibility-reference.md](spec/ssp-compatibility-reference.md)** - SSP 仕様ベース 統合互換リファレンスマニュアル
+- **[local-reference-and-test-spec.md](spec/local-reference-and-test-spec.md)** - ローカル外部仕様・試験環境（local/）連携仕様書
 
 ### 📋 開発プロセス & 履歴 (`process/`)
 

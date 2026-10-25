@@ -5,9 +5,11 @@ use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 use tauri::{Emitter, Manager};
 
-// メニュー色・スキン情報（descript.txt 由来）
 #[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ShellMenuTheme {
+    pub background_color: Option<String>,
+    pub foreground_color: Option<String>,
+    pub font_color: Option<String>,
     pub background_font_color: Option<String>,
     pub foreground_font_color: Option<String>,
     pub disable_font_color: Option<String>,

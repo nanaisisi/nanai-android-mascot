@@ -59,6 +59,7 @@ export const actionMethods = {
     if (action === "close-menu") return;
     if (action === "minimize") return this.minimizeApp();
     if (action === "switch-to-ghost" && payload) return gc.selectGhost(payload);
+    if (action === "call-ghost" && payload) return this.callGhost(payload);
     if (action === "switch-to-shell" && payload) return gc.selectShell(payload);
 
     // ゴースト切り替え / 汎用モーダル

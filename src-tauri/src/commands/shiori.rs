@@ -74,6 +74,9 @@ pub async fn load_ghost(
                         if let Ok(mut engine_lock) = state.shiori_engine.lock() {
                             *engine_lock = Some(engine);
                         }
+                        if let Ok(mut map) = state.active_ghosts.lock() {
+                            map.insert("main".to_string(), ghost_name.clone());
+                        }
                         loaded = true;
                         println!("🎉 Native SHIORI activated: {:?}", cand);
                         break;
@@ -97,13 +100,174 @@ pub async fn load_ghost(
     }
 }
 
+/// ゴーストを新規インスタンスとして追加起動 (マルチゴースト)
+#[tauri::command]
+pub async fn spawn_ghost(
+    state: tauri::State<'_, AppState>,
+    ghost_name: String,
+    app_handle: tauri::AppHandle,
+) -> Result<String, String> {
+    println!("👥 Spawning new ghost instance: {}", ghost_name);
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_millis();
+    let instance_id = format!("ghost_{}", now);
+
+    // ゴーストディレクトリの解決
+    let candidate_dirs = vec![
+        format!("assets/ghost/{}", ghost_name),
+        format!("ghost/{}", ghost_name),
+    ];
+    let mut ghost_dir = PathBuf::from(format!("assets/ghost/{}", ghost_name));
+    for rel in candidate_dirs {
+        if let Ok(resolved) = resolve_asset_path(&rel, &app_handle)
+            && resolved.exists()
+        {
+            ghost_dir = resolved;
+            break;
+        }
+    }
+    let ghost_master_dir = ghost_dir.join("ghost").join("master");
+
+    // SHIORI候補探索
+    let mut candidates = Vec::new();
+    #[cfg(windows)]
+    {
+        candidates.push(ghost_master_dir.join("yaya.dll"));
+        candidates.push(ghost_master_dir.join("shiori.dll"));
+        candidates.push(ghost_master_dir.join("satoriya.dll"));
+    }
+    #[cfg(not(windows))]
+    {
+        candidates.push(ghost_master_dir.join("yaya.so"));
+        candidates.push(ghost_master_dir.join("shiori.so"));
+        candidates.push(ghost_master_dir.join("libyaya.so"));
+    }
+
+    for cand in candidates {
+        if cand.exists() {
+            if let Ok(mut engine) = ShioriDynamicEngine::load_library(&cand) {
+                if let Ok(_) = engine.initialize(&ghost_master_dir) {
+                    if let Ok(mut engines) = state.ghost_engines.lock() {
+                        engines.insert(instance_id.clone(), engine);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    if let Ok(mut active) = state.active_ghosts.lock() {
+        active.insert(instance_id.clone(), ghost_name.clone());
+    }
+
+    #[cfg(desktop)]
+    {
+        // 新規ウィンドウを生成
+        let encoded_name: String = ghost_name
+            .bytes()
+            .map(|b| {
+                if b.is_ascii_alphanumeric() || b == b'-' || b == b'_' || b == b'.' || b == b'~' {
+                    (b as char).to_string()
+                } else {
+                    format!("%{:02X}", b)
+                }
+            })
+            .collect();
+        let url = format!("index.html?ghost_id={}&ghost_name={}", instance_id, encoded_name);
+        let win_label = format!("window_{}", instance_id);
+        
+        let builder = tauri::WebviewWindowBuilder::new(
+            &app_handle,
+            &win_label,
+            tauri::WebviewUrl::App(url.into()),
+        )
+        .title(format!("Nanai Android Mascot - {}", ghost_name))
+        .inner_size(400.0, 600.0)
+        .transparent(true)
+        .decorations(false)
+        .always_on_top(true)
+        .resizable(true);
+
+        builder.build().map_err(|e| e.to_string())?;
+    }
+
+    Ok(instance_id)
+}
+
+/// 単一ゴーストを終了 (SSP準拠: そのゴーストのみ終了。残りが無ければプロセス終了)
+#[tauri::command]
+pub async fn close_ghost(
+    state: tauri::State<'_, AppState>,
+    ghost_id: Option<String>,
+    app_handle: tauri::AppHandle,
+) -> Result<(), String> {
+    let target_id = ghost_id.unwrap_or_else(|| "main".to_string());
+    println!("❌ Closing ghost instance: {}", target_id);
+
+    // エンジン解放
+    if let Ok(mut engines) = state.ghost_engines.lock() {
+        if let Some(mut engine) = engines.remove(&target_id) {
+            let _ = engine.unload();
+        }
+    }
+    if target_id == "main" {
+        if let Ok(mut engine_lock) = state.shiori_engine.lock()
+            && let Some(mut engine) = engine_lock.take()
+        {
+            let _ = engine.unload();
+        }
+    }
+
+    // アクティブゴーストから削除
+    let remaining_count = if let Ok(mut active) = state.active_ghosts.lock() {
+        active.remove(&target_id);
+        active.len()
+    } else {
+        0
+    };
+
+    #[cfg(desktop)]
+    {
+        // 該当ウィンドウを閉じる
+        let win_label = if target_id == "main" {
+            "main".to_string()
+        } else {
+            format!("window_{}", target_id)
+        };
+        if let Some(win) = app_handle.get_webview_window(&win_label) {
+            let _ = win.close();
+        }
+    }
+
+    // 残りのゴーストがゼロになったらアプリ全体を終了
+    if remaining_count == 0 {
+        println!("🏁 No active ghosts remaining. Exiting app.");
+        app_handle.exit(0);
+    }
+
+    Ok(())
+}
+
 /// SHIORIにリクエストを送信（SHIORI/3.0 プロトコル準拠）
 #[tauri::command]
 pub async fn send_shiori_request(
     state: tauri::State<'_, AppState>,
     request: String,
+    ghost_id: Option<String>,
 ) -> Result<String, String> {
-    // ネイティブSHIORIエンジンへ委譲
+    let gid = ghost_id.unwrap_or_else(|| "main".to_string());
+
+    if gid != "main" {
+        if let Ok(engines) = state.ghost_engines.lock() {
+            if let Some(engine) = engines.get(&gid) {
+                return engine.request(&request);
+            }
+        }
+    }
+
+    // デフォルト/メインのネイティブSHIORIエンジンへ委譲
     let engine_lock = state
         .shiori_engine
         .lock()
@@ -122,6 +286,7 @@ pub async fn send_shiori_event(
     state: tauri::State<'_, AppState>,
     event: String,
     references: Option<Vec<String>>,
+    ghost_id: Option<String>,
 ) -> Result<String, String> {
     let mut req = format!(
         "GET SHIORI/3.0\r\nID: {}\r\nSender: NanaiMascot\r\nCharset: UTF-8\r\n",
@@ -133,7 +298,7 @@ pub async fn send_shiori_event(
         }
     }
     req.push_str("\r\n");
-    send_shiori_request(state, req).await
+    send_shiori_request(state, req, ghost_id).await
 }
 
 /// マウスクリックイベントを送信（簡易版）

@@ -49,13 +49,14 @@ export const menuMethods = {
     const shellNames = gc.shells || ["master"];
     const currentShellName = gc.currentShell || "master";
     const ghosts = gc.ghosts || [{ name: AppConfig.paths.fallbackGhostName }];
+    const fullShells = gc.currentGhost?.shells || shellNames;
 
     // 独立メニューウィンドウへの状態同期
     if (isTauriAvailable()) {
       emit("sync-ghosts", {
         ghosts,
-        currentGhost: gc.currentGhost,
-        shells: shellNames,
+        currentGhost: gc.currentGhost?.name || gc.currentGhost,
+        shells: fullShells,
         currentShell: currentShellName,
       });
       emit("sync-theme", this.currentBalloonTheme);

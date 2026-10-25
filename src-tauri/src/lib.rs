@@ -137,6 +137,8 @@ pub fn run() {
             commands::shiori::get_all_ghosts,
             commands::shiori::get_shiori_status,
             commands::shiori::unload_current_ghost,
+            commands::shiori::spawn_ghost,
+            commands::shiori::close_ghost,
             commands::window::request_overlay_permission,
             commands::window::setup_foreground_service,
             commands::window::test_command,

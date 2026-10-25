@@ -47,6 +47,9 @@ pub struct AppState {
     pub recent_files: Mutex<Vec<String>>,
     pub current_ghost_name: Mutex<Option<String>>,
     pub shiori_engine: Mutex<Option<ShioriDynamicEngine>>,
+    // マルチゴースト対応 (ghost_id -> Engine, ghost_id -> ghost_name)
+    pub ghost_engines: Mutex<std::collections::HashMap<String, ShioriDynamicEngine>>,
+    pub active_ghosts: Mutex<std::collections::HashMap<String, String>>,
 }
 
 impl AppState {
@@ -55,6 +58,8 @@ impl AppState {
             recent_files: Mutex::new(Vec::new()),
             current_ghost_name: Mutex::new(None),
             shiori_engine: Mutex::new(None),
+            ghost_engines: Mutex::new(std::collections::HashMap::new()),
+            active_ghosts: Mutex::new(std::collections::HashMap::new()),
         }
     }
 }

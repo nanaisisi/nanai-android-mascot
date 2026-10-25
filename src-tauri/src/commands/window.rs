@@ -157,9 +157,9 @@ pub async fn show_menu_window(app_handle: tauri::AppHandle, x: f64, y: f64) -> R
     #[cfg(desktop)]
     {
         use tauri::Manager;
-        // メインメニューのコンパクトな実寸 (240x460)
+        // メインメニューの実寸 (240x540: 終了ボタン・フッターまで収まるサイズ)
         let win_width = 240.0;
-        let win_height = 460.0;
+        let win_height = 540.0;
 
         let mut target_x = x;
         let mut target_y = y;

@@ -38,6 +38,10 @@ export class NanaiAndroidMascotApp {
 			autoSwitchBalloonWithGhost: true,
 		};
 
+		const urlParams = new URLSearchParams(globalThis.location.search);
+		this.ghostId = urlParams.get("ghost_id") || "main";
+		this.initialGhostName = urlParams.get("ghost_name") || null;
+
 		/** @type {GhostController} */
 		this.ghostController = new GhostController(this);
 		/** @type {InteractionManager} */
@@ -52,6 +56,20 @@ export class NanaiAndroidMascotApp {
 		/** @type {Record<string, HTMLElement|null>} */
 		this.elements = {};
 		this.init();
+	}
+
+	/**
+	 * 他のゴーストを別インスタンスとして新規起動 (マルチゴースト)
+	 * @param {string} ghostName
+	 */
+	async callGhost(ghostName) {
+		if (isTauriAvailable()) {
+			try {
+				await invoke("spawn_ghost", { ghostName });
+			} catch (e) {
+				console.error("Failed to spawn ghost:", e);
+			}
+		}
 	}
 
 	async init() {
@@ -107,10 +125,15 @@ export class NanaiAndroidMascotApp {
 		const exit = async () => {
 			if (isTauriAvailable()) {
 				try {
-					await invoke("exit_app");
+					await invoke("close_ghost", { ghostId: this.ghostId });
 					return;
 				} catch (_e) {
-					// fallthrough
+					try {
+						await invoke("exit_app");
+						return;
+					} catch (_err) {
+						// fallthrough
+					}
 				}
 			}
 			globalThis.window.close();

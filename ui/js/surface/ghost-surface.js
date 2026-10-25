@@ -31,19 +31,23 @@ export const ghostSurfaceMethods = {
       return;
     }
 
-    if (isTauriAvailable()) {
-      // デスクトップ(Tauri)環境下では、メインキャラ(scope 0)・サブキャラ(scope 1+)ともに独立サブウィンドウ側で表示
-      if (slot) slot.style.display = "none";
-      if (container) container.style.display = "none";
-      invoke("show_subchar_window", { scopeId }).catch(() => {});
-    } else {
-      if (!isSubchar) {
-        if (container) container.style.visibility = "visible";
-        this.app.surfaceManager.setSurfaceId(surfaceId);
+    if (isSubchar) {
+      if (isTauriAvailable()) {
+        if (slot) slot.style.display = "none";
+        if (container) container.style.display = "none";
+        invoke("show_subchar_window", { scopeId }).catch(() => {});
       } else {
         if (slot && slot.style.display === "none") slot.style.display = "flex";
         if (container && container.style.display === "none") container.style.display = "flex";
       }
+    } else {
+      // メインキャラクター (スコープ0) は常にメインウィンドウで表示
+      if (slot && slot.style.display === "none") slot.style.display = "flex";
+      if (container) {
+        container.style.display = "flex";
+        container.style.visibility = "visible";
+      }
+      this.app.surfaceManager.setSurfaceId(surfaceId);
     }
 
     const fallbackSurface = isSubchar ? 10 : 0;

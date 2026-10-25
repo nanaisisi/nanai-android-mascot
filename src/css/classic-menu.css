@@ -17,14 +17,14 @@ body {
   user-select: none;
   -webkit-user-select: none;
   overflow: hidden;
-  padding: 2px;
+  padding: 0.125rem;
   display: flex;
   justify-content: flex-end;
 }
 
 .menu-container {
-  padding: 4px 0;
-  width: 210px;
+  padding: 0.25rem 0;
+  width: clamp(10rem, 45vw, 15rem);
   background-color: var(--balloon-bg);
   background-image: var(--balloon-pattern);
   border: var(--balloon-border-width) var(--balloon-border-style) var(--balloon-border-color);
@@ -36,7 +36,7 @@ body {
 
 .menu-item {
   width: 100%;
-  padding: 6px 14px;
+  padding: 0.5rem 0.875rem;
   background: none;
   border: none;
   text-align: left;
@@ -59,9 +59,9 @@ body {
 
 .menu-item.has-submenu::after {
   content: "◀";
-  font-size: 8px;
+  font-size: 0.5rem;
   opacity: 0.7;
-  margin-left: 8px;
+  margin-left: 0.5rem;
 }
 
 .menu-item:hover.has-submenu::after {
@@ -69,9 +69,9 @@ body {
 }
 
 .shortcut-key {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: #777;
-  margin-left: 12px;
+  margin-left: 0.75rem;
 }
 
 .menu-item:hover .shortcut-key {
@@ -81,7 +81,7 @@ body {
 .menu-separator {
   height: 1px;
   background-color: var(--balloon-separator-color);
-  margin: 4px 6px;
+  margin: 0.25rem 0.375rem;
 }
 
 /* サイドメニュー (独立サブメニュー: 右寄せメニューのため左側に展開) */
@@ -90,16 +90,16 @@ body {
   position: absolute;
   right: 100%;
   top: 0;
-  margin-right: 4px;
-  min-width: 190px;
+  margin-right: 0.25rem;
+  min-width: clamp(9.375rem, 40vw, 13.125rem);
   background-color: var(--balloon-bg);
   background-image: var(--balloon-pattern);
   border: var(--balloon-border-width) var(--balloon-border-style) var(--balloon-border-color);
   border-radius: var(--balloon-border-radius);
   box-shadow: var(--balloon-box-shadow);
-  padding: 4px 0;
+  padding: 0.25rem 0;
   z-index: 2000;
-  max-height: calc(100vh - 40px);
+  max-height: calc(100vh - 2.5rem);
   overflow-y: auto;
 }
 

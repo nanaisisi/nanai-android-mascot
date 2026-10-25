@@ -79,7 +79,7 @@ fn load_surface_image(
     let master_dir = base_ghost_path.join("shell").join("master");
 
     let surface_id_num = surface_id.parse::<u32>().unwrap_or(0);
-    let mut candidates = vec![
+    let candidates = vec![
         shell_dir.join(format!("surface{surface_id}.png")),
         shell_dir.join(format!("surface{surface_id_num:04}.png")),
         shell_dir.join(format!("surface{surface_id_num:02}.png")),
@@ -403,7 +403,8 @@ async fn send_shiori_request(
 
     if script.is_empty() {
         let response =
-            "SHIORI/3.0 311 No Content\r\nSender: NanaiRustCore\r\nCharset: UTF-8\r\n\r\n".to_string();
+            "SHIORI/3.0 311 No Content\r\nSender: NanaiRustCore\r\nCharset: UTF-8\r\n\r\n"
+                .to_string();
         Ok(response)
     } else {
         let response = format!(

@@ -1,6 +1,7 @@
 /* ===========================================
    Nanai Android Mascot - マスコット & バルーンスタイル
    =========================================== */
+@import "balloon-theme.css";
 
 /* ゴースト表示コンテナ（ドラッグ移動対応） */
 .ghost-display {
@@ -9,8 +10,10 @@
   justify-content: center;
   align-items: center;
   position: absolute;
-  width: 200px;
-  height: 400px;
+  /* 画面の最小幅・高さ（vmin）に応じたレスポンシブなサイズ設定 */
+  width: clamp(8.75rem, 35vmin, 16.25rem);
+  aspect-ratio: 1 / 2;
+  height: auto;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
@@ -29,14 +32,14 @@
 
 /* 画面端ドッキング（スナップ退避）状態 */
 .ghost-display.is-docked-left {
-  left: 0px !important;
-  transform: translate(-70%, -50%) !important;
+  left: 0;
+  transform: translate(-70%, -50%);
   opacity: 0.7;
 }
 
 .ghost-display.is-docked-right {
-  left: 100vw !important;
-  transform: translate(-30%, -50%) !important;
+  left: 100vw;
+  transform: translate(-30%, -50%);
   opacity: 0.7;
 }
 
@@ -47,14 +50,11 @@
 
 /* 1番手キャラクター（kero）のスタイル */
 .ghost-display.kero-display {
-  width: 140px;
-  height: 280px;
+  /* sakuraの約70%相当（clampでレスポンシブ維持） */
+  width: clamp(6.25rem, 25vmin, 11.25rem);
+  aspect-ratio: 1 / 2;
+  height: auto;
   z-index: 49;
-}
-
-.balloon-display.kero-balloon .balloon {
-  background: rgba(240, 248, 255, 0.95);
-  border: 1px solid rgba(100, 149, 237, 0.3);
 }
 
 .ghost-character {
@@ -73,26 +73,26 @@
 /* クイックアクション（⚡）ラッパー & パレット */
 .quick-bubble-wrapper {
   position: absolute;
-  top: -10px;
-  right: -10px;
+  top: -0.625rem;
+  right: -0.625rem;
   z-index: 60;
 }
 
 .quick-bubble {
-  padding: 4px 10px;
-  height: 28px;
+  padding: 0.25rem 0.625rem;
+  height: 1.75rem;
   background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 14px;
+  border-radius: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 500;
   color: #333;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-  backdrop-filter: blur(8px);
+  box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(0.5rem);
   transition: transform 0.2s ease, background-color 0.2s;
   white-space: nowrap;
 }
@@ -108,33 +108,33 @@
 
 .quick-actions-panel {
   position: absolute;
-  top: 34px;
+  top: 2.125rem;
   right: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
   background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(0.75rem);
   border: 1px solid rgba(0, 0, 0, 0.18);
-  border-radius: 8px;
-  padding: 6px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  border-radius: 0.5rem;
+  padding: 0.375rem;
+  box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.25);
   animation: fadeInDown 0.15s ease-out;
-  min-width: 130px;
+  min-width: 8rem;
   z-index: 1000;
 }
 
 .quick-action-btn {
-  height: 32px;
-  padding: 0 10px;
-  border-radius: 6px;
+  height: 2rem;
+  padding: 0 0.625rem;
+  border-radius: 0.375rem;
   border: none;
   background: transparent;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: #333;
   white-space: nowrap;
   transition: background-color 0.15s;
@@ -153,7 +153,7 @@
 @keyframes fadeInDown {
   from {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translateY(-0.5rem);
   }
   to {
     opacity: 1;
@@ -163,13 +163,13 @@
 
 /* キャラクタプレースホルダー・画像 */
 .character-placeholder {
-  font-size: 120px;
+  font-size: clamp(3rem, 15vmin, 7.5rem);
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  filter: drop-shadow(2px 2px 8px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(0.125rem 0.125rem 0.5rem rgba(0, 0, 0, 0.3));
   animation: float 3s ease-in-out infinite;
 }
 
@@ -177,24 +177,22 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: drop-shadow(2px 2px 8px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(0.125rem 0.125rem 0.5rem rgba(0, 0, 0, 0.3));
 }
 
 @keyframes float {
   0%, 100% {
-    transform: translateY(0px);
+    transform: translateY(0);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-0.625rem);
   }
 }
-
-@import "balloon-theme.css";
 
 /* バルーン表示 */
 .balloon-display {
   position: absolute;
-  top: 50px;
+  top: clamp(2rem, 8vh, 3.5rem);
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;
@@ -207,24 +205,29 @@
   border-radius: var(--balloon-border-radius);
   border: var(--balloon-border-width) var(--balloon-border-style) var(--balloon-border-color);
   box-shadow: var(--balloon-box-shadow);
-  padding: 14px 18px;
+  padding: 0.875rem 1.125rem;
   position: relative;
-  max-width: 280px;
+  max-width: clamp(12.5rem, 80vw, 22.5rem);
   font-family: var(--balloon-font-family);
   color: var(--balloon-text-color);
   transition: all 0.25s ease;
 }
 
+.balloon-display.kero-balloon .balloon {
+  background: rgba(240, 248, 255, 0.95);
+  border: 1px solid rgba(100, 149, 237, 0.3);
+}
+
 .balloon::before {
   content: "";
   position: absolute;
-  bottom: -10px;
-  left: 30px;
+  bottom: -0.625rem;
+  left: 1.875rem;
   width: 0;
   height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-top: 10px solid var(--balloon-tail-color);
+  border-left: 0.625rem solid transparent;
+  border-right: 0.625rem solid transparent;
+  border-top: 0.625rem solid var(--balloon-tail-color);
 }
 
 .balloon-text {
@@ -240,14 +243,14 @@
 /* バルーン内の選択肢ボタン */
 .balloon-choice-btn {
   display: inline-block;
-  margin-top: 6px;
-  margin-right: 4px;
-  padding: 4px 10px;
-  font-size: 12px;
+  margin-top: 0.375rem;
+  margin-right: 0.25rem;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.75rem;
   color: #0078d7;
   background: rgba(0, 120, 215, 0.08);
   border: 1px solid rgba(0, 120, 215, 0.3);
-  border-radius: 4px;
+  border-radius: 0.25rem;
   cursor: pointer;
   min-height: auto;
   min-width: auto;
@@ -267,23 +270,23 @@
 /* ステータスバー（常駐インジケータ） */
 .status-bar {
   position: fixed;
-  bottom: 15px;
+  bottom: clamp(0.75rem, 3vh, 1.5rem);
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
   background: rgba(255, 255, 255, 0.9);
-  border-radius: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  font-size: 12px;
+  border-radius: 1.25rem;
+  box-shadow: 0 0.125rem 0.625rem rgba(0, 0, 0, 0.1);
+  font-size: 0.75rem;
   backdrop-filter: blur(10px);
 }
 
 .status-indicator {
-  width: 8px;
-  height: 8px;
+  width: 0.5rem;
+  height: 0.5rem;
   border-radius: 50%;
   background: #f44336;
 }

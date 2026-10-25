@@ -30,6 +30,7 @@
       <!-- 右上メニューボタン -->
       <div class="top-right-menu">
         <button
+          type="button"
           class="menu-btn"
           id="menu-btn"
           title="メニュー"
@@ -64,14 +65,14 @@
           </div>
           <!-- クイックアクション（簡易ミニ操作パレット） -->
           <div class="quick-bubble-wrapper">
-            <button class="quick-bubble" id="quick-bubble" title="クイックメニュー">
+            <button type="button" class="quick-bubble" id="quick-bubble" title="クイックメニュー">
               ⚡ 操作
             </button>
             <div class="quick-actions-panel" id="quick-actions-panel" style="display: none;">
-              <button class="quick-action-btn" id="qa-talk-btn"><span>💬 話しかける</span></button>
-              <button class="quick-action-btn" id="qa-ghost-btn"><span>👻 ゴースト切替</span></button>
-              <button class="quick-action-btn" id="qa-balloon-btn"><span>💭 バルーン変更</span></button>
-              <button class="quick-action-btn" id="qa-minimize-btn"><span>🗕 最小化</span></button>
+              <button type="button" class="quick-action-btn" id="qa-talk-btn"><span>💬 話しかける</span></button>
+              <button type="button" class="quick-action-btn" id="qa-ghost-btn"><span>👻 ゴースト切替</span></button>
+              <button type="button" class="quick-action-btn" id="qa-balloon-btn"><span>💭 バルーン変更</span></button>
+              <button type="button" class="quick-action-btn" id="qa-minimize-btn"><span>🗕 最小化</span></button>
             </div>
           </div>
         </div>
@@ -110,7 +111,7 @@
     <!-- モーダルオーバーレイ -->
     <div class="modal-overlay" id="modal-overlay" style="display: none">
       <div class="modal">
-        <button class="close-btn" id="modal-close">&times;</button>
+        <button type="button" class="close-btn" id="modal-close">&times;</button>
         <div id="modal-content">
           <!-- モーダル内容がここに表示される -->
         </div>
@@ -134,14 +135,14 @@
         <span class="form-label">ゴースト取り込み (.nar / .zip):</span>
         <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
           <input type="file" id="ghost-archive-input" accept=".nar,.zip" style="flex: 1; padding: 6px; font-size: 13px;" />
-          <button id="import-ghost-btn" class="primary" style="white-space: nowrap;">取り込み</button>
+          <button type="button" id="import-ghost-btn" class="primary" style="white-space: nowrap;">取り込み</button>
         </div>
         <div id="import-ghost-status" style="font-size: 12px; margin-top: 4px; color: #666;"></div>
       </div>
       <div class="form-section">
         <span class="form-label">ゴーストディレクトリ:</span>
         <input type="text" id="ghost-directory" value="assets/ghost" />
-        <button id="refresh-ghosts-btn">更新</button>
+        <button type="button" id="refresh-ghosts-btn">更新</button>
       </div>
     </div>
 
@@ -162,7 +163,7 @@
       <div class="form-section">
         <span class="form-label">バルーンディレクトリ:</span>
         <input type="text" id="balloon-directory" value="assets/balloon" />
-        <button id="refresh-balloons-btn">更新</button>
+        <button type="button" id="refresh-balloons-btn">更新</button>
       </div>
     </div>
 
@@ -171,7 +172,7 @@
       <div class="form-section">
         <span class="form-label">スキャン対象:</span>
         <input type="text" id="scan-path" value="assets/" />
-        <button id="start-scan-btn">スキャン開始</button>
+        <button type="button" id="start-scan-btn">スキャン開始</button>
       </div>
       <div class="form-section">
         <span class="form-label">スキャン結果:</span>
@@ -194,9 +195,9 @@
       <div class="form-section">
         <span class="form-label">SHIORI テスト:</span>
         <div class="test-controls">
-          <button id="test-shiori-init">SHIORI初期化</button>
-          <button id="test-shiori-request">リクエスト送信</button>
-          <button id="test-shiori-finalize">SHIORI終了</button>
+          <button type="button" id="test-shiori-init">SHIORI初期化</button>
+          <button type="button" id="test-shiori-request">リクエスト送信</button>
+          <button type="button" id="test-shiori-finalize">SHIORI終了</button>
         </div>
       </div>
       <div class="form-section">
@@ -207,7 +208,7 @@
           value="hello"
           placeholder="テストメッセージ"
         />
-        <button id="send-test-message">メッセージ送信</button>
+        <button type="button" id="send-test-message">メッセージ送信</button>
       </div>
       <div class="form-section">
         <span class="form-label">パステスト:</span>
@@ -218,7 +219,7 @@
             value="../assets/ghost"
             placeholder="テストパス"
           />
-          <button id="test-path-resolve">パス解決テスト</button>
+          <button type="button" id="test-path-resolve">パス解決テスト</button>
         </div>
       </div>
       <div class="form-section">
@@ -257,7 +258,7 @@
       </div>
       <div class="form-section" id="overlay-permission-section">
         <span class="form-label">Android オーバーレイ設定:</span>
-        <button id="open-overlay-settings-btn" style="font-size: 11px; padding: 4px 8px;">
+        <button type="button" id="open-overlay-settings-btn" style="font-size: 11px; padding: 4px 8px;">
           📲 重ねて表示の権限設定を開く
         </button>
       </div>
@@ -291,8 +292,8 @@
         </select>
       </div>
       <div class="form-section">
-        <button id="save-settings-btn" class="primary">設定保存</button>
-        <button id="reset-settings-btn">設定リセット</button>
+        <button type="button" id="save-settings-btn" class="primary">設定保存</button>
+        <button type="button" id="reset-settings-btn">設定リセット</button>
       </div>
     </div>
 
@@ -312,7 +313,7 @@
         </div>
       </div>
       <div class="form-section">
-        <button id="add-plugin-btn" class="primary">新しいプラグインを追加...</button>
+        <button type="button" id="add-plugin-btn" class="primary">新しいプラグインを追加...</button>
       </div>
     </div>
 
@@ -339,7 +340,7 @@
           <option value="warn">警告</option>
           <option value="error">エラー</option>
         </select>
-        <button id="apply-log-level">適用</button>
+        <button type="button" id="apply-log-level">適用</button>
       </div>
       <div class="form-section">
         <span class="form-label">ログ出力:</span>
@@ -347,8 +348,8 @@
           <div class="log-entry info">デバッグログがここに表示されます。</div>
         </div>
         <div class="log-controls">
-          <button id="clear-logs">ログクリア</button>
-          <button id="export-logs">ログエクスポート</button>
+          <button type="button" id="clear-logs">ログクリア</button>
+          <button type="button" id="export-logs">ログエクスポート</button>
         </div>
       </div>
     </div>
@@ -461,7 +462,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         <span class="form-label">アーカイブファイルを選択:</span>
         <div style="display: flex; gap: 8px; align-items: center; margin-top: 6px;">
           <input type="file" id="modal-install-file-input" accept=".nar,.zip" style="flex: 1; padding: 6px; font-size: 13px;" />
-          <button id="modal-install-submit-btn" class="primary" style="white-space: nowrap;">取り込み実行</button>
+          <button type="button" id="modal-install-submit-btn" class="primary" style="white-space: nowrap;">取り込み実行</button>
         </div>
         <div id="modal-install-status" style="font-size: 12px; margin-top: 8px; min-height: 18px; color: #666;"></div>
       </div>

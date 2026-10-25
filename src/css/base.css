@@ -51,29 +51,29 @@ body {
   align-items: center;
   position: relative;
   background: transparent;
-  margin-top: 60px;
+  margin-top: clamp(2rem, 8vh, 4rem);
   pointer-events: none;
 }
 
 /* 汎用ボタン */
 button {
-  padding: 12px 16px;
-  font-size: 14px;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
   font-weight: 500;
   border: none;
-  border-radius: 6px;
+  border-radius: 0.375rem;
   cursor: pointer;
   transition: all 0.3s ease;
   background: rgba(33, 150, 243, 0.9);
   color: white;
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 2.75rem; /* モバイルのタッチターゲット約44px */
+  min-width: 2.75rem;
   touch-action: manipulation;
 }
 
 button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+  box-shadow: 0 0.25rem 0.75rem rgba(33, 150, 243, 0.3);
 }
 
 button:active {
@@ -81,12 +81,12 @@ button:active {
 }
 
 button.primary {
-  background: rgba(76, 175, 80, 0.9) !important;
+  background: rgba(76, 175, 80, 0.9);
   color: white;
 }
 
 button.primary:hover {
-  background: rgba(69, 160, 73, 0.9) !important;
+  background: rgba(69, 160, 73, 0.9);
 }
 
 /* テキスト選択 */

@@ -1,6 +1,7 @@
-# HEADLINE/2.0 規格対応仕様 (HEADLINE/2.0 Compliance)
+﻿# HEADLINE/2.0 規格対応仕様 (HEADLINE/2.0 Compliance)
 
 - **仕様リファレンス**: [ukatech/ukadoc-spec: HEADLINE/2.0](https://ukatech.shillest.net/ukadoc-spec/spec/headline/)
+- **元ドキュメント・権利者**: [ukatech/ukadoc-spec: HEADLINE Senser](https://ukatech.shillest.net/ukadoc-spec/spec/headline/) - © MATERIA開発チーム / ukadoc プロジェクト (ukadoc 仕様 / パブリックリファレンス)
 - **プロトコル**: HEADLINE/2.0 (DLL / WebSensor)
 - **対応ステータス**: **設計・一部実装（40%）**
 

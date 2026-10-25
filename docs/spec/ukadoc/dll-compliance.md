@@ -1,6 +1,7 @@
-# DLL 規格対応仕様 (DLL Architecture & WASM Compliance)
+﻿# DLL 規格対応仕様 (DLL Architecture & WASM Compliance)
 
 - **仕様リファレンス**: [ukatech/ukadoc-spec: DLL規格](https://ukatech.shillest.net/ukadoc-spec/spec/dll/)
+- **元ドキュメント・権利者**: [ukatech/ukadoc-spec: DLLインターフェース](https://ukatech.shillest.net/ukadoc-spec/spec/dll/) - © MATERIA開発チーム / ukadoc プロジェクト (ukadoc 仕様 / パブリックリファレンス)
 - **インターフェース**: C-ABI DLL (`load`, `unload`, `request`), WebAssembly (WASM)
 - **対応ステータス**: **設計・基盤開発中（60%）**
 

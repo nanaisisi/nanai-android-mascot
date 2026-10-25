@@ -1,6 +1,7 @@
-# FMO / Mutex 規格対応仕様 (FMO & Mutex Compliance)
+﻿# FMO / Mutex 規格対応仕様 (FMO & Mutex Compliance)
 
 - **仕様リファレンス**: [ukatech/ukadoc-spec: FMO/Mutex](https://ukatech.shillest.net/ukadoc-spec/spec/fmo-mutex/)
+- **元ドキュメント・権利者**: [ukatech/ukadoc-spec: FMO/Mutex](https://ukatech.shillest.net/ukadoc-spec/spec/fmo-mutex/) - © MATERIA開発チーム / ukadoc プロジェクト / コミュニティ有志 (ukadoc 仕様 / パブリックリファレンス)
 - **インターフェース**: Windows File Mapping Object (FMO), 名前付きミューテックス, プロセス間排他
 - **対応ステータス**: **設計・一部実装（50%）**
 

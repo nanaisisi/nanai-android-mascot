@@ -1,5 +1,6 @@
-# VFS・エンコーディング・アーカイブ規格対応仕様 (VFS & Archive Compliance)
+﻿# VFS・エンコーディング・アーカイブ規格対応仕様 (VFS & Archive Compliance)
 
+- **元ドキュメント・権利者**: ZIP / Nar アーカイブ仕様 (SSP / 伺か) - © MATERIA開発チーム / SSP開発チーム / PKWARE (コミュニティ規格 / オープンフォーマット)
 Nanai Android Mascot における「ファイルシステム（仮想パス・大文字小文字吸収）」、「文字コード（Shift_JIS/UTF-8）」、および「NAR アーカイブ」規格への個別対応仕様です。
 
 ## 1. 概要と対応度

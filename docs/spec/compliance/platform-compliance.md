@@ -1,5 +1,6 @@
-# プラットフォーム規格対応仕様 (Platform Compliance)
+﻿# プラットフォーム規格対応仕様 (Platform Compliance)
 
+- **元ドキュメント・権利者**: Android SDK / Tauri Framework Reference - © Google LLC / The Tauri Programme (Apache 2.0 / MIT License)
 Nanai Android Mascot における「Windows」および「Android」プラットフォーム要件・OS規格への個別対応仕様です。
 
 ## 1. 概要と対応度

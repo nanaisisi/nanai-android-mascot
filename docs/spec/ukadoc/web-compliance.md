@@ -1,6 +1,7 @@
-# Web関連規格対応仕様 (Web & Network Compliance)
+﻿# Web関連規格対応仕様 (Web & Network Compliance)
 
 - **仕様リファレンス**: [ukatech/ukadoc-spec: Web関連](https://ukatech.shillest.net/ukadoc-spec/spec/web/)
+- **元ドキュメント・権利者**: [ukatech/ukadoc-spec: 外部連携/Web関連](https://ukatech.shillest.net/ukadoc-spec/) - © SSP開発チーム / ukadoc プロジェクト (ukadoc 仕様 / パブリックリファレンス)
 - **インターフェース**: NAR インストール, `updates2.dau`, ネットワーク更新, Web 連携
 - **対応ステータス**: **設計・一部実装（65%）**
 

@@ -1,6 +1,7 @@
-# SAORI over DirectSSTP 規格対応仕様 (SAORI over DirectSSTP Compliance)
+﻿# SAORI over DirectSSTP 規格対応仕様 (SAORI over DirectSSTP Compliance)
 
 - **仕様リファレンス**: [ukatech/ukadoc-spec: SAORI over DirectSSTP](https://ukatech.shillest.net/ukadoc-spec/spec/saori-ex/)
+- **元ドキュメント・権利者**: [ukatech/ukadoc-spec: SAORI](https://ukatech.shillest.net/ukadoc-spec/spec/saori/) - © SAORI 規格策定チーム / ukadoc プロジェクト (ukadoc 仕様 / パブリックリファレンス)
 - **プロトコル**: SAORI-basic (DLL) / SAORI-universal (DirectSSTP)
 - **対応ステータス**: **設計・一部実装（40%）**
 

@@ -11,12 +11,16 @@ const byId = (id) => document.getElementById(id);
 /** サーフェス/キャラクター表示メソッド (GhostController に mixin) */
 export const ghostSurfaceMethods = {
 	/**
-	 * サーフェス表示を更新
+	 * サーフィス表示を更新
 	 * @this {import('../ghost/ghost.js').GhostController}
 	 * @param {number|string} surfaceId
 	 * @param {number} [scopeId]
+	 * @param {Array<{ file: string, x: number, y: number, type: string }>|null} [extraLayers]
+	 *     SERIKO アニメーションの 1 フレーム差分レイヤー。
+	 *     指定時はベースサーフィス上に当該レイヤーを合成して表示し、
+	 *     サーフィス番号・アニメーションスケジュールには干渉しない。
 	 */
-	updateSurface(surfaceId, scopeId = 0) {
+	updateSurface(surfaceId, scopeId = 0, extraLayers = null) {
 		const ghostName =
 			this.currentGhost?.name || AppConfig.paths.fallbackGhostName;
 		const ghostPath =
@@ -32,24 +36,31 @@ export const ghostSurfaceMethods = {
 		);
 		const container = byId(isSubchar ? "kero-display" : "ghost-display");
 		const slot = byId(isSubchar ? "kero-slot" : "ghost-container");
+		// アニメフレーム合成モード: ベースサーフィスは既に解決済みのため
+		// エイリアス解決・\s 相当の状態変更・アニメ再スケジューリングを行わない
+		const isAnimationFrame = Array.isArray(extraLayers);
 
-		// サーフィスエイリアス (surface.alias ブロック) を番号へ解決 (UKADOC準拠)
-		surfaceId =
-			this.app?.surfaceManager?.resolveSurfaceNumber?.(surfaceId, scopeId) ??
-			surfaceId;
+		if (!isAnimationFrame) {
+			// サーフィスエイリアス (surface.alias ブロック) を番号へ解決 (UKADOC準拠)
+			surfaceId =
+				this.app?.surfaceManager?.resolveSurfaceNumber?.(surfaceId, scopeId) ??
+				surfaceId;
 
-		if (surfaceId === -1 || surfaceId === "-1") {
-			if (slot) slot.style.display = "none";
-			if (container) container.style.visibility = "hidden";
-			if (isTauriAvailable()) {
-				invoke("hide_subchar_window", { scopeId }).catch(() => {});
+			if (surfaceId === -1 || surfaceId === "-1") {
+				if (slot) slot.style.display = "none";
+				if (container) container.style.visibility = "hidden";
+				if (isTauriAvailable()) {
+					invoke("hide_subchar_window", { scopeId }).catch(() => {});
+				}
+				return;
 			}
+
+			// サーフィスIDを SurfaceManager に常に通知（当たり判定とアニメーションのため）
+			// スコープ毎に独立管理 (\0 と \1 のサーフィスを混同しない)
+			this.app?.surfaceManager?.setSurfaceId(surfaceId, scopeId);
+		} else if (surfaceId === -1 || surfaceId === "-1") {
 			return;
 		}
-
-		// サーフィスIDを SurfaceManager に常に通知（当たり判定とアニメーションのため）
-		// スコープ毎に独立管理 (\0 と \1 のサーフィスを混同しない)
-		this.app?.surfaceManager?.setSurfaceId(surfaceId, scopeId);
 
 		if (isTauriAvailable()) {
 			// デスクトップ(Tauri)環境では、スコープ0(メイン)・スコープ1以降(サブ)問わず
@@ -106,6 +117,7 @@ export const ghostSurfaceMethods = {
 							);
 						},
 						scopeId,
+						extraLayers,
 					);
 				} catch (_e) {
 					// 合成エラー時はベース画像をそのまま使用

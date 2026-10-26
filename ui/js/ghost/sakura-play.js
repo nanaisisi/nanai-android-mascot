@@ -12,6 +12,7 @@ export async function playScript(player, script) {
 	const currentId = player.playbackId;
 	player.isPlaying = true;
 	player.skipRequested = false;
+	player.timeCritical = false; // 新しい再生で `\t` セクションをリセット
 	player.currentScope = 0;
 
 	const app = player.app;
@@ -207,8 +208,10 @@ export async function playScript(player, script) {
 			}
 
 			case "timeout":
-				// \t: タイムアウト抑止（自動消去の無効化）
-				player.hasTimeoutSuppressed = true;
+				// \t: タイムクリティカルセクション (UKADOC準拠)。
+				// スクリプトブレーク（選択肢選択・ダブルクリック中断）か \e まで
+				// マウス系イベント通知を抑止する。
+				player.timeCritical = true;
 				break;
 
 			case "halt":

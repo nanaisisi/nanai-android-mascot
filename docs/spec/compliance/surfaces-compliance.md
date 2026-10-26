@@ -26,8 +26,8 @@ Nanai Android Mascot における「サーフィス定義（`surfaces.txt`）」
 | **差分合成 (element)**          | `element[ID],overlay/replace,file,x,y` |  ✅ 対応済  | 表情差分パーツ（目・口・眉等）の座標指定レイヤー合成・パース対応   |
 | **当たり判定 (collision)**      | `collision[ID],X1,Y1,X2,Y2,Name`       |  ✅ 対応済  | 矩形判定領域のパース、表示倍率を逆算した座標変換、部位名取得       |
 | **円形/楕円判定 (collisionex)** | `collisionex[ID],Name,circle/ellipse`  |  ✅ 対応済  | circle/ellipse を型付き形状（`CollisionShape::Circle`/`Ellipse`）として点内包判定、rect/polygon も維持 |
-| **アニメーション (animation)**  | `animation[ID].interval` 等            |  ✅ 対応済  | パラパラアニメーション・瞬き・口パク定義のパースおよびタイマー基盤 |
-| **着せ替え (bind)**             | `bind` オプションによる着脱            |  🚧 開発中  | メニューUIからのパーツトグル合成                                   |
+| **アニメーション (animation)**  | `animation[ID].interval` 等            |  ✅ 対応済  | interval 全種の再生基盤、SERIKO pattern 差分合成（overlay/replace）、口パク |
+| **着せ替え (bind)**             | `bind` オプションによる着脱            |  ✅ 対応済  | bindgroup メニュー（mustselect 排他含む）、bind レイヤー常時合成          |
 | **PNA 透過マスク**              | 24bit BMP + 8bit グレースケールマスク  | ⚠️ 部分対応 | アルファ付き PNG 形式を第一推奨とし、PNAは透過変換対応             |
 
 ---

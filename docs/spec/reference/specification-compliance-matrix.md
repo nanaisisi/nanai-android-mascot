@@ -59,6 +59,7 @@ Nanai Android Mascot における「伺か（UKAGAKA）」関連規格、およ�
 | `\b[ID]`                        | バルーン切り替え               | ⚠️ 部分対応 | 基本バルーン表示・切り替えに対応（特殊形状指定は順次）           |
 | `\x`, `\_q`                     | クリック待ち / クイック描画    | ⚠️ 部分対応 | クリック待機および一括即時表示の基本制御                         |
 | `\![raise,...]`                 | イベント強制発火               |  ✅ 対応済  | さくらスクリプト側からの SHIORI イベントディスパッチ（他の `\![...]` も JS ディスパッチへ汎用透過） |
+| `\t`                            | タイムクリティカルセクション   |  ✅ 対応済  | スクリプトブレーク/`\e` までマウス系イベント（つつき・撫で）通知を抑止（UKADOC準拠） |
 
 ### 2.3 サーフィス・グラフィックス (`surfaces.txt` / PNG)
 
@@ -68,8 +69,8 @@ Nanai Android Mascot における「伺か（UKAGAKA）」関連規格、およ�
 | **差分合成 (element)**          | `element[ID],overlay/replace,...`     |  ✅ 対応済  | 表情差分パーツ（目・口等）の合成レンダリング           |
 | **当たり判定 (collision)**      | `collision[ID],X1,Y1,X2,Y2,Name`      |  ✅ 対応済  | 矩形判定、表示倍率を逆算した座標変換、部位名取得       |
 | **円形/楕円判定 (collisionex)** | `collisionex[ID],Name,circle/ellipse` |  ✅ 対応済  | circle/ellipse を型付き形状として点内包判定（rect/polygon も維持） |
-| **アニメーション (animation)**  | `animation[ID].interval` 等           |  🚧 開発中  | パラパラアニメーション・瞬き・口パク定義の再生基盤     |
-| **着せ替え (bind)**             | `bind` オプションによる着脱           |  🚧 開発中  | メニューUIからのパーツトグル合成                       |
+| **アニメーション (animation)**  | `animation[ID].interval` 等          |  ✅ 対応済  | interval 全種（sometimes/always/runonce/periodic/random/talk 等）再生、SERIKO pattern 差分合成（overlay/replace）、口パク・`\i`・`\![anim,pause/resume]` 対応 |
+| **着せ替え (bind)**             | `bind` オプションによる着脱           |  ✅ 対応済  | bindgroup メニュー（mustselect 排他含む）、bind レイヤーの常時合成、`OnDressupChanged` 送信       |
 | **PNA 透過マスク**              | 24bit BMP + 8bit グレースケールマスク | ⚠️ 部分対応 | アルファ付き PNG 形式を第一推奨とし、PNAは透過変換対応 |
 
 ### 2.4 バルーン・UI・メニュー体系

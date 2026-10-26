@@ -177,25 +177,36 @@ export const surfaceRenderMethods = {
 	},
 
 	/**
-	 * element0〜elementN で定義されたレイヤー画像 + 装着中の着せ替え bind レイヤーを
-	 * ベース画像上に合成 (UKADOC準拠)
+	 * element0〜elementN で定義されたレイヤー画像 + 装着中の着せ替え bind レイヤー +
+	 * SERIKO アニメーションフレーム差分レイヤーをベース画像上に合成 (UKADOC準拠)
 	 * @this {import('./surface-manager.js').SurfaceManager}
 	 * @param {number|string} surfaceId
 	 * @param {string} baseImgSrc
 	 * @param {Function} resolveImagePath - ファイル名から画像URL/DataURLを解決する関数
 	 * @param {number} [scopeId] - 着せ替え状態を参照するスコープ（scope 0 = さくら / 1 = うにゅ）
+	 * @param {Array<{ file: string, x: number, y: number, type: string }>|null} [frameLayers]
+	 *     - SERIKO アニメ 1 フレームの差分レイヤー（bind レイヤーの上に重ねる）
 	 * @returns {Promise<string>} - 合成後のDataURL (PNG)
 	 */
-	composeSurfaceElements(surfaceId, baseImgSrc, resolveImagePath, scopeId = 0) {
+	composeSurfaceElements(
+		surfaceId,
+		baseImgSrc,
+		resolveImagePath,
+		scopeId = 0,
+		frameLayers = null,
+	) {
 		const sid = String(surfaceId);
 		const elementList = this.elements[sid] || this.elements.default || [];
 		const bindLayers =
 			scopeId === 0 || scopeId === 1 ? this.activeBindLayers(scopeId, sid) : [];
+		const layers = frameLayers?.length
+			? [...bindLayers, ...frameLayers]
+			: bindLayers;
 		return composeSurfaceElements(
 			elementList,
 			baseImgSrc,
 			resolveImagePath,
-			bindLayers,
+			layers,
 		);
 	},
 

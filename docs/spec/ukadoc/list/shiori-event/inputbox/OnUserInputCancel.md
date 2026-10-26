@@ -2,11 +2,11 @@
 
 - **規格**: [OnUserInputCancel.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/inputbox/OnUserInputCancel/) (ukadoc-spec/list/shiori-event/inputbox/OnUserInputCancel.md)
 - **検索語**: OnUserInputCancel
-- **対応状況**: 🔎 コード上に出現(処理の有無は要読解)
+- **対応状況**: ✅ 実装済(SHIORIへ送信)
 
 ## 突合結果
 
-実装コードに「OnUserInputCancel」が出現。実際の処理内容は未精査。
+UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装箇所を参照)。
 
 ## 実装箇所
 

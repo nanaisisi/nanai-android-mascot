@@ -26,15 +26,24 @@ export function parseSakuraScript(script) {
 				tokens.push({ type: "scope", value: 1 });
 				i++;
 			}
-			// \p[n] (スコープ指定: \p[0], \p[1] 等)
-			else if (char === "p" && script[i + 1] === "[") {
-				const end = script.indexOf("]", i + 1);
-				if (end !== -1) {
-					const scopeVal =
-						Number.parseInt(script.substring(i + 2, end), 10) || 0;
-					tokens.push({ type: "scope", value: scopeVal });
-					i = end + 1;
-				} else {
+			// \p[n] または \p0..\p9 (スコープ指定)
+			else if (char === "p") {
+				i++;
+				if (script[i] === "[") {
+					const end = script.indexOf("]", i);
+					if (end !== -1) {
+						const scopeVal =
+							Number.parseInt(script.substring(i + 1, end), 10) || 0;
+						tokens.push({ type: "scope", value: scopeVal });
+						i = end + 1;
+					} else {
+						i++;
+					}
+				} else if (/\d/.test(script[i])) {
+					tokens.push({
+						type: "scope",
+						value: Number.parseInt(script[i], 10),
+					});
 					i++;
 				}
 			}
@@ -129,10 +138,25 @@ export function parseSakuraScript(script) {
 				tokens.push({ type: "pause" });
 				i++;
 			}
-			// \_q (クイック描画切替)
+			// \_q / \_q[1] / \_q[0] (クイック描画切替)
 			else if (char === "_" && script[i + 1] === "q") {
-				tokens.push({ type: "quick_toggle" });
-				i += 2;
+				if (script[i + 2] === "[") {
+					const end = script.indexOf("]", i + 2);
+					if (end !== -1) {
+						const val = script.substring(i + 3, end).trim();
+						tokens.push({
+							type: "quick_toggle",
+							value: val !== "0" && val !== "false",
+						});
+						i = end + 1;
+					} else {
+						tokens.push({ type: "quick_toggle", value: true });
+						i += 2;
+					}
+				} else {
+					tokens.push({ type: "quick_toggle", value: undefined });
+					i += 2;
+				}
 			}
 			// \_a[ID,arg...] / \_a (アンカーリンク)
 			else if (char === "_" && script[i + 1] === "a") {
@@ -203,10 +227,25 @@ export function parseSakuraScript(script) {
 					i += 2;
 				}
 			}
-			// \_s (複数キャラ同期表示トグル)
+			// \_s (複数キャラ同期表示トグル / \_s[1], \_s[0])
 			else if (char === "_" && script[i + 1] === "s") {
-				tokens.push({ type: "sync_toggle" });
-				i += 2;
+				if (script[i + 2] === "[") {
+					const end = script.indexOf("]", i + 2);
+					if (end !== -1) {
+						const val = script.substring(i + 3, end).trim();
+						tokens.push({
+							type: "sync_toggle",
+							value: val !== "0" && val !== "false",
+						});
+						i = end + 1;
+					} else {
+						tokens.push({ type: "sync_toggle", value: true });
+						i += 2;
+					}
+				} else {
+					tokens.push({ type: "sync_toggle", value: undefined });
+					i += 2;
+				}
 			}
 			// \b (バルーン指定: \b[0], \b[-1], \b0..\b9)
 			else if (char === "b") {

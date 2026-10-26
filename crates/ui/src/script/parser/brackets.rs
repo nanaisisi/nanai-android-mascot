@@ -36,9 +36,13 @@ fn read_digit(chars: &mut CharsIter<'_>) -> Option<u32> {
     }
 }
 
-/// `\p[N]`
+/// `\p[N]` または `\p0..\p9`
 pub(super) fn handle_target_p(chars: &mut CharsIter<'_>) -> Option<u8> {
-    read_bracketed(chars)?.parse().ok()
+    if let Some(bracketed) = read_bracketed(chars) {
+        bracketed.trim().parse().ok()
+    } else {
+        read_digit(chars).map(|d| d as u8)
+    }
 }
 
 /// `\s[N]` または `\s0..\s9`
@@ -173,8 +177,18 @@ pub(super) fn handle_underscore(
             }
         }
         Some('q') => {
-            // \_q トグル
-            callback(SakuraCommand::Quick(true));
+            // \_q / \_q[1] (高速表示ON), \_q[0] (高速表示OFF)
+            let enabled = if chars.peek() == Some(&'[') {
+                read_bracketed(chars)
+                    .map(|v| match v.trim() {
+                        "0" | "false" => false,
+                        _ => true,
+                    })
+                    .unwrap_or(true)
+            } else {
+                true
+            };
+            callback(SakuraCommand::Quick(enabled));
         }
         Some('a') => {
             // \_a[id]text\_a
@@ -198,8 +212,18 @@ pub(super) fn handle_underscore(
             }
         }
         Some('s') => {
-            // \_s (複数キャラ同期表示トグル)
-            callback(SakuraCommand::Sync(true));
+            // \_s (複数キャラ同期表示トグル / \_s[1], \_s[0])
+            let enabled = if chars.peek() == Some(&'[') {
+                read_bracketed(chars)
+                    .map(|v| match v.trim() {
+                        "0" | "false" => false,
+                        _ => true,
+                    })
+                    .unwrap_or(true)
+            } else {
+                true
+            };
+            callback(SakuraCommand::Sync(enabled));
         }
         Some('l') => {
             // \_l[x,y]

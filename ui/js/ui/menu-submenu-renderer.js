@@ -167,9 +167,9 @@ export class MenuSubmenuRenderer {
 	}
 
 	applyShellTheme(activeShell) {
+		const rootStyle = document.documentElement.style;
 		if (activeShell?.menu_theme) {
 			const mt = activeShell.menu_theme;
-			const rootStyle = document.documentElement.style;
 			if (mt.background_color)
 				rootStyle.setProperty("--balloon-bg", mt.background_color);
 			if (mt.foreground_color)
@@ -189,6 +189,46 @@ export class MenuSubmenuRenderer {
 				rootStyle.setProperty("--balloon-disable-text", mt.disable_font_color);
 			if (mt.separator_color)
 				rootStyle.setProperty("--balloon-separator-color", mt.separator_color);
+
+			// オーナードロー画像 (背景・ハイライト・サイドバー)
+			const shellPath = activeShell.path || "";
+			const resolveImg = (relPath) => {
+				if (!relPath) return null;
+				const full = shellPath
+					? `${shellPath.replace(/\\/g, "/")}/${relPath.replace(/\\/g, "/")}`
+					: relPath;
+				return globalThis.__TAURI__?.core?.convertFileSrc
+					? globalThis.__TAURI__.core.convertFileSrc(full)
+					: full;
+			};
+
+			if (mt.background_bitmap) {
+				const bgUrl = resolveImg(mt.background_bitmap);
+				rootStyle.setProperty("--menu-bg-image", `url("${bgUrl}")`);
+			} else {
+				rootStyle.removeProperty("--menu-bg-image");
+			}
+
+			if (mt.foreground_bitmap) {
+				const fgUrl = resolveImg(mt.foreground_bitmap);
+				rootStyle.setProperty("--menu-fg-image", `url("${fgUrl}")`);
+			} else {
+				rootStyle.removeProperty("--menu-fg-image");
+			}
+
+			if (mt.sidebar_bitmap) {
+				const sideUrl = resolveImg(mt.sidebar_bitmap);
+				rootStyle.setProperty("--menu-sidebar-image", `url("${sideUrl}")`);
+				document.body.classList.add("has-sidebar");
+			} else {
+				rootStyle.removeProperty("--menu-sidebar-image");
+				document.body.classList.remove("has-sidebar");
+			}
+		} else {
+			rootStyle.removeProperty("--menu-bg-image");
+			rootStyle.removeProperty("--menu-fg-image");
+			rootStyle.removeProperty("--menu-sidebar-image");
+			document.body.classList.remove("has-sidebar");
 		}
 	}
 }

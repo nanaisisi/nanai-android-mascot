@@ -34,12 +34,32 @@ body.subchar-mode .main-only {
 	overflow-y: auto;
 	overflow-x: visible;
 	background-color: var(--balloon-bg);
-	background-image: var(--balloon-pattern);
+	background-image: var(--menu-bg-image, var(--balloon-pattern));
+	background-repeat: repeat;
 	border: var(--balloon-border-width) var(--balloon-border-style)
 		var(--balloon-border-color);
 	border-radius: var(--balloon-border-radius);
 	box-shadow: var(--balloon-box-shadow);
 	position: relative;
+}
+
+.menu-sidebar {
+	display: none;
+	width: var(--menu-sidebar-width, 24px);
+	background-image: var(--menu-sidebar-image, none);
+	background-repeat: no-repeat;
+	background-position: left top;
+	background-size: contain;
+	flex-shrink: 0;
+}
+
+body.has-sidebar .menu-sidebar {
+	display: block;
+}
+
+body.has-sidebar {
+	display: flex;
+	flex-direction: row;
 }
 
 .menu-container::-webkit-scrollbar,
@@ -74,6 +94,9 @@ body.subchar-mode .main-only {
 .menu-item:hover,
 .menu-item:focus {
 	background-color: var(--balloon-highlight-bg, #0078d7);
+	background-image: var(--menu-fg-image, none);
+	background-repeat: no-repeat;
+	background-size: cover;
 	color: var(--balloon-highlight-text, #ffffff);
 	outline: none;
 }

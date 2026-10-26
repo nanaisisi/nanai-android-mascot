@@ -93,7 +93,7 @@ export const menuMethods = {
 			win.postMessage(
 				{
 					type: "sync-shells",
-					shells: shellNames,
+					shells: fullShells,
 					currentShell: currentShellName,
 				},
 				"*",

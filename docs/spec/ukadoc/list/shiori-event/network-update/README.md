@@ -16,8 +16,8 @@
 | [OnUpdateBegin](OnUpdateBegin.md)                                           | OnUpdateBegin                      |      ✅ 実装済(SHIORIへ送信)      |
 | [OnUpdateCheckComplete](OnUpdateCheckComplete.md)                           | OnUpdateCheckComplete              |      ✅ 実装済(SHIORIへ送信)      |
 | [OnUpdateCheckFailure](OnUpdateCheckFailure.md)                             | OnUpdateCheckFailure               |      ✅ 実装済(SHIORIへ送信)      |
-| [OnUpdateCheckResult](OnUpdateCheckResult.md)                               | OnUpdateCheckResult                |            ❌ 検出なし            |
-| [OnUpdateCheckResultEx](OnUpdateCheckResultEx.md)                           | OnUpdateCheckResultEx              |            ❌ 検出なし            |
+| [OnUpdateCheckResult](OnUpdateCheckResult.md)                               | OnUpdateCheckResult                |      ✅ 実装済(SHIORIへ送信)      |
+| [OnUpdateCheckResultEx](OnUpdateCheckResultEx.md)                           | OnUpdateCheckResultEx              |      ✅ 実装済(SHIORIへ送信)      |
 | [OnUpdateComplete](OnUpdateComplete.md)                                     | OnUpdateComplete                   |      ✅ 実装済(SHIORIへ送信)      |
 | [OnUpdateFailure](OnUpdateFailure.md)                                       | OnUpdateFailure                    |      ✅ 実装済(SHIORIへ送信)      |
 | [OnUpdateOther.OnDownloadBegin](OnUpdateOther.OnDownloadBegin.md)           | OnUpdateOther.OnDownloadBegin      |            ❌ 検出なし            |
@@ -30,6 +30,6 @@
 | [OnUpdateOtherReady](OnUpdateOtherReady.md)                                 | OnUpdateOtherReady                 |            ❌ 検出なし            |
 | [OnUpdateProcessExec](OnUpdateProcessExec.md)                               | OnUpdateProcessExec                |      ✅ 実装済(SHIORIへ送信)      |
 | [OnUpdateReady](OnUpdateReady.md)                                           | OnUpdateReady                      |      ✅ 実装済(SHIORIへ送信)      |
-| [OnUpdateResult](OnUpdateResult.md)                                         | OnUpdateResult                     |            ❌ 検出なし            |
-| [OnUpdateResultEx](OnUpdateResultEx.md)                                     | OnUpdateResultEx                   |            ❌ 検出なし            |
+| [OnUpdateResult](OnUpdateResult.md)                                         | OnUpdateResult                     |      ✅ 実装済(SHIORIへ送信)      |
+| [OnUpdateResultEx](OnUpdateResultEx.md)                                     | OnUpdateResultEx                   |      ✅ 実装済(SHIORIへ送信)      |
 | [OnUpdateResultExplorer](OnUpdateResultExplorer.md)                         | OnUpdateResultExplorer             |            ❌ 検出なし            |

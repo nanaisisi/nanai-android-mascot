@@ -1,4 +1,9 @@
 import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
+import {
+	collisionContains,
+	getShellManifest,
+	manifestToSurfaceData,
+} from "./shell-manifest.js";
 import { SurfaceAnimationManager } from "./surface-animation-manager.js";
 import {
 	composeSurfaceElements,
@@ -6,6 +11,11 @@ import {
 } from "./surface-compositor.js";
 import { expandSurfaceRange, parseSurfacesTxt } from "./surface-parser.js";
 
+export {
+	collisionContains,
+	getShellManifest,
+	manifestToSurfaceData,
+} from "./shell-manifest.js";
 // 外部エクスポート
 export {
 	composeSurfaceElements,
@@ -40,6 +50,10 @@ export class SurfaceManager {
 		this.chromaKeyCache = new Map();
 		/** @type {Map<string, boolean>} 着せ替えパーツのON/OFF状態 (key: scope_category_part) */
 		this.dressupState = new Map();
+		/** @type {Record<string, number[]>|null} surface.alias ブロックのエイリアス（Rust マニフェスト由来） */
+		this.aliases = null;
+		/** @type {Record<string, any>|null} Rust `shell_manifest` の生マニフェスト */
+		this.shellManifest = null;
 
 		this.animationManager = new SurfaceAnimationManager(this);
 	}
@@ -50,16 +64,42 @@ export class SurfaceManager {
 
 	/**
 	 * ゴーストの surfaces.txt を読み込んでパース
+	 *
+	 * Tauri 環境では Rust 側パーサー（`shell_manifest` コマンド、ukadoc-spec 突合済）を
+	 * 優先使用し、失敗時またはブラウザ環境では JS パーサーにフォールバックする。
 	 * @param {string} ghostPath
 	 * @param {string} shellName
 	 */
 	async loadSurfacesTxt(ghostPath, shellName = "master") {
 		try {
+			// ghostPath が `..../shell/<シェル名>` 形式なら分割する
+			let basePath = ghostPath;
+			let shell = shellName;
+			const shellMatch = ghostPath.match(/[/\\]shell[/\\]([^/\\]+)$/);
+			if (shellMatch) {
+				basePath = ghostPath.slice(0, shellMatch.index);
+				shell = shellMatch[1];
+			}
+			const ghostName = basePath.split(/[\\/]/).filter(Boolean).pop() || "";
+
+			// 1) Rust パーサー経由（ukadoc-spec 突合済み）
+			if (isTauriAvailable()) {
+				const manifest = await getShellManifest(ghostName, shell);
+				if (manifest) {
+					console.log(
+						`📜 shell_manifest 取得成功 (ghost=${ghostName}, shell=${shell})`,
+					);
+					this.applyShellManifest(manifest);
+					return;
+				}
+				console.warn(
+					"shell_manifest 取得失敗、テキストパースへフォールバック:",
+				);
+			}
+
+			// 2) JS テキストパーサー（フォールバック / ブラウザ環境）
 			let content = "";
-			const basePath = ghostPath.includes("/shell/")
-				? ghostPath
-				: `${ghostPath}/shell/${shellName}`;
-			const surfacesPath = `${basePath}/surfaces.txt`;
+			const surfacesPath = `${basePath}/shell/${shell}/surfaces.txt`;
 
 			if (isTauriAvailable()) {
 				try {
@@ -84,6 +124,22 @@ export class SurfaceManager {
 				err,
 			);
 		}
+	}
+
+	/**
+	 * Rust `shell_manifest` のマニフェストを内部レコードへ適用する
+	 */
+	applyShellManifest(manifest) {
+		const data = manifestToSurfaceData(manifest);
+		this.collisions = data.collisions;
+		this.elements = data.elements;
+		this.animations = data.animations;
+		this.aliases = data.aliases;
+		this.shellManifest = manifest;
+
+		console.log(
+			`🎯 当たり判定・合成要素登録完了 (Rust shell_manifest): ${Object.keys(this.collisions).length} サーフィス登録済み`,
+		);
 	}
 
 	/**
@@ -158,12 +214,7 @@ export class SurfaceManager {
 		// 定義の逆順（手前のもの優先）で判定
 		for (let i = colList.length - 1; i >= 0; i--) {
 			const col = colList[i];
-			if (
-				canvasX >= col.x1 &&
-				canvasX <= col.x2 &&
-				canvasY >= col.y1 &&
-				canvasY <= col.y2
-			) {
+			if (collisionContains(col, canvasX, canvasY)) {
 				return {
 					name: col.name,
 					canvasX,

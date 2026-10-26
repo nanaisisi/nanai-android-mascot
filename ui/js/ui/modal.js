@@ -1,4 +1,5 @@
 import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
+import { modalTemplates } from "./modal-templates.js";
 
 /**
  * Nanai Android Mascot - モーダル & UIダイアログ管理
@@ -30,10 +31,14 @@ export class ModalManager {
   }
 
   show(contentId) {
-    const source = document.getElementById(contentId);
-    if (!source || !this.content || !this.overlay) return;
+    let html = modalTemplates[contentId];
+    if (!html) {
+      const source = document.getElementById(contentId);
+      html = source?.innerHTML;
+    }
+    if (!html || !this.content || !this.overlay) return;
 
-    this.content.innerHTML = source.innerHTML;
+    this.content.innerHTML = html;
     this.overlay.style.display = "flex";
     this.setupListeners(contentId);
   }

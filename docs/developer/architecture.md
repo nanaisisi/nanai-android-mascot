@@ -72,7 +72,7 @@ flowchart TB
 - **`index.html`**:
   - メインコンテナ。Android環境では単一Activity内で透過キャンバス・キャラクター・UIコンテナを一括提供。
   - デスクトップ環境（Tauri / Windows等）では、常駐コントローラー・メニュー・各種モーダル管理基盤として機能。
-- **`subcharacter.html` / `subcharacter.js` (キャラクターウィンドウ)**:
+- **`character.html` / `character.js` (キャラクターウィンドウ)**:
   - 透過キャラクター描画専用ウィンドウ。
   - デスクトップ環境ではスコープ0（メインキャラ/さくら）およびスコープ1以降（サブキャラ/うにゅう等）の双方が独立した透過ウィンドウ（`subchar_window_0`, `subchar_window_1`, ...）として生成・表示され、それぞれ個別にドラッグ移動および右クリックメニューの展開が可能。
 - **`ui/js/surface/surface.js` / `ghost-surface.js`**:

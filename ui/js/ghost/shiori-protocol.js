@@ -10,7 +10,11 @@
  * @param {string} sender - 送信元ベースウェア名
  * @returns {string} SHIORI/3.0 リクエスト
  */
-export function buildRequest(id, references = [], sender = "NanaiAndroidMascot") {
+export function buildRequest(
+	id,
+	references = [],
+	sender = "NanaiAndroidMascot",
+) {
 	let req = `GET SHIORI/3.0\r\n`;
 	req += `Sender: ${sender}\r\n`;
 	req += `ID: ${id}\r\n`;
@@ -100,3 +104,62 @@ export const ShioriProtocol = {
 	buildRequest,
 	parseResponse,
 };
+
+/**
+ * Rust `ShioriResponse`（serde externally tagged enum）のステータス → 数値コード
+ * 例: "Ok" → 200 / { "Other": 599 } → 599
+ * @param {string|Record<string, any>|undefined} status
+ * @returns {number}
+ */
+export function statusCodeFromRust(status) {
+	if (typeof status === "object" && status !== null) {
+		const [variant, val] = Object.entries(status)[0] ?? ["Ok", undefined];
+		const codes = {
+			Ok: 200,
+			NoContent: 204,
+			NotEnough: 311,
+			Advice: 312,
+			BadRequest: 400,
+			InternalServerError: 500,
+		};
+		return typeof val === "number" ? val : (codes[variant] ?? 0);
+	}
+	const codes = {
+		Ok: 200,
+		NoContent: 204,
+		NotEnough: 311,
+		Advice: 312,
+		BadRequest: 400,
+		InternalServerError: 500,
+	};
+	return codes[status] ?? 0;
+}
+
+/**
+ * Rust 解析済みレスポンス（`send_shiori_event_typed` の戻り値）を
+ * レガシー parseResponse 形状（{ status, statusText, value, headers }）へ変換
+ * @param {Record<string, any>|null} typed
+ * @returns {{ status: number, statusText: string, value: string, headers: Object }|null}
+ */
+export function fromRustResponse(typed) {
+	if (!typed || typeof typed !== "object") return null;
+
+	const status = statusCodeFromRust(typed.status);
+	const headers = {};
+	for (const [key, value] of Object.entries(typed)) {
+		if (value == null) continue;
+		if (Array.isArray(value)) {
+			if (value.length > 0) headers[key.toLowerCase()] = value;
+		} else if (typeof value !== "object") {
+			headers[key.toLowerCase()] = String(value);
+		} else {
+			headers[key.toLowerCase()] = value;
+		}
+	}
+	return {
+		status,
+		statusText: typed.statusText ?? "",
+		value: typed.value ?? "",
+		headers,
+	};
+}

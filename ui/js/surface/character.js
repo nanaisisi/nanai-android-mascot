@@ -5,7 +5,7 @@
 const img = document.getElementById("subchar-img");
 const root = document.getElementById("subchar-root");
 
-// URLパラメータからスコープIDを取得 (例: subcharacter.html?scope=1)
+// URLパラメータからスコープIDを取得 (例: character.html?scope=1)
 const urlParams = new URLSearchParams(globalThis.location.search);
 const scopeId = parseInt(urlParams.get("scope") || "1", 10);
 

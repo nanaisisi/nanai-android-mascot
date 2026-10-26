@@ -55,7 +55,7 @@ pub async fn show_subchar_window(
             let sub_win = tauri::WebviewWindowBuilder::new(
                 &app_handle,
                 &label,
-                tauri::WebviewUrl::App(format!("subcharacter.html?scope={}", scope_id).into()),
+                tauri::WebviewUrl::App(format!("character.html?scope={}", scope_id).into()),
             )
             .title(title)
             .inner_size(win_width, win_height)

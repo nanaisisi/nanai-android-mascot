@@ -101,7 +101,10 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
     }
 
     // install.txt の type 種別を検証 (ukadoc準拠: Ghost / Shell / Balloon / Plugin / Supplement)
-    let kind = install_type.as_deref().map(str::to_lowercase).unwrap_or_else(|| "ghost".to_string());
+    let kind = install_type
+        .as_deref()
+        .map(str::to_lowercase)
+        .unwrap_or_else(|| "ghost".to_string());
     if kind != "ghost" && kind != "balloon" {
         let label = install_type.unwrap_or_default();
         return Err(format!(

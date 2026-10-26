@@ -44,11 +44,7 @@ if (globalThis.__TAURI__) {
 		globalThis.__TAURI__.event?.listen || globalThis.__TAURI__.listen;
 	const emitFn = globalThis.__TAURI__.event?.emit || globalThis.__TAURI__.emit;
 
-	if (typeof emitFn === "function") {
-		emitFn("balloon-ready", { scopeId });
-	}
-
-	// 親ウィンドウからのバルーンコンテンツ更新イベントを受信
+	// 親ウィンドウからのバルーンコンテンツ更新イベントを受信 (listenを先に登録)
 	if (typeof listenFn === "function") {
 		listenFn(`update-balloon-content-${scopeId}`, (event) => {
 			const { html, theme } = event.payload || {};
@@ -69,6 +65,10 @@ if (globalThis.__TAURI__) {
 				document.documentElement.setAttribute("data-balloon-theme", theme);
 			}
 		});
+	}
+
+	if (typeof emitFn === "function") {
+		emitFn("balloon-ready", { scopeId });
 	}
 
 	// バルーン本体のクリックでスキップまたは改ページ通知

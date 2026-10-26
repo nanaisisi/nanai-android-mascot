@@ -48,9 +48,8 @@ export const ghostSurfaceMethods = {
 		}
 
 		// サーフィスIDを SurfaceManager に常に通知（当たり判定とアニメーションのため）
-		if (!isSubchar) {
-			this.app?.surfaceManager?.setSurfaceId(surfaceId, scopeId);
-		}
+		// スコープ毎に独立管理 (\0 と \1 のサーフィスを混同しない)
+		this.app?.surfaceManager?.setSurfaceId(surfaceId, scopeId);
 
 		if (isTauriAvailable()) {
 			// デスクトップ(Tauri)環境では、スコープ0(メイン)・スコープ1以降(サブ)問わず

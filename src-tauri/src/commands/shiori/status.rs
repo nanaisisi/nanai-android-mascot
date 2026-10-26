@@ -20,11 +20,7 @@ pub async fn get_all_ghosts(_state: tauri::State<'_, AppState>) -> Result<Vec<Gh
 /// SHIORIの状態を取得
 #[tauri::command]
 pub async fn get_shiori_status(state: tauri::State<'_, AppState>) -> Result<bool, String> {
-    if let Ok(lock) = state.shiori_engine.lock() {
-        Ok(lock.is_some())
-    } else {
-        Ok(false)
-    }
+    Ok(state.shiori_engine.lock().is_some())
 }
 
 /// 簡易ゴーストスキャン（JavaScriptから呼び出し用）

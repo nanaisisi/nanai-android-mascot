@@ -1,8 +1,8 @@
 #![allow(unused_imports)]
 use crate::shiori::dynamic::ShioriDynamicEngine;
 use nanai_android_mascot_ui::resolve_vfs_path;
+use parking_lot::Mutex;
 use std::path::{Path, PathBuf};
-use std::sync::Mutex;
 use tauri::{Emitter, Manager};
 
 #[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]

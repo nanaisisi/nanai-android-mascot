@@ -5,9 +5,10 @@
  * FFI経由でSHIORI/3.0プロトコルを実装する
  */
 
+use parking_lot::{Mutex, MutexGuard};
 use std::ffi::{CStr, CString};
 use std::os::raw::{c_char, c_int, c_long};
-use std::sync::{LazyLock, Mutex};
+use std::sync::LazyLock;
 
 // YAYA C++関数への外部宣言
 unsafe extern "C" {
@@ -64,9 +65,7 @@ pub struct YayaEngine;
 impl YayaEngine {
     /// YAYA初期化
     pub fn initialize(ghost_dir: &str) -> Result<(), String> {
-        let mut state = SHIORI_STATE
-            .lock()
-            .map_err(|_| "Failed to lock SHIORI state")?;
+        let mut state = SHIORI_STATE.lock();
 
         if state.initialized && state.engine == EngineType::YAYA {
             return Ok(());
@@ -106,9 +105,7 @@ impl YayaEngine {
 
     /// SHIORI load実行
     pub fn load() -> Result<i32, String> {
-        let state = SHIORI_STATE
-            .lock()
-            .map_err(|_| "Failed to lock SHIORI state")?;
+        let state = SHIORI_STATE.lock();
 
         if !state.initialized || state.engine != EngineType::YAYA {
             return Err("YAYA not initialized".to_string());
@@ -122,9 +119,7 @@ impl YayaEngine {
 
     /// SHIORI unload実行
     pub fn unload() -> Result<i32, String> {
-        let state = SHIORI_STATE
-            .lock()
-            .map_err(|_| "Failed to lock SHIORI state")?;
+        let state = SHIORI_STATE.lock();
 
         if !state.initialized || state.engine != EngineType::YAYA {
             return Err("YAYA not initialized".to_string());
@@ -138,9 +133,7 @@ impl YayaEngine {
 
     /// SHIORI request実行
     pub fn request(input: &str) -> Result<String, String> {
-        let state = SHIORI_STATE
-            .lock()
-            .map_err(|_| "Failed to lock SHIORI state")?;
+        let state = SHIORI_STATE.lock();
 
         if !state.initialized || state.engine != EngineType::YAYA {
             return Err("YAYA not initialized".to_string());
@@ -180,14 +173,12 @@ impl YayaEngine {
 
     /// YAYA終了
     pub fn finalize() -> Result<(), String> {
-        let mut state = SHIORI_STATE
-            .lock()
-            .map_err(|_| "Failed to lock SHIORI state")?;
+        let mut state = SHIORI_STATE.lock();
 
         Self::cleanup_internal(&mut state)
     }
 
-    fn cleanup_internal(state: &mut std::sync::MutexGuard<ShioriState>) -> Result<(), String> {
+    fn cleanup_internal(state: &mut MutexGuard<ShioriState>) -> Result<(), String> {
         if state.initialized && state.engine == EngineType::YAYA {
             unsafe {
                 yaya_finalize();
@@ -251,9 +242,7 @@ impl IntegratedShiori {
 
     /// 現在のエンジンタイプ取得
     pub fn current_engine() -> Result<EngineType, String> {
-        let state = SHIORI_STATE
-            .lock()
-            .map_err(|_| "Failed to lock SHIORI state")?;
+        let state = SHIORI_STATE.lock();
 
         Ok(state.engine.clone())
     }

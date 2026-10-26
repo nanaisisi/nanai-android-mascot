@@ -153,15 +153,7 @@ pub fn add_to_recent_files(
     app_handle: tauri::AppHandle<tauri::Wry>,
 ) -> Result<(), String> {
     let app_state = app_handle.state::<tauri::State<AppState>>();
-    let mut recent_files = match app_state.recent_files.lock() {
-        Ok(lock) => lock,
-        Err(e) => {
-            let msg = e.to_string();
-            eprintln!("add_to_recent_files lock error: {msg}");
-            emit_error_to_all(&app_handle, msg.clone());
-            return Err(msg);
-        }
-    };
+    let mut recent_files = app_state.recent_files.lock();
 
     // 既に存在する場合は削除して先頭に追加（LRU方式）
     if let Some(index) = recent_files.iter().position(|x| *x == path) {
@@ -182,14 +174,6 @@ pub fn add_to_recent_files(
 #[tauri::command]
 pub fn get_recent_files(app_handle: tauri::AppHandle<tauri::Wry>) -> Result<Vec<String>, String> {
     let app_state = app_handle.state::<tauri::State<AppState>>();
-    let recent_files = match app_state.recent_files.lock() {
-        Ok(lock) => lock,
-        Err(e) => {
-            let msg = e.to_string();
-            eprintln!("get_recent_files lock error: {msg}");
-            emit_error_to_all(&app_handle, msg.clone());
-            return Err(msg);
-        }
-    };
+    let recent_files = app_state.recent_files.lock();
     Ok(recent_files.clone())
 }

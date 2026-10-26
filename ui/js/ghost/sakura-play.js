@@ -36,13 +36,14 @@ export async function playScript(player, script) {
 		}
 		if (isTauriAvailable()) {
 			shownScopes.add(0);
-			invoke("show_balloon_window", { scopeId: 0 }).catch(() => {});
+			const winPromises = [invoke("show_balloon_window", { scopeId: 0 }).catch(() => {})];
 			// スクリプト内にスコープ1（\1 / \u）以降の発話・選択肢が含まれているか判定
 			const hasKero = tokens.some((t) => t.type === "scope" && t.value >= 1);
 			if (hasKero) {
 				shownScopes.add(1);
-				invoke("show_balloon_window", { scopeId: 1 }).catch(() => {});
+				winPromises.push(invoke("show_balloon_window", { scopeId: 1 }).catch(() => {}));
 			}
+			await Promise.all(winPromises);
 		}
 	}
 
@@ -52,26 +53,28 @@ export async function playScript(player, script) {
 	let currentAnchor = null;
 
 	// 独立バルーン同期用ヘルパー（頻繁なIPC呼び出しによるWindowsメッセージキュー溢れを抑止）
-	let syncPendingScope = null;
+	let syncPendingScopes = new Set();
 	let syncTimer = null;
 	const flushDesktopBalloon = () => {
 		if (syncTimer) {
 			clearTimeout(syncTimer);
 			syncTimer = null;
 		}
-		if (syncPendingScope !== null && isTauriAvailable()) {
-			const sc = syncPendingScope;
-			syncPendingScope = null;
-			emit(`update-balloon-content-${sc}`, {
-				html: (sc === 1 ? keroText : sakuraText)?.innerHTML || "",
-				theme: app.currentBalloonTheme || "default",
-			});
+		if (syncPendingScopes.size > 0 && isTauriAvailable()) {
+			for (const sc of syncPendingScopes) {
+				emit(`update-balloon-content-${sc}`, {
+					html: (sc === 1 ? keroText : sakuraText)?.innerHTML || "",
+					theme: app.currentBalloonTheme || "default",
+				});
+			}
+			syncPendingScopes.clear();
 		}
 	};
 
-	const scheduleDesktopBalloonSync = (immediate = false) => {
+	const scheduleDesktopBalloonSync = (immediate = false, targetScope = null) => {
 		if (!isTauriAvailable()) return;
-		syncPendingScope = player.currentScope;
+		const sc = targetScope ?? player.currentScope;
+		syncPendingScopes.add(sc);
 		if (immediate) {
 			flushDesktopBalloon();
 			return;

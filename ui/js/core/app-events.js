@@ -1,4 +1,4 @@
-import { invoke, isTauriAvailable, listen } from "./tauri-helper.js";
+import { emit, invoke, isTauriAvailable, listen } from "./tauri-helper.js";
 
 export const eventMethods = {
 	setupEventListeners() {
@@ -105,9 +105,7 @@ export const eventMethods = {
 			if (typeof scopeId === "number") {
 				const cachedSrc = this.ghostController?.currentSurfaces?.get(scopeId);
 				if (cachedSrc) {
-					import("./tauri-helper.js").then(({ emit }) => {
-						emit(`update-subchar-image-${scopeId}`, { src: cachedSrc });
-					});
+					emit(`update-subchar-image-${scopeId}`, { src: cachedSrc });
 				}
 			}
 		});

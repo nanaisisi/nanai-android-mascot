@@ -1,5 +1,3 @@
-import { invoke, isTauriAvailable } from "./tauri-helper.js";
-
 export const settingsMethods = {
 	loadSettings() {
 		try {
@@ -56,39 +54,10 @@ export const settingsMethods = {
 	},
 
 	startSecondTimer() {
-		let secondCounter = 0;
-		const talkInterval = 60 + Math.floor(Math.random() * 30);
-
 		document.addEventListener("visibilitychange", () => {
 			if (document.visibilityState === "visible") {
 				this.ghostController.sendShioriEvent("OnWindowStateRestore");
 			}
 		});
-
-		setInterval(async () => {
-			secondCounter++;
-			if (!this.ghostController.currentGhost) return;
-
-			if (secondCounter % 60 === 0) {
-				try {
-					await this.ghostController.sendShioriEvent("OnMinuteChange");
-				} catch (_e) {
-					// エラー無視
-				}
-			}
-
-			if (isTauriAvailable()) {
-				try {
-					await invoke("on_second_change");
-				} catch (_error) {
-					// SHIORI未ロードまたは非サポート時は無視
-				}
-			} else if (secondCounter >= talkInterval) {
-				secondCounter = 0;
-				if (!this.sakuraPlayer.isPlaying) {
-					this.ghostController.sendShioriEvent("OnSecondChange");
-				}
-			}
-		}, 1000);
 	},
 };

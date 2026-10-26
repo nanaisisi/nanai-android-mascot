@@ -16,8 +16,17 @@
   1. マウス移動（ドラッグ・部位追従・ヒットテスト）イベントの `requestAnimationFrame` または 16ms〜33ms 単位でのスロットリング（間引き）。
   2. 不要な IPC 通信の抑制（UI側で閉じる座標計算や DOM 更新は Rust を経由せず直接処理）。
   3. ゴースト再ロード・ウィンドウ生成時のイベントリスナー解除・再登録のクリーンアップ徹底。
-- **詳細設計仕様書**:
-  - [軽量化・フリーズ防止およびIPCキューあふれ対策仕様](../design/cache-and-async/performance-and-ipc-stabilization.md)
+
+### 1.2 独立ウィンドウ（バルーン・キャラクター）の生成・ロード順序および初期表示同期
+
+- **現象**:
+  起動時イベント（`OnBoot`）等でサブキャラクター（\1）が表示されず、バルーン内のスクリプトメッセージが再生・同期されない。
+- **原因と背景**:
+  Tauri デスクトップ環境において、サブキャラクターウィンドウ (`character.html`) やバルーンウィンドウ (`balloon.html`) の生成（`invoke("show_subchar_window")`, `invoke("show_balloon_window")`）が非同期のまま先行し、Webview の DOM 構築およびリスナー登録が完了する前にスクリプト再生・画像 `emit` が送信完了していた。
+- **対策完了 (対応ファイル)**:
+  - `ui/js/ghost/sakura-play.js`: バルーンウィンドウ表示完了を `await` 待機、スコープ単位での同期バッファリング。
+  - `ui/js/surface/ghost-surface.js`: サブキャラクターウィンドウ表示完了の `await` 待機。
+  - `ui/js/core/app-events.js`: `request-subchar-image` 受信時の画像キャッシュ直接 `emit` による即時同期。
 
 ---
 

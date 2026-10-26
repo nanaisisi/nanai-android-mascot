@@ -40,10 +40,11 @@ pub async fn show_balloon_window(
             let is_vis = balloon_win.is_visible().unwrap_or(false);
             if !is_vis {
                 let (target_x, target_y) = get_pos();
-                let _ = balloon_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
-                    x: target_x,
-                    y: target_y,
-                }));
+                let _ =
+                    balloon_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
+                        x: target_x,
+                        y: target_y,
+                    }));
                 let _ = balloon_win.show();
             }
         } else {
@@ -60,6 +61,7 @@ pub async fn show_balloon_window(
             .transparent(true)
             .decorations(false)
             .always_on_top(true)
+            .skip_taskbar(true)
             .resizable(true)
             .position(target_x, target_y)
             .build()
@@ -112,6 +114,7 @@ pub async fn preload_auxiliary_windows(app_handle: tauri::AppHandle) -> Result<(
                 .transparent(true)
                 .decorations(false)
                 .always_on_top(true)
+                .skip_taskbar(true)
                 .resizable(true)
                 .visible(false)
                 .build();
@@ -167,7 +170,6 @@ pub async fn preload_auxiliary_windows(app_handle: tauri::AppHandle) -> Result<(
             .transparent(true)
             .decorations(false)
             .always_on_top(true)
-            .skip_taskbar(true)
             .resizable(false)
             .visible(false)
             .build()

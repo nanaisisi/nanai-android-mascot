@@ -21,7 +21,9 @@ export const ghostShioriMethods = {
 			// 初期化完了に伴い処理中バナーを閉じる
 			try {
 				await invoke("hide_loading_banner_window");
-			} catch (_e) {}
+			} catch (_e) {
+				// バナーウィンドウが存在しない、または非表示済みの場合は無視
+			}
 
 			console.log(`✨ アセット・SHIORI準備完了 (ゲート通過): OnBoot発行`);
 			try {
@@ -61,6 +63,15 @@ export const ghostShioriMethods = {
 			// Reference3: 最小化フラグ (0: 通常)
 			// Reference4: 発話不可フラグ (0: 発話可能, 1: 発話中等)
 			try {
+				if (this.uptimeSeconds % 60 === 0) {
+					await this.sendShioriEvent("OnMinuteChange", [
+						Math.floor(this.uptimeSeconds / 60),
+						0,
+						0,
+						isMinimized,
+						cantTalk,
+					]);
+				}
 				await this.sendShioriEvent("OnSecondChange", [
 					this.uptimeSeconds,
 					0,

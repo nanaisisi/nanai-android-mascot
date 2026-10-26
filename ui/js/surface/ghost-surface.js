@@ -68,7 +68,7 @@ export const ghostSurfaceMethods = {
 			// 独立した透過キャラクターウィンドウで描画・移動を行う
 			if (slot) slot.style.display = "none";
 			if (container) container.style.display = "none";
-			invoke("show_subchar_window", { scopeId }).catch(() => {});
+			await invoke("show_subchar_window", { scopeId }).catch(() => {});
 		} else {
 			// Webブラウザ / Android等のシングルコンテナ環境ではメインウィンドウ内で描画
 			if (slot && slot.style.display === "none") slot.style.display = "flex";

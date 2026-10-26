@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nanai Loading Banner</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/loading-banner.css" />
+    <script type="module" src="js/ui/loading-banner.js"></script>
+  </head>
+  <body>
+    <!-- アクセシビリティ・規格準拠（markuplint MD033/h1） -->
+    <h1 class="visually-hidden">Nanai Android Mascot - 処理中ステータスバナー</h1>
+    <div class="banner-box" id="banner-box">
+      <!-- 上段: 3:2 の 3 相当 (バージョン / 処理中ステータス) -->
+      <div class="banner-top">
+        <div class="banner-version-box">
+          <span class="banner-app-title">Nanai Mascot</span>
+          <span class="banner-version" id="banner-version">v1.0.0</span>
+        </div>
+        <div class="banner-status-badge">
+          <span class="banner-status-indicator"></span>
+          <span class="banner-status-text">処 理 中</span>
+        </div>
+      </div>
+      <!-- 下段: 3:2 の 2 相当 (ゴースト名) -->
+      <div class="banner-bottom">
+        <span class="banner-ghost-name" id="banner-ghost-name">Loading Ghost...</span>
+      </div>
+    </div>
+  </body>
+</html>

@@ -19,11 +19,14 @@ export const ghostShioriMethods = {
 				} catch (_error) {
 					// OnBoot送信失敗時はスキップ
 				}
+				// 初期化・OnBoot完了に伴い処理中バナーを閉じる
+				invoke("hide_loading_banner_window").catch(() => {});
 				// 自律タイマー (OnSecondChange) 開始
 				this.startSecondChangeTimer();
 			}, 1000);
 		} catch (error) {
 			console.error("❌ SHIORI初期化エラー:", error);
+			invoke("hide_loading_banner_window").catch(() => {});
 		}
 	},
 

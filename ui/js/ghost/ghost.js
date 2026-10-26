@@ -2,7 +2,6 @@ import { AppConfig } from "../core/config.js";
 import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 import { ghostSurfaceMethods } from "../surface/ghost-surface.js";
 import { ghostShioriMethods } from "./ghost-shiori.js";
-import { shioriNotifyMethods } from "./shiori-notify.js";
 
 /**
  * Nanai Android Mascot - ゴースト管理モジュール
@@ -163,6 +162,14 @@ export class GhostController {
 			invoke("record_ghost_loaded", { ghostName }).catch((err) => {
 				console.warn("⚠️ record_ghost_loaded failed:", err);
 			});
+		}
+
+		// 起動時・処理中ステータスバナーを表示（SSP/MATERIA風・メニュー反対側下部）
+		if (isTauriAvailable()) {
+			invoke("show_loading_banner_window", {
+				ghostName: ghost.name,
+				ghostVersion: ghost.version || "1.0.0",
+			}).catch(() => {});
 		}
 
 		this.initializeGhostSHIORI(ghost);

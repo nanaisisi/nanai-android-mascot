@@ -193,6 +193,8 @@ pub fn run() {
             commands::window::hide_subchar_window,
             commands::window::show_balloon_window,
             commands::window::hide_balloon_window,
+            commands::window::show_loading_banner_window,
+            commands::window::hide_loading_banner_window,
             commands::install::pick_and_install_ghost_archive,
             commands::install::install_ghost_archive,
             commands::install::install_ghost_archive_bytes,

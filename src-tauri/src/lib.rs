@@ -146,6 +146,7 @@ pub fn run() {
             }
         })
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![
             commands::file::open_file,
             commands::config::get_app_config,
@@ -179,6 +180,7 @@ pub fn run() {
             commands::window::hide_subchar_window,
             commands::window::show_balloon_window,
             commands::window::hide_balloon_window,
+            commands::install::pick_and_install_ghost_archive,
             commands::install::install_ghost_archive,
             commands::install::install_ghost_archive_bytes,
             commands::file::load_surface_image,

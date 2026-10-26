@@ -36,8 +36,10 @@ pub struct ShellManifest {
     pub descript: Descript,
     /// サーフィス定義（番号昇順）
     pub surfaces: Vec<SurfaceManifest>,
-    /// `surface.alias` ブロックの エイリアス名 → サーフィス番号列
+    /// `surface.alias` / `sakura.surface.alias` ブロックの エイリアス名 → サーフィス番号列
     pub aliases: BTreeMap<String, Vec<u32>>,
+    /// `kero.surface.alias` / `char1.surface.alias` ブロックの エイリアス名 → 番号列
+    pub kero_aliases: BTreeMap<String, Vec<u32>>,
     /// `surfacetable.txt` パース結果（任意）
     pub surface_table: Option<SurfaceTable>,
     /// さくら（\0）の着せ替えパーツ定義
@@ -71,6 +73,7 @@ impl Shell {
             descript: self.descript.clone(),
             surfaces,
             aliases: self.surfaces_txt.aliases.clone(),
+            kero_aliases: self.surfaces_txt.kero_aliases.clone(),
             surface_table: self.surface_table.clone(),
             sakura_bind_groups: self.sakura_bind_groups(),
             kero_bind_groups: self.kero_bind_groups(),

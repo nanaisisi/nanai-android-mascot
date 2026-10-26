@@ -108,13 +108,14 @@ export function collisionContains(col, x, y) {
 /**
  * ShellManifest → SurfaceManager 用レコード（レガシー構造）へ変換
  * @param {Record<string, any>} manifest - Rust `ShellManifest`
- * @returns {{ collisions: Record<string, any[]>, elements: Record<string, any[]>, animations: Record<string, any[]>, aliases: Record<string, number[]> }}
+ * @returns {{ collisions: Record<string, any[]>, elements: Record<string, any[]>, animations: Record<string, any[]>, aliases: Record<string, number[]>, keroAliases: Record<string, number[]> }}
  */
 export function manifestToSurfaceData(manifest) {
 	const collisions = {};
 	const elements = {};
 	const animations = {};
 	const aliases = manifest?.aliases ?? {};
+	const keroAliases = manifest?.kero_aliases ?? {};
 
 	for (const surfaceEntry of manifest?.surfaces ?? []) {
 		const sid = String(surfaceEntry.number);
@@ -151,7 +152,7 @@ export function manifestToSurfaceData(manifest) {
 			}));
 	}
 
-	return { collisions, elements, animations, aliases };
+	return { collisions, elements, animations, aliases, keroAliases };
 }
 
 /**

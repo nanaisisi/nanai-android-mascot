@@ -59,6 +59,8 @@ export class SurfaceManager {
 		this.dressupState = new Map();
 		/** @type {Record<string, number[]>|null} surface.alias ブロックのエイリアス（Rust マニフェスト由来） */
 		this.aliases = null;
+		/** @type {Record<string, number[]>|null} kero.surface.alias / char1.surface.alias のエイリアス */
+		this.keroAliases = null;
 		/** @type {Record<string, any>|null} Rust `shell_manifest` の生マニフェスト */
 		this.shellManifest = null;
 
@@ -142,6 +144,7 @@ export class SurfaceManager {
 		this.elements = data.elements;
 		this.animations = data.animations;
 		this.aliases = data.aliases;
+		this.keroAliases = data.keroAliases;
 		this.shellManifest = manifest;
 
 		// bindgroup[N].default,1（初期装着）を着せ替え状態へシード（既存キーは保持）
@@ -171,6 +174,35 @@ export class SurfaceManager {
 
 	expandSurfaceRange(rangeStr) {
 		return expandSurfaceRange(rangeStr);
+	}
+
+	/**
+	 * サーフィスエイリアス名（surface.alias ブロック）をサーフィス番号へ解決する
+	 * (UKADOC準拠: 複数番号が設定されている場合はランダム抽選)
+	 *
+	 * 数値または未登録の名前はそのまま返す。
+	 * @param {number|string|null|undefined} surfaceId
+	 * @param {number} [scopeId] - 0 (さくら / 共通) または 1 (うにゅ)
+	 * @returns {number|string} 解決済みサーフィス番号（文字列）または元の値
+	 */
+	resolveSurfaceNumber(surfaceId, scopeId = 0) {
+		const name = String(surfaceId ?? "").trim();
+		if (name === "" || /^-?\d+$/.test(name)) {
+			return surfaceId;
+		}
+		const map = scopeId === 1 ? this.keroAliases : this.aliases;
+		let list = Array.isArray(map?.[name]) ? map[name] : null;
+		if (!list && map) {
+			// 大文字小文字を無視した探索（Rust alias_numbers と同等の挙動）
+			const entry = Object.entries(map).find(
+				([key]) => key.toLowerCase() === name.toLowerCase(),
+			);
+			list = Array.isArray(entry?.[1]) ? entry[1] : null;
+		}
+		if (!list || list.length === 0) {
+			return surfaceId;
+		}
+		return String(list[Math.floor(Math.random() * list.length)]);
 	}
 
 	setSurfaceId(surfaceId, scopeId = 0) {
@@ -327,7 +359,10 @@ export class SurfaceManager {
 			for (const animId of bindAnimationIds(group.number, group.add_ids)) {
 				const anim = animById.get(String(animId));
 				for (const pattern of anim?.patterns ?? []) {
-					const file = patternSurfaceFile(pattern.surface);
+					// pattern surface は番号のほかエイリアス名も受理 (UKADOC準拠)
+					const file = patternSurfaceFile(
+						this.resolveSurfaceNumber(pattern.surface, scopeId),
+					);
 					if (!file) continue;
 					layers.push({
 						file,

@@ -135,14 +135,14 @@ pub fn parse_surface_table(text: &str) -> SurfaceTable {
             }
             _ => {
                 // それ以外はグループ内なら登録行（`[サーフィス番号],[名前]`）として処理
-                if let Some(group) = current_group.as_mut() {
-                    if let Ok(id) = key.trim().parse::<u32>() {
-                        group.entries.push(SurfTableEntry {
-                            surface_id: id,
-                            name: value.trim().to_string(),
-                        });
-                        continue;
-                    }
+                if let Some(group) = current_group.as_mut()
+                    && let Ok(id) = key.trim().parse::<u32>()
+                {
+                    group.entries.push(SurfTableEntry {
+                        surface_id: id,
+                        name: value.trim().to_string(),
+                    });
+                    continue;
                 }
                 table
                     .properties

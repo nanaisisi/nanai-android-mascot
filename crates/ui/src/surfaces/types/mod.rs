@@ -9,5 +9,8 @@ pub mod txt;
 pub use collision::{CollisionArea, CollisionShape};
 pub use composition::{CompositionLayer, CompositionPlan};
 pub use draw::{DrawMethod, Interval};
-pub use surface::{AnimationPattern, BalloonOffset, ElementDef, Points, SerikoAnimation, SortKind, SurfaceDefinition};
+pub use surface::{
+    AnimationPattern, BalloonOffset, ElementDef, Points, SerikoAnimation, SortKind,
+    SurfaceDefinition,
+};
 pub use txt::SurfacesTxt;

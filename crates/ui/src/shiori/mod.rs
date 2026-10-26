@@ -172,14 +172,10 @@ mod tests {
 
     #[test]
     fn test_response_teach_pending() {
-        let not_enough = ShioriResponse::parse(
-            "SHIORI/3.0 311 Not Enough\r\n\r\n",
-        )
-        .unwrap();
+        let not_enough = ShioriResponse::parse("SHIORI/3.0 311 Not Enough\r\n\r\n").unwrap();
         assert!(not_enough.is_teach_pending());
 
-        let advice =
-            ShioriResponse::parse("SHIORI/3.0 312 Advice\r\n\r\n").unwrap();
+        let advice = ShioriResponse::parse("SHIORI/3.0 312 Advice\r\n\r\n").unwrap();
         assert!(advice.is_teach_pending());
 
         assert!(!ShioriResponse::ok("script").is_teach_pending());

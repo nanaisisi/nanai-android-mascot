@@ -104,7 +104,7 @@ impl ShioriRequest {
                 "x-sstp-passthru-markersend" => {}
                 _ => {
                     if let Some(rest) = lower.strip_prefix("reference") {
-                        if let Some(idx) = rest.parse::<usize>().ok() {
+                        if let Ok(idx) = rest.parse::<usize>() {
                             let n = idx;
                             if req.references.len() <= n {
                                 req.references.resize(n + 1, String::new());

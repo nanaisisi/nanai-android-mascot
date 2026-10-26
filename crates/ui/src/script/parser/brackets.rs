@@ -74,10 +74,7 @@ pub(super) fn handle_font(chars: &mut CharsIter<'_>) -> Option<(String, Option<S
 }
 
 /// `\![raise,Event,...]` または `\![bind,category,part,status]`
-pub(super) fn handle_raiselike(
-    chars: &mut CharsIter<'_>,
-    callback: &mut dyn FnMut(SakuraCommand),
-) {
+pub(super) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnMut(SakuraCommand)) {
     let Some(cmd_str) = read_bracketed(chars) else {
         return;
     };
@@ -152,7 +149,10 @@ pub(super) fn handle_underscore(
                     }
                     anchor_text.push(ac);
                 }
-                callback(SakuraCommand::Anchor { id: anchor_id, text: anchor_text });
+                callback(SakuraCommand::Anchor {
+                    id: anchor_id,
+                    text: anchor_text,
+                });
             }
         }
         Some('s') => {

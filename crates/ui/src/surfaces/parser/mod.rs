@@ -49,9 +49,7 @@ pub fn parse_surfaces_txt(text: &str) -> SurfacesTxt {
 
         match &scope {
             Some(BlockKind::Descript) => handle_descript_line(&mut txt, line),
-            Some(BlockKind::Alias { kero }) => {
-                handle_alias_line(&mut txt, *kero, line)
-            }
+            Some(BlockKind::Alias { kero }) => handle_alias_line(&mut txt, *kero, line),
             Some(BlockKind::Surface { ids, .. }) => {
                 let ids = ids.clone();
                 handle_surface_line(&mut txt, &ids, line);
@@ -85,7 +83,7 @@ fn parse_block_opener(line: &str) -> Option<BlockKind> {
         _ => (line, false),
     };
     if let Some(rest) = line.strip_prefix("surface") {
-        let rest = rest.replace('[', " ").replace(']', " ");
+        let rest = rest.replace(['[', ']'], " ");
         if let Some(spec) = rest.strip_prefix(".append") {
             if spec
                 .trim()
@@ -184,10 +182,10 @@ fn handle_surface_line(txt: &mut SurfacesTxt, ids: &[u32], line: &str) {
     }
     let key_lower = key.to_lowercase();
 
-    if key_lower.starts_with("collisionex") {
-        apply_collisionex(txt, ids, &key_lower["collisionex".len()..], value);
-    } else if key_lower.starts_with("collision") {
-        apply_collision(txt, ids, &key_lower["collision".len()..], value);
+    if let Some(rest) = key_lower.strip_prefix("collisionex") {
+        apply_collisionex(txt, ids, rest, value);
+    } else if let Some(rest) = key_lower.strip_prefix("collision") {
+        apply_collision(txt, ids, rest, value);
     } else if let Some(rest) = key_lower.strip_prefix("element") {
         apply_element(txt, ids, rest, value);
     } else if let Some(rest) = key_lower.strip_prefix("animation") {

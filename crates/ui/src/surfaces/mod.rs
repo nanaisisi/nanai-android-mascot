@@ -202,7 +202,10 @@ surface.alias
         assert!(txt.alias_numbers("通常").is_none());
 
         assert_eq!(txt.kero_alias_numbers("通常").unwrap(), &[10u32][..]);
-        assert_eq!(txt.kero_alias_numbers("nameycand").unwrap(), &[11u32, 12][..]);
+        assert_eq!(
+            txt.kero_alias_numbers("nameycand").unwrap(),
+            &[11u32, 12][..]
+        );
         assert!(txt.kero_alias_numbers("照れ").is_none());
         assert!(txt.resolve_kero_alias("通常").is_some());
     }

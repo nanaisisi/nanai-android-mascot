@@ -73,14 +73,14 @@ impl ShioriResponse {
                         "x-sstp-passthru-markersend" => {}
                         _ => {
                             if let Some(rest) = key_l.strip_prefix("reference") {
-                                if let Some(idx) = rest.parse::<usize>().ok() {
+                                if let Ok(idx) = rest.parse::<usize>() {
                                     let n = idx.saturating_sub(1);
                                     if res.references.len() <= n {
                                         res.references.resize(n + 1, String::new());
                                     }
                                     res.references[n] = value.to_string();
                                 }
-                            } else if let Some(rest) = key_str_prefix(&key) {
+                            } else if let Some(rest) = key_str_prefix(key) {
                                 res.passthru.insert(rest, value.to_string());
                             }
                         }

@@ -7,16 +7,7 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"includes": [
-			"**",
-			"!src/cpp/*",
-			"!cpp/*",
-			"!cpp/*/*",
-			"!cpp/*/*/*",
-			"!cpp/*/*/*/*",
-			"!cpp/*/*/*/*/*",
-			"!cpp/*/*/*/*/*/*"
-		]
+		"includes": ["**", "!src/cpp", "!cpp"]
 	},
 	"formatter": {
 		"enabled": true,

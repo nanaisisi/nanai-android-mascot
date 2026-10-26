@@ -1,4 +1,4 @@
-﻿# SSP 仕様ベース 統合互換リファレンスマニュアル
+# SSP 仕様ベース 統合互換リファレンスマニュアル
 
 - **言及規格の元ドキュメント・権利者・ライセンス**:
   - **SHIORI 仕様 / 各種サブシステム**:
@@ -51,7 +51,7 @@ flowchart TD
 
 ### 1.1 標準ディレクトリ構成・アセット分離仕様マッピング
 
-SSP 標準の配置構造との互換性を確保しつつ、Git リポジトリ汚染を防ぐアセット分離仕様です（詳細は [ghost-import-and-asset-separation-spec.md](ghost-import-and-asset-separation-spec.md) 参照）。
+SSP 標準の配置構造との互換性を確保しつつ、Git リポジトリ汚染を防ぐアセット分離仕様です（詳細は [ghost-import-and-asset-separation-spec.md](../ghost/ghost-import-and-asset-separation-spec.md) 参照）。
 
 | ディレクトリ | SSP 標準の役割 | Nanai 実装仕様 | Git 管理ポリシー |
 | :-: | :--- | :--- | :--- |
@@ -67,12 +67,12 @@ SSP の標準右クリックメニュー（`howto/rclick.md`）に対する、�
 
 | # | SSP 標準メニュー項目 | サブキャラ表示 | 本プロジェクト（Nanai）実装仕様 | モバイル（Android）適応方針 |
 | :-: | :--- | :-: | :--- | :--- |
-| **1** | おすすめ | ◯ | [ui-and-menu-spec.md](../design/ui-and-menu-spec.md) にてブラウザ起動連携 | Android 標準インテント (`ACTION_VIEW`) でブラウザ起動 |
+| **1** | おすすめ | ◯ | [ui-and-menu-spec.md](../../design/ui/ui-and-menu-spec.md) にてブラウザ起動連携 | Android 標準インテント (`ACTION_VIEW`) でブラウザ起動 |
 | **2** | ポータルサイト | - | ゴースト/シェル作者サイトへの URL 起動 | 同上 |
 | **3** | ネットワーク更新 | - | `updates2.dau` / `updates.txt` によるオンライン差分取得 | Wi-Fi 接続時更新・バックグラウンド更新 |
 | **4** | アンインストール (Vanish) | - | ゴーストディレクトリ削除ダイアログ | アプリ内部データ領域からの安全な削除 |
 | **5** | RSS/ヘッドライン | - | ヘッドラインセンサ（Plugin）連携 | Web 標準 Fetch による RSS/Atom リーダーシム |
-| **6** | プラグイン | - | JS / WASM プラグイン一覧実行 ([wasm-and-plugin-extensibility.md](wasm-and-plugin-extensibility.md)) | サンドボックス内 WebExtension 型プラグイン |
+| **6** | プラグイン | - | JS / WASM プラグイン一覧実行 ([wasm-and-plugin-extensibility.md](../platform/wasm-and-plugin-extensibility.md)) | サンドボックス内 WebExtension 型プラグイン |
 | **7** | メールチェック | - | POP3 メール着信確認 | 将来拡張（優先度: Low） |
 | **8** | シェル倍率 | - | **50% / 75% / 100% / 125% / 150% / 200%** | ピンチイン/アウト操作およびスライダー調整 |
 | **9** | 機能 | - | サブメニュー展開（カレンダー、バックログ等） | モーダルパネル形式での一覧展開 |
@@ -137,10 +137,10 @@ SSP の設定ダイアログ群（`config/index.md`）に対応する設定マ�
 
 | 規格 | 参照公式仕様 (ukadoc-spec) | Nanai 実装仕様書 | 互換目標 |
 | :--- | :--- | :--- | :--- |
-| **SHIORI/3.0** | [spec/shiori3 (UKADOC)](https://ssp.shillest.net/ukadoc/manual/spec_shiori3.html) | [shiori-integration.md](shiori-integration.md) | 100% (Event & Response ヘッダ完全準拠) |
-| **SakuraScript** | [list/sakura-script (UKADOC)](https://ssp.shillest.net/ukadoc/manual/spec_sakura_script.html) | [sakura-script-and-balloon-spec.md](sakura-script-and-balloon-spec.md) | `\0`, `\1`, `\s`, `\w`, `\q`, `\n`, `\c`, `\e` 等主要タグ完全対応 |
-| **surfaces.txt** | [descript/shell-surfaces (UKADOC)](https://ssp.shillest.net/ukadoc/manual/descript_surfaces.html) | [surfaces-and-collision-spec.md](surfaces-and-collision-spec.md) | Canvas 2D レイヤー合成、アニメーション、Collision 判定 |
-| **descript.txt** | [descript/ghost (UKADOC)](https://ssp.shillest.net/ukadoc/manual/descript_ghost.html) | [encoding-and-vfs-spec.md](encoding-and-vfs-spec.md) | Shift_JIS/UTF-8 自動判別、定義パース |
+| **SHIORI/3.0** | [spec/shiori3 (UKADOC)](https://ssp.shillest.net/ukadoc/manual/spec_shiori3.html) | [shiori-integration.md](../shiori-script/shiori-integration.md) | 100% (Event & Response ヘッダ完全準拠) |
+| **SakuraScript** | [list/sakura-script (UKADOC)](https://ssp.shillest.net/ukadoc/manual/spec_sakura_script.html) | [sakura-script-and-balloon-spec.md](../shiori-script/sakura-script-and-balloon-spec.md) | `\0`, `\1`, `\s`, `\w`, `\q`, `\n`, `\c`, `\e` 等主要タグ完全対応 |
+| **surfaces.txt** | [descript/shell-surfaces (UKADOC)](https://ssp.shillest.net/ukadoc/manual/descript_surfaces.html) | [surfaces-and-collision-spec.md](../ghost/surfaces-and-collision-spec.md) | Canvas 2D レイヤー合成、アニメーション、Collision 判定 |
+| **descript.txt** | [descript/ghost (UKADOC)](https://ssp.shillest.net/ukadoc/manual/descript_ghost.html) | [encoding-and-vfs-spec.md](../platform/encoding-and-vfs-spec.md) | Shift_JIS/UTF-8 自動判別、定義パース |
 
 ---
 
@@ -152,6 +152,6 @@ SSP の設定ダイアログ群（`config/index.md`）に対応する設定マ�
   - 里々公式マニュアル: [ukatech/satori-docs](https://github.com/ukatech/satori-docs)
   - YAYA 公式マニュアル: [YAYA-shiori/yaya-docs](https://github.com/YAYA-shiori/yaya-docs)
 - **プロジェクト詳細仕様**:
-  - ゴースト取り込み & アセット分離: [ghost-import-and-asset-separation-spec.md](ghost-import-and-asset-separation-spec.md)
-  - UI/メニュー設計: [ui-and-menu-spec.md](../design/ui-and-menu-spec.md)
-  - Android 固有常駐仕様: [android-overlay-and-service-spec.md](android-overlay-and-service-spec.md)
+  - ゴースト取り込み & アセット分離: [ghost-import-and-asset-separation-spec.md](../ghost/ghost-import-and-asset-separation-spec.md)
+  - UI/メニュー設計: [ui-and-menu-spec.md](../../design/ui/ui-and-menu-spec.md)
+  - Android 固有常駐仕様: [android-overlay-and-service-spec.md](../platform/android-overlay-and-service-spec.md)

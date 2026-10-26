@@ -1,4 +1,4 @@
-﻿# SHIORI 統合技術仕様
+# SHIORI 統合技術仕様
 
 - **言及規格の元ドキュメント・権利者・ライセンス**:
   - **SHIORI 仕様 / 各種サブシステム**:
@@ -30,9 +30,9 @@ Ukagaka Tech Team（`ukatech`）および公式ドキュメントプロジェク
   - [ukatech/ukadoc-ssp](https://github.com/ukatech/ukadoc-ssp) - SSP 固有仕様・拡張リファレンスリポジトリ
   - Web 版公式マニュアル: [UKADOC Project (ssp.shillest.net/ukadoc/)](https://ssp.shillest.net/ukadoc/)
 - **公式 SHIORI 実装の現状**:
-  - 里々（[src/cpp/satoriya-shiori](src/cpp/satoriya-shiori) / 公式マニュアル: [ukatech/satori-docs](https://github.com/ukatech/satori-docs)）
-  - YAYA（[src/cpp/yaya-shiori](src/cpp/yaya-shiori) / 公式マニュアル: [YAYA-shiori/yaya-docs](https://github.com/YAYA-shiori/yaya-docs)）
-  - 華和梨（[src/cpp/kawari](src/cpp/kawari) / [ukatech/kawari](https://github.com/ukatech/kawari)）
+  - 里々（src/cpp/satoriya-shiori / 公式マニュアル: [ukatech/satori-docs](https://github.com/ukatech/satori-docs)）
+  - YAYA（src/cpp/yaya-shiori / 公式マニュアル: [YAYA-shiori/yaya-docs](https://github.com/YAYA-shiori/yaya-docs)）
+  - 華和梨（src/cpp/kawari / [ukatech/kawari](https://github.com/ukatech/kawari)）
   - 各公式リポジトリは、Windows / MSVC を主軸としつつ Linux/POSIX 向けビルドテスト等のクロスプラットフォーム化を進めている**「移植・整備の途上」**にある。
   - 公式リポジトリ単体での Android NDK / WebAssembly (WASM) 向けビルド済みパッケージや完全移植版はまだ提供されていない。
 

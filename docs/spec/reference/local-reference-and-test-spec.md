@@ -1,4 +1,4 @@
-﻿# ローカル環境接続・外部参照アダプタ仕様書
+# ローカル環境接続・外部参照アダプタ仕様書
 
 - **言及規格の元ドキュメント・権利者・ライセンス**:
   - **SHIORI 仕様 / 各種サブシステム**:
@@ -14,9 +14,9 @@
 > **役割**: **リポジトリ公開仕様**（各開発者の環境差分を吸収するプロトコル・インターフェース定義）  
 > **関連仕様書**:
 >
-> - [ghost-import-and-asset-separation-spec.md](ghost-import-and-asset-separation-spec.md)
+> - [ghost-import-and-asset-separation-spec.md](../ghost/ghost-import-and-asset-separation-spec.md)
 > - [ssp-compatibility-reference.md](ssp-compatibility-reference.md)
-> - [shiori-integration.md](shiori-integration.md)
+> - [shiori-integration.md](../shiori-script/shiori-integration.md)
 
 ---
 

@@ -24,7 +24,7 @@
 
 ## 🎯 優先度：最高（Phase 2: インタラクション & スクリプト統合）
 
-詳細仕様: [docs/design/implementation-plan-and-spec.md](docs/design/implementation-plan-and-spec.md)
+詳細仕様: [docs/design/implementation-plan-and-spec.md](docs/design/planning/implementation-plan-and-spec.md)
 
 ### 3. さくらスクリプト再生キューとサーフィスの完全連動
 

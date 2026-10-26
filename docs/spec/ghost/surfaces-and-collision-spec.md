@@ -1,4 +1,4 @@
-﻿# surfaces.txt アニメーション合成 & 当たり判定（Collision）仕様書
+# surfaces.txt アニメーション合成 & 当たり判定（Collision）仕様書
 
 - **言及規格の元ドキュメント・権利者・ライセンス**:
   - **SHIORI 仕様 / 各種サブシステム**:

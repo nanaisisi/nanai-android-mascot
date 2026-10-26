@@ -1,4 +1,4 @@
-﻿- **言及規格の元ドキュメント・権利者・ライセンス**:
+- **言及規格の元ドキュメント・権利者・ライセンス**:
   - **SHIORI 仕様 / 各種サブシステム**:
     - **SHIORI/3.0 規格**: [ukadoc-spec: shiori3](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/) - © UKADOC project (CC BY 4.0)
     - **里々 (SATORI)**: [ukatech/satori-docs](https://ukatech.shillest.net/satori-docs/) - © Kusigahama Yagi / SEIBIHAN (BSD 2-Clause License)
@@ -17,7 +17,7 @@
 ## 2026 年 10 月 26 日 - ゴースト互換性ギャップ分析とロードマップ仕様策定
 
 ### 新規作成
-- **[ghost-compatibility-gap-and-roadmap.md](../spec/ghost-compatibility-gap-and-roadmap.md)**:
+- **[ghost-compatibility-gap-and-roadmap.md](../spec/ghost/ghost-compatibility-gap-and-roadmap.md)**:
   - 32bit DLL読み込み・差分表示の現状実装を踏まえ、一般的な伺かゴースト資産の再現に必要な不足機能（ウェイト制御・SERIKOアニメーション・当たり判定・自律発話タイマー・バルーンスキン・VFS）のギャップ一覧化と、依存関係に基づく4段階の実装優先順位ロードマップを策定。
 
 ### 機能更新

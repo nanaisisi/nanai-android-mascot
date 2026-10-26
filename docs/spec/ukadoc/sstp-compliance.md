@@ -1,4 +1,4 @@
-﻿# SSTP/1.x 規格対応仕様 (SSTP Compliance)
+# SSTP/1.x 規格対応仕様 (SSTP Compliance)
 
 - **仕様リファレンス**: [ukatech/ukadoc-spec: SSTP/1.x](https://ukatech.shillest.net/ukadoc-spec/spec/sstp/)
 - **言及規格の元ドキュメント・権利者・ライセンス**:

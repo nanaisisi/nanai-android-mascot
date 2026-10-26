@@ -1,4 +1,4 @@
-﻿# SAORI over DirectSSTP 規格対応仕様 (SAORI over DirectSSTP Compliance)
+# SAORI over DirectSSTP 規格対応仕様 (SAORI over DirectSSTP Compliance)
 
 - **仕様リファレンス**: [ukatech/ukadoc-spec: SAORI over DirectSSTP](https://ukatech.shillest.net/ukadoc-spec/spec/saori-ex/)
 - **言及規格の元ドキュメント・権利者・ライセンス**:

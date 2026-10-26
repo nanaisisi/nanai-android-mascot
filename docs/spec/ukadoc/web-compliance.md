@@ -1,4 +1,4 @@
-﻿# Web関連規格対応仕様 (Web & Network Compliance)
+# Web関連規格対応仕様 (Web & Network Compliance)
 
 - **仕様リファレンス**: [ukatech/ukadoc-spec: Web関連](https://ukatech.shillest.net/ukadoc-spec/spec/web/)
 - **言及規格の元ドキュメント・権利者・ライセンス**:

@@ -1,4 +1,4 @@
-﻿# PLUGIN/2.0 規格対応仕様 (PLUGIN/2.0 Compliance)
+# PLUGIN/2.0 規格対応仕様 (PLUGIN/2.0 Compliance)
 
 - **仕様リファレンス**: [ukatech/ukadoc-spec: PLUGIN/2.0](https://ukatech.shillest.net/ukadoc-spec/spec/plugin/)
 - **言及規格の元ドキュメント・権利者・ライセンス**:

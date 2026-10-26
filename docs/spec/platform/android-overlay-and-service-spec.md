@@ -1,4 +1,4 @@
-﻿# Android システムオーバーレイ & 常駐生存（Background Service）仕様書
+# Android システムオーバーレイ & 常駐生存（Background Service）仕様書
 
 - **言及規格の元ドキュメント・権利者・ライセンス**:
   - **バルーン仕様 (Balloon)**: [ukadoc-spec: balloon](https://ukatech.shillest.net/ukadoc-spec/) - © UKADOC project / Ukagaka Tech Team (CC BY 4.0)

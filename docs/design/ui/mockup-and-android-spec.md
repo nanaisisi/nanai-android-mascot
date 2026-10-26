@@ -1,4 +1,4 @@
-﻿# nanai-android-mascot UI/UX & モックアップ仕様書
+# nanai-android-mascot UI/UX & モックアップ仕様書
 
 - **言及規格の元ドキュメント・権利者・ライセンス**:
   - **SHIORI 仕様 / 各種サブシステム**:

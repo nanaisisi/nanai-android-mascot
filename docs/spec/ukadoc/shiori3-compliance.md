@@ -1,4 +1,4 @@
-﻿# SHIORI/3.0 規格対応仕様 (SHIORI/3.0 Compliance)
+# SHIORI/3.0 規格対応仕様 (SHIORI/3.0 Compliance)
 
 - **仕様リファレンス**: [ukatech/ukadoc-spec: SHIORI/3.0](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/)
 - **言及規格の元ドキュメント・権利者・ライセンス**:

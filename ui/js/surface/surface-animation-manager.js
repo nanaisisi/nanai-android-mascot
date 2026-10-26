@@ -14,6 +14,8 @@ export class SurfaceAnimationManager {
 		this._spokenCount = {};
 		/** @type {Map<string, boolean>} `\![anim,pause,ID]` で一時停止中のアニメーション (key: scopeId__animId) */
 		this.pausedAnimations = new Map();
+		/** @type {Map<string, Promise<void>>} 再生中のアニメーション（多重起動防止） */
+		this._runningAnimations = new Map();
 	}
 
 	/**
@@ -175,7 +177,23 @@ export class SurfaceAnimationManager {
 	/**
 	 * アニメーションパターンの順次実行
 	 */
-	async playAnimationPatterns(anim, baseSurfaceId, scopeId) {
+	playAnimationPatterns(anim, baseSurfaceId, scopeId) {
+		// 同一アニメの多重起動を防ぐ（口パクは1文字ごとに呼ばれるため、重なると合成処理が積み上がる）
+		const key = `${scopeId}__${baseSurfaceId}__${anim?.id ?? anim?.interval ?? ""}`;
+		const running = this._runningAnimations.get(key);
+		if (running) return running;
+		const playing = this._playAnimationPatterns(
+			anim,
+			baseSurfaceId,
+			scopeId,
+		).finally(() => {
+			this._runningAnimations.delete(key);
+		});
+		this._runningAnimations.set(key, playing);
+		return playing;
+	}
+
+	async _playAnimationPatterns(anim, baseSurfaceId, scopeId) {
 		if (!anim.patterns?.length) return;
 		const gc = this.manager.app?.ghostController;
 		if (!gc) return;
@@ -200,28 +218,35 @@ export class SurfaceAnimationManager {
 			}
 
 			const patSurface = String(pat.surface).trim();
+			const frameStart = Date.now();
 			// SERIKO 合成: ベースサーフィス上に差分パターンを重ねて表示
 			// (UKADOC 準拠: pattern.x/y オフセット、method overlay/replace)
 			// 合成不可（pattern -1 / サーフィス未定義）時は旧方式の全面差し替えへフォールバック
-			if (
-				patSurface === "-1" ||
-				!this.renderAnimationFrame(pat, baseSurfaceId, scopeId)
-			) {
+			// フレーム描画の完了を待ってから次へ進む（未完了の合成が積み上がらないように）
+			const framePromise =
+				patSurface === "-1"
+					? null
+					: this.renderAnimationFrame(pat, baseSurfaceId, scopeId);
+			if (framePromise) {
+				await framePromise;
+			} else {
 				await gc.updateSurface(
 					patSurface === "-1" ? baseSurfaceId : patSurface,
 					scopeId,
+					patSurface === "-1" ? [] : null,
 				);
 			}
 
-			const waitMs = Math.max(pat.wait || 100, 30);
-			await new Promise((r) => setTimeout(r, waitMs));
+			// 描画にかかった時間を差し引いて、パターン指定の wait を守る
+			const waitMs = Math.max(pat.wait || 100, 30) - (Date.now() - frameStart);
+			if (waitMs > 0) await new Promise((r) => setTimeout(r, waitMs));
 		}
 
 		if (
 			String(this.manager.currentSurfaceIdFor(scopeId)) ===
 			String(baseSurfaceId)
 		) {
-			await gc.updateSurface(baseSurfaceId, scopeId);
+			await gc.updateSurface(baseSurfaceId, scopeId, []);
 		}
 	}
 
@@ -232,22 +257,23 @@ export class SurfaceAnimationManager {
 	 * @param {{ surface: number|string, x?: number, y?: number, type?: string }} pat
 	 * @param {number|string} baseSurfaceId
 	 * @param {number} scopeId
-	 * @returns {boolean} 合成に成功したか（false なら全面差し替えフォールバック）
+	 * @returns {Promise<unknown>|false} 描画完了 Promise（false なら全面差し替えフォールバック）
 	 */
 	renderAnimationFrame(pat, baseSurfaceId, scopeId) {
 		if (baseSurfaceId === -1 || baseSurfaceId === "-1") return false;
 		const resolved = this.manager.resolveSurfaceNumber(pat.surface, scopeId);
 		const file = patternSurfaceFile(resolved);
 		if (!file) return false;
-		this.manager.app?.ghostController?.updateSurface(baseSurfaceId, scopeId, [
+		const gc = this.manager.app?.ghostController;
+		if (!gc) return false;
+		return Promise.resolve(gc.updateSurface(baseSurfaceId, scopeId, [
 			{
 				file,
 				x: pat.x ?? 0,
 				y: pat.y ?? 0,
 				type: pat.type ?? "overlay",
 			},
-		]);
-		return true;
+		]));
 	}
 
 	/**

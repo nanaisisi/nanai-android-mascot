@@ -27,6 +27,7 @@ export async function playScript(player, script) {
 	);
 
 	// 発話文字や選択肢がある場合のみバルーンの内容を初期化・表示
+	const shownScopes = new Set();
 	if (hasTextContent) {
 		sakuraText.innerHTML = "";
 		if (keroText) keroText.innerHTML = "";
@@ -34,10 +35,12 @@ export async function playScript(player, script) {
 			sakuraDisplay.style.display = "block";
 		}
 		if (isTauriAvailable()) {
+			shownScopes.add(0);
 			invoke("show_balloon_window", { scopeId: 0 }).catch(() => {});
 			// スクリプト内にスコープ1（\1 / \u）以降の発話・選択肢が含まれているか判定
 			const hasKero = tokens.some((t) => t.type === "scope" && t.value >= 1);
 			if (hasKero) {
+				shownScopes.add(1);
 				invoke("show_balloon_window", { scopeId: 1 }).catch(() => {});
 			}
 		}
@@ -48,14 +51,35 @@ export async function playScript(player, script) {
 	let ended = false;
 	let currentAnchor = null;
 
-	// 独立バルーン同期用ヘルパー
-	const syncDesktopBalloon = () => {
-		if (isTauriAvailable()) {
-			emit(`update-balloon-content-${player.currentScope}`, {
-				html:
-					(player.currentScope === 1 ? keroText : sakuraText)?.innerHTML || "",
+	// 独立バルーン同期用ヘルパー（頻繁なIPC呼び出しによるWindowsメッセージキュー溢れを抑止）
+	let syncPendingScope = null;
+	let syncTimer = null;
+	const flushDesktopBalloon = () => {
+		if (syncTimer) {
+			clearTimeout(syncTimer);
+			syncTimer = null;
+		}
+		if (syncPendingScope !== null && isTauriAvailable()) {
+			const sc = syncPendingScope;
+			syncPendingScope = null;
+			emit(`update-balloon-content-${sc}`, {
+				html: (sc === 1 ? keroText : sakuraText)?.innerHTML || "",
 				theme: app.currentBalloonTheme || "default",
 			});
+		}
+	};
+
+	const scheduleDesktopBalloonSync = (immediate = false) => {
+		if (!isTauriAvailable()) return;
+		syncPendingScope = player.currentScope;
+		if (immediate) {
+			flushDesktopBalloon();
+			return;
+		}
+		if (!syncTimer) {
+			syncTimer = setTimeout(() => {
+				flushDesktopBalloon();
+			}, 60);
 		}
 	};
 
@@ -78,7 +102,8 @@ export async function playScript(player, script) {
 						}
 					}
 					currentBalloonText = keroText || sakuraText;
-					if (isTauriAvailable() && hasTextContent) {
+					if (isTauriAvailable() && hasTextContent && !shownScopes.has(1)) {
+						shownScopes.add(1);
 						invoke("show_balloon_window", { scopeId: 1 }).catch(() => {});
 					}
 				} else {
@@ -89,7 +114,8 @@ export async function playScript(player, script) {
 						sakuraDisplay.style.display = "block";
 					}
 					currentBalloonText = sakuraText;
-					if (isTauriAvailable() && hasTextContent) {
+					if (isTauriAvailable() && hasTextContent && !shownScopes.has(player.currentScope)) {
+						shownScopes.add(player.currentScope);
 						invoke("show_balloon_window", { scopeId: player.currentScope }).catch(() => {});
 					}
 				}
@@ -106,7 +132,7 @@ export async function playScript(player, script) {
 				} else {
 					currentBalloonText.appendChild(span);
 				}
-				syncDesktopBalloon();
+				scheduleDesktopBalloonSync(false);
 
 				// 文字送り時の口パク連動
 				app.surfaceManager?.onCharSpoken(player.currentScope);
@@ -126,16 +152,17 @@ export async function playScript(player, script) {
 				} else {
 					currentBalloonText.appendChild(document.createElement("br"));
 				}
-				syncDesktopBalloon();
+				scheduleDesktopBalloonSync(false);
 				break;
 
 			case "clear":
 				currentBalloonText.innerHTML = "";
-				syncDesktopBalloon();
+				scheduleDesktopBalloonSync(true);
 				break;
 
 			case "pause":
 				// \x: クリックまたはタイムアウト待ち
+				flushDesktopBalloon();
 				if (!player.skipRequested && !isQuickMode) {
 					const activeDisplay =
 						player.currentScope === 1 ? keroDisplay : sakuraDisplay;
@@ -158,7 +185,7 @@ export async function playScript(player, script) {
 				});
 				currentBalloonText.appendChild(anchorSpan);
 				currentAnchor = anchorSpan;
-				syncDesktopBalloon();
+				scheduleDesktopBalloonSync(false);
 				break;
 			}
 
@@ -206,7 +233,7 @@ export async function playScript(player, script) {
 				});
 				currentBalloonText.appendChild(document.createElement("br"));
 				currentBalloonText.appendChild(choiceBtn);
-				syncDesktopBalloon();
+				flushDesktopBalloon();
 				break;
 			}
 
@@ -250,7 +277,7 @@ export async function playScript(player, script) {
 					spacer.style.top = `${token.y}px`;
 				}
 				currentBalloonText.appendChild(spacer);
-				syncDesktopBalloon();
+				scheduleDesktopBalloonSync(false);
 				break;
 			}
 
@@ -314,7 +341,7 @@ export async function playScript(player, script) {
 		}
 	}
 
-	syncDesktopBalloon();
+	flushDesktopBalloon();
 	player.isPlaying = false;
 	player.scheduleSurfaceRestore(currentId);
 }

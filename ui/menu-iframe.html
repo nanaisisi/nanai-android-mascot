@@ -127,9 +127,13 @@
            3. ベースウェア (SSP) 側メニュー: ツール・更新・設定
            ============================================================== -->
       <!-- [SHIORI連携] OnUpdate イベント発火。
-           ※ベースウェア側未実装: updates2.dau / updates.txt によるHTTP差分更新エンジンは段階的実装予定 -->
+           updates2.dau / updates.txt によるHTTP差分更新エンジン実装済み (src-tauri/src/commands/update/network.rs) -->
       <button type="button" class="menu-item" id="update-btn" role="menuitem">
         <span>🔄 ネットワーク更新 (U)</span>
+      </button>
+      <!-- [SHIORI連携] OnUpdateCheckComplete / OnUpdateCheckFailure 発火 (チェックのみ実行) -->
+      <button type="button" class="menu-item" id="updatecheck-btn" role="menuitem">
+        <span>✅ ネットワーク更新チェックのみ (C)</span>
       </button>
 
       <div class="menu-item-wrapper main-only">

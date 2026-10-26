@@ -186,7 +186,7 @@ globalThis.addEventListener("DOMContentLoaded", () => {
 	dispatcher.dispatchAction("request-sync");
 });
 
-// ショートカットキー対応 (T, B, R, P, O, D, A, Ctrl+I, Ctrl+W, Escape)
+// ショートカットキー対応 (T, B, R, P, O, D, A, C, Ctrl+I, Ctrl+W, Escape)
 document.addEventListener("keydown", (e) => {
 	if (e.key === "Escape") {
 		dispatcher.dispatchAction("close-menu");
@@ -210,6 +210,7 @@ document.addEventListener("keydown", (e) => {
 		r: "recommend", // おすすめサイト (Recommend)
 		t: "portal", // ポータル (Portal)
 		u: "update", // ネットワーク更新 (Update)
+		c: "updatecheck", // ネットワーク更新チェックのみ (Check)
 		b: "balloon", // バルーン (Balloon)
 		f: "tools", // ツール
 		i: "install", // ファイル導入

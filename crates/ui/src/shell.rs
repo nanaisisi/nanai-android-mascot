@@ -107,6 +107,26 @@ impl Shell {
         self.descript.craftmanw()
     }
 
+    /// 選択キャラの「既定装着」として指定された bind アニメーションID列
+    /// （descript `[target].bindgroup[N].default,1` の集まり）
+    pub fn default_bind_ids(&self, target: &str) -> Vec<u32> {
+        self.descript
+            .bind_groups(target)
+            .into_iter()
+            .filter(|g| g.default)
+            .map(|g| g.number)
+            .collect()
+    }
+
+    /// 現在の着せ替え状態から合成レイヤー計画を立てる
+    pub fn composition_plan(
+        &self,
+        surface: u32,
+        binds: &[u32],
+    ) -> Option<crate::surfaces::CompositionPlan> {
+        self.surfaces_txt.plan_composition(surface, binds)
+    }
+
     /// シェル内の画像ファイルを相対解決する
     pub fn resolve_asset(&self, relative: &str) -> Option<PathBuf> {
         resolve_vfs_path(&self.directory, relative)
@@ -168,6 +188,12 @@ mod tests {
         // 着せ替え定義（mock_nanai は sakura / kero とも bindgroup を持つ）
         assert!(!shell.sakura_bind_groups().is_empty());
         assert!(!shell.kero_bind_groups().is_empty());
+
+        // 既定装着の bind id と合成計画
+        if let Some(default_id) = shell.default_bind_ids("sakura").first().copied() {
+            let plan = shell.composition_plan(0, &[default_id]).unwrap();
+            assert!(plan.bind_pattern_count() >= 1);
+        }
 
         // surfacetable.txt も存在する（グループ一覧）
         if let Some(table) = &shell.surface_table {

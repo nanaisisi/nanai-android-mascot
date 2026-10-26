@@ -36,11 +36,16 @@ if (globalThis.__TAURI__) {
 
 	// デスクトップ上でのドラッグ移動
 	root?.addEventListener("mousedown", (e) => {
-		if (e.button === 0 && typeof invokeFn === "function") {
-			const startDraggingFn =
-				globalThis.__TAURI__.window?.getCurrentWindow?.()?.startDragging;
-			if (typeof startDraggingFn === "function") {
-				startDraggingFn();
+		if (e.button === 0) {
+			const tauriWindow =
+				globalThis.__TAURI__.window?.getCurrentWindow?.() ||
+				globalThis.__TAURI__.getCurrentWindow?.();
+			if (tauriWindow && typeof tauriWindow.startDragging === "function") {
+				try {
+					tauriWindow.startDragging();
+				} catch (_err) {
+					// 無視
+				}
 			}
 		}
 	});

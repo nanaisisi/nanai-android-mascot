@@ -49,6 +49,7 @@ export default defineConfig({
 				menu: resolve(import.meta.dirname, "ui/menu-iframe.html"),
 				submenu: resolve(import.meta.dirname, "ui/submenu-iframe.html"),
 				subcharacter: resolve(import.meta.dirname, "ui/subcharacter.html"),
+				balloon: resolve(import.meta.dirname, "ui/balloon.html"),
 				testMenu: resolve(import.meta.dirname, "ui/test-menu.html"),
 			},
 		},

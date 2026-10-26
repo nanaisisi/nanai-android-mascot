@@ -9,7 +9,11 @@ pub async fn send_shiori_request(
 ) -> Result<String, String> {
     let gid = ghost_id.unwrap_or_else(|| "main".to_string());
 
-    println!("📤 [Rust] SHIORI request (ghost: {}):\n{}", gid, request.trim());
+    println!(
+        "📤 [Rust] SHIORI request (ghost: {}):\n{}",
+        gid,
+        request.trim()
+    );
 
     let result = if gid != "main" {
         let engines = state.ghost_engines.lock();
@@ -29,7 +33,11 @@ pub async fn send_shiori_request(
     };
 
     match &result {
-        Ok(res) => println!("📥 [Rust] SHIORI response (ghost: {}):\n{}", gid, res.trim()),
+        Ok(res) => println!(
+            "📥 [Rust] SHIORI response (ghost: {}):\n{}",
+            gid,
+            res.trim()
+        ),
         Err(err) => println!("❌ [Rust] SHIORI request failed (ghost: {}): {}", gid, err),
     }
 

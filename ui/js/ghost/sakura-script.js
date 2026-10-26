@@ -1,4 +1,9 @@
-import { emit, invoke, isTauriAvailable, listen } from "../core/tauri-helper.js";
+import {
+	emit,
+	invoke,
+	isTauriAvailable,
+	listen,
+} from "../core/tauri-helper.js";
 import { SakuraCommandHandler } from "./sakura-command-handler.js";
 import { parseSakuraScript } from "./sakura-parser.js";
 
@@ -34,7 +39,9 @@ export class SakuraScriptPlayer {
 			listen("balloon-anchor-selected", (event) => {
 				const { anchorId } = event.payload || {};
 				if (anchorId) {
-					this.app.ghostController.sendShioriEvent("OnAnchorSelect", [anchorId]);
+					this.app.ghostController.sendShioriEvent("OnAnchorSelect", [
+						anchorId,
+					]);
 				}
 			});
 			listen("balloon-clicked", () => {
@@ -42,7 +49,11 @@ export class SakuraScriptPlayer {
 			});
 			listen("balloon-ready", (event) => {
 				const sid = event.payload?.scopeId ?? 0;
-				const html = (sid === 1 ? this.app.elements.keroBalloonText : this.app.elements.balloonText)?.innerHTML || "";
+				const html =
+					(sid === 1
+						? this.app.elements.keroBalloonText
+						: this.app.elements.balloonText
+					)?.innerHTML || "";
 				emit(`update-balloon-content-${sid}`, {
 					html,
 					theme: this.app.currentBalloonTheme || "default",
@@ -75,7 +86,8 @@ export class SakuraScriptPlayer {
 		const keroDisplay = this.app.elements.keroBalloonDisplay;
 
 		const hasTextContent = tokens.some(
-			(t) => t.type === "char" || t.type === "choice" || t.type === "anchor_begin"
+			(t) =>
+				t.type === "char" || t.type === "choice" || t.type === "anchor_begin",
 		);
 
 		// 発話文字や選択肢がある場合のみバルーンの内容を初期化・表示
@@ -96,7 +108,8 @@ export class SakuraScriptPlayer {
 		const syncDesktopBalloon = () => {
 			if (isTauriAvailable()) {
 				emit(`update-balloon-content-${this.currentScope}`, {
-					html: (this.currentScope === 1 ? keroText : sakuraText)?.innerHTML || "",
+					html:
+						(this.currentScope === 1 ? keroText : sakuraText)?.innerHTML || "",
 					theme: this.app.currentBalloonTheme || "default",
 				});
 			}
@@ -136,6 +149,9 @@ export class SakuraScriptPlayer {
 				case "char": {
 					const span = document.createElement("span");
 					span.textContent = token.value;
+					if (this.currentFontStyles) {
+						Object.assign(span.style, this.currentFontStyles);
+					}
 					if (currentAnchor) {
 						currentAnchor.appendChild(span);
 					} else {
@@ -241,6 +257,67 @@ export class SakuraScriptPlayer {
 					currentBalloonText.appendChild(document.createElement("br"));
 					currentBalloonText.appendChild(choiceBtn);
 					syncDesktopBalloon();
+					break;
+				}
+
+				case "balloon": {
+					// \b[-1] でバルーン非表示、その他は表示
+					const balloonDisplay =
+						this.currentScope === 1 ? keroDisplay : sakuraDisplay;
+					if (token.value === -1) {
+						if (balloonDisplay) balloonDisplay.style.display = "none";
+					} else {
+						if (balloonDisplay) balloonDisplay.style.display = "block";
+					}
+					break;
+				}
+
+				case "timeout":
+					// \t: タイムアウト抑止（自動消去の無効化）
+					this.hasTimeoutSuppressed = true;
+					break;
+
+				case "halt":
+					// \-: ゴースト終了
+					await this.app.ghostController?.closeGhost?.();
+					break;
+
+				case "offset": {
+					// \_l[x,y] バルーン内座標オフセット指定（spanのstyle指定で実現）
+					const spacer = document.createElement("span");
+					spacer.style.display = "inline-block";
+					if (token.x.startsWith("@")) {
+						spacer.style.marginLeft = `${token.x.slice(1)}px`;
+					} else {
+						spacer.style.position = "relative";
+						spacer.style.left = `${token.x}px`;
+					}
+					if (token.y.startsWith("@")) {
+						spacer.style.marginTop = `${token.y.slice(1)}px`;
+					} else {
+						spacer.style.top = `${token.y}px`;
+					}
+					currentBalloonText.appendChild(spacer);
+					syncDesktopBalloon();
+					break;
+				}
+
+				case "font": {
+					// \f[color,red], \f[bold,1], \f[default]
+					if (token.tag === "default") {
+						this.currentFontStyles = {};
+					} else if (token.tag === "color" && token.param) {
+						this.currentFontStyles = this.currentFontStyles || {};
+						this.currentFontStyles.color = token.param;
+					} else if (token.tag === "bold") {
+						this.currentFontStyles = this.currentFontStyles || {};
+						this.currentFontStyles.fontWeight =
+							token.param === "0" ? "normal" : "bold";
+					} else if (token.tag === "italic") {
+						this.currentFontStyles = this.currentFontStyles || {};
+						this.currentFontStyles.fontStyle =
+							token.param === "0" ? "normal" : "italic";
+					}
 					break;
 				}
 

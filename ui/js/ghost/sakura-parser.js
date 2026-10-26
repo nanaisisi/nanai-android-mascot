@@ -45,7 +45,8 @@ export function parseSakuraScript(script) {
 			else if (char === "p" && script[i + 1] === "[") {
 				const end = script.indexOf("]", i + 1);
 				if (end !== -1) {
-					const scopeVal = Number.parseInt(script.substring(i + 2, end), 10) || 0;
+					const scopeVal =
+						Number.parseInt(script.substring(i + 2, end), 10) || 0;
 					tokens.push({ type: "scope", value: scopeVal });
 					i = end + 1;
 				} else {
@@ -69,7 +70,10 @@ export function parseSakuraScript(script) {
 						i++;
 					}
 				} else if (/\d/.test(script[i])) {
-					tokens.push({ type: "surface", value: Number.parseInt(script[i], 10) });
+					tokens.push({
+						type: "surface",
+						value: Number.parseInt(script[i], 10),
+					});
 					i++;
 				}
 			}
@@ -177,7 +181,9 @@ export function parseSakuraScript(script) {
 					content += script[j];
 					j++;
 				}
-				const args = content.split(",").map((s) => s.trim().replace(/^"|"$/g, ""));
+				const args = content
+					.split(",")
+					.map((s) => s.trim().replace(/^"|"$/g, ""));
 				tokens.push({ type: "command", args });
 				i = j + 1;
 			}
@@ -195,6 +201,80 @@ export function parseSakuraScript(script) {
 				} else {
 					i++;
 				}
+			}
+			// \_l[x,y] (座標移動)
+			else if (char === "_" && script[i + 1] === "l" && script[i + 2] === "[") {
+				const start = i + 3;
+				const end = script.indexOf("]", start);
+				if (end !== -1) {
+					const coords = script.substring(start, end).split(",");
+					tokens.push({
+						type: "offset",
+						x: coords[0]?.trim() || "0",
+						y: coords[1]?.trim() || "0",
+					});
+					i = end + 1;
+				} else {
+					i += 2;
+				}
+			}
+			// \_s (複数キャラ同期表示トグル)
+			else if (char === "_" && script[i + 1] === "s") {
+				tokens.push({ type: "sync_toggle" });
+				i += 2;
+			}
+			// \b (バルーン指定: \b[0], \b[-1], \b0..\b9)
+			else if (char === "b") {
+				i++;
+				if (script[i] === "[") {
+					const end = script.indexOf("]", i);
+					if (end !== -1) {
+						const val = Number.parseInt(
+							script.substring(i + 1, end).trim(),
+							10,
+						);
+						tokens.push({
+							type: "balloon",
+							value: Number.isNaN(val) ? 0 : val,
+						});
+						i = end + 1;
+					} else {
+						i++;
+					}
+				} else if (/\d/.test(script[i])) {
+					tokens.push({
+						type: "balloon",
+						value: Number.parseInt(script[i], 10),
+					});
+					i++;
+				}
+			}
+			// \f (フォント指定: \f[tag,param], \f[tag])
+			else if (char === "f" && script[i + 1] === "[") {
+				const start = i + 2;
+				const end = script.indexOf("]", start);
+				if (end !== -1) {
+					const content = script.substring(start, end);
+					const parts = content.split(",").map((s) => s.trim());
+					tokens.push({
+						type: "font",
+						tag: parts[0] || "",
+						param: parts.length > 1 ? parts.slice(1).join(",") : null,
+					});
+					i = end + 1;
+				} else {
+					i++;
+				}
+			}
+			// \t (タイムアウト抑止)
+			else if (char === "t") {
+				tokens.push({ type: "timeout" });
+				i++;
+			}
+			// \- (ゴースト終了)
+			else if (char === "-") {
+				tokens.push({ type: "halt" });
+				i++;
 			}
 			// \e (終了)
 			else if (char === "e") {

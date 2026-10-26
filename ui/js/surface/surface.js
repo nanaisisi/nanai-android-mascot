@@ -1,6 +1,16 @@
 import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
-import { composeSurfaceElements, processChromaKey } from "./surface-compositor.js";
+import {
+	composeSurfaceElements,
+	processChromaKey,
+} from "./surface-compositor.js";
 import { expandSurfaceRange, parseSurfacesTxt } from "./surface-parser.js";
+
+// 外部エクスポート
+export {
+	composeSurfaceElements,
+	processChromaKey,
+} from "./surface-compositor.js";
+export { expandSurfaceRange, parseSurfacesTxt } from "./surface-parser.js";
 
 /**
  * Nanai Android Mascot - surfaces.txt パーサー & 当たり判定（Collision）マネージャー
@@ -65,7 +75,10 @@ export class SurfaceManager {
 				this.parseSurfacesTxt(content);
 			}
 		} catch (err) {
-			console.warn("surfaces.txt 読み込みスキップ (デフォルト設定を使用):", err);
+			console.warn(
+				"surfaces.txt 読み込みスキップ (デフォルト設定を使用):",
+				err,
+			);
 		}
 	}
 
@@ -227,7 +240,9 @@ export class SurfaceManager {
 	async playAnimationById(animId, scopeId = 0, waitForComplete = false) {
 		const sid = String(this.currentSurfaceId);
 		const animList = this.animations[sid] || this.animations.default || [];
-		const anim = animList.find((a) => a.id === animId || String(a.id) === String(animId));
+		const anim = animList.find(
+			(a) => a.id === animId || String(a.id) === String(animId),
+		);
 		if (!anim) return;
 
 		const playPromise = this.playAnimationPatterns(anim, sid, scopeId);
@@ -242,7 +257,9 @@ export class SurfaceManager {
 	onCharSpoken(scopeId = 0) {
 		const sid = String(this.currentSurfaceId);
 		const animList = this.animations[sid] || this.animations.default || [];
-		const talkAnim = animList.find((a) => (a.interval || "").startsWith("talk"));
+		const talkAnim = animList.find((a) =>
+			(a.interval || "").startsWith("talk"),
+		);
 		if (!talkAnim) return;
 
 		if (!this._spokenCount) this._spokenCount = {};
@@ -258,7 +275,8 @@ export class SurfaceManager {
 	 * マウス・タッチ座標から当たり部位（head, bust等）を判定
 	 */
 	detectCollision(clickX, clickY, targetRect, surfaceId = null) {
-		const sid = surfaceId !== null ? String(surfaceId) : String(this.currentSurfaceId);
+		const sid =
+			surfaceId !== null ? String(surfaceId) : String(this.currentSurfaceId);
 
 		// 表示要素内での相対座標 (0.0 〜 1.0)
 		const relX = (clickX - targetRect.left) / targetRect.width;
@@ -307,7 +325,13 @@ export class SurfaceManager {
 	/**
 	 * 着せ替えパーツの装着/解除 (\![bind,category,part,status] UKADOC準拠)
 	 */
-	async bindDressup(category, part = "", statusVal = "", scopeId = 0, notifyEvent = true) {
+	async bindDressup(
+		category,
+		part = "",
+		statusVal = "",
+		scopeId = 0,
+		notifyEvent = true,
+	) {
 		const key = `${scopeId}__${category}__${part}`;
 		let newStatus = true;
 
@@ -327,7 +351,10 @@ export class SurfaceManager {
 		);
 
 		// サーフィス再描画（着せ替え状態の反映）
-		await this.app.ghostController.updateSurface(this.currentSurfaceId, scopeId);
+		await this.app.ghostController.updateSurface(
+			this.currentSurfaceId,
+			scopeId,
+		);
 
 		// SHIORI イベント通知 (OnDressupChanged)
 		if (notifyEvent) {
@@ -357,7 +384,3 @@ export class SurfaceManager {
 		return composeSurfaceElements(elementList, baseImgSrc, resolveImagePath);
 	}
 }
-
-// 外部エクスポート
-export { parseSurfacesTxt, expandSurfaceRange } from "./surface-parser.js";
-export { processChromaKey, composeSurfaceElements } from "./surface-compositor.js";

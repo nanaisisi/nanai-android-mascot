@@ -67,4 +67,14 @@ impl Descript {
     pub fn font_color(&self) -> Option<&String> {
         self.get("font.color")
     }
+
+    /// トレイ/アプリアイコン画像パス (`icon` キー)
+    pub fn icon(&self) -> Option<&String> {
+        self.get("icon")
+    }
+
+    /// 作者/作者Web (`craftman` / `craftmanw` キー)
+    pub fn craftmanw(&self) -> Option<&String> {
+        self.get("craftmanw").or_else(|| self.get("craftman"))
+    }
 }

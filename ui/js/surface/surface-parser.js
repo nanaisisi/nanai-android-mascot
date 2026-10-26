@@ -84,17 +84,25 @@ export function parseSurfacesTxt(text) {
 		// collisionex[ID],[name],[shape],[coords...] または collision[ID],[coords...],[name]
 		if (trimmed.startsWith("collisionex")) {
 			const parts = trimmed.split(",");
-			if (parts.length >= 6) {
+			if (parts.length >= 5) {
 				const name = parts[1].trim().toLowerCase();
 				const shape = parts[2].trim().toLowerCase();
-				const x1 = Number.parseInt(parts[3], 10);
-				const y1 = Number.parseInt(parts[4], 10);
-				const x2 = Number.parseInt(parts[5], 10);
-				const y2 = Number.parseInt(parts[6], 10);
 
 				currentSurfaces.forEach((s) => {
 					if (!collisions[s]) collisions[s] = [];
-					collisions[s].push({ name, shape, x1, y1, x2, y2 });
+					if (shape === "circle" || shape === "ellipse") {
+						const cx = Number.parseInt(parts[3], 10);
+						const cy = Number.parseInt(parts[4], 10);
+						const rx = Number.parseInt(parts[5], 10);
+						const ry = Number.parseInt(parts[6], 10) || rx;
+						collisions[s].push({ name, shape, cx, cy, rx, ry });
+					} else if (parts.length >= 7) {
+						const x1 = Number.parseInt(parts[3], 10);
+						const y1 = Number.parseInt(parts[4], 10);
+						const x2 = Number.parseInt(parts[5], 10);
+						const y2 = Number.parseInt(parts[6], 10);
+						collisions[s].push({ name, shape, x1, y1, x2, y2 });
+					}
 				});
 			}
 		} else if (trimmed.startsWith("collision")) {

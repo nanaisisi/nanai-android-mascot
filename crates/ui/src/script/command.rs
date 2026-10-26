@@ -9,7 +9,9 @@ pub enum SakuraCommand {
     Wait(u32),    // \w1..9, \_w[ms] (ミリ秒単位)
     ClickWait,    // \x (クリック/入力待ち)
     Quick(bool),  // \_q (高速表示トグル)
-    NewLine,      // \n
+    NewLine {
+        half: bool,
+    }, // \n / \n[half]
     Clear,        // \c
     Choice {
         label: String,
@@ -29,6 +31,10 @@ pub enum SakuraCommand {
         status: Option<bool>,
     }, // \![bind,cat,part,status]
     Balloon(i32), // \b[n], \b[-1], \b0..\b9
+    Animation {
+        id: u32,
+        wait: bool,
+    }, // \i[ID], \i[ID,wait]
     Timeout,      // \t (タイムアウト抑止)
     Halt,         // \- (ゴースト終了)
     Sync(bool),   // \_s (複数キャラ同期発話トグル)
@@ -42,4 +48,7 @@ pub enum SakuraCommand {
     }, // \f[tag,param], \f[tag]
     Text(String), // 通常テキスト
     End,          // \e
+    Command {
+        args: Vec<String>,
+    }, // その他の \![...] 汎用透過
 }

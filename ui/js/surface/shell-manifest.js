@@ -48,11 +48,19 @@ export function collisionRecord(area) {
 	const shape = area?.shape ?? {};
 	let kind = "rect";
 	let coords = shape;
-	if (typeof shape === "object" && "Polygon" in shape) {
-		kind = "polygon";
-		coords = shape.Polygon;
-	} else if (typeof shape === "object" && "Rect" in shape) {
-		coords = shape.Rect;
+	if (typeof shape === "object") {
+		if ("Polygon" in shape) {
+			kind = "polygon";
+			coords = shape.Polygon;
+		} else if ("Circle" in shape) {
+			kind = "circle";
+			coords = shape.Circle;
+		} else if ("Ellipse" in shape) {
+			kind = "ellipse";
+			coords = shape.Ellipse;
+		} else if ("Rect" in shape) {
+			coords = shape.Rect;
+		}
 	}
 
 	if (kind === "polygon") {
@@ -62,6 +70,16 @@ export function collisionRecord(area) {
 			vertices: (coords?.vertices ?? []).map((p) =>
 				Array.isArray(p) ? p : [p?.x ?? 0, p?.y ?? 0],
 			),
+		};
+	}
+	if (kind === "circle" || kind === "ellipse") {
+		return {
+			name: String(area?.name ?? "").toLowerCase(),
+			shape: kind,
+			cx: Number(coords?.cx ?? 0),
+			cy: Number(coords?.cy ?? 0),
+			rx: Number(coords?.rx ?? coords?.r ?? 0),
+			ry: Number(coords?.ry ?? coords?.r ?? 0),
 		};
 	}
 	return {
@@ -96,6 +114,11 @@ export function collisionContains(col, x, y) {
 			}
 		}
 		return inside;
+	}
+	if (col.shape === "circle" || col.shape === "ellipse") {
+		const dx = (x - col.cx) / (col.rx || 0);
+		const dy = (y - col.cy) / (col.ry || 0);
+		return col.rx > 0 && col.ry > 0 && dx * dx + dy * dy <= 1;
 	}
 	return (
 		x >= Math.min(col.x1, col.x2) &&

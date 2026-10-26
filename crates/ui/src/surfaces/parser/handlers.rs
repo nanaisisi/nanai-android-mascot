@@ -79,6 +79,27 @@ pub(super) fn apply_collisionex(txt: &mut SurfacesTxt, ids: &[u32], id_part: &st
                 .map(|c| (c[0], c[1]))
                 .collect(),
         }),
+        // circle: 中心X, 中心Y, 半径X, 半径Y（半径Y省略時は真円）
+        "circle" if coords.len() >= 3 => Some(match coords.len() {
+            4.. => CollisionShape::Ellipse {
+                cx: coords[0],
+                cy: coords[1],
+                rx: coords[2] as f64,
+                ry: coords[3] as f64,
+            },
+            _ => CollisionShape::Circle {
+                cx: coords[0],
+                cy: coords[1],
+                r: coords[2] as f64,
+            },
+        }),
+        // ellipse: 中心X, 中心Y, 半径X, 半径Y
+        "ellipse" if coords.len() >= 4 => Some(CollisionShape::Ellipse {
+            cx: coords[0],
+            cy: coords[1],
+            rx: coords[2] as f64,
+            ry: coords[3] as f64,
+        }),
         _ => {
             if coords.len() >= 6 {
                 Some(CollisionShape::Polygon {

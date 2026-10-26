@@ -55,6 +55,38 @@ pub(super) fn handle_wait_short(chars: &mut CharsIter<'_>) -> Option<u32> {
     read_digit(chars).map(|d| d * 50)
 }
 
+/// `\n` / `\n[half]` / `\n[N]`（N は1行空行。ここでは half 判定のみ返す）
+pub(super) fn handle_newline(chars: &mut CharsIter<'_>) -> Option<bool> {
+    let arg = read_bracketed(chars);
+    Some(matches!(arg.as_deref(), Some("half")))
+}
+
+/// `\i[ID]` / `\i[ID,wait]` / `\i0..\i9`
+pub(super) fn handle_animation(chars: &mut CharsIter<'_>) -> Option<(u32, bool)> {
+    let content = match read_bracketed(chars) {
+        Some(c) => c,
+        None => {
+            // 旧形式 \i0..\i9
+            return read_digit(chars).map(|d| (d, false));
+        }
+    };
+    let mut parts = content.split(',');
+    let id_raw = parts.next().unwrap_or("").trim();
+    if id_raw.is_empty() {
+        return None;
+    }
+    let id: u32 = id_raw.parse().ok()?;
+    let wait = parts.next().is_some_and(|p| p.trim() == "wait");
+    Some((id, wait))
+}
+
+/// 未知タグの後続引数（`[...]`）を黙って消費する（本文への漏出防止）
+pub(super) fn consume_tag_tail(chars: &mut CharsIter<'_>) {
+    if chars.peek() == Some(&'[') {
+        let _ = read_bracketed(chars);
+    }
+}
+
 /// `\b[n]`（\b[-1] 等の負数含む）または `\b0..\b9`
 pub(super) fn handle_balloon(chars: &mut CharsIter<'_>) -> Option<i32> {
     if let Some(num) = read_bracketed(chars) {
@@ -105,16 +137,26 @@ pub(super) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
                 status,
             });
         }
-        _ => {}
+        _ => {
+            // その他の \![...] は汎用コマンドとして JS 側へ透過する
+            callback(SakuraCommand::Command {
+                args: parts.iter().map(|s| s.to_string()).collect(),
+            });
+        }
     }
 }
 
-/// `\q[テキスト,ID]`
+/// `\q[テキスト,ID]` / `\q[temp,テキスト,ID]`（旧形式）
 pub(super) fn handle_choice(chars: &mut CharsIter<'_>) -> Option<(String, String)> {
     let content = read_bracketed(chars)?;
-    let mut parts = content.splitn(2, ',');
-    let label = parts.next().unwrap_or("").to_string();
-    let id = parts.next().unwrap_or("").to_string();
+    let parts: Vec<&str> = content.split(',').map(|s| s.trim()).collect();
+    if parts.len() >= 3 && parts[0] == "temp" {
+        let label = parts[1].to_string();
+        let id = parts[2].to_string();
+        return Some((label, id));
+    }
+    let label = parts.first().copied().unwrap_or("").to_string();
+    let id = parts.get(1).copied().unwrap_or("").to_string();
     Some((label, id))
 }
 
@@ -168,6 +210,14 @@ pub(super) fn handle_underscore(
                 callback(SakuraCommand::Offset { x, y });
             }
         }
-        _ => {}
+        Some('_') => {
+            // \__w[delay] 等の副コマンド連結: 1文字読み飛ばして [...] を消費
+            let _ = chars.next();
+            consume_tag_tail(chars);
+        }
+        _ => {
+            // 未知の \_x 系: 後続の [...] 引数を消費し、本文への漏出を防ぐ
+            consume_tag_tail(chars);
+        }
     }
 }

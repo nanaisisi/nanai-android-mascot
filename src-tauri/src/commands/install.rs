@@ -101,13 +101,11 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
     }
 
     // install.txt の type 種別を検証 (ukadoc準拠: Ghost / Shell / Balloon / Plugin / Supplement)
-    // ゴースト以外のアーカイブを ghost ディレクトリに展開して壊すのを防ぐ
-    if let Some(kind) = install_type.as_deref().map(str::to_lowercase)
-        && kind != "ghost"
-    {
+    let kind = install_type.as_deref().map(str::to_lowercase).unwrap_or_else(|| "ghost".to_string());
+    if kind != "ghost" && kind != "balloon" {
         let label = install_type.unwrap_or_default();
         return Err(format!(
-            "install.txt type={label} ({kind}): 現状Ghostアーカイブのみ取り込み可能です"
+            "install.txt type={label} ({kind}): 現状GhostおよびBalloonアーカイブのみ取り込み可能です"
         ));
     }
 
@@ -117,8 +115,12 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
         .map(|c| if r#"\/:*?"<>| "#.contains(c) { '_' } else { c })
         .collect();
 
-    let target_ghost_base = resolve_asset_path("assets/ghost", app_handle)?;
-    let target_dir = target_ghost_base.join(&safe_dir_name);
+    let target_base = if kind == "balloon" {
+        resolve_asset_path("assets/balloon", app_handle)?
+    } else {
+        resolve_asset_path("assets/ghost", app_handle)?
+    };
+    let target_dir = target_base.join(&safe_dir_name);
 
     if !target_dir.exists() {
         std::fs::create_dir_all(&target_dir)

@@ -50,7 +50,7 @@ git ls-files | Select-String "\.js$" | ForEach-Object { Get-Item $_ } | Sort-Obj
 #### Nushell での実行例
 
 ```nu
-git ls-files | lines | where ($in | str ends-with ".js") | each { |it| ls $it } | flatten | sort-by size --reverse | first 10
+git ls-files | lines | where ($in | str ends-with ".js") | each { |it| try { ls $it } } | compact | flatten | sort-by size --reverse | first 10 | select name size
 ```
 
 #### Bash での実行例

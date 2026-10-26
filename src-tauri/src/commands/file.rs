@@ -52,6 +52,8 @@ pub fn load_surface_image(
         shell_dir.join(format!("surface{surface_id}.png")),
         shell_dir.join(format!("surface{surface_id_num:04}.png")),
         shell_dir.join(format!("surface{surface_id_num:02}.png")),
+        shell_dir.join(format!("surface{surface_id}.bmp")),
+        shell_dir.join(format!("surface{surface_id_num:04}.bmp")),
         shell_dir.join(format!("surface{surface_id}.svg")),
         shell_dir.join(format!("surface{surface_id}.pna")),
         shell_dir.join(format!("Surface{surface_id}.png")),
@@ -59,6 +61,8 @@ pub fn load_surface_image(
         master_dir.join(format!("surface{surface_id}.png")),
         master_dir.join(format!("surface{surface_id_num:04}.png")),
         master_dir.join(format!("surface{surface_id_num:02}.png")),
+        master_dir.join(format!("surface{surface_id}.bmp")),
+        master_dir.join(format!("surface{surface_id_num:04}.bmp")),
         master_dir.join(format!("surface{surface_id}.svg")),
     ];
 
@@ -91,6 +95,7 @@ pub fn load_surface_image(
                 .to_lowercase();
             let mime = match ext.as_str() {
                 "svg" => "image/svg+xml",
+                "bmp" => "image/bmp",
                 "pna" => "image/png",
                 _ => "image/png",
             };

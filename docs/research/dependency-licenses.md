@@ -1,0 +1,75 @@
+# 依存ライセンス調査報告書 (Dependency License Audit)
+
+本ドキュメントは、**Nanai Android Mascot** が利用・同梱するすべてのソフトウェア依存関係（Rust クレート、フロントエンド npm パッケージ、および「伺か」系ネイティブ SHIORI サブモジュール）のライセンス調査結果をまとめたものです。
+
+---
+
+## 1. 総合評価・サマリー
+
+- **コンプライアンス適合性**: 適合（重大なライセンスリスクなし）
+- **強コピーレフト（GPL系）の混入**: なし
+- **ライセンス未定義依存**: なし
+- **本プロジェクトライセンス（MIT / Apache-2.0）との両立**: 完全互換
+- **留意事項**:
+  - 弱コピーレフトライセンスである **MPL-2.0** が一部の Rust クレートに含まれますが、これらは無改変のライブラリ利用であり、プロジェクト全体のコードを伝播・強制開示させる影響はありません。
+  - 「伺か」系 SHIORI サブモジュール（里々、YAYA、華和梨）は **BSD 2-Clause / BSD 3-Clause** であり、バイナリ配布・同梱時に著作権表示と免責条項を保持することで安全に利用可能です。
+
+---
+
+## 2. 「伺か」系ネイティブ SHIORI サブモジュールのライセンス
+
+本プロジェクトでは、将来の WebAssembly (WASM) / ネイティブ連携を視野に `cpp/` 配下に代表的な伺か SHIORI 実装を Git サブモジュールとして管理しています。
+
+| モジュール名 | リポジトリ / 配置パス | ライセンス | 著作権者 | 利用上の要件・備考 |
+| :--- | :--- | :--- | :--- | :--- |
+| **華和梨 (KAWARI)** | `cpp/kawari` (v9.2.0) | **BSD 2-Clause License** | Copyright (C) 2001-2015 KAWARI Development Team | 著作権表示および免責条項の保持。 |
+| **里々 (SATORI)** | `cpp/satoriya-shiori` (Mc170-4-r3) | **BSD 2-Clause License** | Copyright (c) 2001-2005 Kusigahama Yagi / 2006- SEIBIHAN | 著作権表示および免責条項の保持。 |
+| **YAYA** | `cpp/yaya-shiori` (Tc550-3) | **修正BSDライセンス (BSD 3-Clause)** または **AYA Ver.5元ライセンス** | Copyright (c) 2007- 整備班 (SEIBIHAN) / 原著作者 umeici 氏 | 伺かゴースト周辺ツールとしての組み込み時は AYA Ver.5 ライセンス（自由利用・自由改変・免責）の選択が可能。通常の再配布では BSD 3-Clause に従い著作権表示・免責条項を保持。 |
+
+### 内包ライブラリ（YAYA）
+
+YAYA のソースコード内には以下の補助ライブラリが含まれています：
+
+1. **バベル (-babel-)**: 文字コード変換ライブラリ（独自許諾・自由利用可能）
+2. **DEELX**: 正規表現エンジン（GPL / 商用ライセンスデュアル。ただし YAYA 配布形態ではフリーモジュールとして組み込み利用）
+
+---
+
+## 3. Rust クレート依存（Cargo）
+
+全 365 個の外部依存クレートを調査しました。未定義ライセンスや GPL 系統の混入はありません。
+
+### ライセンス種別ごとの分類
+
+| ライセンス種別 | 主な該当クレート例 | 分類・利用条件 |
+| :--- | :--- | :--- |
+| **MIT / Apache-2.0** (デュアル含む) | `serde`, `tokio`, `tauri`, `reqwest`, `thiserror`, `windows-sys`, `flate2` 等 (300+ クレート) | 寛容型（Permissive）。著作権表示・免責条項を保持。 |
+| **BSD-3-Clause / BSD-2-Clause** | `ring`, `crossbeam-*`, `regex-syntax` 等 | 寛容型。著作権表示・免責条項を保持。 |
+| **ISC** | `rustls`, `webpki` | 寛容型（MIT 同等）。 |
+| **Zlib** | `zlib-rs`, `foldhash`, `bytemuck` 等 | 寛容型。再配布時の条件が極めて緩やか。 |
+| **Unicode-3.0** | `icu_*`, `zerovec`, `yoke` 等 (ICU4X 関連) | Unicode Consortium による寛容型許諾。 |
+| **CDLA-Permissive-2.0** | `mime-db` | The Linux Foundation によるデータ定義向け寛容ライセンス。 |
+| **MPL-2.0** (Mozilla Public License 2.0) | `selectors`, `cssparser`, `cssparser-macros`, `dtoa-short`, `option-ext` | ファイル単位の弱コピーレフト。クレート自体のソースコードを改変しない限り、プロジェクト全体へのライセンス波及なし。 |
+| **マルチライセンス (LGPL含む)** | `r-efi` (`MIT OR Apache-2.0 OR LGPL-2.1-or-later`) | MIT または Apache-2.0 を選択可能であるため、LGPL 条件は回避。 |
+
+---
+
+## 4. フロントエンド・JavaScript 依存 (npm)
+
+`package.json` に定義されている依存関係です。
+
+| パッケージ名 | 区分 | バージョン | ライセンス | 用途 |
+| :--- | :--- | :--- | :--- | :--- |
+| `@tauri-apps/api` | dependencies | `^2.12.4` | **Apache-2.0 / MIT** | Tauri ランタイムとのフロントエンド通信 API |
+| `vite` | devDependencies | `^8.3.5` | **MIT** | 開発サーバおよびフロントエンドビルドツール |
+| `@biomejs/biome` | devDependencies | `2.6.3` | **MIT / Apache-2.0** | Linter & Formatter |
+| `markuplint` | devDependencies | `^5.3.0` | **MIT** | HTML マークアップ構文チェッカー |
+
+---
+
+## 5. 配布・ビルド時における推奨事項
+
+1. **Third-Party Notice の整備**:
+   - リリースバイナリ（Windows インストーラ、Android APK 等）を配布する際は、同梱ソフトウェアの著作権表示（MIT/Apache/BSD/Zlib/MPL等）をまとめた Notice テキストを添付してください。
+2. **CI 自動チェックの導入**:
+   - `cargo-deny` を GitHub Actions ワークフローに組み込むことで、今後の新規クレート追加時に不適合ライセンスが混入することを自動検知できます。

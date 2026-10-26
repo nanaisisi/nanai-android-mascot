@@ -161,6 +161,7 @@ pub fn run() {
             commands::shiori::load_ghost,
             commands::shiori::send_shiori_request,
             commands::shiori::send_shiori_event,
+            commands::shiori::send_shiori_notify,
             commands::shiori::send_shiori_event_typed,
             commands::shiori::on_mouse_click,
             commands::shiori::on_second_change,

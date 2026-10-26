@@ -104,6 +104,23 @@ pub async fn send_shiori_event(
     send_shiori_request(state, req.build(), ghost_id).await
 }
 
+/// SHIORIへ NOTIFY コマンドで情報を通知（UKADOC notify イベント群）
+///
+/// NOTIFY の SHIORI 応答は baseware が無視する規約のため、応答テキストはそのまま返す。
+/// `installedghostname` / `ghostpathlist` / `uniqueid` / `basewareversion` 等の
+/// 起動時情報提示に使用する。
+#[tauri::command]
+pub async fn send_shiori_notify(
+    state: tauri::State<'_, AppState>,
+    event: String,
+    references: Option<Vec<String>>,
+    ghost_id: Option<String>,
+) -> Result<String, String> {
+    let mut req = ShioriRequest::notify(&event, &references.unwrap_or_default());
+    req.sender = "NanaiMascot".to_string();
+    send_shiori_request(state, req.build(), ghost_id).await
+}
+
 /// SHIORI イベントを送信し、解析済み `ShioriResponse` オブジェクトで返す
 ///
 /// JS 側は生テキストパース（`ShioriProtocol.parseResponse`）を介さずに

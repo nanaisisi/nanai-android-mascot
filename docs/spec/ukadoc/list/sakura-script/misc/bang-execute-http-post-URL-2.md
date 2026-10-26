@@ -2,8 +2,8 @@
 
 - **規格**: [bang-execute-http-post-URL-2.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/misc/bang-execute-http-post-URL-2/) (ukadoc-spec/list/sakura-script/misc/bang-execute-http-post-URL-2.md)
 - **検索語**: \!
-- **対応状況**: ❓ 要確認
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
-実装コードに「\!」が出現。実際の処理内容は未精査(短いトークンのため誤検出の可能性大)。
+パーサがタグを読み飛ばす、または sakura-command-handler.js が「未対応の \! コマンド」として扱い、該当処理はない。

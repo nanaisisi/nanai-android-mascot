@@ -180,10 +180,7 @@ pub(super) fn handle_underscore(
             // \_q / \_q[1] (高速表示ON), \_q[0] (高速表示OFF)
             let enabled = if chars.peek() == Some(&'[') {
                 read_bracketed(chars)
-                    .map(|v| match v.trim() {
-                        "0" | "false" => false,
-                        _ => true,
-                    })
+                    .map(|v| !matches!(v.trim(), "0" | "false"))
                     .unwrap_or(true)
             } else {
                 true
@@ -215,10 +212,7 @@ pub(super) fn handle_underscore(
             // \_s (複数キャラ同期表示トグル / \_s[1], \_s[0])
             let enabled = if chars.peek() == Some(&'[') {
                 read_bracketed(chars)
-                    .map(|v| match v.trim() {
-                        "0" | "false" => false,
-                        _ => true,
-                    })
+                    .map(|v| !matches!(v.trim(), "0" | "false"))
                     .unwrap_or(true)
             } else {
                 true

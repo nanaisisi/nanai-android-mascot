@@ -121,27 +121,31 @@ pub fn run() {
     builder
         .on_window_event(|window, event| {
             if let tauri::WindowEvent::Focused(false) = event {
-                let label = window.label();
+                let label = window.label().to_string();
                 if label == "menu_window" || label == "submenu_window" {
-                    let app = window.app_handle();
-                    let menu_focused = app
-                        .get_webview_window("menu_window")
-                        .map(|w| w.is_focused().unwrap_or(false))
-                        .unwrap_or(false);
-                    let sub_focused = app
-                        .get_webview_window("submenu_window")
-                        .map(|w| w.is_focused().unwrap_or(false))
-                        .unwrap_or(false);
+                    let app = window.app_handle().clone();
+                    tauri::async_runtime::spawn_blocking(move || {
+                        // フォーカス遷移中の瞬断による誤非表示を防ぐため 150ms 待機
+                        std::thread::sleep(std::time::Duration::from_millis(150));
+                        let menu_focused = app
+                            .get_webview_window("menu_window")
+                            .map(|w| w.is_focused().unwrap_or(false))
+                            .unwrap_or(false);
+                        let sub_focused = app
+                            .get_webview_window("submenu_window")
+                            .map(|w| w.is_focused().unwrap_or(false))
+                            .unwrap_or(false);
 
-                    // メニューとサブメニューの双方がフォーカスを失った場合のみ非表示化
-                    if !menu_focused && !sub_focused {
-                        if let Some(m) = app.get_webview_window("menu_window") {
-                            let _ = m.hide();
+                        // メニューとサブメニューの双方が依然フォーカスを持っていない場合のみ非表示化
+                        if !menu_focused && !sub_focused {
+                            if let Some(m) = app.get_webview_window("menu_window") {
+                                let _ = m.hide();
+                            }
+                            if let Some(s) = app.get_webview_window("submenu_window") {
+                                let _ = s.hide();
+                            }
                         }
-                        if let Some(s) = app.get_webview_window("submenu_window") {
-                            let _ = s.hide();
-                        }
-                    }
+                    });
                 }
             }
         })

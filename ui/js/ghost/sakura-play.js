@@ -30,9 +30,16 @@ export async function playScript(player, script) {
 	if (hasTextContent) {
 		sakuraText.innerHTML = "";
 		if (keroText) keroText.innerHTML = "";
-		sakuraDisplay.style.display = "block";
+		if (!isTauriAvailable()) {
+			sakuraDisplay.style.display = "block";
+		}
 		if (isTauriAvailable()) {
 			invoke("show_balloon_window", { scopeId: 0 }).catch(() => {});
+			// スクリプト内にスコープ1（\1 / \u）以降の発話・選択肢が含まれているか判定
+			const hasKero = tokens.some((t) => t.type === "scope" && t.value >= 1);
+			if (hasKero) {
+				invoke("show_balloon_window", { scopeId: 1 }).catch(() => {});
+			}
 		}
 	}
 
@@ -62,24 +69,28 @@ export async function playScript(player, script) {
 			case "scope":
 				player.currentScope = token.value;
 				if (player.currentScope === 1) {
-					if (app.elements.keroSlot) {
-						app.elements.keroSlot.style.display = "flex";
+					if (!isTauriAvailable()) {
+						if (app.elements.keroSlot) {
+							app.elements.keroSlot.style.display = "flex";
+						}
+						if (keroDisplay && keroText) {
+							keroDisplay.style.display = "block";
+						}
 					}
-					if (keroDisplay && keroText) {
-						keroDisplay.style.display = "block";
-						currentBalloonText = keroText;
-					}
+					currentBalloonText = keroText || sakuraText;
 					if (isTauriAvailable() && hasTextContent) {
 						invoke("show_balloon_window", { scopeId: 1 }).catch(() => {});
 					}
 				} else {
-					if (app.elements.sakuraSlot) {
-						app.elements.sakuraSlot.style.display = "flex";
+					if (!isTauriAvailable()) {
+						if (app.elements.sakuraSlot) {
+							app.elements.sakuraSlot.style.display = "flex";
+						}
+						sakuraDisplay.style.display = "block";
 					}
-					sakuraDisplay.style.display = "block";
 					currentBalloonText = sakuraText;
 					if (isTauriAvailable() && hasTextContent) {
-						invoke("show_balloon_window", { scopeId: 0 }).catch(() => {});
+						invoke("show_balloon_window", { scopeId: player.currentScope }).catch(() => {});
 					}
 				}
 				break;

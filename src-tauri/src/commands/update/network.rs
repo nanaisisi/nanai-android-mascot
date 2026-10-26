@@ -2,6 +2,19 @@ use super::dau::*;
 use md5::{Digest, Md5};
 use std::fs;
 use std::path::PathBuf;
+use tauri::Emitter;
+
+/// 1ファイルごとの更新進捗をフロントエンドへ通知
+/// (フロント側で OnUpdate.OnDownloadBegin / OnUpdate.OnMD5Compare* として SHIORI に中継する)
+fn report_progress(
+    app_handle: &tauri::AppHandle,
+    phase: &str,
+    path: &str,
+    detail: Option<&str>,
+) {
+    let payload = serde_json::json!({ "phase": phase, "path": path, "detail": detail });
+    let _ = app_handle.emit("update-progress", payload);
+}
 
 /// ゴーストの更新チェック
 #[tauri::command]
@@ -164,13 +177,21 @@ pub async fn execute_ghost_update(
     for entry in check_result.update_files {
         let file_url = format!("{}{}", check_result.homeurl, entry.path);
         println!("⬇️ Downloading update file: {}", file_url);
+        report_progress(&app_handle, "download-begin", &entry.path, None);
 
         let resp = match client.get(&file_url).send().await {
             Ok(r) => {
                 if !r.status().is_success() {
+                    let status = r.status().as_u16().to_string();
+                    report_progress(
+                        &app_handle,
+                        "download-failed",
+                        &entry.path,
+                        Some(&status),
+                    );
                     return Ok(UpdateExecutionResult {
                         success: false,
-                        reason: r.status().as_u16().to_string(),
+                        reason: status,
                         updated_files,
                         ghost_name: check_result.ghost_name,
                     });
@@ -179,6 +200,12 @@ pub async fn execute_ghost_update(
             }
             Err(e) => {
                 let reason = if e.is_timeout() { "timeout" } else { "404" };
+                report_progress(
+                    &app_handle,
+                    "download-failed",
+                    &entry.path,
+                    Some(reason),
+                );
                 return Ok(UpdateExecutionResult {
                     success: false,
                     reason: reason.to_string(),
@@ -192,6 +219,7 @@ pub async fn execute_ghost_update(
 
         // MD5 チェック
         if !entry.md5.is_empty() {
+            report_progress(&app_handle, "md5-begin", &entry.path, None);
             let mut hasher = Md5::new();
             hasher.update(&bytes);
             let downloaded_md5: String = hasher
@@ -204,6 +232,12 @@ pub async fn execute_ghost_update(
                     "❌ MD5 mismatch for {}: expected {}, got {}",
                     entry.path, entry.md5, downloaded_md5
                 );
+                report_progress(
+                    &app_handle,
+                    "md5-failed",
+                    &entry.path,
+                    Some("md5 miss"),
+                );
                 return Ok(UpdateExecutionResult {
                     success: false,
                     reason: "md5 miss".to_string(),
@@ -211,6 +245,7 @@ pub async fn execute_ghost_update(
                     ghost_name: check_result.ghost_name,
                 });
             }
+            report_progress(&app_handle, "md5-complete", &entry.path, None);
         }
 
         // 保存
@@ -221,6 +256,7 @@ pub async fn execute_ghost_update(
 
         if let Err(e) = fs::write(&local_path, &bytes) {
             println!("❌ File write error: {}", e);
+            report_progress(&app_handle, "fileio-failed", &entry.path, None);
             return Ok(UpdateExecutionResult {
                 success: false,
                 reason: "fileio".to_string(),
@@ -229,6 +265,7 @@ pub async fn execute_ghost_update(
             });
         }
 
+        report_progress(&app_handle, "saved", &entry.path, None);
         updated_files.push(entry.path);
     }
 

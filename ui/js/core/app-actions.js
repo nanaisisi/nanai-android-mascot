@@ -19,7 +19,7 @@ const SCALE_MAP = {
 };
 
 /** SHIORIイベントへ単純転送するアクション */
-// ※ベースウェア側未実装: 外部ブラウザ起動・updates2.dau照合・RSSパーサー等は今後拡張
+// ※外部ブラウザ起動・RSSパーサー等は今後拡張 (updates2.dau照合は app-update.js + network.rs で実装済み)
 const SHIORI_ACTIONS = {
 	recommend: ["OnChoiceSelect", ["recommendlink"]],
 	portal: ["OnChoiceSelect", ["portal"]],
@@ -48,6 +48,10 @@ export const actionMethods = {
 
 		if (action === "update") {
 			return this.startNetworkUpdate();
+		}
+
+		if (action === "updatecheck") {
+			return this.startNetworkUpdate(null, { checkOnly: true });
 		}
 
 		if (SHIORI_ACTIONS[action]) {

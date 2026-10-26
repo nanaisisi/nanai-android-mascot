@@ -1,13 +1,15 @@
 # OnUpdate.OnMD5CompareBegin
 
-- **規格**: [OnUpdate.OnMD5CompareBegin.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/network-update/OnUpdate.OnMD5CompareBegin/) (ukadoc-spec/list/shiori-event/network-update/OnUpdate.OnMD5CompareBegin.md)
+- **規格**: [OnUpdate.OnMD5CompareBegin.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/network-update/OnUpdate.OnMD5CompareBegin/) (ukadoc-spec/list/shiori-event/network-update/OnUpdate.OnMD5CompareBegin/)
 - **検索語**: OnUpdate.OnMD5CompareBegin
-- **対応状況**: 📝 コメントのみ(未実装の可能性大)
+- **対応状況**: ✅ 実装済(SHIORIへ送信)
 
 ## 突合結果
 
-実装コードに「OnUpdate.OnMD5CompareBegin」が出現。実際の処理内容は未精査。
+Rust 側の MD5 照合開始通知 (`update-progress` / phase `md5-begin`) をフロントエンドで受信し、SHIORI へイベントを送信している。
 
 ## 実装箇所
 
-- `ui/js/core/app-update.js:13` (コメント) `*    - OnUpdate.OnMD5CompareBegin`
+- `src-tauri/src/commands/update/network.rs` (`report_progress(&app_handle, "md5-begin", &entry.path, None)`)
+- `ui/js/core/app-update.js` (コメント) `*    - OnUpdate.OnMD5CompareBegin`
+- `ui/js/core/app-update.js` `gc.sendShioriEvent("OnUpdate.OnMD5CompareBegin", [filePath, "", "", "ghost", "manual"])`

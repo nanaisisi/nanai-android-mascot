@@ -2,11 +2,11 @@
 
 - **規格**: [name.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/shiori/name/) (ukadoc-spec/list/shiori-resource/shiori/name.md)
 - **検索語**: name
-- **対応状況**: 🔎 コード上に出現(処理の有無は要読解)
+- **対応状況**: ⚠️ 一部対応(読込のみ)
 
 ## 突合結果
 
-実装コードに「name」が出現。実際の処理内容は未精査。
+ghost/scan.rs でゴースト名を読込。SHIORI リソースとしての応答処理は未確認。
 
 ## 実装箇所
 

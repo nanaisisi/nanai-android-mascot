@@ -2,11 +2,11 @@
 
 - **規格**: [internal_crypto.Compare.md](https://ukatech.shillest.net/ukadoc-spec/spec/saori-ex/internal_crypto/internal_crypto.Compare/) (ukadoc-spec/spec/saori-ex/internal_crypto/internal_crypto.Compare.md)
 - **検索語**: Compare
-- **対応状況**: 🔎 コード上に出現(処理の有無は要読解)
+- **対応状況**: ❌ 未実装(誤検出)
 
 ## 突合結果
 
-実装コードに「Compare」が出現。実際の処理内容は未精査。
+ヒットしたのは一般的な語「Compare」の無関係な出現。該当の仕様に対応する処理は確認できない。
 
 ## 実装箇所
 

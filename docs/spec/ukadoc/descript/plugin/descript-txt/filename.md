@@ -2,11 +2,11 @@
 
 - **規格**: [filename.md](https://ukatech.shillest.net/ukadoc-spec/descript/plugin/descript-txt/filename/) (ukadoc-spec/descript/plugin/descript-txt/filename.md)
 - **検索語**: filename
-- **対応状況**: 🔎 コード上に出現(処理の有無は要読解)
+- **対応状況**: ❌ 未実装(誤検出)
 
 ## 突合結果
 
-実装コードに「filename」が出現。実際の処理内容は未精査。
+ヒットしたのは一般的な語「filename」の無関係な出現。該当の仕様に対応する処理は確認できない。
 
 ## 実装箇所
 

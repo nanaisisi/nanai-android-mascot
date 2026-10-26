@@ -2,11 +2,11 @@
 
 - **規格**: [disable.font.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/disable.font/) (ukadoc-spec/descript/balloon/descript-txt/disable.font.md)
 - **検索語**: disable.font.
-- **対応状況**: 🔎 コード上に出現(処理の有無は要読解)
+- **対応状況**: ❌ 未実装(誤検出)
 
 ## 突合結果
 
-実装コードに「disable.font.」が出現。実際の処理内容は未精査。
+ヒットしたのは一般的な語「disable.font.」の無関係な出現。該当の仕様に対応する処理は確認できない。
 
 ## 実装箇所
 

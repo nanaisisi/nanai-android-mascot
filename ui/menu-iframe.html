@@ -15,11 +15,11 @@
            SSP仕様: ゴースト側SHIORIイベントへ透過的にリクエストを送る領域
            ============================================================== -->
       <!-- [実装済] OnChoiceSelect または OnSecondChange によるトーク再送 -->
-      <button type="button" class="menu-item" id="talk-btn" role="menuitem">
+      <button type="button" class="menu-item main-only" id="talk-btn" role="menuitem">
         <span>💬 もう一度話す (A)</span>
       </button>
 
-      <!-- [SHIORI連携] SSP仕様: OnChoiceSelect または \![open,recommendlink] 発火。
+      <!-- [SHIORI連携] 【サブ共通】SSP仕様: OnChoiceSelect または \![open,recommendlink] 発火。
            ※ベースウェア側未実装: 外部ブラウザ遷移およびゴースト独自のリンク一覧展開はSHIORI応答待ち -->
       <button type="button" class="menu-item" id="recommend-btn" role="menuitem">
         <span>🔗 おすすめサイト (R)</span>
@@ -27,7 +27,7 @@
 
       <!-- [SHIORI連携] SSP仕様: OnChoiceSelect または \![open,portal] 発火。
            ※ベースウェア側未実装: descript.txt内のportalurlへのブラウザ起動は段階的実装予定 -->
-      <button type="button" class="menu-item" id="portal-btn" role="menuitem">
+      <button type="button" class="menu-item main-only" id="portal-btn" role="menuitem">
         <span>🌐 ポータルサイト (T)</span>
       </button>
 
@@ -36,13 +36,13 @@
            - コミュニケート入力ボックス (OnCommunicate)
       -->
 
-      <div class="menu-separator"></div>
+      <div class="menu-separator main-only"></div>
 
       <!-- ==============================================================
            2. ベースウェア (SSP) 側メニュー: マスコット・表示切り替え
            ============================================================== -->
       <!-- [実装済] VFS / ゴーストディレクトリからの検出ゴースト切り替え -->
-      <div class="menu-item-wrapper">
+      <div class="menu-item-wrapper main-only">
         <button type="button" class="menu-item has-submenu" id="ghost-switch-btn" role="menuitem">
           <span>👻 ゴースト切り替え (G)</span>
         </button>
@@ -57,7 +57,7 @@
       </div>
 
       <!-- [マルチゴースト] 他のゴーストを呼ぶ (追加起動) -->
-      <div class="menu-item-wrapper">
+      <div class="menu-item-wrapper main-only">
         <button type="button" class="menu-item has-submenu" id="call-ghost-btn" role="menuitem">
           <span>👥 他のゴーストを呼ぶ (C)</span>
         </button>
@@ -67,9 +67,9 @@
       </div>
 
       <!-- [実装済] shell/master ディレクトリからのシェル切り替え -->
-      <div class="menu-item-wrapper">
+      <div class="menu-item-wrapper main-only">
         <button type="button" class="menu-item has-submenu" id="shell-switch-btn" role="menuitem">
-          <span>👗 着せ替え・シェル (C)</span>
+          <span>👗 シェル切り替え</span>
         </button>
         <div class="submenu-container" id="shell-submenu">
           <button type="button" class="menu-item is-current" id="shell-master-btn">
@@ -78,10 +78,10 @@
         </div>
       </div>
 
-      <!-- [実装済] ShellManifest bindgroup からの着せ替えパーツ切替 (UKADOC オーナードローメニュー) -->
+      <!-- [実装済] 【サブ共通】ShellManifest bindgroup からの着せ替えパーツ切替 (UKADOC オーナードローメニュー) -->
       <div class="menu-item-wrapper">
         <button type="button" class="menu-item has-submenu" id="dressup-menu-btn" role="menuitem">
-          <span>🧥 着せ替えパーツ (D)</span>
+          <span>🧥 着せ替え (C)</span>
         </button>
         <div class="submenu-container" id="dressup-submenu">
           <!-- 動的描画 (Rust shell_manifest sakura/kero bindgroup) -->
@@ -89,7 +89,7 @@
       </div>
 
       <!-- [実装済] 画面内キャンバスのCSSピクセル倍率変更 (50%〜200%) -->
-      <div class="menu-item-wrapper">
+      <div class="menu-item-wrapper main-only">
         <button type="button" class="menu-item has-submenu" id="scale-menu-btn" role="menuitem">
           <span>🔍 シェル倍率 (S)</span>
         </button>
@@ -104,7 +104,7 @@
       </div>
 
       <!-- [実装済] CSSバルーンスキン切り替え (ivory, pixel, comic, dark) -->
-      <div class="menu-item-wrapper">
+      <div class="menu-item-wrapper main-only">
         <button type="button" class="menu-item has-submenu" id="balloon-menu-btn" role="menuitem">
           <span>💭 バルーン切り替え (B)</span>
         </button>
@@ -121,18 +121,18 @@
         </div>
       </div>
 
-      <div class="menu-separator"></div>
+      <div class="menu-separator main-only"></div>
 
       <!-- ==============================================================
            3. ベースウェア (SSP) 側メニュー: ツール・更新・設定
            ============================================================== -->
       <!-- [SHIORI連携] OnUpdate イベント発火。
            updates2.dau / updates.txt によるHTTP差分更新エンジン実装済み (src-tauri/src/commands/update/network.rs) -->
-      <button type="button" class="menu-item" id="update-btn" role="menuitem">
+      <button type="button" class="menu-item main-only" id="update-btn" role="menuitem">
         <span>🔄 ネットワーク更新 (U)</span>
       </button>
       <!-- [SHIORI連携] OnUpdateCheckComplete / OnUpdateCheckFailure 発火 (チェックのみ実行) -->
-      <button type="button" class="menu-item" id="updatecheck-btn" role="menuitem">
+      <button type="button" class="menu-item main-only" id="updatecheck-btn" role="menuitem">
         <span>✅ ネットワーク更新チェックのみ (C)</span>
       </button>
 
@@ -166,22 +166,22 @@
       </div>
 
       <!-- [実装済] 基本設定モーダル (サウンド・描画等) -->
-      <button type="button" class="menu-item" id="settings-btn" role="menuitem">
+      <button type="button" class="menu-item main-only" id="settings-btn" role="menuitem">
         <span>⚙️ 設定 (O)</span>
       </button>
 
       <!-- [実装済] ユーザーガイド・操作説明モーダル -->
-      <button type="button" class="menu-item" id="help-btn" role="menuitem">
+      <button type="button" class="menu-item main-only" id="help-btn" role="menuitem">
         <span>❓ 情報・ヘルプ (H)</span>
       </button>
 
       <!-- [実装済] UKADOC・各SHIORIエンジン著作権モーダル -->
-      <button type="button" class="menu-item" id="license-btn" role="menuitem">
+      <button type="button" class="menu-item main-only" id="license-btn" role="menuitem">
         <span>📜 著作権・ライセンス表示 (L)</span>
       </button>
 
       <!-- [SHIORI連携] メールチェック (POP3/IMAP クライアント / OnBIFF 連携) -->
-      <button type="button" class="menu-item" id="biff-btn" data-action="biff" role="menuitem">
+      <button type="button" class="menu-item main-only" id="biff-btn" data-action="biff" role="menuitem">
         <span>📬 メールチェック (M)</span>
       </button>
 
@@ -196,15 +196,21 @@
            4. 最小化・終了
            ============================================================== -->
       <!-- [実装済] デスクトップ版の最小化 / Android版のバックグラウンド化 -->
-      <button type="button" class="menu-item" id="minimize-btn" role="menuitem">
+      <button type="button" class="menu-item main-only" id="minimize-btn" role="menuitem">
         <span>➖ アイコン化・隠す (M)</span>
         <span class="shortcut-key">Ctrl+I</span>
       </button>
 
-      <!-- [実装済] プロセス正常終了 (OnClose イベント送出後終了) -->
+      <!-- [実装済] 【サブ共通】プロセス正常終了 (OnClose イベント送出後終了) -->
       <button type="button" class="menu-item" id="close-btn" role="menuitem">
         <span>✖ 終了 (W)</span>
         <span class="shortcut-key">Ctrl+W</span>
+      </button>
+
+      <!-- [実装済] 【サブ共通】全て終了 (SSP標準ショートカット Ctrl+Q) -->
+      <button type="button" class="menu-item" id="close-all-btn" data-action="close-all" role="menuitem">
+        <span>❌ 全て終了 (X)</span>
+        <span class="shortcut-key">Ctrl+Q</span>
       </button>
     </div>
   </body>

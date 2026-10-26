@@ -1,7 +1,7 @@
 # 基本的な使い方：右クリックメニュー
 
 - **規格**: [howto/rclick.md](https://ukatech.shillest.net/ukadoc-ssp/howto/rclick/) (ukadoc-ssp/howto/rclick.md)
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -15,10 +15,12 @@
     3. 終了 (W)
     4. 全て終了 (X)
 
-### 2. Nanai Mascot 現状実装と差異
+### 2. Nanai Mascot 実装仕様
 
-- **現状の実装**:
-  - `ui/menu-iframe.html` および `ui/js/ui/context-menu.js` では `sync-menu-scope` によりスコープ（`\0` / `\1`）を受信し、着せ替えサブメニューのみを対象キャラのパーツ定義に切り替えている。
-  - しかしメインメニュー自体の項目（設定・ゴースト切り替え・ネットワーク更新など）は、サブキャラクリック時もメインキャラと同様に全件表示されたままになっており、SSP仕様（【サブ】限定項目への絞り込み）と乖離がある。
-- **今後の対応方針**:
-  - `scope !== 0` の場合に `.menu-item` にサブキャラ専用フィルタ（`.sub-char-only` または `body.scope-sub` クラス適用）を行い、SSP規格通り「おすすめ・着せ替え・終了・全て終了」へ自動絞り込み表示する制御を追加予定。
+- **スコープ連動フィルタリング**:
+  - `ui/js/ui/menu-dispatcher.js` にて `scope > 0` の場合に `document.body.classList.add("subchar-mode")` を適用。
+  - `ui/css/context-menu.css` の `body.subchar-mode .main-only { display: none; }` により、メインキャラ専用項目（トーク再送、ポータル、ゴースト切り替え、シェル切り替え、倍率変更、バルーンスキン、更新、ツール、設定、情報、メールチェック、最小化）を一括非表示化。
+- **サブキャラ共通項目の保持**:
+  - `ui/menu-iframe.html`: 「🔗 おすすめサイト (R)」「🧥 着せ替え (C)」「✖ 終了 (W)」「❌ 全て終了 (X)」をサブキャラクリック時も表示。
+  - 着せ替えメニューは対象スコープ（`\1` 等）のパーツ定義へ動的同期。
+  - ショートカットキー `Ctrl+Q` / `x`（全て終了）、`Ctrl+W` / `w`（終了）を完備。

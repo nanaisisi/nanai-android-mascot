@@ -57,6 +57,7 @@ globalThis.addEventListener("message", (event) => {
 				: parseInt(event.data.scope, 10);
 		if (!Number.isNaN(scope)) {
 			dispatcher.setScope(scope);
+			renderer.renderDressupSubmenu(null, scope);
 		}
 	} else if (event.data?.type === "sync-ghosts") {
 		renderer.renderGhostSubmenu(
@@ -200,6 +201,9 @@ document.addEventListener("keydown", (e) => {
 		} else if (e.key.toLowerCase() === "w") {
 			e.preventDefault();
 			dispatcher.dispatchAction("close");
+		} else if (e.key.toLowerCase() === "q") {
+			e.preventDefault();
+			dispatcher.dispatchAction("close-all");
 		}
 		return;
 	}
@@ -219,6 +223,7 @@ document.addEventListener("keydown", (e) => {
 		l: "license", // 著作権・ライセンス (License)
 		m: "minimize", // 最小化 (Minimize)
 		w: "close", // 終了
+		x: "close-all", // 全て終了 (Exit all)
 	};
 
 	const action = keyMap[e.key.toLowerCase()];

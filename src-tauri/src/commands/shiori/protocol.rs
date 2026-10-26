@@ -1,4 +1,5 @@
 use crate::common::*;
+use nanai_android_mascot_ui::{ShioriRequest, ShioriResponse};
 
 #[derive(PartialEq, PartialOrd, Clone, Copy)]
 enum LogLevel {
@@ -16,6 +17,31 @@ fn log_level() -> LogLevel {
         Ok("off") => LogLevel::Off,
         Ok("trace") => LogLevel::Trace,
         _ => LogLevel::Info,
+    }
+}
+
+/// エンジンへのリクエスト委譲（main / 個別ゴースト共通）
+///
+/// `crates/ui` の ukadoc-spec 準拠 `ShioriRequest` でビルドしたテキストを
+/// そのまま SHIORI DLL へ渡す。
+fn dispatch_request(
+    state: &tauri::State<'_, AppState>,
+    request: &str,
+    ghost_id: &str,
+) -> Result<String, String> {
+    if ghost_id != "main" {
+        let engines = state.ghost_engines.lock();
+        if let Some(engine) = engines.get(ghost_id) {
+            return engine.request(request);
+        }
+        return Err("Ghost engine not found".to_string());
+    }
+    // デフォルト/メインのネイティブSHIORIエンジンへ委譲
+    let engine_lock = state.shiori_engine.lock();
+    if let Some(ref engine) = *engine_lock {
+        engine.request(request)
+    } else {
+        Err("No active SHIORI engine loaded".to_string())
     }
 }
 
@@ -40,22 +66,7 @@ pub async fn send_shiori_request(
         );
     }
 
-    let result = if gid != "main" {
-        let engines = state.ghost_engines.lock();
-        if let Some(engine) = engines.get(&gid) {
-            engine.request(&request)
-        } else {
-            Err("Ghost engine not found".to_string())
-        }
-    } else {
-        // デフォルト/メインのネイティブSHIORIエンジンへ委譲
-        let engine_lock = state.shiori_engine.lock();
-        if let Some(ref engine) = *engine_lock {
-            engine.request(&request)
-        } else {
-            Err("No active SHIORI engine loaded".to_string())
-        }
-    };
+    let result = dispatch_request(&state, &request, &gid);
 
     match &result {
         Ok(res) => {
@@ -78,6 +89,9 @@ pub async fn send_shiori_request(
 }
 
 /// SHIORIにイベントを送信（簡易版・パラメータ指定対応）
+///
+/// リクエスト構築は `nanai_android_mascot_ui` の ukadoc-spec 準拠
+/// `ShioriRequest` モデル（GET / Sender / Charset / ID / Reference0..N）に一本化。
 #[tauri::command]
 pub async fn send_shiori_event(
     state: tauri::State<'_, AppState>,
@@ -85,17 +99,29 @@ pub async fn send_shiori_event(
     references: Option<Vec<String>>,
     ghost_id: Option<String>,
 ) -> Result<String, String> {
-    let mut req = format!(
-        "GET SHIORI/3.0\r\nID: {}\r\nSender: NanaiMascot\r\nCharset: UTF-8\r\n",
-        event
-    );
-    if let Some(refs) = references {
-        for (i, ref_val) in refs.iter().enumerate() {
-            req.push_str(&format!("Reference{}: {}\r\n", i, ref_val));
-        }
-    }
-    req.push_str("\r\n");
-    send_shiori_request(state, req, ghost_id).await
+    let mut req = ShioriRequest::get(&event, &references.unwrap_or_default());
+    req.sender = "NanaiMascot".to_string();
+    send_shiori_request(state, req.build(), ghost_id).await
+}
+
+/// SHIORI イベントを送信し、解析済み `ShioriResponse` オブジェクトで返す
+///
+/// JS 側は生テキストパース（`ShioriProtocol.parseResponse`）を介さずに
+/// status / value / 拡張ヘッダ（Marker や ErrorLevel 等）を取得できる。
+#[tauri::command]
+pub async fn send_shiori_event_typed(
+    state: tauri::State<'_, AppState>,
+    event: String,
+    args: Option<Vec<String>>,
+    ghost_id: Option<String>,
+) -> Result<ShioriResponse, String> {
+    let mut req = ShioriRequest::get(&event, &args.unwrap_or_default());
+    req.sender = "NanaiMascot".to_string();
+
+    let gid = ghost_id.unwrap_or_else(|| "main".to_string());
+    let text = req.build();
+    let raw = dispatch_request(&state, &text, &gid)?;
+    ShioriResponse::parse(&raw)
 }
 
 /// マウスクリックイベントを送信（簡易版）

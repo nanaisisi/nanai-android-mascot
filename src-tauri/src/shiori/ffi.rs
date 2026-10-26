@@ -3,6 +3,7 @@
 //! YAYAとSATORIYAのC++コードとのFFI（Foreign Function Interface）定義
 
 use libc::{c_char, c_int, c_long, c_void};
+use nanai_android_mascot_ui::{ShioriMethod, ShioriRequest};
 use std::ffi::{CStr, CString};
 use std::ptr;
 
@@ -145,57 +146,72 @@ impl Drop for ShioriInterface {
     }
 }
 
-/// SHIORIリクエストの構築ヘルパー
+/// SHIORIリクエストの構築ヘルパー（`nanai_android_mascot_ui::shiori` の
+/// ukadoc-spec 準拠モデルへ委譲。ステータス行の単数化・`ID:` ヘッダ対応）
 pub struct ShioriRequestBuilder {
-    method: String,
-    version: String,
-    headers: Vec<(String, String)>,
+    request: ShioriRequest,
 }
 
 impl ShioriRequestBuilder {
     pub fn new() -> Self {
         ShioriRequestBuilder {
-            method: "GET".to_string(),
-            version: "SHIORI/3.0".to_string(),
-            headers: Vec::new(),
+            request: ShioriRequest::default(),
         }
     }
 
     pub fn method(mut self, method: &str) -> Self {
-        self.method = method.to_string();
+        if method.eq_ignore_ascii_case("NOTIFY") {
+            self.request.method = ShioriMethod::Notify;
+        } else {
+            self.request.method = ShioriMethod::Get;
+        }
         self
     }
 
-    pub fn header(mut self, key: &str, value: &str) -> Self {
-        self.headers.push((key.to_string(), value.to_string()));
+    pub fn header(self, _key: &str, _value: &str) -> Self {
+        // 任意ヘッダは ukadoc-spec 外のため無視（Event 等の誤送出を防ぐ）
         self
     }
 
-    pub fn sender(self, sender: &str) -> Self {
-        self.header("Sender", sender)
+    pub fn sender(mut self, sender: &str) -> Self {
+        self.request.sender = sender.to_string();
+        self
     }
 
-    pub fn charset(self, charset: &str) -> Self {
-        self.header("Charset", charset)
+    pub fn charset(mut self, charset: &str) -> Self {
+        self.request.charset = charset.to_string();
+        self
     }
 
-    pub fn event(self, event: &str) -> Self {
-        self.header("Event", event)
+    /// イベントID（ukadoc-spec では `ID:` ヘッダ）
+    pub fn event(mut self, event: &str) -> Self {
+        self.request.id = event.to_string();
+        self
     }
 
-    pub fn reference(self, index: usize, value: &str) -> Self {
-        self.header(&format!("Reference{}", index), value)
+    pub fn reference(mut self, index: usize, value: &str) -> Self {
+        if self.request.references.len() <= index {
+            self.request.references.resize(index + 1, String::new());
+        }
+        self.request.references[index] = value.to_string();
+        self
     }
 
     pub fn build(self) -> String {
-        let mut request = format!("{} {} {}\r\n", self.method, self.version, self.version);
-
-        for (key, value) in self.headers {
-            request.push_str(&format!("{}: {}\r\n", key, value));
+        let mut req = self.request;
+        if req.sender.is_empty() {
+            req.sender = "NanaiMascot".to_string();
         }
+        if req.charset.is_empty() {
+            req.charset = "UTF-8".to_string();
+        }
+        req.build()
+    }
+}
 
-        request.push_str("\r\n");
-        request
+impl Default for ShioriRequestBuilder {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -205,7 +221,7 @@ impl ShioriRequestBuilder {
     pub fn on_boot() -> Self {
         ShioriRequestBuilder::new()
             .method("NOTIFY")
-            .header("Event", "OnBoot")
+            .event("OnBoot")
             .charset("UTF-8")
     }
 
@@ -213,7 +229,7 @@ impl ShioriRequestBuilder {
     pub fn on_close() -> Self {
         ShioriRequestBuilder::new()
             .method("NOTIFY")
-            .header("Event", "OnClose")
+            .event("OnClose")
             .charset("UTF-8")
     }
 
@@ -221,7 +237,7 @@ impl ShioriRequestBuilder {
     pub fn on_mouse_click(x: i32, y: i32, button: &str) -> Self {
         ShioriRequestBuilder::new()
             .method("NOTIFY")
-            .header("Event", "OnMouseClick")
+            .event("OnMouseClick")
             .reference(0, &x.to_string())
             .reference(1, &y.to_string())
             .reference(2, button)
@@ -232,7 +248,7 @@ impl ShioriRequestBuilder {
     pub fn on_second_change() -> Self {
         ShioriRequestBuilder::new()
             .method("NOTIFY")
-            .header("Event", "OnSecondChange")
+            .event("OnSecondChange")
             .charset("UTF-8")
     }
 
@@ -240,7 +256,7 @@ impl ShioriRequestBuilder {
     pub fn on_minute_change() -> Self {
         ShioriRequestBuilder::new()
             .method("NOTIFY")
-            .header("Event", "OnMinuteChange")
+            .event("OnMinuteChange")
             .charset("UTF-8")
     }
 
@@ -248,7 +264,7 @@ impl ShioriRequestBuilder {
     pub fn on_window_state_minimize() -> Self {
         ShioriRequestBuilder::new()
             .method("NOTIFY")
-            .header("Event", "OnWindowStateMinimize")
+            .event("OnWindowStateMinimize")
             .charset("UTF-8")
     }
 
@@ -256,7 +272,7 @@ impl ShioriRequestBuilder {
     pub fn on_window_state_restore() -> Self {
         ShioriRequestBuilder::new()
             .method("NOTIFY")
-            .header("Event", "OnWindowStateRestore")
+            .event("OnWindowStateRestore")
             .charset("UTF-8")
     }
 
@@ -264,7 +280,7 @@ impl ShioriRequestBuilder {
     pub fn on_biff_begin() -> Self {
         ShioriRequestBuilder::new()
             .method("NOTIFY")
-            .header("Event", "OnBIFFBegin")
+            .event("OnBIFFBegin")
             .charset("UTF-8")
     }
 
@@ -272,7 +288,7 @@ impl ShioriRequestBuilder {
     pub fn on_biff_complete(count: u32, size_bytes: u64) -> Self {
         ShioriRequestBuilder::new()
             .method("NOTIFY")
-            .header("Event", "OnBIFFComplete")
+            .event("OnBIFFComplete")
             .reference(0, &count.to_string())
             .reference(1, &size_bytes.to_string())
             .charset("UTF-8")
@@ -282,7 +298,7 @@ impl ShioriRequestBuilder {
     pub fn generic_event(event_name: &str, references: &[&str]) -> Self {
         let mut builder = ShioriRequestBuilder::new()
             .method("GET")
-            .header("Event", event_name)
+            .event(event_name)
             .charset("UTF-8");
         for (i, ref_val) in references.iter().enumerate() {
             builder = builder.reference(i, ref_val);

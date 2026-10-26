@@ -79,6 +79,7 @@ export const actionMethods = {
 		}
 		if (action.startsWith("scale-")) return this.applyShellScaleAction(action);
 		if (action === "close" || action === "exit") return this.closeApp();
+		if (action === "close-all" || action === "exit-all") return this.closeApp();
 		if (action === "close-menu") return;
 		if (action === "minimize") return this.minimizeApp();
 		if (

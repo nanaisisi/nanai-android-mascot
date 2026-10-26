@@ -33,6 +33,11 @@ export const ghostSurfaceMethods = {
 		const container = byId(isSubchar ? "kero-display" : "ghost-display");
 		const slot = byId(isSubchar ? "kero-slot" : "ghost-container");
 
+		// サーフィスエイリアス (surface.alias ブロック) を番号へ解決 (UKADOC準拠)
+		surfaceId =
+			this.app?.surfaceManager?.resolveSurfaceNumber?.(surfaceId, scopeId) ??
+			surfaceId;
+
 		if (surfaceId === -1 || surfaceId === "-1") {
 			if (slot) slot.style.display = "none";
 			if (container) container.style.visibility = "hidden";

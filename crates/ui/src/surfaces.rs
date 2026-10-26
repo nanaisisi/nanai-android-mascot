@@ -340,6 +340,9 @@ pub struct SurfacesTxt {
     pub surfaces: BTreeMap<u32, SurfaceDefinition>,
     /// `surface.alias` ブロックの エイリアス名 → サーフィス番号列
     pub aliases: BTreeMap<String, Vec<u32>>,
+    /// `kero.surface.alias` / `char1.surface.alias` ブロックのエイリアス名 → 番号列
+    #[serde(default)]
+    pub kero_aliases: BTreeMap<String, Vec<u32>>,
     /// ルート（ブロック外）の未分類キー・バリュー
     pub properties: BTreeMap<String, String>,
 }
@@ -404,9 +407,25 @@ impl SurfacesTxt {
         None
     }
 
+    /// 相方（kero / char1）のエイリアス名に対応するサーフィス番号列を取得
+    pub fn kero_alias_numbers(&self, name: &str) -> Option<&Vec<u32>> {
+        for (key, list) in &self.kero_aliases {
+            if key.eq_ignore_ascii_case(name) {
+                return Some(list);
+            }
+        }
+        None
+    }
+
     /// エイリアス名から最初の有効なサーフィス定義を解決する
     pub fn resolve_alias(&self, name: &str) -> Option<&SurfaceDefinition> {
         let list = self.alias_numbers(name)?;
+        list.iter().find_map(|n| self.surfaces.get(n))
+    }
+
+    /// 相方（kero / char1）のエイリアス名から最初の有効なサーフィス定義を解決する
+    pub fn resolve_kero_alias(&self, name: &str) -> Option<&SurfaceDefinition> {
+        let list = self.kero_alias_numbers(name)?;
         list.iter().find_map(|n| self.surfaces.get(n))
     }
 }
@@ -418,9 +437,9 @@ impl SurfacesTxt {
 enum BlockKind {
     /// `descript {}` ブロック
     Descript,
-    /// `surface.alias {}` ブロック
-    Alias,
-    /// `surface[N...]` / `surface.append[N...]` ブロック
+    /// `surface.alias {}` / `sakura.surface.alias {}` / `kero.surface.alias {}` ブロック
+    Alias { kero: bool },
+    /// `surface[N...]` / `surface.append[N...]` / `sakura.surface[N...]` ブロック
     Surface { ids: Vec<u32>, append: bool },
 }
 
@@ -455,7 +474,9 @@ pub fn parse_surfaces_txt(text: &str) -> SurfacesTxt {
 
         match &scope {
             Some(BlockKind::Descript) => handle_descript_line(&mut txt, line),
-            Some(BlockKind::Alias) => handle_alias_line(&mut txt, line),
+            Some(BlockKind::Alias { kero }) => {
+                handle_alias_line(&mut txt, *kero, line)
+            }
             Some(BlockKind::Surface { ids, .. }) => {
                 let ids = ids.clone();
                 handle_surface_line(&mut txt, &ids, line);
@@ -479,8 +500,20 @@ fn prepare_block(txt: &mut SurfacesTxt, kind: &BlockKind) {
     }
 }
 
-/// ブロック開始行（`surface[N]` / `surface.append[N]` / `surface.alias` / `descript`）を判定する
+/// ブロック開始行（`surface[N]` / `surface.append[N]` / `*.surface.alias` / `descript`）を判定する
+///
+/// ukadoc-spec 準拠のキャラクタープレフィックス（`sakura.` / `kero.` / `char0..char9.`）を
+/// 剥がしてから判定する。`surface.alias` と `sakura.surface.alias` はスコープ 0、
+/// `kero.surface.alias` と `char1.surface.alias` はスコープ 1 の定義として扱う。
 fn parse_block_opener(line: &str) -> Option<BlockKind> {
+    let (line, kero) = match line {
+        l if l.starts_with("sakura.surface") => (&l["sakura.".len()..], false),
+        l if l.starts_with("kero.surface") => (&l["kero.".len()..], true),
+        l if l.starts_with("char0.surface") => (&l["char0.".len()..], false),
+        l if l.starts_with("char1.surface") => (&l["char1.".len()..], true),
+        // char2 以降（SSP の charN.surface.*）は未対応のためそのまま処理へ
+        _ => (line, false),
+    };
     if let Some(rest) = line.strip_prefix("surface") {
         let rest = rest.replace('[', " ").replace(']', " ");
         if let Some(spec) = rest.strip_prefix(".append") {
@@ -498,7 +531,7 @@ fn parse_block_opener(line: &str) -> Option<BlockKind> {
         if let Some(spec) = rest.strip_prefix(".alias") {
             // `surface.alias {` / `surface.alias{`
             if spec.trim().is_empty() || spec.trim() == "{" {
-                return Some(BlockKind::Alias);
+                return Some(BlockKind::Alias { kero });
             }
             return None;
         }
@@ -569,7 +602,10 @@ fn handle_descript_line(txt: &mut SurfacesTxt, line: &str) {
 }
 
 /// `surface.alias {}` ブロック内の行を処理する（`エイリアス名, 番号, 番号...`）
-fn handle_alias_line(txt: &mut SurfacesTxt, line: &str) {
+///
+/// `kero` が true の場合は相方（`kero.surface.alias` / `char1.surface.alias`）の
+/// エイリアスとして `kero_aliases` に登録する。
+fn handle_alias_line(txt: &mut SurfacesTxt, kero: bool, line: &str) {
     let Some((name, rest)) = split_key_value(line) else {
         return;
     };
@@ -577,7 +613,11 @@ fn handle_alias_line(txt: &mut SurfacesTxt, line: &str) {
     if name.is_empty() {
         return;
     }
-    txt.aliases.insert(name, expand_range(rest));
+    if kero {
+        txt.kero_aliases.insert(name, expand_range(rest));
+    } else {
+        txt.aliases.insert(name, expand_range(rest));
+    }
 }
 
 /// `surface[N] {}` / `surface.append[N] {}` ブロック内の行を処理する
@@ -1025,6 +1065,55 @@ surface.alias
         assert_eq!(txt.alias_numbers("笑顔").unwrap(), &[1u32, 2][..]);
         assert_eq!(txt.alias_numbers("にこにこ").unwrap(), &[3u32][..]);
         assert!(txt.resolve_alias("笑顔").is_some());
+    }
+
+    #[test]
+    fn test_parse_character_alias_blocks() {
+        // ukadoc-spec: sakura.surface.alias / kero.surface.alias（char*.surface.alias は SSP 拡張）
+        let sample = r"surface0
+{
+element0,base,surface0.png,0,0
+}
+
+surface10
+{
+element0,base,surface10.png,0,0
+}
+
+sakura.surface.alias
+{
+素,[0]
+照れ,[1,101,201]
+}
+
+kero.surface.alias
+{
+通常,[10]
+}
+
+char1.surface.alias
+{
+nameycand,[11,12]
+}
+
+surface.alias
+{
+共通,9
+}
+";
+        let txt = SurfacesTxt::parse(sample);
+
+        // スコープ 0（さくら / 共通）
+        assert_eq!(txt.alias_numbers("素").unwrap(), &[0u32][..]);
+        assert_eq!(txt.alias_numbers("照れ").unwrap(), &[1u32, 101, 201][..]);
+        assert_eq!(txt.alias_numbers("共通").unwrap(), &[9u32][..]);
+        assert!(txt.alias_numbers("通常").is_none());
+
+        // スコープ 1（相方）
+        assert_eq!(txt.kero_alias_numbers("通常").unwrap(), &[10u32][..]);
+        assert_eq!(txt.kero_alias_numbers("nameycand").unwrap(), &[11u32, 12][..]);
+        assert!(txt.kero_alias_numbers("照れ").is_none());
+        assert!(txt.resolve_kero_alias("通常").is_some());
     }
 
     #[test]

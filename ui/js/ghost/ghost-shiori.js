@@ -113,6 +113,13 @@ export const ghostShioriMethods = {
 							status: parsed.status,
 						};
 					}
+					if (parsed.status === 311 || parsed.status === 312) {
+						// Teach 追加入力要求（ukadoc: 311 Not Enough / 312 Advice）→
+						// TeachBox を再オープンして OnTeach ループへ
+						this.app.sakuraPlayer?.commandHandler?.openTeachBox([], {
+							notifyStart: false,
+						});
+					}
 					return { response: "", script: "", status: parsed.status };
 				}
 			} catch (_e) {
@@ -154,5 +161,73 @@ export const ghostShioriMethods = {
 	triggerRandomTalk() {
 		// SHIORI の OnRandomTalk / OnSecondChange に委譲
 		this.sendShioriEvent("OnRandomTalk");
+	},
+
+	/**
+	 * TeachBox 入力の送信（OnTeach + 311/312 再入ループ, UKADOC準拠）
+	 *
+	 * 200: 履歴クリア・完了 / 311 (Not Enough): 履歴保持で再オープン /
+	 * 312 (Advice): 直近入力を破棄して再オープン / 400・500: 履歴クリア
+	 * @param {string} value - 新規入力
+	 */
+	async sendTeachInput(value) {
+		if (!isTauriAvailable()) return;
+
+		/** @type {string[]} */
+		const history = [...(this._teachHistory ?? []), value];
+		this._teachHistory = history;
+
+		const ghostId = this.app.ghostId || "main";
+		try {
+			const typed = await invoke("send_shiori_event_typed", {
+				event: "OnTeach",
+				args: history,
+				ghostId,
+			});
+			const parsed = fromRustResponse(typed);
+			const code = parsed?.status ?? 0;
+
+			switch (code) {
+				case 311: {
+					// Not Enough: さらなる追加情報が必要 → 履歴を保持して再オープン
+					this.app.sakuraPlayer?.commandHandler?.openTeachBox([], {
+						notifyStart: false,
+					});
+					break;
+				}
+				case 312: {
+					// Advice: 直近の入力が解釈不能 → 破棄して再オープン
+					this._teachHistory = history.slice(0, -1);
+					this.app.sakuraPlayer?.commandHandler?.openTeachBox([], {
+						notifyStart: false,
+					});
+					break;
+				}
+				case 400:
+				case 500: {
+					this.clearTeachHistory();
+					break;
+				}
+				default: {
+					// 200 / 204 等: teach セッション完了
+					this.clearTeachHistory();
+					if (parsed?.value?.trim()) {
+						this.app.playSakuraScript(parsed.value);
+					}
+				}
+			}
+			return code;
+		} catch (error) {
+			console.warn("OnTeach 送信失敗:", error);
+			this.clearTeachHistory();
+			return null;
+		}
+	},
+
+	/**
+	 * Teach 入力履歴のクリア（テキスト完了・キャンセル・エラー時）
+	 */
+	clearTeachHistory() {
+		this._teachHistory = [];
 	},
 };

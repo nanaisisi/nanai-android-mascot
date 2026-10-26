@@ -199,7 +199,7 @@ pub(super) fn handle_underscore(
                     if ac == '\\' && chars.peek() == Some(&'_') {
                         chars.next();
                         if chars.peek() == Some(&'a') {
-                            chars.next();
+                            chars.next(); // 'a' を消費
                             break;
                         }
                     }

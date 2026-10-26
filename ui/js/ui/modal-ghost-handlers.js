@@ -66,8 +66,50 @@ export class ModalGhostHandlers {
       }
     };
 
-    importBtn?.addEventListener("click", handleGhostImport);
-    fileInput?.addEventListener("change", handleGhostImport);
+    importBtn?.addEventListener("click", async () => {
+      if (isTauriAvailable()) {
+        await this.pickAndInstall(statusEl, async (res) => {
+          await this.app.ghostController.scanGhosts();
+          this.app.ghostController.selectGhost(res.name);
+          this.renderGhostList();
+        });
+        return;
+      }
+      if (!fileInput?.files?.[0]) {
+        fileInput?.click();
+        return;
+      }
+      handleGhostImport();
+    });
+    fileInput?.addEventListener("change", () => {
+      if (fileInput.files?.[0]) handleGhostImport();
+    });
+  }
+
+  /** ネイティブダイアログでアーカイブを選んで取り込む */
+  async pickAndInstall(statusEl, onDone) {
+    try {
+      if (statusEl) {
+        statusEl.textContent = "📂 ファイルを選択してください...";
+        statusEl.style.color = "#2980b9";
+      }
+      const res = await invoke("pick_and_install_ghost_archive");
+      if (!res) {
+        if (statusEl) statusEl.textContent = "キャンセルされました。";
+        return;
+      }
+      if (statusEl) {
+        statusEl.textContent = `✅ 「${res.name}」を取り込みました！`;
+        statusEl.style.color = "#27ae60";
+      }
+      await onDone(res);
+    } catch (err) {
+      console.error("アーカイブ取り込み失敗:", err);
+      if (statusEl) {
+        statusEl.textContent = `❌ 失敗: ${err}`;
+        statusEl.style.color = "#c0392b";
+      }
+    }
   }
 
   setupInstallListeners() {
@@ -126,8 +168,25 @@ export class ModalGhostHandlers {
       }
     };
 
-    submitBtn?.addEventListener("click", doInstall);
-    fileInput?.addEventListener("change", doInstall);
+    submitBtn?.addEventListener("click", async () => {
+      if (isTauriAvailable()) {
+        await this.pickAndInstall(statusEl, async (res) => {
+          await this.app.ghostController.scanGhosts();
+          this.app.ghostController.selectGhost(res.name);
+          this.app.showBalloon(`「${res.name}」をインストールして切り替えました！`);
+          setTimeout(() => this.app.hideBalloon(), 2500);
+        });
+        return;
+      }
+      if (!fileInput?.files?.[0]) {
+        fileInput?.click();
+        return;
+      }
+      doInstall();
+    });
+    fileInput?.addEventListener("change", () => {
+      if (fileInput.files?.[0]) doInstall();
+    });
   }
 
   renderBalloonList() {

@@ -179,6 +179,30 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
     })
 }
 
+/// ネイティブのファイル選択ダイアログを開き、選んだアーカイブを取り込む。キャンセル時は None
+#[tauri::command]
+pub async fn pick_and_install_ghost_archive(
+    app_handle: tauri::AppHandle,
+) -> Result<Option<GhostInfo>, String> {
+    use tauri_plugin_dialog::DialogExt;
+    let picked = tauri::async_runtime::spawn_blocking({
+        let app = app_handle.clone();
+        move || {
+            app.dialog()
+                .file()
+                .add_filter("Ghost archive", &["nar", "zip"])
+                .blocking_pick_file()
+        }
+    })
+    .await
+    .map_err(|e| e.to_string())?;
+    let Some(fp) = picked else { return Ok(None) };
+    let path = fp.into_path().map_err(|e| e.to_string())?;
+    install_ghost_archive(path.to_string_lossy().to_string(), app_handle)
+        .await
+        .map(Some)
+}
+
 /// ゴーストアーカイブ (.nar / .zip) のパス指定取り込み・解凍コマンド
 #[tauri::command]
 pub async fn install_ghost_archive(

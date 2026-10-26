@@ -22,7 +22,7 @@ Nanai Android Mascot における「伺か（UKAGAKA）」関連規格、およ�
 | :---------------------------------------- | :--------------------------------------------------- | :-----: | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **SHIORI 3.0**                            | ゴースト頭脳・イベント通信プロトコル                 | **92%** | SHIORI 3.0 リクエスト/レスポンスパーサー、主要基本イベント、ネットワーク更新 (`OnUpdate*` / `OnUpdateCheck*` / ファイル単位進捗、updates2.dau 差分、`OnUpdateResultExplorer`)、メールチェック (`OnBIFF*` / `OnBIFF2Complete`)、Web Worker 非同期実行実装済。C/C++系ネイティブSHIORIのWASM化が継続課題。 |
 | **さくらスクリプト (Sakura Script)**      | テキスト送出・タグ制御プロトコル                     | **96%** | `\0`, `\1`, `\p[n]`, `\h`, `\u`, `\s[ID]`, `\w[N]`, `\_w[ms]`, `\q[text,id]`, `\_a[id]`, `\i[ID,wait]`, `\n[half]`, `\b`, `\x`, `\_q`, `\_s`, `\_l`, `\f`, `\e` 等の実装・文字送り制御完備。未対応 `\![...]` の JS 側汎用透過完備。 |
-| **サーフィス仕様 (surfaces.txt / PNA)**   | 画像定義・重ね合わせ・当たり判定                     | **90%** | HTML5 Canvas 2D によるベース・差分合成、`collision` / `collisionex`(rect/polygon/circle/ellipse) 当たり判定、表示倍率逆算マッピング実装済。PNA/透過PNG対応。着せ替えbindはメニューUI完備。       |
+| **サーフィス仕様 (surfaces.txt / PNA)**   | 画像定義・重ね合わせ・当たり判定                     | **95%** | HTML5 Canvas 2D によるベース・差分合成、`collision` / `collisionex`(rect/polygon/circle/ellipse) 当たり判定、表示倍率逆算マッピング、PNAアルファマスク合成・BMP/PNG読込対応。着せ替えbindはメニューUI完備。 |
 | **バルーン仕様 (balloon / descript.txt)** | 吹き出しスキン・フォント・配置定義                   | **85%** | `\0`, `\1` 独立バルーン、CSSテーマ着せ替え（モダン/アイボリー/コミック/ダーク）、`descript.txt` (フォント名/色/サイズ/選択肢色/validrectパディング/wordwrappoint折り返し/原点オフセット) の動的適用、倍率拡縮実装済。 |
 | **SSP 互換メニュー・操作体系**            | 右クリックメニュー・ショートカット・操作系           | **85%** | 伺か標準階層メニュー（iframe隔離）、シェル倍率切替（50%〜200%）、ドッキング退避、モーダルUI群（設定/情報/一覧）実装済。                                 |
 | **ファイル配置・アーカイブ (NAR / VFS)**  | ゴースト配布形式・ファイルシステム・エンコーディング | **95%** | Shift_JIS (CP932) ↔ UTF-8 自動判別・透過読込、大文字小文字吸収 VFS 実装済。NAR/zip 自動展開（install.txt `type` による Ghost / Balloon 自動仕分け導入・Zip Slip 防止完備）。シェル単体 NAR は今後順次拡充。 |
@@ -81,7 +81,7 @@ Nanai Android Mascot における「伺か（UKAGAKA）」関連規格、およ�
 | **円形/楕円判定 (collisionex)** | `collisionex[ID],Name,circle/ellipse` |  ✅ 対応済  | circle/ellipse を型付き形状として点内包判定（rect/polygon も維持） |
 | **アニメーション (animation)**  | `animation[ID].interval` 等          |  ✅ 対応済  | interval 全種（sometimes/always/runonce/periodic/random/talk 等）再生、SERIKO pattern 差分合成（overlay/replace）、口パク・`\i`・`\![anim,pause/resume]` 対応 |
 | **着せ替え (bind)**             | `bind` オプションによる着脱           |  ✅ 対応済  | bindgroup メニュー（mustselect 排他含む）、bind レイヤーの常時合成、`OnDressupChanged` 送信       |
-| **PNA 透過マスク**              | 24bit BMP + 8bit グレースケールマスク | ⚠️ 部分対応 | アルファ付き PNG 形式を第一推奨とし、PNAは透過変換対応 |
+| **PNA 透過マスク**              | 24bit BMP/PNG + 8bit グレースケールマスク | ✅ 対応済 | `load_surface_pna` によるマスク読込、Canvas 2D による白黒輝度→アルファ値変換合成、BMP/PNG 相互透過対応 |
 
 ### 2.4 バルーン・UI・メニュー体系
 

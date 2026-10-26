@@ -1,5 +1,5 @@
 use crate::common::*;
-use crate::ghost::scan::{scan_ghost_directory, ScanResult};
+use crate::ghost::scan::{ScanResult, scan_ghost_directory};
 
 /// 現在のゴースト情報を取得（簡易版）
 #[tauri::command]

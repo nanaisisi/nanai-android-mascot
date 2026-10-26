@@ -1,5 +1,5 @@
 use md5::{Digest, Md5};
-use nanai_android_mascot_ui::{open_text_file, Descript};
+use nanai_android_mascot_ui::{Descript, open_text_file};
 use std::fs;
 use std::path::Path;
 

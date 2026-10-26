@@ -567,6 +567,14 @@ impl ShioriResponse {
         }
     }
 
+    /// OnTeach の追加情報要求（311 Not Enough / 312 Advice）か
+    pub fn is_teach_pending(&self) -> bool {
+        matches!(
+            self.status,
+            StatusCode::NotEnough | StatusCode::Advice
+        )
+    }
+
     /// テキストから SHIORI/3.0 レスポンスをパースする（LF / CRLF 両対応）
     ///
     /// Value ヘッダの値が複数行に跨る場合、継続行は `\n` 連結される。
@@ -917,5 +925,22 @@ mod tests {
 
         let empty = ShioriResponse::parse("").unwrap_err();
         assert!(!empty.is_empty());
+    }
+
+    #[test]
+    fn test_response_teach_pending() {
+        // 311 Not Enough / 312 Advice: OnTeach の追加情報要求
+        let not_enough = ShioriResponse::parse(
+            "SHIORI/3.0 311 Not Enough\r\n\r\n",
+        )
+        .unwrap();
+        assert!(not_enough.is_teach_pending());
+
+        let advice =
+            ShioriResponse::parse("SHIORI/3.0 312 Advice\r\n\r\n").unwrap();
+        assert!(advice.is_teach_pending());
+
+        assert!(!ShioriResponse::ok("script").is_teach_pending());
+        assert!(!ShioriResponse::no_content().is_teach_pending());
     }
 }

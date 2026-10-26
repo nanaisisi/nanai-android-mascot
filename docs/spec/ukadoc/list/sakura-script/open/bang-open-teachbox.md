@@ -1,9 +1,15 @@
-# \![open,teachbox]
+﻿# \![open,teachbox]
 
 - **規格**: [bang-open-teachbox.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/open/bang-open-teachbox/) (ukadoc-spec/list/sakura-script/open/bang-open-teachbox.md)
 - **検索語**: \!
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
 パーサがタグを読み飛ばす、または sakura-command-handler.js が「未対応の \! コマンド」として扱い、該当処理はない。
+
+## 実装箇所
+
+- `ui/js/ghost/sakura-command-handler.js` （`\![open,teachbox]` / `\![close,teachbox]`: TeachBox UI、OnTeachStart 送出、OnTeachInputCancel (Reference0=空席/Reference1=cancel) ）
+- `ui/js/ghost/ghost-shiori.js` （OnTeach + 311 Not Enough / 312 Advice 再入ループ: sendTeachInput / clearTeachHistory、入力履歴 Reference0.. 送信）
+- `crates/ui/src/shiori.rs` （ShioriResponse::is_teach_pending: 311/312 判定）

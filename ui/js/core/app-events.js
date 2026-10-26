@@ -126,6 +126,8 @@ export const eventMethods = {
 	},
 
 	onGhostClick(clientX, clientY, rect, scopeId = 0) {
+		// `\t`（タイムクリティカルセクション）中はマウス系イベントを通知しない (UKADOC準拠)
+		if (this.sakuraPlayer?.timeCritical && this.sakuraPlayer?.isPlaying) return;
 		const col = this.getCollisionInfo(clientX, clientY, rect, scopeId);
 		console.log(
 			`🖱️ ゴーストタップ: スコープ=${scopeId}, 部位=${col.name || "なし"} (X:${col.canvasX}, Y:${col.canvasY})`,
@@ -150,6 +152,8 @@ export const eventMethods = {
 	},
 
 	onGhostStroke(clientX, clientY, rect, scopeId = 0) {
+		// `\t`（タイムクリティカルセクション）中はマウス系イベントを通知しない (UKADOC準拠)
+		if (this.sakuraPlayer?.timeCritical && this.sakuraPlayer?.isPlaying) return;
 		const col = this.getCollisionInfo(clientX, clientY, rect, scopeId);
 		console.log(
 			`🖐️ ゴースト撫で（Stroke）: スコープ=${scopeId}, 部位=${col.name || "なし"}`,

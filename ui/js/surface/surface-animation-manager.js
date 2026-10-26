@@ -1,6 +1,8 @@
 /**
  * SERIKOアニメーションおよび発話口パク管理
  */
+import { patternSurfaceFile } from "./bind-menu.js";
+
 export class SurfaceAnimationManager {
 	/**
 	 * @param {import('./surface.js').SurfaceManager} manager
@@ -198,10 +200,17 @@ export class SurfaceAnimationManager {
 			}
 
 			const patSurface = String(pat.surface).trim();
-			if (patSurface === "-1") {
-				await gc.updateSurface(baseSurfaceId, scopeId);
-			} else {
-				await gc.updateSurface(patSurface, scopeId);
+			// SERIKO 合成: ベースサーフィス上に差分パターンを重ねて表示
+			// (UKADOC 準拠: pattern.x/y オフセット、method overlay/replace)
+			// 合成不可（pattern -1 / サーフィス未定義）時は旧方式の全面差し替えへフォールバック
+			if (
+				patSurface === "-1" ||
+				!this.renderAnimationFrame(pat, baseSurfaceId, scopeId)
+			) {
+				await gc.updateSurface(
+					patSurface === "-1" ? baseSurfaceId : patSurface,
+					scopeId,
+				);
 			}
 
 			const waitMs = Math.max(pat.wait || 100, 30);
@@ -214,6 +223,31 @@ export class SurfaceAnimationManager {
 		) {
 			await gc.updateSurface(baseSurfaceId, scopeId);
 		}
+	}
+
+	/**
+	 * SERIKO パターンを「ベースサーフィス + 差分レイヤー」として 1 フレーム描画
+	 * (UKADOC 準拠: pattern.surface / pattern.x / pattern.y / pattern[K],method)
+	 * 現在のサーフィス番号・アニメーションスケジュールには干渉しない。
+	 * @param {{ surface: number|string, x?: number, y?: number, type?: string }} pat
+	 * @param {number|string} baseSurfaceId
+	 * @param {number} scopeId
+	 * @returns {boolean} 合成に成功したか（false なら全面差し替えフォールバック）
+	 */
+	renderAnimationFrame(pat, baseSurfaceId, scopeId) {
+		if (baseSurfaceId === -1 || baseSurfaceId === "-1") return false;
+		const resolved = this.manager.resolveSurfaceNumber(pat.surface, scopeId);
+		const file = patternSurfaceFile(resolved);
+		if (!file) return false;
+		this.manager.app?.ghostController?.updateSurface(baseSurfaceId, scopeId, [
+			{
+				file,
+				x: pat.x ?? 0,
+				y: pat.y ?? 0,
+				type: pat.type ?? "overlay",
+			},
+		]);
+		return true;
 	}
 
 	/**

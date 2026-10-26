@@ -21,6 +21,12 @@ export class SakuraScriptPlayer {
 		this.currentScope = 0; // 0: sakura, 1: kero
 		/** @type {number} */
 		this.playbackId = 0;
+		/**
+		 * `\t` タイムクリティカルセクション (UKADOC準拠)。
+		 * スクリプトブレークか \e までマウス系イベント通知を抑止する。
+		 * @type {boolean}
+		 */
+		this.timeCritical = false;
 
 		this.commandHandler = new SakuraCommandHandler(this);
 

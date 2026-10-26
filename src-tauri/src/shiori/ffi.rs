@@ -285,13 +285,60 @@ impl ShioriRequestBuilder {
     }
 
     /// OnBIFFCompleteイベントのリクエストを作成 (メールチェック完了)
-    pub fn on_biff_complete(count: u32, size_bytes: u64) -> Self {
-        ShioriRequestBuilder::new()
+    pub fn on_biff_complete(count: u32, size_bytes: u64, account_name: Option<&str>) -> Self {
+        let mut builder = ShioriRequestBuilder::new()
             .method("NOTIFY")
             .event("OnBIFFComplete")
             .reference(0, &count.to_string())
             .reference(1, &size_bytes.to_string())
-            .charset("UTF-8")
+            .charset("UTF-8");
+        if let Some(account) = account_name {
+            builder = builder.reference(2, account);
+        }
+        builder
+    }
+
+    /// OnBIFF2Completeイベントのリクエストを作成 (メールチェック詳細完了通知)
+    pub fn on_biff_2_complete(count: u32, size_bytes: u64, account_name: Option<&str>, unread_count: Option<u32>) -> Self {
+        let mut builder = ShioriRequestBuilder::new()
+            .method("NOTIFY")
+            .event("OnBIFF2Complete")
+            .reference(0, &count.to_string())
+            .reference(1, &size_bytes.to_string())
+            .charset("UTF-8");
+        if let Some(account) = account_name {
+            builder = builder.reference(2, account);
+        }
+        if let Some(unread) = unread_count {
+            builder = builder.reference(3, &unread.to_string());
+        }
+        builder
+    }
+
+    /// OnBIFFFailureイベントのリクエストを作成 (メールチェック失敗)
+    pub fn on_biff_failure(reason: &str, account_name: Option<&str>) -> Self {
+        let mut builder = ShioriRequestBuilder::new()
+            .method("NOTIFY")
+            .event("OnBIFFFailure")
+            .reference(0, reason)
+            .charset("UTF-8");
+        if let Some(account) = account_name {
+            builder = builder.reference(1, account);
+        }
+        builder
+    }
+
+    /// OnUpdateResultExplorerイベントのリクエストを作成 (更新結果の詳細エクスプローラ表示)
+    pub fn on_update_result_explorer(status: &str, log_path: Option<&str>) -> Self {
+        let mut builder = ShioriRequestBuilder::new()
+            .method("NOTIFY")
+            .event("OnUpdateResultExplorer")
+            .reference(0, status)
+            .charset("UTF-8");
+        if let Some(path) = log_path {
+            builder = builder.reference(1, path);
+        }
+        builder
     }
 
     /// 任意のイベント名と参照引数から汎用リクエストを作成

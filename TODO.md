@@ -155,8 +155,8 @@
 
 - **方針**: DOM/UI非依存の解析・プロトコル処理を `crates/ui` / Tauri コマンドに一元化
 - **対応策**:
-  - [ ] `surface-parser.js` / `shell-manifest.js` の解析処理を Rust（`crates/ui::surfaces`, `manifest`）へ移譲
-  - [ ] `sakura-parser.js`（さくらスクリプト構文解析）の Rust 側（`crates/ui::script`）一元化
+  - [x] `surface-parser.js` / `shell-manifest.js` の解析処理を Rust（`crates/ui::surfaces`, `manifest`）へ移譲（`parse_surfaces_text` / `shell_manifest`）
+  - [x] `sakura-parser.js`（さくらスクリプト構文解析）の Rust 側（`crates/ui::script`）一元化（`parse_sakura_script`）
   - [ ] `shiori-protocol.js` の Rust 側（`crates/ui::shiori`）統合と IPC 連携
   - [ ] アニメーションタイムライン計算（`crates/ui::animation`）とフロントエンド描画の連携整理
 

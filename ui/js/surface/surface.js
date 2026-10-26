@@ -10,6 +10,7 @@ import {
 	collisionContains,
 	getShellManifest,
 	manifestToSurfaceData,
+	parseSurfacesTextWithRust,
 } from "./shell-manifest.js";
 import { SurfaceAnimationManager } from "./surface-animation-manager.js";
 import {
@@ -145,7 +146,7 @@ export class SurfaceManager {
 
 			if (content) {
 				console.log(`📜 surfaces.txt 読み込み成功 (${surfacesPath})`);
-				this.parseSurfacesTxt(content);
+				await this.parseSurfacesTxt(content);
 			}
 		} catch (err) {
 			console.warn(
@@ -181,14 +182,27 @@ export class SurfaceManager {
 	/**
 	 * surfaces.txt のテキスト内容をパースして当たり判定を登録
 	 */
-	parseSurfacesTxt(text) {
+	async parseSurfacesTxt(text) {
+		if (isTauriAvailable()) {
+			const rustData = await parseSurfacesTextWithRust(text);
+			if (rustData) {
+				this.collisions = rustData.collisions;
+				this.elements = rustData.elements;
+				this.animations = rustData.animations;
+				console.log(
+					`🎯 当たり判定・合成要素登録完了 (Rust parse_surfaces_text): ${Object.keys(this.collisions).length} サーフィス登録済み`,
+				);
+				return;
+			}
+		}
+
 		const parsed = parseSurfacesTxt(text);
 		this.collisions = parsed.collisions;
 		this.elements = parsed.elements;
 		this.animations = parsed.animations;
 
 		console.log(
-			`🎯 当たり判定・合成要素登録完了: ${Object.keys(this.collisions).length} サーフィス登録済み`,
+			`🎯 当たり判定・合成要素登録完了 (JS fallback): ${Object.keys(this.collisions).length} サーフィス登録済み`,
 		);
 	}
 

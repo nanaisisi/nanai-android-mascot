@@ -47,3 +47,32 @@ pub fn shell_manifest(
     let shell = Shell::load(&shell_dir).map_err(|e| e.to_string())?;
     Ok(shell.manifest())
 }
+
+/// さくらスクリプト文字列を Rust コアでパースして SakuraCommand 配列を返す
+#[tauri::command]
+pub fn parse_sakura_script(
+    script: String,
+) -> Result<Vec<nanai_android_mascot_ui::SakuraCommand>, String> {
+    Ok(nanai_android_mascot_ui::parse_sakura_script(&script))
+}
+
+/// surfaces.txt の文字列を Rust コアでパースして SurfaceManifest マップを返す
+#[tauri::command]
+pub fn parse_surfaces_text(
+    content: String,
+) -> Result<std::collections::BTreeMap<u32, nanai_android_mascot_ui::SurfaceManifest>, String> {
+    let surfaces_txt = nanai_android_mascot_ui::parse_surfaces_txt(&content);
+    let mut map = std::collections::BTreeMap::new();
+    for (id, def) in surfaces_txt.surfaces.iter() {
+        map.insert(
+            *id,
+            nanai_android_mascot_ui::SurfaceManifest {
+                number: *id,
+                name: def.name.clone(),
+                definition: def.clone(),
+            },
+        );
+    }
+    Ok(map)
+}
+

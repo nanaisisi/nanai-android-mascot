@@ -1,5 +1,8 @@
+use serde::{Deserialize, Serialize};
+
 /// さくらスクリプトの内部コマンド列挙
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(tag = "type", content = "payload")]
 pub enum SakuraCommand {
     Target(u8),   // \0, \1, \p[n]
     Surface(u32), // \s[0], \s0

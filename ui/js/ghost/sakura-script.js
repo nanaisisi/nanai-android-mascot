@@ -5,7 +5,7 @@ import {
 	listen,
 } from "../core/tauri-helper.js";
 import { SakuraCommandHandler } from "./sakura-command-handler.js";
-import { parseSakuraScript } from "./sakura-parser.js";
+import { parseSakuraScriptAsync } from "./sakura-parser.js";
 
 /**
  * Nanai Android Mascot - さくらスクリプト（SakuraScript）プレイヤー
@@ -65,15 +65,15 @@ export class SakuraScriptPlayer {
 	/**
 	 * さくらスクリプト文字列を解析してトークン列に変換
 	 */
-	parse(script) {
-		return parseSakuraScript(script);
+	async parse(script) {
+		return await parseSakuraScriptAsync(script);
 	}
 
 	/**
 	 * トークン列をバルーンにアニメーション再生
 	 */
 	async play(script) {
-		const tokens = this.parse(script);
+		const tokens = await this.parse(script);
 		this.playbackId++;
 		const currentId = this.playbackId;
 		this.isPlaying = true;

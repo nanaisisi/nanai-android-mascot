@@ -172,3 +172,26 @@ export async function getShellManifest(ghostName, shellName) {
 		return null;
 	}
 }
+
+/**
+ * Rust 側で surfaces.txt のテキスト内容をパースしてサーフィスデータを取得する
+ * @param {string} content
+ * @returns {Promise<{ collisions: Record<string, any[]>, elements: Record<string, any[]>, animations: Record<string, any[]> }|null>}
+ */
+export async function parseSurfacesTextWithRust(content) {
+	try {
+		const rawMap = await invoke("parse_surfaces_text", { content });
+		if (!rawMap || typeof rawMap !== "object") return null;
+
+		const surfaces = Object.values(rawMap);
+		const data = manifestToSurfaceData({ surfaces });
+		return {
+			collisions: data.collisions,
+			elements: data.elements,
+			animations: data.animations,
+		};
+	} catch (err) {
+		console.warn("⚠️ Rust parse_surfaces_text 失敗:", err);
+		return null;
+	}
+}

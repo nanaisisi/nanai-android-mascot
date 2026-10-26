@@ -1,10 +1,10 @@
 import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
+import { SurfaceAnimationManager } from "./surface-animation-manager.js";
 import {
 	composeSurfaceElements,
 	processChromaKey,
 } from "./surface-compositor.js";
 import { expandSurfaceRange, parseSurfacesTxt } from "./surface-parser.js";
-import { SurfaceAnimationManager } from "./surface-animation-manager.js";
 
 // 外部エクスポート
 export {

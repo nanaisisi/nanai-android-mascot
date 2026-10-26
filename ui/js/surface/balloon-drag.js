@@ -23,7 +23,9 @@ export class BalloonDragManager {
           this.balloonOffsetY = parsed.y;
         }
       }
-    } catch (_) {}
+    } catch (_) {
+      // LocalStorage access restricted or unavailable
+    }
   }
 
   updateFollowPosition(newX, newY) {
@@ -94,7 +96,9 @@ export class BalloonDragManager {
               "nanai_balloon_offset",
               JSON.stringify({ x: this.balloonOffsetX, y: this.balloonOffsetY })
             );
-          } catch (_) {}
+          } catch (_) {
+            // LocalStorage access restricted or unavailable
+          }
         }
       }
     };

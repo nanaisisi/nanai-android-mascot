@@ -123,9 +123,78 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
                                 });
                             }
                         }
+                        Some('s') => {
+                            // \_s (複数キャラ同期表示トグル)
+                            callback(SakuraCommand::Sync(true));
+                        }
+                        Some('l') => {
+                            // \_l[x,y]
+                            if chars.peek() == Some(&'[') {
+                                chars.next();
+                                let mut pos = String::new();
+                                while let Some(&nc) = chars.peek() {
+                                    if nc == ']' {
+                                        chars.next();
+                                        break;
+                                    }
+                                    pos.push(nc);
+                                    chars.next();
+                                }
+                                let mut coords = pos.splitn(2, ',');
+                                let x = coords.next().unwrap_or("0").trim().to_string();
+                                let y = coords.next().unwrap_or("0").trim().to_string();
+                                callback(SakuraCommand::Offset { x, y });
+                            }
+                        }
                         _ => {}
                     }
                 }
+                Some('b') => {
+                    // \b[n] または \b0..\b9
+                    if chars.peek() == Some(&'[') {
+                        chars.next();
+                        let mut num = String::new();
+                        while let Some(&nc) = chars.peek() {
+                            if nc == ']' {
+                                chars.next();
+                                break;
+                            }
+                            num.push(nc);
+                            chars.next();
+                        }
+                        if let Ok(n) = num.trim().parse::<i32>() {
+                            callback(SakuraCommand::Balloon(n));
+                        }
+                    } else if let Some(&nc) = chars.peek()
+                        && nc.is_ascii_digit()
+                    {
+                        chars.next();
+                        if let Some(digit) = nc.to_digit(10) {
+                            callback(SakuraCommand::Balloon(digit as i32));
+                        }
+                    }
+                }
+                Some('f') => {
+                    // \f[tag,param] または \f[tag]
+                    if chars.peek() == Some(&'[') {
+                        chars.next();
+                        let mut content = String::new();
+                        while let Some(&nc) = chars.peek() {
+                            if nc == ']' {
+                                chars.next();
+                                break;
+                            }
+                            content.push(nc);
+                            chars.next();
+                        }
+                        let mut parts = content.splitn(2, ',');
+                        let tag = parts.next().unwrap_or("").trim().to_string();
+                        let param = parts.next().map(|p| p.trim().to_string());
+                        callback(SakuraCommand::Font { tag, param });
+                    }
+                }
+                Some('t') => callback(SakuraCommand::Timeout),
+                Some('-') => callback(SakuraCommand::Halt),
                 Some('!') => {
                     // \![raise,Event,...] または \![bind,category,part,status]
                     if chars.peek() == Some(&'[') {

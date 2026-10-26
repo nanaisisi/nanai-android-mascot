@@ -83,4 +83,38 @@ mod tests {
             }
         );
     }
+
+    #[test]
+    fn test_sakura_script_extended_tags() {
+        let script = r"\b[0]\b[-1]\t\-\_s\_l[10,20]\f[color,red]\f[bold]";
+        let mut commands = Vec::new();
+        execute_sakura_script(script, |cmd| commands.push(cmd));
+
+        assert_eq!(commands[0], SakuraCommand::Balloon(0));
+        assert_eq!(commands[1], SakuraCommand::Balloon(-1));
+        assert_eq!(commands[2], SakuraCommand::Timeout);
+        assert_eq!(commands[3], SakuraCommand::Halt);
+        assert_eq!(commands[4], SakuraCommand::Sync(true));
+        assert_eq!(
+            commands[5],
+            SakuraCommand::Offset {
+                x: "10".into(),
+                y: "20".into(),
+            }
+        );
+        assert_eq!(
+            commands[6],
+            SakuraCommand::Font {
+                tag: "color".into(),
+                param: Some("red".into()),
+            }
+        );
+        assert_eq!(
+            commands[7],
+            SakuraCommand::Font {
+                tag: "bold".into(),
+                param: None,
+            }
+        );
+    }
 }

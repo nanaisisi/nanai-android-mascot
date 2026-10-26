@@ -2,11 +2,11 @@
 
 - **規格**: [menu.foreground.bitmap.filename.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ownerdraw-image/menu.foreground.bitmap.filename/) (ukadoc-spec/list/shiori-resource/ownerdraw-image/menu.foreground.bitmap.filename.md)
 - **検索語**: menu.foreground.bitmap.filename
-- **対応状況**: 🔎 コード上に出現(処理の有無は要読解)
+- **対応状況**: ⚠️ 一部対応(読込のみ)
 
 ## 突合結果
 
-実装コードに「menu.foreground.bitmap.filename」が出現。実際の処理内容は未精査。
+ghost/scan.rs で descript.txt から読込 (表示への反映は未確認)。
 
 ## 実装箇所
 

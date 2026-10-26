@@ -2,11 +2,11 @@
 
 - **規格**: [animation-star-.interval.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/animation-star-.interval/) (ukadoc-spec/descript/shell-surfaces/surface-brace/animation-star-.interval.md)
 - **検索語**: animation
-- **対応状況**: 🔎 コード上に出現(処理の有無は要読解)
+- **対応状況**: ❓ 要確認(surface 関連語)
 
 ## 突合結果
 
-実装コードに「animation」が出現。実際の処理内容は未精査。
+サーフェス処理 (ui/js/surface/) に関連する語「animation」が出現。surfaces.txt の該当機能として実装されているかは個別の読解が必要。
 
 ## 実装箇所
 

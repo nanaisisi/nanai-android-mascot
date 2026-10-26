@@ -2,11 +2,11 @@
 
 - **規格**: [homeurl.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ghost/homeurl/) (ukadoc-spec/list/shiori-resource/ghost/homeurl.md)
 - **検索語**: homeurl
-- **対応状況**: 🔎 コード上に出現(処理の有無は要読解)
+- **対応状況**: ⚠️ 一部対応(読込のみ)
 
 ## 突合結果
 
-実装コードに「homeurl」が出現。実際の処理内容は未精査。
+update/network.rs で homeurl を取得してネットワーク更新に使用。
 
 ## 実装箇所
 

@@ -2,11 +2,11 @@
 
 - **規格**: [caption_shioriresource.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/caption_shioriresource/)
 - **検索語**: SHIORI
-- **対応状況**: 🔎 コード上に出現(処理の有無は要読解)
+- **対応状況**: ❌ 未実装(誤検出)
 
 ## 突合結果
 
-実装コードに「SHIORI」が出現。実際の処理内容は未精査。
+ヒットしたのは一般的な語「SHIORI」の無関係な出現。該当の仕様に対応する処理は確認できない。
 
 ## 実装箇所
 

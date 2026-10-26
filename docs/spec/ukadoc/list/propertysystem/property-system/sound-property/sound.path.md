@@ -2,11 +2,11 @@
 
 - **規格**: [sound.path.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/sound-property/sound.path/)
 - **検索語**: path
-- **対応状況**: 🔎 コード上に出現(処理の有無は要読解)
+- **対応状況**: ❌ 未実装(誤検出)
 
 ## 突合結果
 
-実装コードに「path」が出現。実際の処理内容は未精査。
+ヒットしたのは一般的な語「path」の無関係な出現。該当の仕様に対応する処理は確認できない。
 
 ## 実装箇所
 

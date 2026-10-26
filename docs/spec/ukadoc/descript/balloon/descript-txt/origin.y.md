@@ -2,11 +2,11 @@
 
 - **規格**: [origin.y.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/origin.y/) (ukadoc-spec/descript/balloon/descript-txt/origin.y.md)
 - **検索語**: origin.y
-- **対応状況**: 🔎 コード上に出現(処理の有無は要読解)
+- **対応状況**: ⚠️ 一部対応(読込のみ)
 
 ## 突合結果
 
-実装コードに「origin.y」が出現。実際の処理内容は未精査。
+ghost/scan.rs 等で descript の値を読込している。表示・動作への反映は個別未確認。
 
 ## 実装箇所
 

@@ -62,6 +62,8 @@ pub fn scan_shells_from_ghost(ghost_dir: &Path) -> Vec<ShellInfo> {
                             || bg_font_col.is_some()
                             || fg_font_col.is_some()
                             || bg_bmp.is_some()
+                            || fg_bmp.is_some()
+                            || side_bmp.is_some()
                         {
                             menu_theme = Some(ShellMenuTheme {
                                 background_color: bg_color,

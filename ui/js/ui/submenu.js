@@ -260,6 +260,31 @@ if (globalThis.__TAURI__) {
 							"--balloon-separator-color",
 							mt.separator_color,
 						);
+
+					const shellPath = activeShell.path || "";
+					const resolveImg = (relPath) => {
+						if (!relPath) return null;
+						const full = shellPath
+							? `${shellPath.replace(/\\/g, "/")}/${relPath.replace(/\\/g, "/")}`
+							: relPath;
+						return globalThis.__TAURI__?.core?.convertFileSrc
+							? globalThis.__TAURI__.core.convertFileSrc(full)
+							: full;
+					};
+
+					if (mt.background_bitmap) {
+						const bgUrl = resolveImg(mt.background_bitmap);
+						rootStyle.setProperty("--menu-bg-image", `url("${bgUrl}")`);
+					} else {
+						rootStyle.removeProperty("--menu-bg-image");
+					}
+
+					if (mt.foreground_bitmap) {
+						const fgUrl = resolveImg(mt.foreground_bitmap);
+						rootStyle.setProperty("--menu-fg-image", `url("${fgUrl}")`);
+					} else {
+						rootStyle.removeProperty("--menu-fg-image");
+					}
 				}
 				renderContent();
 			}

@@ -14,7 +14,8 @@ body {
 	max-height: calc(100vh - 0.5rem);
 	overflow-y: auto;
 	background-color: var(--balloon-bg, #ffffff);
-	background-image: var(--balloon-pattern, none);
+	background-image: var(--menu-bg-image, var(--balloon-pattern, none));
+	background-repeat: repeat;
 	border: var(--balloon-border-width, 1px) var(--balloon-border-style, solid)
 		var(--balloon-border-color, #7a7a7a);
 	border-radius: var(--balloon-border-radius, 0.375rem);

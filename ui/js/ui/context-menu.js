@@ -76,6 +76,12 @@ globalThis.addEventListener("message", (event) => {
 			event.data.shells || ["master"],
 			event.data.currentShell || "master",
 		);
+		const activeShell =
+			event.data.shells?.find((s) => s.name === event.data.currentShell) ||
+			event.data.shells?.[0];
+		if (activeShell) {
+			renderer.applyShellTheme(activeShell);
+		}
 	} else if (event.data?.type === "sync-theme") {
 		renderer.applyTheme(event.data.theme);
 	}

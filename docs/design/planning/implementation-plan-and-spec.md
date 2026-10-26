@@ -30,9 +30,10 @@ flowchart TD
         MenuUI["伺か標準メニュー / 設定モーダル"]
     end
 
-    subgraph CoreBridge ["Tauri / Rust コア仲介層"]
+    subgraph CoreBridge ["Tauri / Rust コア仲介層 (crates/ui & src-tauri)"]
         VFS["VFS & 文字コード変換 (encoding_rs)<br>・Shift_JIS ↔ UTF-8 自動判別<br>・大文字小文字無視パス解決"]
         EventDispatcher["イベントディスパッチャー<br>・OnMouseClick, OnChoiceSelect<br>・OnSecondChange タイマー"]
+        RustParsers["Rust コアパーサー・プロトコル層<br>・surfaces.txt / マニフェスト解析<br>・さくらスクリプト解析 (AST生成)<br>・SHIORI/3.0 プロトコル制御"]
     end
 
     subgraph Backend ["バックエンド / プラットフォーム連携"]
@@ -48,6 +49,8 @@ flowchart TD
     ScriptEngine -->|\\s[ID] 表情切り替え| CanvasLayer
     CanvasLayer <--> VFS
     EventDispatcher <--> AndroidNative
+    ScriptEngine -.->|パース移譲| RustParsers
+    CanvasLayer -.->|定義取得| RustParsers
 ```
 
 ---
@@ -140,6 +143,24 @@ flowchart TD
    - 右クリックメニュー（[src/menu-iframe.html](../../../ui/menu-iframe.html) & [src/js/context-menu.js](../../../ui/js/ui/context-menu.js)）への「ファイル取り込み・導入 (I)」項目追加。
    - 取り込み専用モーダル（[src/index.html](../../../ui/index.html) & [src/js/modal.js](../../../ui/js/ui/modal.js)）およびゴースト管理モーダルからの 2 系統の取り込み UI 連携。
    - 取り込み完了後のゴースト一覧再スキャン・自動選択・バルーン通知パイプライン。
+
+---
+
+### Milestone 7: コア解析・プロトコル処理の Rust 移行と二重実装解消
+
+**目標**: フロントエンド（JS）とバックエンド（Rust `crates/ui`）で重複しているパーサー・プロトコルロジックを Rust コアに一元化し、WebView の責務を描画と UI インタラクションに特化させる。
+
+1. **パーサー・マニフェスト処理の Rust 移譲**
+   - `surface-parser.js` および `shell-manifest.js` の解析処理を `crates/ui`（`surfaces.rs`, `manifest.rs`）へ統合。
+   - Tauri Command 経由で構造化データ（JSON / IPC）としてフロントへ渡す構成へ変更。
+2. **さくらスクリプト解析（AST・コマンドキュー）の一元化**
+   - `sakura-parser.js` の構文解析を Rust 側（`crates/ui/src/script.rs`）に移行。
+   - フロントエンド（`sakura-script.js`）は解析済みコマンドのキュー消化（ディスパッチとウェイト制御）のみを担当。
+3. **SHIORI プロトコル制御の Rust 移譲**
+   - `shiori-protocol.js` を `crates/ui/src/shiori.rs` と一本化。
+   - ネイティブ DLL やプロセス間通信、WASM 呼び出しなどの SHIORI セッションを Rust コア側で管理。
+4. **SERIKO アニメーション計算の連携**
+   - `crates/ui/src/animation.rs` によるタイムライン事前計算を活用し、JS 側はスケジュールされたフレーム描画に専念。
 
 ---
 

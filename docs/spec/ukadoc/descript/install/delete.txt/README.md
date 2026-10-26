@@ -4,5 +4,5 @@
 
 | 項目 | 検索語 | 対応状況 |
 | :--- | :--- | :---: |
-| [相対パス](entry.md) | 相対パス | ⚠️ 出現あり(要精査) |
+| [相対パス](entry.md) | 相対パス | 📝 コメントのみ(未実装の可能性大) |
 | [delete.txt](introduction_delete.txt.md) | delete.txt | ❌ 検出なし |

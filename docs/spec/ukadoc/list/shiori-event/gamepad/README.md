@@ -7,7 +7,7 @@
 | [軸名一覧](caption_gamepad_axis.md) | 軸名一覧 | ❌ 検出なし |
 | [ボタン名一覧](caption_gamepad_button.md) | ボタン名一覧 | ❌ 検出なし |
 | [パッドインデックスについて](caption_gamepad_padindex.md) | パッドインデックスについて | ❌ 検出なし |
-| [Windows上のSSPにおけるXInput固有の仕様](caption_gamepad_xinput.md) | Windows | ⚠️ 出現あり(要精査) |
+| [Windows上のSSPにおけるXInput固有の仕様](caption_gamepad_xinput.md) | Windows | ❌ 未実装(誤検出) |
 | [OnGamepadAxisMove](OnGamepadAxisMove.md) | OnGamepadAxisMove | ❌ 検出なし |
 | [OnGamepadButtonDown](OnGamepadButtonDown.md) | OnGamepadButtonDown | ❌ 検出なし |
 | [OnGamepadButtonUp](OnGamepadButtonUp.md) | OnGamepadButtonUp | ❌ 検出なし |

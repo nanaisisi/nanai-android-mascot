@@ -5,7 +5,7 @@
 | 項目 | 検索語 | 対応状況 |
 | :--- | :--- | :---: |
 | [arrow.filename,ファイル名](arrow.filename.md) | arrow.filename | ❌ 検出なし |
-| [balloons\*s.txt/balloonk\*s.txt](balloons-s-txt-balloonk-s-txt.md) | balloons | ⚠️ 出現あり(要精査) |
+| [balloons\*s.txt/balloonk\*s.txt](balloons-s-txt-balloonk-s-txt.md) | balloons | ❌ 未実装(誤検出) |
 | [clickwaitmarker.filename,ファイル名](clickwaitmarker.filename.md) | clickwaitmarker.filename | ❌ 検出なし |
 | [marker.filename,ファイル名](marker.filename.md) | marker.filename | ❌ 検出なし |
 | [onlinemarker.filename,ファイル名](onlinemarker.filename.md) | onlinemarker.filename | ❌ 検出なし |

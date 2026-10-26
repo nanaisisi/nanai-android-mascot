@@ -2,11 +2,11 @@
 
 - **規格**: [talk.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/talk/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/talk.md)
 - **検索語**: talk
-- **対応状況**: ❓ 要確認(surface 関連語)
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-サーフェス処理 (ui/js/surface/) に関連する語「talk」が出現。surfaces.txt の該当機能として実装されているかは個別の読解が必要。
+surface-animation-manager.js で interval 種別として処理している。
 
 ## 実装箇所
 

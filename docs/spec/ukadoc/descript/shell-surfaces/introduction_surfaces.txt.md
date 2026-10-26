@@ -2,11 +2,11 @@
 
 - **規格**: [introduction_surfaces.txt.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/introduction_surfaces.txt/) (ukadoc-spec/descript/shell-surfaces/introduction_surfaces.txt.md)
 - **検索語**: surfaces.txt
-- **対応状況**: ❓ 要確認(surface 関連語)
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
-サーフェス処理 (ui/js/surface/) に関連する語「surfaces.txt」が出現。surfaces.txt の該当機能として実装されているかは個別の読解が必要。
+surface-parser.js / surface-animation-manager.js に該当の解析・処理は確認できない。
 
 ## 実装箇所
 

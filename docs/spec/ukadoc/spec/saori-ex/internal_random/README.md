@@ -4,6 +4,6 @@
 
 | 項目 | 検索語 | 対応状況 |
 | :--- | :--- | :---: |
-| [Bytes](internal_random.Bytes.md) | Bytes | ⚠️ 出現あり(要精査) |
-| [Number](internal_random.Number.md) | Number | ⚠️ 出現あり(要精査) |
+| [Bytes](internal_random.Bytes.md) | Bytes | ❌ 未実装(誤検出) |
+| [Number](internal_random.Number.md) | Number | ❌ 未実装(誤検出) |
 | [UUID](internal_random.UUID.md) | UUID | ❌ 検出なし |

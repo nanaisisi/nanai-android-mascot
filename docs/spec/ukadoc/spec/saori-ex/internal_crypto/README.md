@@ -6,10 +6,10 @@
 | :--- | :--- | :---: |
 | [共通鍵暗号（Encrypt / Decrypt）](internal_crypto_cipher.md) | Encrypt | ❌ 検出なし |
 | [公開鍵暗号（GenerateKeyPair / Sign / Verify / KeyAgreement）](internal_crypto_pkey.md) | GenerateKeyPair | ❌ 検出なし |
-| [Compare](internal_crypto.Compare.md) | Compare | ⚠️ 出現あり(要精査) |
+| [Compare](internal_crypto.Compare.md) | Compare | ❌ 未実装(誤検出) |
 | [Decrypt](internal_crypto.Decrypt.md) | Decrypt | ❌ 検出なし |
 | [DeriveKey](internal_crypto.DeriveKey.md) | DeriveKey | ❌ 検出なし |
-| [Digest](internal_crypto.Digest.md) | Digest | ⚠️ 出現あり(要精査) |
+| [Digest](internal_crypto.Digest.md) | Digest | ❌ 未実装(誤検出) |
 | [Encrypt](internal_crypto.Encrypt.md) | Encrypt | ❌ 検出なし |
 | [GenerateKeyPair](internal_crypto.GenerateKeyPair.md) | GenerateKeyPair | ❌ 検出なし |
 | [HashPassword](internal_crypto.HashPassword.md) | HashPassword | ❌ 検出なし |

@@ -4,13 +4,13 @@
 
 | 項目 | 検索語 | 対応状況 |
 | :--- | :--- | :---: |
-| [system:arrow](system-arrow.md) | system | ⚠️ 出現あり(要精査) |
-| [system:cross](system-cross.md) | system | ⚠️ 出現あり(要精査) |
-| [system:finger](system-finger.md) | system | ⚠️ 出現あり(要精査) |
-| [system:grip](system-grip.md) | system | ⚠️ 出現あり(要精査) |
-| [system:hand](system-hand.md) | system | ⚠️ 出現あり(要精査) |
-| [system:help](system-help.md) | system | ⚠️ 出現あり(要精査) |
-| [system:move](system-move.md) | system | ⚠️ 出現あり(要精査) |
-| [system:no](system-no.md) | system | ⚠️ 出現あり(要精査) |
-| [system:text](system-text.md) | system | ⚠️ 出現あり(要精査) |
-| [system:wait](system-wait.md) | system | ⚠️ 出現あり(要精査) |
+| [system:arrow](system-arrow.md) | system | ❌ 未実装(誤検出) |
+| [system:cross](system-cross.md) | system | ❌ 未実装(誤検出) |
+| [system:finger](system-finger.md) | system | ❌ 未実装(誤検出) |
+| [system:grip](system-grip.md) | system | ❌ 未実装(誤検出) |
+| [system:hand](system-hand.md) | system | ❌ 未実装(誤検出) |
+| [system:help](system-help.md) | system | ❌ 未実装(誤検出) |
+| [system:move](system-move.md) | system | ❌ 未実装(誤検出) |
+| [system:no](system-no.md) | system | ❌ 未実装(誤検出) |
+| [system:text](system-text.md) | system | ❌ 未実装(誤検出) |
+| [system:wait](system-wait.md) | system | ❌ 未実装(誤検出) |

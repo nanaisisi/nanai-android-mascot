@@ -36,7 +36,7 @@
 | [\![open,ghostexplorer]](bang-open-ghostexplorer.md) | \! | ❓ 要確認 |
 | [\![open,headlinesensorexplorer]](bang-open-headlinesensorexplorer.md) | \! | ❓ 要確認 |
 | [\![open,help,ダイアログID]](bang-open-help-ID.md) | \! | ❓ 要確認 |
-| [\![open,inputbox,ID,表示時間,テキスト,オプション,...]](bang-open-inputbox-ID.md) | \! | ❓ 要確認 |
+| [\![open,inputbox,ID,表示時間,テキスト,オプション,...]](bang-open-inputbox-ID.md) | \! | ✅ 実装済 |
 | [\![open,ipinput,ID,表示時間,IP1桁目,IP2桁目,IP3桁目,IP4桁目,オプション]](bang-open-ipinput-ID-IP1-IP2-IP3-IP4.md) | \! | ❓ 要確認 |
 | [\![open,mailer,パラメータ]](bang-open-mailer.md) | \! | ❓ 要確認 |
 | [\![open,messenger]](bang-open-messenger.md) | \! | ❓ 要確認 |
@@ -56,6 +56,6 @@
 | [\![open,textareabox,ID,表示時間,テキスト,オプション,...]](bang-open-textareabox-ID.md) | \! | ❓ 要確認 |
 | [\![open,timeinput,ID,表示時間,時,分,秒,オプション]](bang-open-timeinput-ID.md) | \! | ❓ 要確認 |
 | [\j[ID]](j-ID.md) | \j | ❌ 検出なし |
-| [InputBoxのID](notes_inputbox-id.md) | InputBox | ⚠️ 出現あり(要精査) |
-| [InputBoxオプション](notes_inputbox-option.md) | InputBox | ⚠️ 出現あり(要精査) |
+| [InputBoxのID](notes_inputbox-id.md) | InputBox | ⚠️ 一部対応 |
+| [InputBoxオプション](notes_inputbox-option.md) | InputBox | ⚠️ 一部対応 |
 | [ファイルを開く / ファイルを保存 / フォルダ選択 / カラーパレット選択 パラメータ](notes_selectfile.md) | ファイルを開く / ファイルを保存 / フォルダ選択 / カラーパレット選択 パラメータ | ❌ 検出なし |

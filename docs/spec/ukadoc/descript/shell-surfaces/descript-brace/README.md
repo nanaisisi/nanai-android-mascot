@@ -6,6 +6,6 @@
 | :--- | :--- | :---: |
 | [animation-sort,ソート順序](animation-sort.md) | animation-sort | ❌ 検出なし |
 | [collision-sort,ソート順序](collision-sort.md) | collision-sort | ❌ 検出なし |
-| [descriptブレス記述例](introduction_descriptbrace.md) | descript | ⚠️ 出現あり(要精査) |
+| [descriptブレス記述例](introduction_descriptbrace.md) | descript | ❌ 未実装(誤検出) |
 | [maxwidth,ピクセル](maxwidth.md) | maxwidth | ❌ 検出なし |
-| [version,\*](version.md) | version | ⚠️ 出現あり(要精査) |
+| [version,\*](version.md) | version | ❌ 未実装(誤検出) |

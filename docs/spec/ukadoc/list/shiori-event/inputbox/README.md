@@ -12,5 +12,5 @@
 | [OnTeachStart](OnTeachStart.md) | OnTeachStart | ❌ 検出なし |
 | [OnTextAreaInput](OnTextAreaInput.md) | OnTextAreaInput | ❌ 検出なし |
 | [OnTextAreaInputCancel](OnTextAreaInputCancel.md) | OnTextAreaInputCancel | ❌ 検出なし |
-| [OnUserInput](OnUserInput.md) | OnUserInput | ⚠️ 出現あり(要精査) |
-| [OnUserInputCancel](OnUserInputCancel.md) | OnUserInputCancel | ⚠️ 出現あり(要精査) |
+| [OnUserInput](OnUserInput.md) | OnUserInput | ✅ 実装済(SHIORIへ送信) |
+| [OnUserInputCancel](OnUserInputCancel.md) | OnUserInputCancel | ✅ 実装済(SHIORIへ送信) |

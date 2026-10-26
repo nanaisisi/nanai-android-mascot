@@ -5,5 +5,5 @@
 | 項目 | 検索語 | 対応状況 |
 | :--- | :--- | :---: |
 | [OnHourTimeSignal](OnHourTimeSignal.md) | OnHourTimeSignal | ❌ 検出なし |
-| [OnMinuteChange](OnMinuteChange.md) | OnMinuteChange | ⚠️ 出現あり(要精査) |
-| [OnSecondChange](OnSecondChange.md) | OnSecondChange | ⚠️ 出現あり(要精査) |
+| [OnMinuteChange](OnMinuteChange.md) | OnMinuteChange | ✅ 実装済(SHIORIへ送信) |
+| [OnSecondChange](OnSecondChange.md) | OnSecondChange | ✅ 実装済(SHIORIへ送信) |

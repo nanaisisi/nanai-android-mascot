@@ -18,8 +18,8 @@
 | [callghosthistorybutton.caption](callghosthistorybutton.caption.md) | callghosthistorybutton.caption | ❌ 検出なし |
 | [callghostrootbutton.caption](callghostrootbutton.caption.md) | callghostrootbutton.caption | ❌ 検出なし |
 | [callsstpsendboxbutton.caption](callsstpsendboxbutton.caption.md) | callsstpsendboxbutton.caption | ❌ 検出なし |
-| [ショートカットキー](caption_menushortcut.md) | ショートカットキー | ⚠️ 出現あり(要精査) |
-| [char\*.recommendsites.caption](char-star-.recommendsites.caption.md) | char | ⚠️ 出現あり(要精査) |
+| [ショートカットキー](caption_menushortcut.md) | ショートカットキー | 📝 コメントのみ(未実装の可能性大) |
+| [char\*.recommendsites.caption](char-star-.recommendsites.caption.md) | char | ❌ 未実装(誤検出) |
 | [charsetbutton.caption](charsetbutton.caption.md) | charsetbutton.caption | ❌ 検出なし |
 | [closeballoonbutton.caption](closeballoonbutton.caption.md) | closeballoonbutton.caption | ❌ 検出なし |
 | [closebutton.caption](closebutton.caption.md) | closebutton.caption | ❌ 検出なし |

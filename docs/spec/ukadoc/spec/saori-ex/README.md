@@ -6,7 +6,7 @@
 | :--- | :--- | :---: |
 | [非同期の呼び出し](async.md) | 非同期の呼び出し | ❌ 検出なし |
 | [互換モジュール](compat.md) | 互換モジュール | ❌ 検出なし |
-| [SAORI over DirectSSTP](directsstp.md) | SAORI | ⚠️ 出現あり(要精査) |
+| [SAORI over DirectSSTP](directsstp.md) | SAORI | ❌ 未実装(誤検出) |
 | [内蔵モジュールの共通規約](internal.md) | 内蔵モジュールの共通規約 | ❌ 検出なし |
-| [SAORI/1.0の概要](saori.md) | SAORI | ⚠️ 出現あり(要精査) |
+| [SAORI/1.0の概要](saori.md) | SAORI | ❌ 未実装(誤検出) |
 | [送信側の手順](sender.md) | 送信側の手順 | ❌ 検出なし |

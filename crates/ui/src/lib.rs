@@ -1,6 +1,7 @@
 pub mod animation;
 pub mod app;
 pub mod descript;
+pub mod manifest;
 pub mod script;
 pub mod shell;
 pub mod surfacetable;
@@ -10,6 +11,7 @@ pub mod vfs;
 // 外部公開・後方互換のための再エクスポート
 pub use animation::{ScheduledFrame, Timeline, build_timeline, cycle_len_ms};
 pub use descript::{BindGroup, BindOptionGroup, CharDefaults, Descript};
+pub use manifest::{ShellManifest, SurfaceManifest};
 pub use script::{SakuraCommand, execute_sakura_script};
 pub use shell::Shell;
 pub use surfacetable::{

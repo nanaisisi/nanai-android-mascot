@@ -1,4 +1,4 @@
-//! SERIKO アニメーション実行器（ukadoc-spec / descript / shell-surfaces 準拠）
+﻿//! SERIKO アニメーション実行器（ukadoc-spec / descript / shell-surfaces 準拠）
 //!
 //! `animation[N].pattern[K]` 列を実行スケジュール（発火時刻列）に変換し、
 //! インターバル種別に応じた発火判定・周期再生を担う。
@@ -8,10 +8,11 @@
 //! であり、pattern K の適用時刻 = 直前までの wait の総和
 //! （例: pattern0,base,6 / pattern1,base,-1,85 → 6 を 0ms で表示し、85ms 後にクリア）。
 
+use serde::{Deserialize, Serialize};
 use crate::surfaces::{AnimationPattern, Interval};
 
 /// 時刻 `at_ms` に適用される1フレーム
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ScheduledFrame {
     pub pattern: AnimationPattern,
     /// 開始時刻（ミリ秒）。`pattern.wait` の累積値
@@ -44,7 +45,7 @@ pub fn cycle_len_ms(patterns: &[AnimationPattern]) -> u32 {
 }
 
 /// 再生用タイムライン（pattern 列を元に frame_at クエリを提供する）
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Timeline {
     frames: Vec<ScheduledFrame>,
     total_ms: u32,

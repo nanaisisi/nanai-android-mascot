@@ -153,6 +153,7 @@ pub fn run() {
             commands::config::record_ghost_loaded,
             commands::file::add_to_recent_files,
             commands::file::get_recent_files,
+            commands::shell::shell_manifest,
             ghost::scan::scan_ghost_directory,
             commands::shiori::scan_ghosts,
             commands::shiori::load_ghost,

@@ -1,21 +1,22 @@
-//! `surfacetable.txt` パーサー（ukadoc-spec / descript / shell-surfacetable 準拠）
+﻿//! `surfacetable.txt` パーサー（ukadoc-spec / descript / shell-surfacetable 準拠）
 //!
 //! 「SSP を起動しなくてもサーフィスを確認できるようにするための」仕様であり、
 //! シェル自体には不要なファイル。ゴーストのサーフィスを グループ名 / 名前 の
 //! 形式で整理する。サーフィス表示系（サーフィステスト・プレビュー）は
 //! このパース結果を利用する。
 
+use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
 /// グループ内の1登録（`[サーフィス番号],[名前]`）
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SurfTableEntry {
     pub surface_id: u32,
     pub name: String,
 }
 
 /// `group,[グループ名] {}` の定義
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SurfTableGroup {
     /// グループ名（`__disabled` は非表示グループ）
     pub name: String,
@@ -30,7 +31,7 @@ impl SurfTableGroup {
 }
 
 /// `surfacetable.txt` のパース結果
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct SurfaceTable {
     /// 1行目に記述が必須の `charset,` 指定
     pub charset: Option<String>,

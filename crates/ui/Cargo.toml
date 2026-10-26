@@ -13,6 +13,9 @@ rust-i18n = "4.2.4"
 sys-locale = "0.3.2"
 encoding_rs = "0.8.42"
 
+[dev-dependencies]
+serde_json = "1.0.154"
+
 
 [[bin]]
 name = "nanai_android_mascot_ui_bin"

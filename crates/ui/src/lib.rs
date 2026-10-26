@@ -1,13 +1,15 @@
 pub mod app;
 pub mod descript;
 pub mod script;
+pub mod shell;
 pub mod surfacetable;
 pub mod surfaces;
 pub mod vfs;
 
 // 外部公開・後方互換のための再エクスポート
-pub use descript::Descript;
+pub use descript::{BindGroup, BindOptionGroup, CharDefaults, Descript};
 pub use script::{SakuraCommand, execute_sakura_script};
+pub use shell::Shell;
 pub use surfacetable::{
     SurfTableEntry, SurfTableGroup, SurfaceTable, is_parts_name, parse_surface_table,
 };

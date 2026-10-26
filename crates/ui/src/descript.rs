@@ -1,4 +1,4 @@
-﻿use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
 
 /// シェル descript の `[target].defaultx/y/left/top`（基準位置）
@@ -150,10 +150,18 @@ impl Descript {
     /// `[target].defaultx`, `defaulty`, `defaultleft`, `defaulttop`（sakura/kero/charN）
     pub fn char_defaults(&self, target: &str) -> CharDefaults {
         CharDefaults {
-            x: self.get(&format!("{target}.defaultx")).and_then(|v| v.parse().ok()),
-            y: self.get(&format!("{target}.defaulty")).and_then(|v| v.parse().ok()),
-            left: self.get(&format!("{target}.defaultleft")).and_then(|v| v.parse().ok()),
-            top: self.get(&format!("{target}.defaulttop")).and_then(|v| v.parse().ok()),
+            x: self
+                .get(&format!("{target}.defaultx"))
+                .and_then(|v| v.parse().ok()),
+            y: self
+                .get(&format!("{target}.defaulty"))
+                .and_then(|v| v.parse().ok()),
+            left: self
+                .get(&format!("{target}.defaultleft"))
+                .and_then(|v| v.parse().ok()),
+            top: self
+                .get(&format!("{target}.defaulttop"))
+                .and_then(|v| v.parse().ok()),
         }
     }
 
@@ -196,10 +204,7 @@ impl Descript {
                     let mut parts = value.splitn(3, ',').map(str::trim);
                     entry.category = parts.next().unwrap_or("").to_string();
                     entry.part = parts.next().unwrap_or("").to_string();
-                    entry.thumbnail = parts
-                        .next()
-                        .filter(|s| !s.is_empty())
-                        .map(str::to_string);
+                    entry.thumbnail = parts.next().filter(|s| !s.is_empty()).map(str::to_string);
                 }
                 "default" => {
                     entry.default = value.trim() == "1";
@@ -263,5 +268,3 @@ mod tests {
         assert!(expand_ids("abc").is_empty());
     }
 }
-
-

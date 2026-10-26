@@ -4,8 +4,9 @@ pub mod descript;
 pub mod manifest;
 pub mod script;
 pub mod shell;
-pub mod surfacetable;
+pub mod shiori;
 pub mod surfaces;
+pub mod surfacetable;
 pub mod vfs;
 
 // 外部公開・後方互換のための再エクスポート
@@ -14,12 +15,12 @@ pub use descript::{BindGroup, BindOptionGroup, CharDefaults, Descript};
 pub use manifest::{ShellManifest, SurfaceManifest};
 pub use script::{SakuraCommand, execute_sakura_script};
 pub use shell::Shell;
+pub use surfaces::{
+    BalloonOffset, CollisionArea, CollisionShape, CompositionLayer, CompositionPlan, DrawMethod,
+    ElementDef, Interval, SerikoAnimation, SurfacesTxt, parse_surfaces_txt,
+};
 pub use surfacetable::{
     SurfTableEntry, SurfTableGroup, SurfaceTable, is_parts_name, parse_surface_table,
-};
-pub use surfaces::{
-    BalloonOffset, CollisionArea, CollisionShape, CompositionLayer, CompositionPlan,
-    DrawMethod, ElementDef, Interval, SerikoAnimation, SurfacesTxt, parse_surfaces_txt,
 };
 pub use vfs::{open_shift_jis_file, open_text_file, resolve_vfs_path};
 
@@ -37,8 +38,7 @@ mod tests {
 
     #[test]
     fn test_descript_parse() {
-        let sample =
-            "charset,Shift_JIS\r\nname,SampleGhost\r\nsakura.name,Nanai\r\nkero.name,Mini\r\nicon,icon.ico\r\ncraftmanw,Author\r\n";
+        let sample = "charset,Shift_JIS\r\nname,SampleGhost\r\nsakura.name,Nanai\r\nkero.name,Mini\r\nicon,icon.ico\r\ncraftmanw,Author\r\n";
         let desc = Descript::parse(sample);
         assert_eq!(desc.name().map(|s| s.as_str()), Some("SampleGhost"));
         assert_eq!(desc.sakura_name().map(|s| s.as_str()), Some("Nanai"));

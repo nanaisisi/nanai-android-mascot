@@ -1,4 +1,4 @@
-﻿//! SERIKO アニメーション実行器（ukadoc-spec / descript / shell-surfaces 準拠）
+//! SERIKO アニメーション実行器（ukadoc-spec / descript / shell-surfaces 準拠）
 //!
 //! `animation[N].pattern[K]` 列を実行スケジュール（発火時刻列）に変換し、
 //! インターバル種別に応じた発火判定・周期再生を担う。
@@ -8,8 +8,8 @@
 //! であり、pattern K の適用時刻 = 直前までの wait の総和
 //! （例: pattern0,base,6 / pattern1,base,-1,85 → 6 を 0ms で表示し、85ms 後にクリア）。
 
-use serde::{Deserialize, Serialize};
 use crate::surfaces::{AnimationPattern, Interval};
+use serde::{Deserialize, Serialize};
 
 /// 時刻 `at_ms` に適用される1フレーム
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -163,8 +163,8 @@ mod tests {
     fn test_build_timeline() {
         // mock_nanai まばたき形式: 表示(0ms) → 85ms待ってクリア
         let patterns = vec![
-            pattern(0, 6, 0),     // at 0? wait0=0 → 0
-            pattern(1, -1, 85),   // at 0 + 85 = 85
+            pattern(0, 6, 0),   // at 0? wait0=0 → 0
+            pattern(1, -1, 85), // at 0 + 85 = 85
         ];
         let timeline = build_timeline(&patterns);
         assert_eq!(timeline[0].at_ms, 0);

@@ -29,8 +29,14 @@ pub enum SakuraCommand {
     Timeout,      // \t (タイムアウト抑止)
     Halt,         // \- (ゴースト終了)
     Sync(bool),   // \_s (複数キャラ同期発話トグル)
-    Offset { x: String, y: String }, // \_l[x,y] (座標移動)
-    Font { tag: String, param: Option<String> }, // \f[tag,param], \f[tag]
+    Offset {
+        x: String,
+        y: String,
+    }, // \_l[x,y] (座標移動)
+    Font {
+        tag: String,
+        param: Option<String>,
+    }, // \f[tag,param], \f[tag]
     Text(String), // 通常テキスト
     End,          // \e
 }

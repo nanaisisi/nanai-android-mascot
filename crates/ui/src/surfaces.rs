@@ -1,4 +1,4 @@
-﻿//! `surfaces.txt` パーサー（ukadoc-spec / descript / shell-surfaces 準拠）
+//! `surfaces.txt` パーサー（ukadoc-spec / descript / shell-surfaces 準拠）
 //!
 //! シェルのサーフィス定義（Element 描画 / SERIKO アニメーション / Collision 当たり判定 /
 //! Alias・範囲指定・surface.append マージ）を Rust 構造体群へとパースする。
@@ -44,9 +44,7 @@ impl DrawMethod {
             "replace" => Self::Replace,
             "add" => Self::Add,
             "bind" => Self::Bind,
-            s if s.starts_with("blend-") => {
-                Self::Blend(s.trim_start_matches("blend-").to_string())
-            }
+            s if s.starts_with("blend-") => Self::Blend(s.trim_start_matches("blend-").to_string()),
             other => Self::Custom(other.to_string()),
         }
     }
@@ -142,16 +140,15 @@ impl CollisionShape {
                 let (x1, y1, x2, y2) = (*x1, *y1, *x2, *y2);
                 x >= x1.min(x2) && x <= x1.max(x2) && y >= y1.min(y2) && y <= y1.max(y2)
             }
-            CollisionShape::Polygon { vertices } if vertices.len() >= 3 => {                // 偶奇規則（Even–Odd rule）によるポリゴン内外判定
+            CollisionShape::Polygon { vertices } if vertices.len() >= 3 => {
+                // 偶奇規則（Even–Odd rule）によるポリゴン内外判定
                 let mut inside = false;
                 let n = vertices.len();
                 let mut j = n - 1;
                 for i in 0..n {
                     let (xi, yi) = vertices[i];
                     let (xj, yj) = vertices[j];
-                    if ((yi > y) != (yj > y))
-                        && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)
-                    {
+                    if ((yi > y) != (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi) {
                         inside = !inside;
                     }
                     j = i;
@@ -448,7 +445,9 @@ pub fn parse_surfaces_txt(text: &str) -> SurfacesTxt {
         }
 
         // ブロック開始行の検出（scope にいない場合のみ）
-        if scope.is_none() && let Some(kind) = parse_block_opener(line) {
+        if scope.is_none()
+            && let Some(kind) = parse_block_opener(line)
+        {
             prepare_block(&mut txt, &kind);
             scope = Some(kind);
             continue;
@@ -485,7 +484,10 @@ fn parse_block_opener(line: &str) -> Option<BlockKind> {
     if let Some(rest) = line.strip_prefix("surface") {
         let rest = rest.replace('[', " ").replace(']', " ");
         if let Some(spec) = rest.strip_prefix(".append") {
-            if spec.trim().starts_with(|c: char| c.is_ascii_digit() || c == ',') {
+            if spec
+                .trim()
+                .starts_with(|c: char| c.is_ascii_digit() || c == ',')
+            {
                 return Some(BlockKind::Surface {
                     ids: expand_range(spec.trim().trim_end_matches('{')),
                     append: true,
@@ -544,7 +546,8 @@ fn handle_root_line(txt: &mut SurfacesTxt, line: &str) {
     if key.to_lowercase() == "charset" {
         txt.charset = Some(value.trim().to_string());
     } else {
-        txt.properties.insert(key.to_string(), value.trim().to_string());
+        txt.properties
+            .insert(key.to_string(), value.trim().to_string());
     }
 }
 
@@ -559,7 +562,8 @@ fn handle_descript_line(txt: &mut SurfacesTxt, line: &str) {
         "animation.sort" => txt.animation_sort = Some(SortKind::parse(value)),
         "collision.sort" => txt.collision_sort = Some(SortKind::parse(value)),
         k => {
-            txt.properties.insert(k.to_string(), value.trim().to_string());
+            txt.properties
+                .insert(k.to_string(), value.trim().to_string());
         }
     }
 }
@@ -700,7 +704,15 @@ fn apply_collisionex(txt: &mut SurfacesTxt, ids: &[u32], id_part: &str, value: &
 
     let Some(shape) = shape else { return };
     for num in ids {
-        txt.surfaces.entry(*num).or_default().collisions.push(CollisionArea { id, name: name.clone(), shape: shape.clone() });
+        txt.surfaces
+            .entry(*num)
+            .or_default()
+            .collisions
+            .push(CollisionArea {
+                id,
+                name: name.clone(),
+                shape: shape.clone(),
+            });
     }
 }
 
@@ -722,17 +734,29 @@ fn apply_collision_body(txt: &mut SurfacesTxt, ids: &[u32], id: Option<u32>, tok
     if tokens.len() < 5 {
         return;
     }
-    let Ok(x1) = tokens[0].parse::<i32>() else { return };
-    let Ok(y1) = tokens[1].parse::<i32>() else { return };
-    let Ok(x2) = tokens[2].parse::<i32>() else { return };
-    let Ok(y2) = tokens[3].parse::<i32>() else { return };
+    let Ok(x1) = tokens[0].parse::<i32>() else {
+        return;
+    };
+    let Ok(y1) = tokens[1].parse::<i32>() else {
+        return;
+    };
+    let Ok(x2) = tokens[2].parse::<i32>() else {
+        return;
+    };
+    let Ok(y2) = tokens[3].parse::<i32>() else {
+        return;
+    };
     let name = tokens[4].trim().to_string();
     for num in ids {
-        txt.surfaces.entry(*num).or_default().collisions.push(CollisionArea {
-            id,
-            name: name.clone(),
-            shape: CollisionShape::Rect { x1, y1, x2, y2 },
-        });
+        txt.surfaces
+            .entry(*num)
+            .or_default()
+            .collisions
+            .push(CollisionArea {
+                id,
+                name: name.clone(),
+                shape: CollisionShape::Rect { x1, y1, x2, y2 },
+            });
     }
 }
 
@@ -752,7 +776,11 @@ fn apply_element(txt: &mut SurfacesTxt, ids: &[u32], id_part: &str, value: &str)
         options: tokens.iter().skip(4).cloned().collect(),
     };
     for num in ids {
-        txt.surfaces.entry(*num).or_default().elements.push(element.clone());
+        txt.surfaces
+            .entry(*num)
+            .or_default()
+            .elements
+            .push(element.clone());
     }
 }
 
@@ -777,7 +805,8 @@ fn apply_animation_line(txt: &mut SurfacesTxt, ids: &[u32], rest: &str, value: &
         } else if field_lower.starts_with("name") {
             anim.name = Some(value.trim().to_string());
         } else if field_lower.starts_with("option") {
-            anim.options.push(value.split(',').map(|t| t.trim().to_string()).collect());
+            anim.options
+                .push(value.split(',').map(|t| t.trim().to_string()).collect());
         } else if field_lower.starts_with("pattern") {
             let index = if field_lower == "pattern" {
                 // 無番号 pattern は連番で付番
@@ -849,7 +878,10 @@ mod tests {
 
     #[test]
     fn test_expand_range() {
-        assert_eq!(expand_range("0-9,20-22"), (0..10).chain(20..23).collect::<Vec<u32>>());
+        assert_eq!(
+            expand_range("0-9,20-22"),
+            (0..10).chain(20..23).collect::<Vec<u32>>()
+        );
         assert_eq!(expand_range("19,100,101"), [19, 100, 101]);
         assert_eq!(expand_range("[7]"), [7]);
         assert!(expand_range("abc").is_empty());
@@ -918,7 +950,12 @@ sakura.balloon.offsetx,-10
         let head = def0.collisions.iter().find(|c| c.name == "head").unwrap();
         assert_eq!(
             head.shape,
-            CollisionShape::Rect { x1: 34, y1: 20, x2: 157, y2: 72 }
+            CollisionShape::Rect {
+                x1: 34,
+                y1: 20,
+                x2: 157,
+                y2: 72
+            }
         );
 
         // surface.append0 による追加要素とアニメーション
@@ -949,7 +986,10 @@ sakura.balloon.offsetx,-10
 
         // 当たり判定ヒットテスト
         assert_eq!(def0.hit_test(90, 40).map(|c| c.name.as_str()), Some("head"));
-        assert_eq!(def0.hit_test(90, 170).map(|c| c.name.as_str()), Some("bust"));
+        assert_eq!(
+            def0.hit_test(90, 170).map(|c| c.name.as_str()),
+            Some("bust")
+        );
         assert_eq!(def0.hit_test(5, 5), None);
     }
 
@@ -1002,7 +1042,10 @@ animation2.name,まばたき
         let anim1 = &def.animations[&1];
         assert_eq!(anim1.interval, Some(Interval::Periodic(500)));
         assert_eq!(anim1.patterns[0].index, 0);
-        assert_eq!(anim1.patterns[0].method, DrawMethod::Blend("multiply".into()));
+        assert_eq!(
+            anim1.patterns[0].method,
+            DrawMethod::Blend("multiply".into())
+        );
         assert_eq!(anim1.patterns[0].x, 5);
         assert_eq!(anim1.patterns[1].method, DrawMethod::OverlayFast);
         assert_eq!(anim1.patterns[1].index, 1);
@@ -1095,6 +1138,8 @@ element1,overlay,surface01.png,0,0
         let plan = txt.plan_composition(0, &[100]).unwrap();
         // 着袖 bind (animation100) の add pattern が積まれる
         assert_eq!(plan.bind_pattern_count(), 1);
-        assert!(matches!(plan.layers.last(), Some(CompositionLayer::Pattern(p)) if p.surface == 100));
+        assert!(
+            matches!(plan.layers.last(), Some(CompositionLayer::Pattern(p)) if p.surface == 100)
+        );
     }
 }

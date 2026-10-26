@@ -18,6 +18,11 @@ export const ghostShioriMethods = {
 				readinessGatePromise,
 			]);
 
+			// 初期化完了に伴い処理中バナーを閉じる
+			try {
+				await invoke("hide_loading_banner_window");
+			} catch (_e) {}
+
 			console.log(`✨ アセット・SHIORI準備完了 (ゲート通過): OnBoot発行`);
 			try {
 				await this.sendShioriEvent("OnBoot");
@@ -25,8 +30,6 @@ export const ghostShioriMethods = {
 				// OnBoot送信失敗時はスキップ
 			}
 
-			// 初期化・OnBoot完了に伴い処理中バナーを閉じる
-			invoke("hide_loading_banner_window").catch(() => {});
 			// 自律タイマー (OnSecondChange) 開始
 			this.startSecondChangeTimer();
 		} catch (error) {
@@ -43,6 +46,8 @@ export const ghostShioriMethods = {
 		this.uptimeSeconds = 0;
 
 		this._secondTimerId = setInterval(async () => {
+			if (this._secondSending) return;
+			this._secondSending = true;
 			this.uptimeSeconds++;
 			// 発話中またはウィンドウ最小化中などの判定
 			const isSpeaking = this.app.sakuraPlayer?.isPlaying ? 1 : 0;
@@ -65,6 +70,8 @@ export const ghostShioriMethods = {
 				]);
 			} catch (_err) {
 				// タイマーエラーは無視
+			} finally {
+				this._secondSending = false;
 			}
 		}, 1000);
 	},

@@ -67,32 +67,45 @@ export class BalloonDragManager {
 			return true;
 		};
 
+		let rafPending = false;
+		let targetLeft = 0;
+		let targetTop = 0;
+
 		const onMove = (clientX, clientY) => {
 			if (!isBalloonDragging) return;
 
 			const deltaX = clientX - bStartX;
 			const deltaY = clientY - bStartY;
 
-			const newLeft = bInitialLeft + deltaX;
-			const newTop = bInitialTop + deltaY;
+			targetLeft = bInitialLeft + deltaX;
+			targetTop = bInitialTop + deltaY;
 
-			balloon.style.left = `${newLeft}px`;
-			balloon.style.top = `${newTop}px`;
+			if (!rafPending) {
+				rafPending = true;
+				requestAnimationFrame(() => {
+					rafPending = false;
+					if (!isBalloonDragging) return;
 
-			// キャラクターの中心位置に対する相対オフセットを記録
-			const ghostRect = ghostTarget.getBoundingClientRect();
-			const ghostCenterX = ghostRect.left + ghostRect.width / 2;
-			const ghostCenterY = ghostRect.top + ghostRect.height / 2;
+					balloon.style.left = `${targetLeft}px`;
+					balloon.style.top = `${targetTop}px`;
 
-			this.balloonOffsetX = newLeft - ghostCenterX;
-			this.balloonOffsetY = newTop - ghostCenterY;
-			this.interaction.balloonOffsetX = this.balloonOffsetX;
-			this.interaction.balloonOffsetY = this.balloonOffsetY;
+					// キャラクターの中心位置に対する相対オフセットを記録
+					const ghostRect = ghostTarget.getBoundingClientRect();
+					const ghostCenterX = ghostRect.left + ghostRect.width / 2;
+					const ghostCenterY = ghostRect.top + ghostRect.height / 2;
+
+					this.balloonOffsetX = targetLeft - ghostCenterX;
+					this.balloonOffsetY = targetTop - ghostCenterY;
+					this.interaction.balloonOffsetX = this.balloonOffsetX;
+					this.interaction.balloonOffsetY = this.balloonOffsetY;
+				});
+			}
 		};
 
 		const onEnd = () => {
 			if (isBalloonDragging) {
 				isBalloonDragging = false;
+				rafPending = false;
 				balloon.style.cursor = "";
 				// 相対オフセットを保存
 				if (

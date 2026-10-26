@@ -37,6 +37,7 @@ export async function playScript(player, script) {
 
 	let currentBalloonText = sakuraText;
 	let isQuickMode = false;
+	let ended = false;
 	let currentAnchor = null;
 
 	// 独立バルーン同期用ヘルパー
@@ -52,6 +53,7 @@ export async function playScript(player, script) {
 
 	for (let j = 0; j < tokens.length; j++) {
 		if (player.playbackId !== currentId) break; // 新しい再生で中断
+		if (ended) break; // \e 以降は再生しない（UKADOC準拠）
 
 		const token = tokens[j];
 
@@ -258,6 +260,8 @@ export async function playScript(player, script) {
 				break;
 
 			case "end":
+				// \e: スクリプト終了（以降のトークンは再生しない）
+				ended = true;
 				break;
 		}
 	}

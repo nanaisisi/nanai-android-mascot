@@ -61,7 +61,7 @@ mod tests {
         assert_eq!(commands[1], SakuraCommand::Surface(0));
         assert_eq!(commands[2], SakuraCommand::Text("こんにちは".into()));
         assert_eq!(commands[3], SakuraCommand::Wait(250));
-        assert_eq!(commands[4], SakuraCommand::NewLine);
+        assert_eq!(commands[4], SakuraCommand::NewLine { half: false });
         assert_eq!(
             commands[5],
             SakuraCommand::Choice {
@@ -137,5 +137,82 @@ mod tests {
                 param: None,
             }
         );
+    }
+
+    #[test]
+    fn test_sakura_script_legacy_scope_and_newline_half() {
+        let script = r"\h\s[0]ひと\h\u\s[10]うなぎ\n[half]\0下半分";
+        let mut commands = Vec::new();
+        execute_sakura_script(script, |cmd| commands.push(cmd));
+
+        assert_eq!(commands[0], SakuraCommand::Target(0)); // \h
+        assert_eq!(commands[3], SakuraCommand::Target(0)); // \h
+        assert_eq!(commands[4], SakuraCommand::Target(1)); // \u
+        assert!(
+            commands
+                .iter()
+                .any(|c| *c == SakuraCommand::NewLine { half: true })
+        );
+        // \n[half] が本文テキストに漏出していない
+        assert!(commands.iter().all(|c| match c {
+            SakuraCommand::Text(t) => !t.contains("half"),
+            _ => true,
+        }));
+    }
+
+    #[test]
+    fn test_sakura_script_animation() {
+        let script = r"\0\1は鳴き声\i[3,wait]\i7この間は本文";
+        let mut commands = Vec::new();
+        execute_sakura_script(script, |cmd| commands.push(cmd));
+
+        assert_eq!(commands[3], SakuraCommand::Animation { id: 3, wait: true });
+        assert_eq!(commands[4], SakuraCommand::Animation { id: 7, wait: false });
+        assert_eq!(commands[5], SakuraCommand::Text("この間は本文".into()));
+    }
+
+    #[test]
+    fn test_sakura_script_passthrough_and_unknown_tags() {
+        let script = r"\0\![open,inputbox,--timeout=5]\![set,str,hello]\j[1,2]\__w[500]あ";
+        let mut commands = Vec::new();
+        execute_sakura_script(script, |cmd| commands.push(cmd));
+
+        assert_eq!(
+            commands[1],
+            SakuraCommand::Command {
+                args: vec!["open".into(), "inputbox".into(), "--timeout=5".into()]
+            }
+        );
+        assert_eq!(
+            commands[2],
+            SakuraCommand::Command {
+                args: vec!["set".into(), "str".into(), "hello".into()]
+            }
+        );
+        // 未知タグ（\j / \__w）の引数が本文に漏出していない
+        assert!(commands.iter().all(|c| match c {
+            SakuraCommand::Text(t) => t == "あ",
+            _ => true,
+        }));
+    }
+
+    #[test]
+    fn test_collisionex_circle_and_ellipse() {
+        let sample = r"surface2
+{
+collisionex0,face,circle,100,100,50
+collisionex1,halo,ellipse,100,100,60,30
+}
+";
+        let txt = SurfacesTxt::parse(sample);
+        let def2 = txt.surface(2).unwrap();
+
+        let face = def2.hit_test(140, 100).expect("円の内側は face");
+        assert_eq!(face.name, "face");
+        assert!(def2.hit_test(190, 100).is_none()); // 円の外側
+
+        let halo = def2.hit_test(160, 100).expect("楕円の内側は halo");
+        assert_eq!(halo.name, "halo");
+        assert!(def2.hit_test(150, 40).is_none()); // 楕円の外側（y方向 半径30）
     }
 }

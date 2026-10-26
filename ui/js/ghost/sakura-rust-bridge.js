@@ -27,7 +27,7 @@ export function rustCommandsToTokens(rustCommands) {
 				tokens.push({ type: "quick_toggle" });
 				break;
 			case "NewLine":
-				tokens.push({ type: "newline", half: false });
+				tokens.push({ type: "newline", half: cmd.payload?.half === true });
 				break;
 			case "Clear":
 				tokens.push({ type: "clear" });
@@ -71,6 +71,13 @@ export function rustCommandsToTokens(rustCommands) {
 			case "Balloon":
 				tokens.push({ type: "balloon", value: cmd.payload ?? 0 });
 				break;
+			case "Animation":
+				tokens.push({
+					type: "animation",
+					animId: cmd.payload?.id ?? 0,
+					wait: cmd.payload?.wait === true,
+				});
+				break;
 			case "Timeout":
 				tokens.push({ type: "timeout" });
 				break;
@@ -101,6 +108,10 @@ export function rustCommandsToTokens(rustCommands) {
 				break;
 			case "End":
 				tokens.push({ type: "end" });
+				break;
+			case "Command":
+				// 未対応 \![...] の汎用透過
+				tokens.push({ type: "command", args: cmd.payload?.args ?? [] });
 				break;
 			default:
 				break;

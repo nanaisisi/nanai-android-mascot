@@ -208,6 +208,19 @@ export const actionMethods = {
 		if (!props) return;
 		const root = document.documentElement;
 
+		// フォントファミリ (font.name)
+		if (props["font.name"]) {
+			root.style.setProperty("--balloon-font-family", `"${props["font.name"]}", Meiryo, sans-serif`);
+		}
+
+		// フォントサイズ (font.height)
+		if (props["font.height"]) {
+			const fh = parseInt(props["font.height"], 10);
+			if (!Number.isNaN(fh) && fh > 0) {
+				root.style.setProperty("--balloon-font-size", `${fh}px`);
+			}
+		}
+
 		// フォント色 (font.color.r,g,b または font.color)
 		if (props["font.color"]) {
 			root.style.setProperty("--balloon-text-color", props["font.color"]);
@@ -220,6 +233,14 @@ export const actionMethods = {
 				"--balloon-text-color",
 				`rgb(${props["font.color.r"]}, ${props["font.color.g"]}, ${props["font.color.b"]})`,
 			);
+		}
+
+		// リンク・選択肢色 (cursor.font.color / font.color.link)
+		if (props["cursor.font.color"]) {
+			root.style.setProperty("--balloon-highlight-bg", props["cursor.font.color"]);
+		}
+		if (props["cursor.color.font"]) {
+			root.style.setProperty("--balloon-highlight-text", props["cursor.color.font"]);
 		}
 
 		// 有効テキスト領域 (validrect.left, top, right, bottom) によるパディング調整
@@ -240,6 +261,17 @@ export const actionMethods = {
 			const balloonEl = document.querySelector(".balloon");
 			if (balloonEl) {
 				balloonEl.style.padding = `${padTop} ${padRight} ${padBottom} ${padLeft}`;
+			}
+		}
+
+		// 折り返し幅 (wordwrappoint.x)
+		if (props["wordwrappoint.x"]) {
+			const ww = parseInt(props["wordwrappoint.x"], 10);
+			if (!Number.isNaN(ww) && ww > 50) {
+				const balloonEl = document.querySelector(".balloon");
+				if (balloonEl) {
+					balloonEl.style.maxWidth = `${ww}px`;
+				}
 			}
 		}
 

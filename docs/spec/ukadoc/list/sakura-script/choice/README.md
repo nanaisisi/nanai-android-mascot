@@ -1,0 +1,19 @@
+# sakura-script/choice 項目別突合
+
+実装コードの文字列検索による一次調査です。
+
+| 項目 | 検索語 | 対応状況 |
+| :--- | :--- | :---: |
+| [\__q[ID,...]](__q-ID.md) | \__q | ❌ 検出なし |
+| [\_a[ID]](_a-ID.md) | \_a | ❓ 要確認 |
+| [\_a[ID,r2,r3...]](_a-ID-r2-r3.md) | \_a | ❓ 要確認 |
+| [\_a[OnID,r0,r1...]](_a-OnID-r0-r1.md) | \_a | ❓ 要確認 |
+| [\![set,choicetimeout,時間]](bang-set-choicetimeout.md) | \! | ❓ 要確認 |
+| [\q[タイトル,ID]](q-ID.md) | \q | ❓ 要確認 |
+| [\q[ID][タイトル]または\q*[ID][タイトル]](q-ID-q-star-ID.md) | \q | ❓ 要確認 |
+| [\q\[タイトル,ID,r*2*,r*3*...\]](q-ID-r2-r3.md) | \q | ❓ 要確認 |
+| [\q[タイトル,ID1,ID2,ID3...]](q-ID1-ID2-ID3.md) | \q | ❓ 要確認 |
+| [\q[タイトル,OnID,r0,r1,...]](q-OnID-r0-r1.md) | \q | ❓ 要確認 |
+| [\q[タイトル,script:実行内容]](q-script.md) | \q | ❓ 要確認 |
+| [\*](star.md) | \* | ❌ 検出なし |
+| [\z](z.md) | \z | ❌ 検出なし |

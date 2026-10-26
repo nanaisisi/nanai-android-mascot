@@ -1,0 +1,12 @@
+# docs/spec/ukadoc/spec/saori-ex 項目別突合
+
+実装コードの文字列検索による一次調査です。
+
+| 項目 | 検索語 | 対応状況 |
+| :--- | :--- | :---: |
+| [非同期の呼び出し](async.md) | 非同期の呼び出し | ❌ 検出なし |
+| [互換モジュール](compat.md) | 互換モジュール | ❌ 検出なし |
+| [SAORI over DirectSSTP](directsstp.md) | SAORI | ⚠️ 出現あり(要精査) |
+| [内蔵モジュールの共通規約](internal.md) | 内蔵モジュールの共通規約 | ❌ 検出なし |
+| [SAORI/1.0の概要](saori.md) | SAORI | ⚠️ 出現あり(要精査) |
+| [送信側の手順](sender.md) | 送信側の手順 | ❌ 検出なし |

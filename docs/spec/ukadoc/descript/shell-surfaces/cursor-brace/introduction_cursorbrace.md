@@ -1,0 +1,17 @@
+# cursorブレス記述例
+
+- **規格**: [introduction_cursorbrace.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/cursor-brace/introduction_cursorbrace/) (ukadoc-spec/descript/shell-surfaces/cursor-brace/introduction_cursorbrace.md)
+- **検索語**: cursor
+- **対応状況**: 🔎 コード上に出現(処理の有無は要読解)
+
+## 突合結果
+
+実装コードに「cursor」が出現。実際の処理内容は未精査。
+
+## 実装箇所
+
+- `ui/js/ui/templates/ghost-templates.js:21`  `<button type="button" id="import-ghost-btn" class="primary" style="flex: 0 0 auto; white-s`
+- `ui/js/ui/templates/ghost-templates.js:63`  `<button type="button" id="modal-install-submit-btn" class="primary" style="flex: 0 0 auto;`
+- `ui/js/ui/modal-ghost-handlers.js:213`  `<div class="ghost-item ${currentTheme === b.id ? "active" : ""}" data-theme="${b.id}" styl`
+- `ui/js/ui/modal-ghost-handlers.js:248`  `<div class="ghost-item ${this.app.ghostController.currentGhost?.name === ghost.name ? "act`
+- `ui/js/surface/balloon-drag.js:61`  `balloon.style.cursor = "grabbing";`

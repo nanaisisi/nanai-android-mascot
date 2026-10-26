@@ -1,4 +1,4 @@
-﻿- **言及規格の元ドキュメント・権利者・ライセンス**:
+- **言及規格の元ドキュメント・権利者・ライセンス**:
   - **伺か標準仕様 / ゴースト / シェル**: [ukatech/ukadoc-spec (UKADOC project)](https://ukatech.shillest.net/ukadoc-spec/) - © UKADOC project / Ukagaka Tech Team (CC BY 4.0)
 
 > **AI 関与について**: このドキュメントは GitHub

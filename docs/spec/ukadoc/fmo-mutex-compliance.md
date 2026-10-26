@@ -1,4 +1,4 @@
-﻿# FMO / Mutex 規格対応仕様 (FMO & Mutex Compliance)
+# FMO / Mutex 規格対応仕様 (FMO & Mutex Compliance)
 
 - **仕様リファレンス**: [ukatech/ukadoc-spec: FMO/Mutex](https://ukatech.shillest.net/ukadoc-spec/spec/fmo-mutex/)
 - **言及規格の元ドキュメント・権利者・ライセンス**:

@@ -1,4 +1,4 @@
-﻿# DLLのWASMパッケージングおよびAndroid動的ロード検討書 (DLL to WASM Packaging Research)
+# DLLのWASMパッケージングおよびAndroid動的ロード検討書 (DLL to WASM Packaging Research)
 
 - **言及規格の元ドキュメント・権利者・ライセンス**:
   - **SHIORI 仕様 / 各種サブシステム**:

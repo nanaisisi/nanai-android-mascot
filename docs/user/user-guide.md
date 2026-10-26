@@ -1,4 +1,4 @@
-﻿# ユーザーガイド - Nanai Android Mascot
+# ユーザーガイド - Nanai Android Mascot
 
 - **言及規格の元ドキュメント・権利者・ライセンス**:
   - **SSP 拡張仕様 / メニュー規格**: [ukatech/ukadoc-ssp](https://github.com/ukatech/ukadoc-ssp) / [SSP BUG-SLIK-PRACTICE](http://ssp.shillest.net/) - © UKADOC project (CC BY 4.0) / © PONapook 氏

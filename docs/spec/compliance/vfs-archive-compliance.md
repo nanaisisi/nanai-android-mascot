@@ -1,4 +1,4 @@
-﻿# VFS・エンコーディング・アーカイブ規格対応仕様 (VFS & Archive Compliance)
+# VFS・エンコーディング・アーカイブ規格対応仕様 (VFS & Archive Compliance)
 
 - **言及規格の元ドキュメント・権利者・ライセンス**:
   - **バルーン仕様 (Balloon)**: [ukadoc-spec: balloon](https://ukatech.shillest.net/ukadoc-spec/) - © UKADOC project / Ukagaka Tech Team (CC BY 4.0)

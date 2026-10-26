@@ -1,4 +1,4 @@
-﻿# キャッシュ・非同期・Web/WASM連携 実装ロードマップ
+# キャッシュ・非同期・Web/WASM連携 実装ロードマップ
 
 - **言及規格の元ドキュメント・権利者・ライセンス**:
   - **surfaces.txt / アニメーション合成 / 当たり判定**: [ukadoc-spec: surfaces.txt](https://ukatech.shillest.net/ukadoc-spec/spec/surfaces/) - © UKADOC project / Ukagaka Tech Team (CC BY 4.0)

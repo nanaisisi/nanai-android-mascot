@@ -1,4 +1,4 @@
-﻿# 規格対応度一覧（Specification Compliance Matrix）
+# 規格対応度一覧（Specification Compliance Matrix）
 
 - **言及規格の元ドキュメント・権利者・ライセンス**:
   - **SHIORI 仕様 / 各種サブシステム**:

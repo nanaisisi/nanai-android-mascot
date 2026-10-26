@@ -1,4 +1,4 @@
-﻿# DLL 規格対応仕様 (DLL Architecture & WASM Compliance)
+# DLL 規格対応仕様 (DLL Architecture & WASM Compliance)
 
 - **仕様リファレンス**: [ukatech/ukadoc-spec: DLL規格](https://ukatech.shillest.net/ukadoc-spec/spec/dll/)
 - **言及規格の元ドキュメント・権利者・ライセンス**:

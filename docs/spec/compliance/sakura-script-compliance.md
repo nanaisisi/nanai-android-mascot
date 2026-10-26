@@ -1,4 +1,4 @@
-﻿# さくらスクリプト規格対応仕様 (Sakura Script Compliance)
+# さくらスクリプト規格対応仕様 (Sakura Script Compliance)
 
 - **言及規格の元ドキュメント・権利者・ライセンス**:
   - **さくらスクリプト (Sakura Script)**: [ukadoc-spec: さくらスクリプト](https://ukatech.shillest.net/ukadoc-spec/spec/sakura-script/) - © UKADOC project / Ukagaka Tech Team (CC BY 4.0)

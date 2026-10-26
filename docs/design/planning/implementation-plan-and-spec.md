@@ -1,4 +1,4 @@
-﻿# 次期フェーズ実装計画 & 統合技術仕様書 (Phase 2+)
+# 次期フェーズ実装計画 & 統合技術仕様書 (Phase 2+)
 
 - **言及規格の元ドキュメント・権利者・ライセンス**:
   - **SHIORI 仕様 / 各種サブシステム**:
@@ -60,7 +60,7 @@ flowchart TD
 
 1. **さくらスクリプト再生キューとサーフィスの完全連動**
    - [x] パーサー・トークナイザー基盤の実装 (`src/js/sakura-script.js`)
-   - [x] `\s[ID]` による [src/js/surface.js](../../src/js/surface.js) のリアルタイム表情切り替えハンドラ接続
+   - [x] `\s[ID]` による [src/js/surface.js](../../../ui/js/surface/surface.js) のリアルタイム表情切り替えハンドラ接続
    - [x] `\w`, `\_w` ウェイトとバルーンタイピング表示の非同期実行
    - [x] クリックによる全文スキップ機能のバルーンUI組み込み
 2. **当たり判定（Collision）からの SHIORI イベント発火**
@@ -68,7 +68,7 @@ flowchart TD
    - [x] 頭部・胸部など各部位タッチ時の `OnMouseClick`（Reference4: 部位ID）生成
    - [x] 選択肢 `\q[ラベル,ID]` クリック時の `OnChoiceSelect` イベント返送パイプライン構築
 3. **定期タイマー（OnSecondChange）とランダムトーク**
-   - [x] 一定間隔（例: 60〜180秒）でのランダムトーク発生ロジック（[src/js/ghost.js](../../src/js/ghost.js)）
+   - [x] 一定間隔（例: 60〜180秒）でのランダムトーク発生ロジック（[src/js/ghost.js](../../../ui/js/ghost/ghost.js)）
 
 ---
 
@@ -77,12 +77,12 @@ flowchart TD
 **目標**: 任意の歴史的ゴースト（Shift_JIS記述のZIPまたはフォルダ）を配置・選択し、文字化けなくサーフィスとスクリプトを読み込めるようにする。
 
 1. **Rust 側 VFS コマンドの Tauri 登録**
-   - [x] [src-tauri/src/lib.rs](../../src-tauri/src/lib.rs) での `open_text_file`（UTF-8/Shift_JIS自動変換）および `resolve_vfs_path` 実装
-   - [x] フロントエンド側からの Tauri invoke によるアセット・surfaces.txt パス解決（[src/js/surface.js](../../src/js/surface.js)）
+   - [x] [src-tauri/src/lib.rs](../../../src-tauri/src/lib.rs) での `open_text_file`（UTF-8/Shift_JIS自動変換）および `resolve_vfs_path` 実装
+   - [x] フロントエンド側からの Tauri invoke によるアセット・surfaces.txt パス解決（[src/js/surface.js](../../../ui/js/surface/surface.js)）
 2. **大文字・小文字不一致の透過的解決**
    - [x] `surface0.png` 等のフォールバック・小文字正規化ロード対応
 3. **ゴースト・バルーン着せ替え UI の接続**
-   - [x] 標準右クリックメニューの「シェル」「着せ替え」サブメニューにスキャン結果を反映（[src/menu-iframe.html](../../src/menu-iframe.html) & [src/js/context-menu.js](../../src/js/context-menu.js)）
+   - [x] 標準右クリックメニューの「シェル」「着せ替え」サブメニューにスキャン結果を反映（[src/menu-iframe.html](../../../ui/menu-iframe.html) & [src/js/context-menu.js](../../../ui/js/ui/context-menu.js)）
 
 ---
 
@@ -91,11 +91,11 @@ flowchart TD
 **目標**: Windows DLL 非依存で、里々 (SATORI) や YAYA 辞書をブラウザ/Android 内で実行可能にする。
 
 1. **SHIORI 3.0 プロトコルレイヤーの標準化**
-   - [x] Request / Response 文字列のヘッダー・ステータスコード整形ユーティリティ（[src/js/shiori-protocol.js](../../src/js/shiori-protocol.js)）
+   - [x] Request / Response 文字列のヘッダー・ステータスコード整形ユーティリティ（[src/js/shiori-protocol.js](../../../ui/js/ghost/shiori-protocol.js)）
 2. **Web Worker サンドボックス SHIORI**
-   - [x] WASM 化された SHIORI エンジンを Web Worker 上で起動し、メインスレッドの UI 描画をブロックしない非同期呼び出しモデルを構築（[src/js/shiori-worker.js](../../src/js/shiori-worker.js)）
+   - [x] WASM 化された SHIORI エンジンを Web Worker 上で起動し、メインスレッドの UI 描画をブロックしない非同期呼び出しモデルを構築（[src/js/shiori-worker.js](../../../ui/js/ghost/shiori-worker.js)）
 3. **JS モック対話エンジン（軽量フォールバック）**
-   - [x] SHIORI バイナリを含まない軽量ゴースト用の JavaScript 簡易対話・イベントハンドラの整備（[src/js/ghost.js](../../src/js/ghost.js)）
+   - [x] SHIORI バイナリを含まない軽量ゴースト用の JavaScript 簡易対話・イベントハンドラの整備（[src/js/ghost.js](../../../ui/js/ghost/ghost.js)）
 
 ---
 
@@ -107,9 +107,9 @@ flowchart TD
    - [x] `SYSTEM_ALERT_WINDOW` の設定画面誘導インテント呼び出し（Tauriコマンド `request_overlay_permission` & 設定モーダル案内UI）
    - [x] フォアグラウンドサービス通知チャネルの実装（Tauriコマンド `setup_foreground_service`）
 2. **透過タッチスルー (Touch-through)**
-   - [x] マスコット透過部分のタッチイベント透過（[src/css/base.css](../../src/css/base.css) の `.container: pointer-events: none` & `.ghost-display: pointer-events: auto` 分離）
+   - [x] マスコット透過部分のタッチイベント透過（[src/css/base.css](../../../ui/css/base.css) の `.container: pointer-events: none` & `.ghost-display: pointer-events: auto` 分離）
 3. **画面端スナップ & ドッキング UI**
-   - [x] [src/js/interaction.js](../../src/js/interaction.js) による端寄せドッキングと復帰の CSS アニメーション
+   - [x] [src/js/interaction.js](../../../ui/js/surface/interaction.js) による端寄せドッキングと復帰の CSS アニメーション
 
 ---
 
@@ -133,12 +133,12 @@ flowchart TD
 **目標**: ユーザーが `.nar` や `.zip` の配布アーカイブを取り込み、安全に解凍・インストールして即時切り替え可能にする。
 
 1. **アーカイブ解凍・パストラバーサル防止基盤**
-   - [src-tauri/src/lib.rs](../../src-tauri/src/lib.rs) の `install_ghost_archive` Tauriコマンド。
+   - [src-tauri/src/lib.rs](../../../src-tauri/src/lib.rs) の `install_ghost_archive` Tauriコマンド。
    - `install.txt`（Shift_JIS / UTF-8 両対応）の自動パースによるゴースト名・展開ディレクトリ判定。
    - Zip Slip 脆弱性を防止するパス正規化と安全なディレクトリ解決。
 2. **メニュー導線 & 取り込みモーダル UI**
-   - 右クリックメニュー（[src/menu-iframe.html](../../src/menu-iframe.html) & [src/js/context-menu.js](../../src/js/context-menu.js)）への「ファイル取り込み・導入 (I)」項目追加。
-   - 取り込み専用モーダル（[src/index.html](../../src/index.html) & [src/js/modal.js](../../src/js/modal.js)）およびゴースト管理モーダルからの 2 系統の取り込み UI 連携。
+   - 右クリックメニュー（[src/menu-iframe.html](../../../ui/menu-iframe.html) & [src/js/context-menu.js](../../../ui/js/ui/context-menu.js)）への「ファイル取り込み・導入 (I)」項目追加。
+   - 取り込み専用モーダル（[src/index.html](../../../ui/index.html) & [src/js/modal.js](../../../ui/js/ui/modal.js)）およびゴースト管理モーダルからの 2 系統の取り込み UI 連携。
    - 取り込み完了後のゴースト一覧再スキャン・自動選択・バルーン通知パイプライン。
 
 ---
@@ -161,16 +161,16 @@ flowchart TD
 
 - **現状**: デスクトップでは右クリックで標準伺かメニューを表示。
 - **対応方針**:
-  - 長押し（Long Press: 600ms）または 2本指タップでメニューをトグル（[src/js/interaction.js](../../src/js/interaction.js) に実装完了）。
+  - 長押し（Long Press: 600ms）または 2本指タップでメニューをトグル（[src/js/interaction.js](../../../ui/js/surface/interaction.js) に実装完了）。
   - 画面上部の固定クイックボタンからの展開もサポート（実装完了）。
 
 ---
 
 ## 4. ドキュメント相互参照
 
-- [PROJECT-SPEC.md](../PROJECT-SPEC.md) - プロジェクト全体仕様書
-- [TODO.md](../TODO.md) - 詳細タスクチェックリスト
-- [docs/spec/sakura-script-and-balloon-spec.md](../spec/sakura-script-and-balloon-spec.md) - さくらスクリプト & バルーン仕様
-- [docs/spec/surfaces-and-collision-spec.md](../spec/surfaces-and-collision-spec.md) - サーフィス合成 & 当たり判定仕様
-- [docs/spec/encoding-and-vfs-spec.md](../spec/encoding-and-vfs-spec.md) - 文字コード & VFS 仕様
-- [docs/spec/android-overlay-and-service-spec.md](../spec/android-overlay-and-service-spec.md) - Android 常駐・オーバーレイ仕様
+- [PROJECT-SPEC.md](../../../PROJECT-SPEC.md) - プロジェクト全体仕様書
+- [TODO.md](../../../TODO.md) - 詳細タスクチェックリスト
+- [docs/spec/sakura-script-and-balloon-spec.md](../../spec/shiori-script/sakura-script-and-balloon-spec.md) - さくらスクリプト & バルーン仕様
+- [docs/spec/surfaces-and-collision-spec.md](../../spec/ghost/surfaces-and-collision-spec.md) - サーフィス合成 & 当たり判定仕様
+- [docs/spec/encoding-and-vfs-spec.md](../../spec/platform/encoding-and-vfs-spec.md) - 文字コード & VFS 仕様
+- [docs/spec/android-overlay-and-service-spec.md](../../spec/platform/android-overlay-and-service-spec.md) - Android 常駐・オーバーレイ仕様

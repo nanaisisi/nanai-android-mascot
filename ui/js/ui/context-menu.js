@@ -141,7 +141,15 @@ if (globalThis.__TAURI__) {
 
 // 親ウィンドウからの状態同期メッセージ受信 (iframeフォールバック時)
 globalThis.addEventListener("message", (event) => {
-	if (event.data?.type === "sync-ghosts") {
+	if (event.data?.type === "sync-scope") {
+		const scope =
+			typeof event.data.scope === "number"
+				? event.data.scope
+				: parseInt(event.data.scope, 10);
+		if (!Number.isNaN(scope)) {
+			setScope(scope);
+		}
+	} else if (event.data?.type === "sync-ghosts") {
 		const ghosts = event.data.ghosts || [];
 		const currentGhost = event.data.currentGhost;
 		renderGhostSubmenu(ghosts, currentGhost);

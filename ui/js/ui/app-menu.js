@@ -19,7 +19,7 @@ export const menuMethods = {
 
       // 独立したバルーンスキン連動メニューウィンドウを表示 (枠外にはみ出して表示可能)
       invoke("show_menu_window", { x: posX, y: posY, scope })
-        .then(() => this.syncMenuGhosts())
+        .then(() => this.syncMenuGhosts(scope))
         .catch((err) => {
           console.warn("show_menu_window failed, fallback to show_context_menu:", err);
           const gc = this.ghostController;
@@ -28,24 +28,24 @@ export const menuMethods = {
             currentGhost: gc.currentGhost?.name || null,
             shells: gc.shells || ["master"],
             currentShell: gc.currentShell || "master",
-          }).catch(() => this.toggleHtmlMenu());
+          }).catch(() => this.toggleHtmlMenu(scope));
         });
       return;
     }
-    this.toggleHtmlMenu();
+    this.toggleHtmlMenu(scope);
   },
 
-  toggleHtmlMenu() {
+  toggleHtmlMenu(scope = 0) {
     if (!this.elements.menuContainer) return;
     const isVisible = this.elements.menuContainer.style.display !== "none";
     const nextState = isVisible ? "none" : "block";
     this.elements.menuContainer.style.display = nextState;
     if (nextState === "block") {
-      this.syncMenuGhosts();
+      this.syncMenuGhosts(scope);
     }
   },
 
-  syncMenuGhosts() {
+  syncMenuGhosts(scope = 0) {
     const gc = this.ghostController;
     const shellNames = gc.shells || ["master"];
     const currentShellName = gc.currentShell || "master";
@@ -61,11 +61,13 @@ export const menuMethods = {
         currentShell: currentShellName,
       });
       emit("sync-theme", this.currentBalloonTheme);
+      emit("sync-menu-scope", scope);
     }
 
     // iframe メニューへの同期 (フォールバック)
     const win = document.getElementById("menu-iframe")?.contentWindow;
     if (win) {
+      win.postMessage({ type: "sync-scope", scope }, "*");
       win.postMessage({ type: "sync-ghosts", ghosts, currentGhost: gc.currentGhost }, "*");
       win.postMessage({ type: "sync-shells", shells: shellNames, currentShell: currentShellName }, "*");
       win.postMessage({ type: "sync-theme", theme: this.currentBalloonTheme }, "*");

@@ -1,11 +1,11 @@
-# SHIORI/3.0 response: ステータスコード
+﻿# SHIORI/3.0 response: ステータスコード
 
 - **規格**: [response.md](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/response/) (ukadoc-spec/spec/shiori3/response.md)
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-200 / 204 を処理。311 / 312 (OnTeach) と 400 / 500 の扱いは要確認。
+Rust 通信層として `crates/ui/src/shiori.rs`（SHIORI/3.0 リクエスト/レスポンス モデル・ビルダー・パーサー）で実装。SSP 拡張ヘッダ（SenderType / SecurityLevel / SecurityOrigin / Status / BaseID / X-SSTP-PassThru- / ValueNotify / Marker / ErrorLevel / ErrorDescription / BalloonOffset / Age / MarkerSend）を serde モデル + CR+LF 直列化に対応。34 ユニットテストでサンプル突合確認済み。
 
 ## 備考
 

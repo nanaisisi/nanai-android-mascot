@@ -9,8 +9,8 @@ use std::collections::BTreeMap;
 
 use crate::descript::{BindGroup, Descript};
 use crate::shell::Shell;
-use crate::surfacetable::SurfaceTable;
 use crate::surfaces::SurfaceDefinition;
+use crate::surfacetable::SurfaceTable;
 
 /// 1サーフィス分のマニフェスト（番号 + 定義 + 表示名）
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
@@ -84,8 +84,8 @@ mod tests {
 
     /// 実プロジェクトのサンプルシェル（存在時のみ実行される結合テスト）
     fn mock_shell_dir() -> Option<std::path::PathBuf> {
-        let dir =
-            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../assets/ghost/mock_nanai/shell/master");
+        let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../../assets/ghost/mock_nanai/shell/master");
         dir.is_dir().then_some(dir)
     }
 
@@ -100,7 +100,11 @@ mod tests {
             "charset,Shift_JIS\nsurface0\n{\nelement0,base,surface0.png,0,0\ncollisionex0,head,rect,0,0,10,10\nanimation100.interval,bind\nanimation100.pattern0,add,100,0,0,0\n}\n",
         )
         .unwrap();
-        std::fs::write(dir.join("descript.txt"), "type,shell\nname,manifest_test\ncraftmanw,Tester\n").unwrap();
+        std::fs::write(
+            dir.join("descript.txt"),
+            "type,shell\nname,manifest_test\ncraftmanw,Tester\n",
+        )
+        .unwrap();
 
         let shell = Shell::load(&dir).unwrap();
         let manifest = shell.manifest();
@@ -110,7 +114,10 @@ mod tests {
         assert_eq!(manifest.descript.type_().map(|s| s.as_str()), Some("shell"));
         assert_eq!(manifest.surfaces.len(), 1);
         assert_eq!(manifest.surfaces[0].number, 0);
-        assert_eq!(manifest.surfaces[0].definition.element(0).unwrap().file, "surface0.png");
+        assert_eq!(
+            manifest.surfaces[0].definition.element(0).unwrap().file,
+            "surface0.png"
+        );
         assert_eq!(manifest.sakura_bind_groups.len(), 0);
 
         // JSON 化できる

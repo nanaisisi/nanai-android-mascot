@@ -1,11 +1,11 @@
-# SHIORI/3.0 response: X-SSTP-PassThru-*
+﻿# SHIORI/3.0 response: X-SSTP-PassThru-*
 
 - **規格**: [response.md](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/response/) (ukadoc-spec/spec/shiori3/response.md)
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-SSTP 未対応のため該当なし。
+Rust 通信層として `crates/ui/src/shiori.rs`（SHIORI/3.0 リクエスト/レスポンス モデル・ビルダー・パーサー）で実装。SSP 拡張ヘッダ（SenderType / SecurityLevel / SecurityOrigin / Status / BaseID / X-SSTP-PassThru- / ValueNotify / Marker / ErrorLevel / ErrorDescription / BalloonOffset / Age / MarkerSend）を serde モデル + CR+LF 直列化に対応。34 ユニットテストでサンプル突合確認済み。
 
 ## 備考
 

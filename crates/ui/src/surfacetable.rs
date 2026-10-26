@@ -1,4 +1,4 @@
-﻿//! `surfacetable.txt` パーサー（ukadoc-spec / descript / shell-surfacetable 準拠）
+//! `surfacetable.txt` パーサー（ukadoc-spec / descript / shell-surfacetable 準拠）
 //!
 //! 「SSP を起動しなくてもサーフィスを確認できるようにするための」仕様であり、
 //! シェル自体には不要なファイル。ゴーストのサーフィスを グループ名 / 名前 の
@@ -235,7 +235,10 @@ group,g1
 ";
         let table = SurfaceTable::parse(sample);
         assert_eq!(table.scope, Some(2));
-        assert_eq!(table.options[0], vec!["あ行".to_string(), "か行".to_string()]);
+        assert_eq!(
+            table.options[0],
+            vec!["あ行".to_string(), "か行".to_string()]
+        );
         assert_eq!(table.group("G1").unwrap().entries[0].name, "テスト");
     }
 
@@ -255,7 +258,11 @@ group,g1
         // 本体通常 / 本体腕組み / 本体正面向け / 下半身_* 各グループが存在する
         assert!(table.group("本体通常").is_some() || !table.groups.is_empty());
         // 可視サーフィスの一覧に 0 / 30 / 10 / 14 が含まれる
-        let mut ids: Vec<u32> = table.visible_entries().iter().map(|e| e.surface_id).collect();
+        let mut ids: Vec<u32> = table
+            .visible_entries()
+            .iter()
+            .map(|e| e.surface_id)
+            .collect();
         ids.sort_unstable();
         for probe in [0u32, 10, 14, 30] {
             assert!(

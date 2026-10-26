@@ -5,8 +5,8 @@
 //! 描画・当たり判定・着せ替え解決に使う構造体にまとめる。
 
 use crate::descript::{BindGroup, Descript};
-use crate::surfacetable::SurfaceTable;
 use crate::surfaces::{CollisionArea, SurfaceDefinition, SurfacesTxt};
+use crate::surfacetable::SurfaceTable;
 use crate::vfs::{open_text_file, resolve_vfs_path};
 use std::path::{Path, PathBuf};
 

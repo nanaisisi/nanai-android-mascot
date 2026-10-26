@@ -42,6 +42,7 @@ export class InteractionManager {
 		let initialLeft = 0;
 		let initialTop = 0;
 		let hasMoved = false;
+		let rafPending = false;
 
 		// 長押し（Long Press）によるモバイルメニュー表示
 		let longPressTimer = null;
@@ -165,18 +166,26 @@ export class InteractionManager {
 					Math.min(globalThis.innerHeight - padding, newY),
 				);
 
-				target.style.left = `${newX}px`;
-				target.style.top = `${newY}px`;
-				target.style.transform = "translate(-50%, -50%)";
+				if (!rafPending) {
+					rafPending = true;
+					requestAnimationFrame(() => {
+						rafPending = false;
+						if (!isInteracting && !isDragging) return;
+						target.style.left = `${newX}px`;
+						target.style.top = `${newY}px`;
+						target.style.transform = "translate(-50%, -50%)";
 
-				// バルーンが存在する場合、設定された相対オフセットを維持してキャラクターに追従
-				this.balloonDragManager.updateFollowPosition(newX, newY);
+						// バルーンが存在する場合、設定された相対オフセットを維持してキャラクターに追従
+						this.balloonDragManager.updateFollowPosition(newX, newY);
+					});
+				}
 			}
 		};
 
 		const onPointerUp = (e) => {
 			if (!isInteracting) return;
 			isInteracting = false;
+			rafPending = false;
 			target.classList.remove("is-dragging");
 
 			if (longPressTimer) {

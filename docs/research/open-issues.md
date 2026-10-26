@@ -16,6 +16,8 @@
   1. マウス移動（ドラッグ・部位追従・ヒットテスト）イベントの `requestAnimationFrame` または 16ms〜33ms 単位でのスロットリング（間引き）。
   2. 不要な IPC 通信の抑制（UI側で閉じる座標計算や DOM 更新は Rust を経由せず直接処理）。
   3. ゴースト再ロード・ウィンドウ生成時のイベントリスナー解除・再登録のクリーンアップ徹底。
+- **詳細設計仕様書**:
+  - [軽量化・フリーズ防止およびIPCキューあふれ対策仕様](../design/cache-and-async/performance-and-ipc-stabilization.md)
 
 ---
 

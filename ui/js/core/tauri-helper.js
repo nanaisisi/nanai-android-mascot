@@ -24,6 +24,20 @@ export function isTauriAvailable() {
 }
 
 /**
+ * IPC キュー統計管理（最大キュー数・同時保留数・警告検知）
+ */
+export const ipcQueueStats = {
+	pendingCount: 0,
+	peakPendingCount: 0,
+	totalCalls: 0,
+	reset() {
+		this.pendingCount = 0;
+		this.peakPendingCount = 0;
+		this.totalCalls = 0;
+	},
+};
+
+/**
  * Tauri IPCコマンドの呼び出しラッパー
  * @template T
  * @param {string} cmd - 実行するTauriコマンド名
@@ -34,7 +48,36 @@ export async function invoke(cmd, args = {}) {
 	if (!isTauriAvailable()) {
 		throw new Error(`Tauri is not available to invoke command: ${cmd}`);
 	}
-	return await tauriInvoke(cmd, args);
+
+	ipcQueueStats.totalCalls++;
+	ipcQueueStats.pendingCount++;
+	if (ipcQueueStats.pendingCount > ipcQueueStats.peakPendingCount) {
+		ipcQueueStats.peakPendingCount = ipcQueueStats.pendingCount;
+		console.log(
+			`📊 [IPC Queue] 最大キュー数更新: ${ipcQueueStats.peakPendingCount} (直近実行: ${cmd}, 累積呼出: ${ipcQueueStats.totalCalls})`,
+		);
+	}
+
+	// 多段階の警戒域アラート（100件: 軽度滞留 / 1000件: 重度滞留 / 5000件: 危険域・Win32クォータ枯渇寸前）
+	if (ipcQueueStats.pendingCount === 100) {
+		console.warn(
+			`⚠️ [IPC Queue Alert] キュー軽度滞留 (100件到達): 直近実行=${cmd}, 最大記録=${ipcQueueStats.peakPendingCount}`,
+		);
+	} else if (ipcQueueStats.pendingCount === 1000) {
+		console.warn(
+			`🚨 [IPC Queue Warning] キュー重度滞留 (1000件到達): 直近実行=${cmd}, 最大記録=${ipcQueueStats.peakPendingCount}`,
+		);
+	} else if (ipcQueueStats.pendingCount === 5000) {
+		console.error(
+			`🔥 [IPC Queue CRITICAL] キュー危険域 (5000件到達 - Win32上限10,000件の50%): 直近実行=${cmd}, 最大記録=${ipcQueueStats.peakPendingCount}`,
+		);
+	}
+
+	try {
+		return await tauriInvoke(cmd, args);
+	} finally {
+		ipcQueueStats.pendingCount--;
+	}
 }
 
 /**
@@ -83,4 +126,9 @@ export async function listen(event, handler) {
 export async function emit(event, payload) {
 	if (!isTauriAvailable()) return;
 	await tauriEmit(event, payload);
+}
+
+// 開発・診断用グローバルアクセス
+if (typeof globalThis !== "undefined") {
+	globalThis.__NANAI_IPC_QUEUE_STATS__ = ipcQueueStats;
 }

@@ -153,6 +153,28 @@ pub async fn preload_auxiliary_windows(app_handle: tauri::AppHandle) -> Result<(
             .visible(false)
             .build();
         }
+
+        // 4. サブキャラクターウィンドウ (scope 1: うにゅう/相方) を最小化・非表示状態で事前キャッシュ
+        let subchar_label = "subchar_window_1";
+        if app_handle.get_webview_window(subchar_label).is_none() {
+            if let Ok(subchar_win) = tauri::WebviewWindowBuilder::new(
+                &app_handle,
+                subchar_label,
+                tauri::WebviewUrl::App("character.html?scope=1".into()),
+            )
+            .title("Nanai Android Mascot - Character 1")
+            .inner_size(200.0, 360.0)
+            .transparent(true)
+            .decorations(false)
+            .always_on_top(true)
+            .skip_taskbar(true)
+            .resizable(false)
+            .visible(false)
+            .build()
+            {
+                let _ = subchar_win.minimize();
+            }
+        }
     }
     Ok(())
 }

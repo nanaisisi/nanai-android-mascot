@@ -284,6 +284,47 @@ impl SortKind {
     }
 }
 
+// ---------------------------------------------------------------- 合成計画 (MAYUNA)
+
+/// 合成計画の1レイヤー
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum CompositionLayer {
+    /// surface ブロックの element（base / overlay 等）
+    Element(ElementDef),
+    /// 装着された着せ替え（bind）アニメーションの pattern
+    Pattern(AnimationPattern),
+}
+
+/// `SurfacesTxt::plan_composition` の結果（下から上への描画順）
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CompositionPlan {
+    /// 対象サーフィス番号
+    pub surface: u32,
+    /// 描画順に並んだレイヤー列
+    pub layers: Vec<CompositionLayer>,
+}
+
+impl CompositionPlan {
+    /// レイヤーの参照列（表示ファイル名と描画地点の確認用）
+    pub fn layer_files(&self) -> Vec<String> {
+        self.layers
+            .iter()
+            .map(|l| match l {
+                CompositionLayer::Element(e) => e.file.clone(),
+                CompositionLayer::Pattern(p) => p.surface.to_string(),
+            })
+            .collect()
+    }
+
+    /// 装着 pattern レイヤーの数
+    pub fn bind_pattern_count(&self) -> usize {
+        self.layers
+            .iter()
+            .filter(|l| matches!(l, CompositionLayer::Pattern(_)))
+            .count()
+    }
+}
+
 // ---------------------------------------------------------------- surfaces.txt 全体
 
 /// `surfaces.txt` のパース結果
@@ -314,7 +355,48 @@ impl SurfacesTxt {
     /// サーフィス番号に対応する定義を取得
     pub fn surface(&self, number: u32) -> Option<&SurfaceDefinition> {
         self.surfaces.get(&number)
-    }    /// エイリアス名に対応するサーフィス番号列を取得
+    }
+
+    /// 合成計画（MAYUNA / 着せ替え表示のレイヤー列）を立てる
+    ///
+    /// `binds` は装着する着せ替えアニメーションID（descript の bindgroup 番号）。
+    /// 要素ID順に base レイヤーを積み、その後装着された `interval,bind`
+    /// アニメの pattern を index 順に積み上げ、`CompositionPlan` で返す。
+    /// 未定義サーフィスは None、bind 以外のID・未定義IDは無視される。
+    pub fn plan_composition(&self, number: u32, binds: &[u32]) -> Option<CompositionPlan> {
+        let def = self.surface(number)?;
+
+        // element をID順（安定ソート）で並べ替え
+        let mut elements: Vec<&ElementDef> = def.elements.iter().collect();
+        elements.sort_by_key(|e| e.id);
+
+        let mut layers: Vec<CompositionLayer> = elements
+            .into_iter()
+            .cloned()
+            .map(CompositionLayer::Element)
+            .collect();
+
+        let mut bind_ids: Vec<u32> = binds.to_vec();
+        bind_ids.sort_unstable();
+        for bind_id in bind_ids {
+            let Some(anim) = def.animations.get(&bind_id) else {
+                continue;
+            };
+            if anim.interval.as_ref() != Some(&Interval::Bind) {
+                continue;
+            }
+            let mut patterns: Vec<&AnimationPattern> = anim.patterns.iter().collect();
+            patterns.sort_by_key(|p| p.index);
+            layers.extend(patterns.into_iter().cloned().map(CompositionLayer::Pattern));
+        }
+
+        Some(CompositionPlan {
+            surface: number,
+            layers,
+        })
+    }
+
+    /// エイリアス名に対応するサーフィス番号列を取得
     pub fn alias_numbers(&self, name: &str) -> Option<&Vec<u32>> {
         for (key, list) in &self.aliases {
             if key.eq_ignore_ascii_case(name) {
@@ -943,5 +1025,75 @@ animation2.name,まばたき
         assert!(names.contains(&"head") && names.contains(&"bust") && names.contains(&"skirt"));
         assert!(def0.animations.contains_key(&0));
         assert!(txt.surface(100).is_some());
+    }
+
+    #[test]
+    fn test_plan_composition() {
+        let sample = r"charset,Shift_JIS
+surface0
+{
+element0,base,surface0.png,0,0
+collisionex0,head,rect,0,0,10,10
+animation100.interval,bind
+animation100.pattern0,add,100,0,0,0
+animation100.pattern1,add,101,0,0,0
+animation200.interval,sometimes
+animation200.pattern0,overlay,9,500,0,0
+}
+
+surface.append0
+{
+element1,overlay,surface01.png,0,0
+}
+";
+        let txt = SurfacesTxt::parse(sample);
+
+        // bind なし: base 要素のみ
+        let plan = txt.plan_composition(0, &[]).unwrap();
+        assert_eq!(plan.layers.len(), 2);
+        assert_eq!(
+            plan.layer_files(),
+            vec!["surface0.png".to_string(), "surface01.png".to_string()]
+        );
+
+        // bind あり: bind アニメの pattern が後段に積まれる
+        let plan = txt.plan_composition(0, &[100]).unwrap();
+        assert_eq!(plan.bind_pattern_count(), 2);
+        assert_eq!(
+            plan.layers[2],
+            CompositionLayer::Pattern(AnimationPattern {
+                index: 0,
+                method: DrawMethod::Add,
+                surface: 100,
+                wait: 0,
+                x: 0,
+                y: 0,
+                options: vec![],
+            })
+        );
+
+        // non-bind / 未定義IDは無視
+        let plan = txt.plan_composition(0, &[200, 999]).unwrap();
+        assert_eq!(plan.bind_pattern_count(), 0);
+
+        // 未定義サーフィスは None
+        assert!(txt.plan_composition(42, &[]).is_none());
+    }
+
+    #[test]
+    fn test_plan_composition_mock_nanai() {
+        // 実シェルに対する結合テスト（存在時のみ）
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../../assets/ghost/mock_nanai/shell/master/surfaces.txt");
+        if !path.exists() {
+            return;
+        }
+        let content = crate::vfs::open_text_file(&path).unwrap();
+        let txt = SurfacesTxt::parse(&content);
+
+        let plan = txt.plan_composition(0, &[100]).unwrap();
+        // 着袖 bind (animation100) の add pattern が積まれる
+        assert_eq!(plan.bind_pattern_count(), 1);
+        assert!(matches!(plan.layers.last(), Some(CompositionLayer::Pattern(p)) if p.surface == 100));
     }
 }

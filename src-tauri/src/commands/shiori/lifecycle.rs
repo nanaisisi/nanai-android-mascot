@@ -61,7 +61,10 @@ pub async fn load_ghost(
                         eprintln!("⚠️ Failed to initialize SHIORI at {:?}: {}", cand, e);
                     } else {
                         *state.shiori_engine.lock() = Some(engine);
-                        state.active_ghosts.lock().insert("main".to_string(), ghost_name.clone());
+                        state
+                            .active_ghosts
+                            .lock()
+                            .insert("main".to_string(), ghost_name.clone());
                         loaded = true;
                         println!("🎉 Native SHIORI activated: {:?}", cand);
                         break;
@@ -135,12 +138,18 @@ pub async fn spawn_ghost(
             && let Ok(mut engine) = ShioriDynamicEngine::load_library(&cand)
             && engine.initialize(&ghost_master_dir).is_ok()
         {
-            state.ghost_engines.lock().insert(instance_id.clone(), engine);
+            state
+                .ghost_engines
+                .lock()
+                .insert(instance_id.clone(), engine);
             break;
         }
     }
 
-    state.active_ghosts.lock().insert(instance_id.clone(), ghost_name.clone());
+    state
+        .active_ghosts
+        .lock()
+        .insert(instance_id.clone(), ghost_name.clone());
 
     #[cfg(desktop)]
     {

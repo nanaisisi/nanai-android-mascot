@@ -1,6 +1,6 @@
+use tauri::Manager;
 #[cfg(desktop)]
 use tauri::menu::{MenuBuilder, SubmenuBuilder};
-use tauri::Manager;
 
 /// OSネイティブのコンテキストメニュー表示コマンド (SSP / ukadoc 仕様準拠のメニュー再編)
 #[tauri::command]

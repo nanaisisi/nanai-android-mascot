@@ -63,15 +63,6 @@ impl AppState {
     }
 }
 
-// エラーメッセージを全ウィンドウにemitするヘルパー関数
-pub fn emit_error_to_all(app_handle: &tauri::AppHandle<tauri::Wry>, msg: String) {
-    if let Some(window) = app_handle.get_webview_window("main")
-        && let Err(err) = window.emit("error", msg.clone())
-    {
-        eprintln!("emit failed: {err}");
-    }
-}
-
 /// アセットパスを解決（開発/本番環境対応）
 pub fn resolve_asset_path(
     relative_path: &str,

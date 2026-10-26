@@ -256,6 +256,24 @@ export class SurfaceManager {
 		);
 	}
 
+	/**
+	 * `\![anim,pause,ID]` (SSP): サーフィスアニメーションの一時停止
+	 * @param {number|string} animId
+	 * @param {number} [scopeId]
+	 */
+	pauseAnimationById(animId, scopeId = 0) {
+		this.animationManager.pauseAnimation(scopeId, animId);
+	}
+
+	/**
+	 * `\![anim,resume,ID]` (SSP): アニメーションの一時停止解除
+	 * @param {number|string} animId
+	 * @param {number} [scopeId]
+	 */
+	resumeAnimationById(animId, scopeId = 0) {
+		this.animationManager.resumeAnimation(scopeId, animId);
+	}
+
 	onCharSpoken(scopeId = 0) {
 		this.animationManager.onCharSpoken(scopeId);
 	}

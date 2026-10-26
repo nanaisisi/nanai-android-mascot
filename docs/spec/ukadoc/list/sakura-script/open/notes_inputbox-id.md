@@ -2,11 +2,11 @@
 
 - **規格**: [notes_inputbox-id.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/open/notes_inputbox-id/) (ukadoc-spec/list/sakura-script/open/notes_inputbox-id.md)
 - **検索語**: InputBox
-- **対応状況**: 🔎 コード上に出現(処理の有無は要読解)
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
-実装コードに「InputBox」が出現。実際の処理内容は未精査。
+openInputBox で入力ボックスを開く処理はあるが、ID/オプション指定の解釈は未確認。
 
 ## 実装箇所
 

@@ -1,14 +1,15 @@
-# scope,数値
+﻿# scope,数値
 
 - **規格**: [scope.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfacetable/surfacetable-txt/scope/) (ukadoc-spec/descript/shell-surfacetable/surfacetable-txt/scope.md)
 - **検索語**: scope
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済 (Rust パーサー `crates/ui/src/surfacetable.rs` で解析・データ化済 / 表示側は別レイヤー)
 
 ## 突合結果
 
 surface-parser.js / surface-animation-manager.js に該当の解析・処理は確認できない。
 
 ## 実装箇所
+- `crates/ui/src/surfacetable.rs` （Rust 版 surfacetable.txt パーサー：charset / version / scope / option / group / サーフィスID・名前 解析）
 
 - `src-tauri/src/commands/window/menu_window.rs:10`  `scope: Option<i32>,`
 - `src-tauri/src/commands/window/menu_window.rs:15`  `let menu_scope = scope.unwrap_or(0);`

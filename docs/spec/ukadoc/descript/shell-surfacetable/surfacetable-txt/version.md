@@ -1,14 +1,15 @@
-# version,数値
+﻿# version,数値
 
 - **規格**: [version.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfacetable/surfacetable-txt/version/) (ukadoc-spec/descript/shell-surfacetable/surfacetable-txt/version.md)
 - **検索語**: version
-- **対応状況**: ❌ 未実装(誤検出)
+- **対応状況**: ✅ 実装済 (Rust パーサー `crates/ui/src/surfacetable.rs` で解析・データ化済 / 表示側は別レイヤー)
 
 ## 突合結果
 
 ヒットしたのは一般的な語「version」の無関係な出現。該当の仕様に対応する処理は確認できない。
 
 ## 実装箇所
+- `crates/ui/src/surfacetable.rs` （Rust 版 surfacetable.txt パーサー：charset / version / scope / option / group / サーフィスID・名前 解析）
 
 - `src-tauri/src/shiori/cpp.rs:26`  `fn yaya_get_version() -> *const c_char;`
 - `src-tauri/src/shiori/cpp.rs:162`  `pub fn get_version() -> Result<String, String> {`

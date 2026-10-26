@@ -1,12 +1,7 @@
-/**
- * Nanai Android Mascot - さくらスクリプト（SakuraScript）パーサー & プレイヤー
- */
+import { parseSakuraScript } from "./sakura-parser.js";
 
 /**
- * @typedef {Object} SakuraScriptToken
- * @property {string} type - トークン種別 ('scope'|'surface'|'wait'|'text'|'balloon'|'choice'|'reset'|'sync'等)
- * @property {any} [value] - トークンの値 (スコープ番号、サーフェス番号、テキスト等)
- * @property {Record<string, any>} [params] - オプションパラメータ
+ * Nanai Android Mascot - さくらスクリプト（SakuraScript）プレイヤー
  */
 
 export class SakuraScriptPlayer {
@@ -30,220 +25,7 @@ export class SakuraScriptPlayer {
 	 * さくらスクリプト文字列を解析してトークン列に変換
 	 */
 	parse(script) {
-		const tokens = [];
-		let i = 0;
-		const len = script.length;
-
-		while (i < len) {
-			if (script[i] === "\\") {
-				i++;
-				if (i >= len) break;
-
-				const char = script[i];
-
-				// \0 または \h (メインキャラ指定)
-				if (char === "0" || char === "h") {
-					tokens.push({ type: "scope", value: 0 });
-					i++;
-				}
-				// \1 または \u (サブキャラ指定)
-				else if (char === "1" || char === "u") {
-					tokens.push({ type: "scope", value: 1 });
-					i++;
-				}
-				// \p[n] (スコープ指定: \p[0], \p[1] 等)
-				else if (char === "p" && script[i + 1] === "[") {
-					const end = script.indexOf("]", i + 1);
-					if (end !== -1) {
-						const scopeVal = parseInt(script.substring(i + 2, end), 10) || 0;
-						tokens.push({ type: "scope", value: scopeVal });
-						i = end + 1;
-					} else {
-						i++;
-					}
-				}
-				// \s (サーフィス指定: \s0 または \s[10], \s[-1])
-				else if (char === "s") {
-					i++;
-					if (script[i] === "[") {
-						const end = script.indexOf("]", i);
-						if (end !== -1) {
-							const val = script.substring(i + 1, end).trim();
-							const parsedId = parseInt(val, 10);
-							tokens.push({
-								type: "surface",
-								value: Number.isNaN(parsedId) ? 0 : parsedId,
-							});
-							i = end + 1;
-						} else {
-							i++;
-						}
-					} else if (/\d/.test(script[i])) {
-						tokens.push({ type: "surface", value: parseInt(script[i], 10) });
-						i++;
-					}
-				}
-				// \i (アニメーション呼出: \i[ID], \i[ID,wait], \i1〜\i9)
-				else if (char === "i") {
-					i++;
-					if (script[i] === "[") {
-						const end = script.indexOf("]", i);
-						if (end !== -1) {
-							const val = script.substring(i + 1, end).trim();
-							const parts = val.split(",");
-							const animId = parseInt(parts[0], 10);
-							const wait = parts[1]?.trim().toLowerCase() === "wait";
-							tokens.push({
-								type: "animation",
-								animId: Number.isNaN(animId) ? 0 : animId,
-								wait,
-							});
-							i = end + 1;
-						} else {
-							i++;
-						}
-					} else if (/\d/.test(script[i])) {
-						tokens.push({
-							type: "animation",
-							animId: parseInt(script[i], 10),
-							wait: false,
-						});
-						i++;
-					}
-				}
-				// \w1 〜 \w9 (ウェイト)
-				else if (char === "w" && /\d/.test(script[i + 1])) {
-					i++;
-					const weight = parseInt(script[i], 10);
-					tokens.push({ type: "wait", value: weight * 50 });
-					i++;
-				}
-				// \_w[ms] (ミリ秒ウェイト)
-				else if (
-					char === "_" &&
-					script[i + 1] === "w" &&
-					script[i + 2] === "["
-				) {
-					const start = i + 3;
-					const end = script.indexOf("]", start);
-					if (end !== -1) {
-						const ms = parseInt(script.substring(start, end), 10) || 100;
-						tokens.push({ type: "wait", value: ms });
-						i = end + 1;
-					} else {
-						i += 2;
-					}
-				}
-				// \n (改行)
-				else if (char === "n") {
-					i++;
-					if (script.substr(i, 6) === "[half]") {
-						tokens.push({ type: "newline", half: true });
-						i += 6;
-					} else {
-						tokens.push({ type: "newline", half: false });
-					}
-				}
-				// \c (クリア)
-				else if (char === "c") {
-					tokens.push({ type: "clear" });
-					i++;
-				}
-				// \x (クリック待ち・改ページ)
-				else if (char === "x") {
-					tokens.push({ type: "pause" });
-					i++;
-				}
-				// \_q (クイック描画切替)
-				else if (char === "_" && script[i + 1] === "q") {
-					tokens.push({ type: "quick_toggle" });
-					i += 2;
-				}
-				// \_a[ID,arg...] / \_a (アンカーリンク)
-				else if (char === "_" && script[i + 1] === "a") {
-					if (script[i + 2] === "[") {
-						const start = i + 3;
-						const end = script.indexOf("]", start);
-						if (end !== -1) {
-							const content = script.substring(start, end);
-							const args = content.split(",").map((s) => s.trim());
-							tokens.push({
-								type: "anchor_begin",
-								id: args[0] || "",
-								args,
-							});
-							i = end + 1;
-						} else {
-							i += 2;
-						}
-					} else {
-						tokens.push({ type: "anchor_end" });
-						i += 2;
-					}
-				}
-				// \![command,arg,...] (内部コマンド)
-				else if (char === "!" && script[i + 1] === "[") {
-					let j = i + 2;
-					let content = "";
-					while (j < len && script[j] !== "]") {
-						// \] はエスケープされた ]
-						if (script[j] === "\\" && script[j + 1] === "]") j++;
-						content += script[j];
-						j++;
-					}
-					const args = content
-						.split(",")
-						.map((s) => s.trim().replace(/^"|"$/g, ""));
-					tokens.push({ type: "command", args });
-					i = j + 1;
-				}
-				// \q[テキスト,ID] (選択肢)
-				else if (char === "q" && script[i + 1] === "[") {
-					const start = i + 2;
-					const end = script.indexOf("]", start);
-					if (end !== -1) {
-						const content = script.substring(start, end);
-						const comma = content.indexOf(",");
-						const text = comma !== -1 ? content.substring(0, comma) : content;
-						const id = comma !== -1 ? content.substring(comma + 1) : content;
-						tokens.push({ type: "choice", text: text.trim(), id: id.trim() });
-						i = end + 1;
-					} else {
-						i++;
-					}
-				}
-				// \e (終了)
-				else if (char === "e") {
-					tokens.push({ type: "end" });
-					break;
-				}
-				// その他タグはスキップ
-				else {
-					i++;
-					// \_x や \__v のようなアンダースコアで始まるタグ名（[ 直前まで）をスキップ
-					if (char === "_") {
-						while (i < len && script[i] !== "[" && script[i] !== "\\") {
-							i++;
-						}
-					}
-					// 引数 [ ... ] があれば本文に出さず読み飛ばす
-					if (i < len && script[i] === "[") {
-						let j = i + 1;
-						while (j < len && script[j] !== "]") {
-							if (script[j] === "\\" && script[j + 1] === "]") j++;
-							j++;
-						}
-						i = j + 1;
-					}
-				}
-			} else {
-				// 通常テキスト文字
-				tokens.push({ type: "char", value: script[i] });
-				i++;
-			}
-		}
-
-		return tokens;
+		return parseSakuraScript(script);
 	}
 
 	/**
@@ -280,72 +62,70 @@ export class SakuraScriptPlayer {
 			switch (token.type) {
 				case "scope":
 					this.currentScope = token.value;
-					currentAnchor = null;
-					if (this.currentScope >= 1) {
-						const keroSlot = document.getElementById("kero-slot");
-						if (keroSlot && keroSlot.style.display === "none") {
-							keroSlot.style.display = "flex";
-						}
-						if (keroText && keroDisplay) {
-							currentBalloonText = keroText;
+					if (this.currentScope === 1) {
+						if (keroDisplay && keroText) {
 							keroDisplay.style.display = "block";
+							currentBalloonText = keroText;
 						}
 					} else {
-						currentBalloonText = sakuraText;
 						sakuraDisplay.style.display = "block";
+						currentBalloonText = sakuraText;
 					}
 					break;
 
-				case "char":
-					(currentAnchor || currentBalloonText).appendChild(
-						document.createTextNode(token.value),
-					);
-					// 発話連動の口パク (SERIKO talk,N)
+				case "char": {
+					const span = document.createElement("span");
+					span.textContent = token.value;
+					if (currentAnchor) {
+						currentAnchor.appendChild(span);
+					} else {
+						currentBalloonText.appendChild(span);
+					}
+
+					// 文字送り時の口パク連動
 					this.app.surfaceManager?.onCharSpoken(this.currentScope);
-					if (!this.skipRequested && !isQuickMode) {
-						const delay = /^[、。！？.?!]/.test(token.value) ? 120 : 40;
-						await this.sleep(delay);
-					}
-					break;
 
-				case "newline": {
-					currentAnchor = null;
-					const br = document.createElement("br");
-					if (token.half) br.className = "half-br";
-					currentBalloonText.appendChild(br);
+					if (!this.skipRequested && !isQuickMode) {
+						await this.sleep(40);
+					}
 					break;
 				}
 
+				case "newline":
+					if (token.half) {
+						const halfBr = document.createElement("span");
+						halfBr.style.display = "block";
+						halfBr.style.height = "0.4em";
+						currentBalloonText.appendChild(halfBr);
+					} else {
+						currentBalloonText.appendChild(document.createElement("br"));
+					}
+					break;
+
 				case "clear":
 					currentBalloonText.innerHTML = "";
-					currentAnchor = null;
 					break;
 
 				case "pause":
-					// \x: クリック待ち（またはスキップ/タイムアウト）
-					if (!this.skipRequested) {
-						await this.waitForClickOrTimeout(currentBalloonText, 10000);
+					// \x: クリックまたはタイムアウト待ち
+					if (!this.skipRequested && !isQuickMode) {
+						const activeDisplay =
+							this.currentScope === 1 ? keroDisplay : sakuraDisplay;
+						await this.waitForClickOrTimeout(activeDisplay);
 					}
-					currentBalloonText.innerHTML = "";
-					currentAnchor = null;
 					break;
 
 				case "anchor_begin": {
 					const anchorSpan = document.createElement("span");
 					anchorSpan.className = "balloon-anchor";
-					anchorSpan.setAttribute("data-id", token.id);
+					anchorSpan.dataset.anchorId = token.id;
 					anchorSpan.addEventListener("click", (e) => {
 						e.stopPropagation();
-						if (token.id.startsWith("On")) {
-							this.app.ghostController.sendShioriEvent(
-								token.id,
-								token.args ? token.args.slice(1) : [],
-							);
-						} else {
-							this.app.ghostController.sendShioriEvent("OnAnchorSelect", [
-								token.id,
-							]);
-						}
+						console.log(`🔗 アンカークリック: ${token.id}`);
+						this.app.ghostController.sendShioriEvent("OnAnchorSelect", [
+							token.id,
+							...token.args,
+						]);
 					});
 					currentBalloonText.appendChild(anchorSpan);
 					currentAnchor = anchorSpan;
@@ -369,10 +149,7 @@ export class SakuraScriptPlayer {
 
 				case "surface":
 					// 表情切り替え（スコープ別）
-					this.app.ghostController.updateSurface(
-						token.value,
-						this.currentScope,
-					);
+					this.app.ghostController.updateSurface(token.value, this.currentScope);
 					break;
 
 				case "animation":
@@ -474,13 +251,13 @@ export class SakuraScriptPlayer {
 		for (let i = 1; i < params.length; i++) {
 			const p = params[i] ?? "";
 			if (p.startsWith("--timeout=")) {
-				timeoutMs = parseInt(p.replace("--timeout=", ""), 10) || 0;
+				timeoutMs = Number.parseInt(p.replace("--timeout=", ""), 10) || 0;
 			} else if (p.startsWith("--text=")) {
 				defaultText = p.replace("--text=", "");
 			} else if (p.startsWith("--placeholder=")) {
 				placeholder = p.replace("--placeholder=", "");
 			} else if (i === 1 && !p.startsWith("--")) {
-				timeoutMs = parseInt(p, 10) || 0;
+				timeoutMs = Number.parseInt(p, 10) || 0;
 			} else if (i === 2 && !p.startsWith("--")) {
 				defaultText = p;
 			}
@@ -528,10 +305,7 @@ export class SakuraScriptPlayer {
 			if (id.startsWith("On")) {
 				await this.app.ghostController.sendShioriEvent(id, [val]);
 			} else {
-				await this.app.ghostController.sendShioriEvent("OnUserInput", [
-					id,
-					val,
-				]);
+				await this.app.ghostController.sendShioriEvent("OnUserInput", [id, val]);
 			}
 		};
 
@@ -657,3 +431,5 @@ export class SakuraScriptPlayer {
 		});
 	}
 }
+
+export { parseSakuraScript } from "./sakura-parser.js";

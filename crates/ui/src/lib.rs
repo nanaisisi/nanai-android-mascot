@@ -8,7 +8,7 @@ pub mod surfaces;
 pub mod vfs;
 
 // 外部公開・後方互換のための再エクスポート
-pub use animation::{ScheduledFrame, build_timeline, cycle_len_ms, frame_at_ms};
+pub use animation::{ScheduledFrame, Timeline, build_timeline, cycle_len_ms};
 pub use descript::{BindGroup, BindOptionGroup, CharDefaults, Descript};
 pub use script::{SakuraCommand, execute_sakura_script};
 pub use shell::Shell;

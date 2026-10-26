@@ -102,13 +102,13 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
 
     // install.txt の type 種別を検証 (ukadoc準拠: Ghost / Shell / Balloon / Plugin / Supplement)
     // ゴースト以外のアーカイブを ghost ディレクトリに展開して壊すのを防ぐ
-    if let Some(kind) = install_type.as_deref().map(str::to_lowercase) {
-        if kind != "ghost" {
-            let label = install_type.unwrap_or_default();
-            return Err(format!(
-                "install.txt type={label} ({kind}): 現状Ghostアーカイブのみ取り込み可能です"
-            ));
-        }
+    if let Some(kind) = install_type.as_deref().map(str::to_lowercase)
+        && kind != "ghost"
+    {
+        let label = install_type.unwrap_or_default();
+        return Err(format!(
+            "install.txt type={label} ({kind}): 現状Ghostアーカイブのみ取り込み可能です"
+        ));
     }
 
     // サニタイズ（フォルダ名に使用できない文字を除去）

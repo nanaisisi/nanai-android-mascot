@@ -6,12 +6,7 @@ use tauri::Emitter;
 
 /// 1ファイルごとの更新進捗をフロントエンドへ通知
 /// (フロント側で OnUpdate.OnDownloadBegin / OnUpdate.OnMD5Compare* として SHIORI に中継する)
-fn report_progress(
-    app_handle: &tauri::AppHandle,
-    phase: &str,
-    path: &str,
-    detail: Option<&str>,
-) {
+fn report_progress(app_handle: &tauri::AppHandle, phase: &str, path: &str, detail: Option<&str>) {
     let payload = serde_json::json!({ "phase": phase, "path": path, "detail": detail });
     let _ = app_handle.emit("update-progress", payload);
 }
@@ -183,12 +178,7 @@ pub async fn execute_ghost_update(
             Ok(r) => {
                 if !r.status().is_success() {
                     let status = r.status().as_u16().to_string();
-                    report_progress(
-                        &app_handle,
-                        "download-failed",
-                        &entry.path,
-                        Some(&status),
-                    );
+                    report_progress(&app_handle, "download-failed", &entry.path, Some(&status));
                     return Ok(UpdateExecutionResult {
                         success: false,
                         reason: status,
@@ -200,12 +190,7 @@ pub async fn execute_ghost_update(
             }
             Err(e) => {
                 let reason = if e.is_timeout() { "timeout" } else { "404" };
-                report_progress(
-                    &app_handle,
-                    "download-failed",
-                    &entry.path,
-                    Some(reason),
-                );
+                report_progress(&app_handle, "download-failed", &entry.path, Some(reason));
                 return Ok(UpdateExecutionResult {
                     success: false,
                     reason: reason.to_string(),
@@ -232,12 +217,7 @@ pub async fn execute_ghost_update(
                     "❌ MD5 mismatch for {}: expected {}, got {}",
                     entry.path, entry.md5, downloaded_md5
                 );
-                report_progress(
-                    &app_handle,
-                    "md5-failed",
-                    &entry.path,
-                    Some("md5 miss"),
-                );
+                report_progress(&app_handle, "md5-failed", &entry.path, Some("md5 miss"));
                 return Ok(UpdateExecutionResult {
                     success: false,
                     reason: "md5 miss".to_string(),

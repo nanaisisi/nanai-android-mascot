@@ -102,6 +102,8 @@ export class NanaiAndroidMascotApp {
 			ghostCharacter: "ghost-character",
 			keroDisplay: "kero-display",
 			keroCharacter: "kero-character",
+			sakuraSlot: "sakura-slot",
+			keroSlot: "kero-slot",
 			balloonDisplay: "balloon-display",
 			balloonText: "balloon-text",
 			keroBalloonDisplay: "kero-balloon-display",

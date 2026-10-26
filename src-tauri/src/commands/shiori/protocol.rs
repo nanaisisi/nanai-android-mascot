@@ -9,21 +9,31 @@ pub async fn send_shiori_request(
 ) -> Result<String, String> {
     let gid = ghost_id.unwrap_or_else(|| "main".to_string());
 
-    if gid != "main" {
+    println!("📤 [Rust] SHIORI request (ghost: {}):\n{}", gid, request.trim());
+
+    let result = if gid != "main" {
         let engines = state.ghost_engines.lock();
         if let Some(engine) = engines.get(&gid) {
-            return engine.request(&request);
+            engine.request(&request)
+        } else {
+            Err("Ghost engine not found".to_string())
         }
-    }
-
-    // デフォルト/メインのネイティブSHIORIエンジンへ委譲
-    let engine_lock = state.shiori_engine.lock();
-
-    if let Some(ref engine) = *engine_lock {
-        engine.request(&request)
     } else {
-        Err("No active SHIORI engine loaded".to_string())
+        // デフォルト/メインのネイティブSHIORIエンジンへ委譲
+        let engine_lock = state.shiori_engine.lock();
+        if let Some(ref engine) = *engine_lock {
+            engine.request(&request)
+        } else {
+            Err("No active SHIORI engine loaded".to_string())
+        }
+    };
+
+    match &result {
+        Ok(res) => println!("📥 [Rust] SHIORI response (ghost: {}):\n{}", gid, res.trim()),
+        Err(err) => println!("❌ [Rust] SHIORI request failed (ghost: {}): {}", gid, err),
     }
+
+    result
 }
 
 /// SHIORIにイベントを送信（簡易版・パラメータ指定対応）

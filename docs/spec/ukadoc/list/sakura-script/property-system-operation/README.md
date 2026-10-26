@@ -4,5 +4,5 @@
 
 | 項目 | 検索語 | 対応状況 |
 | :--- | :--- | :---: |
-| [\![get,property,イベント名,プロパティ名,プロパティ名,...]](bang-get-property.md) | \! | ❓ 要確認 |
-| [\![set,property,プロパティ名,値]](bang-set-property.md) | \! | ❓ 要確認 |
+| [\![get,property,イベント名,プロパティ名,プロパティ名,...]](bang-get-property.md) | \! | ❌ 未実装 |
+| [\![set,property,プロパティ名,値]](bang-set-property.md) | \! | ❌ 未実装 |

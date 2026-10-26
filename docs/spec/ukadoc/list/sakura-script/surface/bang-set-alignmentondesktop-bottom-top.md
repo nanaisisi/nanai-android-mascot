@@ -2,8 +2,8 @@
 
 - **規格**: [bang-set-alignmentondesktop-bottom-top.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/surface/bang-set-alignmentondesktop-bottom-top/) (ukadoc-spec/list/sakura-script/surface/bang-set-alignmentondesktop-bottom-top.md)
 - **検索語**: \!
-- **対応状況**: ❓ 要確認
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
-実装コードに「\!」が出現。実際の処理内容は未精査(短いトークンのため誤検出の可能性大)。
+sakura-command-handler.js は alignmenttodesktop を処理する。alignmentondesktop (旧名) の別名扱いは未確認。

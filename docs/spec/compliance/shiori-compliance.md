@@ -14,11 +14,13 @@ Nanai Android Mascot における「SHIORI プロトコル」およびイベン�
 ## 1. 概要と対応度
 
 - **プロトコル規格**: SHIORI/3.0（および SHIORI/2.x エミュレーション）
-- **対応度**: **85%**
+- **対応度**: **92%**
 - **主要実装ファイル**:
-  - `src/js/ghost/shiori-protocol.js`: SHIORI 3.0 リクエスト/レスポンスパーサー
-  - `src/js/ghost/shiori-worker.js`: 非同期 Web Worker サンドボックス実行環境
-  - `src/js/ghost/ghost.js`: イベントパイプライン・キューイング制御
+  - `crates/ui/src/shiori.rs`: SHIORI 3.0 リクエスト/レスポンス Rust 統一パーサー・モデル
+  - `src-tauri/src/shiori/ffi.rs`: ネイティブ SHIORI DLL 連携およびリクエストビルダー (`on_biff_*` / `on_update_*`)
+  - `ui/js/ghost/ghost.js`: イベントパイプライン・キューイング制御
+  - `ui/js/core/app-actions.js`: `OnBIFF*` メールチェック、メニューアクション連携
+  - `ui/js/core/app-update.js`: `OnUpdate*` ネットワーク更新制御パイプライン
 
 ---
 
@@ -50,4 +52,4 @@ Nanai Android Mascot における「SHIORI プロトコル」およびイベン�
 | `OnUpdate*`          | ネットワーク更新実行時       |  ✅ 対応済  | OnUpdateProcessExec → OnUpdateBegin → OnUpdateReady → OnUpdate.OnDownloadBegin/OnMD5Compare* → OnUpdateComplete/Failure（Ref0 理由: none/changed/timeout/md5 miss/404/fileio、Ref3: ghost、Ref4: manual）。updates2.dau/updates.txt 差分取得実装済 |
 | `OnUpdateCheck*`     | 更新チェックのみ実行時       |  ✅ 対応済  | メニュー「ネットワーク更新チェックのみ」(U/C キー) 時。OnUpdateCheckComplete (Ref0: 総数 or none)、OnUpdateCheckFailure (Ref0: 失敗理由)                                                                  |
 | `OnUpdateResult*`    | 更新実行後の一括結果通知     |  ✅ 対応済  | 全更新終了後に OnUpdateResultEx → (スクリプト未返答なら) OnUpdateResult を送信。Reference0: (\1 区切り) 名前/種別/OK\|NG/件数または理由/失敗ファイル。チェックのみ時は OnUpdateCheckResult(Ex)          |
-| `OnBIFF`             | メールチェック実行時         |  🚧 計画中  | POP3 着信確認シミュレーション                                                                                                                                             |
+| `OnBIFF*`            | メールチェック実行時         |  ✅ 対応済  | OnBIFFBegin → POP3/アカウントチェック → OnBIFFComplete (Ref0: 通数, Ref1: サイズ, Ref2: アカウント名) / OnBIFF2Complete (ヘッダ情報付) / OnBIFFFailure (理由: connect/login等) 送信パイプライン完備 |

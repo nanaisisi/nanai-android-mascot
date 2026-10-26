@@ -5,10 +5,9 @@
  * FFI経由でSHIORI/3.0プロトコルを実装する
  */
 
-use once_cell::sync::Lazy;
 use std::ffi::{CStr, CString};
 use std::os::raw::{c_char, c_int, c_long};
-use std::sync::{Arc, Mutex};
+use std::sync::{LazyLock, Mutex};
 
 // YAYA C++関数への外部宣言
 unsafe extern "C" {
@@ -51,12 +50,12 @@ struct ShioriState {
 }
 
 /// グローバルSHIORIステート（シングルトン）
-static SHIORI_STATE: Lazy<Arc<Mutex<ShioriState>>> = Lazy::new(|| {
-    Arc::new(Mutex::new(ShioriState {
+static SHIORI_STATE: LazyLock<Mutex<ShioriState>> = LazyLock::new(|| {
+    Mutex::new(ShioriState {
         engine: EngineType::None,
         initialized: false,
         ghost_path: None,
-    }))
+    })
 });
 
 /// YAYA SHIORI 統合クラス

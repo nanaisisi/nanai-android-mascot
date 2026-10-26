@@ -9,6 +9,7 @@ pub async fn show_balloon_window(
     width: Option<f64>,
     height: Option<f64>,
 ) -> Result<(), String> {
+    println!("💬 show_balloon_window called: scope_id={}", scope_id);
     #[cfg(desktop)]
     {
         use tauri::Manager;
@@ -37,9 +38,9 @@ pub async fn show_balloon_window(
 
         if let Some(balloon_win) = app_handle.get_webview_window(&label) {
             let (target_x, target_y) = get_pos();
-            let _ = balloon_win.set_position(tauri::Position::Physical(tauri::PhysicalPosition {
-                x: target_x as i32,
-                y: target_y as i32,
+            let _ = balloon_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
+                x: target_x,
+                y: target_y,
             }));
             let _ = balloon_win.show();
         } else {

@@ -5,14 +5,7 @@
 const urlParams = new URLSearchParams(globalThis.location.search);
 const scopeId = parseInt(urlParams.get("scope") || "0", 10);
 
-const balloonBox = document.getElementById("balloon-box");
-const balloonText = document.getElementById("balloon-text");
-
-// テーマの適用
-const savedTheme = localStorage.getItem("nanai_balloon_theme") || "default";
-document.documentElement.setAttribute("data-balloon-theme", savedTheme);
-
-function setupInteractiveElements(emitFn) {
+function setupInteractiveElements(balloonText, emitFn) {
 	if (!balloonText) return;
 
 	// 選択肢ボタン (\q)
@@ -39,7 +32,16 @@ function setupInteractiveElements(emitFn) {
 	});
 }
 
-if (globalThis.__TAURI__) {
+function initBalloonWindow() {
+	const balloonBox = document.getElementById("balloon-box");
+	const balloonText = document.getElementById("balloon-text");
+
+	// テーマの適用
+	const savedTheme = localStorage.getItem("nanai_balloon_theme") || "default";
+	document.documentElement.setAttribute("data-balloon-theme", savedTheme);
+
+	if (!globalThis.__TAURI__) return;
+
 	const listenFn =
 		globalThis.__TAURI__.event?.listen || globalThis.__TAURI__.listen;
 	const emitFn = globalThis.__TAURI__.event?.emit || globalThis.__TAURI__.emit;
@@ -51,10 +53,11 @@ if (globalThis.__TAURI__) {
 			if (theme) {
 				document.documentElement.setAttribute("data-balloon-theme", theme);
 			}
-			if (balloonText && html !== undefined) {
-				balloonText.innerHTML = html;
+			const targetText = document.getElementById("balloon-text");
+			if (targetText && html !== undefined) {
+				targetText.innerHTML = html;
 				// クリックイベントの再バインド (選択肢・アンカー等)
-				setupInteractiveElements(emitFn);
+				setupInteractiveElements(targetText, emitFn);
 			}
 		});
 
@@ -93,4 +96,10 @@ if (globalThis.__TAURI__) {
 			}
 		}
 	});
+}
+
+if (document.readyState === "loading") {
+	document.addEventListener("DOMContentLoaded", initBalloonWindow);
+} else {
+	initBalloonWindow();
 }

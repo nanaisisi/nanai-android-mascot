@@ -15,6 +15,8 @@ import { invoke, isTauriAvailable, listen } from "./tauri-helper.js";
  *    - OnUpdate.OnMD5CompareComplete / OnUpdate.OnMD5CompareFailure
  * 5. 全ファイル取得・置き換え後、ゴースト再ロード -> OnUpdateComplete (Reference0: "changed")
  * 失敗時は随時 OnUpdateFailure (Reference0: failure_reason)
+ * 6. 全更新終了後: OnUpdateResultEx -> (スクリプト未返答なら) OnUpdateResult
+ *    (種別)[\1](OK|NG)[\1](件数|理由), チェックのみ実行時は OnUpdateCheckResult(Ex)
  */
 export const updateMethods = {
 	/**
@@ -29,6 +31,7 @@ export const updateMethods = {
 		const ghostName =
 			targetGhostName || gc.currentGhost?.name || "とらふぃっく☆とれいん";
 		const ghostPath = gc.currentGhost?.path || "";
+		let failedFile = null;
 
 		console.log(`🌐 ネットワーク更新プロセス開始: ${ghostName}`);
 
@@ -67,6 +70,7 @@ export const updateMethods = {
 				"ghost",
 				"manual",
 			]);
+			await this.sendUpdateResultSummary(ghostName, false, "fileio", null);
 			return;
 		}
 
@@ -87,6 +91,13 @@ export const updateMethods = {
 					"ghost",
 					"manual",
 				]);
+				await this.sendUpdateResultSummary(
+					ghostName,
+					true,
+					checkResult.has_update ? checkResult.total_count : 0,
+					null,
+					true,
+				);
 				return;
 			}
 
@@ -101,6 +112,7 @@ export const updateMethods = {
 					"ghost",
 					"manual",
 				]);
+				await this.sendUpdateResultSummary(ghostName, true, 0, null);
 				return;
 			}
 
@@ -156,6 +168,7 @@ export const updateMethods = {
 						"ghost",
 						"manual",
 					]).catch?.(() => {});
+					failedFile = filePath;
 				}
 			};
 			const unlisten = isTauriAvailable()
@@ -183,6 +196,12 @@ export const updateMethods = {
 						"manual",
 					]);
 					this.showBalloon?.("🎉 ネットワーク更新が完了しました！");
+					await this.sendUpdateResultSummary(
+						ghostName,
+						true,
+						updateResult.updated_files.length,
+						null,
+					);
 				} else {
 					const failureReason = updateResult.reason || "unknown";
 					await gc.sendShioriEvent("OnUpdateFailure", [
@@ -193,6 +212,12 @@ export const updateMethods = {
 						"manual",
 					]);
 					this.showBalloon?.(`❌ ネットワーク更新失敗: ${failureReason}`);
+					await this.sendUpdateResultSummary(
+						ghostName,
+						false,
+						failureReason,
+						failedFile,
+					);
 				}
 			} finally {
 				unlisten?.();
@@ -216,6 +241,13 @@ export const updateMethods = {
 					"manual",
 				]);
 				this.showBalloon?.(`❌ 更新チェック失敗: ${reason}`);
+				await this.sendUpdateResultSummary(
+					ghostName,
+					false,
+					reason,
+					null,
+					true,
+				);
 				return;
 			}
 
@@ -226,11 +258,46 @@ export const updateMethods = {
 				"ghost",
 				"manual",
 			]);
+			await this.sendUpdateResultSummary(ghostName, false, reason, failedFile);
 			this.showBalloon?.(`❌ 更新処理中にエラーが発生しました: ${err}`);
 		}
 	},
 
 	wait(ms) {
 		return new Promise((resolve) => setTimeout(resolve, ms));
+	},
+
+	/**
+	 * 更新結果の一括通知 (UKADOC準拠)
+	 * OnUpdateResultEx (または OnUpdateCheckResultEx) を送信し、
+	 * スクリプトが返されなかった場合のみ OnUpdateResult (同 Check 版) を送信する。
+	 * 各 Reference には (Ex無: 種別, Ex有: 対象名)[\1]種別[\1]OK|NG[\1]件数または理由[\1]失敗ファイル 形式の文字列を格納
+	 * ※失敗ファイルが特定できない場合は [\1] 区切りの第5要素を省略
+	 * @this {import('../../main.js').NanaiAndroidMascotApp}
+	 * @param {string} ghostName 更新対象 (ゴースト名)
+	 * @param {boolean} success 成功有無
+	 * @param {number|string} detail 成功時は更新ファイル数 (更新なし=none の場合は 0)、失敗時は失敗理由
+	 * @param {string|null} failedFile 失敗原因ファイル名 (不明なら null)
+	 * @param {boolean} [checkOnly] 更新チェックのみ実行時 true
+	 */
+	async sendUpdateResultSummary(
+		ghostName,
+		success,
+		detail,
+		failedFile,
+		checkOnly = false,
+	) {
+		const gc = this.ghostController;
+		const sep = String.fromCharCode(1); // \1 (バイト値1)
+		const parts = ["ghost", success ? "OK" : "NG", String(detail)];
+		if (failedFile) parts.push(failedFile);
+		const baseEvent = checkOnly ? "OnUpdateCheckResult" : "OnUpdateResult";
+
+		const resEx = await gc.sendShioriEvent(`${baseEvent}Ex`, [
+			[ghostName, ...parts].join(sep),
+		]);
+		if (!resEx?.script?.trim()) {
+			await gc.sendShioriEvent(baseEvent, [parts.join(sep)]);
+		}
 	},
 };

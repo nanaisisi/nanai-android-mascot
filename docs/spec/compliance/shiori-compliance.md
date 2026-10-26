@@ -48,5 +48,6 @@ Nanai Android Mascot における「SHIORI プロトコル」およびイベン�
 | `OnMinuteChange`     | 毎分タイマー                 |  ✅ 対応済  | 時報トーク、バックグラウンド処理                                                               |
 | `OnChoiceSelect`     | さくらスクリプト `\q` 選択時 |  ✅ 対応済  | Reference0: 選択肢ID, Reference1: 選択肢テキスト                                               |
 | `OnUpdate*`          | ネットワーク更新実行時       | ✅ 対応済 | OnUpdateProcessExec → OnUpdateBegin → OnUpdateReady → OnUpdate.OnDownloadBegin/OnMD5Compare* → OnUpdateComplete/Failure（Ref0 理由: none/changed/timeout/md5 miss/404/fileio、Ref3: ghost、Ref4: manual）。updates2.dau/updates.txt 差分取得実装済 |
-| `OnUpdateCheck*`     | 更新チェックのみ実行時       | ✅ 対応済 | メニュー「ネットワーク更新チェックのみ」(U/C キー) 時。OnUpdateCheckComplete (Ref0: 総数 or none)、OnUpdateCheckFailure (Ref0: 失敗理由)。OnUpdateCheckResult/Ex は未対応 |
+| `OnUpdateCheck*`     | 更新チェックのみ実行時       | ✅ 対応済 | メニュー「ネットワーク更新チェックのみ」(U/C キー) 時。OnUpdateCheckComplete (Ref0: 総数 or none)、OnUpdateCheckFailure (Ref0: 失敗理由) |
+| `OnUpdateResult*`    | 更新実行後の一括結果通知     | ✅ 対応済 | 全更新終了後に OnUpdateResultEx → (スクリプト未返答なら) OnUpdateResult を送信。Reference0: (\1 区切り) 名前/種別/OK|NG/件数または理由/失敗ファイル。チェックのみ時は OnUpdateCheckResult(Ex) |
 | `OnBIFF`             | メールチェック実行時         |  🚧 計画中  | POP3 着信確認シミュレーション                                                                  |

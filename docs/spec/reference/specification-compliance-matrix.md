@@ -44,7 +44,7 @@ Nanai Android Mascot における「伺か（UKAGAKA）」関連規格、およ�
 | **入力・タッチイベント**     | `OnMouseClick`, `OnMouseDoubleClick`       |     ✅ 対応済     | 当たり判定部位（head, bust, skirt 等）を識別して Reference 送信       |
 | **タイマーイベント**         | `OnSecondChange`, `OnMinuteChange`         |     ✅ 対応済     | ゴースト側の時間変化検知・ランダムトークトリガー                      |
 | **選択肢イベント**           | `OnChoiceSelect`                           |     ✅ 対応済     | `\q` タグクリック時の ID/ラベル引数渡し                               |
-| **ネットワークイベント**     | `OnUpdate*`, `OnUpdateCheck*`, `OnBIFF`    |    🚧 一部対応    | OnUpdateBegin/Ready/Complete/Failure + ファイル単位 per-file 進捗イベント + 更新チェックのみ (OnUpdateCheckComplete/Failure, 目次・更新チェック専用メニュー)。OnBIFF/OnUpdateResult* 系は未対応 |
+| **ネットワークイベント**     | `OnUpdate*`, `OnUpdateCheck*`, `OnBIFF`    |    🚧 一部対応    | OnUpdateBegin/Ready/Complete/Failure + ファイル単位 per-file 進捗イベント + 更新チェックのみ (OnUpdateCheckComplete/Failure) + 一括結果通知 (OnUpdateResult/ResultEx, CheckResult 系)。OnBIFF/OnUpdateResultExplorer は未対応 |
 
 ### 2.2 さくらスクリプト (Sakura Script)
 

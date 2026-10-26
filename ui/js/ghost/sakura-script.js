@@ -1,3 +1,4 @@
+import { emit, invoke, isTauriAvailable, listen } from "../core/tauri-helper.js";
 import { SakuraCommandHandler } from "./sakura-command-handler.js";
 import { parseSakuraScript } from "./sakura-parser.js";
 
@@ -22,6 +23,32 @@ export class SakuraScriptPlayer {
 		this.playbackId = 0;
 
 		this.commandHandler = new SakuraCommandHandler(this);
+
+		if (isTauriAvailable()) {
+			listen("balloon-choice-selected", (event) => {
+				const { choiceId, choiceText } = event.payload || {};
+				if (choiceId) {
+					this.onChoiceSelected(choiceId, choiceText || "");
+				}
+			});
+			listen("balloon-anchor-selected", (event) => {
+				const { anchorId } = event.payload || {};
+				if (anchorId) {
+					this.app.ghostController.sendShioriEvent("OnAnchorSelect", [anchorId]);
+				}
+			});
+			listen("balloon-clicked", () => {
+				this.skip();
+			});
+			listen("balloon-ready", (event) => {
+				const sid = event.payload?.scopeId ?? 0;
+				const html = (sid === 1 ? this.app.elements.keroBalloonText : this.app.elements.balloonText)?.innerHTML || "";
+				emit(`update-balloon-content-${sid}`, {
+					html,
+					theme: this.app.currentBalloonTheme || "default",
+				});
+			});
+		}
 	}
 
 	/**
@@ -56,11 +83,24 @@ export class SakuraScriptPlayer {
 			sakuraText.innerHTML = "";
 			if (keroText) keroText.innerHTML = "";
 			sakuraDisplay.style.display = "block";
+			if (isTauriAvailable()) {
+				invoke("show_balloon_window", { scopeId: 0 }).catch(() => {});
+			}
 		}
 
 		let currentBalloonText = sakuraText;
 		let isQuickMode = false;
 		let currentAnchor = null;
+
+		// 独立バルーン同期用ヘルパー
+		const syncDesktopBalloon = () => {
+			if (isTauriAvailable()) {
+				emit(`update-balloon-content-${this.currentScope}`, {
+					html: (this.currentScope === 1 ? keroText : sakuraText)?.innerHTML || "",
+					theme: this.app.currentBalloonTheme || "default",
+				});
+			}
+		};
 
 		for (let j = 0; j < tokens.length; j++) {
 			if (this.playbackId !== currentId) break; // 新しい再生で中断
@@ -78,12 +118,18 @@ export class SakuraScriptPlayer {
 							keroDisplay.style.display = "block";
 							currentBalloonText = keroText;
 						}
+						if (isTauriAvailable() && hasTextContent) {
+							invoke("show_balloon_window", { scopeId: 1 }).catch(() => {});
+						}
 					} else {
 						if (this.app.elements.sakuraSlot) {
 							this.app.elements.sakuraSlot.style.display = "flex";
 						}
 						sakuraDisplay.style.display = "block";
 						currentBalloonText = sakuraText;
+						if (isTauriAvailable() && hasTextContent) {
+							invoke("show_balloon_window", { scopeId: 0 }).catch(() => {});
+						}
 					}
 					break;
 
@@ -95,6 +141,7 @@ export class SakuraScriptPlayer {
 					} else {
 						currentBalloonText.appendChild(span);
 					}
+					syncDesktopBalloon();
 
 					// 文字送り時の口パク連動
 					this.app.surfaceManager?.onCharSpoken(this.currentScope);
@@ -114,10 +161,12 @@ export class SakuraScriptPlayer {
 					} else {
 						currentBalloonText.appendChild(document.createElement("br"));
 					}
+					syncDesktopBalloon();
 					break;
 
 				case "clear":
 					currentBalloonText.innerHTML = "";
+					syncDesktopBalloon();
 					break;
 
 				case "pause":
@@ -133,6 +182,7 @@ export class SakuraScriptPlayer {
 					const anchorSpan = document.createElement("span");
 					anchorSpan.className = "balloon-anchor";
 					anchorSpan.dataset.anchorId = token.id;
+					anchorSpan.setAttribute("data-anchor-id", token.id);
 					anchorSpan.addEventListener("click", (e) => {
 						e.stopPropagation();
 						console.log(`🔗 アンカークリック: ${token.id}`);
@@ -143,6 +193,7 @@ export class SakuraScriptPlayer {
 					});
 					currentBalloonText.appendChild(anchorSpan);
 					currentAnchor = anchorSpan;
+					syncDesktopBalloon();
 					break;
 				}
 
@@ -181,6 +232,7 @@ export class SakuraScriptPlayer {
 				case "choice": {
 					const choiceBtn = document.createElement("button");
 					choiceBtn.className = "balloon-choice-btn";
+					choiceBtn.setAttribute("data-choice-id", token.id);
 					choiceBtn.textContent = token.text;
 					choiceBtn.addEventListener("click", (e) => {
 						e.stopPropagation();
@@ -188,6 +240,7 @@ export class SakuraScriptPlayer {
 					});
 					currentBalloonText.appendChild(document.createElement("br"));
 					currentBalloonText.appendChild(choiceBtn);
+					syncDesktopBalloon();
 					break;
 				}
 
@@ -200,6 +253,7 @@ export class SakuraScriptPlayer {
 			}
 		}
 
+		syncDesktopBalloon();
 		this.isPlaying = false;
 		this.scheduleSurfaceRestore(currentId);
 	}

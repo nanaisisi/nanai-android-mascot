@@ -177,6 +177,8 @@ pub fn run() {
             commands::window::hide_submenu_window,
             commands::window::show_subchar_window,
             commands::window::hide_subchar_window,
+            commands::window::show_balloon_window,
+            commands::window::hide_balloon_window,
             commands::install::install_ghost_archive,
             commands::install::install_ghost_archive_bytes,
             commands::file::load_surface_image,

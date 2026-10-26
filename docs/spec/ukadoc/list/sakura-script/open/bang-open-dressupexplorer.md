@@ -2,8 +2,15 @@
 
 - **規格**: [bang-open-dressupexplorer.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/open/bang-open-dressupexplorer/) (ukadoc-spec/list/sakura-script/open/bang-open-dressupexplorer.md)
 - **検索語**: \!
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済 (簡易実装: 着せ替えメニューを開く)
 
 ## 突合結果
 
-パーサがタグを読み飛ばす、または sakura-command-handler.js が「未対応の \! コマンド」として扱い、該当処理はない。
+`ui/js/ghost/sakura-command-handler.js` が `\![open,dressupexplorer]` を処理し、
+着せ替え (bindgroup) サブメニューを含む標準メニューを開く。
+SSP 本家のような専用エクスプローラーウィンドウは今後の拡張。
+
+## 実装箇所
+
+- `ui/js/ghost/sakura-command-handler.js`  `\![open,dressupexplorer]` → `app.toggleMenu()`
+- `ui/js/ui/menu-submenu-renderer.js` / `ui/js/ui/submenu.js`  bindgroup 由来の着せ替えメニュー

@@ -16,6 +16,8 @@ if (globalThis.__TAURI__) {
 					: parseInt(event.payload, 10);
 			if (!Number.isNaN(scope)) {
 				dispatcher.setScope(scope);
+				// 着せ替えサブメニューを新スコープのパーツ定義へ切替
+				renderer.renderDressupSubmenu(null, scope);
 			}
 		});
 		listenFn("sync-ghosts", (event) => {
@@ -25,6 +27,13 @@ if (globalThis.__TAURI__) {
 				renderer.renderCallGhostSubmenu(data.ghosts || []);
 				if (data.shells) {
 					renderer.renderShellSubmenu(data.shells, data.currentShell);
+				}
+				// 着せ替え (bindgroup) メニューをスコープに合わせて再描画
+				if (data.dressup) {
+					renderer.renderDressupSubmenu(
+						data.dressup,
+						data.scope ?? dispatcher.currentScope,
+					);
 				}
 				// ゴースト/シェルの descript.txt 由来のメニュー配色を適用
 				const activeShell =
@@ -50,11 +59,21 @@ globalThis.addEventListener("message", (event) => {
 			dispatcher.setScope(scope);
 		}
 	} else if (event.data?.type === "sync-ghosts") {
-		renderer.renderGhostSubmenu(event.data.ghosts || [], event.data.currentGhost);
+		renderer.renderGhostSubmenu(
+			event.data.ghosts || [],
+			event.data.currentGhost,
+		);
+		// 着せ替え (bindgroup) メニューをスコープに合わせて再描画
+		if (event.data.dressup) {
+			renderer.renderDressupSubmenu(
+				event.data.dressup,
+				event.data.scope ?? dispatcher.currentScope,
+			);
+		}
 	} else if (event.data?.type === "sync-shells") {
 		renderer.renderShellSubmenu(
 			event.data.shells || ["master"],
-			event.data.currentShell || "master"
+			event.data.currentShell || "master",
 		);
 	} else if (event.data?.type === "sync-theme") {
 		renderer.applyTheme(event.data.theme);

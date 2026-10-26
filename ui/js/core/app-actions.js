@@ -1,3 +1,4 @@
+import { bindMenuData } from "../surface/bind-menu.js";
 import { emit, invoke, isTauriAvailable } from "./tauri-helper.js";
 
 const BALLOON_THEMES = ["emily4", "ivory", "pixel", "comic", "dark"];
@@ -72,22 +73,77 @@ export const actionMethods = {
 		if (action === "close" || action === "exit") return this.closeApp();
 		if (action === "close-menu") return;
 		if (action === "minimize") return this.minimizeApp();
-		if ((action === "switch-to-ghost" || action === "switch-ghost") && payload) {
-			const ghostName = typeof payload === "string" ? payload : payload.name || payload.ghostName;
+		if (
+			(action === "switch-to-ghost" || action === "switch-ghost") &&
+			payload
+		) {
+			const ghostName =
+				typeof payload === "string"
+					? payload
+					: payload.name || payload.ghostName;
 			if (ghostName) return gc.selectGhost(ghostName);
 		}
 		if (action === "call-ghost" && payload) {
-			const ghostName = typeof payload === "string" ? payload : payload.name || payload.ghostName;
+			const ghostName =
+				typeof payload === "string"
+					? payload
+					: payload.name || payload.ghostName;
 			if (ghostName) return this.callGhost(ghostName);
 		}
-		if ((action === "switch-to-shell" || action === "switch-shell") && payload) {
-			const shellName = typeof payload === "string" ? payload : payload.name || payload.shellName;
+		if (
+			(action === "switch-to-shell" || action === "switch-shell") &&
+			payload
+		) {
+			const shellName =
+				typeof payload === "string"
+					? payload
+					: payload.name || payload.shellName;
 			if (shellName) return gc.selectShell(shellName);
+		}
+		if (action === "dressup-toggle" && payload) {
+			return this.handleDressupToggle(payload);
 		}
 
 		// ゴースト切り替え / 汎用モーダル
 		const modalKey = action === "ghost-switch" ? "ghost" : action;
 		this.modalManager?.show(`${modalKey}-modal-content`);
+	},
+
+	/**
+	 * 着せ替え (bindgroup) パーツの装着/解除 (UKADOC オーナードローメニュー準拠)
+	 *
+	 * `mustselect` カテゴリでは ON 選択時に同カテゴリの他パーツを解除する。
+	 * @this {import('../../main.js').NanaiAndroidMascotApp}
+	 * @param {{ category: string, part: string, scope?: number }} payload
+	 */
+	async handleDressupToggle(payload) {
+		const sm = this.surfaceManager;
+		if (!sm || !payload?.category) return;
+		const scopeId = Number.isFinite(payload.scope) ? payload.scope : 0;
+		const { category, part } = payload;
+
+		// 現状の反転値を先に判定（bindDressup による状態変更前に確定）
+		const willOn =
+			sm.dressupState.get(`${scopeId}__${category}__${part}`) !== true;
+
+		// mustselect: 単一選択カテゴリは ON 選択時に他パーツを解除
+		let options = [];
+		let siblingParts = [];
+		if (sm.shellManifest) {
+			const cat = bindMenuData(sm.shellManifest, scopeId).categories.find(
+				(c) => c.category === category,
+			);
+			options = cat?.options ?? [];
+			siblingParts = cat?.parts ?? [];
+		}
+		if (willOn && options.includes("mustselect")) {
+			for (const p of siblingParts) {
+				if (p.part === part) continue;
+				await sm.bindDressup(category, p.part, "0", scopeId);
+			}
+		}
+
+		return sm.bindDressup(category, part, willOn ? "1" : "0", scopeId);
 	},
 
 	cycleBalloonTheme() {

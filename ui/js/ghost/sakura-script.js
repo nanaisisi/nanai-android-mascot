@@ -47,11 +47,16 @@ export class SakuraScriptPlayer {
 		const keroText = this.app.elements.keroBalloonText;
 		const keroDisplay = this.app.elements.keroBalloonDisplay;
 
-		if (!sakuraText || !sakuraDisplay) return;
+		const hasTextContent = tokens.some(
+			(t) => t.type === "char" || t.type === "choice" || t.type === "anchor_begin"
+		);
 
-		sakuraText.innerHTML = "";
-		sakuraDisplay.style.display = "block";
-		if (keroText) keroText.innerHTML = "";
+		// 発話文字や選択肢がある場合のみバルーンの内容を初期化・表示
+		if (hasTextContent) {
+			sakuraText.innerHTML = "";
+			if (keroText) keroText.innerHTML = "";
+			sakuraDisplay.style.display = "block";
+		}
 
 		let currentBalloonText = sakuraText;
 		let isQuickMode = false;
@@ -66,11 +71,17 @@ export class SakuraScriptPlayer {
 				case "scope":
 					this.currentScope = token.value;
 					if (this.currentScope === 1) {
+						if (this.app.elements.keroSlot) {
+							this.app.elements.keroSlot.style.display = "flex";
+						}
 						if (keroDisplay && keroText) {
 							keroDisplay.style.display = "block";
 							currentBalloonText = keroText;
 						}
 					} else {
+						if (this.app.elements.sakuraSlot) {
+							this.app.elements.sakuraSlot.style.display = "flex";
+						}
 						sakuraDisplay.style.display = "block";
 						currentBalloonText = sakuraText;
 					}

@@ -1,73 +1,8 @@
-// 現在のターゲットスコープ (0: メイン, 1+: サブキャラクター)
-const urlParams = new URLSearchParams(globalThis.location.search);
-let currentScope = parseInt(urlParams.get("scope") || "0", 10);
+import { MenuDispatcher } from "./menu-dispatcher.js";
+import { MenuSubmenuRenderer } from "./menu-submenu-renderer.js";
 
-function setScope(scope) {
-	currentScope = scope;
-	if (scope > 0) {
-		document.body.classList.add("subchar-mode");
-	} else {
-		document.body.classList.remove("subchar-mode");
-	}
-}
-
-setScope(currentScope);
-
-function dispatchAction(action, payload = null) {
-	if (!action) return;
-	console.log(
-		`Context Menu Action: ${action}`,
-		payload || "",
-		`Scope: ${currentScope}`,
-	);
-
-	// アクションに scope 情報を付与（payloadがオブジェクトの場合は合成、プリミティブの場合はラップ）
-	let finalPayload = payload;
-	if (currentScope > 0) {
-		if (finalPayload === null || finalPayload === undefined) {
-			finalPayload = { scope: currentScope };
-		} else if (
-			typeof finalPayload === "object" &&
-			!Array.isArray(finalPayload)
-		) {
-			finalPayload = { ...finalPayload, scope: currentScope };
-		}
-	}
-
-	// iframe 環境の場合
-	if (globalThis.parent && globalThis.parent !== globalThis) {
-		globalThis.parent.postMessage(
-			{
-				type: "menu-action",
-				action: action,
-				payload: finalPayload,
-				timestamp: Date.now(),
-			},
-			"*",
-		);
-	}
-
-	// 独立ウィンドウ（WebviewWindow）環境の場合
-	if (globalThis.__TAURI__) {
-		const emitFn =
-			globalThis.__TAURI__.event?.emit || globalThis.__TAURI__.emit;
-		const invokeFn =
-			globalThis.__TAURI__.core?.invoke || globalThis.__TAURI__.invoke;
-		if (typeof emitFn === "function") {
-			emitFn("menu-action", { action, payload: finalPayload });
-		}
-		// 終了（close/exit）の場合は直接 exit_app を呼び出して確実にプロセスを落とす
-		if (action === "close" || action === "exit") {
-			if (typeof invokeFn === "function") {
-				invokeFn("exit_app").catch(() => {});
-			}
-			return;
-		}
-		if (typeof invokeFn === "function" && action !== "request-sync") {
-			invokeFn("hide_menu_window").catch(() => {});
-		}
-	}
-}
+const dispatcher = new MenuDispatcher();
+const renderer = new MenuSubmenuRenderer(dispatcher);
 
 // 独立ウィンドウ環境での Tauri イベント受信 (ゴースト・シェル・バルーンテーマ同期・スコープ同期)
 if (globalThis.__TAURI__) {
@@ -80,61 +15,26 @@ if (globalThis.__TAURI__) {
 					? event.payload
 					: parseInt(event.payload, 10);
 			if (!Number.isNaN(scope)) {
-				setScope(scope);
+				dispatcher.setScope(scope);
 			}
 		});
 		listenFn("sync-ghosts", (event) => {
 			const data = event.payload;
 			if (data) {
-				renderGhostSubmenu(data.ghosts || [], data.currentGhost);
-				renderCallGhostSubmenu(data.ghosts || []);
+				renderer.renderGhostSubmenu(data.ghosts || [], data.currentGhost);
+				renderer.renderCallGhostSubmenu(data.ghosts || []);
 				if (data.shells) {
-					renderShellSubmenu(data.shells, data.currentShell);
+					renderer.renderShellSubmenu(data.shells, data.currentShell);
 				}
 				// ゴースト/シェルの descript.txt 由来のメニュー配色を適用
 				const activeShell =
 					data.shells?.find((s) => s.name === data.currentShell) ||
 					data.shells?.[0];
-				if (activeShell?.menu_theme) {
-					const mt = activeShell.menu_theme;
-					const rootStyle = document.documentElement.style;
-					if (mt.background_color)
-						rootStyle.setProperty("--balloon-bg", mt.background_color);
-					if (mt.foreground_color)
-						rootStyle.setProperty(
-							"--balloon-highlight-bg",
-							mt.foreground_color,
-						);
-					if (mt.background_font_color || mt.font_color) {
-						rootStyle.setProperty(
-							"--balloon-text-color",
-							mt.background_font_color || mt.font_color,
-						);
-					}
-					if (mt.foreground_font_color)
-						rootStyle.setProperty(
-							"--balloon-highlight-text",
-							mt.foreground_font_color,
-						);
-					if (mt.disable_font_color)
-						rootStyle.setProperty(
-							"--balloon-disable-text",
-							mt.disable_font_color,
-						);
-					if (mt.separator_color)
-						rootStyle.setProperty(
-							"--balloon-separator-color",
-							mt.separator_color,
-						);
-				}
+				renderer.applyShellTheme(activeShell);
 			}
 		});
 		listenFn("sync-theme", (event) => {
-			const theme = event.payload;
-			if (theme) {
-				document.documentElement.setAttribute("data-balloon-theme", theme);
-				document.body.className = `balloon-theme-${theme}`;
-			}
+			renderer.applyTheme(event.payload);
 		});
 	}
 }
@@ -147,121 +47,19 @@ globalThis.addEventListener("message", (event) => {
 				? event.data.scope
 				: parseInt(event.data.scope, 10);
 		if (!Number.isNaN(scope)) {
-			setScope(scope);
+			dispatcher.setScope(scope);
 		}
 	} else if (event.data?.type === "sync-ghosts") {
-		const ghosts = event.data.ghosts || [];
-		const currentGhost = event.data.currentGhost;
-		renderGhostSubmenu(ghosts, currentGhost);
+		renderer.renderGhostSubmenu(event.data.ghosts || [], event.data.currentGhost);
 	} else if (event.data?.type === "sync-shells") {
-		const shells = event.data.shells || ["master"];
-		const currentShell = event.data.currentShell || "master";
-		renderShellSubmenu(shells, currentShell);
+		renderer.renderShellSubmenu(
+			event.data.shells || ["master"],
+			event.data.currentShell || "master"
+		);
 	} else if (event.data?.type === "sync-theme") {
-		const theme = event.data.theme;
-		if (theme) {
-			document.documentElement.setAttribute("data-balloon-theme", theme);
-			document.body.className = `balloon-theme-${theme}`;
-		}
+		renderer.applyTheme(event.data.theme);
 	}
 });
-
-function renderShellSubmenu(shells, currentShell) {
-	const container = document.getElementById("shell-submenu");
-	if (!container) return;
-
-	container.innerHTML = "";
-
-	shells.forEach((shellItem) => {
-		const shellName =
-			typeof shellItem === "string" ? shellItem : shellItem?.name || "master";
-		const displayName =
-			typeof shellItem === "object" && shellItem?.display_name
-				? shellItem.display_name
-				: shellName;
-		const isCurrent = currentShell === shellName;
-		const btn = document.createElement("button");
-		btn.className = `menu-item ${isCurrent ? "is-current" : ""}`;
-		btn.dataset.shellName = shellName;
-		btn.innerHTML = `<span>${isCurrent ? "✓ " : "　"}${displayName}</span>`;
-		btn.addEventListener("click", () => {
-			dispatchAction("switch-to-shell", shellName);
-		});
-		container.appendChild(btn);
-	});
-}
-
-function renderGhostSubmenu(ghosts, currentGhost) {
-	const container = document.getElementById("ghost-submenu");
-	if (!container) return;
-
-	container.innerHTML = "";
-
-	// 検出されたゴースト一覧
-	ghosts.forEach((ghost) => {
-		const isCurrent = currentGhost && currentGhost.name === ghost.name;
-		const btn = document.createElement("button");
-		btn.className = `menu-item ${isCurrent ? "is-current" : ""}`;
-		btn.dataset.ghostName = ghost.name;
-		btn.innerHTML = `<span>${isCurrent ? "✓ " : "　"}${ghost.name}</span>`;
-		btn.addEventListener("click", () => {
-			dispatchAction("switch-to-ghost", ghost.name);
-		});
-		container.appendChild(btn);
-	});
-
-	// セパレータ
-	if (ghosts.length > 0) {
-		const sep = document.createElement("div");
-		sep.className = "menu-separator";
-		container.appendChild(sep);
-	}
-
-	// ゴースト管理モーダルを開くボタン
-	const manageBtn = document.createElement("button");
-	manageBtn.className = "menu-item";
-	manageBtn.id = "ghost-btn";
-	manageBtn.innerHTML = `<span>📂 ゴースト管理...</span>`;
-	manageBtn.addEventListener("click", () => {
-		dispatchAction("ghost");
-	});
-	container.appendChild(manageBtn);
-
-	// ゴースト取り込みモーダルを開くボタン
-	const installBtn = document.createElement("button");
-	installBtn.className = "menu-item";
-	installBtn.id = "install-btn";
-	installBtn.innerHTML = `<span>📥 ゴーストの取り込み...</span>`;
-	installBtn.addEventListener("click", () => {
-		dispatchAction("install");
-	});
-	container.appendChild(installBtn);
-}
-
-function renderCallGhostSubmenu(ghosts) {
-	const container = document.getElementById("call-ghost-submenu");
-	if (!container) return;
-
-	container.innerHTML = "";
-
-	ghosts.forEach((ghost) => {
-		const btn = document.createElement("button");
-		btn.className = "menu-item";
-		btn.dataset.ghostName = ghost.name;
-		btn.innerHTML = `<span>➕ ${ghost.name}</span>`;
-		btn.addEventListener("click", () => {
-			dispatchAction("call-ghost", ghost.name);
-		});
-		container.appendChild(btn);
-	});
-
-	if (ghosts.length === 0) {
-		const emptySpan = document.createElement("div");
-		emptySpan.className = "menu-item is-disabled";
-		emptySpan.innerHTML = `<span>(ゴーストがありません)</span>`;
-		container.appendChild(emptySpan);
-	}
-}
 
 // 独立サブメニューウィンドウを開く補助関数 (デスクトップ環境用)
 function _triggerSubmenuWindow(menuType, buttonEl) {
@@ -272,7 +70,6 @@ function _triggerSubmenuWindow(menuType, buttonEl) {
 			const rect = buttonEl.getBoundingClientRect();
 			const sX = globalThis.screenX ?? 0;
 			const sY = globalThis.screenY ?? 0;
-			// メニューウィンドウの右横 (+2px) かつボタンの上下位置に合わせる
 			const posX = sX + 240 + 2;
 			const posY = sY + rect.top;
 			invokeFn("show_submenu_window", {
@@ -315,7 +112,7 @@ document.addEventListener("click", (e) => {
 	}
 
 	const action = menuItem.dataset.action || menuItem.id.replace("-btn", "");
-	dispatchAction(action);
+	dispatcher.dispatchAction(action);
 });
 
 // SSP準拠: サブメニューが画面右端を超える場合は左側へ反転展開
@@ -324,10 +121,9 @@ function checkSubmenuFlip(wrapper) {
 	if (!container) return;
 
 	const containerRect = container.getBoundingClientRect();
-	const submenuWidth = 240; // およそのサブメニュー幅
+	const submenuWidth = 240;
 	const spaceOnRight = (globalThis.innerWidth ?? 800) - containerRect.right;
 
-	// 右側にサブメニューを出す十分なスペースがない場合は左側に展開
 	if (spaceOnRight < submenuWidth) {
 		wrapper.classList.add("flip-left");
 	} else {
@@ -363,29 +159,28 @@ globalThis.addEventListener("DOMContentLoaded", () => {
 	try {
 		const savedTheme = localStorage.getItem("nanai_balloon_theme");
 		if (savedTheme) {
-			document.documentElement.setAttribute("data-balloon-theme", savedTheme);
-			document.body.className = `balloon-theme-${savedTheme}`;
+			renderer.applyTheme(savedTheme);
 		}
 	} catch (_err) {
 		// LocalStorage access restricted or unavailable
 	}
-	dispatchAction("request-sync");
+	dispatcher.dispatchAction("request-sync");
 });
 
 // ショートカットキー対応 (T, B, R, P, O, D, A, Ctrl+I, Ctrl+W, Escape)
 document.addEventListener("keydown", (e) => {
 	if (e.key === "Escape") {
-		dispatchAction("close-menu");
+		dispatcher.dispatchAction("close-menu");
 		return;
 	}
 
 	if (e.ctrlKey || e.metaKey) {
 		if (e.key.toLowerCase() === "i") {
 			e.preventDefault();
-			dispatchAction("minimize");
+			dispatcher.dispatchAction("minimize");
 		} else if (e.key.toLowerCase() === "w") {
 			e.preventDefault();
-			dispatchAction("close");
+			dispatcher.dispatchAction("close");
 		}
 		return;
 	}
@@ -409,6 +204,6 @@ document.addEventListener("keydown", (e) => {
 	const action = keyMap[e.key.toLowerCase()];
 	if (action) {
 		e.preventDefault();
-		dispatchAction(action);
+		dispatcher.dispatchAction(action);
 	}
 });

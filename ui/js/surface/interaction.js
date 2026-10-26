@@ -1,8 +1,9 @@
+import { BalloonDragManager } from "./balloon-drag.js";
+
 /**
  * Nanai Android Mascot - ドラッグ & タッチインタラクション管理
  * ドラッグ移動、スナップ退避、および部位撫で（Stroke）判定
  */
-
 export class InteractionManager {
   /**
    * @param {import('../../main.js').NanaiAndroidMascotApp} app
@@ -10,6 +11,23 @@ export class InteractionManager {
   constructor(app) {
     /** @type {import('../../main.js').NanaiAndroidMascotApp} */
     this.app = app;
+    this.balloonDragManager = new BalloonDragManager(this);
+  }
+
+  get balloonOffsetX() {
+    return this.balloonDragManager.balloonOffsetX;
+  }
+
+  set balloonOffsetX(val) {
+    this.balloonDragManager.balloonOffsetX = val;
+  }
+
+  get balloonOffsetY() {
+    return this.balloonDragManager.balloonOffsetY;
+  }
+
+  set balloonOffsetY(val) {
+    this.balloonDragManager.balloonOffsetY = val;
   }
 
   setupDragging(target, onGhostClick, onGhostStroke) {
@@ -141,13 +159,7 @@ export class InteractionManager {
         target.style.transform = "translate(-50%, -50%)";
 
         // バルーンが存在する場合、設定された相対オフセットを維持してキャラクターに追従
-        const balloon = document.getElementById("balloon-display");
-        if (balloon) {
-          const offsetX = this.balloonOffsetX !== undefined ? this.balloonOffsetX : 0;
-          const offsetY = this.balloonOffsetY !== undefined ? this.balloonOffsetY : -120;
-          balloon.style.left = `${newX + offsetX}px`;
-          balloon.style.top = `${Math.max(20, newY + offsetY)}px`;
-        }
+        this.balloonDragManager.updateFollowPosition(newX, newY);
       }
     };
 
@@ -213,112 +225,6 @@ export class InteractionManager {
    * バルーンをドラッグしてキャラクターに対する相対位置（可変）を変更する
    */
   setupBalloonDragging(ghostTarget) {
-    const balloon = document.getElementById("balloon-display");
-    if (!balloon) return;
-
-    let isBalloonDragging = false;
-    let bStartX = 0;
-    let bStartY = 0;
-    let bInitialLeft = 0;
-    let bInitialTop = 0;
-
-    // 保存された相対オフセットを復元
-    try {
-      const savedOffset = localStorage.getItem("nanai_balloon_offset");
-      if (savedOffset) {
-        const parsed = JSON.parse(savedOffset);
-        if (typeof parsed.x === "number" && typeof parsed.y === "number") {
-          this.balloonOffsetX = parsed.x;
-          this.balloonOffsetY = parsed.y;
-        }
-      }
-    } catch (_) {}
-
-    const onStart = (clientX, clientY, targetEl) => {
-      if (targetEl && (targetEl.tagName === "A" || targetEl.tagName === "BUTTON")) return false;
-      isBalloonDragging = true;
-      bStartX = clientX;
-      bStartY = clientY;
-
-      const rect = balloon.getBoundingClientRect();
-      bInitialLeft = rect.left + rect.width / 2;
-      bInitialTop = rect.top + rect.height / 2;
-
-      balloon.style.cursor = "grabbing";
-      return true;
-    };
-
-    const onMove = (clientX, clientY) => {
-      if (!isBalloonDragging) return;
-
-      const deltaX = clientX - bStartX;
-      const deltaY = clientY - bStartY;
-
-      let newLeft = bInitialLeft + deltaX;
-      let newTop = bInitialTop + deltaY;
-
-      balloon.style.left = `${newLeft}px`;
-      balloon.style.top = `${newTop}px`;
-
-      // キャラクターの中心位置に対する相対オフセットを記録
-      const ghostRect = ghostTarget.getBoundingClientRect();
-      const ghostCenterX = ghostRect.left + ghostRect.width / 2;
-      const ghostCenterY = ghostRect.top + ghostRect.height / 2;
-
-      this.balloonOffsetX = newLeft - ghostCenterX;
-      this.balloonOffsetY = newTop - ghostCenterY;
-    };
-
-    const onEnd = () => {
-      if (isBalloonDragging) {
-        isBalloonDragging = false;
-        balloon.style.cursor = "";
-        // 相対オフセットを保存
-        if (this.balloonOffsetX !== undefined && this.balloonOffsetY !== undefined) {
-          try {
-            localStorage.setItem(
-              "nanai_balloon_offset",
-              JSON.stringify({ x: this.balloonOffsetX, y: this.balloonOffsetY })
-            );
-          } catch (_) {}
-        }
-      }
-    };
-
-    balloon.addEventListener("mousedown", (e) => {
-      if (e.button !== 0) return;
-      if (onStart(e.clientX, e.clientY, e.target)) {
-        e.stopPropagation();
-      }
-    });
-
-    globalThis.addEventListener("mousemove", (e) => {
-      onMove(e.clientX, e.clientY);
-    });
-
-    globalThis.addEventListener("mouseup", onEnd);
-
-    // タッチデバイス（モバイル・Android）対応
-    balloon.addEventListener(
-      "touchstart",
-      (e) => {
-        const touch = e.touches[0];
-        if (touch && onStart(touch.clientX, touch.clientY, e.target)) {
-          e.stopPropagation();
-        }
-      },
-      { passive: true }
-    );
-
-    globalThis.addEventListener(
-      "touchmove",
-      (e) => {
-        const touch = e.touches[0];
-        if (touch) onMove(touch.clientX, touch.clientY);
-      },
-      { passive: true }
-    );
-
-    globalThis.addEventListener("touchend", onEnd);
+    this.balloonDragManager.setupBalloonDragging(ghostTarget);
   }
 }

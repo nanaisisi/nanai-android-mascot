@@ -21,15 +21,17 @@
 - 🤖 **AI 駆動開発** - GitHub Copilot / Antigravity との緊密な協調による設計・実装
 - 📱 **クロスプラットフォーム** - Android OS向け互換ベースウェアとして、Windows デスクトップ検証（Windows First）から段階的に Android 環境へ適応
 - 🔧 **Tauri v2 + Rust + Web 技術** - 軽量・省メモリ・高速起動と、Web 標準（HTML5/Canvas/CSS/Modern JS）による高い拡張性を両立
-- 🎭 **高水準な伺か互換性** - さくらスクリプト、`surfaces.txt` 合成、当たり判定、伺か標準メニュー、Shift_JIS 自動変換・VFS 対応
-- 🛡️ **SHIORI 多層フォールバック** - ネイティブ DLL、WebAssembly（WASM）、内蔵辞書パーサー/モックの多層連携
+- 🛡️ **SHIORI 多層フォールバック & バージョン共存**:
+  - **同梱版（ベースライン）**: Git サブモジュール（`src/cpp/satoriya-shiori`, `src/cpp/yaya-shiori` 等）の C++ ソースを Cargo `cc` / NDK で直接コンパイルし、安定・最高速のネイティブ実行を提供。
+  - **非同梱・外部導入版（WASM）**: ユーザーが後から追加するサードパーティ製ゴーストの Win32 DLL 代替として WebAssembly (`.wasm`) を採用。Android の `dlopen()` 制約やアーキテクチャ差分（ARM/x86）を単一バイナリで安全に吸収。
+  - **マルチバージョン共存**: 最新機能への即時追従や、特定旧バージョン（バグ互換等）に依存した歴史的ゴーストも WASM サンドボックスのインスタンス分離により競合なく安全に実行可能。
 
 ---
 
 ## 🛠️ 技術構成
 
-- **バックエンド**: Rust 2024, Tauri v2, `encoding_rs`
-- **フロントエンド**: Vanilla HTML5, Canvas 2D, Modern JavaScript, CSS3
+- **バックエンド**: Rust 2024, Tauri v2, `encoding_rs`, C++ (NDK/cc 経由での SHIORI 静的リンク)
+- **フロントエンド / 実行層**: Vanilla HTML5, Canvas 2D, Modern JavaScript, CSS3, WebAssembly (WASM Worker)
 - **ゴーストデータ**: 公式モックキャラクター `mock_nanai` 同梱（`assets/ghost/mock_nanai`）
 
 ---

@@ -1,0 +1,9 @@
+# \![set,alpha,数値,オプション]
+
+- **規格**: [bang-set-alpha.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/surface/bang-set-alpha/) (ukadoc-spec/list/sakura-script/surface/bang-set-alpha.md)
+- **検索語**: \!
+- **対応状況**: ❓ 要確認
+
+## 突合結果
+
+実装コードに「\!」が出現。実際の処理内容は未精査(短いトークンのため誤検出の可能性大)。

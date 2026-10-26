@@ -1,0 +1,12 @@
+# descript/shell-surfaces/cursor-brace 項目別突合
+
+実装コードの文字列検索による一次調査です。
+
+| 項目 | 検索語 | 対応状況 |
+| :--- | :--- | :---: |
+| [cursorブレス記述例](introduction_cursorbrace.md) | cursor | ⚠️ 出現あり(要精査) |
+| [mousedown\*,当たり判定ID,ファイル名](mousedown-star.md) | mousedown | ⚠️ 出現あり(要精査) |
+| [mousehover\*,当たり判定ID,ファイル名](mousehover-star.md) | mousehover | ❌ 検出なし |
+| [mouserightdown\*,当たり判定ID,ファイル名](mouserightdown-star.md) | mouserightdown | ❌ 検出なし |
+| [mouseup\*,当たり判定ID,ファイル名](mouseup-star.md) | mouseup | ⚠️ 出現あり(要精査) |
+| [mousewheel\*,当たり判定ID,ファイル名](mousewheel-star.md) | mousewheel | ❌ 検出なし |

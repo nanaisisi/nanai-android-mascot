@@ -9,6 +9,7 @@ pub async fn show_menu_window(
     y: f64,
     scope: Option<i32>,
 ) -> Result<(), String> {
+    println!("👉 show_menu_window called: x={}, y={}, scope={:?}", x, y, scope);
     #[cfg(desktop)]
     {
         use tauri::Manager;
@@ -40,9 +41,9 @@ pub async fn show_menu_window(
                 width: win_width,
                 height: win_height,
             }));
-            let _ = menu_win.set_position(tauri::Position::Physical(tauri::PhysicalPosition {
-                x: target_x as i32,
-                y: target_y as i32,
+            let _ = menu_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
+                x: target_x,
+                y: target_y,
             }));
             let _ = menu_win.show();
             let _ = menu_win.set_focus();
@@ -129,9 +130,9 @@ pub async fn show_submenu_window(
                 width: win_width,
                 height: win_height,
             }));
-            let _ = sub_win.set_position(tauri::Position::Physical(tauri::PhysicalPosition {
-                x: target_x as i32,
-                y: target_y as i32,
+            let _ = sub_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
+                x: target_x,
+                y: target_y,
             }));
             let _ = sub_win.show();
         } else {

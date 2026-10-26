@@ -138,7 +138,11 @@ pub async fn send_shiori_event_typed(
     let gid = ghost_id.unwrap_or_else(|| "main".to_string());
     let text = req.build();
     let raw = dispatch_request(&state, &text, &gid)?;
-    ShioriResponse::parse(&raw)
+    let parsed = ShioriResponse::parse(&raw);
+    if event != "OnSecondChange" && let Ok(ref res) = parsed {
+        println!("✨ SHIORI Event '{}' -> status={:?}, value='{}'", event, res.status, res.value.as_deref().unwrap_or(""));
+    }
+    parsed
 }
 
 /// マウスクリックイベントを送信（簡易版）

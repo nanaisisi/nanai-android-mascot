@@ -10,6 +10,8 @@ export class SurfaceAnimationManager {
 		/** @type {Record<number, any[]>} */
 		this.activeAnimationTimers = {};
 		this._spokenCount = {};
+		/** @type {Map<string, boolean>} `\![anim,pause,ID]` で一時停止中のアニメーション (key: scopeId__animId) */
+		this.pausedAnimations = new Map();
 	}
 
 	/**
@@ -22,6 +24,47 @@ export class SurfaceAnimationManager {
 			clearInterval(t);
 		});
 		this.activeAnimationTimers[scopeId] = [];
+		// サーフィス変更 (\s) 時は \![anim,pause] 状態も解除
+		this.clearPausedAnimations(scopeId);
+	}
+
+	/**
+	 * `\![anim,pause,ID]` (SSP): アニメーションの一時停止 (サーフィス変更まで有効)
+	 * @param {number} scopeId
+	 * @param {number|string} animId
+	 */
+	pauseAnimation(scopeId = 0, animId) {
+		this.pausedAnimations.set(`${scopeId}__${animId}`, true);
+	}
+
+	/**
+	 * `\![anim,resume,ID]` (SSP): 一時停止の解除
+	 * @param {number} scopeId
+	 * @param {number|string} animId
+	 */
+	resumeAnimation(scopeId = 0, animId) {
+		this.pausedAnimations.delete(`${scopeId}__${animId}`);
+	}
+
+	/**
+	 * 指定スコープのアニメーションが一時停止中か
+	 * @param {number} scopeId
+	 * @param {number|string} animId
+	 */
+	isAnimationPaused(scopeId = 0, animId) {
+		return this.pausedAnimations.get(`${scopeId}__${animId}`) === true;
+	}
+
+	/**
+	 * スコープ全体の一時停止状態をクリア（サーフィス変更 (\s) 時）
+	 * @param {number} scopeId
+	 */
+	clearPausedAnimations(scopeId = 0) {
+		for (const key of [...this.pausedAnimations.keys()]) {
+			if (key.startsWith(`${scopeId}__`)) {
+				this.pausedAnimations.delete(key);
+			}
+		}
 	}
 
 	/**
@@ -141,6 +184,18 @@ export class SurfaceAnimationManager {
 				String(baseSurfaceId)
 			)
 				break;
+
+			// \![anim,pause,ID] の一時停止ゲート（\![anim,resume,ID] で再開）
+			if (anim?.id != null && this.isAnimationPaused(scopeId, anim.id)) {
+				while (this.isAnimationPaused(scopeId, anim.id)) {
+					if (
+						String(this.manager.currentSurfaceIdFor(scopeId)) !==
+						String(baseSurfaceId)
+					)
+						break;
+					await new Promise((r) => setTimeout(r, 120));
+				}
+			}
 
 			const patSurface = String(pat.surface).trim();
 			if (patSurface === "-1") {

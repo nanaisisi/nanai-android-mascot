@@ -47,6 +47,19 @@ export class SakuraCommandHandler {
 				this.player.currentScope,
 				rawCmd !== "bind-noevent",
 			);
+		} else if (rawCmd === "anim") {
+			// \![anim,pause,ID] / \![anim,resume,ID] (SSP: 「pouse」表記ゆれも受付)
+			const [verbRaw, idVal] = args.slice(1);
+			const animId = Number.parseInt(String(idVal ?? ""), 10);
+			const verb = String(verbRaw ?? "").toLowerCase();
+			if (Number.isFinite(animId)) {
+				const sm = this.app.surfaceManager;
+				if (verb === "pause" || verb === "pouse") {
+					sm?.pauseAnimationById(animId, this.player.currentScope);
+				} else if (verb === "resume") {
+					sm?.resumeAnimationById(animId, this.player.currentScope);
+				}
+			}
 		} else if (rawCmd === "set" && rawSub === "alignmenttodesktop") {
 			await this.setAlignmentToDesktop(args[2]);
 		} else if (rawCmd === "update" || rawCmd === "updatebymyself") {

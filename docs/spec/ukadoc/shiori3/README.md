@@ -4,7 +4,7 @@
 
 | 項目 | 区分 | 対応状況 | 備考 |
 | :--- | :--- | :------: | :--- |
-| [capability](capability.md) | capability | ❓ 未確認 | Capability 系ヘッダ・イベント処理 |
+| [capability](capability.md) | capability | ❌ 未実装 | Capability 系ヘッダ・イベント処理は未実装 |
 | [request: メソッド (GET / NOTIFY)](request-method.md) | request | ✅ 対応済 | `crates/ui/src/shiori.rs` にて GET / NOTIFY 対応 |
 | [request: ID](request-id.md) | request | ✅ 対応済 | イベント名・ID ヘッダ |
 | [request: Charset](request-charset.md) | request | ✅ 対応済 | 文字エンコーディング指定 (UTF-8 / Shift_JIS) |

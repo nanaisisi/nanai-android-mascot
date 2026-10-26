@@ -19,8 +19,9 @@ export const ghostSurfaceMethods = {
 	 *     SERIKO アニメーションの 1 フレーム差分レイヤー。
 	 *     指定時はベースサーフィス上に当該レイヤーを合成して表示し、
 	 *     サーフィス番号・アニメーションスケジュールには干渉しない。
+	 * @returns {Promise<string|null>} 合成/解決された画像URL
 	 */
-	updateSurface(surfaceId, scopeId = 0, extraLayers = null) {
+	async updateSurface(surfaceId, scopeId = 0, extraLayers = null) {
 		const ghostName =
 			this.currentGhost?.name || AppConfig.paths.fallbackGhostName;
 		const ghostPath =
@@ -168,18 +169,19 @@ export const ghostSurfaceMethods = {
 					surfaceId: String(id),
 				}).catch(() => null);
 
-			Promise.all([load(surfaceId), loadPna(surfaceId)])
+			return await Promise.all([load(surfaceId), loadPna(surfaceId)])
 				.then(([dataUrl, pnaUrl]) => applyImageSrc(dataUrl, null, pnaUrl))
-				.catch((err) => {
+				.catch(async (err) => {
 					console.warn("load_surface_image 失敗、フォールバック:", err);
-					load(fallbackSurface)
-						.then((fallbackUrl) => applyImageSrc(fallbackUrl))
-						.catch(() => {
-							if (img) img.style.display = "none";
-							if (isSubchar && slot) slot.style.display = "none";
-						});
+					try {
+						const fallbackUrl = await load(fallbackSurface);
+						return await applyImageSrc(fallbackUrl);
+					} catch (_err) {
+						if (img) img.style.display = "none";
+						if (isSubchar && slot) slot.style.display = "none";
+						return null;
+					}
 				});
-			return;
 		}
 
 		const imgUrl = convertFileSrc(
@@ -191,10 +193,10 @@ export const ghostSurfaceMethods = {
 		const fallbackSvgUrl = convertFileSrc(
 			`${ghostPath}/shell/${shell}/surface${fallbackSurface}.svg`,
 		);
-		applyImageSrc(imgUrl, fallbackSvgUrl, pnaUrl);
+		return await applyImageSrc(imgUrl, fallbackSvgUrl, pnaUrl);
 	},
 
-	updateGhostCharacter(ghostName) {
+	async updateGhostCharacter(ghostName) {
 		const sakuraPlaceholder =
 			byId("sakura-placeholder") ||
 			document.querySelector(".character-placeholder");
@@ -213,16 +215,17 @@ export const ghostSurfaceMethods = {
 		if (keroSlot) keroSlot.style.display = "none";
 		if (keroPlaceholder) keroPlaceholder.innerHTML = "";
 
-		// 0: メインキャラクター (sakura) の初期サーフェス \s0 のみ表示
-		this.updateSurface(0, 0);
+		// 0: メインキャラクター (sakura) の初期サーフェス \s0 表示
+		const promises = [this.updateSurface(0, 0)];
 
 		// ゴースト側に kero.name 等のサブキャラ設定が存在する場合のみ、またはスクリプトからの明示呼び出し時にサブウィンドウで表示
 		const hasKero = Boolean(this.currentGhost?.kero_name);
 		if (hasKero) {
-			this.updateSurface(10, 1);
+			promises.push(this.updateSurface(10, 1));
 		} else if (isTauriAvailable()) {
 			invoke("hide_subchar_window", { scopeId: 1 }).catch(() => {});
 		}
+		await Promise.all(promises);
 	},
 
 	updateCurrentGhostDisplay() {

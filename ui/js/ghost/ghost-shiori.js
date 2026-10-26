@@ -8,22 +8,27 @@ export const ghostShioriMethods = {
 	 * @this {import('./ghost.js').GhostController}
 	 * @param {import('./ghost.js').GhostInfo} ghost
 	 */
-	async initializeGhostSHIORI(ghost) {
+	async initializeGhostSHIORI(ghost, readinessGatePromise = null) {
 		if (!isTauriAvailable()) return;
 		try {
 			console.log(`🎭 SHIORI初期化開始: ${ghost.name}`);
-			await invoke("load_ghost", { ghostName: ghost.name });
-			setTimeout(async () => {
-				try {
-					await this.sendShioriEvent("OnBoot");
-				} catch (_error) {
-					// OnBoot送信失敗時はスキップ
-				}
-				// 初期化・OnBoot完了に伴い処理中バナーを閉じる
-				invoke("hide_loading_banner_window").catch(() => {});
-				// 自律タイマー (OnSecondChange) 開始
-				this.startSecondChangeTimer();
-			}, 1000);
+			// SHIORI DLLのロードと、シェルの初期サーフィス/マニフェスト準備完了を並行待機
+			await Promise.all([
+				invoke("load_ghost", { ghostName: ghost.name }),
+				readinessGatePromise,
+			]);
+
+			console.log(`✨ アセット・SHIORI準備完了 (ゲート通過): OnBoot発行`);
+			try {
+				await this.sendShioriEvent("OnBoot");
+			} catch (_error) {
+				// OnBoot送信失敗時はスキップ
+			}
+
+			// 初期化・OnBoot完了に伴い処理中バナーを閉じる
+			invoke("hide_loading_banner_window").catch(() => {});
+			// 自律タイマー (OnSecondChange) 開始
+			this.startSecondChangeTimer();
 		} catch (error) {
 			console.error("❌ SHIORI初期化エラー:", error);
 			invoke("hide_loading_banner_window").catch(() => {});

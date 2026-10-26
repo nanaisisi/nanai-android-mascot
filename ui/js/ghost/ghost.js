@@ -151,7 +151,6 @@ export class GhostController {
 		this.currentShell = this.shells[0] || AppConfig.paths.fallbackShellName;
 
 		this.updateCurrentGhostDisplay();
-		this.updateGhostCharacter(ghostName);
 		localStorage.setItem(
 			AppConfig.storageKeys.lastGhost,
 			JSON.stringify(ghost),
@@ -172,11 +171,15 @@ export class GhostController {
 			}).catch(() => {});
 		}
 
-		this.initializeGhostSHIORI(ghost);
-		this.app.surfaceManager.loadSurfacesTxt(
+		// アセット読み込みゲート: surfaces.txtのパースと初期サーフィス画像生成を両方完了させる
+		const surfacesTxtPromise = this.app.surfaceManager.loadSurfacesTxt(
 			ghost.path || `${AppConfig.paths.defaultGhostDir}/${ghostName}`,
 			this.currentShell,
 		);
+		const characterPromise = this.updateGhostCharacter(ghostName);
+		const readinessGate = Promise.all([surfacesTxtPromise, characterPromise]);
+
+		this.initializeGhostSHIORI(ghost, readinessGate);
 
 		// ゴースト連動のバルーン自動切り替え（設定が有効な場合、デフォルト有効）
 		if (this.app.settings?.autoSwitchBalloonWithGhost !== false) {

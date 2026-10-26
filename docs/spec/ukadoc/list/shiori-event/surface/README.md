@@ -2,8 +2,8 @@
 
 実装コードの文字列検索による一次調査です。
 
-| 項目 | 検索語 | 対応状況 |
-| :--- | :--- | :---: |
-| [OnOtherSurfaceChange](OnOtherSurfaceChange.md) | OnOtherSurfaceChange | ❌ 検出なし |
-| [OnSurfaceChange](OnSurfaceChange.md) | OnSurfaceChange | ❌ 検出なし |
-| [OnSurfaceRestore](OnSurfaceRestore.md) | OnSurfaceRestore | ✅ 実装済(SHIORIへ送信) |
+| 項目                                            | 検索語               |        対応状況         |
+| :---------------------------------------------- | :------------------- | :---------------------: |
+| [OnOtherSurfaceChange](OnOtherSurfaceChange.md) | OnOtherSurfaceChange |       ❌ 検出なし       |
+| [OnSurfaceChange](OnSurfaceChange.md)           | OnSurfaceChange      |       ❌ 検出なし       |
+| [OnSurfaceRestore](OnSurfaceRestore.md)         | OnSurfaceRestore     | ✅ 実装済(SHIORIへ送信) |

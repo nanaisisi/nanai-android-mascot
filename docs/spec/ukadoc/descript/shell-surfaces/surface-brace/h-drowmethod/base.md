@@ -10,8 +10,8 @@ surface-parser.js が解析 (パターン種別など) するが、描画への�
 
 ## 実装箇所
 
-- `ui/js/surface/surface-animation-manager.js:119`  `async playAnimationPatterns(anim, baseSurfaceId, scopeId) {`
-- `ui/js/surface/surface-animation-manager.js:125`  `if (String(this.manager.currentSurfaceId) !== String(baseSurfaceId)) break;`
-- `ui/js/surface/surface-animation-manager.js:129`  `await gc.updateSurface(baseSurfaceId, scopeId);`
-- `ui/js/surface/surface-animation-manager.js:138`  `if (String(this.manager.currentSurfaceId) === String(baseSurfaceId)) {`
-- `ui/js/surface/surface-animation-manager.js:139`  `await gc.updateSurface(baseSurfaceId, scopeId);`
+- `ui/js/surface/surface-animation-manager.js:119` `async playAnimationPatterns(anim, baseSurfaceId, scopeId) {`
+- `ui/js/surface/surface-animation-manager.js:125` `if (String(this.manager.currentSurfaceId) !== String(baseSurfaceId)) break;`
+- `ui/js/surface/surface-animation-manager.js:129` `await gc.updateSurface(baseSurfaceId, scopeId);`
+- `ui/js/surface/surface-animation-manager.js:138` `if (String(this.manager.currentSurfaceId) === String(baseSurfaceId)) {`
+- `ui/js/surface/surface-animation-manager.js:139` `await gc.updateSurface(baseSurfaceId, scopeId);`

@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/ghost.js:37`  `async autoLoadGhost() {`
-- `ui/js/ghost/ghost.js:172`  `if (this.app.settings?.autoSwitchBalloonWithGhost !== false) {`
-- `ui/js/ui/templates/ghost-templates.js:21`  `<button type="button" id="import-ghost-btn" class="primary" style="flex: 0 0 auto; white-s`
-- `ui/js/ui/templates/ghost-templates.js:63`  `<button type="button" id="modal-install-submit-btn" class="primary" style="flex: 0 0 auto;`
-- `ui/windows/multi-window.js:158`  `const checked = document.getElementById("auto-minimize").checked;`
+- `ui/js/ghost/ghost.js:37` `async autoLoadGhost() {`
+- `ui/js/ghost/ghost.js:172` `if (this.app.settings?.autoSwitchBalloonWithGhost !== false) {`
+- `ui/js/ui/templates/ghost-templates.js:21` `<button type="button" id="import-ghost-btn" class="primary" style="flex: 0 0 auto; white-s`
+- `ui/js/ui/templates/ghost-templates.js:63` `<button type="button" id="modal-install-submit-btn" class="primary" style="flex: 0 0 auto;`
+- `ui/windows/multi-window.js:158` `const checked = document.getElementById("auto-minimize").checked;`

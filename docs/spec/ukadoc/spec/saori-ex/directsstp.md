@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/ui/templates/doc-templates.js:102`  `<h4>里々（SATORI）本体・同梱 SAORI (ssu) - BSD 2-Clause License</h4>`
+- `ui/js/ui/templates/doc-templates.js:102` `<h4>里々（SATORI）本体・同梱 SAORI (ssu) - BSD 2-Clause License</h4>`

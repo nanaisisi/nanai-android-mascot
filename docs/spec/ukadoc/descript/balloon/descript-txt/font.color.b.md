@@ -10,5 +10,5 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 
 ## 実装箇所
 
-- `ui/js/core/app-actions.js:153`  `props["font.color.b"]`
-- `ui/js/core/app-actions.js:157`  `rgb(${props["font.color.r"]}, ${props["font.color.g"]}, ${props["font.color.b"]}),`
+- `ui/js/core/app-actions.js:153` `props["font.color.b"]`
+- `ui/js/core/app-actions.js:157` `rgb(${props["font.color.r"]}, ${props["font.color.g"]}, ${props["font.color.b"]}),`

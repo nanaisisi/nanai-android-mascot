@@ -19,13 +19,13 @@
 
 Android OSがネイティブで提供する仕組みとRustの責務を以下のように切り分けます。
 
-| 領域 | Android OS / Tauriプラットフォームの責務 | Rust側の責務 | 狙い・効果 |
-| :--- | :--- | :--- | :--- |
-| **キャッシュストレージ** | `context.cacheDir`（内部キャッシュ）の領域提供とOS自動パージ管理 | キャッシュディレクトリ配下のファイルI/O、インデックス管理 | OSの容量管理・ユーザーによる「キャッシュ削除」と完全同期 |
-| **メモリ監視・解放** | `ComponentCallbacks2.onTrimMemory()` の監視と通知 | L1インメモリLRUキャッシュの段階的破棄（`TRIM_MEMORY_RUNNING_CRITICAL`等） | OOM Killerによる強制終了を防止 |
-| **ロケール・言語** | Android `Configuration` / WebView `navigator.language` | ロケール文字列を受け取り翻訳辞書を切り替えるのみ | `sys-locale` などの外部クレート削減 |
-| **静的初期化** | プラットフォーム初期化ライフサイクル | `std::sync::LazyLock` / `std::sync::OnceLock` | `once_cell` クレートの完全廃止 |
-| **テキスト解析** | なし | 高速スライス走査（`std::str`） | `regex` クレートへの依存を極力排除しバイナリ削減 |
+| 領域                     | Android OS / Tauriプラットフォームの責務                         | Rust側の責務                                                              | 狙い・効果                                               |
+| :----------------------- | :--------------------------------------------------------------- | :------------------------------------------------------------------------ | :------------------------------------------------------- |
+| **キャッシュストレージ** | `context.cacheDir`（内部キャッシュ）の領域提供とOS自動パージ管理 | キャッシュディレクトリ配下のファイルI/O、インデックス管理                 | OSの容量管理・ユーザーによる「キャッシュ削除」と完全同期 |
+| **メモリ監視・解放**     | `ComponentCallbacks2.onTrimMemory()` の監視と通知                | L1インメモリLRUキャッシュの段階的破棄（`TRIM_MEMORY_RUNNING_CRITICAL`等） | OOM Killerによる強制終了を防止                           |
+| **ロケール・言語**       | Android `Configuration` / WebView `navigator.language`           | ロケール文字列を受け取り翻訳辞書を切り替えるのみ                          | `sys-locale` などの外部クレート削減                      |
+| **静的初期化**           | プラットフォーム初期化ライフサイクル                             | `std::sync::LazyLock` / `std::sync::OnceLock`                             | `once_cell` クレートの完全廃止                           |
+| **テキスト解析**         | なし                                                             | 高速スライス走査（`std::str`）                                            | `regex` クレートへの依存を極力排除しバイナリ削減         |
 
 ---
 
@@ -124,13 +124,13 @@ Cargo.toml (workspace)
 
 ### 6.1 ツール体系一覧
 
-| 分類 / 目的 | Rust 側ツール | Web / npm / ドキュメント側ツール | 役割・検査内容 |
-| :--- | :--- | :--- | :--- |
-| **フォーマッタ（fmt）** | `cargo fmt` | `@biomejs/biome format` | コードスタイルの統一・自動整形 |
-| **リンター（linter）** | `cargo check` | `@biomejs/biome lint`<br>`markuplint` | 構文エラー・非推奨記法・HTML標準準拠チェック |
-| **静的解析・イディオム** | `cargo clippy -- -D warnings` | Biome 推奨ルール群 | パフォーマンス低下・潜在的バグ・Rustイディオムの遵守 |
-| **依存関係・結合度（coupling）** | `cargo modules structure`<br>`cargo-deny` / `cargo-tree` | `biome`（未利用インポート検知） | ワークスペース境界・不要結合・循環参照の防止 |
-| **セキュリティ監査（audit）** | `cargo audit` | `npm audit` | 既知の脆弱性（CVE）検知と依存バージョン管理 |
+| 分類 / 目的                      | Rust 側ツール                                            | Web / npm / ドキュメント側ツール      | 役割・検査内容                                       |
+| :------------------------------- | :------------------------------------------------------- | :------------------------------------ | :--------------------------------------------------- |
+| **フォーマッタ（fmt）**          | `cargo fmt`                                              | `@biomejs/biome format`               | コードスタイルの統一・自動整形                       |
+| **リンター（linter）**           | `cargo check`                                            | `@biomejs/biome lint`<br>`markuplint` | 構文エラー・非推奨記法・HTML標準準拠チェック         |
+| **静的解析・イディオム**         | `cargo clippy -- -D warnings`                            | Biome 推奨ルール群                    | パフォーマンス低下・潜在的バグ・Rustイディオムの遵守 |
+| **依存関係・結合度（coupling）** | `cargo modules structure`<br>`cargo-deny` / `cargo-tree` | `biome`（未利用インポート検知）       | ワークスペース境界・不要結合・循環参照の防止         |
+| **セキュリティ監査（audit）**    | `cargo audit`                                            | `npm audit`                           | 既知の脆弱性（CVE）検知と依存バージョン管理          |
 
 ### 6.2 各ツールの活用方針とコマンド
 

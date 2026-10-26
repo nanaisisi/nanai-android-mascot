@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/ghost.js:4`  `import { ghostShioriMethods } from "./ghost-shiori.js";`
+- `ui/js/ghost/ghost.js:4` `import { ghostShioriMethods } from "./ghost-shiori.js";`
 - `ui/js/ghost/ghost.js:8` (コメント) `* (SHIORI通信は ghost-shiori.js、サーフェス表示は ghost-surface.js)`
-- `src-tauri/src/commands/shiori/lifecycle.rs:44`  `candidates.push(ghost_master_dir.join("shiori.dll"));`
-- `src-tauri/src/commands/shiori/lifecycle.rs:50`  `candidates.push(ghost_master_dir.join("shiori.so"));`
-- `src-tauri/src/commands/shiori/lifecycle.rs:126`  `candidates.push(ghost_master_dir.join("shiori.dll"));`
+- `src-tauri/src/commands/shiori/lifecycle.rs:44` `candidates.push(ghost_master_dir.join("shiori.dll"));`
+- `src-tauri/src/commands/shiori/lifecycle.rs:50` `candidates.push(ghost_master_dir.join("shiori.so"));`
+- `src-tauri/src/commands/shiori/lifecycle.rs:126` `candidates.push(ghost_master_dir.join("shiori.dll"));`

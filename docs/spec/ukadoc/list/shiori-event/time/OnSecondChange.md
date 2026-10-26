@@ -10,8 +10,8 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 
 ## 実装箇所
 
-- `ui/js/core/app-settings.js:87`  `this.ghostController.sendShioriEvent("OnSecondChange");`
+- `ui/js/core/app-settings.js:87` `this.ghostController.sendShioriEvent("OnSecondChange");`
 - `src-tauri/src/commands/shiori/protocol.rs:32` (コメント) `// 既定は info（失敗のみ出力）、trace で全リクエスト/レスポンス、毎秒の OnSecondChange は NANAI_LOG=trace のときのみ`
-- `src-tauri/src/commands/shiori/protocol.rs:34`  `let noisy = request.contains("ID: OnSecondChange");`
+- `src-tauri/src/commands/shiori/protocol.rs:34` `let noisy = request.contains("ID: OnSecondChange");`
 - `ui/js/ghost/ghost-shiori.js:22` (コメント) `// 自律タイマー (OnSecondChange) 開始`
 - `ui/js/ghost/ghost-shiori.js:31` (コメント) `* OnSecondChange 定期イベントタイマー (毎秒送信)`

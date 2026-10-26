@@ -10,5 +10,5 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan.rs:197`  `.and_then(|m| m.get("craftmanurl").cloned());`
-- `src-tauri/src/commands/install.rs:168`  `.and_then(|m| m.get("craftmanurl").cloned());`
+- `src-tauri/src/ghost/scan.rs:197` `.and_then(|m| m.get("craftmanurl").cloned());`
+- `src-tauri/src/commands/install.rs:168` `.and_then(|m| m.get("craftmanurl").cloned());`

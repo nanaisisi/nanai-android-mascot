@@ -60,12 +60,12 @@ graph TB
 
 ### ランタイム別のメモリ・スレッド特性
 
-| 観点 | 1. Java / Kotlin (ART) | 2. Rust (Native NDK) | 3. JS / WASM (WebView V8) |
-| :--- | :--- | :--- | :--- |
-| **実行形態** | ART (AOT / JIT), JVMバイトコード | ARM64 Native機械語 (LLVM) | V8 JIT / Bytecode, WASM Linear Mem |
-| **メモリ管理** | トレーシングGC (世代別コンパクション) | 所有権 / RAII (明示的解放, No GC) | V8 GC (Orinoco / Scavenger) |
-| **スレッドモデル** | OSスレッド (Java Threads / Coroutine) | OSスレッド + Tokio非同期Green Threads | 単一UIスレッド (EventLoop) + WebWorkers |
-| **主な責務** | OSライフサイクル、権限、通知、SAF | 画像合成、ZIP展開、SHIORI、L2キャッシュ | 描画プレゼンテーション、UIイベント、バルーン |
+| 観点               | 1. Java / Kotlin (ART)                | 2. Rust (Native NDK)                    | 3. JS / WASM (WebView V8)                    |
+| :----------------- | :------------------------------------ | :-------------------------------------- | :------------------------------------------- |
+| **実行形態**       | ART (AOT / JIT), JVMバイトコード      | ARM64 Native機械語 (LLVM)               | V8 JIT / Bytecode, WASM Linear Mem           |
+| **メモリ管理**     | トレーシングGC (世代別コンパクション) | 所有権 / RAII (明示的解放, No GC)       | V8 GC (Orinoco / Scavenger)                  |
+| **スレッドモデル** | OSスレッド (Java Threads / Coroutine) | OSスレッド + Tokio非同期Green Threads   | 単一UIスレッド (EventLoop) + WebWorkers      |
+| **主な責務**       | OSライフサイクル、権限、通知、SAF     | 画像合成、ZIP展開、SHIORI、L2キャッシュ | 描画プレゼンテーション、UIイベント、バルーン |
 
 ---
 

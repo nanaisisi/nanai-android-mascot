@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/shiori/status.rs:2`  `use crate::ghost::scan::{ScanResult, scan_ghost_directory};`
+- `src-tauri/src/commands/shiori/status.rs:2` `use crate::ghost::scan::{ScanResult, scan_ghost_directory};`
 - `src-tauri/src/commands/shiori/status.rs:33` (コメント) `// ghost_pathをghost_dirとしてscan_ghost_directoryに渡す`
-- `src-tauri/src/commands/shiori/status.rs:34`  `scan_ghost_directory(state, ghost_path, app_handle).await`
-- `ui/js/ui/templates/ghost-templates.js:27`  `<input type="text" id="ghost-directory" value="assets/ghost" />`
-- `ui/js/ui/templates/ghost-templates.js:48`  `<input type="text" id="balloon-directory" value="assets/balloon" />`
+- `src-tauri/src/commands/shiori/status.rs:34` `scan_ghost_directory(state, ghost_path, app_handle).await`
+- `ui/js/ui/templates/ghost-templates.js:27` `<input type="text" id="ghost-directory" value="assets/ghost" />`
+- `ui/js/ui/templates/ghost-templates.js:48` `<input type="text" id="balloon-directory" value="assets/balloon" />`

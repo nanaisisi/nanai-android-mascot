@@ -88,11 +88,11 @@ Rust側のコードベースはターゲット（`target_os = "android"`、`desk
 
 SHIORIスクリプトエンジン（YAYA、華和梨、Satoriなど）の互換レイヤーについて、環境ごとの整合性を以下のように担保します。
 
-| 実行環境 | SHIORI実装形態 | 呼び出し方式 | 非同期制御 |
-| :--- | :--- | :--- | :--- |
-| **Android (Native/Tauri)** | Rust再実装版 or C++共有ライブラリ (`.so`) | JNI / 直接dlopen (Rust FFI) | Tokio非同期タスク上で呼び出し |
-| **Web / WASM** | Rust再実装版（WASMコンパイル） or JS版 | Direct Function Call | Promise / async-await |
-| **Desktop (Tauri)** | C共有ライブラリ (`.dll` / `.so`) | `libloading` による動的ロード | スレッドプール経由非同期呼出 |
+| 実行環境                   | SHIORI実装形態                            | 呼び出し方式                  | 非同期制御                    |
+| :------------------------- | :---------------------------------------- | :---------------------------- | :---------------------------- |
+| **Android (Native/Tauri)** | Rust再実装版 or C++共有ライブラリ (`.so`) | JNI / 直接dlopen (Rust FFI)   | Tokio非同期タスク上で呼び出し |
+| **Web / WASM**             | Rust再実装版（WASMコンパイル） or JS版    | Direct Function Call          | Promise / async-await         |
+| **Desktop (Tauri)**        | C共有ライブラリ (`.dll` / `.so`)          | `libloading` による動的ロード | スレッドプール経由非同期呼出  |
 
 ---
 

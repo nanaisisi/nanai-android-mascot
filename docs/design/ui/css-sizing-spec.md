@@ -12,14 +12,14 @@
 
 ## 2. 単位使い分け規約 (Sizing Guidelines)
 
-| 単位・記法 | 主な用途 | 採用理由・メリット |
-| :--- | :--- | :--- |
-| `rem` | フォントサイズ、パディング、マージン、ボタン寸法、角丸、シャドウ | ルートフォントサイズ（端末・ブラウザ基準）に連動し、OSのアクセシビリティ拡大設定に追従するため。 |
-| `clamp(min, preferred, max)` | キャラクター枠、バルーン最大幅、モーダルダイアログ幅・高さ | 小型端末での極端な縮小・大画面での過剰な肥大化を防ぎつつ、画面サイズに応じて柔軟にスケールさせるため。 |
-| `vmin` | マスコット表示枠（`.ghost-display`）の基準幅 | 端末の縦向き（Portrait）と横向き（Landscape）のどちらでも、画面短辺に比例して常に適切なプロポーションを保つため。 |
-| `vw` / `vh` | モーダル・バルーンの画面追従マージン、上下位置調整 | 画面全体の表示領域に対する割合で安全にオフセットを確保するため。 |
-| `em` | メディアクエリのブレークポイント（例: `@media (max-width: 48em)`） | ユーザーがブラウザ・OSの基準文字サイズを変更した際にも、意図通りの比率でレスポンシブ切り替えを行うため。 |
-| `px` (限定使用) | 極細境界線（`border: 1px solid`、`height: 1px`）、a11y非表示（`1px`） | サブピクセルレンダリング時の線の消失・滲み防止、および定型アクセシビリティ仕様準拠のため。 |
+| 単位・記法                   | 主な用途                                                              | 採用理由・メリット                                                                                                |
+| :--------------------------- | :-------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------- |
+| `rem`                        | フォントサイズ、パディング、マージン、ボタン寸法、角丸、シャドウ      | ルートフォントサイズ（端末・ブラウザ基準）に連動し、OSのアクセシビリティ拡大設定に追従するため。                  |
+| `clamp(min, preferred, max)` | キャラクター枠、バルーン最大幅、モーダルダイアログ幅・高さ            | 小型端末での極端な縮小・大画面での過剰な肥大化を防ぎつつ、画面サイズに応じて柔軟にスケールさせるため。            |
+| `vmin`                       | マスコット表示枠（`.ghost-display`）の基準幅                          | 端末の縦向き（Portrait）と横向き（Landscape）のどちらでも、画面短辺に比例して常に適切なプロポーションを保つため。 |
+| `vw` / `vh`                  | モーダル・バルーンの画面追従マージン、上下位置調整                    | 画面全体の表示領域に対する割合で安全にオフセットを確保するため。                                                  |
+| `em`                         | メディアクエリのブレークポイント（例: `@media (max-width: 48em)`）    | ユーザーがブラウザ・OSの基準文字サイズを変更した際にも、意図通りの比率でレスポンシブ切り替えを行うため。          |
+| `px` (限定使用)              | 極細境界線（`border: 1px solid`、`height: 1px`）、a11y非表示（`1px`） | サブピクセルレンダリング時の線の消失・滲み防止、および定型アクセシビリティ仕様準拠のため。                        |
 
 ---
 
@@ -30,16 +30,16 @@
 ```css
 /* メインキャラクター (sakura / 0番手) */
 .ghost-display {
-  width: clamp(8.75rem, 35vmin, 16.25rem);
-  aspect-ratio: 1 / 2;
-  height: auto;
+	width: clamp(8.75rem, 35vmin, 16.25rem);
+	aspect-ratio: 1 / 2;
+	height: auto;
 }
 
 /* サブキャラクター (kero / 1番手) */
 .ghost-display.kero-display {
-  width: clamp(6.25rem, 25vmin, 11.25rem);
-  aspect-ratio: 1 / 2;
-  height: auto;
+	width: clamp(6.25rem, 25vmin, 11.25rem);
+	aspect-ratio: 1 / 2;
+	height: auto;
 }
 ```
 
@@ -50,12 +50,12 @@
 
 ```css
 .balloon-display {
-  top: clamp(2rem, 8vh, 3.5rem);
+	top: clamp(2rem, 8vh, 3.5rem);
 }
 
 .balloon {
-  padding: 0.875rem 1.125rem;
-  max-width: clamp(12.5rem, 80vw, 22.5rem);
+	padding: 0.875rem 1.125rem;
+	max-width: clamp(12.5rem, 80vw, 22.5rem);
 }
 ```
 
@@ -65,13 +65,13 @@
 
 ```css
 .menu-container {
-  padding: 0.25rem 0;
-  width: clamp(10rem, 45vw, 15rem);
+	padding: 0.25rem 0;
+	width: clamp(10rem, 45vw, 15rem);
 }
 
 .submenu-container {
-  min-width: clamp(9.375rem, 40vw, 13.125rem);
-  max-height: calc(100vh - 2.5rem);
+	min-width: clamp(9.375rem, 40vw, 13.125rem);
+	max-height: calc(100vh - 2.5rem);
 }
 ```
 
@@ -81,18 +81,18 @@
 
 ```css
 .menu-iframe-container {
-  width: clamp(15rem, 80vw, 28.75rem);
+	width: clamp(15rem, 80vw, 28.75rem);
 }
 
 .menu-iframe-container iframe {
-  width: 100%;
-  height: clamp(20rem, 70vh, 36.25rem);
+	width: 100%;
+	height: clamp(20rem, 70vh, 36.25rem);
 }
 
 .modal {
-  border-radius: 0.75rem;
-  max-width: clamp(17.5rem, 90vw, 37.5rem);
-  max-height: 85vh;
+	border-radius: 0.75rem;
+	max-width: clamp(17.5rem, 90vw, 37.5rem);
+	max-height: 85vh;
 }
 ```
 

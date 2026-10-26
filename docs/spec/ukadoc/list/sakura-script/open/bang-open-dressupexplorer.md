@@ -12,5 +12,5 @@ SSP 本家のような専用エクスプローラーウィンドウは今後の�
 
 ## 実装箇所
 
-- `ui/js/ghost/sakura-command-handler.js`  `\![open,dressupexplorer]` → `app.toggleMenu()`
-- `ui/js/ui/menu-submenu-renderer.js` / `ui/js/ui/submenu.js`  bindgroup 由来の着せ替えメニュー
+- `ui/js/ghost/sakura-command-handler.js` `\![open,dressupexplorer]` → `app.toggleMenu()`
+- `ui/js/ui/menu-submenu-renderer.js` / `ui/js/ui/submenu.js` bindgroup 由来の着せ替えメニュー

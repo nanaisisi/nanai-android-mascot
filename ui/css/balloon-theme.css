@@ -4,132 +4,135 @@
    ==================================================== */
 
 :root {
-  /* デフォルト（モダンニュートラル） */
-  --balloon-bg: #f9f9f9;
-  --balloon-pattern: none;
-  --balloon-border-color: #7a7a7a;
-  --balloon-border-width: 1px;
-  --balloon-border-style: solid;
-  --balloon-border-radius: 0.375rem;
-  --balloon-box-shadow: 0.125rem 0.125rem 0.75rem rgba(0, 0, 0, 0.35);
-  --balloon-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Meiryo", sans-serif;
-  --balloon-font-size: 0.8125rem;
-  --balloon-text-color: #111111;
-  --balloon-highlight-bg: #0078d7;
-  --balloon-highlight-text: #ffffff;
-  --balloon-separator-color: #dcdcdc;
-  --balloon-tail-color: #f9f9f9;
+	/* デフォルト（モダンニュートラル） */
+	--balloon-bg: #f9f9f9;
+	--balloon-pattern: none;
+	--balloon-border-color: #7a7a7a;
+	--balloon-border-width: 1px;
+	--balloon-border-style: solid;
+	--balloon-border-radius: 0.375rem;
+	--balloon-box-shadow: 0.125rem 0.125rem 0.75rem rgba(0, 0, 0, 0.35);
+	--balloon-font-family:
+		-apple-system, BlinkMacSystemFont, "Segoe UI", "Meiryo", sans-serif;
+	--balloon-font-size: 0.8125rem;
+	--balloon-text-color: #111111;
+	--balloon-highlight-bg: #0078d7;
+	--balloon-highlight-text: #ffffff;
+	--balloon-separator-color: #dcdcdc;
+	--balloon-tail-color: #f9f9f9;
 }
 
 /* 象牙色レトロ伺かスキン (SSP風) */
 [data-balloon-theme="ivory"],
 body.balloon-theme-ivory {
-  --balloon-bg: #ffffea;
-  --balloon-pattern: none;
-  --balloon-border-color: #555555;
-  --balloon-border-width: 2px;
-  --balloon-border-style: solid;
-  --balloon-border-radius: 0.25rem;
-  --balloon-box-shadow: 0.1875rem 0.1875rem 0 rgba(0, 0, 0, 0.45);
-  --balloon-font-family: "MS UI Gothic", "Meiryo", sans-serif;
-  --balloon-font-size: 0.8125rem;
-  --balloon-text-color: #000000;
-  --balloon-highlight-bg: #000080;
-  --balloon-highlight-text: #ffffff;
-  --balloon-separator-color: #777777;
-  --balloon-tail-color: #ffffea;
+	--balloon-bg: #ffffea;
+	--balloon-pattern: none;
+	--balloon-border-color: #555555;
+	--balloon-border-width: 2px;
+	--balloon-border-style: solid;
+	--balloon-border-radius: 0.25rem;
+	--balloon-box-shadow: 0.1875rem 0.1875rem 0 rgba(0, 0, 0, 0.45);
+	--balloon-font-family: "MS UI Gothic", "Meiryo", sans-serif;
+	--balloon-font-size: 0.8125rem;
+	--balloon-text-color: #000000;
+	--balloon-highlight-bg: #000080;
+	--balloon-highlight-text: #ffffff;
+	--balloon-separator-color: #777777;
+	--balloon-tail-color: #ffffea;
 }
 
 /* ドット絵・ピクセル風スキン (レトロゲームドットデザイン) */
 [data-balloon-theme="pixel"],
 body.balloon-theme-pixel {
-  --balloon-bg: #222228;
-  --balloon-pattern: radial-gradient(#33333d 15%, transparent 16%);
-  --balloon-border-color: #00ffcc;
-  --balloon-border-width: 2px;
-  --balloon-border-style: solid;
-  --balloon-border-radius: 0px;
-  --balloon-box-shadow: 0.25rem 0.25rem 0 #005544;
-  --balloon-font-family: "Consolas", "Courier New", monospace;
-  --balloon-font-size: 0.8125rem;
-  --balloon-text-color: #ffffff;
-  --balloon-highlight-bg: #00ffcc;
-  --balloon-highlight-text: #000000;
-  --balloon-separator-color: #00ffcc;
-  --balloon-tail-color: #222228;
+	--balloon-bg: #222228;
+	--balloon-pattern: radial-gradient(#33333d 15%, transparent 16%);
+	--balloon-border-color: #00ffcc;
+	--balloon-border-width: 2px;
+	--balloon-border-style: solid;
+	--balloon-border-radius: 0px;
+	--balloon-box-shadow: 0.25rem 0.25rem 0 #005544;
+	--balloon-font-family: "Consolas", "Courier New", monospace;
+	--balloon-font-size: 0.8125rem;
+	--balloon-text-color: #ffffff;
+	--balloon-highlight-bg: #00ffcc;
+	--balloon-highlight-text: #000000;
+	--balloon-separator-color: #00ffcc;
+	--balloon-tail-color: #222228;
 }
 
 /* ポップコミック風スキン (太枠 & 丸み) */
 [data-balloon-theme="comic"],
 body.balloon-theme-comic {
-  --balloon-bg: #ffffff;
-  --balloon-pattern: none;
-  --balloon-border-color: #222222;
-  --balloon-border-width: 2px;
-  --balloon-border-style: solid;
-  --balloon-border-radius: 1.25rem;
-  --balloon-box-shadow: 0.25rem 0.25rem 0 #222222;
-  --balloon-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --balloon-font-size: 0.875rem;
-  --balloon-text-color: #111111;
-  --balloon-highlight-bg: #ffbb00;
-  --balloon-highlight-text: #000000;
-  --balloon-separator-color: #222222;
-  --balloon-tail-color: #ffffff;
+	--balloon-bg: #ffffff;
+	--balloon-pattern: none;
+	--balloon-border-color: #222222;
+	--balloon-border-width: 2px;
+	--balloon-border-style: solid;
+	--balloon-border-radius: 1.25rem;
+	--balloon-box-shadow: 0.25rem 0.25rem 0 #222222;
+	--balloon-font-family:
+		-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	--balloon-font-size: 0.875rem;
+	--balloon-text-color: #111111;
+	--balloon-highlight-bg: #ffbb00;
+	--balloon-highlight-text: #000000;
+	--balloon-separator-color: #222222;
+	--balloon-tail-color: #ffffff;
 }
 
 /* サイバーダークスキン (夜間・ハイコントラスト) */
 [data-balloon-theme="dark"],
 body.balloon-theme-dark {
-  --balloon-bg: rgba(26, 28, 36, 0.95);
-  --balloon-pattern: none;
-  --balloon-border-color: rgba(255, 255, 255, 0.18);
-  --balloon-border-width: 1px;
-  --balloon-border-style: solid;
-  --balloon-border-radius: 0.5rem;
-  --balloon-box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.65);
-  --balloon-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --balloon-font-size: 0.8125rem;
-  --balloon-text-color: #f0f0f0;
-  --balloon-highlight-bg: #4a69bd;
-  --balloon-highlight-text: #ffffff;
-  --balloon-separator-color: rgba(255, 255, 255, 0.12);
-  --balloon-tail-color: rgba(26, 28, 36, 0.95);
+	--balloon-bg: rgba(26, 28, 36, 0.95);
+	--balloon-pattern: none;
+	--balloon-border-color: rgba(255, 255, 255, 0.18);
+	--balloon-border-width: 1px;
+	--balloon-border-style: solid;
+	--balloon-border-radius: 0.5rem;
+	--balloon-box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.65);
+	--balloon-font-family:
+		-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	--balloon-font-size: 0.8125rem;
+	--balloon-text-color: #f0f0f0;
+	--balloon-highlight-bg: #4a69bd;
+	--balloon-highlight-text: #ffffff;
+	--balloon-separator-color: rgba(255, 255, 255, 0.12);
+	--balloon-tail-color: rgba(26, 28, 36, 0.95);
 }
 
 /* Emily/Phase4 専用バルーンスキン (descript.txt & balloons0.png/balloonk0.png 準拠) */
 [data-balloon-theme="emily4"],
 body.balloon-theme-emily4 {
-  --balloon-bg: #fffdf5;
-  --balloon-pattern: none;
-  --balloon-border-color: #691919;
-  --balloon-border-width: 16px;
-  --balloon-border-style: solid;
-  --balloon-border-radius: 4px;
-  --balloon-box-shadow: 0 4px 12px rgba(105, 25, 25, 0.25);
-  --balloon-font-family: "MS UI Gothic", "Meiryo", sans-serif;
-  --balloon-font-size: 12px;
-  --balloon-text-color: rgb(105, 25, 25);
-  --balloon-highlight-bg: rgb(180, 40, 40);
-  --balloon-highlight-text: #ffffff;
-  --balloon-separator-color: #d8c2b5;
-  --balloon-tail-color: #fffdf5;
+	--balloon-bg: #fffdf5;
+	--balloon-pattern: none;
+	--balloon-border-color: #691919;
+	--balloon-border-width: 16px;
+	--balloon-border-style: solid;
+	--balloon-border-radius: 4px;
+	--balloon-box-shadow: 0 4px 12px rgba(105, 25, 25, 0.25);
+	--balloon-font-family: "MS UI Gothic", "Meiryo", sans-serif;
+	--balloon-font-size: 12px;
+	--balloon-text-color: rgb(105, 25, 25);
+	--balloon-highlight-bg: rgb(180, 40, 40);
+	--balloon-highlight-text: #ffffff;
+	--balloon-separator-color: #d8c2b5;
+	--balloon-tail-color: #fffdf5;
 }
 
 [data-balloon-theme="emily4"] .balloon,
 body.balloon-theme-emily4 .balloon {
-  border-image-source: url("../assets/balloon/emily4/balloons0.png");
-  border-image-slice: 16 16 16 16 fill;
-  border-image-width: 16px;
-  border-image-repeat: repeat;
-  background-color: transparent;
-  color: rgb(105, 25, 25);
+	border-image-source: url("../assets/balloon/emily4/balloons0.png");
+	border-image-slice: 16 16 16 16 fill;
+	border-image-width: 16px;
+	border-image-repeat: repeat;
+	background-color: transparent;
+	color: rgb(105, 25, 25);
 }
 
 [data-balloon-theme="emily4"] .kero-balloon .balloon,
 body.balloon-theme-emily4 .kero-balloon .balloon {
-  border-image-source: url("../assets/balloon/emily4/balloonk0.png");
-  border-image-slice: 16 16 16 16 fill;
-  border-image-width: 16px;
-  border-image-repeat: repeat;
+	border-image-source: url("../assets/balloon/emily4/balloonk0.png");
+	border-image-slice: 16 16 16 16 fill;
+	border-image-width: 16px;
+	border-image-repeat: repeat;
 }

@@ -10,6 +10,6 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 
 ## 実装箇所
 
-- `ui/js/core/app-actions.js:118`  `this.ghostController.sendShioriEvent("OnWindowStateMinimize");`
+- `ui/js/core/app-actions.js:118` `this.ghostController.sendShioriEvent("OnWindowStateMinimize");`
 - `src-tauri/src/shiori/ffi.rs:247` (コメント) `/// OnWindowStateMinimizeイベントのリクエストを作成`
-- `src-tauri/src/shiori/ffi.rs:251`  `.header("Event", "OnWindowStateMinimize")`
+- `src-tauri/src/shiori/ffi.rs:251` `.header("Event", "OnWindowStateMinimize")`

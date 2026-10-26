@@ -3,15 +3,24 @@
  * `@tauri-apps/api` の公式バインディングを使用しつつ、
  * Web/ブラウザ単体プレビュー時やフォールバック環境でも動作するようにラップします。
  */
-import { convertFileSrc as tauriConvertFileSrc, invoke as tauriInvoke } from "@tauri-apps/api/core";
-import { emit as tauriEmit, listen as tauriListen } from "@tauri-apps/api/event";
+import {
+	convertFileSrc as tauriConvertFileSrc,
+	invoke as tauriInvoke,
+} from "@tauri-apps/api/core";
+import {
+	emit as tauriEmit,
+	listen as tauriListen,
+} from "@tauri-apps/api/event";
 
 /**
  * Tauri環境で動作しているかどうかを判定
  * @returns {boolean}
  */
 export function isTauriAvailable() {
-	return typeof globalThis !== "undefined" && (!!globalThis.__TAURI__ || !!globalThis.__TAURI_INTERNALS__);
+	return (
+		typeof globalThis !== "undefined" &&
+		(!!globalThis.__TAURI__ || !!globalThis.__TAURI_INTERNALS__)
+	);
 }
 
 /**

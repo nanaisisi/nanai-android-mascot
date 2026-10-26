@@ -10,5 +10,5 @@ openInputBox で入力ボックスを開く処理はあるが、ID/オプショ�
 
 ## 実装箇所
 
-- `ui/js/ghost/sakura-command-handler.js:21`  `this.openInputBox(args.slice(2));`
-- `ui/js/ghost/sakura-command-handler.js:50`  `openInputBox(params) {`
+- `ui/js/ghost/sakura-command-handler.js:21` `this.openInputBox(args.slice(2));`
+- `ui/js/ghost/sakura-command-handler.js:50` `openInputBox(params) {`

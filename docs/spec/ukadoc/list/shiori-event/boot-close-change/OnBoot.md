@@ -11,7 +11,7 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 ## 実装箇所
 
 - `ui/js/ghost/shiori-protocol.js:8` (コメント) `* @param {string} id - イベントID (例: "OnBoot", "OnMouseClick")`
-- `ui/js/ghost/ghost-shiori.js:18`  `await this.sendShioriEvent("OnBoot");`
+- `ui/js/ghost/ghost-shiori.js:18` `await this.sendShioriEvent("OnBoot");`
 - `ui/js/ghost/ghost-shiori.js:20` (コメント) `// OnBoot送信失敗時はスキップ`
 - `src-tauri/src/shiori/ffi.rs:204` (コメント) `/// OnBootイベントのリクエストを作成`
-- `src-tauri/src/shiori/ffi.rs:208`  `.header("Event", "OnBoot")`
+- `src-tauri/src/shiori/ffi.rs:208` `.header("Event", "OnBoot")`

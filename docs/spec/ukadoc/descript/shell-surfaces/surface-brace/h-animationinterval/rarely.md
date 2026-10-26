@@ -11,4 +11,4 @@ surface-animation-manager.js で interval 種別として処理している。
 ## 実装箇所
 
 - `ui/js/surface/surface-animation-manager.js:90` (コメント) `// sometimes(毎秒1/2), rarely(毎秒1/4), random,N(毎秒1/N)`
-- `ui/js/surface/surface-animation-manager.js:92`  `if (intervalStr === "rarely") {`
+- `ui/js/surface/surface-animation-manager.js:92` `if (intervalStr === "rarely") {`

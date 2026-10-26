@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/windows/desktop-features.js:5`  `systemTray: false,`
-- `ui/windows/desktop-features.js:20`  `if (tray) tray.textContent = featureStates.systemTray ? "ON" : "OFF";`
-- `ui/windows/desktop-features.js:85`  `featureStates.systemTray = !featureStates.systemTray;`
-- `ui/windows/desktop-features.js:86`  `console.log(システムトレイ: ${featureStates.systemTray});`
-- `ui/windows/desktop-features.js:91`  `featureStates.systemTray ? "表示" : "非表示"`
+- `ui/windows/desktop-features.js:5` `systemTray: false,`
+- `ui/windows/desktop-features.js:20` `if (tray) tray.textContent = featureStates.systemTray ? "ON" : "OFF";`
+- `ui/windows/desktop-features.js:85` `featureStates.systemTray = !featureStates.systemTray;`
+- `ui/windows/desktop-features.js:86` `console.log(システムトレイ: ${featureStates.systemTray});`
+- `ui/windows/desktop-features.js:91` `featureStates.systemTray ? "表示" : "非表示"`

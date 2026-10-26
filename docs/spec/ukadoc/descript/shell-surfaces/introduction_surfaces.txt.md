@@ -9,10 +9,11 @@
 surface-parser.js / surface-animation-manager.js に該当の解析・処理は確認できない。
 
 ## 実装箇所
+
 - `crates/ui/src/surfaces.rs` （Rust 版 surfaces.txt パーサー：Element / Collision / SERIKO / Alias / append の解析）
 
 - `ui/js/surface/surface-parser.js:2` (コメント) `* surfaces.txt パーサーモジュール`
 - `ui/js/surface/surface-parser.js:58` (コメント) `* surfaces.txt をパースして collisions, elements, animations を抽出`
 - `ui/js/surface/surface.js:17` (コメント) `* Nanai Android Mascot - surfaces.txt パーサー & 当たり判定（Collision）マネージャー`
 - `ui/js/surface/surface.js:52` (コメント) `* ゴーストの surfaces.txt を読み込んでパース`
-- `ui/js/surface/surface.js:62`  `const surfacesPath = ${basePath}/surfaces.txt;`
+- `ui/js/surface/surface.js:62` `const surfacesPath = ${basePath}/surfaces.txt;`

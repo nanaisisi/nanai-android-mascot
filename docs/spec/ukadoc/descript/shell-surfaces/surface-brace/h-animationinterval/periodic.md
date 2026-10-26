@@ -11,4 +11,4 @@ surface-animation-manager.js で interval 種別として処理している。
 ## 実装箇所
 
 - `ui/js/surface/surface-animation-manager.js:62` (コメント) `// periodic,秒: 指定秒数間隔で定期再生`
-- `ui/js/surface/surface-animation-manager.js:63`  `if (intervalStr.startsWith("periodic")) {`
+- `ui/js/surface/surface-animation-manager.js:63` `if (intervalStr.startsWith("periodic")) {`

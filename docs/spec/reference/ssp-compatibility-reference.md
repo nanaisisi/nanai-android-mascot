@@ -53,11 +53,11 @@ flowchart TD
 
 SSP 標準の配置構造との互換性を確保しつつ、Git リポジトリ汚染を防ぐアセット分離仕様です（詳細は [ghost-import-and-asset-separation-spec.md](../ghost/ghost-import-and-asset-separation-spec.md) 参照）。
 
-| ディレクトリ | SSP 標準の役割 | Nanai 実装仕様 | Git 管理ポリシー |
-| :-: | :--- | :--- | :--- |
-| `assets/ghost/` | ゴースト格納ディレクトリ (`ghost/`) | 各ゴースト (`ghost/master/`, `shell/master/`) を配置 | `mock_nanai` のみ追跡。導入ゴーストは Git 除外 |
-| `assets/balloon/` | バルーン格納ディレクトリ (`balloon/`) | 吹き出しスキン (`descript.txt`, 画像アセット) を配置 | `default` のみ追跡。追加バルーンは Git 除外 |
-| `userData/` | ユーザー設定・セーブデータ (`data/`) | 設定・セーブデータ・一時インポートファイル | 完全除外（ローカル専用データ領域） |
+|   ディレクトリ    | SSP 標準の役割                        | Nanai 実装仕様                                       | Git 管理ポリシー                               |
+| :---------------: | :------------------------------------ | :--------------------------------------------------- | :--------------------------------------------- |
+|  `assets/ghost/`  | ゴースト格納ディレクトリ (`ghost/`)   | 各ゴースト (`ghost/master/`, `shell/master/`) を配置 | `mock_nanai` のみ追跡。導入ゴーストは Git 除外 |
+| `assets/balloon/` | バルーン格納ディレクトリ (`balloon/`) | 吹き出しスキン (`descript.txt`, 画像アセット) を配置 | `default` のみ追跡。追加バルーンは Git 除外    |
+|    `userData/`    | ユーザー設定・セーブデータ (`data/`)  | 設定・セーブデータ・一時インポートファイル           | 完全除外（ローカル専用データ領域）             |
 
 ---
 
@@ -65,29 +65,29 @@ SSP 標準の配置構造との互換性を確保しつつ、Git リポジトリ
 
 SSP の標準右クリックメニュー（`howto/rclick.md`）に対する、本プロジェクトでの対応状況およびモバイル向け再設計。
 
-| # | SSP 標準メニュー項目 | サブキャラ表示 | 本プロジェクト（Nanai）実装仕様 | モバイル（Android）適応方針 |
-| :-: | :--- | :-: | :--- | :--- |
-| **1** | おすすめ | ◯ | [ui-and-menu-spec.md](../../design/ui/ui-and-menu-spec.md) にてブラウザ起動連携 | Android 標準インテント (`ACTION_VIEW`) でブラウザ起動 |
-| **2** | ポータルサイト | - | ゴースト/シェル作者サイトへの URL 起動 | 同上 |
-| **3** | ネットワーク更新 | - | `updates2.dau` / `updates.txt` によるオンライン差分取得 | Wi-Fi 接続時更新・バックグラウンド更新 |
-| **4** | アンインストール (Vanish) | - | ゴーストディレクトリ削除ダイアログ | アプリ内部データ領域からの安全な削除 |
-| **5** | RSS/ヘッドライン | - | ヘッドラインセンサ（Plugin）連携 | Web 標準 Fetch による RSS/Atom リーダーシム |
-| **6** | プラグイン | - | JS / WASM プラグイン一覧実行 ([wasm-and-plugin-extensibility.md](../platform/wasm-and-plugin-extensibility.md)) | サンドボックス内 WebExtension 型プラグイン |
-| **7** | メールチェック | - | POP3 メール着信確認 | 将来拡張（優先度: Low） |
-| **8** | シェル倍率 | - | **50% / 75% / 100% / 125% / 150% / 200%** | ピンチイン/アウト操作およびスライダー調整 |
-| **9** | 機能 | - | サブメニュー展開（カレンダー、バックログ等） | モーダルパネル形式での一覧展開 |
-| **10** | 設定 | - | 本体設定ダイアログ | タブ形式のモダン設定モーダル |
-| **11** | ゴースト切り替え | - | インストール済みゴースト一覧選択 | カルセール／カード選択 UI |
-| **12** | 他のゴーストを呼ぶ | - | 複数ゴースト同時召喚（マルチゴースト） | 単一透過レイヤー内での多体配置（Phase 3） |
-| **13** | シェル | - | インストール済み着せ替えシェルの切替 | シェルプレビュー付き切替シート |
-| **14** | 着せ替え | ◯ | surfaces `bind` オプションのパーツ単位トグル | チェックボックス付きアパレル選択パネル |
-| **15** | バルーン | - | スタイル（吹き出し）の切替 | 吹き出しテーマ選択 |
-| **16** | 最近使ったもの | - | 履歴スタック（ゴースト・バルーン） | 最近使ったゴーストへのクイックアクセス |
-| **17** | 情報 | - | SSP / ゴーストクレジット情報表示 | アプリバージョン & クレジットダイアログ |
-| **18** | アイコン化 | - | 最小化・タスクトレイ格納 | **画面端スナップ（ドッキング）** / 通知領域退避 |
-| **19** | Language | - | UI 言語切替（日本語 / 英語） | OS 言語自動追従 + 手動切替 |
-| **20** | 終了 | ◯ | 対象ゴーストのクローズ処理 (`OnClose`) | 個別終了 |
-| **21** | 全て終了 | ◯ | アプリケーション全体の完全終了 | 常駐サービス停止 & プロセス終了 |
+|   #    | SSP 標準メニュー項目      | サブキャラ表示 | 本プロジェクト（Nanai）実装仕様                                                                                 | モバイル（Android）適応方針                           |
+| :----: | :------------------------ | :------------: | :-------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------- |
+| **1**  | おすすめ                  |       ◯        | [ui-and-menu-spec.md](../../design/ui/ui-and-menu-spec.md) にてブラウザ起動連携                                 | Android 標準インテント (`ACTION_VIEW`) でブラウザ起動 |
+| **2**  | ポータルサイト            |       -        | ゴースト/シェル作者サイトへの URL 起動                                                                          | 同上                                                  |
+| **3**  | ネットワーク更新          |       -        | `updates2.dau` / `updates.txt` によるオンライン差分取得                                                         | Wi-Fi 接続時更新・バックグラウンド更新                |
+| **4**  | アンインストール (Vanish) |       -        | ゴーストディレクトリ削除ダイアログ                                                                              | アプリ内部データ領域からの安全な削除                  |
+| **5**  | RSS/ヘッドライン          |       -        | ヘッドラインセンサ（Plugin）連携                                                                                | Web 標準 Fetch による RSS/Atom リーダーシム           |
+| **6**  | プラグイン                |       -        | JS / WASM プラグイン一覧実行 ([wasm-and-plugin-extensibility.md](../platform/wasm-and-plugin-extensibility.md)) | サンドボックス内 WebExtension 型プラグイン            |
+| **7**  | メールチェック            |       -        | POP3 メール着信確認                                                                                             | 将来拡張（優先度: Low）                               |
+| **8**  | シェル倍率                |       -        | **50% / 75% / 100% / 125% / 150% / 200%**                                                                       | ピンチイン/アウト操作およびスライダー調整             |
+| **9**  | 機能                      |       -        | サブメニュー展開（カレンダー、バックログ等）                                                                    | モーダルパネル形式での一覧展開                        |
+| **10** | 設定                      |       -        | 本体設定ダイアログ                                                                                              | タブ形式のモダン設定モーダル                          |
+| **11** | ゴースト切り替え          |       -        | インストール済みゴースト一覧選択                                                                                | カルセール／カード選択 UI                             |
+| **12** | 他のゴーストを呼ぶ        |       -        | 複数ゴースト同時召喚（マルチゴースト）                                                                          | 単一透過レイヤー内での多体配置（Phase 3）             |
+| **13** | シェル                    |       -        | インストール済み着せ替えシェルの切替                                                                            | シェルプレビュー付き切替シート                        |
+| **14** | 着せ替え                  |       ◯        | surfaces `bind` オプションのパーツ単位トグル                                                                    | チェックボックス付きアパレル選択パネル                |
+| **15** | バルーン                  |       -        | スタイル（吹き出し）の切替                                                                                      | 吹き出しテーマ選択                                    |
+| **16** | 最近使ったもの            |       -        | 履歴スタック（ゴースト・バルーン）                                                                              | 最近使ったゴーストへのクイックアクセス                |
+| **17** | 情報                      |       -        | SSP / ゴーストクレジット情報表示                                                                                | アプリバージョン & クレジットダイアログ               |
+| **18** | アイコン化                |       -        | 最小化・タスクトレイ格納                                                                                        | **画面端スナップ（ドッキング）** / 通知領域退避       |
+| **19** | Language                  |       -        | UI 言語切替（日本語 / 英語）                                                                                    | OS 言語自動追従 + 手動切替                            |
+| **20** | 終了                      |       ◯        | 対象ゴーストのクローズ処理 (`OnClose`)                                                                          | 個別終了                                              |
+| **21** | 全て終了                  |       ◯        | アプリケーション全体の完全終了                                                                                  | 常駐サービス停止 & プロセス終了                       |
 
 ---
 
@@ -135,12 +135,12 @@ SSP の設定ダイアログ群（`config/index.md`）に対応する設定マ�
 
 ## 5. SHIORI / さくらスクリプト / サーフィス互換基準
 
-| 規格 | 参照公式仕様 (ukadoc-spec) | Nanai 実装仕様書 | 互換目標 |
-| :--- | :--- | :--- | :--- |
-| **SHIORI/3.0** | [spec/shiori3 (UKADOC)](https://ssp.shillest.net/ukadoc/manual/spec_shiori3.html) | [shiori-integration.md](../shiori-script/shiori-integration.md) | 100% (Event & Response ヘッダ完全準拠) |
-| **SakuraScript** | [list/sakura-script (UKADOC)](https://ssp.shillest.net/ukadoc/manual/spec_sakura_script.html) | [sakura-script-and-balloon-spec.md](../shiori-script/sakura-script-and-balloon-spec.md) | `\0`, `\1`, `\s`, `\w`, `\q`, `\n`, `\c`, `\e` 等主要タグ完全対応 |
-| **surfaces.txt** | [descript/shell-surfaces (UKADOC)](https://ssp.shillest.net/ukadoc/manual/descript_surfaces.html) | [surfaces-and-collision-spec.md](../ghost/surfaces-and-collision-spec.md) | Canvas 2D レイヤー合成、アニメーション、Collision 判定 |
-| **descript.txt** | [descript/ghost (UKADOC)](https://ssp.shillest.net/ukadoc/manual/descript_ghost.html) | [encoding-and-vfs-spec.md](../platform/encoding-and-vfs-spec.md) | Shift_JIS/UTF-8 自動判別、定義パース |
+| 規格             | 参照公式仕様 (ukadoc-spec)                                                                        | Nanai 実装仕様書                                                                        | 互換目標                                                          |
+| :--------------- | :------------------------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------- | :---------------------------------------------------------------- |
+| **SHIORI/3.0**   | [spec/shiori3 (UKADOC)](https://ssp.shillest.net/ukadoc/manual/spec_shiori3.html)                 | [shiori-integration.md](../shiori-script/shiori-integration.md)                         | 100% (Event & Response ヘッダ完全準拠)                            |
+| **SakuraScript** | [list/sakura-script (UKADOC)](https://ssp.shillest.net/ukadoc/manual/spec_sakura_script.html)     | [sakura-script-and-balloon-spec.md](../shiori-script/sakura-script-and-balloon-spec.md) | `\0`, `\1`, `\s`, `\w`, `\q`, `\n`, `\c`, `\e` 等主要タグ完全対応 |
+| **surfaces.txt** | [descript/shell-surfaces (UKADOC)](https://ssp.shillest.net/ukadoc/manual/descript_surfaces.html) | [surfaces-and-collision-spec.md](../ghost/surfaces-and-collision-spec.md)               | Canvas 2D レイヤー合成、アニメーション、Collision 判定            |
+| **descript.txt** | [descript/ghost (UKADOC)](https://ssp.shillest.net/ukadoc/manual/descript_ghost.html)             | [encoding-and-vfs-spec.md](../platform/encoding-and-vfs-spec.md)                        | Shift_JIS/UTF-8 自動判別、定義パース                              |
 
 ---
 

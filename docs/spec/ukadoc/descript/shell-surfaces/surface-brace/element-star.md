@@ -9,10 +9,11 @@
 surface-parser.js が解析 (パターン種別など) するが、描画への反映は個別未確認。
 
 ## 実装箇所
+
 - `crates/ui/src/surfaces.rs` （Rust 版 surfaces.txt パーサー：Element / Collision / SERIKO / Alias / append の解析）
 
 - `ui/js/surface/surface-parser.js:58` (コメント) `* surfaces.txt をパースして collisions, elements, animations を抽出`
 - `ui/js/surface/surface-parser.js:60` (コメント) `* @returns {{ collisions: Record<string, CollisionArea[]>, elements: Record<string, Surfac`
-- `ui/js/surface/surface-parser.js:64`  `const elements = {};`
-- `ui/js/surface/surface-parser.js:115`  `} else if (trimmed.startsWith("element")) {`
-- `ui/js/surface/surface-parser.js:124`  `if (!elements[s]) elements[s] = [];`
+- `ui/js/surface/surface-parser.js:64` `const elements = {};`
+- `ui/js/surface/surface-parser.js:115` `} else if (trimmed.startsWith("element")) {`
+- `ui/js/surface/surface-parser.js:124` `if (!elements[s]) elements[s] = [];`

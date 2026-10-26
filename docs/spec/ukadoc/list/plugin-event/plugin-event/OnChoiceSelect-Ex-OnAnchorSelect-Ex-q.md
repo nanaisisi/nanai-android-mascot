@@ -10,6 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/sakura-script.js:297`  `await this.app.ghostController.sendShioriEvent("OnChoiceSelect", [`
-- `ui/js/core/app-actions.js:23`  `recommend: ["OnChoiceSelect", ["recommendlink"]],`
-- `ui/js/core/app-actions.js:24`  `portal: ["OnChoiceSelect", ["portal"]],`
+- `ui/js/ghost/sakura-script.js:297` `await this.app.ghostController.sendShioriEvent("OnChoiceSelect", [`
+- `ui/js/core/app-actions.js:23` `recommend: ["OnChoiceSelect", ["recommendlink"]],`
+- `ui/js/core/app-actions.js:24` `portal: ["OnChoiceSelect", ["portal"]],`

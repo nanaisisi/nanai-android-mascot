@@ -10,6 +10,6 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 
 ## 実装箇所
 
-- `ui/js/core/app-settings.js:62`  `this.ghostController.sendShioriEvent("OnWindowStateRestore");`
+- `ui/js/core/app-settings.js:62` `this.ghostController.sendShioriEvent("OnWindowStateRestore");`
 - `src-tauri/src/shiori/ffi.rs:255` (コメント) `/// OnWindowStateRestoreイベントのリクエストを作成`
-- `src-tauri/src/shiori/ffi.rs:259`  `.header("Event", "OnWindowStateRestore")`
+- `src-tauri/src/shiori/ffi.rs:259` `.header("Event", "OnWindowStateRestore")`

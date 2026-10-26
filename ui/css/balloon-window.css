@@ -2,76 +2,78 @@
    Nanai Android Mascot - 独立バルーンウィンドウ専用スタイル
    ==================================================== */
 
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  overflow: hidden;
-  user-select: none;
-  -webkit-user-select: none;
+html,
+body {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	background: transparent;
+	overflow: hidden;
+	user-select: none;
+	-webkit-user-select: none;
 }
 
 .balloon-window-container {
-  padding: 8px;
-  box-sizing: border-box;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: flex-start;
+	padding: 8px;
+	box-sizing: border-box;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: flex-start;
 }
 
 .balloon {
-  background-color: var(--balloon-bg, #f9f9f9);
-  background-image: var(--balloon-pattern, none);
-  border-radius: var(--balloon-border-radius, 6px);
-  border: var(--balloon-border-width, 1px) var(--balloon-border-style, solid) var(--balloon-border-color, #7a7a7a);
-  box-shadow: var(--balloon-box-shadow, 2px 2px 8px rgba(0, 0, 0, 0.35));
-  padding: 10px 14px;
-  box-sizing: border-box;
-  width: 100%;
-  min-height: 80px;
-  max-height: 100%;
-  overflow-y: auto;
-  font-family: var(--balloon-font-family, sans-serif);
-  color: var(--balloon-text-color, #111111);
-  word-break: break-word;
-  cursor: grab;
+	background-color: var(--balloon-bg, #f9f9f9);
+	background-image: var(--balloon-pattern, none);
+	border-radius: var(--balloon-border-radius, 6px);
+	border: var(--balloon-border-width, 1px) var(--balloon-border-style, solid)
+		var(--balloon-border-color, #7a7a7a);
+	box-shadow: var(--balloon-box-shadow, 2px 2px 8px rgba(0, 0, 0, 0.35));
+	padding: 10px 14px;
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 80px;
+	max-height: 100%;
+	overflow-y: auto;
+	font-family: var(--balloon-font-family, sans-serif);
+	color: var(--balloon-text-color, #111111);
+	word-break: break-word;
+	cursor: grab;
 }
 
 .balloon:active {
-  cursor: grabbing;
+	cursor: grabbing;
 }
 
 .balloon-text {
-  color: var(--balloon-text-color, #111111);
-  font-size: var(--balloon-font-size, 0.85rem);
-  line-height: 1.5;
-  margin: 0;
+	color: var(--balloon-text-color, #111111);
+	font-size: var(--balloon-font-size, 0.85rem);
+	line-height: 1.5;
+	margin: 0;
 }
 
 .balloon-choice-btn {
-  display: inline-block;
-  margin-top: 6px;
-  margin-right: 4px;
-  padding: 4px 10px;
-  font-size: 0.8rem;
-  color: #0078d7;
-  background: rgba(0, 120, 215, 0.08);
-  border: 1px solid rgba(0, 120, 215, 0.3);
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.15s ease;
+	display: inline-block;
+	margin-top: 6px;
+	margin-right: 4px;
+	padding: 4px 10px;
+	font-size: 0.8rem;
+	color: #0078d7;
+	background: rgba(0, 120, 215, 0.08);
+	border: 1px solid rgba(0, 120, 215, 0.3);
+	border-radius: 4px;
+	cursor: pointer;
+	transition: all 0.15s ease;
 }
 
 .balloon-choice-btn:hover {
-  background: #0078d7;
-  color: #ffffff;
+	background: #0078d7;
+	color: #ffffff;
 }
 
 .balloon-anchor {
-  color: var(--balloon-highlight-bg, #0078d7);
-  text-decoration: underline;
-  cursor: pointer;
+	color: var(--balloon-highlight-bg, #0078d7);
+	text-decoration: underline;
+	cursor: pointer;
 }

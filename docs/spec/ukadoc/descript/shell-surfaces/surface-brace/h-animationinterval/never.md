@@ -10,4 +10,4 @@ surface-animation-manager.js で interval 種別として処理している。
 
 ## 実装箇所
 
-- `ui/js/surface/surface-animation-manager.js:99`  `intervalStr === "never" ||`
+- `ui/js/surface/surface-animation-manager.js:99` `intervalStr === "never" ||`

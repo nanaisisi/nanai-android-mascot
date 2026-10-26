@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/ffi.rs:240`  `pub fn on_minute_change() -> Self {`
+- `src-tauri/src/shiori/ffi.rs:240` `pub fn on_minute_change() -> Self {`

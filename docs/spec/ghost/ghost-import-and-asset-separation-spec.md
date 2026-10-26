@@ -78,11 +78,11 @@ imported_ghosts/
 
 本設計におけるアセット配置および除外ルールは、デスクトップ版基準実装である **SSP の標準階層構造と完全に整合** しています。
 
-| ディレクトリ | SSP 標準の役割 | Nanai 実装仕様 | Git 管理ポリシー |
-| :--- | :--- | :--- | :--- |
-| `assets/ghost/` | ゴースト格納ディレクトリ (`ghost/`) | 各ゴースト (`ghost/master/`, `shell/master/`) を格納 | `mock_nanai` のみ管理対象。取り込んだ外部ゴーストは除外 |
-| `assets/balloon/` | バルーン格納ディレクトリ (`balloon/`) | 吹き出しスキン (`descript.txt`, スキン画像) を格納 | `default` のみ管理対象。追加バルーンは除外 |
-| `userData/` | ユーザー設定・セーブデータ (`data/`) | 各種設定値、履歴、インポート一時領域 | 完全除外（ローカル専用データ） |
+| ディレクトリ      | SSP 標準の役割                        | Nanai 実装仕様                                       | Git 管理ポリシー                                        |
+| :---------------- | :------------------------------------ | :--------------------------------------------------- | :------------------------------------------------------ |
+| `assets/ghost/`   | ゴースト格納ディレクトリ (`ghost/`)   | 各ゴースト (`ghost/master/`, `shell/master/`) を格納 | `mock_nanai` のみ管理対象。取り込んだ外部ゴーストは除外 |
+| `assets/balloon/` | バルーン格納ディレクトリ (`balloon/`) | 吹き出しスキン (`descript.txt`, スキン画像) を格納   | `default` のみ管理対象。追加バルーンは除外              |
+| `userData/`       | ユーザー設定・セーブデータ (`data/`)  | 各種設定値、履歴、インポート一時領域                 | 完全除外（ローカル専用データ）                          |
 
 #### 整合によるメリット
 
@@ -99,12 +99,12 @@ imported_ghosts/
 
 ### 3.1 撤廃対象と移行後動作一覧
 
-| ファイル | 廃止する埋め込みコード | 移行後の正規動作 |
-| :--- | :--- | :--- |
-| **`src/js/ghost.js`** | `triggerRandomTalk()` 内の固定セリフ配列 (`const talks = [...]`) | SHIORI へ `OnSecondChange` / `OnRandomTalk` を通知し、SHIORI から返却されたスクリプトを再生。返却なし時は無音維持。 |
-| **`src/js/ghost.js`** | `sendShioriEvent()` 内の `if (!isTauriAvailable())` モック分岐 | SHIORI コアへ透過的にリクエストを送信。未ロード時・無応答時は何も喋らない（余計なモック文字列を差し込まない）。 |
-| **`src/js/surface.js`** | デフォルト当たり判定 (`collisions.default: [head, face, body]`) | `surfaces.txt` をパースした結果のみを登録。未定義の場合は判定なし（または全体タップ）。 |
-| **`src-tauri/src/lib.rs`** | `send_shiori_request` 内の `match event_id { "OnBoot" => ... }` | 組み込み文字列を廃止。SHIORI（WASM / DLL）へ中継し、SHIORI 未実装・未接続時は `311 No Content` を返却。 |
+| ファイル                   | 廃止する埋め込みコード                                           | 移行後の正規動作                                                                                                    |
+| :------------------------- | :--------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------ |
+| **`src/js/ghost.js`**      | `triggerRandomTalk()` 内の固定セリフ配列 (`const talks = [...]`) | SHIORI へ `OnSecondChange` / `OnRandomTalk` を通知し、SHIORI から返却されたスクリプトを再生。返却なし時は無音維持。 |
+| **`src/js/ghost.js`**      | `sendShioriEvent()` 内の `if (!isTauriAvailable())` モック分岐   | SHIORI コアへ透過的にリクエストを送信。未ロード時・無応答時は何も喋らない（余計なモック文字列を差し込まない）。     |
+| **`src/js/surface.js`**    | デフォルト当たり判定 (`collisions.default: [head, face, body]`)  | `surfaces.txt` をパースした結果のみを登録。未定義の場合は判定なし（または全体タップ）。                             |
+| **`src-tauri/src/lib.rs`** | `send_shiori_request` 内の `match event_id { "OnBoot" => ... }`  | 組み込み文字列を廃止。SHIORI（WASM / DLL）へ中継し、SHIORI 未実装・未接続時は `311 No Content` を返却。             |
 
 ### 3.2 SHIORI 通信の純粋化
 
@@ -172,9 +172,9 @@ sequenceDiagram
 
 ## 5. 実装ロードマップ
 
-| フェーズ | 作業内容 | 対象成果物 |
-| :--- | :--- | :--- |
-| **Phase 1** | **Git 管理除外の適用**<br>・`.gitignore` の更新<br>・不要なローカルゴースト追跡の解除 | [.gitignore](../../../.gitignore) |
+| フェーズ    | 作業内容                                                                                                                                                            | 対象成果物                                                                                                                              |
+| :---------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------- |
+| **Phase 1** | **Git 管理除外の適用**<br>・`.gitignore` の更新<br>・不要なローカルゴースト追跡の解除                                                                               | [.gitignore](../../../.gitignore)                                                                                                       |
 | **Phase 2** | **埋め込みハードコードの廃止**<br>・`src/js/ghost.js` の固定セリフ・モック撤廃<br>・`src/js/surface.js` の固定判定撤廃<br>・`src-tauri/src/lib.rs` の固定文字列撤廃 | [ghost.js](../../../ui/js/ghost/ghost.js)<br>[surface.js](../../../ui/js/surface/surface.js)<br>[lib.rs](../../../src-tauri/src/lib.rs) |
-| **Phase 3** | **ゴースト取り込みバックエンド実装**<br>・`zip` クレート導入<br>・`install_ghost_archive` Tauriコマンド実装 | [Cargo.toml](../../../src-tauri/Cargo.toml)<br>[lib.rs](../../../src-tauri/src/lib.rs) |
-| **Phase 4** | **ゴースト取り込み UI 実装**<br>・モーダルに「ゴースト取り込み (.nar/.zip)」UI追加<br>・D&D対応と自動再読み込み接続 | [index.html](../../../ui/index.html)<br>[modal.js](../../../ui/js/ui/modal.js) |
+| **Phase 3** | **ゴースト取り込みバックエンド実装**<br>・`zip` クレート導入<br>・`install_ghost_archive` Tauriコマンド実装                                                         | [Cargo.toml](../../../src-tauri/Cargo.toml)<br>[lib.rs](../../../src-tauri/src/lib.rs)                                                  |
+| **Phase 4** | **ゴースト取り込み UI 実装**<br>・モーダルに「ゴースト取り込み (.nar/.zip)」UI追加<br>・D&D対応と自動再読み込み接続                                                 | [index.html](../../../ui/index.html)<br>[modal.js](../../../ui/js/ui/modal.js)                                                          |

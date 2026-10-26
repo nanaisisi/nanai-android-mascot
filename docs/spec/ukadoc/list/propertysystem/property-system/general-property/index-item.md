@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-protocol.js:19`  `references.forEach((ref, index) => {`
-- `ui/js/ghost/shiori-protocol.js:21`  `req += Reference${index}: ${ref}\r\n;`
-- `ui/js/ghost/shiori-protocol.js:64`  `const colonIdx = line.indexOf(":");`
-- `ui/js/ghost/ghost.js:94`  `const indexA = historyOrder.indexOf(a.name);`
-- `ui/js/ghost/ghost.js:95`  `const indexB = historyOrder.indexOf(b.name);`
+- `ui/js/ghost/shiori-protocol.js:19` `references.forEach((ref, index) => {`
+- `ui/js/ghost/shiori-protocol.js:21` `req += Reference${index}: ${ref}\r\n;`
+- `ui/js/ghost/shiori-protocol.js:64` `const colonIdx = line.indexOf(":");`
+- `ui/js/ghost/ghost.js:94` `const indexA = historyOrder.indexOf(a.name);`
+- `ui/js/ghost/ghost.js:95` `const indexB = historyOrder.indexOf(b.name);`

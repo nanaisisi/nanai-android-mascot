@@ -9,10 +9,11 @@
 surface-parser.js / surface-animation-manager.js に該当の解析・処理は確認できない。
 
 ## 実装箇所
+
 - `crates/ui/src/surfacetable.rs` （Rust 版 surfacetable.txt パーサー：charset / version / scope / option / group / サーフィスID・名前 解析）
 
-- `src-tauri/src/commands/window/menu_window.rs:10`  `scope: Option<i32>,`
-- `src-tauri/src/commands/window/menu_window.rs:15`  `let menu_scope = scope.unwrap_or(0);`
-- `src-tauri/src/commands/window/menu_window.rs:18`  `let win_height = if menu_scope > 0 { 420.0 } else { 540.0 };`
-- `src-tauri/src/commands/window/menu_window.rs:49`  `let _ = menu_win.emit("sync-menu-scope", menu_scope);`
-- `src-tauri/src/commands/window/menu_window.rs:54`  `tauri::WebviewUrl::App(format!("menu-iframe.html?scope={}", menu_scope).into()),`
+- `src-tauri/src/commands/window/menu_window.rs:10` `scope: Option<i32>,`
+- `src-tauri/src/commands/window/menu_window.rs:15` `let menu_scope = scope.unwrap_or(0);`
+- `src-tauri/src/commands/window/menu_window.rs:18` `let win_height = if menu_scope > 0 { 420.0 } else { 540.0 };`
+- `src-tauri/src/commands/window/menu_window.rs:49` `let _ = menu_win.emit("sync-menu-scope", menu_scope);`
+- `src-tauri/src/commands/window/menu_window.rs:54` `tauri::WebviewUrl::App(format!("menu-iframe.html?scope={}", menu_scope).into()),`

@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/ui/templates/ghost-templates.js:20`  `<input type="file" id="ghost-archive-input" accept=".nar,.zip" style="flex: 1 1 180px; min`
-- `ui/js/ui/templates/ghost-templates.js:62`  `<input type="file" id="modal-install-file-input" accept=".nar,.zip" style="flex: 1 1 200px`
+- `ui/js/ui/templates/ghost-templates.js:20` `<input type="file" id="ghost-archive-input" accept=".nar,.zip" style="flex: 1 1 180px; min`
+- `ui/js/ui/templates/ghost-templates.js:62` `<input type="file" id="modal-install-file-input" accept=".nar,.zip" style="flex: 1 1 200px`

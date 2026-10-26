@@ -1,109 +1,111 @@
 body {
-  margin: 0;
-  padding: 0;
-  background: transparent;
-  font-family: Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+	background: transparent;
+	font-family: Arial, sans-serif;
 }
 
 .menu-container {
-  position: fixed;
-  top: clamp(0.5rem, 2vh, 1rem);
-  right: clamp(0.5rem, 2vw, 1rem);
-  z-index: 99999;
+	position: fixed;
+	top: clamp(0.5rem, 2vh, 1rem);
+	right: clamp(0.5rem, 2vw, 1rem);
+	z-index: 99999;
 }
 
 .menu-btn {
-  width: 3.125rem;
-  height: 3.125rem;
-  background: white;
-  border: 2px solid #333;
-  border-radius: 50%;
-  font-size: 1.25rem;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.3);
-  transition: transform 0.2s, background-color 0.2s;
+	width: 3.125rem;
+	height: 3.125rem;
+	background: white;
+	border: 2px solid #333;
+	border-radius: 50%;
+	font-size: 1.25rem;
+	font-weight: bold;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.3);
+	transition:
+		transform 0.2s,
+		background-color 0.2s;
 }
 
 .menu-btn:hover {
-  background: #f0f0f0;
-  transform: scale(1.1);
+	background: #f0f0f0;
+	transform: scale(1.1);
 }
 
 .menu-dropdown {
-  position: absolute;
-  top: 3.75rem;
-  right: 0;
-  background: white;
-  border: 2px solid #333;
-  border-radius: 0.5rem;
-  min-width: clamp(10rem, 40vw, 15rem);
-  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.4);
-  display: none;
+	position: absolute;
+	top: 3.75rem;
+	right: 0;
+	background: white;
+	border: 2px solid #333;
+	border-radius: 0.5rem;
+	min-width: clamp(10rem, 40vw, 15rem);
+	box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.4);
+	display: none;
 }
 
 .menu-dropdown.show {
-  display: block;
+	display: block;
 }
 
 .menu-item {
-  display: block;
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: none;
-  background: none;
-  text-align: left;
-  cursor: pointer;
-  font-size: 0.875rem;
-  border-bottom: 1px solid #eee;
-  box-sizing: border-box;
+	display: block;
+	width: 100%;
+	padding: 0.75rem 1rem;
+	border: none;
+	background: none;
+	text-align: left;
+	cursor: pointer;
+	font-size: 0.875rem;
+	border-bottom: 1px solid #eee;
+	box-sizing: border-box;
 }
 
 .menu-item:hover {
-  background: #f0f0f0;
+	background: #f0f0f0;
 }
 
 .menu-item:last-child {
-  border-bottom: none;
+	border-bottom: none;
 }
 
 .modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 100000;
-  backdrop-filter: blur(0.25rem);
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.5);
+	display: none;
+	align-items: center;
+	justify-content: center;
+	z-index: 100000;
+	backdrop-filter: blur(0.25rem);
 }
 
 .modal.show {
-  display: flex;
+	display: flex;
 }
 
 .modal-content {
-  background: white;
-  padding: clamp(1rem, 3vw, 1.5rem);
-  border-radius: 0.5rem;
-  max-width: clamp(17.5rem, 90vw, 31.25rem);
-  width: 90%;
-  position: relative;
-  box-sizing: border-box;
+	background: white;
+	padding: clamp(1rem, 3vw, 1.5rem);
+	border-radius: 0.5rem;
+	max-width: clamp(17.5rem, 90vw, 31.25rem);
+	width: 90%;
+	position: relative;
+	box-sizing: border-box;
 }
 
 .close-btn {
-  position: absolute;
-  top: 0.625rem;
-  right: 0.9375rem;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
+	position: absolute;
+	top: 0.625rem;
+	right: 0.9375rem;
+	background: none;
+	border: none;
+	font-size: 1.5rem;
+	cursor: pointer;
 }

@@ -112,10 +112,10 @@ Android の Scoped Storage（外部ストレージ制限）や将来のブラウ
 ```typescript
 // メモリ VFS インターフェース
 export interface VirtualFileSystem {
-  readFile(path: string): Uint8Array | null;
-  readTextFile(path: string, defaultCharset?: string): string | null;
-  exists(path: string): boolean;
-  listDir(dirPath: string): string[];
+	readFile(path: string): Uint8Array | null;
+	readTextFile(path: string, defaultCharset?: string): string | null;
+	exists(path: string): boolean;
+	listDir(dirPath: string): string[];
 }
 ```
 

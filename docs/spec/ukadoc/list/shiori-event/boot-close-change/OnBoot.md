@@ -2,11 +2,11 @@
 
 - **規格**: [OnBoot.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/boot-close-change/OnBoot/) (ukadoc-spec/list/shiori-event/boot-close-change/OnBoot.md)
 - **検索語**: OnBoot
-- **対応状況**: 🔎 コード上に出現(処理の有無は要読解)
+- **対応状況**: ✅ 実装済(SHIORIへ送信)
 
 ## 突合結果
 
-実装コードに「OnBoot」が出現。実際の処理内容は未精査。
+UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装箇所を参照)。
 
 ## 実装箇所
 

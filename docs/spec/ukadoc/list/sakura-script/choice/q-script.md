@@ -2,8 +2,8 @@
 
 - **規格**: [q-script.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/choice/q-script/) (ukadoc-spec/list/sakura-script/choice/q-script.md)
 - **検索語**: \q
-- **対応状況**: ❓ 要確認
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
-実装コードに「\q」が出現。実際の処理内容は未精査(短いトークンのため誤検出の可能性大)。
+基本形 (ID/テキスト) のみ処理し、この拡張形式 (複数ID / OnID / script: / 追加参照) は未対応。

@@ -1,6 +1,8 @@
+﻿use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
 
-/// シェル descript の `[target].defaultx/y/left/top`（基準位置）#[derive(Debug, Clone, Default)]
+/// シェル descript の `[target].defaultx/y/left/top`（基準位置）
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct CharDefaults {
     pub x: Option<i32>,
     pub y: Option<i32>,
@@ -9,7 +11,7 @@ pub struct CharDefaults {
 }
 
 /// `[target].bindoption.group`（着せ替え選択の挙動設定）
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct BindOptionGroup {
     /// メニューに表示するカテゴリ名
     pub category: String,
@@ -17,7 +19,7 @@ pub struct BindOptionGroup {
     pub options: Vec<String>,
 }
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 /// `[target].bindgroup[N]` の着せ替えパーツ定義
 pub struct BindGroup {
     /// 対応する SHEIKO アニメーションID（着せ替え番号）
@@ -54,7 +56,7 @@ fn expand_ids(value: &str) -> Vec<u32> {
 }
 
 /// `descript.txt` のパース結果を保持する構造体
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct Descript {
     pub properties: HashMap<String, String>,
 }

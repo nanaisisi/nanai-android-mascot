@@ -1,15 +1,16 @@
-//! `surfaces.txt` パーサー（ukadoc-spec / descript / shell-surfaces 準拠）
+﻿//! `surfaces.txt` パーサー（ukadoc-spec / descript / shell-surfaces 準拠）
 //!
 //! シェルのサーフィス定義（Element 描画 / SERIKO アニメーション / Collision 当たり判定 /
 //! Alias・範囲指定・surface.append マージ）を Rust 構造体群へとパースする。
 //! パーサーはテキスト評価のみを担当し、描画・アニメーション再生は UI 実装側が行う。
 
+use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
 // ---------------------------------------------------------------- 描画メソッド
 
 /// `element[N]` / `animation[N].pattern[K]` の第1パラメータ（描画メソッド）
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum DrawMethod {
     /// `base`：下地として描画する
     Base,
@@ -54,7 +55,7 @@ impl DrawMethod {
 // ---------------------------------------------------------------- SERIKO インターバル
 
 /// `animation[N].interval` の種別（ukadoc: h-animationinterval 系）
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Interval {
     /// `always`：常時ループ
     Always,
@@ -115,7 +116,7 @@ impl Interval {
 // ---------------------------------------------------------------- 当たり判定
 
 /// collision の形状（`rect` 固定5点 / `polygon` 多角形）
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum CollisionShape {
     /// 矩形（始点X, 始点Y, 終点X, 終点Y）
     Rect { x1: i32, y1: i32, x2: i32, y2: i32 },
@@ -124,7 +125,7 @@ pub enum CollisionShape {
 }
 
 /// 一つの当たり判定領域
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct CollisionArea {
     /// `collision[N]` 形式時の通しID（collisionex では省略され得る）
     pub id: Option<u32>,
@@ -172,7 +173,7 @@ impl CollisionArea {
 // ---------------------------------------------------------------- サーフィス構成要素
 
 /// `element[N]` の1行分の定義
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ElementDef {
     pub id: u32,
     pub method: DrawMethod,
@@ -185,7 +186,7 @@ pub struct ElementDef {
 }
 
 /// `animation[N].pattern[K]` の1コマ分の定義
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct AnimationPattern {
     pub index: u32,
     pub method: DrawMethod,
@@ -200,7 +201,7 @@ pub struct AnimationPattern {
 }
 
 /// 一つの SERIKO アニメーション定義
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SerikoAnimation {
     pub id: u32,
     pub interval: Option<Interval>,
@@ -212,7 +213,7 @@ pub struct SerikoAnimation {
 }
 
 /// サーフィスの基準点情報（`point.*`）
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Points {
     pub center_x: Option<i32>,
     pub center_y: Option<i32>,
@@ -223,14 +224,14 @@ pub struct Points {
 }
 
 /// バルーン位置オフセット（`<char>.balloon.offsetx/y` / `balloon.offsetx/y`）
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct BalloonOffset {
     pub x: Option<i32>,
     pub y: Option<i32>,
 }
 
 /// `surface[N]` / `surface.append[N]` の1サーフィス分の定義
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct SurfaceDefinition {
     pub elements: Vec<ElementDef>,
     pub collisions: Vec<CollisionArea>,
@@ -260,7 +261,7 @@ impl SurfaceDefinition {
 // ---------------------------------------------------------------- 並べ替え指定
 
 /// `descript` ブロックの `animation.sort` / `collision.sort` 値
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum SortKind {
     /// `id`：アニメーションID順（ collision は当たり判定ID順）
     Id,
@@ -287,7 +288,7 @@ impl SortKind {
 // ---------------------------------------------------------------- 合成計画 (MAYUNA)
 
 /// 合成計画の1レイヤー
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum CompositionLayer {
     /// surface ブロックの element（base / overlay 等）
     Element(ElementDef),
@@ -296,7 +297,7 @@ pub enum CompositionLayer {
 }
 
 /// `SurfacesTxt::plan_composition` の結果（下から上への描画順）
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct CompositionPlan {
     /// 対象サーフィス番号
     pub surface: u32,
@@ -328,7 +329,7 @@ impl CompositionPlan {
 // ---------------------------------------------------------------- surfaces.txt 全体
 
 /// `surfaces.txt` のパース結果
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct SurfacesTxt {
     /// `charset,` 指定（例: Shift_JIS）
     pub charset: Option<String>,

@@ -12,7 +12,8 @@ impl ShioriResponse {
         let first = it.next().unwrap_or("");
         let mut tokens = first.split_whitespace();
         let proto = tokens.next().unwrap_or("");
-        if !proto.eq_ignore_ascii_case("SHIORI/3.0") && !proto.eq_ignore_ascii_case("SHIORI/2.6") {
+        let proto_upper = proto.to_ascii_uppercase();
+        if !proto_upper.starts_with("SHIORI/") {
             return Err(format!("unsupported protocol version: {}", proto));
         }
         let status_code = tokens

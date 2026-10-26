@@ -181,4 +181,13 @@ mod tests {
         assert!(!ShioriResponse::ok("script").is_teach_pending());
         assert!(!ShioriResponse::no_content().is_teach_pending());
     }
+
+    #[test]
+    fn test_response_legacy_version() {
+        let text = "SHIORI/2.2 200 OK\r\nCharset: Shift_JIS\r\nSender: Kawari\r\nValue: legacy response\r\n\r\n";
+        let res = ShioriResponse::parse(text).unwrap();
+        assert_eq!(res.status, StatusCode::Ok);
+        assert_eq!(res.sender.as_deref(), Some("Kawari"));
+        assert_eq!(res.value.as_deref(), Some("legacy response"));
+    }
 }

@@ -44,7 +44,9 @@ export function processChromaKey(imageSrc, pnaSrc = null, cache = null) {
 						const pnaCanvas = document.createElement("canvas");
 						pnaCanvas.width = width;
 						pnaCanvas.height = height;
-						const pnaCtx = pnaCanvas.getContext("2d", { willReadFrequently: true });
+						const pnaCtx = pnaCanvas.getContext("2d", {
+							willReadFrequently: true,
+						});
 						if (pnaCtx) {
 							pnaCtx.drawImage(pnaImg, 0, 0, width, height);
 							const pnaData = pnaCtx.getImageData(0, 0, width, height).data;
@@ -72,7 +74,10 @@ export function processChromaKey(imageSrc, pnaSrc = null, cache = null) {
 						cornerR === 0 && cornerG >= 250 && cornerB === 0 && cornerA === 255;
 					const isCornerTarget =
 						isCornerPureGreen ||
-						(cornerA === 255 && cornerR === 0 && cornerG === 255 && cornerB === 0);
+						(cornerA === 255 &&
+							cornerR === 0 &&
+							cornerG === 255 &&
+							cornerB === 0);
 
 					let modified = false;
 					const len = data.length;
@@ -128,14 +133,63 @@ export function processChromaKey(imageSrc, pnaSrc = null, cache = null) {
 }
 
 /**
- * element0〜elementN で定義されたレイヤー画像をベース画像上に合成 (UKADOC準拠)
+ * 1レイヤー画像を読み込んでキャンバスに描画する（replace は下地クリア付き）
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {string} fileName
+ * @param {Function} resolveImagePath
+ * @param {number} x
+ * @param {number} y
+ * @param {string} [type]
+ * @returns {Promise<void>}
+ */
+async function drawLayer(
+	ctx,
+	fileName,
+	resolveImagePath,
+	x,
+	y,
+	type = "overlay",
+) {
+	if (!fileName) return;
+	const layerSrc = await resolveImagePath(fileName);
+	if (!layerSrc) return;
+
+	await new Promise((imgResolve) => {
+		const partImg = new Image();
+		partImg.crossOrigin = "anonymous";
+		partImg.onload = () => {
+			if (type === "replace") {
+				ctx.clearRect(
+					x,
+					y,
+					partImg.naturalWidth || partImg.width,
+					partImg.naturalHeight || partImg.height,
+				);
+			}
+			ctx.drawImage(partImg, x, y);
+			imgResolve();
+		};
+		partImg.onerror = () => imgResolve();
+		partImg.src = layerSrc;
+	});
+}
+
+/**
+ * element0〜elementN で定義されたレイヤー画像 + 着せ替え bind レイヤーを
+ * ベース画像上に合成 (UKADOC準拠)
  * @param {import('./surface-parser.js').SurfaceElement[]} elementList
  * @param {string} baseImgSrc
  * @param {Function} resolveImagePath - ファイル名から画像URL/DataURLを解決する関数
+ * @param {Array<{ file: string, x: number, y: number, type: string }>} [bindLayers] - 装着中の着せ替えレイヤー（element 合成後に追加）
  * @returns {Promise<string>} - 合成後のDataURL (PNG)
  */
-export function composeSurfaceElements(elementList, baseImgSrc, resolveImagePath) {
-	if (!elementList || elementList.length === 0) {
+export function composeSurfaceElements(
+	elementList,
+	baseImgSrc,
+	resolveImagePath,
+	bindLayers = [],
+) {
+	if ((!elementList || elementList.length === 0) && bindLayers.length === 0) {
 		return Promise.resolve(baseImgSrc);
 	}
 
@@ -154,29 +208,28 @@ export function composeSurfaceElements(elementList, baseImgSrc, resolveImagePath
 
 				ctx.drawImage(baseImg, 0, 0);
 
-				for (const elem of elementList) {
-					if (!elem.file) continue;
-					const elemSrc = await resolveImagePath(elem.file);
-					if (!elemSrc) continue;
+				for (const element of elementList) {
+					if (!element.file) continue;
+					await drawLayer(
+						ctx,
+						element.file,
+						resolveImagePath,
+						element.x,
+						element.y,
+						element.type,
+					);
+				}
 
-					await new Promise((imgResolve) => {
-						const partImg = new Image();
-						partImg.crossOrigin = "anonymous";
-						partImg.onload = () => {
-							if (elem.type === "replace") {
-								ctx.clearRect(
-									elem.x,
-									elem.y,
-									partImg.naturalWidth || partImg.width,
-									partImg.naturalHeight || partImg.height,
-								);
-							}
-							ctx.drawImage(partImg, elem.x, elem.y);
-							imgResolve();
-						};
-						partImg.onerror = () => imgResolve();
-						partImg.src = elemSrc;
-					});
+				// 装着中の着せ替え (bindgroup) レイヤーを上に重ねる
+				for (const layer of bindLayers) {
+					await drawLayer(
+						ctx,
+						layer.file,
+						resolveImagePath,
+						layer.x,
+						layer.y,
+						layer.type,
+					);
 				}
 
 				resolve(canvas.toDataURL("image/png"));

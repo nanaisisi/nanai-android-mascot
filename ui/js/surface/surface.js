@@ -1,5 +1,12 @@
 import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 import {
+	bindAnimationIds,
+	bindGroupsForScope,
+	dressupKey,
+	patternSurfaceFile,
+	seedDressupDefaults,
+} from "./bind-menu.js";
+import {
 	collisionContains,
 	getShellManifest,
 	manifestToSurfaceData,
@@ -136,6 +143,12 @@ export class SurfaceManager {
 		this.animations = data.animations;
 		this.aliases = data.aliases;
 		this.shellManifest = manifest;
+
+		// bindgroup[N].default,1（初期装着）を着せ替え状態へシード（既存キーは保持）
+		const seeded = seedDressupDefaults(manifest, this.dressupState);
+		if (seeded > 0) {
+			console.log(`👗 bindgroup default 初期装着シード: ${seeded} パーツ`);
+		}
 
 		console.log(
 			`🎯 当たり判定・合成要素登録完了 (Rust shell_manifest): ${Object.keys(this.collisions).length} サーフィス登録済み`,
@@ -287,15 +300,66 @@ export class SurfaceManager {
 	}
 
 	/**
-	 * element0〜elementN で定義されたレイヤー画像をベース画像上に合成 (UKADOC準拠)
+	 * 現在装着中の着せ替え (bindgroup) に対応する SERIKO bind アニメーションの
+	 * レイヤー（pattern 画像 + オフセット）を取得 (UKADOC準拠)
+	 *
+	 * bindgroup 番号 = interval,bind の SHEIKO アニメーションID。
+	 * 装着パーツ（dressupState true）のアニメーションパターンを
+	 * 常時表示レイヤーとして合成に回す。
+	 * @param {number} [scopeId]
+	 * @param {number|string|null} [surfaceId]
+	 * @returns {Array<{ file: string, x: number, y: number, type: string }>}
+	 */
+	activeBindLayers(scopeId = 0, surfaceId = null) {
+		if (!this.shellManifest) return [];
+		const sid = String(surfaceId ?? this.currentSurfaceId);
+		const animList = this.animations[sid] ?? [];
+		const animById = new Map(animList.map((a) => [String(a.id), a]));
+
+		/** @type {Array<{ file: string, x: number, y: number, type: string }>} */
+		const layers = [];
+		for (const group of bindGroupsForScope(this.shellManifest, scopeId)) {
+			if (
+				!this.dressupState.get(dressupKey(scopeId, group.category, group.part))
+			) {
+				continue;
+			}
+			for (const animId of bindAnimationIds(group.number, group.add_ids)) {
+				const anim = animById.get(String(animId));
+				for (const pattern of anim?.patterns ?? []) {
+					const file = patternSurfaceFile(pattern.surface);
+					if (!file) continue;
+					layers.push({
+						file,
+						x: pattern.x ?? 0,
+						y: pattern.y ?? 0,
+						type: pattern.type ?? "overlay",
+					});
+				}
+			}
+		}
+		return layers;
+	}
+
+	/**
+	 * element0〜elementN で定義されたレイヤー画像 + 装着中の着せ替え bind レイヤーを
+	 * ベース画像上に合成 (UKADOC準拠)
 	 * @param {number|string} surfaceId
 	 * @param {string} baseImgSrc
 	 * @param {Function} resolveImagePath - ファイル名から画像URL/DataURLを解決する関数
+	 * @param {number} [scopeId] - 着せ替え状態を参照するスコープ（scope 0 = さくら / 1 = うにゅ）
 	 * @returns {Promise<string>} - 合成後のDataURL (PNG)
 	 */
-	composeSurfaceElements(surfaceId, baseImgSrc, resolveImagePath) {
+	composeSurfaceElements(surfaceId, baseImgSrc, resolveImagePath, scopeId = 0) {
 		const sid = String(surfaceId);
 		const elementList = this.elements[sid] || this.elements.default || [];
-		return composeSurfaceElements(elementList, baseImgSrc, resolveImagePath);
+		const bindLayers =
+			scopeId === 0 || scopeId === 1 ? this.activeBindLayers(scopeId, sid) : [];
+		return composeSurfaceElements(
+			elementList,
+			baseImgSrc,
+			resolveImagePath,
+			bindLayers,
+		);
 	}
 }

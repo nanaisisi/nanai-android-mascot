@@ -25,6 +25,9 @@ export class SakuraCommandHandler {
 		} else if (rawCmd === "close" && rawSub === "teachbox") {
 			// \![close,teachbox] — OnTeachInputCancel を発生させない
 			this.closeTeachBox();
+		} else if (rawCmd === "open" && rawSub === "dressupexplorer") {
+			// \![open,dressupexplorer] — 着せ替えメニューを開く (UKADOC準拠)
+			this.app.toggleMenu?.();
 		} else if (rawCmd === "raise") {
 			// \![raise,EventName,Ref0,Ref1...]
 			const eventName = args[1];

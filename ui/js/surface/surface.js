@@ -4,6 +4,7 @@ import {
 	processChromaKey,
 } from "./surface-compositor.js";
 import { expandSurfaceRange, parseSurfacesTxt } from "./surface-parser.js";
+import { SurfaceAnimationManager } from "./surface-animation-manager.js";
 
 // 外部エクスポート
 export {
@@ -29,8 +30,6 @@ export class SurfaceManager {
 		this.elements = {};
 		/** @type {Record<number|string, import('./surface-parser.js').SurfaceAnimation[]>} */
 		this.animations = {};
-		/** @type {Record<number, any[]>} */
-		this.activeAnimationTimers = {};
 		/** @type {number} */
 		this.baseWidth = 200;
 		/** @type {number} */
@@ -41,6 +40,12 @@ export class SurfaceManager {
 		this.chromaKeyCache = new Map();
 		/** @type {Map<string, boolean>} 着せ替えパーツのON/OFF状態 (key: scope_category_part) */
 		this.dressupState = new Map();
+
+		this.animationManager = new SurfaceAnimationManager(this);
+	}
+
+	get activeAnimationTimers() {
+		return this.animationManager.activeAnimationTimers;
 	}
 
 	/**
@@ -51,7 +56,6 @@ export class SurfaceManager {
 	async loadSurfacesTxt(ghostPath, shellName = "master") {
 		try {
 			let content = "";
-			// shell/master などのパス形式に対応
 			const basePath = ghostPath.includes("/shell/")
 				? ghostPath
 				: `${ghostPath}/shell/${shellName}`;
@@ -102,173 +106,36 @@ export class SurfaceManager {
 
 	setSurfaceId(surfaceId, scopeId = 0) {
 		this.currentSurfaceId = surfaceId;
-		this.stopAnimations(scopeId);
-		this.startAnimations(surfaceId, scopeId);
+		this.animationManager.stopAnimations(scopeId);
+		this.animationManager.startAnimations(surfaceId, scopeId);
 	}
 
-	/**
-	 * 指定スコープのアクティブなアニメーションタイマーをすべて停止
-	 */
 	stopAnimations(scopeId = 0) {
-		const timers = this.activeAnimationTimers[scopeId] || [];
-		timers.forEach((t) => {
-			clearTimeout(t);
-			clearInterval(t);
-		});
-		this.activeAnimationTimers[scopeId] = [];
+		this.animationManager.stopAnimations(scopeId);
 	}
 
-	/**
-	 * 指定サーフィスのアニメーション定義（SERIKO）を開始
-	 */
 	startAnimations(surfaceId, scopeId = 0) {
-		const sid = String(surfaceId);
-		const animList = this.animations[sid] || this.animations.default || [];
-		if (!animList.length) return;
-
-		if (!this.activeAnimationTimers[scopeId]) {
-			this.activeAnimationTimers[scopeId] = [];
-		}
-
-		animList.forEach((anim) => {
-			this.scheduleAnimation(anim, surfaceId, scopeId);
-		});
+		this.animationManager.startAnimations(surfaceId, scopeId);
 	}
 
-	/**
-	 * アニメーションの interval 指定に応じたタイマースケジュール (UKADOC準拠)
-	 */
-	scheduleAnimation(anim, surfaceId, scopeId) {
-		const intervalStr = (anim.interval || "sometimes").toLowerCase();
-
-		// runonce: サーフィス切り替え直後に1回のみ実行
-		if (intervalStr === "runonce") {
-			const timer = setTimeout(async () => {
-				if (String(this.currentSurfaceId) === String(surfaceId)) {
-					await this.playAnimationPatterns(anim, surfaceId, scopeId);
-				}
-			}, 30);
-			this.activeAnimationTimers[scopeId].push(timer);
-			return;
-		}
-
-		// periodic,秒: 指定秒数間隔で定期再生
-		if (intervalStr.startsWith("periodic")) {
-			const parts = intervalStr.split(",");
-			const sec = Math.max(Number.parseFloat(parts[1]) || 4, 0.5);
-			const timer = setInterval(async () => {
-				if (String(this.currentSurfaceId) === String(surfaceId)) {
-					await this.playAnimationPatterns(anim, surfaceId, scopeId);
-				}
-			}, sec * 1000);
-			this.activeAnimationTimers[scopeId].push(timer);
-			return;
-		}
-
-		// always: ループ再生
-		if (intervalStr === "always") {
-			const loop = async () => {
-				if (String(this.currentSurfaceId) === String(surfaceId)) {
-					await this.playAnimationPatterns(anim, surfaceId, scopeId);
-					if (String(this.currentSurfaceId) === String(surfaceId)) {
-						const timer = setTimeout(loop, 50);
-						this.activeAnimationTimers[scopeId].push(timer);
-					}
-				}
-			};
-			loop();
-			return;
-		}
-
-		// sometimes(毎秒1/2), rarely(毎秒1/4), random,N(毎秒1/N)
-		// UKADOC仕様: 「そのサーフェスである間毎秒(1/N)の確率で再生」
-		let probability = 0.5; // sometimes
-		if (intervalStr === "rarely") {
-			probability = 0.25;
-		} else if (intervalStr.startsWith("random")) {
-			const n = Number.parseInt(intervalStr.split(",")[1], 10) || 2;
-			probability = 1.0 / n;
-		} else if (
-			intervalStr.startsWith("talk") ||
-			intervalStr === "never" ||
-			intervalStr === "bind"
-		) {
-			return; // 発話時口パク、着せ替え、スクリプト直接呼出 (\i) は別トリガー
-		}
-
-		// 毎秒チェックして確率抽選
-		const timer = setInterval(async () => {
-			if (String(this.currentSurfaceId) === String(surfaceId)) {
-				if (Math.random() <= probability) {
-					await this.playAnimationPatterns(anim, surfaceId, scopeId);
-				}
-			}
-		}, 1000);
-		this.activeAnimationTimers[scopeId].push(timer);
-	}
-
-	/**
-	 * アニメーションパターンの順次実行
-	 */
-	async playAnimationPatterns(anim, baseSurfaceId, scopeId) {
-		if (!anim.patterns?.length) return;
-		const gc = this.app?.ghostController;
-		if (!gc) return;
-
-		for (const pat of anim.patterns) {
-			if (String(this.currentSurfaceId) !== String(baseSurfaceId)) break;
-
-			const patSurface = String(pat.surface).trim();
-			if (patSurface === "-1") {
-				await gc.updateSurface(baseSurfaceId, scopeId);
-			} else {
-				await gc.updateSurface(patSurface, scopeId);
-			}
-
-			const waitMs = Math.max(pat.wait || 100, 30);
-			await new Promise((r) => setTimeout(r, waitMs));
-		}
-
-		if (String(this.currentSurfaceId) === String(baseSurfaceId)) {
-			await gc.updateSurface(baseSurfaceId, scopeId);
-		}
-	}
-
-	/**
-	 * さくらスクリプト \i[ID] による明示的なアニメーション再生
-	 */
-	async playAnimationById(animId, scopeId = 0, waitForComplete = false) {
-		const sid = String(this.currentSurfaceId);
-		const animList = this.animations[sid] || this.animations.default || [];
-		const anim = animList.find(
-			(a) => a.id === animId || String(a.id) === String(animId),
+	playAnimationPatterns(anim, baseSurfaceId, scopeId) {
+		return this.animationManager.playAnimationPatterns(
+			anim,
+			baseSurfaceId,
+			scopeId,
 		);
-		if (!anim) return;
-
-		const playPromise = this.playAnimationPatterns(anim, sid, scopeId);
-		if (waitForComplete) {
-			await playPromise;
-		}
 	}
 
-	/**
-	 * 発話（文字送り）時の口パク連動 (interval talk,N 準拠)
-	 */
+	playAnimationById(animId, scopeId = 0, waitForComplete = false) {
+		return this.animationManager.playAnimationById(
+			animId,
+			scopeId,
+			waitForComplete,
+		);
+	}
+
 	onCharSpoken(scopeId = 0) {
-		const sid = String(this.currentSurfaceId);
-		const animList = this.animations[sid] || this.animations.default || [];
-		const talkAnim = animList.find((a) =>
-			(a.interval || "").startsWith("talk"),
-		);
-		if (!talkAnim) return;
-
-		if (!this._spokenCount) this._spokenCount = {};
-		this._spokenCount[scopeId] = (this._spokenCount[scopeId] || 0) + 1;
-
-		const n = Number.parseInt(talkAnim.interval.split(",")[1], 10) || 1;
-		if (this._spokenCount[scopeId] % n === 0) {
-			this.playAnimationPatterns(talkAnim, sid, scopeId).catch(() => {});
-		}
+		this.animationManager.onCharSpoken(scopeId);
 	}
 
 	/**
@@ -340,7 +207,6 @@ export class SurfaceManager {
 		} else if (statusVal === "0" || statusVal === "false") {
 			newStatus = false;
 		} else {
-			// 省略または空欄時はトグル
 			const current = this.dressupState.get(key) ?? false;
 			newStatus = !current;
 		}
@@ -350,13 +216,11 @@ export class SurfaceManager {
 			`👗 着せ替え更新: scope=${scopeId}, category=${category}, part=${part}, state=${newStatus}`,
 		);
 
-		// サーフィス再描画（着せ替え状態の反映）
 		await this.app.ghostController.updateSurface(
 			this.currentSurfaceId,
 			scopeId,
 		);
 
-		// SHIORI イベント通知 (OnDressupChanged)
 		if (notifyEvent) {
 			try {
 				await this.app.ghostController.sendShioriEvent("OnDressupChanged", [

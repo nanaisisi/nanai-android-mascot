@@ -1,3 +1,4 @@
+import { SakuraCommandHandler } from "./sakura-command-handler.js";
 import { parseSakuraScript } from "./sakura-parser.js";
 
 /**
@@ -19,6 +20,8 @@ export class SakuraScriptPlayer {
 		this.currentScope = 0; // 0: sakura, 1: kero
 		/** @type {number} */
 		this.playbackId = 0;
+
+		this.commandHandler = new SakuraCommandHandler(this);
 	}
 
 	/**
@@ -149,7 +152,10 @@ export class SakuraScriptPlayer {
 
 				case "surface":
 					// 表情切り替え（スコープ別）
-					this.app.ghostController.updateSurface(token.value, this.currentScope);
+					this.app.ghostController.updateSurface(
+						token.value,
+						this.currentScope,
+					);
 					break;
 
 				case "animation":
@@ -175,7 +181,7 @@ export class SakuraScriptPlayer {
 				}
 
 				case "command":
-					await this.runCommand(token.args);
+					await this.commandHandler.runCommand(token.args);
 					break;
 
 				case "end":
@@ -203,171 +209,6 @@ export class SakuraScriptPlayer {
 				}
 			}
 		}, 8000);
-	}
-
-	/**
-	 * \![...] 内部コマンドの実行
-	 */
-	async runCommand(args) {
-		const rawCmd = (args[0] ?? "").toLowerCase();
-		const rawSub = (args[1] ?? "").toLowerCase();
-
-		if (rawCmd === "open" && rawSub === "inputbox") {
-			this.openInputBox(args.slice(2));
-		} else if (rawCmd === "raise") {
-			// \![raise,EventName,Ref0,Ref1...]
-			const eventName = args[1];
-			if (eventName) {
-				await this.app.ghostController.sendShioriEvent(eventName, args.slice(2));
-			}
-		} else if (rawCmd === "bind" || rawCmd === "bind-noevent") {
-			// \![bind,category,part,status]
-			const [category, part, statusVal] = args.slice(1);
-			await this.app.surfaceManager?.bindDressup(
-				category,
-				part,
-				statusVal,
-				this.currentScope,
-				rawCmd !== "bind-noevent",
-			);
-		} else if (rawCmd === "set" && rawSub === "alignmenttodesktop") {
-			await this.setAlignmentToDesktop(args[2]);
-		} else if (rawCmd === "update" || rawCmd === "updatebymyself") {
-			await this.app.startNetworkUpdate?.();
-		} else {
-			console.debug("未対応の \\! コマンド:", args);
-		}
-	}
-
-	/**
-	 * \![open,inputbox,ID,...] の処理 (UKADOC準拠)
-	 */
-	openInputBox(params) {
-		const id = params[0] || "UserInput";
-		let timeoutMs = 0;
-		let defaultText = "";
-		let placeholder = "";
-
-		for (let i = 1; i < params.length; i++) {
-			const p = params[i] ?? "";
-			if (p.startsWith("--timeout=")) {
-				timeoutMs = Number.parseInt(p.replace("--timeout=", ""), 10) || 0;
-			} else if (p.startsWith("--text=")) {
-				defaultText = p.replace("--text=", "");
-			} else if (p.startsWith("--placeholder=")) {
-				placeholder = p.replace("--placeholder=", "");
-			} else if (i === 1 && !p.startsWith("--")) {
-				timeoutMs = Number.parseInt(p, 10) || 0;
-			} else if (i === 2 && !p.startsWith("--")) {
-				defaultText = p;
-			}
-		}
-
-		const balloon =
-			this.currentScope === 1
-				? this.app.elements.keroBalloonText
-				: this.app.elements.balloonText;
-		if (!balloon) return;
-
-		const form = document.createElement("div");
-		form.className = "balloon-inputbox-form";
-		form.style.marginTop = "0.5rem";
-		form.style.display = "flex";
-		form.style.gap = "0.25rem";
-
-		const input = document.createElement("input");
-		input.type = "text";
-		input.className = "balloon-input";
-		input.value = defaultText;
-		input.placeholder = placeholder;
-		input.style.flex = "1";
-		input.style.fontSize = "0.8rem";
-		input.style.padding = "0.2rem 0.4rem";
-		input.style.borderRadius = "0.25rem";
-		input.style.border = "1px solid var(--balloon-border-color, #888)";
-		input.style.background = "var(--balloon-bg, #fff)";
-		input.style.color = "var(--balloon-text-color, #000)";
-
-		const submitBtn = document.createElement("button");
-		submitBtn.textContent = "OK";
-		submitBtn.className = "balloon-choice-btn";
-		submitBtn.style.marginTop = "0";
-
-		let timer = null;
-		const cleanup = () => {
-			if (timer) clearTimeout(timer);
-			form.remove();
-		};
-
-		const submit = async () => {
-			const val = input.value;
-			cleanup();
-			if (id.startsWith("On")) {
-				await this.app.ghostController.sendShioriEvent(id, [val]);
-			} else {
-				await this.app.ghostController.sendShioriEvent("OnUserInput", [id, val]);
-			}
-		};
-
-		const cancel = async () => {
-			cleanup();
-			await this.app.ghostController.sendShioriEvent("OnUserInputCancel", [id]);
-		};
-
-		submitBtn.addEventListener("click", (e) => {
-			e.stopPropagation();
-			submit();
-		});
-
-		input.addEventListener("keydown", (e) => {
-			if (e.key === "Enter") {
-				e.stopPropagation();
-				submit();
-			} else if (e.key === "Escape") {
-				e.stopPropagation();
-				cancel();
-			}
-		});
-
-		form.appendChild(input);
-		form.appendChild(submitBtn);
-		balloon.appendChild(form);
-		setTimeout(() => input.focus(), 50);
-
-		if (timeoutMs > 0) {
-			timer = setTimeout(() => {
-				cleanup();
-				this.app.ghostController.sendShioriEvent("OnUserInputCancel", [id]);
-			}, timeoutMs);
-		}
-	}
-
-	/**
-	 * ウィンドウをデスクトップの端に揃える (free / top / bottom / left / right)
-	 */
-	async setAlignmentToDesktop(mode) {
-		this.app.alignmentToDesktop = mode;
-		if (mode === "free") return; // 自由配置: 何もしない
-		try {
-			const api = globalThis.__TAURI__?.window;
-			if (!api) return;
-			const win = api.getCurrentWindow();
-			const monitor = await api.currentMonitor();
-			if (!monitor) return;
-			const size = await win.outerSize();
-			const pos = await win.outerPosition();
-			const { x: mx, y: my } = monitor.position;
-			const { width: mw, height: mh } = monitor.size;
-			let x = pos.x;
-			let y = pos.y;
-			if (mode === "bottom") y = my + mh - size.height;
-			else if (mode === "top") y = my;
-			else if (mode === "left") x = mx;
-			else if (mode === "right") x = mx + mw - size.width;
-			await win.setPosition(new api.PhysicalPosition(x, y));
-		} catch (e) {
-			console.warn("alignmenttodesktop 失敗:", e);
-		}
 	}
 
 	/**

@@ -9,18 +9,15 @@ pub async fn send_shiori_request(
 ) -> Result<String, String> {
     let gid = ghost_id.unwrap_or_else(|| "main".to_string());
 
-    if gid != "main"
-        && let Ok(engines) = state.ghost_engines.lock()
-        && let Some(engine) = engines.get(&gid)
-    {
-        return engine.request(&request);
+    if gid != "main" {
+        let engines = state.ghost_engines.lock();
+        if let Some(engine) = engines.get(&gid) {
+            return engine.request(&request);
+        }
     }
 
     // デフォルト/メインのネイティブSHIORIエンジンへ委譲
-    let engine_lock = state
-        .shiori_engine
-        .lock()
-        .map_err(|e| format!("Failed to lock SHIORI engine: {}", e))?;
+    let engine_lock = state.shiori_engine.lock();
 
     if let Some(ref engine) = *engine_lock {
         engine.request(&request)

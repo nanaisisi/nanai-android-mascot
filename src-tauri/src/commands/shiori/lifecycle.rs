@@ -12,15 +12,11 @@ pub async fn load_ghost(
     println!("📥 Loading ghost: {}", ghost_name);
 
     // 既存のSHIORIをアンロード
-    if let Ok(mut engine_lock) = state.shiori_engine.lock()
-        && let Some(mut engine) = engine_lock.take()
-    {
+    if let Some(mut engine) = state.shiori_engine.lock().take() {
         let _ = engine.unload();
     }
 
-    if let Ok(mut ghost_lock) = state.current_ghost_name.lock() {
-        *ghost_lock = Some(ghost_name.clone());
-    }
+    *state.current_ghost_name.lock() = Some(ghost_name.clone());
 
     // ゴーストディレクトリの解決 (assets/ghost/名 または ghost/名)
     let candidate_dirs = vec![
@@ -64,12 +60,8 @@ pub async fn load_ghost(
                     if let Err(e) = engine.initialize(&ghost_master_dir) {
                         eprintln!("⚠️ Failed to initialize SHIORI at {:?}: {}", cand, e);
                     } else {
-                        if let Ok(mut engine_lock) = state.shiori_engine.lock() {
-                            *engine_lock = Some(engine);
-                        }
-                        if let Ok(mut map) = state.active_ghosts.lock() {
-                            map.insert("main".to_string(), ghost_name.clone());
-                        }
+                        *state.shiori_engine.lock() = Some(engine);
+                        state.active_ghosts.lock().insert("main".to_string(), ghost_name.clone());
                         loaded = true;
                         println!("🎉 Native SHIORI activated: {:?}", cand);
                         break;
@@ -143,16 +135,12 @@ pub async fn spawn_ghost(
             && let Ok(mut engine) = ShioriDynamicEngine::load_library(&cand)
             && engine.initialize(&ghost_master_dir).is_ok()
         {
-            if let Ok(mut engines) = state.ghost_engines.lock() {
-                engines.insert(instance_id.clone(), engine);
-            }
+            state.ghost_engines.lock().insert(instance_id.clone(), engine);
             break;
         }
     }
 
-    if let Ok(mut active) = state.active_ghosts.lock() {
-        active.insert(instance_id.clone(), ghost_name.clone());
-    }
+    state.active_ghosts.lock().insert(instance_id.clone(), ghost_name.clone());
 
     #[cfg(desktop)]
     {
@@ -202,25 +190,20 @@ pub async fn close_ghost(
     println!("❌ Closing ghost instance: {}", target_id);
 
     // エンジン解放
-    if let Ok(mut engines) = state.ghost_engines.lock()
-        && let Some(mut engine) = engines.remove(&target_id)
-    {
+    if let Some(mut engine) = state.ghost_engines.lock().remove(&target_id) {
         let _ = engine.unload();
     }
     if target_id == "main"
-        && let Ok(mut engine_lock) = state.shiori_engine.lock()
-        && let Some(mut engine) = engine_lock.take()
+        && let Some(mut engine) = state.shiori_engine.lock().take()
     {
         let _ = engine.unload();
     }
 
     // アクティブゴーストから削除
-    let remaining_count = if let Ok(mut active) = state.active_ghosts.lock() {
-        active.remove(&target_id);
-        active.len()
-    } else {
-        0
-    };
+    let mut active = state.active_ghosts.lock();
+    active.remove(&target_id);
+    let remaining_count = active.len();
+    drop(active);
 
     #[cfg(desktop)]
     {
@@ -248,13 +231,9 @@ pub async fn close_ghost(
 /// 現在のゴーストを終了
 #[tauri::command]
 pub async fn unload_current_ghost(state: tauri::State<'_, AppState>) -> Result<String, String> {
-    if let Ok(mut engine_lock) = state.shiori_engine.lock()
-        && let Some(mut engine) = engine_lock.take()
-    {
+    if let Some(mut engine) = state.shiori_engine.lock().take() {
         let _ = engine.unload();
     }
-    if let Ok(mut ghost_lock) = state.current_ghost_name.lock() {
-        *ghost_lock = None;
-    }
+    *state.current_ghost_name.lock() = None;
     Ok("Ghost unloaded successfully".to_string())
 }

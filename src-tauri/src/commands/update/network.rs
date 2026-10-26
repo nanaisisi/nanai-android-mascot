@@ -16,7 +16,6 @@ pub async fn check_ghost_update(
         state
             .current_ghost_name
             .lock()
-            .map_err(|e| e.to_string())?
             .clone()
             .unwrap_or_else(|| "とらふぃっく☆とれいん".to_string())
     };

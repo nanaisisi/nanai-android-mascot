@@ -1,19 +1,13 @@
 {
-  "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "checkJs": true,
-    "allowJs": true,
-    "strict": false,
-    "noEmit": true
-  },
-  "include": [
-    "src/**/*.js"
-  ],
-  "exclude": [
-    "node_modules",
-    "target",
-    "src-tauri"
-  ]
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"checkJs": true,
+		"allowJs": true,
+		"strict": false,
+		"noEmit": true
+	},
+	"include": ["ui/**/*.js"],
+	"exclude": ["node_modules", "target", "src-tauri"]
 }

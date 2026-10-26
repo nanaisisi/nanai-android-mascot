@@ -195,7 +195,15 @@ export const updateMethods = {
 						"ghost",
 						"manual",
 					]);
-					this.showBalloon?.("🎉 ネットワーク更新が完了しました！");
+					// OnUpdateResultExplorer 送信 (UKADOC準拠: 更新詳細・差分リスト通知)
+					if (updateResult.updated_files?.length > 0) {
+						await gc.sendShioriEvent("OnUpdateResultExplorer", [
+							"changed",
+							updatedFilesStr,
+							"ghost",
+							ghostName,
+						]);
+					}
 					await this.sendUpdateResultSummary(
 						ghostName,
 						true,

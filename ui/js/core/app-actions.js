@@ -54,6 +54,10 @@ export const actionMethods = {
 			return this.startNetworkUpdate(null, { checkOnly: true });
 		}
 
+		if (action === "biff" || action === "mail") {
+			return this.checkEmail();
+		}
+
 		if (SHIORI_ACTIONS[action]) {
 			gc.sendShioriEvent(...SHIORI_ACTIONS[action]);
 			return;
@@ -259,5 +263,55 @@ export const actionMethods = {
 		const idx = ghosts.findIndex((g) => g.name === currentName);
 		const next = ghosts[(idx + 1) % ghosts.length];
 		if (next) this.ghostController.selectGhost(next.name);
+	},
+
+	/**
+	 * メールチェック (UKADOC OnBIFF 準拠)
+	 * @this {import('../../main.js').NanaiAndroidMascotApp}
+	 * @param {string} [accountName] アカウント名 (省略時は "default")
+	 */
+	async checkEmail(accountName = "default") {
+		const gc = this.ghostController;
+		console.log(`📬 メールチェック開始 (OnBIFF): account=${accountName}`);
+		this.showBalloon?.("📬 メールを確認中...");
+
+		// 1. OnBIFFBegin 発火 (Ref0: アカウント名)
+		await gc.sendShioriEvent("OnBIFFBegin", [accountName]);
+
+		try {
+			if (isTauriAvailable()) {
+				// Tauri バックエンド経由のメールチェック (存在する場合)
+				const result = await invoke("check_email", { account: accountName }).catch(() => null);
+				if (result && typeof result === "object") {
+					const count = Number(result.count || 0);
+					const size = Number(result.size || 0);
+					const unread = Number(result.unread || 0);
+					if (result.headers && Array.isArray(result.headers)) {
+						await gc.sendShioriEvent("OnBIFF2Complete", [
+							String(count),
+							String(size),
+							accountName,
+							String(unread),
+							result.headers.join("\x01"),
+						]);
+					} else {
+						await gc.sendShioriEvent("OnBIFFComplete", [
+							String(count),
+							String(size),
+							accountName,
+							String(unread),
+						]);
+					}
+					return;
+				}
+			}
+
+			// 既定・未設定時: 新着 0 件として OnBIFFComplete (Ref0: 0, Ref1: 0, Ref2: accountName)
+			await new Promise((r) => setTimeout(r, 600));
+			await gc.sendShioriEvent("OnBIFFComplete", ["0", "0", accountName, "0"]);
+		} catch (err) {
+			console.warn("OnBIFF 失敗:", err);
+			await gc.sendShioriEvent("OnBIFFFailure", ["connect", accountName]);
+		}
 	},
 };

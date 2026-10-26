@@ -20,7 +20,7 @@ Nanai Android Mascot における「伺か（UKAGAKA）」関連規格、およ�
 
 | 規格・仕様群                              | 概要                                                 | 対応度  | 主な実装状況 / 今後の方針                                                                                                                               |
 | :---------------------------------------- | :--------------------------------------------------- | :-----: | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **SHIORI 3.0**                            | ゴースト頭脳・イベント通信プロトコル                 | **87%** | SHIORI 3.0 リクエスト/レスポンスパーサー、主要基本イベント、ネットワーク更新 (`OnUpdate*` / `OnUpdateCheck*` / ファイル単位進捗、updates2.dau 差分)、Web Worker 非同期実行実装済。C/C++系ネイティブSHIORIのWASM化・OnUpdateResult*/OnBIFF系が継続課題。                    |
+| **SHIORI 3.0**                            | ゴースト頭脳・イベント通信プロトコル                 | **92%** | SHIORI 3.0 リクエスト/レスポンスパーサー、主要基本イベント、ネットワーク更新 (`OnUpdate*` / `OnUpdateCheck*` / ファイル単位進捗、updates2.dau 差分、`OnUpdateResultExplorer`)、メールチェック (`OnBIFF*` / `OnBIFF2Complete`)、Web Worker 非同期実行実装済。C/C++系ネイティブSHIORIのWASM化が継続課題。 |
 | **さくらスクリプト (Sakura Script)**      | テキスト送出・タグ制御プロトコル                     | **96%** | `\0`, `\1`, `\p[n]`, `\h`, `\u`, `\s[ID]`, `\w[N]`, `\_w[ms]`, `\q[text,id]`, `\_a[id]`, `\i[ID,wait]`, `\n[half]`, `\b`, `\x`, `\_q`, `\_s`, `\_l`, `\f`, `\e` 等の実装・文字送り制御完備。未対応 `\![...]` の JS 側汎用透過完備。 |
 | **サーフィス仕様 (surfaces.txt / PNA)**   | 画像定義・重ね合わせ・当たり判定                     | **90%** | HTML5 Canvas 2D によるベース・差分合成、`collision` / `collisionex`(rect/polygon/circle/ellipse) 当たり判定、表示倍率逆算マッピング実装済。PNA/透過PNG対応。着せ替えbindはメニューUI完備。       |
 | **バルーン仕様 (balloon / descript.txt)** | 吹き出しスキン・フォント・配置定義                   | **75%** | `\0`, `\1` 独立バルーン、CSSテーマ着せ替え（モダン/アイボリー/コミック/ダーク）、倍率拡縮実装済。SSP固有の細部座標定義解釈は順次拡充。                  |
@@ -44,7 +44,7 @@ Nanai Android Mascot における「伺か（UKAGAKA）」関連規格、およ�
 | **入力・タッチイベント**     | `OnMouseClick`, `OnMouseDoubleClick`       |     ✅ 対応済     | 当たり判定部位（head, bust, skirt 等）を識別して Reference 送信       |
 | **タイマーイベント**         | `OnSecondChange`, `OnMinuteChange`         |     ✅ 対応済     | ゴースト側の時間変化検知・ランダムトークトリガー                      |
 | **選択肢イベント**           | `OnChoiceSelect`                           |     ✅ 対応済     | `\q` タグクリック時の ID/ラベル引数渡し                               |
-| **ネットワークイベント**     | `OnUpdate*`, `OnUpdateCheck*`, `OnBIFF`    |    🚧 一部対応    | OnUpdateBegin/Ready/Complete/Failure + ファイル単位 per-file 進捗イベント + 更新チェックのみ (OnUpdateCheckComplete/Failure) + 一括結果通知 (OnUpdateResult/ResultEx, CheckResult 系)。OnBIFF/OnUpdateResultExplorer は未対応 |
+| **ネットワークイベント**     | `OnUpdate*`, `OnUpdateCheck*`, `OnBIFF*`   |     ✅ 対応済     | OnUpdateBegin/Ready/Complete/Failure + ファイル単位 per-file 進捗 + 更新チェックのみ (OnUpdateCheckComplete/Failure) + 一括結果通知 (OnUpdateResult/ResultEx, CheckResult系) + OnUpdateResultExplorer、および OnBIFFBegin/Complete/2Complete/Failure メールチェックパイプライン完備 |
 
 ### 2.2 さくらスクリプト (Sakura Script)
 

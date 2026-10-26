@@ -156,8 +156,12 @@ export async function playScript(player, script) {
 				break;
 
 			case "quick_toggle":
-				// \_q: クイック描画トグル
-				isQuickMode = !isQuickMode;
+				// \_q / \_q[1] / \_q[0]: クイック描画制御
+				if (typeof token.value === "boolean") {
+					isQuickMode = token.value;
+				} else {
+					isQuickMode = !isQuickMode;
+				}
 				break;
 
 			case "wait":
@@ -240,23 +244,53 @@ export async function playScript(player, script) {
 			}
 
 			case "font": {
-				// \f[color,red], \f[bold,1], \f[default]
+				// \f[color,red], \f[bold,1], \f[italic,1], \f[height,14], \f[strike,1], \f[underline,1], \f[shadow,color], \f[default]
+				player.currentFontStyles = player.currentFontStyles || {};
 				if (token.tag === "default") {
 					player.currentFontStyles = {};
-				} else if (token.tag === "color" && token.param) {
-					player.currentFontStyles = player.currentFontStyles || {};
-					player.currentFontStyles.color = token.param;
+				} else if (token.tag === "color") {
+					if (token.param) player.currentFontStyles.color = token.param;
+					else delete player.currentFontStyles.color;
 				} else if (token.tag === "bold") {
-					player.currentFontStyles = player.currentFontStyles || {};
 					player.currentFontStyles.fontWeight =
-						token.param === "0" ? "normal" : "bold";
+						token.param === "0" || token.param === "false" ? "normal" : "bold";
 				} else if (token.tag === "italic") {
-					player.currentFontStyles = player.currentFontStyles || {};
 					player.currentFontStyles.fontStyle =
-						token.param === "0" ? "normal" : "italic";
+						token.param === "0" || token.param === "false" ? "normal" : "italic";
+				} else if (token.tag === "strike") {
+					player.currentFontStyles.textDecoration =
+						token.param === "0" || token.param === "false" ? "none" : "line-through";
+				} else if (token.tag === "underline") {
+					player.currentFontStyles.textDecoration =
+						token.param === "0" || token.param === "false" ? "none" : "underline";
+				} else if (token.tag === "height") {
+					if (token.param) {
+						const size = token.param.endsWith("px") || token.param.endsWith("pt") || token.param.endsWith("em")
+							? token.param
+							: `${token.param}px`;
+						player.currentFontStyles.fontSize = size;
+					}
+				} else if (token.tag === "shadow") {
+					if (token.param === "0" || token.param === "none") {
+						delete player.currentFontStyles.textShadow;
+					} else {
+						const col = token.param || "rgba(0,0,0,0.5)";
+						player.currentFontStyles.textShadow = `1px 1px 2px ${col}`;
+					}
+				} else if (token.tag === "name" && token.param) {
+					player.currentFontStyles.fontFamily = token.param;
 				}
 				break;
 			}
+
+			case "sync_toggle":
+				// \_s / \_s[1] / \_s[0]: 複数キャラ同時発話モード
+				if (typeof token.value === "boolean") {
+					player.isSyncMode = token.value;
+				} else {
+					player.isSyncMode = !player.isSyncMode;
+				}
+				break;
 
 			case "command":
 				await player.commandHandler.runCommand(token.args);

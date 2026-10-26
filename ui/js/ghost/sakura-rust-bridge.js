@@ -24,7 +24,7 @@ export function rustCommandsToTokens(rustCommands) {
 				tokens.push({ type: "pause" });
 				break;
 			case "Quick":
-				tokens.push({ type: "quick_toggle" });
+				tokens.push({ type: "quick_toggle", value: cmd.payload ?? true });
 				break;
 			case "NewLine":
 				tokens.push({ type: "newline", half: cmd.payload?.half === true });
@@ -85,7 +85,7 @@ export function rustCommandsToTokens(rustCommands) {
 				tokens.push({ type: "halt" });
 				break;
 			case "Sync":
-				tokens.push({ type: "sync_toggle" });
+				tokens.push({ type: "sync_toggle", value: cmd.payload ?? true });
 				break;
 			case "Offset":
 				tokens.push({

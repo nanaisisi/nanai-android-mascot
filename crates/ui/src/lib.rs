@@ -137,6 +137,26 @@ mod tests {
                 param: None,
             }
         );
+
+        let script_q = r"\_q高速\_q[0]通常\_q[1]再度高速";
+        let mut cmds_q = Vec::new();
+        execute_sakura_script(script_q, |cmd| cmds_q.push(cmd));
+        assert_eq!(cmds_q[0], SakuraCommand::Quick(true));
+        assert_eq!(cmds_q[1], SakuraCommand::Text("高速".into()));
+        assert_eq!(cmds_q[2], SakuraCommand::Quick(false));
+        assert_eq!(cmds_q[3], SakuraCommand::Text("通常".into()));
+        assert_eq!(cmds_q[4], SakuraCommand::Quick(true));
+        assert_eq!(cmds_q[5], SakuraCommand::Text("再度高速".into()));
+
+        let script_ps = r"\p[2]\p3\_s[1]同期\_s[0]非同期";
+        let mut cmds_ps = Vec::new();
+        execute_sakura_script(script_ps, |cmd| cmds_ps.push(cmd));
+        assert_eq!(cmds_ps[0], SakuraCommand::Target(2));
+        assert_eq!(cmds_ps[1], SakuraCommand::Target(3));
+        assert_eq!(cmds_ps[2], SakuraCommand::Sync(true));
+        assert_eq!(cmds_ps[3], SakuraCommand::Text("同期".into()));
+        assert_eq!(cmds_ps[4], SakuraCommand::Sync(false));
+        assert_eq!(cmds_ps[5], SakuraCommand::Text("非同期".into()));
     }
 
     #[test]

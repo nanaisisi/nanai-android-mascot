@@ -98,9 +98,17 @@ export class SakuraScriptPlayer {
 	/**
 	 * アニメーション早送り（スキップ）
 	 */
+	/**
+	 * アニメーション早送り（スキップ）
+	 */
 	skip() {
 		if (this.isPlaying) {
 			this.skipRequested = true;
+			if (typeof this._pauseResolver === "function") {
+				const resolve = this._pauseResolver;
+				this._pauseResolver = null;
+				resolve();
+			}
 		}
 	}
 
@@ -127,32 +135,36 @@ export class SakuraScriptPlayer {
 	/**
 	 * バルーンのクリックまたはタイムアウトを待つ (\x 制御)
 	 */
-	waitForClickOrTimeout(element, timeoutMs = 10000) {
+	waitForClickOrTimeout(element, timeoutMs = 15000) {
 		return new Promise((resolve) => {
 			let timer = null;
-			const cleanup = () => {
+			let resolved = false;
+
+			const done = () => {
+				if (resolved) return;
+				resolved = true;
+				this._pauseResolver = null;
 				if (timer) clearTimeout(timer);
 				element?.removeEventListener("click", onClick);
 				document.removeEventListener("keydown", onKey);
-			};
-			const onClick = (e) => {
-				e.stopPropagation();
-				cleanup();
 				resolve();
 			};
+
+			this._pauseResolver = done;
+
+			const onClick = (e) => {
+				e.stopPropagation();
+				done();
+			};
 			const onKey = (e) => {
-				if (e.key === "Enter" || e.key === " ") {
-					cleanup();
-					resolve();
+				if (e.key === "Enter" || e.key === " " || e.key === "Escape") {
+					done();
 				}
 			};
 
 			element?.addEventListener("click", onClick);
 			document.addEventListener("keydown", onKey);
-			timer = setTimeout(() => {
-				cleanup();
-				resolve();
-			}, timeoutMs);
+			timer = setTimeout(done, timeoutMs);
 		});
 	}
 }

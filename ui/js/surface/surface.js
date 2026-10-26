@@ -1,40 +1,9 @@
 import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
+import { composeSurfaceElements, processChromaKey } from "./surface-compositor.js";
+import { expandSurfaceRange, parseSurfacesTxt } from "./surface-parser.js";
 
 /**
  * Nanai Android Mascot - surfaces.txt パーサー & 当たり判定（Collision）マネージャー
- */
-
-/**
- * @typedef {Object} CollisionArea
- * @property {number} x0
- * @property {number} y0
- * @property {number} x1
- * @property {number} y1
- * @property {string} id
- */
-
-/**
- * @typedef {Object} SurfaceElement
- * @property {string} type
- * @property {string} file
- * @property {number} x
- * @property {number} y
- */
-
-/**
- * @typedef {Object} AnimationPattern
- * @property {number} surface
- * @property {number} wait
- * @property {string} type
- * @property {number} x
- * @property {number} y
- */
-
-/**
- * @typedef {Object} SurfaceAnimation
- * @property {number} id
- * @property {string} interval
- * @property {AnimationPattern[]} patterns
  */
 
 export class SurfaceManager {
@@ -44,11 +13,11 @@ export class SurfaceManager {
 	constructor(app) {
 		/** @type {import('../../main.js').NanaiAndroidMascotApp} */
 		this.app = app;
-		/** @type {Record<number, CollisionArea[]>} */
+		/** @type {Record<number|string, import('./surface-parser.js').CollisionArea[]>} */
 		this.collisions = {};
-		/** @type {Record<number, SurfaceElement[]>} */
+		/** @type {Record<number|string, import('./surface-parser.js').SurfaceElement[]>} */
 		this.elements = {};
-		/** @type {Record<number, SurfaceAnimation[]>} */
+		/** @type {Record<number|string, import('./surface-parser.js').SurfaceAnimation[]>} */
 		this.animations = {};
 		/** @type {Record<number, any[]>} */
 		this.activeAnimationTimers = {};
@@ -96,10 +65,7 @@ export class SurfaceManager {
 				this.parseSurfacesTxt(content);
 			}
 		} catch (err) {
-			console.warn(
-				"surfaces.txt 読み込みスキップ (デフォルト設定を使用):",
-				err,
-			);
+			console.warn("surfaces.txt 読み込みスキップ (デフォルト設定を使用):", err);
 		}
 	}
 
@@ -107,110 +73,10 @@ export class SurfaceManager {
 	 * surfaces.txt のテキスト内容をパースして当たり判定を登録
 	 */
 	parseSurfacesTxt(text) {
-		const lines = text.split(/\r?\n/);
-		let currentSurfaces = ["default"];
-
-		lines.forEach((line) => {
-			const trimmed = line.trim();
-			if (!trimmed || trimmed.startsWith("//")) return;
-
-			// surface[ID] または surface.append[ID] ブロック開始
-			const surfaceMatch = trimmed.match(/^surface(?:\.append)?([\d,-]+)/);
-			if (surfaceMatch) {
-				currentSurfaces = this.expandSurfaceRange(surfaceMatch[1]);
-				currentSurfaces.forEach((s) => {
-					if (!this.collisions[s]) this.collisions[s] = [];
-				});
-				return;
-			}
-
-			// collisionex[ID],[name],[shape],[coords...] または collision[ID],[coords...],[name]
-			if (trimmed.startsWith("collisionex")) {
-				const parts = trimmed.split(",");
-				if (parts.length >= 6) {
-					const name = parts[1].trim().toLowerCase();
-					const shape = parts[2].trim().toLowerCase();
-					const x1 = parseInt(parts[3], 10);
-					const y1 = parseInt(parts[4], 10);
-					const x2 = parseInt(parts[5], 10);
-					const y2 = parseInt(parts[6], 10);
-
-					currentSurfaces.forEach((s) => {
-						if (!this.collisions[s]) this.collisions[s] = [];
-						this.collisions[s].push({ name, shape, x1, y1, x2, y2 });
-					});
-				}
-			} else if (trimmed.startsWith("collision")) {
-				const parts = trimmed.split(",");
-				// collision[ID],[x1],[y1],[x2],[y2],[name]
-				if (parts.length >= 6) {
-					const x1 = parseInt(parts[1], 10);
-					const y1 = parseInt(parts[2], 10);
-					const x2 = parseInt(parts[3], 10);
-					const y2 = parseInt(parts[4], 10);
-					const name = parts[5].trim().toLowerCase();
-
-					currentSurfaces.forEach((s) => {
-						if (!this.collisions[s]) this.collisions[s] = [];
-						this.collisions[s].push({ name, shape: "rect", x1, y1, x2, y2 });
-					});
-				}
-			} else if (trimmed.startsWith("element")) {
-				const parts = trimmed.split(",");
-				if (parts.length >= 5) {
-					const type = parts[1].trim().toLowerCase();
-					const file = parts[2].trim();
-					const x = parseInt(parts[3], 10) || 0;
-					const y = parseInt(parts[4], 10) || 0;
-
-					currentSurfaces.forEach((s) => {
-						if (!this.elements[s]) this.elements[s] = [];
-						this.elements[s].push({ type, file, x, y });
-					});
-				}
-			} else if (trimmed.includes(".interval,")) {
-				// animation[ID].interval,[interval]
-				const match = trimmed.match(/^animation(\d+)\.interval,\s*(.+)$/);
-				if (match) {
-					const animId = parseInt(match[1], 10);
-					const interval = match[2].trim();
-					currentSurfaces.forEach((s) => {
-						if (!this.animations[s]) this.animations[s] = [];
-						let anim = this.animations[s].find((a) => a.id === animId);
-						if (!anim) {
-							anim = { id: animId, interval, patterns: [] };
-							this.animations[s].push(anim);
-						} else {
-							anim.interval = interval;
-						}
-					});
-				}
-			} else if (trimmed.includes(".pattern")) {
-				// animation[ID].pattern[P],[surface],[wait],[type],[x],[y]
-				const match = trimmed.match(/^animation(\d+)\.pattern\d*,\s*(.+)$/);
-				if (match) {
-					const animId = parseInt(match[1], 10);
-					const pParts = match[2].split(",");
-					if (pParts.length >= 2) {
-						const patSurface = pParts[0].trim();
-						const wait = parseInt(pParts[1], 10) || 100;
-						const type = pParts[2] ? pParts[2].trim().toLowerCase() : "overlay";
-						const x = pParts[3] ? parseInt(pParts[3], 10) || 0 : 0;
-						const y = pParts[4] ? parseInt(pParts[4], 10) || 0 : 0;
-
-						currentSurfaces.forEach((s) => {
-							if (!this.animations[s]) this.animations[s] = [];
-							let anim = this.animations[s].find((a) => a.id === animId);
-							if (!anim) {
-								anim = { id: animId, interval: "sometimes", patterns: [] };
-								this.animations[s].push(anim);
-							}
-							anim.patterns.push({ surface: patSurface, wait, type, x, y });
-						});
-					}
-				}
-			}
-		});
+		const parsed = parseSurfacesTxt(text);
+		this.collisions = parsed.collisions;
+		this.elements = parsed.elements;
+		this.animations = parsed.animations;
 
 		console.log(
 			`🎯 当たり判定・合成要素登録完了: ${Object.keys(this.collisions).length} サーフィス登録済み`,
@@ -218,16 +84,7 @@ export class SurfaceManager {
 	}
 
 	expandSurfaceRange(rangeStr) {
-		const res = [];
-		rangeStr.split(",").forEach((part) => {
-			if (part.includes("-")) {
-				const [start, end] = part.split("-").map((v) => parseInt(v, 10));
-				for (let i = start; i <= end; i++) res.push(String(i));
-			} else {
-				res.push(part.trim());
-			}
-		});
-		return res;
+		return expandSurfaceRange(rangeStr);
 	}
 
 	setSurfaceId(surfaceId, scopeId = 0) {
@@ -285,7 +142,7 @@ export class SurfaceManager {
 		// periodic,秒: 指定秒数間隔で定期再生
 		if (intervalStr.startsWith("periodic")) {
 			const parts = intervalStr.split(",");
-			const sec = Math.max(parseFloat(parts[1]) || 4, 0.5);
+			const sec = Math.max(Number.parseFloat(parts[1]) || 4, 0.5);
 			const timer = setInterval(async () => {
 				if (String(this.currentSurfaceId) === String(surfaceId)) {
 					await this.playAnimationPatterns(anim, surfaceId, scopeId);
@@ -316,7 +173,7 @@ export class SurfaceManager {
 		if (intervalStr === "rarely") {
 			probability = 0.25;
 		} else if (intervalStr.startsWith("random")) {
-			const n = parseInt(intervalStr.split(",")[1], 10) || 2;
+			const n = Number.parseInt(intervalStr.split(",")[1], 10) || 2;
 			probability = 1.0 / n;
 		} else if (
 			intervalStr.startsWith("talk") ||
@@ -370,9 +227,7 @@ export class SurfaceManager {
 	async playAnimationById(animId, scopeId = 0, waitForComplete = false) {
 		const sid = String(this.currentSurfaceId);
 		const animList = this.animations[sid] || this.animations.default || [];
-		const anim = animList.find(
-			(a) => a.id === animId || String(a.id) === String(animId),
-		);
+		const anim = animList.find((a) => a.id === animId || String(a.id) === String(animId));
 		if (!anim) return;
 
 		const playPromise = this.playAnimationPatterns(anim, sid, scopeId);
@@ -387,15 +242,13 @@ export class SurfaceManager {
 	onCharSpoken(scopeId = 0) {
 		const sid = String(this.currentSurfaceId);
 		const animList = this.animations[sid] || this.animations.default || [];
-		const talkAnim = animList.find((a) =>
-			(a.interval || "").startsWith("talk"),
-		);
+		const talkAnim = animList.find((a) => (a.interval || "").startsWith("talk"));
 		if (!talkAnim) return;
 
 		if (!this._spokenCount) this._spokenCount = {};
 		this._spokenCount[scopeId] = (this._spokenCount[scopeId] || 0) + 1;
 
-		const n = parseInt(talkAnim.interval.split(",")[1], 10) || 1;
+		const n = Number.parseInt(talkAnim.interval.split(",")[1], 10) || 1;
 		if (this._spokenCount[scopeId] % n === 0) {
 			this.playAnimationPatterns(talkAnim, sid, scopeId).catch(() => {});
 		}
@@ -405,8 +258,7 @@ export class SurfaceManager {
 	 * マウス・タッチ座標から当たり部位（head, bust等）を判定
 	 */
 	detectCollision(clickX, clickY, targetRect, surfaceId = null) {
-		const sid =
-			surfaceId !== null ? String(surfaceId) : String(this.currentSurfaceId);
+		const sid = surfaceId !== null ? String(surfaceId) : String(this.currentSurfaceId);
 
 		// 表示要素内での相対座標 (0.0 〜 1.0)
 		const relX = (clickX - targetRect.left) / targetRect.width;
@@ -449,124 +301,7 @@ export class SurfaceManager {
 	 * @returns {Promise<string>} - 透過合成後のDataURL (PNG)
 	 */
 	processChromaKey(imageSrc, pnaSrc = null) {
-		if (!imageSrc) return Promise.resolve(imageSrc);
-		const cacheKey = pnaSrc ? `${imageSrc}__pna__${pnaSrc}` : imageSrc;
-		if (this.chromaKeyCache.has(cacheKey)) {
-			return Promise.resolve(this.chromaKeyCache.get(cacheKey));
-		}
-
-		return new Promise((resolve) => {
-			const img = new Image();
-			img.crossOrigin = "anonymous";
-			img.onload = () => {
-				const onBaseLoaded = (pnaImg = null) => {
-					try {
-						const canvas = document.createElement("canvas");
-						const width = img.naturalWidth || img.width;
-						const height = img.naturalHeight || img.height;
-						canvas.width = width;
-						canvas.height = height;
-
-						const ctx = canvas.getContext("2d", { willReadFrequently: true });
-						if (!ctx) {
-							this.chromaKeyCache.set(cacheKey, imageSrc);
-							resolve(imageSrc);
-							return;
-						}
-
-						ctx.drawImage(img, 0, 0);
-						const imgData = ctx.getImageData(0, 0, width, height);
-						const data = imgData.data;
-
-						if (pnaImg) {
-							// PNA アルファマスク合成 (UKADOC準拠)
-							const pnaCanvas = document.createElement("canvas");
-							pnaCanvas.width = width;
-							pnaCanvas.height = height;
-							const pnaCtx = pnaCanvas.getContext("2d", { willReadFrequently: true });
-							if (pnaCtx) {
-								pnaCtx.drawImage(pnaImg, 0, 0, width, height);
-								const pnaData = pnaCtx.getImageData(0, 0, width, height).data;
-								const len = data.length;
-								for (let i = 0; i < len; i += 4) {
-									// PNA の輝度 (白=255不透明, 黒=0透過) をアルファ値に適用
-									data[i + 3] = pnaData[i];
-								}
-								ctx.putImageData(imgData, 0, 0);
-								const resultUrl = canvas.toDataURL("image/png");
-								this.chromaKeyCache.set(cacheKey, resultUrl);
-								resolve(resultUrl);
-								return;
-							}
-						}
-
-						// 左上1ピクセル (0, 0) の色を取得（伺かの伝統的な透過色仕様）
-						const cornerR = data[0];
-						const cornerG = data[1];
-						const cornerB = data[2];
-						const cornerA = data[3];
-
-						// 左上が透過でなく、純緑(#00FF00)または特定背景色の場合にクロマキー判定
-						const isCornerPureGreen =
-							cornerR === 0 && cornerG >= 250 && cornerB === 0 && cornerA === 255;
-						const isCornerTarget =
-							isCornerPureGreen ||
-							(cornerA === 255 &&
-								cornerR === 0 &&
-								cornerG === 255 &&
-								cornerB === 0);
-
-						let modified = false;
-						const len = data.length;
-
-						for (let i = 0; i < len; i += 4) {
-							const r = data[i];
-							const g = data[i + 1];
-							const b = data[i + 2];
-							const a = data[i + 3];
-
-							if (a === 0) continue;
-
-							// 純緑 (#00FF00) 判定 (許容差あり: R <= 30, G >= 220, B <= 30)
-							const isGreen = r <= 35 && g >= 220 && b <= 35;
-
-							// または左上ピクセルと完全一致
-							const isMatchCorner =
-								isCornerTarget && r === cornerR && g === cornerG && b === cornerB;
-
-							if (isGreen || isMatchCorner) {
-								data[i + 3] = 0; // アルファ値を 0（完全透明）に設定
-								modified = true;
-							}
-						}
-
-						if (modified) {
-							ctx.putImageData(imgData, 0, 0);
-							const resultUrl = canvas.toDataURL("image/png");
-							this.chromaKeyCache.set(cacheKey, resultUrl);
-							resolve(resultUrl);
-						} else {
-							this.chromaKeyCache.set(cacheKey, imageSrc);
-							resolve(imageSrc);
-						}
-					} catch (_err) {
-						resolve(imageSrc);
-					}
-				};
-
-				if (pnaSrc) {
-					const pnaImg = new Image();
-					pnaImg.crossOrigin = "anonymous";
-					pnaImg.onload = () => onBaseLoaded(pnaImg);
-					pnaImg.onerror = () => onBaseLoaded(null);
-					pnaImg.src = pnaSrc;
-				} else {
-					onBaseLoaded(null);
-				}
-			};
-			img.onerror = () => resolve(imageSrc);
-			img.src = imageSrc;
-		});
+		return processChromaKey(imageSrc, pnaSrc, this.chromaKeyCache);
 	}
 
 	/**
@@ -587,7 +322,9 @@ export class SurfaceManager {
 		}
 
 		this.dressupState.set(key, newStatus);
-		console.log(`👗 着せ替え更新: scope=${scopeId}, category=${category}, part=${part}, state=${newStatus}`);
+		console.log(
+			`👗 着せ替え更新: scope=${scopeId}, category=${category}, part=${part}, state=${newStatus}`,
+		);
 
 		// サーフィス再描画（着せ替え状態の反映）
 		await this.app.ghostController.updateSurface(this.currentSurfaceId, scopeId);
@@ -617,52 +354,10 @@ export class SurfaceManager {
 	composeSurfaceElements(surfaceId, baseImgSrc, resolveImagePath) {
 		const sid = String(surfaceId);
 		const elementList = this.elements[sid] || this.elements.default || [];
-		if (!elementList || elementList.length === 0) {
-			return Promise.resolve(baseImgSrc);
-		}
-
-		return new Promise((resolve) => {
-			const baseImg = new Image();
-			baseImg.crossOrigin = "anonymous";
-			baseImg.onload = async () => {
-				try {
-					const width = baseImg.naturalWidth || baseImg.width;
-					const height = baseImg.naturalHeight || baseImg.height;
-					const canvas = document.createElement("canvas");
-					canvas.width = width;
-					canvas.height = height;
-					const ctx = canvas.getContext("2d");
-					if (!ctx) return resolve(baseImgSrc);
-
-					ctx.drawImage(baseImg, 0, 0);
-
-					for (const elem of elementList) {
-						if (!elem.file) continue;
-						const elemSrc = await resolveImagePath(elem.file);
-						if (!elemSrc) continue;
-
-						await new Promise((imgResolve) => {
-							const partImg = new Image();
-							partImg.crossOrigin = "anonymous";
-							partImg.onload = () => {
-								if (elem.type === "replace") {
-									ctx.clearRect(elem.x, elem.y, partImg.naturalWidth || partImg.width, partImg.naturalHeight || partImg.height);
-								}
-								ctx.drawImage(partImg, elem.x, elem.y);
-								imgResolve();
-							};
-							partImg.onerror = () => imgResolve();
-							partImg.src = elemSrc;
-						});
-					}
-
-					resolve(canvas.toDataURL("image/png"));
-				} catch (_err) {
-					resolve(baseImgSrc);
-				}
-			};
-			baseImg.onerror = () => resolve(baseImgSrc);
-			baseImg.src = baseImgSrc;
-		});
+		return composeSurfaceElements(elementList, baseImgSrc, resolveImagePath);
 	}
 }
+
+// 外部エクスポート
+export { parseSurfacesTxt, expandSurfaceRange } from "./surface-parser.js";
+export { processChromaKey, composeSurfaceElements } from "./surface-compositor.js";

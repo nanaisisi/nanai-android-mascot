@@ -18,7 +18,7 @@ pub struct ScheduledFrame {
     pub at_ms: u32,
 }
 
-/// pattern 列を実行スケジュールへ変換する（pattern index 順に累積待ち時間を計算）
+/// pattern 列を実行スケジュールへ変換する（pattern index 列に累積待ち時間を計算）
 pub fn build_timeline(patterns: &[AnimationPattern]) -> Vec<ScheduledFrame> {
     let mut sorted: Vec<&AnimationPattern> = patterns.iter().collect();
     sorted.sort_by_key(|p| p.index);
@@ -43,10 +43,39 @@ pub fn cycle_len_ms(patterns: &[AnimationPattern]) -> u32 {
     }
 }
 
-/// 指定時刻に表示すべきフレーム（`at_ms <= elapsed` の最後のもの）
-pub fn frame_at_ms(patterns: &[AnimationPattern], elapsed_ms: u32) -> Option<&ScheduledFrame> {
-    let timeline = build_timeline(patterns);
-    timeline.iter().rev().find(|f| f.at_ms <= elapsed_ms)
+/// 再生用タイムライン（pattern 列を元に frame_at クエリを提供する）
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Timeline {
+    frames: Vec<ScheduledFrame>,
+    total_ms: u32,
+}
+
+impl Timeline {
+    /// pattern 列からタイムラインを構築する
+    pub fn new(patterns: &[AnimationPattern]) -> Self {
+        let frames = build_timeline(patterns);
+        // 1周期の長さ: 最終フレームの適用時刻 + その wait
+        let total_ms = frames
+            .last()
+            .map(|f| f.at_ms.saturating_add(f.pattern.wait))
+            .unwrap_or(0);
+        Self { frames, total_ms }
+    }
+
+    /// 登録済みフレームリスト
+    pub fn frames(&self) -> &[ScheduledFrame] {
+        &self.frames
+    }
+
+    /// 1周期の長さ（ミリ秒）
+    pub fn total_ms(&self) -> u32 {
+        self.total_ms
+    }
+
+    /// 指定時刻に表示すべきフレーム（`at_ms <= elapsed` の最後のもの）
+    pub fn frame_at(&self, elapsed_ms: u32) -> Option<&ScheduledFrame> {
+        self.frames.iter().rev().find(|f| f.at_ms <= elapsed_ms)
+    }
 }
 
 impl Interval {
@@ -115,7 +144,7 @@ impl Interval {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::surfaces::DrawMethod;
+    use crate::surfaces::{DrawMethod, SurfacesTxt};
 
     fn pattern(index: u32, surface: i32, wait: u32) -> AnimationPattern {
         AnimationPattern {
@@ -153,14 +182,16 @@ mod tests {
     #[test]
     fn test_frame_at() {
         let patterns = vec![pattern(0, 6, 0), pattern(1, -1, 85)];
-        assert_eq!(frame_at_ms(&patterns, 0).unwrap().pattern.surface, 6);
-        assert_eq!(frame_at_ms(&patterns, 84).unwrap().pattern.surface, 6);
-        assert_eq!(frame_at_ms(&patterns, 85).unwrap().pattern.surface, -1);
-        assert_eq!(frame_at_ms(&patterns, 10_000).unwrap().pattern.surface, -1);
-        assert!(frame_at_ms(&patterns, 10_000).is_some());
+        let tl = Timeline::new(&patterns);
+        assert_eq!(tl.frame_at(0).unwrap().pattern.surface, 6);
+        assert_eq!(tl.frame_at(84).unwrap().pattern.surface, 6);
+        assert_eq!(tl.frame_at(85).unwrap().pattern.surface, -1);
+        assert_eq!(tl.frame_at(10_000).unwrap().pattern.surface, -1);
+        assert_eq!(tl.total_ms(), 170);
 
         // 空のタイムライン
-        assert!(frame_at_ms(&[], 500).is_none());
+        assert!(Timeline::new(&[]).frame_at(500).is_none());
+        assert_eq!(Timeline::new(&[]).total_ms(), 0);
         assert_eq!(cycle_len_ms(&[]), 0);
     }
 

@@ -154,6 +154,8 @@ pub fn run() {
             commands::file::add_to_recent_files,
             commands::file::get_recent_files,
             commands::shell::shell_manifest,
+            commands::shell::parse_sakura_script,
+            commands::shell::parse_surfaces_text,
             ghost::scan::scan_ghost_directory,
             commands::shiori::scan_ghosts,
             commands::shiori::load_ghost,

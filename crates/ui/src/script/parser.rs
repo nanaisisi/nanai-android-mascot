@@ -1,5 +1,12 @@
 use super::command::SakuraCommand;
 
+/// さくらスクリプトをパースして SakuraCommand のリストとして返す
+pub fn parse_sakura_script(script: &str) -> Vec<SakuraCommand> {
+    let mut commands = Vec::new();
+    execute_sakura_script(script, |cmd| commands.push(cmd));
+    commands
+}
+
 /// さくらスクリプトのパーサと実行（内部コマンド）
 pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraCommand)) {
     let mut chars = script.chars().peekable();

@@ -17,7 +17,7 @@ pub use shiori::{
     ErrorLevel, GhostStatusToken, SecurityLevel, SenderTypeTag, ShioriMethod,
     ShioriRequest, ShioriResponse, StatusCode, parse_sender_types,
 };
-pub use script::{SakuraCommand, execute_sakura_script};
+pub use script::{SakuraCommand, execute_sakura_script, parse_sakura_script};
 pub use shell::Shell;
 pub use surfaces::{
     BalloonOffset, CollisionArea, CollisionShape, CompositionLayer, CompositionPlan, DrawMethod,

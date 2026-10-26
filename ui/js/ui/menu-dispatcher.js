@@ -60,13 +60,6 @@ export class MenuDispatcher {
 			if (typeof emitFn === "function") {
 				emitFn("menu-action", { action, payload: finalPayload });
 			}
-			// 終了（close/exit）の場合は直接 exit_app を呼び出して確実にプロセスを落とす
-			if (action === "close" || action === "exit") {
-				if (typeof invokeFn === "function") {
-					invokeFn("exit_app").catch(() => {});
-				}
-				return;
-			}
 			if (typeof invokeFn === "function" && action !== "request-sync") {
 				invokeFn("hide_menu_window").catch(() => {});
 			}

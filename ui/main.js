@@ -125,6 +125,9 @@ export class NanaiAndroidMascotApp {
 	 * アプリケーションを安全に終了
 	 */
 	async closeApp() {
+		if (this._isExiting) return;
+		this._isExiting = true;
+
 		const exit = async () => {
 			this.ghostController?.stopSecondChangeTimer?.();
 			if (isTauriAvailable()) {

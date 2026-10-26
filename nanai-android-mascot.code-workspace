@@ -4,7 +4,9 @@
       "path": "."
     }
   ],
-  "settings": {},
+  "settings": {
+    "markuplint.ignoreFiles": ["cpp/**", "target/**", "target_tauri/**", "dist/**"]
+  },
   "extensions": {
     "recommendations": [
       "vadimcn.vscode-lldb",

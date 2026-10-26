@@ -1,5 +1,6 @@
 # Biome ignore patterns
 src/cpp/**
+cpp/**
 target/**
 dist/**
 gen/**

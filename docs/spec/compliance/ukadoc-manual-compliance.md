@@ -6,6 +6,10 @@
 
 本書は、`ukadoc-spec` リポジトリの `manual/` 配下の全マニュアル仕様（`balloon.md`, `directory.md`, `ghost.md`, `install.md`, `owner-draw-menu.md`, `shell.md`, `translator.md`, `update.md`）に基づき、Nanai Android Mascot における各構成・機能の対応状況および実装方針を突合した仕様ドキュメントです。
 
+> [!WARNING]
+> 以下の表は旧来の自己申告で、コード根拠が未確認です。コード突合済みの結果は [ukadoc/manual/](../ukadoc/manual/) の各ファイルと [SUMMARY.md](../ukadoc/SUMMARY.md) が正です。
+> 突合では translator・owner-draw-menu が未実装、install は Ghost/Balloon のみ対応、update のみ実装済でした。
+
 ---
 
 ## 1. 総合サマリー & 対応マトリクス

@@ -10,6 +10,6 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 
 ## 実装箇所
 
-- `ui/js/surface/surface.js:226`  `await this.app.ghostController.sendShioriEvent("OnDressupChanged", [`
-- `ui/js/core/app-actions.js`  `handleDressupToggle` (着せ替えメニューからの切替時も OnDressupChanged 送出: Reference0=category, Reference1=part, Reference2=0/1, Reference3=scopeId)
-- `ui/js/ghost/sakura-command-handler.js`  `\![bind,...] / \![bind-noevent,...] からの切替時`
+- `ui/js/surface/surface.js:226` `await this.app.ghostController.sendShioriEvent("OnDressupChanged", [`
+- `ui/js/core/app-actions.js` `handleDressupToggle` (着せ替えメニューからの切替時も OnDressupChanged 送出: Reference0=category, Reference1=part, Reference2=0/1, Reference3=scopeId)
+- `ui/js/ghost/sakura-command-handler.js` `\![bind,...] / \![bind-noevent,...] からの切替時`

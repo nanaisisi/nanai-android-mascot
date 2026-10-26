@@ -11,7 +11,7 @@
 ## 実装箇所
 
 - `src-tauri/src/ghost/scan.rs:21` (コメント) `/// descript.txt の内容をパース（Shift_JIS / UTF-8 両対応）`
-- `src-tauri/src/ghost/scan.rs:68`  `let descript_path = path.join("descript.txt");`
+- `src-tauri/src/ghost/scan.rs:68` `let descript_path = path.join("descript.txt");`
 - `src-tauri/src/ghost/scan.rs:170` (コメント) `// ghost/master/descript.txt または descript.txt`
-- `src-tauri/src/ghost/scan.rs:172`  `path.join("ghost").join("master").join("descript.txt"),`
-- `src-tauri/src/ghost/scan.rs:173`  `path.join("descript.txt"),`
+- `src-tauri/src/ghost/scan.rs:172` `path.join("ghost").join("master").join("descript.txt"),`
+- `src-tauri/src/ghost/scan.rs:173` `path.join("descript.txt"),`

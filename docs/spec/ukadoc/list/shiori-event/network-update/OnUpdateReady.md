@@ -12,4 +12,4 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 
 - `ui/js/core/app-update.js:10` (コメント) `*    - 更新あり: OnUpdateReady (Reference0: ファイル総数-1, Reference1: ファイル名リスト)`
 - `ui/js/core/app-update.js:63` (コメント) `// 4. OnUpdateReady`
-- `ui/js/core/app-update.js:66`  `await gc.sendShioriEvent("OnUpdateReady", [totalMinusOne, fileListStr, "", "ghost", "manua`
+- `ui/js/core/app-update.js:66` `await gc.sendShioriEvent("OnUpdateReady", [totalMinusOne, fileListStr, "", "ghost", "manua`

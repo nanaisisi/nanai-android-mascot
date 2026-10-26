@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/core/app-update.js:88`  `console.error("ネットワーク更新エラー:", err);`
-- `ui/js/ghost/ghost.js:61`  `} catch (error) {`
-- `ui/js/ghost/ghost.js:62`  `console.error("❌ 自動ゴースト読み込みエラー:", error);`
-- `ui/js/ghost/ghost.js:74`  `} catch (error) {`
-- `ui/js/ghost/ghost.js:75`  `console.error("ゴースト存在確認エラー:", error);`
+- `ui/js/core/app-update.js:88` `console.error("ネットワーク更新エラー:", err);`
+- `ui/js/ghost/ghost.js:61` `} catch (error) {`
+- `ui/js/ghost/ghost.js:62` `console.error("❌ 自動ゴースト読み込みエラー:", error);`
+- `ui/js/ghost/ghost.js:74` `} catch (error) {`
+- `ui/js/ghost/ghost.js:75` `console.error("ゴースト存在確認エラー:", error);`

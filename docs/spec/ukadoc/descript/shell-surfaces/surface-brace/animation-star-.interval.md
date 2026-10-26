@@ -12,6 +12,6 @@ surface-parser.js が解析し、判定・再生に利用している。
 
 - `ui/js/surface/surface-parser.js:58` (コメント) `* surfaces.txt をパースして collisions, elements, animations を抽出`
 - `ui/js/surface/surface-parser.js:60` (コメント) `* @returns {{ collisions: Record<string, CollisionArea[]>, elements: Record<string, Surfac`
-- `ui/js/surface/surface-parser.js:65`  `const animations = {};`
+- `ui/js/surface/surface-parser.js:65` `const animations = {};`
 - `ui/js/surface/surface-parser.js:129` (コメント) `// animation[ID].interval,[interval]`
-- `ui/js/surface/surface-parser.js:130`  `const match = trimmed.match(/^animation(\d+)\.interval,\s*(.+)$/);`
+- `ui/js/surface/surface-parser.js:130` `const match = trimmed.match(/^animation(\d+)\.interval,\s*(.+)$/);`

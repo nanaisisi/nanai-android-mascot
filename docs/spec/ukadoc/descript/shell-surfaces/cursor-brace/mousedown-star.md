@@ -10,7 +10,7 @@ surface-parser.js / surface-animation-manager.js に該当の解析・処理は�
 
 ## 実装箇所
 
-- `ui/js/surface/character.js:38`  `root?.addEventListener("mousedown", (e) => {`
-- `ui/js/ghost/balloon-window.js:83`  `balloonBox?.addEventListener("mousedown", (e) => {`
-- `ui/js/surface/interaction.js:212`  `target.addEventListener("mousedown", onPointerDown);`
-- `ui/js/surface/balloon-drag.js:106`  `balloon.addEventListener("mousedown", (e) => {`
+- `ui/js/surface/character.js:38` `root?.addEventListener("mousedown", (e) => {`
+- `ui/js/ghost/balloon-window.js:83` `balloonBox?.addEventListener("mousedown", (e) => {`
+- `ui/js/surface/interaction.js:212` `target.addEventListener("mousedown", onPointerDown);`
+- `ui/js/surface/balloon-drag.js:106` `balloon.addEventListener("mousedown", (e) => {`

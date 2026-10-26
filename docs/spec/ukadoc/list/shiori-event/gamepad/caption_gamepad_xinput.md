@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/windows/multi-window.js:117`  `export function initializeAllWindows() {`
-- `ui/windows/multi-window.js:128`  `export function minimizeAllWindows() {`
-- `ui/windows/multi-window.js:132`  `export function restoreAllWindows() {`
-- `ui/windows/multi-window.js:136`  `export function closeAllWindows() {`
-- `ui/windows/multi-window.js:176`  `globalThis.initializeAllWindows = initializeAllWindows;`
+- `ui/windows/multi-window.js:117` `export function initializeAllWindows() {`
+- `ui/windows/multi-window.js:128` `export function minimizeAllWindows() {`
+- `ui/windows/multi-window.js:132` `export function restoreAllWindows() {`
+- `ui/windows/multi-window.js:136` `export function closeAllWindows() {`
+- `ui/windows/multi-window.js:176` `globalThis.initializeAllWindows = initializeAllWindows;`

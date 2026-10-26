@@ -42,8 +42,7 @@ function setupInteractiveElements(emitFn) {
 if (globalThis.__TAURI__) {
 	const listenFn =
 		globalThis.__TAURI__.event?.listen || globalThis.__TAURI__.listen;
-	const emitFn =
-		globalThis.__TAURI__.event?.emit || globalThis.__TAURI__.emit;
+	const emitFn = globalThis.__TAURI__.event?.emit || globalThis.__TAURI__.emit;
 
 	if (typeof emitFn === "function") {
 		emitFn("balloon-ready", { scopeId });

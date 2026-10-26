@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/ui/templates/ghost-templates.js:49`  `<button type="button" id="refresh-balloons-btn">更新</button>`
+- `ui/js/ui/templates/ghost-templates.js:49` `<button type="button" id="refresh-balloons-btn">更新</button>`

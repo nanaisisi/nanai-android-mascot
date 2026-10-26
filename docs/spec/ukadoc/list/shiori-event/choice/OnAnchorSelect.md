@@ -10,5 +10,5 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 
 ## 実装箇所
 
-- `ui/js/ghost/sakura-script.js:37`  `this.app.ghostController.sendShioriEvent("OnAnchorSelect", [anchorId]);`
-- `ui/js/ghost/sakura-script.js:189`  `this.app.ghostController.sendShioriEvent("OnAnchorSelect", [`
+- `ui/js/ghost/sakura-script.js:37` `this.app.ghostController.sendShioriEvent("OnAnchorSelect", [anchorId]);`
+- `ui/js/ghost/sakura-script.js:189` `this.app.ghostController.sendShioriEvent("OnAnchorSelect", [`

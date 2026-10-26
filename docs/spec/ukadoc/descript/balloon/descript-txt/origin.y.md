@@ -11,6 +11,6 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 ## 実装箇所
 
 - `ui/js/core/app-actions.js:182` (コメント) `// バルーン原点 (origin.x, origin.y) によるオフセット調整`
-- `ui/js/core/app-actions.js:184`  `const oy = parseInt(props["origin.y"], 10);`
+- `ui/js/core/app-actions.js:184` `const oy = parseInt(props["origin.y"], 10);`
 - `crates/ui/src/descript.rs:50` (コメント) `/// バルーン用原点座標 (origin.x, origin.y)`
-- `crates/ui/src/descript.rs:53`  `let y = self.get("origin.y").and_then(|v| v.parse().ok());`
+- `crates/ui/src/descript.rs:53` `let y = self.get("origin.y").and_then(|v| v.parse().ok());`

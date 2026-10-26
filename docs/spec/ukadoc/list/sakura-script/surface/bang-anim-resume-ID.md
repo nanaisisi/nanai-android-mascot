@@ -11,6 +11,6 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/sakura-command-handler.js`  `\![anim]` コマンド分岐 (resume)
-- `ui/js/surface/surface.js`  `resumeAnimationById(animId, scopeId)`
-- `ui/js/surface/surface-animation-manager.js`  `resumeAnimation` (一時停止ゲート解除)
+- `ui/js/ghost/sakura-command-handler.js` `\![anim]` コマンド分岐 (resume)
+- `ui/js/surface/surface.js` `resumeAnimationById(animId, scopeId)`
+- `ui/js/surface/surface-animation-manager.js` `resumeAnimation` (一時停止ゲート解除)

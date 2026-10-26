@@ -17,14 +17,17 @@
 ## 2026 年 10 月 26 日 - ゴースト互換性ギャップ分析とロードマップ仕様策定
 
 ### 新規作成
+
 - **[ghost-compatibility-gap-and-roadmap.md](../spec/ghost/ghost-compatibility-gap-and-roadmap.md)**:
   - 32bit DLL読み込み・差分表示の現状実装を踏まえ、一般的な伺かゴースト資産の再現に必要な不足機能（ウェイト制御・SERIKOアニメーション・当たり判定・自律発話タイマー・バルーンスキン・VFS）のギャップ一覧化と、依存関係に基づく4段階の実装優先順位ロードマップを策定。
 
 ### 機能更新
+
 - **サーフィス多重画像合成 (lement0〜lementN)**:
-  - surfaces.txt 内の element 重ね合わせ指定（overlay, eplace 等）を Canvas レイヤーで事前自動合成する composeSurfaceElements を実装。
+  - surfaces.txt 内の element 重ね合わせ指定（overlay,
+    eplace 等）を Canvas レイヤーで事前自動合成する composeSurfaceElements を実装。
 - **バルーンスキン仕様拡張**:
-  - descript.rs にバルーン定義用アクセサ（origin.x, origin.y, alidrect, ont.color）を追加。
+  - descript.rs にバルーン定義用アクセサ（origin.x, origin.y, alidrect, ont.color）を追加。
 
 ## 2025 年 6 月 30 日 - 開発方針の大幅変更
 
@@ -43,7 +46,6 @@
 ### 修正された開発フロー
 
 1. **Windows First**: PC 環境での多機能実装・検証
-
    - 複数ウィンドウによる表現
    - デスクトップ環境の利点を活用
    - YAYA 連携の完全実装
@@ -180,13 +182,11 @@ Windows 環境を主軸とした段階的開発に変更、Android 移植は後�
 #### 実施内容
 
 1. **window-design.md の方針明確化**
-
    - Windows は Android 向け UI の検証用であることを明記
    - 将来的な Windows 固有機能（Splashscreen 等）は分離検討対象として明記
    - 実装順序から Windows 固有機能を分離し、将来的検討事項に変更
 
 2. **方針転換の理由**
-
    - Android 向け UI の検証・開発に集中したい
    - Windows 固有機能は現在のスコープ外とし、混乱を避ける
    - 段階的・焦点を絞った開発アプローチの採用

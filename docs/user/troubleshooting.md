@@ -204,8 +204,7 @@
    ```bash
    # Windows
    %APPDATA%\nanai-android-mascot\settings.json
-   
-   # Linux
+      # Linux
    ~/.local/share/nanai-android-mascot/settings.json
    ```
 
@@ -382,13 +381,15 @@ sudo apt-get install libwebkit2gtk-4.0-dev
 
 ```markdown
 ## 環境情報
+
 - OS: Windows 11 / Android 12 / Ubuntu 20.04
 - アプリバージョン: v1.0.0
 - インストール方法: バイナリ / ソースビルド
 
 ## 問題の詳細
+
 - 発生日時: 2025-07-11 15:30
-- 再現手順: 
+- 再現手順:
   1. アプリを起動
   2. ゴースト管理を開く
   3. ...
@@ -417,5 +418,5 @@ RUST_LOG=debug の出力結果
 
 ---
 
-*このドキュメントは継続的に更新され、新しい問題と解決方法が追加されます。*  
-*最終更新: 2025年7月11日*
+_このドキュメントは継続的に更新され、新しい問題と解決方法が追加されます。_  
+_最終更新: 2025年7月11日_

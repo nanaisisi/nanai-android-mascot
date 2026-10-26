@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/update/network.rs:85`  `let mut needs_update = false;`
-- `src-tauri/src/commands/update/network.rs:88`  `needs_update = true;`
-- `src-tauri/src/commands/update/network.rs:92`  `needs_update = true;`
-- `src-tauri/src/commands/update/network.rs:95`  `needs_update = true;`
-- `src-tauri/src/commands/update/network.rs:99`  `if needs_update {`
+- `src-tauri/src/commands/update/network.rs:85` `let mut needs_update = false;`
+- `src-tauri/src/commands/update/network.rs:88` `needs_update = true;`
+- `src-tauri/src/commands/update/network.rs:92` `needs_update = true;`
+- `src-tauri/src/commands/update/network.rs:95` `needs_update = true;`
+- `src-tauri/src/commands/update/network.rs:99` `if needs_update {`

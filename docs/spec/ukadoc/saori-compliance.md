@@ -31,9 +31,9 @@ SAORI (Sakura Auxiliary Operator for Request Interruption) は、ゴースト（
 
 ## 2. コマンド・リクエスト仕様
 
-| リクエスト項目 | 仕様 | 対応状況 | 動作仕様・備考 |
-| :--- | :--- | :---: | :--- |
-| `EXECUTE SSTP/1.1` | DirectSSTP メソッド | 🚧 開発中 | `SecurityLevel: External` / `Charset: UTF-8` |
-| `Command: [SAORI-Name]` | 呼び出し対象モジュール | 🚧 開発中 | 登録済み WASM / ネイティブ SAORI の特定 |
-| `Argument0` .. `n` | 引数リスト | 🚧 開発中 | SHIORI から渡された引数配列のマーシャリング |
-| `Result` / `Value0` .. `n` | 戻り値レスポンス | 🚧 開発中 | 実行結果を SHIORI へ返却 |
+| リクエスト項目             | 仕様                   | 対応状況  | 動作仕様・備考                               |
+| :------------------------- | :--------------------- | :-------: | :------------------------------------------- |
+| `EXECUTE SSTP/1.1`         | DirectSSTP メソッド    | 🚧 開発中 | `SecurityLevel: External` / `Charset: UTF-8` |
+| `Command: [SAORI-Name]`    | 呼び出し対象モジュール | 🚧 開発中 | 登録済み WASM / ネイティブ SAORI の特定      |
+| `Argument0` .. `n`         | 引数リスト             | 🚧 開発中 | SHIORI から渡された引数配列のマーシャリング  |
+| `Result` / `Value0` .. `n` | 戻り値レスポンス       | 🚧 開発中 | 実行結果を SHIORI へ返却                     |

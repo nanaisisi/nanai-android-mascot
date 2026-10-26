@@ -13,6 +13,6 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/sakura-command-handler.js`  `\![anim]` コマンド分岐 (pause / pouse / resume)
-- `ui/js/surface/surface.js`  `pauseAnimationById(animId, scopeId)`
-- `ui/js/surface/surface-animation-manager.js`  `pauseAnimation` / `isAnimationPaused` / パターン再生の一時停止ゲート
+- `ui/js/ghost/sakura-command-handler.js` `\![anim]` コマンド分岐 (pause / pouse / resume)
+- `ui/js/surface/surface.js` `pauseAnimationById(animId, scopeId)`
+- `ui/js/surface/surface-animation-manager.js` `pauseAnimation` / `isAnimationPaused` / パターン再生の一時停止ゲート

@@ -11,6 +11,6 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 ## 実装箇所
 
 - `ui/js/core/app-actions.js:161` (コメント) `// 有効テキスト領域 (validrect.left, top, right, bottom) によるパディング調整`
-- `ui/js/core/app-actions.js:162`  `const vl = parseInt(props["validrect.left"], 10);`
+- `ui/js/core/app-actions.js:162` `const vl = parseInt(props["validrect.left"], 10);`
 - `crates/ui/src/descript.rs:57` (コメント) `/// バルーン有効テキスト領域 (validrect.left, top, right, bottom)`
-- `crates/ui/src/descript.rs:59`  `let l = self.get("validrect.left").and_then(|v| v.parse().ok());`
+- `crates/ui/src/descript.rs:59` `let l = self.get("validrect.left").and_then(|v| v.parse().ok());`

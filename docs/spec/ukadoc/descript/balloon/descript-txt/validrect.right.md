@@ -10,5 +10,5 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 
 ## 実装箇所
 
-- `ui/js/core/app-actions.js:164`  `const vr = parseInt(props["validrect.right"], 10);`
-- `crates/ui/src/descript.rs:61`  `let r = self.get("validrect.right").and_then(|v| v.parse().ok());`
+- `ui/js/core/app-actions.js:164` `const vr = parseInt(props["validrect.right"], 10);`
+- `crates/ui/src/descript.rs:61` `let r = self.get("validrect.right").and_then(|v| v.parse().ok());`

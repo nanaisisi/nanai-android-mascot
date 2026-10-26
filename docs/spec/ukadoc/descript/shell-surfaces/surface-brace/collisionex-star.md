@@ -9,7 +9,8 @@
 surface-parser.js が解析し、判定・再生に利用している。
 
 ## 実装箇所
+
 - `crates/ui/src/surfaces.rs` （Rust 版 surfaces.txt パーサー：Element / Collision / SERIKO / Alias / append の解析）
 
 - `ui/js/surface/surface-parser.js:84` (コメント) `// collisionex[ID],[name],[shape],[coords...] または collision[ID],[coords...],[name]`
-- `ui/js/surface/surface-parser.js:85`  `if (trimmed.startsWith("collisionex")) {`
+- `ui/js/surface/surface-parser.js:85` `if (trimmed.startsWith("collisionex")) {`

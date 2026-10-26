@@ -2,75 +2,75 @@
 
 実装コードの文字列検索による一次調査です。
 
-| 項目 | 検索語 | 対応状況 |
-| :--- | :--- | :---: |
-| [\_m[0x00]](_m-0x00.md) | \_m | ❌ 検出なし |
-| [\_u[0x0000]](_u-0x0000.md) | \_u | ❌ 検出なし |
-| [\&[ID]](amp-ID.md) | \&[ID] | ❌ 検出なし |
-| [\![cancel,filewatch,パス]](bang-cancel-filewatch.md) | \! | ❌ 未実装 |
-| [\![cancel,http,URL]](bang-cancel-http-URL.md) | \! | ❌ 未実装 |
-| [\![cancel,ical,URL]](bang-cancel-ical-URL.md) | \! | ❌ 未実装 |
-| [\![cancel,websocket,URL]](bang-cancel-websocket-URL.md) | \! | ❌ 未実装 |
-| [\![close,websocket,URL]](bang-close-websocket-URL.md) | \! | ❌ 未実装 |
-| [\![create,shortcut]](bang-create-shortcut.md) | \! | ❌ 未実装 |
-| [\![enter,collisionmode]\![enter,collisionmode,rect]](bang-enter-collisionmode-bang-enter-collisionmode-rect.md) | \! | ❌ 未実装 |
-| [\![enter,inductionmode]](bang-enter-inductionmode.md) | \! | ❌ 未実装 |
-| [\![enter,passivemode]](bang-enter-passivemode.md) | \! | ❌ 未実装 |
-| [\![enter,selectmode,モード(rect),左,上,右,下]\![enter,selectmode,モード(rect),当たり判定名]\![enter,selectmode,モード(rect)]](bang-enter-selectmode-rect-bang-enter-selectmode-rect-bang-enter-selectmode-rect.md) | \! | ❌ 未実装 |
-| [\![execute,compressarchive,ファイル名,ディレクトリ名,オプション...]](bang-execute-compressarchive.md) | \! | ❌ 未実装 |
-| [\![execute,createnar,出力先ファイル]](bang-execute-createnar.md) | \! | ❌ 未実装 |
-| [\![execute,createupdatedata,出力先ファイル]](bang-execute-createupdatedata.md) | \! | ❌ 未実装 |
-| [\![execute,dropdefault,file,ファイルパス,ファイルパス...] \![execute,dropdefault,url,URL,種別]](bang-execute-dropdefault-file-.-bang-execute-dropdefault-url-URL.md) | \! | ❌ 未実装 |
-| [\![execute,dumpballoon,ディレクトリ,スコープID,prefix,イベントID]](bang-execute-dumpballoon-ID-prefix-ID.md) | \! | ❌ 未実装 |
-| [\![execute,dumpsurface,ディレクトリ,スコープID,サーフェスリスト,prefix,イベントID,ゼロ位置切り出し,アニメーションID]](bang-execute-dumpsurface-ID-prefix-ID-ID.md) | \! | ❌ 未実装 |
-| [\![execute,emptyrecyclebin]](bang-execute-emptyrecyclebin.md) | \! | ❌ 未実装 |
-| [\![execute,extractarchive,ファイル名,ディレクトリ名,オプション...]](bang-execute-extractarchive.md) | \! | ❌ 未実装 |
-| [\![execute,filewatch,パス,オプション...]](bang-execute-filewatch.md) | \! | ❌ 未実装 |
-| [\![execute,http-delete,URL,オプション,オプション,オプション...]](bang-execute-http-delete-URL.md) | \! | ❌ 未実装 |
-| [\![execute,http-get,URL]](bang-execute-http-get-URL.md) | \! | ❌ 未実装 |
-| [\![execute,http-get,URL,パラメータ]](bang-execute-http-get-URL-2.md) | \! | ❌ 未実装 |
-| [\![execute,http-get,URL,オプション,オプション,オプション...]](bang-execute-http-get-URL-3.md) | \! | ❌ 未実装 |
-| [\![execute,http-head,URL,オプション,オプション,オプション...]](bang-execute-http-head-URL.md) | \! | ❌ 未実装 |
-| [\![execute,http-options,URL,オプション,オプション,オプション...]](bang-execute-http-options-URL.md) | \! | ❌ 未実装 |
-| [\![execute,http-patch,URL,オプション,オプション,オプション...]](bang-execute-http-patch-URL.md) | \! | ❌ 未実装 |
-| [\![execute,http-post,URL,パラメータ]](bang-execute-http-post-URL.md) | \! | ❌ 未実装 |
-| [\![execute,http-post,URL,オプション,オプション,オプション...]](bang-execute-http-post-URL-2.md) | \! | ❌ 未実装 |
-| [\![execute,http-put,URL,オプション,オプション,オプション...]](bang-execute-http-put-URL.md) | \! | ❌ 未実装 |
-| [\![execute,ical-get,URL,オプション,オプション,オプション...]](bang-execute-ical-get-URL.md) | \! | ❌ 未実装 |
-| [\![execute,ical-post,URL,オプション,オプション,オプション...]](bang-execute-ical-post-URL.md) | \! | ❌ 未実装 |
-| [\![execute,install,path,ファイル名]](bang-execute-install-path.md) | \! | ❌ 未実装 |
-| [\![execute,install,url,URL,種別]](bang-execute-install-url-URL.md) | \! | ❌ 未実装 |
-| [\![execute,nslookup,パラメータ1,パラメータ2,...]](bang-execute-nslookup-1-2.md) | \! | ❌ 未実装 |
-| [\![execute,ping,パラメータ1,パラメータ2,...]](bang-execute-ping-1-2.md) | \! | ❌ 未実装 |
-| [\![execute,rss-get,URL,オプション,オプション,オプション...]](bang-execute-rss-get-URL.md) | \! | ❌ 未実装 |
-| [\![execute,rss-post,URL,オプション,オプション,オプション...]](bang-execute-rss-post-URL.md) | \! | ❌ 未実装 |
-| [\![execute,schedule-add,オプション,オプション,オプション...]](bang-execute-schedule-add.md) | \! | ❌ 未実装 |
-| [\![execute,schedule-delete,UID,オプション...]](bang-execute-schedule-delete-UID.md) | \! | ❌ 未実装 |
-| [\![execute,schedule-get,オプション,オプション,オプション...]](bang-execute-schedule-get.md) | \! | ❌ 未実装 |
-| [\![execute,websocket,URL,オプション,オプション,オプション...]](bang-execute-websocket-URL.md) | \! | ❌ 未実装 |
-| [\![leave,collisionmode]](bang-leave-collisionmode.md) | \! | ❌ 未実装 |
-| [\![leave,inductionmode]](bang-leave-inductionmode.md) | \! | ❌ 未実装 |
-| [\![leave,passivemode]](bang-leave-passivemode.md) | \! | ❌ 未実装 |
-| [\![leave,selectmode]](bang-leave-selectmode.md) | \! | ❌ 未実装 |
-| [\![load,makoto]](bang-load-makoto.md) | \! | ❌ 未実装 |
-| [\![load,shiori]](bang-load-shiori.md) | \! | ❌ 未実装 |
-| [\![reload,aigraph]](bang-reload-aigraph.md) | \! | ❌ 未実装 |
-| [\![reload,balloon]](bang-reload-balloon.md) | \! | ❌ 未実装 |
-| [\![reload,descript]](bang-reload-descript.md) | \! | ❌ 未実装 |
-| [\![reload,descript,パラメータ]](bang-reload-descript-2.md) | \! | ❌ 未実装 |
-| [\![reload,ghost]](bang-reload-ghost.md) | \! | ❌ 未実装 |
-| [\![reload,makoto]](bang-reload-makoto.md) | \! | ❌ 未実装 |
-| [\![reload,shell]](bang-reload-shell.md) | \! | ❌ 未実装 |
-| [\![reload,shiori]](bang-reload-shiori.md) | \! | ❌ 未実装 |
-| [\![reloadsurface]](bang-reloadsurface.md) | \! | ❌ 未実装 |
-| [\![send,websocket-binary,URL,base64data]](bang-send-websocket-binary-URL-base64data.md) | \! | ❌ 未実装 |
-| [\![send,websocket,URL,data1,data2,...]](bang-send-websocket-URL-data1-data2.md) | \! | ❌ 未実装 |
-| [\![set,shioridebugmode,(true/false)]](bang-set-shioridebugmode-true-false.md) | \! | ❌ 未実装 |
-| [\![unload,makoto]](bang-unload-makoto.md) | \! | ❌ 未実装 |
-| [\![unload,shiori]](bang-unload-shiori.md) | \! | ❌ 未実装 |
-| [\m[umsg,wparam,lparam]](m-umsg-wparam-lparam.md) | \m | ❌ 検出なし |
-| [http/rss/ical/websocket オプション](notes_executehttp.md) | http | ❌ 未実装(誤検出) |
-| [iCal絞り込みオプション \[2.8.90\]](notes_executeical.md) | iCal | ❌ 検出なし |
-| [RSS絞り込みオプション \[2.8.92\]](notes_executerss.md) | 2.8.92 | ❌ 検出なし |
-| [InductionMode](notes_inductionmode.md) | InductionMode | ❌ 検出なし |
-| [PassiveMode](notes_passivemode.md) | PassiveMode | ❌ 検出なし |
+| 項目                                                                                                                                                                                                                | 検索語        |     対応状況      |
+| :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------------ | :---------------: |
+| [\_m[0x00]](_m-0x00.md)                                                                                                                                                                                             | \_m           |    ❌ 検出なし    |
+| [\_u[0x0000]](_u-0x0000.md)                                                                                                                                                                                         | \_u           |    ❌ 検出なし    |
+| [\&[ID]](amp-ID.md)                                                                                                                                                                                                 | \&[ID]        |    ❌ 検出なし    |
+| [\![cancel,filewatch,パス]](bang-cancel-filewatch.md)                                                                                                                                                               | \!            |     ❌ 未実装     |
+| [\![cancel,http,URL]](bang-cancel-http-URL.md)                                                                                                                                                                      | \!            |     ❌ 未実装     |
+| [\![cancel,ical,URL]](bang-cancel-ical-URL.md)                                                                                                                                                                      | \!            |     ❌ 未実装     |
+| [\![cancel,websocket,URL]](bang-cancel-websocket-URL.md)                                                                                                                                                            | \!            |     ❌ 未実装     |
+| [\![close,websocket,URL]](bang-close-websocket-URL.md)                                                                                                                                                              | \!            |     ❌ 未実装     |
+| [\![create,shortcut]](bang-create-shortcut.md)                                                                                                                                                                      | \!            |     ❌ 未実装     |
+| [\![enter,collisionmode]\![enter,collisionmode,rect]](bang-enter-collisionmode-bang-enter-collisionmode-rect.md)                                                                                                    | \!            |     ❌ 未実装     |
+| [\![enter,inductionmode]](bang-enter-inductionmode.md)                                                                                                                                                              | \!            |     ❌ 未実装     |
+| [\![enter,passivemode]](bang-enter-passivemode.md)                                                                                                                                                                  | \!            |     ❌ 未実装     |
+| [\![enter,selectmode,モード(rect),左,上,右,下]\![enter,selectmode,モード(rect),当たり判定名]\![enter,selectmode,モード(rect)]](bang-enter-selectmode-rect-bang-enter-selectmode-rect-bang-enter-selectmode-rect.md) | \!            |     ❌ 未実装     |
+| [\![execute,compressarchive,ファイル名,ディレクトリ名,オプション...]](bang-execute-compressarchive.md)                                                                                                              | \!            |     ❌ 未実装     |
+| [\![execute,createnar,出力先ファイル]](bang-execute-createnar.md)                                                                                                                                                   | \!            |     ❌ 未実装     |
+| [\![execute,createupdatedata,出力先ファイル]](bang-execute-createupdatedata.md)                                                                                                                                     | \!            |     ❌ 未実装     |
+| [\![execute,dropdefault,file,ファイルパス,ファイルパス...]\![execute,dropdefault,url,URL,種別]](bang-execute-dropdefault-file-.-bang-execute-dropdefault-url-URL.md)                                                | \!            |     ❌ 未実装     |
+| [\![execute,dumpballoon,ディレクトリ,スコープID,prefix,イベントID]](bang-execute-dumpballoon-ID-prefix-ID.md)                                                                                                       | \!            |     ❌ 未実装     |
+| [\![execute,dumpsurface,ディレクトリ,スコープID,サーフェスリスト,prefix,イベントID,ゼロ位置切り出し,アニメーションID]](bang-execute-dumpsurface-ID-prefix-ID-ID.md)                                                 | \!            |     ❌ 未実装     |
+| [\![execute,emptyrecyclebin]](bang-execute-emptyrecyclebin.md)                                                                                                                                                      | \!            |     ❌ 未実装     |
+| [\![execute,extractarchive,ファイル名,ディレクトリ名,オプション...]](bang-execute-extractarchive.md)                                                                                                                | \!            |     ❌ 未実装     |
+| [\![execute,filewatch,パス,オプション...]](bang-execute-filewatch.md)                                                                                                                                               | \!            |     ❌ 未実装     |
+| [\![execute,http-delete,URL,オプション,オプション,オプション...]](bang-execute-http-delete-URL.md)                                                                                                                  | \!            |     ❌ 未実装     |
+| [\![execute,http-get,URL]](bang-execute-http-get-URL.md)                                                                                                                                                            | \!            |     ❌ 未実装     |
+| [\![execute,http-get,URL,パラメータ]](bang-execute-http-get-URL-2.md)                                                                                                                                               | \!            |     ❌ 未実装     |
+| [\![execute,http-get,URL,オプション,オプション,オプション...]](bang-execute-http-get-URL-3.md)                                                                                                                      | \!            |     ❌ 未実装     |
+| [\![execute,http-head,URL,オプション,オプション,オプション...]](bang-execute-http-head-URL.md)                                                                                                                      | \!            |     ❌ 未実装     |
+| [\![execute,http-options,URL,オプション,オプション,オプション...]](bang-execute-http-options-URL.md)                                                                                                                | \!            |     ❌ 未実装     |
+| [\![execute,http-patch,URL,オプション,オプション,オプション...]](bang-execute-http-patch-URL.md)                                                                                                                    | \!            |     ❌ 未実装     |
+| [\![execute,http-post,URL,パラメータ]](bang-execute-http-post-URL.md)                                                                                                                                               | \!            |     ❌ 未実装     |
+| [\![execute,http-post,URL,オプション,オプション,オプション...]](bang-execute-http-post-URL-2.md)                                                                                                                    | \!            |     ❌ 未実装     |
+| [\![execute,http-put,URL,オプション,オプション,オプション...]](bang-execute-http-put-URL.md)                                                                                                                        | \!            |     ❌ 未実装     |
+| [\![execute,ical-get,URL,オプション,オプション,オプション...]](bang-execute-ical-get-URL.md)                                                                                                                        | \!            |     ❌ 未実装     |
+| [\![execute,ical-post,URL,オプション,オプション,オプション...]](bang-execute-ical-post-URL.md)                                                                                                                      | \!            |     ❌ 未実装     |
+| [\![execute,install,path,ファイル名]](bang-execute-install-path.md)                                                                                                                                                 | \!            |     ❌ 未実装     |
+| [\![execute,install,url,URL,種別]](bang-execute-install-url-URL.md)                                                                                                                                                 | \!            |     ❌ 未実装     |
+| [\![execute,nslookup,パラメータ1,パラメータ2,...]](bang-execute-nslookup-1-2.md)                                                                                                                                    | \!            |     ❌ 未実装     |
+| [\![execute,ping,パラメータ1,パラメータ2,...]](bang-execute-ping-1-2.md)                                                                                                                                            | \!            |     ❌ 未実装     |
+| [\![execute,rss-get,URL,オプション,オプション,オプション...]](bang-execute-rss-get-URL.md)                                                                                                                          | \!            |     ❌ 未実装     |
+| [\![execute,rss-post,URL,オプション,オプション,オプション...]](bang-execute-rss-post-URL.md)                                                                                                                        | \!            |     ❌ 未実装     |
+| [\![execute,schedule-add,オプション,オプション,オプション...]](bang-execute-schedule-add.md)                                                                                                                        | \!            |     ❌ 未実装     |
+| [\![execute,schedule-delete,UID,オプション...]](bang-execute-schedule-delete-UID.md)                                                                                                                                | \!            |     ❌ 未実装     |
+| [\![execute,schedule-get,オプション,オプション,オプション...]](bang-execute-schedule-get.md)                                                                                                                        | \!            |     ❌ 未実装     |
+| [\![execute,websocket,URL,オプション,オプション,オプション...]](bang-execute-websocket-URL.md)                                                                                                                      | \!            |     ❌ 未実装     |
+| [\![leave,collisionmode]](bang-leave-collisionmode.md)                                                                                                                                                              | \!            |     ❌ 未実装     |
+| [\![leave,inductionmode]](bang-leave-inductionmode.md)                                                                                                                                                              | \!            |     ❌ 未実装     |
+| [\![leave,passivemode]](bang-leave-passivemode.md)                                                                                                                                                                  | \!            |     ❌ 未実装     |
+| [\![leave,selectmode]](bang-leave-selectmode.md)                                                                                                                                                                    | \!            |     ❌ 未実装     |
+| [\![load,makoto]](bang-load-makoto.md)                                                                                                                                                                              | \!            |     ❌ 未実装     |
+| [\![load,shiori]](bang-load-shiori.md)                                                                                                                                                                              | \!            |     ❌ 未実装     |
+| [\![reload,aigraph]](bang-reload-aigraph.md)                                                                                                                                                                        | \!            |     ❌ 未実装     |
+| [\![reload,balloon]](bang-reload-balloon.md)                                                                                                                                                                        | \!            |     ❌ 未実装     |
+| [\![reload,descript]](bang-reload-descript.md)                                                                                                                                                                      | \!            |     ❌ 未実装     |
+| [\![reload,descript,パラメータ]](bang-reload-descript-2.md)                                                                                                                                                         | \!            |     ❌ 未実装     |
+| [\![reload,ghost]](bang-reload-ghost.md)                                                                                                                                                                            | \!            |     ❌ 未実装     |
+| [\![reload,makoto]](bang-reload-makoto.md)                                                                                                                                                                          | \!            |     ❌ 未実装     |
+| [\![reload,shell]](bang-reload-shell.md)                                                                                                                                                                            | \!            |     ❌ 未実装     |
+| [\![reload,shiori]](bang-reload-shiori.md)                                                                                                                                                                          | \!            |     ❌ 未実装     |
+| [\![reloadsurface]](bang-reloadsurface.md)                                                                                                                                                                          | \!            |     ❌ 未実装     |
+| [\![send,websocket-binary,URL,base64data]](bang-send-websocket-binary-URL-base64data.md)                                                                                                                            | \!            |     ❌ 未実装     |
+| [\![send,websocket,URL,data1,data2,...]](bang-send-websocket-URL-data1-data2.md)                                                                                                                                    | \!            |     ❌ 未実装     |
+| [\![set,shioridebugmode,(true/false)]](bang-set-shioridebugmode-true-false.md)                                                                                                                                      | \!            |     ❌ 未実装     |
+| [\![unload,makoto]](bang-unload-makoto.md)                                                                                                                                                                          | \!            |     ❌ 未実装     |
+| [\![unload,shiori]](bang-unload-shiori.md)                                                                                                                                                                          | \!            |     ❌ 未実装     |
+| [\m[umsg,wparam,lparam]](m-umsg-wparam-lparam.md)                                                                                                                                                                   | \m            |    ❌ 検出なし    |
+| [http/rss/ical/websocket オプション](notes_executehttp.md)                                                                                                                                                          | http          | ❌ 未実装(誤検出) |
+| [iCal絞り込みオプション \[2.8.90\]](notes_executeical.md)                                                                                                                                                           | iCal          |    ❌ 検出なし    |
+| [RSS絞り込みオプション \[2.8.92\]](notes_executerss.md)                                                                                                                                                             | 2.8.92        |    ❌ 検出なし    |
+| [InductionMode](notes_inductionmode.md)                                                                                                                                                                             | InductionMode |    ❌ 検出なし    |
+| [PassiveMode](notes_passivemode.md)                                                                                                                                                                                 | PassiveMode   |    ❌ 検出なし    |

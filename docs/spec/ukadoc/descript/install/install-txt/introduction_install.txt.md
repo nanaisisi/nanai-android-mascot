@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/ui/templates/ghost-templates.js:71`  `<li><strong>install.txt 自動解析:</strong> ゴースト名・ディレクトリ設定を自動認識</li>`
-- `src-tauri/src/ghost/scan.rs:174`  `path.join("install.txt"),`
+- `ui/js/ui/templates/ghost-templates.js:71` `<li><strong>install.txt 自動解析:</strong> ゴースト名・ディレクトリ設定を自動認識</li>`
+- `src-tauri/src/ghost/scan.rs:174` `path.join("install.txt"),`
 - `src-tauri/src/commands/install.rs:14` (コメント) `// アーカイブ内のinstall.txtまたはdescript.txtを検索してゴースト名を特定`
-- `src-tauri/src/commands/install.rs:29`  `if lower.ends_with("install.txt") || lower.ends_with("descript.txt") {`
-- `src-tauri/src/commands/install.rs:62`  `if lower.ends_with("install.txt") {`
+- `src-tauri/src/commands/install.rs:29` `if lower.ends_with("install.txt") || lower.ends_with("descript.txt") {`
+- `src-tauri/src/commands/install.rs:62` `if lower.ends_with("install.txt") {`

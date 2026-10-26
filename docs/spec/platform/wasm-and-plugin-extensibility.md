@@ -55,11 +55,11 @@
 
 ### 3.1 WASM化対象のコンポーネント
 
-| コンポーネント | 従来実装 | WASM化の狙い |
-| :--- | :--- | :--- |
-| **SHIORI エンジン (里々/YAYA)** | C++ DLL | Emscripten / Clang WASM ターゲットでコンパイル。OS を問わず同一バイナリで対話ロジックを高速・安全に実行。 |
-| **独自ゴースト・スクリプトエンジン** | Rust (`libloading`) | `wasm-bindgen` を用いてビルド。Web ブラウザ版および Android WebView 上でサンドボックス動作。 |
-| **画像処理 / PNA・透過合成** | GDI+ / 独自 C++ | Canvas 2D よりも高速かつメモリ効率の高いピクセル透過・マスク合成を WASM (Rust/C++) で処理。 |
+| コンポーネント                       | 従来実装            | WASM化の狙い                                                                                              |
+| :----------------------------------- | :------------------ | :-------------------------------------------------------------------------------------------------------- |
+| **SHIORI エンジン (里々/YAYA)**      | C++ DLL             | Emscripten / Clang WASM ターゲットでコンパイル。OS を問わず同一バイナリで対話ロジックを高速・安全に実行。 |
+| **独自ゴースト・スクリプトエンジン** | Rust (`libloading`) | `wasm-bindgen` を用いてビルド。Web ブラウザ版および Android WebView 上でサンドボックス動作。              |
+| **画像処理 / PNA・透過合成**         | GDI+ / 独自 C++     | Canvas 2D よりも高速かつメモリ効率の高いピクセル透過・マスク合成を WASM (Rust/C++) で処理。               |
 
 ### 3.2 SHIORI 3.0 on WASM のインターフェース仕様
 
@@ -68,14 +68,14 @@
 ```typescript
 // WASM SHIORI インターフェース定義
 export interface WasmShioriEngine {
-  /** SHIORI 初期化 (ゴースト辞書パスまたはアーカイブを展開) */
-  load(ghostFiles: Map<string, Uint8Array>): Promise<boolean>;
+	/** SHIORI 初期化 (ゴースト辞書パスまたはアーカイブを展開) */
+	load(ghostFiles: Map<string, Uint8Array>): Promise<boolean>;
 
-  /** SHIORI 3.0 リクエスト文字列の送受信 */
-  request(requestText: string): Promise<string>;
+	/** SHIORI 3.0 リクエスト文字列の送受信 */
+	request(requestText: string): Promise<string>;
 
-  /** アンロード処理 */
-  unload(): Promise<boolean>;
+	/** アンロード処理 */
+	unload(): Promise<boolean>;
 }
 ```
 
@@ -105,15 +105,11 @@ plugins/
 
 ```json
 {
-  "id": "nanai-weather-plugin",
-  "name": "お天気通知プラグイン",
-  "version": "1.0.0",
-  "author": "Nanai Project",
-  "permissions": [
-    "network:fetch",
-    "shiori:raise_event",
-    "ui:balloon"
-  ]
+	"id": "nanai-weather-plugin",
+	"name": "お天気通知プラグイン",
+	"version": "1.0.0",
+	"author": "Nanai Project",
+	"permissions": ["network:fetch", "shiori:raise_event", "ui:balloon"]
 }
 ```
 
@@ -124,39 +120,42 @@ plugins/
 ```javascript
 // index.js の実装例
 export default class WeatherPlugin {
-  async onInit(context) {
-    this.context = context;
-    console.log("お天気プラグインがロードされました");
+	async onInit(context) {
+		this.context = context;
+		console.log("お天気プラグインがロードされました");
 
-    // 1. 定期イベントのフック
-    context.events.on("OnMinuteChange", async () => {
-      await this.checkWeather();
-    });
+		// 1. 定期イベントのフック
+		context.events.on("OnMinuteChange", async () => {
+			await this.checkWeather();
+		});
 
-    // 2. メニュー項目の追加
-    context.menu.registerItem({
-      id: "check-weather",
-      label: "☀️ 天気予報を聞く",
-      action: () => this.speakWeather(),
-    });
-  }
+		// 2. メニュー項目の追加
+		context.menu.registerItem({
+			id: "check-weather",
+			label: "☀️ 天気予報を聞く",
+			action: () => this.speakWeather(),
+		});
+	}
 
-  async checkWeather() {
-    // 天気 API 取得
-    const res = await this.context.network.fetch("https://api.weather...");
-    const data = await res.json();
-    
-    // ゴーストにイベントとして渡す、または直接バルーン表示
-    this.context.shiori.raiseEvent("OnWeatherNotice", [data.weather, data.temp]);
-  }
+	async checkWeather() {
+		// 天気 API 取得
+		const res = await this.context.network.fetch("https://api.weather...");
+		const data = await res.json();
 
-  speakWeather() {
-    this.context.ui.showBalloon("今日はいい天気だよ！お出かけ日和だね♪");
-  }
+		// ゴーストにイベントとして渡す、または直接バルーン表示
+		this.context.shiori.raiseEvent("OnWeatherNotice", [
+			data.weather,
+			data.temp,
+		]);
+	}
 
-  onDestroy() {
-    console.log("お天気プラグインが破棄されました");
-  }
+	speakWeather() {
+		this.context.ui.showBalloon("今日はいい天気だよ！お出かけ日和だね♪");
+	}
+
+	onDestroy() {
+		console.log("お天気プラグインが破棄されました");
+	}
 }
 ```
 

@@ -1,4 +1,3 @@
-
 # 貢献ガイド - Nanai Android Mascot
 
 このプロジェクトへの貢献をお考えいただき、ありがとうございます。Nanai Android Mascot は AI 主導開発を採用したプロジェクトですが、コミュニティからの貢献を歓迎します。
@@ -101,6 +100,7 @@ cargo tauri dev
 
 ```md
 # 機能実装時
+
 現在のプロジェクト: Tauri + Rust のデスクトップマスコット
 実装箇所: [具体的な場所]
 要求: [具体的な機能]
@@ -171,7 +171,7 @@ pub fn get_ghost_info(ghost_name: &str) -> Result<GhostInfo, Error> {
  * @returns {Promise<Object>} ゴースト情報
  */
 async function getGhostInfo(ghostName) {
-  // 実装
+	// 実装
 }
 ```
 

@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/surface/character.js:5`  `const img = document.getElementById("subchar-img");`
-- `ui/js/surface/character.js:6`  `const root = document.getElementById("subchar-root");`
+- `ui/js/surface/character.js:5` `const img = document.getElementById("subchar-img");`
+- `ui/js/surface/character.js:6` `const root = document.getElementById("subchar-root");`
 - `ui/js/surface/character.js:8` (コメント) `// URLパラメータからスコープIDを取得 (例: character.html?scope=1)`
-- `ui/js/surface/character.js:20`  `listenFn(update-subchar-image-${scopeId}, (event) => {`
-- `ui/js/surface/character.js:34`  `emitFn("request-subchar-image", { scopeId });`
+- `ui/js/surface/character.js:20` `listenFn(update-subchar-image-${scopeId}, (event) => {`
+- `ui/js/surface/character.js:34` `emitFn("request-subchar-image", { scopeId });`

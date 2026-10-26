@@ -11,4 +11,4 @@ src-tauri/src/shiori/ffi.rs にリクエスト生成関数はあるが、発火�
 ## 実装箇所
 
 - `src-tauri/src/shiori/ffi.rs:271` (コメント) `/// OnBIFFCompleteイベントのリクエストを作成 (メールチェック完了)`
-- `src-tauri/src/shiori/ffi.rs:275`  `.header("Event", "OnBIFFComplete")`
+- `src-tauri/src/shiori/ffi.rs:275` `.header("Event", "OnBIFFComplete")`

@@ -11,4 +11,4 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 ## 実装箇所
 
 - `src-tauri/src/shiori/ffi.rs:212` (コメント) `/// OnCloseイベントのリクエストを作成`
-- `src-tauri/src/shiori/ffi.rs:216`  `.header("Event", "OnClose")`
+- `src-tauri/src/shiori/ffi.rs:216` `.header("Event", "OnClose")`

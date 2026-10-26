@@ -10,7 +10,7 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan.rs:104`  `let bg_bmp = map.get("menu.background.bitmap.filename").cloned();`
-- `src-tauri/src/ghost/scan.rs:105`  `let fg_bmp = map.get("menu.foreground.bitmap.filename").cloned();`
-- `src-tauri/src/ghost/scan.rs:106`  `let side_bmp = map.get("menu.sidebar.bitmap.filename").cloned();`
-- `crates/ui/src/app.rs:30`  `pub fn extract_filename(path: &str) -> String {`
+- `src-tauri/src/ghost/scan.rs:104` `let bg_bmp = map.get("menu.background.bitmap.filename").cloned();`
+- `src-tauri/src/ghost/scan.rs:105` `let fg_bmp = map.get("menu.foreground.bitmap.filename").cloned();`
+- `src-tauri/src/ghost/scan.rs:106` `let side_bmp = map.get("menu.sidebar.bitmap.filename").cloned();`
+- `crates/ui/src/app.rs:30` `pub fn extract_filename(path: &str) -> String {`

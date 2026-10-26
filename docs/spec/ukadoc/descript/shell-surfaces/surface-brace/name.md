@@ -9,10 +9,11 @@
 ghost/scan.rs 等で descript の値を読込している。表示・動作への反映は個別未確認。
 
 ## 実装箇所
+
 - `crates/ui/src/surfaces.rs` （Rust 版 surfaces.txt パーサー：Element / Collision / SERIKO / Alias / append の解析）
 
-- `ui/js/core/app-update.js:26`  `const ghostName = targetGhostName || gc.currentGhost?.name || "とらふぃっく☆とれいん";`
+- `ui/js/core/app-update.js:26` `const ghostName = targetGhostName || gc.currentGhost?.name || "とらふぃっく☆とれいん";`
 - `ui/js/ghost/ghost.js:13` (コメント) `* @property {string} name`
-- `ui/js/ghost/ghost.js:48`  `? JSON.parse(localStorage.getItem(AppConfig.storageKeys.lastGhost) || "{}")?.name`
-- `ui/js/ghost/ghost.js:52`  `const found = this.ghosts.find((g) => g.name === targetGhostName);`
-- `ui/js/ghost/ghost.js:73`  `return result.ghosts?.some((g) => g.name === ghostInfo.name) || false;`
+- `ui/js/ghost/ghost.js:48` `? JSON.parse(localStorage.getItem(AppConfig.storageKeys.lastGhost) || "{}")?.name`
+- `ui/js/ghost/ghost.js:52` `const found = this.ghosts.find((g) => g.name === targetGhostName);`
+- `ui/js/ghost/ghost.js:73` `return result.ghosts?.some((g) => g.name === ghostInfo.name) || false;`

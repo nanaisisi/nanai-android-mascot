@@ -10,4 +10,4 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 
 ## 実装箇所
 
-- `ui/js/ghost/ghost.js:194`  `this.sendShioriEvent("OnShellChanged", [shellName]);`
+- `ui/js/ghost/ghost.js:194` `this.sendShioriEvent("OnShellChanged", [shellName]);`

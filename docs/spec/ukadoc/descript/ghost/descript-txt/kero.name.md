@@ -10,8 +10,8 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan.rs:192`  `let kero_name = meta_map.as_ref().and_then(|m| m.get("kero.name").cloned());`
-- `crates/ui/src/lib.rs:26`  `"charset,Shift_JIS\r\nname,SampleGhost\r\nsakura.name,Nanai\r\nkero.name,Mini\r\n";`
-- `src-tauri/src/commands/install.rs:163`  `let kero_name = meta_map.as_ref().and_then(|m| m.get("kero.name").cloned());`
+- `src-tauri/src/ghost/scan.rs:192` `let kero_name = meta_map.as_ref().and_then(|m| m.get("kero.name").cloned());`
+- `crates/ui/src/lib.rs:26` `"charset,Shift_JIS\r\nname,SampleGhost\r\nsakura.name,Nanai\r\nkero.name,Mini\r\n";`
+- `src-tauri/src/commands/install.rs:163` `let kero_name = meta_map.as_ref().and_then(|m| m.get("kero.name").cloned());`
 - `ui/js/surface/ghost-surface.js:164` (コメント) `// ゴースト側に kero.name 等のサブキャラ設定が存在する場合のみ、またはスクリプトからの明示呼び出し時にサブウィンドウで表示`
 - `crates/ui/src/descript.rs:35` (コメント) `/// キャラクター本体名（kero.name または sakura.name）`

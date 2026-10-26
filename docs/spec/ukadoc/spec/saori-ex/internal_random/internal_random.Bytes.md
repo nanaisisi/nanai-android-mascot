@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/dynamic.rs:17`  `fn GlobalAlloc(uFlags: u32, dwBytes: usize) -> Hglobal;`
-- `ui/js/ghost/shiori-worker.js:13`  `if (payload?.wasmUrl || payload?.wasmBytes) {`
-- `ui/js/ghost/shiori-worker.js:14`  `const wasmBytes =`
-- `ui/js/ghost/shiori-worker.js:15`  `payload.wasmBytes ||`
-- `ui/js/ghost/shiori-worker.js:25`  `wasmBytes,`
+- `src-tauri/src/shiori/dynamic.rs:17` `fn GlobalAlloc(uFlags: u32, dwBytes: usize) -> Hglobal;`
+- `ui/js/ghost/shiori-worker.js:13` `if (payload?.wasmUrl || payload?.wasmBytes) {`
+- `ui/js/ghost/shiori-worker.js:14` `const wasmBytes =`
+- `ui/js/ghost/shiori-worker.js:15` `payload.wasmBytes ||`
+- `ui/js/ghost/shiori-worker.js:25` `wasmBytes,`

@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/ui/modal.js:61`  `} else if (contentId === "balloon-modal-content") {`
-- `ui/js/ghost/ghost.js:176`  `this.app.setBalloonTheme?.(this.app.settings?.balloonTheme || "default");`
-- `ui/js/ui/templates/ghost-templates.js:32`  `"balloon-modal-content": `
-- `ui/js/ui/templates/ghost-templates.js:36`  `<div class="current-balloon" id="current-balloon">デフォルト</div>`
-- `ui/js/ui/templates/ghost-templates.js:40`  `<div class="balloon-list" id="balloon-list">`
+- `ui/js/ui/modal.js:61` `} else if (contentId === "balloon-modal-content") {`
+- `ui/js/ghost/ghost.js:176` `this.app.setBalloonTheme?.(this.app.settings?.balloonTheme || "default");`
+- `ui/js/ui/templates/ghost-templates.js:32` `"balloon-modal-content": `
+- `ui/js/ui/templates/ghost-templates.js:36` `<div class="current-balloon" id="current-balloon">デフォルト</div>`
+- `ui/js/ui/templates/ghost-templates.js:40` `<div class="balloon-list" id="balloon-list">`

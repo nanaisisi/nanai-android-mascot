@@ -11,4 +11,4 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 ## 実装箇所
 
 - `ui/js/ghost/sakura-script.js:262` (コメント) `* 発話終了後のサーフィス自動復帰タイマー (OnSurfaceRestore)`
-- `ui/js/ghost/sakura-script.js:271`  `await this.app.ghostController.sendShioriEvent("OnSurfaceRestore");`
+- `ui/js/ghost/sakura-script.js:271` `await this.app.ghostController.sendShioriEvent("OnSurfaceRestore");`

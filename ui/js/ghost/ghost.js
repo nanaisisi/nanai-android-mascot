@@ -45,7 +45,9 @@ export class GhostController {
 				this.app.initialGhostName ||
 				AppConfig.state?.last_ghost ||
 				(localStorage.getItem(AppConfig.storageKeys.lastGhost)
-					? JSON.parse(localStorage.getItem(AppConfig.storageKeys.lastGhost) || "{}")?.name
+					? JSON.parse(
+							localStorage.getItem(AppConfig.storageKeys.lastGhost) || "{}",
+						)?.name
 					: null);
 
 			if (targetGhostName) {
@@ -173,7 +175,9 @@ export class GhostController {
 			if (ghostName.includes("Emily") || ghostName.includes("emily")) {
 				this.app.setBalloonTheme?.("emily4");
 			} else {
-				this.app.setBalloonTheme?.(this.app.settings?.balloonTheme || "default");
+				this.app.setBalloonTheme?.(
+					this.app.settings?.balloonTheme || "default",
+				);
 			}
 		}
 		// メニュー側の選択状態表示（✓マーク等）を最新状態に同期

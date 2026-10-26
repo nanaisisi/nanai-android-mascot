@@ -12,8 +12,8 @@ Rust パーサーが解析し、マニフェスト経由で JS のサーフィ�
 
 ## 実装箇所
 
-- `crates/ui/src/surfaces.rs`  `handle_alias_line` / `parse_block_opener` (エイリアス名 → 番号列、キャラクタープレフィックス対応)、`alias_numbers` / `kero_alias_numbers` / `resolve_alias` / `resolve_kero_alias`
-- `crates/ui/src/manifest.rs`  `ShellManifest.aliases` / `ShellManifest.kero_aliases` (JSON 化)
-- `ui/js/surface/shell-manifest.js`  `manifestToSurfaceData` (aliases / keroAliases の伝播)
-- `ui/js/surface/surface.js`  `resolveSurfaceNumber(surfaceId, scopeId)` (別名 → 番号ランダム抽選)、`activeBindLayers` (bind pattern surface 名の解決)
-- `ui/js/surface/ghost-surface.js`  `updateSurface` 入口で全サーフィス参照を解決
+- `crates/ui/src/surfaces.rs` `handle_alias_line` / `parse_block_opener` (エイリアス名 → 番号列、キャラクタープレフィックス対応)、`alias_numbers` / `kero_alias_numbers` / `resolve_alias` / `resolve_kero_alias`
+- `crates/ui/src/manifest.rs` `ShellManifest.aliases` / `ShellManifest.kero_aliases` (JSON 化)
+- `ui/js/surface/shell-manifest.js` `manifestToSurfaceData` (aliases / keroAliases の伝播)
+- `ui/js/surface/surface.js` `resolveSurfaceNumber(surfaceId, scopeId)` (別名 → 番号ランダム抽選)、`activeBindLayers` (bind pattern surface 名の解決)
+- `ui/js/surface/ghost-surface.js` `updateSurface` 入口で全サーフィス参照を解決

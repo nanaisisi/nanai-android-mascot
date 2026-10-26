@@ -10,4 +10,4 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan.rs:104`  `let bg_bmp = map.get("menu.background.bitmap.filename").cloned();`
+- `src-tauri/src/ghost/scan.rs:104` `let bg_bmp = map.get("menu.background.bitmap.filename").cloned();`

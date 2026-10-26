@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/shiori/lifecycle.rs:100`  `.duration_since(std::time::UNIX_EPOCH)`
+- `src-tauri/src/commands/shiori/lifecycle.rs:100` `.duration_since(std::time::UNIX_EPOCH)`

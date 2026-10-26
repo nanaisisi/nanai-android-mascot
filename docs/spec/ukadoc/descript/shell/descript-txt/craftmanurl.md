@@ -9,7 +9,8 @@
 ghost/scan.rs 等で descript の値を読込している。表示・動作への反映は個別未確認。
 
 ## 実装箇所
+
 - `crates/ui/src/descript.rs` （Rust 版 descript.txt パーサー: bindgroup / bindoption / default* / type / craftmanurl 解析）
 
-- `src-tauri/src/ghost/scan.rs:197`  `.and_then(|m| m.get("craftmanurl").cloned());`
-- `src-tauri/src/commands/install.rs:168`  `.and_then(|m| m.get("craftmanurl").cloned());`
+- `src-tauri/src/ghost/scan.rs:197` `.and_then(|m| m.get("craftmanurl").cloned());`
+- `src-tauri/src/commands/install.rs:168` `.and_then(|m| m.get("craftmanurl").cloned());`

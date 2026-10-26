@@ -10,6 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/ui/templates/ghost-templates.js:28`  `<button type="button" id="refresh-ghosts-btn">更新</button>`
-- `ui/js/ui/templates/ghost-templates.js:49`  `<button type="button" id="refresh-balloons-btn">更新</button>`
-- `ui/js/ui/modal-ghost-handlers.js:17`  `document.getElementById("refresh-ghosts-btn")?.addEventListener("click", async () => {`
+- `ui/js/ui/templates/ghost-templates.js:28` `<button type="button" id="refresh-ghosts-btn">更新</button>`
+- `ui/js/ui/templates/ghost-templates.js:49` `<button type="button" id="refresh-balloons-btn">更新</button>`
+- `ui/js/ui/modal-ghost-handlers.js:17` `document.getElementById("refresh-ghosts-btn")?.addEventListener("click", async () => {`

@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan.rs:101`  `let dis_font_col = parse_color("menu.disable.font.color");`
+- `src-tauri/src/ghost/scan.rs:101` `let dis_font_col = parse_color("menu.disable.font.color");`

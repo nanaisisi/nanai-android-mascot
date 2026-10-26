@@ -58,11 +58,9 @@
    ```bash
    # Rust のインストール
    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-   
-   # Node.js のインストール（LTS版）
+      # Node.js のインストール（LTS版）
    # https://nodejs.org/からダウンロード
-   
-   # Git のインストール
+      # Git のインストール
    # https://git-scm.com/からダウンロード
    ```
 
@@ -79,11 +77,9 @@
    ```bash
    # 依存関係のインストール
    cargo build --release
-   
-   # 開発版の実行
+      # 開発版の実行
    cargo tauri dev
-   
-   # リリース版のビルド
+      # リリース版のビルド
    cargo tauri build
    ```
 
@@ -120,13 +116,11 @@
    ```bash
    # Android Studio のインストール
    # https://developer.android.com/studio
-   
-   # SDK の設定
+      # SDK の設定
    export ANDROID_HOME=$HOME/Android/Sdk
    export PATH=$PATH:$ANDROID_HOME/tools
    export PATH=$PATH:$ANDROID_HOME/platform-tools
-   
-   # Rust Android ターゲットの追加
+      # Rust Android ターゲットの追加
    rustup target add aarch64-linux-android
    rustup target add armv7-linux-androideabi
    rustup target add i686-linux-android
@@ -146,8 +140,7 @@
    ```bash
    # デバッグビルド
    cargo tauri android build -d -t aarch64
-   
-   # リリースビルド
+      # リリースビルド
    cargo tauri android build -t aarch64
    ```
 

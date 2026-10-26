@@ -76,7 +76,7 @@ Nanai Android Mascot における「伺か（UKAGAKA）」関連規格、およ�
 | 項目                            | 対象仕様                              |  対応状況   | 詳細・備考                                             |
 | :------------------------------ | :------------------------------------ | :---------: | :----------------------------------------------------- |
 | **ベース画像描画**              | `surface0.png` 等の基準描画           |  ✅ 対応済  | 透明度（アルファチャンネル）を維持した Canvas 2D 描画  |
-| **差分合成 (element)**          | `element[ID],overlay/replace,...`     |  ✅ 対応済  | 表情差分パーツ（目・口等）の合成レンダリング           |
+| **差分合成 (element)**          | `element[ID],overlay/replace,...`     |  ✅ 対応済  | 表情差分パーツ（目・口等）の合成、`overlayfast`/`replace` クリア、`blend-multiply`/`screen`/`overlay`/`add` 等のブレンド合成完備 |
 | **当たり判定 (collision)**      | `collision[ID],X1,Y1,X2,Y2,Name`      |  ✅ 対応済  | 矩形判定、表示倍率を逆算した座標変換、部位名取得       |
 | **円形/楕円判定 (collisionex)** | `collisionex[ID],Name,circle/ellipse` |  ✅ 対応済  | circle/ellipse を型付き形状として点内包判定（rect/polygon も維持） |
 | **アニメーション (animation)**  | `animation[ID].interval` 等          |  ✅ 対応済  | interval 全種（sometimes/always/runonce/periodic/random/talk 等）再生、SERIKO pattern 差分合成（overlay/replace）、口パク・`\i`・`\![anim,pause/resume]` 対応 |

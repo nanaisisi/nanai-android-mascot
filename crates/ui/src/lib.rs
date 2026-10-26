@@ -1,11 +1,16 @@
 pub mod app;
 pub mod descript;
 pub mod script;
+pub mod surfaces;
 pub mod vfs;
 
 // 外部公開・後方互換のための再エクスポート
 pub use descript::Descript;
 pub use script::{SakuraCommand, execute_sakura_script};
+pub use surfaces::{
+    BalloonOffset, CollisionArea, CollisionShape, DrawMethod, ElementDef, Interval,
+    SerikoAnimation, SurfacesTxt, parse_surfaces_txt,
+};
 pub use vfs::{open_shift_jis_file, open_text_file, resolve_vfs_path};
 
 #[cfg(test)]

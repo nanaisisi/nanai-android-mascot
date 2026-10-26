@@ -1,8 +1,8 @@
-# kero.balloon.offsetx,座標
+﻿# kero.balloon.offsetx,座標
 
 - **規格**: [kero.balloon.offsetx.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/kero.balloon.offsetx/) (ukadoc-spec/descript/shell-surfaces/surface-brace/kero.balloon.offsetx.md)
 - **検索語**: kero.balloon.offsetx
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ⚠️ 一部対応 (Rust パーサー `crates/ui/src/surfaces.rs` で解析・データ化実装済 / 描画・実行への反映は別レイヤー)
 
 ## 突合結果
 

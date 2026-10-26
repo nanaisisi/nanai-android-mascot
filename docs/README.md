@@ -67,6 +67,7 @@
 - **[compare_baseware.md](research/compare_baseware.md)** - 互換ベースウェア比較
 - **[compare_chara_solution.md](research/compare_chara_solution.md)** - キャラクターソリューション比較
 - **[compare_device_solution.md](research/compare_device_solution.md)** - 音声アシスタント・スマートデバイス比較
+- **[dependency-licenses.md](research/dependency-licenses.md)** - 依存ライセンス調査報告書（Rust/npm/伺か系SHIORI）
 
 ## 🚀 クイックスタート
 

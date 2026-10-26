@@ -106,25 +106,51 @@ export const ghostSurfaceMethods = {
 			// element0〜N の多重パーツ合成処理 (+ 装着中の着せ替え bind レイヤー)
 			if (transparentSrc && this.app?.surfaceManager?.composeSurfaceElements) {
 				try {
+					const resolveLayerImage = async (fileName) => {
+						const resolveId =
+							fileName.replace(/\.[^/.]+$/, "").replace(/^surface/i, "") || "0";
+						const pnaFileName = fileName.replace(/\.[^/.]+$/, ".pna");
+						let layerSrc = null;
+						let layerPnaSrc = null;
+
+						if (isTauriAvailable()) {
+							layerSrc = await this.loadSurfaceAsset(
+								"load_surface_image",
+								ghostPath,
+								shell,
+								resolveId,
+							).catch(() => null);
+							if (!layerSrc) return null;
+							layerPnaSrc = await this.loadSurfaceAsset(
+								"load_surface_pna",
+								ghostPath,
+								shell,
+								resolveId,
+							).catch(() => null);
+						} else {
+							layerSrc = convertFileSrc(`${ghostPath}/shell/${shell}/${fileName}`);
+							layerPnaSrc = convertFileSrc(
+								`${ghostPath}/shell/${shell}/${pnaFileName}`,
+							);
+						}
+
+						if (!layerSrc || !this.app?.surfaceManager?.processChromaKey) {
+							return layerSrc;
+						}
+						try {
+							return await this.app.surfaceManager.processChromaKey(
+								layerSrc,
+								layerPnaSrc,
+							);
+						} catch (_e) {
+							return layerSrc;
+						}
+					};
+
 					transparentSrc = await this.app.surfaceManager.composeSurfaceElements(
 						surfaceId,
 						transparentSrc,
-						(fileName) => {
-							const resolveId =
-								fileName.replace(/\.[^/.]+$/, "").replace(/^surface/i, "") ||
-								"0";
-							if (isTauriAvailable()) {
-								return this.loadSurfaceAsset(
-									"load_surface_image",
-									ghostPath,
-									shell,
-									resolveId,
-								).catch(() => null);
-							}
-							return Promise.resolve(
-								convertFileSrc(`${ghostPath}/shell/${shell}/${fileName}`),
-							);
-						},
+						resolveLayerImage,
 						scopeId,
 						extraLayers,
 					);

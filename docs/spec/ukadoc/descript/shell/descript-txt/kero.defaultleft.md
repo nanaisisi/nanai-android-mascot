@@ -1,8 +1,8 @@
-# kero.defaultleft,X座標
+﻿# kero.defaultleft,X座標
 
 - **規格**: [kero.defaultleft.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell/descript-txt/kero.defaultleft/) (ukadoc-spec/descript/shell/descript-txt/kero.defaultleft.md)
 - **検索語**: kero.defaultleft
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済 (Rust `crates/ui/src/descript.rs` Descript 解析 / `crates/ui/src/shell.rs` Shell::load)
 
 ## 突合結果
 

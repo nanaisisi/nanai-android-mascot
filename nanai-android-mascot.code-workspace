@@ -5,7 +5,14 @@
     }
   ],
   "settings": {
-    "markuplint.ignoreFiles": ["cpp/**", "target/**", "target_tauri/**", "dist/**"]
+    "markuplint.ignoreFiles": ["cpp/**", "target/**", "target_tauri/**", "dist/**", "**/cpp/**"],
+    "html.validate.scripts": false,
+    "html.validate.styles": false,
+    "files.watcherExclude": {
+      "**/cpp/**": true,
+      "**/target/**": true,
+      "**/target_tauri/**": true
+    }
   },
   "extensions": {
     "recommendations": [

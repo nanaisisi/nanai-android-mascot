@@ -52,14 +52,12 @@ export async function playScript(player, script) {
 	let ended = false;
 	let currentAnchor = null;
 
-	// 独立バルーン同期用ヘルパー（頻繁なIPC呼び出しによるWindowsメッセージキュー溢れを抑止）
+	// 独立バルーン同期用ヘルパー
+	// 同一ターン内（\_q のクイック描画など）の連続更新だけをまとめ、表示は遅延させない
 	let syncPendingScopes = new Set();
-	let syncTimer = null;
+	let syncQueued = false;
 	const flushDesktopBalloon = () => {
-		if (syncTimer) {
-			clearTimeout(syncTimer);
-			syncTimer = null;
-		}
+		syncQueued = false;
 		if (syncPendingScopes.size > 0 && isTauriAvailable()) {
 			for (const sc of syncPendingScopes) {
 				emit(`update-balloon-content-${sc}`, {
@@ -79,10 +77,9 @@ export async function playScript(player, script) {
 			flushDesktopBalloon();
 			return;
 		}
-		if (!syncTimer) {
-			syncTimer = setTimeout(() => {
-				flushDesktopBalloon();
-			}, 60);
+		if (!syncQueued) {
+			syncQueued = true;
+			queueMicrotask(flushDesktopBalloon);
 		}
 	};
 

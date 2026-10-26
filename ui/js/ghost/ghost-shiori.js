@@ -8,7 +8,11 @@ export const ghostShioriMethods = {
 	 * @this {import('./ghost.js').GhostController}
 	 * @param {import('./ghost.js').GhostInfo} ghost
 	 */
-	async initializeGhostSHIORI(ghost, readinessGatePromise = null) {
+	async initializeGhostSHIORI(
+		ghost,
+		readinessGatePromise = null,
+		isCurrentLoad = () => true,
+	) {
 		if (!isTauriAvailable()) return;
 		try {
 			console.log(`🎭 SHIORI初期化開始: ${ghost.name}`);
@@ -17,13 +21,15 @@ export const ghostShioriMethods = {
 				invoke("load_ghost", { ghostName: ghost.name }),
 				readinessGatePromise,
 			]);
+			if (!isCurrentLoad()) return;
 
-			// 初期化完了に伴い処理中バナーを閉じる
+			// 初期化完了に伴い処理中バナーを閉じる（閉じ終わるまで会話を始めない）
 			try {
 				await invoke("hide_loading_banner_window");
 			} catch (_e) {
 				// バナーウィンドウが存在しない、または非表示済みの場合は無視
 			}
+			if (!isCurrentLoad()) return;
 
 			console.log(`✨ アセット・SHIORI準備完了 (ゲート通過): OnBoot発行`);
 			try {
@@ -36,7 +42,9 @@ export const ghostShioriMethods = {
 			this.startSecondChangeTimer();
 		} catch (error) {
 			console.error("❌ SHIORI初期化エラー:", error);
-			invoke("hide_loading_banner_window").catch(() => {});
+			if (isCurrentLoad()) {
+				invoke("hide_loading_banner_window").catch(() => {});
+			}
 		}
 	},
 

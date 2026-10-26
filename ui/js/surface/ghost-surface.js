@@ -40,6 +40,10 @@ export const ghostSurfaceMethods = {
 		// アニメフレーム合成モード: ベースサーフィスは既に解決済みのため
 		// エイリアス解決・\s 相当の状態変更・アニメ再スケジューリングを行わない
 		const isAnimationFrame = Array.isArray(extraLayers);
+		// スコープ毎の更新世代。遅れて完了した古い更新で新しい表示を上書きしない
+		this._surfaceSeq ??= {};
+		const seq = (this._surfaceSeq[scopeId] = (this._surfaceSeq[scopeId] ?? 0) + 1);
+		const isStale = () => this._surfaceSeq[scopeId] !== seq;
 
 		if (!isAnimationFrame) {
 			// サーフィスエイリアス (surface.alias ブロック) を番号へ解決 (UKADOC準拠)
@@ -68,7 +72,10 @@ export const ghostSurfaceMethods = {
 			// 独立した透過キャラクターウィンドウで描画・移動を行う
 			if (slot) slot.style.display = "none";
 			if (container) container.style.display = "none";
-			await invoke("show_subchar_window", { scopeId }).catch(() => {});
+			// アニメーションフレームは表示中のウィンドウへの差分描画なので再表示しない
+			if (!isAnimationFrame) {
+				await invoke("show_subchar_window", { scopeId }).catch(() => {});
+			}
 		} else {
 			// Webブラウザ / Android等のシングルコンテナ環境ではメインウィンドウ内で描画
 			if (slot && slot.style.display === "none") slot.style.display = "flex";
@@ -107,11 +114,12 @@ export const ghostSurfaceMethods = {
 								fileName.replace(/\.[^/.]+$/, "").replace(/^surface/i, "") ||
 								"0";
 							if (isTauriAvailable()) {
-								return invoke("load_surface_image", {
+								return this.loadSurfaceAsset(
+									"load_surface_image",
 									ghostPath,
 									shell,
-									surfaceId: resolveId,
-								}).catch(() => null);
+									resolveId,
+								).catch(() => null);
 							}
 							return Promise.resolve(
 								convertFileSrc(`${ghostPath}/shell/${shell}/${fileName}`),
@@ -124,6 +132,8 @@ export const ghostSurfaceMethods = {
 					// 合成エラー時はベース画像をそのまま使用
 				}
 			}
+
+			if (isStale()) return null;
 
 			if (this.currentSurfaces) {
 				this.currentSurfaces.set(scopeId, transparentSrc);
@@ -157,17 +167,11 @@ export const ghostSurfaceMethods = {
 
 		if (isTauriAvailable()) {
 			const load = (id) =>
-				invoke("load_surface_image", {
-					ghostPath,
-					shellName: shell,
-					surfaceId: String(id),
-				});
+				this.loadSurfaceAsset("load_surface_image", ghostPath, shell, id);
 			const loadPna = (id) =>
-				invoke("load_surface_pna", {
-					ghostPath,
-					shellName: shell,
-					surfaceId: String(id),
-				}).catch(() => null);
+				this.loadSurfaceAsset("load_surface_pna", ghostPath, shell, id).catch(
+					() => null,
+				);
 
 			return await Promise.all([load(surfaceId), loadPna(surfaceId)])
 				.then(([dataUrl, pnaUrl]) => applyImageSrc(dataUrl, null, pnaUrl))
@@ -194,6 +198,41 @@ export const ghostSurfaceMethods = {
 			`${ghostPath}/shell/${shell}/surface${fallbackSurface}.svg`,
 		);
 		return await applyImageSrc(imgUrl, fallbackSvgUrl, pnaUrl);
+	},
+
+	/**
+	 * サーフィス画像 / PNA の読み込み（ゴースト・シェル・ID 単位でキャッシュ）
+	 * アニメーションの毎フレームで同じファイルを Rust から読み直さないようにする
+	 * @this {import('../ghost/ghost.js').GhostController}
+	 * @param {"load_surface_image"|"load_surface_pna"} cmd
+	 * @param {string} ghostPath
+	 * @param {string} shellName
+	 * @param {number|string} surfaceId
+	 * @returns {Promise<string>}
+	 */
+	loadSurfaceAsset(cmd, ghostPath, shellName, surfaceId) {
+		this._surfaceAssetCache ??= new Map();
+		const key = `${cmd}|${ghostPath}|${shellName}|${surfaceId}`;
+		let pending = this._surfaceAssetCache.get(key);
+		if (!pending) {
+			pending = invoke(cmd, {
+				ghostPath,
+				shellName,
+				surfaceId: String(surfaceId),
+			});
+			this._surfaceAssetCache.set(key, pending);
+			// ゴースト内で使った画像だけを保持し、長時間稼働でも無制限に増やさない
+			if (this._surfaceAssetCache.size > 64) {
+				this._surfaceAssetCache.delete(this._surfaceAssetCache.keys().next().value);
+			}
+		}
+		return pending;
+	},
+
+	/** ゴースト・シェル切り替え時などに画像キャッシュを破棄 */
+	clearSurfaceAssetCache() {
+		this._surfaceAssetCache?.clear();
+		this.app?.surfaceManager?.chromaKeyCache?.clear();
 	},
 
 	async updateGhostCharacter(ghostName) {

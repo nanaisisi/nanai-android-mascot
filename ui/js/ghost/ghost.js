@@ -141,6 +141,13 @@ export class GhostController {
 			path: `${AppConfig.paths.defaultGhostDir}/${ghostName}`,
 		};
 
+		// 切り替え中に完了した旧ゴーストの読み込みがバナーや会話を操作しないようにする
+		const generation = (this._ghostLoadGeneration =
+			(this._ghostLoadGeneration ?? 0) + 1);
+		this.clearSurfaceAssetCache();
+		for (const scope of Object.keys(this._surfaceSeq ?? {})) {
+			this._surfaceSeq[scope]++;
+		}
 		this.currentGhost = ghost;
 		// 検出されたシェル一覧を同期
 		if (ghost.shells && ghost.shells.length > 0) {
@@ -164,12 +171,14 @@ export class GhostController {
 		}
 
 		// 起動時・処理中ステータスバナーを表示（SSP/MATERIA風・メニュー反対側下部）
-		if (isTauriAvailable()) {
-			invoke("show_loading_banner_window", {
-				ghostName: ghost.name,
-				ghostVersion: ghost.version || "1.0.0",
-			}).catch(() => {});
-		}
+		const bannerPromise = isTauriAvailable()
+			? invoke("show_loading_banner_window", {
+					ghostName: ghost.name,
+					ghostVersion: ghost.version || "1.0.0",
+				}).catch((error) => {
+					console.warn("⚠️ 処理中バナーを表示できません:", error);
+				})
+			: Promise.resolve();
 
 		// アセット読み込みゲート: surfaces.txtのパースと初期サーフィス画像生成を両方完了させる
 		const surfacesTxtPromise = this.app.surfaceManager.loadSurfacesTxt(
@@ -177,9 +186,15 @@ export class GhostController {
 			this.currentShell,
 		);
 		const characterPromise = this.updateGhostCharacter(ghostName);
-		const readinessGate = Promise.all([surfacesTxtPromise, characterPromise]);
+		const readinessGate = Promise.all([
+			bannerPromise,
+			surfacesTxtPromise,
+			characterPromise,
+		]);
 
-		this.initializeGhostSHIORI(ghost, readinessGate);
+		const startup = this.initializeGhostSHIORI(ghost, readinessGate, () =>
+			this._ghostLoadGeneration === generation,
+		);
 
 		// ゴースト連動のバルーン自動切り替え（設定が有効な場合、デフォルト有効）
 		if (this.app.settings?.autoSwitchBalloonWithGhost !== false) {
@@ -193,6 +208,7 @@ export class GhostController {
 		}
 		// メニュー側の選択状態表示（✓マーク等）を最新状態に同期
 		this.app.syncMenuGhosts?.();
+		return startup;
 	}
 
 	selectShell(shellName) {

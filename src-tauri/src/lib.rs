@@ -65,6 +65,12 @@ pub fn run() {
                     .build()?;
 
                 app.set_menu(menu)?;
+
+                // バルーン・メニュー等の補助ウィンドウを先行キャッシュ（起動時のもたつき解消）
+                let app_handle_preload = app.handle().clone();
+                tauri::async_runtime::spawn(async move {
+                    let _ = commands::window::preload_auxiliary_windows(app_handle_preload).await;
+                });
             }
             #[cfg(not(desktop))]
             let _ = app;
@@ -193,6 +199,7 @@ pub fn run() {
             commands::window::hide_subchar_window,
             commands::window::show_balloon_window,
             commands::window::hide_balloon_window,
+            commands::window::preload_auxiliary_windows,
             commands::window::show_loading_banner_window,
             commands::window::hide_loading_banner_window,
             commands::install::pick_and_install_ghost_archive,

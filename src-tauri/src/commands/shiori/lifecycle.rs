@@ -38,17 +38,48 @@ pub async fn load_ghost(
 
     // SHIORIライブラリ（DLL / .so）の探索候補
     let mut candidates = Vec::new();
+
+    // 1. descript.txt の "shiori" キー指定を最優先
+    let descript_path = ghost_master_dir.join("descript.txt");
+    if let Some(map) = crate::ghost::scan::read_descript_file(&descript_path)
+        && let Some(shiori_filename) = map.get("shiori")
+    {
+        let rel_path = shiori_filename.trim();
+        if !rel_path.is_empty() {
+            candidates.push(ghost_master_dir.join(rel_path));
+            #[cfg(not(windows))]
+            {
+                // Windows DLL名が指定されている場合、同名.soへのフォールバック候補も追加
+                if rel_path.ends_with(".dll") {
+                    let so_name = format!("{}.so", &rel_path[..rel_path.len() - 4]);
+                    candidates.push(ghost_master_dir.join(&so_name));
+                    candidates.push(ghost_master_dir.join(format!("lib{}", so_name)));
+                }
+            }
+        }
+    }
+
+    // 2. 代表的なSHIORIバイナリ（DLL / .so）の標準フォールバック候補
     #[cfg(windows)]
     {
         candidates.push(ghost_master_dir.join("yaya.dll"));
+        candidates.push(ghost_master_dir.join("satori.dll"));
+        candidates.push(ghost_master_dir.join("kawari.dll"));
         candidates.push(ghost_master_dir.join("shiori.dll"));
         candidates.push(ghost_master_dir.join("satoriya.dll"));
+        candidates.push(ghost_master_dir.join("aya5.dll"));
+        candidates.push(ghost_master_dir.join("aya.dll"));
     }
     #[cfg(not(windows))]
     {
         candidates.push(ghost_master_dir.join("yaya.so"));
-        candidates.push(ghost_master_dir.join("shiori.so"));
         candidates.push(ghost_master_dir.join("libyaya.so"));
+        candidates.push(ghost_master_dir.join("satori.so"));
+        candidates.push(ghost_master_dir.join("libsatori.so"));
+        candidates.push(ghost_master_dir.join("kawari.so"));
+        candidates.push(ghost_master_dir.join("libkawari.so"));
+        candidates.push(ghost_master_dir.join("shiori.so"));
+        candidates.push(ghost_master_dir.join("libshiori.so"));
     }
 
     let mut loaded = false;
@@ -120,17 +151,47 @@ pub async fn spawn_ghost(
 
     // SHIORI候補探索
     let mut candidates = Vec::new();
+
+    // 1. descript.txt の "shiori" キー指定を最優先
+    let descript_path = ghost_master_dir.join("descript.txt");
+    if let Some(map) = crate::ghost::scan::read_descript_file(&descript_path)
+        && let Some(shiori_filename) = map.get("shiori")
+    {
+        let rel_path = shiori_filename.trim();
+        if !rel_path.is_empty() {
+            candidates.push(ghost_master_dir.join(rel_path));
+            #[cfg(not(windows))]
+            {
+                if rel_path.ends_with(".dll") {
+                    let so_name = format!("{}.so", &rel_path[..rel_path.len() - 4]);
+                    candidates.push(ghost_master_dir.join(&so_name));
+                    candidates.push(ghost_master_dir.join(format!("lib{}", so_name)));
+                }
+            }
+        }
+    }
+
+    // 2. 代表的なSHIORIバイナリ（DLL / .so）の標準フォールバック候補
     #[cfg(windows)]
     {
         candidates.push(ghost_master_dir.join("yaya.dll"));
+        candidates.push(ghost_master_dir.join("satori.dll"));
+        candidates.push(ghost_master_dir.join("kawari.dll"));
         candidates.push(ghost_master_dir.join("shiori.dll"));
         candidates.push(ghost_master_dir.join("satoriya.dll"));
+        candidates.push(ghost_master_dir.join("aya5.dll"));
+        candidates.push(ghost_master_dir.join("aya.dll"));
     }
     #[cfg(not(windows))]
     {
         candidates.push(ghost_master_dir.join("yaya.so"));
-        candidates.push(ghost_master_dir.join("shiori.so"));
         candidates.push(ghost_master_dir.join("libyaya.so"));
+        candidates.push(ghost_master_dir.join("satori.so"));
+        candidates.push(ghost_master_dir.join("libsatori.so"));
+        candidates.push(ghost_master_dir.join("kawari.so"));
+        candidates.push(ghost_master_dir.join("libkawari.so"));
+        candidates.push(ghost_master_dir.join("shiori.so"));
+        candidates.push(ghost_master_dir.join("libshiori.so"));
     }
 
     for cand in candidates {

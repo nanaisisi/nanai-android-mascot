@@ -85,7 +85,8 @@ export const eventMethods = {
       const data = event.payload;
       if (!data) return;
       if (data.action === "request-sync") {
-        this.syncMenuGhosts();
+        const reqScope = data.payload?.scope ?? 0;
+        this.syncMenuGhosts(reqScope);
         return;
       }
       this.handleMenuAction(data.action, data.payload);

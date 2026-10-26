@@ -51,8 +51,11 @@ export class SurfaceManager {
 		this.baseWidth = 200;
 		/** @type {number} */
 		this.baseHeight = 400;
-		/** @type {number} */
-		this.currentSurfaceId = 0;
+		/** @type {Map<number, number|string>} スコープ (0=さくら / 1=うにゅ) 毎の現在サーフィスID */
+		this.currentSurfaceIds = new Map([
+			[0, 0],
+			[1, 10],
+		]);
 		/** @type {Map<string, string>} */
 		this.chromaKeyCache = new Map();
 		/** @type {Map<string, boolean>} 着せ替えパーツのON/OFF状態 (key: scope_category_part) */
@@ -69,6 +72,23 @@ export class SurfaceManager {
 
 	get activeAnimationTimers() {
 		return this.animationManager.activeAnimationTimers;
+	}
+
+	/**
+	 * スコープ 0（さくら）の現在サーフィスID（互換アクセサ）
+	 * @returns {number|string}
+	 */
+	get currentSurfaceId() {
+		return this.currentSurfaceIds.get(0) ?? 0;
+	}
+
+	/**
+	 * スコープ毎の現在サーフィスIDを取得 (UKADOC準拠: \0 / \1 独立)
+	 * @param {number} [scopeId]
+	 * @returns {number|string}
+	 */
+	currentSurfaceIdFor(scopeId = 0) {
+		return this.currentSurfaceIds.get(scopeId) ?? (scopeId === 1 ? 10 : 0);
 	}
 
 	/**
@@ -206,7 +226,8 @@ export class SurfaceManager {
 	}
 
 	setSurfaceId(surfaceId, scopeId = 0) {
-		this.currentSurfaceId = surfaceId;
+		// スコープ毎に独立追跡 (\0 と \1 のサーフィスを混同しない)
+		this.currentSurfaceIds.set(scopeId, surfaceId);
 		this.animationManager.stopAnimations(scopeId);
 		this.animationManager.startAnimations(surfaceId, scopeId);
 	}
@@ -242,9 +263,11 @@ export class SurfaceManager {
 	/**
 	 * マウス・タッチ座標から当たり部位（head, bust等）を判定
 	 */
-	detectCollision(clickX, clickY, targetRect, surfaceId = null) {
+	detectCollision(clickX, clickY, targetRect, surfaceId = null, scopeId = 0) {
 		const sid =
-			surfaceId !== null ? String(surfaceId) : String(this.currentSurfaceId);
+			surfaceId !== null
+				? String(surfaceId)
+				: String(this.currentSurfaceIdFor(scopeId));
 
 		// 表示要素内での相対座標 (0.0 〜 1.0)
 		const relX = (clickX - targetRect.left) / targetRect.width;
@@ -313,7 +336,7 @@ export class SurfaceManager {
 		);
 
 		await this.app.ghostController.updateSurface(
-			this.currentSurfaceId,
+			this.currentSurfaceIdFor(scopeId),
 			scopeId,
 		);
 
@@ -344,7 +367,7 @@ export class SurfaceManager {
 	 */
 	activeBindLayers(scopeId = 0, surfaceId = null) {
 		if (!this.shellManifest) return [];
-		const sid = String(surfaceId ?? this.currentSurfaceId);
+		const sid = String(surfaceId ?? this.currentSurfaceIdFor(scopeId));
 		const animList = this.animations[sid] ?? [];
 		const animById = new Map(animList.map((a) => [String(a.id), a]));
 

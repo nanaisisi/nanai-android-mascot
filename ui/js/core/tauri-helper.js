@@ -1,15 +1,17 @@
 /**
  * Tauri API Helper
- * Tauri v2 では `globalThis.__TAURI__.core.invoke` または `globalThis.__TAURI__.invoke` に配置されます。
- * 両方のバージョンおよび Web/モック環境に対応するためのラッパー関数を提供します。
+ * `@tauri-apps/api` の公式バインディングを使用しつつ、
+ * Web/ブラウザ単体プレビュー時やフォールバック環境でも動作するようにラップします。
  */
+import { convertFileSrc as tauriConvertFileSrc, invoke as tauriInvoke } from "@tauri-apps/api/core";
+import { emit as tauriEmit, listen as tauriListen } from "@tauri-apps/api/event";
 
 /**
  * Tauri環境で動作しているかどうかを判定
  * @returns {boolean}
  */
 export function isTauriAvailable() {
-  return typeof globalThis !== "undefined" && !!globalThis.__TAURI__;
+	return typeof globalThis !== "undefined" && (!!globalThis.__TAURI__ || !!globalThis.__TAURI_INTERNALS__);
 }
 
 /**
@@ -20,18 +22,10 @@ export function isTauriAvailable() {
  * @returns {Promise<T>}
  */
 export async function invoke(cmd, args = {}) {
-  const tauri = globalThis.__TAURI__;
-  if (!tauri) {
-    throw new Error(`Tauri is not available to invoke command: ${cmd}`);
-  }
-
-  // Tauri v2 では tauri.core.invoke、v1 や一部バインディングでは tauri.invoke
-  const invokeFn = tauri.core?.invoke || tauri.invoke;
-  if (typeof invokeFn === "function") {
-    return await invokeFn(cmd, args);
-  }
-
-  throw new TypeError(`Tauri invoke function is not available on globalThis.__TAURI__ (cmd: ${cmd})`);
+	if (!isTauriAvailable()) {
+		throw new Error(`Tauri is not available to invoke command: ${cmd}`);
+	}
+	return await tauriInvoke(cmd, args);
 }
 
 /**
@@ -41,39 +35,43 @@ export async function invoke(cmd, args = {}) {
  * @returns {string}
  */
 export function convertFileSrc(filePath, protocol = "asset") {
-  if (!filePath) return "";
-  const tauri = globalThis.__TAURI__;
-  if (!tauri) {
-    return filePath;
-  }
-  const convertFn = tauri.core?.convertFileSrc || tauri.tauri?.convertFileSrc || tauri.convertFileSrc;
-  if (typeof convertFn === "function") {
-    return convertFn(filePath, protocol);
-  }
-  // 相対パスまたはWeb URLはそのまま
-  if (filePath.startsWith("http://") || filePath.startsWith("https://") || filePath.startsWith("asset://") || filePath.startsWith("./") || filePath.startsWith("/")) {
-    return filePath;
-  }
-  // Windows絶対パスなどをアセットプロトコル形式に変換
-  const normalized = filePath.replace(/\\/g, "/");
-  return `asset://localhost/${encodeURI(normalized)}`;
+	if (!filePath) return "";
+	if (isTauriAvailable()) {
+		return tauriConvertFileSrc(filePath, protocol);
+	}
+	// 相対パスまたはWeb URLはそのまま
+	if (
+		filePath.startsWith("http://") ||
+		filePath.startsWith("https://") ||
+		filePath.startsWith("asset://") ||
+		filePath.startsWith("./") ||
+		filePath.startsWith("/")
+	) {
+		return filePath;
+	}
+	// Windows絶対パスなどをフォールバック形式に変換
+	const normalized = filePath.replace(/\\/g, "/");
+	return `asset://localhost/${encodeURI(normalized)}`;
 }
 
+/**
+ * イベントリスナー登録
+ * @param {string} event
+ * @param {(event: any) => void} handler
+ * @returns {Promise<() => void>}
+ */
 export async function listen(event, handler) {
-  const tauri = globalThis.__TAURI__;
-  if (!tauri) return () => {};
-  const listenFn = tauri.event?.listen || tauri.listen;
-  if (typeof listenFn === "function") {
-    return await listenFn(event, handler);
-  }
-  return () => {};
+	if (!isTauriAvailable()) return () => {};
+	return await tauriListen(event, handler);
 }
 
+/**
+ * イベント発火
+ * @param {string} event
+ * @param {any} [payload]
+ * @returns {Promise<void>}
+ */
 export async function emit(event, payload) {
-  const tauri = globalThis.__TAURI__;
-  if (!tauri) return;
-  const emitFn = tauri.event?.emit || tauri.emit;
-  if (typeof emitFn === "function") {
-    return await emitFn(event, payload);
-  }
+	if (!isTauriAvailable()) return;
+	await tauriEmit(event, payload);
 }

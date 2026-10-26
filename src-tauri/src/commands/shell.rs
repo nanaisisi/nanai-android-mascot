@@ -14,7 +14,10 @@ fn resolve_shell_dir(
     shell_name: &str,
     app_handle: &tauri::AppHandle,
 ) -> Result<PathBuf, String> {
-    for base in [format!("assets/ghost/{}", ghost_name), format!("ghost/{}", ghost_name)] {
+    for base in [
+        format!("assets/ghost/{}", ghost_name),
+        format!("ghost/{}", ghost_name),
+    ] {
         if let Ok(resolved) = resolve_asset_path(&base, app_handle)
             && resolved.exists()
         {

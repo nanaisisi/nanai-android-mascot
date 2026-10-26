@@ -67,6 +67,7 @@
   - [x] 存在しないゴーストの適切なフォールバック処理（mock_nanai）
 
 ### 8. ハードコード廃止と設定・定数モジュール化
+
 - **現状**: `GhostController` や `shiori-worker.js`、パス解決に固定文字列（`mock_nanai`, `assets/ghost`）が存在
 - **対応策**:
   - [x] 設定・定数モジュール（`src/js/config.js`）の一元化
@@ -149,6 +150,15 @@
   - [x] `install.txt` 自動パース（Shift_JIS / UTF-8 両対応）
   - [x] 右クリックメニューへの「ファイル取り込み・導入 (I)」項目追加 & ショートカットキー（I）
   - [x] 取り込みモーダル UI（ファイル選択・進捗ステータス・自動ロード・バルーン通知）
+
+### 16. コア解析・プロトコル処理の Rust 移行（二重実装の解消）
+
+- **方針**: DOM/UI非依存の解析・プロトコル処理を `crates/ui` / Tauri コマンドに一元化
+- **対応策**:
+  - [ ] `surface-parser.js` / `shell-manifest.js` の解析処理を Rust（`crates/ui::surfaces`, `manifest`）へ移譲
+  - [ ] `sakura-parser.js`（さくらスクリプト構文解析）の Rust 側（`crates/ui::script`）一元化
+  - [ ] `shiori-protocol.js` の Rust 側（`crates/ui::shiori`）統合と IPC 連携
+  - [ ] アニメーションタイムライン計算（`crates/ui::animation`）とフロントエンド描画の連携整理
 
 ## 🧪 検証・テスト項目
 

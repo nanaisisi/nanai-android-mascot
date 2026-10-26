@@ -14,6 +14,8 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
     // アーカイブ内のinstall.txtまたはdescript.txtを検索してゴースト名を特定
     let mut ghost_name = String::new();
     let mut root_prefix = String::new();
+    // install.txt の type 取り込み種別 (ukadoc 準拠: Ghost / Shell / Balloon / Plugin / Supplement)
+    let mut install_type: Option<String> = None;
 
     for i in 0..zip.len() {
         if let Ok(entry) = zip.by_index(i) {
@@ -49,11 +51,33 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
 
                     for line in text.lines() {
                         let trimmed = line.trim();
-                        if let Some(val) = trimmed.strip_prefix("name,") {
-                            ghost_name = val.trim().to_string();
-                            break;
-                        } else if let Some(val) = trimmed.strip_prefix("name:") {
-                            ghost_name = val.trim().to_string();
+                        let is_install_txt = lower.ends_with("install.txt");
+                        let mut progress = false;
+                        if ghost_name.is_empty() {
+                            if let Some(val) = trimmed.strip_prefix("name,") {
+                                ghost_name = val.trim().trim_end_matches(',').trim().to_string();
+                                progress = true;
+                            } else if let Some(val) = trimmed.strip_prefix("name:") {
+                                ghost_name = val.trim().trim_end_matches(',').trim().to_string();
+                                progress = true;
+                            }
+                        }
+                        if is_install_txt && install_type.is_none() {
+                            if let Some(val) = trimmed.strip_prefix("type,") {
+                                install_type =
+                                    Some(val.trim().trim_end_matches(',').trim().to_string());
+                                progress = true;
+                            } else if let Some(val) = trimmed.strip_prefix("type:") {
+                                install_type =
+                                    Some(val.trim().trim_end_matches(',').trim().to_string());
+                                progress = true;
+                            }
+                        }
+                        // ゴースト名と (install.txt の場合) 種別の両方が確定したら打ち切り
+                        if progress
+                            && !ghost_name.is_empty()
+                            && (!is_install_txt || install_type.is_some())
+                        {
                             break;
                         }
                     }
@@ -74,6 +98,17 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
     // ゴースト名が見つからない場合はフォールバック名を使用
     if ghost_name.is_empty() {
         ghost_name = fallback_name.to_string();
+    }
+
+    // install.txt の type 種別を検証 (ukadoc準拠: Ghost / Shell / Balloon / Plugin / Supplement)
+    // ゴースト以外のアーカイブを ghost ディレクトリに展開して壊すのを防ぐ
+    if let Some(kind) = install_type.as_deref().map(str::to_lowercase) {
+        if kind != "ghost" {
+            let label = install_type.unwrap_or_default();
+            return Err(format!(
+                "install.txt type={label} ({kind}): 現状Ghostアーカイブのみ取り込み可能です"
+            ));
+        }
     }
 
     // サニタイズ（フォルダ名に使用できない文字を除去）

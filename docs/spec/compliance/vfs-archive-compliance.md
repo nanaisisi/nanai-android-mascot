@@ -9,7 +9,7 @@ Nanai Android Mascot における「ファイルシステム（仮想パス・�
 ## 1. 概要と対応度
 
 - **規格**: Shift_JIS (CP932) / UTF-8、大文字小文字区別なしパス、NAR (ZIP)
-- **対応度**: **80%**
+- **対応度**: **90%**
 - **主要実装ファイル**:
   - `src-tauri/src/lib.rs`: `encoding_rs` によるエンコード変換、大文字小文字吸収 VFS
   - `docs/spec/ghost-import-and-asset-separation-spec.md`: アセット分離仕様
@@ -24,7 +24,7 @@ Nanai Android Mascot における「ファイルシステム（仮想パス・�
 | **文字コード自動判別**         | Shift_JIS (CP932) / UTF-8 / EUC-JP              | ✅ 対応済 | `encoding_rs` を用いた Rust 側でのバイト列自動判別と透過 UTF-8 変換                                       |
 | **仮想ファイルシステム (VFS)** | 大文字・小文字表記揺れ吸収                      | ✅ 対応済 | Windows (大文字小文字区別なし) と Android/Linux (区別あり) の差異を Rust 側の正規化パス解決で透過的に吸収 |
 | **アセット分離設計**           | `assets/ghost/`, `assets/balloon/`, `userData/` | ✅ 対応済 | 初期同梱アセット（Git追跡）とユーザー導入アセット（Git除外・端末ローカル保存）の完全分離                  |
-| **NAR アーカイブ展開**         | `.nar` (ZIP準拠) の解凍・導入                   | 🚧 開発中 | ドラッグ＆ドロップまたはファイルインポートによる自動解凍・VFS配置                                         |
+| **NAR アーカイブ展開**         | `.nar` (ZIP準拠) の解凍・導入                   | ✅ 対応済 | 選択/バイト列取り込みによる自動解凍、Zip Slip 防止、install.txt `type` 種別検証（Ghost 以外は明示エラーで拒否） |
 | **`descript.txt` パース**      | `charset,Shift_JIS` 等                          | ✅ 対応済 | 定義ファイルのヘッダ文字コード指定および行単位パース                                                      |
 
 ---

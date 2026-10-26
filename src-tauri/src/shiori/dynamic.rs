@@ -2,6 +2,7 @@
 //!
 //! Windows (DLL) および Linux/Android (.so) の SHIORI 3.0 ライブラリを動的ロード・呼び出し
 
+use super::error::ShioriError;
 use libloading::{Library, Symbol};
 use std::ffi::c_void;
 use std::path::{Path, PathBuf};
@@ -147,10 +148,10 @@ unsafe impl Sync for ShioriDynamicEngine {}
 
 impl ShioriDynamicEngine {
     /// SHIORI DLL / .so を動的ロード (32bit DLL は 64bit 本体では別プロセスで実行)
-    pub fn load_library(dll_path: &Path) -> Result<Self, String> {
+    pub fn load_library(dll_path: &Path) -> Result<Self, ShioriError> {
         #[cfg(windows)]
         if cfg!(target_pointer_width = "64") && is_x86_dll(dll_path) {
-            let host = HostProc::spawn(dll_path)?;
+            let host = HostProc::spawn(dll_path).map_err(ShioriError::HostProcess)?;
             println!(
                 "🧩 32bit SHIORI DLL を shiori-host32 経由でロード: {:?}",
                 dll_path
@@ -165,28 +166,42 @@ impl ShioriDynamicEngine {
         }
 
         let lib = unsafe {
-            Library::new(dll_path)
-                .map_err(|e| format!("Failed to load library {:?}: {}", dll_path, e))?
+            Library::new(dll_path).map_err(|source| ShioriError::LibraryLoad {
+                path: dll_path.to_path_buf(),
+                source,
+            })?
         };
 
         let fn_load: ShioriLoadFn = unsafe {
-            let sym: Symbol<ShioriLoadFn> = lib
-                .get(b"load")
-                .map_err(|e| format!("Symbol 'load' not found: {}", e))?;
+            let sym: Symbol<ShioriLoadFn> =
+                lib.get(b"load")
+                    .map_err(|source| ShioriError::SymbolNotFound {
+                        symbol: "load",
+                        path: dll_path.to_path_buf(),
+                        source,
+                    })?;
             *sym
         };
 
         let fn_unload: ShioriUnloadFn = unsafe {
-            let sym: Symbol<ShioriUnloadFn> = lib
-                .get(b"unload")
-                .map_err(|e| format!("Symbol 'unload' not found: {}", e))?;
+            let sym: Symbol<ShioriUnloadFn> =
+                lib.get(b"unload")
+                    .map_err(|source| ShioriError::SymbolNotFound {
+                        symbol: "unload",
+                        path: dll_path.to_path_buf(),
+                        source,
+                    })?;
             *sym
         };
 
         let fn_request: ShioriRequestFn = unsafe {
-            let sym: Symbol<ShioriRequestFn> = lib
-                .get(b"request")
-                .map_err(|e| format!("Symbol 'request' not found: {}", e))?;
+            let sym: Symbol<ShioriRequestFn> =
+                lib.get(b"request")
+                    .map_err(|source| ShioriError::SymbolNotFound {
+                        symbol: "request",
+                        path: dll_path.to_path_buf(),
+                        source,
+                    })?;
             *sym
         };
 
@@ -200,7 +215,7 @@ impl ShioriDynamicEngine {
     }
 
     /// SHIORI::load(dirpath)
-    pub fn initialize(&mut self, dir_path: &Path) -> Result<(), String> {
+    pub fn initialize(&mut self, dir_path: &Path) -> Result<(), ShioriError> {
         if self.is_loaded {
             return Ok(());
         }
@@ -210,20 +225,24 @@ impl ShioriDynamicEngine {
         let len = bytes.len() as i64;
 
         if let Some(host) = &self.host {
-            let (r, _) = host.lock().map_err(|e| e.to_string())?.call(1, bytes)?;
+            let (r, _) = host
+                .lock()
+                .map_err(|e| ShioriError::HostProcess(e.to_string()))?
+                .call(1, bytes)
+                .map_err(ShioriError::HostProcess)?;
             if r == 0 {
-                return Err("SHIORI load returned 0 (failed)".to_string());
+                return Err(ShioriError::LoadFailed(r));
             }
             self.is_loaded = true;
             return Ok(());
         }
-        let (fn_load, _, _) = self.fns.ok_or("not loaded")?;
+        let (fn_load, _, _) = self.fns.ok_or(ShioriError::NotLoaded)?;
 
         #[cfg(windows)]
         unsafe {
             let hmem = GlobalAlloc(GMEM_FIXED, bytes.len() + 1);
             if hmem.is_null() {
-                return Err("GlobalAlloc failed".to_string());
+                return Err(ShioriError::MemoryAllocationFailed);
             }
             std::ptr::copy_nonoverlapping(bytes.as_ptr(), hmem as *mut u8, bytes.len());
             *(hmem as *mut u8).add(bytes.len()) = 0;
@@ -232,7 +251,7 @@ impl ShioriDynamicEngine {
             GlobalFree(hmem);
 
             if res == 0 {
-                return Err("SHIORI load returned 0 (failed)".to_string());
+                return Err(ShioriError::LoadFailed(res));
             }
         }
 
@@ -243,7 +262,7 @@ impl ShioriDynamicEngine {
             let ptr = buf.as_mut_ptr() as Hglobal;
             let res = (fn_load)(ptr, len);
             if res == 0 {
-                return Err("SHIORI load returned 0 (failed)".to_string());
+                return Err(ShioriError::LoadFailed(res));
             }
         }
 

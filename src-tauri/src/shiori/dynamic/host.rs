@@ -65,7 +65,11 @@ impl HostProc {
             .map_err(|e| format!("host spawn failed: {e}"))?;
         let stdin = child.stdin.take().ok_or("no stdin")?;
         let stdout = child.stdout.take().ok_or("no stdout")?;
-        let mut h = HostProc { child, stdin, stdout };
+        let mut h = HostProc {
+            child,
+            stdin,
+            stdout,
+        };
         // 起動通知 (ready) を待つ
         h.read_reply()
             .map_err(|e| format!("host did not start (DLL load failed?): {e}"))?;

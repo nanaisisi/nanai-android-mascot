@@ -10,13 +10,12 @@ pub fn expand_range(spec: &str) -> Vec<u32> {
         if part.is_empty() {
             continue;
         }
-        if let Some((start, end)) = part.split_once('-') {
-            if let (Ok(s), Ok(e)) = (start.trim().parse::<u32>(), end.trim().parse::<u32>()) {
-                if s <= e {
-                    out.extend(s..=e);
-                    continue;
-                }
-            }
+        if let Some((start, end)) = part.split_once('-')
+            && let (Ok(s), Ok(e)) = (start.trim().parse::<u32>(), end.trim().parse::<u32>())
+            && s <= e
+        {
+            out.extend(s..=e);
+            continue;
         }
         if let Ok(n) = part.parse::<u32>() {
             out.push(n);
@@ -128,7 +127,12 @@ pub(super) fn apply_collision(txt: &mut SurfacesTxt, ids: &[u32], id_part: &str,
     }
 }
 
-pub(super) fn apply_collision_body(txt: &mut SurfacesTxt, ids: &[u32], id: Option<u32>, tokens: &[&str]) {
+pub(super) fn apply_collision_body(
+    txt: &mut SurfacesTxt,
+    ids: &[u32],
+    id: Option<u32>,
+    tokens: &[&str],
+) {
     if tokens.len() < 5 {
         return;
     }

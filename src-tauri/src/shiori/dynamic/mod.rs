@@ -8,9 +8,9 @@ use std::path::{Path, PathBuf};
 
 #[cfg(not(windows))]
 use self::host::Hglobal;
-use self::host::{HostProc, ShioriLoadFn, ShioriRequestFn, ShioriUnloadFn};
 #[cfg(windows)]
 use self::host::{GMEM_FIXED, GlobalAlloc, GlobalFree, is_x86_dll};
+use self::host::{HostProc, ShioriLoadFn, ShioriRequestFn, ShioriUnloadFn};
 
 pub struct ShioriDynamicEngine {
     _lib: Option<Library>,

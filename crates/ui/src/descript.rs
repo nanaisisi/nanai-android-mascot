@@ -169,9 +169,7 @@ impl Descript {
     pub fn bindoption_group(&self, target: &str) -> Option<BindOptionGroup> {
         let value = self.get(&format!("{target}.bindoption.group"))?;
         let mut parts = value.split(',').map(str::trim);
-        let Some(category) = parts.next() else {
-            return None;
-        };
+        let category = parts.next()?;
         let options: Vec<String> = parts.map(str::to_string).collect();
         Some(BindOptionGroup {
             category: category.to_string(),

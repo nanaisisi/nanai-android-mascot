@@ -74,10 +74,7 @@ impl ShioriResponse {
 
     /// OnTeach の追加情報要求（311 Not Enough / 312 Advice）か
     pub fn is_teach_pending(&self) -> bool {
-        matches!(
-            self.status,
-            StatusCode::NotEnough | StatusCode::Advice
-        )
+        matches!(self.status, StatusCode::NotEnough | StatusCode::Advice)
     }
 }
 

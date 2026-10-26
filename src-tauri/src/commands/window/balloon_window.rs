@@ -37,12 +37,15 @@ pub async fn show_balloon_window(
         };
 
         if let Some(balloon_win) = app_handle.get_webview_window(&label) {
-            let (target_x, target_y) = get_pos();
-            let _ = balloon_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
-                x: target_x,
-                y: target_y,
-            }));
-            let _ = balloon_win.show();
+            let is_vis = balloon_win.is_visible().unwrap_or(false);
+            if !is_vis {
+                let (target_x, target_y) = get_pos();
+                let _ = balloon_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
+                    x: target_x,
+                    y: target_y,
+                }));
+                let _ = balloon_win.show();
+            }
         } else {
             let (target_x, target_y) = get_pos();
 

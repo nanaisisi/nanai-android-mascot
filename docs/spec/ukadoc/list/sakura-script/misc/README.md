@@ -69,7 +69,7 @@
 | [\![unload,makoto]](bang-unload-makoto.md) | \! | ❓ 要確認 |
 | [\![unload,shiori]](bang-unload-shiori.md) | \! | ❓ 要確認 |
 | [\m[umsg,wparam,lparam]](m-umsg-wparam-lparam.md) | \m | ❌ 検出なし |
-| [http/rss/ical/websocket オプション](notes_executehttp.md) | http | ⚠️ 出現あり(要精査) |
+| [http/rss/ical/websocket オプション](notes_executehttp.md) | http | ❌ 未実装(誤検出) |
 | [iCal絞り込みオプション \[2.8.90\]](notes_executeical.md) | iCal | ❌ 検出なし |
 | [RSS絞り込みオプション \[2.8.92\]](notes_executerss.md) | 2.8.92 | ❌ 検出なし |
 | [InductionMode](notes_inductionmode.md) | InductionMode | ❌ 検出なし |

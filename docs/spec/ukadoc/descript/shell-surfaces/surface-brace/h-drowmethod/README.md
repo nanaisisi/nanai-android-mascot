@@ -4,13 +4,13 @@
 
 | 項目 | 検索語 | 対応状況 |
 | :--- | :--- | :---: |
-| [add](add.md) | add | ❓ 要確認 |
+| [add](add.md) | add | ⚠️ 一部対応 |
 | [alternativestart,(ID1,ID2...)](alternativestart.md) | alternativestart | ❌ 検出なし |
 | [alternativestop,(ID1,ID2...)](alternativestop.md) | alternativestop | ❌ 検出なし |
 | [asis](asis.md) | asis | ❌ 検出なし |
-| [auto](auto.md) | auto | ⚠️ 出現あり(要精査) |
-| [base](base.md) | base | ⚠️ 出現あり(要精査) |
-| [bind](bind.md) | bind | ⚠️ 出現あり(要精査) |
+| [auto](auto.md) | auto | ❌ 未実装(誤検出) |
+| [base](base.md) | base | ⚠️ 一部対応 |
+| [bind](bind.md) | bind | ⚠️ 一部対応 |
 | [blend-add](blend-add.md) | blend-add | ❌ 検出なし |
 | [blend-add-fast](blend-add-fast.md) | blend-add-fast | ❌ 検出なし |
 | [blend-add-glow](blend-add-glow.md) | blend-add-glow | ❌ 検出なし |
@@ -66,12 +66,12 @@
 | [blend-subtract-fast](blend-subtract-fast.md) | blend-subtract-fast | ❌ 検出なし |
 | [blend-vivid-light](blend-vivid-light.md) | blend-vivid-light | ❌ 検出なし |
 | [blend-vivid-light-fast](blend-vivid-light-fast.md) | blend-vivid-light-fast | ❌ 検出なし |
-| [import,ファイル名,ウエイトmsec,X,Y](import.md) | import | ⚠️ 出現あり(要精査) |
-| [insert,ID](insert.md) | insert | ⚠️ 出現あり(要精査) |
+| [import,ファイル名,ウエイトmsec,X,Y](import.md) | import | ❌ 未実装(誤検出) |
+| [insert,ID](insert.md) | insert | ⚠️ 一部対応 |
 | [interpolate](interpolate.md) | interpolate | ❌ 検出なし |
 | [描画メソッド](introduction_drawmethod.md) | 描画メソッド | ❌ 検出なし |
-| [move](move.md) | move | ⚠️ 出現あり(要精査) |
-| [overlay](overlay.md) | overlay | ⚠️ 出現あり(要精査) |
+| [move](move.md) | move | ⚠️ 一部対応 |
+| [overlay](overlay.md) | overlay | ⚠️ 一部対応 |
 | [overlay-fast](overlay-fast.md) | overlay-fast | ❌ 検出なし |
 | [overlayfast](overlayfast.md) | overlayfast | ❌ 検出なし |
 | [overlaymultiply](overlaymultiply.md) | overlaymultiply | ❌ 検出なし |
@@ -79,7 +79,7 @@
 | [parallelstart,(ID1,ID2...)](parallelstart.md) | parallelstart | ❌ 検出なし |
 | [parallelstop,(ID1,ID2...)](parallelstop.md) | parallelstop | ❌ 検出なし |
 | [reduce](reduce.md) | reduce | ❌ 検出なし |
-| [replace](replace.md) | replace | ⚠️ 出現あり(要精査) |
+| [replace](replace.md) | replace | ⚠️ 一部対応 |
 | [scaling](scaling.md) | scaling | ❌ 検出なし |
-| [start,ID](start.md) | start | ⚠️ 出現あり(要精査) |
-| [stop,ID](stop.md) | stop | ⚠️ 出現あり(要精査) |
+| [start,ID](start.md) | start | ⚠️ 一部対応 |
+| [stop,ID](stop.md) | stop | ⚠️ 一部対応 |

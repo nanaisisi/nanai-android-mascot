@@ -5,11 +5,11 @@
 | 項目 | 検索語 | 対応状況 |
 | :--- | :--- | :---: |
 | [alwaysdisplay,数値](alwaysdisplay.md) | alwaysdisplay | ❌ 検出なし |
-| [charset,文字コード](charset.md) | charset | ⚠️ 出現あり(要精査) |
+| [charset,文字コード](charset.md) | charset | ⚠️ 一部対応(読込のみ) |
 | [dllname,ファイル名](dllname.md) | dllname | ❌ 検出なし |
-| [homeurl,URL](homeurl.md) | homeurl | ⚠️ 出現あり(要精査) |
-| [descript.txt（Headlineの）](introduction_descript.txt.md) | descript.txt | ⚠️ 出現あり(要精査) |
-| [name,ヘッドライン名](name.md) | name | ⚠️ 出現あり(要精査) |
+| [homeurl,URL](homeurl.md) | homeurl | ⚠️ 一部対応(読込のみ) |
+| [descript.txt（Headlineの）](introduction_descript.txt.md) | descript.txt | ❌ 未実装(誤検出) |
+| [name,ヘッドライン名](name.md) | name | ⚠️ 一部対応(読込のみ) |
 | [openurl,URL](openurl.md) | openurl | ❌ 検出なし |
 | [readme,ファイル名](readme.md) | readme | ⚠️ 出現あり(要精査) |
 | [readme.charset,文字コード](readme.charset.md) | readme.charset | ❌ 検出なし |

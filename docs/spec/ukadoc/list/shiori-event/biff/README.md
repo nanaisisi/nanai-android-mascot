@@ -5,6 +5,6 @@
 | 項目 | 検索語 | 対応状況 |
 | :--- | :--- | :---: |
 | [OnBIFF2Complete](OnBIFF2Complete.md) | OnBIFF2Complete | ❌ 検出なし |
-| [OnBIFFBegin](OnBIFFBegin.md) | OnBIFFBegin | ⚠️ 出現あり(要精査) |
-| [OnBIFFComplete](OnBIFFComplete.md) | OnBIFFComplete | ⚠️ 出現あり(要精査) |
+| [OnBIFFBegin](OnBIFFBegin.md) | OnBIFFBegin | ⚠️ 一部対応(リクエスト生成のみ) |
+| [OnBIFFComplete](OnBIFFComplete.md) | OnBIFFComplete | ⚠️ 一部対応(リクエスト生成のみ) |
 | [OnBIFFFailure](OnBIFFFailure.md) | OnBIFFFailure | ❌ 検出なし |

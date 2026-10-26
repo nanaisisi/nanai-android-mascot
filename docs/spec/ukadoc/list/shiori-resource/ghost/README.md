@@ -5,18 +5,18 @@
 | 項目 | 検索語 | 対応状況 |
 | :--- | :--- | :---: |
 | [(入力ボックス種類).defaultleft　(入力ボックス種類).defaulttop](boxname.defaultleft.md) | .defaultleft | ❌ 検出なし |
-| [char\*.defaultleft](char-star-.defaultleft.md) | char | ⚠️ 出現あり(要精査) |
-| [char\*.defaulttop](char-star-.defaulttop.md) | char | ⚠️ 出現あり(要精査) |
-| [char\*.defaultx](char-star-.defaultx.md) | char | ⚠️ 出現あり(要精査) |
-| [char\*.defaulty](char-star-.defaulty.md) | char | ⚠️ 出現あり(要精査) |
-| [char\*.popupmenu.applybindtoself](char-star-.popupmenu.applybindtoself.md) | char | ⚠️ 出現あり(要精査) |
-| [char\*.popupmenu.type](char-star-.popupmenu.type.md) | char | ⚠️ 出現あり(要精査) |
-| [char\*.popupmenu.visible](char-star-.popupmenu.visible.md) | char | ⚠️ 出現あり(要精査) |
-| [char\*.recommendbuttoncaption](char-star-.recommendbuttoncaption.md) | char | ⚠️ 出現あり(要精査) |
-| [char\*.recommendsites](char-star-.recommendsites.md) | char | ⚠️ 出現あり(要精査) |
+| [char\*.defaultleft](char-star-.defaultleft.md) | char | ❌ 未実装(誤検出) |
+| [char\*.defaulttop](char-star-.defaulttop.md) | char | ❌ 未実装(誤検出) |
+| [char\*.defaultx](char-star-.defaultx.md) | char | ❌ 未実装(誤検出) |
+| [char\*.defaulty](char-star-.defaulty.md) | char | ❌ 未実装(誤検出) |
+| [char\*.popupmenu.applybindtoself](char-star-.popupmenu.applybindtoself.md) | char | ❌ 未実装(誤検出) |
+| [char\*.popupmenu.type](char-star-.popupmenu.type.md) | char | ❌ 未実装(誤検出) |
+| [char\*.popupmenu.visible](char-star-.popupmenu.visible.md) | char | ❌ 未実装(誤検出) |
+| [char\*.recommendbuttoncaption](char-star-.recommendbuttoncaption.md) | char | ❌ 未実装(誤検出) |
+| [char\*.recommendsites](char-star-.recommendsites.md) | char | ❌ 未実装(誤検出) |
 | [getaistate](getaistate.md) | getaistate | ❌ 検出なし |
 | [getaistateex](getaistateex.md) | getaistateex | ❌ 検出なし |
-| [homeurl](homeurl.md) | homeurl | ⚠️ 出現あり(要精査) |
+| [homeurl](homeurl.md) | homeurl | ⚠️ 一部対応(読込のみ) |
 | [kero.defaultleft](kero.defaultleft.md) | kero.defaultleft | ❌ 検出なし |
 | [kero.defaulttop](kero.defaulttop.md) | kero.defaulttop | ❌ 検出なし |
 | [kero.defaultx](kero.defaultx.md) | kero.defaultx | ❌ 検出なし |

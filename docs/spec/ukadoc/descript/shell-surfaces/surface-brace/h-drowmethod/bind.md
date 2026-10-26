@@ -2,11 +2,11 @@
 
 - **規格**: [bind.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/bind/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/bind.md)
 - **検索語**: bind
-- **対応状況**: ❓ 要確認(surface 関連語)
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
-サーフェス処理 (ui/js/surface/) に関連する語「bind」が出現。surfaces.txt の該当機能として実装されているかは個別の読解が必要。
+surface-parser.js が解析 (パターン種別など) するが、描画への反映は個別未確認。
 
 ## 実装箇所
 

@@ -51,7 +51,7 @@
 | [arrow0.y,座標 [\*1](../index.md#balloon設定)](arrow0.y.md) | arrow0.y | ❌ 検出なし |
 | [arrow1.x,座標 [\*1](../index.md#balloon設定)](arrow1.x.md) | arrow1.x | ❌ 検出なし |
 | [arrow1.y,座標 [\*1](../index.md#balloon設定)](arrow1.y.md) | arrow1.y | ❌ 検出なし |
-| [charset,文字コード](charset.md) | charset | ⚠️ 出現あり(要精査) |
+| [charset,文字コード](charset.md) | charset | ⚠️ 一部対応(読込のみ) |
 | [clickwaitmarker.x,座標 [\*1](../index.md#balloon設定)](clickwaitmarker.x.md) | clickwaitmarker.x | ❌ 検出なし |
 | [clickwaitmarker.y,座標 [\*1](../index.md#balloon設定)](clickwaitmarker.y.md) | clickwaitmarker.y | ❌ 検出なし |
 | [communicatebox.background.color.b,数値](communicatebox.background.color.b.md) | communicatebox.background.color.b | ❌ 検出なし |
@@ -68,10 +68,10 @@
 | [communicatebox.width,サイズ](communicatebox.width.md) | communicatebox.width | ❌ 検出なし |
 | [communicatebox.x,座標](communicatebox.x.md) | communicatebox.x | ❌ 検出なし |
 | [communicatebox.y,座標](communicatebox.y.md) | communicatebox.y | ❌ 検出なし |
-| [craftman,作者名](craftman.md) | craftman | ⚠️ 出現あり(要精査) |
-| [craftmanurl,URL](craftmanurl.md) | craftmanurl | ⚠️ 出現あり(要精査) |
+| [craftman,作者名](craftman.md) | craftman | ⚠️ 一部対応(読込のみ) |
+| [craftmanurl,URL](craftmanurl.md) | craftmanurl | ⚠️ 一部対応(読込のみ) |
 | [craftmanw,作者名](craftmanw.md) | craftmanw | ❌ 検出なし |
-| [cursor,ファイル名 / mousecursor,ファイル名](cursor.md) | cursor | ⚠️ 出現あり(要精査) |
+| [cursor,ファイル名 / mousecursor,ファイル名](cursor.md) | cursor | ❌ 未実装 |
 | [cursor.blendmethod,コマンド](cursor.blendmethod.md) | cursor.blendmethod | ❌ 検出なし |
 | [cursor.brush.color.b,数値](cursor.brush.color.b.md) | cursor.brush.color.b | ❌ 検出なし |
 | [cursor.brush.color.g,数値](cursor.brush.color.g.md) | cursor.brush.color.g | ❌ 検出なし |
@@ -101,12 +101,12 @@
 | [cursor.pen.color.g,数値](cursor.pen.color.g.md) | cursor.pen.color.g | ❌ 検出なし |
 | [cursor.pen.color.r,数値](cursor.pen.color.r.md) | cursor.pen.color.r | ❌ 検出なし |
 | [cursor.style,形状](cursor.style.md) | cursor.style | ❌ 検出なし |
-| [disable.font.(フォント定義),(指定)](disable.font.md) | disable.font. | ⚠️ 出現あり(要精査) |
+| [disable.font.(フォント定義),(指定)](disable.font.md) | disable.font. | ❌ 未実装(誤検出) |
 | [dpi,推奨DPI](dpi.md) | dpi,推奨DPI | ❌ 検出なし |
 | [font.bold,0/1](font.bold.md) | font.bold | ❌ 検出なし |
-| [font.color.b,数値](font.color.b.md) | font.color.b | ⚠️ 出現あり(要精査) |
-| [font.color.g,数値](font.color.g.md) | font.color.g | ⚠️ 出現あり(要精査) |
-| [font.color.r,数値](font.color.r.md) | font.color.r | ⚠️ 出現あり(要精査) |
+| [font.color.b,数値](font.color.b.md) | font.color.b | ⚠️ 一部対応(読込のみ) |
+| [font.color.g,数値](font.color.g.md) | font.color.g | ⚠️ 一部対応(読込のみ) |
+| [font.color.r,数値](font.color.r.md) | font.color.r | ⚠️ 一部対応(読込のみ) |
 | [font.height,数値](font.height.md) | font.height | ❌ 検出なし |
 | [font.italic,0/1](font.italic.md) | font.italic | ❌ 検出なし |
 | [font.name,フォント名](font.name.md) | font.name | ❌ 検出なし |
@@ -117,13 +117,13 @@
 | [font.shadowstyle,形態指定](font.shadowstyle.md) | font.shadowstyle | ❌ 検出なし |
 | [font.strike,0/1](font.strike.md) | font.strike | ❌ 検出なし |
 | [font.underline,0/1](font.underline.md) | font.underline | ❌ 検出なし |
-| [homeurl,URL](homeurl.md) | homeurl | ⚠️ 出現あり(要精査) |
+| [homeurl,URL](homeurl.md) | homeurl | ⚠️ 一部対応(読込のみ) |
 | [id,ID名](id.md) | id,ID名 | ❌ 検出なし |
-| [descript.txt（Balloonの）](introduction_descript.txt.md) | descript.txt | ⚠️ 出現あり(要精査) |
+| [descript.txt（Balloonの）](introduction_descript.txt.md) | descript.txt | ❌ 未実装(誤検出) |
 | [mousecursor.arrow,ファイル名](mousecursor.arrow.md) | mousecursor.arrow | ❌ 検出なし |
 | [mousecursor.text,ファイル名](mousecursor.text.md) | mousecursor.text | ❌ 検出なし |
 | [mousecursor.wait,ファイル名](mousecursor.wait.md) | mousecursor.wait | ❌ 検出なし |
-| [name,バルーン名](name.md) | name | ⚠️ 出現あり(要精査) |
+| [name,バルーン名](name.md) | name | ⚠️ 一部対応(読込のみ) |
 | [number.font.color.b,数値](number.font.color.b.md) | number.font.color.b | ❌ 検出なし |
 | [number.font.color.g,数値](number.font.color.g.md) | number.font.color.g | ❌ 検出なし |
 | [number.font.color.r,数値](number.font.color.r.md) | number.font.color.r | ❌ 検出なし |
@@ -136,8 +136,8 @@
 | [onlinemarker.interval,待機時間](onlinemarker.interval.md) | onlinemarker.interval | ❌ 検出なし |
 | [onlinemarker.x,座標 [\*1](../index.md#balloon設定)](onlinemarker.x.md) | onlinemarker.x | ❌ 検出なし |
 | [onlinemarker.y,座標 [\*1](../index.md#balloon設定)](onlinemarker.y.md) | onlinemarker.y | ❌ 検出なし |
-| [origin.x,座標 [\*1](../index.md#balloon設定)](origin.x.md) | origin.x | ⚠️ 出現あり(要精査) |
-| [origin.y,座標 [\*1](../index.md#balloon設定)](origin.y.md) | origin.y | ⚠️ 出現あり(要精査) |
+| [origin.x,座標 [\*1](../index.md#balloon設定)](origin.x.md) | origin.x | ⚠️ 一部対応(読込のみ) |
+| [origin.y,座標 [\*1](../index.md#balloon設定)](origin.y.md) | origin.y | ⚠️ 一部対応(読込のみ) |
 | [overlay_outside_balloon,数値](overlay_outside_balloon.md) | overlay_outside_balloon | ❌ 検出なし |
 | [paint_transparent_region_black,数値](paint_transparent_region_black.md) | paint_transparent_region_black | ❌ 検出なし |
 | [readme,ファイル名](readme.md) | readme | ⚠️ 出現あり(要精査) |
@@ -153,13 +153,13 @@
 | [sstpmessage.xr,座標 [\*1](../index.md#balloon設定)](sstpmessage.xr.md) | sstpmessage.xr | ❌ 検出なし |
 | [sstpmessage.y,座標 [\*1](../index.md#balloon設定)](sstpmessage.y.md) | sstpmessage.y | ❌ 検出なし |
 | [sstpmessage.yb,座標 [\*1](../index.md#balloon設定)](sstpmessage.yb.md) | sstpmessage.yb | ❌ 検出なし |
-| [type,種別](type.md) | type | ⚠️ 出現あり(要精査) |
+| [type,種別](type.md) | type | ❌ 未実装(誤検出) |
 | [use_input_alpha,数値](use_input_alpha.md) | use_input_alpha | ❌ 検出なし |
 | [use_self_alpha,値](use_self_alpha.md) | use_self_alpha | ❌ 検出なし |
-| [validrect.bottom,座標 [\*1](../index.md#balloon設定)](validrect.bottom.md) | validrect.bottom | ⚠️ 出現あり(要精査) |
-| [validrect.left,座標 [\*1](../index.md#balloon設定)](validrect.left.md) | validrect.left | ⚠️ 出現あり(要精査) |
-| [validrect.right,座標 [\*1](../index.md#balloon設定)](validrect.right.md) | validrect.right | ⚠️ 出現あり(要精査) |
-| [validrect.top,座標 [\*1](../index.md#balloon設定)](validrect.top.md) | validrect.top | ⚠️ 出現あり(要精査) |
+| [validrect.bottom,座標 [\*1](../index.md#balloon設定)](validrect.bottom.md) | validrect.bottom | ⚠️ 一部対応(読込のみ) |
+| [validrect.left,座標 [\*1](../index.md#balloon設定)](validrect.left.md) | validrect.left | ⚠️ 一部対応(読込のみ) |
+| [validrect.right,座標 [\*1](../index.md#balloon設定)](validrect.right.md) | validrect.right | ⚠️ 一部対応(読込のみ) |
+| [validrect.top,座標 [\*1](../index.md#balloon設定)](validrect.top.md) | validrect.top | ⚠️ 一部対応(読込のみ) |
 | [vertical,0/1](vertical.md) | vertical | ❌ 検出なし |
 | [windowposition.limit,0/1](windowposition.limit.md) | windowposition.limit | ❌ 検出なし |
 | [windowposition.x,座標](windowposition.x.md) | windowposition.x | ❌ 検出なし |

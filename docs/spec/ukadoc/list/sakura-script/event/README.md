@@ -21,7 +21,7 @@
 | [\![notify,イベント名,r0,r1,r2...]](bang-notify-r0-r1-r2.md) | \! | ❓ 要確認 |
 | [\![notifyother,ゴースト名,イベント名,r0,r1,r2...]](bang-notifyother-r0-r1-r2.md) | \! | ❓ 要確認 |
 | [\![notifyplugin,プラグインのIDまたは名前,イベント名,r0,r1,r2...]](bang-notifyplugin-ID-r0-r1-r2.md) | \! | ❓ 要確認 |
-| [\![raise,イベント名,r0,r1,r2...]](bang-raise-r0-r1-r2.md) | \! | ❓ 要確認 |
+| [\![raise,イベント名,r0,r1,r2...]](bang-raise-r0-r1-r2.md) | \! | ✅ 実装済 |
 | [\![raiseother,ゴースト名,イベント名,r0,r1,r2...]](bang-raiseother-r0-r1-r2.md) | \! | ❓ 要確認 |
 | [\![raiseplugin,プラグインのIDまたは名前,イベント名,r0,r1,r2...]](bang-raiseplugin-ID-r0-r1-r2.md) | \! | ❓ 要確認 |
 | [\![restore,wallpaper]](bang-restore-wallpaper.md) | \! | ❓ 要確認 |
@@ -40,12 +40,12 @@
 | [\![timerraise,時間,繰り返すか否か,イベント名,r0,r1,r2...]](bang-timerraise-r0-r1-r2.md) | \! | ❓ 要確認 |
 | [\![timerraiseother,時間,繰り返すか否か,ゴースト名,イベント名,r0,r1,r2...]](bang-timerraiseother-r0-r1-r2.md) | \! | ❓ 要確認 |
 | [\![timerraiseplugin,時間,繰り返すか否か,プラグインのIDまたは名前,イベント名,r0,r1,r2...]](bang-timerraiseplugin-ID-r0-r1-r2.md) | \! | ❓ 要確認 |
-| [\![update,更新対象(,オプション,オプション...)]](bang-update.md) | \! | ❓ 要確認 |
-| [\![update,platform]](bang-update-platform.md) | \! | ❓ 要確認 |
+| [\![update,更新対象(,オプション,オプション...)]](bang-update.md) | \! | ✅ 実装済 |
+| [\![update,platform]](bang-update-platform.md) | \! | ✅ 実装済 |
 | [\![updatebymyself(,オプション,オプション...)]](bang-updatebymyself.md) | \! | ❓ 要確認 |
 | [\![updateother,更新対象/オプション群,...]](bang-updateother.md) | \! | ❓ 要確認 |
 | [\![vanishbymyself]](bang-vanishbymyself.md) | \! | ❓ 要確認 |
-| [\e](e.md) | \e | ❓ 要確認 |
+| [\e](e.md) | \e | ✅ 実装済 |
 | [\-](entry.md) | \- | ❌ 検出なし |
 | [補足](note-1.md) | 補足 | ❌ 検出なし |
 | [\+](plus.md) | \+ | ❌ 検出なし |

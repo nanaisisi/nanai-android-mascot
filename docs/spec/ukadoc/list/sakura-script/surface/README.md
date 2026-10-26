@@ -14,7 +14,7 @@
 | [\![anim,pause,ID]](bang-anim-pause-ID.md) | \! | ❓ 要確認 |
 | [\![anim,resume,ID]](bang-anim-resume-ID.md) | \! | ❓ 要確認 |
 | [\![anim,stop,ID]](bang-anim-stop-ID.md) | \! | ❓ 要確認 |
-| [\![bind,カテゴリ名,パーツ名,数値]](bang-bind.md) | \! | ❓ 要確認 |
+| [\![bind,カテゴリ名,パーツ名,数値]](bang-bind.md) | \! | ✅ 実装済 |
 | [\![bind-noevent,カテゴリ名,パーツ名,数値]](bang-bind-noevent.md) | \! | ❓ 要確認 |
 | [\![effect,プラグイン名,速度倍率,パラメータ]](bang-effect.md) | \! | ❓ 要確認 |
 | [\![effect2,追加サーフェスID,プラグイン名,速度倍率,パラメータ]](bang-effect2-ID.md) | \! | ❓ 要確認 |
@@ -28,8 +28,8 @@
 | [\![reset,sticky-window]](bang-reset-sticky-window.md) | \! | ❓ 要確認 |
 | [\![reset,zorder]](bang-reset-zorder.md) | \! | ❓ 要確認 |
 | [\![set,alignmentondesktop,bottomまたはtop]](bang-set-alignmentondesktop-bottom-top.md) | \! | ❓ 要確認 |
-| [\![set,alignmenttodesktop,方向]](bang-set-alignmenttodesktop.md) | \! | ❓ 要確認 |
-| [\![set,alignmenttodesktop,free]](bang-set-alignmenttodesktop-free.md) | \! | ❓ 要確認 |
+| [\![set,alignmenttodesktop,方向]](bang-set-alignmenttodesktop.md) | \! | ✅ 実装済 |
+| [\![set,alignmenttodesktop,free]](bang-set-alignmenttodesktop-free.md) | \! | ✅ 実装済 |
 | [\![set,alpha,数値,オプション]](bang-set-alpha.md) | \! | ❓ 要確認 |
 | [\![set,position,x,y,スコープID]](bang-set-position-x-y-ID.md) | \! | ❓ 要確認 |
 | [\![set,scaling,倍率]](bang-set-scaling.md) | \! | ❓ 要確認 |
@@ -38,8 +38,8 @@
 | [\![set,sticky-window,スコープID,スコープID,...]](bang-set-sticky-window-ID-ID.md) | \! | ❓ 要確認 |
 | [\![set,zorder,スコープID,スコープID,...]](bang-set-zorder-ID-ID.md) | \! | ❓ 要確認 |
 | [\![unlock,repaint]](bang-unlock-repaint.md) | \! | ❓ 要確認 |
-| [\i[ID番号]](i-ID.md) | \i | ❓ 要確認 |
-| [\i[ID,wait]](i-ID-wait.md) | \i | ❓ 要確認 |
+| [\i[ID番号]](i-ID.md) | \i | ✅ 実装済 |
+| [\i[ID,wait]](i-ID-wait.md) | \i | ✅ 実装済 |
 | [\![move]、\![moveasync]について](notes_move.md) | \! | ❓ 要確認 |
-| [\s[ID番号]](s-ID.md) | \s | ❓ 要確認 |
+| [\s[ID番号]](s-ID.md) | \s | ✅ 実装済 |
 | [\sID番号](sID.md) | \sID | ❌ 検出なし |

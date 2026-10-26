@@ -6,4 +6,4 @@
 | :--- | :--- | :---: |
 | [OnOtherSurfaceChange](OnOtherSurfaceChange.md) | OnOtherSurfaceChange | ❌ 検出なし |
 | [OnSurfaceChange](OnSurfaceChange.md) | OnSurfaceChange | ❌ 検出なし |
-| [OnSurfaceRestore](OnSurfaceRestore.md) | OnSurfaceRestore | ⚠️ 出現あり(要精査) |
+| [OnSurfaceRestore](OnSurfaceRestore.md) | OnSurfaceRestore | ✅ 実装済(SHIORIへ送信) |

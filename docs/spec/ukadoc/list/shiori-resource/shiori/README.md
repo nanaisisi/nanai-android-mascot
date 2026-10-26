@@ -4,8 +4,8 @@
 
 | 項目 | 検索語 | 対応状況 |
 | :--- | :--- | :---: |
-| [craftman](craftman.md) | craftman | ⚠️ 出現あり(要精査) |
+| [craftman](craftman.md) | craftman | ⚠️ 一部対応(読込のみ) |
 | [craftmanw](craftmanw.md) | craftmanw | ❌ 検出なし |
 | [log_path](log_path.md) | log_path | ❌ 検出なし |
-| [name](name.md) | name | ⚠️ 出現あり(要精査) |
-| [version](version.md) | version | ⚠️ 出現あり(要精査) |
+| [name](name.md) | name | ⚠️ 一部対応(読込のみ) |
+| [version](version.md) | version | ❌ 未実装(誤検出) |

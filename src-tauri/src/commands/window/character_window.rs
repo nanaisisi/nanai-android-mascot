@@ -23,6 +23,7 @@ pub async fn show_character_window(
                     y: py as i32,
                 }));
             }
+            let _ = sub_win.unminimize();
             let _ = sub_win.show();
         } else {
             // スコープ番号に応じた配置 (スコープ0: メイン位置、スコープ1以降: その横へ配置)
@@ -85,6 +86,7 @@ pub async fn hide_character_window(
         use tauri::Manager;
         let label = format!("subchar_window_{}", scope_id);
         if let Some(sub_win) = app_handle.get_webview_window(&label) {
+            let _ = sub_win.minimize();
             let _ = sub_win.hide();
         }
     }

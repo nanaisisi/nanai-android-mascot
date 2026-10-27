@@ -192,8 +192,10 @@ export class GhostController {
 			characterPromise,
 		]);
 
-		const startup = this.initializeGhostSHIORI(ghost, readinessGate, () =>
-			this._ghostLoadGeneration === generation,
+		const startup = this.initializeGhostSHIORI(
+			ghost,
+			readinessGate,
+			() => this._ghostLoadGeneration === generation,
 		);
 
 		// ゴースト連動のバルーン自動切り替え（設定が有効な場合、デフォルト有効）

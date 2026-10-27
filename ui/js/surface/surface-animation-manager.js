@@ -9,7 +9,9 @@ import { patternSurfaceFile } from "./bind-menu.js";
  * @returns {number}
  */
 export function resolvePatternWait(wait) {
-	const match = String(wait ?? 0).trim().match(/^(\d+)(?:-(\d+))?$/);
+	const match = String(wait ?? 0)
+		.trim()
+		.match(/^(\d+)(?:-(\d+))?$/);
 	if (!match) return 0;
 	const min = Number(match[1]);
 	const max = match[2] == null ? min : Number(match[2]);
@@ -24,7 +26,9 @@ export function resolvePatternWait(wait) {
  * @returns {{ kinds: Set<string>, param: number|null }}
  */
 export function parseInterval(interval) {
-	const value = String(interval || "sometimes").trim().toLowerCase();
+	const value = String(interval || "sometimes")
+		.trim()
+		.toLowerCase();
 	const comma = value.indexOf(",");
 	const head = comma < 0 ? value : value.slice(0, comma);
 	const raw = comma < 0 ? "" : value.slice(comma + 1).trim();
@@ -199,10 +203,11 @@ export class SurfaceAnimationManager {
 			this.manager.animations[sid] || this.manager.animations.default || [];
 		return animList
 			.map((anim) => ({ anim, sid, ...parseInterval(anim.interval) }))
-			.filter(({ anim, kinds }) =>
-				kinds.has(kind) &&
-				(!kinds.has("bind") ||
-					this.manager.isBindAnimationActive?.(scopeId, anim.id, sid)),
+			.filter(
+				({ anim, kinds }) =>
+					kinds.has(kind) &&
+					(!kinds.has("bind") ||
+						this.manager.isBindAnimationActive?.(scopeId, anim.id, sid)),
 			);
 	}
 
@@ -229,7 +234,12 @@ export class SurfaceAnimationManager {
 		// 前回のアニメーションが終わっていなくても、新しい再生をスケジュールする
 		const running = this._runningAnimations.get(key);
 		const { kinds } = parseInterval(anim.interval);
-		if (running && !kinds.has("runonce") && !kinds.has("yen-e") && !kinds.has("endtalk")) {
+		if (
+			running &&
+			!kinds.has("runonce") &&
+			!kinds.has("yen-e") &&
+			!kinds.has("endtalk")
+		) {
 			return running;
 		}
 		const playing = this._playAnimationPatterns(
@@ -287,7 +297,11 @@ export class SurfaceAnimationManager {
 			// (UKADOC 準拠: pattern.x/y オフセット、method overlay/replace)
 			// 合成不可（サーフィス未定義）時は旧方式の全面差し替えへフォールバック
 			// フレーム描画の完了を待ってから次へ進む（未完了の合成が積み上がらないように）
-			const framePromise = this.renderAnimationFrame(pat, baseSurfaceId, scopeId);
+			const framePromise = this.renderAnimationFrame(
+				pat,
+				baseSurfaceId,
+				scopeId,
+			);
 			if (framePromise) {
 				await framePromise;
 			} else {
@@ -319,14 +333,16 @@ export class SurfaceAnimationManager {
 		if (!file) return false;
 		const gc = this.manager.app?.ghostController;
 		if (!gc) return false;
-		return Promise.resolve(gc.updateSurface(baseSurfaceId, scopeId, [
-			{
-				file,
-				x: pat.x ?? 0,
-				y: pat.y ?? 0,
-				type: pat.type ?? "overlay",
-			},
-		]));
+		return Promise.resolve(
+			gc.updateSurface(baseSurfaceId, scopeId, [
+				{
+					file,
+					x: pat.x ?? 0,
+					y: pat.y ?? 0,
+					type: pat.type ?? "overlay",
+				},
+			]),
+		);
 	}
 
 	/**
@@ -380,7 +396,10 @@ export class SurfaceAnimationManager {
 		if (!this._talkStarted[scopeId]) this.onTalkStart(scopeId);
 
 		this._spokenCount[scopeId] = (this._spokenCount[scopeId] || 0) + 1;
-		for (const { anim, sid, param } of this.animationsForTrigger(scopeId, "talk")) {
+		for (const { anim, sid, param } of this.animationsForTrigger(
+			scopeId,
+			"talk",
+		)) {
 			const n = Math.max(param || 1, 1);
 			if (this._spokenCount[scopeId] % n === 0) {
 				this.playAnimationPatterns(anim, sid, scopeId).catch(() => {});

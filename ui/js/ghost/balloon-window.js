@@ -34,7 +34,7 @@ function setupInteractiveElements(balloonText, emitFn) {
 
 function initBalloonWindow() {
 	const balloonBox = document.getElementById("balloon-box");
-	const balloonText = document.getElementById("balloon-text");
+	const _balloonText = document.getElementById("balloon-text");
 
 	// テーマの適用
 	const savedTheme = localStorage.getItem("nanai_balloon_theme") || "default";

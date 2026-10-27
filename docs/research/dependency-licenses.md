@@ -20,11 +20,11 @@
 
 本プロジェクトでは、将来の WebAssembly (WASM) / ネイティブ連携を視野に `cpp/` 配下に代表的な伺か SHIORI 実装を Git サブモジュールとして管理しています。
 
-| モジュール名 | リポジトリ / 配置パス | ライセンス | 著作権者 | 利用上の要件・備考 |
-| :--- | :--- | :--- | :--- | :--- |
-| **華和梨 (KAWARI)** | `cpp/kawari` (v9.2.0) | **BSD 2-Clause License** | Copyright (C) 2001-2015 KAWARI Development Team | 著作権表示および免責条項の保持。 |
-| **里々 (SATORI)** | `cpp/satoriya-shiori` (Mc170-4-r3) | **BSD 2-Clause License** | Copyright (c) 2001-2005 Kusigahama Yagi / 2006- SEIBIHAN | 著作権表示および免責条項の保持。 |
-| **YAYA** | `cpp/yaya-shiori` (Tc550-3) | **修正BSDライセンス (BSD 3-Clause)** または **AYA Ver.5元ライセンス** | Copyright (c) 2007- 整備班 (SEIBIHAN) / 原著作者 umeici 氏 | 伺かゴースト周辺ツールとしての組み込み時は AYA Ver.5 ライセンス（自由利用・自由改変・免責）の選択が可能。通常の再配布では BSD 3-Clause に従い著作権表示・免責条項を保持。 |
+| モジュール名        | リポジトリ / 配置パス              | ライセンス                                                            | 著作権者                                                   | 利用上の要件・備考                                                                                                                                                        |
+| :------------------ | :--------------------------------- | :-------------------------------------------------------------------- | :--------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **華和梨 (KAWARI)** | `cpp/kawari` (v9.2.0)              | **BSD 2-Clause License**                                              | Copyright (C) 2001-2015 KAWARI Development Team            | 著作権表示および免責条項の保持。                                                                                                                                          |
+| **里々 (SATORI)**   | `cpp/satoriya-shiori` (Mc170-4-r3) | **BSD 2-Clause License**                                              | Copyright (c) 2001-2005 Kusigahama Yagi / 2006- SEIBIHAN   | 著作権表示および免責条項の保持。                                                                                                                                          |
+| **YAYA**            | `cpp/yaya-shiori` (Tc550-3)        | **修正BSDライセンス (BSD 3-Clause)** または **AYA Ver.5元ライセンス** | Copyright (c) 2007- 整備班 (SEIBIHAN) / 原著作者 umeici 氏 | 伺かゴースト周辺ツールとしての組み込み時は AYA Ver.5 ライセンス（自由利用・自由改変・免責）の選択が可能。通常の再配布では BSD 3-Clause に従い著作権表示・免責条項を保持。 |
 
 ### 内包ライブラリ（YAYA）
 
@@ -41,16 +41,16 @@ YAYA のソースコード内には以下の補助ライブラリが含まれて
 
 ### ライセンス種別ごとの分類
 
-| ライセンス種別 | 主な該当クレート例 | 分類・利用条件 |
-| :--- | :--- | :--- |
-| **MIT / Apache-2.0** (デュアル含む) | `serde`, `tokio`, `tauri`, `reqwest`, `thiserror`, `windows-sys`, `flate2` 等 (300+ クレート) | 寛容型（Permissive）。著作権表示・免責条項を保持。 |
-| **BSD-3-Clause / BSD-2-Clause** | `ring`, `crossbeam-*`, `regex-syntax` 等 | 寛容型。著作権表示・免責条項を保持。 |
-| **ISC** | `rustls`, `webpki` | 寛容型（MIT 同等）。 |
-| **Zlib** | `zlib-rs`, `foldhash`, `bytemuck` 等 | 寛容型。再配布時の条件が極めて緩やか。 |
-| **Unicode-3.0** | `icu_*`, `zerovec`, `yoke` 等 (ICU4X 関連) | Unicode Consortium による寛容型許諾。 |
-| **CDLA-Permissive-2.0** | `mime-db` | The Linux Foundation によるデータ定義向け寛容ライセンス。 |
-| **MPL-2.0** (Mozilla Public License 2.0) | `selectors`, `cssparser`, `cssparser-macros`, `dtoa-short`, `option-ext` | ファイル単位の弱コピーレフト。クレート自体のソースコードを改変しない限り、プロジェクト全体へのライセンス波及なし。 |
-| **マルチライセンス (LGPL含む)** | `r-efi` (`MIT OR Apache-2.0 OR LGPL-2.1-or-later`) | MIT または Apache-2.0 を選択可能であるため、LGPL 条件は回避。 |
+| ライセンス種別                           | 主な該当クレート例                                                                            | 分類・利用条件                                                                                                     |
+| :--------------------------------------- | :-------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------- |
+| **MIT / Apache-2.0** (デュアル含む)      | `serde`, `tokio`, `tauri`, `reqwest`, `thiserror`, `windows-sys`, `flate2` 等 (300+ クレート) | 寛容型（Permissive）。著作権表示・免責条項を保持。                                                                 |
+| **BSD-3-Clause / BSD-2-Clause**          | `ring`, `crossbeam-*`, `regex-syntax` 等                                                      | 寛容型。著作権表示・免責条項を保持。                                                                               |
+| **ISC**                                  | `rustls`, `webpki`                                                                            | 寛容型（MIT 同等）。                                                                                               |
+| **Zlib**                                 | `zlib-rs`, `foldhash`, `bytemuck` 等                                                          | 寛容型。再配布時の条件が極めて緩やか。                                                                             |
+| **Unicode-3.0**                          | `icu_*`, `zerovec`, `yoke` 等 (ICU4X 関連)                                                    | Unicode Consortium による寛容型許諾。                                                                              |
+| **CDLA-Permissive-2.0**                  | `mime-db`                                                                                     | The Linux Foundation によるデータ定義向け寛容ライセンス。                                                          |
+| **MPL-2.0** (Mozilla Public License 2.0) | `selectors`, `cssparser`, `cssparser-macros`, `dtoa-short`, `option-ext`                      | ファイル単位の弱コピーレフト。クレート自体のソースコードを改変しない限り、プロジェクト全体へのライセンス波及なし。 |
+| **マルチライセンス (LGPL含む)**          | `r-efi` (`MIT OR Apache-2.0 OR LGPL-2.1-or-later`)                                            | MIT または Apache-2.0 を選択可能であるため、LGPL 条件は回避。                                                      |
 
 ---
 
@@ -58,12 +58,12 @@ YAYA のソースコード内には以下の補助ライブラリが含まれて
 
 `package.json` に定義されている依存関係です。
 
-| パッケージ名 | 区分 | バージョン | ライセンス | 用途 |
-| :--- | :--- | :--- | :--- | :--- |
-| `@tauri-apps/api` | dependencies | `^2.12.4` | **Apache-2.0 / MIT** | Tauri ランタイムとのフロントエンド通信 API |
-| `vite` | devDependencies | `^8.3.5` | **MIT** | 開発サーバおよびフロントエンドビルドツール |
-| `@biomejs/biome` | devDependencies | `2.6.3` | **MIT / Apache-2.0** | Linter & Formatter |
-| `markuplint` | devDependencies | `^5.3.0` | **MIT** | HTML マークアップ構文チェッカー |
+| パッケージ名      | 区分            | バージョン | ライセンス           | 用途                                       |
+| :---------------- | :-------------- | :--------- | :------------------- | :----------------------------------------- |
+| `@tauri-apps/api` | dependencies    | `^2.12.4`  | **Apache-2.0 / MIT** | Tauri ランタイムとのフロントエンド通信 API |
+| `vite`            | devDependencies | `^8.3.5`   | **MIT**              | 開発サーバおよびフロントエンドビルドツール |
+| `@biomejs/biome`  | devDependencies | `2.6.3`    | **MIT / Apache-2.0** | Linter & Formatter                         |
+| `markuplint`      | devDependencies | `^5.3.0`   | **MIT**              | HTML マークアップ構文チェッカー            |
 
 ---
 

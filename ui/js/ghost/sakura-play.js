@@ -36,12 +36,16 @@ export async function playScript(player, script) {
 		}
 		if (isTauriAvailable()) {
 			shownScopes.add(0);
-			const winPromises = [invoke("show_balloon_window", { scopeId: 0 }).catch(() => {})];
+			const winPromises = [
+				invoke("show_balloon_window", { scopeId: 0 }).catch(() => {}),
+			];
 			// スクリプト内にスコープ1（\1 / \u）以降の発話・選択肢が含まれているか判定
 			const hasKero = tokens.some((t) => t.type === "scope" && t.value >= 1);
 			if (hasKero) {
 				shownScopes.add(1);
-				winPromises.push(invoke("show_balloon_window", { scopeId: 1 }).catch(() => {}));
+				winPromises.push(
+					invoke("show_balloon_window", { scopeId: 1 }).catch(() => {}),
+				);
 			}
 			await Promise.all(winPromises);
 		}
@@ -69,7 +73,10 @@ export async function playScript(player, script) {
 		}
 	};
 
-	const scheduleDesktopBalloonSync = (immediate = false, targetScope = null) => {
+	const scheduleDesktopBalloonSync = (
+		immediate = false,
+		targetScope = null,
+	) => {
 		if (!isTauriAvailable()) return;
 		const sc = targetScope ?? player.currentScope;
 		syncPendingScopes.add(sc);
@@ -116,9 +123,15 @@ export async function playScript(player, script) {
 						sakuraDisplay.style.display = "block";
 					}
 					currentBalloonText = sakuraText;
-					if (isTauriAvailable() && hasTextContent && !shownScopes.has(player.currentScope)) {
+					if (
+						isTauriAvailable() &&
+						hasTextContent &&
+						!shownScopes.has(player.currentScope)
+					) {
 						shownScopes.add(player.currentScope);
-						invoke("show_balloon_window", { scopeId: player.currentScope }).catch(() => {});
+						invoke("show_balloon_window", {
+							scopeId: player.currentScope,
+						}).catch(() => {});
 					}
 				}
 				break;
@@ -296,18 +309,27 @@ export async function playScript(player, script) {
 						token.param === "0" || token.param === "false" ? "normal" : "bold";
 				} else if (token.tag === "italic") {
 					player.currentFontStyles.fontStyle =
-						token.param === "0" || token.param === "false" ? "normal" : "italic";
+						token.param === "0" || token.param === "false"
+							? "normal"
+							: "italic";
 				} else if (token.tag === "strike") {
 					player.currentFontStyles.textDecoration =
-						token.param === "0" || token.param === "false" ? "none" : "line-through";
+						token.param === "0" || token.param === "false"
+							? "none"
+							: "line-through";
 				} else if (token.tag === "underline") {
 					player.currentFontStyles.textDecoration =
-						token.param === "0" || token.param === "false" ? "none" : "underline";
+						token.param === "0" || token.param === "false"
+							? "none"
+							: "underline";
 				} else if (token.tag === "height") {
 					if (token.param) {
-						const size = token.param.endsWith("px") || token.param.endsWith("pt") || token.param.endsWith("em")
-							? token.param
-							: `${token.param}px`;
+						const size =
+							token.param.endsWith("px") ||
+							token.param.endsWith("pt") ||
+							token.param.endsWith("em")
+								? token.param
+								: `${token.param}px`;
 						player.currentFontStyles.fontSize = size;
 					}
 				} else if (token.tag === "shadow") {

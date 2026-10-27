@@ -3,7 +3,9 @@ import { test } from "node:test";
 
 const deferred = () => {
 	let resolve;
-	const promise = new Promise((r) => { resolve = r; });
+	const promise = new Promise((r) => {
+		resolve = r;
+	});
 	return { promise, resolve };
 };
 
@@ -37,7 +39,9 @@ function setup() {
 	const gc = new GhostController(app);
 	gc.ghosts = [{ name: "g", path: "ghost/g" }];
 	gc.updateGhostCharacter = async () => {};
-	gc.sendShioriEvent = async (event) => { calls.push(event); };
+	gc.sendShioriEvent = async (event) => {
+		calls.push(event);
+	};
 	gc.startSecondChangeTimer = () => {};
 	return { gc, assets };
 }
@@ -54,18 +58,24 @@ test("boot waits for assets and for banner to finish hiding", async () => {
 	assert.equal(calls.includes("hide_loading_banner_window"), true);
 	hideGate.resolve();
 	await starting;
-	assert.ok(calls.indexOf("hide_loading_banner_window") < calls.indexOf("OnBoot"));
+	assert.ok(
+		calls.indexOf("hide_loading_banner_window") < calls.indexOf("OnBoot"),
+	);
 });
 
 test("automatic startup waits until selected ghost is ready", async () => {
 	for (const initialGhostName of ["g", undefined]) {
 		const { gc } = setup();
 		gc.app.initialGhostName = initialGhostName;
-		gc.scanGhosts = async () => { gc.ghosts = [{ name: "g", path: "ghost/g" }]; };
+		gc.scanGhosts = async () => {
+			gc.ghosts = [{ name: "g", path: "ghost/g" }];
+		};
 		const gate = deferred();
 		gc.selectGhost = () => gate.promise;
 		let finished = false;
-		const startup = gc.autoLoadGhost().then(() => { finished = true; });
+		const startup = gc.autoLoadGhost().then(() => {
+			finished = true;
+		});
 		await new Promise((r) => setImmediate(r));
 		assert.equal(finished, false);
 		gate.resolve();

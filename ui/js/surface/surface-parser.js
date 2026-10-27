@@ -153,7 +153,9 @@ export function parseSurfacesTxt(text) {
 		} else if (/^(?:animation\d+\.|\d+)pattern\d+,/.test(trimmed)) {
 			// SERIKO/2: animation[ID].pattern[P],method,surface,wait,x,y
 			// SERIKO/1: [ID]pattern[P],surface,wait,method,x,y
-			const match = trimmed.match(/^(?:animation)?(\d+)\.?(?:pattern)(\d+),\s*(.+)$/);
+			const match = trimmed.match(
+				/^(?:animation)?(\d+)\.?(?:pattern)(\d+),\s*(.+)$/,
+			);
 			if (match) {
 				const animId = Number.parseInt(match[1], 10);
 				const index = Number.parseInt(match[2], 10);
@@ -173,7 +175,14 @@ export function parseSurfacesTxt(text) {
 							anim = { id: animId, interval: "sometimes", patterns: [] };
 							animations[s].push(anim);
 						}
-						anim.patterns.push({ surface, wait: Number.isNaN(wait) ? 0 : wait * (legacy ? 10 : 1), type, x, y, index });
+						anim.patterns.push({
+							surface,
+							wait: Number.isNaN(wait) ? 0 : wait * (legacy ? 10 : 1),
+							type,
+							x,
+							y,
+							index,
+						});
 					});
 				}
 			}

@@ -61,7 +61,7 @@ export const shioriNotifyMethods = {
 
 		const keroNames = ghosts
 			.map((g) => g.kero_name)
-			.filter((n) => Boolean(n && n.trim()));
+			.filter((n) => Boolean(n?.trim()));
 		if (keroNames.length > 0) {
 			await this.sendShioriNotify("installedkeroname", keroNames);
 		}

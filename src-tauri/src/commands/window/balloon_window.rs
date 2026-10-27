@@ -159,8 +159,8 @@ pub async fn preload_auxiliary_windows(app_handle: tauri::AppHandle) -> Result<(
 
         // 4. サブキャラクターウィンドウ (scope 1: うにゅう/相方) を最小化・非表示状態で事前キャッシュ
         let subchar_label = "subchar_window_1";
-        if app_handle.get_webview_window(subchar_label).is_none() {
-            if let Ok(subchar_win) = tauri::WebviewWindowBuilder::new(
+        if app_handle.get_webview_window(subchar_label).is_none()
+            && let Ok(subchar_win) = tauri::WebviewWindowBuilder::new(
                 &app_handle,
                 subchar_label,
                 tauri::WebviewUrl::App("character.html?scope=1".into()),
@@ -173,9 +173,8 @@ pub async fn preload_auxiliary_windows(app_handle: tauri::AppHandle) -> Result<(
             .resizable(false)
             .visible(false)
             .build()
-            {
-                let _ = subchar_win.minimize();
-            }
+        {
+            let _ = subchar_win.minimize();
         }
     }
     Ok(())

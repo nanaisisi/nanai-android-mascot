@@ -139,8 +139,15 @@ pub async fn send_shiori_event_typed(
     let text = req.build();
     let raw = dispatch_request(&state, &text, &gid)?;
     let parsed = ShioriResponse::parse(&raw);
-    if event != "OnSecondChange" && let Ok(ref res) = parsed {
-        println!("✨ SHIORI Event '{}' -> status={:?}, value='{}'", event, res.status, res.value.as_deref().unwrap_or(""));
+    if event != "OnSecondChange"
+        && let Ok(ref res) = parsed
+    {
+        println!(
+            "✨ SHIORI Event '{}' -> status={:?}, value='{}'",
+            event,
+            res.status,
+            res.value.as_deref().unwrap_or("")
+        );
     }
     parsed
 }

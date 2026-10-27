@@ -21,7 +21,9 @@ globalThis.__TAURI_INTERNALS__ = {
 	},
 };
 
-const { ghostSurfaceMethods } = await import("../ui/js/surface/ghost-surface.js");
+const { ghostSurfaceMethods } = await import(
+	"../ui/js/surface/ghost-surface.js"
+);
 
 function makeController() {
 	const gc = Object.create(ghostSurfaceMethods);
@@ -75,17 +77,19 @@ test("animation frame layer also runs chroma-key processing", async () => {
 	calls.length = 0;
 	const gc = makeController();
 	await gc.updateSurface(0, 0, [{ file: "surface1.png", x: 0, y: 0 }]);
-	assert.ok(
-		gc._chromaCalls.some((c) => c.src === "data:image/png;base64,1"),
-	);
+	assert.ok(gc._chromaCalls.some((c) => c.src === "data:image/png;base64,1"));
 });
 
 test("a slower older surface update does not overwrite a newer one", async () => {
 	calls.length = 0;
 	const gc = makeController();
 	let release;
-	const gate = new Promise((r) => { release = r; });
-	loadDelay = async (args) => { if (args.surfaceId === "5") await gate; };
+	const gate = new Promise((r) => {
+		release = r;
+	});
+	loadDelay = async (args) => {
+		if (args.surfaceId === "5") await gate;
+	};
 	const older = gc.updateSurface(5, 0);
 	await gc.updateSurface(6, 0);
 	release();

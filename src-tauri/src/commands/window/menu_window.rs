@@ -35,7 +35,11 @@ pub async fn show_menu_window(
                 target_x = max_x.max(screen_pos.x as f64);
             }
             if target_y > max_y {
-                target_y = max_y.max(screen_pos.y as f64);
+                // 画面下端に近い項目は、項目の下端にサブメニューの下端を合わせて上方向へ展開する。
+                // 親メニューの項目高は通常 40px 前後で、単純な max_y への切り詰めでは
+                // サブメニューが画面下端と重なりやすい。
+                let anchor_height = 40.0;
+                target_y = (target_y - win_height + anchor_height).max(screen_pos.y as f64);
             }
         }
 

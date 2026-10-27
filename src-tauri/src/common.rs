@@ -77,6 +77,7 @@ pub struct ShellInfo {
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct GhostInfo {
     pub name: String,
+    pub version: Option<String>,
     pub path: String,
     pub sakura_name: Option<String>,
     pub kero_name: Option<String>,

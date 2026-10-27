@@ -304,6 +304,7 @@ export class ModalGhostHandlers {
 				(ghost) => `
         <div class="ghost-item ${this.app.ghostController.currentGhost?.name === ghost.name ? "active" : ""}" data-ghost="${ghost.name}" style="cursor: pointer; padding: 6px; border-bottom: 1px solid rgba(0,0,0,0.05);">
           <strong>${this.app.ghostController.currentGhost?.name === ghost.name ? "✓ " : ""}${ghost.name}</strong><br>
+          <small style="color: #666;">バージョン: ${ghost.version || "不明"}</small><br>
           <small style="color: #666;">${ghost.path}</small>
         </div>`,
 			)

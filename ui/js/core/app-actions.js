@@ -54,6 +54,10 @@ export const actionMethods = {
       return this.startNetworkUpdate(null, { checkOnly: true });
     }
 
+    if (action === "ghost-info") {
+      return this.showGhostInformation();
+    }
+
     if (action === "biff" || action === "mail") {
       return this.checkEmail();
     }
@@ -136,6 +140,48 @@ export const actionMethods = {
     // ゴースト切り替え / 汎用モーダル
     const modalKey = action === "ghost-switch" ? "ghost" : action;
     this.modalManager?.show(`${modalKey}-modal-content`);
+  },
+
+  /**
+   * 現在のゴースト情報を SSP 風の情報ダイアログで表示する。
+   * @this {import('../../main.js').NanaiAndroidMascotApp}
+   */
+  showGhostInformation() {
+    const ghost = this.ghostController?.currentGhost;
+    if (!ghost || !this.modalManager?.content || !this.modalManager?.overlay) {
+      return;
+    }
+
+    const escapeHtml = (value) =>
+      String(value ?? "不明")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    const row = (label, value) =>
+      `<div class="info-item"><strong>${escapeHtml(label)}:</strong> <span>${escapeHtml(value)}</span></div>`;
+
+    this.modalManager.content.innerHTML = `
+      <h2>👻 ゴースト情報</h2>
+      <div class="form-section">
+        ${row("名前", ghost.name)}
+        ${row("バージョン", ghost.version)}
+        ${row("さくら", ghost.sakura_name)}
+        ${row("うにゅう", ghost.kero_name)}
+        ${row("SHIORI", ghost.shiori)}
+        ${row("作者", ghost.craftman)}
+        ${row("作者 URL", ghost.craftman_url)}
+        ${row("インストール先", ghost.path)}
+      </div>
+      <div class="form-section" style="text-align: right;">
+        <button id="modal-ok-btn" class="primary">OK</button>
+      </div>
+    `;
+    this.modalManager.overlay.style.display = "flex";
+    this.modalManager.content
+      .querySelector("#modal-ok-btn")
+      ?.addEventListener("click", () => this.modalManager.hide());
   },
 
   /**

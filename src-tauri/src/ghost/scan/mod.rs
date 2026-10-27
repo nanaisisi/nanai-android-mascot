@@ -54,6 +54,7 @@ pub async fn scan_ghost_directory(
                         .as_ref()
                         .and_then(|m| m.get("name").cloned())
                         .unwrap_or_else(|| dir_name.clone());
+                    let version = meta_map.as_ref().and_then(|m| m.get("version").cloned());
 
                     let sakura_name = meta_map
                         .as_ref()
@@ -70,6 +71,7 @@ pub async fn scan_ghost_directory(
 
                     ghosts.push(GhostInfo {
                         name: display_name,
+                        version,
                         path: path.to_string_lossy().to_string(),
                         sakura_name,
                         kero_name,
@@ -89,6 +91,7 @@ pub async fn scan_ghost_directory(
             let shells = scan_shells_from_ghost(&mock_nanai_path);
             ghosts.push(GhostInfo {
                 name: "mock_nanai".to_string(),
+                version: Some("1.0.0".to_string()),
                 path: mock_nanai_path.to_string_lossy().to_string(),
                 sakura_name: Some("なない".to_string()),
                 kero_name: None,

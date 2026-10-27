@@ -84,6 +84,9 @@ export const menuMethods = {
 				recentGhosts,
 			});
 			emit("sync-theme", this.currentBalloonTheme);
+			if (this.availableBalloons) {
+				emit("sync-balloons", this.availableBalloons);
+			}
 			emit("sync-menu-scope", scope);
 		}
 
@@ -114,6 +117,12 @@ export const menuMethods = {
 				{ type: "sync-theme", theme: this.currentBalloonTheme },
 				"*",
 			);
+			if (this.availableBalloons) {
+				win.postMessage(
+					{ type: "sync-balloons", balloons: this.availableBalloons },
+					"*"
+				);
+			}
 		}
 	},
 

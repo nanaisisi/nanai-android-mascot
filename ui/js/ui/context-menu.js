@@ -20,6 +20,10 @@ if (globalThis.__TAURI__) {
 				renderer.renderDressupSubmenu(null, scope);
 			}
 		});
+		listenFn("sync-balloons", (event) => {
+			globalThis._lastBalloons = event.payload;
+			renderer.renderBalloonSubmenu(event.payload, document.documentElement.getAttribute("data-balloon-theme"));
+		});
 		listenFn("sync-ghosts", (event) => {
 			const data = event.payload;
 			if (data) {
@@ -46,6 +50,13 @@ if (globalThis.__TAURI__) {
 		});
 		listenFn("sync-theme", (event) => {
 			renderer.applyTheme(event.payload);
+			if (globalThis._lastBalloons) {
+				renderer.renderBalloonSubmenu(globalThis._lastBalloons, event.payload);
+			}
+		});
+		listenFn("sync-balloons", (event) => {
+			globalThis._lastBalloons = event.payload;
+			renderer.renderBalloonSubmenu(event.payload, document.documentElement.getAttribute("data-balloon-theme"));
 		});
 	}
 }
@@ -88,6 +99,12 @@ globalThis.addEventListener("message", (event) => {
 		}
 	} else if (event.data?.type === "sync-theme") {
 		renderer.applyTheme(event.data.theme);
+		if (globalThis._lastBalloons) {
+			renderer.renderBalloonSubmenu(globalThis._lastBalloons, event.data.theme);
+		}
+	} else if (event.data?.type === "sync-balloons") {
+		globalThis._lastBalloons = event.data.balloons;
+		renderer.renderBalloonSubmenu(event.data.balloons, document.documentElement.getAttribute("data-balloon-theme"));
 	}
 });
 

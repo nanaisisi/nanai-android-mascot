@@ -19,6 +19,7 @@ pub async fn get_all_ghosts(_state: tauri::State<'_, AppState>) -> Result<Vec<Gh
 
 /// SHIORIの状態を取得
 #[tauri::command]
+#[specta::specta]
 pub async fn get_shiori_status(state: tauri::State<'_, AppState>) -> Result<bool, String> {
     Ok(state.shiori_engine.lock().is_some())
 }

@@ -1,4 +1,4 @@
-package com.nanai_android_mascot
+package com.nanai_android_mascot.app
 
 import android.content.Context
 import androidx.startup.Initializer

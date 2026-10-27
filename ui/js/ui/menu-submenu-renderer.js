@@ -159,6 +159,36 @@ export class MenuSubmenuRenderer {
 		}
 	}
 
+	/**
+	 * 最近使ったもの（ゴースト実行履歴）サブメニュー描画 (SSP準拠)
+	 * @param {string[]} [recentGhosts]
+	 */
+	renderRecentSubmenu(recentGhosts = []) {
+		const container = document.getElementById("recent-submenu");
+		if (!container) return;
+
+		container.innerHTML = "";
+
+		if (recentGhosts.length === 0) {
+			const empty = document.createElement("div");
+			empty.className = "menu-item is-disabled";
+			empty.innerHTML = `<span>(履歴はありません)</span>`;
+			container.appendChild(empty);
+			return;
+		}
+
+		recentGhosts.forEach((ghostName) => {
+			const btn = document.createElement("button");
+			btn.className = "menu-item";
+			btn.dataset.ghostName = ghostName;
+			btn.innerHTML = `<span>🕘 ${ghostName}</span>`;
+			btn.addEventListener("click", () => {
+				this.dispatcher.dispatchAction("recent-ghost", ghostName);
+			});
+			container.appendChild(btn);
+		});
+	}
+
 	applyTheme(theme) {
 		if (theme) {
 			document.documentElement.setAttribute("data-balloon-theme", theme);

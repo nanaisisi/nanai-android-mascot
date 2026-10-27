@@ -161,6 +161,8 @@ export class GhostController {
 			AppConfig.storageKeys.lastGhost,
 			JSON.stringify(ghost),
 		);
+		// メニュー「最近使ったもの」履歴に記録
+		this.app?.recordRecentGhost?.(ghost.name);
 
 		// Rustバックエンド（config.local.toml）へ読み込み履歴を永続化
 		if (isTauriAvailable()) {

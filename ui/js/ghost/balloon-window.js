@@ -42,6 +42,7 @@ async function applyBalloonDescript(theme) {
 	try {
 		const props = await invoke("balloon_manifest", { name: theme });
 		if (!props || typeof props !== "object") return;
+		const balloonBox = document.getElementById("balloon-box");
 		const root = document.documentElement;
 
 		const toCss = (base) => {
@@ -95,6 +96,22 @@ async function applyBalloonDescript(theme) {
 				"max-width",
 				`calc(100% + ${Math.abs(ww)}px)`,
 			);
+		}
+
+		// 背景画像（balloons0: さくら / balloonk0: 相方。9 スライスで伸縮）
+		const imageFile = scopeId === 0 ? "balloons0.png" : "balloonk0.png";
+		const bgImage = await invoke("load_balloon_image", {
+			name: theme,
+			file: imageFile,
+		}).catch(() => null);
+		if (bgImage) {
+			const t = Number.isNaN(vt) ? 38 : Math.max(8, vt);
+			const r = Number.isNaN(vr) ? 40 : Math.max(8, vr);
+			const b = Number.isNaN(vb) ? 60 : Math.max(8, vb);
+			const l = Number.isNaN(vl) ? 40 : Math.max(8, vl);
+			document.body.style.borderImage = `url("${bgImage}") ${t} ${r} ${b} ${l} fill / ${t}px ${r}px ${b}px ${l}px stretch`;
+			document.body.style.borderStyle = "solid";
+			document.body.style.borderWidth = "0";
 		}
 	} catch (_e) {
 		// スキン descript 未定義（CSS テーマのみ）の場合は無視

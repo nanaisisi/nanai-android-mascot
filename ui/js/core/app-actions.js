@@ -67,7 +67,7 @@ export const actionMethods = {
 		if (action === "scan") return gc.scanGhosts();
 		if (action === "open-ghost-folder") {
 			if (isTauriAvailable()) {
-				invoke("open_ghost_directory").catch(e => console.error(e));
+				invoke("open_ghost_directory").catch((e) => console.error(e));
 			}
 			return;
 		}
@@ -83,7 +83,7 @@ export const actionMethods = {
 			this.setBalloonTheme(theme);
 			let label = THEME_LABELS[theme] || theme;
 			if (this.availableBalloons) {
-				const bInfo = this.availableBalloons.find(b => b.dir_name === theme);
+				const bInfo = this.availableBalloons.find((b) => b.dir_name === theme);
 				if (bInfo) label = bInfo.name;
 			}
 			this.showBalloon(`バルーンスキンを「${label}」に変更しました`);
@@ -236,15 +236,15 @@ export const actionMethods = {
 	cycleBalloonTheme() {
 		let themes = BALLOON_THEMES;
 		if (this.availableBalloons && this.availableBalloons.length > 0) {
-			themes = this.availableBalloons.map(b => b.dir_name);
+			themes = this.availableBalloons.map((b) => b.dir_name);
 		}
 		const idx = themes.indexOf(this.currentBalloonTheme);
 		const next = themes[(idx + 1) % themes.length];
 		this.setBalloonTheme(next);
-		
+
 		let label = THEME_LABELS[next] || next;
 		if (this.availableBalloons) {
-			const bInfo = this.availableBalloons.find(b => b.dir_name === next);
+			const bInfo = this.availableBalloons.find((b) => b.dir_name === next);
 			if (bInfo) label = bInfo.name;
 		}
 		this.showBalloon(`バルーンスキンを「${label}」に変更しました`);

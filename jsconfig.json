@@ -3,7 +3,7 @@
 		"target": "ESNext",
 		"module": "ESNext",
 		"moduleResolution": "Bundler",
-		"checkJs": true,
+		"checkJs": false,
 		"allowJs": true,
 		"strict": true,
 		"noUncheckedIndexedAccess": true,

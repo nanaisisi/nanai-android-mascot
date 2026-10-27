@@ -1,3 +1,33 @@
+import { getAllWindows } from "@tauri-apps/api/window";
+import { invoke, isTauriAvailable } from "../js/core/tauri-helper.js";
+
+async function findWindow(label) {
+	if (!globalThis.__TAURI__ && !globalThis.__TAURI_INTERNALS__) return null;
+	const windows = await getAllWindows();
+	return windows.find((window) => window.label === label) ?? null;
+}
+
+async function toggleLabeledWindow(windowLabel, stateKey) {
+	const window = await findWindow(windowLabel);
+	if (!window) {
+		console.error(`ウィンドウが見つかりません: ${windowLabel}`);
+		return;
+	}
+	const nextState = !windowStates[stateKey];
+	try {
+		if (nextState) {
+			await window.show();
+			await window.unminimize();
+			await window.setFocus();
+		} else {
+			await window.hide();
+		}
+		updateWindowStatus(stateKey, nextState);
+	} catch (error) {
+		console.error(`ウィンドウ操作に失敗しました: ${windowLabel}`, error);
+	}
+}
+
 // ウィンドウ状態管理
 export const windowStates = {
 	ghost: false,
@@ -32,15 +62,8 @@ export function updateWindowStatus(windowName, isActive) {
 }
 
 // ゴーストウィンドウ制御
-export function toggleGhostWindow() {
-	const newState = !windowStates.ghost;
-	updateWindowStatus("ghost", newState);
-
-	if (newState) {
-		console.log("ゴーストウィンドウを開きます...");
-	} else {
-		console.log("ゴーストウィンドウを閉じます...");
-	}
+export async function toggleGhostWindow() {
+	await toggleLabeledWindow("ghost-floating", "ghost");
 }
 
 export function configureGhostWindow() {
@@ -50,15 +73,8 @@ export function configureGhostWindow() {
 }
 
 // 設定ウィンドウ制御
-export function toggleSettingsWindow() {
-	const newState = !windowStates.settings;
-	updateWindowStatus("settings", newState);
-
-	if (newState) {
-		console.log("設定ウィンドウを開きます...");
-	} else {
-		console.log("設定ウィンドウを閉じます...");
-	}
+export async function toggleSettingsWindow() {
+	await toggleLabeledWindow("desktop-features", "settings");
 }
 
 export function resetSettings() {
@@ -68,17 +84,16 @@ export function resetSettings() {
 }
 
 // バルーンウィンドウ制御
-export function testBalloonWindow() {
+export async function testBalloonWindow() {
 	console.log("バルーンテスト表示...");
-	updateWindowStatus("balloon", true);
-
-	setTimeout(() => {
-		updateWindowStatus("balloon", false);
+	await toggleLabeledWindow("balloon_window_0", "balloon");
+	setTimeout(async () => {
+		const window = await findWindow("balloon_window_0");
+		if (window) {
+			await window.hide();
+			updateWindowStatus("balloon", false);
+		}
 	}, 3000);
-
-	alert(
-		"バルーンテスト表示\n\n将来的な機能:\n• ゴースト連動位置\n• 自動消去タイマー\n• 音声再生連動",
-	);
 }
 
 export function configureBalloon() {
@@ -88,23 +103,23 @@ export function configureBalloon() {
 }
 
 // YAYA連携制御
-export function connectYAYA() {
+export async function connectYAYA() {
 	console.log("YAYA接続を試行します...");
-	updateWindowStatus("yaya", true);
-
-	setTimeout(() => {
-		const success = Math.random() > 0.3;
-		if (success) {
-			alert(
-				"YAYA接続成功！\n\n将来的な機能:\n• SHIORI DLL読み込み\n• リクエスト/レスポンス\n• エラーログ表示",
-			);
-		} else {
-			updateWindowStatus("yaya", false);
-			alert(
-				"YAYA接続失敗\n\nデバッグ情報:\n• DLLファイルが見つかりません\n• 設定を確認してください",
-			);
+	if (!isTauriAvailable()) {
+		updateWindowStatus("yaya", false);
+		console.error("Tauri 環境では SHIORI ステータスを取得できません");
+		return;
+	}
+	try {
+		const connected = await invoke("get_shiori_status");
+		updateWindowStatus("yaya", connected);
+		if (!connected) {
+			console.error("SHIORI はロードされていません");
 		}
-	}, 1500);
+	} catch (error) {
+		updateWindowStatus("yaya", false);
+		console.error("SHIORI ステータス取得に失敗しました:", error);
+	}
 }
 
 export function debugYAYA() {

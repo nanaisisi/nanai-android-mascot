@@ -176,7 +176,11 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
         }
     }
 
-    println!("✅ Ghost successfully installed to: {:?}", target_dir);
+    if kind == "balloon" {
+        flatten_balloon_directory(&target_dir)?;
+    }
+
+    println!("✅ Archive successfully installed to: {:?}", target_dir);
 
     let shells = crate::ghost::scan::scan_shells_from_ghost(&target_dir);
     let descript_candidates = [
@@ -217,6 +221,52 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
         craftman_url,
         shells,
     })
+}
+
+fn flatten_balloon_directory(target_dir: &Path) -> Result<(), String> {
+    let entries: Vec<PathBuf> = std::fs::read_dir(target_dir)
+        .map_err(|e| format!("Failed to inspect balloon directory: {e}"))?
+        .flatten()
+        .map(|entry| entry.path())
+        .collect();
+
+    let wrapper = if target_dir.join("balloon").is_dir() {
+        Some(target_dir.join("balloon"))
+    } else if entries.len() == 1 && entries[0].is_dir() {
+        Some(entries[0].clone())
+    } else {
+        None
+    };
+
+    let Some(wrapper) = wrapper else {
+        return Ok(());
+    };
+
+    let children: Vec<PathBuf> = std::fs::read_dir(&wrapper)
+        .map_err(|e| format!("Failed to inspect balloon wrapper: {e}"))?
+        .flatten()
+        .map(|entry| entry.path())
+        .collect();
+    for child in children {
+        let destination = target_dir.join(
+            child
+                .file_name()
+                .ok_or_else(|| "Invalid balloon archive entry".to_string())?,
+        );
+        if destination.exists() {
+            if destination.is_dir() {
+                std::fs::remove_dir_all(&destination)
+                    .map_err(|e| format!("Failed to replace balloon entry: {e}"))?;
+            } else {
+                std::fs::remove_file(&destination)
+                    .map_err(|e| format!("Failed to replace balloon entry: {e}"))?;
+            }
+        }
+        std::fs::rename(&child, &destination)
+            .map_err(|e| format!("Failed to normalize balloon entry: {e}"))?;
+    }
+    std::fs::remove_dir(&wrapper).map_err(|e| format!("Failed to remove balloon wrapper: {e}"))?;
+    Ok(())
 }
 
 /// ネイティブのファイル選択ダイアログを開き、選んだアーカイブを取り込む。キャンセル時は None

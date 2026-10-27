@@ -89,7 +89,7 @@ Rust `Command`: `surface_composition_plan`
 
 `SurfaceManager` に追加:
 
-```
+```text
 planCache: Map<`${surfaceId}__${planHash}`, LayerKey[]>
 ```
 

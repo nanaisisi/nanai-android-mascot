@@ -41,6 +41,7 @@ body.subchar-mode .main-only {
 	border-radius: var(--balloon-border-radius);
 	box-shadow: var(--balloon-box-shadow);
 	position: relative;
+	cursor: move;
 }
 
 .menu-sidebar {
@@ -89,6 +90,7 @@ body.has-sidebar {
 	transition:
 		background-color 0.1s,
 		color 0.1s;
+	cursor: pointer;
 }
 
 .menu-item:hover,

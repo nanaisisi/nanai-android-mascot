@@ -26,6 +26,11 @@ body {
 	padding: 0.25rem 0;
 	font-size: var(--balloon-font-size, 0.8125rem);
 	color: var(--balloon-text-color, #111111);
+	cursor: move;
+}
+
+.submenu-window-container .menu-item {
+	cursor: pointer;
 }
 
 .submenu-window-container .menu-item:hover,

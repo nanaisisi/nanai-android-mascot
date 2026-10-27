@@ -324,6 +324,12 @@ export class MenuSubmenuRenderer {
         document.body.classList.remove("has-sidebar");
       }
     } else {
+      rootStyle.removeProperty("--balloon-bg");
+      rootStyle.removeProperty("--balloon-highlight-bg");
+      rootStyle.removeProperty("--balloon-text-color");
+      rootStyle.removeProperty("--balloon-highlight-text");
+      rootStyle.removeProperty("--balloon-disable-text");
+      rootStyle.removeProperty("--balloon-separator-color");
       rootStyle.removeProperty("--menu-bg-image");
       rootStyle.removeProperty("--menu-fg-image");
       rootStyle.removeProperty("--menu-sidebar-image");

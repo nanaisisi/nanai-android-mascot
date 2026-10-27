@@ -14,6 +14,11 @@
 
 Nanai Android Mascot における「伺か（UKAGAKA）」関連規格、および現代プラットフォーム（Windows / Android）向け標準規格への対応状況・進捗マトリクスです。
 
+> **コード突合注記 (2026-10-28)**: 以下の対応率は網羅的な適合試験の合格率ではなく、従来の進捗目安です。
+> 実装と文書の突合で、NAR導入は Ghost/Balloon のみ、`local/ghost`・`userData/ghost` 優先探索、
+> 外部 translator、owner-draw-menu、plugin/headline 導入は未実装または部分対応であることを確認しています。
+> 詳細な判定は [ukadoc-manual-compliance.md](../compliance/ukadoc-manual-compliance.md) を参照してください。
+
 ---
 
 ## 1. 規格対応サマリー
@@ -25,7 +30,7 @@ Nanai Android Mascot における「伺か（UKAGAKA）」関連規格、およ�
 | **サーフィス仕様 (surfaces.txt / PNA)**   | 画像定義・重ね合わせ・当たり判定                     | **98%** | HTML5 Canvas 2D によるベース・差分合成、`collision` / `collisionex`(rect/polygon/circle/ellipse) 当たり判定、表示倍率逆算マッピング、PNAアルファマスク合成・BMP/PNG読込、エイリアス解決 (`surface.alias`)・基準点座標対応。着せ替えbindはメニューUI完備。                                               |
 | **バルーン仕様 (balloon / descript.txt)** | 吹き出しスキン・フォント・配置定義                   | **85%** | `\0`, `\1` 独立バルーン、CSSテーマ着せ替え（モダン/アイボリー/コミック/ダーク）、`descript.txt` (フォント名/色/サイズ/選択肢色/validrectパディング/wordwrappoint折り返し/原点オフセット) の動的適用、倍率拡縮実装済。                                                                                   |
 | **SSP 互換メニュー・操作体系**            | 右クリックメニュー・ショートカット・操作系           | **85%** | 伺か標準階層メニュー（iframe隔離）、シェル倍率切替（50%〜200%）、ドッキング退避、モーダルUI群（設定/情報/一覧）実装済。                                                                                                                                                                                 |
-| **ファイル配置・アーカイブ (NAR / VFS)**  | ゴースト配布形式・ファイルシステム・エンコーディング | **95%** | Shift_JIS (CP932) ↔ UTF-8 自動判別・透過読込、大文字小文字吸収 VFS 実装済。NAR/zip 自動展開（install.txt `type` による Ghost / Balloon 自動仕分け導入・Zip Slip 防止完備）。シェル単体 NAR は今後順次拡充。                                                                                             |
+| **ファイル配置・アーカイブ (NAR / VFS)**  | ゴースト配布形式・ファイルシステム・エンコーディング | **要再評価** | Shift_JIS (CP932) 読込、大文字小文字吸収、Zip Slip 防止、Ghost/Balloon の NAR/ZIP 展開は確認済み。Shell/Plugin/Headline、`accept`、`local/ghost`・`userData/ghost` 優先探索は未実装。 |
 | **プラットフォーム対応 (Tauri v2 / OS)**  | Windows 透過オーバーレイ / Android 最適化            | **75%** | Windows 完全透過・クリックスルー・マウス操作・キーバインド実装済。Android タッチスワイプ・端スナップ実装済（常駐サービス・AlertWindow化継続）。                                                                                                                                                         |
 
 ---

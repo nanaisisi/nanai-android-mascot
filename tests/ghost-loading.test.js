@@ -20,7 +20,7 @@ globalThis.__TAURI_INTERNALS__ = {
 		return null;
 	},
 };
-globalThis.localStorage = { setItem() {} };
+globalThis.localStorage = { setItem() {}, getItem: () => null };
 globalThis.document = { getElementById: () => null, querySelector: () => null };
 
 const { GhostController } = await import("../ui/js/ghost/ghost.js");
@@ -55,6 +55,23 @@ test("boot waits for assets and for banner to finish hiding", async () => {
 	hideGate.resolve();
 	await starting;
 	assert.ok(calls.indexOf("hide_loading_banner_window") < calls.indexOf("OnBoot"));
+});
+
+test("automatic startup waits until selected ghost is ready", async () => {
+	for (const initialGhostName of ["g", undefined]) {
+		const { gc } = setup();
+		gc.app.initialGhostName = initialGhostName;
+		gc.scanGhosts = async () => { gc.ghosts = [{ name: "g", path: "ghost/g" }]; };
+		const gate = deferred();
+		gc.selectGhost = () => gate.promise;
+		let finished = false;
+		const startup = gc.autoLoadGhost().then(() => { finished = true; });
+		await new Promise((r) => setImmediate(r));
+		assert.equal(finished, false);
+		gate.resolve();
+		await startup;
+		assert.equal(finished, true);
+	}
 });
 
 test("stale ghost load cannot hide the next ghost's banner or boot", async () => {

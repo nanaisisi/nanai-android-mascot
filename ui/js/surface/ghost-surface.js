@@ -42,7 +42,8 @@ export const ghostSurfaceMethods = {
 		const isAnimationFrame = Array.isArray(extraLayers);
 		// スコープ毎の更新世代。遅れて完了した古い更新で新しい表示を上書きしない
 		this._surfaceSeq ??= {};
-		const seq = (this._surfaceSeq[scopeId] = (this._surfaceSeq[scopeId] ?? 0) + 1);
+		this._surfaceSeq[scopeId] = (this._surfaceSeq[scopeId] ?? 0) + 1;
+		const seq = this._surfaceSeq[scopeId];
 		const isStale = () => this._surfaceSeq[scopeId] !== seq;
 
 		if (!isAnimationFrame) {

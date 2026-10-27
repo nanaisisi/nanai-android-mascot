@@ -54,7 +54,7 @@ export class GhostController {
 				const found = this.ghosts.find((g) => g.name === targetGhostName);
 				if (found) {
 					console.log(`🎯 前回選択されたゴーストをロード: ${targetGhostName}`);
-					this.selectGhost(targetGhostName);
+					await this.selectGhost(targetGhostName);
 					return;
 				}
 			}
@@ -62,7 +62,7 @@ export class GhostController {
 			await this.scanAndLoadFirstGhost();
 		} catch (error) {
 			console.error("❌ 自動ゴースト読み込みエラー:", error);
-			this.selectGhost(AppConfig.paths.fallbackGhostName);
+			await this.selectGhost(AppConfig.paths.fallbackGhostName);
 		}
 	}
 
@@ -116,7 +116,7 @@ export class GhostController {
 			console.log(
 				`Tauri環境ではありません - デフォルト${AppConfig.paths.fallbackGhostName}を使用`,
 			);
-			this.selectGhost(AppConfig.paths.fallbackGhostName);
+			await this.selectGhost(AppConfig.paths.fallbackGhostName);
 			return;
 		}
 
@@ -125,13 +125,13 @@ export class GhostController {
 				await this.scanGhosts();
 			}
 			if (this.ghosts.length > 0) {
-				this.selectGhost(this.ghosts[0].name);
+				await this.selectGhost(this.ghosts[0].name);
 			} else {
-				this.selectGhost(AppConfig.paths.fallbackGhostName);
+				await this.selectGhost(AppConfig.paths.fallbackGhostName);
 			}
 		} catch (error) {
 			console.error("❌ ゴーストスキャンエラー:", error);
-			this.selectGhost(AppConfig.paths.fallbackGhostName);
+			await this.selectGhost(AppConfig.paths.fallbackGhostName);
 		}
 	}
 
@@ -142,8 +142,8 @@ export class GhostController {
 		};
 
 		// 切り替え中に完了した旧ゴーストの読み込みがバナーや会話を操作しないようにする
-		const generation = (this._ghostLoadGeneration =
-			(this._ghostLoadGeneration ?? 0) + 1);
+		this._ghostLoadGeneration = (this._ghostLoadGeneration ?? 0) + 1;
+		const generation = this._ghostLoadGeneration;
 		this.clearSurfaceAssetCache();
 		for (const scope of Object.keys(this._surfaceSeq ?? {})) {
 			this._surfaceSeq[scope]++;

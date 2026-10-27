@@ -59,7 +59,21 @@ export class ModalGhostHandlers {
 						statusEl.style.color = "#27ae60";
 					}
 					await this.app.ghostController.scanGhosts();
-					this.app.ghostController.selectGhost(res.name);
+					const importedGhost = this.app.ghostController.ghosts.find(
+						(ghost) => ghost.name === res.name,
+					);
+					if (importedGhost) {
+						this.app.ghostController.selectGhost(importedGhost.name);
+					} else {
+						await this.app.scanBalloons();
+						const importedBalloon = this.app.availableBalloons?.find(
+							(balloon) =>
+								balloon.name === res.name || balloon.dir_name === res.name,
+						);
+						if (importedBalloon) {
+							await this.app.setBalloonTheme(importedBalloon.dir_name);
+						}
+					}
 					this.renderGhostList();
 				} catch (err) {
 					console.error("アーカイブ取り込み失敗:", err);
@@ -79,7 +93,21 @@ export class ModalGhostHandlers {
 			if (isTauriAvailable()) {
 				await this.pickAndInstall(statusEl, async (res) => {
 					await this.app.ghostController.scanGhosts();
-					this.app.ghostController.selectGhost(res.name);
+					const importedGhost = this.app.ghostController.ghosts.find(
+						(ghost) => ghost.name === res.name,
+					);
+					if (importedGhost) {
+						this.app.ghostController.selectGhost(importedGhost.name);
+					} else {
+						await this.app.scanBalloons();
+						const importedBalloon = this.app.availableBalloons?.find(
+							(balloon) =>
+								balloon.name === res.name || balloon.dir_name === res.name,
+						);
+						if (importedBalloon) {
+							await this.app.setBalloonTheme(importedBalloon.dir_name);
+						}
+					}
 					this.renderGhostList();
 				});
 				return;

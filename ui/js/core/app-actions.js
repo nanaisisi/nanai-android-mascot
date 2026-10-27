@@ -186,7 +186,23 @@ export const actionMethods = {
       const result = await invoke("pick_and_install_ghost_archive");
       if (!result) return;
       await this.ghostController.scanGhosts();
-      await this.ghostController.selectGhost(result.name);
+      await this.scanBalloons();
+      const importedGhost = this.ghostController.ghosts.find(
+        (ghost) => ghost.name === result.name,
+      );
+      if (importedGhost) {
+        await this.ghostController.selectGhost(importedGhost.name);
+        return;
+      }
+      const importedBalloon = this.availableBalloons?.find(
+        (balloon) =>
+          balloon.name === result.name || balloon.dir_name === result.name,
+      );
+      if (importedBalloon) {
+        await this.setBalloonTheme(importedBalloon.dir_name);
+        this.showBalloon(`バルーン「${importedBalloon.name}」を導入しました`);
+        setTimeout(() => this.hideBalloon(), 2000);
+      }
     } catch (error) {
       console.error("メニューからのゴースト取り込みに失敗しました:", error);
       this.modalManager?.showNotification(

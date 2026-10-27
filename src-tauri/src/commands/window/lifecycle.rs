@@ -10,8 +10,10 @@ pub async fn test_command() -> Result<String, String> {
 #[tauri::command]
 pub async fn minimize_app(app_handle: tauri::AppHandle) -> Result<(), String> {
     #[cfg(desktop)]
-    if let Some(window) = app_handle.get_webview_window("main") {
-        window.minimize().map_err(|e| e.to_string())?;
+    {
+        for (_, window) in app_handle.webview_windows() {
+            let _ = window.minimize();
+        }
     }
     #[cfg(not(desktop))]
     let _ = app_handle;

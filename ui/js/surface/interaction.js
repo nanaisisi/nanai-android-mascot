@@ -1,4 +1,5 @@
 import { BalloonDragManager } from "./balloon-drag.js";
+import { isTauriAvailable, startDraggingWindow } from "../core/tauri-helper.js";
 
 /**
  * Nanai Android Mascot - ドラッグ & タッチインタラクション管理
@@ -28,6 +29,37 @@ export class InteractionManager {
 
 	set balloonOffsetY(val) {
 		this.balloonDragManager.balloonOffsetY = val;
+	}
+
+	/**
+	 * @param {HTMLElement} img
+	 * @param {number} clientX
+	 * @param {number} clientY
+	 */
+	isPixelTransparent(img, clientX, clientY) {
+		if (!img || img.tagName !== "IMG") return false;
+		try {
+			const rect = img.getBoundingClientRect();
+			// 画像の実際の表示サイズと解像度に合わせてスケール
+			const scaleX = img.naturalWidth / rect.width;
+			const scaleY = img.naturalHeight / rect.height;
+			const x = Math.floor((clientX - rect.left) * scaleX);
+			const y = Math.floor((clientY - rect.top) * scaleY);
+			
+			if (x < 0 || y < 0 || x >= img.naturalWidth || y >= img.naturalHeight) return true;
+
+			const canvas = document.createElement("canvas");
+			canvas.width = 1;
+			canvas.height = 1;
+			const ctx = canvas.getContext("2d", { willReadFrequently: true });
+			// 対象の1ピクセルだけを描画
+			ctx.drawImage(img, x, y, 1, 1, 0, 0, 1, 1);
+			const data = ctx.getImageData(0, 0, 1, 1).data;
+			return data[3] === 0; // alpha が 0 なら透明
+		} catch (e) {
+			console.warn("Pixel transparency check failed:", e);
+			return false; // エラー時は不透明扱い（ドラッグ許可）
+		}
 	}
 
 	setupDragging(target, onGhostClick, onGhostStroke) {
@@ -71,6 +103,12 @@ export class InteractionManager {
 
 			const clientX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
 			const clientY = e.clientY ?? e.touches?.[0]?.clientY ?? 0;
+
+			// 透明ピクセルの場合はドラッグやインタラクションを開始しない（クリックスルーの補助）
+			const img = target.querySelector("img");
+			if (img && this.isPixelTransparent(img, clientX, clientY)) {
+				return;
+			}
 
 			startX = clientX;
 			startY = clientY;
@@ -136,21 +174,12 @@ export class InteractionManager {
 
 				// デスクトップ環境（Windows等）の場合はネイティブウィンドウ自体を移動
 				const isDesktop =
-					globalThis.__TAURI__ && !navigator.userAgent.includes("Android");
+					isTauriAvailable() && !navigator.userAgent.includes("Android");
 				if (isDesktop) {
-					const tauriWindow =
-						globalThis.__TAURI__.window?.getCurrentWindow?.() ||
-						globalThis.__TAURI__.getCurrentWindow?.();
-					if (tauriWindow && typeof tauriWindow.startDragging === "function") {
-						try {
-							tauriWindow.startDragging();
-							isInteracting = false;
-							isDragging = false;
-							return;
-						} catch (err) {
-							console.warn("startDragging failed:", err);
-						}
-					}
+					startDraggingWindow();
+					isInteracting = false;
+					isDragging = false;
+					return;
 				}
 
 				let newX = initialLeft + deltaX;

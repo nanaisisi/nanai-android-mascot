@@ -82,17 +82,15 @@ function initBalloonWindow() {
 	});
 
 	// ドラッグ移動 (Tauri v2 startDragging)
-	balloonBox?.addEventListener("mousedown", (e) => {
+	balloonBox?.addEventListener("mousedown", async (e) => {
 		if (e.button === 0) {
-			const tauriWindow =
-				globalThis.__TAURI__.window?.getCurrentWindow?.() ||
-				globalThis.__TAURI__.getCurrentWindow?.();
-			if (tauriWindow && typeof tauriWindow.startDragging === "function") {
-				try {
-					tauriWindow.startDragging();
-				} catch (_err) {
-					// 無視
+			try {
+				if (globalThis.__TAURI__) {
+					const { getCurrentWindow } = await import("@tauri-apps/api/window");
+					await getCurrentWindow().startDragging();
 				}
+			} catch (_err) {
+				// 無視
 			}
 		}
 	});

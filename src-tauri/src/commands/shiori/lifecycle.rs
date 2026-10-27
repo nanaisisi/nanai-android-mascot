@@ -18,21 +18,8 @@ pub async fn load_ghost(
 
     *state.current_ghost_name.lock() = Some(ghost_name.clone());
 
-    // ゴーストディレクトリの解決 (assets/ghost/名 または ghost/名)
-    let candidate_dirs = vec![
-        format!("assets/ghost/{}", ghost_name),
-        format!("ghost/{}", ghost_name),
-    ];
-
-    let mut ghost_dir = PathBuf::from(format!("assets/ghost/{}", ghost_name));
-    for rel in candidate_dirs {
-        if let Ok(resolved) = resolve_asset_path(&rel, &app_handle)
-            && resolved.exists()
-        {
-            ghost_dir = resolved;
-            break;
-        }
-    }
+    let ghost_dir = resolve_ghost_directory(&ghost_name, &app_handle)
+        .unwrap_or_else(|_| PathBuf::from(format!("assets/ghost/{}", ghost_name)));
 
     let ghost_master_dir = ghost_dir.join("ghost").join("master");
 
@@ -133,20 +120,8 @@ pub async fn spawn_ghost(
         .as_millis();
     let instance_id = format!("ghost_{}", now);
 
-    // ゴーストディレクトリの解決
-    let candidate_dirs = vec![
-        format!("assets/ghost/{}", ghost_name),
-        format!("ghost/{}", ghost_name),
-    ];
-    let mut ghost_dir = PathBuf::from(format!("assets/ghost/{}", ghost_name));
-    for rel in candidate_dirs {
-        if let Ok(resolved) = resolve_asset_path(&rel, &app_handle)
-            && resolved.exists()
-        {
-            ghost_dir = resolved;
-            break;
-        }
-    }
+    let ghost_dir = resolve_ghost_directory(&ghost_name, &app_handle)
+        .unwrap_or_else(|_| PathBuf::from(format!("assets/ghost/{}", ghost_name)));
     let ghost_master_dir = ghost_dir.join("ghost").join("master");
 
     // SHIORI候補探索

@@ -73,8 +73,7 @@ export const actionMethods = {
     if (action === "uninstall-ghost" || action === "uninstall") {
       return this.uninstallCurrentGhost();
     }
-    if (action === "install")
-      return this.modalManager?.show("install-modal-content");
+    if (action === "install") return this.installGhostFromMenu();
     if (action === "balloon" || action === "balloon-cycle")
       return this.cycleBalloonTheme();
     if (action.startsWith("balloon-theme-")) {
@@ -172,6 +171,29 @@ export const actionMethods = {
       console.error("🗑️ アンインストール失敗:", err);
       this.showBalloon(`アンインストールに失敗しました: ${err}`);
       setTimeout(() => this.hideBalloon(), 3000);
+    }
+  },
+
+  /**
+   * メニューからアーカイブ選択ダイアログを直接開いてゴーストを導入する。
+   * @this {import('../../main.js').NanaiAndroidMascotApp}
+   */
+  async installGhostFromMenu() {
+    if (!isTauriAvailable()) {
+      return this.modalManager?.show("install-modal-content");
+    }
+    try {
+      const result = await invoke("pick_and_install_ghost_archive");
+      if (!result) return;
+      await this.ghostController.scanGhosts();
+      await this.ghostController.selectGhost(result.name);
+    } catch (error) {
+      console.error("メニューからのゴースト取り込みに失敗しました:", error);
+      this.modalManager?.showNotification(
+        "ゴースト取り込み失敗",
+        String(error),
+        true,
+      );
     }
   },
 

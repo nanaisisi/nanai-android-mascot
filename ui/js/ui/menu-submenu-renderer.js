@@ -2,8 +2,6 @@
  * コンテキストメニューの各サブメニュー（ゴースト、シェル、呼び出し）描画
  */
 
-import { open } from "@tauri-apps/plugin-dialog";
-
 export class MenuSubmenuRenderer {
   /**
    * @param {import('./menu-dispatcher.js').MenuDispatcher} dispatcher
@@ -161,16 +159,8 @@ export class MenuSubmenuRenderer {
     installBtn.className = "menu-item";
     installBtn.id = "install-btn";
     installBtn.innerHTML = `<span>📥 ゴーストの取り込み...</span>`;
-    installBtn.addEventListener("click", async () => {
-      // this.dispatcher.dispatchAction("install");
-      // Open a dialog
-      const file = await open({
-        multiple: false,
-        directory: false,
-      });
-      console.log(file);
-      // Prints file path or URI
-      // Todo unzip
+    installBtn.addEventListener("click", () => {
+      this.dispatcher.dispatchAction("install");
     });
     container.appendChild(installBtn);
   }

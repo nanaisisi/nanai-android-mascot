@@ -1,6 +1,7 @@
 /**
  * Nanai Android Mascot - 独立サブメニューウィンドウ制御
  */
+import { emit, invoke, isTauriAvailable } from "../core/tauri-helper.js";
 
 /** @type {string} */
 let currentSubmenuType = "ghost";
@@ -22,18 +23,16 @@ let dressupScope = 0;
  * @param {string} action
  * @param {any} [payload]
  */
-function dispatchSubmenuAction(action, payload = null) {
-  if (globalThis.__TAURI__) {
-    const emitFn =
-      globalThis.__TAURI__.event?.emit || globalThis.__TAURI__.emit;
-    const invokeFn =
-      globalThis.__TAURI__.core?.invoke || globalThis.__TAURI__.invoke;
-    if (typeof emitFn === "function") {
-      emitFn("menu-action", { action, payload });
-    }
-    if (typeof invokeFn === "function") {
-      invokeFn("hide_menu_window").catch(() => {});
-      invokeFn("hide_submenu_window").catch(() => {});
+async function dispatchSubmenuAction(action, payload = null) {
+  if (isTauriAvailable()) {
+    try {
+      await emit("menu-action", { action, payload });
+      await Promise.all([
+        invoke("hide_menu_window"),
+        invoke("hide_submenu_window"),
+      ]);
+    } catch (error) {
+      console.error("サブメニューアクションの送信に失敗しました:", error);
     }
   }
 }

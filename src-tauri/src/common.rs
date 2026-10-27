@@ -96,6 +96,7 @@ pub struct AppState {
     pub ghost_engines: Mutex<std::collections::HashMap<String, ShioriDynamicEngine>>,
     pub active_ghosts: Mutex<std::collections::HashMap<String, String>>,
     pub is_dialog_open: Mutex<bool>,
+    pub balloon_offsets: Mutex<std::collections::HashMap<i32, (i32, i32)>>,
 }
 
 impl AppState {
@@ -107,6 +108,7 @@ impl AppState {
             ghost_engines: Mutex::new(std::collections::HashMap::new()),
             active_ghosts: Mutex::new(std::collections::HashMap::new()),
             is_dialog_open: Mutex::new(false),
+            balloon_offsets: Mutex::new(std::collections::HashMap::new()),
         }
     }
 }

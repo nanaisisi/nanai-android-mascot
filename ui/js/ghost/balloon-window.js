@@ -195,6 +195,10 @@ function initBalloonWindow() {
 			}
 		}
 	});
+
+	balloonBox?.addEventListener("mouseup", () => {
+		void invoke("save_balloon_offset_from_position", { scopeId });
+	});
 }
 
 if (document.readyState === "loading") {

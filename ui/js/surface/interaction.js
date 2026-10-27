@@ -1,4 +1,8 @@
-import { isTauriAvailable, startDraggingWindow } from "../core/tauri-helper.js";
+import {
+	getCurrentWindowPosition,
+	isTauriAvailable,
+	moveCurrentWindowBy,
+} from "../core/tauri-helper.js";
 import { BalloonDragManager } from "./balloon-drag.js";
 
 /**
@@ -69,6 +73,7 @@ export class InteractionManager {
 		let isInteracting = false;
 		let isDragging = false;
 		let nativeDragStarted = false;
+		let nativeWindowOrigin = null;
 		let startX = 0;
 		let startY = 0;
 		let lastX = 0;
@@ -99,6 +104,7 @@ export class InteractionManager {
 			isInteracting = true;
 			isDragging = false;
 			nativeDragStarted = false;
+			nativeWindowOrigin = null;
 			hasMoved = false;
 			strokeDistance = 0;
 			strokeTriggered = false;
@@ -120,7 +126,9 @@ export class InteractionManager {
 				!navigator.userAgent.includes("Android");
 			if (isDesktop) {
 				nativeDragStarted = true;
-				startDraggingWindow();
+				void getCurrentWindowPosition().then((position) => {
+					if (isInteracting) nativeWindowOrigin = position;
+				});
 			}
 
 			startX = clientX;
@@ -187,6 +195,13 @@ export class InteractionManager {
 
 				// デスクトップ環境（Windows等）の場合はネイティブウィンドウ自体を移動
 				if (nativeDragStarted) {
+					if (nativeWindowOrigin) {
+						void moveCurrentWindowBy(
+							clientX - startX,
+							clientY - startY,
+							nativeWindowOrigin,
+						);
+					}
 					return;
 				}
 

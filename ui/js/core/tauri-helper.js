@@ -11,7 +11,10 @@ import {
 	emit as tauriEmit,
 	listen as tauriListen,
 } from "@tauri-apps/api/event";
-import { getCurrentWindow } from "@tauri-apps/api/window";
+import {
+	getCurrentWindow,
+	PhysicalPosition,
+} from "@tauri-apps/api/window";
 
 /**
  * Tauri環境で動作しているかどうかを判定
@@ -139,6 +142,39 @@ export async function startDraggingWindow() {
 		await getCurrentWindow().startDragging();
 	} catch (err) {
 		console.warn("startDraggingWindow failed:", err);
+	}
+}
+
+/**
+ * 現在のウィンドウを指定量だけ移動する。
+ * ネイティブドラッグが WebView のイベント経路で失われる環境向けのフォールバック。
+ * @param {number} x
+ * @param {number} y
+ * @param {{x: number, y: number}} origin
+ * @returns {Promise<void>}
+ */
+export async function moveCurrentWindowBy(x, y, origin) {
+	if (!isTauriAvailable()) return;
+	try {
+		await getCurrentWindow().setPosition(
+			new PhysicalPosition(Math.round(origin.x + x), Math.round(origin.y + y)),
+		);
+	} catch (err) {
+		console.warn("moveCurrentWindowBy failed:", err);
+	}
+}
+
+/**
+ * @returns {Promise<{x: number, y: number} | null>}
+ */
+export async function getCurrentWindowPosition() {
+	if (!isTauriAvailable()) return null;
+	try {
+		const position = await getCurrentWindow().outerPosition();
+		return { x: position.x, y: position.y };
+	} catch (err) {
+		console.warn("getCurrentWindowPosition failed:", err);
+		return null;
 	}
 }
 

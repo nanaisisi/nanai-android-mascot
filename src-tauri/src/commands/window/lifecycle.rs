@@ -2,6 +2,7 @@ use tauri::Manager;
 
 /// デバッグ用のテストコマンド
 #[tauri::command]
+#[specta::specta]
 pub async fn test_command() -> Result<String, String> {
     Ok("SHIORI統合テスト成功!".to_string())
 }

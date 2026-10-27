@@ -1,6 +1,8 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
+use specta_typescript::Typescript;
 use tauri::Emitter;
 use tauri::Manager;
+use tauri_specta::{Builder as SpectaBuilder, collect_commands};
 
 // Desktop専用の機能
 #[cfg(desktop)]
@@ -21,6 +23,14 @@ use common::*;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    let specta_builder = SpectaBuilder::<tauri::Wry>::new()
+        .commands(collect_commands![commands::window::test_command,]);
+
+    #[cfg(debug_assertions)]
+    specta_builder
+        .export(Typescript::default(), "../ui/bindings.ts")
+        .expect("Failed to export TypeScript bindings");
+
     let builder = tauri::Builder::default()
         .setup(|app| {
             #[cfg(desktop)]

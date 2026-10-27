@@ -60,6 +60,24 @@ export class NanaiAndroidMascotApp {
 	}
 
 	/**
+	 * イベント mixin の型をクラス定義にも公開する。
+	 * 実装は Object.assign で eventMethods から注入される。
+	 * @param {number|undefined} clientX
+	 * @param {number|undefined} clientY
+	 * @param {DOMRect|undefined} rect
+	 * @param {number} [scopeId]
+	 */
+	onGhostClick(clientX, clientY, rect, scopeId = 0) {
+		return eventMethods.onGhostClick.call(
+			this,
+			clientX,
+			clientY,
+			rect,
+			scopeId,
+		);
+	}
+
+	/**
 	 * 他のゴーストを別インスタンスとして新規起動 (マルチゴースト)
 	 * @param {string} ghostName
 	 */

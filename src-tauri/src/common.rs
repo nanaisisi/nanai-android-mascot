@@ -181,7 +181,9 @@ pub fn resolve_ghost_directory(
                 path.join("descript.txt"),
                 path.join("install.txt"),
             ];
-            if descriptors.iter().filter_map(|p| crate::ghost::scan::read_descript_file(p))
+            if descriptors
+                .iter()
+                .filter_map(|p| crate::ghost::scan::read_descript_file(p))
                 .any(|meta| meta.get("name").is_some_and(|name| name == ghost_name))
             {
                 return Ok(path);

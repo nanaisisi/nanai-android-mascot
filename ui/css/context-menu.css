@@ -12,12 +12,12 @@
 
 body {
 	font-family: var(--balloon-font-family);
-	background: transparent;
+	background: transparent !important;
 	color: var(--balloon-text-color);
 	user-select: none;
 	-webkit-user-select: none;
 	overflow: visible;
-	padding: 0.25rem;
+	padding: 0;
 	display: flex;
 	justify-content: flex-start;
 	min-height: 100vh;
@@ -36,9 +36,10 @@ body.subchar-mode .main-only {
 	background-color: var(--balloon-bg);
 	background-image: var(--menu-bg-image, var(--balloon-pattern));
 	background-repeat: repeat;
-	border: none;
-	border-radius: 0;
-	box-shadow: none;
+	border: 0 !important;
+	border-radius: 0 !important;
+	box-shadow: none !important;
+	outline: 0;
 	position: relative;
 	cursor: move;
 }

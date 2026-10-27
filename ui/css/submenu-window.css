@@ -1,7 +1,7 @@
 body {
 	margin: 0;
-	padding: 0.25rem;
-	background: transparent;
+	padding: 0;
+	background: transparent !important;
 	overflow: hidden;
 	font-family: var(--balloon-font-family);
 	color: var(--balloon-text-color, #111111);
@@ -16,9 +16,10 @@ body {
 	background-color: var(--balloon-bg, #ffffff);
 	background-image: var(--menu-bg-image, var(--balloon-pattern, none));
 	background-repeat: repeat;
-	border: none;
-	border-radius: 0;
-	box-shadow: none;
+	border: 0 !important;
+	border-radius: 0 !important;
+	box-shadow: none !important;
+	outline: 0;
 	padding: 0.25rem 0;
 	font-size: var(--balloon-font-size, 0.8125rem);
 	color: var(--balloon-text-color, #111111);

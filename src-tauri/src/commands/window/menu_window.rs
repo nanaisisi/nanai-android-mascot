@@ -44,6 +44,8 @@ pub async fn show_menu_window(
         }
 
         if let Some(menu_win) = app_handle.get_webview_window("menu_window") {
+            let _ = menu_win.set_decorations(false);
+            let _ = menu_win.set_shadow(false);
             let _ = menu_win.set_size(tauri::Size::Logical(tauri::LogicalSize {
                 width: win_width,
                 height: win_height,
@@ -134,6 +136,8 @@ pub async fn show_submenu_window(
         }
 
         if let Some(sub_win) = app_handle.get_webview_window("submenu_window") {
+            let _ = sub_win.set_decorations(false);
+            let _ = sub_win.set_shadow(false);
             let _ = sub_win.set_size(tauri::Size::Logical(tauri::LogicalSize {
                 width: win_width,
                 height: win_height,

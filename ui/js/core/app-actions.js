@@ -57,6 +57,9 @@ export const actionMethods = {
     if (action === "ghost-info") {
       return this.showGhostInformation();
     }
+    if (action === "explorer") {
+      return this.modalManager?.show("explorer-modal-content");
+    }
 
     if (action === "biff" || action === "mail") {
       return this.checkEmail();

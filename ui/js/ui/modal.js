@@ -56,6 +56,8 @@ export class ModalManager {
 	setupListeners(contentId) {
 		if (contentId === "ghost-modal-content") {
 			this.ghostHandlers.setupGhostListeners();
+		} else if (contentId === "explorer-modal-content") {
+			this.ghostHandlers.setupExplorerListeners();
 		} else if (contentId === "install-modal-content") {
 			this.ghostHandlers.setupInstallListeners();
 		} else if (contentId === "balloon-modal-content") {

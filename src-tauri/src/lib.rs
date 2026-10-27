@@ -59,11 +59,20 @@ pub fn run() {
                     .default_window_icon()
                     .cloned()
                     .unwrap_or_else(|| Image::new_owned(vec![0, 0, 0, 0], 1, 1));
+                let menu = MenuBuilder::new(app)
+                    .text("open_menu", "メニューを開く")
+                    .text("close", "終了")
+                    .build()?;
                 let _tray = TrayIconBuilder::new()
                     .icon(icon)
                     .on_tray_icon_event(move |tray, event| {
                         if let TrayIconEvent::Click {
                             button: tauri::tray::MouseButton::Left,
+                            button_state: tauri::tray::MouseButtonState::Up,
+                            ..
+                        }
+                        | TrayIconEvent::Click {
+                            button: tauri::tray::MouseButton::Right,
                             button_state: tauri::tray::MouseButtonState::Up,
                             ..
                         }
@@ -76,8 +85,8 @@ pub fn run() {
                                     let size = monitor.size();
                                     let pos = monitor.position();
                                     (
-                                        (pos.x + size.width as i32) as f64 - 260.0,
-                                        (pos.y + size.height as i32) as f64 - 560.0,
+                                        (pos.x + size.width as i32) as f64 - 280.0,
+                                        (pos.y + size.height as i32) as f64 - 620.0,
                                     )
                                 } else {
                                     (100.0, 100.0)
@@ -89,10 +98,6 @@ pub fn run() {
                         }
                     })
                     .build(app)?;
-                let menu = MenuBuilder::new(app)
-                    .text("open_menu", "メニューを開く")
-                    .text("close", "終了")
-                    .build()?;
 
                 app.set_menu(menu)?;
 
@@ -134,8 +139,8 @@ pub fn run() {
                     let size = monitor.size();
                     let pos = monitor.position();
                     (
-                        (pos.x + size.width as i32) as f64 - 260.0,
-                        (pos.y + size.height as i32) as f64 - 560.0,
+                        (pos.x + size.width as i32) as f64 - 280.0,
+                        (pos.y + size.height as i32) as f64 - 620.0,
                     )
                 } else {
                     (100.0, 100.0)

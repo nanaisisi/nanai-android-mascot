@@ -142,7 +142,7 @@ export function processChromaKey(imageSrc, pnaSrc = null, cache = null) {
  * @param {string} [type]
  * @returns {Promise<void>}
  */
-async function drawLayer(
+export async function drawLayer(
 	ctx,
 	fileName,
 	resolveImagePath,
@@ -198,16 +198,34 @@ async function drawLayer(
  * @param {string} baseImgSrc
  * @param {Function} resolveImagePath - ファイル名から画像URL/DataURLを解決する関数
  * @param {Array<{ file: string, x: number, y: number, type: string }>} [bindLayers] - 装着中の着せ替えレイヤー（element 合成後に追加）
- * @returns {Promise<string>} - 合成後のDataURL (PNG)
+ * @param {{ returnCanvas?: boolean }} [options] - returnCanvas 時は `{ src, canvas }` を返す（SERIKO 差分描画の下地として再利用）
+ * @returns {Promise<string|{ src: string, canvas: HTMLCanvasElement }>} - 合成後のDataURL (PNG)
  */
 export function composeSurfaceElements(
 	elementList,
 	baseImgSrc,
 	resolveImagePath,
 	bindLayers = [],
+	{ returnCanvas = false } = {},
 ) {
 	if ((!elementList || elementList.length === 0) && bindLayers.length === 0) {
-		return Promise.resolve(baseImgSrc);
+		return returnCanvas
+			? (async () => {
+					const img = new Image();
+					const canvas = await new Promise((res) => {
+						img.onload = () => {
+							const c = document.createElement("canvas");
+							c.width = img.naturalWidth || img.width;
+							c.height = img.naturalHeight || img.height;
+							c.getContext("2d")?.drawImage(img, 0, 0);
+							res(c);
+						};
+						img.onerror = () => res(null);
+						img.src = baseImgSrc;
+					});
+					return { src: baseImgSrc, canvas };
+				})()
+			: Promise.resolve(baseImgSrc);
 	}
 
 	return new Promise((resolve) => {
@@ -249,7 +267,8 @@ export function composeSurfaceElements(
 					);
 				}
 
-				resolve(canvas.toDataURL("image/png"));
+				const dataUrl = canvas.toDataURL("image/png");
+				resolve(returnCanvas ? { src: dataUrl, canvas } : dataUrl);
 			} catch (_err) {
 				resolve(baseImgSrc);
 			}

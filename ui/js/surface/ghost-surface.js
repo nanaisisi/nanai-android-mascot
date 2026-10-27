@@ -264,6 +264,7 @@ export const ghostSurfaceMethods = {
 	clearSurfaceAssetCache() {
 		this._surfaceAssetCache?.clear();
 		this.app?.surfaceManager?.chromaKeyCache?.clear();
+		this.app?.surfaceManager?.baseCanvasCache?.clear();
 	},
 
 	async updateGhostCharacter(ghostName) {

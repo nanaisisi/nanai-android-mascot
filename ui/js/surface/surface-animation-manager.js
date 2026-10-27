@@ -321,7 +321,7 @@ export class SurfaceAnimationManager {
 		} else {
 			// レガシー（Web/Mock・Rust 不可時）: 逐次待機で再生
 			for (const pat of anim.patterns) {
-				await this._playOnePat(
+				const cont = await this._playOnePat(
 					pat,
 					anim,
 					baseSurfaceId,
@@ -329,6 +329,8 @@ export class SurfaceAnimationManager {
 					key,
 					isCurrent,
 				);
+				// -1（このアニメーションの停止）などで後続フレームを中断する
+				if (!cont) break;
 			}
 		}
 
@@ -364,7 +366,7 @@ export class SurfaceAnimationManager {
 			if (!isCurrent()) return;
 			prevAt = at;
 
-			await this._applyAnimationFrame(
+			const cont = await this._applyAnimationFrame(
 				pat,
 				anim,
 				baseSurfaceId,
@@ -372,6 +374,8 @@ export class SurfaceAnimationManager {
 				key,
 				isCurrent,
 			);
+			// -1（このアニメーションの停止）などで後続フレームを中断する
+			if (!cont) return;
 		}
 	}
 
@@ -426,14 +430,15 @@ export class SurfaceAnimationManager {
 
 	/**
 	 * レガシー逐次待機の1コマ再生（Web/Mock 向けフォールバック）
+	 * @returns {Promise<boolean>} 後続フレームの再生を続行するか
 	 */
 	async _playOnePat(pat, anim, baseSurfaceId, scopeId, key, isCurrent) {
-		if (!isCurrent()) return;
-
 		// UKADOC: ウェイトは「そのコマを描画するまで」の待ち時間（ミリ秒）
 		const waitMs = resolvePatternWait(pat.wait);
 		if (waitMs > 0) await new Promise((r) => setTimeout(r, waitMs));
-		await this._applyAnimationFrame(
+		// 待機後にサーフィス変更・停止（-2）が起きていれば描画しない
+		if (!isCurrent()) return false;
+		return await this._applyAnimationFrame(
 			pat,
 			anim,
 			baseSurfaceId,

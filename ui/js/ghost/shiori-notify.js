@@ -1,4 +1,4 @@
-import { isTauriAvailable, invoke } from "../core/tauri-helper.js";
+import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 
 /**
  * UKADOC notify イベント群 (SHIORI/3.0 NOTIFY コマンド)

@@ -39,6 +39,8 @@ export class SurfaceManager {
 		this.shellManifest = null;
 		/** @type {Map<string, any>} Rust 合成計画キャッシュ (key: scope__surface__binds) */
 		this.planCache = new Map();
+		/** @type {Map<string, HTMLCanvasElement>} ベース合成済みキャンバス（SERIKO 差分描画の下地・planCache と同一キー) */
+		this.baseCanvasCache = new Map();
 
 		this.animationManager = new SurfaceAnimationManager(this);
 	}

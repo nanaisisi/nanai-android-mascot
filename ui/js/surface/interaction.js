@@ -68,6 +68,7 @@ export class InteractionManager {
 
 		let isInteracting = false;
 		let isDragging = false;
+		let nativeDragStarted = false;
 		let startX = 0;
 		let startY = 0;
 		let lastX = 0;
@@ -97,6 +98,7 @@ export class InteractionManager {
 
 			isInteracting = true;
 			isDragging = false;
+			nativeDragStarted = false;
 			hasMoved = false;
 			strokeDistance = 0;
 			strokeTriggered = false;
@@ -109,6 +111,16 @@ export class InteractionManager {
 			const img = target.querySelector("img");
 			if (img && this.isPixelTransparent(img, clientX, clientY)) {
 				return;
+			}
+
+			// Tauri のネイティブドラッグは、移動後ではなく押下イベント中に開始する必要がある。
+			const isDesktop =
+				e.type === "mousedown" &&
+				isTauriAvailable() &&
+				!navigator.userAgent.includes("Android");
+			if (isDesktop) {
+				nativeDragStarted = true;
+				startDraggingWindow();
 			}
 
 			startX = clientX;
@@ -174,12 +186,7 @@ export class InteractionManager {
 				target.classList.add("is-dragging");
 
 				// デスクトップ環境（Windows等）の場合はネイティブウィンドウ自体を移動
-				const isDesktop =
-					isTauriAvailable() && !navigator.userAgent.includes("Android");
-				if (isDesktop) {
-					startDraggingWindow();
-					isInteracting = false;
-					isDragging = false;
+				if (nativeDragStarted) {
 					return;
 				}
 
@@ -225,6 +232,17 @@ export class InteractionManager {
 
 			// 長押し発火後や撫で判定が発火していた場合はタップやドラッグ確定を行わない
 			if (longPressTriggered || strokeTriggered) {
+				return;
+			}
+
+			if (nativeDragStarted) {
+				if (!hasMoved && onGhostClick) {
+					const clientX = e.clientX ?? startX;
+					const clientY = e.clientY ?? startY;
+					const rect = target.getBoundingClientRect();
+					onGhostClick(clientX, clientY, rect);
+				}
+				target.classList.remove("is-dragging");
 				return;
 			}
 

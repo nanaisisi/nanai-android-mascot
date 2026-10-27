@@ -48,12 +48,22 @@
 ### ビルド & 実行 (Windows)
 
 ```bash
+# アプリのログを警告・エラーだけに制限
+cargo tauri dev -- --log-level=warn
+
+# アプリのログを完全に抑制（`--` が必要）
+cargo tauri dev -- --quiet
+
 # 開発モード起動
 cargo tauri dev
 
 # リリースビルド
 cargo tauri build
 ```
+
+ログレベルには `off`、`error`、`warn`、`info`、`debug`、`trace` を指定できます。
+`cargo run --quiet` は Cargo の出力だけを抑制します。アプリへ渡す場合は
+`cargo run -- --quiet` のように `--` の後ろへ指定してください。
 
 ### ビルド & 実行 (Android)
 

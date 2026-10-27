@@ -7,7 +7,7 @@
 ## 1. 概要
 
 伺か（SSP）互換の右クリック操作により展開される、ポップアップメニューの表示制御およびサブメニューの展開仕様を定めます。
-本機能は、マスコットウィンドウ枠外へのはみ出し表示を可能とする独立Tauriウィンドウ、およびブラウザ/Android環境向けのインラインiframeフォールバックの双方で共通のデザイン・挙動を提供します。
+本機能は、マスコットウィンドウ枠外へのはみ出し表示を可能とする独立Tauriウィンドウ、およびブラウザ/Android環境向けのインラインiframeフォールバックの双方で共通のデザイン・挙動を提供します。デスクトップのメニューウィンドウはタイトルバー・ネイティブ枠・影を持たない透過ウィンドウとして表示します。
 
 ## 2. メニュー本体の画面内収束 (SSP準拠)
 
@@ -18,6 +18,9 @@
    - ウィンドウが画面外に押し出されたり、切り取られることを防止します。
 3. **メインメニュー内のスクロール**:
    - 項目数が多い場合でも、`.menu-container` に `max-height: calc(100vh - 1rem)` および `overflow-y: auto` を適用し、薄型スクロールバーにてメニュー内完結でスクロール可能です。
+4. **トレイからの表示**:
+   - Windows のトレイアイコンを左クリック、右クリック、またはダブルクリックすると、ネイティブのトレイ項目一覧ではなく通常の `menu_window` を表示します。
+   - トレイ起点ではプライマリモニター右下から余白を取った座標を初期位置とし、Rust 側で画面境界内へ補正します。
 
 ## 3. サブメニューのフライアウト展開仕様
 
@@ -34,11 +37,11 @@ SSP標準のUI体験に基づき、確定的かつ自然な横展開を提供し
 ## 4. 構成ファイル
 
 - **Rust (ウィンドウ制御・画面端クランプ)**:
-  `src-tauri/src/lib.rs` (`show_menu_window`)
+  `src-tauri/src/lib.rs` (トレイ起点) / `src-tauri/src/commands/window/menu_window.rs` (`show_menu_window`)
 - **マークアップ**:
-  `src/menu-iframe.html`
+  `ui/menu-iframe.html`
 - **スタイル (CSS)**:
-  `src/css/context-menu.css`
-  `src/css/menu-modal.css`
+  `ui/css/context-menu.css`
+  `ui/css/menu-modal.css`
 - **スクリプト (JS)**:
-  `src/js/context-menu.js`
+  `ui/js/ui/context-menu.js`

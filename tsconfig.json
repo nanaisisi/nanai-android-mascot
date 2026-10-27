@@ -1,0 +1,11 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"strict": true,
+		"noEmit": true
+	},
+	"include": ["ui/**/*.ts", "ui/**/*.d.ts"],
+	"exclude": ["node_modules", "target", "src-tauri"]
+}

@@ -3,6 +3,42 @@
  */
 import { patternSurfaceFile } from "./bind-menu.js";
 
+/**
+ * pattern のウェイト（ミリ秒）。SSP の「最小-最大」指定は範囲内でランダムに選ぶ。
+ * @param {number|string|undefined} wait
+ * @returns {number}
+ */
+export function resolvePatternWait(wait) {
+	const match = String(wait ?? 0).trim().match(/^(\d+)(?:-(\d+))?$/);
+	if (!match) return 0;
+	const min = Number(match[1]);
+	const max = match[2] == null ? min : Number(match[2]);
+	const low = Math.min(min, max);
+	return low + Math.floor(Math.random() * (Math.abs(max - min) + 1));
+}
+
+/**
+ * animation*.interval を UKADOC の組み合わせ指定（SSP: `+` 区切り）として解釈する。
+ * パラメータは末尾にのみ書ける（例: `bind+random,5`）。
+ * @param {string|undefined} interval
+ * @returns {{ kinds: Set<string>, param: number|null }}
+ */
+export function parseInterval(interval) {
+	const value = String(interval || "sometimes").trim().toLowerCase();
+	const comma = value.indexOf(",");
+	const head = comma < 0 ? value : value.slice(0, comma);
+	const raw = comma < 0 ? "" : value.slice(comma + 1).trim();
+	const param = raw === "" ? null : Number.parseFloat(raw);
+	const kinds = new Set(
+		head
+			.split("+")
+			.map((kind) => kind.trim())
+			.map((kind) => (kind === "\\e" || kind === "/e" ? "yen-e" : kind))
+			.filter(Boolean),
+	);
+	return { kinds, param: Number.isFinite(param) ? param : null };
+}
+
 export class SurfaceAnimationManager {
 	/**
 	 * @param {import('./surface.js').SurfaceManager} manager
@@ -16,6 +52,7 @@ export class SurfaceAnimationManager {
 		this.pausedAnimations = new Map();
 		/** @type {Map<string, Promise<void>>} 再生中のアニメーション（多重起動防止） */
 		this._runningAnimations = new Map();
+		this._stoppedAnimations = new Set();
 	}
 
 	/**
@@ -93,85 +130,90 @@ export class SurfaceAnimationManager {
 	 * アニメーションの interval 指定に応じたタイマースケジュール (UKADOC準拠)
 	 */
 	scheduleAnimation(anim, surfaceId, scopeId) {
-		const intervalStr = (anim.interval || "sometimes").toLowerCase();
+		const { kinds, param } = parseInterval(anim.interval);
+		const isCurrent = () =>
+			String(this.manager.currentSurfaceIdFor(scopeId)) === String(surfaceId);
+		const play = () => this.playAnimationPatterns(anim, surfaceId, scopeId);
+
+		// bind 単独は着せ替えレイヤーとして静止合成する。bind+X は装着中のみ X として動く。
+		if (kinds.has("bind")) {
+			if (kinds.size === 1) return;
+			if (!this.manager.isBindAnimationActive?.(scopeId, anim.id, surfaceId)) {
+				return;
+			}
+		}
 
 		// runonce: サーフィス切り替え直後に1回のみ実行
-		if (intervalStr === "runonce") {
+		if (kinds.has("runonce")) {
 			const timer = setTimeout(async () => {
-				if (
-					String(this.manager.currentSurfaceIdFor(scopeId)) ===
-					String(surfaceId)
-				) {
-					await this.playAnimationPatterns(anim, surfaceId, scopeId);
-				}
+				if (isCurrent()) await play();
 			}, 30);
 			this.activeAnimationTimers[scopeId].push(timer);
-			return;
 		}
 
 		// periodic,秒: 指定秒数間隔で定期再生
-		if (intervalStr.startsWith("periodic")) {
-			const parts = intervalStr.split(",");
-			const sec = Math.max(Number.parseFloat(parts[1]) || 4, 0.5);
+		if (kinds.has("periodic")) {
+			const sec = Math.max(param || 4, 0.5);
 			const timer = setInterval(async () => {
-				if (
-					String(this.manager.currentSurfaceIdFor(scopeId)) ===
-					String(surfaceId)
-				) {
-					await this.playAnimationPatterns(anim, surfaceId, scopeId);
-				}
+				if (isCurrent()) await play();
 			}, sec * 1000);
 			this.activeAnimationTimers[scopeId].push(timer);
-			return;
 		}
 
 		// always: ループ再生
-		if (intervalStr === "always") {
+		if (kinds.has("always")) {
 			const loop = async () => {
-				if (
-					String(this.manager.currentSurfaceIdFor(scopeId)) ===
-					String(surfaceId)
-				) {
-					await this.playAnimationPatterns(anim, surfaceId, scopeId);
-					if (
-						String(this.manager.currentSurfaceIdFor(scopeId)) ===
-						String(surfaceId)
-					) {
-						const timer = setTimeout(loop, 50);
-						this.activeAnimationTimers[scopeId].push(timer);
-					}
+				if (!isCurrent()) return;
+				await play();
+				if (isCurrent()) {
+					const timer = setTimeout(loop, 50);
+					this.activeAnimationTimers[scopeId].push(timer);
 				}
 			};
 			loop();
-			return;
 		}
 
 		// sometimes(毎秒1/2), rarely(毎秒1/4), random,N(毎秒1/N)
-		let probability = 0.5; // sometimes
-		if (intervalStr === "rarely") {
-			probability = 0.25;
-		} else if (intervalStr.startsWith("random")) {
-			const n = Number.parseInt(intervalStr.split(",")[1], 10) || 2;
-			probability = 1.0 / n;
-		} else if (
-			intervalStr.startsWith("talk") ||
-			intervalStr === "never" ||
-			intervalStr === "bind"
-		) {
-			return; // 発話時口パク、着せ替え、スクリプト直接呼出 (\i) は別トリガー
-		}
+		let probability = null;
+		if (kinds.has("sometimes")) probability = 0.5;
+		if (kinds.has("rarely")) probability = 0.25;
+		if (kinds.has("random")) probability = 1 / (param > 0 ? param : 2);
+		if (probability == null) return; // talk/starttalk/endtalk/yen-e/never は別トリガー
 
 		// 毎秒チェックして確率抽選
 		const timer = setInterval(async () => {
-			if (
-				String(this.manager.currentSurfaceIdFor(scopeId)) === String(surfaceId)
-			) {
-				if (Math.random() <= probability) {
-					await this.playAnimationPatterns(anim, surfaceId, scopeId);
-				}
-			}
+			if (isCurrent() && Math.random() <= probability) await play();
 		}, 1000);
 		this.activeAnimationTimers[scopeId].push(timer);
+	}
+
+	/**
+	 * 現在サーフィスのうち、指定インターバル種別を含むアニメーション
+	 * @param {number} scopeId
+	 * @param {string} kind
+	 */
+	animationsForTrigger(scopeId, kind) {
+		const sid = String(this.manager.currentSurfaceIdFor(scopeId));
+		const animList =
+			this.manager.animations[sid] || this.manager.animations.default || [];
+		return animList
+			.map((anim) => ({ anim, sid, ...parseInterval(anim.interval) }))
+			.filter(({ anim, kinds }) =>
+				kinds.has(kind) &&
+				(!kinds.has("bind") ||
+					this.manager.isBindAnimationActive?.(scopeId, anim.id, sid)),
+			);
+	}
+
+	/**
+	 * starttalk / endtalk / yen-e などの単発トリガーを実行
+	 * @param {number} scopeId
+	 * @param {string} kind
+	 */
+	triggerAnimations(scopeId, kind) {
+		for (const { anim, sid } of this.animationsForTrigger(scopeId, kind)) {
+			this.playAnimationPatterns(anim, sid, scopeId).catch(() => {});
+		}
 	}
 
 	/**
@@ -186,60 +228,63 @@ export class SurfaceAnimationManager {
 			anim,
 			baseSurfaceId,
 			scopeId,
+			key,
 		).finally(() => {
 			this._runningAnimations.delete(key);
+			this._stoppedAnimations.delete(key);
 		});
 		this._runningAnimations.set(key, playing);
 		return playing;
 	}
 
-	async _playAnimationPatterns(anim, baseSurfaceId, scopeId) {
+	async _playAnimationPatterns(anim, baseSurfaceId, scopeId, key) {
 		if (!anim.patterns?.length) return;
 		const gc = this.manager.app?.ghostController;
 		if (!gc) return;
+		const isCurrent = () =>
+			!this._stoppedAnimations.has(key) &&
+			String(this.manager.currentSurfaceIdFor(scopeId)) ===
+				String(baseSurfaceId);
 
 		for (const pat of anim.patterns) {
-			if (
-				String(this.manager.currentSurfaceIdFor(scopeId)) !==
-				String(baseSurfaceId)
-			)
-				break;
+			if (!isCurrent()) break;
+
+			// UKADOC: ウェイトは「そのコマを描画するまで」の待ち時間（ミリ秒）
+			const waitMs = resolvePatternWait(pat.wait);
+			if (waitMs > 0) await new Promise((r) => setTimeout(r, waitMs));
+			if (!isCurrent()) break;
 
 			// \![anim,pause,ID] の一時停止ゲート（\![anim,resume,ID] で再開）
 			if (anim?.id != null && this.isAnimationPaused(scopeId, anim.id)) {
 				while (this.isAnimationPaused(scopeId, anim.id)) {
-					if (
-						String(this.manager.currentSurfaceIdFor(scopeId)) !==
-						String(baseSurfaceId)
-					)
-						break;
+					if (!isCurrent()) break;
 					await new Promise((r) => setTimeout(r, 120));
 				}
+				if (!isCurrent()) break;
 			}
 
 			const patSurface = String(pat.surface).trim();
-			const frameStart = Date.now();
+			// -1: このアニメーションを停止、-2: 同一スコープの他アニメーションを停止
+			if (patSurface === "-1") break;
+			if (patSurface === "-2") {
+				for (const otherKey of this._runningAnimations.keys()) {
+					if (otherKey !== key && otherKey.startsWith(`${scopeId}__`)) {
+						this._stoppedAnimations.add(otherKey);
+					}
+				}
+				continue;
+			}
+
 			// SERIKO 合成: ベースサーフィス上に差分パターンを重ねて表示
 			// (UKADOC 準拠: pattern.x/y オフセット、method overlay/replace)
-			// 合成不可（pattern -1 / サーフィス未定義）時は旧方式の全面差し替えへフォールバック
+			// 合成不可（サーフィス未定義）時は旧方式の全面差し替えへフォールバック
 			// フレーム描画の完了を待ってから次へ進む（未完了の合成が積み上がらないように）
-			const framePromise =
-				patSurface === "-1"
-					? null
-					: this.renderAnimationFrame(pat, baseSurfaceId, scopeId);
+			const framePromise = this.renderAnimationFrame(pat, baseSurfaceId, scopeId);
 			if (framePromise) {
 				await framePromise;
 			} else {
-				await gc.updateSurface(
-					patSurface === "-1" ? baseSurfaceId : patSurface,
-					scopeId,
-					patSurface === "-1" ? [] : null,
-				);
+				await gc.updateSurface(patSurface, scopeId, null);
 			}
-
-			// 描画にかかった時間を差し引いて、パターン指定の wait を守る
-			const waitMs = Math.max(pat.wait || 100, 30) - (Date.now() - frameStart);
-			if (waitMs > 0) await new Promise((r) => setTimeout(r, waitMs));
 		}
 
 		if (

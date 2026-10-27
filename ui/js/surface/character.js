@@ -36,17 +36,36 @@ function initCharacterWindow() {
 	}
 
 	// デスクトップ上でのドラッグ移動
-	root?.addEventListener("mousedown", (e) => {
+	root?.addEventListener("mousedown", async (e) => {
 		if (e.button === 0) {
-			const tauriWindow =
-				globalThis.__TAURI__.window?.getCurrentWindow?.() ||
-				globalThis.__TAURI__.getCurrentWindow?.();
-			if (tauriWindow && typeof tauriWindow.startDragging === "function") {
-				try {
-					tauriWindow.startDragging();
-				} catch (_err) {
-					// 無視
+			// 透明ピクセルの場合はドラッグを開始しない
+			if (img) {
+				const rect = img.getBoundingClientRect();
+				const scaleX = img.naturalWidth / rect.width;
+				const scaleY = img.naturalHeight / rect.height;
+				const x = Math.floor((e.clientX - rect.left) * scaleX);
+				const y = Math.floor((e.clientY - rect.top) * scaleY);
+				if (x >= 0 && y >= 0 && x < img.naturalWidth && y < img.naturalHeight) {
+					const canvas = document.createElement("canvas");
+					canvas.width = 1;
+					canvas.height = 1;
+					const ctx = canvas.getContext("2d", { willReadFrequently: true });
+					ctx.drawImage(img, x, y, 1, 1, 0, 0, 1, 1);
+					if (ctx.getImageData(0, 0, 1, 1).data[3] === 0) {
+						return; // 透明ならドラッグさせない
+					}
+				} else {
+					return;
 				}
+			}
+
+			try {
+				if (globalThis.__TAURI__) {
+					const { getCurrentWindow } = await import("@tauri-apps/api/window");
+					await getCurrentWindow().startDragging();
+				}
+			} catch (_err) {
+				// 無視
 			}
 		}
 	});

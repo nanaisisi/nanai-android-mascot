@@ -11,6 +11,7 @@ import {
 	emit as tauriEmit,
 	listen as tauriListen,
 } from "@tauri-apps/api/event";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 
 /**
  * Tauri環境で動作しているかどうかを判定
@@ -126,6 +127,19 @@ export async function listen(event, handler) {
 export async function emit(event, payload) {
 	if (!isTauriAvailable()) return;
 	await tauriEmit(event, payload);
+}
+
+/**
+ * 現在のウィンドウのドラッグ移動を開始
+ * @returns {Promise<void>}
+ */
+export async function startDraggingWindow() {
+	if (!isTauriAvailable()) return;
+	try {
+		await getCurrentWindow().startDragging();
+	} catch (err) {
+		console.warn("startDraggingWindow failed:", err);
+	}
 }
 
 // 開発・診断用グローバルアクセス

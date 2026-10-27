@@ -79,6 +79,38 @@ pub fn parse_surfaces_text(
     Ok(map)
 }
 
+/// ゴーストディレクトリを解決する（ゴースト名 → 実パス、未検出は None）
+fn resolve_ghost_dir_opt(ghost_name: &str, app_handle: &tauri::AppHandle) -> Option<PathBuf> {
+    for base in [
+        format!("assets/ghost/{}", ghost_name),
+        format!("ghost/{}", ghost_name),
+    ] {
+        if let Ok(resolved) = resolve_asset_path(&base, app_handle)
+            && resolved.is_dir()
+        {
+            return Some(resolved);
+        }
+    }
+    None
+}
+
+/// ゴーストをアンインストールする（SSP 右クリックメニュー「アンインストール」）
+///
+/// ゴーストディレクトリ（`assets/ghost/<name>` 等）を再帰削除する。
+/// 確認ダイアログはフロントエンド側で表示する。
+#[tauri::command]
+pub async fn uninstall_ghost(
+    ghost_name: String,
+    app_handle: tauri::AppHandle,
+) -> Result<bool, String> {
+    let Some(dir) = resolve_ghost_dir_opt(&ghost_name, &app_handle) else {
+        return Ok(false);
+    };
+    std::fs::remove_dir_all(&dir)
+        .map(|_| true)
+        .map_err(|e| format!("ゴーストの削除に失敗しました: {e}"))
+}
+
 /// バルーン descript.txt をパースしてプロパティ連想配列を返す
 ///
 /// `name`: バルーン名（`assets/balloon/<name>`、例 `emily4`）
@@ -90,6 +122,41 @@ pub fn balloon_manifest(
 ) -> Result<std::collections::BTreeMap<String, String>, String> {
     let dir = resolve_balloon_dir(&name, &app_handle)?;
     Ok(balloon_descript_map(&dir))
+}
+
+/// バルーン画像アセット（balloons0.png / balloonk0.png 等）を Data URL (base64) として返す
+///
+/// ファイルが存在しない場合は `None`（背景画像を持たない CSS テーマ）。
+/// 大文字・小文字の表記揺れは VFS で吸収する。
+#[tauri::command]
+pub fn load_balloon_image(
+    name: String,
+    file: String,
+    app_handle: tauri::AppHandle,
+) -> Result<Option<String>, String> {
+    use base64::Engine;
+    let dir = resolve_balloon_dir(&name, &app_handle)?;
+    let Some(path) = nanai_android_mascot_ui::resolve_vfs_path(&dir, &file) else {
+        return Ok(None);
+    };
+    let Ok(bytes) = std::fs::read(&path) else {
+        return Ok(None);
+    };
+    let mime = match path
+        .extension()
+        .and_then(|e| e.to_str())
+        .map(|s| s.to_lowercase())
+    {
+        Some(ref e) if e == "png" => "image/png",
+        Some(ref e) if e == "bmp" => "image/bmp",
+        Some(ref e) if e == "jpg" || e == "jpeg" => "image/jpeg",
+        Some(ref e) if e == "svg" => "image/svg+xml",
+        _ => "application/octet-stream",
+    };
+    Ok(Some(format!(
+        "data:{mime};base64,{}",
+        base64::engine::general_purpose::STANDARD.encode(bytes)
+    )))
 }
 
 /// バルーンディレクトリを解決する（バルーン名 → 実パス）

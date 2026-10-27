@@ -62,6 +62,16 @@ export const menuMethods = {
 			this.surfaceManager,
 		);
 
+		// 最近使ったもの (SSP準拠・ゴースト実行履歴)
+		let recentGhosts = [];
+		try {
+			recentGhosts = JSON.parse(
+				localStorage.getItem("nanai_recent_ghosts") || "[]",
+			);
+		} catch (_err) {
+			// LocalStorage 利用不可環境では空配列
+		}
+
 		// 独立メニューウィンドウへの状態同期
 		if (isTauriAvailable()) {
 			emit("sync-ghosts", {
@@ -71,6 +81,7 @@ export const menuMethods = {
 				currentShell: currentShellName,
 				scope,
 				dressup,
+				recentGhosts,
 			});
 			emit("sync-theme", this.currentBalloonTheme);
 			emit("sync-menu-scope", scope);
@@ -87,6 +98,7 @@ export const menuMethods = {
 					currentGhost: gc.currentGhost,
 					scope,
 					dressup,
+					recentGhosts,
 				},
 				"*",
 			);

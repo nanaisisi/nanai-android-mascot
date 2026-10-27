@@ -221,5 +221,9 @@ AndroidやWeb環境でも同一ゴースト資産を安定して動作させま�
    - Rust（`balloon_manifest` コマンド / `crates/ui::descript` パーサー）で descript.txt をパースし、
      メインウィンドウ（`app-actions.js`）および独立バルーンウィンドウ（`balloon-window.js`）へ動的反映。
    - スキン切替時は前テーマの上書き値を `resetBalloonDescript()` でリセットしてから適用。
+   - 背景画像（`balloons0.png` / `balloonk0.png`）も Rust コア
+     （`load_balloon_image` コマンド・大文字小文字吸収 VFS 経由）で取得し、
+     CSS `border-image` による 9 スライス描画へ反映（
+     `balloon-window.js` `applyBalloonDescript`）。
 3. **実機（`cargo tauri dev`）における実ゴースト総合動作確認**:
    - 実機環境での自律トーク・当たり判定イベント・バルーン表示の検証。

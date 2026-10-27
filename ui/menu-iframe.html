@@ -137,6 +137,21 @@
         <span>✅ ネットワーク更新チェックのみ (C)</span>
       </button>
 
+      <!-- [実装済] SSP準拠: ゴーストの削除 (確認ダイアログ → uninstall_ghost コマンド) -->
+      <button type="button" class="menu-item main-only" id="uninstall-btn" role="menuitem" data-action="uninstall-ghost">
+        <span>🗑️ アンインストール</span>
+      </button>
+
+      <!-- [実装済] SSP準拠: ゴースト実行履歴から再度実行 (nanai_recent_ghosts) -->
+      <div class="menu-item-wrapper main-only">
+        <button type="button" class="menu-item has-submenu" id="recent-menu-btn" role="menuitem">
+          <span>🕘 最近使ったもの</span>
+        </button>
+        <div class="submenu-container" id="recent-submenu">
+          <!-- 動的描画 -->
+        </div>
+      </div>
+
       <div class="menu-item-wrapper main-only">
         <button type="button" class="menu-item has-submenu" id="tools-menu-btn" role="menuitem">
           <span>🛠️ 機能・ツール (F)</span>

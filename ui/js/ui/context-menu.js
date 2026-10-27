@@ -35,6 +35,8 @@ if (globalThis.__TAURI__) {
 						data.scope ?? dispatcher.currentScope,
 					);
 				}
+				// 最近使ったもの (ゴースト実行履歴)
+				renderer.renderRecentSubmenu(data.recentGhosts || []);
 				// ゴースト/シェルの descript.txt 由来のメニュー配色を適用
 				const activeShell =
 					data.shells?.find((s) => s.name === data.currentShell) ||
@@ -71,6 +73,8 @@ globalThis.addEventListener("message", (event) => {
 				event.data.scope ?? dispatcher.currentScope,
 			);
 		}
+		// 最近使ったもの (ゴースト実行履歴)
+		renderer.renderRecentSubmenu(event.data.recentGhosts || []);
 	} else if (event.data?.type === "sync-shells") {
 		renderer.renderShellSubmenu(
 			event.data.shells || ["master"],

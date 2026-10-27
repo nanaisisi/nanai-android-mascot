@@ -1,4 +1,5 @@
 import { bindMenuData } from "../surface/bind-menu.js";
+import { AppConfig } from "./config.js";
 import { emit, invoke, isTauriAvailable } from "./tauri-helper.js";
 
 const BALLOON_THEMES = ["emily4", "ivory", "pixel", "comic", "dark"];
@@ -64,6 +65,9 @@ export const actionMethods = {
 		}
 
 		if (action === "scan") return gc.scanGhosts();
+		if (action === "uninstall-ghost" || action === "uninstall") {
+			return this.uninstallCurrentGhost();
+		}
 		if (action === "install")
 			return this.modalManager?.show("install-modal-content");
 		if (action === "balloon" || action === "balloon-cycle")
@@ -99,6 +103,13 @@ export const actionMethods = {
 					: payload.name || payload.ghostName;
 			if (ghostName) return this.callGhost(ghostName);
 		}
+		if (action === "recent-ghost" && payload) {
+			const ghostName =
+				typeof payload === "string"
+					? payload
+					: payload.name || payload.ghostName;
+			if (ghostName) return gc.selectGhost(ghostName);
+		}
 		if (
 			(action === "switch-to-shell" || action === "switch-shell") &&
 			payload
@@ -116,6 +127,64 @@ export const actionMethods = {
 		// ゴースト切り替え / 汎用モーダル
 		const modalKey = action === "ghost-switch" ? "ghost" : action;
 		this.modalManager?.show(`${modalKey}-modal-content`);
+	},
+
+	/**
+	 * 現在のゴーストをアンインストールする (SSP 右クリックメニュー「アンインストール」)
+	 * 確認ダイアログ → `uninstall_ghost` コマンド（ゴーストディレクトリ再帰削除）。
+	 * 削除後は残存ゴーストへ自動切替する。
+	 * @this {import('../../main.js').NanaiAndroidMascotApp}
+	 */
+	async uninstallCurrentGhost() {
+		const gc = this.ghostController;
+		const name = gc.currentGhost?.name;
+		if (!name) return;
+		const message = `ゴースト「${name}」をアンインストールしますか？\nゴーストのファイルはすべて削除されます（復元できません）。`;
+		if (
+			typeof globalThis.confirm !== "function" ||
+			!globalThis.confirm(message)
+		) {
+			return;
+		}
+		try {
+			const removed = await invoke("uninstall_ghost", { ghostName: name });
+			console.log(`🗑️ ゴーストアンインストール: ${name} (removed=${removed})`);
+			this.showBalloon(`ゴースト「${name}」を削除しました`);
+			setTimeout(() => this.hideBalloon(), 2500);
+			await gc.scanGhosts();
+			const next = (gc.ghosts || []).find((g) => g.name !== name);
+			if (next) {
+				await gc.selectGhost(next.name);
+			} else {
+				await gc.selectGhost(AppConfig.paths.fallbackGhostName);
+			}
+		} catch (err) {
+			console.error("🗑️ アンインストール失敗:", err);
+			this.showBalloon(`アンインストールに失敗しました: ${err}`);
+			setTimeout(() => this.hideBalloon(), 3000);
+		}
+	},
+
+	/**
+	 * 最近使ったゴースト履歴を記録する（SSP メニュー「最近使ったもの」）
+	 * @this {import('../../main.js').NanaiAndroidMascotApp}
+	 * @param {string} ghostName
+	 */
+	recordRecentGhost(ghostName) {
+		if (!ghostName) return;
+		const MAX_RECENT = 8;
+		try {
+			const list = JSON.parse(
+				localStorage.getItem("nanai_recent_ghosts") || "[]",
+			);
+			const next = [ghostName, ...list.filter((g) => g !== ghostName)];
+			localStorage.setItem(
+				"nanai_recent_ghosts",
+				JSON.stringify(next.slice(0, MAX_RECENT)),
+			);
+		} catch (_err) {
+			// LocalStorage 利用不可環境では無視
+		}
 	},
 
 	/**

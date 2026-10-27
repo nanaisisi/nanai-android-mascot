@@ -23,7 +23,7 @@
 
 ## 実装済み操作
 
-- エクスプローラを情報メニューから開く
+- エクスプローラを「機能・ツール」サブメニューから開く
 - 現在のゴーストを初期選択
 - 行クリックによる選択
 - 行ダブルクリックまたは「切り替え」によるゴースト切替
@@ -47,5 +47,5 @@
 - `ui/js/ui/templates/ghost-templates.js`: 表と操作 UI
 - `ui/js/ui/modal-ghost-handlers.js`: 走査、検索、ソート、切替
 - `ui/js/core/app-actions.js`: `explorer` アクション
-- `ui/menu-iframe.html`: 情報メニュー項目
+- `ui/menu-iframe.html`: 「機能・ツール」サブメニュー項目
 - `ui/css/menu-modal.css`: 表示スタイル

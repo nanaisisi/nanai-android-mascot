@@ -1,7 +1,12 @@
 /**
  * Nanai Android Mascot - 独立サブメニューウィンドウ制御
  */
-import { emit, invoke, isTauriAvailable } from "../core/tauri-helper.js";
+import {
+  emit,
+  invoke,
+  isTauriAvailable,
+  startDraggingWindow,
+} from "../core/tauri-helper.js";
 
 /** @type {string} */
 let currentSubmenuType = "ghost";
@@ -21,6 +26,12 @@ let dressupScope = 0;
 let cachedBalloons = [];
 /** @type {string|null} */
 let currentBalloonTheme = null;
+
+document.addEventListener("mousedown", (event) => {
+  if (event.button !== 0 || !globalThis.__TAURI__) return;
+  if (event.target.closest(".menu-item")) return;
+  startDraggingWindow();
+});
 
 /**
  * サブメニューのアクションをイベントとして送信

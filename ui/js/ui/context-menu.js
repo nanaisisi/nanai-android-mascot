@@ -1,8 +1,15 @@
 import { MenuDispatcher } from "./menu-dispatcher.js";
 import { MenuSubmenuRenderer } from "./menu-submenu-renderer.js";
+import { startDraggingWindow } from "../core/tauri-helper.js";
 
 const dispatcher = new MenuDispatcher();
 const renderer = new MenuSubmenuRenderer(dispatcher);
+
+document.addEventListener("mousedown", (event) => {
+	if (event.button !== 0 || !globalThis.__TAURI__) return;
+	if (event.target.closest(".menu-item, .submenu-container")) return;
+	startDraggingWindow();
+});
 
 // 独立ウィンドウ環境での Tauri イベント受信 (ゴースト・シェル・バルーンテーマ同期・スコープ同期)
 if (globalThis.__TAURI__) {

@@ -48,6 +48,7 @@ export class SurfaceAnimationManager {
 		/** @type {Record<number, any[]>} */
 		this.activeAnimationTimers = {};
 		this._spokenCount = {};
+		this._talkStarted = {};
 		/** @type {Map<string, boolean>} `\![anim,pause,ID]` で一時停止中のアニメーション (key: scopeId__animId) */
 		this.pausedAnimations = new Map();
 		/** @type {Map<string, Promise<void>>} 再生中のアニメーション（多重起動防止） */
@@ -212,6 +213,7 @@ export class SurfaceAnimationManager {
 	 */
 	triggerAnimations(scopeId, kind) {
 		for (const { anim, sid } of this.animationsForTrigger(scopeId, kind)) {
+			// 単発トリガーは同期的に開始
 			this.playAnimationPatterns(anim, sid, scopeId).catch(() => {});
 		}
 	}
@@ -220,10 +222,16 @@ export class SurfaceAnimationManager {
 	 * アニメーションパターンの順次実行
 	 */
 	playAnimationPatterns(anim, baseSurfaceId, scopeId) {
-		// 同一アニメの多重起動を防ぐ（口パクは1文字ごとに呼ばれるため、重なると合成処理が積み上がる）
+		// starttalk / talk は発話開始・文字送りから複数回呼ばれるが、完了まで待つ仕様
+		// 同じ ID のアニメーションが二重に走るのを防ぐ
 		const key = `${scopeId}__${baseSurfaceId}__${anim?.id ?? anim?.interval ?? ""}`;
+		// talk などは二重起動を防ぐ。ただし、スクリプト終了など単発系 (runonce/yen-e/endtalk) は
+		// 前回のアニメーションが終わっていなくても、新しい再生をスケジュールする
 		const running = this._runningAnimations.get(key);
-		if (running) return running;
+		const { kinds } = parseInterval(anim.interval);
+		if (running && !kinds.has("runonce") && !kinds.has("yen-e") && !kinds.has("endtalk")) {
+			return running;
+		}
 		const playing = this._playAnimationPatterns(
 			anim,
 			baseSurfaceId,
@@ -340,22 +348,43 @@ export class SurfaceAnimationManager {
 	}
 
 	/**
+	 * トーク開始時のトリガー (interval starttalk)
+	 */
+	onTalkStart(scopeId = 0) {
+		this._spokenCount[scopeId] = 0;
+		this._talkStarted[scopeId] = true;
+		this.triggerAnimations(scopeId, "starttalk");
+	}
+
+	/**
+	 * トーク終了時のトリガー (interval endtalk)
+	 */
+	onTalkEnd(scopeId = 0) {
+		if (this._talkStarted[scopeId]) {
+			this.triggerAnimations(scopeId, "endtalk");
+		}
+		this._talkStarted[scopeId] = false;
+	}
+
+	/**
+	 * スクリプト終了時のトリガー (interval \e)
+	 */
+	onScriptEnd(scopeId = 0) {
+		this.triggerAnimations(scopeId, "yen-e");
+	}
+
+	/**
 	 * 発話（文字送り）時の口パク連動 (interval talk,N 準拠)
 	 */
 	onCharSpoken(scopeId = 0) {
-		const sid = String(this.manager.currentSurfaceIdFor(scopeId));
-		const animList =
-			this.manager.animations[sid] || this.manager.animations.default || [];
-		const talkAnim = animList.find((a) =>
-			(a.interval || "").startsWith("talk"),
-		);
-		if (!talkAnim) return;
+		if (!this._talkStarted[scopeId]) this.onTalkStart(scopeId);
 
 		this._spokenCount[scopeId] = (this._spokenCount[scopeId] || 0) + 1;
-
-		const n = Number.parseInt(talkAnim.interval.split(",")[1], 10) || 1;
-		if (this._spokenCount[scopeId] % n === 0) {
-			this.playAnimationPatterns(talkAnim, sid, scopeId).catch(() => {});
+		for (const { anim, sid, param } of this.animationsForTrigger(scopeId, "talk")) {
+			const n = Math.max(param || 1, 1);
+			if (this._spokenCount[scopeId] % n === 0) {
+				this.playAnimationPatterns(anim, sid, scopeId).catch(() => {});
+			}
 		}
 	}
 }

@@ -26,7 +26,7 @@ test("first spoken character reaches desktop balloon without the old 60ms thrott
 		scheduleSurfaceRestore() {},
 		app: {
 			elements: { balloonText: content, balloonDisplay: {}, keroBalloonText: null },
-			surfaceManager: { onCharSpoken() {} },
+			surfaceManager: { onCharSpoken() {}, onTalkEnd() {}, onScriptEnd() {} },
 		},
 	};
 	const playing = playScript(player, "test");

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { parseSurfacesTxt } from "../ui/js/surface/surface-parser.js";
 import { SurfaceAnimationManager } from "../ui/js/surface/surface-animation-manager.js";
+import { parseSurfacesTxt } from "../ui/js/surface/surface-parser.js";
 
 function animationFixture() {
 	const frames = [];

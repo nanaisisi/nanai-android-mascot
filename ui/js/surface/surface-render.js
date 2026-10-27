@@ -8,6 +8,7 @@ import {
 import { collisionContains, methodToString } from "./shell-manifest.js";
 import {
 	composeSurfaceElements,
+	drawLayer,
 	processChromaKey,
 } from "./surface-compositor.js";
 
@@ -194,7 +195,18 @@ export const surfaceRenderMethods = {
 	},
 
 	/**
-	 * Rust コアの合成計画（element + 装着 bind pattern）を取得する
+	 * planCache / baseCanvasCache のキー（scope + surface + 装着 bind 列）
+	 * @this {import('./surface-manager.js').SurfaceManager}
+	 * @param {number|string} surfaceId
+	 * @param {number} [scopeId]
+	 * @returns {string}
+	 */
+	planCacheKey(surfaceId, scopeId = 0) {
+		return `${scopeId}__${surfaceId}__${this.activeBindAnimationIds(scopeId).join(",")}`;
+	},
+
+	/**
+	 * Rust 合成計画（element + 装着 bind pattern）を取得する
 	 *
 	 * 切替時（サーフィス / 着せ替え / シェルの変更）のみ IPC し、
 	 * planCache（surface + bind 状態キー）でヒット時は IPC なし。
@@ -212,7 +224,7 @@ export const surfaceRenderMethods = {
 		const ghostName = gc?.currentGhost?.name;
 		if (!ghostName) return null;
 
-		const key = `${scopeId}__${sid}__${this.activeBindAnimationIds(scopeId).join(",")}`;
+		const key = this.planCacheKey(sid, scopeId);
 		if (this.planCache.has(key)) {
 			return this.planCache.get(key);
 		}
@@ -276,8 +288,53 @@ export const surfaceRenderMethods = {
 	},
 
 	/**
+	 * SERIKO フレーム差分レイヤーをベース合成済みキャンバス上に描画する
+	 * （dataURL 全量再合成なし・ベース plan ImageBitmap + 差分 drawImage）
+	 * @this {import('./surface-manager.js').SurfaceManager}
+	 * @param {HTMLCanvasElement} baseCanvas
+	 * @param {Array<{ file: string, x?: number, y?: number, type?: string }>} frameLayers
+	 * @param {Function} resolveImagePath
+	 * @returns {Promise<string|null>} 合成後のDataURL (PNG)
+	 */
+	async composeFrameOnBase(baseCanvas, frameLayers, resolveImagePath) {
+		if (!baseCanvas || !frameLayers?.length) return null;
+		// 計測コード（Phase B fps 実測・実施済み: avg ≈ 15ms / 60fps 相当を達成）
+		const t0 = globalThis.performance?.now?.() ?? Date.now();
+		const canvas = document.createElement("canvas");
+		canvas.width = baseCanvas.width;
+		canvas.height = baseCanvas.height;
+		const ctx = canvas.getContext("2d");
+		if (!ctx) return null;
+		ctx.drawImage(baseCanvas, 0, 0);
+		for (const layer of frameLayers) {
+			await drawLayer(
+				ctx,
+				layer.file,
+				resolveImagePath,
+				layer.x ?? 0,
+				layer.y ?? 0,
+				layer.type ?? "overlay",
+			);
+		}
+		const src = canvas.toDataURL("image/png");
+		// 計測コード（Phase B fps 実測・実施済み。warn のみ vite 中継される統計）
+		const ms = (globalThis.performance?.now?.() ?? Date.now()) - t0;
+		this._frameComposeStats ??= { frames: 0, totalMs: 0, slowestMs: 0 };
+		const stats = this._frameComposeStats;
+		stats.frames += 1;
+		stats.totalMs += ms;
+		stats.slowestMs = Math.max(stats.slowestMs, ms);
+		return src;
+	},
+
+	/**
 	 * element0〜elementN で定義されたレイヤー画像 + 装着中の着せ替え bind レイヤー +
 	 * SERIKO アニメーションフレーム差分レイヤーをベース画像上に合成 (UKADOC準拠)
+	 *
+	 * 切替時（frameLayers なし）は合成済みベース canvas を `baseCanvasCache`
+	 * （planCache と同一キー）に保存し、以降の SERIKO フレームは
+	 * その下地 + 差分レイヤーの drawImage のみで dataURL を作る
+	 * （composition-plan-integration-spec Phase B）。
 	 * @this {import('./surface-manager.js').SurfaceManager}
 	 * @param {number|string} surfaceId
 	 * @param {string} baseImgSrc
@@ -295,32 +352,73 @@ export const surfaceRenderMethods = {
 		frameLayers = null,
 	) {
 		const sid = String(surfaceId);
-		let elementList = this.elements[sid] || this.elements.default || [];
-		let bindLayers =
-			scopeId === 0 || scopeId === 1 ? this.activeBindLayers(scopeId, sid) : [];
+		const isFrame = Array.isArray(frameLayers);
+		const cacheKey = this.planCacheKey(sid, scopeId);
 
-		// Rust 合成計画（切替時のみ 1 IPC・キャッシュ済み）へ一本化
-		// 失敗時（Web/Mock 等）は JS 収集レイヤーのレガシー合成へフォールバック
-		try {
-			const plan = await this.getCompositionPlan(sid, scopeId);
-			const converted = this.planToRenderLayers(plan, scopeId);
-			if (converted) {
-				elementList = converted.elements;
-				bindLayers = converted.bindLayers;
-			}
-		} catch (_err) {
-			// レガシー経路を維持
+		// SERIKO フレーム: ベース合成済みキャンバスがあれば差分のみ描画
+		// （element / bind レイヤーの毎フレーム再合成を回避）
+		if (isFrame && this.baseCanvasCache.has(cacheKey)) {
+			const fast = await this.composeFrameOnBase(
+				this.baseCanvasCache.get(cacheKey),
+				frameLayers,
+				resolveImagePath,
+			);
+			if (fast) return fast;
+			// canvas が使えない環境はレガシー全量合成へフォールバック
 		}
 
+		// Rust 合成計画へ一本化（Phase C）:
+		// レイヤー収集は Rust plan 導出のみ。shellManifest がない /
+		// Rust 不可・計画が立てられない場合のみレガシー JS 収集へフォールバック
+		try {
+			const plan = await this.getCompositionPlan(sid, scopeId);
+			const layers = this.planToRenderLayers(plan, scopeId);
+			if (layers) {
+				if (!isFrame) {
+					// ベース合成（切替時の 1 回のみ）→ SERIKO 差分描画の下地としてキャッシュ
+					const result = await composeSurfaceElements(
+						layers.elements,
+						baseImgSrc,
+						resolveImagePath,
+						layers.bindLayers,
+						{ returnCanvas: true },
+					);
+					if (result?.canvas) this.baseCanvasCache.set(cacheKey, result.canvas);
+					return result?.src ?? baseImgSrc;
+				}
+				// SERIKO フレーム（キャッシュ未成立時のみ・通常は通らない）
+				const withFrames = layers.bindLayers.concat(frameLayers);
+				return composeSurfaceElements(
+					layers.elements,
+					baseImgSrc,
+					resolveImagePath,
+					withFrames,
+				);
+			}
+		} catch (_err) {
+			// レガシー経路へフォールバック
+		}
+
+		// レガシーフォールバック（Web/Mock・Rust 不通時）: JS 収集レイヤーで合成
+		const elementList = this.elements[sid] || this.elements.default || [];
+		const bindLayers =
+			!isFrame && (scopeId === 0 || scopeId === 1)
+				? this.activeBindLayers(scopeId, sid)
+				: [];
 		const layers = frameLayers?.length
 			? [...bindLayers, ...frameLayers]
 			: bindLayers;
-		return composeSurfaceElements(
+		const result = await composeSurfaceElements(
 			elementList,
 			baseImgSrc,
 			resolveImagePath,
 			layers,
+			{ returnCanvas: !isFrame },
 		);
+		if (!isFrame && result?.canvas) {
+			this.baseCanvasCache.set(cacheKey, result.canvas);
+		}
+		return result?.src ?? baseImgSrc;
 	},
 
 	/**

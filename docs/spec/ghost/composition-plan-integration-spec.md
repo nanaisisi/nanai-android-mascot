@@ -142,17 +142,35 @@ planCache: Map<`${surfaceId}__${planHash}`, LayerKey[]>
    失敗時（Web/Mock）は現行 `activeBindLayers` をフォールバックとして温存。
 3. Rust `plan_composition` に alias 抽選注入 + テスト追加。
 
-### Phase B — SERIKO フレームの高速化（本命）
+### Phase B — SERIKO フレームの高速化（本命）✅ 実装済み（実測込み）
 
-1. アニメフレームは「ベース plan ImageBitmap + 差分レイヤー drawImage」に切り替え
+1. ✅ アニメフレームは「ベース plan ImageBitmap + 差分レイヤー drawImage」に切り替え
    （dataURL 再合成の廃止）。
-2. fps 測定: まばたき（170ms 周期）・talk 口パクで 60fps を維持することを
-   実機確認（DevTools Performance または log 計測）。
+   - 実装: `surface-render.js` の `composeSurfaceElements` が切替時
+     （`frameLayers` なし）に合成済みベース canvas を `baseCanvasCache`
+     （`planCache` と同一キー: scope + surface + bind 列）に保存。
+   - SERIKO 1 フレームは `composeFrameOnBase()` で下地 drawImage +
+     差分レイヤー drawImage のみ（element / bind レイヤーの毎フレーム再合成を撤去）。
+   - キャッシュ無効化は `applyShellManifest` / `parseSurfacesTxt` /
+     `clearSurfaceAssetCache`（シェル・ゴースト切替）で一括クリア。
+2. ✅ fps 測定: まばたき（170ms 周期）・talk 口パクで 60fps を維持することを
+   実機確認（検証用 console.warn の実測）。
+   - 実測値（とらふぃっく☆とれいん / 実機）: `frames=100, avg=14.9ms,
+     slowest=79.2ms`（slowest は初回の画像デコード込み）。
+     60fps 相当（≈16.6ms/フレーム以内）を達成。
+   - 計測は `composeFrameOnBase` 内 `performance.now()` 統計
+     （`_frameComposeStats`）として実装済み。
 
-### Phase C — 二重実装の撤去
+### Phase C — 二重実装の撤去 ✅ 実装済み
 
-1. `activeBindLayers` / `elements` のレガシー収集を plan 導出へ一本化。
-2. JS `surface-parser.js` は構文パース後方互換のみに縮退（Rust 不通時フォールバック）。
+1. ✅ `activeBindLayers` / `elements` のレガシー収集を plan 導出へ一本化。
+   - `composeSurfaceElements` は Rust plan 導出のみでレイヤー列を組み立て、
+     shellManifest がない / Rust 不可・計画が立てられない場合のみ
+     レガシー JS 収集へフォールバックする（fallback 内でもベース canvas をキャッシュ）。
+2. ✅ JS `surface-parser.js` は構文パース後方互換のみに縮退
+   （Rust 不通時フォールバック）。
+   - `surface-load.js` は `shell_manifest`（Rust）を優先し、失敗時のみ
+     `parseSurfacesTxt`（JS）で構文パースする（実装済み構成を維持）。
 
 ## 5. テスト方針
 

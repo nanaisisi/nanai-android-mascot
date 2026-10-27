@@ -1,6 +1,6 @@
-import { modalTemplates } from "./modal-templates.js";
 import { ModalGhostHandlers } from "./modal-ghost-handlers.js";
 import { ModalSettingsHandlers } from "./modal-settings-handlers.js";
+import { modalTemplates } from "./modal-templates.js";
 
 /**
  * Nanai Android Mascot - モーダル & UIダイアログ管理

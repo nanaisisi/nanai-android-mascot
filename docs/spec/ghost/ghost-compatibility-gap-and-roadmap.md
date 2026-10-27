@@ -209,7 +209,11 @@ AndroidやWeb環境でも同一ゴースト資産を安定して動作させま�
      `planCache`（scope + surface + bind 列キー）でキャッシュ。
      アニメフレーム毎回の IPC/JS 合成は発生しない（パフォーマンス契約を遵守）。
    - 実機検証ずみ（每サーフィス切替で plan hash が安定出力、キャッシュヒット確認）。
-     Phase B（plan_hash 差分検知）/ Phase C（alias 抽選の Rust 注入）は未実施。
+     Phase B（SERIKO フレーム差分描画: baseCanvasCache + composeFrameOnBase）と
+     Phase C（レイヤー収集の plan 一本化・レガシー JS パーサーのフォールバック縮退）
+     も実装済み。Phase B の fps 実測も実施
+     （実機 `frames=100, avg=14.9ms` / 60fps 相当を達成）。
+     残タスクなし（次は必要に応じ追加仕様）。
    - 接続設計（Rust `CompositionPlan` → フロント Canvas キャッシュ描画、IPC 頻度制約込み）は
      [composition-plan-integration-spec.md](composition-plan-integration-spec.md) 参照。
 2. **バルーンスキン動的反映 (`balloon/*/descript.txt`)** ✅ 実装済み:

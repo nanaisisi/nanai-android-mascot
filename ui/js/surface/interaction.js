@@ -1,5 +1,5 @@
-import { BalloonDragManager } from "./balloon-drag.js";
 import { isTauriAvailable, startDraggingWindow } from "../core/tauri-helper.js";
+import { BalloonDragManager } from "./balloon-drag.js";
 
 /**
  * Nanai Android Mascot - ドラッグ & タッチインタラクション管理

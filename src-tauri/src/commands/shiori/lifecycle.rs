@@ -7,6 +7,7 @@ use std::path::PathBuf;
 pub async fn load_ghost(
     state: tauri::State<'_, AppState>,
     ghost_name: String,
+    ghost_path: Option<String>,
     app_handle: tauri::AppHandle,
 ) -> Result<String, String> {
     println!("📥 Loading ghost: {}", ghost_name);
@@ -18,8 +19,11 @@ pub async fn load_ghost(
 
     *state.current_ghost_name.lock() = Some(ghost_name.clone());
 
-    let ghost_dir = resolve_ghost_directory(&ghost_name, &app_handle)
-        .unwrap_or_else(|_| PathBuf::from(format!("assets/ghost/{}", ghost_name)));
+    let ghost_dir = ghost_path
+        .filter(|path| PathBuf::from(path).is_dir())
+        .map(PathBuf::from)
+        .or_else(|| resolve_ghost_directory(&ghost_name, &app_handle).ok())
+        .unwrap_or_else(|| PathBuf::from(format!("assets/ghost/{}", ghost_name)));
 
     let ghost_master_dir = ghost_dir.join("ghost").join("master");
 

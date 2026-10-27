@@ -107,6 +107,15 @@ pub async fn show_subchar_window(
     show_character_window(app_handle, scope_id, x, y, width, height).await
 }
 
+#[tauri::command]
+pub async fn sync_character_balloon(
+    app_handle: tauri::AppHandle,
+    state: tauri::State<'_, crate::common::AppState>,
+    scope_id: i32,
+) -> Result<(), String> {
+    super::balloon_window::sync_balloon_position_impl(&app_handle, &state, scope_id).await
+}
+
 /// 互換用: サブキャラクターウィンドウ非表示コマンド
 #[tauri::command]
 #[allow(unused_variables)]

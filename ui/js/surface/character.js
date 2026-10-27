@@ -75,6 +75,7 @@ function initCharacterWindow() {
 				event.clientY - startY,
 				origin,
 			);
+			void invoke("sync_character_balloon", { scopeId });
 		};
 		const stop = () => {
 			globalThis.removeEventListener("mousemove", move);

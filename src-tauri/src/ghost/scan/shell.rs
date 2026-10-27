@@ -61,6 +61,8 @@ pub fn scan_shells_from_ghost(ghost_dir: &Path) -> Vec<ShellInfo> {
                             || fg_color.is_some()
                             || bg_font_col.is_some()
                             || fg_font_col.is_some()
+                            || dis_font_col.is_some()
+                            || sep_col.is_some()
                             || bg_bmp.is_some()
                             || fg_bmp.is_some()
                             || side_bmp.is_some()

@@ -1,3 +1,7 @@
+import { getCurrentWindow } from "@tauri-apps/api/window";
+
+const currentWindow = getCurrentWindow();
+
 // 機能状態管理
 export const featureStates = {
 	transparency: false,
@@ -28,37 +32,31 @@ export function toggleTransparency() {
 	featureStates.transparency = !featureStates.transparency;
 	console.log(`透過表示: ${featureStates.transparency}`);
 	updateStatusDisplay();
-
-	if (featureStates.transparency) {
-		alert(
-			"透過表示を有効にしました\n\n将来的な実装:\n• ウィンドウ透過度の制御\n• 背景の透過処理\n• 透過度のアニメーション",
-		);
-	} else {
-		alert("透過表示を無効にしました");
-	}
+	adjustOpacity(featureStates.transparency ? 90 : 100);
 }
 
-export function adjustOpacity() {
-	const opacity = prompt("透過度を入力してください (30-100):", "90");
-	if (opacity && opacity >= 30 && opacity <= 100) {
-		console.log(`透過度を${opacity}%に設定`);
-		alert(
-			`透過度を${opacity}%に設定しました\n\n将来的な実装:\n• リアルタイム透過度変更\n• スライダーでの調整\n• プリセット保存`,
-		);
+export async function adjustOpacity(value) {
+	const input = value ?? prompt("透過度を入力してください (30-100):", "90");
+	const opacity = Number(input);
+	if (!Number.isFinite(opacity) || opacity < 30 || opacity > 100) return;
+	console.log(`透過度を${opacity}%に設定`);
+	try {
+		await currentWindow.setOpacity(opacity / 100);
+	} catch (error) {
+		console.error("ウィンドウ透過度の変更に失敗しました:", error);
 	}
 }
 
 // Always On Top機能
-export function toggleAlwaysOnTop() {
+export async function toggleAlwaysOnTop() {
 	featureStates.alwaysOnTop = !featureStates.alwaysOnTop;
 	console.log(`常に最前面: ${featureStates.alwaysOnTop}`);
 	updateStatusDisplay();
-
-	alert(
-		`常に最前面表示: ${
-			featureStates.alwaysOnTop ? "有効" : "無効"
-		}\n\n将来的な実装:\n• Tauri API連携\n• 最前面状態の管理\n• 例外アプリの設定`,
-	);
+	try {
+		await currentWindow.setAlwaysOnTop(featureStates.alwaysOnTop);
+	} catch (error) {
+		console.error("最前面表示の変更に失敗しました:", error);
+	}
 }
 
 export function configureTopmost() {
@@ -69,15 +67,15 @@ export function configureTopmost() {
 
 // ドラッグ移動
 export function enableDragMode() {
-	alert(
-		"ドラッグモード有効\n\n将来的な実装:\n• マウスイベントハンドリング\n• ウィンドウ位置の更新\n• 境界検証とスナップ機能",
-	);
+	currentWindow.startDragging().catch((error) => {
+		console.error("ウィンドウのドラッグ開始に失敗しました:", error);
+	});
 }
 
 export function resetPosition() {
-	alert(
-		"位置をリセットしました\n\n将来的な実装:\n• デフォルト位置への移動\n• アニメーション付き移動\n• 位置履歴の管理",
-	);
+	currentWindow.center().catch((error) => {
+		console.error("ウィンドウ位置のリセットに失敗しました:", error);
+	});
 }
 
 // システムトレイ

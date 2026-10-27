@@ -137,7 +137,14 @@ function _triggerSubmenuWindow(menuType, buttonEl) {
 				y: posY,
 				width: 220,
 				height: 320,
-			}).catch((e) => console.error("Failed to show submenu window:", e));
+			}).catch((e) => {
+				console.error("Failed to show submenu window:", e);
+				const wrapper = buttonEl.closest(".menu-item-wrapper");
+				if (wrapper) {
+					checkSubmenuFlip(wrapper);
+					wrapper.classList.add("open");
+				}
+			});
 		_triggerSubmenuWindow.lastRequest = null;
 	}
 }

@@ -28,7 +28,7 @@ let cachedBalloons = [];
 let currentBalloonTheme = null;
 
 document.addEventListener("mousedown", (event) => {
-  if (event.button !== 0 || !globalThis.__TAURI__) return;
+  if (event.button !== 0 || !isTauriAvailable()) return;
   if (event.target.closest(".menu-item")) return;
   startDraggingWindow();
 });
@@ -162,9 +162,9 @@ function renderContent() {
   } else if (currentSubmenuType === "tools") {
     const tools = [
       { id: "install", label: "📥 ファイル取り込み・導入..." },
-      { id: "scan", label: "📂 ゴーストフォルダ再スキャン" },
-      { id: "headline", label: "📰 ヘッドライン/ニュース" },
-      { id: "plugins", label: "🧩 プラグイン・拡張機能" },
+      { id: "open-ghost-folder", label: "📂 エクスプローラでフォルダを開く" },
+      { id: "explorer", label: "🗂 ゴーストエクスプローラ..." },
+      { id: "scan", label: "🔄 ゴーストフォルダ再スキャン" },
       { id: "debug", label: "🐛 デバッグログ" },
     ];
     tools.forEach((t) => {

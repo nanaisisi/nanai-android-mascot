@@ -143,7 +143,10 @@ pub fn run() {
                             .unwrap_or(false);
 
                         // メニューとサブメニューの双方が依然フォーカスを持っていない場合のみ非表示化
-                        if !menu_focused && !sub_focused {
+                        let state = app.state::<crate::common::AppState>();
+                        let is_dialog_open = *state.is_dialog_open.lock();
+
+                        if !menu_focused && !sub_focused && !is_dialog_open {
                             if let Some(m) = app.get_webview_window("menu_window")
                                 && m.is_visible().unwrap_or(false)
                             {

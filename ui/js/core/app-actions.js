@@ -337,6 +337,9 @@ export const actionMethods = {
    * @param {string | undefined} themeName
    */
   async setBalloonTheme(themeName) {
+    if (!themeName || themeName === this.currentBalloonTheme) {
+      return;
+    }
     this.currentBalloonTheme = themeName;
     localStorage.setItem("nanai_balloon_theme", themeName);
     document.documentElement.setAttribute("data-balloon-theme", themeName);

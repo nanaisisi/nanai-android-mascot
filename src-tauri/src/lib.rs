@@ -12,6 +12,18 @@ use tauri::menu::MenuBuilder;
 #[cfg(desktop)]
 use tauri::tray::{TrayIconBuilder, TrayIconEvent};
 
+macro_rules! println {
+    ($($arg:tt)*) => {
+        $crate::common::log_print($crate::common::LogLevel::Info, format_args!($($arg)*));
+    };
+}
+
+macro_rules! eprintln {
+    ($($arg:tt)*) => {
+        $crate::common::log_print($crate::common::LogLevel::Warn, format_args!($($arg)*));
+    };
+}
+
 mod commands;
 mod common;
 mod ghost;
@@ -23,6 +35,8 @@ use common::*;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    common::initialize_logging_from_args();
+
     let specta_builder = SpectaBuilder::<tauri::Wry>::new().commands(collect_commands![
         commands::window::test_command,
         commands::shiori::on_mouse_click,

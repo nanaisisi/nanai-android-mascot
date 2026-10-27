@@ -32,6 +32,7 @@
 
 ### 📐 設計・ロードマップ (`design/`)
 
+- **[ghost-loading-and-animation-policy.md](design/cache-and-async/ghost-loading-and-animation-policy.md)** - ゴースト読み込み・バナー・会話表示・サーフィス描画の負荷対策コンセプト
 - **[implementation-plan-and-spec.md](design/planning/implementation-plan-and-spec.md)** - 次期フェーズ実装計画 & 統合技術仕様書 (Phase 2+)
 - **[pending-issues-and-roadmap.md](design/planning/pending-issues-and-roadmap.md)** - 検討事項・仕様化ロードマップ（全体概要）
 - **[mockup-and-android-spec.md](design/ui/mockup-and-android-spec.md)** - UI/UX & モックアップ仕様書（PCシミュレーション・モバイル画面設計）

@@ -54,7 +54,7 @@ export async function playScript(player, script) {
 
 	// 独立バルーン同期用ヘルパー
 	// 同一ターン内（\_q のクイック描画など）の連続更新だけをまとめ、表示は遅延させない
-	let syncPendingScopes = new Set();
+	const syncPendingScopes = new Set();
 	let syncQueued = false;
 	const flushDesktopBalloon = () => {
 		syncQueued = false;

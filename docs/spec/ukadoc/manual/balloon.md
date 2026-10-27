@@ -3,8 +3,12 @@
 - **規格**: [manual/balloon.md](https://github.com/ukatech/ukadoc-spec/blob/main/manual/balloon.md)
 - **対応状況**: ⚠️ 一部対応
 
-## 突合結果
+項目ごとの突合は [balloon/README.md](balloon/README.md) に分割している。
 
-- `validrect.*` によるパディング調整: `ui/js/core/app-actions.js:247-251`
-- `wordwrappoint.x` による折り返し幅: `ui/js/core/app-actions.js:268-270`
-- 属性ごとの詳細は [descript/balloon](../descript/balloon) を参照 (多くが未実装)
+主な実装:
+
+- `descript.txt` の一部属性を独立バルーンへ反映
+- `balloons0.png` / `balloonk0.png` の 9-slice 表示
+- `\0` / `\1` のスコープ別バルーンウィンドウ
+
+未対応項目を含むため、個別ファイルの対応状況を参照すること。

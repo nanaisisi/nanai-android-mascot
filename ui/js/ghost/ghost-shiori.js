@@ -123,9 +123,10 @@ export const ghostShioriMethods = {
 			const ghostId = this.app.ghostId || "main";
 
 			// Rust 解析済みレスポンス（ukadoc-spec 準拠 ShioriRequest/Response モデル）に一本化
+			// Reference は SHIORI/3.0 プロトコル上すべて文字列のため文字列化する
 			const typed = await invoke("send_shiori_event_typed", {
 				event: eventName,
-				args,
+				args: (args ?? []).map((value) => String(value)),
 				ghostId,
 			});
 			const parsed = fromRustResponse(typed);

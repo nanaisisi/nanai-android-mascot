@@ -193,6 +193,75 @@
 	font-size: 0.8125rem;
 }
 
+.explorer-toolbar {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+.explorer-toolbar input {
+	flex: 1;
+	min-width: 120px;
+}
+
+.explorer-table-wrap {
+	max-height: 360px;
+	overflow: auto;
+	border: 1px solid #555;
+	background: #202020;
+}
+
+.explorer-table {
+	border-collapse: collapse;
+	width: max-content;
+	min-width: 100%;
+	font-size: 12px;
+	white-space: nowrap;
+}
+
+.explorer-table th,
+.explorer-table td {
+	padding: 4px 7px;
+	border-right: 1px solid #555;
+	border-bottom: 1px solid #444;
+	text-align: left;
+	max-width: 240px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.explorer-table th {
+	position: sticky;
+	top: 0;
+	background: #303030;
+	cursor: pointer;
+	z-index: 1;
+}
+
+.explorer-table tbody tr {
+	cursor: pointer;
+}
+
+.explorer-table tbody tr:hover,
+.explorer-table tbody tr.is-selected {
+	background: #185da8;
+	color: #fff;
+}
+
+.explorer-footer {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	margin-top: 10px;
+}
+
+.explorer-footer span {
+	flex: 1;
+	color: #777;
+	font-size: 12px;
+}
+
 .ghost-item,
 .balloon-item {
 	padding: 0.5rem 0.75rem;

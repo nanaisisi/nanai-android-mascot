@@ -2,6 +2,31 @@
  * ゴースト・バルーン・導入管理用 HTML テンプレート
  */
 export const ghostTemplates = {
+	"explorer-modal-content": `
+    <h2>🗂 エクスプローラ</h2>
+    <div class="explorer-toolbar">
+      <button type="button" id="explorer-refresh-btn">再読み込み</button>
+      <input type="search" id="explorer-search" placeholder="名前・作者名を検索" />
+      <button type="button" id="explorer-search-next-btn">次を検索</button>
+    </div>
+    <div class="explorer-table-wrap">
+      <table class="explorer-table">
+        <thead><tr>
+          <th data-sort="name">名前</th><th data-sort="craftman">作者名</th>
+          <th data-sort="path">パス</th><th>グループ</th>
+          <th data-sort="installDate">インストール日時</th><th data-sort="updateDate">更新日時</th>
+          <th>更新結果</th><th data-sort="sakura_name">¥0名</th><th data-sort="kero_name">¥1名</th>
+        </tr></thead>
+        <tbody id="explorer-rows"></tbody>
+      </table>
+    </div>
+    <div class="explorer-footer">
+      <span id="explorer-status"></span>
+      <button type="button" id="explorer-close-btn">閉じる</button>
+      <button type="button" class="primary" id="explorer-switch-btn">切り替え</button>
+    </div>
+  `,
+
 	"ghost-modal-content": `
     <h2>👻 ゴースト管理</h2>
     <div class="form-section">

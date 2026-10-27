@@ -65,6 +65,19 @@ cargo tauri build
 `cargo run --quiet` は Cargo の出力だけを抑制します。アプリへ渡す場合は
 `cargo run -- --quiet` のように `--` の後ろへ指定してください。
 
+### ゴーストのネットワーク更新 (Windows)
+
+メニューの「ネットワーク更新」、または `U` キーから、現在のゴーストに設定された
+`homeurl` を使って更新できます。更新情報は `updates2.dau` を優先し、取得できない
+場合は `updates.txt` にフォールバックします。各ファイルは定義された MD5 と照合して
+からゴーストの実フォルダーへ保存されます。
+
+更新元のゴーストには、`ghost/master/descript.txt` またはルートの `descript.txt` に
+HTTP(S) の `homeurl` と、更新対象を記載した `updates2.dau` / `updates.txt` が必要です。
+更新チェックのみを行う場合はメニューの「更新確認」を使用できます。更新処理中は
+`OnUpdateBegin`、`OnUpdateReady`、`OnUpdateComplete` / `OnUpdateFailure` などの
+SHIORI イベントも通知されます。
+
 ### ビルド & 実行 (Android)
 
 ```bash

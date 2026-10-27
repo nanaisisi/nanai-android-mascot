@@ -133,9 +133,9 @@ export function parseSurfacesTxt(text) {
 					elements[s].push({ type, file, x, y });
 				});
 			}
-		} else if (trimmed.includes(".interval,")) {
-			// animation[ID].interval,[interval]
-			const match = trimmed.match(/^animation(\d+)\.interval,\s*(.+)$/);
+		} else if (/^(?:animation\d+\.|\d+)interval,/.test(trimmed)) {
+			// SERIKO/2 animation[ID].interval / SERIKO/1 [ID]interval
+			const match = trimmed.match(/^(?:animation)?(\d+)\.?interval,\s*(.+)$/);
 			if (match) {
 				const animId = Number.parseInt(match[1], 10);
 				const interval = match[2].trim();
@@ -150,18 +150,21 @@ export function parseSurfacesTxt(text) {
 					}
 				});
 			}
-		} else if (trimmed.includes(".pattern")) {
-			// animation[ID].pattern[P],[surface],[wait],[type],[x],[y]
-			const match = trimmed.match(/^animation(\d+)\.pattern\d*,\s*(.+)$/);
+		} else if (/^(?:animation\d+\.|\d+)pattern\d+,/.test(trimmed)) {
+			// SERIKO/2: animation[ID].pattern[P],method,surface,wait,x,y
+			// SERIKO/1: [ID]pattern[P],surface,wait,method,x,y
+			const match = trimmed.match(/^(?:animation)?(\d+)\.?(?:pattern)(\d+),\s*(.+)$/);
 			if (match) {
 				const animId = Number.parseInt(match[1], 10);
-				const pParts = match[2].split(",");
-				if (pParts.length >= 2) {
-					const patSurface = pParts[0].trim();
-					const wait = Number.parseInt(pParts[1], 10) || 100;
-					const type = pParts[2] ? pParts[2].trim().toLowerCase() : "overlay";
-					const x = pParts[3] ? Number.parseInt(pParts[3], 10) || 0 : 0;
-					const y = pParts[4] ? Number.parseInt(pParts[4], 10) || 0 : 0;
+				const index = Number.parseInt(match[2], 10);
+				const parts = match[3].split(",");
+				if (parts.length >= 3) {
+					const legacy = !trimmed.startsWith("animation");
+					const surface = (legacy ? parts[0] : parts[1]).trim();
+					const wait = Number.parseInt(legacy ? parts[1] : parts[2], 10);
+					const type = (legacy ? parts[2] : parts[0]).trim().toLowerCase();
+					const x = Number.parseInt(parts[3], 10) || 0;
+					const y = Number.parseInt(parts[4], 10) || 0;
 
 					currentSurfaces.forEach((s) => {
 						if (!animations[s]) animations[s] = [];
@@ -170,12 +173,19 @@ export function parseSurfacesTxt(text) {
 							anim = { id: animId, interval: "sometimes", patterns: [] };
 							animations[s].push(anim);
 						}
-						anim.patterns.push({ surface: patSurface, wait, type, x, y });
+						anim.patterns.push({ surface, wait: Number.isNaN(wait) ? 0 : wait * (legacy ? 10 : 1), type, x, y, index });
 					});
 				}
 			}
 		}
 	});
 
+	for (const animList of Object.values(animations)) {
+		for (const anim of animList) {
+			anim.patterns = anim.patterns
+				.sort((a, b) => a.index - b.index)
+				.map(({ index, ...pattern }) => pattern);
+		}
+	}
 	return { collisions, elements, animations };
 }

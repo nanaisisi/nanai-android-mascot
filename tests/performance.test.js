@@ -20,12 +20,14 @@ test("talk animation does not start overlapping sequences per scope", async () =
 	const animation = new SurfaceAnimationManager(manager);
 	animation.onCharSpoken(0);
 	animation.onCharSpoken(0);
+	await new Promise((r) => setTimeout(r, 20));
 	assert.equal(calls, 1);
 	pending.resolve();
 	await new Promise((r) => setTimeout(r, 80));
 	const before = calls;
 	animation.onCharSpoken(0);
-	assert.equal(calls, before + 1);
+	await new Promise((r) => setTimeout(r, 20));
+	assert.equal(calls, before + 2); // 新しい口パク 1 コマ + ベース復帰
 });
 
 test("animation frame waits for surface composition before advancing", async () => {

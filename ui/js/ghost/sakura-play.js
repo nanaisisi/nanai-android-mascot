@@ -37,14 +37,20 @@ export async function playScript(player, script) {
 		if (isTauriAvailable()) {
 			shownScopes.add(0);
 			const winPromises = [
-				invoke("show_balloon_window", { scopeId: 0 }).catch(() => {}),
+				invoke("show_balloon_window", {
+					scopeId: 0,
+					theme: app.currentBalloonTheme,
+				}).catch(() => {}),
 			];
 			// スクリプト内にスコープ1（\1 / \u）以降の発話・選択肢が含まれているか判定
 			const hasKero = tokens.some((t) => t.type === "scope" && t.value >= 1);
 			if (hasKero) {
 				shownScopes.add(1);
 				winPromises.push(
-					invoke("show_balloon_window", { scopeId: 1 }).catch(() => {}),
+					invoke("show_balloon_window", {
+						scopeId: 1,
+						theme: app.currentBalloonTheme,
+					}).catch(() => {}),
 				);
 			}
 			await Promise.all(winPromises);
@@ -112,7 +118,10 @@ export async function playScript(player, script) {
 					currentBalloonText = keroText || sakuraText;
 					if (isTauriAvailable() && hasTextContent && !shownScopes.has(1)) {
 						shownScopes.add(1);
-						invoke("show_balloon_window", { scopeId: 1 }).catch(() => {});
+						invoke("show_balloon_window", {
+							scopeId: 1,
+							theme: app.currentBalloonTheme,
+						}).catch(() => {});
 					}
 				} else {
 					app.surfaceManager?.onTalkEnd(1);
@@ -131,6 +140,7 @@ export async function playScript(player, script) {
 						shownScopes.add(player.currentScope);
 						invoke("show_balloon_window", {
 							scopeId: player.currentScope,
+							theme: app.currentBalloonTheme,
 						}).catch(() => {});
 					}
 				}

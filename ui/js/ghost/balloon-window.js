@@ -5,6 +5,8 @@ import { invoke } from "../core/tauri-helper.js";
 
 const urlParams = new URLSearchParams(globalThis.location.search);
 const scopeId = parseInt(urlParams.get("scope") || "0", 10);
+let appliedTheme = null;
+let applyingTheme = null;
 
 function setupInteractiveElements(balloonText, emitFn) {
 	if (!balloonText) return;
@@ -39,6 +41,9 @@ function setupInteractiveElements(balloonText, emitFn) {
  */
 async function applyBalloonDescript(theme) {
 	if (!globalThis.__TAURI__) return;
+	if (appliedTheme === theme) return;
+	if (applyingTheme === theme) return;
+	applyingTheme = theme;
 	try {
 		const props = await invoke("balloon_manifest", { name: theme });
 		if (!props || typeof props !== "object") return;
@@ -113,8 +118,11 @@ async function applyBalloonDescript(theme) {
 			document.body.style.borderStyle = "solid";
 			document.body.style.borderWidth = "0";
 		}
+		appliedTheme = theme;
 	} catch (_e) {
 		// スキン descript 未定義（CSS テーマのみ）の場合は無視
+	} finally {
+		if (applyingTheme === theme) applyingTheme = null;
 	}
 }
 
@@ -123,7 +131,10 @@ function initBalloonWindow() {
 	const _balloonText = document.getElementById("balloon-text");
 
 	// テーマの適用
-	const savedTheme = localStorage.getItem("nanai_balloon_theme") || "default";
+	const savedTheme =
+		urlParams.get("theme") ||
+		localStorage.getItem("nanai_balloon_theme") ||
+		"default";
 	document.documentElement.setAttribute("data-balloon-theme", savedTheme);
 	applyBalloonDescript(savedTheme);
 

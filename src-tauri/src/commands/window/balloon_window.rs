@@ -4,6 +4,7 @@
 pub async fn show_balloon_window(
     app_handle: tauri::AppHandle,
     scope_id: i32,
+    theme: Option<String>,
     x: Option<f64>,
     y: Option<f64>,
     width: Option<f64>,
@@ -51,10 +52,16 @@ pub async fn show_balloon_window(
             let (target_x, target_y) = get_pos();
 
             let title = format!("Nanai Mascot - Balloon {}", scope_id);
+            let theme_query = theme
+                .filter(|value| !value.is_empty())
+                .map(|value| format!("&theme={value}"))
+                .unwrap_or_default();
             let balloon_win = tauri::WebviewWindowBuilder::new(
                 &app_handle,
                 &label,
-                tauri::WebviewUrl::App(format!("balloon.html?scope={}", scope_id).into()),
+                tauri::WebviewUrl::App(
+                    format!("balloon.html?scope={scope_id}{theme_query}").into(),
+                ),
             )
             .title(title)
             .inner_size(win_width, win_height)

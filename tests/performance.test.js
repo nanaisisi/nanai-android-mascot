@@ -4,7 +4,9 @@ import { SurfaceAnimationManager } from "../ui/js/surface/surface-animation-mana
 
 const deferred = () => {
 	let resolve;
-	const promise = new Promise((r) => { resolve = r; });
+	const promise = new Promise((r) => {
+		resolve = r;
+	});
 	return { promise, resolve };
 };
 
@@ -12,10 +14,19 @@ test("talk animation does not start overlapping sequences per scope", async () =
 	const pending = deferred();
 	let calls = 0;
 	const manager = {
-		animations: { 0: [{ id: 1, interval: "talk,1", patterns: [{ surface: 1, wait: 1 }] }] },
+		animations: {
+			0: [{ id: 1, interval: "talk,1", patterns: [{ surface: 1, wait: 1 }] }],
+		},
 		currentSurfaceIdFor: () => 0,
 		resolveSurfaceNumber: (id) => id,
-		app: { ghostController: { updateSurface: async () => { calls++; await pending.promise; } } },
+		app: {
+			ghostController: {
+				updateSurface: async () => {
+					calls++;
+					await pending.promise;
+				},
+			},
+		},
 	};
 	const animation = new SurfaceAnimationManager(manager);
 	animation.onCharSpoken(0);
@@ -36,13 +47,21 @@ test("animation frame waits for surface composition before advancing", async () 
 	const manager = {
 		currentSurfaceIdFor: () => 0,
 		resolveSurfaceNumber: (id) => id,
-		app: { ghostController: { updateSurface: async (...args) => {
-			calls.push(args);
-			if (args[2]) await pending.promise;
-		} } },
+		app: {
+			ghostController: {
+				updateSurface: async (...args) => {
+					calls.push(args);
+					if (args[2]) await pending.promise;
+				},
+			},
+		},
 	};
 	const animation = new SurfaceAnimationManager(manager);
-	const playing = animation.playAnimationPatterns({ patterns: [{ surface: 1, wait: 1 }] }, 0, 0);
+	const playing = animation.playAnimationPatterns(
+		{ patterns: [{ surface: 1, wait: 1 }] },
+		0,
+		0,
+	);
 	await new Promise((r) => setTimeout(r, 80));
 	assert.equal(calls.length, 1);
 	pending.resolve();

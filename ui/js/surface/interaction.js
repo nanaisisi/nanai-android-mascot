@@ -37,7 +37,7 @@ export class InteractionManager {
 	 * @param {number} clientY
 	 */
 	isPixelTransparent(img, clientX, clientY) {
-		if (!img || img.tagName !== "IMG") return false;
+		if (img?.tagName !== "IMG") return false;
 		try {
 			const rect = img.getBoundingClientRect();
 			// 画像の実際の表示サイズと解像度に合わせてスケール
@@ -45,8 +45,9 @@ export class InteractionManager {
 			const scaleY = img.naturalHeight / rect.height;
 			const x = Math.floor((clientX - rect.left) * scaleX);
 			const y = Math.floor((clientY - rect.top) * scaleY);
-			
-			if (x < 0 || y < 0 || x >= img.naturalWidth || y >= img.naturalHeight) return true;
+
+			if (x < 0 || y < 0 || x >= img.naturalWidth || y >= img.naturalHeight)
+				return true;
 
 			const canvas = document.createElement("canvas");
 			canvas.width = 1;

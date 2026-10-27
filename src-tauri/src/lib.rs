@@ -144,15 +144,15 @@ pub fn run() {
 
                         // メニューとサブメニューの双方が依然フォーカスを持っていない場合のみ非表示化
                         if !menu_focused && !sub_focused {
-                            if let Some(m) = app.get_webview_window("menu_window") {
-                                if m.is_visible().unwrap_or(false) {
-                                    let _ = m.hide();
-                                }
+                            if let Some(m) = app.get_webview_window("menu_window")
+                                && m.is_visible().unwrap_or(false)
+                            {
+                                let _ = m.hide();
                             }
-                            if let Some(s) = app.get_webview_window("submenu_window") {
-                                if s.is_visible().unwrap_or(false) {
-                                    let _ = s.hide();
-                                }
+                            if let Some(s) = app.get_webview_window("submenu_window")
+                                && s.is_visible().unwrap_or(false)
+                            {
+                                let _ = s.hide();
                             }
                         }
                     });

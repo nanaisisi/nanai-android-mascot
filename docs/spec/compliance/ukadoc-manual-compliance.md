@@ -14,17 +14,16 @@
 
 ## 1. 総合サマリー & 対応マトリクス
 
-| 分類 / ページ | 対象仕様 | 対応状況 | Nanai 実装・対応方針 |
-| :--- | :--- | :---: | :--- |
-| `manual/balloon.md` | バルーンの構成・仕様 | ✅ 対応済 | `descript.txt` 属性解釈、フォント/余白/折り返し/原点設定、スコープ別表示 |
-| `manual/directory.md` | ディレクトリ構成規格 | ✅ 対応済 | VFS (仮想ファイルシステム) による `ghost/`, `shell/`, `balloon/` の標準配置 |
-| `manual/ghost.md` | ゴーストの構成・仕様 | ✅ 対応済 | `ghost/master/` 認識、SHIORI 連携 (WASM/Rust/DLL)、基本イベント発火 |
-| `manual/install.md` | NAR・ZIP アーカイブ導入 | ✅ 対応済 | ドラッグ＆ドロップ、`install.txt` (`type,ghost/shell/balloon/plugin`) 仕分け解凍 |
-| `manual/owner-draw-menu.md` | オーナードロー右クリックメニュー | ✅ 対応済 | iframe 隔離サンドボックス、シェル連動 CSS テーマ、動的メニューツリー構築 |
-| `manual/shell.md` | シェル・サーフィス構成 | ✅ 対応済 | `shell/master/`、`surfaces.txt` (SERIKO/MAYUNA)、マルチレイヤ合成レンダラ |
-| `manual/translator.md` | トランスレータ仕様 | ⚠️ 部分対応 | さくらスクリプトプレイヤ内トランスレートフック基盤、スクリプトフィルタ |
-| `manual/update.md` | ネットワーク更新仕様 | ✅ 対応済 | `updates2.dau` / `update.dau` 解析、HTTP MD5 差分ダウンロード、自動置換 |
-
+| 分類 / ページ               | 対象仕様                         |  対応状況   | Nanai 実装・対応方針                                                             |
+| :-------------------------- | :------------------------------- | :---------: | :------------------------------------------------------------------------------- |
+| `manual/balloon.md`         | バルーンの構成・仕様             |  ✅ 対応済  | `descript.txt` 属性解釈、フォント/余白/折り返し/原点設定、スコープ別表示         |
+| `manual/directory.md`       | ディレクトリ構成規格             |  ✅ 対応済  | VFS (仮想ファイルシステム) による `ghost/`, `shell/`, `balloon/` の標準配置      |
+| `manual/ghost.md`           | ゴーストの構成・仕様             |  ✅ 対応済  | `ghost/master/` 認識、SHIORI 連携 (WASM/Rust/DLL)、基本イベント発火              |
+| `manual/install.md`         | NAR・ZIP アーカイブ導入          |  ✅ 対応済  | ドラッグ＆ドロップ、`install.txt` (`type,ghost/shell/balloon/plugin`) 仕分け解凍 |
+| `manual/owner-draw-menu.md` | オーナードロー右クリックメニュー |  ✅ 対応済  | iframe 隔離サンドボックス、シェル連動 CSS テーマ、動的メニューツリー構築         |
+| `manual/shell.md`           | シェル・サーフィス構成           |  ✅ 対応済  | `shell/master/`、`surfaces.txt` (SERIKO/MAYUNA)、マルチレイヤ合成レンダラ        |
+| `manual/translator.md`      | トランスレータ仕様               | ⚠️ 部分対応 | さくらスクリプトプレイヤ内トランスレートフック基盤、スクリプトフィルタ           |
+| `manual/update.md`          | ネットワーク更新仕様             |  ✅ 対応済  | `updates2.dau` / `update.dau` 解析、HTTP MD5 差分ダウンロード、自動置換          |
 - **全8ページ網羅率**:
   - 対応済 (✅): **7 (87.5%)**
   - 部分対応 (⚠️): **1 (12.5%)**

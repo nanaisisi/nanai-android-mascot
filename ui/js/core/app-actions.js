@@ -211,7 +211,10 @@ export const actionMethods = {
 
 		// フォントファミリ (font.name)
 		if (props["font.name"]) {
-			root.style.setProperty("--balloon-font-family", `"${props["font.name"]}", Meiryo, sans-serif`);
+			root.style.setProperty(
+				"--balloon-font-family",
+				`"${props["font.name"]}", Meiryo, sans-serif`,
+			);
 		}
 
 		// フォントサイズ (font.height)
@@ -238,10 +241,16 @@ export const actionMethods = {
 
 		// リンク・選択肢色 (cursor.font.color / font.color.link)
 		if (props["cursor.font.color"]) {
-			root.style.setProperty("--balloon-highlight-bg", props["cursor.font.color"]);
+			root.style.setProperty(
+				"--balloon-highlight-bg",
+				props["cursor.font.color"],
+			);
 		}
 		if (props["cursor.color.font"]) {
-			root.style.setProperty("--balloon-highlight-text", props["cursor.color.font"]);
+			root.style.setProperty(
+				"--balloon-highlight-text",
+				props["cursor.color.font"],
+			);
 		}
 
 		// 有効テキスト領域 (validrect.left, top, right, bottom) によるパディング調整
@@ -314,7 +323,9 @@ export const actionMethods = {
 		try {
 			if (isTauriAvailable()) {
 				// Tauri バックエンド経由のメールチェック (存在する場合)
-				const result = await invoke("check_email", { account: accountName }).catch(() => null);
+				const result = await invoke("check_email", {
+					account: accountName,
+				}).catch(() => null);
 				if (result && typeof result === "object") {
 					const count = Number(result.count || 0);
 					const size = Number(result.size || 0);

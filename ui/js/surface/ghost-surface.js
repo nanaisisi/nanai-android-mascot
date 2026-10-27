@@ -129,7 +129,9 @@ export const ghostSurfaceMethods = {
 								resolveId,
 							).catch(() => null);
 						} else {
-							layerSrc = convertFileSrc(`${ghostPath}/shell/${shell}/${fileName}`);
+							layerSrc = convertFileSrc(
+								`${ghostPath}/shell/${shell}/${fileName}`,
+							);
 							layerPnaSrc = convertFileSrc(
 								`${ghostPath}/shell/${shell}/${pnaFileName}`,
 							);
@@ -250,7 +252,9 @@ export const ghostSurfaceMethods = {
 			this._surfaceAssetCache.set(key, pending);
 			// ゴースト内で使った画像だけを保持し、長時間稼働でも無制限に増やさない
 			if (this._surfaceAssetCache.size > 64) {
-				this._surfaceAssetCache.delete(this._surfaceAssetCache.keys().next().value);
+				this._surfaceAssetCache.delete(
+					this._surfaceAssetCache.keys().next().value,
+				);
 			}
 		}
 		return pending;

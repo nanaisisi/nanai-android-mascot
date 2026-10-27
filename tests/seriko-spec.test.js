@@ -8,14 +8,24 @@ function animationFixture() {
 	const manager = {
 		currentSurfaceIdFor: () => 0,
 		resolveSurfaceNumber: (id) => id,
-		app: { ghostController: { updateSurface: async (...args) => { frames.push(args); } } },
+		app: {
+			ghostController: {
+				updateSurface: async (...args) => {
+					frames.push(args);
+				},
+			},
+		},
 	};
 	return { animation: new SurfaceAnimationManager(manager), frames };
 }
 
 test("pattern wait elapses before its frame is drawn", async () => {
 	const { animation, frames } = animationFixture();
-	const playing = animation.playAnimationPatterns({ id: 1, patterns: [{ surface: 101, wait: 100 }] }, 0, 0);
+	const playing = animation.playAnimationPatterns(
+		{ id: 1, patterns: [{ surface: 101, wait: 100 }] },
+		0,
+		0,
+	);
 	await new Promise((resolve) => setTimeout(resolve, 20));
 	assert.equal(frames.length, 0);
 	await playing;
@@ -24,22 +34,46 @@ test("pattern wait elapses before its frame is drawn", async () => {
 
 test("surface -1 ends this animation without drawing later patterns", async () => {
 	const { animation, frames } = animationFixture();
-	await animation.playAnimationPatterns({ id: 1, patterns: [
-		{ surface: 101, wait: 0 }, { surface: -1, wait: 0 }, { surface: 102, wait: 0 },
-	] }, 0, 0);
+	await animation.playAnimationPatterns(
+		{
+			id: 1,
+			patterns: [
+				{ surface: 101, wait: 0 },
+				{ surface: -1, wait: 0 },
+				{ surface: 102, wait: 0 },
+			],
+		},
+		0,
+		0,
+	);
 	assert.equal(frames.length, 2);
 	assert.deepEqual(frames[1], [0, 0, []]);
 });
 
 test("surface -2 stops other running animations in the same scope", async () => {
 	const { animation, frames } = animationFixture();
-	const blink = animation.playAnimationPatterns({ id: 1, patterns: [
-		{ surface: 101, wait: 0 }, { surface: 102, wait: 80 },
-	] }, 0, 0);
+	const blink = animation.playAnimationPatterns(
+		{
+			id: 1,
+			patterns: [
+				{ surface: 101, wait: 0 },
+				{ surface: 102, wait: 80 },
+			],
+		},
+		0,
+		0,
+	);
 	await new Promise((resolve) => setTimeout(resolve, 10));
-	await animation.playAnimationPatterns({ id: 2, patterns: [{ surface: -2, wait: 0 }] }, 0, 0);
+	await animation.playAnimationPatterns(
+		{ id: 2, patterns: [{ surface: -2, wait: 0 }] },
+		0,
+		0,
+	);
 	await blink;
-	assert.equal(frames.some(([, , layers]) => layers?.[0]?.file?.includes("102")), false);
+	assert.equal(
+		frames.some(([, , layers]) => layers?.[0]?.file?.includes("102")),
+		false,
+	);
 });
 
 function intervalFixture(animations, surfaceId = 0) {
@@ -92,9 +126,12 @@ test("combined runonce+random interval is not treated as sometimes", async () =>
 });
 
 test("SERIKO/1 pattern uses the legacy 10 ms unit", () => {
-	const { animations } = parseSurfacesTxt(`surface0\n{\n1interval,never\n1pattern0,101,70,overlay,200,100\n}`);
+	const { animations } = parseSurfacesTxt(
+		`surface0\n{\n1interval,never\n1pattern0,101,70,overlay,200,100\n}`,
+	);
 	assert.deepEqual(animations["0"][0], {
-		id: 1, interval: "never",
+		id: 1,
+		interval: "never",
 		patterns: [{ surface: "101", wait: 700, type: "overlay", x: 200, y: 100 }],
 	});
 });

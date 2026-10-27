@@ -161,7 +161,11 @@ async function drawLayer(
 			const savedOp = ctx.globalCompositeOperation;
 			const method = (type || "overlay").toLowerCase();
 
-			if (method === "replace" || method === "overlayfast" || method === "fast") {
+			if (
+				method === "replace" ||
+				method === "overlayfast" ||
+				method === "fast"
+			) {
 				ctx.clearRect(
 					x,
 					y,

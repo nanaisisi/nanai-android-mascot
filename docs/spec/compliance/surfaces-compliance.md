@@ -21,19 +21,19 @@ Nanai Android Mascot における「サーフィス定義（`surfaces.txt`）」
 
 ## 2. 合成・定義対応詳細
 
-| 項目 / 構文                     | 対象仕様                               |  対応状況   | 動作仕様・実装詳細                                                 |
-| :------------------------------ | :------------------------------------- | :---------: | :----------------------------------------------------------------- |
-| **ベース画像描画**              | `surface0.png` 等の基準描画            |  ✅ 対応済  | 透明度（アルファチャンネル）を維持した Canvas 2D 描画              |
-| **差分合成 (element)**          | `element[ID],overlay/replace,file,x,y` |  ✅ 対応済  | 表情差分パーツ（目・口・眉等）の座標指定レイヤー合成・パース対応   |
-| **高速合成 (overlayfast)**      | `element[ID],overlayfast/fast,file,x,y`|  ✅ 対応済  | パーツ領域の直下ピクセルをクリアした上で高速重畳合成               |
-| **ブレンド合成 (blend)**        | `blend-multiply`, `blend-screen` 等    |  ✅ 対応済  | Canvas 2D `globalCompositeOperation` による乗算・スクリーン・覆い焼き合成 |
-| **当たり判定 (collision)**      | `collision[ID],X1,Y1,X2,Y2,Name`       |  ✅ 対応済  | 矩形判定領域のパース、表示倍率を逆算した座標変換、部位名取得       |
-| **円形/楕円判定 (collisionex)** | `collisionex[ID],Name,circle/ellipse`  |  ✅ 対応済  | circle/ellipse を型付き形状（`CollisionShape::Circle`/`Ellipse`）として点内包判定、rect/polygon も維持 |
-| **アニメーション (animation)**  | `animation[ID].interval` 等            |  ✅ 対応済  | interval 全種の再生基盤、SERIKO pattern 差分合成（overlay/replace）、口パク |
-| **着せ替え (bind)**             | `bind` オプションによる着脱            |  ✅ 対応済  | bindgroup メニュー（mustselect 排他含む）、bind レイヤー常時合成          |
-| **PNA 透過マスク**              | 24bit BMP + 8bit グレースケールマスク  |  ✅ 対応済  | 24bit BMP読込および 8bit PNA（白255/黒0）をアルファ値として合成    |
-| **サーフィス別名 (alias)**      | `surface.alias` 定義                   |  ✅ 対応済  | 文字列別名から実サーフィス番号への辞書マッピング解決               |
-| **基準点定義 (point)**          | `point.basepos`, `point.center` 等     |  ✅ 対応済  | 中心点・着弾点・吹き出し接続基準点のパース・座標補正               |
+| 項目 / 構文                     | 対象仕様                                | 対応状況  | 動作仕様・実装詳細                                                                                     |
+| :------------------------------ | :-------------------------------------- | :-------: | :----------------------------------------------------------------------------------------------------- |
+| **ベース画像描画**              | `surface0.png` 等の基準描画             | ✅ 対応済 | 透明度（アルファチャンネル）を維持した Canvas 2D 描画                                                  |
+| **差分合成 (element)**          | `element[ID],overlay/replace,file,x,y`  | ✅ 対応済 | 表情差分パーツ（目・口・眉等）の座標指定レイヤー合成・パース対応                                       |
+| **高速合成 (overlayfast)**      | `element[ID],overlayfast/fast,file,x,y` | ✅ 対応済 | パーツ領域の直下ピクセルをクリアした上で高速重畳合成                                                   |
+| **ブレンド合成 (blend)**        | `blend-multiply`, `blend-screen` 等     | ✅ 対応済 | Canvas 2D `globalCompositeOperation` による乗算・スクリーン・覆い焼き合成                              |
+| **当たり判定 (collision)**      | `collision[ID],X1,Y1,X2,Y2,Name`        | ✅ 対応済 | 矩形判定領域のパース、表示倍率を逆算した座標変換、部位名取得                                           |
+| **円形/楕円判定 (collisionex)** | `collisionex[ID],Name,circle/ellipse`   | ✅ 対応済 | circle/ellipse を型付き形状（`CollisionShape::Circle`/`Ellipse`）として点内包判定、rect/polygon も維持 |
+| **アニメーション (animation)**  | `animation[ID].interval` 等             | ✅ 対応済 | interval 全種の再生基盤、SERIKO pattern 差分合成（overlay/replace）、口パク                            |
+| **着せ替え (bind)**             | `bind` オプションによる着脱             | ✅ 対応済 | bindgroup メニュー（mustselect 排他含む）、bind レイヤー常時合成                                       |
+| **PNA 透過マスク**              | 24bit BMP + 8bit グレースケールマスク   | ✅ 対応済 | 24bit BMP読込および 8bit PNA（白255/黒0）をアルファ値として合成                                        |
+| **サーフィス別名 (alias)**      | `surface.alias` 定義                    | ✅ 対応済 | 文字列別名から実サーフィス番号への辞書マッピング解決                                                   |
+| **基準点定義 (point)**          | `point.basepos`, `point.center` 等      | ✅ 対応済 | 中心点・着弾点・吹き出し接続基準点のパース・座標補正                                                   |
 
 ---
 

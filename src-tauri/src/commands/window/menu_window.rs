@@ -9,7 +9,10 @@ pub async fn show_menu_window(
     y: f64,
     scope: Option<i32>,
 ) -> Result<(), String> {
-    println!("👉 show_menu_window called: x={}, y={}, scope={:?}", x, y, scope);
+    println!(
+        "👉 show_menu_window called: x={}, y={}, scope={:?}",
+        x, y, scope
+    );
     #[cfg(desktop)]
     {
         use tauri::Manager;

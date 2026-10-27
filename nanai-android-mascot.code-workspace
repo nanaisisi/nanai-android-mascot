@@ -1,52 +1,53 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
-	],
-	"settings": {
-		"markuplint.ignoreFiles": [
-			"cpp/**",
-			"target/**",
-			"target_tauri/**",
-			"dist/**",
-			"**/cpp/**"
-		],
-		"html.validate.scripts": false,
-		"html.validate.styles": false,
-		"files.watcherExclude": {
-			"**/cpp/**": true,
-			"**/target/**": true,
-			"**/target_tauri/**": true
-		}
-	},
-	"extensions": {
-		"recommendations": [
-			"vadimcn.vscode-lldb",
-			"biomejs.biome",
-			"jeff-hykin.better-cpp-syntax",
-			"formulahendry.auto-rename-tag",
-			"formulahendry.auto-close-tag",
-			"adelphes.android-dev-ext",
-			"ms-vscode.cpptools",
-			"ms-vscode.cpptools-extension-pack",
-			"llvm-vs-code-extensions.vscode-clangd",
-			"twxs.cmake",
-			"josetr.cmake-language-support-vscode",
-			"ms-vscode.cmake-tools",
-			"ryanluker.vscode-coverage-gutters",
-			"firefox-devtools.vscode-firefox-debug",
-			"denoland.vscode-deno",
-			"dbaeumer.vscode-eslint",
-			"tamasfe.even-better-toml",
-			"ms-vscode.vscode-js-profile-flame",
-			"ecmel.vscode-html-css",
-			"wix.vscode-import-cost",
-			"zignd.html-css-class-completion",
-			"xabikos.javascriptsnippets",
-			"ms-vscode.js-debug-nightly",
-			"kanadelab.surfaces",
-			"yusukehirao.vscode-markuplint"
-		]
-	}
+  "folders": [
+    {
+      "path": ".",
+    },
+  ],
+  "settings": {
+    "markuplint.ignoreFiles": [
+      "cpp/**",
+      "target/**",
+      "target_tauri/**",
+      "dist/**",
+      "**/cpp/**",
+    ],
+    "html.validate.scripts": false,
+    "html.validate.styles": false,
+    "files.watcherExclude": {
+      "**/cpp/**": true,
+      "**/target/**": true,
+      "**/target_tauri/**": true,
+    },
+    "dependi.rust.lockFileEnabled": true,
+  },
+  "extensions": {
+    "recommendations": [
+      "vadimcn.vscode-lldb",
+      "biomejs.biome",
+      "jeff-hykin.better-cpp-syntax",
+      "formulahendry.auto-rename-tag",
+      "formulahendry.auto-close-tag",
+      "adelphes.android-dev-ext",
+      "ms-vscode.cpptools",
+      "ms-vscode.cpptools-extension-pack",
+      "llvm-vs-code-extensions.vscode-clangd",
+      "twxs.cmake",
+      "josetr.cmake-language-support-vscode",
+      "ms-vscode.cmake-tools",
+      "ryanluker.vscode-coverage-gutters",
+      "firefox-devtools.vscode-firefox-debug",
+      "denoland.vscode-deno",
+      "dbaeumer.vscode-eslint",
+      "tamasfe.even-better-toml",
+      "ms-vscode.vscode-js-profile-flame",
+      "ecmel.vscode-html-css",
+      "wix.vscode-import-cost",
+      "zignd.html-css-class-completion",
+      "xabikos.javascriptsnippets",
+      "ms-vscode.js-debug-nightly",
+      "kanadelab.surfaces",
+      "yusukehirao.vscode-markuplint",
+    ],
+  },
 }

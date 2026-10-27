@@ -145,6 +145,53 @@ pub fn resolve_asset_path(
     Ok(normalize_path(&fallback))
 }
 
+/// 表示名とフォルダ名が異なるゴーストの実ディレクトリを解決する。
+pub fn resolve_ghost_directory(
+    ghost_name: &str,
+    app_handle: &tauri::AppHandle,
+) -> Result<PathBuf, String> {
+    let direct_candidates = [
+        format!("assets/ghost/{ghost_name}"),
+        format!("ghost/{ghost_name}"),
+    ];
+    for candidate in direct_candidates {
+        let resolved = resolve_asset_path(&candidate, app_handle)?;
+        if resolved.is_dir() {
+            return Ok(resolved);
+        }
+    }
+
+    let roots = ["assets/ghost", "ghost"];
+    for root in roots {
+        let resolved_root = resolve_asset_path(root, app_handle)?;
+        let Ok(entries) = std::fs::read_dir(&resolved_root) else {
+            continue;
+        };
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if !path.is_dir() {
+                continue;
+            }
+            let folder_name = entry.file_name().to_string_lossy().to_string();
+            if folder_name == ghost_name {
+                return Ok(path);
+            }
+            let descriptors = [
+                path.join("ghost").join("master").join("descript.txt"),
+                path.join("descript.txt"),
+                path.join("install.txt"),
+            ];
+            if descriptors.iter().filter_map(|p| crate::ghost::scan::read_descript_file(p))
+                .any(|meta| meta.get("name").is_some_and(|name| name == ghost_name))
+            {
+                return Ok(path);
+            }
+        }
+    }
+
+    Err(format!("Ghost directory not found: {ghost_name}"))
+}
+
 /// Windows の拡張プレフィックス (\\?\) を除去し、スラッシュを正規化
 pub fn clean_verbatim_path(path_str: &str) -> String {
     let mut s = path_str.to_string();

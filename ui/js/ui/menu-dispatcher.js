@@ -1,6 +1,8 @@
 /**
  * コンテキストメニューのアクション送出およびスコープ管理
  */
+import { emit, invoke, isTauriAvailable } from "../core/tauri-helper.js";
+
 export class MenuDispatcher {
 	constructor() {
 		const urlParams = new URLSearchParams(globalThis.location.search);
@@ -17,7 +19,7 @@ export class MenuDispatcher {
 		}
 	}
 
-	dispatchAction(action, payload = null) {
+	async dispatchAction(action, payload = null) {
 		if (!action) return;
 		console.log(
 			`Context Menu Action: ${action}`,
@@ -52,16 +54,14 @@ export class MenuDispatcher {
 		}
 
 		// 独立ウィンドウ（WebviewWindow）環境の場合
-		if (globalThis.__TAURI__) {
-			const emitFn =
-				globalThis.__TAURI__.event?.emit || globalThis.__TAURI__.emit;
-			const invokeFn =
-				globalThis.__TAURI__.core?.invoke || globalThis.__TAURI__.invoke;
-			if (typeof emitFn === "function") {
-				emitFn("menu-action", { action, payload: finalPayload });
-			}
-			if (typeof invokeFn === "function" && action !== "request-sync") {
-				invokeFn("hide_menu_window").catch(() => {});
+		if (isTauriAvailable()) {
+			try {
+				await emit("menu-action", { action, payload: finalPayload });
+				if (action !== "request-sync") {
+					await invoke("hide_menu_window");
+				}
+			} catch (error) {
+				console.error("メニューアクションの送信に失敗しました:", error);
 			}
 		}
 	}

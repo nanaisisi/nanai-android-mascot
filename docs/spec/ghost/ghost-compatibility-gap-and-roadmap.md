@@ -202,8 +202,14 @@ AndroidやWeb環境でも同一ゴースト資産を安定して動作させま�
 
 ### 現在着手中の項目（実機ゴースト表現の完全再現）
 
-1. **`surfaces.txt` 多重要素合成 (`element0`〜`elementN`)** 📐 設計済み:
-   - `overlay`, `replace`, `asis` 等のパーツ多重重ね合わせを Canvas レイヤーで事前合成する機能。
+1. **`surfaces.txt` 多重要素合成 (`element0`〜`elementN`)** ✅ Phase A 実装済み（仕様書 Phase B/C は残作業）:
+   - Rust コアの `Shell::composition_plan`（element0..N + 装着 bind pattern 列）を
+     `surface_composition_plan` コマンドで IPC 公開。
+   - フロントの切替時（サーフィス / 着せ替え / シェル変更）のみ `getCompositionPlan()` が IPC し、
+     `planCache`（scope + surface + bind 列キー）でキャッシュ。
+     アニメフレーム毎回の IPC/JS 合成は発生しない（パフォーマンス契約を遵守）。
+   - 実機検証ずみ（每サーフィス切替で plan hash が安定出力、キャッシュヒット確認）。
+     Phase B（plan_hash 差分検知）/ Phase C（alias 抽選の Rust 注入）は未実施。
    - 接続設計（Rust `CompositionPlan` → フロント Canvas キャッシュ描画、IPC 頻度制約込み）は
      [composition-plan-integration-spec.md](composition-plan-integration-spec.md) 参照。
 2. **バルーンスキン動的反映 (`balloon/*/descript.txt`)** ✅ 実装済み:

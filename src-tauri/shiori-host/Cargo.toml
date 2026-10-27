@@ -8,7 +8,7 @@ description = "32bit SHIORI DLL host process (stdio bridge for the 64bit main ap
 [workspace]
 
 [dependencies]
-libloading = "0.8"
+libloading = "0.9.0"
 
 [profile.release]
 opt-level = "s"

@@ -80,6 +80,7 @@ pub async fn show_context_menu(
             .text("settings", "⚙️ 設定 (O)")
             .text("debug", "🐛 デバッグログ (D)")
             .text("help", "❓ 情報・ヘルプ (A)")
+            .text("ghost-info", "👻 ゴースト情報")
             .text("license", "📜 著作権・ライセンス表示 (L)")
             .separator()
             // ウィンドウ操作・終了

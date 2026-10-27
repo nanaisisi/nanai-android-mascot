@@ -200,6 +200,7 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
         .as_ref()
         .and_then(|m| m.get("name").cloned())
         .unwrap_or_else(|| safe_dir_name.clone());
+    let version = meta_map.as_ref().and_then(|m| m.get("version").cloned());
 
     let sakura_name = meta_map
         .as_ref()
@@ -213,6 +214,7 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
 
     Ok(GhostInfo {
         name: display_name,
+        version,
         path: target_dir.to_string_lossy().to_string(),
         sakura_name,
         kero_name,

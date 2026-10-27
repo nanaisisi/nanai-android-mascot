@@ -196,7 +196,7 @@ export class GhostController {
     const bannerPromise = isTauriAvailable()
       ? invoke("show_loading_banner_window", {
           ghostName: ghost.name,
-          ghostVersion: ghost.version || "1.0.0",
+          ghostVersion: ghost.version || "不明",
         }).catch((error) => {
           console.warn("⚠️ 処理中バナーを表示できません:", error);
         })

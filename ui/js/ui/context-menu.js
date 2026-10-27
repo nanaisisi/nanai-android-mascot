@@ -20,13 +20,6 @@ if (globalThis.__TAURI__) {
 				renderer.renderDressupSubmenu(null, scope);
 			}
 		});
-		listenFn("sync-balloons", (event) => {
-			globalThis._lastBalloons = event.payload;
-			renderer.renderBalloonSubmenu(
-				event.payload,
-				document.documentElement.getAttribute("data-balloon-theme"),
-			);
-		});
 		listenFn("sync-ghosts", (event) => {
 			const data = event.payload;
 			if (data) {
@@ -119,6 +112,11 @@ globalThis.addEventListener("message", (event) => {
 
 // 独立サブメニューウィンドウを開く補助関数 (デスクトップ環境用)
 function _triggerSubmenuWindow(menuType, buttonEl) {
+	const now = Date.now();
+	const last = _triggerSubmenuWindow.lastRequest;
+	if (last?.type === menuType && now - last.time < 180) return;
+	_triggerSubmenuWindow.lastRequest = { type: menuType, time: now };
+
 	if (globalThis.__TAURI__) {
 		const invokeFn =
 			globalThis.__TAURI__.core?.invoke || globalThis.__TAURI__.invoke;
@@ -136,6 +134,7 @@ function _triggerSubmenuWindow(menuType, buttonEl) {
 				height: 320,
 			}).catch((e) => console.error("Failed to show submenu window:", e));
 		}
+		_triggerSubmenuWindow.lastRequest = null;
 	}
 }
 

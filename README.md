@@ -25,6 +25,7 @@
   - **同梱版（ベースライン）**: Git サブモジュール（`src/cpp/satoriya-shiori`, `src/cpp/yaya-shiori` 等）の C++ ソースを Cargo `cc` / NDK で直接コンパイルし、安定・最高速のネイティブ実行を提供。
   - **非同梱・外部導入版（WASM）**: ユーザーが後から追加するサードパーティ製ゴーストの Win32 DLL 代替として WebAssembly (`.wasm`) を採用。Android の `dlopen()` 制約やアーキテクチャ差分（ARM/x86）を単一バイナリで安全に吸収。
   - **マルチバージョン共存**: 最新機能への即時追従や、特定旧バージョン（バグ互換等）に依存した歴史的ゴーストも WASM サンドボックスのインスタンス分離により競合なく安全に実行可能。
+- 👻 **SSP風ゴースト情報**: メニューの「情報」から、現在のゴーストの名前・バージョン・作者・SHIORI・キャラクター名・インストール先を確認できます。処理中バナーにも対象ゴーストの `descript.txt` に記載された `version` を表示します。
 
 ---
 
@@ -47,12 +48,14 @@
 
 ### ビルド & 実行 (Windows)
 
+cargo runから実行ファイルに引数を渡すために、`--` が2個必要。
+
 ```bash
 # アプリのログを警告・エラーだけに制限
-cargo tauri dev -- --log-level=warn
+cargo tauri dev -- -- --log-level=warn
 
-# アプリのログを完全に抑制（`--` が必要）
-cargo tauri dev -- --quiet
+# アプリのログを完全に抑制
+cargo tauri dev -- -- --quiet
 
 # 開発モード起動
 cargo tauri dev

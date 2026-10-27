@@ -17,6 +17,10 @@ let currentShellName = null;
 let cachedDressup = null;
 /** @type {number} */
 let dressupScope = 0;
+/** @type {any[]} */
+let cachedBalloons = [];
+/** @type {string|null} */
+let currentBalloonTheme = null;
 
 /**
  * サブメニューのアクションをイベントとして送信
@@ -110,12 +114,6 @@ function renderContent() {
       }
     }
   } else if (currentSubmenuType === "balloon") {
-    const themes = [
-      { id: "ivory", label: "アイボリー (Ivory)" },
-      { id: "pixel", label: "ピクセル (Pixel)" },
-      { id: "comic", label: "コミック (Comic)" },
-      { id: "dark", label: "ダーク (Dark)" },
-    ];
     const cycleBtn = document.createElement("button");
     cycleBtn.type = "button";
     cycleBtn.className = "menu-item";
@@ -129,11 +127,22 @@ function renderContent() {
     sep.className = "menu-separator";
     container.appendChild(sep);
 
+    const themes = cachedBalloons.length > 0
+      ? cachedBalloons.map((balloon) => ({
+          id: balloon.dir_name,
+          label: balloon.name || balloon.dir_name,
+        }))
+      : [
+          { id: "ivory", label: "アイボリー (Ivory)" },
+          { id: "pixel", label: "ピクセル (Pixel)" },
+          { id: "comic", label: "コミック (Comic)" },
+          { id: "dark", label: "ダーク (Dark)" },
+        ];
     themes.forEach((t) => {
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "menu-item";
-      btn.innerHTML = `<span>${t.label}</span>`;
+      btn.className = `menu-item${currentBalloonTheme === t.id ? " is-current" : ""}`;
+      btn.innerHTML = `<span>${currentBalloonTheme === t.id ? "✓ " : "　"}${t.label}</span>`;
       btn.addEventListener("click", () => {
         dispatchSubmenuAction(`balloon-theme-${t.id}`);
       });
@@ -267,6 +276,20 @@ if (globalThis.__TAURI__) {
         }
         renderContent();
       }
+    });
+
+    listenFn("sync-balloons", (event) => {
+      cachedBalloons = event.payload || [];
+      renderContent();
+    });
+
+    listenFn("sync-theme", (event) => {
+      currentBalloonTheme = event.payload || null;
+      document.documentElement.setAttribute("data-balloon-theme", currentBalloonTheme || "");
+      document.body.className = currentBalloonTheme
+        ? `balloon-theme-${currentBalloonTheme}`
+        : "";
+      renderContent();
     });
 
     listenFn("sync-menu-scope", (event) => {

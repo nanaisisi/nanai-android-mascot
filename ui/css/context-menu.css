@@ -36,10 +36,9 @@ body.subchar-mode .main-only {
 	background-color: var(--balloon-bg);
 	background-image: var(--menu-bg-image, var(--balloon-pattern));
 	background-repeat: repeat;
-	border: var(--balloon-border-width) var(--balloon-border-style)
-		var(--balloon-border-color);
-	border-radius: var(--balloon-border-radius);
-	box-shadow: var(--balloon-box-shadow);
+	border: none;
+	border-radius: 0;
+	box-shadow: none;
 	position: relative;
 	cursor: move;
 }
@@ -144,10 +143,9 @@ body.has-sidebar {
 	width: clamp(10rem, 240px, 15rem);
 	background-color: var(--balloon-bg);
 	background-image: var(--balloon-pattern);
-	border: var(--balloon-border-width) var(--balloon-border-style)
-		var(--balloon-border-color);
-	border-radius: var(--balloon-border-radius);
-	box-shadow: var(--balloon-box-shadow);
+	border: none;
+	border-radius: 0;
+	box-shadow: none;
 	padding: 0.25rem 0;
 	z-index: 2000;
 	max-height: calc(100vh - 2rem);

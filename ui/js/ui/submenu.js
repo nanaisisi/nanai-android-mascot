@@ -268,9 +268,15 @@ if (globalThis.__TAURI__) {
     listenFn("sync-theme", (event) => {
       currentBalloonTheme = event.payload || null;
       document.documentElement.setAttribute("data-balloon-theme", currentBalloonTheme || "");
-      document.body.className = currentBalloonTheme
-        ? `balloon-theme-${currentBalloonTheme}`
-        : "";
+      document.body.classList.remove(
+        "balloon-theme-ivory",
+        "balloon-theme-pixel",
+        "balloon-theme-comic",
+        "balloon-theme-dark",
+      );
+      if (currentBalloonTheme) {
+        document.body.classList.add(`balloon-theme-${currentBalloonTheme}`);
+      }
       renderContent();
     });
 
@@ -296,7 +302,7 @@ globalThis.addEventListener("DOMContentLoaded", () => {
     const savedTheme = localStorage.getItem("nanai_balloon_theme");
     if (savedTheme) {
       document.documentElement.setAttribute("data-balloon-theme", savedTheme);
-      document.body.className = `balloon-theme-${savedTheme}`;
+      document.body.classList.add(`balloon-theme-${savedTheme}`);
     }
   } catch (_err) {
     // LocalStorage access restricted or unavailable

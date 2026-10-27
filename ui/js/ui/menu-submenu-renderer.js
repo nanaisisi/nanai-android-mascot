@@ -258,7 +258,13 @@ export class MenuSubmenuRenderer {
   applyTheme(theme) {
     if (theme) {
       document.documentElement.setAttribute("data-balloon-theme", theme);
-      document.body.className = `balloon-theme-${theme}`;
+      document.body.classList.remove(
+        "balloon-theme-ivory",
+        "balloon-theme-pixel",
+        "balloon-theme-comic",
+        "balloon-theme-dark",
+      );
+      document.body.classList.add(`balloon-theme-${theme}`);
     }
   }
 

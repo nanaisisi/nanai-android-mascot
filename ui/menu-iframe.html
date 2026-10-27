@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja" data-balloon-theme="default">
   <head>
     <meta charset="UTF-8" />
@@ -12,29 +12,55 @@
     <div class="menu-sidebar" id="menu-sidebar" aria-hidden="true"></div>
     <div class="menu-container" role="menu">
       <!-- 0. ゴースト側メニュー -->
-      <button type="button" class="menu-item main-only" id="talk-btn" role="menuitem">
+      <button
+        type="button"
+        class="menu-item main-only"
+        id="talk-btn"
+        role="menuitem"
+      >
         <span>💬 もう一度話す (A)</span>
       </button>
 
       <div class="menu-separator main-only"></div>
 
       <!-- 1,おすすめ【サブ】 -->
-      <button type="button" class="menu-item" id="recommend-btn" role="menuitem">
+      <button
+        type="button"
+        class="menu-item"
+        id="recommend-btn"
+        role="menuitem"
+      >
         <span>🔗 おすすめサイト (R)</span>
       </button>
 
       <!-- 2,ポータルサイト -->
-      <button type="button" class="menu-item main-only" id="portal-btn" role="menuitem">
+      <button
+        type="button"
+        class="menu-item main-only"
+        id="portal-btn"
+        role="menuitem"
+      >
         <span>🌐 ポータルサイト (T)</span>
       </button>
 
       <!-- 3,ネットワーク更新 -->
-      <button type="button" class="menu-item main-only" id="update-btn" role="menuitem">
+      <button
+        type="button"
+        class="menu-item main-only"
+        id="update-btn"
+        role="menuitem"
+      >
         <span>🔄 ネットワーク更新 (U)</span>
       </button>
 
       <!-- 4,アンインストール -->
-      <button type="button" class="menu-item main-only" id="uninstall-btn" role="menuitem" data-action="uninstall-ghost">
+      <button
+        type="button"
+        class="menu-item main-only"
+        id="uninstall-btn"
+        role="menuitem"
+        data-action="uninstall-ghost"
+      >
         <span>🗑️ アンインストール</span>
       </button>
 
@@ -49,28 +75,56 @@
       </button>
 
       <!-- 7,メールチェック -->
-      <button type="button" class="menu-item main-only" id="biff-btn" data-action="biff" role="menuitem">
+      <button
+        type="button"
+        class="menu-item main-only"
+        id="biff-btn"
+        data-action="biff"
+        role="menuitem"
+      >
         <span>📬 メールチェック (M)</span>
       </button>
 
       <!-- 8,シェル倍率 -->
       <div class="menu-item-wrapper main-only">
-        <button type="button" class="menu-item has-submenu" id="scale-menu-btn" role="menuitem">
+        <button
+          type="button"
+          class="menu-item has-submenu"
+          id="scale-menu-btn"
+          role="menuitem"
+        >
           <span>🔍 シェル倍率 (S)</span>
         </button>
         <div class="submenu-container">
-          <button type="button" class="menu-item" id="scale-50-btn"><span>50%</span></button>
-          <button type="button" class="menu-item" id="scale-75-btn"><span>75%</span></button>
-          <button type="button" class="menu-item" id="scale-100-btn"><span>100% (標準)</span></button>
-          <button type="button" class="menu-item" id="scale-125-btn"><span>125%</span></button>
-          <button type="button" class="menu-item" id="scale-150-btn"><span>150%</span></button>
-          <button type="button" class="menu-item" id="scale-200-btn"><span>200%</span></button>
+          <button type="button" class="menu-item" id="scale-50-btn">
+            <span>50%</span>
+          </button>
+          <button type="button" class="menu-item" id="scale-75-btn">
+            <span>75%</span>
+          </button>
+          <button type="button" class="menu-item" id="scale-100-btn">
+            <span>100% (標準)</span>
+          </button>
+          <button type="button" class="menu-item" id="scale-125-btn">
+            <span>125%</span>
+          </button>
+          <button type="button" class="menu-item" id="scale-150-btn">
+            <span>150%</span>
+          </button>
+          <button type="button" class="menu-item" id="scale-200-btn">
+            <span>200%</span>
+          </button>
         </div>
       </div>
 
       <!-- 9,機能 -->
       <div class="menu-item-wrapper main-only">
-        <button type="button" class="menu-item has-submenu" id="tools-menu-btn" role="menuitem">
+        <button
+          type="button"
+          class="menu-item has-submenu"
+          id="tools-menu-btn"
+          role="menuitem"
+        >
           <span>🛠️ 機能・ツール (F)</span>
         </button>
         <div class="submenu-container">
@@ -90,20 +144,35 @@
       </div>
 
       <!-- 10,設定 -->
-      <button type="button" class="menu-item main-only" id="settings-btn" role="menuitem">
+      <button
+        type="button"
+        class="menu-item main-only"
+        id="settings-btn"
+        role="menuitem"
+      >
         <span>⚙️ 設定 (O)</span>
       </button>
 
       <!-- 11,ゴースト切り替え -->
       <div class="menu-item-wrapper main-only">
-        <button type="button" class="menu-item has-submenu" id="ghost-switch-btn" role="menuitem">
+        <button
+          type="button"
+          class="menu-item has-submenu"
+          id="ghost-switch-btn"
+          role="menuitem"
+        >
           <span>👻 ゴースト切り替え (G)</span>
         </button>
         <div class="submenu-container" id="ghost-submenu">
           <button type="button" class="menu-item" id="ghost-btn">
             <span>📂 ゴースト一覧・管理...</span>
           </button>
-          <button type="button" class="menu-item" id="ghost-install-btn" data-action="install">
+          <button
+            type="button"
+            class="menu-item"
+            id="ghost-install-btn"
+            data-action="install"
+          >
             <span>📥 ゴーストの取り込み...</span>
           </button>
         </div>
@@ -111,7 +180,12 @@
 
       <!-- 12,他のゴーストを呼ぶ -->
       <div class="menu-item-wrapper main-only">
-        <button type="button" class="menu-item has-submenu" id="call-ghost-btn" role="menuitem">
+        <button
+          type="button"
+          class="menu-item has-submenu"
+          id="call-ghost-btn"
+          role="menuitem"
+        >
           <span>👥 他のゴーストを呼ぶ (C)</span>
         </button>
         <div class="submenu-container" id="call-ghost-submenu">
@@ -121,11 +195,20 @@
 
       <!-- 13,シェル -->
       <div class="menu-item-wrapper main-only">
-        <button type="button" class="menu-item has-submenu" id="shell-switch-btn" role="menuitem">
+        <button
+          type="button"
+          class="menu-item has-submenu"
+          id="shell-switch-btn"
+          role="menuitem"
+        >
           <span>👗 シェル切り替え</span>
         </button>
         <div class="submenu-container" id="shell-submenu">
-          <button type="button" class="menu-item is-current" id="shell-master-btn">
+          <button
+            type="button"
+            class="menu-item is-current"
+            id="shell-master-btn"
+          >
             <span>✓ master (通常)</span>
           </button>
         </div>
@@ -133,7 +216,12 @@
 
       <!-- 14,着せ替え【サブ】 -->
       <div class="menu-item-wrapper">
-        <button type="button" class="menu-item has-submenu" id="dressup-menu-btn" role="menuitem">
+        <button
+          type="button"
+          class="menu-item has-submenu"
+          id="dressup-menu-btn"
+          role="menuitem"
+        >
           <span>🧥 着せ替え (C)</span>
         </button>
         <div class="submenu-container" id="dressup-submenu">
@@ -143,7 +231,12 @@
 
       <!-- 15,バルーン -->
       <div class="menu-item-wrapper main-only">
-        <button type="button" class="menu-item has-submenu" id="balloon-menu-btn" role="menuitem">
+        <button
+          type="button"
+          class="menu-item has-submenu"
+          id="balloon-menu-btn"
+          role="menuitem"
+        >
           <span>💭 バルーン切り替え (B)</span>
         </button>
         <div class="submenu-container" id="balloon-submenu">
@@ -151,17 +244,29 @@
             <span>🔄 次のスキンへ切り替え</span>
           </button>
           <div class="menu-separator"></div>
-          <button type="button" class="menu-item" id="balloon-theme-emily4-btn"><span>クラシック (Emily)</span></button>
-          <button type="button" class="menu-item" id="balloon-theme-ivory-btn"><span>アイボリー (Ivory)</span></button>
-          <button type="button" class="menu-item" id="balloon-theme-pixel-btn"><span>ピクセル (Pixel)</span></button>
-          <button type="button" class="menu-item" id="balloon-theme-comic-btn"><span>コミック (Comic)</span></button>
-          <button type="button" class="menu-item" id="balloon-theme-dark-btn"><span>ダーク (Dark)</span></button>
+          <button type="button" class="menu-item" id="balloon-theme-ivory-btn">
+            <span>アイボリー (Ivory)</span>
+          </button>
+          <button type="button" class="menu-item" id="balloon-theme-pixel-btn">
+            <span>ピクセル (Pixel)</span>
+          </button>
+          <button type="button" class="menu-item" id="balloon-theme-comic-btn">
+            <span>コミック (Comic)</span>
+          </button>
+          <button type="button" class="menu-item" id="balloon-theme-dark-btn">
+            <span>ダーク (Dark)</span>
+          </button>
         </div>
       </div>
 
       <!-- 16,最近使ったもの -->
       <div class="menu-item-wrapper main-only">
-        <button type="button" class="menu-item has-submenu" id="recent-menu-btn" role="menuitem">
+        <button
+          type="button"
+          class="menu-item has-submenu"
+          id="recent-menu-btn"
+          role="menuitem"
+        >
           <span>🕘 最近使ったもの</span>
         </button>
         <div class="submenu-container" id="recent-submenu">
@@ -171,14 +276,24 @@
 
       <!-- 17,情報 -->
       <div class="menu-item-wrapper main-only">
-        <button type="button" class="menu-item has-submenu" id="info-menu-btn" role="menuitem">
+        <button
+          type="button"
+          class="menu-item has-submenu"
+          id="info-menu-btn"
+          role="menuitem"
+        >
           <span>❓ 情報 (H)</span>
         </button>
         <div class="submenu-container">
           <button type="button" class="menu-item" id="help-btn" role="menuitem">
             <span>❓ 情報・ヘルプ</span>
           </button>
-          <button type="button" class="menu-item" id="license-btn" role="menuitem">
+          <button
+            type="button"
+            class="menu-item"
+            id="license-btn"
+            role="menuitem"
+          >
             <span>📜 著作権・ライセンス表示</span>
           </button>
         </div>
@@ -187,7 +302,12 @@
       <div class="menu-separator"></div>
 
       <!-- 18,アイコン化 -->
-      <button type="button" class="menu-item main-only" id="minimize-btn" role="menuitem">
+      <button
+        type="button"
+        class="menu-item main-only"
+        id="minimize-btn"
+        role="menuitem"
+      >
         <span>➖ アイコン化・隠す (M)</span>
         <span class="shortcut-key">Ctrl+I</span>
       </button>
@@ -199,7 +319,13 @@
       </button>
 
       <!-- 21,全て終了【サブ】 -->
-      <button type="button" class="menu-item" id="close-all-btn" data-action="close-all" role="menuitem">
+      <button
+        type="button"
+        class="menu-item"
+        id="close-all-btn"
+        data-action="close-all"
+        role="menuitem"
+      >
         <span>❌ 全て終了 (X)</span>
         <span class="shortcut-key">Ctrl+Q</span>
       </button>

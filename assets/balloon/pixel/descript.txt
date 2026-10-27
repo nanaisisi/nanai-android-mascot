@@ -1,0 +1,31 @@
+charset,Shift_JIS
+type,balloon
+name,Pixel Retro Balloon
+
+craftmanw,Nanai Android Mascot Project
+
+// ドット絵・ピクセル風スキン（ui/css/balloon-theme.css の pixel トークンに準拠）
+origin.x,10
+origin.y,24
+
+wordwrappoint.x,-40
+wordwrappoint.y,0
+
+font.height,13
+
+font.color.r,255
+font.color.g,255
+font.color.b,255
+
+cursor.font.color.r,0
+cursor.font.color.g,255
+cursor.font.color.b,204
+
+cursor.color.font.r,0
+cursor.color.font.g,0
+cursor.color.font.b,0
+
+validrect.left,14
+validrect.top,14
+validrect.right,14
+validrect.bottom,14

@@ -1,0 +1,31 @@
+charset,Shift_JIS
+type,balloon
+name,Ivory Retro Balloon
+
+craftmanw,Nanai Android Mascot Project
+
+// 象牙色レトロ伺かスキン（ui/css/balloon-theme.css の ivory トークンに準拠）
+origin.x,10
+origin.y,24
+
+wordwrappoint.x,-40
+wordwrappoint.y,0
+
+font.height,13
+
+font.color.r,0
+font.color.g,0
+font.color.b,0
+
+cursor.font.color.r,0
+cursor.font.color.g,0
+cursor.font.color.b,128
+
+cursor.color.font.r,255
+cursor.color.font.g,255
+cursor.color.font.b,255
+
+validrect.left,14
+validrect.top,14
+validrect.right,14
+validrect.bottom,14

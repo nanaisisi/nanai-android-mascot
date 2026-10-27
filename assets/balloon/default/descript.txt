@@ -1,0 +1,31 @@
+charset,Shift_JIS
+type,balloon
+name,Nanai Standard Balloon
+
+craftmanw,Nanai Android Mascot Project
+
+// モダンニュートラル既定スキン（ui/css/balloon-theme.css の :root トークンに準拠）
+origin.x,12
+origin.y,28
+
+wordwrappoint.x,-40
+wordwrappoint.y,0
+
+font.height,13
+
+font.color.r,17
+font.color.g,17
+font.color.b,17
+
+cursor.font.color.r,0
+cursor.font.color.g,120
+cursor.font.color.b,215
+
+cursor.color.font.r,255
+cursor.color.font.g,255
+cursor.color.font.b,255
+
+validrect.left,16
+validrect.top,16
+validrect.right,16
+validrect.bottom,16

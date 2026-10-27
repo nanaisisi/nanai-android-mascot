@@ -202,8 +202,10 @@ AndroidやWeb環境でも同一ゴースト資産を安定して動作させま�
 
 ### 現在着手中の項目（実機ゴースト表現の完全再現）
 
-1. **`surfaces.txt` 多重要素合成 (`element0`〜`elementN`)**:
+1. **`surfaces.txt` 多重要素合成 (`element0`〜`elementN`)** 📐 設計済み:
    - `overlay`, `replace`, `asis` 等のパーツ多重重ね合わせを Canvas レイヤーで事前合成する機能。
+   - 接続設計（Rust `CompositionPlan` → フロント Canvas キャッシュ描画、IPC 頻度制約込み）は
+     [composition-plan-integration-spec.md](composition-plan-integration-spec.md) 参照。
 2. **バルーンスキン動的反映 (`balloon/*/descript.txt`)** ✅ 実装済み:
    - `origin.x`, `origin.y`, `validrect` のCSS/レイアウトへの動的適用。
    - Rust（`balloon_manifest` コマンド / `crates/ui::descript` パーサー）で descript.txt をパースし、

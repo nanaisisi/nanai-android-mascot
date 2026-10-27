@@ -44,6 +44,10 @@ assets/ghost/*
 !assets/ghost/.gitkeep
 assets/balloon/*
 !assets/balloon/default/
+!assets/balloon/ivory/
+!assets/balloon/pixel/
+!assets/balloon/comic/
+!assets/balloon/dark/
 !assets/balloon/.gitkeep
 
 # User & temporary import data

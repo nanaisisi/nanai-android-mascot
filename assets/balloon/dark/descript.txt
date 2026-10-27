@@ -1,0 +1,31 @@
+charset,Shift_JIS
+type,balloon
+name,Cyber Dark Balloon
+
+craftmanw,Nanai Android Mascot Project
+
+// サイバーダークスキン・夜間ハイコントラスト（ui/css/balloon-theme.css の dark トークンに準拠）
+origin.x,10
+origin.y,26
+
+wordwrappoint.x,-40
+wordwrappoint.y,0
+
+font.height,13
+
+font.color.r,240
+font.color.g,240
+font.color.b,240
+
+cursor.font.color.r,74
+cursor.font.color.g,105
+cursor.font.color.b,189
+
+cursor.color.font.r,255
+cursor.color.font.g,255
+cursor.color.font.b,255
+
+validrect.left,16
+validrect.top,16
+validrect.right,16
+validrect.bottom,16

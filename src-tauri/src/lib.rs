@@ -170,6 +170,7 @@ pub fn run() {
             commands::shell::shell_manifest,
             commands::shell::parse_sakura_script,
             commands::shell::parse_surfaces_text,
+            commands::shell::animation_timeline,
             ghost::scan::scan_ghost_directory,
             commands::shiori::scan_ghosts,
             commands::shiori::load_ghost,

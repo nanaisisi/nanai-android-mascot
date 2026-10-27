@@ -26,8 +26,11 @@ pub struct AnimationPattern {
     pub method: DrawMethod,
     /// 表示するサーフィス番号（-1 はここまでのアニメ結果のクリア）
     pub surface: i32,
-    /// このフレームの待ち時間（ミリ秒）
+    /// このフレームの待ち時間（ミリ秒）の下限
     pub wait: u32,
+    /// 待ち時間の上限（SSP の `min-max` 範囲指定。単一値の場合は None）
+    #[serde(default)]
+    pub wait_max: Option<u32>,
     pub x: i32,
     pub y: i32,
     /// 追加オプション

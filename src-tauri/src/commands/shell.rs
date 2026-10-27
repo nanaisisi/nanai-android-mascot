@@ -75,3 +75,57 @@ pub fn parse_surfaces_text(
     }
     Ok(map)
 }
+
+/// タイムライン計算の入力パターン（フロントエンド側で抽選済みの待ち時間）
+#[derive(serde::Deserialize)]
+pub struct TimelinePattern {
+    #[allow(dead_code)]
+    index: u32,
+    wait_ms: u32,
+}
+
+/// タイムラインの1フレーム（`index` フレームは `at_ms` 時刻に適用）
+#[derive(serde::Serialize)]
+pub struct TimelineFrame {
+    at_ms: u32,
+}
+
+/// 実行スケジュール（1周期のフレーム列と周期長）
+#[derive(serde::Serialize)]
+pub struct AnimationTimeline {
+    frames: Vec<TimelineFrame>,
+    total_ms: u32,
+}
+
+/// SERIKO パターン列を実行スケジュール（適用時刻列）へ変換する
+///
+/// `crates/ui::animation` の `build_timeline` / `Timeline` に一元化しており、
+/// フロントエンドは待ち時間の累積・周期長を自前計算しない。
+#[tauri::command]
+pub fn animation_timeline(patterns: Vec<TimelinePattern>) -> Result<AnimationTimeline, String> {
+    use nanai_android_mascot_ui::Timeline;
+    use nanai_android_mascot_ui::surfaces::{AnimationPattern, DrawMethod};
+
+    let anims: Vec<AnimationPattern> = patterns
+        .iter()
+        .map(|p| AnimationPattern {
+            index: p.index,
+            method: DrawMethod::Overlay,
+            surface: 0,
+            wait: p.wait_ms,
+            wait_max: None,
+            x: 0,
+            y: 0,
+            options: vec![],
+        })
+        .collect();
+    let timeline = Timeline::new(&anims);
+    Ok(AnimationTimeline {
+        frames: timeline
+            .frames()
+            .iter()
+            .map(|f| TimelineFrame { at_ms: f.at_ms })
+            .collect(),
+        total_ms: timeline.total_ms(),
+    })
+}

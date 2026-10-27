@@ -153,6 +153,7 @@ mod tests {
             method: DrawMethod::Overlay,
             surface,
             wait,
+            wait_max: None,
             x: 0,
             y: 0,
             options: vec![],

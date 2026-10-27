@@ -1,6 +1,9 @@
 /**
  * コンテキストメニューの各サブメニュー（ゴースト、シェル、呼び出し）描画
  */
+
+import { open } from "@tauri-apps/plugin-dialog";
+
 export class MenuSubmenuRenderer {
 	/**
 	 * @param {import('./menu-dispatcher.js').MenuDispatcher} dispatcher
@@ -32,6 +35,70 @@ export class MenuSubmenuRenderer {
 			});
 			container.appendChild(btn);
 		});
+	}
+
+	renderBalloonSubmenu(balloons, currentBalloonTheme) {
+		const container = document.getElementById("balloon-submenu");
+		if (!container) return;
+
+		// 「次のスキンへ切り替え」は残すため一度リセット
+		container.innerHTML = `
+			<button type="button" class="menu-item" id="balloon-cycle-btn">
+				<span>🔄 次のスキンへ切り替え</span>
+			</button>
+			<div class="menu-separator"></div>
+		`;
+
+		// 次スキンボタンのイベント再バインド
+		const cycleBtn = container.querySelector("#balloon-cycle-btn");
+		if (cycleBtn) {
+			cycleBtn.addEventListener("click", () => {
+				this.dispatcher.dispatchAction("balloon-cycle");
+			});
+		}
+
+		if (balloons && balloons.length > 0) {
+			balloons.forEach((balloon) => {
+				const isCurrent = currentBalloonTheme === balloon.dir_name;
+				const btn = document.createElement("button");
+				btn.className = `menu-item ${isCurrent ? "is-current" : ""}`;
+				// 識別子としてアクション名を付ける
+				btn.dataset.action = `balloon-theme-${balloon.dir_name}`;
+
+				const span = document.createElement("span");
+				span.textContent = `${isCurrent ? "✓ " : "　"}${balloon.name}`;
+				btn.appendChild(span);
+
+				btn.addEventListener("click", () => {
+					this.dispatcher.dispatchAction(`balloon-theme-${balloon.dir_name}`);
+				});
+				container.appendChild(btn);
+			});
+		} else {
+			// balloonsが渡されない場合はフォールバック（以前の固定テーマ）
+			const fallbackThemes = [
+				{ id: "emily4", label: "クラシック (Emily)" },
+				{ id: "ivory", label: "アイボリー (Ivory)" },
+				{ id: "pixel", label: "ピクセル (Pixel)" },
+				{ id: "comic", label: "コミック (Comic)" },
+				{ id: "dark", label: "ダーク (Dark)" },
+			];
+			fallbackThemes.forEach((t) => {
+				const isCurrent = currentBalloonTheme === t.id;
+				const btn = document.createElement("button");
+				btn.className = `menu-item ${isCurrent ? "is-current" : ""}`;
+				btn.dataset.action = `balloon-theme-${t.id}`;
+
+				const span = document.createElement("span");
+				span.textContent = `${isCurrent ? "✓ " : "　"}${t.label}`;
+				btn.appendChild(span);
+
+				btn.addEventListener("click", () => {
+					this.dispatcher.dispatchAction(`balloon-theme-${t.id}`);
+				});
+				container.appendChild(btn);
+			});
+		}
 	}
 
 	renderGhostSubmenu(ghosts, currentGhost) {
@@ -75,8 +142,15 @@ export class MenuSubmenuRenderer {
 		installBtn.className = "menu-item";
 		installBtn.id = "install-btn";
 		installBtn.innerHTML = `<span>📥 ゴーストの取り込み...</span>`;
-		installBtn.addEventListener("click", () => {
-			this.dispatcher.dispatchAction("install");
+		installBtn.addEventListener("click", async () => {
+			// this.dispatcher.dispatchAction("install");
+			// Open a dialog
+			const file = await open({
+				multiple: false,
+				directory: false,
+			});
+			console.log(file);
+			// Prints file path or URI
 		});
 		container.appendChild(installBtn);
 	}

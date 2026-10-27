@@ -59,7 +59,7 @@ export const ghostTemplates = {
       </p>
       <span class="form-label">アーカイブファイルを選択:</span>
       <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; margin-top: 6px;">
-        <input type="file" id="modal-install-file-input" accept=".nar,.zip" style="flex: 1 1 200px; min-width: 0; max-width: 100%; padding: 6px; font-size: 13px; box-sizing: border-box;" />
+        <button type="button" id="modal-install-select-btn" style="flex: 1 1 200px; padding: 6px; font-size: 13px; cursor: pointer;">ファイルを選択...</button>
         <button type="button" id="modal-install-submit-btn" class="primary" style="flex: 0 0 auto; white-space: nowrap; padding: 6px 16px; font-size: 13px; cursor: pointer;">取り込み実行</button>
       </div>
       <div id="modal-install-status" style="font-size: 12px; margin-top: 8px; min-height: 18px; color: #666; word-break: break-all;"></div>

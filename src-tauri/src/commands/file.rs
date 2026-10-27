@@ -182,3 +182,12 @@ pub fn get_recent_files(app_handle: tauri::AppHandle<tauri::Wry>) -> Result<Vec<
     let recent_files = app_state.recent_files.lock();
     Ok(recent_files.clone())
 }
+
+#[tauri::command]
+pub fn open_ghost_directory(app_handle: tauri::AppHandle<tauri::Wry>) -> Result<(), String> {
+    let base = resolve_asset_path("assets/ghost", &app_handle)
+        .unwrap_or_else(|_| std::path::PathBuf::from("assets/ghost"));
+
+    tauri_plugin_opener::reveal_item_in_dir(base)
+        .map_err(|e| format!("Failed to open directory: {}", e))
+}

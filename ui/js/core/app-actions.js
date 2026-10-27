@@ -65,6 +65,12 @@ export const actionMethods = {
 		}
 
 		if (action === "scan") return gc.scanGhosts();
+		if (action === "open-ghost-folder") {
+			if (isTauriAvailable()) {
+				invoke("open_ghost_directory").catch(e => console.error(e));
+			}
+			return;
+		}
 		if (action === "uninstall-ghost" || action === "uninstall") {
 			return this.uninstallCurrentGhost();
 		}
@@ -75,9 +81,12 @@ export const actionMethods = {
 		if (action.startsWith("balloon-theme-")) {
 			const theme = action.replace("balloon-theme-", "");
 			this.setBalloonTheme(theme);
-			this.showBalloon(
-				`バルーンスキンを「${THEME_LABELS[theme] || theme}」に変更しました`,
-			);
+			let label = THEME_LABELS[theme] || theme;
+			if (this.availableBalloons) {
+				const bInfo = this.availableBalloons.find(b => b.dir_name === theme);
+				if (bInfo) label = bInfo.name;
+			}
+			this.showBalloon(`バルーンスキンを「${label}」に変更しました`);
 			setTimeout(() => this.hideBalloon(), 2000);
 			return;
 		}
@@ -225,12 +234,20 @@ export const actionMethods = {
 	},
 
 	cycleBalloonTheme() {
-		const idx = BALLOON_THEMES.indexOf(this.currentBalloonTheme);
-		const next = BALLOON_THEMES[(idx + 1) % BALLOON_THEMES.length];
+		let themes = BALLOON_THEMES;
+		if (this.availableBalloons && this.availableBalloons.length > 0) {
+			themes = this.availableBalloons.map(b => b.dir_name);
+		}
+		const idx = themes.indexOf(this.currentBalloonTheme);
+		const next = themes[(idx + 1) % themes.length];
 		this.setBalloonTheme(next);
-		this.showBalloon(
-			`バルーンスキンを「${THEME_LABELS[next] || next}」に変更しました`,
-		);
+		
+		let label = THEME_LABELS[next] || next;
+		if (this.availableBalloons) {
+			const bInfo = this.availableBalloons.find(b => b.dir_name === next);
+			if (bInfo) label = bInfo.name;
+		}
+		this.showBalloon(`バルーンスキンを「${label}」に変更しました`);
 		setTimeout(() => this.hideBalloon(), 2000);
 	},
 
@@ -280,6 +297,21 @@ export const actionMethods = {
 				}
 			} catch (_e) {
 				// スキン descript 未定義（CSS テーマのみ）の場合は無視
+			}
+		}
+	},
+
+	async scanBalloons() {
+		if (isTauriAvailable()) {
+			try {
+				const balloons = await invoke("scan_balloons");
+				if (balloons && balloons.length > 0) {
+					this.availableBalloons = balloons;
+					// UI更新のためのイベント発火
+					emit("sync-balloons", balloons);
+				}
+			} catch (e) {
+				console.error("Failed to scan balloons:", e);
 			}
 		}
 	},

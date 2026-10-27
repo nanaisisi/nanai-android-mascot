@@ -1,4 +1,6 @@
 /// 独立バルーン（スコープ N）ウィンドウ表示コマンド
+use tauri::Emitter;
+
 #[tauri::command]
 #[allow(unused_variables)]
 pub async fn show_balloon_window(
@@ -48,11 +50,19 @@ pub async fn show_balloon_window(
                     }));
                 let _ = balloon_win.show();
             }
+            if let Some(theme) = theme.filter(|value| !value.is_empty()) {
+                let _ = app_handle.emit_to(
+                    &label,
+                    "balloon-theme-changed",
+                    serde_json::json!({ "theme": theme }),
+                );
+            }
         } else {
             let (target_x, target_y) = get_pos();
 
             let title = format!("Nanai Mascot - Balloon {}", scope_id);
             let theme_query = theme
+                .as_ref()
                 .filter(|value| !value.is_empty())
                 .map(|value| format!("&theme={value}"))
                 .unwrap_or_default();
@@ -75,6 +85,13 @@ pub async fn show_balloon_window(
             .map_err(|e| e.to_string())?;
 
             let _ = balloon_win.show();
+            if let Some(theme) = theme.filter(|value| !value.is_empty()) {
+                let _ = app_handle.emit_to(
+                    &label,
+                    "balloon-theme-changed",
+                    serde_json::json!({ "theme": theme }),
+                );
+            }
         }
     }
     Ok(())

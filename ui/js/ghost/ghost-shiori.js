@@ -1,5 +1,5 @@
 import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
-import { fromRustResponse, ShioriProtocol } from "./shiori-protocol.js";
+import { fromRustResponse } from "./shiori-protocol.js";
 
 /** SHIORI 通信関連メソッド (GhostController に mixin) */
 export const ghostShioriMethods = {
@@ -120,72 +120,37 @@ export const ghostShioriMethods = {
 		}
 
 		try {
-			let response = "";
-			let parsed = null;
 			const ghostId = this.app.ghostId || "main";
 
-			// 1) Rust 解析済みレスポンス（ukadoc-spec 準拠 ShioriRequest/Response モデル）
-			try {
-				const typed = await invoke("send_shiori_event_typed", {
-					event: eventName,
-					args,
-					ghostId,
-				});
-				if (typed) {
-					parsed = fromRustResponse(typed);
-					console.log(
-						`📥 SHIORI レスポンス (typed, ${eventName}): status=${parsed.status}, value length=${parsed.value?.length ?? 0}`,
-					);
-					if (parsed.status === 200) {
-						const script = parsed.value;
-						if (script?.trim()) {
-							this.app.playSakuraScript(script);
-						}
-						return {
-							response: "",
-							script: script ?? "",
-							status: parsed.status,
-						};
-					}
-					if (parsed.status === 311 || parsed.status === 312) {
-						// Teach 追加入力要求（ukadoc: 311 Not Enough / 312 Advice）→
-						// TeachBox を再オープンして OnTeach ループへ
-						this.app.sakuraPlayer?.commandHandler?.openTeachBox([], {
-							notifyStart: false,
-						});
-					}
-					return { response: "", script: "", status: parsed.status };
-				}
-			} catch (_e) {
-				// 未登録コマンド等はレガシーパスへフォールバック
-			}
-
-			// 2) SHIORI/3.0 標準リクエストの構築（レガシー経路）
-			const requestText = ShioriProtocol.buildRequest(eventName, args);
-			console.log(`📤 送信 SHIORI/3.0 リクエスト:\n${requestText}`);
-
-			try {
-				response = await invoke("send_shiori_request", {
-					request: requestText,
-					ghostId,
-				});
-			} catch (_e) {
-				response = await invoke("send_shiori_event", {
-					event: eventName,
-					ghostId,
-				});
-			}
-
-			// 200 OK 且つスクリプトが存在する場合のみ再生
-			if (response?.trim()) {
-				const legacy = ShioriProtocol.parseResponse(response);
-				const script = legacy.value || (legacy.status === 200 ? response : "");
+			// Rust 解析済みレスポンス（ukadoc-spec 準拠 ShioriRequest/Response モデル）に一本化
+			const typed = await invoke("send_shiori_event_typed", {
+				event: eventName,
+				args,
+				ghostId,
+			});
+			const parsed = fromRustResponse(typed);
+			console.log(
+				`📥 SHIORI レスポンス (${eventName}): status=${parsed.status}, value length=${parsed.value?.length ?? 0}`,
+			);
+			if (parsed.status === 200) {
+				const script = parsed.value;
 				if (script?.trim()) {
 					this.app.playSakuraScript(script);
 				}
-				return { response, script, status: legacy.status };
+				return {
+					response: "",
+					script: script ?? "",
+					status: parsed.status,
+				};
 			}
-			return null;
+			if (parsed.status === 311 || parsed.status === 312) {
+				// Teach 追加入力要求（ukadoc: 311 Not Enough / 312 Advice）→
+				// TeachBox を再オープンして OnTeach ループへ
+				this.app.sakuraPlayer?.commandHandler?.openTeachBox([], {
+					notifyStart: false,
+				});
+			}
+			return { response: "", script: "", status: parsed.status };
 		} catch (error) {
 			console.warn(`SHIORIイベント送信失敗 (${eventName}):`, error);
 			return null;

@@ -1,22 +1,65 @@
 /**
  * SERIKOアニメーションおよび発話口パク管理
+ *
+ * pattern 列の実行スケジュール（適用時刻・周期長）の計算は
+ * Rust コア（`crates/ui::animation` / Tauri コマンド `animation_timeline`）に一本化し、
+ * フロントエンドはタイムラインに従った描画のみを行う。
+ * Tauri 未検出（Web/Mock）の場合は従来の逐次待機でフォールバックする。
  */
+import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 import { patternSurfaceFile } from "./bind-menu.js";
+
+/**
+ * pattern 列から Rust（`crates/ui::animation`）で実行スケジュールを計算する
+ * `frames[i]` は `frames[i-1]` との差分待ち時間（累積 at_ms）で描画する。
+ * 失敗時は null（レガシーの逐次待機へフォールバック）
+ * @param {Array<{index?: number, wait?: number|string}>} patterns
+ * @returns {Promise<{ frames: number[], totalMs: number }|null>}
+ */
+export async function buildAnimationTimeline(patterns) {
+	if (!patterns?.length || !isTauriAvailable()) return null;
+	try {
+		const timeline = await invoke("animation_timeline", {
+			patterns: patterns.map((pat, index) => ({
+				index: pat.index ?? index,
+				waitMs: resolvePatternWait(pat.wait, pat.waitMax),
+			})),
+		});
+		const frames = (timeline?.frames ?? []).map((f) => f.atMs ?? f.at_ms ?? 0);
+		return {
+			frames,
+			totalMs: timeline?.totalMs ?? timeline?.total_ms ?? 0,
+		};
+	} catch (_err) {
+		return null;
+	}
+}
 
 /**
  * pattern のウェイト（ミリ秒）。SSP の「最小-最大」指定は範囲内でランダムに選ぶ。
  * @param {number|string|undefined} wait
+ * @param {number|string|null|undefined} [waitMax] - 上限（Rust パースの `wait_max`）
  * @returns {number}
  */
-export function resolvePatternWait(wait) {
-	const match = String(wait ?? 0)
-		.trim()
-		.match(/^(\d+)(?:-(\d+))?$/);
-	if (!match) return 0;
-	const min = Number(match[1]);
-	const max = match[2] == null ? min : Number(match[2]);
-	const low = Math.min(min, max);
-	return low + Math.floor(Math.random() * (Math.abs(max - min) + 1));
+export function resolvePatternWait(wait, waitMax = null) {
+	const toNumber = (value) => {
+		const match = String(value ?? "")
+			.trim()
+			.match(/^(\d+)(?:-(\d+))?$/);
+		if (!match) return null;
+		const min = Number(match[1]);
+		const max = match[2] == null ? min : Number(match[2]);
+		return { min: Math.min(min, max), span: Math.abs(max - min) };
+	};
+	const low = toNumber(wait);
+	if (low == null) return 0;
+	const high = toNumber(waitMax);
+	if (high != null) {
+		const min = low.min;
+		const span = Math.max(high.min + high.span - min, 0);
+		return min + Math.floor(Math.random() * (span + 1));
+	}
+	return low.min + Math.floor(Math.random() * (low.span + 1));
 }
 
 /**
@@ -264,48 +307,28 @@ export class SurfaceAnimationManager {
 			String(this.manager.currentSurfaceIdFor(scopeId)) ===
 				String(baseSurfaceId);
 
-		for (const pat of anim.patterns) {
-			if (!isCurrent()) break;
-
-			// UKADOC: ウェイトは「そのコマを描画するまで」の待ち時間（ミリ秒）
-			const waitMs = resolvePatternWait(pat.wait);
-			if (waitMs > 0) await new Promise((r) => setTimeout(r, waitMs));
-			if (!isCurrent()) break;
-
-			// \![anim,pause,ID] の一時停止ゲート（\![anim,resume,ID] で再開）
-			if (anim?.id != null && this.isAnimationPaused(scopeId, anim.id)) {
-				while (this.isAnimationPaused(scopeId, anim.id)) {
-					if (!isCurrent()) break;
-					await new Promise((r) => setTimeout(r, 120));
-				}
-				if (!isCurrent()) break;
-			}
-
-			const patSurface = String(pat.surface).trim();
-			// -1: このアニメーションを停止、-2: 同一スコープの他アニメーションを停止
-			if (patSurface === "-1") break;
-			if (patSurface === "-2") {
-				for (const otherKey of this._runningAnimations.keys()) {
-					if (otherKey !== key && otherKey.startsWith(`${scopeId}__`)) {
-						this._stoppedAnimations.add(otherKey);
-					}
-				}
-				continue;
-			}
-
-			// SERIKO 合成: ベースサーフィス上に差分パターンを重ねて表示
-			// (UKADOC 準拠: pattern.x/y オフセット、method overlay/replace)
-			// 合成不可（サーフィス未定義）時は旧方式の全面差し替えへフォールバック
-			// フレーム描画の完了を待ってから次へ進む（未完了の合成が積み上がらないように）
-			const framePromise = this.renderAnimationFrame(
-				pat,
+		// 実行スケジュール（適用時刻列）を Rust コアで計算
+		// `wait_max` 由来のランダム化は抽選済みの waitMs を Rust へ渡す
+		const timeline = await buildAnimationTimeline(anim.patterns);
+		if (timeline) {
+			await this._playTimelineFrames(
+				timeline,
+				anim,
 				baseSurfaceId,
 				scopeId,
+				key,
 			);
-			if (framePromise) {
-				await framePromise;
-			} else {
-				await gc.updateSurface(patSurface, scopeId, null);
+		} else {
+			// レガシー（Web/Mock・Rust 不可時）: 逐次待機で再生
+			for (const pat of anim.patterns) {
+				await this._playOnePat(
+					pat,
+					anim,
+					baseSurfaceId,
+					scopeId,
+					key,
+					isCurrent,
+				);
 			}
 		}
 
@@ -315,6 +338,109 @@ export class SurfaceAnimationManager {
 		) {
 			await gc.updateSurface(baseSurfaceId, scopeId, []);
 		}
+	}
+
+	/**
+	 * Rust 計算済みタイムラインのフレームを順次描画
+	 */
+	async _playTimelineFrames(timeline, anim, baseSurfaceId, scopeId, key) {
+		if (!anim.patterns?.length || !timeline?.frames?.length) return;
+		const isCurrent = () =>
+			!this._stoppedAnimations.has(key) &&
+			String(this.manager.currentSurfaceIdFor(scopeId)) ===
+				String(baseSurfaceId);
+
+		// タイムライン順（index 順）に並べた pattern に対し、
+		// at_ms の差分だけ待機してからフレームを適用する
+		const pending = anim.patterns
+			.slice()
+			.sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
+		let prevAt = 0;
+		for (let i = 0; i < pending.length && i < timeline.frames.length; i++) {
+			const pat = pending[i];
+			const at = timeline.frames[i] ?? prevAt;
+			const dwell = Math.max(at - prevAt, 0);
+			if (dwell > 0) await new Promise((r) => setTimeout(r, dwell));
+			if (!isCurrent()) return;
+			prevAt = at;
+
+			await this._applyAnimationFrame(
+				pat,
+				anim,
+				baseSurfaceId,
+				scopeId,
+				key,
+				isCurrent,
+			);
+		}
+	}
+
+	/**
+	 * 1フレームの共通処理（一時停止ゲート・-1/-2 停止・差分描画）
+	 * @returns {boolean} 後続フレームの再生を続行するか
+	 */
+	async _applyAnimationFrame(
+		pat,
+		anim,
+		baseSurfaceId,
+		scopeId,
+		key,
+		isCurrent,
+	) {
+		const gc = this.manager.app?.ghostController;
+		if (!gc) return false;
+
+		// \![anim,pause,ID] の一時停止ゲート（\![anim,resume,ID] で再開）
+		if (anim?.id != null && this.isAnimationPaused(scopeId, anim.id)) {
+			while (this.isAnimationPaused(scopeId, anim.id)) {
+				if (!isCurrent()) return false;
+				await new Promise((r) => setTimeout(r, 120));
+			}
+			if (!isCurrent()) return false;
+		}
+
+		const patSurface = String(pat.surface).trim();
+		// -1: このアニメーションを停止、-2: 同一スコープの他アニメーションを停止
+		if (patSurface === "-1") return false;
+		if (patSurface === "-2") {
+			for (const otherKey of this._runningAnimations.keys()) {
+				if (otherKey !== key && otherKey.startsWith(`${scopeId}__`)) {
+					this._stoppedAnimations.add(otherKey);
+				}
+			}
+			return true;
+		}
+
+		// SERIKO 合成: ベースサーフィス上に差分パターンを重ねて表示
+		// (UKADOC 準拠: pattern.x/y オフセット、method overlay/replace)
+		// 合成不可（サーフィス未定義）時は旧方式の全面差し替えへフォールバック
+		// フレーム描画の完了を待ってから次へ進む（未完了の合成が積み上がらないように）
+		const framePromise = this.renderAnimationFrame(pat, baseSurfaceId, scopeId);
+		if (framePromise) {
+			await framePromise;
+		} else {
+			await gc.updateSurface(patSurface, scopeId, null);
+		}
+		return true;
+	}
+
+	/**
+	 * レガシー逐次待機の1コマ再生（Web/Mock 向けフォールバック）
+	 */
+	async _playOnePat(pat, anim, baseSurfaceId, scopeId, key, isCurrent) {
+		if (!isCurrent()) return;
+
+		// UKADOC: ウェイトは「そのコマを描画するまで」の待ち時間（ミリ秒）
+		const waitMs = resolvePatternWait(pat.wait);
+		if (waitMs > 0) await new Promise((r) => setTimeout(r, waitMs));
+		await this._applyAnimationFrame(
+			pat,
+			anim,
+			baseSurfaceId,
+			scopeId,
+			key,
+			isCurrent,
+		);
 	}
 
 	/**

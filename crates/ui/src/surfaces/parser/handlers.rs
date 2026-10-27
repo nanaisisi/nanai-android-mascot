@@ -238,11 +238,29 @@ pub(super) fn apply_animation_line(txt: &mut SurfacesTxt, ids: &[u32], rest: &st
             if tokens.is_empty() {
                 continue;
             }
+            // ウェイトは単一値（`85`）または SSP 拡張の範囲指定（`85-120`）を許容する
+            let (wait, wait_max) = tokens
+                .get(2)
+                .and_then(|t| {
+                    let (low, high) = match t.split_once('-') {
+                        Some((low, high)) => (low, high),
+                        None => (*t, ""),
+                    };
+                    let low = low.parse::<u32>().ok()?;
+                    let high = high.parse::<u32>().ok();
+                    match high {
+                        Some(h) if h >= low => Some((low, Some(h))),
+                        Some(_) => Some((low, Some(low))),
+                        None => Some((low, None)),
+                    }
+                })
+                .unwrap_or((0, None));
             let pattern = AnimationPattern {
                 index,
                 method: DrawMethod::parse(tokens[0]),
                 surface: tokens.get(1).and_then(|t| t.parse().ok()).unwrap_or(0),
-                wait: tokens.get(2).and_then(|t| t.parse().ok()).unwrap_or(0),
+                wait,
+                wait_max,
                 x: tokens.get(3).and_then(|t| t.parse().ok()).unwrap_or(0),
                 y: tokens.get(4).and_then(|t| t.parse().ok()).unwrap_or(0),
                 options: tokens.iter().skip(5).map(|t| t.to_string()).collect(),

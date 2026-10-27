@@ -157,8 +157,8 @@
 - **対応策**:
   - [x] `surface-parser.js` / `shell-manifest.js` の解析処理を Rust（`crates/ui::surfaces`, `manifest`）へ移譲（`parse_surfaces_text` / `shell_manifest`）
   - [x] `sakura-parser.js`（さくらスクリプト構文解析）の Rust 側（`crates/ui::script`）一元化（`parse_sakura_script`）
-  - [ ] `shiori-protocol.js` の Rust 側（`crates/ui::shiori`）統合と IPC 連携
-  - [ ] アニメーションタイムライン計算（`crates/ui::animation`）とフロントエンド描画の連携整理
+- [x] `shiori-protocol.js` の Rust 側（`crates/ui::shiori`）統合と IPC 連携（JS は Rust 解析済みレスポンス変換のみに一本化・レガシー自前パース廃止）
+- [x] アニメーションタイムライン計算（`crates/ui::animation`）とフロントエンド描画の連携整理（`animation_timeline` コマンド新設・pattern ウェイト `min-max` 範囲指定対応）
 
 ## 🧪 検証・テスト項目
 

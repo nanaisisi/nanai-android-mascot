@@ -168,6 +168,7 @@ export function manifestToSurfaceData(manifest) {
 					.map((p) => ({
 						surface: String(p.surface ?? -1),
 						wait: p.wait ?? 100,
+						waitMax: p.wait_max ?? null,
 						type: methodToString(p.method) || "overlay",
 						x: p.x ?? 0,
 						y: p.y ?? 0,

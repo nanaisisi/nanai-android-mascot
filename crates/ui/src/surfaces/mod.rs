@@ -126,6 +126,28 @@ sakura.balloon.offsetx,-10
             Some("bust")
         );
         assert_eq!(def0.hit_test(5, 5), None);
+
+        // SSP 拡張: pattern ウェイトの範囲指定（`min-max`）
+        let sample = r"surface0
+{
+animation0.interval,always
+animation0.pattern0,base,6,85-120,0,0
+}
+";
+        let txt2 = SurfacesTxt::parse(sample);
+        let p0 = &txt2.surface(0).unwrap().animations[&0].patterns[0];
+        assert_eq!(p0.wait, 85);
+        assert_eq!(p0.wait_max, Some(120));
+        // 単一値は wait_max が None
+        let sample_single = r"surface0
+{
+animation0.pattern0,base,6,85
+}
+";
+        let txt3 = SurfacesTxt::parse(sample_single);
+        let p0 = &txt3.surface(0).unwrap().animations[&0].patterns[0];
+        assert_eq!(p0.wait, 85);
+        assert_eq!(p0.wait_max, None);
     }
 
     #[test]
@@ -290,6 +312,7 @@ element1,overlay,surface01.png,0,0
                 method: DrawMethod::Add,
                 surface: 100,
                 wait: 0,
+                wait_max: None,
                 x: 0,
                 y: 0,
                 options: vec![],

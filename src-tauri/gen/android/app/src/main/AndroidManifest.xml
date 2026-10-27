@@ -47,8 +47,6 @@
             android:name=".SubActivity"
             android:exported="false" />
 
-        <activity android:name=".DetailActivity" android:exported="true" />
-
         <provider
           android:name="androidx.core.content.FileProvider"
           android:authorities="${applicationId}.fileprovider"

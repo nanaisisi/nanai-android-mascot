@@ -11,7 +11,7 @@
     window:clearTop="false">
     <SplitPairFilter
       window:primaryActivityName=".MainActivity"
-      window:secondaryActivityName=".DetailActivity"/>
+      window:secondaryActivityName=".SubActivity"/>
   </SplitPairRule>
 
 </resources>

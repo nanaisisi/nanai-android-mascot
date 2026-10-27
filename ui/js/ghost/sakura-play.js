@@ -93,6 +93,7 @@ export async function playScript(player, script) {
 			case "scope":
 				player.currentScope = token.value;
 				if (player.currentScope === 1) {
+					app.surfaceManager?.onTalkEnd(0);
 					if (!isTauriAvailable()) {
 						if (app.elements.keroSlot) {
 							app.elements.keroSlot.style.display = "flex";
@@ -107,6 +108,7 @@ export async function playScript(player, script) {
 						invoke("show_balloon_window", { scopeId: 1 }).catch(() => {});
 					}
 				} else {
+					app.surfaceManager?.onTalkEnd(1);
 					if (!isTauriAvailable()) {
 						if (app.elements.sakuraSlot) {
 							app.elements.sakuraSlot.style.display = "flex";
@@ -336,12 +338,20 @@ export async function playScript(player, script) {
 
 			case "end":
 				// \e: スクリプト終了（以降のトークンは再生しない）
+				app.surfaceManager?.onTalkEnd(player.currentScope);
+				app.surfaceManager?.onScriptEnd(0);
+				app.surfaceManager?.onScriptEnd(1);
 				ended = true;
 				break;
 		}
 	}
 
 	flushDesktopBalloon();
+	if (!ended) {
+		app.surfaceManager?.onTalkEnd(player.currentScope);
+		app.surfaceManager?.onScriptEnd(0);
+		app.surfaceManager?.onScriptEnd(1);
+	}
 	player.isPlaying = false;
 	player.scheduleSurfaceRestore(currentId);
 }

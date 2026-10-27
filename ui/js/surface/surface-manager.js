@@ -111,6 +111,14 @@ export class SurfaceManager {
 		this.animationManager.resumeAnimation(scopeId, animId);
 	}
 
+	onTalkEnd(scopeId = 0) {
+		this.animationManager.onTalkEnd(scopeId);
+	}
+
+	onScriptEnd(scopeId = 0) {
+		this.animationManager.onScriptEnd(scopeId);
+	}
+
 	onCharSpoken(scopeId = 0) {
 		this.animationManager.onCharSpoken(scopeId);
 	}

@@ -25,6 +25,7 @@ const { ghostSurfaceMethods } = await import("../ui/js/surface/ghost-surface.js"
 
 function makeController() {
 	const gc = Object.create(ghostSurfaceMethods);
+	const chromaCalls = [];
 	gc.currentGhost = { name: "g", path: "ghost/g" };
 	gc.currentShell = "master";
 	gc.currentSurfaces = new Map();
@@ -32,11 +33,19 @@ function makeController() {
 		surfaceManager: {
 			resolveSurfaceNumber: (id) => id,
 			setSurfaceId() {},
-			processChromaKey: async (src) => src,
-			composeSurfaceElements: async (_id, src, _resolve, _scope, layers) =>
-				layers ? `${src}+frame` : src,
+			processChromaKey: async (src, pna) => {
+				chromaCalls.push({ src, pna });
+				return src;
+			},
+			composeSurfaceElements: async (_id, src, resolve, _scope, layers) => {
+				for (const layer of layers || []) {
+					await resolve(layer.file);
+				}
+				return layers ? `${src}+frame` : src;
+			},
 		},
 	};
+	gc._chromaCalls = chromaCalls;
 	return gc;
 }
 
@@ -60,6 +69,15 @@ test("animation frames do not re-show the character window", async () => {
 	const gc = makeController();
 	await gc.updateSurface(0, 0, [{ file: "surface1.png", x: 0, y: 0 }]);
 	assert.equal(count("show_subchar_window"), 0);
+});
+
+test("animation frame layer also runs chroma-key processing", async () => {
+	calls.length = 0;
+	const gc = makeController();
+	await gc.updateSurface(0, 0, [{ file: "surface1.png", x: 0, y: 0 }]);
+	assert.ok(
+		gc._chromaCalls.some((c) => c.src === "data:image/png;base64,1"),
+	);
 });
 
 test("a slower older surface update does not overwrite a newer one", async () => {

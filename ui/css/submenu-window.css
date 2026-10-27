@@ -28,6 +28,40 @@ body {
 	color: var(--balloon-text-color, #111111);
 }
 
+.submenu-window-container .menu-item:hover,
+.submenu-window-container .menu-item:focus {
+	background-color: var(--balloon-highlight-bg, #0078d7);
+	background-image: var(--menu-fg-image, none);
+	background-repeat: no-repeat;
+	background-size: cover;
+	color: var(--balloon-highlight-text, #ffffff);
+	outline: none;
+}
+
+.submenu-window-container .menu-separator {
+	background-color: var(--balloon-separator-color, #999999);
+}
+
+.submenu-window-container {
+	position: relative;
+}
+
+body.has-sidebar .submenu-window-container {
+	padding-left: var(--menu-sidebar-width, 24px);
+}
+
+body.has-sidebar .submenu-window-container::before {
+	content: "";
+	position: absolute;
+	inset: 0 auto 0 0;
+	width: var(--menu-sidebar-width, 24px);
+	background-image: var(--menu-sidebar-image, none);
+	background-repeat: no-repeat;
+	background-position: left top;
+	background-size: contain;
+	pointer-events: none;
+}
+
 .submenu-window-container::-webkit-scrollbar {
 	width: 4px;
 }

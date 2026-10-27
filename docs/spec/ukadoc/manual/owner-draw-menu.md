@@ -1,7 +1,7 @@
 # オーナードローメニュー (manual/owner-draw-menu.md)
 
 - **規格**: [manual/owner-draw-menu.md](https://github.com/ukatech/ukadoc-spec/blob/main/manual/owner-draw-menu.md)
-- **対応状況**: ✅ 対応済
+- **対応状況**: ⚠️ 部分対応（シェル定義の画像・配色）
 
 ## 突合結果
 
@@ -11,6 +11,8 @@
 - **画像ビットマップ定義の読込と描画**:
   - `src-tauri/src/ghost/scan/shell.rs:56-78` にて `menu.background.bitmap.filename`, `menu.foreground.bitmap.filename`, `menu.sidebar.bitmap.filename` のパスを取得・保持。
   - `ui/js/ui/menu-submenu-renderer.js` / `ui/js/ui/submenu.js` にて各ビットマップをアセットURL（`convertFileSrc`）経由で `--menu-bg-image`、`--menu-fg-image`、`--menu-sidebar-image` に設定。
-  - `ui/css/context-menu.css` および `ui/css/submenu-window.css` にてメニュー全体の背景テクスチャタイル、選択・ホバー時のハイライト画像、およびサイドバー要素（`.menu-sidebar`）の描画レイアウトを実装。
+  - `ui/css/context-menu.css` および `ui/css/submenu-window.css` にてメニュー全体の背景テクスチャタイル、選択・ホバー時のハイライト画像、およびサイドバー要素の描画レイアウトを実装。
+  - 独立した着せ替え・バルーン等のサブメニューにも同じ設定を同期して適用。
 - **メニュー動作・構造**:
   - メイン/サブキャラ分離やコンテキストメニューの動作・ショートカットキー対応は [howto/rclick](../ssp/howto/rclick.md) を参照。
+  - `sakura.menuitem*` / `kero.menuitem*` による SHIORI Resource の動的な任意メニュー項目、および SHIORI Resource 側からの定義上書きは未対応。

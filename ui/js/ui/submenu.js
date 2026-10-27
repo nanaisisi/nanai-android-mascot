@@ -188,6 +188,44 @@ function renderContent() {
   }
 }
 
+function applyShellMenuTheme(activeShell) {
+  const rootStyle = document.documentElement.style;
+  const theme = activeShell?.menu_theme;
+  const setOrRemove = (property, value) => {
+    if (value) rootStyle.setProperty(property, value);
+    else rootStyle.removeProperty(property);
+  };
+
+  setOrRemove("--balloon-bg", theme?.background_color);
+  setOrRemove("--balloon-highlight-bg", theme?.foreground_color);
+  setOrRemove(
+    "--balloon-text-color",
+    theme?.background_font_color || theme?.font_color,
+  );
+  setOrRemove("--balloon-highlight-text", theme?.foreground_font_color);
+  setOrRemove("--balloon-disable-text", theme?.disable_font_color);
+  setOrRemove("--balloon-separator-color", theme?.separator_color);
+
+  const shellPath = activeShell?.path?.replace(/\\/g, "/") || "";
+  const setImage = (property, relativePath) => {
+    if (!relativePath) {
+      rootStyle.removeProperty(property);
+      return;
+    }
+    const fullPath = shellPath
+      ? `${shellPath}/${String(relativePath).replace(/\\/g, "/")}`
+      : String(relativePath);
+    const url = globalThis.__TAURI__?.core?.convertFileSrc
+      ? globalThis.__TAURI__.core.convertFileSrc(fullPath)
+      : fullPath;
+    rootStyle.setProperty(property, `url("${url}")`);
+  };
+  setImage("--menu-bg-image", theme?.background_bitmap);
+  setImage("--menu-fg-image", theme?.foreground_bitmap);
+  setImage("--menu-sidebar-image", theme?.sidebar_bitmap);
+  document.body.classList.toggle("has-sidebar", Boolean(theme?.sidebar_bitmap));
+}
+
 if (globalThis.__TAURI__) {
   const listenFn =
     globalThis.__TAURI__.event?.listen || globalThis.__TAURI__.listen;
@@ -217,63 +255,7 @@ if (globalThis.__TAURI__) {
         const activeShell =
           data.shells?.find((s) => s.name === data.currentShell) ||
           data.shells?.[0];
-        if (activeShell?.menu_theme) {
-          const mt = activeShell.menu_theme;
-          const rootStyle = document.documentElement.style;
-          if (mt.background_color)
-            rootStyle.setProperty("--balloon-bg", mt.background_color);
-          if (mt.foreground_color)
-            rootStyle.setProperty(
-              "--balloon-highlight-bg",
-              mt.foreground_color,
-            );
-          if (mt.background_font_color || mt.font_color) {
-            rootStyle.setProperty(
-              "--balloon-text-color",
-              mt.background_font_color || mt.font_color,
-            );
-          }
-          if (mt.foreground_font_color)
-            rootStyle.setProperty(
-              "--balloon-highlight-text",
-              mt.foreground_font_color,
-            );
-          if (mt.disable_font_color)
-            rootStyle.setProperty(
-              "--balloon-disable-text",
-              mt.disable_font_color,
-            );
-          if (mt.separator_color)
-            rootStyle.setProperty(
-              "--balloon-separator-color",
-              mt.separator_color,
-            );
-
-          const shellPath = activeShell.path || "";
-          const resolveImg = (relPath) => {
-            if (!relPath) return null;
-            const full = shellPath
-              ? `${shellPath.replace(/\\/g, "/")}/${relPath.replace(/\\/g, "/")}`
-              : relPath;
-            return globalThis.__TAURI__?.core?.convertFileSrc
-              ? globalThis.__TAURI__.core.convertFileSrc(full)
-              : full;
-          };
-
-          if (mt.background_bitmap) {
-            const bgUrl = resolveImg(mt.background_bitmap);
-            rootStyle.setProperty("--menu-bg-image", `url("${bgUrl}")`);
-          } else {
-            rootStyle.removeProperty("--menu-bg-image");
-          }
-
-          if (mt.foreground_bitmap) {
-            const fgUrl = resolveImg(mt.foreground_bitmap);
-            rootStyle.setProperty("--menu-fg-image", `url("${fgUrl}")`);
-          } else {
-            rootStyle.removeProperty("--menu-fg-image");
-          }
-        }
+        applyShellMenuTheme(activeShell);
         renderContent();
       }
     });
@@ -306,13 +288,6 @@ if (globalThis.__TAURI__) {
       }
     });
 
-    listenFn("sync-theme", (event) => {
-      const theme = event.payload;
-      if (theme) {
-        document.documentElement.setAttribute("data-balloon-theme", theme);
-        document.body.className = `balloon-theme-${theme}`;
-      }
-    });
   }
 }
 

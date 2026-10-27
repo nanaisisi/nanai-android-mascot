@@ -225,7 +225,8 @@ export const surfaceRenderMethods = {
 			});
 			if (!plan || !Array.isArray(plan.layers)) return null;
 			this.planCache.set(key, plan);
-			console.info(
+			// vite は warn/error のみ中継するため（検証済み。通常メッセージは無音でよい）
+			console.debug(
 				`🧩 合成計画取得 (Rust): surface=${sid}, layers=${plan.layers.length}, hash=${plan.planHash}`,
 			);
 			return plan;

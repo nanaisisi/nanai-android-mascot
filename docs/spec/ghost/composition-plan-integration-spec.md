@@ -11,11 +11,11 @@
 
 ### 1.1 現状の実装（二重実装）
 
-| 領域 | 実装箇所 | 担当内容 |
-| --- | --- | --- |
+| 領域                              | 実装箇所                                                                                                                                    | 担当内容                                                                                            |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
 | 合成計画（要素順・bind 列の解決） | `crates/ui/src/surfaces/types/txt.rs:43` `plan_composition` / `composition.rs` `CompositionPlan` / `shell.rs:122` `Shell::composition_plan` | element0..N（id ソート）+ 装着 bind アニメの pattern 列（index ソート）を描画順レイヤー列として返す |
-| 合成実行（ピクセル合成） | `ui/js/surface/surface-compositor.js` `composeSurfaceElements` / `drawLayer` | Canvas 2D での PNA・クロマキー・blend method 合成 |
-| bind レイヤー収集 | `ui/js/surface/surface-render.js` `activeBindLayers` | dressupState + bindgroup/addid → pattern レイヤー列を **JS 側で**再構築 |
+| 合成実行（ピクセル合成）          | `ui/js/surface/surface-compositor.js` `composeSurfaceElements` / `drawLayer`                                                                | Canvas 2D での PNA・クロマキー・blend method 合成                                                   |
+| bind レイヤー収集                 | `ui/js/surface/surface-render.js` `activeBindLayers`                                                                                        | dressupState + bindgroup/addid → pattern レイヤー列を **JS 側で**再構築                             |
 
 問題点:
 
@@ -105,26 +105,26 @@ planCache: Map<`${surfaceId}__${planHash}`, LayerKey[]>
 
 ### 2.4 DrawMethod ↔ Canvas の対応（維持）
 
-| Rust `DrawMethod` | レガシー文字列 | Canvas 処理（`drawLayer`） |
-| --- | --- | --- |
-| Base | `base` | 最初の下地（configure なし描画） |
-| Overlay | `overlay` | 通常合成（デフォルト op） |
-| Replace / OverlayFast / Fast | `replace` / `overlayfast` / `fast` | 該当矩形 `clearRect` 後描画 |
-| Blend(Multiply / Screen / Overlay / SoftLight / Add) | `blend-*` / `add` | `globalCompositeOperation` 切替 |
-| Add | `add` | `lighter` |
+| Rust `DrawMethod`                                    | レガシー文字列                     | Canvas 処理（`drawLayer`）       |
+| ---------------------------------------------------- | ---------------------------------- | -------------------------------- |
+| Base                                                 | `base`                             | 最初の下地（configure なし描画） |
+| Overlay                                              | `overlay`                          | 通常合成（デフォルト op）        |
+| Replace / OverlayFast / Fast                         | `replace` / `overlayfast` / `fast` | 該当矩形 `clearRect` 後描画      |
+| Blend(Multiply / Screen / Overlay / SoftLight / Add) | `blend-*` / `add`                  | `globalCompositeOperation` 切替  |
+| Add                                                  | `add`                              | `lighter`                        |
 
 合成モードの追加対応（`asis` 等）は Rust `DrawMethod::parse` に網羅させる
 （**構文解析は Rust のみ**で進化させ、JS 側の文字列 switch は触らない）。
 
 ## 3. パフォーマンス契約
 
-| 項目 | 目標 |
-| --- | --- |
-| IPC 頻度 | サーフィス切替・着せ替え変更・シェル切替時のみ（**毎フレーム 0 回**） |
-| plan サイズ | 通常 < 1KB。巨大 bind（数十パーツ）でも配列 1 層分のみ |
-| キャッシュヒット | 同一 surface + bind 状態の再描画は IPC なし |
-| Canvas 合成 | dataURL 変換をフレーム毎に行わない。layer は `ImageBitmap`/blob URL を事前デコードし `drawImage` で直描き |
-| メモリ | planCache エントリは layers の参照列のみ（画像は既存 `load_surface_image` キャッシュと共有） |
+| 項目             | 目標                                                                                                      |
+| ---------------- | --------------------------------------------------------------------------------------------------------- |
+| IPC 頻度         | サーフィス切替・着せ替え変更・シェル切替時のみ（**毎フレーム 0 回**）                                     |
+| plan サイズ      | 通常 < 1KB。巨大 bind（数十パーツ）でも配列 1 層分のみ                                                    |
+| キャッシュヒット | 同一 surface + bind 状態の再描画は IPC なし                                                               |
+| Canvas 合成      | dataURL 変換をフレーム毎に行わない。layer は `ImageBitmap`/blob URL を事前デコードし `drawImage` で直描き |
+| メモリ           | planCache エントリは layers の参照列のみ（画像は既存 `load_surface_image` キャッシュと共有）              |
 
 **やってはいけないこと**: 毎フレーム `composeSurfaceElements` による
 全面 dataURL 再合成（現状の SERIKO フレームもベース plan キャッシュと差し替え可能
@@ -167,13 +167,13 @@ planCache: Map<`${surfaceId}__${planHash}`, LayerKey[]>
 
 ## 6. リスクと緩和
 
-| リスク | 緩和策 |
-| --- | --- |
-| alias 乱数差による見た目不一致（JS/Rust 独立抽選） | 計画は Rust 抽選に一本化、JS 抽選は本体 \s 専用 |
-| bind 追加時に `addid` / `mustselect` の扱い差 | bind ID 列の組立ては現行 `bindGroupsForScope` ロジックを共用（JS 側で ID 列だけ作り Rust へ渡す） |
-| 巨大シェルでの plan 再計算頻発 | `dressupState` まとめ払い＋planHash 無効化で冪等化 |
-| Android 上での ImageBitmap 消費メモリ | layer は shell 画像キャッシュと参照共有し、plan 単体はメタデータのみ |
-| Web (非 Tauri) 環境 | planCache を空にして即座にレガシー合成へフォールバック |
+| リスク                                             | 緩和策                                                                                            |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| alias 乱数差による見た目不一致（JS/Rust 独立抽選） | 計画は Rust 抽選に一本化、JS 抽選は本体 \s 専用                                                   |
+| bind 追加時に `addid` / `mustselect` の扱い差      | bind ID 列の組立ては現行 `bindGroupsForScope` ロジックを共用（JS 側で ID 列だけ作り Rust へ渡す） |
+| 巨大シェルでの plan 再計算頻発                     | `dressupState` まとめ払い＋planHash 無効化で冪等化                                                |
+| Android 上での ImageBitmap 消費メモリ              | layer は shell 画像キャッシュと参照共有し、plan 単体はメタデータのみ                              |
+| Web (非 Tauri) 環境                                | planCache を空にして即座にレガシー合成へフォールバック                                            |
 
 ## 7. 関連
 

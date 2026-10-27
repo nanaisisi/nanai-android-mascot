@@ -137,32 +137,6 @@ export class MenuSubmenuRenderer {
       },
     );
 
-    // セパレータ
-    if (ghosts.length > 0) {
-      const sep = document.createElement("div");
-      sep.className = "menu-separator";
-      container.appendChild(sep);
-    }
-
-    // ゴースト管理モーダルを開くボタン
-    const manageBtn = document.createElement("button");
-    manageBtn.className = "menu-item";
-    manageBtn.id = "ghost-btn";
-    manageBtn.innerHTML = `<span>📂 ゴースト管理...</span>`;
-    manageBtn.addEventListener("click", () => {
-      this.dispatcher.dispatchAction("ghost");
-    });
-    container.appendChild(manageBtn);
-
-    // ゴースト取り込みダイアログを開くボタン
-    const installBtn = document.createElement("button");
-    installBtn.className = "menu-item";
-    installBtn.id = "install-btn";
-    installBtn.innerHTML = `<span>📥 ゴーストの取り込み...</span>`;
-    installBtn.addEventListener("click", () => {
-      this.dispatcher.dispatchAction("install");
-    });
-    container.appendChild(installBtn);
   }
 
   /**

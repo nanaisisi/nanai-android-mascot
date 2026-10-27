@@ -103,7 +103,6 @@ export class GhostController {
 			}
 
 			this.ghosts = scanned;
-			this.syncWithMenu();
 			return this.ghosts;
 		} catch (error) {
 			console.error("❌ ゴーストスキャンエラー:", error);

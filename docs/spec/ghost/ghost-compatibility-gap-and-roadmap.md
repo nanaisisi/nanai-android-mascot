@@ -204,7 +204,10 @@ AndroidやWeb環境でも同一ゴースト資産を安定して動作させま�
 
 1. **`surfaces.txt` 多重要素合成 (`element0`〜`elementN`)**:
    - `overlay`, `replace`, `asis` 等のパーツ多重重ね合わせを Canvas レイヤーで事前合成する機能。
-2. **バルーンスキン動的反映 (`balloon/*/descript.txt`)**:
+2. **バルーンスキン動的反映 (`balloon/*/descript.txt`)** ✅ 実装済み:
    - `origin.x`, `origin.y`, `validrect` のCSS/レイアウトへの動的適用。
+   - Rust（`balloon_manifest` コマンド / `crates/ui::descript` パーサー）で descript.txt をパースし、
+     メインウィンドウ（`app-actions.js`）および独立バルーンウィンドウ（`balloon-window.js`）へ動的反映。
+   - スキン切替時は前テーマの上書き値を `resetBalloonDescript()` でリセットしてから適用。
 3. **実機（`cargo tauri dev`）における実ゴースト総合動作確認**:
    - 実機環境での自律トーク・当たり判定イベント・バルーン表示の検証。

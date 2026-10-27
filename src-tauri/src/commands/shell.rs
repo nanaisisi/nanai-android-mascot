@@ -76,6 +76,45 @@ pub fn parse_surfaces_text(
     Ok(map)
 }
 
+/// バルーン descript.txt をパースしてプロパティ連想配列を返す
+///
+/// `name`: バルーン名（`assets/balloon/<name>`、例 `emily4`）
+/// 戻り値は `font.height` 等の descript キー・値フラットマップ。
+#[tauri::command]
+pub fn balloon_manifest(
+    name: String,
+    app_handle: tauri::AppHandle,
+) -> Result<std::collections::BTreeMap<String, String>, String> {
+    let dir = resolve_balloon_dir(&name, &app_handle)?;
+    Ok(balloon_descript_map(&dir))
+}
+
+/// バルーンディレクトリを解決する（バルーン名 → 実パス）
+fn resolve_balloon_dir(name: &str, app_handle: &tauri::AppHandle) -> Result<PathBuf, String> {
+    for base in [
+        format!("assets/balloon/{}", name),
+        format!("balloon/{}", name),
+    ] {
+        if let Ok(resolved) = resolve_asset_path(&base, app_handle)
+            && resolved.is_dir()
+        {
+            return Ok(resolved);
+        }
+    }
+    Err(format!("balloon directory not found: {}", name))
+}
+
+/// バルーン descript.txt を読み込み、キー・値のフラットマップへ変換する
+fn balloon_descript_map(dir: &std::path::Path) -> std::collections::BTreeMap<String, String> {
+    let descript = dir.join("descript.txt");
+    let content = nanai_android_mascot_ui::open_text_file(&descript).unwrap_or_default();
+    let parsed = nanai_android_mascot_ui::Descript::parse(&content);
+    parsed
+        .properties
+        .into_iter()
+        .collect::<std::collections::BTreeMap<_, _>>()
+}
+
 /// タイムライン計算の入力パターン（フロントエンド側で抽選済みの待ち時間）
 #[derive(serde::Deserialize)]
 pub struct TimelinePattern {

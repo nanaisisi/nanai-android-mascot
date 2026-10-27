@@ -191,14 +191,67 @@ export const actionMethods = {
 		}
 	},
 
-	setBalloonTheme(themeName) {
+	async setBalloonTheme(themeName) {
 		this.currentBalloonTheme = themeName;
+		localStorage.setItem("nanai_balloon_theme", themeName);
 		document.documentElement.setAttribute("data-balloon-theme", themeName);
 		document.body.className = `balloon-theme-${themeName}`;
 		this.elements.balloonDisplay?.setAttribute("data-balloon-theme", themeName);
 		if (isTauriAvailable()) {
 			emit("sync-theme", themeName);
 		}
+
+		// バルーンスキン descript.txt を Rust でパースして動的反映（UKADOC準拠）
+		this.resetBalloonDescript();
+		if (isTauriAvailable()) {
+			try {
+				const props = await invoke("balloon_manifest", { name: themeName });
+				if (props && typeof props === "object") {
+					this.applyBalloonDescript(props);
+				}
+			} catch (_e) {
+				// スキン descript 未定義（CSS テーマのみ）の場合は無視
+			}
+		}
+	},
+
+	/**
+	 * バルーン descript 由来の動的スタイルをテーマ既定へ戻す（スキン切替時）
+	 */
+	resetBalloonDescript() {
+		const root = document.documentElement;
+		for (const key of [
+			"--balloon-font-family",
+			"--balloon-font-size",
+			"--balloon-text-color",
+			"--balloon-highlight-bg",
+			"--balloon-highlight-text",
+		]) {
+			root.style.removeProperty(key);
+		}
+		const balloonEl = document.querySelector(".balloon");
+		if (balloonEl) {
+			balloonEl.style.padding = "";
+			balloonEl.style.maxWidth = "";
+		}
+		if (this.elements.balloonDisplay) {
+			this.elements.balloonDisplay.style.left = "";
+			this.elements.balloonDisplay.style.top = "";
+		}
+	},
+
+	/**
+	 * RGB成分（xxx.color.r / .g / .b）から CSS 色へ
+	 * @param {Record<string, string>} props
+	 * @param {string} base - 例 "font.color"
+	 * @returns {string|null}
+	 */
+	rgbFromComponents(props, base) {
+		const r = parseInt(props[`${base}.r`], 10);
+		const g = parseInt(props[`${base}.g`], 10);
+		const b = parseInt(props[`${base}.b`], 10);
+		if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)) return null;
+		return `rgb(${r}, ${g}, ${b})`;
 	},
 
 	/**
@@ -226,31 +279,25 @@ export const actionMethods = {
 		}
 
 		// フォント色 (font.color.r,g,b または font.color)
+		const fontColor = this.rgbFromComponents(props, "font.color");
 		if (props["font.color"]) {
 			root.style.setProperty("--balloon-text-color", props["font.color"]);
-		} else if (
-			props["font.color.r"] &&
-			props["font.color.g"] &&
-			props["font.color.b"]
-		) {
-			root.style.setProperty(
-				"--balloon-text-color",
-				`rgb(${props["font.color.r"]}, ${props["font.color.g"]}, ${props["font.color.b"]})`,
-			);
+		} else if (fontColor) {
+			root.style.setProperty("--balloon-text-color", fontColor);
 		}
 
-		// リンク・選択肢色 (cursor.font.color / font.color.link)
-		if (props["cursor.font.color"]) {
-			root.style.setProperty(
-				"--balloon-highlight-bg",
-				props["cursor.font.color"],
-			);
+		// リンク・選択肢色 (cursor.font.color / cursor.color.font / anchor 系)
+		const cursorBg =
+			this.rgbFromComponents(props, "cursor.font.color") ||
+			props["cursor.font.color"];
+		if (cursorBg) {
+			root.style.setProperty("--balloon-highlight-bg", cursorBg);
 		}
-		if (props["cursor.color.font"]) {
-			root.style.setProperty(
-				"--balloon-highlight-text",
-				props["cursor.color.font"],
-			);
+		const cursorText =
+			this.rgbFromComponents(props, "cursor.color.font") ||
+			props["cursor.color.font"];
+		if (cursorText) {
+			root.style.setProperty("--balloon-highlight-text", cursorText);
 		}
 
 		// 有効テキスト領域 (validrect.left, top, right, bottom) によるパディング調整

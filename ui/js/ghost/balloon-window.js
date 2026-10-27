@@ -1,6 +1,7 @@
 /**
  * Nanai Android Mascot - 独立バルーンウィンドウ制御スクリプト
  */
+import { invoke } from "../core/tauri-helper.js";
 
 const urlParams = new URLSearchParams(globalThis.location.search);
 const scopeId = parseInt(urlParams.get("scope") || "0", 10);
@@ -32,6 +33,74 @@ function setupInteractiveElements(balloonText, emitFn) {
 	});
 }
 
+/**
+ * バルーン descript.txt の定義をスタイルへ動的反映（UKADOC準拠）
+ * @param {string} theme
+ */
+async function applyBalloonDescript(theme) {
+	if (!globalThis.__TAURI__) return;
+	try {
+		const props = await invoke("balloon_manifest", { name: theme });
+		if (!props || typeof props !== "object") return;
+		const root = document.documentElement;
+
+		const toCss = (base) => {
+			const r = parseInt(props[`${base}.r`], 10);
+			const g = parseInt(props[`${base}.g`], 10);
+			const b = parseInt(props[`${base}.b`], 10);
+			return Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)
+				? null
+				: `rgb(${r}, ${g}, ${b})`;
+		};
+		if (props["font.name"]) {
+			root.style.setProperty(
+				"--balloon-font-family",
+				`"${props["font.name"]}", Meiryo, sans-serif`,
+			);
+		}
+		const fh = parseInt(props["font.height"], 10);
+		if (!Number.isNaN(fh) && fh > 0) {
+			root.style.setProperty("--balloon-font-size", `${fh}px`);
+		}
+		const textColor = props["font.color"] || toCss("font.color");
+		if (textColor) {
+			root.style.setProperty("--balloon-text-color", textColor);
+		}
+		const highlightBg =
+			props["cursor.font.color"] || toCss("cursor.font.color");
+		if (highlightBg) {
+			root.style.setProperty("--balloon-highlight-bg", highlightBg);
+		}
+
+		// 有効テキスト領域 (validrect) による余白調整
+		const vl = parseInt(props["validrect.left"], 10);
+		const vt = parseInt(props["validrect.top"], 10);
+		const vr = parseInt(props["validrect.right"], 10);
+		const vb = parseInt(props["validrect.bottom"], 10);
+		if (
+			!Number.isNaN(vl) &&
+			!Number.isNaN(vt) &&
+			!Number.isNaN(vr) &&
+			!Number.isNaN(vb)
+		) {
+			balloonBox?.style.setProperty(
+				"padding",
+				`${Math.max(8, vt)}px ${Math.max(8, vr)}px ${Math.max(8, vb)}px ${Math.max(8, vl)}px`,
+			);
+		}
+		// 折り返し幅 (wordwrappoint.x は原点右基準の負オフセット指定)
+		const ww = parseInt(props["wordwrappoint.x"], 10);
+		if (!Number.isNaN(ww)) {
+			balloonBox?.style.setProperty(
+				"max-width",
+				`calc(100% + ${Math.abs(ww)}px)`,
+			);
+		}
+	} catch (_e) {
+		// スキン descript 未定義（CSS テーマのみ）の場合は無視
+	}
+}
+
 function initBalloonWindow() {
 	const balloonBox = document.getElementById("balloon-box");
 	const _balloonText = document.getElementById("balloon-text");
@@ -39,6 +108,7 @@ function initBalloonWindow() {
 	// テーマの適用
 	const savedTheme = localStorage.getItem("nanai_balloon_theme") || "default";
 	document.documentElement.setAttribute("data-balloon-theme", savedTheme);
+	applyBalloonDescript(savedTheme);
 
 	if (!globalThis.__TAURI__) return;
 
@@ -52,6 +122,7 @@ function initBalloonWindow() {
 			const { html, theme } = event.payload || {};
 			if (theme) {
 				document.documentElement.setAttribute("data-balloon-theme", theme);
+				applyBalloonDescript(theme);
 			}
 			const targetText = document.getElementById("balloon-text");
 			if (targetText && html !== undefined) {
@@ -66,6 +137,8 @@ function initBalloonWindow() {
 			const theme = event.payload?.theme || event.payload;
 			if (theme) {
 				document.documentElement.setAttribute("data-balloon-theme", theme);
+				localStorage.setItem("nanai_balloon_theme", theme);
+				applyBalloonDescript(theme);
 			}
 		});
 	}

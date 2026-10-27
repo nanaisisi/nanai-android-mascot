@@ -137,7 +137,7 @@ export class MenuSubmenuRenderer {
 		});
 		container.appendChild(manageBtn);
 
-		// ゴースト取り込みモーダルを開くボタン
+		// ゴースト取り込みダイアログを開くボタン
 		const installBtn = document.createElement("button");
 		installBtn.className = "menu-item";
 		installBtn.id = "install-btn";
@@ -151,6 +151,7 @@ export class MenuSubmenuRenderer {
 			});
 			console.log(file);
 			// Prints file path or URI
+			// Todo unzip
 		});
 		container.appendChild(installBtn);
 	}

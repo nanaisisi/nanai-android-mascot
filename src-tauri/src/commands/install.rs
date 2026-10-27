@@ -225,6 +225,9 @@ pub async fn pick_and_install_ghost_archive(
     app_handle: tauri::AppHandle,
 ) -> Result<Option<GhostInfo>, String> {
     use tauri_plugin_dialog::DialogExt;
+    let state = app_handle.state::<crate::common::AppState>();
+    *state.is_dialog_open.lock() = true;
+
     let picked = tauri::async_runtime::spawn_blocking({
         let app = app_handle.clone();
         move || {
@@ -236,6 +239,10 @@ pub async fn pick_and_install_ghost_archive(
     })
     .await
     .map_err(|e| e.to_string())?;
+
+    let state2 = app_handle.state::<crate::common::AppState>();
+    *state2.is_dialog_open.lock() = false;
+
     let Some(fp) = picked else { return Ok(None) };
     let path = fp.into_path().map_err(|e| e.to_string())?;
     install_ghost_archive(path.to_string_lossy().to_string(), app_handle)

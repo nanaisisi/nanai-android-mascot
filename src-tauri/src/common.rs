@@ -49,6 +49,7 @@ pub struct AppState {
     // マルチゴースト対応 (ghost_id -> Engine, ghost_id -> ghost_name)
     pub ghost_engines: Mutex<std::collections::HashMap<String, ShioriDynamicEngine>>,
     pub active_ghosts: Mutex<std::collections::HashMap<String, String>>,
+    pub is_dialog_open: Mutex<bool>,
 }
 
 impl AppState {
@@ -59,6 +60,7 @@ impl AppState {
             shiori_engine: Mutex::new(None),
             ghost_engines: Mutex::new(std::collections::HashMap::new()),
             active_ghosts: Mutex::new(std::collections::HashMap::new()),
+            is_dialog_open: Mutex::new(false),
         }
     }
 }

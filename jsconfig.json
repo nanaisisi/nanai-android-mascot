@@ -10,6 +10,6 @@
 		"exactOptionalPropertyTypes": true,
 		"noEmit": true
 	},
-	"include": ["ui/**/*.js", "ui/**/*.ts", "ui/**/*.d.ts"],
+	"include": ["ui/**/*.js"],
 	"exclude": ["node_modules", "target", "src-tauri"]
 }

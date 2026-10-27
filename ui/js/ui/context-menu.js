@@ -1,22 +1,24 @@
 import { MenuDispatcher } from "./menu-dispatcher.js";
 import { MenuSubmenuRenderer } from "./menu-submenu-renderer.js";
-import { startDraggingWindow } from "../core/tauri-helper.js";
+import {
+	invoke,
+	isTauriAvailable,
+	listen,
+	startDraggingWindow,
+} from "../core/tauri-helper.js";
 
 const dispatcher = new MenuDispatcher();
 const renderer = new MenuSubmenuRenderer(dispatcher);
 
 document.addEventListener("mousedown", (event) => {
-	if (event.button !== 0 || !globalThis.__TAURI__) return;
+	if (event.button !== 0 || !isTauriAvailable()) return;
 	if (event.target.closest(".menu-item, .submenu-container")) return;
 	startDraggingWindow();
 });
 
 // 独立ウィンドウ環境での Tauri イベント受信 (ゴースト・シェル・バルーンテーマ同期・スコープ同期)
-if (globalThis.__TAURI__) {
-	const listenFn =
-		globalThis.__TAURI__.event?.listen || globalThis.__TAURI__.listen;
-	if (typeof listenFn === "function") {
-		listenFn("sync-menu-scope", (event) => {
+if (isTauriAvailable()) {
+	listen("sync-menu-scope", (event) => {
 			const scope =
 				typeof event.payload === "number"
 					? event.payload
@@ -27,7 +29,7 @@ if (globalThis.__TAURI__) {
 				renderer.renderDressupSubmenu(null, scope);
 			}
 		});
-		listenFn("sync-ghosts", (event) => {
+		listen("sync-ghosts", (event) => {
 			const data = event.payload;
 			if (data) {
 				renderer.renderGhostSubmenu(data.ghosts || [], data.currentGhost);
@@ -51,20 +53,19 @@ if (globalThis.__TAURI__) {
 				renderer.applyShellTheme(activeShell);
 			}
 		});
-		listenFn("sync-theme", (event) => {
+		listen("sync-theme", (event) => {
 			renderer.applyTheme(event.payload);
 			if (globalThis._lastBalloons) {
 				renderer.renderBalloonSubmenu(globalThis._lastBalloons, event.payload);
 			}
 		});
-		listenFn("sync-balloons", (event) => {
+		listen("sync-balloons", (event) => {
 			globalThis._lastBalloons = event.payload;
 			renderer.renderBalloonSubmenu(
 				event.payload,
 				document.documentElement.getAttribute("data-balloon-theme"),
 			);
 		});
-	}
 }
 
 // 親ウィンドウからの状態同期メッセージ受信 (iframeフォールバック時)
@@ -124,23 +125,19 @@ function _triggerSubmenuWindow(menuType, buttonEl) {
 	if (last?.type === menuType && now - last.time < 180) return;
 	_triggerSubmenuWindow.lastRequest = { type: menuType, time: now };
 
-	if (globalThis.__TAURI__) {
-		const invokeFn =
-			globalThis.__TAURI__.core?.invoke || globalThis.__TAURI__.invoke;
-		if (typeof invokeFn === "function") {
+	if (isTauriAvailable()) {
 			const rect = buttonEl.getBoundingClientRect();
 			const sX = globalThis.screenX ?? 0;
 			const sY = globalThis.screenY ?? 0;
 			const posX = sX + 240 + 2;
 			const posY = sY + rect.top;
-			invokeFn("show_submenu_window", {
+			invoke("show_submenu_window", {
 				menuType: menuType,
 				x: posX,
 				y: posY,
 				width: 220,
 				height: 320,
 			}).catch((e) => console.error("Failed to show submenu window:", e));
-		}
 		_triggerSubmenuWindow.lastRequest = null;
 	}
 }
@@ -154,7 +151,7 @@ document.addEventListener("click", (e) => {
 		const menuType = menuItem.id
 			.replace("-menu-btn", "")
 			.replace("-switch-btn", "");
-		if (globalThis.__TAURI__) {
+		if (isTauriAvailable()) {
 			_triggerSubmenuWindow(menuType, menuItem);
 			return;
 		}
@@ -197,7 +194,7 @@ function checkSubmenuFlip(wrapper) {
 document.querySelectorAll(".menu-item-wrapper").forEach((wrapper) => {
 	wrapper.addEventListener("mouseenter", () => {
 		checkSubmenuFlip(wrapper);
-		if (globalThis.__TAURI__) {
+		if (isTauriAvailable()) {
 			const btn = wrapper.querySelector(".menu-item.has-submenu");
 			if (btn) {
 				const menuType = btn.id
@@ -210,7 +207,7 @@ document.querySelectorAll(".menu-item-wrapper").forEach((wrapper) => {
 		}
 	});
 	wrapper.addEventListener("mouseleave", () => {
-		if (!globalThis.__TAURI__) {
+		if (!isTauriAvailable()) {
 			wrapper.classList.remove("open");
 		}
 	});

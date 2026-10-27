@@ -154,6 +154,7 @@ pub async fn send_shiori_event_typed(
 
 /// マウスクリックイベントを送信（簡易版）
 #[tauri::command]
+#[specta::specta]
 pub async fn on_mouse_click() -> Result<String, String> {
     println!("🖱️ Mouse click event");
     Ok("Mouse clicked".to_string())
@@ -161,6 +162,7 @@ pub async fn on_mouse_click() -> Result<String, String> {
 
 /// 秒数変化イベントを送信（簡易版）
 #[tauri::command]
+#[specta::specta]
 pub async fn on_second_change() -> Result<String, String> {
     // 無音で実行
     Ok("Second changed".to_string())

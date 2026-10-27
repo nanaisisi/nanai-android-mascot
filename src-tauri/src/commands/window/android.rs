@@ -1,5 +1,6 @@
 /// Androidオーバーレイ権限リクエスト・案内コマンド
 #[tauri::command]
+#[specta::specta]
 pub async fn request_overlay_permission() -> Result<String, String> {
     #[cfg(target_os = "android")]
     {
@@ -14,6 +15,7 @@ pub async fn request_overlay_permission() -> Result<String, String> {
 
 /// Androidフォアグラウンドサービス通知チャネル設定コマンド
 #[tauri::command]
+#[specta::specta]
 pub async fn setup_foreground_service(enabled: bool) -> Result<String, String> {
     #[cfg(target_os = "android")]
     {

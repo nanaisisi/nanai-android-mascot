@@ -23,8 +23,14 @@ use common::*;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let specta_builder = SpectaBuilder::<tauri::Wry>::new()
-        .commands(collect_commands![commands::window::test_command,]);
+    let specta_builder = SpectaBuilder::<tauri::Wry>::new().commands(collect_commands![
+        commands::window::test_command,
+        commands::shiori::on_mouse_click,
+        commands::shiori::on_second_change,
+        commands::shiori::get_shiori_status,
+        commands::window::request_overlay_permission,
+        commands::window::setup_foreground_service,
+    ]);
 
     #[cfg(debug_assertions)]
     specta_builder

@@ -57,25 +57,6 @@ function renderContent() {
       container.appendChild(btn);
     });
 
-    const sep = document.createElement("div");
-    sep.className = "menu-separator";
-    container.appendChild(sep);
-
-    const manageBtn = document.createElement("button");
-    manageBtn.type = "button";
-    manageBtn.className = "menu-item";
-    manageBtn.innerHTML = `<span>📂 ゴースト一覧・管理...</span>`;
-    manageBtn.addEventListener("click", () => {
-      dispatchSubmenuAction("ghost");
-    });
-    const installBtn = document.createElement("button");
-    installBtn.type = "button";
-    installBtn.className = "menu-item";
-    installBtn.innerHTML = `<span>📥 ゴーストの取り込み...</span>`;
-    installBtn.addEventListener("click", () => {
-      dispatchSubmenuAction("install");
-    });
-    container.appendChild(installBtn);
   } else if (currentSubmenuType === "shell") {
     (cachedShells.length > 0 ? cachedShells : ["master"]).forEach(
       (shellItem) => {

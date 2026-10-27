@@ -11,85 +11,49 @@
     <h1 class="visually-hidden">Nanai Android Mascot 標準メニュー</h1>
     <div class="menu-sidebar" id="menu-sidebar" aria-hidden="true"></div>
     <div class="menu-container" role="menu">
-      <!-- ==============================================================
-           1. ゴースト側メニュー (ゴースト固有の機能・SHIORI対話)
-           SSP仕様: ゴースト側SHIORIイベントへ透過的にリクエストを送る領域
-           ============================================================== -->
-      <!-- [実装済] OnChoiceSelect または OnSecondChange によるトーク再送 -->
+      <!-- 0. ゴースト側メニュー -->
       <button type="button" class="menu-item main-only" id="talk-btn" role="menuitem">
         <span>💬 もう一度話す (A)</span>
       </button>
 
-      <!-- [SHIORI連携] 【サブ共通】SSP仕様: OnChoiceSelect または \![open,recommendlink] 発火。
-           ※ベースウェア側未実装: 外部ブラウザ遷移およびゴースト独自のリンク一覧展開はSHIORI応答待ち -->
+      <div class="menu-separator main-only"></div>
+
+      <!-- 1,おすすめ【サブ】 -->
       <button type="button" class="menu-item" id="recommend-btn" role="menuitem">
         <span>🔗 おすすめサイト (R)</span>
       </button>
 
-      <!-- [SHIORI連携] SSP仕様: OnChoiceSelect または \![open,portal] 発火。
-           ※ベースウェア側未実装: descript.txt内のportalurlへのブラウザ起動は段階的実装予定 -->
+      <!-- 2,ポータルサイト -->
       <button type="button" class="menu-item main-only" id="portal-btn" role="menuitem">
         <span>🌐 ポータルサイト (T)</span>
       </button>
 
-      <!-- ※ベースウェア側未実装(SSP本家機能):
-           - さっきなんて言った？ / トークログ表示 (OnHistory / OnChoiceSelect)
-           - コミュニケート入力ボックス (OnCommunicate)
-      -->
+      <!-- 3,ネットワーク更新 -->
+      <button type="button" class="menu-item main-only" id="update-btn" role="menuitem">
+        <span>🔄 ネットワーク更新 (U)</span>
+      </button>
 
-      <div class="menu-separator main-only"></div>
+      <!-- 4,アンインストール -->
+      <button type="button" class="menu-item main-only" id="uninstall-btn" role="menuitem" data-action="uninstall-ghost">
+        <span>🗑️ アンインストール</span>
+      </button>
 
-      <!-- ==============================================================
-           2. ベースウェア (SSP) 側メニュー: マスコット・表示切り替え
-           ============================================================== -->
-      <!-- [実装済] VFS / ゴーストディレクトリからの検出ゴースト切り替え -->
-      <div class="menu-item-wrapper main-only">
-        <button type="button" class="menu-item has-submenu" id="ghost-switch-btn" role="menuitem">
-          <span>👻 ゴースト切り替え (G)</span>
-        </button>
-        <div class="submenu-container" id="ghost-submenu">
-          <button type="button" class="menu-item" id="ghost-btn">
-            <span>📂 ゴースト一覧・管理...</span>
-          </button>
-          <button type="button" class="menu-item" id="ghost-install-btn" data-action="install">
-            <span>📥 ゴーストの取り込み...</span>
-          </button>
-        </div>
-      </div>
+      <!-- 5,RSS/ヘッドライン -->
+      <button type="button" class="menu-item main-only" id="headline-btn">
+        <span>📰 ヘッドライン/ニュース</span>
+      </button>
 
-      <!-- [マルチゴースト] 他のゴーストを呼ぶ (追加起動) -->
-      <div class="menu-item-wrapper main-only">
-        <button type="button" class="menu-item has-submenu" id="call-ghost-btn" role="menuitem">
-          <span>👥 他のゴーストを呼ぶ (C)</span>
-        </button>
-        <div class="submenu-container" id="call-ghost-submenu">
-          <!-- 動的描画 -->
-        </div>
-      </div>
+      <!-- 6,プラグイン -->
+      <button type="button" class="menu-item main-only" id="plugins-btn">
+        <span>🧩 プラグイン・拡張機能</span>
+      </button>
 
-      <!-- [実装済] shell/master ディレクトリからのシェル切り替え -->
-      <div class="menu-item-wrapper main-only">
-        <button type="button" class="menu-item has-submenu" id="shell-switch-btn" role="menuitem">
-          <span>👗 シェル切り替え</span>
-        </button>
-        <div class="submenu-container" id="shell-submenu">
-          <button type="button" class="menu-item is-current" id="shell-master-btn">
-            <span>✓ master (通常)</span>
-          </button>
-        </div>
-      </div>
+      <!-- 7,メールチェック -->
+      <button type="button" class="menu-item main-only" id="biff-btn" data-action="biff" role="menuitem">
+        <span>📬 メールチェック (M)</span>
+      </button>
 
-      <!-- [実装済] 【サブ共通】ShellManifest bindgroup からの着せ替えパーツ切替 (UKADOC オーナードローメニュー) -->
-      <div class="menu-item-wrapper">
-        <button type="button" class="menu-item has-submenu" id="dressup-menu-btn" role="menuitem">
-          <span>🧥 着せ替え (C)</span>
-        </button>
-        <div class="submenu-container" id="dressup-submenu">
-          <!-- 動的描画 (Rust shell_manifest sakura/kero bindgroup) -->
-        </div>
-      </div>
-
-      <!-- [実装済] 画面内キャンバスのCSSピクセル倍率変更 (50%〜200%) -->
+      <!-- 8,シェル倍率 -->
       <div class="menu-item-wrapper main-only">
         <button type="button" class="menu-item has-submenu" id="scale-menu-btn" role="menuitem">
           <span>🔍 シェル倍率 (S)</span>
@@ -104,7 +68,77 @@
         </div>
       </div>
 
-      <!-- [実装済] CSSバルーンスキン切り替え (ivory, pixel, comic, dark) -->
+      <!-- 9,機能 -->
+      <div class="menu-item-wrapper main-only">
+        <button type="button" class="menu-item has-submenu" id="tools-menu-btn" role="menuitem">
+          <span>🛠️ 機能・ツール (F)</span>
+        </button>
+        <div class="submenu-container">
+          <button type="button" class="menu-item" id="install-btn">
+            <span>📥 ファイル取り込み・導入...</span>
+          </button>
+          <button type="button" class="menu-item" id="scan-btn">
+            <span>📂 ゴーストフォルダ再スキャン</span>
+          </button>
+          <button type="button" class="menu-item" id="debug-btn">
+            <span>🐛 デバッグログ</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 10,設定 -->
+      <button type="button" class="menu-item main-only" id="settings-btn" role="menuitem">
+        <span>⚙️ 設定 (O)</span>
+      </button>
+
+      <!-- 11,ゴースト切り替え -->
+      <div class="menu-item-wrapper main-only">
+        <button type="button" class="menu-item has-submenu" id="ghost-switch-btn" role="menuitem">
+          <span>👻 ゴースト切り替え (G)</span>
+        </button>
+        <div class="submenu-container" id="ghost-submenu">
+          <button type="button" class="menu-item" id="ghost-btn">
+            <span>📂 ゴースト一覧・管理...</span>
+          </button>
+          <button type="button" class="menu-item" id="ghost-install-btn" data-action="install">
+            <span>📥 ゴーストの取り込み...</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 12,他のゴーストを呼ぶ -->
+      <div class="menu-item-wrapper main-only">
+        <button type="button" class="menu-item has-submenu" id="call-ghost-btn" role="menuitem">
+          <span>👥 他のゴーストを呼ぶ (C)</span>
+        </button>
+        <div class="submenu-container" id="call-ghost-submenu">
+          <!-- 動的描画 -->
+        </div>
+      </div>
+
+      <!-- 13,シェル -->
+      <div class="menu-item-wrapper main-only">
+        <button type="button" class="menu-item has-submenu" id="shell-switch-btn" role="menuitem">
+          <span>👗 シェル切り替え</span>
+        </button>
+        <div class="submenu-container" id="shell-submenu">
+          <button type="button" class="menu-item is-current" id="shell-master-btn">
+            <span>✓ master (通常)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 14,着せ替え【サブ】 -->
+      <div class="menu-item-wrapper">
+        <button type="button" class="menu-item has-submenu" id="dressup-menu-btn" role="menuitem">
+          <span>🧥 着せ替え (C)</span>
+        </button>
+        <div class="submenu-container" id="dressup-submenu">
+          <!-- 動的描画 (Rust shell_manifest sakura/kero bindgroup) -->
+        </div>
+      </div>
+
+      <!-- 15,バルーン -->
       <div class="menu-item-wrapper main-only">
         <button type="button" class="menu-item has-submenu" id="balloon-menu-btn" role="menuitem">
           <span>💭 バルーン切り替え (B)</span>
@@ -122,27 +156,7 @@
         </div>
       </div>
 
-      <div class="menu-separator main-only"></div>
-
-      <!-- ==============================================================
-           3. ベースウェア (SSP) 側メニュー: ツール・更新・設定
-           ============================================================== -->
-      <!-- [SHIORI連携] OnUpdate イベント発火。
-           updates2.dau / updates.txt によるHTTP差分更新エンジン実装済み (src-tauri/src/commands/update/network.rs) -->
-      <button type="button" class="menu-item main-only" id="update-btn" role="menuitem">
-        <span>🔄 ネットワーク更新 (U)</span>
-      </button>
-      <!-- [SHIORI連携] OnUpdateCheckComplete / OnUpdateCheckFailure 発火 (チェックのみ実行) -->
-      <button type="button" class="menu-item main-only" id="updatecheck-btn" role="menuitem">
-        <span>✅ ネットワーク更新チェックのみ (C)</span>
-      </button>
-
-      <!-- [実装済] SSP準拠: ゴーストの削除 (確認ダイアログ → uninstall_ghost コマンド) -->
-      <button type="button" class="menu-item main-only" id="uninstall-btn" role="menuitem" data-action="uninstall-ghost">
-        <span>🗑️ アンインストール</span>
-      </button>
-
-      <!-- [実装済] SSP準拠: ゴースト実行履歴から再度実行 (nanai_recent_ghosts) -->
+      <!-- 16,最近使ったもの -->
       <div class="menu-item-wrapper main-only">
         <button type="button" class="menu-item has-submenu" id="recent-menu-btn" role="menuitem">
           <span>🕘 最近使ったもの</span>
@@ -152,78 +166,36 @@
         </div>
       </div>
 
+      <!-- 17,情報 -->
       <div class="menu-item-wrapper main-only">
-        <button type="button" class="menu-item has-submenu" id="tools-menu-btn" role="menuitem">
-          <span>🛠️ 機能・ツール (F)</span>
+        <button type="button" class="menu-item has-submenu" id="info-menu-btn" role="menuitem">
+          <span>❓ 情報 (H)</span>
         </button>
         <div class="submenu-container">
-          <!-- [実装済] .nar / .zip アーカイブの解凍・自動導入 -->
-          <button type="button" class="menu-item" id="install-btn">
-            <span>📥 ファイル取り込み・導入...</span>
+          <button type="button" class="menu-item" id="help-btn" role="menuitem">
+            <span>❓ 情報・ヘルプ</span>
           </button>
-          <!-- [実装済] assets/ghost 配下の再スキャン -->
-          <button type="button" class="menu-item" id="scan-btn">
-            <span>📂 ゴーストフォルダ再スキャン</span>
-          </button>
-          <!-- [SHIORI連携] OnHeadline イベント発火。
-               ※ベースウェア側未実装: RSS/HTTP取得とセンサリングエンジンは段階的実装予定 -->
-          <button type="button" class="menu-item" id="headline-btn">
-            <span>📰 ヘッドライン/ニュース</span>
-          </button>
-          <!-- ※ベースウェア側未実装(SSP本家機能): プラグインマネージャ (.dll / .js 連携) -->
-          <button type="button" class="menu-item" id="plugins-btn">
-            <span>🧩 プラグイン・拡張機能</span>
-          </button>
-          <!-- [実装済] SHIORIリクエストおよびシステム動作のリアルタイムデバッグログ -->
-          <button type="button" class="menu-item" id="debug-btn">
-            <span>🐛 デバッグログ</span>
+          <button type="button" class="menu-item" id="license-btn" role="menuitem">
+            <span>📜 著作権・ライセンス表示</span>
           </button>
         </div>
       </div>
 
-      <!-- [実装済] 基本設定モーダル (サウンド・描画等) -->
-      <button type="button" class="menu-item main-only" id="settings-btn" role="menuitem">
-        <span>⚙️ 設定 (O)</span>
-      </button>
-
-      <!-- [実装済] ユーザーガイド・操作説明モーダル -->
-      <button type="button" class="menu-item main-only" id="help-btn" role="menuitem">
-        <span>❓ 情報・ヘルプ (H)</span>
-      </button>
-
-      <!-- [実装済] UKADOC・各SHIORIエンジン著作権モーダル -->
-      <button type="button" class="menu-item main-only" id="license-btn" role="menuitem">
-        <span>📜 著作権・ライセンス表示 (L)</span>
-      </button>
-
-      <!-- [SHIORI連携] メールチェック (POP3/IMAP クライアント / OnBIFF 連携) -->
-      <button type="button" class="menu-item main-only" id="biff-btn" data-action="biff" role="menuitem">
-        <span>📬 メールチェック (M)</span>
-      </button>
-
-      <!-- ※ベースウェア側未実装(SSP本家機能):
-           - カレンダー / スケジューラ連携
-           - 外部ツール呼び出し連携
-      -->
-
       <div class="menu-separator"></div>
 
-      <!-- ==============================================================
-           4. 最小化・終了
-           ============================================================== -->
-      <!-- [実装済] デスクトップ版の最小化 / Android版のバックグラウンド化 -->
+      <!-- 18,アイコン化 -->
       <button type="button" class="menu-item main-only" id="minimize-btn" role="menuitem">
         <span>➖ アイコン化・隠す (M)</span>
         <span class="shortcut-key">Ctrl+I</span>
       </button>
 
-      <!-- [実装済] 【サブ共通】プロセス正常終了 (OnClose イベント送出後終了) -->
+      <!-- 20,終了【サブ】 -->
       <button type="button" class="menu-item" id="close-btn" role="menuitem">
         <span>✖ 終了 (W)</span>
         <span class="shortcut-key">Ctrl+W</span>
       </button>
 
-      <!-- [実装済] 【サブ共通】全て終了 (SSP標準ショートカット Ctrl+Q) -->
+      <!-- 21,全て終了【サブ】 -->
       <button type="button" class="menu-item" id="close-all-btn" data-action="close-all" role="menuitem">
         <span>❌ 全て終了 (X)</span>
         <span class="shortcut-key">Ctrl+Q</span>

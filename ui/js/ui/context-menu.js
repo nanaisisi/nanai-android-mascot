@@ -224,7 +224,6 @@ document.addEventListener("keydown", (e) => {
 		r: "recommend", // おすすめサイト (Recommend)
 		t: "portal", // ポータル (Portal)
 		u: "update", // ネットワーク更新 (Update)
-		c: "updatecheck", // ネットワーク更新チェックのみ (Check)
 		b: "balloon", // バルーン (Balloon)
 		f: "tools", // ツール
 		i: "install", // ファイル導入

@@ -6,7 +6,8 @@ import {
 	invoke,
 	isTauriAvailable,
 	listen,
-	startDraggingWindow,
+	getCurrentWindowPosition,
+	moveCurrentWindowBy,
 } from "../core/tauri-helper.js";
 
 const urlParams = new URLSearchParams(globalThis.location.search);
@@ -64,7 +65,25 @@ function initCharacterWindow() {
 	root?.addEventListener("mousedown", (e) => {
 		if (e.button !== 0) return;
 		if (img && isTransparentPixel(img, e.clientX, e.clientY)) return;
-		void startDraggingWindow();
+		const startX = e.clientX;
+		const startY = e.clientY;
+		let origin = null;
+		const move = (event) => {
+			if (!origin) return;
+			void moveCurrentWindowBy(
+				event.clientX - startX,
+				event.clientY - startY,
+				origin,
+			);
+		};
+		const stop = () => {
+			globalThis.removeEventListener("mousemove", move);
+		};
+		globalThis.addEventListener("mousemove", move);
+		globalThis.addEventListener("mouseup", stop, { once: true });
+		void getCurrentWindowPosition().then((position) => {
+			origin = position;
+		});
 	});
 
 	root?.addEventListener("click", () => {

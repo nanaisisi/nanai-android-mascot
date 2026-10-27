@@ -25,32 +25,32 @@ pub fn scan_balloons(app_handle: tauri::AppHandle) -> Result<Vec<BalloonInfo>, S
     let mut balloons = Vec::new();
     // balloons は assets/balloon 直下
     for base_dir in ["assets/balloon", "balloon"] {
-        if let Ok(resolved) = resolve_asset_path(base_dir, &app_handle) {
-            if resolved.exists() && resolved.is_dir() {
-                if let Ok(entries) = std::fs::read_dir(&resolved) {
-                    for entry in entries.flatten() {
-                        let path = entry.path();
-                        if path.is_dir() {
-                            let dir_name = entry.file_name().to_string_lossy().to_string();
-                            if !dir_name.starts_with('.') {
-                                let descript = balloon_descript_map(&path);
-                                let name = descript
-                                    .get("name")
-                                    .cloned()
-                                    .unwrap_or_else(|| dir_name.clone());
-                                balloons.push(BalloonInfo {
-                                    dir_name,
-                                    name,
-                                    descript,
-                                });
-                            }
-                        }
+        if let Ok(resolved) = resolve_asset_path(base_dir, &app_handle)
+            && resolved.exists()
+            && resolved.is_dir()
+            && let Ok(entries) = std::fs::read_dir(&resolved)
+        {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                if path.is_dir() {
+                    let dir_name = entry.file_name().to_string_lossy().to_string();
+                    if !dir_name.starts_with('.') {
+                        let descript = balloon_descript_map(&path);
+                        let name = descript
+                            .get("name")
+                            .cloned()
+                            .unwrap_or_else(|| dir_name.clone());
+                        balloons.push(BalloonInfo {
+                            dir_name,
+                            name,
+                            descript,
+                        });
                     }
                 }
             }
         }
     }
-    
+
     // ディレクトリ名の重複を排除（assets/balloon が優先される想定）
     let mut unique = std::collections::HashMap::new();
     for b in balloons {
@@ -58,7 +58,7 @@ pub fn scan_balloons(app_handle: tauri::AppHandle) -> Result<Vec<BalloonInfo>, S
     }
     let mut result: Vec<_> = unique.into_values().collect();
     result.sort_by(|a, b| a.name.cmp(&b.name));
-    
+
     Ok(result)
 }
 

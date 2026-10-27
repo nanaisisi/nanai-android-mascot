@@ -83,7 +83,7 @@ export class NanaiAndroidMascotApp {
 		this.loadSettings();
 		this.setupEventListeners();
 		this.applySettings();
-		
+
 		// バルーン情報のスキャン
 		await this.scanBalloons();
 

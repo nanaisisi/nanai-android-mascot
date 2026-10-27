@@ -21,12 +21,28 @@ class MainActivity : TauriActivity() {
 
   override fun onResume() {
     super.onResume()
+    handleServiceIntent(intent)
     if (Settings.canDrawOverlays(this)) {
       val intent = Intent(this, NanaiForegroundService::class.java)
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         startForegroundService(intent)
       } else {
         startService(intent)
+      }
+    }
+  }
+
+  override fun onNewIntent(intent: Intent) {
+    super.onNewIntent(intent)
+    setIntent(intent)
+    handleServiceIntent(intent)
+  }
+
+  private fun handleServiceIntent(intent: Intent) {
+    when (intent.action) {
+      NanaiForegroundService.ACTION_HIDE -> moveTaskToBack(true)
+      NanaiForegroundService.ACTION_SHOW -> {
+        window.decorView.visibility = android.view.View.VISIBLE
       }
     }
   }

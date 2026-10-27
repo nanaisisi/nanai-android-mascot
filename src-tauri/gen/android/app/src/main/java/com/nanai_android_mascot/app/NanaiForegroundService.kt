@@ -29,15 +29,23 @@ class NanaiForegroundService : Service() {
   override fun onBind(intent: Intent?): IBinder? = null
 
   private fun buildNotification(): Notification {
-    val launchIntent = packageManager.getLaunchIntentForPackage(packageName)
-    val contentIntent = launchIntent?.let {
-      PendingIntent.getActivity(
-        this,
-        0,
-        it,
-        PendingIntent.FLAG_UPDATE_CURRENT or pendingIntentImmutableFlag()
-      )
-    }
+    val showIntent = Intent(this, MainActivity::class.java)
+      .setAction(ACTION_SHOW)
+      .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+    val contentIntent = PendingIntent.getActivity(
+      this,
+      0,
+      showIntent,
+      PendingIntent.FLAG_UPDATE_CURRENT or pendingIntentImmutableFlag()
+    )
+    val hideIntent = PendingIntent.getActivity(
+      this,
+      2,
+      Intent(this, MainActivity::class.java)
+        .setAction(ACTION_HIDE)
+        .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+      PendingIntent.FLAG_UPDATE_CURRENT or pendingIntentImmutableFlag()
+    )
     val stopIntent = PendingIntent.getService(
       this,
       1,
@@ -51,6 +59,8 @@ class NanaiForegroundService : Service() {
       .setContentText("ゴースト: ナナイ (タップでメニュー表示)")
       .setContentIntent(contentIntent)
       .setOngoing(true)
+      .addAction(android.R.drawable.ic_menu_view, "表示", contentIntent)
+      .addAction(android.R.drawable.ic_menu_close_clear_cancel, "隠す", hideIntent)
       .addAction(android.R.drawable.ic_menu_close_clear_cancel, "終了", stopIntent)
       .build()
   }
@@ -70,6 +80,8 @@ class NanaiForegroundService : Service() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
 
   companion object {
+    const val ACTION_HIDE = "com.nanai_android_mascot.app.HIDE"
+    const val ACTION_SHOW = "com.nanai_android_mascot.app.SHOW"
     private const val CHANNEL_ID = "nanai_mascot_service"
     private const val NOTIFICATION_ID = 1001
     private const val ACTION_STOP = "com.nanai_android_mascot.app.STOP_SERVICE"

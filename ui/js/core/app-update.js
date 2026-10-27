@@ -76,7 +76,10 @@ export const updateMethods = {
 
 		try {
 			// 3. 更新ファイル有無チェック
-			const checkResult = await invoke("check_ghost_update", { ghostName });
+			const checkResult = await invoke("check_ghost_update", {
+				ghostName,
+				ghostPath,
+			});
 			console.log("🔍 更新チェック結果:", checkResult);
 
 			const fileNames = checkResult.update_files.map((f) => f.path);
@@ -179,6 +182,7 @@ export const updateMethods = {
 				// 5. 更新実行
 				const updateResult = await invoke("execute_ghost_update", {
 					ghostName,
+					ghostPath,
 				});
 				console.log("🚀 更新実行結果:", updateResult);
 

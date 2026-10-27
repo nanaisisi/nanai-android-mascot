@@ -1,10 +1,11 @@
+import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 import {
 	bindAnimationIds,
 	bindGroupsForScope,
 	dressupKey,
 	patternSurfaceFile,
 } from "./bind-menu.js";
-import { collisionContains } from "./shell-manifest.js";
+import { collisionContains, methodToString } from "./shell-manifest.js";
 import {
 	composeSurfaceElements,
 	processChromaKey,
@@ -177,6 +178,103 @@ export const surfaceRenderMethods = {
 	},
 
 	/**
+	 * 装着中 bindgroup（dressupState true）に対応する bind アニメーションID列
+	 * @this {import('./surface-manager.js').SurfaceManager}
+	 * @param {number} [scopeId]
+	 * @returns {number[]}
+	 */
+	activeBindAnimationIds(scopeId = 0) {
+		if (!this.shellManifest) return [];
+		return bindGroupsForScope(this.shellManifest, scopeId)
+			.filter((group) =>
+				this.dressupState.get(dressupKey(scopeId, group.category, group.part)),
+			)
+			.flatMap((group) => bindAnimationIds(group.number, group.add_ids))
+			.sort((a, b) => a - b);
+	},
+
+	/**
+	 * Rust コアの合成計画（element + 装着 bind pattern）を取得する
+	 *
+	 * 切替時（サーフィス / 着せ替え / シェルの変更）のみ IPC し、
+	 * planCache（surface + bind 状態キー）でヒット時は IPC なし。
+	 * 失敗時は null（JS 収集レイヤーのレガシー合成へフォールバック）。
+	 * @this {import('./surface-manager.js').SurfaceManager}
+	 * @param {number|string} surfaceId
+	 * @param {number} [scopeId]
+	 * @returns {Promise<{ layers: Element[] , planHash: string }|null>}
+	 */
+	async getCompositionPlan(surfaceId, scopeId = 0) {
+		if (!this.shellManifest || !isTauriAvailable()) return null;
+		const sid = Number(surfaceId);
+		if (!Number.isFinite(sid) || sid < 0) return null;
+		const gc = this.app?.ghostController;
+		const ghostName = gc?.currentGhost?.name;
+		if (!ghostName) return null;
+
+		const key = `${scopeId}__${sid}__${this.activeBindAnimationIds(scopeId).join(",")}`;
+		if (this.planCache.has(key)) {
+			return this.planCache.get(key);
+		}
+		try {
+			const plan = await invoke("surface_composition_plan", {
+				ghostName,
+				shellName: gc?.currentShell || "master",
+				surfaceId: sid,
+				binds: this.activeBindAnimationIds(scopeId),
+			});
+			if (!plan || !Array.isArray(plan.layers)) return null;
+			this.planCache.set(key, plan);
+			console.info(
+				`🧩 合成計画取得 (Rust): surface=${sid}, layers=${plan.layers.length}, hash=${plan.planHash}`,
+			);
+			return plan;
+		} catch (_err) {
+			return null;
+		}
+	},
+
+	/**
+	 * Rust 合成計画をレガシー描画レイヤー列へ変換する
+	 * @this {import('./surface-manager.js').SurfaceManager}
+	 * @param {{ layers: Record<string, any>[] }|null} plan
+	 * @param {number} [scopeId] - pattern surface エイリアス解決のスコープ
+	 * @returns {{ elements: Array<{ file: string, x: number, y: number, type: string }>, bindLayers: Array<{ file: string, x: number, y: number, type: string }> }|null}
+	 */
+	planToRenderLayers(plan, scopeId = 0) {
+		if (!plan?.layers?.length) return null;
+		const elements = [];
+		const bindLayers = [];
+		let hasElement = false;
+		for (const layer of plan.layers) {
+			const raw = layer.Element ?? layer.Pattern;
+			if (!raw) continue;
+			const type = methodToString(raw.method) || "overlay";
+			if (layer.Element) {
+				hasElement = true;
+				if (raw.file) {
+					elements.push({
+						file: raw.file,
+						x: raw.x ?? 0,
+						y: raw.y ?? 0,
+						type,
+					});
+				}
+			} else {
+				const file = patternSurfaceFile(
+					this.resolveSurfaceNumber(raw.surface, scopeId),
+				);
+				if (file) {
+					bindLayers.push({ file, x: raw.x ?? 0, y: raw.y ?? 0, type });
+				}
+			}
+		}
+		// element 定義が一つも無いシェル（bind のみ）はレガシー要素へフォールバック
+		if (!hasElement) return null;
+		return { elements, bindLayers };
+	},
+
+	/**
 	 * element0〜elementN で定義されたレイヤー画像 + 装着中の着せ替え bind レイヤー +
 	 * SERIKO アニメーションフレーム差分レイヤーをベース画像上に合成 (UKADOC準拠)
 	 * @this {import('./surface-manager.js').SurfaceManager}
@@ -188,7 +286,7 @@ export const surfaceRenderMethods = {
 	 *     - SERIKO アニメ 1 フレームの差分レイヤー（bind レイヤーの上に重ねる）
 	 * @returns {Promise<string>} - 合成後のDataURL (PNG)
 	 */
-	composeSurfaceElements(
+	async composeSurfaceElements(
 		surfaceId,
 		baseImgSrc,
 		resolveImagePath,
@@ -196,9 +294,23 @@ export const surfaceRenderMethods = {
 		frameLayers = null,
 	) {
 		const sid = String(surfaceId);
-		const elementList = this.elements[sid] || this.elements.default || [];
-		const bindLayers =
+		let elementList = this.elements[sid] || this.elements.default || [];
+		let bindLayers =
 			scopeId === 0 || scopeId === 1 ? this.activeBindLayers(scopeId, sid) : [];
+
+		// Rust 合成計画（切替時のみ 1 IPC・キャッシュ済み）へ一本化
+		// 失敗時（Web/Mock 等）は JS 収集レイヤーのレガシー合成へフォールバック
+		try {
+			const plan = await this.getCompositionPlan(sid, scopeId);
+			const converted = this.planToRenderLayers(plan, scopeId);
+			if (converted) {
+				elementList = converted.elements;
+				bindLayers = converted.bindLayers;
+			}
+		} catch (_err) {
+			// レガシー経路を維持
+		}
+
 		const layers = frameLayers?.length
 			? [...bindLayers, ...frameLayers]
 			: bindLayers;

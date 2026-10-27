@@ -5,7 +5,10 @@
 //! `ShellManifest`（serde JSON）としてフロントエンドへ返す。
 
 use crate::common::*;
+use nanai_android_mascot_ui::surfaces::{CompositionLayer, DrawMethod};
 use nanai_android_mascot_ui::{Shell, ShellManifest};
+use std::collections::hash_map::DefaultHasher;
+use std::hash::{Hash, Hasher};
 use std::path::PathBuf;
 
 /// シェルディレクトリを解決する（ゴースト名 + シェル名 → 実パス）
@@ -113,6 +116,116 @@ fn balloon_descript_map(dir: &std::path::Path) -> std::collections::BTreeMap<Str
         .properties
         .into_iter()
         .collect::<std::collections::BTreeMap<_, _>>()
+}
+
+/// 合成計画のスナップショット（フロント Canvas 描画へ渡す形式）
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CompositionPlanSnapshot {
+    surface: u32,
+    layers: Vec<PlanLayer>,
+    plan_hash: String,
+}
+
+/// 合成計画の1レイヤー
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PlanLayer {
+    /// `element`（surface ブロックの element）または `pattern`（装着 bind の pattern）
+    kind: &'static str,
+    /// 描画ファイル（element）。pattern の場合は空
+    file: String,
+    /// pattern の source サーフィス番号（element は 0）
+    surface: i32,
+    x: i32,
+    y: i32,
+    /// レガシー文字列化した描画メソッド（`base` / `overlay` / `blend-*` 等）
+    method: String,
+}
+
+impl CompositionPlanSnapshot {
+    /// Rust `CompositionPlan` をフロント契約 JSON へ変換する
+    fn snapshot(plan: nanai_android_mascot_ui::surfaces::CompositionPlan) -> Self {
+        let layers = plan
+            .layers
+            .iter()
+            .map(|layer| match layer {
+                CompositionLayer::Element(e) => PlanLayer {
+                    kind: "element",
+                    file: e.file.clone(),
+                    surface: 0,
+                    x: e.x,
+                    y: e.y,
+                    method: method_string(&e.method),
+                },
+                CompositionLayer::Pattern(p) => PlanLayer {
+                    kind: "pattern",
+                    file: String::new(),
+                    surface: p.surface,
+                    x: p.x,
+                    y: p.y,
+                    method: method_string(&p.method),
+                },
+            })
+            .collect();
+        let mut hasher = DefaultHasher::new();
+        plan.surface.hash(&mut hasher);
+        for layer in &plan.layers {
+            match layer {
+                CompositionLayer::Element(e) => {
+                    "element".hash(&mut hasher);
+                    e.file.hash(&mut hasher);
+                    e.x.hash(&mut hasher);
+                    e.y.hash(&mut hasher);
+                    method_string(&e.method).hash(&mut hasher);
+                }
+                CompositionLayer::Pattern(p) => {
+                    "pattern".hash(&mut hasher);
+                    p.surface.hash(&mut hasher);
+                    p.x.hash(&mut hasher);
+                    p.y.hash(&mut hasher);
+                    method_string(&p.method).hash(&mut hasher);
+                }
+            }
+        }
+        Self {
+            surface: plan.surface,
+            layers,
+            plan_hash: format!("{:016x}", hasher.finish()),
+        }
+    }
+}
+
+/// `DrawMethod` をレガシー文字列化（JS `methodToString` と同等の変換を Rust 側で担保）
+fn method_string(method: &DrawMethod) -> String {
+    match method {
+        DrawMethod::Base => "base".to_string(),
+        DrawMethod::Overlay => "overlay".to_string(),
+        DrawMethod::OverlayFast => "overlayfast".to_string(),
+        DrawMethod::Interpolate => "interpolate".to_string(),
+        DrawMethod::Replace => "replace".to_string(),
+        DrawMethod::Add | DrawMethod::Bind => "add".to_string(),
+        DrawMethod::Blend(name) => format!("blend-{name}"),
+        DrawMethod::Custom(name) => name.clone(),
+    }
+}
+
+/// 合成計画（MAYUNA: element 列 + 装着 bind pattern 列）を Rust コアで立てて返す
+///
+/// フロントは切替時（サーフィス・着せ替え・シェルの変更時）のみ呼び出し、
+/// `plan_hash` をキーにレイヤー列をキャッシュする（アニメフレーム毎回の IPC は禁止）。
+#[tauri::command]
+pub fn surface_composition_plan(
+    ghost_name: String,
+    shell_name: String,
+    surface_id: u32,
+    binds: Option<Vec<u32>>,
+    app_handle: tauri::AppHandle,
+) -> Result<Option<CompositionPlanSnapshot>, String> {
+    let shell_dir = resolve_shell_dir(&ghost_name, &shell_name, &app_handle)?;
+    let shell = Shell::load(&shell_dir).map_err(|e| e.to_string())?;
+    let plan = shell.composition_plan(surface_id, &binds.unwrap_or_default());
+    Ok(plan.map(CompositionPlanSnapshot::snapshot))
 }
 
 /// タイムライン計算の入力パターン（フロントエンド側で抽選済みの待ち時間）

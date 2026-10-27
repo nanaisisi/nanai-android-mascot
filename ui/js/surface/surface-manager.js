@@ -37,6 +37,8 @@ export class SurfaceManager {
 		this.keroAliases = null;
 		/** @type {Record<string, any>|null} Rust `shell_manifest` の生マニフェスト */
 		this.shellManifest = null;
+		/** @type {Map<string, any>} Rust 合成計画キャッシュ (key: scope__surface__binds) */
+		this.planCache = new Map();
 
 		this.animationManager = new SurfaceAnimationManager(this);
 	}

@@ -88,6 +88,8 @@ export const surfaceLoadMethods = {
 		this.aliases = data.aliases;
 		this.keroAliases = data.keroAliases;
 		this.shellManifest = manifest;
+		// シェル単位の Rust 合成計画キャッシュは消去（composition-plan-integration-spec 2.3）
+		this.planCache?.clear();
 
 		// bindgroup[N].default,1（初期装着）を着せ替え状態へシード（既存キーは保持）
 		const seeded = seedDressupDefaults(manifest, this.dressupState);
@@ -105,6 +107,7 @@ export const surfaceLoadMethods = {
 	 * @this {import('./surface-manager.js').SurfaceManager}
 	 */
 	async parseSurfacesTxt(text) {
+		this.planCache?.clear();
 		if (isTauriAvailable()) {
 			const rustData = await parseSurfacesTextWithRust(text);
 			if (rustData) {

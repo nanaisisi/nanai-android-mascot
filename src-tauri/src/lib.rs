@@ -172,6 +172,7 @@ pub fn run() {
             commands::shell::parse_surfaces_text,
             commands::shell::animation_timeline,
             commands::shell::balloon_manifest,
+            commands::shell::surface_composition_plan,
             ghost::scan::scan_ghost_directory,
             commands::shiori::scan_ghosts,
             commands::shiori::load_ghost,

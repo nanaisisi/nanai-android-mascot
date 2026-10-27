@@ -16,13 +16,9 @@ body {
 	background-color: var(--balloon-bg, #ffffff);
 	background-image: var(--menu-bg-image, var(--balloon-pattern, none));
 	background-repeat: repeat;
-	border: var(--balloon-border-width, 1px) var(--balloon-border-style, solid)
-		var(--balloon-border-color, #7a7a7a);
-	border-radius: var(--balloon-border-radius, 0.375rem);
-	box-shadow: var(
-		--balloon-box-shadow,
-		0.125rem 0.125rem 0.75rem rgba(0, 0, 0, 0.35)
-	);
+	border: none;
+	border-radius: 0;
+	box-shadow: none;
 	padding: 0.25rem 0;
 	font-size: var(--balloon-font-size, 0.8125rem);
 	color: var(--balloon-text-color, #111111);

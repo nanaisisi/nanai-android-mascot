@@ -62,6 +62,9 @@ pub struct ShellMenuTheme {
     pub background_bitmap: Option<String>,
     pub foreground_bitmap: Option<String>,
     pub sidebar_bitmap: Option<String>,
+    pub background_alignment: Option<String>,
+    pub foreground_alignment: Option<String>,
+    pub sidebar_alignment: Option<String>,
 }
 
 // シェル情報

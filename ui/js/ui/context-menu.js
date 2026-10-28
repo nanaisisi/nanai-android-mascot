@@ -34,6 +34,9 @@ if (isTauriAvailable()) {
 		listen("sync-ghosts", (event) => {
 			const data = event.payload;
 			if (data) {
+				if (typeof data.scope === "number" && data.scope !== dispatcher.currentScope) {
+					dispatcher.setScope(data.scope);
+				}
 				renderer.renderGhostSubmenu(data.ghosts || [], data.currentGhost);
 				renderer.renderCallGhostSubmenu(data.ghosts || []);
 				if (data.shells) {

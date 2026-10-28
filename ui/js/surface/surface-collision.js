@@ -23,10 +23,14 @@ export const surfaceCollisionMethods = {
 		const map = scopeId === 1 ? this.keroAliases : this.aliases;
 		let list = Array.isArray(map?.[name]) ? map[name] : null;
 		if (!list && map) {
-			const entry = Object.entries(map).find(
-				([key]) => key.toLowerCase() === name.toLowerCase(),
-			);
-			list = Array.isArray(entry?.[1]) ? entry[1] : null;
+			const lowerName = name.toLowerCase();
+			for (const key in map) {
+				if (key.toLowerCase() === lowerName) {
+					const val = map[key];
+					list = Array.isArray(val) ? val : null;
+					break;
+				}
+			}
 		}
 		if (!list || list.length === 0) {
 			return surfaceId;

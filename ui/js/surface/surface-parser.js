@@ -62,7 +62,8 @@ export function expandSurfaceRange(rangeStr) {
 export function parseSurfacesTxt(text) {
 	const collisions = {};
 	const elements = {};
-	const animationMap = new Map();
+	const animations = {};
+	const animationMaps = {};
 
 	const lines = text.split(/\r?\n/);
 	let currentSurfaces = ["default"];
@@ -140,15 +141,13 @@ export function parseSurfacesTxt(text) {
 				const animId = Number.parseInt(match[1], 10);
 				const interval = match[2].trim();
 				currentSurfaces.forEach((s) => {
-					let surfaceAnims = animationMap.get(s);
-					if (!surfaceAnims) {
-						surfaceAnims = new Map();
-						animationMap.set(s, surfaceAnims);
-					}
-					let anim = surfaceAnims.get(animId);
+					if (!animations[s]) animations[s] = [];
+					if (!animationMaps[s]) animationMaps[s] = new Map();
+					let anim = animationMaps[s].get(animId);
 					if (!anim) {
 						anim = { id: animId, interval, patterns: [] };
-						surfaceAnims.set(animId, anim);
+						animationMaps[s].set(animId, anim);
+						animations[s].push(anim);
 					} else {
 						anim.interval = interval;
 					}
@@ -172,42 +171,35 @@ export function parseSurfacesTxt(text) {
 					const x = Number.parseInt(parts[3], 10) || 0;
 					const y = Number.parseInt(parts[4], 10) || 0;
 
-					const patternObj = {
-						surface,
-						wait: Number.isNaN(wait) ? 0 : wait * (legacy ? 10 : 1),
-						type,
-						x,
-						y,
-						index,
-					};
-
 					currentSurfaces.forEach((s) => {
-						let surfaceAnims = animationMap.get(s);
-						if (!surfaceAnims) {
-							surfaceAnims = new Map();
-							animationMap.set(s, surfaceAnims);
-						}
-						let anim = surfaceAnims.get(animId);
+						if (!animations[s]) animations[s] = [];
+						if (!animationMaps[s]) animationMaps[s] = new Map();
+						let anim = animationMaps[s].get(animId);
 						if (!anim) {
 							anim = { id: animId, interval: "sometimes", patterns: [] };
-							surfaceAnims.set(animId, anim);
+							animationMaps[s].set(animId, anim);
+							animations[s].push(anim);
 						}
-						anim.patterns.push(patternObj);
+						anim.patterns.push({
+							surface,
+							wait: Number.isNaN(wait) ? 0 : wait * (legacy ? 10 : 1),
+							type,
+							x,
+							y,
+							index,
+						});
 					});
 				}
 			}
 		}
 	});
 
-	const animations = {};
-	for (const [s, surfaceAnims] of animationMap.entries()) {
-		const animList = Array.from(surfaceAnims.values());
+	for (const animList of Object.values(animations)) {
 		for (const anim of animList) {
 			anim.patterns = anim.patterns
 				.sort((a, b) => a.index - b.index)
 				.map(({ index, ...pattern }) => pattern);
 		}
-		animations[s] = animList;
 	}
 	return { collisions, elements, animations };
 }

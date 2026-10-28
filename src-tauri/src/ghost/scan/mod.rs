@@ -16,6 +16,40 @@ pub struct ScanResult {
     input_path: String,
 }
 
+fn format_system_time(sys_time: std::time::SystemTime) -> Option<String> {
+    let dur = sys_time.duration_since(std::time::UNIX_EPOCH).ok()?;
+    let secs = dur.as_secs();
+    let days = secs / 86400;
+    let remainder = secs % 86400;
+    let hours = remainder / 3600;
+    let minutes = (remainder % 3600) / 60;
+    let seconds = remainder % 60;
+
+    let mut year = 1970;
+    let mut remaining_days = days as i64;
+    loop {
+        let leap = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+        let days_in_year = if leap { 366 } else { 365 };
+        if remaining_days < days_in_year {
+            break;
+        }
+        remaining_days -= days_in_year;
+        year += 1;
+    }
+    let mut month = 1;
+    let leap = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+    let days_in_months = [31, if leap { 29 } else { 28 }, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    for &dim in &days_in_months {
+        if remaining_days < dim {
+            break;
+        }
+        remaining_days -= dim;
+        month += 1;
+    }
+    let day = remaining_days + 1;
+    Some(format!("{:04}-{:02}-{:02} {:02}:{:02}:{:02}", year, month, day, hours, minutes, seconds))
+}
+
 /// ゴーストディレクトリをフルスキャンして完全なゴースト情報を取得
 #[tauri::command]
 pub async fn scan_ghost_directory(
@@ -66,6 +100,16 @@ pub async fn scan_ghost_directory(
                         .as_ref()
                         .and_then(|m| m.get("craftmanurl").cloned());
 
+                    let (install_date, update_date) = if let Ok(meta) = std::fs::metadata(&path) {
+                        let modified = meta.modified().ok().and_then(format_system_time);
+                        let created = meta.created().ok().and_then(format_system_time);
+                        (created.or(modified.clone()), modified)
+                    } else {
+                        (None, None)
+                    };
+                    let update_result = Some("正常 (最新)".to_string());
+                    let group = meta_map.as_ref().and_then(|m| m.get("group").cloned());
+
                     // 全シェルをスキャン
                     let shells = scan_shells_from_ghost(&path);
 
@@ -79,6 +123,10 @@ pub async fn scan_ghost_directory(
                         craftman,
                         craftman_url,
                         shells,
+                        group,
+                        install_date,
+                        update_date,
+                        update_result,
                     });
                 }
             }
@@ -89,6 +137,13 @@ pub async fn scan_ghost_directory(
         let mock_nanai_path = ghost_path.join("mock_nanai");
         if mock_nanai_path.exists() {
             let shells = scan_shells_from_ghost(&mock_nanai_path);
+            let (install_date, update_date) = if let Ok(meta) = std::fs::metadata(&mock_nanai_path) {
+                let modified = meta.modified().ok().and_then(format_system_time);
+                let created = meta.created().ok().and_then(format_system_time);
+                (created.or(modified.clone()), modified)
+            } else {
+                (None, None)
+            };
             ghosts.push(GhostInfo {
                 name: "mock_nanai".to_string(),
                 version: Some("1.0.0".to_string()),
@@ -99,6 +154,10 @@ pub async fn scan_ghost_directory(
                 craftman: None,
                 craftman_url: None,
                 shells,
+                group: None,
+                install_date,
+                update_date,
+                update_result: Some("正常 (最新)".to_string()),
             });
         }
     }

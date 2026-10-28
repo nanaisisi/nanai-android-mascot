@@ -263,18 +263,21 @@ document.addEventListener("keydown", (e) => {
 
 	// 単一アクセラレータキー (SSP標準キーバインド準拠)
 	const keyMap = {
-		a: "talk", // もう一度話す (Again)
-		r: "recommend", // おすすめサイト (Recommend)
-		t: "portal", // ポータル (Portal)
+		r: "recommend", // おすすめ (Recommend)
+		t: "portal", // ポータルサイト (Portal)
 		u: "update", // ネットワーク更新 (Update)
-		b: "balloon", // バルーン (Balloon)
-		f: "tools", // ツール
-		i: "install", // ファイル導入
+		d: "uninstall-ghost", // アンインストール (Delete)
+		h: "headline", // RSS/ヘッドライン (Headline)
+		p: "plugins", // プラグイン (Plugins)
+		m: "biff", // メールチェック (Mail)
+		f: "tools", // 機能 (Functions)
 		o: "settings", // 設定 (Options)
-		h: "help", // 情報・ヘルプ (Help)
-		l: "license", // 著作権・ライセンス (License)
-		m: "minimize", // 最小化 (Minimize)
-		w: "close", // 終了
+		g: "ghost", // ゴースト切り替え (Ghost)
+		c: "dressup", // 着せ替え (Clothing)
+		b: "balloon", // バルーン (Balloon)
+		a: "help", // 情報 (About)
+		i: "minimize", // アイコン化 (Iconize)
+		w: "close", // 終了 (Window close)
 		x: "close-all", // 全て終了 (Exit all)
 	};
 

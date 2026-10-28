@@ -60,6 +60,39 @@ export const actionMethods = {
     if (action === "explorer") {
       return this.modalManager?.show("explorer-modal-content");
     }
+    if (action === "backlog") {
+      return this.modalManager?.show("backlog-modal-content");
+    }
+    if (action === "reload-ghost") {
+      const currentName = gc.currentGhost?.name || AppConfig.paths.fallbackGhostName;
+      return gc.selectGhost(currentName).then(() => {
+        this.showBalloon("🔄 ゴーストを再読み込みしました");
+        setTimeout(() => this.hideBalloon(), 2000);
+      });
+    }
+    if (action === "reset-shell-position") {
+      if (this.elements.ghostDisplay) {
+        this.elements.ghostDisplay.style.left = "";
+        this.elements.ghostDisplay.style.top = "";
+        this.elements.ghostDisplay.style.transform = "";
+        this.elements.ghostDisplay.classList.remove("is-docked-left", "is-docked-right");
+      }
+      this.showBalloon("📍 シェル位置を初期化しました");
+      setTimeout(() => this.hideBalloon(), 2000);
+      return;
+    }
+    if (action === "reset-balloon-position") {
+      if (this.interactionManager) {
+        this.interactionManager.balloonOffsetX = 0;
+        this.interactionManager.balloonOffsetY = 0;
+      }
+      this.showBalloon("🎈 バルーン位置を初期化しました");
+      setTimeout(() => this.hideBalloon(), 2000);
+      return;
+    }
+    if (action === "close-balloon") {
+      return this.hideBalloon();
+    }
 
     if (action === "biff" || action === "mail") {
       return this.checkEmail();

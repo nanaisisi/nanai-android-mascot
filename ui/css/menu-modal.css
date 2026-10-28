@@ -193,40 +193,57 @@
 	font-size: 0.8125rem;
 }
 
+/* エクスプローラウィンドウ専用 モダン配色 */
 .explorer-toolbar {
 	display: flex;
-	gap: 8px;
+	gap: 10px;
 	align-items: center;
-	margin-bottom: 10px;
+	margin-bottom: 12px;
 }
 
-.explorer-toolbar input {
+.explorer-toolbar input[type="search"] {
 	flex: 1;
-	min-width: 120px;
+	min-width: 140px;
+	padding: 6px 10px;
+	background: #1a2234;
+	border: 1px solid #3b82f6;
+	border-radius: 6px;
+	color: #f8fafc;
+	font-size: 13px;
+	outline: none;
+	transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.explorer-toolbar input[type="search"]:focus {
+	border-color: #60a5fa;
+	box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.25);
 }
 
 .explorer-table-wrap {
-	max-height: 360px;
+	max-height: 380px;
 	overflow: auto;
-	border: 1px solid #555;
-	background: #202020;
+	border: 1px solid rgba(100, 116, 139, 0.3);
+	border-radius: 8px;
+	background: #0f172a;
+	box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 .explorer-table {
 	border-collapse: collapse;
 	width: max-content;
 	min-width: 100%;
-	font-size: 12px;
+	font-size: 12.5px;
 	white-space: nowrap;
+	color: #e2e8f0;
 }
 
 .explorer-table th,
 .explorer-table td {
-	padding: 4px 7px;
-	border-right: 1px solid #555;
-	border-bottom: 1px solid #444;
+	padding: 6px 10px;
+	border-right: 1px solid rgba(51, 65, 85, 0.6);
+	border-bottom: 1px solid rgba(51, 65, 85, 0.5);
 	text-align: left;
-	max-width: 240px;
+	max-width: 260px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
@@ -234,31 +251,45 @@
 .explorer-table th {
 	position: sticky;
 	top: 0;
-	background: #303030;
+	background: #1e293b;
+	color: #93c5fd;
+	font-weight: 600;
 	cursor: pointer;
 	z-index: 1;
+	border-bottom: 2px solid #3b82f6;
+}
+
+.explorer-table th:hover {
+	background: #334155;
 }
 
 .explorer-table tbody tr {
 	cursor: pointer;
+	transition: background-color 0.15s ease;
 }
 
-.explorer-table tbody tr:hover,
+.explorer-table tbody tr:hover {
+	background: rgba(59, 130, 246, 0.15);
+}
+
 .explorer-table tbody tr.is-selected {
-	background: #185da8;
-	color: #fff;
+	background: #2563eb !important;
+	color: #ffffff !important;
+	font-weight: 500;
 }
 
 .explorer-footer {
 	display: flex;
-	gap: 8px;
+	gap: 10px;
 	align-items: center;
-	margin-top: 10px;
+	margin-top: 12px;
+	padding-top: 4px;
+	border-top: 1px solid rgba(100, 116, 139, 0.2);
 }
 
 .explorer-footer span {
 	flex: 1;
-	color: #777;
+	color: #94a3b8;
 	font-size: 12px;
 }
 

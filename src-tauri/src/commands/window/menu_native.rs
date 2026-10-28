@@ -61,31 +61,35 @@ pub async fn show_context_menu(
         // SSP標準階層メニュー構築
         let menu = MenuBuilder::new(&app_handle)
             // トーク
-            .text("talk", "💬 もう一度話す (T)")
+            .text("talk", "💬 もう一度話す (A)")
+            .separator()
+            // リンク・更新
+            .text("recommend", "🔗 おすすめ (R)")
+            .text("portal", "🌐 ポータルサイト (T)")
+            .text("update", "🔄 ネットワーク更新 (U)")
+            .text("uninstall", "🗑️ アンインストール (D)")
+            .text("headline", "📰 RSS/ヘッドライン (H)")
+            .text("plugins", "🧩 プラグイン (P)")
+            .text("biff", "📬 メールチェック (M)")
             .separator()
             // ゴースト・外観
+            .item(&scale_submenu)
+            .text("tools", "🛠️ 機能 (F)")
+            .text("settings", "⚙️ 設定 (O)")
+            .separator()
             .item(&ghost_submenu)
             .item(&shell_submenu)
-            .item(&scale_submenu)
-            .text("balloon", "💭 バルーン設定 (B)")
+            .text("balloon", "💭 バルーン (B)")
             .separator()
-            // ツール・拡張
-            .text("update", "🌐 ネットワーク更新 (U)")
-            .text("headline", "📰 ヘッドライン/ニュース (H)")
-            .text("install", "📥 ファイル取り込み・導入 (I)")
-            .text("scan", "📂 フォルダ再スキャン (R)")
-            .text("plugins", "🧩 プラグイン・拡張機能 (P)")
-            .separator()
-            // 設定・ヘルプ
-            .text("settings", "⚙️ 設定 (O)")
-            .text("debug", "🐛 デバッグログ (D)")
-            .text("help", "❓ 情報・ヘルプ (A)")
-            .text("ghost-info", "👻 ゴースト情報")
+            // 情報・ヘルプ
+            .text("help", "ℹ️ 本体情報 (A)")
+            .text("ghost-info", "👻 ゴースト情報 (G)")
             .text("license", "📜 著作権・ライセンス表示 (L)")
             .separator()
             // ウィンドウ操作・終了
-            .text("minimize", "🗕 アイコン化・隠す (I)")
-            .text("exit", "❌ 終了 (W)")
+            .text("minimize", "🗕 アイコン化 (I)")
+            .text("exit", "✖ 終了 (W)")
+            .text("close-all", "❌ 全て終了 (X)")
             .build()
             .map_err(|e| e.to_string())?;
 

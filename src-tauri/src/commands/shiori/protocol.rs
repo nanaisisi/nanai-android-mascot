@@ -167,3 +167,31 @@ pub async fn on_second_change() -> Result<String, String> {
     // 無音で実行
     Ok("Second changed".to_string())
 }
+
+/// SHIORI へ OnTranslate イベントを送信し、ゴースト側で翻訳されたさくらスクリプトを取得する (UKADOC 規格準拠)
+#[tauri::command]
+pub async fn send_on_translate(
+    state: tauri::State<'_, AppState>,
+    script: String,
+    ghost_id: Option<String>,
+) -> Result<String, String> {
+    let mut req = ShioriRequest::get("OnTranslate", &[script.clone()]);
+    req.sender = "NanaiMascot".to_string();
+    let gid = ghost_id.unwrap_or_else(|| "main".to_string());
+
+    match dispatch_request(&state, &req.build(), &gid) {
+        Ok(raw) => {
+            let parsed = ShioriResponse::parse(&raw);
+            if let Ok(res) = parsed {
+                if let Some(val) = res.value {
+                    let trimmed = val.trim();
+                    if !trimmed.is_empty() {
+                        return Ok(trimmed.to_string());
+                    }
+                }
+            }
+            Ok(script)
+        }
+        Err(_) => Ok(script),
+    }
+}

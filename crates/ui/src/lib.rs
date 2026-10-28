@@ -7,10 +7,12 @@ pub mod shell;
 pub mod shiori;
 pub mod surfaces;
 pub mod surfacetable;
+pub mod update;
 pub mod vfs;
 
 // 外部公開・後方互換のための再エクスポート
 pub use animation::{ScheduledFrame, Timeline, build_timeline, cycle_len_ms};
+pub use update::{UpdateEntry, parse_update_definition};
 pub use descript::{BindGroup, BindOptionGroup, CharDefaults, Descript};
 pub use manifest::{ShellManifest, SurfaceManifest};
 pub use script::{SakuraCommand, execute_sakura_script, parse_sakura_script};

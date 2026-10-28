@@ -15,7 +15,6 @@ export const ghostShioriMethods = {
 	) {
 		if (!isTauriAvailable()) return;
 		try {
-			console.log(`🎭 SHIORI初期化開始: ${ghost.name}`);
 			// SHIORI DLLのロードと、シェルの初期サーフィス/マニフェスト準備完了を並行待機
 			await Promise.all([
 				invoke("load_ghost", {
@@ -34,7 +33,6 @@ export const ghostShioriMethods = {
 			}
 			if (!isCurrentLoad()) return;
 
-			console.log(`✨ アセット・SHIORI準備完了 (ゲート通過): OnBoot発行`);
 			try {
 				await this.sendShioriEvent("OnBoot");
 			} catch (_error) {

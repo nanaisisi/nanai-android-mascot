@@ -154,6 +154,7 @@ body {
 .balloon {
 	cursor: var(--balloon-cursor-arrow, auto);
 }
-.balloon-text, .balloon-text * {
+.balloon-text,
+.balloon-text * {
 	cursor: var(--balloon-cursor-text, text);
 }

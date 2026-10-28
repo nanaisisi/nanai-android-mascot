@@ -18,16 +18,20 @@
 ## Proposed Changes
 
 ### [MODIFY] [app-actions.js](file:///E:/project/rust/nanai-android-mascot/ui/js/core/app-actions.js)
+
 - `applyBalloonDescript()` 内に、アンカー詳細スタイル（`anchor.font.color`, `anchor.style`, `anchor.visited.*` 等）、コミュニケートボックス詳細設定（`communicatebox.*`）、カーソル詳細設定の CSS 変数バインドを網羅的に拡充。
 
 ### [MODIFY] [balloon-window.css](file:///E:/project/rust/nanai-android-mascot/ui/css/balloon-window.css)
+
 - `--balloon-anchor-color`, `--balloon-anchor-visited-color`, `--balloon-cb-bg`, `--balloon-cb-color` などの新しい CSS 変数を定義し、`.balloon-anchor`, `.communicate-box` 等のスタイルに反映。
 
 ## Verification Plan
 
 ### Automated Tests
+
 - `cargo check` による Rust バックエンドのコンパイル確認。
 - JS / CSS 構文チェック。
 
 ### Manual Verification
+
 - バルーンテーマ切替および詳細な descript.txt プロパティを持つスキンでの描画確認。

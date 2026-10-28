@@ -7,7 +7,13 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"includes": ["**", "!src/cpp", "!cpp"]
+		"includes": [
+			"**",
+			"!cpp",
+			"!docs/ukadoc-spec",
+			"!docs/ukadoc-ssp",
+			"!docs/ghost"
+		]
 	},
 	"formatter": {
 		"enabled": true,

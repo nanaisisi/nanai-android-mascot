@@ -152,8 +152,8 @@ impl ShioriDynamicEngine {
     /// SHIORI::request(req) (SHIORI 2.x 自動フォールバック対応)
     pub fn request(&self, request_str: &str) -> Result<String, String> {
         let res = self.request_raw(request_str);
-        if let Ok(ref text) = res {
-            if (text.contains("400 Bad Request") || text.contains("500 Internal") || text.is_empty())
+        if let Ok(ref text) = res
+            && (text.contains("400 Bad Request") || text.contains("500 Internal") || text.is_empty())
                 && request_str.starts_with("GET ") && request_str.contains("SHIORI/3.0") {
                     let translated = request_str.replace("SHIORI/3.0", "SHIORI/2.x");
                     if let Ok(fallback_res) = self.request_raw(&translated)
@@ -162,7 +162,6 @@ impl ShioriDynamicEngine {
                             return Ok(wrapped);
                         }
                 }
-        }
         res
     }
 

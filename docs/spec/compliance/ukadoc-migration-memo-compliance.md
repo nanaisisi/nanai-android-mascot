@@ -1,0 +1,15 @@
+# ukadoc-spec/migration & memo (移行ガイド・設計メモ) 規格適合確認文書
+
+- **言及規格の元ドキュメント・権利者・ライセンス**:
+  - **ukadoc-spec/migration & memo**: [ukatech/ukadoc-spec](https://ukatech.shillest.net/ukadoc-spec/) - © UKADOC project / Ukagaka Tech Team (CC BY 4.0)
+
+Nanai Android Mascot における、ukadoc-spec の `migration/` および `memo/` ディレクトリに蓄積された仕様移行・設計思想に基づくアーキテクチャ適合の確認文書である。
+
+---
+
+## 1. 移行・設計メモの反映状況
+
+| カテゴリ | 対象概念・ガイド | 適合状態 | Nanai における適用・設計方針 |
+| :--- | :--- | :---: | :--- |
+| **プラットフォーム移行** (`migration/`) | レガシーWin32依存からクロスプラットフォーム（Windows / Android）への移行思想 | **完全適用** | Tauri v2 + Rust バックエンド + Vanilla Web（HTML5/Modern JS/CSS3）によるモダンなリアクティブ・デスクトップ/モバイル統合アーキテクチャの採用。 |
+| **仕様メモ・ドラフト** (`memo/`) | 仕様策定中の拡張機能、イベント拡張の設計思想 | **適用済** | SHIORI 2.x フォールバック、SAORI 1.0、FMO、SSTP、`OnTranslate` などの高度な拡張仕様をドラフト規格に則り独自実装・統合。 |

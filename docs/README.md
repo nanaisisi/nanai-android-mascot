@@ -54,6 +54,7 @@
 - **[ghost-compatibility-gap-and-roadmap.md](spec/ghost/ghost-compatibility-gap-and-roadmap.md)** - 伺かゴースト互換性ギャップ分析と実装改善ロードマップ仕様書
 - **[compatibility-implementation-plan.md](spec/reference/compatibility-implementation-plan.md)** - 互換実装計画仕様書
 - **[specification-compliance-matrix.md](spec/reference/specification-compliance-matrix.md)** - 仕様適合マトリクス
+- **[balloon-dpi-scaling-spec.md](developer/balloon-dpi-scaling-spec.md)** - バルーン DPI スケーリングおよびクロスプラットフォーム表示仕様 (NSM独自仕様)
 
 ### 📋 開発プロセス & 履歴 (`process/`)
 

@@ -87,7 +87,6 @@ export const menuMethods = {
 			if (this.availableBalloons) {
 				emit("sync-balloons", this.availableBalloons);
 			}
-			emit("sync-menu-scope", scope);
 		}
 
 		// iframe メニューへの同期 (フォールバック)

@@ -269,7 +269,10 @@ document.addEventListener("keydown", (e) => {
 		} else if (e.shiftKey && e.key.toLowerCase() === "f10") {
 			e.preventDefault();
 			dispatcher.dispatchAction("reset-balloon-position");
-		} else if (e.shiftKey && (e.key === "Delete" || e.key === "Del" || e.key.toLowerCase() === "del")) {
+		} else if (
+			e.shiftKey &&
+			(e.key === "Delete" || e.key === "Del" || e.key.toLowerCase() === "del")
+		) {
 			e.preventDefault();
 			dispatcher.dispatchAction("close-balloon");
 		}

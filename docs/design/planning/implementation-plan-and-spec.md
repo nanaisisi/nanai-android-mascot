@@ -189,8 +189,8 @@ flowchart TD
 
 ## 4. ドキュメント相互参照
 
-- [PROJECT-SPEC.md](../../../PROJECT-SPEC.md) - プロジェクト全体仕様書
-- [TODO.md](../../../TODO.md) - 詳細タスクチェックリスト
+- [PROJECT-SPEC.md](../../developer/PROJECT-SPEC.md) - プロジェクト全体仕様書
+- [TODO.md](../../developer/TODO.md) - 詳細タスクチェックリスト
 - [docs/spec/sakura-script-and-balloon-spec.md](../../spec/shiori-script/sakura-script-and-balloon-spec.md) - さくらスクリプト & バルーン仕様
 - [docs/spec/surfaces-and-collision-spec.md](../../spec/ghost/surfaces-and-collision-spec.md) - サーフィス合成 & 当たり判定仕様
 - [docs/spec/encoding-and-vfs-spec.md](../../spec/platform/encoding-and-vfs-spec.md) - 文字コード & VFS 仕様

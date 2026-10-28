@@ -377,7 +377,9 @@ export class MenuSubmenuRenderer {
 			if (mt.sidebar_bitmap) {
 				const sideUrl = resolveImg(mt.sidebar_bitmap);
 				rootStyle.setProperty("--menu-sidebar-image", `url("${sideUrl}")`);
-				const sideAlign = String(mt.sidebar_alignment || "bottom").toLowerCase();
+				const sideAlign = String(
+					mt.sidebar_alignment || "bottom",
+				).toLowerCase();
 				rootStyle.setProperty(
 					"--menu-sidebar-position",
 					sideAlign.includes("top") ? "left top" : "left bottom",

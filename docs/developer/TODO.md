@@ -24,11 +24,11 @@
 
 ## 🎯 優先度：最高（Phase 2: インタラクション & スクリプト統合）
 
-詳細仕様: [docs/design/implementation-plan-and-spec.md](docs/design/planning/implementation-plan-and-spec.md)
+詳細仕様: [docs/design/implementation-plan-and-spec.md](../design/planning/implementation-plan-and-spec.md)
 
 ### 3. さくらスクリプト再生キューとサーフィスの完全連動
 
-- [x] `\s[ID]` による [src/js/surface.js](src/js/surface.js) のリアルタイム表情切り替え接続
+- [x] `\s[ID]` による [src/js/surface.js](../../src/js/surface.js) のリアルタイム表情切り替え接続
 - [x] `\w`, `\_w` ウェイトとバルーンタイピング表示の非同期実行
 - [x] クリックによる全文スキップ機能のバルーンUI組み込み
 
@@ -102,7 +102,7 @@
   - [x] SHIORI 3.0 プロトコルの完全実装（ShioriProtocol: buildRequest, parseResponse）
   - [x] イベント処理の拡充（OnBoot, OnMouseClick, OnChoiceSelect, OnSecondChange）
   - [x] エラーハンドリングの改善
-  - [x] C++ライブラリ / WASM との統合基盤（[src/js/shiori-worker.js](src/js/shiori-worker.js) & [src/cpp/yaya_rust_interface.h](src/cpp/yaya_rust_interface.h)）
+  - [x] C++ライブラリ / WASM との統合基盤（[src/js/shiori-worker.js](../../src/js/shiori-worker.js) & [src/cpp/yaya_rust_interface.h](../../src/cpp/yaya_rust_interface.h)）
 
 ## 🎨 優先度：低
 

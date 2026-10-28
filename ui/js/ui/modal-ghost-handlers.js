@@ -28,8 +28,7 @@ export class ModalGhostHandlers {
 				?.querySelectorAll("th[data-sort]")
 				.forEach((header) => {
 					const baseLabel =
-						header.dataset.label ||
-						header.textContent.replace(/ [▲▼]$/, "");
+						header.dataset.label || header.textContent.replace(/ [▲▼]$/, "");
 					header.dataset.label = baseLabel;
 					if (header.dataset.sort === sortKey) {
 						header.textContent = `${baseLabel} ${sortAsc ? "▲" : "▼"}`;
@@ -41,28 +40,45 @@ export class ModalGhostHandlers {
 		const render = () => {
 			if (!rows) return;
 			updateSortHeaderIndicators();
-			const query = String(search?.value || "").trim().toLowerCase();
+			const query = String(search?.value || "")
+				.trim()
+				.toLowerCase();
 			const list = ghosts
 				.filter((ghost) =>
 					[ghost.name, ghost.craftman, ghost.path].some((value) =>
-						String(value || "").toLowerCase().includes(query),
+						String(value || "")
+							.toLowerCase()
+							.includes(query),
 					),
 				)
 				.sort((a, b) => {
 					const left = String(a[sortKey] || "");
 					const right = String(b[sortKey] || "");
-					return (left.localeCompare(right, "ja") || a.name.localeCompare(b.name, "ja")) *
-						(sortAsc ? 1 : -1);
+					return (
+						(left.localeCompare(right, "ja") ||
+							a.name.localeCompare(b.name, "ja")) * (sortAsc ? 1 : -1)
+					);
 				});
 			rows.innerHTML = "";
 			list.forEach((ghost) => {
 				const tr = document.createElement("tr");
 				tr.className = ghost.name === selected?.name ? "is-selected" : "";
 				tr.innerHTML = [
-					ghost.name, ghost.craftman, ghost.path, ghost.group,
-					ghost.install_date, ghost.update_date, ghost.update_result,
-					ghost.sakura_name, ghost.kero_name,
-				].map((value) => `<td title="${String(value || "").replaceAll('"', "&quot;")}">${format(value)}</td>`).join("");
+					ghost.name,
+					ghost.craftman,
+					ghost.path,
+					ghost.group,
+					ghost.install_date,
+					ghost.update_date,
+					ghost.update_result,
+					ghost.sakura_name,
+					ghost.kero_name,
+				]
+					.map(
+						(value) =>
+							`<td title="${String(value || "").replaceAll('"', "&quot;")}">${format(value)}</td>`,
+					)
+					.join("");
 				tr.addEventListener("click", () => {
 					selected = ghost;
 					render();

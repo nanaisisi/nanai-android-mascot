@@ -1,6 +1,6 @@
 # mousecursor.wait,ファイル名
 
-- **規格**: [mousecursor.wait.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/mousecursor.wait/) (ukadoc-spec/descript/balloon/descript-txt/mousecursor.wait.md)
+- **規格**: [mousecursor.wait.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/mousecursor.wait.md)
 - **検索語**: mousecursor.wait
 - **対応状況**: ✅ 対応済
 

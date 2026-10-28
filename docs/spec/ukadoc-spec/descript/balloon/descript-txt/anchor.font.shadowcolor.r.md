@@ -1,6 +1,6 @@
 # anchor.font.shadowcolor.r,数値
 
-- **規格**: [anchor.font.shadowcolor.r.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/anchor.font.shadowcolor.r/) (ukadoc-spec/descript/balloon/descript-txt/anchor.font.shadowcolor.r.md)
+- **規格**: [anchor.font.shadowcolor.r.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/anchor.font.shadowcolor.r.md)
 - **検索語**: anchor.font.shadowcolor.r
 - **対応状況**: ❌ 検出なし
 

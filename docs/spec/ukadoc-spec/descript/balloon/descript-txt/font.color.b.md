@@ -1,6 +1,6 @@
 # font.color.b,数値
 
-- **規格**: [font.color.b.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/font.color.b/) (ukadoc-spec/descript/balloon/descript-txt/font.color.b.md)
+- **規格**: [font.color.b.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/font.color.b.md)
 - **検索語**: font.color.b
 - **対応状況**: ⚠️ 一部対応(読込のみ)
 

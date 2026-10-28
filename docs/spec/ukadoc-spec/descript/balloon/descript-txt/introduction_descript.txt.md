@@ -1,6 +1,6 @@
 # descript.txt（Balloonの）
 
-- **規格**: [introduction_descript.txt.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/introduction_descript.txt/) (ukadoc-spec/descript/balloon/descript-txt/introduction_descript.txt.md)
+- **規格**: [introduction_descript.txt.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/introduction_descript.txt.md)
 - **検索語**: descript.txt
 - **対応状況**: ❌ 未実装(誤検出)
 

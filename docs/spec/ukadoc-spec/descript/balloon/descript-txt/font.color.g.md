@@ -1,6 +1,6 @@
 # font.color.g,数値
 
-- **規格**: [font.color.g.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/font.color.g/) (ukadoc-spec/descript/balloon/descript-txt/font.color.g.md)
+- **規格**: [font.color.g.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/font.color.g.md)
 - **検索語**: font.color.g
 - **対応状況**: ⚠️ 一部対応(読込のみ)
 

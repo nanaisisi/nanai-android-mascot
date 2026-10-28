@@ -1,6 +1,6 @@
 # homeurl,URL
 
-- **規格**: [homeurl.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/homeurl/) (ukadoc-spec/descript/balloon/descript-txt/homeurl.md)
+- **規格**: [homeurl.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/homeurl.md)
 - **検索語**: homeurl
 - **対応状況**: ⚠️ 一部対応(読込のみ)
 

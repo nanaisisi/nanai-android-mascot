@@ -1,6 +1,6 @@
 # overlay_outside_balloon,数値
 
-- **規格**: [overlay_outside_balloon.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/overlay_outside_balloon/) (ukadoc-spec/descript/balloon/descript-txt/overlay_outside_balloon.md)
+- **規格**: [overlay_outside_balloon.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/overlay_outside_balloon.md)
 - **検索語**: overlay_outside_balloon
 - **対応状況**: ❌ 検出なし
 

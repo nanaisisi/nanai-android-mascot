@@ -1,6 +1,6 @@
 # validrect.top,座標 [\*1](../index.md#balloon設定)
 
-- **規格**: [validrect.top.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/validrect.top/) (ukadoc-spec/descript/balloon/descript-txt/validrect.top.md)
+- **規格**: [validrect.top.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/validrect.top.md)
 - **検索語**: validrect.top
 - **対応状況**: ⚠️ 一部対応(読込のみ)
 

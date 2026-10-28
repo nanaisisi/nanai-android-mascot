@@ -1,6 +1,6 @@
 # mousecursor.arrow,ファイル名
 
-- **規格**: [mousecursor.arrow.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/mousecursor.arrow/) (ukadoc-spec/descript/balloon/descript-txt/mousecursor.arrow.md)
+- **規格**: [mousecursor.arrow.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/mousecursor.arrow.md)
 - **検索語**: mousecursor.arrow
 - **対応状況**: ✅ 対応済
 

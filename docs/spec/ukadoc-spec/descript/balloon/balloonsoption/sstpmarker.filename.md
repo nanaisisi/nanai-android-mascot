@@ -1,6 +1,6 @@
 # sstpmarker.filename,ファイル名
 
-- **規格**: [sstpmarker.filename.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/balloonsoption/sstpmarker.filename/) (ukadoc-spec/descript/balloon/balloonsoption/sstpmarker.filename.md)
+- **規格**: [sstpmarker.filename.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/balloonsoption/sstpmarker.filename.md)
 - **検索語**: sstpmarker.filename
 - **対応状況**: ✅ 対応済
 

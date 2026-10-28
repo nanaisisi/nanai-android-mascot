@@ -1,6 +1,6 @@
 # wordwrappoint.x,座標
 
-- **規格**: [wordwrappoint.x.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/wordwrappoint.x/) (ukadoc-spec/descript/balloon/descript-txt/wordwrappoint.x.md)
+- **規格**: [wordwrappoint.x.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/wordwrappoint.x.md)
 - **検索語**: wordwrappoint.x
 - **対応状況**: ✅ 対応済
 

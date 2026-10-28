@@ -1,6 +1,6 @@
 # validrect.right,座標 [\*1](../index.md#balloon設定)
 
-- **規格**: [validrect.right.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/validrect.right/) (ukadoc-spec/descript/balloon/descript-txt/validrect.right.md)
+- **規格**: [validrect.right.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/validrect.right.md)
 - **検索語**: validrect.right
 - **対応状況**: ⚠️ 一部対応(読込のみ)
 

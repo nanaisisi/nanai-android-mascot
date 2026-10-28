@@ -1,6 +1,6 @@
 # balloons\*s.txt/balloonk\*s.txt
 
-- **規格**: [balloons-s-txt-balloonk-s-txt.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/balloonsoption/balloons-s-txt-balloonk-s-txt/) (ukadoc-spec/descript/balloon/balloonsoption/balloons-s-txt-balloonk-s-txt.md)
+- **規格**: [balloons-s-txt-balloonk-s-txt.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/balloonsoption/balloons-s-txt-balloonk-s-txt.md)
 - **検索語**: balloons
 - **対応状況**: ✅ 対応済
 

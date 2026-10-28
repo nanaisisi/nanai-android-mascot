@@ -1,6 +1,6 @@
 # name,バルーン名
 
-- **規格**: [name.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/name/) (ukadoc-spec/descript/balloon/descript-txt/name.md)
+- **規格**: [name.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/name.md)
 - **検索語**: name
 - **対応状況**: ⚠️ 一部対応(読込のみ)
 

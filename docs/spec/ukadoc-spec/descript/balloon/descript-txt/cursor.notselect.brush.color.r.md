@@ -1,6 +1,6 @@
 # cursor.notselect.brush.color.r,数値
 
-- **規格**: [cursor.notselect.brush.color.r.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/cursor.notselect.brush.color.r/) (ukadoc-spec/descript/balloon/descript-txt/cursor.notselect.brush.color.r.md)
+- **規格**: [cursor.notselect.brush.color.r.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/cursor.notselect.brush.color.r.md)
 - **検索語**: cursor.notselect.brush.color.r
 - **対応状況**: ❌ 検出なし
 

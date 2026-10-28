@@ -1,6 +1,6 @@
 # type,種別
 
-- **規格**: [type.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/type/) (ukadoc-spec/descript/balloon/descript-txt/type.md)
+- **規格**: [type.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/type.md)
 - **検索語**: type
 - **対応状況**: ❌ 未実装(誤検出)
 

@@ -1,6 +1,6 @@
 # paint_transparent_region_black,数値
 
-- **規格**: [paint_transparent_region_black.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/paint_transparent_region_black/) (ukadoc-spec/descript/balloon/descript-txt/paint_transparent_region_black.md)
+- **規格**: [paint_transparent_region_black.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/paint_transparent_region_black.md)
 - **検索語**: paint_transparent_region_black
 - **対応状況**: ❌ 検出なし
 

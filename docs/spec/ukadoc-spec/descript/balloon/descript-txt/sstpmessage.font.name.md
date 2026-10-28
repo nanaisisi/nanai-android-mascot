@@ -1,6 +1,6 @@
 # sstpmessage.font.name,フォント名
 
-- **規格**: [sstpmessage.font.name.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/sstpmessage.font.name/) (ukadoc-spec/descript/balloon/descript-txt/sstpmessage.font.name.md)
+- **規格**: [sstpmessage.font.name.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/sstpmessage.font.name.md)
 - **検索語**: sstpmessage.font.name
 - **対応状況**: ❌ 検出なし
 

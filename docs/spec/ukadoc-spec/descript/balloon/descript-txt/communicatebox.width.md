@@ -1,6 +1,6 @@
 # communicatebox.width,サイズ
 
-- **規格**: [communicatebox.width.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/communicatebox.width/) (ukadoc-spec/descript/balloon/descript-txt/communicatebox.width.md)
+- **規格**: [communicatebox.width.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/communicatebox.width.md)
 - **検索語**: communicatebox.width
 - **対応状況**: ✅ 対応済
 

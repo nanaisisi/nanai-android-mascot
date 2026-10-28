@@ -1,6 +1,6 @@
 # font.height,数値
 
-- **規格**: [font.height.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/font.height/) (ukadoc-spec/descript/balloon/descript-txt/font.height.md)
+- **規格**: [font.height.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/font.height.md)
 - **検索語**: font.height
 - **対応状況**: ✅ 対応済
 

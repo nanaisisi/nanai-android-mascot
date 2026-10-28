@@ -1,6 +1,6 @@
 # communicatebox.font.color.b,数値
 
-- **規格**: [communicatebox.font.color.b.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/communicatebox.font.color.b/) (ukadoc-spec/descript/balloon/descript-txt/communicatebox.font.color.b.md)
+- **規格**: [communicatebox.font.color.b.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/communicatebox.font.color.b.md)
 - **検索語**: communicatebox.font.color.b
 - **対応状況**: ❌ 検出なし
 

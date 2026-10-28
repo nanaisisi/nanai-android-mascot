@@ -211,7 +211,9 @@
 	color: #f8fafc;
 	font-size: 13px;
 	outline: none;
-	transition: border-color 0.2s, box-shadow 0.2s;
+	transition:
+		border-color 0.2s,
+		box-shadow 0.2s;
 }
 
 .explorer-toolbar input[type="search"]:focus {
@@ -273,8 +275,8 @@
 }
 
 .explorer-table tbody tr.is-selected {
-	background: #2563eb !important;
-	color: #ffffff !important;
+	background: #2563eb;
+	color: #ffffff;
 	font-weight: 500;
 }
 

@@ -1,11 +1,11 @@
-import { MenuDispatcher } from "./menu-dispatcher.js";
-import { MenuSubmenuRenderer } from "./menu-submenu-renderer.js";
 import {
 	invoke,
 	isTauriAvailable,
 	listen,
 	startDraggingWindow,
 } from "../core/tauri-helper.js";
+import { MenuDispatcher } from "./menu-dispatcher.js";
+import { MenuSubmenuRenderer } from "./menu-submenu-renderer.js";
 
 const dispatcher = new MenuDispatcher();
 const renderer = new MenuSubmenuRenderer(dispatcher);
@@ -31,46 +31,49 @@ if (isTauriAvailable()) {
 			dispatcher.dispatchAction("request-sync");
 		}
 	});
-		listen("sync-ghosts", (event) => {
-			const data = event.payload;
-			if (data) {
-				if (typeof data.scope === "number" && data.scope !== dispatcher.currentScope) {
-					dispatcher.setScope(data.scope);
-				}
-				renderer.renderGhostSubmenu(data.ghosts || [], data.currentGhost);
-				renderer.renderCallGhostSubmenu(data.ghosts || []);
-				if (data.shells) {
-					renderer.renderShellSubmenu(data.shells, data.currentShell);
-				}
-				// 着せ替え (bindgroup) メニューをスコープに合わせて再描画
-				if (data.dressup) {
-					renderer.renderDressupSubmenu(
-						data.dressup,
-						data.scope ?? dispatcher.currentScope,
-					);
-				}
-				// 最近使ったもの (ゴースト実行履歴)
-				renderer.renderRecentSubmenu(data.recentGhosts || []);
-				// ゴースト/シェルの descript.txt 由来のメニュー配色を適用
-				const activeShell =
-					data.shells?.find((s) => s.name === data.currentShell) ||
-					data.shells?.[0];
-				renderer.applyShellTheme(activeShell);
+	listen("sync-ghosts", (event) => {
+		const data = event.payload;
+		if (data) {
+			if (
+				typeof data.scope === "number" &&
+				data.scope !== dispatcher.currentScope
+			) {
+				dispatcher.setScope(data.scope);
 			}
-		});
-		listen("sync-theme", (event) => {
-			renderer.applyTheme(event.payload);
-			if (globalThis._lastBalloons) {
-				renderer.renderBalloonSubmenu(globalThis._lastBalloons, event.payload);
+			renderer.renderGhostSubmenu(data.ghosts || [], data.currentGhost);
+			renderer.renderCallGhostSubmenu(data.ghosts || []);
+			if (data.shells) {
+				renderer.renderShellSubmenu(data.shells, data.currentShell);
 			}
-		});
-		listen("sync-balloons", (event) => {
-			globalThis._lastBalloons = event.payload;
-			renderer.renderBalloonSubmenu(
-				event.payload,
-				document.documentElement.getAttribute("data-balloon-theme"),
-			);
-		});
+			// 着せ替え (bindgroup) メニューをスコープに合わせて再描画
+			if (data.dressup) {
+				renderer.renderDressupSubmenu(
+					data.dressup,
+					data.scope ?? dispatcher.currentScope,
+				);
+			}
+			// 最近使ったもの (ゴースト実行履歴)
+			renderer.renderRecentSubmenu(data.recentGhosts || []);
+			// ゴースト/シェルの descript.txt 由来のメニュー配色を適用
+			const activeShell =
+				data.shells?.find((s) => s.name === data.currentShell) ||
+				data.shells?.[0];
+			renderer.applyShellTheme(activeShell);
+		}
+	});
+	listen("sync-theme", (event) => {
+		renderer.applyTheme(event.payload);
+		if (globalThis._lastBalloons) {
+			renderer.renderBalloonSubmenu(globalThis._lastBalloons, event.payload);
+		}
+	});
+	listen("sync-balloons", (event) => {
+		globalThis._lastBalloons = event.payload;
+		renderer.renderBalloonSubmenu(
+			event.payload,
+			document.documentElement.getAttribute("data-balloon-theme"),
+		);
+	});
 }
 
 // 親ウィンドウからの状態同期メッセージ受信 (iframeフォールバック時)
@@ -131,25 +134,25 @@ function _triggerSubmenuWindow(menuType, buttonEl) {
 	_triggerSubmenuWindow.lastRequest = { type: menuType, time: now };
 
 	if (isTauriAvailable()) {
-			const rect = buttonEl.getBoundingClientRect();
-			const sX = globalThis.screenX ?? 0;
-			const sY = globalThis.screenY ?? 0;
-			const posX = sX + 240 + 2;
-			const posY = sY + rect.top;
-			invoke("show_submenu_window", {
-				menuType: menuType,
-				x: posX,
-				y: posY,
-				width: 220,
-				height: 320,
-			}).catch((e) => {
-				console.error("Failed to show submenu window:", e);
-				const wrapper = buttonEl.closest(".menu-item-wrapper");
-				if (wrapper) {
-					checkSubmenuFlip(wrapper);
-					wrapper.classList.add("open");
-				}
-			});
+		const rect = buttonEl.getBoundingClientRect();
+		const sX = globalThis.screenX ?? 0;
+		const sY = globalThis.screenY ?? 0;
+		const posX = sX + 240 + 2;
+		const posY = sY + rect.top;
+		invoke("show_submenu_window", {
+			menuType: menuType,
+			x: posX,
+			y: posY,
+			width: 220,
+			height: 320,
+		}).catch((e) => {
+			console.error("Failed to show submenu window:", e);
+			const wrapper = buttonEl.closest(".menu-item-wrapper");
+			if (wrapper) {
+				checkSubmenuFlip(wrapper);
+				wrapper.classList.add("open");
+			}
+		});
 		_triggerSubmenuWindow.lastRequest = null;
 	}
 }

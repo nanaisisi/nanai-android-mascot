@@ -14,25 +14,27 @@
 
 ## 一覧項目とデータ仕様
 
-| 列 | データ | 対応 | 備考 |
-| --- | --- | --- | --- |
-| 名前 | `GhostInfo.name` | ✅ | `descript.txt` の `name` |
-| 作者名 | `GhostInfo.craftman` | ✅ | `craftman` プロパティ |
-| パス | `GhostInfo.path` | ✅ | インストールディレクトリ絶対パス |
-| グループ | `GhostInfo.group` | ✅ | グループ定義 |
-| インストール日時 | `GhostInfo.install_date` | ✅ | ディレクトリ作成/初回修正日時 |
-| 更新日時 | `GhostInfo.update_date` | ✅ | **ゴースト依存**: `updates2.dau` / `descript.txt` の更新日時 |
-| 更新結果 | `GhostInfo.update_result` | ✅ | `OK(0)`, `-` (etc) 等のステータス |
-| `¥0名` | `GhostInfo.sakura_name` | ✅ | `sakura.name` |
-| `¥1名` | `GhostInfo.kero_name` | ✅ | `kero.name` |
+| 列               | データ                    | 対応 | 備考                                                         |
+| ---------------- | ------------------------- | ---- | ------------------------------------------------------------ |
+| 名前             | `GhostInfo.name`          | ✅   | `descript.txt` の `name`                                     |
+| 作者名           | `GhostInfo.craftman`      | ✅   | `craftman` プロパティ                                        |
+| パス             | `GhostInfo.path`          | ✅   | インストールディレクトリ絶対パス                             |
+| グループ         | `GhostInfo.group`         | ✅   | グループ定義                                                 |
+| インストール日時 | `GhostInfo.install_date`  | ✅   | ディレクトリ作成/初回修正日時                                |
+| 更新日時         | `GhostInfo.update_date`   | ✅   | **ゴースト依存**: `updates2.dau` / `descript.txt` の更新日時 |
+| 更新結果         | `GhostInfo.update_result` | ✅   | `OK(0)`, `-` (etc) 等のステータス                            |
+| `¥0名`           | `GhostInfo.sakura_name`   | ✅   | `sakura.name`                                                |
+| `¥1名`           | `GhostInfo.kero_name`     | ✅   | `kero.name`                                                  |
 
 ### 1. 更新日時 (`update_date`) のゴースト依存ロジック
+
 ゴーストの更新日時はホスト側のフォルダ変更日時ではなく、ゴースト固有のファイル変更に依存して決定される：
 1. ゴースト内の `updates2.dau`（ネットワーク更新ファイル一覧）のファイル修正日時を最優先で参照。
 2. `updates2.dau` がない場合は、`ghost/master/descript.txt`（ゴースト設定ファイル）のファイル修正日時を参照。
 3. いずれもない場合は、ゴーストディレクトリ自体の修正日時にフォールバック。
 
 ### 2. 更新結果 (`update_result`) ステータス定義
+
 SSP / ネットワーク更新仕様に準拠したステータスコードおよび表現を使用：
 - `OK(0)`: 正常・準備完了（`updates2.dau` 検出等）
 - `OK(2)` / `OK(4)` / `OK(5)`: 各種成功・更新完了コード

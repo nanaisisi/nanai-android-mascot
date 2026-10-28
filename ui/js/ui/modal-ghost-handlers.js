@@ -25,28 +25,45 @@ export class ModalGhostHandlers {
 		const format = (value) => value || "—";
 		const render = () => {
 			if (!rows) return;
-			const query = String(search?.value || "").trim().toLowerCase();
+			const query = String(search?.value || "")
+				.trim()
+				.toLowerCase();
 			const list = ghosts
 				.filter((ghost) =>
 					[ghost.name, ghost.craftman, ghost.path].some((value) =>
-						String(value || "").toLowerCase().includes(query),
+						String(value || "")
+							.toLowerCase()
+							.includes(query),
 					),
 				)
 				.sort((a, b) => {
 					const left = String(a[sortKey] || "");
 					const right = String(b[sortKey] || "");
-					return (left.localeCompare(right, "ja") || a.name.localeCompare(b.name, "ja")) *
-						(sortAsc ? 1 : -1);
+					return (
+						(left.localeCompare(right, "ja") ||
+							a.name.localeCompare(b.name, "ja")) * (sortAsc ? 1 : -1)
+					);
 				});
 			rows.innerHTML = "";
 			list.forEach((ghost) => {
 				const tr = document.createElement("tr");
 				tr.className = ghost.name === selected?.name ? "is-selected" : "";
 				tr.innerHTML = [
-					ghost.name, ghost.craftman, ghost.path, ghost.group,
-					ghost.install_date, ghost.update_date, ghost.update_result,
-					ghost.sakura_name, ghost.kero_name,
-				].map((value) => `<td title="${String(value || "").replaceAll('"', "&quot;")}">${format(value)}</td>`).join("");
+					ghost.name,
+					ghost.craftman,
+					ghost.path,
+					ghost.group,
+					ghost.install_date,
+					ghost.update_date,
+					ghost.update_result,
+					ghost.sakura_name,
+					ghost.kero_name,
+				]
+					.map(
+						(value) =>
+							`<td title="${String(value || "").replaceAll('"', "&quot;")}">${format(value)}</td>`,
+					)
+					.join("");
 				tr.addEventListener("click", () => {
 					selected = ghost;
 					render();
@@ -61,32 +78,53 @@ export class ModalGhostHandlers {
 		};
 		const load = async () => {
 			ghosts = (await this.app.ghostController.scanGhosts()) || [];
-			selected = ghosts.find((ghost) => ghost.name === this.app.ghostController.currentGhost?.name) || ghosts[0] || null;
+			selected =
+				ghosts.find(
+					(ghost) => ghost.name === this.app.ghostController.currentGhost?.name,
+				) ||
+				ghosts[0] ||
+				null;
 			render();
 		};
-		this.manager.content?.querySelector("#explorer-refresh-btn")?.addEventListener("click", load);
-		search?.addEventListener("input", () => { searchIndex = -1; render(); });
-		this.manager.content?.querySelector("#explorer-search-next-btn")?.addEventListener("click", () => {
-			const matches = [...(rows?.querySelectorAll("tr") || [])];
-			if (!matches.length) return;
-			searchIndex = (searchIndex + 1) % matches.length;
-			matches[searchIndex].click();
-			matches[searchIndex].scrollIntoView({ block: "nearest" });
+		this.manager.content
+			?.querySelector("#explorer-refresh-btn")
+			?.addEventListener("click", load);
+		search?.addEventListener("input", () => {
+			searchIndex = -1;
+			render();
 		});
-		this.manager.content?.querySelectorAll("th[data-sort]").forEach((header) => {
-			header.addEventListener("click", () => {
-				const key = header.dataset.sort;
-				if (sortKey === key) sortAsc = !sortAsc;
-				else { sortKey = key; sortAsc = true; }
-				render();
+		this.manager.content
+			?.querySelector("#explorer-search-next-btn")
+			?.addEventListener("click", () => {
+				const matches = [...(rows?.querySelectorAll("tr") || [])];
+				if (!matches.length) return;
+				searchIndex = (searchIndex + 1) % matches.length;
+				matches[searchIndex].click();
+				matches[searchIndex].scrollIntoView({ block: "nearest" });
 			});
-		});
-		this.manager.content?.querySelector("#explorer-close-btn")?.addEventListener("click", () => this.manager.hide());
-		this.manager.content?.querySelector("#explorer-switch-btn")?.addEventListener("click", async () => {
-			if (!selected) return;
-			await this.app.ghostController.selectGhost(selected.name);
-			this.manager.hide();
-		});
+		this.manager.content
+			?.querySelectorAll("th[data-sort]")
+			.forEach((header) => {
+				header.addEventListener("click", () => {
+					const key = header.dataset.sort;
+					if (sortKey === key) sortAsc = !sortAsc;
+					else {
+						sortKey = key;
+						sortAsc = true;
+					}
+					render();
+				});
+			});
+		this.manager.content
+			?.querySelector("#explorer-close-btn")
+			?.addEventListener("click", () => this.manager.hide());
+		this.manager.content
+			?.querySelector("#explorer-switch-btn")
+			?.addEventListener("click", async () => {
+				if (!selected) return;
+				await this.app.ghostController.selectGhost(selected.name);
+				this.manager.hide();
+			});
 		void load();
 	}
 

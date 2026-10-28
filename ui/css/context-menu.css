@@ -12,7 +12,7 @@
 
 body {
 	font-family: var(--balloon-font-family);
-	background: transparent !important;
+	background: transparent;
 	color: var(--balloon-text-color);
 	user-select: none;
 	-webkit-user-select: none;
@@ -36,9 +36,9 @@ body.subchar-mode .main-only {
 	background-color: var(--balloon-bg);
 	background-image: var(--menu-bg-image, var(--balloon-pattern));
 	background-repeat: repeat;
-	border: 0 !important;
-	border-radius: 0 !important;
-	box-shadow: none !important;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
 	outline: 0;
 	position: relative;
 	cursor: move;
@@ -90,7 +90,6 @@ body.has-sidebar {
 	transition:
 		background-color 0.1s,
 		color 0.1s;
-	cursor: pointer;
 }
 
 .menu-item:hover,

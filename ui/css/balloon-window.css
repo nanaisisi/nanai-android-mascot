@@ -96,3 +96,56 @@ body {
 	background-size: contain;
 	pointer-events: none;
 }
+
+/* クリック待ちマーカー (clickwaitmarker.filename) */
+.clickwait-marker {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	background-image: var(--balloon-clickwait-image, none);
+	background-repeat: no-repeat;
+	background-size: contain;
+	vertical-align: middle;
+	margin-left: 4px;
+}
+
+/* バルーンマーカー (marker.filename) */
+.balloon-marker {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	background-image: var(--balloon-marker-image, none);
+	background-repeat: no-repeat;
+	background-size: contain;
+	vertical-align: middle;
+	margin: 0 2px;
+}
+
+/* SSTPマーカー (sstpmarker.filename) */
+.sstp-marker {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	background-image: var(--balloon-sstpmarker-image, none);
+	background-repeat: no-repeat;
+	background-size: contain;
+	vertical-align: middle;
+	margin: 0 2px;
+}
+
+/* コミュニケートボックス (communicatebox.*) */
+.communicate-box {
+	position: absolute;
+	width: 200px;
+	height: 24px;
+	left: 12px;
+	bottom: 12px;
+	background: var(--balloon-cb-bg, #ffffff);
+	color: var(--balloon-cb-color, #111111);
+	border: 1px solid var(--balloon-border-color, #7a7a7a);
+	border-radius: 4px;
+	padding: 2px 6px;
+	font-family: inherit;
+	font-size: inherit;
+	outline: none;
+}

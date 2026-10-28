@@ -604,13 +604,17 @@ export const actionMethods = {
 		const cbHeight = props["communicatebox.height"];
 		const cbX = props["communicatebox.x"];
 		const cbY = props["communicatebox.y"];
-		if (cbWidth || cbHeight || cbX || cbY) {
+		const cbFontColor = this.rgbFromComponents(props, "communicatebox.font.color") || props["communicatebox.font.color"];
+		const cbBgColor = this.rgbFromComponents(props, "communicatebox.background.color") || props["communicatebox.background.color"];
+		if (cbWidth || cbHeight || cbX || cbY || cbFontColor || cbBgColor) {
 			const cbEl = document.querySelector(".communicate-box");
 			if (cbEl) {
 				if (cbWidth) cbEl.style.width = `${cbWidth}px`;
 				if (cbHeight) cbEl.style.height = `${cbHeight}px`;
 				if (cbX) cbEl.style.left = `${cbX}px`;
 				if (cbY) cbEl.style.top = `${cbY}px`;
+				if (cbFontColor) cbEl.style.color = cbFontColor;
+				if (cbBgColor) cbEl.style.backgroundColor = cbBgColor;
 			}
 		}
 

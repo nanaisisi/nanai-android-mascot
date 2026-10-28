@@ -1,5 +1,6 @@
 use crate::common::*;
 use crate::shiori::dynamic::ShioriDynamicEngine;
+use nanai_android_mascot_ui::resolve_vfs_path;
 use std::path::PathBuf;
 
 /// ゴーストを読み込み（動的SHIORIローダー対応）
@@ -75,12 +76,23 @@ pub async fn load_ghost(
 
     let mut loaded = false;
     for cand in candidates {
-        if cand.exists() {
-            println!("🔍 Attempting to load SHIORI binary: {:?}", cand);
-            match ShioriDynamicEngine::load_library(&cand) {
+        let target_cand: Option<PathBuf> = if cand.exists() {
+            Some(cand)
+        } else if let Some(parent) = cand.parent()
+            && parent.exists()
+            && let Some(file_name) = cand.file_name().and_then(|n| n.to_str())
+        {
+            resolve_vfs_path(parent, file_name)
+        } else {
+            None
+        };
+
+        if let Some(cand_path) = target_cand {
+            println!("🔍 Attempting to load SHIORI binary: {:?}", cand_path);
+            match ShioriDynamicEngine::load_library(&cand_path) {
                 Ok(mut engine) => {
                     if let Err(e) = engine.initialize(&ghost_master_dir) {
-                        eprintln!("⚠️ Failed to initialize SHIORI at {:?}: {}", cand, e);
+                        eprintln!("⚠️ Failed to initialize SHIORI at {:?}: {}", cand_path, e);
                     } else {
                         *state.shiori_engine.lock() = Some(engine);
                         state
@@ -88,12 +100,12 @@ pub async fn load_ghost(
                             .lock()
                             .insert("main".to_string(), ghost_name.clone());
                         loaded = true;
-                        println!("🎉 Native SHIORI activated: {:?}", cand);
+                        println!("🎉 Native SHIORI activated: {:?}", cand_path);
                         break;
                     }
                 }
                 Err(e) => {
-                    eprintln!("⚠️ Failed to load library {:?}: {}", cand, e);
+                    eprintln!("⚠️ Failed to load library {:?}: {}", cand_path, e);
                 }
             }
         }

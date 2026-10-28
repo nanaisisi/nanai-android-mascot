@@ -22,14 +22,6 @@ export class ModalGhostHandlers {
 		let sortAsc = true;
 		let searchIndex = -1;
 
-		const isStaleUpdateDate = (dateStr) => {
-			if (!dateStr || typeof dateStr !== "string") return false;
-			const normalized = dateStr.trim().replace(" ", "T");
-			const parsed = Date.parse(normalized);
-			if (Number.isNaN(parsed)) return false;
-			const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000;
-			return Date.now() - parsed >= ONE_YEAR_MS;
-		};
 		const format = (value) => value || "—";
 		const updateSortHeaderIndicators = () => {
 			this.manager.content
@@ -49,56 +41,28 @@ export class ModalGhostHandlers {
 		const render = () => {
 			if (!rows) return;
 			updateSortHeaderIndicators();
-			const query = String(search?.value || "")
-				.trim()
-				.toLowerCase();
+			const query = String(search?.value || "").trim().toLowerCase();
 			const list = ghosts
 				.filter((ghost) =>
 					[ghost.name, ghost.craftman, ghost.path].some((value) =>
-						String(value || "")
-							.toLowerCase()
-							.includes(query),
+						String(value || "").toLowerCase().includes(query),
 					),
 				)
 				.sort((a, b) => {
 					const left = String(a[sortKey] || "");
 					const right = String(b[sortKey] || "");
-					return (
-						(left.localeCompare(right, "ja") ||
-							a.name.localeCompare(b.name, "ja")) * (sortAsc ? 1 : -1)
-					);
+					return (left.localeCompare(right, "ja") || a.name.localeCompare(b.name, "ja")) *
+						(sortAsc ? 1 : -1);
 				});
 			rows.innerHTML = "";
 			list.forEach((ghost) => {
 				const tr = document.createElement("tr");
-				const isSelected = ghost.name === selected?.name;
-				const isStale = isStaleUpdateDate(ghost.update_date);
-				tr.className = [
-					isSelected ? "is-selected" : "",
-					isStale ? "is-stale-update" : "",
-				]
-					.filter(Boolean)
-					.join(" ");
-				const cells = [
-					{ value: ghost.name },
-					{ value: ghost.craftman },
-					{ value: ghost.path },
-					{ value: ghost.group },
-					{ value: ghost.install_date },
-					{ value: ghost.update_date, stale: isStale },
-					{ value: ghost.update_result },
-					{ value: ghost.sakura_name },
-					{ value: ghost.kero_name },
-				];
-				tr.innerHTML = cells
-					.map(({ value, stale }) => {
-						const titleText = stale
-							? `${String(value || "")} (最終更新から1年以上経過)`
-							: String(value || "");
-						const cls = stale ? ' class="is-stale-date"' : "";
-						return `<td${cls} title="${titleText.replaceAll('"', "&quot;")}">${format(value)}</td>`;
-					})
-					.join("");
+				tr.className = ghost.name === selected?.name ? "is-selected" : "";
+				tr.innerHTML = [
+					ghost.name, ghost.craftman, ghost.path, ghost.group,
+					ghost.install_date, ghost.update_date, ghost.update_result,
+					ghost.sakura_name, ghost.kero_name,
+				].map((value) => `<td title="${String(value || "").replaceAll('"', "&quot;")}">${format(value)}</td>`).join("");
 				tr.addEventListener("click", () => {
 					selected = ghost;
 					render();

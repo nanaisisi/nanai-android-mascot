@@ -1,7 +1,7 @@
 # エクスプローラ機能仕様
 
 - **規格**: [ukadoc-ssp/functions/explorer](https://github.com/ukatech/ukadoc-ssp/blob/main/functions/explorer/index.md)
-- **対応状況**: ⚠️ 部分対応
+- **対応状況**: ✅ 対応済 (基本項目・ゴースト依存日時・ステータス判定)
 
 ## 目的
 
@@ -12,19 +12,33 @@
 - **UIデザインと配色の管轄**: エクスプローラウィンドウ（および各種モーダル、メニュー）の外観デザイン、テーブルレイアウト、配色スキーム（ダークテーマ・アクセントカラー等）は、SSP本体のネイティブデザインに依存するものではなく、**本アプリケーション（Nanai Android Mascot）側の管轄**である。
 - **デザイン方針**: アプリケーション全体のバルーンデザインシステムやモーダルテーマ（CSS変数）に完全に準拠し、マルチプラットフォーム（デスクトップ・Android等）で視認性と操作性に優れたモダンなデザインを提供する。
 
-## 一覧項目
+## 一覧項目とデータ仕様
 
-| 列 | データ | 対応 |
-| --- | --- | --- |
-| 名前 | `GhostInfo.name` | ✅ |
-| 作者名 | `GhostInfo.craftman` | ✅ |
-| パス | `GhostInfo.path` | ✅ |
-| グループ | 現在の走査結果には未保持 | ⚠️ `—` |
-| インストール日時 | インストール履歴未保持 | ⚠️ `—` |
-| 更新日時 | 更新履歴未保持 | ⚠️ `—` |
-| 更新結果 | 更新履歴未保持 | ⚠️ `—` |
-| `¥0名` | `GhostInfo.sakura_name` | ✅ |
-| `¥1名` | `GhostInfo.kero_name` | ✅ |
+| 列 | データ | 対応 | 備考 |
+| --- | --- | --- | --- |
+| 名前 | `GhostInfo.name` | ✅ | `descript.txt` の `name` |
+| 作者名 | `GhostInfo.craftman` | ✅ | `craftman` プロパティ |
+| パス | `GhostInfo.path` | ✅ | インストールディレクトリ絶対パス |
+| グループ | `GhostInfo.group` | ✅ | グループ定義 |
+| インストール日時 | `GhostInfo.install_date` | ✅ | ディレクトリ作成/初回修正日時 |
+| 更新日時 | `GhostInfo.update_date` | ✅ | **ゴースト依存**: `updates2.dau` / `descript.txt` の更新日時 |
+| 更新結果 | `GhostInfo.update_result` | ✅ | `OK(0)`, `-` (etc) 等のステータス |
+| `¥0名` | `GhostInfo.sakura_name` | ✅ | `sakura.name` |
+| `¥1名` | `GhostInfo.kero_name` | ✅ | `kero.name` |
+
+### 1. 更新日時 (`update_date`) のゴースト依存ロジック
+ゴーストの更新日時はホスト側のフォルダ変更日時ではなく、ゴースト固有のファイル変更に依存して決定される：
+1. ゴースト内の `updates2.dau`（ネットワーク更新ファイル一覧）のファイル修正日時を最優先で参照。
+2. `updates2.dau` がない場合は、`ghost/master/descript.txt`（ゴースト設定ファイル）のファイル修正日時を参照。
+3. いずれもない場合は、ゴーストディレクトリ自体の修正日時にフォールバック。
+
+### 2. 更新結果 (`update_result`) ステータス定義
+SSP / ネットワーク更新仕様に準拠したステータスコードおよび表現を使用：
+- `OK(0)`: 正常・準備完了（`updates2.dau` 検出等）
+- `OK(2)` / `OK(4)` / `OK(5)`: 各種成功・更新完了コード
+- `NG(timeout)`: ネットワークタイムアウト
+- `NG(404)`: 対象ファイル不存在（404 Not Found）
+- `-`: 未実施・その他（etc）
 
 ## 実装済み操作
 
@@ -40,17 +54,16 @@
 
 ## 未対応・今後の拡張
 
-- `group`、インストール日時、最終更新日時、更新結果の永続化
+- `group`、インストール日時、最終更新日時、更新結果の永続化 DB
 - 種類メニューによるバルーン・シェル・プラグイン一覧への切替
 - 複数選択（Ctrl/Shift）
 - 右クリック機能メニュー、コピー、全選択
-- ネットワーク更新結果の行単位反映
 - 起動時にエクスプローラを自動表示する設定
 
 ## 実装箇所
 
 - `ui/js/ui/templates/ghost-templates.js`: 表と操作 UI
 - `ui/js/ui/modal-ghost-handlers.js`: 走査、検索、ソート、切替
-- `ui/js/core/app-actions.js`: `explorer` アクション
-- `ui/menu-iframe.html`: 「機能・ツール」サブメニュー項目
-- `ui/css/menu-modal.css`: 表示スタイル
+- `src-tauri/src/common.rs`: `GhostInfo` 拡張
+- `src-tauri/src/ghost/scan/mod.rs`: ゴースト依存日時およびステータス算出ロジック
+- `ui/css/menu-modal.css`: モダンダークエクスプローラ配色

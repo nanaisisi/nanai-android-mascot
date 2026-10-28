@@ -100,14 +100,34 @@ pub async fn scan_ghost_directory(
                         .as_ref()
                         .and_then(|m| m.get("craftmanurl").cloned());
 
-                    let (install_date, update_date) = if let Ok(meta) = std::fs::metadata(&path) {
-                        let modified = meta.modified().ok().and_then(format_system_time);
+                    let mut install_date = None;
+                    let mut update_date = None;
+
+                    // ゴースト依存の更新日時チェック (updates2.dau や ghost/master/descript.txt を優先)
+                    let dau_path = path.join("updates2.dau");
+                    let master_desc_path = path.join("ghost").join("master").join("descript.txt");
+
+                    if let Ok(meta) = std::fs::metadata(&dau_path) {
+                        update_date = meta.modified().ok().and_then(format_system_time);
+                    }
+                    if update_date.is_none() && let Ok(meta) = std::fs::metadata(&master_desc_path) {
+                        update_date = meta.modified().ok().and_then(format_system_time);
+                    }
+
+                    if let Ok(meta) = std::fs::metadata(&path) {
                         let created = meta.created().ok().and_then(format_system_time);
-                        (created.or(modified.clone()), modified)
+                        let modified = meta.modified().ok().and_then(format_system_time);
+                        install_date = created.or(modified.clone());
+                        if update_date.is_none() {
+                            update_date = modified;
+                        }
+                    }
+
+                    let update_result = if dau_path.exists() {
+                        Some("OK(0)".to_string())
                     } else {
-                        (None, None)
+                        Some("-".to_string())
                     };
-                    let update_result = Some("正常 (最新)".to_string());
                     let group = meta_map.as_ref().and_then(|m| m.get("group").cloned());
 
                     // 全シェルをスキャン
@@ -157,7 +177,7 @@ pub async fn scan_ghost_directory(
                 group: None,
                 install_date,
                 update_date,
-                update_result: Some("正常 (最新)".to_string()),
+                update_result: Some("OK(0)".to_string()),
             });
         }
     }

@@ -27,6 +27,7 @@ mod common;
 mod fmo;
 mod ghost;
 mod shiori;
+mod sstp;
 
 use common::*;
 
@@ -269,7 +270,8 @@ pub fn run() {
             commands::ext::scan_plugins,
             commands::ext::scan_headlines,
             shiori::saori::execute_saori,
-            fmo::get_fmo_status
+            fmo::get_fmo_status,
+            sstp::send_sstp_request
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

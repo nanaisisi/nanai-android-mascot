@@ -100,15 +100,15 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
         ghost_name = fallback_name.to_string();
     }
 
-    // install.txt の type 種別を検証 (ukadoc準拠: Ghost / Shell / Balloon / Plugin / Supplement)
+    // install.txt の type 種別を検証 (ukadoc準拠: Ghost / Shell / Balloon / Plugin / Headline / Supplement)
     let kind = install_type
         .as_deref()
         .map(str::to_lowercase)
         .unwrap_or_else(|| "ghost".to_string());
-    if kind != "ghost" && kind != "balloon" {
+    if kind != "ghost" && kind != "balloon" && kind != "shell" && kind != "plugin" && kind != "headline" {
         let label = install_type.unwrap_or_default();
         return Err(format!(
-            "install.txt type={label} ({kind}): 現状GhostおよびBalloonアーカイブのみ取り込み可能です"
+            "install.txt type={label} ({kind}): サポートされていないアーカイブ種別です"
         ));
     }
 
@@ -118,10 +118,12 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
         .map(|c| if r#"\/:*?"<>| "#.contains(c) { '_' } else { c })
         .collect();
 
-    let target_base = if kind == "balloon" {
-        resolve_asset_path("assets/balloon", app_handle)?
-    } else {
-        resolve_asset_path("assets/ghost", app_handle)?
+    let target_base = match kind.as_str() {
+        "balloon" => resolve_asset_path("assets/balloon", app_handle)?,
+        "shell" => resolve_asset_path("assets/shell", app_handle)?,
+        "plugin" => resolve_asset_path("assets/plugin", app_handle)?,
+        "headline" => resolve_asset_path("assets/headline", app_handle)?,
+        _ => resolve_asset_path("assets/ghost", app_handle)?,
     };
     let target_dir = target_base.join(&safe_dir_name);
 

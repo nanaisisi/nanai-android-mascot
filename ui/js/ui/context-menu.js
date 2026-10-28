@@ -19,16 +19,18 @@ document.addEventListener("mousedown", (event) => {
 // 独立ウィンドウ環境での Tauri イベント受信 (ゴースト・シェル・バルーンテーマ同期・スコープ同期)
 if (isTauriAvailable()) {
 	listen("sync-menu-scope", (event) => {
-			const scope =
-				typeof event.payload === "number"
-					? event.payload
-					: parseInt(event.payload, 10);
-			if (!Number.isNaN(scope)) {
-				dispatcher.setScope(scope);
-				// 着せ替えサブメニューを新スコープのパーツ定義へ切替
-				renderer.renderDressupSubmenu(null, scope);
-			}
-		});
+		const scope =
+			typeof event.payload === "number"
+				? event.payload
+				: parseInt(event.payload, 10);
+		if (!Number.isNaN(scope)) {
+			dispatcher.setScope(scope);
+			// 着せ替えサブメニューを新スコープのパーツ定義へ切替
+			renderer.renderDressupSubmenu(null, scope);
+			// 新しいスコープに合わせた最新状態の同期を要求
+			dispatcher.dispatchAction("request-sync");
+		}
+	});
 		listen("sync-ghosts", (event) => {
 			const data = event.payload;
 			if (data) {

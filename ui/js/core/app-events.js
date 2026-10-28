@@ -115,7 +115,8 @@ export const eventMethods = {
 			if (event.data?.type !== "menu-action") return;
 			const action = event.data.action;
 			if (action === "request-sync") {
-				this.syncMenuGhosts();
+				const reqScope = event.data.payload?.scope ?? 0;
+				this.syncMenuGhosts(reqScope);
 				return;
 			}
 			this.hideMenu();

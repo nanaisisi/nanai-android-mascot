@@ -17,6 +17,8 @@ pub async fn show_character_window(
         let label = format!("subchar_window_{}", scope_id);
 
         if let Some(sub_win) = app_handle.get_webview_window(&label) {
+            let _ = sub_win.set_decorations(false);
+            let _ = sub_win.set_shadow(false);
             if let (Some(px), Some(py)) = (x, y) {
                 let _ = sub_win.set_position(tauri::Position::Physical(tauri::PhysicalPosition {
                     x: px as i32,
@@ -62,7 +64,9 @@ pub async fn show_character_window(
             .inner_size(win_width, win_height)
             .transparent(true)
             .decorations(false)
+            .shadow(false)
             .always_on_top(true)
+            .skip_taskbar(true)
             .resizable(false)
             .position(target_x, target_y)
             .build()

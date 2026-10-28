@@ -36,6 +36,8 @@ pub async fn show_loading_banner_window(
         let g_ver = ghost_version.unwrap_or_else(|| "1.0.0".to_string());
 
         if let Some(banner_win) = app_handle.get_webview_window("loading_banner_window") {
+            let _ = banner_win.set_decorations(false);
+            let _ = banner_win.set_shadow(false);
             let _ = banner_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
                 x: target_x,
                 y: target_y,
@@ -65,6 +67,7 @@ pub async fn show_loading_banner_window(
             .inner_size(win_width, win_height)
             .transparent(true)
             .decorations(false)
+            .shadow(false)
             .always_on_top(true)
             .skip_taskbar(true)
             .resizable(false)

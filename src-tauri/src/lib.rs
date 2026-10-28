@@ -252,7 +252,9 @@ pub fn run() {
             commands::file::load_surface_image,
             commands::file::load_surface_pna,
             commands::update::check_ghost_update,
-            commands::update::execute_ghost_update
+            commands::update::execute_ghost_update,
+            commands::ext::scan_plugins,
+            commands::ext::scan_headlines
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

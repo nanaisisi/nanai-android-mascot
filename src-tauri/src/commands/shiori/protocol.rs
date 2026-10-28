@@ -175,23 +175,36 @@ pub async fn send_on_translate(
     script: String,
     ghost_id: Option<String>,
 ) -> Result<String, String> {
-    let mut req = ShioriRequest::get("OnTranslate", &[script.clone()]);
+    let mut req = ShioriRequest::get("OnTranslate", std::slice::from_ref(&script));
     req.sender = "NanaiMascot".to_string();
     let gid = ghost_id.unwrap_or_else(|| "main".to_string());
 
     match dispatch_request(&state, &req.build(), &gid) {
         Ok(raw) => {
             let parsed = ShioriResponse::parse(&raw);
-            if let Ok(res) = parsed {
-                if let Some(val) = res.value {
+            if let Ok(res) = parsed
+                && let Some(val) = res.value {
                     let trimmed = val.trim();
                     if !trimmed.is_empty() {
                         return Ok(trimmed.to_string());
                     }
                 }
-            }
             Ok(script)
         }
         Err(_) => Ok(script),
     }
+}
+
+/// ゴースト間呼び出し/切り替え関連のイベントを送信する (UKADOC 規格準拠)
+#[tauri::command]
+pub async fn send_ghost_call_event(
+    state: tauri::State<'_, AppState>,
+    event: String,
+    target_ghost_name: String,
+    ghost_id: Option<String>,
+) -> Result<String, String> {
+    let mut req = ShioriRequest::get(&event, &[target_ghost_name]);
+    req.sender = "NanaiMascot".to_string();
+    let gid = ghost_id.unwrap_or_else(|| "main".to_string());
+    dispatch_request(&state, &req.build(), &gid)
 }

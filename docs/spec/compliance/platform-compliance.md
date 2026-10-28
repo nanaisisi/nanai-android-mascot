@@ -9,11 +9,11 @@ Nanai Android Mascot における「Windows」および「Android」プラット
 ## 1. 概要と対応度
 
 - **規格**: Tauri v2, Windows Desktop, Android API 26+ (Overlay / Foreground Service)
-- **対応度**: **75%**
+- **対応度**: **80%**
 - **主要実装ファイル**:
   - `src-tauri/tauri.conf.json`: ウィンドウ透過・リサイズ・セキュリティ権限
-  - `src/js/interaction.js`: マウス/タッチハイブリッド操作制御
-  - `docs/spec/android-overlay-and-service-spec.md`: Android 常駐・オーバーレイ仕様
+  - `ui/js/interaction.js`: マウス/タッチハイブリッド操作制御
+  - `docs/spec/ukadoc-ssp/functions/window-snap.md`: ウィンドウ・スナップおよび位置リセット仕様
 
 ---
 
@@ -28,6 +28,8 @@ Nanai Android Mascot における「Windows」および「Android」プラット
 | **ウィンドウ移動**           | タイトルバーなしドラッグ | ✅ 対応済 | キャラクター領域ドラッグによるウィンドウスムーズ追従                  |
 | **右クリックメニュー**       | コンテキストメニュー     | ✅ 対応済 | キャラクター右クリックでの iframe 隔離メニュー展開                    |
 | **キーボードショートカット** | `Ctrl+W`, `Ctrl+Q` 等    | ✅ 対応済 | 標準アクセラレータキーによる終了・操作                                |
+| **画面端スナップ / ドッキング**| 上下左右への吸着・退避   | ✅ 対応済 | 画面端へのドラッグ/スワイプによるスナップおよび半透明タブ退避・復帰   |
+| **位置リセット**             | シェル/バルーン位置初期化| ✅ 対応済 | 「機能」メニューからのシェル位置初期化（`Ctrl+Shift+F12`）およびバルーンオフセット初期化 |
 
 ### 2.2 Android (モバイル環境)
 

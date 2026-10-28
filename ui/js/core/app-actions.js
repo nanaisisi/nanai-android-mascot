@@ -105,6 +105,20 @@ export const actionMethods = {
 		if (action === "close-balloon") {
 			return this.hideBalloon();
 		}
+		if (action === "keep-temporary-ghost") {
+			const gc = this.ghostController;
+			if (gc.currentGhost?.isTemporary) {
+				gc.currentGhost.isTemporary = false;
+				this.showBalloon(
+					"📌 一時起動ゴーストを通常起動状態として保持しました",
+				);
+				gc.sendShioriEvent("OnBoot");
+			} else {
+				this.showBalloon("⚠️ 一時起動中のゴーストではありません");
+			}
+			setTimeout(() => this.hideBalloon(), 2000);
+			return;
+		}
 
 		if (action === "biff" || action === "mail") {
 			return this.checkEmail();

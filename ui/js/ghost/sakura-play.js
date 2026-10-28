@@ -1,4 +1,9 @@
-import { emit, invoke, isTauriAvailable } from "../core/tauri-helper.js";
+/**
+ * @file sakura-play.js
+ * @brief トークン列をバルーンにアニメーション再生するさくらスクリプトプレイヤー本体
+ */
+import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
+import { createBalloonSyncManager } from "./sakura-play-sync.js";
 
 /**
  * トークン列をバルーンにアニメーション再生（SakuraScriptPlayer.play の本体）
@@ -12,7 +17,7 @@ export async function playScript(player, script) {
 	const currentId = player.playbackId;
 	player.isPlaying = true;
 	player.skipRequested = false;
-	player.timeCritical = false; // 新しい再生で `\t` セクションをリセット
+	player.timeCritical = false;
 	player.currentScope = 0;
 
 	const app = player.app;
@@ -26,7 +31,6 @@ export async function playScript(player, script) {
 			t.type === "char" || t.type === "choice" || t.type === "anchor_begin",
 	);
 
-	// 発話文字や選択肢がある場合のみバルーンの内容を初期化・表示
 	const shownScopes = new Set();
 	if (hasTextContent) {
 		sakuraText.innerHTML = "";
@@ -42,7 +46,6 @@ export async function playScript(player, script) {
 					theme: app.currentBalloonTheme,
 				}).catch(() => {}),
 			];
-			// スクリプト内にスコープ1（\1 / \u）以降の発話・選択肢が含まれているか判定
 			const hasKero = tokens.some((t) => t.type === "scope" && t.value >= 1);
 			if (hasKero) {
 				shownScopes.add(1);
@@ -62,43 +65,12 @@ export async function playScript(player, script) {
 	let ended = false;
 	let currentAnchor = null;
 
-	// 独立バルーン同期用ヘルパー
-	// 同一ターン内（\_q のクイック描画など）の連続更新だけをまとめ、表示は遅延させない
-	const syncPendingScopes = new Set();
-	let syncQueued = false;
-	const flushDesktopBalloon = () => {
-		syncQueued = false;
-		if (syncPendingScopes.size > 0 && isTauriAvailable()) {
-			for (const sc of syncPendingScopes) {
-				emit(`update-balloon-content-${sc}`, {
-					html: (sc === 1 ? keroText : sakuraText)?.innerHTML || "",
-					theme: app.currentBalloonTheme || "default",
-				});
-			}
-			syncPendingScopes.clear();
-		}
-	};
-
-	const scheduleDesktopBalloonSync = (
-		immediate = false,
-		targetScope = null,
-	) => {
-		if (!isTauriAvailable()) return;
-		const sc = targetScope ?? player.currentScope;
-		syncPendingScopes.add(sc);
-		if (immediate) {
-			flushDesktopBalloon();
-			return;
-		}
-		if (!syncQueued) {
-			syncQueued = true;
-			queueMicrotask(flushDesktopBalloon);
-		}
-	};
+	const { flushDesktopBalloon, scheduleDesktopBalloonSync } =
+		createBalloonSyncManager(player, app, sakuraText, keroText);
 
 	for (let j = 0; j < tokens.length; j++) {
-		if (player.playbackId !== currentId) break; // 新しい再生で中断
-		if (ended) break; // \e 以降は再生しない（UKADOC準拠）
+		if (player.playbackId !== currentId) break;
+		if (ended) break;
 
 		const token = tokens[j];
 
@@ -159,7 +131,6 @@ export async function playScript(player, script) {
 				}
 				scheduleDesktopBalloonSync(false);
 
-				// 文字送り時の口パク連動
 				app.surfaceManager?.onCharSpoken(player.currentScope);
 
 				if (!player.skipRequested && !isQuickMode) {
@@ -186,7 +157,6 @@ export async function playScript(player, script) {
 				break;
 
 			case "pause":
-				// \x: クリックまたはタイムアウト待ち
 				flushDesktopBalloon();
 				if (!player.skipRequested && !isQuickMode) {
 					const activeDisplay =
@@ -202,7 +172,6 @@ export async function playScript(player, script) {
 				anchorSpan.setAttribute("data-anchor-id", token.id);
 				anchorSpan.addEventListener("click", (e) => {
 					e.stopPropagation();
-					console.log(`🔗 アンカークリック: ${token.id}`);
 					app.ghostController.sendShioriEvent("OnAnchorSelect", [
 						token.id,
 						...token.args,
@@ -219,7 +188,6 @@ export async function playScript(player, script) {
 				break;
 
 			case "quick_toggle":
-				// \_q / \_q[1] / \_q[0]: クイック描画制御
 				if (typeof token.value === "boolean") {
 					isQuickMode = token.value;
 				} else {
@@ -234,12 +202,10 @@ export async function playScript(player, script) {
 				break;
 
 			case "surface":
-				// 表情切り替え（スコープ別）
 				app.ghostController.updateSurface(token.value, player.currentScope);
 				break;
 
 			case "animation":
-				// \i[ID] / \i[ID,wait]: アニメーション直接再生
 				await app.surfaceManager?.playAnimationById(
 					token.animId,
 					player.currentScope,
@@ -263,7 +229,6 @@ export async function playScript(player, script) {
 			}
 
 			case "balloon": {
-				// \b[-1] でバルーン非表示、その他は表示
 				const balloonDisplay =
 					player.currentScope === 1 ? keroDisplay : sakuraDisplay;
 				if (token.value === -1) {
@@ -275,19 +240,14 @@ export async function playScript(player, script) {
 			}
 
 			case "timeout":
-				// \t: タイムクリティカルセクション (UKADOC準拠)。
-				// スクリプトブレーク（選択肢選択・ダブルクリック中断）か \e まで
-				// マウス系イベント通知を抑止する。
 				player.timeCritical = true;
 				break;
 
 			case "halt":
-				// \-: ゴースト終了
 				await app.ghostController?.closeGhost?.();
 				break;
 
 			case "offset": {
-				// \_l[x,y] バルーン内座標オフセット指定（spanのstyle指定で実現）
 				const spacer = document.createElement("span");
 				spacer.style.display = "inline-block";
 				if (token.x.startsWith("@")) {
@@ -307,7 +267,6 @@ export async function playScript(player, script) {
 			}
 
 			case "font": {
-				// \f[color,red], \f[bold,1], \f[italic,1], \f[height,14], \f[strike,1], \f[underline,1], \f[shadow,color], \f[default]
 				player.currentFontStyles = player.currentFontStyles || {};
 				if (token.tag === "default") {
 					player.currentFontStyles = {};
@@ -356,7 +315,6 @@ export async function playScript(player, script) {
 			}
 
 			case "sync_toggle":
-				// \_s / \_s[1] / \_s[0]: 複数キャラ同時発話モード
 				if (typeof token.value === "boolean") {
 					player.isSyncMode = token.value;
 				} else {
@@ -369,7 +327,6 @@ export async function playScript(player, script) {
 				break;
 
 			case "end":
-				// \e: スクリプト終了（以降のトークンは再生しない）
 				app.surfaceManager?.onTalkEnd(player.currentScope);
 				app.surfaceManager?.onScriptEnd(0);
 				app.surfaceManager?.onScriptEnd(1);

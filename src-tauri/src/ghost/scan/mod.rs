@@ -1,6 +1,7 @@
 //! ゴーストディレクトリのスキャン（Tauri コマンド）
 
 use crate::common::*;
+use tauri::Manager;
 
 mod descript;
 mod shell;
@@ -62,92 +63,117 @@ pub async fn scan_ghost_directory(
     println!("🔍 Input path: {}", ghost_dir);
     println!("🔍 Resolved absolute path: {:?}", ghost_path);
 
+    // userData/ghost (ユーザーデータ) 優先探索パスの構築 (SSP / 伺か標準仕様準拠)
+    let mut paths_to_scan = Vec::new();
+    if let Ok(app_data_dir) = app_handle.path().app_data_dir() {
+        let user_ghost_dir = app_data_dir.join("userData").join("ghost");
+        if user_ghost_dir.exists() {
+            paths_to_scan.push(user_ghost_dir);
+        }
+        let alt_user_ghost_dir = app_data_dir.join("ghost");
+        if alt_user_ghost_dir.exists() && !paths_to_scan.contains(&alt_user_ghost_dir) {
+            paths_to_scan.push(alt_user_ghost_dir);
+        }
+    }
+    if !paths_to_scan.contains(&ghost_path) {
+        paths_to_scan.push(ghost_path.clone());
+    }
+
     let mut ghosts = Vec::new();
+    let mut scanned_names = std::collections::HashSet::new();
 
-    if let Ok(entries) = std::fs::read_dir(&ghost_path) {
-        for entry in entries.flatten() {
-            let path = entry.path();
-            if path.is_dir() {
-                let dir_name = entry.file_name().to_string_lossy().to_string();
-                if !dir_name.starts_with('.') {
-                    // ghost/master/descript.txt または descript.txt
-                    let descript_candidates = [
-                        path.join("ghost").join("master").join("descript.txt"),
-                        path.join("descript.txt"),
-                        path.join("install.txt"),
-                    ];
-                    let mut meta_map = None;
-                    for cand in &descript_candidates {
-                        if let Some(map) = read_descript_file(cand) {
-                            meta_map = Some(map);
-                            break;
+    for scan_dir in paths_to_scan {
+        if let Ok(entries) = std::fs::read_dir(&scan_dir) {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                if path.is_dir() {
+                    let dir_name = entry.file_name().to_string_lossy().to_string();
+                    if !dir_name.starts_with('.') {
+                        // ghost/master/descript.txt または descript.txt
+                        let descript_candidates = [
+                            path.join("ghost").join("master").join("descript.txt"),
+                            path.join("descript.txt"),
+                            path.join("install.txt"),
+                        ];
+                        let mut meta_map = None;
+                        for cand in &descript_candidates {
+                            if let Some(map) = read_descript_file(cand) {
+                                meta_map = Some(map);
+                                break;
+                            }
                         }
-                    }
 
-                    let display_name = meta_map
-                        .as_ref()
-                        .and_then(|m| m.get("name").cloned())
-                        .unwrap_or_else(|| dir_name.clone());
-                    let version = meta_map.as_ref().and_then(|m| m.get("version").cloned());
+                        let display_name = meta_map
+                            .as_ref()
+                            .and_then(|m| m.get("name").cloned())
+                            .unwrap_or_else(|| dir_name.clone());
 
-                    let sakura_name = meta_map
-                        .as_ref()
-                        .and_then(|m| m.get("sakura.name").cloned());
-                    let kero_name = meta_map.as_ref().and_then(|m| m.get("kero.name").cloned());
-                    let shiori = meta_map.as_ref().and_then(|m| m.get("shiori").cloned());
-                    let craftman = meta_map.as_ref().and_then(|m| m.get("craftman").cloned());
-                    let craftman_url = meta_map
-                        .as_ref()
-                        .and_then(|m| m.get("craftmanurl").cloned());
-
-                    let mut install_date = None;
-                    let mut update_date = None;
-
-                    // ゴースト依存の更新日時チェック (updates2.dau や ghost/master/descript.txt を優先)
-                    let dau_path = path.join("updates2.dau");
-                    let master_desc_path = path.join("ghost").join("master").join("descript.txt");
-
-                    if let Ok(meta) = std::fs::metadata(&dau_path) {
-                        update_date = meta.modified().ok().and_then(format_system_time);
-                    }
-                    if update_date.is_none() && let Ok(meta) = std::fs::metadata(&master_desc_path) {
-                        update_date = meta.modified().ok().and_then(format_system_time);
-                    }
-
-                    if let Ok(meta) = std::fs::metadata(&path) {
-                        let created = meta.created().ok().and_then(format_system_time);
-                        let modified = meta.modified().ok().and_then(format_system_time);
-                        install_date = created.or(modified.clone());
-                        if update_date.is_none() {
-                            update_date = modified;
+                        // 既に優先パス（userData等）でスキャン済みのゴースト名はスキップ（優先探索）
+                        if scanned_names.contains(&display_name) {
+                            continue;
                         }
+                        scanned_names.insert(display_name.clone());
+
+                        let version = meta_map.as_ref().and_then(|m| m.get("version").cloned());
+                        let sakura_name = meta_map
+                            .as_ref()
+                            .and_then(|m| m.get("sakura.name").cloned());
+                        let kero_name = meta_map.as_ref().and_then(|m| m.get("kero.name").cloned());
+                        let shiori = meta_map.as_ref().and_then(|m| m.get("shiori").cloned());
+                        let craftman = meta_map.as_ref().and_then(|m| m.get("craftman").cloned());
+                        let craftman_url = meta_map
+                            .as_ref()
+                            .and_then(|m| m.get("craftmanurl").cloned());
+
+                        let mut install_date = None;
+                        let mut update_date = None;
+
+                        // ゴースト依存の更新日時チェック (updates2.dau や ghost/master/descript.txt を優先)
+                        let dau_path = path.join("updates2.dau");
+                        let master_desc_path = path.join("ghost").join("master").join("descript.txt");
+
+                        if let Ok(meta) = std::fs::metadata(&dau_path) {
+                            update_date = meta.modified().ok().and_then(format_system_time);
+                        }
+                        if update_date.is_none() && let Ok(meta) = std::fs::metadata(&master_desc_path) {
+                            update_date = meta.modified().ok().and_then(format_system_time);
+                        }
+
+                        if let Ok(meta) = std::fs::metadata(&path) {
+                            let created = meta.created().ok().and_then(format_system_time);
+                            let modified = meta.modified().ok().and_then(format_system_time);
+                            install_date = created.or(modified.clone());
+                            if update_date.is_none() {
+                                update_date = modified;
+                            }
+                        }
+
+                        let update_result = if dau_path.exists() {
+                            Some("OK(0)".to_string())
+                        } else {
+                            Some("-".to_string())
+                        };
+                        let group = meta_map.as_ref().and_then(|m| m.get("group").cloned());
+
+                        // 全シェルをスキャン
+                        let shells = scan_shells_from_ghost(&path);
+
+                        ghosts.push(GhostInfo {
+                            name: display_name,
+                            version,
+                            path: path.to_string_lossy().to_string(),
+                            sakura_name,
+                            kero_name,
+                            shiori,
+                            craftman,
+                            craftman_url,
+                            shells,
+                            group,
+                            install_date,
+                            update_date,
+                            update_result,
+                        });
                     }
-
-                    let update_result = if dau_path.exists() {
-                        Some("OK(0)".to_string())
-                    } else {
-                        Some("-".to_string())
-                    };
-                    let group = meta_map.as_ref().and_then(|m| m.get("group").cloned());
-
-                    // 全シェルをスキャン
-                    let shells = scan_shells_from_ghost(&path);
-
-                    ghosts.push(GhostInfo {
-                        name: display_name,
-                        version,
-                        path: path.to_string_lossy().to_string(),
-                        sakura_name,
-                        kero_name,
-                        shiori,
-                        craftman,
-                        craftman_url,
-                        shells,
-                        group,
-                        install_date,
-                        update_date,
-                        update_result,
-                    });
                 }
             }
         }

@@ -1,4 +1,5 @@
 pub mod config;
+pub mod ext;
 pub mod file;
 pub mod install;
 pub mod shell;

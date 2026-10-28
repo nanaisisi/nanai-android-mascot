@@ -91,6 +91,28 @@ pub struct GhostInfo {
     pub update_result: Option<String>,
 }
 
+// プラグイン情報 (UKADOC / SSP 規格)
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct PluginInfo {
+    pub name: String,
+    pub version: Option<String>,
+    pub path: String,
+    pub craftman: Option<String>,
+    pub craftman_url: Option<String>,
+    pub description: Option<String>,
+}
+
+// ヘッドラインセンサー情報 (UKADOC / SSP 規格)
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct HeadlineInfo {
+    pub name: String,
+    pub version: Option<String>,
+    pub path: String,
+    pub craftman: Option<String>,
+    pub craftman_url: Option<String>,
+    pub url: Option<String>,
+}
+
 // アプリケーション状態を定義
 pub struct AppState {
     pub recent_files: Mutex<Vec<String>>,

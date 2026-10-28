@@ -17,6 +17,14 @@ const SCALE_MAP = {
   "scale-150": { width: "300px", height: "600px" },
   "scale-200": { width: "400px", height: "800px" },
 };
+const BALLOON_SCALE_MAP = {
+  "balloon-scale-50": "0.5",
+  "balloon-scale-75": "0.75",
+  "balloon-scale-100": "1",
+  "balloon-scale-125": "1.25",
+  "balloon-scale-150": "1.5",
+  "balloon-scale-200": "2",
+};
 
 /** SHIORIイベントへ単純転送するアクション */
 // ※外部ブラウザ起動・RSSパーサー等は今後拡張 (updates2.dau照合は app-update.js + network.rs で実装済み)
@@ -137,6 +145,7 @@ export const actionMethods = {
       return;
     }
     if (action.startsWith("scale-")) return this.applyShellScaleAction(action);
+    if (action.startsWith("balloon-scale-")) return this.applyBalloonScaleAction(action);
     if (action === "close" || action === "exit") return this.closeApp();
     if (action === "close-all" || action === "exit-all") return this.closeApp();
     if (action === "close-menu") return;
@@ -413,6 +422,21 @@ export const actionMethods = {
     this.showBalloon(
       `シェル倍率を ${scalePercent}% に変更しました`,
     );
+    setTimeout(() => this.hideBalloon(), 1500);
+  },
+
+  /**
+   * @param {string} action
+   */
+  applyBalloonScaleAction(action) {
+    const scale = BALLOON_SCALE_MAP[action] || "1";
+    const percent = Math.round(parseFloat(scale) * 100);
+    const balloonEl = document.querySelector(".balloon");
+    if (balloonEl) {
+      balloonEl.style.transform = `scale(${scale})`;
+      balloonEl.style.transformOrigin = "bottom left";
+    }
+    this.showBalloon(`バルーン倍率を ${percent}% に変更しました`);
     setTimeout(() => this.hideBalloon(), 1500);
   },
 

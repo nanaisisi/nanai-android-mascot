@@ -149,8 +149,27 @@ impl ShioriDynamicEngine {
         Ok(())
     }
 
-    /// SHIORI::request(req)
+    /// SHIORI::request(req) (SHIORI 2.x 自動フォールバック対応)
     pub fn request(&self, request_str: &str) -> Result<String, String> {
+        let res = self.request_raw(request_str);
+        if let Ok(ref text) = res {
+            if text.contains("400 Bad Request") || text.contains("500 Internal") || text.is_empty() {
+                if request_str.starts_with("GET ") && request_str.contains("SHIORI/3.0") {
+                    let translated = request_str.replace("SHIORI/3.0", "SHIORI/2.x");
+                    if let Ok(fallback_res) = self.request_raw(&translated) {
+                        if !fallback_res.contains("400 Bad Request") {
+                            let wrapped = format!("SHIORI/3.0 200 OK\r\nCharset: UTF-8\r\nValue: {}\r\n\r\n", fallback_res.trim());
+                            return Ok(wrapped);
+                        }
+                    }
+                }
+            }
+        }
+        res
+    }
+
+    /// 内部低レベル SHIORI::request 呼び出し
+    fn request_raw(&self, request_str: &str) -> Result<String, String> {
         if !self.is_loaded {
             return Err("SHIORI is not loaded".to_string());
         }
@@ -189,7 +208,6 @@ impl ShioriDynamicEngine {
             }
 
             let slice = std::slice::from_raw_parts(result_hmem as *const u8, len as usize);
-            // SHIORIのレスポンス文字コード (UTF-8 優先、フォールバック Shift_JIS)
             let (cow, _, had_errors) = encoding_rs::UTF_8.decode(slice);
             let response = if had_errors {
                 let (sjis_cow, _, _) = encoding_rs::SHIFT_JIS.decode(slice);

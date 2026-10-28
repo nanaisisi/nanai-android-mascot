@@ -40,7 +40,7 @@ pub async fn show_balloon_window(
         };
 
         if let Some(balloon_win) = app_handle.get_webview_window(&label) {
-            let is_vis = balloon_win.is_visible().unwrap_or(false);
+            let is_vis = balloon_win.is_visible().map_err(|e| e.to_string())?;
             if !is_vis {
                 let (target_x, target_y) = get_pos();
                 let _ =

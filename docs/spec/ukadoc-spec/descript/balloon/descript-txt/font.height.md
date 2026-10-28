@@ -6,4 +6,4 @@
 
 ## 突合結果
 
-`app-actions.js` の `applyBalloonDescript` にて `--balloon-font-size` として動的バインド対応済。
+`app-actions.js` の `applyBalloonDescript()` において `props["font.height"]` をパースし、文書のルート要素に対して `--balloon-font-size: \`\${fh}px\`` カスタムプロパティとして動的バインドされる実装が行われている。

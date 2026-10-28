@@ -1,14 +1,8 @@
 use md5::{Digest, Md5};
 use nanai_android_mascot_ui::{Descript, open_text_file};
+pub use nanai_android_mascot_ui::{UpdateEntry, parse_update_definition};
 use std::fs;
 use std::path::Path;
-
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct UpdateEntry {
-    pub path: String,
-    pub md5: String,
-    pub size: Option<u64>,
-}
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct UpdateCheckResult {
@@ -26,65 +20,6 @@ pub struct UpdateExecutionResult {
     pub reason: String, // "changed", "none", "timeout", "md5 miss", "404", "fileio", etc.
     pub updated_files: Vec<String>,
     pub ghost_name: String,
-}
-
-/// updates2.dau または updates.txt の内容をパース
-pub fn parse_update_definition(content: &str) -> Vec<UpdateEntry> {
-    let mut entries = Vec::new();
-    for line in content.lines() {
-        let trimmed = line.trim();
-        if trimmed.is_empty() {
-            continue;
-        }
-
-        // updates.txt の場合: "file," プレフィックス
-        let data_part = if let Some(stripped) = trimmed.strip_prefix("file,") {
-            stripped
-        } else if trimmed.starts_with("charset,") {
-            continue;
-        } else {
-            trimmed
-        };
-
-        // 区切り文字: \x01 (Byte 1) または カンマフォールバック
-        let parts: Vec<&str> = if data_part.contains('\x01') {
-            data_part.split('\x01').collect()
-        } else {
-            data_part.split(',').collect()
-        };
-
-        if parts.is_empty() {
-            continue;
-        }
-
-        let rel_path = parts[0].trim().replace('\\', "/");
-        if rel_path.is_empty() {
-            continue;
-        }
-
-        let md5_hash = if parts.len() > 1 {
-            parts[1].trim().to_lowercase()
-        } else {
-            String::new()
-        };
-
-        let mut size = None;
-        for &extra in parts.iter().skip(2) {
-            let extra_trimmed = extra.trim();
-            if let Some(s) = extra_trimmed.strip_prefix("size=")
-                && let Ok(val) = s.parse::<u64>()
-            {
-                size = Some(val);
-            }
-        }
-
-        entries.push(UpdateEntry {
-            path: rel_path,
-            md5: md5_hash,
-            size,
-        });
-    }
-    entries
 }
 
 /// ローカルファイルの MD5 ハッシュを計算

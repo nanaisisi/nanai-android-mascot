@@ -56,6 +56,26 @@ fn test_parse_draw_method_variants() {
         DrawMethod::Blend("add".to_string())
     );
     assert_eq!(
+        DrawMethod::parse("blend-sub"),
+        DrawMethod::Blend("sub".to_string())
+    );
+    assert_eq!(
+        DrawMethod::parse("start"),
+        DrawMethod::Custom("start".to_string())
+    );
+    assert_eq!(
+        DrawMethod::parse("stop"),
+        DrawMethod::Custom("stop".to_string())
+    );
+    assert_eq!(
+        DrawMethod::parse("move"),
+        DrawMethod::Custom("move".to_string())
+    );
+    assert_eq!(
+        DrawMethod::parse("insert"),
+        DrawMethod::Custom("insert".to_string())
+    );
+    assert_eq!(
         DrawMethod::parse("custom_method"),
         DrawMethod::Custom("custom_method".to_string())
     );

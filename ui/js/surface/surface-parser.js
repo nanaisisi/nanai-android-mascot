@@ -63,6 +63,7 @@ export function parseSurfacesTxt(text) {
 	const collisions = {};
 	const elements = {};
 	const animations = {};
+	const animationMaps = {};
 
 	const lines = text.split(/\r?\n/);
 	let currentSurfaces = ["default"];
@@ -141,9 +142,11 @@ export function parseSurfacesTxt(text) {
 				const interval = match[2].trim();
 				currentSurfaces.forEach((s) => {
 					if (!animations[s]) animations[s] = [];
-					let anim = animations[s].find((a) => a.id === animId);
+					if (!animationMaps[s]) animationMaps[s] = new Map();
+					let anim = animationMaps[s].get(animId);
 					if (!anim) {
 						anim = { id: animId, interval, patterns: [] };
+						animationMaps[s].set(animId, anim);
 						animations[s].push(anim);
 					} else {
 						anim.interval = interval;
@@ -170,9 +173,11 @@ export function parseSurfacesTxt(text) {
 
 					currentSurfaces.forEach((s) => {
 						if (!animations[s]) animations[s] = [];
-						let anim = animations[s].find((a) => a.id === animId);
+						if (!animationMaps[s]) animationMaps[s] = new Map();
+						let anim = animationMaps[s].get(animId);
 						if (!anim) {
 							anim = { id: animId, interval: "sometimes", patterns: [] };
+							animationMaps[s].set(animId, anim);
 							animations[s].push(anim);
 						}
 						anim.patterns.push({

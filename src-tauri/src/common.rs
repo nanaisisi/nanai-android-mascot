@@ -227,9 +227,15 @@ pub fn resolve_ghost_directory(
     ghost_name: &str,
     app_handle: &tauri::AppHandle,
 ) -> Result<PathBuf, String> {
+    let safe_ghost_name: String = ghost_name
+        .chars()
+        .map(|c| if r#"\/:*?"<>| "#.contains(c) { '_' } else { c })
+        .collect();
     let direct_candidates = [
         format!("assets/ghost/{ghost_name}"),
         format!("ghost/{ghost_name}"),
+        format!("assets/ghost/{safe_ghost_name}"),
+        format!("ghost/{safe_ghost_name}"),
     ];
     for candidate in direct_candidates {
         let resolved = resolve_asset_path(&candidate, app_handle)?;
@@ -238,9 +244,18 @@ pub fn resolve_ghost_directory(
         }
     }
 
-    let roots = ["assets/ghost", "ghost"];
-    for root in roots {
-        let resolved_root = resolve_asset_path(root, app_handle)?;
+    let mut roots = Vec::new();
+    if let Ok(app_data_dir) = app_handle.path().app_data_dir() {
+        roots.push(app_data_dir.join("userData").join("ghost"));
+        roots.push(app_data_dir.join("ghost"));
+    }
+    for root in ["assets/ghost", "ghost"] {
+        if let Ok(resolved_root) = resolve_asset_path(root, app_handle) {
+            roots.push(resolved_root);
+        }
+    }
+
+    for resolved_root in roots {
         let Ok(entries) = std::fs::read_dir(&resolved_root) else {
             continue;
         };
@@ -250,7 +265,7 @@ pub fn resolve_ghost_directory(
                 continue;
             }
             let folder_name = entry.file_name().to_string_lossy().to_string();
-            if folder_name == ghost_name {
+            if folder_name == ghost_name || folder_name == safe_ghost_name {
                 return Ok(path);
             }
             let descriptors = [
@@ -261,7 +276,12 @@ pub fn resolve_ghost_directory(
             if descriptors
                 .iter()
                 .filter_map(|p| crate::ghost::scan::read_descript_file(p))
-                .any(|meta| meta.get("name").is_some_and(|name| name == ghost_name))
+                .any(|meta| {
+                    meta.get("name").is_some_and(|name| name == ghost_name)
+                        || meta
+                            .get("directory")
+                            .is_some_and(|dir| dir == ghost_name)
+                })
             {
                 return Ok(path);
             }

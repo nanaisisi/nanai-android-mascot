@@ -12,6 +12,61 @@ fn test_expand_range() {
 }
 
 #[test]
+fn test_parse_draw_method_variants() {
+    assert_eq!(DrawMethod::parse("base"), DrawMethod::Base);
+    assert_eq!(DrawMethod::parse("overlay"), DrawMethod::Overlay);
+    assert_eq!(DrawMethod::parse("overlayfast"), DrawMethod::OverlayFast);
+    assert_eq!(DrawMethod::parse("fast"), DrawMethod::OverlayFast);
+    assert_eq!(DrawMethod::parse("overlay-fast"), DrawMethod::OverlayFast);
+    assert_eq!(DrawMethod::parse("interpolate"), DrawMethod::Interpolate);
+    assert_eq!(DrawMethod::parse("replace"), DrawMethod::Replace);
+    assert_eq!(DrawMethod::parse("add"), DrawMethod::Add);
+    assert_eq!(DrawMethod::parse("bind"), DrawMethod::Bind);
+
+    assert_eq!(
+        DrawMethod::parse("blend-multiply"),
+        DrawMethod::Blend("multiply".to_string())
+    );
+    assert_eq!(
+        DrawMethod::parse("blend-add"),
+        DrawMethod::Blend("add".to_string())
+    );
+    assert_eq!(
+        DrawMethod::parse("blend-sub"),
+        DrawMethod::Blend("sub".to_string())
+    );
+
+    assert_eq!(
+        DrawMethod::parse("start"),
+        DrawMethod::Custom("start".to_string())
+    );
+    assert_eq!(
+        DrawMethod::parse("stop"),
+        DrawMethod::Custom("stop".to_string())
+    );
+    assert_eq!(
+        DrawMethod::parse("move"),
+        DrawMethod::Custom("move".to_string())
+    );
+    assert_eq!(
+        DrawMethod::parse("insert"),
+        DrawMethod::Custom("insert".to_string())
+    );
+
+    // Case insensitivity and whitespace trimming
+    assert_eq!(DrawMethod::parse("  BASE  "), DrawMethod::Base);
+    assert_eq!(DrawMethod::parse("OverLayFast"), DrawMethod::OverlayFast);
+    assert_eq!(
+        DrawMethod::parse("  BLEND-multiply\n"),
+        DrawMethod::Blend("multiply".to_string())
+    );
+    assert_eq!(
+        DrawMethod::parse("\tMOVE "),
+        DrawMethod::Custom("move".to_string())
+    );
+}
+
+#[test]
 fn test_parse_interval_variants() {
     assert_eq!(Interval::parse("random,3"), Interval::Random(3));
     assert_eq!(Interval::parse("periodic,1000"), Interval::Periodic(1000));

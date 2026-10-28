@@ -154,6 +154,12 @@ pub async fn scan_ghost_directory(
                 if path.is_dir() {
                     let dir_name = entry.file_name().to_string_lossy().to_string();
                     if !dir_name.starts_with('.') {
+                        // ゴーストフォルダ内に .dev_ignore ファイルが存在する場合は除外
+                        if path.join(".dev_ignore").exists() {
+                            println!("🚫 Skipping ghost directory with .dev_ignore: {:?}", path);
+                            continue;
+                        }
+
                         // ghost/master/descript.txt または descript.txt
                         let descript_candidates = [
                             path.join("ghost").join("master").join("descript.txt"),

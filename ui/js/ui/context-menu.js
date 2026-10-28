@@ -260,6 +260,18 @@ document.addEventListener("keydown", (e) => {
 		} else if (e.key.toLowerCase() === "q") {
 			e.preventDefault();
 			dispatcher.dispatchAction("close-all");
+		} else if (e.key.toLowerCase() === "k") {
+			e.preventDefault();
+			dispatcher.dispatchAction("keep-temporary-ghost");
+		} else if (e.shiftKey && e.key.toLowerCase() === "f12") {
+			e.preventDefault();
+			dispatcher.dispatchAction("reset-shell-position");
+		} else if (e.shiftKey && e.key.toLowerCase() === "f10") {
+			e.preventDefault();
+			dispatcher.dispatchAction("reset-balloon-position");
+		} else if (e.shiftKey && (e.key === "Delete" || e.key === "Del" || e.key.toLowerCase() === "del")) {
+			e.preventDefault();
+			dispatcher.dispatchAction("close-balloon");
 		}
 		return;
 	}

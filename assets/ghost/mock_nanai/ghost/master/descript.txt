@@ -1,6 +1,6 @@
 charset,Shift_JIS
 type,ghost
-name,ゴーストキット改良版Plus（さとりすと用）
+name,mock_nanai
 craftman,ghostmaster
 craftmanw,ごーすとますたー
 sakura.name,ちぇっか

@@ -8,9 +8,13 @@
     <script type="module" src="js/ui/context-menu.js"></script>
   </head>
   <body class="balloon-theme-default">
-    <h1 class="visually-hidden">Nanai Android Mascot 標準メニュー</h1>
+    <h1 class="visually-hidden">Nanai Android Mascot 標準メニュー (SSPベース)</h1>
     <div class="menu-sidebar" id="menu-sidebar" aria-hidden="true"></div>
     <div class="menu-container" role="menu">
+      <!-- ================================================================= -->
+      <!-- SSP 互換右クリックメニュー階層構造定義 (HTML仕様表現) -->
+      <!-- ================================================================= -->
+
       <!-- 0. ゴースト側メニュー -->
       <button
         type="button"
@@ -23,7 +27,7 @@
 
       <div class="menu-separator main-only"></div>
 
-      <!-- 1,おすすめ【サブ】 -->
+      <!-- 1. おすすめ【サブ】 -->
       <button
         type="button"
         class="menu-item"
@@ -33,7 +37,7 @@
         <span>🔗 おすすめ (R)</span>
       </button>
 
-      <!-- 2,ポータルサイト -->
+      <!-- 2. ポータルサイト -->
       <button
         type="button"
         class="menu-item main-only"
@@ -43,7 +47,7 @@
         <span>🌐 ポータルサイト (T)</span>
       </button>
 
-      <!-- 3,ネットワーク更新 -->
+      <!-- 3. ネットワーク更新 -->
       <button
         type="button"
         class="menu-item main-only"
@@ -53,7 +57,7 @@
         <span>🔄 ネットワーク更新 (U)</span>
       </button>
 
-      <!-- 4,アンインストール -->
+      <!-- 4. アンインストール【サブ】 -->
       <button
         type="button"
         class="menu-item main-only"
@@ -64,17 +68,17 @@
         <span>🗑️ アンインストール (D)</span>
       </button>
 
-      <!-- 5,RSS/ヘッドライン -->
+      <!-- 5. RSS/ヘッドライン -->
       <button type="button" class="menu-item main-only" id="headline-btn">
         <span>📰 RSS/ヘッドライン (H)</span>
       </button>
 
-      <!-- 6,プラグイン -->
+      <!-- 6. プラグイン -->
       <button type="button" class="menu-item main-only" id="plugins-btn">
         <span>🧩 プラグイン (P)</span>
       </button>
 
-      <!-- 7,メールチェック -->
+      <!-- 7. メールチェック -->
       <button
         type="button"
         class="menu-item main-only"
@@ -85,7 +89,7 @@
         <span>📬 メールチェック (M)</span>
       </button>
 
-      <!-- 8,シェル倍率 -->
+      <!-- 8. シェル倍率 (サブメニュー) -->
       <div class="menu-item-wrapper main-only">
         <button
           type="button"
@@ -117,7 +121,7 @@
         </div>
       </div>
 
-      <!-- 9,機能 -->
+      <!-- 9. 機能 (サブメニュー) -->
       <div class="menu-item-wrapper main-only">
         <button
           type="button"
@@ -167,7 +171,7 @@
         </div>
       </div>
 
-      <!-- 10,設定 -->
+      <!-- 10. 設定 -->
       <button
         type="button"
         class="menu-item main-only"
@@ -177,7 +181,7 @@
         <span>⚙️ 設定 (O)</span>
       </button>
 
-      <!-- 11,ゴースト切り替え -->
+      <!-- 11. ゴースト切り替え (動的サブメニュー) -->
       <div class="menu-item-wrapper main-only">
         <button
           type="button"
@@ -192,7 +196,7 @@
         </div>
       </div>
 
-      <!-- 12,他のゴーストを呼ぶ -->
+      <!-- 12. 他のゴーストを呼ぶ (動的サブメニュー) -->
       <div class="menu-item-wrapper main-only">
         <button
           type="button"
@@ -207,7 +211,7 @@
         </div>
       </div>
 
-      <!-- 13,シェル -->
+      <!-- 13. シェル (サブメニュー) -->
       <div class="menu-item-wrapper main-only">
         <button
           type="button"
@@ -228,7 +232,7 @@
         </div>
       </div>
 
-      <!-- 14,着せ替え【サブ】 -->
+      <!-- 14. 着せ替え【サブ】 (動的サブメニュー) -->
       <div class="menu-item-wrapper">
         <button
           type="button"
@@ -243,7 +247,7 @@
         </div>
       </div>
 
-      <!-- 15,バルーン -->
+      <!-- 15. バルーン (サブメニュー) -->
       <div class="menu-item-wrapper main-only">
         <button
           type="button"
@@ -258,16 +262,16 @@
             <span>🔄 次のスキンへ切り替え</span>
           </button>
           <div class="menu-separator"></div>
-          <button type="button" class="menu-item" id="balloon-theme-ivory-btn">
+          <button type="button" class="menu-item" id="balloon-theme-ivory-btn" data-action="balloon-theme-ivory">
             <span>アイボリー (Ivory)</span>
           </button>
-          <button type="button" class="menu-item" id="balloon-theme-pixel-btn">
+          <button type="button" class="menu-item" id="balloon-theme-pixel-btn" data-action="balloon-theme-pixel">
             <span>ピクセル (Pixel)</span>
           </button>
-          <button type="button" class="menu-item" id="balloon-theme-comic-btn">
+          <button type="button" class="menu-item" id="balloon-theme-comic-btn" data-action="balloon-theme-comic">
             <span>コミック (Comic)</span>
           </button>
-          <button type="button" class="menu-item" id="balloon-theme-dark-btn">
+          <button type="button" class="menu-item" id="balloon-theme-dark-btn" data-action="balloon-theme-dark">
             <span>ダーク (Dark)</span>
           </button>
           <div class="menu-separator"></div>
@@ -276,18 +280,18 @@
               <span>🔍 バルーン倍率</span>
             </button>
             <div class="submenu-container">
-              <button type="button" class="menu-item" id="balloon-scale-50-btn"><span>50%</span></button>
-              <button type="button" class="menu-item" id="balloon-scale-75-btn"><span>75%</span></button>
-              <button type="button" class="menu-item" id="balloon-scale-100-btn"><span>100% (標準)</span></button>
-              <button type="button" class="menu-item" id="balloon-scale-125-btn"><span>125%</span></button>
-              <button type="button" class="menu-item" id="balloon-scale-150-btn"><span>150%</span></button>
-              <button type="button" class="menu-item" id="balloon-scale-200-btn"><span>200%</span></button>
+              <button type="button" class="menu-item" id="balloon-scale-50-btn" data-action="balloon-scale-50"><span>50%</span></button>
+              <button type="button" class="menu-item" id="balloon-scale-75-btn" data-action="balloon-scale-75"><span>75%</span></button>
+              <button type="button" class="menu-item" id="balloon-scale-100-btn" data-action="balloon-scale-100"><span>100% (標準)</span></button>
+              <button type="button" class="menu-item" id="balloon-scale-125-btn" data-action="balloon-scale-125"><span>125%</span></button>
+              <button type="button" class="menu-item" id="balloon-scale-150-btn" data-action="balloon-scale-150"><span>150%</span></button>
+              <button type="button" class="menu-item" id="balloon-scale-200-btn" data-action="balloon-scale-200"><span>200%</span></button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- 16,最近使ったもの -->
+      <!-- 16. 最近使ったもの (動的サブメニュー) -->
       <div class="menu-item-wrapper main-only">
         <button
           type="button"
@@ -302,7 +306,7 @@
         </div>
       </div>
 
-      <!-- 17,情報 -->
+      <!-- 17. 情報 (サブメニュー) -->
       <div class="menu-item-wrapper main-only">
         <button
           type="button"
@@ -333,7 +337,7 @@
 
       <div class="menu-separator"></div>
 
-      <!-- 18,アイコン化 -->
+      <!-- 18. アイコン化 -->
       <button
         type="button"
         class="menu-item main-only"
@@ -344,13 +348,13 @@
         <span class="shortcut-key">Ctrl+I</span>
       </button>
 
-      <!-- 20,終了【サブ】 -->
+      <!-- 20. 終了【サブ】 -->
       <button type="button" class="menu-item" id="close-btn" role="menuitem">
         <span>✖ 終了 (W)</span>
         <span class="shortcut-key">Ctrl+W</span>
       </button>
 
-      <!-- 21,全て終了【サブ】 -->
+      <!-- 21. 全て終了【サブ】 -->
       <button
         type="button"
         class="menu-item"

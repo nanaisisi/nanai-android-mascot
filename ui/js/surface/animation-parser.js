@@ -1,12 +1,22 @@
 /**
- * SERIKOアニメーションのタイムライン計算および interval / wait パース補助
+ * @file animation-parser.js
+ * @brief SERIKO アニメーションのタイムライン計算および interval / wait パース補助モジュール
+ *
+ * UKADOC / SSP の SERIKO アニメーション定義における interval 指定の解釈、
+ * pattern の wait（最小-最大ランダム範囲）解決、および Rust コア
+ * （`crates/ui::animation` / `animation_timeline` コマンド）との連携による
+ * 高精度なアニメーション実行スケジュール計算を担当します。
  */
 import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 
 /**
  * pattern 列から Rust（`crates/ui::animation`）で実行スケジュールを計算する
- * @param {Array<{index?: number, wait?: number|string}>} patterns
- * @returns {Promise<{ frames: number[], totalMs: number }|null>}
+ *
+ * `frames[i]` は `frames[i-1]` との差分待ち時間（累積 at_ms）で描画します。
+ * 失敗時（Tauri 未検出やオフライン等）は null を返し、レガシーの逐次待機へフォールバックします。
+ *
+ * @param {Array<{index?: number, wait?: number|string, waitMax?: number|string|null}>} patterns - アニメーションパターン列
+ * @returns {Promise<{ frames: number[], totalMs: number }|null>} タイムラインフレーム情報または null
  */
 export async function buildAnimationTimeline(patterns) {
 	if (!patterns?.length || !isTauriAvailable()) return null;
@@ -28,10 +38,12 @@ export async function buildAnimationTimeline(patterns) {
 }
 
 /**
- * pattern のウェイト（ミリ秒）。
- * @param {number|string|undefined} wait
- * @param {number|string|null|undefined} [waitMax]
- * @returns {number}
+ * pattern のウェイト（ミリ秒）を解決する。
+ * SSP の「最小-最大」指定（例: `100-200`）に対応し、指定範囲内でランダムにミリ秒を選定します。
+ *
+ * @param {number|string|undefined} wait - 最小ウェイトまたは単一ウェイト値
+ * @param {number|string|null|undefined} [waitMax] - 上限（Rust パースの `wait_max`）
+ * @returns {number} 解決されたウェイト値（ミリ秒）
  */
 export function resolvePatternWait(wait, waitMax = null) {
 	const toNumber = (value) => {
@@ -55,9 +67,11 @@ export function resolvePatternWait(wait, waitMax = null) {
 }
 
 /**
- * animation*.interval を UKADOC の組み合わせ指定として解釈する。
- * @param {string|undefined} interval
- * @returns {{ kinds: Set<string>, param: number|null }}
+ * animation*.interval を UKADOC の組み合わせ指定（SSP: `+` 区切り）として解釈する。
+ * パラメータは末尾にカンマ区切りで指定できます（例: `bind+random,5`, `periodic,4`）。
+ *
+ * @param {string|undefined} interval - インターバル文字列（例: "sometimes", "always", "periodic,3"）
+ * @returns {{ kinds: Set<string>, param: number|null }} 解析された種類セットと数値パラメータ
  */
 export function parseInterval(interval) {
 	const value = String(interval || "sometimes")

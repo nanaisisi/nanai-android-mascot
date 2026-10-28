@@ -15,16 +15,16 @@
 
 ## 1. 総合サマリー & 対応マトリクス
 
-| 分類 / ページ               | 対象仕様                         |  対応状況   | Nanai 実装・対応方針                                                             |
-| :-------------------------- | :------------------------------- | :---------: | :------------------------------------------------------------------------------- |
-| `manual/balloon.md`         | バルーンの構成・仕様             |  ✅ 対応済  | `descript.txt` 属性解釈、フォント/余白/折り返し/原点設定、スコープ別表示         |
-| `manual/directory.md`       | ディレクトリ構成規格             |  ✅ 対応済  | VFS (仮想ファイルシステム) による `ghost/`, `shell/`, `balloon/` の標準配置      |
-| `manual/ghost.md`           | ゴーストの構成・仕様             |  ✅ 対応済  | `ghost/master/` 認識、SHIORI 連携 (WASM/Rust/DLL)、基本イベント発火              |
-| `manual/install.md`         | NAR・ZIP アーカイブ導入          |  ⚠️ 部分対応 | `.nar` / `.zip` の Ghost/Balloon 導入、Zip Slip 防止。Shell/Plugin/Headline の `type` は未対応 |
-| `manual/owner-draw-menu.md` | オーナードロー右クリックメニュー |  ⚠️ 部分対応 | iframe のメニューUIは存在するが、ゴースト提供のオーナードロー仕様との完全互換は未検証 |
-| `manual/shell.md`           | シェル・サーフィス構成           |  ✅ 対応済  | `shell/master/`、`surfaces.txt` (SERIKO/MAYUNA)、マルチレイヤ合成レンダラ        |
-| `manual/translator.md`      | トランスレータ仕様               | ❌ 未実装 | 外部トランスレータ仕様に準拠した登録・実行機構は未実装。内部プレイヤーの拡張余地のみ |
-| `manual/update.md`          | ネットワーク更新仕様             |  ✅ 対応済  | `updates2.dau` / `update.dau` 解析、HTTP MD5 差分ダウンロード、自動置換          |
+| 分類 / ページ               | 対象仕様                         |  対応状況   | Nanai 実装・対応方針                                                                           |
+| :-------------------------- | :------------------------------- | :---------: | :--------------------------------------------------------------------------------------------- |
+| `manual/balloon.md`         | バルーンの構成・仕様             |  ✅ 対応済  | `descript.txt` 属性解釈、フォント/余白/折り返し/原点設定、スコープ別表示                       |
+| `manual/directory.md`       | ディレクトリ構成規格             |  ✅ 対応済  | VFS (仮想ファイルシステム) による `ghost/`, `shell/`, `balloon/` の標準配置                    |
+| `manual/ghost.md`           | ゴーストの構成・仕様             |  ✅ 対応済  | `ghost/master/` 認識、SHIORI 連携 (WASM/Rust/DLL)、基本イベント発火                            |
+| `manual/install.md`         | NAR・ZIP アーカイブ導入          | ⚠️ 部分対応 | `.nar` / `.zip` の Ghost/Balloon 導入、Zip Slip 防止。Shell/Plugin/Headline の `type` は未対応 |
+| `manual/owner-draw-menu.md` | オーナードロー右クリックメニュー | ⚠️ 部分対応 | iframe のメニューUIは存在するが、ゴースト提供のオーナードロー仕様との完全互換は未検証          |
+| `manual/shell.md`           | シェル・サーフィス構成           |  ✅ 対応済  | `shell/master/`、`surfaces.txt` (SERIKO/MAYUNA)、マルチレイヤ合成レンダラ                      |
+| `manual/translator.md`      | トランスレータ仕様               |  ❌ 未実装  | 外部トランスレータ仕様に準拠した登録・実行機構は未実装。内部プレイヤーの拡張余地のみ           |
+| `manual/update.md`          | ネットワーク更新仕様             |  ✅ 対応済  | `updates2.dau` / `update.dau` 解析、HTTP MD5 差分ダウンロード、自動置換                        |
 - **コード突合済みの分類（8ページ）**:
   - 対応済 (✅): **4**
   - 部分対応 (⚠️): **3**

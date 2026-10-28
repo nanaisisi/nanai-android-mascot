@@ -11,10 +11,7 @@ import {
 	emit as tauriEmit,
 	listen as tauriListen,
 } from "@tauri-apps/api/event";
-import {
-	getCurrentWindow,
-	PhysicalPosition,
-} from "@tauri-apps/api/window";
+import { getCurrentWindow, PhysicalPosition } from "@tauri-apps/api/window";
 
 /**
  * Tauri環境で動作しているかどうかを判定

@@ -3,10 +3,10 @@
  */
 import {
 	emit,
+	getCurrentWindowPosition,
 	invoke,
 	isTauriAvailable,
 	listen,
-	getCurrentWindowPosition,
 	moveCurrentWindowBy,
 } from "../core/tauri-helper.js";
 
@@ -19,9 +19,7 @@ function isTransparentPixel(img, clientX, clientY) {
 		return false;
 	}
 
-	const x = Math.floor(
-		(clientX - rect.left) * (img.naturalWidth / rect.width),
-	);
+	const x = Math.floor((clientX - rect.left) * (img.naturalWidth / rect.width));
 	const y = Math.floor(
 		(clientY - rect.top) * (img.naturalHeight / rect.height),
 	);

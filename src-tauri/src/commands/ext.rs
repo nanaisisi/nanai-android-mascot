@@ -20,8 +20,8 @@ pub async fn scan_plugins(
     }
 
     for dir in search_dirs {
-        if dir.exists() && dir.is_dir() {
-            if let Ok(entries) = std::fs::read_dir(dir) {
+        if dir.exists() && dir.is_dir()
+            && let Ok(entries) = std::fs::read_dir(dir) {
                 for entry in entries.flatten() {
                     let path = entry.path();
                     if path.is_dir() {
@@ -48,7 +48,6 @@ pub async fn scan_plugins(
                     }
                 }
             }
-        }
     }
 
     Ok(plugins)
@@ -70,8 +69,8 @@ pub async fn scan_headlines(
     }
 
     for dir in search_dirs {
-        if dir.exists() && dir.is_dir() {
-            if let Ok(entries) = std::fs::read_dir(dir) {
+        if dir.exists() && dir.is_dir()
+            && let Ok(entries) = std::fs::read_dir(dir) {
                 for entry in entries.flatten() {
                     let path = entry.path();
                     if path.is_dir() {
@@ -98,7 +97,6 @@ pub async fn scan_headlines(
                     }
                 }
             }
-        }
     }
 
     Ok(headlines)

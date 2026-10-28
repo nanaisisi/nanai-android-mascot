@@ -59,6 +59,7 @@ export const ghostTemplates = {
     <div class="form-section">
       <span class="form-label">現在のバルーン:</span>
       <div class="current-balloon" id="current-balloon">デフォルト</div>
+      <div id="balloon-recommended-info" style="font-size: 12px; color: #555; margin-top: 4px;"></div>
     </div>
     <div class="form-section">
       <span class="form-label">利用可能なバルーン:</span>

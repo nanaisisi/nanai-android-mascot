@@ -1,36 +1,33 @@
-# メニュー画像対応および SSP オーナードローメニュー規格適合計画
+# バルーン descript-txt 詳細プロパティ完全適合計画
 
-本計画は、伺か（UKAGAKA）および SSP のシェル仕様（`menu.background.bitmap`, `menu.sidebar.bitmap`, `menu.foreground.bitmap` 等）に基づくカスタム背景画像・サイドバー画像のメニュー適用機能を強化し、SSPのビジュアル規格への完全適合を図るとともに、その仕様を公式文書として体系化するものである。
+本計画は、`docs/spec/ukadoc/descript/balloon/descript-txt/` 配下で定義されるすべてのバルーン descript プロパティ群（アンカー詳細、コミュニケートボックス詳細、カーソル、フォント詳細スタイル等）を、フロントエンドの CSS 変数および DOM レンダリングシステムに完全に統合・適合させるためのものである。
 
 ## User Review Required
 
-- **ビジュアル互換性**: シェルごとに指定された背景ビットマップやサイドバービットマップを、独立 iframe メニュー（`menu-iframe.html` / `submenu.js`）の背景およびサイド領域にCSS背景画像（`url(...)`）として動的レンダリングする。
-- **仕様の文書化**: SSP オーナードローメニューのビットマップ定義に関する仕様書を新規文書ファイル（`docs/spec/ukadoc-ssp/functions/menu-bitmap.md`）として正式に作成する。
-- **フォールバック**: 画像が存在しない場合や未指定の場合は、従来のエレガントなCSSカスタムプロパティ（ダーク/アイボリー等のカラーテーマ）へ自動フォールバックする。
+- **完全網羅 (`descript-txt/`)**:
+  - `anchor.*`（リンク色、スタイル、訪問済みリンク状態）
+  - `communicatebox.*`（幅、高さ、座標、フォント、背景色、プレースホルダー色）
+  - `cursor.*`（選択肢カーソルの詳細スタイル）
+  - `font.*`（太字、斜体、アウトライン、取り消し線、下線、影スタイル）
+- **動的CSS連携**: `applyBalloonDescript()` および `balloon-window.css` を拡充し、スキンごとに異なる細かなビジュアルプロパティを完全再現する。
 
 ## Open Questions
 
-- 特になし。既存の Rust `shell_manifest` 解析結果 (`menu_theme`) とフロントエンドの `applyShellMenuTheme` をフル活用して安全に実現する。
+- 特になし。すでにバックエンド側では `balloon_manifest` を通じてすべての descript プロパティが抽出されているため、フロントエンド側のバインドと CSS スタイリングの拡充に集中する。
 
 ## Proposed Changes
 
-### [NEW] メニュー画像仕様の文書化
-#### [NEW] [menu-bitmap.md](file:///E:/project/rust/nanai-android-mascot/docs/spec/ukadoc-ssp/functions/menu-bitmap.md)
-- シェルの `descript.txt` で定義される `menu.background.bitmap`、`menu.sidebar.bitmap`、`menu.foreground.bitmap` の仕様定義、およびオーナードローメニューへの適用規則を文書化。
+### [MODIFY] [app-actions.js](file:///E:/project/rust/nanai-android-mascot/ui/js/core/app-actions.js)
+- `applyBalloonDescript()` 内に、アンカー詳細スタイル（`anchor.font.color`, `anchor.style`, `anchor.visited.*` 等）、コミュニケートボックス詳細設定（`communicatebox.*`）、カーソル詳細設定の CSS 変数バインドを網羅的に拡充。
 
-### メニューレンダリング & スタイル拡張
-#### [MODIFY] [menu.css](file:///E:/project/rust/nanai-android-mascot/ui/css/menu.css)
-- シェル指定の背景ビットマップ (`--menu-bg-image`)、サイドバービットマップ (`--menu-sidebar-image`)、前景ビットマップ (`--menu-fg-image`) の背景プロパティを正式定義。
-- サイドバー表示用クラス `.has-sidebar` のレイアウト調整。
-
-#### [MODIFY] [submenu.js](file:///E:/project/rust/nanai-android-mascot/ui/js/ui/submenu.js) / [menu-submenu-renderer.js](file:///E:/project/rust/nanai-android-mascot/ui/js/ui/menu-submenu-renderer.js)
-- シェルの絶対パスと相対ビットマップファイル名から `convertFileSrc` を用いた Tauri 安全URLへの変換処理の厳密化。
+### [MODIFY] [balloon-window.css](file:///E:/project/rust/nanai-android-mascot/ui/css/balloon-window.css)
+- `--balloon-anchor-color`, `--balloon-anchor-visited-color`, `--balloon-cb-bg`, `--balloon-cb-color` などの新しい CSS 変数を定義し、`.balloon-anchor`, `.communicate-box` 等のスタイルに反映。
 
 ## Verification Plan
 
 ### Automated Tests
 - `cargo check` による Rust バックエンドのコンパイル確認。
-- CSS / JS 構文解析・インスペクションチェック。
+- JS / CSS 構文チェック。
 
 ### Manual Verification
-- `VitreumRisum` や `とらふぃっく☆とれいん` などのメニュー背景ビットマップを持つシェルでメニューを開き、カスタム画像背景・サイドバーが正常に描画されることを目視確認。
+- バルーンテーマ切替および詳細な descript.txt プロパティを持つスキンでの描画確認。

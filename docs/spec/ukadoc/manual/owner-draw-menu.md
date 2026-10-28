@@ -14,5 +14,5 @@
   - `ui/css/context-menu.css` および `ui/css/submenu-window.css` にてメニュー全体の背景テクスチャタイル、選択・ホバー時のハイライト画像、およびサイドバー要素の描画レイアウトを実装。
   - 独立した着せ替え・バルーン等のサブメニューにも同じ設定を同期して適用。
 - **メニュー動作・構造**:
-  - メイン/サブキャラ分離やコンテキストメニューの動作・ショートカットキー対応は [howto/rclick](../ssp/howto/rclick.md) を参照。
+  - メイン/サブキャラ分離やコンテキストメニューの動作・ショートカットキー対応は [howto/rclick](../../ukadoc-ssp/howto/rclick.md) を参照。
   - `sakura.menuitem*` / `kero.menuitem*` による SHIORI Resource の動的な任意メニュー項目、および SHIORI Resource 側からの定義上書きは未対応。

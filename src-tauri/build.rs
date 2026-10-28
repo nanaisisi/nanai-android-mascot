@@ -115,20 +115,44 @@ fn build_yaya_shiori_stub() {
     // Rust統合インターフェイスファイル
     build.file(cpp_interface_dir.join("yaya_rust_interface.cpp"));
 
-    // Windows環境でのみ段階的追加用の本家YAYA基本ファイルをコンパイル
+    // Windows環境でのみ本家YAYAソースファイルをコンパイル
     if target.contains("windows") && yaya_dir.exists() {
-        let basic_files = [
-            "globalvariable.cpp",
+        let yaya_sources = [
+            "aya5.cpp",
+            "ayavm.cpp",
+            "aya_profile.cpp",
             "basis.cpp",
-            "misc.cpp",
+            "ccct.cpp",
+            "comment.cpp",
             "crc32.c",
+            "dir_enum.cpp",
+            "file.cpp",
+            "file1.cpp",
+            "function.cpp",
+            "globalvariable.cpp",
+            "lib.cpp",
+            "lib1.cpp",
+            "localvariable.cpp",
+            "log.cpp",
+            "logexcode.cpp",
+            "manifest.cpp",
             "md5c.c",
+            "messages.cpp",
+            "misc.cpp",
+            "mt19937ar.cpp",
+            "parser0.cpp",
+            "parser1.cpp",
+            "selecter.cpp",
+            "sha1.c",
+            "stdafx.cpp",
+            "sysfunc.cpp",
             "value.cpp",
             "valuesub.cpp",
             "variable.cpp",
+            "wsex.cpp",
         ];
 
-        for file in basic_files.iter() {
+        for file in yaya_sources.iter() {
             let file_path = yaya_dir.join(file);
             if file_path.exists() {
                 println!("cargo:rerun-if-changed={}", file_path.display());

@@ -700,6 +700,25 @@ export const actionMethods = {
 		setBalloonImage("clickwaitmarker.filename", "--balloon-clickwait-image");
 		setBalloonImage("marker.filename", "--balloon-marker-image");
 		setBalloonImage("onlinemarker.filename", "--balloon-online-image");
+		setBalloonImage("sstpmarker.filename", "--balloon-sstpmarker-image");
+
+		// マウスカーソル設定 (mousecursor.arrow, mousecursor.text, mousecursor.wait)
+		const setMouseCursor = (propName, varName) => {
+			const filename = props[propName];
+			if (filename) {
+				const themeName = this.currentBalloonTheme || "default";
+				const fullPath = `assets/balloon/${themeName}/${filename}`;
+				const url = globalThis.__TAURI__?.core?.convertFileSrc
+					? globalThis.__TAURI__.core.convertFileSrc(fullPath)
+					: fullPath;
+				root.style.setProperty(varName, `url("${url}"), auto`);
+			}
+		};
+		setMouseCursor("mousecursor.arrow", "--balloon-cursor-arrow");
+		setMouseCursor("mousecursor.text", "--balloon-cursor-text");
+		setMouseCursor("mousecursor.wait", "--balloon-cursor-wait");
+		setBalloonImage("marker.filename", "--balloon-marker-image");
+		setBalloonImage("onlinemarker.filename", "--balloon-online-image");
 		setBalloonImage("sstpmarker.filename", "--balloon-sstp-image");
 	},
 

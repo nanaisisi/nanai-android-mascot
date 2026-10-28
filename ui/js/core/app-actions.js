@@ -579,6 +579,41 @@ export const actionMethods = {
 			}
 		}
 
+		// フォント詳細装飾 (font.bold, font.italic, font.underline, font.strike)
+		if (props["font.bold"] === "1" || props["font.bold"]?.toLowerCase() === "true") {
+			root.style.setProperty("--balloon-font-weight", "bold");
+		}
+		if (props["font.italic"] === "1" || props["font.italic"]?.toLowerCase() === "true") {
+			root.style.setProperty("--balloon-font-style", "italic");
+		}
+		let decorations = [];
+		if (props["font.underline"] === "1" || props["font.underline"]?.toLowerCase() === "true") decorations.push("underline");
+		if (props["font.strike"] === "1" || props["font.strike"]?.toLowerCase() === "true") decorations.push("line-through");
+		if (decorations.length > 0) {
+			root.style.setProperty("--balloon-text-decoration", decorations.join(" "));
+		}
+
+		// アンカーリンク色 (anchor.font.color, anchor.visited.font.color)
+		const anchorCol = this.rgbFromComponents(props, "anchor.font.color") || props["anchor.font.color"];
+		if (anchorCol) root.style.setProperty("--balloon-anchor-color", anchorCol);
+		const anchorVisited = this.rgbFromComponents(props, "anchor.visited.font.color") || props["anchor.visited.font.color"];
+		if (anchorVisited) root.style.setProperty("--balloon-anchor-visited-color", anchorVisited);
+
+		// コミュニケートボックス (communicatebox.*)
+		const cbWidth = props["communicatebox.width"];
+		const cbHeight = props["communicatebox.height"];
+		const cbX = props["communicatebox.x"];
+		const cbY = props["communicatebox.y"];
+		if (cbWidth || cbHeight || cbX || cbY) {
+			const cbEl = document.querySelector(".communicate-box");
+			if (cbEl) {
+				if (cbWidth) cbEl.style.width = `${cbWidth}px`;
+				if (cbHeight) cbEl.style.height = `${cbHeight}px`;
+				if (cbX) cbEl.style.left = `${cbX}px`;
+				if (cbY) cbEl.style.top = `${cbY}px`;
+			}
+		}
+
 		// フォント色 (font.color.r,g,b または font.color)
 		const fontColor = this.rgbFromComponents(props, "font.color");
 		if (props["font.color"]) {
@@ -644,6 +679,24 @@ export const actionMethods = {
 					this.elements.balloonDisplay.style.top = `calc(2rem + ${oy}px)`;
 			}
 		}
+
+		// バルーンオプション画像 (arrow.filename, clickwaitmarker.filename 等)
+		const setBalloonImage = (propName, cssVarName) => {
+			const filename = props[propName];
+			if (filename) {
+				const themeName = this.currentBalloonTheme || "default";
+				const fullPath = `assets/balloon/${themeName}/${filename}`;
+				const url = globalThis.__TAURI__?.core?.convertFileSrc
+					? globalThis.__TAURI__.core.convertFileSrc(fullPath)
+					: fullPath;
+				root.style.setProperty(cssVarName, `url("${url}")`);
+			}
+		};
+		setBalloonImage("arrow.filename", "--balloon-arrow-image");
+		setBalloonImage("clickwaitmarker.filename", "--balloon-clickwait-image");
+		setBalloonImage("marker.filename", "--balloon-marker-image");
+		setBalloonImage("onlinemarker.filename", "--balloon-online-image");
+		setBalloonImage("sstpmarker.filename", "--balloon-sstp-image");
 	},
 
 	switchToNextGhost() {

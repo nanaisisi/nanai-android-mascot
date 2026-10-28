@@ -1,6 +1,6 @@
 # cursor.notselect.font.shadowcolor.r,数値
 
-- **規格**: [cursor.notselect.font.shadowcolor.r.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/cursor.notselect.font.shadowcolor.r/) (ukadoc-spec/descript/balloon/descript-txt/cursor.notselect.font.shadowcolor.r.md)
+- **規格**: [cursor.notselect.font.shadowcolor.r.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/cursor.notselect.font.shadowcolor.r.md)
 - **検索語**: cursor.notselect.font.shadowcolor.r
 - **対応状況**: ❌ 検出なし
 

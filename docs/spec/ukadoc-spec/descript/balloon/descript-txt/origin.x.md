@@ -1,6 +1,6 @@
 # origin.x,座標
 
-- **規格**: [origin.x.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/origin.x/) (ukadoc-spec/descript/balloon/descript-txt/origin.x.md)
+- **規格**: [origin.x.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/origin.x.md)
 - **検索語**: origin.x
 - **対応状況**: ✅ 対応済
 

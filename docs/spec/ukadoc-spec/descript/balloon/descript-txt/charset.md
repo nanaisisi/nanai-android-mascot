@@ -1,6 +1,6 @@
 # charset,文字コード
 
-- **規格**: [charset.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/charset/) (ukadoc-spec/descript/balloon/descript-txt/charset.md)
+- **規格**: [charset.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/charset.md)
 - **検索語**: charset
 - **対応状況**: ✅ 対応済
 

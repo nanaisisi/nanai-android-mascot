@@ -1,6 +1,6 @@
 # anchor.notselect.font.color.g,数値
 
-- **規格**: [anchor.notselect.font.color.g.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/anchor.notselect.font.color.g/) (ukadoc-spec/descript/balloon/descript-txt/anchor.notselect.font.color.g.md)
+- **規格**: [anchor.notselect.font.color.g.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/anchor.notselect.font.color.g.md)
 - **検索語**: anchor.notselect.font.color.g
 - **対応状況**: ❌ 検出なし
 

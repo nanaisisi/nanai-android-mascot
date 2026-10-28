@@ -1,6 +1,6 @@
 # readme,ファイル名
 
-- **規格**: [readme.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/readme.charset/) (ukadoc-spec/descript/balloon/descript-txt/readme.md)
+- **規格**: [readme.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/readme.md)
 - **検索語**: readme
 - **対応状況**: ❌ 検出なし
 

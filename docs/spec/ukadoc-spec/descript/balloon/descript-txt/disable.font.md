@@ -1,6 +1,6 @@
 # disable.font.(フォント定義),(指定)
 
-- **規格**: [disable.font.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/disable.font/) (ukadoc-spec/descript/balloon/descript-txt/disable.font.md)
+- **規格**: [disable.font.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/disable.font.md)
 - **検索語**: disable.font.
 - **対応状況**: ❌ 未実装(誤検出)
 

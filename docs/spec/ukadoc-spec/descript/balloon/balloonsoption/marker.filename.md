@@ -1,6 +1,6 @@
 # marker.filename,ファイル名
 
-- **規格**: [marker.filename.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/balloonsoption/marker.filename/) (ukadoc-spec/descript/balloon/balloonsoption/marker.filename.md)
+- **規格**: [marker.filename.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/balloonsoption/marker.filename.md)
 - **検索語**: marker.filename
 - **対応状況**: ✅ 対応済
 

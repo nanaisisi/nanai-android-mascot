@@ -1,6 +1,6 @@
 # craftman,作者名
 
-- **規格**: [craftman.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/craftman/) (ukadoc-spec/descript/balloon/descript-txt/craftman.md)
+- **規格**: [craftman.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/craftman.md)
 - **検索語**: craftman
 - **対応状況**: ⚠️ 一部対応(読込のみ)
 

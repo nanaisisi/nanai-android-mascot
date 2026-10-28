@@ -1,6 +1,6 @@
 # communicatebox.placeholder.color.g,数値
 
-- **規格**: [communicatebox.placeholder.color.g.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/communicatebox.placeholder.color.g/) (ukadoc-spec/descript/balloon/descript-txt/communicatebox.placeholder.color.g.md)
+- **規格**: [communicatebox.placeholder.color.g.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/communicatebox.placeholder.color.g.md)
 - **検索語**: communicatebox.placeholder.color.g
 - **対応状況**: ❌ 検出なし
 

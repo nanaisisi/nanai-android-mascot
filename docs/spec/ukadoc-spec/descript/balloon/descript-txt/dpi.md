@@ -1,6 +1,6 @@
 # dpi,推奨DPI
 
-- **規格**: [dpi.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/dpi/) (ukadoc-spec/descript/balloon/descript-txt/dpi.md)
+- **規格**: [dpi.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/dpi.md)
 - **検索語**: dpi
 - **対応状況**: ✅ 対応済
 - **規格**: [dpi.md](../../../../ukadoc-spec/descript/balloon/descript-txt/dpi.md) (`ukadoc-spec/descript/balloon/descript-txt/dpi.md`)

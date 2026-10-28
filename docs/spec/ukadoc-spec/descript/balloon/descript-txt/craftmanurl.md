@@ -1,6 +1,6 @@
 # craftmanurl,URL
 
-- **規格**: [craftmanurl.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/craftmanurl/) (ukadoc-spec/descript/balloon/descript-txt/craftmanurl.md)
+- **規格**: [craftmanurl.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/craftmanurl.md)
 - **検索語**: craftmanurl
 - **対応状況**: ⚠️ 一部対応(読込のみ)
 

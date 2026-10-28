@@ -1,6 +1,6 @@
 # anchor.visited.font.shadowcolor.b,数値
 
-- **規格**: [anchor.visited.font.shadowcolor.b.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/anchor.visited.font.shadowcolor.b/) (ukadoc-spec/descript/balloon/descript-txt/anchor.visited.font.shadowcolor.b.md)
+- **規格**: [anchor.visited.font.shadowcolor.b.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/anchor.visited.font.shadowcolor.b.md)
 - **検索語**: anchor.visited.font.shadowcolor.b
 - **対応状況**: ❌ 検出なし
 

@@ -1,6 +1,6 @@
 # anchor.pen.color.b,数値
 
-- **規格**: [anchor.pen.color.b.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/descript-txt/anchor.pen.color.b/) (ukadoc-spec/descript/balloon/descript-txt/anchor.pen.color.b.md)
+- **規格**: [anchor.pen.color.b.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/anchor.pen.color.b.md)
 - **検索語**: anchor.pen.color.b
 - **対応状況**: ❌ 検出なし
 

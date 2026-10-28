@@ -164,10 +164,15 @@ function renderContent() {
     });
   } else if (currentSubmenuType === "tools") {
     const tools = [
-      { id: "install", label: "📥 ファイル取り込み・導入..." },
+      { id: "explorer", label: "🗂 エクスプローラ... (Ctrl+E)" },
+      { id: "backlog", label: "📜 バックログ (Ctrl+B)" },
+      { id: "install", label: "📄 ファイルを開く... (Ctrl+O)" },
       { id: "open-ghost-folder", label: "📂 エクスプローラでフォルダを開く" },
-      { id: "explorer", label: "🗂 ゴーストエクスプローラ..." },
-      { id: "scan", label: "🔄 ゴーストフォルダ再スキャン" },
+      { id: "scan", label: "🔄 動作情報再読み込み" },
+      { id: "reload-ghost", label: "🔄 ゴースト再読み込み" },
+      { id: "reset-shell-position", label: "📍 シェル位置初期化 (Ctrl+Shift+F12)" },
+      { id: "reset-balloon-position", label: "🎈 バルーン位置初期化 (Ctrl+Shift+F10)" },
+      { id: "close-balloon", label: "❌ バルーンを消す" },
       { id: "debug", label: "🐛 デバッグログ" },
     ];
     tools.forEach((t) => {
@@ -238,9 +243,9 @@ function renderContent() {
     }
   } else if (currentSubmenuType === "info") {
     const infoItems = [
-      { id: "help", label: "❓ 情報・ヘルプ" },
-      { id: "ghost-info", label: "👻 ゴースト情報" },
-      { id: "license", label: "📜 著作権・ライセンス表示" },
+      { id: "help", label: "ℹ️ 本体情報 (A)" },
+      { id: "ghost-info", label: "👻 ゴースト情報 (G)" },
+      { id: "license", label: "📜 著作権・ライセンス表示 (L)" },
     ];
     infoItems.forEach((item) => {
       const btn = document.createElement("button");

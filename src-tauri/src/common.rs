@@ -85,6 +85,10 @@ pub struct GhostInfo {
     pub craftman: Option<String>,
     pub craftman_url: Option<String>,
     pub shells: Vec<ShellInfo>,
+    pub group: Option<String>,
+    pub install_date: Option<String>,
+    pub update_date: Option<String>,
+    pub update_result: Option<String>,
 }
 
 // アプリケーション状態を定義

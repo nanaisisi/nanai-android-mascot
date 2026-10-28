@@ -30,7 +30,7 @@
         id="recommend-btn"
         role="menuitem"
       >
-        <span>🔗 おすすめサイト (R)</span>
+        <span>🔗 おすすめ (R)</span>
       </button>
 
       <!-- 2,ポータルサイト -->
@@ -61,17 +61,17 @@
         role="menuitem"
         data-action="uninstall-ghost"
       >
-        <span>🗑️ アンインストール</span>
+        <span>🗑️ アンインストール (D)</span>
       </button>
 
       <!-- 5,RSS/ヘッドライン -->
       <button type="button" class="menu-item main-only" id="headline-btn">
-        <span>📰 ヘッドライン/ニュース</span>
+        <span>📰 RSS/ヘッドライン (H)</span>
       </button>
 
       <!-- 6,プラグイン -->
       <button type="button" class="menu-item main-only" id="plugins-btn">
-        <span>🧩 プラグイン・拡張機能</span>
+        <span>🧩 プラグイン (P)</span>
       </button>
 
       <!-- 7,メールチェック -->
@@ -125,22 +125,40 @@
           id="tools-menu-btn"
           role="menuitem"
         >
-          <span>🛠️ 機能・ツール (F)</span>
+          <span>🛠️ 機能 (F)</span>
         </button>
         <div class="submenu-container">
-          <button type="button" class="menu-item" id="install-btn">
-            <span>📥 ファイル取り込み・導入...</span>
+          <button type="button" class="menu-item" id="explorer-btn" data-action="explorer">
+            <span>🗂 エクスプローラ... (Ctrl+E)</span>
           </button>
-          <button type="button" class="menu-item" id="open-ghost-folder-btn">
+          <button type="button" class="menu-item" id="backlog-btn" data-action="backlog">
+            <span>📜 バックログ (Ctrl+B)</span>
+          </button>
+          <div class="menu-separator"></div>
+          <button type="button" class="menu-item" id="install-btn" data-action="install">
+            <span>📄 ファイルを開く... (Ctrl+O)</span>
+          </button>
+          <button type="button" class="menu-item" id="open-ghost-folder-btn" data-action="open-ghost-folder">
             <span>📂 エクスプローラでフォルダを開く</span>
           </button>
-          <button type="button" class="menu-item" id="explorer-btn">
-            <span>🗂 ゴーストエクスプローラ...</span>
+          <button type="button" class="menu-item" id="scan-btn" data-action="scan">
+            <span>🔄 動作情報再読み込み</span>
           </button>
-          <button type="button" class="menu-item" id="scan-btn">
-            <span>🔄 ゴーストフォルダ再スキャン</span>
+          <button type="button" class="menu-item" id="reload-ghost-btn" data-action="reload-ghost">
+            <span>🔄 ゴースト再読み込み</span>
           </button>
-          <button type="button" class="menu-item" id="debug-btn">
+          <div class="menu-separator"></div>
+          <button type="button" class="menu-item" id="reset-shell-pos-btn" data-action="reset-shell-position">
+            <span>📍 シェル位置初期化 (Ctrl+Shift+F12)</span>
+          </button>
+          <button type="button" class="menu-item" id="reset-balloon-pos-btn" data-action="reset-balloon-position">
+            <span>🎈 バルーン位置初期化 (Ctrl+Shift+F10)</span>
+          </button>
+          <button type="button" class="menu-item" id="close-balloon-btn" data-action="close-balloon">
+            <span>❌ バルーンを消す</span>
+          </button>
+          <div class="menu-separator"></div>
+          <button type="button" class="menu-item" id="debug-btn" data-action="debug">
             <span>🐛 デバッグログ</span>
           </button>
         </div>
@@ -167,7 +185,7 @@
           <span>👻 ゴースト切り替え (G)</span>
         </button>
         <div class="submenu-container" id="ghost-submenu">
-          <!-- ゴースト一覧は独立エクスプローラから操作する -->
+          <!-- 動的描画 -->
         </div>
       </div>
 
@@ -194,7 +212,7 @@
           id="shell-switch-btn"
           role="menuitem"
         >
-          <span>👗 シェル切り替え</span>
+          <span>👗 シェル (S)</span>
         </button>
         <div class="submenu-container" id="shell-submenu">
           <button
@@ -230,7 +248,7 @@
           id="balloon-menu-btn"
           role="menuitem"
         >
-          <span>💭 バルーン切り替え (B)</span>
+          <span>💭 バルーン (B)</span>
         </button>
         <div class="submenu-container" id="balloon-submenu">
           <button type="button" class="menu-item" id="balloon-cycle-btn">
@@ -275,22 +293,23 @@
           id="info-menu-btn"
           role="menuitem"
         >
-          <span>❓ 情報 (H)</span>
+          <span>❓ 情報 (A)</span>
         </button>
         <div class="submenu-container">
-          <button type="button" class="menu-item" id="help-btn" role="menuitem">
-            <span>❓ 情報・ヘルプ</span>
+          <button type="button" class="menu-item" id="help-btn" data-action="help" role="menuitem">
+            <span>ℹ️ 本体情報 (A)</span>
           </button>
-          <button type="button" class="menu-item" id="ghost-info-btn" role="menuitem">
-            <span>👻 ゴースト情報</span>
+          <button type="button" class="menu-item" id="ghost-info-btn" data-action="ghost-info" role="menuitem">
+            <span>👻 ゴースト情報 (G)</span>
           </button>
           <button
             type="button"
             class="menu-item"
             id="license-btn"
+            data-action="license"
             role="menuitem"
           >
-            <span>📜 著作権・ライセンス表示</span>
+            <span>📜 著作権・ライセンス表示 (L)</span>
           </button>
         </div>
       </div>
@@ -304,7 +323,7 @@
         id="minimize-btn"
         role="menuitem"
       >
-        <span>➖ アイコン化・隠す (M)</span>
+        <span>🗕 アイコン化 (I)</span>
         <span class="shortcut-key">Ctrl+I</span>
       </button>
 

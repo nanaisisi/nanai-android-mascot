@@ -222,6 +222,10 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
         craftman,
         craftman_url,
         shells,
+        group: None,
+        install_date: None,
+        update_date: None,
+        update_result: Some("正常 (インストール済)".to_string()),
     })
 }
 

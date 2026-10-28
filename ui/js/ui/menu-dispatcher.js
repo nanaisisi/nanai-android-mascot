@@ -29,15 +29,13 @@ export class MenuDispatcher {
 
 		// アクションに scope 情報を付与（payloadがオブジェクトの場合は合成、プリミティブの場合はラップ）
 		let finalPayload = payload;
-		if (this.currentScope > 0) {
-			if (finalPayload === null || finalPayload === undefined) {
-				finalPayload = { scope: this.currentScope };
-			} else if (
-				typeof finalPayload === "object" &&
-				!Array.isArray(finalPayload)
-			) {
-				finalPayload = { ...finalPayload, scope: this.currentScope };
-			}
+		if (finalPayload === null || finalPayload === undefined) {
+			finalPayload = { scope: this.currentScope };
+		} else if (
+			typeof finalPayload === "object" &&
+			!Array.isArray(finalPayload)
+		) {
+			finalPayload = { scope: this.currentScope, ...finalPayload };
 		}
 
 		// iframe 環境の場合

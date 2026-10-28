@@ -219,7 +219,9 @@ pub async fn spawn_ghost(
         .inner_size(400.0, 600.0)
         .transparent(true)
         .decorations(false)
+        .shadow(false)
         .always_on_top(true)
+        .skip_taskbar(true)
         .resizable(true);
 
         builder.build().map_err(|e| e.to_string())?;

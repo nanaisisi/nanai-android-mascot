@@ -33,7 +33,6 @@ export const ghostShioriMethods = {
 			}
 			if (!isCurrentLoad()) return;
 
-			console.log(`✨ アセット・SHIORI準備完了 (ゲート通過): OnBoot発行`);
 			try {
 				await this.sendShioriEvent("OnBoot");
 			} catch (_error) {

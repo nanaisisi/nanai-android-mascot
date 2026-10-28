@@ -149,3 +149,11 @@ body {
 	font-size: inherit;
 	outline: none;
 }
+
+/* カスタムマウスカーソル (mousecursor.*) */
+.balloon {
+	cursor: var(--balloon-cursor-arrow, auto);
+}
+.balloon-text, .balloon-text * {
+	cursor: var(--balloon-cursor-text, text);
+}

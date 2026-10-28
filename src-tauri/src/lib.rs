@@ -8,8 +8,6 @@ use tauri_specta::{Builder as SpectaBuilder, collect_commands};
 #[cfg(desktop)]
 use tauri::image::Image;
 #[cfg(desktop)]
-use tauri::menu::MenuBuilder;
-#[cfg(desktop)]
 use tauri::tray::{TrayIconBuilder, TrayIconEvent};
 
 macro_rules! println {
@@ -59,10 +57,6 @@ pub fn run() {
                     .default_window_icon()
                     .cloned()
                     .unwrap_or_else(|| Image::new_owned(vec![0, 0, 0, 0], 1, 1));
-                let menu = MenuBuilder::new(app)
-                    .text("open_menu", "メニューを開く")
-                    .text("close", "終了")
-                    .build()?;
                 let _tray = TrayIconBuilder::new()
                     .icon(icon)
                     .on_tray_icon_event(move |tray, event| {
@@ -98,8 +92,6 @@ pub fn run() {
                         }
                     })
                     .build(app)?;
-
-                app.set_menu(menu)?;
 
                 // バルーン・メニュー等の補助ウィンドウを先行キャッシュ（起動時のもたつき解消）
                 let app_handle_preload = app.handle().clone();
@@ -235,6 +227,8 @@ pub fn run() {
             commands::window::test_command,
             commands::window::minimize_app,
             commands::window::exit_app,
+            commands::window::show_modal_window,
+            commands::window::hide_modal_window,
             commands::window::show_context_menu,
             commands::window::show_menu_window,
             commands::window::hide_menu_window,
@@ -242,6 +236,7 @@ pub fn run() {
             commands::window::hide_submenu_window,
             commands::window::show_subchar_window,
             commands::window::hide_subchar_window,
+            commands::window::set_character_scale,
             commands::window::show_balloon_window,
             commands::window::set_balloon_offset,
             commands::window::sync_balloon_position,

@@ -118,6 +118,10 @@ export class NanaiAndroidMascotApp {
 	}
 
 	initUIEnvironment() {
+		if (isTauriAvailable()) {
+			const menuBtn = document.getElementById("menu-btn");
+			if (menuBtn) menuBtn.style.display = "none";
+		}
 		const ids = {
 			ghostDisplay: "ghost-display",
 			ghostCharacter: "ghost-character",

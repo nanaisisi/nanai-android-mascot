@@ -1,3 +1,5 @@
+import { emit, invoke, isTauriAvailable } from "./tauri-helper.js";
+
 export const settingsMethods = {
 	loadSettings() {
 		try {
@@ -19,6 +21,9 @@ export const settingsMethods = {
 			this.elements.ghostDisplay.style.width = `${Math.round((200 * scalePercent) / 100)}px`;
 			this.elements.ghostDisplay.style.height = `${Math.round((400 * scalePercent) / 100)}px`;
 		}
+		if (isTauriAvailable()) {
+			invoke("set_character_scale", { scalePercent }).catch(() => {});
+		}
 
 		// バルーン倍率
 		const balloonPercent = parseInt(this.settings.balloonScale, 10) || 100;
@@ -36,16 +41,34 @@ export const settingsMethods = {
 		);
 	},
 
-	showBalloon(text) {
+	showBalloon(text, scopeId = 0) {
 		if (this.elements.balloonText && this.elements.balloonDisplay) {
 			this.elements.balloonText.textContent = text;
-			this.elements.balloonDisplay.style.display = "block";
+			if (!isTauriAvailable()) {
+				this.elements.balloonDisplay.style.display = "block";
+			}
+		}
+		if (isTauriAvailable()) {
+			invoke("show_balloon_window", {
+				scopeId,
+				theme: this.currentBalloonTheme,
+			})
+				.then(() => {
+					emit(`update-balloon-content-${scopeId}`, {
+						html: this.elements.balloonText?.innerHTML || text,
+						theme: this.currentBalloonTheme || "default",
+					});
+				})
+				.catch(() => {});
 		}
 	},
 
-	hideBalloon() {
+	hideBalloon(scopeId = 0) {
 		if (this.elements.balloonDisplay) {
 			this.elements.balloonDisplay.style.display = "none";
+		}
+		if (isTauriAvailable()) {
+			invoke("hide_balloon_window", { scopeId }).catch(() => {});
 		}
 	},
 

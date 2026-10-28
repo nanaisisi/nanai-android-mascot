@@ -25,7 +25,6 @@ body {
 	justify-content: center;
 	align-items: center;
 	cursor: grab;
-	-webkit-app-region: drag;
 }
 
 .subchar-container:active {

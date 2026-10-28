@@ -164,7 +164,7 @@ function initCharacterWindow() {
 	globalThis.addEventListener("touchmove", onPointerMove, { passive: true });
 	globalThis.addEventListener("touchend", onPointerUp);
 
-	root?.addEventListener("contextmenu", (e) => {
+	globalThis.addEventListener("contextmenu", (e) => {
 		e.preventDefault();
 		openCharacterMenu(e.screenX, e.screenY);
 	});

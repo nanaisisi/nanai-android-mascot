@@ -159,7 +159,8 @@ document.addEventListener("click", (e) => {
 	if (menuItem.classList.contains("has-submenu")) {
 		const menuType = menuItem.id
 			.replace("-menu-btn", "")
-			.replace("-switch-btn", "");
+			.replace("-switch-btn", "")
+			.replace("-btn", "");
 		if (isTauriAvailable()) {
 			_triggerSubmenuWindow(menuType, menuItem);
 			return;
@@ -208,7 +209,8 @@ document.querySelectorAll(".menu-item-wrapper").forEach((wrapper) => {
 			if (btn) {
 				const menuType = btn.id
 					.replace("-menu-btn", "")
-					.replace("-switch-btn", "");
+					.replace("-switch-btn", "")
+					.replace("-btn", "");
 				_triggerSubmenuWindow(menuType, btn);
 			}
 		} else {

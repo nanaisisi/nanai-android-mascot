@@ -35,7 +35,8 @@ body.subchar-mode .main-only {
 	overflow-x: visible;
 	background-color: var(--balloon-bg);
 	background-image: var(--menu-bg-image, var(--balloon-pattern));
-	background-repeat: repeat;
+	background-repeat: var(--menu-bg-repeat, repeat);
+	background-position: var(--menu-bg-position, left top);
 	border: 0;
 	border-radius: 0;
 	box-shadow: none;
@@ -47,10 +48,11 @@ body.subchar-mode .main-only {
 .menu-sidebar {
 	display: none;
 	width: var(--menu-sidebar-width, 24px);
+	background-color: var(--balloon-bg);
 	background-image: var(--menu-sidebar-image, none);
 	background-repeat: no-repeat;
-	background-position: left top;
-	background-size: contain;
+	background-position: var(--menu-sidebar-position, left bottom);
+	background-size: auto;
 	flex-shrink: 0;
 }
 
@@ -96,7 +98,8 @@ body.has-sidebar {
 .menu-item:focus {
 	background-color: var(--balloon-highlight-bg, #0078d7);
 	background-image: var(--menu-fg-image, none);
-	background-repeat: no-repeat;
+	background-repeat: var(--menu-fg-repeat, no-repeat);
+	background-position: var(--menu-fg-position, left top);
 	background-size: cover;
 	color: var(--balloon-highlight-text, #ffffff);
 	outline: none;
@@ -142,7 +145,9 @@ body.has-sidebar {
 	top: 0;
 	width: clamp(10rem, 240px, 15rem);
 	background-color: var(--balloon-bg);
-	background-image: var(--balloon-pattern);
+	background-image: var(--menu-bg-image, var(--balloon-pattern));
+	background-repeat: var(--menu-bg-repeat, repeat);
+	background-position: var(--menu-bg-position, left top);
 	border: none;
 	border-radius: 0;
 	box-shadow: none;

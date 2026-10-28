@@ -101,7 +101,7 @@ pub fn run() {
             commands::shell::load_balloon_image,
             commands::shell::uninstall_ghost,
             commands::shell::surface_composition_plan,
-            ghost::scan::scan_ghost_directory,
+            ghost::scan::directory::scan_ghost_directory,
             commands::shiori::scan_ghosts,
             commands::shiori::load_ghost,
             commands::shiori::send_shiori_request,

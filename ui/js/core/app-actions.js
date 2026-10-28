@@ -109,9 +109,7 @@ export const actionMethods = {
 			const gc = this.ghostController;
 			if (gc.currentGhost?.isTemporary) {
 				gc.currentGhost.isTemporary = false;
-				this.showBalloon(
-					"📌 一時起動ゴーストを通常起動状態として保持しました",
-				);
+				this.showBalloon("📌 一時起動ゴーストを通常起動状態として保持しました");
 				gc.sendShioriEvent("OnBoot");
 			} else {
 				this.showBalloon("⚠️ 一時起動中のゴーストではありません");
@@ -446,12 +444,22 @@ export const actionMethods = {
 	 * @param {string} action
 	 */
 	applyBalloonScaleAction(action) {
-		const scale = BALLOON_SCALE_MAP[action] || "1";
-		const percent = Math.round(parseFloat(scale) * 100);
+		const userScale = parseFloat(BALLOON_SCALE_MAP[action] || "1") || 1;
+		this.balloonUserScale = userScale;
+		const dpiScale = this.balloonDpiScale || 1;
+		const finalScale = +(userScale * dpiScale).toFixed(4);
+		const percent = Math.round(userScale * 100);
+		document.documentElement.style.setProperty(
+			"--balloon-user-scale",
+			String(userScale),
+		);
 		const balloonEl = document.querySelector(".balloon");
 		if (balloonEl) {
-			balloonEl.style.transform = `scale(${scale})`;
+			balloonEl.style.transform = `scale(${finalScale})`;
 			balloonEl.style.transformOrigin = "bottom left";
+		}
+		if (isTauriAvailable()) {
+			emit("balloon-scale-changed", { userScale, dpiScale, finalScale });
 		}
 		this.showBalloon(`バルーン倍率を ${percent}% に変更しました`);
 		setTimeout(() => this.hideBalloon(), 1500);
@@ -521,7 +529,10 @@ export const actionMethods = {
 	 */
 	resetBalloonDescript() {
 		const root = document.documentElement;
+		this.balloonDpiScale = 1;
 		for (const key of [
+			"--balloon-dpi",
+			"--balloon-dpi-scale",
 			"--balloon-font-family",
 			"--balloon-font-size",
 			"--balloon-text-color",
@@ -534,6 +545,8 @@ export const actionMethods = {
 		if (balloonEl) {
 			balloonEl.style.padding = "";
 			balloonEl.style.maxWidth = "";
+			const userScale = this.balloonUserScale || 1;
+			balloonEl.style.transform = userScale !== 1 ? `scale(${userScale})` : "";
 		}
 		if (this.elements.balloonDisplay) {
 			this.elements.balloonDisplay.style.left = "";
@@ -563,6 +576,24 @@ export const actionMethods = {
 		if (!props) return;
 		const root = document.documentElement;
 
+		// 推奨 DPI (dpi,推奨DPI / 既定値: 96, SSP 2.7.21準拠)
+		const parsedDpi = parseInt(props.dpi, 10);
+		const balloonDpi =
+			!Number.isNaN(parsedDpi) && parsedDpi > 0 ? parsedDpi : 96;
+		const dpiScale = +(96 / balloonDpi).toFixed(4);
+		this.balloonDpiScale = dpiScale;
+		root.style.setProperty("--balloon-dpi", String(balloonDpi));
+		root.style.setProperty("--balloon-dpi-scale", String(dpiScale));
+
+		const userScale = this.balloonUserScale || 1;
+		const finalScale = +(userScale * dpiScale).toFixed(4);
+		const balloonScaleEl = document.querySelector(".balloon");
+		if (balloonScaleEl) {
+			balloonScaleEl.style.transform =
+				finalScale !== 1 ? `scale(${finalScale})` : "";
+			balloonScaleEl.style.transformOrigin = "bottom left";
+		}
+
 		// フォントファミリ (font.name)
 		if (props["font.name"]) {
 			root.style.setProperty(
@@ -580,32 +611,58 @@ export const actionMethods = {
 		}
 
 		// フォント詳細装飾 (font.bold, font.italic, font.underline, font.strike)
-		if (props["font.bold"] === "1" || props["font.bold"]?.toLowerCase() === "true") {
+		if (
+			props["font.bold"] === "1" ||
+			props["font.bold"]?.toLowerCase() === "true"
+		) {
 			root.style.setProperty("--balloon-font-weight", "bold");
 		}
-		if (props["font.italic"] === "1" || props["font.italic"]?.toLowerCase() === "true") {
+		if (
+			props["font.italic"] === "1" ||
+			props["font.italic"]?.toLowerCase() === "true"
+		) {
 			root.style.setProperty("--balloon-font-style", "italic");
 		}
-		let decorations = [];
-		if (props["font.underline"] === "1" || props["font.underline"]?.toLowerCase() === "true") decorations.push("underline");
-		if (props["font.strike"] === "1" || props["font.strike"]?.toLowerCase() === "true") decorations.push("line-through");
+		const decorations = [];
+		if (
+			props["font.underline"] === "1" ||
+			props["font.underline"]?.toLowerCase() === "true"
+		)
+			decorations.push("underline");
+		if (
+			props["font.strike"] === "1" ||
+			props["font.strike"]?.toLowerCase() === "true"
+		)
+			decorations.push("line-through");
 		if (decorations.length > 0) {
-			root.style.setProperty("--balloon-text-decoration", decorations.join(" "));
+			root.style.setProperty(
+				"--balloon-text-decoration",
+				decorations.join(" "),
+			);
 		}
 
 		// アンカーリンク色 (anchor.font.color, anchor.visited.font.color)
-		const anchorCol = this.rgbFromComponents(props, "anchor.font.color") || props["anchor.font.color"];
+		const anchorCol =
+			this.rgbFromComponents(props, "anchor.font.color") ||
+			props["anchor.font.color"];
 		if (anchorCol) root.style.setProperty("--balloon-anchor-color", anchorCol);
-		const anchorVisited = this.rgbFromComponents(props, "anchor.visited.font.color") || props["anchor.visited.font.color"];
-		if (anchorVisited) root.style.setProperty("--balloon-anchor-visited-color", anchorVisited);
+		const anchorVisited =
+			this.rgbFromComponents(props, "anchor.visited.font.color") ||
+			props["anchor.visited.font.color"];
+		if (anchorVisited)
+			root.style.setProperty("--balloon-anchor-visited-color", anchorVisited);
 
 		// コミュニケートボックス (communicatebox.*)
 		const cbWidth = props["communicatebox.width"];
 		const cbHeight = props["communicatebox.height"];
 		const cbX = props["communicatebox.x"];
 		const cbY = props["communicatebox.y"];
-		const cbFontColor = this.rgbFromComponents(props, "communicatebox.font.color") || props["communicatebox.font.color"];
-		const cbBgColor = this.rgbFromComponents(props, "communicatebox.background.color") || props["communicatebox.background.color"];
+		const cbFontColor =
+			this.rgbFromComponents(props, "communicatebox.font.color") ||
+			props["communicatebox.font.color"];
+		const cbBgColor =
+			this.rgbFromComponents(props, "communicatebox.background.color") ||
+			props["communicatebox.background.color"];
 		if (cbWidth || cbHeight || cbX || cbY || cbFontColor || cbBgColor) {
 			const cbEl = document.querySelector(".communicate-box");
 			if (cbEl) {

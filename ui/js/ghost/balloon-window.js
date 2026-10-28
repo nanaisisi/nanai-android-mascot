@@ -13,6 +13,19 @@ const urlParams = new URLSearchParams(globalThis.location.search);
 const scopeId = parseInt(urlParams.get("scope") || "0", 10);
 let appliedTheme = null;
 let applyingTheme = null;
+let currentDpiScale = 1;
+let currentUserScale = 1;
+
+function updateBalloonWindowScale(balloonBox) {
+	const root = document.documentElement;
+	const finalScale = +(currentUserScale * currentDpiScale).toFixed(4);
+	root.style.setProperty("--balloon-dpi-scale", String(currentDpiScale));
+	root.style.setProperty("--balloon-user-scale", String(currentUserScale));
+	if (balloonBox) {
+		balloonBox.style.transform = finalScale !== 1 ? `scale(${finalScale})` : "";
+		balloonBox.style.transformOrigin = "top left";
+	}
+}
 
 function setupInteractiveElements(balloonText) {
 	if (!balloonText) return;
@@ -51,6 +64,14 @@ async function applyBalloonDescript(theme) {
 		if (!props || typeof props !== "object") return;
 		const balloonBox = document.getElementById("balloon-box");
 		const root = document.documentElement;
+
+		// 推奨 DPI (dpi,推奨DPI / 既定値: 96, SSP 2.7.21準拠)
+		const parsedDpi = parseInt(props.dpi, 10);
+		const balloonDpi =
+			!Number.isNaN(parsedDpi) && parsedDpi > 0 ? parsedDpi : 96;
+		currentDpiScale = +(96 / balloonDpi).toFixed(4);
+		root.style.setProperty("--balloon-dpi", String(balloonDpi));
+		updateBalloonWindowScale(balloonBox);
 
 		const toCss = (base) => {
 			const r = parseInt(props[`${base}.r`], 10);
@@ -164,6 +185,15 @@ function initBalloonWindow() {
 			document.documentElement.setAttribute("data-balloon-theme", theme);
 			localStorage.setItem("nanai_balloon_theme", theme);
 			applyBalloonDescript(theme);
+		}
+	});
+
+	// バルーン倍率更新 (手動スケール × DPI推奨スケール)
+	void listen("balloon-scale-changed", (event) => {
+		const userScale = Number(event.payload?.userScale);
+		if (!Number.isNaN(userScale) && userScale > 0) {
+			currentUserScale = userScale;
+			updateBalloonWindowScale(balloonBox);
 		}
 	});
 

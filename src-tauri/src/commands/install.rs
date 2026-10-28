@@ -171,10 +171,14 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
             if let Some(parent) = out_path.parent() {
                 std::fs::create_dir_all(parent).ok();
             }
+            let entry_mtime = entry.last_modified().and_then(zip_datetime_to_system_time);
             let mut outfile = std::fs::File::create(&out_path)
                 .map_err(|e| format!("Failed to extract '{}': {}", out_path.display(), e))?;
             std::io::copy(&mut entry, &mut outfile)
                 .map_err(|e| format!("Failed writing file '{}': {}", out_path.display(), e))?;
+            if let Some(mtime) = entry_mtime {
+                let _ = outfile.set_modified(mtime);
+            }
         }
     }
 
@@ -213,6 +217,10 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
     let craftman_url = meta_map
         .as_ref()
         .and_then(|m| m.get("craftmanurl").cloned());
+    let group = meta_map.as_ref().and_then(|m| m.get("group").cloned());
+
+    let (install_date, update_date) =
+        crate::ghost::scan::compute_ghost_dates(&target_dir);
 
     Ok(GhostInfo {
         name: display_name,
@@ -224,11 +232,51 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
         craftman,
         craftman_url,
         shells,
-        group: None,
-        install_date: None,
-        update_date: None,
+        group,
+        install_date,
+        update_date,
         update_result: Some("正常 (インストール済)".to_string()),
     })
+}
+
+fn zip_datetime_to_system_time(dt: zip::DateTime) -> Option<std::time::SystemTime> {
+    let year = dt.year() as i64;
+    let month = dt.month() as usize;
+    let day = dt.day() as i64;
+    if year < 1970 || !(1..=12).contains(&month) || !(1..=31).contains(&day) {
+        return None;
+    }
+
+    let mut days = 0i64;
+    for y in 1970..year {
+        let leap = (y % 4 == 0 && y % 100 != 0) || (y % 400 == 0);
+        days += if leap { 366 } else { 365 };
+    }
+    let leap = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+    let days_in_months = [
+        31,
+        if leap { 29 } else { 28 },
+        31,
+        30,
+        31,
+        30,
+        31,
+        31,
+        30,
+        31,
+        30,
+        31,
+    ];
+    for &dim in &days_in_months[..(month - 1)] {
+        days += dim;
+    }
+    days += day - 1;
+
+    let secs = (days as u64) * 86_400
+        + (dt.hour() as u64) * 3_600
+        + (dt.minute() as u64) * 60
+        + (dt.second() as u64);
+    std::time::UNIX_EPOCH.checked_add(std::time::Duration::from_secs(secs))
 }
 
 fn flatten_balloon_directory(target_dir: &Path) -> Result<(), String> {

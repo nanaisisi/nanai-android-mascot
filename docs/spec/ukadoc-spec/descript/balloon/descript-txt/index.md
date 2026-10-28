@@ -13,7 +13,7 @@
 | [id,ID名](id.md) | id | 未確認 |
 | [craftmanurl,URL](craftmanurl.md) | craftmanurl | 未確認 |
 | [homeurl,URL](homeurl.md) | homeurl | 未確認 |
-| [dpi,推奨DPI](dpi.md) | dpi | 未確認 |
+| [dpi,推奨DPI](dpi.md) | dpi | ✅ 対応済（独自ハイブリッド） |
 | [readme,ファイル名](readme.md) | readme | 未確認 |
 | [readme.charset,文字コード](readme.charset.md) | readme.charset | 未確認 |
 | [cursor,ファイル名 / mousecursor,ファイル名](cursor.md) | cursor | 未確認 |

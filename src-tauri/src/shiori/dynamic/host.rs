@@ -82,8 +82,16 @@ impl HostProc {
         self.stdout
             .read_exact(&mut head)
             .map_err(|e| e.to_string())?;
-        let status = i32::from_le_bytes(head[0..4].try_into().unwrap());
-        let len = u32::from_le_bytes(head[4..8].try_into().unwrap()) as usize;
+        let status = i32::from_le_bytes(
+            head[0..4]
+                .try_into()
+                .map_err(|_| "Invalid status bytes".to_string())?,
+        );
+        let len = u32::from_le_bytes(
+            head[4..8]
+                .try_into()
+                .map_err(|_| "Invalid length bytes".to_string())?,
+        ) as usize;
         let mut buf = vec![0u8; len];
         self.stdout
             .read_exact(&mut buf)

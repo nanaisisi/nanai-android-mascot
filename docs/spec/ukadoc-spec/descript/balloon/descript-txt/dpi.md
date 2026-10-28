@@ -8,8 +8,8 @@
 - **書式**: `dpi,推奨DPI`
 - **既定値**: `96`（Windows標準 100% スケーリング相当）
 - **SSP対応バージョン**: SSP 2.7.21 以降
-- **検索語**: `dpi`, `devicePixelRatio`, `balloon-scale`
-- **対応状況**: 🔶 一部対応（WebView の論理ピクセル自動スケーリングおよび手動バルーン倍率変更に対応、`descript.txt` の `dpi` 値による自動逆補正は未実装）
+- **検索語**: `dpi`, `balloonDpiScale`, `balloon-scale`
+- **対応状況**: ✅ 対応済（`descript.txt` の `dpi` 指定値に基づく `96 / dpi` 論理ピクセル補正およびユーザー手動バルーン倍率との合成に対応）
 
 ## 突合結果
 
@@ -62,6 +62,6 @@ $$\text{balloonDpiScale} = \frac{96}{\text{Number}(\text{props}[\text{"dpi"}]) |
 
 - **パーサ層**: [src-tauri/src/commands/shell.rs](../../../../src-tauri/src/commands/shell.rs) の `balloon_manifest` コマンドにて、`descript.txt` の全キー・値（`dpi` を含む）を `BTreeMap<String, String>` としてフロントエンドへ返却済み。
 - **適用層（メインウィンドウ / 独立バルーンウィンドウ）**:
-  - [ui/js/core/app-actions.js](../../../../ui/js/core/app-actions.js) の `applyBalloonDescript(props)` および `applyBalloonScaleAction(action)`
-  - [ui/js/ghost/balloon-window.js](../../../../ui/js/ghost/balloon-window.js) の `applyBalloonDescript(theme)`
-  - 現状は右クリックメニューの「バルーン倍率（50%〜200%）」による手動スケール（`transform: scale(...)`）と WebView 標準の論理ピクセルスケーリング（`dpi,96` 基準）が動作しており、`props["dpi"]` を読み取って `96 / dpi` 倍率を自動乗算する処理は今後の拡張対象となっている。
+  - [ui/js/core/app-actions.js](../../../../ui/js/core/app-actions.js) の `applyBalloonDescript(props)`、`resetBalloonDescript()`、および `applyBalloonScaleAction(action)`
+  - [ui/js/ghost/balloon-window.js](../../../../ui/js/ghost/balloon-window.js) の `applyBalloonDescript(theme)` および `updateBalloonWindowScale(balloonBox)`
+  - `props.dpi` をパースし（未指定・不正値時は既定値 `96`）、`dpiScale = 96 / balloonDpi` を算出して CSS カスタムプロパティ（`--balloon-dpi`, `--balloon-dpi-scale`）へ設定。さらに右クリックメニューの「バルーン倍率（50%〜200%）」による手動スケール（`userScale`）と乗算した `finalScale = userScale * dpiScale` を `.balloon` 要素の `transform: scale(...)` に適用している。

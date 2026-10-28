@@ -158,11 +158,11 @@
 | 項目 | 検索語 | 対応状況 |
 | :--- | :--- | :---: |
 | [descript.txt（Balloonの）](introduction_descript.txt.md) | descript.txt | 未確認 |
-| [charset,文字コード](charset.md) |  | 未確認 |
-| [name,バルーン名](name.md) |  | 未確認 |
-| [type,種別](type.md) |  | 未確認 |
-| [craftman,作者名](craftman.md) |  | 未確認 |
-| [craftmanw,作者名](craftmanw.md) |  | 未確認 |
+| [charset,文字コード](charset.md) | charset | 未確認 |
+| [name,バルーン名](name.md) | name | 未確認 |
+| [type,種別](type.md) | type | 未確認 |
+| [craftman,作者名](craftman.md) | craftman | 未確認 |
+| [craftmanw,作者名](craftmanw.md) | craftmanw | 未確認 |
 | [id,ID名](id.md) |  | 未確認 |
 | [craftmanurl,URL](craftmanurl.md) |  | 未確認 |
 | [homeurl,URL](homeurl.md) |  | 未確認 |

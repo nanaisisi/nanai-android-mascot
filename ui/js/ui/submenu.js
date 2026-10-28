@@ -5,6 +5,7 @@ import {
   emit,
   invoke,
   isTauriAvailable,
+  listen,
   startDraggingWindow,
 } from "../core/tauri-helper.js";
 
@@ -26,6 +27,8 @@ let dressupScope = 0;
 let cachedBalloons = [];
 /** @type {string|null} */
 let currentBalloonTheme = null;
+/** @type {string[]} */
+let cachedRecentGhosts = [];
 
 document.addEventListener("mousedown", (event) => {
   if (event.button !== 0 || !isTauriAvailable()) return;
@@ -196,6 +199,59 @@ function renderContent() {
       });
       container.appendChild(btn);
     });
+  } else if (currentSubmenuType === "call-ghost") {
+    cachedGhosts.forEach((ghostItem) => {
+      const ghostName =
+        typeof ghostItem === "string" ? ghostItem : ghostItem?.name || "";
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "menu-item";
+      btn.innerHTML = `<span>➕ ${ghostName}</span>`;
+      btn.addEventListener("click", () => {
+        dispatchSubmenuAction("call-ghost", ghostName);
+      });
+      container.appendChild(btn);
+    });
+    if (cachedGhosts.length === 0) {
+      const empty = document.createElement("div");
+      empty.className = "menu-item is-disabled";
+      empty.innerHTML = `<span>(ゴーストがありません)</span>`;
+      container.appendChild(empty);
+    }
+  } else if (currentSubmenuType === "recent") {
+    if (cachedRecentGhosts.length === 0) {
+      const empty = document.createElement("div");
+      empty.className = "menu-item is-disabled";
+      empty.innerHTML = `<span>(履歴はありません)</span>`;
+      container.appendChild(empty);
+    } else {
+      cachedRecentGhosts.forEach((ghostName) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "menu-item";
+        btn.innerHTML = `<span>🕘 ${ghostName}</span>`;
+        btn.addEventListener("click", () => {
+          dispatchSubmenuAction("recent-ghost", ghostName);
+        });
+        container.appendChild(btn);
+      });
+    }
+  } else if (currentSubmenuType === "info") {
+    const infoItems = [
+      { id: "help", label: "❓ 情報・ヘルプ" },
+      { id: "ghost-info", label: "👻 ゴースト情報" },
+      { id: "license", label: "📜 著作権・ライセンス表示" },
+    ];
+    infoItems.forEach((item) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "menu-item";
+      btn.innerHTML = `<span>${item.label}</span>`;
+      btn.addEventListener("click", () => {
+        dispatchSubmenuAction(item.id);
+      });
+      container.appendChild(btn);
+    });
   }
 }
 
@@ -237,75 +293,74 @@ function applyShellMenuTheme(activeShell) {
   document.body.classList.toggle("has-sidebar", Boolean(theme?.sidebar_bitmap));
 }
 
-if (globalThis.__TAURI__) {
-  const listenFn =
-    globalThis.__TAURI__.event?.listen || globalThis.__TAURI__.listen;
-  if (typeof listenFn === "function") {
-    listenFn("set-submenu-type", (event) => {
-      if (event.payload?.type) {
-        currentSubmenuType = event.payload.type;
+if (isTauriAvailable()) {
+  listen("set-submenu-type", (event) => {
+    if (event.payload?.type) {
+      currentSubmenuType = event.payload.type;
+      renderContent();
+    }
+  });
+
+  listen("sync-ghosts", (event) => {
+    const data = event.payload;
+    if (data) {
+      cachedGhosts = data.ghosts || [];
+      currentGhostName = data.currentGhost;
+      cachedShells = data.shells || [];
+      currentShellName = data.currentShell;
+      cachedRecentGhosts = data.recentGhosts || [];
+      // 着せ替え (bindgroup) メニューデータの同期
+      if (data.dressup) {
+        cachedDressup = data.dressup;
+      }
+      if (typeof data.scope === "number") {
+        dressupScope = data.scope;
+      }
+      // ゴースト/シェルの descript.txt 由来のメニュー配色を適用
+      const activeShell =
+        data.shells?.find((s) => s.name === data.currentShell) ||
+        data.shells?.[0];
+      applyShellMenuTheme(activeShell);
+      renderContent();
+    }
+  });
+
+  listen("sync-balloons", (event) => {
+    cachedBalloons = event.payload || [];
+    renderContent();
+  });
+
+  listen("sync-theme", (event) => {
+    currentBalloonTheme = event.payload || null;
+    document.documentElement.setAttribute(
+      "data-balloon-theme",
+      currentBalloonTheme || "",
+    );
+    document.body.classList.remove(
+      "balloon-theme-ivory",
+      "balloon-theme-pixel",
+      "balloon-theme-comic",
+      "balloon-theme-dark",
+    );
+    if (currentBalloonTheme) {
+      document.body.classList.add(`balloon-theme-${currentBalloonTheme}`);
+    }
+    renderContent();
+  });
+
+  listen("sync-menu-scope", (event) => {
+    const scope =
+      typeof event.payload === "number"
+        ? event.payload
+        : parseInt(event.payload, 10);
+    if (!Number.isNaN(scope)) {
+      dressupScope = scope;
+      // 着せ替えサブメニュー表示中なら新スコープへ切替
+      if (currentSubmenuType === "dressup") {
         renderContent();
       }
-    });
-
-    listenFn("sync-ghosts", (event) => {
-      const data = event.payload;
-      if (data) {
-        cachedGhosts = data.ghosts || [];
-        currentGhostName = data.currentGhost;
-        cachedShells = data.shells || [];
-        currentShellName = data.currentShell;
-        // 着せ替え (bindgroup) メニューデータの同期
-        if (data.dressup) {
-          cachedDressup = data.dressup;
-        }
-        if (typeof data.scope === "number") {
-          dressupScope = data.scope;
-        }
-        // ゴースト/シェルの descript.txt 由来のメニュー配色を適用
-        const activeShell =
-          data.shells?.find((s) => s.name === data.currentShell) ||
-          data.shells?.[0];
-        applyShellMenuTheme(activeShell);
-        renderContent();
-      }
-    });
-
-    listenFn("sync-balloons", (event) => {
-      cachedBalloons = event.payload || [];
-      renderContent();
-    });
-
-    listenFn("sync-theme", (event) => {
-      currentBalloonTheme = event.payload || null;
-      document.documentElement.setAttribute("data-balloon-theme", currentBalloonTheme || "");
-      document.body.classList.remove(
-        "balloon-theme-ivory",
-        "balloon-theme-pixel",
-        "balloon-theme-comic",
-        "balloon-theme-dark",
-      );
-      if (currentBalloonTheme) {
-        document.body.classList.add(`balloon-theme-${currentBalloonTheme}`);
-      }
-      renderContent();
-    });
-
-    listenFn("sync-menu-scope", (event) => {
-      const scope =
-        typeof event.payload === "number"
-          ? event.payload
-          : parseInt(event.payload, 10);
-      if (!Number.isNaN(scope)) {
-        dressupScope = scope;
-        // 着せ替えサブメニュー表示中なら新スコープへ切替
-        if (currentSubmenuType === "dressup") {
-          renderContent();
-        }
-      }
-    });
-
-  }
+    }
+  });
 }
 
 globalThis.addEventListener("DOMContentLoaded", () => {
@@ -319,11 +374,7 @@ globalThis.addEventListener("DOMContentLoaded", () => {
     // LocalStorage access restricted or unavailable
   }
   renderContent();
-  if (globalThis.__TAURI__) {
-    const emitFn =
-      globalThis.__TAURI__.event?.emit || globalThis.__TAURI__.emit;
-    if (typeof emitFn === "function") {
-      emitFn("menu-action", { action: "request-sync" });
-    }
+  if (isTauriAvailable()) {
+    void emit("menu-action", { action: "request-sync" });
   }
 });

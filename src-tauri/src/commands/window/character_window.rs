@@ -120,6 +120,31 @@ pub async fn sync_character_balloon(
     super::balloon_window::sync_balloon_position_impl(&app_handle, &state, scope_id).await
 }
 
+/// キャラクター（スコープ N）ウィンドウのサイズ変更コマンド（シェル倍率変更用）
+#[tauri::command]
+#[allow(unused_variables)]
+pub async fn set_character_scale(
+    app_handle: tauri::AppHandle,
+    scale_percent: u32,
+) -> Result<(), String> {
+    #[cfg(desktop)]
+    {
+        use tauri::Manager;
+        let factor = (scale_percent as f64) / 100.0;
+        let win_width = (200.0 * factor).round().max(80.0);
+        let win_height = (360.0 * factor).round().max(140.0);
+        for (label, win) in app_handle.webview_windows() {
+            if label.starts_with("subchar_window_") {
+                let _ = win.set_size(tauri::Size::Logical(tauri::LogicalSize {
+                    width: win_width,
+                    height: win_height,
+                }));
+            }
+        }
+    }
+    Ok(())
+}
+
 /// 互換用: サブキャラクターウィンドウ非表示コマンド
 #[tauri::command]
 #[allow(unused_variables)]

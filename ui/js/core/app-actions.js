@@ -70,7 +70,13 @@ export const actionMethods = {
       return;
     }
 
-    if (action === "scan") return gc.scanGhosts();
+    if (action === "scan") {
+      return gc.scanGhosts().then(() => {
+        this.syncMenuGhosts?.();
+        this.showBalloon("🔄 ゴーストフォルダを再スキャンしました");
+        setTimeout(() => this.hideBalloon(), 2000);
+      });
+    }
     if (action === "open-ghost-folder") {
       if (isTauriAvailable()) {
         invoke("open_ghost_directory").catch((e) => console.error(e));
@@ -182,6 +188,7 @@ export const actionMethods = {
       </div>
     `;
     this.modalManager.overlay.style.display = "flex";
+    this.modalManager.showWindowIfNeeded?.();
     this.modalManager.content
       .querySelector("#modal-ok-btn")
       ?.addEventListener("click", () => this.modalManager.hide());
@@ -197,15 +204,19 @@ export const actionMethods = {
     const gc = this.ghostController;
     const name = gc.currentGhost?.name;
     if (!name) return;
-    const message = `ゴースト「${name}」をアンインストールしますか？\nゴーストのファイルはすべて削除されます（復元できません）。`;
-    if (
-      typeof globalThis.confirm !== "function" ||
-      !globalThis.confirm(message)
-    ) {
+    if (!isTauriAvailable()) {
+      const message = `ゴースト「${name}」をアンインストールしますか？\nゴーストのファイルはすべて削除されます（復元できません）。`;
+      if (
+        typeof globalThis.confirm === "function" &&
+        !globalThis.confirm(message)
+      ) {
+        return;
+      }
       return;
     }
     try {
       const removed = await invoke("uninstall_ghost", { ghostName: name });
+      if (!removed) return;
       console.log(`🗑️ ゴーストアンインストール: ${name} (removed=${removed})`);
       this.showBalloon(`ゴースト「${name}」を削除しました`);
       setTimeout(() => this.hideBalloon(), 2500);
@@ -358,12 +369,16 @@ export const actionMethods = {
    */
   applyShellScaleAction(action) {
     const conf = SCALE_MAP[action] || SCALE_MAP["scale-100"];
+    const scalePercent = parseInt(action.replace("scale-", ""), 10) || 100;
     if (this.elements.ghostDisplay) {
       this.elements.ghostDisplay.style.width = conf.width;
       this.elements.ghostDisplay.style.height = conf.height;
     }
+    if (isTauriAvailable()) {
+      invoke("set_character_scale", { scalePercent }).catch(() => {});
+    }
     this.showBalloon(
-      `シェル倍率を ${action.replace("scale-", "")}% に変更しました`,
+      `シェル倍率を ${scalePercent}% に変更しました`,
     );
     setTimeout(() => this.hideBalloon(), 1500);
   },

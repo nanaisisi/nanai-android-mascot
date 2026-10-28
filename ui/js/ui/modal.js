@@ -1,3 +1,4 @@
+import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 import { ModalGhostHandlers } from "./modal-ghost-handlers.js";
 import { ModalSettingsHandlers } from "./modal-settings-handlers.js";
 import { modalTemplates } from "./modal-templates.js";
@@ -34,6 +35,14 @@ export class ModalManager {
 		});
 	}
 
+	showWindowIfNeeded() {
+		if (isTauriAvailable()) {
+			invoke("show_modal_window").catch((e) =>
+				console.warn("show_modal_window failed:", e),
+			);
+		}
+	}
+
 	show(contentId) {
 		let html = modalTemplates[contentId];
 		if (!html) {
@@ -44,12 +53,16 @@ export class ModalManager {
 
 		this.content.innerHTML = html;
 		this.overlay.style.display = "flex";
+		this.showWindowIfNeeded();
 		this.setupListeners(contentId);
 	}
 
 	hide() {
 		if (this.overlay) {
 			this.overlay.style.display = "none";
+		}
+		if (isTauriAvailable()) {
+			invoke("hide_modal_window").catch(() => {});
 		}
 	}
 
@@ -86,6 +99,7 @@ export class ModalManager {
       </div>
     `;
 		this.overlay.style.display = "flex";
+		this.showWindowIfNeeded();
 		document
 			.getElementById("modal-ok-btn")
 			?.addEventListener("click", () => this.hide());

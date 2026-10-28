@@ -1,14 +1,20 @@
 /**
  * Nanai Android Mascot - 独立バルーンウィンドウ制御スクリプト
  */
-import { invoke } from "../core/tauri-helper.js";
+import {
+	emit,
+	invoke,
+	isTauriAvailable,
+	listen,
+	startDraggingWindow,
+} from "../core/tauri-helper.js";
 
 const urlParams = new URLSearchParams(globalThis.location.search);
 const scopeId = parseInt(urlParams.get("scope") || "0", 10);
 let appliedTheme = null;
 let applyingTheme = null;
 
-function setupInteractiveElements(balloonText, emitFn) {
+function setupInteractiveElements(balloonText) {
 	if (!balloonText) return;
 
 	// 選択肢ボタン (\q)
@@ -17,9 +23,7 @@ function setupInteractiveElements(balloonText, emitFn) {
 			e.stopPropagation();
 			const choiceId = btn.getAttribute("data-choice-id");
 			const choiceText = btn.textContent;
-			if (typeof emitFn === "function") {
-				emitFn("balloon-choice-selected", { scopeId, choiceId, choiceText });
-			}
+			void emit("balloon-choice-selected", { scopeId, choiceId, choiceText });
 		});
 	});
 
@@ -28,9 +32,7 @@ function setupInteractiveElements(balloonText, emitFn) {
 		anchor.addEventListener("click", (e) => {
 			e.stopPropagation();
 			const anchorId = anchor.getAttribute("data-anchor-id");
-			if (typeof emitFn === "function") {
-				emitFn("balloon-anchor-selected", { scopeId, anchorId });
-			}
+			void emit("balloon-anchor-selected", { scopeId, anchorId });
 		});
 	});
 }
@@ -40,7 +42,7 @@ function setupInteractiveElements(balloonText, emitFn) {
  * @param {string} theme
  */
 async function applyBalloonDescript(theme) {
-	if (!globalThis.__TAURI__) return;
+	if (!isTauriAvailable()) return;
 	if (appliedTheme === theme) return;
 	if (applyingTheme === theme) return;
 	applyingTheme = theme;
@@ -138,61 +140,44 @@ function initBalloonWindow() {
 	document.documentElement.setAttribute("data-balloon-theme", savedTheme);
 	applyBalloonDescript(savedTheme);
 
-	if (!globalThis.__TAURI__) return;
-
-	const listenFn =
-		globalThis.__TAURI__.event?.listen || globalThis.__TAURI__.listen;
-	const emitFn = globalThis.__TAURI__.event?.emit || globalThis.__TAURI__.emit;
+	if (!isTauriAvailable()) return;
 
 	// 親ウィンドウからのバルーンコンテンツ更新イベントを受信 (listenを先に登録)
-	if (typeof listenFn === "function") {
-		listenFn(`update-balloon-content-${scopeId}`, (event) => {
-			const { html, theme } = event.payload || {};
-			if (theme) {
-				document.documentElement.setAttribute("data-balloon-theme", theme);
-				applyBalloonDescript(theme);
-			}
-			const targetText = document.getElementById("balloon-text");
-			if (targetText && html !== undefined) {
-				targetText.innerHTML = html;
-				// クリックイベントの再バインド (選択肢・アンカー等)
-				setupInteractiveElements(targetText, emitFn);
-			}
-		});
-
-		// テーマ更新
-		listenFn("balloon-theme-changed", (event) => {
-			const theme = event.payload?.theme || event.payload;
-			if (theme) {
-				document.documentElement.setAttribute("data-balloon-theme", theme);
-				localStorage.setItem("nanai_balloon_theme", theme);
-				applyBalloonDescript(theme);
-			}
-		});
-	}
-
-	if (typeof emitFn === "function") {
-		emitFn("balloon-ready", { scopeId });
-	}
-
-	// バルーン本体のクリックでスキップまたは改ページ通知
-	balloonBox?.addEventListener("click", () => {
-		if (typeof emitFn === "function") {
-			emitFn("balloon-clicked", { scopeId });
+	void listen(`update-balloon-content-${scopeId}`, (event) => {
+		const { html, theme } = event.payload || {};
+		if (theme) {
+			document.documentElement.setAttribute("data-balloon-theme", theme);
+			applyBalloonDescript(theme);
+		}
+		const targetText = document.getElementById("balloon-text");
+		if (targetText && html !== undefined) {
+			targetText.innerHTML = html;
+			// クリックイベントの再バインド (選択肢・アンカー等)
+			setupInteractiveElements(targetText);
 		}
 	});
 
+	// テーマ更新
+	void listen("balloon-theme-changed", (event) => {
+		const theme = event.payload?.theme || event.payload;
+		if (theme) {
+			document.documentElement.setAttribute("data-balloon-theme", theme);
+			localStorage.setItem("nanai_balloon_theme", theme);
+			applyBalloonDescript(theme);
+		}
+	});
+
+	void emit("balloon-ready", { scopeId });
+
+	// バルーン本体のクリックでスキップまたは改ページ通知
+	balloonBox?.addEventListener("click", () => {
+		void emit("balloon-clicked", { scopeId });
+	});
+
 	// ドラッグ移動 (Tauri v2 startDragging)
-	balloonBox?.addEventListener("mousedown", async (e) => {
+	balloonBox?.addEventListener("mousedown", (e) => {
 		if (e.button === 0) {
-			try {
-				if (globalThis.__TAURI__) {
-					const { getCurrentWindow } = await import("@tauri-apps/api/window");
-					await getCurrentWindow().startDragging();
-				}
-			} catch (_err) {
-				// 無視
-			}
+			void startDraggingWindow();
 		}
 	});
 

@@ -6,4 +6,4 @@
 
 ## 突合結果
 
-`app-actions.js` の `applyBalloonDescript()` において `validrect.left, top, right, bottom` を一括パースし、ドキュメント内の `.balloon` 要素の `padding`（`\${padTop} \${padRight} \${padBottom} \${padLeft}`）として動的適用される実装が行われている。
+`app-actions.js` の `applyBalloonDescript()` において `validrect.left, top, right, bottom` を一括パースし、ドキュメント内の `.balloon` 要素の `padding`（`${padTop} ${padRight} ${padBottom} ${padLeft}`）として動的適用される実装が行われている。

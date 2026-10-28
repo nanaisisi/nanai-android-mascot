@@ -1,5 +1,6 @@
 /**
- * Nanai Android Mascot - 独立サブメニューウィンドウ制御
+ * @file submenu.js
+ * @brief 独立サブメニューウィンドウ制御のメインエントリポイント
  */
 import {
 	emit,
@@ -8,6 +9,8 @@ import {
 	listen,
 	startDraggingWindow,
 } from "../core/tauri-helper.js";
+import { renderSubmenuContent } from "./submenu-renderer.js";
+import { applyShellMenuTheme } from "./submenu-theme.js";
 
 /** @type {string} */
 let currentSubmenuType = "ghost";
@@ -56,314 +59,19 @@ async function dispatchSubmenuAction(action, payload = null) {
 }
 
 function renderContent() {
-	const container = document.getElementById("submenu-content");
-	if (!container) return;
-	container.innerHTML = "";
-
-	if (currentSubmenuType === "ghost") {
-		cachedGhosts.forEach((ghostItem) => {
-			const ghostName =
-				typeof ghostItem === "string" ? ghostItem : ghostItem?.name || "";
-			const isCurrent = ghostName === currentGhostName;
-			const btn = document.createElement("button");
-			btn.type = "button";
-			btn.className = `menu-item${isCurrent ? " is-current" : ""}`;
-			btn.innerHTML = `<span>${isCurrent ? "✓ " : ""}${ghostName}</span>`;
-			btn.addEventListener("click", () => {
-				dispatchSubmenuAction("switch-ghost", ghostName);
-			});
-			container.appendChild(btn);
-		});
-	} else if (currentSubmenuType === "shell") {
-		(cachedShells.length > 0 ? cachedShells : ["master"]).forEach(
-			(shellItem) => {
-				const shellName =
-					typeof shellItem === "string"
-						? shellItem
-						: shellItem?.name || "master";
-				const displayName =
-					typeof shellItem === "object" && shellItem?.display_name
-						? shellItem.display_name
-						: shellName;
-				const btn = document.createElement("button");
-				btn.type = "button";
-				btn.className = `menu-item${shellName === currentShellName ? " is-current" : ""}`;
-				btn.innerHTML = `<span>${shellName === currentShellName ? "✓ " : ""}${displayName}</span>`;
-				btn.addEventListener("click", () => {
-					dispatchSubmenuAction("switch-shell", shellName);
-				});
-				container.appendChild(btn);
-			},
-		);
-	} else if (currentSubmenuType === "dressup") {
-		const data =
-			dressupScope === 1 ? cachedDressup?.kero : cachedDressup?.sakura;
-		const categories = data?.categories ?? [];
-		if (categories.length === 0) {
-			const empty = document.createElement("div");
-			empty.className = "menu-item is-disabled";
-			empty.innerHTML = `<span>(着せ替えパーツなし)</span>`;
-			container.appendChild(empty);
-		}
-		for (const cat of categories) {
-			const label = document.createElement("div");
-			label.className = "menu-item is-disabled";
-			label.innerHTML = `<span>${cat.category}</span>`;
-			container.appendChild(label);
-
-			for (const part of cat.parts) {
-				const btn = document.createElement("button");
-				btn.type = "button";
-				btn.className = `menu-item${part.on ? " is-current" : ""}`;
-				btn.innerHTML = `<span>${part.on ? "✓ " : "　"}${part.part}</span>`;
-				btn.addEventListener("click", () => {
-					dispatchSubmenuAction("dressup-toggle", {
-						category: cat.category,
-						part: part.part,
-						scope: dressupScope,
-					});
-				});
-				container.appendChild(btn);
-			}
-		}
-	} else if (currentSubmenuType === "balloon") {
-		const cycleBtn = document.createElement("button");
-		cycleBtn.type = "button";
-		cycleBtn.className = "menu-item";
-		cycleBtn.innerHTML = `<span>🔄 次のスキンへ切り替え</span>`;
-		cycleBtn.addEventListener("click", () => {
-			dispatchSubmenuAction("balloon-cycle");
-		});
-		container.appendChild(cycleBtn);
-
-		const sep = document.createElement("div");
-		sep.className = "menu-separator";
-		container.appendChild(sep);
-
-		const themes =
-			cachedBalloons.length > 0
-				? cachedBalloons.map((balloon) => ({
-						id: balloon.dir_name,
-						label: balloon.name || balloon.dir_name,
-					}))
-				: [
-						{ id: "ivory", label: "アイボリー (Ivory)" },
-						{ id: "pixel", label: "ピクセル (Pixel)" },
-						{ id: "comic", label: "コミック (Comic)" },
-						{ id: "dark", label: "ダーク (Dark)" },
-					];
-		themes.forEach((t) => {
-			const btn = document.createElement("button");
-			btn.type = "button";
-			btn.className = `menu-item${currentBalloonTheme === t.id ? " is-current" : ""}`;
-			btn.innerHTML = `<span>${currentBalloonTheme === t.id ? "✓ " : "　"}${t.label}</span>`;
-			btn.addEventListener("click", () => {
-				dispatchSubmenuAction(`balloon-theme-${t.id}`);
-			});
-			container.appendChild(btn);
-		});
-	} else if (currentSubmenuType === "tools") {
-		const tools = [
-			{ id: "explorer", label: "🗂 エクスプローラ... (Ctrl+E)" },
-			{ id: "backlog", label: "📜 バックログ (Ctrl+B)" },
-			{ id: "install", label: "📄 ファイルを開く... (Ctrl+O)" },
-			{ id: "open-ghost-folder", label: "📂 エクスプローラでフォルダを開く" },
-			{ id: "scan", label: "🔄 動作情報再読み込み" },
-			{ id: "reload-ghost", label: "🔄 ゴースト再読み込み" },
-			{
-				id: "reset-shell-position",
-				label: "📍 シェル位置初期化 (Ctrl+Shift+F12)",
-			},
-			{
-				id: "reset-balloon-position",
-				label: "🎈 バルーン位置初期化 (Ctrl+Shift+F10)",
-			},
-			{ id: "close-balloon", label: "❌ バルーンを消す" },
-			{ id: "debug", label: "🐛 デバッグログ" },
-		];
-		tools.forEach((t) => {
-			const btn = document.createElement("button");
-			btn.type = "button";
-			btn.className = "menu-item";
-			btn.innerHTML = `<span>${t.label}</span>`;
-			btn.addEventListener("click", () => {
-				dispatchSubmenuAction(t.id);
-			});
-			container.appendChild(btn);
-		});
-	} else if (currentSubmenuType === "scale") {
-		const scales = [
-			{ label: "50%", val: "scale-50" },
-			{ label: "75%", val: "scale-75" },
-			{ label: "100% (標準)", val: "scale-100" },
-			{ label: "125%", val: "scale-125" },
-			{ label: "150%", val: "scale-150" },
-			{ label: "200%", val: "scale-200" },
-		];
-		scales.forEach((s) => {
-			const btn = document.createElement("button");
-			btn.type = "button";
-			btn.className = "menu-item";
-			btn.innerHTML = `<span>${s.label}</span>`;
-			btn.addEventListener("click", () => {
-				dispatchSubmenuAction(s.val);
-			});
-			container.appendChild(btn);
-		});
-	} else if (currentSubmenuType === "call-ghost") {
-		cachedGhosts.forEach((ghostItem) => {
-			const ghostName =
-				typeof ghostItem === "string" ? ghostItem : ghostItem?.name || "";
-			const btn = document.createElement("button");
-			btn.type = "button";
-			btn.className = "menu-item";
-			btn.innerHTML = `<span>➕ ${ghostName}</span>`;
-			btn.addEventListener("click", () => {
-				dispatchSubmenuAction("call-ghost", ghostName);
-			});
-			container.appendChild(btn);
-		});
-		if (cachedGhosts.length === 0) {
-			const empty = document.createElement("div");
-			empty.className = "menu-item is-disabled";
-			empty.innerHTML = `<span>(ゴーストがありません)</span>`;
-			container.appendChild(empty);
-		}
-	} else if (currentSubmenuType === "recent") {
-		if (cachedRecentGhosts.length === 0) {
-			const empty = document.createElement("div");
-			empty.className = "menu-item is-disabled";
-			empty.innerHTML = `<span>(履歴はありません)</span>`;
-			container.appendChild(empty);
-		} else {
-			cachedRecentGhosts.forEach((ghostName) => {
-				const btn = document.createElement("button");
-				btn.type = "button";
-				btn.className = "menu-item";
-				btn.innerHTML = `<span>🕘 ${ghostName}</span>`;
-				btn.addEventListener("click", () => {
-					dispatchSubmenuAction("recent-ghost", ghostName);
-				});
-				container.appendChild(btn);
-			});
-		}
-	} else if (currentSubmenuType === "info") {
-		const infoItems = [
-			{ id: "help", label: "ℹ️ 本体情報 (A)" },
-			{ id: "ghost-info", label: "👻 ゴースト情報 (G)" },
-			{ id: "license", label: "📜 著作権・ライセンス表示 (L)" },
-		];
-		infoItems.forEach((item) => {
-			const btn = document.createElement("button");
-			btn.type = "button";
-			btn.className = "menu-item";
-			btn.innerHTML = `<span>${item.label}</span>`;
-			btn.addEventListener("click", () => {
-				dispatchSubmenuAction(item.id);
-			});
-			container.appendChild(btn);
-		});
-	}
-}
-
-function applyShellMenuTheme(activeShell) {
-	const rootStyle = document.documentElement.style;
-	const theme = activeShell?.menu_theme;
-	const setOrRemove = (property, value) => {
-		if (value) rootStyle.setProperty(property, value);
-		else rootStyle.removeProperty(property);
-	};
-
-	setOrRemove("--balloon-bg", theme?.background_color);
-	setOrRemove("--balloon-highlight-bg", theme?.foreground_color);
-	setOrRemove(
-		"--balloon-text-color",
-		theme?.background_font_color || theme?.font_color,
-	);
-	setOrRemove("--balloon-highlight-text", theme?.foreground_font_color);
-	setOrRemove("--balloon-disable-text", theme?.disable_font_color);
-	setOrRemove("--balloon-separator-color", theme?.separator_color);
-
-	const shellPath = activeShell?.path?.replace(/\\/g, "/") || "";
-	const setImage = (property, relativePath) => {
-		if (!relativePath) {
-			rootStyle.removeProperty(property);
-			return;
-		}
-		const relStr = String(relativePath);
-		if (
-			relStr.startsWith("data:") ||
-			relStr.startsWith("http://") ||
-			relStr.startsWith("https://") ||
-			relStr.startsWith("asset:")
-		) {
-			rootStyle.setProperty(property, `url("${relStr}")`);
-			return;
-		}
-		const fullPath = shellPath
-			? `${shellPath}/${relStr.replace(/\\/g, "/")}`
-			: relStr;
-		const url = globalThis.__TAURI__?.core?.convertFileSrc
-			? globalThis.__TAURI__.core.convertFileSrc(fullPath)
-			: fullPath;
-		rootStyle.setProperty(property, `url("${url}")`);
-	};
-
-	const applyAlignment = (alignRaw, prefix) => {
-		const align = String(alignRaw || "").toLowerCase();
-		let pos = "left top";
-		if (align.includes("right") && align.includes("bottom")) {
-			pos = "right bottom";
-		} else if (align.includes("right")) {
-			pos = "right top";
-		} else if (align.includes("center") && align.includes("bottom")) {
-			pos = "center bottom";
-		} else if (align.includes("center")) {
-			pos = "center top";
-		} else if (align.includes("bottom")) {
-			pos = "left bottom";
-		}
-		let repeat = "repeat";
-		if (align.includes("repeat-x") && align.includes("repeat-y")) {
-			repeat = "repeat";
-		} else if (align.includes("repeat-x")) {
-			repeat = "repeat-x";
-		} else if (align.includes("repeat-y")) {
-			repeat = "repeat-y";
-		} else if (align) {
-			repeat = "no-repeat";
-		}
-		rootStyle.setProperty(`--${prefix}-position`, pos);
-		rootStyle.setProperty(`--${prefix}-repeat`, repeat);
-	};
-
-	setImage("--menu-bg-image", theme?.background_bitmap);
-	if (theme?.background_bitmap) {
-		applyAlignment(theme.background_alignment, "menu-bg");
-	} else {
-		rootStyle.removeProperty("--menu-bg-position");
-		rootStyle.removeProperty("--menu-bg-repeat");
-	}
-
-	setImage("--menu-fg-image", theme?.foreground_bitmap);
-	if (theme?.foreground_bitmap) {
-		applyAlignment(theme.foreground_alignment, "menu-fg");
-	} else {
-		rootStyle.removeProperty("--menu-fg-position");
-		rootStyle.removeProperty("--menu-fg-repeat");
-	}
-
-	setImage("--menu-sidebar-image", theme?.sidebar_bitmap);
-	if (theme?.sidebar_bitmap) {
-		const sideAlign = String(theme.sidebar_alignment || "bottom").toLowerCase();
-		rootStyle.setProperty(
-			"--menu-sidebar-position",
-			sideAlign.includes("top") ? "left top" : "left bottom",
-		);
-	} else {
-		rootStyle.removeProperty("--menu-sidebar-position");
-	}
-	document.body.classList.toggle("has-sidebar", Boolean(theme?.sidebar_bitmap));
+	renderSubmenuContent({
+		currentSubmenuType,
+		cachedGhosts,
+		currentGhostName,
+		cachedShells,
+		currentShellName,
+		cachedDressup,
+		dressupScope,
+		cachedBalloons,
+		currentBalloonTheme,
+		cachedRecentGhosts,
+		dispatchSubmenuAction,
+	});
 }
 
 if (isTauriAvailable()) {
@@ -382,14 +90,12 @@ if (isTauriAvailable()) {
 			cachedShells = data.shells || [];
 			currentShellName = data.currentShell;
 			cachedRecentGhosts = data.recentGhosts || [];
-			// 着せ替え (bindgroup) メニューデータの同期
 			if (data.dressup) {
 				cachedDressup = data.dressup;
 			}
 			if (typeof data.scope === "number") {
 				dressupScope = data.scope;
 			}
-			// ゴースト/シェルの descript.txt 由来のメニュー配色を適用
 			const activeShell =
 				data.shells?.find((s) => s.name === data.currentShell) ||
 				data.shells?.[0];
@@ -428,7 +134,6 @@ if (isTauriAvailable()) {
 				: parseInt(event.payload, 10);
 		if (!Number.isNaN(scope)) {
 			dressupScope = scope;
-			// 着せ替えサブメニュー表示中なら新スコープへ切替
 			if (currentSubmenuType === "dressup") {
 				renderContent();
 			}
@@ -448,6 +153,6 @@ globalThis.addEventListener("DOMContentLoaded", () => {
 	}
 	renderContent();
 	if (isTauriAvailable()) {
-		void emit("menu-action", { action: "request-sync" });
+		invoke("notify_submenu_ready").catch(() => {});
 	}
 });

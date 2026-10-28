@@ -77,3 +77,22 @@ body {
 	text-decoration: underline;
 	cursor: pointer;
 }
+
+/* バルーンオプション画像 (arrow.filename, clickwaitmarker.filename 等) */
+.balloon {
+	position: relative;
+}
+
+.balloon::after {
+	content: "";
+	display: var(--balloon-arrow-display, block);
+	position: absolute;
+	bottom: -16px;
+	left: 24px;
+	width: 32px;
+	height: 16px;
+	background-image: var(--balloon-arrow-image, none);
+	background-repeat: no-repeat;
+	background-size: contain;
+	pointer-events: none;
+}

@@ -6,4 +6,4 @@
 
 ## 突合結果
 
-`app-actions.js` の `applyBalloonDescript` にて `--balloon-font-weight: bold` として動的バインド対応済。
+`app-actions.js` の `applyBalloonDescript()` において `props["font.bold"] === "1"`（または `"true"`）を検出し、文書のルート要素に対して `--balloon-font-weight: bold` カスタムプロパティを動的設定する実装が行われている。

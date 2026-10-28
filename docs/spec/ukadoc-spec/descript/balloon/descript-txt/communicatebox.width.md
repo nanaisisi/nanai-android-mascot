@@ -6,4 +6,4 @@
 
 ## 突合結果
 
-`app-actions.js` の `applyBalloonDescript` にて `.communicate-box` の幅指定として動的バインド対応済。
+`app-actions.js` の `applyBalloonDescript()` において `props["communicatebox.width"]` を取得し、ドキュメント内の `.communicate-box` 要素の幅（`style.width = \`\${cbWidth}px\``）として動的に反映される実装が行われている。

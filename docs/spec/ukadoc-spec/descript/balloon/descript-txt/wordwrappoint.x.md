@@ -6,4 +6,4 @@
 
 ## 突合結果
 
-`app-actions.js` の `applyBalloonDescript` にてバルーンの最大幅 (`max-width`) として動的適用対応済。
+`app-actions.js` の `applyBalloonDescript()` において `props["wordwrappoint.x"]` を数値パースし、ドキュメント内の `.balloon` 要素の最大幅（`style.maxWidth = \`\${ww}px\``）として動的適用される実装が行われている。

@@ -22,9 +22,33 @@ export class ModalGhostHandlers {
 		let sortAsc = true;
 		let searchIndex = -1;
 
+		const isStaleUpdateDate = (dateStr) => {
+			if (!dateStr || typeof dateStr !== "string") return false;
+			const normalized = dateStr.trim().replace(" ", "T");
+			const parsed = Date.parse(normalized);
+			if (Number.isNaN(parsed)) return false;
+			const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000;
+			return Date.now() - parsed >= ONE_YEAR_MS;
+		};
 		const format = (value) => value || "—";
+		const updateSortHeaderIndicators = () => {
+			this.manager.content
+				?.querySelectorAll("th[data-sort]")
+				.forEach((header) => {
+					const baseLabel =
+						header.dataset.label ||
+						header.textContent.replace(/ [▲▼]$/, "");
+					header.dataset.label = baseLabel;
+					if (header.dataset.sort === sortKey) {
+						header.textContent = `${baseLabel} ${sortAsc ? "▲" : "▼"}`;
+					} else {
+						header.textContent = baseLabel;
+					}
+				});
+		};
 		const render = () => {
 			if (!rows) return;
+			updateSortHeaderIndicators();
 			const query = String(search?.value || "")
 				.trim()
 				.toLowerCase();
@@ -47,22 +71,33 @@ export class ModalGhostHandlers {
 			rows.innerHTML = "";
 			list.forEach((ghost) => {
 				const tr = document.createElement("tr");
-				tr.className = ghost.name === selected?.name ? "is-selected" : "";
-				tr.innerHTML = [
-					ghost.name,
-					ghost.craftman,
-					ghost.path,
-					ghost.group,
-					ghost.install_date,
-					ghost.update_date,
-					ghost.update_result,
-					ghost.sakura_name,
-					ghost.kero_name,
+				const isSelected = ghost.name === selected?.name;
+				const isStale = isStaleUpdateDate(ghost.update_date);
+				tr.className = [
+					isSelected ? "is-selected" : "",
+					isStale ? "is-stale-update" : "",
 				]
-					.map(
-						(value) =>
-							`<td title="${String(value || "").replaceAll('"', "&quot;")}">${format(value)}</td>`,
-					)
+					.filter(Boolean)
+					.join(" ");
+				const cells = [
+					{ value: ghost.name },
+					{ value: ghost.craftman },
+					{ value: ghost.path },
+					{ value: ghost.group },
+					{ value: ghost.install_date },
+					{ value: ghost.update_date, stale: isStale },
+					{ value: ghost.update_result },
+					{ value: ghost.sakura_name },
+					{ value: ghost.kero_name },
+				];
+				tr.innerHTML = cells
+					.map(({ value, stale }) => {
+						const titleText = stale
+							? `${String(value || "")} (最終更新から1年以上経過)`
+							: String(value || "");
+						const cls = stale ? ' class="is-stale-date"' : "";
+						return `<td${cls} title="${titleText.replaceAll('"', "&quot;")}">${format(value)}</td>`;
+					})
 					.join("");
 				tr.addEventListener("click", () => {
 					selected = ghost;

@@ -51,6 +51,71 @@ fn format_system_time(sys_time: std::time::SystemTime) -> Option<String> {
     Some(format!("{:04}-{:02}-{:02} {:02}:{:02}:{:02}", year, month, day, hours, minutes, seconds))
 }
 
+/// ゴーストディレクトリのインストール日時と更新日時を算出する
+///
+/// - インストール日時: ゴーストディレクトリ自体の作成日時（取得不可なら更新日時）
+/// - 更新日時: `updates2.dau`、`ghost/master/descript.txt`、`ghost/master` 内のファイル群（セーブファイル等を除く）の最新更新日時
+pub fn compute_ghost_dates(path: &std::path::Path) -> (Option<String>, Option<String>) {
+    let mut install_date = None;
+    if let Ok(meta) = std::fs::metadata(path) {
+        let created = meta.created().ok().and_then(format_system_time);
+        let modified = meta.modified().ok().and_then(format_system_time);
+        install_date = created.or(modified);
+    }
+
+    let dau_path = path.join("updates2.dau");
+    let master_dir = path.join("ghost").join("master");
+    let master_desc_path = master_dir.join("descript.txt");
+
+    let mut latest_mtime: Option<std::time::SystemTime> = None;
+    let mut consider = |p: &std::path::Path| {
+        if let Ok(meta) = std::fs::metadata(p)
+            && let Ok(mtime) = meta.modified()
+        {
+            latest_mtime = Some(match latest_mtime {
+                Some(prev) if prev > mtime => prev,
+                _ => mtime,
+            });
+        }
+    };
+
+    consider(&dau_path);
+    consider(&master_desc_path);
+    consider(&path.join("descript.txt"));
+    consider(&path.join("install.txt"));
+
+    if let Ok(entries) = std::fs::read_dir(&master_dir) {
+        for entry in entries.flatten() {
+            let entry_path = entry.path();
+            if entry_path.is_file() {
+                let fname = entry
+                    .file_name()
+                    .to_string_lossy()
+                    .to_ascii_lowercase();
+                // 起動や会話のたびに書き換わる SHIORI セーブデータ・ログ・プロファイルは除外し、
+                // 本来のゴースト定義・辞書・スクリプトの更新日時を反映する
+                let is_runtime_save = fname.ends_with("_variable.cfg")
+                    || fname.ends_with("savedata.txt")
+                    || fname.ends_with("savedata.dat")
+                    || fname.ends_with(".sav")
+                    || fname.ends_with(".log")
+                    || fname.ends_with(".bak")
+                    || fname.ends_with(".tmp")
+                    || fname == "profile";
+                if !is_runtime_save {
+                    consider(&entry_path);
+                }
+            }
+        }
+    }
+
+    let update_date = latest_mtime
+        .and_then(format_system_time)
+        .or_else(|| install_date.clone());
+
+    (install_date, update_date)
+}
+
 /// ゴーストディレクトリをフルスキャンして完全なゴースト情報を取得
 #[tauri::command]
 pub async fn scan_ghost_directory(
@@ -125,28 +190,8 @@ pub async fn scan_ghost_directory(
                             .as_ref()
                             .and_then(|m| m.get("craftmanurl").cloned());
 
-                        let mut install_date = None;
-                        let mut update_date = None;
-
-                        // ゴースト依存の更新日時チェック (updates2.dau や ghost/master/descript.txt を優先)
+                        let (install_date, update_date) = compute_ghost_dates(&path);
                         let dau_path = path.join("updates2.dau");
-                        let master_desc_path = path.join("ghost").join("master").join("descript.txt");
-
-                        if let Ok(meta) = std::fs::metadata(&dau_path) {
-                            update_date = meta.modified().ok().and_then(format_system_time);
-                        }
-                        if update_date.is_none() && let Ok(meta) = std::fs::metadata(&master_desc_path) {
-                            update_date = meta.modified().ok().and_then(format_system_time);
-                        }
-
-                        if let Ok(meta) = std::fs::metadata(&path) {
-                            let created = meta.created().ok().and_then(format_system_time);
-                            let modified = meta.modified().ok().and_then(format_system_time);
-                            install_date = created.or(modified.clone());
-                            if update_date.is_none() {
-                                update_date = modified;
-                            }
-                        }
 
                         let update_result = if dau_path.exists() {
                             Some("OK(0)".to_string())

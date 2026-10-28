@@ -13,9 +13,9 @@ export const ghostTemplates = {
       <table class="explorer-table">
         <thead><tr>
           <th data-sort="name">名前</th><th data-sort="craftman">作者名</th>
-          <th data-sort="path">パス</th><th>グループ</th>
-          <th data-sort="installDate">インストール日時</th><th data-sort="updateDate">更新日時</th>
-          <th>更新結果</th><th data-sort="sakura_name">¥0名</th><th data-sort="kero_name">¥1名</th>
+          <th data-sort="path">パス</th><th data-sort="group">グループ</th>
+          <th data-sort="install_date">インストール日時</th><th data-sort="update_date">更新日時</th>
+          <th data-sort="update_result">更新結果</th><th data-sort="sakura_name">¥0名</th><th data-sort="kero_name">¥1名</th>
         </tr></thead>
         <tbody id="explorer-rows"></tbody>
       </table>

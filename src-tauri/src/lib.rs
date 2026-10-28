@@ -1,14 +1,5 @@
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 use specta_typescript::Typescript;
-use tauri::Emitter;
-use tauri::Manager;
 use tauri_specta::{Builder as SpectaBuilder, collect_commands};
-
-// Desktop専用の機能
-#[cfg(desktop)]
-use tauri::image::Image;
-#[cfg(desktop)]
-use tauri::tray::{TrayIconBuilder, TrayIconEvent};
 
 macro_rules! println {
     ($($arg:tt)*) => {
@@ -24,10 +15,12 @@ macro_rules! eprintln {
 
 mod commands;
 mod common;
+mod events;
 mod fmo;
 mod ghost;
 mod shiori;
 mod sstp;
+mod tray;
 
 use common::*;
 
@@ -67,45 +60,7 @@ pub fn run() {
         .setup(|app| {
             #[cfg(desktop)]
             {
-                let icon = app
-                    .default_window_icon()
-                    .cloned()
-                    .unwrap_or_else(|| Image::new_owned(vec![0, 0, 0, 0], 1, 1));
-                let _tray = TrayIconBuilder::new()
-                    .icon(icon)
-                    .on_tray_icon_event(move |tray, event| {
-                        if let TrayIconEvent::Click {
-                            button: tauri::tray::MouseButton::Left,
-                            button_state: tauri::tray::MouseButtonState::Up,
-                            ..
-                        }
-                        | TrayIconEvent::Click {
-                            button: tauri::tray::MouseButton::Right,
-                            button_state: tauri::tray::MouseButtonState::Up,
-                            ..
-                        }
-                        | TrayIconEvent::DoubleClick { .. } = event
-                        {
-                            let app_handle = tray.app_handle().clone();
-                            tauri::async_runtime::spawn(async move {
-                                let (x, y) = if let Ok(Some(monitor)) = app_handle.primary_monitor()
-                                {
-                                    let size = monitor.size();
-                                    let pos = monitor.position();
-                                    (
-                                        (pos.x + size.width as i32) as f64 - 280.0,
-                                        (pos.y + size.height as i32) as f64 - 620.0,
-                                    )
-                                } else {
-                                    (100.0, 100.0)
-                                };
-                                let _ =
-                                    commands::window::show_menu_window(app_handle, x, y, Some(0))
-                                        .await;
-                            });
-                        }
-                    })
-                    .build(app)?;
+                let _tray = tray::setup_tray(app)?;
 
                 // バルーン・メニュー等の補助ウィンドウを先行キャッシュ（起動時のもたつき解消）
                 let app_handle_preload = app.handle().clone();
@@ -121,87 +76,12 @@ pub fn run() {
 
     #[cfg(desktop)]
     let builder = builder.on_menu_event(move |app_handle, event| {
-        let id = event.id().as_ref();
-        if let Some(ghost_name) = id.strip_prefix("ghost:") {
-            let _ = app_handle.emit(
-                "native-menu-action",
-                serde_json::json!({
-                    "action": "switch-to-ghost",
-                    "payload": ghost_name
-                }),
-            );
-        } else if let Some(shell_name) = id.strip_prefix("shell:") {
-            let _ = app_handle.emit(
-                "native-menu-action",
-                serde_json::json!({
-                    "action": "switch-to-shell",
-                    "payload": shell_name
-                }),
-            );
-        } else if id == "open" || id == "open_menu" {
-            let app_h = app_handle.clone();
-            tauri::async_runtime::spawn(async move {
-                let (x, y) = if let Ok(Some(monitor)) = app_h.primary_monitor() {
-                    let size = monitor.size();
-                    let pos = monitor.position();
-                    (
-                        (pos.x + size.width as i32) as f64 - 280.0,
-                        (pos.y + size.height as i32) as f64 - 620.0,
-                    )
-                } else {
-                    (100.0, 100.0)
-                };
-                let _ = commands::window::show_menu_window(app_h, x, y, Some(0)).await;
-            });
-        } else if id == "close" || id == "exit" {
-            app_handle.exit(0);
-        } else {
-            let _ = app_handle.emit(
-                "native-menu-action",
-                serde_json::json!({
-                    "action": id
-                }),
-            );
-        }
+        events::handle_menu_event(app_handle, event);
     });
 
     builder
         .on_window_event(|window, event| {
-            if let tauri::WindowEvent::Focused(false) = event {
-                let label = window.label().to_string();
-                if label == "menu_window" || label == "submenu_window" {
-                    let app = window.app_handle().clone();
-                    tauri::async_runtime::spawn_blocking(move || {
-                        // フォーカス遷移中の瞬断による誤非表示を防ぐため 150ms 待機
-                        std::thread::sleep(std::time::Duration::from_millis(150));
-                        let menu_focused = app
-                            .get_webview_window("menu_window")
-                            .map(|w| w.is_focused().unwrap_or(false))
-                            .unwrap_or(false);
-                        let sub_focused = app
-                            .get_webview_window("submenu_window")
-                            .map(|w| w.is_focused().unwrap_or(false))
-                            .unwrap_or(false);
-
-                        // メニューとサブメニューの双方が依然フォーカスを持っていない場合のみ非表示化
-                        let state = app.state::<crate::common::AppState>();
-                        let is_dialog_open = *state.is_dialog_open.lock();
-
-                        if !menu_focused && !sub_focused && !is_dialog_open {
-                            if let Some(m) = app.get_webview_window("menu_window")
-                                && m.is_visible().unwrap_or(false)
-                            {
-                                let _ = m.hide();
-                            }
-                            if let Some(s) = app.get_webview_window("submenu_window")
-                                && s.is_visible().unwrap_or(false)
-                            {
-                                let _ = s.hide();
-                            }
-                        }
-                    });
-                }
-            }
+            events::handle_window_event(window, event);
         })
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())

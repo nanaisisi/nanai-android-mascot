@@ -7,3 +7,9 @@
 [submodule "cpp/kawari"]
 	path = cpp/kawari
 	url = https://github.com/ukatech/kawari.git
+[submodule "docs/ukadoc-ssp"]
+	path = docs/ukadoc-ssp
+	url = https://github.com/ukatech/ukadoc-ssp.git
+[submodule "docs/ukadoc-spec"]
+	path = docs/ukadoc-spec
+	url = https://github.com/ukatech/ukadoc-spec.git

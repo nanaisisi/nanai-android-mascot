@@ -271,7 +271,8 @@ pub fn run() {
             commands::ext::scan_headlines,
             shiori::saori::execute_saori,
             fmo::get_fmo_status,
-            sstp::send_sstp_request
+            sstp::send_sstp_request,
+            commands::shiori::send_on_translate
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

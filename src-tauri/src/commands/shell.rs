@@ -68,17 +68,16 @@ fn resolve_shell_dir(
     shell_name: &str,
     app_handle: &tauri::AppHandle,
 ) -> Result<PathBuf, String> {
-    for base in [
-        format!("assets/ghost/{}", ghost_name),
-        format!("ghost/{}", ghost_name),
-    ] {
-        if let Ok(resolved) = resolve_asset_path(&base, app_handle)
-            && resolved.exists()
+    if let Ok(ghost_dir) = resolve_ghost_directory(ghost_name, app_handle) {
+        let dir = ghost_dir.join("shell").join(shell_name);
+        if dir.is_dir() {
+            return Ok(dir);
+        }
+        if let Some(resolved_shell) =
+            nanai_android_mascot_ui::resolve_vfs_path(&ghost_dir.join("shell"), shell_name)
+            && resolved_shell.is_dir()
         {
-            let dir = resolved.join("shell").join(shell_name);
-            if dir.is_dir() {
-                return Ok(dir);
-            }
+            return Ok(resolved_shell);
         }
     }
     Err(format!(
@@ -132,17 +131,7 @@ pub fn parse_surfaces_text(
 
 /// ゴーストディレクトリを解決する（ゴースト名 → 実パス、未検出は None）
 fn resolve_ghost_dir_opt(ghost_name: &str, app_handle: &tauri::AppHandle) -> Option<PathBuf> {
-    for base in [
-        format!("assets/ghost/{}", ghost_name),
-        format!("ghost/{}", ghost_name),
-    ] {
-        if let Ok(resolved) = resolve_asset_path(&base, app_handle)
-            && resolved.is_dir()
-        {
-            return Some(resolved);
-        }
-    }
-    None
+    resolve_ghost_directory(ghost_name, app_handle).ok()
 }
 
 /// ゴーストをアンインストールする（SSP 右クリックメニュー「アンインストール」）

@@ -11,87 +11,80 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
     fallback_name: &str,
     app_handle: &tauri::AppHandle,
 ) -> Result<GhostInfo, String> {
-    // アーカイブ内のinstall.txtまたはdescript.txtを検索してゴースト名を特定
-    let mut ghost_name = String::new();
-    let mut root_prefix = String::new();
-    // install.txt の type 取り込み種別 (ukadoc 準拠: Ghost / Shell / Balloon / Plugin / Supplement)
-    let mut install_type: Option<String> = None;
+    // 1. アーカイブ内の install.txt (最浅階層を最優先) または descript.txt を検索し、
+    //    バンドルバルーンの balloon/install.txt に誤爆しないよう選別する
+    let mut best_install_idx: Option<(usize, usize)> = None; // (depth, index)
+    let mut best_descript_idx: Option<(usize, usize)> = None; // (priority, index)
 
     for i in 0..zip.len() {
         if let Ok(entry) = zip.by_index(i) {
-            let raw_bytes = entry.name_raw();
-            let decoded_name = if let Ok(s) = std::str::from_utf8(raw_bytes) {
-                s.to_string()
-            } else {
-                let (cow, _, _) = encoding_rs::SHIFT_JIS.decode(raw_bytes);
-                cow.into_owned()
-            };
+            let decoded_name = decode_zip_entry_name(entry.name_raw());
             let name = decoded_name.replace('\\', "/");
             let lower = name.to_lowercase();
-            if lower.ends_with("install.txt") || lower.ends_with("descript.txt") {
-                // ファイル内容をShift_JIS / UTF-8で読み取り
-                let mut reader = entry;
-                let mut bytes = Vec::new();
-                use std::io::Read;
-                if reader.read_to_end(&mut bytes).is_ok() {
-                    // 1. UTF-8判定（有効なUTF-8であればUTF-8を優先、不正バイト時のみShift_JIS）
-                    let text = if let Ok(utf8_str) = std::str::from_utf8(&bytes) {
-                        if utf8_str.to_lowercase().contains("charset,shift_jis")
-                            || utf8_str.to_lowercase().contains("charset,sjis")
-                        {
-                            let (sjis_decoded, _, _) = encoding_rs::SHIFT_JIS.decode(&bytes);
-                            sjis_decoded.into_owned()
-                        } else {
-                            utf8_str.to_string()
-                        }
-                    } else {
-                        let (sjis_decoded, _, _) = encoding_rs::SHIFT_JIS.decode(&bytes);
-                        sjis_decoded.into_owned()
-                    };
+            let depth = lower.matches('/').count();
 
-                    for line in text.lines() {
-                        let trimmed = line.trim();
-                        let is_install_txt = lower.ends_with("install.txt");
-                        let mut progress = false;
-                        if ghost_name.is_empty() {
-                            if let Some(val) = trimmed.strip_prefix("name,") {
-                                ghost_name = val.trim().trim_end_matches(',').trim().to_string();
-                                progress = true;
-                            } else if let Some(val) = trimmed.strip_prefix("name:") {
-                                ghost_name = val.trim().trim_end_matches(',').trim().to_string();
-                                progress = true;
-                            }
-                        }
-                        if is_install_txt && install_type.is_none() {
-                            if let Some(val) = trimmed.strip_prefix("type,") {
-                                install_type =
-                                    Some(val.trim().trim_end_matches(',').trim().to_string());
-                                progress = true;
-                            } else if let Some(val) = trimmed.strip_prefix("type:") {
-                                install_type =
-                                    Some(val.trim().trim_end_matches(',').trim().to_string());
-                                progress = true;
-                            }
-                        }
-                        // ゴースト名と (install.txt の場合) 種別の両方が確定したら打ち切り
-                        if progress
-                            && !ghost_name.is_empty()
-                            && (!is_install_txt || install_type.is_some())
-                        {
-                            break;
-                        }
-                    }
+            if lower == "install.txt" || lower.ends_with("/install.txt") {
+                if best_install_idx.is_none_or(|(best_depth, _)| depth < best_depth) {
+                    best_install_idx = Some((depth, i));
                 }
-
-                if lower.ends_with("install.txt") {
-                    if let Some(idx) = name.rfind('/') {
-                        root_prefix = name[..=idx].to_string();
-                    }
-                    if !ghost_name.is_empty() {
-                        break;
-                    }
+            } else if lower == "descript.txt" || lower.ends_with("/descript.txt") {
+                // ghost/master/descript.txt を最優先
+                let prio = if lower.ends_with("ghost/master/descript.txt") {
+                    0
+                } else {
+                    1 + depth
+                };
+                if best_descript_idx.is_none_or(|(best_prio, _)| prio < best_prio) {
+                    best_descript_idx = Some((prio, i));
                 }
             }
+        }
+    }
+
+    let mut ghost_name = String::new();
+    let mut root_prefix = String::new();
+    let mut install_type: Option<String> = None;
+    let mut install_directory: Option<String> = None;
+    let mut balloon_directory: Option<String> = None;
+    let mut balloon_source_directory: Option<String> = None;
+
+    if let Some((_, idx)) = best_install_idx
+        && let Ok(mut entry) = zip.by_index(idx)
+    {
+        let name = decode_zip_entry_name(entry.name_raw()).replace('\\', "/");
+        if let Some(slash_idx) = name.rfind('/') {
+            root_prefix = name[..=slash_idx].to_string();
+        }
+        let map = parse_zip_entry_descript(&mut entry);
+        if let Some(val) = map.get("name") {
+            ghost_name = val.clone();
+        }
+        if let Some(val) = map.get("type") {
+            install_type = Some(val.clone());
+        }
+        if let Some(val) = map.get("directory") {
+            install_directory = Some(val.clone());
+        }
+        if let Some(val) = map.get("balloon.directory") {
+            balloon_directory = Some(val.clone());
+        }
+        if let Some(val) = map.get("balloon.source.directory") {
+            balloon_source_directory = Some(val.clone());
+        }
+    }
+
+    if ghost_name.is_empty()
+        && let Some((_, idx)) = best_descript_idx
+        && let Ok(mut entry) = zip.by_index(idx)
+    {
+        let map = parse_zip_entry_descript(&mut entry);
+        if let Some(val) = map.get("name") {
+            ghost_name = val.clone();
+        }
+        if install_type.is_none()
+            && let Some(val) = map.get("type")
+        {
+            install_type = Some(val.clone());
         }
     }
 
@@ -100,12 +93,19 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
         ghost_name = fallback_name.to_string();
     }
 
-    // install.txt の type 種別を検証 (ukadoc準拠: Ghost / Shell / Balloon / Plugin / Headline / Supplement)
+    // install.txt の type 種別を検証 (ukadoc準拠: Ghost / Shell / Balloon / Plugin / Headline / Supplement / Package)
     let kind = install_type
         .as_deref()
-        .map(str::to_lowercase)
+        .map(|s| s.split(',').next().unwrap_or(s).trim().to_lowercase())
         .unwrap_or_else(|| "ghost".to_string());
-    if kind != "ghost" && kind != "balloon" && kind != "shell" && kind != "plugin" && kind != "headline" {
+    if kind != "ghost"
+        && kind != "balloon"
+        && kind != "shell"
+        && kind != "plugin"
+        && kind != "headline"
+        && kind != "supplement"
+        && kind != "package"
+    {
         let label = install_type.unwrap_or_default();
         return Err(format!(
             "install.txt type={label} ({kind}): サポートされていないアーカイブ種別です"
@@ -113,10 +113,13 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
     }
 
     // サニタイズ（フォルダ名に使用できない文字を除去）
-    let safe_dir_name: String = ghost_name
-        .chars()
-        .map(|c| if r#"\/:*?"<>| "#.contains(c) { '_' } else { c })
-        .collect();
+    // install.txt に directory 指定がある場合は、既存の同名ゴーストフォルダがなければ directory 指定も考慮しつつ安全に生成
+    let raw_dir_name = install_directory
+        .as_deref()
+        .filter(|s| !s.trim().is_empty())
+        .unwrap_or(&ghost_name);
+    let safe_dir_name = sanitize_dir_name(raw_dir_name);
+    let alt_safe_name = sanitize_dir_name(&ghost_name);
 
     let target_base = match kind.as_str() {
         "balloon" => resolve_asset_path("assets/balloon", app_handle)?,
@@ -125,12 +128,41 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
         "headline" => resolve_asset_path("assets/headline", app_handle)?,
         _ => resolve_asset_path("assets/ghost", app_handle)?,
     };
-    let target_dir = target_base.join(&safe_dir_name);
+    // 既に表示名ベースのフォルダが存在する場合はそちらを優先更新し、新規なら directory 指定名を使用
+    let target_dir = if target_base.join(&alt_safe_name).exists() {
+        target_base.join(&alt_safe_name)
+    } else {
+        target_base.join(&safe_dir_name)
+    };
 
     if !target_dir.exists() {
         std::fs::create_dir_all(&target_dir)
             .map_err(|e| format!("Failed to create destination dir: {}", e))?;
     }
+
+    // 同梱バルーン (balloon.directory / balloon.source.directory) の展開設定
+    let bundled_balloon = if kind == "ghost" || kind == "package" {
+        if let Some(ref b_dir) = balloon_directory {
+            let src_dir = balloon_source_directory
+                .as_deref()
+                .unwrap_or(b_dir.as_str())
+                .trim_matches('/')
+                .to_string();
+            let dest_name = sanitize_dir_name(b_dir);
+            if !src_dir.is_empty() && !dest_name.is_empty() {
+                let balloon_base = resolve_asset_path("assets/balloon", app_handle)?;
+                let balloon_dest = balloon_base.join(&dest_name);
+                std::fs::create_dir_all(&balloon_dest).ok();
+                Some((format!("{src_dir}/"), balloon_dest))
+            } else {
+                None
+            }
+        } else {
+            None
+        }
+    } else {
+        None
+    };
 
     // アーカイブを展開
     for i in 0..zip.len() {
@@ -138,13 +170,7 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
             .by_index(i)
             .map_err(|e| format!("Failed to read archive entry #{}: {}", i, e))?;
 
-        let raw_bytes = entry.name_raw();
-        let decoded_name = if let Ok(s) = std::str::from_utf8(raw_bytes) {
-            s.to_string()
-        } else {
-            let (cow, _, _) = encoding_rs::SHIFT_JIS.decode(raw_bytes);
-            cow.into_owned()
-        };
+        let decoded_name = decode_zip_entry_name(entry.name_raw());
         let entry_name = decoded_name.replace('\\', "/");
 
         // root_prefixの除去
@@ -158,10 +184,25 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
             continue;
         }
 
+        // 同梱バルーンのディレクトリ配下なら assets/balloon/<balloon.directory> へ振り分け展開
+        let (active_target_dir, active_rel_path) =
+            if let Some((ref src_prefix, ref balloon_dest)) = bundled_balloon
+                && relative_path.len() >= src_prefix.len()
+                && relative_path[..src_prefix.len()].eq_ignore_ascii_case(src_prefix)
+            {
+                let sub = &relative_path[src_prefix.len()..];
+                if sub.is_empty() {
+                    continue;
+                }
+                (balloon_dest, sub)
+            } else {
+                (&target_dir, relative_path)
+            };
+
         // パストラバーサル防止 (Zip Slip)
-        let out_path = target_dir.join(relative_path);
+        let out_path = active_target_dir.join(active_rel_path);
         let normalized = normalize_path(&out_path);
-        if !normalized.starts_with(&target_dir) {
+        if !normalized.starts_with(active_target_dir) {
             return Err(format!("Illegal path in archive: {}", entry_name));
         }
 
@@ -237,6 +278,56 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
         update_date,
         update_result: Some("正常 (インストール済)".to_string()),
     })
+}
+
+fn decode_zip_entry_name(raw_bytes: &[u8]) -> String {
+    if let Ok(s) = std::str::from_utf8(raw_bytes) {
+        s.to_string()
+    } else {
+        let (cow, _, _) = encoding_rs::SHIFT_JIS.decode(raw_bytes);
+        cow.into_owned()
+    }
+}
+
+fn parse_zip_entry_descript(entry: &mut impl std::io::Read) -> std::collections::HashMap<String, String> {
+    let mut map = std::collections::HashMap::new();
+    let mut bytes = Vec::new();
+    if entry.read_to_end(&mut bytes).is_err() {
+        return map;
+    }
+    let text = if let Ok(utf8_str) = std::str::from_utf8(&bytes) {
+        let lower = utf8_str.to_lowercase();
+        if lower.contains("charset,shift_jis") || lower.contains("charset,sjis") {
+            let (sjis_decoded, _, _) = encoding_rs::SHIFT_JIS.decode(&bytes);
+            sjis_decoded.into_owned()
+        } else {
+            utf8_str.to_string()
+        }
+    } else {
+        let (sjis_decoded, _, _) = encoding_rs::SHIFT_JIS.decode(&bytes);
+        sjis_decoded.into_owned()
+    };
+
+    for line in text.lines() {
+        let trimmed = line.trim().trim_start_matches('\u{feff}');
+        if trimmed.is_empty() || trimmed.starts_with("//") || trimmed.starts_with('#') {
+            continue;
+        }
+        if let Some((key, val)) = trimmed.split_once(',').or_else(|| trimmed.split_once(':')) {
+            let k = key.trim().to_lowercase();
+            let v = val.trim().trim_end_matches(',').trim().to_string();
+            if !k.is_empty() && !v.is_empty() {
+                map.insert(k, v);
+            }
+        }
+    }
+    map
+}
+
+fn sanitize_dir_name(raw: &str) -> String {
+    raw.chars()
+        .map(|c| if r#"\/:*?"<>| "#.contains(c) { '_' } else { c })
+        .collect()
 }
 
 fn zip_datetime_to_system_time(dt: zip::DateTime) -> Option<std::time::SystemTime> {

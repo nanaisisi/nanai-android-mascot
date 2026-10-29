@@ -21,8 +21,12 @@ const getEl = (id) => {
 						{
 							getAttribute: (a) => a === "data-choice-id" ? "choice1" : null,
 							textContent: "Choice1",
-							addEventListener(t, cb) { this._cb = cb; },
-							click() { this._cb?.({ stopPropagation() {} }); },
+							addEventListener(t, cb) {
+								this._cb = cb;
+							},
+							click() {
+								this._cb?.({ stopPropagation() {} });
+							},
 						},
 					];
 				}
@@ -30,8 +34,12 @@ const getEl = (id) => {
 					return [
 						{
 							getAttribute: (a) => a === "data-anchor-id" ? "anchor1" : null,
-							addEventListener(t, cb) { this._cb = cb; },
-							click() { this._cb?.({ stopPropagation() {} }); },
+							addEventListener(t, cb) {
+								this._cb = cb;
+							},
+							click() {
+								this._cb?.({ stopPropagation() {} });
+							},
 						},
 					];
 				}
@@ -41,32 +49,49 @@ const getEl = (id) => {
 				this._listeners = this._listeners || {};
 				this._listeners[t] = cb;
 			},
-			click() { this._listeners?.click?.({}); },
-			mousedown() { this._listeners?.mousedown?.({ button: 0 }); },
-			mouseup() { this._listeners?.mouseup?.(); },
+			click() {
+				this._listeners?.click?.({});
+			},
+			mousedown() {
+				this._listeners?.mousedown?.({ button: 0 });
+			},
+			mouseup() {
+				this._listeners?.mouseup?.();
+			},
 		};
 	}
 	return elements[id];
 };
 
+const docListeners = {};
 globalThis.document = {
 	documentElement: { style: { setProperty() {} }, setAttribute() {} },
 	body: { style: {} },
-	getElementById(id) { return getEl(id); },
-	readyState: "complete",
-	addEventListener() {},
+	getElementById(id) {
+		return getEl(id);
+	},
+	readyState: "loading",
+	addEventListener(type, cb) {
+		docListeners[type] = cb;
+	},
 };
 
 globalThis.__TAURI_INTERNALS__ = {
-	metadata: { currentWindow: { label: "balloon_window_0", startDragging: async () => {} } },
-	invoke: async (cmd, args) => {
+	metadata: {
+		currentWindow: { label: "balloon_window_0", startDragging: async () => {} },
+	},
+	invoke: async (cmd, _args) => {
 		if (cmd === "balloon_manifest") {
 			return {
 				dpi: "120",
 				"font.name": "Meiryo",
 				"font.height": "12",
-				"font.color": "#000",
-				"cursor.font.color": "#fff",
+				"font.color.r": "100",
+				"font.color.g": "150",
+				"font.color.b": "200",
+				"cursor.font.color.r": "50",
+				"cursor.font.color.g": "50",
+				"cursor.font.color.b": "50",
 				"validrect.left": "10",
 				"validrect.top": "10",
 				"validrect.right": "10",
@@ -95,6 +120,9 @@ globalThis.__TAURI_INTERNALS__ = {
 await import("../ui/js/ghost/balloon-window.js");
 
 test("balloon-window covers interactive elements, theme/manifest loading, and Tauri scale/drag events", async () => {
+	// Trigger DOMContentLoaded listener
+	docListeners.DOMContentLoaded?.();
+
 	const balloonBox = getEl("balloon-box");
 	const balloonText = getEl("balloon-text");
 
@@ -106,7 +134,10 @@ test("balloon-window covers interactive elements, theme/manifest loading, and Ta
 	// 2. Test update-balloon-content-0 listener
 	if (listenHandlers["update-balloon-content-0"]) {
 		await listenHandlers["update-balloon-content-0"]({
-			payload: { html: '<button class="balloon-choice-btn" data-choice-id="choice1">Choice1</button><a class="balloon-anchor" data-anchor-id="anchor1">Anchor1</a>', theme: "ivory" },
+			payload: {
+				html: '<button class="balloon-choice-btn" data-choice-id="choice1">Choice1</button><a class="balloon-anchor" data-anchor-id="anchor1">Anchor1</a>',
+				theme: "ivory",
+			},
 		});
 	}
 
@@ -119,14 +150,22 @@ test("balloon-window covers interactive elements, theme/manifest loading, and Ta
 
 	// 3. Test balloon-theme-changed listener
 	if (listenHandlers["balloon-theme-changed"]) {
-		await listenHandlers["balloon-theme-changed"]({ payload: { theme: "dark" } });
+		await listenHandlers["balloon-theme-changed"]({
+			payload: { theme: "dark" },
+		});
 	}
 
 	// 4. Test balloon-scale-changed listener
 	if (listenHandlers["balloon-scale-changed"]) {
-		await listenHandlers["balloon-scale-changed"]({ payload: { userScale: 1.5 } });
+		await listenHandlers["balloon-scale-changed"]({
+			payload: { userScale: 1.5 },
+		});
 	}
 
+	// 5. Test Non-Tauri environment early return
+	delete globalThis.__TAURI__;
 	delete globalThis.__TAURI_INTERNALS__;
+	docListeners.DOMContentLoaded?.();
+
 	assert.ok(true);
 });

@@ -174,9 +174,14 @@ export const updateMethods = {
 					failedFile = filePath;
 				}
 			};
-			const unlisten = isTauriAvailable()
-				? await listen("update-progress", progressHandler)
-				: null;
+			let unlisten = null;
+			if (isTauriAvailable()) {
+				try {
+					unlisten = await listen("update-progress", progressHandler);
+				} catch (_) {
+					// 進捗リスナーの登録失敗時は無効化して続行
+				}
+			}
 
 			try {
 				// 5. 更新実行
@@ -232,7 +237,13 @@ export const updateMethods = {
 					);
 				}
 			} finally {
-				unlisten?.();
+				if (typeof unlisten === "function") {
+					try {
+						await unlisten();
+					} catch (_) {
+						// イベントリスナーの解除エラーは安全に無視
+					}
+				}
 			}
 		} catch (err) {
 			console.error("ネットワーク更新エラー:", err);

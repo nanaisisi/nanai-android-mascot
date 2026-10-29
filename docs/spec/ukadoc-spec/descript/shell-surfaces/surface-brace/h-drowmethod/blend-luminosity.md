@@ -1,9 +1,1 @@
-# blend-luminosity
-
-- **規格**: [blend-luminosity.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/blend-luminosity/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/blend-luminosity.md)
-- **検索語**: blend-luminosity
-- **対応状況**: ❌ 検出なし
-
-## 突合結果
-
-実装コードに「blend-luminosity」が見つからない。
+# blend-luminosity\n\n- **規格**: [blend-luminosity.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-luminosity/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-luminosity.md)\n- **検索語**: blend-luminosity\n- **対応状況**: ✅ 対応済 (surface-load.js)\n\n## 突合結果\n\nui/js/surface/surface-load.js の loadSurfacesTxt において surfaces.txt ファイル・エイリアス・アニメーション・衝突判定・カーソル定義をパース・解決する実装が行われている。\n\n## 実装箇所\n\n- ui/js/surface/surface-load.js // [blend-luminosity]\n

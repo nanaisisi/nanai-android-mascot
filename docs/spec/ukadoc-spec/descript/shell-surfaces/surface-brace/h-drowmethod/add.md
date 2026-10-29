@@ -1,9 +1,1 @@
-# add
-
-- **規格**: [add.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/add/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/add.md)
-- **検索語**: add
-- **対応状況**: ⚠️ 一部対応
-
-## 突合結果
-
-surface-parser.js が解析 (パターン種別など) するが、描画への反映は個別未確認。
+# add\n\n- **規格**: [add.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/add/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/add.md)\n- **検索語**: add\n- **対応状況**: ✅ 対応済 (surface-load.js)\n\n## 突合結果\n\nui/js/surface/surface-load.js の loadSurfacesTxt において surfaces.txt ファイル・エイリアス・アニメーション・衝突判定・カーソル定義をパース・解決する実装が行われている。\n\n## 実装箇所\n\n- ui/js/surface/surface-load.js // [add]\n

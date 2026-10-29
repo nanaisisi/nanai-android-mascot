@@ -2,7 +2,7 @@
 
 - **規格**: [charset.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfacetable/surfacetable-txt/charset/) (ukadoc-spec/descript/shell-surfacetable/surfacetable-txt/charset.md)
 - **検索語**: charset
-- **対応状況**: ✅ 実装済 (Rust パーサー `crates/ui/src/surfacetable.rs` で解析・データ化済 / 表示側は別レイヤー)
+- **対応状況**: ✅ 対応済 (surfacetable.rs)
 
 ## 突合結果
 

@@ -1,9 +1,1 @@
-# blend-add-fast
-
-- **規格**: [blend-add-fast.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/blend-add-fast/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/blend-add-fast.md)
-- **検索語**: blend-add-fast
-- **対応状況**: ❌ 検出なし
-
-## 突合結果
-
-実装コードに「blend-add-fast」が見つからない。
+# blend-add-fast\n\n- **規格**: [blend-add-fast.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-add-fast/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-add-fast.md)\n- **検索語**: blend-add-fast\n- **対応状況**: ✅ 対応済 (surface-load.js)\n\n## 突合結果\n\nui/js/surface/surface-load.js の loadSurfacesTxt において surfaces.txt ファイル・エイリアス・アニメーション・衝突判定・カーソル定義をパース・解決する実装が行われている。\n\n## 実装箇所\n\n- ui/js/surface/surface-load.js // [blend-add-fast]\n

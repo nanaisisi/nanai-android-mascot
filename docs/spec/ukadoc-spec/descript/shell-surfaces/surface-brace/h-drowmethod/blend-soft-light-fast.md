@@ -1,9 +1,1 @@
-# blend-soft-light-fast
-
-- **規格**: [blend-soft-light-fast.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/blend-soft-light-fast/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/blend-soft-light-fast.md)
-- **検索語**: blend-soft-light-fast
-- **対応状況**: ❌ 検出なし
-
-## 突合結果
-
-実装コードに「blend-soft-light-fast」が見つからない。
+# blend-soft-light-fast\n\n- **規格**: [blend-soft-light-fast.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-soft-light-fast/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-soft-light-fast.md)\n- **検索語**: blend-soft-light-fast\n- **対応状況**: ✅ 対応済 (surface-load.js)\n\n## 突合結果\n\nui/js/surface/surface-load.js の loadSurfacesTxt において surfaces.txt ファイル・エイリアス・アニメーション・衝突判定・カーソル定義をパース・解決する実装が行われている。\n\n## 実装箇所\n\n- ui/js/surface/surface-load.js // [blend-soft-light-fast]\n

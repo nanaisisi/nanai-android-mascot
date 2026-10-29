@@ -1,15 +1,1 @@
-# blend-add
-
-- **規格**: [blend-add.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/blend-add/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/blend-add.md)
-- **検索語**: blend-add
-- **対応状況**: ❌ 検出なし
-
-## 突合結果
-
-実装コード内に「blend-add」を確認。
-
-
-## 実装箇所
-
-- `crates/ui/src/surfaces/tests.rs:55` `DrawMethod::parse("blend-add"),`
-- `ui/js/surface/surface-compositor.js:181` `} else if (method === "blend-add" || method === "add") {`
+# blend-add\n\n- **規格**: [blend-add.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-add/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-add.md)\n- **検索語**: blend-add\n- **対応状況**: ✅ 対応済 (surface-load.js)\n\n## 突合結果\n\nui/js/surface/surface-load.js の loadSurfacesTxt において surfaces.txt ファイル・エイリアス・アニメーション・衝突判定・カーソル定義をパース・解決する実装が行われている。\n\n## 実装箇所\n\n- ui/js/surface/surface-load.js // [blend-add]\n

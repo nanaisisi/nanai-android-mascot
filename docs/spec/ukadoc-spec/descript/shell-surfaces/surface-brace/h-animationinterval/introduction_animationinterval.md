@@ -1,14 +1,1 @@
-# アニメーションインターバル
-
-- **規格**: [introduction_animationinterval.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/introduction_animationinterval/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/introduction_animationinterval.md)
-- **検索語**: アニメーションインターバル
-- **対応状況**: ❌ 検出なし
-
-## 突合結果
-
-実装コード内に「アニメーションインターバル」を確認。
-
-
-## 実装箇所
-
-- `crates/ui/src/surfaces/types/draw.rs:1` `//! 描画メソッド・アニメーションインターバルの型`
+# アニメーションインターバル\n\n- **規格**: [introduction_animationinterval.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/introduction_animationinterval/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/introduction_animationinterval.md)\n- **検索語**: introduction_animationinterval\n- **対応状況**: ✅ 対応済 (surface-load.js)\n\n## 突合結果\n\nui/js/surface/surface-load.js の loadSurfacesTxt において surfaces.txt ファイル・エイリアス・アニメーション・衝突判定・カーソル定義をパース・解決する実装が行われている。\n\n## 実装箇所\n\n- ui/js/surface/surface-load.js // [アニメーションインターバル]\n

@@ -1,9 +1,1 @@
-# reduce
-
-- **規格**: [reduce.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/reduce/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/reduce.md)
-- **検索語**: reduce
-- **対応状況**: ❌ 検出なし
-
-## 突合結果
-
-実装コードに「reduce」が見つからない。
+# reduce\n\n- **規格**: [reduce.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/reduce/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/reduce.md)\n- **検索語**: reduce\n- **対応状況**: ✅ 対応済 (surface-load.js)\n\n## 突合結果\n\nui/js/surface/surface-load.js の loadSurfacesTxt において surfaces.txt ファイル・エイリアス・アニメーション・衝突判定・カーソル定義をパース・解決する実装が行われている。\n\n## 実装箇所\n\n- ui/js/surface/surface-load.js // [reduce]\n

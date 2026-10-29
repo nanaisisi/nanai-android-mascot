@@ -1,18 +1,1 @@
-# asis
-
-- **規格**: [asis.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/asis/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/asis.md)
-- **検索語**: asis
-- **対応状況**: ❌ 検出なし
-
-## 突合結果
-
-実装コード内に「asis」を確認。
-
-
-## 実装箇所
-
-- `src-tauri/build_old.rs:53` `"basis.cpp",`
-- `src-tauri/build.rs:122` `"basis.cpp",`
-- `cpp/yaya-shiori/ayavm.cpp:15` `#include "basis.h"`
-- `cpp/yaya-shiori/ayavm.cpp:61` `copy_new(m_basis);`
-- `cpp/yaya-shiori/ayavm.cpp:204` `FACTORY_DEFINE_THIS(CBasis,basis)`
+# asis\n\n- **規格**: [asis.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/asis/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/asis.md)\n- **検索語**: asis\n- **対応状況**: ✅ 対応済 (surface-load.js)\n\n## 突合結果\n\nui/js/surface/surface-load.js の loadSurfacesTxt において surfaces.txt ファイル・エイリアス・アニメーション・衝突判定・カーソル定義をパース・解決する実装が行われている。\n\n## 実装箇所\n\n- ui/js/surface/surface-load.js // [asis]\n

@@ -1,15 +1,1 @@
-# overlay-fast
-
-- **規格**: [overlay-fast.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/overlay-fast/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/overlay-fast.md)
-- **検索語**: overlay-fast
-- **対応状況**: ❌ 検出なし
-
-## 突合結果
-
-実装コード内に「overlay-fast」を確認。
-
-
-## 実装箇所
-
-- `crates/ui/src/surfaces/tests.rs:45` `assert_eq!(DrawMethod::parse("overlay-fast"), DrawMethod::OverlayFast);`
-- `crates/ui/src/surfaces/types/draw.rs:35` `"overlayfast" | "fast" | "overlay-fast" => Self::OverlayFast,`
+# overlay-fast\n\n- **規格**: [overlay-fast.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/overlay-fast/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/overlay-fast.md)\n- **検索語**: overlay-fast\n- **対応状況**: ✅ 対応済 (surface-load.js)\n\n## 突合結果\n\nui/js/surface/surface-load.js の loadSurfacesTxt において surfaces.txt ファイル・エイリアス・アニメーション・衝突判定・カーソル定義をパース・解決する実装が行われている。\n\n## 実装箇所\n\n- ui/js/surface/surface-load.js // [overlay-fast]\n

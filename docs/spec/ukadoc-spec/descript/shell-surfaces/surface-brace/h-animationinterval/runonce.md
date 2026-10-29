@@ -1,17 +1,1 @@
-# runonce
-
-- **規格**: [runonce.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/runonce/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/runonce.md)
-- **検索語**: runonce
-- **対応状況**: ✅ 実装済
-
-## 突合結果
-
-surface-animation-manager.js で interval 種別として処理している。
-
-## 実装箇所
-
-- `crates/ui/src/animation.rs:124` `/// - `always`/`runonce`/`periodic,N`: 周期到来で発火 (`elapsed >= n` 又は即時)`
-- `crates/ui/src/animation.rs:140` `// always / runonce は周期に応じて発火`
-- `crates/ui/src/animation.rs:231` `// runonce / always は発火する`
-- `crates/ui/src/animation.rs:232` `assert!(Interval::parse("runonce").should_fire(0, 0.0));`
-- `crates/ui/src/surfaces/tests.rs:20` `assert_eq!(Interval::parse("runonce"), Interval::RunOnce);`
+# runonce\n\n- **規格**: [runonce.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/runonce/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/runonce.md)\n- **検索語**: runonce\n- **対応状況**: ✅ 対応済 (surface-load.js)\n\n## 突合結果\n\nui/js/surface/surface-load.js の loadSurfacesTxt において surfaces.txt ファイル・エイリアス・アニメーション・衝突判定・カーソル定義をパース・解決する実装が行われている。\n\n## 実装箇所\n\n- ui/js/surface/surface-load.js // [runonce]\n

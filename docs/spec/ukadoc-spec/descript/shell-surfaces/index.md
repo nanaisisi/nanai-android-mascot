@@ -12,7 +12,9 @@
 
 | カテゴリ / 規格ファイル | 概要・対象領域 | 対応状況 | 関連実装コード |
 | :--- | :--- | :---: | :--- |
-| **[descript-brace 仕様項目一覧](descript-brace/index.md)** | `version`, `maxsurface` 等サーフィス全般定義 | ✅ 対応済 (100%) | `src-tauri/src/ghost/scan/shell.rs`, `ui/js/surface/surface-load.js` |
+| **[surfaces.txt または surfaces\*\*.txt(SSPのみ)](file/index.md)** | `surfaces.txt` ファイル・エンコーディング仕様 | ✅ 対応済 (100%) | `ui/js/surface/surface-load.js` |
+| **[descriptブレス](descript-brace/index.md)** | `version`, `maxsurface` 等サーフィス全般定義 | ✅ 対応済 (100%) | `src-tauri/src/ghost/scan/shell.rs`, `ui/js/surface/surface-load.js` |
 | **[surface-alias-brace 仕様項目一覧](surface-alias-brace/index.md)** | サーフィスエイリアス定義 (`surface.alias`) | ✅ 対応済 (100%) | `ui/js/surface/surface-load.js` |
 | **[surface-brace 仕様項目一覧](surface-brace/index.md)** | アニメーションインターバル・描画メソッド定義 | ✅ 対応済 (100%) | `ui/js/surface/surface-load.js` |
+| **[cursorブレス](cursor-brace/index.md)** | カーソルイベントブレース定義 | ✅ 対応済 (100%) | `ui/js/surface/surface-load.js` |
 | **[tooltip-brace 仕様項目一覧](tooltip-brace/index.md)** | サーフィスツールチップ定義 | ✅ 対応済 (100%) | `ui/js/surface/surface-load.js` |

@@ -12,4 +12,4 @@
 
 | カテゴリ / 規格ファイル | 概要・対象領域 | 対応状況 | 関連実装コード |
 | :--- | :--- | :---: | :--- |
-| **[surfacetable.txt 仕様項目一覧](surfacetable-txt/index.md)** | バージョン、オプション定義 | ✅ 対応済 (100%) | `ui/js/surface/surface-load.js` |
+| **[surfacetable.txt 仕様項目一覧](surfacetable-txt/index.md)** | バージョン、オプション定義 | ✅ 対応済 (100%) | `crates/ui/src/surfacetable.rs` |

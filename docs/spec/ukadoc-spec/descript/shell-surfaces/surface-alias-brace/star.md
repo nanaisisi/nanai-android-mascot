@@ -1,9 +1,13 @@
-﻿# \*,\[\*\]
+﻿# *（任意のエイリアス名）
 
 - **規格**: [star.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-alias-brace/star/) (ukadoc-spec/descript/shell-surfaces/surface-alias-brace/star.md)
-- **検索語**: \*,\[\*\]
-- **対応状況**: ⚠️ 一部対応 (Rust パーサー `crates/ui/src/surfaces.rs` で解析・データ化実装済 / 描画・実行への反映は別レイヤー)
+- **検索語**: *
+- **対応状況**: ✅ 対応済 (surface-load.js)
 
 ## 突合結果
 
-実装コードに「\*,\[\*\]」が見つからない。
+`ui/js/surface/surface-load.js` において、`surfaces.txt` 内の任意のエイリアス定義キーと配列解決を行う実装が行われている。
+
+## 実装箇所
+
+- `ui/js/surface/surface-load.js` `// [*（任意のエイリアス名）]`

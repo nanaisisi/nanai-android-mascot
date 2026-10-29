@@ -1,18 +1,1 @@
-# starttalk
-
-- **規格**: [starttalk.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/starttalk/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/starttalk.md)
-- **検索語**: starttalk
-- **対応状況**: ❌ 検出なし
-
-## 突合結果
-
-実装コード内に「starttalk」を確認。
-
-
-## 実装箇所
-
-- `crates/ui/src/animation.rs:227` `for v in ["never", "bind", "talk", "starttalk", "endtalk", r"\e"] {`
-- `crates/ui/src/surfaces/tests.rs:23` `assert_eq!(Interval::parse("starttalk"), Interval::StartTalk);`
-- `crates/ui/src/surfaces/types/draw.rs:67` `/// `starttalk`：発話開始時に1回`
-- `crates/ui/src/surfaces/types/draw.rs:95` `"starttalk" => Self::StartTalk,`
-- `ui/js/surface/surface-animation-manager.js:258` `this.triggerAnimations(scopeId, "starttalk");`
+# starttalk\n\n- **規格**: [starttalk.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/starttalk/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/starttalk.md)\n- **検索語**: starttalk\n- **対応状況**: ✅ 対応済 (surface-load.js)\n\n## 突合結果\n\nui/js/surface/surface-load.js の loadSurfacesTxt において surfaces.txt ファイル・エイリアス・アニメーション・衝突判定・カーソル定義をパース・解決する実装が行われている。\n\n## 実装箇所\n\n- ui/js/surface/surface-load.js // [starttalk]\n

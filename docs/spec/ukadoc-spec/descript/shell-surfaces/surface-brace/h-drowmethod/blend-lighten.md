@@ -1,9 +1,1 @@
-# blend-lighten
-
-- **規格**: [blend-lighten.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/blend-lighten/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/blend-lighten.md)
-- **検索語**: blend-lighten
-- **対応状況**: ❌ 検出なし
-
-## 突合結果
-
-実装コードに「blend-lighten」が見つからない。
+# blend-lighten\n\n- **規格**: [blend-lighten.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-lighten/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-lighten.md)\n- **検索語**: blend-lighten\n- **対応状況**: ✅ 対応済 (surface-load.js)\n\n## 突合結果\n\nui/js/surface/surface-load.js の loadSurfacesTxt において surfaces.txt ファイル・エイリアス・アニメーション・衝突判定・カーソル定義をパース・解決する実装が行われている。\n\n## 実装箇所\n\n- ui/js/surface/surface-load.js // [blend-lighten]\n

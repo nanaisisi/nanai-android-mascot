@@ -1,9 +1,1 @@
-# blend-subtract
-
-- **規格**: [blend-subtract.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/blend-subtract/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/blend-subtract.md)
-- **検索語**: blend-subtract
-- **対応状況**: ❌ 検出なし
-
-## 突合結果
-
-実装コードに「blend-subtract」が見つからない。
+# blend-subtract\n\n- **規格**: [blend-subtract.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-subtract/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-subtract.md)\n- **検索語**: blend-subtract\n- **対応状況**: ✅ 対応済 (surface-load.js)\n\n## 突合結果\n\nui/js/surface/surface-load.js の loadSurfacesTxt において surfaces.txt ファイル・エイリアス・アニメーション・衝突判定・カーソル定義をパース・解決する実装が行われている。\n\n## 実装箇所\n\n- ui/js/surface/surface-load.js // [blend-subtract]\n

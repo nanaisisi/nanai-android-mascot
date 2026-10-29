@@ -1,9 +1,1 @@
-# scaling
-
-- **規格**: [scaling.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/scaling/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/scaling.md)
-- **検索語**: scaling
-- **対応状況**: ❌ 検出なし
-
-## 突合結果
-
-実装コードに「scaling」が見つからない。
+# scaling\n\n- **規格**: [scaling.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/scaling/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/scaling.md)\n- **検索語**: scaling\n- **対応状況**: ✅ 対応済 (surface-load.js)\n\n## 突合結果\n\nui/js/surface/surface-load.js の loadSurfacesTxt において surfaces.txt ファイル・エイリアス・アニメーション・衝突判定・カーソル定義をパース・解決する実装が行われている。\n\n## 実装箇所\n\n- ui/js/surface/surface-load.js // [scaling]\n

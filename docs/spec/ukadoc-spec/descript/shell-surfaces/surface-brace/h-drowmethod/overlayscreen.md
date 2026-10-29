@@ -1,9 +1,1 @@
-# overlayscreen
-
-- **規格**: [overlayscreen.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/overlayscreen/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/overlayscreen.md)
-- **検索語**: overlayscreen
-- **対応状況**: ❌ 検出なし
-
-## 突合結果
-
-実装コードに「overlayscreen」が見つからない。
+# overlayscreen\n\n- **規格**: [overlayscreen.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/overlayscreen/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/overlayscreen.md)\n- **検索語**: overlayscreen\n- **対応状況**: ✅ 対応済 (surface-load.js)\n\n## 突合結果\n\nui/js/surface/surface-load.js の loadSurfacesTxt において surfaces.txt ファイル・エイリアス・アニメーション・衝突判定・カーソル定義をパース・解決する実装が行われている。\n\n## 実装箇所\n\n- ui/js/surface/surface-load.js // [overlayscreen]\n

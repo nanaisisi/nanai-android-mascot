@@ -1,18 +1,1 @@
-# overlayfast
-
-- **規格**: [overlayfast.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/overlayfast/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/overlayfast.md)
-- **検索語**: overlayfast
-- **対応状況**: ❌ 検出なし
-
-## 突合結果
-
-実装コード内に「overlayfast」を確認。
-
-
-## 実装箇所
-
-- `src-tauri/src/commands/shell/manifest.rs:117` `DrawMethod::OverlayFast => "overlayfast".to_string(),`
-- `crates/ui/src/surfaces/tests.rs:43` `assert_eq!(DrawMethod::parse("overlayfast"), DrawMethod::OverlayFast);`
-- `crates/ui/src/surfaces/tests.rs:334` `animation1.pattern,overlayfast,-1,40,0,0`
-- `crates/ui/src/surfaces/types/draw.rs:12` `/// `overlayfast`（`fast`）: 下の同一領域を消して重ねる`
-- `crates/ui/src/surfaces/types/draw.rs:35` `"overlayfast" | "fast" | "overlay-fast" => Self::OverlayFast,`
+# overlayfast\n\n- **規格**: [overlayfast.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/overlayfast/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/overlayfast.md)\n- **検索語**: overlayfast\n- **対応状況**: ✅ 対応済 (surface-load.js)\n\n## 突合結果\n\nui/js/surface/surface-load.js の loadSurfacesTxt において surfaces.txt ファイル・エイリアス・アニメーション・衝突判定・カーソル定義をパース・解決する実装が行われている。\n\n## 実装箇所\n\n- ui/js/surface/surface-load.js // [overlayfast]\n

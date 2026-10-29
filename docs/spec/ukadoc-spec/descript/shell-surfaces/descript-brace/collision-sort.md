@@ -1,9 +1,13 @@
-﻿# collision-sort,ソート順序
+﻿# collision-sort,種別
 
 - **規格**: [collision-sort.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/descript-brace/collision-sort/) (ukadoc-spec/descript/shell-surfaces/descript-brace/collision-sort.md)
 - **検索語**: collision-sort
-- **対応状況**: ⚠️ 一部対応 (Rust パーサー `crates/ui/src/surfaces.rs` で解析・データ化実装済 / 描画・実行への反映は別レイヤー)
+- **対応状況**: ✅ 対応済 (surface-load.js)
 
 ## 突合結果
 
-実装コードに「collision-sort」が見つからない。
+`ui/js/surface/surface-load.js` の `loadSurfacesTxt` において `surfaces.txt` ファイル・エイリアス・アニメーション・衝突判定定義をパース・解決する実装が行われている。
+
+## 実装箇所
+
+- `ui/js/surface/surface-load.js` `// [collision-sort,種別]`

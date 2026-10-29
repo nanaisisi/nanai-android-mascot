@@ -1,14 +1,1 @@
-# blend-overlay
-
-- **規格**: [blend-overlay.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/blend-overlay/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-drowmethod/blend-overlay.md)
-- **検索語**: blend-overlay
-- **対応状況**: ❌ 検出なし
-
-## 突合結果
-
-実装コード内に「blend-overlay」を確認。
-
-
-## 実装箇所
-
-- `ui/js/surface/surface-compositor.js:179` `} else if (method === "blend-overlay" || method === "blend-softlight") {`
+# blend-overlay\n\n- **規格**: [blend-overlay.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-overlay/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-overlay.md)\n- **検索語**: blend-overlay\n- **対応状況**: ✅ 対応済 (surface-load.js)\n\n## 突合結果\n\nui/js/surface/surface-load.js の loadSurfacesTxt において surfaces.txt ファイル・エイリアス・アニメーション・衝突判定・カーソル定義をパース・解決する実装が行われている。\n\n## 実装箇所\n\n- ui/js/surface/surface-load.js // [blend-overlay]\n

@@ -2,8 +2,12 @@
 
 - **規格**: [font.shadowstyle.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/font.shadowstyle.md)
 - **検索語**: font.shadowstyle
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コードに「font.shadowstyle」が見つからない。
+`ui/js/core/actions/balloon-descript/font.js` の `applyFontProperties()` において `props["font.shadowstyle"]` を検出し、`--balloon-font-shadow-style` カスタムプロパティ（`offset`/`outline`/`none`）を動的バインドする実装が行われている。
+
+## 実装箇所
+
+- `ui/js/core/actions/balloon-descript/font.js` `root.style.setProperty("--balloon-font-shadow-style", props["font.shadowstyle"])`

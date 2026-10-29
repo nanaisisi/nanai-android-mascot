@@ -2,8 +2,12 @@
 
 - **規格**: [anchor.style.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/anchor.style.md)
 - **検索語**: anchor.style
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コードに「anchor.style」が見つからない。
+`ui/js/core/actions/balloon-descript/font.js` の `applyFontProperties()` 内 `applyAnchorGroup("anchor", "--balloon-anchor")` において `props["anchor.style"]` を検出し、`--balloon-anchor-style` カスタムプロパティへ反映する実装が行われている。
+
+## 実装箇所
+
+- `ui/js/core/actions/balloon-descript/font.js` `if (props[\`${prefix}.style\`]) root.style.setProperty(...)`

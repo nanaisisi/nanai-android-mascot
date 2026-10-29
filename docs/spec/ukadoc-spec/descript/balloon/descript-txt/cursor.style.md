@@ -2,8 +2,12 @@
 
 - **規格**: [cursor.style.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/cursor.style.md)
 - **検索語**: cursor.style
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コードに「cursor.style」が見つからない。
+`ui/js/core/actions/balloon-descript/font.js` の `applyFontProperties()` 内 `applyAnchorGroup("cursor", "--balloon-cursor")` において `props["cursor.style"]` を検出し、`--balloon-cursor-style` カスタムプロパティへ反映する実装が行われている。
+
+## 実装箇所
+
+- `ui/js/core/actions/balloon-descript/font.js` `if (props[\`${prefix}.style\`]) root.style.setProperty(...)`

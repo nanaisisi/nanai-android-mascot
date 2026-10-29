@@ -20,12 +20,14 @@ globalThis.document = {
 };
 globalThis.screenX = 0;
 globalThis.screenY = 0;
+globalThis.addEventListener = () => {};
 
 const { eventMethods } = await import("../ui/js/core/app-events.js");
 
 test("eventMethods coverage for setupEventListeners, interactions, buttons, and listeners", async () => {
 	const listeners = {};
 	const mockApp = {
+		...eventMethods,
 		interactionManager: {
 			setupDragging(el, onClick, onStroke) {
 				el._onClick = onClick;
@@ -64,13 +66,14 @@ test("eventMethods coverage for setupEventListeners, interactions, buttons, and 
 			sendShioriEvent: async () => ({ script: "test" }),
 			currentSurfaces: new Map([[1, "src.png"]]),
 		},
-		getCollisionInfo() { return { name: "Head", canvasX: 10, canvasY: 20 }; },
+		surfaceManager: {
+			detectCollision() { return { name: "Head", canvasX: 10, canvasY: 20 }; }
+		},
 		onGhostClick() {},
 		switchToNextGhost() {},
 	};
 
-	const bind = eventMethods.setupEventListeners.bind(mockApp);
-	bind();
+	mockApp.setupEventListeners();
 
 	// Test contextmenu on ghost display
 	listeners.contextmenu?.({ preventDefault() {}, stopPropagation() {}, screenX: 10, screenY: 20 });
@@ -90,17 +93,17 @@ test("eventMethods coverage for setupEventListeners, interactions, buttons, and 
 	document._listeners?.keydown?.({ key: "q", metaKey: true, preventDefault() {} });
 
 	// Test onGhostClick and onGhostStroke
-	await eventMethods.onGhostClick.call(mockApp, 10, 20, {}, 0);
-	await eventMethods.onGhostStroke.call(mockApp, 10, 20, {}, 0);
+	await mockApp.onGhostClick(10, 20, {}, 0);
+	await mockApp.onGhostStroke(10, 20, {}, 0);
 
 	// Test getCollisionInfo & detectPart
-	const col = eventMethods.getCollisionInfo.call(mockApp, 10, 20, {}, 0);
+	const col = mockApp.getCollisionInfo(10, 20, {}, 0);
 	assert.equal(col.name, "Head");
-	const part = eventMethods.detectPart.call(mockApp, 10, 20, {});
+	const part = mockApp.detectPart(10, 20, {});
 	assert.equal(part, "Head");
 
 	// Test fallback getCollisionInfo without clientX/clientY
-	const col2 = eventMethods.getCollisionInfo.call(mockApp, undefined, undefined, null, 0);
+	const col2 = mockApp.getCollisionInfo(undefined, undefined, null, 0);
 	assert.equal(col2.name, "");
 
 	assert.ok(true);

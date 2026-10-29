@@ -6,4 +6,10 @@
 
 ## 突合結果
 
-実装コードに「keroname」が見つからない。
+実装コード内に「keroname」を確認。
+
+
+## 実装箇所
+
+- `ui/js/ghost/shiori-notify.js:11` `* - installedghostname / installedsakuraname / installedkeroname`
+- `ui/js/ghost/shiori-notify.js:66` `await this.sendShioriNotify("installedkeroname", keroNames);`

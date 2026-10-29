@@ -7,3 +7,12 @@
 ## 突合結果
 
 パーサがタグを読み飛ばす、または sakura-command-handler.js が「未対応の \! コマンド」として扱い、該当処理はない。
+
+
+## 実装箇所
+
+- `src-tauri/src/commands/window/balloon_window.rs:179` `/// 独立バルーン（スコープ N）ウィンドウ非表示コマンド (\b[-1])`
+- `crates/ui/src/lib.rs:112` `let script = r"\b[0]\b[-1]\t\-\_s\_l[10,20]\f[color,red]\f[bold]";`
+- `crates/ui/src/script/command.rs:33` `Balloon(i32), // \b[n], \b[-1], \b0..\b9`
+- `crates/ui/src/script/parser/brackets.rs:94` `/// `\b[n]`（\b[-1] 等の負数含む）または `\b0..\b9``
+- `crates/ui/src/script/parser/mod.rs:51` `// \b[n] または \b0..\b9（\b[-1] 等の負数含む）`

@@ -7,3 +7,9 @@
 ## 突合結果
 
 パーサは基本形のみ処理し、この引数形式は解釈しない。
+
+
+## 実装箇所
+
+- `crates/ui/src/script/command.rs:15` `Clear,        // \c`
+- `ui/js/ghost/sakura-tokenizer.js:131` `// \c (クリア)`

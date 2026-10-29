@@ -10,7 +10,6 @@
 
 ## 実装箇所
 
-- `ui/menu-iframe.html` (`<button ... id="updatecheck-btn">ネットワーク更新チェックのみ`)
-- `ui/js/ui/context-menu.js` (keyMap) `c: "updatecheck"`
-- `ui/js/core/app-actions.js` `if (action === "updatecheck") { return this.startNetworkUpdate(null, { checkOnly: true }); }`
-- `ui/js/core/app-update.js` `await gc.sendShioriEvent("OnUpdateCheckComplete", [checkResult.has_update ? String(checkResult.total_count) : "none", fileNames.join(","), "", "ghost", "manual"])`
+- `ui/js/core/app-update.js:11` `*    - チェックのみ実行時: OnUpdateCheckComplete / OnUpdateCheckFailure`
+- `ui/js/core/app-update.js:88` `// チェックのみ実行: OnUpdateCheckComplete (Ref0: 総数 または "none")`
+- `ui/js/core/app-update.js:90` `await gc.sendShioriEvent("OnUpdateCheckComplete", [`

@@ -10,5 +10,7 @@ surface-parser.js / surface-animation-manager.js に該当の解析・処理は�
 
 ## 実装箇所
 
-- `ui/js/surface/interaction.js:214` `globalThis.addEventListener("mouseup", onPointerUp);`
-- `ui/js/surface/balloon-drag.js:117` `globalThis.addEventListener("mouseup", onEnd);`
+- `ui/js/ghost/balloon-window.js:214` `balloonBox?.addEventListener("mouseup", () => {`
+- `ui/js/surface/interaction.js:302` `globalThis.addEventListener("mouseup", onPointerUp);`
+- `ui/js/surface/character.js:159` `globalThis.addEventListener("mouseup", onPointerUp);`
+- `ui/js/surface/balloon-drag.js:141` `globalThis.addEventListener("mouseup", onEnd);`

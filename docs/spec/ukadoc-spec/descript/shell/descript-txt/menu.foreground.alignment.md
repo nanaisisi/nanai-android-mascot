@@ -6,4 +6,9 @@
 
 ## 突合結果
 
-実装コードに「menu.foreground.alignment」が見つからない。
+実装コード内に「menu.foreground.alignment」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/ghost/scan/shell.rs:139` `let fg_align = merged.get("menu.foreground.alignment").cloned();`

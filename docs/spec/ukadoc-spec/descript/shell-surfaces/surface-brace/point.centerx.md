@@ -7,3 +7,8 @@
 ## 突合結果
 
 実装コードに「point.centerx」が見つからない。
+
+
+## 実装箇所
+
+- `crates/ui/src/surfaces/tests.rs:171` `point.centerx,96`

@@ -6,4 +6,12 @@
 
 ## 突合結果
 
-実装コードに「uniqueid」が見つからない。
+実装コード内に「uniqueid」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/commands/shiori/protocol.rs:110` `/// `installedghostname` / `ghostpathlist` / `uniqueid` / `basewareversion` 等の`
+- `ui/js/ghost/shiori-notify.js:14` `* - basewareversion / uniqueid`
+- `ui/js/ghost/shiori-notify.js:85` `// uniqueid: ゴーストインストールディレクトリ名を自前IDとする`
+- `ui/js/ghost/shiori-notify.js:91` `await this.sendShioriNotify("uniqueid", [dirName]);`

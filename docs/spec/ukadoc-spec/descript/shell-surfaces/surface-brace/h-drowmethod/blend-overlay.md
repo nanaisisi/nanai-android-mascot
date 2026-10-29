@@ -6,4 +6,9 @@
 
 ## 突合結果
 
-実装コードに「blend-overlay」が見つからない。
+実装コード内に「blend-overlay」を確認。
+
+
+## 実装箇所
+
+- `ui/js/surface/surface-compositor.js:179` `} else if (method === "blend-overlay" || method === "blend-softlight") {`

@@ -12,4 +12,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install.rs` `install.txt` `type` 解析と種別検証（`Ghost` のみ展開）
+- `src-tauri/src/lib.rs:1` `use specta_typescript::Typescript;`
+- `src-tauri/src/lib.rs:110` `commands::shiori::send_shiori_event_typed,`
+- `src-tauri/src/commands/window/menu_window.rs:108` `menu_type: String,`
+- `src-tauri/src/commands/window/menu_window.rs:172` `let _ = app_handle.emit("set-submenu-type", serde_json::json!({ "type": menu_typ`
+- `src-tauri/src/commands/shiori/protocol.rs:129` `pub async fn send_shiori_event_typed(`

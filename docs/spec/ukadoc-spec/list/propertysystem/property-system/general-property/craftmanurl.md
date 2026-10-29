@@ -10,5 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan.rs:197` `.and_then(|m| m.get("craftmanurl").cloned());`
-- `src-tauri/src/commands/install.rs:168` `.and_then(|m| m.get("craftmanurl").cloned());`
+- `src-tauri/src/commands/ext.rs:35` `let craftman_url = map.get("craftmanurl").cloned();`
+- `src-tauri/src/commands/ext.rs:84` `let craftman_url = map.get("craftmanurl").cloned();`
+- `src-tauri/src/commands/install/archive.rs:243` `.and_then(|m| m.get("craftmanurl").cloned());`
+- `src-tauri/src/ghost/scan/directory.rs:89` `.and_then(|m| m.get("craftmanurl").cloned());`
+- `crates/ui/src/descript.rs:135` `/// 作者Webページ (`craftmanurl` キー)`

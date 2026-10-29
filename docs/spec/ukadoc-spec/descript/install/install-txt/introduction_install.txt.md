@@ -13,7 +13,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install.rs:14` (コメント) `// アーカイブ内のinstall.txtまたはdescript.txtを検索してゴースト名を特定`
-- `src-tauri/src/commands/install.rs:29` `if lower.ends_with("install.txt") || lower.ends_with("descript.txt") {`
-- `src-tauri/src/commands/install.rs:62以降` `install.txt` の `name` / `type` 解析
-- `src-tauri/src/commands/install.rs:109以降` `type` 種別検証 (Ghost のみ展開)
+- `src-tauri/src/commands/install/archive.rs:19` `if lower == "install.txt" || lower.ends_with("/install.txt") {`
+- `src-tauri/src/commands/install/archive.rs:101` `"install.txt type={label} ({kind}): サポートされていないアーカイブ種別です"`
+- `src-tauri/src/commands/install/archive.rs:219` `target_dir.join("install.txt"),`
+- `src-tauri/src/ghost/scan/directory.rs:58` `path.join("install.txt"),`
+- `src-tauri/src/ghost/scan/date.rs:62` `consider(&path.join("install.txt"));`

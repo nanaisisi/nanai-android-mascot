@@ -6,4 +6,9 @@
 
 ## 突合結果
 
-実装コードに「communicatebox.height」が見つからない。
+実装コード内に「communicatebox.height」を確認。
+
+
+## 実装箇所
+
+- `ui/js/core/actions/balloon-descript.js:98` `const cbHeight = props["communicatebox.height"];`

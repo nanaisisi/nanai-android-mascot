@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/ffi.rs`: `on_biff_failure()`
-- `ui/js/core/app-actions.js`: `checkEmail()` (OnBIFFFailure 送信)
+- `src-tauri/src/shiori/ffi/builder.rs:165` `.event("OnBIFFFailure")`
+- `ui/js/core/actions/network-actions.js:49` `await gc.sendShioriEvent("OnBIFFFailure", ["connect", accountName]);`

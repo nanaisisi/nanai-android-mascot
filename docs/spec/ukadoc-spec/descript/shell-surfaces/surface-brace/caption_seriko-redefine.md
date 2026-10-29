@@ -10,5 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/surface/surface-animation-manager.js:2` (コメント) `* SERIKOアニメーションおよび発話口パク管理`
-- `ui/js/surface/surface-animation-manager.js:28` (コメント) `* 指定サーフィスのアニメーション定義（SERIKO）を開始`
+- `crates/ui/src/shell.rs:20` `/// `surfaces.txt`（Element / SERIKO / Collision）`
+- `crates/ui/src/manifest.rs:5` `//! element 合成・SERIKO 再生・当たり判定・着せ替え描画を行う。`
+- `crates/ui/src/animation.rs:1` `//! SERIKO アニメーション実行器（ukadoc-spec / descript / shell-surfaces 準拠）`
+- `crates/ui/src/surfaces/mod.rs:3` `//! シェルのサーフィス定義（Element 描画 / SERIKO アニメーション / Collision 当たり判定 /`
+- `crates/ui/src/surfaces/types/surface.rs:40` `/// 一つの SERIKO アニメーション定義`

@@ -78,3 +78,12 @@ $$\text{finalScale} = \text{userScale} \times \text{dpiScale}$$
   - [ui/js/core/app-actions.js](../../../../ui/js/core/app-actions.js) (`applyBalloonDescript`, `resetBalloonDescript`, `applyBalloonScaleAction`)
   - [ui/js/ghost/balloon-window.js](../../../../ui/js/ghost/balloon-window.js) (`applyBalloonDescript`, `updateBalloonWindowScale`)
   - パースされた `props.dpi` から `--balloon-dpi` および `--balloon-dpi-scale` カスタムプロパティを生成し、`.balloon` 要素へ `scale(finalScale)` を適用。
+
+
+## 実装箇所
+
+- `ui/js/ghost/balloon-window.js:22` `root.style.setProperty("--balloon-dpi-scale", String(currentDpiScale));`
+- `ui/js/ghost/balloon-window.js:68` `// 推奨 DPI (dpi,推奨DPI / 既定値: 96, SSP 2.7.21準拠)`
+- `ui/js/ghost/balloon-window.js:69` `const parsedDpi = parseInt(props.dpi, 10);`
+- `ui/js/ghost/balloon-window.js:73` `root.style.setProperty("--balloon-dpi", String(balloonDpi));`
+- `ui/js/core/actions/balloon-descript.js:26` `const parsedDpi = parseInt(props.dpi, 10);`

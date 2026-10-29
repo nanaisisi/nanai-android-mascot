@@ -7,3 +7,12 @@
 ## 突合結果
 
 実装コードに「group」が見つからない。
+
+
+## 実装箇所
+
+- `src-tauri/src/commands/install/archive.rs:244` `let group = meta_map.as_ref().and_then(|m| m.get("group").cloned());`
+- `src-tauri/src/commands/install/archive.rs:259` `group,`
+- `src-tauri/src/ghost/scan/directory.rs:99` `let group = meta_map.as_ref().and_then(|m| m.get("group").cloned());`
+- `src-tauri/src/ghost/scan/directory.rs:113` `group,`
+- `src-tauri/src/ghost/scan/directory.rs:145` `group: None,`

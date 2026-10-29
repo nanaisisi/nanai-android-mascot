@@ -7,3 +7,9 @@
 ## 突合結果
 
 実装コードに「balloon.offsetx」が見つからない。
+
+
+## 実装箇所
+
+- `crates/ui/src/surfaces/tests.rs:172` `sakura.balloon.offsetx,-10`
+- `crates/ui/src/surfaces/types/surface.rs:63` `/// バルーン位置オフセット（`<char>.balloon.offsetx/y` / `balloon.offsetx/y`）`

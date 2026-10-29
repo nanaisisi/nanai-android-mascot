@@ -6,4 +6,10 @@
 
 ## 突合結果
 
-実装コードに「log_path」が見つからない。
+実装コード内に「log_path」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/shiori/ffi/builder.rs:174` `pub fn on_update_result_explorer(status: &str, log_path: Option<&str>) -> Self {`
+- `src-tauri/src/shiori/ffi/builder.rs:180` `if let Some(path) = log_path {`

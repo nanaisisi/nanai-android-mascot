@@ -89,6 +89,93 @@ mod tests {
     }
 
     #[test]
+    fn test_parse_request_empty_and_missing_protocol() {
+        assert_eq!(ShioriRequest::parse(""), Err("empty request".to_string()));
+        assert_eq!(
+            ShioriRequest::parse("   \r\n"),
+            Err("empty request".to_string())
+        );
+        assert_eq!(
+            ShioriRequest::parse("GET"),
+            Err("missing protocol".to_string())
+        );
+    }
+
+    #[test]
+    fn test_parse_request_unsupported_version() {
+        let err = ShioriRequest::parse("GET SHIORI/2.0\r\nID: OnBoot\r\n\r\n").unwrap_err();
+        assert_eq!(err, "unsupported protocol version: SHIORI/2.0");
+
+        let err_http = ShioriRequest::parse("GET HTTP/1.1\r\nID: OnBoot\r\n\r\n").unwrap_err();
+        assert_eq!(err_http, "unsupported protocol version: HTTP/1.1");
+    }
+
+    #[test]
+    fn test_parse_request_missing_id() {
+        let err = ShioriRequest::parse("GET SHIORI/3.0\r\nSender: SSP\r\n\r\n").unwrap_err();
+        assert_eq!(err, "ID header is missing");
+    }
+
+    #[test]
+    fn test_parse_request_protocol_versions() {
+        let text_2_6 = "GET SHIORI/2.6\r\nID: OnBoot\r\n\r\n";
+        let req_2_6 = ShioriRequest::parse(text_2_6).unwrap();
+        assert_eq!(req_2_6.id, "OnBoot");
+
+        let text_lowercase = "get shiori/3.0\r\nid: OnBoot\r\n\r\n";
+        let req_lower = ShioriRequest::parse(text_lowercase).unwrap();
+        assert_eq!(req_lower.method, ShioriMethod::Get);
+        assert_eq!(req_lower.id, "OnBoot");
+    }
+
+    #[test]
+    fn test_parse_request_headers_and_security_origin() {
+        // SecurityOrigin: null case
+        let text_null_origin =
+            "GET SHIORI/3.0\r\nID: OnTest\r\nSecurityOrigin: null\r\nSecurityLevel: external\r\n\r\n";
+        let req_null = ShioriRequest::parse(text_null_origin).unwrap();
+        assert_eq!(req_null.security_origin, Some(None));
+        assert_eq!(req_null.security_level, Some(SecurityLevel::External));
+
+        // SecurityOrigin with value case
+        let text_val_origin = "GET SHIORI/3.0\r\nID: OnTest\r\nSecurityOrigin: http://example.com\r\n\r\n";
+        let req_val = ShioriRequest::parse(text_val_origin).unwrap();
+        assert_eq!(
+            req_val.security_origin,
+            Some(Some("http://example.com".to_string()))
+        );
+
+        // SecurityOrigin omitted case
+        let text_no_origin = "GET SHIORI/3.0\r\nID: OnTest\r\n\r\n";
+        let req_no_origin = ShioriRequest::parse(text_no_origin).unwrap();
+        assert_eq!(req_no_origin.security_origin, None);
+    }
+
+    #[test]
+    fn test_parse_request_sparse_references_and_passthru() {
+        let text = "GET SHIORI/3.0\r\nID: OnEvent\r\nReference2: val2\r\nReference0: val0\r\nInvalidHeaderLineWithoutColon\r\nX-SSTP-PassThru-HeaderOne: foo\r\nx-sstp-passthru-headertwo: bar\r\nx-sstp-passthru-markersend: ignored\r\n\r\n";
+        let req = ShioriRequest::parse(text).unwrap();
+        assert_eq!(req.references.len(), 3);
+        assert_eq!(req.references[0], "val0");
+        assert_eq!(req.references[1], "");
+        assert_eq!(req.references[2], "val2");
+        assert_eq!(req.passthru.get("HeaderOne").map(String::as_str), Some("foo"));
+        assert_eq!(req.passthru.get("headertwo").map(String::as_str), Some("bar"));
+        assert!(!req.passthru.contains_key("markersend"));
+    }
+
+    #[test]
+    fn test_parse_request_crlf_and_lf() {
+        let text_lf = "GET SHIORI/3.0\nSender: SSP\nID: OnBoot\nReference0: ref0\n\n";
+        let text_crlf = "GET SHIORI/3.0\r\nSender: SSP\r\nID: OnBoot\r\nReference0: ref0\r\n\r\n";
+
+        let req_lf = ShioriRequest::parse(text_lf).unwrap();
+        let req_crlf = ShioriRequest::parse(text_crlf).unwrap();
+
+        assert_eq!(req_lf, req_crlf);
+    }
+
+    #[test]
     fn test_response_status_codes() {
         assert_eq!(StatusCode::parse(200), StatusCode::Ok);
         assert_eq!(StatusCode::parse(204), StatusCode::NoContent);

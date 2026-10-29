@@ -10,8 +10,8 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-protocol.js:8` (コメント) `* @param {string} id - イベントID (例: "OnBoot", "OnMouseClick")`
-- `ui/js/ghost/ghost-shiori.js:18` `await this.sendShioriEvent("OnBoot");`
-- `ui/js/ghost/ghost-shiori.js:20` (コメント) `// OnBoot送信失敗時はスキップ`
-- `src-tauri/src/shiori/ffi.rs:204` (コメント) `/// OnBootイベントのリクエストを作成`
-- `src-tauri/src/shiori/ffi.rs:208` `.header("Event", "OnBoot")`
+- `src-tauri/src/shiori/ffi/builder.rs:77` `.event("OnBoot")`
+- `crates/ui/src/shiori/mod.rs:36` `base_id: Some("OnBoot".into()),`
+- `crates/ui/src/shiori/mod.rs:47` `assert!(text.contains("BaseID: OnBoot\r\n"));`
+- `crates/ui/src/shiori/mod.rs:73` `assert_eq!(parsed.base_id.as_deref(), Some("OnBoot"));`
+- `crates/ui/src/shiori/mod.rs:106` `let err = ShioriRequest::parse("GET SHIORI/2.0\r\nID: OnBoot\r\n\r\n").unwrap_er`

@@ -6,4 +6,10 @@
 
 ## 突合結果
 
-実装コードに「blend-add」が見つからない。
+実装コード内に「blend-add」を確認。
+
+
+## 実装箇所
+
+- `crates/ui/src/surfaces/tests.rs:55` `DrawMethod::parse("blend-add"),`
+- `ui/js/surface/surface-compositor.js:181` `} else if (method === "blend-add" || method === "add") {`

@@ -6,4 +6,13 @@
 
 ## 突合結果
 
-実装コードに「hwnd」が見つからない。
+実装コード内に「hwnd」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/sstp.rs:11` `pub hwnd: Option<u64>,`
+- `src-tauri/src/fmo.rs:21` `pub hwnd: u64,`
+- `src-tauri/src/fmo.rs:51` `hwnd: 0,`
+- `cpp/yaya-shiori/aya5.h:43` `extern "C" DLLEXPORT BOOL_TYPE FUNCATTRIB logsend(long hwnd);`
+- `cpp/yaya-shiori/basis.h:106` `void	SetLogRcvWnd(long hwnd);`

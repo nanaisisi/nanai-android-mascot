@@ -6,4 +6,13 @@
 
 ## 突合結果
 
-実装コードに「hour」が見つからない。
+実装コード内に「hour」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/commands/install/utils.rs:87` `+ (dt.hour() as u64) * 3_600`
+- `src-tauri/src/ghost/scan/date.rs:6` `let hours = remainder / 3600;`
+- `src-tauri/src/ghost/scan/date.rs:32` `Some(format!("{:04}-{:02}-{:02} {:02}:{:02}:{:02}", year, month, day, hours, min`
+- `cpp/yaya-shiori/misc.cpp:969` `tmtime.tm_hour = stime.wHour;`
+- `cpp/yaya-shiori/misc.cpp:1032` `t3 = tm.tm_hour;`

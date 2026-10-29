@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan.rs:21` (コメント) `/// descript.txt の内容をパース（Shift_JIS / UTF-8 両対応）`
-- `src-tauri/src/ghost/scan.rs:68` `let descript_path = path.join("descript.txt");`
-- `src-tauri/src/ghost/scan.rs:170` (コメント) `// ghost/master/descript.txt または descript.txt`
-- `src-tauri/src/ghost/scan.rs:172` `path.join("ghost").join("master").join("descript.txt"),`
-- `src-tauri/src/ghost/scan.rs:173` `path.join("descript.txt"),`
+- `src-tauri/src/commands/ext.rs:30` `let desc_path = path.join("descript.txt");`
+- `src-tauri/src/commands/ext.rs:79` `let desc_path = path.join("descript.txt");`
+- `src-tauri/src/commands/shiori/lifecycle/load.rs:32` `let descript_path = ghost_master_dir.join("descript.txt");`
+- `src-tauri/src/commands/shiori/lifecycle/spawn.rs:25` `let descript_path = ghost_master_dir.join("descript.txt");`
+- `src-tauri/src/commands/update/dau.rs:40` `// 1. ghost/master/descript.txt`

@@ -10,6 +10,7 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 
 ## 実装箇所
 
-- `ui/js/ghost/sakura-command-handler.js:113` `await this.app.ghostController.sendShioriEvent("OnUserInput", [id, val]);`
-- `ui/js/ghost/sakura-command-handler.js:119` `await this.app.ghostController.sendShioriEvent("OnUserInputCancel", [id]);`
-- `ui/js/ghost/sakura-command-handler.js:145` `this.app.ghostController.sendShioriEvent("OnUserInputCancel", [id]);`
+- `ui/js/ghost/sakura-command-handler.js:138` `await this.app.ghostController.sendShioriEvent("OnUserInput", [`
+- `ui/js/ghost/sakura-command-handler.js:147` `await this.app.ghostController.sendShioriEvent("OnUserInputCancel", [id]);`
+- `ui/js/ghost/sakura-command-handler.js:173` `this.app.ghostController.sendShioriEvent("OnUserInputCancel", [id]);`
+- `ui/js/ghost/sakura-command-handler.js:249` `// Reference0: 空席 (OnUserInputCancel と番号を揃える) / Reference1: cancel`

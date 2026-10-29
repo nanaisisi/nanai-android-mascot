@@ -6,4 +6,9 @@
 
 ## 突合結果
 
-実装コードに「OnCommunicate」が見つからない。
+実装コード内に「OnCommunicate」を確認。
+
+
+## 実装箇所
+
+- `crates/ui/src/shiori/protocol/response/mod.rs:41` `/// Reference1..N（互換性のため Reference1 = 通信先 OnCommunicate の Reference2）`

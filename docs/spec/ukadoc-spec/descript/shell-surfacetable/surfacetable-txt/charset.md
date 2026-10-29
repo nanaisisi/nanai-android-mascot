@@ -10,10 +10,8 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 
 ## 実装箇所
 
-- `crates/ui/src/surfacetable.rs` （Rust 版 surfacetable.txt パーサー：charset / version / scope / option / group / サーフィスID・名前 解析）
-
-- `src-tauri/src/ghost/scan.rs:28` `if utf8_str.to_lowercase().contains("charset,shift_jis")`
-- `src-tauri/src/ghost/scan.rs:29` `|| utf8_str.to_lowercase().contains("charset,sjis")`
-- `crates/ui/src/lib.rs:26` `"charset,Shift_JIS\r\nname,SampleGhost\r\nsakura.name,Nanai\r\nkero.name,Mini\r\n";`
-- `src-tauri/src/commands/install.rs:37` `if utf8_str.to_lowercase().contains("charset,shift_jis")`
-- `src-tauri/src/commands/install.rs:38` `|| utf8_str.to_lowercase().contains("charset,sjis")`
+- `src-tauri/src/commands/install/utils.rs:20` `if lower.contains("charset,shift_jis") || lower.contains("charset,sjis") {`
+- `src-tauri/src/ghost/scan/descript.rs:13` `if utf8_str.to_lowercase().contains("charset,shift_jis")`
+- `src-tauri/src/ghost/scan/descript.rs:14` `|| utf8_str.to_lowercase().contains("charset,sjis")`
+- `src-tauri/src/shiori/ffi/builder.rs:37` `pub fn charset(mut self, charset: &str) -> Self {`
+- `src-tauri/src/shiori/ffi/builder.rs:38` `self.request.charset = charset.to_string();`

@@ -10,8 +10,8 @@ surface-animation-manager.js で interval 種別として処理している。
 
 ## 実装箇所
 
-- `ui/windows/desktop-features.js:4` `alwaysOnTop: false,`
-- `ui/windows/desktop-features.js:19` `if (topmost) topmost.textContent = featureStates.alwaysOnTop ? "ON" : "OFF";`
-- `ui/windows/desktop-features.js:53` `featureStates.alwaysOnTop = !featureStates.alwaysOnTop;`
-- `ui/windows/desktop-features.js:54` `console.log(常に最前面: ${featureStates.alwaysOnTop});`
-- `ui/windows/desktop-features.js:59` `featureStates.alwaysOnTop ? "有効" : "無効"`
+- `src-tauri/tauri.conf.json:22` `"alwaysOnTop": true,`
+- `src-tauri/src/commands/window/loading_banner_window.rs:71` `.always_on_top(true)`
+- `src-tauri/src/commands/window/character_window.rs:68` `.always_on_top(true)`
+- `src-tauri/src/commands/window/balloon_window.rs:81` `.always_on_top(true)`
+- `src-tauri/src/commands/window/balloon_window.rs:220` `.always_on_top(true)`

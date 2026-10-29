@@ -10,6 +10,6 @@ Rust 側の 1ファイルごとのダウンロード開始通知 (`update-progre
 
 ## 実装箇所
 
-- `src-tauri/src/commands/update/network.rs` (`report_progress(&app_handle, "download-begin", &entry.path, None)`)
-- `ui/js/core/app-update.js` (コメント) `*    - OnUpdate.OnDownloadBegin`
-- `ui/js/core/app-update.js` `gc.sendShioriEvent("OnUpdate.OnDownloadBegin", [filePath, "", "", "ghost", "manual"])`
+- `src-tauri/src/commands/update/network.rs:52` `/// (フロント側で OnUpdate.OnDownloadBegin / OnUpdate.OnMD5Compare* として SHIORI に中継する)`
+- `ui/js/core/app-update.js:13` `*    - OnUpdate.OnDownloadBegin`
+- `ui/js/core/app-update.js:143` `gc.sendShioriEvent("OnUpdate.OnDownloadBegin", [`

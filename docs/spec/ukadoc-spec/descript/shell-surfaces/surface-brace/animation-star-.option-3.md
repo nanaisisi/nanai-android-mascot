@@ -10,10 +10,8 @@ surface-parser.js / surface-animation-manager.js に該当の解析・処理は�
 
 ## 実装箇所
 
-- `crates/ui/src/surfaces.rs` （Rust 版 surfaces.txt パーサー：Element / Collision / SERIKO / Alias / append の解析）
-
-- `ui/js/surface/surface-parser.js:58` (コメント) `* surfaces.txt をパースして collisions, elements, animations を抽出`
-- `ui/js/surface/surface-parser.js:60` (コメント) `* @returns {{ collisions: Record<string, CollisionArea[]>, elements: Record<string, Surfac`
-- `ui/js/surface/surface-parser.js:65` `const animations = {};`
-- `ui/js/surface/surface-parser.js:129` (コメント) `// animation[ID].interval,[interval]`
-- `ui/js/surface/surface-parser.js:130` `const match = trimmed.match(/^animation(\d+)\.interval,\s*(.+)$/);`
+- `src-tauri/src/lib.rs:98` `commands::shell::animation_timeline,`
+- `src-tauri/src/commands/shell/mod.rs:7` `pub mod animation;`
+- `src-tauri/src/commands/shell/mod.rs:12` `pub use animation::*;`
+- `src-tauri/src/commands/shell/animation.rs:49` `pub fn animation_timeline(patterns: Vec<TimelinePattern>) -> Result<AnimationTim`
+- `crates/ui/src/manifest.rs:22` `/// element / animation / collision / point 定義`

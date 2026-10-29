@@ -6,4 +6,13 @@
 
 ## 突合結果
 
-実装コードに「month」が見つからない。
+実装コード内に「month」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/commands/install/utils.rs:55` `let month = dt.month() as usize;`
+- `src-tauri/src/commands/install/utils.rs:57` `if year < 1970 || !(1..=12).contains(&month) || !(1..=31).contains(&day) {`
+- `src-tauri/src/commands/install/utils.rs:67` `let days_in_months = [`
+- `src-tauri/src/commands/install/utils.rs:81` `for &dim in &days_in_months[..(month - 1)] {`
+- `src-tauri/src/ghost/scan/date.rs:21` `let mut month = 1;`

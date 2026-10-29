@@ -10,10 +10,8 @@
 
 ## 実装箇所
 
-- `crates/ui/src/descript.rs` （Rust 版 descript.txt パーサー: bindgroup / bindoption / default* / type / craftmanurl 解析）
-
-- `src-tauri/src/commands/window/menu_window.rs:97` `menu_type: String,`
-- `src-tauri/src/commands/window/menu_window.rs:158` `let _ = app_handle.emit("set-submenu-type", serde_json::json!({ "type": menu_type }));`
-- `ui/js/surface/character.js:18` `if (typeof listenFn === "function") {`
-- `ui/js/surface/character.js:33` `if (typeof emitFn === "function") {`
-- `ui/js/surface/character.js:43` `if (tauriWindow && typeof tauriWindow.startDragging === "function") {`
+- `src-tauri/src/lib.rs:1` `use specta_typescript::Typescript;`
+- `src-tauri/src/lib.rs:110` `commands::shiori::send_shiori_event_typed,`
+- `src-tauri/src/commands/window/menu_window.rs:108` `menu_type: String,`
+- `src-tauri/src/commands/window/menu_window.rs:172` `let _ = app_handle.emit("set-submenu-type", serde_json::json!({ "type": menu_typ`
+- `src-tauri/src/commands/shiori/protocol.rs:129` `pub async fn send_shiori_event_typed(`

@@ -10,10 +10,8 @@
 
 ## 実装箇所
 
-- `crates/ui/src/descript.rs` （Rust 版 descript.txt パーサー: bindgroup / bindoption / default* / type / craftmanurl 解析）
-
-- `ui/js/surface/character.js:5` `const img = document.getElementById("subchar-img");`
-- `ui/js/surface/character.js:6` `const root = document.getElementById("subchar-root");`
-- `ui/js/surface/character.js:8` (コメント) `// URLパラメータからスコープIDを取得 (例: character.html?scope=1)`
-- `ui/js/surface/character.js:20` `listenFn(update-subchar-image-${scopeId}, (event) => {`
-- `ui/js/surface/character.js:34` `emitFn("request-subchar-image", { scopeId });`
+- `src-tauri/src/lib.rs:131` `commands::window::show_subchar_window,`
+- `src-tauri/src/lib.rs:132` `commands::window::hide_subchar_window,`
+- `src-tauri/src/lib.rs:133` `commands::window::set_character_scale,`
+- `src-tauri/src/lib.rs:138` `commands::window::sync_character_balloon,`
+- `src-tauri/src/commands/window/character_window.rs:4` `pub async fn show_character_window(`

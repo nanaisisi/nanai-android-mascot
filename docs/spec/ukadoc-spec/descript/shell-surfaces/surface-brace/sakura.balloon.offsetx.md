@@ -7,3 +7,8 @@
 ## 突合結果
 
 実装コードに「sakura.balloon.offsetx」が見つからない。
+
+
+## 実装箇所
+
+- `crates/ui/src/surfaces/tests.rs:172` `sakura.balloon.offsetx,-10`

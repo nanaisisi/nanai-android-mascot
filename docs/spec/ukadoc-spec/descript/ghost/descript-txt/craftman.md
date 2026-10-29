@@ -10,8 +10,8 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan.rs:194` `let craftman = meta_map.as_ref().and_then(|m| m.get("craftman").cloned());`
-- `src-tauri/src/ghost/scan.rs:195` `let craftman_url = meta_map`
-- `src-tauri/src/ghost/scan.rs:197` `.and_then(|m| m.get("craftmanurl").cloned());`
-- `src-tauri/src/ghost/scan.rs:208` `craftman,`
-- `src-tauri/src/ghost/scan.rs:209` `craftman_url,`
+- `src-tauri/src/fmo.rs:22` `pub craftman: String,`
+- `src-tauri/src/fmo.rs:52` `craftman: "Nanai Project".to_string(),`
+- `src-tauri/src/commands/ext.rs:34` `let craftman = map.get("craftman").cloned();`
+- `src-tauri/src/commands/ext.rs:35` `let craftman_url = map.get("craftmanurl").cloned();`
+- `src-tauri/src/commands/ext.rs:42` `craftman,`

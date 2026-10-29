@@ -6,4 +6,10 @@
 
 ## 突合結果
 
-実装コードに「blend-screen」が見つからない。
+実装コード内に「blend-screen」を確認。
+
+
+## 実装箇所
+
+- `crates/ui/src/surfaces/tests.rs:104` `DrawMethod::parse(" blend-screen "),`
+- `ui/js/surface/surface-compositor.js:177` `} else if (method === "blend-screen" || method === "screen") {`

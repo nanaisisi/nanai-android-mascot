@@ -10,8 +10,6 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-protocol.js:8` (コメント) `* @param {string} id - イベントID (例: "OnBoot", "OnMouseClick")`
-- `ui/js/core/app-events.js:136` (コメント) `// つつき反応が無かった場合は OnMouseClick もフォールバック送信`
-- `ui/js/core/app-events.js:138` `this.ghostController.sendShioriEvent("OnMouseClick", args);`
-- `src-tauri/src/shiori/ffi.rs:220` (コメント) `/// OnMouseClickイベントのリクエストを作成`
-- `src-tauri/src/shiori/ffi.rs:224` `.header("Event", "OnMouseClick")`
+- `src-tauri/src/shiori/ffi/builder.rs:91` `.event("OnMouseClick")`
+- `ui/js/core/app-events.js:146` `// つつき反応が無かった場合は OnMouseClick もフォールバック送信`
+- `ui/js/core/app-events.js:148` `this.ghostController.sendShioriEvent("OnMouseClick", args);`

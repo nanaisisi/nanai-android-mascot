@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
+- `src-tauri/src/lib.rs:94` `commands::file::open_ghost_directory,`
+- `src-tauri/src/lib.rs:104` `ghost::scan::directory::scan_ghost_directory,`
+- `src-tauri/src/commands/file.rs:187` `pub fn open_ghost_directory(app_handle: tauri::AppHandle<tauri::Wry>) -> Result<`
+- `src-tauri/src/commands/file.rs:192` `.map_err(|e| format!("Failed to open directory: {}", e))`
 - `src-tauri/src/commands/shiori/status.rs:2` `use crate::ghost::scan::{ScanResult, scan_ghost_directory};`
-- `src-tauri/src/commands/shiori/status.rs:33` (コメント) `// ghost_pathをghost_dirとしてscan_ghost_directoryに渡す`
-- `src-tauri/src/commands/shiori/status.rs:34` `scan_ghost_directory(state, ghost_path, app_handle).await`
-- `ui/js/ui/templates/ghost-templates.js:27` `<input type="text" id="ghost-directory" value="assets/ghost" />`
-- `ui/js/ui/templates/ghost-templates.js:48` `<input type="text" id="balloon-directory" value="assets/balloon" />`

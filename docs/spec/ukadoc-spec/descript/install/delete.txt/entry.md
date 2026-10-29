@@ -10,5 +10,6 @@
 
 ## 実装箇所
 
-- `src-tauri/src/common.rs:110` (コメント) `// 4. カレントディレクトリからの相対パス`
-- `ui/js/core/tauri-helper.js:42` (コメント) `// 相対パスまたはWeb URLはそのまま`
+- `crates/ui/src/surfaces/types/surface.rs:14` `/// 描画する画像ファイル（シェル相対パス）`
+- `ui/js/core/tauri-helper.js:95` `// 相対パスまたはWeb URLはそのまま`
+- `cpp/yaya-shiori/basis.cpp:301` `*  機能概要：  渡された文字列が相対パス表記なら絶対パスに書き換えます`

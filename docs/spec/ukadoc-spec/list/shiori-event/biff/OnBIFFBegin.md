@@ -10,6 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/ffi.rs`: `on_biff_begin()`
-- `ui/js/core/app-actions.js`: `checkEmail()`
-- `ui/menu-iframe.html`: `#biff-btn`
+- `src-tauri/src/shiori/ffi/builder.rs:129` `.event("OnBIFFBegin")`
+- `ui/js/core/actions/network-actions.js:14` `await gc.sendShioriEvent("OnBIFFBegin", [accountName]);`

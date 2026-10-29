@@ -3,7 +3,7 @@
 use crate::surfaces::types::*;
 use super::utils::split_id_suffix;
 
-pub(super) fn apply_element(txt: &mut SurfacesTxt, ids: &[u32], id_part: &str, value: &str) {
+pub(crate) fn apply_element(txt: &mut SurfacesTxt, ids: &[u32], id_part: &str, value: &str) {
     let (_word, id) = split_id_suffix(id_part);
     let tokens: Vec<String> = value.split(',').map(|t| t.trim().to_string()).collect();
     if tokens.len() < 3 {

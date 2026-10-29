@@ -3,7 +3,7 @@
 use crate::surfaces::types::*;
 use super::utils::split_id_suffix;
 
-pub(super) fn apply_collisionex(txt: &mut SurfacesTxt, ids: &[u32], id_part: &str, value: &str) {
+pub(crate) fn apply_collisionex(txt: &mut SurfacesTxt, ids: &[u32], id_part: &str, value: &str) {
     let (_word, id) = split_id_suffix(id_part);
     let tokens: Vec<&str> = value.split(',').map(str::trim).collect();
     if tokens.len() < 3 {
@@ -82,7 +82,7 @@ pub(super) fn apply_collisionex(txt: &mut SurfacesTxt, ids: &[u32], id_part: &st
     }
 }
 
-pub(super) fn apply_collision(txt: &mut SurfacesTxt, ids: &[u32], id_part: &str, value: &str) {
+pub(crate) fn apply_collision(txt: &mut SurfacesTxt, ids: &[u32], id_part: &str, value: &str) {
     let (_word, mut id) = split_id_suffix(id_part);
     let tokens: Vec<&str> = value.split(',').map(str::trim).collect();
 
@@ -94,7 +94,7 @@ pub(super) fn apply_collision(txt: &mut SurfacesTxt, ids: &[u32], id_part: &str,
     }
 }
 
-pub(super) fn apply_collision_body(
+pub(crate) fn apply_collision_body(
     txt: &mut SurfacesTxt,
     ids: &[u32],
     id: Option<u32>,

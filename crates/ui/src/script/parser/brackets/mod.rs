@@ -3,7 +3,7 @@
 pub mod utils;
 pub mod handlers;
 
-pub(crate) use utils::{consume_tag_tail, read_bracketed, read_digit, CharsIter};
+pub(crate) use utils::consume_tag_tail;
 pub(crate) use handlers::{
     handle_animation, handle_balloon, handle_choice, handle_font, handle_newline,
     handle_raiselike, handle_surface, handle_target_p, handle_underscore, handle_wait_short,

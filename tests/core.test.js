@@ -22,6 +22,23 @@ test("AppConfig test", async () => {
 	assert.equal(AppConfig.paths.defaultGhostDir, "test_dir");
 });
 
+test("AppConfig loadAppConfig with shiori and state", async () => {
+	globalThis.__TAURI_INTERNALS__ = {
+		invoke: async (cmd) => {
+			if (cmd === "get_app_config") {
+				return {
+					shiori: { path: "shiori.dll" },
+					state: { booted: true },
+				};
+			}
+			return null;
+		},
+	};
+	await loadAppConfig();
+	assert.equal(AppConfig.shiori.path, "shiori.dll");
+	assert.equal(AppConfig.state.booted, true);
+});
+
 test("tauri-helper test", async () => {
 	globalThis.window = globalThis;
 	assert.equal(typeof isTauriAvailable(), "boolean");

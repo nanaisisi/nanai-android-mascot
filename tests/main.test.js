@@ -176,6 +176,21 @@ test("NanaiAndroidMascotApp closeApp (lines 164-183) covers all exit fallbacks a
 		await app3.closeApp();
 		await new Promise((r) => setTimeout(r, 50));
 		assert.ok(cmds3.includes("exit_app"));
+		// 4. Non-Tauri closeApp -> skips isTauriAvailable() block and calls window.close()
+		delete globalThis.__TAURI__;
+		delete globalThis.__TAURI_INTERNALS__;
+		const app4 = new NanaiAndroidMascotApp();
+		app4.hideMenu = () => {};
+		app4.modalManager = null;
+		app4.ghostController = null;
+		app4.sakuraPlayer = null;
+		let nonTauriClosed = false;
+		globalThis.close = () => {
+			nonTauriClosed = true;
+		};
+		await app4.closeApp();
+		await new Promise((r) => setTimeout(r, 450));
+		assert.equal(nonTauriClosed, true);
 	} finally {
 		NanaiAndroidMascotApp.prototype.init = origInit;
 		delete globalThis.__TAURI__;
@@ -212,7 +227,22 @@ test("NanaiAndroidMascotApp initialization and mixin delegation", async () => {
 
 	globalThis.__TAURI_INTERNALS__ = createTauriInternals(async () => 1);
 	app.initUIEnvironment();
+	const origGetEl = globalThis.document.getElementById;
+	globalThis.document.getElementById = () => null;
+	app.initUIEnvironment();
+	globalThis.document.getElementById = origGetEl;
 	delete globalThis.__TAURI_INTERNALS__;
+
+	// Test fallback URL params (no ghost_id / ghost_name in search)
+	const origSearch = globalThis.location.search;
+	globalThis.location.search = "";
+	const origInit = NanaiAndroidMascotApp.prototype.init;
+	NanaiAndroidMascotApp.prototype.init = async () => {};
+	const appFallback = new NanaiAndroidMascotApp();
+	assert.equal(appFallback.ghostId, "main");
+	assert.equal(appFallback.initialGhostName, null);
+	NanaiAndroidMascotApp.prototype.init = origInit;
+	globalThis.location.search = origSearch;
 
 	globalThis._globalListeners?.DOMContentLoaded?.();
 

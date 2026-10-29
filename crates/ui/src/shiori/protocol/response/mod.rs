@@ -116,3 +116,52 @@ pub(super) fn write_multiline_header(out: &mut String, name: &str, value: &str) 
         out.push_str("\r\n");
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_shiori_response_constructors() {
+        let no_cont = ShioriResponse::no_content();
+        assert_eq!(no_cont.status, StatusCode::NoContent);
+        assert!(!no_cont.is_teach_pending());
+
+        let ok_res = ShioriResponse::ok("\\hHello");
+        assert_eq!(ok_res.status, StatusCode::Ok);
+        assert_eq!(ok_res.value.as_deref(), Some("\\hHello"));
+        assert!(!ok_res.is_teach_pending());
+
+        let mut teach_res = ShioriResponse::default();
+        teach_res.status = StatusCode::NotEnough;
+        assert!(teach_res.is_teach_pending());
+        teach_res.status = StatusCode::Advice;
+        assert!(teach_res.is_teach_pending());
+    }
+
+    #[test]
+    fn test_response_helpers() {
+        assert_eq!(key_str_prefix("X-SSTP-PassThru-CustomKey"), Some("CustomKey".to_string()));
+        assert_eq!(key_str_prefix("InvalidKey"), None);
+
+        assert!(is_header_key("X-Header-Name_1"));
+        assert!(!is_header_key("Invalid Header"));
+        assert!(!is_header_key(""));
+
+        let mut res = ShioriResponse::ok("Line1");
+        push_continuation(&mut res, Some("value"), "Line2");
+        assert_eq!(res.value.as_deref(), Some("Line1\nLine2"));
+
+        let mut res_notify = ShioriResponse::ok("Notify1");
+        res_notify.value_notify = Some("Notify1".to_string());
+        push_continuation(&mut res_notify, Some("value_notify"), "Notify2");
+        assert_eq!(res_notify.value_notify.as_deref(), Some("Notify1\nNotify2"));
+
+        push_continuation(&mut res_notify, Some("unknown"), "Ignored");
+
+        let mut out = String::new();
+        write_multiline_header(&mut out, "Header", "Line1\nLine2");
+        assert!(out.contains("Header: Line1"));
+        assert!(out.contains("Line2"));
+    }
+}

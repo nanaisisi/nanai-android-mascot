@@ -108,4 +108,11 @@ mod tests {
         let cmds = parse_sakura_script(script);
         assert!(!cmds.is_empty());
     }
+
+    #[test]
+    fn test_parse_sakura_script_comprehensive() {
+        let script = "\\0\\h\\1\\u\\p[2]\\s[10]\\w5\\x\\b[1]\\f[bold,1]\\t\\-\\n\\i[3]\\c\\e\\q[Opt,ID]\\!unknown\\e";
+        let cmds = parse_sakura_script(script);
+        assert!(!cmds.is_empty());
+    }
 }

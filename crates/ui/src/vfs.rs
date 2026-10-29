@@ -110,6 +110,20 @@ mod tests {
     }
 
     #[test]
+    fn test_open_text_file_plain_utf8_and_error() {
+        let temp_dir = std::env::temp_dir();
+        let file_path = temp_dir.join("nanai_plain_utf8.txt");
+
+        std::fs::write(&file_path, "Hello UTF8").unwrap();
+        assert_eq!(open_text_file(&file_path).unwrap(), "Hello UTF8");
+
+        let bad_path = temp_dir.join("non_existent_file_12345.txt");
+        assert!(open_text_file(&bad_path).is_err());
+
+        let _ = std::fs::remove_file(&file_path);
+    }
+
+    #[test]
     fn test_resolve_vfs_path() {
         let temp_dir = std::env::temp_dir().join("nanai_vfs_test_dir");
         let _ = std::fs::remove_dir_all(&temp_dir);
@@ -120,6 +134,25 @@ mod tests {
 
         let resolved = resolve_vfs_path(&temp_dir, "subfolder/target.txt");
         assert!(resolved.is_some());
+
+        let _ = std::fs::remove_dir_all(&temp_dir);
+    }
+
+    #[test]
+    fn test_resolve_vfs_path_edge_cases() {
+        let temp_dir = std::env::temp_dir().join("nanai_vfs_edge_dir");
+        let _ = std::fs::remove_dir_all(&temp_dir);
+        let sub = temp_dir.join("SubFolder");
+        std::fs::create_dir_all(&sub).unwrap();
+
+        let resolved = resolve_vfs_path(&temp_dir, "./SubFolder/../SubFolder");
+        assert!(resolved.is_some());
+
+        let file = sub.join("File.txt");
+        std::fs::write(&file, "data").unwrap();
+
+        assert!(resolve_vfs_path(&temp_dir, "subfolder/file.txt").is_some());
+        assert!(resolve_vfs_path(&temp_dir, "nonexistent/file.txt").is_none());
 
         let _ = std::fs::remove_dir_all(&temp_dir);
     }

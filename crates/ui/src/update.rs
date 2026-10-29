@@ -41,6 +41,8 @@ pub fn parse_update_definition(content: &str) -> Vec<UpdateEntry> {
             String::new()
         };
 
+        // [相対パス,ignore], [補足]: updates_def.txt / updates2.dau における相対パス指定、ignore, readonly, delete, size パラメータパース
+        let mut option_flags = Vec::new();
         let mut size = None;
         for &extra in parts.iter().skip(2) {
             let extra_trimmed = extra.trim();
@@ -48,6 +50,11 @@ pub fn parse_update_definition(content: &str) -> Vec<UpdateEntry> {
                 && let Ok(val) = s.parse::<u64>()
             {
                 size = Some(val);
+            } else if extra_trimmed.eq_ignore_ascii_case("ignore")
+                || extra_trimmed.eq_ignore_ascii_case("readonly")
+                || extra_trimmed.eq_ignore_ascii_case("delete")
+            {
+                option_flags.push(extra_trimmed.to_string());
             }
         }
 

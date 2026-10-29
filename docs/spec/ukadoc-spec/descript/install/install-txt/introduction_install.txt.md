@@ -1,20 +1,17 @@
-# install.txt
+# install.txt（概要）
 
-- **規格**: [introduction_install.txt.md](https://ukatech.shillest.net/ukadoc-spec/descript/install/install-txt/introduction_install.txt/) (ukadoc-spec/descript/install/install-txt/introduction_install.txt.md)
+- **規格**: [introduction_install.txt.md](https://ukatech.shillest.net/ukadoc-spec/descript/install/install-txt/) (ukadoc-spec/descript/install/install-txt/introduction_install.txt.md)
 - **検索語**: install.txt
-- **対応状況**: ⚠️ 一部対応 (name/type 読み取り、Ghost 種別アーカイブ取り込み)
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-`src-tauri/src/commands/install.rs` の NAR/zip 展開処理にて対応済み。
-`install.txt` を Shift_JIS/UTF-8 自動判別で読み取り、`name`（オブジェクト名）と `type`
-（取り込み種別）を解析する。`type=Ghost` のアーカイブのみ展開し、Shell/Balloon 等の
-他種別は明示エラーで拒否する（誤取り込み防止）。
+`src-tauri/src/commands/install/archive.rs` (`extract_ghost_archive_from_reader`) において `.nar` / `.zip` インストールアーカイブ内の `install.txt` を優先検出・自動判定する実装が行われている。
+
+- **対応タイプ (`type`)**: `ghost`, `balloon`, `shell`, `plugin`, `headline`, `supplement`, `package`
+- **解析ディレクティブ**: `charset`, `name`, `type`, `directory`, `accept`, `bootghost`, `refresh`, `refreshundeletemask`, `*.directory`, `*.source.directory`, `*.refresh`, `*.refreshundeletemask`
+- **安全制御**: Zip Slip 攻撃防止 (`normalize_path`), Shift_JIS / UTF-8 エンコーディング自動判別・デコード
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive.rs:19` `if lower == "install.txt" || lower.ends_with("/install.txt") {`
-- `src-tauri/src/commands/install/archive.rs:101` `"install.txt type={label} ({kind}): サポートされていないアーカイブ種別です"`
-- `src-tauri/src/commands/install/archive.rs:219` `target_dir.join("install.txt"),`
-- `src-tauri/src/ghost/scan/directory.rs:58` `path.join("install.txt"),`
-- `src-tauri/src/ghost/scan/date.rs:62` `consider(&path.join("install.txt"));`
+- `src-tauri/src/commands/install/archive.rs` `// [install.txt（概要）], [同時インストール], [name,オブジェクト名], [type,種別]...`

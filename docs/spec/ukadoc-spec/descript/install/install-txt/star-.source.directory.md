@@ -1,14 +1,13 @@
-# \*.source.directory,ディレクトリ名
+# *.source.directory,ディレクトリ名
 
-- **規格**: [star-.source.directory.md](https://ukatech.shillest.net/ukadoc-spec/descript/install/install-txt/star-.source.directory/) (ukadoc-spec/descript/install/install-txt/star-.source.directory.md)
-- **検索語**: .source.directory
-- **対応状況**: ❌ 検出なし
+- **規格**: [star-.source.directory.md](https://ukatech.shillest.net/ukadoc-spec/descript/install/install-txt/) (ukadoc-spec/descript/install/install-txt/star-.source.directory.md)
+- **検索語**: *.source.directory
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コード内に「.source.directory」を確認。
-
+`src-tauri/src/commands/install/archive.rs` において `*.source.directory`（`balloon.source.directory` 等）をパースし、アーカイブ内ソースフォルダを特定する実装が行われている。
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive.rs:63` `if let Some(val) = map.get("balloon.source.directory") {`
+- `src-tauri/src/commands/install/archive.rs` `// [*.directory,ディレクトリ名], [*.source.directory,ディレクトリ名]...`

@@ -1,32 +1,9 @@
+import {
+	buildUpdateArgs,
+	createUpdateProgressHandler,
+	parseErrorReason,
+} from "./actions/update-protocol.js";
 import { invoke, isTauriAvailable, listen } from "./tauri-helper.js";
-
-/**
- * ネットワーク更新標準 SHIORI 引数生成ヘルパー (UKADOC準拠)
- * [Ref0, Ref1, Ref2, Ref3, Ref4] -> [ref0, ref1, "", "ghost", "manual"]
- */
-function buildUpdateArgs(ref0 = "", ref1 = "") {
-	return [String(ref0), String(ref1), "", "ghost", "manual"];
-}
-
-/** 更新進行フェーズ → SHIORI サブイベント対応表 */
-const PROGRESS_PHASE_EVENTS = {
-	"download-begin": "OnUpdate.OnDownloadBegin",
-	"md5-begin": "OnUpdate.OnMD5CompareBegin",
-	"md5-complete": "OnUpdate.OnMD5CompareComplete",
-	"md5-failed": "OnUpdate.OnMD5CompareFailure",
-};
-
-/**
- * 例外オブジェクトから UKADOC 準拠の失敗理由を抽出
- * @param {any} err
- * @returns {string}
- */
-function parseErrorReason(err) {
-	const msg = String(err);
-	if (msg.includes("404")) return "404";
-	if (msg.includes("timeout")) return "timeout";
-	return "fileio";
-}
 
 /**
  * ネットワーク更新制御モジュール
@@ -147,19 +124,9 @@ export const updateMethods = {
 			);
 
 			// 4.5 ファイル単位の進捗通知 (Rust execute_ghost_update の update-progress)
-			const progressHandler = (event) => {
-				const { phase, path: filePath } = event.payload || {};
-				if (!filePath) return;
-				const evName = PROGRESS_PHASE_EVENTS[phase];
-				if (evName) {
-					gc.sendShioriEvent(evName, buildUpdateArgs(filePath)).catch?.(
-						() => {},
-					);
-				}
-				if (phase === "md5-failed") {
-					failedFile = filePath;
-				}
-			};
+			const progressHandler = createUpdateProgressHandler(gc, (fp) => {
+				failedFile = fp;
+			});
 
 			let unlisten = null;
 			if (isTauriAvailable()) {

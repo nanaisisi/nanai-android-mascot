@@ -108,3 +108,4 @@
 | [seriko.use_self_alpha,値](seriko.use_self_alpha.md) | seriko.use_self_alpha | ✅ 対応済 (shell.rs) |
 | [seriko.zorder,スコープID,スコープID,...](seriko.zorder.md) | seriko.zorder | ✅ 対応済 (shell.rs) |
 | [type,種別](type.md) | type | ✅ 対応済 (shell.rs) |
+| [seriko.defaultsurfacedirectoryname,ディレクトリ名](seriko.defaultsurfacedirectoryname.md) | seriko.defaultsurfacedirectoryname | ✅ 対応済 (shell.rs) |

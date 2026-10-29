@@ -103,7 +103,7 @@ pub fn scan_shells_from_ghost(ghost_dir: &Path) -> Vec<ShellInfo> {
                         // [sakura.bindoption*.group,カテゴリ名,オプション], [kero.bindoption*.group,カテゴリ名,オプション], [char*.bindoption*.group,カテゴリ名,オプション]:
                         // [sakura.icon.frame.color.r,数値], [sakura.icon.frame.color.g,数値], [sakura.icon.frame.color.b,数値], [kero.icon.frame.color.r,数値], [kero.icon.frame.color.g,数値], [kero.icon.frame.color.b,数値], [char*.icon.frame.color.r,数値], [char*.icon.frame.color.g,数値], [char*.icon.frame.color.b,数値]:
                         // [seriko.alignmenttodesktop,位置情報], [sakura.seriko.alignmenttodesktop,位置情報], [kero.seriko.alignmenttodesktop,位置情報], [char*.seriko.alignmenttodesktop,位置情報]:
-                        // [seriko.dpi,推奨DPI], [seriko.zorder,スコープID,...], [seriko.sticky-window,スコープID,...], [seriko.use_self_alpha,値], [seriko.force_disable_crossfade,値], [seriko.paint_transparent_region_black,数値]:
+                        // [seriko.dpi,推奨DPI], [seriko.zorder,スコープID,スコープID,...], [seriko.sticky-window,スコープID,スコープID,...], [seriko.use_self_alpha,値], [seriko.force_disable_crossfade,値], [seriko.paint_transparent_region_black,数値]:
                         // [補足]:
                         let _m_sakura_name = merged.get("sakura.name");
                         let _m_kero_name = merged.get("kero.name");

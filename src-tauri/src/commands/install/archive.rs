@@ -212,6 +212,27 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
 
     println!("✅ Archive successfully installed to: {:?}", target_dir);
 
+    // [delete.txt]: インストール・更新時の指定ファイル自動削除処理（delete.txt の相対パス解析・削除）
+    let delete_txt_path = target_dir.join("delete.txt");
+    if delete_txt_path.exists()
+        && let Ok(del_content) = std::fs::read_to_string(&delete_txt_path)
+    {
+        for del_line in del_content.lines() {
+            let rel = del_line.trim().replace('\\', "/");
+            if !rel.is_empty() && !rel.starts_with("//") {
+                let to_del = target_dir.join(&rel);
+                let norm_del = normalize_path(&to_del);
+                if norm_del.starts_with(&target_dir) && to_del.exists() {
+                    if to_del.is_dir() {
+                        std::fs::remove_dir_all(&to_del).ok();
+                    } else {
+                        std::fs::remove_file(&to_del).ok();
+                    }
+                }
+            }
+        }
+    }
+
     let shells = crate::ghost::scan::scan_shells_from_ghost(&target_dir);
     let descript_candidates = [
         target_dir.join("ghost").join("master").join("descript.txt"),

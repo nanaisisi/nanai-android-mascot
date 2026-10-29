@@ -1,5 +1,7 @@
 //! さくらスクリプトのパーサと実行（内部コマンド）
 
+use crate::script::parser::brackets::handlers::handle_wait_short;
+
 use super::command::SakuraCommand;
 
 mod brackets;
@@ -38,7 +40,7 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
                 }
                 Some('w') => {
                     // \w1..\w9
-                    if let Some(ms) = brackets::handle_wait_short(&mut chars) {
+                    if let Some(ms) = handle_wait_short(&mut chars) {
                         callback(SakuraCommand::Wait(ms));
                     }
                 }

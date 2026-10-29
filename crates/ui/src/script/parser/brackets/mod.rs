@@ -1,18 +1,19 @@
 //! さくらスクリプトの括弧コマンド（`\s[N]` / `\_w[N]` / `\![...]` 等）処理モジュール
 
-pub mod utils;
 pub mod handlers;
+pub mod utils;
 
-pub(crate) use utils::consume_tag_tail;
 pub(crate) use handlers::{
-    handle_animation, handle_balloon, handle_choice, handle_font, handle_newline,
-    handle_raiselike, handle_surface, handle_target_p, handle_underscore, handle_wait_short,
+    handle_animation, handle_balloon, handle_choice, handle_font, handle_newline, handle_raiselike,
+    handle_surface, handle_target_p, handle_underscore,
 };
+pub(crate) use utils::consume_tag_tail;
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use super::super::SakuraCommand;
+    use super::*;
+    use crate::script::parser::brackets::utils::{read_bracketed, read_digit};
 
     #[test]
     fn test_brackets_helpers() {
@@ -34,7 +35,10 @@ mod tests {
         assert_eq!(handle_newline(&mut chars), Some(true));
 
         let mut chars = "[bold,1]".chars().peekable();
-        assert_eq!(handle_font(&mut chars), Some(("bold".to_string(), Some("1".to_string()))));
+        assert_eq!(
+            handle_font(&mut chars),
+            Some(("bold".to_string(), Some("1".to_string())))
+        );
 
         let mut chars = "[-1]".chars().peekable();
         assert_eq!(handle_balloon(&mut chars), Some(-1));
@@ -55,11 +59,17 @@ mod tests {
 
         let mut chars = "[ChoiceText,ChoiceID]".chars().peekable();
         let choice = handle_choice(&mut chars);
-        assert_eq!(choice, Some(("ChoiceText".to_string(), "ChoiceID".to_string())));
+        assert_eq!(
+            choice,
+            Some(("ChoiceText".to_string(), "ChoiceID".to_string()))
+        );
 
         let mut chars = "[temp,TempText,TempID]".chars().peekable();
         let choice_temp = handle_choice(&mut chars);
-        assert_eq!(choice_temp, Some(("TempText".to_string(), "TempID".to_string())));
+        assert_eq!(
+            choice_temp,
+            Some(("TempText".to_string(), "TempID".to_string()))
+        );
     }
 
     #[test]
@@ -82,11 +92,23 @@ mod tests {
         let mut cmds = Vec::new();
         let mut chars = "l[10,20]".chars().peekable();
         handle_underscore(&mut chars, &mut |c| cmds.push(c));
-        assert_eq!(cmds, vec![SakuraCommand::Offset { x: "10".into(), y: "20".into() }]);
+        assert_eq!(
+            cmds,
+            vec![SakuraCommand::Offset {
+                x: "10".into(),
+                y: "20".into()
+            }]
+        );
 
         let mut cmds = Vec::new();
         let mut chars = "a[anchor1]text\\_a".chars().peekable();
         handle_underscore(&mut chars, &mut |c| cmds.push(c));
-        assert_eq!(cmds, vec![SakuraCommand::Anchor { id: "anchor1".into(), text: "text".into() }]);
+        assert_eq!(
+            cmds,
+            vec![SakuraCommand::Anchor {
+                id: "anchor1".into(),
+                text: "text".into()
+            }]
+        );
     }
 }

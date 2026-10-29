@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { test } from "node:test";
+import { test } from "vitest";
 
 globalThis.window = globalThis;
 globalThis.document = {
@@ -22,7 +22,6 @@ test("balloonDescriptActions rgbFromComponents and applyBalloonDescript", () => 
 		"font.underline": "1",
 		"font.strike": "true",
 		"validrect.left": "10",
-		"validrect.top": "10",
 		"validrect.right": "200",
 		"validrect.bottom": "100",
 		"wordwrappoint.x": "400",

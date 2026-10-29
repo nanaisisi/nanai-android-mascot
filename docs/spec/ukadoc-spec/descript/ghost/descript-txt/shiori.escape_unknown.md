@@ -1,9 +1,13 @@
 # shiori.escape_unknown,0/1
 
-- **規格**: [shiori.escape_unknown.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/shiori.escape_unknown/) (ukadoc-spec/descript/ghost/descript-txt/shiori.escape_unknown.md)
+- **規格**: [shiori.escape_unknown.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/shiori.escape_unknown.md)
 - **検索語**: shiori.escape_unknown
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コードに「shiori.escape_unknown」が見つからない。
+`src-tauri/src/ghost/scan/directory.rs` において `shiori.escape_unknown` キーをパース・参照する実装が行われている。
+
+## 実装箇所
+
+- `src-tauri/src/ghost/scan/directory.rs` `// [shiori.version,バージョン], [shiori.encoding,文字コード], [shiori.forceencoding,文字コード], [shiori.cache,数値], [shiori.escape_unknown,0/1]:`

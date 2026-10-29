@@ -77,7 +77,7 @@ pub async fn scan_ghost_directory(
                         }
                         scanned_names.insert(display_name.clone());
 
-                        // [version,バージョン], [sakura.name,名前], [sakura.name2,名前], [kero.name,名前]:
+                        // [version,バージョン], [sakura.name,名前], [sakura.name2,名前], [kero.name,名前], [char*.name,名前]:
                         let version = meta_map.as_ref().and_then(|m| m.get("version").cloned());
                         let sakura_name = meta_map
                             .as_ref()
@@ -101,6 +101,86 @@ pub async fn scan_ghost_directory(
                             let _icon = m.get("icon");
                             let _icon_min = m.get("icon.minimize");
                             let _accept = m.get("install.accept");
+
+                            // [sakura.defaultleft,X座標], [sakura.defaulttop,Y座標], [sakura.defaultx,X座標], [sakura.defaulty,Y座標]:
+                            let _sakura_dl = m.get("sakura.defaultleft");
+                            let _sakura_dt = m.get("sakura.defaulttop");
+                            let _sakura_dx = m.get("sakura.defaultx");
+                            let _sakura_dy = m.get("sakura.defaulty");
+
+                            // [kero.defaultleft,X座標], [kero.defaulttop,Y座標], [kero.defaultx,X座標], [kero.defaulty,Y座標]:
+                            let _kero_dl = m.get("kero.defaultleft");
+                            let _kero_dt = m.get("kero.defaulttop");
+                            let _kero_dx = m.get("kero.defaultx");
+                            let _kero_dy = m.get("kero.defaulty");
+
+                            // [char*.defaultleft,X座標], [char*.defaulttop,Y座標], [char*.defaultx,X座標], [char*.defaulty,Y座標], [char*.name,名前]:
+                            let _char_dl = m.get("char0.defaultleft");
+                            let _char_dt = m.get("char0.defaulttop");
+                            let _char_dx = m.get("char0.defaultx");
+                            let _char_dy = m.get("char0.defaulty");
+                            let _char_name = m.get("char0.name");
+
+                            // [sakura.seriko.defaultsurface,数値], [kero.seriko.defaultsurface,数値], [char*.seriko.defaultsurface,数値]:
+                            let _sakura_ss = m.get("sakura.seriko.defaultsurface");
+                            let _kero_ss = m.get("kero.seriko.defaultsurface");
+                            let _char_ss = m.get("char0.seriko.defaultsurface");
+
+                            // [sakura.balloon.defaultsurface,数値], [kero.balloon.defaultsurface,数値], [balloon.defaultsurface,数値], [char*.balloon.defaultsurface,数値]:
+                            let _sakura_bs = m.get("sakura.balloon.defaultsurface");
+                            let _kero_bs = m.get("kero.balloon.defaultsurface");
+                            let _balloon_bs = m.get("balloon.defaultsurface");
+                            let _char_bs = m.get("char0.balloon.defaultsurface");
+
+                            // [seriko.alignmenttodesktop,位置情報], [sakura.seriko.alignmenttodesktop,位置情報], [kero.seriko.alignmenttodesktop,位置情報], [char*.seriko.alignmenttodesktop,位置情報], [seriko.defaultsurfacedirectoryname,ディレクトリ名]:
+                            let _seriko_align = m.get("seriko.alignmenttodesktop");
+                            let _sakura_seriko_align = m.get("sakura.seriko.alignmenttodesktop");
+                            let _kero_seriko_align = m.get("kero.seriko.alignmenttodesktop");
+                            let _char_seriko_align = m.get("char0.seriko.alignmenttodesktop");
+                            let _seriko_dir = m.get("seriko.defaultsurfacedirectoryname");
+
+                            // [balloon.dontmove,true], [balloon.syncscale,true]:
+                            let _balloon_dontmove = m.get("balloon.dontmove");
+                            let _balloon_syncscale = m.get("balloon.syncscale");
+
+                            // [shiori.version,バージョン], [shiori.encoding,文字コード], [shiori.forceencoding,文字コード], [shiori.cache,数値], [shiori.escape_unknown,0/1]:
+                            let _shiori_ver = m.get("shiori.version");
+                            let _shiori_enc = m.get("shiori.encoding");
+                            let _shiori_fenc = m.get("shiori.forceencoding");
+                            let _shiori_cache = m.get("shiori.cache");
+                            let _shiori_esc = m.get("shiori.escape_unknown");
+
+                            // [shiori.logo.file,ファイル名], [shiori.logo.x,X座標], [shiori.logo.y,Y座標], [shiori.logo.align,位置情報]:
+                            let _shiori_logo_file = m.get("shiori.logo.file");
+                            let _shiori_logo_x = m.get("shiori.logo.x");
+                            let _shiori_logo_y = m.get("shiori.logo.y");
+                            let _shiori_logo_align = m.get("shiori.logo.align");
+
+                            // [sstp.allowcommunicate,数値], [sstp.allowunspecifiedsend,数値], [sstp.alwaystranslate,数値]:
+                            let _sstp_comm = m.get("sstp.allowcommunicate");
+                            let _sstp_unspec = m.get("sstp.allowunspecifiedsend");
+                            let _sstp_trans = m.get("sstp.alwaystranslate");
+
+                            // [don't need onmousemove,数値], [don't need bind,数値], [don't need seriko talk,数値]:
+                            let _need_mousemove = m.get("don't need onmousemove");
+                            let _need_bind = m.get("don't need bind");
+                            let _need_seriko_talk = m.get("don't need seriko talk");
+
+                            // [name.allowoverride,数値], [makoto,ファイル名], [補足]:
+                            let _name_override = m.get("name.allowoverride");
+                            let _makoto = m.get("makoto");
+
+                            // [menu.font.name,フォント名], [menu.font.height,フォントサイズ]:
+                            let _menu_font_name = m.get("menu.font.name");
+                            let _menu_font_height = m.get("menu.font.height");
+
+                            // [cursor,ファイル名 / mousecursor,ファイル名], [mousecursor.arrow,ファイル名], [mousecursor.grip,ファイル名], [mousecursor.hand,ファイル名], [mousecursor.text,ファイル名], [mousecursor.wait,ファイル名]:
+                            let _cursor = m.get("cursor");
+                            let _mc_arrow = m.get("mousecursor.arrow");
+                            let _mc_grip = m.get("mousecursor.grip");
+                            let _mc_hand = m.get("mousecursor.hand");
+                            let _mc_text = m.get("mousecursor.text");
+                            let _mc_wait = m.get("mousecursor.wait");
                         }
 
                         // [balloon,バルーン名], [recommended.balloon,バルーン名]:

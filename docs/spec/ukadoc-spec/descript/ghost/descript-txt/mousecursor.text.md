@@ -2,13 +2,13 @@
 
 - **規格**: [mousecursor.text.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/mousecursor.text/) (ukadoc-spec/descript/ghost/descript-txt/mousecursor.text.md)
 - **検索語**: mousecursor.text
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コード内に「mousecursor.text」を確認。
-
+`src-tauri/src/ghost/scan/directory.rs` および `ui/js/core/actions/balloon-descript/assets.js` の `setMouseCursor()` において `mousecursor.text` を検出し、`--balloon-cursor-text` カスタムプロパティへ反映する実装が行われている。
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript.js:209` `setMouseCursor("mousecursor.text", "--balloon-cursor-text");`
+- `src-tauri/src/ghost/scan/directory.rs` `// [cursor,ファイル名 / mousecursor,ファイル名]...`
+- `ui/js/core/actions/balloon-descript/assets.js` `setMouseCursor("mousecursor.text", "--balloon-cursor-text");`

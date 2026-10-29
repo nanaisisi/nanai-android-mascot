@@ -1,14 +1,13 @@
 # sakura.defaultx,X座標
 
-- **規格**: [sakura.defaultx.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/sakura.defaultx/) (ukadoc-spec/descript/ghost/descript-txt/sakura.defaultx.md)
+- **規格**: [sakura.defaultx.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/sakura.defaultx.md)
 - **検索語**: sakura.defaultx
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コード内に「sakura.defaultx」を確認。
-
+`src-tauri/src/ghost/scan/directory.rs` において `sakura.defaultx` キーをパース・参照する実装が行われている。
 
 ## 実装箇所
 
-- `crates/ui/src/descript.rs:227` `sakura.defaultx,120\r\nsakura.defaulty,240\r\n\`
+- `src-tauri/src/ghost/scan/directory.rs` `// [sakura.defaultleft,X座標], [sakura.defaulttop,Y座標], [sakura.defaultx,X座標]...`

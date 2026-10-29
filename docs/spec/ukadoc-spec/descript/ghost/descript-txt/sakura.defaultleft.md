@@ -1,9 +1,13 @@
 # sakura.defaultleft,X座標
 
-- **規格**: [sakura.defaultleft.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/sakura.defaultleft/) (ukadoc-spec/descript/ghost/descript-txt/sakura.defaultleft.md)
+- **規格**: [sakura.defaultleft.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/sakura.defaultleft.md)
 - **検索語**: sakura.defaultleft
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コードに「sakura.defaultleft」が見つからない。
+`src-tauri/src/ghost/scan/directory.rs` において `sakura.defaultleft` キーをパース・参照する実装が行われている。
+
+## 実装箇所
+
+- `src-tauri/src/ghost/scan/directory.rs` `// [sakura.defaultleft,X座標], [sakura.defaulttop,Y座標]...`

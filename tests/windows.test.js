@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 globalThis.window = globalThis;
-globalThis.prompt = (msg, def) => def || "90";
+globalThis.prompt = (_msg, def) => def || "90";
 globalThis.alert = () => {};
 globalThis.confirm = () => true;
 globalThis.__TAURI_INTERNALS__ = {
@@ -25,9 +25,15 @@ const getEl = (id) => {
 			value: "100",
 			classList: {
 				classes: new Set(),
-				add(c) { this.classes.add(c); },
-				remove(c) { this.classes.delete(c); },
-				contains(c) { return this.classes.has(c); },
+				add(c) {
+					this.classes.add(c);
+				},
+				remove(c) {
+					this.classes.delete(c);
+				},
+				contains(c) {
+					return this.classes.has(c);
+				},
 			},
 		};
 	}
@@ -35,8 +41,12 @@ const getEl = (id) => {
 };
 
 globalThis.document = {
-	getElementById(id) { return getEl(id); },
-	querySelector(sel) { return getEl(sel.replace(".", "").replace("#", "")); },
+	getElementById(id) {
+		return getEl(id);
+	},
+	querySelector(sel) {
+		return getEl(sel.replace(".", "").replace("#", ""));
+	},
 	addEventListener() {},
 };
 

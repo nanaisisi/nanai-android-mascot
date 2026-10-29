@@ -12,6 +12,6 @@ surface-parser.js が解析 (パターン種別など) するが、描画への�
 
 - `crates/ui/src/surfaces/tests.rs:67` `DrawMethod::parse("stop"),`
 - `crates/ui/src/surfaces/tests.rs:68` `DrawMethod::Custom("stop".to_string())`
-- `crates/ui/src/surfaces/types/draw.rs:24` `/// その他の拡張メソッド（`start` / `stop` / `move` / `import` 等）`
+- `crates/ui/src/surfaces/types/draw.rs:24` `/// その他の拡張メソッド（`start`/`stop`/`move`/`import` 等）`
 - `crates/ui/src/shiori/protocol/response/parse.rs:197` `fn test_parse_stop_at_empty_line() {`
 - `ui/main.js:157` `this.ghostController?.stopSecondChangeTimer?.();`

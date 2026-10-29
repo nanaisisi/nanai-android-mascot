@@ -12,6 +12,6 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 
 - `src-tauri/src/commands/install/archive.rs:238` `let kero_name = meta_map.as_ref().and_then(|m| m.get("kero.name").cloned());`
 - `src-tauri/src/ghost/scan/directory.rs:84` `.and_then(|m| m.get("kero.name").cloned());`
-- `crates/ui/src/descript.rs:90` `/// キャラクター本体名（`kero.name` または `sakura.name`）`
+- `crates/ui/src/descript.rs:90` `/// キャラクター本体名（`kero.name`または`sakura.name`）`
 - `crates/ui/src/descript.rs:94` `/// 相方名（`kero.name`）`
 - `crates/ui/src/descript.rs:96` `self.get("kero.name")`

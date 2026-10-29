@@ -6,7 +6,12 @@ import { eventMethods } from "../ui/js/core/app-events.js";
 import { settingsMethods } from "../ui/js/core/app-settings.js";
 import { updateMethods } from "../ui/js/core/app-update.js";
 import { AppConfig, loadAppConfig } from "../ui/js/core/config.js";
-import { emit, invoke, isTauriAvailable, listen } from "../ui/js/core/tauri-helper.js";
+import {
+	emit,
+	invoke,
+	isTauriAvailable,
+	listen,
+} from "../ui/js/core/tauri-helper.js";
 
 test("AppConfig test", async () => {
 	assert.ok(AppConfig.paths.defaultGhostDir);
@@ -125,19 +130,36 @@ test("AppEvents, AppSettings, AppUpdate, actionMethods test", async () => {
 	await mockApp.sendUpdateResultSummary("g", true, 0, null);
 });
 
-import { convertFileSrc, startDraggingWindow, moveCurrentWindowBy, getCurrentWindowPosition } from "../ui/js/core/tauri-helper.js";
+import {
+	convertFileSrc,
+	getCurrentWindowPosition,
+	moveCurrentWindowBy,
+	startDraggingWindow,
+} from "../ui/js/core/tauri-helper.js";
 
 test("tauri-helper advanced coverage test", async () => {
 	delete globalThis.__TAURI__;
 	delete globalThis.__TAURI_INTERNALS__;
 
 	assert.equal(convertFileSrc(""), "");
-	assert.equal(convertFileSrc("http://example.com/img.png"), "http://example.com/img.png");
-	assert.equal(convertFileSrc("https://example.com/img.png"), "https://example.com/img.png");
-	assert.equal(convertFileSrc("asset://localhost/img.png"), "asset://localhost/img.png");
+	assert.equal(
+		convertFileSrc("http://example.com/img.png"),
+		"http://example.com/img.png",
+	);
+	assert.equal(
+		convertFileSrc("https://example.com/img.png"),
+		"https://example.com/img.png",
+	);
+	assert.equal(
+		convertFileSrc("asset://localhost/img.png"),
+		"asset://localhost/img.png",
+	);
 	assert.equal(convertFileSrc("./img.png"), "./img.png");
 	assert.equal(convertFileSrc("/img.png"), "/img.png");
-	assert.equal(convertFileSrc("C:\\path\\to\\img.png"), "asset://localhost/C:/path/to/img.png");
+	assert.equal(
+		convertFileSrc("C:\\path\\to\\img.png"),
+		"asset://localhost/C:/path/to/img.png",
+	);
 
 	await startDraggingWindow();
 	await moveCurrentWindowBy(10, 10, { x: 0, y: 0 });

@@ -12,5 +12,5 @@
 ## 実装箇所
 
 - `crates/ui/src/surfaces/parser/mod.rs:149` `"maxwidth" => txt.maxwidth = value.trim().parse().ok(),`
-- `crates/ui/src/surfaces/types/txt.rs:16` `/// `descript` ブロック内の `maxwidth,``
+- `crates/ui/src/surfaces/types/txt.rs:16` `/// `descript`ブロック内の`maxwidth,``
 - `crates/ui/src/surfaces/types/txt.rs:17` `pub maxwidth: Option<i32>,`

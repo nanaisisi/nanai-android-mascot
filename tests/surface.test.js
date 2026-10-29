@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-import { parseInterval, resolvePatternWait } from "../ui/js/surface/animation-parser.js";
+import {
+	parseInterval,
+	resolvePatternWait,
+} from "../ui/js/surface/animation-parser.js";
 import { BalloonDragManager } from "../ui/js/surface/balloon-drag.js";
 import { bindMenuData } from "../ui/js/surface/bind-menu.js";
 

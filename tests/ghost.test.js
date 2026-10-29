@@ -1,10 +1,12 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-
-import { ghostShioriMethods } from "../ui/js/ghost/ghost-shiori.js";
 import { GhostController } from "../ui/js/ghost/ghost.js";
+import { ghostShioriMethods } from "../ui/js/ghost/ghost-shiori.js";
 import { parseSakuraScript } from "../ui/js/ghost/sakura-parser.js";
-import { fromRustResponse, statusCodeFromRust } from "../ui/js/ghost/shiori-protocol.js";
+import {
+	fromRustResponse,
+	statusCodeFromRust,
+} from "../ui/js/ghost/shiori-protocol.js";
 
 test("sakura-parser test", () => {
 	const ast = parseSakuraScript("\\0Hello\\1World\\e");

@@ -41,7 +41,7 @@ test("updateMethods.startNetworkUpdate covers all flows and edge cases", async (
 	// 3. Tauri available, checkOnly = true (success with update) (Lines 90-140)
 	globalThis.__TAURI__ = {
 		core: {
-			invoke: async (cmd, args) => {
+			invoke: async (cmd, _args) => {
 				if (cmd === "check_ghost_update") {
 					return {
 						has_update: true,
@@ -93,7 +93,7 @@ test("updateMethods.startNetworkUpdate covers all flows and edge cases", async (
 	// 6. Tauri available, full update with success and progress events (Lines 150-189)
 	let progressCb = null;
 	globalThis.__TAURI__.event = {
-		listen: async (eventName, handler) => {
+		listen: async (_eventName, handler) => {
 			progressCb = handler;
 			return () => {};
 		},

@@ -3,7 +3,9 @@ import { test } from "vitest";
 
 globalThis.window = globalThis;
 
-const { networkActions } = await import("../ui/js/core/actions/network-actions.js");
+const { networkActions } = await import(
+	"../ui/js/core/actions/network-actions.js"
+);
 
 test("networkActions.checkEmail covers all branches (Tauri & non-Tauri)", async () => {
 	const eventsSent = [];
@@ -27,7 +29,7 @@ test("networkActions.checkEmail covers all branches (Tauri & non-Tauri)", async 
 
 	// 2. Tauri environment with standard result
 	globalThis.__TAURI_INTERNALS__ = {
-		invoke: async (cmd, args) => {
+		invoke: async (cmd, _args) => {
 			if (cmd === "check_email") {
 				return { count: 3, size: 1024, unread: 1 };
 			}
@@ -36,13 +38,20 @@ test("networkActions.checkEmail covers all branches (Tauri & non-Tauri)", async 
 	};
 	eventsSent.length = 0;
 	await mockApp.checkEmail("work");
-	assert.ok(eventsSent.some((e) => e.ev === "OnBIFFComplete" && e.args[2] === "work"));
+	assert.ok(
+		eventsSent.some((e) => e.ev === "OnBIFFComplete" && e.args[2] === "work"),
+	);
 
 	// 3. Tauri environment with headers result (OnBIFF2Complete)
 	globalThis.__TAURI_INTERNALS__ = {
-		invoke: async (cmd, args) => {
+		invoke: async (cmd, _args) => {
 			if (cmd === "check_email") {
-				return { count: 5, size: 2048, unread: 2, headers: ["Subject: Hello", "From: Boss"] };
+				return {
+					count: 5,
+					size: 2048,
+					unread: 2,
+					headers: ["Subject: Hello", "From: Boss"],
+				};
 			}
 		},
 		transformCallback: (cb) => cb,

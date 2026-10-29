@@ -12,7 +12,7 @@ ui/js/ghost/sakura-parser.js / sakura-command-handler.js で処理: ミリ秒ウ
 ## 実装箇所
 
 - `crates/ui/src/script/command.rs:9` `Wait(u32),    // \w1..9, \_w[ms] (ミリ秒単位)`
-- `crates/ui/src/script/parser/brackets.rs:1` `//! さくらスクリプトの括弧コマンド（`\s[N]` / `\_w[N]` / `\![...]` 等）処理`
+- `crates/ui/src/script/parser/brackets.rs:1` `//! さくらスクリプトの括弧コマンド（`\s[N]`/`\_w[N]`/`\![...]` 等）処理`
 - `crates/ui/src/script/parser/brackets.rs:167` `/// `\_` 系コマンド（\_w / \_q / \_a / \_s / \_l）の共通処理`
 - `crates/ui/src/script/parser/brackets.rs:174` `// \_w[N]`
 - `crates/ui/src/script/parser/mod.rs:47` `// \_w / \_q / \_a / \_s / \_l`

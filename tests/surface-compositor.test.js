@@ -60,13 +60,15 @@ test("surface-compositor covers processChromaKey, drawLayer, and composeSurfaceE
 		drawImage() {},
 		clearRect() {},
 	};
-	const resolvePath = async (f) => f ? `resolved_${f}` : null;
+	const resolvePath = async (f) => (f ? `resolved_${f}` : null);
 	await drawLayer(mockCtx, "part.png", resolvePath, 0, 0, "replace");
 	await drawLayer(mockCtx, "multiply.png", resolvePath, 0, 0, "blend-multiply");
 	await drawLayer(mockCtx, "", resolvePath, 0, 0, "overlay");
 
 	// 5. composeSurfaceElements
-	const compEmpty = await composeSurfaceElements([], "", resolvePath, [], { returnCanvas: true });
+	const compEmpty = await composeSurfaceElements([], "", resolvePath, [], {
+		returnCanvas: true,
+	});
 	assert.ok(compEmpty);
 
 	const compRes = await composeSurfaceElements(

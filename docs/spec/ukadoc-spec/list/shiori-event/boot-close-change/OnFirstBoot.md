@@ -15,4 +15,4 @@
 - `crates/ui/src/shiori/mod.rs:48` `assert!(text.contains("ID: OnFirstBoot\r\n"));`
 - `crates/ui/src/shiori/mod.rs:53` `let id_pos = text.find("ID: OnFirstBoot").unwrap();`
 - `crates/ui/src/shiori/mod.rs:72` `assert_eq!(parsed.id, "OnFirstBoot");`
-- `crates/ui/src/shiori/protocol/request.rs:24` `/// 互換可能な基本イベント名（SSP拡張。`OnFirstBoot` → `OnBoot` など）`
+- `crates/ui/src/shiori/protocol/request.rs:24` `/// 互換可能な基本イベント名（SSP拡張。`OnFirstBoot`→`OnBoot` など）`

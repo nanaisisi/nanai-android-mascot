@@ -3,7 +3,7 @@ import { test } from "vitest";
 
 globalThis.window = globalThis;
 globalThis.document = {
-	createElement: (tag) => ({
+	createElement: (_tag) => ({
 		className: "",
 		innerHTML: "",
 		addEventListener(type, cb) {
@@ -14,7 +14,9 @@ globalThis.document = {
 	}),
 };
 
-const { ModalGhostHandlers } = await import("../ui/js/ui/modal-ghost-handlers.js");
+const { ModalGhostHandlers } = await import(
+	"../ui/js/ui/modal-ghost-handlers.js"
+);
 
 test("ModalGhostHandlers covers constructor and setupExplorerListeners", () => {
 	const mockManager = {

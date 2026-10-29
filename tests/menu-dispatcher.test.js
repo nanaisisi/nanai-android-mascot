@@ -5,9 +5,15 @@ globalThis.window = globalThis;
 globalThis.location = { search: "?scope=0" };
 const classList = {
 	classes: new Set(),
-	add(c) { this.classes.add(c); },
-	remove(c) { this.classes.delete(c); },
-	contains(c) { return this.classes.has(c); },
+	add(c) {
+		this.classes.add(c);
+	},
+	remove(c) {
+		this.classes.delete(c);
+	},
+	contains(c) {
+		return this.classes.has(c);
+	},
 };
 globalThis.document = { body: { classList } };
 globalThis.parent = globalThis;

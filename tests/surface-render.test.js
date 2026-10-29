@@ -32,22 +32,28 @@ globalThis.document = {
 	},
 };
 
-const { surfaceRenderMethods } = await import("../ui/js/surface/surface-render.js");
+const { surfaceRenderMethods } = await import(
+	"../ui/js/surface/surface-render.js"
+);
 
 test("surfaceRenderMethods covers composeFrameOnBase, composeSurfaceElements, and processChromaKey", async () => {
 	const mockManager = {
 		...surfaceRenderMethods,
 		planCacheKey: () => "mock_cache_key",
 		baseCanvasCache: new Map(),
-		async getCompositionPlan() { return null; },
-		activeBindLayers() { return []; },
-		elements: { "0": [{ file: "el1.png", x: 0, y: 0, type: "overlay" }] },
+		async getCompositionPlan() {
+			return null;
+		},
+		activeBindLayers() {
+			return [];
+		},
+		elements: { 0: [{ file: "el1.png", x: 0, y: 0, type: "overlay" }] },
 		chromaKeyCache: new Map(),
 	};
 
 	// 1. composeFrameOnBase
 	const mockBaseCanvas = document.createElement("canvas");
-	const resolvePath = async (f) => f ? `resolved_${f}` : null;
+	const resolvePath = async (f) => (f ? `resolved_${f}` : null);
 	const frameSrc = await mockManager.composeFrameOnBase(
 		mockBaseCanvas,
 		[{ file: "frame1.png", x: 10, y: 10, type: "overlay" }],

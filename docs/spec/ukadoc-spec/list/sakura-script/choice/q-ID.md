@@ -13,6 +13,6 @@ ui/js/ghost/sakura-parser.js / sakura-command-handler.js で処理: 選択肢 \q
 
 - `crates/ui/src/lib.rs:58` `let script = r"\0\s[0]こんにちは\w5\n\q[はい,id_yes]\e";`
 - `crates/ui/src/script/command.rs:19` `}, // \q[label,id]`
-- `crates/ui/src/script/parser/brackets.rs:153` `/// `\q[テキスト,ID]` / `\q[temp,テキスト,ID]`（旧形式）`
+- `crates/ui/src/script/parser/brackets.rs:153` `/// `\q[テキスト,ID]`/`\q[temp,テキスト,ID]`（旧形式）`
 - `crates/ui/src/script/parser/mod.rs:83` `// \q[テキスト,ID] / \q[temp,テキスト,ID]`
 - `ui/js/ghost/sakura-tokenizer.js:199` `// \q[テキスト,ID] (選択肢)`

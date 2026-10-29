@@ -10,7 +10,10 @@ globalThis.document = {
 		return null;
 	},
 };
-globalThis.localStorage = { getItem: () => JSON.stringify(["Ghost1"]), setItem: () => {} };
+globalThis.localStorage = {
+	getItem: () => JSON.stringify(["Ghost1"]),
+	setItem: () => {},
+};
 
 const { menuMethods } = await import("../ui/js/ui/app-menu.js");
 
@@ -69,7 +72,9 @@ test("menuMethods covers toggleMenu, toggleHtmlMenu, syncMenuGhosts, hideMenu, a
 	globalThis.window = globalThis;
 
 	let syncCalled = false;
-	mockApp.syncMenuGhosts = () => { syncCalled = true; };
+	mockApp.syncMenuGhosts = () => {
+		syncCalled = true;
+	};
 	mockApp.toggleMenu(10, 20, 0);
 	await new Promise((r) => setTimeout(r, 10));
 	assert.equal(syncCalled, true);

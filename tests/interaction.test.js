@@ -45,7 +45,12 @@ test("InteractionManager covers isPixelTransparent and setupDragging", async () 
 	const mockTarget = {
 		querySelector: () => ({
 			tagName: "IMG",
-			getBoundingClientRect: () => ({ left: 0, top: 0, width: 100, height: 100 }),
+			getBoundingClientRect: () => ({
+				left: 0,
+				top: 0,
+				width: 100,
+				height: 100,
+			}),
 			naturalWidth: 10,
 			naturalHeight: 10,
 		}),
@@ -73,11 +78,21 @@ test("InteractionManager covers isPixelTransparent and setupDragging", async () 
 	);
 
 	// 1. Test isPixelTransparent with transparent pixel
-	const isTrans = manager.isPixelTransparent(mockTarget.querySelector(), 10, 10);
+	const isTrans = manager.isPixelTransparent(
+		mockTarget.querySelector(),
+		10,
+		10,
+	);
 	assert.equal(isTrans, true);
 
 	// 2. Test pointer down on transparent pixel (should return early)
-	listeners.mousedown?.({ button: 0, cancelable: true, preventDefault() {}, clientX: 10, clientY: 10 });
+	listeners.mousedown?.({
+		button: 0,
+		cancelable: true,
+		preventDefault() {},
+		clientX: 10,
+		clientY: 10,
+	});
 
 	// 3. Test pointer down on non-transparent pixel (mock non-transparent)
 	const mockImgNonTrans = {
@@ -105,14 +120,24 @@ test("InteractionManager covers isPixelTransparent and setupDragging", async () 
 		return {};
 	};
 
-	listeners.mousedown?.({ button: 0, cancelable: true, preventDefault() {}, clientX: 20, clientY: 20 });
+	listeners.mousedown?.({
+		button: 0,
+		cancelable: true,
+		preventDefault() {},
+		clientX: 20,
+		clientY: 20,
+	});
 	globalListeners.mousemove?.({ clientX: 30, clientY: 30 });
 	globalListeners.mousemove?.({ clientX: 90, clientY: 90 }); // triggers stroke threshold
 	globalListeners.mouseup?.({ clientX: 90, clientY: 90 });
 
 	// Test touch events
 	mockTarget._listeners = {};
-	listeners.touchstart?.({ cancelable: true, preventDefault() {}, touches: [{ clientX: 20, clientY: 20 }] });
+	listeners.touchstart?.({
+		cancelable: true,
+		preventDefault() {},
+		touches: [{ clientX: 20, clientY: 20 }],
+	});
 	globalListeners.touchmove?.({ touches: [{ clientX: 25, clientY: 25 }] });
 	globalListeners.touchend?.();
 

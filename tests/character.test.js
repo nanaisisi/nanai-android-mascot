@@ -7,7 +7,12 @@ globalThis.document = {
 	getElementById(id) {
 		if (id === "subchar-img") {
 			return {
-				getBoundingClientRect: () => ({ left: 0, top: 0, width: 100, height: 100 }),
+				getBoundingClientRect: () => ({
+					left: 0,
+					top: 0,
+					width: 100,
+					height: 100,
+				}),
 				naturalWidth: 10,
 				naturalHeight: 10,
 				src: "",
@@ -48,12 +53,12 @@ globalThis.addEventListener = (type, cb) => {
 	globalThis._globalListeners[type] = cb;
 };
 
-const characterModule = await import("../ui/js/surface/character.js");
+const _characterModule = await import("../ui/js/surface/character.js");
 
 test("character window logic covers transparent check, menu, and pointer events", async () => {
 	// 1. Test init when Tauri is available
 	globalThis.__TAURI_INTERNALS__ = {
-		invoke: async (cmd, args) => {
+		invoke: async (cmd, _args) => {
 			if (cmd === "show_menu_window") return;
 			if (cmd === "sync_character_balloon") return;
 		},
@@ -64,7 +69,13 @@ test("character window logic covers transparent check, menu, and pointer events"
 	assert.ok(root);
 
 	// Simulate mousedown (non-transparent pixel)
-	root._listeners?.mousedown?.({ button: 0, clientX: 10, clientY: 10, screenX: 10, screenY: 10 });
+	root._listeners?.mousedown?.({
+		button: 0,
+		clientX: 10,
+		clientY: 10,
+		screenX: 10,
+		screenY: 10,
+	});
 
 	// Simulate mousemove (dragging)
 	globalThis._globalListeners?.mousemove?.({ clientX: 30, clientY: 30 });
@@ -73,7 +84,11 @@ test("character window logic covers transparent check, menu, and pointer events"
 	globalThis._globalListeners?.mouseup?.();
 
 	// Simulate contextmenu
-	globalThis._globalListeners?.contextmenu?.({ preventDefault() {}, screenX: 50, screenY: 50 });
+	globalThis._globalListeners?.contextmenu?.({
+		preventDefault() {},
+		screenX: 50,
+		screenY: 50,
+	});
 
 	delete globalThis.__TAURI_INTERNALS__;
 	assert.ok(true);

@@ -15,8 +15,18 @@ test("shioriNotifyMethods covers sendShioriNotify and sendBootNotifyEvents", asy
 			path: "/assets/ghost/ghost1",
 		},
 		ghosts: [
-			{ name: "Ghost1", sakura_name: "Sakura1", kero_name: "Kero1", path: "/assets/ghost/ghost1" },
-			{ name: "Ghost2", sakura_name: "Sakura2", kero_name: "", path: "/assets/ghost/ghost2" },
+			{
+				name: "Ghost1",
+				sakura_name: "Sakura1",
+				kero_name: "Kero1",
+				path: "/assets/ghost/ghost1",
+			},
+			{
+				name: "Ghost2",
+				sakura_name: "Sakura2",
+				kero_name: "",
+				path: "/assets/ghost/ghost2",
+			},
 		],
 		shells: ["master", "alt"],
 	};
@@ -46,12 +56,12 @@ test("shioriNotifyMethods covers sendShioriNotify and sendBootNotifyEvents", asy
 	// 3. sendBootNotifyEvents with full ghost/shell metadata
 	calls.length = 0;
 	await controller.sendBootNotifyEvents();
-	assert.ok(calls.some(c => c.args.event === "installedghostname"));
-	assert.ok(calls.some(c => c.args.event === "installedkeroname"));
-	assert.ok(calls.some(c => c.args.event === "installedshellname"));
-	assert.ok(calls.some(c => c.args.event === "ghostpathlist"));
-	assert.ok(calls.some(c => c.args.event === "basewareversion"));
-	assert.ok(calls.some(c => c.args.event === "uniqueid"));
+	assert.ok(calls.some((c) => c.args.event === "installedghostname"));
+	assert.ok(calls.some((c) => c.args.event === "installedkeroname"));
+	assert.ok(calls.some((c) => c.args.event === "installedshellname"));
+	assert.ok(calls.some((c) => c.args.event === "ghostpathlist"));
+	assert.ok(calls.some((c) => c.args.event === "basewareversion"));
+	assert.ok(calls.some((c) => c.args.event === "uniqueid"));
 
 	// 4. sendShioriNotify with invoke error (catch branch)
 	globalThis.__TAURI_INTERNALS__.invoke = async () => {

@@ -8,9 +8,9 @@ globalThis.document = {
 		this._listeners[type] = cb;
 	},
 	removeEventListener() {},
-	getElementById(id) {
+	getElementById(_id) {
 		return {
-			addEventListener(type, cb) {
+			addEventListener(_type, cb) {
 				this._cb = cb;
 			},
 		};
@@ -36,21 +36,41 @@ test("eventMethods coverage for setupEventListeners, interactions, buttons, and 
 		},
 		elements: {
 			ghostDisplay: {
-				addEventListener(type, cb) { listeners[type] = cb; },
-				getBoundingClientRect: () => ({ left: 0, top: 0, right: 100, bottom: 50 }),
+				addEventListener(type, cb) {
+					listeners[type] = cb;
+				},
+				getBoundingClientRect: () => ({
+					left: 0,
+					top: 0,
+					right: 100,
+					bottom: 50,
+				}),
 			},
 			keroDisplay: {
-				addEventListener(type, cb) { listeners[`kero_${type}`] = cb; },
+				addEventListener(type, cb) {
+					listeners[`kero_${type}`] = cb;
+				},
 			},
 			menuBtn: {
-				getBoundingClientRect: () => ({ left: 0, top: 0, right: 50, bottom: 25 }),
-				addEventListener(type, cb) { listeners[`menu_${type}`] = cb; },
+				getBoundingClientRect: () => ({
+					left: 0,
+					top: 0,
+					right: 50,
+					bottom: 25,
+				}),
+				addEventListener(type, cb) {
+					listeners[`menu_${type}`] = cb;
+				},
 			},
 			quickBubble: {
-				addEventListener(type, cb) { listeners[`quick_${type}`] = cb; },
+				addEventListener(type, cb) {
+					listeners[`quick_${type}`] = cb;
+				},
 			},
 			balloonDisplay: {
-				addEventListener(type, cb) { listeners[`balloon_${type}`] = cb; },
+				addEventListener(type, cb) {
+					listeners[`balloon_${type}`] = cb;
+				},
 			},
 		},
 		toggleMenu() {},
@@ -67,7 +87,9 @@ test("eventMethods coverage for setupEventListeners, interactions, buttons, and 
 			currentSurfaces: new Map([[1, "src.png"]]),
 		},
 		surfaceManager: {
-			detectCollision() { return { name: "Head", canvasX: 10, canvasY: 20 }; }
+			detectCollision() {
+				return { name: "Head", canvasX: 10, canvasY: 20 };
+			},
 		},
 		onGhostClick() {},
 		switchToNextGhost() {},
@@ -76,8 +98,18 @@ test("eventMethods coverage for setupEventListeners, interactions, buttons, and 
 	mockApp.setupEventListeners();
 
 	// Test contextmenu on ghost display
-	listeners.contextmenu?.({ preventDefault() {}, stopPropagation() {}, screenX: 10, screenY: 20 });
-	listeners.kero_contextmenu?.({ preventDefault() {}, stopPropagation() {}, screenX: 15, screenY: 25 });
+	listeners.contextmenu?.({
+		preventDefault() {},
+		stopPropagation() {},
+		screenX: 10,
+		screenY: 20,
+	});
+	listeners.kero_contextmenu?.({
+		preventDefault() {},
+		stopPropagation() {},
+		screenX: 15,
+		screenY: 25,
+	});
 
 	// Test UI buttons
 	listeners.menu_click?.({ stopPropagation() {}, screenX: 30, screenY: 40 });
@@ -86,11 +118,23 @@ test("eventMethods coverage for setupEventListeners, interactions, buttons, and 
 
 	// Test global document event listeners
 	document._listeners?.click?.();
-	document._listeners?.contextmenu?.({ preventDefault() {}, screenX: 50, screenY: 60 });
+	document._listeners?.contextmenu?.({
+		preventDefault() {},
+		screenX: 50,
+		screenY: 60,
+	});
 
 	document._listeners?.keydown?.({ key: "Escape" });
-	document._listeners?.keydown?.({ key: "w", ctrlKey: true, preventDefault() {} });
-	document._listeners?.keydown?.({ key: "q", metaKey: true, preventDefault() {} });
+	document._listeners?.keydown?.({
+		key: "w",
+		ctrlKey: true,
+		preventDefault() {},
+	});
+	document._listeners?.keydown?.({
+		key: "q",
+		metaKey: true,
+		preventDefault() {},
+	});
 
 	// Test onGhostClick and onGhostStroke
 	await mockApp.onGhostClick(10, 20, {}, 0);

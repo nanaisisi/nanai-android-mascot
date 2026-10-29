@@ -15,7 +15,7 @@ globalThis.document = {
 let eventListener = null;
 globalThis.__TAURI__ = {
 	event: {
-		listen: async (eventName, cb) => {
+		listen: async (_eventName, cb) => {
 			eventListener = cb;
 		},
 	},

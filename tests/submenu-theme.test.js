@@ -6,8 +6,12 @@ const styleProps = {};
 globalThis.document = {
 	documentElement: {
 		style: {
-			setProperty(prop, val) { styleProps[prop] = val; },
-			removeProperty(prop) { delete styleProps[prop]; },
+			setProperty(prop, val) {
+				styleProps[prop] = val;
+			},
+			removeProperty(prop) {
+				delete styleProps[prop];
+			},
 		},
 	},
 	body: {
@@ -17,7 +21,9 @@ globalThis.document = {
 				if (force) this.classes.add(c);
 				else this.classes.delete(c);
 			},
-			contains(c) { return this.classes.has(c); },
+			contains(c) {
+				return this.classes.has(c);
+			},
 		},
 	},
 };

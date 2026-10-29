@@ -11,7 +11,13 @@ globalThis.document = {
 	visibilityState: "visible",
 };
 globalThis.localStorage = {
-	getItem: () => JSON.stringify({ darkMode: true, shellScale: "120", balloonScale: "150", balloonTheme: "ivory" }),
+	getItem: () =>
+		JSON.stringify({
+			darkMode: true,
+			shellScale: "120",
+			balloonScale: "150",
+			balloonTheme: "ivory",
+		}),
 	setItem: () => {},
 };
 
@@ -20,16 +26,29 @@ const { settingsMethods } = await import("../ui/js/core/app-settings.js");
 test("settingsMethods coverage for loadSettings, applySettings, showBalloon, hideBalloon, and timers", async () => {
 	const mockApp = {
 		...settingsMethods,
-		settings: { darkMode: false, shellScale: "100", balloonScale: "100", balloonTheme: "default" },
+		settings: {
+			darkMode: false,
+			shellScale: "100",
+			balloonScale: "100",
+			balloonTheme: "default",
+		},
 		elements: {
 			ghostDisplay: { style: {} },
 			balloonDisplay: { style: {} },
 			balloonText: { textContent: "", innerHTML: "hello" },
 		},
 		currentBalloonTheme: "default",
-		setBalloonTheme(theme) { this.currentBalloonTheme = theme; },
-		applyBalloonTheme() { this.setBalloonTheme(this.settings.balloonTheme); },
-		sakuraPlayer: { play(script) { return `played:${script}`; } },
+		setBalloonTheme(theme) {
+			this.currentBalloonTheme = theme;
+		},
+		applyBalloonTheme() {
+			this.setBalloonTheme(this.settings.balloonTheme);
+		},
+		sakuraPlayer: {
+			play(script) {
+				return `played:${script}`;
+			},
+		},
 		ghostController: { sendShioriEvent() {} },
 	};
 
@@ -52,11 +71,12 @@ test("settingsMethods coverage for loadSettings, applySettings, showBalloon, hid
 	// Test showBalloon & hideBalloon (Tauri available)
 	globalThis.__TAURI__ = {
 		core: {
-			invoke: async (cmd, args) => {
-				if (cmd === "show_balloon_window" || cmd === "hide_balloon_window") return;
+			invoke: async (cmd, _args) => {
+				if (cmd === "show_balloon_window" || cmd === "hide_balloon_window")
+					return;
 			},
 		},
-		event: { emit: async () => {} }
+		event: { emit: async () => {} },
 	};
 	mockApp.showBalloon("tauri text", 1);
 	await new Promise((r) => setTimeout(r, 10));

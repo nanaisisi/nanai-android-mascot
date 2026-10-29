@@ -4,7 +4,7 @@
  */
 import { rgbFromComponents } from "./utils.js";
 
-export function applyFontProperties(root, props, instance) {
+export function applyFontProperties(root, props, _instance) {
 	if (props["font.name"]) {
 		root.style.setProperty(
 			"--balloon-font-family",
@@ -43,15 +43,11 @@ export function applyFontProperties(root, props, instance) {
 	)
 		decorations.push("line-through");
 	if (decorations.length > 0) {
-		root.style.setProperty(
-			"--balloon-text-decoration",
-			decorations.join(" "),
-		);
+		root.style.setProperty("--balloon-text-decoration", decorations.join(" "));
 	}
 
 	const anchorCol =
-		rgbFromComponents(props, "anchor.font.color") ||
-		props["anchor.font.color"];
+		rgbFromComponents(props, "anchor.font.color") || props["anchor.font.color"];
 	if (anchorCol) root.style.setProperty("--balloon-anchor-color", anchorCol);
 
 	const anchorVisited =
@@ -74,22 +70,25 @@ export function applyFontProperties(root, props, instance) {
 	}
 
 	const cursorBg =
-		rgbFromComponents(props, "cursor.font.color") ||
-		props["cursor.font.color"];
+		rgbFromComponents(props, "cursor.font.color") || props["cursor.font.color"];
 	if (cursorBg) {
 		root.style.setProperty("--balloon-highlight-bg", cursorBg);
 	}
 	const cursorText =
-		rgbFromComponents(props, "cursor.color.font") ||
-		props["cursor.color.font"];
+		rgbFromComponents(props, "cursor.color.font") || props["cursor.color.font"];
 	if (cursorText) {
 		root.style.setProperty("--balloon-highlight-text", cursorText);
 	}
 
 	const numFontName = props["number.font.name"];
-	if (numFontName) root.style.setProperty("--balloon-number-font-family", `"${numFontName}", sans-serif`);
+	if (numFontName)
+		root.style.setProperty(
+			"--balloon-number-font-family",
+			`"${numFontName}", sans-serif`,
+		);
 	const numFontHeight = parseInt(props["number.font.height"], 10);
-	if (!Number.isNaN(numFontHeight)) root.style.setProperty("--balloon-number-font-size", `${numFontHeight}px`);
+	if (!Number.isNaN(numFontHeight))
+		root.style.setProperty("--balloon-number-font-size", `${numFontHeight}px`);
 	const numColor = rgbFromComponents(props, "number.font.color");
 	if (numColor) root.style.setProperty("--balloon-number-color", numColor);
 

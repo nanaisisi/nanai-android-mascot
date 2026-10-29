@@ -6,7 +6,7 @@ globalThis.location = { search: "?scope=0" };
 globalThis.localStorage = { getItem: () => null, setItem: () => {} };
 globalThis.document = {
 	documentElement: { style: { setProperty() {} }, setAttribute() {} },
-	getElementById(id) {
+	getElementById(_id) {
 		return {
 			style: {},
 			addEventListener() {},

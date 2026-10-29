@@ -13,7 +13,7 @@ Rust パーサーが解析し、マニフェスト経由で JS のサーフィ�
 ## 実装箇所
 
 - `crates/ui/src/shell.rs:67` `/// `surface.alias` ブロック（エイリアス名）からサーフィス定義を解決する`
-- `crates/ui/src/manifest.rs:39` `/// `surface.alias` / `sakura.surface.alias` ブロックの エイリアス名 → サーフィス番号列`
-- `crates/ui/src/manifest.rs:41` `/// `kero.surface.alias` / `char1.surface.alias` ブロックの エイリアス名 → 番号列`
+- `crates/ui/src/manifest.rs:39` `/// `surface.alias`/`sakura.surface.alias` ブロックの エイリアス名 → サーフィス番号列`
+- `crates/ui/src/manifest.rs:41` `/// `kero.surface.alias`/`char1.surface.alias` ブロックの エイリアス名 → 番号列`
 - `crates/ui/src/surfaces/tests.rs:254` `surface.alias`
 - `crates/ui/src/surfaces/tests.rs:291` `sakura.surface.alias`

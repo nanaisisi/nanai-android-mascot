@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-const { surfaceDressupMethods } = await import("../ui/js/surface/surface-dressup.js");
+const { surfaceDressupMethods } = await import(
+	"../ui/js/surface/surface-dressup.js"
+);
 
 test("surfaceDressupMethods covers bindDressup, activeBindLayers, plans, and cache", async () => {
 	const eventsSent = [];
@@ -11,31 +13,37 @@ test("surfaceDressupMethods covers bindDressup, activeBindLayers, plans, and cac
 		app: {
 			ghostController: {
 				updateSurface: async () => {},
-				sendShioriEvent: async (ev, args) => { eventsSent.push({ ev, args }); },
+				sendShioriEvent: async (ev, args) => {
+					eventsSent.push({ ev, args });
+				},
 				currentGhost: { name: "TestGhost" },
 				currentShell: "master",
 			},
 		},
-		currentSurfaceIdFor() { return 0; },
+		currentSurfaceIdFor() {
+			return 0;
+		},
 		shellManifest: {
 			sakura_bind_groups: [
 				{ number: 100, category: "hat", part: "ribbon", add_ids: [101] },
 			],
 		},
 		animations: {
-			"0": [
+			0: [
 				{ id: 100, patterns: [{ surface: 10, x: 0, y: 0, method: "Overlay" }] },
 				{ id: 101, patterns: [{ surface: 11, x: 5, y: 5, method: "Add" }] },
 			],
 		},
-		resolveSurfaceNumber(s) { return s; },
+		resolveSurfaceNumber(s) {
+			return s;
+		},
 		planCache: new Map(),
 	};
 
 	// 1. bindDressup with explicit status "1"
 	await mockManager.bindDressup("hat", "ribbon", "1", 0, true);
 	assert.equal(mockManager.dressupState.get("0__hat__ribbon"), true);
-	assert.ok(eventsSent.some(e => e.ev === "OnDressupChanged"));
+	assert.ok(eventsSent.some((e) => e.ev === "OnDressupChanged"));
 
 	// 2. bindDressup toggle to false ("0")
 	await mockManager.bindDressup("hat", "ribbon", "0", 0, true);
@@ -60,7 +68,7 @@ test("surfaceDressupMethods covers bindDressup, activeBindLayers, plans, and cac
 	assert.equal(planNoTauri, null);
 
 	globalThis.__TAURI_INTERNALS__ = {
-		invoke: async (cmd, args) => {
+		invoke: async (cmd, _args) => {
 			if (cmd === "surface_composition_plan") {
 				return {
 					layers: [
@@ -91,7 +99,9 @@ test("surfaceDressupMethods covers bindDressup, activeBindLayers, plans, and cac
 	assert.equal(mockManager.planToRenderLayers({ layers: [] }, 0), null);
 
 	// Test invoke error
-	globalThis.__TAURI_INTERNALS__.invoke = async () => { throw new Error("fail"); };
+	globalThis.__TAURI_INTERNALS__.invoke = async () => {
+		throw new Error("fail");
+	};
 	mockManager.planCache.clear();
 	assert.equal(await mockManager.getCompositionPlan(0, 0), null);
 

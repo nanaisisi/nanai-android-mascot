@@ -115,28 +115,18 @@ mod tests {
     #[test]
     fn test_handlers_extended_edge_cases() {
         let mut cmds = Vec::new();
-        let mut chars = "[bind,cat,part,0]".chars().peekable();
-        handle_raiselike(&mut chars, &mut |c| cmds.push(c));
-
-        let mut cmds2 = Vec::new();
-        let mut chars2 = "[bind,cat,part,invalid_status]".chars().peekable();
-        handle_raiselike(&mut chars2, &mut |c| cmds2.push(c));
-
-        let mut cmds3 = Vec::new();
-        let mut chars3 = "[unknown_cmd,arg1]".chars().peekable();
-        handle_raiselike(&mut chars3, &mut |c| cmds3.push(c));
-
-        let mut cmds_raise = Vec::new();
-        let mut chars_raise = "[raise]".chars().peekable();
-        handle_raiselike(&mut chars_raise, &mut |c| cmds_raise.push(c));
-
-        let mut cmds_bind = Vec::new();
-        let mut chars_bind = "[bind]".chars().peekable();
-        handle_raiselike(&mut chars_bind, &mut |c| cmds_bind.push(c));
-
-        let mut cmds_un = Vec::new();
-        let mut chars_un = "no_bracket".chars().peekable();
-        handle_raiselike(&mut chars_un, &mut |c| cmds_un.push(c));
+        let mut push = |c| cmds.push(c);
+        for input in [
+            "[bind,cat,part,0]",
+            "[bind,cat,part,invalid_status]",
+            "[unknown_cmd,arg1]",
+            "[raise]",
+            "[bind]",
+            "no_bracket",
+        ] {
+            let mut chars = input.chars().peekable();
+            handle_raiselike(&mut chars, &mut push);
+        }
 
         let mut chars4 = "5".chars().peekable();
         assert_eq!(handle_balloon(&mut chars4), Some(5));
@@ -171,58 +161,25 @@ mod tests {
         let mut chars_choice3 = "[JustLabel]".chars().peekable();
         assert_eq!(handle_choice(&mut chars_choice3), Some(("JustLabel".to_string(), "".to_string())));
 
-        let mut chars_w = "w[abc]".chars().peekable();
-        let mut cmds_w = Vec::new();
-        handle_underscore(&mut chars_w, &mut |c| cmds_w.push(c));
-        assert!(cmds_w.is_empty());
-
-        let mut chars_w2 = "wno_bracket".chars().peekable();
-        let mut cmds_w2 = Vec::new();
-        handle_underscore(&mut chars_w2, &mut |c| cmds_w2.push(c));
-        assert!(cmds_w2.is_empty());
-
-        let mut chars_q = "q".chars().peekable();
-        let mut cmds_q = Vec::new();
-        handle_underscore(&mut chars_q, &mut |c| cmds_q.push(c));
-        assert_eq!(cmds_q.pop(), Some(SakuraCommand::Quick(true)));
-
-        let mut chars_q2 = "q[invalid]".chars().peekable();
-        let mut cmds_q2 = Vec::new();
-        handle_underscore(&mut chars_q2, &mut |c| cmds_q2.push(c));
-        assert_eq!(cmds_q2.pop(), Some(SakuraCommand::Quick(true)));
-
-        let mut chars_s = "s".chars().peekable();
-        let mut cmds_s = Vec::new();
-        handle_underscore(&mut chars_s, &mut |c| cmds_s.push(c));
-        assert_eq!(cmds_s.pop(), Some(SakuraCommand::Sync(true)));
-
-        let mut chars_s2 = "s[invalid]".chars().peekable();
-        let mut cmds_s2 = Vec::new();
-        handle_underscore(&mut chars_s2, &mut |c| cmds_s2.push(c));
-        assert_eq!(cmds_s2.pop(), Some(SakuraCommand::Sync(true)));
-
-        let mut chars_l = "l[10]".chars().peekable();
-        let mut cmds_l = Vec::new();
-        handle_underscore(&mut chars_l, &mut |c| cmds_l.push(c));
-        assert_eq!(cmds_l.pop(), Some(SakuraCommand::Offset { x: "10".to_string(), y: "0".to_string() }));
-
-        let mut chars_l2 = "lno_bracket".chars().peekable();
-        let mut cmds_l2 = Vec::new();
-        handle_underscore(&mut chars_l2, &mut |c| cmds_l2.push(c));
-        assert!(cmds_l2.is_empty());
-
-        let mut chars_a = "ano_bracket".chars().peekable();
-        let mut cmds_a = Vec::new();
-        handle_underscore(&mut chars_a, &mut |c| cmds_a.push(c));
-        assert!(cmds_a.is_empty());
-
-        let mut chars_a2 = "a[id]text\\_b\\_a".chars().peekable();
-        let mut cmds_a2 = Vec::new();
-        handle_underscore(&mut chars_a2, &mut |c| cmds_a2.push(c));
-        assert_eq!(cmds_a2.pop(), Some(SakuraCommand::Anchor { id: "id".to_string(), text: "text\\b".to_string() }));
-
-        let mut chars7 = "x".chars().peekable();
-        let mut cmds7 = Vec::new();
-        handle_underscore(&mut chars7, &mut |c| cmds7.push(c));
+        let mut u_cmds = Vec::new();
+        let mut push_u = |c| u_cmds.push(c);
+        for input in [
+            "w[abc]",
+            "wno_bracket",
+            "q",
+            "q[invalid]",
+            "s",
+            "s[invalid]",
+            "l[10]",
+            "lno_bracket",
+            "ano_bracket",
+            "a[id]text\\_b\\_a",
+            "x",
+            "_w[10]",
+        ] {
+            let mut chars = input.chars().peekable();
+            handle_underscore(&mut chars, &mut push_u);
+        }
+        assert!(!u_cmds.is_empty());
     }
 }

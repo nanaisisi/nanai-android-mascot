@@ -66,9 +66,6 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
         return;
     };
     let parts: Vec<&str> = cmd_str.split(',').map(|s| s.trim()).collect();
-    if parts.is_empty() {
-        return;
-    }
     match parts[0] {
         "raise" => {
             let event = parts.get(1).unwrap_or(&"").to_string();

@@ -11,26 +11,34 @@ const { updateMethods } = await import("../ui/js/core/app-update.js");
 
 test("updateMethods.startNetworkUpdate covers all flows and edge cases", async () => {
 	const eventsSent = [];
+	let scriptReturn = null;
 	const mockApp = {
 		...updateMethods,
 		ghostController: {
 			currentGhost: { name: "MockGhost", path: "path/to/ghost" },
 			sendShioriEvent: async (ev, args) => {
 				eventsSent.push({ ev, args });
-				if (ev === "OnUpdateProcessExec") return { script: null };
-				return { script: null };
+				if (ev === "OnUpdateProcessExec") return { script: scriptReturn };
+				if (ev.endsWith("Ex")) return { script: "handled" }; // Test summary when script is returned
+				return { script: "custom" };
 			},
+			selectGhost() {},
 		},
 		showBalloon() {},
 		wait: async () => {},
 	};
 
-	// 1. Browser fallback (Tauri unavailable)
+	// 1. OnUpdateProcessExec returns script (early return) (Lines 49-50)
+	scriptReturn = "custom script";
 	const origTauri = globalThis.__TAURI__;
 	delete globalThis.__TAURI__;
 	await mockApp.startNetworkUpdate();
 
-	// 2. Tauri available, checkOnly = true (success with update)
+	// 2. Browser fallback (Tauri unavailable)
+	scriptReturn = null;
+	await mockApp.startNetworkUpdate();
+
+	// 3. Tauri available, checkOnly = true (success with update) (Lines 90-140)
 	globalThis.__TAURI__ = {
 		core: {
 			invoke: async (cmd, args) => {
@@ -52,14 +60,28 @@ test("updateMethods.startNetworkUpdate covers all flows and edge cases", async (
 	eventsSent.length = 0;
 	await mockApp.startNetworkUpdate(null, { checkOnly: true });
 
-	// 3. Tauri available, checkOnly = true (no update / error in check)
+	// 3b. Tauri available, checkOnly = true (no update)
+	globalThis.__TAURI__.core.invoke = async (cmd) => {
+		if (cmd === "check_ghost_update") {
+			return {
+				has_update: false,
+				total_count: 0,
+				message: "No update",
+				update_files: [],
+			};
+		}
+	};
+	eventsSent.length = 0;
+	await mockApp.startNetworkUpdate(null, { checkOnly: true });
+
+	// 4. Tauri available, checkOnly = true (error in check) (Lines 195-240)
 	globalThis.__TAURI__.core.invoke = async (cmd) => {
 		if (cmd === "check_ghost_update") throw new Error("404 not found");
 	};
 	eventsSent.length = 0;
 	await mockApp.startNetworkUpdate(null, { checkOnly: true });
 
-	// 4. Tauri available, full update, no update
+	// 5. Tauri available, full update, no update
 	globalThis.__TAURI__.core.invoke = async (cmd) => {
 		if (cmd === "check_ghost_update") {
 			return { has_update: false, total_count: 0, update_files: [] };
@@ -68,7 +90,7 @@ test("updateMethods.startNetworkUpdate covers all flows and edge cases", async (
 	eventsSent.length = 0;
 	await mockApp.startNetworkUpdate();
 
-	// 5. Tauri available, full update with success and progress events
+	// 6. Tauri available, full update with success and progress events (Lines 150-189)
 	let progressCb = null;
 	globalThis.__TAURI__.event = {
 		listen: async (eventName, handler) => {
@@ -98,7 +120,7 @@ test("updateMethods.startNetworkUpdate covers all flows and edge cases", async (
 	eventsSent.length = 0;
 	await mockApp.startNetworkUpdate();
 
-	// 6. Full update with execute_ghost_update failure
+	// 7. Full update with execute_ghost_update failure (Lines 195-240)
 	globalThis.__TAURI__.core.invoke = async (cmd) => {
 		if (cmd === "check_ghost_update") {
 			return {
@@ -115,12 +137,15 @@ test("updateMethods.startNetworkUpdate covers all flows and edge cases", async (
 	eventsSent.length = 0;
 	await mockApp.startNetworkUpdate();
 
-	// 7. Full update with timeout error in catch
+	// 8. Full update with timeout error in catch (Lines 195-240)
 	globalThis.__TAURI__.core.invoke = async (cmd) => {
 		if (cmd === "check_ghost_update") throw new Error("timeout error");
 	};
 	eventsSent.length = 0;
 	await mockApp.startNetworkUpdate();
+
+	// 9. Test sendUpdateResultSummary when script is returned
+	await mockApp.sendUpdateResultSummary("MockGhost", true, 0, null, false);
 
 	if (origTauri) globalThis.__TAURI__ = origTauri;
 	else delete globalThis.__TAURI__;

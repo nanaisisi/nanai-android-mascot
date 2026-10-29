@@ -76,3 +76,51 @@ pub fn resolve_vfs_path(base_dir: &Path, relative_path: &str) -> Option<PathBuf>
     }
     Some(current)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::io::Write;
+
+    #[test]
+    fn test_open_text_file_utf8_and_sjis() {
+        let temp_dir = std::env::temp_dir();
+        let file_path = temp_dir.join("nanai_test_vfs.txt");
+
+        // Write UTF-8 with BOM
+        {
+            let mut f = File::create(&file_path).unwrap();
+            f.write_all(&[0xEF, 0xBB, 0xBF]).unwrap();
+            f.write_all("こんにちは".as_bytes()).unwrap();
+        }
+        let content = open_text_file(&file_path).unwrap();
+        assert_eq!(content, "こんにちは");
+
+        // Write Shift_JIS
+        {
+            let (sjis_bytes, _, _) = SHIFT_JIS.encode("テスト");
+            let mut f = File::create(&file_path).unwrap();
+            f.write_all(&sjis_bytes).unwrap();
+        }
+        let content2 = open_text_file(&file_path).unwrap();
+        assert_eq!(content2, "テスト");
+
+        assert!(open_shift_jis_file(file_path.to_str().unwrap()).is_ok());
+        let _ = std::fs::remove_file(&file_path);
+    }
+
+    #[test]
+    fn test_resolve_vfs_path() {
+        let temp_dir = std::env::temp_dir().join("nanai_vfs_test_dir");
+        let _ = std::fs::remove_dir_all(&temp_dir);
+        let sub_dir = temp_dir.join("SubFolder");
+        std::fs::create_dir_all(&sub_dir).unwrap();
+        let file_path = sub_dir.join("Target.txt");
+        std::fs::write(&file_path, "hello").unwrap();
+
+        let resolved = resolve_vfs_path(&temp_dir, "subfolder/target.txt");
+        assert!(resolved.is_some());
+
+        let _ = std::fs::remove_dir_all(&temp_dir);
+    }
+}

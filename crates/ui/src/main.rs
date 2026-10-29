@@ -29,4 +29,21 @@ mod tests {
         rust_i18n::set_locale(lang_code);
         assert_eq!(&*rust_i18n::locale(), "ja");
     }
+
+    #[test]
+    fn test_various_locales() {
+        for (input, expected) in [
+            ("en-US", "en"),
+            ("zh-CN", "zh"),
+            ("fr", "fr"),
+            ("", ""),
+        ] {
+            let code = input.split('-').next().unwrap_or("en");
+            if code.is_empty() {
+                assert_eq!(expected, "");
+            } else {
+                assert_eq!(code, expected);
+            }
+        }
+    }
 }

@@ -67,3 +67,27 @@ pub fn parse_sender_types(value: &str) -> Vec<SenderTypeTag> {
         .filter(|t| !matches!(t, SenderTypeTag::Custom(v) if v.is_empty()))
         .collect()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_sender_type_parsing_and_token() {
+        let raw = "internal, sakuraapi, sstp, custom_tag";
+        let tags = parse_sender_types(raw);
+        assert_eq!(
+            tags,
+            vec![
+                SenderTypeTag::Internal,
+                SenderTypeTag::SakuraApi,
+                SenderTypeTag::Sstp,
+                SenderTypeTag::Custom("custom_tag".to_string()),
+            ]
+        );
+
+        assert_eq!(SenderTypeTag::Internal.token(), "internal");
+        assert_eq!(SenderTypeTag::SakuraApi.token(), "sakuraapi");
+        assert_eq!(SenderTypeTag::Custom("test".into()).token(), "test");
+    }
+}

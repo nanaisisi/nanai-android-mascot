@@ -22,7 +22,7 @@ const { balloonDescriptActions } = await import(
 	"../ui/js/core/actions/balloon-descript.js"
 );
 
-test("balloonDescriptActions covers rgbFromComponents and applyBalloonDescript", () => {
+test("balloonDescriptActions covers rgbFromComponents and applyBalloonDescript for all UKADOC properties", () => {
 	// 1. rgbFromComponents
 	const rgb = balloonDescriptActions.rgbFromComponents(
 		{ "font.color.r": "255", "font.color.g": "128", "font.color.b": "0" },
@@ -77,11 +77,49 @@ test("balloonDescriptActions covers rgbFromComponents and applyBalloonDescript",
 		"font.italic": "true",
 		"font.underline": "1",
 		"font.strike": "1",
-		"font.color": "#333333",
-		"anchor.font.color": "#0000ff",
-		"cursor.font.color": "#ff0000",
+		"font.outline": "1",
+		"font.color.r": "50",
+		"font.color.g": "50",
+		"font.color.b": "50",
+		"font.shadowcolor.r": "200",
+		"font.shadowcolor.g": "200",
+		"font.shadowcolor.b": "200",
+		"font.shadowstyle": "outline",
+		"anchor.style": "square+underline",
+		"anchor.font.color.r": "0",
+		"anchor.font.color.g": "0",
+		"anchor.font.color.b": "255",
+		"anchor.visited.style": "underline",
+		"anchor.visited.font.color.r": "128",
+		"anchor.visited.font.color.g": "0",
+		"anchor.visited.font.color.b": "128",
+		"anchor.notselect.style": "none",
+		"anchor.notselect.font.color.r": "100",
+		"anchor.notselect.font.color.g": "100",
+		"anchor.notselect.font.color.b": "100",
+		"cursor.style": "square",
+		"cursor.font.color.r": "255",
+		"cursor.font.color.g": "0",
+		"cursor.font.color.b": "0",
+		"cursor.notselect.style": "none",
+		"cursor.notselect.font.color.r": "80",
+		"cursor.notselect.font.color.g": "80",
+		"cursor.notselect.font.color.b": "80",
+		"number.x": "10",
+		"number.y": "20",
+		"number.xr": "-10",
+		"number.yb": "-20",
 		"number.font.name": "Arial",
 		"number.font.height": "12",
+		"number.font.color.r": "10",
+		"number.font.color.g": "10",
+		"number.font.color.b": "10",
+		"sstpmarker.x": "15",
+		"sstpmarker.y": "25",
+		"sstpmessage.x": "30",
+		"sstpmessage.y": "40",
+		"sstpmessage.xr": "-30",
+		"sstpmessage.yb": "-40",
 		"arrow.filename": "arrow.png",
 		"clickwaitmarker.filename": "marker.png",
 		"mousecursor.arrow": "cursor.cur",
@@ -100,6 +138,16 @@ test("balloonDescriptActions covers rgbFromComponents and applyBalloonDescript",
 	assert.equal(cssVars["--balloon-dpi"], "120");
 	assert.equal(cssVars["--balloon-font-family"], '"Meiryo", Meiryo, sans-serif');
 	assert.equal(cssVars["--balloon-font-size"], "14px");
+	assert.equal(cssVars["--balloon-font-outline"], "1");
+	assert.equal(cssVars["--balloon-font-shadow-color"], "rgb(200, 200, 200)");
+	assert.equal(cssVars["--balloon-font-shadow-style"], "outline");
+	assert.equal(cssVars["--balloon-anchor-style"], "square+underline");
+	assert.equal(cssVars["--balloon-anchor-visited-style"], "underline");
+	assert.equal(cssVars["--balloon-anchor-notselect-style"], "none");
+	assert.equal(cssVars["--balloon-cursor-style"], "square");
+	assert.equal(cssVars["--balloon-number-x"], "10px");
+	assert.equal(cssVars["--balloon-sstpmarker-x"], "15px");
+	assert.equal(cssVars["--balloon-sstpmessage-x"], "30px");
 	assert.equal(cssVars["--balloon-writing-mode"], "vertical-rl");
 	assert.equal(cssVars["--balloon-paint-black"], "1");
 

@@ -1,6 +1,6 @@
 /**
  * @file layout.js
- * @brief バルーンレイアウト・DPI・領域・位置の設定反映
+ * @brief バルーンレイアウト・DPI・領域・位置・数字・SSTPメッセージ設定反映 (UKADOC準拠)
  */
 import { rgbFromComponents } from "./utils.js";
 
@@ -21,6 +21,7 @@ export function applyLayoutProperties(root, props, instance) {
 		balloonScaleEl.style.transformOrigin = "bottom left";
 	}
 
+	// コミュニケートボックス (communicatebox.*)
 	const cbWidth = props["communicatebox.width"];
 	const cbHeight = props["communicatebox.height"];
 	const cbX = props["communicatebox.x"];
@@ -66,6 +67,7 @@ export function applyLayoutProperties(root, props, instance) {
 		}
 	}
 
+	// 有効表示領域 (validrect.*)
 	const vl = parseInt(props["validrect.left"], 10);
 	const vt = parseInt(props["validrect.top"], 10);
 	const vr = parseInt(props["validrect.right"], 10);
@@ -86,6 +88,7 @@ export function applyLayoutProperties(root, props, instance) {
 		}
 	}
 
+	// 折り返し・境界位置 (wordwrappoint.x / y)
 	if (props["wordwrappoint.x"]) {
 		const ww = parseInt(props["wordwrappoint.x"], 10);
 		if (!Number.isNaN(ww) && ww > 50) {
@@ -104,6 +107,7 @@ export function applyLayoutProperties(root, props, instance) {
 		}
 	}
 
+	// 表示原点オフセット (origin.x / y)
 	const ox = parseInt(props["origin.x"], 10);
 	const oy = parseInt(props["origin.y"], 10);
 	if (!Number.isNaN(ox) || !Number.isNaN(oy)) {
@@ -115,6 +119,27 @@ export function applyLayoutProperties(root, props, instance) {
 		}
 	}
 
+	// 数字位置 (number.x / y / xr / yb)
+	const numX = parseInt(props["number.x"], 10);
+	const numY = parseInt(props["number.y"], 10);
+	const numXR = parseInt(props["number.xr"], 10);
+	const numYB = parseInt(props["number.yb"], 10);
+	if (!Number.isNaN(numX)) root.style.setProperty("--balloon-number-x", `${numX}px`);
+	if (!Number.isNaN(numY)) root.style.setProperty("--balloon-number-y", `${numY}px`);
+	if (!Number.isNaN(numXR)) root.style.setProperty("--balloon-number-xr", `${numXR}px`);
+	if (!Number.isNaN(numYB)) root.style.setProperty("--balloon-number-yb", `${numYB}px`);
+
+	// SSTPメッセージ位置 (sstpmessage.x / y / xr / yb)
+	const sstpX = parseInt(props["sstpmessage.x"], 10);
+	const sstpY = parseInt(props["sstpmessage.y"], 10);
+	const sstpXR = parseInt(props["sstpmessage.xr"], 10);
+	const sstpYB = parseInt(props["sstpmessage.yb"], 10);
+	if (!Number.isNaN(sstpX)) root.style.setProperty("--balloon-sstpmessage-x", `${sstpX}px`);
+	if (!Number.isNaN(sstpY)) root.style.setProperty("--balloon-sstpmessage-y", `${sstpY}px`);
+	if (!Number.isNaN(sstpXR)) root.style.setProperty("--balloon-sstpmessage-xr", `${sstpXR}px`);
+	if (!Number.isNaN(sstpYB)) root.style.setProperty("--balloon-sstpmessage-yb", `${sstpYB}px`);
+
+	// ウィンドウ位置および画面外制限 (windowposition.x / y / limit)
 	const wpX = parseInt(props["windowposition.x"], 10);
 	const wpY = parseInt(props["windowposition.y"], 10);
 	if (!Number.isNaN(wpX))

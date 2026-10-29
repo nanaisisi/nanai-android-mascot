@@ -1,6 +1,6 @@
 /**
  * @file assets.js
- * @brief バルーン画像・矢印・マーカー・カーソル・アルファ設定反映
+ * @brief バルーン画像・矢印・マーカー・カーソル・アルファ設定反映 (UKADOC準拠)
  */
 export function applyAssetProperties(root, props, instance) {
 	const setBalloonImage = (propName, cssVarName) => {
@@ -35,6 +35,7 @@ export function applyAssetProperties(root, props, instance) {
 	setMouseCursor("mousecursor.text", "--balloon-cursor-text");
 	setMouseCursor("mousecursor.wait", "--balloon-cursor-wait");
 
+	// 矢印位置 (arrow0.x/y, arrow1.x/y)
 	const arrow0x = parseInt(props["arrow0.x"], 10);
 	const arrow0y = parseInt(props["arrow0.y"], 10);
 	if (!Number.isNaN(arrow0x))
@@ -49,6 +50,7 @@ export function applyAssetProperties(root, props, instance) {
 	if (!Number.isNaN(arrow1y))
 		root.style.setProperty("--balloon-arrow1-y", `${arrow1y}px`);
 
+	// クリック待ちマーカー位置 (clickwaitmarker.x/y)
 	const cwX = parseInt(props["clickwaitmarker.x"], 10);
 	const cwY = parseInt(props["clickwaitmarker.y"], 10);
 	if (!Number.isNaN(cwX))
@@ -56,6 +58,15 @@ export function applyAssetProperties(root, props, instance) {
 	if (!Number.isNaN(cwY))
 		root.style.setProperty("--balloon-clickwait-y", `${cwY}px`);
 
+	// SSTPマーカー位置 (sstpmarker.x/y)
+	const smX = parseInt(props["sstpmarker.x"], 10);
+	const smY = parseInt(props["sstpmarker.y"], 10);
+	if (!Number.isNaN(smX))
+		root.style.setProperty("--balloon-sstpmarker-x", `${smX}px`);
+	if (!Number.isNaN(smY))
+		root.style.setProperty("--balloon-sstpmarker-y", `${smY}px`);
+
+	// 縦書きモード (vertical)
 	const isVertical =
 		props.vertical === "1" || props.vertical?.toLowerCase() === "true";
 	root.style.setProperty(
@@ -63,6 +74,7 @@ export function applyAssetProperties(root, props, instance) {
 		isVertical ? "vertical-rl" : "horizontal-tb",
 	);
 
+	// オンラインマーカー (onlinemarker.interval, onlinemarker.x/y)
 	const onlineInterval = parseInt(props["onlinemarker.interval"], 10);
 	if (!Number.isNaN(onlineInterval))
 		instance.onlineMarkerInterval = onlineInterval;
@@ -73,6 +85,7 @@ export function applyAssetProperties(root, props, instance) {
 	if (!Number.isNaN(onlineY))
 		root.style.setProperty("--balloon-online-y", `${onlineY}px`);
 
+	// SSTPメッセージ位置 (sstpmessage.x/y)
 	const sstpMsgX = parseInt(props["sstpmessage.x"], 10);
 	const sstpMsgY = parseInt(props["sstpmessage.y"], 10);
 	if (!Number.isNaN(sstpMsgX))
@@ -80,6 +93,7 @@ export function applyAssetProperties(root, props, instance) {
 	if (!Number.isNaN(sstpMsgY))
 		root.style.setProperty("--balloon-sstpmessage-y", `${sstpMsgY}px`);
 
+	// アルファ・透過領域描画オプション
 	const paintBlack =
 		props.paint_transparent_region_black === "1" ||
 		props.paint_transparent_region_black?.toLowerCase() === "true";

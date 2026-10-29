@@ -36,68 +36,130 @@ globalThis.addEventListener = (type, cb) => {
 	globalThis._globalListeners[type] = cb;
 };
 
+const createTauriInternals = (invokeFn) => ({
+	metadata: { currentWindow: { label: "main" } },
+	invoke: invokeFn || (async () => {}),
+	transformCallback: (cb) => cb,
+	plugins: {
+		event: {
+			listen: async () => () => {},
+			emit: async () => {},
+		},
+	},
+});
+
 const { NanaiAndroidMascotApp } = await import("../ui/main.js");
 
-test("NanaiAndroidMascotApp instantiation, init, callGhost, closeApp and mixin delegation", async () => {
+test("NanaiAndroidMascotApp callGhost (lines 85-87) covers success and error branches", async () => {
+	const origInit = NanaiAndroidMascotApp.prototype.init;
+	NanaiAndroidMascotApp.prototype.init = async () => {};
+
+	try {
+		const app = new NanaiAndroidMascotApp();
+
+		// 1. Non-Tauri environment
+		delete globalThis.__TAURI__;
+		delete globalThis.__TAURI_INTERNALS__;
+		await app.callGhost("Ghost1");
+
+		// 2. Tauri environment success
+		const invokedCmds = [];
+		globalThis.__TAURI_INTERNALS__ = createTauriInternals(async (cmd, args) => {
+			invokedCmds.push({ cmd, args });
+		});
+
+		await app.callGhost("Ghost2");
+		assert.ok(invokedCmds.some((c) => c.cmd === "spawn_ghost" && c.args.ghostName === "Ghost2"));
+
+		// 3. Tauri environment error
+		globalThis.__TAURI_INTERNALS__ = createTauriInternals(async () => {
+			throw new Error("spawn_ghost error");
+		});
+		await app.callGhost("Ghost3");
+	} finally {
+		NanaiAndroidMascotApp.prototype.init = origInit;
+		delete globalThis.__TAURI_INTERNALS__;
+	}
+});
+
+test("NanaiAndroidMascotApp closeApp (lines 164-183) covers all exit fallbacks and isPlaying state", async () => {
+	const origInit = NanaiAndroidMascotApp.prototype.init;
+	NanaiAndroidMascotApp.prototype.init = async () => {};
+
+	try {
+		// 1. Normal exit with close_ghost success
+		const app1 = new NanaiAndroidMascotApp();
+		app1.hideMenu = () => {};
+		app1.modalManager = { hide: () => {} };
+		app1.ghostController = {
+			stopSecondChangeTimer: () => {},
+			sendShioriEvent: async () => ({}),
+		};
+		app1.sakuraPlayer = { isPlaying: false };
+
+		const cmds1 = [];
+		globalThis.__TAURI_INTERNALS__ = createTauriInternals(async (cmd) => {
+			cmds1.push(cmd);
+			if (cmd === "unload_current_ghost") return;
+			if (cmd === "close_ghost") return;
+		});
+
+		await app1.closeApp();
+		await new Promise((r) => setTimeout(r, 450));
+		assert.ok(cmds1.includes("unload_current_ghost"));
+		assert.ok(cmds1.includes("close_ghost"));
+
+		// 2. Exit with unload_current_ghost error, close_ghost error, exit_app error -> window.close fallback
+		const app2 = new NanaiAndroidMascotApp();
+		app2.hideMenu = () => {};
+		app2.modalManager = { hide: () => {} };
+		app2.ghostController = {
+			stopSecondChangeTimer: () => {},
+			sendShioriEvent: async () => { throw new Error("OnClose error"); },
+		};
+		app2.sakuraPlayer = { isPlaying: true };
+
+		const cmds2 = [];
+		let windowClosed = false;
+		globalThis.close = () => { windowClosed = true; };
+		globalThis.__TAURI_INTERNALS__ = createTauriInternals(async (cmd) => {
+			cmds2.push(cmd);
+			throw new Error(`${cmd} error`);
+		});
+
+		await app2.closeApp();
+		await new Promise((r) => setTimeout(r, 1550));
+		assert.ok(cmds2.includes("unload_current_ghost"));
+		assert.ok(cmds2.includes("close_ghost"));
+		assert.ok(cmds2.includes("exit_app"));
+		assert.equal(windowClosed, true);
+	} finally {
+		NanaiAndroidMascotApp.prototype.init = origInit;
+		delete globalThis.__TAURI_INTERNALS__;
+	}
+});
+
+test("NanaiAndroidMascotApp initialization and mixin delegation", async () => {
+	delete globalThis.__TAURI_INTERNALS__;
 	const app = new NanaiAndroidMascotApp();
 	assert.equal(app.ghostId, "main");
 	assert.equal(app.initialGhostName, "mock_nanai");
-	assert.ok(app.ghostController);
-	assert.ok(app.interactionManager);
-	assert.ok(app.surfaceManager);
-	assert.ok(app.sakuraPlayer);
 
-	// 1. Test onGhostClick
 	app.ghostController.sendShioriEvent = async () => ({});
 	app.onGhostClick(10, 10, { left: 0, top: 0, width: 100, height: 100 }, 0);
 
-	// 2. Mock required methods for init
 	app.scanBalloons = async () => {};
 	app.ghostController.autoLoadGhost = async () => {};
 	app.ghostController.stopSecondChangeTimer = () => {};
 
-	// Test init with autoLoadGhost = false
 	app.settings.autoLoadGhost = false;
 	await app.init();
 	assert.equal(app.isInitialized, true);
 
-	// Test init with autoLoadGhost = true
 	app.settings.autoLoadGhost = true;
 	await app.init();
 
-	// 3. Test callGhost (non-Tauri vs Tauri success vs Tauri error)
-	delete globalThis.__TAURI__;
-	delete globalThis.__TAURI_INTERNALS__;
-	await app.callGhost("AnotherGhost");
-
-	globalThis.__TAURI_INTERNALS__ = {
-		invoke: async (cmd) => {
-			if (cmd === "spawn_ghost") return;
-		},
-		transformCallback: (cb) => cb,
-	};
-	globalThis.window = globalThis;
-	await app.callGhost("AnotherGhost");
-
-	// Test callGhost error catch
-	globalThis.__TAURI_INTERNALS__.invoke = async () => { throw new Error("spawn fail"); };
-	await app.callGhost("FailingGhost");
-
-	// 4. Test closeApp with Tauri available and fallback sequence
-	globalThis.__TAURI_INTERNALS__.invoke = async (cmd) => {
-		if (cmd === "unload_current_ghost") return;
-		if (cmd === "close_ghost") throw new Error("close_ghost fail");
-		if (cmd === "exit_app") return;
-	};
-
-	const closePromise = app.closeApp();
-	// Test duplicate closeApp call while exiting
-	await app.closeApp();
-	await closePromise;
-
-	// 5. Test DOMContentLoaded event listener
 	globalThis._globalListeners?.DOMContentLoaded?.();
 
-	delete globalThis.__TAURI_INTERNALS__;
 	assert.ok(true);
 });

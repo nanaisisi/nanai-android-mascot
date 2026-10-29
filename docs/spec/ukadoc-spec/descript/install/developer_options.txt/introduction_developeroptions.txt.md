@@ -2,8 +2,12 @@
 
 - **規格**: [introduction_developeroptions.txt.md](https://ukatech.shillest.net/ukadoc-spec/descript/install/developer_options.txt/introduction_developeroptions.txt/) (ukadoc-spec/descript/install/developer_options.txt/introduction_developeroptions.txt.md)
 - **検索語**: developer_options.txt
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コードに「developer_options.txt」が見つからない。
+`src-tauri/src/ghost/scan/directory.rs` において `developer_options.txt` を読み込み、開発者向け除外・制御フラグ行を抽出・適用する実装が行われている。
+
+## 実装箇所
+
+- `src-tauri/src/ghost/scan/directory.rs` `// [developer_options.txt], [自動的に除外される対象], [相対パス,オプション1,オプション2,...]:`

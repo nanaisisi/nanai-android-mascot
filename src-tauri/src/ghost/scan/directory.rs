@@ -58,6 +58,19 @@ pub async fn scan_ghost_directory(
                             continue;
                         }
 
+                        // [developer_options.txt], [自動的に除外される対象], [相対パス,オプション1,オプション2,...]:
+                        let dev_options_path = path.join("developer_options.txt");
+                        if dev_options_path.exists()
+                            && let Ok(dev_content) = std::fs::read_to_string(&dev_options_path)
+                        {
+                            for dev_line in dev_content.lines() {
+                                let trimmed = dev_line.trim();
+                                if !trimmed.is_empty() && !trimmed.starts_with("//") {
+                                    println!("🛠️ Developer option entry: {}", trimmed);
+                                }
+                            }
+                        }
+
                         // [descript.txt（Ghostの）]: ゴーストマニフェスト定義読込
                         let descript_candidates = [
                             path.join("ghost").join("master").join("descript.txt"),

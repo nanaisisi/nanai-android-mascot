@@ -1,10 +1,12 @@
 /**
  * @file layout.js
  * @brief バルーンレイアウト・DPI・領域・位置・数字・SSTPメッセージ設定反映 (UKADOC準拠)
+ * // [descript.txt（Balloonの）]: Balloon descript.txt レイアウト・領域・座標バインディング
  */
 import { rgbFromComponents } from "./utils.js";
 
 export function applyLayoutProperties(root, props, instance) {
+	// [descript.txt（Balloonの）]: props
 	// [dpi,推奨DPI]: props["dpi"]
 	const parsedDpi = parseInt(props.dpi, 10);
 	const balloonDpi = !Number.isNaN(parsedDpi) && parsedDpi > 0 ? parsedDpi : 96;

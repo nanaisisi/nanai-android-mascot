@@ -1,8 +1,10 @@
 /**
  * @file assets.js
  * @brief バルーン画像・矢印・マーカー・カーソル・アルファ設定反映 (UKADOC準拠)
+ * // [descript.txt（Balloonの）]: Balloon descript.txt アセット・画像属性バインディング
  */
 export function applyAssetProperties(root, props, instance) {
+	// [descript.txt（Balloonの）]: props
 	// [readme,ファイル名]: props["readme"]
 	if (props["readme"]) root.style.setProperty("--balloon-readme", props["readme"]);
 

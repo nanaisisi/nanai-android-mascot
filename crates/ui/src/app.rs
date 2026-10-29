@@ -55,4 +55,17 @@ mod tests {
     fn test_get_ghost_dir_list() {
         let _list = get_ghost_dir_list();
     }
+
+    #[test]
+    fn test_get_ghost_dir_list_with_mock() {
+        let ghost_dir = get_ghost_dir();
+        let _ = fs::create_dir_all(&ghost_dir);
+        let mock_ghost = ghost_dir.join("mock_ghost_test_dir");
+        let _ = fs::create_dir_all(&mock_ghost);
+
+        let list = get_ghost_dir_list();
+        assert!(list.contains(&"mock_ghost_test_dir".to_string()));
+
+        let _ = fs::remove_dir_all(&mock_ghost);
+    }
 }

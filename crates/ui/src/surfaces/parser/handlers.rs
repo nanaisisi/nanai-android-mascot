@@ -332,4 +332,41 @@ mod tests {
         apply_animation_line(&mut txt, &[0], "0.pattern0", "overlay,6,85-120,0,0");
         assert!(txt.surfaces.get(&0).unwrap().animations.contains_key(&0));
     }
+
+    #[test]
+    fn test_apply_collisionex_shapes() {
+        let mut txt = SurfacesTxt::default();
+        apply_collisionex(&mut txt, &[0], "collision0", "Head, rect, 0, 0, 50, 50");
+        apply_collisionex(&mut txt, &[0], "collision1", "Body, polygon, 0, 0, 10, 10, 20, 20");
+        apply_collisionex(&mut txt, &[0], "collision2", "C1, circle, 10, 10, 5");
+        apply_collisionex(&mut txt, &[0], "collision3", "C2, circle, 10, 10, 5, 5");
+        apply_collisionex(&mut txt, &[0], "collision4", "E1, ellipse, 10, 10, 5, 8");
+        apply_collisionex(&mut txt, &[0], "collision5", "F1, unknown, 0, 0, 10, 10, 20, 20");
+        assert_eq!(txt.surfaces.get(&0).unwrap().collisions.len(), 6);
+    }
+
+    #[test]
+    fn test_apply_animation_fields() {
+        let mut txt = SurfacesTxt::default();
+        apply_animation_line(&mut txt, &[0], "0.name", "BlinkAnimation");
+        apply_animation_line(&mut txt, &[0], "0.option", "async");
+        apply_animation_line(&mut txt, &[0], "0.pattern", "overlay,6,85,0,0");
+        apply_animation_line(&mut txt, &[0], "0.pattern1", "overlay,-1,85-120,0,0");
+        assert!(txt.surfaces.get(&0).unwrap().animations.contains_key(&0));
+    }
+
+    #[test]
+    fn test_apply_point_all_fields() {
+        let mut txt = SurfacesTxt::default();
+        for field in ["centerx", "centery", "basepos.x", "basepos.y", "kinoko.centerx", "kinoko.centery", "unknown"] {
+            apply_point(&mut txt, &[0], field, "100");
+        }
+        let points = &txt.surfaces.get(&0).unwrap().points;
+        assert_eq!(points.center_x, Some(100));
+        assert_eq!(points.center_y, Some(100));
+        assert_eq!(points.basepos_x, Some(100));
+        assert_eq!(points.basepos_y, Some(100));
+        assert_eq!(points.kinoko_center_x, Some(100));
+        assert_eq!(points.kinoko_center_y, Some(100));
+    }
 }

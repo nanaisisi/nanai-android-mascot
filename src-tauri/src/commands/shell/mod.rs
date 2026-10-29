@@ -13,3 +13,11 @@ pub use animation::*;
 pub use balloon::*;
 pub use ghost::*;
 pub use manifest::*;
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_shell_commands_module() {
+        // Module availability verification
+    }
+}

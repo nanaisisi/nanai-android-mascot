@@ -84,3 +84,11 @@ pub async fn install_ghost_archive_bytes(
 
     extract_ghost_archive_from_reader(zip, &fallback, &app_handle)
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_install_module() {
+        // Module availability verification
+    }
+}

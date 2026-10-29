@@ -90,4 +90,26 @@ mod tests {
         assert_eq!(SenderTypeTag::SakuraApi.token(), "sakuraapi");
         assert_eq!(SenderTypeTag::Custom("test".into()).token(), "test");
     }
+
+    #[test]
+    fn test_all_sender_type_variants() {
+        let variants = vec![
+            ("internal", SenderTypeTag::Internal),
+            ("external", SenderTypeTag::External),
+            ("sakuraapi", SenderTypeTag::SakuraApi),
+            ("embed", SenderTypeTag::Embed),
+            ("raise", SenderTypeTag::Raise),
+            ("property", SenderTypeTag::Property),
+            ("plugin", SenderTypeTag::Plugin),
+            ("sstp", SenderTypeTag::Sstp),
+            ("communicate", SenderTypeTag::Communicate),
+            ("custom_val", SenderTypeTag::Custom("custom_val".to_string())),
+        ];
+
+        for (s, expected) in variants {
+            let parsed = SenderTypeTag::parse(s);
+            assert_eq!(parsed, expected);
+            assert_eq!(parsed.token().to_lowercase(), s.to_lowercase());
+        }
+    }
 }

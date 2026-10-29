@@ -46,4 +46,14 @@ mod tests {
             }
         }
     }
+
+    #[test]
+    fn test_main_locale_fallback_logic() {
+        let fallback = Some("").filter(|s| !s.is_empty()).unwrap_or("en");
+        assert_eq!(fallback, "en");
+
+        let valid = Some("ja-JP").filter(|s| !s.is_empty()).unwrap_or("en");
+        let lang = valid.split('-').next().unwrap_or("en");
+        assert_eq!(lang, "ja");
+    }
 }

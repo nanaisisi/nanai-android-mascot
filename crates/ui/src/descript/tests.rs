@@ -87,11 +87,14 @@ fn test_descript_more_properties() {
 
 #[test]
 fn test_descript_parser_edge_cases() {
-    let sample = "sakura.bindgroup0.name,Invalid,Zero\n\
+    let sample = "no_comma_line\n\
+                  sakura.bindgroup0.name,Invalid,Zero\n\
+                  sakura.bindgroupABC.name,Invalid,Alpha\n\
                   sakura.bindgroup10.unknown_field,value\n\
                   sakura.defaultleft,10\n\
                   sakura.defaulttop,20\n";
     let desc = Descript::parse(sample);
+    assert!(desc.bindoption_group("sakura").is_none());
     let groups = desc.bind_groups("sakura");
     assert_eq!(groups.len(), 1);
     let defaults = desc.char_defaults("sakura");

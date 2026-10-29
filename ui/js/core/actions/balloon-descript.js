@@ -94,6 +94,21 @@ export const balloonDescriptActions = {
 		if (anchorVisited)
 			root.style.setProperty("--balloon-anchor-visited-color", anchorVisited);
 
+		const anchorNotSelect =
+			this.rgbFromComponents(props, "anchor.notselect.font.color") ||
+			props["anchor.notselect.font.color"];
+		if (anchorNotSelect)
+			root.style.setProperty("--balloon-anchor-notselect-color", anchorNotSelect);
+
+		const useSelfAlpha = props["use_self_alpha"] === "1" || props["use_self_alpha"]?.toLowerCase() === "true";
+		root.style.setProperty("--balloon-use-self-alpha", useSelfAlpha ? "1" : "0");
+
+		const useInputAlpha = props["use_input_alpha"] === "1" || props["use_input_alpha"]?.toLowerCase() === "true";
+		root.style.setProperty("--balloon-use-input-alpha", useInputAlpha ? "1" : "0");
+
+		const overlayOutside = props["overlay_outside_balloon"] === "1" || props["overlay_outside_balloon"]?.toLowerCase() === "true";
+		root.style.setProperty("--balloon-overlay-outside", overlayOutside ? "1" : "0");
+
 		const cbWidth = props["communicatebox.width"];
 		const cbHeight = props["communicatebox.height"];
 		const cbX = props["communicatebox.x"];
@@ -233,6 +248,33 @@ export const balloonDescriptActions = {
 
 		const wpX = parseInt(props["windowposition.x"], 10);
 		const wpY = parseInt(props["windowposition.y"], 10);
+		if (!Number.isNaN(wpX)) root.style.setProperty("--balloon-windowpos-x", `${wpX}px`);
+		if (!Number.isNaN(wpY)) root.style.setProperty("--balloon-windowpos-y", `${wpY}px`);
+
+		// さらなる未実装プロパティ群（communicatebox.placeholder, number.font, onlinemarker, sstpmessage）の追加実装
+		const cbPlaceholder =
+			this.rgbFromComponents(props, "communicatebox.placeholder.color") ||
+			props["communicatebox.placeholder.color"];
+		if (cbPlaceholder) root.style.setProperty("--communicatebox-placeholder-color", cbPlaceholder);
+
+		const numFontName = props["number.font.name"];
+		if (numFontName) root.style.setProperty("--balloon-number-font-family", `"${numFontName}", sans-serif`);
+		const numFontHeight = parseInt(props["number.font.height"], 10);
+		if (!Number.isNaN(numFontHeight)) root.style.setProperty("--balloon-number-font-size", `${numFontHeight}px`);
+		const numColor = this.rgbFromComponents(props, "number.font.color");
+		if (numColor) root.style.setProperty("--balloon-number-color", numColor);
+
+		const onlineInterval = parseInt(props["onlinemarker.interval"], 10);
+		if (!Number.isNaN(onlineInterval)) this.onlineMarkerInterval = onlineInterval;
+		const onlineX = parseInt(props["onlinemarker.x"], 10);
+		const onlineY = parseInt(props["onlinemarker.y"], 10);
+		if (!Number.isNaN(onlineX)) root.style.setProperty("--balloon-online-x", `${onlineX}px`);
+		if (!Number.isNaN(onlineY)) root.style.setProperty("--balloon-online-y", `${onlineY}px`);
+
+		const sstpMsgX = parseInt(props["sstpmessage.x"], 10);
+		const sstpMsgY = parseInt(props["sstpmessage.y"], 10);
+		if (!Number.isNaN(sstpMsgX)) root.style.setProperty("--balloon-sstpmessage-x", `${sstpMsgX}px`);
+		if (!Number.isNaN(sstpMsgY)) root.style.setProperty("--balloon-sstpmessage-y", `${sstpMsgY}px`);
 		if (!Number.isNaN(wpX)) root.style.setProperty("--balloon-windowpos-x", `${wpX}px`);
 		if (!Number.isNaN(wpY)) root.style.setProperty("--balloon-windowpos-y", `${wpY}px`);
 	},

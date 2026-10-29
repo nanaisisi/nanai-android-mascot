@@ -138,3 +138,16 @@ with-env { RUSTC_WRAPPER: "", CARGO_UNSTABLE_CODEGEN_BACKEND: "true", CARGO_PROF
 ```bash
 cargo llvm-cov clean
 ```
+
+---
+
+## 5. バルーン仕様（descript.txt）拡張実装一覧
+
+UKADOC 仕様に準拠したバルーンプロパティについて、[balloon-descript.js](file:///E:/project/rust/nanai-android-mascot/ui/js/core/actions/balloon-descript.js) にて以下の詳細プロパティの動的反映を実装しています：
+
+- **DPI 調整**: `dpi`（デフォルト 96 からの倍率計算・CSS `--balloon-dpi-scale` 適用）
+- **フォント設定**: `font.name`, `font.height`, `font.bold`, `font.italic`, `font.underline`, `font.strike`
+- **描画・パディング範囲**: `validrect.left/top/right/bottom`（動的パディング適用）
+- **原点・位置制御**: `origin.x`, `origin.y`, `windowposition.x`, `windowposition.y`
+- **吹き出し矢印・マーカー**: `arrow0.x/y`, `arrow1.x/y`, `clickwaitmarker.x/y`
+- **テキストレイアウト**: `vertical`（縦書き `--balloon-writing-mode: vertical-rl` 対応）

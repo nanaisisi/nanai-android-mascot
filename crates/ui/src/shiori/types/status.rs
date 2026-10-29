@@ -92,3 +92,43 @@ impl GhostStatusToken {
             .join(",")
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_ghost_status_token_parsing_and_writing() {
+        let raw = "talking, choosing, minimizing, induction, passive, timecritical, nouserbreak, online, opening(input), balloon(0=2/1=1), custom_ext";
+        let tokens = GhostStatusToken::parse_list(raw);
+        assert_eq!(
+            tokens,
+            vec![
+                GhostStatusToken::Talking,
+                GhostStatusToken::Choosing,
+                GhostStatusToken::Minimizing,
+                GhostStatusToken::Induction,
+                GhostStatusToken::Passive,
+                GhostStatusToken::TimeCritical,
+                GhostStatusToken::NoUserBreak,
+                GhostStatusToken::Online,
+                GhostStatusToken::Opening("input".to_string()),
+                GhostStatusToken::Balloon(vec![(0, 2), (1, 1)]),
+                GhostStatusToken::Custom("custom_ext".to_string()),
+            ]
+        );
+
+        let written = GhostStatusToken::write_tokens(&tokens);
+        assert!(written.contains("talking"));
+        assert!(written.contains("choosing"));
+        assert!(written.contains("minimizing"));
+        assert!(written.contains("induction"));
+        assert!(written.contains("passive"));
+        assert!(written.contains("timecritical"));
+        assert!(written.contains("nouserbreak"));
+        assert!(written.contains("online"));
+        assert!(written.contains("opening(input)"));
+        assert!(written.contains("balloon(0=2/1=1)"));
+        assert!(written.contains("custom_ext"));
+    }
+}

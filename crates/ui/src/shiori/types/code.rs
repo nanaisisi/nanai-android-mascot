@@ -103,3 +103,45 @@ impl ErrorLevel {
             .join("\u{1}")
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_status_code_methods() {
+        assert_eq!(StatusCode::parse(200), StatusCode::Ok);
+        assert_eq!(StatusCode::Ok.code(), 200);
+        assert_eq!(StatusCode::Ok.text(), "OK");
+
+        assert_eq!(StatusCode::parse(204), StatusCode::NoContent);
+        assert_eq!(StatusCode::NoContent.text(), "No Content");
+
+        assert_eq!(StatusCode::parse(311), StatusCode::NotEnough);
+        assert_eq!(StatusCode::parse(312), StatusCode::Advice);
+        assert_eq!(StatusCode::parse(400), StatusCode::BadRequest);
+        assert_eq!(StatusCode::parse(500), StatusCode::InternalError);
+        assert_eq!(StatusCode::parse(999), StatusCode::Other(999));
+        assert_eq!(StatusCode::Other(999).code(), 999);
+        assert_eq!(StatusCode::Other(999).text(), "");
+    }
+
+    #[test]
+    fn test_error_level_parsing_and_joining() {
+        let raw = "info\u{1}warning\u{1}custom_lvl";
+        let levels = ErrorLevel::parse_list(raw);
+        assert_eq!(
+            levels,
+            vec![
+                ErrorLevel::Info,
+                ErrorLevel::Warning,
+                ErrorLevel::Custom("custom_lvl".to_string()),
+            ]
+        );
+
+        let joined = ErrorLevel::join_tokens(&levels);
+        assert!(joined.contains("info"));
+        assert!(joined.contains("warning"));
+        assert!(joined.contains("custom_lvl"));
+    }
+}

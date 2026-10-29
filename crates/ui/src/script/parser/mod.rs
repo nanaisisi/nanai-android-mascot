@@ -97,3 +97,15 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
         callback(SakuraCommand::Text(buffer));
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_sakura_script() {
+        let script = "\\0\\s[0]Hello\\w1\\e";
+        let cmds = parse_sakura_script(script);
+        assert!(!cmds.is_empty());
+    }
+}

@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/ui/modal.js:61` `} else if (contentId === "balloon-modal-content") {`
-- `ui/js/ghost/ghost.js:176` `this.app.setBalloonTheme?.(this.app.settings?.balloonTheme || "default");`
-- `ui/js/ui/templates/ghost-templates.js:32` `"balloon-modal-content": `
-- `ui/js/ui/templates/ghost-templates.js:36` `<div class="current-balloon" id="current-balloon">デフォルト</div>`
-- `ui/js/ui/templates/ghost-templates.js:40` `<div class="balloon-list" id="balloon-list">`
+- `src-tauri/src/fmo.rs:13` `pub balloon0: String,`
+- `src-tauri/src/fmo.rs:14` `pub balloon1: String,`
+- `src-tauri/src/fmo.rs:43` `balloon0: "".to_string(),`
+- `src-tauri/src/fmo.rs:44` `balloon1: "".to_string(),`
+- `src-tauri/src/lib.rs:99` `commands::shell::scan_balloons,`

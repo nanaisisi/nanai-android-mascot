@@ -10,10 +10,8 @@ surface-parser.js / surface-animation-manager.js に該当の解析・処理は�
 
 ## 実装箇所
 
-- `crates/ui/src/surfaces.rs` （Rust 版 surfaces.txt パーサー：Element / Collision / SERIKO / Alias / append の解析）
-
-- `ui/js/ghost/ghost.js:3` `import { ghostSurfaceMethods } from "../surface/ghost-surface.js";`
-- `ui/js/ghost/ghost.js:8` (コメント) `* (SHIORI通信は ghost-shiori.js、サーフェス表示は ghost-surface.js)`
-- `ui/js/ghost/ghost.js:166` `this.app.surfaceManager.loadSurfacesTxt(`
-- `ui/js/ghost/ghost.js:193` `this.app.surfaceManager.loadSurfacesTxt(${ghostPath}/shell/${shellName});`
-- `ui/js/surface/surface-parser.js:2` (コメント) `* surfaces.txt パーサーモジュール`
+- `src-tauri/src/fmo.rs:11` `pub surface0: u32,`
+- `src-tauri/src/fmo.rs:12` `pub surface1: u32,`
+- `src-tauri/src/fmo.rs:41` `surface0: 0,`
+- `src-tauri/src/fmo.rs:42` `surface1: 10,`
+- `src-tauri/src/lib.rs:97` `commands::shell::parse_surfaces_text,`

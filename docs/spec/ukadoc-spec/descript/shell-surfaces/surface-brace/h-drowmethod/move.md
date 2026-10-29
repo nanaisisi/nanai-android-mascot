@@ -10,8 +10,8 @@ surface-parser.js が解析 (パターン種別など) するが、描画への�
 
 ## 実装箇所
 
-- `ui/js/ui/test-menu.js:6` `dropdown.classList.remove("show");`
-- `ui/js/ui/test-menu.js:27` `dropdown.classList.remove("show");`
-- `ui/js/ui/test-menu.js:35` `modal.classList.remove("show");`
-- `ui/js/ui/test-menu.js:51` `dropdown.classList.remove("show");`
-- `ui/js/ui/test-menu.js:62` `dropdown.classList.remove("show");`
+- `src-tauri/build.rs:34` `.env_remove("CARGO_ENCODED_RUSTFLAGS")`
+- `src-tauri/build.rs:35` `.env_remove("RUSTFLAGS")`
+- `src-tauri/build.rs:36` `.env_remove("CARGO_BUILD_TARGET")`
+- `src-tauri/build.rs:37` `.env_remove("TARGET")`
+- `src-tauri/src/events.rs:24` `tauri::async_runtime::spawn(async move {`

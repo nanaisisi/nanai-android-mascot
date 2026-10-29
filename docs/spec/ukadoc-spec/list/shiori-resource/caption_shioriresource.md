@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/ui/templates/doc-templates.js:101` `<h3>3. SHIORI サブシステム & 外部連携エンジン</h3>`
-- `src-tauri/src/commands/shiori/status.rs:20` (コメント) `/// SHIORIの状態を取得`
-- `ui/js/surface/character.js:53` (コメント) `// タップ/クリックでSHIORIへクリックイベント通知（該当スコープIDを送信）`
-- `ui/js/core/app-update.js:75` (コメント) `// ゴーストとSHIORIを再ロード`
-- `ui/js/core/app-update.js:76` `console.log("🔄 更新成功。ゴーストとSHIORIを再読み込みします...");`
+- `src-tauri/build.rs:4` `// 32bit SHIORI ホスト (tauri_build が bundle resources を検証する前に用意する)`
+- `src-tauri/build.rs:43` `"cargo:warning=shiori-host32 のビルドに失敗: `rustup target add i686-pc-windows-msvc` を`
+- `src-tauri/src/commands/window/lifecycle.rs:7` `Ok("SHIORI統合テスト成功!".to_string())`
+- `src-tauri/src/commands/shiori/protocol.rs:26` `/// そのまま SHIORI DLL へ渡す。`
+- `src-tauri/src/commands/shiori/protocol.rs:39` `// デフォルト/メインのネイティブSHIORIエンジンへ委譲`

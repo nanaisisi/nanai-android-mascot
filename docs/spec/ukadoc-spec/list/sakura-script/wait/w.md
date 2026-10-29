@@ -7,3 +7,12 @@
 ## 突合結果
 
 sakura-parser.js が \w1〜\w9 (1=50ms) として処理している。
+
+
+## 実装箇所
+
+- `crates/ui/src/lib.rs:58` `let script = r"\0\s[0]こんにちは\w5\n\q[はい,id_yes]\e";`
+- `crates/ui/src/script/command.rs:9` `Wait(u32),    // \w1..9, \_w[ms] (ミリ秒単位)`
+- `crates/ui/src/script/parser/brackets.rs:57` `/// `\w1..\w9`（数字×50ms）`
+- `crates/ui/src/script/parser/mod.rs:40` `// \w1..\w9`
+- `ui/js/ghost/sakura-tokenizer.js:102` `// \w1 〜 \w9 (ウェイト)`

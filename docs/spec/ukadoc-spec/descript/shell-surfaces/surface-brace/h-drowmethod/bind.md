@@ -10,8 +10,8 @@ surface-parser.js が解析 (パターン種別など) するが、描画への�
 
 ## 実装箇所
 
-- `ui/js/surface/surface-animation-manager.js:100` `intervalStr === "bind"`
-- `crates/ui/src/script/parser.rs:130` (コメント) `// \![raise,Event,...] または \![bind,category,part,status]`
-- `crates/ui/src/script/parser.rs:153` `"bind" => {`
-- `crates/ui/src/lib.rs:56` `let script = r"\0\_q\x\_a[anchor01]リンク\_a\![raise,OnTest,1,2]\![bind,clothing,ribbon,1]";`
-- `ui/js/surface/surface.js:193` (コメント) `* 着せ替えパーツの装着/解除 (\![bind,category,part,status] UKADOC準拠)`
+- `src-tauri/src/lib.rs:48` `"../ui/bindings.ts",`
+- `src-tauri/src/lib.rs:50` `.expect("Failed to export TypeScript bindings");`
+- `src-tauri/src/lib.rs:51` `if let Ok(content) = std::fs::read_to_string("../ui/bindings.ts") {`
+- `src-tauri/src/lib.rs:55` `let _ = std::fs::write("../ui/bindings.ts", patched);`
+- `src-tauri/src/commands/shell/manifest.rs:131` `binds: Option<Vec<u32>>,`

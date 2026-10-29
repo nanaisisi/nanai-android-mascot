@@ -7,3 +7,12 @@
 ## 突合結果
 
 ui/js/ghost/sakura-parser.js / sakura-command-handler.js で処理: スコープ指定 \p[n]。
+
+
+## 実装箇所
+
+- `crates/ui/src/lib.rs:153` `let script_ps = r"\p[2]\p3\_s[1]同期\_s[0]非同期";`
+- `crates/ui/src/script/command.rs:7` `Target(u8),   // \0, \1, \p[n]`
+- `crates/ui/src/script/parser/brackets.rs:39` `/// `\p[N]` または `\p0..\p9``
+- `crates/ui/src/script/parser/mod.rs:28` `// \p[N]`
+- `ui/js/ghost/sakura-tokenizer.js:29` `// \p[n] または \p0..\p9 (スコープ指定)`

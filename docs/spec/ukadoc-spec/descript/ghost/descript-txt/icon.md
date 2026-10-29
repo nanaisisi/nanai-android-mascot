@@ -10,7 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/lib.rs:28` `let icon = app`
-- `src-tauri/src/lib.rs:29` `.default_window_icon()`
-- `src-tauri/src/lib.rs:33` `.icon(icon)`
-- `src-tauri/src/lib.rs:34` `.on_tray_icon_event(move |tray, event| {`
+- `src-tauri/tauri.conf.json:36` `"icon": [`
+- `src-tauri/tauri.conf.json:37` `"icons/32x32.png",`
+- `src-tauri/tauri.conf.json:38` `"icons/128x128.png",`
+- `src-tauri/tauri.conf.json:39` `"icons/128x128@2x.png",`
+- `src-tauri/tauri.conf.json:40` `"icons/icon.icns",`

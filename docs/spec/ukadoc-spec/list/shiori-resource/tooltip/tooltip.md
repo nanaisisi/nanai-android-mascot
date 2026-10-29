@@ -6,4 +6,9 @@
 
 ## 突合結果
 
-実装コードに「tooltip」が見つからない。
+実装コード内に「tooltip」を確認。
+
+
+## 実装箇所
+
+- `ui/windows/tauri-desktop.conf.json:169` `"tooltip": "Nanai Android Mascot Desktop"`

@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/ffi.rs`: `on_biff_2_complete()`
-- `ui/js/core/app-actions.js`: `checkEmail()` (OnBIFF2Complete 送信)
+- `src-tauri/src/shiori/ffi/builder.rs:149` `.event("OnBIFF2Complete")`
+- `ui/js/core/actions/network-actions.js:26` `await gc.sendShioriEvent("OnBIFF2Complete", [`

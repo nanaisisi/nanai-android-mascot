@@ -6,4 +6,11 @@
 
 ## 突合結果
 
-実装コードに「OnUpdateResultExplorer」が見つからない。
+実装コード内に「OnUpdateResultExplorer」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/shiori/ffi/builder.rs:177` `.event("OnUpdateResultExplorer")`
+- `ui/js/core/app-update.js:202` `// OnUpdateResultExplorer 送信 (UKADOC準拠: 更新詳細・差分リスト通知)`
+- `ui/js/core/app-update.js:204` `await gc.sendShioriEvent("OnUpdateResultExplorer", [`

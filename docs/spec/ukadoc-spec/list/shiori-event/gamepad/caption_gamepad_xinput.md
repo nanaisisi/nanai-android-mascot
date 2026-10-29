@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/windows/multi-window.js:117` `export function initializeAllWindows() {`
-- `ui/windows/multi-window.js:128` `export function minimizeAllWindows() {`
-- `ui/windows/multi-window.js:132` `export function restoreAllWindows() {`
-- `ui/windows/multi-window.js:136` `export function closeAllWindows() {`
-- `ui/windows/multi-window.js:176` `globalThis.initializeAllWindows = initializeAllWindows;`
+- `src-tauri/build_stub.rs:19` `// Windowsでの設定`
+- `src-tauri/build_old.rs:37` `// Windowsでの設定`
+- `src-tauri/build.rs:14` `/// Windows 64bit ターゲット時のみ、32bit DLL 用ヘルパー shiori-host32.exe をビルドする`
+- `src-tauri/build.rs:60` `// Windows固有の設定`
+- `src-tauri/build.rs:118` `// Windows環境でのみ段階的追加用の本家YAYA基本ファイルをコンパイル`

@@ -7,3 +7,11 @@
 ## 突合結果
 
 `app-actions.js` の `applyBalloonDescript()` において `props["wordwrappoint.x"]` を数値パースし、ドキュメント内の `.balloon` 要素の最大幅（`style.maxWidth = \`${ww}px\``）として動的適用される実装が行われている。
+
+
+## 実装箇所
+
+- `ui/js/ghost/balloon-window.js:120` `// 折り返し幅 (wordwrappoint.x は原点右基準の負オフセット指定)`
+- `ui/js/ghost/balloon-window.js:121` `const ww = parseInt(props["wordwrappoint.x"], 10);`
+- `ui/js/core/actions/balloon-descript.js:159` `if (props["wordwrappoint.x"]) {`
+- `ui/js/core/actions/balloon-descript.js:160` `const ww = parseInt(props["wordwrappoint.x"], 10);`

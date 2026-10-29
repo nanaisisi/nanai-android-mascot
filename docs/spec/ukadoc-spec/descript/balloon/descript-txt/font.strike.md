@@ -6,4 +6,10 @@
 
 ## 突合結果
 
-実装コードに「font.strike」が見つからない。
+実装コード内に「font.strike」を確認。
+
+
+## 実装箇所
+
+- `ui/js/core/actions/balloon-descript.js:76` `props["font.strike"] === "1" ||`
+- `ui/js/core/actions/balloon-descript.js:77` `props["font.strike"]?.toLowerCase() === "true"`

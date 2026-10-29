@@ -7,3 +7,8 @@
 ## 突合結果
 
 `app-actions.js` の `applyBalloonDescript()` にて `--balloon-cursor-wait` カスタムプロパティおよび CSS `cursor` スタイリングとして完全実装済。
+
+
+## 実装箇所
+
+- `ui/js/core/actions/balloon-descript.js:210` `setMouseCursor("mousecursor.wait", "--balloon-cursor-wait");`

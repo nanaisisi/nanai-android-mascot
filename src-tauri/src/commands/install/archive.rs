@@ -37,8 +37,9 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
     let mut root_prefix = String::new();
     let mut install_type: Option<String> = None;
     let mut install_directory: Option<String> = None;
-    let mut balloon_directory: Option<String> = None;
-    let mut balloon_source_directory: Option<String> = None;
+
+    // 同時インストール用 (kind, dest_dir, src_dir)
+    let mut bundled_resources_config: Vec<(String, String, String)> = Vec::new();
 
     if let Some((_, idx)) = best_install_idx
         && let Ok(mut entry) = zip.by_index(idx)
@@ -57,8 +58,6 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
         let _charset = map.get("charset");
         let _refresh = map.get("refresh");
         let _refreshmask = map.get("refreshundeletemask");
-        let _star_dir = map.get("ghost.directory").or_else(|| map.get("shell.directory"));
-        let _star_src_dir = map.get("ghost.source.directory").or_else(|| map.get("shell.source.directory"));
         let _star_refresh = map.get("ghost.refresh").or_else(|| map.get("shell.refresh"));
         let _star_refreshmask = map.get("ghost.refreshundeletemask").or_else(|| map.get("shell.refreshundeletemask"));
 
@@ -71,11 +70,18 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
         if let Some(val) = map.get("directory") {
             install_directory = Some(val.clone());
         }
-        if let Some(val) = map.get("balloon.directory") {
-            balloon_directory = Some(val.clone());
-        }
-        if let Some(val) = map.get("balloon.source.directory") {
-            balloon_source_directory = Some(val.clone());
+
+        // 動的な同時インストール解析 (balloon, balloon0, plugin, shell etc.)
+        for (k, v) in &map {
+            if k.ends_with(".directory") && !k.ends_with(".source.directory") {
+                let prefix = &k[..k.len() - 10]; // strip ".directory"
+                let src_key = format!("{prefix}.source.directory");
+                let src_dir = map.get(&src_key).unwrap_or(v).clone();
+
+                // parse kind (e.g. "balloon0" -> "balloon")
+                let kind = prefix.trim_end_matches(|c: char| c.is_ascii_digit()).to_string();
+                bundled_resources_config.push((kind, v.clone(), src_dir));
+            }
         }
     }
 
@@ -142,28 +148,28 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
             .map_err(|e| format!("Failed to create destination dir: {}", e))?;
     }
 
-    let bundled_balloon = if kind == "ghost" || kind == "package" {
-        if let Some(ref b_dir) = balloon_directory {
-            let src_dir = balloon_source_directory
-                .as_deref()
-                .unwrap_or(b_dir.as_str())
-                .trim_matches('/')
-                .to_string();
-            let dest_name = sanitize_dir_name(b_dir);
+    let mut bundled_resources = Vec::new();
+    if kind == "ghost" || kind == "package" || kind == "shell" {
+        for (r_kind, b_dir, b_src_dir) in bundled_resources_config {
+            let src_dir = b_src_dir.trim_matches('/').to_string();
+            let dest_name = sanitize_dir_name(&b_dir);
             if !src_dir.is_empty() && !dest_name.is_empty() {
-                let balloon_base = resolve_asset_path("assets/balloon", app_handle)?;
-                let balloon_dest = balloon_base.join(&dest_name);
-                std::fs::create_dir_all(&balloon_dest).ok();
-                Some((format!("{src_dir}/"), balloon_dest))
-            } else {
-                None
+                let base_path = match r_kind.as_str() {
+                    "balloon" => resolve_asset_path("assets/balloon", app_handle).ok(),
+                    "headline" => resolve_asset_path("assets/headline", app_handle).ok(),
+                    "plugin" => resolve_asset_path("assets/plugin", app_handle).ok(),
+                    "shell" => resolve_asset_path("assets/shell", app_handle).ok(),
+                    _ => None,
+                };
+
+                if let Some(base) = base_path {
+                    let dest = base.join(&dest_name);
+                    std::fs::create_dir_all(&dest).ok();
+                    bundled_resources.push((format!("{src_dir}/"), dest));
+                }
             }
-        } else {
-            None
         }
-    } else {
-        None
-    };
+    }
 
     for i in 0..zip.len() {
         let mut entry = zip
@@ -183,19 +189,22 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
             continue;
         }
 
-        let (active_target_dir, active_rel_path) =
-            if let Some((ref src_prefix, ref balloon_dest)) = bundled_balloon
-                && relative_path.len() >= src_prefix.len()
+        let mut active_target_dir = &target_dir;
+        let mut active_rel_path = relative_path;
+
+        for (src_prefix, dest_dir) in &bundled_resources {
+            if relative_path.len() >= src_prefix.len()
                 && relative_path[..src_prefix.len()].eq_ignore_ascii_case(src_prefix)
             {
-                let sub = &relative_path[src_prefix.len()..];
-                if sub.is_empty() {
-                    continue;
-                }
-                (balloon_dest, sub)
-            } else {
-                (&target_dir, relative_path)
-            };
+                active_target_dir = dest_dir;
+                active_rel_path = &relative_path[src_prefix.len()..];
+                break;
+            }
+        }
+
+        if active_rel_path.is_empty() {
+            continue;
+        }
 
         let out_path = active_target_dir.join(active_rel_path);
         let normalized = normalize_path(&out_path);

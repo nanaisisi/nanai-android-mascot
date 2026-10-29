@@ -113,21 +113,29 @@ export const balloonDescriptActions = {
 		const cbHeight = props["communicatebox.height"];
 		const cbX = props["communicatebox.x"];
 		const cbY = props["communicatebox.y"];
+		const cbFontName = props["communicatebox.font.name"];
+		const cbFontHeight = parseInt(props["communicatebox.font.height"], 10);
 		const cbFontColor =
 			this.rgbFromComponents(props, "communicatebox.font.color") ||
 			props["communicatebox.font.color"];
 		const cbBgColor =
 			this.rgbFromComponents(props, "communicatebox.background.color") ||
 			props["communicatebox.background.color"];
-		if (cbWidth || cbHeight || cbX || cbY || cbFontColor || cbBgColor) {
+		const cbPlaceholder =
+			this.rgbFromComponents(props, "communicatebox.placeholder.color") ||
+			props["communicatebox.placeholder.color"];
+		if (cbWidth || cbHeight || cbX || cbY || cbFontName || !Number.isNaN(cbFontHeight) || cbFontColor || cbBgColor || cbPlaceholder) {
 			const cbEl = document.querySelector(".communicate-box");
 			if (cbEl) {
 				if (cbWidth) cbEl.style.width = `${cbWidth}px`;
 				if (cbHeight) cbEl.style.height = `${cbHeight}px`;
 				if (cbX) cbEl.style.left = `${cbX}px`;
 				if (cbY) cbEl.style.top = `${cbY}px`;
+				if (cbFontName) cbEl.style.fontFamily = `"${cbFontName}", sans-serif`;
+				if (!Number.isNaN(cbFontHeight)) cbEl.style.fontSize = `${cbFontHeight}px`;
 				if (cbFontColor) cbEl.style.color = cbFontColor;
 				if (cbBgColor) cbEl.style.backgroundColor = cbBgColor;
+				if (cbPlaceholder) cbEl.style.setProperty("--communicatebox-placeholder-color", cbPlaceholder);
 			}
 		}
 
@@ -251,12 +259,7 @@ export const balloonDescriptActions = {
 		if (!Number.isNaN(wpX)) root.style.setProperty("--balloon-windowpos-x", `${wpX}px`);
 		if (!Number.isNaN(wpY)) root.style.setProperty("--balloon-windowpos-y", `${wpY}px`);
 
-		// さらなる未実装プロパティ群（communicatebox.placeholder, number.font, onlinemarker, sstpmessage）の追加実装
-		const cbPlaceholder =
-			this.rgbFromComponents(props, "communicatebox.placeholder.color") ||
-			props["communicatebox.placeholder.color"];
-		if (cbPlaceholder) root.style.setProperty("--communicatebox-placeholder-color", cbPlaceholder);
-
+		// さらなる未実装プロパティ群（number.font, onlinemarker, sstpmessage）の追加実装
 		const numFontName = props["number.font.name"];
 		if (numFontName) root.style.setProperty("--balloon-number-font-family", `"${numFontName}", sans-serif`);
 		const numFontHeight = parseInt(props["number.font.height"], 10);

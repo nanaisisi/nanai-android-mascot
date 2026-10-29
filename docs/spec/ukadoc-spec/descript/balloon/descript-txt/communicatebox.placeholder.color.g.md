@@ -1,9 +1,9 @@
 # communicatebox.placeholder.color.g,数値
 
-- **規格**: [communicatebox.placeholder.color.g.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/communicatebox.placeholder.color.g.md)
+- **規格**: [communicatebox.placeholder.color.g.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/)
 - **検索語**: communicatebox.placeholder.color.g
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コードに「communicatebox.placeholder.color.g」が見つからない。
+`ui/js/core/actions/balloon-descript.js` の `rgbFromComponents` により `communicatebox.placeholder.color.r/g/b` を合成し、CSS 変数 `--communicatebox-placeholder-color` として動的適用を実装済み。

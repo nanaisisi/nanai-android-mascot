@@ -10,4 +10,4 @@ ghost/scan.rs で descript.txt から読込 (表示への反映は未確認)。
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan.rs:104` `let bg_bmp = map.get("menu.background.bitmap.filename").cloned();`
+- `src-tauri/src/ghost/scan/shell.rs:123` `.get("menu.background.bitmap.filename")`

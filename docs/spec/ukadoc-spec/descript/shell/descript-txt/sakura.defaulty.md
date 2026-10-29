@@ -7,3 +7,8 @@
 ## 突合結果
 
 実装コードに「sakura.defaulty」が見つからない。
+
+
+## 実装箇所
+
+- `crates/ui/src/descript.rs:227` `sakura.defaultx,120\r\nsakura.defaulty,240\r\n\`

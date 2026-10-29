@@ -10,8 +10,8 @@ surface-parser.js が解析 (パターン種別など) するが、描画への�
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan.rs:48` `map.insert(key.trim().to_lowercase(), val.trim().to_string());`
-- `src-tauri/src/ghost/scan.rs:50` `map.insert(key.trim().to_lowercase(), val.trim().to_string());`
-- `src-tauri/src/commands/file.rs:164` `recent_files.insert(0, path);`
-- `src-tauri/src/commands/shiori/lifecycle.rs:67` `.insert("main".to_string(), ghost_name.clone());`
-- `src-tauri/src/commands/shiori/lifecycle.rs:144` `.insert(instance_id.clone(), engine);`
+- `src-tauri/src/fmo.rs:37` `ghosts.insert(`
+- `src-tauri/src/commands/file.rs:169` `recent_files.insert(0, path);`
+- `src-tauri/src/commands/config.rs:49` `target_sub.insert(sub_k, sub_v);`
+- `src-tauri/src/commands/config.rs:53` `base_map.insert(k, other);`
+- `src-tauri/src/commands/config.rs:99` `.or_insert_with(|| toml::Value::Table(toml::map::Map::new()));`

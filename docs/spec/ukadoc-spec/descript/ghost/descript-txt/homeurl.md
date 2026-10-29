@@ -10,8 +10,8 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 
 ## 実装箇所
 
-- `src-tauri/src/commands/update/network.rs:38` `let homeurl = get_ghost_homeurl(&ghost_dir).ok_or_else(|| {`
-- `src-tauri/src/commands/update/network.rs:40` `"ゴースト「{}」に homeurl が設定されていません",`
-- `src-tauri/src/commands/update/network.rs:53` `let url_dau = format!("{}updates2.dau", homeurl);`
-- `src-tauri/src/commands/update/network.rs:63` `let url_txt = format!("{}updates.txt", homeurl);`
-- `src-tauri/src/commands/update/network.rs:76` `homeurl`
+- `src-tauri/src/commands/update/dau.rs:10` `pub homeurl: String,`
+- `src-tauri/src/commands/update/dau.rs:38` `/// ゴーストの homeurl を取得`
+- `src-tauri/src/commands/update/dau.rs:39` `pub fn get_ghost_homeurl(ghost_dir: &Path) -> Option<String> {`
+- `src-tauri/src/commands/update/dau.rs:44` `if let Some(url) = desc.homeurl() {`
+- `src-tauri/src/commands/update/dau.rs:57` `if let Some(url) = desc.homeurl() {`

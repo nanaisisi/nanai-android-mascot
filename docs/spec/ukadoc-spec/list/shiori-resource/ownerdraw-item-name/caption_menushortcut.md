@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/ui/context-menu.js:170` (コメント) `// ショートカットキー対応 (T, B, R, P, O, D, A, Ctrl+I, Ctrl+W, Escape)`
+- `ui/js/ui/context-menu.js:246` `// ショートカットキー対応 (T, B, R, P, O, D, A, C, Ctrl+I, Ctrl+W, Escape)`

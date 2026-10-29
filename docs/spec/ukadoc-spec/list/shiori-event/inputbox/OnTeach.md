@@ -10,6 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/sakura-command-handler.js` （`\![open,teachbox]` / `\![close,teachbox]`: TeachBox UI、OnTeachStart 送出、OnTeachInputCancel (Reference0=空席/Reference1=cancel) ）
-- `ui/js/ghost/ghost-shiori.js` （OnTeach + 311 Not Enough / 312 Advice 再入ループ: sendTeachInput / clearTeachHistory、入力履歴 Reference0.. 送信）
-- `crates/ui/src/shiori.rs` （ShioriResponse::is_teach_pending: 311/312 判定）
+- `crates/ui/src/shiori/protocol/response/mod.rs:75` `/// OnTeach の追加情報要求（311 Not Enough / 312 Advice）か`
+- `crates/ui/src/shiori/types/code.rs:13` `/// 311 (OnTeach): 追加情報取得が必要（入力ボックス再オープン）`
+- `crates/ui/src/shiori/types/code.rs:15` `/// 312 (OnTeach): 直近の Reference を破棄し再問合せ`
+- `ui/js/ghost/ghost-shiori.js:150` `// TeachBox を再オープンして OnTeach ループへ`
+- `ui/js/ghost/ghost-shiori.js:168` `* TeachBox 入力の送信（OnTeach + 311/312 再入ループ, UKADOC準拠）`

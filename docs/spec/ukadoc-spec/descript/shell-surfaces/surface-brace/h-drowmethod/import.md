@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/update/mod.rs:4` (コメント) `#[allow(unused_imports)]`
-- `ui/js/ui/modal.js:1` `import { modalTemplates } from "./modal-templates.js";`
-- `ui/js/ui/modal.js:2` `import { ModalGhostHandlers } from "./modal-ghost-handlers.js";`
-- `ui/js/ui/modal.js:3` `import { ModalSettingsHandlers } from "./modal-settings-handlers.js";`
-- `ui/js/ui/modal.js:10` (コメント) `* @param {import('../../main.js').NanaiAndroidMascotApp} app`
+- `src-tauri/src/commands/file.rs:1` `#![allow(unused_imports)]`
+- `src-tauri/src/commands/config.rs:1` `#![allow(unused_imports)]`
+- `src-tauri/src/commands/shiori/mod.rs:5` `#[allow(unused_imports)]`
+- `src-tauri/src/commands/shiori/mod.rs:7` `#[allow(unused_imports)]`
+- `src-tauri/src/commands/shiori/mod.rs:9` `#[allow(unused_imports)]`

@@ -10,8 +10,8 @@ surface-parser.js が解析 (パターン種別など) するが、描画への�
 
 ## 実装箇所
 
-- `ui/windows/desktop-features.js:144` `const checked = document.getElementById("startup-setting").checked;`
-- `ui/js/surface/character.js:43` `if (tauriWindow && typeof tauriWindow.startDragging === "function") {`
-- `ui/js/surface/character.js:45` `tauriWindow.startDragging();`
-- `ui/js/core/app-update.js:24` `async startNetworkUpdate(targetGhostName = null) {`
-- `ui/js/surface/surface-parser.js:48` `const [start, end] = part.split("-").map((v) => Number.parseInt(v, 10));`
+- `src-tauri/build.rs:20` `if !target.contains("windows") || !target.starts_with("x86_64") {`
+- `src-tauri/src/commands/ext.rs:29` `if !dir_name.starts_with('.') {`
+- `src-tauri/src/commands/ext.rs:78` `if !dir_name.starts_with('.') {`
+- `src-tauri/src/commands/window/character_window.rs:137` `if label.starts_with("subchar_window_") {`
+- `src-tauri/src/commands/update/network.rs:36` `if normalized.is_empty() || normalized.starts_with('/') {`

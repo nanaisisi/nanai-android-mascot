@@ -10,6 +10,5 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 
 ## 実装箇所
 
-- `ui/js/core/app-settings.js:72` `await this.ghostController.sendShioriEvent("OnMinuteChange");`
-- `src-tauri/src/shiori/ffi.rs:239` (コメント) `/// OnMinuteChangeイベントのリクエストを作成`
-- `src-tauri/src/shiori/ffi.rs:243` `.header("Event", "OnMinuteChange")`
+- `src-tauri/src/shiori/ffi/builder.rs:108` `.event("OnMinuteChange")`
+- `ui/js/ghost/ghost-shiori.js:76` `await this.sendShioriEvent("OnMinuteChange", [`

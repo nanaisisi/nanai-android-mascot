@@ -6,4 +6,11 @@
 
 ## 突合結果
 
-実装コードに「basewareversion」が見つからない。
+実装コード内に「basewareversion」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/commands/shiori/protocol.rs:110` `/// `installedghostname` / `ghostpathlist` / `uniqueid` / `basewareversion` 等の`
+- `ui/js/ghost/shiori-notify.js:14` `* - basewareversion / uniqueid`
+- `ui/js/ghost/shiori-notify.js:81` `await this.sendShioriNotify("basewareversion", [`

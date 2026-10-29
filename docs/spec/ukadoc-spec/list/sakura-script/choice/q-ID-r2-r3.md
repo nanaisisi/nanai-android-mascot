@@ -7,3 +7,12 @@
 ## 突合結果
 
 パーサがタグを読み飛ばす、または sakura-command-handler.js が「未対応の \! コマンド」として扱い、該当処理はない。
+
+
+## 実装箇所
+
+- `crates/ui/src/lib.rs:58` `let script = r"\0\s[0]こんにちは\w5\n\q[はい,id_yes]\e";`
+- `crates/ui/src/script/command.rs:19` `}, // \q[label,id]`
+- `crates/ui/src/script/parser/brackets.rs:153` `/// `\q[テキスト,ID]` / `\q[temp,テキスト,ID]`（旧形式）`
+- `crates/ui/src/script/parser/mod.rs:83` `// \q[テキスト,ID] / \q[temp,テキスト,ID]`
+- `ui/js/ghost/sakura-tokenizer.js:199` `// \q[テキスト,ID] (選択肢)`

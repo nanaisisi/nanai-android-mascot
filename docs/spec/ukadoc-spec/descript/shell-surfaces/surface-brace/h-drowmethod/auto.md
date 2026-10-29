@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/ghost.js:37` `async autoLoadGhost() {`
-- `ui/js/ghost/ghost.js:172` `if (this.app.settings?.autoSwitchBalloonWithGhost !== false) {`
-- `ui/js/ui/templates/ghost-templates.js:21` `<button type="button" id="import-ghost-btn" class="primary" style="flex: 0 0 auto; white-s`
-- `ui/js/ui/templates/ghost-templates.js:63` `<button type="button" id="modal-install-submit-btn" class="primary" style="flex: 0 0 auto;`
-- `ui/windows/multi-window.js:158` `const checked = document.getElementById("auto-minimize").checked;`
+- `src-tauri/src/shiori/cpp.rs:222` `pub fn initialize_auto(ghost_dir: &str) -> Result<EngineType, String> {`
+- `ui/main.js:16` `* @property {boolean} autoLoadGhost`
+- `ui/main.js:22` `* @property {boolean} autoSwitchBalloonWithGhost`
+- `ui/main.js:33` `autoLoadGhost: true,`
+- `ui/main.js:39` `autoSwitchBalloonWithGhost: true,`

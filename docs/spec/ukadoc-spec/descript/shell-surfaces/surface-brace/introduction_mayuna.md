@@ -8,3 +8,9 @@
 ## 突合結果
 
 実装コードに「MAYUNA」が見つからない。
+
+
+## 実装箇所
+
+- `crates/ui/src/surfaces/types/composition.rs:1` `//! 合成計画 (MAYUNA) の型`
+- `crates/ui/src/surfaces/types/txt.rs:42` `/// 合成計画（MAYUNA / 着せ替え表示のレイヤー列）を立てる`

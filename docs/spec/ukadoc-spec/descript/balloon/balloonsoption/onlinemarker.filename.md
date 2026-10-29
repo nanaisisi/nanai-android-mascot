@@ -7,3 +7,9 @@
 ## 突合結果
 
 `app-actions.js` の `applyBalloonDescript` にて `--balloon-online-image` として動的解決・バインド対応済。
+
+
+## 実装箇所
+
+- `ui/js/core/actions/balloon-descript.js:194` `setBalloonImage("onlinemarker.filename", "--balloon-online-image");`
+- `ui/js/core/actions/balloon-descript.js:212` `setBalloonImage("onlinemarker.filename", "--balloon-online-image");`

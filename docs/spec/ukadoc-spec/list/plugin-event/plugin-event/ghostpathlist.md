@@ -2,8 +2,15 @@
 
 - **規格**: [ghostpathlist.md](https://ukatech.shillest.net/ukadoc-spec/list/plugin-event/plugin-event/ghostpathlist/) (ukadoc-spec/list/plugin-event/plugin-event/ghostpathlist.md)
 - **検索語**: ghostpathlist
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-実装コードに「ghostpathlist」が見つからない。
+実装コード内に「ghostpathlist」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/commands/shiori/protocol.rs:110` `/// `installedghostname` / `ghostpathlist` / `uniqueid` / `basewareversion` 等の`
+- `ui/js/ghost/shiori-notify.js:13` `* - ghostpathlist (読み込み可能なゴーストフォルダのフルパス)`
+- `ui/js/ghost/shiori-notify.js:77` `await this.sendShioriNotify("ghostpathlist", ghostPaths);`

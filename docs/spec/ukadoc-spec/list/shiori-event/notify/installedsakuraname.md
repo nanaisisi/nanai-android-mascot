@@ -6,4 +6,9 @@
 
 ## 突合結果
 
-実装コードに「installedsakuraname」が見つからない。
+実装コード内に「installedsakuraname」を確認。
+
+
+## 実装箇所
+
+- `ui/js/ghost/shiori-notify.js:11` `* - installedghostname / installedsakuraname / installedkeroname`

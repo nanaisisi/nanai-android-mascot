@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/windows/desktop-features.js:5` `systemTray: false,`
-- `ui/windows/desktop-features.js:20` `if (tray) tray.textContent = featureStates.systemTray ? "ON" : "OFF";`
-- `ui/windows/desktop-features.js:85` `featureStates.systemTray = !featureStates.systemTray;`
-- `ui/windows/desktop-features.js:86` `console.log(システムトレイ: ${featureStates.systemTray});`
-- `ui/windows/desktop-features.js:91` `featureStates.systemTray ? "表示" : "非表示"`
+- `src-tauri/src/main.rs:2` `#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]`
+- `src-tauri/src/commands/install/archive.rs:198` `let entry_mtime = entry.last_modified().and_then(zip_datetime_to_system_time);`
+- `src-tauri/src/commands/install/utils.rs:53` `pub fn zip_datetime_to_system_time(dt: zip::DateTime) -> Option<std::time::Syste`
+- `src-tauri/src/ghost/scan/directory.rs:5` `use super::date::{format_system_time, compute_ghost_dates};`
+- `src-tauri/src/ghost/scan/directory.rs:129` `let modified = meta.modified().ok().and_then(format_system_time);`

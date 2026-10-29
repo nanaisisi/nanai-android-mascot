@@ -10,7 +10,8 @@ surface-parser.js が解析し、判定・再生に利用している。
 
 ## 実装箇所
 
-- `crates/ui/src/surfaces.rs` （Rust 版 surfaces.txt パーサー：Element / Collision / SERIKO / Alias / append の解析）
-
-- `ui/js/surface/surface-parser.js:84` (コメント) `// collisionex[ID],[name],[shape],[coords...] または collision[ID],[coords...],[name]`
-- `ui/js/surface/surface-parser.js:85` `if (trimmed.startsWith("collisionex")) {`
+- `crates/ui/src/manifest.rs:103` `"charset,Shift_JIS\nsurface0\n{\nelement0,base,surface0.png,0,0\ncollisionex0,he`
+- `crates/ui/src/lib.rs:222` `fn test_collisionex_circle_and_ellipse() {`
+- `crates/ui/src/lib.rs:225` `collisionex0,face,circle,100,100,50`
+- `crates/ui/src/lib.rs:226` `collisionex1,halo,ellipse,100,100,60,30`
+- `crates/ui/src/surfaces/tests.rs:157` `collisionex0,head,rect,34,20,157,72`

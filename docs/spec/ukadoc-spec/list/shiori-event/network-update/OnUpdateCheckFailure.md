@@ -10,6 +10,6 @@
 
 ## 実装箇所
 
-- `ui/menu-iframe.html` (`<button ... id="updatecheck-btn">ネットワーク更新チェックのみ`)
-- `ui/js/core/app-actions.js` `if (action === "updatecheck") { return this.startNetworkUpdate(null, { checkOnly: true }); }`
-- `ui/js/core/app-update.js` `await gc.sendShioriEvent("OnUpdateCheckFailure", [reason, "", "", "ghost", "manual"])`
+- `ui/js/core/app-update.js:11` `*    - チェックのみ実行時: OnUpdateCheckComplete / OnUpdateCheckFailure`
+- `ui/js/core/app-update.js:247` `// チェックのみ実行: OnUpdateCheckFailure (Ref0: 失敗理由)`
+- `ui/js/core/app-update.js:248` `await gc.sendShioriEvent("OnUpdateCheckFailure", [`

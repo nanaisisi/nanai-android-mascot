@@ -6,4 +6,10 @@
 
 ## 突合結果
 
-実装コードに「OnTranslate」が見つからない。
+実装コード内に「OnTranslate」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/commands/shiori/protocol.rs:171` `/// SHIORI へ OnTranslate イベントを送信し、ゴースト側で翻訳されたさくらスクリプトを取得する (UKADOC 規格準拠)`
+- `src-tauri/src/commands/shiori/protocol.rs:178` `let mut req = ShioriRequest::get("OnTranslate", std::slice::from_ref(&script));`

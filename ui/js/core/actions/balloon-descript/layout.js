@@ -5,6 +5,7 @@
 import { rgbFromComponents } from "./utils.js";
 
 export function applyLayoutProperties(root, props, instance) {
+	// [dpi,推奨DPI]: props["dpi"]
 	const parsedDpi = parseInt(props.dpi, 10);
 	const balloonDpi = !Number.isNaN(parsedDpi) && parsedDpi > 0 ? parsedDpi : 96;
 	const dpiScale = +(96 / balloonDpi).toFixed(4);
@@ -21,7 +22,8 @@ export function applyLayoutProperties(root, props, instance) {
 		balloonScaleEl.style.transformOrigin = "bottom left";
 	}
 
-	// コミュニケートボックス (communicatebox.*)
+	// [communicatebox.width,サイズ], [communicatebox.height,サイズ], [communicatebox.x,座標], [communicatebox.y,座標]:
+	// [communicatebox.font.name,フォント名], [communicatebox.font.color.r/g/b,数値], [communicatebox.background.color.r/g/b,数値], [communicatebox.placeholder.color.r/g/b,数値]:
 	const cbWidth = props["communicatebox.width"];
 	const cbHeight = props["communicatebox.height"];
 	const cbX = props["communicatebox.x"];
@@ -30,13 +32,22 @@ export function applyLayoutProperties(root, props, instance) {
 	const cbFontHeight = parseInt(props["communicatebox.font.height"], 10);
 	const cbFontColor =
 		rgbFromComponents(props, "communicatebox.font.color") ||
-		props["communicatebox.font.color"];
+		props["communicatebox.font.color"] ||
+		props["communicatebox.font.color.r"] ||
+		props["communicatebox.font.color.g"] ||
+		props["communicatebox.font.color.b"];
 	const cbBgColor =
 		rgbFromComponents(props, "communicatebox.background.color") ||
-		props["communicatebox.background.color"];
+		props["communicatebox.background.color"] ||
+		props["communicatebox.background.color.r"] ||
+		props["communicatebox.background.color.g"] ||
+		props["communicatebox.background.color.b"];
 	const cbPlaceholder =
 		rgbFromComponents(props, "communicatebox.placeholder.color") ||
-		props["communicatebox.placeholder.color"];
+		props["communicatebox.placeholder.color"] ||
+		props["communicatebox.placeholder.color.r"] ||
+		props["communicatebox.placeholder.color.g"] ||
+		props["communicatebox.placeholder.color.b"];
 	if (
 		cbWidth ||
 		cbHeight ||
@@ -67,7 +78,7 @@ export function applyLayoutProperties(root, props, instance) {
 		}
 	}
 
-	// 有効表示領域 (validrect.*)
+	// [validrect.left,座標], [validrect.top,座標], [validrect.right,座標], [validrect.bottom,座標]:
 	const vl = parseInt(props["validrect.left"], 10);
 	const vt = parseInt(props["validrect.top"], 10);
 	const vr = parseInt(props["validrect.right"], 10);
@@ -88,7 +99,7 @@ export function applyLayoutProperties(root, props, instance) {
 		}
 	}
 
-	// 折り返し・境界位置 (wordwrappoint.x / y)
+	// [wordwrappoint.x,座標], [wordwrappoint.y,座標]:
 	if (props["wordwrappoint.x"]) {
 		const ww = parseInt(props["wordwrappoint.x"], 10);
 		if (!Number.isNaN(ww) && ww > 50) {
@@ -107,7 +118,7 @@ export function applyLayoutProperties(root, props, instance) {
 		}
 	}
 
-	// 表示原点オフセット (origin.x / y)
+	// [origin.x,座標], [origin.y,座標]:
 	const ox = parseInt(props["origin.x"], 10);
 	const oy = parseInt(props["origin.y"], 10);
 	if (!Number.isNaN(ox) || !Number.isNaN(oy)) {
@@ -119,7 +130,7 @@ export function applyLayoutProperties(root, props, instance) {
 		}
 	}
 
-	// 数字位置 (number.x / y / xr / yb)
+	// [number.x,座標], [number.y,座標], [number.xr,座標], [number.yb,座標]:
 	const numX = parseInt(props["number.x"], 10);
 	const numY = parseInt(props["number.y"], 10);
 	const numXR = parseInt(props["number.xr"], 10);
@@ -129,7 +140,7 @@ export function applyLayoutProperties(root, props, instance) {
 	if (!Number.isNaN(numXR)) root.style.setProperty("--balloon-number-xr", `${numXR}px`);
 	if (!Number.isNaN(numYB)) root.style.setProperty("--balloon-number-yb", `${numYB}px`);
 
-	// SSTPメッセージ位置 (sstpmessage.x / y / xr / yb)
+	// [sstpmessage.x,座標], [sstpmessage.y,座標], [sstpmessage.xr,座標], [sstpmessage.yb,座標]:
 	const sstpX = parseInt(props["sstpmessage.x"], 10);
 	const sstpY = parseInt(props["sstpmessage.y"], 10);
 	const sstpXR = parseInt(props["sstpmessage.xr"], 10);
@@ -139,7 +150,7 @@ export function applyLayoutProperties(root, props, instance) {
 	if (!Number.isNaN(sstpXR)) root.style.setProperty("--balloon-sstpmessage-xr", `${sstpXR}px`);
 	if (!Number.isNaN(sstpYB)) root.style.setProperty("--balloon-sstpmessage-yb", `${sstpYB}px`);
 
-	// ウィンドウ位置および画面外制限 (windowposition.x / y / limit)
+	// [windowposition.x,座標], [windowposition.y,座標], [windowposition.limit,0/1]:
 	const wpX = parseInt(props["windowposition.x"], 10);
 	const wpY = parseInt(props["windowposition.y"], 10);
 	if (!Number.isNaN(wpX))

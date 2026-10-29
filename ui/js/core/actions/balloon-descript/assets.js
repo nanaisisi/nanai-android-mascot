@@ -3,6 +3,13 @@
  * @brief バルーン画像・矢印・マーカー・カーソル・アルファ設定反映 (UKADOC準拠)
  */
 export function applyAssetProperties(root, props, instance) {
+	// [readme,ファイル名]: props["readme"]
+	if (props["readme"]) root.style.setProperty("--balloon-readme", props["readme"]);
+
+	// [readme.charset,文字コード]: props["readme.charset"]
+	if (props["readme.charset"])
+		root.style.setProperty("--balloon-readme-charset", props["readme.charset"]);
+
 	const setBalloonImage = (propName, cssVarName) => {
 		const filename = props[propName];
 		if (filename) {
@@ -31,11 +38,16 @@ export function applyAssetProperties(root, props, instance) {
 			root.style.setProperty(varName, `url("${url}"), auto`);
 		}
 	};
+	// [cursor,ファイル名 / mousecursor,ファイル名]:
+	setMouseCursor("cursor", "--balloon-cursor-default");
+	// [mousecursor.arrow,ファイル名]:
 	setMouseCursor("mousecursor.arrow", "--balloon-cursor-arrow");
+	// [mousecursor.text,ファイル名]:
 	setMouseCursor("mousecursor.text", "--balloon-cursor-text");
+	// [mousecursor.wait,ファイル名]:
 	setMouseCursor("mousecursor.wait", "--balloon-cursor-wait");
 
-	// 矢印位置 (arrow0.x/y, arrow1.x/y)
+	// [arrow0.x,座標], [arrow0.y,座標], [arrow1.x,座標], [arrow1.y,座標]:
 	const arrow0x = parseInt(props["arrow0.x"], 10);
 	const arrow0y = parseInt(props["arrow0.y"], 10);
 	if (!Number.isNaN(arrow0x))
@@ -50,7 +62,7 @@ export function applyAssetProperties(root, props, instance) {
 	if (!Number.isNaN(arrow1y))
 		root.style.setProperty("--balloon-arrow1-y", `${arrow1y}px`);
 
-	// クリック待ちマーカー位置 (clickwaitmarker.x/y)
+	// [clickwaitmarker.x,座標], [clickwaitmarker.y,座標]:
 	const cwX = parseInt(props["clickwaitmarker.x"], 10);
 	const cwY = parseInt(props["clickwaitmarker.y"], 10);
 	if (!Number.isNaN(cwX))
@@ -58,7 +70,7 @@ export function applyAssetProperties(root, props, instance) {
 	if (!Number.isNaN(cwY))
 		root.style.setProperty("--balloon-clickwait-y", `${cwY}px`);
 
-	// SSTPマーカー位置 (sstpmarker.x/y)
+	// [sstpmarker.x,座標], [sstpmarker.y,座標]:
 	const smX = parseInt(props["sstpmarker.x"], 10);
 	const smY = parseInt(props["sstpmarker.y"], 10);
 	if (!Number.isNaN(smX))
@@ -66,7 +78,7 @@ export function applyAssetProperties(root, props, instance) {
 	if (!Number.isNaN(smY))
 		root.style.setProperty("--balloon-sstpmarker-y", `${smY}px`);
 
-	// 縦書きモード (vertical)
+	// [vertical,0/1]: props["vertical"]
 	const isVertical =
 		props.vertical === "1" || props.vertical?.toLowerCase() === "true";
 	root.style.setProperty(
@@ -74,7 +86,7 @@ export function applyAssetProperties(root, props, instance) {
 		isVertical ? "vertical-rl" : "horizontal-tb",
 	);
 
-	// オンラインマーカー (onlinemarker.interval, onlinemarker.x/y)
+	// [onlinemarker.interval,待機時間], [onlinemarker.x,座標], [onlinemarker.y,座標]:
 	const onlineInterval = parseInt(props["onlinemarker.interval"], 10);
 	if (!Number.isNaN(onlineInterval))
 		instance.onlineMarkerInterval = onlineInterval;
@@ -85,7 +97,7 @@ export function applyAssetProperties(root, props, instance) {
 	if (!Number.isNaN(onlineY))
 		root.style.setProperty("--balloon-online-y", `${onlineY}px`);
 
-	// SSTPメッセージ位置 (sstpmessage.x/y)
+	// [sstpmessage.x,座標], [sstpmessage.y,座標]:
 	const sstpMsgX = parseInt(props["sstpmessage.x"], 10);
 	const sstpMsgY = parseInt(props["sstpmessage.y"], 10);
 	if (!Number.isNaN(sstpMsgX))
@@ -93,17 +105,19 @@ export function applyAssetProperties(root, props, instance) {
 	if (!Number.isNaN(sstpMsgY))
 		root.style.setProperty("--balloon-sstpmessage-y", `${sstpMsgY}px`);
 
-	// アルファ・透過領域描画オプション
+	// [paint_transparent_region_black,数値]:
 	const paintBlack =
 		props.paint_transparent_region_black === "1" ||
 		props.paint_transparent_region_black?.toLowerCase() === "true";
 	root.style.setProperty("--balloon-paint-black", paintBlack ? "1" : "0");
 
+	// [use_self_alpha,値]:
 	const useSelfAlpha =
 		props.use_self_alpha === "1" ||
 		props.use_self_alpha?.toLowerCase() === "true";
 	root.style.setProperty("--balloon-use-self-alpha", useSelfAlpha ? "1" : "0");
 
+	// [use_input_alpha,数値]:
 	const useInputAlpha =
 		props.use_input_alpha === "1" ||
 		props.use_input_alpha?.toLowerCase() === "true";
@@ -112,6 +126,7 @@ export function applyAssetProperties(root, props, instance) {
 		useInputAlpha ? "1" : "0",
 	);
 
+	// [overlay_outside_balloon,0/1]:
 	const overlayOutside =
 		props.overlay_outside_balloon === "1" ||
 		props.overlay_outside_balloon?.toLowerCase() === "true";

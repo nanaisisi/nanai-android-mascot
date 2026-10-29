@@ -1,4 +1,5 @@
 use specta_typescript::Typescript;
+#[allow(unused_imports)]
 use tauri_specta::{Builder as SpectaBuilder, collect_commands};
 
 macro_rules! println {
@@ -30,6 +31,7 @@ use common::*;
 pub fn run() {
     common::initialize_logging_from_args();
 
+    #[allow(unused_variables)]
     let specta_builder = SpectaBuilder::<tauri::Wry>::new().commands(collect_commands![
         commands::window::test_command,
         commands::shiori::on_mouse_click,

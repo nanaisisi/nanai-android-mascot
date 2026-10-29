@@ -10,8 +10,8 @@ surface-parser.js が解析 (パターン種別など) するが、描画への�
 
 ## 実装箇所
 
-- `ui/js/surface/surface-animation-manager.js:119` `async playAnimationPatterns(anim, baseSurfaceId, scopeId) {`
-- `ui/js/surface/surface-animation-manager.js:125` `if (String(this.manager.currentSurfaceId) !== String(baseSurfaceId)) break;`
-- `ui/js/surface/surface-animation-manager.js:129` `await gc.updateSurface(baseSurfaceId, scopeId);`
-- `ui/js/surface/surface-animation-manager.js:138` `if (String(this.manager.currentSurfaceId) === String(baseSurfaceId)) {`
-- `ui/js/surface/surface-animation-manager.js:139` `await gc.updateSurface(baseSurfaceId, scopeId);`
+- `src-tauri/src/commands/file.rs:44` `let base_ghost_path =`
+- `src-tauri/src/commands/file.rs:47` `let shell_dir = base_ghost_path.join("shell").join(&shell_name);`
+- `src-tauri/src/commands/file.rs:48` `let master_dir = base_ghost_path.join("shell").join("master");`
+- `src-tauri/src/commands/file.rs:102` `use base64::Engine;`
+- `src-tauri/src/commands/file.rs:103` `let b64 = base64::engine::general_purpose::STANDARD.encode(&bytes);`

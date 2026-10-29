@@ -7,3 +7,10 @@
 ## 突合結果
 
 バルーンテキストの描画において、CSS writing-mode または縦書き表示制御に対応。
+
+
+## 実装箇所
+
+- `ui/css/balloon-window.css:108` `vertical-align: middle;`
+- `ui/css/balloon-window.css:120` `vertical-align: middle;`
+- `ui/css/balloon-window.css:132` `vertical-align: middle;`

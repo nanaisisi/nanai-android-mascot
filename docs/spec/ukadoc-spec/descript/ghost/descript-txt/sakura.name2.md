@@ -6,4 +6,10 @@
 
 ## 突合結果
 
-実装コードに「sakura.name2」が見つからない。
+実装コード内に「sakura.name2」を確認。
+
+
+## 実装箇所
+
+- `crates/ui/src/descript.rs:145` `/// さくら（本体）の正式名とサブ表示名（`sakura.name`, `sakura.name2`）`
+- `crates/ui/src/descript.rs:147` `(self.get("sakura.name"), self.get("sakura.name2"))`

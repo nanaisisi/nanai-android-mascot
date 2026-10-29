@@ -6,4 +6,9 @@
 
 ## 突合結果
 
-実装コードに「menu.sidebar.alignment」が見つからない。
+実装コード内に「menu.sidebar.alignment」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/ghost/scan/shell.rs:140` `let side_align = merged.get("menu.sidebar.alignment").cloned();`

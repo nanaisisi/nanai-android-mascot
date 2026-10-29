@@ -6,4 +6,9 @@
 
 ## 突合結果
 
-実装コードに「mousecursor.arrow」が見つからない。
+実装コード内に「mousecursor.arrow」を確認。
+
+
+## 実装箇所
+
+- `ui/js/core/actions/balloon-descript.js:208` `setMouseCursor("mousecursor.arrow", "--balloon-cursor-arrow");`

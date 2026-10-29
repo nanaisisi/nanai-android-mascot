@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-protocol.js:19` `references.forEach((ref, index) => {`
-- `ui/js/ghost/shiori-protocol.js:21` `req += Reference${index}: ${ref}\r\n;`
-- `ui/js/ghost/shiori-protocol.js:64` `const colonIdx = line.indexOf(":");`
-- `ui/js/ghost/ghost.js:94` `const indexA = historyOrder.indexOf(a.name);`
-- `ui/js/ghost/ghost.js:95` `const indexB = historyOrder.indexOf(b.name);`
+- `src-tauri/src/commands/file.rs:164` `if let Some(index) = recent_files.iter().position(|x| *x == path) {`
+- `src-tauri/src/commands/file.rs:165` `recent_files.remove(index);`
+- `src-tauri/src/commands/shiori/lifecycle/spawn.rs:96` `"index.html?ghost_id={}&ghost_name={}",`
+- `src-tauri/src/commands/install/archive.rs:13` `if let Ok(entry) = zip.by_index(i) {`
+- `src-tauri/src/commands/install/archive.rs:44` `&& let Ok(mut entry) = zip.by_index(idx)`

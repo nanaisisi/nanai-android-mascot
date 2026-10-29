@@ -6,4 +6,9 @@
 
 ## 突合結果
 
-実装コードに「.defaultleft」が見つからない。
+実装コード内に「.defaultleft」を確認。
+
+
+## 実装箇所
+
+- `crates/ui/src/descript.rs:160` `.get(&format!("{target}.defaultleft"))`

@@ -6,4 +6,9 @@
 
 ## 突合結果
 
-実装コードに「menu.background.alignment」が見つからない。
+実装コード内に「menu.background.alignment」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/ghost/scan/shell.rs:138` `let bg_align = merged.get("menu.background.alignment").cloned();`

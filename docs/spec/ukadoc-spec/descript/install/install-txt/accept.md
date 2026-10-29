@@ -10,5 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/ui/templates/ghost-templates.js:20` `<input type="file" id="ghost-archive-input" accept=".nar,.zip" style="flex: 1 1 180px; min`
-- `ui/js/ui/templates/ghost-templates.js:62` `<input type="file" id="modal-install-file-input" accept=".nar,.zip" style="flex: 1 1 200px`
+- `src-tauri/src/sstp.rs:38` `value: "Script accepted and executed".to_string(),`
+- `ui/js/ui/templates/ghost-templates.js:45` `<input type="file" id="ghost-archive-input" accept=".nar,.zip" style="flex: 1 1 `
+- `cpp/yaya-shiori/sha1.c:140` `*      This function accepts an array of octets as the next portion`

@@ -10,7 +10,4 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 
 ## 実装箇所
 
-- `ui/js/core/app-actions.js:147` (コメント) `// フォント色 (font.color.r,g,b または font.color)`
-- `ui/js/core/app-actions.js:151` `props["font.color.r"] &&`
-- `ui/js/core/app-actions.js:157` `rgb(${props["font.color.r"]}, ${props["font.color.g"]}, ${props["font.color.b"]}),`
-- `crates/ui/src/descript.rs:66` (コメント) `/// バルーンフォント色 (font.color.r,g,b または font.color)`
+- `crates/ui/src/descript.rs:120` `/// バルーンフォント色 (`font.color.r,g,b` または `font.color`)`

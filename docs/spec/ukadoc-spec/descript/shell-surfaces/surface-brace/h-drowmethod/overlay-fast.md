@@ -6,4 +6,10 @@
 
 ## 突合結果
 
-実装コードに「overlay-fast」が見つからない。
+実装コード内に「overlay-fast」を確認。
+
+
+## 実装箇所
+
+- `crates/ui/src/surfaces/tests.rs:45` `assert_eq!(DrawMethod::parse("overlay-fast"), DrawMethod::OverlayFast);`
+- `crates/ui/src/surfaces/types/draw.rs:35` `"overlayfast" | "fast" | "overlay-fast" => Self::OverlayFast,`

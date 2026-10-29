@@ -10,10 +10,8 @@
 
 ## 実装箇所
 
-- `crates/ui/src/surfaces.rs` （Rust 版 surfaces.txt パーサー：Element / Collision / SERIKO / Alias / append の解析）
-
-- `src-tauri/src/ghost/scan.rs:21` (コメント) `/// descript.txt の内容をパース（Shift_JIS / UTF-8 両対応）`
-- `src-tauri/src/ghost/scan.rs:22` `pub fn read_descript_file(file_path: &Path) -> Option<std::collections::HashMap<String, St`
-- `src-tauri/src/ghost/scan.rs:68` `let descript_path = path.join("descript.txt");`
-- `src-tauri/src/ghost/scan.rs:69` `if let Some(map) = read_descript_file(&descript_path) {`
-- `src-tauri/src/ghost/scan.rs:170` (コメント) `// ghost/master/descript.txt または descript.txt`
+- `src-tauri/src/commands/ext.rs:4` `use crate::ghost::scan::read_descript_file;`
+- `src-tauri/src/commands/ext.rs:30` `let desc_path = path.join("descript.txt");`
+- `src-tauri/src/commands/ext.rs:31` `if let Some(map) = read_descript_file(&desc_path) {`
+- `src-tauri/src/commands/ext.rs:36` `let description = map.get("description").cloned();`
+- `src-tauri/src/commands/ext.rs:44` `description,`

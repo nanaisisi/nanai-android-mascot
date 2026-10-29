@@ -6,4 +6,9 @@
 
 ## 突合結果
 
-実装コードに「communicatebox.y」が見つからない。
+実装コード内に「communicatebox.y」を確認。
+
+
+## 実装箇所
+
+- `ui/js/core/actions/balloon-descript.js:100` `const cbY = props["communicatebox.y"];`

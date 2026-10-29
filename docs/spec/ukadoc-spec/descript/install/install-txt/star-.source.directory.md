@@ -6,4 +6,9 @@
 
 ## 突合結果
 
-実装コードに「.source.directory」が見つからない。
+実装コード内に「.source.directory」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/commands/install/archive.rs:63` `if let Some(val) = map.get("balloon.source.directory") {`

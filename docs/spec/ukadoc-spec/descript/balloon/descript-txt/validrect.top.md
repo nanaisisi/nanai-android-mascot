@@ -10,5 +10,6 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 
 ## 実装箇所
 
-- `ui/js/core/app-actions.js:163` `const vt = parseInt(props["validrect.top"], 10);`
-- `crates/ui/src/descript.rs:60` `let t = self.get("validrect.top").and_then(|v| v.parse().ok());`
+- `crates/ui/src/descript.rs:114` `let t = self.get("validrect.top").and_then(|v| v.parse().ok());`
+- `ui/js/ghost/balloon-window.js:106` `const vt = parseInt(props["validrect.top"], 10);`
+- `ui/js/core/actions/balloon-descript.js:140` `const vt = parseInt(props["validrect.top"], 10);`

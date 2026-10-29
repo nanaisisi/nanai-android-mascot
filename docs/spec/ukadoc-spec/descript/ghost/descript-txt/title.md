@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/window/menu_window.rs:56` `.title("Nanai Menu")`
-- `src-tauri/src/commands/window/menu_window.rs:143` `.title("Nanai Submenu")`
-- `ui/js/ui/modal.js:75` `showNotification(title, message, isError = false) {`
-- `ui/js/ui/modal.js:78` `<h2>${isError ? "⚠️ " : "ℹ️ "}${title}</h2>`
-- `ui/js/ui/test-menu.js:14` `export function openModal(title) {`
+- `src-tauri/tauri.conf.json:16` `"title": "Nanai Android Mascot",`
+- `src-tauri/tauri.test.conf.json:16` `"title": "nanai-android-mascot-test",`
+- `src-tauri/src/commands/window/loading_banner_window.rs:66` `.title("Loading Banner")`
+- `src-tauri/src/commands/window/character_window.rs:52` `let title = if scope_id == 0 {`
+- `src-tauri/src/commands/window/character_window.rs:63` `.title(title)`

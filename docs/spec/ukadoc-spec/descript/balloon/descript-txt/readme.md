@@ -6,4 +6,11 @@
 
 ## 突合結果
 
-実装コードに「readme」が見つからない。
+実装コード内に「readme」を確認。
+
+
+## 実装箇所
+
+- `crates/ui/src/update.rs:91` `file,ghost\\master\\readme.txt,ABCDEF1234567890ABCDEF1234567890\r\n";`
+- `crates/ui/src/update.rs:99` `assert_eq!(entries[1].path, "ghost/master/readme.txt");`
+- `crates/ui/src/lib.rs:39` `if let Ok(content) = open_shift_jis_file("sample/readme.txt") {`

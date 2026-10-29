@@ -10,8 +10,8 @@ surface-parser.js が解析 (パターン種別など) するが、描画への�
 
 ## 実装箇所
 
-- `src-tauri/src/commands/window/android.rs:3` `pub async fn request_overlay_permission() -> Result<String, String> {`
-- `ui/js/ui/modal.js:16` `this.overlay = document.getElementById("modal-overlay");`
-- `ui/js/ui/modal.js:30` `this.overlay?.addEventListener("click", (e) => {`
-- `ui/js/ui/modal.js:31` `if (e.target === this.overlay) {`
-- `ui/js/ui/modal.js:43` `if (!html || !this.content || !this.overlay) return;`
+- `src-tauri/src/lib.rs:38` `commands::window::request_overlay_permission,`
+- `src-tauri/src/lib.rs:119` `commands::window::request_overlay_permission,`
+- `src-tauri/src/commands/window/android.rs:4` `pub async fn request_overlay_permission() -> Result<String, String> {`
+- `src-tauri/src/commands/shell/manifest.rs:116` `DrawMethod::Overlay => "overlay".to_string(),`
+- `src-tauri/src/commands/shell/manifest.rs:117` `DrawMethod::OverlayFast => "overlayfast".to_string(),`

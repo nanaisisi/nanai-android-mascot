@@ -10,8 +10,8 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan.rs:191` `.and_then(|m| m.get("sakura.name").cloned());`
-- `crates/ui/src/lib.rs:26` `"charset,Shift_JIS\r\nname,SampleGhost\r\nsakura.name,Nanai\r\nkero.name,Mini\r\n";`
-- `src-tauri/src/commands/install.rs:162` `.and_then(|m| m.get("sakura.name").cloned());`
-- `crates/ui/src/descript.rs:35` (コメント) `/// キャラクター本体名（kero.name または sakura.name）`
-- `crates/ui/src/descript.rs:37` `self.get("sakura.name")`
+- `src-tauri/src/commands/install/archive.rs:237` `.and_then(|m| m.get("sakura.name").cloned());`
+- `src-tauri/src/ghost/scan/directory.rs:81` `.and_then(|m| m.get("sakura.name").cloned());`
+- `crates/ui/src/descript.rs:90` `/// キャラクター本体名（`kero.name` または `sakura.name`）`
+- `crates/ui/src/descript.rs:92` `self.get("sakura.name")`
+- `crates/ui/src/descript.rs:145` `/// さくら（本体）の正式名とサブ表示名（`sakura.name`, `sakura.name2`）`

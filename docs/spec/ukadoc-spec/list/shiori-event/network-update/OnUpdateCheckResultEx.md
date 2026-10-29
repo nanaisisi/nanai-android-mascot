@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/core/app-update.js` `await gc.sendShioriEvent(`${baseEvent}Ex`, [[ghostName, ...parts].join(sep)])` (checkOnly 時 baseEvent = "OnUpdateCheckResult", `sep` = バイト値1)
+- `ui/js/core/app-update.js:284` `* OnUpdateResultEx (または OnUpdateCheckResultEx) を送信し、`

@@ -7,3 +7,8 @@
 ## 突合結果
 
 実装コードに「\*」が見つからない(短いトークンのため誤検出の可能性大)。
+
+
+## 実装箇所
+
+- `cpp/yaya-shiori/dir_enum.cpp:62` `yaya::string_t tmp_str = enumpath + L"\\*.*";`

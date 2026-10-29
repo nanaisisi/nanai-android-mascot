@@ -264,5 +264,45 @@ mod tests {
     fn test_expand_ids_ranges() {
         assert_eq!(expand_ids("0-2,9"), vec![0, 1, 2, 9]);
         assert!(expand_ids("abc").is_empty());
+        assert_eq!(expand_ids("[5-3]"), Vec::<u32>::new());
+        assert_eq!(expand_ids("[10]"), vec![10]);
+    }
+
+    #[test]
+    fn test_descript_more_properties() {
+        let sample = "# Comment\n// Comment2\n\n\
+            name,MockGhost\n\
+            sakura.name,Sakura\n\
+            kero.name,Kero\n\
+            sakura.name2,SakuraSub\n\
+            homeurl,https://home.url\n\
+            origin.x,10\n\
+            origin.y,20\n\
+            validrect.left,0\n\
+            validrect.top,0\n\
+            validrect.right,800\n\
+            validrect.bottom,600\n\
+            font.color,255,255,255\n\
+            icon,icon.png\n\
+            craftman,Author\n\
+            craftmanurl,https://author.url\n\
+            type,ghost\n";
+        let desc = Descript::parse(sample);
+        assert_eq!(desc.name().unwrap(), "MockGhost");
+        assert_eq!(desc.sakura_name().unwrap(), "Sakura");
+        assert_eq!(desc.kero_name().unwrap(), "Kero");
+        assert_eq!(desc.sakura_names(), (Some(&"Sakura".to_string()), Some(&"SakuraSub".to_string())));
+        assert_eq!(desc.homeurl().unwrap(), "https://home.url");
+        assert_eq!(desc.origin(), (Some(10), Some(20)));
+        assert_eq!(desc.validrect(), (Some(0), Some(0), Some(800), Some(600)));
+        assert_eq!(desc.font_color().unwrap(), "255,255,255");
+        assert_eq!(desc.icon().unwrap(), "icon.png");
+        assert_eq!(desc.craftmanw().unwrap(), "Author");
+        assert_eq!(desc.craftmanurl().unwrap(), "https://author.url");
+        assert_eq!(desc.type_().unwrap(), "ghost");
+
+        let sample2 = "craftmanw,AuthorW\ncraftman,Author\n";
+        let desc2 = Descript::parse(sample2);
+        assert_eq!(desc2.craftmanw().unwrap(), "AuthorW");
     }
 }

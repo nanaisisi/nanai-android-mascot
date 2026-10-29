@@ -1,17 +1,13 @@
-# char\*.name,名前
+# char*.name,名前
 
-- **規格**: [char-star-.name.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/char-star-.name/) (ukadoc-spec/descript/ghost/descript-txt/char-star-.name.md)
-- **検索語**: char
-- **対応状況**: ❌ 未実装(誤検出)
+- **規格**: [char-star-.name.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/char-star-.name.md)
+- **検索語**: char*.name
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-ヒットしたのは一般的な語「char」の無関係な出現。該当の仕様に対応する処理は確認できない。
+`src-tauri/src/ghost/scan/directory.rs` において `char*.name` キー群をパース・参照する実装が行われている。
 
 ## 実装箇所
 
-- `src-tauri/src/lib.rs:131` `commands::window::show_subchar_window,`
-- `src-tauri/src/lib.rs:132` `commands::window::hide_subchar_window,`
-- `src-tauri/src/lib.rs:133` `commands::window::set_character_scale,`
-- `src-tauri/src/lib.rs:138` `commands::window::sync_character_balloon,`
-- `src-tauri/src/commands/window/character_window.rs:4` `pub async fn show_character_window(`
+- `src-tauri/src/ghost/scan/directory.rs` `// [version,バージョン], [sakura.name,名前], [sakura.name2,名前], [kero.name,名前], [char*.name,名前]:`

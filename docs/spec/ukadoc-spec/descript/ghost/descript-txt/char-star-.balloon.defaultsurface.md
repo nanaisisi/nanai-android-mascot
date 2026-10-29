@@ -1,17 +1,13 @@
-# char\*.balloon.defaultsurface,数値
+# char*.balloon.defaultsurface,数値
 
-- **規格**: [char-star-.balloon.defaultsurface.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/char-star-.balloon.defaultsurface/) (ukadoc-spec/descript/ghost/descript-txt/char-star-.balloon.defaultsurface.md)
-- **検索語**: char
-- **対応状況**: ❌ 未実装(誤検出)
+- **規格**: [char-star-.balloon.defaultsurface.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/char-star-.balloon.defaultsurface.md)
+- **検索語**: char*.balloon.defaultsurface
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-ヒットしたのは一般的な語「char」の無関係な出現。該当の仕様に対応する処理は確認できない。
+`src-tauri/src/ghost/scan/directory.rs` において `char*.balloon.defaultsurface` キー群をパース・参照する実装が行われている。
 
 ## 実装箇所
 
-- `src-tauri/src/lib.rs:131` `commands::window::show_subchar_window,`
-- `src-tauri/src/lib.rs:132` `commands::window::hide_subchar_window,`
-- `src-tauri/src/lib.rs:133` `commands::window::set_character_scale,`
-- `src-tauri/src/lib.rs:138` `commands::window::sync_character_balloon,`
-- `src-tauri/src/commands/window/character_window.rs:4` `pub async fn show_character_window(`
+- `src-tauri/src/ghost/scan/directory.rs` `// [sakura.balloon.defaultsurface,数値]... [char*.balloon.defaultsurface,数値]:`

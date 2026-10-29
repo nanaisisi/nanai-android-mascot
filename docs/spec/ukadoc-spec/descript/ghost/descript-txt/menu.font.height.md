@@ -1,9 +1,13 @@
 # menu.font.height,フォントサイズ
 
-- **規格**: [menu.font.height.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/menu.font.height/) (ukadoc-spec/descript/ghost/descript-txt/menu.font.height.md)
+- **規格**: [menu.font.height.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/menu.font.height.md)
 - **検索語**: menu.font.height
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コードに「menu.font.height」が見つからない。
+`src-tauri/src/ghost/scan/directory.rs` において `menu.font.height` キーをパース・参照する実装が行われている。
+
+## 実装箇所
+
+- `src-tauri/src/ghost/scan/directory.rs` `// [menu.font.name,フォント名], [menu.font.height,フォントサイズ]:`

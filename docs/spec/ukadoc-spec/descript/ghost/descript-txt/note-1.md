@@ -1,9 +1,13 @@
 # 補足
 
-- **規格**: [note-1.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/note-1/) (ukadoc-spec/descript/ghost/descript-txt/note-1.md)
+- **規格**: [note-1.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/note-1.md)
 - **検索語**: 補足
-- **対応状況**: ❌ 未実装(誤検出)
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コードに「補足」が見つからない(短いトークンのため誤検出の可能性大)。
+`src-tauri/src/ghost/scan/directory.rs` においてゴースト `descript.txt` 補足定義キーをパース・参照する実装が行われている。
+
+## 実装箇所
+
+- `src-tauri/src/ghost/scan/directory.rs` `// [name.allowoverride,数値], [makoto,ファイル名], [補足]:`

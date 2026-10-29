@@ -1,9 +1,13 @@
 # menu.font.name,フォント名
 
-- **規格**: [menu.font.name.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/menu.font.name/) (ukadoc-spec/descript/ghost/descript-txt/menu.font.name.md)
+- **規格**: [menu.font.name.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/menu.font.name.md)
 - **検索語**: menu.font.name
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コードに「menu.font.name」が見つからない。
+`src-tauri/src/ghost/scan/directory.rs` において `menu.font.name` キーをパース・参照する実装が行われている。
+
+## 実装箇所
+
+- `src-tauri/src/ghost/scan/directory.rs` `// [menu.font.name,フォント名], [menu.font.height,フォントサイズ]:`

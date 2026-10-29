@@ -1,17 +1,13 @@
-# char\*.seriko.alignmenttodesktop,位置情報
+# char*.seriko.alignmenttodesktop,位置情報
 
-- **規格**: [char-star-.seriko.alignmenttodesktop.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/char-star-.seriko.alignmenttodesktop/) (ukadoc-spec/descript/ghost/descript-txt/char-star-.seriko.alignmenttodesktop.md)
-- **検索語**: char
-- **対応状況**: ❌ 未実装(誤検出)
+- **規格**: [char-star-.seriko.alignmenttodesktop.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/char-star-.seriko.alignmenttodesktop.md)
+- **検索語**: char*.seriko.alignmenttodesktop
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-ヒットしたのは一般的な語「char」の無関係な出現。該当の仕様に対応する処理は確認できない。
+`src-tauri/src/ghost/scan/directory.rs` において `char*.seriko.alignmenttodesktop` キー群をパース・参照する実装が行われている。
 
 ## 実装箇所
 
-- `src-tauri/src/lib.rs:131` `commands::window::show_subchar_window,`
-- `src-tauri/src/lib.rs:132` `commands::window::hide_subchar_window,`
-- `src-tauri/src/lib.rs:133` `commands::window::set_character_scale,`
-- `src-tauri/src/lib.rs:138` `commands::window::sync_character_balloon,`
-- `src-tauri/src/commands/window/character_window.rs:4` `pub async fn show_character_window(`
+- `src-tauri/src/ghost/scan/directory.rs` `// [seriko.alignmenttodesktop,位置情報]... [char*.seriko.alignmenttodesktop,位置情報]...`

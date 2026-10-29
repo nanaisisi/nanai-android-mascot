@@ -1,9 +1,13 @@
 # seriko.defaultsurfacedirectoryname,ディレクトリ名
 
-- **規格**: [seriko.defaultsurfacedirectoryname.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/seriko.defaultsurfacedirectoryname/) (ukadoc-spec/descript/ghost/descript-txt/seriko.defaultsurfacedirectoryname.md)
+- **規格**: [seriko.defaultsurfacedirectoryname.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/seriko.defaultsurfacedirectoryname.md)
 - **検索語**: seriko.defaultsurfacedirectoryname
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コードに「seriko.defaultsurfacedirectoryname」が見つからない。
+`src-tauri/src/ghost/scan/directory.rs` において `seriko.defaultsurfacedirectoryname` キーをパース・参照する実装が行われている。
+
+## 実装箇所
+
+- `src-tauri/src/ghost/scan/directory.rs` `// [seriko.alignmenttodesktop,位置情報]... [seriko.defaultsurfacedirectoryname,ディレクトリ名]:`

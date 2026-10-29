@@ -60,3 +60,4 @@ src-tauri/shiori-host/target
 coverage
 ui/coverage
 coverage-run
+coverage-final

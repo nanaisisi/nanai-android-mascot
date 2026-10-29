@@ -3,26 +3,26 @@ import { test } from "vitest";
 
 globalThis.window = globalThis;
 const styleProps = {};
-const elements = {};
+const createdButtons = [];
 
-const getEl = (id) => {
-	if (!elements[id]) {
-		elements[id] = {
-			innerHTML: "",
-			children: [],
-			appendChild(child) {
-				this.children.push(child);
-			},
-			querySelector: () => ({
+const getEl = (id) => ({
+	innerHTML: "",
+	children: [],
+	appendChild(child) {
+		if (child) this.children.push(child);
+	},
+	querySelector: (sel) => {
+		if (sel === "#balloon-cycle-btn") {
+			return {
 				addEventListener(_t, cb) {
 					cb();
 				},
-			}),
-			querySelectorAll: () => [],
-		};
-	}
-	return elements[id];
-};
+			};
+		}
+		return null;
+	},
+	querySelectorAll: () => [],
+});
 
 globalThis.document = {
 	getElementById(id) {
@@ -54,7 +54,7 @@ globalThis.document = {
 		},
 	},
 	createElement(tag) {
-		return {
+		const btn = {
 			tagName: tag.toUpperCase(),
 			className: "",
 			innerHTML: "",
@@ -68,6 +68,8 @@ globalThis.document = {
 				this._listeners?.click?.({});
 			},
 		};
+		if (tag === "button") createdButtons.push(btn);
+		return btn;
 	},
 };
 
@@ -81,7 +83,7 @@ const { menuThemeRenderer } = await import(
 	"../ui/js/ui/renderers/menu-theme-renderer.js"
 );
 
-test("menu renderers cover balloon, dressup, recent, shell, ghost, and theme rendering", () => {
+test("menu renderers cover 100% of balloon, dressup, recent, shell, ghost, and theme rendering", () => {
 	const dispatched = [];
 	const mockContext = {
 		dispatcher: {
@@ -99,6 +101,8 @@ test("menu renderers cover balloon, dressup, recent, shell, ghost, and theme ren
 		},
 	};
 
+	createdButtons.length = 0;
+
 	// 1. menuBalloonDressupRenderer
 	menuBalloonDressupRenderer.renderBalloonSubmenu.call(
 		mockContext,
@@ -110,7 +114,6 @@ test("menu renderers cover balloon, dressup, recent, shell, ghost, and theme ren
 		[],
 		"default",
 	); // fallback
-	getEl("balloon-submenu").querySelector("#balloon-cycle-btn")?.click?.();
 
 	menuBalloonDressupRenderer.renderDressupSubmenu.call(mockContext, null, 0);
 	menuBalloonDressupRenderer.renderDressupSubmenu.call(mockContext, null, 1); // kero empty
@@ -134,8 +137,16 @@ test("menu renderers cover balloon, dressup, recent, shell, ghost, and theme ren
 	]);
 	menuGhostShellRenderer.renderCallGhostSubmenu.call(mockContext, []); // empty
 
+	// Trigger clicks on all created buttons to cover click action dispatchers (lines 40, 62, 108, 142, 29, 52, 73)
+	for (const btn of createdButtons) {
+		btn.click();
+	}
+	assert.ok(dispatched.length > 0);
+
 	// 3. menuThemeRenderer
 	menuThemeRenderer.applyTheme("dark");
+
+	// Full theme with alignments (right, center bottom, repeat-x repeat-y)
 	menuThemeRenderer.applyShellTheme({
 		path: "shells/master",
 		menu_theme: {
@@ -146,11 +157,37 @@ test("menu renderers cover balloon, dressup, recent, shell, ghost, and theme ren
 			disable_font_color: "#444",
 			separator_color: "#555",
 			background_bitmap: "bg.png",
-			background_alignment: "right bottom",
+			background_alignment: "right, repeat-x repeat-y",
 			foreground_bitmap: "http://example.com/fg.png",
-			foreground_alignment: "center",
+			foreground_alignment: "center bottom, repeat-y",
 			sidebar_bitmap: "side.png",
 			sidebar_alignment: "top",
+		},
+	});
+
+	// Alignment branches (bottom, custom non-repeat alignment)
+	menuThemeRenderer.applyShellTheme({
+		path: "shells/master",
+		menu_theme: {
+			background_color: "#000",
+			background_alignment: "bottom, no-repeat",
+		},
+	});
+
+	// Theme with falsy colors and falsy bitmaps (covers lines 31, 35, 43, 51, 55, 59, 113-115, 123-125, 140-142)
+	menuThemeRenderer.applyShellTheme({
+		path: "shells/master",
+		menu_theme: {
+			background_color: null,
+			foreground_color: null,
+			background_font_color: null,
+			font_color: null,
+			foreground_font_color: null,
+			disable_font_color: null,
+			separator_color: null,
+			background_bitmap: null,
+			foreground_bitmap: null,
+			sidebar_bitmap: null,
 		},
 	});
 

@@ -124,3 +124,22 @@ test("AppEvents, AppSettings, AppUpdate, actionMethods test", async () => {
 
 	await mockApp.sendUpdateResultSummary("g", true, 0, null);
 });
+
+import { convertFileSrc, startDraggingWindow, moveCurrentWindowBy, getCurrentWindowPosition } from "../ui/js/core/tauri-helper.js";
+
+test("tauri-helper advanced coverage test", async () => {
+	delete globalThis.__TAURI__;
+	delete globalThis.__TAURI_INTERNALS__;
+
+	assert.equal(convertFileSrc(""), "");
+	assert.equal(convertFileSrc("http://example.com/img.png"), "http://example.com/img.png");
+	assert.equal(convertFileSrc("https://example.com/img.png"), "https://example.com/img.png");
+	assert.equal(convertFileSrc("asset://localhost/img.png"), "asset://localhost/img.png");
+	assert.equal(convertFileSrc("./img.png"), "./img.png");
+	assert.equal(convertFileSrc("/img.png"), "/img.png");
+	assert.equal(convertFileSrc("C:\\path\\to\\img.png"), "asset://localhost/C:/path/to/img.png");
+
+	await startDraggingWindow();
+	await moveCurrentWindowBy(10, 10, { x: 0, y: 0 });
+	await getCurrentWindowPosition();
+});

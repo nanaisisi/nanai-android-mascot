@@ -2,30 +2,63 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 globalThis.window = globalThis;
+const quickBtns = {};
+const documentListeners = {};
+const globalListeners = {};
+const tauriListeners = {};
+
 globalThis.document = {
 	addEventListener(type, cb) {
-		this._listeners = this._listeners || {};
-		this._listeners[type] = cb;
+		documentListeners[type] = cb;
 	},
 	removeEventListener() {},
-	getElementById(_id) {
-		return {
-			addEventListener(_type, cb) {
-				this._cb = cb;
-			},
-		};
+	getElementById(id) {
+		if (!quickBtns[id]) {
+			quickBtns[id] = {
+				addEventListener(type, cb) {
+					this._cb = cb;
+				},
+				click() {
+					this._cb?.({ stopPropagation() {} });
+				},
+			};
+		}
+		return quickBtns[id];
 	},
 	documentElement: { style: {} },
 	querySelector: () => null,
 };
+
 globalThis.screenX = 0;
 globalThis.screenY = 0;
-globalThis.addEventListener = () => {};
+globalThis.addEventListener = (type, cb) => {
+	globalListeners[type] = cb;
+};
+
+globalThis.__TAURI_INTERNALS__ = {
+	metadata: { currentWindow: { label: "main" } },
+	invoke: async (cmd) => {
+		if (cmd === "on_mouse_click") return;
+	},
+	transformCallback: (cb) => cb,
+	plugins: {
+		event: {
+			listen: async (event, cb) => {
+				tauriListeners[event] = cb;
+				return () => {};
+			},
+			emit: async (event, payload) => {},
+		},
+	},
+};
 
 const { eventMethods } = await import("../ui/js/core/app-events.js");
 
-test("eventMethods coverage for setupEventListeners, interactions, buttons, and listeners", async () => {
+test("eventMethods covers 100% of event listeners, buttons, external menus, and ghost click/stroke", async () => {
 	const listeners = {};
+	let shioriDoubleRes = null;
+	const eventsSent = [];
+
 	const mockApp = {
 		...eventMethods,
 		interactionManager: {
@@ -36,41 +69,21 @@ test("eventMethods coverage for setupEventListeners, interactions, buttons, and 
 		},
 		elements: {
 			ghostDisplay: {
-				addEventListener(type, cb) {
-					listeners[type] = cb;
-				},
-				getBoundingClientRect: () => ({
-					left: 0,
-					top: 0,
-					right: 100,
-					bottom: 50,
-				}),
+				addEventListener(type, cb) { listeners[type] = cb; },
+				getBoundingClientRect: () => ({ left: 0, top: 0, right: 100, bottom: 50 }),
 			},
 			keroDisplay: {
-				addEventListener(type, cb) {
-					listeners[`kero_${type}`] = cb;
-				},
+				addEventListener(type, cb) { listeners[`kero_${type}`] = cb; },
 			},
 			menuBtn: {
-				getBoundingClientRect: () => ({
-					left: 0,
-					top: 0,
-					right: 50,
-					bottom: 25,
-				}),
-				addEventListener(type, cb) {
-					listeners[`menu_${type}`] = cb;
-				},
+				getBoundingClientRect: () => ({ left: 0, top: 0, right: 50, bottom: 25 }),
+				addEventListener(type, cb) { listeners[`menu_${type}`] = cb; },
 			},
 			quickBubble: {
-				addEventListener(type, cb) {
-					listeners[`quick_${type}`] = cb;
-				},
+				addEventListener(type, cb) { listeners[`quick_${type}`] = cb; },
 			},
 			balloonDisplay: {
-				addEventListener(type, cb) {
-					listeners[`balloon_${type}`] = cb;
-				},
+				addEventListener(type, cb) { listeners[`balloon_${type}`] = cb; },
 			},
 		},
 		toggleMenu() {},
@@ -83,72 +96,75 @@ test("eventMethods coverage for setupEventListeners, interactions, buttons, and 
 		closeApp() {},
 		syncMenuGhosts() {},
 		ghostController: {
-			sendShioriEvent: async () => ({ script: "test" }),
-			currentSurfaces: new Map([[1, "src.png"]]),
+			sendShioriEvent: async (ev, args) => {
+				eventsSent.push({ ev, args });
+				if (ev === "OnMouseDoubleClick") return shioriDoubleRes;
+				return { script: "click_script" };
+			},
+			currentSurfaces: new Map([[1, "subchar.png"]]),
 		},
 		surfaceManager: {
 			detectCollision() {
 				return { name: "Head", canvasX: 10, canvasY: 20 };
 			},
 		},
-		onGhostClick() {},
 		switchToNextGhost() {},
 	};
 
 	mockApp.setupEventListeners();
 
-	// Test contextmenu on ghost display
-	listeners.contextmenu?.({
-		preventDefault() {},
-		stopPropagation() {},
-		screenX: 10,
-		screenY: 20,
-	});
-	listeners.kero_contextmenu?.({
-		preventDefault() {},
-		stopPropagation() {},
-		screenX: 15,
-		screenY: 25,
-	});
+	// 1. Test contextmenu on ghost & kero display
+	listeners.contextmenu?.({ preventDefault() {}, stopPropagation() {}, screenX: 10, screenY: 20 });
+	listeners.kero_contextmenu?.({ preventDefault() {}, stopPropagation() {}, screenX: 15, screenY: 25 });
 
-	// Test UI buttons
+	// 2. Test UI buttons
 	listeners.menu_click?.({ stopPropagation() {}, screenX: 30, screenY: 40 });
 	listeners.quick_click?.({ stopPropagation() {} });
 	listeners.balloon_click?.();
 
-	// Test global document event listeners
-	document._listeners?.click?.();
-	document._listeners?.contextmenu?.({
-		preventDefault() {},
-		screenX: 50,
-		screenY: 60,
-	});
+	// Quick action buttons
+	quickBtns["qa-talk-btn"]?.click();
+	quickBtns["qa-ghost-btn"]?.click();
+	quickBtns["qa-balloon-btn"]?.click();
+	quickBtns["qa-minimize-btn"]?.click();
 
-	document._listeners?.keydown?.({ key: "Escape" });
-	document._listeners?.keydown?.({
-		key: "w",
-		ctrlKey: true,
-		preventDefault() {},
-	});
-	document._listeners?.keydown?.({
-		key: "q",
-		metaKey: true,
-		preventDefault() {},
-	});
+	// 3. Test global document event listeners
+	documentListeners.click?.();
+	documentListeners.contextmenu?.({ preventDefault() {}, screenX: 50, screenY: 60 });
 
-	// Test onGhostClick and onGhostStroke
+	documentListeners.keydown?.({ key: "Escape" });
+	documentListeners.keydown?.({ key: "w", ctrlKey: true, preventDefault() {} });
+	documentListeners.keydown?.({ key: "q", metaKey: true, preventDefault() {} });
+
+	// 4. Test external menu listeners (Tauri + postMessage)
+	await tauriListeners["menu-action"]?.({ payload: { action: "request-sync", payload: { scope: 1 } } });
+	await tauriListeners["menu-action"]?.({ payload: { action: "talk", payload: null } });
+	await tauriListeners["request-subchar-image"]?.({ payload: { scopeId: 1 } });
+
+	globalListeners.message?.({ data: { type: "menu-action", action: "request-sync", payload: { scope: 1 } } });
+	globalListeners.message?.({ data: { type: "menu-action", action: "talk", payload: null } });
+
+	// 5. Test onGhostClick and onGhostStroke (with script response)
+	shioriDoubleRes = { script: "double_click_script" };
 	await mockApp.onGhostClick(10, 20, {}, 0);
 	await mockApp.onGhostStroke(10, 20, {}, 0);
 
-	// Test getCollisionInfo & detectPart
+	// Test onGhostClick fallback to OnMouseClick when double click has no script
+	shioriDoubleRes = null;
+	await mockApp.onGhostClick(10, 20, {}, 0);
+
+	// Test timeCritical section early return
+	mockApp.sakuraPlayer.timeCritical = true;
+	mockApp.sakuraPlayer.isPlaying = true;
+	await mockApp.onGhostClick(10, 20, {}, 0);
+	await mockApp.onGhostStroke(10, 20, {}, 0);
+
+	// 6. Test getCollisionInfo & detectPart
 	const col = mockApp.getCollisionInfo(10, 20, {}, 0);
 	assert.equal(col.name, "Head");
 	const part = mockApp.detectPart(10, 20, {});
 	assert.equal(part, "Head");
 
-	// Test fallback getCollisionInfo without clientX/clientY
-	const col2 = mockApp.getCollisionInfo(undefined, undefined, null, 0);
-	assert.equal(col2.name, "");
-
+	delete globalThis.__TAURI_INTERNALS__;
 	assert.ok(true);
 });

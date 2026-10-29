@@ -171,3 +171,15 @@ pub fn normalize_path(path: &Path) -> PathBuf {
         canonical
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_clean_verbatim_path() {
+        assert_eq!(clean_verbatim_path(r"\\?\C:\path\to\file"), r"C:\path\to\file");
+        let expected = format!("normal{}path", std::path::MAIN_SEPARATOR);
+        assert_eq!(clean_verbatim_path("normal/path"), expected);
+    }
+}

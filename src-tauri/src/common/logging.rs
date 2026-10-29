@@ -1,7 +1,7 @@
 use std::fmt;
 use std::sync::OnceLock;
 
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug)]
 pub enum LogLevel {
     Off,
     Error,
@@ -41,5 +41,21 @@ pub fn log_print(level: LogLevel, message: fmt::Arguments<'_>) {
     let configured = LOG_LEVEL.get().copied().unwrap_or(LogLevel::Info);
     if level <= configured && level != LogLevel::Off {
         std::eprintln!("{message}");
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_log_level() {
+        assert_eq!(parse_log_level("off"), Some(LogLevel::Off));
+        assert_eq!(parse_log_level("ERROR"), Some(LogLevel::Error));
+        assert_eq!(parse_log_level("warning"), Some(LogLevel::Warn));
+        assert_eq!(parse_log_level("info"), Some(LogLevel::Info));
+        assert_eq!(parse_log_level("debug"), Some(LogLevel::Debug));
+        assert_eq!(parse_log_level("trace"), Some(LogLevel::Trace));
+        assert_eq!(parse_log_level("invalid"), None);
     }
 }

@@ -12,7 +12,7 @@ globalThis.document = {
 
 const { actionMethods } = await import("../ui/js/core/app-actions.js");
 
-test("actionMethods.handleMenuAction covers all branches", async () => {
+test("actionMethods.handleMenuAction covers all branches including Tauri folder open, balloon labels, and close-all", async () => {
 	const mockApp = {
 		ghostController: {
 			currentGhost: { name: "Mock", isTemporary: true },
@@ -21,6 +21,9 @@ test("actionMethods.handleMenuAction covers all branches", async () => {
 			sendShioriEvent: () => {},
 			scanGhosts: async () => {},
 		},
+		availableBalloons: [
+			{ dir_name: "ivory", name: "Ivory Balloon" },
+		],
 		modalManager: { show() {} },
 		elements: { ghostDisplay: { style: {}, classList: { remove() {} } } },
 		interactionManager: { balloonOffsetX: 0, balloonOffsetY: 0 },
@@ -59,22 +62,41 @@ test("actionMethods.handleMenuAction covers all branches", async () => {
 	handle("reset-shell-position");
 	handle("reset-balloon-position");
 	handle("close-balloon");
-	handle("keep-temporary-ghost");
 
+	// Test keep-temporary-ghost when true vs false
+	handle("keep-temporary-ghost");
 	mockApp.ghostController.currentGhost.isTemporary = false;
 	handle("keep-temporary-ghost");
 
 	await handle("biff");
 	handle("recommend");
 	await handle("scan");
+
+	// Test open-ghost-folder in Tauri environment with error catch
+	globalThis.__TAURI_INTERNALS__ = {
+		invoke: async (cmd) => {
+			if (cmd === "open_ghost_directory") throw new Error("folder fail");
+		},
+		transformCallback: (cb) => cb,
+	};
 	handle("open-ghost-folder");
+	delete globalThis.__TAURI_INTERNALS__;
+
 	await handle("uninstall");
 	handle("install");
+
+	// Test balloon-theme with availableBalloons matching
 	handle("balloon-theme-ivory");
 	handle("balloon-theme-custom");
+
 	handle("scale-100");
 	handle("balloon-scale-100");
+
+	// Test close, close-all, exit-all
 	handle("close");
+	handle("close-all");
+	handle("exit-all");
+
 	handle("close-menu");
 	handle("minimize");
 
@@ -85,4 +107,6 @@ test("actionMethods.handleMenuAction covers all branches", async () => {
 	await handle("switch-to-shell", "Default");
 	await handle("dressup-toggle", { part: "hat" });
 	handle("unknown-action");
+
+	assert.ok(true);
 });

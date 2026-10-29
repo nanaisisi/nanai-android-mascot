@@ -1,6 +1,34 @@
 import { invoke, isTauriAvailable, listen } from "./tauri-helper.js";
 
 /**
+ * ネットワーク更新標準 SHIORI 引数生成ヘルパー (UKADOC準拠)
+ * [Ref0, Ref1, Ref2, Ref3, Ref4] -> [ref0, ref1, "", "ghost", "manual"]
+ */
+function buildUpdateArgs(ref0 = "", ref1 = "") {
+	return [String(ref0), String(ref1), "", "ghost", "manual"];
+}
+
+/** 更新進行フェーズ → SHIORI サブイベント対応表 */
+const PROGRESS_PHASE_EVENTS = {
+	"download-begin": "OnUpdate.OnDownloadBegin",
+	"md5-begin": "OnUpdate.OnMD5CompareBegin",
+	"md5-complete": "OnUpdate.OnMD5CompareComplete",
+	"md5-failed": "OnUpdate.OnMD5CompareFailure",
+};
+
+/**
+ * 例外オブジェクトから UKADOC 準拠の失敗理由を抽出
+ * @param {any} err
+ * @returns {string}
+ */
+function parseErrorReason(err) {
+	const msg = String(err);
+	if (msg.includes("404")) return "404";
+	if (msg.includes("timeout")) return "timeout";
+	return "fileio";
+}
+
+/**
  * ネットワーク更新制御モジュール
  * UKADOC (SSP仕様) 準拠:
  * 1. OnUpdateProcessExec (スクリプト返答があればカスタマイズ)
@@ -45,15 +73,11 @@ export const updateMethods = {
 		}
 
 		// 2. OnUpdateBegin 送信 (Ref0: ゴースト名, Ref1: パス, Ref3: "ghost", Ref4: "manual")
-		//    ※チェックのみ実行時は OnUpdateBegin/OnUpdateReady 以降を発生させない (UKADOC準拠)
 		if (!checkOnly) {
-			await gc.sendShioriEvent("OnUpdateBegin", [
-				ghostName,
-				ghostPath,
-				"",
-				"ghost",
-				"manual",
-			]);
+			await gc.sendShioriEvent(
+				"OnUpdateBegin",
+				buildUpdateArgs(ghostName, ghostPath),
+			);
 		}
 
 		this.showBalloon?.("🌐 ネットワーク更新を確認中...");
@@ -63,13 +87,7 @@ export const updateMethods = {
 			this.showBalloon?.(
 				"⚠️ ブラウザ環境のためネットワーク更新はシミュレーションのみです",
 			);
-			await gc.sendShioriEvent("OnUpdateFailure", [
-				"fileio",
-				"",
-				"",
-				"ghost",
-				"manual",
-			]);
+			await gc.sendShioriEvent("OnUpdateFailure", buildUpdateArgs("fileio"));
 			await this.sendUpdateResultSummary(ghostName, false, "fileio", null);
 			return;
 		}
@@ -87,13 +105,13 @@ export const updateMethods = {
 			if (checkOnly) {
 				// チェックのみ実行: OnUpdateCheckComplete (Ref0: 総数 または "none")
 				this.showBalloon?.(checkResult.message);
-				await gc.sendShioriEvent("OnUpdateCheckComplete", [
-					checkResult.has_update ? String(checkResult.total_count) : "none",
-					fileNames.join(","),
-					"",
-					"ghost",
-					"manual",
-				]);
+				await gc.sendShioriEvent(
+					"OnUpdateCheckComplete",
+					buildUpdateArgs(
+						checkResult.has_update ? String(checkResult.total_count) : "none",
+						fileNames.join(","),
+					),
+				);
 				await this.sendUpdateResultSummary(
 					ghostName,
 					true,
@@ -108,13 +126,10 @@ export const updateMethods = {
 				// 更新なし
 				console.log("✨ 更新ファイルなし (none)");
 				this.showBalloon?.("✨ 最新の状態です。更新ファイルはありません。");
-				await gc.sendShioriEvent("OnUpdateComplete", [
-					"none",
-					"",
-					"",
-					"ghost",
-					"manual",
-				]);
+				await gc.sendShioriEvent(
+					"OnUpdateComplete",
+					buildUpdateArgs("none"),
+				);
 				await this.sendUpdateResultSummary(ghostName, true, 0, null);
 				return;
 			}
@@ -122,13 +137,10 @@ export const updateMethods = {
 			// 4. OnUpdateReady
 			const totalMinusOne = (checkResult.total_count - 1).toString();
 			const fileListStr = fileNames.join(",");
-			await gc.sendShioriEvent("OnUpdateReady", [
-				totalMinusOne,
-				fileListStr,
-				"",
-				"ghost",
-				"manual",
-			]);
+			await gc.sendShioriEvent(
+				"OnUpdateReady",
+				buildUpdateArgs(totalMinusOne, fileListStr),
+			);
 
 			this.showBalloon?.(
 				`📥 更新ファイル ${checkResult.total_count} 件をダウンロード中...`,
@@ -138,42 +150,17 @@ export const updateMethods = {
 			const progressHandler = (event) => {
 				const { phase, path: filePath } = event.payload || {};
 				if (!filePath) return;
-				// UKADOC 準拠のイベント名へ中継
-				if (phase === "download-begin") {
-					gc.sendShioriEvent("OnUpdate.OnDownloadBegin", [
-						filePath,
-						"",
-						"",
-						"ghost",
-						"manual",
-					]).catch?.(() => {});
-				} else if (phase === "md5-begin") {
-					gc.sendShioriEvent("OnUpdate.OnMD5CompareBegin", [
-						filePath,
-						"",
-						"",
-						"ghost",
-						"manual",
-					]).catch?.(() => {});
-				} else if (phase === "md5-complete") {
-					gc.sendShioriEvent("OnUpdate.OnMD5CompareComplete", [
-						filePath,
-						"",
-						"",
-						"ghost",
-						"manual",
-					]).catch?.(() => {});
-				} else if (phase === "md5-failed") {
-					gc.sendShioriEvent("OnUpdate.OnMD5CompareFailure", [
-						filePath,
-						"",
-						"",
-						"ghost",
-						"manual",
-					]).catch?.(() => {});
+				const evName = PROGRESS_PHASE_EVENTS[phase];
+				if (evName) {
+					gc.sendShioriEvent(evName, buildUpdateArgs(filePath)).catch?.(
+						() => {},
+					);
+				}
+				if (phase === "md5-failed") {
 					failedFile = filePath;
 				}
 			};
+
 			let unlisten = null;
 			if (isTauriAvailable()) {
 				try {
@@ -197,13 +184,13 @@ export const updateMethods = {
 					gc.selectGhost(ghostName);
 
 					const updatedFilesStr = updateResult.updated_files.join(",");
-					await gc.sendShioriEvent("OnUpdateComplete", [
-						updateResult.reason || "changed",
-						updatedFilesStr,
-						"",
-						"ghost",
-						"manual",
-					]);
+					await gc.sendShioriEvent(
+						"OnUpdateComplete",
+						buildUpdateArgs(
+							updateResult.reason || "changed",
+							updatedFilesStr,
+						),
+					);
 					// OnUpdateResultExplorer 送信 (UKADOC準拠: 更新詳細・差分リスト通知)
 					if (updateResult.updated_files?.length > 0) {
 						await gc.sendShioriEvent("OnUpdateResultExplorer", [
@@ -221,13 +208,13 @@ export const updateMethods = {
 					);
 				} else {
 					const failureReason = updateResult.reason || "unknown";
-					await gc.sendShioriEvent("OnUpdateFailure", [
-						failureReason,
-						updateResult.updated_files?.join(",") ?? "",
-						"",
-						"ghost",
-						"manual",
-					]);
+					await gc.sendShioriEvent(
+						"OnUpdateFailure",
+						buildUpdateArgs(
+							failureReason,
+							updateResult.updated_files?.join(",") ?? "",
+						),
+					);
 					this.showBalloon?.(`❌ ネットワーク更新失敗: ${failureReason}`);
 					await this.sendUpdateResultSummary(
 						ghostName,
@@ -247,22 +234,14 @@ export const updateMethods = {
 			}
 		} catch (err) {
 			console.error("ネットワーク更新エラー:", err);
-			const errMsg = String(err);
-			const reason = errMsg.includes("404")
-				? "404"
-				: errMsg.includes("timeout")
-					? "timeout"
-					: "fileio";
+			const reason = parseErrorReason(err);
 
 			if (checkOnly) {
 				// チェックのみ実行: OnUpdateCheckFailure (Ref0: 失敗理由)
-				await gc.sendShioriEvent("OnUpdateCheckFailure", [
-					reason,
-					"",
-					"",
-					"ghost",
-					"manual",
-				]);
+				await gc.sendShioriEvent(
+					"OnUpdateCheckFailure",
+					buildUpdateArgs(reason),
+				);
 				this.showBalloon?.(`❌ 更新チェック失敗: ${reason}`);
 				await this.sendUpdateResultSummary(
 					ghostName,
@@ -274,13 +253,7 @@ export const updateMethods = {
 				return;
 			}
 
-			await gc.sendShioriEvent("OnUpdateFailure", [
-				reason,
-				"",
-				"",
-				"ghost",
-				"manual",
-			]);
+			await gc.sendShioriEvent("OnUpdateFailure", buildUpdateArgs(reason));
 			await this.sendUpdateResultSummary(ghostName, false, reason, failedFile);
 			this.showBalloon?.(`❌ 更新処理中にエラーが発生しました: ${err}`);
 		}

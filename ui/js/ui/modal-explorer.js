@@ -10,7 +10,7 @@ export function setupExplorerListeners(modalManager, app) {
 	let selected = null;
 	let sortKey = "name";
 	let sortAsc = true;
-	let searchIndex = -1;
+	let _searchIndex = -1;
 
 	const format = (value) => value || "—";
 	const updateSortHeaderIndicators = () => {
@@ -30,11 +30,15 @@ export function setupExplorerListeners(modalManager, app) {
 	const render = () => {
 		if (!rows) return;
 		updateSortHeaderIndicators();
-		const query = String(search?.value || "").trim().toLowerCase();
+		const query = String(search?.value || "")
+			.trim()
+			.toLowerCase();
 		const list = ghosts
 			.filter((ghost) =>
 				[ghost.name, ghost.craftman, ghost.path].some((value) =>
-					String(value || "").toLowerCase().includes(query),
+					String(value || "")
+						.toLowerCase()
+						.includes(query),
 				),
 			)
 			.sort((a, b) => {
@@ -91,7 +95,7 @@ export function setupExplorerListeners(modalManager, app) {
 		?.querySelector("#explorer-refresh-btn")
 		?.addEventListener("click", load);
 	search?.addEventListener("input", () => {
-		searchIndex = -1;
+		_searchIndex = -1;
 		render();
 	});
 

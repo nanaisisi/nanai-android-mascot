@@ -117,3 +117,24 @@ cargo tauri android dev
    - バックグラウンド待機時やアイドル状態での不要なループ・タイマー動作が停止し、バッテリー消費が抑えられているか。
 5. **文字コード・ファイルパス互換性**:
    - Android（Linux ファイルシステム）の大文字小文字厳格判定において、ゴーストファイルのロード漏れが発生しないか。
+
+---
+
+## 4. コードカバレッジ計測 (`cargo llvm-cov`) の注意事項
+
+本プロジェクトでは開発プロファイル（`[profile.dev]`）で高速化のため **Cranelift** (`codegen-backend = "cranelift"`) を `.cargo/config.toml` に設定しています。
+
+そのため、LLVM 固有のカバレッジ計測オプション（`-Cinstrument-coverage`）を使用する `cargo llvm-cov` 実行時に Cranelift との競合エラーが発生する場合があります。
+
+### 諸設定を回避するカバレッジツール実行方式
+
+設定やキャッシュの競合を回避し、LLVM バックエンドでカバレッジ（HTMLレポート生成）を実行するには、以下の環境変数オーバーライドを付与したコマンドを使用します：
+
+```bash
+with-env { RUSTC_WRAPPER: "", CARGO_UNSTABLE_CODEGEN_BACKEND: "true", CARGO_PROFILE_DEV_CODEGEN_BACKEND: "llvm" } { cargo llvm-cov --html }
+```
+
+あるいは、必要に応じて事前にクリーンを実行してください：
+```bash
+cargo llvm-cov clean
+```

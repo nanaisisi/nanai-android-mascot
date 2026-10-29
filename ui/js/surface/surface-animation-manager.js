@@ -2,16 +2,17 @@
  * @file surface-animation-manager.js
  * @brief SERIKO アニメーションおよび発話口パク管理クラス
  */
-import { patternSurfaceFile } from "./bind-menu.js";
+
 import {
 	buildAnimationTimeline,
-	resolvePatternWait,
 	parseInterval,
+	resolvePatternWait,
 } from "./animation-parser.js";
+import { patternSurfaceFile } from "./bind-menu.js";
 import { surfaceAnimationTimers } from "./surface-animation-timers.js";
 
 // Re-export helper functions for backwards compatibility
-export { buildAnimationTimeline, resolvePatternWait, parseInterval };
+export { buildAnimationTimeline, parseInterval, resolvePatternWait };
 
 export class SurfaceAnimationManager {
 	/**
@@ -55,11 +56,20 @@ export class SurfaceAnimationManager {
 	}
 
 	scheduleAnimation(anim, surfaceId, scopeId) {
-		surfaceAnimationTimers.scheduleAnimation.call(this, anim, surfaceId, scopeId);
+		surfaceAnimationTimers.scheduleAnimation.call(
+			this,
+			anim,
+			surfaceId,
+			scopeId,
+		);
 	}
 
 	animationsForTrigger(scopeId, kind) {
-		return surfaceAnimationTimers.animationsForTrigger.call(this, scopeId, kind);
+		return surfaceAnimationTimers.animationsForTrigger.call(
+			this,
+			scopeId,
+			kind,
+		);
 	}
 
 	triggerAnimations(scopeId, kind) {

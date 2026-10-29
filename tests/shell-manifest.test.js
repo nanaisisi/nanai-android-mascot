@@ -29,22 +29,33 @@ test("shell-manifest functions cover enums, collision records, and containment",
 	assert.equal(methodToString("overlay"), "overlay");
 
 	// 4. collisionRecord (rect, polygon, circle, ellipse)
-	const rectRec = collisionRecord({ name: "Head", shape: { Rect: { x1: 0, y1: 0, x2: 10, y2: 10 } } });
+	const rectRec = collisionRecord({
+		name: "Head",
+		shape: { Rect: { x1: 0, y1: 0, x2: 10, y2: 10 } },
+	});
 	assert.equal(rectRec.shape, "rect");
 	assert.equal(rectRec.x2, 10);
 
 	const polyRec = collisionRecord({
 		name: "Arm",
-		shape: { Polygon: { vertices: [[0, 0], [10, 0], [5, 10], [{ x: 0, y: 0 }]] } },
+		shape: {
+			Polygon: { vertices: [[0, 0], [10, 0], [5, 10], [{ x: 0, y: 0 }]] },
+		},
 	});
 	assert.equal(polyRec.shape, "polygon");
 	assert.equal(polyRec.vertices.length, 4);
 
-	const circleRec = collisionRecord({ name: "C", shape: { Circle: { cx: 5, cy: 5, r: 5 } } });
+	const circleRec = collisionRecord({
+		name: "C",
+		shape: { Circle: { cx: 5, cy: 5, r: 5 } },
+	});
 	assert.equal(circleRec.shape, "circle");
 	assert.equal(circleRec.rx, 5);
 
-	const ellipseRec = collisionRecord({ name: "E", shape: { Ellipse: { cx: 5, cy: 5, rx: 5, ry: 8 } } });
+	const ellipseRec = collisionRecord({
+		name: "E",
+		shape: { Ellipse: { cx: 5, cy: 5, rx: 5, ry: 8 } },
+	});
 	assert.equal(ellipseRec.shape, "ellipse");
 	assert.equal(ellipseRec.ry, 8);
 
@@ -65,13 +76,25 @@ test("shell-manifest functions cover enums, collision records, and containment",
 			{
 				number: 0,
 				definition: {
-					collisions: [{ name: "head", shape: { Rect: { x1: 0, y1: 0, x2: 10, y2: 10 } } }],
+					collisions: [
+						{ name: "head", shape: { Rect: { x1: 0, y1: 0, x2: 10, y2: 10 } } },
+					],
 					elements: [{ id: 0, method: "Base", file: "base.png", x: 0, y: 0 }],
 					animations: {
 						0: {
 							id: 0,
 							interval: "Always",
-							patterns: [{ index: 0, surface: 6, wait: 50, wait_max: 100, method: "Overlay", x: 0, y: 0 }],
+							patterns: [
+								{
+									index: 0,
+									surface: 6,
+									wait: 50,
+									wait_max: 100,
+									method: "Overlay",
+									x: 0,
+									y: 0,
+								},
+							],
 						},
 					},
 				},
@@ -86,9 +109,9 @@ test("shell-manifest functions cover enums, collision records, and containment",
 
 	// 7. getShellManifest & parseSurfacesTextWithRust (with Tauri mock)
 	globalThis.__TAURI_INTERNALS__ = {
-		invoke: async (cmd, args) => {
+		invoke: async (cmd, _args) => {
 			if (cmd === "shell_manifest") return mockManifest;
-			if (cmd === "parse_surfaces_text") return { "0": mockManifest.surfaces[0] };
+			if (cmd === "parse_surfaces_text") return { 0: mockManifest.surfaces[0] };
 		},
 		transformCallback: (cb) => cb,
 	};
@@ -101,7 +124,9 @@ test("shell-manifest functions cover enums, collision records, and containment",
 	assert.ok(parseRes);
 
 	// Test error catch branches
-	globalThis.__TAURI_INTERNALS__.invoke = async () => { throw new Error("fail"); };
+	globalThis.__TAURI_INTERNALS__.invoke = async () => {
+		throw new Error("fail");
+	};
 	assert.equal(await getShellManifest("g", "s"), null);
 	assert.equal(await parseSurfacesTextWithRust("bad"), null);
 

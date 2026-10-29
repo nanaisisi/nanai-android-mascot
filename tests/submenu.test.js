@@ -13,7 +13,7 @@ globalThis.document = {
 		documentListeners[type] = cb;
 	},
 	documentElement: { setAttribute() {} },
-	getElementById(id) {
+	getElementById(_id) {
 		return {
 			innerHTML: "",
 			appendChild() {},
@@ -35,7 +35,7 @@ test("submenu event handlers, Tauri sync listeners, and DOMContentLoaded init", 
 
 	// 2. Test Tauri event listeners via mock listen
 	globalThis.__TAURI_INTERNALS__ = {
-		invoke: async (cmd) => {},
+		invoke: async (_cmd) => {},
 		transformCallback: (cb) => cb,
 	};
 	globalThis.window = globalThis;

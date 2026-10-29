@@ -9,7 +9,9 @@ globalThis.document = {
 			return {
 				innerHTML: "",
 				children,
-				appendChild(child) { this.children.push(child); },
+				appendChild(child) {
+					this.children.push(child);
+				},
 			};
 		}
 		return null;
@@ -23,12 +25,16 @@ globalThis.document = {
 				this._listeners = this._listeners || {};
 				this._listeners[type] = cb;
 			},
-			click() { this._listeners?.click?.({}); },
+			click() {
+				this._listeners?.click?.({});
+			},
 		};
 	},
 };
 
-const { renderSubmenuContent } = await import("../ui/js/ui/submenu-renderer.js");
+const { renderSubmenuContent } = await import(
+	"../ui/js/ui/submenu-renderer.js"
+);
 
 test("renderSubmenuContent covers all submenu types (ghost, shell, dressup, balloon, recent)", () => {
 	const dispatched = [];

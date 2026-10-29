@@ -3,7 +3,13 @@ import { test } from "vitest";
 
 globalThis.window = globalThis;
 globalThis.document = {
-	createElement: () => ({ textContent: "", style: {}, addEventListener(t, cb) { this._cb = cb; } }),
+	createElement: () => ({
+		textContent: "",
+		style: {},
+		addEventListener(_t, cb) {
+			this._cb = cb;
+		},
+	}),
 };
 globalThis.localStorage = {
 	getItem: () => JSON.stringify(["Ghost1"]),
@@ -13,7 +19,11 @@ globalThis.localStorage = {
 const { ghostActions } = await import("../ui/js/core/actions/ghost-actions.js");
 
 test("ghostActions coverage for all methods", async () => {
-	const mockOkBtn = { addEventListener(t, cb) { cb(); } };
+	const mockOkBtn = {
+		addEventListener(_t, cb) {
+			cb();
+		},
+	};
 	const mockApp = {
 		...ghostActions,
 		ghostController: {
@@ -35,7 +45,7 @@ test("ghostActions coverage for all methods", async () => {
 		modalManager: {
 			content: {
 				innerHTML: "",
-				querySelector: (sel) => sel === "#modal-ok-btn" ? mockOkBtn : null,
+				querySelector: (sel) => (sel === "#modal-ok-btn" ? mockOkBtn : null),
 			},
 			overlay: { style: {} },
 			hide() {},
@@ -80,7 +90,11 @@ test("ghostActions coverage for all methods", async () => {
 		shellManifest: {},
 		bindDressup: async () => {},
 	};
-	await ghostActions.handleDressupToggle.call(mockApp, { category: "hat", part: "ribbon", scope: 0 });
+	await ghostActions.handleDressupToggle.call(mockApp, {
+		category: "hat",
+		part: "ribbon",
+		scope: 0,
+	});
 
 	assert.ok(true);
 });

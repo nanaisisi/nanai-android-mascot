@@ -9,7 +9,10 @@ globalThis.localStorage = {
 };
 globalThis.confirm = () => true;
 globalThis.Blob = class {
-	constructor(content, options) { this.content = content; this.options = options; }
+	constructor(content, options) {
+		this.content = content;
+		this.options = options;
+	}
 };
 globalThis.URL.createObjectURL = () => "blob:url";
 globalThis.URL.revokeObjectURL = () => {};
@@ -23,13 +26,18 @@ const getEl = (id) => {
 			innerHTML: "",
 			textContent: "",
 			classList: {
-				toggle(c) { this._active = !this._active; return this._active; },
+				toggle(_c) {
+					this._active = !this._active;
+					return this._active;
+				},
 			},
 			addEventListener(type, cb) {
 				this._listeners = this._listeners || {};
 				this._listeners[type] = cb;
 			},
-			click() { this._listeners?.click?.({}); },
+			click() {
+				this._listeners?.click?.({});
+			},
 			querySelector: () => ({ textContent: "PluginA" }),
 		};
 	}
@@ -37,29 +45,42 @@ const getEl = (id) => {
 };
 
 globalThis.document = {
-	getElementById(id) { return getEl(id); },
+	getElementById(id) {
+		return getEl(id);
+	},
 	querySelectorAll(sel) {
 		if (sel === "#plugin-list .ghost-item") return [getEl("plugin1")];
 		return [];
 	},
-	createElement: (tag) => ({
+	createElement: (_tag) => ({
 		href: "",
 		download: "",
 		click() {},
 	}),
 };
 
-const { ModalSettingsHandlers } = await import("../ui/js/ui/modal-settings-handlers.js");
+const { ModalSettingsHandlers } = await import(
+	"../ui/js/ui/modal-settings-handlers.js"
+);
 
 test("ModalSettingsHandlers covers settings, plugins, and debug listeners", async () => {
 	const mockManager = {
 		app: {
-			settings: { autoLoadGhost: true, darkMode: false, shellScale: "100", balloonScale: "100" },
-			applySettings() { this.applied = true; },
+			settings: {
+				autoLoadGhost: true,
+				darkMode: false,
+				shellScale: "100",
+				balloonScale: "100",
+			},
+			applySettings() {
+				this.applied = true;
+			},
 			showBalloon() {},
 			hideBalloon() {},
 		},
-		hide() { this.hidden = true; },
+		hide() {
+			this.hidden = true;
+		},
 		showNotification() {},
 	};
 

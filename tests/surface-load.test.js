@@ -48,9 +48,14 @@ test("surfaceLoadMethods covers loadSurfacesTxt, applyShellManifest, parseSurfac
 
 	// 4. parseSurfacesTxt with Tauri available & parseSurfacesTextWithRust success
 	globalThis.__TAURI_INTERNALS__ = {
-		invoke: async (cmd, args) => {
+		invoke: async (cmd, _args) => {
 			if (cmd === "parse_surfaces_text") {
-				return { "1": { number: 1, definition: { collisions: [], elements: [], animations: {} } } };
+				return {
+					1: {
+						number: 1,
+						definition: { collisions: [], elements: [], animations: {} },
+					},
+				};
 			}
 		},
 		transformCallback: (cb) => cb,
@@ -60,13 +65,16 @@ test("surfaceLoadMethods covers loadSurfacesTxt, applyShellManifest, parseSurfac
 	assert.ok(mockManager.collisions["1"]);
 
 	// 5. loadSurfacesTxt with Tauri shell_manifest success
-	globalThis.__TAURI_INTERNALS__.invoke = async (cmd, args) => {
+	globalThis.__TAURI_INTERNALS__.invoke = async (cmd, _args) => {
 		if (cmd === "shell_manifest") return mockManifest;
 	};
-	await mockManager.loadSurfacesTxt("/assets/ghost/mock_nanai/shell/master", "master");
+	await mockManager.loadSurfacesTxt(
+		"/assets/ghost/mock_nanai/shell/master",
+		"master",
+	);
 
 	// 6. loadSurfacesTxt with Tauri shell_manifest fail and open_file success
-	globalThis.__TAURI_INTERNALS__.invoke = async (cmd, args) => {
+	globalThis.__TAURI_INTERNALS__.invoke = async (cmd, _args) => {
 		if (cmd === "shell_manifest") return null;
 		if (cmd === "open_file") return "surface0 {}";
 	};

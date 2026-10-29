@@ -1,14 +1,16 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-const { surfaceCollisionMethods } = await import("../ui/js/surface/surface-collision.js");
+const { surfaceCollisionMethods } = await import(
+	"../ui/js/surface/surface-collision.js"
+);
 
 test("surfaceCollisionMethods covers resolveSurfaceNumber and detectCollision", async () => {
 	const mockManager = {
 		...surfaceCollisionMethods,
 		aliases: {
 			smile: [1, 2],
-			"SMILE": [1, 2],
+			SMILE: [1, 2],
 		},
 		keroAliases: {
 			normal: [10],
@@ -19,9 +21,7 @@ test("surfaceCollisionMethods covers resolveSurfaceNumber and detectCollision", 
 		baseWidth: 200,
 		baseHeight: 400,
 		collisions: {
-			"0": [
-				{ name: "head", shape: "rect", x1: 0, y1: 0, x2: 100, y2: 100 },
-			],
+			0: [{ name: "head", shape: "rect", x1: 0, y1: 0, x2: 100, y2: 100 }],
 			default: [],
 		},
 	};

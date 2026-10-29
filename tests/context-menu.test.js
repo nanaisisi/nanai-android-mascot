@@ -15,7 +15,7 @@ globalThis.document = {
 	addEventListener(type, cb) {
 		documentListeners[type] = cb;
 	},
-	getElementById(id) {
+	getElementById(_id) {
 		return {
 			innerHTML: "",
 			appendChild() {},
@@ -25,7 +25,13 @@ globalThis.document = {
 			querySelectorAll: () => [],
 		};
 	},
-	createElement: (tag) => ({ innerHTML: "", appendChild() {}, style: {}, dataset: {}, addEventListener() {} }),
+	createElement: (_tag) => ({
+		innerHTML: "",
+		appendChild() {},
+		style: {},
+		dataset: {},
+		addEventListener() {},
+	}),
 	querySelectorAll: () => [],
 	documentElement: {
 		getAttribute: () => "default",
@@ -46,8 +52,18 @@ test("context-menu event handlers, sync listeners, and keyboard shortcuts", asyn
 
 	// 2. Test window message listener
 	globalListeners.message?.({ data: { type: "sync-scope", scope: 1 } });
-	globalListeners.message?.({ data: { type: "sync-ghosts", ghosts: [], currentGhost: "G1", dressup: null, recentGhosts: [] } });
-	globalListeners.message?.({ data: { type: "sync-shells", shells: ["master"], currentShell: "master" } });
+	globalListeners.message?.({
+		data: {
+			type: "sync-ghosts",
+			ghosts: [],
+			currentGhost: "G1",
+			dressup: null,
+			recentGhosts: [],
+		},
+	});
+	globalListeners.message?.({
+		data: { type: "sync-shells", shells: ["master"], currentShell: "master" },
+	});
 	globalListeners.message?.({ data: { type: "sync-theme", theme: "ivory" } });
 	globalListeners.message?.({ data: { type: "sync-balloons", balloons: [] } });
 
@@ -70,11 +86,36 @@ test("context-menu event handlers, sync listeners, and keyboard shortcuts", asyn
 	documentListeners.keydown?.({ key: "w", ctrlKey: true, preventDefault() {} });
 	documentListeners.keydown?.({ key: "q", metaKey: true, preventDefault() {} });
 	documentListeners.keydown?.({ key: "k", ctrlKey: true, preventDefault() {} });
-	documentListeners.keydown?.({ key: "f12", shiftKey: true, preventDefault() {} });
-	documentListeners.keydown?.({ key: "f10", shiftKey: true, preventDefault() {} });
+	documentListeners.keydown?.({
+		key: "f12",
+		shiftKey: true,
+		preventDefault() {},
+	});
+	documentListeners.keydown?.({
+		key: "f10",
+		shiftKey: true,
+		preventDefault() {},
+	});
 
 	// Single accelerator keys
-	for (const k of ["r", "t", "u", "d", "h", "p", "m", "f", "o", "g", "c", "b", "a", "i", "w", "x"]) {
+	for (const k of [
+		"r",
+		"t",
+		"u",
+		"d",
+		"h",
+		"p",
+		"m",
+		"f",
+		"o",
+		"g",
+		"c",
+		"b",
+		"a",
+		"i",
+		"w",
+		"x",
+	]) {
 		documentListeners.keydown?.({ key: k, preventDefault() {} });
 	}
 

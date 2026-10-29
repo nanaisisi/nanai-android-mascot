@@ -16,12 +16,22 @@ globalThis.document = {
 				click() {
 					this._listeners?.click?.({ target: this });
 				},
-				querySelector: () => ({ addEventListener(t, cb) { cb(); } }),
+				querySelector: () => ({
+					addEventListener(_t, cb) {
+						cb();
+					},
+				}),
 			};
 		}
 		return elements[id];
 	},
-	createElement: (tag) => ({ innerHTML: "", appendChild() {}, style: {}, dataset: {}, addEventListener() {} }),
+	createElement: (_tag) => ({
+		innerHTML: "",
+		appendChild() {},
+		style: {},
+		dataset: {},
+		addEventListener() {},
+	}),
 };
 
 const { ModalManager } = await import("../ui/js/ui/modal.js");

@@ -10,4 +10,4 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 
 ## 実装箇所
 
-- `crates/ui/src/descript.rs:120` `/// バルーンフォント色 (`font.color.r,g,b` または `font.color`)`
+- `crates/ui/src/descript.rs:120` `/// バルーンフォント色 (`font.color.r,g,b`または`font.color`)`

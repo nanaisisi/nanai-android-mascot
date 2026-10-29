@@ -10,8 +10,14 @@ const getEl = (id) => {
 		elements[id] = {
 			innerHTML: "",
 			children: [],
-			appendChild(child) { this.children.push(child); },
-			querySelector: () => ({ addEventListener(t, cb) { cb(); } }),
+			appendChild(child) {
+				this.children.push(child);
+			},
+			querySelector: () => ({
+				addEventListener(_t, cb) {
+					cb();
+				},
+			}),
 			querySelectorAll: () => [],
 		};
 	}
@@ -19,20 +25,32 @@ const getEl = (id) => {
 };
 
 globalThis.document = {
-	getElementById(id) { return getEl(id); },
+	getElementById(id) {
+		return getEl(id);
+	},
 	documentElement: {
 		setAttribute() {},
 		style: {
-			setProperty(p, v) { styleProps[p] = v; },
-			removeProperty(p) { delete styleProps[p]; },
+			setProperty(p, v) {
+				styleProps[p] = v;
+			},
+			removeProperty(p) {
+				delete styleProps[p];
+			},
 		},
 	},
 	body: {
 		classList: {
 			classes: new Set(),
-			add(c) { this.classes.add(c); },
-			remove(...args) { for (const c of args) this.classes.delete(c); },
-			contains(c) { return this.classes.has(c); },
+			add(c) {
+				this.classes.add(c);
+			},
+			remove(...args) {
+				for (const c of args) this.classes.delete(c);
+			},
+			contains(c) {
+				return this.classes.has(c);
+			},
 		},
 	},
 	createElement(tag) {
@@ -46,14 +64,22 @@ globalThis.document = {
 				this._listeners = this._listeners || {};
 				this._listeners[type] = cb;
 			},
-			click() { this._listeners?.click?.({}); },
+			click() {
+				this._listeners?.click?.({});
+			},
 		};
 	},
 };
 
-const { menuBalloonDressupRenderer } = await import("../ui/js/ui/renderers/menu-balloon-dressup-renderer.js");
-const { menuGhostShellRenderer } = await import("../ui/js/ui/renderers/menu-ghost-shell-renderer.js");
-const { menuThemeRenderer } = await import("../ui/js/ui/renderers/menu-theme-renderer.js");
+const { menuBalloonDressupRenderer } = await import(
+	"../ui/js/ui/renderers/menu-balloon-dressup-renderer.js"
+);
+const { menuGhostShellRenderer } = await import(
+	"../ui/js/ui/renderers/menu-ghost-shell-renderer.js"
+);
+const { menuThemeRenderer } = await import(
+	"../ui/js/ui/renderers/menu-theme-renderer.js"
+);
 
 test("menu renderers cover balloon, dressup, recent, shell, ghost, and theme rendering", () => {
 	const dispatched = [];
@@ -64,14 +90,26 @@ test("menu renderers cover balloon, dressup, recent, shell, ghost, and theme ren
 			},
 		},
 		dressupData: {
-			sakura: { categories: [{ category: "Hat", parts: [{ part: "Ribbon", on: true }] }] },
+			sakura: {
+				categories: [
+					{ category: "Hat", parts: [{ part: "Ribbon", on: true }] },
+				],
+			},
 			kero: { categories: [] },
 		},
 	};
 
 	// 1. menuBalloonDressupRenderer
-	menuBalloonDressupRenderer.renderBalloonSubmenu.call(mockContext, [{ dir_name: "ivory", name: "Ivory" }], "ivory");
-	menuBalloonDressupRenderer.renderBalloonSubmenu.call(mockContext, [], "default"); // fallback
+	menuBalloonDressupRenderer.renderBalloonSubmenu.call(
+		mockContext,
+		[{ dir_name: "ivory", name: "Ivory" }],
+		"ivory",
+	);
+	menuBalloonDressupRenderer.renderBalloonSubmenu.call(
+		mockContext,
+		[],
+		"default",
+	); // fallback
 	getEl("balloon-submenu").querySelector("#balloon-cycle-btn")?.click?.();
 
 	menuBalloonDressupRenderer.renderDressupSubmenu.call(mockContext, null, 0);
@@ -81,9 +119,19 @@ test("menu renderers cover balloon, dressup, recent, shell, ghost, and theme ren
 	menuBalloonDressupRenderer.renderRecentSubmenu.call(mockContext, []); // empty
 
 	// 2. menuGhostShellRenderer
-	menuGhostShellRenderer.renderShellSubmenu.call(mockContext, ["master", { name: "alt", display_name: "Alt" }], "master");
-	menuGhostShellRenderer.renderGhostSubmenu.call(mockContext, [{ name: "G1" }, { name: "G2" }], { name: "G1" });
-	menuGhostShellRenderer.renderCallGhostSubmenu.call(mockContext, [{ name: "G1" }]);
+	menuGhostShellRenderer.renderShellSubmenu.call(
+		mockContext,
+		["master", { name: "alt", display_name: "Alt" }],
+		"master",
+	);
+	menuGhostShellRenderer.renderGhostSubmenu.call(
+		mockContext,
+		[{ name: "G1" }, { name: "G2" }],
+		{ name: "G1" },
+	);
+	menuGhostShellRenderer.renderCallGhostSubmenu.call(mockContext, [
+		{ name: "G1" },
+	]);
 	menuGhostShellRenderer.renderCallGhostSubmenu.call(mockContext, []); // empty
 
 	// 3. menuThemeRenderer

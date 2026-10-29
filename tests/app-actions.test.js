@@ -3,7 +3,11 @@ import { test } from "vitest";
 
 globalThis.window = globalThis;
 globalThis.document = {
-	createElement: () => ({ textContent: "", style: {}, classList: { remove() {} } }),
+	createElement: () => ({
+		textContent: "",
+		style: {},
+		classList: { remove() {} },
+	}),
 };
 
 const { actionMethods } = await import("../ui/js/core/app-actions.js");
@@ -34,7 +38,9 @@ test("actionMethods.handleMenuAction covers all branches", async () => {
 		minimizeApp() {},
 		callGhost: async () => {},
 		handleDressupToggle: async () => {},
-		onGhostClick() { return "talk-result"; },
+		onGhostClick() {
+			return "talk-result";
+		},
 		checkEmail: async () => {},
 	};
 

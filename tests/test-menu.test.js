@@ -13,9 +13,15 @@ const getEl = (idOrClass) => {
 			textContent: "",
 			classes,
 			classList: {
-				add(c) { classes.add(c); },
-				remove(c) { classes.delete(c); },
-				contains(c) { return classes.has(c); },
+				add(c) {
+					classes.add(c);
+				},
+				remove(c) {
+					classes.delete(c);
+				},
+				contains(c) {
+					return classes.has(c);
+				},
 			},
 			contains: () => false,
 		};
@@ -24,14 +30,20 @@ const getEl = (idOrClass) => {
 };
 
 globalThis.document = {
-	getElementById(id) { return getEl(id); },
-	querySelector(sel) { return getEl(sel); },
+	getElementById(id) {
+		return getEl(id);
+	},
+	querySelector(sel) {
+		return getEl(sel);
+	},
 	addEventListener(type, cb) {
 		documentListeners[type] = cb;
 	},
 };
 
-const { toggleMenu, openModal, closeModal } = await import("../ui/js/ui/test-menu.js");
+const { toggleMenu, openModal, closeModal } = await import(
+	"../ui/js/ui/test-menu.js"
+);
 
 test("test-menu covers toggleMenu, openModal, closeModal, and document listeners", () => {
 	// 1. toggleMenu (show -> remove, remove -> show)
@@ -51,7 +63,7 @@ test("test-menu covers toggleMenu, openModal, closeModal, and document listeners
 
 	// 4. Document click outside dropdown and menuBtn
 	const dropdown = getEl("dropdown");
-	const menuBtn = getEl(".menu-btn");
+	const _menuBtn = getEl(".menu-btn");
 	dropdown.classList.add("show");
 	documentListeners.click?.({ target: { closest: () => null } });
 	assert.equal(dropdown.classList.contains("show"), false);

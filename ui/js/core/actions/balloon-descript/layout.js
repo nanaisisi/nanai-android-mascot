@@ -6,8 +6,7 @@ import { rgbFromComponents } from "./utils.js";
 
 export function applyLayoutProperties(root, props, instance) {
 	const parsedDpi = parseInt(props.dpi, 10);
-	const balloonDpi =
-		!Number.isNaN(parsedDpi) && parsedDpi > 0 ? parsedDpi : 96;
+	const balloonDpi = !Number.isNaN(parsedDpi) && parsedDpi > 0 ? parsedDpi : 96;
 	const dpiScale = +(96 / balloonDpi).toFixed(4);
 	instance.balloonDpiScale = dpiScale;
 	root.style.setProperty("--balloon-dpi", String(balloonDpi));
@@ -37,7 +36,17 @@ export function applyLayoutProperties(root, props, instance) {
 	const cbPlaceholder =
 		rgbFromComponents(props, "communicatebox.placeholder.color") ||
 		props["communicatebox.placeholder.color"];
-	if (cbWidth || cbHeight || cbX || cbY || cbFontName || !Number.isNaN(cbFontHeight) || cbFontColor || cbBgColor || cbPlaceholder) {
+	if (
+		cbWidth ||
+		cbHeight ||
+		cbX ||
+		cbY ||
+		cbFontName ||
+		!Number.isNaN(cbFontHeight) ||
+		cbFontColor ||
+		cbBgColor ||
+		cbPlaceholder
+	) {
 		const cbEl = document.querySelector(".communicate-box");
 		if (cbEl) {
 			if (cbWidth) cbEl.style.width = `${cbWidth}px`;
@@ -45,10 +54,15 @@ export function applyLayoutProperties(root, props, instance) {
 			if (cbX) cbEl.style.left = `${cbX}px`;
 			if (cbY) cbEl.style.top = `${cbY}px`;
 			if (cbFontName) cbEl.style.fontFamily = `"${cbFontName}", sans-serif`;
-			if (!Number.isNaN(cbFontHeight)) cbEl.style.fontSize = `${cbFontHeight}px`;
+			if (!Number.isNaN(cbFontHeight))
+				cbEl.style.fontSize = `${cbFontHeight}px`;
 			if (cbFontColor) cbEl.style.color = cbFontColor;
 			if (cbBgColor) cbEl.style.backgroundColor = cbBgColor;
-			if (cbPlaceholder) cbEl.style.setProperty("--communicatebox-placeholder-color", cbPlaceholder);
+			if (cbPlaceholder)
+				cbEl.style.setProperty(
+					"--communicatebox-placeholder-color",
+					cbPlaceholder,
+				);
 		}
 	}
 
@@ -103,9 +117,13 @@ export function applyLayoutProperties(root, props, instance) {
 
 	const wpX = parseInt(props["windowposition.x"], 10);
 	const wpY = parseInt(props["windowposition.y"], 10);
-	if (!Number.isNaN(wpX)) root.style.setProperty("--balloon-windowpos-x", `${wpX}px`);
-	if (!Number.isNaN(wpY)) root.style.setProperty("--balloon-windowpos-y", `${wpY}px`);
+	if (!Number.isNaN(wpX))
+		root.style.setProperty("--balloon-windowpos-x", `${wpX}px`);
+	if (!Number.isNaN(wpY))
+		root.style.setProperty("--balloon-windowpos-y", `${wpY}px`);
 
-	const winLimit = props["windowposition.limit"] === "1" || props["windowposition.limit"]?.toLowerCase() === "true";
+	const winLimit =
+		props["windowposition.limit"] === "1" ||
+		props["windowposition.limit"]?.toLowerCase() === "true";
 	instance.windowPositionLimit = winLimit;
 }

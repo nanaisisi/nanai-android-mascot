@@ -14,7 +14,7 @@ globalThis.document = {
 		this._listeners = this._listeners || {};
 		this._listeners[type] = cb;
 	},
-	getElementById(id) {
+	getElementById(_id) {
 		return {
 			style: {},
 			classList: { remove() {}, add() {} },
@@ -69,7 +69,11 @@ test("NanaiAndroidMascotApp callGhost (lines 85-87) covers success and error bra
 		});
 
 		await app.callGhost("Ghost2");
-		assert.ok(invokedCmds.some((c) => c.cmd === "spawn_ghost" && c.args.ghostName === "Ghost2"));
+		assert.ok(
+			invokedCmds.some(
+				(c) => c.cmd === "spawn_ghost" && c.args.ghostName === "Ghost2",
+			),
+		);
 
 		// 3. Tauri environment error
 		globalThis.__TAURI_INTERNALS__ = createTauriInternals(async () => {
@@ -115,13 +119,17 @@ test("NanaiAndroidMascotApp closeApp (lines 164-183) covers all exit fallbacks a
 		app2.modalManager = { hide: () => {} };
 		app2.ghostController = {
 			stopSecondChangeTimer: () => {},
-			sendShioriEvent: async () => { throw new Error("OnClose error"); },
+			sendShioriEvent: async () => {
+				throw new Error("OnClose error");
+			},
 		};
 		app2.sakuraPlayer = { isPlaying: true };
 
 		const cmds2 = [];
 		let windowClosed = false;
-		globalThis.close = () => { windowClosed = true; };
+		globalThis.close = () => {
+			windowClosed = true;
+		};
 		globalThis.__TAURI_INTERNALS__ = createTauriInternals(async (cmd) => {
 			cmds2.push(cmd);
 			throw new Error(`${cmd} error`);

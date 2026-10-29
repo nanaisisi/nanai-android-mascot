@@ -48,6 +48,20 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
             root_prefix = name[..=slash_idx].to_string();
         }
         let map = parse_zip_entry_descript(&mut entry);
+
+        // [install.txt（概要）], [同時インストール], [name,オブジェクト名], [type,種別], [directory,ディレクトリ名], [accept,本体側名], [bootghost,ディレクトリ名], [charset,文字コード]:
+        // [refresh,数値], [refreshundeletemask,ファイル名1:ファイル名2...]:
+        // [*.directory,ディレクトリ名], [*.source.directory,ディレクトリ名], [*.refresh,数値], [*.refreshundeletemask,ファイル名1:ファイル名2...]:
+        let _accept = map.get("accept");
+        let _bootghost = map.get("bootghost");
+        let _charset = map.get("charset");
+        let _refresh = map.get("refresh");
+        let _refreshmask = map.get("refreshundeletemask");
+        let _star_dir = map.get("ghost.directory").or_else(|| map.get("shell.directory"));
+        let _star_src_dir = map.get("ghost.source.directory").or_else(|| map.get("shell.source.directory"));
+        let _star_refresh = map.get("ghost.refresh").or_else(|| map.get("shell.refresh"));
+        let _star_refreshmask = map.get("ghost.refreshundeletemask").or_else(|| map.get("shell.refreshundeletemask"));
+
         if let Some(val) = map.get("name") {
             ghost_name = val.clone();
         }

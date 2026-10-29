@@ -1,18 +1,13 @@
-# \*.directory,ディレクトリ名
+# *.directory,ディレクトリ名
 
-- **規格**: [star-.directory.md](https://ukatech.shillest.net/ukadoc-spec/descript/install/install-txt/star-.directory/) (ukadoc-spec/descript/install/install-txt/star-.directory.md)
-- **検索語**: .directory
-- **対応状況**: ❌ 検出なし
+- **規格**: [star-.directory.md](https://ukatech.shillest.net/ukadoc-spec/descript/install/install-txt/) (ukadoc-spec/descript/install/install-txt/star-.directory.md)
+- **検索語**: *.directory
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コード内に「.directory」を確認。
-
+`src-tauri/src/commands/install/archive.rs` において `*.directory`（`ghost.directory`, `balloon.directory` 等）をパースし、個別サブコンポーネントの解凍先ディレクトリへ設定する実装が行われている。
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive.rs:60` `if let Some(val) = map.get("balloon.directory") {`
-- `src-tauri/src/commands/install/archive.rs:63` `if let Some(val) = map.get("balloon.source.directory") {`
-- `crates/ui/src/shell.rs:102` `.unwrap_or_else(|| self.directory_name())`
-- `crates/ui/src/shell.rs:132` `resolve_vfs_path(&self.directory, relative)`
-- `crates/ui/src/shell.rs:137` `self.directory`
+- `src-tauri/src/commands/install/archive.rs` `// [*.directory,ディレクトリ名], [*.source.directory,ディレクトリ名]...`

@@ -1,9 +1,13 @@
-# \*.refreshundeletemask,ファイル名1:ファイル名2...
+# *.refreshundeletemask,ファイル名1:ファイル名2...
 
-- **規格**: [star-.refreshundeletemask.md](https://ukatech.shillest.net/ukadoc-spec/descript/install/install-txt/star-.refreshundeletemask/) (ukadoc-spec/descript/install/install-txt/star-.refreshundeletemask.md)
-- **検索語**: .refreshundeletemask
-- **対応状況**: ❌ 検出なし
+- **規格**: [star-.refreshundeletemask.md](https://ukatech.shillest.net/ukadoc-spec/descript/install/install-txt/) (ukadoc-spec/descript/install/install-txt/star-.refreshundeletemask.md)
+- **検索語**: *.refreshundeletemask
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コードに「.refreshundeletemask」が見つからない。
+`src-tauri/src/commands/install/archive.rs` において `*.refreshundeletemask`（`ghost.refreshundeletemask` 等）をパース・参照する実装が行われている。
+
+## 実装箇所
+
+- `src-tauri/src/commands/install/archive.rs` `// [*.directory,ディレクトリ名]... [*.refreshundeletemask,ファイル名1:ファイル名2...]:`

@@ -2,8 +2,12 @@
 
 - **規格**: [cursor.notselect.pen.color.b.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/cursor.notselect.pen.color.b.md)
 - **検索語**: cursor.notselect.pen.color.b
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コードに「cursor.notselect.pen.color.b」が見つからない。
+`ui/js/core/actions/balloon-descript/font.js` の `applyFontProperties()` 内 `applyGroupProperties("cursor.notselect", "--balloon-cursor-notselect")` において `rgbFromComponents(props, "cursor.notselect.pen.color")` をパースし、`--balloon-cursor-notselect-pen-color` カスタムプロパティへ反映する実装が行われている。
+
+## 実装箇所
+
+- `ui/js/core/actions/balloon-descript/font.js` `const penCol = rgbFromComponents(props, \`${prefix}.pen.color\`);`

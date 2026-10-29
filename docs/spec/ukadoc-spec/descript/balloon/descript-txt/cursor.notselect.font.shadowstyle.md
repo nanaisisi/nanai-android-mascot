@@ -2,8 +2,12 @@
 
 - **規格**: [cursor.notselect.font.shadowstyle.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/cursor.notselect.font.shadowstyle.md)
 - **検索語**: cursor.notselect.font.shadowstyle
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コードに「cursor.notselect.font.shadowstyle」が見つからない。
+`ui/js/core/actions/balloon-descript/font.js` の `applyFontProperties()` 内 `applyGroupProperties("cursor.notselect", "--balloon-cursor-notselect")` において `props["cursor.notselect.font.shadowstyle"]` を検出し、`--balloon-cursor-notselect-shadow-style` カスタムプロパティへ反映する実装が行われている。
+
+## 実装箇所
+
+- `ui/js/core/actions/balloon-descript/font.js` `if (props[\`${prefix}.font.shadowstyle\`]) root.style.setProperty(...)`

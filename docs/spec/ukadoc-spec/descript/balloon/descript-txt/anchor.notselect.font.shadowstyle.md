@@ -2,8 +2,12 @@
 
 - **規格**: [anchor.notselect.font.shadowstyle.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/anchor.notselect.font.shadowstyle.md)
 - **検索語**: anchor.notselect.font.shadowstyle
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コードに「anchor.notselect.font.shadowstyle」が見つからない。
+`ui/js/core/actions/balloon-descript/font.js` の `applyFontProperties()` 内 `applyGroupProperties("anchor.notselect", "--balloon-anchor-notselect")` において `props["anchor.notselect.font.shadowstyle"]` を検出し、`--balloon-anchor-notselect-shadow-style` カスタムプロパティへ反映する実装が行われている。
+
+## 実装箇所
+
+- `ui/js/core/actions/balloon-descript/font.js` `if (props[\`${prefix}.font.shadowstyle\`]) root.style.setProperty(...)`

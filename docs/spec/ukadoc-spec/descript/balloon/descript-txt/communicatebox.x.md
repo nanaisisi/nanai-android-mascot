@@ -2,13 +2,12 @@
 
 - **規格**: [communicatebox.x.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/communicatebox.x.md)
 - **検索語**: communicatebox.x
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コード内に「communicatebox.x」を確認。
-
+`ui/js/core/actions/balloon-descript/layout.js` の `applyLayoutProperties()` において `props["communicatebox.x"]` をパースし、`.communicate-box` DOM の `left` 位置へ反映する実装が行われている。
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript.js:99` `const cbX = props["communicatebox.x"];`
+- `ui/js/core/actions/balloon-descript/layout.js` `if (cbX) cbEl.style.left = \`${cbX}px\`;`

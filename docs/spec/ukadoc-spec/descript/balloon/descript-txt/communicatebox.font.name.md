@@ -2,8 +2,12 @@
 
 - **規格**: [communicatebox.font.name.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/communicatebox.font.name.md)
 - **検索語**: communicatebox.font.name
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コードに「communicatebox.font.name」が見つからない。
+`ui/js/core/actions/balloon-descript/layout.js` の `applyLayoutProperties()` において `props["communicatebox.font.name"]` を検出し、`.communicate-box` DOM の `fontFamily` へ反映する実装が行われている。
+
+## 実装箇所
+
+- `ui/js/core/actions/balloon-descript/layout.js` `if (cbFontName) cbEl.style.fontFamily = \`"${cbFontName}", sans-serif\`;`

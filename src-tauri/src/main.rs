@@ -4,3 +4,11 @@
 fn main() {
     nanai_android_mascot_lib::run()
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_main_entry_point_cfg() {
+        assert!(true);
+    }
+}

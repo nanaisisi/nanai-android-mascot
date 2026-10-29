@@ -93,3 +93,47 @@ fn main() {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_reply_protocol_format() {
+        let mut buf = Vec::new();
+        reply(&mut buf, 1, b"ready");
+
+        assert_eq!(buf.len(), 4 + 4 + 5);
+        let status = i32::from_le_bytes(buf[0..4].try_into().unwrap());
+        let len = u32::from_le_bytes(buf[4..8].try_into().unwrap());
+        let payload = &buf[8..];
+
+        assert_eq!(status, 1);
+        assert_eq!(len, 5);
+        assert_eq!(payload, b"ready");
+    }
+
+    #[test]
+    fn test_to_hglobal_alloc_and_free() {
+        let data = b"test_payload";
+        unsafe {
+            let h = to_hglobal(data);
+            assert!(!h.is_null());
+            let slice = std::slice::from_raw_parts(h as *const u8, data.len());
+            assert_eq!(slice, data);
+            assert_eq!(*(h as *const u8).add(data.len()), 0);
+            GlobalFree(h);
+        }
+    }
+
+    #[test]
+    fn test_to_hglobal_empty() {
+        let data = b"";
+        unsafe {
+            let h = to_hglobal(data);
+            assert!(!h.is_null());
+            assert_eq!(*(h as *const u8), 0);
+            GlobalFree(h);
+        }
+    }
+}

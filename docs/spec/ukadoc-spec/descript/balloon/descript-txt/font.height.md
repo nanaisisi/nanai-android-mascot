@@ -8,7 +8,6 @@
 
 `app-actions.js` の `applyBalloonDescript()` において `props["font.height"]` をパースし、文書のルート要素に対して `--balloon-font-size: \`${fh}px\`` カスタムプロパティとして動的バインドされる実装が行われている。
 
-
 ## 実装箇所
 
 - `ui/js/ghost/balloon-window.js:90` `const fh = parseInt(props["font.height"], 10);`

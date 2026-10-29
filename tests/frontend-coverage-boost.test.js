@@ -29,6 +29,13 @@ test("balloonDescriptActions rgbFromComponents and applyBalloonDescript", () => 
 		"origin.x": "5",
 		"origin.y": "5",
 		"arrow.filename": "arrow.png",
+		"arrow0.x": "12",
+		"arrow0.y": "24",
+		"clickwaitmarker.x": "50",
+		"clickwaitmarker.y": "60",
+		vertical: "1",
+		"windowposition.x": "100",
+		"windowposition.y": "200",
 	};
 
 	const rgb = balloonDescriptActions.rgbFromComponents(props, "font.color");

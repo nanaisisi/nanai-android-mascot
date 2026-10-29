@@ -8,7 +8,6 @@
 
 `app-actions.js` の `applyBalloonDescript()` において `validrect.left, top, right, bottom` を一括パースし、ドキュメント内の `.balloon` 要素の `padding`（`${padTop} ${padRight} ${padBottom} ${padLeft}`）として動的適用される実装が行われている。
 
-
 ## 実装箇所
 
 - `crates/ui/src/descript.rs:111` `/// バルーン有効テキスト領域 (validrect.left, top, right, bottom)`

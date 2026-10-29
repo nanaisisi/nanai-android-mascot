@@ -8,7 +8,6 @@
 
 `app-actions.js` の `applyBalloonDescript()` において `props["font.name"]` を取得し、文書のルート要素に対して `--balloon-font-family: \`"${props["font.name"]}", Meiryo, sans-serif\`` カスタムプロパティとして動的バインドされる実装が行われている。
 
-
 ## 実装箇所
 
 - `ui/js/ghost/balloon-window.js:84` `if (props["font.name"]) {`

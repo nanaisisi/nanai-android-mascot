@@ -211,5 +211,29 @@ export const balloonDescriptActions = {
 		setBalloonImage("marker.filename", "--balloon-marker-image");
 		setBalloonImage("onlinemarker.filename", "--balloon-online-image");
 		setBalloonImage("sstpmarker.filename", "--balloon-sstp-image");
+
+		// 未対応だったプロパティ群（arrow0/1, clickwaitmarker, vertical, windowposition）の対応追加
+		const arrow0x = parseInt(props["arrow0.x"], 10);
+		const arrow0y = parseInt(props["arrow0.y"], 10);
+		if (!Number.isNaN(arrow0x)) root.style.setProperty("--balloon-arrow0-x", `${arrow0x}px`);
+		if (!Number.isNaN(arrow0y)) root.style.setProperty("--balloon-arrow0-y", `${arrow0y}px`);
+
+		const arrow1x = parseInt(props["arrow1.x"], 10);
+		const arrow1y = parseInt(props["arrow1.y"], 10);
+		if (!Number.isNaN(arrow1x)) root.style.setProperty("--balloon-arrow1-x", `${arrow1x}px`);
+		if (!Number.isNaN(arrow1y)) root.style.setProperty("--balloon-arrow1-y", `${arrow1y}px`);
+
+		const cwX = parseInt(props["clickwaitmarker.x"], 10);
+		const cwY = parseInt(props["clickwaitmarker.y"], 10);
+		if (!Number.isNaN(cwX)) root.style.setProperty("--balloon-clickwait-x", `${cwX}px`);
+		if (!Number.isNaN(cwY)) root.style.setProperty("--balloon-clickwait-y", `${cwY}px`);
+
+		const isVertical = props["vertical"] === "1" || props["vertical"]?.toLowerCase() === "true";
+		root.style.setProperty("--balloon-writing-mode", isVertical ? "vertical-rl" : "horizontal-tb");
+
+		const wpX = parseInt(props["windowposition.x"], 10);
+		const wpY = parseInt(props["windowposition.y"], 10);
+		if (!Number.isNaN(wpX)) root.style.setProperty("--balloon-windowpos-x", `${wpX}px`);
+		if (!Number.isNaN(wpY)) root.style.setProperty("--balloon-windowpos-y", `${wpY}px`);
 	},
 };

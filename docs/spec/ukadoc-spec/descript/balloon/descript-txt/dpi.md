@@ -79,7 +79,6 @@ $$\text{finalScale} = \text{userScale} \times \text{dpiScale}$$
   - [ui/js/ghost/balloon-window.js](../../../../ui/js/ghost/balloon-window.js) (`applyBalloonDescript`, `updateBalloonWindowScale`)
   - パースされた `props.dpi` から `--balloon-dpi` および `--balloon-dpi-scale` カスタムプロパティを生成し、`.balloon` 要素へ `scale(finalScale)` を適用。
 
-
 ## 実装箇所
 
 - `ui/js/ghost/balloon-window.js:22` `root.style.setProperty("--balloon-dpi-scale", String(currentDpiScale));`

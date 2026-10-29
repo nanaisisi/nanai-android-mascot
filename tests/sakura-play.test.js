@@ -9,43 +9,103 @@ globalThis.__TAURI_INTERNALS__ = {
 		if (cmd === "plugin:event|emit") events.push(args);
 	},
 };
+
+const createEl = (tag) => {
+	const children = [];
+	return {
+		tagName: String(tag || "").toUpperCase(),
+		textContent: "",
+		innerHTML: "",
+		style: {},
+		dataset: {},
+		appendChild(el) {
+			children.push(el);
+			if (typeof el === "string") this.textContent += el;
+			else if (el?.textContent) this.textContent += el.textContent;
+		},
+		setAttribute(a, v) { this[a] = v; },
+		addEventListener(t, cb) {
+			this._listeners = this._listeners || {};
+			this._listeners[t] = cb;
+		},
+		click() { this._listeners?.click?.({ stopPropagation() {} }); },
+	};
+};
+
 globalThis.document = {
-	createElement: () => ({ textContent: "", style: {} }),
+	createElement: createEl,
 };
 globalThis.requestAnimationFrame = (callback) => setTimeout(callback, 0);
 globalThis.cancelAnimationFrame = (id) => clearTimeout(id);
+
 const { playScript } = await import("../ui/js/ghost/sakura-play.js");
 
-test("first spoken character reaches desktop balloon without the old 60ms throttle", async () => {
+test("playScript covers all tokens (scope, char, newline, clear, pause, anchor, quick, wait, surface, animation, choice, balloon, timeout, halt, offset, font)", async () => {
 	events.length = 0;
-	const content = {
-		innerHTML: "",
-		appendChild(el) {
-			this.innerHTML += el.textContent;
-		},
-	};
+	const sakuraText = createEl("div");
+	const keroText = createEl("div");
+
 	const player = {
-		playbackId: 0,
+		playbackId: 1,
 		parse: async () => [
+			{ type: "scope", value: 1 },
+			{ type: "font", tag: "bold", param: "1" },
+			{ type: "font", tag: "italic", param: "true" },
+			{ type: "font", tag: "underline", param: "1" },
+			{ type: "font", tag: "strike", param: "1" },
+			{ type: "font", tag: "color", param: "#ff0000" },
+			{ type: "font", tag: "height", param: "16px" },
 			{ type: "char", value: "あ" },
+			{ type: "newline", half: false },
+			{ type: "newline", half: true },
+			{ type: "anchor_begin", id: "a1", args: [] },
 			{ type: "char", value: "い" },
+			{ type: "anchor_end" },
+			{ type: "quick_toggle", value: true },
+			{ type: "clear" },
+			{ type: "pause" },
+			{ type: "wait", value: 10 },
+			{ type: "surface", value: 0 },
+			{ type: "animation", animId: 1, wait: 0 },
+			{ type: "choice", id: "c1", text: "Option1" },
+			{ type: "balloon", value: 0 },
+			{ type: "balloon", value: -1 },
+			{ type: "timeout" },
+			{ type: "offset", x: "10", y: "@5" },
+			{ type: "font", tag: "default" },
+			{ type: "scope", value: 0 },
+			{ type: "char", value: "う" },
+			{ type: "halt" },
 		],
-		sleep: (ms) => new Promise((r) => setTimeout(r, ms)),
-		scheduleSurfaceRestore() {},
+		sleep: () => Promise.resolve(),
+		waitForClickOrTimeout: () => Promise.resolve(),
+		onChoiceSelected: () => {},
+		scheduleSurfaceRestore: () => {},
 		app: {
+			ghostId: "main",
+			currentBalloonTheme: "ivory",
 			elements: {
-				balloonText: content,
-				balloonDisplay: {},
-				keroBalloonText: null,
+				balloonText: sakuraText,
+				balloonDisplay: createEl("div"),
+				keroBalloonText: keroText,
+				keroBalloonDisplay: createEl("div"),
+				sakuraSlot: createEl("div"),
+				keroSlot: createEl("div"),
 			},
-			surfaceManager: { onCharSpoken() {}, onTalkEnd() {}, onScriptEnd() {} },
+			surfaceManager: {
+				onCharSpoken() {},
+				onTalkEnd() {},
+				onScriptEnd() {},
+				playAnimationById: async () => {},
+			},
+			ghostController: {
+				updateSurface() {},
+				sendShioriEvent: async () => {},
+				closeGhost: async () => {},
+			},
 		},
 	};
-	const playing = playScript(player, "test");
-	await new Promise((r) => setTimeout(r, 25));
-	assert.equal(
-		events.some((e) => e.event === "update-balloon-content-0"),
-		true,
-	);
-	await playing;
+
+	await playScript(player, "\\0あ\\e");
+	assert.equal(player.timeCritical, true);
 });

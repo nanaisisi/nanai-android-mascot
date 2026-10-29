@@ -6,11 +6,12 @@ pub mod element;
 pub mod animation;
 pub mod point;
 
-pub use utils::{expand_range, parse_balloon_offset_key};
-pub(super) use collision::{apply_collision, apply_collisionex};
-pub(super) use element::apply_element;
-pub(super) use animation::apply_animation_line;
-pub(super) use point::apply_point;
+pub use utils::expand_range;
+pub(crate) use utils::{parse_balloon_offset_key, first_i32};
+pub(crate) use collision::{apply_collision, apply_collisionex};
+pub(crate) use element::apply_element;
+pub(crate) use animation::apply_animation_line;
+pub(crate) use point::apply_point;
 
 #[cfg(test)]
 mod tests {
@@ -32,8 +33,8 @@ mod tests {
 
     #[test]
     fn test_first_i32() {
-        assert_eq!(utils::first_i32(" 42 , 100 "), Some(42));
-        assert_eq!(utils::first_i32("abc"), None);
+        assert_eq!(first_i32(" 42 , 100 "), Some(42));
+        assert_eq!(first_i32("abc"), None);
     }
 
     #[test]

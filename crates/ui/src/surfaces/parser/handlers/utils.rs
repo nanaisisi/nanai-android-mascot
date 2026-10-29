@@ -22,7 +22,7 @@ pub fn expand_range(spec: &str) -> Vec<u32> {
     out
 }
 
-pub(super) fn split_id_suffix(token: &str) -> (&str, Option<u32>) {
+pub(crate) fn split_id_suffix(token: &str) -> (&str, Option<u32>) {
     let token = token.trim();
     match token.find(|c: char| c.is_ascii_digit()) {
         Some(pos) => {
@@ -33,14 +33,14 @@ pub(super) fn split_id_suffix(token: &str) -> (&str, Option<u32>) {
     }
 }
 
-pub(super) fn first_i32(value: &str) -> Option<i32> {
+pub(crate) fn first_i32(value: &str) -> Option<i32> {
     value
         .split(',')
         .map(str::trim)
         .find_map(|t| t.parse::<i32>().ok())
 }
 
-pub(super) fn parse_balloon_offset_key(key: &str) -> Option<(String, char)> {
+pub(crate) fn parse_balloon_offset_key(key: &str) -> Option<(String, char)> {
     if let Some(axis_str) = key.strip_prefix("balloon.offset") {
         let axis = axis_str.trim().trim_start_matches('.').chars().next()?;
         return Some(("*".to_string(), axis));

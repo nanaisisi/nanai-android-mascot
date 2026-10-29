@@ -3,7 +3,7 @@
 use crate::surfaces::types::*;
 use super::utils::split_id_suffix;
 
-pub(super) fn apply_animation_line(txt: &mut SurfacesTxt, ids: &[u32], rest: &str, value: &str) {
+pub(crate) fn apply_animation_line(txt: &mut SurfacesTxt, ids: &[u32], rest: &str, value: &str) {
     let Some((id_part, field)) = rest.split_once('.') else {
         return;
     };

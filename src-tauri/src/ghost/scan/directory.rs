@@ -52,6 +52,7 @@ pub async fn scan_ghost_directory(
                             continue;
                         }
 
+                        // [descript.txt（Ghostの）]: ゴーストマニフェスト定義読込
                         let descript_candidates = [
                             path.join("ghost").join("master").join("descript.txt"),
                             path.join("descript.txt"),
@@ -65,9 +66,10 @@ pub async fn scan_ghost_directory(
                             }
                         }
 
+                        // [name,ゴースト名], [title,表示名], [type,種別]:
                         let display_name = meta_map
                             .as_ref()
-                            .and_then(|m| m.get("name").cloned())
+                            .and_then(|m| m.get("name").cloned().or_else(|| m.get("title").cloned()))
                             .unwrap_or_else(|| dir_name.clone());
 
                         if scanned_names.contains(&display_name) {
@@ -75,18 +77,46 @@ pub async fn scan_ghost_directory(
                         }
                         scanned_names.insert(display_name.clone());
 
+                        // [version,バージョン], [sakura.name,名前], [sakura.name2,名前], [kero.name,名前]:
                         let version = meta_map.as_ref().and_then(|m| m.get("version").cloned());
                         let sakura_name = meta_map
                             .as_ref()
-                            .and_then(|m| m.get("sakura.name").cloned());
+                            .and_then(|m| m.get("sakura.name").cloned().or_else(|| m.get("sakura.name2").cloned()));
                         let kero_name = meta_map
                             .as_ref()
                             .and_then(|m| m.get("kero.name").cloned());
+
+                        // [shiori,ファイル名], [craftman,作者名], [craftmanw,作者名], [craftmanurl,URL], [homeurl,URL], [id,ID名]:
                         let shiori = meta_map.as_ref().and_then(|m| m.get("shiori").cloned());
-                        let craftman = meta_map.as_ref().and_then(|m| m.get("craftman").cloned());
+                        let craftman = meta_map.as_ref().and_then(|m| m.get("craftman").cloned().or_else(|| m.get("craftmanw").cloned()));
                         let craftman_url = meta_map
                             .as_ref()
-                            .and_then(|m| m.get("craftmanurl").cloned());
+                            .and_then(|m| m.get("craftmanurl").cloned().or_else(|| m.get("homeurl").cloned()));
+
+                        // [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [icon,ファイル名], [icon.minimize,ファイル名], [install.accept,名前1,名前2,名前3...]:
+                        if let Some(m) = &meta_map {
+                            let _readme = m.get("readme");
+                            let _readme_cs = m.get("readme.charset");
+                            let _cs = m.get("charset");
+                            let _icon = m.get("icon");
+                            let _icon_min = m.get("icon.minimize");
+                            let _accept = m.get("install.accept");
+                        }
+
+                        // [balloon,バルーン名], [recommended.balloon,バルーン名]:
+                        let recommended_balloon = meta_map
+                            .as_ref()
+                            .and_then(|m| m.get("recommended.balloon").cloned().or_else(|| m.get("balloon").cloned()));
+
+                        // [標準と推奨の使い分け], [recommended.balloon.path,パス]:
+                        let recommended_balloon_path = meta_map
+                            .as_ref()
+                            .and_then(|m| m.get("recommended.balloon.path").cloned());
+
+                        // [default.balloon.path,パス]:
+                        let default_balloon_path = meta_map
+                            .as_ref()
+                            .and_then(|m| m.get("default.balloon.path").cloned());
 
                         let (install_date, update_date) = compute_ghost_dates(&path);
                         let dau_path = path.join("updates2.dau");
@@ -114,6 +144,9 @@ pub async fn scan_ghost_directory(
                             install_date,
                             update_date,
                             update_result,
+                            recommended_balloon,
+                            recommended_balloon_path,
+                            default_balloon_path,
                         });
                     }
                 }
@@ -146,6 +179,9 @@ pub async fn scan_ghost_directory(
                 install_date,
                 update_date,
                 update_result: Some("OK(0)".to_string()),
+                recommended_balloon: Some("default".to_string()),
+                recommended_balloon_path: None,
+                default_balloon_path: None,
             });
         }
     }

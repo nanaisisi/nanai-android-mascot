@@ -1,17 +1,13 @@
 # craftmanurl,URL
 
-- **規格**: [craftmanurl.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/craftmanurl/) (ukadoc-spec/descript/ghost/descript-txt/craftmanurl.md)
+- **規格**: [craftmanurl.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/craftmanurl.md)
 - **検索語**: craftmanurl
-- **対応状況**: ⚠️ 一部対応(読込のみ)
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-ghost/scan.rs 等で descript の値を読込している。表示・動作への反映は個別未確認。
+`src-tauri/src/ghost/scan/directory.rs` において `craftmanurl` キーをパースし、`GhostInfo.craftman_url` へ設定する実装が行われている。
 
 ## 実装箇所
 
-- `src-tauri/src/commands/ext.rs:35` `let craftman_url = map.get("craftmanurl").cloned();`
-- `src-tauri/src/commands/ext.rs:84` `let craftman_url = map.get("craftmanurl").cloned();`
-- `src-tauri/src/commands/install/archive.rs:243` `.and_then(|m| m.get("craftmanurl").cloned());`
-- `src-tauri/src/ghost/scan/directory.rs:89` `.and_then(|m| m.get("craftmanurl").cloned());`
-- `crates/ui/src/descript.rs:135` `/// 作者Webページ (`craftmanurl` キー)`
+- `src-tauri/src/ghost/scan/directory.rs` `// [shiori,ファイル名], [craftman,作者名], [craftmanw,作者名], [craftmanurl,URL], [homeurl,URL], [id,ID名]:`

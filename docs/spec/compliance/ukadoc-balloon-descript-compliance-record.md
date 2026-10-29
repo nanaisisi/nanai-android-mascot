@@ -82,6 +82,12 @@ UKADOC (SSP仕様) 準拠のバルーン `descript.txt` プロパティ群のフ
 
 ---
 
+## 6. ソースコードコメント参照規定 (Code Comment Annotation Rule)
+
+[厳密コード検証システム規定 (Strict Code Verification Protocol)](../../developer/strict-code-verification-system.md) に基づき、[index.md](../ukadoc-spec/descript/balloon/descript-txt/index.md) の全 163 仕様項目タイトルは、ソースコード ([balloon.rs](file:///E:/project/rust/nanai-android-mascot/src-tauri/src/commands/shell/balloon.rs), [font.js](file:///E:/project/rust/nanai-android-mascot/ui/js/core/actions/balloon-descript/font.js), [layout.js](file:///E:/project/rust/nanai-android-mascot/ui/js/core/actions/balloon-descript/layout.js), [assets.js](file:///E:/project/rust/nanai-android-mascot/ui/js/core/actions/balloon-descript/assets.js), [balloon-window.js](file:///E:/project/rust/nanai-android-mascot/ui/js/ghost/balloon-window.js)) 内に **「`// [項目名,タイトル]: ...`」** 形式のコードコメントとして 1 回以上明確にアノテーションされている。
+
+---
+
 ## 🧪 単体テスト検証
 
 すべてのプロパティ設定と CSS 変数バインディングは、[tests/balloon-descript.test.js](file:///E:/project/rust/nanai-android-mascot/tests/balloon-descript.test.js) および [tests/balloon-window.test.js](file:///E:/project/rust/nanai-android-mascot/tests/balloon-window.test.js) により全件検証され、PASS（成功）している。

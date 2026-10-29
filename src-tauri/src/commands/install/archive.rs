@@ -243,6 +243,17 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
         .and_then(|m| m.get("craftmanurl").cloned());
     let group = meta_map.as_ref().and_then(|m| m.get("group").cloned());
 
+    // [balloon,バルーン名], [recommended.balloon,バルーン名]:
+    let recommended_balloon = meta_map
+        .as_ref()
+        .and_then(|m| m.get("recommended.balloon").cloned().or_else(|| m.get("balloon").cloned()));
+    let recommended_balloon_path = meta_map
+        .as_ref()
+        .and_then(|m| m.get("recommended.balloon.path").cloned());
+    let default_balloon_path = meta_map
+        .as_ref()
+        .and_then(|m| m.get("default.balloon.path").cloned());
+
     let (install_date, update_date) =
         crate::ghost::scan::compute_ghost_dates(&target_dir);
 
@@ -260,5 +271,8 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
         install_date,
         update_date,
         update_result: Some("正常 (インストール済)".to_string()),
+        recommended_balloon,
+        recommended_balloon_path,
+        default_balloon_path,
     })
 }

@@ -1,6 +1,6 @@
 /**
  * @file assets.js
- * @brief バルーン画像・矢印・マーカー・カーソル・アルファ設定反映 (UKADOC準拠)
+ * @brief バルーン画像・矢印・マーカー・カーソル・アルファ・推奨ゴースト設定反映 (UKADOC準拠)
  * // [descript.txt（Balloonの）]: Balloon descript.txt アセット・画像属性バインディング
  */
 export function applyAssetProperties(root, props, instance) {
@@ -11,6 +11,12 @@ export function applyAssetProperties(root, props, instance) {
 	// [readme.charset,文字コード]: props["readme.charset"]
 	if (props["readme.charset"])
 		root.style.setProperty("--balloon-readme-charset", props["readme.charset"]);
+
+	// [推奨の意味], [recommended.ghost,ゴースト名], [recommended.ghost.path,パス]:
+	if (props["recommended.ghost"])
+		root.style.setProperty("--balloon-recommended-ghost", props["recommended.ghost"]);
+	if (props["recommended.ghost.path"])
+		root.style.setProperty("--balloon-recommended-ghost-path", props["recommended.ghost.path"]);
 
 	const setBalloonImage = (propName, cssVarName) => {
 		const filename = props[propName];
@@ -23,10 +29,15 @@ export function applyAssetProperties(root, props, instance) {
 			root.style.setProperty(cssVarName, `url("${url}")`);
 		}
 	};
+	// [arrow.filename,ファイル名]:
 	setBalloonImage("arrow.filename", "--balloon-arrow-image");
+	// [clickwaitmarker.filename,ファイル名]:
 	setBalloonImage("clickwaitmarker.filename", "--balloon-clickwait-image");
+	// [marker.filename,ファイル名]:
 	setBalloonImage("marker.filename", "--balloon-marker-image");
+	// [onlinemarker.filename,ファイル名]:
 	setBalloonImage("onlinemarker.filename", "--balloon-online-image");
+	// [sstpmarker.filename,ファイル名]:
 	setBalloonImage("sstpmarker.filename", "--balloon-sstpmarker-image");
 
 	const setMouseCursor = (propName, varName) => {

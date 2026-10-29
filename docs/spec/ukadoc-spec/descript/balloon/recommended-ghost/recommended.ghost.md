@@ -6,4 +6,9 @@
 
 ## 突合結果
 
-バルーンマニフェスト (`balloon_manifest`) の `recommended.ghost` パース対応済。
+`ui/js/core/actions/balloon-descript/assets.js` の `applyAssetProperties()` および `src-tauri/src/commands/shell/balloon.rs` において `recommended.ghost` を検出し、`--balloon-recommended-ghost` カスタムプロパティへバインド対応済。
+
+## 実装箇所
+
+- `src-tauri/src/commands/shell/balloon.rs` `/// [推奨の意味], [recommended.ghost,ゴースト名]`
+- `ui/js/core/actions/balloon-descript/assets.js` `if (props["recommended.ghost"]) root.style.setProperty("--balloon-recommended-ghost", props["recommended.ghost"]);`

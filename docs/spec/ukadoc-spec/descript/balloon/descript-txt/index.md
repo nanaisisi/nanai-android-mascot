@@ -27,7 +27,7 @@
 | [validrect.right,座標 \*1](validrect.right.md)                                     | validrect.right                     | ✅ 実装済 (balloon-descript.js) |
 | [validrect.bottom,座標 \*1](validrect.bottom.md)                                   | validrect.bottom                    | ✅ 実装済 (balloon-descript.js) |
 | [wordwrappoint.x,座標 \*1](wordwrappoint.x.md)                                     | wordwrappoint.x                     | ✅ 実装済 (balloon-descript.js) |
-| [wordwrappoint.y,座標 \*1](wordwrappoint.y.md)                                     | wordwrappoint.y                     |            未確認             |
+| [wordwrappoint.y,座標 \*1](wordwrappoint.y.md)                                     | wordwrappoint.y                     | ✅ 実装済 (balloon-descript.js) |
 | [vertical,0/1](vertical.md)                                                        | vertical                            | ✅ 実装済 (balloon-descript.js) |
 | [font.name,フォント名](font.name.md)                                               | font.name                           | ✅ 実装済 (balloon-descript.js) |
 | [font.height,数値](font.height.md)                                                 | font.height                         | ✅ 実装済 (balloon-descript.js) |
@@ -43,7 +43,7 @@
 | [font.underline,0/1](font.underline.md)                                            | font.underline                      | ✅ 実装済 (balloon-descript.js) |
 | [font.strike,0/1](font.strike.md)                                                  | font.strike                         | ✅ 実装済 (balloon-descript.js) |
 | [font.outline,0/1](font.outline.md)                                                | font.outline                        |            未確認             |
-| [disable.font.(フォント定義),(指定)](disable.font.md)                              | disable.font.(フォント定義)         |            未確認             |
+| [disable.font.(フォント定義),(指定)](disable.font.md)                              | disable.font.(フォント定義)         | ✅ 実装済 (balloon-descript.js) |
 | [cursor.style,形状](cursor.style.md)                                               | cursor.style                        |            未確認             |
 | [cursor.blendmethod,コマンド](cursor.blendmethod.md)                               | cursor.blendmethod                  |            未確認             |
 | [cursor.font.color.r,数値](cursor.font.color.r.md)                                 | cursor.font.color.r                 |            未確認             |
@@ -145,7 +145,7 @@
 | [arrow0.y,座標 \*1](arrow0.y.md)                                                   | arrow0.y                            | ✅ 実装済 (balloon-descript.js) |
 | [arrow1.x,座標 \*1](arrow1.x.md)                                                   | arrow1.x                            | ✅ 実装済 (balloon-descript.js) |
 | [arrow1.y,座標 \*1](arrow1.y.md)                                                   | arrow1.y                            | ✅ 実装済 (balloon-descript.js) |
-| [communicatebox.font.name,フォント名](communicatebox.font.name.md)                 | communicatebox.font.name            |            未確認             |
+| [communicatebox.font.name,フォント名](communicatebox.font.name.md)                 | communicatebox.font.name            | ✅ 実装済 (balloon-descript.js) |
 | [communicatebox.font.color.r,数値](communicatebox.font.color.r.md)                 | communicatebox.font.color.r         |            未確認             |
 | [communicatebox.font.color.g,数値](communicatebox.font.color.g.md)                 | communicatebox.font.color.g         |            未確認             |
 | [communicatebox.font.color.b,数値](communicatebox.font.color.b.md)                 | communicatebox.font.color.b         |            未確認             |
@@ -161,10 +161,10 @@
 | [communicatebox.background.color.b,数値](communicatebox.background.color.b.md)     | communicatebox.background.color.b   |            未確認             |
 | [communicatebox.placeholder.color.g,数値](communicatebox.placeholder.color.g.md)     | communicatebox.placeholder.color.g  | ✅ 実装済 (balloon-descript.js) |
 | [communicatebox.placeholder.color.b,数値](communicatebox.placeholder.color.b.md)     | communicatebox.placeholder.color.b  | ✅ 実装済 (balloon-descript.js) |
-| [communicatebox.x,座標](communicatebox.x.md)                                       | communicatebox.x                    |            未確認             |
-| [communicatebox.y,座標](communicatebox.y.md)                                       | communicatebox.y                    |            未確認             |
-| [communicatebox.width,サイズ](communicatebox.width.md)                             | communicatebox.width                |            未確認             |
-| [communicatebox.height,サイズ](communicatebox.height.md)                           | communicatebox.height               |            未確認             |
+| [communicatebox.x,座標](communicatebox.x.md)                                       | communicatebox.x                    | ✅ 実装済 (balloon-descript.js) |
+| [communicatebox.y,座標](communicatebox.y.md)                                       | communicatebox.y                    | ✅ 実装済 (balloon-descript.js) |
+| [communicatebox.width,サイズ](communicatebox.width.md)                             | communicatebox.width                | ✅ 実装済 (balloon-descript.js) |
+| [communicatebox.height,サイズ](communicatebox.height.md)                           | communicatebox.height               | ✅ 実装済 (balloon-descript.js) |
 | [paint_transparent_region_black,数値](paint_transparent_region_black.md)         | paint_transparent_region_black      | ✅ 実装済 (balloon-descript.js) |
 | [use_self_alpha,値](use_self_alpha.md)                                             | use_self_alpha                      | ✅ 実装済 (balloon-descript.js) |
 | [use_input_alpha,数値](use_input_alpha.md)                                         | use_input_alpha                     | ✅ 実装済 (balloon-descript.js) |

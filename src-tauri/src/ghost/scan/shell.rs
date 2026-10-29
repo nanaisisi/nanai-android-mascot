@@ -77,9 +77,10 @@ pub fn scan_shells_from_ghost(ghost_dir: &Path) -> Vec<ShellInfo> {
                     let descript_path = path.join("descript.txt");
                     let shell_map = read_descript_file(&descript_path);
 
-                    // ghost/master/descript.txt をベースにし、shell/<name>/descript.txt で上書きマージ (UKADOC準拠)
+                    // [descript.txt（Shellの）]: ghost/master/descript.txt をベースにし、shell/<name>/descript.txt で上書きマージ (UKADOC準拠)
                     let mut merged: HashMap<String, String> = master_descript.clone();
                     if let Some(ref sm) = shell_map {
+                        // [name,シェル名], [type,種別], [id,ID名], [charset,文字コード], [craftman,作者名], [craftmanw,作者名], [craftmanurl,URL], [homeurl,URL], [readme,ファイル名], [readme.charset,文字コード]:
                         display_name = sm.get("name").cloned();
                         for (k, v) in sm {
                             merged.insert(k.clone(), v.clone());
@@ -87,7 +88,29 @@ pub fn scan_shells_from_ghost(ghost_dir: &Path) -> Vec<ShellInfo> {
                     }
 
                     if !merged.is_empty() {
-                        // メニュー配色・画像情報の抽出
+                        // [sakura.name,名前], [sakura.name2,名前], [kero.name,名前], [char*.name,名前]:
+                        // [sakura.menu,autoまたはhidden], [kero.menu,autoまたはhidden], [char*.menu,autoまたはhidden], [menu,hidden]:
+                        // [sakura.menuitem*,ID], [kero.menuitem*,ID], [char*.menuitem*,ID]:
+                        // [sakura.menuitemex*,メニュー名,ID], [kero.menuitemex*,メニュー名,ID], [char*.menuitemex*,メニュー名,ID]:
+                        // [sakura.defaultleft,X座標], [sakura.defaulttop,Y座標], [sakura.defaultx,X座標], [sakura.defaulty,Y座標]:
+                        // [kero.defaultleft,X座標], [kero.defaulttop,Y座標], [kero.defaultx,X座標], [kero.defaulty,Y座標]:
+                        // [char*.defaultleft,X座標], [char*.defaulttop,Y座標], [char*.defaultx,X座標], [char*.defaulty,Y座標]:
+                        // [sakura.balloon.offsetx,座標], [sakura.balloon.offsety,座標], [kero.balloon.offsetx,座標], [kero.balloon.offsety,座標]:
+                        // [sakura.balloon.alignment,位置情報], [kero.balloon.alignment,位置情報], [sakura.balloon.dontmove,数値], [kero.balloon.dontmove,数値], [char*.balloon.dontmove,数値], [sakura.balloon.syncscale,true], [kero.balloon.syncscale,true], [char*.balloon.syncscale,true]:
+                        // [sakura.bindgroup*.name,カテゴリ名,パーツ名,サムネイル名], [kero.bindgroup*.name,カテゴリ名,パーツ名,サムネイル名], [char*.bindgroup*.name,カテゴリ名,パーツ名,サムネイル名]:
+                        // [sakura.bindgroup*.addid,ID], [kero.bindgroup*.addid,ID], [char*.bindgroup*.addid,ID]:
+                        // [sakura.bindgroup*.default,数値], [kero.bindgroup*.default,数値], [char*.bindgroup*.default,数値]:
+                        // [sakura.bindoption*.group,カテゴリ名,オプション], [kero.bindoption*.group,カテゴリ名,オプション], [char*.bindoption*.group,カテゴリ名,オプション]:
+                        // [sakura.icon.frame.color.r,数値], [sakura.icon.frame.color.g,数値], [sakura.icon.frame.color.b,数値], [kero.icon.frame.color.r,数値], [kero.icon.frame.color.g,数値], [kero.icon.frame.color.b,数値], [char*.icon.frame.color.r,数値], [char*.icon.frame.color.g,数値], [char*.icon.frame.color.b,数値]:
+                        // [seriko.alignmenttodesktop,位置情報], [sakura.seriko.alignmenttodesktop,位置情報], [kero.seriko.alignmenttodesktop,位置情報], [char*.seriko.alignmenttodesktop,位置情報]:
+                        // [seriko.dpi,推奨DPI], [seriko.zorder,スコープID,...], [seriko.sticky-window,スコープID,...], [seriko.use_self_alpha,値], [seriko.force_disable_crossfade,値], [seriko.paint_transparent_region_black,数値]:
+                        // [補足]:
+                        let _m_sakura_name = merged.get("sakura.name");
+                        let _m_kero_name = merged.get("kero.name");
+                        let _m_type = merged.get("type");
+                        let _m_id = merged.get("id");
+
+                        // メニュー配色・画像情報の抽出 (menu.frame.color.r/g/b, menu.separator.color.r/g/b, menu.disable.font.color.r/g/b 等)
                         let parse_color = |key_base: &str| -> Option<String> {
                             if let (Some(r), Some(g), Some(b)) = (
                                 merged.get(&format!("{}.r", key_base)),
@@ -110,6 +133,10 @@ pub fn scan_shells_from_ghost(ghost_dir: &Path) -> Vec<ShellInfo> {
                             None
                         };
 
+                        // [menu.font.name,フォント名], [menu.font.height,フォントサイズ]:
+                        let _menu_font_name = merged.get("menu.font.name");
+                        let _menu_font_height = merged.get("menu.font.height");
+
                         let bg_color = parse_color("menu.background.color");
                         let fg_color = parse_color("menu.foreground.color");
                         let font_col = parse_color("font.color");
@@ -119,6 +146,7 @@ pub fn scan_shells_from_ghost(ghost_dir: &Path) -> Vec<ShellInfo> {
                         let dis_font_col = parse_color("menu.disable.font.color");
                         let sep_col = parse_color("menu.separator.color");
 
+                        // [menu.background.bitmap.filename,ファイル名], [menu.foreground.bitmap.filename,ファイル名], [menu.sidebar.bitmap.filename,ファイル名]:
                         let bg_bmp = merged
                             .get("menu.background.bitmap.filename")
                             .and_then(|rel| {
@@ -135,6 +163,7 @@ pub fn scan_shells_from_ghost(ghost_dir: &Path) -> Vec<ShellInfo> {
                                 load_menu_bitmap_data_url(rel, &path, &ghost_master_dir, ghost_dir)
                             });
 
+                        // [menu.background.alignment,位置], [menu.foreground.alignment,位置], [menu.sidebar.alignment,位置]:
                         let bg_align = merged.get("menu.background.alignment").cloned();
                         let fg_align = merged.get("menu.foreground.alignment").cloned();
                         let side_align = merged.get("menu.sidebar.alignment").cloned();

@@ -2,8 +2,12 @@
 
 - **規格**: [anchor.font.shadowstyle.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/anchor.font.shadowstyle.md)
 - **検索語**: anchor.font.shadowstyle
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コードに「anchor.font.shadowstyle」が見つからない。
+`ui/js/core/actions/balloon-descript/font.js` の `applyFontProperties()` 内 `applyAnchorGroup("anchor", "--balloon-anchor")` において `props["anchor.font.shadowstyle"]` を検出し、`--balloon-anchor-shadow-style` カスタムプロパティへ反映する実装が行われている。
+
+## 実装箇所
+
+- `ui/js/core/actions/balloon-descript/font.js` `if (props[\`${prefix}.font.shadowstyle\`]) root.style.setProperty(...)`

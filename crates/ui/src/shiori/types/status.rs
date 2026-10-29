@@ -34,7 +34,7 @@ impl GhostStatusToken {
             if let Some(kind) = lower.strip_prefix("opening(") {
                 out.push(Self::Opening(kind.trim_end_matches(')').to_string()));
             } else if let Some(ids) = lower.strip_prefix("balloon(") {
-                let inner = ids.trim_end_matches(')').replace('/', ",0,");
+                let inner = ids.trim_end_matches(')').replace('/', ",");
                 let pairs = inner
                     .split(',')
                     .filter(|s| !s.trim().is_empty())

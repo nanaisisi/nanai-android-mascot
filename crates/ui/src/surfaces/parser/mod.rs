@@ -222,3 +222,22 @@ fn split_key_value(line: &str) -> Option<(&str, &str)> {
     let (key, value) = line.split_once(',')?;
     Some((key.trim(), value.trim()))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_surfaces_txt_blocks() {
+        let text = "descript {\r\nversion,1\r\n}\r\nsurface.alias {\r\nmain,0,1\r\n}\r\nsurface0 {\r\nelement0,overlay,base.png,0,0\r\npoint.centerx,100\r\nballoon.offsetx,10\r\notherkey,value\r\n}\r\nsurface.append0 {\r\nelement1,overlay,top.png,0,0\r\n}\r\n";
+        let parsed = parse_surfaces_txt(text);
+        assert_eq!(parsed.version, 1);
+        assert!(parsed.aliases.contains_key("main"));
+        assert!(parsed.surfaces.contains_key(&0));
+        let def = parsed.surfaces.get(&0).unwrap();
+        assert_eq!(def.elements.len(), 2);
+        assert_eq!(def.points.center_x, Some(100));
+        assert_eq!(def.balloon_offsets.get("*").unwrap().x, Some(10));
+        assert_eq!(def.properties.get("otherkey").unwrap(), "value");
+    }
+}

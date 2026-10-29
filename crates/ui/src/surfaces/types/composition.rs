@@ -42,3 +42,39 @@ impl CompositionPlan {
             .count()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::surfaces::types::DrawMethod;
+
+    #[test]
+    fn test_composition_plan_methods() {
+        let elem = ElementDef {
+            id: 0,
+            method: DrawMethod::Overlay,
+            file: "base.png".into(),
+            x: 0,
+            y: 0,
+            options: vec![],
+        };
+        let pat = AnimationPattern {
+            index: 0,
+            method: DrawMethod::Overlay,
+            surface: 10,
+            wait: 85,
+            wait_max: None,
+            x: 0,
+            y: 0,
+            options: vec![],
+        };
+
+        let plan = CompositionPlan {
+            surface: 0,
+            layers: vec![CompositionLayer::Element(elem), CompositionLayer::Pattern(pat)],
+        };
+
+        assert_eq!(plan.layer_files(), vec!["base.png", "10"]);
+        assert_eq!(plan.bind_pattern_count(), 1);
+    }
+}

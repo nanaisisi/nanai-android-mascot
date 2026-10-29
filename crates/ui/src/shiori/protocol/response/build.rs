@@ -66,3 +66,41 @@ impl ShioriResponse {
         out
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_shiori_response_build_full() {
+        let mut res = ShioriResponse::ok("\\hHello");
+        res.status = StatusCode::Other(999);
+        res.sender = Some("TestSender".into());
+        res.value_notify = Some("NotifyScript".into());
+        res.security_level = Some(SecurityLevel::Local);
+        res.marker = Some("MarkerVal".into());
+        res.error_level = vec![ErrorLevel::Warning];
+        res.error_description = vec!["WarnDesc".into()];
+        res.balloon_offset = Some((10, 20));
+        res.reference0 = Some("Ref0Val".into());
+        res.references = vec!["Ref1Val".into()];
+        res.age = Some(1);
+        res.marker_send = Some("SendMarker".into());
+        res.passthru.insert("PassKey".into(), "PassVal".into());
+
+        let built = res.build();
+        assert!(built.contains("SHIORI/3.0 999"));
+        assert!(built.contains("Sender: TestSender"));
+        assert!(built.contains("ValueNotify: NotifyScript"));
+        assert!(built.contains("SecurityLevel: local"));
+        assert!(built.contains("Marker: MarkerVal"));
+        assert!(built.contains("ErrorLevel: warning"));
+        assert!(built.contains("ErrorDescription: WarnDesc"));
+        assert!(built.contains("BalloonOffset: 10,20"));
+        assert!(built.contains("Reference0: Ref0Val"));
+        assert!(built.contains("Reference1: Ref1Val"));
+        assert!(built.contains("Age: 1"));
+        assert!(built.contains("MarkerSend: SendMarker"));
+        assert!(built.contains("X-SSTP-PassThru-PassKey: PassVal"));
+    }
+}

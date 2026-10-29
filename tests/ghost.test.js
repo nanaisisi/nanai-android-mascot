@@ -20,13 +20,30 @@ test("sakura-parser test", () => {
 	assert.ok(ast);
 });
 
-test("shiori-protocol test", () => {
+test("shiori-protocol 100% coverage test", () => {
 	assert.equal(statusCodeFromRust("Ok"), 200);
+	assert.equal(statusCodeFromRust("NoContent"), 204);
 	assert.equal(statusCodeFromRust({ Other: 599 }), 599);
+	assert.equal(statusCodeFromRust({ Unknown: "str" }), 0);
+	assert.equal(statusCodeFromRust(undefined), 0);
 
-	const parsed = fromRustResponse({ status: "Ok", value: "\\0Hello\\e" });
+	assert.equal(fromRustResponse(null), null);
+	assert.equal(fromRustResponse("string"), null);
+
+	const parsed = fromRustResponse({
+		status: "Ok",
+		value: "\\0Hello\\e",
+		statusText: "200 OK",
+		items: ["item1", "item2"],
+		emptyItems: [],
+		objHeader: { prop: "val" },
+		nullProp: null,
+	});
 	assert.equal(parsed.status, 200);
 	assert.equal(parsed.value, "\\0Hello\\e");
+	assert.equal(parsed.statusText, "200 OK");
+	assert.equal(parsed.headers.items.length, 2);
+	assert.equal(parsed.headers.emptyitems, undefined);
 });
 
 test("ghostShioriMethods & GhostController full methods test", async () => {

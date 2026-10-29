@@ -56,4 +56,13 @@ mod tests {
         let lang = valid.split('-').next().unwrap_or("en");
         assert_eq!(lang, "ja");
     }
+
+    #[test]
+    fn test_locale_split_edge_cases() {
+        let locales = ["ja-JP", "en_US.UTF-8", "zh", "de-DE-POSIX"];
+        for l in locales {
+            let code = l.split(|c| c == '-' || c == '_').next().unwrap_or("en");
+            assert!(!code.is_empty());
+        }
+    }
 }

@@ -170,3 +170,62 @@ impl ShioriRequest {
         out
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_shiori_request_get_and_notify() {
+        let get_req = ShioriRequest::get("OnBoot", &["ref0".into()]);
+        assert_eq!(get_req.method, ShioriMethod::Get);
+        assert_eq!(get_req.id, "OnBoot");
+        assert_eq!(get_req.references, vec!["ref0".to_string()]);
+
+        let notify_req = ShioriRequest::notify("OnClose", &[]);
+        assert_eq!(notify_req.method, ShioriMethod::Notify);
+        assert_eq!(notify_req.id, "OnClose");
+    }
+
+    #[test]
+    fn test_shiori_request_parse_and_build() {
+        let raw = "GET SHIORI/3.0\r\nCharset: UTF-8\r\nSender: TestGhost\r\nID: OnBoot\r\nReference0: val0\r\n\r\n";
+        let parsed = ShioriRequest::parse(raw).unwrap();
+        assert_eq!(parsed.id, "OnBoot");
+        assert_eq!(parsed.references[0], "val0");
+
+        let built = parsed.build();
+        assert!(built.contains("GET SHIORI/3.0"));
+        assert!(built.contains("ID: OnBoot"));
+        assert!(built.contains("Reference0: val0"));
+    }
+
+    #[test]
+    fn test_shiori_request_parse_errors() {
+        assert!(ShioriRequest::parse("").is_err());
+        assert!(ShioriRequest::parse("GET INVALID/1.0\r\nID: OnBoot\r\n\r\n").is_err());
+        assert!(ShioriRequest::parse("GET SHIORI/3.0\r\nCharset: UTF-8\r\n\r\n").is_err());
+    }
+
+    #[test]
+    fn test_shiori_request_build_all_headers() {
+        let mut req = ShioriRequest::get("OnBoot", &["ref0".into()]);
+        req.sender_type = vec![SenderTypeTag::Internal];
+        req.security_level = Some(SecurityLevel::Local);
+        req.security_origin = Some(Some("localhost".into()));
+        req.status = vec![GhostStatusToken::Talking];
+        req.base_id = Some("OnBootBase".into());
+        req.passthru.insert("CustomKey".into(), "CustomVal".into());
+
+        let built = req.build();
+        assert!(built.contains("SenderType: internal"));
+        assert!(built.contains("SecurityLevel: local"));
+        assert!(built.contains("SecurityOrigin: localhost"));
+        assert!(built.contains("Status: talking"));
+        assert!(built.contains("BaseID: OnBootBase"));
+        assert!(built.contains("X-SSTP-PassThru-CustomKey: CustomVal"));
+
+        req.security_origin = Some(None);
+        assert!(req.build().contains("SecurityOrigin: null"));
+    }
+}

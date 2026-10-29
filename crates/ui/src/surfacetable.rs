@@ -243,6 +243,19 @@ group,g1
     }
 
     #[test]
+    fn test_parse_unclosed_groups_and_invalid_numbers() {
+        let sample = "version,invalid\r\nscope,invalid\r\ngroup,g1\r\n10,name1\r\ngroup,g2\r\n20,name2";
+        let table = SurfaceTable::parse(sample);
+        assert_eq!(table.version, 0);
+        assert_eq!(table.scope, None);
+        assert_eq!(table.groups.len(), 2);
+        assert_eq!(table.groups[0].name, "g1");
+        assert_eq!(table.groups[0].entries[0].surface_id, 10);
+        assert_eq!(table.groups[1].name, "g2");
+        assert_eq!(table.groups[1].entries[0].surface_id, 20);
+    }
+
+    #[test]
     fn test_parse_mock_nanai_file() {
         // 実プロジェクトのサンプルシェルに対する結合テスト（存在時のみ）
         let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))

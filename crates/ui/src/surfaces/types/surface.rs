@@ -119,3 +119,40 @@ impl SortKind {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::surfaces::types::{CollisionShape, DrawMethod};
+
+    #[test]
+    fn test_surface_definition_methods() {
+        let elem = ElementDef {
+            id: 1,
+            method: DrawMethod::Overlay,
+            file: "face.png".into(),
+            x: 0,
+            y: 0,
+            options: vec![],
+        };
+        let area = CollisionArea {
+            id: Some(0),
+            name: "Head".into(),
+            shape: CollisionShape::Rect { x1: 0, y1: 0, x2: 100, y2: 100 },
+        };
+
+        let mut def = SurfaceDefinition::default();
+        def.elements.push(elem);
+        def.collisions.push(area);
+
+        assert!(def.hit_test(50, 50).is_some());
+        assert!(def.hit_test(200, 200).is_none());
+        assert_eq!(def.element(1).unwrap().file, "face.png");
+        assert!(def.element(99).is_none());
+
+        assert_eq!(SortKind::parse("id"), SortKind::Id);
+        assert_eq!(SortKind::parse("unique-junk"), SortKind::UniqueJunk);
+        assert_eq!(SortKind::parse("u-scoped"), SortKind::UScoped);
+        assert_eq!(SortKind::parse("other"), SortKind::Custom("other".into()));
+    }
+}

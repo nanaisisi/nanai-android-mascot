@@ -131,4 +131,10 @@ mod tests {
         assert!(written.contains("balloon(0=2/1=1)"));
         assert!(written.contains("custom_ext"));
     }
+
+    #[test]
+    fn test_balloon_status_single_token() {
+        let tokens = GhostStatusToken::parse_list("balloon(2)");
+        assert_eq!(tokens, vec![GhostStatusToken::Balloon(vec![(2, 0)])]);
+    }
 }

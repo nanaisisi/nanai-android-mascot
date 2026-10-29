@@ -144,4 +144,16 @@ mod tests {
         assert!(joined.contains("warning"));
         assert!(joined.contains("custom_lvl"));
     }
+
+    #[test]
+    fn test_all_error_level_variants() {
+        let raw = "notice\u{1}error\u{1}critical";
+        let levels = ErrorLevel::parse_list(raw);
+        assert_eq!(
+            levels,
+            vec![ErrorLevel::Notice, ErrorLevel::Error, ErrorLevel::Critical]
+        );
+        let joined = ErrorLevel::join_tokens(&levels);
+        assert_eq!(joined, "notice\u{1}error\u{1}critical");
+    }
 }

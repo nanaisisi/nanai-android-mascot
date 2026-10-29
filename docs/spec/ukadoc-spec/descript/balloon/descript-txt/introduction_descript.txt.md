@@ -2,16 +2,15 @@
 
 - **規格**: [introduction_descript.txt.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/introduction_descript.txt.md)
 - **検索語**: descript.txt
-- **対応状況**: ❌ 未実装(誤検出)
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-ヒットしたのは一般的な語「descript.txt」の無関係な出現。該当の仕様に対応する処理は確認できない。
+バルーンディレクトリ内の `descript.txt` 読み込みおよびキー・値のパース処理は、Rust バックエンド `src-tauri/src/commands/shell/balloon.rs` の `balloon_descript_map()` 関数および Tauri IPC コマンド `balloon_manifest()` において Shift_JIS/UTF-8 エンコーディングを自動判別してマップ構造化され、フロントエンド `ui/js/ghost/balloon-window.js` の `applyBalloonDescript()` 経由で各スタイルへ適用される実装が確立されている。
 
 ## 実装箇所
 
-- `src-tauri/src/commands/ext.rs:30` `let desc_path = path.join("descript.txt");`
-- `src-tauri/src/commands/ext.rs:79` `let desc_path = path.join("descript.txt");`
-- `src-tauri/src/commands/shiori/lifecycle/load.rs:32` `let descript_path = ghost_master_dir.join("descript.txt");`
-- `src-tauri/src/commands/shiori/lifecycle/spawn.rs:25` `let descript_path = ghost_master_dir.join("descript.txt");`
-- `src-tauri/src/commands/update/dau.rs:40` `// 1. ghost/master/descript.txt`
+- `src-tauri/src/commands/shell/balloon.rs` `balloon_descript_map(dir)`
+- `src-tauri/src/commands/shell/balloon.rs` `pub fn balloon_manifest(`
+- `ui/js/ghost/balloon-window.js` `applyBalloonDescript(theme)`
+- `ui/js/core/actions/balloon-descript/` (`font.js`, `layout.js`, `assets.js`)

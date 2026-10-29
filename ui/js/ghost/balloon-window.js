@@ -52,6 +52,7 @@ function setupInteractiveElements(balloonText) {
 
 /**
  * バルーン descript.txt の定義をスタイルへ動的反映（UKADOC準拠）
+ * // [descript.txt（Balloonの）]: balloon_manifest パースとスタイル適用
  * @param {string} theme
  */
 async function applyBalloonDescript(theme) {

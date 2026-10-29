@@ -1,10 +1,12 @@
 /**
  * @file font.js
  * @brief バルーンフォント・カラー・装飾・アンカー・カーソル・SSTPメッセージの設定反映 (UKADOC準拠)
+ * // [descript.txt（Balloonの）]: Balloon descript.txt フォント・カラー属性バインディング
  */
 import { rgbFromComponents } from "./utils.js";
 
 export function applyFontProperties(root, props, _instance) {
+	// [descript.txt（Balloonの）]: props
 	// [id,ID名]: props["id"]
 	if (props["id"]) root.style.setProperty("--balloon-id", props["id"]);
 

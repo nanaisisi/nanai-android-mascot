@@ -24,6 +24,7 @@ pub fn scan_balloons(app_handle: tauri::AppHandle) -> Result<Vec<BalloonInfo>, S
                     let dir_name = entry.file_name().to_string_lossy().to_string();
                     if !dir_name.starts_with('.') {
                         let descript = balloon_descript_map(&path);
+                        // [name,バルーン名]: descript.get("name")
                         let name = descript
                             .get("name")
                             .cloned()
@@ -102,10 +103,13 @@ pub fn resolve_balloon_dir(name: &str, app_handle: &tauri::AppHandle) -> Result<
     Err(format!("balloon directory not found: {}", name))
 }
 
+/// [descript.txt（Balloonの）]: バルーン descript.txt パース処理
+/// [charset,文字コード], [type,種別], [craftman,作者名], [craftmanw,作者名], [craftmanurl,URL], [homeurl,URL]
 pub fn balloon_descript_map(dir: &std::path::Path) -> std::collections::BTreeMap<String, String> {
     let descript = dir.join("descript.txt");
     let content = nanai_android_mascot_ui::open_text_file(&descript).unwrap_or_default();
     let parsed = nanai_android_mascot_ui::Descript::parse(&content);
+    // [charset,文字コード], [type,種別], [craftman,作者名], [craftmanw,作者名], [craftmanurl,URL], [homeurl,URL]:
     parsed
         .properties
         .into_iter()

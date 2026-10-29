@@ -10,4 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/core/app-update.js` `await gc.sendShioriEvent(`${baseEvent}Ex`, [[ghostName, ...parts].join(sep)])` (baseEvent = "OnUpdateResult", `sep` = バイト値1)
+- `src-tauri/src/shiori/ffi/builder.rs:177` `.event("OnUpdateResultExplorer")`
+- `ui/js/core/app-update.js:18` `* 6. 全更新終了後: OnUpdateResultEx -> (スクリプト未返答なら) OnUpdateResult`
+- `ui/js/core/app-update.js:202` `// OnUpdateResultExplorer 送信 (UKADOC準拠: 更新詳細・差分リスト通知)`
+- `ui/js/core/app-update.js:204` `await gc.sendShioriEvent("OnUpdateResultExplorer", [`
+- `ui/js/core/app-update.js:284` `* OnUpdateResultEx (または OnUpdateCheckResultEx) を送信し、`

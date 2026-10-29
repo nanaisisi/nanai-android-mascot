@@ -2,7 +2,7 @@
 
 - **規格**: [sound.preload.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/sound-property/sound.preload/)
 - **検索語**: preload
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装(誤検出)
 
 ## 突合結果
 

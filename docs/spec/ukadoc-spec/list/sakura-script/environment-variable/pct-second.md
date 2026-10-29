@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/core/app-settings.js:57` `let secondCounter = 0;`
-- `ui/js/core/app-settings.js:67` `secondCounter++;`
-- `ui/js/core/app-settings.js:70` `if (secondCounter % 60 === 0) {`
-- `ui/js/core/app-settings.js:80` `await invoke("on_second_change");`
-- `ui/js/core/app-settings.js:84` `} else if (secondCounter >= talkInterval) {`
+- `src-tauri/src/lib.rs:36` `commands::shiori::on_second_change,`
+- `src-tauri/src/lib.rs:112` `commands::shiori::on_second_change,`
+- `src-tauri/src/commands/shiori/protocol.rs:166` `pub async fn on_second_change() -> Result<String, String> {`
+- `src-tauri/src/commands/install/utils.rs:89` `+ (dt.second() as u64);`
+- `src-tauri/src/ghost/scan/date.rs:8` `let seconds = remainder % 60;`

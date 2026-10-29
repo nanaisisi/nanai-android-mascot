@@ -10,6 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/sakura-command-handler.js` （`\![open,teachbox]` / `\![close,teachbox]`: TeachBox UI、OnTeachStart 送出、OnTeachInputCancel (Reference0=空席/Reference1=cancel) ）
-- `ui/js/ghost/ghost-shiori.js` （OnTeach + 311 Not Enough / 312 Advice 再入ループ: sendTeachInput / clearTeachHistory、入力履歴 Reference0.. 送信）
-- `crates/ui/src/shiori.rs` （ShioriResponse::is_teach_pending: 311/312 判定）
+- `ui/js/ghost/sakura-command-handler.js:23` `// \![open,teachbox] — OnTeachStart → OnTeach / OnTeachInputCancel (UKADOC 準拠)`
+- `ui/js/ghost/sakura-command-handler.js:26` `// \![close,teachbox] — OnTeachInputCancel を発生させない`
+- `ui/js/ghost/sakura-command-handler.js:182` `* 閉じる/キャンセルで OnTeachInputCancel（Reference0=空席, Reference1=cancel）。`
+- `ui/js/ghost/sakura-command-handler.js:250` `await this.app.ghostController?.sendShioriEvent("OnTeachInputCancel", [`
+- `ui/js/ghost/sakura-command-handler.js:281` `* OnTeachInputCancel を発生させずに閉じる。開いてない場合は無視される。`

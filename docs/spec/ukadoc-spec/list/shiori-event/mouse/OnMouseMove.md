@@ -10,4 +10,4 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 
 ## 実装箇所
 
-- `ui/js/core/app-events.js:147` `this.ghostController.sendShioriEvent("OnMouseMove", [col.canvasX, col.canvasY, 0, scopeId,`
+- `ui/js/core/app-events.js:161` `this.ghostController.sendShioriEvent("OnMouseMove", [`

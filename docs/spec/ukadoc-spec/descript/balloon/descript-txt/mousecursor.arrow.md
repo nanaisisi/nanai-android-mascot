@@ -7,3 +7,8 @@
 ## 突合結果
 
 `app-actions.js` の `applyBalloonDescript()` にて `--balloon-cursor-arrow` カスタムプロパティおよび CSS `cursor` スタイリングとして完全実装済。
+
+
+## 実装箇所
+
+- `ui/js/core/actions/balloon-descript.js:208` `setMouseCursor("mousecursor.arrow", "--balloon-cursor-arrow");`

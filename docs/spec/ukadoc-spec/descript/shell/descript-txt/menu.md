@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/window/menu_window.rs:6` `pub async fn show_menu_window(`
-- `src-tauri/src/commands/window/menu_window.rs:15` `let menu_scope = scope.unwrap_or(0);`
-- `src-tauri/src/commands/window/menu_window.rs:18` `let win_height = if menu_scope > 0 { 420.0 } else { 540.0 };`
-- `src-tauri/src/commands/window/menu_window.rs:38` `if let Some(menu_win) = app_handle.get_webview_window("menu_window") {`
-- `src-tauri/src/commands/window/menu_window.rs:39` `let _ = menu_win.set_size(tauri::Size::Logical(tauri::LogicalSize {`
+- `src-tauri/src/events.rs:4` `pub fn handle_menu_event(app_handle: &tauri::AppHandle, event: tauri::menu::Menu`
+- `src-tauri/src/events.rs:8` `"native-menu-action",`
+- `src-tauri/src/events.rs:16` `"native-menu-action",`
+- `src-tauri/src/events.rs:22` `} else if id == "open" || id == "open_menu" {`
+- `src-tauri/src/events.rs:35` `let _ = crate::commands::window::show_menu_window(app_h, x, y, Some(0)).await;`

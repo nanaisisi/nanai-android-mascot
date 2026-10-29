@@ -6,4 +6,9 @@
 
 ## 突合結果
 
-実装コードに「mousecursor.wait」が見つからない。
+実装コード内に「mousecursor.wait」を確認。
+
+
+## 実装箇所
+
+- `ui/js/core/actions/balloon-descript.js:210` `setMouseCursor("mousecursor.wait", "--balloon-cursor-wait");`

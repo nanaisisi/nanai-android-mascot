@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/ui/templates/doc-templates.js:78` `<a href="https://github.com/ukatech/ukadoc-spec" target="_blank" rel="noopener noreferrer"`
-- `ui/js/ui/templates/doc-templates.js:79` `<a href="https://github.com/ukatech/ukadoc-ssp" target="_blank" rel="noopener noreferrer">`
-- `ui/js/ui/templates/doc-templates.js:84` `<a href="https://github.com/YAYA-shiori/yaya-docs" target="_blank" rel="noopener noreferre`
-- `ui/js/ui/templates/doc-templates.js:89` `<a href="https://github.com/ukatech/satori-docs" target="_blank" rel="noopener noreferrer"`
-- `ui/js/ui/templates/doc-templates.js:94` `<a href="https://github.com/ukatech/kawari-docs" target="_blank" rel="noopener noreferrer"`
+- `src-tauri/tauri.conf.json:2` `"$schema": "https://schema.tauri.app/config/2",`
+- `src-tauri/tauri.conf.json:9` `"devUrl": "http://localhost:5173",`
+- `src-tauri/tauri.test.conf.json:2` `"$schema": "https://schema.tauri.app/config/2",`
+- `src-tauri/tauri.test.conf.json:8` `"devUrl": "http://localhost:1421",`
+- `src-tauri/src/ghost/scan/shell.rs:22` `|| normalized.starts_with("http://")`

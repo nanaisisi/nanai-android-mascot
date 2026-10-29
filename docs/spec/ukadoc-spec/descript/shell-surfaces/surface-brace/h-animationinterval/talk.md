@@ -10,8 +10,8 @@ surface-animation-manager.js で interval 種別として処理している。
 
 ## 実装箇所
 
-- `ui/js/surface/character.js:58` `emitFn("menu-action", { action: "talk", payload: { scope: scopeId } });`
-- `ui/js/surface/surface-animation-manager.js:98` `intervalStr.startsWith("talk") ||`
-- `ui/js/surface/surface-animation-manager.js:162` (コメント) `* 発話（文字送り）時の口パク連動 (interval talk,N 準拠)`
-- `ui/js/surface/surface-animation-manager.js:168` `const talkAnim = animList.find((a) =>`
-- `ui/js/surface/surface-animation-manager.js:169` `(a.interval || "").startsWith("talk")`
+- `src-tauri/src/commands/window/menu_native.rs:64` `.text("talk", "💬 もう一度話す (A)")`
+- `crates/ui/src/animation.rs:227` `for v in ["never", "bind", "talk", "starttalk", "endtalk", r"\e"] {`
+- `crates/ui/src/surfaces/tests.rs:22` `assert_eq!(Interval::parse("talk"), Interval::Talk);`
+- `crates/ui/src/surfaces/tests.rs:23` `assert_eq!(Interval::parse("starttalk"), Interval::StartTalk);`
+- `crates/ui/src/surfaces/tests.rs:24` `assert_eq!(Interval::parse("endtalk"), Interval::EndTalk);`

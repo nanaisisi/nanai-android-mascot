@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/ghost.js:13` (コメント) `* @property {string} name`
-- `ui/js/ghost/ghost.js:14` (コメント) `* @property {string} [path]`
-- `ui/js/ghost/ghost.js:15` (コメント) `* @property {string[]} [shells]`
-- `ui/js/surface/surface-parser.js:7` (コメント) `* @property {number} x1`
-- `ui/js/surface/surface-parser.js:8` (コメント) `* @property {number} y1`
+- `crates/ui/src/shiori/types/sender.rs:38` `"property" => Self::Property,`
+- `crates/ui/src/shiori/types/sender.rs:53` `Self::Property => "property".into(),`
+- `ui/main.js:16` `* @property {boolean} autoLoadGhost`
+- `ui/main.js:17` `* @property {boolean} enableNotifications`
+- `ui/main.js:18` `* @property {boolean} darkMode`

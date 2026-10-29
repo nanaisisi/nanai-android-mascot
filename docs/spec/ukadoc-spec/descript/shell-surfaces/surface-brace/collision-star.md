@@ -10,10 +10,8 @@ surface-parser.js が解析し、判定・再生に利用している。
 
 ## 実装箇所
 
-- `crates/ui/src/surfaces.rs` （Rust 版 surfaces.txt パーサー：Element / Collision / SERIKO / Alias / append の解析）
-
-- `ui/js/surface/surface-parser.js:58` (コメント) `* surfaces.txt をパースして collisions, elements, animations を抽出`
-- `ui/js/surface/surface-parser.js:60` (コメント) `* @returns {{ collisions: Record<string, CollisionArea[]>, elements: Record<string, Surfac`
-- `ui/js/surface/surface-parser.js:63` `const collisions = {};`
-- `ui/js/surface/surface-parser.js:79` `if (!collisions[s]) collisions[s] = [];`
-- `ui/js/surface/surface-parser.js:84` (コメント) `// collisionex[ID],[name],[shape],[coords...] または collision[ID],[coords...],[name]`
+- `crates/ui/src/shell.rs:179` `assert!(def0.collisions.iter().any(|c| c.name == "head"));`
+- `crates/ui/src/manifest.rs:22` `/// element / animation / collision / point 定義`
+- `crates/ui/src/manifest.rs:103` `"charset,Shift_JIS\nsurface0\n{\nelement0,base,surface0.png,0,0\ncollisionex0,he`
+- `crates/ui/src/manifest.rs:142` `assert!(s0.definition.collisions.iter().any(|c| c.name == "head"));`
+- `crates/ui/src/lib.rs:222` `fn test_collisionex_circle_and_ellipse() {`

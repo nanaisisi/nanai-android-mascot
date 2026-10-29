@@ -40,8 +40,12 @@ test("balloonDescriptActions rgbFromComponents and applyBalloonDescript", () => 
 	const rgb = balloonDescriptActions.rgbFromComponents(props, "font.color");
 	assert.equal(rgb, "rgb(255, 128, 0)");
 
-	const invalidRgb = balloonDescriptActions.rgbFromComponents({ "font.color.r": "255", "font.color.g": "128" }, "font.color");
-	assert.equal(invalidRgb, null);
+	assert.equal(balloonDescriptActions.rgbFromComponents({ "font.color.g": "128", "font.color.b": "0" }, "font.color"), null);
+	assert.equal(balloonDescriptActions.rgbFromComponents({ "font.color.r": "255", "font.color.b": "0" }, "font.color"), null);
+	assert.equal(balloonDescriptActions.rgbFromComponents({ "font.color.r": "255", "font.color.g": "128" }, "font.color"), null);
+	assert.equal(balloonDescriptActions.rgbFromComponents({ "font.color.r": "abc", "font.color.g": "128", "font.color.b": "0" }, "font.color"), null);
+	assert.equal(balloonDescriptActions.rgbFromComponents({ "font.color.r": "255", "font.color.g": "abc", "font.color.b": "0" }, "font.color"), null);
+	assert.equal(balloonDescriptActions.rgbFromComponents({ "font.color.r": "255", "font.color.g": "128", "font.color.b": "abc" }, "font.color"), null);
 
 	balloonDescriptActions.elements = {
 		balloonDisplay: { style: {} },

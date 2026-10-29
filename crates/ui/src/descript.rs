@@ -169,7 +169,7 @@ impl Descript {
     pub fn bindoption_group(&self, target: &str) -> Option<BindOptionGroup> {
         let value = self.get(&format!("{target}.bindoption.group"))?;
         let mut parts = value.split(',').map(str::trim);
-        let category = parts.next()?;
+        let category = parts.next().unwrap_or("");
         let options: Vec<String> = parts.map(str::to_string).collect();
         Some(BindOptionGroup {
             category: category.to_string(),
@@ -225,10 +225,15 @@ mod tests {
     fn test_descript_shell_extensions() {
         let sample = "type,shell\r\ncraftmanurl,https://example.ukagaka\r\n\
             sakura.defaultx,120\r\nsakura.defaulty,240\r\n\
+            sakura.defaultleft,10\r\nsakura.defaulttop,20\r\n\
+            invalid_line_without_comma\r\n\
             sakura.bindoption.group,服,multiple\r\n\
+            sakura.bindgroup0.name,無効,零番\r\n\
+            sakura.bindgroupabc.name,無効,文字\r\n\
             sakura.bindgroup100.name,服,和服,thumb.png\r\n\
             sakura.bindgroup100.default,1\r\n\
             sakura.bindgroup100.addid,101,102\r\n\
+            sakura.bindgroup100.unknown,val\r\n\
             kero.bindgroup200.name,帽子,ヘッドドレス\r\n";
         let desc = Descript::parse(sample);
 
@@ -258,6 +263,7 @@ mod tests {
         let kero_groups = desc.bind_groups("kero");
         assert_eq!(kero_groups.len(), 1);
         assert_eq!(kero_groups[0].part, "ヘッドドレス");
+        assert!(desc.bindoption_group("kero").is_none());
     }
 
     #[test]

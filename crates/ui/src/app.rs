@@ -14,13 +14,14 @@ pub fn get_ghost_dir() -> PathBuf {
 pub fn get_ghost_dir_list() -> Vec<String> {
     let ghost_dir = get_ghost_dir();
     let mut list = Vec::new();
-    if let Ok(entries) = fs::read_dir(&ghost_dir) {
-        for entry in entries.flatten() {
-            if entry.path().is_dir()
-                && let Some(name) = entry.file_name().to_str()
-            {
-                list.push(name.to_string());
-            }
+    let Ok(entries) = fs::read_dir(&ghost_dir) else {
+        return list;
+    };
+    for entry in entries.flatten() {
+        if entry.path().is_dir()
+            && let Some(name) = entry.file_name().to_str()
+        {
+            list.push(name.to_string());
         }
     }
     list
@@ -59,13 +60,21 @@ mod tests {
     #[test]
     fn test_get_ghost_dir_list_with_mock() {
         let ghost_dir = get_ghost_dir();
+        let _ = fs::remove_dir_all(&ghost_dir);
+        assert!(get_ghost_dir_list().is_empty());
+
         let _ = fs::create_dir_all(&ghost_dir);
         let mock_ghost = ghost_dir.join("mock_ghost_test_dir");
         let _ = fs::create_dir_all(&mock_ghost);
+        let mock_file = ghost_dir.join("not_a_dir.txt");
+        let _ = fs::write(&mock_file, "test");
 
         let list = get_ghost_dir_list();
         assert!(list.contains(&"mock_ghost_test_dir".to_string()));
+        assert!(!list.contains(&"not_a_dir.txt".to_string()));
 
+        let _ = fs::remove_file(&mock_file);
         let _ = fs::remove_dir_all(&mock_ghost);
+        let _ = fs::remove_dir(&ghost_dir);
     }
 }

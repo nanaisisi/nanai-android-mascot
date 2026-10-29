@@ -42,10 +42,9 @@ impl Shell {
             })?;
 
         let descript = read_descript(directory).unwrap_or_default();
-        let surfaces_txt = {
-            let content = open_text_file(&surfaces_path)?;
-            SurfacesTxt::parse(&content)
-        };
+        let surfaces_txt = open_text_file(&surfaces_path)
+            .map(|c| SurfacesTxt::parse(&c))
+            .unwrap_or_default();
         let surface_table = resolve_vfs_path(directory, "surfacetable.txt")
             .filter(|p| p.is_file())
             .and_then(|p| open_text_file(&p).ok())
@@ -144,28 +143,23 @@ impl Shell {
 
 /// `descript.txt` を読み込む（無い場合や読込失敗時は空 descript）
 fn read_descript(directory: &Path) -> Option<Descript> {
-    let path = resolve_vfs_path(directory, "descript.txt")?;
-    if !path.is_file() {
-        return None;
-    }
-    let content = open_text_file(&path).ok()?;
-    Some(Descript::parse(&content))
+    let path = resolve_vfs_path(directory, "descript.txt").filter(|p| p.is_file())?;
+    open_text_file(&path).ok().map(|c| Descript::parse(&c))
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    /// 実プロジェクトのサンプルシェル（存在時のみ実行される結合テスト）
-    fn mock_shell_dir() -> Option<PathBuf> {
-        let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("../../assets/ghost/mock_nanai/shell/master");
-        dir.is_dir().then_some(dir)
+    /// 実プロジェクトのサンプルシェル
+    fn mock_shell_dir() -> PathBuf {
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../../assets/ghost/mock_nanai/shell/master")
     }
 
     #[test]
     fn test_load_mock_shell() {
-        let Some(dir) = mock_shell_dir() else { return };
+        let dir = mock_shell_dir();
         let shell = Shell::load(&dir).unwrap();
 
         assert_eq!(shell.directory_name(), "master");
@@ -190,25 +184,43 @@ mod tests {
         assert!(!shell.kero_bind_groups().is_empty());
 
         // 既定装着の bind id と合成計画
-        if let Some(default_id) = shell.default_bind_ids("sakura").first().copied() {
-            let plan = shell.composition_plan(0, &[default_id]).unwrap();
-            assert!(plan.bind_pattern_count() >= 1);
-        }
+        let default_id = shell.default_bind_ids("sakura")[0];
+        let plan = shell.composition_plan(0, &[default_id]).unwrap();
+        assert!(plan.bind_pattern_count() >= 1);
 
         // surfacetable.txt も存在する（グループ一覧）
-        if let Some(table) = &shell.surface_table {
-            assert_eq!(table.version, 1);
-            assert!(!table.visible_entries().is_empty());
-        }
+        let table = shell.surface_table.as_ref().unwrap();
+        assert_eq!(table.version, 1);
+        assert!(!table.visible_entries().is_empty());
 
         // アセット解決（VFS 大文字小文字吸収含む）
         assert!(shell.resolve_asset("surface0.png").is_some());
         assert!(shell.resolve_asset("Surface0.PNG").is_some());
+        let _ = shell.alias_surface("non_existent_alias");
     }
 
     #[test]
     fn test_load_missing_directory() {
         let err = Shell::load(Path::new("definitely/not/exist")).unwrap_err();
         assert_eq!(err.kind(), std::io::ErrorKind::NotFound);
+
+        let empty_dir = std::env::temp_dir().join("nanai_empty_shell_dir");
+        let _ = std::fs::remove_dir_all(&empty_dir);
+        std::fs::create_dir_all(&empty_dir).unwrap();
+        let err2 = Shell::load(&empty_dir).unwrap_err();
+        assert_eq!(err2.kind(), std::io::ErrorKind::NotFound);
+
+        // descript.txt がディレクトリである異常系と name 指定ありのケース
+        std::fs::create_dir_all(empty_dir.join("descript.txt")).unwrap();
+        std::fs::write(empty_dir.join("surfaces.txt"), "surface0\n{\n}\n").unwrap();
+        let shell_no_desc = Shell::load(&empty_dir).unwrap();
+        assert_eq!(shell_no_desc.display_name(), "nanai_empty_shell_dir");
+
+        std::fs::remove_dir_all(empty_dir.join("descript.txt")).unwrap();
+        std::fs::write(empty_dir.join("descript.txt"), "name,CustomShellName\n").unwrap();
+        let shell_named = Shell::load(&empty_dir).unwrap();
+        assert_eq!(shell_named.display_name(), "CustomShellName");
+
+        let _ = std::fs::remove_dir_all(&empty_dir);
     }
 }

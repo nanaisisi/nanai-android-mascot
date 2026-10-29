@@ -86,9 +86,7 @@ pub(super) fn handle_animation(chars: &mut CharsIter<'_>) -> Option<(u32, bool)>
 
 /// 未知タグの後続引数（`[...]`）を黙って消費する（本文への漏出防止）
 pub(super) fn consume_tag_tail(chars: &mut CharsIter<'_>) {
-    if chars.peek() == Some(&'[') {
-        let _ = read_bracketed(chars);
-    }
+    let _ = read_bracketed(chars);
 }
 
 /// `\b[n]`（\b[-1] 等の負数含む）または `\b0..\b9`
@@ -115,9 +113,6 @@ pub(super) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
         return;
     };
     let parts: Vec<&str> = cmd_str.split(',').map(|s| s.trim()).collect();
-    if parts.is_empty() {
-        return;
-    }
     match parts[0] {
         "raise" => {
             let event = parts.get(1).unwrap_or(&"").to_string();
@@ -246,6 +241,27 @@ mod tests {
 
     #[test]
     fn test_brackets_helpers() {
+        let mut empty_chars = "".chars().peekable();
+        assert_eq!(read_digit(&mut empty_chars), None);
+        let mut chars = "abc".chars().peekable();
+        assert_eq!(read_digit(&mut chars), None);
+        assert_eq!(handle_surface(&mut chars), None);
+        assert_eq!(handle_balloon(&mut chars), None);
+        assert_eq!(handle_animation(&mut chars), None);
+        let mut bad_anim = "[abc]".chars().peekable();
+        assert_eq!(handle_animation(&mut bad_anim), None);
+
+        let mut chars = "5".chars().peekable();
+        assert_eq!(handle_surface(&mut chars), Some(5));
+        let mut chars = "2".chars().peekable();
+        assert_eq!(handle_balloon(&mut chars), Some(2));
+
+        let mut chars = "[]".chars().peekable();
+        assert_eq!(handle_animation(&mut chars), None);
+
+        let mut chars = "[abc]".chars().peekable();
+        consume_tag_tail(&mut chars);
+
         let mut chars = "[123]".chars().peekable();
         assert_eq!(read_bracketed(&mut chars), Some("123".to_string()));
 
@@ -275,6 +291,11 @@ mod tests {
         handle_raiselike(&mut chars, &mut |c| cmds.push(c));
         assert_eq!(cmds.len(), 1);
 
+        let mut chars = "[bind,cat,part,0]".chars().peekable();
+        handle_raiselike(&mut chars, &mut |c| cmds.push(c));
+        let mut chars = "[bind,cat,part,invalid]".chars().peekable();
+        handle_raiselike(&mut chars, &mut |c| cmds.push(c));
+
         let mut chars = "[ChoiceText,ChoiceID]".chars().peekable();
         let choice = handle_choice(&mut chars);
         assert_eq!(choice, Some(("ChoiceText".to_string(), "ChoiceID".to_string())));
@@ -300,6 +321,12 @@ mod tests {
         let mut chars = "s[1]".chars().peekable();
         handle_underscore(&mut chars, &mut |c| cmds.push(c));
         assert_eq!(cmds, vec![SakuraCommand::Sync(true)]);
+
+        let mut push = |c| cmds.push(c);
+        for input in ["w", "a", "a[id]text\\_bmore\\_a", "l", "l[10,20]", "z[arg]", "_w[10]", "z"] {
+            let mut chars = input.chars().peekable();
+            handle_underscore(&mut chars, &mut push);
+        }
 
         let mut cmds = Vec::new();
         let mut chars = "l[10,20]".chars().peekable();

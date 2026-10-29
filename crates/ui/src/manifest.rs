@@ -85,11 +85,10 @@ impl Shell {
 mod tests {
     use super::*;
 
-    /// 実プロジェクトのサンプルシェル（存在時のみ実行される結合テスト）
-    fn mock_shell_dir() -> Option<std::path::PathBuf> {
-        let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("../../assets/ghost/mock_nanai/shell/master");
-        dir.is_dir().then_some(dir)
+    /// 実プロジェクトのサンプルシェル
+    fn mock_shell_dir() -> std::path::PathBuf {
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../../assets/ghost/mock_nanai/shell/master")
     }
 
     #[test]
@@ -132,7 +131,7 @@ mod tests {
 
     #[test]
     fn test_manifest_json_roundtrip_mock_nanai() {
-        let Some(dir) = mock_shell_dir() else { return };
+        let dir = mock_shell_dir();
         let shell = Shell::load(&dir).unwrap();
         let manifest = shell.manifest();
 

@@ -169,5 +169,6 @@ mod tests {
         let plan = txt.plan_composition(0, &[100, 101, 999]).unwrap();
         assert_eq!(plan.bind_pattern_count(), 1);
         assert_eq!(plan.layer_files(), vec!["20"]);
+        assert!(txt.plan_composition(999, &[]).is_none());
     }
 }

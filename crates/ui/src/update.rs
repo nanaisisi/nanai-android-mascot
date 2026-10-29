@@ -30,10 +30,6 @@ pub fn parse_update_definition(content: &str) -> Vec<UpdateEntry> {
             data_part.split(',').collect()
         };
 
-        if parts.is_empty() {
-            continue;
-        }
-
         let rel_path = parts[0].trim().replace('\\', "/");
         if rel_path.is_empty() {
             continue;

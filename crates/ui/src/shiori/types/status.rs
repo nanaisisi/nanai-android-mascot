@@ -99,7 +99,7 @@ mod tests {
 
     #[test]
     fn test_ghost_status_token_parsing_and_writing() {
-        let raw = "talking, choosing, minimizing, induction, passive, timecritical, nouserbreak, online, opening(input), balloon(0=2/1=1), custom_ext";
+        let raw = "talking, , choosing, minimizing, induction, passive, timecritical, nouserbreak, online, opening(input), balloon(0=2/1=1/3), custom_ext";
         let tokens = GhostStatusToken::parse_list(raw);
         assert_eq!(
             tokens,
@@ -113,7 +113,7 @@ mod tests {
                 GhostStatusToken::NoUserBreak,
                 GhostStatusToken::Online,
                 GhostStatusToken::Opening("input".to_string()),
-                GhostStatusToken::Balloon(vec![(0, 2), (1, 1)]),
+                GhostStatusToken::Balloon(vec![(0, 2), (1, 1), (3, 0)]),
                 GhostStatusToken::Custom("custom_ext".to_string()),
             ]
         );
@@ -128,7 +128,7 @@ mod tests {
         assert!(written.contains("nouserbreak"));
         assert!(written.contains("online"));
         assert!(written.contains("opening(input)"));
-        assert!(written.contains("balloon(0=2/1=1)"));
+        assert!(written.contains("balloon(0=2/1=1/3=0)"));
         assert!(written.contains("custom_ext"));
     }
 

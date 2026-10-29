@@ -235,9 +235,6 @@ pub(super) fn apply_animation_line(txt: &mut SurfacesTxt, ids: &[u32], rest: &st
                 split_id_suffix(&field["pattern".len()..]).1.unwrap_or(0)
             };
             let tokens: Vec<&str> = value.split(',').map(str::trim).collect();
-            if tokens.is_empty() {
-                continue;
-            }
             // ウェイトは単一値（`85`）または SSP 拡張の範囲指定（`85-120`）を許容する
             let (wait, wait_max) = tokens
                 .get(2)
@@ -292,7 +289,7 @@ mod tests {
 
     #[test]
     fn test_expand_range() {
-        assert_eq!(expand_range("0-2,5"), vec![0, 1, 2, 5]);
+        assert_eq!(expand_range("0-2, ,5"), vec![0, 1, 2, 5]);
         assert_eq!(expand_range("[10-12]"), vec![10, 11, 12]);
         assert_eq!(expand_range("invalid"), Vec::<u32>::new());
     }
@@ -313,6 +310,9 @@ mod tests {
     fn test_parse_balloon_offset_key() {
         assert_eq!(parse_balloon_offset_key("balloon.offset.x"), Some(("*".to_string(), 'x')));
         assert_eq!(parse_balloon_offset_key("sakura.balloon.offset.y"), Some(("sakura".to_string(), 'y')));
+        assert_eq!(parse_balloon_offset_key("balloon.offset"), None);
+        assert_eq!(parse_balloon_offset_key("sakura.balloon.offset"), None);
+        assert_eq!(parse_balloon_offset_key(".balloon.offset.x"), None);
         assert_eq!(parse_balloon_offset_key("invalid"), None);
     }
 
@@ -320,16 +320,43 @@ mod tests {
     fn test_apply_handlers() {
         let mut txt = SurfacesTxt::default();
         apply_point(&mut txt, &[0], "centerx", "150");
+        apply_point(&mut txt, &[0], "centery", "160");
+        apply_point(&mut txt, &[0], "basepos.x", "10");
+        apply_point(&mut txt, &[0], "basepos.y", "20");
+        apply_point(&mut txt, &[0], "kinoko.centerx", "30");
+        apply_point(&mut txt, &[0], "kinoko.centery", "40");
+        apply_point(&mut txt, &[0], "unknown", "0");
         assert_eq!(txt.surfaces.get(&0).unwrap().points.center_x, Some(150));
 
         apply_element(&mut txt, &[0], "element0", "overlay,base.png,0,0");
+        apply_element(&mut txt, &[0], "element1", "short");
         assert_eq!(txt.surfaces.get(&0).unwrap().elements.len(), 1);
 
         apply_collision(&mut txt, &[0], "collision0", "0,0,50,50,Face");
-        assert_eq!(txt.surfaces.get(&0).unwrap().collisions.len(), 1);
+        apply_collision(&mut txt, &[0], "collision", "1,0,0,50,50,Head");
+        apply_collision(&mut txt, &[0], "collision2", "short");
+        apply_collision(&mut txt, &[0], "collision2", "x,0,50,50,Face");
+        apply_collision(&mut txt, &[0], "collision2", "0,y,50,50,Face");
+        apply_collision(&mut txt, &[0], "collision2", "0,0,x,50,Face");
+        apply_collision(&mut txt, &[0], "collision2", "0,0,50,y,Face");
+        assert_eq!(txt.surfaces.get(&0).unwrap().collisions.len(), 2);
 
+        apply_collisionex(&mut txt, &[0], "collisionex0", "short");
+        apply_collisionex(&mut txt, &[0], "collisionex0", "Face,circle,10,10,5,8");
+        apply_collisionex(&mut txt, &[0], "collisionex1", "Box,unknown,0,0,10,10");
+        apply_collisionex(&mut txt, &[0], "collisionex2", "Poly,unknown,0,0,10,10,20,20");
+        apply_collisionex(&mut txt, &[0], "collisionex3", "Bad,unknown,0,0");
+
+        apply_animation_line(&mut txt, &[0], "no_dot", "sometimes");
+        apply_animation_line(&mut txt, &[0], "abc.interval", "sometimes");
         apply_animation_line(&mut txt, &[0], "0.interval", "sometimes");
-        apply_animation_line(&mut txt, &[0], "0.pattern0", "overlay,6,85-120,0,0");
+        apply_animation_line(&mut txt, &[0], "0.name", "blink");
+        apply_animation_line(&mut txt, &[0], "0.option", "exclusive");
+        apply_animation_line(&mut txt, &[0], "0.pattern0", "overlay,6,85-120,0,0,opt1");
+        apply_animation_line(&mut txt, &[0], "0.pattern", "overlay,6,120-85,0,0");
+        apply_animation_line(&mut txt, &[0], "0.pattern2", "overlay,6,50,0,0");
+        apply_animation_line(&mut txt, &[0], "0.pattern3", "overlay,6,invalid,0,0");
+        apply_animation_line(&mut txt, &[0], "0.unknown", "val");
         assert!(txt.surfaces.get(&0).unwrap().animations.contains_key(&0));
     }
 

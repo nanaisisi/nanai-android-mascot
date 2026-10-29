@@ -1,110 +1,13 @@
-# descript/shell/descript-txt 項目別突合
+# readme,ファイル名
 
-実装コードの文字列検索による一次調査です。
+- **規格**: [readme.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell/descript-txt/) (ukadoc-spec/descript/shell/descript-txt/readme.md)
+- **検索語**: readme
+- **対応状況**: ✅ 対応済
 
-| 項目                                                                                           | 検索語                                |       対応状況        |
-| :--------------------------------------------------------------------------------------------- | :------------------------------------ | :-------------------: |
-| [char\*.balloon.dontmove,数値](char-star-.balloon.dontmove.md)                                 | char                                  |   ❌ 未実装(誤検出)   |
-| [char\*.balloon.syncscale,true](char-star-.balloon.syncscale.md)                               | char                                  |   ❌ 未実装(誤検出)   |
-| [char\*.bindgroup\*.addid,ID](char-star-.bindgroup-star-.addid.md)                             | char                                  |   ❌ 未実装(誤検出)   |
-| [char\*.bindgroup\*.default,数値](char-star-.bindgroup-star-.default.md)                       | char                                  |   ❌ 未実装(誤検出)   |
-| [char\*.bindgroup\*.name,カテゴリ名,パーツ名,サムネイル名](char-star-.bindgroup-star-.name.md) | char                                  |   ❌ 未実装(誤検出)   |
-| [char\*.bindoption\*.group,カテゴリ名,オプション](char-star-.bindoption-star-.group.md)        | char                                  |   ❌ 未実装(誤検出)   |
-| [char\*.defaultleft,X座標](char-star-.defaultleft.md)                                          | char                                  |   ❌ 未実装(誤検出)   |
-| [char\*.defaulttop,Y座標](char-star-.defaulttop.md)                                            | char                                  |   ❌ 未実装(誤検出)   |
-| [char\*.defaultx,X座標](char-star-.defaultx.md)                                                | char                                  |   ❌ 未実装(誤検出)   |
-| [char\*.defaulty,Y座標](char-star-.defaulty.md)                                                | char                                  |   ❌ 未実装(誤検出)   |
-| [char\*.icon.frame.color.b,数値](char-star-.icon.frame.color.b.md)                             | char                                  |   ❌ 未実装(誤検出)   |
-| [char\*.icon.frame.color.g,数値](char-star-.icon.frame.color.g.md)                             | char                                  |   ❌ 未実装(誤検出)   |
-| [char\*.icon.frame.color.r,数値](char-star-.icon.frame.color.r.md)                             | char                                  |   ❌ 未実装(誤検出)   |
-| [char\*.menu,autoまたはhidden](char-star-.menu.md)                                             | char                                  |   ❌ 未実装(誤検出)   |
-| [char\*.menuitem\*,ID](char-star-.menuitem-star.md)                                            | char                                  |   ❌ 未実装(誤検出)   |
-| [char\*.menuitemex\*,メニュー名,ID](char-star-.menuitemex-star.md)                             | char                                  |   ❌ 未実装(誤検出)   |
-| [char\*.name,名前](char-star-.name.md)                                                         | char                                  |   ❌ 未実装(誤検出)   |
-| [char\*.seriko.alignmenttodesktop,位置情報](char-star-.seriko.alignmenttodesktop.md)           | char                                  |   ❌ 未実装(誤検出)   |
-| [charset,文字コード](charset.md)                                                               | charset                               | ⚠️ 一部対応(読込のみ) |
-| [craftman,作者名](craftman.md)                                                                 | craftman                              | ⚠️ 一部対応(読込のみ) |
-| [craftmanurl,URL](craftmanurl.md)                                                              | craftmanurl                           | ⚠️ 一部対応(読込のみ) |
-| [craftmanw,作者名](craftmanw.md)                                                               | craftmanw                             |      ❌ 検出なし      |
-| [homeurl,URL](homeurl.md)                                                                      | homeurl                               | ⚠️ 一部対応(読込のみ) |
-| [id,ID名](id.md)                                                                               | id,ID名                               |      ❌ 検出なし      |
-| [descript.txt（Shellの）](introduction_descript.txt.md)                                        | descript.txt                          |   ❌ 未実装(誤検出)   |
-| [kero.balloon.alignment,位置情報](kero.balloon.alignment.md)                                   | kero.balloon.alignment                |      ❌ 検出なし      |
-| [kero.balloon.dontmove,数値](kero.balloon.dontmove_.md)                                        | kero.balloon.dontmove                 |      ❌ 検出なし      |
-| [kero.balloon.offsetx,座標](kero.balloon.offsetx.md)                                           | kero.balloon.offsetx                  |      ❌ 検出なし      |
-| [kero.balloon.offsety,座標](kero.balloon.offsety.md)                                           | kero.balloon.offsety                  |      ❌ 検出なし      |
-| [kero.balloon.syncscale,true](kero.balloon.syncscale_.md)                                      | kero.balloon.syncscale                |      ❌ 検出なし      |
-| [kero.bindgroup\*.addid,ID](kero.bindgroup-star-.addid.md)                                     | kero.bindgroup                        |      ❌ 検出なし      |
-| [kero.bindgroup\*.default,数値](kero.bindgroup-star-.default.md)                               | kero.bindgroup                        |      ❌ 検出なし      |
-| [kero.bindgroup\*.name,カテゴリ名,パーツ名,サムネイル名](kero.bindgroup-star-.name.md)         | kero.bindgroup                        |      ❌ 検出なし      |
-| [kero.bindoption\*.group,カテゴリ名,オプション](kero.bindoption-star-.group.md)                | kero.bindoption                       |      ❌ 検出なし      |
-| [kero.defaultleft,X座標](kero.defaultleft.md)                                                  | kero.defaultleft                      |      ❌ 検出なし      |
-| [kero.defaulttop,Y座標](kero.defaulttop.md)                                                    | kero.defaulttop                       |      ❌ 検出なし      |
-| [kero.defaultx,X座標](kero.defaultx.md)                                                        | kero.defaultx                         |      ❌ 検出なし      |
-| [kero.defaulty,Y座標](kero.defaulty.md)                                                        | kero.defaulty                         |      ❌ 検出なし      |
-| [kero.icon.frame.color.b,数値](kero.icon.frame.color.b.md)                                     | kero.icon.frame.color.b               |      ❌ 検出なし      |
-| [kero.icon.frame.color.g,数値](kero.icon.frame.color.g.md)                                     | kero.icon.frame.color.g               |      ❌ 検出なし      |
-| [kero.icon.frame.color.r,数値](kero.icon.frame.color.r.md)                                     | kero.icon.frame.color.r               |      ❌ 検出なし      |
-| [kero.menu,autoまたはhidden](kero.menu.md)                                                     | kero.menu                             |      ❌ 検出なし      |
-| [kero.menuitem\*,ID](kero.menuitem-star.md)                                                    | kero.menuitem                         |      ❌ 検出なし      |
-| [kero.menuitemex\*,メニュー名,ID](kero.menuitemex-star.md)                                     | kero.menuitemex                       |      ❌ 検出なし      |
-| [kero.name,名前](kero.name.md)                                                                 | kero.name                             | ⚠️ 一部対応(読込のみ) |
-| [kero.seriko.alignmenttodesktop,位置情報](kero.seriko.alignmenttodesktop.md)                   | kero.seriko.alignmenttodesktop        |      ❌ 検出なし      |
-| [menu,hidden](menu.md)                                                                         | menu                                  |   ❌ 未実装(誤検出)   |
-| [menu.background.alignment,位置](menu.background.alignment.md)                                 | menu.background.alignment             |      ❌ 検出なし      |
-| [menu.background.bitmap.filename,ファイル名](menu.background.bitmap.filename.md)               | menu.background.bitmap.filename       | ⚠️ 一部対応(読込のみ) |
-| [menu.background.font.color.b,数値](menu.background.font.color.b.md)                           | menu.background.font.color.b          |      ❌ 検出なし      |
-| [menu.background.font.color.g,数値](menu.background.font.color.g.md)                           | menu.background.font.color.g          |      ❌ 検出なし      |
-| [menu.background.font.color.r,数値](menu.background.font.color.r.md)                           | menu.background.font.color.r          |      ❌ 検出なし      |
-| [menu.disable.font.color.b](menu.disable.font.color.b.md)                                      | menu.disable.font.color.b             |      ❌ 検出なし      |
-| [menu.disable.font.color.g](menu.disable.font.color.g.md)                                      | menu.disable.font.color.g             |      ❌ 検出なし      |
-| [menu.disable.font.color.r](menu.disable.font.color.r.md)                                      | menu.disable.font.color.r             |      ❌ 検出なし      |
-| [menu.font.height,フォントサイズ](menu.font.height.md)                                         | menu.font.height                      |      ❌ 検出なし      |
-| [menu.font.name,フォント名](menu.font.name.md)                                                 | menu.font.name                        |      ❌ 検出なし      |
-| [menu.foreground.alignment,位置](menu.foreground.alignment.md)                                 | menu.foreground.alignment             |      ❌ 検出なし      |
-| [menu.foreground.bitmap.filename,ファイル名](menu.foreground.bitmap.filename.md)               | menu.foreground.bitmap.filename       | ⚠️ 一部対応(読込のみ) |
-| [menu.foreground.font.color.b,数値](menu.foreground.font.color.b.md)                           | menu.foreground.font.color.b          |      ❌ 検出なし      |
-| [menu.foreground.font.color.g,数値](menu.foreground.font.color.g.md)                           | menu.foreground.font.color.g          |      ❌ 検出なし      |
-| [menu.foreground.font.color.r,数値](menu.foreground.font.color.r.md)                           | menu.foreground.font.color.r          |      ❌ 検出なし      |
-| [menu.frame.color.b,数値](menu.frame.color.b.md)                                               | menu.frame.color.b                    |      ❌ 検出なし      |
-| [menu.frame.color.g,数値](menu.frame.color.g.md)                                               | menu.frame.color.g                    |      ❌ 検出なし      |
-| [menu.frame.color.r,数値](menu.frame.color.r.md)                                               | menu.frame.color.r                    |      ❌ 検出なし      |
-| [menu.separator.color.b,数値](menu.separator.color.b.md)                                       | menu.separator.color.b                |      ❌ 検出なし      |
-| [menu.separator.color.g,数値](menu.separator.color.g.md)                                       | menu.separator.color.g                |      ❌ 検出なし      |
-| [menu.separator.color.r,数値](menu.separator.color.r.md)                                       | menu.separator.color.r                |      ❌ 検出なし      |
-| [menu.sidebar.alignment,位置](menu.sidebar.alignment.md)                                       | menu.sidebar.alignment                |      ❌ 検出なし      |
-| [menu.sidebar.bitmap.filename,ファイル名](menu.sidebar.bitmap.filename.md)                     | menu.sidebar.bitmap.filename          | ⚠️ 一部対応(読込のみ) |
-| [name,シェル名](name.md)                                                                       | name                                  | ⚠️ 一部対応(読込のみ) |
-| [補足](note-1.md)                                                                              | 補足                                  |      ❌ 検出なし      |
-| [readme,ファイル名](readme.md)                                                                 | readme                                |  ⚠️ 出現あり(要精査)  |
-| [readme.charset,文字コード](readme.charset.md)                                                 | readme.charset                        |      ❌ 検出なし      |
-| [sakura.balloon.alignment,位置情報](sakura.balloon.alignment.md)                               | sakura.balloon.alignment              |      ❌ 検出なし      |
-| [sakura.balloon.dontmove,数値](sakura.balloon.dontmove_.md)                                    | sakura.balloon.dontmove               |      ❌ 検出なし      |
-| [sakura.balloon.offsetx,座標](sakura.balloon.offsetx.md)                                       | sakura.balloon.offsetx                |      ❌ 検出なし      |
-| [sakura.balloon.offsety,座標](sakura.balloon.offsety.md)                                       | sakura.balloon.offsety                |      ❌ 検出なし      |
-| [sakura.balloon.syncscale,true](sakura.balloon.syncscale_.md)                                  | sakura.balloon.syncscale              |      ❌ 検出なし      |
-| [sakura.bindgroup\*.addid,ID](sakura.bindgroup-star-.addid.md)                                 | sakura.bindgroup                      |      ❌ 検出なし      |
-| [sakura.bindgroup\*.default,数値](sakura.bindgroup-star-.default.md)                           | sakura.bindgroup                      |      ❌ 検出なし      |
-| [sakura.bindgroup\*.name,カテゴリ名,パーツ名,サムネイル名](sakura.bindgroup-star-.name.md)     | sakura.bindgroup                      |      ❌ 検出なし      |
-| [sakura.bindoption\*.group,カテゴリ名,オプション](sakura.bindoption-star-.group.md)            | sakura.bindoption                     |      ❌ 検出なし      |
-| [sakura.defaultleft,X座標](sakura.defaultleft.md)                                              | sakura.defaultleft                    |      ❌ 検出なし      |
-| [sakura.defaulttop,Y座標](sakura.defaulttop.md)                                                | sakura.defaulttop                     |      ❌ 検出なし      |
-| [sakura.defaultx,X座標](sakura.defaultx.md)                                                    | sakura.defaultx                       |      ❌ 検出なし      |
-| [sakura.defaulty,Y座標](sakura.defaulty.md)                                                    | sakura.defaulty                       |      ❌ 検出なし      |
-| [sakura.icon.frame.color.b,数値](sakura.icon.frame.color.b.md)                                 | sakura.icon.frame.color.b             |      ❌ 検出なし      |
-| [sakura.icon.frame.color.g,数値](sakura.icon.frame.color.g.md)                                 | sakura.icon.frame.color.g             |      ❌ 検出なし      |
-| [sakura.icon.frame.color.r,数値](sakura.icon.frame.color.r.md)                                 | sakura.icon.frame.color.r             |      ❌ 検出なし      |
-| [sakura.menu,autoまたはhidden](sakura.menu.md)                                                 | sakura.menu                           |      ❌ 検出なし      |
-| [sakura.menuitem\*,ID](sakura.menuitem-star.md)                                                | sakura.menuitem                       |      ❌ 検出なし      |
-| [sakura.menuitemex\*,メニュー名,ID](sakura.menuitemex-star.md)                                 | sakura.menuitemex                     |      ❌ 検出なし      |
-| [sakura.name,名前](sakura.name.md)                                                             | sakura.name                           | ⚠️ 一部対応(読込のみ) |
-| [sakura.name2,名前](sakura.name2.md)                                                           | sakura.name2                          |      ❌ 検出なし      |
-| [sakura.seriko.alignmenttodesktop,位置情報](sakura.seriko.alignmenttodesktop.md)               | sakura.seriko.alignmenttodesktop      |      ❌ 検出なし      |
-| [seriko.alignmenttodesktop,位置情報](seriko.alignmenttodesktop.md)                             | seriko.alignmenttodesktop             |      ❌ 検出なし      |
-| [seriko.dpi,推奨DPI](seriko.dpi.md)                                                            | seriko.dpi                            |      ❌ 検出なし      |
-| [seriko.force_disable_crossfade,値](seriko.force_disable_crossfade.md)                         | seriko.force_disable_crossfade        |      ❌ 検出なし      |
-| [seriko.paint_transparent_region_black,数値](seriko.paint_transparent_region_black.md)         | seriko.paint_transparent_region_black |      ❌ 検出なし      |
-| [seriko.sticky-window,スコープID,スコープID,...](seriko.sticky-window.md)                      | seriko.sticky-window                  |      ❌ 検出なし      |
-| [seriko.use_self_alpha,値](seriko.use_self_alpha.md)                                           | seriko.use_self_alpha                 |      ❌ 検出なし      |
-| [seriko.zorder,スコープID,スコープID,...](seriko.zorder.md)                                    | seriko.zorder                         |      ❌ 検出なし      |
-| [type,種別](type.md)                                                                           | type                                  |   ❌ 未実装(誤検出)   |
+## 突合結果
+
+`src-tauri/src/ghost/scan/shell.rs` においてシェルの `descript.txt` 内の `readme` キーをパースし、情報を参照・利用する実装が行われている。
+
+## 実装箇所
+
+- `src-tauri/src/ghost/scan/shell.rs` `// [name,シェル名]... [readme,ファイル名]...`

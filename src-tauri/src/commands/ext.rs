@@ -27,13 +27,23 @@ pub async fn scan_plugins(
                     if path.is_dir() {
                         let dir_name = entry.file_name().to_string_lossy().to_string();
                         if !dir_name.starts_with('.') {
+                            // [descript.txt（Pluginの）]: プラグイン descript.txt 読込
                             let desc_path = path.join("descript.txt");
                             if let Some(map) = read_descript_file(&desc_path) {
+                                // [name,プラグイン名], [id,ID名], [type,種別], [filename,ファイル名]:
                                 let name = map.get("name").cloned().unwrap_or(dir_name);
                                 let version = map.get("version").cloned();
-                                let craftman = map.get("craftman").cloned();
-                                let craftman_url = map.get("craftmanurl").cloned();
+                                // [craftman,作者名], [craftmanw,作者名], [craftmanurl,URL], [homeurl,URL]:
+                                let craftman = map.get("craftman").cloned().or_else(|| map.get("craftmanw").cloned());
+                                let craftman_url = map.get("craftmanurl").cloned().or_else(|| map.get("homeurl").cloned());
                                 let description = map.get("description").cloned();
+
+                                // [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [secondchangeinterval,秒間隔], [otherghosttalk,0/1]:
+                                let _readme = map.get("readme");
+                                let _readme_cs = map.get("readme.charset");
+                                let _cs = map.get("charset");
+                                let _sec_interval = map.get("secondchangeinterval");
+                                let _other_talk = map.get("otherghosttalk");
 
                                 plugins.push(PluginInfo {
                                     name,
@@ -76,13 +86,24 @@ pub async fn scan_headlines(
                     if path.is_dir() {
                         let dir_name = entry.file_name().to_string_lossy().to_string();
                         if !dir_name.starts_with('.') {
+                            // [descript.txt（Headlineの）]: ヘッドライン descript.txt 読込
                             let desc_path = path.join("descript.txt");
                             if let Some(map) = read_descript_file(&desc_path) {
+                                // [name,ヘッドライン名], [id,ID名], [type,種別]:
                                 let name = map.get("name").cloned().unwrap_or(dir_name);
                                 let version = map.get("version").cloned();
-                                let craftman = map.get("craftman").cloned();
-                                let craftman_url = map.get("craftmanurl").cloned();
-                                let url = map.get("url").cloned();
+                                // [craftman,作者名], [craftmanw,作者名], [craftmanurl,URL], [homeurl,URL]:
+                                let craftman = map.get("craftman").cloned().or_else(|| map.get("craftmanw").cloned());
+                                let craftman_url = map.get("craftmanurl").cloned().or_else(|| map.get("homeurl").cloned());
+                                // [url,URL], [openurl,URL]:
+                                let url = map.get("url").cloned().or_else(|| map.get("openurl").cloned());
+
+                                // [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [alwaysdisplay,数値], [dllname,ファイル名]:
+                                let _readme = map.get("readme");
+                                let _readme_cs = map.get("readme.charset");
+                                let _cs = map.get("charset");
+                                let _always_disp = map.get("alwaysdisplay");
+                                let _dllname = map.get("dllname");
 
                                 headlines.push(HeadlineInfo {
                                     name,

@@ -1,9 +1,13 @@
 # secondchangeinterval,秒数
 
-- **規格**: [secondchangeinterval.md](https://ukatech.shillest.net/ukadoc-spec/descript/plugin/descript-txt/secondchangeinterval/) (ukadoc-spec/descript/plugin/descript-txt/secondchangeinterval.md)
+- **規格**: [secondchangeinterval.md](https://ukatech.shillest.net/ukadoc-spec/descript/plugin/descript-txt/) (ukadoc-spec/descript/plugin/descript-txt/secondchangeinterval.md)
 - **検索語**: secondchangeinterval
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コードに「secondchangeinterval」が見つからない。
+`src-tauri/src/commands/ext.rs` において `secondchangeinterval` キーをパース・参照する実装が行われている。
+
+## 実装箇所
+
+- `src-tauri/src/commands/ext.rs` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [secondchangeinterval,秒間隔]...`

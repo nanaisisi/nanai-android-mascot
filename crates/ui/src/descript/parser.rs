@@ -1,43 +1,9 @@
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
-
-/// シェル descript の `[target].defaultx/y/left/top`（基準位置）
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
-pub struct CharDefaults {
-    pub x: Option<i32>,
-    pub y: Option<i32>,
-    pub left: Option<i32>,
-    pub top: Option<i32>,
-}
-
-/// `[target].bindoption.group`（着せ替え選択の挙動設定）
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
-pub struct BindOptionGroup {
-    /// メニューに表示するカテゴリ名
-    pub category: String,
-    /// `mustselect` / `multiple` 等
-    pub options: Vec<String>,
-}
-
-#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
-/// `[target].bindgroup[N]` の着せ替えパーツ定義
-pub struct BindGroup {
-    /// 対応する SHEIKO アニメーションID（着せ替え番号）
-    pub number: u32,
-    /// メニューに表示するカテゴリ名（`bindgroup[N].name` 第1パラメータ）
-    pub category: String,
-    /// パーツ名（`bindgroup[N].name` 第2パラメータ）
-    pub part: String,
-    /// サムネイル画像ファイル名（省略可）
-    pub thumbnail: Option<String>,
-    /// `bindgroup[N].default,1` 設定（初期装着）
-    pub default: bool,
-    /// `bindgroup[N].addid` 追加装着アニメーションID列
-    pub add_ids: Vec<u32>,
-}
+use super::types::{CharDefaults, BindOptionGroup, BindGroup};
 
 /// カンマ区切りの数値リスト（範囲対応 `0-9` 含む）をパースする
-fn expand_ids(value: &str) -> Vec<u32> {
+pub(super) fn expand_ids(value: &str) -> Vec<u32> {
     let mut out = Vec::new();
     for part in value.split(',') {
         let part = part.trim().trim_start_matches('[').trim_end_matches(']');
@@ -169,7 +135,7 @@ impl Descript {
     pub fn bindoption_group(&self, target: &str) -> Option<BindOptionGroup> {
         let value = self.get(&format!("{target}.bindoption.group"))?;
         let mut parts = value.split(',').map(str::trim);
-        let category = parts.next().unwrap_or("");
+        let category = parts.next()?;
         let options: Vec<String> = parts.map(str::to_string).collect();
         Some(BindOptionGroup {
             category: category.to_string(),
@@ -214,101 +180,5 @@ impl Descript {
             }
         }
         groups.into_values().collect()
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_descript_shell_extensions() {
-        let sample = "type,shell\r\ncraftmanurl,https://example.ukagaka\r\n\
-            sakura.defaultx,120\r\nsakura.defaulty,240\r\n\
-            sakura.defaultleft,10\r\nsakura.defaulttop,20\r\n\
-            invalid_line_without_comma\r\n\
-            sakura.bindoption.group,服,multiple\r\n\
-            sakura.bindgroup0.name,無効,零番\r\n\
-            sakura.bindgroupabc.name,無効,文字\r\n\
-            sakura.bindgroup100.name,服,和服,thumb.png\r\n\
-            sakura.bindgroup100.default,1\r\n\
-            sakura.bindgroup100.addid,101,102\r\n\
-            sakura.bindgroup100.unknown,val\r\n\
-            kero.bindgroup200.name,帽子,ヘッドドレス\r\n";
-        let desc = Descript::parse(sample);
-
-        assert_eq!(desc.type_().map(|s| s.as_str()), Some("shell"));
-        assert_eq!(
-            desc.craftmanurl().map(|s| s.as_str()),
-            Some("https://example.ukagaka")
-        );
-        let defaults = desc.char_defaults("sakura");
-        assert_eq!(defaults.x, Some(120));
-        assert_eq!(defaults.y, Some(240));
-
-        let option = desc.bindoption_group("sakura").unwrap();
-        assert_eq!(option.category, "服");
-        assert_eq!(option.options, vec!["multiple".to_string()]);
-
-        let sakura_groups = desc.bind_groups("sakura");
-        assert_eq!(sakura_groups.len(), 1);
-        let g = &sakura_groups[0];
-        assert_eq!(g.number, 100);
-        assert_eq!(g.category, "服");
-        assert_eq!(g.part, "和服");
-        assert_eq!(g.thumbnail.as_deref(), Some("thumb.png"));
-        assert!(g.default);
-        assert_eq!(g.add_ids, [101u32, 102]);
-
-        let kero_groups = desc.bind_groups("kero");
-        assert_eq!(kero_groups.len(), 1);
-        assert_eq!(kero_groups[0].part, "ヘッドドレス");
-        assert!(desc.bindoption_group("kero").is_none());
-    }
-
-    #[test]
-    fn test_expand_ids_ranges() {
-        assert_eq!(expand_ids("0-2,9"), vec![0, 1, 2, 9]);
-        assert!(expand_ids("abc").is_empty());
-        assert_eq!(expand_ids("[5-3]"), Vec::<u32>::new());
-        assert_eq!(expand_ids("[10]"), vec![10]);
-    }
-
-    #[test]
-    fn test_descript_more_properties() {
-        let sample = "# Comment\n// Comment2\n\n\
-            name,MockGhost\n\
-            sakura.name,Sakura\n\
-            kero.name,Kero\n\
-            sakura.name2,SakuraSub\n\
-            homeurl,https://home.url\n\
-            origin.x,10\n\
-            origin.y,20\n\
-            validrect.left,0\n\
-            validrect.top,0\n\
-            validrect.right,800\n\
-            validrect.bottom,600\n\
-            font.color,255,255,255\n\
-            icon,icon.png\n\
-            craftman,Author\n\
-            craftmanurl,https://author.url\n\
-            type,ghost\n";
-        let desc = Descript::parse(sample);
-        assert_eq!(desc.name().unwrap(), "MockGhost");
-        assert_eq!(desc.sakura_name().unwrap(), "Sakura");
-        assert_eq!(desc.kero_name().unwrap(), "Kero");
-        assert_eq!(desc.sakura_names(), (Some(&"Sakura".to_string()), Some(&"SakuraSub".to_string())));
-        assert_eq!(desc.homeurl().unwrap(), "https://home.url");
-        assert_eq!(desc.origin(), (Some(10), Some(20)));
-        assert_eq!(desc.validrect(), (Some(0), Some(0), Some(800), Some(600)));
-        assert_eq!(desc.font_color().unwrap(), "255,255,255");
-        assert_eq!(desc.icon().unwrap(), "icon.png");
-        assert_eq!(desc.craftmanw().unwrap(), "Author");
-        assert_eq!(desc.craftmanurl().unwrap(), "https://author.url");
-        assert_eq!(desc.type_().unwrap(), "ghost");
-
-        let sample2 = "craftmanw,AuthorW\ncraftman,Author\n";
-        let desc2 = Descript::parse(sample2);
-        assert_eq!(desc2.craftmanw().unwrap(), "AuthorW");
     }
 }

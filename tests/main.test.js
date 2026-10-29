@@ -2,6 +2,9 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 globalThis.window = globalThis;
+globalThis.close = function () {
+	this.closed = true;
+};
 globalThis.location = { search: "?ghost_id=main&ghost_name=mock_nanai" };
 globalThis.localStorage = { getItem: () => null, setItem: () => {} };
 globalThis.document = {
@@ -63,6 +66,8 @@ test("NanaiAndroidMascotApp callGhost (lines 85-87) covers success and error bra
 		await app.callGhost("Ghost1");
 
 		// 2. Tauri environment success
+		delete globalThis.__TAURI__;
+		delete globalThis.window.__TAURI__;
 		const invokedCmds = [];
 		globalThis.__TAURI_INTERNALS__ = createTauriInternals(async (cmd, args) => {
 			invokedCmds.push({ cmd, args });
@@ -76,12 +81,16 @@ test("NanaiAndroidMascotApp callGhost (lines 85-87) covers success and error bra
 		);
 
 		// 3. Tauri environment error
-		globalThis.__TAURI_INTERNALS__ = createTauriInternals(async () => {
+		delete globalThis.__TAURI__;
+		delete globalThis.window.__TAURI__;
+		globalThis.__TAURI_INTERNALS__ = createTauriInternals(async (cmd) => {
+			if (cmd.startsWith("plugin:event|")) return 1;
 			throw new Error("spawn_ghost error");
 		});
 		await app.callGhost("Ghost3");
 	} finally {
 		NanaiAndroidMascotApp.prototype.init = origInit;
+		delete globalThis.__TAURI__;
 		delete globalThis.__TAURI_INTERNALS__;
 	}
 });
@@ -102,7 +111,10 @@ test("NanaiAndroidMascotApp closeApp (lines 164-183) covers all exit fallbacks a
 		app1.sakuraPlayer = { isPlaying: false };
 
 		const cmds1 = [];
+		delete globalThis.__TAURI__;
+		delete globalThis.window.__TAURI__;
 		globalThis.__TAURI_INTERNALS__ = createTauriInternals(async (cmd) => {
+			if (cmd.startsWith("plugin:event|")) return 1;
 			cmds1.push(cmd);
 			if (cmd === "unload_current_ghost") return;
 			if (cmd === "close_ghost") return;
@@ -130,24 +142,49 @@ test("NanaiAndroidMascotApp closeApp (lines 164-183) covers all exit fallbacks a
 		globalThis.close = () => {
 			windowClosed = true;
 		};
+		delete globalThis.__TAURI__;
+		delete globalThis.window.__TAURI__;
 		globalThis.__TAURI_INTERNALS__ = createTauriInternals(async (cmd) => {
+			if (cmd.startsWith("plugin:event|")) return 1;
 			cmds2.push(cmd);
 			throw new Error(`${cmd} error`);
 		});
 
 		await app2.closeApp();
+		await app2.closeApp(); // _isExiting early return
 		await new Promise((r) => setTimeout(r, 1550));
 		assert.ok(cmds2.includes("unload_current_ghost"));
 		assert.ok(cmds2.includes("close_ghost"));
 		assert.ok(cmds2.includes("exit_app"));
 		assert.equal(windowClosed, true);
+
+		// 3. exit_app success & hideMenu error catch(_err)
+		delete globalThis.__TAURI__;
+		delete globalThis.window.__TAURI__;
+		delete globalThis.__TAURI_INTERNALS__;
+		const app3 = new NanaiAndroidMascotApp();
+		app3.hideMenu = () => {
+			throw new Error("hideMenu error");
+		};
+		const cmds3 = [];
+		globalThis.__TAURI_INTERNALS__ = createTauriInternals(async (cmd) => {
+			if (cmd.startsWith("plugin:event|")) return 1;
+			cmds3.push(cmd);
+			if (cmd === "exit_app") return;
+			throw new Error(`${cmd} error`);
+		});
+		await app3.closeApp();
+		await new Promise((r) => setTimeout(r, 50));
+		assert.ok(cmds3.includes("exit_app"));
 	} finally {
 		NanaiAndroidMascotApp.prototype.init = origInit;
+		delete globalThis.__TAURI__;
 		delete globalThis.__TAURI_INTERNALS__;
 	}
 });
 
 test("NanaiAndroidMascotApp initialization and mixin delegation", async () => {
+	delete globalThis.__TAURI__;
 	delete globalThis.__TAURI_INTERNALS__;
 	const app = new NanaiAndroidMascotApp();
 	assert.equal(app.ghostId, "main");
@@ -155,6 +192,12 @@ test("NanaiAndroidMascotApp initialization and mixin delegation", async () => {
 
 	app.ghostController.sendShioriEvent = async () => ({});
 	app.onGhostClick(10, 10, { left: 0, top: 0, width: 100, height: 100 }, 0);
+	// Direct call to original class method onGhostClick before/aside from Object.assign override
+	const origEventOnGhostClick = Object.getOwnPropertyDescriptor(
+		NanaiAndroidMascotApp.prototype,
+		"onGhostClick",
+	);
+	assert.ok(origEventOnGhostClick);
 
 	app.scanBalloons = async () => {};
 	app.ghostController.autoLoadGhost = async () => {};
@@ -166,6 +209,10 @@ test("NanaiAndroidMascotApp initialization and mixin delegation", async () => {
 
 	app.settings.autoLoadGhost = true;
 	await app.init();
+
+	globalThis.__TAURI_INTERNALS__ = createTauriInternals(async () => 1);
+	app.initUIEnvironment();
+	delete globalThis.__TAURI_INTERNALS__;
 
 	globalThis._globalListeners?.DOMContentLoaded?.();
 

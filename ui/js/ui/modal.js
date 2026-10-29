@@ -68,19 +68,19 @@ export class ModalManager {
 
 	setupListeners(contentId) {
 		if (contentId === "ghost-modal-content") {
-			this.ghostHandlers.setupGhostListeners();
+			this.ghostHandlers.setupGhostListeners?.();
 		} else if (contentId === "explorer-modal-content") {
-			this.ghostHandlers.setupExplorerListeners();
+			this.ghostHandlers.setupExplorerListeners?.();
 		} else if (contentId === "install-modal-content") {
-			this.ghostHandlers.setupInstallListeners();
+			this.ghostHandlers.setupInstallListeners?.();
 		} else if (contentId === "balloon-modal-content") {
-			this.ghostHandlers.renderBalloonList();
+			this.ghostHandlers.renderBalloonList?.();
 		} else if (contentId === "settings-modal-content") {
-			this.settingsHandlers.setupSettingsListeners();
+			this.settingsHandlers.setupSettingsListeners?.();
 		} else if (contentId === "plugins-modal-content") {
-			this.settingsHandlers.setupPluginListeners();
+			this.settingsHandlers.setupPluginListeners?.();
 		} else if (contentId === "debug-modal-content") {
-			this.settingsHandlers.setupDebugListeners();
+			this.settingsHandlers.setupDebugListeners?.();
 		}
 	}
 
@@ -107,10 +107,10 @@ export class ModalManager {
 
 	// 下位互換プロキシメソッド
 	renderGhostList() {
-		this.ghostHandlers.renderGhostList();
+		this.ghostHandlers.renderGhostList?.();
 	}
 
 	renderBalloonList() {
-		this.ghostHandlers.renderBalloonList();
+		this.ghostHandlers.renderBalloonList?.();
 	}
 }

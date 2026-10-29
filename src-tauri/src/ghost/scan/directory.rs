@@ -47,8 +47,14 @@ pub async fn scan_ghost_directory(
                 if path.is_dir() {
                     let dir_name = entry.file_name().to_string_lossy().to_string();
                     if !dir_name.starts_with('.') {
-                        if path.join(".dev_ignore").exists() {
-                            println!("🚫 Skipping ghost directory with .dev_ignore: {:?}", path);
+                        // [.narignore / .updateignore / .narinclude / .updateinclude]: アーカイブ・更新除外および開発無視ファイルのハンドリング
+                        if path.join(".dev_ignore").exists()
+                            || path.join(".narignore").exists()
+                            || path.join(".updateignore").exists()
+                            || path.join(".narinclude").exists()
+                            || path.join(".updateinclude").exists()
+                        {
+                            println!("🚫 Skipping ghost directory with .dev_ignore/.narignore/.updateignore: {:?}", path);
                             continue;
                         }
 

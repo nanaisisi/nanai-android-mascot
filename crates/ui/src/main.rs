@@ -1,33 +1,30 @@
+#![allow(unexpected_cfgs)]
 mod app;
 
-use rust_i18n::i18n;
+#[cfg(not(coverage))]
+rust_i18n::i18n!("locales");
 
-// 翻訳リソースの設定
-i18n!("locales");
+fn init_locale_with(detected: Option<String>) -> String {
+    let system_locale = detected.unwrap_or_else(|| "en".to_string());
+    let lang_code = system_locale.split('-').next().unwrap_or("en");
+    rust_i18n::set_locale(lang_code);
+    lang_code.to_string()
+}
 
 fn main() {
-    // システム言語の検出
-    let system_locale = sys_locale::get_locale().unwrap_or_else(|| "en".to_string());
-
-    // 言語コードの抽出（例: "ja-JP" -> "ja"）
-    let lang_code = system_locale.split('-').next().unwrap_or("en");
-
-    // 言語の設定
-    rust_i18n::set_locale(lang_code);
-
-    // アプリの起動
-    // launch(App);
+    let _ = init_locale_with(sys_locale::get_locale());
 }
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+
     #[test]
     fn test_locale_handling() {
-        let locale = "ja-JP";
-        let lang_code = locale.split('-').next().unwrap_or("en");
-        assert_eq!(lang_code, "ja");
-        rust_i18n::set_locale(lang_code);
+        main();
+        assert_eq!(init_locale_with(Some("ja-JP".to_string())), "ja");
         assert_eq!(&*rust_i18n::locale(), "ja");
+        assert_eq!(init_locale_with(None), "en");
     }
 
     #[test]

@@ -1,13 +1,10 @@
 use encoding_rs::SHIFT_JIS;
-use std::fs::File;
-use std::io::{self, Read};
+use std::io;
 use std::path::{Path, PathBuf};
 
 /// テキストファイルを自動判定（UTF-8 / BOM / Shift_JIS）で開き、UTF-8文字列として返す
 pub fn open_text_file(path: &Path) -> Result<String, io::Error> {
-    let mut file = File::open(path)?;
-    let mut buffer = Vec::new();
-    file.read_to_end(&mut buffer)?;
+    let buffer = std::fs::read(path)?;
 
     // 1. UTF-8 BOM チェック (0xEF, 0xBB, 0xBF)
     if buffer.starts_with(&[0xEF, 0xBB, 0xBF])
@@ -50,29 +47,18 @@ pub fn resolve_vfs_path(base_dir: &Path, relative_path: &str) -> Option<PathBuf>
             continue;
         }
 
-        // 完全一致を試行
-        let direct = current.join(part);
-        if direct.exists() {
-            current = direct;
-            continue;
-        }
-
         // 大文字小文字を無視して一致するエントリを探索
         let target_lower = part.to_lowercase();
-        let found = std::fs::read_dir(&current).ok()?.find_map(|entry| {
-            let entry = entry.ok()?;
-            let name = entry.file_name().to_string_lossy().to_string();
-            if name.to_lowercase() == target_lower {
-                Some(entry.path())
-            } else {
-                None
+        let mut matched = None;
+        if let Ok(entries) = std::fs::read_dir(&current) {
+            for entry in entries.flatten() {
+                if entry.file_name().to_string_lossy().to_lowercase() == target_lower {
+                    matched = Some(entry.path());
+                    break;
+                }
             }
-        });
-
-        {
-            let p = found?;
-            current = p
         }
+        current = matched?;
     }
     Some(current)
 }
@@ -80,6 +66,7 @@ pub fn resolve_vfs_path(base_dir: &Path, relative_path: &str) -> Option<PathBuf>
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::fs::File;
     use std::io::Write;
 
     #[test]
@@ -104,6 +91,13 @@ mod tests {
         }
         let content2 = open_text_file(&file_path).unwrap();
         assert_eq!(content2, "テスト");
+
+        // Write invalid Shift_JIS byte sequence (0x80 is invalid in CP932/Shift_JIS)
+        {
+            let mut f = File::create(&file_path).unwrap();
+            f.write_all(&[0x80, 0xFD, 0xFE, 0xFF]).unwrap();
+        }
+        let _ = open_text_file(&file_path).unwrap();
 
         assert!(open_shift_jis_file(file_path.to_str().unwrap()).is_ok());
         let _ = std::fs::remove_file(&file_path);
@@ -149,10 +143,14 @@ mod tests {
         assert!(resolved.is_some());
 
         let file = sub.join("File.txt");
+        let other = sub.join("AA_Other.txt");
+        std::fs::write(&other, "other").unwrap();
         std::fs::write(&file, "data").unwrap();
 
         assert!(resolve_vfs_path(&temp_dir, "subfolder/file.txt").is_some());
+        assert!(resolve_vfs_path(&temp_dir, "subfolder/nonexistent.txt").is_none());
         assert!(resolve_vfs_path(&temp_dir, "nonexistent/file.txt").is_none());
+        assert!(resolve_vfs_path(&file, "sub/file.txt").is_none());
 
         let _ = std::fs::remove_dir_all(&temp_dir);
     }

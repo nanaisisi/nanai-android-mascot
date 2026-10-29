@@ -189,7 +189,7 @@ mod tests {
 
     #[test]
     fn test_shiori_request_parse_and_build() {
-        let raw = "GET SHIORI/3.0\r\nCharset: UTF-8\r\nSender: TestGhost\r\nID: OnBoot\r\nReference0: val0\r\n\r\n";
+        let raw = "GET SHIORI/3.0\r\nCharset: UTF-8\r\nSender: TestGhost\r\nID: OnBoot\r\nReference0: val0\r\nReferenceABC: invalid\r\nUnknownHeader: ignored\r\n\r\n";
         let parsed = ShioriRequest::parse(raw).unwrap();
         assert_eq!(parsed.id, "OnBoot");
         assert_eq!(parsed.references[0], "val0");

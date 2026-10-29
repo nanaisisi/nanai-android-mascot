@@ -144,9 +144,13 @@ mod tests {
         let res_vn = ShioriResponse::parse(text_vn).unwrap();
         assert_eq!(res_vn.value_notify.as_deref(), Some("notify1\nnotify2"));
 
-        let text_url = "SHIORI/3.0 200 OK\r\nValue: http://example.com:8080/path\r\n\r\n";
+        let text_url = "SHIORI/3.0 200 OK\r\nValue: http://example.com:8080/path\r\ncont key: cont val\r\n\r\n";
         let res_url = ShioriResponse::parse(text_url).unwrap();
-        assert_eq!(res_url.value.as_deref(), Some("http://example.com:8080/path"));
+        assert_eq!(res_url.value.as_deref(), Some("http://example.com:8080/path\ncont key: cont val"));
+
+        let text_unknown = "SHIORI/3.0 200 OK\r\nReference2: r2\r\nReference0: r0\r\nReference1: r1\r\nUnknownHeader: val\r\n\r\n";
+        let res_unknown = ShioriResponse::parse(text_unknown).unwrap();
+        assert_eq!(res_unknown.references, vec!["r1".to_string(), "r2".to_string()]);
 
         let text_orphan = "SHIORI/3.0 200 OK\r\nOrphan line\r\nValue: val\r\n\r\n";
         let res_orphan = ShioriResponse::parse(text_orphan).unwrap();
@@ -170,7 +174,7 @@ mod tests {
         assert_eq!(res_invalid.balloon_offset, None);
         assert_eq!(res_invalid.age, None);
 
-        let text_partial_offset = "SHIORI/3.0 200 OK\r\nBalloonOffset: 10\r\n\r\n";
+        let text_partial_offset = "SHIORI/3.0 200 OK\r\nBalloonOffset: x, 10\r\nBalloonOffset: 10, y\r\nBalloonOffset: 10\r\n\r\n";
         let res_partial = ShioriResponse::parse(text_partial_offset).unwrap();
         assert_eq!(res_partial.balloon_offset, None);
     }

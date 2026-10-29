@@ -67,9 +67,8 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
                 }
                 Some('n') => {
                     // \n / \n[half] / \n[N]
-                    if let Some(half) = brackets::handle_newline(&mut chars) {
-                        callback(SakuraCommand::NewLine { half });
-                    }
+                    let half = brackets::handle_newline(&mut chars).unwrap_or(false);
+                    callback(SakuraCommand::NewLine { half });
                 }
                 Some('i') => {
                     // \i[ID] / \i[ID,wait] / \i0..\i9
@@ -111,7 +110,7 @@ mod tests {
 
     #[test]
     fn test_parse_sakura_script_comprehensive() {
-        let script = "\\0\\h\\1\\u\\p[2]\\s[10]\\w5\\x\\b[1]\\f[bold,1]\\t\\-\\n\\i[3]\\c\\e\\q[Opt,ID]\\!unknown\\e";
+        let script = "\\0\\h\\1\\u\\p[2]\\px\\s[10]\\sx\\w5\\wx\\x\\_w[10]\\b[1]\\bx\\f[bold,1]\\fx\\t\\-\\n\\i[3]\\ix\\c\\e\\q[Opt,ID]\\qx\\![raise,OnE]\\!unknown\\z[arg]\\";
         let cmds = parse_sakura_script(script);
         assert!(!cmds.is_empty());
     }

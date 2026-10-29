@@ -115,12 +115,21 @@ mod tests {
         assert_eq!(StatusCode::Ok.text(), "OK");
 
         assert_eq!(StatusCode::parse(204), StatusCode::NoContent);
+        assert_eq!(StatusCode::NoContent.code(), 204);
         assert_eq!(StatusCode::NoContent.text(), "No Content");
 
         assert_eq!(StatusCode::parse(311), StatusCode::NotEnough);
+        assert_eq!(StatusCode::NotEnough.code(), 311);
+        assert_eq!(StatusCode::NotEnough.text(), "Not Enough");
         assert_eq!(StatusCode::parse(312), StatusCode::Advice);
+        assert_eq!(StatusCode::Advice.code(), 312);
+        assert_eq!(StatusCode::Advice.text(), "Advice");
         assert_eq!(StatusCode::parse(400), StatusCode::BadRequest);
+        assert_eq!(StatusCode::BadRequest.code(), 400);
+        assert_eq!(StatusCode::BadRequest.text(), "Bad Request");
         assert_eq!(StatusCode::parse(500), StatusCode::InternalError);
+        assert_eq!(StatusCode::InternalError.code(), 500);
+        assert_eq!(StatusCode::InternalError.text(), "Internal Server Error");
         assert_eq!(StatusCode::parse(999), StatusCode::Other(999));
         assert_eq!(StatusCode::Other(999).code(), 999);
         assert_eq!(StatusCode::Other(999).text(), "");

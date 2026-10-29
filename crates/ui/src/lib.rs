@@ -36,10 +36,9 @@ mod tests {
 
     #[test]
     fn test_open_shift_jis_file() {
-        if let Ok(content) = open_shift_jis_file("sample/readme.txt") {
-            assert!(!content.is_empty());
-            println!("Content: {}", content);
-        }
+        let path = concat!(env!("CARGO_MANIFEST_DIR"), "/../../assets/ghost/mock_nanai/install.txt");
+        let content = open_shift_jis_file(path).unwrap();
+        assert!(!content.is_empty());
     }
 
     #[test]

@@ -108,9 +108,8 @@ pub(super) fn is_header_key(key: &str) -> bool {
 
 pub(super) fn write_multiline_header(out: &mut String, name: &str, value: &str) {
     let mut lines = value.split('\n');
-    if let Some(first) = lines.next() {
-        out.push_str(&format!("{}: {}\r\n", name, first));
-    }
+    let first = lines.next().unwrap_or("");
+    out.push_str(&format!("{}: {}\r\n", name, first));
     for line in lines {
         out.push_str(line);
         out.push_str("\r\n");
@@ -158,6 +157,10 @@ mod tests {
         assert_eq!(res_notify.value_notify.as_deref(), Some("Notify1\nNotify2"));
 
         push_continuation(&mut res_notify, Some("unknown"), "Ignored");
+
+        let mut res_none = ShioriResponse::default();
+        push_continuation(&mut res_none, Some("value"), "Ignored");
+        push_continuation(&mut res_none, Some("value_notify"), "Ignored");
 
         let mut out = String::new();
         write_multiline_header(&mut out, "Header", "Line1\nLine2");

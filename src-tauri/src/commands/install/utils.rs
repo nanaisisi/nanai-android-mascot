@@ -135,3 +135,23 @@ pub fn flatten_balloon_directory(target_dir: &Path) -> Result<(), String> {
     std::fs::remove_dir(&wrapper).map_err(|e| format!("Failed to remove balloon wrapper: {e}"))?;
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_sanitize_dir_name() {
+        assert_eq!(sanitize_dir_name("Test Ghost/Name?"), "Test_Ghost_Name_");
+        assert_eq!(sanitize_dir_name("normal_name"), "normal_name");
+    }
+
+    #[test]
+    fn test_parse_zip_entry_descript() {
+        let content = b"name,TestGhost\nversion,1.0.0\n// comment\n";
+        let mut cursor = std::io::Cursor::new(content);
+        let map = parse_zip_entry_descript(&mut cursor);
+        assert_eq!(map.get("name"), Some(&"TestGhost".to_string()));
+        assert_eq!(map.get("version"), Some(&"1.0.0".to_string()));
+    }
+}

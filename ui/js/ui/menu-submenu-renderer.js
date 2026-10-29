@@ -2,8 +2,9 @@
  * @file menu-submenu-renderer.js
  * @brief コンテキストメニューの各サブメニュー描画を統合するメインクラス
  */
-import { menuGhostShellRenderer } from "./renderers/menu-ghost-shell-renderer.js";
+
 import { menuBalloonDressupRenderer } from "./renderers/menu-balloon-dressup-renderer.js";
+import { menuGhostShellRenderer } from "./renderers/menu-ghost-shell-renderer.js";
 import { menuThemeRenderer } from "./renderers/menu-theme-renderer.js";
 
 export class MenuSubmenuRenderer {
@@ -37,11 +38,7 @@ export class MenuSubmenuRenderer {
 	}
 
 	renderDressupSubmenu(dressup, scope = 0) {
-		menuBalloonDressupRenderer.renderDressupSubmenu.call(
-			this,
-			dressup,
-			scope,
-		);
+		menuBalloonDressupRenderer.renderDressupSubmenu.call(this, dressup, scope);
 	}
 
 	renderRecentSubmenu(recentGhosts = []) {

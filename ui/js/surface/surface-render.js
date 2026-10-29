@@ -2,12 +2,13 @@
  * @file surface-render.js
  * @brief サーフィスの描画・合成、当たり判定、着せ替え管理を統合するメイン mixin モジュール
  */
+
+import { surfaceCollisionMethods } from "./surface-collision.js";
 import {
 	composeSurfaceElements,
 	drawLayer,
 	processChromaKey,
 } from "./surface-compositor.js";
-import { surfaceCollisionMethods } from "./surface-collision.js";
 import { surfaceDressupMethods } from "./surface-dressup.js";
 
 export const surfaceRenderMethods = {

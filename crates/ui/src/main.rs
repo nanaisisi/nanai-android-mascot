@@ -18,3 +18,15 @@ fn main() {
     // アプリの起動
     // launch(App);
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_locale_handling() {
+        let locale = "ja-JP";
+        let lang_code = locale.split('-').next().unwrap_or("en");
+        assert_eq!(lang_code, "ja");
+        rust_i18n::set_locale(lang_code);
+        assert_eq!(&*rust_i18n::locale(), "ja");
+    }
+}

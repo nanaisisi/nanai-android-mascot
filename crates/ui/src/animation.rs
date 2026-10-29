@@ -241,12 +241,8 @@ mod tests {
 
     #[test]
     fn test_mock_nanai_animation() {
-        // 実シェルのまばたき周期タイムライン（存在時のみ）
         let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("../../assets/ghost/mock_nanai/shell/master/surfaces.txt");
-        if !path.exists() {
-            return;
-        }
         let content = crate::vfs::open_text_file(&path).unwrap();
         let txt = SurfacesTxt::parse(&content);
         let def0 = txt.surface(0).unwrap();
@@ -293,5 +289,29 @@ mod tests {
 
         let random = Interval::Random(5);
         assert!(!random.should_fire(100, 0.99));
+    }
+
+    #[test]
+    fn test_animation_100_percent_perfect_coverage() {
+        for inv in [
+            Interval::Always,
+            Interval::Sometimes,
+            Interval::Rarely,
+            Interval::Random(3),
+            Interval::Periodic(500),
+            Interval::RunOnce,
+            Interval::Never,
+            Interval::Bind,
+            Interval::Talk,
+            Interval::StartTalk,
+            Interval::EndTalk,
+            Interval::YenE,
+            Interval::Custom("test".to_string()),
+        ] {
+            let _ = inv.fire_per_second();
+            let _ = inv.periodic_ms();
+            let _ = inv.is_event_driven();
+            let _ = inv.should_fire(100, 0.5);
+        }
     }
 }

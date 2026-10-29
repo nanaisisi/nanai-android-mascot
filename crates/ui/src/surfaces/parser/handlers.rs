@@ -44,14 +44,14 @@ pub(super) fn first_i32(value: &str) -> Option<i32> {
 
 pub(super) fn parse_balloon_offset_key(key: &str) -> Option<(String, char)> {
     if let Some(axis_str) = key.strip_prefix("balloon.offset") {
-        let axis = axis_str.trim().chars().next()?;
+        let axis = axis_str.trim().trim_start_matches('.').chars().next()?;
         return Some(("*".to_string(), axis));
     }
     let (head, rest) = key.split_once(".balloon.offset")?;
     if head.is_empty() {
         return None;
     }
-    let axis = rest.trim().chars().next()?;
+    let axis = rest.trim().trim_start_matches('.').chars().next()?;
     Some((head.to_string(), axis))
 }
 
@@ -283,5 +283,53 @@ pub(super) fn apply_point(txt: &mut SurfacesTxt, ids: &[u32], field: &str, value
             "kinoko.centery" => points.kinoko_center_y = parsed,
             _ => {}
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_expand_range() {
+        assert_eq!(expand_range("0-2,5"), vec![0, 1, 2, 5]);
+        assert_eq!(expand_range("[10-12]"), vec![10, 11, 12]);
+        assert_eq!(expand_range("invalid"), Vec::<u32>::new());
+    }
+
+    #[test]
+    fn test_split_id_suffix() {
+        assert_eq!(split_id_suffix("test100"), ("test", Some(100)));
+        assert_eq!(split_id_suffix("noint"), ("noint", None));
+    }
+
+    #[test]
+    fn test_first_i32() {
+        assert_eq!(first_i32(" 42 , 100 "), Some(42));
+        assert_eq!(first_i32("abc"), None);
+    }
+
+    #[test]
+    fn test_parse_balloon_offset_key() {
+        assert_eq!(parse_balloon_offset_key("balloon.offset.x"), Some(("*".to_string(), 'x')));
+        assert_eq!(parse_balloon_offset_key("sakura.balloon.offset.y"), Some(("sakura".to_string(), 'y')));
+        assert_eq!(parse_balloon_offset_key("invalid"), None);
+    }
+
+    #[test]
+    fn test_apply_handlers() {
+        let mut txt = SurfacesTxt::default();
+        apply_point(&mut txt, &[0], "centerx", "150");
+        assert_eq!(txt.surfaces.get(&0).unwrap().points.center_x, Some(150));
+
+        apply_element(&mut txt, &[0], "element0", "overlay,base.png,0,0");
+        assert_eq!(txt.surfaces.get(&0).unwrap().elements.len(), 1);
+
+        apply_collision(&mut txt, &[0], "collision0", "0,0,50,50,Face");
+        assert_eq!(txt.surfaces.get(&0).unwrap().collisions.len(), 1);
+
+        apply_animation_line(&mut txt, &[0], "0.interval", "sometimes");
+        apply_animation_line(&mut txt, &[0], "0.pattern0", "overlay,6,85-120,0,0");
+        assert!(txt.surfaces.get(&0).unwrap().animations.contains_key(&0));
     }
 }

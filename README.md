@@ -62,6 +62,9 @@ cargo tauri dev
 
 # リリースビルド
 cargo tauri build
+
+# カバレッジテスト
+with-env { RUSTC_WRAPPER: "", CARGO_UNSTABLE_CODEGEN_BACKEND: "true", CARGO_PROFILE_DEV_CODEGEN_BACKEND: "llvm" } { cargo llvm-cov --summary-only }
 ```
 
 ログレベルには `off`、`error`、`warn`、`info`、`debug`、`trace` を指定できます。

@@ -34,3 +34,25 @@ pub fn extract_filename(path: &str) -> String {
         .unwrap_or(path)
         .to_string()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_get_ghost_dir() {
+        assert_eq!(get_ghost_dir(), PathBuf::from("ghost"));
+    }
+
+    #[test]
+    fn test_extract_filename() {
+        assert_eq!(extract_filename("assets/ghost/mock_nanai/surfaces.txt"), "surfaces.txt");
+        assert_eq!(extract_filename("surfaces.txt"), "surfaces.txt");
+        assert_eq!(extract_filename(""), "");
+    }
+
+    #[test]
+    fn test_get_ghost_dir_list() {
+        let _list = get_ghost_dir_list();
+    }
+}

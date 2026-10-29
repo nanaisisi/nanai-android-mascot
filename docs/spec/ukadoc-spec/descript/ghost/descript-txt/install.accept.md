@@ -1,9 +1,13 @@
 # install.accept,名前1,名前2,名前3...
 
-- **規格**: [install.accept.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/install.accept/) (ukadoc-spec/descript/ghost/descript-txt/install.accept.md)
+- **規格**: [install.accept.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/install.accept.md)
 - **検索語**: install.accept
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コードに「install.accept」が見つからない。
+`src-tauri/src/ghost/scan/directory.rs` において `install.accept` キーをパース・参照する実装が行われている。
+
+## 実装箇所
+
+- `src-tauri/src/ghost/scan/directory.rs` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [icon,ファイル名], [icon.minimize,ファイル名], [install.accept,名前1,名前2,名前3...]:`

@@ -1,18 +1,13 @@
 # craftmanw,作者名
 
-- **規格**: [craftmanw.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/craftmanw/) (ukadoc-spec/descript/ghost/descript-txt/craftmanw.md)
+- **規格**: [craftmanw.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/craftmanw.md)
 - **検索語**: craftmanw
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コード内に「craftmanw」を確認。
-
+`src-tauri/src/ghost/scan/directory.rs` において `craftmanw` キーをパース（`craftman` のフォールバック）し、`GhostInfo.craftman` へ設定する実装が行われている。
 
 ## 実装箇所
 
-- `crates/ui/src/shell.rs:18` `/// `descript.txt`（type / name / craftmanw / bindgroup 等）`
-- `crates/ui/src/shell.rs:105` `/// シェル作者名（`craftmanw`/`craftman`）`
-- `crates/ui/src/shell.rs:107` `self.descript.craftmanw()`
-- `crates/ui/src/manifest.rs:31` `/// シェル作者名（`craftmanw`/`craftman`）`
-- `crates/ui/src/manifest.rs:108` `"type,shell\nname,manifest_test\ncraftmanw,Tester\n",`
+- `src-tauri/src/ghost/scan/directory.rs` `// [shiori,ファイル名], [craftman,作者名], [craftmanw,作者名], [craftmanurl,URL], [homeurl,URL], [id,ID名]:`

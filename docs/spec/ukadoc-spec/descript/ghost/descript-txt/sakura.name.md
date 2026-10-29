@@ -1,17 +1,13 @@
 # sakura.name,名前
 
-- **規格**: [sakura.name.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/sakura.name/) (ukadoc-spec/descript/ghost/descript-txt/sakura.name.md)
+- **規格**: [sakura.name.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/sakura.name.md)
 - **検索語**: sakura.name
-- **対応状況**: ⚠️ 一部対応(読込のみ)
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-ghost/scan.rs 等で descript の値を読込している。表示・動作への反映は個別未確認。
+`src-tauri/src/ghost/scan/directory.rs` において `sakura.name` キーをパースし、本体（\0）表示名 `GhostInfo.sakura_name` へ設定する実装が行われている。
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive.rs:237` `.and_then(|m| m.get("sakura.name").cloned());`
-- `src-tauri/src/ghost/scan/directory.rs:81` `.and_then(|m| m.get("sakura.name").cloned());`
-- `crates/ui/src/descript.rs:90` `/// キャラクター本体名（`kero.name`または`sakura.name`）`
-- `crates/ui/src/descript.rs:92` `self.get("sakura.name")`
-- `crates/ui/src/descript.rs:145` `/// さくら（本体）の正式名とサブ表示名（`sakura.name`, `sakura.name2`）`
+- `src-tauri/src/ghost/scan/directory.rs` `// [version,バージョン], [sakura.name,名前], [sakura.name2,名前], [kero.name,名前]:`

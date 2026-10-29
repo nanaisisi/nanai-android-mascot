@@ -6,11 +6,8 @@
 
 ## 突合結果
 
-`app-actions.js` の `applyBalloonDescript` にて `--balloon-clickwait-image` として動的解決・バインド対応済。
-
+`ui/js/core/actions/balloon-descript/assets.js` の `applyAssetProperties()` 内 `setBalloonImage("clickwaitmarker.filename", "--balloon-clickwait-image")` にて動的解決・バインド対応済。
 
 ## 実装箇所
 
-- `ui/css/balloon-window.css:81` `/* バルーンオプション画像 (arrow.filename, clickwaitmarker.filename 等) */`
-- `ui/css/balloon-window.css:100` `/* クリック待ちマーカー (clickwaitmarker.filename) */`
-- `ui/js/core/actions/balloon-descript.js:192` `setBalloonImage("clickwaitmarker.filename", "--balloon-clickwait-image");`
+- `ui/js/core/actions/balloon-descript/assets.js` `setBalloonImage("clickwaitmarker.filename", "--balloon-clickwait-image");`

@@ -127,7 +127,7 @@ async function applyBalloonDescript(theme) {
 			);
 		}
 
-		// 背景画像（balloons0: さくら / balloonk0: 相方。9 スライスで伸縮）
+		// [balloons*s.txt/balloonk*s.txt]: 背景画像（balloons0: さくら / balloonk0: 相方。9 スライスで伸縮）
 		const imageFile = scopeId === 0 ? "balloons0.png" : "balloonk0.png";
 		const bgImage = await invoke("load_balloon_image", {
 			name: theme,

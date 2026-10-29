@@ -41,6 +41,12 @@ pub struct GhostInfo {
     pub install_date: Option<String>,
     pub update_date: Option<String>,
     pub update_result: Option<String>,
+    /// [balloon,バルーン名], [recommended.balloon,バルーン名]:
+    pub recommended_balloon: Option<String>,
+    /// [標準と推奨の使い分け], [recommended.balloon.path,パス]:
+    pub recommended_balloon_path: Option<String>,
+    /// [default.balloon.path,パス]:
+    pub default_balloon_path: Option<String>,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]

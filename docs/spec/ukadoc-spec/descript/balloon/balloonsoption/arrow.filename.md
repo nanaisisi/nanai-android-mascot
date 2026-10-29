@@ -6,10 +6,9 @@
 
 ## 突合結果
 
-`app-actions.js` の `applyBalloonDescript` にて `--balloon-arrow-image` として動的解決・バインド対応済。
-
+`ui/js/core/actions/balloon-descript/assets.js` の `applyAssetProperties()` 内 `setBalloonImage("arrow.filename", "--balloon-arrow-image")` にて動的解決・バインド対応済。
 
 ## 実装箇所
 
 - `ui/css/balloon-window.css:81` `/* バルーンオプション画像 (arrow.filename, clickwaitmarker.filename 等) */`
-- `ui/js/core/actions/balloon-descript.js:191` `setBalloonImage("arrow.filename", "--balloon-arrow-image");`
+- `ui/js/core/actions/balloon-descript/assets.js` `setBalloonImage("arrow.filename", "--balloon-arrow-image");`

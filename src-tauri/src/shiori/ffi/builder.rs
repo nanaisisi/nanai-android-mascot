@@ -194,3 +194,32 @@ impl ShioriRequestBuilder {
         builder
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_shiori_request_builder_on_boot() {
+        let req = ShioriRequestBuilder::on_boot().build();
+        assert!(req.contains("OnBoot"));
+        assert!(req.contains("NOTIFY"));
+    }
+
+    #[test]
+    fn test_shiori_request_builder_mouse_click() {
+        let req = ShioriRequestBuilder::on_mouse_click(100, 200, "0").build();
+        assert!(req.contains("OnMouseClick"));
+        assert!(req.contains("100"));
+        assert!(req.contains("200"));
+    }
+
+    #[test]
+    fn test_shiori_request_builder_biff() {
+        let req = ShioriRequestBuilder::on_biff_complete(3, 1024, Some("default")).build();
+        assert!(req.contains("OnBIFFComplete"));
+        assert!(req.contains("3"));
+        assert!(req.contains("1024"));
+        assert!(req.contains("default"));
+    }
+}

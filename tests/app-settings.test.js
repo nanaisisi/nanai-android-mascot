@@ -56,32 +56,47 @@ test("settingsMethods coverage for loadSettings, applySettings, showBalloon, hid
 	assert.equal(mockApp.settings.darkMode, true);
 
 	// Test applySettings with Tauri unavailable
+	delete globalThis.__TAURI__;
+	delete globalThis.__TAURI_INTERNALS__;
 	mockApp.applySettings();
 
 	// Test applySettings with Tauri available
-	globalThis.__TAURI__ = { core: { invoke: async () => {} } };
+	globalThis.__TAURI_INTERNALS__ = {
+		metadata: { currentWindow: { label: "main" } },
+		invoke: async () => {},
+		transformCallback: (cb) => cb,
+		plugins: { event: { emit: async () => {} } },
+	};
 	mockApp.applySettings();
-	delete globalThis.__TAURI__;
 
 	// Test showBalloon & hideBalloon (Tauri unavailable)
+	delete globalThis.__TAURI_INTERNALS__;
 	mockApp.showBalloon("test text", 0);
 	assert.equal(mockApp.elements.balloonText.textContent, "test text");
 	mockApp.hideBalloon(0);
 
 	// Test showBalloon & hideBalloon (Tauri available)
-	globalThis.__TAURI__ = {
-		core: {
-			invoke: async (cmd, _args) => {
-				if (cmd === "show_balloon_window" || cmd === "hide_balloon_window")
-					return;
+	const emittedEvents = [];
+	globalThis.__TAURI_INTERNALS__ = {
+		metadata: { currentWindow: { label: "main" } },
+		invoke: async (cmd) => {
+			if (cmd === "show_balloon_window" || cmd === "hide_balloon_window") return;
+		},
+		transformCallback: (cb) => cb,
+		plugins: {
+			event: {
+				emit: async (event, payload) => {
+					emittedEvents.push({ event, payload });
+				},
 			},
 		},
-		event: { emit: async () => {} },
 	};
+
 	mockApp.showBalloon("tauri text", 1);
-	await new Promise((r) => setTimeout(r, 10));
+	await new Promise((r) => setTimeout(r, 20));
 	mockApp.hideBalloon(1);
-	delete globalThis.__TAURI__;
+
+	delete globalThis.__TAURI_INTERNALS__;
 
 	// Test playSakuraScript
 	const res = mockApp.playSakuraScript("\\0Hello");

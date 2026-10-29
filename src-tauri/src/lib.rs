@@ -1,5 +1,5 @@
-use specta_typescript::Typescript;
 #[allow(unused_imports)]
+use specta_typescript::Typescript;
 use tauri_specta::{Builder as SpectaBuilder, collect_commands};
 
 macro_rules! println {

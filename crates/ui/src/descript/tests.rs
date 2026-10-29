@@ -84,3 +84,17 @@ fn test_descript_more_properties() {
     let desc2 = Descript::parse(sample2);
     assert_eq!(desc2.craftmanw().unwrap(), "AuthorW");
 }
+
+#[test]
+fn test_descript_parser_edge_cases() {
+    let sample = "sakura.bindgroup0.name,Invalid,Zero\n\
+                  sakura.bindgroup10.unknown_field,value\n\
+                  sakura.defaultleft,10\n\
+                  sakura.defaulttop,20\n";
+    let desc = Descript::parse(sample);
+    let groups = desc.bind_groups("sakura");
+    assert_eq!(groups.len(), 1);
+    let defaults = desc.char_defaults("sakura");
+    assert_eq!(defaults.left, Some(10));
+    assert_eq!(defaults.top, Some(20));
+}

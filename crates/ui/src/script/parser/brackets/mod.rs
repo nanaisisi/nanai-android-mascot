@@ -111,4 +111,32 @@ mod tests {
             }]
         );
     }
+
+    #[test]
+    fn test_handlers_extended_edge_cases() {
+        let mut cmds = Vec::new();
+        let mut chars = "[bind,cat,part,0]".chars().peekable();
+        handle_raiselike(&mut chars, &mut |c| cmds.push(c));
+
+        let mut cmds2 = Vec::new();
+        let mut chars2 = "[bind,cat,part,invalid_status]".chars().peekable();
+        handle_raiselike(&mut chars2, &mut |c| cmds2.push(c));
+
+        let mut cmds3 = Vec::new();
+        let mut chars3 = "[unknown_cmd,arg1]".chars().peekable();
+        handle_raiselike(&mut chars3, &mut |c| cmds3.push(c));
+
+        let mut chars4 = "5".chars().peekable();
+        assert_eq!(handle_balloon(&mut chars4), Some(5));
+
+        let mut chars5 = "2".chars().peekable();
+        assert_eq!(handle_target_p(&mut chars5), Some(2));
+
+        let mut chars6 = "3".chars().peekable();
+        assert_eq!(handle_animation(&mut chars6), Some((3, false)));
+
+        let mut chars7 = "x".chars().peekable();
+        let mut cmds7 = Vec::new();
+        handle_underscore(&mut chars7, &mut |c| cmds7.push(c));
+    }
 }

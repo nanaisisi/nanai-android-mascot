@@ -126,6 +126,18 @@ mod tests {
         let mut chars3 = "[unknown_cmd,arg1]".chars().peekable();
         handle_raiselike(&mut chars3, &mut |c| cmds3.push(c));
 
+        let mut cmds_raise = Vec::new();
+        let mut chars_raise = "[raise]".chars().peekable();
+        handle_raiselike(&mut chars_raise, &mut |c| cmds_raise.push(c));
+
+        let mut cmds_bind = Vec::new();
+        let mut chars_bind = "[bind]".chars().peekable();
+        handle_raiselike(&mut chars_bind, &mut |c| cmds_bind.push(c));
+
+        let mut cmds_un = Vec::new();
+        let mut chars_un = "no_bracket".chars().peekable();
+        handle_raiselike(&mut chars_un, &mut |c| cmds_un.push(c));
+
         let mut chars4 = "5".chars().peekable();
         assert_eq!(handle_balloon(&mut chars4), Some(5));
 
@@ -134,6 +146,80 @@ mod tests {
 
         let mut chars6 = "3".chars().peekable();
         assert_eq!(handle_animation(&mut chars6), Some((3, false)));
+
+        let mut chars_anim2 = "[1]".chars().peekable();
+        assert_eq!(handle_animation(&mut chars_anim2), Some((1, false)));
+
+        let mut chars_anim3 = "[ ,wait]".chars().peekable();
+        assert_eq!(handle_animation(&mut chars_anim3), None);
+
+        let mut chars_anim4 = "[abc,wait]".chars().peekable();
+        assert_eq!(handle_animation(&mut chars_anim4), None);
+
+        let mut chars_anim5 = "a".chars().peekable();
+        assert_eq!(handle_animation(&mut chars_anim5), None);
+
+        let mut chars_font2 = "no_bracket".chars().peekable();
+        assert_eq!(handle_font(&mut chars_font2), None);
+
+        let mut chars_font3 = "[bold]".chars().peekable();
+        assert_eq!(handle_font(&mut chars_font3), Some(("bold".to_string(), None)));
+
+        let mut chars_choice2 = "no_bracket".chars().peekable();
+        assert_eq!(handle_choice(&mut chars_choice2), None);
+
+        let mut chars_choice3 = "[JustLabel]".chars().peekable();
+        assert_eq!(handle_choice(&mut chars_choice3), Some(("JustLabel".to_string(), "".to_string())));
+
+        let mut chars_w = "w[abc]".chars().peekable();
+        let mut cmds_w = Vec::new();
+        handle_underscore(&mut chars_w, &mut |c| cmds_w.push(c));
+        assert!(cmds_w.is_empty());
+
+        let mut chars_w2 = "wno_bracket".chars().peekable();
+        let mut cmds_w2 = Vec::new();
+        handle_underscore(&mut chars_w2, &mut |c| cmds_w2.push(c));
+        assert!(cmds_w2.is_empty());
+
+        let mut chars_q = "q".chars().peekable();
+        let mut cmds_q = Vec::new();
+        handle_underscore(&mut chars_q, &mut |c| cmds_q.push(c));
+        assert_eq!(cmds_q.pop(), Some(SakuraCommand::Quick(true)));
+
+        let mut chars_q2 = "q[invalid]".chars().peekable();
+        let mut cmds_q2 = Vec::new();
+        handle_underscore(&mut chars_q2, &mut |c| cmds_q2.push(c));
+        assert_eq!(cmds_q2.pop(), Some(SakuraCommand::Quick(true)));
+
+        let mut chars_s = "s".chars().peekable();
+        let mut cmds_s = Vec::new();
+        handle_underscore(&mut chars_s, &mut |c| cmds_s.push(c));
+        assert_eq!(cmds_s.pop(), Some(SakuraCommand::Sync(true)));
+
+        let mut chars_s2 = "s[invalid]".chars().peekable();
+        let mut cmds_s2 = Vec::new();
+        handle_underscore(&mut chars_s2, &mut |c| cmds_s2.push(c));
+        assert_eq!(cmds_s2.pop(), Some(SakuraCommand::Sync(true)));
+
+        let mut chars_l = "l[10]".chars().peekable();
+        let mut cmds_l = Vec::new();
+        handle_underscore(&mut chars_l, &mut |c| cmds_l.push(c));
+        assert_eq!(cmds_l.pop(), Some(SakuraCommand::Offset { x: "10".to_string(), y: "0".to_string() }));
+
+        let mut chars_l2 = "lno_bracket".chars().peekable();
+        let mut cmds_l2 = Vec::new();
+        handle_underscore(&mut chars_l2, &mut |c| cmds_l2.push(c));
+        assert!(cmds_l2.is_empty());
+
+        let mut chars_a = "ano_bracket".chars().peekable();
+        let mut cmds_a = Vec::new();
+        handle_underscore(&mut chars_a, &mut |c| cmds_a.push(c));
+        assert!(cmds_a.is_empty());
+
+        let mut chars_a2 = "a[id]text\\_b\\_a".chars().peekable();
+        let mut cmds_a2 = Vec::new();
+        handle_underscore(&mut chars_a2, &mut |c| cmds_a2.push(c));
+        assert_eq!(cmds_a2.pop(), Some(SakuraCommand::Anchor { id: "id".to_string(), text: "text\\b".to_string() }));
 
         let mut chars7 = "x".chars().peekable();
         let mut cmds7 = Vec::new();

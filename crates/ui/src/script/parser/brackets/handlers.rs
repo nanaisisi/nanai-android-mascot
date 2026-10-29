@@ -72,7 +72,11 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
     match parts[0] {
         "raise" => {
             let event = parts.get(1).unwrap_or(&"").to_string();
-            let refs = parts[2..].iter().map(|s| s.to_string()).collect();
+            let refs = if parts.len() > 2 {
+                parts[2..].iter().map(|s| s.to_string()).collect()
+            } else {
+                Vec::new()
+            };
             callback(SakuraCommand::Raise {
                 event,
                 references: refs,

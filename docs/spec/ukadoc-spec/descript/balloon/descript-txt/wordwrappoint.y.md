@@ -1,9 +1,13 @@
-# wordwrappoint.y,座標 [\*1](../index.md#balloon設定)
+# wordwrappoint.y,座標
 
 - **規格**: [wordwrappoint.y.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/wordwrappoint.y.md)
 - **検索語**: wordwrappoint.y
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コードに「wordwrappoint.y」が見つからない。
+`ui/js/core/actions/balloon-descript/layout.js` の `applyLayoutProperties()` において `props["wordwrappoint.y"]` をパースし、バルーン DOM (`.balloon`) の `maxHeight` スタイルへ動的適用する実装が行われている。
+
+## 実装箇所
+
+- `ui/js/core/actions/balloon-descript/layout.js` `const wwY = parseInt(props["wordwrappoint.y"], 10);`

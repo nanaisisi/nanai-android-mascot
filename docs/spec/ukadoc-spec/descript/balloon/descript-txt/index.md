@@ -76,18 +76,18 @@
 | [anchor.font.color.r,数値](anchor.font.color.r.md) | anchor.font.color.r | ✅ 対応済 (balloon-descript.js) |
 | [anchor.font.color.g,数値](anchor.font.color.g.md) | anchor.font.color.g | ✅ 対応済 (balloon-descript.js) |
 | [anchor.font.color.b,数値](anchor.font.color.b.md) | anchor.font.color.b | ✅ 対応済 (balloon-descript.js) |
-| [anchor.font.shadowcolor.r,数値](anchor.font.shadowcolor.r.md) | anchor.font.shadowcolor.r | ❌ 検出なし |
-| [anchor.font.shadowcolor.g,数値](anchor.font.shadowcolor.g.md) | anchor.font.shadowcolor.g | ❌ 検出なし |
-| [anchor.font.shadowcolor.b,数値](anchor.font.shadowcolor.b.md) | anchor.font.shadowcolor.b | ❌ 検出なし |
-| [anchor.font.shadowstyle,形態指定](anchor.font.shadowstyle.md) | anchor.font.shadowstyle | ❌ 検出なし |
+| [anchor.font.shadowcolor.r,数値](anchor.font.shadowcolor.r.md) | anchor.font.shadowcolor.r | ✅ 対応済 (balloon-descript.js) |
+| [anchor.font.shadowcolor.g,数値](anchor.font.shadowcolor.g.md) | anchor.font.shadowcolor.g | ✅ 対応済 (balloon-descript.js) |
+| [anchor.font.shadowcolor.b,数値](anchor.font.shadowcolor.b.md) | anchor.font.shadowcolor.b | ✅ 対応済 (balloon-descript.js) |
+| [anchor.font.shadowstyle,形態指定](anchor.font.shadowstyle.md) | anchor.font.shadowstyle | ✅ 対応済 (balloon-descript.js) |
 | [anchor.style,形状](anchor.style.md) | anchor.style | ✅ 対応済 (balloon-descript.js) |
 | [anchor.blendmethod,コマンド](anchor.blendmethod.md) | anchor.blendmethod | ❌ 検出なし |
-| [anchor.pen.color.r,数値](anchor.pen.color.r.md) | anchor.pen.color.r | ❌ 検出なし |
-| [anchor.pen.color.g,数値](anchor.pen.color.g.md) | anchor.pen.color.g | ❌ 検出なし |
-| [anchor.pen.color.b,数値](anchor.pen.color.b.md) | anchor.pen.color.b | ❌ 検出なし |
-| [anchor.brush.color.r,数値](anchor.brush.color.r.md) | anchor.brush.color.r | ❌ 検出なし |
-| [anchor.brush.color.g,数値](anchor.brush.color.g.md) | anchor.brush.color.g | ❌ 検出なし |
-| [anchor.brush.color.b,数値](anchor.brush.color.b.md) | anchor.brush.color.b | ❌ 検出なし |
+| [anchor.pen.color.r,数値](anchor.pen.color.r.md) | anchor.pen.color.r | ✅ 対応済 (balloon-descript.js) |
+| [anchor.pen.color.g,数値](anchor.pen.color.g.md) | anchor.pen.color.g | ✅ 対応済 (balloon-descript.js) |
+| [anchor.pen.color.b,数値](anchor.pen.color.b.md) | anchor.pen.color.b | ✅ 対応済 (balloon-descript.js) |
+| [anchor.brush.color.r,数値](anchor.brush.color.r.md) | anchor.brush.color.r | ✅ 対応済 (balloon-descript.js) |
+| [anchor.brush.color.g,数値](anchor.brush.color.g.md) | anchor.brush.color.g | ✅ 対応済 (balloon-descript.js) |
+| [anchor.brush.color.b,数値](anchor.brush.color.b.md) | anchor.brush.color.b | ✅ 対応済 (balloon-descript.js) |
 | [anchor.notselect.style,形状](anchor.notselect.style.md) | anchor.notselect.style | ✅ 対応済 (balloon-descript.js) |
 | [anchor.notselect.font.color.r,数値](anchor.notselect.font.color.r.md) | anchor.notselect.font.color.r | ✅ 対応済 (balloon-descript.js) |
 | [anchor.notselect.font.color.g,数値](anchor.notselect.font.color.g.md) | anchor.notselect.font.color.g | ✅ 対応済 (balloon-descript.js) |
@@ -127,11 +127,11 @@
 | [onlinemarker.interval,待機時間](onlinemarker.interval.md) | onlinemarker.interval | ✅ 対応済 (balloon-descript.js) |
 | [onlinemarker.x,座標 \*1](onlinemarker.x.md) | onlinemarker.x | ✅ 対応済 (balloon-descript.js) |
 | [onlinemarker.y,座標 \*1](onlinemarker.y.md) | onlinemarker.y | ✅ 対応済 (balloon-descript.js) |
-| [sstpmessage.font.name,フォント名](sstpmessage.font.name.md) | sstpmessage.font.name | ❌ 検出なし |
-| [sstpmessage.font.height,サイズ](sstpmessage.font.height.md) | sstpmessage.font.height | ❌ 検出なし |
-| [sstpmessage.font.color.r,数値](sstpmessage.font.color.r.md) | sstpmessage.font.color.r | ❌ 検出なし |
-| [sstpmessage.font.color.g,数値](sstpmessage.font.color.g.md) | sstpmessage.font.color.g | ❌ 検出なし |
-| [sstpmessage.font.color.b,数値](sstpmessage.font.color.b.md) | sstpmessage.font.color.b | ❌ 検出なし |
+| [sstpmessage.font.name,フォント名](sstpmessage.font.name.md) | sstpmessage.font.name | ✅ 対応済 (balloon-descript.js) |
+| [sstpmessage.font.height,サイズ](sstpmessage.font.height.md) | sstpmessage.font.height | ✅ 対応済 (balloon-descript.js) |
+| [sstpmessage.font.color.r,数値](sstpmessage.font.color.r.md) | sstpmessage.font.color.r | ✅ 対応済 (balloon-descript.js) |
+| [sstpmessage.font.color.g,数値](sstpmessage.font.color.g.md) | sstpmessage.font.color.g | ✅ 対応済 (balloon-descript.js) |
+| [sstpmessage.font.color.b,数値](sstpmessage.font.color.b.md) | sstpmessage.font.color.b | ✅ 対応済 (balloon-descript.js) |
 | [number.font.name,フォント名](number.font.name.md) | number.font.name | ✅ 対応済 (balloon-descript.js) |
 | [number.font.height,数値](number.font.height.md) | number.font.height | ✅ 対応済 (balloon-descript.js) |
 | [number.font.color.r,数値](number.font.color.r.md) | number.font.color.r | ✅ 対応済 (balloon-descript.js) |
@@ -151,7 +151,7 @@
 | [communicatebox.font.color.b,数値](communicatebox.font.color.b.md) | communicatebox.font.color.b | ✅ 対応済 (balloon-descript.js) |
 | [communicatebox.background.color.r,数値](communicatebox.background.color.r.md) | communicatebox.background.color.r | ✅ 対応済 (balloon-descript.js) |
 | [communicatebox.background.color.g,数値](communicatebox.background.color.g.md) | communicatebox.background.color.g | ✅ 対応済 (balloon-descript.js) |
-| [communicatebox.background.color.b,数値](communicatebox.background.color.b.md) | communicatebox.background.color.b | ✅ 実装済 (balloon-descript.js) |
+| [communicatebox.background.color.b,数値](communicatebox.background.color.b.md) | communicatebox.background.color.b | ✅ 対応済 (balloon-descript.js) |
 | [communicatebox.placeholder.color.r,数値](communicatebox.placeholder.color.r.md) | communicatebox.placeholder.color.r | ✅ 対応済 (balloon-descript.js) |
 | [communicatebox.placeholder.color.g,数値](communicatebox.placeholder.color.g.md) | communicatebox.placeholder.color.g | ✅ 対応済 (balloon-descript.js) |
 | [communicatebox.placeholder.color.b,数値](communicatebox.placeholder.color.b.md) | communicatebox.placeholder.color.b | ✅ 対応済 (balloon-descript.js) |

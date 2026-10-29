@@ -1,6 +1,6 @@
 /**
  * @file font.js
- * @brief バルーンフォント・カラー・装飾・アンカー・カーソルの設定反映 (UKADOC準拠)
+ * @brief バルーンフォント・カラー・装飾・アンカー・カーソル・SSTPメッセージの設定反映 (UKADOC準拠)
  */
 import { rgbFromComponents } from "./utils.js";
 
@@ -139,6 +139,21 @@ export function applyFontProperties(root, props, _instance) {
 	}
 	const numColor = rgbFromComponents(props, "number.font.color");
 	if (numColor) root.style.setProperty("--balloon-number-color", numColor);
+
+	// SSTPメッセージ (sstpmessage.font.*) フォント・サイズ・カラー
+	const sstpFontName = props["sstpmessage.font.name"];
+	if (sstpFontName) {
+		root.style.setProperty(
+			"--balloon-sstp-font-family",
+			`"${sstpFontName}", sans-serif`,
+		);
+	}
+	const sstpFontHeight = parseInt(props["sstpmessage.font.height"], 10);
+	if (!Number.isNaN(sstpFontHeight)) {
+		root.style.setProperty("--balloon-sstp-font-size", `${sstpFontHeight}px`);
+	}
+	const sstpColor = rgbFromComponents(props, "sstpmessage.font.color");
+	if (sstpColor) root.style.setProperty("--balloon-sstp-font-color", sstpColor);
 
 	// フォント無効化設定 (disable.font)
 	const disableFont = props["disable.font"];

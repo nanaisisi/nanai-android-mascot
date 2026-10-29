@@ -275,7 +275,21 @@ export const balloonDescriptActions = {
 		const sstpMsgY = parseInt(props["sstpmessage.y"], 10);
 		if (!Number.isNaN(sstpMsgX)) root.style.setProperty("--balloon-sstpmessage-x", `${sstpMsgX}px`);
 		if (!Number.isNaN(sstpMsgY)) root.style.setProperty("--balloon-sstpmessage-y", `${sstpMsgY}px`);
-		if (!Number.isNaN(wpX)) root.style.setProperty("--balloon-windowpos-x", `${wpX}px`);
-		if (!Number.isNaN(wpY)) root.style.setProperty("--balloon-windowpos-y", `${wpY}px`);
+
+		const paintBlack = props["paint_transparent_region_black"] === "1" || props["paint_transparent_region_black"]?.toLowerCase() === "true";
+		root.style.setProperty("--balloon-paint-black", paintBlack ? "1" : "0");
+
+		const wwY = parseInt(props["wordwrappoint.y"], 10);
+		if (!Number.isNaN(wwY) && wwY > 20) {
+			const balloonEl = document.querySelector(".balloon");
+			if (balloonEl) {
+				balloonEl.style.maxHeight = `${wwY}px`;
+			}
+		}
+
+		const disableFont = props["disable.font"];
+		if (disableFont) {
+			root.style.setProperty("--balloon-disable-font", disableFont);
+		}
 	},
 };

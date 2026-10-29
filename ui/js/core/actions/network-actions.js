@@ -11,9 +11,9 @@ export const networkActions = {
 		console.log(`📬 メールチェック開始 (OnBIFF): account=${accountName}`);
 		this.showBalloon?.("📬 メールを確認中...");
 
-		await gc.sendShioriEvent("OnBIFFBegin", [accountName]);
-
 		try {
+			await gc.sendShioriEvent("OnBIFFBegin", [accountName]);
+
 			if (isTauriAvailable()) {
 				const result = await invoke("check_email", {
 					account: accountName,

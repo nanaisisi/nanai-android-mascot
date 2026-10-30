@@ -6,5 +6,5 @@
 ## 突合結果
 
 - ゴースト走査と `install.txt` の参照: `src-tauri/src/ghost/scan/mod.rs:43`
-- SHIORI 連携は [shiori3](../shiori3) を参照
+- SHIORI 連携は [shiori3](../spec/shiori3) を参照
 - `descript.txt` 属性の網羅性は [descript/ghost](../descript/ghost) を参照 (多くが未実装)

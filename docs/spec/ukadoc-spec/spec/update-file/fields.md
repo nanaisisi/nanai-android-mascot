@@ -5,4 +5,4 @@
 
 ## 突合結果
 
-`src-tauri/src/commands/update/dau.rs` にて相対パス、MD5、ファイルサイズ（および `file,` / `charset,` プレフィックス）のパース処理に対応。
+`../../../../../src-tauri/src/commands/update/dau.rs` にて相対パス、MD5、ファイルサイズ（および `file,` / `charset,` プレフィックス）のパース処理に対応。

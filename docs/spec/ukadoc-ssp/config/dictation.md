@@ -10,8 +10,8 @@ Web Speech API を用いた音声合成（TTS）および音声認識（Dictatio
 
 ## 実装箇所
 
-- `ui/main.js:5` `import { DictationManager } from "./js/core/actions/dictation.js";`
+- `ui/main.js:1` `import { DictationManager } from "./js/core/actions/dictation.js";`
 - `ui/main.js:50` `this.dictationManager = new DictationManager(this);`
 - `ui/js/core/actions/dictation.js:2` `* @file dictation.js`
 - `ui/js/core/actions/dictation.js:4` `* [config/dictation.md], [functions/speech-recognition.md], [functions/speech-sy`
-- `ui/js/core/actions/dictation.js:32` `emit("dictation-result", { text });`
+- `ui/js/core/actions/dictation.js:33` `emit("dictation-result", { text });`

@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:29` `if q == "headlinelist.count" {`
+- `src-tauri/src/shiori/property.rs:21` `"headlinelist.count" => "0".to_string(),`

@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/ext.rs:98` `// [url,URL], [openurl,URL]:`
-- `src-tauri/src/commands/ext.rs:99` `let url = map.get("url").cloned().or_else(|| map.get("openurl").cloned());`
+- `src-tauri/src/commands/ext.rs:110` `// [url,URL], [openurl,URL]:`
+- `src-tauri/src/commands/ext.rs:114` `.or_else(|| map.get("openurl").cloned());`

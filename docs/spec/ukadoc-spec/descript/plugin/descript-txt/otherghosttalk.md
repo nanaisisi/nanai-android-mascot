@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/ext.rs:41` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [secondchangeinterva`
-- `src-tauri/src/commands/ext.rs:46` `let _other_talk = map.get("otherghosttalk");`
+- `src-tauri/src/commands/ext.rs:47` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [secondchangeinterva`
+- `src-tauri/src/commands/ext.rs:52` `let _other_talk = map.get("otherghosttalk");`

@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/ext.rs:148` `"OnMenuExec" => Some(format!("\\0プラグイン「{}」が実行されました\\e", request.plugin_name)),`
+- `src-tauri/src/commands/ext.rs:166` `"OnMenuExec" => Some(format!(`

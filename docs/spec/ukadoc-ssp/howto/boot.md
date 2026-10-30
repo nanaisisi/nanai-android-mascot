@@ -11,7 +11,7 @@
 ## 実装箇所
 
 - `src-tauri/src/commands/install/archive.rs:53` `// [install.txt（概要）], [同時インストール], [name,オブジェクト名], [type,種別], [directory,ディレクトリ名]`
-- `src-tauri/src/commands/install/archive.rs:62` `let _bootghost = map.get("bootghost");`
+- `src-tauri/src/commands/install/archive.rs:65` `let _bootghost = map.get("bootghost");`
 - `src-tauri/src/shiori/ffi/builder.rs:74` `pub fn on_boot() -> Self {`
-- `src-tauri/src/shiori/ffi/builder.rs:203` `fn test_shiori_request_builder_on_boot() {`
-- `src-tauri/src/shiori/ffi/builder.rs:204` `let req = ShioriRequestBuilder::on_boot().build();`
+- `src-tauri/src/shiori/ffi/builder.rs:208` `fn test_shiori_request_builder_on_boot() {`
+- `src-tauri/src/shiori/ffi/builder.rs:209` `let req = ShioriRequestBuilder::on_boot().build();`

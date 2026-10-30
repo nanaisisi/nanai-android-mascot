@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs:189` `// [name.allowoverride,数値], [makoto,ファイル名], [補足]:`
-- `src-tauri/src/ghost/scan/directory.rs:190` `let _name_override = m.get("name.allowoverride");`
+- `src-tauri/src/ghost/scan/directory.rs:200` `// [name.allowoverride,数値], [makoto,ファイル名], [補足]:`
+- `src-tauri/src/ghost/scan/directory.rs:201` `let _name_override = m.get("name.allowoverride");`

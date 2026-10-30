@@ -11,5 +11,5 @@
 ## 実装箇所
 
 - `ui/js/core/app-update.js:24` `*    (種別)[\1](OK|NG)[\1](件数|理由), チェックのみ実行時は OnUpdateCheckResult(Ex)`
-- `ui/js/core/app-update.js:235` `* OnUpdateResultEx (または OnUpdateCheckResultEx) を送信し、`
-- `ui/js/core/app-update.js:257` `const baseEvent = checkOnly ? "OnUpdateCheckResult" : "OnUpdateResult";`
+- `ui/js/core/app-update.js:229` `* OnUpdateResultEx (または OnUpdateCheckResultEx) を送信し、`
+- `ui/js/core/app-update.js:251` `const baseEvent = checkOnly ? "OnUpdateCheckResult" : "OnUpdateResult";`

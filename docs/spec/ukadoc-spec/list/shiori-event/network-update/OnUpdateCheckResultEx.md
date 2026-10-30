@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/core/app-update.js:235` `* OnUpdateResultEx (または OnUpdateCheckResultEx) を送信し、`
+- `ui/js/core/app-update.js:229` `* OnUpdateResultEx (または OnUpdateCheckResultEx) を送信し、`

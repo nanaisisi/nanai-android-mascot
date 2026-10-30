@@ -15,4 +15,4 @@ ui/js/ghost/sakura-parser.js / sakura-command-handler.js で処理: クリック
 - `src-tauri/src/shiori/fmo.rs:32` `content.push_str(&format!("{}.hwnd\x01{}\r\n", prefix, rec.hwnd));`
 - `src-tauri/src/shiori/fmo.rs:33` `content.push_str(&format!("{}.name\x01{}\r\n", prefix, rec.name));`
 - `src-tauri/src/shiori/fmo.rs:34` `content.push_str(&format!("{}.keroname\x01{}\r\n", prefix, rec.keroname));`
-- `src-tauri/src/shiori/fmo.rs:35` `content.push_str(&format!("{}.sakura.surface\x01{}\r\n", prefix, rec.sakura_surf`
+- `src-tauri/src/shiori/fmo.rs:36` `"{}.sakura.surface\x01{}\r\n",`

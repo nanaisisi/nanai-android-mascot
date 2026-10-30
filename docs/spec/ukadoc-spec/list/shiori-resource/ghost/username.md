@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/config.rs` 設定管理
+- `src-tauri/src/shiori/property.rs:29` `"username" => "User".to_string(),`
+- `src-tauri/src/shiori/property.rs:64` `evaluate_property_query("username"),`

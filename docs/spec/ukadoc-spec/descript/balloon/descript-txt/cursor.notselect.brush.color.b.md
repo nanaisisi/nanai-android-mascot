@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js:284` `// [cursor.notselect.pen.color.r,数値], [cursor.notselect.pen.color.g,数値], [cursor`
-- `ui/js/core/actions/balloon-descript/font.js:291` `props["cursor.notselect.brush.color.b"]`
+- `ui/js/core/actions/balloon-descript/font.js:298` `// [cursor.notselect.pen.color.r,数値], [cursor.notselect.pen.color.g,数値], [cursor`
+- `ui/js/core/actions/balloon-descript/font.js:305` `props["cursor.notselect.brush.color.b"]`

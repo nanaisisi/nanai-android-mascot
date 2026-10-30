@@ -14,4 +14,4 @@
 - `ui/css/balloon-window.css:100` `/* クリック待ちマーカー (clickwaitmarker.filename) */`
 - `ui/css/balloon-window.css:112` `/* バルーンマーカー (marker.filename) */`
 - `ui/css/balloon-window.css:124` `/* SSTPマーカー (sstpmarker.filename) */`
-- `ui/js/core/actions/balloon-descript/assets.js:34` `// [clickwaitmarker.filename,ファイル名]:`
+- `ui/js/core/actions/balloon-descript/assets.js:40` `// [clickwaitmarker.filename,ファイル名]:`

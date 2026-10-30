@@ -11,4 +11,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:17` `if q == "ghostlist.index(0).name" || q == "ghostlist.index(0)" {`
+- `src-tauri/src/shiori/property.rs:16` `"ghostlist.index(0).name" | "ghostlist.index(0)" => "Mock Ghost".to_string(),`
+- `src-tauri/src/shiori/property.rs:17` `"ghostlist.index(0).path" => "mock_ghost".to_string(),`

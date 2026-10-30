@@ -11,4 +11,4 @@ ghost/scan.rs で descript.txt から読込 (表示への反映は未確認)。
 ## 実装箇所
 
 - `src-tauri/src/ghost/scan/shell.rs:149` `// [menu.background.bitmap.filename,ファイル名], [menu.foreground.bitmap.filename,ファイ`
-- `src-tauri/src/ghost/scan/shell.rs:156` `.get("menu.foreground.bitmap.filename")`
+- `src-tauri/src/ghost/scan/shell.rs:163` `.get("menu.foreground.bitmap.filename")`

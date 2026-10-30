@@ -10,6 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js:270` `// [cursor.notselect.style,形状], [cursor.notselect.font.color.r,数値], [cursor.nots`
-- `ui/js/core/actions/balloon-descript/font.js:275` `props["cursor.notselect.font.color.b"]`
-- `tests/balloon-descript.test.js:107` `"cursor.notselect.font.color.b": "80",`
+- `ui/js/core/actions/balloon-descript/font.js:282` `// [cursor.notselect.style,形状], [cursor.notselect.font.color.r,数値], [cursor.nots`
+- `ui/js/core/actions/balloon-descript/font.js:287` `props["cursor.notselect.font.color.b"]`
+- `tests/balloon-descript.test.js:113` `"cursor.notselect.font.color.b": "80",`

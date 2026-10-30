@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/assets.js:113` `// [sstpmessage.x,座標], [sstpmessage.y,座標]:`
-- `ui/js/core/actions/balloon-descript/assets.js:115` `const sstpMsgY = parseInt(props["sstpmessage.y"], 10);`
-- `ui/js/core/actions/balloon-descript/layout.js:145` `// [sstpmessage.x,座標], [sstpmessage.y,座標], [sstpmessage.xr,座標], [sstpmessage.yb,`
-- `ui/js/core/actions/balloon-descript/layout.js:147` `const sstpY = parseInt(props["sstpmessage.y"], 10);`
-- `ui/js/core/actions/balloon-descript/layout.js:149` `const sstpYB = parseInt(props["sstpmessage.yb"], 10);`
+- `ui/js/core/actions/balloon-descript/assets.js:119` `// [sstpmessage.x,座標], [sstpmessage.y,座標]:`
+- `ui/js/core/actions/balloon-descript/assets.js:121` `const sstpMsgY = parseInt(props["sstpmessage.y"], 10);`
+- `ui/js/core/actions/balloon-descript/layout.js:149` `// [sstpmessage.x,座標], [sstpmessage.y,座標], [sstpmessage.xr,座標], [sstpmessage.yb,`
+- `ui/js/core/actions/balloon-descript/layout.js:151` `const sstpY = parseInt(props["sstpmessage.y"], 10);`
+- `ui/js/core/actions/balloon-descript/layout.js:153` `const sstpYB = parseInt(props["sstpmessage.yb"], 10);`

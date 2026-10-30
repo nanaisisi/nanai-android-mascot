@@ -12,4 +12,4 @@
 
 - `ui/js/core/actions/balloon-descript/layout.js:27` `// [communicatebox.width,サイズ], [communicatebox.height,サイズ], [communicatebox.x,座標`
 - `ui/js/core/actions/balloon-descript/layout.js:31` `const cbX = props["communicatebox.x"];`
-- `tests/balloon-descript.test.js:56` `"communicatebox.x": "10",`
+- `tests/balloon-descript.test.js:62` `"communicatebox.x": "10",`

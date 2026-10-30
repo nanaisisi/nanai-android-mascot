@@ -11,6 +11,6 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/ext.rs:149` `"OnGhostBoot" => Some("".to_string()),`
+- `src-tauri/src/commands/ext.rs:170` `"OnGhostBoot" => Some("".to_string()),`
 - `ui/js/ghost/ghost-shiori.js:38` `// [PLUGIN/2.0]: OnGhostBoot event broadcast to available plugins`
 - `ui/js/ghost/ghost-shiori.js:44` `eventId: "OnGhostBoot",`

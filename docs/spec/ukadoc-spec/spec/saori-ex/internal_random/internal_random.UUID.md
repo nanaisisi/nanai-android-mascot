@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/saori.rs:62` `Some("Format\nDigest\nNumber\nUUID\nListModules\nListFunctions".to_string())`
+- `src-tauri/src/shiori/saori.rs:66` `Some("Format\nDigest\nNumber\nUUID\nListModules\nListFunctions".to_string())`

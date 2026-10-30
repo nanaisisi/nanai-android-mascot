@@ -12,4 +12,4 @@
 
 - `ui/js/core/actions/balloon-descript/layout.js:28` `// [communicatebox.font.name,フォント名], [communicatebox.font.color.r/g/b,数値], [comm`
 - `ui/js/core/actions/balloon-descript/layout.js:38` `props["communicatebox.font.color.r"] ||`
-- `tests/balloon-descript.test.js:60` `"communicatebox.font.color.r": "0",`
+- `tests/balloon-descript.test.js:66` `"communicatebox.font.color.r": "0",`

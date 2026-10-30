@@ -12,4 +12,4 @@
 
 - `src-tauri/src/ghost/scan/directory.rs:51` `// [.narignore / .updateignore / .narinclude / .updateinclude]: アーカイブ・更新除外および開発無`
 - `src-tauri/src/ghost/scan/directory.rs:53` `|| path.join(".narignore").exists()`
-- `src-tauri/src/ghost/scan/directory.rs:58` `println!("🚫 Skipping ghost directory with .dev_ignore/.narignore/.updateignore: `
+- `src-tauri/src/ghost/scan/directory.rs:59` `"🚫 Skipping ghost directory with .dev_ignore/.narignore/.updateignore: {:?}",`

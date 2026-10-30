@@ -13,5 +13,5 @@
 - `crates/ui/src/shiori/protocol/request.rs:58` `let mut fields = first.split_whitespace();`
 - `crates/ui/src/shiori/protocol/request.rs:59` `let method = fields.next().ok_or_else(|| "empty request".to_string())?;`
 - `crates/ui/src/shiori/protocol/request.rs:60` `let version = fields`
-- `crates/ui/src/surfaces/parser/handlers/mod.rs:107` `fn test_apply_animation_fields() {`
-- `crates/ui/src/surfaces/parser/handlers/mod.rs:117` `fn test_apply_point_all_fields() {`
+- `crates/ui/src/surfaces/parser/handlers/mod.rs:128` `fn test_apply_animation_fields() {`
+- `crates/ui/src/surfaces/parser/handlers/mod.rs:138` `fn test_apply_point_all_fields() {`

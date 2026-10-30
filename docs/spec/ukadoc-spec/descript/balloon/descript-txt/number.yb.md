@@ -12,4 +12,4 @@
 
 - `ui/js/core/actions/balloon-descript/layout.js:135` `// [number.x,座標], [number.y,座標], [number.xr,座標], [number.yb,座標]:`
 - `ui/js/core/actions/balloon-descript/layout.js:139` `const numYB = parseInt(props["number.yb"], 10);`
-- `tests/balloon-descript.test.js:111` `"number.yb": "-20",`
+- `tests/balloon-descript.test.js:117` `"number.yb": "-20",`

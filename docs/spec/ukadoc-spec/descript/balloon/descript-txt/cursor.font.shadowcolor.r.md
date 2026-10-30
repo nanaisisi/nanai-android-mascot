@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js:253` `// [cursor.font.shadowcolor.r,数値], [cursor.font.shadowcolor.g,数値], [cursor.font.`
-- `ui/js/core/actions/balloon-descript/font.js:255` `props["cursor.font.shadowcolor.r"] ||`
+- `ui/js/core/actions/balloon-descript/font.js:263` `// [cursor.font.shadowcolor.r,数値], [cursor.font.shadowcolor.g,数値], [cursor.font.`
+- `ui/js/core/actions/balloon-descript/font.js:265` `props["cursor.font.shadowcolor.r"] ||`

@@ -12,7 +12,7 @@ PNA マスク合成および Canvas 2D レンダラにおいてアルファチ�
 ## 実装箇所
 
 - `src-tauri/src/ghost/scan/shell.rs:106` `// [seriko.dpi,推奨DPI], [seriko.zorder,スコープID,スコープID,...], [seriko.sticky-window,`
-- `ui/js/core/actions/balloon-descript/assets.js:127` `// [use_self_alpha,値]:`
-- `ui/js/core/actions/balloon-descript/assets.js:129` `props.use_self_alpha === "1" ||`
-- `ui/js/core/actions/balloon-descript/assets.js:130` `props.use_self_alpha?.toLowerCase() === "true";`
-- `tests/balloon-descript.test.js:131` `use_self_alpha: "true",`
+- `ui/js/core/actions/balloon-descript/assets.js:133` `// [use_self_alpha,値]:`
+- `ui/js/core/actions/balloon-descript/assets.js:135` `props.use_self_alpha === "1" ||`
+- `ui/js/core/actions/balloon-descript/assets.js:136` `props.use_self_alpha?.toLowerCase() === "true";`
+- `tests/balloon-descript.test.js:137` `use_self_alpha: "true",`

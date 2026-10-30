@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js:224` `// [anchor.notselect.font.shadowcolor.r,数値], [anchor.notselect.font.shadowcolor.`
-- `ui/js/core/actions/balloon-descript/font.js:229` `props["anchor.notselect.font.shadowstyle"]`
+- `ui/js/core/actions/balloon-descript/font.js:231` `// [anchor.notselect.font.shadowcolor.r,数値], [anchor.notselect.font.shadowcolor.`
+- `ui/js/core/actions/balloon-descript/font.js:236` `props["anchor.notselect.font.shadowstyle"]`

@@ -11,7 +11,7 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/assets.js:142` `// [overlay_outside_balloon,0/1]:`
-- `ui/js/core/actions/balloon-descript/assets.js:144` `props.overlay_outside_balloon === "1" ||`
-- `ui/js/core/actions/balloon-descript/assets.js:145` `props.overlay_outside_balloon?.toLowerCase() === "true";`
-- `tests/balloon-descript.test.js:133` `overlay_outside_balloon: "1",`
+- `ui/js/core/actions/balloon-descript/assets.js:148` `// [overlay_outside_balloon,0/1]:`
+- `ui/js/core/actions/balloon-descript/assets.js:150` `props.overlay_outside_balloon === "1" ||`
+- `ui/js/core/actions/balloon-descript/assets.js:151` `props.overlay_outside_balloon?.toLowerCase() === "true";`
+- `tests/balloon-descript.test.js:139` `overlay_outside_balloon: "1",`

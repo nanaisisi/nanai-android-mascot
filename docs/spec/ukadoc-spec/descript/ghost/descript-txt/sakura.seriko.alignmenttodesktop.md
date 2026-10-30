@@ -10,6 +10,6 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs:155` `// [seriko.alignmenttodesktop,位置情報], [sakura.seriko.alignmenttodesktop,位置情報], [k`
-- `src-tauri/src/ghost/scan/directory.rs:157` `let _sakura_seriko_align = m.get("sakura.seriko.alignmenttodesktop");`
+- `src-tauri/src/ghost/scan/directory.rs:166` `// [seriko.alignmenttodesktop,位置情報], [sakura.seriko.alignmenttodesktop,位置情報], [k`
+- `src-tauri/src/ghost/scan/directory.rs:168` `let _sakura_seriko_align = m.get("sakura.seriko.alignmenttodesktop");`
 - `src-tauri/src/ghost/scan/shell.rs:105` `// [seriko.alignmenttodesktop,位置情報], [sakura.seriko.alignmenttodesktop,位置情報], [k`

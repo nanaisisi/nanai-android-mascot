@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:26` `if q == "pluginlist.count" {`
+- `src-tauri/src/shiori/property.rs:20` `"pluginlist.count" => "0".to_string(),`

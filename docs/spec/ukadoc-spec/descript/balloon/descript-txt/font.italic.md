@@ -14,5 +14,5 @@
 - `ui/js/core/actions/balloon-descript/font.js:37` `// [font.italic,0/1]: props["font.italic"]`
 - `ui/js/core/actions/balloon-descript/font.js:39` `props["font.italic"] === "1" ||`
 - `ui/js/core/actions/balloon-descript/font.js:40` `props["font.italic"]?.toLowerCase() === "true"`
-- `tests/balloon-descript.test.js:77` `"font.italic": "true",`
+- `tests/balloon-descript.test.js:83` `"font.italic": "true",`
 - `tests/core-actions.test.js:36` `"font.italic": "false",`

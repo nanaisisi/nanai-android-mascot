@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:23` `if q == "balloonlist.index(0).name" {`
+- `src-tauri/src/shiori/property.rs:19` `"balloonlist.index(0).name" => "Default Balloon".to_string(),`

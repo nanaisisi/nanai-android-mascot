@@ -6,4 +6,13 @@
 
 ## 突合結果
 
-実装コードに「currentghost.」が見つからない。
+実装コード内に「currentghost.」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/shiori/property.rs:25` `"currentghost.name" => "Mock Ghost".to_string(),`
+- `src-tauri/src/shiori/property.rs:26` `"currentghost.path" => "mock_ghost".to_string(),`
+- `src-tauri/src/shiori/property.rs:27` `"currentghost.craftman" => "Ukagaka Creator".to_string(),`
+- `src-tauri/src/shiori/property.rs:28` `"currentghost.craftmanurl" => "https://example.com".to_string(),`
+- `src-tauri/src/shiori/property.rs:32` `if q.starts_with("currentghost.scope(") {`

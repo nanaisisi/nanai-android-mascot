@@ -11,4 +11,4 @@
 ## 実装箇所
 
 - `ui/js/ghost/ghost.js:164` `const generation = this._ghostLoadGeneration;`
-- `ui/js/ghost/ghost.js:228` `() => this._ghostLoadGeneration === generation,`
+- `ui/js/ghost/ghost.js:231` `() => this._ghostLoadGeneration === generation,`

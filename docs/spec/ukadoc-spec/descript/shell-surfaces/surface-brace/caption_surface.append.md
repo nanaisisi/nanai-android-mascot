@@ -6,6 +6,6 @@
 
 - `src-tauri/src/fmo.rs:11` `pub surface0: u32,`
 - `src-tauri/src/fmo.rs:12` `pub surface1: u32,`
-- `src-tauri/src/fmo.rs:41` `surface0: 0,`
-- `src-tauri/src/fmo.rs:42` `surface1: 10,`
+- `src-tauri/src/fmo.rs:39` `surface0: 0,`
+- `src-tauri/src/fmo.rs:40` `surface1: 10,`
 - `src-tauri/src/lib.rs:99` `commands::shell::parse_surfaces_text,`

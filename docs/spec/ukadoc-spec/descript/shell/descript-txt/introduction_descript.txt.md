@@ -6,6 +6,6 @@
 
 - `src-tauri/src/commands/ext.rs:30` `// [descript.txt（Pluginの）]: プラグイン descript.txt 読込`
 - `src-tauri/src/commands/ext.rs:31` `let desc_path = path.join("descript.txt");`
-- `src-tauri/src/commands/ext.rs:89` `// [descript.txt（Headlineの）]: ヘッドライン descript.txt 読込`
-- `src-tauri/src/commands/ext.rs:90` `let desc_path = path.join("descript.txt");`
+- `src-tauri/src/commands/ext.rs:95` `// [descript.txt（Headlineの）]: ヘッドライン descript.txt 読込`
+- `src-tauri/src/commands/ext.rs:96` `let desc_path = path.join("descript.txt");`
 - `src-tauri/src/commands/install/archive.rs:23` `} else if lower == "descript.txt" || lower.ends_with("/descript.txt") {`

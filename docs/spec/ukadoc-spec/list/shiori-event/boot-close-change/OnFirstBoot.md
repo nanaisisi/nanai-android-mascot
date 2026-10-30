@@ -11,7 +11,7 @@
 
 ## 実装箇所
 
-- `crates/ui/src/shiori/protocol/request.rs:24` `/// 互換可能な基本イベント名（SSP拡張。`OnFirstBoot`→`OnBoot` など）`
+- `crates/ui/src/shiori/protocol/request.rs:24` `/// 互換可能な基本イベント名（SSP拡張。`OnFirstBoot` → `OnBoot` など）`
 - `crates/ui/src/shiori/tests/request_tests.rs:13` `id: "OnFirstBoot".into(),`
 - `crates/ui/src/shiori/tests/request_tests.rs:26` `assert!(text.contains("ID: OnFirstBoot\r\n"));`
 - `crates/ui/src/shiori/tests/request_tests.rs:31` `let id_pos = text.find("ID: OnFirstBoot").unwrap();`

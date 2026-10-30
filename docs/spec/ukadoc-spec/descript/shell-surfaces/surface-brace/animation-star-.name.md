@@ -11,7 +11,7 @@ surface-parser.js / surface-animation-manager.js に該当の解析・処理は�
 ## 実装箇所
 
 - `src-tauri/src/lib.rs:100` `commands::shell::animation_timeline,`
-- `src-tauri/src/commands/shell/animation.rs:49` `pub fn animation_timeline(patterns: Vec<TimelinePattern>) -> Result<AnimationTim`
+- `src-tauri/src/commands/shell/animation.rs:45` `pub fn animation_timeline(patterns: Vec<TimelinePattern>) -> Result<AnimationTim`
 - `src-tauri/src/commands/shell/mod.rs:7` `pub mod animation;`
 - `src-tauri/src/commands/shell/mod.rs:12` `pub use animation::*;`
 - `crates/ui/src/lib.rs:1` `pub mod animation;`

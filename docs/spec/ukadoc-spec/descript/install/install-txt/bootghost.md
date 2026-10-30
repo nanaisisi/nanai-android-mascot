@@ -11,4 +11,4 @@
 ## 実装箇所
 
 - `src-tauri/src/commands/install/archive.rs:53` `// [install.txt（概要）], [同時インストール], [name,オブジェクト名], [type,種別], [directory,ディレクトリ名]`
-- `src-tauri/src/commands/install/archive.rs:62` `let _bootghost = map.get("bootghost");`
+- `src-tauri/src/commands/install/archive.rs:65` `let _bootghost = map.get("bootghost");`

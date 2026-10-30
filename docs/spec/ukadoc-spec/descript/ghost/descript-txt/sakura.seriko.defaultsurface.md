@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs:144` `// [sakura.seriko.defaultsurface,数値], [kero.seriko.defaultsurface,数値], [char*.se`
-- `src-tauri/src/ghost/scan/directory.rs:145` `let _sakura_ss = m.get("sakura.seriko.defaultsurface");`
+- `src-tauri/src/ghost/scan/directory.rs:155` `// [sakura.seriko.defaultsurface,数値], [kero.seriko.defaultsurface,数値], [char*.se`
+- `src-tauri/src/ghost/scan/directory.rs:156` `let _sakura_ss = m.get("sakura.seriko.defaultsurface");`

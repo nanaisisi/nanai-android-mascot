@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive.rs:287` `let kero_name = meta_map.as_ref().and_then(|m| m.get("kero.name").cloned());`
-- `src-tauri/src/ghost/scan/directory.rs:100` `// [version,バージョン], [sakura.name,名前], [sakura.name2,名前], [kero.name,名前], [char*.`
-- `src-tauri/src/ghost/scan/directory.rs:107` `.and_then(|m| m.get("kero.name").cloned());`
+- `src-tauri/src/commands/install/archive.rs:296` `let kero_name = meta_map.as_ref().and_then(|m| m.get("kero.name").cloned());`
+- `src-tauri/src/ghost/scan/directory.rs:105` `// [version,バージョン], [sakura.name,名前], [sakura.name2,名前], [kero.name,名前], [char*.`
+- `src-tauri/src/ghost/scan/directory.rs:112` `let kero_name = meta_map.as_ref().and_then(|m| m.get("kero.name").cloned());`
 - `src-tauri/src/ghost/scan/shell.rs:91` `// [sakura.name,名前], [sakura.name2,名前], [kero.name,名前], [char*.name,名前]:`
 - `src-tauri/src/ghost/scan/shell.rs:109` `let _m_kero_name = merged.get("kero.name");`

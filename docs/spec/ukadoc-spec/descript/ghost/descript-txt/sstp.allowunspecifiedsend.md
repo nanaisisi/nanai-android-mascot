@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs:179` `// [sstp.allowcommunicate,数値], [sstp.allowunspecifiedsend,数値], [sstp.alwaystrans`
-- `src-tauri/src/ghost/scan/directory.rs:181` `let _sstp_unspec = m.get("sstp.allowunspecifiedsend");`
+- `src-tauri/src/ghost/scan/directory.rs:190` `// [sstp.allowcommunicate,数値], [sstp.allowunspecifiedsend,数値], [sstp.alwaystrans`
+- `src-tauri/src/ghost/scan/directory.rs:192` `let _sstp_unspec = m.get("sstp.allowunspecifiedsend");`

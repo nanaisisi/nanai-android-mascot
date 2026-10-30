@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/ext.rs:150` `"OnGhostExit" => Some("".to_string()),`
+- `src-tauri/src/commands/ext.rs:171` `"OnGhostExit" => Some("".to_string()),`

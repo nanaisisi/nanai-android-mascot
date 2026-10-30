@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/ext.rs:101` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [alwaysdisplay,数値], `
-- `src-tauri/src/commands/ext.rs:106` `let _dllname = map.get("dllname");`
+- `src-tauri/src/commands/ext.rs:116` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [alwaysdisplay,数値], `
+- `src-tauri/src/commands/ext.rs:121` `let _dllname = map.get("dllname");`

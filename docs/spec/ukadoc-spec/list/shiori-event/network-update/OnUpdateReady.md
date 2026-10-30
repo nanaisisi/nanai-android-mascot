@@ -11,5 +11,5 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 ## 実装箇所
 
 - `ui/js/core/app-update.js:15` `*    - 更新あり: OnUpdateReady (Reference0: ファイル総数-1, Reference1: ファイル名リスト)`
-- `ui/js/core/app-update.js:114` `// 4. OnUpdateReady`
-- `ui/js/core/app-update.js:118` `"OnUpdateReady",`
+- `ui/js/core/app-update.js:111` `// 4. OnUpdateReady`
+- `ui/js/core/app-update.js:115` `"OnUpdateReady",`

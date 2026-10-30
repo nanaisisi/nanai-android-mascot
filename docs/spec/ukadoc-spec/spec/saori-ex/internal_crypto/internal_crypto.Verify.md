@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-- `tests/sakura-rust-bridge.test.js:39` `// Verify specific tokens`
+- `tests/sakura-rust-bridge.test.js:45` `// Verify specific tokens`

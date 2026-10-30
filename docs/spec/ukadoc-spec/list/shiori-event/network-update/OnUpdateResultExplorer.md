@@ -11,6 +11,6 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/ffi/builder.rs:177` `.event("OnUpdateResultExplorer")`
-- `ui/js/core/app-update.js:161` `// OnUpdateResultExplorer 送信 (UKADOC準拠: 更新詳細・差分リスト通知)`
-- `ui/js/core/app-update.js:163` `await gc.sendShioriEvent("OnUpdateResultExplorer", [`
+- `src-tauri/src/shiori/ffi/builder.rs:182` `.event("OnUpdateResultExplorer")`
+- `ui/js/core/app-update.js:155` `// OnUpdateResultExplorer 送信 (UKADOC準拠: 更新詳細・差分リスト通知)`
+- `ui/js/core/app-update.js:157` `await gc.sendShioriEvent("OnUpdateResultExplorer", [`

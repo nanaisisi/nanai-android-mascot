@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:35` `if q == "baseware.version" || q == "system.baseware.version" {`
+- `src-tauri/src/shiori/property.rs:23` `"baseware.version" | "system.baseware.version" => "1.0.0".to_string(),`

@@ -11,7 +11,7 @@
 ## 実装箇所
 
 - `src-tauri/src/commands/shell/mod.rs:3` `//! ukadoc-spec のシェル定義（descript.txt / surfaces.txt / surfacetable.txt）`
-- `crates/ui/src/app.rs:50` `assert_eq!(extract_filename("assets/ghost/mock_nanai/surfaces.txt"), "surfaces.t`
-- `crates/ui/src/app.rs:51` `assert_eq!(extract_filename("surfaces.txt"), "surfaces.txt");`
-- `crates/ui/src/manifest.rs:20` `/// `surfaces.txt`の`name,` / surfacetable の表示名（無ければ None）`
-- `crates/ui/src/manifest.rs:101` `dir.join("surfaces.txt"),`
+- `crates/ui/src/app.rs:51` `extract_filename("assets/ghost/mock_nanai/surfaces.txt"),`
+- `crates/ui/src/app.rs:52` `"surfaces.txt"`
+- `crates/ui/src/app.rs:54` `assert_eq!(extract_filename("surfaces.txt"), "surfaces.txt");`
+- `crates/ui/src/manifest.rs:20` `/// `surfaces.txt` の `name,` / surfacetable の表示名（無ければ None）`

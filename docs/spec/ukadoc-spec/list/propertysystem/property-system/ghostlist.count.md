@@ -11,5 +11,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:14` `if q == "ghostlist.count" {`
-- `src-tauri/src/shiori/property.rs:52` `assert_eq!(evaluate_property_query("ghostlist.count"), "1");`
+- `src-tauri/src/shiori/property.rs:15` `"ghostlist.count" => "1".to_string(),`
+- `src-tauri/src/shiori/property.rs:54` `assert_eq!(evaluate_property_query("ghostlist.count"), "1");`

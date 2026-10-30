@@ -11,5 +11,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:32` `if q == "baseware.name" || q == "system.baseware.name" {`
-- `src-tauri/src/shiori/property.rs:53` `assert_eq!(evaluate_property_query("baseware.name"), "Nanai Android Mascot");`
+- `src-tauri/src/shiori/property.rs:22` `"baseware.name" | "system.baseware.name" => "Nanai Android Mascot".to_string(),`
+- `src-tauri/src/shiori/property.rs:56` `evaluate_property_query("baseware.name"),`

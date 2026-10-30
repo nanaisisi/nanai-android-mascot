@@ -13,5 +13,5 @@
 - `ui/js/core/actions/balloon-descript/font.js:87` `// [font.shadowcolor.r,数値], [font.shadowcolor.g,数値], [font.shadowcolor.b,数値], [f`
 - `ui/js/core/actions/balloon-descript/font.js:92` `props["font.shadowcolor.b"]`
 - `ui/js/core/actions/balloon-descript/font.js:120` `props[`${prefix}.font.shadowcolor.b`]`
-- `ui/js/core/actions/balloon-descript/font.js:175` `// [anchor.font.shadowcolor.r,数値], [anchor.font.shadowcolor.g,数値], [anchor.font.`
-- `ui/js/core/actions/balloon-descript/font.js:179` `props["anchor.font.shadowcolor.b"] ||`
+- `ui/js/core/actions/balloon-descript/font.js:176` `// [anchor.font.shadowcolor.r,数値], [anchor.font.shadowcolor.g,数値], [anchor.font.`
+- `ui/js/core/actions/balloon-descript/font.js:180` `props["anchor.font.shadowcolor.b"] ||`

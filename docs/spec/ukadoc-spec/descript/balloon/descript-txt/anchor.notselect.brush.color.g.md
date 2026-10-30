@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js:231` `// [anchor.notselect.pen.color.r,数値], [anchor.notselect.pen.color.g,数値], [anchor`
-- `ui/js/core/actions/balloon-descript/font.js:237` `props["anchor.notselect.brush.color.g"] ||`
+- `ui/js/core/actions/balloon-descript/font.js:239` `// [anchor.notselect.pen.color.r,数値], [anchor.notselect.pen.color.g,数値], [anchor`
+- `ui/js/core/actions/balloon-descript/font.js:245` `props["anchor.notselect.brush.color.g"] ||`

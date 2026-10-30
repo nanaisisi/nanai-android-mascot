@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js:277` `// [cursor.notselect.font.shadowcolor.r,数値], [cursor.notselect.font.shadowcolor.`
-- `ui/js/core/actions/balloon-descript/font.js:282` `props["cursor.notselect.font.shadowstyle"]`
+- `ui/js/core/actions/balloon-descript/font.js:290` `// [cursor.notselect.font.shadowcolor.r,数値], [cursor.notselect.font.shadowcolor.`
+- `ui/js/core/actions/balloon-descript/font.js:295` `props["cursor.notselect.font.shadowstyle"]`

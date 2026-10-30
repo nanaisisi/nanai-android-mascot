@@ -12,6 +12,6 @@
 
 - `src-tauri/src/fmo.rs:13` `pub balloon0: String,`
 - `src-tauri/src/fmo.rs:14` `pub balloon1: String,`
-- `src-tauri/src/fmo.rs:43` `balloon0: "".to_string(),`
-- `src-tauri/src/fmo.rs:44` `balloon1: "".to_string(),`
+- `src-tauri/src/fmo.rs:41` `balloon0: "".to_string(),`
+- `src-tauri/src/fmo.rs:42` `balloon1: "".to_string(),`
 - `src-tauri/src/lib.rs:101` `commands::shell::scan_balloons,`

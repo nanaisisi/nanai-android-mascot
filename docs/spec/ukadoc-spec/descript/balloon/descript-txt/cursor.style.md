@@ -10,6 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js:245` `// [cursor.style,形状], [cursor.blendmethod,コマンド], [cursor.font.color.r,数値], [curs`
-- `ui/js/core/actions/balloon-descript/font.js:247` `props["cursor.style"] ||`
-- `tests/balloon-descript.test.js:100` `"cursor.style": "square",`
+- `ui/js/core/actions/balloon-descript/font.js:254` `// [cursor.style,形状], [cursor.blendmethod,コマンド], [cursor.font.color.r,数値], [curs`
+- `ui/js/core/actions/balloon-descript/font.js:256` `props["cursor.style"] ||`
+- `tests/balloon-descript.test.js:106` `"cursor.style": "square",`

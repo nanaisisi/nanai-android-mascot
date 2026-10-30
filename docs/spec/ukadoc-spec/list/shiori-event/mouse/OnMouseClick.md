@@ -11,7 +11,7 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 ## 実装箇所
 
 - `src-tauri/src/shiori/ffi/builder.rs:91` `.event("OnMouseClick")`
-- `src-tauri/src/shiori/ffi/builder.rs:212` `assert!(req.contains("OnMouseClick"));`
+- `src-tauri/src/shiori/ffi/builder.rs:217` `assert!(req.contains("OnMouseClick"));`
 - `ui/js/core/app-events.js:146` `// つつき反応が無かった場合は OnMouseClick もフォールバック送信`
 - `ui/js/core/app-events.js:148` `this.ghostController.sendShioriEvent("OnMouseClick", args);`
-- `tests/app-events.test.js:152` `// Test onGhostClick fallback to OnMouseClick when double click has no script`
+- `tests/app-events.test.js:198` `// Test onGhostClick fallback to OnMouseClick when double click has no script`

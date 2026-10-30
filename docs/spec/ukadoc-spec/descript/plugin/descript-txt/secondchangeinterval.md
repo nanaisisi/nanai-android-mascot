@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/ext.rs:41` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [secondchangeinterva`
-- `src-tauri/src/commands/ext.rs:45` `let _sec_interval = map.get("secondchangeinterval");`
+- `src-tauri/src/commands/ext.rs:47` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [secondchangeinterva`
+- `src-tauri/src/commands/ext.rs:51` `let _sec_interval = map.get("secondchangeinterval");`

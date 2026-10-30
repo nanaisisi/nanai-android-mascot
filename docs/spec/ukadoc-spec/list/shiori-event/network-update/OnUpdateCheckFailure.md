@@ -11,5 +11,5 @@
 ## 実装箇所
 
 - `ui/js/core/app-update.js:16` `*    - チェックのみ実行時: OnUpdateCheckComplete / OnUpdateCheckFailure`
-- `ui/js/core/app-update.js:207` `// チェックのみ実行: OnUpdateCheckFailure (Ref0: 失敗理由)`
-- `ui/js/core/app-update.js:209` `"OnUpdateCheckFailure",`
+- `ui/js/core/app-update.js:201` `// チェックのみ実行: OnUpdateCheckFailure (Ref0: 失敗理由)`
+- `ui/js/core/app-update.js:203` `"OnUpdateCheckFailure",`

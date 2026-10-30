@@ -11,6 +11,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js:217` `// [anchor.notselect.style,形状], [anchor.notselect.font.color.r,数値], [anchor.nots`
-- `ui/js/core/actions/balloon-descript/font.js:222` `props["anchor.notselect.font.color.b"]`
-- `tests/balloon-descript.test.js:99` `"anchor.notselect.font.color.b": "100",`
+- `ui/js/core/actions/balloon-descript/font.js:223` `// [anchor.notselect.style,形状], [anchor.notselect.font.color.r,数値], [anchor.nots`
+- `ui/js/core/actions/balloon-descript/font.js:228` `props["anchor.notselect.font.color.b"]`
+- `tests/balloon-descript.test.js:105` `"anchor.notselect.font.color.b": "100",`

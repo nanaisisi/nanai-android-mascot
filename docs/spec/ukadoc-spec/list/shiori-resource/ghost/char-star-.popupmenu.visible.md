@@ -14,4 +14,4 @@
 - `src-tauri/src/lib.rs:134` `commands::window::hide_subchar_window,`
 - `src-tauri/src/lib.rs:135` `commands::window::set_character_scale,`
 - `src-tauri/src/lib.rs:140` `commands::window::sync_character_balloon,`
-- `src-tauri/src/commands/ext.rs:41` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [secondchangeinterva`
+- `src-tauri/src/commands/ext.rs:47` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [secondchangeinterva`

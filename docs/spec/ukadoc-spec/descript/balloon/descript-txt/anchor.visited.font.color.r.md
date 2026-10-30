@@ -10,6 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js:193` `// [anchor.visited.style,形状], [anchor.visited.font.color.r,数値], [anchor.visited.`
-- `ui/js/core/actions/balloon-descript/font.js:196` `props["anchor.visited.font.color.r"] ||`
-- `tests/balloon-descript.test.js:93` `"anchor.visited.font.color.r": "128",`
+- `ui/js/core/actions/balloon-descript/font.js:196` `// [anchor.visited.style,形状], [anchor.visited.font.color.r,数値], [anchor.visited.`
+- `ui/js/core/actions/balloon-descript/font.js:199` `props["anchor.visited.font.color.r"] ||`
+- `tests/balloon-descript.test.js:99` `"anchor.visited.font.color.r": "128",`

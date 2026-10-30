@@ -14,4 +14,4 @@
 - `src-tauri/src/events.rs:10` `"action": "switch-to-ghost",`
 - `src-tauri/src/events.rs:11` `"payload": ghost_name`
 - `src-tauri/src/fmo.rs:20` `pub ghosts: HashMap<String, FmoGhostStatus>,`
-- `src-tauri/src/fmo.rs:31` `.current_ghost_name`
+- `src-tauri/src/fmo.rs:29` `.current_ghost_name`

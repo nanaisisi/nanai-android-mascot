@@ -11,8 +11,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/ext.rs:41` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [secondchangeinterva`
-- `src-tauri/src/commands/ext.rs:42` `let _readme = map.get("readme");`
-- `src-tauri/src/commands/ext.rs:43` `let _readme_cs = map.get("readme.charset");`
-- `src-tauri/src/commands/ext.rs:101` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [alwaysdisplay,数値], `
-- `src-tauri/src/commands/ext.rs:102` `let _readme = map.get("readme");`
+- `src-tauri/src/commands/ext.rs:47` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [secondchangeinterva`
+- `src-tauri/src/commands/ext.rs:48` `let _readme = map.get("readme");`
+- `src-tauri/src/commands/ext.rs:49` `let _readme_cs = map.get("readme.charset");`
+- `src-tauri/src/commands/ext.rs:116` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [alwaysdisplay,数値], `
+- `src-tauri/src/commands/ext.rs:117` `let _readme = map.get("readme");`

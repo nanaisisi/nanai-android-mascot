@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/ext.rs:41` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [secondchangeinterva`
-- `src-tauri/src/commands/ext.rs:43` `let _readme_cs = map.get("readme.charset");`
-- `src-tauri/src/commands/ext.rs:101` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [alwaysdisplay,数値], `
-- `src-tauri/src/commands/ext.rs:103` `let _readme_cs = map.get("readme.charset");`
-- `src-tauri/src/ghost/scan/directory.rs:116` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [icon,ファイル名], [icon.`
+- `src-tauri/src/commands/ext.rs:47` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [secondchangeinterva`
+- `src-tauri/src/commands/ext.rs:49` `let _readme_cs = map.get("readme.charset");`
+- `src-tauri/src/commands/ext.rs:116` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [alwaysdisplay,数値], `
+- `src-tauri/src/commands/ext.rs:118` `let _readme_cs = map.get("readme.charset");`
+- `src-tauri/src/ghost/scan/directory.rs:127` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [icon,ファイル名], [icon.`

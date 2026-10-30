@@ -6,4 +6,10 @@
 
 ## 突合結果
 
-実装コードに「username」が見つからない。
+実装コード内に「username」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/shiori/property.rs:29` `"username" => "User".to_string(),`
+- `src-tauri/src/shiori/property.rs:64` `evaluate_property_query("username"),`

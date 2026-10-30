@@ -14,5 +14,5 @@
 - `ui/js/core/actions/balloon-descript/font.js:29` `// [font.bold,0/1]: props["font.bold"]`
 - `ui/js/core/actions/balloon-descript/font.js:31` `props["font.bold"] === "1" ||`
 - `ui/js/core/actions/balloon-descript/font.js:32` `props["font.bold"]?.toLowerCase() === "true"`
-- `tests/balloon-descript.test.js:76` `"font.bold": "1",`
+- `tests/balloon-descript.test.js:82` `"font.bold": "1",`
 - `tests/core-actions.test.js:35` `"font.bold": "0",`

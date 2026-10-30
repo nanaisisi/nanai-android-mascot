@@ -12,6 +12,6 @@
 
 - `src-tauri/src/commands/calendar.rs:1` `//! SSP Calendar & Schedule Manager specification implementation (ukadoc-ssp/fun`
 - `src-tauri/src/shiori/fmo.rs:30` `let prefix = format!("ssp_fmo_header_{}", rec.id);`
-- `src-tauri/src/shiori/fmo.rs:76` `map.insert("ssp".to_string(), false);`
+- `src-tauri/src/shiori/fmo.rs:84` `map.insert("ssp".to_string(), false);`
 - `ui/js/ui/templates/doc-templates.js:79` `<a href="https://github.com/ukatech/ukadoc-ssp" target="_blank" rel="noopener no`
 - `cpp/yaya-shiori/deelx.h:1291` `m_posixfun = ::isspace;`

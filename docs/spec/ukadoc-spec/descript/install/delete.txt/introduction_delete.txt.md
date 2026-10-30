@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive.rs:243` `// [delete.txt]: インストール・更新時の指定ファイル自動削除処理（delete.txt の相対パス解析・削除）`
-- `src-tauri/src/commands/install/archive.rs:244` `let delete_txt_path = target_dir.join("delete.txt");`
+- `src-tauri/src/commands/install/archive.rs:252` `// [delete.txt]: インストール・更新時の指定ファイル自動削除処理（delete.txt の相対パス解析・削除）`
+- `src-tauri/src/commands/install/archive.rs:253` `let delete_txt_path = target_dir.join("delete.txt");`

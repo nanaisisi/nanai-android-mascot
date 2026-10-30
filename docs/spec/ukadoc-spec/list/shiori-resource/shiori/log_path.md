@@ -11,5 +11,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/ffi/builder.rs:174` `pub fn on_update_result_explorer(status: &str, log_path: Option<&str>) -> Self {`
-- `src-tauri/src/shiori/ffi/builder.rs:180` `if let Some(path) = log_path {`
+- `src-tauri/src/shiori/ffi/builder.rs:179` `pub fn on_update_result_explorer(status: &str, log_path: Option<&str>) -> Self {`
+- `src-tauri/src/shiori/ffi/builder.rs:185` `if let Some(path) = log_path {`

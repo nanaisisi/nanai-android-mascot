@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs:173` `// [shiori.logo.file,ファイル名], [shiori.logo.x,X座標], [shiori.logo.y,Y座標], [shiori.l`
-- `src-tauri/src/ghost/scan/directory.rs:175` `let _shiori_logo_x = m.get("shiori.logo.x");`
+- `src-tauri/src/ghost/scan/directory.rs:184` `// [shiori.logo.file,ファイル名], [shiori.logo.x,X座標], [shiori.logo.y,Y座標], [shiori.l`
+- `src-tauri/src/ghost/scan/directory.rs:186` `let _shiori_logo_x = m.get("shiori.logo.x");`

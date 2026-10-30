@@ -12,6 +12,6 @@
 
 - `src-tauri/src/lib.rs:38` `commands::shiori::on_second_change,`
 - `src-tauri/src/lib.rs:114` `commands::shiori::on_second_change,`
-- `src-tauri/src/commands/ext.rs:41` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [secondchangeinterva`
-- `src-tauri/src/commands/ext.rs:45` `let _sec_interval = map.get("secondchangeinterval");`
-- `src-tauri/src/commands/install/utils.rs:89` `+ (dt.second() as u64);`
+- `src-tauri/src/commands/ext.rs:47` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [secondchangeinterva`
+- `src-tauri/src/commands/ext.rs:51` `let _sec_interval = map.get("secondchangeinterval");`
+- `src-tauri/src/commands/install/utils.rs:91` `+ (dt.second() as u64);`

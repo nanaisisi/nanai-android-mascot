@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/parser/brackets/mod.rs:176` `"a[id]text\\_b\\_a",`
+- `crates/ui/src/script/parser/brackets/mod.rs:182` `"a[id]text\\_b\\_a",`

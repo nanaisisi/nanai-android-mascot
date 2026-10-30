@@ -10,7 +10,7 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/assets.js:63` `// [arrow0.x,座標], [arrow0.y,座標], [arrow1.x,座標], [arrow1.y,座標]:`
-- `ui/js/core/actions/balloon-descript/assets.js:65` `const arrow0y = parseInt(props["arrow0.y"], 10);`
-- `tests/balloon-descript.test.js:127` `"arrow0.y": "5",`
+- `ui/js/core/actions/balloon-descript/assets.js:69` `// [arrow0.x,座標], [arrow0.y,座標], [arrow1.x,座標], [arrow1.y,座標]:`
+- `ui/js/core/actions/balloon-descript/assets.js:71` `const arrow0y = parseInt(props["arrow0.y"], 10);`
+- `tests/balloon-descript.test.js:133` `"arrow0.y": "5",`
 - `tests/frontend-coverage-boost.test.js:34` `"arrow0.y": "24",`

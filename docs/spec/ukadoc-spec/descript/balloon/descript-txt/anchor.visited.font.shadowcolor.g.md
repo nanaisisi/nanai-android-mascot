@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js:200` `// [anchor.visited.font.shadowcolor.r,数値], [anchor.visited.font.shadowcolor.g,数値`
-- `ui/js/core/actions/balloon-descript/font.js:203` `props["anchor.visited.font.shadowcolor.g"] ||`
+- `ui/js/core/actions/balloon-descript/font.js:204` `// [anchor.visited.font.shadowcolor.r,数値], [anchor.visited.font.shadowcolor.g,数値`
+- `ui/js/core/actions/balloon-descript/font.js:207` `props["anchor.visited.font.shadowcolor.g"] ||`

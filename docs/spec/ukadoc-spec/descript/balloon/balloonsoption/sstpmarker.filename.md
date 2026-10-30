@@ -11,5 +11,5 @@
 ## 実装箇所
 
 - `ui/css/balloon-window.css:124` `/* SSTPマーカー (sstpmarker.filename) */`
-- `ui/js/core/actions/balloon-descript/assets.js:40` `// [sstpmarker.filename,ファイル名]:`
-- `ui/js/core/actions/balloon-descript/assets.js:41` `setBalloonImage("sstpmarker.filename", "--balloon-sstpmarker-image");`
+- `ui/js/core/actions/balloon-descript/assets.js:46` `// [sstpmarker.filename,ファイル名]:`
+- `ui/js/core/actions/balloon-descript/assets.js:47` `setBalloonImage("sstpmarker.filename", "--balloon-sstpmarker-image");`

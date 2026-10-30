@@ -158,6 +158,7 @@ pub fn run() {
             shiori::fmo::get_fmo_status,
             shiori::fmo::check_base_ware_mutex,
             sstp::send_sstp_request,
+            commands::web::handle_ukagaka_uri,
             commands::shiori::send_on_translate,
             commands::shiori::send_ghost_call_event
         ])

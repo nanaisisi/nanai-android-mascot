@@ -5,4 +5,5 @@ pub mod install;
 pub mod shell;
 pub mod shiori;
 pub mod update;
+pub mod web;
 pub mod window;

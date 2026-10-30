@@ -49,8 +49,8 @@ fn extract_tag_content(block: &str, tag: &str) -> String {
         }
     }
     let open_prefix = format!("<{}", tag);
-    if let Some(s) = block.find(&open_prefix) {
-        if let Some(gt) = block[s..].find('>') {
+    if let Some(s) = block.find(&open_prefix)
+        && let Some(gt) = block[s..].find('>') {
             let start = s + gt + 1;
             if let Some(e) = block[start..].find(&end_tag) {
                 let content = &block[start..start + e];
@@ -62,7 +62,6 @@ fn extract_tag_content(block: &str, tag: &str) -> String {
                     .to_string();
             }
         }
-    }
     String::new()
 }
 

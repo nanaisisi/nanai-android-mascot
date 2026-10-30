@@ -74,7 +74,7 @@ pub async fn execute_saori(request: SaoriRequest) -> Result<SaoriResponse, Strin
 
     let mut value = None;
 
-    let parts: Vec<&str> = request.dll_path.split(|c| c == '.' || c == '/').collect();
+    let parts: Vec<&str> = request.dll_path.split(['.', '/']).collect();
     if let Some(module) = parts.first() {
         let function = parts.get(1).unwrap_or(&"");
         value = execute_saori_ex_internal(module, function, &request.args);

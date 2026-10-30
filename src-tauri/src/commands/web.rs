@@ -13,22 +13,21 @@ pub async fn handle_ukagaka_uri(
     if lower.starts_with("ukagaka://install") || lower.starts_with("ghost://install") {
         if let Some(pos) = uri.find("url=") {
             let install_url = &uri[pos + 4..];
-            let decoded = urlencoding::decode(install_url).unwrap_or_else(|_| std::borrow::Cow::Borrowed(install_url));
+            let decoded = urlencoding::decode(install_url).unwrap_or(std::borrow::Cow::Borrowed(install_url));
             app_handle
                 .emit("ukagaka-install-url", decoded.to_string())
                 .map_err(|e| e.to_string())?;
             return Ok(format!("Triggered install for URL: {}", decoded));
         }
-    } else if lower.starts_with("ukagaka://sstp") || lower.starts_with("sstp://") {
-        if let Some(pos) = uri.find("script=") {
+    } else if (lower.starts_with("ukagaka://sstp") || lower.starts_with("sstp://"))
+        && let Some(pos) = uri.find("script=") {
             let script = &uri[pos + 7..];
-            let decoded = urlencoding::decode(script).unwrap_or_else(|_| std::borrow::Cow::Borrowed(script));
+            let decoded = urlencoding::decode(script).unwrap_or(std::borrow::Cow::Borrowed(script));
             app_handle
                 .emit("sstp-execute-script", decoded.to_string())
                 .map_err(|e| e.to_string())?;
             return Ok("Triggered SSTP script execution".to_string());
         }
-    }
     Ok(format!("Processed URI: {}", uri))
 }
 

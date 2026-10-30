@@ -10,4 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/assets.js` `if (!Number.isNaN(smX)) root.style.setProperty("--balloon-sstpmarker-x", \`${smX}px\`);`
+- `ui/js/core/actions/balloon-descript/assets.js:86` `// [sstpmarker.x,座標], [sstpmarker.y,座標]:`
+- `ui/js/core/actions/balloon-descript/assets.js:87` `const smX = parseInt(props["sstpmarker.x"], 10);`
+- `tests/balloon-descript.test.js:117` `"sstpmarker.x": "15",`

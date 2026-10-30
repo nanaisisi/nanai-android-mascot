@@ -10,8 +10,8 @@ update/network.rs で homeurl を取得してネットワーク更新に使用�
 
 ## 実装箇所
 
-- `src-tauri/src/commands/update/dau.rs:10` `pub homeurl: String,`
-- `src-tauri/src/commands/update/dau.rs:38` `/// ゴーストの homeurl を取得`
-- `src-tauri/src/commands/update/dau.rs:39` `pub fn get_ghost_homeurl(ghost_dir: &Path) -> Option<String> {`
-- `src-tauri/src/commands/update/dau.rs:44` `if let Some(url) = desc.homeurl() {`
-- `src-tauri/src/commands/update/dau.rs:57` `if let Some(url) = desc.homeurl() {`
+- `src-tauri/src/commands/ext.rs:36` `// [craftman,作者名], [craftmanw,作者名], [craftmanurl,URL], [homeurl,URL]:`
+- `src-tauri/src/commands/ext.rs:38` `let craftman_url = map.get("craftmanurl").cloned().or_else(|| map.get("homeurl")`
+- `src-tauri/src/commands/ext.rs:95` `// [craftman,作者名], [craftmanw,作者名], [craftmanurl,URL], [homeurl,URL]:`
+- `src-tauri/src/commands/ext.rs:97` `let craftman_url = map.get("craftmanurl").cloned().or_else(|| map.get("homeurl")`
+- `src-tauri/src/commands/shell/balloon.rs:107` `/// [charset,文字コード], [type,種別], [craftman,作者名], [craftmanw,作者名], [craftmanurl,UR`

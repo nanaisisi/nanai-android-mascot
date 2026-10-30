@@ -10,4 +10,6 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs` `// [kero.defaultleft,X座標], [kero.defaulttop,Y座標], [kero.defaultx,X座標]...`
+- `src-tauri/src/ghost/scan/directory.rs:130` `// [kero.defaultleft,X座標], [kero.defaulttop,Y座標], [kero.defaultx,X座標], [kero.def`
+- `src-tauri/src/ghost/scan/directory.rs:133` `let _kero_dx = m.get("kero.defaultx");`
+- `src-tauri/src/ghost/scan/shell.rs:96` `// [kero.defaultleft,X座標], [kero.defaulttop,Y座標], [kero.defaultx,X座標], [kero.def`

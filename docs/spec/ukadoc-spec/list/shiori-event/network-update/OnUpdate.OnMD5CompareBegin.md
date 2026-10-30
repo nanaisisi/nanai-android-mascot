@@ -10,5 +10,5 @@ Rust 側の MD5 照合開始通知 (`update-progress` / phase `md5-begin`) を�
 
 ## 実装箇所
 
-- `ui/js/core/app-update.js:14` `*    - OnUpdate.OnMD5CompareBegin`
-- `ui/js/core/app-update.js:151` `gc.sendShioriEvent("OnUpdate.OnMD5CompareBegin", [`
+- `ui/js/core/app-update.js:19` `*    - OnUpdate.OnMD5CompareBegin`
+- `ui/js/core/actions/update-protocol.js:20` `"md5-begin": "OnUpdate.OnMD5CompareBegin",`

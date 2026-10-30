@@ -10,4 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/layout.js` `if (!Number.isNaN(numX)) root.style.setProperty("--balloon-number-x", \`${numX}px\`);`
+- `ui/js/core/actions/balloon-descript/layout.js:135` `// [number.x,座標], [number.y,座標], [number.xr,座標], [number.yb,座標]:`
+- `ui/js/core/actions/balloon-descript/layout.js:136` `const numX = parseInt(props["number.x"], 10);`
+- `ui/js/core/actions/balloon-descript/layout.js:138` `const numXR = parseInt(props["number.xr"], 10);`
+- `tests/balloon-descript.test.js:108` `"number.x": "10",`
+- `tests/balloon-descript.test.js:110` `"number.xr": "-10",`

@@ -11,8 +11,8 @@ ui/js/ghost/sakura-parser.js / sakura-command-handler.js で処理: クリック
 
 ## 実装箇所
 
-- `crates/ui/src/update.rs:26` `// 区切り文字: \x01 (Byte 1) または カンマフォールバック`
-- `crates/ui/src/update.rs:27` `let parts: Vec<&str> = if data_part.contains('\x01') {`
-- `crates/ui/src/update.rs:28` `data_part.split('\x01').collect()`
-- `crates/ui/src/update.rs:73` `let content = "ghost\\master\\descript.txt\x011A2B3C4D5E6F7890ABCDEF1234567890\x`
-- `crates/ui/src/update.rs:74` `ghost\\master\\shiori.dll\x01FEDCBA09876543210987654321ABCDEF\r\n";`
+- `src-tauri/src/shiori/fmo.rs:31` `content.push_str(&format!("{}.path\x01{}\r\n", prefix, rec.path));`
+- `src-tauri/src/shiori/fmo.rs:32` `content.push_str(&format!("{}.hwnd\x01{}\r\n", prefix, rec.hwnd));`
+- `src-tauri/src/shiori/fmo.rs:33` `content.push_str(&format!("{}.name\x01{}\r\n", prefix, rec.name));`
+- `src-tauri/src/shiori/fmo.rs:34` `content.push_str(&format!("{}.keroname\x01{}\r\n", prefix, rec.keroname));`
+- `src-tauri/src/shiori/fmo.rs:35` `content.push_str(&format!("{}.sakura.surface\x01{}\r\n", prefix, rec.sakura_surf`

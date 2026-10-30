@@ -11,4 +11,6 @@
 ## 実装箇所
 
 - `src-tauri/src/shiori/ffi/builder.rs:129` `.event("OnBIFFBegin")`
-- `ui/js/core/actions/network-actions.js:14` `await gc.sendShioriEvent("OnBIFFBegin", [accountName]);`
+- `ui/js/core/actions/network-actions.js:15` `await gc.sendShioriEvent("OnBIFFBegin", [accountName]);`
+- `tests/network-actions.test.js:27` `assert.ok(eventsSent.some((e) => e.ev === "OnBIFFBegin"));`
+- `tests/network-actions.test.js:72` `if (ev === "OnBIFFBegin") throw new Error("Shiori error");`

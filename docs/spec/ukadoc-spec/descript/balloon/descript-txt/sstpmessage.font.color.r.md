@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js` `const sstpColor = rgbFromComponents(props, "sstpmessage.font.color");`
+- `ui/js/core/actions/balloon-descript/font.js:327` `// [sstpmessage.font.name,フォント名], [sstpmessage.font.height,サイズ], [sstpmessage.fo`
+- `ui/js/core/actions/balloon-descript/font.js:341` `props["sstpmessage.font.color.r"] ||`

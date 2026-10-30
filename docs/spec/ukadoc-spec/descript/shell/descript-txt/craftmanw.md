@@ -2,17 +2,10 @@
 
 - **規格**: [craftmanw.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell/descript-txt/craftmanw/) (ukadoc-spec/descript/shell/descript-txt/craftmanw.md)
 - **検索語**: craftmanw
-- **対応状況**: ✅ 対応済 (shell.rs)\n\n## 突合結果\n\nsrc-tauri/src/ghost/scan/shell.rs においてパース・抽出・バインドする実装が行われている。\n\n## 実装箇所\n\n- src-tauri/src/ghost/scan/shell.rs // [name,シェル名]... [type,種別]... [char*.name,名前]...
+- **対応状況**: ✅ 対応済 (shell.rs)\n\n## 突合結果\n\nsrc-tauri/src/ghost/scan/shell.rs においてパース・抽出・バインドする実装が行われている。\n\n## 実装箇所
 
-## 突合結果
-
-実装コード内に「craftmanw」を確認。
-
-
-## 実装箇所
-
-- `crates/ui/src/shell.rs:18` `/// `descript.txt`（type / name / craftmanw / bindgroup 等）`
-- `crates/ui/src/shell.rs:105` `/// シェル作者名（`craftmanw`/`craftman`）`
-- `crates/ui/src/shell.rs:107` `self.descript.craftmanw()`
-- `crates/ui/src/manifest.rs:31` `/// シェル作者名（`craftmanw`/`craftman`）`
-- `crates/ui/src/manifest.rs:108` `"type,shell\nname,manifest_test\ncraftmanw,Tester\n",`
+- `src-tauri/src/commands/ext.rs:36` `// [craftman,作者名], [craftmanw,作者名], [craftmanurl,URL], [homeurl,URL]:`
+- `src-tauri/src/commands/ext.rs:37` `let craftman = map.get("craftman").cloned().or_else(|| map.get("craftmanw").clon`
+- `src-tauri/src/commands/ext.rs:95` `// [craftman,作者名], [craftmanw,作者名], [craftmanurl,URL], [homeurl,URL]:`
+- `src-tauri/src/commands/ext.rs:96` `let craftman = map.get("craftman").cloned().or_else(|| map.get("craftmanw").clon`
+- `src-tauri/src/commands/shell/balloon.rs:107` `/// [charset,文字コード], [type,種別], [craftman,作者名], [craftmanw,作者名], [craftmanurl,UR`

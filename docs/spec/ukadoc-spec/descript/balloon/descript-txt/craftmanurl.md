@@ -10,8 +10,8 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 
 ## 実装箇所
 
-- `src-tauri/src/commands/ext.rs:35` `let craftman_url = map.get("craftmanurl").cloned();`
-- `src-tauri/src/commands/ext.rs:84` `let craftman_url = map.get("craftmanurl").cloned();`
-- `src-tauri/src/commands/install/archive.rs:243` `.and_then(|m| m.get("craftmanurl").cloned());`
-- `src-tauri/src/ghost/scan/directory.rs:89` `.and_then(|m| m.get("craftmanurl").cloned());`
-- `crates/ui/src/descript.rs:135` `/// 作者Webページ (`craftmanurl` キー)`
+- `src-tauri/src/commands/ext.rs:36` `// [craftman,作者名], [craftmanw,作者名], [craftmanurl,URL], [homeurl,URL]:`
+- `src-tauri/src/commands/ext.rs:38` `let craftman_url = map.get("craftmanurl").cloned().or_else(|| map.get("homeurl")`
+- `src-tauri/src/commands/ext.rs:95` `// [craftman,作者名], [craftmanw,作者名], [craftmanurl,URL], [homeurl,URL]:`
+- `src-tauri/src/commands/ext.rs:97` `let craftman_url = map.get("craftmanurl").cloned().or_else(|| map.get("homeurl")`
+- `src-tauri/src/commands/install/archive.rs:287` `.and_then(|m| m.get("craftmanurl").cloned());`

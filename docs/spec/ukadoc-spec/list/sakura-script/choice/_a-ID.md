@@ -11,8 +11,8 @@ ui/js/ghost/sakura-parser.js / sakura-command-handler.js で処理: アンカー
 
 ## 実装箇所
 
-- `crates/ui/src/lib.rs:79` `let script = r"\0\_q\x\_a[anchor01]リンク\_a\![raise,OnTest,1,2]\![bind,clothing,ri`
+- `crates/ui/src/lib.rs:78` `let script = r"\0\_q\x\_a[anchor01]リンク\_a\![raise,OnTest,1,2]\![bind,clothing,ri`
 - `crates/ui/src/script/command.rs:23` `}, // \_a[id]text\_a`
-- `crates/ui/src/script/parser/brackets.rs:167` `/// `\_` 系コマンド（\_w / \_q / \_a / \_s / \_l）の共通処理`
-- `crates/ui/src/script/parser/brackets.rs:191` `// \_a[id]text\_a`
-- `crates/ui/src/script/parser/brackets.rs:193` `// \_a までテキストを蓄積`
+- `crates/ui/src/script/parser/mod.rs:49` `// \_w / \_q / \_a / \_s / \_l`
+- `crates/ui/src/script/parser/brackets/mod.rs:104` `let mut chars = "a[anchor1]text\\_a".chars().peekable();`
+- `crates/ui/src/script/parser/brackets/mod.rs:176` `"a[id]text\\_b\\_a",`

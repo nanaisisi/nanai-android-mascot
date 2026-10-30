@@ -10,4 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/assets.js` `if (!Number.isNaN(onlineInterval)) instance.onlineMarkerInterval = onlineInterval;`
+- `ui/js/core/actions/balloon-descript/assets.js:102` `// [onlinemarker.interval,待機時間], [onlinemarker.x,座標], [onlinemarker.y,座標]:`
+- `ui/js/core/actions/balloon-descript/assets.js:103` `const onlineInterval = parseInt(props["onlinemarker.interval"], 10);`
+- `tests/balloon-descript.test.js:129` `"onlinemarker.interval": "5000",`

@@ -11,8 +11,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive.rs:244` `let group = meta_map.as_ref().and_then(|m| m.get("group").cloned());`
-- `src-tauri/src/commands/install/archive.rs:259` `group,`
-- `src-tauri/src/ghost/scan/directory.rs:99` `let group = meta_map.as_ref().and_then(|m| m.get("group").cloned());`
-- `src-tauri/src/ghost/scan/directory.rs:113` `group,`
-- `src-tauri/src/ghost/scan/directory.rs:145` `group: None,`
+- `src-tauri/gen/schemas/android-schema.json:40` `"description": "A grouping and boundary mechanism developers can use to isolate `
+- `src-tauri/gen/schemas/android-schema.json:52` `"description": "Description of what the capability is intended to allow on assoc`
+- `src-tauri/gen/schemas/desktop-schema.json:40` `"description": "A grouping and boundary mechanism developers can use to isolate `
+- `src-tauri/gen/schemas/desktop-schema.json:52` `"description": "Description of what the capability is intended to allow on assoc`
+- `src-tauri/gen/schemas/mobile-schema.json:40` `"description": "A grouping and boundary mechanism developers can use to isolate `

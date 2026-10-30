@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js` `const sstpFontHeight = parseInt(props["sstpmessage.font.height"], 10);`
+- `ui/js/core/actions/balloon-descript/font.js:327` `// [sstpmessage.font.name,フォント名], [sstpmessage.font.height,サイズ], [sstpmessage.fo`
+- `ui/js/core/actions/balloon-descript/font.js:335` `const sstpFontHeight = parseInt(props["sstpmessage.font.height"], 10);`

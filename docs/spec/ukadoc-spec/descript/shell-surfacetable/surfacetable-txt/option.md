@@ -10,8 +10,8 @@ surface-parser.js / surface-animation-manager.js に該当の解析・処理は�
 
 ## 実装箇所
 
+- `src-tauri/gen/schemas/android-schema.json:57` `"description": "Configure remote URLs that can use the capability permissions.\n`
+- `src-tauri/gen/schemas/desktop-schema.json:57` `"description": "Configure remote URLs that can use the capability permissions.\n`
+- `src-tauri/gen/schemas/mobile-schema.json:57` `"description": "Configure remote URLs that can use the capability permissions.\n`
+- `src-tauri/gen/schemas/windows-schema.json:57` `"description": "Configure remote URLs that can use the capability permissions.\n`
 - `src-tauri/src/commands/shell/animation.rs:63` `options: vec![],`
-- `crates/ui/src/surfacetable.rs:42` `/// `option,` の内容（任意個）`
-- `crates/ui/src/surfacetable.rs:43` `pub options: Vec<Vec<String>>,`
-- `crates/ui/src/surfacetable.rs:120` `"option" => {`
-- `crates/ui/src/surfacetable.rs:122` `.options`

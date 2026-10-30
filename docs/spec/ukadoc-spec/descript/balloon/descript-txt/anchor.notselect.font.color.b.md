@@ -7,3 +7,10 @@
 ## 突合結果
 
 `ui/js/core/actions/balloon-descript.js` の `rgbFromComponents` により `anchor.notselect.font.color.r/g/b` を合成し、CSS 変数 `--balloon-anchor-notselect-color` として動的適用を実装済み。
+
+
+## 実装箇所
+
+- `ui/js/core/actions/balloon-descript/font.js:217` `// [anchor.notselect.style,形状], [anchor.notselect.font.color.r,数値], [anchor.nots`
+- `ui/js/core/actions/balloon-descript/font.js:222` `props["anchor.notselect.font.color.b"]`
+- `tests/balloon-descript.test.js:99` `"anchor.notselect.font.color.b": "100",`

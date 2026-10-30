@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/assets.js` `setBalloonImage("onlinemarker.filename", "--balloon-online-image");`
+- `ui/js/core/actions/balloon-descript/assets.js:38` `// [onlinemarker.filename,ファイル名]:`
+- `ui/js/core/actions/balloon-descript/assets.js:39` `setBalloonImage("onlinemarker.filename", "--balloon-online-image");`

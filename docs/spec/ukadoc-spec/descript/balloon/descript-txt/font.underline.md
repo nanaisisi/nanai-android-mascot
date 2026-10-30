@@ -10,4 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js` `props["font.underline"] === "1" ||`
+- `ui/js/core/actions/balloon-descript/font.js:46` `// [font.underline,0/1]: props["font.underline"]`
+- `ui/js/core/actions/balloon-descript/font.js:48` `props["font.underline"] === "1" ||`
+- `ui/js/core/actions/balloon-descript/font.js:49` `props["font.underline"]?.toLowerCase() === "true"`
+- `tests/balloon-descript.test.js:78` `"font.underline": "1",`
+- `tests/core-actions.test.js:37` `"font.underline": "0",`

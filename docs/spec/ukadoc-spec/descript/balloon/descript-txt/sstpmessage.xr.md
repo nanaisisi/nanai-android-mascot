@@ -10,4 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/layout.js` `if (!Number.isNaN(sstpXR)) root.style.setProperty("--balloon-sstpmessage-xr", \`${sstpXR}px\`);`
+- `ui/js/core/actions/balloon-descript/layout.js:145` `// [sstpmessage.x,座標], [sstpmessage.y,座標], [sstpmessage.xr,座標], [sstpmessage.yb,`
+- `ui/js/core/actions/balloon-descript/layout.js:148` `const sstpXR = parseInt(props["sstpmessage.xr"], 10);`
+- `tests/balloon-descript.test.js:121` `"sstpmessage.xr": "-30",`

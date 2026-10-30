@@ -11,4 +11,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript.js:97` `const cbWidth = props["communicatebox.width"];`
+- `ui/js/core/actions/balloon-descript/layout.js:27` `// [communicatebox.width,サイズ], [communicatebox.height,サイズ], [communicatebox.x,座標`
+- `ui/js/core/actions/balloon-descript/layout.js:29` `const cbWidth = props["communicatebox.width"];`
+- `tests/balloon-descript.test.js:54` `"communicatebox.width": "200",`

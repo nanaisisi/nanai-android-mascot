@@ -10,4 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js` `const fontColor = rgbFromComponents(props, "font.color");`
+- `ui/js/core/actions/balloon-descript/font.js:73` `// [font.color.r,数値], [font.color.g,数値], [font.color.b,数値]: props["font.color.r/`
+- `ui/js/core/actions/balloon-descript/font.js:77` `props["font.color.g"] ||`
+- `ui/js/core/actions/balloon-descript/font.js:110` `props[`${prefix}.font.color.g`] ||`
+- `ui/js/core/actions/balloon-descript/font.js:168` `// [anchor.style,形状], [anchor.font.color.r,数値], [anchor.font.color.g,数値], [ancho`
+- `ui/js/core/actions/balloon-descript/font.js:172` `props["anchor.font.color.g"] ||`

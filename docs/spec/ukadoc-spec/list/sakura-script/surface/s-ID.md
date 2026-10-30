@@ -11,8 +11,8 @@ ui/js/ghost/sakura-parser.js / sakura-command-handler.js で処理: サーフェ
 
 ## 実装箇所
 
-- `src-tauri/src/commands/window/character_window.rs:81` `/// キャラクター（スコープ N）ウィンドウ非表示コマンド (\s[-1])`
-- `crates/ui/src/update.rs:74` `ghost\\master\\shiori.dll\x01FEDCBA09876543210987654321ABCDEF\r\n";`
-- `crates/ui/src/lib.rs:58` `let script = r"\0\s[0]こんにちは\w5\n\q[はい,id_yes]\e";`
-- `crates/ui/src/lib.rs:166` `let script = r"\h\s[0]ひと\h\u\s[10]うなぎ\n[half]\0下半分";`
-- `crates/ui/src/script/command.rs:8` `Surface(u32), // \s[0], \s0`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:3128` `"source": "E:\\project\\rust\\nanai-android-mascot\\src-tauri\\gen\\android\\app`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:4603` `"source": "E:\\project\\rust\\nanai-android-mascot\\src-tauri\\gen\\android\\app`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:4620` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\24f96ce3c49f3e7`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:4694` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\62bf2bd6f69d478`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:4895` `"source": "E:\\project\\rust\\nanai-android-mascot\\src-tauri\\gen\\android\\app`

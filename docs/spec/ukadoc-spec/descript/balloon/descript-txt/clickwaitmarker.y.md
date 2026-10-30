@@ -10,4 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/assets.js` `if (!Number.isNaN(cwY)) root.style.setProperty("--balloon-clickwait-y", \`${cwY}px\`);`
+- `ui/js/core/actions/balloon-descript/assets.js:78` `// [clickwaitmarker.x,座標], [clickwaitmarker.y,座標]:`
+- `ui/js/core/actions/balloon-descript/assets.js:80` `const cwY = parseInt(props["clickwaitmarker.y"], 10);`
+- `tests/frontend-coverage-boost.test.js:36` `"clickwaitmarker.y": "60",`

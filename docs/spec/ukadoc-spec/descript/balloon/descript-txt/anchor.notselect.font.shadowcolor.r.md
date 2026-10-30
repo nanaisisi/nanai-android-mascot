@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js` `const shadowCol = rgbFromComponents(props, \`${prefix}.font.shadowcolor\`);`
+- `ui/js/core/actions/balloon-descript/font.js:224` `// [anchor.notselect.font.shadowcolor.r,数値], [anchor.notselect.font.shadowcolor.`
+- `ui/js/core/actions/balloon-descript/font.js:226` `props["anchor.notselect.font.shadowcolor.r"] ||`

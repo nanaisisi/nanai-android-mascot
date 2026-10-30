@@ -10,4 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/layout.js` `const vt = parseInt(props["validrect.top"], 10);`
+- `crates/ui/src/descript/parser.rs:80` `let t = self.get("validrect.top").and_then(|v| v.parse().ok());`
+- `crates/ui/src/descript/tests.rs:61` `validrect.top,0\n\`
+- `ui/js/core/actions/balloon-descript/layout.js:83` `// [validrect.left,座標], [validrect.top,座標], [validrect.right,座標], [validrect.bot`
+- `ui/js/core/actions/balloon-descript/layout.js:85` `const vt = parseInt(props["validrect.top"], 10);`
+- `ui/js/ghost/balloon-window.js:107` `const vt = parseInt(props["validrect.top"], 10);`

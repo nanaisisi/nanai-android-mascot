@@ -11,8 +11,8 @@
 
 ## 実装箇所
 
-- `crates/ui/src/lib.rs:112` `let script = r"\b[0]\b[-1]\t\-\_s\_l[10,20]\f[color,red]\f[bold]";`
+- `crates/ui/src/lib.rs:111` `let script = r"\b[0]\b[-1]\t\-\_s\_l[10,20]\f[color,red]\f[bold]";`
 - `crates/ui/src/script/command.rs:44` `}, // \_l[x,y] (座標移動)`
-- `crates/ui/src/script/parser/brackets.rs:167` `/// `\_` 系コマンド（\_w / \_q / \_a / \_s / \_l）の共通処理`
-- `crates/ui/src/script/parser/brackets.rs:223` `// \_l[x,y]`
-- `crates/ui/src/script/parser/mod.rs:47` `// \_w / \_q / \_a / \_s / \_l`
+- `crates/ui/src/script/parser/mod.rs:49` `// \_w / \_q / \_a / \_s / \_l`
+- `ui/js/ghost/sakura-tokenizer.js:214` `// \_l[x,y] (座標移動)`
+- `tests/sakura-tokenizer.test.js:8` `"\\0\\hHello\\1\\uWorld\\p[2]\\p0\\s[10]\\s0\\i[1,wait]\\i2\\w5\\_w[200]\\n\\n[h`

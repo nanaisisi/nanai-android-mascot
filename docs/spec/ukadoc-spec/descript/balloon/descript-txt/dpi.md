@@ -81,8 +81,8 @@ $$\text{finalScale} = \text{userScale} \times \text{dpiScale}$$
 
 ## 実装箇所
 
-- `ui/js/ghost/balloon-window.js:22` `root.style.setProperty("--balloon-dpi-scale", String(currentDpiScale));`
-- `ui/js/ghost/balloon-window.js:68` `// 推奨 DPI (dpi,推奨DPI / 既定値: 96, SSP 2.7.21準拠)`
-- `ui/js/ghost/balloon-window.js:69` `const parsedDpi = parseInt(props.dpi, 10);`
-- `ui/js/ghost/balloon-window.js:73` `root.style.setProperty("--balloon-dpi", String(balloonDpi));`
-- `ui/js/core/actions/balloon-descript.js:26` `const parsedDpi = parseInt(props.dpi, 10);`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:2236` `"outputFile": "com.nanai_android_mascot.app-arm64Debug-39:/values-hdpi-v4_values`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:2239` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\7e448c973fe8964`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/values-hdpi-v4.json:4` `"outputFile": "com.nanai_android_mascot.app-mergeArm64DebugResources-37:/values-`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/values-hdpi-v4.json:7` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\7e448c973fe8964`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/single/mergeArm64DebugResources.json:3` `"merged": "com.nanai_android_mascot.app-arm64Debug-39:/mipmap-xhdpi_ic_launcher_`

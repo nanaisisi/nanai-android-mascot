@@ -10,4 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/ext.rs` `// [name,ヘッドライン名], [id,ID名], [type,種別]:`
+- `src-tauri/build.rs:66` `} else if target.contains("android") {`
+- `src-tauri/build.rs:67` `// Android固有の設定`
+- `src-tauri/build.rs:78` `// Android NDK のヘッダーパス自動探索`
+- `src-tauri/build.rs:84` `let arch_inc = sysroot_inc.join("aarch64-linux-android");`
+- `src-tauri/tauri.conf.json:3` `"productName": "nanai-android-mascot",`

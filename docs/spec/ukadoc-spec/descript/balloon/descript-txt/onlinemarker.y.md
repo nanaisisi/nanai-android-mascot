@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/assets.js` `if (!Number.isNaN(onlineY)) root.style.setProperty("--balloon-online-y", \`${onlineY}px\`);`
+- `ui/js/core/actions/balloon-descript/assets.js:102` `// [onlinemarker.interval,待機時間], [onlinemarker.x,座標], [onlinemarker.y,座標]:`
+- `ui/js/core/actions/balloon-descript/assets.js:107` `const onlineY = parseInt(props["onlinemarker.y"], 10);`

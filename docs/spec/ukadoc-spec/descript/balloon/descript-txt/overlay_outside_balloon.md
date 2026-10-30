@@ -7,3 +7,11 @@
 ## 突合結果
 
 `ui/js/core/actions/balloon-descript.js` にて `overlay_outside_balloon` プロパティをパースし、CSS 変数 `--balloon-overlay-outside` として動的適用を実装済み。
+
+
+## 実装箇所
+
+- `ui/js/core/actions/balloon-descript/assets.js:142` `// [overlay_outside_balloon,0/1]:`
+- `ui/js/core/actions/balloon-descript/assets.js:144` `props.overlay_outside_balloon === "1" ||`
+- `ui/js/core/actions/balloon-descript/assets.js:145` `props.overlay_outside_balloon?.toLowerCase() === "true";`
+- `tests/balloon-descript.test.js:133` `overlay_outside_balloon: "1",`

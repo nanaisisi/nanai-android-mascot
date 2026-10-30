@@ -11,8 +11,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/sstp.rs:11` `pub hwnd: Option<u64>,`
 - `src-tauri/src/fmo.rs:21` `pub hwnd: u64,`
 - `src-tauri/src/fmo.rs:51` `hwnd: 0,`
-- `cpp/yaya-shiori/aya5.h:43` `extern "C" DLLEXPORT BOOL_TYPE FUNCATTRIB logsend(long hwnd);`
-- `cpp/yaya-shiori/basis.h:106` `void	SetLogRcvWnd(long hwnd);`
+- `src-tauri/src/sstp.rs:11` `pub hwnd: Option<u64>,`
+- `src-tauri/src/shiori/fmo.rs:11` `pub hwnd: u64,`
+- `src-tauri/src/shiori/fmo.rs:32` `content.push_str(&format!("{}.hwnd\x01{}\r\n", prefix, rec.hwnd));`

@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs` `let _mc_grip = m.get("mousecursor.grip");`
+- `src-tauri/src/ghost/scan/directory.rs:196` `// [cursor,ファイル名 / mousecursor,ファイル名], [mousecursor.arrow,ファイル名], [mousecursor.g`
+- `src-tauri/src/ghost/scan/directory.rs:199` `let _mc_grip = m.get("mousecursor.grip");`

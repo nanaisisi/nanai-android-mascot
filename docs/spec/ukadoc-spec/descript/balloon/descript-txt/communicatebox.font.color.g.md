@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/layout.js` `if (cbFontColor) cbEl.style.color = cbFontColor;`
+- `ui/js/core/actions/balloon-descript/layout.js:39` `props["communicatebox.font.color.g"] ||`
+- `tests/balloon-descript.test.js:61` `"communicatebox.font.color.g": "0",`

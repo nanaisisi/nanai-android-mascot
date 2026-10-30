@@ -10,5 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/shell/balloon.rs` `/// [推奨の意味], [recommended.ghost,ゴースト名]`
-- `ui/js/core/actions/balloon-descript/assets.js` `if (props["recommended.ghost"])`
+- `ui/js/core/actions/balloon-descript/assets.js:15` `// [推奨の意味], [recommended.ghost,ゴースト名], [recommended.ghost.path,パス]:`

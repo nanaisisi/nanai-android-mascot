@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs` `// [don't need onmousemove,数値], [don't need bind,数値], [don't need seriko talk,数値]:`
+- `src-tauri/src/ghost/scan/directory.rs:183` `// [don't need onmousemove,数値], [don't need bind,数値], [don't need seriko talk,数値`
+- `src-tauri/src/ghost/scan/directory.rs:184` `let _need_mousemove = m.get("don't need onmousemove");`

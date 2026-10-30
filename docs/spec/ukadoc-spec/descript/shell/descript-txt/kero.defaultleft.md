@@ -7,3 +7,10 @@
 ## 突合結果
 
 実装コードに「kero.defaultleft」が見つからない。
+
+
+## 実装箇所
+
+- `src-tauri/src/ghost/scan/directory.rs:130` `// [kero.defaultleft,X座標], [kero.defaulttop,Y座標], [kero.defaultx,X座標], [kero.def`
+- `src-tauri/src/ghost/scan/directory.rs:131` `let _kero_dl = m.get("kero.defaultleft");`
+- `src-tauri/src/ghost/scan/shell.rs:96` `// [kero.defaultleft,X座標], [kero.defaulttop,Y座標], [kero.defaultx,X座標], [kero.def`

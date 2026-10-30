@@ -10,4 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js` `if (props[\`${prefix}.style\`]) root.style.setProperty(...)`
+- `ui/js/core/actions/balloon-descript/font.js:270` `// [cursor.notselect.style,形状], [cursor.notselect.font.color.r,数値], [cursor.nots`
+- `ui/js/core/actions/balloon-descript/font.js:272` `props["cursor.notselect.style"] ||`
+- `tests/balloon-descript.test.js:104` `"cursor.notselect.style": "none",`

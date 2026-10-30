@@ -11,5 +11,8 @@
 
 ## 実装箇所
 
+- `src-tauri/src/shiori/fmo.rs:13` `pub keroname: String,`
+- `src-tauri/src/shiori/fmo.rs:34` `content.push_str(&format!("{}.keroname\x01{}\r\n", prefix, rec.keroname));`
+- `src-tauri/src/shiori/fmo.rs:60` `keroname: "Kero".to_string(),`
 - `ui/js/ghost/shiori-notify.js:11` `* - installedghostname / installedsakuraname / installedkeroname`
 - `ui/js/ghost/shiori-notify.js:66` `await this.sendShioriNotify("installedkeroname", keroNames);`

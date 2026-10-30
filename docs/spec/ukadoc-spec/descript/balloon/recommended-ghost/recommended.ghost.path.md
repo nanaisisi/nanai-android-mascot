@@ -10,5 +10,6 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/shell/balloon.rs` `/// [推奨の意味], [recommended.ghost,ゴースト名]`
-- `ui/js/core/actions/balloon-descript/assets.js` `if (props["recommended.ghost.path"]) root.style.setProperty("--balloon-recommended-ghost-path", props["recommended.ghost.path"]);`
+- `ui/js/core/actions/balloon-descript/assets.js:15` `// [推奨の意味], [recommended.ghost,ゴースト名], [recommended.ghost.path,パス]:`
+- `ui/js/core/actions/balloon-descript/assets.js:18` `if (props["recommended.ghost.path"])`
+- `ui/js/core/actions/balloon-descript/assets.js:19` `root.style.setProperty("--balloon-recommended-ghost-path", props["recommended.gh`

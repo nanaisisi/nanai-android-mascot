@@ -10,8 +10,8 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/utils.rs:20` `if lower.contains("charset,shift_jis") || lower.contains("charset,sjis") {`
-- `src-tauri/src/ghost/scan/descript.rs:13` `if utf8_str.to_lowercase().contains("charset,shift_jis")`
-- `src-tauri/src/ghost/scan/descript.rs:14` `|| utf8_str.to_lowercase().contains("charset,sjis")`
-- `src-tauri/src/shiori/ffi/builder.rs:37` `pub fn charset(mut self, charset: &str) -> Self {`
-- `src-tauri/src/shiori/ffi/builder.rs:38` `self.request.charset = charset.to_string();`
+- `src-tauri/src/commands/ext.rs:41` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [secondchangeinterva`
+- `src-tauri/src/commands/ext.rs:43` `let _readme_cs = map.get("readme.charset");`
+- `src-tauri/src/commands/ext.rs:44` `let _cs = map.get("charset");`
+- `src-tauri/src/commands/ext.rs:101` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [alwaysdisplay,数値], `
+- `src-tauri/src/commands/ext.rs:103` `let _readme_cs = map.get("readme.charset");`

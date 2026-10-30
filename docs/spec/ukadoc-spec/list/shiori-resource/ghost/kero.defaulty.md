@@ -6,4 +6,11 @@
 
 ## 突合結果
 
-実装コードに「kero.defaulty」が見つからない。
+実装コード内に「kero.defaulty」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/ghost/scan/directory.rs:130` `// [kero.defaultleft,X座標], [kero.defaulttop,Y座標], [kero.defaultx,X座標], [kero.def`
+- `src-tauri/src/ghost/scan/directory.rs:134` `let _kero_dy = m.get("kero.defaulty");`
+- `src-tauri/src/ghost/scan/shell.rs:96` `// [kero.defaultleft,X座標], [kero.defaulttop,Y座標], [kero.defaultx,X座標], [kero.def`

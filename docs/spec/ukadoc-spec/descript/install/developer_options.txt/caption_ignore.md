@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs` `// [developer_options.txt], [自動的に除外される対象], [相対パス,オプション1,オプション2,...]:`
+- `src-tauri/src/ghost/scan/directory.rs:61` `// [developer_options.txt], [自動的に除外される対象], [相対パス,オプション1,オプション2,...]:`

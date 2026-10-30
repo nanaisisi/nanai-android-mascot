@@ -10,6 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/app-update.js:11` `*    - チェックのみ実行時: OnUpdateCheckComplete / OnUpdateCheckFailure`
-- `ui/js/core/app-update.js:88` `// チェックのみ実行: OnUpdateCheckComplete (Ref0: 総数 または "none")`
-- `ui/js/core/app-update.js:90` `await gc.sendShioriEvent("OnUpdateCheckComplete", [`
+- `ui/js/core/app-update.js:16` `*    - チェックのみ実行時: OnUpdateCheckComplete / OnUpdateCheckFailure`
+- `ui/js/core/app-update.js:83` `// チェックのみ実行: OnUpdateCheckComplete (Ref0: 総数 または "none")`
+- `ui/js/core/app-update.js:86` `"OnUpdateCheckComplete",`

@@ -2,15 +2,10 @@
 
 - **規格**: [mouseup-star.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/cursor-brace/mouseup-star/) (ukadoc-spec/descript/shell-surfaces/cursor-brace/mouseup-star.md)
 - **検索語**: mouseup
-- **対応状況**: ✅ 対応済 (surface-load.js)\n\n## 突合結果\n\nui/js/surface/surface-load.js の loadSurfacesTxt において surfaces.txt ファイル・エイリアス・アニメーション・衝突判定定義をパース・解決する実装が行われている。\n\n## 実装箇所\n\n- ui/js/surface/surface-load.js // [surfaces.txt], [surface.alias], [surface], [descript] 等のブレース構文
+- **対応状況**: ✅ 対応済 (surface-load.js)\n\n## 突合結果\n\nui/js/surface/surface-load.js の loadSurfacesTxt において surfaces.txt ファイル・エイリアス・アニメーション・衝突判定定義をパース・解決する実装が行われている。\n\n## 実装箇所
 
-## 突合結果
-
-surface-parser.js / surface-animation-manager.js に該当の解析・処理は確認できない。
-
-## 実装箇所
-
-- `ui/js/ghost/balloon-window.js:214` `balloonBox?.addEventListener("mouseup", () => {`
-- `ui/js/surface/interaction.js:302` `globalThis.addEventListener("mouseup", onPointerUp);`
-- `ui/js/surface/character.js:159` `globalThis.addEventListener("mouseup", onPointerUp);`
+- `ui/js/ghost/balloon-window.js:215` `balloonBox?.addEventListener("mouseup", () => {`
 - `ui/js/surface/balloon-drag.js:141` `globalThis.addEventListener("mouseup", onEnd);`
+- `ui/js/surface/character.js:159` `globalThis.addEventListener("mouseup", onPointerUp);`
+- `ui/js/surface/interaction.js:302` `globalThis.addEventListener("mouseup", onPointerUp);`
+- `ui/js/surface/surface-load.js:11` `// [mouseup\*,当たり判定ID,ファイル名]`

@@ -13,3 +13,4 @@
 
 - `ui/js/ghost/shiori-notify.js:12` `* - installedshellname (現在のゴーストに同梱のシェル名)`
 - `ui/js/ghost/shiori-notify.js:71` `await this.sendShioriNotify("installedshellname", this.shells);`
+- `tests/shiori-notify.test.js:61` `assert.ok(calls.some((c) => c.args.event === "installedshellname"));`

@@ -10,4 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/surface/surface-load.js` `// [descriptブレス記述例]`
+- `src-tauri/capabilities/default.json:4` `"description": "Capability for the main window",`
+- `src-tauri/gen/schemas/acl-manifests.json:1` `{"core":{"default_permission":{"identifier":"default","description":"Default cor`
+- `src-tauri/gen/schemas/android-schema.json:4` `"description": "Capability formats accepted in a capability file.",`
+- `src-tauri/gen/schemas/android-schema.json:7` `"description": "A single capability.",`
+- `src-tauri/gen/schemas/android-schema.json:15` `"description": "A list of capabilities.",`

@@ -10,8 +10,8 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive.rs:237` `.and_then(|m| m.get("sakura.name").cloned());`
-- `src-tauri/src/ghost/scan/directory.rs:81` `.and_then(|m| m.get("sakura.name").cloned());`
-- `crates/ui/src/descript.rs:90` `/// キャラクター本体名（`kero.name`または`sakura.name`）`
-- `crates/ui/src/descript.rs:92` `self.get("sakura.name")`
-- `crates/ui/src/descript.rs:145` `/// さくら（本体）の正式名とサブ表示名（`sakura.name`, `sakura.name2`）`
+- `src-tauri/src/commands/install/archive.rs:281` `.and_then(|m| m.get("sakura.name").cloned());`
+- `src-tauri/src/ghost/scan/directory.rs:99` `// [version,バージョン], [sakura.name,名前], [sakura.name2,名前], [kero.name,名前], [char*.`
+- `src-tauri/src/ghost/scan/directory.rs:103` `.and_then(|m| m.get("sakura.name").cloned().or_else(|| m.get("sakura.name2").clo`
+- `src-tauri/src/ghost/scan/shell.rs:91` `// [sakura.name,名前], [sakura.name2,名前], [kero.name,名前], [char*.name,名前]:`
+- `src-tauri/src/ghost/scan/shell.rs:108` `let _m_sakura_name = merged.get("sakura.name");`

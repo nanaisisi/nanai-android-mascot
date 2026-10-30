@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive.rs` `// [*.directory,ディレクトリ名]... [*.refreshundeletemask,ファイル名1:ファイル名2...]:`
+- `src-tauri/src/commands/install/archive.rs:55` `// [*.directory,ディレクトリ名], [*.source.directory,ディレクトリ名], [*.refresh,数値], [*.refre`

@@ -11,8 +11,8 @@ ui/js/ghost/sakura-parser.js / sakura-command-handler.js で処理: スコープ
 
 ## 実装箇所
 
-- `crates/ui/src/lib.rs:153` `let script_ps = r"\p[2]\p3\_s[1]同期\_s[0]非同期";`
-- `crates/ui/src/script/command.rs:7` `Target(u8),   // \0, \1, \p[n]`
-- `crates/ui/src/script/parser/brackets.rs:39` `/// `\p[N]`または`\p0..\p9``
-- `crates/ui/src/script/parser/mod.rs:28` `// \p[N]`
-- `ui/js/ghost/sakura-tokenizer.js:29` `// \p[n] または \p0..\p9 (スコープ指定)`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:3128` `"source": "E:\\project\\rust\\nanai-android-mascot\\src-tauri\\gen\\android\\app`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:4603` `"source": "E:\\project\\rust\\nanai-android-mascot\\src-tauri\\gen\\android\\app`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:4895` `"source": "E:\\project\\rust\\nanai-android-mascot\\src-tauri\\gen\\android\\app`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:4948` `"source": "E:\\project\\rust\\nanai-android-mascot\\src-tauri\\gen\\android\\app`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/values-night-v8.json:24` `"source": "E:\\project\\rust\\nanai-android-mascot\\src-tauri\\gen\\android\\app`

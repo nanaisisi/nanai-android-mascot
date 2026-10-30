@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs` `// [char*.defaultleft,X座標], [char*.defaulttop,Y座標], [char*.defaultx,X座標], [char*.defaulty,Y座標]...`
+- `src-tauri/src/ghost/scan/directory.rs:136` `// [char*.defaultleft,X座標], [char*.defaulttop,Y座標], [char*.defaultx,X座標], [char*`
+- `src-tauri/src/ghost/scan/shell.rs:97` `// [char*.defaultleft,X座標], [char*.defaulttop,Y座標], [char*.defaultx,X座標], [char*`

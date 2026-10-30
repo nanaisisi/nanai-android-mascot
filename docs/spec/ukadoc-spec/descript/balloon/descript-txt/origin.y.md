@@ -11,7 +11,8 @@
 
 ## 実装箇所
 
-- `crates/ui/src/descript.rs:104` `/// バルーン用原点座標 (origin.x, origin.y)`
-- `crates/ui/src/descript.rs:107` `let y = self.get("origin.y").and_then(|v| v.parse().ok());`
+- `crates/ui/src/descript/parser.rs:70` `/// バルーン用原点座標 (origin.x, origin.y)`
+- `crates/ui/src/descript/parser.rs:73` `let y = self.get("origin.y").and_then(|v| v.parse().ok());`
+- `crates/ui/src/descript/tests.rs:59` `origin.y,20\n\`
 - `ui/js/core/tauri-helper.js:157` `new PhysicalPosition(Math.round(origin.x + x), Math.round(origin.y + y)),`
-- `ui/js/core/actions/balloon-descript.js:170` `const oy = parseInt(props["origin.y"], 10);`
+- `ui/js/core/actions/balloon-descript/layout.js:123` `// [origin.x,座標], [origin.y,座標]:`

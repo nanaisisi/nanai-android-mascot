@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/layout.js` `if (cbBgColor) cbEl.style.backgroundColor = cbBgColor;`
+- `ui/js/core/actions/balloon-descript/layout.js:46` `props["communicatebox.background.color.b"];`

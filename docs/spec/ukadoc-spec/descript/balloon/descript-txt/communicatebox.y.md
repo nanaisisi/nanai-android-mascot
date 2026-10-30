@@ -10,4 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/layout.js` `if (cbY) cbEl.style.top = \`${cbY}px\`;`
+- `ui/js/core/actions/balloon-descript/layout.js:27` `// [communicatebox.width,サイズ], [communicatebox.height,サイズ], [communicatebox.x,座標`
+- `ui/js/core/actions/balloon-descript/layout.js:32` `const cbY = props["communicatebox.y"];`
+- `tests/balloon-descript.test.js:57` `"communicatebox.y": "10",`

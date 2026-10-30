@@ -10,5 +10,5 @@ Rust 側の MD5 照合成功通知 (`update-progress` / phase `md5-complete`) �
 
 ## 実装箇所
 
-- `ui/js/core/app-update.js:15` `*    - OnUpdate.OnMD5CompareComplete / OnUpdate.OnMD5CompareFailure`
-- `ui/js/core/app-update.js:159` `gc.sendShioriEvent("OnUpdate.OnMD5CompareComplete", [`
+- `ui/js/core/app-update.js:20` `*    - OnUpdate.OnMD5CompareComplete / OnUpdate.OnMD5CompareFailure`
+- `ui/js/core/actions/update-protocol.js:21` `"md5-complete": "OnUpdate.OnMD5CompareComplete",`

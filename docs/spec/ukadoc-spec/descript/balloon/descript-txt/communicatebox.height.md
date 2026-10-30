@@ -10,4 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/layout.js` `if (cbHeight) cbEl.style.height = \`${cbHeight}px\`;`
+- `ui/js/core/actions/balloon-descript/layout.js:27` `// [communicatebox.width,サイズ], [communicatebox.height,サイズ], [communicatebox.x,座標`
+- `ui/js/core/actions/balloon-descript/layout.js:30` `const cbHeight = props["communicatebox.height"];`
+- `tests/balloon-descript.test.js:55` `"communicatebox.height": "30",`

@@ -12,3 +12,4 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 
 - `ui/js/core/app-events.js:142` `// まず OnMouseDoubleClick (つつき) を送信 (多くのゴーストがつつきトークを定義)`
 - `ui/js/core/app-events.js:144` `.sendShioriEvent("OnMouseDoubleClick", args)`
+- `tests/app-events.test.js:101` `if (ev === "OnMouseDoubleClick") return shioriDoubleRes;`

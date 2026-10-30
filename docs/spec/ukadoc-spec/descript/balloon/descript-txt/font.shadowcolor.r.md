@@ -10,4 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js` `const fontShadowColor = rgbFromComponents(props, "font.shadowcolor");`
+- `ui/js/core/actions/balloon-descript/font.js:87` `// [font.shadowcolor.r,数値], [font.shadowcolor.g,数値], [font.shadowcolor.b,数値], [f`
+- `ui/js/core/actions/balloon-descript/font.js:90` `props["font.shadowcolor.r"] ||`
+- `ui/js/core/actions/balloon-descript/font.js:118` `props[`${prefix}.font.shadowcolor.r`] ||`
+- `ui/js/core/actions/balloon-descript/font.js:175` `// [anchor.font.shadowcolor.r,数値], [anchor.font.shadowcolor.g,数値], [anchor.font.`
+- `ui/js/core/actions/balloon-descript/font.js:177` `props["anchor.font.shadowcolor.r"] ||`

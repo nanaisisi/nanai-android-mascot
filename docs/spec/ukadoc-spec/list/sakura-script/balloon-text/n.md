@@ -11,8 +11,8 @@ ui/js/ghost/sakura-parser.js / sakura-command-handler.js で処理: 改行 (\n[h
 
 ## 実装箇所
 
-- `src-tauri/src/lib.rs:47` `.header("// deno-lint-ignore-file no-explicit-any\n// biome-ignore-all lint/susp`
-- `src-tauri/src/commands/shiori/protocol.rs:63` `"📤 [Rust] SHIORI request (ghost: {}):\n{}",`
-- `src-tauri/src/commands/shiori/protocol.rs:75` `"📥 [Rust] SHIORI response (ghost: {}):\n{}",`
-- `src-tauri/src/commands/shell/ghost.rs:25` `"ゴースト「{name}」をアンインストールしますか？\nゴーストのファイルはすべて削除されます（復元できません）。"`
-- `src-tauri/src/shiori/dynamic/mod.rs:161` `let wrapped = format!("SHIORI/3.0 200 OK\r\nCharset: UTF-8\r\nValue: {}\r\n\r\n"`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:3128` `"source": "E:\\project\\rust\\nanai-android-mascot\\src-tauri\\gen\\android\\app`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:4603` `"source": "E:\\project\\rust\\nanai-android-mascot\\src-tauri\\gen\\android\\app`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:4895` `"source": "E:\\project\\rust\\nanai-android-mascot\\src-tauri\\gen\\android\\app`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:4948` `"source": "E:\\project\\rust\\nanai-android-mascot\\src-tauri\\gen\\android\\app`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/values-night-v8.json:24` `"source": "E:\\project\\rust\\nanai-android-mascot\\src-tauri\\gen\\android\\app`

@@ -10,8 +10,8 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive.rs:238` `let kero_name = meta_map.as_ref().and_then(|m| m.get("kero.name").cloned());`
-- `src-tauri/src/ghost/scan/directory.rs:84` `.and_then(|m| m.get("kero.name").cloned());`
-- `crates/ui/src/descript.rs:90` `/// キャラクター本体名（`kero.name`または`sakura.name`）`
-- `crates/ui/src/descript.rs:94` `/// 相方名（`kero.name`）`
-- `crates/ui/src/descript.rs:96` `self.get("kero.name")`
+- `src-tauri/src/commands/install/archive.rs:282` `let kero_name = meta_map.as_ref().and_then(|m| m.get("kero.name").cloned());`
+- `src-tauri/src/ghost/scan/directory.rs:99` `// [version,バージョン], [sakura.name,名前], [sakura.name2,名前], [kero.name,名前], [char*.`
+- `src-tauri/src/ghost/scan/directory.rs:106` `.and_then(|m| m.get("kero.name").cloned());`
+- `src-tauri/src/ghost/scan/shell.rs:91` `// [sakura.name,名前], [sakura.name2,名前], [kero.name,名前], [char*.name,名前]:`
+- `src-tauri/src/ghost/scan/shell.rs:109` `let _m_kero_name = merged.get("kero.name");`

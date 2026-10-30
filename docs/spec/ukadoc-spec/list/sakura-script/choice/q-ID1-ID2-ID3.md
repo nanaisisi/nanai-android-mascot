@@ -11,8 +11,8 @@
 
 ## 実装箇所
 
-- `crates/ui/src/lib.rs:58` `let script = r"\0\s[0]こんにちは\w5\n\q[はい,id_yes]\e";`
+- `crates/ui/src/lib.rs:57` `let script = r"\0\s[0]こんにちは\w5\n\q[はい,id_yes]\e";`
 - `crates/ui/src/script/command.rs:19` `}, // \q[label,id]`
-- `crates/ui/src/script/parser/brackets.rs:153` `/// `\q[テキスト,ID]`/`\q[temp,テキスト,ID]`（旧形式）`
-- `crates/ui/src/script/parser/mod.rs:83` `// \q[テキスト,ID] / \q[temp,テキスト,ID]`
-- `ui/js/ghost/sakura-tokenizer.js:199` `// \q[テキスト,ID] (選択肢)`
+- `crates/ui/src/script/parser/mod.rs:84` `// \q[テキスト,ID] / \q[temp,テキスト,ID]`
+- `crates/ui/src/script/parser/mod.rs:115` `let script = "\\0\\h\\1\\u\\p[2]\\px\\s[10]\\sx\\w5\\wx\\x\\_w[10]\\b[1]\\bx\\f[`
+- `ui/js/ghost/balloon-window.js:33` `// 選択肢ボタン (\q)`

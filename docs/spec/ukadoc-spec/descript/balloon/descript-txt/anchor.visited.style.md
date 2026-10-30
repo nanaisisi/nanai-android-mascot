@@ -10,4 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js` `applyAnchorGroup("anchor.visited", "--balloon-anchor-visited");`
+- `ui/js/core/actions/balloon-descript/font.js:193` `// [anchor.visited.style,形状], [anchor.visited.font.color.r,数値], [anchor.visited.`
+- `ui/js/core/actions/balloon-descript/font.js:195` `props["anchor.visited.style"] ||`
+- `tests/balloon-descript.test.js:92` `"anchor.visited.style": "underline",`

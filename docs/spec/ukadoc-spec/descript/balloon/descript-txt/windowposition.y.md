@@ -10,4 +10,7 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/layout.js` `if (!Number.isNaN(wpY)) root.style.setProperty("--balloon-windowpos-y", \`${wpY}px\`);`
+- `ui/js/core/actions/balloon-descript/layout.js:155` `// [windowposition.x,座標], [windowposition.y,座標], [windowposition.limit,0/1]:`
+- `ui/js/core/actions/balloon-descript/layout.js:157` `const wpY = parseInt(props["windowposition.y"], 10);`
+- `tests/balloon-descript.test.js:72` `"windowposition.y": "200",`
+- `tests/frontend-coverage-boost.test.js:39` `"windowposition.y": "200",`

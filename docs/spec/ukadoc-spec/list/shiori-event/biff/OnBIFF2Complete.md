@@ -12,3 +12,5 @@
 
 - `src-tauri/src/shiori/ffi/builder.rs:149` `.event("OnBIFF2Complete")`
 - `ui/js/core/actions/network-actions.js:26` `await gc.sendShioriEvent("OnBIFF2Complete", [`
+- `tests/network-actions.test.js:45` `// 3. Tauri environment with headers result (OnBIFF2Complete)`
+- `tests/network-actions.test.js:61` `assert.ok(eventsSent.some((e) => e.ev === "OnBIFF2Complete"));`

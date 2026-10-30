@@ -2,16 +2,10 @@
 
 - **規格**: [introduction_cursorbrace.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/cursor-brace/introduction_cursorbrace/) (ukadoc-spec/descript/shell-surfaces/cursor-brace/introduction_cursorbrace.md)
 - **検索語**: cursor
-- **対応状況**: ✅ 対応済 (surface-load.js)\n\n## 突合結果\n\nui/js/surface/surface-load.js の loadSurfacesTxt において surfaces.txt ファイル・エイリアス・アニメーション・衝突判定定義をパース・解決する実装が行われている。\n\n## 実装箇所\n\n- ui/js/surface/surface-load.js // [surfaces.txt], [surface.alias], [surface], [descript] 等のブレース構文
+- **対応状況**: ✅ 対応済 (surface-load.js)\n\n## 突合結果\n\nui/js/surface/surface-load.js の loadSurfacesTxt において surfaces.txt ファイル・エイリアス・アニメーション・衝突判定定義をパース・解決する実装が行われている。\n\n## 実装箇所
 
-## 突合結果
-
-surface-parser.js / surface-animation-manager.js に該当の解析・処理は確認できない。
-
-## 実装箇所
-
-- `ui/css/character.css:27` `cursor: grab;`
-- `ui/css/character.css:31` `cursor: grabbing;`
-- `ui/css/base.css:66` `cursor: pointer;`
-- `ui/css/base.css:104` `cursor: text;`
-- `ui/css/mascot.css:54` `cursor: grab;`
+- `src-tauri/gen/schemas/acl-manifests.json:1` `{"core":{"default_permission":{"identifier":"default","description":"Default cor`
+- `src-tauri/gen/schemas/android-schema.json:1434` `"description": "Default permissions for the plugin.\n#### This default permissio`
+- `src-tauri/gen/schemas/android-schema.json:1437` `"markdownDescription": "Default permissions for the plugin.\n#### This default p`
+- `src-tauri/gen/schemas/android-schema.json:1476` `"description": "Enables the cursor_position command without any pre-configured s`
+- `src-tauri/gen/schemas/android-schema.json:1478` `"const": "core:window:allow-cursor-position",`

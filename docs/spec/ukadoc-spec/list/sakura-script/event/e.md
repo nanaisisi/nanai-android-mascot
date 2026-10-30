@@ -11,8 +11,8 @@ ui/js/ghost/sakura-parser.js / sakura-command-handler.js で処理: スクリプ
 
 ## 実装箇所
 
-- `crates/ui/src/lib.rs:58` `let script = r"\0\s[0]こんにちは\w5\n\q[はい,id_yes]\e";`
-- `crates/ui/src/animation.rs:227` `for v in ["never", "bind", "talk", "starttalk", "endtalk", r"\e"] {`
-- `crates/ui/src/script/command.rs:50` `End,          // \e`
-- `crates/ui/src/surfaces/tests.rs:25` `assert_eq!(Interval::parse(r"\e"), Interval::YenE);`
-- `crates/ui/src/surfaces/types/draw.rs:71` `/// `\e`（yen-e）：さくらスクリプト `\e` 到達時に強制実行`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:43` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\e095ee544d9efdd`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:153` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\e095ee544d9efdd`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:211` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\e095ee544d9efdd`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:320` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\e095ee544d9efdd`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:414` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\e095ee544d9efdd`

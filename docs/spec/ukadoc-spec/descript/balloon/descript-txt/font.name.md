@@ -10,7 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/balloon-window.js:84` `if (props["font.name"]) {`
-- `ui/js/ghost/balloon-window.js:87` ``"${props["font.name"]}", Meiryo, sans-serif`,`
-- `ui/js/core/actions/balloon-descript.js:43` `if (props["font.name"]) {`
-- `ui/js/core/actions/balloon-descript.js:46` ``"${props["font.name"]}", Meiryo, sans-serif`,`
+- `src-tauri/src/ghost/scan/directory.rs:192` `// [menu.font.name,フォント名], [menu.font.height,フォントサイズ]:`
+- `src-tauri/src/ghost/scan/directory.rs:193` `let _menu_font_name = m.get("menu.font.name");`
+- `src-tauri/src/ghost/scan/shell.rs:136` `// [menu.font.name,フォント名], [menu.font.height,フォントサイズ]:`
+- `src-tauri/src/ghost/scan/shell.rs:137` `let _menu_font_name = merged.get("menu.font.name");`
+- `ui/js/core/actions/balloon-descript/font.js:13` `// [font.name,フォント名]: props["font.name"]`

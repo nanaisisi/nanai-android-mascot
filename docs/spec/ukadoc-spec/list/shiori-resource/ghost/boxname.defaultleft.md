@@ -11,4 +11,8 @@
 
 ## 実装箇所
 
-- `crates/ui/src/descript.rs:160` `.get(&format!("{target}.defaultleft"))`
+- `src-tauri/src/ghost/scan/directory.rs:124` `// [sakura.defaultleft,X座標], [sakura.defaulttop,Y座標], [sakura.defaultx,X座標], [sa`
+- `src-tauri/src/ghost/scan/directory.rs:125` `let _sakura_dl = m.get("sakura.defaultleft");`
+- `src-tauri/src/ghost/scan/directory.rs:130` `// [kero.defaultleft,X座標], [kero.defaulttop,Y座標], [kero.defaultx,X座標], [kero.def`
+- `src-tauri/src/ghost/scan/directory.rs:131` `let _kero_dl = m.get("kero.defaultleft");`
+- `src-tauri/src/ghost/scan/directory.rs:136` `// [char*.defaultleft,X座標], [char*.defaulttop,Y座標], [char*.defaultx,X座標], [char*`

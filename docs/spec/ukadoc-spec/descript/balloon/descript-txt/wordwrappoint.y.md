@@ -10,4 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/layout.js` `const wwY = parseInt(props["wordwrappoint.y"], 10);`
+- `ui/js/core/actions/balloon-descript/layout.js:104` `// [wordwrappoint.x,座標], [wordwrappoint.y,座標]:`
+- `ui/js/core/actions/balloon-descript/layout.js:115` `const wwY = parseInt(props["wordwrappoint.y"], 10);`
+- `tests/balloon-descript.test.js:68` `"wordwrappoint.y": "150",`

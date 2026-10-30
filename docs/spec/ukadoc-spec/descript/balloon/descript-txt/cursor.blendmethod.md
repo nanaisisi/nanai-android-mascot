@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js` `if (props[\`${prefix}.blendmethod\`]) root.style.setProperty(...)`
+- `ui/js/core/actions/balloon-descript/font.js:245` `// [cursor.style,形状], [cursor.blendmethod,コマンド], [cursor.font.color.r,数値], [curs`
+- `ui/js/core/actions/balloon-descript/font.js:248` `props["cursor.blendmethod"] ||`

@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/assets.js` `if (!Number.isNaN(arrow1y)) root.style.setProperty("--balloon-arrow1-y", \`${arrow1y}px\`);`
+- `ui/js/core/actions/balloon-descript/assets.js:63` `// [arrow0.x,座標], [arrow0.y,座標], [arrow1.x,座標], [arrow1.y,座標]:`
+- `ui/js/core/actions/balloon-descript/assets.js:72` `const arrow1y = parseInt(props["arrow1.y"], 10);`

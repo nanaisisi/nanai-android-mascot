@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs` `// [shiori.version,バージョン], [shiori.encoding,文字コード], [shiori.forceencoding,文字コード], [shiori.cache,数値], [shiori.escape_unknown,0/1]:`
+- `src-tauri/src/ghost/scan/directory.rs:165` `// [shiori.version,バージョン], [shiori.encoding,文字コード], [shiori.forceencoding,文字コード]`
+- `src-tauri/src/ghost/scan/directory.rs:170` `let _shiori_esc = m.get("shiori.escape_unknown");`

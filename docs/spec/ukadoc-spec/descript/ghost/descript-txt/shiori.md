@@ -10,4 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs` `// [shiori,ファイル名], [craftman,作者名]...`
+- `src-tauri/build.rs:5` `build_shiori_host32();`
+- `src-tauri/build.rs:11` `build_yaya_shiori_stub();`
+- `src-tauri/build.rs:14` `/// Windows 64bit ターゲット時のみ、32bit DLL 用ヘルパー shiori-host32.exe をビルドする`
+- `src-tauri/build.rs:15` `fn build_shiori_host32() {`
+- `src-tauri/build.rs:16` `println!("cargo:rerun-if-changed=shiori-host/src");`

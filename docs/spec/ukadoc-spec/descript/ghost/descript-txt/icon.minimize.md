@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [icon,ファイル名], [icon.minimize,ファイル名], [install.accept,名前1,名前2,名前3...]:`
+- `src-tauri/src/ghost/scan/directory.rs:115` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [icon,ファイル名], [icon.`
+- `src-tauri/src/ghost/scan/directory.rs:121` `let _icon_min = m.get("icon.minimize");`

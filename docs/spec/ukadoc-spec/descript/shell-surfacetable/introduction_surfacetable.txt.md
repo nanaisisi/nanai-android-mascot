@@ -12,7 +12,7 @@
 ## 実装箇所
 
 - `src-tauri/src/commands/shell/mod.rs:3` `//! ukadoc-spec のシェル定義（descript.txt / surfaces.txt / surfacetable.txt）`
-- `crates/ui/src/surfacetable.rs:1` `//! `surfacetable.txt` パーサー（ukadoc-spec / descript / shell-surfacetable 準拠）`
-- `crates/ui/src/surfacetable.rs:33` `/// `surfacetable.txt` のパース結果`
-- `crates/ui/src/surfacetable.rs:51` `/// テキスト内容から `surfacetable.txt` をパースする`
-- `crates/ui/src/surfacetable.rs:86` `/// テキスト内容から `surfacetable.txt` をパースする`
+- `crates/ui/src/manifest.rs:43` `/// `surfacetable.txt` パース結果（任意）`
+- `crates/ui/src/shell.rs:3` `//! シェルディレクトリから `descript.txt` / `surfaces.txt` / `surfacetable.txt``
+- `crates/ui/src/shell.rs:22` `/// `surfacetable.txt`（任意・サーフィスグループ一覧）`
+- `crates/ui/src/shell.rs:48` `let surface_table = resolve_vfs_path(directory, "surfacetable.txt")`

@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs` `// [seriko.alignmenttodesktop,位置情報]... [char*.seriko.alignmenttodesktop,位置情報]...`
+- `src-tauri/src/ghost/scan/directory.rs:154` `// [seriko.alignmenttodesktop,位置情報], [sakura.seriko.alignmenttodesktop,位置情報], [k`
+- `src-tauri/src/ghost/scan/shell.rs:105` `// [seriko.alignmenttodesktop,位置情報], [sakura.seriko.alignmenttodesktop,位置情報], [k`

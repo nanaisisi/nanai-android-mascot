@@ -11,7 +11,7 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 ## 実装箇所
 
 - `src-tauri/src/shiori/ffi/builder.rs:77` `.event("OnBoot")`
-- `crates/ui/src/shiori/mod.rs:36` `base_id: Some("OnBoot".into()),`
-- `crates/ui/src/shiori/mod.rs:47` `assert!(text.contains("BaseID: OnBoot\r\n"));`
-- `crates/ui/src/shiori/mod.rs:73` `assert_eq!(parsed.base_id.as_deref(), Some("OnBoot"));`
-- `crates/ui/src/shiori/mod.rs:106` `let err = ShioriRequest::parse("GET SHIORI/2.0\r\nID: OnBoot\r\n\r\n").unwrap_er`
+- `src-tauri/src/shiori/ffi/builder.rs:205` `assert!(req.contains("OnBoot"));`
+- `crates/ui/src/shiori/protocol/request.rs:24` `/// 互換可能な基本イベント名（SSP拡張。`OnFirstBoot` → `OnBoot` など）`
+- `crates/ui/src/shiori/protocol/request.rs:180` `let get_req = ShioriRequest::get("OnBoot", &["ref0".into()]);`
+- `crates/ui/src/shiori/protocol/request.rs:182` `assert_eq!(get_req.id, "OnBoot");`

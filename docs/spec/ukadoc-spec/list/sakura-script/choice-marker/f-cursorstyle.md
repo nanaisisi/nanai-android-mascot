@@ -11,8 +11,8 @@
 
 ## 実装箇所
 
-- `crates/ui/src/lib.rs:112` `let script = r"\b[0]\b[-1]\t\-\_s\_l[10,20]\f[color,red]\f[bold]";`
-- `crates/ui/src/script/command.rs:48` `}, // \f[tag,param], \f[tag]`
-- `crates/ui/src/script/parser/brackets.rs:103` `/// `\f[tag,param]`または`\f[tag]``
-- `crates/ui/src/script/parser/mod.rs:57` `// \f[tag,param] または \f[tag]`
-- `ui/js/ghost/sakura-tokenizer.js:276` `// \f (フォント指定: \f[tag,param], \f[tag])`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:7` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\f4929af4ba90d04`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:93` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\f4929af4ba90d04`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:187` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\f4929af4ba90d04`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:228` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\f4929af4ba90d04`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:337` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\f4929af4ba90d04`

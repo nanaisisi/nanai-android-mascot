@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs` `// [shiori.version,バージョン], [shiori.encoding,文字コード], [shiori.forceencoding,文字コード], [shiori.cache,数値]...`
+- `src-tauri/src/ghost/scan/directory.rs:165` `// [shiori.version,バージョン], [shiori.encoding,文字コード], [shiori.forceencoding,文字コード]`
+- `src-tauri/src/ghost/scan/directory.rs:168` `let _shiori_fenc = m.get("shiori.forceencoding");`

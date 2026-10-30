@@ -7,3 +7,10 @@
 ## 突合結果
 
 `ui/js/core/actions/balloon-descript.js` にて `number.font.name` をパースし、CSS 変数 `--balloon-number-font-family` として動的適用を実装済み。
+
+
+## 実装箇所
+
+- `ui/js/core/actions/balloon-descript/font.js:306` `// [number.font.name,フォント名], [number.font.height,数値], [number.font.color.r,数値], `
+- `ui/js/core/actions/balloon-descript/font.js:307` `const numFontName = props["number.font.name"];`
+- `tests/balloon-descript.test.js:112` `"number.font.name": "Arial",`

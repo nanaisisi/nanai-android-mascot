@@ -2,8 +2,10 @@
 
 - **規格**: [readme.charset.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell/descript-txt/readme.charset/) (ukadoc-spec/descript/shell/descript-txt/readme.charset.md)
 - **検索語**: readme.charset
-- **対応状況**: ✅ 対応済 (shell.rs)\n\n## 突合結果\n\nsrc-tauri/src/ghost/scan/shell.rs においてパース・抽出・バインドする実装が行われている。\n\n## 実装箇所\n\n- src-tauri/src/ghost/scan/shell.rs // [name,シェル名]... [type,種別]... [char*.name,名前]...
+- **対応状況**: ✅ 対応済 (shell.rs)\n\n## 突合結果\n\nsrc-tauri/src/ghost/scan/shell.rs においてパース・抽出・バインドする実装が行われている。\n\n## 実装箇所
 
-## 突合結果
-
-実装コードに「readme.charset」が見つからない。
+- `src-tauri/src/commands/ext.rs:41` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [secondchangeinterva`
+- `src-tauri/src/commands/ext.rs:43` `let _readme_cs = map.get("readme.charset");`
+- `src-tauri/src/commands/ext.rs:101` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [alwaysdisplay,数値], `
+- `src-tauri/src/commands/ext.rs:103` `let _readme_cs = map.get("readme.charset");`
+- `src-tauri/src/ghost/scan/directory.rs:115` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [icon,ファイル名], [icon.`

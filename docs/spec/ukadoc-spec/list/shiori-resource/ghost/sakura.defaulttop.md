@@ -6,4 +6,12 @@
 
 ## 突合結果
 
-実装コードに「sakura.defaulttop」が見つからない。
+実装コード内に「sakura.defaulttop」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/ghost/scan/directory.rs:124` `// [sakura.defaultleft,X座標], [sakura.defaulttop,Y座標], [sakura.defaultx,X座標], [sa`
+- `src-tauri/src/ghost/scan/directory.rs:126` `let _sakura_dt = m.get("sakura.defaulttop");`
+- `src-tauri/src/ghost/scan/shell.rs:95` `// [sakura.defaultleft,X座標], [sakura.defaulttop,Y座標], [sakura.defaultx,X座標], [sa`
+- `crates/ui/src/descript/tests.rs:95` `sakura.defaulttop,20\n";`

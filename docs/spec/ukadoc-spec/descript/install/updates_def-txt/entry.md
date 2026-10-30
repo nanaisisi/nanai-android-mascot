@@ -10,4 +10,8 @@
 
 ## 実装箇所
 
-- `crates/ui/src/update.rs` `// [相対パス,ignore], [補足]: updates_def.txt / updates2.dau における相対パス指定...`
+- `src-tauri/gen/schemas/acl-manifests.json:1` `{"core":{"default_permission":{"identifier":"default","description":"Default cor`
+- `src-tauri/gen/schemas/android-schema.json:1758` `"description": "Enables the set_ignore_cursor_events command without any pre-con`
+- `src-tauri/gen/schemas/android-schema.json:1760` `"const": "core:window:allow-set-ignore-cursor-events",`
+- `src-tauri/gen/schemas/android-schema.json:1761` `"markdownDescription": "Enables the set_ignore_cursor_events command without any`
+- `src-tauri/gen/schemas/android-schema.json:2232` `"description": "Denies the set_ignore_cursor_events command without any pre-conf`

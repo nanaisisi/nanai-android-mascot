@@ -10,7 +10,8 @@
 
 ## 実装箇所
 
-- `crates/ui/src/descript.rs:111` `/// バルーン有効テキスト領域 (validrect.left, top, right, bottom)`
-- `crates/ui/src/descript.rs:113` `let l = self.get("validrect.left").and_then(|v| v.parse().ok());`
-- `ui/js/ghost/balloon-window.js:105` `const vl = parseInt(props["validrect.left"], 10);`
-- `ui/js/core/actions/balloon-descript.js:139` `const vl = parseInt(props["validrect.left"], 10);`
+- `crates/ui/src/descript/parser.rs:77` `/// バルーン有効テキスト領域 (validrect.left, top, right, bottom)`
+- `crates/ui/src/descript/parser.rs:79` `let l = self.get("validrect.left").and_then(|v| v.parse().ok());`
+- `crates/ui/src/descript/tests.rs:60` `validrect.left,0\n\`
+- `ui/js/core/actions/balloon-descript/layout.js:83` `// [validrect.left,座標], [validrect.top,座標], [validrect.right,座標], [validrect.bot`
+- `ui/js/core/actions/balloon-descript/layout.js:84` `const vl = parseInt(props["validrect.left"], 10);`

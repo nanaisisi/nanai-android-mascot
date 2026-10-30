@@ -12,6 +12,6 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 
 - `src-tauri/src/fmo.rs:22` `pub craftman: String,`
 - `src-tauri/src/fmo.rs:52` `craftman: "Nanai Project".to_string(),`
-- `src-tauri/src/commands/ext.rs:34` `let craftman = map.get("craftman").cloned();`
-- `src-tauri/src/commands/ext.rs:35` `let craftman_url = map.get("craftmanurl").cloned();`
-- `src-tauri/src/commands/ext.rs:42` `craftman,`
+- `src-tauri/src/commands/ext.rs:36` `// [craftman,作者名], [craftmanw,作者名], [craftmanurl,URL], [homeurl,URL]:`
+- `src-tauri/src/commands/ext.rs:37` `let craftman = map.get("craftman").cloned().or_else(|| map.get("craftmanw").clon`
+- `src-tauri/src/commands/ext.rs:38` `let craftman_url = map.get("craftmanurl").cloned().or_else(|| map.get("homeurl")`

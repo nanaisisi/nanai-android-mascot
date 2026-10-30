@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/surface/surface-load.js` `// [alias.txt]`
+- `ui/js/surface/surface-load.js:28` `// [alias.txt]`

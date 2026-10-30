@@ -12,3 +12,4 @@
 
 - `src-tauri/src/shiori/ffi/builder.rs:165` `.event("OnBIFFFailure")`
 - `ui/js/core/actions/network-actions.js:49` `await gc.sendShioriEvent("OnBIFFFailure", ["connect", accountName]);`
+- `tests/network-actions.test.js:77` `assert.ok(eventsSent.some((e) => e.ev === "OnBIFFFailure"));`

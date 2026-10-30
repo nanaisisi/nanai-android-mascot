@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs` `// [name.allowoverride,数値], [makoto,ファイル名], [補足]:`
+- `src-tauri/src/ghost/scan/directory.rs:188` `// [name.allowoverride,数値], [makoto,ファイル名], [補足]:`
+- `src-tauri/src/ghost/scan/directory.rs:190` `let _makoto = m.get("makoto");`

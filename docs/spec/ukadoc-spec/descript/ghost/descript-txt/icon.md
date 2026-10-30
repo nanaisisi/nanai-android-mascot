@@ -10,4 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [icon,ファイル名], [icon.minimize,ファイル名], [install.accept,名前1,名前2,名前3...]:`
+- `src-tauri/tauri.conf.json:36` `"icon": [`
+- `src-tauri/tauri.conf.json:37` `"icons/32x32.png",`
+- `src-tauri/tauri.conf.json:38` `"icons/128x128.png",`
+- `src-tauri/tauri.conf.json:39` `"icons/128x128@2x.png",`
+- `src-tauri/tauri.conf.json:40` `"icons/icon.icns",`

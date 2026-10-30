@@ -10,5 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs` `// [default.balloon.path,パス]:`
-- `ui/js/ghost/ghost.js` `// [balloon,バルーン名]... [default.balloon.path,パス]:`
+- `src-tauri/src/commands/install/archive.rs:299` `.and_then(|m| m.get("default.balloon.path").cloned());`
+- `src-tauri/src/common/models.rs:48` `/// [default.balloon.path,パス]:`
+- `src-tauri/src/ghost/scan/directory.rs:215` `// [default.balloon.path,パス]:`
+- `src-tauri/src/ghost/scan/directory.rs:218` `.and_then(|m| m.get("default.balloon.path").cloned());`
+- `ui/js/ghost/ghost.js:188` `// [balloon,バルーン名], [recommended.balloon,バルーン名], [標準と推奨の使い分け], [recommended.ball`

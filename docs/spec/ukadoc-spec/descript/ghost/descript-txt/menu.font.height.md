@@ -10,4 +10,7 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs` `// [menu.font.name,フォント名], [menu.font.height,フォントサイズ]:`
+- `src-tauri/src/ghost/scan/directory.rs:192` `// [menu.font.name,フォント名], [menu.font.height,フォントサイズ]:`
+- `src-tauri/src/ghost/scan/directory.rs:194` `let _menu_font_height = m.get("menu.font.height");`
+- `src-tauri/src/ghost/scan/shell.rs:136` `// [menu.font.name,フォント名], [menu.font.height,フォントサイズ]:`
+- `src-tauri/src/ghost/scan/shell.rs:138` `let _menu_font_height = merged.get("menu.font.height");`

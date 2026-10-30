@@ -7,3 +7,11 @@
 ## 突合結果
 
 `ui/js/core/actions/balloon-descript.js` にて `windowposition.limit` プロパティをパースし、`this.windowPositionLimit` として実装済み。
+
+
+## 実装箇所
+
+- `ui/js/core/actions/balloon-descript/layout.js:155` `// [windowposition.x,座標], [windowposition.y,座標], [windowposition.limit,0/1]:`
+- `ui/js/core/actions/balloon-descript/layout.js:164` `props["windowposition.limit"] === "1" ||`
+- `ui/js/core/actions/balloon-descript/layout.js:165` `props["windowposition.limit"]?.toLowerCase() === "true";`
+- `tests/balloon-descript.test.js:73` `"windowposition.limit": "1",`

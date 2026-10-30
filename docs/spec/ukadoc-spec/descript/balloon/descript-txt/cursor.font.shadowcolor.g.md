@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js` `const shadowCol = rgbFromComponents(props, \`${prefix}.font.shadowcolor\`);`
+- `ui/js/core/actions/balloon-descript/font.js:253` `// [cursor.font.shadowcolor.r,数値], [cursor.font.shadowcolor.g,数値], [cursor.font.`
+- `ui/js/core/actions/balloon-descript/font.js:256` `props["cursor.font.shadowcolor.g"] ||`

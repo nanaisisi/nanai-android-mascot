@@ -12,6 +12,6 @@
 
 - `crates/ui/src/shiori/types/sender.rs:38` `"property" => Self::Property,`
 - `crates/ui/src/shiori/types/sender.rs:53` `Self::Property => "property".into(),`
+- `crates/ui/src/shiori/types/sender.rs:102` `("property", SenderTypeTag::Property),`
 - `ui/main.js:16` `* @property {boolean} autoLoadGhost`
 - `ui/main.js:17` `* @property {boolean} enableNotifications`
-- `ui/main.js:18` `* @property {boolean} darkMode`

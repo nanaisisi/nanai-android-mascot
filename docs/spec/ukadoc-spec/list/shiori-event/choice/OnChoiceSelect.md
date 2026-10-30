@@ -10,6 +10,6 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 
 ## 実装箇所
 
-- `ui/js/ghost/sakura-script.js:124` `await this.app.ghostController.sendShioriEvent("OnChoiceSelect", [`
 - `ui/js/core/app-actions.js:16` `recommend: ["OnChoiceSelect", ["recommendlink"]],`
 - `ui/js/core/app-actions.js:17` `portal: ["OnChoiceSelect", ["portal"]],`
+- `ui/js/ghost/sakura-script.js:124` `await this.app.ghostController.sendShioriEvent("OnChoiceSelect", [`

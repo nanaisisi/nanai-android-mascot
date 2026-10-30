@@ -10,4 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/layout.js` `if (cbFontName) cbEl.style.fontFamily = \`"${cbFontName}", sans-serif\`;`
+- `ui/js/core/actions/balloon-descript/layout.js:28` `// [communicatebox.font.name,フォント名], [communicatebox.font.color.r/g/b,数値], [comm`
+- `ui/js/core/actions/balloon-descript/layout.js:33` `const cbFontName = props["communicatebox.font.name"];`
+- `tests/balloon-descript.test.js:58` `"communicatebox.font.name": "MS Gothic",`

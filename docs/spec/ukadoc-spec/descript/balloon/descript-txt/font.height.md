@@ -10,6 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/balloon-window.js:90` `const fh = parseInt(props["font.height"], 10);`
-- `ui/js/core/actions/balloon-descript.js:50` `if (props["font.height"]) {`
-- `ui/js/core/actions/balloon-descript.js:51` `const fh = parseInt(props["font.height"], 10);`
+- `src-tauri/src/ghost/scan/directory.rs:192` `// [menu.font.name,フォント名], [menu.font.height,フォントサイズ]:`
+- `src-tauri/src/ghost/scan/directory.rs:194` `let _menu_font_height = m.get("menu.font.height");`
+- `src-tauri/src/ghost/scan/shell.rs:136` `// [menu.font.name,フォント名], [menu.font.height,フォントサイズ]:`
+- `src-tauri/src/ghost/scan/shell.rs:138` `let _menu_font_height = merged.get("menu.font.height");`
+- `ui/js/core/actions/balloon-descript/font.js:21` `// [font.height,数値]: props["font.height"]`

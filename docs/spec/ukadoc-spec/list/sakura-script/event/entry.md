@@ -11,8 +11,8 @@
 
 ## 実装箇所
 
-- `crates/ui/src/lib.rs:112` `let script = r"\b[0]\b[-1]\t\-\_s\_l[10,20]\f[color,red]\f[bold]";`
+- `crates/ui/src/lib.rs:111` `let script = r"\b[0]\b[-1]\t\-\_s\_l[10,20]\f[color,red]\f[bold]";`
 - `crates/ui/src/script/command.rs:39` `Halt,         // \- (ゴースト終了)`
-- `ui/js/ghost/sakura-tokenizer.js:298` `// \- (ゴースト終了)`
-- `cpp/yaya-shiori/parser0.cpp:2528` `CRegexpT<yaya::char_t> regex(L"^[^!\"#$%&'()*+,\\-/:;<=>?@\\[\\\\\\]`{|}\\s]+\\(`
-- `cpp/yaya-shiori/parser0.cpp:2532` `CRegexpT<yaya::char_t> regex2(L"([^!\"#$%&'()*+\\-/:;<=>?@\\[\\\\\\]`{|}\\s]+)",`
+- `crates/ui/src/script/parser/mod.rs:115` `let script = "\\0\\h\\1\\u\\p[2]\\px\\s[10]\\sx\\w5\\wx\\x\\_w[10]\\b[1]\\bx\\f[`
+- `ui/coverage/prettify.js:56` `"(?:^^\\.?|[+-]|\\!|\\!=|\\!==|\\#|\\%|\\%=|&|&&|&&=|&=|\\(|\\*|\\*=|\\+=|\\,|\\`
+- `ui/coverage/prettify.js:478` `"^(?:0x[a-f0-9]+|(?:\\d(?:_\\d+)*\\d*(?:\\.\\d*)?|\\.\\d\\+)(?:e[+\\-]?\\d+)?)[a`

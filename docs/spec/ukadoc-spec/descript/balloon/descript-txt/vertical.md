@@ -11,6 +11,8 @@
 
 ## 実装箇所
 
+- `ui/coverage/base.css:120` `vertical-align: middle;`
+- `ui/coverage/base.css:136` `vertical-align: top;`
 - `ui/css/balloon-window.css:108` `vertical-align: middle;`
 - `ui/css/balloon-window.css:120` `vertical-align: middle;`
 - `ui/css/balloon-window.css:132` `vertical-align: middle;`

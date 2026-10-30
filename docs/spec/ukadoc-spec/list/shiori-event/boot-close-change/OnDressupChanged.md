@@ -11,3 +11,4 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 ## 実装箇所
 
 - `ui/js/surface/surface-dressup.js:50` `await this.app.ghostController.sendShioriEvent("OnDressupChanged", [`
+- `tests/surface-dressup.test.js:46` `assert.ok(eventsSent.some((e) => e.ev === "OnDressupChanged"));`

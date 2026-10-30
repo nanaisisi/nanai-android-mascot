@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs` `// [sakura.balloon.defaultsurface,数値]... [char*.balloon.defaultsurface,数値]:`
+- `src-tauri/src/ghost/scan/directory.rs:148` `// [sakura.balloon.defaultsurface,数値], [kero.balloon.defaultsurface,数値], [balloo`

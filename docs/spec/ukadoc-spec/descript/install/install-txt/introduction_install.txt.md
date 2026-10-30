@@ -14,4 +14,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive.rs` `// [install.txt（概要）], [同時インストール], [name,オブジェクト名], [type,種別]...`
+- `src-tauri/src/commands/install/archive.rs:19` `if lower == "install.txt" || lower.ends_with("/install.txt") {`
+- `src-tauri/src/commands/install/archive.rs:53` `// [install.txt（概要）], [同時インストール], [name,オブジェクト名], [type,種別], [directory,ディレクトリ名]`
+- `src-tauri/src/commands/install/archive.rs:121` `"install.txt type={label} ({kind}): サポートされていないアーカイブ種別です"`
+- `src-tauri/src/commands/install/archive.rs:263` `target_dir.join("install.txt"),`
+- `src-tauri/src/common/paths.rs:120` `path.join("install.txt"),`

@@ -11,8 +11,8 @@
 
 ## 実装箇所
 
-- `crates/ui/src/descript.rs:32` `pub thumbnail: Option<String>,`
-- `crates/ui/src/descript.rs:205` `entry.thumbnail = parts.next().filter(|s| !s.is_empty()).map(str::to_string);`
-- `crates/ui/src/descript.rs:254` `assert_eq!(g.thumbnail.as_deref(), Some("thumb.png"));`
+- `crates/ui/src/descript/parser.rs:171` `entry.thumbnail = parts.next().filter(|s| !s.is_empty()).map(str::to_string);`
+- `crates/ui/src/descript/tests.rs:33` `assert_eq!(g.thumbnail.as_deref(), Some("thumb.png"));`
+- `crates/ui/src/descript/types.rs:31` `pub thumbnail: Option<String>,`
+- `ui/js/core/actions/ghost-actions.js:156` `/** @type {{ number: number; part: string; thumbnail?: string | null; on: boolea`
 - `ui/js/surface/bind-menu.js:6` `* thumbnail/default/add_ids）と descript `bindoption.group` を`
-- `ui/js/surface/bind-menu.js:19` `* @returns {Array<{ number: number, category: string, part: string, thumbnail?: `

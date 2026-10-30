@@ -6,4 +6,9 @@
 
 ## 突合結果
 
-実装コードに「menu.frame.color.r」が見つからない。
+実装コード内に「menu.frame.color.r」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/ghost/scan/shell.rs:113` `// メニュー配色・画像情報の抽出 (menu.frame.color.r/g/b, menu.separator.color.r/g/b, menu.disa`

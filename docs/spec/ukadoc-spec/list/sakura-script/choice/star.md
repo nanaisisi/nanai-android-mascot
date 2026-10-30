@@ -11,4 +11,8 @@
 
 ## 実装箇所
 
-- `cpp/yaya-shiori/dir_enum.cpp:62` `yaya::string_t tmp_str = enumpath + L"\\*.*";`
+- `ui/coverage/prettify.js:56` `"(?:^^\\.?|[+-]|\\!|\\!=|\\!==|\\#|\\%|\\%=|&|&&|&&=|&=|\\(|\\*|\\*=|\\+=|\\,|\\`
+- `ui/coverage/prettify.js:455` `S.push([j, /^\/\*[\s\S]*?(?:\*\/|$)/, null]);`
+- `ui/coverage/prettify.js:920` `[PR.PR_COMMENT, /^\/\*[^*]*\*+(?:[^\/*][^*]*\*+)*\//],`
+- `ui/js/surface/surface-load.js:8` `// [mousedown\*,当たり判定ID,ファイル名]`
+- `ui/js/surface/surface-load.js:9` `// [mousehover\*,当たり判定ID,ファイル名]`

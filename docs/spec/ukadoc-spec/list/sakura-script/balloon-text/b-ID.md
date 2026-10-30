@@ -11,8 +11,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/window/balloon_window.rs:179` `/// 独立バルーン（スコープ N）ウィンドウ非表示コマンド (\b[-1])`
-- `crates/ui/src/lib.rs:112` `let script = r"\b[0]\b[-1]\t\-\_s\_l[10,20]\f[color,red]\f[bold]";`
-- `crates/ui/src/script/command.rs:33` `Balloon(i32), // \b[n], \b[-1], \b0..\b9`
-- `crates/ui/src/script/parser/brackets.rs:94` `/// `\b[n]`（\b[-1] 等の負数含む）または `\b0..\b9``
-- `crates/ui/src/script/parser/mod.rs:51` `// \b[n] または \b0..\b9（\b[-1] 等の負数含む）`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:43` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\e095ee544d9efdd`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:153` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\e095ee544d9efdd`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:211` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\e095ee544d9efdd`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:320` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\e095ee544d9efdd`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:414` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\e095ee544d9efdd`

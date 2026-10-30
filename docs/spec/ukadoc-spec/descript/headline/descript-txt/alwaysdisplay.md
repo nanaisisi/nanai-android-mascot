@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/ext.rs` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [alwaysdisplay,数値]...`
+- `src-tauri/src/commands/ext.rs:101` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [alwaysdisplay,数値], `
+- `src-tauri/src/commands/ext.rs:105` `let _always_disp = map.get("alwaysdisplay");`

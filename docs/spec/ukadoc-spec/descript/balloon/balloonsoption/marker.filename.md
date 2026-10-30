@@ -10,4 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/assets.js` `setBalloonImage("marker.filename", "--balloon-marker-image");`
+- `ui/css/balloon-window.css:81` `/* バルーンオプション画像 (arrow.filename, clickwaitmarker.filename 等) */`
+- `ui/css/balloon-window.css:100` `/* クリック待ちマーカー (clickwaitmarker.filename) */`
+- `ui/css/balloon-window.css:112` `/* バルーンマーカー (marker.filename) */`
+- `ui/css/balloon-window.css:124` `/* SSTPマーカー (sstpmarker.filename) */`
+- `ui/js/core/actions/balloon-descript/assets.js:34` `// [clickwaitmarker.filename,ファイル名]:`

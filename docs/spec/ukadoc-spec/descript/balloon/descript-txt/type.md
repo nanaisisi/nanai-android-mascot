@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/lib.rs:1` `use specta_typescript::Typescript;`
-- `src-tauri/src/lib.rs:110` `commands::shiori::send_shiori_event_typed,`
-- `src-tauri/src/commands/window/menu_window.rs:108` `menu_type: String,`
-- `src-tauri/src/commands/window/menu_window.rs:172` `let _ = app_handle.emit("set-submenu-type", serde_json::json!({ "type": menu_typ`
-- `src-tauri/src/commands/shiori/protocol.rs:129` `pub async fn send_shiori_event_typed(`
+- `src-tauri/gen/android/app/build/intermediates/assets/arm64Debug/mergeArm64DebugAssets/tauri.conf.json:1` `{"$schema":"https://schema.tauri.app/config/2","productName":"nanai-android-masc`
+- `src-tauri/gen/android/app/build/intermediates/compatible_screen_manifest/arm64Debug/createArm64DebugCompatibleScreenManifests/output-metadata.json:4` `"type": "COMPATIBLE_SCREEN_MANIFEST",`
+- `src-tauri/gen/android/app/build/intermediates/linked_resources_binary_format/arm64Debug/processArm64DebugResources/output-metadata.json:4` `"type": "LINKED_RESOURCES_BINARY_FORMAT",`
+- `src-tauri/gen/android/app/build/intermediates/linked_resources_binary_format/arm64Debug/processArm64DebugResources/output-metadata.json:11` `"type": "SINGLE",`
+- `src-tauri/gen/android/app/build/intermediates/merged_manifests/arm64Debug/processArm64DebugManifest/output-metadata.json:4` `"type": "MERGED_MANIFESTS",`

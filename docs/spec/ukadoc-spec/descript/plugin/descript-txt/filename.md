@@ -10,4 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/ext.rs` `// [name,プラグイン名], [id,ID名], [type,種別], [filename,ファイル名]:`
+- `src-tauri/src/commands/ext.rs:33` `// [name,プラグイン名], [id,ID名], [type,種別], [filename,ファイル名]:`
+- `src-tauri/src/commands/shiori/lifecycle/load.rs:34` `&& let Some(shiori_filename) = map.get("shiori")`
+- `src-tauri/src/commands/shiori/lifecycle/load.rs:36` `let rel_path = shiori_filename.trim();`
+- `src-tauri/src/commands/shiori/lifecycle/spawn.rs:27` `&& let Some(shiori_filename) = map.get("shiori")`
+- `src-tauri/src/commands/shiori/lifecycle/spawn.rs:29` `let rel_path = shiori_filename.trim();`

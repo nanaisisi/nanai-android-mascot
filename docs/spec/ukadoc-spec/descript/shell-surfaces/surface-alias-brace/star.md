@@ -10,4 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/surface/surface-load.js` `// [*（任意のエイリアス名）]`
+- `src-tauri/capabilities/default.json:5` `"windows": ["*"],`
+- `src-tauri/gen/schemas/acl-manifests.json:1` `{"core":{"default_permission":{"identifier":"default","description":"Default cor`
+- `src-tauri/gen/schemas/android-schema.json:40` `"description": "A grouping and boundary mechanism developers can use to isolate `
+- `src-tauri/gen/schemas/android-schema.json:57` `"description": "Configure remote URLs that can use the capability permissions.\n`
+- `src-tauri/gen/schemas/android-schema.json:114` `"description": "Remote domains this capability refers to using the [URLPattern s`

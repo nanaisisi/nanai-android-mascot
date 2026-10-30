@@ -10,4 +10,5 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/shell.rs:123` `.get("menu.background.bitmap.filename")`
+- `src-tauri/src/ghost/scan/shell.rs:149` `// [menu.background.bitmap.filename,ファイル名], [menu.foreground.bitmap.filename,ファイ`
+- `src-tauri/src/ghost/scan/shell.rs:151` `.get("menu.background.bitmap.filename")`

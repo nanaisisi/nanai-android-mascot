@@ -7,3 +7,12 @@
 ## 突合結果
 
 `ui/js/core/actions/balloon-descript.js` にて `paint_transparent_region_black` プロパティをパースし、CSS 変数 `--balloon-paint-black` として動的適用を実装済み。
+
+
+## 実装箇所
+
+- `src-tauri/src/ghost/scan/shell.rs:106` `// [seriko.dpi,推奨DPI], [seriko.zorder,スコープID,スコープID,...], [seriko.sticky-window,`
+- `ui/js/core/actions/balloon-descript/assets.js:121` `// [paint_transparent_region_black,数値]:`
+- `ui/js/core/actions/balloon-descript/assets.js:123` `props.paint_transparent_region_black === "1" ||`
+- `ui/js/core/actions/balloon-descript/assets.js:124` `props.paint_transparent_region_black?.toLowerCase() === "true";`
+- `tests/balloon-descript.test.js:130` `paint_transparent_region_black: "1",`

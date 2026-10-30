@@ -10,4 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive.rs` `// [install.txt（概要）]... [directory,ディレクトリ名]...`
+- `src-tauri/gen/schemas/acl-manifests.json:1` `{"core":{"default_permission":{"identifier":"default","description":"Default cor`
+- `src-tauri/gen/schemas/android-schema.json:236` `"description": "A path that can be opened by the webview when using the Opener A`
+- `src-tauri/gen/schemas/android-schema.json:284` `"description": "A path that can be opened by the webview when using the Opener A`
+- `src-tauri/gen/schemas/android-schema.json:942` `"description": "Default permissions for the plugin, which enables all commands.\`
+- `src-tauri/gen/schemas/android-schema.json:945` `"markdownDescription": "Default permissions for the plugin, which enables all co`

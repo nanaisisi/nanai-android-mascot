@@ -11,5 +11,8 @@ ui/js/ghost/sakura-parser.js で処理: バルーンクリア。
 
 ## 実装箇所
 
-- `crates/ui/src/script/command.rs:15` `Clear,        // \c`
-- `ui/js/ghost/sakura-tokenizer.js:131` `// \c (クリア)`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:7` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\f4929af4ba90d04`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:26` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\7e448c973fe8964`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:43` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\e095ee544d9efdd`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:60` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\7b73304cee1dfb2`
+- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:82` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\7e448c973fe8964`

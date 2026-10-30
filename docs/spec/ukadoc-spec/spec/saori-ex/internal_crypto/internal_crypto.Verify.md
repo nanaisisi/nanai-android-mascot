@@ -6,4 +6,9 @@
 
 ## 突合結果
 
-実装コードに「Verify」が見つからない。
+実装コード内に「Verify」を確認。
+
+
+## 実装箇所
+
+- `tests/sakura-rust-bridge.test.js:39` `// Verify specific tokens`

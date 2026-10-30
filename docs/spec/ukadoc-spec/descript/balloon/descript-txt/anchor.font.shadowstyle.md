@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js` `if (props[\`${prefix}.font.shadowstyle\`]) root.style.setProperty(...)`
+- `ui/js/core/actions/balloon-descript/font.js:175` `// [anchor.font.shadowcolor.r,数値], [anchor.font.shadowcolor.g,数値], [anchor.font.`
+- `ui/js/core/actions/balloon-descript/font.js:180` `props["anchor.font.shadowstyle"]`

@@ -36,6 +36,7 @@ libloading = "0.9.0"
 toml = "1.1.8"
 reqwest = { version = "0.13.5", features = ["blocking", "json"] }
 md-5 = "0.11.0"
+chrono = "0.4"
 parking_lot = "0.13.0"
 thiserror = "2.0.21"
 anyhow = "1.0.104"

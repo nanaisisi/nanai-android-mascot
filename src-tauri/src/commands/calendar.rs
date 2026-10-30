@@ -2,7 +2,9 @@
 //! [calendar/index.md], [calendar/schedule.md], [calendar/menu.md], [\![open,calendar]], [\![execute,schedule-add]]
 
 use serde::{Deserialize, Serialize};
-use tauri::Emitter;
+use std::fs;
+use std::path::PathBuf;
+use tauri::{Emitter, Manager};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ScheduleItem {
@@ -14,37 +16,41 @@ pub struct ScheduleItem {
     pub notified: bool,
 }
 
-#[tauri::command]
-pub async fn get_schedules() -> Result<Vec<ScheduleItem>, String> {
-    Ok(vec![
-        ScheduleItem {
-            id: "sch_1".to_string(),
-            date: "Today".to_string(),
-            time: "12:00".to_string(),
-            title: "お昼休み (SSP Calendar)".to_string(),
-            memo: "休憩時間アラーム".to_string(),
-            notified: false,
-        },
-        ScheduleItem {
-            id: "sch_2".to_string(),
-            date: "Today".to_string(),
-            time: "18:00".to_string(),
-            title: "定時退社".to_string(),
-            memo: "業務終了".to_string(),
-            notified: false,
-        },
-    ])
+fn get_schedules_file_path(app_handle: &tauri::AppHandle) -> Result<PathBuf, String> {
+    let app_data_dir = app_handle.path().app_data_dir().map_err(|e| e.to_string())?;
+    fs::create_dir_all(&app_data_dir).map_err(|e| e.to_string())?;
+    Ok(app_data_dir.join("schedules.json"))
 }
 
 #[tauri::command]
-pub async fn add_schedule(item: ScheduleItem) -> Result<bool, String> {
-    println!("📅 [Calendar] Added schedule: {} at {} {}", item.title, item.date, item.time);
+pub async fn get_schedules(app_handle: tauri::AppHandle) -> Result<Vec<ScheduleItem>, String> {
+    let path = get_schedules_file_path(&app_handle)?;
+    if !path.exists() {
+        return Ok(Vec::new());
+    }
+    let content = fs::read_to_string(&path).map_err(|e| e.to_string())?;
+    let items: Vec<ScheduleItem> = serde_json::from_str(&content).unwrap_or_default();
+    Ok(items)
+}
+
+#[tauri::command]
+pub async fn add_schedule(item: ScheduleItem, app_handle: tauri::AppHandle) -> Result<bool, String> {
+    let mut items = get_schedules(app_handle.clone()).await.unwrap_or_default();
+    items.retain(|i| i.id != item.id);
+    items.push(item);
+    let path = get_schedules_file_path(&app_handle)?;
+    let json = serde_json::to_string_pretty(&items).map_err(|e| e.to_string())?;
+    fs::write(&path, json).map_err(|e| e.to_string())?;
     Ok(true)
 }
 
 #[tauri::command]
-pub async fn delete_schedule(id: String) -> Result<bool, String> {
-    println!("📅 [Calendar] Deleted schedule ID: {}", id);
+pub async fn delete_schedule(id: String, app_handle: tauri::AppHandle) -> Result<bool, String> {
+    let mut items = get_schedules(app_handle.clone()).await.unwrap_or_default();
+    items.retain(|i| i.id != id);
+    let path = get_schedules_file_path(&app_handle)?;
+    let json = serde_json::to_string_pretty(&items).map_err(|e| e.to_string())?;
+    fs::write(&path, json).map_err(|e| e.to_string())?;
     Ok(true)
 }
 
@@ -58,17 +64,4 @@ pub async fn trigger_calendar_event(
         .emit("calendar-event-triggered", &event_id)
         .map_err(|e| e.to_string())?;
     Ok(format!("Triggered {}", event_id))
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[tokio::test]
-    async fn test_calendar_commands() {
-        let schedules = get_schedules().await.unwrap();
-        assert!(!schedules.is_empty());
-        let res = add_schedule(schedules[0].clone()).await.unwrap();
-        assert!(res);
-    }
 }

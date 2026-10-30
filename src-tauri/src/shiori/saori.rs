@@ -31,7 +31,7 @@ fn execute_saori_ex_internal(module: &str, function: &str, args: &[String]) -> O
                     .as_secs();
                 Some(now.to_string())
             }
-            _ => Some("2026-10-28 00:00:00".to_string()),
+            _ => Some(chrono::Utc::now().format("%Y-%m-%d %H:%M:%S").to_string()),
         },
         "internal_crypto" => match function.to_lowercase().as_str() {
             "digest" => {

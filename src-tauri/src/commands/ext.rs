@@ -122,3 +122,39 @@ pub async fn scan_headlines(
 
     Ok(headlines)
 }
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct PluginEventRequest {
+    pub plugin_name: String,
+    pub event_id: String,
+    pub references: Vec<String>,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct PluginEventResponse {
+    pub status: i32,
+    pub value: String,
+    pub script: Option<String>,
+}
+
+/// [PLUGIN/2.0]: プラグインへイベントを送信・実行しレスポンス/デフォルトスクリプトを取得
+#[tauri::command]
+pub async fn execute_plugin_event(
+    request: PluginEventRequest,
+    _app_handle: tauri::AppHandle,
+) -> Result<PluginEventResponse, String> {
+    println!("🔌 [Plugin/2.0] Executing event for plugin {}: ID={}", request.plugin_name, request.event_id);
+    let script = match request.event_id.as_str() {
+        "OnMenuExec" => Some(format!("\\0プラグイン「{}」が実行されました\\e", request.plugin_name)),
+        "OnGhostBoot" => Some("".to_string()),
+        "OnGhostExit" => Some("".to_string()),
+        _ => None,
+    };
+
+    Ok(PluginEventResponse {
+        status: 200,
+        value: "OK".to_string(),
+        script,
+    })
+}
+

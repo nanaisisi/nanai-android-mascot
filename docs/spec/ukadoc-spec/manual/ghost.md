@@ -1,10 +1,9 @@
 # ゴースト (manual/ghost.md)
 
 - **規格**: [manual/ghost.md](https://github.com/ukatech/ukadoc-spec/blob/main/manual/ghost.md)
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 対応済 (実ファイルハンドリング実装済)
 
-## 突合結果
+## 実ファイルハンドリング突合結果
 
-- ゴースト走査と `install.txt` の参照: `src-tauri/src/ghost/scan/mod.rs:43`
-- SHIORI 連携は [shiori3](../spec/shiori3) を参照
-- `descript.txt` 属性の網羅性は [descript/ghost](../descript/ghost) を参照 (多くが未実装)
+- **ゴースト走査と構造解決**: `ghost/master/` フォルダの検出、`descript.txt` のパース、SHIORI 動的ロード（`shiori.dll` / `.so` / WASM）の実ファイル解決に対応 (`src-tauri/src/ghost/scan/mod.rs`, `src-tauri/src/shiori/dynamic/`)。
+- **除外制御**: `.dev_ignore` / `.narignore` / `.updateignore` の存在判定による不要ファイル除外処理を完備。

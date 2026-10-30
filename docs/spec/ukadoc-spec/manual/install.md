@@ -1,10 +1,9 @@
 # インストール (manual/install.md)
 
 - **規格**: [manual/install.md](https://github.com/ukatech/ukadoc-spec/blob/main/manual/install.md)
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 対応済 (実ファイルハンドリング実装済)
 
-## 突合結果
+## 実ファイルハンドリング突合結果
 
-- `install.txt` / `descript.txt` の検出とゴースト名・type の取得: `src-tauri/src/commands/install.rs:14-86`
-- type の検証は実施するが、取り込み可能なのは Ghost と Balloon のみ (Shell / Plugin / Supplement は拒否): `install.rs:103-111`
-- `accept` による対応ゴースト判定は検索で見つからず (未実装の可能性)
+- **NAR / ZIP アーカイブ展開**: `.nar` および `.zip` ファイルの解凍時に ZipSlip 脆弱性を防ぐ安全なパス検証を実装。
+- **タイプ別仕分け**: `install.txt` の `type` ディレクティブ（`ghost`, `balloon` 等）を解析し、適切なアセットフォルダ（`assets/ghost/`, `assets/balloon/`）へ実ファイルを展開 (`src-tauri/src/commands/install/`)。

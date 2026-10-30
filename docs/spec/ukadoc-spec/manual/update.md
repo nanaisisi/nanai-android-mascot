@@ -1,10 +1,9 @@
 # ネットワーク更新 (manual/update.md)
 
 - **規格**: [manual/update.md](https://github.com/ukatech/ukadoc-spec/blob/main/manual/update.md)
-- **対応状況**: ✅ 実装済
+- **対応状況**: ✅ 対応済 (実ファイルハンドリング実装済)
 
-## 突合結果
+## 実ファイルハンドリング突合結果
 
-- `updates2.dau` を取得し、無ければ `updates.txt` を試行: `src-tauri/src/commands/update/network.rs:59-61`
-- DAU パース: `src-tauri/src/commands/update/dau.rs:31`
-- MD5 によるローカル差分判定とダウンロード後検証: `network.rs:97-99`, `network.rs:205-228`
+- **updates2.dau / updates.txt 解析**: `homeurl` から更新定義ファイルを取得し `parse_update_definition` にてパース。
+- **物理ファイルのダウンロードと検証**: MD5 ハッシュ突合による差分ダウンロード、一時領域での検証を経て安全に既存アセットファイルを上書き・置換するアトミックファイル処理を実装 (`src-tauri/src/commands/update/network.rs`)。

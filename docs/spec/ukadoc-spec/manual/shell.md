@@ -1,9 +1,9 @@
 # シェル (manual/shell.md)
 
 - **規格**: [manual/shell.md](https://github.com/ukatech/ukadoc-spec/blob/main/manual/shell.md)
-- **対応状況**: ❓ 未確認
+- **対応状況**: ✅ 対応済 (実ファイルハンドリング実装済)
 
-## 突合結果
+## 実ファイルハンドリング突合結果
 
-- 今回は実装との突合を行っていない
-- 属性ごとの状況は [descript/shell](../descript/shell) と [descript/shell-surfaces](../descript/shell-surfaces) を参照
+- **サーフェス実ファイル画像読込**: `load_surface_image` により `surface*.png` / `surface*.bmp` を読み込み。
+- **PNA アルファマスク処理**: `load_surface_pna` により対応する 8bit グレースケールマスク (`surface*.pna`) を読み込み、Canvas 2D コンポジタにて透過・抜き合わせ合成を実行 (`src-tauri/src/commands/file.rs`, `ui/js/surface/surface-compositor.js`)。

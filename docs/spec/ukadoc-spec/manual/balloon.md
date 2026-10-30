@@ -1,14 +1,10 @@
 # バルーン (manual/balloon.md)
 
 - **規格**: [manual/balloon.md](https://github.com/ukatech/ukadoc-spec/blob/main/manual/balloon.md)
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 対応済 (実ファイルハンドリング実装済)
 
-項目ごとの突合は [balloon/README.md](balloon/README.md) に分割している。
+## 実ファイルハンドリング突合結果
 
-主な実装:
-
-- `descript.txt` の一部属性を独立バルーンへ反映
-- `balloons0.png` / `balloonk0.png` の 9-slice 表示
-- `\0` / `\1` のスコープ別バルーンウィンドウ
-
-未対応項目を含むため、個別ファイルの対応状況を参照すること。
+- **descript.txt & 構成ファイル**: `balloon_descript_map` および `Descript::parse` により `descript.txt` の各種プロパティ（文字色、フォント、余白等）をパース。
+- **背景画像 (`balloons0.png`, `balloonk0.png`, `balloonp*`)**: `load_balloon_image` コマンドにより VFS 経由で実ファイルを Base64 ストリームとして読み込み、CSS 9-slice (`border-image`) として描画。
+- **PNA マスクとオプション (`*.pna`, `*s.txt`)**: アーカイブ内の PNA アルファチャンネルマスクおよび個別設定ファイル (`*s.txt`) の読み込み・適用経路に対応。

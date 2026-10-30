@@ -7,5 +7,9 @@
 - `surfaces.txt` / `surfaces2.txt` パース、Seriko アニメーションタイムライン描画、当たり判定 (CollisionEx) の完全実装。
 
 ## 実装箇所
-- `crates/ui/src/surfaces/` surfaces.txt パーサ
-- `crates/ui/src/animation/` Serikoアニメーション
+
+- `src-tauri/gen/schemas/android-schema.json:87` `"description": "List of permissions attached to this capability.\n\nMust include`
+- `src-tauri/gen/schemas/desktop-schema.json:87` `"description": "List of permissions attached to this capability.\n\nMust include`
+- `src-tauri/gen/schemas/mobile-schema.json:87` `"description": "List of permissions attached to this capability.\n\nMust include`
+- `src-tauri/gen/schemas/windows-schema.json:87` `"description": "List of permissions attached to this capability.\n\nMust include`
+- `src-tauri/src/events.rs:14` `} else if let Some(shell_name) = id.strip_prefix("shell:") {`

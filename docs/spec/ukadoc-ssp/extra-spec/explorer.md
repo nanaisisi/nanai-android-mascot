@@ -68,8 +68,8 @@ SSP / ネットワーク更新仕様に準拠したステータスコードお�
 
 ## 実装箇所
 
-- `ui/js/ui/templates/ghost-templates.js`: 表と操作 UI
-- `ui/js/ui/modal-ghost-handlers.js`: 走査、検索、ソート（▲/▼インジケータ）、切替
-- `src-tauri/src/common.rs`: `GhostInfo` 拡張
-- `src-tauri/src/ghost/scan/mod.rs`: ゴースト依存日時およびステータス算出ロジック
-- `ui/css/menu-modal.css`: モダンダークエクスプローラ配色
+- `src-tauri/gen/schemas/acl-manifests.json:1` `{"core":{"default_permission":{"identifier":"default","description":"Default cor`
+- `src-tauri/gen/schemas/android-schema.json:143` `"description": "This permission set allows opening `mailto:`, `tel:`, `https://``
+- `src-tauri/gen/schemas/android-schema.json:146` `"markdownDescription": "This permission set allows opening `mailto:`, `tel:`, `h`
+- `src-tauri/gen/schemas/android-schema.json:2388` `"description": "This permission set allows opening `mailto:`, `tel:`, `https://``
+- `src-tauri/gen/schemas/android-schema.json:2391` `"markdownDescription": "This permission set allows opening `mailto:`, `tel:`, `h`

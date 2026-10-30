@@ -6,3 +6,9 @@
 ## 突合結果
 
 クライアント実行環境のため、更新定義ファイルの生成機能は未実装。
+
+
+## 実装箇所
+
+- `ui/js/ghost/ghost.js:164` `const generation = this._ghostLoadGeneration;`
+- `ui/js/ghost/ghost.js:228` `() => this._ghostLoadGeneration === generation,`

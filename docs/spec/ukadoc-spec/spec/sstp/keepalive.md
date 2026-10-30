@@ -6,3 +6,8 @@
 ## 突合結果
 
 SSTP 未対応。
+
+
+## 実装箇所
+
+- `src-tauri/src/sstp.rs:2` `//! [SSTP/1.x], [method_send], [method_execute], [method_give], [method_communic`

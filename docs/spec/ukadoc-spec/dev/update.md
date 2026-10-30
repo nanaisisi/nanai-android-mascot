@@ -7,5 +7,9 @@
 - `updates.txt` および `updates2.dau` のフォーマット解析、差分ファイル取得、安全な差分適用プロトコルの実装。
 
 ## 実装箇所
-- `src-tauri/src/update/` ネットワーク更新パーサ・実行エンジン
-- `ui/js/core/app-update.js` 更新クライアントロジック
+
+- `src-tauri/tauri.conf.json:45` `"updater": {`
+- `src-tauri/gen/android/app/build/intermediates/assets/arm64Debug/mergeArm64DebugAssets/tauri.conf.json:1` `{"$schema":"https://schema.tauri.app/config/2","productName":"nanai-android-masc`
+- `src-tauri/gen/android/app/src/main/assets/tauri.conf.json:1` `{"$schema":"https://schema.tauri.app/config/2","productName":"nanai-android-masc`
+- `src-tauri/src/lib.rs:150` `commands::update::check_ghost_update,`
+- `src-tauri/src/lib.rs:151` `commands::update::execute_ghost_update,`

@@ -6,3 +6,8 @@
 ## 突合結果
 
 語の出現は無関係 (SSTP の EXECUTE ではない)。
+
+
+## 実装箇所
+
+- `src-tauri/src/sstp.rs:2` `//! [SSTP/1.x], [method_send], [method_execute], [method_give], [method_communic`

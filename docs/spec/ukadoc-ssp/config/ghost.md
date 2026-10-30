@@ -6,3 +6,12 @@
 ## 突合結果
 
 デフォルトゴースト設定、移動制約
+
+
+## 実装箇所
+
+- `src-tauri/src/events.rs:6` `if let Some(ghost_name) = id.strip_prefix("ghost:") {`
+- `src-tauri/src/events.rs:10` `"action": "switch-to-ghost",`
+- `src-tauri/src/events.rs:11` `"payload": ghost_name`
+- `src-tauri/src/fmo.rs:20` `pub ghosts: HashMap<String, FmoGhostStatus>,`
+- `src-tauri/src/fmo.rs:31` `.current_ghost_name`

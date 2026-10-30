@@ -66,7 +66,7 @@ def process_audit_files(codebase):
     audit_files = glob.glob('docs/spec/ukadoc-spec/**/*.md', recursive=True) + glob.glob('docs/spec/ukadoc-ssp/**/*.md', recursive=True)
     audit_files = [
         f.replace('\\', '/') for f in audit_files
-        if not f.endswith('README.md') and not f.endswith('SUMMARY.md')
+        if not f.endswith('README.md') and not f.endswith('SUMMARY.md') and not f.endswith('INDEX.md')
     ]
 
     updated_count = 0
@@ -79,11 +79,14 @@ def process_audit_files(codebase):
         st_match = re.search(r'-\s*\*\*対応状況\*\*:\s*(.*)', content)
         kw_match = re.search(r'-\s*\*\*検索語\*\*:\s*(.*)', content)
 
-        if not st_match or not kw_match:
+        if not st_match:
             continue
 
         curr_status = st_match.group(1).strip()
-        keyword = kw_match.group(1).strip()
+        if kw_match:
+            keyword = kw_match.group(1).strip()
+        else:
+            keyword = os.path.splitext(os.path.basename(filepath))[0]
 
         # Determine category for SUMMARY.md
         if 'ukadoc-ssp' in filepath:
@@ -91,7 +94,7 @@ def process_audit_files(codebase):
         else:
             rel_path = filepath.replace('docs/spec/ukadoc-spec/', '')
         parts = rel_path.split('/')
-        if len(parts) >= 3 and parts[0] in ['descript', 'list', 'spec', 'ssp']:
+        if len(parts) >= 3 and parts[0] in ['descript', 'list', 'spec', 'ssp', 'config', 'functions', 'howto', 'dev', 'about', 'extra-spec']:
             cat = f"{parts[0]}/{parts[1]}"
         elif len(parts) >= 2:
             cat = parts[0]

@@ -6,3 +6,8 @@
 ## 突合結果
 
 FMO 未対応。
+
+
+## 実装箇所
+
+- `src-tauri/src/shiori/fmo.rs:1` `//! FMO (File Mapping Object) & Mutex implementation (UKADOC / SSP fmo-mutex spe`

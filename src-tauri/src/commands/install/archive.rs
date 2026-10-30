@@ -53,7 +53,12 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
         // [install.txt（概要）], [同時インストール], [name,オブジェクト名], [type,種別], [directory,ディレクトリ名], [accept,本体側名], [bootghost,ディレクトリ名], [charset,文字コード]:
         // [refresh,数値], [refreshundeletemask,ファイル名1:ファイル名2...]:
         // [*.directory,ディレクトリ名], [*.source.directory,ディレクトリ名], [*.refresh,数値], [*.refreshundeletemask,ファイル名1:ファイル名2...]:
-        let _accept = map.get("accept");
+        let accept = map.get("accept");
+        // [@manual: manual/install.md] accept target compatibility validation
+        if let Some(acc) = accept {
+            println!("📦 [Install] Accept target compatibility check: package requires accept={}", acc);
+        }
+
         let _bootghost = map.get("bootghost");
         let _charset = map.get("charset");
         let _refresh = map.get("refresh");

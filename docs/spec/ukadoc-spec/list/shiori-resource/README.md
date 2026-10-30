@@ -4,5 +4,5 @@
 
 | 項目                                                        | 検索語                         |     対応状況      |
 | :---------------------------------------------------------- | :----------------------------- | :---------------: |
-| [SHIORI Resource](caption_shioriresource.md)                | SHIORI                         | ❌ 未実装(誤検出) |
-| [オーナードローメニュー項目表示](ownerdraw-item-display.md) | オーナードローメニュー項目表示 |    ❌ 検出なし    |
+| [SHIORI Resource](caption_shioriresource.md)                | SHIORI                         |     ✅ 対応済     |
+| [オーナードローメニュー項目表示](ownerdraw-item-display.md) | オーナードローメニュー         |     ✅ 対応済     |

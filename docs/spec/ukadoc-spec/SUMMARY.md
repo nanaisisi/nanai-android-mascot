@@ -17,9 +17,9 @@
 | list/sakura-script         |        31 |          10 |       334 |         0 |  375 |
 | list/shiori-event          |        41 |           4 |       284 |         0 |  329 |
 | list/shiori-event-ex       |         0 |           0 |       178 |         0 |  178 |
-| list/shiori-resource       |         1 |           6 |       154 |         1 |  162 |
+| list/shiori-resource       |         2 |           6 |       153 |         1 |  162 |
 | spec/saori-ex              |         2 |           0 |        41 |         0 |   43 |
-| **合計** |       601 |          60 |      1202 |         3 | 1866 |
+| **合計** |       602 |          60 |      1201 |         3 | 1866 |
 
 ## 注意
 

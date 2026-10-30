@@ -90,9 +90,9 @@ def process_audit_files(codebase):
 
         # Determine category for SUMMARY.md
         if 'ukadoc-ssp' in filepath:
-            rel_path = filepath.replace('docs/spec/ukadoc-ssp/', 'ssp/')
+            rel_path = filepath.replace('docs/spec/ukadoc-ssp/', 'ukadoc-ssp/')
         else:
-            rel_path = filepath.replace('docs/spec/ukadoc-spec/', '')
+            rel_path = filepath.replace('docs/spec/ukadoc-spec/', 'ukadoc-spec/')
         parts = rel_path.split('/')
         if len(parts) >= 3 and parts[0] in ['descript', 'list', 'spec', 'ssp', 'config', 'functions', 'howto', 'dev', 'about', 'extra-spec']:
             cat = f"{parts[0]}/{parts[1]}"

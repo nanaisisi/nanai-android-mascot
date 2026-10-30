@@ -14,5 +14,5 @@
 - `src-tauri/src/fmo.rs:21` `pub hwnd: u64,`
 - `src-tauri/src/fmo.rs:49` `hwnd: 0,`
 - `src-tauri/src/sstp.rs:14` `pub hwnd: Option<u64>,`
-- `src-tauri/src/sstp.rs:96` `hwnd: None,`
-- `src-tauri/src/shiori/fmo.rs:11` `pub hwnd: u64,`
+- `src-tauri/src/sstp.rs:50` `let mut hwnd = None;`
+- `src-tauri/src/sstp.rs:67` `"hwnd" => hwnd = val.parse().ok(),`

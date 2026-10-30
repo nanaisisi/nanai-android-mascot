@@ -26,6 +26,69 @@ pub struct SstpResponse {
     pub reference0: Option<String>,
 }
 
+/// Parse raw SSTP/1.x request text conforming to UKADOC spec
+pub fn parse_raw_sstp_request(raw: &str) -> Result<SstpRequest, String> {
+    let mut lines = raw.lines();
+    let first_line = lines.next().ok_or("Empty SSTP request")?;
+    let mut method = "SEND".to_string();
+    let upper = first_line.to_uppercase();
+    if upper.starts_with("SEND") {
+        method = "SEND".to_string();
+    } else if upper.starts_with("EXECUTE") {
+        method = "EXECUTE".to_string();
+    } else if upper.starts_with("NOTIFY") {
+        method = "NOTIFY".to_string();
+    } else if upper.starts_with("COMMUNICATE") {
+        method = "COMMUNICATE".to_string();
+    } else if upper.starts_with("GIVE") {
+        method = "GIVE".to_string();
+    }
+
+    let mut sender = "Unknown".to_string();
+    let mut script = None;
+    let mut event = None;
+    let mut hwnd = None;
+    let mut security_level = Some("local".to_string());
+    let mut references = HashMap::new();
+    let mut keep_alive = Some(false);
+
+    for line in lines {
+        let line = line.trim();
+        if line.is_empty() {
+            continue;
+        }
+        if let Some((key, val)) = line.split_once(':') {
+            let key = key.trim();
+            let val = val.trim().to_string();
+            match key.to_lowercase().as_str() {
+                "sender" => sender = val,
+                "script" => script = Some(val),
+                "event" => event = Some(val),
+                "hwnd" => hwnd = val.parse().ok(),
+                "securitylevel" => security_level = Some(val),
+                "keepalive" => keep_alive = Some(val.to_lowercase() == "true" || val == "1"),
+                _ => {
+                    if key.starts_with("Reference") {
+                        references.insert(key.to_string(), val);
+                    }
+                }
+            }
+        }
+    }
+
+    Ok(SstpRequest {
+        method: Some(method),
+        sender,
+        script,
+        event,
+        hwnd,
+        security_level,
+        security_origin: None,
+        references,
+        keep_alive,
+    })
+}
+
 #[tauri::command]
 pub async fn send_sstp_request(
     request: SstpRequest,
@@ -81,13 +144,30 @@ pub async fn send_sstp_request(
     })
 }
 
+#[tauri::command]
+pub async fn parse_and_send_sstp_raw(
+    raw_request: String,
+    app_handle: tauri::AppHandle,
+) -> Result<SstpResponse, String> {
+    let req = parse_raw_sstp_request(&raw_request)?;
+    send_sstp_request(req, app_handle).await
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
+    #[test]
+    fn test_parse_raw_sstp() {
+        let raw = "SEND SSTP/1.1\r\nSender: TestApp\r\nScript: \\0Hi\\e\r\nReference0: RefVal\r\n";
+        let req = parse_raw_sstp_request(raw).unwrap();
+        assert_eq!(req.sender, "TestApp");
+        assert_eq!(req.script, Some("\\0Hi\\e".to_string()));
+        assert_eq!(req.references.get("Reference0"), Some(&"RefVal".to_string()));
+    }
+
     #[tokio::test]
     async fn test_sstp_send_request() {
-        // Test logic for sstp request
         let req = SstpRequest {
             method: Some("SEND".to_string()),
             sender: "TestApp".to_string(),

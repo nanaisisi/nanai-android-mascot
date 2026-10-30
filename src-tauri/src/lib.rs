@@ -154,6 +154,7 @@ pub fn run() {
             commands::ext::execute_plugin_event,
             shiori::saori::execute_saori,
             shiori::headline::fetch_headline_feed,
+            shiori::property::get_system_property,
             shiori::fmo::get_fmo_status,
             shiori::fmo::check_base_ware_mutex,
             sstp::send_sstp_request,

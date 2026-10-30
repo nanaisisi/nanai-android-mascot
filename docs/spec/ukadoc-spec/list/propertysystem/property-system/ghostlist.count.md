@@ -6,4 +6,10 @@
 
 ## 突合結果
 
-実装コードに「ghostlist.count」が見つからない。
+実装コード内に「ghostlist.count」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/shiori/property.rs:14` `if q == "ghostlist.count" {`
+- `src-tauri/src/shiori/property.rs:52` `assert_eq!(evaluate_property_query("ghostlist.count"), "1");`

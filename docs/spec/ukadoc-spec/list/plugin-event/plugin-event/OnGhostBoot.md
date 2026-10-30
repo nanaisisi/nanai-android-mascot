@@ -6,4 +6,11 @@
 
 ## 突合結果
 
-実装コードに「OnGhostBoot」が見つからない。
+実装コード内に「OnGhostBoot」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/commands/ext.rs:149` `"OnGhostBoot" => Some("".to_string()),`
+- `ui/js/ghost/ghost-shiori.js:38` `// [PLUGIN/2.0]: OnGhostBoot event broadcast to available plugins`
+- `ui/js/ghost/ghost-shiori.js:44` `eventId: "OnGhostBoot",`

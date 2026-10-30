@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs:148` `// [sakura.balloon.defaultsurface,数値], [kero.balloon.defaultsurface,数値], [balloo`
-- `src-tauri/src/ghost/scan/directory.rs:149` `let _sakura_bs = m.get("sakura.balloon.defaultsurface");`
-- `src-tauri/src/ghost/scan/directory.rs:150` `let _kero_bs = m.get("kero.balloon.defaultsurface");`
-- `src-tauri/src/ghost/scan/directory.rs:151` `let _balloon_bs = m.get("balloon.defaultsurface");`
-- `src-tauri/src/ghost/scan/directory.rs:152` `let _char_bs = m.get("char0.balloon.defaultsurface");`
+- `src-tauri/src/ghost/scan/directory.rs:149` `// [sakura.balloon.defaultsurface,数値], [kero.balloon.defaultsurface,数値], [balloo`
+- `src-tauri/src/ghost/scan/directory.rs:150` `let _sakura_bs = m.get("sakura.balloon.defaultsurface");`
+- `src-tauri/src/ghost/scan/directory.rs:151` `let _kero_bs = m.get("kero.balloon.defaultsurface");`
+- `src-tauri/src/ghost/scan/directory.rs:152` `let _balloon_bs = m.get("balloon.defaultsurface");`
+- `src-tauri/src/ghost/scan/directory.rs:153` `let _char_bs = m.get("char0.balloon.defaultsurface");`

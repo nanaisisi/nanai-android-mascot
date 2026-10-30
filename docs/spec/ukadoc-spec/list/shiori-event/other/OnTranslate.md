@@ -11,5 +11,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/shiori/protocol.rs:171` `/// SHIORI へ OnTranslate イベントを送信し、ゴースト側で翻訳されたさくらスクリプトを取得する (UKADOC 規格準拠)`
-- `src-tauri/src/commands/shiori/protocol.rs:178` `let mut req = ShioriRequest::get("OnTranslate", std::slice::from_ref(&script));`
+- `src-tauri/src/commands/shiori/protocol.rs:109` `/// [@manual: manual/translator.md] Translator integration / OnTranslate hook su`
+- `src-tauri/src/commands/shiori/protocol.rs:172` `/// SHIORI へ OnTranslate イベントを送信し、ゴースト側で翻訳されたさくらスクリプトを取得する (UKADOC 規格準拠)`
+- `src-tauri/src/commands/shiori/protocol.rs:179` `let mut req = ShioriRequest::get("OnTranslate", std::slice::from_ref(&script));`
+- `ui/js/ghost/sakura-play.js:15` `// [OnTranslate / manual/translator.md]: 発話前のスクリプト動的変換・翻訳処理`
+- `ui/js/ghost/sakura-play.js:20` `const transRes = await app.ghostController.sendShioriEvent("OnTranslate", [scrip`

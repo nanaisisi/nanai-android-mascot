@@ -6,4 +6,9 @@
 
 ## 突合結果
 
-実装コードに「OnMenuExec」が見つからない。
+実装コード内に「OnMenuExec」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/commands/ext.rs:148` `"OnMenuExec" => Some(format!("\\0プラグイン「{}」が実行されました\\e", request.plugin_name)),`

@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs:154` `// [seriko.alignmenttodesktop,位置情報], [sakura.seriko.alignmenttodesktop,位置情報], [k`
-- `src-tauri/src/ghost/scan/directory.rs:159` `let _seriko_dir = m.get("seriko.defaultsurfacedirectoryname");`
+- `src-tauri/src/ghost/scan/directory.rs:155` `// [seriko.alignmenttodesktop,位置情報], [sakura.seriko.alignmenttodesktop,位置情報], [k`
+- `src-tauri/src/ghost/scan/directory.rs:160` `let _seriko_dir = m.get("seriko.defaultsurfacedirectoryname");`

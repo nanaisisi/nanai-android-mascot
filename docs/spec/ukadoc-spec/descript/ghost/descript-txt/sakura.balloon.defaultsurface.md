@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs:148` `// [sakura.balloon.defaultsurface,数値], [kero.balloon.defaultsurface,数値], [balloo`
-- `src-tauri/src/ghost/scan/directory.rs:149` `let _sakura_bs = m.get("sakura.balloon.defaultsurface");`
+- `src-tauri/src/ghost/scan/directory.rs:149` `// [sakura.balloon.defaultsurface,数値], [kero.balloon.defaultsurface,数値], [balloo`
+- `src-tauri/src/ghost/scan/directory.rs:150` `let _sakura_bs = m.get("sakura.balloon.defaultsurface");`

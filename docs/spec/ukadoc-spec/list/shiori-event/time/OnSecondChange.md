@@ -12,6 +12,6 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 
 - `src-tauri/src/commands/shiori/protocol.rs:58` `// 既定は info（失敗のみ出力）、trace で全リクエスト/レスポンス、毎秒の OnSecondChange は NANAI_LOG=trace のとき`
 - `src-tauri/src/commands/shiori/protocol.rs:60` `let noisy = request.contains("ID: OnSecondChange");`
-- `src-tauri/src/commands/shiori/protocol.rs:142` `if event != "OnSecondChange"`
+- `src-tauri/src/commands/shiori/protocol.rs:143` `if event != "OnSecondChange"`
 - `src-tauri/src/shiori/ffi/builder.rs:101` `.event("OnSecondChange")`
 - `crates/ui/src/shiori/tests/request_tests.rs:57` `let text = "NOTIFY SHIORI/3.0\r\nCharset: UTF-8\r\nSender: NanaiAndroidMascot\r\`

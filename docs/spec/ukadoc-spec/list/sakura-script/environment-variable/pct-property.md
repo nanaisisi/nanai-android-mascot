@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `crates/ui/src/shiori/types/sender.rs:38` `"property" => Self::Property,`
-- `crates/ui/src/shiori/types/sender.rs:53` `Self::Property => "property".into(),`
-- `crates/ui/src/shiori/types/sender.rs:102` `("property", SenderTypeTag::Property),`
-- `ui/main.js:16` `* @property {boolean} autoLoadGhost`
-- `ui/main.js:17` `* @property {boolean} enableNotifications`
+- `src-tauri/src/lib.rs:157` `shiori::property::get_system_property,`
+- `src-tauri/src/shiori/mod.rs:6` `pub mod property;`
+- `src-tauri/src/shiori/property.rs:1` `//! Property System evaluation engine specification implementation (UKADOC prope`
+- `src-tauri/src/shiori/property.rs:11` `/// Evaluate property system queries conforming to UKADOC propertysystem spec`
+- `src-tauri/src/shiori/property.rs:12` `pub fn evaluate_property_query(query: &str) -> String {`

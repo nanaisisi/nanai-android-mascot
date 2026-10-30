@@ -6,4 +6,9 @@
 
 ## 突合結果
 
-実装コードに「OnGhostExit」が見つからない。
+実装コード内に「OnGhostExit」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/commands/ext.rs:150` `"OnGhostExit" => Some("".to_string()),`

@@ -6,4 +6,10 @@
 
 ## 突合結果
 
-実装コードに「balloonlist」が見つからない。
+実装コード内に「balloonlist」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/shiori/property.rs:20` `if q == "balloonlist.count" {`
+- `src-tauri/src/shiori/property.rs:23` `if q == "balloonlist.index(0).name" {`

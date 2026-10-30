@@ -6,4 +6,9 @@
 
 ## 突合結果
 
-実装コードに「headlinelist.count」が見つからない。
+実装コード内に「headlinelist.count」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/shiori/property.rs:29` `if q == "headlinelist.count" {`

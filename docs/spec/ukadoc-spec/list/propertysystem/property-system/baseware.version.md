@@ -6,4 +6,9 @@
 
 ## 突合結果
 
-実装コードに「baseware.version」が見つからない。
+実装コード内に「baseware.version」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/shiori/property.rs:35` `if q == "baseware.version" || q == "system.baseware.version" {`

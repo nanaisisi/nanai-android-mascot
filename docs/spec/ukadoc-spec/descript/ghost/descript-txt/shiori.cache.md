@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs:165` `// [shiori.version,バージョン], [shiori.encoding,文字コード], [shiori.forceencoding,文字コード]`
-- `src-tauri/src/ghost/scan/directory.rs:169` `let _shiori_cache = m.get("shiori.cache");`
+- `src-tauri/src/ghost/scan/directory.rs:166` `// [shiori.version,バージョン], [shiori.encoding,文字コード], [shiori.forceencoding,文字コード]`
+- `src-tauri/src/ghost/scan/directory.rs:170` `let _shiori_cache = m.get("shiori.cache");`

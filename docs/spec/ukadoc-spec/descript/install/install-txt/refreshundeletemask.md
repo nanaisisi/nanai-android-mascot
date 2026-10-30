@@ -12,5 +12,5 @@
 
 - `src-tauri/src/commands/install/archive.rs:54` `// [refresh,数値], [refreshundeletemask,ファイル名1:ファイル名2...]:`
 - `src-tauri/src/commands/install/archive.rs:55` `// [*.directory,ディレクトリ名], [*.source.directory,ディレクトリ名], [*.refresh,数値], [*.refre`
-- `src-tauri/src/commands/install/archive.rs:60` `let _refreshmask = map.get("refreshundeletemask");`
-- `src-tauri/src/commands/install/archive.rs:62` `let _star_refreshmask = map.get("ghost.refreshundeletemask").or_else(|| map.get(`
+- `src-tauri/src/commands/install/archive.rs:65` `let _refreshmask = map.get("refreshundeletemask");`
+- `src-tauri/src/commands/install/archive.rs:67` `let _star_refreshmask = map.get("ghost.refreshundeletemask").or_else(|| map.get(`

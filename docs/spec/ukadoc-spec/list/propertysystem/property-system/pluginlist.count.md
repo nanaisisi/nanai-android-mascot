@@ -6,4 +6,9 @@
 
 ## 突合結果
 
-実装コードに「pluginlist.count」が見つからない。
+実装コード内に「pluginlist.count」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/shiori/property.rs:26` `if q == "pluginlist.count" {`

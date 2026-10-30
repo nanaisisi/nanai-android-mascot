@@ -13,6 +13,6 @@
 
 - `src-tauri/src/fmo.rs:21` `pub hwnd: u64,`
 - `src-tauri/src/fmo.rs:51` `hwnd: 0,`
-- `src-tauri/src/sstp.rs:11` `pub hwnd: Option<u64>,`
+- `src-tauri/src/sstp.rs:14` `pub hwnd: Option<u64>,`
+- `src-tauri/src/sstp.rs:90` `hwnd: None,`
 - `src-tauri/src/shiori/fmo.rs:11` `pub hwnd: u64,`
-- `src-tauri/src/shiori/fmo.rs:32` `content.push_str(&format!("{}.hwnd\x01{}\r\n", prefix, rec.hwnd));`

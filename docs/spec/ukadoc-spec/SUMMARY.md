@@ -14,12 +14,12 @@
 | descript/shell-surfacetable |         7 |           0 |         0 |         0 |    7 |
 | list/plugin-event          |         4 |           0 |        14 |         1 |   19 |
 | list/propertysystem        |         2 |           1 |       193 |         1 |  197 |
-| list/sakura-script         |        29 |          10 |       336 |         0 |  375 |
+| list/sakura-script         |        31 |          10 |       334 |         0 |  375 |
 | list/shiori-event          |        41 |           4 |       284 |         0 |  329 |
 | list/shiori-event-ex       |         0 |           0 |       178 |         0 |  178 |
 | list/shiori-resource       |         0 |           6 |       155 |         1 |  162 |
 | spec/saori-ex              |         2 |           0 |        41 |         0 |   43 |
-| **合計** |       598 |          60 |      1205 |         3 | 1866 |
+| **合計** |       600 |          60 |      1203 |         3 | 1866 |
 
 ## 注意
 

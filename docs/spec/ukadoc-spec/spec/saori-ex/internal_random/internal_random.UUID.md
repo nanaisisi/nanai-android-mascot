@@ -6,4 +6,9 @@
 
 ## 突合結果
 
-実装コードに「UUID」が見つからない。
+実装コード内に「UUID」を確認。
+
+
+## 実装箇所
+
+- `src-tauri/src/shiori/saori.rs:62` `Some("Format\nDigest\nNumber\nUUID\nListModules\nListFunctions".to_string())`

@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/saori.rs:1` `//! SAORI (System Architecture Of Request Integration) 1.0 プロトコル仕様の実装`
-- `src-tauri/src/shiori/saori.rs:7` `/// SAORI 1.0 リクエスト`
-- `src-tauri/src/shiori/saori.rs:14` `/// SAORI 1.0 レスポンス`
-- `src-tauri/src/shiori/saori.rs:22` `/// SAORI 1.0 リクエストを実行（将来的なネイティブDLL / WASM / 組み込みスクリプト実行に対応）`
-- `src-tauri/src/shiori/saori.rs:25` `println!("🔌 EXECUTE SAORI/1.0: dll={:?}, args={:?}", request.dll_path, request.a`
+- `src-tauri/src/shiori/saori.rs:1` `//! SAORI (System Architecture Of Request Integration) 1.0 & SAORI-Ex protocol s`
+- `src-tauri/src/shiori/saori.rs:2` `//! UKADOC 規格準拠: 外部 DLL / スクリプト実行および内蔵 SAORI-Ex 拡張インターフェース`
+- `src-tauri/src/shiori/saori.rs:3` `//! [SAORI over DirectSSTP], [internal.md], [internal_crypto], [internal_time], `
+- `src-tauri/src/shiori/saori.rs:8` `/// SAORI 1.0 リクエスト`
+- `src-tauri/src/shiori/saori.rs:15` `/// SAORI 1.0 レスポンス`

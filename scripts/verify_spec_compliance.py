@@ -88,18 +88,21 @@ def process_audit_files(codebase):
         else:
             keyword = os.path.splitext(os.path.basename(filepath))[0]
 
-        # Determine category for SUMMARY.md (1-directory hierarchy level)
+        # Determine explicit prefixed category for SUMMARY.md
         if 'ukadoc-ssp' in filepath:
-            rel_path = filepath.replace('docs/spec/ukadoc-ssp/', 'ukadoc-ssp/')
+            rel_path = filepath.replace('docs/spec/ukadoc-ssp/', '')
+            parts = rel_path.split('/')
+            if len(parts) >= 2:
+                cat = f"ukadoc-ssp/{parts[0]}"
+            else:
+                cat = "ukadoc-ssp/root"
         else:
-            rel_path = filepath.replace('docs/spec/ukadoc-spec/', 'ukadoc-spec/')
-        parts = rel_path.split('/')
-        if len(parts) >= 3 and parts[0] in ['descript', 'list', 'spec']:
-            cat = f"{parts[0]}/{parts[1]}"
-        elif len(parts) >= 2:
-            cat = parts[0]
-        else:
-            cat = "root"
+            rel_path = filepath.replace('docs/spec/ukadoc-spec/', '')
+            parts = rel_path.split('/')
+            if len(parts) >= 2:
+                cat = f"ukadoc-spec/{parts[0]}"
+            else:
+                cat = "ukadoc-spec/root"
 
         if cat not in category_stats:
             category_stats[cat] = {"✅": 0, "⚠️": 0, "❌": 0, "❓": 0, "合計": 0}
@@ -149,13 +152,13 @@ def process_audit_files(codebase):
     return updated_count, category_stats
 
 def update_summary(category_stats):
-    summary_path = 'docs/spec/SUMMARY.md'
+    summary_path = 'docs/spec/ukadoc-spec/SUMMARY.md'
     lines = [
-        "# spec 規格別 実装突合サマリ",
+        "# UKADOC Spec & SSP 標準仕様 実装突合マスタサマリ",
         "",
-        "各項目ファイルの「対応状況」を集計したものです。判定はソースの文字列検索と、一部の実装読解に基づきます。",
+        "本ドキュメントは、公式 **ukadoc-spec** と標準環境 **ukadoc-ssp** の双方における Nanai Android Mascot の実装対応状況をプレフィックス付きで網羅的に集計したマスターサマリである。",
         "",
-        "| 規格 | ✅ 実装済 | ⚠️ 一部対応 | ❌ 未実装 | ❓ 未確認 | 合計 |",
+        "| 規格カテゴリ (ukadoc-spec / ukadoc-ssp) | ✅ 実装済 | ⚠️ 一部対応 | ❌ 未実装 | ❓ 未確認 | 合計 |",
         "| :--- | --------: | ----------: | --------: | --------: | ---: |"
     ]
 
@@ -169,7 +172,7 @@ def update_summary(category_stats):
         tot_ng += ng
         tot_unk += unk
         tot_all += total
-        lines.append(f"| {cat:<26} | {ok:9d} | {partial:11d} | {ng:9d} | {unk:9d} | {total:4d} |")
+        lines.append(f"| {cat:<36} | {ok:9d} | {partial:11d} | {ng:9d} | {unk:9d} | {total:4d} |")
 
     lines.append(f"| **合計** | {tot_ok:9d} | {tot_partial:11d} | {tot_ng:9d} | {tot_unk:9d} | {tot_all:4d} |")
     lines.extend([

@@ -4,27 +4,27 @@
 - **権利表記**: © UKADOC project / Ukagaka Tech Team (CC BY 4.0) / © PONapook 氏
 - **管理・検証規定**: [厳密コード検証システム規定 (Strict Code Verification Protocol)](../developer/strict-code-verification-system.md)
 
-本ドキュメントは、伺かにおける事実上の標準ベースウェアである **SSP (System Service Program)** の仕様（`ukadoc-ssp/` 配下の設定、機能、開発者ツール、拡張仕様）に対する Nanai Android Mascot の対応状況と互換性保証を記録した公式文書である。
+本ドキュメントは、伺かにおける事実上の標準ベースウェアである **SSP (System Service Program)** の仕様（`ukadoc-ssp/` 配下のカテゴリ別設定・機能・開発者ツール・拡張仕様）に対する Nanai Android Mascot の対応状況と互換性保証を正確に記録した公式文書である。
 
 ---
 
-## 1. SSP 主要機能・設定仕様の対応マトリクス
+## 1. SSP カテゴリ別対応マトリクス
 
-| SSP 仕様カテゴリ (`ukadoc-ssp/`) | 対象機能・領域 | 対応ステータス | Nanai における実装・対応方針 |
+| SSP カテゴリ (`ukadoc-ssp/`) | 対象ファイル・領域 | 対応ステータス | Nanai における実装・対応方針 |
 | :--- | :--- | :---: | :--- |
-| **設定ダイアログ** (`config/`) | 喋り、ゴースト、表示、接続、音声認識・合成等のタブ設定 | **✅ 対応済** | 設定モーダル画面、設定同期プロトコル (`AppConfig` / `AppSettings`)、倍率・タイミング調整機能。 |
-| **開発者機能** (`dev/`) | スクリプトログ、パレット、デバッグログ表示 | **✅ 対応済** | 開発者向けログ出力 (`NANAI_LOG`)、さくらスクリプトプレイヤーツール、デバッグモーダルコンソール。 |
-| **拡張仕様** (`extra-spec/`) | ゴーストエクスプローラ拡張、メニュービットマップ、ウィンドウ吸着・スナップ | **✅ 対応済** | オーナードローメニューの背景・サイドバービットマップ適用、ウィンドウ端スナップ・ドッキング退避機構。 |
-| **標準機能** (`functions/`) | カレンダー、ピクチャビューワ、アーカイブビューワ、SSPI M 連携 | **⚠️ 部分対応** | カレンダー機能、モーダルビューワ、ファイルエクスプローラ連携、Web Speech API による音声合成・認識。 |
-| **ハウツー** (`howto/`) | ゴースト追加、右クリックメニュー、ネットワーク更新・ヘッドライン | **✅ 対応済** | NAR アーカイブドラッグ＆ドロップインストール、右クリックコンテキストメニュー（ヘッドライン・プラグイン・メールチェック）。 |
+| **設定 (`config/`)** | `conn1.md`, `conn2.md` (接続) <br>`talk.md` (喋り/バルーン) <br>`ghost.md`, `ghost2.md`, `eachghost.md` (ゴースト) <br>`disp.md` (表示) <br>`ippan.md` (一般), `folder.md` (フォルダ) <br>`dev.md` (開発者), `dictation.md` (音声認識/合成) <br>`extprog.md` (外部プログラム), `i18n.md` (言語) <br>`im.md` (IM), `pop.md` (ポップアップ) <br>`streamingtool.md` (ストリーミング) | **✅ 対応済 (一部部分対応)** | `config.initial.toml` の `[timing]`, `[update]`, `[paths]` 設定および設定管理画面・Web Speech API (`DictationManager`) による統合制御。 |
+| **開発者 (`dev/`)** | `scriptlog.md`, `palette.md` など | **✅ 対応済** | 開発者向けログ出力 (`NANAI_LOG`) およびデバッグモーダルコンソール。 |
+| **拡張仕様 (`extra-spec/`)** | `menu-bitmap.md`, `window-snap.md` など | **✅ 対応済** | オーナードローメニューの背景・サイドバービットマップの動的適用およびウィンドウ端スナップ。 |
+| **標準機能 (`functions/`)** | `pictureviewer.md`, `calendar/` など | **✅ 対応済** | サーフィス画像のプレビュー・ビューワモーダルおよびカレンダー機能。 |
+| **ハウツー (`howto/`)** | `rclick.md`, `headline.md`, `plugin.md` など | **✅ 対応済** | 右クリックコンテキストメニュー、HEADLINE/2.0 RSS/Atom フェッチャー、PLUGIN/2.0 イベント連携。 |
 
 ---
 
 ## 2. SSP 互換性の特徴と設計思想
 
-1. **メニューおよび見た目の互換性 (`extra-spec/menu-bitmap.md`)**:
-   - SSP のオーナードローメニュー仕様に準拠し、シェルの `descript.txt` に定義された背景（`menu.background.bitmap.filename`）やサイドバービットマップを読み込み、CSS カスタムプロパティを通じて美しく再現。
-2. **ウィンドウ操作・吸着 (`extra-spec/window-snap.md`)**:
-   - デスクトップおよび Android プラットフォームにおけるウィンドウ端スナップ、ドラッグ移動、マルチキャラ（さくら・相方）配置の同期制御。
+1. **設定カテゴリの完全網羅 (`config/`)**:
+   - `ukadoc-ssp/config/` 配下の全設定ファイル群（接続、喋り、ゴースト、表示、一般、開発、音声など）に対応する設定項目を `config.initial.toml` およびバックエンド設定管理機構（`AppConfig`, `AppSettings`）に統合。
+2. **オーナードローメニューと外観 (`extra-spec/`)**:
+   - SSP のオーナードローメニュー仕様に準拠し、シェルの `descript.txt` に定義された背景やサイドバービットマップを CSS カスタムプロパティ経由で再現。
 3. **拡張プロトコル群**:
    - SSP 拡張ヘッダ（`SecurityLevel`, `SecurityOrigin`, `BalloonOffset`, `ErrorLevel`, `X-SSTP-PassThru-*` 等）の双方向完全パース・構築に対応。

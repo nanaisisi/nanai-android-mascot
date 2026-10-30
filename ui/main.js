@@ -2,6 +2,7 @@ import { actionMethods } from "./js/core/app-actions.js";
 import { eventMethods } from "./js/core/app-events.js";
 import { settingsMethods } from "./js/core/app-settings.js";
 import { updateMethods } from "./js/core/app-update.js";
+import { DictationManager } from "./js/core/actions/dictation.js";
 import { AppConfig, loadAppConfig } from "./js/core/config.js";
 import { invoke, isTauriAvailable } from "./js/core/tauri-helper.js";
 import { GhostController } from "./js/ghost/ghost.js";
@@ -45,6 +46,8 @@ export class NanaiAndroidMascotApp {
 
 		/** @type {GhostController} */
 		this.ghostController = new GhostController(this);
+		/** @type {DictationManager} */
+		this.dictationManager = new DictationManager(this);
 		/** @type {InteractionManager} */
 		this.interactionManager = new InteractionManager(this);
 		/** @type {SurfaceManager} */

@@ -26,6 +26,12 @@ auto_boot = true
 second_change_event = true
 preferred_dll_names = ["yaya.dll", "shiori.dll", "satoriya.dll"]
 
+# SSP config: conn2.md (ネットワーク更新チェック設定)
+[update]
+check_on_boot = true
+interval_hours = 24
+notification_enabled = true
+
 [state]
 # 前回読み込んだゴーストの履歴/順序（先頭が直近）
 last_ghosts = ["mock_nanai"]

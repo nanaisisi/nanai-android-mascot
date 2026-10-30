@@ -1,16 +1,23 @@
 //! SHIORI DLL 呼び出しの低レベル FFI・ホストプロセス管理
+//!
+//! [DLL共通仕様], [メモリ管理], [request関数], [ライフサイクル関数 (loadu)]
 
 use std::ffi::c_void;
 use std::path::{Path, PathBuf};
 
 pub type Hglobal = *mut c_void;
+// [ライフサイクル関数 (loadu)]: load / loadu FFI シグネチャ
 pub(super) type ShioriLoadFn = unsafe extern "C" fn(h: Hglobal, len: i64) -> i32;
+// [ライフサイクル関数 (loadu)]: unload FFI シグネチャ
 pub(super) type ShioriUnloadFn = unsafe extern "C" fn() -> i32;
+// [request関数]: request FFI シグネチャ
 pub(super) type ShioriRequestFn = unsafe extern "C" fn(h: Hglobal, len: *mut i64) -> Hglobal;
 
 #[cfg(windows)]
 unsafe extern "system" {
+    // [メモリ管理]: GlobalAlloc Win32 API 連携
     pub(super) fn GlobalAlloc(uFlags: u32, dwBytes: usize) -> Hglobal;
+    // [メモリ管理]: GlobalFree Win32 API 連携
     pub(super) fn GlobalFree(hMem: Hglobal) -> Hglobal;
 }
 

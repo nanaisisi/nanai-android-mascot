@@ -162,6 +162,7 @@ pub fn run() {
             commands::calendar::get_schedules,
             commands::calendar::add_schedule,
             commands::calendar::delete_schedule,
+            commands::calendar::trigger_calendar_event,
             commands::shiori::send_on_translate,
             commands::shiori::send_ghost_call_event
         ])

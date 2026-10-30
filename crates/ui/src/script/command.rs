@@ -48,6 +48,12 @@ pub enum SakuraCommand {
     }, // \f[tag,param], \f[tag]
     Text(String), // 通常テキスト
     End,          // \e
+    ScheduleAdd {
+        date: String,
+        time: String,
+        title: String,
+        memo: String,
+    }, // \![execute,schedule-add,...]
     Command {
         args: Vec<String>,
     }, // その他の \![...] 汎用透過

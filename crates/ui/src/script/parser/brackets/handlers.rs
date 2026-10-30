@@ -79,6 +79,24 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
                 references: refs,
             });
         }
+        "execute" => {
+            if parts.get(1).is_some_and(|p| *p == "schedule-add") {
+                let date = parts.get(2).unwrap_or(&"Today").to_string();
+                let time = parts.get(3).unwrap_or(&"12:00").to_string();
+                let title = parts.get(4).unwrap_or(&"スケジュール").to_string();
+                let memo = parts.get(5).unwrap_or(&"").to_string();
+                callback(SakuraCommand::ScheduleAdd {
+                    date,
+                    time,
+                    title,
+                    memo,
+                });
+            } else {
+                callback(SakuraCommand::Command {
+                    args: parts.iter().map(|s| s.to_string()).collect(),
+                });
+            }
+        }
         "bind" => {
             let category = parts.get(1).unwrap_or(&"").to_string();
             let part = parts.get(2).unwrap_or(&"").to_string();

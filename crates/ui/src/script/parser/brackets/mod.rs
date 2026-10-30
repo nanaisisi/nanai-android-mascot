@@ -181,5 +181,10 @@ mod tests {
             handle_underscore(&mut chars, &mut push_u);
         }
         assert!(!u_cmds.is_empty());
+
+        let mut open_cmds = Vec::new();
+        let mut chars_open = "[open,inputbox,box1,hello]".chars().peekable();
+        handle_raiselike(&mut chars_open, &mut |c| open_cmds.push(c));
+        assert_eq!(open_cmds.len(), 1);
     }
 }

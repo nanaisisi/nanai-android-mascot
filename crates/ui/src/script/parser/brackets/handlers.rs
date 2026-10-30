@@ -111,6 +111,20 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
                 status,
             });
         }
+        "open" => {
+            let dialog_type = parts.get(1).unwrap_or(&"").to_string();
+            let id = parts.get(2).unwrap_or(&"").to_string();
+            let args = if parts.len() > 3 {
+                parts[3..].iter().map(|s| s.to_string()).collect()
+            } else {
+                Vec::new()
+            };
+            callback(SakuraCommand::OpenDialog {
+                dialog_type,
+                id,
+                args,
+            });
+        }
         _ => {
             callback(SakuraCommand::Command {
                 args: parts.iter().map(|s| s.to_string()).collect(),

@@ -54,6 +54,11 @@ pub enum SakuraCommand {
         title: String,
         memo: String,
     }, // \![execute,schedule-add,...]
+    OpenDialog {
+        dialog_type: String,
+        id: String,
+        args: Vec<String>,
+    }, // \![open,inputbox,ID,...] 等
     Command {
         args: Vec<String>,
     }, // その他の \![...] 汎用透過

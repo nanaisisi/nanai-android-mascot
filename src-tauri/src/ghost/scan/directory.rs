@@ -22,6 +22,7 @@ pub async fn scan_ghost_directory(
     println!("🔍 Input path: {}", ghost_dir);
     println!("🔍 Resolved absolute path: {:?}", ghost_path);
 
+    // [@manual: manual/directory.md] Priority directory scanning (userData/ghost vs local/ghost)
     let mut paths_to_scan = Vec::new();
     if let Ok(app_data_dir) = app_handle.path().app_data_dir() {
         let user_ghost_dir = app_data_dir.join("userData").join("ghost");

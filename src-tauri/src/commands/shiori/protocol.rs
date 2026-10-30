@@ -106,6 +106,7 @@ pub async fn send_shiori_event(
 
 /// SHIORIへ NOTIFY コマンドで情報を通知（UKADOC notify イベント群）
 ///
+/// [@manual: manual/translator.md] Translator integration / OnTranslate hook support for script post-processing
 /// NOTIFY の SHIORI 応答は baseware が無視する規約のため、応答テキストはそのまま返す。
 /// `installedghostname` / `ghostpathlist` / `uniqueid` / `basewareversion` 等の
 /// 起動時情報提示に使用する。

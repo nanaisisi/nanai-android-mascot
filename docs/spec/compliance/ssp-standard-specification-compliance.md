@@ -15,7 +15,7 @@
 | **設定 (`config/`)** | `conn1.md`, `conn2.md` (接続) <br>`talk.md` (喋り/バルーン) <br>`ghost.md`, `ghost2.md`, `eachghost.md` (ゴースト) <br>`disp.md` (表示) <br>`ippan.md` (一般), `folder.md` (フォルダ) <br>`dev.md` (開発者), `dictation.md` (音声認識/合成) <br>`extprog.md` (外部プログラム), `i18n.md` (言語) <br>`im.md` (IM), `pop.md` (ポップアップ) <br>`streamingtool.md` (ストリーミング) | **✅ 対応済 (一部部分対応)** | `config.initial.toml` の `[timing]`, `[update]`, `[paths]` 設定および設定管理画面・Web Speech API (`DictationManager`) による統合制御。 |
 | **開発者 (`dev/`)** | `scriptlog.md`, `palette.md` など | **✅ 対応済** | 開発者向けログ出力 (`NANAI_LOG`) およびデバッグモーダルコンソール。 |
 | **拡張仕様 (`extra-spec/`)** | `menu-bitmap.md`, `window-snap.md` など | **✅ 対応済** | オーナードローメニューの背景・サイドバービットマップの動的適用およびウィンドウ端スナップ。 |
-| **標準機能 (`functions/`)** | `pictureviewer.md`, `calendar/` など | **✅ 対応済** | サーフィス画像のプレビュー・ビューワモーダルおよびカレンダー機能。 |
+| **標準機能 (`functions/`)** | `pictureviewer.md`, `calendar/` (`index.md`, `menu.md`, `schedule.md`) など | **✅ 対応済** | サーフィス画像のプレビュー・ビューワモーダル、および SSP カレンダー・スケジュール管理機能 (`src-tauri/src/commands/calendar.rs`)。 |
 | **ハウツー (`howto/`)** | `rclick.md`, `headline.md`, `plugin.md` など | **✅ 対応済** | 右クリックコンテキストメニュー、HEADLINE/2.0 RSS/Atom フェッチャー、PLUGIN/2.0 イベント連携。 |
 
 ---
@@ -24,7 +24,9 @@
 
 1. **設定カテゴリの完全網羅 (`config/`)**:
    - `ukadoc-ssp/config/` 配下の全設定ファイル群（接続、喋り、ゴースト、表示、一般、開発、音声など）に対応する設定項目を `config.initial.toml` およびバックエンド設定管理機構（`AppConfig`, `AppSettings`）に統合。
-2. **オーナードローメニューと外観 (`extra-spec/`)**:
+2. **カレンダー・スケジュール機能 (`functions/calendar/`)**:
+   - SSP 標準のカレンダー・スケジュール編集・管理仕様 (`calendar/schedule.md`) に準拠したバックエンドマネージャーを実装。
+3. **オーナードローメニューと外観 (`extra-spec/`)**:
    - SSP のオーナードローメニュー仕様に準拠し、シェルの `descript.txt` に定義された背景やサイドバービットマップを CSS カスタムプロパティ経由で再現。
-3. **拡張プロトコル群**:
+4. **拡張プロトコル群**:
    - SSP 拡張ヘッダ（`SecurityLevel`, `SecurityOrigin`, `BalloonOffset`, `ErrorLevel`, `X-SSTP-PassThru-*` 等）の双方向完全パース・構築に対応。

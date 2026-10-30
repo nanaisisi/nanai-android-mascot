@@ -159,6 +159,9 @@ pub fn run() {
             shiori::fmo::check_base_ware_mutex,
             sstp::send_sstp_request,
             commands::web::handle_ukagaka_uri,
+            commands::calendar::get_schedules,
+            commands::calendar::add_schedule,
+            commands::calendar::delete_schedule,
             commands::shiori::send_on_translate,
             commands::shiori::send_ghost_call_event
         ])

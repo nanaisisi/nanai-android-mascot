@@ -35,6 +35,18 @@ export const ghostShioriMethods = {
 
 			try {
 				await this.sendShioriEvent("OnBoot");
+				// [PLUGIN/2.0]: OnGhostBoot event broadcast to available plugins
+				if (this.app?.availablePlugins && isTauriAvailable()) {
+					for (const plugin of this.app.availablePlugins) {
+						invoke("execute_plugin_event", {
+							request: {
+								pluginName: plugin.name,
+								eventId: "OnGhostBoot",
+								references: [ghost.name],
+							},
+						}).catch(() => {});
+					}
+				}
 			} catch (_error) {
 				// OnBoot送信失敗時はスキップ
 			}

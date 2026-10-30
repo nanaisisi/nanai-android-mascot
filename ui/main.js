@@ -84,8 +84,8 @@ export class NanaiAndroidMascotApp {
 		this.setupEventListeners();
 		this.applySettings();
 
-		// バルーン情報のスキャン
-		await this.scanBalloons();
+		// バルーン情報・プラグイン情報のスキャン
+		await Promise.all([this.scanBalloons(), this.scanPlugins()]);
 
 		// ゴースト初期化
 		if (this.settings.autoLoadGhost) {
@@ -97,6 +97,19 @@ export class NanaiAndroidMascotApp {
 		this.startSecondTimer();
 		this.isInitialized = true;
 		console.log("✅ Nanai Android Mascot 初期化完了");
+	}
+
+	async scanPlugins() {
+		if (!isTauriAvailable()) return;
+		try {
+			const plugins = await invoke("scan_plugins");
+			if (plugins && plugins.length > 0) {
+				this.availablePlugins = plugins;
+				console.log("🔌 プラグインスキャン完了:", plugins.length);
+			}
+		} catch (e) {
+			console.error("プラグインスキャン失敗:", e);
+		}
 	}
 
 	initUIEnvironment() {

@@ -129,8 +129,8 @@ mod tests {
         let entries = parse_update_definition(content);
         assert!(entries.is_empty());
 
-        // Extra unknown key-value pairs along with size
-        let content = "shell/default/surface0.png\x0100112233445566778899aabbccddeeff\x01foo=bar\x01size=512\x01baz=qux\r\n";
+        // Extra unknown key-value pairs along with size and option flags (ignore, readonly, delete)
+        let content = "shell/default/surface0.png\x0100112233445566778899aabbccddeeff\x01foo=bar\x01size=512\x01ignore\x01readonly\x01delete\x01baz=qux\r\n";
         let entries = parse_update_definition(content);
         assert_eq!(entries.len(), 1);
         assert_eq!(entries[0].path, "shell/default/surface0.png");

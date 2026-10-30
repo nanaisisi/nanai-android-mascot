@@ -2,11 +2,11 @@
 
 - **規格**: [caption_shioriresource.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/caption_shioriresource/)
 - **検索語**: SHIORI
-- **対応状況**: ❌ 未実装(誤検出)
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-ヒットしたのは一般的な語「SHIORI」の無関係な出現。該当の仕様に対応する処理は確認できない。
+`crates/ui/src/shiori/protocol/` における SHIORI 3.0 / 2.x リクエスト・レスポンスパーサーおよびヘッダ管理モデルにより、各種 SHIORI Resource（`craftman`, `name`, `version`, 状態トークン等）の送受信・処理に対応。
 
 ## 実装箇所
 

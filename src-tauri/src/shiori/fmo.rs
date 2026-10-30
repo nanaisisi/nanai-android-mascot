@@ -50,7 +50,6 @@ pub fn generate_fmo_buffer(records: &[FmoRecord]) -> Vec<u8> {
     buf
 }
 
-#[tauri::command]
 pub async fn get_fmo_status() -> Result<FmoStatus, String> {
     let records = vec![FmoRecord {
         id: "00004468_000f0dea".to_string(),

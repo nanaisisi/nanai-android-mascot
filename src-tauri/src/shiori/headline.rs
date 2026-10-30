@@ -67,10 +67,9 @@ fn extract_tag_content(block: &str, tag: &str) -> String {
 }
 
 fn extract_link_content(block: &str) -> String {
-    if let Some(link) = extract_tag_content(block, "link") {
-        if !link.is_empty() {
-            return link;
-        }
+    let link = extract_tag_content(block, "link");
+    if !link.is_empty() {
+        return link;
     }
     if let Some(s) = block.find("<link ") {
         if let Some(href_pos) = block[s..].find("href=\"") {

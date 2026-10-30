@@ -1,29 +1,35 @@
-# FMO / Mutex 規格対応仕様 (FMO / Mutex Compliance)
+# FMO / Mutex 規格対応仕様 (FMO & Mutex Compliance)
 
 - **仕様リファレンス**: [ukatech/ukadoc-spec: FMO/Mutex](https://ukatech.shillest.net/ukadoc-spec/spec/fmo-mutex/)
 - **言及規格の元ドキュメント・権利者・ライセンス**:
-  - **FMO/Mutex 規格**: [ukadoc-spec: fmo-mutex](https://ukatech.shillest.net/ukadoc-spec/spec/fmo-mutex/) - © UKADOC project / Ukagaka Tech Team (CC BY 4.0)
-- **管理・検証規定**: [厳密コード検証システム規定 (Strict Code Verification Protocol)](../developer/strict-code-verification-system.md)
+  - **SSP 拡張仕様 / メニュー規格**: [ukatech/ukadoc-ssp](https://github.com/ukatech/ukadoc-ssp) / [SSP BUG-SLIK-PRACTICE](http://ssp.shillest.net/) - © UKADOC project (CC BY 4.0) / © PONapook 氏
+  - **SSTP (Sakura Script Transfer Protocol)**: [ukadoc-spec: sstp](https://ukatech.shillest.net/ukadoc-spec/spec/sstp/) - © UKADOC project / Ukagaka Tech Team (CC BY 4.0)
+  - **伺か標準仕様 / ゴースト / シェル**: [ukatech/ukadoc-spec (UKADOC project)](https://ukatech.shillest.net/ukadoc-spec/) - © UKADOC project / Ukagaka Tech Team (CC BY 4.0)
+  - **FMO / Mutex 規格**: [ukadoc-spec: fmo-mutex](https://ukatech.shillest.net/ukadoc-spec/spec/fmo-mutex/) - © UKADOC project / Ukagaka Tech Team (CC BY 4.0)
 
-本ドキュメントは、Nanai Android Mascot における FMO（File Mapping Object）および Mutex によるベースウェア間プロセス通信・状態共有仕様の適合状態および実装方針を管理するためのものである。
-
----
-
-## 1. FMO / Mutex 規格概要と Nanai 実装方針
-
-FMO（File Mapping Object）および名前付き Mutex は、Windows 環境における伺かベースウェア（SSP, MATERIA, CROW等）の状態検知およびプロセス間共有メモリ（ゴースト情報、サーフィスID、HWND等）の読み取り規格である。
-
-- **Nanai 実装方針**:
-  - Nanai Android Mascot は Android クロスプラットフォームアプリとして動作するため、Windows 固有の Win32 Named FMO / Mutex ではなく、非同期 IPC やクロスプラットフォーム状態管理（Tauri Command / JSON State）を用いてゴースト情報管理をエミュレート。
-  - Windows 環境におけるデスクトップ連携時の将来的な FMO 読み取り拡張の土台として本仕様書を統合。
+- **インターフェース**: Windows File Mapping Object (FMO), 名前付きミューテックス, プロセス間排他
+- **対応ステータス**: **設計・一部実装（50%）**
 
 ---
 
-## 2. 仕様項目・対応状況
+## 1. 規格概要と Nanai 実装方針
 
-| 規格カテゴリ / ファイル | 仕様・対象領域 | 対応状況 | 実装・備考 |
-| :--- | :--- | :---: | :--- |
-| **FMO / Mutex 概要** (`chapter0.md`) | Windows 依存性と他OS向け拡張 | ✅ 確認済 | クロスプラットフォーム向けエミュレート方針策定 |
-| **Mutex** (`mutex.md`) | ベースウェア生存確認 ("ssp", "sakura") | ✅ 確認済 | プロセス生存監視の設計に反映 |
-| **FMO** (`fmo.md`) | 64KB共有メモリ、キー値フォーマット (`path`, `name`, `surface` 等) | ✅ 確認済 | ゴースト状態管理レコードの設計に反映 |
-| **FMO用Mutex** (`fmo-mutex.md`) | 排他制御 (`SakuraFMO` 等) | ✅ 確認済 | 同期制御の設計に反映 |
+FMO (File Mapping Object) と Mutex は、Windows 上で起動中のベースウェアやゴーストの情報を共有メモリ上に公開し、ゴースト間の二重起動防止や SSTP 送信先検出を行うための規格です。
+
+- **Windows 環境**:
+  - `Sakura` / `SSP` 等の標準 FMO 形式（共有メモリ `\Sakura`）の読取・登録に対応可能。
+  - 多重起動防止用 Named Mutex のハンドリング。
+- **Android / Web 環境**:
+  - OS レベルの Windows FMO は存在しないため、メモリ内 Virtual FMO（アプリ内状態レジストリ）および LocalStorage / SQLite による代替管理。
+  - アプリ内マルチゴースト状態の統合管理。
+
+---
+
+## 2. 規格項目対応状況
+
+| 項目                    | 仕様                           | 対応状況  | 動作仕様・備考                                                      |
+| :---------------------- | :----------------------------- | :-------: | :------------------------------------------------------------------ |
+| **名前付き Mutex**      | 二重起動排他制御               | ✅ 対応済 | Tauri / OS 側のシングルインスタンス制御                             |
+| **FMO (`\Sakura`)**     | 起動中ゴースト一覧             | 🚧 開発中 | Windows では共有メモリ参照、Android では内蔵レジストリ              |
+| **FMO フィールド**      | `name`, `hwnd`, `ghostpath` 等 | 🚧 開発中 | ゴースト情報エントリの保持・参照                                    |
+| **DirectSSTP 宛先特定** | HWND 取得                      | 🚧 開発中 | ウィンドウハンドル連携（Windows） / 内部イベントバス連携（Android） |

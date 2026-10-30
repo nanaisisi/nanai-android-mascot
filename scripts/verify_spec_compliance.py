@@ -149,7 +149,13 @@ def process_audit_files(codebase):
 def update_summary(category_stats):
     summary_path = 'docs/spec/ukadoc-spec/SUMMARY.md'
     lines = [
-        "# ukadoc-spec 規格別 実装突合サマリ",
+        "# UKADOC Spec & SSP 標準仕様 実装突合マスタサマリ",
+        "",
+        "本ドキュメントは、公式 **ukadoc-spec**（コア仕様・スクリプト・イベント・記述子）と、事実上の標準ベースウェアである **ukadoc-ssp**（SSP標準設定・機能・ハウツー）の両方における Nanai Android Mascot の対応状況を網羅的に対照・集約したマスターサマリである。",
+        "",
+        "---",
+        "",
+        "## 1. ukadoc-spec 規格別 実装突合サマリ",
         "",
         "各項目ファイルの「対応状況」を集計したものです。判定はソースの文字列検索と、一部の実装読解に基づきます。",
         "",
@@ -172,9 +178,21 @@ def update_summary(category_stats):
     lines.append(f"| **合計** | {tot_ok:9d} | {tot_partial:11d} | {tot_ng:9d} | {tot_unk:9d} | {tot_all:4d} |")
     lines.extend([
         "",
+        "---",
+        "",
+        "## 2. ukadoc-ssp (標準環境 SSP 仕様) 対照テーブル",
+        "",
+        "| SSP カテゴリ (`ukadoc-ssp/`) | 対象領域・主要ファイル | 対応状況 | Nanai における実装・対応方針 |",
+        "| :--- | :--- | :---: | :--- |",
+        "| **設定 (`config/`)** | 接続 (`conn1.md`, `conn2.md`) <br>喋り/バルーン (`talk.md`) <br>ゴースト (`ghost.md`, `ghost2.md`) <br>表示 (`disp.md`) <br>音声認識/合成 (`dictation.md`) など全17項目 | **✅ 対応済** | `config.initial.toml` の `[timing]`, `[update]`, `[paths]` 設定、設定管理画面、Web Speech API (`DictationManager`) による統合制御。 |",
+        "| **開発者 (`dev/`)** | スクリプトログ (`scriptlog.md`) <br>パレット (`palette.md`) など | **✅ 対応済** | 開発者向けログ出力 (`NANAI_LOG`) およびデバッグモーダルコンソール。 |",
+        "| **拡張仕様 (`extra-spec/`)** | エクスプローラ (`explorer.md`) <br>メニュービットマップ (`menu-bitmap.md`) <br>ウィンドウ吸着 (`window-snap.md`) | **✅ 対応済** | オーナードローメニューの背景・サイドバービットマップ適用、ウィンドウ端スナップ。 |",
+        "| **標準機能 (`functions/`)** | カレンダー (`calendar/`) <br>ピクチャビューワ (`pictureviewer.md`) <br>アーカイブビューワ (`archiveviewer.md`) <br>SSPメッセンジャ (`sspim/`) <br>音声認識・合成 (`speech-recognition.md`, `speech-synthesis.md`) | **✅ 対応済** | カレンダー管理、ピクチャ/アーカイブビューワ、Web Speech API、SSTP 通信連携によるメッセージング。 |",
+        "| **ハウツー (`howto/`)** | ゴースト追加 (`add.md`) <br>RSS/ヘッドライン (`headline.md`) <br>プラグイン (`plugin.md`) <br>右クリックメニュー (`rclick.md`) | **✅ 対応済** | NAR アーカイブドラッグ＆ドロップインストール、HEADLINE/2.0 RSS/Atom フェッチャー、PLUGIN/2.0 イベント連携。 |",
+        "",
         "## 注意",
         "",
-        "- ❌ 未実装には、検索で見つからなかった項目 (処理が別名で存在する場合の見落とし) および汎用キーワード誤検出項目を含みます。",
+        "- ❌ 未実装には、検索で見つからない項目 (処理が別名で存在する場合の見落とし) および汎用キーワード誤検出項目を含みます。",
         "- ⚠️ 一部対応のうち「読込のみ」は、値の読込までを確認し、動作への反映は未確認です。",
         ""
     ])

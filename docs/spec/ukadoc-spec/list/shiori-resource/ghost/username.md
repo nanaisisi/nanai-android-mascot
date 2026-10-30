@@ -2,8 +2,12 @@
 
 - **規格**: [username.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ghost/username/) (ukadoc-spec/list/shiori-resource/ghost/username.md)
 - **検索語**: username
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 対応済
 
 ## 突合結果
 
-実装コードに「username」が見つからない。
+設定・SHIORIリクエスト/イベント時のユーザー名（username）取得・通知に対応。
+
+## 実装箇所
+
+- `src-tauri/src/commands/config.rs` 設定管理

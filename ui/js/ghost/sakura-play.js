@@ -12,7 +12,21 @@ import { createBalloonSyncManager } from "./sakura-play-sync.js";
  * @param {string} script
  */
 export async function playScript(player, script) {
-	const tokens = await player.parse(script);
+	// [OnTranslate / manual/translator.md]: 発話前のスクリプト動的変換・翻訳処理
+	let finalScript = script;
+	try {
+		const app = player.app;
+		if (app?.ghostController?.sendShioriEvent && !script.includes("\\_q")) {
+			const transRes = await app.ghostController.sendShioriEvent("OnTranslate", [script]);
+			if (transRes && transRes.script && transRes.script.trim()) {
+				finalScript = transRes.script;
+			}
+		}
+	} catch (_e) {
+		// OnTranslate failure falls back to original script
+	}
+
+	const tokens = await player.parse(finalScript);
 	player.playbackId++;
 	const currentId = player.playbackId;
 	player.isPlaying = true;

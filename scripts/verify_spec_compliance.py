@@ -88,13 +88,13 @@ def process_audit_files(codebase):
         else:
             keyword = os.path.splitext(os.path.basename(filepath))[0]
 
-        # Determine category for SUMMARY.md
+        # Determine category for SUMMARY.md (1-directory hierarchy level)
         if 'ukadoc-ssp' in filepath:
             rel_path = filepath.replace('docs/spec/ukadoc-ssp/', 'ukadoc-ssp/')
         else:
             rel_path = filepath.replace('docs/spec/ukadoc-spec/', 'ukadoc-spec/')
         parts = rel_path.split('/')
-        if len(parts) >= 3 and parts[0] in ['descript', 'list', 'spec', 'ssp', 'ukadoc-ssp']:
+        if len(parts) >= 3 and parts[0] in ['descript', 'list', 'spec']:
             cat = f"{parts[0]}/{parts[1]}"
         elif len(parts) >= 2:
             cat = parts[0]
@@ -149,13 +149,13 @@ def process_audit_files(codebase):
     return updated_count, category_stats
 
 def update_summary(category_stats):
-    summary_path = 'docs/spec/ukadoc-spec/SUMMARY.md'
+    summary_path = 'docs/spec/SUMMARY.md'
     lines = [
-        "# UKADOC Spec & SSP 標準仕様 実装突合マスタサマリ",
+        "# spec 規格別 実装突合サマリ",
         "",
-        "本ドキュメントは、公式 **ukadoc-spec**（コア仕様・スクリプト・イベント・記述子）と、事実上の標準ベースウェアである **ukadoc-ssp**（SSP標準設定・機能・ハウツー）の両方における Nanai Android Mascot の対応状況を網羅的に対照・集約したマスターサマリである。",
+        "各項目ファイルの「対応状況」を集計したものです。判定はソースの文字列検索と、一部の実装読解に基づきます。",
         "",
-        "| 規格カテゴリ (表示名) | ✅ 実装済 | ⚠️ 一部対応 | ❌ 未実装 | ❓ 未確認 | 合計 |",
+        "| 規格 | ✅ 実装済 | ⚠️ 一部対応 | ❌ 未実装 | ❓ 未確認 | 合計 |",
         "| :--- | --------: | ----------: | --------: | --------: | ---: |"
     ]
 
@@ -169,8 +169,7 @@ def update_summary(category_stats):
         tot_ng += ng
         tot_unk += unk
         tot_all += total
-        display_name = cat
-        lines.append(f"| {display_name:<46} | {ok:9d} | {partial:11d} | {ng:9d} | {unk:9d} | {total:4d} |")
+        lines.append(f"| {cat:<26} | {ok:9d} | {partial:11d} | {ng:9d} | {unk:9d} | {total:4d} |")
 
     lines.append(f"| **合計** | {tot_ok:9d} | {tot_partial:11d} | {tot_ng:9d} | {tot_unk:9d} | {tot_all:4d} |")
     lines.extend([

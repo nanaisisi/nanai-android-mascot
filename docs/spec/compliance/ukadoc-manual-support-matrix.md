@@ -1,30 +1,31 @@
-# マニュアル仕様 (ukadoc-spec/manual/) 対応可能性・サポート評価マトリクス (Manual Support Matrix)
+# マニュアル仕様 (ukadoc-spec/manual/) 実ファイルハンドリング対応評価マトリクス (Manual File Handling Support Matrix)
 
 - **参照公式仕様**: [ukatech/ukadoc-spec: manual](https://github.com/ukatech/ukadoc-spec/tree/main/manual)
 - **管理・検証規定**: [厳密コード検証システム規定 (Strict Code Verification Protocol)](../developer/strict-code-verification-system.md)
 
-本ドキュメントは、`ukadoc-spec/manual/` 配下の各マニュアル仕様書（`balloon.md`, `directory.md`, `ghost.md`, `install.md`, `owner-draw-menu.md`, `shell.md`, `translator.md`, `update.md`）について、Nanai Android Mascot（Tauri / Rust / Webフロントエンド）における**対応可能性（Feasibility）および実装サポート状況**を評価・記録した公式評価マトリクスである。
+本ドキュメントは、`ukadoc-spec/manual/` 配下の各マニュアル仕様書（テキスト解析に留まらず、**実際のフォルダ構造やファイル群をいかに発見し、ロード・合成・適用して適切にハンドリングするか**）に対する Nanai Android Mascot の実ファイル対応状況を再確認・評価した公式マトリクスである。
 
 ---
 
-## 1. マニュアルファイル別 対応可能性・サポートマトリクス
+## 1. マニュアル別 実ファイルハンドリング対応マトリクス
 
-| 規格マニュアルファイル | 対象機能・領域 | 対応ステータス | Nanai における対応方針・実現方式 | 主要な実装・対応箇所 |
-| :--- | :--- | :---: | :--- | :--- |
-| **`balloon.md`** | バルーンの構造、画像、`descript.txt` 属性、フォント・余白 | **✅ 対応済 (Fully Supported)** | `descript.txt` のパース、9-slice (pna/png) 描画、スコープ別独立バルーン表示 | `ui/js/core/actions/balloon-descript/`, `ui/js/ui/balloon.js` |
-| **`directory.md`** | 伺か標準ディレクトリ構造 (`ghost/`, `shell/`, `balloon/`) | **✅ 対応済 (Fully Supported)** | VFS による大文字小文字吸収パス解決、`userData/ghost` と `local/ghost` の優先順位付き走査 | `src-tauri/src/ghost/scan/directory.rs` |
-| **`ghost.md`** | ゴーストのファイル構造、SHIORI連携、`\0` / `\1` キャラクタ | **✅ 対応済 (Fully Supported)** | ネイティブ DLL / WASM / JS SHIORI の動的ロード、`OnBoot`等の基本イベントルーティング | `src-tauri/src/shiori/`, `ui/js/ghost/ghost.js` |
-| **`install.md`** | `.nar` / `.zip` アーカイブ導入、`install.txt` 処理 | **⚠️ 部分対応 (Partially Supported)** | ゴースト・バルーンの安全な NAR 展開（ZipSlip防止）、シェル等への拡張余地 | `src-tauri/src/commands/install/` |
-| **`owner-draw-menu.md`** | カスタムデザイン可能な右クリックオーナードローメニュー | **⚠️ 部分対応 (Partially Supported)** | Webview/iframe による高機能コンテキストメニュー、背景・サイドバービットマップ適用 | `ui/menu-iframe.html`, `ui/js/ui/submenu.js` |
-| **`shell.md`** | シェル画像、`surfaces.txt`（SERIKO・合成・当たり判定） | **✅ 対応済 (Fully Supported)** | Canvas 2D によるマルチレイヤ合成、SERIKO アニメーションタイムライン、当たり判定 | `crates/ui/src/surfaces/`, `ui/js/surface/` |
-| **`translator.md`** | SHIORI 出力テキストの動的加工・翻訳 (OnTranslate) | **⚠️ 設計対応・フック有 (Feasible)** | `OnTranslate` イベントパイプラインを経由したテキストの動的置換・加工処理 | `src-tauri/src/commands/shiori/protocol.rs`, `ui/js/ghost/ghost-shiori.js` |
-| **`update.md`** | `homeurl` に基づく `updates2.dau` / `update.dau` ネットワーク更新 | **✅ 対応済 (Fully Supported)** | Rust による `updates2.dau` 解析、MD5 差分ダウンロード、アトミックファイル置換 | `src-tauri/src/commands/update/`, `ui/js/core/app-update.js` |
+| 規格マニュアルファイル | 対象ディレクトリ・ファイル構造 | 実ファイルハンドリング対応状況 | 実装方式・ファイル処理の詳細 |
+| :--- | :--- | :---: | :--- |
+| **`manual/balloon.md`** (`balloon/`) | `balloons*.png`, `balloonk*.png`, `balloonp*`, `.pna`, `*s.txt`, `descript.txt` | **✅ 対応済 (一部フォールバック拡充中)** | `load_balloon_image` により `balloons0.png` / `balloonk0.png` を VFS 経由で取得し、CSS 9-slice 背景画像として描画。`.pna` マスクおよび個別オプション (`*s.txt`) の適用経路を統合。 |
+| **`manual/directory.md`** | `ghost/`, `shell/`, `balloon/` 標準ディレクトリ階層 | **✅ 対応済 (Fully Supported)** | VFS（仮想ファイルシステム）および大文字小文字を吸収するパス解決。`userData/ghost` と `local/ghost` の優先順位付き走査を実装。 |
+| **`manual/ghost.md`** | `ghost/master/`, `descript.txt`, SHIORI DLL / .so | **✅ 対応済 (Fully Supported)** | ゴーストディレクトリ内の構造走査、`descript.txt` 読込、プラットフォーム別 (Windows/Android) SHIORI 実行ファイルの動的ロード。 |
+| **`manual/install.md`** | `.nar` / `.zip` アーカイブ, `install.txt` | **⚠️ 部分対応 (Partially Supported)** | `.nar` / `.zip` の安全な展開（ZipSlip防止）、`ghost` および `balloon` 型アーカイブの自動配置。 |
+| **`manual/owner-draw-menu.md`** | メニュー背景・前景・サイドバービットマップ | **⚠️ 部分対応 (Partially Supported)** | Webview/iframe による高機能メニュー UI。ゴースト提供のオーナードロー用ビットマップの動的読込・スタイリング。 |
+| **`manual/shell.md`** | `shell/master/`, `surfaces.txt`, `surface*.png`, `surface*.pna` | **✅ 対応済 (Fully Supported)** | `load_surface_image` / `load_surface_pna` による 24bit PNG/BMP および 8bit PNA マスクの読み込み・Canvas 2D レイヤ合成。 |
+| **`manual/translator.md`** | トランスレータ用外部スクリプト/DLL 連携 | **⚠️ 設計対応・フック有 (Feasible)** | `OnTranslate` イベントパイプラインを経由したさくらスクリプトの動的置換・加工処理の基盤を実装。 |
+| **`manual/update.md`** | `updates2.dau`, `update.dau`, 差分ファイル群 | **✅ 対応済 (Fully Supported)** | `homeurl` からの `updates2.dau` 取得・パース、MD5 チェックサム突合による差分ファイルの安全なダウンロードとアトミック置換。 |
 
 ---
 
-## 2. 結論と今後の拡張方針
+## 2. 実ファイルハンドリングにおける強みと今後の拡張
 
-1. **完全対応領域 (`balloon.md`, `directory.md`, `ghost.md`, `shell.md`, `update.md`)**:
-   - 伺かコアエコシステムの主要機能（ゴースト起動、シェル描画、バルーン表示、ネットワーク更新、ディレクトリ解決）はすべて実装済みであり、デスクトップおよびモバイル（Android）環境の両方で高い互換性を発揮する。
-2. **部分対応・拡張領域 (`install.md`, `owner-draw-menu.md`, `translator.md`)**:
-   - `install.md` のシェル・プラグイン・ヘッドライン導入拡張、および `translator.md` の外部トランスレータ DLL / WASM プラグイン対応については、現在のフック設計およびサンドボックス基盤をベースに順次拡張可能なアーキテクチャとなっている。
+1. **実ファイル・アセットの堅牢な VFS 解決 (`directory.md`, `ghost.md`, `shell.md`, `balloon.md`)**:
+   - 伺か特有の大文字小文字の混在や、異なるベースウェア（MATERIA/SSP/CROW）間のパス規則の違いを、Rust 製 VFS および Tauri コマンド群が完全に吸収。
+   - `surface*.png` や `surface*.pna`（アルファマスク）、`balloons0.png` / `balloonk0.png` などのバイナリリソースを Base64 またはピクセルバッファとしてロスなく UI 層へ引き渡し。
+2. **ネットワーク・アーカイブ実ファイル処理 (`update.md`, `install.md`)**:
+   - `updates2.dau` 等のテキスト定義パースだけでなく、実際に差分ファイルをダウンロードしてストレージ上に安全に配置する一連のライフサイクルが確立されている。

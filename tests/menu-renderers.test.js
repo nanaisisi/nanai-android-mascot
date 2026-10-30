@@ -6,7 +6,7 @@ const styleProps = {};
 const createdButtons = [];
 let returnNullContainer = false;
 
-const getEl = (id) => {
+const getEl = (_id) => {
 	if (returnNullContainer) return null;
 	return {
 		innerHTML: "",
@@ -138,7 +138,11 @@ test("menu renderers cover 100% of balloon, dressup, recent, shell, ghost, and t
 	// 2. menuGhostShellRenderer
 	menuGhostShellRenderer.renderShellSubmenu.call(
 		mockContext,
-		["master", { display_name: "AltFallback" }, { name: "alt", display_name: "Alt" }],
+		[
+			"master",
+			{ display_name: "AltFallback" },
+			{ name: "alt", display_name: "Alt" },
+		],
 		"master",
 	);
 	menuGhostShellRenderer.renderGhostSubmenu.call(
@@ -158,7 +162,11 @@ test("menu renderers cover 100% of balloon, dressup, recent, shell, ghost, and t
 
 	// 3. Null container guards
 	returnNullContainer = true;
-	menuBalloonDressupRenderer.renderBalloonSubmenu.call(mockContext, [], "default");
+	menuBalloonDressupRenderer.renderBalloonSubmenu.call(
+		mockContext,
+		[],
+		"default",
+	);
 	menuBalloonDressupRenderer.renderDressupSubmenu.call(mockContext, null, 0);
 	menuBalloonDressupRenderer.renderRecentSubmenu.call(mockContext, []);
 	menuGhostShellRenderer.renderShellSubmenu.call(mockContext, [], "master");

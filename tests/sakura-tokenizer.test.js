@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-const { parseSakuraScript } = await import("../ui/js/ghost/sakura-tokenizer.js");
+const { parseSakuraScript } = await import(
+	"../ui/js/ghost/sakura-tokenizer.js"
+);
 
 test("parseSakuraScript tokenizes all JS fallback SakuraScript tags and text", () => {
 	const script =
@@ -33,25 +35,48 @@ test("parseSakuraScript tokenizes all JS fallback SakuraScript tags and text", (
 	assert.equal(nls[1].half, true);
 
 	// Clear and Pause
-	assert.equal(tokens.some((t) => t.type === "clear"), true);
-	assert.equal(tokens.some((t) => t.type === "pause"), true);
+	assert.equal(
+		tokens.some((t) => t.type === "clear"),
+		true,
+	);
+	assert.equal(
+		tokens.some((t) => t.type === "pause"),
+		true,
+	);
 
 	// Quick toggle
 	const quicks = tokens.filter((t) => t.type === "quick_toggle");
 	assert.equal(quicks.length, 3);
 
 	// Anchor
-	assert.equal(tokens.some((t) => t.type === "anchor_begin" && t.id === "a1"), true);
-	assert.equal(tokens.some((t) => t.type === "anchor_end"), true);
+	assert.equal(
+		tokens.some((t) => t.type === "anchor_begin" && t.id === "a1"),
+		true,
+	);
+	assert.equal(
+		tokens.some((t) => t.type === "anchor_end"),
+		true,
+	);
 
 	// Command
-	assert.equal(tokens.some((t) => t.type === "command" && t.args[0] === "open"), true);
+	assert.equal(
+		tokens.some((t) => t.type === "command" && t.args[0] === "open"),
+		true,
+	);
 
 	// Choice
-	assert.equal(tokens.some((t) => t.type === "choice" && t.id === "opt1" && t.text === "Opt"), true);
+	assert.equal(
+		tokens.some(
+			(t) => t.type === "choice" && t.id === "opt1" && t.text === "Opt",
+		),
+		true,
+	);
 
 	// Offset
-	assert.equal(tokens.some((t) => t.type === "offset" && t.x === "10" && t.y === "20"), true);
+	assert.equal(
+		tokens.some((t) => t.type === "offset" && t.x === "10" && t.y === "20"),
+		true,
+	);
 
 	// Sync toggle
 	assert.equal(tokens.filter((t) => t.type === "sync_toggle").length, 3);
@@ -66,10 +91,22 @@ test("parseSakuraScript tokenizes all JS fallback SakuraScript tags and text", (
 	assert.equal(fonts[0].param, "1");
 
 	// Timeout, Halt, End
-	assert.equal(tokens.some((t) => t.type === "timeout"), true);
-	assert.equal(tokens.some((t) => t.type === "halt"), true);
-	assert.equal(tokens.some((t) => t.type === "end"), true);
+	assert.equal(
+		tokens.some((t) => t.type === "timeout"),
+		true,
+	);
+	assert.equal(
+		tokens.some((t) => t.type === "halt"),
+		true,
+	);
+	assert.equal(
+		tokens.some((t) => t.type === "end"),
+		true,
+	);
 
 	// Normal text chars
-	assert.equal(tokens.some((t) => t.type === "char" && t.value === "H"), true);
+	assert.equal(
+		tokens.some((t) => t.type === "char" && t.value === "H"),
+		true,
+	);
 });

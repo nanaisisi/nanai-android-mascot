@@ -3,7 +3,8 @@ import { test, vi } from "vitest";
 
 globalThis.window = globalThis;
 let promptReturn = "90";
-globalThis.prompt = (_msg, def) => (promptReturn !== undefined ? promptReturn : def);
+globalThis.prompt = (_msg, def) =>
+	promptReturn !== undefined ? promptReturn : def;
 let lastAlertMessage = "";
 globalThis.alert = (msg) => {
 	lastAlertMessage = String(msg || "");
@@ -181,7 +182,11 @@ test("desktop-features.js 100% coverage", async () => {
 
 	const origGetById = globalThis.document.getElementById;
 	globalThis.document.getElementById = (id) => {
-		if (id === "interval-value" || id === "memory-value" || id === "performance-status") {
+		if (
+			id === "interval-value" ||
+			id === "memory-value" ||
+			id === "performance-status"
+		) {
 			return null;
 		}
 		return getEl(id);

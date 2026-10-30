@@ -4,6 +4,7 @@
 - **概要**: UKADOC 開発者向け解説 (`dev/`) の各項目（着せ替え定義、NARアーカイブ、オーナードローメニュー、シェル仕様、ネットワーク更新）に対する Nanai Android Mascot の実装対応一覧。
 
 ## 対応項目
+
 - `bind.md`: 着せ替え定義 (`bindgroup`, `bindoption`) - ✅ 対応済
 - `nar.md`: NARアーカイブ構造・パッケージング - ✅ 対応済
 - `ownerdraw.md`: オーナードローメニュー仕様 - ✅ 対応済

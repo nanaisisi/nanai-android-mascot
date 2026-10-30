@@ -4,4 +4,5 @@
 - **対応状況**: ✅ 対応済
 
 ## 実装方針・確認事項
+
 - `surfaces.txt` パーサおよび `surface-dressup.js` による `bindgroup`・`bindoption` 定義の解析とレイヤー合成に対応。

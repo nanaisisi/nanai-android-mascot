@@ -18,8 +18,14 @@ test("rustCommandsToTokens converts all Rust commands to SakuraScriptToken list"
 		{ type: "Choice", payload: { label: "Opt", id: "opt1" } },
 		{ type: "Anchor", payload: { id: "a1", text: "Hi" } },
 		{ type: "Raise", payload: { event: "OnEvent", references: ["ref1"] } },
-		{ type: "Bind", payload: { category: "hat", part: "ribbon", status: true } },
-		{ type: "Bind", payload: { category: "hat", part: "ribbon", status: false } },
+		{
+			type: "Bind",
+			payload: { category: "hat", part: "ribbon", status: true },
+		},
+		{
+			type: "Bind",
+			payload: { category: "hat", part: "ribbon", status: false },
+		},
 		{ type: "Balloon", payload: 0 },
 		{ type: "Animation", payload: { id: 1, wait: true } },
 		{ type: "Timeout" },
@@ -58,12 +64,9 @@ test("parseSakuraScriptAsync covers non-Tauri, Tauri success, and Tauri error br
 
 	// 2. Tauri environment success
 	globalThis.__TAURI_INTERNALS__ = {
-		invoke: async (cmd, args) => {
+		invoke: async (cmd, _args) => {
 			if (cmd === "parse_sakura_script") {
-				return [
-					{ type: "Text", payload: "Hi" },
-					{ type: "End" },
-				];
+				return [{ type: "Text", payload: "Hi" }, { type: "End" }];
 			}
 		},
 		transformCallback: (cb) => cb,

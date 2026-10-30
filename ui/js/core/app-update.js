@@ -103,10 +103,7 @@ export const updateMethods = {
 				// 更新なし
 				console.log("✨ 更新ファイルなし (none)");
 				this.showBalloon?.("✨ 最新の状態です。更新ファイルはありません。");
-				await gc.sendShioriEvent(
-					"OnUpdateComplete",
-					buildUpdateArgs("none"),
-				);
+				await gc.sendShioriEvent("OnUpdateComplete", buildUpdateArgs("none"));
 				await this.sendUpdateResultSummary(ghostName, true, 0, null);
 				return;
 			}
@@ -153,10 +150,7 @@ export const updateMethods = {
 					const updatedFilesStr = updateResult.updated_files.join(",");
 					await gc.sendShioriEvent(
 						"OnUpdateComplete",
-						buildUpdateArgs(
-							updateResult.reason || "changed",
-							updatedFilesStr,
-						),
+						buildUpdateArgs(updateResult.reason || "changed", updatedFilesStr),
 					);
 					// OnUpdateResultExplorer 送信 (UKADOC準拠: 更新詳細・差分リスト通知)
 					if (updateResult.updated_files?.length > 0) {

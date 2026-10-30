@@ -41,7 +41,11 @@ test("InteractionManager covers dragging, stroke, longpress, docking, and native
 	const clicked = [];
 	const stroked = [];
 	let menuToggled = false;
-	const mockApp = { toggleMenu() { menuToggled = true; } };
+	const mockApp = {
+		toggleMenu() {
+			menuToggled = true;
+		},
+	};
 	const manager = new InteractionManager(mockApp);
 
 	const listeners = {};
@@ -49,17 +53,33 @@ test("InteractionManager covers dragging, stroke, longpress, docking, and native
 	const mockTarget = {
 		querySelector: () => ({
 			tagName: "IMG",
-			getBoundingClientRect: () => ({ left: 0, top: 0, width: 100, height: 100 }),
+			getBoundingClientRect: () => ({
+				left: 0,
+				top: 0,
+				width: 100,
+				height: 100,
+			}),
 			naturalWidth: 10,
 			naturalHeight: 10,
 		}),
 		classList: {
-			add(c) { classes.add(c); },
-			remove(...args) { for (const c of args) classes.delete(c); },
-			contains(c) { return classes.has(c); },
+			add(c) {
+				classes.add(c);
+			},
+			remove(...args) {
+				for (const c of args) classes.delete(c);
+			},
+			contains(c) {
+				return classes.has(c);
+			},
 		},
 		style: {},
-		getBoundingClientRect: () => ({ left: 10, top: 10, width: 100, height: 100 }),
+		getBoundingClientRect: () => ({
+			left: 10,
+			top: 10,
+			width: 100,
+			height: 100,
+		}),
 		addEventListener(type, cb) {
 			listeners[type] = cb;
 		},

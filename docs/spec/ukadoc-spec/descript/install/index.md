@@ -10,10 +10,10 @@
 
 ## 1. サブカテゴリ一覧・対応状況
 
-| カテゴリ / 規格ファイル | 概要・対象領域 | 対応状況 | 関連実装コード |
-| :--- | :--- | :---: | :--- |
-| **[install.txt 仕様項目一覧](install-txt/index.md)** | アーカイブ展開時ターゲット振り分け (`name`, `type`, `directory`) | ✅ 対応済 (100%) | `src-tauri/src/commands/install/archive.rs` |
-| **[delete.txt 仕様項目一覧](delete.txt/index.md)** | アンインストール時自動削除定義 | ✅ 対応済 (100%) | `src-tauri/src/commands/install/archive.rs` |
-| **[developer_options.txt 仕様項目一覧](developer_options.txt/index.md)** | 開発者向けオプションフラグ制御 | ✅ 対応済 (100%) | `src-tauri/src/ghost/scan/directory.rs` |
-| **[.narignore / .updateignore / .narinclude / .updateinclude](narignore-updateignore-narinclude-updateinclude.md)** | アーカイブ・更新用除外・追加定義 | ✅ 対応済 (100%) | `src-tauri/src/ghost/scan/directory.rs` |
-| **[updates_def.txt 仕様項目一覧](updates_def-txt/index.md)** | ネットワーク更新制御定義 | ✅ 対応済 (100%) | `src-tauri/src/commands/update/dau.rs` |
+| カテゴリ / 規格ファイル                                                                                             | 概要・対象領域                                                   |     対応状況     | 関連実装コード                              |
+| :------------------------------------------------------------------------------------------------------------------ | :--------------------------------------------------------------- | :--------------: | :------------------------------------------ |
+| **[install.txt 仕様項目一覧](install-txt/index.md)**                                                                | アーカイブ展開時ターゲット振り分け (`name`, `type`, `directory`) | ✅ 対応済 (100%) | `src-tauri/src/commands/install/archive.rs` |
+| **[delete.txt 仕様項目一覧](delete.txt/index.md)**                                                                  | アンインストール時自動削除定義                                   | ✅ 対応済 (100%) | `src-tauri/src/commands/install/archive.rs` |
+| **[developer_options.txt 仕様項目一覧](developer_options.txt/index.md)**                                            | 開発者向けオプションフラグ制御                                   | ✅ 対応済 (100%) | `src-tauri/src/ghost/scan/directory.rs`     |
+| **[.narignore / .updateignore / .narinclude / .updateinclude](narignore-updateignore-narinclude-updateinclude.md)** | アーカイブ・更新用除外・追加定義                                 | ✅ 対応済 (100%) | `src-tauri/src/ghost/scan/directory.rs`     |
+| **[updates_def.txt 仕様項目一覧](updates_def-txt/index.md)**                                                        | ネットワーク更新制御定義                                         | ✅ 対応済 (100%) | `src-tauri/src/commands/update/dau.rs`      |

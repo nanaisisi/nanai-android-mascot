@@ -21,9 +21,7 @@ test("actionMethods.handleMenuAction covers all branches including Tauri folder 
 			sendShioriEvent: () => {},
 			scanGhosts: async () => {},
 		},
-		availableBalloons: [
-			{ dir_name: "ivory", name: "Ivory Balloon" },
-		],
+		availableBalloons: [{ dir_name: "ivory", name: "Ivory Balloon" }],
 		modalManager: { show() {} },
 		elements: { ghostDisplay: { style: {}, classList: { remove() {} } } },
 		interactionManager: { balloonOffsetX: 0, balloonOffsetY: 0 },

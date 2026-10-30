@@ -176,7 +176,13 @@ test("updateMethods.startNetworkUpdate covers 100% of network update flows, prog
 	// 9. Test sendUpdateResultSummary when Ex script is falsy (sends baseEvent)
 	resExScript = "";
 	await mockApp.sendUpdateResultSummary("MockGhost", true, 0, null, false);
-	await mockApp.sendUpdateResultSummary("MockGhost", false, "error", "file.txt", true);
+	await mockApp.sendUpdateResultSummary(
+		"MockGhost",
+		false,
+		"error",
+		"file.txt",
+		true,
+	);
 
 	delete globalThis.__TAURI_INTERNALS__;
 	assert.ok(true);

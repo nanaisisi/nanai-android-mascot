@@ -80,7 +80,8 @@ test("settingsMethods coverage for loadSettings, applySettings, showBalloon, hid
 	globalThis.__TAURI_INTERNALS__ = {
 		metadata: { currentWindow: { label: "main" } },
 		invoke: async (cmd) => {
-			if (cmd === "show_balloon_window" || cmd === "hide_balloon_window") return;
+			if (cmd === "show_balloon_window" || cmd === "hide_balloon_window")
+				return;
 		},
 		transformCallback: (cb) => cb,
 		plugins: {

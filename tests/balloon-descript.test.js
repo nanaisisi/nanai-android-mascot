@@ -6,14 +6,20 @@ const cssVars = {};
 globalThis.document = {
 	documentElement: {
 		style: {
-			setProperty(k, v) { cssVars[k] = v; },
-			removeProperty(k) { delete cssVars[k]; },
+			setProperty(k, v) {
+				cssVars[k] = v;
+			},
+			removeProperty(k) {
+				delete cssVars[k];
+			},
 		},
 	},
-	querySelector(sel) {
+	querySelector(_sel) {
 		return {
 			style: {},
-			setProperty(k, v) { this.style[k] = v; },
+			setProperty(k, v) {
+				this.style[k] = v;
+			},
 		};
 	},
 };
@@ -136,7 +142,10 @@ test("balloonDescriptActions covers rgbFromComponents and applyBalloonDescript f
 	balloonDescriptActions.applyBalloonDescript.call(mockInstance, props);
 
 	assert.equal(cssVars["--balloon-dpi"], "120");
-	assert.equal(cssVars["--balloon-font-family"], '"Meiryo", Meiryo, sans-serif');
+	assert.equal(
+		cssVars["--balloon-font-family"],
+		'"Meiryo", Meiryo, sans-serif',
+	);
 	assert.equal(cssVars["--balloon-font-size"], "14px");
 	assert.equal(cssVars["--balloon-font-outline"], "1");
 	assert.equal(cssVars["--balloon-font-shadow-color"], "rgb(200, 200, 200)");

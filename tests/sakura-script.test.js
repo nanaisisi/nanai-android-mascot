@@ -93,7 +93,9 @@ test("SakuraScriptPlayer covers all methods, Tauri listeners, and restore timer"
 	// 4. Test skip with active pauseResolver
 	player.isPlaying = true;
 	let resolverCalled = false;
-	player._pauseResolver = () => { resolverCalled = true; };
+	player._pauseResolver = () => {
+		resolverCalled = true;
+	};
 	player.skip();
 	assert.equal(player.skipRequested, true);
 	assert.equal(resolverCalled, true);

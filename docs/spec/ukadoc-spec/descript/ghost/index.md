@@ -10,10 +10,10 @@
 
 ## 1. サブカテゴリ一覧・対応状況
 
-| カテゴリ / 規格ファイル | 概要・対象領域 | 対応状況 | 関連実装コード |
-| :--- | :--- | :---: | :--- |
-| **[descript.txt 仕様項目一覧](descript-txt/index.md)** | ゴースト名、作者、SHIORI、表示名、スコープ定義等 (全 72 項目) | ✅ 対応済 (100%) | `src-tauri/src/ghost/scan/directory.rs`, `src-tauri/src/ghost/scan/descript.rs` |
-| **[推奨バルーン定義 (recommended-balloon)](recommended-balloon/index.md)** | ゴースト推奨のバルーン設定 (`recommended.balloon` 等 全 5 項目) | ✅ 対応済 (100%) | `src-tauri/src/ghost/scan/directory.rs`, `ui/js/ghost/ghost.js` |
+| カテゴリ / 規格ファイル                                                    | 概要・対象領域                                                  |     対応状況     | 関連実装コード                                                                  |
+| :------------------------------------------------------------------------- | :-------------------------------------------------------------- | :--------------: | :------------------------------------------------------------------------------ |
+| **[descript.txt 仕様項目一覧](descript-txt/index.md)**                     | ゴースト名、作者、SHIORI、表示名、スコープ定義等 (全 72 項目)   | ✅ 対応済 (100%) | `src-tauri/src/ghost/scan/directory.rs`, `src-tauri/src/ghost/scan/descript.rs` |
+| **[推奨バルーン定義 (recommended-balloon)](recommended-balloon/index.md)** | ゴースト推奨のバルーン設定 (`recommended.balloon` 等 全 5 項目) | ✅ 対応済 (100%) | `src-tauri/src/ghost/scan/directory.rs`, `ui/js/ghost/ghost.js`                 |
 
 ---
 

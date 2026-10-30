@@ -8,7 +8,6 @@ globalThis.document = {
 };
 
 import { GhostController } from "../ui/js/ghost/ghost.js";
-import { ghostShioriMethods } from "../ui/js/ghost/ghost-shiori.js";
 import { parseSakuraScript } from "../ui/js/ghost/sakura-parser.js";
 import {
 	fromRustResponse,
@@ -72,7 +71,9 @@ test("ghostShioriMethods & GhostController full methods test", async () => {
 
 	// 2. autoLoadGhost with initialGhostName
 	mockApp.initialGhostName = "GhostA";
-	controller.ghosts = [{ name: "GhostA", path: "/a", shells: [{ name: "master" }] }];
+	controller.ghosts = [
+		{ name: "GhostA", path: "/a", shells: [{ name: "master" }] },
+	];
 	await controller.autoLoadGhost();
 	assert.equal(controller.currentGhost.name, "GhostA");
 
@@ -111,7 +112,9 @@ test("ghostShioriMethods & GhostController full methods test", async () => {
 	assert.equal(controller.currentShell, "alt_shell");
 
 	// 6. scanGhosts error catch
-	globalThis.__TAURI_INTERNALS__.invoke = async () => { throw new Error("scan fail"); };
+	globalThis.__TAURI_INTERNALS__.invoke = async () => {
+		throw new Error("scan fail");
+	};
 	await controller.scanGhosts();
 	await controller.scanAndLoadFirstGhost();
 

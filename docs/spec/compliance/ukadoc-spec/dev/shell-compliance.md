@@ -4,4 +4,5 @@
 - **対応状況**: ✅ 対応済
 
 ## 実装方針・確認事項
+
 - `surfaces.txt` / `surfaces2.txt` パース、Seriko アニメーションタイムライン描画、当たり判定 (CollisionEx) の完全実装。

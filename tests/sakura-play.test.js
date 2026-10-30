@@ -23,12 +23,16 @@ const createEl = (tag) => {
 			if (typeof el === "string") this.textContent += el;
 			else if (el?.textContent) this.textContent += el.textContent;
 		},
-		setAttribute(a, v) { this[a] = v; },
+		setAttribute(a, v) {
+			this[a] = v;
+		},
 		addEventListener(t, cb) {
 			this._listeners = this._listeners || {};
 			this._listeners[t] = cb;
 		},
-		click() { this._listeners?.click?.({ stopPropagation() {} }); },
+		click() {
+			this._listeners?.click?.({ stopPropagation() {} });
+		},
 	};
 };
 

@@ -58,7 +58,7 @@ globalThis.addEventListener = (type, cb) => {
 
 globalThis.__TAURI_INTERNALS__ = {
 	metadata: { currentWindow: { label: "subchar_1" } },
-	invoke: async (cmd, args) => {
+	invoke: async (cmd, _args) => {
 		if (cmd === "plugin:window|position") return { x: 100, y: 100 };
 		if (cmd === "plugin:window|set_position") return;
 		if (cmd === "show_menu_window") return;
@@ -85,7 +85,9 @@ test("character window covers subchar image updates, pointer interactions, dragg
 
 	// 1. Test update-subchar-image-1 event listener
 	if (listenCallbacks["update-subchar-image-1"]) {
-		await listenCallbacks["update-subchar-image-1"]({ payload: { src: "sub.png" } });
+		await listenCallbacks["update-subchar-image-1"]({
+			payload: { src: "sub.png" },
+		});
 		assert.equal(imgEl.src, "sub.png");
 		assert.equal(imgEl.style.display, "block");
 
@@ -99,11 +101,23 @@ test("character window covers subchar image updates, pointer interactions, dragg
 	transparentAlpha = 255;
 
 	// 3. Test click without drag (emits talk)
-	rootEl._listeners?.mousedown?.({ button: 0, clientX: 10, clientY: 10, screenX: 10, screenY: 10 });
+	rootEl._listeners?.mousedown?.({
+		button: 0,
+		clientX: 10,
+		clientY: 10,
+		screenX: 10,
+		screenY: 10,
+	});
 	globalThis._globalListeners?.mouseup?.();
 
 	// 4. Test long press timer
-	rootEl._listeners?.mousedown?.({ button: 0, clientX: 10, clientY: 10, screenX: 10, screenY: 10 });
+	rootEl._listeners?.mousedown?.({
+		button: 0,
+		clientX: 10,
+		clientY: 10,
+		screenX: 10,
+		screenY: 10,
+	});
 	vi.advanceTimersByTime(700);
 	globalThis._globalListeners?.mouseup?.();
 
@@ -114,7 +128,11 @@ test("character window covers subchar image updates, pointer interactions, dragg
 	globalThis._globalListeners?.mouseup?.();
 
 	// 6. Test contextmenu
-	globalThis._globalListeners?.contextmenu?.({ preventDefault() {}, screenX: 50, screenY: 50 });
+	globalThis._globalListeners?.contextmenu?.({
+		preventDefault() {},
+		screenX: 50,
+		screenY: 50,
+	});
 
 	vi.useRealTimers();
 	delete globalThis.__TAURI_INTERNALS__;

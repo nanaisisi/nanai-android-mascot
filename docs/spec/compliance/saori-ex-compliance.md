@@ -21,10 +21,10 @@ SAORI-EX は、従来の SAORI/1.0 仕様を拡張し、暗号処理、ファイ
 
 ## 2. モジュール・インターフェース対応状況
 
-| カテゴリ / 規格ファイル | 仕様・対象領域 | 対応状況 | 実装コード・備考 |
-| :--- | :--- | :---: | :--- |
-| **SAORI/1.0 基本** (`saori.md`, `chapter0.md`) | リクエスト/レスポンス、引数受付 | ✅ 対応済 | `src-tauri/src/shiori/saori.rs` (`execute_saori`) |
-| **非同期実行** (`async.md`) | 非同期リクエスト処理 | ✅ 対応済 | Rust `async fn` コマンドとして非同期対応 |
-| **内部モジュール** (`internal.md`, `internal_crypto/`, `internal_file/`, `internal_jwt/`, `internal_time/`, `internal_random/`, `internal_system/`, `internal_text/`, `internal_data/`) | 暗号・ファイル・JWT・時間・乱数等の内蔵ユーティリティ | 🚧 設計・一部実装 | 拡張スタブおよび `saori.rs` によるフォールバック |
-| **DirectSSTP** (`directsstp.md`) | ダイレクトSSTP送信 | ✅ 対応済 | SSTP ブリッジモジュール群と連携 |
-| **Sender / Compat** (`sender.md`, `compat.md`) | 送信元制御・互換性維持 | ✅ 対応済 | ヘッダーおよび互換レスポンス制御 |
+| カテゴリ / 規格ファイル                                                                                                                                                                 | 仕様・対象領域                                        |     対応状況      | 実装コード・備考                                  |
+| :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------- | :---------------: | :------------------------------------------------ |
+| **SAORI/1.0 基本** (`saori.md`, `chapter0.md`)                                                                                                                                          | リクエスト/レスポンス、引数受付                       |     ✅ 対応済     | `src-tauri/src/shiori/saori.rs` (`execute_saori`) |
+| **非同期実行** (`async.md`)                                                                                                                                                             | 非同期リクエスト処理                                  |     ✅ 対応済     | Rust `async fn` コマンドとして非同期対応          |
+| **内部モジュール** (`internal.md`, `internal_crypto/`, `internal_file/`, `internal_jwt/`, `internal_time/`, `internal_random/`, `internal_system/`, `internal_text/`, `internal_data/`) | 暗号・ファイル・JWT・時間・乱数等の内蔵ユーティリティ | 🚧 設計・一部実装 | 拡張スタブおよび `saori.rs` によるフォールバック  |
+| **DirectSSTP** (`directsstp.md`)                                                                                                                                                        | ダイレクトSSTP送信                                    |     ✅ 対応済     | SSTP ブリッジモジュール群と連携                   |
+| **Sender / Compat** (`sender.md`, `compat.md`)                                                                                                                                          | 送信元制御・互換性維持                                |     ✅ 対応済     | ヘッダーおよび互換レスポンス制御                  |

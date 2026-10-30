@@ -9,16 +9,16 @@
 
 ## 1. マニュアル別 実ファイルハンドリング対応マトリクス
 
-| 規格マニュアルファイル | 対象ディレクトリ・ファイル構造 | 実ファイルハンドリング対応状況 | 実装方式・ファイル処理の詳細 |
-| :--- | :--- | :---: | :--- |
+| 規格マニュアルファイル               | 対象ディレクトリ・ファイル構造                                                  |      実ファイルハンドリング対応状況      | 実装方式・ファイル処理の詳細                                                                                                                                                       |
+| :----------------------------------- | :------------------------------------------------------------------------------ | :--------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **`manual/balloon.md`** (`balloon/`) | `balloons*.png`, `balloonk*.png`, `balloonp*`, `.pna`, `*s.txt`, `descript.txt` | **✅ 対応済 (一部フォールバック拡充中)** | `load_balloon_image` により `balloons0.png` / `balloonk0.png` を VFS 経由で取得し、CSS 9-slice 背景画像として描画。`.pna` マスクおよび個別オプション (`*s.txt`) の適用経路を統合。 |
-| **`manual/directory.md`** | `ghost/`, `shell/`, `balloon/` 標準ディレクトリ階層 | **✅ 対応済 (Fully Supported)** | VFS（仮想ファイルシステム）および大文字小文字を吸収するパス解決。`userData/ghost` と `local/ghost` の優先順位付き走査を実装。 |
-| **`manual/ghost.md`** | `ghost/master/`, `descript.txt`, SHIORI DLL / .so | **✅ 対応済 (Fully Supported)** | ゴーストディレクトリ内の構造走査、`descript.txt` 読込、プラットフォーム別 (Windows/Android) SHIORI 実行ファイルの動的ロード。 |
-| **`manual/install.md`** | `.nar` / `.zip` アーカイブ, `install.txt` | **⚠️ 部分対応 (Partially Supported)** | `.nar` / `.zip` の安全な展開（ZipSlip防止）、`ghost` および `balloon` 型アーカイブの自動配置。 |
-| **`manual/owner-draw-menu.md`** | メニュー背景・前景・サイドバービットマップ | **⚠️ 部分対応 (Partially Supported)** | Webview/iframe による高機能メニュー UI。ゴースト提供のオーナードロー用ビットマップの動的読込・スタイリング。 |
-| **`manual/shell.md`** | `shell/master/`, `surfaces.txt`, `surface*.png`, `surface*.pna` | **✅ 対応済 (Fully Supported)** | `load_surface_image` / `load_surface_pna` による 24bit PNG/BMP および 8bit PNA マスクの読み込み・Canvas 2D レイヤ合成。 |
-| **`manual/translator.md`** | トランスレータ用外部スクリプト/DLL 連携 | **⚠️ 設計対応・フック有 (Feasible)** | `OnTranslate` イベントパイプラインを経由したさくらスクリプトの動的置換・加工処理の基盤を実装。 |
-| **`manual/update.md`** | `updates2.dau`, `update.dau`, 差分ファイル群 | **✅ 対応済 (Fully Supported)** | `homeurl` からの `updates2.dau` 取得・パース、MD5 チェックサム突合による差分ファイルの安全なダウンロードとアトミック置換。 |
+| **`manual/directory.md`**            | `ghost/`, `shell/`, `balloon/` 標準ディレクトリ階層                             |     **✅ 対応済 (Fully Supported)**      | VFS（仮想ファイルシステム）および大文字小文字を吸収するパス解決。`userData/ghost` と `local/ghost` の優先順位付き走査を実装。                                                      |
+| **`manual/ghost.md`**                | `ghost/master/`, `descript.txt`, SHIORI DLL / .so                               |     **✅ 対応済 (Fully Supported)**      | ゴーストディレクトリ内の構造走査、`descript.txt` 読込、プラットフォーム別 (Windows/Android) SHIORI 実行ファイルの動的ロード。                                                      |
+| **`manual/install.md`**              | `.nar` / `.zip` アーカイブ, `install.txt`                                       |  **⚠️ 部分対応 (Partially Supported)**   | `.nar` / `.zip` の安全な展開（ZipSlip防止）、`ghost` および `balloon` 型アーカイブの自動配置。                                                                                     |
+| **`manual/owner-draw-menu.md`**      | メニュー背景・前景・サイドバービットマップ                                      |  **⚠️ 部分対応 (Partially Supported)**   | Webview/iframe による高機能メニュー UI。ゴースト提供のオーナードロー用ビットマップの動的読込・スタイリング。                                                                       |
+| **`manual/shell.md`**                | `shell/master/`, `surfaces.txt`, `surface*.png`, `surface*.pna`                 |     **✅ 対応済 (Fully Supported)**      | `load_surface_image` / `load_surface_pna` による 24bit PNG/BMP および 8bit PNA マスクの読み込み・Canvas 2D レイヤ合成。                                                            |
+| **`manual/translator.md`**           | トランスレータ用外部スクリプト/DLL 連携                                         |   **⚠️ 設計対応・フック有 (Feasible)**   | `OnTranslate` イベントパイプラインを経由したさくらスクリプトの動的置換・加工処理の基盤を実装。                                                                                     |
+| **`manual/update.md`**               | `updates2.dau`, `update.dau`, 差分ファイル群                                    |     **✅ 対応済 (Fully Supported)**      | `homeurl` からの `updates2.dau` 取得・パース、MD5 チェックサム突合による差分ファイルの安全なダウンロードとアトミック置換。                                                         |
 
 ---
 

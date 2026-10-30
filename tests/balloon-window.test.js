@@ -19,9 +19,9 @@ const getEl = (id) => {
 				if (sel === ".balloon-choice-btn") {
 					return [
 						{
-							getAttribute: (a) => a === "data-choice-id" ? "choice1" : null,
+							getAttribute: (a) => (a === "data-choice-id" ? "choice1" : null),
 							textContent: "Choice1",
-							addEventListener(t, cb) {
+							addEventListener(_t, cb) {
 								this._cb = cb;
 							},
 							click() {
@@ -33,8 +33,8 @@ const getEl = (id) => {
 				if (sel === ".balloon-anchor") {
 					return [
 						{
-							getAttribute: (a) => a === "data-anchor-id" ? "anchor1" : null,
-							addEventListener(t, cb) {
+							getAttribute: (a) => (a === "data-anchor-id" ? "anchor1" : null),
+							addEventListener(_t, cb) {
 								this._cb = cb;
 							},
 							click() {

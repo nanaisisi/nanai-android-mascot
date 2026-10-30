@@ -6,7 +6,7 @@
 export function applyAssetProperties(root, props, instance) {
 	// [descript.txt（Balloonの）]: props
 	// [readme,ファイル名]: props["readme"]
-	if (props["readme"]) root.style.setProperty("--balloon-readme", props["readme"]);
+	if (props.readme) root.style.setProperty("--balloon-readme", props.readme);
 
 	// [readme.charset,文字コード]: props["readme.charset"]
 	if (props["readme.charset"])
@@ -14,9 +14,15 @@ export function applyAssetProperties(root, props, instance) {
 
 	// [推奨の意味], [recommended.ghost,ゴースト名], [recommended.ghost.path,パス]:
 	if (props["recommended.ghost"])
-		root.style.setProperty("--balloon-recommended-ghost", props["recommended.ghost"]);
+		root.style.setProperty(
+			"--balloon-recommended-ghost",
+			props["recommended.ghost"],
+		);
 	if (props["recommended.ghost.path"])
-		root.style.setProperty("--balloon-recommended-ghost-path", props["recommended.ghost.path"]);
+		root.style.setProperty(
+			"--balloon-recommended-ghost-path",
+			props["recommended.ghost.path"],
+		);
 
 	const setBalloonImage = (propName, cssVarName) => {
 		const filename = props[propName];

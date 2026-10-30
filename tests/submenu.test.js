@@ -9,7 +9,7 @@ const globalListeners = {};
 const tauriListeners = {};
 
 globalThis.document = {
-	body: { classList: { add() {}, remove(...args) {} } },
+	body: { classList: { add() {}, remove(..._args) {} } },
 	addEventListener(type, cb) {
 		documentListeners[type] = cb;
 	},
@@ -28,7 +28,9 @@ globalThis.addEventListener = (type, cb) => {
 };
 
 globalThis.__TAURI_INTERNALS__ = {
-	metadata: { currentWindow: { label: "submenu", startDragging: async () => {} } },
+	metadata: {
+		currentWindow: { label: "submenu", startDragging: async () => {} },
+	},
 	invoke: async (cmd) => {
 		if (cmd === "hide_menu_window") return;
 		if (cmd === "hide_submenu_window") return;
@@ -71,7 +73,9 @@ test("submenu event handlers, Tauri sync listeners, and DOMContentLoaded init", 
 		},
 	});
 
-	await tauriListeners["sync-balloons"]?.({ payload: [{ dir_name: "ivory", name: "Ivory" }] });
+	await tauriListeners["sync-balloons"]?.({
+		payload: [{ dir_name: "ivory", name: "Ivory" }],
+	});
 
 	await tauriListeners["sync-theme"]?.({ payload: "dark" });
 

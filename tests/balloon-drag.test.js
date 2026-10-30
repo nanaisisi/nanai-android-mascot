@@ -1,13 +1,18 @@
 import assert from "node:assert/strict";
-import { test, vi } from "vitest";
+import { test } from "vitest";
 
 globalThis.window = globalThis;
-globalThis.requestAnimationFrame = (cb) => { cb(); return 1; };
+globalThis.requestAnimationFrame = (cb) => {
+	cb();
+	return 1;
+};
 
 let savedStorage = null;
 globalThis.localStorage = {
-	getItem: (k) => savedStorage,
-	setItem: (k, v) => { savedStorage = v; },
+	getItem: (_k) => savedStorage,
+	setItem: (_k, v) => {
+		savedStorage = v;
+	},
 };
 
 const documentListeners = {};
@@ -15,7 +20,12 @@ const globalListeners = {};
 
 const balloonEl = {
 	style: {},
-	getBoundingClientRect: () => ({ left: 100, top: 100, width: 200, height: 100 }),
+	getBoundingClientRect: () => ({
+		left: 100,
+		top: 100,
+		width: 200,
+		height: 100,
+	}),
 	addEventListener(type, cb) {
 		this._listeners = this._listeners || {};
 		this._listeners[type] = cb;
@@ -27,7 +37,9 @@ globalThis.document = {
 		if (id === "balloon-display") return balloonEl;
 		return null;
 	},
-	addEventListener(type, cb) { documentListeners[type] = cb; },
+	addEventListener(type, cb) {
+		documentListeners[type] = cb;
+	},
 };
 
 globalThis.addEventListener = (type, cb) => {
@@ -51,7 +63,12 @@ test("BalloonDragManager covers restore, follow, dragging, and persistence", () 
 
 	// Test setupBalloonDragging
 	const ghostTarget = {
-		getBoundingClientRect: () => ({ left: 200, top: 200, width: 100, height: 200 }),
+		getBoundingClientRect: () => ({
+			left: 200,
+			top: 200,
+			width: 100,
+			height: 200,
+		}),
 	};
 	manager.setupBalloonDragging(ghostTarget);
 

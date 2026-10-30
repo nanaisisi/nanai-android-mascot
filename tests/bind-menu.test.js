@@ -56,7 +56,10 @@ test("bind-menu functions cover options, grouping, payload, seeding, and surface
 
 	// Test null dressupMenuPayload
 	assert.equal(dressupMenuPayload(null), null);
-	assert.equal(dressupMenuPayload({ sakura_bind_groups: [], kero_bind_groups: [] }), null);
+	assert.equal(
+		dressupMenuPayload({ sakura_bind_groups: [], kero_bind_groups: [] }),
+		null,
+	);
 
 	// 5. seedDressupDefaults
 	const newStateMap = new Map();

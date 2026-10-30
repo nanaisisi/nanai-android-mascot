@@ -137,20 +137,28 @@ export function applyLayoutProperties(root, props, instance) {
 	const numY = parseInt(props["number.y"], 10);
 	const numXR = parseInt(props["number.xr"], 10);
 	const numYB = parseInt(props["number.yb"], 10);
-	if (!Number.isNaN(numX)) root.style.setProperty("--balloon-number-x", `${numX}px`);
-	if (!Number.isNaN(numY)) root.style.setProperty("--balloon-number-y", `${numY}px`);
-	if (!Number.isNaN(numXR)) root.style.setProperty("--balloon-number-xr", `${numXR}px`);
-	if (!Number.isNaN(numYB)) root.style.setProperty("--balloon-number-yb", `${numYB}px`);
+	if (!Number.isNaN(numX))
+		root.style.setProperty("--balloon-number-x", `${numX}px`);
+	if (!Number.isNaN(numY))
+		root.style.setProperty("--balloon-number-y", `${numY}px`);
+	if (!Number.isNaN(numXR))
+		root.style.setProperty("--balloon-number-xr", `${numXR}px`);
+	if (!Number.isNaN(numYB))
+		root.style.setProperty("--balloon-number-yb", `${numYB}px`);
 
 	// [sstpmessage.x,座標], [sstpmessage.y,座標], [sstpmessage.xr,座標], [sstpmessage.yb,座標]:
 	const sstpX = parseInt(props["sstpmessage.x"], 10);
 	const sstpY = parseInt(props["sstpmessage.y"], 10);
 	const sstpXR = parseInt(props["sstpmessage.xr"], 10);
 	const sstpYB = parseInt(props["sstpmessage.yb"], 10);
-	if (!Number.isNaN(sstpX)) root.style.setProperty("--balloon-sstpmessage-x", `${sstpX}px`);
-	if (!Number.isNaN(sstpY)) root.style.setProperty("--balloon-sstpmessage-y", `${sstpY}px`);
-	if (!Number.isNaN(sstpXR)) root.style.setProperty("--balloon-sstpmessage-xr", `${sstpXR}px`);
-	if (!Number.isNaN(sstpYB)) root.style.setProperty("--balloon-sstpmessage-yb", `${sstpYB}px`);
+	if (!Number.isNaN(sstpX))
+		root.style.setProperty("--balloon-sstpmessage-x", `${sstpX}px`);
+	if (!Number.isNaN(sstpY))
+		root.style.setProperty("--balloon-sstpmessage-y", `${sstpY}px`);
+	if (!Number.isNaN(sstpXR))
+		root.style.setProperty("--balloon-sstpmessage-xr", `${sstpXR}px`);
+	if (!Number.isNaN(sstpYB))
+		root.style.setProperty("--balloon-sstpmessage-yb", `${sstpYB}px`);
 
 	// [windowposition.x,座標], [windowposition.y,座標], [windowposition.limit,0/1]:
 	const wpX = parseInt(props["windowposition.x"], 10);

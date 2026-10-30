@@ -15,7 +15,7 @@ globalThis.document = {
 	getElementById(id) {
 		if (!quickBtns[id]) {
 			quickBtns[id] = {
-				addEventListener(type, cb) {
+				addEventListener(_type, cb) {
 					this._cb = cb;
 				},
 				click() {
@@ -47,7 +47,7 @@ globalThis.__TAURI_INTERNALS__ = {
 				tauriListeners[event] = cb;
 				return () => {};
 			},
-			emit: async (event, payload) => {},
+			emit: async (_event, _payload) => {},
 		},
 	},
 };
@@ -69,21 +69,41 @@ test("eventMethods covers 100% of event listeners, buttons, external menus, and 
 		},
 		elements: {
 			ghostDisplay: {
-				addEventListener(type, cb) { listeners[type] = cb; },
-				getBoundingClientRect: () => ({ left: 0, top: 0, right: 100, bottom: 50 }),
+				addEventListener(type, cb) {
+					listeners[type] = cb;
+				},
+				getBoundingClientRect: () => ({
+					left: 0,
+					top: 0,
+					right: 100,
+					bottom: 50,
+				}),
 			},
 			keroDisplay: {
-				addEventListener(type, cb) { listeners[`kero_${type}`] = cb; },
+				addEventListener(type, cb) {
+					listeners[`kero_${type}`] = cb;
+				},
 			},
 			menuBtn: {
-				getBoundingClientRect: () => ({ left: 0, top: 0, right: 50, bottom: 25 }),
-				addEventListener(type, cb) { listeners[`menu_${type}`] = cb; },
+				getBoundingClientRect: () => ({
+					left: 0,
+					top: 0,
+					right: 50,
+					bottom: 25,
+				}),
+				addEventListener(type, cb) {
+					listeners[`menu_${type}`] = cb;
+				},
 			},
 			quickBubble: {
-				addEventListener(type, cb) { listeners[`quick_${type}`] = cb; },
+				addEventListener(type, cb) {
+					listeners[`quick_${type}`] = cb;
+				},
 			},
 			balloonDisplay: {
-				addEventListener(type, cb) { listeners[`balloon_${type}`] = cb; },
+				addEventListener(type, cb) {
+					listeners[`balloon_${type}`] = cb;
+				},
 			},
 		},
 		toggleMenu() {},
@@ -114,8 +134,18 @@ test("eventMethods covers 100% of event listeners, buttons, external menus, and 
 	mockApp.setupEventListeners();
 
 	// 1. Test contextmenu on ghost & kero display
-	listeners.contextmenu?.({ preventDefault() {}, stopPropagation() {}, screenX: 10, screenY: 20 });
-	listeners.kero_contextmenu?.({ preventDefault() {}, stopPropagation() {}, screenX: 15, screenY: 25 });
+	listeners.contextmenu?.({
+		preventDefault() {},
+		stopPropagation() {},
+		screenX: 10,
+		screenY: 20,
+	});
+	listeners.kero_contextmenu?.({
+		preventDefault() {},
+		stopPropagation() {},
+		screenX: 15,
+		screenY: 25,
+	});
 
 	// 2. Test UI buttons
 	listeners.menu_click?.({ stopPropagation() {}, screenX: 30, screenY: 40 });
@@ -130,19 +160,35 @@ test("eventMethods covers 100% of event listeners, buttons, external menus, and 
 
 	// 3. Test global document event listeners
 	documentListeners.click?.();
-	documentListeners.contextmenu?.({ preventDefault() {}, screenX: 50, screenY: 60 });
+	documentListeners.contextmenu?.({
+		preventDefault() {},
+		screenX: 50,
+		screenY: 60,
+	});
 
 	documentListeners.keydown?.({ key: "Escape" });
 	documentListeners.keydown?.({ key: "w", ctrlKey: true, preventDefault() {} });
 	documentListeners.keydown?.({ key: "q", metaKey: true, preventDefault() {} });
 
 	// 4. Test external menu listeners (Tauri + postMessage)
-	await tauriListeners["menu-action"]?.({ payload: { action: "request-sync", payload: { scope: 1 } } });
-	await tauriListeners["menu-action"]?.({ payload: { action: "talk", payload: null } });
+	await tauriListeners["menu-action"]?.({
+		payload: { action: "request-sync", payload: { scope: 1 } },
+	});
+	await tauriListeners["menu-action"]?.({
+		payload: { action: "talk", payload: null },
+	});
 	await tauriListeners["request-subchar-image"]?.({ payload: { scopeId: 1 } });
 
-	globalListeners.message?.({ data: { type: "menu-action", action: "request-sync", payload: { scope: 1 } } });
-	globalListeners.message?.({ data: { type: "menu-action", action: "talk", payload: null } });
+	globalListeners.message?.({
+		data: {
+			type: "menu-action",
+			action: "request-sync",
+			payload: { scope: 1 },
+		},
+	});
+	globalListeners.message?.({
+		data: { type: "menu-action", action: "talk", payload: null },
+	});
 
 	// 5. Test onGhostClick and onGhostStroke (with script response)
 	shioriDoubleRes = { script: "double_click_script" };

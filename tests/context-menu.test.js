@@ -51,8 +51,12 @@ globalThis.document = {
 						this._listeners = this._listeners || {};
 						this._listeners[t] = cb;
 					},
-					mouseenter() { this._listeners?.mouseenter?.(); },
-					mouseleave() { this._listeners?.mouseleave?.(); },
+					mouseenter() {
+						this._listeners?.mouseenter?.();
+					},
+					mouseleave() {
+						this._listeners?.mouseleave?.();
+					},
 				},
 			];
 		}
@@ -126,10 +130,16 @@ test("context-menu event handlers, sync listeners, mouse events and keyboard sho
 		},
 	});
 	globalListeners.message?.({
-		data: { type: "sync-shells", shells: [{ name: "master" }], currentShell: "master" },
+		data: {
+			type: "sync-shells",
+			shells: [{ name: "master" }],
+			currentShell: "master",
+		},
 	});
 	globalListeners.message?.({ data: { type: "sync-theme", theme: "ivory" } });
-	globalListeners.message?.({ data: { type: "sync-balloons", balloons: [{ name: "default" }] } });
+	globalListeners.message?.({
+		data: { type: "sync-balloons", balloons: [{ name: "default" }] },
+	});
 
 	// 4. Test document click on has-submenu and normal menu item in Tauri
 	const wrapperEl = {
@@ -187,13 +197,40 @@ test("context-menu event handlers, sync listeners, mouse events and keyboard sho
 	documentListeners.keydown?.({ key: "w", ctrlKey: true, preventDefault() {} });
 	documentListeners.keydown?.({ key: "q", metaKey: true, preventDefault() {} });
 	documentListeners.keydown?.({ key: "k", ctrlKey: true, preventDefault() {} });
-	documentListeners.keydown?.({ key: "f12", shiftKey: true, preventDefault() {} });
-	documentListeners.keydown?.({ key: "f10", shiftKey: true, preventDefault() {} });
-	documentListeners.keydown?.({ key: "Delete", shiftKey: true, preventDefault() {} });
+	documentListeners.keydown?.({
+		key: "f12",
+		shiftKey: true,
+		preventDefault() {},
+	});
+	documentListeners.keydown?.({
+		key: "f10",
+		shiftKey: true,
+		preventDefault() {},
+	});
+	documentListeners.keydown?.({
+		key: "Delete",
+		shiftKey: true,
+		preventDefault() {},
+	});
 
 	// Single accelerator keys
 	for (const k of [
-		"r", "t", "u", "d", "h", "p", "m", "f", "o", "g", "c", "b", "a", "i", "w", "x",
+		"r",
+		"t",
+		"u",
+		"d",
+		"h",
+		"p",
+		"m",
+		"f",
+		"o",
+		"g",
+		"c",
+		"b",
+		"a",
+		"i",
+		"w",
+		"x",
 	]) {
 		documentListeners.keydown?.({ key: k, preventDefault() {} });
 	}

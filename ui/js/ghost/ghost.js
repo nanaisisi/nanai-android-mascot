@@ -186,7 +186,10 @@ export class GhostController {
 		this.app?.recordRecentGhost?.(ghost.name);
 
 		// [balloon,バルーン名], [recommended.balloon,バルーン名], [標準と推奨の使い分け], [recommended.balloon.path,パス], [default.balloon.path,パス]:
-		if (this.app?.settings?.autoSwitchBalloonWithGhost || ghost.recommended_balloon) {
+		if (
+			this.app?.settings?.autoSwitchBalloonWithGhost ||
+			ghost.recommended_balloon
+		) {
 			const targetBalloon = ghost.recommended_balloon || ghost.balloon;
 			if (targetBalloon) {
 				this.app.setBalloonTheme?.(targetBalloon);

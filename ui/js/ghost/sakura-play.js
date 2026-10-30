@@ -17,8 +17,11 @@ export async function playScript(player, script) {
 	try {
 		const app = player.app;
 		if (app?.ghostController?.sendShioriEvent && !script.includes("\\_q")) {
-			const transRes = await app.ghostController.sendShioriEvent("OnTranslate", [script]);
-			if (transRes && transRes.script && transRes.script.trim()) {
+			const transRes = await app.ghostController.sendShioriEvent(
+				"OnTranslate",
+				[script],
+			);
+			if (transRes?.script?.trim()) {
 				finalScript = transRes.script;
 			}
 		}

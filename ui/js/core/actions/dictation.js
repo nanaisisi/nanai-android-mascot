@@ -3,7 +3,7 @@
  * @brief SSP 互換音声認識（Dictation）および音声合成（TTS）モジュール (Web Speech API)
  * [config/dictation.md], [functions/speech-recognition.md], [functions/speech-synthesis.md]
  */
-import { emit, invoke, isTauriAvailable } from "../tauri-helper.js";
+import { emit } from "../tauri-helper.js";
 
 export class DictationManager {
 	constructor(app) {
@@ -16,7 +16,8 @@ export class DictationManager {
 
 	initSpeechRecognition() {
 		if (typeof window === "undefined") return;
-		const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+		const SpeechRecognition =
+			window.SpeechRecognition || window.webkitSpeechRecognition;
 		if (SpeechRecognition) {
 			this.recognition = new SpeechRecognition();
 			this.recognition.lang = "ja-JP";
@@ -65,7 +66,10 @@ export class DictationManager {
 
 	speakText(text, lang = "ja-JP") {
 		if (!this.synth) return;
-		const cleanText = text.replace(/\\([0-9hwnsblfxtqea_]\[[^\]]*\]|[0-9hwnsblfxtqea_])/g, "");
+		const cleanText = text.replace(
+			/\\([0-9hwnsblfxtqea_]\[[^\]]*\]|[0-9hwnsblfxtqea_])/g,
+			"",
+		);
 		if (!cleanText.trim()) return;
 
 		const utterance = new SpeechSynthesisUtterance(cleanText);

@@ -100,7 +100,9 @@ test("ModalManager covers 100% of init, show for all contents, hide, notificatio
 	assert.equal(manager.overlay.style.display, "none");
 
 	// 5. Test error catch in showWindowIfNeeded & hide
-	globalThis.__TAURI_INTERNALS__.invoke = async () => { throw new Error("IPC fail"); };
+	globalThis.__TAURI_INTERNALS__.invoke = async () => {
+		throw new Error("IPC fail");
+	};
 	manager.show("ghost-modal-content");
 	manager.hide();
 

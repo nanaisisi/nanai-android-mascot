@@ -8,7 +8,7 @@ import { rgbFromComponents } from "./utils.js";
 export function applyFontProperties(root, props, _instance) {
 	// [descript.txt（Balloonの）]: props
 	// [id,ID名]: props["id"]
-	if (props["id"]) root.style.setProperty("--balloon-id", props["id"]);
+	if (props.id) root.style.setProperty("--balloon-id", props.id);
 
 	// [font.name,フォント名]: props["font.name"]
 	if (props["font.name"]) {
@@ -171,14 +171,16 @@ export function applyFontProperties(root, props, _instance) {
 		props["anchor.font.color.r"] ||
 		props["anchor.font.color.g"] ||
 		props["anchor.font.color.b"]
-	) {}
+	) {
+	}
 	// [anchor.font.shadowcolor.r,数値], [anchor.font.shadowcolor.g,数値], [anchor.font.shadowcolor.b,数値], [anchor.font.shadowstyle,形態指定]:
 	if (
 		props["anchor.font.shadowcolor.r"] ||
 		props["anchor.font.shadowcolor.g"] ||
 		props["anchor.font.shadowcolor.b"] ||
 		props["anchor.font.shadowstyle"]
-	) {}
+	) {
+	}
 	// [anchor.pen.color.r,数値], [anchor.pen.color.g,数値], [anchor.pen.color.b,数値], [anchor.brush.color.r,数値], [anchor.brush.color.g,数値], [anchor.brush.color.b,数値], [anchor.blendmethod,コマンド]:
 	if (
 		props["anchor.pen.color.r"] ||
@@ -188,7 +190,8 @@ export function applyFontProperties(root, props, _instance) {
 		props["anchor.brush.color.g"] ||
 		props["anchor.brush.color.b"] ||
 		props["anchor.blendmethod"]
-	) {}
+	) {
+	}
 
 	// [anchor.visited.style,形状], [anchor.visited.font.color.r,数値], [anchor.visited.font.color.g,数値], [anchor.visited.font.color.b,数値]:
 	if (
@@ -196,14 +199,16 @@ export function applyFontProperties(root, props, _instance) {
 		props["anchor.visited.font.color.r"] ||
 		props["anchor.visited.font.color.g"] ||
 		props["anchor.visited.font.color.b"]
-	) {}
+	) {
+	}
 	// [anchor.visited.font.shadowcolor.r,数値], [anchor.visited.font.shadowcolor.g,数値], [anchor.visited.font.shadowcolor.b,数値], [anchor.visited.font.shadowstyle,形態指定]:
 	if (
 		props["anchor.visited.font.shadowcolor.r"] ||
 		props["anchor.visited.font.shadowcolor.g"] ||
 		props["anchor.visited.font.shadowcolor.b"] ||
 		props["anchor.visited.font.shadowstyle"]
-	) {}
+	) {
+	}
 	// [anchor.visited.pen.color.r,数値], [anchor.visited.pen.color.g,数値], [anchor.visited.pen.color.b,数値], [anchor.visited.brush.color.r,数値], [anchor.visited.brush.color.g,数値], [anchor.visited.brush.color.b,数値]:
 	if (
 		props["anchor.visited.pen.color.r"] ||
@@ -212,7 +217,8 @@ export function applyFontProperties(root, props, _instance) {
 		props["anchor.visited.brush.color.r"] ||
 		props["anchor.visited.brush.color.g"] ||
 		props["anchor.visited.brush.color.b"]
-	) {}
+	) {
+	}
 
 	// [anchor.notselect.style,形状], [anchor.notselect.font.color.r,数値], [anchor.notselect.font.color.g,数値], [anchor.notselect.font.color.b,数値]:
 	if (
@@ -220,14 +226,16 @@ export function applyFontProperties(root, props, _instance) {
 		props["anchor.notselect.font.color.r"] ||
 		props["anchor.notselect.font.color.g"] ||
 		props["anchor.notselect.font.color.b"]
-	) {}
+	) {
+	}
 	// [anchor.notselect.font.shadowcolor.r,数値], [anchor.notselect.font.shadowcolor.g,数値], [anchor.notselect.font.shadowcolor.b,数値], [anchor.notselect.font.shadowstyle,形態指定]:
 	if (
 		props["anchor.notselect.font.shadowcolor.r"] ||
 		props["anchor.notselect.font.shadowcolor.g"] ||
 		props["anchor.notselect.font.shadowcolor.b"] ||
 		props["anchor.notselect.font.shadowstyle"]
-	) {}
+	) {
+	}
 	// [anchor.notselect.pen.color.r,数値], [anchor.notselect.pen.color.g,数値], [anchor.notselect.pen.color.b,数値], [anchor.notselect.brush.color.r,数値], [anchor.notselect.brush.color.g,数値], [anchor.notselect.brush.color.b,数値]:
 	if (
 		props["anchor.notselect.pen.color.r"] ||
@@ -236,7 +244,8 @@ export function applyFontProperties(root, props, _instance) {
 		props["anchor.notselect.brush.color.r"] ||
 		props["anchor.notselect.brush.color.g"] ||
 		props["anchor.notselect.brush.color.b"]
-	) {}
+	) {
+	}
 
 	// 選択肢カーソル (cursor / cursor.notselect)
 	applyGroupProperties("cursor", "--balloon-cursor");
@@ -249,14 +258,16 @@ export function applyFontProperties(root, props, _instance) {
 		props["cursor.font.color.r"] ||
 		props["cursor.font.color.g"] ||
 		props["cursor.font.color.b"]
-	) {}
+	) {
+	}
 	// [cursor.font.shadowcolor.r,数値], [cursor.font.shadowcolor.g,数値], [cursor.font.shadowcolor.b,数値], [cursor.font.shadowstyle,形態指定]:
 	if (
 		props["cursor.font.shadowcolor.r"] ||
 		props["cursor.font.shadowcolor.g"] ||
 		props["cursor.font.shadowcolor.b"] ||
 		props["cursor.font.shadowstyle"]
-	) {}
+	) {
+	}
 	// [cursor.pen.color.r,数値], [cursor.pen.color.g,数値], [cursor.pen.color.b,数値], [cursor.brush.color.r,数値], [cursor.brush.color.g,数値], [cursor.brush.color.b,数値]:
 	if (
 		props["cursor.pen.color.r"] ||
@@ -265,7 +276,8 @@ export function applyFontProperties(root, props, _instance) {
 		props["cursor.brush.color.r"] ||
 		props["cursor.brush.color.g"] ||
 		props["cursor.brush.color.b"]
-	) {}
+	) {
+	}
 
 	// [cursor.notselect.style,形状], [cursor.notselect.font.color.r,数値], [cursor.notselect.font.color.g,数値], [cursor.notselect.font.color.b,数値]:
 	if (
@@ -273,14 +285,16 @@ export function applyFontProperties(root, props, _instance) {
 		props["cursor.notselect.font.color.r"] ||
 		props["cursor.notselect.font.color.g"] ||
 		props["cursor.notselect.font.color.b"]
-	) {}
+	) {
+	}
 	// [cursor.notselect.font.shadowcolor.r,数値], [cursor.notselect.font.shadowcolor.g,数値], [cursor.notselect.font.shadowcolor.b,数値], [cursor.notselect.font.shadowstyle,形態指定]:
 	if (
 		props["cursor.notselect.font.shadowcolor.r"] ||
 		props["cursor.notselect.font.shadowcolor.g"] ||
 		props["cursor.notselect.font.shadowcolor.b"] ||
 		props["cursor.notselect.font.shadowstyle"]
-	) {}
+	) {
+	}
 	// [cursor.notselect.pen.color.r,数値], [cursor.notselect.pen.color.g,数値], [cursor.notselect.pen.color.b,数値], [cursor.notselect.brush.color.r,数値], [cursor.notselect.brush.color.g,数値], [cursor.notselect.brush.color.b,数値]:
 	if (
 		props["cursor.notselect.pen.color.r"] ||
@@ -289,7 +303,8 @@ export function applyFontProperties(root, props, _instance) {
 		props["cursor.notselect.brush.color.r"] ||
 		props["cursor.notselect.brush.color.g"] ||
 		props["cursor.notselect.brush.color.b"]
-	) {}
+	) {
+	}
 
 	// 互換ハイライト表示キー
 	const cursorBg =

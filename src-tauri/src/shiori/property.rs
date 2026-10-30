@@ -50,7 +50,13 @@ mod tests {
     #[test]
     fn test_property_evaluation() {
         assert_eq!(evaluate_property_query("ghostlist.count"), "1");
-        assert_eq!(evaluate_property_query("baseware.name"), "Nanai Android Mascot");
-        assert_eq!(evaluate_property_query("unknown.prop"), "(unknown property: unknown.prop)");
+        assert_eq!(
+            evaluate_property_query("baseware.name"),
+            "Nanai Android Mascot"
+        );
+        assert_eq!(
+            evaluate_property_query("unknown.prop"),
+            "(unknown property: unknown.prop)"
+        );
     }
 }

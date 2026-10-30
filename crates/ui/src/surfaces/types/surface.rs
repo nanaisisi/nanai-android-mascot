@@ -138,7 +138,12 @@ mod tests {
         let area = CollisionArea {
             id: Some(0),
             name: "Head".into(),
-            shape: CollisionShape::Rect { x1: 0, y1: 0, x2: 100, y2: 100 },
+            shape: CollisionShape::Rect {
+                x1: 0,
+                y1: 0,
+                x2: 100,
+                y2: 100,
+            },
         };
 
         let mut def = SurfaceDefinition::default();

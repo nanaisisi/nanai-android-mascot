@@ -32,10 +32,19 @@ pub fn generate_fmo_buffer(records: &[FmoRecord]) -> Vec<u8> {
         content.push_str(&format!("{}.hwnd\x01{}\r\n", prefix, rec.hwnd));
         content.push_str(&format!("{}.name\x01{}\r\n", prefix, rec.name));
         content.push_str(&format!("{}.keroname\x01{}\r\n", prefix, rec.keroname));
-        content.push_str(&format!("{}.sakura.surface\x01{}\r\n", prefix, rec.sakura_surface));
-        content.push_str(&format!("{}.kero.surface\x01{}\r\n", prefix, rec.kero_surface));
+        content.push_str(&format!(
+            "{}.sakura.surface\x01{}\r\n",
+            prefix, rec.sakura_surface
+        ));
+        content.push_str(&format!(
+            "{}.kero.surface\x01{}\r\n",
+            prefix, rec.kero_surface
+        ));
         content.push_str(&format!("{}.ghostpath\x01{}\r\n", prefix, rec.ghost_path));
-        content.push_str(&format!("{}.modulestate\x01{}\r\n", prefix, rec.module_state));
+        content.push_str(&format!(
+            "{}.modulestate\x01{}\r\n",
+            prefix, rec.module_state
+        ));
     }
 
     let mut buf = vec![0u8; 65536];

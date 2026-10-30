@@ -1,8 +1,8 @@
-use crate::common::*;
-use tauri::Manager;
+use super::date::{compute_ghost_dates, format_system_time};
 use super::descript::read_descript_file;
 use super::shell::scan_shells_from_ghost;
-use super::date::{format_system_time, compute_ghost_dates};
+use crate::common::*;
+use tauri::Manager;
 
 #[derive(Debug, Clone, serde::Serialize)]
 pub struct ScanResult {
@@ -55,7 +55,10 @@ pub async fn scan_ghost_directory(
                             || path.join(".narinclude").exists()
                             || path.join(".updateinclude").exists()
                         {
-                            println!("🚫 Skipping ghost directory with .dev_ignore/.narignore/.updateignore: {:?}", path);
+                            println!(
+                                "🚫 Skipping ghost directory with .dev_ignore/.narignore/.updateignore: {:?}",
+                                path
+                            );
                             continue;
                         }
 
@@ -89,7 +92,9 @@ pub async fn scan_ghost_directory(
                         // [name,ゴースト名], [title,表示名], [type,種別]:
                         let display_name = meta_map
                             .as_ref()
-                            .and_then(|m| m.get("name").cloned().or_else(|| m.get("title").cloned()))
+                            .and_then(|m| {
+                                m.get("name").cloned().or_else(|| m.get("title").cloned())
+                            })
                             .unwrap_or_else(|| dir_name.clone());
 
                         if scanned_names.contains(&display_name) {
@@ -99,19 +104,25 @@ pub async fn scan_ghost_directory(
 
                         // [version,バージョン], [sakura.name,名前], [sakura.name2,名前], [kero.name,名前], [char*.name,名前]:
                         let version = meta_map.as_ref().and_then(|m| m.get("version").cloned());
-                        let sakura_name = meta_map
-                            .as_ref()
-                            .and_then(|m| m.get("sakura.name").cloned().or_else(|| m.get("sakura.name2").cloned()));
-                        let kero_name = meta_map
-                            .as_ref()
-                            .and_then(|m| m.get("kero.name").cloned());
+                        let sakura_name = meta_map.as_ref().and_then(|m| {
+                            m.get("sakura.name")
+                                .cloned()
+                                .or_else(|| m.get("sakura.name2").cloned())
+                        });
+                        let kero_name = meta_map.as_ref().and_then(|m| m.get("kero.name").cloned());
 
                         // [shiori,ファイル名], [craftman,作者名], [craftmanw,作者名], [craftmanurl,URL], [homeurl,URL], [id,ID名]:
                         let shiori = meta_map.as_ref().and_then(|m| m.get("shiori").cloned());
-                        let craftman = meta_map.as_ref().and_then(|m| m.get("craftman").cloned().or_else(|| m.get("craftmanw").cloned()));
-                        let craftman_url = meta_map
-                            .as_ref()
-                            .and_then(|m| m.get("craftmanurl").cloned().or_else(|| m.get("homeurl").cloned()));
+                        let craftman = meta_map.as_ref().and_then(|m| {
+                            m.get("craftman")
+                                .cloned()
+                                .or_else(|| m.get("craftmanw").cloned())
+                        });
+                        let craftman_url = meta_map.as_ref().and_then(|m| {
+                            m.get("craftmanurl")
+                                .cloned()
+                                .or_else(|| m.get("homeurl").cloned())
+                        });
 
                         // [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [icon,ファイル名], [icon.minimize,ファイル名], [install.accept,名前1,名前2,名前3...]:
                         if let Some(m) = &meta_map {
@@ -204,9 +215,11 @@ pub async fn scan_ghost_directory(
                         }
 
                         // [balloon,バルーン名], [recommended.balloon,バルーン名]:
-                        let recommended_balloon = meta_map
-                            .as_ref()
-                            .and_then(|m| m.get("recommended.balloon").cloned().or_else(|| m.get("balloon").cloned()));
+                        let recommended_balloon = meta_map.as_ref().and_then(|m| {
+                            m.get("recommended.balloon")
+                                .cloned()
+                                .or_else(|| m.get("balloon").cloned())
+                        });
 
                         // [標準と推奨の使い分け], [recommended.balloon.path,パス]:
                         let recommended_balloon_path = meta_map
@@ -258,7 +271,8 @@ pub async fn scan_ghost_directory(
         let mock_nanai_path = ghost_path.join("mock_nanai");
         if mock_nanai_path.exists() {
             let shells = scan_shells_from_ghost(&mock_nanai_path);
-            let (install_date, update_date) = if let Ok(meta) = std::fs::metadata(&mock_nanai_path) {
+            let (install_date, update_date) = if let Ok(meta) = std::fs::metadata(&mock_nanai_path)
+            {
                 let modified = meta.modified().ok().and_then(format_system_time);
                 let created = meta.created().ok().and_then(format_system_time);
                 (created.or(modified.clone()), modified)

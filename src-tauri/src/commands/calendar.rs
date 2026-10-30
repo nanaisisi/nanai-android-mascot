@@ -17,7 +17,10 @@ pub struct ScheduleItem {
 }
 
 fn get_schedules_file_path(app_handle: &tauri::AppHandle) -> Result<PathBuf, String> {
-    let app_data_dir = app_handle.path().app_data_dir().map_err(|e| e.to_string())?;
+    let app_data_dir = app_handle
+        .path()
+        .app_data_dir()
+        .map_err(|e| e.to_string())?;
     fs::create_dir_all(&app_data_dir).map_err(|e| e.to_string())?;
     Ok(app_data_dir.join("schedules.json"))
 }
@@ -34,7 +37,10 @@ pub async fn get_schedules(app_handle: tauri::AppHandle) -> Result<Vec<ScheduleI
 }
 
 #[tauri::command]
-pub async fn add_schedule(item: ScheduleItem, app_handle: tauri::AppHandle) -> Result<bool, String> {
+pub async fn add_schedule(
+    item: ScheduleItem,
+    app_handle: tauri::AppHandle,
+) -> Result<bool, String> {
     let mut items = get_schedules(app_handle.clone()).await.unwrap_or_default();
     items.retain(|i| i.id != item.id);
     items.push(item);
@@ -59,7 +65,10 @@ pub async fn trigger_calendar_event(
     event_id: String,
     app_handle: tauri::AppHandle,
 ) -> Result<String, String> {
-    println!("📅 [Calendar Event] Triggering calendar event: {}", event_id);
+    println!(
+        "📅 [Calendar Event] Triggering calendar event: {}",
+        event_id
+    );
     app_handle
         .emit("calendar-event-triggered", &event_id)
         .map_err(|e| e.to_string())?;

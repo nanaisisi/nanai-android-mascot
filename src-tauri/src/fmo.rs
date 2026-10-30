@@ -24,9 +24,7 @@ pub struct FmoSystemStatus {
 
 /// 現在の FMO 状態を取得する Tauri コマンド (UKADOC FMO 規格準拠)
 #[tauri::command]
-pub async fn get_fmo_status(
-    state: tauri::State<'_, AppState>,
-) -> Result<String, String> {
+pub async fn get_fmo_status(state: tauri::State<'_, AppState>) -> Result<String, String> {
     let current_name = state
         .current_ghost_name
         .lock()

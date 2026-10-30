@@ -13,7 +13,10 @@ pub struct HeadlineItem {
 pub fn parse_feed_xml(xml: &str) -> Vec<HeadlineItem> {
     let mut items = Vec::new();
     let mut remaining = xml;
-    while let Some(start_idx) = remaining.find("<item>").or_else(|| remaining.find("<entry>")) {
+    while let Some(start_idx) = remaining
+        .find("<item>")
+        .or_else(|| remaining.find("<entry>"))
+    {
         let is_item = remaining[start_idx..].starts_with("<item>");
         let tag_len = if is_item { 6 } else { 7 };
         remaining = &remaining[start_idx + tag_len..];
@@ -50,18 +53,19 @@ fn extract_tag_content(block: &str, tag: &str) -> String {
     }
     let open_prefix = format!("<{}", tag);
     if let Some(s) = block.find(&open_prefix)
-        && let Some(gt) = block[s..].find('>') {
-            let start = s + gt + 1;
-            if let Some(e) = block[start..].find(&end_tag) {
-                let content = &block[start..start + e];
-                return content
-                    .trim()
-                    .replace("<![CDATA[", "")
-                    .replace("]]>", "")
-                    .trim()
-                    .to_string();
-            }
+        && let Some(gt) = block[s..].find('>')
+    {
+        let start = s + gt + 1;
+        if let Some(e) = block[start..].find(&end_tag) {
+            let content = &block[start..start + e];
+            return content
+                .trim()
+                .replace("<![CDATA[", "")
+                .replace("]]>", "")
+                .trim()
+                .to_string();
         }
+    }
     String::new()
 }
 

@@ -1,5 +1,5 @@
-use crate::common::*;
 use super::utils::*;
+use crate::common::*;
 
 pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
     mut zip: zip::ZipArchive<R>,
@@ -56,15 +56,22 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
         let accept = map.get("accept");
         // [@manual: manual/install.md] accept target compatibility validation
         if let Some(acc) = accept {
-            println!("📦 [Install] Accept target compatibility check: package requires accept={}", acc);
+            println!(
+                "📦 [Install] Accept target compatibility check: package requires accept={}",
+                acc
+            );
         }
 
         let _bootghost = map.get("bootghost");
         let _charset = map.get("charset");
         let _refresh = map.get("refresh");
         let _refreshmask = map.get("refreshundeletemask");
-        let _star_refresh = map.get("ghost.refresh").or_else(|| map.get("shell.refresh"));
-        let _star_refreshmask = map.get("ghost.refreshundeletemask").or_else(|| map.get("shell.refreshundeletemask"));
+        let _star_refresh = map
+            .get("ghost.refresh")
+            .or_else(|| map.get("shell.refresh"));
+        let _star_refreshmask = map
+            .get("ghost.refreshundeletemask")
+            .or_else(|| map.get("shell.refreshundeletemask"));
 
         if let Some(val) = map.get("name") {
             ghost_name = val.clone();
@@ -84,7 +91,9 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
                 let src_dir = map.get(&src_key).unwrap_or(v).clone();
 
                 // parse kind (e.g. "balloon0" -> "balloon")
-                let kind = prefix.trim_end_matches(|c: char| c.is_ascii_digit()).to_string();
+                let kind = prefix
+                    .trim_end_matches(|c: char| c.is_ascii_digit())
+                    .to_string();
                 bundled_resources_config.push((kind, v.clone(), src_dir));
             }
         }
@@ -293,9 +302,11 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
     let group = meta_map.as_ref().and_then(|m| m.get("group").cloned());
 
     // [balloon,バルーン名], [recommended.balloon,バルーン名]:
-    let recommended_balloon = meta_map
-        .as_ref()
-        .and_then(|m| m.get("recommended.balloon").cloned().or_else(|| m.get("balloon").cloned()));
+    let recommended_balloon = meta_map.as_ref().and_then(|m| {
+        m.get("recommended.balloon")
+            .cloned()
+            .or_else(|| m.get("balloon").cloned())
+    });
     let recommended_balloon_path = meta_map
         .as_ref()
         .and_then(|m| m.get("recommended.balloon.path").cloned());
@@ -303,8 +314,7 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
         .as_ref()
         .and_then(|m| m.get("default.balloon.path").cloned());
 
-    let (install_date, update_date) =
-        crate::ghost::scan::compute_ghost_dates(&target_dir);
+    let (install_date, update_date) = crate::ghost::scan::compute_ghost_dates(&target_dir);
 
     Ok(GhostInfo {
         name: display_name,

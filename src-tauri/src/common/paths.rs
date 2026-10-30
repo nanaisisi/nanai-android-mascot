@@ -124,9 +124,7 @@ pub fn resolve_ghost_directory(
                 .filter_map(|p| crate::ghost::scan::read_descript_file(p))
                 .any(|meta| {
                     meta.get("name").is_some_and(|name| name == ghost_name)
-                        || meta
-                            .get("directory")
-                            .is_some_and(|dir| dir == ghost_name)
+                        || meta.get("directory").is_some_and(|dir| dir == ghost_name)
                 })
             {
                 return Ok(path);
@@ -178,7 +176,10 @@ mod tests {
 
     #[test]
     fn test_clean_verbatim_path() {
-        assert_eq!(clean_verbatim_path(r"\\?\C:\path\to\file"), r"C:\path\to\file");
+        assert_eq!(
+            clean_verbatim_path(r"\\?\C:\path\to\file"),
+            r"C:\path\to\file"
+        );
         let expected = format!("normal{}path", std::path::MAIN_SEPARATOR);
         assert_eq!(clean_verbatim_path("normal/path"), expected);
     }

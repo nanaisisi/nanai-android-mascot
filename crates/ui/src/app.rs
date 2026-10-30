@@ -47,7 +47,10 @@ mod tests {
 
     #[test]
     fn test_extract_filename() {
-        assert_eq!(extract_filename("assets/ghost/mock_nanai/surfaces.txt"), "surfaces.txt");
+        assert_eq!(
+            extract_filename("assets/ghost/mock_nanai/surfaces.txt"),
+            "surfaces.txt"
+        );
         assert_eq!(extract_filename("surfaces.txt"), "surfaces.txt");
         assert_eq!(extract_filename(""), "");
     }

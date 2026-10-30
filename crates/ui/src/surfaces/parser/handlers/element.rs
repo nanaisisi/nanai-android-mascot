@@ -1,7 +1,7 @@
 //! 描画要素 (`element`) ハンドラー
 
-use crate::surfaces::types::*;
 use super::utils::split_id_suffix;
+use crate::surfaces::types::*;
 
 pub(crate) fn apply_element(txt: &mut SurfacesTxt, ids: &[u32], id_part: &str, value: &str) {
     let (_word, id) = split_id_suffix(id_part);

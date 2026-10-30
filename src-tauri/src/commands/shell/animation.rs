@@ -2,16 +2,12 @@ use nanai_android_mascot_ui::{SakuraCommand, SurfaceManifest};
 use std::collections::BTreeMap;
 
 #[tauri::command]
-pub fn parse_sakura_script(
-    script: String,
-) -> Result<Vec<SakuraCommand>, String> {
+pub fn parse_sakura_script(script: String) -> Result<Vec<SakuraCommand>, String> {
     Ok(nanai_android_mascot_ui::parse_sakura_script(&script))
 }
 
 #[tauri::command]
-pub fn parse_surfaces_text(
-    content: String,
-) -> Result<BTreeMap<u32, SurfaceManifest>, String> {
+pub fn parse_surfaces_text(content: String) -> Result<BTreeMap<u32, SurfaceManifest>, String> {
     let surfaces_txt = nanai_android_mascot_ui::parse_surfaces_txt(&content);
     let mut map = BTreeMap::new();
     for (id, def) in surfaces_txt.surfaces.iter() {

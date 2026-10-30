@@ -70,7 +70,10 @@ fn test_descript_more_properties() {
     assert_eq!(desc.name().unwrap(), "MockGhost");
     assert_eq!(desc.sakura_name().unwrap(), "Sakura");
     assert_eq!(desc.kero_name().unwrap(), "Kero");
-    assert_eq!(desc.sakura_names(), (Some(&"Sakura".to_string()), Some(&"SakuraSub".to_string())));
+    assert_eq!(
+        desc.sakura_names(),
+        (Some(&"Sakura".to_string()), Some(&"SakuraSub".to_string()))
+    );
     assert_eq!(desc.homeurl().unwrap(), "https://home.url");
     assert_eq!(desc.origin(), (Some(10), Some(20)));
     assert_eq!(desc.validrect(), (Some(0), Some(0), Some(800), Some(600)));

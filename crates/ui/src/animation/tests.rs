@@ -16,10 +16,7 @@ fn pattern(index: u32, surface: i32, wait: u32) -> AnimationPattern {
 
 #[test]
 fn test_build_timeline() {
-    let patterns = vec![
-        pattern(0, 6, 0),
-        pattern(1, -1, 85),
-    ];
+    let patterns = vec![pattern(0, 6, 0), pattern(1, -1, 85)];
     let timeline = build_timeline(&patterns);
     assert_eq!(timeline[0].at_ms, 0);
     assert_eq!(timeline[1].at_ms, 85);

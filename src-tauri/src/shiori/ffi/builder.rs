@@ -143,7 +143,12 @@ impl ShioriRequestBuilder {
         builder
     }
 
-    pub fn on_biff_2_complete(count: u32, size_bytes: u64, account_name: Option<&str>, unread_count: Option<u32>) -> Self {
+    pub fn on_biff_2_complete(
+        count: u32,
+        size_bytes: u64,
+        account_name: Option<&str>,
+        unread_count: Option<u32>,
+    ) -> Self {
         let mut builder = ShioriRequestBuilder::new()
             .method("NOTIFY")
             .event("OnBIFF2Complete")

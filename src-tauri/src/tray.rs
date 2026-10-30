@@ -36,8 +36,7 @@ pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error
                         (100.0, 100.0)
                     };
                     let _ =
-                        crate::commands::window::show_menu_window(app_handle, x, y, Some(0))
-                            .await;
+                        crate::commands::window::show_menu_window(app_handle, x, y, Some(0)).await;
                 });
             }
         })

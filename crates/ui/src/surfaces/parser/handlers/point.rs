@@ -1,7 +1,7 @@
 //! 基準点 (`point`) ハンドラー
 
-use crate::surfaces::types::*;
 use super::utils::first_i32;
+use crate::surfaces::types::*;
 
 pub(crate) fn apply_point(txt: &mut SurfacesTxt, ids: &[u32], field: &str, value: &str) {
     let parsed = first_i32(value);

@@ -1,6 +1,6 @@
+use super::types::{BindGroup, BindOptionGroup, CharDefaults};
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
-use super::types::{CharDefaults, BindOptionGroup, BindGroup};
 
 /// カンマ区切りの数値リスト（範囲対応 `0-9` 含む）をパースする
 pub(super) fn expand_ids(value: &str) -> Vec<u32> {

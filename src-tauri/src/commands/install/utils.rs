@@ -9,7 +9,9 @@ pub fn decode_zip_entry_name(raw_bytes: &[u8]) -> String {
     }
 }
 
-pub fn parse_zip_entry_descript(entry: &mut impl std::io::Read) -> std::collections::HashMap<String, String> {
+pub fn parse_zip_entry_descript(
+    entry: &mut impl std::io::Read,
+) -> std::collections::HashMap<String, String> {
     let mut map = std::collections::HashMap::new();
     let mut bytes = Vec::new();
     if entry.read_to_end(&mut bytes).is_err() {

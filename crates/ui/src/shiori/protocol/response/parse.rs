@@ -146,11 +146,17 @@ mod tests {
 
         let text_url = "SHIORI/3.0 200 OK\r\nValue: http://example.com:8080/path\r\ncont key: cont val\r\n\r\n";
         let res_url = ShioriResponse::parse(text_url).unwrap();
-        assert_eq!(res_url.value.as_deref(), Some("http://example.com:8080/path\ncont key: cont val"));
+        assert_eq!(
+            res_url.value.as_deref(),
+            Some("http://example.com:8080/path\ncont key: cont val")
+        );
 
         let text_unknown = "SHIORI/3.0 200 OK\r\nReference2: r2\r\nReference0: r0\r\nReference1: r1\r\nUnknownHeader: val\r\n\r\n";
         let res_unknown = ShioriResponse::parse(text_unknown).unwrap();
-        assert_eq!(res_unknown.references, vec!["r1".to_string(), "r2".to_string()]);
+        assert_eq!(
+            res_unknown.references,
+            vec!["r1".to_string(), "r2".to_string()]
+        );
 
         let text_orphan = "SHIORI/3.0 200 OK\r\nOrphan line\r\nValue: val\r\n\r\n";
         let res_orphan = ShioriResponse::parse(text_orphan).unwrap();
@@ -183,7 +189,10 @@ mod tests {
     fn test_parse_error_levels_and_descriptions() {
         let text = "SHIORI/3.0 500 Internal Error\r\nErrorLevel: error\u{1}warning\r\nErrorDescription: err_msg\u{1}warn_msg\r\n\r\n";
         let res = ShioriResponse::parse(text).unwrap();
-        assert_eq!(res.error_level, vec![ErrorLevel::Error, ErrorLevel::Warning]);
+        assert_eq!(
+            res.error_level,
+            vec![ErrorLevel::Error, ErrorLevel::Warning]
+        );
         assert_eq!(res.error_description, vec!["err_msg", "warn_msg"]);
     }
 
@@ -192,8 +201,18 @@ mod tests {
         let text = "SHIORI/3.0 200 OK\r\nReference0: ref0_val\r\nReference1: ref1_val\r\nReference3: ref3_val\r\nReferenceABC: invalid_ref\r\nX-SSTP-PassThru-CustomHeader: custom_val\r\nX-SSTP-PassThru-MarkerSend: skipped_val\r\n\r\n";
         let res = ShioriResponse::parse(text).unwrap();
         assert_eq!(res.reference0.as_deref(), Some("ref0_val"));
-        assert_eq!(res.references, vec!["ref1_val".to_string(), "".to_string(), "ref3_val".to_string()]);
-        assert_eq!(res.passthru.get("CustomHeader").map(String::as_str), Some("custom_val"));
+        assert_eq!(
+            res.references,
+            vec![
+                "ref1_val".to_string(),
+                "".to_string(),
+                "ref3_val".to_string()
+            ]
+        );
+        assert_eq!(
+            res.passthru.get("CustomHeader").map(String::as_str),
+            Some("custom_val")
+        );
         assert_eq!(res.passthru.get("MarkerSend"), None);
     }
 

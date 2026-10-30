@@ -32,7 +32,10 @@ pub async fn uninstall_ghost(
     })
     .await
     .unwrap_or(false);
-    *app_handle.state::<crate::common::AppState>().is_dialog_open.lock() = false;
+    *app_handle
+        .state::<crate::common::AppState>()
+        .is_dialog_open
+        .lock() = false;
 
     if !confirmed {
         return Ok(false);

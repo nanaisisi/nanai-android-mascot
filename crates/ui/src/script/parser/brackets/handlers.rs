@@ -1,7 +1,7 @@
 //! さくらスクリプト括弧コマンドハンドラー
 
 use super::super::SakuraCommand;
-use super::utils::{consume_tag_tail, read_bracketed, read_digit, CharsIter};
+use super::utils::{CharsIter, consume_tag_tail, read_bracketed, read_digit};
 
 pub(crate) fn handle_target_p(chars: &mut CharsIter<'_>) -> Option<u8> {
     if let Some(bracketed) = read_bracketed(chars) {

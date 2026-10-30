@@ -126,7 +126,10 @@ fn test_parse_interval_formatting_and_defaults() {
 
     assert_eq!(Interval::parse("  always  "), Interval::Always);
     assert_eq!(Interval::parse(" random , 7 "), Interval::Random(7));
-    assert_eq!(Interval::parse(" periodic , 2500 "), Interval::Periodic(2500));
+    assert_eq!(
+        Interval::parse(" periodic , 2500 "),
+        Interval::Periodic(2500)
+    );
 
     assert_eq!(Interval::parse("random"), Interval::Random(10));
     assert_eq!(Interval::parse("random,invalid"), Interval::Random(10));

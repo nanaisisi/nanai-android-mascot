@@ -103,7 +103,10 @@ mod tests {
             ("plugin", SenderTypeTag::Plugin),
             ("sstp", SenderTypeTag::Sstp),
             ("communicate", SenderTypeTag::Communicate),
-            ("custom_val", SenderTypeTag::Custom("custom_val".to_string())),
+            (
+                "custom_val",
+                SenderTypeTag::Custom("custom_val".to_string()),
+            ),
         ];
 
         for (s, expected) in variants {

@@ -88,9 +88,10 @@ pub async fn hide_loading_banner_window(app_handle: tauri::AppHandle) -> Result<
     {
         use tauri::Manager;
         if let Some(banner_win) = app_handle.get_webview_window("loading_banner_window")
-            && banner_win.is_visible().map_err(|e| e.to_string())? {
-                let _ = banner_win.hide();
-            }
+            && banner_win.is_visible().map_err(|e| e.to_string())?
+        {
+            let _ = banner_win.hide();
+        }
     }
     #[cfg(not(desktop))]
     let _ = app_handle;

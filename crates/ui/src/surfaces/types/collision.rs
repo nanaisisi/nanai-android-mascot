@@ -84,33 +84,62 @@ mod tests {
     #[test]
     fn test_collision_shapes_contains() {
         // Rect
-        let rect = CollisionShape::Rect { x1: 0, y1: 0, x2: 10, y2: 10 };
+        let rect = CollisionShape::Rect {
+            x1: 0,
+            y1: 0,
+            x2: 10,
+            y2: 10,
+        };
         assert!(rect.contains(5, 5));
         assert!(!rect.contains(15, 5));
 
         // Polygon
-        let poly = CollisionShape::Polygon { vertices: vec![(0, 0), (10, 0), (10, 10), (0, 10)] };
+        let poly = CollisionShape::Polygon {
+            vertices: vec![(0, 0), (10, 0), (10, 10), (0, 10)],
+        };
         assert!(poly.contains(5, 5));
         assert!(!poly.contains(15, 5));
         let poly_empty = CollisionShape::Polygon { vertices: vec![] };
         assert!(!poly_empty.contains(0, 0));
 
         // Circle
-        let circle = CollisionShape::Circle { cx: 0, cy: 0, r: 10.0 };
+        let circle = CollisionShape::Circle {
+            cx: 0,
+            cy: 0,
+            r: 10.0,
+        };
         assert!(circle.contains(0, 0));
         assert!(!circle.contains(20, 20));
-        let zero_circle = CollisionShape::Circle { cx: 0, cy: 0, r: 0.0 };
+        let zero_circle = CollisionShape::Circle {
+            cx: 0,
+            cy: 0,
+            r: 0.0,
+        };
         assert!(!zero_circle.contains(0, 0));
 
         // Ellipse
-        let ellipse = CollisionShape::Ellipse { cx: 0, cy: 0, rx: 10.0, ry: 5.0 };
+        let ellipse = CollisionShape::Ellipse {
+            cx: 0,
+            cy: 0,
+            rx: 10.0,
+            ry: 5.0,
+        };
         assert!(ellipse.contains(0, 0));
         assert!(!ellipse.contains(20, 20));
-        let zero_ellipse = CollisionShape::Ellipse { cx: 0, cy: 0, rx: 0.0, ry: 5.0 };
+        let zero_ellipse = CollisionShape::Ellipse {
+            cx: 0,
+            cy: 0,
+            rx: 0.0,
+            ry: 5.0,
+        };
         assert!(!zero_ellipse.contains(0, 0));
 
         // CollisionArea helper
-        let area = CollisionArea { id: Some(1), name: "Body".into(), shape: rect };
+        let area = CollisionArea {
+            id: Some(1),
+            name: "Body".into(),
+            shape: rect,
+        };
         assert!(area.contains(5, 5));
     }
 }

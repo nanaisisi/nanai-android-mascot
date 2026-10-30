@@ -184,12 +184,13 @@ pub async fn send_on_translate(
         Ok(raw) => {
             let parsed = ShioriResponse::parse(&raw);
             if let Ok(res) = parsed
-                && let Some(val) = res.value {
-                    let trimmed = val.trim();
-                    if !trimmed.is_empty() {
-                        return Ok(trimmed.to_string());
-                    }
+                && let Some(val) = res.value
+            {
+                let trimmed = val.trim();
+                if !trimmed.is_empty() {
+                    return Ok(trimmed.to_string());
                 }
+            }
             Ok(script)
         }
         Err(_) => Ok(script),

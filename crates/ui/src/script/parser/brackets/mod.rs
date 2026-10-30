@@ -153,13 +153,19 @@ mod tests {
         assert_eq!(handle_font(&mut chars_font2), None);
 
         let mut chars_font3 = "[bold]".chars().peekable();
-        assert_eq!(handle_font(&mut chars_font3), Some(("bold".to_string(), None)));
+        assert_eq!(
+            handle_font(&mut chars_font3),
+            Some(("bold".to_string(), None))
+        );
 
         let mut chars_choice2 = "no_bracket".chars().peekable();
         assert_eq!(handle_choice(&mut chars_choice2), None);
 
         let mut chars_choice3 = "[JustLabel]".chars().peekable();
-        assert_eq!(handle_choice(&mut chars_choice3), Some(("JustLabel".to_string(), "".to_string())));
+        assert_eq!(
+            handle_choice(&mut chars_choice3),
+            Some(("JustLabel".to_string(), "".to_string()))
+        );
 
         let mut u_cmds = Vec::new();
         let mut push_u = |c| u_cmds.push(c);

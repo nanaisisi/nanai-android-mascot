@@ -1,10 +1,10 @@
 //! `descript.txt` パーサモジュール
 
-pub mod types;
 pub mod parser;
+pub mod types;
 
 #[cfg(test)]
 mod tests;
 
-pub use types::{BindGroup, BindOptionGroup, CharDefaults};
 pub use parser::Descript;
+pub use types::{BindGroup, BindOptionGroup, CharDefaults};

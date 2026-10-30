@@ -29,12 +29,7 @@ mod tests {
 
     #[test]
     fn test_various_locales() {
-        for (input, expected) in [
-            ("en-US", "en"),
-            ("zh-CN", "zh"),
-            ("fr", "fr"),
-            ("", ""),
-        ] {
+        for (input, expected) in [("en-US", "en"), ("zh-CN", "zh"), ("fr", "fr"), ("", "")] {
             let code = input.split('-').next().unwrap_or("en");
             if code.is_empty() {
                 assert_eq!(expected, "");

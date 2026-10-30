@@ -2,8 +2,8 @@
 //! [SSTP/1.x], [method_send], [method_execute], [method_give], [method_communicate], [method_notify], [keepalive]
 
 use serde::{Deserialize, Serialize};
-use tauri::Emitter;
 use std::collections::HashMap;
+use tauri::Emitter;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SstpRequest {
@@ -31,8 +31,14 @@ pub async fn send_sstp_request(
     request: SstpRequest,
     app_handle: tauri::AppHandle,
 ) -> Result<SstpResponse, String> {
-    let method = request.method.unwrap_or_else(|| "SEND".to_string()).to_uppercase();
-    println!("📨 [SSTP/1.1] Method: {}, Sender: {}", method, request.sender);
+    let method = request
+        .method
+        .unwrap_or_else(|| "SEND".to_string())
+        .to_uppercase();
+    println!(
+        "📨 [SSTP/1.1] Method: {}, Sender: {}",
+        method, request.sender
+    );
 
     match method.as_str() {
         "SEND" | "NOTIFY" => {

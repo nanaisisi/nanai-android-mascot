@@ -12,7 +12,6 @@ pub mod vfs;
 
 // 外部公開・後方互換のための再エクスポート
 pub use animation::{ScheduledFrame, Timeline, build_timeline, cycle_len_ms};
-pub use update::{UpdateEntry, parse_update_definition};
 pub use descript::{BindGroup, BindOptionGroup, CharDefaults, Descript};
 pub use manifest::{ShellManifest, SurfaceManifest};
 pub use script::{SakuraCommand, execute_sakura_script, parse_sakura_script};
@@ -28,6 +27,7 @@ pub use surfaces::{
 pub use surfacetable::{
     SurfTableEntry, SurfTableGroup, SurfaceTable, is_parts_name, parse_surface_table,
 };
+pub use update::{UpdateEntry, parse_update_definition};
 pub use vfs::{open_shift_jis_file, open_text_file, resolve_vfs_path};
 
 #[cfg(test)]
@@ -36,7 +36,10 @@ mod tests {
 
     #[test]
     fn test_open_shift_jis_file() {
-        let path = concat!(env!("CARGO_MANIFEST_DIR"), "/../../assets/ghost/mock_nanai/install.txt");
+        let path = concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../assets/ghost/mock_nanai/install.txt"
+        );
         let content = open_shift_jis_file(path).unwrap();
         assert!(!content.is_empty());
     }

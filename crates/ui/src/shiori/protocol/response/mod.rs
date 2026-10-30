@@ -140,7 +140,10 @@ mod tests {
 
     #[test]
     fn test_response_helpers() {
-        assert_eq!(key_str_prefix("X-SSTP-PassThru-CustomKey"), Some("CustomKey".to_string()));
+        assert_eq!(
+            key_str_prefix("X-SSTP-PassThru-CustomKey"),
+            Some("CustomKey".to_string())
+        );
         assert_eq!(key_str_prefix("InvalidKey"), None);
 
         assert!(is_header_key("X-Header-Name_1"));

@@ -20,7 +20,20 @@ pub fn format_system_time(sys_time: std::time::SystemTime) -> Option<String> {
     }
     let mut month = 1;
     let leap = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
-    let days_in_months = [31, if leap { 29 } else { 28 }, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    let days_in_months = [
+        31,
+        if leap { 29 } else { 28 },
+        31,
+        30,
+        31,
+        30,
+        31,
+        31,
+        30,
+        31,
+        30,
+        31,
+    ];
     for &dim in &days_in_months {
         if remaining_days < dim {
             break;
@@ -29,7 +42,10 @@ pub fn format_system_time(sys_time: std::time::SystemTime) -> Option<String> {
         month += 1;
     }
     let day = remaining_days + 1;
-    Some(format!("{:04}-{:02}-{:02} {:02}:{:02}:{:02}", year, month, day, hours, minutes, seconds))
+    Some(format!(
+        "{:04}-{:02}-{:02} {:02}:{:02}:{:02}",
+        year, month, day, hours, minutes, seconds
+    ))
 }
 
 pub fn compute_ghost_dates(path: &std::path::Path) -> (Option<String>, Option<String>) {
@@ -65,10 +81,7 @@ pub fn compute_ghost_dates(path: &std::path::Path) -> (Option<String>, Option<St
         for entry in entries.flatten() {
             let entry_path = entry.path();
             if entry_path.is_file() {
-                let fname = entry
-                    .file_name()
-                    .to_string_lossy()
-                    .to_ascii_lowercase();
+                let fname = entry.file_name().to_string_lossy().to_ascii_lowercase();
                 let is_runtime_save = fname.ends_with("_variable.cfg")
                     || fname.ends_with("savedata.txt")
                     || fname.ends_with("savedata.dat")

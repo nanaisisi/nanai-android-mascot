@@ -63,7 +63,10 @@ mod tests {
         assert_eq!(ShioriMethod::Notify.as_str(), "NOTIFY");
 
         assert_eq!(SecurityLevel::parse("local"), Some(SecurityLevel::Local));
-        assert_eq!(SecurityLevel::parse("EXTERNAL"), Some(SecurityLevel::External));
+        assert_eq!(
+            SecurityLevel::parse("EXTERNAL"),
+            Some(SecurityLevel::External)
+        );
         assert_eq!(SecurityLevel::parse("invalid"), None);
         assert_eq!(SecurityLevel::Local.as_str(), "local");
         assert_eq!(SecurityLevel::External.as_str(), "external");

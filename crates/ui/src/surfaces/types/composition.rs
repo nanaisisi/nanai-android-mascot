@@ -71,7 +71,10 @@ mod tests {
 
         let plan = CompositionPlan {
             surface: 0,
-            layers: vec![CompositionLayer::Element(elem), CompositionLayer::Pattern(pat)],
+            layers: vec![
+                CompositionLayer::Element(elem),
+                CompositionLayer::Pattern(pat),
+            ],
         };
 
         assert_eq!(plan.layer_files(), vec!["base.png", "10"]);

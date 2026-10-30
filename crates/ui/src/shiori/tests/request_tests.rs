@@ -114,7 +114,8 @@ fn test_parse_request_headers_and_security_origin() {
     assert_eq!(req_null.security_origin, Some(None));
     assert_eq!(req_null.security_level, Some(SecurityLevel::External));
 
-    let text_val_origin = "GET SHIORI/3.0\r\nID: OnTest\r\nSecurityOrigin: http://example.com\r\n\r\n";
+    let text_val_origin =
+        "GET SHIORI/3.0\r\nID: OnTest\r\nSecurityOrigin: http://example.com\r\n\r\n";
     let req_val = ShioriRequest::parse(text_val_origin).unwrap();
     assert_eq!(
         req_val.security_origin,
@@ -134,8 +135,14 @@ fn test_parse_request_sparse_references_and_passthru() {
     assert_eq!(req.references[0], "val0");
     assert_eq!(req.references[1], "");
     assert_eq!(req.references[2], "val2");
-    assert_eq!(req.passthru.get("HeaderOne").map(String::as_str), Some("foo"));
-    assert_eq!(req.passthru.get("headertwo").map(String::as_str), Some("bar"));
+    assert_eq!(
+        req.passthru.get("HeaderOne").map(String::as_str),
+        Some("foo")
+    );
+    assert_eq!(
+        req.passthru.get("headertwo").map(String::as_str),
+        Some("bar")
+    );
     assert!(!req.passthru.contains_key("markersend"));
 }
 

@@ -1,17 +1,17 @@
 //! `surface[N]` ブロック内の個別キー処理（collision / element / animation / point）モジュール
 
-pub mod utils;
+pub mod animation;
 pub mod collision;
 pub mod element;
-pub mod animation;
 pub mod point;
+pub mod utils;
 
-pub use utils::expand_range;
-pub(crate) use utils::{parse_balloon_offset_key, first_i32};
+pub(crate) use animation::apply_animation_line;
 pub(crate) use collision::{apply_collision, apply_collisionex};
 pub(crate) use element::apply_element;
-pub(crate) use animation::apply_animation_line;
 pub(crate) use point::apply_point;
+pub use utils::expand_range;
+pub(crate) use utils::{first_i32, parse_balloon_offset_key};
 
 #[cfg(test)]
 mod tests {
@@ -39,8 +39,14 @@ mod tests {
 
     #[test]
     fn test_parse_balloon_offset_key() {
-        assert_eq!(parse_balloon_offset_key("balloon.offset.x"), Some(("*".to_string(), 'x')));
-        assert_eq!(parse_balloon_offset_key("sakura.balloon.offset.y"), Some(("sakura".to_string(), 'y')));
+        assert_eq!(
+            parse_balloon_offset_key("balloon.offset.x"),
+            Some(("*".to_string(), 'x'))
+        );
+        assert_eq!(
+            parse_balloon_offset_key("sakura.balloon.offset.y"),
+            Some(("sakura".to_string(), 'y'))
+        );
         assert_eq!(parse_balloon_offset_key("balloon.offset"), None);
         assert_eq!(parse_balloon_offset_key("sakura.balloon.offset"), None);
         assert_eq!(parse_balloon_offset_key(".balloon.offset.x"), None);
@@ -75,7 +81,12 @@ mod tests {
         apply_collisionex(&mut txt, &[0], "collisionex0", "short");
         apply_collisionex(&mut txt, &[0], "collisionex0", "Face,circle,10,10,5,8");
         apply_collisionex(&mut txt, &[0], "collisionex1", "Box,unknown,0,0,10,10");
-        apply_collisionex(&mut txt, &[0], "collisionex2", "Poly,unknown,0,0,10,10,20,20");
+        apply_collisionex(
+            &mut txt,
+            &[0],
+            "collisionex2",
+            "Poly,unknown,0,0,10,10,20,20",
+        );
         apply_collisionex(&mut txt, &[0], "collisionex3", "Bad,unknown,0,0");
 
         apply_animation_line(&mut txt, &[0], "no_dot", "sometimes");
@@ -95,11 +106,21 @@ mod tests {
     fn test_apply_collisionex_shapes() {
         let mut txt = SurfacesTxt::default();
         apply_collisionex(&mut txt, &[0], "collision0", "Head, rect, 0, 0, 50, 50");
-        apply_collisionex(&mut txt, &[0], "collision1", "Body, polygon, 0, 0, 10, 10, 20, 20");
+        apply_collisionex(
+            &mut txt,
+            &[0],
+            "collision1",
+            "Body, polygon, 0, 0, 10, 10, 20, 20",
+        );
         apply_collisionex(&mut txt, &[0], "collision2", "C1, circle, 10, 10, 5");
         apply_collisionex(&mut txt, &[0], "collision3", "C2, circle, 10, 10, 5, 5");
         apply_collisionex(&mut txt, &[0], "collision4", "E1, ellipse, 10, 10, 5, 8");
-        apply_collisionex(&mut txt, &[0], "collision5", "F1, unknown, 0, 0, 10, 10, 20, 20");
+        apply_collisionex(
+            &mut txt,
+            &[0],
+            "collision5",
+            "F1, unknown, 0, 0, 10, 10, 20, 20",
+        );
         assert_eq!(txt.surfaces.get(&0).unwrap().collisions.len(), 6);
     }
 
@@ -116,7 +137,15 @@ mod tests {
     #[test]
     fn test_apply_point_all_fields() {
         let mut txt = SurfacesTxt::default();
-        for field in ["centerx", "centery", "basepos.x", "basepos.y", "kinoko.centerx", "kinoko.centery", "unknown"] {
+        for field in [
+            "centerx",
+            "centery",
+            "basepos.x",
+            "basepos.y",
+            "kinoko.centerx",
+            "kinoko.centery",
+            "unknown",
+        ] {
             apply_point(&mut txt, &[0], field, "100");
         }
         let points = &txt.surfaces.get(&0).unwrap().points;

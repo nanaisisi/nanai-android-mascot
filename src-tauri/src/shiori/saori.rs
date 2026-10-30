@@ -42,22 +42,26 @@ fn execute_saori_ex_internal(module: &str, function: &str, args: &[String]) -> O
         },
         "internal_random" => match function.to_lowercase().as_str() {
             "number" => {
-                let max = args.first().and_then(|s| s.parse::<u32>().ok()).unwrap_or(100);
+                let max = args
+                    .first()
+                    .and_then(|s| s.parse::<u32>().ok())
+                    .unwrap_or(100);
                 let rand_val = (std::time::SystemTime::now()
                     .duration_since(std::time::UNIX_EPOCH)
                     .unwrap_or_default()
-                    .subsec_nanos() % max) + 1;
+                    .subsec_nanos()
+                    % max)
+                    + 1;
                 Some(rand_val.to_string())
             }
-            "uuid" => {
-                Some("550e8400-e29b-41d4-a716-446655440000".to_string())
-            }
+            "uuid" => Some("550e8400-e29b-41d4-a716-446655440000".to_string()),
             _ => Some("42".to_string()),
         },
         "internal_system" => match function.to_lowercase().as_str() {
-            "listmodules" => {
-                Some("internal_time\ninternal_crypto\ninternal_random\ninternal_system\ninternal_data".to_string())
-            }
+            "listmodules" => Some(
+                "internal_time\ninternal_crypto\ninternal_random\ninternal_system\ninternal_data"
+                    .to_string(),
+            ),
             "listfunctions" => {
                 Some("Format\nDigest\nNumber\nUUID\nListModules\nListFunctions".to_string())
             }
@@ -70,7 +74,10 @@ fn execute_saori_ex_internal(module: &str, function: &str, args: &[String]) -> O
 /// SAORI 1.0 リクエストを実行（SAORI-Ex 内蔵関数および外部DLL/WASM対応）
 #[tauri::command]
 pub async fn execute_saori(request: SaoriRequest) -> Result<SaoriResponse, String> {
-    println!("🔌 EXECUTE SAORI/1.0: dll={:?}, args={:?}", request.dll_path, request.args);
+    println!(
+        "🔌 EXECUTE SAORI/1.0: dll={:?}, args={:?}",
+        request.dll_path, request.args
+    );
 
     let mut value = None;
 
@@ -96,7 +103,10 @@ pub async fn execute_saori(request: SaoriRequest) -> Result<SaoriResponse, Strin
                 .as_secs();
             timestamp.to_string()
         } else {
-            format!("Nanai SAORI Stub: executed successfully with {} args", request.args.len())
+            format!(
+                "Nanai SAORI Stub: executed successfully with {} args",
+                request.args.len()
+            )
         });
     }
 

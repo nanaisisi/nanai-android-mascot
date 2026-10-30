@@ -147,21 +147,31 @@ pub fn scan_shells_from_ghost(ghost_dir: &Path) -> Vec<ShellInfo> {
                         let sep_col = parse_color("menu.separator.color");
 
                         // [menu.background.bitmap.filename,ファイル名], [menu.foreground.bitmap.filename,ファイル名], [menu.sidebar.bitmap.filename,ファイル名]:
-                        let bg_bmp = merged
-                            .get("menu.background.bitmap.filename")
-                            .and_then(|rel| {
-                                load_menu_bitmap_data_url(rel, &path, &ghost_master_dir, ghost_dir)
-                            });
-                        let fg_bmp = merged
-                            .get("menu.foreground.bitmap.filename")
-                            .and_then(|rel| {
-                                load_menu_bitmap_data_url(rel, &path, &ghost_master_dir, ghost_dir)
-                            });
-                        let side_bmp = merged
-                            .get("menu.sidebar.bitmap.filename")
-                            .and_then(|rel| {
-                                load_menu_bitmap_data_url(rel, &path, &ghost_master_dir, ghost_dir)
-                            });
+                        let bg_bmp =
+                            merged
+                                .get("menu.background.bitmap.filename")
+                                .and_then(|rel| {
+                                    load_menu_bitmap_data_url(
+                                        rel,
+                                        &path,
+                                        &ghost_master_dir,
+                                        ghost_dir,
+                                    )
+                                });
+                        let fg_bmp =
+                            merged
+                                .get("menu.foreground.bitmap.filename")
+                                .and_then(|rel| {
+                                    load_menu_bitmap_data_url(
+                                        rel,
+                                        &path,
+                                        &ghost_master_dir,
+                                        ghost_dir,
+                                    )
+                                });
+                        let side_bmp = merged.get("menu.sidebar.bitmap.filename").and_then(|rel| {
+                            load_menu_bitmap_data_url(rel, &path, &ghost_master_dir, ghost_dir)
+                        });
 
                         // [menu.background.alignment,位置], [menu.foreground.alignment,位置], [menu.sidebar.alignment,位置]:
                         let bg_align = merged.get("menu.background.alignment").cloned();

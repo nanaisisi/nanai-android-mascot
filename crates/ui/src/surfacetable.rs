@@ -253,7 +253,10 @@ group,g1
         assert_eq!(table.groups[0].entries[0].surface_id, 10);
         assert_eq!(table.groups[1].name, "g2");
         assert_eq!(table.groups[1].entries[0].surface_id, 20);
-        assert_eq!(table.properties.get("top_prop").map(String::as_str), Some("top_val"));
+        assert_eq!(
+            table.properties.get("top_prop").map(String::as_str),
+            Some("top_val")
+        );
     }
 
     #[test]

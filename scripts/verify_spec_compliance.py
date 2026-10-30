@@ -2,8 +2,8 @@
 """
 scripts/verify_spec_compliance.py
 
-Verifies specification implementation against ~1965 collation/audit markdown files
-in docs/spec/ukadoc-spec/ and updates implementation locations, statuses, and SUMMARY.md.
+Verifies specification implementation against all audit markdown files
+in docs/spec/ukadoc-spec/ and docs/spec/ukadoc-ssp/ and updates implementation locations, statuses, and SUMMARY.md.
 """
 
 import os
@@ -17,7 +17,6 @@ GENERIC_KEYWORDS = {
     "さくらスクリプトの寿命", "version", "meta."
 }
 
-# Domain keywords that definitely indicate implemented features when found in core code
 DOMAIN_STATUS_MAP = {
     "OnBoot": "✅ 実装済(SHIORIへ送信)",
     "OnChoiceSelect": "✅ 実装済",
@@ -64,7 +63,7 @@ def search_keyword(keyword, codebase):
     return results
 
 def process_audit_files(codebase):
-    audit_files = glob.glob('docs/spec/ukadoc-spec/**/*.md', recursive=True)
+    audit_files = glob.glob('docs/spec/ukadoc-spec/**/*.md', recursive=True) + glob.glob('docs/spec/ukadoc-ssp/**/*.md', recursive=True)
     audit_files = [
         f.replace('\\', '/') for f in audit_files
         if not f.endswith('README.md') and not f.endswith('SUMMARY.md')
@@ -87,7 +86,10 @@ def process_audit_files(codebase):
         keyword = kw_match.group(1).strip()
 
         # Determine category for SUMMARY.md
-        rel_path = filepath.replace('docs/spec/ukadoc-spec/', '')
+        if 'ukadoc-ssp' in filepath:
+            rel_path = filepath.replace('docs/spec/ukadoc-ssp/', 'ssp/')
+        else:
+            rel_path = filepath.replace('docs/spec/ukadoc-spec/', '')
         parts = rel_path.split('/')
         if len(parts) >= 3 and parts[0] in ['descript', 'list', 'spec', 'ssp']:
             cat = f"{parts[0]}/{parts[1]}"
@@ -101,14 +103,12 @@ def process_audit_files(codebase):
 
         matches = search_keyword(keyword, codebase)
 
-        # Check if status needs update
         new_status = curr_status
         if keyword in DOMAIN_STATUS_MAP and matches:
             new_status = DOMAIN_STATUS_MAP[keyword]
         elif keyword.lower() in GENERIC_KEYWORDS and ('未実装' in curr_status or '検出なし' in curr_status):
             new_status = "❌ 未実装(誤検出)"
 
-        # Update implementation section if matches exist and keyword is a domain term
         if matches and keyword not in GENERIC_KEYWORDS and keyword not in ["さくらスクリプトのエスケープ", "さくらスクリプトの寿命", "補足"]:
             impl_lines = []
             for path, line_no, text in matches[:5]:
@@ -133,7 +133,6 @@ def process_audit_files(codebase):
         with open(filepath, 'w', encoding='utf-8') as f:
             f.write(content)
 
-        # Categorize for SUMMARY.md
         if "✅" in new_status:
             category_stats[cat]["✅"] += 1
         elif "⚠️" in new_status:
@@ -153,13 +152,7 @@ def update_summary(category_stats):
         "",
         "本ドキュメントは、公式 **ukadoc-spec**（コア仕様・スクリプト・イベント・記述子）と、事実上の標準ベースウェアである **ukadoc-ssp**（SSP標準設定・機能・ハウツー）の両方における Nanai Android Mascot の対応状況を網羅的に対照・集約したマスターサマリである。",
         "",
-        "---",
-        "",
-        "## 1. ukadoc-spec 規格別 実装突合サマリ",
-        "",
-        "各項目ファイルの「対応状況」を集計したものです。判定はソースの文字列検索と、一部の実装読解に基づきます。",
-        "",
-        "| 規格 | ✅ 実装済 | ⚠️ 一部対応 | ❌ 未実装 | ❓ 未確認 | 合計 |",
+        "| 規格カテゴリ | ✅ 実装済 | ⚠️ 一部対応 | ❌ 未実装 | ❓ 未確認 | 合計 |",
         "| :--- | --------: | ----------: | --------: | --------: | ---: |"
     ]
 
@@ -177,18 +170,6 @@ def update_summary(category_stats):
 
     lines.append(f"| **合計** | {tot_ok:9d} | {tot_partial:11d} | {tot_ng:9d} | {tot_unk:9d} | {tot_all:4d} |")
     lines.extend([
-        "",
-        "---",
-        "",
-        "## 2. ukadoc-ssp (標準環境 SSP 仕様) 対照テーブル",
-        "",
-        "| SSP カテゴリ (`ukadoc-ssp/`) | 対象領域・主要ファイル | 対応状況 | Nanai における実装・対応方針 |",
-        "| :--- | :--- | :---: | :--- |",
-        "| **設定 (`config/`)** | 接続 (`conn1.md`, `conn2.md`) <br>喋り/バルーン (`talk.md`) <br>ゴースト (`ghost.md`, `ghost2.md`) <br>表示 (`disp.md`) <br>音声認識/合成 (`dictation.md`) など全17項目 | **✅ 対応済** | `config.initial.toml` の `[timing]`, `[update]`, `[paths]` 設定、設定管理画面、Web Speech API (`DictationManager`) による統合制御。 |",
-        "| **開発者 (`dev/`)** | スクリプトログ (`scriptlog.md`) <br>パレット (`palette.md`) など | **✅ 対応済** | 開発者向けログ出力 (`NANAI_LOG`) およびデバッグモーダルコンソール。 |",
-        "| **拡張仕様 (`extra-spec/`)** | エクスプローラ (`explorer.md`) <br>メニュービットマップ (`menu-bitmap.md`) <br>ウィンドウ吸着 (`window-snap.md`) | **✅ 対応済** | オーナードローメニューの背景・サイドバービットマップ適用、ウィンドウ端スナップ。 |",
-        "| **標準機能 (`functions/`)** | カレンダー (`calendar/`) <br>ピクチャビューワ (`pictureviewer.md`) <br>アーカイブビューワ (`archiveviewer.md`) <br>SSPメッセンジャ (`sspim/`) <br>音声認識・合成 (`speech-recognition.md`, `speech-synthesis.md`) | **✅ 対応済** | カレンダー管理、ピクチャ/アーカイブビューワ、Web Speech API、SSTP 通信連携によるメッセージング。 |",
-        "| **ハウツー (`howto/`)** | ゴースト追加 (`add.md`) <br>RSS/ヘッドライン (`headline.md`) <br>プラグイン (`plugin.md`) <br>右クリックメニュー (`rclick.md`) | **✅ 対応済** | NAR アーカイブドラッグ＆ドロップインストール、HEADLINE/2.0 RSS/Atom フェッチャー、PLUGIN/2.0 イベント連携。 |",
         "",
         "## 注意",
         "",

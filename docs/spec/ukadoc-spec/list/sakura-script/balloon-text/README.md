@@ -27,7 +27,7 @@
 | [\![set,autoscroll,enable]](bang-set-autoscroll-enable.md)                                                | \!     |                ✅ 実装済                 |
 | [\![set,balloonalign,ID]](bang-set-balloonalign-ID.md)                                                    | \!     |                ✅ 実装済                 |
 | [\![set,balloonmarker,マーカー表示文字列]](bang-set-balloonmarker.md)                                     | \!     |                ✅ 実装済                 |
-| [\![set,balloonnum,ファイル名,現在の数,最大数]](bang-set-balloonnum.md)                                   | \!     |                ❌ 未実装                 |
+| [\![set,balloonnum,ファイル名,現在の数,最大数]](bang-set-balloonnum.md)                                   | \!     |                ✅ 実装済                 |
 | [\![set,balloonoffset,x,y]](bang-set-balloonoffset-x-y.md)                                                | \!     |                ✅ 実装済                 |
 | [\![set,balloontimeout,時間]](bang-set-balloontimeout.md)                                                 | \!     |                ✅ 実装済                 |
 | [\![set,balloonwait,倍率]](bang-set-balloonwait.md)                                                       | \!     |                ✅ 実装済                 |

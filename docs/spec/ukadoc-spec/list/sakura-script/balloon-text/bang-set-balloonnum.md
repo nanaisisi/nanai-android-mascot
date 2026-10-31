@@ -6,7 +6,7 @@
 
 ## 突合結果
 
-パーサがタグを読み飛ばす、または sakura-command-handler.js が「未対応の \! コマンド」として扱い、該当処理はない。
+`\![set,balloonnum,...]` 設定コマンドのパース処理および `SakuraCommand::BalloonSetting` へのマッピングを実装 (`crates/ui/src/script/parser/brackets/handlers/raiselike.rs`)。
 
 ## 実装箇所
 

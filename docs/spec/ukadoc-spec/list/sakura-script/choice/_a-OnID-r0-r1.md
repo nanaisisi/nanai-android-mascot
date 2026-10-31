@@ -6,7 +6,7 @@
 
 ## 突合結果
 
-基本形 (ID/テキスト) のみ処理し、この拡張形式 (複数ID / OnID / script: / 追加参照) は未対応。
+`\_a[OnID,r0,r1...]` 形式のアンカータグのパース処理および `SakuraCommand::Anchor` へのマッピングを実装 (`crates/ui/src/script/parser/brackets/handlers/underscore.rs`)。
 
 ## 実装箇所
 

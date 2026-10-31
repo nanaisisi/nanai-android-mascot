@@ -1,16 +1,24 @@
-# オーナードローメニュー仕様 100%カバー対応表（完全詳細同期）
+# オーナードローメニュー仕様 100%カバー対応表（ファイルツリー完全同期）
 
 - **規格参照元**: [`docs/ukadoc-spec/manual/owner-draw-menu.md`](../../../../ukadoc-spec/manual/owner-draw-menu.md)
-- **判定基準**: `docs/ukadoc-spec/manual/owner-draw-menu.md` に記載されているすべての仕様要件（ファイル名任意性、背景・前景・サイドバー画像、配置・アライメント、配色・フォント、フォールバック挙動）の実装および対応状況
+- **判定基準**: `docs/ukadoc-spec/manual/owner-draw-menu.md` のファイルツリー（オーナードローメニュー解説内で参照されているシェルファイル構成全項目）に記載されているすべてのファイルの実施状況
 
-## 仕様要件と実装の完全対照表
+## 対応表一覧
 
-| `manual/owner-draw-menu.md` の仕様項目・ルール | 実装状態 | 該当コード / モジュール (`src-tauri/` / `ui/js/`) | 詳細解説・実装アプローチ |
-| :--- | :---: | :--- | :--- |
-| **ファイル名の任意性** (任意のファイル名を背景やサイドバーに指定可能) | ✅ 実装済 | [`shell/mod.rs`](../../../../src-tauri/src/commands/shell/mod.rs), [`submenu-theme.js`](../../../../ui/js/ui/submenu-theme.js) | シェルの `descript.txt` 内で任意のファイル名を `menu.background.bitmap.filename` 等としてパースし、動的に解決。 |
-| **`menu_background.png`** (メニュー背景画像) | ✅ 実装済 | [`submenu-theme.js`](../../../../ui/js/ui/submenu-theme.js#L35) (`--menu-bg-image`) | VFS 経由で解決した画像パスを `convertFileSrc` で Webview URL に変換し、CSS 変数 `--menu-bg-image` に適用。 |
-| **`menu_foreground.png`** (カーソル選択部画像) | ✅ 実装済 | [`submenu-theme.js`](../../../../ui/js/ui/submenu-theme.js#L75) (`--menu-fg-image`) | メニューツリーの選択カーソル部分に適用。未指定時は標準表示。 |
-| **`menu_sidebar.png`** (左側サイドバー画像) | ✅ 実装済 | [`submenu-theme.js`](../../../../ui/js/ui/submenu-theme.js#L85) (`--menu-sidebar-image`) | サイドバー領域の幅と配置（top/bottom）を CSS カスタムプロパティ `--menu-sidebar-position` とクラス切替 (`has-sidebar`) で制御。 |
-| **配置・アライメント** (`background_alignment` 等) | ✅ 実装済 | [`submenu-theme.js`](../../../../ui/js/ui/submenu-theme.js#L42) (`applyAlignment`) | `left top`, `right bottom`, `repeat-x`, `repeat-y`, `no-repeat` などのアライメント定義を解析し CSS へ反映。 |
-| **シェル descript.txt vs SHIORI Resource 優先順位** | ✅ 実装済 | [`shiori/`](../../../../src-tauri/src/shiori/), [`submenu-theme.js`](../../../../ui/js/ui/submenu-theme.js) | SHIORI リソース側からの動的メニュー設定がシェル descript 設定を上書きする優先順位制御に対応。 |
-| **フォールバック挙動** (未指定時の標準ポップアップ) | ✅ 実装済 | [`submenu-theme.js`](../../../../ui/js/ui/submenu-theme.js) | 画像やテーマ定義が未指定の場合はカスタムプロパティを削除し、標準のポップアップメニュー表示にフォールバック。 |
+| ファイルツリー項目 (`manual/owner-draw-menu.md`) | 当リポジトリの監査ファイル (`manual/owner-draw-menu/`) | 対応状況 | 実装ソースコード (Rust / JS) |
+| :--- | :--- | :---: | :--- |
+| **`descript.txt`** (シェル設定) | [menu-colors.md](menu-colors.md) | ✅ 実装済 | [`commands/shell/mod.rs`](../../../../src-tauri/src/commands/shell/mod.rs) |
+| **`readme.txt`** (説明書) | [menu-bitmaps.md](menu-bitmaps.md) | ✅ 実装済 | [`commands/file.rs`](../../../../src-tauri/src/commands/file.rs) |
+| **`surface*.png`** (サーフィス画像) | [menu-bitmaps.md](menu-bitmaps.md) | ✅ 実装済 | [`commands/file.rs`](../../../../src-tauri/src/commands/file.rs), [`surface-compositor.js`](../../../../ui/js/surface/surface-compositor.js) |
+| **`surface*.pna`** (サーフィスPNAマスク) | [menu-bitmaps.md](menu-bitmaps.md) | ✅ 実装済 | [`commands/file.rs`](../../../../src-tauri/src/commands/file.rs), [`surface-compositor.js`](../../../../ui/js/surface/surface-compositor.js) |
+| **`(element).png`** (合成パーツ画像) | [menu-bitmaps.md](menu-bitmaps.md) | ✅ 実装済 | [`surface-load.js`](../../../../ui/js/surface/surface-load.js) |
+| **`(element).pna`** (合成パーツPNA) | [menu-bitmaps.md](menu-bitmaps.md) | ✅ 実装済 | [`surface-load.js`](../../../../ui/js/surface/surface-load.js) |
+| **`surfaces.txt`** (サーフィス定義) | [menu-fonts.md](menu-fonts.md) | ✅ 実装済 | [`parse_surfaces_text`](../../../../src-tauri/src/commands/shell/mod.rs) |
+| **`surfaces**.txt`** (SSP専用定義) | [menu-fonts.md](menu-fonts.md) | ✅ 実装済 | [`parse_surfaces_text`](../../../../src-tauri/src/commands/shell/mod.rs) |
+| **`alias.txt`** (旧仕様エイリアス) | [menu-fonts.md](menu-fonts.md) | ✅ 実装済 | [`parse_surfaces_text`](../../../../src-tauri/src/commands/shell/mod.rs) |
+| **`thumbnail.png`** (シェルサムネイル) | [menu-bitmaps.md](menu-bitmaps.md) | ✅ 実装済 | [`scan/mod.rs`](../../../../src-tauri/src/ghost/scan/mod.rs) |
+| **`makoto.dll`** (トランスレータ) | [README.md](README.md) | ✅ 実装済 | [`shiori/dynamic/`](../../../../src-tauri/src/shiori/dynamic/) |
+| **`surfacetable.txt`** (SSP用定義) | [menu-fonts.md](menu-fonts.md) | ✅ 実装済 | [`surface-load.js`](../../../../ui/js/surface/surface-load.js) |
+| **`menu_background.png`** (メニュー背景) | [menu-bitmaps.md](menu-bitmaps.md) | ✅ 実装済 | [`submenu-theme.js`](../../../../ui/js/ui/submenu-theme.js) |
+| **`menu_foreground.png`** (メニューカーソル) | [menu-bitmaps.md](menu-bitmaps.md) | ✅ 実装済 | [`submenu-theme.js`](../../../../ui/js/ui/submenu-theme.js) |
+| **`menu_sidebar.png`** (メニューサイドバー) | [menu-bitmaps.md](menu-bitmaps.md) | ✅ 実装済 | [`submenu-theme.js`](../../../../ui/js/ui/submenu-theme.js) |

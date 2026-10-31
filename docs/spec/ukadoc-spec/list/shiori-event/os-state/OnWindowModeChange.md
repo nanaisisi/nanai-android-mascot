@@ -2,7 +2,7 @@
 
 - **規格**: [OnWindowModeChange.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/os-state/OnWindowModeChange/) (ukadoc-spec/list/shiori-event/os-state/OnWindowModeChange.md)
 - **検索語**: OnWindowModeChange
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

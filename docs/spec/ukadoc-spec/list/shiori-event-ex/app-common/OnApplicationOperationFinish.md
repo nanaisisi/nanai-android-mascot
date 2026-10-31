@@ -2,7 +2,7 @@
 
 - **規格**: [OnApplicationOperationFinish.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event-ex/app-common/OnApplicationOperationFinish/) (ukadoc-spec/list/shiori-event-ex/app-common/OnApplicationOperationFinish.md)
 - **検索語**: OnApplicationOperationFinish
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

@@ -2,7 +2,7 @@
 
 - **規格**: [OnElonaOmakeMMAEventSkillUp.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event-ex/app-elona-omake-mma/OnElonaOmakeMMAEventSkillUp/) (ukadoc-spec/list/shiori-event-ex/app-elona-omake-mma/OnElonaOmakeMMAEventSkillUp.md)
 - **検索語**: OnElonaOmakeMMAEventSkillUp
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

@@ -2,7 +2,7 @@
 
 - **規格**: [ShioriEcho.CommandHistory.New.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event-ex/app-ghost-terminal/ShioriEcho.CommandHistory.New/) (ukadoc-spec/list/shiori-event-ex/app-ghost-terminal/ShioriEcho.CommandHistory.New.md)
 - **検索語**: ShioriEcho.CommandHistory.New
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

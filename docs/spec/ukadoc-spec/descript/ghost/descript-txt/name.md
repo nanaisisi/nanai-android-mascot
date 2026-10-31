@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs` `// [name,ゴースト名], [title,表示名], [type,種別]:`
+実装コード内に「name」は検出されませんでした。

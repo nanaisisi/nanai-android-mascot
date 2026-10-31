@@ -2,7 +2,7 @@
 
 - **規格**: [mousecursor.hand.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/mousecursor.hand/) (ukadoc-spec/descript/ghost/descript-txt/mousecursor.hand.md)
 - **検索語**: mousecursor.hand
-- **対応状況**: ✅ 対応済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,5 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs:208` `// [cursor,ファイル名 / mousecursor,ファイル名], [mousecursor.arrow,ファイル名], [mousecursor.g`
-- `src-tauri/src/ghost/scan/directory.rs:212` `let _mc_hand = m.get("mousecursor.hand");`
+実装コード内に「mousecursor.hand」は検出されませんでした。

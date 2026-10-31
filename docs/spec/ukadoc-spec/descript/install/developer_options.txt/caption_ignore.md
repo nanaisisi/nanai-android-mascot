@@ -2,7 +2,7 @@
 
 - **規格**: [caption_ignore.md](https://ukatech.shillest.net/ukadoc-spec/descript/install/developer_options.txt/caption_ignore/) (ukadoc-spec/descript/install/developer_options.txt/caption_ignore.md)
 - **検索語**: 自動的に除外される対象
-- **対応状況**: ✅ 対応済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs:65` `// [developer_options.txt], [自動的に除外される対象], [相対パス,オプション1,オプション2,...]:`
+実装コード内に「自動的に除外される対象」は検出されませんでした。

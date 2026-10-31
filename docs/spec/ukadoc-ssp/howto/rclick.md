@@ -1,7 +1,7 @@
 # 基本的な使い方：右クリックメニュー
 
 - **規格**: [howto/rclick.md](https://ukatech.shillest.net/ukadoc-ssp/howto/rclick/) (ukadoc-ssp/howto/rclick.md)
-- **対応状況**: ✅ 実装済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

@@ -2,7 +2,7 @@
 
 - **規格**: [OnSchedule5MinutesToGo.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/calendar/OnSchedule5MinutesToGo/) (ukadoc-spec/list/shiori-event/calendar/OnSchedule5MinutesToGo.md)
 - **検索語**: OnSchedule5MinutesToGo
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

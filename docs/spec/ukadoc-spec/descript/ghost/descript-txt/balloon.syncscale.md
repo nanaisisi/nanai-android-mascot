@@ -2,7 +2,7 @@
 
 - **規格**: [balloon.syncscale.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/balloon.syncscale.md)
 - **検索語**: balloon.syncscale
-- **対応状況**: ✅ 対応済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/shell.rs:99` `// [sakura.balloon.alignment,位置情報], [kero.balloon.alignment,位置情報], [sakura.ballo`
+実装コード内に「balloon.syncscale」は検出されませんでした。

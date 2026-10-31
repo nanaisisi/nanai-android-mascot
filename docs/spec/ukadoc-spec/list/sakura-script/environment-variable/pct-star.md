@@ -2,7 +2,7 @@
 
 - **規格**: [pct-star.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/environment-variable/pct-star/) (ukadoc-spec/list/sakura-script/environment-variable/pct-star.md)
 - **検索語**: %\*
-- **対応状況**: ✅ 実装済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

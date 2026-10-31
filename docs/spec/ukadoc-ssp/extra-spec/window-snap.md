@@ -1,7 +1,7 @@
 # SSP ウィンドウ・スナップ機能および位置リセット仕様 (Window Snap & Position Reset Specification)
 
 - **規格**: [ukadoc-ssp/functions/window](https://ukatech.shillest.net/ukadoc-ssp/) / SSP デスクトップスナップ・ウインドウ配置規約
-- **対応状況**: ✅ 対応済
+- **対応状況**: ❌ 未実装
 
 ## 1. 概要
 

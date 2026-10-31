@@ -2,7 +2,7 @@
 
 - **規格**: [menu.separator.color.b.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ownerdraw-color/menu.separator.color.b/) (ukadoc-spec/list/shiori-resource/ownerdraw-color/menu.separator.color.b.md)
 - **検索語**: menu.separator.color.b
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

@@ -2,7 +2,7 @@
 
 - **規格**: [ShioriEcho.GetName.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event-ex/app-ghost-terminal/ShioriEcho.GetName/) (ukadoc-spec/list/shiori-event-ex/app-ghost-terminal/ShioriEcho.GetName.md)
 - **検索語**: ShioriEcho.GetName
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

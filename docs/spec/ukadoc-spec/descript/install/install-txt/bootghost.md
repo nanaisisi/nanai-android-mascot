@@ -2,7 +2,7 @@
 
 - **規格**: [bootghost.md](https://ukatech.shillest.net/ukadoc-spec/descript/install/install-txt/) (ukadoc-spec/descript/install/install-txt/bootghost.md)
 - **検索語**: bootghost
-- **対応状況**: ✅ 対応済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,5 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive.rs:53` `// [install.txt（概要）], [同時インストール], [name,オブジェクト名], [type,種別], [directory,ディレクトリ名]`
-- `src-tauri/src/commands/install/archive.rs:65` `let _bootghost = map.get("bootghost");`
+実装コード内に「bootghost」は検出されませんでした。

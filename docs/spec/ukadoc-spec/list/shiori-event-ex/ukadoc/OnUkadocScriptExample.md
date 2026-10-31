@@ -2,7 +2,7 @@
 
 - **規格**: [OnUkadocScriptExample.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event-ex/ukadoc/OnUkadocScriptExample/) (ukadoc-spec/list/shiori-event-ex/ukadoc/OnUkadocScriptExample.md)
 - **検索語**: OnUkadocScriptExample
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

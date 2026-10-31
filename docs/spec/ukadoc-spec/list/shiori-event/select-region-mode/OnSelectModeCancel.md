@@ -2,7 +2,7 @@
 
 - **規格**: [OnSelectModeCancel.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/select-region-mode/OnSelectModeCancel/) (ukadoc-spec/list/shiori-event/select-region-mode/OnSelectModeCancel.md)
 - **検索語**: OnSelectModeCancel
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

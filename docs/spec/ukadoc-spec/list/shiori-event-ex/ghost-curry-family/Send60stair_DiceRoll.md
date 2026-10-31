@@ -2,7 +2,7 @@
 
 - **規格**: [Send60stair_DiceRoll.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event-ex/ghost-curry-family/Send60stair_DiceRoll/) (ukadoc-spec/list/shiori-event-ex/ghost-curry-family/Send60stair_DiceRoll.md)
 - **検索語**: Send60stair_DiceRoll
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

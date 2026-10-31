@@ -2,7 +2,7 @@
 
 - **規格**: [OnGhostTermsDecline.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/dialogbox/OnGhostTermsDecline/) (ukadoc-spec/list/shiori-event/dialogbox/OnGhostTermsDecline.md)
 - **検索語**: OnGhostTermsDecline
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

@@ -2,7 +2,7 @@
 
 - **規格**: [currentghost.seriko.cursor.scope-ID-.mouse-q-q-q-q-list.index-ID2-.name.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/currentghost.seriko.cursor.scope-ID-.mouse-q-q-q-q-list.index-ID2-.name/) (ukadoc-spec/list/propertysystem/property-system/currentghost.seriko.cursor.scope-ID-.mouse-q-q-q-q-list.index-ID2-.name.md)
 - **検索語**: currentghost.seriko.cursor.scope
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

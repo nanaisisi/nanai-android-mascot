@@ -2,7 +2,7 @@
 
 - **規格**: [animation-sort.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/descript-brace/animation-sort/) (ukadoc-spec/descript/shell-surfaces/descript-brace/animation-sort.md)
 - **検索語**: animation-sort
-- **対応状況**: ✅ 対応済 (surface-load.js)
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/surface/surface-load.js` `// [animation-sort,ソート順序]`
+実装コード内に「animation-sort」は検出されませんでした。

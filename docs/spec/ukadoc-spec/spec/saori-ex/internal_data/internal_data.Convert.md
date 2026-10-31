@@ -10,5 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/core/tauri-helper.js:6` `import { convertFileSrc as tauriConvertFileSrc, invoke as tauriInvoke } from "@tauri-apps/`
-- `ui/js/core/tauri-helper.js:40` `return tauriConvertFileSrc(filePath, protocol);`
+実装コード内に「Convert」は検出されませんでした。

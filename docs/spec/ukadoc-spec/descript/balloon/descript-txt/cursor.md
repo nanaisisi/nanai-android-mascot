@@ -2,7 +2,7 @@
 
 - **規格**: [cursor.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/cursor.md)
 - **検索語**: cursor, mousecursor
-- **対応状況**: ✅ 対応済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,6 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/assets.js` `setMouseCursor("mousecursor.arrow", "--balloon-cursor-arrow");`
-- `ui/js/core/actions/balloon-descript/assets.js` `setMouseCursor("mousecursor.text", "--balloon-cursor-text");`
-- `ui/js/core/actions/balloon-descript/assets.js` `setMouseCursor("mousecursor.wait", "--balloon-cursor-wait");`
+実装コード内に「cursor, mousecursor」は検出されませんでした。

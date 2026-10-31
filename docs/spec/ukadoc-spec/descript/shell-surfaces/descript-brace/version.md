@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/surface/surface-load.js` `// [version,1]`
+実装コード内に「version」は検出されませんでした。

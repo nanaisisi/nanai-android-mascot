@@ -2,7 +2,7 @@
 
 - **規格**: [anchor.font.shadowcolor.g.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/anchor.font.shadowcolor.g.md)
 - **検索語**: anchor.font.shadowcolor.g
-- **対応状況**: ✅ 対応済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,5 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js:176` `// [anchor.font.shadowcolor.r,数値], [anchor.font.shadowcolor.g,数値], [anchor.font.`
-- `ui/js/core/actions/balloon-descript/font.js:179` `props["anchor.font.shadowcolor.g"] ||`
+実装コード内に「anchor.font.shadowcolor.g」は検出されませんでした。

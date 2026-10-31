@@ -1,7 +1,7 @@
 # update-file : 概要
 
 - **規格**: [overview.md](https://ukatech.shillest.net/ukadoc-spec/spec/update-file/overview/) (ukadoc-spec/spec/update-file/overview.md)
-- **対応状況**: ✅ 実装済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

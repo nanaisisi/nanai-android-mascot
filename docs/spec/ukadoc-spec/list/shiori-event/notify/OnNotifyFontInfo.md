@@ -2,7 +2,7 @@
 
 - **規格**: [OnNotifyFontInfo.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/notify/OnNotifyFontInfo/) (ukadoc-spec/list/shiori-event/notify/OnNotifyFontInfo.md)
 - **検索語**: OnNotifyFontInfo
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

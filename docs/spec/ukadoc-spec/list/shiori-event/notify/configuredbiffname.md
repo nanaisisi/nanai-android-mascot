@@ -2,7 +2,7 @@
 
 - **規格**: [configuredbiffname.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/notify/configuredbiffname/) (ukadoc-spec/list/shiori-event/notify/configuredbiffname.md)
 - **検索語**: configuredbiffname
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

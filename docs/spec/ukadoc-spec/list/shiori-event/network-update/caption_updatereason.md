@@ -2,7 +2,7 @@
 
 - **規格**: [caption_updatereason.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/network-update/caption_updatereason/) (ukadoc-spec/list/shiori-event/network-update/caption_updatereason/)
 - **検索語**: ネットワーク更新理由
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,5 +10,4 @@ OnUpdateProcessExec / OnUpdateBegin / OnUpdateReady / OnUpdateComplete / OnUpdat
 
 ## 実装箇所
 
-- `ui/js/core/app-update.js` (各 sendShioriEvent の第5引数 `"" "ghost", "manual"`)
-- `ui/js/core/app-update.js` `await gc.sendShioriEvent("OnUpdateProcessExec", ["manual"])`
+実装コード内に「ネットワーク更新理由」は検出されませんでした。

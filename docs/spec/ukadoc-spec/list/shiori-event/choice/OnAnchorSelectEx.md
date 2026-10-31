@@ -2,7 +2,7 @@
 
 - **規格**: [OnAnchorSelectEx.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/choice/OnAnchorSelectEx/) (ukadoc-spec/list/shiori-event/choice/OnAnchorSelectEx.md)
 - **検索語**: OnAnchorSelectEx
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

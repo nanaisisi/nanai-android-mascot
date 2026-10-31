@@ -2,7 +2,7 @@
 
 - **規格**: [OnMouseUpEx.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/mouse/OnMouseUpEx/) (ukadoc-spec/list/shiori-event/mouse/OnMouseUpEx.md)
 - **検索語**: OnMouseUpEx
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

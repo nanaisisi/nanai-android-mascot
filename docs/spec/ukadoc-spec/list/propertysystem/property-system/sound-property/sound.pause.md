@@ -10,6 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/sakura-script.js:172` `case "pause":`
-- `ui/js/ghost/sakura-parser.js:7` (コメント) `* @property {string} type - トークン種別 ('scope'|'surface'|'animation'|'wait'|'newline'|'clear'`
-- `ui/js/ghost/sakura-parser.js:140` `tokens.push({ type: "pause" });`
+実装コード内に「pause」は検出されませんでした。

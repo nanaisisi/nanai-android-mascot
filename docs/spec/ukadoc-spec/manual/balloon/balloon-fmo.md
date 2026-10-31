@@ -1,6 +1,6 @@
 # バルーン FMO 連携 (`balloon0`, `balloon1`)
 
-- **対応状況**: ✅ 実装済
+- **対応状況**: ❌ 未実装
 - **実装ファイル**:
   - [fmo.rs](../../../../src-tauri/src/fmo.rs) (`pub balloon0`, `pub balloon1`)
 

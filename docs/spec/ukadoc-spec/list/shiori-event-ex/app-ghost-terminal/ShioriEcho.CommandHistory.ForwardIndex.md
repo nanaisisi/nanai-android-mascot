@@ -2,7 +2,7 @@
 
 - **規格**: [ShioriEcho.CommandHistory.ForwardIndex.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event-ex/app-ghost-terminal/ShioriEcho.CommandHistory.ForwardIndex/) (ukadoc-spec/list/shiori-event-ex/app-ghost-terminal/ShioriEcho.CommandHistory.ForwardIndex.md)
 - **検索語**: ShioriEcho.CommandHistory.ForwardIndex
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

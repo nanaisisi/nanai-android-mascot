@@ -2,7 +2,7 @@
 
 - **規格**: [pluginpathlist.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/notify/pluginpathlist/) (ukadoc-spec/list/shiori-event/notify/pluginpathlist.md)
 - **検索語**: pluginpathlist
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

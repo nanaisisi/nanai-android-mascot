@@ -2,7 +2,7 @@
 
 - **規格**: [OnElinMapItemGenerate.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event-ex/app-elin/OnElinMapItemGenerate/) (ukadoc-spec/list/shiori-event-ex/app-elin/OnElinMapItemGenerate.md)
 - **検索語**: OnElinMapItemGenerate
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

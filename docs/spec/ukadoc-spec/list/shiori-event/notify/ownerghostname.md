@@ -2,7 +2,7 @@
 
 - **規格**: [ownerghostname.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/notify/ownerghostname/) (ukadoc-spec/list/shiori-event/notify/ownerghostname.md)
 - **検索語**: ownerghostname
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

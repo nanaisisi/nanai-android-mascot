@@ -1,7 +1,7 @@
 # memo/shiori-event.md 規格対応文書
 
 - **参照規格**: [ukadoc-spec/memo/shiori-event.md](../../../../ukadoc-spec/memo/shiori-event.md) (SHIORIイベント解説)
-- **対応状況**: ✅ 対応済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -9,5 +9,4 @@
 
 ## 実装箇所
 
-- `crates/ui/src/shiori/protocol/` SHIORI プロトコル・イベント処理
-- `ui/js/ghost/shiori-notify.js` SHIORI イベント通知
+実装コード内に「shiori-event」は検出されませんでした。

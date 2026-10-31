@@ -1,7 +1,7 @@
 # update-file : updates.txt (Version 3)
 
 - **規格**: [updatestxt.md](https://ukatech.shillest.net/ukadoc-spec/spec/update-file/updatestxt/) (ukadoc-spec/spec/update-file/updatestxt.md)
-- **対応状況**: ✅ 実装済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -9,4 +9,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/update/dau.rs:3` `pub use nanai_android_mascot_ui::{UpdateEntry, parse_update_definition};`
+実装コード内に「updatestxt」は検出されませんでした。

@@ -2,7 +2,7 @@
 
 - **規格**: [OnCompressArchiveFailure.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/other/OnCompressArchiveFailure/) (ukadoc-spec/list/shiori-event/other/OnCompressArchiveFailure.md)
 - **検索語**: OnCompressArchiveFailure
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

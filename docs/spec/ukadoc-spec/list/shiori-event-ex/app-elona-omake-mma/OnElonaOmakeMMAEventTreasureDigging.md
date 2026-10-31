@@ -2,7 +2,7 @@
 
 - **規格**: [OnElonaOmakeMMAEventTreasureDigging.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event-ex/app-elona-omake-mma/OnElonaOmakeMMAEventTreasureDigging/) (ukadoc-spec/list/shiori-event-ex/app-elona-omake-mma/OnElonaOmakeMMAEventTreasureDigging.md)
 - **検索語**: OnElonaOmakeMMAEventTreasureDigging
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

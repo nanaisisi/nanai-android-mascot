@@ -2,7 +2,7 @@
 
 - **規格**: [currentghost.shelllist.current.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/currentghost.shelllist.current/) (ukadoc-spec/list/propertysystem/property-system/currentghost.shelllist.current.md)
 - **検索語**: currentghost.shelllist.current.
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

@@ -2,7 +2,7 @@
 
 - **規格**: [system.monitor.index-ID-.dpi.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/system.monitor.index-ID-.dpi/) (ukadoc-spec/list/propertysystem/property-system/system.monitor.index-ID-.dpi.md)
 - **検索語**: system.monitor.index
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

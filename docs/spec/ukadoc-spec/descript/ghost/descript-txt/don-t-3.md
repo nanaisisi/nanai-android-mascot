@@ -2,7 +2,7 @@
 
 - **規格**: [don-t-3.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/don-t-3.md)
 - **検索語**: don't need seriko talk
-- **対応状況**: ✅ 対応済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,5 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs:195` `// [don't need onmousemove,数値], [don't need bind,数値], [don't need seriko talk,数値`
-- `src-tauri/src/ghost/scan/directory.rs:198` `let _need_seriko_talk = m.get("don't need seriko talk");`
+実装コード内に「don't need seriko talk」は検出されませんでした。

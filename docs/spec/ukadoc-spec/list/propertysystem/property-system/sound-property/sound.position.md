@@ -10,8 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/window/menu_window.rs:26` `let screen_pos = monitor.position();`
-- `src-tauri/src/commands/window/menu_window.rs:43` `let _ = menu_win.set_position(tauri::Position::Physical(tauri::PhysicalPosition {`
-- `src-tauri/src/commands/window/menu_window.rs:63` `.position(target_x, target_y)`
-- `src-tauri/src/commands/window/menu_window.rs:114` `let screen_pos = monitor.position();`
-- `src-tauri/src/commands/window/menu_window.rs:132` `let _ = sub_win.set_position(tauri::Position::Physical(tauri::PhysicalPosition {`
+実装コード内に「position」は検出されませんでした。

@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive.rs` `// [install.txt（概要）]... [name,オブジェクト名]...`
+実装コード内に「name」は検出されませんでした。

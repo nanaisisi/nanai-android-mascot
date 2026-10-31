@@ -10,6 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/core/app-update.js:13` (コメント) `*    - OnUpdate.OnMD5CompareBegin`
-- `ui/js/core/app-update.js:14` (コメント) `*    - OnUpdate.OnMD5CompareComplete / OnMD5CompareFailure`
-- `ui/js/ghost/ghost.js:99` `return a.name.localeCompare(b.name);`
+実装コード内に「Compare」は検出されませんでした。

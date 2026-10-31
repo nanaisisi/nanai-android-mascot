@@ -2,7 +2,7 @@
 
 - **規格**: [sakura.balloon.offsety.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/sakura.balloon.offsety/) (ukadoc-spec/descript/shell-surfaces/surface-brace/sakura.balloon.offsety.md)
 - **検索語**: sakura.balloon.offsety
-- **対応状況**: ⚠️ 一部対応 (Rust パーサー `crates/ui/src/surfaces.rs` で解析・データ化実装済 / 描画・実行への反映は別レイヤー)
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/shell.rs:98` `// [sakura.balloon.offsetx,座標], [sakura.balloon.offsety,座標], [kero.balloon.offse`
+実装コード内に「sakura.balloon.offsety」は検出されませんでした。

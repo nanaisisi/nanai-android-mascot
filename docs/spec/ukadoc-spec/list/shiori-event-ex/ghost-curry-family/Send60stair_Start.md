@@ -2,7 +2,7 @@
 
 - **規格**: [Send60stair_Start.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event-ex/ghost-curry-family/Send60stair_Start/) (ukadoc-spec/list/shiori-event-ex/ghost-curry-family/Send60stair_Start.md)
 - **検索語**: Send60stair_Start
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

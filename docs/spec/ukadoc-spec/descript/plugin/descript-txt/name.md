@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/ext.rs` `// [name,プラグイン名], [id,ID名], [type,種別], [filename,ファイル名]:`
+実装コード内に「name」は検出されませんでした。

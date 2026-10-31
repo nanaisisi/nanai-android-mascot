@@ -2,7 +2,7 @@
 
 - **規格**: [cursor.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/cursor/) (ukadoc-spec/descript/ghost/descript-txt/cursor.md)
 - **検索語**: cursor, mousecursor
-- **対応状況**: ✅ 対応済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,5 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs` `// [cursor,ファイル名 / mousecursor,ファイル名]...`
-- `ui/js/core/actions/balloon-descript/assets.js` `setMouseCursor("cursor", "--balloon-cursor-default");`
+実装コード内に「cursor, mousecursor」は検出されませんでした。

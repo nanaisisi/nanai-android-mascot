@@ -2,7 +2,7 @@
 
 - **規格**: [kero.seriko.defaultsurface.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/kero.seriko.defaultsurface.md)
 - **検索語**: kero.seriko.defaultsurface
-- **対応状況**: ✅ 対応済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,5 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs:155` `// [sakura.seriko.defaultsurface,数値], [kero.seriko.defaultsurface,数値], [char*.se`
-- `src-tauri/src/ghost/scan/directory.rs:157` `let _kero_ss = m.get("kero.seriko.defaultsurface");`
+実装コード内に「kero.seriko.defaultsurface」は検出されませんでした。

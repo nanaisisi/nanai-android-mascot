@@ -2,7 +2,7 @@
 
 - **規格**: [installedheadlinename.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/notify/installedheadlinename/) (ukadoc-spec/list/shiori-event/notify/installedheadlinename.md)
 - **検索語**: installedheadlinename
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

@@ -2,7 +2,7 @@
 
 - **規格**: [OnMouseWheel.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/mouse/OnMouseWheel/) (ukadoc-spec/list/shiori-event/mouse/OnMouseWheel.md)
 - **検索語**: OnMouseWheel
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

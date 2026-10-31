@@ -1,6 +1,6 @@
 # `thumbnail.png`
 
-- **対応状況**: ✅ 実装済
+- **対応状況**: ❌ 未実装
 - **実装ファイル**:
   - [balloon.rs](../../../../src-tauri/src/commands/shell/balloon.rs) (`scan_balloons` での `thumbnail.png` / `.jpg` / `.bmp` 読込)
 

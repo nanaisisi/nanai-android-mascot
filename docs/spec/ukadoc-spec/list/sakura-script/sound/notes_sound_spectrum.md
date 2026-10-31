@@ -2,7 +2,7 @@
 
 - **規格**: [notes_sound_spectrum.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/sound/notes_sound_spectrum/) (ukadoc-spec/list/sakura-script/sound/notes_sound_spectrum.md)
 - **検索語**: sound
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

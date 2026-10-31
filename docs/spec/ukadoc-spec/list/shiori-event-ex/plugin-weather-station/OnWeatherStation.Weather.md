@@ -2,7 +2,7 @@
 
 - **規格**: [OnWeatherStation.Weather.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event-ex/plugin-weather-station/OnWeatherStation.Weather/) (ukadoc-spec/list/shiori-event-ex/plugin-weather-station/OnWeatherStation.Weather.md)
 - **検索語**: OnWeatherStation.Weather
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

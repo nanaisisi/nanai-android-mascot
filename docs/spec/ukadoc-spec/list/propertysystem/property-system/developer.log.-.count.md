@@ -2,7 +2,7 @@
 
 - **規格**: [developer.log.-.count.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/developer.log.-.count/) (ukadoc-spec/list/propertysystem/property-system/developer.log.-.count.md)
 - **検索語**: developer.log.
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

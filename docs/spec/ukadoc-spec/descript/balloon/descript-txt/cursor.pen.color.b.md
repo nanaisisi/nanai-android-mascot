@@ -2,7 +2,7 @@
 
 - **規格**: [cursor.pen.color.b.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/cursor.pen.color.b.md)
 - **検索語**: cursor.pen.color.b
-- **対応状況**: ✅ 対応済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,5 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js:271` `// [cursor.pen.color.r,数値], [cursor.pen.color.g,数値], [cursor.pen.color.b,数値], [c`
-- `ui/js/core/actions/balloon-descript/font.js:275` `props["cursor.pen.color.b"] ||`
+実装コード内に「cursor.pen.color.b」は検出されませんでした。

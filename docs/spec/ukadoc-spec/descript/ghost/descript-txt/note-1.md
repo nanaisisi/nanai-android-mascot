@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs` `// [name.allowoverride,数値], [makoto,ファイル名], [補足]:`
+実装コード内に「補足」は検出されませんでした。

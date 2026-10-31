@@ -10,5 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/update/network.rs:2` `use md5::{Digest, Md5};`
-- `src-tauri/src/commands/update/dau.rs:1` `use md5::{Digest, Md5};`
+実装コード内に「Digest」は検出されませんでした。

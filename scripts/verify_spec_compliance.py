@@ -124,6 +124,8 @@ def process_audit_files(codebase):
             new_status = DOMAIN_STATUS_MAP[keyword]
         elif keyword.lower() in GENERIC_KEYWORDS and ('未実装' in curr_status or '検出なし' in curr_status):
             new_status = "❌ 未実装(誤検出)"
+        elif not matches and keyword not in GENERIC_KEYWORDS and keyword not in ["さくらスクリプトのエスケープ", "さくらスクリプトの寿命", "補足"] and 'note-' not in filepath:
+            new_status = "❌ 未実装"
 
         if matches and keyword not in GENERIC_KEYWORDS and keyword not in ["さくらスクリプトのエスケープ", "さくらスクリプトの寿命", "補足"]:
             impl_lines = []
@@ -139,22 +141,13 @@ def process_audit_files(codebase):
             else:
                 content += f"\n\n## 実装箇所\n\n{impl_block}\n"
 
-            if "❌ 検出なし" in curr_status:
+            if "❌ 検出なし" in curr_status or "❌ 未実装" in curr_status:
                 content = content.replace("実装コードに「" + keyword + "」が見つからない。", f"実装コード内に「{keyword}」を確認。")
-        elif "## 実装箇所" in content:
-            idx = content.find("## 実装箇所")
-            impl_section = content[idx:]
-            cleaned_impl_lines = [
-                sanitize_snippet(ln)
-                for ln in impl_section.splitlines()
-                if "src-tauri/gen/" not in ln and "<USER_HOME>" not in sanitize_snippet(ln)
-            ]
-            # If only heading remains without bullet items, remove section or keep cleaned lines
-            has_bullets = any(ln.strip().startswith("- ") for ln in cleaned_impl_lines)
-            if has_bullets:
-                content = content[:idx] + "\n".join(cleaned_impl_lines) + "\n"
-            else:
-                content = content[:idx].rstrip() + "\n"
+                content = content.replace("実装コードに「" + keyword + "」が見つからない(短いトークンのため誤検出の可能性大)。", f"実装コード内に「{keyword}」を確認。")
+        else:
+            if "## 実装箇所" in content:
+                idx = content.find("## 実装箇所")
+                content = content[:idx] + f"## 実装箇所\n\n実装コード内に「{keyword}」は検出されませんでした。\n"
 
         if new_status != curr_status:
             content = re.sub(r'(-\s*\*\*対応状況\*\*:\s*).*', r'\1' + new_status, content)

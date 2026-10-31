@@ -2,7 +2,7 @@
 
 - **規格**: [caption_archive_error_codes.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/other/caption_archive_error_codes/) (ukadoc-spec/list/shiori-event/other/caption_archive_error_codes.md)
 - **検索語**: アーカイブ操作エラーコード
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

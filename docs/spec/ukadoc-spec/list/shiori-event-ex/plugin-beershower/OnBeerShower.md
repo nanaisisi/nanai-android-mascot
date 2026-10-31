@@ -2,7 +2,7 @@
 
 - **規格**: [OnBeerShower.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event-ex/plugin-beershower/OnBeerShower/) (ukadoc-spec/list/shiori-event-ex/plugin-beershower/OnBeerShower.md)
 - **検索語**: OnBeerShower
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

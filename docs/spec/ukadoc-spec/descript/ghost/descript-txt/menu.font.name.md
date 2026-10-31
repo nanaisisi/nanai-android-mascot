@@ -2,7 +2,7 @@
 
 - **規格**: [menu.font.name.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/menu.font.name.md)
 - **検索語**: menu.font.name
-- **対応状況**: ✅ 対応済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,5 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/shell.rs:136` `// [menu.font.name,フォント名], [menu.font.height,フォントサイズ]:`
-- `src-tauri/src/ghost/scan/shell.rs:137` `let _menu_font_name = merged.get("menu.font.name");`
+実装コード内に「menu.font.name」は検出されませんでした。

@@ -2,7 +2,7 @@
 
 - **規格**: [OnVanishSelecting.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/vanish/OnVanishSelecting/) (ukadoc-spec/list/shiori-event/vanish/OnVanishSelecting.md)
 - **検索語**: OnVanishSelecting
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

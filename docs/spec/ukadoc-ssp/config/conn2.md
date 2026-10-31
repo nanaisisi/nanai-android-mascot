@@ -1,7 +1,7 @@
 # 設定：接続(2)
 
 - **規格**: [config/conn2.md](https://ukatech.shillest.net/ukadoc-ssp/config/conn2/) (ukadoc-ssp/config/conn2.md)
-- **対応状況**: ✅ 実装済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

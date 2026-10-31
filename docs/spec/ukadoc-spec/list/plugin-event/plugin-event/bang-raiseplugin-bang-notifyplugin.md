@@ -2,7 +2,7 @@
 
 - **規格**: [bang-raiseplugin-bang-notifyplugin.md](https://ukatech.shillest.net/ukadoc-spec/list/plugin-event/plugin-event/bang-raiseplugin-bang-notifyplugin/) (ukadoc-spec/list/plugin-event/plugin-event/bang-raiseplugin-bang-notifyplugin.md)
 - **検索語**: raiseplugin
-- **対応状況**: ✅ 対応済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/parser/brackets/handlers.rs` プラグインイベントハンドラ
+実装コード内に「raiseplugin」は検出されませんでした。

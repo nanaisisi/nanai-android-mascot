@@ -2,7 +2,7 @@
 
 - **規格**: [OnElonaOmakeMMAEventSaleWife.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event-ex/app-elona-omake-mma/OnElonaOmakeMMAEventSaleWife/) (ukadoc-spec/list/shiori-event-ex/app-elona-omake-mma/OnElonaOmakeMMAEventSaleWife.md)
 - **検索語**: OnElonaOmakeMMAEventSaleWife
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

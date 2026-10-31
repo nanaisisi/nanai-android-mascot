@@ -2,7 +2,7 @@
 
 - **規格**: [caption_updatetype.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/network-update/caption_updatetype/) (ukadoc-spec/list/shiori-event/network-update/caption_updatetype/)
 - **検索語**: ネットワーク更新対象の種別
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/core/app-update.js` (各 sendShioriEvent の各第4引数 `"ghost"`)
+実装コード内に「ネットワーク更新対象の種別」は検出されませんでした。

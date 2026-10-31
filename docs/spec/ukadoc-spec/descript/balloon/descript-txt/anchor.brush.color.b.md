@@ -2,7 +2,7 @@
 
 - **規格**: [anchor.brush.color.b.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/anchor.brush.color.b.md)
 - **検索語**: anchor.brush.color.b
-- **対応状況**: ✅ 対応済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,5 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js:184` `// [anchor.pen.color.r,数値], [anchor.pen.color.g,数値], [anchor.pen.color.b,数値], [a`
-- `ui/js/core/actions/balloon-descript/font.js:191` `props["anchor.brush.color.b"] ||`
+実装コード内に「anchor.brush.color.b」は検出されませんでした。

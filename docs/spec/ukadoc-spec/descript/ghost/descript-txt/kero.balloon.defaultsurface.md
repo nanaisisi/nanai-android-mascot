@@ -2,7 +2,7 @@
 
 - **規格**: [kero.balloon.defaultsurface.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/kero.balloon.defaultsurface.md)
 - **検索語**: kero.balloon.defaultsurface
-- **対応状況**: ✅ 対応済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,5 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs:160` `// [sakura.balloon.defaultsurface,数値], [kero.balloon.defaultsurface,数値], [balloo`
-- `src-tauri/src/ghost/scan/directory.rs:162` `let _kero_bs = m.get("kero.balloon.defaultsurface");`
+実装コード内に「kero.balloon.defaultsurface」は検出されませんでした。

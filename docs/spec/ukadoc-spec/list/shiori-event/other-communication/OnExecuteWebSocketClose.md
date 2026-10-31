@@ -2,7 +2,7 @@
 
 - **規格**: [OnExecuteWebSocketClose.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/other-communication/OnExecuteWebSocketClose/) (ukadoc-spec/list/shiori-event/other-communication/OnExecuteWebSocketClose.md)
 - **検索語**: OnExecuteWebSocketClose
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

@@ -2,7 +2,7 @@
 
 - **規格**: [notes_selectfile.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/open/notes_selectfile/) (ukadoc-spec/list/sakura-script/open/notes_selectfile.md)
 - **検索語**: ファイルを開く / ファイルを保存 / フォルダ選択 / カラーパレット選択 パラメータ
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

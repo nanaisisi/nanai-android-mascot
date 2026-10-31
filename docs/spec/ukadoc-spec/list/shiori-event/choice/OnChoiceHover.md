@@ -2,7 +2,7 @@
 
 - **規格**: [OnChoiceHover.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/choice/OnChoiceHover/) (ukadoc-spec/list/shiori-event/choice/OnChoiceHover.md)
 - **検索語**: OnChoiceHover
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

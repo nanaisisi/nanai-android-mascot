@@ -2,7 +2,7 @@
 
 - **規格**: [OnVoiceRecognitionWord.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/speech/OnVoiceRecognitionWord/) (ukadoc-spec/list/shiori-event/speech/OnVoiceRecognitionWord.md)
 - **検索語**: OnVoiceRecognitionWord
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

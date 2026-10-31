@@ -2,7 +2,7 @@
 
 - **規格**: [history.ghost.index-ID.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/history.ghost.index-ID/) (ukadoc-spec/list/propertysystem/property-system/history.ghost.index-ID.md)
 - **検索語**: history.ghost.index
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

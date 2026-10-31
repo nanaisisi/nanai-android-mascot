@@ -2,7 +2,7 @@
 
 - **規格**: [compat.md](https://ukatech.shillest.net/ukadoc-spec/spec/saori-ex/compat/)
 - **検索語**: 互換モジュール
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

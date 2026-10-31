@@ -2,7 +2,7 @@
 
 - **規格**: [rateofuselist.index-.boottimeweekly.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/rateofuselist.index-.boottimeweekly/) (ukadoc-spec/list/propertysystem/property-system/rateofuselist.index-.boottimeweekly.md)
 - **検索語**: rateofuselist.index
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

@@ -2,7 +2,7 @@
 
 - **規格**: [OnInstallRefuse.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/install/OnInstallRefuse/) (ukadoc-spec/list/shiori-event/install/OnInstallRefuse.md)
 - **検索語**: OnInstallRefuse
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

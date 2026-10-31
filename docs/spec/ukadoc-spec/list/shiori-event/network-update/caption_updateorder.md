@@ -2,7 +2,7 @@
 
 - **規格**: [caption_updateorder.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/network-update/caption_updateorder/) (ukadoc-spec/list/shiori-event/network-update/caption_updateorder/)
 - **検索語**: ネットワーク更新イベントの発生順序
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,5 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/core/app-update.js` (モジュール先頭コメントに発生順序を記述)
-- `src-tauri/src/commands/update/network.rs` (1ファイル単位の進捗通知経由で per-file イベントを発生)
+実装コード内に「ネットワーク更新イベントの発生順序」は検出されませんでした。

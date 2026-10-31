@@ -2,7 +2,7 @@
 
 - **規格**: [shiori.version.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/shiori.version.md)
 - **検索語**: shiori.version
-- **対応状況**: ✅ 対応済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,5 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs:177` `// [shiori.version,バージョン], [shiori.encoding,文字コード], [shiori.forceencoding,文字コード]`
-- `src-tauri/src/ghost/scan/directory.rs:178` `let _shiori_ver = m.get("shiori.version");`
+実装コード内に「shiori.version」は検出されませんでした。

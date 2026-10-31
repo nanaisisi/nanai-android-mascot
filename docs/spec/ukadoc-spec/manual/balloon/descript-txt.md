@@ -1,6 +1,6 @@
 # `descript.txt`
 
-- **対応状況**: ✅ 実装済
+- **対応状況**: ❌ 未実装
 - **規格**: [descript/balloon](../../descript/balloon)
 - **実装ファイル**:
   - [balloon.rs](../../../../src-tauri/src/commands/shell/balloon.rs) (`balloon_manifest`)

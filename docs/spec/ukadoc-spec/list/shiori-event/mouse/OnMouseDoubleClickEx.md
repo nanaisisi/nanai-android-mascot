@@ -2,7 +2,7 @@
 
 - **規格**: [OnMouseDoubleClickEx.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/mouse/OnMouseDoubleClickEx/) (ukadoc-spec/list/shiori-event/mouse/OnMouseDoubleClickEx.md)
 - **検索語**: OnMouseDoubleClickEx
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

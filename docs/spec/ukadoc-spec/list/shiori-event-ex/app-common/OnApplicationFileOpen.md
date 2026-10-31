@@ -2,7 +2,7 @@
 
 - **規格**: [OnApplicationFileOpen.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event-ex/app-common/OnApplicationFileOpen/) (ukadoc-spec/list/shiori-event-ex/app-common/OnApplicationFileOpen.md)
 - **検索語**: OnApplicationFileOpen
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

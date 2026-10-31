@@ -2,7 +2,7 @@
 
 - **規格**: [char-star-.seriko.defaultsurface.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/char-star-.seriko.defaultsurface.md)
 - **検索語**: char*.seriko.defaultsurface
-- **対応状況**: ✅ 対応済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs:155` `// [sakura.seriko.defaultsurface,数値], [kero.seriko.defaultsurface,数値], [char*.se`
+実装コード内に「char*.seriko.defaultsurface」は検出されませんでした。

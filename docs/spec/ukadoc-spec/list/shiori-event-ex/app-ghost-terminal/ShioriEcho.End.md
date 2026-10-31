@@ -2,7 +2,7 @@
 
 - **規格**: [ShioriEcho.End.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event-ex/app-ghost-terminal/ShioriEcho.End/) (ukadoc-spec/list/shiori-event-ex/app-ghost-terminal/ShioriEcho.End.md)
 - **検索語**: ShioriEcho.End
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

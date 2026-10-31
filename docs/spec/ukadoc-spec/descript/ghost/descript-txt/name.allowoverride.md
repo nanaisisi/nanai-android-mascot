@@ -2,7 +2,7 @@
 
 - **規格**: [name.allowoverride.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/name.allowoverride.md)
 - **検索語**: name.allowoverride
-- **対応状況**: ✅ 対応済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,5 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs:200` `// [name.allowoverride,数値], [makoto,ファイル名], [補足]:`
-- `src-tauri/src/ghost/scan/directory.rs:201` `let _name_override = m.get("name.allowoverride");`
+実装コード内に「name.allowoverride」は検出されませんでした。

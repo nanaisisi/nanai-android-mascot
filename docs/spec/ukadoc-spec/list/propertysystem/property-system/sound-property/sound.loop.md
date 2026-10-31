@@ -10,6 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/surface/surface-animation-manager.js:77` `const loop = async () => {`
-- `ui/js/surface/surface-animation-manager.js:81` `const timer = setTimeout(loop, 50);`
-- `ui/js/surface/surface-animation-manager.js:86` `loop();`
+実装コード内に「loop」は検出されませんでした。

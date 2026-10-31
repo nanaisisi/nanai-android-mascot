@@ -2,7 +2,7 @@
 
 - **規格**: [sstp.alwaystranslate.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/sstp.alwaystranslate.md)
 - **検索語**: sstp.alwaystranslate
-- **対応状況**: ✅ 対応済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,5 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs:190` `// [sstp.allowcommunicate,数値], [sstp.allowunspecifiedsend,数値], [sstp.alwaystrans`
-- `src-tauri/src/ghost/scan/directory.rs:193` `let _sstp_trans = m.get("sstp.alwaystranslate");`
+実装コード内に「sstp.alwaystranslate」は検出されませんでした。

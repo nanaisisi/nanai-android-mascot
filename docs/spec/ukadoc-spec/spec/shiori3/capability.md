@@ -1,7 +1,7 @@
 # SHIORI/3.0 capability: 実装対応状況の検知
 
 - **規格**: [capability.md](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/capability/) (ukadoc-spec/spec/shiori3/capability.md)
-- **対応状況**: ✅ 実装済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -9,5 +9,4 @@ SHIORI/3.0 プロトコルの Capability 系ヘッダ（`Sender`, `Charset`, `ID
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/ffi/builder.rs:1` `pub struct ShioriRequestBuilder`
-- `src-tauri/src/commands/shiori/protocol.rs`
+実装コード内に「capability」は検出されませんでした。

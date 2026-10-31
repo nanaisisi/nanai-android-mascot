@@ -2,7 +2,7 @@
 
 - **規格**: [caption_updateresultfailure.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/network-update/caption_updateresultfailure/) (ukadoc-spec/list/shiori-event/network-update/caption_updateresultfailure/)
 - **検索語**: ネットワーク失敗理由
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,5 +10,4 @@ OnUpdateFailure / OnUpdateCheckFailure の Reference0 に失敗理由として t
 
 ## 実装箇所
 
-- `ui/js/core/app-update.js` (catch 節の reason 判定: 404 / timeout / fileio)
-- `src-tauri/src/commands/update/network.rs` (`reason: "md5 miss"`, `reason: "fileio"`, ステータスコード, timeout 判定)
+実装コード内に「ネットワーク失敗理由」は検出されませんでした。

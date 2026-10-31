@@ -2,7 +2,7 @@
 
 - **規格**: [sakura.portalbuttoncaption.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ghost/sakura.portalbuttoncaption/) (ukadoc-spec/list/shiori-resource/ghost/sakura.portalbuttoncaption.md)
 - **検索語**: sakura.portalbuttoncaption
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

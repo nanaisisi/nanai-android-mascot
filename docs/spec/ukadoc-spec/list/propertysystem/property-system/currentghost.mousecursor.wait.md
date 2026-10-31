@@ -2,7 +2,7 @@
 
 - **規格**: [currentghost.mousecursor.wait.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/currentghost.mousecursor.wait/) (ukadoc-spec/list/propertysystem/property-system/currentghost.mousecursor.wait.md)
 - **検索語**: currentghost.mousecursor.wait
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

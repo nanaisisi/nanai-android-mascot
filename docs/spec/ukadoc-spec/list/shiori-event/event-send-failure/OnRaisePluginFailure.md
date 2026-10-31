@@ -2,7 +2,7 @@
 
 - **規格**: [OnRaisePluginFailure.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/event-send-failure/OnRaisePluginFailure/) (ukadoc-spec/list/shiori-event/event-send-failure/OnRaisePluginFailure.md)
 - **検索語**: OnRaisePluginFailure
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

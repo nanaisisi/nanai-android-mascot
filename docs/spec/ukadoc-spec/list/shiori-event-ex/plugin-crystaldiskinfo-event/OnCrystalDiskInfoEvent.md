@@ -2,7 +2,7 @@
 
 - **規格**: [OnCrystalDiskInfoEvent.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event-ex/plugin-crystaldiskinfo-event/OnCrystalDiskInfoEvent/) (ukadoc-spec/list/shiori-event-ex/plugin-crystaldiskinfo-event/OnCrystalDiskInfoEvent.md)
 - **検索語**: OnCrystalDiskInfoEvent
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

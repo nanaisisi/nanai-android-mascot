@@ -2,7 +2,7 @@
 
 - **規格**: [OnKinokoObjectCreate.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event-ex/app-kinoko/OnKinokoObjectCreate/) (ukadoc-spec/list/shiori-event-ex/app-kinoko/OnKinokoObjectCreate.md)
 - **検索語**: OnKinokoObjectCreate
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

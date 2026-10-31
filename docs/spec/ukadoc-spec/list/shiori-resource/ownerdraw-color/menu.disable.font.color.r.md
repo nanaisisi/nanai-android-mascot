@@ -2,7 +2,7 @@
 
 - **規格**: [menu.disable.font.color.r.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ownerdraw-color/menu.disable.font.color.r/) (ukadoc-spec/list/shiori-resource/ownerdraw-color/menu.disable.font.color.r.md)
 - **検索語**: menu.disable.font.color.r
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/shell.rs:113` `// メニュー配色・画像情報の抽出 (menu.frame.color.r/g/b, menu.separator.color.r/g/b, menu.disa`
+実装コード内に「menu.disable.font.color.r」は検出されませんでした。

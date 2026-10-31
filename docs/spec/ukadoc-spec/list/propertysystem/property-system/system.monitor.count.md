@@ -2,7 +2,7 @@
 
 - **規格**: [system.monitor.count.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/system.monitor.count/) (ukadoc-spec/list/propertysystem/property-system/system.monitor.count.md)
 - **検索語**: system.monitor.count
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/shiori/lifecycle.rs:100` `.duration_since(std::time::UNIX_EPOCH)`
+実装コード内に「duration」は検出されませんでした。

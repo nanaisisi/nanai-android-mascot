@@ -1,6 +1,6 @@
 # `readme.txt`
 
-- **対応状況**: ✅ 実装済
+- **対応状況**: ❌ 未実装
 - **実装ファイル**:
   - [balloon.rs](../../../../src-tauri/src/commands/shell/balloon.rs) (`get_balloon_readme` および `BalloonInfo.readme`)
 

@@ -2,7 +2,7 @@
 
 - **規格**: [OnMahjong.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event-ex/app-mahjong/OnMahjong/) (ukadoc-spec/list/shiori-event-ex/app-mahjong/OnMahjong.md)
 - **検索語**: OnMahjong
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

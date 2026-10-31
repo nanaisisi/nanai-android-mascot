@@ -2,7 +2,7 @@
 
 - **規格**: [sender.md](https://ukatech.shillest.net/ukadoc-spec/spec/saori-ex/sender/)
 - **検索語**: 送信側の手順
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

@@ -2,7 +2,7 @@
 
 - **規格**: [enable_debug.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/notify/enable_debug/) (ukadoc-spec/list/shiori-event/notify/enable_debug.md)
 - **検索語**: enable_debug
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

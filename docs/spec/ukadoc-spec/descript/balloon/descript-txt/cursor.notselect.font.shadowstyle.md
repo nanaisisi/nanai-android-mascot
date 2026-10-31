@@ -2,7 +2,7 @@
 
 - **規格**: [cursor.notselect.font.shadowstyle.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/cursor.notselect.font.shadowstyle.md)
 - **検索語**: cursor.notselect.font.shadowstyle
-- **対応状況**: ✅ 対応済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,5 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js:290` `// [cursor.notselect.font.shadowcolor.r,数値], [cursor.notselect.font.shadowcolor.`
-- `ui/js/core/actions/balloon-descript/font.js:295` `props["cursor.notselect.font.shadowstyle"]`
+実装コード内に「cursor.notselect.font.shadowstyle」は検出されませんでした。

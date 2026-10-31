@@ -2,7 +2,7 @@
 
 - **規格**: [OnWeatherStation.Astro.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event-ex/plugin-weather-station/OnWeatherStation.Astro/) (ukadoc-spec/list/shiori-event-ex/plugin-weather-station/OnWeatherStation.Astro.md)
 - **検索語**: OnWeatherStation.Astro
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

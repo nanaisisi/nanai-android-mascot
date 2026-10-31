@@ -1,7 +1,7 @@
 # オーナードローメニュー (manual/owner-draw-menu.md)
 
 - **規格**: [manual/owner-draw-menu.md](https://github.com/ukatech/ukadoc-spec/blob/main/manual/owner-draw-menu.md)
-- **対応状況**: ✅ 対応済 (実ファイルハンドリング実装済)
+- **対応状況**: ❌ 未実装
 
 ## 実ファイルハンドリング突合結果
 

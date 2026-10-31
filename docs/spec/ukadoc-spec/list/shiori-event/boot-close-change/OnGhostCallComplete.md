@@ -2,7 +2,7 @@
 
 - **規格**: [OnGhostCallComplete.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/boot-close-change/OnGhostCallComplete/) (ukadoc-spec/list/shiori-event/boot-close-change/OnGhostCallComplete.md)
 - **検索語**: OnGhostCallComplete
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs` (`evaluate_property_query`)
+実装コード内に「version」は検出されませんでした。

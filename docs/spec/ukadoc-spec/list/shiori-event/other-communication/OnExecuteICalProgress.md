@@ -2,7 +2,7 @@
 
 - **規格**: [OnExecuteICalProgress.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/other-communication/OnExecuteICalProgress/) (ukadoc-spec/list/shiori-event/other-communication/OnExecuteICalProgress.md)
 - **検索語**: OnExecuteICalProgress
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

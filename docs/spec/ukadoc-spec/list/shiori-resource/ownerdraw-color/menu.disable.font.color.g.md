@@ -2,7 +2,7 @@
 
 - **規格**: [menu.disable.font.color.g.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ownerdraw-color/menu.disable.font.color.g/) (ukadoc-spec/list/shiori-resource/ownerdraw-color/menu.disable.font.color.g.md)
 - **検索語**: menu.disable.font.color.g
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

@@ -2,7 +2,7 @@
 
 - **規格**: [shiori.logo.file.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/shiori.logo.file.md)
 - **検索語**: shiori.logo.file
-- **対応状況**: ✅ 対応済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,5 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs:184` `// [shiori.logo.file,ファイル名], [shiori.logo.x,X座標], [shiori.logo.y,Y座標], [shiori.l`
-- `src-tauri/src/ghost/scan/directory.rs:185` `let _shiori_logo_file = m.get("shiori.logo.file");`
+実装コード内に「shiori.logo.file」は検出されませんでした。

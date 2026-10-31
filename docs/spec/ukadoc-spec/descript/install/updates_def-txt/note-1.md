@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `crates/ui/src/update.rs` `// [相対パス,ignore], [補足]: updates_def.txt / updates2.dau における相対パス指定...`
+実装コード内に「補足」は検出されませんでした。

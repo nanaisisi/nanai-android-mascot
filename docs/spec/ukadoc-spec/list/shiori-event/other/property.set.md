@@ -2,7 +2,7 @@
 
 - **規格**: [property.set.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/other/property.set/) (ukadoc-spec/list/shiori-event/other/property.set.md)
 - **検索語**: property.set
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

@@ -2,7 +2,7 @@
 
 - **規格**: [OnExecuteScheduleFailure.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/other-communication/OnExecuteScheduleFailure/) (ukadoc-spec/list/shiori-event/other-communication/OnExecuteScheduleFailure.md)
 - **検索語**: OnExecuteScheduleFailure
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

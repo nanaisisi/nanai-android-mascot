@@ -2,7 +2,7 @@
 
 - **規格**: [OnBatteryChargingStart.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/os-state/OnBatteryChargingStart/) (ukadoc-spec/list/shiori-event/os-state/OnBatteryChargingStart.md)
 - **検索語**: OnBatteryChargingStart
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

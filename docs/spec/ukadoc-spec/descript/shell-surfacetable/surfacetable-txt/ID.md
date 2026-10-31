@@ -2,7 +2,7 @@
 
 - **規格**: [ID.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfacetable/surfacetable-txt/ID/) (ukadoc-spec/descript/shell-surfacetable/surfacetable-txt/ID.md)
 - **検索語**: サーフェスID,名前
-- **対応状況**: ✅ 対応済 (surfacetable.rs)
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

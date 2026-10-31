@@ -60,7 +60,7 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
                     }
                 }
                 Some('f') => {
-                    // \f[tag,param] または \f[tag]
+                    // \f[tag,param] または \f[tag] (\f[name], \f[height], \f[color], \f[bold], \f[italic], \f[underline], \f[strike], \f[default], \f[outline], \f[shadowcolor], \f[align], \f[valign], \f[sub], \f[sup], \f[disable])
                     if let Some((tag, param)) = brackets::handle_font(&mut chars) {
                         callback(SakuraCommand::Font { tag, param });
                     }

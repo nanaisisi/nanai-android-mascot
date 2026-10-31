@@ -51,7 +51,7 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
                 let action = parts.get(1).unwrap_or(&"").to_string();
                 let target = parts.get(2).unwrap_or(&"").to_string();
                 callback(SakuraCommand::MailExec { action, target });
-            } else if parts.get(1).is_some_and(|p| *p == "deletefile" || *p == "renamefile") {
+            } else if parts.get(1).is_some_and(|p| *p == "deletefile" || *p == "renamefile" || *p == "copyfile" || *p == "movefile") {
                 let action = parts.get(1).unwrap_or(&"").to_string();
                 let path = parts.get(2).unwrap_or(&"").to_string();
                 let dest = parts.get(3).unwrap_or(&"").to_string();

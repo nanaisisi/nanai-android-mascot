@@ -23,7 +23,15 @@ pub(crate) fn handle_wait_short(chars: &mut CharsIter<'_>) -> Option<u32> {
 
 pub(crate) fn handle_newline(chars: &mut CharsIter<'_>) -> Option<bool> {
     let arg = read_bracketed(chars);
-    Some(matches!(arg.as_deref(), Some("half")))
+    if let Some(s) = arg.as_deref() {
+        if s.eq_ignore_ascii_case("half") {
+            return Some(true);
+        }
+        if let Ok(pct) = s.parse::<u32>() {
+            return Some(pct <= 50);
+        }
+    }
+    Some(false)
 }
 
 pub(crate) fn handle_animation(chars: &mut CharsIter<'_>) -> Option<(u32, bool)> {

@@ -2,8 +2,8 @@
 
 - **規格**: [note-1.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/balloon-text/note-1/) (ukadoc-spec/list/sakura-script/balloon-text/note-1.md)
 - **検索語**: 補足
-- **対応状況**: ❌ 未実装(誤検出)
+- **対応状況**: ✅ 文書対応済 (規格解説ページ)
 
 ## 突合結果
 
-実装コードに「補足」が見つからない(短いトークンのため誤検出の可能性大)。
+`\_b` タグ等のファイルパスやオプションに関する解説補足ページ。実装対象のコマンドではなく仕様解説文書。

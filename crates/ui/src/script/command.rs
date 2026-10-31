@@ -13,6 +13,7 @@ pub enum SakuraCommand {
         half: bool,
     }, // \n / \n[half]
     Clear,        // \c
+    ClearArg { arg: String }, // \c[char,n], \c[line,n]
     Choice {
         label: String,
         id: String,

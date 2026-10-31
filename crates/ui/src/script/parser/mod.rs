@@ -78,7 +78,14 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
                         callback(SakuraCommand::Animation { id, wait });
                     }
                 }
-                Some('c') => callback(SakuraCommand::Clear),
+                Some('c') => {
+                    if let Some(arg) = brackets::read_bracketed(&mut chars) {
+                        callback(SakuraCommand::ClearArg { arg });
+                    } else {
+                        callback(SakuraCommand::Clear)
+                    }
+                }
+                Some('C') => callback(SakuraCommand::Clear),
                 Some('e') => callback(SakuraCommand::End),
                 Some('q') => {
                     // \q[テキスト,ID] / \q[temp,テキスト,ID]

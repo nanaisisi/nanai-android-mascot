@@ -14,4 +14,4 @@
 - `src-tauri/src/common/paths.rs:181` `r"C:\path\to\file"`
 - `crates/ui/src/lib.rs:114` `let script = r"\b[0]\b[-1]\t\-\_s\_l[10,20]\f[color,red]\f[bold]";`
 - `crates/ui/src/update.rs:110` `let content = "\r\n  \r\n\t\r\n";`
-- `crates/ui/src/script/command.rs:38` `Timeout,      // \t (タイムアウト抑止)`
+- `crates/ui/src/script/command.rs:39` `Timeout,      // \t (タイムアウト抑止)`

@@ -13,3 +13,9 @@
 [submodule "docs/ukadoc-spec"]
 	path = docs/ukadoc-spec
 	url = https://github.com/ukatech/ukadoc-spec.git
+[submodule "docs/doc-nas-spec"]
+	path = docs/doc-nas-spec
+	url = https://github.com/nanaisisi/doc-nas-spec.git
+[submodule "docs/doc-ssp-spec"]
+	path = docs/doc-ssp-spec
+	url = https://github.com/nanaisisi/doc-ssp-spec.git

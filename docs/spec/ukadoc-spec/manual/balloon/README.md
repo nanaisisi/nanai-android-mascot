@@ -29,6 +29,11 @@
 | [数値フォント設定 (`number.font`)](number-font.md)                     | ✅ 実装済                                           |
 | [SSTP メッセージ設定 (`sstpmessage.font`)](sstp-message.md)            | ✅ 実装済                                           |
 | [無効フォント設定 (`disable.font`)](disable-font.md)                   | ✅ 実装済                                           |
+| [マウスカーソル設定 (`mousecursor`)](mousecursor.md)                   | ✅ 実装済                                           |
+| [コミュニケートボックス (`communicatebox`)](communicatebox.md)       | ✅ 実装済                                           |
+| [原点オフセット設定 (`origin`)](origin.md)                             | ✅ 実装済                                           |
+| [マーカーアイコン設定 (`marker`)](markers.md)                          | ✅ 実装済                                           |
+| [拡張レンダリングオプション](advanced-options.md)                      | ✅ 実装済                                           |
 
 ## 対応範囲の共通事項
 

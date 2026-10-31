@@ -116,6 +116,20 @@ export function rustCommandsToTokens(rustCommands) {
 			case "WindowState":
 				tokens.push({ type: "command", command: "windowstate", args: [cmd.payload ?? ""] });
 				break;
+			case "Change":
+				tokens.push({
+					type: "command",
+					command: "change",
+					args: [cmd.payload?.target ?? "", cmd.payload?.name ?? ""],
+				});
+				break;
+			case "Call":
+				tokens.push({
+					type: "command",
+					command: "call",
+					args: [cmd.payload?.target ?? "", cmd.payload?.name ?? ""],
+				});
+				break;
 			case "Biff":
 				tokens.push({ type: "command", command: "biff", args: [] });
 				break;

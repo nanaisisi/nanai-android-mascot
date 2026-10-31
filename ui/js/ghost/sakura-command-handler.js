@@ -67,6 +67,16 @@ export class SakuraCommandHandler {
 			if (state) {
 				await this.handleWindowState(state);
 			}
+		} else if (rawCmd === "change") {
+			const [target, name] = args.slice(1);
+			if (target === "ghost" && name) {
+				await this.app.ghostController?.switchGhost?.(name);
+			}
+		} else if (rawCmd === "call") {
+			const [target, name] = args.slice(1);
+			if (target === "ghost" && name) {
+				await this.app.ghostController?.callGhost?.(name);
+			}
 		} else if (rawCmd === "update" || rawCmd === "updatebymyself") {
 			await this.app.startNetworkUpdate?.();
 		} else {

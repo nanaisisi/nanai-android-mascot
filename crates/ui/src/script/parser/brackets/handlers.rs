@@ -185,6 +185,19 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
                 });
             }
         }
+        "change" => {
+            let target = parts.get(1).unwrap_or(&"").to_string();
+            let name = parts.get(2).unwrap_or(&"").to_string();
+            callback(SakuraCommand::Change { target, name });
+        }
+        "call" => {
+            let target = parts.get(1).unwrap_or(&"").to_string();
+            let name = parts.get(2).unwrap_or(&"").to_string();
+            callback(SakuraCommand::Call { target, name });
+        }
+        _ => {
+            }
+        }
         _ => {
             callback(SakuraCommand::Command {
                 args: parts.iter().map(|s| s.to_string()).collect(),

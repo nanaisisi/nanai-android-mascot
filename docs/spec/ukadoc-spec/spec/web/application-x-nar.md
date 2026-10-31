@@ -1,11 +1,11 @@
 # web : application/x-nar MIME
 
 - **規格**: [application-x-nar.md](https://ukatech.shillest.net/ukadoc-spec/spec/web/application-x-nar/) (ukadoc-spec/spec/web/application-x-nar.md)
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-MIME 登録・関連付けなし。
+`application/x-nar` およびインストーラ用 URI (`ukagaka://install`) のハンドリング処理を実装 (`src-tauri/src/commands/web.rs`)。
 
 ## 実装箇所
 

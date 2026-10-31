@@ -1,17 +1,17 @@
 # \![quicksection,true]
 
 - **規格**: [bang-quicksection-true.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/wait/bang-quicksection-true/) (ukadoc-spec/list/sakura-script/wait/bang-quicksection-true.md)
-- **検索語**: \!
+- **検索語**: Quick
 - **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-パーサがタグを読み飛ばす、または sakura-command-handler.js が「未対応の \! コマンド」として扱い、該当処理はない。
+\\_q / \\![quicksection,...] 高速表示制御タグのパース処理を実装 (crates/ui/src/script/command.rs -> SakuraCommand::Quick)。
 
 ## 実装箇所
 
-- `src-tauri/src/commands/calendar.rs:2` `//! [calendar/index.md], [calendar/schedule.md], [calendar/menu.md], [\![open,ca`
-- `crates/ui/src/lib.rs:81` `let script = r"\0\_q\x\_a[anchor01]リンク\_a\![raise,OnTest,1,2]\![bind,clothing,ri`
-- `crates/ui/src/lib.rs:200` `let script = r"\0\![open,inputbox,--timeout=5]\![set,str,hello]\j[1,2]\__w[500]あ`
-- `crates/ui/src/script/command.rs:44` `}, // \![raise,Event,...]`
-- `crates/ui/src/script/command.rs:49` `}, // \![bind,cat,part,status]`
+- `crates/ui/src/lib.rs:86` `assert_eq!(commands[1], SakuraCommand::Quick(true));`
+- `crates/ui/src/lib.rs:148` `assert_eq!(cmds_q[0], SakuraCommand::Quick(true));`
+- `crates/ui/src/lib.rs:150` `assert_eq!(cmds_q[2], SakuraCommand::Quick(false));`
+- `crates/ui/src/lib.rs:152` `assert_eq!(cmds_q[4], SakuraCommand::Quick(true));`
+- `crates/ui/src/script/command.rs:11` `Quick(bool),  // \_q (高速表示トグル)`

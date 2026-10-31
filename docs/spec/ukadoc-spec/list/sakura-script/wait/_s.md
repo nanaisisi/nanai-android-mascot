@@ -1,17 +1,17 @@
 # \_s
 
 - **規格**: [_s.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/wait/_s/) (ukadoc-spec/list/sakura-script/wait/_s.md)
-- **検索語**: \_s
+- **検索語**: Sync
 - **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-実装コード内に「\_s」を確認。
+\\_s 複数キャラ同期発話制御タグのパース処理を実装 (crates/ui/src/script/command.rs -> SakuraCommand::Sync)。
 
 ## 実装箇所
 
-- `crates/ui/src/lib.rs:114` `let script = r"\b[0]\b[-1]\t\-\_s\_l[10,20]\f[color,red]\f[bold]";`
-- `crates/ui/src/lib.rs:155` `let script_ps = r"\p[2]\p3\_s[1]同期\_s[0]非同期";`
+- `src-tauri/src/shiori/dynamic/mod.rs:25` `unsafe impl Sync for ShioriDynamicEngine {}`
+- `crates/ui/src/lib.rs:122` `assert_eq!(commands[4], SakuraCommand::Sync(true));`
+- `crates/ui/src/lib.rs:160` `assert_eq!(cmds_ps[2], SakuraCommand::Sync(true));`
+- `crates/ui/src/lib.rs:162` `assert_eq!(cmds_ps[4], SakuraCommand::Sync(false));`
 - `crates/ui/src/script/command.rs:64` `Sync(bool),   // \_s (複数キャラ同期発話トグル)`
-- `crates/ui/src/script/parser/mod.rs:53` `// \_w / \_q / \_a / \_s / \_l / \_! / \_\_v / \_\_q`
-- `ui/js/ghost/sakura-tokenizer.js:230` `// \_s (複数キャラ同期表示トグル / \_s[1], \_s[0])`

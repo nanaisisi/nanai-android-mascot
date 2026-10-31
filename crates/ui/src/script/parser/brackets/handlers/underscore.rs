@@ -116,6 +116,9 @@ pub(crate) fn handle_underscore(
                     };
                     callback(SakuraCommand::Quick(enabled));
                 }
+                Some('+') => {
+                    callback(SakuraCommand::Plus);
+                }
                 _ => {
                     consume_tag_tail(chars);
                 }

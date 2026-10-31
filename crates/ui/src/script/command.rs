@@ -35,6 +35,8 @@ pub enum SakuraCommand {
     }, // \_a[id,r2,...]text\_a
     Star, // \*
     Z,    // \z
+    AudioWait, // \a
+    Plus,      // \+ / \_+
     Raise {
         event: String,
         references: Vec<String>,

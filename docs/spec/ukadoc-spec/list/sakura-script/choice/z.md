@@ -11,4 +11,4 @@
 ## 実装箇所
 
 - `crates/ui/src/script/command.rs:37` `Z,    // \z`
-- `crates/ui/src/script/parser/mod.rs:126` `let script = "\\0\\h\\1\\u\\p[2]\\px\\s[10]\\sx\\w5\\wx\\x\\_w[10]\\b[1]\\bx\\f[`
+- `crates/ui/src/script/parser/mod.rs:130` `let script = "\\0\\h\\1\\u\\p[2]\\px\\s[10]\\sx\\w5\\wx\\x\\_w[10]\\b[1]\\bx\\f[`

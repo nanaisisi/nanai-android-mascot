@@ -11,7 +11,7 @@ ui/js/ghost/sakura-parser.js / sakura-command-handler.js で処理: アニメー
 ## 実装箇所
 
 - `crates/ui/src/lib.rs:189` `let script = r"\0\1は鳴き声\i[3,wait]\i7この間は本文";`
-- `crates/ui/src/script/command.rs:57` `}, // \i[ID], \i[ID,wait]`
-- `crates/ui/src/script/parser/mod.rs:78` `// \i[ID] / \i[ID,wait] / \i0..\i9`
-- `crates/ui/src/script/parser/mod.rs:126` `let script = "\\0\\h\\1\\u\\p[2]\\px\\s[10]\\sx\\w5\\wx\\x\\_w[10]\\b[1]\\bx\\f[`
+- `crates/ui/src/script/command.rs:59` `}, // \i[ID], \i[ID,wait]`
+- `crates/ui/src/script/parser/mod.rs:79` `// \i[ID] / \i[ID,wait] / \i0..\i9`
+- `crates/ui/src/script/parser/mod.rs:130` `let script = "\\0\\h\\1\\u\\p[2]\\px\\s[10]\\sx\\w5\\wx\\x\\_w[10]\\b[1]\\bx\\f[`
 - `ui/js/ghost/sakura-tokenizer.js:74` `// \i (アニメーション呼出: \i[ID], \i[ID,wait], \i1〜\i9)`

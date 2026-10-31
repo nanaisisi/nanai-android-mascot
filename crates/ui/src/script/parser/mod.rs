@@ -28,6 +28,7 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
             match chars.next() {
                 Some('0') | Some('h') => callback(SakuraCommand::Target(0)),
                 Some('1') | Some('u') => callback(SakuraCommand::Target(1)),
+                Some(c @ '2'..='9') => callback(SakuraCommand::Target(c.to_digit(10).unwrap() as u8)),
                 Some('p') => {
                     // \p[N]
                     if let Some(n) = brackets::handle_target_p(&mut chars) {
@@ -97,6 +98,9 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
                 }
                 Some('*') => callback(SakuraCommand::Star),
                 Some('z') => callback(SakuraCommand::Z),
+                Some('a') => callback(SakuraCommand::AudioWait),
+                Some('v') => callback(SakuraCommand::Voice("".into())),
+                Some('+') => callback(SakuraCommand::Plus),
                 // 未知タグ: 後続の [...] 引数を消費し、本文への漏出を防ぐ
                 Some(_) => brackets::consume_tag_tail(&mut chars),
                 None => {}

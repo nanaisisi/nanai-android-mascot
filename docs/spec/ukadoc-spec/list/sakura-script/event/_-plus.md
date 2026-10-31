@@ -2,7 +2,7 @@
 
 - **規格**: [_-plus.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/event/_-plus/) (ukadoc-spec/list/sakura-script/event/_-plus.md)
 - **検索語**: \_
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

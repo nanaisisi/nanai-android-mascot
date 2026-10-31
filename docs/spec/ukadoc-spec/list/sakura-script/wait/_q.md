@@ -13,5 +13,5 @@ ui/js/ghost/sakura-parser.js / sakura-command-handler.js で処理: クイック
 - `crates/ui/src/lib.rs:81` `let script = r"\0\_q\x\_a[anchor01]リンク\_a\![raise,OnTest,1,2]\![bind,clothing,ri`
 - `crates/ui/src/lib.rs:145` `let script_q = r"\_q高速\_q[0]通常\_q[1]再度高速";`
 - `crates/ui/src/script/command.rs:11` `Quick(bool),  // \_q (高速表示トグル)`
-- `crates/ui/src/script/parser/mod.rs:51` `// \_w / \_q / \_a / \_s / \_l / \_! / \_\_v / \_\_q`
+- `crates/ui/src/script/parser/mod.rs:52` `// \_w / \_q / \_a / \_s / \_l / \_! / \_\_v / \_\_q`
 - `ui/js/ghost/sakura-tokenizer.js:141` `// \_q / \_q[1] / \_q[0] (クイック描画切替)`

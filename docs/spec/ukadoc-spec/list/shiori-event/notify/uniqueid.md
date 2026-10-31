@@ -12,5 +12,5 @@
 
 - `src-tauri/src/commands/shiori/protocol.rs:111` `/// `installedghostname` / `ghostpathlist` / `uniqueid` / `basewareversion` 等の`
 - `ui/js/ghost/shiori-notify.js:14` `* - basewareversion / uniqueid`
-- `ui/js/ghost/shiori-notify.js:99` `// uniqueid: ゴーストインストールディレクトリ名を自前IDとする`
-- `ui/js/ghost/shiori-notify.js:105` `await this.sendShioriNotify("uniqueid", [dirName]);`
+- `ui/js/ghost/shiori-notify.js:101` `// uniqueid: ゴーストインストールディレクトリ名を自前IDとする`
+- `ui/js/ghost/shiori-notify.js:107` `await this.sendShioriNotify("uniqueid", [dirName]);`

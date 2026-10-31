@@ -27,6 +27,8 @@ import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
  * - OnArchiveViewerOpen, OnDirectoryDrop, OnFileDrop, OnFileDrop2, OnFileDropEx, OnFileDropped
  * - OnFileDropping, OnMediaPlayerOpen, OnNarCreated, OnNarCreating, OnOtherObjectDropped
  * - OnOtherObjectDropping, OnPictureViewerOpen, OnUpdatedataCreated, OnUpdatedataCreating, OnWallpaperChange
+ * - OnApplicationBoot, OnApplicationClose, OnApplicationExist, OnApplicationFileOpen
+ * - OnApplicationOperationFinish, OnApplicationVersion, OnWebsiteUpdateNotify
  */
 export const shioriNotifyMethods = {
 	/**

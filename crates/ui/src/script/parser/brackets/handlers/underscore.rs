@@ -27,6 +27,9 @@ pub(crate) fn handle_underscore(
         Some('n') => {
             callback(SakuraCommand::NewLineNoPause);
         }
+        Some('!') => {
+            callback(SakuraCommand::NoUserBreak(true));
+        }
         Some('b') => {
             if let Some(content) = read_bracketed(chars) {
                 let parts: Vec<&str> = content.split(',').map(|s| s.trim()).collect();
@@ -93,8 +96,14 @@ pub(crate) fn handle_underscore(
             }
         }
         Some('_') => {
-            let _ = chars.next();
-            consume_tag_tail(chars);
+            if chars.peek() == Some(&'v') {
+                chars.next();
+                let opt = read_bracketed(chars).unwrap_or_default();
+                callback(SakuraCommand::Voice(opt));
+            } else {
+                let _ = chars.next();
+                consume_tag_tail(chars);
+            }
         }
         _ => {
             consume_tag_tail(chars);

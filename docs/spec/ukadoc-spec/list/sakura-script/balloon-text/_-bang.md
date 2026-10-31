@@ -1,9 +1,14 @@
 # \_!
 
-- **規格**: [_-bang.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/balloon-text/_-bang/) (ukadoc-spec/list/sakura-script/balloon-text/_-bang.md)
+- **規格**: [_-bang.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/balloon-text/-bang/)
 - **検索語**: \_!
-- **対応状況**: ✅ 対応済
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-`crates/ui/src/script/parser/mod.rs` の特殊タグハンドリング層にて `\_!` シーケンスのパースおよびエスケープ・文字送り制御に対応。
+`\_!` (NoUserBreak) タグのパース処理を実装 (`crates/ui/src/script/parser/brackets/handlers/underscore.rs`)。
+
+
+## 実装箇所
+
+- `crates/ui/src/script/command.rs:44` `NoUserBreak(bool), // \_!`

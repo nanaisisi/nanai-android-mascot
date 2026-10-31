@@ -97,6 +97,9 @@ export class SakuraCommandHandler {
 			const [account] = args.slice(1);
 			console.log(`✉️ Mail check requested for account: ${account}`);
 			await this.app.networkActions?.checkEmail?.(account);
+		} else if (rawCmd === "mailexec") {
+			const [action, target] = args.slice(1);
+			console.log(`✉️ Mail action ${action}: target=${target}`);
 		} else if (rawCmd === "sethttptimeout") {
 			const [timeout] = args.slice(1);
 			console.log(`⏱️ HTTP timeout set: ${timeout}s`);

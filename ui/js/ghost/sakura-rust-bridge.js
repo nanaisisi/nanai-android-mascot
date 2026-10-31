@@ -185,6 +185,13 @@ export function rustCommandsToTokens(rustCommands) {
 					args: [cmd.payload?.account ?? ""],
 				});
 				break;
+			case "MailExec":
+				tokens.push({
+					type: "command",
+					command: "mailexec",
+					args: [cmd.payload?.action ?? "", cmd.payload?.target ?? ""],
+				});
+				break;
 			case "SetHttpTimeout":
 				tokens.push({
 					type: "command",

@@ -47,6 +47,10 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
             } else if parts.get(1).is_some_and(|p| *p == "mailcheck") {
                 let account = parts.get(2).unwrap_or(&"").to_string();
                 callback(SakuraCommand::MailCheckExec { account });
+            } else if parts.get(1).is_some_and(|p| *p == "mailsend" || *p == "mailsettings") {
+                let action = parts.get(1).unwrap_or(&"").to_string();
+                let target = parts.get(2).unwrap_or(&"").to_string();
+                callback(SakuraCommand::MailExec { action, target });
             } else {
                 callback(SakuraCommand::Command {
                     args: parts.iter().map(|s| s.to_string()).collect(),

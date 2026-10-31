@@ -105,6 +105,10 @@ pub enum SakuraCommand {
     MailCheckExec {
         account: String,
     },
+    MailExec {
+        action: String,
+        target: String,
+    },
     SetHttpTimeout(u32),
     SetProxy {
         server: String,

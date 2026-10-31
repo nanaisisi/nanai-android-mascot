@@ -9,8 +9,8 @@ RSS/Atom フィード読み込みと HEADLINE 連携 (`src-tauri/src/shiori/head
 
 ## 実装箇所
 
-- `src-tauri/src/lib.rs:153` `commands::ext::scan_headlines,`
-- `src-tauri/src/lib.rs:156` `shiori::headline::fetch_headline_feed,`
+- `src-tauri/src/lib.rs:154` `commands::ext::scan_headlines,`
+- `src-tauri/src/lib.rs:157` `shiori::headline::fetch_headline_feed,`
 - `src-tauri/src/commands/ext.rs:73` `pub async fn scan_headlines(app_handle: tauri::AppHandle) -> Result<Vec<Headline`
 - `src-tauri/src/commands/ext.rs:74` `let mut headlines = Vec::new();`
 - `src-tauri/src/commands/ext.rs:78` `search_dirs.push(app_data_dir.join("userData").join("headline"));`

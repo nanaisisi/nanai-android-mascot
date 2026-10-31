@@ -12,5 +12,5 @@
 - `src-tauri/tauri.conf.json:44` `"plugins": {`
 - `src-tauri/src/lib.rs:88` `.plugin(tauri_plugin_opener::init())`
 - `src-tauri/src/lib.rs:89` `.plugin(tauri_plugin_dialog::init())`
-- `src-tauri/src/lib.rs:152` `commands::ext::scan_plugins,`
-- `src-tauri/src/lib.rs:154` `commands::ext::execute_plugin_event,`
+- `src-tauri/src/lib.rs:153` `commands::ext::scan_plugins,`
+- `src-tauri/src/lib.rs:155` `commands::ext::execute_plugin_event,`

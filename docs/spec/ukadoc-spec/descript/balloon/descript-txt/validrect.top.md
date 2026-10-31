@@ -14,4 +14,4 @@
 - `crates/ui/src/descript/tests.rs:61` `validrect.top,0\n\`
 - `ui/js/core/actions/balloon-descript/layout.js:83` `// [validrect.left,座標], [validrect.top,座標], [validrect.right,座標], [validrect.bot`
 - `ui/js/core/actions/balloon-descript/layout.js:85` `const vt = parseInt(props["validrect.top"], 10);`
-- `ui/js/ghost/balloon-window.js:108` `const vt = parseInt(props["validrect.top"], 10);`
+- `ui/js/ghost/balloon-window.js:84` `const vt = parseInt(props["validrect.top"], 10);`

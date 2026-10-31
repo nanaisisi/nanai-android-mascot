@@ -7,5 +7,5 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/balloon-window.js:172` `// オプションアセット (balloonc, arrow, sstp, online) のロード試行`
-- `ui/js/ghost/balloon-window.js:176` `file: "balloonc0.png",`
+- `ui/js/ghost/balloon-window.js:148` `// オプションアセット (balloonc, arrow, sstp, online) のロード試行`
+- `ui/js/ghost/balloon-window.js:152` `file: "balloonc0.png",`

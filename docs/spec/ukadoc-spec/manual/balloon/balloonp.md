@@ -7,6 +7,6 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/balloon-window.js:131` `// [balloons*s.txt/balloonk*s.txt/balloonp*]: 背景画像（scope 0: balloons0.png, scope`
-- `ui/js/ghost/balloon-window.js:137` `: `balloonp${scopeId}.png`;`
-- `ui/js/ghost/balloon-window.js:143` `: `balloonp${scopeId}.pna`;`
+- `ui/js/ghost/balloon-window.js:107` `// [balloons*s.txt/balloonk*s.txt/balloonp*]: 背景画像（scope 0: balloons0.png, scope`
+- `ui/js/ghost/balloon-window.js:113` `: `balloonp${scopeId}.png`;`
+- `ui/js/ghost/balloon-window.js:119` `: `balloonp${scopeId}.pna`;`

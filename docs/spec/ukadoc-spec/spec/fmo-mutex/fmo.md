@@ -13,4 +13,4 @@ FMO の作成・参照なし (Mutex の検索ヒットは Rust 標準の排他�
 - `src-tauri/src/fmo.rs:47` `let fmo = FmoSystemStatus {`
 - `src-tauri/src/fmo.rs:53` `serde_json::to_string(&fmo).map_err(|e| e.to_string())`
 - `src-tauri/src/lib.rs:20` `mod fmo;`
-- `src-tauri/src/lib.rs:158` `fmo::get_fmo_status,`
+- `src-tauri/src/lib.rs:159` `fmo::get_fmo_status,`

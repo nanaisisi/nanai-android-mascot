@@ -9,6 +9,7 @@ import {
 	startDraggingWindow,
 } from "../core/tauri-helper.js";
 import { processChromaKey } from "../surface/surface-compositor.js";
+import { applyFontProperties } from "../core/actions/balloon-descript/font.js";
 
 const urlParams = new URLSearchParams(globalThis.location.search);
 const scopeId = parseInt(urlParams.get("scope") || "0", 10);
@@ -75,33 +76,8 @@ async function applyBalloonDescript(theme) {
 		root.style.setProperty("--balloon-dpi", String(balloonDpi));
 		updateBalloonWindowScale(balloonBox);
 
-		const toCss = (base) => {
-			const r = parseInt(props[`${base}.r`], 10);
-			const g = parseInt(props[`${base}.g`], 10);
-			const b = parseInt(props[`${base}.b`], 10);
-			return Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)
-				? null
-				: `rgb(${r}, ${g}, ${b})`;
-		};
-		if (props["font.name"]) {
-			root.style.setProperty(
-				"--balloon-font-family",
-				`"${props["font.name"]}", Meiryo, sans-serif`,
-			);
-		}
-		const fh = parseInt(props["font.height"], 10);
-		if (!Number.isNaN(fh) && fh > 0) {
-			root.style.setProperty("--balloon-font-size", `${fh}px`);
-		}
-		const textColor = props["font.color"] || toCss("font.color");
-		if (textColor) {
-			root.style.setProperty("--balloon-text-color", textColor);
-		}
-		const highlightBg =
-			props["cursor.font.color"] || toCss("cursor.font.color");
-		if (highlightBg) {
-			root.style.setProperty("--balloon-highlight-bg", highlightBg);
-		}
+		// descript.txt のフォント、色、アンカー、カーソル、装飾プロパティを完全適用
+		applyFontProperties(balloonBox || root, props);
 
 		// 有効テキスト領域 (validrect) による余白調整
 		const vl = parseInt(props["validrect.left"], 10);

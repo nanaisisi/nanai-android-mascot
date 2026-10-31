@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/lib.rs:104` `commands::shell::uninstall_ghost,`
-- `src-tauri/src/lib.rs:145` `commands::install::pick_and_install_ghost_archive,`
-- `src-tauri/src/lib.rs:146` `commands::install::install_ghost_archive,`
-- `src-tauri/src/lib.rs:147` `commands::install::install_ghost_archive_bytes,`
+- `src-tauri/src/lib.rs:105` `commands::shell::uninstall_ghost,`
+- `src-tauri/src/lib.rs:146` `commands::install::pick_and_install_ghost_archive,`
+- `src-tauri/src/lib.rs:147` `commands::install::install_ghost_archive,`
+- `src-tauri/src/lib.rs:148` `commands::install::install_ghost_archive_bytes,`
 - `src-tauri/src/commands/mod.rs:5` `pub mod install;`

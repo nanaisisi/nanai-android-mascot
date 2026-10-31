@@ -8,6 +8,7 @@ pub struct BalloonInfo {
     pub name: String,
     pub descript: std::collections::BTreeMap<String, String>,
     pub thumbnail: Option<String>,
+    pub readme: Option<String>,
 }
 
 #[tauri::command]
@@ -47,11 +48,23 @@ pub fn scan_balloons(app_handle: tauri::AppHandle) -> Result<Vec<BalloonInfo>, S
                                 }
                             });
 
+                        let readme = ["readme.txt", "Readme.txt", "README.TXT"]
+                            .iter()
+                            .find_map(|f| {
+                                let p = path.join(f);
+                                if p.is_file() {
+                                    nanai_android_mascot_ui::open_text_file(&p).ok()
+                                } else {
+                                    None
+                                }
+                            });
+
                         balloons.push(BalloonInfo {
                             dir_name,
                             name,
                             descript,
                             thumbnail,
+                            readme,
                         });
                     }
                 }
@@ -67,6 +80,21 @@ pub fn scan_balloons(app_handle: tauri::AppHandle) -> Result<Vec<BalloonInfo>, S
     result.sort_by(|a, b| a.name.cmp(&b.name));
 
     Ok(result)
+}
+
+#[tauri::command]
+pub fn get_balloon_readme(
+    name: String,
+    app_handle: tauri::AppHandle,
+) -> Result<Option<String>, String> {
+    let dir = resolve_balloon_dir(&name, &app_handle)?;
+    for f in ["readme.txt", "Readme.txt", "README.TXT"] {
+        let p = dir.join(f);
+        if p.is_file() {
+            return Ok(nanai_android_mascot_ui::open_text_file(&p).ok());
+        }
+    }
+    Ok(None)
 }
 
 #[tauri::command]

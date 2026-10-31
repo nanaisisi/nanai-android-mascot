@@ -11,7 +11,7 @@
 ## 実装箇所
 
 - `src-tauri/src/commands/shell/balloon.rs:10` `pub thumbnail: Option<String>,`
-- `src-tauri/src/commands/shell/balloon.rs:34` `let thumbnail = ["thumbnail.png", "thumbnail.jpg", "thumbnail.bmp"]`
-- `src-tauri/src/commands/shell/balloon.rs:54` `thumbnail,`
+- `src-tauri/src/commands/shell/balloon.rs:35` `let thumbnail = ["thumbnail.png", "thumbnail.jpg", "thumbnail.bmp"]`
+- `src-tauri/src/commands/shell/balloon.rs:66` `thumbnail,`
 - `crates/ui/src/descript/parser.rs:171` `entry.thumbnail = parts.next().filter(|s| !s.is_empty()).map(str::to_string);`
 - `crates/ui/src/descript/tests.rs:33` `assert_eq!(g.thumbnail.as_deref(), Some("thumb.png"));`

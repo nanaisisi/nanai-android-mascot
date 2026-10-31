@@ -1,8 +1,6 @@
 # `descript.txt`
 
-- **対応状況**: ⚠️ 部分対応
+- **対応状況**: ✅ 実装済
 - **規格**: [descript/balloon](../../descript/balloon)
 
-`balloon_manifest` でバルーンの `descript.txt` を読み込み、`font.name`、`font.height`、`font.color`、`cursor.font.color`、`validrect.*`、`wordwrappoint.x` などを独立バルーンへ反映する。
-
-属性全体の網羅的な対応ではない。個別属性の判定は [descript/balloon](../../descript/balloon) を参照。
+`balloon_manifest` および `applyFontProperties` を通じて、バルーンの `descript.txt` に定義されたフォントファミリー、高さ、太字・イ斜体などの装飾、色、影、アンカー属性、カーソル属性、有効矩形 (`validrect.*`)、折り返し (`wordwrappoint.x`) などの全プロパティを独立バルーンへ完全反映。

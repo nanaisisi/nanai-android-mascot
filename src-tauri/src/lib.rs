@@ -101,6 +101,7 @@ pub fn run() {
             commands::shell::scan_balloons,
             commands::shell::balloon_manifest,
             commands::shell::load_balloon_image,
+            commands::shell::get_balloon_readme,
             commands::shell::uninstall_ghost,
             commands::shell::surface_composition_plan,
             ghost::scan::directory::scan_ghost_directory,

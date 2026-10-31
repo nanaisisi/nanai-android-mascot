@@ -2,7 +2,7 @@
 
 - **規格**: [f-anchorvisitedstyle.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/choice-marker/f-anchorvisitedstyle/) (ukadoc-spec/list/sakura-script/choice-marker/f-anchorvisitedstyle.md)
 - **検索語**: \f
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

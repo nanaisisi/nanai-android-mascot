@@ -2,7 +2,7 @@
 
 - **規格**: [f-cursornotselectpencolor.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/choice-marker/f-cursornotselectpencolor/) (ukadoc-spec/list/sakura-script/choice-marker/f-cursornotselectpencolor.md)
 - **検索語**: \f
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

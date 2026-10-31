@@ -2,7 +2,7 @@
 
 - **規格**: [f-anchorfontcolor.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/choice-marker/f-anchorfontcolor/) (ukadoc-spec/list/sakura-script/choice-marker/f-anchorfontcolor.md)
 - **検索語**: \f
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

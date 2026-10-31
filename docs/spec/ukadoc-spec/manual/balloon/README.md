@@ -19,6 +19,8 @@
 | [sstp.png](sstp-png.md)                                                | ✅ 実装済                                           |
 | [thumbnail.png](thumbnail-png.md)                                      | ✅ 実装済                                           |
 | [SSP 専用画像](ssp-assets.md)                                          | ✅ 実装済                                           |
+| [バルーン FMO 連携](balloon-fmo.md)                                    | ✅ 実装済                                           |
+| [バルーン 9-slice 描画](balloon-9slice.md)                             | ✅ 実装済                                           |
 
 ## 対応範囲の共通事項
 

@@ -7,7 +7,7 @@ pub(crate) use handlers::{
     handle_animation, handle_balloon, handle_choice, handle_font, handle_newline, handle_raiselike,
     handle_surface, handle_target_p, handle_underscore,
 };
-pub(crate) use utils::consume_tag_tail;
+pub(crate) use utils::{consume_tag_tail, read_bracketed};
 
 #[cfg(test)]
 mod tests {

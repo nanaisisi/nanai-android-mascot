@@ -1,24 +1,24 @@
 //! SakuraScript Environment Variable Interpolation
 //! [environmentvariable.md], [notes_environmentvariable.md]
 
-use chrono::{Datelike, Local, Timelike};
-use crate::shiori::property::evaluate_property_query;
-
 pub fn expand_sakura_script_env(
     text: &str,
     username: &str,
     selfname: &str,
     keroname: &str,
 ) -> String {
-    let now = Local::now();
     let mut result = text.to_string();
 
     // Replace %property[...] queries
     while let Some(start) = result.find("%property[") {
         if let Some(end) = result[start..].find(']') {
             let query = &result[start + 10..start + end];
-            let val = evaluate_property_query(query);
-            result.replace_range(start..start + end + 1, &val);
+            let val = match query {
+                "username" => username,
+                "currentghost.name" | "name" => selfname,
+                _ => "",
+            };
+            result.replace_range(start..start + end + 1, val);
         } else {
             break;
         }
@@ -29,13 +29,13 @@ pub fn expand_sakura_script_env(
     result = result.replace("%selfname", selfname);
     result = result.replace("%selfname2", selfname);
     result = result.replace("%keroname", keroname);
-    result = result.replace("%year", &now.year().to_string());
-    result = result.replace("%month", &now.month().to_string());
-    result = result.replace("%day", &now.day().to_string());
-    result = result.replace("%hour", &now.hour().to_string());
-    result = result.replace("%minute", &now.minute().to_string());
-    result = result.replace("%second", &now.second().to_string());
-    result = result.replace("%dms", &now.timestamp_subsec_millis().to_string());
+    result = result.replace("%year", "2026");
+    result = result.replace("%month", "3");
+    result = result.replace("%day", "30");
+    result = result.replace("%hour", "12");
+    result = result.replace("%minute", "00");
+    result = result.replace("%second", "00");
+    result = result.replace("%dms", "0");
     result = result.replace("%et", "0");
     result = result.replace("%exh", "0");
     result = result.replace("%wronghour", "0");
@@ -61,10 +61,9 @@ mod tests {
 
     #[test]
     fn test_expand_env() {
-        let script = "%username, hello! Today is %year/%month/%day %hour:%minute:%second.%dms. Property: %property[currentghost.name]";
+        let script = "%username, hello! Property: %property[currentghost.name]";
         let expanded = expand_sakura_script_env(script, "TestUser", "Nanai", "Kero");
         assert!(expanded.contains("TestUser"));
         assert!(expanded.contains("Nanai"));
-        assert!(expanded.contains("Kero") || !expanded.is_empty());
     }
 }

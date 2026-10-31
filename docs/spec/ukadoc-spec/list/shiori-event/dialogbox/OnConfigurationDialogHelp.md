@@ -6,8 +6,9 @@
 
 ## 突合結果
 
-OnConfigurationDialogHelp ダイアログ関連SHIORIイベント通知処理を実装 (ui/js/ghost/shiori-notify.js -> sendShioriNotify).
+設定ダイアログ (`settings-modal-content`) 内のヘルプボタン押下時に `OnConfigurationDialogHelp` SHIORIイベント (Reference0: "settings") を送信するイベントハンドラを実装 (`ui/js/ui/modal-settings-handlers.js` -> `OnConfigurationDialogHelp`)。
 
 ## 実装箇所
 
 - `ui/js/ghost/shiori-notify.js:25` `* - OnConfigurationDialogHelp, OnGhostTermsAccept, OnGhostTermsDecline, OnSystem`
+- `ui/js/ui/modal-settings-handlers.js:91` `this.app.ghostController?.sendShioriEvent("OnConfigurationDialogHelp", [`

@@ -1,4 +1,5 @@
 use super::super::utils::*;
+use crate::common::*;
 
 pub struct InstallInspectionResult {
     pub ghost_name: String,

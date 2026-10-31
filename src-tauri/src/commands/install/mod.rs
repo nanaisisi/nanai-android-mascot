@@ -85,6 +85,18 @@ pub async fn install_ghost_archive_bytes(
     extract_ghost_archive_from_reader(zip, &fallback, &app_handle)
 }
 
+/// フォルダを指定して .nar (ZIP形式) アーカイブを圧縮作成・パッキングするコマンド
+#[tauri::command]
+pub async fn create_nar_archive(
+    folder_path: String,
+    output_nar_path: String,
+) -> Result<u64, String> {
+    println!("📦 Creating NAR archive from folder: {} -> {}", folder_path, output_nar_path);
+    let src = Path::new(&folder_path);
+    let dst = Path::new(&output_nar_path);
+    archive::create_nar_from_directory(src, dst)
+}
+
 #[cfg(test)]
 mod tests {
     #[test]

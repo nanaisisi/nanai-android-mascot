@@ -87,6 +87,19 @@ export class SakuraCommandHandler {
 		} else if (rawCmd === "archiveexec") {
 			const [action, filename, dest] = args.slice(1);
 			console.log(`📦 Archive action ${action}: file=${filename}, dest=${dest}`);
+			if (action === "createnar" && isTauriAvailable()) {
+				try {
+					const ghostPath = this.app.ghostController?.currentGhost?.path || "";
+					const outputPath = filename || `${ghostPath}.nar`;
+					await invoke("create_nar_archive", {
+						folderPath: ghostPath,
+						outputNarPath: outputPath,
+					});
+					console.log(`📦 Created NAR archive: ${outputPath}`);
+				} catch (err) {
+					console.warn("Failed to create NAR archive:", err);
+				}
+			}
 		} else if (rawCmd === "downloadexec") {
 			const [url, savePath] = args.slice(1);
 			console.log(`📥 Download requested: url=${url}, savePath=${savePath}`);

@@ -66,6 +66,7 @@ export const settingsTemplates = {
     <div class="form-section">
       <button type="button" id="save-settings-btn" class="primary">設定保存</button>
       <button type="button" id="reset-settings-btn">設定リセット</button>
+      <button type="button" id="config-help-btn">❓ ヘルプ</button>
     </div>
   `,
 

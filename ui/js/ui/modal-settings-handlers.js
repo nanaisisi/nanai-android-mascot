@@ -85,6 +85,13 @@ export class ModalSettingsHandlers {
 				setTimeout(() => this.app.hideBalloon(), 2000);
 			}
 		});
+
+		const helpBtn = document.getElementById("config-help-btn");
+		helpBtn?.addEventListener("click", () => {
+			this.app.ghostController?.sendShioriEvent("OnConfigurationDialogHelp", [
+				"settings",
+			]);
+		});
 	}
 
 	setupPluginListeners() {

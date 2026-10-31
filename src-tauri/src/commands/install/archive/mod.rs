@@ -1,7 +1,11 @@
 mod extraction;
 mod inspection;
+mod packaging;
 mod postprocess;
 
+pub use packaging::create_nar_from_directory;
+
+use super::utils::flatten_balloon_directory;
 use crate::common::*;
 use extraction::extract_zip_entries;
 use inspection::inspect_zip_archive;

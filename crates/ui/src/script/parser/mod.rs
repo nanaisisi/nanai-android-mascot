@@ -103,6 +103,21 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
                 Some('a') => callback(SakuraCommand::AudioWait), // \a
                 Some('v') => callback(SakuraCommand::Voice("".into())), // \v
                 Some('+') => callback(SakuraCommand::Plus),  // \+
+                Some('&') => {
+                    // \&[ID] entity / property interpolation (\&[amp], \&[lt], \&[gt], \&[quot], \&[ID])
+                    if let Some(id) = brackets::read_bracketed(&mut chars) {
+                        let text = match id.as_str() {
+                            "amp" => "&".to_string(),
+                            "lt" => "<".to_string(),
+                            "gt" => ">".to_string(),
+                            "quot" => "\"".to_string(),
+                            "apos" => "'".to_string(),
+                            "nbsp" => " ".to_string(),
+                            other => format!("&[{}]", other),
+                        };
+                        callback(SakuraCommand::Text(text));
+                    }
+                }
                 // 未知タグ: 後続の [...] 引数を消費し、本文への漏出を防ぐ
                 Some(_) => brackets::consume_tag_tail(&mut chars),
                 None => {}

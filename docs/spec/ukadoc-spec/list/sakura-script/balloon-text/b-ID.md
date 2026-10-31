@@ -14,4 +14,4 @@
 - `crates/ui/src/lib.rs:114` `let script = r"\b[0]\b[-1]\t\-\_s\_l[10,20]\f[color,red]\f[bold]";`
 - `crates/ui/src/script/command.rs:49` `Balloon(i32), // \b[n], \b[-1], \b0..\b9`
 - `crates/ui/src/script/parser/mod.rs:57` `// \b[n] または \b0..\b9（\b[-1] 等の負数含む）`
-- `crates/ui/src/script/parser/mod.rs:132` `let script = "\\0\\h\\1\\u\\p[2]\\px\\s[10]\\sx\\w5\\wx\\x\\_w[10]\\b[1]\\bx\\f[`
+- `crates/ui/src/script/parser/mod.rs:147` `let script = "\\0\\h\\1\\u\\p[2]\\px\\s[10]\\sx\\w5\\wx\\x\\_w[10]\\b[1]\\bx\\f[`

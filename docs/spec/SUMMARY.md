@@ -4,8 +4,22 @@
 
 | 規格 (ukadoc-spec / ukadoc-ssp 層 + 1階層) | ✅ 実装済 | ⚠️ 一部対応 | ❌ 未実装 | ❓ 未確認 | 合計 |
 | :--- | --------: | ----------: | --------: | --------: | ---: |
+| nas-spec/android-overlay-and-service-spec.md |         1 |           0 |         0 |         0 |    1 |
+| nas-spec/composition-plan-integration-spec.md |         1 |           0 |         0 |         0 |    1 |
+| nas-spec/context-menu-spec.md        |         1 |           0 |         0 |         0 |    1 |
+| nas-spec/encoding-and-vfs-spec.md    |         1 |           0 |         0 |         0 |    1 |
+| nas-spec/ghost-import-and-asset-separation-spec.md |         1 |           0 |         0 |         0 |    1 |
+| nas-spec/plugin-and-shiori-fallback-spec.md |         1 |           0 |         0 |         0 |    1 |
+| nas-spec/sakura-script-and-balloon-spec.md |         1 |           0 |         0 |         0 |    1 |
+| nas-spec/shell-menu-pictures-spec.md |         1 |           0 |         0 |         0 |    1 |
+| nas-spec/shiori-integration.md       |         1 |           0 |         0 |         0 |    1 |
+| nas-spec/ssp-compatibility-reference.md |         1 |           0 |         0 |         0 |    1 |
 | nas-spec/ssp-font-and-ui-spec.md     |         1 |           0 |         0 |         0 |    1 |
 | nas-spec/ssp-master-compatibility-spec.md |         1 |           0 |         0 |         0 |    1 |
+| nas-spec/standard-ghost-spec.md      |         1 |           0 |         0 |         0 |    1 |
+| nas-spec/submenu-window-spec.md      |         1 |           0 |         0 |         0 |    1 |
+| nas-spec/surfaces-and-collision-spec.md |         1 |           0 |         0 |         0 |    1 |
+| nas-spec/wasm-and-plugin-extensibility.md |         1 |           0 |         0 |         0 |    1 |
 | ssp-external-spec/explorer.md        |         1 |           0 |         0 |         0 |    1 |
 | ssp-external-spec/menu-bitmap.md     |         1 |           0 |         0 |         0 |    1 |
 | ssp-external-spec/window-snap.md     |         1 |           0 |         0 |         0 |    1 |
@@ -20,7 +34,7 @@
 | ukadoc-ssp/dev                       |         2 |           0 |         3 |         0 |    5 |
 | ukadoc-ssp/functions                 |        13 |           0 |         4 |         0 |   17 |
 | ukadoc-ssp/howto                     |         5 |           0 |         2 |         0 |    7 |
-| **合計** |      1038 |           3 |      1029 |         0 | 2070 |
+| **合計** |      1052 |           3 |      1029 |         0 | 2084 |
 
 ## 注意
 

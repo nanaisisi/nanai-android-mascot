@@ -6,7 +6,7 @@
 
 ## 突合結果
 
-OnApplicationFileOpen 外部アプリケーション連携SHIORIイベント処理を実装 (ui/js/ghost/shiori-notify.js -> sendShioriNotify).
+OnApplicationFileOpen 外部アプリケーション連携SHIORIイベント処理を実装 (ui/js/ghost/ghost-shiori.js -> sendShioriEvent, ui/js/ghost/shiori-notify.js).
 
 ## 実装箇所
 

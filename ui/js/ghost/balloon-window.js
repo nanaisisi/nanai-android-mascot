@@ -8,6 +8,7 @@ import {
 	listen,
 	startDraggingWindow,
 } from "../core/tauri-helper.js";
+import { processChromaKey } from "../surface/surface-compositor.js";
 
 const urlParams = new URLSearchParams(globalThis.location.search);
 const scopeId = parseInt(urlParams.get("scope") || "0", 10);
@@ -127,12 +128,20 @@ async function applyBalloonDescript(theme) {
 			);
 		}
 
-		// [balloons*s.txt/balloonk*s.txt]: 背景画像（balloons0: さくら / balloonk0: 相方。9 スライスで伸縮）
+		// [balloons*s.txt/balloonk*s.txt]: 背景画像（balloons0: さくら / balloonk0: 相方。9 スライスで伸縮）+ PNAアルファマスク対応
 		const imageFile = scopeId === 0 ? "balloons0.png" : "balloonk0.png";
-		const bgImage = await invoke("load_balloon_image", {
+		const pnaFile = scopeId === 0 ? "balloons0.pna" : "balloonk0.pna";
+		const bgImageRaw = await invoke("load_balloon_image", {
 			name: theme,
 			file: imageFile,
 		}).catch(() => null);
+		const pnaImage = await invoke("load_balloon_image", {
+			name: theme,
+			file: pnaFile,
+		}).catch(() => null);
+
+		const bgImage = bgImageRaw ? await processChromaKey(bgImageRaw, pnaImage) : null;
+
 		if (bgImage) {
 			const t = Number.isNaN(vt) ? 38 : Math.max(8, vt);
 			const r = Number.isNaN(vr) ? 40 : Math.max(8, vr);

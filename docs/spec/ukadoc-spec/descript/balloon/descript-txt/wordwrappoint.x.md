@@ -13,5 +13,5 @@
 - `ui/js/core/actions/balloon-descript/layout.js:104` `// [wordwrappoint.x,座標], [wordwrappoint.y,座標]:`
 - `ui/js/core/actions/balloon-descript/layout.js:105` `if (props["wordwrappoint.x"]) {`
 - `ui/js/core/actions/balloon-descript/layout.js:106` `const ww = parseInt(props["wordwrappoint.x"], 10);`
-- `ui/js/ghost/balloon-window.js:121` `// 折り返し幅 (wordwrappoint.x は原点右基準の負オフセット指定)`
-- `ui/js/ghost/balloon-window.js:122` `const ww = parseInt(props["wordwrappoint.x"], 10);`
+- `ui/js/ghost/balloon-window.js:122` `// 折り返し幅 (wordwrappoint.x は原点右基準の負オフセット指定)`
+- `ui/js/ghost/balloon-window.js:123` `const ww = parseInt(props["wordwrappoint.x"], 10);`

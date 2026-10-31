@@ -14,4 +14,4 @@
 - `crates/ui/src/descript/tests.rs:63` `validrect.bottom,600\n\`
 - `ui/js/core/actions/balloon-descript/layout.js:83` `// [validrect.left,座標], [validrect.top,座標], [validrect.right,座標], [validrect.bot`
 - `ui/js/core/actions/balloon-descript/layout.js:87` `const vb = parseInt(props["validrect.bottom"], 10);`
-- `ui/js/ghost/balloon-window.js:109` `const vb = parseInt(props["validrect.bottom"], 10);`
+- `ui/js/ghost/balloon-window.js:110` `const vb = parseInt(props["validrect.bottom"], 10);`

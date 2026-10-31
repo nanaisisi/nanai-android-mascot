@@ -101,13 +101,24 @@ pub(crate) fn handle_underscore(
             }
         }
         Some('_') => {
-            if chars.peek() == Some(&'v') {
-                chars.next();
-                let opt = read_bracketed(chars).unwrap_or_default();
-                callback(SakuraCommand::Voice(opt));
-            } else {
-                let _ = chars.next();
-                consume_tag_tail(chars);
+            match chars.next() {
+                Some('v') => {
+                    let opt = read_bracketed(chars).unwrap_or_default();
+                    callback(SakuraCommand::Voice(opt));
+                }
+                Some('q') => {
+                    let enabled = if chars.peek() == Some(&'[') {
+                        read_bracketed(chars)
+                            .map(|v| !matches!(v.trim(), "0" | "false"))
+                            .unwrap_or(true)
+                    } else {
+                        true
+                    };
+                    callback(SakuraCommand::Quick(enabled));
+                }
+                _ => {
+                    consume_tag_tail(chars);
+                }
             }
         }
         _ => {

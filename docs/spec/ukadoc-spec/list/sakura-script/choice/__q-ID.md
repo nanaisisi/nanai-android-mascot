@@ -6,4 +6,8 @@
 
 ## 突合結果
 
-実装コードに「\__q」が見つからない。
+`\_\_q` (Quick) タグのパーサ処理を実装 (`crates/ui/src/script/parser/brackets/handlers/underscore.rs`)。
+
+## 実装箇所
+
+- `crates/ui/src/script/parser/brackets/handlers/underscore.rs` (`handle_underscore`)

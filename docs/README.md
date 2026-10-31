@@ -18,26 +18,26 @@
 
 ## 📚 ドキュメント構成
 
-### 📖 ユーザー向けドキュメント (`user/`)
+### 📖 ユーザー向けドキュメント (`doc/user`)
 
-- **[installation.md](user/installation.md)** - インストール手順・ビルドガイド（Windows / Android）
-- **[user-guide.md](user/user-guide.md)** - 基本的な使用方法・操作ガイド
-- **[troubleshooting.md](user/troubleshooting.md)** - トラブルシューティング
+- **[installation.md](doc/user/installation.md)** - インストール手順・ビルドガイド（Windows / Android）
+- **[user-guide.md](doc/user/user-guide.md)** - 基本的な使用方法・操作ガイド
+- **[troubleshooting.md](doc/user/troubleshooting.md)** - トラブルシューティング
 - **[credits-and-license.md](credits-and-license.md)** - 権利表記・著作権・ライセンス（使用単語・規格等の権利者表記）
 
-### 🛠️ 開発者向けドキュメント (`developer/`)
+### 🛠️ 開発者向けドキュメント (`doc/developer`)
 
-- **[architecture.md](developer/architecture.md)** - システムアーキテクチャ（Frontend / Tauri Bridge / Rust Backend）
-- **[dpi-patch-spec.md](developer/specs/dpi-patch-spec.md)** - dpi クレート改変仕様・記録書 (patches/dpi)
+- **[architecture.md](doc/developer/architecture.md)** - システムアーキテクチャ（Frontend / Tauri Bridge / Rust Backend）
+- **[dpi-patch-spec.md](doc/developer/specs/dpi-patch-spec.md)** - dpi クレート改変仕様・記録書 (patches/dpi)
 
-### 📐 設計・ロードマップ (`design/`)
+### 📐 設計・ロードマップ (`doc/design`)
 
-- **[ghost-loading-and-animation-policy.md](design/cache-and-async/ghost-loading-and-animation-policy.md)** - ゴースト読み込み・バナー・会話表示・サーフィス描画の負荷対策コンセプト
-- **[implementation-plan-and-spec.md](design/planning/implementation-plan-and-spec.md)** - 次期フェーズ実装計画 & 統合技術仕様書 (Phase 2+)
-- **[pending-issues-and-roadmap.md](design/planning/pending-issues-and-roadmap.md)** - 検討事項・仕様化ロードマップ（全体概要）
-- **[mockup-and-android-spec.md](design/ui/mockup-and-android-spec.md)** - UI/UX & モックアップ仕様書（PCシミュレーション・モバイル画面設計）
-- **[ui-and-menu-spec.md](design/ui/ui-and-menu-spec.md)** - 標準UI & 拡張メニュー仕様書
-- **[window-design.md](design/ui/window-design.md)** - ウィンドウ設計（Windows検証 / Android Single Container）
+- **[ghost-loading-and-animation-policy.md](doc/design/cache-and-async/ghost-loading-and-animation-policy.md)** - ゴースト読み込み・バナー・会話表示・サーフィス描画の負荷対策コンセプト
+- **[implementation-plan-and-spec.md](doc/design/planning/implementation-plan-and-spec.md)** - 次期フェーズ実装計画 & 統合技術仕様書 (Phase 2+)
+- **[pending-issues-and-roadmap.md](doc/design/planning/pending-issues-and-roadmap.md)** - 検討事項・仕様化ロードマップ（全体概要）
+- **[mockup-and-android-spec.md](doc/design/ui/mockup-and-android-spec.md)** - UI/UX & モックアップ仕様書（PCシミュレーション・モバイル画面設計）
+- **[ui-and-menu-spec.md](doc/design/ui/ui-and-menu-spec.md)** - 標準UI & 拡張メニュー仕様書
+- **[window-design.md](doc/design/ui/window-design.md)** - ウィンドウ設計（Windows検証 / Android Single Container）
 
 ### 🔧 仕様適合確認・マスター規格 (`spec/`)
 
@@ -50,48 +50,48 @@
 
 ### 📐 内部設計技術仕様書 (`doc-spec/`)
 
-- **[standard-ghost-spec.md](doc-spec/ghost/standard-ghost-spec.md)** - 公式サンプルキャラクター仕様書（モック & プチ）
-- **[sakura-script-and-balloon-spec.md](doc-spec/shiori-script/sakura-script-and-balloon-spec.md)** - さくらスクリプトパーサー & バルーン文字送り仕様書
-- **[surfaces-and-collision-spec.md](doc-spec/ghost/surfaces-and-collision-spec.md)** - surfaces.txt アニメーション合成 & 当たり判定仕様書
-- **[encoding-and-vfs-spec.md](doc-spec/platform/encoding-and-vfs-spec.md)** - 文字コード変換 (Shift_JIS ↔ UTF-8) & 仮想ファイルシステム (VFS) 仕様書
-- **[android-overlay-and-service-spec.md](doc-spec/platform/android-overlay-and-service-spec.md)** - Android システムオーバーレイ & 常駐生存仕様書
-- **[plugin-and-shiori-fallback-spec.md](doc-spec/shiori-script/plugin-and-shiori-fallback-spec.md)** - プラグイン & SHIORI 読込み・代替読込み (Fallback) 仕様書
-- **[wasm-and-plugin-extensibility.md](doc-spec/platform/wasm-and-plugin-extensibility.md)** - WASM化指針 & JavaScript拡張システム仕様書
-- **[shiori-integration.md](doc-spec/shiori-script/shiori-integration.md)** - SHIORI 組み込み統合技術仕様
-- **[ssp-compatibility-reference.md](doc-spec/reference/ssp-compatibility-reference.md)** - SSP 仕様ベース 統合互換リファレンスマニュアル
-- **[local-reference-and-test-spec.md](doc-spec/reference/local-reference-and-test-spec.md)** - ローカル外部仕様・試験環境（local/）連携仕様書
-- **[ghost-compatibility-gap-and-roadmap.md](doc-spec/ghost/ghost-compatibility-gap-and-roadmap.md)** - 伺かゴースト互換性ギャップ分析と実装改善ロードマップ仕様書
-- **[compatibility-implementation-plan.md](doc-spec/reference/compatibility-implementation-plan.md)** - 互換実装計画仕様書
-- **[specification-compliance-matrix.md](doc-spec/reference/specification-compliance-matrix.md)** - 仕様適合マトリクス
+- **[standard-ghost-spec.md](doc/ghost/standard-ghost-spec.md)** - 公式サンプルキャラクター仕様書（モック & プチ）
+- **[sakura-script-and-balloon-spec.md](doc/shiori-script/sakura-script-and-balloon-spec.md)** - さくらスクリプトパーサー & バルーン文字送り仕様書
+- **[surfaces-and-collision-spec.md](doc/ghost/surfaces-and-collision-spec.md)** - surfaces.txt アニメーション合成 & 当たり判定仕様書
+- **[encoding-and-vfs-spec.md](doc/platform/encoding-and-vfs-spec.md)** - 文字コード変換 (Shift_JIS ↔ UTF-8) & 仮想ファイルシステム (VFS) 仕様書
+- **[android-overlay-and-service-spec.md](doc/platform/android-overlay-and-service-spec.md)** - Android システムオーバーレイ & 常駐生存仕様書
+- **[plugin-and-shiori-fallback-spec.md](doc/shiori-script/plugin-and-shiori-fallback-spec.md)** - プラグイン & SHIORI 読込み・代替読込み (Fallback) 仕様書
+- **[wasm-and-plugin-extensibility.md](doc/platform/wasm-and-plugin-extensibility.md)** - WASM化指針 & JavaScript拡張システム仕様書
+- **[shiori-integration.md](doc/shiori-script/shiori-integration.md)** - SHIORI 組み込み統合技術仕様
+- **[ssp-compatibility-reference.md](doc/reference/ssp-compatibility-reference.md)** - SSP 仕様ベース 統合互換リファレンスマニュアル
+- **[local-reference-and-test-spec.md](doc/reference/local-reference-and-test-spec.md)** - ローカル外部仕様・試験環境（local/）連携仕様書
+- **[ghost-compatibility-gap-and-roadmap.md](doc/ghost/ghost-compatibility-gap-and-roadmap.md)** - 伺かゴースト互換性ギャップ分析と実装改善ロードマップ仕様書
+- **[compatibility-implementation-plan.md](doc/reference/compatibility-implementation-plan.md)** - 互換実装計画仕様書
+- **[specification-compliance-matrix.md](doc/reference/specification-compliance-matrix.md)** - 仕様適合マトリクス
 
-### 📋 開発プロセス & 履歴 (`process/`)
+### 📋 開発プロセス & 履歴 (`doc/process`)
 
-- **[AI_driven.md](process/AI_driven.md)** - AI 駆動開発の手法と実践記録
-- **[development-approach.md](process/development-approach.md)** - 開発アプローチ・技術選定
-- **[doc_history.md](process/doc_history.md)** - ドキュメント変更履歴
-- **[documentation-proposal.md](process/documentation-proposal.md)** - ドキュメント戦略・提案
+- **[AI_driven.md](doc/process/AI_driven.md)** - AI 駆動開発の手法と実践記録
+- **[development-approach.md](doc/process/development-approach.md)** - 開発アプローチ・技術選定
+- **[doc_history.md](doc/process/doc_history.md)** - ドキュメント変更履歴
+- **[documentation-proposal.md](doc/process/documentation-proposal.md)** - ドキュメント戦略・提案
 
-### 🔬 調査・研究メモ (`research/`)
+### 🔬 調査・研究メモ (`doc/research`)
 
-- **[all_desktopmascot.md](research/all_desktopmascot.md)** - デスクトップマスコットの立ち位置・原理検討メモ
-- **[compare_baseware.md](research/compare_baseware.md)** - 互換ベースウェア比較
-- **[compare_chara_solution.md](research/compare_chara_solution.md)** - キャラクターソリューション比較
-- **[compare_device_solution.md](research/compare_device_solution.md)** - 音声アシスタント・スマートデバイス比較
-- **[dependency-licenses.md](research/dependency-licenses.md)** - 依存ライセンス調査報告書（Rust/npm/伺か系SHIORI）
+- **[all_desktopmascot.md](doc/research/all_desktopmascot.md)** - デスクトップマスコットの立ち位置・原理検討メモ
+- **[compare_baseware.md](doc/research/compare_baseware.md)** - 互換ベースウェア比較
+- **[compare_chara_solution.md](doc/research/compare_chara_solution.md)** - キャラクターソリューション比較
+- **[compare_device_solution.md](doc/research/compare_device_solution.md)** - 音声アシスタント・スマートデバイス比較
+- **[dependency-licenses.md](doc/research/dependency-licenses.md)** - 依存ライセンス調査報告書（Rust/npm/伺か系SHIORI）
 
 ## 🚀 クイックスタート
 
 ### 初めて使う方
 
-1. **[インストールガイド](user/installation.md)** でアプリをインストール
-2. **[ユーザーガイド](user/user-guide.md)** で基本的な使用方法を確認
-3. 問題が発生した場合は **[トラブルシューティング](user/troubleshooting.md)** を参照
+1. **[インストールガイド](doc/user/installation.md)** でアプリをインストール
+2. **[ユーザーガイド](doc/user/user-guide.md)** で基本的な使用方法を確認
+3. 問題が発生した場合は **[トラブルシューティング](doc/user/troubleshooting.md)** を参照
 
 ### 開発に参加したい方
 
 1. **[貢献ガイド](../CONTRIBUTING.md)** で貢献方法を確認
-2. **[システムアーキテクチャ](developer/architecture.md)** でシステム構成を理解
-3. **[AI 主導開発](process/AI_driven.md)** で開発手法を把握
+2. **[システムアーキテクチャ](doc/developer/architecture.md)** でシステム構成を理解
+3. **[AI 主導開発](doc/process/AI_driven.md)** で開発手法を把握
 
 ## 📝 ドキュメントの特徴
 
@@ -133,20 +133,20 @@
 
 ### 目的別
 
-- **インストールしたい** → [インストールガイド](user/installation.md)
-- **使い方を知りたい** → [ユーザーガイド](user/user-guide.md)
-- **問題を解決したい** → [トラブルシューティング](user/troubleshooting.md)
+- **インストールしたい** → [インストールガイド](doc/user/installation.md)
+- **使い方を知りたい** → [ユーザーガイド](doc/user/user-guide.md)
+- **問題を解決したい** → [トラブルシューティング](doc/user/troubleshooting.md)
 - **開発に参加したい** → [貢献ガイド](../CONTRIBUTING.md)
-- **システムを理解したい** → [アーキテクチャ](developer/architecture.md)
-- **AI 開発に興味がある** → [AI 主導開発](process/AI_driven.md)
+- **システムを理解したい** → [アーキテクチャ](doc/developer/architecture.md)
+- **AI 開発に興味がある** → [AI 主導開発](doc/process/AI_driven.md)
 
 ### 技術レベル別
 
-- **初心者・ユーザー** → [ユーザー向けガイド](user/user-guide.md) (`user/` ディレクトリ)
-- **開発者・コントリビューター** → [システムアーキテクチャ](developer/architecture.md) (`developer/` ディレクトリ)
-- **設計・ロードマップ確認** → [実装計画](design/planning/implementation-plan-and-spec.md)、[ロードマップ](design/planning/pending-issues-and-roadmap.md) (`design/` ディレクトリ)
-- **仕様策定・互換レイヤー実装** → 各種技術仕様書（[文字コード/VFS仕様](doc-spec/platform/encoding-and-vfs-spec.md)、[SHIORIフォールバック仕様](doc-spec/shiori-script/plugin-and-shiori-fallback-spec.md)等、`spec/` ディレクトリ）
-- **開発プロセス・背景設計** → [AI主導開発](process/AI_driven.md)、[開発アプローチ](process/development-approach.md) (`process/` ディレクトリ)
+- **初心者・ユーザー** → [ユーザー向けガイド](doc/user/user-guide.md) (`doc/user` ディレクトリ)
+- **開発者・コントリビューター** → [システムアーキテクチャ](doc/developer/architecture.md) (`doc/developer` ディレクトリ)
+- **設計・ロードマップ確認** → [実装計画](doc/design/planning/implementation-plan-and-spec.md)、[ロードマップ](doc/design/planning/pending-issues-and-roadmap.md) (`doc/design` ディレクトリ)
+- **仕様策定・互換レイヤー実装** → 各種技術仕様書（[文字コード/VFS仕様](doc/platform/encoding-and-vfs-spec.md)、[SHIORIフォールバック仕様](doc/shiori-script/plugin-and-shiori-fallback-spec.md)等、`spec/` ディレクトリ）
+- **開発プロセス・背景設計** → [AI主導開発](doc/process/AI_driven.md)、[開発アプローチ](doc/process/development-approach.md) (`doc/process` ディレクトリ)
 
 ## 🤝 ドキュメントの改善
 

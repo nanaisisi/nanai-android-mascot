@@ -101,10 +101,10 @@ cargo tauri android run
 プロジェクトの詳細な技術仕様書、設計書、ユーザーガイドは [`docs/`](docs/README.md) ディレクトリに体系的にまとめられています。
 
 - **[ドキュメント総合案内](docs/README.md)**
-- **[ユーザーガイド](docs/user/user-guide.md)**
-- **[インストール手順](docs/user/installation.md)**
-- **[システムアーキテクチャ](docs/developer/architecture.md)**
-- **[開発アプローチ](docs/process/development-approach.md)**
+- **[ユーザーガイド](docs/doc/user/user-guide.md)**
+- **[インストール手順](docs/doc/user/installation.md)**
+- **[システムアーキテクチャ](docs/doc/developer/architecture.md)**
+- **[開発アプローチ](docs/doc/process/development-approach.md)**
 - **[技術仕様書一覧](docs/spec/)**
 
 ---

@@ -96,9 +96,13 @@ def process_audit_files(codebase):
             keyword = os.path.splitext(os.path.basename(filepath))[0]
 
         # Determine category from relative path under docs/spec/
+        # (If 2nd level is a file like nas-spec/foo.md, group by 1st level folder 'nas-spec')
         rel_path = filepath.replace('docs/spec/', '')
         parts = rel_path.split('/')
-        cat = f"{parts[0]}/{parts[1]}" if len(parts) >= 2 else parts[0]
+        if len(parts) >= 2 and not parts[1].endswith('.md'):
+            cat = f"{parts[0]}/{parts[1]}"
+        else:
+            cat = parts[0]
 
         if cat not in category_stats:
             category_stats[cat] = {"✅": 0, "⚠️": 0, "❌": 0, "❓": 0, "合計": 0}

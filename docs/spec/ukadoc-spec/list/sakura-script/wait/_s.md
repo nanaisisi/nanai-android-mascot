@@ -2,7 +2,7 @@
 
 - **規格**: [_s.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/wait/_s/) (ukadoc-spec/list/sakura-script/wait/_s.md)
 - **検索語**: \_s
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

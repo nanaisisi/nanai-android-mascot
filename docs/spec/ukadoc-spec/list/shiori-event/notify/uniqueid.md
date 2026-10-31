@@ -2,7 +2,7 @@
 
 - **規格**: [uniqueid.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/notify/uniqueid/) (ukadoc-spec/list/shiori-event/notify/uniqueid.md)
 - **検索語**: uniqueid
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

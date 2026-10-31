@@ -2,7 +2,7 @@
 
 - **規格**: [bang-anim-offset-ID-x-y.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/surface/bang-anim-offset-ID-x-y/) (ukadoc-spec/list/sakura-script/surface/bang-anim-offset-ID-x-y.md)
 - **検索語**: \!
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

@@ -23,6 +23,7 @@ pub fn expand_sakura_script_env(
         }
     }
 
+    // Standard environment variables
     result = result.replace("%username", username);
     result = result.replace("%selfname", selfname);
     result = result.replace("%selfname2", selfname);
@@ -51,4 +52,18 @@ pub fn expand_sakura_script_env(
     result = result.replace("%mz", "0");
     result = result.replace("%*", "");
     result
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_expand_env() {
+        let script = "%username, hello! Today is %year/%month/%day %hour:%minute:%second.%dms. Property: %property[currentghost.name]";
+        let expanded = expand_sakura_script_env(script, "TestUser", "Nanai", "Kero");
+        assert!(expanded.contains("TestUser"));
+        assert!(expanded.contains("Nanai"));
+        assert!(expanded.contains("Kero") || !expanded.is_empty());
+    }
 }

@@ -2,7 +2,7 @@
 
 - **規格**: [bang-open-rateofusegraphtotal.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/open/bang-open-rateofusegraphtotal/) (ukadoc-spec/list/sakura-script/open/bang-open-rateofusegraphtotal.md)
 - **検索語**: \!
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

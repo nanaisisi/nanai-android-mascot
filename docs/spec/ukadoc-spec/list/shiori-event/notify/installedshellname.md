@@ -2,7 +2,7 @@
 
 - **規格**: [installedshellname.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/notify/installedshellname/) (ukadoc-spec/list/shiori-event/notify/installedshellname.md)
 - **検索語**: installedshellname
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

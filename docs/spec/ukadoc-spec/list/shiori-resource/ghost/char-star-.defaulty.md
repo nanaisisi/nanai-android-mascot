@@ -2,7 +2,7 @@
 
 - **規格**: [char-star-.defaulty.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ghost/char-star-.defaulty/) (ukadoc-spec/list/shiori-resource/ghost/char-star-.defaulty.md)
 - **検索語**: char
-- **対応状況**: ❌ 未実装(誤検出)
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

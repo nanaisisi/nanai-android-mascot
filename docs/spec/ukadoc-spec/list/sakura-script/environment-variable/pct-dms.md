@@ -12,4 +12,5 @@
 ## 実装箇所
 
 - `crates/ui/src/script/env.rs:1` `//! SakuraScript Environment Variable Interpolation (%username, %selfname, %dms,`
-- `crates/ui/src/script/env.rs:36` `result = result.replace("%dms", &now.timestamp_subsec_millis().to_string());`
+- `crates/ui/src/script/env.rs:37` `result = result.replace("%dms", &now.timestamp_subsec_millis().to_string());`
+- `crates/ui/src/script/env.rs:63` `let script = "%username, hello! Today is %year/%month/%day %hour:%minute:%second`

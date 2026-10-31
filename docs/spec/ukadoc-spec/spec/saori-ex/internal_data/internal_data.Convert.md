@@ -2,7 +2,7 @@
 
 - **規格**: [internal_data.Convert.md](https://ukatech.shillest.net/ukadoc-spec/spec/saori-ex/internal_data/internal_data.Convert/) (ukadoc-spec/spec/saori-ex/internal_data/internal_data.Convert.md)
 - **検索語**: Convert
-- **対応状況**: ❌ 未実装(誤検出)
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

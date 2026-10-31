@@ -2,7 +2,7 @@
 
 - **規格**: [sakura.name.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell/descript-txt/sakura.name/) (ukadoc-spec/descript/shell/descript-txt/sakura.name.md)
 - **検索語**: sakura.name
-- **対応状況**: ⚠️ 一部対応(読込のみ)
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

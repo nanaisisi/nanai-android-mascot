@@ -13,5 +13,5 @@
 - `src-tauri/src/commands/install/utils.rs:89` `+ (dt.hour() as u64) * 3_600`
 - `src-tauri/src/ghost/scan/date.rs:6` `let hours = remainder / 3600;`
 - `src-tauri/src/ghost/scan/date.rs:47` `year, month, day, hours, minutes, seconds`
-- `crates/ui/src/script/env.rs:33` `result = result.replace("%hour", &now.hour().to_string());`
-- `crates/ui/src/script/env.rs:39` `result = result.replace("%wronghour", "0");`
+- `crates/ui/src/script/env.rs:34` `result = result.replace("%hour", &now.hour().to_string());`
+- `crates/ui/src/script/env.rs:40` `result = result.replace("%wronghour", "0");`

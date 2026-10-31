@@ -14,4 +14,4 @@
 - `src-tauri/src/shiori/fmo.rs:34` `content.push_str(&format!("{}.keroname\x01{}\r\n", prefix, rec.keroname));`
 - `src-tauri/src/shiori/fmo.rs:68` `keroname: "Kero".to_string(),`
 - `crates/ui/src/script/env.rs:10` `keroname: &str,`
-- `crates/ui/src/script/env.rs:29` `result = result.replace("%keroname", keroname);`
+- `crates/ui/src/script/env.rs:30` `result = result.replace("%keroname", keroname);`

@@ -2,7 +2,7 @@
 
 - **規格**: [bang-set-scaling.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/surface/bang-set-scaling/) (ukadoc-spec/list/sakura-script/surface/bang-set-scaling.md)
 - **検索語**: \!
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

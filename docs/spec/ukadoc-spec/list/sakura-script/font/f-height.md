@@ -2,7 +2,7 @@
 
 - **規格**: [f-height.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/font/f-height/) (ukadoc-spec/list/sakura-script/font/f-height.md)
 - **検索語**: \f
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

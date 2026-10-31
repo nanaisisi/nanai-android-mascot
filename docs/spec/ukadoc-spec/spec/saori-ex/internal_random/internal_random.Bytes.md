@@ -2,7 +2,7 @@
 
 - **規格**: [internal_random.Bytes.md](https://ukatech.shillest.net/ukadoc-spec/spec/saori-ex/internal_random/internal_random.Bytes/) (ukadoc-spec/spec/saori-ex/internal_random/internal_random.Bytes.md)
 - **検索語**: Bytes
-- **対応状況**: ❌ 未実装(誤検出)
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

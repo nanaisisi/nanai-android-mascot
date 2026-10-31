@@ -1,7 +1,7 @@
 # sstp : COMMUNICATE
 
 - **規格**: [method_communicate.md](https://ukatech.shillest.net/ukadoc-spec/spec/sstp/method_communicate/) (ukadoc-spec/spec/sstp/method_communicate.md)
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

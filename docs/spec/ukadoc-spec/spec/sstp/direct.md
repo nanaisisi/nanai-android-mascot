@@ -1,7 +1,7 @@
 # sstp : Direct SSTP
 
 - **規格**: [direct.md](https://ukatech.shillest.net/ukadoc-spec/spec/sstp/direct/) (ukadoc-spec/spec/sstp/direct.md)
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

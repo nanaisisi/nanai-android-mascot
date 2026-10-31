@@ -2,7 +2,7 @@
 
 - **規格**: [bang-execute-dumpsurface-ID-prefix-ID-ID.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/misc/bang-execute-dumpsurface-ID-prefix-ID-ID/) (ukadoc-spec/list/sakura-script/misc/bang-execute-dumpsurface-ID-prefix-ID-ID.md)
 - **検索語**: \!
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

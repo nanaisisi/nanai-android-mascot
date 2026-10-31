@@ -2,7 +2,7 @@
 
 - **規格**: [index-item.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/general-property/index-item/)
 - **検索語**: index
-- **対応状況**: ❌ 未実装(誤検出)
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

@@ -2,7 +2,7 @@
 
 - **規格**: [bang-open-ipinput-ID-IP1-IP2-IP3-IP4.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/open/bang-open-ipinput-ID-IP1-IP2-IP3-IP4/) (ukadoc-spec/list/sakura-script/open/bang-open-ipinput-ID-IP1-IP2-IP3-IP4.md)
 - **検索語**: \!
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

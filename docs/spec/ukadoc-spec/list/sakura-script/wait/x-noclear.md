@@ -2,7 +2,7 @@
 
 - **規格**: [x-noclear.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/wait/x-noclear/) (ukadoc-spec/list/sakura-script/wait/x-noclear.md)
 - **検索語**: \x
-- **対応状況**: ❌ 未実装 (パーサは引数形式を解釈しない)
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

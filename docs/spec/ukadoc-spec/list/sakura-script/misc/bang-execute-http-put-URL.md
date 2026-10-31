@@ -2,7 +2,7 @@
 
 - **規格**: [bang-execute-http-put-URL.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/misc/bang-execute-http-put-URL/) (ukadoc-spec/list/sakura-script/misc/bang-execute-http-put-URL.md)
 - **検索語**: \!
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/env.rs:49` `result = result.replace("%mc", "0");`
+- `crates/ui/src/script/env.rs:50` `result = result.replace("%mc", "0");`

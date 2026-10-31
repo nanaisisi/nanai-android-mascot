@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/env.rs:42` `result = result.replace("%screenwidth", "1024");`
+- `crates/ui/src/script/env.rs:43` `result = result.replace("%screenwidth", "1024");`

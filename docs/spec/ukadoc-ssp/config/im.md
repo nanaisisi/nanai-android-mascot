@@ -1,7 +1,7 @@
 # 設定：IM
 
 - **規格**: [config/im.md](https://ukatech.shillest.net/ukadoc-ssp/config/im/) (ukadoc-ssp/config/im.md)
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

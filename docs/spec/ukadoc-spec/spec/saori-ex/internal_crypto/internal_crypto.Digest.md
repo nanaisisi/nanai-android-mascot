@@ -2,7 +2,7 @@
 
 - **規格**: [internal_crypto.Digest.md](https://ukatech.shillest.net/ukadoc-spec/spec/saori-ex/internal_crypto/internal_crypto.Digest/) (ukadoc-spec/spec/saori-ex/internal_crypto/internal_crypto.Digest.md)
 - **検索語**: Digest
-- **対応状況**: ❌ 未実装(誤検出)
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-実装コード内に「補足」は検出されませんでした。
+- `crates/ui/src/update.rs:44` `// [相対パス,ignore], [補足]: updates_def.txt / updates2.dau における相対パス指定、ignore, readon`
+- `cpp/yaya-shiori/wsex.cpp:232` `*  補足　wchar_t*を直接渡せる_wfopenはWin9x系未サポートのため使えないのです。無念。`

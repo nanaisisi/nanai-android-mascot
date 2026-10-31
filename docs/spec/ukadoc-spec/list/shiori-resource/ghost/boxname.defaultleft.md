@@ -2,7 +2,7 @@
 
 - **規格**: [boxname.defaultleft.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ghost/boxname.defaultleft/) (ukadoc-spec/list/shiori-resource/ghost/boxname.defaultleft.md)
 - **検索語**: .defaultleft
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

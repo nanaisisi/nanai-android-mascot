@@ -2,7 +2,7 @@
 
 - **規格**: [username.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/general-property/username/)
 - **検索語**: username
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -14,4 +14,4 @@
 - `src-tauri/src/shiori/property.rs:67` `assert_eq!(evaluate_property_query("username"), "User");`
 - `crates/ui/src/script/env.rs:1` `//! SakuraScript Environment Variable Interpolation (%username, %selfname, %dms,`
 - `crates/ui/src/script/env.rs:8` `username: &str,`
-- `crates/ui/src/script/env.rs:26` `result = result.replace("%username", username);`
+- `crates/ui/src/script/env.rs:27` `result = result.replace("%username", username);`

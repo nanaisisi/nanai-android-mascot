@@ -2,7 +2,7 @@
 
 - **規格**: [sakura.defaulty.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ghost/sakura.defaulty/) (ukadoc-spec/list/shiori-resource/ghost/sakura.defaulty.md)
 - **検索語**: sakura.defaulty
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

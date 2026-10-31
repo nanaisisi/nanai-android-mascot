@@ -2,7 +2,7 @@
 
 - **規格**: [internal_jwt.Verify.md](https://ukatech.shillest.net/ukadoc-spec/spec/saori-ex/internal_jwt/internal_jwt.Verify/) (ukadoc-spec/spec/saori-ex/internal_jwt/internal_jwt.Verify.md)
 - **検索語**: Verify
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

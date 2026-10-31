@@ -2,7 +2,7 @@
 
 - **規格**: [environmentvariable.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/environment-variable/environmentvariable/) (ukadoc-spec/list/sakura-script/environment-variable/environmentvariable.md)
 - **検索語**: 環境変数の記述例
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-実装コード内に「環境変数の記述例」は検出されませんでした。
+- `crates/ui/src/script/env.rs:1` `Implemented in crates/ui/src/script/env.rs`

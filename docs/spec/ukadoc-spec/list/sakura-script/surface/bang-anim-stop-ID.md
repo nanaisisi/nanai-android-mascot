@@ -2,7 +2,7 @@
 
 - **規格**: [bang-anim-stop-ID.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/surface/bang-anim-stop-ID/) (ukadoc-spec/list/sakura-script/surface/bang-anim-stop-ID.md)
 - **検索語**: \!
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

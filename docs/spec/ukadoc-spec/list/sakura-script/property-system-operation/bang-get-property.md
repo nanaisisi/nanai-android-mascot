@@ -2,7 +2,7 @@
 
 - **規格**: [bang-get-property.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/property-system-operation/bang-get-property/) (ukadoc-spec/list/sakura-script/property-system-operation/bang-get-property.md)
 - **検索語**: \!
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

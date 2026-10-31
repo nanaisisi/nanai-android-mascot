@@ -2,7 +2,7 @@
 
 - **規格**: [pluginlist.count.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/pluginlist.count/) (ukadoc-spec/list/propertysystem/property-system/pluginlist.count.md)
 - **検索語**: pluginlist.count
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

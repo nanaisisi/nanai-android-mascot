@@ -2,7 +2,7 @@
 
 - **規格**: [installedsakuraname.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/notify/installedsakuraname/) (ukadoc-spec/list/shiori-event/notify/installedsakuraname.md)
 - **検索語**: installedsakuraname
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

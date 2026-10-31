@@ -2,7 +2,7 @@
 
 - **規格**: [char-star-.bind.menu.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/general-property/char-star-.bind.menu/)
 - **検索語**: char
-- **対応状況**: ❌ 未実装(誤検出)
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

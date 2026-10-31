@@ -2,7 +2,7 @@
 
 - **規格**: [internal_crypto.Compare.md](https://ukatech.shillest.net/ukadoc-spec/spec/saori-ex/internal_crypto/internal_crypto.Compare/) (ukadoc-spec/spec/saori-ex/internal_crypto/internal_crypto.Compare.md)
 - **検索語**: Compare
-- **対応状況**: ❌ 未実装(誤検出)
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 

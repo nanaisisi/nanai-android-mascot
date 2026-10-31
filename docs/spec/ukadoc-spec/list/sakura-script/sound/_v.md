@@ -2,7 +2,7 @@
 
 - **規格**: [_v.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/sound/_v/) (ukadoc-spec/list/sakura-script/sound/_v.md)
 - **検索語**: \_v
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

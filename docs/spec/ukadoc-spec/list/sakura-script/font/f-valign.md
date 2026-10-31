@@ -2,7 +2,7 @@
 
 - **規格**: [f-valign.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/font/f-valign/) (ukadoc-spec/list/sakura-script/font/f-valign.md)
 - **検索語**: \f
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

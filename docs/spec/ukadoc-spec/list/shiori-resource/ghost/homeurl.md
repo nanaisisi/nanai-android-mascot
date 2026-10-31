@@ -2,7 +2,7 @@
 
 - **規格**: [homeurl.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ghost/homeurl/) (ukadoc-spec/list/shiori-resource/ghost/homeurl.md)
 - **検索語**: homeurl
-- **対応状況**: ⚠️ 一部対応(読込のみ)
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/env.rs:39` `result = result.replace("%wronghour", "0");`
+- `crates/ui/src/script/env.rs:40` `result = result.replace("%wronghour", "0");`

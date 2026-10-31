@@ -2,7 +2,7 @@
 
 - **規格**: [ghostlist.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/ghostlist/) (ukadoc-spec/list/propertysystem/property-system/ghostlist.md)
 - **検索語**: ghostlist
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

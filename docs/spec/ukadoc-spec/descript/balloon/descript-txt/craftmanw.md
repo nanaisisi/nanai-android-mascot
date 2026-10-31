@@ -2,7 +2,7 @@
 
 - **規格**: [craftmanw.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/craftmanw.md)
 - **検索語**: craftmanw
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

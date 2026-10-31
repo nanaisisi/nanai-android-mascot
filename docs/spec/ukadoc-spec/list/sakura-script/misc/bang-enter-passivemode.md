@@ -2,7 +2,7 @@
 
 - **規格**: [bang-enter-passivemode.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/misc/bang-enter-passivemode/) (ukadoc-spec/list/sakura-script/misc/bang-enter-passivemode.md)
 - **検索語**: \!
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

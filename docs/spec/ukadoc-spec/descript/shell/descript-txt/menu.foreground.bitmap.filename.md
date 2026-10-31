@@ -2,7 +2,7 @@
 
 - **規格**: [menu.foreground.bitmap.filename.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell/descript-txt/menu.foreground.bitmap.filename/) (ukadoc-spec/descript/shell/descript-txt/menu.foreground.bitmap.filename.md)
 - **検索語**: menu.foreground.bitmap.filename
-- **対応状況**: ⚠️ 一部対応(読込のみ)
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

@@ -2,7 +2,7 @@
 
 - **規格**: [notes_inputbox-id.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/open/notes_inputbox-id/) (ukadoc-spec/list/sakura-script/open/notes_inputbox-id.md)
 - **検索語**: InputBox
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

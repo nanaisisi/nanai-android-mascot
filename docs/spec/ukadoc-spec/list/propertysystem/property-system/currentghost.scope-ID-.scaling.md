@@ -2,7 +2,7 @@
 
 - **規格**: [currentghost.scope-ID-.scaling.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/currentghost.scope-ID-.scaling/) (ukadoc-spec/list/propertysystem/property-system/currentghost.scope-ID-.scaling.md)
 - **検索語**: currentghost.scope
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

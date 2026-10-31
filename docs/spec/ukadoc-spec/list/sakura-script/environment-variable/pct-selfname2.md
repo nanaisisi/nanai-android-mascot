@@ -2,7 +2,7 @@
 
 - **規格**: [pct-selfname2.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/environment-variable/pct-selfname2/) (ukadoc-spec/list/sakura-script/environment-variable/pct-selfname2.md)
 - **検索語**: selfname2
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/env.rs:28` `result = result.replace("%selfname2", selfname);`
+- `crates/ui/src/script/env.rs:29` `result = result.replace("%selfname2", selfname);`

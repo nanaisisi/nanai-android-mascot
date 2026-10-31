@@ -2,7 +2,7 @@
 
 - **規格**: [caption_gamepad_xinput.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/gamepad/caption_gamepad_xinput/) (ukadoc-spec/list/shiori-event/gamepad/caption_gamepad_xinput.md)
 - **検索語**: Windows
-- **対応状況**: ❌ 未実装(誤検出)
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

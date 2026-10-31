@@ -2,7 +2,7 @@
 
 - **規格**: [notes_executehttp.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/misc/notes_executehttp/) (ukadoc-spec/list/sakura-script/misc/notes_executehttp.md)
 - **検索語**: http
-- **対応状況**: ❌ 未実装(誤検出)
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

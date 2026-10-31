@@ -2,7 +2,7 @@
 
 - **規格**: [bang-anim-add-text-x-y-r-g-b.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/surface/bang-anim-add-text-x-y-r-g-b/) (ukadoc-spec/list/sakura-script/surface/bang-anim-add-text-x-y-r-g-b.md)
 - **検索語**: \!
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

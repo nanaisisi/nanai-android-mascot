@@ -2,7 +2,7 @@
 
 - **規格**: [balloonlist.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/balloonlist/) (ukadoc-spec/list/propertysystem/property-system/balloonlist.md)
 - **検索語**: balloonlist
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

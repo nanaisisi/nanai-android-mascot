@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/env.rs:40` `result = result.replace("%lastghostname", "");`
+- `crates/ui/src/script/env.rs:41` `result = result.replace("%lastghostname", "");`

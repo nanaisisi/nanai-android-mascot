@@ -2,7 +2,7 @@
 
 - **規格**: [menu.sidebar.bitmap.filename.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ownerdraw-image/menu.sidebar.bitmap.filename/) (ukadoc-spec/list/shiori-resource/ownerdraw-image/menu.sidebar.bitmap.filename.md)
 - **検索語**: menu.sidebar.bitmap.filename
-- **対応状況**: ⚠️ 一部対応(読込のみ)
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

@@ -2,7 +2,7 @@
 
 - **規格**: [bang-sound-cdplay-No.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/sound/bang-sound-cdplay-No/) (ukadoc-spec/list/sakura-script/sound/bang-sound-cdplay-No.md)
 - **検索語**: \!
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

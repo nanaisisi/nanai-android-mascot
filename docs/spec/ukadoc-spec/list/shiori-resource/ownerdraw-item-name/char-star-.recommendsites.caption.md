@@ -2,7 +2,7 @@
 
 - **規格**: [char-star-.recommendsites.caption.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ownerdraw-item-name/char-star-.recommendsites.caption/) (ukadoc-spec/list/shiori-resource/ownerdraw-item-name/char-star-.recommendsites.caption.md)
 - **検索語**: char
-- **対応状況**: ❌ 未実装(誤検出)
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

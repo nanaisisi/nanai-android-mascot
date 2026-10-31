@@ -2,7 +2,7 @@
 
 - **規格**: [bang-reload-shiori.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/misc/bang-reload-shiori/) (ukadoc-spec/list/sakura-script/misc/bang-reload-shiori.md)
 - **検索語**: \!
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

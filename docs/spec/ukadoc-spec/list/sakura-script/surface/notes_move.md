@@ -2,7 +2,7 @@
 
 - **規格**: [notes_move.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/surface/notes_move/) (ukadoc-spec/list/sakura-script/surface/notes_move.md)
 - **検索語**: \!
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

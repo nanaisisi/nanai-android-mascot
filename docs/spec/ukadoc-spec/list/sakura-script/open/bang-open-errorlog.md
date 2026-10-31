@@ -2,7 +2,7 @@
 
 - **規格**: [bang-open-errorlog.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/open/bang-open-errorlog/) (ukadoc-spec/list/sakura-script/open/bang-open-errorlog.md)
 - **検索語**: \!
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

@@ -11,4 +11,5 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/env.rs:32` `result = result.replace("%day", &now.day().to_string());`
+- `crates/ui/src/script/env.rs:33` `result = result.replace("%day", &now.day().to_string());`
+- `crates/ui/src/script/env.rs:63` `let script = "%username, hello! Today is %year/%month/%day %hour:%minute:%second`

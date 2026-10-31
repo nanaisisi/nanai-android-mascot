@@ -2,7 +2,7 @@
 
 - **規格**: [bang-leave-collisionmode.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/misc/bang-leave-collisionmode/) (ukadoc-spec/list/sakura-script/misc/bang-leave-collisionmode.md)
 - **検索語**: \!
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

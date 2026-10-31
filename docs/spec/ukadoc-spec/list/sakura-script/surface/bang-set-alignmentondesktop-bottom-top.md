@@ -2,7 +2,7 @@
 
 - **規格**: [bang-set-alignmentondesktop-bottom-top.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/surface/bang-set-alignmentondesktop-bottom-top/) (ukadoc-spec/list/sakura-script/surface/bang-set-alignmentondesktop-bottom-top.md)
 - **検索語**: \!
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

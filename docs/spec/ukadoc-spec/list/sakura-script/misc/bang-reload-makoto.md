@@ -2,7 +2,7 @@
 
 - **規格**: [bang-reload-makoto.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/misc/bang-reload-makoto/) (ukadoc-spec/list/sakura-script/misc/bang-reload-makoto.md)
 - **検索語**: \!
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

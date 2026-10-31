@@ -2,7 +2,7 @@
 
 - **規格**: [charset.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell/descript-txt/charset/) (ukadoc-spec/descript/shell/descript-txt/charset.md)
 - **検索語**: charset
-- **対応状況**: ⚠️ 一部対応(読込のみ)
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

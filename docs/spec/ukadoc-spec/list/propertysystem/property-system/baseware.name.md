@@ -8,7 +8,6 @@
 
 実装コード内に「baseware.name」を確認。
 
-
 ## 実装箇所
 
 - `src-tauri/src/shiori/property.rs:22` `"baseware.name" | "system.baseware.name" => "Nanai Android Mascot".to_string(),`

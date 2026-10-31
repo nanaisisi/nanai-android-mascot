@@ -8,7 +8,6 @@
 
 ui/js/ghost/sakura-parser.js / sakura-command-handler.js で処理: アニメーション呼出。
 
-
 ## 実装箇所
 
 - `crates/ui/src/lib.rs:189` `let script = r"\0\1は鳴き声\i[3,wait]\i7この間は本文";`

@@ -7,7 +7,6 @@
 
 クレジット、ライセンス表記、バージョン情報モーダル
 
-
 ## 実装箇所
 
 - `src-tauri/src/commands/calendar.rs:1` `//! SSP Calendar & Schedule Manager specification implementation (ukadoc-ssp/fun`

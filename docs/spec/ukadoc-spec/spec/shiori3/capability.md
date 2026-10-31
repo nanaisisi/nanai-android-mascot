@@ -12,7 +12,6 @@ Capability 系ヘッダ・イベント処理は未実装 (検出されず)。
 - 突合は実装コード (src-tauri/src、ui/js) の文字列検索に基づく一次調査です。
 - 規格の詳細は参照元ドキュメントを参照してください。
 
-
 ## 実装箇所
 
 - `src-tauri/gen/schemas/android-schema.json:4` `"description": "Capability formats accepted in a capability file.",`

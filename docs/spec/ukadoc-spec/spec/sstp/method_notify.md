@@ -7,7 +7,6 @@
 
 SSTP 経由の NOTIFY なし (SHIORI の NOTIFY は別規格)。
 
-
 ## 実装箇所
 
 - `src-tauri/src/sstp.rs:2` `//! [SSTP/1.x], [method_send], [method_execute], [method_give], [method_communic`

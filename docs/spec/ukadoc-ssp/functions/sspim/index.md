@@ -7,7 +7,6 @@
 
 SSTP 通信連携 (`src-tauri/src/sstp.rs`) によるゴースト間メッセージング機能の実装完了。
 
-
 ## 実装箇所
 
 - `src-tauri/gen/android/app/build/intermediates/assets/arm64Debug/mergeArm64DebugAssets/tauri.conf.json:1` `{"$schema":"https://schema.tauri.app/config/2","productName":"nanai-android-masc`

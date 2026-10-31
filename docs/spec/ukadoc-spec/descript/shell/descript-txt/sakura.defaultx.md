@@ -8,7 +8,6 @@
 
 実装コードに「sakura.defaultx」が見つからない。
 
-
 ## 実装箇所
 
 - `src-tauri/src/ghost/scan/directory.rs:136` `// [sakura.defaultleft,X座標], [sakura.defaulttop,Y座標], [sakura.defaultx,X座標], [sa`

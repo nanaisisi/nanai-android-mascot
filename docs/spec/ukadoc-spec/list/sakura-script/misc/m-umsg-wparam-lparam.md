@@ -8,7 +8,6 @@
 
 実装コードに「\m」が見つからない(短いトークンのため誤検出の可能性大)。
 
-
 ## 実装箇所
 
 - `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:7` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\f4929af4ba90d04`

@@ -8,7 +8,6 @@
 
 実装コード内に「ListFunctions」を確認。
 
-
 ## 実装箇所
 
 - `src-tauri/src/shiori/saori.rs:66` `Some("Format\nDigest\nNumber\nUUID\nListModules\nListFunctions".to_string())`

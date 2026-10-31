@@ -8,7 +8,6 @@
 
 実装コード内に「baseware.version」を確認。
 
-
 ## 実装箇所
 
 - `src-tauri/src/shiori/property.rs:23` `"baseware.version" | "system.baseware.version" => "1.0.0".to_string(),`

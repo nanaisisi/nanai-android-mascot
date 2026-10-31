@@ -8,7 +8,6 @@
 
 実装コード内に「headlinelist」を確認。
 
-
 ## 実装箇所
 
 - `src-tauri/src/shiori/property.rs:21` `"headlinelist.count" => "0".to_string(),`

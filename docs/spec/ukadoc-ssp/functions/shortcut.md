@@ -7,7 +7,6 @@
 
 R, T, U, C, M, S, B, O, G, W, X など標準キーバインド実装
 
-
 ## 実装箇所
 
 - `ui/menu-iframe.html:348` `<span class="shortcut-key">Ctrl+I</span>`

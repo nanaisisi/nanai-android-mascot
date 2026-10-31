@@ -8,7 +8,6 @@
 
 実装コード内に「hour」を確認。
 
-
 ## 実装箇所
 
 - `src-tauri/src/commands/install/utils.rs:89` `+ (dt.hour() as u64) * 3_600`

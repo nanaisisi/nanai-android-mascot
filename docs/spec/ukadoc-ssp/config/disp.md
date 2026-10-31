@@ -7,7 +7,6 @@
 
 シェル倍率、バルーン倍率、フォント指定、クリックスルー
 
-
 ## 実装箇所
 
 - `src-tauri/build.rs:87` `build.flag(format!("--sysroot={}", sysroot.display()));`

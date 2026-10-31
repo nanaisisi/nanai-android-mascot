@@ -8,7 +8,6 @@
 - `memo.md`: ベースウェアの機能比較・互換メモ - ✅ 対応済
 - `shiori-event.md`: SHIORI Event 解説・GET/NOTIFY コマンド仕様 - ✅ 対応済
 
-
 ## 実装箇所
 
 - `src-tauri/gen/android/app/build/intermediates/assets/arm64Debug/mergeArm64DebugAssets/tauri.conf.json:1` `{"$schema":"https://schema.tauri.app/config/2","productName":"nanai-android-masc`

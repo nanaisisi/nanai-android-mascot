@@ -8,7 +8,6 @@
 
 実装コード内に「pluginlist.count」を確認。
 
-
 ## 実装箇所
 
 - `src-tauri/src/shiori/property.rs:20` `"pluginlist.count" => "0".to_string(),`

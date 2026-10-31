@@ -163,7 +163,10 @@ mod tests {
         let req = parse_raw_sstp_request(raw).unwrap();
         assert_eq!(req.sender, "TestApp");
         assert_eq!(req.script, Some("\\0Hi\\e".to_string()));
-        assert_eq!(req.references.get("Reference0"), Some(&"RefVal".to_string()));
+        assert_eq!(
+            req.references.get("Reference0"),
+            Some(&"RefVal".to_string())
+        );
     }
 
     #[tokio::test]

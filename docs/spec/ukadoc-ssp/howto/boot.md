@@ -7,7 +7,6 @@
 
 アプリ起動、前回終了位置・ゴーストの自動復元、常駐通知連携
 
-
 ## 実装箇所
 
 - `src-tauri/src/commands/install/archive.rs:53` `// [install.txt（概要）], [同時インストール], [name,オブジェクト名], [type,種別], [directory,ディレクトリ名]`

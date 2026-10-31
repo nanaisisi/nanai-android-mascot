@@ -8,7 +8,6 @@
 
 `app-actions.js` の `applyBalloonDescript()` において `props["font.bold"] === "1"`（または `"true"`）を検出し、文書のルート要素に対して `--balloon-font-weight: bold` カスタムプロパティを動的設定する実装が行われている。
 
-
 ## 実装箇所
 
 - `ui/js/core/actions/balloon-descript/font.js:29` `// [font.bold,0/1]: props["font.bold"]`

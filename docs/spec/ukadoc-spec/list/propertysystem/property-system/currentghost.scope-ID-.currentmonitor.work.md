@@ -8,7 +8,6 @@
 
 実装コード内に「currentghost.scope」を確認。
 
-
 ## 実装箇所
 
 - `src-tauri/src/shiori/property.rs:32` `if q.starts_with("currentghost.scope(") {`

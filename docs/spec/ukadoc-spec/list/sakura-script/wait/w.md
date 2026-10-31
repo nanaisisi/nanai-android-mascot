@@ -8,7 +8,6 @@
 
 sakura-parser.js が \w1〜\w9 (1=50ms) として処理している。
 
-
 ## 実装箇所
 
 - `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:4821` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\e9ae7d08892ee5b`

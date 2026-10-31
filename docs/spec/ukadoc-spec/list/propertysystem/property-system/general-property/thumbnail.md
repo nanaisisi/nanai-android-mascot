@@ -8,7 +8,6 @@
 
 実装コード内に「thumbnail」を確認。
 
-
 ## 実装箇所
 
 - `crates/ui/src/descript/parser.rs:171` `entry.thumbnail = parts.next().filter(|s| !s.is_empty()).map(str::to_string);`

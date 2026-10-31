@@ -8,7 +8,6 @@
 
 `ui/js/core/actions/balloon-descript.js` にて `overlay_outside_balloon` プロパティをパースし、CSS 変数 `--balloon-overlay-outside` として動的適用を実装済み。
 
-
 ## 実装箇所
 
 - `ui/js/core/actions/balloon-descript/assets.js:148` `// [overlay_outside_balloon,0/1]:`

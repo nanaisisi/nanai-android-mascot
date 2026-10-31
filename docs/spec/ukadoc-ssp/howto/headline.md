@@ -7,7 +7,6 @@
 
 RSS/Atom フィード読み込みと HEADLINE 連携 (`src-tauri/src/shiori/headline.rs` の `fetch_headline_feed`) の実装完了。
 
-
 ## 実装箇所
 
 - `src-tauri/src/lib.rs:153` `commands::ext::scan_headlines,`

@@ -8,7 +8,6 @@
 
 実装コードに「\-」が見つからない(短いトークンのため誤検出の可能性大)。
 
-
 ## 実装箇所
 
 - `crates/ui/src/lib.rs:114` `let script = r"\b[0]\b[-1]\t\-\_s\_l[10,20]\f[color,red]\f[bold]";`

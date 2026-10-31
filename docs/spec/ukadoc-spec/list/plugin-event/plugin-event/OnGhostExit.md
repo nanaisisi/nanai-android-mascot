@@ -8,7 +8,6 @@
 
 実装コード内に「OnGhostExit」を確認。
 
-
 ## 実装箇所
 
 - `src-tauri/src/commands/ext.rs:171` `"OnGhostExit" => Some("".to_string()),`

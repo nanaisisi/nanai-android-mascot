@@ -8,7 +8,6 @@
 
 実装コード内に「month」を確認。
 
-
 ## 実装箇所
 
 - `src-tauri/src/commands/install/utils.rs:57` `let month = dt.month() as usize;`

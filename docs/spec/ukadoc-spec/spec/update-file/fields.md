@@ -7,7 +7,6 @@
 
 `../../../../../src-tauri/src/commands/update/dau.rs` にて相対パス、MD5、ファイルサイズ（および `file,` / `charset,` プレフィックス）のパース処理に対応。
 
-
 ## 実装箇所
 
 - `crates/ui/src/shiori/protocol/request.rs:58` `let mut fields = first.split_whitespace();`

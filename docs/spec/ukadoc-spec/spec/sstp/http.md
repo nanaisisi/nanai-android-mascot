@@ -7,7 +7,6 @@
 
 HTTP SSTP サーバなし。
 
-
 ## 実装箇所
 
 - `src-tauri/tauri.conf.json:2` `"$schema": "https://schema.tauri.app/config/2",`

@@ -7,7 +7,6 @@
 
 タスクトレイ格納（Android 常駐通知・スナップ退避）
 
-
 ## 実装箇所
 
 - `src-tauri/gen/schemas/android-schema.json:2461` `"description": "Represents a list of other [`Value`]s.",`

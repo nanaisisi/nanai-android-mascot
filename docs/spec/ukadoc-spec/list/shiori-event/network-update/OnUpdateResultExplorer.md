@@ -8,7 +8,6 @@
 
 実装コード内に「OnUpdateResultExplorer」を確認。
 
-
 ## 実装箇所
 
 - `src-tauri/src/shiori/ffi/builder.rs:182` `.event("OnUpdateResultExplorer")`

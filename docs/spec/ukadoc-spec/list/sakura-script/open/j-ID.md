@@ -8,7 +8,6 @@
 
 実装コードに「\j」が見つからない(短いトークンのため誤検出の可能性大)。
 
-
 ## 実装箇所
 
 - `crates/ui/src/lib.rs:200` `let script = r"\0\![open,inputbox,--timeout=5]\![set,str,hello]\j[1,2]\__w[500]あ`

@@ -8,7 +8,6 @@
 
 ui/js/ghost/sakura-parser.js / sakura-command-handler.js で処理: サーフェス切替。
 
-
 ## 実装箇所
 
 - `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:3128` `"source": "E:\\project\\rust\\nanai-android-mascot\\src-tauri\\gen\\android\\app`

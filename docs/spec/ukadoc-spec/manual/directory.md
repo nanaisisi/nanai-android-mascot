@@ -8,7 +8,6 @@
 - **VFS (仮想ファイルシステム) と大文字小文字の吸収**: `resolve_vfs_path` により、Windows / Android 間やゴーストフォルダ内の大文字小文字の違いを完全に吸収して実ファイルを探索。
 - **優先順位付き走査 (`userData/ghost` vs `local/ghost`)**: `scan_ghost_directory` において `userData/ghost` を優先しつつ、内蔵アセットをフォールバックとして走査する仕組みを実装 (`src-tauri/src/ghost/scan/directory.rs`)。
 
-
 ## 実装箇所
 
 - `src-tauri/gen/schemas/acl-manifests.json:1` `{"core":{"default_permission":{"identifier":"default","description":"Default cor`

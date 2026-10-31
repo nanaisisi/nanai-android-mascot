@@ -8,7 +8,6 @@
 
 実装コードに「balloon.offsety」が見つからない。
 
-
 ## 実装箇所
 
 - `src-tauri/src/ghost/scan/shell.rs:98` `// [sakura.balloon.offsetx,座標], [sakura.balloon.offsety,座標], [kero.balloon.offse`

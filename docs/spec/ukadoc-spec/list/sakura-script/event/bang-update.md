@@ -8,7 +8,6 @@
 
 ui/js/ghost/sakura-parser.js / sakura-command-handler.js で処理: ネットワーク更新開始。
 
-
 ## 実装箇所
 
 - `src-tauri/src/commands/calendar.rs:2` `//! [calendar/index.md], [calendar/schedule.md], [calendar/menu.md], [\![open,ca`

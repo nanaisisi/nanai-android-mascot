@@ -3,7 +3,8 @@
 scripts/verify_spec_compliance.py
 
 Verifies specification implementation against all audit markdown files
-in docs/spec/ukadoc-spec/ and docs/spec/ukadoc-ssp/ and updates implementation locations, statuses, and SUMMARY.md.
+in docs/spec/ukadoc-spec/ and docs/spec/ukadoc-ssp/ and updates implementation locations, statuses, and SUMMARY.md,
+ensuring explicit ukadoc-spec/ and ukadoc-ssp/ prefixes are displayed in SUMMARY.md.
 """
 
 import os
@@ -92,14 +93,18 @@ def process_audit_files(codebase):
         if 'ukadoc-ssp' in filepath:
             rel_path = filepath.replace('docs/spec/ukadoc-ssp/', '')
             parts = rel_path.split('/')
-            if len(parts) >= 2:
+            if len(parts) >= 3:
+                cat = f"ukadoc-ssp/{parts[0]}/{parts[1]}"
+            elif len(parts) >= 2:
                 cat = f"ukadoc-ssp/{parts[0]}"
             else:
                 cat = "ukadoc-ssp/root"
         else:
             rel_path = filepath.replace('docs/spec/ukadoc-spec/', '')
             parts = rel_path.split('/')
-            if len(parts) >= 2:
+            if len(parts) >= 3:
+                cat = f"ukadoc-spec/{parts[0]}/{parts[1]}"
+            elif len(parts) >= 2:
                 cat = f"ukadoc-spec/{parts[0]}"
             else:
                 cat = "ukadoc-spec/root"
@@ -154,9 +159,9 @@ def process_audit_files(codebase):
 def update_summary(category_stats):
     summary_path = 'docs/spec/ukadoc-spec/SUMMARY.md'
     lines = [
-        "# UKADOC Spec & SSP 標準仕様 実装突合マスタサマリ",
+        "# ukadoc-spec & ukadoc-ssp 規格別 実装突合サマリ",
         "",
-        "本ドキュメントは、公式 **ukadoc-spec** と標準環境 **ukadoc-ssp** の双方における Nanai Android Mascot の実装対応状況をプレフィックス付きで網羅的に集計したマスターサマリである。",
+        "本ドキュメントは、公式 **ukadoc-spec** と標準環境 **ukadoc-ssp** の双方における Nanai Android Mascot の対応状況を網羅的に集計したマスターサマリである。",
         "",
         "| 規格カテゴリ (ukadoc-spec / ukadoc-ssp) | ✅ 実装済 | ⚠️ 一部対応 | ❌ 未実装 | ❓ 未確認 | 合計 |",
         "| :--- | --------: | ----------: | --------: | --------: | ---: |"

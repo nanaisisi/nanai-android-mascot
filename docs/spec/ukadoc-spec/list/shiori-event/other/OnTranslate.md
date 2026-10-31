@@ -8,7 +8,6 @@
 
 実装コード内に「OnTranslate」を確認。
 
-
 ## 実装箇所
 
 - `src-tauri/src/commands/shiori/protocol.rs:109` `/// [@manual: manual/translator.md] Translator integration / OnTranslate hook su`

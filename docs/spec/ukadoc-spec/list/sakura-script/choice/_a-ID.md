@@ -8,7 +8,6 @@
 
 ui/js/ghost/sakura-parser.js / sakura-command-handler.js で処理: アンカー (begin/end)。
 
-
 ## 実装箇所
 
 - `crates/ui/src/lib.rs:81` `let script = r"\0\_q\x\_a[anchor01]リンク\_a\![raise,OnTest,1,2]\![bind,clothing,ri`

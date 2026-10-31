@@ -8,7 +8,6 @@
 
 パーサは基本形のみ処理し、この引数形式は解釈しない。
 
-
 ## 実装箇所
 
 - `src-tauri/src/shiori/fmo.rs:31` `content.push_str(&format!("{}.path\x01{}\r\n", prefix, rec.path));`

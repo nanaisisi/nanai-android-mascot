@@ -8,7 +8,6 @@
 
 実装コード内に「update_result」を確認。
 
-
 ## 実装箇所
 
 - `src-tauri/src/commands/install/archive.rs:332` `update_result: Some("正常 (インストール済)".to_string()),`

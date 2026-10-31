@@ -8,7 +8,6 @@
 
 ui/js/ghost/sakura-parser.js / sakura-command-handler.js で処理: クリック待ち・改ページ。
 
-
 ## 実装箇所
 
 - `src-tauri/src/shiori/fmo.rs:31` `content.push_str(&format!("{}.path\x01{}\r\n", prefix, rec.path));`

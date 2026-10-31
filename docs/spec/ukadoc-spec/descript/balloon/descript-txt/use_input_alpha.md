@@ -8,7 +8,6 @@
 
 PNA マスク合成および Canvas 2D レンダラにおいてアルファチャンネル透過処理を完備。
 
-
 ## 実装箇所
 
 - `ui/js/core/actions/balloon-descript/assets.js:139` `// [use_input_alpha,数値]:`

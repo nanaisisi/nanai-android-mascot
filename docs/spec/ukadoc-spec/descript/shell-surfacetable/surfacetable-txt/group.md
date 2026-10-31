@@ -8,7 +8,6 @@
 
 実装コードに「group」が見つからない。
 
-
 ## 実装箇所
 
 - `src-tauri/gen/schemas/android-schema.json:40` `"description": "A grouping and boundary mechanism developers can use to isolate `

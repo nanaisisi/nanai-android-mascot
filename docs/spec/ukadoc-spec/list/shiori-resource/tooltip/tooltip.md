@@ -8,7 +8,6 @@
 
 実装コード内に「tooltip」を確認。
 
-
 ## 実装箇所
 
 - `src-tauri/gen/schemas/acl-manifests.json:1` `{"core":{"default_permission":{"identifier":"default","description":"Default cor`

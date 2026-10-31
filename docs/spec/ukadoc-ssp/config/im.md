@@ -7,7 +7,6 @@
 
 SSTP 待ち受けポート（9801/9821）設定
 
-
 ## 実装箇所
 
 - `src-tauri/build_old.rs:132` `println!("cargo:warning=SATORIYA shiori build is not yet implemented");`

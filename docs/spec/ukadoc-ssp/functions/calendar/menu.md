@@ -7,7 +7,6 @@
 
 カレンダー操作メニューおよびイベントトリガー連携 (`trigger_calendar_event`) の実装完了。
 
-
 ## 実装箇所
 
 - `src-tauri/gen/schemas/acl-manifests.json:1` `{"core":{"default_permission":{"identifier":"default","description":"Default cor`

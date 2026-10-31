@@ -8,7 +8,6 @@
 
 `ui/js/core/actions/balloon-descript.js` にて `paint_transparent_region_black` プロパティをパースし、CSS 変数 `--balloon-paint-black` として動的適用を実装済み。
 
-
 ## 実装箇所
 
 - `src-tauri/src/ghost/scan/shell.rs:106` `// [seriko.dpi,推奨DPI], [seriko.zorder,スコープID,スコープID,...], [seriko.sticky-window,`

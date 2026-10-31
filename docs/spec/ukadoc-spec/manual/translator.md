@@ -7,7 +7,6 @@
 
 - **OnTranslate パイプライン**: SHIORI が出力したさくらスクリプトテキストを受け取り、画面描画・発話直前に動的置換・加工を行う `OnTranslate` イベント処理パイプラインを実装 (`src-tauri/src/commands/shiori/protocol.rs`, `ui/js/ghost/ghost-shiori.js`)。
 
-
 ## 実装箇所
 
 - `src-tauri/src/commands/shiori/protocol.rs:109` `/// [@manual: manual/translator.md] Translator integration / OnTranslate hook su`

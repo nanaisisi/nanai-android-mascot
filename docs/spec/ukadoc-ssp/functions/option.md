@@ -7,7 +7,6 @@
 
 倍率変更、クリックスルー透過、常時最前面
 
-
 ## 実装箇所
 
 - `src-tauri/gen/schemas/android-schema.json:57` `"description": "Configure remote URLs that can use the capability permissions.\n`

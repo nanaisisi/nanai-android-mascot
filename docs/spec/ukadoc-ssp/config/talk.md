@@ -7,7 +7,6 @@
 
 自動トーク頻度設定、バルーン消去待ち時間
 
-
 ## 実装箇所
 
 - `src-tauri/src/commands/ext.rs:47` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [secondchangeinterva`

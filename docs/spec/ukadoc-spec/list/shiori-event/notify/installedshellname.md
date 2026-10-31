@@ -8,7 +8,6 @@
 
 実装コード内に「installedshellname」を確認。
 
-
 ## 実装箇所
 
 - `ui/js/ghost/shiori-notify.js:12` `* - installedshellname (現在のゴーストに同梱のシェル名)`

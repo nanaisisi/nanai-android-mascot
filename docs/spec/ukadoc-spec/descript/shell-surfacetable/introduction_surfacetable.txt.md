@@ -8,7 +8,6 @@
 
 実装コードに「surfacetable.txt」が見つからない。
 
-
 ## 実装箇所
 
 - `src-tauri/src/commands/shell/mod.rs:3` `//! ukadoc-spec のシェル定義（descript.txt / surfaces.txt / surfacetable.txt）`

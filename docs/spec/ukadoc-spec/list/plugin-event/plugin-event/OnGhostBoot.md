@@ -8,7 +8,6 @@
 
 実装コード内に「OnGhostBoot」を確認。
 
-
 ## 実装箇所
 
 - `src-tauri/src/commands/ext.rs:170` `"OnGhostBoot" => Some("".to_string()),`

@@ -7,7 +7,6 @@
 
 SSTP 未対応。
 
-
 ## 実装箇所
 
 - `src-tauri/src/lib.rs:23` `mod sstp;`

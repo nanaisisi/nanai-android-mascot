@@ -7,7 +7,6 @@
 
 メールチェック（POP3/IMAP）接続設定、OnBIFF* パイプライン
 
-
 ## 実装箇所
 
 - `src-tauri/gen/schemas/acl-manifests.json:1` `{"core":{"default_permission":{"identifier":"default","description":"Default cor`

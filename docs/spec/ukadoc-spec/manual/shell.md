@@ -8,7 +8,6 @@
 - **サーフェス実ファイル画像読込**: `load_surface_image` により `surface*.png` / `surface*.bmp` を読み込み。
 - **PNA アルファマスク処理**: `load_surface_pna` により対応する 8bit グレースケールマスク (`surface*.pna`) を読み込み、Canvas 2D コンポジタにて透過・抜き合わせ合成を実行 (`src-tauri/src/commands/file.rs`, `ui/js/surface/surface-compositor.js`)。
 
-
 ## 実装箇所
 
 - `src-tauri/gen/schemas/android-schema.json:87` `"description": "List of permissions attached to this capability.\n\nMust include`

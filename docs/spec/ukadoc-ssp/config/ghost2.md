@@ -7,7 +7,6 @@
 
 当たり判定の視覚化、重複キャラクターの取り扱い
 
-
 ## 実装箇所
 
 - `tests/shiori-notify.test.js:28` `path: "/assets/ghost/ghost2",`

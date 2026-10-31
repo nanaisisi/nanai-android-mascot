@@ -8,7 +8,6 @@
 
 `app-actions.js` の `applyBalloonDescript()` において原点 X オフセットとして動的適用対応済。
 
-
 ## 実装箇所
 
 - `crates/ui/src/descript/parser.rs:70` `/// バルーン用原点座標 (origin.x, origin.y)`

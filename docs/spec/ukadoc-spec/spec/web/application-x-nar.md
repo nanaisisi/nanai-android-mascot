@@ -7,7 +7,6 @@
 
 MIME 登録・関連付けなし。
 
-
 ## 実装箇所
 
 - `src-tauri/src/commands/web.rs:1` `//! Ukagaka Web Integration specification implementation (spec/web/x-ukagaka-lin`

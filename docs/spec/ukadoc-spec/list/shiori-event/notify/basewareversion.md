@@ -8,7 +8,6 @@
 
 実装コード内に「basewareversion」を確認。
 
-
 ## 実装箇所
 
 - `src-tauri/src/commands/shiori/protocol.rs:111` `/// `installedghostname` / `ghostpathlist` / `uniqueid` / `basewareversion` 等の`

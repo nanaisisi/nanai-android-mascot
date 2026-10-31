@@ -8,7 +8,6 @@
 
 `app-actions.js` の `applyBalloonDescript()` において `props["font.italic"] === "1"`（または `"true"`）を検出し、文書のルート要素に対して `--balloon-font-style: italic` カスタムプロパティを動的設定する実装が行われている。
 
-
 ## 実装箇所
 
 - `ui/js/core/actions/balloon-descript/font.js:37` `// [font.italic,0/1]: props["font.italic"]`

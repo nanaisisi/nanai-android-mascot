@@ -8,7 +8,6 @@
 
 実装コード内に「balloonlist.index」を確認。
 
-
 ## 実装箇所
 
 - `src-tauri/src/shiori/property.rs:19` `"balloonlist.index(0).name" => "Default Balloon".to_string(),`

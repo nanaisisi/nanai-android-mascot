@@ -7,7 +7,6 @@
 
 バージョンリリースノート表示
 
-
 ## 実装箇所
 
 - `cpp/yaya-shiori/md5c.c:170` `/* Zeroize sensitive information.`

@@ -7,7 +7,6 @@
 
 スクリプト入力パレット、ログコンソール
 
-
 ## 実装箇所
 
 - `src-tauri/tauri.conf.json:7` `"beforeDevCommand": "npm run dev",`

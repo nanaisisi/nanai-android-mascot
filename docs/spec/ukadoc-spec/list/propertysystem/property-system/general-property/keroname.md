@@ -8,7 +8,6 @@
 
 実装コード内に「keroname」を確認。
 
-
 ## 実装箇所
 
 - `src-tauri/src/shiori/fmo.rs:13` `pub keroname: String,`

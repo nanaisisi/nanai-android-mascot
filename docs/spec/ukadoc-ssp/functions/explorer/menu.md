@@ -31,7 +31,6 @@
    - **更新/NAR両方作成 (B)**
    - **Zip+Txt更新ファイル作成**
 
-
 ## 実装箇所
 
 - `src-tauri/gen/schemas/acl-manifests.json:1` `{"core":{"default_permission":{"identifier":"default","description":"Default cor`

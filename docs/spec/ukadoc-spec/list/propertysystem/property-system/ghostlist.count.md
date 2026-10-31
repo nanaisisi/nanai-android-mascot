@@ -8,7 +8,6 @@
 
 実装コード内に「ghostlist.count」を確認。
 
-
 ## 実装箇所
 
 - `src-tauri/src/shiori/property.rs:15` `"ghostlist.count" => "1".to_string(),`

@@ -8,7 +8,6 @@
 
 実装コード内に「capability」を確認。
 
-
 ## 実装箇所
 
 - `src-tauri/gen/schemas/android-schema.json:4` `"description": "Capability formats accepted in a capability file.",`

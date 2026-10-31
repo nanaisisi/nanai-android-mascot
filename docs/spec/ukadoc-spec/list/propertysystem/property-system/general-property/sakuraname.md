@@ -8,7 +8,6 @@
 
 実装コード内に「sakuraname」を確認。
 
-
 ## 実装箇所
 
 - `ui/js/ghost/shiori-notify.js:11` `* - installedghostname / installedsakuraname / installedkeroname`

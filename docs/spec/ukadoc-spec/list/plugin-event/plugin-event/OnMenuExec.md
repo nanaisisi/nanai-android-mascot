@@ -8,7 +8,6 @@
 
 実装コード内に「OnMenuExec」を確認。
 
-
 ## 実装箇所
 
 - `src-tauri/src/commands/ext.rs:166` `"OnMenuExec" => Some(format!(`

@@ -8,7 +8,6 @@
 
 実装コード内に「ghostlist.index」を確認。
 
-
 ## 実装箇所
 
 - `src-tauri/src/shiori/property.rs:16` `"ghostlist.index(0).name" | "ghostlist.index(0)" => "Mock Ghost".to_string(),`

@@ -8,7 +8,6 @@
 
 バルーンテキストの描画において、CSS writing-mode または縦書き表示制御に対応。
 
-
 ## 実装箇所
 
 - `ui/coverage/base.css:120` `vertical-align: middle;`

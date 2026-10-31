@@ -8,7 +8,6 @@
 
 実装コード内に「log_path」を確認。
 
-
 ## 実装箇所
 
 - `src-tauri/src/shiori/ffi/builder.rs:179` `pub fn on_update_result_explorer(status: &str, log_path: Option<&str>) -> Self {`

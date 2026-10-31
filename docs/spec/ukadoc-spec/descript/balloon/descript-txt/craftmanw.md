@@ -8,7 +8,6 @@
 
 実装コード内に「craftmanw」を確認。
 
-
 ## 実装箇所
 
 - `src-tauri/src/commands/ext.rs:36` `// [craftman,作者名], [craftmanw,作者名], [craftmanurl,URL], [homeurl,URL]:`

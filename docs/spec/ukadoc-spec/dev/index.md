@@ -11,7 +11,6 @@
 - `shell.md` / `shell-error.md`: シェル仕様・サーフィス定義 - ✅ 対応済
 - `update.md`: ネットワーク更新仕様 - ✅ 対応済
 
-
 ## 実装箇所
 
 - `src-tauri/gen/android/app/build/intermediates/assets/arm64Debug/mergeArm64DebugAssets/tauri.conf.json:1` `{"$schema":"https://schema.tauri.app/config/2","productName":"nanai-android-masc`

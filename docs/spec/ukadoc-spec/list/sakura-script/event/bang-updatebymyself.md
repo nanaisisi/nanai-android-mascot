@@ -8,7 +8,6 @@
 
 sakura-command-handler.js が updatebymyself を受け付け、ネットワーク更新を開始する (オプションは未解釈)。
 
-
 ## 実装箇所
 
 - `src-tauri/src/commands/calendar.rs:2` `//! [calendar/index.md], [calendar/schedule.md], [calendar/menu.md], [\![open,ca`

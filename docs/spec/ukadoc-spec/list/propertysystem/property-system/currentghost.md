@@ -8,7 +8,6 @@
 
 実装コード内に「currentghost.」を確認。
 
-
 ## 実装箇所
 
 - `src-tauri/src/shiori/property.rs:25` `"currentghost.name" => "Mock Ghost".to_string(),`

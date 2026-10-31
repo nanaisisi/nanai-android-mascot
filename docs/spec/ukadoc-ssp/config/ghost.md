@@ -7,7 +7,6 @@
 
 デフォルトゴースト設定、移動制約
 
-
 ## 実装箇所
 
 - `src-tauri/src/events.rs:6` `if let Some(ghost_name) = id.strip_prefix("ghost:") {`

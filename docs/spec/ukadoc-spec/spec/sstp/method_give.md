@@ -7,7 +7,6 @@
 
 該当処理なし。
 
-
 ## 実装箇所
 
 - `src-tauri/src/sstp.rs:2` `//! [SSTP/1.x], [method_send], [method_execute], [method_give], [method_communic`

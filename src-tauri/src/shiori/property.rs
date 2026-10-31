@@ -56,14 +56,8 @@ mod tests {
             evaluate_property_query("baseware.name"),
             "Nanai Android Mascot"
         );
-        assert_eq!(
-            evaluate_property_query("currentghost.name"),
-            "Mock Ghost"
-        );
-        assert_eq!(
-            evaluate_property_query("username"),
-            "User"
-        );
+        assert_eq!(evaluate_property_query("currentghost.name"), "Mock Ghost");
+        assert_eq!(evaluate_property_query("username"), "User");
         assert_eq!(
             evaluate_property_query("unknown.prop"),
             "(unknown property: unknown.prop)"

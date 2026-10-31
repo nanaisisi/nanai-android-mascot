@@ -7,7 +7,6 @@
 
 機能一覧インデックスの整理
 
-
 ## 実装箇所
 
 - `src-tauri/gen/android/app/build/intermediates/assets/arm64Debug/mergeArm64DebugAssets/tauri.conf.json:1` `{"$schema":"https://schema.tauri.app/config/2","productName":"nanai-android-masc`

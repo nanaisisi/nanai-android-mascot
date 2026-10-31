@@ -8,7 +8,6 @@
 
 `ui/js/core/actions/balloon-descript.js` にて `windowposition.limit` プロパティをパースし、`this.windowPositionLimit` として実装済み。
 
-
 ## 実装箇所
 
 - `ui/js/core/actions/balloon-descript/layout.js:163` `// [windowposition.x,座標], [windowposition.y,座標], [windowposition.limit,0/1]:`

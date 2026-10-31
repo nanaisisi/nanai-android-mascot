@@ -8,7 +8,6 @@
 
 `app-actions.js` の `applyBalloonDescript()` において `props["wordwrappoint.x"]` を数値パースし、ドキュメント内の `.balloon` 要素の最大幅（`style.maxWidth = \`${ww}px\``）として動的適用される実装が行われている。
 
-
 ## 実装箇所
 
 - `ui/js/core/actions/balloon-descript/layout.js:104` `// [wordwrappoint.x,座標], [wordwrappoint.y,座標]:`

@@ -8,7 +8,6 @@
 
 実装コード内に「baseware.windowmode」を確認。
 
-
 ## 実装箇所
 
 - `src-tauri/src/shiori/property.rs:24` `"baseware.windowmode" => "normal".to_string(),`

@@ -7,7 +7,6 @@
 
 伺か専門用語（ゴースト、シェル、バルーン、SHIORI等）の解説
 
-
 ## 実装箇所
 
 - `src-tauri/gen/schemas/android-schema.json:123` `"description": "An entry for a permission value in a [`Capability`] can be eithe`

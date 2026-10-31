@@ -8,7 +8,6 @@
 
 sakura-command-handler.js は alignmenttodesktop を処理する。alignmentondesktop (旧名) の別名扱いは未確認。
 
-
 ## 実装箇所
 
 - `src-tauri/src/commands/calendar.rs:2` `//! [calendar/index.md], [calendar/schedule.md], [calendar/menu.md], [\![open,ca`

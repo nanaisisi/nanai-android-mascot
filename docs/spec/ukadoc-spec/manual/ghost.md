@@ -8,7 +8,6 @@
 - **ゴースト走査と構造解決**: `ghost/master/` フォルダの検出、`descript.txt` のパース、SHIORI 動的ロード（`shiori.dll` / `.so` / WASM）の実ファイル解決に対応 (`src-tauri/src/ghost/scan/mod.rs`, `src-tauri/src/shiori/dynamic/`)。
 - **除外制御**: `.dev_ignore` / `.narignore` / `.updateignore` の存在判定による不要ファイル除外処理を完備。
 
-
 ## 実装箇所
 
 - `src-tauri/src/events.rs:6` `if let Some(ghost_name) = id.strip_prefix("ghost:") {`

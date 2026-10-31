@@ -7,7 +7,6 @@
 
 プラグイン管理モーダル、PLUGIN/2.0 イベント送受信パイプライン
 
-
 ## 実装箇所
 
 - `src-tauri/tauri.conf.json:44` `"plugins": {`

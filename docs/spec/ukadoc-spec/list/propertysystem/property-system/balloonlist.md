@@ -8,7 +8,6 @@
 
 実装コード内に「balloonlist」を確認。
 
-
 ## 実装箇所
 
 - `src-tauri/src/shiori/property.rs:18` `"balloonlist.count" => "1".to_string(),`

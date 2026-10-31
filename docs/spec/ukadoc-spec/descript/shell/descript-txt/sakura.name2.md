@@ -8,7 +8,6 @@
 
 実装コードに「sakura.name2」が見つからない。
 
-
 ## 実装箇所
 
 - `src-tauri/src/ghost/scan/directory.rs:105` `// [version,バージョン], [sakura.name,名前], [sakura.name2,名前], [kero.name,名前], [char*.`

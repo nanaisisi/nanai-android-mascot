@@ -8,7 +8,6 @@
 
 実装コード内に「OnFirstBoot」を確認。
 
-
 ## 実装箇所
 
 - `crates/ui/src/shiori/protocol/request.rs:24` `/// 互換可能な基本イベント名（SSP拡張。`OnFirstBoot` → `OnBoot` など）`

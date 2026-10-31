@@ -8,7 +8,6 @@
 
 `app-actions.js` の `applyBalloonDescript()` において `props["communicatebox.width"]` を取得し、ドキュメント内の `.communicate-box` 要素の幅（`style.width = \`${cbWidth}px\``）として動的に反映される実装が行われている。
 
-
 ## 実装箇所
 
 - `ui/js/core/actions/balloon-descript/layout.js:27` `// [communicatebox.width,サイズ], [communicatebox.height,サイズ], [communicatebox.x,座標`

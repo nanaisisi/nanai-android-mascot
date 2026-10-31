@@ -8,7 +8,6 @@
 
 実装コードに「kero.defaultx」が見つからない。
 
-
 ## 実装箇所
 
 - `src-tauri/src/ghost/scan/directory.rs:142` `// [kero.defaultleft,X座標], [kero.defaulttop,Y座標], [kero.defaultx,X座標], [kero.def`

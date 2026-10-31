@@ -9,7 +9,6 @@
 
 実装コードに「MAYUNA」が見つからない。
 
-
 ## 実装箇所
 
 - `crates/ui/src/surfaces/types/composition.rs:1` `//! 合成計画 (MAYUNA) の型`

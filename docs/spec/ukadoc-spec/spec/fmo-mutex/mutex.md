@@ -7,7 +7,6 @@
 
 ベースウェア識別用の名前付き Mutex なし。
 
-
 ## 実装箇所
 
 - `src-tauri/src/lib.rs:159` `shiori::fmo::check_base_ware_mutex,`

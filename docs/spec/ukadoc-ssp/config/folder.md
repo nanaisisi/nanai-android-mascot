@@ -7,7 +7,6 @@
 
 ゴースト・バルーン保存パス（userData/assets）管理
 
-
 ## 実装箇所
 
 - `src-tauri/src/common/paths.rs:113` `let folder_name = entry.file_name().to_string_lossy().to_string();`

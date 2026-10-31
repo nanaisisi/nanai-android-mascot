@@ -7,7 +7,6 @@
 
 ゴースト発話によるスケジュール通知 (`OnSchedule5MinutesToGo`, `OnScheduleTodayNotify`) および `\![execute,schedule-add,...]` のパース・登録処理の実装完了。
 
-
 ## 実装箇所
 
 - `src-tauri/src/lib.rs:163` `commands::calendar::get_schedules,`

@@ -8,7 +8,6 @@
 
 パーサがタグを読み飛ばす、または sakura-command-handler.js が「未対応の \! コマンド」として扱い、該当処理はない。
 
-
 ## 実装箇所
 
 - `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:43` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\e095ee544d9efdd`

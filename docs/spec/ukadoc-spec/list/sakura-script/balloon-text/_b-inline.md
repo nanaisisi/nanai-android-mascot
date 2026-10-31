@@ -8,7 +8,6 @@
 
 実装コードに「\_b」が見つからない(短いトークンのため誤検出の可能性大)。
 
-
 ## 実装箇所
 
 - `crates/ui/src/script/parser/brackets/mod.rs:182` `"a[id]text\\_b\\_a",`

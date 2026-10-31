@@ -7,7 +7,6 @@
 
 デスクトップ常駐 / モバイルフローティングオーバーレイ表示による代替
 
-
 ## 実装箇所
 
 - `src-tauri/src/shiori/property.rs:24` `"baseware.windowmode" => "normal".to_string(),`

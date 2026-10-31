@@ -8,7 +8,6 @@
 
 バックエンドの `read_descript_file` およびファイルパーサ（`descript.rs`）において、Shift_JIS（CP932）と UTF-8 の自動判別デコード（`encoding_rs::SHIFT_JIS`）による透過的な文字コード処理が実装されている。
 
-
 ## 実装箇所
 
 - `src-tauri/src/commands/ext.rs:47` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [secondchangeinterva`

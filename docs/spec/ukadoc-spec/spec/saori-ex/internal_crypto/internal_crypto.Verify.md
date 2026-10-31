@@ -8,7 +8,6 @@
 
 実装コード内に「Verify」を確認。
 
-
 ## 実装箇所
 
 - `tests/sakura-rust-bridge.test.js:45` `// Verify specific tokens`

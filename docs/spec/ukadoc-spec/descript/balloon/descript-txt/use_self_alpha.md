@@ -8,7 +8,6 @@
 
 PNA マスク合成および Canvas 2D レンダラにおいてアルファチャンネル透過処理を完備。
 
-
 ## 実装箇所
 
 - `src-tauri/src/ghost/scan/shell.rs:106` `// [seriko.dpi,推奨DPI], [seriko.zorder,スコープID,スコープID,...], [seriko.sticky-window,`

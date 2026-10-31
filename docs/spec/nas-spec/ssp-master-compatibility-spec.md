@@ -10,16 +10,19 @@
 
 ## 1. フォントサイズ・96 DPI 換算・インラインサイズフィット規格
 
+> [!IMPORTANT]
+> 伺か（Materia / CROW / SSP）におけるフォントサイズ指定は、Windows GDI の `LOGFONT` 構造体 (`lfHeight`) および標準的な 96 DPI 画面ディスプレイ（100% スケーリング）の物理単位系に依存しています。
+
 ### 1.1 数理的換算根拠
-伺か（Materia / CROW / SSP）におけるフォントサイズ指定は、Windows GDI（96 DPI 標準、1 インチ ＝ 72 pt ＝ 96 px）を基準とする。
+1 インチ ＝ 72 ポイント (pt) ＝ 96 ピクセル (px)（96 DPI 環境）
 
 $$\text{ピクセルサイズ (px)} = \text{round}\left( \text{ポイントサイズ (pt)} \times \frac{96}{72} \right) = \text{round}\left( \text{pt} \times \frac{4}{3} \right)$$
 
 SSP の標準フォントサイズである **`9pt`** を換算すると：
 $$9 \text{ pt} \times \frac{96}{72} = 12 \text{ px}$$
-となり、UKADOC 規格 (`font.height,12`) の既定値 **`12px`** に完全一致する。
+となり、UKADOC 規格 (`font.height,12`) の既定値 **`12px`** に完全一致します。
 
-### 1.2 バルーンフォント評価優先順位
+### 1.2 バルーンフォント評価優先順位ルール
 1. **`font.height,数値`** (最優先): ピクセル単位 (`px`)。例: `font.height,14` $\to$ `14px`
 2. **`font.size,数値`** (第2優先): ポイント単位 (`pt`)。$\text{pt} \times \frac{96}{72}$ で px に換算。
 3. **既定値フォールバック** (最小優先度): 未指定時は **`12px`** (9pt 相当)。
@@ -32,12 +35,41 @@ $$9 \text{ pt} \times \frac{96}{72} = 12 \text{ px}$$
 
 ## 2. サーフェスアルファ透過・描画規格 (`seriko.use_self_alpha`)
 
+> [!NOTE]
+> アルファチャンネル付き 32bit PNG 画像を意図通りに描画するため、伝統的な緑抜き（クロマキー）を通過させずに画像自体の透明度を利用します。
+
 - **プロパティ**: `seriko.use_self_alpha,1`（`descript.txt` 内）
 - **挙動**: 指定時、左上 1 ピクセルクロマキーや緑抜き処理（`#00FF00`）をバイパスし、32bit PNG 画像が持つアルファチャンネル透過を直接コンポジタで利用する。
+
+```mermaid
+flowchart TD
+    A["Image Load Request"] --> B{"pnaSrc exists?"}
+    B -- Yes --> C["Apply PNA Mask to Alpha Channel"]
+    B -- No --> D{"seriko.use_self_alpha == true?"}
+    D -- Yes --> E["Bypass ChromaKey (Use 32bit PNG Alpha)"]
+    D -- No --> F["Detect Corner Pixel & ChromaKey (#00FF00)"]
+```
 
 ---
 
 ## 3. ベースウェア識別・名前付き Mutex 保持規格 (`ssp` / `sakura`)
+
+> [!TIP]
+> ベースウェア起動中にプロセス所有権をアピールするため、Win32 API およびインメモリレジストリで Named Mutex を保持します。
+
+```mermaid
+sequenceDiagram
+    participant App as Nanai Android Mascot (App Setup)
+    participant WinAPI as Win32 Threading API
+    participant Registry as Mutex Registry
+
+    App->>WinAPI: CreateMutexA(NULL, FALSE, "ssp")
+    WinAPI-->>App: Return Handle (Store in HELD_HANDLES)
+    App->>WinAPI: CreateMutexA(NULL, FALSE, "sakura")
+    WinAPI-->>App: Return Handle (Store in HELD_HANDLES)
+    App->>Registry: set_fallback_mutex("ssp", true)
+    App->>Registry: set_fallback_mutex("sakura", true)
+```
 
 - **識別名**: `"ssp"` (SSP 識別子), `"sakura"` (Materia/CROW 識別子), `"NanaiFMO"`
 - **Windows ネイティブ挙動**: アプリ起動時（`setup`）に `CreateMutexA` で `"ssp"` / `"sakura"` ハンドルを獲得・常時保持。他プロセスからの `OpenMutexA` 判定に応答する。
@@ -46,6 +78,25 @@ $$9 \text{ pt} \times \frac{96}{72} = 12 \text{ px}$$
 ---
 
 ## 4. SHIORI DLL ライフサイクル規格 (`loadu` 優先ロード)
+
+> [!NOTE]
+> UTF-8 パスを扱う最新の `loadu` 関数を優先取得することで、Unicode パス環境（日本語・中国語ディレクトリ等）でのロード失敗を防止します。
+
+```mermaid
+sequenceDiagram
+    participant App as Nanai Core
+    participant DLL as SHIORI Module (DLL / .so)
+
+    App->>DLL: Get Symbol "loadu"
+    alt Symbol "loadu" Found
+        DLL-->>App: Return loadu pointer
+        App->>DLL: loadu(utf8_path, len)
+    else Symbol "loadu" Not Found
+        App->>DLL: Get Symbol "load"
+        DLL-->>App: Return load pointer
+        App->>DLL: load(cp932_path, len)
+    end
+```
 
 - **`loadu` 優先検索**: SSP 2.6.92+ 規格に準拠し、DLL / `.so` 内の `loadu`（UTF-8 パス受取関数）を優先取得。存在しない場合のみ従来型 `load`（CP932/ANSI）へフォールバック。
 - **メモリ管理**: `GlobalAlloc(GMEM_FIXED, len + 1)` で確保し、ヌル終端文字（`0`）を付与。
@@ -60,6 +111,9 @@ $$9 \text{ pt} \times \frac{96}{72} = 12 \text{ px}$$
 ---
 
 ## 6. 外部アプリ連携 (`external` / `shiori-event-ex/app-common`) に対する設計方針
+
+> [!CAUTION]
+> モバイル環境やサンドボックス環境で無闇な外部プロセス監視や外部アプリ起動を行うと、バッテリー消費・発熱・セキュリティ例外の原因となります。
 
 ### 「`external` 連携は取りやめるか？」に対する方針決定
 - **背景**: Windows デスクトップ時代の `OnApplicationBoot` や外部プロセス監視機能は、Android（モバイル）や Tauri サンドボックス環境下では**実プロセスが存在しない、あるいは OS 制限により動作しない**。

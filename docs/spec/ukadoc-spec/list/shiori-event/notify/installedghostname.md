@@ -13,4 +13,4 @@
 - `src-tauri/src/commands/shiori/protocol.rs:111` `/// `installedghostname` / `ghostpathlist` / `uniqueid` / `basewareversion` 等の`
 - `ui/js/ghost/shiori-notify.js:11` `* - installedghostname / installedsakuraname / installedkeroname`
 - `ui/js/ghost/shiori-notify.js:37` `* @param {string} event イベントID (例: "installedghostname")`
-- `ui/js/ghost/shiori-notify.js:70` `"installedghostname",`
+- `ui/js/ghost/shiori-notify.js:152` `"installedghostname",`

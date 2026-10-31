@@ -53,6 +53,88 @@ export const shioriNotifyMethods = {
 	},
 
 	/**
+	 * 外部アプリケーション起動通知 (OnApplicationBoot) を送信
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} appName アプリケーション名/ID
+	 * @param {string} [appPath] アプリケーションパス
+	 */
+	async notifyApplicationBoot(appName, appPath = "") {
+		return await this.sendShioriNotify("OnApplicationBoot", [appName, appPath]);
+	},
+
+	/**
+	 * 外部アプリケーション終了通知 (OnApplicationClose) を送信
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} appName アプリケーション名/ID
+	 */
+	async notifyApplicationClose(appName) {
+		return await this.sendShioriNotify("OnApplicationClose", [appName]);
+	},
+
+	/**
+	 * 外部アプリケーション存在確認 (OnApplicationExist) を送信
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} appName アプリケーション名/ID
+	 * @returns {Promise<boolean>} アプリケーションが存在・起動中か
+	 */
+	async checkApplicationExist(appName) {
+		const res = await this.sendShioriNotify("OnApplicationExist", [appName]);
+		return res === "1" || res === "true";
+	},
+
+	/**
+	 * 外部アプリケーションファイルオープン通知 (OnApplicationFileOpen) を送信
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} appName アプリケーション名/ID
+	 * @param {string} filePath 開いたファイルのパス
+	 */
+	async notifyApplicationFileOpen(appName, filePath = "") {
+		return await this.sendShioriNotify("OnApplicationFileOpen", [
+			appName,
+			filePath,
+		]);
+	},
+
+	/**
+	 * 外部アプリケーション操作完了通知 (OnApplicationOperationFinish) を送信
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} appName アプリケーション名/ID
+	 * @param {string} [operationName] 操作名
+	 */
+	async notifyApplicationOperationFinish(appName, operationName = "") {
+		return await this.sendShioriNotify("OnApplicationOperationFinish", [
+			appName,
+			operationName,
+		]);
+	},
+
+	/**
+	 * 外部アプリケーションバージョン通知 (OnApplicationVersion) を送信
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} appName アプリケーション名/ID
+	 * @param {string} [version] バージョン文字列
+	 */
+	async notifyApplicationVersion(appName, version = "") {
+		return await this.sendShioriNotify("OnApplicationVersion", [
+			appName,
+			version,
+		]);
+	},
+
+	/**
+	 * Webサイト更新通知 (OnWebsiteUpdateNotify) を送信
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} url 更新されたWebサイトのURL
+	 * @param {string} [updateTime] 更新日時
+	 */
+	async notifyWebsiteUpdate(url, updateTime = "") {
+		return await this.sendShioriNotify("OnWebsiteUpdateNotify", [
+			url,
+			updateTime,
+		]);
+	},
+
+	/**
 	 * 起動時通知一式を送信 (SHIORI ロード後 / OnBoot 後に呼ぶ)
 	 * @this {import('./ghost.js').GhostController}
 	 */

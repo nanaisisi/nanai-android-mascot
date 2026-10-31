@@ -4,10 +4,10 @@
 
 | 項目 | 検索語 | 対応状況 |
 | :--- | :--- | :---: |
-| [OnApplicationBoot](OnApplicationBoot.md) | OnApplicationBoot | ✅ 実装済 |
-| [OnApplicationClose](OnApplicationClose.md) | OnApplicationClose | ✅ 実装済 |
-| [OnApplicationExist](OnApplicationExist.md) | OnApplicationExist | ✅ 実装済 |
-| [OnApplicationFileOpen](OnApplicationFileOpen.md) | OnApplicationFileOpen | ✅ 実装済 |
-| [OnApplicationOperationFinish](OnApplicationOperationFinish.md) | OnApplicationOperationFinish | ✅ 実装済 |
-| [OnApplicationVersion](OnApplicationVersion.md) | OnApplicationVersion | ✅ 実装済 |
-| [OnWebsiteUpdateNotify](OnWebsiteUpdateNotify.md) | OnWebsiteUpdateNotify | ✅ 実装済 |
+| [OnApplicationBoot](OnApplicationBoot.md) | notifyApplicationBoot | ✅ 実装済 |
+| [OnApplicationClose](OnApplicationClose.md) | notifyApplicationClose | ✅ 実装済 |
+| [OnApplicationExist](OnApplicationExist.md) | checkApplicationExist | ✅ 実装済 |
+| [OnApplicationFileOpen](OnApplicationFileOpen.md) | notifyApplicationFileOpen | ✅ 実装済 |
+| [OnApplicationOperationFinish](OnApplicationOperationFinish.md) | notifyApplicationOperationFinish | ✅ 実装済 |
+| [OnApplicationVersion](OnApplicationVersion.md) | notifyApplicationVersion | ✅ 実装済 |
+| [OnWebsiteUpdateNotify](OnWebsiteUpdateNotify.md) | notifyWebsiteUpdate | ✅ 実装済 |

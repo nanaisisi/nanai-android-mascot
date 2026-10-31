@@ -16,4 +16,4 @@
 - `src-tauri/src/ghost/scan/date.rs:7` `let minutes = (remainder % 3600) / 60;`
 - `src-tauri/src/ghost/scan/date.rs:47` `year, month, day, hours, minutes, seconds`
 - `src-tauri/src/shiori/ffi/builder.rs:105` `pub fn on_minute_change() -> Self {`
-- `crates/ui/src/script/env.rs:22` `result = result.replace("%minute", &now.minute().to_string());`
+- `crates/ui/src/script/env.rs:34` `result = result.replace("%minute", &now.minute().to_string());`

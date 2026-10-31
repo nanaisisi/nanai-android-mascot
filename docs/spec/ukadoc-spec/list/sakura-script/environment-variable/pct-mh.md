@@ -12,4 +12,4 @@
 ## 実装箇所
 
 - `crates/ui/src/script/env.rs:1` `//! SakuraScript Environment Variable Interpolation (%username, %selfname, %dms,`
-- `crates/ui/src/script/env.rs:34` `result = result.replace("%mh", "0");`
+- `crates/ui/src/script/env.rs:46` `result = result.replace("%mh", "0");`

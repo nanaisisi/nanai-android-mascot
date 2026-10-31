@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/env.rs:20` `result = result.replace("%day", &now.day().to_string());`
+- `crates/ui/src/script/env.rs:32` `result = result.replace("%day", &now.day().to_string());`

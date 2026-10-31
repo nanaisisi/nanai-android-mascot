@@ -130,6 +130,19 @@ export function rustCommandsToTokens(rustCommands) {
 					args: [cmd.payload?.target ?? "", cmd.payload?.name ?? ""],
 				});
 				break;
+			case "SetWallpaper":
+				tokens.push({
+					type: "command",
+					command: "setwallpaper",
+					args: [cmd.payload?.filename ?? "", cmd.payload?.option ?? ""],
+				});
+				break;
+			case "SaveWallpaper":
+				tokens.push({ type: "command", command: "savewallpaper", args: [] });
+				break;
+			case "RestoreWallpaper":
+				tokens.push({ type: "command", command: "restorewallpaper", args: [] });
+				break;
 			case "Biff":
 				tokens.push({ type: "command", command: "biff", args: [] });
 				break;

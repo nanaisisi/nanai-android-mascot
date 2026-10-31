@@ -145,6 +145,11 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
                     let state = parts.get(2).unwrap_or(&"").to_string();
                     callback(SakuraCommand::WindowState(state));
                 }
+                "wallpaper" => {
+                    let filename = parts.get(2).unwrap_or(&"").to_string();
+                    let option = parts.get(3).unwrap_or(&"").to_string();
+                    callback(SakuraCommand::SetWallpaper { filename, option });
+                }
                 _ => {
                     callback(SakuraCommand::Command {
                         args: parts.iter().map(|s| s.to_string()).collect(),
@@ -194,6 +199,24 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
             let target = parts.get(1).unwrap_or(&"").to_string();
             let name = parts.get(2).unwrap_or(&"").to_string();
             callback(SakuraCommand::Call { target, name });
+        }
+        "save" => {
+            if parts.get(1).is_some_and(|p| *p == "wallpaper") {
+                callback(SakuraCommand::SaveWallpaper);
+            } else {
+                callback(SakuraCommand::Command {
+                    args: parts.iter().map(|s| s.to_string()).collect(),
+                });
+            }
+        }
+        "restore" => {
+            if parts.get(1).is_some_and(|p| *p == "wallpaper") {
+                callback(SakuraCommand::RestoreWallpaper);
+            } else {
+                callback(SakuraCommand::Command {
+                    args: parts.iter().map(|s| s.to_string()).collect(),
+                });
+            }
         }
         _ => {
             }

@@ -77,6 +77,11 @@ export class SakuraCommandHandler {
 			if (target === "ghost" && name) {
 				await this.app.ghostController?.callGhost?.(name);
 			}
+		} else if (rawCmd === "setwallpaper") {
+			const [filename, option] = args.slice(1);
+			console.log(`🖼️ Wallpaper set: ${filename} (option: ${option})`);
+		} else if (rawCmd === "savewallpaper" || rawCmd === "restorewallpaper") {
+			console.log(`🖼️ Wallpaper ${rawCmd} executed`);
 		} else if (rawCmd === "update" || rawCmd === "updatebymyself") {
 			await this.app.startNetworkUpdate?.();
 		} else {

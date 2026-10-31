@@ -75,6 +75,12 @@ pub enum SakuraCommand {
         target: String,
         name: String,
     },
+    SetWallpaper {
+        filename: String,
+        option: String,
+    },
+    SaveWallpaper,
+    RestoreWallpaper,
     Biff,
     ExecuteSntp,
     CreateShortcut,

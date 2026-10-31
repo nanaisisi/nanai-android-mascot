@@ -12,7 +12,7 @@ import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
  * - installedshellname (現在のゴーストに同梱のシェル名)
  * - ghostpathlist (読み込み可能なゴーストフォルダのフルパス)
  * - basewareversion / uniqueid
- * ※ balloon / plugin / headline / calendar / otherghostname 系は未対応
+ * - OnBalloonBreak / OnBalloonClose / OnBalloonTimeout (バルーン操作イベント)
  */
 export const shioriNotifyMethods = {
 	/**

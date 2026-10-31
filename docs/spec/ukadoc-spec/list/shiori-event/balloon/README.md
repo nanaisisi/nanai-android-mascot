@@ -4,6 +4,6 @@
 
 | 項目 | 検索語 | 対応状況 |
 | :--- | :--- | :---: |
-| [OnBalloonBreak](OnBalloonBreak.md) | sendShioriNotify | ✅ 実装済 |
-| [OnBalloonClose](OnBalloonClose.md) | sendShioriNotify | ✅ 実装済 |
-| [OnBalloonTimeout](OnBalloonTimeout.md) | sendShioriNotify | ✅ 実装済 |
+| [OnBalloonBreak](OnBalloonBreak.md) | OnBalloonBreak | ✅ 実装済 |
+| [OnBalloonClose](OnBalloonClose.md) | OnBalloonClose | ✅ 実装済 |
+| [OnBalloonTimeout](OnBalloonTimeout.md) | OnBalloonTimeout | ✅ 実装済 |

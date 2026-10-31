@@ -19,6 +19,34 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
                 references: refs,
             });
         }
+        "raiseplugin" | "notifyplugin" | "timerraiseplugin" | "timernotifyplugin" => {
+            let is_notify = parts[0] == "notifyplugin" || parts[0] == "timernotifyplugin";
+            let (plugin, event, refs) = if parts[0].starts_with("timer") {
+                let plugin = parts.get(3).unwrap_or(&"").to_string();
+                let event = parts.get(4).unwrap_or(&"").to_string();
+                let refs = if parts.len() > 5 {
+                    parts[5..].iter().map(|s| s.to_string()).collect()
+                } else {
+                    Vec::new()
+                };
+                (plugin, event, refs)
+            } else {
+                let plugin = parts.get(1).unwrap_or(&"").to_string();
+                let event = parts.get(2).unwrap_or(&"").to_string();
+                let refs = if parts.len() > 3 {
+                    parts[3..].iter().map(|s| s.to_string()).collect()
+                } else {
+                    Vec::new()
+                };
+                (plugin, event, refs)
+            };
+            callback(SakuraCommand::PluginEvent {
+                plugin,
+                event,
+                references: refs,
+                is_notify,
+            });
+        }
         "execute" => {
             if parts.get(1).is_some_and(|p| *p == "schedule-add") {
                 let date = parts.get(2).unwrap_or(&"Today").to_string();

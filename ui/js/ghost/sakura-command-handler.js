@@ -38,6 +38,29 @@ export class SakuraCommandHandler {
 					args.slice(2),
 				);
 			}
+		} else if (
+			rawCmd === "raiseplugin" ||
+			rawCmd === "notifyplugin" ||
+			rawCmd === "timerraiseplugin" ||
+			rawCmd === "timernotifyplugin"
+		) {
+			const isTimer = rawCmd.startsWith("timer");
+			const pluginName = isTimer ? args[3] : args[1];
+			const eventId = isTimer ? args[4] : args[2];
+			const references = isTimer ? args.slice(5) : args.slice(3);
+			if (pluginName && eventId && isTauriAvailable()) {
+				try {
+					await invoke("execute_plugin_event", {
+						request: {
+							pluginName,
+							eventId,
+							references,
+						},
+					});
+				} catch (err) {
+					console.warn(`Plugin event execution failed (${pluginName}):`, err);
+				}
+			}
 		} else if (rawCmd === "bind" || rawCmd === "bind-noevent") {
 			const [category, part, statusVal] = args.slice(1);
 			await this.app.surfaceManager?.bindDressup(

@@ -42,6 +42,12 @@ pub enum SakuraCommand {
         event: String,
         references: Vec<String>,
     }, // \![raise,Event,...]
+    PluginEvent {
+        plugin: String,
+        event: String,
+        references: Vec<String>,
+        is_notify: bool,
+    }, // \![raiseplugin,...] / \![notifyplugin,...]
     Bind {
         category: String,
         part: String,

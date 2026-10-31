@@ -2,11 +2,11 @@
 
 - **規格**: [b-ID.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/balloon-text/b-ID/) (ukadoc-spec/list/sakura-script/balloon-text/b-ID.md)
 - **検索語**: \b
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-パーサがタグを読み飛ばす、または sakura-command-handler.js が「未対応の \! コマンド」として扱い、該当処理はない。
+`\b[n]`, `\b[-1]`, `\b0`～`\b9` などのバルーン切り替え・非表示制御コマンドのパースおよび `Balloon(i32)` コマンド処理を完備 (`crates/ui/src/script/parser/mod.rs`, `src-tauri/src/commands/window/balloon_window/show.rs`)。
 
 ## 実装箇所
 

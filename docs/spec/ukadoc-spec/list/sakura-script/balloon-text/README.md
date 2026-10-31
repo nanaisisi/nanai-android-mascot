@@ -15,7 +15,7 @@
 | [\_b[ファイルパス,x,y,opaque]](_b-x-y-opaque.md)                                                          | \_b    |               ❌ 検出なし                |
 | [\_l[x,y]](_l-x-y.md)                                                                                     | \_l    |               ❌ 検出なし                |
 | [\_n](_n.md)                                                                                              | \_n    |               ❌ 検出なし                |
-| [\b[ID番号]](b-ID.md)                                                                                     | \b     |                ❌ 未実装                 |
+| [\b[ID番号]](b-ID.md)                                                                                     | \b     |                ✅ 実装済                 |
 | [\![enter,nouserbreakmode]](bang-enter-nouserbreakmode.md)                                                | \!     |                ❌ 未実装                 |
 | [\![enter,onlinemode]](bang-enter-onlinemode.md)                                                          | \!     |                ❌ 未実装                 |
 | [\![execute,resetballoonpos]](bang-execute-resetballoonpos.md)                                            | \!     |                ❌ 未実装                 |

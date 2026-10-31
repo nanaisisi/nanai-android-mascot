@@ -277,6 +277,9 @@ pub async fn execute_ghost_update(
         updated_files.push(entry.path);
     }
 
+    // 更新後に delete.txt が存在する場合、旧ファイルのクリーンアップ処理を実行
+    crate::commands::install::archive::process_delete_txt(&ghost_dir);
+
     Ok(UpdateExecutionResult {
         success: true,
         reason: "changed".to_string(),

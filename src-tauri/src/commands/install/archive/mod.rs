@@ -4,12 +4,13 @@ mod packaging;
 mod postprocess;
 
 pub use packaging::create_nar_from_directory;
+pub use postprocess::process_delete_txt;
 
 use super::utils::flatten_balloon_directory;
 use crate::common::*;
 use extraction::extract_zip_entries;
 use inspection::inspect_zip_archive;
-use postprocess::{build_extracted_ghost_info, process_delete_txt};
+use postprocess::build_extracted_ghost_info;
 
 pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
     mut zip: zip::ZipArchive<R>,

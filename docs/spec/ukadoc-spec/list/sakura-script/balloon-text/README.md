@@ -35,7 +35,7 @@
 | [\![*]](bang-star.md)                                                                                     | \!     |                ❌ 未実装                 |
 | [\![unlock,balloonmove]](bang-unlock-balloonmove.md)                                                      | \!     |                ❌ 未実装                 |
 | [\![unlock,balloonrepaint]](bang-unlock-balloonrepaint.md)                                                | \!     |                ❌ 未実装                 |
-| [\bID番号](bID.md)                                                                                        | \bID   |               ❌ 検出なし                |
+| [\bID番号](bID.md)                                                                                        | \bID   |                ✅ 実装済                 |
 | [\c](c.md)                                                                                                | \c     |                ✅ 実装済                 |
 | [\C](C-2.md)                                                                                              | \C     |                ✅ 実装済                 |
 | [\c[char,数値]](c-char.md)                                                                                | \c     |                ✅ 実装済                 |

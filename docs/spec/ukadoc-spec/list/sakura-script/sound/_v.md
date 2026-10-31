@@ -1,14 +1,15 @@
 # \_v[ファイル名]
 
 - **規格**: [_v.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/sound/_v/) (ukadoc-spec/list/sakura-script/sound/_v.md)
-- **検索語**: \_v
+- **検索語**: Voice
 - **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-実装コード内に「\_v」を確認。
-
+\\_v / \\8[file] サウンド再生コマンドのパース処理を実装 (crates/ui/src/script/command.rs -> SakuraCommand::Voice)。
 
 ## 実装箇所
 
-- `crates/ui/src/script/parser/mod.rs:53` `// \_w / \_q / \_a / \_s / \_l / \_! / \_\_v / \_\_q`
+- `crates/ui/src/script/command.rs:52` `Voice(String),     // \__v[opt]`
+- `crates/ui/src/script/parser/mod.rs:104` `Some('v') => callback(SakuraCommand::Voice("".into())), // \v`
+- `crates/ui/src/script/parser/brackets/handlers/underscore.rs:144` `callback(SakuraCommand::Voice(opt));`

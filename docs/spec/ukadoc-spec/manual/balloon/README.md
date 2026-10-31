@@ -21,6 +21,14 @@
 | [SSP 専用画像](ssp-assets.md)                                          | ✅ 実装済                                           |
 | [バルーン FMO 連携](balloon-fmo.md)                                    | ✅ 実装済                                           |
 | [バルーン 9-slice 描画](balloon-9slice.md)                             | ✅ 実装済                                           |
+| [有効テキスト領域 (`validrect`)](validrect.md)                         | ✅ 実装済                                           |
+| [テキスト折り返し (`wordwrappoint`)](wordwrappoint.md)                   | ✅ 実装済                                           |
+| [推奨 DPI 設定 (`dpi`)](dpi.md)                                        | ✅ 実装済                                           |
+| [アンカー設定 (`anchor`)](anchor.md)                                   | ✅ 実装済                                           |
+| [選択肢カーソル設定 (`cursor`)](cursor.md)                             | ✅ 実装済                                           |
+| [数値フォント設定 (`number.font`)](number-font.md)                     | ✅ 実装済                                           |
+| [SSTP メッセージ設定 (`sstpmessage.font`)](sstp-message.md)            | ✅ 実装済                                           |
+| [無効フォント設定 (`disable.font`)](disable-font.md)                   | ✅ 実装済                                           |
 
 ## 対応範囲の共通事項
 

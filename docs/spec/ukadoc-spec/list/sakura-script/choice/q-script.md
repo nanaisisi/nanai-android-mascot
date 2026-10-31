@@ -6,7 +6,7 @@
 
 ## 突合結果
 
-基本形 (ID/テキスト) のみ処理し、この拡張形式 (複数ID / OnID / script: / 追加参照) は未対応。
+拡張形式 (複数ID / OnID / script: / 追加参照) を含む選択肢タグのパースおよび SakuraCommand::Choice { label, id, args } へのマッピングを実装 (crates/ui/src/script/parser/brackets/handlers/basic.rs)。
 
 ## 実装箇所
 

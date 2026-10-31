@@ -6,7 +6,7 @@
 
 ## 突合結果
 
-実装コードに「\z」が見つからない(短いトークンのため誤検出の可能性大)。
+`\z` タグのパース処理および `SakuraCommand::Z` へのマッピングを実装 (`crates/ui/src/script/parser/mod.rs`)。
 
 ## 実装箇所
 

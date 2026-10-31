@@ -13,5 +13,5 @@
 - `src-tauri/src/commands/shiori/protocol.rs:109` `/// [@manual: manual/translator.md] Translator integration / OnTranslate hook su`
 - `src-tauri/src/commands/shiori/protocol.rs:172` `/// SHIORI へ OnTranslate イベントを送信し、ゴースト側で翻訳されたさくらスクリプトを取得する (UKADOC 規格準拠)`
 - `src-tauri/src/commands/shiori/protocol.rs:179` `let mut req = ShioriRequest::get("OnTranslate", std::slice::from_ref(&script));`
-- `ui/js/ghost/sakura-play.js:15` `// [OnTranslate / manual/translator.md]: 発話前のスクリプト動的変換・翻訳処理`
-- `ui/js/ghost/sakura-play.js:21` `"OnTranslate",`
+- `ui/js/ghost/sakura-play/translator.js:7` `"OnTranslate",`
+- `ui/js/ghost/sakura-play/translator.js:15` `// OnTranslate failure falls back to original script`

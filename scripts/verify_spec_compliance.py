@@ -4,7 +4,7 @@ scripts/verify_spec_compliance.py
 
 Verifies specification implementation against all audit markdown files
 in docs/spec/ukadoc-spec/ and docs/spec/ukadoc-ssp/ and updates implementation locations, statuses, and SUMMARY.md,
-ensuring explicit ukadoc-spec/ and ukadoc-ssp/ prefixes are displayed in SUMMARY.md.
+using a clean spec_set + 1-level directory category structure (e.g., ukadoc-spec/descript, ukadoc-ssp/config).
 """
 
 import os
@@ -89,22 +89,18 @@ def process_audit_files(codebase):
         else:
             keyword = os.path.splitext(os.path.basename(filepath))[0]
 
-        # Determine explicit prefixed category for SUMMARY.md
+        # Determine spec_set + 1-level directory category (e.g. ukadoc-spec/descript, ukadoc-ssp/config)
         if 'ukadoc-ssp' in filepath:
             rel_path = filepath.replace('docs/spec/ukadoc-ssp/', '')
             parts = rel_path.split('/')
-            if len(parts) >= 3:
-                cat = f"ukadoc-ssp/{parts[0]}/{parts[1]}"
-            elif len(parts) >= 2:
+            if len(parts) >= 1 and parts[0]:
                 cat = f"ukadoc-ssp/{parts[0]}"
             else:
                 cat = "ukadoc-ssp/root"
         else:
             rel_path = filepath.replace('docs/spec/ukadoc-spec/', '')
             parts = rel_path.split('/')
-            if len(parts) >= 3:
-                cat = f"ukadoc-spec/{parts[0]}/{parts[1]}"
-            elif len(parts) >= 2:
+            if len(parts) >= 1 and parts[0]:
                 cat = f"ukadoc-spec/{parts[0]}"
             else:
                 cat = "ukadoc-spec/root"
@@ -159,11 +155,11 @@ def process_audit_files(codebase):
 def update_summary(category_stats):
     summary_path = 'docs/spec/ukadoc-spec/SUMMARY.md'
     lines = [
-        "# ukadoc-spec & ukadoc-ssp 規格別 実装突合サマリ",
+        "# ukadoc-spec & ukadoc-ssp 規格別 実装突合マスタサマリ",
         "",
-        "本ドキュメントは、公式 **ukadoc-spec** と標準環境 **ukadoc-ssp** の双方における Nanai Android Mascot の対応状況を網羅的に集計したマスターサマリである。",
+        "各項目ファイルの「対応状況」を集計したものです。判定はソースの文字列検索と、一部の実装読解に基づきます。",
         "",
-        "| 規格カテゴリ (ukadoc-spec / ukadoc-ssp) | ✅ 実装済 | ⚠️ 一部対応 | ❌ 未実装 | ❓ 未確認 | 合計 |",
+        "| 規格 (ukadoc-spec / ukadoc-ssp 層 + 1階層) | ✅ 実装済 | ⚠️ 一部対応 | ❌ 未実装 | ❓ 未確認 | 合計 |",
         "| :--- | --------: | ----------: | --------: | --------: | ---: |"
     ]
 

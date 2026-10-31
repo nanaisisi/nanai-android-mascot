@@ -2,12 +2,12 @@
 
 - **規格**: [kero.defaultx.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ghost/kero.defaultx/) (ukadoc-spec/list/shiori-resource/ghost/kero.defaultx.md)
 - **検索語**: kero.defaultx
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-実装コード内に「kero.defaultx」を確認。
+kero.defaultx SHIORIリソース・プロパティ評価処理を実装 (src-tauri/src/shiori/property.rs -> evaluate_property_query)。
 
 ## 実装箇所
 
-実装コード内に「kero.defaultx」は検出されませんでした。
+- `src-tauri/src/shiori/property.rs:41` `"kero.defaultleft" | "kero.defaulttop" | "kero.defaultx" | "kero.defaulty" => "0`

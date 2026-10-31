@@ -6,7 +6,7 @@
 
 ## 突合結果
 
-update/network.rs で homeurl を取得してネットワーク更新に使用。
+homeurl SHIORIリソース・プロパティ評価処理を実装 (src-tauri/src/shiori/property.rs -> evaluate_property_query)。
 
 ## 実装箇所
 

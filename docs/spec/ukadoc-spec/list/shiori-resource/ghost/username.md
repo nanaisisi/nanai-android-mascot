@@ -2,16 +2,16 @@
 
 - **規格**: [username.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ghost/username/) (ukadoc-spec/list/shiori-resource/ghost/username.md)
 - **検索語**: username
-- **対応状況**: ✅ 対応済
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-設定・SHIORIリクエスト/イベント時のユーザー名（username）取得・通知に対応。
+username SHIORIリソース・プロパティ評価処理を実装 (src-tauri/src/shiori/property.rs -> evaluate_property_query)。
 
 ## 実装箇所
 
 - `src-tauri/src/shiori/property.rs:29` `"username" => "User".to_string(),`
-- `src-tauri/src/shiori/property.rs:67` `assert_eq!(evaluate_property_query("username"), "User");`
+- `src-tauri/src/shiori/property.rs:79` `assert_eq!(evaluate_property_query("username"), "User");`
 - `crates/ui/src/script/env.rs:9` `username: &str,`
 - `crates/ui/src/script/env.rs:28` `result = result.replace("%username", username);`
 - `crates/ui/src/script/env.rs:64` `let script = "%username, hello! Today is %year/%month/%day %hour:%minute:%second`

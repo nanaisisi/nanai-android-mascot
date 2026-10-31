@@ -2,12 +2,12 @@
 
 - **規格**: [kero.defaulttop.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ghost/kero.defaulttop/) (ukadoc-spec/list/shiori-resource/ghost/kero.defaulttop.md)
 - **検索語**: kero.defaulttop
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-実装コード内に「kero.defaulttop」を確認。
+kero.defaulttop SHIORIリソース・プロパティ評価処理を実装 (src-tauri/src/shiori/property.rs -> evaluate_property_query)。
 
 ## 実装箇所
 
-実装コード内に「kero.defaulttop」は検出されませんでした。
+- `src-tauri/src/shiori/property.rs:41` `"kero.defaultleft" | "kero.defaulttop" | "kero.defaultx" | "kero.defaulty" => "0`

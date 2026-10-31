@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
+- `src-tauri/src/shiori/property.rs:38` `"sakura.defaultleft" | "sakura.defaulttop" | "sakura.defaultx" | "sakura.default`
 - `crates/ui/src/descript/tests.rs:98` `sakura.defaulttop,20\n";`

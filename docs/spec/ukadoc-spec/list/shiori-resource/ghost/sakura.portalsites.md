@@ -2,13 +2,12 @@
 
 - **規格**: [sakura.portalsites.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ghost/sakura.portalsites/) (ukadoc-spec/list/shiori-resource/ghost/sakura.portalsites.md)
 - **検索語**: sakura.portalsites
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-実装コードに「sakura.portalsites」が見つからない。
-
+sakura.portalsites SHIORIリソース・プロパティ評価処理を実装 (src-tauri/src/shiori/property.rs -> evaluate_property_query)。
 
 ## 実装箇所
 
-実装コード内に「sakura.portalsites」は検出されませんでした。
+- `src-tauri/src/shiori/property.rs:40` `"sakura.portalbuttoncaption" | "sakura.portalsites" | "sakura.recommendbuttoncap`

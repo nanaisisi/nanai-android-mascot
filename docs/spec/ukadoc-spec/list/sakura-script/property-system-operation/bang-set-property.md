@@ -11,7 +11,7 @@
 ## 実装箇所
 
 - `src-tauri/src/shiori/property.rs:12` `pub fn evaluate_property_query(query: &str) -> String {`
-- `src-tauri/src/shiori/property.rs:52` `Ok(evaluate_property_query(&query))`
-- `src-tauri/src/shiori/property.rs:61` `assert_eq!(evaluate_property_query("ghostlist.count"), "1");`
-- `src-tauri/src/shiori/property.rs:63` `evaluate_property_query("baseware.name"),`
-- `src-tauri/src/shiori/property.rs:66` `assert_eq!(evaluate_property_query("currentghost.name"), "Mock Ghost");`
+- `src-tauri/src/shiori/property.rs:64` `Ok(evaluate_property_query(&query))`
+- `src-tauri/src/shiori/property.rs:73` `assert_eq!(evaluate_property_query("ghostlist.count"), "1");`
+- `src-tauri/src/shiori/property.rs:75` `evaluate_property_query("baseware.name"),`
+- `src-tauri/src/shiori/property.rs:78` `assert_eq!(evaluate_property_query("currentghost.name"), "Mock Ghost");`

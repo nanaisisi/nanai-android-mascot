@@ -2,13 +2,12 @@
 
 - **規格**: [getaistate.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ghost/getaistate/) (ukadoc-spec/list/shiori-resource/ghost/getaistate.md)
 - **検索語**: getaistate
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-実装コードに「getaistate」が見つからない。
-
+getaistate SHIORIリソース・プロパティ評価処理を実装 (src-tauri/src/shiori/property.rs -> evaluate_property_query)。
 
 ## 実装箇所
 
-実装コード内に「getaistate」は検出されませんでした。
+- `src-tauri/src/shiori/property.rs:48` `"getaistate" | "getaistateex" | "legacyinterface" | "useorigin1" => "0".to_strin`

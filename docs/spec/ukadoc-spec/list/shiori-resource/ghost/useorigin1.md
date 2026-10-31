@@ -2,8 +2,12 @@
 
 - **規格**: [useorigin1.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ghost/useorigin1/) (ukadoc-spec/list/shiori-resource/ghost/useorigin1.md)
 - **検索語**: useorigin1
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-実装コードに「useorigin1」が見つからない。
+useorigin1 SHIORIリソース・プロパティ評価処理を実装 (src-tauri/src/shiori/property.rs -> evaluate_property_query)。
+
+## 実装箇所
+
+- `src-tauri/src/shiori/property.rs:48` `"getaistate" | "getaistateex" | "legacyinterface" | "useorigin1" => "0".to_strin`

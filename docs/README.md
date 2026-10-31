@@ -39,7 +39,16 @@
 - **[ui-and-menu-spec.md](design/ui/ui-and-menu-spec.md)** - 標準UI & 拡張メニュー仕様書
 - **[window-design.md](design/ui/window-design.md)** - ウィンドウ設計（Windows検証 / Android Single Container）
 
-### 🔧 詳細技術仕様書 (`spec/`)
+### 🔧 仕様適合確認・マスター規格 (`spec/`)
+
+- **[SUMMARY.md](spec/SUMMARY.md)** - 規格別実装適合度自動集計マスタサマリ
+- **[ssp-master-compatibility-spec.md](spec/nas-spec/ssp-master-compatibility-spec.md)** - SSP 互換・暗黙規格統括マスター仕様書 (96 DPI換算, Mutex, DLL, `seriko.use_self_alpha`等)
+- **[ssp-font-and-ui-spec.md](spec/nas-spec/ssp-font-and-ui-spec.md)** - SSP 暗黙仕様: フォントサイズ・インライン要素サイズフィット規格
+- **[explorer.md](spec/ssp-external-spec/explorer.md)** - エクスプローラ機能仕様
+- **[menu-bitmap.md](spec/ssp-external-spec/menu-bitmap.md)** - オーナードローメニュー・背景画像仕様
+- **[window-snap.md](spec/ssp-external-spec/window-snap.md)** - ウィンドウ・スナップ機能および位置リセット仕様
+
+### 📐 内部設計技術仕様書 (`doc-spec/`)
 
 - **[standard-ghost-spec.md](doc-spec/ghost/standard-ghost-spec.md)** - 公式サンプルキャラクター仕様書（モック & プチ）
 - **[sakura-script-and-balloon-spec.md](doc-spec/shiori-script/sakura-script-and-balloon-spec.md)** - さくらスクリプトパーサー & バルーン文字送り仕様書
@@ -54,7 +63,6 @@
 - **[ghost-compatibility-gap-and-roadmap.md](doc-spec/ghost/ghost-compatibility-gap-and-roadmap.md)** - 伺かゴースト互換性ギャップ分析と実装改善ロードマップ仕様書
 - **[compatibility-implementation-plan.md](doc-spec/reference/compatibility-implementation-plan.md)** - 互換実装計画仕様書
 - **[specification-compliance-matrix.md](doc-spec/reference/specification-compliance-matrix.md)** - 仕様適合マトリクス
-- **[balloon-dpi-scaling-spec.md](developer/balloon-dpi-scaling-spec.md)** - バルーン DPI スケーリングおよびクロスプラットフォーム表示仕様 (NSM独自仕様)
 
 ### 📋 開発プロセス & 履歴 (`process/`)
 

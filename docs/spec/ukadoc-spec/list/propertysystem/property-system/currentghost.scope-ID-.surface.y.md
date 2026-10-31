@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:32` `if q.starts_with("currentghost.scope(") {`
+- `src-tauri/src/shiori/property.rs:33` `if q.starts_with("currentghost.scope(") {`

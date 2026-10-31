@@ -13,4 +13,4 @@
 - `src-tauri/src/commands/config.rs:53` `base_map.insert(k, other);`
 - `src-tauri/src/commands/ext.rs:47` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [secondchangeinterva`
 - `src-tauri/src/commands/ext.rs:52` `let _other_talk = map.get("otherghosttalk");`
-- `crates/ui/src/vfs.rs:146` `let other = sub.join("AA_Other.txt");`
+- `src-tauri/src/shiori/property.rs:31` `"other_homeurl_override" | "other_homeurl" => "https://example.com/ghost/".to_st`

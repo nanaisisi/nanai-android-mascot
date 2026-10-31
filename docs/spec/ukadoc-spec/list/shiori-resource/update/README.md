@@ -5,4 +5,4 @@
 
 | 項目                                              | 対応状況 |
 | :------------------------------------------------ | :------: |
-| [other_homeurl_override](other_homeurl_override.md) | ❌ 検出なし |
+| [other_homeurl_override](other_homeurl_override.md) | ✅ 実装済 |

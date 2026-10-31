@@ -28,6 +28,7 @@ pub fn evaluate_property_query(query: &str) -> String {
         "currentghost.craftmanurl" => "https://example.com".to_string(),
         "username" => "User".to_string(),
         "homeurl" => "https://example.com/ghost/".to_string(),
+        "other_homeurl_override" | "other_homeurl" => "https://example.com/ghost/".to_string(),
         _ => {
             if q.starts_with("currentghost.scope(") {
                 if q.contains(".name") {

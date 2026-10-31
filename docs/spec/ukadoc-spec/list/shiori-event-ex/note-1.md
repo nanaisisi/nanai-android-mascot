@@ -2,7 +2,7 @@
 
 - **規格**: [note-1.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event-ex/note-1/)
 - **検索語**: 補足
-- **対応状況**: ❌ 未実装(誤検出)
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

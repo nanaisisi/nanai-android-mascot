@@ -1,4 +1,5 @@
-//! SakuraScript Environment Variable Interpolation (%username, %selfname, %dms, %ms, %mp, %mh, %me, %mt, %property[...], etc.)
+//! SakuraScript Environment Variable Interpolation
+//! [environmentvariable.md], [notes_environmentvariable.md]
 
 use chrono::{Datelike, Local, Timelike};
 use crate::shiori::property::evaluate_property_query;

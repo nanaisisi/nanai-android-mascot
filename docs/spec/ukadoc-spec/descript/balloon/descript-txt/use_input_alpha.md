@@ -13,4 +13,3 @@ PNA マスク合成および Canvas 2D レンダラにおいてアルファチ�
 - `ui/js/core/actions/balloon-descript/assets.js:139` `// [use_input_alpha,数値]:`
 - `ui/js/core/actions/balloon-descript/assets.js:141` `props.use_input_alpha === "1" ||`
 - `ui/js/core/actions/balloon-descript/assets.js:142` `props.use_input_alpha?.toLowerCase() === "true";`
-- `tests/balloon-descript.test.js:138` `use_input_alpha: "1",`

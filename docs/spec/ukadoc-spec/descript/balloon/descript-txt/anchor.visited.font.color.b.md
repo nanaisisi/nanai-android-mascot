@@ -2,7 +2,7 @@
 
 - **規格**: [anchor.visited.font.color.b.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/anchor.visited.font.color.b.md)
 - **検索語**: anchor.visited.font.color.b
-- **対応状況**: ✅ 対応済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `tests/balloon-descript.test.js:101` `"anchor.visited.font.color.b": "128",`
+実装コード内に「anchor.visited.font.color.b」は検出されませんでした。

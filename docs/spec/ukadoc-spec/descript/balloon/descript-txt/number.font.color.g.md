@@ -11,4 +11,3 @@
 ## 実装箇所
 
 - `ui/js/core/actions/balloon-descript/font/special.js:29` `props["number.font.color.g"] ||`
-- `tests/balloon-descript.test.js:121` `"number.font.color.g": "10",`

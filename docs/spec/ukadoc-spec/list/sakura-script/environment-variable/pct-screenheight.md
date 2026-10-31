@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/env.rs:44` `result = result.replace("%screenheight", "768");`
+- `crates/ui/src/script/env.rs:45` `result = result.replace("%screenheight", "768");`

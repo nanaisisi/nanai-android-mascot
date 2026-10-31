@@ -11,4 +11,3 @@
 ## 実装箇所
 
 - `ui/js/core/actions/balloon-descript/font/special.js:30` `props["number.font.color.b"]`
-- `tests/balloon-descript.test.js:122` `"number.font.color.b": "10",`

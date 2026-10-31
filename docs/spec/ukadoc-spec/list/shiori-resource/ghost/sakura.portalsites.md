@@ -7,3 +7,8 @@
 ## 突合結果
 
 実装コードに「sakura.portalsites」が見つからない。
+
+
+## 実装箇所
+
+実装コード内に「sakura.portalsites」は検出されませんでした。

@@ -7,3 +7,8 @@
 ## 突合結果
 
 実装コードに「installedplugin」が見つからない。
+
+
+## 実装箇所
+
+実装コード内に「installedplugin」は検出されませんでした。

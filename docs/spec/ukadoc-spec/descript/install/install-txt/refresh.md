@@ -14,4 +14,3 @@
 - `ui/js/ui/templates/ghost-templates.js:8` `<button type="button" id="explorer-refresh-btn">再読み込み</button>`
 - `ui/js/ui/templates/ghost-templates.js:53` `<button type="button" id="refresh-ghosts-btn">更新</button>`
 - `ui/js/ui/templates/ghost-templates.js:75` `<button type="button" id="refresh-balloons-btn">更新</button>`
-- `tests/modal-explorer.test.js:93` `// Test refresh btn`

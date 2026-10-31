@@ -11,4 +11,3 @@
 ## 実装箇所
 
 - `ui/js/ghost/command-handler/teachbox.js:62` `await handler.app.ghostController?.sendShioriEvent("OnTeachInputCancel", [`
-- `tests/sakura-command-handler.test.js:142` `assert.ok(eventsSent.some((e) => e.ev === "OnTeachInputCancel"));`

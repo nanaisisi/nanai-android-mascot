@@ -12,5 +12,3 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 
 - `src-tauri/src/shiori/ffi/builder.rs:108` `.event("OnMinuteChange")`
 - `ui/js/ghost/ghost-shiori.js:88` `await this.sendShioriEvent("OnMinuteChange", [`
-- `tests/ghost-shiori.test.js:81` `// Test timer interval (OnSecondChange & OnMinuteChange at 60s)`
-- `tests/ghost-shiori.test.js:88` `(e) => e.ev === "OnSecondChange" || e.ev === "OnMinuteChange",`

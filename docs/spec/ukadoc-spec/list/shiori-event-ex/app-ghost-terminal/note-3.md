@@ -2,7 +2,7 @@
 
 - **規格**: [note-3.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event-ex/app-ghost-terminal/note-3/) (ukadoc-spec/list/shiori-event-ex/app-ghost-terminal/note-3.md)
 - **検索語**: 補足
-- **対応状況**: ❌ 未実装(誤検出)
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

@@ -2,7 +2,7 @@
 
 - **規格**: [cursor.notselect.style.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/cursor.notselect.style.md)
 - **検索語**: cursor.notselect.style
-- **対応状況**: ✅ 対応済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `tests/balloon-descript.test.js:110` `"cursor.notselect.style": "none",`
+実装コード内に「cursor.notselect.style」は検出されませんでした。

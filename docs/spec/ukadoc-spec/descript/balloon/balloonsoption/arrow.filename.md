@@ -13,5 +13,3 @@
 - `ui/css/balloon-window.css:81` `/* バルーンオプション画像 (arrow.filename, clickwaitmarker.filename 等) */`
 - `ui/js/core/actions/balloon-descript/assets.js:38` `// [arrow.filename,ファイル名]:`
 - `ui/js/core/actions/balloon-descript/assets.js:39` `setBalloonImage("arrow.filename", "--balloon-arrow-image");`
-- `tests/balloon-descript.test.js:129` `"arrow.filename": "arrow.png",`
-- `tests/core-actions.test.js:46` `"arrow.filename": "",`

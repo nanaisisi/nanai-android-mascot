@@ -7,3 +7,8 @@
 ## 突合結果
 
 実装コードに「sakura.recommendsites」が見つからない。
+
+
+## 実装箇所
+
+実装コード内に「sakura.recommendsites」は検出されませんでした。

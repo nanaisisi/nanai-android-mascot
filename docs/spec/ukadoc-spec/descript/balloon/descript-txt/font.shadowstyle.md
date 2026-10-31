@@ -14,4 +14,3 @@
 - `ui/js/core/actions/balloon-descript/font/base.js:85` `props["font.shadowstyle"],`
 - `ui/js/core/actions/balloon-descript/font/group.js:23` `if (props[`${prefix}.font.shadowstyle`]) {`
 - `ui/js/core/actions/balloon-descript/font/group.js:26` `props[`${prefix}.font.shadowstyle`],`
-- `tests/balloon-descript.test.js:93` `"font.shadowstyle": "outline",`

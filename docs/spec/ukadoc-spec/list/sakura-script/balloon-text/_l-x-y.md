@@ -15,4 +15,3 @@
 - `crates/ui/src/script/command.rs:66` `}, // \_l[x,y] (座標移動)`
 - `crates/ui/src/script/parser/mod.rs:53` `// \_w / \_q / \_a / \_s / \_l / \_! / \_\_v / \_\_q`
 - `ui/js/ghost/sakura-tokenizer.js:214` `// \_l[x,y] (座標移動)`
-- `tests/sakura-tokenizer.test.js:10` `"\\0\\hHello\\1\\uWorld\\p[2]\\p0\\s[10]\\s0\\i[1,wait]\\i2\\w5\\_w[200]\\n\\n[h`

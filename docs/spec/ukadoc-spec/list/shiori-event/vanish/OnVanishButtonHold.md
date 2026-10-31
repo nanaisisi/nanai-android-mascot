@@ -7,3 +7,8 @@
 ## 突合結果
 
 実装コードに「OnVanishButtonHold」が見つからない。
+
+
+## 実装箇所
+
+実装コード内に「OnVanishButtonHold」は検出されませんでした。

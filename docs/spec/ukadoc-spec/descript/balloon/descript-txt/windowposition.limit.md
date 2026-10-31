@@ -13,4 +13,3 @@
 - `ui/js/core/actions/balloon-descript/layout.js:163` `// [windowposition.x,座標], [windowposition.y,座標], [windowposition.limit,0/1]:`
 - `ui/js/core/actions/balloon-descript/layout.js:172` `props["windowposition.limit"] === "1" ||`
 - `ui/js/core/actions/balloon-descript/layout.js:173` `props["windowposition.limit"]?.toLowerCase() === "true";`
-- `tests/balloon-descript.test.js:79` `"windowposition.limit": "1",`

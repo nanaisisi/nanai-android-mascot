@@ -13,4 +13,3 @@
 - `ui/js/core/actions/balloon-descript/assets.js:127` `// [paint_transparent_region_black,数値]:`
 - `ui/js/core/actions/balloon-descript/assets.js:129` `props.paint_transparent_region_black === "1" ||`
 - `ui/js/core/actions/balloon-descript/assets.js:130` `props.paint_transparent_region_black?.toLowerCase() === "true";`
-- `tests/balloon-descript.test.js:136` `paint_transparent_region_black: "1",`

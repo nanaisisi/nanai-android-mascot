@@ -7,3 +7,8 @@
 ## 突合結果
 
 実装コードに「OnHeadlinesense.OnFind」が見つからない。
+
+
+## 実装箇所
+
+実装コード内に「OnHeadlinesense.OnFind」は検出されませんでした。

@@ -12,6 +12,3 @@
 
 - `ui/js/core/actions/balloon-descript/font/base.js:36` `props["font.underline"] === "1" ||`
 - `ui/js/core/actions/balloon-descript/font/base.js:37` `props["font.underline"]?.toLowerCase() === "true"`
-- `tests/balloon-descript.test.js:84` `"font.underline": "1",`
-- `tests/core-actions.test.js:37` `"font.underline": "0",`
-- `tests/frontend-coverage-boost.test.js:24` `"font.underline": "1",`

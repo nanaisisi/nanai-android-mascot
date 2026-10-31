@@ -11,8 +11,7 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/env.rs:1` `//! SakuraScript Environment Variable Interpolation (%username, %selfname, %dms,`
-- `crates/ui/src/script/env.rs:9` `selfname: &str,`
-- `crates/ui/src/script/env.rs:28` `result = result.replace("%selfname", selfname);`
-- `crates/ui/src/script/env.rs:29` `result = result.replace("%selfname2", selfname);`
-- `crates/ui/src/script/env.rs:45` `result = result.replace("%ms", selfname);`
+- `crates/ui/src/script/env.rs:10` `selfname: &str,`
+- `crates/ui/src/script/env.rs:29` `result = result.replace("%selfname", selfname);`
+- `crates/ui/src/script/env.rs:30` `result = result.replace("%selfname2", selfname);`
+- `crates/ui/src/script/env.rs:46` `result = result.replace("%ms", selfname);`

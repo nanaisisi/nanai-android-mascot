@@ -12,5 +12,3 @@
 
 - `crates/ui/src/descript/tests.rs:7` `sakura.bindoption.group,服,multiple\r\n\`
 - `ui/js/surface/bind-menu.js:12` `return scopeId === 0 ? "sakura.bindoption.group" : "kero.bindoption.group";`
-- `tests/bind-menu.test.js:18` `assert.equal(bindOptionKey(0), "sakura.bindoption.group");`
-- `tests/bind-menu.test.js:29` `"sakura.bindoption.group": "Hat,multiple",`

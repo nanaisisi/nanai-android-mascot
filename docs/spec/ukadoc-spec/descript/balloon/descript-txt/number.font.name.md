@@ -11,4 +11,3 @@
 ## 実装箇所
 
 - `ui/js/core/actions/balloon-descript/font/special.js:15` `const numFontName = props["number.font.name"];`
-- `tests/balloon-descript.test.js:118` `"number.font.name": "Arial",`

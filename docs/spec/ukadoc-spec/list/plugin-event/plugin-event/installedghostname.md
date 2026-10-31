@@ -14,4 +14,3 @@
 - `ui/js/ghost/shiori-notify.js:11` `* - installedghostname / installedsakuraname / installedkeroname`
 - `ui/js/ghost/shiori-notify.js:21` `* @param {string} event イベントID (例: "installedghostname")`
 - `ui/js/ghost/shiori-notify.js:54` `"installedghostname",`
-- `tests/shiori-notify.test.js:59` `assert.ok(calls.some((c) => c.args.event === "installedghostname"));`

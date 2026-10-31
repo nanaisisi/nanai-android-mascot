@@ -4,19 +4,19 @@
 
 | 規格 (ukadoc-spec / ukadoc-ssp 層 + 1階層) | ✅ 実装済 | ⚠️ 一部対応 | ❌ 未実装 | ❓ 未確認 | 合計 |
 | :--- | --------: | ----------: | --------: | --------: | ---: |
-| ukadoc-spec/descript                 |       294 |           3 |       266 |         0 |  563 |
+| ukadoc-spec/descript                 |       272 |           3 |       288 |         0 |  563 |
 | ukadoc-spec/dev                      |         5 |           0 |         2 |         0 |    7 |
-| ukadoc-spec/list                     |       489 |           0 |       771 |         0 | 1260 |
+| ukadoc-spec/list                     |       496 |           0 |       764 |         0 | 1260 |
 | ukadoc-spec/manual                   |        22 |           0 |        44 |         0 |   66 |
 | ukadoc-spec/memo                     |         2 |           0 |         1 |         0 |    3 |
-| ukadoc-spec/spec                     |        47 |           0 |        68 |         0 |  115 |
-| ukadoc-ssp/about                     |         4 |           0 |         1 |         0 |    5 |
-| ukadoc-ssp/config                    |        11 |           0 |         6 |         0 |   17 |
+| ukadoc-spec/spec                     |        45 |           0 |        70 |         0 |  115 |
+| ukadoc-ssp/about                     |         3 |           0 |         2 |         0 |    5 |
+| ukadoc-ssp/config                    |        10 |           0 |         7 |         0 |   17 |
 | ukadoc-ssp/dev                       |         2 |           0 |         3 |         0 |    5 |
 | ukadoc-ssp/extra-spec                |         1 |           0 |         2 |         0 |    3 |
 | ukadoc-ssp/functions                 |        13 |           0 |         4 |         0 |   17 |
 | ukadoc-ssp/howto                     |         5 |           0 |         2 |         0 |    7 |
-| **合計** |       895 |           3 |      1170 |         0 | 2068 |
+| **合計** |       876 |           3 |      1189 |         0 | 2068 |
 
 ## 注意
 

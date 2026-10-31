@@ -12,4 +12,3 @@
 
 - `ui/js/core/actions/balloon-descript/font/base.js:53` `props["font.outline"] === "1" ||`
 - `ui/js/core/actions/balloon-descript/font/base.js:54` `props["font.outline"]?.toLowerCase() === "true"`
-- `tests/balloon-descript.test.js:86` `"font.outline": "1",`

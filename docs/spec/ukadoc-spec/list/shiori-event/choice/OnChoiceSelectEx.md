@@ -7,3 +7,8 @@
 ## 突合結果
 
 実装コードに「OnChoiceSelectEx」が見つからない。
+
+
+## 実装箇所
+
+実装コード内に「OnChoiceSelectEx」は検出されませんでした。

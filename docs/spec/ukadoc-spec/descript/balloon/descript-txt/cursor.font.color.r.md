@@ -2,7 +2,7 @@
 
 - **規格**: [cursor.font.color.r.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/cursor.font.color.r.md)
 - **検索語**: cursor.font.color.r
-- **対応状況**: ✅ 対応済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,5 +10,4 @@
 
 ## 実装箇所
 
-- `tests/balloon-descript.test.js:107` `"cursor.font.color.r": "255",`
-- `tests/balloon-window.test.js:92` `"cursor.font.color.r": "50",`
+実装コード内に「cursor.font.color.r」は検出されませんでした。

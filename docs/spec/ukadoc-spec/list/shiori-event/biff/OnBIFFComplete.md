@@ -14,4 +14,3 @@
 - `src-tauri/src/shiori/ffi/builder.rs:225` `assert!(req.contains("OnBIFFComplete"));`
 - `ui/js/core/actions/network-actions.js:34` `await gc.sendShioriEvent("OnBIFFComplete", [`
 - `ui/js/core/actions/network-actions.js:46` `await gc.sendShioriEvent("OnBIFFComplete", ["0", "0", accountName, "0"]);`
-- `tests/network-actions.test.js:28` `assert.ok(eventsSent.some((e) => e.ev === "OnBIFFComplete"));`

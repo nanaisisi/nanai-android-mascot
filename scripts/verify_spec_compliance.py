@@ -3,8 +3,8 @@
 scripts/verify_spec_compliance.py
 
 Verifies specification implementation against all audit markdown files
-in docs/spec/ukadoc-spec/ and docs/spec/ukadoc-ssp/ and updates implementation locations, statuses, and SUMMARY.md,
-using a clean spec_set + 1-level directory category structure (e.g., ukadoc-spec/descript, ukadoc-ssp/config).
+in docs/spec/ukadoc-spec/ and docs/spec/ukadoc-ssp/ using automated codebase search,
+updating implementation locations, statuses, and SUMMARY.md.
 """
 
 import os
@@ -26,8 +26,9 @@ def sanitize_snippet(text):
 
 def load_codebase():
     codebase = []
-    search_dirs = ['src-tauri', 'crates/ui', 'ui', 'cpp/yaya-shiori', 'tests']
-    ignore_dirs = {'target', 'build', '.gradle', '.cxx', 'node_modules', 'dist', 'gen', 'coverage'}
+    # Strict production app code directories (excluding cpp and test directories)
+    search_dirs = ['src-tauri', 'crates', 'ui']
+    ignore_dirs = {'target', 'build', '.gradle', '.cxx', 'node_modules', 'dist', 'gen', 'coverage', 'docs', 'tests', 'test'}
     for root_dir in search_dirs:
         if not os.path.exists(root_dir):
             continue
@@ -50,6 +51,9 @@ def search_keyword(keyword, codebase):
 
     results = []
     for path, lines in codebase:
+        # Avoid matching an audit file or test file against itself
+        if 'docs/' in path or 'tests/' in path:
+            continue
         for idx, line in enumerate(lines, 1):
             if keyword in line:
                 cleaned_line = sanitize_snippet(line.strip())
@@ -128,7 +132,7 @@ def process_audit_files(codebase):
                 else:
                     content += f"\n\n## 実装箇所\n\n{impl_block}\n"
             else:
-                if "## 実装箇所" in content and not is_guide_or_note:
+                if "## 実装箇所" in content:
                     idx = content.find("## 実装箇所")
                     content = content[:idx] + f"## 実装箇所\n\n実装コード内に「{keyword}」は検出されませんでした。\n"
 

@@ -14,4 +14,4 @@
 - `src-tauri/src/commands/shiori/protocol.rs:60` `let noisy = request.contains("ID: OnSecondChange");`
 - `src-tauri/src/commands/shiori/protocol.rs:143` `if event != "OnSecondChange"`
 - `src-tauri/src/shiori/ffi/builder.rs:101` `.event("OnSecondChange")`
-- `crates/ui/src/shiori/tests/request_tests.rs:57` `let text = "NOTIFY SHIORI/3.0\r\nCharset: UTF-8\r\nSender: NanaiAndroidMascot\r\`
+- `ui/js/ghost/ghost-shiori.js:54` `// 自律タイマー (OnSecondChange) 開始`

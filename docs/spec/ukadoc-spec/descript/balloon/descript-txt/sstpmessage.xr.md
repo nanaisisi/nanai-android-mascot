@@ -12,4 +12,3 @@
 
 - `ui/js/core/actions/balloon-descript/layout.js:149` `// [sstpmessage.x,座標], [sstpmessage.y,座標], [sstpmessage.xr,座標], [sstpmessage.yb,`
 - `ui/js/core/actions/balloon-descript/layout.js:152` `const sstpXR = parseInt(props["sstpmessage.xr"], 10);`
-- `tests/balloon-descript.test.js:127` `"sstpmessage.xr": "-30",`

@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/env.rs:29` `result = result.replace("%selfname2", selfname);`
+- `crates/ui/src/script/env.rs:30` `result = result.replace("%selfname2", selfname);`

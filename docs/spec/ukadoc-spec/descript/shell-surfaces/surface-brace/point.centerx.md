@@ -11,4 +11,3 @@
 ## 実装箇所
 
 - `crates/ui/src/surfaces/parser/mod.rs:243` `surface0 {\r\nname,SurfaceZero\r\ncollision0,0,0,10,10,Head\r\ncollisionex0,Face`
-- `crates/ui/src/surfaces/tests/parser_tests.rs:31` `point.centerx,96`

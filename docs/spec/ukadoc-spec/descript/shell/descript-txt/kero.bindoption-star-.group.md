@@ -11,4 +11,3 @@
 ## 実装箇所
 
 - `ui/js/surface/bind-menu.js:12` `return scopeId === 0 ? "sakura.bindoption.group" : "kero.bindoption.group";`
-- `tests/bind-menu.test.js:19` `assert.equal(bindOptionKey(1), "kero.bindoption.group");`

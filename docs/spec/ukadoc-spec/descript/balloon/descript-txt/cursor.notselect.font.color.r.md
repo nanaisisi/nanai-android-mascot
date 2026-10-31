@@ -2,7 +2,7 @@
 
 - **規格**: [cursor.notselect.font.color.r.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/cursor.notselect.font.color.r.md)
 - **検索語**: cursor.notselect.font.color.r
-- **対応状況**: ✅ 対応済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `tests/balloon-descript.test.js:111` `"cursor.notselect.font.color.r": "80",`
+実装コード内に「cursor.notselect.font.color.r」は検出されませんでした。

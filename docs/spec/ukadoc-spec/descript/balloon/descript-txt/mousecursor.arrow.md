@@ -12,4 +12,3 @@
 
 - `ui/js/core/actions/balloon-descript/assets.js:62` `// [mousecursor.arrow,ファイル名]:`
 - `ui/js/core/actions/balloon-descript/assets.js:63` `setMouseCursor("mousecursor.arrow", "--balloon-cursor-arrow");`
-- `tests/balloon-descript.test.js:131` `"mousecursor.arrow": "cursor.cur",`

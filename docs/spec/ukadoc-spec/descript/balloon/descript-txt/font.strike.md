@@ -12,6 +12,3 @@
 
 - `ui/js/core/actions/balloon-descript/font/base.js:43` `props["font.strike"] === "1" ||`
 - `ui/js/core/actions/balloon-descript/font/base.js:44` `props["font.strike"]?.toLowerCase() === "true"`
-- `tests/balloon-descript.test.js:85` `"font.strike": "1",`
-- `tests/core-actions.test.js:38` `"font.strike": "false",`
-- `tests/frontend-coverage-boost.test.js:25` `"font.strike": "true",`

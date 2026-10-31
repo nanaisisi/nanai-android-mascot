@@ -14,4 +14,3 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 - `ui/js/ghost/command-handler/inputbox.js:64` `await handler.app.ghostController.sendShioriEvent("OnUserInput", [`
 - `ui/js/ghost/command-handler/inputbox.js:73` `await handler.app.ghostController.sendShioriEvent("OnUserInputCancel", [id]);`
 - `ui/js/ghost/command-handler/inputbox.js:99` `handler.app.ghostController.sendShioriEvent("OnUserInputCancel", [id]);`
-- `tests/sakura-command-handler.test.js:125` `assert.ok(eventsSent.some((e) => e.ev === "OnUserInput"));`

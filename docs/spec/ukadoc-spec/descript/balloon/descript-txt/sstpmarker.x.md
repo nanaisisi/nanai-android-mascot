@@ -12,4 +12,3 @@
 
 - `ui/js/core/actions/balloon-descript/assets.js:92` `// [sstpmarker.x,座標], [sstpmarker.y,座標]:`
 - `ui/js/core/actions/balloon-descript/assets.js:93` `const smX = parseInt(props["sstpmarker.x"], 10);`
-- `tests/balloon-descript.test.js:123` `"sstpmarker.x": "15",`

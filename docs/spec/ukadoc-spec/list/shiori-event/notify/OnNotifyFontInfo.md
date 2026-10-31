@@ -7,3 +7,8 @@
 ## 突合結果
 
 実装コードに「OnNotifyFontInfo」が見つからない。
+
+
+## 実装箇所
+
+実装コード内に「OnNotifyFontInfo」は検出されませんでした。

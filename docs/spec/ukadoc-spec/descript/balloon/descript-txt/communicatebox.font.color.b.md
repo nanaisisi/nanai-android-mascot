@@ -11,4 +11,3 @@
 ## 実装箇所
 
 - `ui/js/core/actions/balloon-descript/layout.js:40` `props["communicatebox.font.color.b"];`
-- `tests/balloon-descript.test.js:68` `"communicatebox.font.color.b": "0",`

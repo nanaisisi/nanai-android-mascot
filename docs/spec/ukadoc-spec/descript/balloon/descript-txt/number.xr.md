@@ -12,4 +12,3 @@
 
 - `ui/js/core/actions/balloon-descript/layout.js:135` `// [number.x,座標], [number.y,座標], [number.xr,座標], [number.yb,座標]:`
 - `ui/js/core/actions/balloon-descript/layout.js:138` `const numXR = parseInt(props["number.xr"], 10);`
-- `tests/balloon-descript.test.js:116` `"number.xr": "-10",`

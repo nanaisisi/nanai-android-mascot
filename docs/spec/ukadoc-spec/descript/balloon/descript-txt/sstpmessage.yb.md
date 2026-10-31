@@ -12,4 +12,3 @@
 
 - `ui/js/core/actions/balloon-descript/layout.js:149` `// [sstpmessage.x,座標], [sstpmessage.y,座標], [sstpmessage.xr,座標], [sstpmessage.yb,`
 - `ui/js/core/actions/balloon-descript/layout.js:153` `const sstpYB = parseInt(props["sstpmessage.yb"], 10);`
-- `tests/balloon-descript.test.js:128` `"sstpmessage.yb": "-40",`

@@ -12,4 +12,3 @@
 
 - `ui/js/core/actions/balloon-descript/font/base.js:74` `props["font.shadowcolor.r"] ||`
 - `ui/js/core/actions/balloon-descript/font/group.js:15` `props[`${prefix}.font.shadowcolor.r`] ||`
-- `tests/balloon-descript.test.js:90` `"font.shadowcolor.r": "200",`

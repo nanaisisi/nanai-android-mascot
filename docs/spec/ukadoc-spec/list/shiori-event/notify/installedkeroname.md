@@ -12,4 +12,3 @@
 
 - `ui/js/ghost/shiori-notify.js:11` `* - installedghostname / installedsakuraname / installedkeroname`
 - `ui/js/ghost/shiori-notify.js:66` `await this.sendShioriNotify("installedkeroname", keroNames);`
-- `tests/shiori-notify.test.js:60` `assert.ok(calls.some((c) => c.args.event === "installedkeroname"));`

@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs:65` `// [developer_options.txt], [自動的に除外される対象], [相対パス,オプション1,オプション2,...]:`
-- `src-tauri/src/ghost/scan/directory.rs:66` `let dev_options_path = path.join("developer_options.txt");`
+- `src-tauri/src/ghost/scan/directory/filter.rs:12` `/// Parse developer_options.txt if present`
+- `src-tauri/src/ghost/scan/directory/filter.rs:14` `let dev_options_path = path.join("developer_options.txt");`

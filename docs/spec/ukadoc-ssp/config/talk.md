@@ -12,5 +12,5 @@
 - `src-tauri/src/commands/ext.rs:47` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [secondchangeinterva`
 - `src-tauri/src/commands/ext.rs:52` `let _other_talk = map.get("otherghosttalk");`
 - `src-tauri/src/commands/window/menu_native.rs:64` `.text("talk", "💬 もう一度話す (A)")`
-- `src-tauri/src/ghost/scan/directory.rs:195` `// [don't need onmousemove,数値], [don't need bind,数値], [don't need seriko talk,数値`
-- `src-tauri/src/ghost/scan/directory.rs:198` `let _need_seriko_talk = m.get("don't need seriko talk");`
+- `crates/ui/src/animation/tests.rs:69` `for v in ["never", "bind", "talk", "starttalk", "endtalk", r"\e"] {`
+- `crates/ui/src/shiori/protocol/request.rs:224` `assert!(built.contains("Status: talking"));`

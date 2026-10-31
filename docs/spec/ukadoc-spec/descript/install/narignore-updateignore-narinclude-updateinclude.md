@@ -10,6 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs:51` `// [.narignore / .updateignore / .narinclude / .updateinclude]: アーカイブ・更新除外および開発無`
-- `src-tauri/src/ghost/scan/directory.rs:53` `|| path.join(".narignore").exists()`
-- `src-tauri/src/ghost/scan/directory.rs:59` `"🚫 Skipping ghost directory with .dev_ignore/.narignore/.updateignore: {:?}",`
+- `src-tauri/src/ghost/scan/directory/filter.rs:3` `/// Check if ghost directory should be skipped due to ignore files (.dev_ignore,`
+- `src-tauri/src/ghost/scan/directory/filter.rs:6` `|| path.join(".narignore").exists()`

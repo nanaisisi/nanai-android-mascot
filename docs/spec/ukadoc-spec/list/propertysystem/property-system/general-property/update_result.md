@@ -12,6 +12,6 @@
 
 - `src-tauri/src/commands/install/archive.rs:332` `update_result: Some("正常 (インストール済)".to_string()),`
 - `src-tauri/src/common/models.rs:43` `pub update_result: Option<String>,`
-- `src-tauri/src/ghost/scan/directory.rs:237` `let update_result = if dau_path.exists() {`
-- `src-tauri/src/ghost/scan/directory.rs:259` `update_result,`
-- `src-tauri/src/ghost/scan/directory.rs:295` `update_result: Some("OK(0)".to_string()),`
+- `src-tauri/src/ghost/scan/directory/mod.rs:70` `let update_result = if dau_path.exists() {`
+- `src-tauri/src/ghost/scan/directory/mod.rs:91` `update_result,`
+- `src-tauri/src/ghost/scan/directory/mod.rs:127` `update_result: Some("OK(0)".to_string()),`

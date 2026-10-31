@@ -8,4 +8,4 @@
 - `src-tauri/src/commands/ext.rs:49` `let _readme_cs = map.get("readme.charset");`
 - `src-tauri/src/commands/ext.rs:116` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [alwaysdisplay,数値], `
 - `src-tauri/src/commands/ext.rs:118` `let _readme_cs = map.get("readme.charset");`
-- `src-tauri/src/ghost/scan/directory.rs:127` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [icon,ファイル名], [icon.`
+- `src-tauri/src/ghost/scan/shell.rs:83` `// [name,シェル名], [type,種別], [id,ID名], [charset,文字コード], [craftman,作者名], [craftmanw`

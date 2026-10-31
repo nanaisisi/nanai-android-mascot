@@ -11,7 +11,7 @@
 ## 実装箇所
 
 - `src-tauri/src/commands/install/archive.rs:295` `.and_then(|m| m.get("sakura.name").cloned());`
-- `src-tauri/src/ghost/scan/directory.rs:105` `// [version,バージョン], [sakura.name,名前], [sakura.name2,名前], [kero.name,名前], [char*.`
-- `src-tauri/src/ghost/scan/directory.rs:108` `m.get("sakura.name")`
-- `src-tauri/src/ghost/scan/directory.rs:110` `.or_else(|| m.get("sakura.name2").cloned())`
 - `src-tauri/src/ghost/scan/shell.rs:91` `// [sakura.name,名前], [sakura.name2,名前], [kero.name,名前], [char*.name,名前]:`
+- `src-tauri/src/ghost/scan/shell.rs:108` `let _m_sakura_name = merged.get("sakura.name");`
+- `src-tauri/src/ghost/scan/directory/manifest.rs:39` `m.get("sakura.name")`
+- `src-tauri/src/ghost/scan/directory/manifest.rs:41` `.or_else(|| m.get("sakura.name2").cloned())`

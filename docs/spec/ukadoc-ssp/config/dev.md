@@ -12,5 +12,5 @@
 - `src-tauri/tauri.conf.json:7` `"beforeDevCommand": "npm run dev",`
 - `src-tauri/tauri.conf.json:9` `"devUrl": "http://localhost:5173",`
 - `src-tauri/tauri.test.conf.json:8` `"devUrl": "http://localhost:1421",`
-- `src-tauri/src/ghost/scan/directory.rs:52` `if path.join(".dev_ignore").exists()`
-- `src-tauri/src/ghost/scan/directory.rs:59` `"🚫 Skipping ghost directory with .dev_ignore/.narignore/.updateignore: {:?}",`
+- `src-tauri/src/ghost/scan/directory/filter.rs:3` `/// Check if ghost directory should be skipped due to ignore files (.dev_ignore,`
+- `src-tauri/src/ghost/scan/directory/filter.rs:5` `path.join(".dev_ignore").exists()`

@@ -11,7 +11,7 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 ## 実装箇所
 
 - `src-tauri/src/commands/install/archive.rs:296` `let kero_name = meta_map.as_ref().and_then(|m| m.get("kero.name").cloned());`
-- `src-tauri/src/ghost/scan/directory.rs:105` `// [version,バージョン], [sakura.name,名前], [sakura.name2,名前], [kero.name,名前], [char*.`
-- `src-tauri/src/ghost/scan/directory.rs:112` `let kero_name = meta_map.as_ref().and_then(|m| m.get("kero.name").cloned());`
 - `src-tauri/src/ghost/scan/shell.rs:91` `// [sakura.name,名前], [sakura.name2,名前], [kero.name,名前], [char*.name,名前]:`
 - `src-tauri/src/ghost/scan/shell.rs:109` `let _m_kero_name = merged.get("kero.name");`
+- `src-tauri/src/ghost/scan/directory/manifest.rs:43` `let kero_name = meta_map.as_ref().and_then(|m| m.get("kero.name").cloned());`
+- `crates/ui/src/lib.rs:49` `let sample = "charset,Shift_JIS\r\nname,SampleGhost\r\nsakura.name,Nanai\r\nkero`

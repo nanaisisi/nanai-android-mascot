@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs:105` `// [version,バージョン], [sakura.name,名前], [sakura.name2,名前], [kero.name,名前], [char*.`
-- `src-tauri/src/ghost/scan/directory.rs:110` `.or_else(|| m.get("sakura.name2").cloned())`
 - `src-tauri/src/ghost/scan/shell.rs:91` `// [sakura.name,名前], [sakura.name2,名前], [kero.name,名前], [char*.name,名前]:`
+- `src-tauri/src/ghost/scan/directory/manifest.rs:41` `.or_else(|| m.get("sakura.name2").cloned())`
 - `crates/ui/src/descript/parser.rs:111` `/// さくら（本体）の正式名とサブ表示名（`sakura.name`, `sakura.name2`）`
 - `crates/ui/src/descript/parser.rs:113` `(self.get("sakura.name"), self.get("sakura.name2"))`
+- `crates/ui/src/descript/tests.rs:56` `sakura.name2,SakuraSub\n\`

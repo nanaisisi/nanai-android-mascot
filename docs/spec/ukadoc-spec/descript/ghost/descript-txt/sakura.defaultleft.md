@@ -10,7 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs:136` `// [sakura.defaultleft,X座標], [sakura.defaulttop,Y座標], [sakura.defaultx,X座標], [sa`
-- `src-tauri/src/ghost/scan/directory.rs:137` `let _sakura_dl = m.get("sakura.defaultleft");`
 - `src-tauri/src/ghost/scan/shell.rs:95` `// [sakura.defaultleft,X座標], [sakura.defaulttop,Y座標], [sakura.defaultx,X座標], [sa`
 - `crates/ui/src/descript/tests.rs:97` `sakura.defaultleft,10\n\`

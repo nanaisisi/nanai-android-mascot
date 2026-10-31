@@ -10,6 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs:173` `// [balloon.dontmove,true], [balloon.syncscale,true]:`
-- `src-tauri/src/ghost/scan/directory.rs:175` `let _balloon_syncscale = m.get("balloon.syncscale");`
 - `src-tauri/src/ghost/scan/shell.rs:99` `// [sakura.balloon.alignment,位置情報], [kero.balloon.alignment,位置情報], [sakura.ballo`

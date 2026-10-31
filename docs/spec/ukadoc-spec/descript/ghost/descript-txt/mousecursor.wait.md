@@ -10,7 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory.rs:208` `// [cursor,ファイル名 / mousecursor,ファイル名], [mousecursor.arrow,ファイル名], [mousecursor.g`
-- `src-tauri/src/ghost/scan/directory.rs:214` `let _mc_wait = m.get("mousecursor.wait");`
 - `ui/js/core/actions/balloon-descript/assets.js:66` `// [mousecursor.wait,ファイル名]:`
 - `ui/js/core/actions/balloon-descript/assets.js:67` `setMouseCursor("mousecursor.wait", "--balloon-cursor-wait");`

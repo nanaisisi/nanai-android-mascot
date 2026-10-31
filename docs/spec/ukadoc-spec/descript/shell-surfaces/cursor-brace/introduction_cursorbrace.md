@@ -8,4 +8,4 @@
 - `src-tauri/shiori-host/src/main.rs:313` `load_and_run(dll_path.to_str().unwrap(), &mut cursor_in, &mut out_ok),`
 - `src-tauri/src/commands/install/utils.rs:154` `let mut cursor = std::io::Cursor::new(content);`
 - `src-tauri/src/commands/install/utils.rs:155` `let map = parse_zip_entry_descript(&mut cursor);`
-- `src-tauri/src/ghost/scan/directory.rs:208` `// [cursor,ファイル名 / mousecursor,ファイル名], [mousecursor.arrow,ファイル名], [mousecursor.g`
+- `ui/css/balloon-window.css:42` `cursor: grab;`

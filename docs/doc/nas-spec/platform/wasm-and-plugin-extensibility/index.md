@@ -1,4 +1,5 @@
-# WASM化指針 & JavaScript拡張システム仕様書
+# WASMおよびプラグイン拡張性仕様
+
 - **規格**: [wasm-and-plugin-extensibility.md](wasm-and-plugin-extensibility.md)
 - **検索語**: scan_plugins
 - **対応状況**: ✅ 実装済

@@ -1,4 +1,5 @@
-# 多層合成 CompositionPlan 連携仕様書（composition-plan-integration-spec）
+# Composition/UI統合仕様
+
 - **規格**: [composition-plan-integration-spec.md](composition-plan-integration-spec.md)
 - **検索語**: plan_composition
 - **対応状況**: ✅ 実装済

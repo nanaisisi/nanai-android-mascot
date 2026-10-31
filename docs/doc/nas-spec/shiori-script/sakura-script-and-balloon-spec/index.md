@@ -1,4 +1,5 @@
-# さくらスクリプト（SakuraScript）パーサー & バルーン文字送り仕様書
+# さくらスクリプトおよびバルーン仕様
+
 - **規格**: [sakura-script-and-balloon-spec.md](sakura-script-and-balloon-spec.md)
 - **検索語**: parse_sakura_script
 - **対応状況**: ✅ 実装済

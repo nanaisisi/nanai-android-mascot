@@ -1,4 +1,5 @@
-# 右クリックメニュー・サブメニュー仕様書 (Context Menu Specification)
+# コンテキストメニュー仕様
+
 - **規格**: [context-menu-spec.md](context-menu-spec.md)
 - **検索語**: show_menu_window
 - **対応状況**: ✅ 対応済

@@ -1,0 +1,6 @@
+# 5. スクロール矢印アセット自動展開規格 (`arrow.filename`)
+
+- **ベース名展開**: `arrow.filename,prefix` 指定時、上矢印 `prefix0.png` および下矢印 `prefix1.png` を自動合成・読み込み。
+- **CSS 変数バインド**: `--balloon-arrow0-image`, `--balloon-arrow1-image`, `--balloon-arrow0-x/y`, `--balloon-arrow1-x/y` へ一括展開。
+
+---

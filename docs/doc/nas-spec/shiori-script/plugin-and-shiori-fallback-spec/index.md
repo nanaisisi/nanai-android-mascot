@@ -1,4 +1,5 @@
-# プラグイン & SHIORI 読込み・代替読込み（Fallback）包括仕様書
+# プラグインおよびSHIORIフォールバック仕様
+
 - **規格**: [plugin-and-shiori-fallback-spec.md](plugin-and-shiori-fallback-spec.md)
 - **検索語**: execute_plugin_event
 - **対応状況**: ✅ 実装済

@@ -1,4 +1,5 @@
-# Android システムオーバーレイ & 常駐生存（Background Service）仕様書
+# Android常駐・オーバーレイ仕様
+
 - **規格**: [android-overlay-and-service-spec.md](android-overlay-and-service-spec.md)
 - **検索語**: request_overlay_permission
 - **対応状況**: ✅ 実装済

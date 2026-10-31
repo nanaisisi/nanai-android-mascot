@@ -1,4 +1,5 @@
-# 文字コード変換（Shift_JIS ↔ UTF-8）& 仮想ファイルシステム（VFS）仕様書
+# 文字コードおよび仮想ファイルシステム(VFS)仕様
+
 - **規格**: [encoding-and-vfs-spec.md](encoding-and-vfs-spec.md)
 - **検索語**: resolve_vfs_path
 - **対応状況**: ✅ 実装済

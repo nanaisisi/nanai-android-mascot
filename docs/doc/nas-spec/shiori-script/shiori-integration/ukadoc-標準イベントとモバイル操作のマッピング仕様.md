@@ -1,4 +1,4 @@
-## UKADOC 標準イベントとモバイル操作のマッピング仕様
+# UKADOC 標準イベントとモバイル操作のマッピング仕様
 
 [UKADOC SHIORI/3.0 Event](https://ssp.shillest.net/ukadoc/manual/spec_shiori3.html) に完全準拠したイベント送受信パイプラインを定義します。
 

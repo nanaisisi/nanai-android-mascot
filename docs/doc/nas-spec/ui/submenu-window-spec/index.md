@@ -1,4 +1,5 @@
-# 独立サブメニューウィンドウ設計・実装仕様書 (submenu-window-spec)
+# サブメニューウィンドウ仕様
+
 - **規格**: [submenu-window-spec.md](submenu-window-spec.md)
 - **検索語**: show_submenu_window
 - **対応状況**: ✅ 対応済

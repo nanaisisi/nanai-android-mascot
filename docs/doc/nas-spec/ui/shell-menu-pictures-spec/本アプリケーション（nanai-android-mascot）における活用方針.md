@@ -1,0 +1,11 @@
+# 3. 本アプリケーション（nanai-android-mascot）における活用方針
+
+### (1) オーナードローメニューのスキン適用
+
+- `../../../ui/menu-iframe.html` において、現在選択中のシェルの `descript.txt`（`menu.*.bitmap.filename`）または `shell/<shell>/menu/` 配下の画像（`foreground.png`, `background.png`, `sidebar.png`）を読み込み、メニューコンテナやホバー時の背景スタイル（CSS）に動的に反映します。
+
+### (2) 起動時／処理中ウィンドウへの適用
+
+- ゴースト起動中（SHIORI ロード中、アセット準備中）のローディング表示において：
+  - **ゴースト固有**: シェルのサムネイル（`thumbnail.png`）やシェルのメニュー画像（`menu/background.png` 等）を背景／ビジュアルとして活用。
+  - **システム共通**: `data/ssp-pictures/` 相当のローディング・処理中インジケータ（スピナーやシステムアイコン）をオーバーレイ表示し、処理中であることを明示。

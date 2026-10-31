@@ -13,4 +13,4 @@
 - `src-tauri/src/commands/ext.rs:52` `let _other_talk = map.get("otherghosttalk");`
 - `src-tauri/src/commands/window/menu_native.rs:64` `.text("talk", "💬 もう一度話す (A)")`
 - `crates/ui/src/animation/tests.rs:69` `for v in ["never", "bind", "talk", "starttalk", "endtalk", r"\e"] {`
-- `crates/ui/src/shiori/protocol/request.rs:224` `assert!(built.contains("Status: talking"));`
+- `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:138` `"autoscroll" | "balloonalign" | "balloonmarker" | "balloonnum" | "balloonwait" |`

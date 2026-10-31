@@ -11,5 +11,5 @@
 ## 実装箇所
 
 - `src-tauri/src/commands/calendar.rs:2` `//! [calendar/index.md], [calendar/schedule.md], [calendar/menu.md], [\![open,ca`
-- `crates/ui/src/script/command.rs:66` `}, // \![execute,schedule-add,...]`
+- `crates/ui/src/script/command.rs:70` `}, // \![execute,schedule-add,...]`
 - `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:23` `if parts.get(1).is_some_and(|p| *p == "schedule-add") {`

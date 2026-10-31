@@ -2,7 +2,7 @@
 
 - **規格**: [bang-lock-balloonrepaint.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/balloon-text/bang-lock-balloonrepaint/) (ukadoc-spec/list/sakura-script/balloon-text/bang-lock-balloonrepaint.md)
 - **検索語**: \!
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

@@ -56,11 +56,22 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
                 let path = parts.get(2).unwrap_or(&"").to_string();
                 let dest = parts.get(3).unwrap_or(&"").to_string();
                 callback(SakuraCommand::FileExec { action, path, dest });
+            } else if parts.get(1).is_some_and(|p| *p == "resetballoonpos") {
+                callback(SakuraCommand::Command {
+                    args: vec!["execute".to_string(), "resetballoonpos".to_string()],
+                });
             } else {
                 callback(SakuraCommand::Command {
                     args: parts.iter().map(|s| s.to_string()).collect(),
                 });
             }
+        }
+        "enter" | "leave" => {
+            let mode = parts.get(1).unwrap_or(&"").to_string();
+            callback(SakuraCommand::ModeChange {
+                mode,
+                active: parts[0] == "enter",
+            });
         }
         "bind" => {
             let category = parts.get(1).unwrap_or(&"").to_string();
@@ -124,6 +135,16 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
                     let port = parts.get(3).and_then(|s| s.parse().ok()).unwrap_or(80);
                     callback(SakuraCommand::SetProxy { server, port });
                 }
+                "autoscroll" | "balloonalign" | "balloonmarker" | "balloonnum" | "balloonwait" | "serikotalk" => {
+                    let key = setting.clone();
+                    let value = parts.get(2).unwrap_or(&"").to_string();
+                    let extra = if parts.len() > 3 {
+                        parts[3..].iter().map(|s| s.to_string()).collect()
+                    } else {
+                        Vec::new()
+                    };
+                    callback(SakuraCommand::BalloonSetting { key, value, extra });
+                }
                 _ => {
                     callback(SakuraCommand::Command {
                         args: parts.iter().map(|s| s.to_string()).collect(),
@@ -131,23 +152,20 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
                 }
             }
         }
-        "lock" => {
-            if parts.get(1).is_some_and(|p| *p == "balloonmove") {
-                callback(SakuraCommand::LockBalloonMove(true));
+        "lock" | "unlock" => {
+            let target = parts.get(1).unwrap_or(&"");
+            if *target == "balloonmove" {
+                callback(SakuraCommand::LockBalloonMove(parts[0] == "lock"));
+            } else if *target == "balloonrepaint" {
+                callback(SakuraCommand::LockBalloonRepaint(parts[0] == "lock"));
             } else {
                 callback(SakuraCommand::Command {
                     args: parts.iter().map(|s| s.to_string()).collect(),
                 });
             }
         }
-        "unlock" => {
-            if parts.get(1).is_some_and(|p| *p == "balloonmove") {
-                callback(SakuraCommand::LockBalloonMove(false));
-            } else {
-                callback(SakuraCommand::Command {
-                    args: parts.iter().map(|s| s.to_string()).collect(),
-                });
-            }
+        "*" => {
+            callback(SakuraCommand::Marker);
         }
         "biff" => {
             callback(SakuraCommand::Biff);

@@ -2,7 +2,7 @@
 
 - **規格**: [bang-lock-balloonmove.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/balloon-text/bang-lock-balloonmove/) (ukadoc-spec/list/sakura-script/balloon-text/bang-lock-balloonmove.md)
 - **検索語**: \!
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

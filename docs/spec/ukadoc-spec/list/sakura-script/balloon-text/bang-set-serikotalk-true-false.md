@@ -2,7 +2,7 @@
 
 - **規格**: [bang-set-serikotalk-true-false.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/balloon-text/bang-set-serikotalk-true-false/) (ukadoc-spec/list/sakura-script/balloon-text/bang-set-serikotalk-true-false.md)
 - **検索語**: \!
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

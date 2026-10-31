@@ -2,7 +2,7 @@
 
 - **規格**: [bang-star.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/balloon-text/bang-star/) (ukadoc-spec/list/sakura-script/balloon-text/bang-star.md)
 - **検索語**: \!
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

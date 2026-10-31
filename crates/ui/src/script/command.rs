@@ -41,6 +41,10 @@ pub enum SakuraCommand {
         status: Option<bool>,
     }, // \![bind,cat,part,status]
     Balloon(i32), // \b[n], \b[-1], \b0..\b9
+    ModeChange { mode: String, active: bool },
+    LockBalloonRepaint(bool),
+    BalloonSetting { key: String, value: String, extra: Vec<String> },
+    Marker,
     Animation {
         id: u32,
         wait: bool,

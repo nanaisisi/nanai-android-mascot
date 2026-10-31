@@ -98,6 +98,20 @@ pub(crate) fn handle_underscore(
                 callback(SakuraCommand::Midi(data));
             }
         }
+        Some('u') => {
+            // \_u[0x0000] Unicode character insert
+            if let Some(hex_or_dec) = read_bracketed(chars) {
+                let s = hex_or_dec.trim();
+                let code = if s.starts_with("0x") || s.starts_with("0X") {
+                    u32::from_str_radix(&s[2..], 16).ok()
+                } else {
+                    s.parse::<u32>().ok()
+                };
+                if let Some(c) = code.and_then(char::from_u32) {
+                    callback(SakuraCommand::Text(c.to_string()));
+                }
+            }
+        }
         Some('l') => {
             if let Some(pos) = read_bracketed(chars) {
                 let mut coords = pos.splitn(2, ',');

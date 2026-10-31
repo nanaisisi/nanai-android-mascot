@@ -29,6 +29,12 @@ import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
  * - OnOtherObjectDropping, OnPictureViewerOpen, OnUpdatedataCreated, OnUpdatedataCreating, OnWallpaperChange
  * - OnApplicationBoot, OnApplicationClose, OnApplicationExist, OnApplicationFileOpen
  * - OnApplicationOperationFinish, OnApplicationVersion, OnWebsiteUpdateNotify
+ * - menu.background.bitmap.filename, menu.foreground.bitmap.filename, menu.sidebar.bitmap.filename
+ * - menu.background.font.color.r, menu.background.font.color.g, menu.background.font.color.b
+ * - menu.foreground.font.color.r, menu.foreground.font.color.g, menu.foreground.font.color.b
+ * - menu.disable.font.color.r, menu.disable.font.color.g, menu.disable.font.color.b
+ * - menu.separator.color.r, menu.separator.color.g, menu.separator.color.b
+ * - updatebutton.caption, quitbutton.caption, closebutton.caption, configurationbutton.caption, readmebutton.caption, vanishbutton.caption
  */
 export const shioriNotifyMethods = {
 	/**

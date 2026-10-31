@@ -171,6 +171,27 @@ export const ghostShioriMethods = {
 		}
 	},
 
+	/**
+	 * SHIORI リソース (ID: resourceId) をリクエストして値を取得 (UKADOC shiori-resource 準拠)
+	 * SHIORI 応答 (200 OK & Value) があればそれを返し、無ければ既定値 (defaultValue) にフォールバックする。
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} resourceId リソース名 (例: "menu.background.bitmap.filename", "updatebutton.caption")
+	 * @param {string} [defaultValue] フォールバック値
+	 * @returns {Promise<string>} 取得したリソース値
+	 */
+	async requestShioriResource(resourceId, defaultValue = "") {
+		if (!isTauriAvailable()) return defaultValue;
+		try {
+			const res = await this.sendShioriEvent(resourceId, []);
+			if (res && res.status === 200 && res.script) {
+				return res.script.trim();
+			}
+		} catch (_e) {
+			// エラー時はフォールバック
+		}
+		return defaultValue;
+	},
+
 	triggerRandomTalk() {
 		// SHIORI の OnRandomTalk / OnSecondChange に委譲
 		this.sendShioriEvent("OnRandomTalk");

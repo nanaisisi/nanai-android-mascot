@@ -11,4 +11,4 @@
 ## 実装箇所
 
 - `ui/js/ghost/shiori-notify.js:11` `* - installedghostname / installedsakuraname / installedkeroname`
-- `ui/js/ghost/shiori-notify.js:65` `"installsakuraname",`
+- `ui/js/ghost/shiori-notify.js:67` `"installsakuraname",`

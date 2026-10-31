@@ -13,3 +13,4 @@
 - `ui/js/core/app-actions.js:16` `recommend: ["OnChoiceSelect", ["recommendlink"]],`
 - `ui/js/core/app-actions.js:17` `portal: ["OnChoiceSelect", ["portal"]],`
 - `ui/js/ghost/sakura-script.js:124` `await this.app.ghostController.sendShioriEvent("OnChoiceSelect", [`
+- `ui/js/ghost/shiori-notify.js:24` `* - OnChoiceEnter, OnChoiceHover, OnChoiceSelect, OnChoiceSelectEx, OnChoiceTime`

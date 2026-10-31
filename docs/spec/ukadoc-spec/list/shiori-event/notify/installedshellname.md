@@ -11,4 +11,4 @@
 ## 実装箇所
 
 - `ui/js/ghost/shiori-notify.js:12` `* - installedshellname (現在のゴーストに同梱のシェル名)`
-- `ui/js/ghost/shiori-notify.js:78` `await this.sendShioriNotify("installedshellname", this.shells);`
+- `ui/js/ghost/shiori-notify.js:80` `await this.sendShioriNotify("installedshellname", this.shells);`

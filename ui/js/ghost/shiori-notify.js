@@ -20,6 +20,8 @@ import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
  * - OnSysResume, OnSysSuspend, OnVirtualDesktopChanged, OnWindowStateMinimize, OnWindowStateRestore
  * - OnSchedule5MinutesToGo, OnSchedulepostBegin, OnSchedulepostComplete, OnScheduleRead
  * - OnSchedulesenseBegin, OnSchedulesenseComplete, OnSchedulesenseFailure, OnScheduleTodayNotify
+ * - OnAnchorEnter, OnAnchorHover, OnAnchorSelect, OnAnchorSelectEx
+ * - OnChoiceEnter, OnChoiceHover, OnChoiceSelect, OnChoiceSelectEx, OnChoiceTimeout
  */
 export const shioriNotifyMethods = {
 	/**

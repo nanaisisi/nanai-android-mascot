@@ -2,7 +2,7 @@
 
 - **規格**: [__q-ID.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/choice/__q-ID/) (ukadoc-spec/list/sakura-script/choice/__q-ID.md)
 - **検索語**: \__q
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-実装コード内に「\__q」は検出されませんでした。
+- `crates/ui/src/script/parser/brackets/handlers/underscore.rs:104` `// \__v, \__q, \_+`
+- `crates/ui/src/script/parser/brackets/handlers/underscore.rs:111` `// \__q[ID] quick choice mode`

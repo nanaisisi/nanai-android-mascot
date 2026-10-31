@@ -101,12 +101,14 @@ pub(crate) fn handle_underscore(
             }
         }
         Some('_') => {
+            // \__v, \__q, \_+
             match chars.next() {
                 Some('v') => {
                     let opt = read_bracketed(chars).unwrap_or_default();
                     callback(SakuraCommand::Voice(opt));
                 }
                 Some('q') => {
+                    // \__q[ID] quick choice mode
                     let enabled = if chars.peek() == Some(&'[') {
                         read_bracketed(chars)
                             .map(|v| !matches!(v.trim(), "0" | "false"))
@@ -117,6 +119,7 @@ pub(crate) fn handle_underscore(
                     callback(SakuraCommand::Quick(enabled));
                 }
                 Some('+') => {
+                    // \_+
                     callback(SakuraCommand::Plus);
                 }
                 _ => {

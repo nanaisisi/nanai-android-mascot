@@ -21,6 +21,40 @@ pub(crate) fn handle_underscore(
             };
             callback(SakuraCommand::Quick(enabled));
         }
+        Some('?') => {
+            callback(SakuraCommand::AutoPause);
+        }
+        Some('n') => {
+            callback(SakuraCommand::NewLineNoPause);
+        }
+        Some('b') => {
+            if let Some(content) = read_bracketed(chars) {
+                let parts: Vec<&str> = content.split(',').map(|s| s.trim()).collect();
+                let path = parts.first().copied().unwrap_or("").to_string();
+                let mode = parts.get(1).copied().unwrap_or("inline").to_string();
+                let mut x = None;
+                let mut y = None;
+                let mut opaque = false;
+                for &p in parts.iter().skip(2) {
+                    if p.eq_ignore_ascii_case("opaque") {
+                        opaque = true;
+                    } else if let Ok(val) = p.parse::<i32>() {
+                        if x.is_none() {
+                            x = Some(val);
+                        } else if y.is_none() {
+                            y = Some(val);
+                        }
+                    }
+                }
+                callback(SakuraCommand::InlineBitmap {
+                    path,
+                    mode,
+                    x,
+                    y,
+                    opaque,
+                });
+            }
+        }
         Some('a') => {
             if let Some(anchor_id) = read_bracketed(chars) {
                 let mut anchor_text = String::new();

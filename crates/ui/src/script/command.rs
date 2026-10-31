@@ -12,6 +12,15 @@ pub enum SakuraCommand {
     NewLine {
         half: bool,
     }, // \n / \n[half]
+    NewLineNoPause, // \_n
+    AutoPause,      // \_?
+    InlineBitmap {
+        path: String,
+        mode: String,
+        x: Option<i32>,
+        y: Option<i32>,
+        opaque: bool,
+    }, // \_b[...]
     Clear,        // \c
     ClearArg { arg: String }, // \c[char,n], \c[line,n]
     Choice {

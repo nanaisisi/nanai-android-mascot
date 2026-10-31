@@ -85,6 +85,25 @@ pub fn check_named_mutex(name: &str) -> bool {
     guard.as_ref().and_then(|m| m.get(name)).copied().unwrap_or(false)
 }
 
+static HELD_HANDLES: Mutex<Vec<usize>> = Mutex::new(Vec::new());
+
+/// ベースウェア動作宣言として "ssp" および "sakura" 名前つき Mutex を獲得・保持する
+pub fn acquire_base_ware_mutexes() {
+    #[cfg(target_os = "windows")]
+    {
+        if let Some(h) = win_mutex::acquire_mutex("ssp") {
+            HELD_HANDLES.lock().unwrap().push(h as usize);
+        }
+        if let Some(h) = win_mutex::acquire_mutex("sakura") {
+            HELD_HANDLES.lock().unwrap().push(h as usize);
+        }
+    }
+
+    set_fallback_mutex("ssp", true);
+    set_fallback_mutex("sakura", true);
+    println!("🔒 BaseWare Named Mutexes ('ssp', 'sakura') successfully acquired and held.");
+}
+
 /// Set in-memory named mutex status for non-Windows or test environments
 pub fn set_fallback_mutex(name: &str, active: bool) {
     let mut guard = FALLBACK_MUTEXES.lock().unwrap();

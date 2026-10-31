@@ -170,6 +170,10 @@ pub fn run() {
             commands::shiori::send_on_translate,
             commands::shiori::send_ghost_call_event
         ])
+        .setup(|_app| {
+            shiori::fmo::acquire_base_ware_mutexes();
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

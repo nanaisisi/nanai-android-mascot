@@ -44,9 +44,9 @@
 - **[SUMMARY.md](spec/SUMMARY.md)** - 規格別実装適合度自動集計マスタサマリ
 - **[ssp-master-compatibility-spec.md](spec/nas-spec/ssp-master-compatibility-spec.md)** - SSP 互換・暗黙規格統括マスター仕様書 (96 DPI換算, Mutex, DLL, `seriko.use_self_alpha`等)
 - **[ssp-font-and-ui-spec.md](spec/nas-spec/ssp-font-and-ui-spec.md)** - SSP 暗黙仕様: フォントサイズ・インライン要素サイズフィット規格
-- **[explorer.md](spec/ssp-external-spec/explorer.md)** - エクスプローラ機能仕様
-- **[menu-bitmap.md](spec/ssp-external-spec/menu-bitmap.md)** - オーナードローメニュー・背景画像仕様
-- **[window-snap.md](spec/ssp-external-spec/window-snap.md)** - ウィンドウ・スナップ機能および位置リセット仕様
+- **[explorer.md](doc/ssp-spec/explorer.md)** - エクスプローラ機能仕様
+- **[menu-bitmap.md](doc/ssp-spec/menu-bitmap.md)** - オーナードローメニュー・背景画像仕様
+- **[window-snap.md](doc/ssp-spec/window-snap.md)** - ウィンドウ・スナップ機能および位置リセット仕様
 
 ### 📐 内部設計技術仕様書 (`doc-spec/`)
 

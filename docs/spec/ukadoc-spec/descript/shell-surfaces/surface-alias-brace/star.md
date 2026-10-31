@@ -11,7 +11,7 @@
 ## 実装箇所
 
 - `src-tauri/capabilities/default.json:5` `"windows": ["*"],`
-- `src-tauri/gen/schemas/acl-manifests.json:1` `{"core":{"default_permission":{"identifier":"default","description":"Default cor`
-- `src-tauri/gen/schemas/android-schema.json:40` `"description": "A grouping and boundary mechanism developers can use to isolate `
-- `src-tauri/gen/schemas/android-schema.json:57` `"description": "Configure remote URLs that can use the capability permissions.\n`
-- `src-tauri/gen/schemas/android-schema.json:114` `"description": "Remote domains this capability refers to using the [URLPattern s`
+- `src-tauri/shiori-host/src/main.rs:12` `type H = *mut c_void;`
+- `src-tauri/shiori-host/src/main.rs:15` `type RequestFn = unsafe extern "C" fn(H, *mut i32) -> H;`
+- `src-tauri/shiori-host/src/main.rs:26` `std::ptr::copy_nonoverlapping(data.as_ptr(), h as *mut u8, data.len());`
+- `src-tauri/shiori-host/src/main.rs:27` `*(h as *mut u8).add(data.len()) = 0;`

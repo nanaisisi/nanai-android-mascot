@@ -13,4 +13,4 @@
 - `src-tauri/build.rs:75` `.flag_if_supported("-Wno-unused-parameter")`
 - `src-tauri/build_old.rs:1` `use std::path::Path;`
 - `src-tauri/build_stub.rs:1` `use std::path::Path;`
-- `src-tauri/gen/android/app/build/intermediates/assets/arm64Debug/mergeArm64DebugAssets/tauri.conf.json:1` `{"$schema":"https://schema.tauri.app/config/2","productName":"nanai-android-masc`
+- `src-tauri/shiori-host/src/main.rs:8` `use libloading::{Library, Symbol};`

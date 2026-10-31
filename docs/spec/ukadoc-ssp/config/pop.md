@@ -9,8 +9,8 @@
 
 ## 実装箇所
 
-- `src-tauri/gen/schemas/acl-manifests.json:1` `{"core":{"default_permission":{"identifier":"default","description":"Default cor`
-- `src-tauri/gen/schemas/android-schema.json:672` `"description": "Default permissions for the plugin, which enables all commands.\`
-- `src-tauri/gen/schemas/android-schema.json:675` `"markdownDescription": "Default permissions for the plugin, which enables all co`
-- `src-tauri/gen/schemas/android-schema.json:726` `"description": "Enables the popup command without any pre-configured scope.",`
-- `src-tauri/gen/schemas/android-schema.json:728` `"const": "core:menu:allow-popup",`
+- `src-tauri/src/commands/window/menu_native.rs:96` `window.popup_menu(&menu).map_err(|e| e.to_string())?;`
+- `src-tauri/src/common/paths.rs:154` `components.pop();`
+- `crates/ui/src/vfs.rs:46` `current.pop();`
+- `ui/js/ghost/shiori-notify.js:89` `.pop();`
+- `ui/js/surface/surface-load.js:171` `const ghostName = basePath.split(/[\\/]/).filter(Boolean).pop() || "";`

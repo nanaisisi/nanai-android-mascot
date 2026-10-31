@@ -9,8 +9,8 @@
 
 ## 実装箇所
 
-- `src-tauri/gen/schemas/android-schema.json:123` `"description": "An entry for a permission value in a [`Capability`] can be eithe`
-- `src-tauri/gen/schemas/desktop-schema.json:123` `"description": "An entry for a permission value in a [`Capability`] can be eithe`
-- `src-tauri/gen/schemas/mobile-schema.json:123` `"description": "An entry for a permission value in a [`Capability`] can be eithe`
-- `src-tauri/gen/schemas/windows-schema.json:123` `"description": "An entry for a permission value in a [`Capability`] can be eithe`
 - `src-tauri/src/sstp.rs:17` `pub references: HashMap<String, String>,`
+- `src-tauri/src/sstp.rs:26` `pub reference0: Option<String>,`
+- `src-tauri/src/sstp.rs:52` `let mut references = HashMap::new();`
+- `src-tauri/src/sstp.rs:72` `references.insert(key.to_string(), val);`
+- `src-tauri/src/sstp.rs:87` `references,`

@@ -9,8 +9,8 @@
 
 ## 実装箇所
 
-- `src-tauri/gen/android/app/build/intermediates/linked_resources_binary_format/arm64Debug/processArm64DebugResources/output-metadata.json:16` `"outputFile": "linked-resources-binary-format-arm64Debug.ap_"`
-- `src-tauri/shiori-host/target/.rustc_info.json:1` `{"rustc_fingerprint":13383896220393496816,"outputs":{"4670552594848531902":{"suc`
-- `src-tauri/shiori-host/target/llvm-cov-target/.rustc_info.json:1` `{"rustc_fingerprint":5785422771802775894,"outputs":{"14116182289129251436":{"suc`
-- `src-tauri/shiori-host/target/owl/.rustc_info.json:1` `{"rustc_fingerprint":5550528094855592342,"outputs":{"4313454036120855957":{"succ`
 - `src-tauri/src/commands/web.rs:1` `//! Ukagaka Web Integration specification implementation (spec/web/x-ukagaka-lin`
+- `src-tauri/src/commands/web.rs:2` `//! [x-ukagaka-link], [application-x-nar]`
+- `src-tauri/src/commands/web.rs:42` `let uri = "ukagaka://install?url=https%3A%2F%2Fexample.com%2Fghost.nar";`
+- `src-tauri/src/commands/install/mod.rs:24` `.add_filter("Ghost archive", &["nar", "zip"])`
+- `src-tauri/src/commands/install/mod.rs:41` `/// ゴーストアーカイブ (.nar / .zip) のパス指定取り込み・解凍コマンド`

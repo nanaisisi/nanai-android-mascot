@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/gen/schemas/android-schema.json:40` `"description": "A grouping and boundary mechanism developers can use to isolate `
-- `src-tauri/gen/schemas/android-schema.json:52` `"description": "Description of what the capability is intended to allow on assoc`
-- `src-tauri/gen/schemas/desktop-schema.json:40` `"description": "A grouping and boundary mechanism developers can use to isolate `
-- `src-tauri/gen/schemas/desktop-schema.json:52` `"description": "Description of what the capability is intended to allow on assoc`
-- `src-tauri/gen/schemas/mobile-schema.json:40` `"description": "A grouping and boundary mechanism developers can use to isolate `
+- `src-tauri/src/commands/install/archive.rs:302` `let group = meta_map.as_ref().and_then(|m| m.get("group").cloned());`
+- `src-tauri/src/commands/install/archive.rs:329` `group,`
+- `src-tauri/src/common/models.rs:40` `pub group: Option<String>,`
+- `src-tauri/src/ghost/scan/directory.rs:242` `let group = meta_map.as_ref().and_then(|m| m.get("group").cloned());`
+- `src-tauri/src/ghost/scan/directory.rs:256` `group,`

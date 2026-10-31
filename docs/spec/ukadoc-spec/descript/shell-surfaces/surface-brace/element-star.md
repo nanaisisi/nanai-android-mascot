@@ -10,8 +10,8 @@ surface-parser.js が解析 (パターン種別など) するが、描画への�
 
 ## 実装箇所
 
-- `src-tauri/gen/android/app/build/intermediates/compatible_screen_manifest/arm64Debug/createArm64DebugCompatibleScreenManifests/output-metadata.json:9` `"elements": []`
-- `src-tauri/gen/android/app/build/intermediates/linked_resources_binary_format/arm64Debug/processArm64DebugResources/output-metadata.json:9` `"elements": [`
-- `src-tauri/gen/android/app/build/intermediates/linked_resources_binary_format/arm64Debug/processArm64DebugResources/output-metadata.json:19` `"elementType": "File"`
-- `src-tauri/gen/android/app/build/intermediates/merged_manifests/arm64Debug/processArm64DebugManifest/output-metadata.json:9` `"elements": [`
-- `src-tauri/gen/android/app/build/intermediates/merged_manifests/arm64Debug/processArm64DebugManifest/output-metadata.json:19` `"elementType": "File"`
+- `src-tauri/src/commands/shell/manifest.rs:68` `kind: "element",`
+- `src-tauri/src/commands/shell/manifest.rs:90` `"element".hash(&mut hasher);`
+- `crates/ui/src/manifest.rs:5` `//! element 合成・SERIKO 再生・当たり判定・着せ替え描画を行う。`
+- `crates/ui/src/manifest.rs:22` `/// element / animation / collision / point 定義`
+- `crates/ui/src/manifest.rs:102` `"charset,Shift_JIS\nsurface0\n{\nelement0,base,surface0.png,0,0\ncollisionex0,he`

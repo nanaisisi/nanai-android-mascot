@@ -10,7 +10,7 @@
 ## 実装箇所
 
 - `src-tauri/tauri.conf.json:44` `"plugins": {`
-- `src-tauri/gen/android/app/build/intermediates/assets/arm64Debug/mergeArm64DebugAssets/tauri.conf.json:1` `{"$schema":"https://schema.tauri.app/config/2","productName":"nanai-android-masc`
-- `src-tauri/gen/android/app/src/main/assets/tauri.conf.json:1` `{"$schema":"https://schema.tauri.app/config/2","productName":"nanai-android-masc`
-- `src-tauri/gen/schemas/acl-manifests.json:1` `{"core":{"default_permission":{"identifier":"default","description":"Default cor`
-- `src-tauri/gen/schemas/android-schema.json:40` `"description": "A grouping and boundary mechanism developers can use to isolate `
+- `src-tauri/src/lib.rs:88` `.plugin(tauri_plugin_opener::init())`
+- `src-tauri/src/lib.rs:89` `.plugin(tauri_plugin_dialog::init())`
+- `src-tauri/src/lib.rs:152` `commands::ext::scan_plugins,`
+- `src-tauri/src/lib.rs:154` `commands::ext::execute_plugin_event,`

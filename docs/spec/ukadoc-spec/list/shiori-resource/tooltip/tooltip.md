@@ -10,8 +10,6 @@
 
 ## 実装箇所
 
-- `src-tauri/gen/schemas/acl-manifests.json:1` `{"core":{"default_permission":{"identifier":"default","description":"Default cor`
-- `src-tauri/gen/schemas/android-schema.json:1062` `"description": "Default permissions for the plugin, which enables all commands.\`
-- `src-tauri/gen/schemas/android-schema.json:1065` `"markdownDescription": "Default permissions for the plugin, which enables all co`
-- `src-tauri/gen/schemas/android-schema.json:1128` `"description": "Enables the set_tooltip command without any pre-configured scope`
-- `src-tauri/gen/schemas/android-schema.json:1130` `"const": "core:tray:allow-set-tooltip",`
+- `ui/js/surface/surface-load.js:134` `// [tooltip-brace 仕様項目一覧インデックス]`
+- `ui/js/surface/surface-load.js:135` `// [tooltipブレス記述例]`
+- `ui/windows/tauri-desktop.conf.json:169` `"tooltip": "Nanai Android Mascot Desktop"`

@@ -12,6 +12,6 @@
 
 - `src-tauri/tauri.conf.json:16` `"title": "Nanai Android Mascot",`
 - `src-tauri/tauri.test.conf.json:16` `"title": "nanai-android-mascot-test",`
-- `src-tauri/gen/android/app/build/intermediates/assets/arm64Debug/mergeArm64DebugAssets/tauri.conf.json:1` `{"$schema":"https://schema.tauri.app/config/2","productName":"nanai-android-masc`
-- `src-tauri/gen/android/app/src/main/assets/tauri.conf.json:1` `{"$schema":"https://schema.tauri.app/config/2","productName":"nanai-android-masc`
-- `src-tauri/gen/schemas/acl-manifests.json:1` `{"core":{"default_permission":{"identifier":"default","description":"Default cor`
+- `src-tauri/src/commands/calendar.rs:14` `pub title: String,`
+- `src-tauri/src/commands/shell/ghost.rs:27` `.title("アンインストール確認")`
+- `src-tauri/src/commands/shiori/lifecycle/spawn.rs:106` `.title(format!("Nanai Android Mascot - {}", ghost_name))`

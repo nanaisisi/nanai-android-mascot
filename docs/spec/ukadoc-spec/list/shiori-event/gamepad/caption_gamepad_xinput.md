@@ -14,4 +14,4 @@
 - `src-tauri/build.rs:60` `// Windows固有の設定`
 - `src-tauri/build_old.rs:37` `// Windowsでの設定`
 - `src-tauri/build_stub.rs:19` `// Windowsでの設定`
-- `src-tauri/gen/schemas/android-schema.json:40` `"description": "A grouping and boundary mechanism developers can use to isolate `
+- `src-tauri/src/main.rs:1` `// Prevents additional console window on Windows in release, DO NOT REMOVE!!`

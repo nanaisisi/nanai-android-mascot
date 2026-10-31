@@ -13,4 +13,4 @@ HTTP SSTP サーバなし。
 - `src-tauri/tauri.conf.json:9` `"devUrl": "http://localhost:5173",`
 - `src-tauri/tauri.test.conf.json:2` `"$schema": "https://schema.tauri.app/config/2",`
 - `src-tauri/tauri.test.conf.json:8` `"devUrl": "http://localhost:1421",`
-- `src-tauri/gen/android/app/build/intermediates/assets/arm64Debug/mergeArm64DebugAssets/tauri.conf.json:1` `{"$schema":"https://schema.tauri.app/config/2","productName":"nanai-android-masc`
+- `src-tauri/src/commands/web.rs:42` `let uri = "ukagaka://install?url=https%3A%2F%2Fexample.com%2Fghost.nar";`

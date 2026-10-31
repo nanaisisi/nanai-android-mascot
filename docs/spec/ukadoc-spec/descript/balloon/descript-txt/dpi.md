@@ -81,8 +81,8 @@ $$\text{finalScale} = \text{userScale} \times \text{dpiScale}$$
 
 ## 実装箇所
 
-- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:2236` `"outputFile": "com.nanai_android_mascot.app-arm64Debug-39:/values-hdpi-v4_values`
-- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:2239` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\7e448c973fe8964`
-- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/values-hdpi-v4.json:4` `"outputFile": "com.nanai_android_mascot.app-mergeArm64DebugResources-37:/values-`
-- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/values-hdpi-v4.json:7` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\7e448c973fe8964`
-- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/single/mergeArm64DebugResources.json:3` `"merged": "com.nanai_android_mascot.app-arm64Debug-39:/mipmap-xhdpi_ic_launcher_`
+- `src-tauri/src/ghost/scan/shell.rs:106` `// [seriko.dpi,推奨DPI], [seriko.zorder,スコープID,スコープID,...], [seriko.sticky-window,`
+- `ui/js/core/actions/balloon-theme.js:53` `const dpiScale = this.balloonDpiScale || 1;`
+- `ui/js/core/actions/balloon-theme.js:54` `const finalScale = +(userScale * dpiScale).toFixed(4);`
+- `ui/js/core/actions/balloon-theme.js:66` `emit("balloon-scale-changed", { userScale, dpiScale, finalScale });`
+- `ui/js/core/actions/balloon-theme.js:119` `"--balloon-dpi",`

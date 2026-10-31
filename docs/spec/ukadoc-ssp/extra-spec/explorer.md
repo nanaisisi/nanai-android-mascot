@@ -68,8 +68,8 @@ SSP / ネットワーク更新仕様に準拠したステータスコードお�
 
 ## 実装箇所
 
-- `src-tauri/gen/schemas/acl-manifests.json:1` `{"core":{"default_permission":{"identifier":"default","description":"Default cor`
-- `src-tauri/gen/schemas/android-schema.json:143` `"description": "This permission set allows opening `mailto:`, `tel:`, `https://``
-- `src-tauri/gen/schemas/android-schema.json:146` `"markdownDescription": "This permission set allows opening `mailto:`, `tel:`, `h`
-- `src-tauri/gen/schemas/android-schema.json:2388` `"description": "This permission set allows opening `mailto:`, `tel:`, `https://``
-- `src-tauri/gen/schemas/android-schema.json:2391` `"markdownDescription": "This permission set allows opening `mailto:`, `tel:`, `h`
+- `src-tauri/src/shiori/ffi/builder.rs:179` `pub fn on_update_result_explorer(status: &str, log_path: Option<&str>) -> Self {`
+- `ui/menu-iframe.html:135` `<button type="button" class="menu-item" id="explorer-btn" data-action="explorer"`
+- `ui/css/menu-modal.css:197` `.explorer-toolbar {`
+- `ui/css/menu-modal.css:204` `.explorer-toolbar input[type="search"] {`
+- `ui/css/menu-modal.css:219` `.explorer-toolbar input[type="search"]:focus {`

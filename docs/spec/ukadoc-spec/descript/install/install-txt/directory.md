@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/gen/schemas/acl-manifests.json:1` `{"core":{"default_permission":{"identifier":"default","description":"Default cor`
-- `src-tauri/gen/schemas/android-schema.json:236` `"description": "A path that can be opened by the webview when using the Opener A`
-- `src-tauri/gen/schemas/android-schema.json:284` `"description": "A path that can be opened by the webview when using the Opener A`
-- `src-tauri/gen/schemas/android-schema.json:942` `"description": "Default permissions for the plugin, which enables all commands.\`
-- `src-tauri/gen/schemas/android-schema.json:945` `"markdownDescription": "Default permissions for the plugin, which enables all co`
+- `src-tauri/src/lib.rs:96` `commands::file::open_ghost_directory,`
+- `src-tauri/src/lib.rs:106` `ghost::scan::directory::scan_ghost_directory,`
+- `src-tauri/src/commands/file.rs:187` `pub fn open_ghost_directory(app_handle: tauri::AppHandle<tauri::Wry>) -> Result<`
+- `src-tauri/src/commands/file.rs:192` `.map_err(|e| format!("Failed to open directory: {}", e))`
+- `src-tauri/src/commands/install/archive.rs:39` `let mut install_directory: Option<String> = None;`

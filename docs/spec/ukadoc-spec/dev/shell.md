@@ -9,8 +9,8 @@
 
 ## 実装箇所
 
-- `src-tauri/gen/schemas/android-schema.json:87` `"description": "List of permissions attached to this capability.\n\nMust include`
-- `src-tauri/gen/schemas/desktop-schema.json:87` `"description": "List of permissions attached to this capability.\n\nMust include`
-- `src-tauri/gen/schemas/mobile-schema.json:87` `"description": "List of permissions attached to this capability.\n\nMust include`
-- `src-tauri/gen/schemas/windows-schema.json:87` `"description": "List of permissions attached to this capability.\n\nMust include`
 - `src-tauri/src/events.rs:14` `} else if let Some(shell_name) = id.strip_prefix("shell:") {`
+- `src-tauri/src/events.rs:18` `"action": "switch-to-shell",`
+- `src-tauri/src/events.rs:19` `"payload": shell_name`
+- `src-tauri/src/lib.rs:97` `commands::shell::shell_manifest,`
+- `src-tauri/src/lib.rs:98` `commands::shell::parse_sakura_script,`

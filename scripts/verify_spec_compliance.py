@@ -29,13 +29,22 @@ DOMAIN_STATUS_MAP = {
     "プロパティシステム": "✅ 一部対応",
 }
 
+def sanitize_snippet(text):
+    text = re.sub(r'[A-Za-z]:\\\\Users\\\\[^\\"\s]+', '<USER_HOME>', text, flags=re.IGNORECASE)
+    text = re.sub(r'[A-Za-z]:/Users/[^/"\s]+', '<USER_HOME>', text, flags=re.IGNORECASE)
+    text = re.sub(r'[A-Za-z]:\\\\project\\\\rust\\\\nanai-android-mascot\\\\?', '', text, flags=re.IGNORECASE)
+    text = re.sub(r'[A-Za-z]:/project/rust/nanai-android-mascot/?', '', text, flags=re.IGNORECASE)
+    return text
+
 def load_codebase():
     codebase = []
     search_dirs = ['src-tauri', 'crates/ui', 'ui', 'cpp/yaya-shiori', 'tests']
+    ignore_dirs = {'target', 'build', '.gradle', '.cxx', 'node_modules', 'dist', 'gen', 'coverage'}
     for root_dir in search_dirs:
         if not os.path.exists(root_dir):
             continue
         for root, dirs, files in os.walk(root_dir):
+            dirs[:] = [d for d in dirs if d not in ignore_dirs]
             for file in files:
                 if file.endswith(('.rs', '.ts', '.js', '.css', '.html', '.cpp', '.h', '.c', '.json')):
                     path = os.path.join(root, file).replace('\\', '/')
@@ -55,7 +64,7 @@ def search_keyword(keyword, codebase):
     for path, lines in codebase:
         for idx, line in enumerate(lines, 1):
             if keyword in line:
-                cleaned_line = line.strip()
+                cleaned_line = sanitize_snippet(line.strip())
                 results.append((path, idx, cleaned_line))
                 if len(results) >= 10:
                     break
@@ -132,10 +141,26 @@ def process_audit_files(codebase):
 
             if "❌ 検出なし" in curr_status:
                 content = content.replace("実装コードに「" + keyword + "」が見つからない。", f"実装コード内に「{keyword}」を確認。")
+        elif "## 実装箇所" in content:
+            idx = content.find("## 実装箇所")
+            impl_section = content[idx:]
+            cleaned_impl_lines = [
+                sanitize_snippet(ln)
+                for ln in impl_section.splitlines()
+                if "src-tauri/gen/" not in ln and "<USER_HOME>" not in sanitize_snippet(ln)
+            ]
+            # If only heading remains without bullet items, remove section or keep cleaned lines
+            has_bullets = any(ln.strip().startswith("- ") for ln in cleaned_impl_lines)
+            if has_bullets:
+                content = content[:idx] + "\n".join(cleaned_impl_lines) + "\n"
+            else:
+                content = content[:idx].rstrip() + "\n"
 
         if new_status != curr_status:
             content = re.sub(r'(-\s*\*\*対応状況\*\*:\s*).*', r'\1' + new_status, content)
             updated_count += 1
+
+        content = sanitize_snippet(content)
 
         with open(filepath, 'w', encoding='utf-8') as f:
             f.write(content)

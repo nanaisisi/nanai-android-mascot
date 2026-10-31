@@ -143,7 +143,7 @@ cargo llvm-cov clean
 
 ## 5. バルーン仕様（descript.txt）拡張実装一覧
 
-UKADOC 仕様に準拠したバルーンプロパティについて、[balloon-descript.js](file:///E:/project/rust/nanai-android-mascot/ui/js/core/actions/balloon-descript.js) にて以下の詳細プロパティの動的反映を実装しています：
+UKADOC 仕様に準拠したバルーンプロパティについて、[balloon-descript.js](../../ui/js/core/actions/balloon-descript.js) にて以下の詳細プロパティの動的反映を実装しています：
 
 - **DPI 調整**: `dpi`（デフォルト 96 からの倍率計算・CSS `--balloon-dpi-scale` 適用）
 - **フォント設定**: `font.name`, `font.height`, `font.bold`, `font.italic`, `font.underline`, `font.strike`

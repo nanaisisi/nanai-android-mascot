@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/gen/schemas/acl-manifests.json:1` `{"core":{"default_permission":{"identifier":"default","description":"Default cor`
-- `src-tauri/gen/schemas/android-schema.json:1758` `"description": "Enables the set_ignore_cursor_events command without any pre-con`
-- `src-tauri/gen/schemas/android-schema.json:1760` `"const": "core:window:allow-set-ignore-cursor-events",`
-- `src-tauri/gen/schemas/android-schema.json:1761` `"markdownDescription": "Enables the set_ignore_cursor_events command without any`
-- `src-tauri/gen/schemas/android-schema.json:2232` `"description": "Denies the set_ignore_cursor_events command without any pre-conf`
+- `src-tauri/src/lib.rs:49` `.header("// deno-lint-ignore-file no-explicit-any\n// biome-ignore-all lint/susp`
+- `src-tauri/src/commands/install/archive.rs:211` `&& relative_path[..src_prefix.len()].eq_ignore_ascii_case(src_prefix)`
+- `src-tauri/src/ghost/scan/directory.rs:51` `// [.narignore / .updateignore / .narinclude / .updateinclude]: アーカイブ・更新除外および開発無`
+- `src-tauri/src/ghost/scan/directory.rs:52` `if path.join(".dev_ignore").exists()`
+- `src-tauri/src/ghost/scan/directory.rs:53` `|| path.join(".narignore").exists()`

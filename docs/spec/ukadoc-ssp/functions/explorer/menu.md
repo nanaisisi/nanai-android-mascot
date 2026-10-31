@@ -33,8 +33,8 @@
 
 ## 実装箇所
 
-- `src-tauri/gen/schemas/acl-manifests.json:1` `{"core":{"default_permission":{"identifier":"default","description":"Default cor`
-- `src-tauri/gen/schemas/android-schema.json:348` `"description": "Default core plugins set.\n#### This default permission set incl`
-- `src-tauri/gen/schemas/android-schema.json:351` `"markdownDescription": "Default core plugins set.\n#### This default permission `
-- `src-tauri/gen/schemas/android-schema.json:672` `"description": "Default permissions for the plugin, which enables all commands.\`
-- `src-tauri/gen/schemas/android-schema.json:674` `"const": "core:menu:default",`
+- `src-tauri/src/events.rs:4` `pub fn handle_menu_event(app_handle: &tauri::AppHandle, event: tauri::menu::Menu`
+- `src-tauri/src/events.rs:8` `"native-menu-action",`
+- `src-tauri/src/events.rs:16` `"native-menu-action",`
+- `src-tauri/src/events.rs:22` `} else if id == "open" || id == "open_menu" {`
+- `src-tauri/src/events.rs:35` `let _ = crate::commands::window::show_menu_window(app_h, x, y, Some(0)).await;`

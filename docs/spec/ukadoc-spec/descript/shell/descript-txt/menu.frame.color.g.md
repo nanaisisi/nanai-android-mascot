@@ -2,8 +2,4 @@
 
 - **規格**: [menu.frame.color.g.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell/descript-txt/menu.frame.color.g/) (ukadoc-spec/descript/shell/descript-txt/menu.frame.color.g.md)
 - **検索語**: menu.frame.color.g
-- **対応状況**: ✅ 対応済 (shell.rs)\n\n## 突合結果\n\nsrc-tauri/src/ghost/scan/shell.rs においてパース・抽出・バインドする実装が行われている。\n\n## 実装箇所\n\n- src-tauri/src/ghost/scan/shell.rs // [name,シェル名]... [type,種別]... [char*.name,名前]...
-
-## 突合結果
-
-実装コードに「menu.frame.color.g」が見つからない。
+- **対応状況**: ✅ 対応済 (shell.rs)\n\n## 突合結果\n\nsrc-tauri/src/ghost/scan/shell.rs においてパース・抽出・バインドする実装が行われている。\n\n

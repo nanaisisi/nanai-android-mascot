@@ -10,8 +10,8 @@ ui/js/ghost/sakura-parser.js / sakura-command-handler.js で処理: 改行 (\n[h
 
 ## 実装箇所
 
-- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:3128` `"source": "E:\\project\\rust\\nanai-android-mascot\\src-tauri\\gen\\android\\app`
-- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:4603` `"source": "E:\\project\\rust\\nanai-android-mascot\\src-tauri\\gen\\android\\app`
-- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:4895` `"source": "E:\\project\\rust\\nanai-android-mascot\\src-tauri\\gen\\android\\app`
-- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:4948` `"source": "E:\\project\\rust\\nanai-android-mascot\\src-tauri\\gen\\android\\app`
-- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/values-night-v8.json:24` `"source": "E:\\project\\rust\\nanai-android-mascot\\src-tauri\\gen\\android\\app`
+- `src-tauri/shiori-host/src/main.rs:150` `let resp = b"SHIORI/3.0 200 OK\r\n\r\n";`
+- `src-tauri/shiori-host/src/main.rs:276` `let resp = b"SHIORI/3.0 200 OK\r\n\r\n";`
+- `src-tauri/src/lib.rs:49` `.header("// deno-lint-ignore-file no-explicit-any\n// biome-ignore-all lint/susp`
+- `src-tauri/src/sstp.rs:162` `let raw = "SEND SSTP/1.1\r\nSender: TestApp\r\nScript: \\0Hi\\e\r\nReference0: R`
+- `src-tauri/src/commands/install/utils.rs:153` `let content = b"name,TestGhost\nversion,1.0.0\n// comment\n";`

@@ -11,7 +11,7 @@
 ## 実装箇所
 
 - `src-tauri/tauri.conf.json:45` `"updater": {`
-- `src-tauri/gen/android/app/build/intermediates/assets/arm64Debug/mergeArm64DebugAssets/tauri.conf.json:1` `{"$schema":"https://schema.tauri.app/config/2","productName":"nanai-android-masc`
-- `src-tauri/gen/android/app/src/main/assets/tauri.conf.json:1` `{"$schema":"https://schema.tauri.app/config/2","productName":"nanai-android-masc`
 - `src-tauri/src/lib.rs:150` `commands::update::check_ghost_update,`
 - `src-tauri/src/lib.rs:151` `commands::update::execute_ghost_update,`
+- `src-tauri/src/commands/mod.rs:8` `pub mod update;`
+- `src-tauri/src/commands/install/archive.rs:317` `let (install_date, update_date) = crate::ghost::scan::compute_ghost_dates(&targe`

@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:7` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\f4929af4ba90d04`
-- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:26` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\7e448c973fe8964`
-- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:43` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\e095ee544d9efdd`
-- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:60` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\7b73304cee1dfb2`
-- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:82` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\7e448c973fe8964`
+- `src-tauri/src/common/paths.rs:180` `clean_verbatim_path(r"\\?\C:\path\to\file"),`
+- `src-tauri/src/common/paths.rs:181` `r"C:\path\to\file"`
+- `crates/ui/src/lib.rs:114` `let script = r"\b[0]\b[-1]\t\-\_s\_l[10,20]\f[color,red]\f[bold]";`
+- `crates/ui/src/update.rs:110` `let content = "\r\n  \r\n\t\r\n";`
+- `crates/ui/src/script/command.rs:38` `Timeout,      // \t (タイムアウト抑止)`

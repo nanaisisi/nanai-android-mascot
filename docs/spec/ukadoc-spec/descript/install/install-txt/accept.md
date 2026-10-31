@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/gen/android/app/build/intermediates/assets/arm64Debug/mergeArm64DebugAssets/tauri.conf.json:1` `{"$schema":"https://schema.tauri.app/config/2","productName":"nanai-android-masc`
-- `src-tauri/gen/android/app/src/main/assets/tauri.conf.json:1` `{"$schema":"https://schema.tauri.app/config/2","productName":"nanai-android-masc`
-- `src-tauri/gen/schemas/android-schema.json:4` `"description": "Capability formats accepted in a capability file.",`
-- `src-tauri/gen/schemas/desktop-schema.json:4` `"description": "Capability formats accepted in a capability file.",`
-- `src-tauri/gen/schemas/mobile-schema.json:4` `"description": "Capability formats accepted in a capability file.",`
+- `src-tauri/src/commands/install/archive.rs:53` `// [install.txt（概要）], [同時インストール], [name,オブジェクト名], [type,種別], [directory,ディレクトリ名]`
+- `src-tauri/src/commands/install/archive.rs:56` `let accept = map.get("accept");`
+- `src-tauri/src/commands/install/archive.rs:57` `// [@manual: manual/install.md] accept target compatibility validation`
+- `src-tauri/src/commands/install/archive.rs:58` `if let Some(acc) = accept {`
+- `src-tauri/src/commands/install/archive.rs:60` `"📦 [Install] Accept target compatibility check: package requires accept={}",`

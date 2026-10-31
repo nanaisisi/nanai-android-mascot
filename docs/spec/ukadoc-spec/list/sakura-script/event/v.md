@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:7` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\f4929af4ba90d04`
-- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:26` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\7e448c973fe8964`
-- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:43` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\e095ee544d9efdd`
-- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:60` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\7b73304cee1dfb2`
-- `src-tauri/gen/android/app/build/intermediates/merged_res_blame_folder/arm64Debug/mergeArm64DebugResources/out/multi-v2/mergeArm64DebugResources.json:82` `"source": "C:\\Users\\user\\.gradle\\caches\\9.6.1\\transforms\\7e448c973fe8964`
+- `cpp/yaya-shiori/deelx.h:2214` `nex2 = CHART_INFO(RCHART('\v'), 0, m_nNextPos, delta);`
+- `cpp/yaya-shiori/deelx.h:2342` `case RCHART('\v'):`
+- `cpp/yaya-shiori/deelx.h:2548` `pRange->m_chars.Push(RCHART('\v'));`
+- `cpp/yaya-shiori/deelx.h:2561` `pRange->m_chars.Push(RCHART('\v'));`
+- `cpp/yaya-shiori/sysfunc.cpp:5089` `arg2.replace(it,it+2,L"\v");`

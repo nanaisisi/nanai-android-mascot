@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/gen/android/app/build/intermediates/assets/arm64Debug/mergeArm64DebugAssets/tauri.conf.json:1` `{"$schema":"https://schema.tauri.app/config/2","productName":"nanai-android-masc`
-- `src-tauri/gen/android/app/src/main/assets/tauri.conf.json:1` `{"$schema":"https://schema.tauri.app/config/2","productName":"nanai-android-masc`
-- `src-tauri/gen/schemas/acl-manifests.json:1` `{"core":{"default_permission":{"identifier":"default","description":"Default cor`
-- `src-tauri/gen/schemas/android-schema.json:57` `"description": "Configure remote URLs that can use the capability permissions.\n`
-- `src-tauri/gen/schemas/android-schema.json:110` `"urls"`
+- `src-tauri/src/commands/ext.rs:36` `// [craftman,作者名], [craftmanw,作者名], [craftmanurl,URL], [homeurl,URL]:`
+- `src-tauri/src/commands/ext.rs:41` `let craftman_url = map`
+- `src-tauri/src/commands/ext.rs:42` `.get("craftmanurl")`
+- `src-tauri/src/commands/ext.rs:44` `.or_else(|| map.get("homeurl").cloned());`
+- `src-tauri/src/commands/ext.rs:59` `craftman_url,`

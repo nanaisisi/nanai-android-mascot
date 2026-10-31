@@ -11,7 +11,7 @@
 ## 実装箇所
 
 - `src-tauri/capabilities/default.json:4` `"description": "Capability for the main window",`
-- `src-tauri/gen/schemas/acl-manifests.json:1` `{"core":{"default_permission":{"identifier":"default","description":"Default cor`
-- `src-tauri/gen/schemas/android-schema.json:4` `"description": "Capability formats accepted in a capability file.",`
-- `src-tauri/gen/schemas/android-schema.json:7` `"description": "A single capability.",`
-- `src-tauri/gen/schemas/android-schema.json:15` `"description": "A list of capabilities.",`
+- `src-tauri/src/commands/ext.rs:4` `use crate::ghost::scan::read_descript_file;`
+- `src-tauri/src/commands/ext.rs:30` `// [descript.txt（Pluginの）]: プラグイン descript.txt 読込`
+- `src-tauri/src/commands/ext.rs:31` `let desc_path = path.join("descript.txt");`
+- `src-tauri/src/commands/ext.rs:32` `if let Some(map) = read_descript_file(&desc_path) {`

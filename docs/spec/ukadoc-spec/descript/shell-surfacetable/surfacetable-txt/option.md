@@ -10,8 +10,8 @@ surface-parser.js / surface-animation-manager.js に該当の解析・処理は�
 
 ## 実装箇所
 
-- `src-tauri/gen/schemas/android-schema.json:57` `"description": "Configure remote URLs that can use the capability permissions.\n`
-- `src-tauri/gen/schemas/desktop-schema.json:57` `"description": "Configure remote URLs that can use the capability permissions.\n`
-- `src-tauri/gen/schemas/mobile-schema.json:57` `"description": "Configure remote URLs that can use the capability permissions.\n`
-- `src-tauri/gen/schemas/windows-schema.json:57` `"description": "Configure remote URLs that can use the capability permissions.\n`
 - `src-tauri/src/commands/shell/animation.rs:59` `options: vec![],`
+- `src-tauri/src/ghost/scan/directory.rs:65` `// [developer_options.txt], [自動的に除外される対象], [相対パス,オプション1,オプション2,...]:`
+- `src-tauri/src/ghost/scan/directory.rs:66` `let dev_options_path = path.join("developer_options.txt");`
+- `src-tauri/src/ghost/scan/directory.rs:67` `if dev_options_path.exists()`
+- `src-tauri/src/ghost/scan/directory.rs:68` `&& let Ok(dev_content) = std::fs::read_to_string(&dev_options_path)`

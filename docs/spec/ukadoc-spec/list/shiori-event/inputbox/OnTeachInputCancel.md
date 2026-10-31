@@ -10,8 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/sakura-command-handler.js:23` `// \![open,teachbox] — OnTeachStart → OnTeach / OnTeachInputCancel (UKADOC 準拠)`
-- `ui/js/ghost/sakura-command-handler.js:26` `// \![close,teachbox] — OnTeachInputCancel を発生させない`
-- `ui/js/ghost/sakura-command-handler.js:226` `* 閉じる/キャンセルで OnTeachInputCancel（Reference0=空席, Reference1=cancel）。`
-- `ui/js/ghost/sakura-command-handler.js:294` `await this.app.ghostController?.sendShioriEvent("OnTeachInputCancel", [`
-- `ui/js/ghost/sakura-command-handler.js:325` `* OnTeachInputCancel を発生させずに閉じる。開いてない場合は無視される。`
+- `ui/js/ghost/command-handler/teachbox.js:62` `await handler.app.ghostController?.sendShioriEvent("OnTeachInputCancel", [`
+- `tests/sakura-command-handler.test.js:142` `assert.ok(eventsSent.some((e) => e.ev === "OnTeachInputCancel"));`

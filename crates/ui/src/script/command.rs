@@ -66,6 +66,9 @@ pub enum SakuraCommand {
     },
     BalloonTimeout(u32),
     LockBalloonMove(bool),
+    Biff,
+    ExecuteSntp,
+    CreateShortcut,
     Command {
         args: Vec<String>,
     }, // その他の \![...] 汎用透過

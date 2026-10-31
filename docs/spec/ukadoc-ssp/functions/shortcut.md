@@ -9,8 +9,8 @@ R, T, U, C, M, S, B, O, G, W, X など標準キーバインド実装
 
 ## 実装箇所
 
+- `crates/ui/src/script/parser/brackets/handlers.rs:176` `if parts.get(1).is_some_and(|p| *p == "shortcut") {`
 - `ui/menu-iframe.html:348` `<span class="shortcut-key">Ctrl+I</span>`
 - `ui/menu-iframe.html:354` `<span class="shortcut-key">Ctrl+W</span>`
 - `ui/menu-iframe.html:366` `<span class="shortcut-key">Ctrl+Q</span>`
 - `ui/coverage/index.html:10` `<link rel="shortcut icon" type="image/x-icon" href="favicon.png" />`
-- `ui/css/context-menu.css:120` `.shortcut-key {`

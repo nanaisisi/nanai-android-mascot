@@ -166,6 +166,21 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
                 });
             }
         }
+        "biff" => {
+            callback(SakuraCommand::Biff);
+        }
+        "executesntp" => {
+            callback(SakuraCommand::ExecuteSntp);
+        }
+        "create" => {
+            if parts.get(1).is_some_and(|p| *p == "shortcut") {
+                callback(SakuraCommand::CreateShortcut);
+            } else {
+                callback(SakuraCommand::Command {
+                    args: parts.iter().map(|s| s.to_string()).collect(),
+                });
+            }
+        }
         _ => {
             callback(SakuraCommand::Command {
                 args: parts.iter().map(|s| s.to_string()).collect(),

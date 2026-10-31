@@ -2,11 +2,11 @@
 
 - **規格**: [pct-property.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/environment-variable/pct-property/) (ukadoc-spec/list/sakura-script/environment-variable/pct-property.md)
 - **検索語**: property
-- **対応状況**: 📝 コメントのみ(未実装の可能性大)
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-実装コードに「property」が出現。実際の処理内容は未精査。
+プロパティシステム評価エンジン (`src-tauri/src/shiori/property.rs` -> `evaluate_property_query`) にてプロパティ照会・取得処理を実装済。
 
 ## 実装箇所
 

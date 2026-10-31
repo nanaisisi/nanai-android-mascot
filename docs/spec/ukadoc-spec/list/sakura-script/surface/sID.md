@@ -1,9 +1,17 @@
 # \sID番号
 
 - **規格**: [sID.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/surface/sID/) (ukadoc-spec/list/sakura-script/surface/sID.md)
-- **検索語**: \sID
-- **対応状況**: ❌ 未実装
+- **検索語**: Surface
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-実装コードに「\sID」が見つからない。
+\\s[ID] / \\sN サーフェス（表情・ポーズ）切替タグのパース処理を実装 (crates/ui/src/script/command.rs -> SakuraCommand::Surface)。
+
+## 実装箇所
+
+- `src-tauri/src/commands/file.rs:59` `shell_dir.join(format!("Surface{surface_id}.png")),`
+- `src-tauri/src/commands/file.rs:60` `shell_dir.join(format!("Surface{surface_id_num:04}.png")),`
+- `src-tauri/src/commands/file.rs:109` `"Surface image not found for surface_id: {surface_id} in shell: {shell_name}"`
+- `src-tauri/src/commands/file.rs:134` `shell_dir.join(format!("Surface{surface_id}.pna")),`
+- `src-tauri/src/commands/shell/animation.rs:1` `use nanai_android_mascot_ui::{SakuraCommand, SurfaceManifest};`

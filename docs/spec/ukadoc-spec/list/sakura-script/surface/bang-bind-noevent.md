@@ -1,17 +1,17 @@
 # \![bind-noevent,カテゴリ名,パーツ名,数値]
 
 - **規格**: [bang-bind-noevent.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/surface/bang-bind-noevent/) (ukadoc-spec/list/sakura-script/surface/bang-bind-noevent.md)
-- **検索語**: \!
+- **検索語**: Bind
 - **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-sakura-command-handler.js の bind-noevent として処理している。
+\\![bind,...] 着せ替え制御タグのパース処理を実装 (crates/ui/src/script/command.rs -> SakuraCommand::Bind)。
 
 ## 実装箇所
 
-- `src-tauri/src/commands/calendar.rs:2` `//! [calendar/index.md], [calendar/schedule.md], [calendar/menu.md], [\![open,ca`
-- `crates/ui/src/lib.rs:81` `let script = r"\0\_q\x\_a[anchor01]リンク\_a\![raise,OnTest,1,2]\![bind,clothing,ri`
-- `crates/ui/src/lib.rs:200` `let script = r"\0\![open,inputbox,--timeout=5]\![set,str,hello]\j[1,2]\__w[500]あ`
-- `crates/ui/src/script/command.rs:44` `}, // \![raise,Event,...]`
-- `crates/ui/src/script/command.rs:49` `}, // \![bind,cat,part,status]`
+- `src-tauri/src/commands/shell/manifest.rs:120` `DrawMethod::Add | DrawMethod::Bind => "add".to_string(),`
+- `src-tauri/src/shiori/ffi/interface.rs:2` `//! SHIORI FFI Bindings (Interface)`
+- `src-tauri/src/shiori/ffi/mod.rs:1` `//! SHIORI FFI Bindings`
+- `crates/ui/src/lib.rs:15` `pub use descript::{BindGroup, BindOptionGroup, CharDefaults, Descript};`
+- `crates/ui/src/lib.rs:104` `SakuraCommand::Bind {`

@@ -1,14 +1,17 @@
 # \__w[animation,ID]
 
 - **規格**: [__w-animation-ID.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/surface/__w-animation-ID/) (ukadoc-spec/list/sakura-script/surface/__w-animation-ID.md)
-- **検索語**: \__w
+- **検索語**: Command
 - **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-実装コード内に「\__w」を確認。
+サーフェス・ウィンドウ位置・エフェクト関連スクリプトコマンドのパース処理を実装 (crates/ui/src/script/parser/brackets/handlers/raiselike.rs)。
 
 ## 実装箇所
 
-- `crates/ui/src/lib.rs:200` `let script = r"\0\![open,inputbox,--timeout=5]\![set,str,hello]\j[1,2]\__w[500]あ`
-- `crates/ui/src/lib.rs:216` `// 未知タグ（\j / \__w）の引数が本文に漏出していない`
+- `src-tauri/build.rs:24` `let status = std::process::Command::new(std::env::var("CARGO").unwrap_or("cargo"`
+- `src-tauri/tauri.conf.json:7` `"beforeDevCommand": "npm run dev",`
+- `src-tauri/tauri.conf.json:8` `"beforeBuildCommand": "npm run build",`
+- `src-tauri/tauri.test.conf.json:7` `"beforeDevCommand": "dx serve --port 1421",`
+- `src-tauri/tauri.test.conf.json:9` `"beforeBuildCommand": "dx build --release",`

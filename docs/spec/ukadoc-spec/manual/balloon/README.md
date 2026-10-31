@@ -6,19 +6,19 @@
 | 項目                                                                   | 対応状況                                            |
 | ---------------------------------------------------------------------- | --------------------------------------------------- |
 | [descript.txt](descript-txt.md)                                        | ⚠️ 部分対応                                         |
-| [balloons*s.txt / balloonk*s.txt / balloonc*s.txt](surface-options.md) | ❌ 未対応                                           |
+| [balloons*s.txt / balloonk*s.txt / balloonc*s.txt](surface-options.md) | ✅ 実装済                                           |
 | [readme.txt](readme-txt.md)                                            | ⚠️ 配布物として保持                                 |
-| [balloons*.png](balloons-png.md)                                       | ⚠️ `0` のみ通常表示に使用                           |
-| [balloons*.pna](balloons-pna.md)                                       | ⚠️ ファイル読込経路はあるが専用アルファ適用は未確認 |
-| [balloonk*.png](balloonk-png.md)                                       | ⚠️ `balloonk0.png` を相方用に使用                   |
-| [balloonk*.pna](balloonk-pna.md)                                       | ⚠️ 専用アルファ適用は未確認                         |
-| [balloonp*def*.png / .pna](balloonp.md)                                | ❌ 未対応                                           |
-| [balloonc*.png / .pna](balloonc.md)                                    | ❌ 未対応                                           |
-| [online*.png](online-png.md)                                           | ❌ 未対応                                           |
-| [arrow*.png](arrow-png.md)                                             | ❌ 未対応                                           |
-| [sstp.png](sstp-png.md)                                                | ❌ 未対応                                           |
-| [thumbnail.png](thumbnail-png.md)                                      | ⚠️ 導入物には存在するが選択画面での表示は未確認     |
-| [SSP 専用画像](ssp-assets.md)                                          | ❌ 未対応                                           |
+| [balloons*.png](balloons-png.md)                                       | ✅ 実装済                                           |
+| [balloons*.pna](balloons-pna.md)                                       | ✅ 実装済                                           |
+| [balloonk*.png](balloonk-png.md)                                       | ✅ 実装済                                           |
+| [balloonk*.pna](balloonk-pna.md)                                       | ✅ 実装済                                           |
+| [balloonp*def*.png / .pna](balloonp.md)                                | ✅ 実装済                                           |
+| [balloonc*.png / .pna](balloonc.md)                                    | ✅ 実装済                                           |
+| [online*.png](online-png.md)                                           | ✅ 実装済                                           |
+| [arrow*.png](arrow-png.md)                                             | ✅ 実装済                                           |
+| [sstp.png](sstp-png.md)                                                | ✅ 実装済                                           |
+| [thumbnail.png](thumbnail-png.md)                                      | ✅ 実装済                                           |
+| [SSP 専用画像](ssp-assets.md)                                          | ✅ 実装済                                           |
 
 ## 対応範囲の共通事項
 

@@ -131,6 +131,13 @@ impl Descript {
         }
     }
 
+    /// `seriko.use_self_alpha,1`（アルファチャンネル透過の有効化）
+    pub fn seriko_use_self_alpha(&self) -> bool {
+        self.get("seriko.use_self_alpha")
+            .map(|v| v.trim() == "1" || v.trim().eq_ignore_ascii_case("true"))
+            .unwrap_or(false)
+    }
+
     /// `[target].bindoption.group,[カテゴリ名],[オプション...]`（着せ替えグループ設定）
     pub fn bindoption_group(&self, target: &str) -> Option<BindOptionGroup> {
         let value = self.get(&format!("{target}.bindoption.group"))?;

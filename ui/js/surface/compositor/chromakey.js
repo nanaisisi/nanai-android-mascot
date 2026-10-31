@@ -5,9 +5,18 @@
  * @param {Map<string, string>} [cache] - キャッシュMap
  * @returns {Promise<string>} - 透過合成後のDataURL (PNG)
  */
-export function processChromaKey(imageSrc, pnaSrc = null, cache = null) {
+export function processChromaKey(
+	imageSrc,
+	pnaSrc = null,
+	cache = null,
+	options = {},
+) {
 	if (!imageSrc) return Promise.resolve(imageSrc);
-	const cacheKey = pnaSrc ? `${imageSrc}__pna__${pnaSrc}` : imageSrc;
+	if (cache?.has(imageSrc)) {
+		return Promise.resolve(cache.get(imageSrc));
+	}
+	const useSelfAlpha = Boolean(options?.useSelfAlpha);
+	const cacheKey = `${imageSrc}__pna__${pnaSrc || "none"}__selfalpha__${useSelfAlpha}`;
 	if (cache?.has(cacheKey)) {
 		return Promise.resolve(cache.get(cacheKey));
 	}

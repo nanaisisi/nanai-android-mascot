@@ -135,6 +135,14 @@ export const surfaceRenderMethods = {
 	 * @this {import('./surface-manager.js').SurfaceManager}
 	 */
 	processChromaKey(imageSrc, pnaSrc = null) {
-		return processChromaKey(imageSrc, pnaSrc, this.chromaKeyCache);
+		const useSelfAlpha =
+			this.shellManifest?.descript?.properties?.["seriko.use_self_alpha"] ===
+				"1" ||
+			this.shellManifest?.descript?.properties?.[
+				"seriko.use_self_alpha"
+			]?.toLowerCase() === "true";
+		return processChromaKey(imageSrc, pnaSrc, this.chromaKeyCache, {
+			useSelfAlpha,
+		});
 	},
 };

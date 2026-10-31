@@ -11,7 +11,7 @@
 ## 実装箇所
 
 - `src-tauri/src/ghost/scan/shell.rs:113` `// メニュー配色・画像情報の抽出 (menu.frame.color.r/g/b, menu.separator.color.r/g/b, menu.disa`
-- `crates/ui/src/descript/parser.rs:86` `/// バルーンフォント色 (`font.color.r,g,b` または `font.color`)`
+- `crates/ui/src/descript/parser.rs:86` `/// バルーンフォント色 (`font.color.r,g,b`または`font.color`)`
 - `ui/js/core/actions/balloon-descript/font.js:73` `// [font.color.r,数値], [font.color.g,数値], [font.color.b,数値]: props["font.color.r/`
 - `ui/js/core/actions/balloon-descript/font.js:76` `props["font.color.r"] ||`
 - `ui/js/core/actions/balloon-descript/font.js:109` `props[`${prefix}.font.color.r`] ||`

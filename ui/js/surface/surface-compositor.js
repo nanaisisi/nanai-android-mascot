@@ -80,26 +80,61 @@ export function processChromaKey(imageSrc, pnaSrc = null, cache = null) {
 							cornerB === 0);
 
 					let modified = false;
-					const len = data.length;
+					const data32 = new Uint32Array(data.buffer);
+					const len32 = data32.length;
 
-					for (let i = 0; i < len; i += 4) {
-						const r = data[i];
-						const g = data[i + 1];
-						const b = data[i + 2];
-						const a = data[i + 3];
+					// Pre-calculate target color for fast matching
+					// Uint32Array format is ABGR in little-endian architectures (most common)
+					const isLittleEndian =
+						new Uint8Array(new Uint32Array([0x11223344]).buffer)[0] === 0x44;
 
-						if (a === 0) continue;
+					let corner32 = 0;
 
-						// 純緑 (#00FF00) 判定 (許容差あり: R <= 35, G >= 220, B <= 35)
-						const isGreen = r <= 35 && g >= 220 && b <= 35;
+					if (isLittleEndian) {
+						corner32 = (cornerA << 24) | (cornerB << 16) | (cornerG << 8) | cornerR;
+					} else {
+						corner32 = (cornerR << 24) | (cornerG << 16) | (cornerB << 8) | cornerA;
+					}
 
-						// または左上ピクセルと完全一致
-						const isMatchCorner =
-							isCornerTarget && r === cornerR && g === cornerG && b === cornerB;
+					if (isLittleEndian) {
+						for (let i = 0; i < len32; i++) {
+							const pixel = data32[i];
 
-						if (isGreen || isMatchCorner) {
-							data[i + 3] = 0; // アルファ値を 0（完全透明）に設定
-							modified = true;
+							// Fast exit if alpha is 0
+							if ((pixel & 0xff000000) === 0) continue;
+
+							const r = pixel & 0xff;
+							const g = (pixel >> 8) & 0xff;
+							const b = (pixel >> 16) & 0xff;
+
+							// 純緑 (#00FF00) 判定 (許容差あり: R <= 35, G >= 220, B <= 35)
+							const isGreen = r <= 35 && g >= 220 && b <= 35;
+							// または左上ピクセルと完全一致
+							const isMatchCorner = isCornerTarget && pixel === corner32;
+
+							if (isGreen || isMatchCorner) {
+								// アルファ値を 0（完全透明）に設定
+								data32[i] = pixel & 0x00ffffff;
+								modified = true;
+							}
+						}
+					} else {
+						for (let i = 0; i < len32; i++) {
+							const pixel = data32[i];
+
+							if ((pixel & 0x000000ff) === 0) continue;
+
+							const r = (pixel >> 24) & 0xff;
+							const g = (pixel >> 16) & 0xff;
+							const b = (pixel >> 8) & 0xff;
+
+							const isGreen = r <= 35 && g >= 220 && b <= 35;
+							const isMatchCorner = isCornerTarget && pixel === corner32;
+
+							if (isGreen || isMatchCorner) {
+								data32[i] = pixel & 0xffffff00;
+								modified = true;
+							}
 						}
 					}
 
@@ -243,6 +278,8 @@ export function composeSurfaceElements(
 
 				ctx.drawImage(baseImg, 0, 0);
 
+				// Process layers sequentially because the operations affect canvas global state sequentially.
+				// Fetching is deferred to inside drawLayer, which we don't want to break the sequential draw operation.
 				for (const element of elementList) {
 					if (!element.file) continue;
 					await drawLayer(

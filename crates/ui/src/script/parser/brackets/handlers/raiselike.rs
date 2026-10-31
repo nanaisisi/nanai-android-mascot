@@ -40,6 +40,10 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
                 let url = parts.get(2).unwrap_or(&"").to_string();
                 let save_path = parts.get(3).unwrap_or(&"").to_string();
                 callback(SakuraCommand::DownloadExec { url, save_path });
+            } else if parts.get(1).is_some_and(|p| *p == "upload" || *p == "http-post") {
+                let url = parts.get(2).unwrap_or(&"").to_string();
+                let file_path = parts.get(3).unwrap_or(&"").to_string();
+                callback(SakuraCommand::UploadExec { url, file_path });
             } else {
                 callback(SakuraCommand::Command {
                     args: parts.iter().map(|s| s.to_string()).collect(),

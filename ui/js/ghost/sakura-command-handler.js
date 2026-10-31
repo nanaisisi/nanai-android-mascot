@@ -90,6 +90,9 @@ export class SakuraCommandHandler {
 		} else if (rawCmd === "downloadexec") {
 			const [url, savePath] = args.slice(1);
 			console.log(`📥 Download requested: url=${url}, savePath=${savePath}`);
+		} else if (rawCmd === "uploadexec") {
+			const [url, filePath] = args.slice(1);
+			console.log(`📤 Upload requested: url=${url}, filePath=${filePath}`);
 		} else if (rawCmd === "update" || rawCmd === "updatebymyself") {
 			await this.app.startNetworkUpdate?.();
 		} else {

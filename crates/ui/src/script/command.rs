@@ -98,6 +98,10 @@ pub enum SakuraCommand {
         url: String,
         save_path: String,
     },
+    UploadExec {
+        url: String,
+        file_path: String,
+    },
     Biff,
     ExecuteSntp,
     CreateShortcut,

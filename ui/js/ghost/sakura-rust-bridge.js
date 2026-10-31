@@ -71,6 +71,16 @@ export function rustCommandsToTokens(rustCommands) {
 			case "Balloon":
 				tokens.push({ type: "balloon", value: cmd.payload ?? 0 });
 				break;
+			case "InlineBitmap":
+				tokens.push({
+					type: "inline_bitmap",
+					path: cmd.payload?.path ?? "",
+					mode: cmd.payload?.mode ?? "inline",
+					x: cmd.payload?.x,
+					y: cmd.payload?.y,
+					opaque: cmd.payload?.opaque === true,
+				});
+				break;
 			case "Animation":
 				tokens.push({
 					type: "animation",

@@ -209,6 +209,36 @@ export async function handleToken(player, app, token, context) {
 			break;
 		}
 
+		case "inline_bitmap": {
+			const img = document.createElement("img");
+			img.className = "balloon-inline-bitmap";
+			const themeName = app.currentBalloonTheme || "default";
+			const rawPath = token.path || "";
+			const fullPath =
+				rawPath.startsWith("data:") ||
+				rawPath.startsWith("http://") ||
+				rawPath.startsWith("https://")
+					? rawPath
+					: `assets/balloon/${themeName}/${rawPath}`;
+			img.src = globalThis.__TAURI__?.core?.convertFileSrc
+				? globalThis.__TAURI__.core.convertFileSrc(fullPath)
+				: fullPath;
+			img.style.display = "inline-block";
+			img.style.verticalAlign = "middle";
+			img.style.maxHeight = "1.2em";
+			img.style.width = "auto";
+			if (token.mode === "inline" || !token.mode) {
+				currentBalloonText.appendChild(img);
+			} else {
+				if (token.x !== undefined) img.style.left = `${token.x}px`;
+				if (token.y !== undefined) img.style.top = `${token.y}px`;
+				img.style.position = "absolute";
+				currentBalloonText.appendChild(img);
+			}
+			scheduleDesktopBalloonSync(false);
+			break;
+		}
+
 		case "timeout":
 			player.timeCritical = true;
 			break;

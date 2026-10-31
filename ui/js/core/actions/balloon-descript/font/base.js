@@ -15,6 +15,16 @@ export function applyBaseFontProperties(root, props) {
 		if (!Number.isNaN(fh) && fh > 0) {
 			root.style.setProperty("--balloon-font-size", `${fh}px`);
 		}
+	} else if (props["font.size"]) {
+		const fs = parseInt(props["font.size"], 10);
+		if (!Number.isNaN(fs) && fs > 0) {
+			// SSP 規格: pt 換算 (9pt = 12px 相当: pt * 96 / 72)
+			const pxSize = Math.round((fs * 96) / 72);
+			root.style.setProperty("--balloon-font-size", `${pxSize}px`);
+		}
+	} else {
+		// SSP 標準の初期フォントサイズ (9pt = 12px)
+		root.style.setProperty("--balloon-font-size", "12px");
 	}
 
 	if (

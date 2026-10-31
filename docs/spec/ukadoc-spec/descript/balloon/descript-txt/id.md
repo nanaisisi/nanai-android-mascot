@@ -12,4 +12,3 @@
 
 - `src-tauri/src/commands/ext.rs:33` `// [name,プラグイン名], [id,ID名], [type,種別], [filename,ファイル名]:`
 - `src-tauri/src/commands/ext.rs:98` `// [name,ヘッドライン名], [id,ID名], [type,種別]:`
-- `ui/js/core/actions/balloon-descript/font.js:10` `// [id,ID名]: props["id"]`

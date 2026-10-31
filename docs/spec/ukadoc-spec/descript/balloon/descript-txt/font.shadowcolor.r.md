@@ -10,8 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js:87` `// [font.shadowcolor.r,数値], [font.shadowcolor.g,数値], [font.shadowcolor.b,数値], [f`
-- `ui/js/core/actions/balloon-descript/font.js:90` `props["font.shadowcolor.r"] ||`
-- `ui/js/core/actions/balloon-descript/font.js:118` `props[`${prefix}.font.shadowcolor.r`] ||`
-- `ui/js/core/actions/balloon-descript/font.js:176` `// [anchor.font.shadowcolor.r,数値], [anchor.font.shadowcolor.g,数値], [anchor.font.`
-- `ui/js/core/actions/balloon-descript/font.js:178` `props["anchor.font.shadowcolor.r"] ||`
+- `ui/js/core/actions/balloon-descript/font/base.js:74` `props["font.shadowcolor.r"] ||`
+- `ui/js/core/actions/balloon-descript/font/group.js:15` `props[`${prefix}.font.shadowcolor.r`] ||`
+- `tests/balloon-descript.test.js:90` `"font.shadowcolor.r": "200",`

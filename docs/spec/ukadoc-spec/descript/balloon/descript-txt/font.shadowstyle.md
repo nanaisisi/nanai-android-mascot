@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js:87` `// [font.shadowcolor.r,数値], [font.shadowcolor.g,数値], [font.shadowcolor.b,数値], [f`
-- `ui/js/core/actions/balloon-descript/font.js:98` `if (props["font.shadowstyle"]) {`
-- `ui/js/core/actions/balloon-descript/font.js:101` `props["font.shadowstyle"],`
-- `ui/js/core/actions/balloon-descript/font.js:126` `if (props[`${prefix}.font.shadowstyle`]) {`
-- `ui/js/core/actions/balloon-descript/font.js:129` `props[`${prefix}.font.shadowstyle`],`
+- `ui/js/core/actions/balloon-descript/font/base.js:82` `if (props["font.shadowstyle"]) {`
+- `ui/js/core/actions/balloon-descript/font/base.js:85` `props["font.shadowstyle"],`
+- `ui/js/core/actions/balloon-descript/font/group.js:23` `if (props[`${prefix}.font.shadowstyle`]) {`
+- `ui/js/core/actions/balloon-descript/font/group.js:26` `props[`${prefix}.font.shadowstyle`],`
+- `tests/balloon-descript.test.js:93` `"font.shadowstyle": "outline",`

@@ -10,7 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js:65` `// [font.outline,0/1]: props["font.outline"]`
-- `ui/js/core/actions/balloon-descript/font.js:67` `props["font.outline"] === "1" ||`
-- `ui/js/core/actions/balloon-descript/font.js:68` `props["font.outline"]?.toLowerCase() === "true"`
+- `ui/js/core/actions/balloon-descript/font/base.js:53` `props["font.outline"] === "1" ||`
+- `ui/js/core/actions/balloon-descript/font/base.js:54` `props["font.outline"]?.toLowerCase() === "true"`
 - `tests/balloon-descript.test.js:86` `"font.outline": "1",`

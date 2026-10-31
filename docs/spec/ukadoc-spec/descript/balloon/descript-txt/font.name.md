@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js:13` `// [font.name,フォント名]: props["font.name"]`
-- `ui/js/core/actions/balloon-descript/font.js:14` `if (props["font.name"]) {`
-- `ui/js/core/actions/balloon-descript/font.js:17` ``"${props["font.name"]}", Meiryo, sans-serif`,`
-- `ui/js/core/actions/balloon-descript/font.js:321` `// [number.font.name,フォント名], [number.font.height,数値], [number.font.color.r,数値], `
-- `ui/js/core/actions/balloon-descript/font.js:322` `const numFontName = props["number.font.name"];`
+- `ui/js/core/actions/balloon-descript/layout.js:28` `// [communicatebox.font.name,フォント名], [communicatebox.font.color.r/g/b,数値], [comm`
+- `ui/js/core/actions/balloon-descript/layout.js:33` `const cbFontName = props["communicatebox.font.name"];`
+- `ui/js/core/actions/balloon-descript/font/base.js:6` `if (props["font.name"]) {`
+- `ui/js/core/actions/balloon-descript/font/base.js:9` ``"${props["font.name"]}", Meiryo, sans-serif`,`
+- `ui/js/core/actions/balloon-descript/font/special.js:15` `const numFontName = props["number.font.name"];`

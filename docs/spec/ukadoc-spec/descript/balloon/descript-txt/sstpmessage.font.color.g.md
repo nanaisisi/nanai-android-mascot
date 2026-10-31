@@ -10,5 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js:342` `// [sstpmessage.font.name,フォント名], [sstpmessage.font.height,サイズ], [sstpmessage.fo`
-- `ui/js/core/actions/balloon-descript/font.js:357` `props["sstpmessage.font.color.g"] ||`
+- `ui/js/core/actions/balloon-descript/font/special.js:49` `props["sstpmessage.font.color.g"] ||`

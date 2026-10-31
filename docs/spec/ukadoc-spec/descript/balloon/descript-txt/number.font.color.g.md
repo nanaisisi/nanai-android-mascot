@@ -10,6 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js:321` `// [number.font.name,フォント名], [number.font.height,数値], [number.font.color.r,数値], `
-- `ui/js/core/actions/balloon-descript/font.js:336` `props["number.font.color.g"] ||`
+- `ui/js/core/actions/balloon-descript/font/special.js:29` `props["number.font.color.g"] ||`
 - `tests/balloon-descript.test.js:121` `"number.font.color.g": "10",`

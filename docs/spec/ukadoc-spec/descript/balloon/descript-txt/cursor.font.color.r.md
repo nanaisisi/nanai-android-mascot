@@ -10,7 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js:254` `// [cursor.style,形状], [cursor.blendmethod,コマンド], [cursor.font.color.r,数値], [curs`
-- `ui/js/core/actions/balloon-descript/font.js:258` `props["cursor.font.color.r"] ||`
 - `tests/balloon-descript.test.js:107` `"cursor.font.color.r": "255",`
 - `tests/balloon-window.test.js:92` `"cursor.font.color.r": "50",`

@@ -11,5 +11,4 @@
 ## 実装箇所
 
 - `src-tauri/src/ghost/scan/shell/theme.rs:40` `let dis_font_col = parse_color("menu.disable.font.color");`
-- `ui/js/core/actions/balloon-descript/font.js:363` `// [disable.font.(フォント定義),(指定)]: props["disable.font"]`
-- `ui/js/core/actions/balloon-descript/font.js:364` `const disableFont = props["disable.font"];`
+- `ui/js/core/actions/balloon-descript/font/special.js:55` `const disableFont = props["disable.font"];`

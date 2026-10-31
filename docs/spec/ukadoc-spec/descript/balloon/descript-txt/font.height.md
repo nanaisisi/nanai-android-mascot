@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js:21` `// [font.height,数値]: props["font.height"]`
-- `ui/js/core/actions/balloon-descript/font.js:22` `if (props["font.height"]) {`
-- `ui/js/core/actions/balloon-descript/font.js:23` `const fh = parseInt(props["font.height"], 10);`
-- `ui/js/core/actions/balloon-descript/font.js:321` `// [number.font.name,フォント名], [number.font.height,数値], [number.font.color.r,数値], `
-- `ui/js/core/actions/balloon-descript/font.js:329` `const numFontHeight = parseInt(props["number.font.height"], 10);`
+- `ui/js/core/actions/balloon-descript/layout.js:34` `const cbFontHeight = parseInt(props["communicatebox.font.height"], 10);`
+- `ui/js/core/actions/balloon-descript/font/base.js:13` `if (props["font.height"]) {`
+- `ui/js/core/actions/balloon-descript/font/base.js:14` `const fh = parseInt(props["font.height"], 10);`
+- `ui/js/core/actions/balloon-descript/font/special.js:22` `const numFontHeight = parseInt(props["number.font.height"], 10);`
+- `ui/js/core/actions/balloon-descript/font/special.js:42` `const sstpFontHeight = parseInt(props["sstpmessage.font.height"], 10);`

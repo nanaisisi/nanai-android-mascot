@@ -11,7 +11,7 @@
 ## 実装箇所
 
 - `crates/ui/src/descript/parser.rs:86` `/// バルーンフォント色 (`font.color.r,g,b` または `font.color`)`
-- `ui/js/core/actions/balloon-descript/font.js:73` `// [font.color.r,数値], [font.color.g,数値], [font.color.b,数値]: props["font.color.r/`
-- `ui/js/core/actions/balloon-descript/font.js:76` `props["font.color.r"] ||`
-- `ui/js/core/actions/balloon-descript/font.js:109` `props[`${prefix}.font.color.r`] ||`
-- `ui/js/core/actions/balloon-descript/font.js:168` `// [anchor.style,形状], [anchor.font.color.r,数値], [anchor.font.color.g,数値], [ancho`
+- `ui/js/core/actions/balloon-descript/layout.js:28` `// [communicatebox.font.name,フォント名], [communicatebox.font.color.r/g/b,数値], [comm`
+- `ui/js/core/actions/balloon-descript/layout.js:38` `props["communicatebox.font.color.r"] ||`
+- `ui/js/core/actions/balloon-descript/font/base.js:61` `props["font.color.r"] ||`
+- `ui/js/core/actions/balloon-descript/font/group.js:6` `props[`${prefix}.font.color.r`] ||`

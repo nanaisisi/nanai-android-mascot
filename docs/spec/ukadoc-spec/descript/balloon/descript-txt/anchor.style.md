@@ -10,6 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js:168` `// [anchor.style,形状], [anchor.font.color.r,数値], [anchor.font.color.g,数値], [ancho`
-- `ui/js/core/actions/balloon-descript/font.js:170` `props["anchor.style"] ||`
 - `tests/balloon-descript.test.js:94` `"anchor.style": "square+underline",`

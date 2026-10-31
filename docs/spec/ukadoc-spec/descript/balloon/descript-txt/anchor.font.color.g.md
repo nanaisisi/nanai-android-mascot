@@ -10,6 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font.js:168` `// [anchor.style,形状], [anchor.font.color.r,数値], [anchor.font.color.g,数値], [ancho`
-- `ui/js/core/actions/balloon-descript/font.js:172` `props["anchor.font.color.g"] ||`
 - `tests/balloon-descript.test.js:96` `"anchor.font.color.g": "0",`

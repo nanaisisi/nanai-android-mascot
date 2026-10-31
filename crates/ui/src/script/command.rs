@@ -81,6 +81,14 @@ pub enum SakuraCommand {
     },
     SaveWallpaper,
     RestoreWallpaper,
+    Cancel {
+        service: String,
+        target: String,
+    },
+    Close {
+        service: String,
+        target: String,
+    },
     Biff,
     ExecuteSntp,
     CreateShortcut,

@@ -218,6 +218,16 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
                 });
             }
         }
+        "cancel" => {
+            let service = parts.get(1).unwrap_or(&"").to_string();
+            let target = parts.get(2).unwrap_or(&"").to_string();
+            callback(SakuraCommand::Cancel { service, target });
+        }
+        "close" => {
+            let service = parts.get(1).unwrap_or(&"").to_string();
+            let target = parts.get(2).unwrap_or(&"").to_string();
+            callback(SakuraCommand::Close { service, target });
+        }
         _ => {
             }
         }

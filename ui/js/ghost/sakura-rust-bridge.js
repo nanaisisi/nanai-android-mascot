@@ -143,6 +143,20 @@ export function rustCommandsToTokens(rustCommands) {
 			case "RestoreWallpaper":
 				tokens.push({ type: "command", command: "restorewallpaper", args: [] });
 				break;
+			case "Cancel":
+				tokens.push({
+					type: "command",
+					command: "cancel",
+					args: [cmd.payload?.service ?? "", cmd.payload?.target ?? ""],
+				});
+				break;
+			case "Close":
+				tokens.push({
+					type: "command",
+					command: "close",
+					args: [cmd.payload?.service ?? "", cmd.payload?.target ?? ""],
+				});
+				break;
 			case "Biff":
 				tokens.push({ type: "command", command: "biff", args: [] });
 				break;

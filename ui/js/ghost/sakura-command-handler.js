@@ -82,6 +82,9 @@ export class SakuraCommandHandler {
 			console.log(`🖼️ Wallpaper set: ${filename} (option: ${option})`);
 		} else if (rawCmd === "savewallpaper" || rawCmd === "restorewallpaper") {
 			console.log(`🖼️ Wallpaper ${rawCmd} executed`);
+		} else if (rawCmd === "cancel" || rawCmd === "close") {
+			const [service, target] = args.slice(1);
+			console.log(`🛑 Network service ${rawCmd}: ${service} (${target})`);
 		} else if (rawCmd === "update" || rawCmd === "updatebymyself") {
 			await this.app.startNetworkUpdate?.();
 		} else {

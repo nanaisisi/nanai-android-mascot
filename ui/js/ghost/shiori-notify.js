@@ -12,7 +12,12 @@ import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
  * - installedshellname (現在のゴーストに同梱のシェル名)
  * - ghostpathlist (読み込み可能なゴーストフォルダのフルパス)
  * - basewareversion / uniqueid
- * - OnBalloonBreak / OnBalloonClose / OnBalloonTimeout (バルーン操作イベント)
+ * - OnBalloonBreak, OnBalloonClose, OnBalloonTimeout (バルーン操作イベント)
+ * - OnBalloonChange, OnBasewareUpdated, OnBasewareUpdating, OnBoot, OnCacheRestore, OnCacheSuspend
+ * - OnClose, OnCloseAll, OnDestroy, OnDressupChanged, OnFirstBoot, OnFullScreenAppMinimize
+ * - OnFullScreenAppRestore, OnGhostCallComplete, OnGhostCalled, OnGhostCalling, OnGhostChanged, OnGhostChanging
+ * - OnInitialize, OnOtherGhostBooted, OnOtherGhostChanged, OnOtherGhostClosed, OnShellChanged, OnShellChanging
+ * - OnSysResume, OnSysSuspend, OnVirtualDesktopChanged, OnWindowStateMinimize, OnWindowStateRestore
  */
 export const shioriNotifyMethods = {
 	/**

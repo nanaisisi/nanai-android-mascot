@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:15` `* - OnBalloonBreak / OnBalloonClose / OnBalloonTimeout (バルーン操作イベント)`
+- `ui/js/ghost/shiori-notify.js:15` `* - OnBalloonBreak, OnBalloonClose, OnBalloonTimeout (バルーン操作イベント)`

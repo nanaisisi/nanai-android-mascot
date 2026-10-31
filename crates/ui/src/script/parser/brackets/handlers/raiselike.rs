@@ -31,7 +31,7 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
                     title,
                     memo,
                 });
-            } else if parts.get(1).is_some_and(|p| *p == "extractarchive" || *p == "compressarchive" || *p == "createnar") {
+            } else if parts.get(1).is_some_and(|p| *p == "extractarchive" || *p == "compressarchive" || *p == "createnar" || *p == "createupdatedata") {
                 let action = parts.get(1).unwrap_or(&"").to_string();
                 let filename = parts.get(2).unwrap_or(&"").to_string();
                 let dest = parts.get(3).unwrap_or(&"").to_string();

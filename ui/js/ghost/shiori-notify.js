@@ -23,6 +23,7 @@ import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
  * - OnAnchorEnter, OnAnchorHover, OnAnchorSelect, OnAnchorSelectEx
  * - OnChoiceEnter, OnChoiceHover, OnChoiceSelect, OnChoiceSelectEx, OnChoiceTimeout
  * - OnConfigurationDialogHelp, OnGhostTermsAccept, OnGhostTermsDecline, OnSystemDialog, OnSystemDialogCancel
+ * - OnNotifyOtherFailure, OnNotifyPluginFailure, OnRaiseOtherFailure, OnRaisePluginFailure
  */
 export const shioriNotifyMethods = {
 	/**

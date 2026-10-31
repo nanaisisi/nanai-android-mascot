@@ -145,13 +145,16 @@ async function applyBalloonDescript(theme) {
 			? await processChromaKey(bgImageRaw, pnaImage)
 			: null;
 
-		// オプションアセット (balloonc, arrow, sstp, online) のロード試行
+		// オプションアセット (balloonc, arrow0/1, sstp, online) のロード試行
 		await Promise.all([
 			invoke("load_balloon_image", {
 				name: theme,
 				file: "balloonc0.png",
 			}).catch(() => null),
 			invoke("load_balloon_image", { name: theme, file: "arrow0.png" }).catch(
+				() => null,
+			),
+			invoke("load_balloon_image", { name: theme, file: "arrow1.png" }).catch(
 				() => null,
 			),
 			invoke("load_balloon_image", { name: theme, file: "sstp.png" }).catch(

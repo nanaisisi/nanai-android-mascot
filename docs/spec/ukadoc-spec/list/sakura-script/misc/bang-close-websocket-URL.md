@@ -11,7 +11,7 @@
 ## 実装箇所
 
 - `src-tauri/src/shiori/ffi/builder.rs:84` `.event("OnClose")`
-- `crates/ui/src/script/command.rs:111` `Close {`
+- `crates/ui/src/script/command.rs:112` `Close {`
 - `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:221` `callback(SakuraCommand::Close { service, target });`
 - `crates/ui/src/shiori/protocol/request.rs:185` `let notify_req = ShioriRequest::notify("OnClose", &[]);`
 - `crates/ui/src/shiori/protocol/request.rs:187` `assert_eq!(notify_req.id, "OnClose");`

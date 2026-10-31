@@ -10,6 +10,6 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/command.rs:120` `DownloadExec {`
+- `crates/ui/src/script/command.rs:121` `DownloadExec {`
 - `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:42` `callback(SakuraCommand::DownloadExec { url, save_path });`
 - `ui/js/ghost/sakura-rust-bridge.js:167` `case "DownloadExec":`

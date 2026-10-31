@@ -10,6 +10,6 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/command.rs:39` `Plus,      // \+ / \_+`
-- `crates/ui/src/script/parser/mod.rs:105` `Some('+') => callback(SakuraCommand::Plus),  // \+`
-- `crates/ui/src/script/parser/brackets/handlers/underscore.rs:143` `callback(SakuraCommand::Plus);`
+- `crates/ui/src/script/command.rs:40` `Plus,      // \+ / \_+`
+- `crates/ui/src/script/parser/mod.rs:111` `Some('+') => callback(SakuraCommand::Plus),  // \+`
+- `crates/ui/src/script/parser/brackets/handlers/underscore.rs:159` `callback(SakuraCommand::Plus);`

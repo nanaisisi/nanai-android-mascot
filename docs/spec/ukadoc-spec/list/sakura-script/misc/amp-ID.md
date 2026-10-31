@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/parser/mod.rs:107` `// \&[ID] entity / property interpolation (\&[amp], \&[lt], \&[gt], \&[quot], \&`
+- `crates/ui/src/script/parser/mod.rs:113` `// \&[ID] entity / property interpolation (\&[amp], \&[lt], \&[gt], \&[quot], \&`

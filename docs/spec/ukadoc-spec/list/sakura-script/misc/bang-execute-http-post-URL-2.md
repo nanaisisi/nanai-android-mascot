@@ -10,6 +10,6 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/command.rs:124` `UploadExec {`
+- `crates/ui/src/script/command.rs:125` `UploadExec {`
 - `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:46` `callback(SakuraCommand::UploadExec { url, file_path });`
 - `ui/js/ghost/sakura-rust-bridge.js:174` `case "UploadExec":`

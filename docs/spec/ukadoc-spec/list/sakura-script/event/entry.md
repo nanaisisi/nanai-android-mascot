@@ -11,7 +11,7 @@
 ## 実装箇所
 
 - `crates/ui/src/lib.rs:121` `assert_eq!(commands[3], SakuraCommand::Halt);`
-- `crates/ui/src/script/command.rs:62` `Halt,         // \- (ゴースト終了)`
+- `crates/ui/src/script/command.rs:63` `Halt,         // \- (ゴースト終了)`
 - `crates/ui/src/script/parser/mod.rs:69` `Some('-') => callback(SakuraCommand::Halt),`
 - `crates/ui/src/script/parser/mod.rs:94` `Some('-') => callback(SakuraCommand::Halt),  // \-`
 - `ui/js/ghost/sakura-rust-bridge.js:84` `case "Halt":`

@@ -10,6 +10,6 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/command.rs:115` `ArchiveExec {`
+- `crates/ui/src/script/command.rs:116` `ArchiveExec {`
 - `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:38` `callback(SakuraCommand::ArchiveExec { action, filename, dest });`
 - `ui/js/ghost/sakura-rust-bridge.js:160` `case "ArchiveExec":`

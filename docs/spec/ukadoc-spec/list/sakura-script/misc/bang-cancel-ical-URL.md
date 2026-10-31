@@ -11,7 +11,7 @@
 ## 実装箇所
 
 - `src-tauri/src/commands/shell/ghost.rs:29` `.buttons(MessageDialogButtons::OkCancel)`
-- `crates/ui/src/script/command.rs:107` `Cancel {`
+- `crates/ui/src/script/command.rs:108` `Cancel {`
 - `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:216` `callback(SakuraCommand::Cancel { service, target });`
 - `ui/js/ghost/sakura-rust-bridge.js:146` `case "Cancel":`
 - `ui/js/ghost/command-handler/inputbox.js:73` `await handler.app.ghostController.sendShioriEvent("OnUserInputCancel", [id]);`

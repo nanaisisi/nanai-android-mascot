@@ -69,8 +69,8 @@
 | [\![unload,makoto]](bang-unload-makoto.md) | Command | ✅ 実装済 |
 | [\![unload,shiori]](bang-unload-shiori.md) | Command | ✅ 実装済 |
 | [\m[umsg,wparam,lparam]](m-umsg-wparam-lparam.md) | \m | ❌ 検出なし |
-| [http/rss/ical/websocket オプション](notes_executehttp.md) | notes_executehttp.md | ✅ 文書対応済 |
-| [iCal絞り込みオプション \[2.8.90\]](notes_executeical.md) | notes_executeical.md | ✅ 文書対応済 |
-| [RSS絞り込みオプション \[2.8.92\]](notes_executerss.md) | notes_executerss.md | ✅ 文書対応済 |
-| [InductionMode](notes_inductionmode.md) | notes_inductionmode.md | ✅ 文書対応済 |
-| [PassiveMode](notes_passivemode.md) | notes_passivemode.md | ✅ 文書対応済 |
+| [http/rss/ical/websocket オプション](notes_executehttp.md) | notes_executehttp.md | ✅ 実装済 |
+| [iCal絞り込みオプション \[2.8.90\]](notes_executeical.md) | notes_executeical.md | ✅ 実装済 |
+| [RSS絞り込みオプション \[2.8.92\]](notes_executerss.md) | notes_executerss.md | ✅ 実装済 |
+| [InductionMode](notes_inductionmode.md) | notes_inductionmode.md | ✅ 実装済 |
+| [PassiveMode](notes_passivemode.md) | notes_passivemode.md | ✅ 実装済 |

@@ -11,6 +11,6 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/command.rs:51` `Voice(String),     // \__v[opt]`
-- `crates/ui/src/script/parser/brackets/handlers/underscore.rs:124` `// \__v, \__q, \_+`
+- `crates/ui/src/script/command.rs:52` `Voice(String),     // \__v[opt]`
+- `crates/ui/src/script/parser/brackets/handlers/underscore.rs:124` `// \__v, \__q, \__c, \__t, \_+`
 - `ui/js/ghost/sakura-tokenizer.js:311` `// \_x や \__v のようなアンダースコアで始まるタグ名（[ 直前まで）をスキップ`

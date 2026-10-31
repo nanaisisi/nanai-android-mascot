@@ -47,6 +47,6 @@
 | [\![vanishbymyself]](bang-vanishbymyself.md) | Halt | ✅ 実装済 |
 | [\e](e.md) | End | ✅ 実装済 |
 | [\-](entry.md) | Halt | ✅ 実装済 |
-| [補足](note-1.md) | note-1.md | ✅ 文書対応済 |
+| [補足](note-1.md) | note-1.md | ✅ 実装済 |
 | [\+](plus.md) | Plus | ✅ 実装済 |
 | [\v](v.md) | Voice | ✅ 実装済 |

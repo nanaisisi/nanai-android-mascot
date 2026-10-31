@@ -102,6 +102,12 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
                 Some('z') => callback(SakuraCommand::Z),     // \z
                 Some('a') => callback(SakuraCommand::AudioWait), // \a
                 Some('v') => callback(SakuraCommand::Voice("".into())), // \v
+                Some('j') => {
+                    // \j[ID] / \j[URL] jump
+                    if let Some(target) = brackets::read_bracketed(&mut chars) {
+                        callback(SakuraCommand::Jump(target));
+                    }
+                }
                 Some('+') => callback(SakuraCommand::Plus),  // \+
                 Some('&') => {
                     // \&[ID] entity / property interpolation (\&[amp], \&[lt], \&[gt], \&[quot], \&[ID])

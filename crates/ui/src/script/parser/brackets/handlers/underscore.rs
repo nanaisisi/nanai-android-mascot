@@ -121,8 +121,24 @@ pub(crate) fn handle_underscore(
             }
         }
         Some('_') => {
-            // \__v, \__q, \_+
+            // \__v, \__q, \__c, \__t, \_+
             match chars.next() {
+                Some('c') => {
+                    // \__c open communicatebox
+                    callback(SakuraCommand::OpenDialog {
+                        dialog_type: "communicatebox".to_string(),
+                        id: "".to_string(),
+                        args: Vec::new(),
+                    });
+                }
+                Some('t') => {
+                    // \__t open teachbox
+                    callback(SakuraCommand::OpenDialog {
+                        dialog_type: "teachbox".to_string(),
+                        id: "".to_string(),
+                        args: Vec::new(),
+                    });
+                }
                 Some('v') => {
                     let opt = read_bracketed(chars).unwrap_or_default();
                     callback(SakuraCommand::Voice(opt));

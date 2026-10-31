@@ -36,6 +36,7 @@ pub enum SakuraCommand {
     Star, // \*
     Z,    // \z
     AudioWait, // \a
+    Jump(String), // \j[ID] / \j[URL] ジャンプ
     Plus,      // \+ / \_+
     Raise {
         event: String,

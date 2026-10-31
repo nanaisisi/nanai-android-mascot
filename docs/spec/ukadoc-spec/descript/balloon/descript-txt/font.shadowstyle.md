@@ -10,7 +10,7 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font/base.js:82` `if (props["font.shadowstyle"]) {`
-- `ui/js/core/actions/balloon-descript/font/base.js:85` `props["font.shadowstyle"],`
+- `ui/js/core/actions/balloon-descript/font/base.js:92` `if (props["font.shadowstyle"]) {`
+- `ui/js/core/actions/balloon-descript/font/base.js:95` `props["font.shadowstyle"],`
 - `ui/js/core/actions/balloon-descript/font/group.js:23` `if (props[`${prefix}.font.shadowstyle`]) {`
 - `ui/js/core/actions/balloon-descript/font/group.js:26` `props[`${prefix}.font.shadowstyle`],`

@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/assets.js:92` `// [sstpmarker.x,座標], [sstpmarker.y,座標]:`
-- `ui/js/core/actions/balloon-descript/assets.js:94` `const smY = parseInt(props["sstpmarker.y"], 10);`
+- `ui/js/core/actions/balloon-descript/assets.js:109` `// [sstpmarker.x,座標], [sstpmarker.y,座標]:`
+- `ui/js/core/actions/balloon-descript/assets.js:111` `const smY = parseInt(props["sstpmarker.y"], 10);`

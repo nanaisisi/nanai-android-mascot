@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/command.rs:75` `ScheduleAdd {`
-- `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:28` `callback(SakuraCommand::ScheduleAdd {`
+- `crates/ui/src/script/command.rs:81` `ScheduleAdd {`
+- `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:56` `callback(SakuraCommand::ScheduleAdd {`

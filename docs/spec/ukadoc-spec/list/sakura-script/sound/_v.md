@@ -10,6 +10,6 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/command.rs:52` `Voice(String),     // \__v[opt]`
+- `crates/ui/src/script/command.rs:58` `Voice(String),     // \__v[opt]`
 - `crates/ui/src/script/parser/mod.rs:104` `Some('v') => callback(SakuraCommand::Voice("".into())), // \v`
 - `crates/ui/src/script/parser/brackets/handlers/underscore.rs:144` `callback(SakuraCommand::Voice(opt));`

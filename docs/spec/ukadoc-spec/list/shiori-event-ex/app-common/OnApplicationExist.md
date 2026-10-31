@@ -13,4 +13,4 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:80` `async checkApplicationExist(appName) {`
+- `ui/js/ghost/shiori-notify.js:86` `async checkApplicationExist(appName) {`

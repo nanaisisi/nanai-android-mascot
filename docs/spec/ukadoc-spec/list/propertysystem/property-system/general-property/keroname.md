@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/fmo.rs:13` `pub keroname: String,`
-- `src-tauri/src/shiori/fmo.rs:34` `content.push_str(&format!("{}.keroname\x01{}\r\n", prefix, rec.keroname));`
-- `src-tauri/src/shiori/fmo.rs:68` `keroname: "Kero".to_string(),`
-- `crates/ui/src/script/env.rs:11` `keroname: &str,`
+- `src-tauri/src/shiori/fmo.rs:14` `pub keroname: String,`
+- `src-tauri/src/shiori/fmo.rs:122` `content.push_str(&format!("{}.keroname\x01{}\r\n", prefix, rec.keroname));`
+- `src-tauri/src/shiori/fmo.rs:156` `keroname: "Kero".to_string(),`
+- `crates/ui/src/script/env.rs:8` `keroname: &str,`
 - `crates/ui/src/script/env.rs:31` `result = result.replace("%keroname", keroname);`

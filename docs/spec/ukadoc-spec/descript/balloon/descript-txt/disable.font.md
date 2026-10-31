@@ -12,3 +12,4 @@
 
 - `src-tauri/src/ghost/scan/shell/theme.rs:40` `let dis_font_col = parse_color("menu.disable.font.color");`
 - `ui/js/core/actions/balloon-descript/font/special.js:55` `const disableFont = props["disable.font"];`
+- `ui/js/ghost/shiori-notify.js:35` `* - menu.disable.font.color.r, menu.disable.font.color.g, menu.disable.font.colo`

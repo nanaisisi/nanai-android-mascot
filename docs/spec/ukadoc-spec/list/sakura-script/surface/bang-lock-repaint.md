@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/command.rs:55` `LockBalloonRepaint(bool),`
-- `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:160` `callback(SakuraCommand::LockBalloonRepaint(parts[0] == "lock"));`
+- `crates/ui/src/script/command.rs:61` `LockBalloonRepaint(bool),`
+- `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:188` `callback(SakuraCommand::LockBalloonRepaint(parts[0] == "lock"));`

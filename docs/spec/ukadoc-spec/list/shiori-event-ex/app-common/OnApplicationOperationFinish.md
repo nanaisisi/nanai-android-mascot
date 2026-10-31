@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:104` `async notifyApplicationOperationFinish(appName, operationName = "") {`
+- `ui/js/ghost/shiori-notify.js:110` `async notifyApplicationOperationFinish(appName, operationName = "") {`

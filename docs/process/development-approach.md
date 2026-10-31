@@ -86,7 +86,7 @@ Frontend Architecture:
 
 伺かゴーストの中核である「SHIORI」は、伝統的に Windows ネイティブ 32bit DLL（`satori.dll`, `yaya.dll` など）として配布されています。Android や 64bit/ARM 環境でこれを稼働させるため、**多層フォールバック機構** を採用しています。
 
-詳細な仕様は [plugin-and-shiori-fallback-spec.md](../spec/shiori-script/plugin-and-shiori-fallback-spec.md) および [wasm-and-plugin-extensibility.md](../spec/platform/wasm-and-plugin-extensibility.md) を参照してください。
+詳細な仕様は [plugin-and-shiori-fallback-spec.md](../doc-spec/shiori-script/plugin-and-shiori-fallback-spec.md) および [wasm-and-plugin-extensibility.md](../doc-spec/platform/wasm-and-plugin-extensibility.md) を参照してください。
 
 ```mermaid
 flowchart TD
@@ -111,7 +111,7 @@ flowchart TD
 
 ## 5. ゴーストデータ管理とアセット構造
 
-公式サンプルキャラクター（`mock_nanai`）および外部ゴーストのアセットは、標準的な伺かディレクトリ構造を準拠して管理します（詳細は [standard-ghost-spec.md](../spec/ghost/standard-ghost-spec.md) 参照）。
+公式サンプルキャラクター（`mock_nanai`）および外部ゴーストのアセットは、標準的な伺かディレクトリ構造を準拠して管理します（詳細は [standard-ghost-spec.md](../doc-spec/ghost/standard-ghost-spec.md) 参照）。
 
 ```text
 assets/ghost/

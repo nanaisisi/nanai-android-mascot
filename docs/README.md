@@ -41,19 +41,19 @@
 
 ### 🔧 詳細技術仕様書 (`spec/`)
 
-- **[standard-ghost-spec.md](spec/ghost/standard-ghost-spec.md)** - 公式サンプルキャラクター仕様書（モック & プチ）
-- **[sakura-script-and-balloon-spec.md](spec/shiori-script/sakura-script-and-balloon-spec.md)** - さくらスクリプトパーサー & バルーン文字送り仕様書
-- **[surfaces-and-collision-spec.md](spec/ghost/surfaces-and-collision-spec.md)** - surfaces.txt アニメーション合成 & 当たり判定仕様書
-- **[encoding-and-vfs-spec.md](spec/platform/encoding-and-vfs-spec.md)** - 文字コード変換 (Shift_JIS ↔ UTF-8) & 仮想ファイルシステム (VFS) 仕様書
-- **[android-overlay-and-service-spec.md](spec/platform/android-overlay-and-service-spec.md)** - Android システムオーバーレイ & 常駐生存仕様書
-- **[plugin-and-shiori-fallback-spec.md](spec/shiori-script/plugin-and-shiori-fallback-spec.md)** - プラグイン & SHIORI 読込み・代替読込み (Fallback) 仕様書
-- **[wasm-and-plugin-extensibility.md](spec/platform/wasm-and-plugin-extensibility.md)** - WASM化指針 & JavaScript拡張システム仕様書
-- **[shiori-integration.md](spec/shiori-script/shiori-integration.md)** - SHIORI 組み込み統合技術仕様
-- **[ssp-compatibility-reference.md](spec/reference/ssp-compatibility-reference.md)** - SSP 仕様ベース 統合互換リファレンスマニュアル
-- **[local-reference-and-test-spec.md](spec/reference/local-reference-and-test-spec.md)** - ローカル外部仕様・試験環境（local/）連携仕様書
-- **[ghost-compatibility-gap-and-roadmap.md](spec/ghost/ghost-compatibility-gap-and-roadmap.md)** - 伺かゴースト互換性ギャップ分析と実装改善ロードマップ仕様書
-- **[compatibility-implementation-plan.md](spec/reference/compatibility-implementation-plan.md)** - 互換実装計画仕様書
-- **[specification-compliance-matrix.md](spec/reference/specification-compliance-matrix.md)** - 仕様適合マトリクス
+- **[standard-ghost-spec.md](doc-spec/ghost/standard-ghost-spec.md)** - 公式サンプルキャラクター仕様書（モック & プチ）
+- **[sakura-script-and-balloon-spec.md](doc-spec/shiori-script/sakura-script-and-balloon-spec.md)** - さくらスクリプトパーサー & バルーン文字送り仕様書
+- **[surfaces-and-collision-spec.md](doc-spec/ghost/surfaces-and-collision-spec.md)** - surfaces.txt アニメーション合成 & 当たり判定仕様書
+- **[encoding-and-vfs-spec.md](doc-spec/platform/encoding-and-vfs-spec.md)** - 文字コード変換 (Shift_JIS ↔ UTF-8) & 仮想ファイルシステム (VFS) 仕様書
+- **[android-overlay-and-service-spec.md](doc-spec/platform/android-overlay-and-service-spec.md)** - Android システムオーバーレイ & 常駐生存仕様書
+- **[plugin-and-shiori-fallback-spec.md](doc-spec/shiori-script/plugin-and-shiori-fallback-spec.md)** - プラグイン & SHIORI 読込み・代替読込み (Fallback) 仕様書
+- **[wasm-and-plugin-extensibility.md](doc-spec/platform/wasm-and-plugin-extensibility.md)** - WASM化指針 & JavaScript拡張システム仕様書
+- **[shiori-integration.md](doc-spec/shiori-script/shiori-integration.md)** - SHIORI 組み込み統合技術仕様
+- **[ssp-compatibility-reference.md](doc-spec/reference/ssp-compatibility-reference.md)** - SSP 仕様ベース 統合互換リファレンスマニュアル
+- **[local-reference-and-test-spec.md](doc-spec/reference/local-reference-and-test-spec.md)** - ローカル外部仕様・試験環境（local/）連携仕様書
+- **[ghost-compatibility-gap-and-roadmap.md](doc-spec/ghost/ghost-compatibility-gap-and-roadmap.md)** - 伺かゴースト互換性ギャップ分析と実装改善ロードマップ仕様書
+- **[compatibility-implementation-plan.md](doc-spec/reference/compatibility-implementation-plan.md)** - 互換実装計画仕様書
+- **[specification-compliance-matrix.md](doc-spec/reference/specification-compliance-matrix.md)** - 仕様適合マトリクス
 - **[balloon-dpi-scaling-spec.md](developer/balloon-dpi-scaling-spec.md)** - バルーン DPI スケーリングおよびクロスプラットフォーム表示仕様 (NSM独自仕様)
 
 ### 📋 開発プロセス & 履歴 (`process/`)
@@ -137,7 +137,7 @@
 - **初心者・ユーザー** → [ユーザー向けガイド](user/user-guide.md) (`user/` ディレクトリ)
 - **開発者・コントリビューター** → [システムアーキテクチャ](developer/architecture.md) (`developer/` ディレクトリ)
 - **設計・ロードマップ確認** → [実装計画](design/planning/implementation-plan-and-spec.md)、[ロードマップ](design/planning/pending-issues-and-roadmap.md) (`design/` ディレクトリ)
-- **仕様策定・互換レイヤー実装** → 各種技術仕様書（[文字コード/VFS仕様](spec/platform/encoding-and-vfs-spec.md)、[SHIORIフォールバック仕様](spec/shiori-script/plugin-and-shiori-fallback-spec.md)等、`spec/` ディレクトリ）
+- **仕様策定・互換レイヤー実装** → 各種技術仕様書（[文字コード/VFS仕様](doc-spec/platform/encoding-and-vfs-spec.md)、[SHIORIフォールバック仕様](doc-spec/shiori-script/plugin-and-shiori-fallback-spec.md)等、`spec/` ディレクトリ）
 - **開発プロセス・背景設計** → [AI主導開発](process/AI_driven.md)、[開発アプローチ](process/development-approach.md) (`process/` ディレクトリ)
 
 ## 🤝 ドキュメントの改善

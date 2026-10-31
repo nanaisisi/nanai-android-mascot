@@ -10,7 +10,7 @@
 
 ## 実装箇所
 
-- `ui/css/balloon-window.css:81` `/* バルーンオプション画像 (arrow.filename, clickwaitmarker.filename 等) */`
-- `ui/css/balloon-window.css:100` `/* クリック待ちマーカー (clickwaitmarker.filename) */`
-- `ui/js/core/actions/balloon-descript/assets.js:40` `// [clickwaitmarker.filename,ファイル名]:`
-- `ui/js/core/actions/balloon-descript/assets.js:41` `setBalloonImage("clickwaitmarker.filename", "--balloon-clickwait-image");`
+- `ui/css/balloon-window.css:84` `/* バルーンオプション画像 (arrow.filename, clickwaitmarker.filename 等) */`
+- `ui/css/balloon-window.css:103` `/* クリック待ちマーカー (clickwaitmarker.filename) */`
+- `ui/js/core/actions/balloon-descript/assets.js:57` `// [clickwaitmarker.filename,ファイル名]:`
+- `ui/js/core/actions/balloon-descript/assets.js:58` `setBalloonImage("clickwaitmarker.filename", "--balloon-clickwait-image");`

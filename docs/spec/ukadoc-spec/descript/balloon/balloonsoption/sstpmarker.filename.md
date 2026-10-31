@@ -10,6 +10,6 @@
 
 ## 実装箇所
 
-- `ui/css/balloon-window.css:124` `/* SSTPマーカー (sstpmarker.filename) */`
-- `ui/js/core/actions/balloon-descript/assets.js:46` `// [sstpmarker.filename,ファイル名]:`
-- `ui/js/core/actions/balloon-descript/assets.js:47` `setBalloonImage("sstpmarker.filename", "--balloon-sstpmarker-image");`
+- `ui/css/balloon-window.css:127` `/* SSTPマーカー (sstpmarker.filename) */`
+- `ui/js/core/actions/balloon-descript/assets.js:63` `// [sstpmarker.filename,ファイル名]:`
+- `ui/js/core/actions/balloon-descript/assets.js:64` `setBalloonImage("sstpmarker.filename", "--balloon-sstpmarker-image");`

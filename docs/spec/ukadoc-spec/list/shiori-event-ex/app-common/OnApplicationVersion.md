@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:117` `async notifyApplicationVersion(appName, version = "") {`
+- `ui/js/ghost/shiori-notify.js:123` `async notifyApplicationVersion(appName, version = "") {`

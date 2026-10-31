@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:91` `async notifyApplicationFileOpen(appName, filePath = "") {`
+- `ui/js/ghost/shiori-notify.js:97` `async notifyApplicationFileOpen(appName, filePath = "") {`

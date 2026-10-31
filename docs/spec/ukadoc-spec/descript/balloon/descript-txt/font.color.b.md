@@ -11,7 +11,7 @@
 ## 実装箇所
 
 - `ui/js/core/actions/balloon-descript/layout.js:40` `props["communicatebox.font.color.b"];`
-- `ui/js/core/actions/balloon-descript/font/base.js:63` `props["font.color.b"]`
+- `ui/js/core/actions/balloon-descript/font/base.js:73` `props["font.color.b"]`
 - `ui/js/core/actions/balloon-descript/font/group.js:8` `props[`${prefix}.font.color.b`]`
 - `ui/js/core/actions/balloon-descript/font/special.js:30` `props["number.font.color.b"]`
 - `ui/js/core/actions/balloon-descript/font/special.js:50` `props["sstpmessage.font.color.b"]`

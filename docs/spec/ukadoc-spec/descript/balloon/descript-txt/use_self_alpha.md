@@ -10,6 +10,8 @@ PNA マスク合成および Canvas 2D レンダラにおいてアルファチ�
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/assets.js:133` `// [use_self_alpha,値]:`
-- `ui/js/core/actions/balloon-descript/assets.js:135` `props.use_self_alpha === "1" ||`
-- `ui/js/core/actions/balloon-descript/assets.js:136` `props.use_self_alpha?.toLowerCase() === "true";`
+- `crates/ui/src/descript/parser.rs:134` `/// `seriko.use_self_alpha,1`（アルファチャンネル透過の有効化）`
+- `crates/ui/src/descript/parser.rs:135` `pub fn seriko_use_self_alpha(&self) -> bool {`
+- `crates/ui/src/descript/parser.rs:136` `self.get("seriko.use_self_alpha")`
+- `ui/js/core/actions/balloon-descript/assets.js:150` `// [use_self_alpha,値]:`
+- `ui/js/core/actions/balloon-descript/assets.js:152` `props.use_self_alpha === "1" ||`

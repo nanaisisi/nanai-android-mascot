@@ -10,6 +10,6 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/command.rs:148` `CreateShortcut,`
-- `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:178` `callback(SakuraCommand::CreateShortcut);`
-- `ui/js/ghost/sakura-rust-bridge.js:222` `case "CreateShortcut":`
+- `crates/ui/src/script/command.rs:154` `CreateShortcut,`
+- `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:206` `callback(SakuraCommand::CreateShortcut);`
+- `ui/js/ghost/sakura-rust-bridge.js:232` `case "CreateShortcut":`

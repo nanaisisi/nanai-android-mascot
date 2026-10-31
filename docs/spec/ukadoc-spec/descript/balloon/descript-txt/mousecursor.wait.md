@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/assets.js:66` `// [mousecursor.wait,ファイル名]:`
-- `ui/js/core/actions/balloon-descript/assets.js:67` `setMouseCursor("mousecursor.wait", "--balloon-cursor-wait");`
+- `ui/js/core/actions/balloon-descript/assets.js:83` `// [mousecursor.wait,ファイル名]:`
+- `ui/js/core/actions/balloon-descript/assets.js:84` `setMouseCursor("mousecursor.wait", "--balloon-cursor-wait");`

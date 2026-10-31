@@ -18,7 +18,7 @@
 
 ### 新規作成
 
-- **[ghost-compatibility-gap-and-roadmap.md](../spec/ghost/ghost-compatibility-gap-and-roadmap.md)**:
+- **[ghost-compatibility-gap-and-roadmap.md](../doc-spec/ghost/ghost-compatibility-gap-and-roadmap.md)**:
   - 32bit DLL読み込み・差分表示の現状実装を踏まえ、一般的な伺かゴースト資産の再現に必要な不足機能（ウェイト制御・SERIKOアニメーション・当たり判定・自律発話タイマー・バルーンスキン・VFS）のギャップ一覧化と、依存関係に基づく4段階の実装優先順位ロードマップを策定。
 
 ### 機能更新

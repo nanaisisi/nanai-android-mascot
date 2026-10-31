@@ -10,6 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/assets.js:127` `// [paint_transparent_region_black,数値]:`
-- `ui/js/core/actions/balloon-descript/assets.js:129` `props.paint_transparent_region_black === "1" ||`
-- `ui/js/core/actions/balloon-descript/assets.js:130` `props.paint_transparent_region_black?.toLowerCase() === "true";`
+- `ui/js/core/actions/balloon-descript/assets.js:144` `// [paint_transparent_region_black,数値]:`
+- `ui/js/core/actions/balloon-descript/assets.js:146` `props.paint_transparent_region_black === "1" ||`
+- `ui/js/core/actions/balloon-descript/assets.js:147` `props.paint_transparent_region_black?.toLowerCase() === "true";`

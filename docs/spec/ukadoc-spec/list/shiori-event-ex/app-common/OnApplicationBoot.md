@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:61` `async notifyApplicationBoot(appName, appPath = "") {`
+- `ui/js/ghost/shiori-notify.js:67` `async notifyApplicationBoot(appName, appPath = "") {`

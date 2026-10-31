@@ -9,8 +9,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/lib.rs:165` `commands::calendar::get_schedules,`
-- `src-tauri/src/lib.rs:166` `commands::calendar::add_schedule,`
-- `src-tauri/src/lib.rs:167` `commands::calendar::delete_schedule,`
+- `src-tauri/src/lib.rs:166` `commands::calendar::get_schedules,`
+- `src-tauri/src/lib.rs:167` `commands::calendar::add_schedule,`
+- `src-tauri/src/lib.rs:168` `commands::calendar::delete_schedule,`
 - `src-tauri/src/commands/calendar.rs:2` `//! [calendar/index.md], [calendar/schedule.md], [calendar/menu.md], [\![open,ca`
 - `src-tauri/src/commands/calendar.rs:4` `//! - caption_schedulesensetiming, caption_scheduletype`

@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font/base.js:36` `props["font.underline"] === "1" ||`
-- `ui/js/core/actions/balloon-descript/font/base.js:37` `props["font.underline"]?.toLowerCase() === "true"`
+- `ui/js/core/actions/balloon-descript/font/base.js:46` `props["font.underline"] === "1" ||`
+- `ui/js/core/actions/balloon-descript/font/base.js:47` `props["font.underline"]?.toLowerCase() === "true"`

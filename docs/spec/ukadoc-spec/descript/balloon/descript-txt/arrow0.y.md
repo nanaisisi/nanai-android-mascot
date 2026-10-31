@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/assets.js:69` `// [arrow0.x,座標], [arrow0.y,座標], [arrow1.x,座標], [arrow1.y,座標]:`
-- `ui/js/core/actions/balloon-descript/assets.js:71` `const arrow0y = parseInt(props["arrow0.y"], 10);`
+- `ui/js/core/actions/balloon-descript/assets.js:86` `// [arrow0.x,座標], [arrow0.y,座標], [arrow1.x,座標], [arrow1.y,座標]:`
+- `ui/js/core/actions/balloon-descript/assets.js:88` `const arrow0y = parseInt(props["arrow0.y"], 10);`

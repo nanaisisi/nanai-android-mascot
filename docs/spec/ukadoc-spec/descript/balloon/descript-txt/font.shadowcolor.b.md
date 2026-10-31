@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font/base.js:76` `props["font.shadowcolor.b"]`
+- `ui/js/core/actions/balloon-descript/font/base.js:86` `props["font.shadowcolor.b"]`
 - `ui/js/core/actions/balloon-descript/font/group.js:17` `props[`${prefix}.font.shadowcolor.b`]`

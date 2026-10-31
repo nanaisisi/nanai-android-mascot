@@ -9,6 +9,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/lib.rs:161` `shiori::fmo::check_base_ware_mutex,`
+- `src-tauri/src/lib.rs:162` `shiori::fmo::check_base_ware_mutex,`
+- `src-tauri/src/lib.rs:174` `shiori::fmo::acquire_base_ware_mutexes();`
 - `src-tauri/src/shiori/fmo.rs:1` `//! FMO (File Mapping Object) & Mutex implementation (UKADOC / SSP fmo-mutex spe`
-- `src-tauri/src/shiori/fmo.rs:82` `pub async fn check_base_ware_mutex() -> Result<HashMap<String, bool>, String> {`
+- `src-tauri/src/shiori/fmo.rs:28` `mod win_mutex {`
+- `src-tauri/src/shiori/fmo.rs:45` `pub fn check_mutex_exists(name: &str) -> bool {`

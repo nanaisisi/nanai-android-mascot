@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:70` `async notifyApplicationClose(appName) {`
+- `ui/js/ghost/shiori-notify.js:76` `async notifyApplicationClose(appName) {`

@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/assets.js:119` `// [sstpmessage.x,座標], [sstpmessage.y,座標]:`
-- `ui/js/core/actions/balloon-descript/assets.js:120` `const sstpMsgX = parseInt(props["sstpmessage.x"], 10);`
+- `ui/js/core/actions/balloon-descript/assets.js:136` `// [sstpmessage.x,座標], [sstpmessage.y,座標]:`
+- `ui/js/core/actions/balloon-descript/assets.js:137` `const sstpMsgX = parseInt(props["sstpmessage.x"], 10);`
 - `ui/js/core/actions/balloon-descript/layout.js:149` `// [sstpmessage.x,座標], [sstpmessage.y,座標], [sstpmessage.xr,座標], [sstpmessage.yb,`
 - `ui/js/core/actions/balloon-descript/layout.js:150` `const sstpX = parseInt(props["sstpmessage.x"], 10);`
 - `ui/js/core/actions/balloon-descript/layout.js:152` `const sstpXR = parseInt(props["sstpmessage.xr"], 10);`

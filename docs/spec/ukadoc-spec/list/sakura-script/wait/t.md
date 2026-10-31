@@ -11,7 +11,7 @@
 ## 実装箇所
 
 - `crates/ui/src/lib.rs:120` `assert_eq!(commands[2], SakuraCommand::Timeout);`
-- `crates/ui/src/script/command.rs:62` `Timeout,      // \t (タイムアウト抑止)`
-- `crates/ui/src/script/command.rs:86` `ChoiceTimeout(u32),`
-- `crates/ui/src/script/command.rs:91` `BalloonTimeout(u32),`
-- `crates/ui/src/script/command.rs:141` `SetHttpTimeout(u32),`
+- `crates/ui/src/script/command.rs:68` `Timeout,      // \t (タイムアウト抑止)`
+- `crates/ui/src/script/command.rs:92` `ChoiceTimeout(u32),`
+- `crates/ui/src/script/command.rs:97` `BalloonTimeout(u32),`
+- `crates/ui/src/script/command.rs:147` `SetHttpTimeout(u32),`

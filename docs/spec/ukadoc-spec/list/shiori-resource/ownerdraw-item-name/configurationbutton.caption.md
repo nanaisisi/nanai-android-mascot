@@ -2,8 +2,13 @@
 
 - **規格**: [configurationbutton.caption.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ownerdraw-item-name/configurationbutton.caption/) (ukadoc-spec/list/shiori-resource/ownerdraw-item-name/configurationbutton.caption.md)
 - **検索語**: configurationbutton.caption
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
 実装コードに「configurationbutton.caption」が見つからない。
+
+
+## 実装箇所
+
+- `ui/js/ghost/shiori-notify.js:37` `* - updatebutton.caption, quitbutton.caption, closebutton.caption, configuration`

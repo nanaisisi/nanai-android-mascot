@@ -11,7 +11,8 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/env.rs:10` `selfname: &str,`
+- `crates/ui/src/script/env.rs:7` `selfname: &str,`
+- `crates/ui/src/script/env.rs:18` `"currentghost.name" | "name" => selfname,`
 - `crates/ui/src/script/env.rs:29` `result = result.replace("%selfname", selfname);`
 - `crates/ui/src/script/env.rs:30` `result = result.replace("%selfname2", selfname);`
 - `crates/ui/src/script/env.rs:46` `result = result.replace("%ms", selfname);`

@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/command.rs:54` `ModeChange { mode: String, active: bool },`
-- `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:71` `callback(SakuraCommand::ModeChange {`
+- `crates/ui/src/script/command.rs:60` `ModeChange { mode: String, active: bool },`
+- `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:99` `callback(SakuraCommand::ModeChange {`

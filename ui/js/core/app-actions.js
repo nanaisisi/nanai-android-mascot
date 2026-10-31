@@ -131,6 +131,24 @@ export const actionMethods = {
 		if (action === "uninstall-ghost" || action === "uninstall") {
 			return this.uninstallCurrentGhost();
 		}
+		if (action === "reset-balloon-position" || action === "resetballoonpos") {
+			localStorage.removeItem("nanai_balloon_offset");
+			if (isTauriAvailable()) {
+				invoke("set_balloon_offset", { scopeId: 0, x: 0, y: 0 }).catch(() => {});
+				invoke("set_balloon_offset", { scopeId: 1, x: 0, y: 0 }).catch(() => {});
+			}
+			this.showBalloon("📍 バルーン位置を初期リセットしました");
+			setTimeout(() => this.hideBalloon(), 2000);
+			return;
+		}
+		if (action === "reset-shell-position") {
+			if (isTauriAvailable()) {
+				invoke("set_character_scale", { scale: 1.0 }).catch(() => {});
+			}
+			this.showBalloon("📍 シェル位置・倍率を初期リセットしました");
+			setTimeout(() => this.hideBalloon(), 2000);
+			return;
+		}
 		if (action === "install") return this.installGhostFromMenu();
 		if (action === "balloon" || action === "balloon-cycle")
 			return this.cycleBalloonTheme();

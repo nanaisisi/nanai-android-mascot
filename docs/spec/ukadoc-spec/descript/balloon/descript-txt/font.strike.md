@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font/base.js:43` `props["font.strike"] === "1" ||`
-- `ui/js/core/actions/balloon-descript/font/base.js:44` `props["font.strike"]?.toLowerCase() === "true"`
+- `ui/js/core/actions/balloon-descript/font/base.js:53` `props["font.strike"] === "1" ||`
+- `ui/js/core/actions/balloon-descript/font/base.js:54` `props["font.strike"]?.toLowerCase() === "true"`

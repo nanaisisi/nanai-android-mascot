@@ -14,4 +14,4 @@
 - `crates/ui/src/lib.rs:122` `assert_eq!(commands[4], SakuraCommand::Sync(true));`
 - `crates/ui/src/lib.rs:160` `assert_eq!(cmds_ps[2], SakuraCommand::Sync(true));`
 - `crates/ui/src/lib.rs:162` `assert_eq!(cmds_ps[4], SakuraCommand::Sync(false));`
-- `crates/ui/src/script/command.rs:64` `Sync(bool),   // \_s (複数キャラ同期発話トグル)`
+- `crates/ui/src/script/command.rs:70` `Sync(bool),   // \_s (複数キャラ同期発話トグル)`

@@ -11,3 +11,4 @@ ghost/scan.rs で descript.txt から読込 (表示への反映は未確認)。
 ## 実装箇所
 
 - `src-tauri/src/ghost/scan/shell/theme.rs:47` `.get("menu.foreground.bitmap.filename")`
+- `ui/js/ghost/shiori-notify.js:32` `* - menu.background.bitmap.filename, menu.foreground.bitmap.filename, menu.sideb`

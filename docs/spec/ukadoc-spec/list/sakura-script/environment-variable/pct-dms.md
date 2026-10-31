@@ -11,5 +11,4 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/env.rs:38` `result = result.replace("%dms", &now.timestamp_subsec_millis().to_string());`
-- `crates/ui/src/script/env.rs:64` `let script = "%username, hello! Today is %year/%month/%day %hour:%minute:%second`
+- `crates/ui/src/script/env.rs:38` `result = result.replace("%dms", "0");`

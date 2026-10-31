@@ -75,8 +75,8 @@ $$\text{finalScale} = \text{userScale} \times \text{dpiScale}$$
 - **Rust バックエンド層**:
   - [src-tauri/src/commands/shell.rs](../../../../src-tauri/src/commands/shell.rs) の `balloon_manifest` コマンドにて、`descript.txt` の全エントリ（`dpi` を含む）をパースし `BTreeMap<String, String>` としてフロントエンドへ返却。
 - **フロントエンド適用層**:
-  - [ui/js/core/app-actions.js](../../../../ui/js/core/app-actions.js) (`applyBalloonDescript`, `resetBalloonDescript`, `applyBalloonScaleAction`)
-  - [ui/js/ghost/balloon-window.js](../../../../ui/js/ghost/balloon-window.js) (`applyBalloonDescript`, `updateBalloonWindowScale`)
+  - [ui/js/core/app-actions.js](../../../../../doc-spec/ui/js/core/app-actions.js) (`applyBalloonDescript`, `resetBalloonDescript`, `applyBalloonScaleAction`)
+  - [ui/js/ghost/balloon-window.js](../../../../../doc-spec/ui/js/ghost/balloon-window.js) (`applyBalloonDescript`, `updateBalloonWindowScale`)
   - パースされた `props.dpi` から `--balloon-dpi` および `--balloon-dpi-scale` カスタムプロパティを生成し、`.balloon` 要素へ `scale(finalScale)` を適用。
 
 ## 実装箇所

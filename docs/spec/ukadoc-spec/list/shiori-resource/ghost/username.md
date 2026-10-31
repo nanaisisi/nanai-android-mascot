@@ -12,6 +12,6 @@ username SHIORIリソース・プロパティ評価処理を実装 (src-tauri/sr
 
 - `src-tauri/src/shiori/property.rs:29` `"username" => "User".to_string(),`
 - `src-tauri/src/shiori/property.rs:79` `assert_eq!(evaluate_property_query("username"), "User");`
-- `crates/ui/src/script/env.rs:9` `username: &str,`
+- `crates/ui/src/script/env.rs:6` `username: &str,`
+- `crates/ui/src/script/env.rs:17` `"username" => username,`
 - `crates/ui/src/script/env.rs:28` `result = result.replace("%username", username);`
-- `crates/ui/src/script/env.rs:64` `let script = "%username, hello! Today is %year/%month/%day %hour:%minute:%second`

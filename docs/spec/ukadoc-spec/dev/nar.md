@@ -9,8 +9,8 @@
 
 ## 実装箇所
 
+- `src-tauri/src/lib.rs:149` `commands::install::create_nar_archive,`
 - `src-tauri/src/commands/web.rs:1` `//! Ukagaka Web Integration specification implementation (spec/web/x-ukagaka-lin`
 - `src-tauri/src/commands/web.rs:2` `//! [x-ukagaka-link], [application-x-nar]`
 - `src-tauri/src/commands/web.rs:42` `let uri = "ukagaka://install?url=https%3A%2F%2Fexample.com%2Fghost.nar";`
 - `src-tauri/src/commands/install/mod.rs:24` `.add_filter("Ghost archive", &["nar", "zip"])`
-- `src-tauri/src/commands/install/mod.rs:41` `/// ゴーストアーカイブ (.nar / .zip) のパス指定取り込み・解凍コマンド`

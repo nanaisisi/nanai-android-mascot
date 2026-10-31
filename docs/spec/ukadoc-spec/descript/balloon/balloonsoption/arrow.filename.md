@@ -10,6 +10,7 @@
 
 ## 実装箇所
 
-- `ui/css/balloon-window.css:81` `/* バルーンオプション画像 (arrow.filename, clickwaitmarker.filename 等) */`
-- `ui/js/core/actions/balloon-descript/assets.js:38` `// [arrow.filename,ファイル名]:`
-- `ui/js/core/actions/balloon-descript/assets.js:39` `setBalloonImage("arrow.filename", "--balloon-arrow-image");`
+- `ui/css/balloon-window.css:84` `/* バルーンオプション画像 (arrow.filename, clickwaitmarker.filename 等) */`
+- `ui/js/core/actions/balloon-descript/assets.js:38` `// [arrow.filename,ファイル名]: UKADOC 準拠ベース名展開 (拡張子なし -> arrow0.png / arrow1.png)`
+- `ui/js/core/actions/balloon-descript/assets.js:39` `const arrowBase = props["arrow.filename"] || "arrow";`
+- `ui/js/core/actions/balloon-descript/assets.js:56` `setBalloonImage("arrow.filename", "--balloon-arrow-image");`

@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font/base.js:28` `props["font.italic"] === "1" ||`
-- `ui/js/core/actions/balloon-descript/font/base.js:29` `props["font.italic"]?.toLowerCase() === "true"`
+- `ui/js/core/actions/balloon-descript/font/base.js:38` `props["font.italic"] === "1" ||`
+- `ui/js/core/actions/balloon-descript/font/base.js:39` `props["font.italic"]?.toLowerCase() === "true"`

@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/css/balloon-window.css:108` `vertical-align: middle;`
-- `ui/css/balloon-window.css:120` `vertical-align: middle;`
-- `ui/css/balloon-window.css:132` `vertical-align: middle;`
-- `ui/js/core/actions/balloon-descript/assets.js:100` `// [vertical,0/1]: props["vertical"]`
-- `ui/js/core/actions/balloon-descript/assets.js:102` `props.vertical === "1" || props.vertical?.toLowerCase() === "true";`
+- `ui/css/balloon-window.css:58` `vertical-align: middle;`
+- `ui/css/balloon-window.css:111` `vertical-align: middle;`
+- `ui/css/balloon-window.css:123` `vertical-align: middle;`
+- `ui/css/balloon-window.css:135` `vertical-align: middle;`
+- `ui/css/mascot.css:301` `vertical-align: middle;`

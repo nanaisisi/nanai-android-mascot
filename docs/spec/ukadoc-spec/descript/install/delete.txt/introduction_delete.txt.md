@@ -11,3 +11,4 @@
 ## 実装箇所
 
 - `src-tauri/src/commands/install/archive/postprocess.rs:5` `let delete_txt_path = target_dir.join("delete.txt");`
+- `src-tauri/src/commands/update/network.rs:280` `// 更新後に delete.txt が存在する場合、旧ファイルのクリーンアップ処理を実行`

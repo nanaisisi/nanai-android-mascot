@@ -10,6 +10,7 @@
 ## 実装箇所
 
 - `src-tauri/src/commands/calendar.rs:1` `//! SSP Calendar & Schedule Manager specification implementation (ukadoc-ssp/fun`
-- `src-tauri/src/shiori/fmo.rs:30` `let prefix = format!("ssp_fmo_header_{}", rec.id);`
-- `src-tauri/src/shiori/fmo.rs:84` `map.insert("ssp".to_string(), false);`
-- `ui/js/ui/templates/doc-templates.js:79` `<a href="https://github.com/ukatech/ukadoc-ssp" target="_blank" rel="noopener no`
+- `src-tauri/src/shiori/fmo.rs:90` `/// ベースウェア動作宣言として "ssp" および "sakura" 名前つき Mutex を獲得・保持する`
+- `src-tauri/src/shiori/fmo.rs:94` `if let Some(h) = win_mutex::acquire_mutex("ssp") {`
+- `src-tauri/src/shiori/fmo.rs:102` `set_fallback_mutex("ssp", true);`
+- `src-tauri/src/shiori/fmo.rs:104` `println!("🔒 BaseWare Named Mutexes ('ssp', 'sakura') successfully acquired and h`

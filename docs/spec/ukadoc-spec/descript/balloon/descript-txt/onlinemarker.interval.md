@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/assets.js:108` `// [onlinemarker.interval,待機時間], [onlinemarker.x,座標], [onlinemarker.y,座標]:`
-- `ui/js/core/actions/balloon-descript/assets.js:109` `const onlineInterval = parseInt(props["onlinemarker.interval"], 10);`
+- `ui/js/core/actions/balloon-descript/assets.js:125` `// [onlinemarker.interval,待機時間], [onlinemarker.x,座標], [onlinemarker.y,座標]:`
+- `ui/js/core/actions/balloon-descript/assets.js:126` `const onlineInterval = parseInt(props["onlinemarker.interval"], 10);`

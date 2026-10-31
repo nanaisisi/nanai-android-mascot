@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font/base.js:21` `props["font.bold"] === "1" ||`
-- `ui/js/core/actions/balloon-descript/font/base.js:22` `props["font.bold"]?.toLowerCase() === "true"`
+- `ui/js/core/actions/balloon-descript/font/base.js:31` `props["font.bold"] === "1" ||`
+- `ui/js/core/actions/balloon-descript/font/base.js:32` `props["font.bold"]?.toLowerCase() === "true"`

@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/assets.js:84` `// [clickwaitmarker.x,座標], [clickwaitmarker.y,座標]:`
-- `ui/js/core/actions/balloon-descript/assets.js:86` `const cwY = parseInt(props["clickwaitmarker.y"], 10);`
+- `ui/js/core/actions/balloon-descript/assets.js:101` `// [clickwaitmarker.x,座標], [clickwaitmarker.y,座標]:`
+- `ui/js/core/actions/balloon-descript/assets.js:103` `const cwY = parseInt(props["clickwaitmarker.y"], 10);`

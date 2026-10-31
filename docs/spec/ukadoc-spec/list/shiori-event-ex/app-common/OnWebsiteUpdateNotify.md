@@ -10,4 +10,4 @@ Webサイト更新通知時に `OnWebsiteUpdateNotify` SHIORIイベント（Refe
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:130` `async notifyWebsiteUpdate(url, updateTime = "") {`
+- `ui/js/ghost/shiori-notify.js:136` `async notifyWebsiteUpdate(url, updateTime = "") {`

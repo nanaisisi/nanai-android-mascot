@@ -11,7 +11,7 @@
 ## 実装箇所
 
 - `ui/js/core/actions/balloon-descript/layout.js:39` `props["communicatebox.font.color.g"] ||`
-- `ui/js/core/actions/balloon-descript/font/base.js:62` `props["font.color.g"] ||`
+- `ui/js/core/actions/balloon-descript/font/base.js:72` `props["font.color.g"] ||`
 - `ui/js/core/actions/balloon-descript/font/group.js:7` `props[`${prefix}.font.color.g`] ||`
 - `ui/js/core/actions/balloon-descript/font/special.js:29` `props["number.font.color.g"] ||`
 - `ui/js/core/actions/balloon-descript/font/special.js:49` `props["sstpmessage.font.color.g"] ||`

@@ -10,6 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/assets.js:148` `// [overlay_outside_balloon,0/1]:`
-- `ui/js/core/actions/balloon-descript/assets.js:150` `props.overlay_outside_balloon === "1" ||`
-- `ui/js/core/actions/balloon-descript/assets.js:151` `props.overlay_outside_balloon?.toLowerCase() === "true";`
+- `ui/js/core/actions/balloon-descript/assets.js:165` `// [overlay_outside_balloon,0/1]:`
+- `ui/js/core/actions/balloon-descript/assets.js:167` `props.overlay_outside_balloon === "1" ||`
+- `ui/js/core/actions/balloon-descript/assets.js:168` `props.overlay_outside_balloon?.toLowerCase() === "true";`

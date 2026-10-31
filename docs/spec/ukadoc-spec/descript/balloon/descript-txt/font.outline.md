@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font/base.js:53` `props["font.outline"] === "1" ||`
-- `ui/js/core/actions/balloon-descript/font/base.js:54` `props["font.outline"]?.toLowerCase() === "true"`
+- `ui/js/core/actions/balloon-descript/font/base.js:63` `props["font.outline"] === "1" ||`
+- `ui/js/core/actions/balloon-descript/font/base.js:64` `props["font.outline"]?.toLowerCase() === "true"`

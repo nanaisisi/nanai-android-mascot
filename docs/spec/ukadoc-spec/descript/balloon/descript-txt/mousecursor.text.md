@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/assets.js:64` `// [mousecursor.text,ファイル名]:`
-- `ui/js/core/actions/balloon-descript/assets.js:65` `setMouseCursor("mousecursor.text", "--balloon-cursor-text");`
+- `ui/js/core/actions/balloon-descript/assets.js:81` `// [mousecursor.text,ファイル名]:`
+- `ui/js/core/actions/balloon-descript/assets.js:82` `setMouseCursor("mousecursor.text", "--balloon-cursor-text");`

@@ -14,8 +14,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive/inspection.rs:28` `if lower == "install.txt" || lower.ends_with("/install.txt") {`
-- `src-tauri/src/commands/install/archive/inspection.rs:116` `"install.txt type={label} ({kind}): サポートされていないアーカイブ種別です"`
+- `src-tauri/src/commands/install/archive/inspection.rs:29` `if lower == "install.txt" || lower.ends_with("/install.txt") {`
+- `src-tauri/src/commands/install/archive/inspection.rs:117` `"install.txt type={label} ({kind}): サポートされていないアーカイブ種別です"`
+- `src-tauri/src/commands/install/archive/packaging.rs:112` `fs::write(source_dir.join("install.txt"), "type,ghost\nname,TestGhost\n").unwrap`
+- `src-tauri/src/commands/install/archive/packaging.rs:126` `assert!(zip.by_name("install.txt").is_ok());`
 - `src-tauri/src/commands/install/archive/postprocess.rs:34` `target_dir.join("install.txt"),`
-- `src-tauri/src/common/paths.rs:120` `path.join("install.txt"),`
-- `src-tauri/src/ghost/scan/date.rs:78` `consider(&path.join("install.txt"));`

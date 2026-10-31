@@ -6,4 +6,9 @@
 
 ## 突合結果
 
-実装コードに「%exh」が見つからない。
+さくらスクリプト環境変数展開処理 (crates/ui/src/script/env.rs) にて対応する変数の置換処理を実装。
+
+
+## 実装箇所
+
+- `crates/ui/src/script/env.rs:26` `result = result.replace("%exh", "0");`

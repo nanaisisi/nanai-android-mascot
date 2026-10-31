@@ -6,9 +6,9 @@
 
 ## 突合結果
 
-実装コードに「%day」が見つからない。
+さくらスクリプト環境変数展開処理 (crates/ui/src/script/env.rs) にて対応する変数の置換処理を実装。
 
 
 ## 実装箇所
 
-- `crates/ui/src/script/env.rs:18` `result = result.replace("%day", &now.day().to_string());`
+- `crates/ui/src/script/env.rs:20` `result = result.replace("%day", &now.day().to_string());`

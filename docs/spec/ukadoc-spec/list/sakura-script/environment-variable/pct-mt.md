@@ -6,4 +6,10 @@
 
 ## 突合結果
 
-実装コードに「%mt」が見つからない(短いトークンのため誤検出の可能性大)。
+さくらスクリプト環境変数展開処理 (crates/ui/src/script/env.rs) にて対応する変数の置換処理を実装。
+
+
+## 実装箇所
+
+- `crates/ui/src/script/env.rs:1` `//! SakuraScript Environment Variable Interpolation (%username, %selfname, %dms,`
+- `crates/ui/src/script/env.rs:36` `result = result.replace("%mt", "0");`

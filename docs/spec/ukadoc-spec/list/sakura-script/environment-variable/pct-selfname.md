@@ -6,11 +6,12 @@
 
 ## 突合結果
 
-実装コードに「selfname」が見つからない。
+さくらスクリプト環境変数展開処理 (crates/ui/src/script/env.rs) にて対応する変数の置換処理を実装。
 
 
 ## 実装箇所
 
-- `crates/ui/src/script/env.rs:1` `//! SakuraScript Environment Variable Interpolation (%username, %selfname, %hour`
+- `crates/ui/src/script/env.rs:1` `//! SakuraScript Environment Variable Interpolation (%username, %selfname, %dms,`
 - `crates/ui/src/script/env.rs:8` `selfname: &str,`
 - `crates/ui/src/script/env.rs:14` `result = result.replace("%selfname", selfname);`
+- `crates/ui/src/script/env.rs:16` `result = result.replace("%ms", selfname);`

@@ -81,8 +81,8 @@ $$\text{finalScale} = \text{userScale} \times \text{dpiScale}$$
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/shell.rs:106` `// [seriko.dpi,推奨DPI], [seriko.zorder,スコープID,スコープID,...], [seriko.sticky-window,`
 - `ui/js/core/actions/balloon-theme.js:53` `const dpiScale = this.balloonDpiScale || 1;`
 - `ui/js/core/actions/balloon-theme.js:54` `const finalScale = +(userScale * dpiScale).toFixed(4);`
 - `ui/js/core/actions/balloon-theme.js:66` `emit("balloon-scale-changed", { userScale, dpiScale, finalScale });`
 - `ui/js/core/actions/balloon-theme.js:119` `"--balloon-dpi",`
+- `ui/js/core/actions/balloon-theme.js:120` `"--balloon-dpi-scale",`

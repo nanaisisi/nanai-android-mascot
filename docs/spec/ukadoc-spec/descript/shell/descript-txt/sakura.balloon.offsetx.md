@@ -4,5 +4,4 @@
 - **検索語**: sakura.balloon.offsetx
 - **対応状況**: ✅ 対応済 (shell.rs)\n\n## 突合結果\n\nsrc-tauri/src/ghost/scan/shell.rs においてパース・抽出・バインドする実装が行われている。\n\n## 実装箇所
 
-- `src-tauri/src/ghost/scan/shell.rs:98` `// [sakura.balloon.offsetx,座標], [sakura.balloon.offsety,座標], [kero.balloon.offse`
 - `crates/ui/src/surfaces/tests/parser_tests.rs:32` `sakura.balloon.offsetx,-10`

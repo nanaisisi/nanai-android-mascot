@@ -10,7 +10,6 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/shell.rs:103` `// [sakura.bindoption*.group,カテゴリ名,オプション], [kero.bindoption*.group,カテゴリ名,オプション],`
 - `crates/ui/src/descript/tests.rs:7` `sakura.bindoption.group,服,multiple\r\n\`
 - `ui/js/surface/bind-menu.js:12` `return scopeId === 0 ? "sakura.bindoption.group" : "kero.bindoption.group";`
 - `tests/bind-menu.test.js:18` `assert.equal(bindOptionKey(0), "sakura.bindoption.group");`

@@ -13,5 +13,5 @@
 - `src-tauri/src/commands/install/archive.rs:302` `let group = meta_map.as_ref().and_then(|m| m.get("group").cloned());`
 - `src-tauri/src/commands/install/archive.rs:329` `group,`
 - `src-tauri/src/common/models.rs:40` `pub group: Option<String>,`
-- `src-tauri/src/ghost/scan/shell.rs:100` `// [sakura.bindgroup*.name,カテゴリ名,パーツ名,サムネイル名], [kero.bindgroup*.name,カテゴリ名,パーツ名,`
-- `src-tauri/src/ghost/scan/shell.rs:101` `// [sakura.bindgroup*.addid,ID], [kero.bindgroup*.addid,ID], [char*.bindgroup*.a`
+- `src-tauri/src/ghost/scan/directory/manifest.rs:12` `pub group: Option<String>,`
+- `src-tauri/src/ghost/scan/directory/manifest.rs:57` `let group = meta_map.as_ref().and_then(|m| m.get("group").cloned());`

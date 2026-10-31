@@ -153,7 +153,7 @@ def process_audit_files(codebase):
     return updated_count, category_stats
 
 def update_summary(category_stats):
-    summary_path = 'docs/spec/ukadoc-spec/SUMMARY.md'
+    summary_path = 'docs/spec/SUMMARY.md'
     lines = [
         "# ukadoc-spec & ukadoc-ssp 規格別 実装突合マスタサマリ",
         "",

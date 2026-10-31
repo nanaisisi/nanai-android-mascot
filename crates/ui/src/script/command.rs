@@ -59,6 +59,13 @@ pub enum SakuraCommand {
         id: String,
         args: Vec<String>,
     }, // \![open,inputbox,ID,...] 等
+    ChoiceTimeout(u32),
+    BalloonOffset {
+        x: i32,
+        y: i32,
+    },
+    BalloonTimeout(u32),
+    LockBalloonMove(bool),
     Command {
         args: Vec<String>,
     }, // その他の \![...] 汎用透過

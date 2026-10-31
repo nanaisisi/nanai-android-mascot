@@ -125,6 +125,47 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
                 args,
             });
         }
+        "set" => {
+            let setting = parts.get(1).unwrap_or(&"").to_string();
+            match setting.to_lowercase().as_str() {
+                "choicetimeout" => {
+                    let timeout = parts.get(2).and_then(|s| s.parse().ok()).unwrap_or(0);
+                    callback(SakuraCommand::ChoiceTimeout(timeout));
+                }
+                "balloonoffset" => {
+                    let x = parts.get(2).and_then(|s| s.parse().ok()).unwrap_or(0);
+                    let y = parts.get(3).and_then(|s| s.parse().ok()).unwrap_or(0);
+                    callback(SakuraCommand::BalloonOffset { x, y });
+                }
+                "balloontimeout" => {
+                    let timeout = parts.get(2).and_then(|s| s.parse().ok()).unwrap_or(0);
+                    callback(SakuraCommand::BalloonTimeout(timeout));
+                }
+                _ => {
+                    callback(SakuraCommand::Command {
+                        args: parts.iter().map(|s| s.to_string()).collect(),
+                    });
+                }
+            }
+        }
+        "lock" => {
+            if parts.get(1).is_some_and(|p| *p == "balloonmove") {
+                callback(SakuraCommand::LockBalloonMove(true));
+            } else {
+                callback(SakuraCommand::Command {
+                    args: parts.iter().map(|s| s.to_string()).collect(),
+                });
+            }
+        }
+        "unlock" => {
+            if parts.get(1).is_some_and(|p| *p == "balloonmove") {
+                callback(SakuraCommand::LockBalloonMove(false));
+            } else {
+                callback(SakuraCommand::Command {
+                    args: parts.iter().map(|s| s.to_string()).collect(),
+                });
+            }
+        }
         _ => {
             callback(SakuraCommand::Command {
                 args: parts.iter().map(|s| s.to_string()).collect(),

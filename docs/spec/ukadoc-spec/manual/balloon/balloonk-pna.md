@@ -1,5 +1,5 @@
 # `balloonk*.pna`
 
-- **対応状況**: ⚠️ 部分対応
+- **対応状況**: ✅ 実装済
 
-アーカイブ内の PNA ファイルは保持されるが、`balloonk*.png` に対応する PNA マスクの適用は未確認。
+`balloonk0.pna` などの PNA マスクを `processChromaKey` により透過アルファとして適用。

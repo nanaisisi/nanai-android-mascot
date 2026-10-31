@@ -5,9 +5,9 @@
 
 | 項目                                                                   | 対応状況                                            |
 | ---------------------------------------------------------------------- | --------------------------------------------------- |
-| [descript.txt](descript-txt.md)                                        | ⚠️ 部分対応                                         |
+| [descript.txt](descript-txt.md)                                        | ✅ 実装済                                           |
 | [balloons*s.txt / balloonk*s.txt / balloonc*s.txt](surface-options.md) | ✅ 実装済                                           |
-| [readme.txt](readme-txt.md)                                            | ⚠️ 配布物として保持                                 |
+| [readme.txt](readme-txt.md)                                            | ✅ 実装済                                           |
 | [balloons*.png](balloons-png.md)                                       | ✅ 実装済                                           |
 | [balloons*.pna](balloons-pna.md)                                       | ✅ 実装済                                           |
 | [balloonk*.png](balloonk-png.md)                                       | ✅ 実装済                                           |

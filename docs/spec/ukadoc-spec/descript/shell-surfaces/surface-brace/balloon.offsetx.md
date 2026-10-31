@@ -12,4 +12,4 @@
 
 - `crates/ui/src/surfaces/parser/mod.rs:243` `surface0 {\r\nname,SurfaceZero\r\ncollision0,0,0,10,10,Head\r\ncollisionex0,Face`
 - `crates/ui/src/surfaces/tests/parser_tests.rs:32` `sakura.balloon.offsetx,-10`
-- `crates/ui/src/surfaces/types/surface.rs:63` `/// バルーン位置オフセット（`<char>.balloon.offsetx/y`/`balloon.offsetx/y`）`
+- `crates/ui/src/surfaces/types/surface.rs:63` `/// バルーン位置オフセット（`<char>.balloon.offsetx/y` / `balloon.offsetx/y`）`

@@ -6,8 +6,10 @@
 
 ## 突合結果
 
-OnChoiceEnter 選択肢/アンカー関連SHIORIイベント処理を実装 (ui/js/ghost/shiori-notify.js -> sendShioriNotify, crates/ui/src/script/command.rs).
+`\q` (選択肢ボタン) 上にマウスカーソルが乗った際 (`mouseenter`)、および外れた際 (`mouseleave`) に `OnChoiceEnter` SHIORIイベントを送信するイベントハンドラを実装 (`ui/js/ghost/sakura-play/handlers.js` -> `OnChoiceEnter`)。
 
 ## 実装箇所
 
 - `ui/js/ghost/shiori-notify.js:24` `* - OnChoiceEnter, OnChoiceHover, OnChoiceSelect, OnChoiceSelectEx, OnChoiceTime`
+- `ui/js/ghost/sakura-play/handlers.js:180` `app.ghostController?.sendShioriEvent("OnChoiceEnter", [`
+- `ui/js/ghost/sakura-play/handlers.js:187` `app.ghostController?.sendShioriEvent("OnChoiceEnter", []);`

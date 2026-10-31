@@ -114,8 +114,18 @@ export async function handleToken(player, app, token, context) {
 				e.stopPropagation();
 				app.ghostController.sendShioriEvent("OnAnchorSelect", [
 					token.id,
-					...token.args,
+					...(token.args || []),
 				]);
+			});
+			anchorSpan.addEventListener("mouseenter", () => {
+				app.ghostController?.sendShioriEvent("OnAnchorEnter", [
+					anchorSpan.textContent || token.id,
+					token.id,
+					...(token.args || []),
+				]);
+			});
+			anchorSpan.addEventListener("mouseleave", () => {
+				app.ghostController?.sendShioriEvent("OnAnchorEnter", []);
 			});
 			currentBalloonText.appendChild(anchorSpan);
 			currentAnchor = anchorSpan;
@@ -165,6 +175,16 @@ export async function handleToken(player, app, token, context) {
 					player.choiceTimeoutTimer = null;
 				}
 				player.onChoiceSelected(token.id, token.text);
+			});
+			choiceBtn.addEventListener("mouseenter", () => {
+				app.ghostController?.sendShioriEvent("OnChoiceEnter", [
+					token.text,
+					token.id,
+					...(token.args || []),
+				]);
+			});
+			choiceBtn.addEventListener("mouseleave", () => {
+				app.ghostController?.sendShioriEvent("OnChoiceEnter", []);
 			});
 			currentBalloonText.appendChild(document.createElement("br"));
 			currentBalloonText.appendChild(choiceBtn);

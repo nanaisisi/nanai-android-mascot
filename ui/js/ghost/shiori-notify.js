@@ -24,6 +24,9 @@ import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
  * - OnChoiceEnter, OnChoiceHover, OnChoiceSelect, OnChoiceSelectEx, OnChoiceTimeout
  * - OnConfigurationDialogHelp, OnGhostTermsAccept, OnGhostTermsDecline, OnSystemDialog, OnSystemDialogCancel
  * - OnNotifyOtherFailure, OnNotifyPluginFailure, OnRaiseOtherFailure, OnRaisePluginFailure
+ * - OnArchiveViewerOpen, OnDirectoryDrop, OnFileDrop, OnFileDrop2, OnFileDropEx, OnFileDropped
+ * - OnFileDropping, OnMediaPlayerOpen, OnNarCreated, OnNarCreating, OnOtherObjectDropped
+ * - OnOtherObjectDropping, OnPictureViewerOpen, OnUpdatedataCreated, OnUpdatedataCreating, OnWallpaperChange
  */
 export const shioriNotifyMethods = {
 	/**

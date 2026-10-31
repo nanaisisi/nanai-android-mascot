@@ -12,4 +12,4 @@
 
 - `src-tauri/src/commands/shiori/protocol.rs:111` `/// `installedghostname` / `ghostpathlist` / `uniqueid` / `basewareversion` 等の`
 - `ui/js/ghost/shiori-notify.js:14` `* - basewareversion / uniqueid`
-- `ui/js/ghost/shiori-notify.js:92` `await this.sendShioriNotify("basewareversion", [`
+- `ui/js/ghost/shiori-notify.js:95` `await this.sendShioriNotify("basewareversion", [`

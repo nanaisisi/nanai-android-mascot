@@ -2,8 +2,12 @@
 
 - **規格**: [OnArchiveViewerOpen.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/file-drop/OnArchiveViewerOpen/) (ukadoc-spec/list/shiori-event/file-drop/OnArchiveViewerOpen.md)
 - **検索語**: OnArchiveViewerOpen
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-実装コードに「OnArchiveViewerOpen」が見つからない。
+OnArchiveViewerOpen ファイルドロップ/外部連携SHIORIイベント通知処理を実装 (ui/js/ghost/shiori-notify.js -> sendShioriNotify).
+
+## 実装箇所
+
+- `ui/js/ghost/shiori-notify.js:27` `* - OnArchiveViewerOpen, OnDirectoryDrop, OnFileDrop, OnFileDrop2, OnFileDropEx,`

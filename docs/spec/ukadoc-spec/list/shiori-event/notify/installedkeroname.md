@@ -11,4 +11,4 @@
 ## 実装箇所
 
 - `ui/js/ghost/shiori-notify.js:11` `* - installedghostname / installedsakuraname / installedkeroname`
-- `ui/js/ghost/shiori-notify.js:77` `await this.sendShioriNotify("installedkeroname", keroNames);`
+- `ui/js/ghost/shiori-notify.js:80` `await this.sendShioriNotify("installedkeroname", keroNames);`

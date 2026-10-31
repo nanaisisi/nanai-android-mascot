@@ -1,5 +1,11 @@
 # `balloonc*.png` / `balloonc*.pna`
 
-- **対応状況**: ❌ 未対応
+- **対応状況**: ✅ 実装済
 
-Send、Communicate、Teach、Input などの入力ボックス画像と、その PNA マスクは未実装。
+選択肢や入力ボックス用バルーン画像（`balloonc0.png` 等）の VFS 経由ロードに対応。
+
+
+## 実装箇所
+
+- `ui/js/ghost/balloon-window.js:172` `// オプションアセット (balloonc, arrow, sstp, online) のロード試行`
+- `ui/js/ghost/balloon-window.js:176` `file: "balloonc0.png",`

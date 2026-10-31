@@ -62,7 +62,7 @@ async function applyBalloonDescript(theme) {
 	if (applyingTheme === theme) return;
 	applyingTheme = theme;
 	try {
-		const props = await invoke("balloon_manifest", { name: theme });
+		const props = await invoke("balloon_manifest", { name: theme, scopeId });
 		if (!props || typeof props !== "object") return;
 		const balloonBox = document.getElementById("balloon-box");
 		const root = document.documentElement;
@@ -128,19 +128,64 @@ async function applyBalloonDescript(theme) {
 			);
 		}
 
-		// [balloons*s.txt/balloonk*s.txt]: 背景画像（balloons0: さくら / balloonk0: 相方。9 スライスで伸縮）+ PNAアルファマスク対応
-		const imageFile = scopeId === 0 ? "balloons0.png" : "balloonk0.png";
-		const pnaFile = scopeId === 0 ? "balloons0.pna" : "balloonk0.pna";
-		const bgImageRaw = await invoke("load_balloon_image", {
+		// [balloons*s.txt/balloonk*s.txt/balloonp*]: 背景画像（scope 0: balloons0.png, scope 1: balloonk0.png, scope >= 2: balloonp{scopeId}.png）+ PNAアルファマスク対応
+		const imageFile =
+			scopeId === 0
+				? "balloons0.png"
+				: scopeId === 1
+					? "balloonk0.png"
+					: `balloonp${scopeId}.png`;
+		const pnaFile =
+			scopeId === 0
+				? "balloons0.pna"
+				: scopeId === 1
+					? "balloonk0.pna"
+					: `balloonp${scopeId}.pna`;
+		let bgImageRaw = await invoke("load_balloon_image", {
 			name: theme,
 			file: imageFile,
 		}).catch(() => null);
-		const pnaImage = await invoke("load_balloon_image", {
+
+		if (!bgImageRaw && scopeId >= 2) {
+			bgImageRaw = await invoke("load_balloon_image", {
+				name: theme,
+				file: "balloons0.png",
+			}).catch(() => null);
+		}
+
+		let pnaImage = await invoke("load_balloon_image", {
 			name: theme,
 			file: pnaFile,
 		}).catch(() => null);
 
-		const bgImage = bgImageRaw ? await processChromaKey(bgImageRaw, pnaImage) : null;
+		if (!pnaImage && scopeId >= 2) {
+			pnaImage = await invoke("load_balloon_image", {
+				name: theme,
+				file: "balloons0.pna",
+			}).catch(() => null);
+		}
+
+		const bgImage = bgImageRaw
+			? await processChromaKey(bgImageRaw, pnaImage)
+			: null;
+
+		// オプションアセット (balloonc, arrow, sstp, online) のロード試行
+		await Promise.all([
+			invoke("load_balloon_image", {
+				name: theme,
+				file: "balloonc0.png",
+			}).catch(() => null),
+			invoke("load_balloon_image", { name: theme, file: "arrow0.png" }).catch(
+				() => null,
+			),
+			invoke("load_balloon_image", { name: theme, file: "sstp.png" }).catch(
+				() => null,
+			),
+			invoke("load_balloon_image", {
+				name: theme,
+				file: "online0.png",
+			}).catch(() => null),
+		]);
 
 		if (bgImage) {
 			const t = Number.isNaN(vt) ? 38 : Math.max(8, vt);

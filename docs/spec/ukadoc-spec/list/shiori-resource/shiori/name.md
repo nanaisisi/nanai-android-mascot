@@ -2,16 +2,12 @@
 
 - **規格**: [name.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/shiori/name/) (ukadoc-spec/list/shiori-resource/shiori/name.md)
 - **検索語**: name
-- **対応状況**: ⚠️ 一部対応(読込のみ)
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-ghost/scan.rs でゴースト名を読込。SHIORI リソースとしての応答処理は未確認。
+プロパティ評価エンジン (`src-tauri/src/shiori/property.rs`) にて `name` リソースクエリの評価処理を実装。
 
 ## 実装箇所
 
-- `ui/js/core/app-update.js:26` `const ghostName = targetGhostName || gc.currentGhost?.name || "とらふぃっく☆とれいん";`
-- `ui/js/ghost/ghost.js:13` (コメント) `* @property {string} name`
-- `ui/js/ghost/ghost.js:48` `? JSON.parse(localStorage.getItem(AppConfig.storageKeys.lastGhost) || "{}")?.name`
-- `ui/js/ghost/ghost.js:52` `const found = this.ghosts.find((g) => g.name === targetGhostName);`
-- `ui/js/ghost/ghost.js:73` `return result.ghosts?.some((g) => g.name === ghostInfo.name) || false;`
+- `src-tauri/src/shiori/property.rs` (`evaluate_property_query`)

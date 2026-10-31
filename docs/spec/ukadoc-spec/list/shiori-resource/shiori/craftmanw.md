@@ -2,11 +2,11 @@
 
 - **規格**: [craftmanw.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/shiori/craftmanw/) (ukadoc-spec/list/shiori-resource/shiori/craftmanw.md)
 - **検索語**: craftmanw
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-実装コード内に「craftmanw」を確認。
+プロパティ評価エンジン (`src-tauri/src/shiori/property.rs`) にて `craftmanw` リソースクエリの評価処理を実装。
 
 ## 実装箇所
 

@@ -2,16 +2,12 @@
 
 - **規格**: [version.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/shiori/version/) (ukadoc-spec/list/shiori-resource/shiori/version.md)
 - **検索語**: version
-- **対応状況**: ❌ 未実装(誤検出)
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-ヒットしたのは一般的な語「version」の無関係な出現。該当の仕様に対応する処理は確認できない。
+プロパティ評価エンジン (`src-tauri/src/shiori/property.rs`) にて `version` リソースクエリの評価処理を実装。
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/cpp.rs:26` `fn yaya_get_version() -> *const c_char;`
-- `src-tauri/src/shiori/cpp.rs:162` `pub fn get_version() -> Result<String, String> {`
-- `src-tauri/src/shiori/cpp.rs:164` `let version_ptr = yaya_get_version();`
-- `src-tauri/src/shiori/cpp.rs:165` `if version_ptr.is_null() {`
-- `src-tauri/src/shiori/cpp.rs:166` `return Err("Failed to get YAYA version".to_string());`
+- `src-tauri/src/shiori/property.rs` (`evaluate_property_query`)

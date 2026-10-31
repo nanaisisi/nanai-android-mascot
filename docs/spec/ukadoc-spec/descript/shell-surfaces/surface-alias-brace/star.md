@@ -11,7 +11,7 @@
 ## 実装箇所
 
 - `src-tauri/capabilities/default.json:5` `"windows": ["*"],`
-- `src-tauri/shiori-host/src/main.rs:12` `type H = *mut c_void;`
-- `src-tauri/shiori-host/src/main.rs:15` `type RequestFn = unsafe extern "C" fn(H, *mut i32) -> H;`
-- `src-tauri/shiori-host/src/main.rs:26` `std::ptr::copy_nonoverlapping(data.as_ptr(), h as *mut u8, data.len());`
-- `src-tauri/shiori-host/src/main.rs:27` `*(h as *mut u8).add(data.len()) = 0;`
+- `src-tauri/shiori-host/src/ffi.rs:3` `pub type H = *mut c_void;`
+- `src-tauri/shiori-host/src/ffi.rs:6` `pub type RequestFn = unsafe extern "C" fn(H, *mut i32) -> H;`
+- `src-tauri/shiori-host/src/ffi.rs:17` `std::ptr::copy_nonoverlapping(data.as_ptr(), h as *mut u8, data.len());`
+- `src-tauri/shiori-host/src/ffi.rs:18` `*(h as *mut u8).add(data.len()) = 0;`

@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/shiori-host/src/main.rs:12` `type H = *mut c_void;`
-- `src-tauri/shiori-host/src/main.rs:13` `type LoadFn = unsafe extern "C" fn(H, i32) -> i32;`
-- `src-tauri/shiori-host/src/main.rs:14` `type UnloadFn = unsafe extern "C" fn() -> i32;`
-- `src-tauri/shiori-host/src/main.rs:15` `type RequestFn = unsafe extern "C" fn(H, *mut i32) -> H;`
-- `src-tauri/shiori-host/src/main.rs:288` `"--crate-type=cdylib",`
+- `src-tauri/shiori-host/src/ffi.rs:3` `pub type H = *mut c_void;`
+- `src-tauri/shiori-host/src/ffi.rs:4` `pub type LoadFn = unsafe extern "C" fn(H, i32) -> i32;`
+- `src-tauri/shiori-host/src/ffi.rs:5` `pub type UnloadFn = unsafe extern "C" fn() -> i32;`
+- `src-tauri/shiori-host/src/ffi.rs:6` `pub type RequestFn = unsafe extern "C" fn(H, *mut i32) -> H;`
+- `src-tauri/shiori-host/src/main.rs:208` `"--crate-type=cdylib",`

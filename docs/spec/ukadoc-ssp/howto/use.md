@@ -13,4 +13,4 @@
 - `src-tauri/build.rs:75` `.flag_if_supported("-Wno-unused-parameter")`
 - `src-tauri/build_old.rs:1` `use std::path::Path;`
 - `src-tauri/build_stub.rs:1` `use std::path::Path;`
-- `src-tauri/shiori-host/src/main.rs:8` `use libloading::{Library, Symbol};`
+- `src-tauri/shiori-host/src/ffi.rs:1` `use std::ffi::c_void;`

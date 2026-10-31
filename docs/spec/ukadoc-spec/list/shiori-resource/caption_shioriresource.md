@@ -13,5 +13,5 @@
 - `src-tauri/build.rs:4` `// 32bit SHIORI ホスト (tauri_build が bundle resources を検証する前に用意する)`
 - `src-tauri/build.rs:43` `"cargo:warning=shiori-host32 のビルドに失敗: `rustup target add i686-pc-windows-msvc` を`
 - `src-tauri/shiori-host/src/main.rs:1` `//! 32bit SHIORI ホスト`
-- `src-tauri/shiori-host/src/main.rs:150` `let resp = b"SHIORI/3.0 200 OK\r\n\r\n";`
-- `src-tauri/shiori-host/src/main.rs:251` `// テスト内で 64bit ミニマル SHIORI DLL を一時生成して load_and_run を検証する`
+- `src-tauri/shiori-host/src/main.rs:39` `let resp = b"SHIORI/3.0 200 OK\r\n\r\n";`
+- `src-tauri/shiori-host/src/main.rs:196` `let resp = b"SHIORI/3.0 200 OK\r\n\r\n";`

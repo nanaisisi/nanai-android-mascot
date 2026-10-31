@@ -14,4 +14,4 @@
 - `src-tauri/src/commands/ext.rs:42` `.get("craftmanurl")`
 - `src-tauri/src/commands/ext.rs:101` `// [craftman,作者名], [craftmanw,作者名], [craftmanurl,URL], [homeurl,URL]:`
 - `src-tauri/src/commands/ext.rs:107` `.get("craftmanurl")`
-- `src-tauri/src/commands/install/archive.rs:301` `.and_then(|m| m.get("craftmanurl").cloned());`
+- `src-tauri/src/commands/install/archive/postprocess.rs:58` `.and_then(|m| m.get("craftmanurl").cloned());`

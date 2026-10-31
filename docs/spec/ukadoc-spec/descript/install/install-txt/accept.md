@@ -10,8 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive.rs:53` `// [install.txt（概要）], [同時インストール], [name,オブジェクト名], [type,種別], [directory,ディレクトリ名]`
-- `src-tauri/src/commands/install/archive.rs:56` `let accept = map.get("accept");`
-- `src-tauri/src/commands/install/archive.rs:57` `// [@manual: manual/install.md] accept target compatibility validation`
-- `src-tauri/src/commands/install/archive.rs:58` `if let Some(acc) = accept {`
-- `src-tauri/src/commands/install/archive.rs:60` `"📦 [Install] Accept target compatibility check: package requires accept={}",`
+- `ui/js/ui/templates/ghost-templates.js:45` `<input type="file" id="ghost-archive-input" accept=".nar,.zip" style="flex: 1 1 `
+- `cpp/yaya-shiori/sha1.c:140` `*      This function accepts an array of octets as the next portion`

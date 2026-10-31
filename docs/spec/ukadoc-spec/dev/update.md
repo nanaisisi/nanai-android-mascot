@@ -13,4 +13,4 @@
 - `src-tauri/src/lib.rs:150` `commands::update::check_ghost_update,`
 - `src-tauri/src/lib.rs:151` `commands::update::execute_ghost_update,`
 - `src-tauri/src/commands/mod.rs:8` `pub mod update;`
-- `src-tauri/src/commands/install/archive.rs:317` `let (install_date, update_date) = crate::ghost::scan::compute_ghost_dates(&targe`
+- `src-tauri/src/commands/install/archive/postprocess.rs:73` `let (install_date, update_date) = crate::ghost::scan::compute_ghost_dates(target`

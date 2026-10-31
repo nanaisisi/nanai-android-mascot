@@ -13,4 +13,4 @@ SSTP 受信機能なし。
 - `src-tauri/src/lib.rs:106` `ghost::scan::directory::scan_ghost_directory,`
 - `src-tauri/src/commands/file.rs:187` `pub fn open_ghost_directory(app_handle: tauri::AppHandle<tauri::Wry>) -> Result<`
 - `src-tauri/src/commands/file.rs:192` `.map_err(|e| format!("Failed to open directory: {}", e))`
-- `src-tauri/src/commands/install/archive.rs:39` `let mut install_directory: Option<String> = None;`
+- `src-tauri/src/commands/install/utils.rs:95` `pub fn flatten_balloon_directory(target_dir: &Path) -> Result<(), String> {`

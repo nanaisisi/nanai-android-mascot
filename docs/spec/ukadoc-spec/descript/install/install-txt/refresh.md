@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive.rs:54` `// [refresh,数値], [refreshundeletemask,ファイル名1:ファイル名2...]:`
-- `src-tauri/src/commands/install/archive.rs:55` `// [*.directory,ディレクトリ名], [*.source.directory,ディレクトリ名], [*.refresh,数値], [*.refre`
-- `src-tauri/src/commands/install/archive.rs:67` `let _refresh = map.get("refresh");`
-- `src-tauri/src/commands/install/archive.rs:68` `let _refreshmask = map.get("refreshundeletemask");`
-- `src-tauri/src/commands/install/archive.rs:69` `let _star_refresh = map`
+- `ui/js/ui/modal-explorer.js:95` `?.querySelector("#explorer-refresh-btn")`
+- `ui/js/ui/templates/ghost-templates.js:8` `<button type="button" id="explorer-refresh-btn">再読み込み</button>`
+- `ui/js/ui/templates/ghost-templates.js:53` `<button type="button" id="refresh-ghosts-btn">更新</button>`
+- `ui/js/ui/templates/ghost-templates.js:75` `<button type="button" id="refresh-balloons-btn">更新</button>`
+- `tests/modal-explorer.test.js:93` `// Test refresh btn`

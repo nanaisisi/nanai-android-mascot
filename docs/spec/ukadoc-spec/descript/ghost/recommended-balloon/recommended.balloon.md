@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive.rs:304` `// [balloon,バルーン名], [recommended.balloon,バルーン名]:`
-- `src-tauri/src/commands/install/archive.rs:306` `m.get("recommended.balloon")`
-- `src-tauri/src/commands/install/archive.rs:312` `.and_then(|m| m.get("recommended.balloon.path").cloned());`
+- `src-tauri/src/commands/install/archive/postprocess.rs:62` `m.get("recommended.balloon")`
+- `src-tauri/src/commands/install/archive/postprocess.rs:68` `.and_then(|m| m.get("recommended.balloon.path").cloned());`
 - `src-tauri/src/common/models.rs:44` `/// [balloon,バルーン名], [recommended.balloon,バルーン名]:`
 - `src-tauri/src/common/models.rs:46` `/// [標準と推奨の使い分け], [recommended.balloon.path,パス]:`
+- `src-tauri/src/ghost/scan/directory/manifest.rs:60` `m.get("recommended.balloon")`

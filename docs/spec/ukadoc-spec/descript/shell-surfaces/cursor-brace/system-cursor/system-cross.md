@@ -8,4 +8,4 @@
 - `src-tauri/shiori-host/src/main.rs:260` `extern "system" {`
 - `src-tauri/src/lib.rs:157` `shiori::property::get_system_property,`
 - `src-tauri/src/main.rs:2` `#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]`
-- `src-tauri/src/commands/install/archive.rs:235` `let entry_mtime = entry.last_modified().and_then(zip_datetime_to_system_time);`
+- `src-tauri/src/commands/install/utils.rs:55` `pub fn zip_datetime_to_system_time(dt: zip::DateTime) -> Option<std::time::Syste`

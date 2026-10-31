@@ -51,14 +51,18 @@ impl ShioriDynamicEngine {
         };
 
         let fn_load: ShioriLoadFn = unsafe {
-            let sym: Symbol<ShioriLoadFn> =
-                lib.get(b"load")
-                    .map_err(|source| ShioriError::SymbolNotFound {
-                        symbol: "load",
-                        path: dll_path.to_path_buf(),
-                        source,
-                    })?;
-            *sym
+            if let Ok(sym) = lib.get::<ShioriLoadFn>(b"loadu") {
+                *sym
+            } else {
+                let sym: Symbol<ShioriLoadFn> =
+                    lib.get(b"load")
+                        .map_err(|source| ShioriError::SymbolNotFound {
+                            symbol: "load",
+                            path: dll_path.to_path_buf(),
+                            source,
+                        })?;
+                *sym
+            }
         };
 
         let fn_unload: ShioriUnloadFn = unsafe {

@@ -1,8 +1,12 @@
 # update-file : updates.txt (Version 3)
 
 - **規格**: [updatestxt.md](https://ukatech.shillest.net/ukadoc-spec/spec/update-file/updatestxt/) (ukadoc-spec/spec/update-file/updatestxt.md)
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-dau.rs / network.rs に処理あり。
+`updates.txt` および `updates2.dau` の統合定義パース、ホーム URL 解決、差分ダウンロード処理を完備 (`src-tauri/src/commands/update/dau.rs`, `src-tauri/src/commands/update/network.rs`)。
+
+## 実装箇所
+
+- `src-tauri/src/commands/update/dau.rs:3` `pub use nanai_android_mascot_ui::{UpdateEntry, parse_update_definition};`

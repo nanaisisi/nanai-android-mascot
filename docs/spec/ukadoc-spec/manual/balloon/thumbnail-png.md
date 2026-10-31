@@ -1,5 +1,5 @@
 # `thumbnail.png`
 
-- **対応状況**: ⚠️ 部分対応
+- **対応状況**: ✅ 実装済
 
-導入物内の `thumbnail.png` は保持される。バルーン選択メニューで PNG/JPEG サムネイルを表示する機能は未確認。
+導入物内の `thumbnail.png`, `thumbnail.jpg`, `thumbnail.bmp` は `scan_balloons` コマンドにより Base64 データ URL としてロードされ、バルーン選択画面等での表示に対応。

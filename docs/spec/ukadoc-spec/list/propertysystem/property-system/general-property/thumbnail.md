@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
+- `src-tauri/src/commands/shell/balloon.rs:10` `pub thumbnail: Option<String>,`
+- `src-tauri/src/commands/shell/balloon.rs:34` `let thumbnail = ["thumbnail.png", "thumbnail.jpg", "thumbnail.bmp"]`
+- `src-tauri/src/commands/shell/balloon.rs:54` `thumbnail,`
 - `crates/ui/src/descript/parser.rs:171` `entry.thumbnail = parts.next().filter(|s| !s.is_empty()).map(str::to_string);`
 - `crates/ui/src/descript/tests.rs:33` `assert_eq!(g.thumbnail.as_deref(), Some("thumb.png"));`
-- `crates/ui/src/descript/types.rs:31` `pub thumbnail: Option<String>,`
-- `ui/js/core/actions/ghost-actions.js:156` `/** @type {{ number: number; part: string; thumbnail?: string | null; on: boolea`
-- `ui/js/surface/bind-menu.js:6` `* thumbnail/default/add_ids）と descript `bindoption.group` を`

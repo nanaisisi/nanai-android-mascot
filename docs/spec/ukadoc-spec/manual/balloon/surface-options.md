@@ -1,5 +1,5 @@
 # `balloons*s.txt` / `balloonk*s.txt` / `balloonc*s.txt`
 
-- **対応状況**: ❌ 未対応
+- **対応状況**: ✅ 実装済
 
-サーフェス ID ごとの `descript.txt` 上書き、および入力ボックス用の `balloonc*s.txt` はまだ解析・適用していない。
+スコープ ID やサーフィス ID に応じた `balloons*s.txt` / `balloonk*s.txt` などのサーフィス別定義ファイルの上書きマージ処理に対応。

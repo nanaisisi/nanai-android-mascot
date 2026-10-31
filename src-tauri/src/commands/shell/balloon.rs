@@ -7,6 +7,7 @@ pub struct BalloonInfo {
     pub dir_name: String,
     pub name: String,
     pub descript: std::collections::BTreeMap<String, String>,
+    pub thumbnail: Option<String>,
 }
 
 #[tauri::command]
@@ -29,10 +30,28 @@ pub fn scan_balloons(app_handle: tauri::AppHandle) -> Result<Vec<BalloonInfo>, S
                             .get("name")
                             .cloned()
                             .unwrap_or_else(|| dir_name.clone());
+
+                        let thumbnail = ["thumbnail.png", "thumbnail.jpg", "thumbnail.bmp"]
+                            .iter()
+                            .find_map(|f| {
+                                let p = path.join(f);
+                                if p.is_file() {
+                                    std::fs::read(&p).ok().map(|bytes| {
+                                        format!(
+                                            "data:image/png;base64,{}",
+                                            base64::engine::general_purpose::STANDARD.encode(bytes)
+                                        )
+                                    })
+                                } else {
+                                    None
+                                }
+                            });
+
                         balloons.push(BalloonInfo {
                             dir_name,
                             name,
                             descript,
+                            thumbnail,
                         });
                     }
                 }
@@ -53,10 +72,41 @@ pub fn scan_balloons(app_handle: tauri::AppHandle) -> Result<Vec<BalloonInfo>, S
 #[tauri::command]
 pub fn balloon_manifest(
     name: String,
+    scope_id: Option<i32>,
+    surface_id: Option<i32>,
     app_handle: tauri::AppHandle,
 ) -> Result<std::collections::BTreeMap<String, String>, String> {
     let dir = resolve_balloon_dir(&name, &app_handle)?;
-    Ok(balloon_descript_map(&dir))
+    let mut map = balloon_descript_map(&dir);
+
+    if let Some(sid) = scope_id {
+        let prefix = if sid == 1 { "balloonk" } else { "balloons" };
+        let candidates = if let Some(surf) = surface_id {
+            vec![
+                format!("{}{}{}s.txt", prefix, surf, sid),
+                format!("{}0s.txt", prefix),
+                format!("{}s.txt", prefix),
+            ]
+        } else {
+            vec![
+                format!("{}0s.txt", prefix),
+                format!("{}s.txt", prefix),
+            ]
+        };
+        for cand in candidates {
+            let p = dir.join(&cand);
+            if p.is_file() {
+                if let Some(sub_map) = nanai_android_mascot_ui::resolve_vfs_path(&dir, &cand).and_then(|fp| nanai_android_mascot_ui::read_descript_file(&fp)) {
+                    for (k, v) in sub_map {
+                        map.insert(k, v);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    Ok(map)
 }
 
 #[tauri::command]

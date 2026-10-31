@@ -11,7 +11,7 @@
 ## 実装箇所
 
 - `src-tauri/src/lib.rs:101` `commands::shell::scan_balloons,`
-- `src-tauri/src/commands/shell/balloon.rs:13` `pub fn scan_balloons(app_handle: tauri::AppHandle) -> Result<Vec<BalloonInfo>, S`
-- `src-tauri/src/commands/shell/balloon.rs:14` `let mut balloons = Vec::new();`
-- `src-tauri/src/commands/shell/balloon.rs:32` `balloons.push(BalloonInfo {`
-- `src-tauri/src/commands/shell/balloon.rs:44` `for b in balloons {`
+- `src-tauri/src/commands/shell/balloon.rs:14` `pub fn scan_balloons(app_handle: tauri::AppHandle) -> Result<Vec<BalloonInfo>, S`
+- `src-tauri/src/commands/shell/balloon.rs:15` `let mut balloons = Vec::new();`
+- `src-tauri/src/commands/shell/balloon.rs:50` `balloons.push(BalloonInfo {`
+- `src-tauri/src/commands/shell/balloon.rs:63` `for b in balloons {`

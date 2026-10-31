@@ -178,6 +178,13 @@ export function rustCommandsToTokens(rustCommands) {
 					args: [cmd.payload?.url ?? "", cmd.payload?.file_path ?? ""],
 				});
 				break;
+			case "MailCheckExec":
+				tokens.push({
+					type: "command",
+					command: "mailcheckexec",
+					args: [cmd.payload?.account ?? ""],
+				});
+				break;
 			case "Biff":
 				tokens.push({ type: "command", command: "biff", args: [] });
 				break;

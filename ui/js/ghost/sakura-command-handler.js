@@ -93,6 +93,10 @@ export class SakuraCommandHandler {
 		} else if (rawCmd === "uploadexec") {
 			const [url, filePath] = args.slice(1);
 			console.log(`📤 Upload requested: url=${url}, filePath=${filePath}`);
+		} else if (rawCmd === "mailcheckexec") {
+			const [account] = args.slice(1);
+			console.log(`✉️ Mail check requested for account: ${account}`);
+			await this.app.networkActions?.checkEmail?.(account);
 		} else if (rawCmd === "update" || rawCmd === "updatebymyself") {
 			await this.app.startNetworkUpdate?.();
 		} else {

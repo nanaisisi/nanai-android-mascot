@@ -102,6 +102,9 @@ pub enum SakuraCommand {
         url: String,
         file_path: String,
     },
+    MailCheckExec {
+        account: String,
+    },
     Biff,
     ExecuteSntp,
     CreateShortcut,

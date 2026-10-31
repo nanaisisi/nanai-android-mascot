@@ -13,4 +13,4 @@
 - `src-tauri/src/commands/install/mod.rs:71` `"📦 Installing ghost archive from memory bytes: {} ({} bytes)",`
 - `src-tauri/src/shiori/fmo.rs:26` `/// Generate FMO 64KB shared memory byte buffer conforming to UKADOC fmo spec`
 - `crates/ui/src/script/command.rs:55` `memo: String,`
-- `crates/ui/src/script/parser/brackets/handlers.rs:87` `let memo = parts.get(5).unwrap_or(&"").to_string();`
+- `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:27` `let memo = parts.get(5).unwrap_or(&"").to_string();`

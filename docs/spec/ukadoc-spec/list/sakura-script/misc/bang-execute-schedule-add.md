@@ -12,4 +12,4 @@
 
 - `src-tauri/src/commands/calendar.rs:2` `//! [calendar/index.md], [calendar/schedule.md], [calendar/menu.md], [\![open,ca`
 - `crates/ui/src/script/command.rs:56` `}, // \![execute,schedule-add,...]`
-- `crates/ui/src/script/parser/brackets/handlers.rs:83` `if parts.get(1).is_some_and(|p| *p == "schedule-add") {`
+- `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:23` `if parts.get(1).is_some_and(|p| *p == "schedule-add") {`

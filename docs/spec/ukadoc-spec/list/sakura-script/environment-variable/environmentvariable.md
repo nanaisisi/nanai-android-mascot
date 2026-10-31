@@ -6,4 +6,8 @@
 
 ## 突合結果
 
-実装コードに「環境変数の記述例」が見つからない。
+さくらスクリプト内の環境変数・システム変数展開処理 (`crates/ui/src/script/env.rs` -> `expand_sakura_script_env`) にて `%username` 等の展開を実装済。
+
+## 実装箇所
+
+- `crates/ui/src/script/env.rs`

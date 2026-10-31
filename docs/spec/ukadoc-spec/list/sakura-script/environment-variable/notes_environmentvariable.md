@@ -6,4 +6,8 @@
 
 ## 突合結果
 
-実装コードに「環境変数の指定方法」が見つからない。
+さくらスクリプトパーサ内での `%username`, `%selfname`, 日時変数等の変数展開仕様に準拠した実装 (`crates/ui/src/script/env.rs`)。
+
+## 実装箇所
+
+- `crates/ui/src/script/env.rs`

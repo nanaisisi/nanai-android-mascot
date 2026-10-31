@@ -1,16 +1,17 @@
 # OnClose
 
 - **規格**: [OnClose.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/boot-close-change/OnClose/) (ukadoc-spec/list/shiori-event/boot-close-change/OnClose.md)
-- **検索語**: OnClose
-- **対応状況**: ✅ 実装済(SHIORIへ送信)
+- **検索語**: sendShioriNotify
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装箇所を参照)。
+OnClose イベント通知・SHIORI送信処理を実装 (ui/js/ghost/shiori-notify.js -> sendShioriNotify)。
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/ffi/builder.rs:84` `.event("OnClose")`
-- `crates/ui/src/shiori/protocol/request.rs:185` `let notify_req = ShioriRequest::notify("OnClose", &[]);`
-- `crates/ui/src/shiori/protocol/request.rs:187` `assert_eq!(notify_req.id, "OnClose");`
-- `ui/main.js:181` `await this.ghostController.sendShioriEvent("OnClose");`
+- `ui/js/ghost/shiori-notify.js:24` `async sendShioriNotify(event, references) {`
+- `ui/js/ghost/shiori-notify.js:53` `await this.sendShioriNotify(`
+- `ui/js/ghost/shiori-notify.js:57` `await this.sendShioriNotify(`
+- `ui/js/ghost/shiori-notify.js:66` `await this.sendShioriNotify("installedkeroname", keroNames);`
+- `ui/js/ghost/shiori-notify.js:71` `await this.sendShioriNotify("installedshellname", this.shells);`

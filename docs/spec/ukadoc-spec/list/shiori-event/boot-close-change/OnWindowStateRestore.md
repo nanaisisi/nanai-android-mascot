@@ -1,14 +1,17 @@
 # OnWindowStateRestore
 
 - **規格**: [OnWindowStateRestore.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/boot-close-change/OnWindowStateRestore/) (ukadoc-spec/list/shiori-event/boot-close-change/OnWindowStateRestore.md)
-- **検索語**: OnWindowStateRestore
-- **対応状況**: ✅ 実装済(SHIORIへ送信)
+- **検索語**: sendShioriNotify
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装箇所を参照)。
+OnWindowStateRestore イベント通知・SHIORI送信処理を実装 (ui/js/ghost/shiori-notify.js -> sendShioriNotify)。
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/ffi/builder.rs:122` `.event("OnWindowStateRestore")`
-- `ui/js/core/app-settings.js:82` `this.ghostController.sendShioriEvent("OnWindowStateRestore");`
+- `ui/js/ghost/shiori-notify.js:24` `async sendShioriNotify(event, references) {`
+- `ui/js/ghost/shiori-notify.js:53` `await this.sendShioriNotify(`
+- `ui/js/ghost/shiori-notify.js:57` `await this.sendShioriNotify(`
+- `ui/js/ghost/shiori-notify.js:66` `await this.sendShioriNotify("installedkeroname", keroNames);`
+- `ui/js/ghost/shiori-notify.js:71` `await this.sendShioriNotify("installedshellname", this.shells);`

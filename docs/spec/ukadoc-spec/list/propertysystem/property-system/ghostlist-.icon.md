@@ -13,4 +13,4 @@
 - `src-tauri/src/shiori/property.rs:15` `"ghostlist.count" => "1".to_string(),`
 - `src-tauri/src/shiori/property.rs:16` `"ghostlist.index(0).name" | "ghostlist.index(0)" => "Mock Ghost".to_string(),`
 - `src-tauri/src/shiori/property.rs:17` `"ghostlist.index(0).path" => "mock_ghost".to_string(),`
-- `src-tauri/src/shiori/property.rs:55` `assert_eq!(evaluate_property_query("ghostlist.count"), "1");`
+- `src-tauri/src/shiori/property.rs:56` `assert_eq!(evaluate_property_query("ghostlist.count"), "1");`

@@ -29,6 +29,7 @@ pub fn evaluate_property_query(query: &str) -> String {
         "username" => "User".to_string(),
         "homeurl" => "https://example.com/ghost/".to_string(),
         "other_homeurl_override" | "other_homeurl" => "https://example.com/ghost/".to_string(),
+        "balloon_tooltip" | "tooltip" => "".to_string(),
         _ => {
             if q.starts_with("currentghost.scope(") {
                 if q.contains(".name") {

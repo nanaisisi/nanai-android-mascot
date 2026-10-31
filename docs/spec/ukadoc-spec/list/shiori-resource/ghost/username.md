@@ -11,4 +11,4 @@
 ## 実装箇所
 
 - `src-tauri/src/shiori/property.rs:29` `"username" => "User".to_string(),`
-- `src-tauri/src/shiori/property.rs:61` `assert_eq!(evaluate_property_query("username"), "User");`
+- `src-tauri/src/shiori/property.rs:62` `assert_eq!(evaluate_property_query("username"), "User");`

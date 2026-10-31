@@ -11,4 +11,4 @@
 ## 実装箇所
 
 - `src-tauri/src/shiori/property.rs:22` `"baseware.name" | "system.baseware.name" => "Nanai Android Mascot".to_string(),`
-- `src-tauri/src/shiori/property.rs:57` `evaluate_property_query("baseware.name"),`
+- `src-tauri/src/shiori/property.rs:58` `evaluate_property_query("baseware.name"),`

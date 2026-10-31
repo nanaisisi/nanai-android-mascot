@@ -10,6 +10,7 @@
 
 ## 実装箇所
 
+- `src-tauri/src/shiori/property.rs:32` `"balloon_tooltip" | "tooltip" => "".to_string(),`
 - `ui/js/surface/surface-load.js:134` `// [tooltip-brace 仕様項目一覧インデックス]`
 - `ui/js/surface/surface-load.js:135` `// [tooltipブレス記述例]`
 - `ui/windows/tauri-desktop.conf.json:169` `"tooltip": "Nanai Android Mascot Desktop"`

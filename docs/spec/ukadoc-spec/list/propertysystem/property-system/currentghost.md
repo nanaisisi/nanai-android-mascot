@@ -14,4 +14,4 @@
 - `src-tauri/src/shiori/property.rs:26` `"currentghost.path" => "mock_ghost".to_string(),`
 - `src-tauri/src/shiori/property.rs:27` `"currentghost.craftman" => "Ukagaka Creator".to_string(),`
 - `src-tauri/src/shiori/property.rs:28` `"currentghost.craftmanurl" => "https://example.com".to_string(),`
-- `src-tauri/src/shiori/property.rs:33` `if q.starts_with("currentghost.scope(") {`
+- `src-tauri/src/shiori/property.rs:34` `if q.starts_with("currentghost.scope(") {`

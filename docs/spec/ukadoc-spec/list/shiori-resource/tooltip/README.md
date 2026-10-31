@@ -5,5 +5,5 @@
 
 | 項目                                  | 検索語          |  対応状況   |
 | :------------------------------------ | :-------------- | :---------: |
-| [balloon_tooltip](balloon_tooltip.md) | balloon_tooltip | ❌ 検出なし |
+| [balloon_tooltip](balloon_tooltip.md) | balloon_tooltip | ✅ 実装済   |
 | [tooltip](tooltip.md)                 | tooltip         | ✅ 実装済   |

@@ -150,6 +150,7 @@ pub fn run() {
             commands::file::load_surface_pna,
             commands::update::check_ghost_update,
             commands::update::execute_ghost_update,
+            commands::update::generate_updates2_dau,
             commands::ext::scan_plugins,
             commands::ext::scan_headlines,
             commands::ext::execute_plugin_event,

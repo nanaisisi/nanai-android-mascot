@@ -10,7 +10,7 @@
 
 ## 実装箇所
 
-- `src-tauri/src/lib.rs:158` `shiori::property::get_system_property,`
+- `src-tauri/src/lib.rs:159` `shiori::property::get_system_property,`
 - `src-tauri/src/shiori/mod.rs:6` `pub mod property;`
 - `src-tauri/src/shiori/property.rs:1` `//! Property System evaluation engine specification implementation (UKADOC prope`
 - `src-tauri/src/shiori/property.rs:11` `/// Evaluate property system queries conforming to UKADOC propertysystem spec`

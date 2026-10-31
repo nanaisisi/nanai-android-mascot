@@ -10,7 +10,7 @@ SSTP 未対応。
 ## 実装箇所
 
 - `src-tauri/src/lib.rs:23` `mod sstp;`
-- `src-tauri/src/lib.rs:161` `sstp::send_sstp_request,`
-- `src-tauri/src/lib.rs:162` `sstp::parse_and_send_sstp_raw,`
+- `src-tauri/src/lib.rs:162` `sstp::send_sstp_request,`
+- `src-tauri/src/lib.rs:163` `sstp::parse_and_send_sstp_raw,`
 - `src-tauri/src/sstp.rs:30` `pub fn parse_raw_sstp_request(raw: &str) -> Result<SstpRequest, String> {`
 - `src-tauri/src/sstp.rs:93` `pub async fn send_sstp_request(`

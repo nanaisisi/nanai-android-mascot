@@ -12,5 +12,5 @@
 - `src-tauri/tauri.conf.json:45` `"updater": {`
 - `src-tauri/src/lib.rs:151` `commands::update::check_ghost_update,`
 - `src-tauri/src/lib.rs:152` `commands::update::execute_ghost_update,`
+- `src-tauri/src/lib.rs:153` `commands::update::generate_updates2_dau,`
 - `src-tauri/src/commands/mod.rs:8` `pub mod update;`
-- `src-tauri/src/commands/install/archive/postprocess.rs:73` `let (install_date, update_date) = crate::ghost::scan::compute_ghost_dates(target`

@@ -1,11 +1,12 @@
 # update-file : フィールド詳細
 
 - **規格**: [fields.md](https://ukatech.shillest.net/ukadoc-spec/spec/update-file/fields/) (ukadoc-spec/spec/update-file/fields.md)
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-`../../../../../src-tauri/src/commands/update/dau.rs` にて相対パス、MD5、ファイルサイズ（および `file,` / `charset,` プレフィックス）のパース処理に対応。
+`src-tauri/src/commands/update/dau.rs` および UI 側の `parse_update_definition` にて相対パス、MD5、ファイルサイズ、文字コード等のフィールドパース処理を完備。
+
 
 ## 実装箇所
 

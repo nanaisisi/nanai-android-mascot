@@ -10,5 +10,6 @@
 
 ## 実装箇所
 
+- `src-tauri/src/commands/update/generation.rs:18` `let dev_opt_path = dir.join("developer_options.txt");`
 - `src-tauri/src/ghost/scan/directory/filter.rs:12` `/// Parse developer_options.txt if present`
 - `src-tauri/src/ghost/scan/directory/filter.rs:14` `let dev_options_path = path.join("developer_options.txt");`

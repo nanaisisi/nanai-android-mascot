@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
+- `src-tauri/src/commands/update/generation.rs:60` `lines.push(format!("{}\x01{}\x01size={}", rel_path, md5, size));`
 - `src-tauri/src/shiori/fmo.rs:31` `content.push_str(&format!("{}.path\x01{}\r\n", prefix, rec.path));`
 - `src-tauri/src/shiori/fmo.rs:32` `content.push_str(&format!("{}.hwnd\x01{}\r\n", prefix, rec.hwnd));`
 - `src-tauri/src/shiori/fmo.rs:33` `content.push_str(&format!("{}.name\x01{}\r\n", prefix, rec.name));`
 - `src-tauri/src/shiori/fmo.rs:34` `content.push_str(&format!("{}.keroname\x01{}\r\n", prefix, rec.keroname));`
-- `src-tauri/src/shiori/fmo.rs:36` `"{}.sakura.surface\x01{}\r\n",`

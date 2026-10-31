@@ -6,3 +6,8 @@
 ## 突合結果
 
 公式ポータル、関連ツールリンク
+
+
+## 実装箇所
+
+- `src-tauri/src/commands/update/generation.rs:32` `let walker = WalkDir::new(&dir).follow_links(false).sort_by_file_name();`

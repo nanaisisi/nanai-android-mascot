@@ -192,6 +192,13 @@ export function rustCommandsToTokens(rustCommands) {
 					args: [cmd.payload?.action ?? "", cmd.payload?.target ?? ""],
 				});
 				break;
+			case "FileExec":
+				tokens.push({
+					type: "command",
+					command: "fileexec",
+					args: [cmd.payload?.action ?? "", cmd.payload?.path ?? "", cmd.payload?.dest ?? ""],
+				});
+				break;
 			case "SetHttpTimeout":
 				tokens.push({
 					type: "command",

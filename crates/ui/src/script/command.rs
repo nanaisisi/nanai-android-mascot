@@ -109,6 +109,11 @@ pub enum SakuraCommand {
         action: String,
         target: String,
     },
+    FileExec {
+        action: String,
+        path: String,
+        dest: String,
+    },
     SetHttpTimeout(u32),
     SetProxy {
         server: String,

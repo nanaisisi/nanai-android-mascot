@@ -100,6 +100,9 @@ export class SakuraCommandHandler {
 		} else if (rawCmd === "mailexec") {
 			const [action, target] = args.slice(1);
 			console.log(`✉️ Mail action ${action}: target=${target}`);
+		} else if (rawCmd === "fileexec") {
+			const [action, path, dest] = args.slice(1);
+			console.log(`📁 File action ${action}: path=${path}, dest=${dest}`);
 		} else if (rawCmd === "sethttptimeout") {
 			const [timeout] = args.slice(1);
 			console.log(`⏱️ HTTP timeout set: ${timeout}s`);

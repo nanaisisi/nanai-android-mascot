@@ -101,6 +101,34 @@ export function rustCommandsToTokens(rustCommands) {
 					param: cmd.payload?.param ?? null,
 				});
 				break;
+			case "ChoiceTimeout":
+				tokens.push({ type: "choice_timeout", timeout: cmd.payload ?? 0 });
+				break;
+			case "BalloonOffset":
+				tokens.push({ type: "balloon_offset", x: cmd.payload?.x ?? 0, y: cmd.payload?.y ?? 0 });
+				break;
+			case "BalloonTimeout":
+				tokens.push({ type: "balloon_timeout", timeout: cmd.payload ?? 0 });
+				break;
+			case "LockBalloonMove":
+				tokens.push({ type: "lock_balloon_move", locked: cmd.payload ?? true });
+				break;
+			case "Biff":
+				tokens.push({ type: "command", command: "biff", args: [] });
+				break;
+			case "ExecuteSntp":
+				tokens.push({ type: "command", command: "executesntp", args: [] });
+				break;
+			case "CreateShortcut":
+				tokens.push({ type: "command", command: "createshortcut", args: [] });
+				break;
+			case "OpenDialog":
+				tokens.push({
+					type: "command",
+					command: "open",
+					args: [cmd.payload?.dialog_type ?? "", cmd.payload?.id ?? "", ...(cmd.payload?.args ?? [])],
+				});
+				break;
 			case "Text":
 				for (const ch of cmd.payload ?? "") {
 					tokens.push({ type: "char", value: ch });

@@ -1,17 +1,17 @@
 # \-
 
 - **規格**: [entry.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/event/entry/) (ukadoc-spec/list/sakura-script/event/entry.md)
-- **検索語**: \-
+- **検索語**: Halt
 - **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-実装コードに「\-」が見つからない(短いトークンのため誤検出の可能性大)。
+`\-` (Halt/ゴースト終了) コマンドのパース処理を実装 (`crates/ui/src/script/parser/mod.rs`)。
 
 ## 実装箇所
 
-- `crates/ui/src/lib.rs:114` `let script = r"\b[0]\b[-1]\t\-\_s\_l[10,20]\f[color,red]\f[bold]";`
+- `crates/ui/src/lib.rs:121` `assert_eq!(commands[3], SakuraCommand::Halt);`
 - `crates/ui/src/script/command.rs:62` `Halt,         // \- (ゴースト終了)`
+- `crates/ui/src/script/parser/mod.rs:69` `Some('-') => callback(SakuraCommand::Halt),`
 - `crates/ui/src/script/parser/mod.rs:94` `Some('-') => callback(SakuraCommand::Halt),  // \-`
-- `crates/ui/src/script/parser/mod.rs:132` `let script = "\\0\\h\\1\\u\\p[2]\\px\\s[10]\\sx\\w5\\wx\\x\\_w[10]\\b[1]\\bx\\f[`
-- `ui/js/ghost/sakura-tokenizer.js:298` `// \- (ゴースト終了)`
+- `ui/js/ghost/sakura-rust-bridge.js:84` `case "Halt":`

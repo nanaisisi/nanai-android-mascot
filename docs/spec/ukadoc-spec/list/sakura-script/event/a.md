@@ -1,12 +1,12 @@
 # \a
 
 - **規格**: [a.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/event/a/) (ukadoc-spec/list/sakura-script/event/a.md)
-- **検索語**: \a
+- **検索語**: AudioWait
 - **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-実装コードに「\a」が見つからない(短いトークンのため誤検出の可能性大)。
+`\a` (AudioWait) コマンドのパース処理を実装 (`crates/ui/src/script/parser/mod.rs`)。
 
 ## 実装箇所
 

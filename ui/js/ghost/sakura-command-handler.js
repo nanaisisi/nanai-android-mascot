@@ -87,6 +87,9 @@ export class SakuraCommandHandler {
 		} else if (rawCmd === "archiveexec") {
 			const [action, filename, dest] = args.slice(1);
 			console.log(`📦 Archive action ${action}: file=${filename}, dest=${dest}`);
+		} else if (rawCmd === "downloadexec") {
+			const [url, savePath] = args.slice(1);
+			console.log(`📥 Download requested: url=${url}, savePath=${savePath}`);
 		} else if (rawCmd === "update" || rawCmd === "updatebymyself") {
 			await this.app.startNetworkUpdate?.();
 		} else {

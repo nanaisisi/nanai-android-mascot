@@ -94,6 +94,10 @@ pub enum SakuraCommand {
         filename: String,
         dest: String,
     },
+    DownloadExec {
+        url: String,
+        save_path: String,
+    },
     Biff,
     ExecuteSntp,
     CreateShortcut,

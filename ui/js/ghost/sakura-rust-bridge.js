@@ -164,6 +164,13 @@ export function rustCommandsToTokens(rustCommands) {
 					args: [cmd.payload?.action ?? "", cmd.payload?.filename ?? "", cmd.payload?.dest ?? ""],
 				});
 				break;
+			case "DownloadExec":
+				tokens.push({
+					type: "command",
+					command: "downloadexec",
+					args: [cmd.payload?.url ?? "", cmd.payload?.save_path ?? ""],
+				});
+				break;
 			case "Biff":
 				tokens.push({ type: "command", command: "biff", args: [] });
 				break;

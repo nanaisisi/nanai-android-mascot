@@ -12,6 +12,6 @@ ui/js/ghost/sakura-parser.js で処理: バルーンクリア。
 
 - `crates/ui/src/script/command.rs:24` `Clear,        // \c`
 - `crates/ui/src/script/command.rs:25` `ClearArg { arg: String }, // \c[char,n], \c[line,n]`
-- `crates/ui/src/script/parser/mod.rs:130` `let script = "\\0\\h\\1\\u\\p[2]\\px\\s[10]\\sx\\w5\\wx\\x\\_w[10]\\b[1]\\bx\\f[`
+- `crates/ui/src/script/parser/mod.rs:131` `let script = "\\0\\h\\1\\u\\p[2]\\px\\s[10]\\sx\\w5\\wx\\x\\_w[10]\\b[1]\\bx\\f[`
 - `ui/js/ghost/sakura-tokenizer.js:131` `// \c (クリア)`
 - `tests/sakura-tokenizer.test.js:10` `"\\0\\hHello\\1\\uWorld\\p[2]\\p0\\s[10]\\s0\\i[1,wait]\\i2\\w5\\_w[200]\\n\\n[h`

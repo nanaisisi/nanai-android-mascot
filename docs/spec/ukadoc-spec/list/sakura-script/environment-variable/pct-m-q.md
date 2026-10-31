@@ -2,7 +2,7 @@
 
 - **規格**: [pct-m-q.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/environment-variable/pct-m-q/) (ukadoc-spec/list/sakura-script/environment-variable/pct-m-q.md)
 - **検索語**: %m?
-- **対応状況**: ✅ 実装済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/env.rs:1` `Implemented in crates/ui/src/script/env.rs`
+実装コード内に「%m?」は検出されませんでした。

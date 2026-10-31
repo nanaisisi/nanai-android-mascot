@@ -12,4 +12,4 @@
 ## 実装箇所
 
 - `crates/ui/src/script/command.rs:50` `NoUserBreak(bool), // \_!`
-- `crates/ui/src/script/parser/mod.rs:52` `// \_w / \_q / \_a / \_s / \_l / \_! / \_\_v / \_\_q`
+- `crates/ui/src/script/parser/mod.rs:53` `// \_w / \_q / \_a / \_s / \_l / \_! / \_\_v / \_\_q`

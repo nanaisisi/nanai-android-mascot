@@ -26,6 +26,7 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
                 buffer.clear();
             }
             match chars.next() {
+                // \0, \1, \2, \3, \4, \5, \6, \7, \8, \9 target scope tags (\0..\9, \h, \u)
                 Some('0') | Some('h') => callback(SakuraCommand::Target(0)),
                 Some('1') | Some('u') => callback(SakuraCommand::Target(1)),
                 Some(c @ '2'..='9') => callback(SakuraCommand::Target(c.to_digit(10).unwrap() as u8)),

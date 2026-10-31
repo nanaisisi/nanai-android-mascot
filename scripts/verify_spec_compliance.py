@@ -17,44 +17,6 @@ GENERIC_KEYWORDS = {
     "name", "duration", "error", "preload", "version", "meta."
 }
 
-SPECIAL_IMPLEMENTED = {
-    "\\6": "crates/ui/src/script/parser/mod.rs",
-    "\\7": "crates/ui/src/script/parser/mod.rs",
-    "\\*": "crates/ui/src/script/command.rs",
-    "\\z": "crates/ui/src/script/command.rs",
-    "環境変数の記述例": "crates/ui/src/script/env.rs",
-    "環境変数の指定方法": "crates/ui/src/script/env.rs",
-    "%day": "crates/ui/src/script/env.rs",
-    "%dms": "crates/ui/src/script/env.rs",
-    "%et": "crates/ui/src/script/env.rs",
-    "%exh": "crates/ui/src/script/env.rs",
-    "%hour": "crates/ui/src/script/env.rs",
-    "%keroname": "crates/ui/src/script/env.rs",
-    "%lastghostname": "crates/ui/src/script/env.rs",
-    "%lastobjectname": "crates/ui/src/script/env.rs",
-    "%m?": "crates/ui/src/script/env.rs",
-    "%mc": "crates/ui/src/script/env.rs",
-    "%me": "crates/ui/src/script/env.rs",
-    "%mh": "crates/ui/src/script/env.rs",
-    "%minute": "crates/ui/src/script/env.rs",
-    "%ml": "crates/ui/src/script/env.rs",
-    "%month": "crates/ui/src/script/env.rs",
-    "%mp": "crates/ui/src/script/env.rs",
-    "%ms": "crates/ui/src/script/env.rs",
-    "%mt": "crates/ui/src/script/env.rs",
-    "%mz": "crates/ui/src/script/env.rs",
-    "property": "src-tauri/src/shiori/property.rs",
-    "%screenheight": "crates/ui/src/script/env.rs",
-    "%screenwidth": "crates/ui/src/script/env.rs",
-    "%second": "crates/ui/src/script/env.rs",
-    "%selfname": "crates/ui/src/script/env.rs",
-    "%selfname2": "crates/ui/src/script/env.rs",
-    "%*": "crates/ui/src/script/env.rs",
-    "username": "crates/ui/src/script/env.rs",
-    "%wronghour": "crates/ui/src/script/env.rs",
-    "補足": "docs/spec/ukadoc-spec/",
-}
-
 def sanitize_snippet(text):
     text = re.sub(r'[A-Za-z]:\\\\Users\\\\[^\\"\s]+', '<USER_HOME>', text, flags=re.IGNORECASE)
     text = re.sub(r'[A-Za-z]:/Users/[^/"\s]+', '<USER_HOME>', text, flags=re.IGNORECASE)
@@ -138,16 +100,13 @@ def process_audit_files(codebase):
             category_stats[cat] = {"✅": 0, "⚠️": 0, "❌": 0, "❓": 0, "合計": 0}
 
         matches = search_keyword(keyword, codebase)
-        if not matches and keyword in SPECIAL_IMPLEMENTED:
-            impl_file = SPECIAL_IMPLEMENTED[keyword]
-            matches = [(impl_file, 1, f"Implemented in {impl_file}")]
 
         is_japanese_prose = bool(re.search(r'[\u3040-\u30ff\u4e00-\u9faf]', keyword))
-        is_guide_or_note = 'note-' in filepath or 'notes_' in filepath or 'environmentvariable' in filepath or is_japanese_prose
+        is_guide_or_note = 'note-' in filepath or 'notes_' in filepath or 'environmentvariable' in filepath or '/manual/' in filepath or '/memo/' in filepath or is_japanese_prose
 
         new_status = curr_status
         if is_guide_or_note:
-            # Conceptual guides / documentation pages - preserve status objectively
+            # Conceptual guides / documentation pages
             pass
         else:
             if not matches and keyword not in GENERIC_KEYWORDS:
@@ -199,7 +158,7 @@ def update_summary(category_stats):
     lines = [
         "# ukadoc-spec & ukadoc-ssp 規格別 実装突合マスタサマリ",
         "",
-        "各項目ファイルの「対応状況」を集計したものです。判定はソースの文字列検索と規格の性質に基づきます。",
+        "各項目ファイルの公式仕様に対する実装状況の自動集計結果です。",
         "",
         "| 規格 (ukadoc-spec / ukadoc-ssp 層 + 1階層) | ✅ 実装済 | ⚠️ 一部対応 | ❌ 未実装 | ❓ 未確認 | 合計 |",
         "| :--- | --------: | ----------: | --------: | --------: | ---: |"

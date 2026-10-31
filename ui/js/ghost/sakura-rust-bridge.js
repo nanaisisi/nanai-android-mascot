@@ -157,6 +157,13 @@ export function rustCommandsToTokens(rustCommands) {
 					args: [cmd.payload?.service ?? "", cmd.payload?.target ?? ""],
 				});
 				break;
+			case "ArchiveExec":
+				tokens.push({
+					type: "command",
+					command: "archiveexec",
+					args: [cmd.payload?.action ?? "", cmd.payload?.filename ?? "", cmd.payload?.dest ?? ""],
+				});
+				break;
 			case "Biff":
 				tokens.push({ type: "command", command: "biff", args: [] });
 				break;

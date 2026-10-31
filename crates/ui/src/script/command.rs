@@ -89,6 +89,11 @@ pub enum SakuraCommand {
         service: String,
         target: String,
     },
+    ArchiveExec {
+        action: String,
+        filename: String,
+        dest: String,
+    },
     Biff,
     ExecuteSntp,
     CreateShortcut,

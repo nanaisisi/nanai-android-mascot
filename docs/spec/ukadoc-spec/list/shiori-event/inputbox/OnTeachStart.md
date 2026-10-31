@@ -11,5 +11,5 @@
 ## 実装箇所
 
 - `ui/js/ghost/sakura-command-handler.js:23` `// \![open,teachbox] — OnTeachStart → OnTeach / OnTeachInputCancel (UKADOC 準拠)`
-- `ui/js/ghost/sakura-command-handler.js:222` `* オープン時に OnTeachStart を送出し、OK で OnTeach（入力履歴 Reference0..）、`
-- `ui/js/ghost/sakura-command-handler.js:235` `this.app.ghostController?.sendShioriEvent("OnTeachStart").catch(() => {});`
+- `ui/js/ghost/sakura-command-handler.js:225` `* オープン時に OnTeachStart を送出し、OK で OnTeach（入力履歴 Reference0..）、`
+- `ui/js/ghost/sakura-command-handler.js:238` `this.app.ghostController?.sendShioriEvent("OnTeachStart").catch(() => {});`

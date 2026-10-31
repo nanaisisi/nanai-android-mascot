@@ -85,6 +85,9 @@ export class SakuraCommandHandler {
 		} else if (rawCmd === "cancel" || rawCmd === "close") {
 			const [service, target] = args.slice(1);
 			console.log(`🛑 Network service ${rawCmd}: ${service} (${target})`);
+		} else if (rawCmd === "archiveexec") {
+			const [action, filename, dest] = args.slice(1);
+			console.log(`📦 Archive action ${action}: file=${filename}, dest=${dest}`);
 		} else if (rawCmd === "update" || rawCmd === "updatebymyself") {
 			await this.app.startNetworkUpdate?.();
 		} else {

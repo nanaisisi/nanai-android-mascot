@@ -14,4 +14,4 @@
 - `crates/ui/src/script/command.rs:108` `Cancel {`
 - `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:216` `callback(SakuraCommand::Cancel { service, target });`
 - `ui/js/ghost/sakura-rust-bridge.js:146` `case "Cancel":`
-- `ui/js/ghost/command-handler/inputbox.js:73` `await handler.app.ghostController.sendShioriEvent("OnUserInputCancel", [id]);`
+- `ui/js/ghost/shiori-notify.js:25` `* - OnConfigurationDialogHelp, OnGhostTermsAccept, OnGhostTermsDecline, OnSystem`

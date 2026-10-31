@@ -92,6 +92,12 @@ pub(crate) fn handle_underscore(
             };
             callback(SakuraCommand::Sync(enabled));
         }
+        Some('m') => {
+            // \_m[hex] MIDI/sound command
+            if let Some(data) = read_bracketed(chars) {
+                callback(SakuraCommand::Midi(data));
+            }
+        }
         Some('l') => {
             if let Some(pos) = read_bracketed(chars) {
                 let mut coords = pos.splitn(2, ',');

@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/parser/brackets/handlers/underscore.rs:104` `// \__v, \__q, \_+`
-- `crates/ui/src/script/parser/brackets/handlers/underscore.rs:111` `// \__q[ID] quick choice mode`
+- `crates/ui/src/script/parser/brackets/handlers/underscore.rs:110` `// \__v, \__q, \_+`
+- `crates/ui/src/script/parser/brackets/handlers/underscore.rs:117` `// \__q[ID] quick choice mode`

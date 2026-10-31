@@ -11,3 +11,4 @@
 ## 実装箇所
 
 - `crates/ui/src/script/command.rs:39` `Plus,      // \+ / \_+`
+- `crates/ui/src/script/parser/mod.rs:105` `Some('+') => callback(SakuraCommand::Plus),  // \+`

@@ -11,7 +11,7 @@
 ## 実装箇所
 
 - `crates/ui/src/script/command.rs:36` `Star, // \*`
+- `crates/ui/src/script/parser/mod.rs:101` `Some('*') => callback(SakuraCommand::Star),  // \*`
 - `ui/js/surface/surface-load.js:8` `// [mousedown\*,当たり判定ID,ファイル名]`
 - `ui/js/surface/surface-load.js:9` `// [mousehover\*,当たり判定ID,ファイル名]`
 - `ui/js/surface/surface-load.js:10` `// [mouserightdown\*,当たり判定ID,ファイル名]`
-- `ui/js/surface/surface-load.js:11` `// [mouseup\*,当たり判定ID,ファイル名]`

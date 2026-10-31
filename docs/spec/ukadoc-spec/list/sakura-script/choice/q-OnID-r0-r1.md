@@ -13,5 +13,5 @@
 - `src-tauri/src/shiori/headline.rs:115` `script.push_str(&format!("\\q[{},{}]\n", item.title, item.url));`
 - `crates/ui/src/lib.rs:60` `let script = r"\0\s[0]こんにちは\w5\n\q[はい,id_yes]\e";`
 - `crates/ui/src/script/command.rs:30` `}, // \q[label,id,r2,...]`
-- `crates/ui/src/script/parser/mod.rs:95` `// \q[テキスト,ID] / \q[temp,テキスト,ID]`
-- `crates/ui/src/script/parser/mod.rs:131` `let script = "\\0\\h\\1\\u\\p[2]\\px\\s[10]\\sx\\w5\\wx\\x\\_w[10]\\b[1]\\bx\\f[`
+- `crates/ui/src/script/parser/mod.rs:96` `// \q[テキスト,ID] / \q[temp,テキスト,ID]`
+- `crates/ui/src/script/parser/mod.rs:132` `let script = "\\0\\h\\1\\u\\p[2]\\px\\s[10]\\sx\\w5\\wx\\x\\_w[10]\\b[1]\\bx\\f[`

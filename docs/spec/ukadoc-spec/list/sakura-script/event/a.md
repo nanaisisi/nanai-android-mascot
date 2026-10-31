@@ -11,3 +11,4 @@
 ## 実装箇所
 
 - `crates/ui/src/script/command.rs:38` `AudioWait, // \a`
+- `crates/ui/src/script/parser/mod.rs:103` `Some('a') => callback(SakuraCommand::AudioWait), // \a`

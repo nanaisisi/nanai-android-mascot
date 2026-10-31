@@ -90,18 +90,19 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
                     }
                 }
                 Some('C') => callback(SakuraCommand::Clear),
-                Some('e') => callback(SakuraCommand::End),
+                Some('e') => callback(SakuraCommand::End),   // \e
+                Some('-') => callback(SakuraCommand::Halt),  // \-
                 Some('q') => {
                     // \q[テキスト,ID] / \q[temp,テキスト,ID]
                     if let Some((label, id, args)) = brackets::handle_choice(&mut chars) {
                         callback(SakuraCommand::Choice { label, id, args });
                     }
                 }
-                Some('*') => callback(SakuraCommand::Star),
-                Some('z') => callback(SakuraCommand::Z),
-                Some('a') => callback(SakuraCommand::AudioWait),
-                Some('v') => callback(SakuraCommand::Voice("".into())),
-                Some('+') => callback(SakuraCommand::Plus),
+                Some('*') => callback(SakuraCommand::Star),  // \*
+                Some('z') => callback(SakuraCommand::Z),     // \z
+                Some('a') => callback(SakuraCommand::AudioWait), // \a
+                Some('v') => callback(SakuraCommand::Voice("".into())), // \v
+                Some('+') => callback(SakuraCommand::Plus),  // \+
                 // 未知タグ: 後続の [...] 引数を消費し、本文への漏出を防ぐ
                 Some(_) => brackets::consume_tag_tail(&mut chars),
                 None => {}

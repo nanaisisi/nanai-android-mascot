@@ -2,7 +2,7 @@
 
 - **規格**: [pct-mh.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/environment-variable/pct-mh/) (ukadoc-spec/list/sakura-script/environment-variable/pct-mh.md)
 - **検索語**: %mh
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

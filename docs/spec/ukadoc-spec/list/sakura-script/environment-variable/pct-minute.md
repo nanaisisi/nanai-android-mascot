@@ -2,7 +2,7 @@
 
 - **規格**: [pct-minute.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/environment-variable/pct-minute/) (ukadoc-spec/list/sakura-script/environment-variable/pct-minute.md)
 - **検索語**: minute
-- **対応状況**: ❌ 未実装(誤検出)
+- **対応状況**: ✅ 実装済(誤検出)
 
 ## 突合結果
 
@@ -14,4 +14,4 @@
 - `src-tauri/src/ghost/scan/date.rs:7` `let minutes = (remainder % 3600) / 60;`
 - `src-tauri/src/ghost/scan/date.rs:47` `year, month, day, hours, minutes, seconds`
 - `src-tauri/src/shiori/ffi/builder.rs:105` `pub fn on_minute_change() -> Self {`
-- `cpp/yaya-shiori/sysfunc.cpp:4214` `*  返値　　：  year,month,day,week(0-6),hour,minute,secondの汎用配列`
+- `crates/ui/src/script/env.rs:20` `result = result.replace("%minute", &now.minute().to_string());`

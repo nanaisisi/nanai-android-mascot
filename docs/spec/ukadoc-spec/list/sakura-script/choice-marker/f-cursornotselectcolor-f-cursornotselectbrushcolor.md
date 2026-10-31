@@ -14,4 +14,4 @@
 - `src-tauri/src/common/paths.rs:181` `r"C:\path\to\file"`
 - `crates/ui/src/lib.rs:114` `let script = r"\b[0]\b[-1]\t\-\_s\_l[10,20]\f[color,red]\f[bold]";`
 - `crates/ui/src/script/command.rs:68` `}, // \f[tag,param], \f[tag]`
-- `crates/ui/src/script/parser/mod.rs:59` `// \f[tag,param] または \f[tag]`
+- `crates/ui/src/script/parser/mod.rs:61` `// \f[tag,param] または \f[tag]`

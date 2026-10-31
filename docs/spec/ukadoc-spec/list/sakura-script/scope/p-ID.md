@@ -14,4 +14,4 @@ ui/js/ghost/sakura-parser.js / sakura-command-handler.js で処理: スコープ
 - `src-tauri/src/common/paths.rs:181` `r"C:\path\to\file"`
 - `crates/ui/src/lib.rs:155` `let script_ps = r"\p[2]\p3\_s[1]同期\_s[0]非同期";`
 - `crates/ui/src/script/command.rs:7` `Target(u8),   // \0, \1, \p[n]`
-- `crates/ui/src/script/parser/mod.rs:30` `// \p[N]`
+- `crates/ui/src/script/parser/mod.rs:32` `// \p[N]`

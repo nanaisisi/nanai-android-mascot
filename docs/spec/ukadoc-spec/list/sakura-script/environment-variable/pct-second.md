@@ -2,7 +2,7 @@
 
 - **規格**: [pct-second.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/environment-variable/pct-second/) (ukadoc-spec/list/sakura-script/environment-variable/pct-second.md)
 - **検索語**: second
-- **対応状況**: ❌ 未実装(誤検出)
+- **対応状況**: ✅ 実装済(誤検出)
 
 ## 突合結果
 

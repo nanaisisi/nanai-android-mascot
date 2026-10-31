@@ -2,7 +2,7 @@
 
 - **規格**: [pct-lastghostname.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/environment-variable/pct-lastghostname/) (ukadoc-spec/list/sakura-script/environment-variable/pct-lastghostname.md)
 - **検索語**: lastghostname
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

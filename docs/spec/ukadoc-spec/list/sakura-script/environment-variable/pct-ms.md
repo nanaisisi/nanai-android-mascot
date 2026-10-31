@@ -2,7 +2,7 @@
 
 - **規格**: [pct-ms.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/environment-variable/pct-ms/) (ukadoc-spec/list/sakura-script/environment-variable/pct-ms.md)
 - **検索語**: %ms
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

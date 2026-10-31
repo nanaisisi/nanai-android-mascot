@@ -1,5 +1,6 @@
 //! さくらスクリプトのパーサと実行（内部コマンド）
 
+use crate::script::env::expand_sakura_script_env;
 use crate::script::parser::brackets::handlers::handle_wait_short;
 
 use super::command::SakuraCommand;
@@ -15,7 +16,8 @@ pub fn parse_sakura_script(script: &str) -> Vec<SakuraCommand> {
 
 /// さくらスクリプトのパーサと実行（内部コマンド）
 pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraCommand)) {
-    let mut chars = script.chars().peekable();
+    let expanded = expand_sakura_script_env(script, "User", "Nanai", "Kero");
+    let mut chars = expanded.chars().peekable();
     let mut buffer = String::new();
     while let Some(c) = chars.next() {
         if c == '\\' {
@@ -46,7 +48,7 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
                 }
                 Some('x') => callback(SakuraCommand::ClickWait),
                 Some('_') => {
-                    // \_w / \_q / \_a / \_s / \_l
+                    // \_w / \_q / \_a / \_s / \_l / \_! / \_\_v / \_\_q
                     brackets::handle_underscore(&mut chars, &mut callback);
                 }
                 Some('b') => {
@@ -114,7 +116,7 @@ mod tests {
 
     #[test]
     fn test_parse_sakura_script() {
-        let script = "\\0\\s[0]Hello\\w1\\e";
+        let script = "\\0\\s[0]Hello %username\\w1\\e";
         let cmds = parse_sakura_script(script);
         assert!(!cmds.is_empty());
     }

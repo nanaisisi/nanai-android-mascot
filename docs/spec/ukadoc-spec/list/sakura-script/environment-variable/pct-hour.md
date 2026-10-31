@@ -2,7 +2,7 @@
 
 - **規格**: [pct-hour.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/environment-variable/pct-hour/) (ukadoc-spec/list/sakura-script/environment-variable/pct-hour.md)
 - **検索語**: hour
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -13,5 +13,5 @@
 - `src-tauri/src/commands/install/utils.rs:89` `+ (dt.hour() as u64) * 3_600`
 - `src-tauri/src/ghost/scan/date.rs:6` `let hours = remainder / 3600;`
 - `src-tauri/src/ghost/scan/date.rs:47` `year, month, day, hours, minutes, seconds`
-- `cpp/yaya-shiori/misc.cpp:969` `tmtime.tm_hour = stime.wHour;`
-- `cpp/yaya-shiori/misc.cpp:1032` `t3 = tm.tm_hour;`
+- `crates/ui/src/script/env.rs:1` `//! SakuraScript Environment Variable Interpolation (%username, %selfname, %hour`
+- `crates/ui/src/script/env.rs:19` `result = result.replace("%hour", &now.hour().to_string());`

@@ -2,7 +2,7 @@
 
 - **規格**: [pct-mz.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/environment-variable/pct-mz/) (ukadoc-spec/list/sakura-script/environment-variable/pct-mz.md)
 - **検索語**: %mz
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

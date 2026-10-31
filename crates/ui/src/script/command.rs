@@ -66,6 +66,7 @@ pub enum SakuraCommand {
     },
     BalloonTimeout(u32),
     LockBalloonMove(bool),
+    WindowState(String),
     Biff,
     ExecuteSntp,
     CreateShortcut,

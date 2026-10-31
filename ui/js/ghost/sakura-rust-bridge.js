@@ -113,6 +113,9 @@ export function rustCommandsToTokens(rustCommands) {
 			case "LockBalloonMove":
 				tokens.push({ type: "lock_balloon_move", locked: cmd.payload ?? true });
 				break;
+			case "WindowState":
+				tokens.push({ type: "command", command: "windowstate", args: [cmd.payload ?? ""] });
+				break;
 			case "Biff":
 				tokens.push({ type: "command", command: "biff", args: [] });
 				break;

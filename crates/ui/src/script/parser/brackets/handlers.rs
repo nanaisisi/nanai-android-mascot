@@ -141,6 +141,10 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
                     let timeout = parts.get(2).and_then(|s| s.parse().ok()).unwrap_or(0);
                     callback(SakuraCommand::BalloonTimeout(timeout));
                 }
+                "windowstate" => {
+                    let state = parts.get(2).unwrap_or(&"").to_string();
+                    callback(SakuraCommand::WindowState(state));
+                }
                 _ => {
                     callback(SakuraCommand::Command {
                         args: parts.iter().map(|s| s.to_string()).collect(),

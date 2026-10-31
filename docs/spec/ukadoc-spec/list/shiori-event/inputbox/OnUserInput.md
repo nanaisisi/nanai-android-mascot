@@ -11,7 +11,7 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 ## 実装箇所
 
 - `ui/js/core/actions/dictation.js:31` `this.app.ghostController.sendShioriEvent("OnUserInput", [text]);`
-- `ui/js/ghost/sakura-command-handler.js:138` `await this.app.ghostController.sendShioriEvent("OnUserInput", [`
-- `ui/js/ghost/sakura-command-handler.js:147` `await this.app.ghostController.sendShioriEvent("OnUserInputCancel", [id]);`
-- `ui/js/ghost/sakura-command-handler.js:173` `this.app.ghostController.sendShioriEvent("OnUserInputCancel", [id]);`
-- `ui/js/ghost/sakura-command-handler.js:249` `// Reference0: 空席 (OnUserInputCancel と番号を揃える) / Reference1: cancel`
+- `ui/js/ghost/sakura-command-handler.js:161` `await this.app.ghostController.sendShioriEvent("OnUserInput", [`
+- `ui/js/ghost/sakura-command-handler.js:170` `await this.app.ghostController.sendShioriEvent("OnUserInputCancel", [id]);`
+- `ui/js/ghost/sakura-command-handler.js:196` `this.app.ghostController.sendShioriEvent("OnUserInputCancel", [id]);`
+- `ui/js/ghost/sakura-command-handler.js:272` `// Reference0: 空席 (OnUserInputCancel と番号を揃える) / Reference1: cancel`

@@ -62,10 +62,33 @@ export class SakuraCommandHandler {
 			}
 		} else if (rawCmd === "set" && rawSub === "alignmenttodesktop") {
 			await this.setAlignmentToDesktop(args[2]);
+		} else if (rawCmd === "windowstate") {
+			const state = args[1];
+			if (state) {
+				await this.handleWindowState(state);
+			}
 		} else if (rawCmd === "update" || rawCmd === "updatebymyself") {
 			await this.app.startNetworkUpdate?.();
 		} else {
 			console.debug("未対応の \\! コマンド:", args);
+		}
+	}
+
+	async handleWindowState(state) {
+		try {
+			const api = globalThis.__TAURI__?.window;
+			if (!api) return;
+			const win = api.getCurrentWindow();
+			const lower = state.toLowerCase();
+			if (lower === "stayontop") {
+				await win.setAlwaysOnTop(true);
+			} else if (lower === "!stayontop") {
+				await win.setAlwaysOnTop(false);
+			} else if (lower === "minimize") {
+				await win.minimize();
+			}
+		} catch (e) {
+			console.warn("windowstate 失敗:", e);
 		}
 	}
 

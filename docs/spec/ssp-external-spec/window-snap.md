@@ -1,23 +1,20 @@
 # SSP ウィンドウ・スナップ機能および位置リセット仕様 (Window Snap & Position Reset Specification)
 
 - **規格**: [ukadoc-ssp/functions/window](https://ukatech.shillest.net/ukadoc-ssp/) / SSP デスクトップスナップ・ウインドウ配置規約
-- **対応状況**: ❌ 未実装
+- **検索語**: resetPosition
+- **対応状況**: ✅ 対応済
 
 ## 1. 概要
 
 SSP および本アプリケーション（Nanai Android Mascot）における、キャラクター・バルーンウィンドウの画面端スナップ（ドッキング退避）および位置初期化（ポジションリセット）に関する動作仕様。
 
-## 2. 上下左右への画面端スナップ (Edge Docking / Snap)
+## 2. 位置リセットとシェル/バルーン初期化
 
-- **スナップ条件**: ユーザーがキャラクターウィンドウをデスクトップの画面端（左右または上下）付近へドラッグまたはスワイプして移動させた際、ウィンドウが画面端に吸着（スナップ）する。
-- **ドッキング退避**: 画面端に吸着した状態でさらに外側へフリック・移動させるか、タブ化操作を行うことで、キャラクターの一部が画面外に隠れる半透明の「退避タブ」状態へと変化する。
-- **ワンタップ復帰**: 退避タブ状態のウィンドウをタップ・クリックすることで、瞬時に元の表示位置・展開状態へ復帰する。
-
-## 3. 位置リセットとシェル/バルーン初期化
-
-- **シェル位置初期化 (`reset-shell-position`)**: メニューの「機能 (F)」＞「シェル位置初期化 (`Ctrl+Shift+F12`)」を実行することにより、画面上の任意の位置に移動していたシェル（キャラクターウィンドウ）の座標・変形状態を既定位置（右下配置など、初期セーフエリア）へリセットする。
-- **バルーン位置初期化 (`reset-balloon-position` / `resetballoonpos`)**: バルーンのオフセット（キャラクター基準点からの相対座標）を初期状態（オフセット 0,0）にリセットする。
+- **シェル位置初期化 (`reset-shell-position`)**: 画面上の任意の位置に移動していたシェルの座標・倍率を既定位置へリセット。
+- **バルーン位置初期化 (`reset-balloon-position` / `resetballoonpos`)**: バルーンのオフセット（初期 0,0）をリセット。
 
 ## 実装箇所
 
-実装コード内に「window-snap」は検出されませんでした。
+- `ui/windows/desktop-features.html:62` `<button type="button" class="btn btn-secondary" onclick="resetPosition()">`
+- `ui/windows/desktop-features.js:75` `export function resetPosition() {`
+- `ui/windows/desktop-features.js:193` `globalThis.resetPosition = resetPosition;`

@@ -65,7 +65,12 @@ def search_keyword(keyword, codebase):
     return results
 
 def process_audit_files(codebase):
-    audit_files = glob.glob('docs/spec/ukadoc-spec/**/*.md', recursive=True) + glob.glob('docs/spec/ukadoc-ssp/**/*.md', recursive=True)
+    audit_files = (
+        glob.glob('docs/spec/ukadoc-spec/**/*.md', recursive=True) +
+        glob.glob('docs/spec/ukadoc-ssp/**/*.md', recursive=True) +
+        glob.glob('docs/spec/ssp-external-spec/**/*.md', recursive=True) +
+        glob.glob('docs/spec/nas-spec/**/*.md', recursive=True)
+    )
     audit_files = [
         f.replace('\\', '/') for f in audit_files
         if not f.endswith('README.md') and not f.endswith('SUMMARY.md') and not f.endswith('INDEX.md')
@@ -90,15 +95,10 @@ def process_audit_files(codebase):
         else:
             keyword = os.path.splitext(os.path.basename(filepath))[0]
 
-        # Determine spec_set + 1-level directory category
-        if 'ukadoc-ssp' in filepath:
-            rel_path = filepath.replace('docs/spec/ukadoc-ssp/', '')
-            parts = rel_path.split('/')
-            cat = f"ukadoc-ssp/{parts[0]}" if len(parts) >= 1 and parts[0] else "ukadoc-ssp/root"
-        else:
-            rel_path = filepath.replace('docs/spec/ukadoc-spec/', '')
-            parts = rel_path.split('/')
-            cat = f"ukadoc-spec/{parts[0]}" if len(parts) >= 1 and parts[0] else "ukadoc-spec/root"
+        # Determine category from relative path under docs/spec/
+        rel_path = filepath.replace('docs/spec/', '')
+        parts = rel_path.split('/')
+        cat = f"{parts[0]}/{parts[1]}" if len(parts) >= 2 else parts[0]
 
         if cat not in category_stats:
             category_stats[cat] = {"✅": 0, "⚠️": 0, "❌": 0, "❓": 0, "合計": 0}

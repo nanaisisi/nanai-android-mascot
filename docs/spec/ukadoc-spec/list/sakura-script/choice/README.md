@@ -8,7 +8,7 @@
 | [\_a[ID]](_a-ID.md)                                          | \_a    |  ✅ 実装済  |
 | [\_a[ID,r2,r3...]](_a-ID-r2-r3.md)                           | \_a    | ⚠️ 一部対応 |
 | [\_a[OnID,r0,r1...]](_a-OnID-r0-r1.md)                       | \_a    | ⚠️ 一部対応 |
-| [\![set,choicetimeout,時間]](bang-set-choicetimeout.md)      | \!     |  ❌ 未実装  |
+| [\![set,choicetimeout,時間]](bang-set-choicetimeout.md)      | \!     |  ✅ 実装済  |
 | [\q[タイトル,ID]](q-ID.md)                                   | \q     |  ✅ 実装済  |
 | [\q[ID][タイトル]または\q*[ID][タイトル]](q-ID-q-star-ID.md) | \q     | ⚠️ 一部対応 |
 | [\q\[タイトル,ID,r*2*,r*3*...\]](q-ID-r2-r3.md)              | \q     |  ❌ 未実装  |

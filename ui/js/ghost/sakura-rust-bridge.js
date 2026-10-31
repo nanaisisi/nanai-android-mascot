@@ -185,6 +185,20 @@ export function rustCommandsToTokens(rustCommands) {
 					args: [cmd.payload?.account ?? ""],
 				});
 				break;
+			case "SetHttpTimeout":
+				tokens.push({
+					type: "command",
+					command: "sethttptimeout",
+					args: [String(cmd.payload ?? 0)],
+				});
+				break;
+			case "SetProxy":
+				tokens.push({
+					type: "command",
+					command: "setproxy",
+					args: [cmd.payload?.server ?? "", String(cmd.payload?.port ?? 80)],
+				});
+				break;
 			case "Biff":
 				tokens.push({ type: "command", command: "biff", args: [] });
 				break;

@@ -106,6 +106,15 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
                     let option = parts.get(3).unwrap_or(&"").to_string();
                     callback(SakuraCommand::SetWallpaper { filename, option });
                 }
+                "httptimeout" => {
+                    let timeout = parts.get(2).and_then(|s| s.parse().ok()).unwrap_or(0);
+                    callback(SakuraCommand::SetHttpTimeout(timeout));
+                }
+                "proxy" => {
+                    let server = parts.get(2).unwrap_or(&"").to_string();
+                    let port = parts.get(3).and_then(|s| s.parse().ok()).unwrap_or(80);
+                    callback(SakuraCommand::SetProxy { server, port });
+                }
                 _ => {
                     callback(SakuraCommand::Command {
                         args: parts.iter().map(|s| s.to_string()).collect(),

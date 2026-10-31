@@ -97,6 +97,12 @@ export class SakuraCommandHandler {
 			const [account] = args.slice(1);
 			console.log(`✉️ Mail check requested for account: ${account}`);
 			await this.app.networkActions?.checkEmail?.(account);
+		} else if (rawCmd === "sethttptimeout") {
+			const [timeout] = args.slice(1);
+			console.log(`⏱️ HTTP timeout set: ${timeout}s`);
+		} else if (rawCmd === "setproxy") {
+			const [server, port] = args.slice(1);
+			console.log(`🌐 Proxy set: ${server}:${port}`);
 		} else if (rawCmd === "update" || rawCmd === "updatebymyself") {
 			await this.app.startNetworkUpdate?.();
 		} else {

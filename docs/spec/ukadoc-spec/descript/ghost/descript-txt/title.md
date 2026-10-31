@@ -12,6 +12,6 @@
 
 - `src-tauri/tauri.conf.json:16` `"title": "Nanai Android Mascot",`
 - `src-tauri/tauri.test.conf.json:16` `"title": "nanai-android-mascot-test",`
-- `src-tauri/src/commands/calendar.rs:14` `pub title: String,`
+- `src-tauri/src/commands/calendar.rs:19` `pub title: String,`
 - `src-tauri/src/commands/shell/ghost.rs:27` `.title("アンインストール確認")`
 - `src-tauri/src/commands/shiori/lifecycle/spawn.rs:106` `.title(format!("Nanai Android Mascot - {}", ghost_name))`

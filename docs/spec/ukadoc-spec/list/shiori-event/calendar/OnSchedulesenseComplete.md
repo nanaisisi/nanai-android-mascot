@@ -1,17 +1,14 @@
 # OnSchedulesenseComplete
 
 - **規格**: [OnSchedulesenseComplete.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/calendar/OnSchedulesenseComplete/) (ukadoc-spec/list/shiori-event/calendar/OnSchedulesenseComplete.md)
-- **検索語**: get_schedules
+- **検索語**: OnSchedulesenseComplete
 - **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-カレンダースケジュール関連イベント・機能を実装 (src-tauri/src/commands/calendar.rs -> get_schedules)。
+OnSchedulesenseComplete カレンダー/スケジュールSHIORIイベント送信処理を実装 (ui/js/ghost/shiori-notify.js -> sendShioriNotify, src-tauri/src/commands/calendar.rs)。
 
 ## 実装箇所
 
-- `src-tauri/src/lib.rs:165` `commands::calendar::get_schedules,`
-- `src-tauri/src/commands/calendar.rs:19` `fn get_schedules_file_path(app_handle: &tauri::AppHandle) -> Result<PathBuf, Str`
-- `src-tauri/src/commands/calendar.rs:29` `pub async fn get_schedules(app_handle: tauri::AppHandle) -> Result<Vec<ScheduleI`
-- `src-tauri/src/commands/calendar.rs:30` `let path = get_schedules_file_path(&app_handle)?;`
-- `src-tauri/src/commands/calendar.rs:44` `let mut items = get_schedules(app_handle.clone()).await.unwrap_or_default();`
+- `src-tauri/src/commands/calendar.rs:6` `//! - OnScheduleRead, OnSchedulesenseBegin, OnSchedulesenseComplete`
+- `ui/js/ghost/shiori-notify.js:22` `* - OnSchedulesenseBegin, OnSchedulesenseComplete, OnSchedulesenseFailure, OnSch`

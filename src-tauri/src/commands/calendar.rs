@@ -1,5 +1,10 @@
 //! SSP Calendar & Schedule Manager specification implementation (ukadoc-ssp/functions/calendar)
 //! [calendar/index.md], [calendar/schedule.md], [calendar/menu.md], [\![open,calendar]], [\![execute,schedule-add]]
+//! Calendar & Schedule SHIORI Events:
+//! - caption_schedulesensetiming, caption_scheduletype
+//! - OnSchedule5MinutesToGo, OnSchedulepostBegin, OnSchedulepostComplete
+//! - OnScheduleRead, OnSchedulesenseBegin, OnSchedulesenseComplete
+//! - OnSchedulesenseFailure, OnScheduleTodayNotify
 
 use serde::{Deserialize, Serialize};
 use std::fs;

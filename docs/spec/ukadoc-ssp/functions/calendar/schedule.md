@@ -13,4 +13,4 @@
 - `src-tauri/src/lib.rs:166` `commands::calendar::add_schedule,`
 - `src-tauri/src/lib.rs:167` `commands::calendar::delete_schedule,`
 - `src-tauri/src/commands/calendar.rs:2` `//! [calendar/index.md], [calendar/schedule.md], [calendar/menu.md], [\![open,ca`
-- `src-tauri/src/commands/calendar.rs:19` `fn get_schedules_file_path(app_handle: &tauri::AppHandle) -> Result<PathBuf, Str`
+- `src-tauri/src/commands/calendar.rs:4` `//! - caption_schedulesensetiming, caption_scheduletype`

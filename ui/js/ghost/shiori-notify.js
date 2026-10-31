@@ -18,6 +18,8 @@ import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
  * - OnFullScreenAppRestore, OnGhostCallComplete, OnGhostCalled, OnGhostCalling, OnGhostChanged, OnGhostChanging
  * - OnInitialize, OnOtherGhostBooted, OnOtherGhostChanged, OnOtherGhostClosed, OnShellChanged, OnShellChanging
  * - OnSysResume, OnSysSuspend, OnVirtualDesktopChanged, OnWindowStateMinimize, OnWindowStateRestore
+ * - OnSchedule5MinutesToGo, OnSchedulepostBegin, OnSchedulepostComplete, OnScheduleRead
+ * - OnSchedulesenseBegin, OnSchedulesenseComplete, OnSchedulesenseFailure, OnScheduleTodayNotify
  */
 export const shioriNotifyMethods = {
 	/**

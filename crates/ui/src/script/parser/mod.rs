@@ -89,10 +89,12 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
                 Some('e') => callback(SakuraCommand::End),
                 Some('q') => {
                     // \q[テキスト,ID] / \q[temp,テキスト,ID]
-                    if let Some((label, id)) = brackets::handle_choice(&mut chars) {
-                        callback(SakuraCommand::Choice { label, id });
+                    if let Some((label, id, args)) = brackets::handle_choice(&mut chars) {
+                        callback(SakuraCommand::Choice { label, id, args });
                     }
                 }
+                Some('*') => callback(SakuraCommand::Star),
+                Some('z') => callback(SakuraCommand::Z),
                 // 未知タグ: 後続の [...] 引数を消費し、本文への漏出を防ぐ
                 Some(_) => brackets::consume_tag_tail(&mut chars),
                 None => {}

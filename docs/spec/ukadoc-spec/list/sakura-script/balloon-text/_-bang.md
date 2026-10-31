@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/command.rs:44` `NoUserBreak(bool), // \_!`
+- `crates/ui/src/script/command.rs:48` `NoUserBreak(bool), // \_!`

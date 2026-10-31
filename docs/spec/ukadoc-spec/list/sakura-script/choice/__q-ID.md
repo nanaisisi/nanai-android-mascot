@@ -2,7 +2,7 @@
 
 - **規格**: [__q-ID.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/choice/__q-ID/) (ukadoc-spec/list/sakura-script/choice/__q-ID.md)
 - **検索語**: \__q
-- **対応状況**: ❌ 検出なし
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

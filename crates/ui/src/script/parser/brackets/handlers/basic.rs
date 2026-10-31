@@ -67,15 +67,25 @@ pub(crate) fn handle_font(chars: &mut CharsIter<'_>) -> Option<(String, Option<S
     Some((tag, param))
 }
 
-pub(crate) fn handle_choice(chars: &mut CharsIter<'_>) -> Option<(String, String)> {
+pub(crate) fn handle_choice(chars: &mut CharsIter<'_>) -> Option<(String, String, Vec<String>)> {
     let content = read_bracketed(chars)?;
     let parts: Vec<&str> = content.split(',').map(|s| s.trim()).collect();
     if parts.len() >= 3 && parts[0] == "temp" {
         let label = parts[1].to_string();
         let id = parts[2].to_string();
-        return Some((label, id));
+        let args = if parts.len() > 3 {
+            parts[3..].iter().map(|s| s.to_string()).collect()
+        } else {
+            Vec::new()
+        };
+        return Some((label, id, args));
     }
     let label = parts.first().copied().unwrap_or("").to_string();
     let id = parts.get(1).copied().unwrap_or("").to_string();
-    Some((label, id))
+    let args = if parts.len() > 2 {
+        parts[2..].iter().map(|s| s.to_string()).collect()
+    } else {
+        Vec::new()
+    };
+    Some((label, id, args))
 }

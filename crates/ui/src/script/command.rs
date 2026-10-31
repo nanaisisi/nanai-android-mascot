@@ -26,11 +26,15 @@ pub enum SakuraCommand {
     Choice {
         label: String,
         id: String,
-    }, // \q[label,id]
+        args: Vec<String>,
+    }, // \q[label,id,r2,...]
     Anchor {
         id: String,
         text: String,
-    }, // \_a[id]text\_a
+        args: Vec<String>,
+    }, // \_a[id,r2,...]text\_a
+    Star, // \*
+    Z,    // \z
     Raise {
         event: String,
         references: Vec<String>,

@@ -59,7 +59,11 @@ pub(crate) fn handle_underscore(
             }
         }
         Some('a') => {
-            if let Some(anchor_id) = read_bracketed(chars) {
+            if let Some(pos) = read_bracketed(chars) {
+                let mut parts = pos.split(',').map(|s| s.trim());
+                let anchor_id = parts.next().unwrap_or("").to_string();
+                let args: Vec<String> = parts.map(|s| s.to_string()).collect();
+
                 let mut anchor_text = String::new();
                 while let Some(ac) = chars.next() {
                     if ac == '\\' && chars.peek() == Some(&'_') {
@@ -74,6 +78,7 @@ pub(crate) fn handle_underscore(
                 callback(SakuraCommand::Anchor {
                     id: anchor_id,
                     text: anchor_text,
+                    args,
                 });
             }
         }

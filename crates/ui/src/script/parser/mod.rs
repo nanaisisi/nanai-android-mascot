@@ -91,7 +91,6 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
                 }
                 Some('C') => callback(SakuraCommand::Clear),
                 Some('e') => callback(SakuraCommand::End),   // \e
-                Some('-') => callback(SakuraCommand::Halt),  // \-
                 Some('q') => {
                     // \q[テキスト,ID] / \q[temp,テキスト,ID]
                     if let Some((label, id, args)) = brackets::handle_choice(&mut chars) {

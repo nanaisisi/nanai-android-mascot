@@ -1,0 +1,33 @@
+# 3. WASM化指針（コアエンジンの移植方針）
+
+### 3.1 WASM化対象のコンポーネント
+
+| コンポーネント                       | 従来実装            | WASM化の狙い                                                                                              |
+| :----------------------------------- | :------------------ | :-------------------------------------------------------------------------------------------------------- |
+| **SHIORI エンジン (里々/YAYA)**      | C++ DLL             | Emscripten / Clang WASM ターゲットでコンパイル。OS を問わず同一バイナリで対話ロジックを高速・安全に実行。 |
+| **独自ゴースト・スクリプトエンジン** | Rust (`libloading`) | `wasm-bindgen` を用いてビルド。Web ブラウザ版および Android WebView 上でサンドボックス動作。              |
+| **画像処理 / PNA・透過合成**         | GDI+ / 独自 C++     | Canvas 2D よりも高速かつメモリ効率の高いピクセル透過・マスク合成を WASM (Rust/C++) で処理。               |
+
+### 3.2 SHIORI 3.0 on WASM のインターフェース仕様
+
+従来の C 言語スタイルの `load(hInst, len)` / `request(hText, &len)` / `unload()` を、WASM 向けに標準化：
+
+```typescript
+// WASM SHIORI インターフェース定義
+export interface WasmShioriEngine {
+	/** SHIORI 初期化 (ゴースト辞書パスまたはアーカイブを展開) */
+	load(ghostFiles: Map<string, Uint8Array>): Promise<boolean>;
+
+	/** SHIORI 3.0 リクエスト文字列の送受信 */
+	request(requestText: string): Promise<string>;
+
+	/** アンロード処理 */
+	unload(): Promise<boolean>;
+}
+```
+
+- **メリット**:
+  - 辞書ファイル（`.txt`）をメモリ上の Virtual FS（仮想ファイルシステム）に展開可能。
+  - 端末ローカルのファイルシステム差異（Android の Scoped Storage 等）に影響されない。
+
+---

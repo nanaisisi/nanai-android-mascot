@@ -102,15 +102,15 @@ body {
 	mix-blend-mode: var(--balloon-anchor-blendmethod, normal);
 }
 
-.balloon-anchor:hover {
-	color: var(--balloon-anchor-color, var(--balloon-highlight-bg, #0078d7));
-}
-
 .balloon-anchor:visited {
 	color: var(
 		--balloon-anchor-visited-color,
 		var(--balloon-anchor-color, #551a8b)
 	);
+}
+
+.balloon-anchor:hover {
+	color: var(--balloon-anchor-color, var(--balloon-highlight-bg, #0078d7));
 }
 
 /* バルーンオプション画像 (arrow.filename, clickwaitmarker.filename 等) */

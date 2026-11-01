@@ -61,14 +61,14 @@ mod tests {
         let choice = handle_choice(&mut chars);
         assert_eq!(
             choice,
-            Some(("ChoiceText".to_string(), "ChoiceID".to_string()))
+            Some(("ChoiceText".to_string(), "ChoiceID".to_string(), Vec::new()))
         );
 
         let mut chars = "[temp,TempText,TempID]".chars().peekable();
         let choice_temp = handle_choice(&mut chars);
         assert_eq!(
             choice_temp,
-            Some(("TempText".to_string(), "TempID".to_string()))
+            Some(("TempText".to_string(), "TempID".to_string(), Vec::new()))
         );
     }
 
@@ -107,7 +107,8 @@ mod tests {
             cmds,
             vec![SakuraCommand::Anchor {
                 id: "anchor1".into(),
-                text: "text".into()
+                text: "text".into(),
+                args: Vec::new(),
             }]
         );
     }
@@ -164,7 +165,7 @@ mod tests {
         let mut chars_choice3 = "[JustLabel]".chars().peekable();
         assert_eq!(
             handle_choice(&mut chars_choice3),
-            Some(("JustLabel".to_string(), "".to_string()))
+            Some(("JustLabel".to_string(), "".to_string(), Vec::new()))
         );
 
         let mut u_cmds = Vec::new();

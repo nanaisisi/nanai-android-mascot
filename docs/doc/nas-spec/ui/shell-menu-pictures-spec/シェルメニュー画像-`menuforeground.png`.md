@@ -1,0 +1,20 @@
+# 1. シェルメニュー画像 (`menu/foreground.png`)
+
+### 規格上の根拠（ukadoc / オーナードローメニュー仕様）
+
+- **元規格**: [manual/owner-draw-menu.md](https://github.com/ukatech/ukadoc-spec/blob/main/manual/owner-draw-menu.md)
+- **関連設定**: シェルの `descript.txt` 内の定義
+  - `menu.background.bitmap.filename,background.png`（メニュー全体の背景画像）
+  - `menu.foreground.bitmap.filename,foreground.png`（カーソル選択行・ハイライト部分の前景画像）
+  - `menu.sidebar.bitmap.filename,sidebar.png`（サイドバー画像）
+- **役割**:
+  - シェルごとの右クリックメニュー（オーナードローメニュー）をスキン化するための画像群です。
+  - `menu/foreground.png` は、項目にホバー・選択フォーカスが当たった際に背景画像の上に重ねて描画されるハイライト／前景スキン画像として使用されます。
+- **配置パス例**:
+  - `ghost/emily4/shell/master/menu/foreground.png`
+  - `ghost/emily4/shell/master/menu/background.png`
+  - `ghost/emily4/shell/master/menu/sidebar.png`
+- **フォールバック**:
+  - 定義および画像が存在しない場合、ベースウェア標準のメニューデザイン・色設定が適用されます。
+
+---

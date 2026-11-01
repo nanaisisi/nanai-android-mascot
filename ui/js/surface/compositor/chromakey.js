@@ -55,11 +55,26 @@ export function processChromaKey(
 						if (pnaCtx) {
 							pnaCtx.drawImage(pnaImg, 0, 0, width, height);
 							const pnaData = pnaCtx.getImageData(0, 0, width, height).data;
-							const len = data.length;
-							for (let i = 0; i < len; i += 4) {
-								// PNA の輝度 (白=255不透明, 黒=0透過) をアルファ値に適用
-								data[i + 3] = pnaData[i];
+
+							const data32 = new Uint32Array(data.buffer);
+							const pnaData32 = new Uint32Array(pnaData.buffer);
+							const len32 = data32.length;
+							const isLittleEndian =
+								new Uint8Array(new Uint32Array([0x11223344]).buffer)[0] ===
+								0x44;
+
+							if (isLittleEndian) {
+								for (let i = 0; i < len32; i++) {
+									const pnaR = pnaData32[i] & 0xff;
+									data32[i] = (data32[i] & 0x00ffffff) | (pnaR << 24);
+								}
+							} else {
+								for (let i = 0; i < len32; i++) {
+									const pnaR = (pnaData32[i] >>> 24) & 0xff;
+									data32[i] = (data32[i] & 0xffffff00) | pnaR;
+								}
 							}
+
 							ctx.putImageData(imgData, 0, 0);
 							const resultUrl = canvas.toDataURL("image/png");
 							cache?.set(cacheKey, resultUrl);

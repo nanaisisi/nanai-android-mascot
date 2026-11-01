@@ -1,6 +1,10 @@
 /**
  * さくらスクリプトの \! 拡張コマンドおよび入力ボックス (\![open,inputbox]) ハンドラ
  */
+import {
+	closeCommunicateBox,
+	openCommunicateBox,
+} from "./command-handler/communicatebox.js";
 import { openInputBox } from "./command-handler/inputbox.js";
 import { closeTeachBox, openTeachBox } from "./command-handler/teachbox.js";
 import {
@@ -16,6 +20,7 @@ export class SakuraCommandHandler {
 		this.player = player;
 		this.app = player.app;
 		this.teachForm = null;
+		this.communicateForm = null;
 	}
 
 	/**
@@ -31,6 +36,10 @@ export class SakuraCommandHandler {
 			openTeachBox(this, args.slice(2));
 		} else if (rawCmd === "close" && rawSub === "teachbox") {
 			closeTeachBox(this);
+		} else if (rawCmd === "open" && rawSub === "communicatebox") {
+			openCommunicateBox(this, args.slice(2));
+		} else if (rawCmd === "close" && rawSub === "communicatebox") {
+			closeCommunicateBox(this, false);
 		} else if (rawCmd === "open" && rawSub === "dressupexplorer") {
 			this.app.toggleMenu?.();
 		} else if (rawCmd === "raise") {
@@ -173,6 +182,14 @@ export class SakuraCommandHandler {
 
 	closeTeachBox() {
 		closeTeachBox(this);
+	}
+
+	openCommunicateBox(params = []) {
+		openCommunicateBox(this, params);
+	}
+
+	closeCommunicateBox(notifyCancel = false) {
+		closeCommunicateBox(this, notifyCancel);
 	}
 
 	async setAlignmentToDesktop(mode) {

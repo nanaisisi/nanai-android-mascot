@@ -119,6 +119,9 @@ pub struct SstpRequest {
     pub keep_alive: bool,
 }
 
+/// Slot-01 Contract: SSTP メッセージ型エイリアス
+pub type SstpMessage = SstpRequest;
+
 impl SstpRequest {
     /// 生テキストから SSTP リクエストをパースする
     pub fn parse(raw: &str) -> Result<Self, String> {

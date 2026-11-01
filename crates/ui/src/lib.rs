@@ -35,7 +35,7 @@ pub use surfacetable::{
     SurfTableEntry, SurfTableGroup, SurfaceTable, is_parts_name, parse_surface_table,
 };
 pub use update::{UpdateEntry, parse_update_definition};
-pub use vfs::{open_shift_jis_file, open_text_file, resolve_vfs_path};
+pub use vfs::{VfsResolver, detect_and_decode, open_shift_jis_file, open_text_file, resolve_vfs_path};
 
 #[cfg(test)]
 mod tests {

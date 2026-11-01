@@ -13,10 +13,13 @@ pub mod update;
 pub mod vfs;
 
 // 外部公開・後方互換のための再エクスポート
-pub use animation::{ScheduledFrame, Timeline, build_timeline, cycle_len_ms};
+pub use animation::{
+    ActiveAnimation, AnimationScheduler, FrameStepEvent, ScheduledFrame, Timeline, build_timeline,
+    cycle_len_ms,
+};
 pub use descript::{BindGroup, BindOptionGroup, CharDefaults, Descript};
 pub use fmo::{
-    FmoRecord, MUTEX_SAKURA, MUTEX_SAKURA_FMO, MUTEX_SAKURA_UNICODE_FMO, MUTEX_SSP,
+    FmoEntry, FmoRecord, MUTEX_SAKURA, MUTEX_SAKURA_FMO, MUTEX_SAKURA_UNICODE_FMO, MUTEX_SSP,
     generate_fmo_buffer, parse_fmo_buffer,
 };
 pub use manifest::{ShellManifest, SurfaceManifest};
@@ -26,16 +29,17 @@ pub use shiori::{
     ErrorLevel, GhostStatusToken, SecurityLevel, SenderTypeTag, ShioriMethod, ShioriRequest,
     ShioriResponse, StatusCode, parse_sender_types,
 };
-pub use sstp::{IfGhostEntry, SstpMethod, SstpRequest, SstpResponse, SstpStatusCode};
+pub use sstp::{IfGhostEntry, SstpMessage, SstpMethod, SstpRequest, SstpResponse, SstpStatusCode};
 pub use surfaces::{
     BalloonOffset, CollisionArea, CollisionShape, CompositionLayer, CompositionPlan, DrawMethod,
-    ElementDef, Interval, SerikoAnimation, SurfacesTxt, parse_surfaces_txt,
+    ElementDef, HitTestResult, Interval, SerikoAnimation, SortKind, SurfacesTxt,
+    parse_surfaces_txt,
 };
 pub use surfacetable::{
     SurfTableEntry, SurfTableGroup, SurfaceTable, is_parts_name, parse_surface_table,
 };
 pub use update::{UpdateEntry, UpdatePackage, parse_update_definition};
-pub use vfs::{open_shift_jis_file, open_text_file, resolve_vfs_path};
+pub use vfs::{VfsResolver, detect_and_decode, open_shift_jis_file, open_text_file, resolve_vfs_path};
 
 #[cfg(test)]
 mod tests {

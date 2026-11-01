@@ -6,7 +6,7 @@ pub mod draw;
 pub mod surface;
 pub mod txt;
 
-pub use collision::{CollisionArea, CollisionShape};
+pub use collision::{CollisionArea, CollisionShape, HitTestResult};
 pub use composition::{CompositionLayer, CompositionPlan};
 pub use draw::{DrawMethod, Interval};
 pub use surface::{

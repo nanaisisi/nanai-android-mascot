@@ -3,7 +3,7 @@
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
-use super::collision::CollisionArea;
+use super::collision::{CollisionArea, HitTestResult};
 use super::draw::{DrawMethod, Interval};
 
 /// `element[N]` の1行分の定義
@@ -38,13 +38,16 @@ pub struct AnimationPattern {
 }
 
 /// 一つの SERIKO アニメーション定義
-#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct SerikoAnimation {
     pub id: u32,
     pub interval: Option<Interval>,
     /// メニュー等で表示される アニメーション名（`animation[N].name`）
     pub name: Option<String>,
     pub patterns: Vec<AnimationPattern>,
+    /// アニメーション動作中有効な当たり判定（`animation[N].collision` / `collisionex`）
+    #[serde(default)]
+    pub collisions: Vec<CollisionArea>,
     /// `animation[N].option` 系に指定された内容（元のトークン列）
     pub options: Vec<Vec<String>>,
 }
@@ -89,6 +92,45 @@ impl SurfaceDefinition {
         self.collisions.iter().find(|c| c.contains(x, y))
     }
 
+    /// ソート順（collision-sort: ascend / descend / none / id 等）を考慮してヒットテストを行う
+    pub fn hit_test_sorted(
+        &self,
+        x: i32,
+        y: i32,
+        sort: Option<&SortKind>,
+    ) -> Option<HitTestResult> {
+        match sort {
+            Some(SortKind::Ascend) => {
+                let mut candidates: Vec<&CollisionArea> = self
+                    .collisions
+                    .iter()
+                    .filter(|c| c.contains(x, y))
+                    .collect();
+                candidates.sort_by_key(|c| c.id.unwrap_or(u32::MAX));
+                candidates.first().map(|c| HitTestResult::new(c, x, y))
+            }
+            Some(SortKind::Descend) => {
+                let mut candidates: Vec<&CollisionArea> = self
+                    .collisions
+                    .iter()
+                    .filter(|c| c.contains(x, y))
+                    .collect();
+                candidates.sort_by_key(|c| std::cmp::Reverse(c.id.unwrap_or(0)));
+                candidates.first().map(|c| HitTestResult::new(c, x, y))
+            }
+            Some(SortKind::Id) => {
+                let mut candidates: Vec<&CollisionArea> = self
+                    .collisions
+                    .iter()
+                    .filter(|c| c.contains(x, y))
+                    .collect();
+                candidates.sort_by_key(|c| c.id.unwrap_or(u32::MAX));
+                candidates.first().map(|c| HitTestResult::new(c, x, y))
+            }
+            _ => self.hit_test(x, y).map(|c| HitTestResult::new(c, x, y)),
+        }
+    }
+
     /// 指定 elementID の要素を取得
     pub fn element(&self, id: u32) -> Option<&ElementDef> {
         self.elements.iter().find(|e| e.id == id)
@@ -98,6 +140,12 @@ impl SurfaceDefinition {
 /// `descript` ブロックの `animation.sort` / `collision.sort` 値
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum SortKind {
+    /// `none`：記述順
+    None,
+    /// `ascend`：ID昇順 (1, 2, 3...)
+    Ascend,
+    /// `descend`：ID降順 (10, 9, 8...)
+    Descend,
     /// `id`：アニメーションID順（ collision は当たり判定ID順）
     Id,
     /// `unique-junk`：ジャンクな重複を弾く
@@ -112,6 +160,9 @@ impl SortKind {
     pub fn parse(value: &str) -> Self {
         let v = value.trim().to_lowercase();
         match v.as_str() {
+            "none" => Self::None,
+            "ascend" => Self::Ascend,
+            "descend" => Self::Descend,
             "id" => Self::Id,
             "unique-junk" => Self::UniqueJunk,
             "u-scoped" => Self::UScoped,

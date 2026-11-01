@@ -4,15 +4,17 @@
 //! Alias・範囲指定・surface.append マージ）を Rust 構造体群へとパースする。
 //! パーサーはテキスト評価のみを担当し、描画・アニメーション再生は UI 実装側が行う。
 
+pub mod compositor;
 pub mod parser;
 pub mod types;
 
 #[cfg(test)]
 mod tests;
 
+pub use compositor::{composite_elements, SurfaceFrameBuffer};
 pub use parser::{expand_range, parse_surfaces_txt};
 pub use types::{
     AnimationPattern, BalloonOffset, CollisionArea, CollisionShape, CompositionLayer,
-    CompositionPlan, DrawMethod, ElementDef, Interval, Points, SerikoAnimation, SortKind,
-    SurfaceDefinition, SurfacesTxt,
+    CompositionPlan, DrawMethod, ElementDef, HitTestResult, Interval, Points, SerikoAnimation,
+    SortKind, SurfaceDefinition, SurfacesTxt,
 };

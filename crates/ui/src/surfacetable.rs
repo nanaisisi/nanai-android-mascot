@@ -76,6 +76,19 @@ impl SurfaceTable {
             .find(|e| e.surface_id == surface_id)
             .map(|e| e.name.as_str())
     }
+
+    /// 指定されたオプションが含まれているか判定する（大文字小文字無視）
+    pub fn has_option(&self, option_name: &str) -> bool {
+        self.options
+            .iter()
+            .flatten()
+            .any(|opt| opt.eq_ignore_ascii_case(option_name))
+    }
+
+    /// `DisableNoDefineSurfaces` オプションが指定されているか
+    pub fn disable_no_define_surfaces(&self) -> bool {
+        self.has_option("DisableNoDefineSurfaces")
+    }
 }
 
 /// アニメーション用サーフィス名か（名前に `__parts` を含むものはサーフィス一覧に表示されない）

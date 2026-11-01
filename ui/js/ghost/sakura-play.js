@@ -8,6 +8,8 @@ import { translateScript } from "./sakura-play/translator.js";
 import { initBalloonWindows } from "./sakura-play/window.js";
 import { createBalloonSyncManager } from "./sakura-play-sync.js";
 
+export { SakuraPlaybackController } from "./sakura-play/controller.js";
+
 /**
  * トークン列をバルーンにアニメーション再生（SakuraScriptPlayer.play の本体）
  *

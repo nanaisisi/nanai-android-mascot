@@ -94,5 +94,9 @@ export function applyBaseFontProperties(root, props) {
 			"--balloon-font-shadow-style",
 			props["font.shadowstyle"],
 		);
+		root.style.setProperty(
+			"--balloon-font-shadowstyle",
+			props["font.shadowstyle"],
+		);
 	}
 }

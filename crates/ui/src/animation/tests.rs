@@ -157,3 +157,157 @@ fn test_animation_100_percent_perfect_coverage() {
         let _ = inv.should_fire(100, 0.5);
     }
 }
+
+#[test]
+fn test_animation_scheduler_basic() {
+    use crate::surfaces::SerikoAnimation;
+
+    let mut scheduler = AnimationScheduler::new();
+    scheduler.set_surface(0, 0);
+    assert_eq!(scheduler.current_surface(0), 0);
+    assert_eq!(scheduler.current_surface(1), 10);
+
+    let anim = SerikoAnimation {
+        id: 1,
+        interval: Some(Interval::RunOnce),
+        name: None,
+        patterns: vec![
+            pattern(0, 101, 50),
+            pattern(1, 102, 50),
+            pattern(2, -1, 0),
+        ],
+        options: vec![],
+    };
+
+    scheduler.schedule_surface_animations(0, 0, &[anim.clone()], 0.0);
+    assert_eq!(scheduler.active_count(0), 1);
+
+    // 0ms時点
+    let events = scheduler.step(0);
+    assert!(events.is_empty());
+
+    // 50ms経過で1フレーム目
+    let events = scheduler.step(50);
+    assert_eq!(events.len(), 1);
+    assert_eq!(events[0].pattern.surface, 101);
+    assert!(!events[0].is_finished);
+
+    // さらに50ms経過で2フレーム目
+    let events = scheduler.step(50);
+    assert_eq!(events.len(), 1);
+    assert_eq!(events[0].pattern.surface, 102);
+    assert!(!events[0].is_finished);
+
+    // さらに0msで3フレーム目（surface -1 到達で終了）
+    let events = scheduler.step(0);
+    assert_eq!(events.len(), 1);
+    assert_eq!(events[0].pattern.surface, -1);
+    assert!(events[0].is_finished);
+    assert_eq!(scheduler.active_count(0), 0);
+}
+
+#[test]
+fn test_animation_scheduler_pause_resume() {
+    use crate::surfaces::SerikoAnimation;
+
+    let mut scheduler = AnimationScheduler::new();
+    let anim = SerikoAnimation {
+        id: 5,
+        interval: Some(Interval::Always),
+        name: None,
+        patterns: vec![pattern(0, 10, 100)],
+        options: vec![],
+    };
+
+    scheduler.start_animation(0, 0, &anim);
+    assert_eq!(scheduler.active_count(0), 1);
+
+    scheduler.pause_animation(0, 5);
+    assert!(scheduler.is_animation_paused(0, 5));
+
+    let events = scheduler.step(200);
+    assert!(events.is_empty());
+
+    scheduler.resume_animation(0, 5);
+    assert!(!scheduler.is_animation_paused(0, 5));
+
+    let events = scheduler.step(100);
+    assert_eq!(events.len(), 1);
+    assert_eq!(events[0].pattern.surface, 10);
+}
+
+#[test]
+fn test_animation_scheduler_talk_and_bind() {
+    use crate::surfaces::SerikoAnimation;
+
+    let mut scheduler = AnimationScheduler::new();
+    let talk_anim = SerikoAnimation {
+        id: 1,
+        interval: Some(Interval::Custom("talk,2".into())),
+        name: None,
+        patterns: vec![pattern(0, 20, 0)],
+        options: vec![],
+    };
+    let start_anim = SerikoAnimation {
+        id: 2,
+        interval: Some(Interval::StartTalk),
+        name: None,
+        patterns: vec![pattern(0, 21, 0)],
+        options: vec![],
+    };
+    let end_anim = SerikoAnimation {
+        id: 3,
+        interval: Some(Interval::EndTalk),
+        name: None,
+        patterns: vec![pattern(0, 22, 0)],
+        options: vec![],
+    };
+    let bind_anim = SerikoAnimation {
+        id: 4,
+        interval: Some(Interval::Bind),
+        name: None,
+        patterns: vec![pattern(0, 23, 0)],
+        options: vec![],
+    };
+
+    let anims = vec![
+        talk_anim.clone(),
+        start_anim.clone(),
+        end_anim.clone(),
+        bind_anim.clone(),
+    ];
+
+    // bindが無効な時はスケジュールされない
+    scheduler.schedule_surface_animations(0, 0, &anims, 0.0);
+    assert_eq!(scheduler.active_count(0), 0);
+
+    // bind有効化
+    scheduler.set_bind_active(0, 4, true);
+    assert!(scheduler.is_bind_active(0, 4));
+    scheduler.schedule_surface_animations(0, 0, &anims, 0.0);
+
+    // 発話トリガー
+    scheduler.on_char_spoken(0, &anims); // 1文字目: starttalk発火、talk,2は未発火
+    let events = scheduler.step(0);
+    assert!(events.iter().any(|e| e.animation_id == 2));
+
+    scheduler.on_char_spoken(0, &anims); // 2文字目: talk,2発火
+    let events = scheduler.step(0);
+    assert!(events.iter().any(|e| e.animation_id == 1));
+
+    scheduler.on_talk_end(0, &anims); // 発話終了: endtalk発火
+    let events = scheduler.step(0);
+    assert!(events.iter().any(|e| e.animation_id == 3));
+
+    // yen-e
+    let yene_anim = SerikoAnimation {
+        id: 9,
+        interval: Some(Interval::YenE),
+        name: None,
+        patterns: vec![pattern(0, 99, 0)],
+        options: vec![],
+    };
+    scheduler.on_script_end(0, &[yene_anim]);
+    let events = scheduler.step(0);
+    assert!(events.iter().any(|e| e.animation_id == 9));
+}

@@ -21,6 +21,12 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
     let mut buffer = String::new();
     while let Some(c) = chars.next() {
         if c == '\\' {
+            // Check for escaped backslash: \\
+            if chars.peek() == Some(&'\\') {
+                chars.next();
+                buffer.push('\\');
+                continue;
+            }
             if !buffer.is_empty() {
                 callback(SakuraCommand::Text(buffer.clone()));
                 buffer.clear();
@@ -50,7 +56,11 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
                         callback(SakuraCommand::Wait(ms));
                     }
                 }
-                Some('x') => callback(SakuraCommand::ClickWait),
+                Some('x') => {
+                    // \x または \x[noclear]
+                    let _ = brackets::read_bracketed(&mut chars);
+                    callback(SakuraCommand::ClickWait);
+                }
                 Some('_') => {
                     // \_w / \_q / \_a / \_s / \_l / \_! / \_\_v / \_\_q
                     brackets::handle_underscore(&mut chars, &mut callback);

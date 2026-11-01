@@ -24,6 +24,9 @@ pub fn expand_sakura_script_env(
         }
     }
 
+    // Preserve escaped \% before expanding environment variables
+    result = result.replace(r"\%", "\u{E000}");
+
     // Standard environment variables
     result = result.replace("%username", username);
     result = result.replace("%selfname", selfname);
@@ -52,6 +55,9 @@ pub fn expand_sakura_script_env(
     result = result.replace("%ml", "0");
     result = result.replace("%mz", "0");
     result = result.replace("%*", "");
+
+    // Restore escaped \% as literal %
+    result = result.replace("\u{E000}", "%");
     result
 }
 

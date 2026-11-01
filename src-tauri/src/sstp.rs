@@ -79,7 +79,13 @@ pub async fn send_sstp_request(
                     .map_err(|e| e.to_string())?;
             }
         }
-        "GIVE" => {}
+        "GIVE" => {
+            if let Some(ref script) = request.script {
+                app_handle
+                    .emit("sstp-give", script)
+                    .map_err(|e| e.to_string())?;
+            }
+        }
         _ => {
             return Ok(SstpResponse {
                 status: "400 Bad Request".to_string(),

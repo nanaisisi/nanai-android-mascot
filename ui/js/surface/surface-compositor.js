@@ -3,4 +3,8 @@
  */
 export { processChromaKey } from "./compositor/chromakey.js";
 export { composeSurfaceElements } from "./compositor/compose.js";
+export {
+	compositeElements,
+	SurfaceFrameBuffer,
+} from "./compositor/framebuffer.js";
 export { drawLayer } from "./compositor/layer.js";

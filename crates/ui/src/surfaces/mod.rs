@@ -13,6 +13,6 @@ mod tests;
 pub use parser::{expand_range, parse_surfaces_txt};
 pub use types::{
     AnimationPattern, BalloonOffset, CollisionArea, CollisionShape, CompositionLayer,
-    CompositionPlan, DrawMethod, ElementDef, Interval, Points, SerikoAnimation, SortKind,
-    SurfaceDefinition, SurfacesTxt,
+    CompositionPlan, DrawMethod, ElementDef, HitTestResult, Interval, Points, SerikoAnimation,
+    SortKind, SurfaceDefinition, SurfacesTxt,
 };

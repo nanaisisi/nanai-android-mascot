@@ -3,6 +3,7 @@
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
+use super::collision::HitTestResult;
 use super::surface::{AnimationPattern, ElementDef, SortKind, SurfaceDefinition};
 use super::{CompositionLayer, CompositionPlan};
 
@@ -104,6 +105,129 @@ impl SurfacesTxt {
     pub fn resolve_kero_alias(&self, name: &str) -> Option<&SurfaceDefinition> {
         let list = self.kero_alias_numbers(name)?;
         list.iter().find_map(|n| self.surfaces.get(n))
+    }
+
+    /// 当たり判定のヒットテスト（`collision.sort` 設定を適用）
+    pub fn hit_test(&self, surface_id: u32, x: i32, y: i32) -> Option<HitTestResult> {
+        let def = self.surface(surface_id)?;
+        def.hit_test_sorted(x, y, self.collision_sort.as_ref())
+    }
+
+    /// バインド（着せ替えパーツ）のアニメーション当たり判定も含めてヒットテストを行う
+    pub fn hit_test_with_binds(
+        &self,
+        surface_id: u32,
+        x: i32,
+        y: i32,
+        binds: &[u32],
+    ) -> Option<HitTestResult> {
+        let def = self.surface(surface_id)?;
+
+        // バインドされたアニメーションの当たり判定を手前に判定
+        for &bind_id in binds {
+            if let Some(anim) = def.animations.get(&bind_id) {
+                for area in anim.collisions.iter().rev() {
+                    if area.contains(x, y) {
+                        return Some(HitTestResult::new(area, x, y));
+                    }
+                }
+            }
+        }
+
+        // ベースサーフィスの当たり判定
+        self.hit_test(surface_id, x, y)
+    }
+
+    /// `surfaces2.txt` 等の上位定義でマージ（上書き・追記）する
+    pub fn merge(&mut self, other: SurfacesTxt) {
+        if other.charset.is_some() {
+            self.charset = other.charset;
+        }
+        if other.version > 0 {
+            self.version = other.version;
+        }
+        if other.maxwidth.is_some() {
+            self.maxwidth = other.maxwidth;
+        }
+        if other.animation_sort.is_some() {
+            self.animation_sort = other.animation_sort;
+        }
+        if other.collision_sort.is_some() {
+            self.collision_sort = other.collision_sort;
+        }
+
+        for (k, v) in other.properties {
+            self.properties.insert(k, v);
+        }
+
+        for (alias, list) in other.aliases {
+            self.aliases.insert(alias, list);
+        }
+
+        for (alias, list) in other.kero_aliases {
+            self.kero_aliases.insert(alias, list);
+        }
+
+        for (num, other_def) in other.surfaces {
+            use std::collections::btree_map::Entry;
+            match self.surfaces.entry(num) {
+                Entry::Vacant(v) => {
+                    v.insert(other_def);
+                }
+                Entry::Occupied(mut occ) => {
+                    let cur = occ.get_mut();
+                    if other_def.name.is_some() {
+                        cur.name = other_def.name;
+                    }
+                    if other_def.points.center_x.is_some() {
+                        cur.points.center_x = other_def.points.center_x;
+                    }
+                    if other_def.points.center_y.is_some() {
+                        cur.points.center_y = other_def.points.center_y;
+                    }
+                    if other_def.points.basepos_x.is_some() {
+                        cur.points.basepos_x = other_def.points.basepos_x;
+                    }
+                    if other_def.points.basepos_y.is_some() {
+                        cur.points.basepos_y = other_def.points.basepos_y;
+                    }
+                    if other_def.points.kinoko_center_x.is_some() {
+                        cur.points.kinoko_center_x = other_def.points.kinoko_center_x;
+                    }
+                    if other_def.points.kinoko_center_y.is_some() {
+                        cur.points.kinoko_center_y = other_def.points.kinoko_center_y;
+                    }
+
+                    for (k, v) in other_def.balloon_offsets {
+                        cur.balloon_offsets.insert(k, v);
+                    }
+                    for (k, v) in other_def.properties {
+                        cur.properties.insert(k, v);
+                    }
+                    for (id, other_anim) in other_def.animations {
+                        match cur.animations.entry(id) {
+                            Entry::Vacant(v) => {
+                                v.insert(other_anim);
+                            }
+                            Entry::Occupied(mut occ_anim) => {
+                                let a = occ_anim.get_mut();
+                                if other_anim.interval.is_some() {
+                                    a.interval = other_anim.interval;
+                                }
+                                if other_anim.name.is_some() {
+                                    a.name = other_anim.name;
+                                }
+                                a.patterns.extend(other_anim.patterns);
+                                a.collisions.extend(other_anim.collisions);
+                                a.options.extend(other_anim.options);
+                            }
+                        }
+                    }
+                    cur.elements.extend(other_def.elements);
+                    cur.collisions.extend(other_def.collisions);
+                }
+            }
+        }
     }
 }
 

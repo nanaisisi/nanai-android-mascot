@@ -1,5 +1,6 @@
 //! アニメーション (`animation`) ハンドラー
 
+use super::collision::{parse_collision_area, parse_collisionex_area};
 use super::utils::split_id_suffix;
 use crate::surfaces::types::*;
 
@@ -25,6 +26,14 @@ pub(crate) fn apply_animation_line(txt: &mut SurfacesTxt, ids: &[u32], rest: &st
         } else if field_lower.starts_with("option") {
             anim.options
                 .push(value.split(',').map(|t| t.trim().to_string()).collect());
+        } else if let Some(collision_part) = field_lower.strip_prefix("collisionex") {
+            if let Some(area) = parse_collisionex_area(collision_part, value) {
+                anim.collisions.push(area);
+            }
+        } else if let Some(collision_part) = field_lower.strip_prefix("collision") {
+            if let Some(area) = parse_collision_area(collision_part, value) {
+                anim.collisions.push(area);
+            }
         } else if field_lower.starts_with("pattern") {
             let index = if field_lower == "pattern" {
                 anim.patterns.len() as u32

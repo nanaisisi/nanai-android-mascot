@@ -15,6 +15,8 @@ test("rustCommandsToTokens converts all Rust commands to SakuraScriptToken list"
 		{ type: "NewLine", payload: { half: true } },
 		{ type: "NewLine", payload: { half: false } },
 		{ type: "Clear" },
+		{ type: "ClearArg", payload: { arg: "char,3" } },
+		{ type: "ClearArg", payload: { arg: "line,1" } },
 		{ type: "Choice", payload: { label: "Opt", id: "opt1" } },
 		{ type: "Anchor", payload: { id: "a1", text: "Hi" } },
 		{ type: "Raise", payload: { event: "OnEvent", references: ["ref1"] } },
@@ -47,6 +49,14 @@ test("rustCommandsToTokens converts all Rust commands to SakuraScriptToken list"
 	assert.equal(tokens.find((t) => t.type === "surface")?.value, 10);
 	assert.equal(tokens.find((t) => t.type === "wait")?.value, 200);
 	assert.equal(tokens.find((t) => t.type === "pause") !== undefined, true);
+	assert.equal(
+		tokens.find((t) => t.type === "clear" && t.mode === "char")?.count,
+		3,
+	);
+	assert.equal(
+		tokens.find((t) => t.type === "clear" && t.mode === "line")?.count,
+		1,
+	);
 	assert.equal(tokens.find((t) => t.type === "quick_toggle")?.value, true);
 	assert.equal(tokens.find((t) => t.type === "choice")?.id, "opt1");
 	assert.equal(tokens.find((t) => t.type === "anchor_begin")?.id, "a1");

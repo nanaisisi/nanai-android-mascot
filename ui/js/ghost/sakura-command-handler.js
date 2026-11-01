@@ -85,6 +85,12 @@ export class SakuraCommandHandler {
 					sm?.resumeAnimationById(animId, this.player.currentScope);
 				}
 			}
+		} else if (rawCmd === "set" && rawSub === "choicetimeout") {
+			const timeout = Number.parseInt(args[2] ?? "", 10);
+			this.player.choiceTimeout = Number.isFinite(timeout) ? timeout : 0;
+		} else if (rawCmd === "set" && rawSub === "balloontimeout") {
+			const timeout = Number.parseInt(args[2] ?? "", 10);
+			this.player.balloonTimeout = Number.isFinite(timeout) ? timeout : 0;
 		} else if (rawCmd === "set" && rawSub === "alignmenttodesktop") {
 			await setAlignmentToDesktop(this, args[2]);
 		} else if (rawCmd === "windowstate") {

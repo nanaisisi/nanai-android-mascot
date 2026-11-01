@@ -32,6 +32,20 @@ export function rustCommandsToTokens(rustCommands) {
 			case "Clear":
 				tokens.push({ type: "clear" });
 				break;
+			case "ClearArg": {
+				const raw = String(cmd.payload?.arg ?? "");
+				const parts = raw.split(",").map((s) => s.trim());
+				if (parts[0] === "char" || parts[0] === "line") {
+					tokens.push({
+						type: "clear",
+						mode: parts[0],
+						count: Number.parseInt(parts[1], 10) || 1,
+					});
+				} else {
+					tokens.push({ type: "clear" });
+				}
+				break;
+			}
 			case "Choice":
 				tokens.push({
 					type: "choice",

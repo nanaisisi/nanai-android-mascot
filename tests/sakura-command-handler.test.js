@@ -97,6 +97,12 @@ test("SakuraCommandHandler covers all commands and boxes", async () => {
 	await handler.runCommand(["set", "alignmenttodesktop", "free"]);
 	await handler.runCommand(["set", "alignmenttodesktop", "bottom"]);
 
+	// 6b. choicetimeout / balloontimeout
+	await handler.runCommand(["set", "choicetimeout", "5000"]);
+	assert.equal(player.choiceTimeout, 5000);
+	await handler.runCommand(["set", "balloontimeout", "3000"]);
+	assert.equal(player.balloonTimeout, 3000);
+
 	// 7. unknown command
 	await handler.runCommand(["unknown"]);
 

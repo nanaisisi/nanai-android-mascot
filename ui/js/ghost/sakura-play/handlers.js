@@ -92,7 +92,43 @@ export async function handleToken(player, app, token, context) {
 			break;
 
 		case "clear":
-			currentBalloonText.innerHTML = "";
+			if (token.mode === "char") {
+				const count = Math.max(1, token.count || 1);
+				let removed = 0;
+				while (removed < count && currentBalloonText.lastChild) {
+					const lastNode = currentBalloonText.lastChild;
+					if (lastNode.nodeType === Node.TEXT_NODE) {
+						const text = lastNode.nodeValue || "";
+						if (text.length <= count - removed) {
+							removed += text.length;
+							currentBalloonText.removeChild(lastNode);
+						} else {
+							lastNode.nodeValue = text.slice(0, -(count - removed));
+							removed = count;
+						}
+					} else {
+						// Element node (e.g. span, br, img)
+						currentBalloonText.removeChild(lastNode);
+						removed++;
+					}
+				}
+			} else if (token.mode === "line") {
+				const count = Math.max(1, token.count || 1);
+				let removedLines = 0;
+				while (removedLines < count && currentBalloonText.lastChild) {
+					const lastNode = currentBalloonText.lastChild;
+					const isBr =
+						lastNode.nodeName === "BR" ||
+						(lastNode.nodeName === "SPAN" &&
+							lastNode.style?.display === "block");
+					currentBalloonText.removeChild(lastNode);
+					if (isBr) {
+						removedLines++;
+					}
+				}
+			} else {
+				currentBalloonText.innerHTML = "";
+			}
 			scheduleDesktopBalloonSync(true);
 			break;
 
@@ -102,6 +138,14 @@ export async function handleToken(player, app, token, context) {
 				const activeDisplay =
 					player.currentScope === 1 ? keroDisplay : sakuraDisplay;
 				await player.waitForClickOrTimeout(activeDisplay);
+			}
+			if (!token.noClear) {
+				// \x: クリック後にスコープをリセット (\0)、フォント装飾を解除、バルーン内容をクリア
+				currentBalloonText.innerHTML = "";
+				player.currentScope = 0;
+				currentBalloonText = sakuraText;
+				player.currentFontStyles = {};
+				scheduleDesktopBalloonSync(true);
 			}
 			break;
 
@@ -241,6 +285,14 @@ export async function handleToken(player, app, token, context) {
 
 		case "timeout":
 			player.timeCritical = true;
+			break;
+
+		case "choice_timeout":
+			player.choiceTimeout = token.timeout;
+			break;
+
+		case "balloon_timeout":
+			player.balloonTimeout = token.timeout;
 			break;
 
 		case "halt":

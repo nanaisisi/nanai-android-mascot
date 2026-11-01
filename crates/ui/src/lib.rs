@@ -32,7 +32,8 @@ pub use shiori::{
 pub use sstp::{IfGhostEntry, SstpMessage, SstpMethod, SstpRequest, SstpResponse, SstpStatusCode};
 pub use surfaces::{
     BalloonOffset, CollisionArea, CollisionShape, CompositionLayer, CompositionPlan, DrawMethod,
-    ElementDef, Interval, SerikoAnimation, SurfacesTxt, parse_surfaces_txt,
+    ElementDef, HitTestResult, Interval, SerikoAnimation, SortKind, SurfacesTxt,
+    parse_surfaces_txt,
 };
 pub use surfacetable::{
     SurfTableEntry, SurfTableGroup, SurfaceTable, is_parts_name, parse_surface_table,

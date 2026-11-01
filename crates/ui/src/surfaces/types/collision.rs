@@ -77,6 +77,30 @@ impl CollisionArea {
     }
 }
 
+/// ヒットテストの結果情報
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct HitTestResult {
+    /// 当たり判定ID（定義されている場合）
+    pub id: Option<u32>,
+    /// 部位名（head, bust, skirt...）
+    pub name: String,
+    /// クリックされたサーフィス内相対X座標
+    pub x: i32,
+    /// クリックされたサーフィス内相対Y座標
+    pub y: i32,
+}
+
+impl HitTestResult {
+    pub fn new(area: &CollisionArea, x: i32, y: i32) -> Self {
+        Self {
+            id: area.id,
+            name: area.name.clone(),
+            x,
+            y,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

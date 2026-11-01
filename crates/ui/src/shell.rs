@@ -5,7 +5,7 @@
 //! 描画・当たり判定・着せ替え解決に使う構造体にまとめる。
 
 use crate::descript::{BindGroup, Descript};
-use crate::surfaces::{CollisionArea, SurfaceDefinition, SurfacesTxt};
+use crate::surfaces::{CollisionArea, HitTestResult, SurfaceDefinition, SurfacesTxt};
 use crate::surfacetable::SurfaceTable;
 use crate::vfs::{open_text_file, resolve_vfs_path};
 use std::path::{Path, PathBuf};
@@ -42,9 +42,18 @@ impl Shell {
             })?;
 
         let descript = read_descript(directory).unwrap_or_default();
-        let surfaces_txt = open_text_file(&surfaces_path)
+        let mut surfaces_txt = open_text_file(&surfaces_path)
             .map(|c| SurfacesTxt::parse(&c))
             .unwrap_or_default();
+
+        // surfaces2.txt（SSP拡張オーバーライド）があればマージ
+        if let Some(s2_path) = resolve_vfs_path(directory, "surfaces2.txt").filter(|p| p.is_file())
+            && let Ok(s2_content) = open_text_file(&s2_path)
+        {
+            let s2_parsed = SurfacesTxt::parse(&s2_content);
+            surfaces_txt.merge(s2_parsed);
+        }
+
         let surface_table = resolve_vfs_path(directory, "surfacetable.txt")
             .filter(|p| p.is_file())
             .and_then(|p| open_text_file(&p).ok())
@@ -71,6 +80,22 @@ impl Shell {
     /// サーフィスへの当たり判定ヒットテスト（部位名を返す）
     pub fn hit_test(&self, number: u32, x: i32, y: i32) -> Option<&CollisionArea> {
         self.surface(number).and_then(|def| def.hit_test(x, y))
+    }
+
+    /// ソート設定（`collision.sort`）を反映したヒットテスト（HitTestResultを返す）
+    pub fn hit_test_result(&self, number: u32, x: i32, y: i32) -> Option<HitTestResult> {
+        self.surfaces_txt.hit_test(number, x, y)
+    }
+
+    /// バインドパーツのアニメーション当たり判定を含めたヒットテスト
+    pub fn hit_test_with_binds(
+        &self,
+        number: u32,
+        x: i32,
+        y: i32,
+        binds: &[u32],
+    ) -> Option<HitTestResult> {
+        self.surfaces_txt.hit_test_with_binds(number, x, y, binds)
     }
 
     /// surfacetable の名前解決（任意定義時のみ）

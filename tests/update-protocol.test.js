@@ -16,9 +16,15 @@ test("update-protocol covers buildUpdateArgs, parseErrorReason, and progressHand
 	const defaultArgs = buildUpdateArgs();
 	assert.deepEqual(defaultArgs, ["", "", "", "ghost", "manual"]);
 
+	const customTypeArgs = buildUpdateArgs("ok", "none", "shell", "automatic");
+	assert.deepEqual(customTypeArgs, ["ok", "none", "", "shell", "automatic"]);
+
 	// 2. parseErrorReason
 	assert.equal(parseErrorReason(new Error("HTTP 404 Not Found")), "404");
+	assert.equal(parseErrorReason(new Error("404")), "404");
 	assert.equal(parseErrorReason("timeout error"), "timeout");
+	assert.equal(parseErrorReason("connection timeout"), "timeout");
+	assert.equal(parseErrorReason("md5 miss mismatch"), "md5 miss");
 	assert.equal(parseErrorReason("other error"), "fileio");
 
 	// 3. createUpdateProgressHandler
@@ -43,9 +49,11 @@ test("update-protocol covers buildUpdateArgs, parseErrorReason, and progressHand
 	handler({ payload: { phase: "md5-begin", path: "file1.txt" } });
 	handler({ payload: { phase: "md5-complete", path: "file1.txt" } });
 	handler({ payload: { phase: "md5-failed", path: "file1.txt" } });
+	handler({ payload: { phase: "fileio-failed", path: "file2.txt" } });
 
-	assert.equal(failedFile, "file1.txt");
-	assert.equal(eventsSent.length, 4);
+	assert.equal(failedFile, "file2.txt");
+	assert.equal(eventsSent.length, 5);
 	assert.equal(eventsSent[0].ev, PROGRESS_PHASE_EVENTS["download-begin"]);
 	assert.equal(eventsSent[3].ev, PROGRESS_PHASE_EVENTS["md5-failed"]);
+	assert.equal(eventsSent[4].ev, PROGRESS_PHASE_EVENTS["fileio-failed"]);
 });

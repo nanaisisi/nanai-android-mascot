@@ -1,5 +1,6 @@
 use super::super::utils::*;
 use crate::common::*;
+use std::collections::HashMap;
 
 pub struct InstallInspectionResult {
     pub ghost_name: String,
@@ -9,6 +10,49 @@ pub struct InstallInspectionResult {
     pub safe_dir_name: String,
     pub alt_safe_name: String,
     pub bundled_resources: Vec<(String, std::path::PathBuf)>,
+}
+
+/// install.txt の規約に従い、同梱リソース (balloon, headline, plugin, shell, calendar.skin, calendar.plugin) を
+/// 無印 → 0 → 1 → 2... の順に連続探索し、欠番が出た時点で打ち切る
+pub fn resolve_bundled_resources_config(
+    map: &HashMap<String, String>,
+) -> Vec<(String, String, String)> {
+    let supported_types = [
+        "balloon",
+        "headline",
+        "plugin",
+        "shell",
+        "calendar.skin",
+        "calendar.plugin",
+    ];
+
+    let mut result = Vec::new();
+
+    for &r_type in &supported_types {
+        // 1. 無印 (例: balloon.directory)
+        let unnumbered_dir_key = format!("{r_type}.directory");
+        if let Some(target_dir) = map.get(&unnumbered_dir_key) {
+            let src_key = format!("{r_type}.source.directory");
+            let src_dir = map.get(&src_key).unwrap_or(target_dir).clone();
+            result.push((r_type.to_string(), target_dir.clone(), src_dir));
+        }
+
+        // 2. 0, 1, 2... の連番探索（欠番が出た時点で打ち切り）
+        let mut idx = 0;
+        loop {
+            let indexed_dir_key = format!("{r_type}{idx}.directory");
+            if let Some(target_dir) = map.get(&indexed_dir_key) {
+                let src_key = format!("{r_type}{idx}.source.directory");
+                let src_dir = map.get(&src_key).unwrap_or(target_dir).clone();
+                result.push((r_type.to_string(), target_dir.clone(), src_dir));
+                idx += 1;
+            } else {
+                break;
+            }
+        }
+    }
+
+    result
 }
 
 pub fn inspect_zip_archive<R: std::io::Read + std::io::Seek>(
@@ -68,17 +112,7 @@ pub fn inspect_zip_archive<R: std::io::Read + std::io::Seek>(
             install_directory = Some(val.clone());
         }
 
-        for (k, v) in &map {
-            if k.ends_with(".directory") && !k.ends_with(".source.directory") {
-                let prefix = &k[..k.len() - 10];
-                let src_key = format!("{prefix}.source.directory");
-                let src_dir = map.get(&src_key).unwrap_or(v).clone();
-                let kind = prefix
-                    .trim_end_matches(|c: char| c.is_ascii_digit())
-                    .to_string();
-                bundled_resources_config.push((kind, v.clone(), src_dir));
-            }
-        }
+        bundled_resources_config = resolve_bundled_resources_config(&map);
     }
 
     if ghost_name.is_empty()
@@ -114,7 +148,7 @@ pub fn inspect_zip_archive<R: std::io::Read + std::io::Seek>(
     {
         let label = install_type.unwrap_or_default();
         return Err(format!(
-            "install.txt type={label} ({kind}): サポートされていないアーカイブ種別です"
+            "invalid type: install.txt type={label} ({kind}): サポートされていないアーカイブ種別です"
         ));
     }
 
@@ -144,6 +178,8 @@ pub fn inspect_zip_archive<R: std::io::Read + std::io::Seek>(
                     "headline" => resolve_asset_path("assets/headline", app_handle).ok(),
                     "plugin" => resolve_asset_path("assets/plugin", app_handle).ok(),
                     "shell" => resolve_asset_path("assets/shell", app_handle).ok(),
+                    "calendar.skin" => resolve_asset_path("assets/calendar/skin", app_handle).ok(),
+                    "calendar.plugin" => resolve_asset_path("assets/calendar/plugin", app_handle).ok(),
                     _ => None,
                 };
 
@@ -165,4 +201,32 @@ pub fn inspect_zip_archive<R: std::io::Read + std::io::Seek>(
         alt_safe_name,
         bundled_resources,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_resolve_bundled_resources_config_sequential() {
+        let mut map = HashMap::new();
+        map.insert("name".to_string(), "Test".to_string());
+        map.insert("type".to_string(), "ghost".to_string());
+        map.insert("balloon.directory".to_string(), "balloon_main".to_string());
+        map.insert("balloon0.directory".to_string(), "balloon_zero".to_string());
+        map.insert("balloon0.source.directory".to_string(), "custom_b0".to_string());
+        map.insert("balloon1.directory".to_string(), "balloon_one".to_string());
+        map.insert("balloon3.directory".to_string(), "balloon_three".to_string()); // 2が欠番なのでスキップされる
+        map.insert("calendar.skin0.directory".to_string(), "cal_skin".to_string());
+        map.insert("calendar.plugin0.directory".to_string(), "cal_plugin".to_string());
+
+        let res = resolve_bundled_resources_config(&map);
+        assert_eq!(res.len(), 5);
+
+        assert_eq!(res[0], ("balloon".to_string(), "balloon_main".to_string(), "balloon_main".to_string()));
+        assert_eq!(res[1], ("balloon".to_string(), "balloon_zero".to_string(), "custom_b0".to_string()));
+        assert_eq!(res[2], ("balloon".to_string(), "balloon_one".to_string(), "balloon_one".to_string()));
+        assert_eq!(res[3], ("calendar.skin".to_string(), "cal_skin".to_string(), "cal_skin".to_string()));
+        assert_eq!(res[4], ("calendar.plugin".to_string(), "cal_plugin".to_string(), "cal_plugin".to_string()));
+    }
 }

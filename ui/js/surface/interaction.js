@@ -67,8 +67,17 @@ export class InteractionManager {
 		}
 	}
 
-	setupDragging(target, onGhostClick, onGhostStroke) {
+	setupDragging(target, onGhostClick, onGhostStroke, options = {}) {
 		if (!target) return;
+
+		const {
+			onGhostMouseDown,
+			onGhostMouseUp,
+			onGhostWheel,
+			onGhostDragStart,
+			onGhostDragEnd,
+			onGhostHover,
+		} = options;
 
 		let isInteracting = false;
 		let isDragging = false;
@@ -140,6 +149,12 @@ export class InteractionManager {
 			initialLeft = rect.left + rect.width / 2;
 			initialTop = rect.top + rect.height / 2;
 
+			if (onGhostMouseDown) {
+				const button = e.button !== undefined ? e.button : 0;
+				const device = e.touches ? "touch" : "mouse";
+				onGhostMouseDown(clientX, clientY, rect, button, device);
+			}
+
 			// 長押しタイマー開始
 			if (longPressTimer) clearTimeout(longPressTimer);
 			longPressTimer = setTimeout(() => {
@@ -190,8 +205,14 @@ export class InteractionManager {
 
 			// 撫でが発動していなければ通常のドラッグ移動を行う
 			if (!strokeTriggered && hasMoved) {
-				isDragging = true;
-				target.classList.add("is-dragging");
+				if (!isDragging) {
+					isDragging = true;
+					target.classList.add("is-dragging");
+					if (onGhostDragStart) {
+						const rect = target.getBoundingClientRect();
+						onGhostDragStart(clientX, clientY, rect);
+					}
+				}
 
 				// デスクトップ環境（Windows等）の場合はネイティブウィンドウ自体を移動
 				if (nativeDragStarted) {
@@ -236,6 +257,7 @@ export class InteractionManager {
 
 		const onPointerUp = (e) => {
 			if (!isInteracting) return;
+			const wasDragging = isDragging;
 			isInteracting = false;
 			rafPending = false;
 			target.classList.remove("is-dragging");
@@ -243,6 +265,20 @@ export class InteractionManager {
 			if (longPressTimer) {
 				clearTimeout(longPressTimer);
 				longPressTimer = null;
+			}
+
+			const clientX = e.clientX ?? startX;
+			const clientY = e.clientY ?? startY;
+			const rect = target.getBoundingClientRect();
+
+			if (wasDragging && onGhostDragEnd) {
+				onGhostDragEnd(clientX, clientY, rect);
+			}
+
+			if (onGhostMouseUp) {
+				const button = e.button !== undefined ? e.button : 0;
+				const device = e.changedTouches ? "touch" : "mouse";
+				onGhostMouseUp(clientX, clientY, rect, button, device);
 			}
 
 			// 長押し発火後や撫で判定が発火していた場合はタップやドラッグ確定を行わない
@@ -304,6 +340,45 @@ export class InteractionManager {
 		target.addEventListener("touchstart", onPointerDown, { passive: true });
 		globalThis.addEventListener("touchmove", onPointerMove, { passive: true });
 		globalThis.addEventListener("touchend", onPointerUp);
+
+		// マウスホイール (OnMouseWheel)
+		target.addEventListener(
+			"wheel",
+			(e) => {
+				if (onGhostWheel) {
+					const clientX = e.clientX ?? 0;
+					const clientY = e.clientY ?? 0;
+					const rect = target.getBoundingClientRect();
+					const delta = Math.round(e.deltaY ?? 0);
+					onGhostWheel(clientX, clientY, rect, delta);
+				}
+			},
+			{ passive: true },
+		);
+
+		// マウスホバー (OnMouseHover)
+		let hoverTimer = null;
+		target.addEventListener(
+			"mousemove",
+			(e) => {
+				if (isInteracting || isDragging || !onGhostHover) return;
+				const clientX = e.clientX ?? 0;
+				const clientY = e.clientY ?? 0;
+				if (hoverTimer) clearTimeout(hoverTimer);
+				hoverTimer = setTimeout(() => {
+					const rect = target.getBoundingClientRect();
+					onGhostHover(clientX, clientY, rect);
+				}, 300);
+			},
+			{ passive: true },
+		);
+
+		target.addEventListener("mouseleave", () => {
+			if (hoverTimer) {
+				clearTimeout(hoverTimer);
+				hoverTimer = null;
+			}
+		});
 
 		// バルーン自体のドラッグによる相対位置調整を設定
 		this.setupBalloonDragging(target);

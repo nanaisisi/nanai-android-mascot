@@ -41,6 +41,12 @@ flowchart LR
    - 実証済みの Web/Rust コア資産を Android Single Activity Container 環境に適応
    - システムオーバーレイ (`SYSTEM_ALERT_WINDOW`) やタッチ透過等のモバイル固有仕様を段階的に接続
 
+### 2.3 仕様定義の前提とアプローチ（独自仕様と推測仕様）
+本プロジェクトでは、仕様やドキュメントを整理・策定する際、以下の前提を厳守します。
+- **独自仕様（Unique Specs / `doc-nas-spec`）**: モバイル適応やTauri/Rust基盤など、本アプリ独自の設計判断を明確に定義。
+- **推測仕様（Implicit/Inferred Specs / `doc-ssp-spec`）**: SSPや過去のベースウェアの暗黙の挙動について、「無知の知」に基づき推測で実装せず、実機検証を元に文面化して安全に互換処理へ還元。
+
+
 ### 2.2 コア設計原則
 
 1. **高い互換性 (SSP 互換)**: 既存の伺か（UKAGAKA）規格（descript.txt, surfaces.txt, さくらスクリプト, SHIORI 3.0）を最大限尊重

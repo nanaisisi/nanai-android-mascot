@@ -1,12 +1,254 @@
 /**
  * さくらスクリプトの \! 拡張コマンドおよび入力ボックス (\![open,inputbox]) ハンドラ
  */
+import {
+	closeCommunicateBox,
+	openCommunicateBox,
+} from "./command-handler/communicatebox.js";
+import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 import { openInputBox } from "./command-handler/inputbox.js";
+import { handleJumpCommand } from "./command-handler/jump.js";
+import {
+	CommandHandlerMap,
+	getCommandHandler,
+	registerCommandHandler,
+} from "./command-handler/registry.js";
 import { closeTeachBox, openTeachBox } from "./command-handler/teachbox.js";
 import {
 	handleWindowState,
 	setAlignmentToDesktop,
 } from "./command-handler/window.js";
+
+/**
+ * 標準コマンド群を CommandHandlerMap へ初期登録
+ */
+function initDefaultCommandHandlers() {
+	if (CommandHandlerMap.size > 0) return;
+
+	registerCommandHandler("open:inputbox", async (handler, args) => {
+		openInputBox(handler, args.slice(2));
+	});
+
+	registerCommandHandler("open:teachbox", async (handler, args) => {
+		openTeachBox(handler, args.slice(2));
+	});
+
+	registerCommandHandler("close:teachbox", async (handler) => {
+		closeTeachBox(handler);
+	});
+
+	registerCommandHandler("open:communicatebox", async (handler, args) => {
+		openCommunicateBox(handler, args.slice(2));
+	});
+
+	registerCommandHandler("close:communicatebox", async (handler) => {
+		closeCommunicateBox(handler, false);
+	});
+
+	registerCommandHandler("open:dressupexplorer", async (handler) => {
+		handler.app.toggleMenu?.();
+	});
+
+	registerCommandHandler("jump", async (handler, args) => {
+		const target = args[1] ?? "";
+		await handleJumpCommand(handler, target, args.slice(2));
+	});
+
+	registerCommandHandler("raise", async (handler, args) => {
+		const eventName = args[1];
+		if (eventName) {
+			await handler.app.ghostController?.sendShioriEvent?.(
+				eventName,
+				args.slice(2),
+			);
+		}
+	});
+
+	registerCommandHandler("raiseplugin", handlePluginEvent);
+	registerCommandHandler("notifyplugin", handlePluginEvent);
+	registerCommandHandler("timerraiseplugin", handlePluginEvent);
+	registerCommandHandler("timernotifyplugin", handlePluginEvent);
+
+	registerCommandHandler("bind", async (handler, args) => {
+		const [category, part, statusVal] = args.slice(1);
+		await handler.app.surfaceManager?.bindDressup?.(
+			category,
+			part,
+			statusVal,
+			handler.player.currentScope,
+			true,
+		);
+	});
+
+	registerCommandHandler("bind-noevent", async (handler, args) => {
+		const [category, part, statusVal] = args.slice(1);
+		await handler.app.surfaceManager?.bindDressup?.(
+			category,
+			part,
+			statusVal,
+			handler.player.currentScope,
+			false,
+		);
+	});
+
+	registerCommandHandler("anim", async (handler, args) => {
+		const [verbRaw, idVal] = args.slice(1);
+		const animId = Number.parseInt(String(idVal ?? ""), 10);
+		const verb = String(verbRaw ?? "").toLowerCase();
+		if (Number.isFinite(animId)) {
+			const sm = handler.app.surfaceManager;
+			if (verb === "pause" || verb === "pouse") {
+				sm?.pauseAnimationById?.(animId, handler.player.currentScope);
+			} else if (verb === "resume") {
+				sm?.resumeAnimationById?.(animId, handler.player.currentScope);
+			}
+		}
+	});
+
+	registerCommandHandler("set:choicetimeout", async (handler, args) => {
+		const timeout = Number.parseInt(args[2] ?? "", 10);
+		handler.player.choiceTimeout = Number.isFinite(timeout) ? timeout : 0;
+	});
+
+	registerCommandHandler("set:balloontimeout", async (handler, args) => {
+		const timeout = Number.parseInt(args[2] ?? "", 10);
+		handler.player.balloonTimeout = Number.isFinite(timeout) ? timeout : 0;
+	});
+
+	registerCommandHandler("set:alignmenttodesktop", async (handler, args) => {
+		await setAlignmentToDesktop(handler, args[2]);
+	});
+
+	registerCommandHandler("windowstate", async (_handler, args) => {
+		const state = args[1];
+		if (state) {
+			await handleWindowState(state);
+		}
+	});
+
+	registerCommandHandler("change", async (handler, args) => {
+		const [target, name] = args.slice(1);
+		if (target === "ghost" && name) {
+			await handler.app.ghostController?.switchGhost?.(name);
+		}
+	});
+
+	registerCommandHandler("call", async (handler, args) => {
+		const [target, name] = args.slice(1);
+		if (target === "ghost" && name) {
+			await handler.app.ghostController?.callGhost?.(name);
+		}
+	});
+
+	registerCommandHandler("setwallpaper", async (_handler, args) => {
+		const [filename, option] = args.slice(1);
+		console.log(`🖼️ Wallpaper set: ${filename} (option: ${option})`);
+	});
+
+	registerCommandHandler("savewallpaper", async (_handler, _args) => {
+		console.log("🖼️ Wallpaper savewallpaper executed");
+	});
+
+	registerCommandHandler("restorewallpaper", async (_handler, _args) => {
+		console.log("🖼️ Wallpaper restorewallpaper executed");
+	});
+
+	registerCommandHandler("cancel", async (_handler, args) => {
+		const [service, target] = args.slice(1);
+		console.log(`🛑 Network service cancel: ${service} (${target})`);
+	});
+
+	registerCommandHandler("close", async (_handler, args) => {
+		const [service, target] = args.slice(1);
+		console.log(`🛑 Network service close: ${service} (${target})`);
+	});
+
+	registerCommandHandler("archiveexec", async (handler, args) => {
+		const [action, filename, dest] = args.slice(1);
+		console.log(`📦 Archive action ${action}: file=${filename}, dest=${dest}`);
+		if (action === "createnar" && isTauriAvailable()) {
+			try {
+				const ghostPath = handler.app.ghostController?.currentGhost?.path || "";
+				const outputPath = filename || `${ghostPath}.nar`;
+				await invoke("create_nar_archive", {
+					folderPath: ghostPath,
+					outputNarPath: outputPath,
+				});
+				console.log(`📦 Created NAR archive: ${outputPath}`);
+			} catch (err) {
+				console.warn("Failed to create NAR archive:", err);
+			}
+		}
+	});
+
+	registerCommandHandler("downloadexec", async (_handler, args) => {
+		const [url, savePath] = args.slice(1);
+		console.log(`📥 Download requested: url=${url}, savePath=${savePath}`);
+	});
+
+	registerCommandHandler("uploadexec", async (_handler, args) => {
+		const [url, filePath] = args.slice(1);
+		console.log(`📤 Upload requested: url=${url}, filePath=${filePath}`);
+	});
+
+	registerCommandHandler("mailcheckexec", async (handler, args) => {
+		const [account] = args.slice(1);
+		console.log(`✉️ Mail check requested for account: ${account}`);
+		await handler.app.networkActions?.checkEmail?.(account);
+	});
+
+	registerCommandHandler("mailexec", async (_handler, args) => {
+		const [action, target] = args.slice(1);
+		console.log(`✉️ Mail action ${action}: target=${target}`);
+	});
+
+	registerCommandHandler("fileexec", async (_handler, args) => {
+		const [action, path, dest] = args.slice(1);
+		console.log(`📁 File action ${action}: path=${path}, dest=${dest}`);
+	});
+
+	registerCommandHandler("sethttptimeout", async (_handler, args) => {
+		const [timeout] = args.slice(1);
+		console.log(`⏱️ HTTP timeout set: ${timeout}s`);
+	});
+
+	registerCommandHandler("setproxy", async (_handler, args) => {
+		const [server, port] = args.slice(1);
+		console.log(`🌐 Proxy set: ${server}:${port}`);
+	});
+
+	registerCommandHandler("update", async (handler) => {
+		await handler.app.startNetworkUpdate?.();
+	});
+
+	registerCommandHandler("updatebymyself", async (handler) => {
+		await handler.app.startNetworkUpdate?.();
+	});
+}
+
+async function handlePluginEvent(_handler, args) {
+	const rawCmd = (args[0] ?? "").toLowerCase();
+	const isTimer = rawCmd.startsWith("timer");
+	const pluginName = isTimer ? args[3] : args[1];
+	const eventId = isTimer ? args[4] : args[2];
+	const references = isTimer ? args.slice(5) : args.slice(3);
+	if (pluginName && eventId && isTauriAvailable()) {
+		try {
+			await invoke("execute_plugin_event", {
+				request: {
+					pluginName,
+					eventId,
+					references,
+				},
+			});
+		} catch (err) {
+			console.warn(`Plugin event execution failed (${pluginName}):`, err);
+		}
+	}
+}
+
+// 起動時にデフォルトハンドラを登録
+initDefaultCommandHandlers();
 
 export class SakuraCommandHandler {
 	/**
@@ -16,148 +258,22 @@ export class SakuraCommandHandler {
 		this.player = player;
 		this.app = player.app;
 		this.teachForm = null;
+		this.communicateForm = null;
+		// 必要に応じてハンドラ初期化
+		initDefaultCommandHandlers();
 	}
 
 	/**
-	 * \![...] 内部コマンドの実行
+	 * \![...] 内部コマンドの実行 (CommandHandlerMap 経由)
+	 * @param {string[]} args
 	 */
 	async runCommand(args) {
 		const rawCmd = (args[0] ?? "").toLowerCase();
 		const rawSub = (args[1] ?? "").toLowerCase();
 
-		if (rawCmd === "open" && rawSub === "inputbox") {
-			openInputBox(this, args.slice(2));
-		} else if (rawCmd === "open" && rawSub === "teachbox") {
-			openTeachBox(this, args.slice(2));
-		} else if (rawCmd === "close" && rawSub === "teachbox") {
-			closeTeachBox(this);
-		} else if (rawCmd === "open" && rawSub === "dressupexplorer") {
-			this.app.toggleMenu?.();
-		} else if (rawCmd === "raise") {
-			const eventName = args[1];
-			if (eventName) {
-				await this.app.ghostController.sendShioriEvent(
-					eventName,
-					args.slice(2),
-				);
-			}
-		} else if (
-			rawCmd === "raiseplugin" ||
-			rawCmd === "notifyplugin" ||
-			rawCmd === "timerraiseplugin" ||
-			rawCmd === "timernotifyplugin"
-		) {
-			const isTimer = rawCmd.startsWith("timer");
-			const pluginName = isTimer ? args[3] : args[1];
-			const eventId = isTimer ? args[4] : args[2];
-			const references = isTimer ? args.slice(5) : args.slice(3);
-			if (pluginName && eventId && isTauriAvailable()) {
-				try {
-					await invoke("execute_plugin_event", {
-						request: {
-							pluginName,
-							eventId,
-							references,
-						},
-					});
-				} catch (err) {
-					console.warn(`Plugin event execution failed (${pluginName}):`, err);
-				}
-			}
-		} else if (rawCmd === "bind" || rawCmd === "bind-noevent") {
-			const [category, part, statusVal] = args.slice(1);
-			await this.app.surfaceManager?.bindDressup(
-				category,
-				part,
-				statusVal,
-				this.player.currentScope,
-				rawCmd !== "bind-noevent",
-			);
-		} else if (rawCmd === "anim") {
-			const [verbRaw, idVal] = args.slice(1);
-			const animId = Number.parseInt(String(idVal ?? ""), 10);
-			const verb = String(verbRaw ?? "").toLowerCase();
-			if (Number.isFinite(animId)) {
-				const sm = this.app.surfaceManager;
-				if (verb === "pause" || verb === "pouse") {
-					sm?.pauseAnimationById(animId, this.player.currentScope);
-				} else if (verb === "resume") {
-					sm?.resumeAnimationById(animId, this.player.currentScope);
-				}
-			}
-		} else if (rawCmd === "set" && rawSub === "choicetimeout") {
-			const timeout = Number.parseInt(args[2] ?? "", 10);
-			this.player.choiceTimeout = Number.isFinite(timeout) ? timeout : 0;
-		} else if (rawCmd === "set" && rawSub === "balloontimeout") {
-			const timeout = Number.parseInt(args[2] ?? "", 10);
-			this.player.balloonTimeout = Number.isFinite(timeout) ? timeout : 0;
-		} else if (rawCmd === "set" && rawSub === "alignmenttodesktop") {
-			await setAlignmentToDesktop(this, args[2]);
-		} else if (rawCmd === "windowstate") {
-			const state = args[1];
-			if (state) {
-				await handleWindowState(state);
-			}
-		} else if (rawCmd === "change") {
-			const [target, name] = args.slice(1);
-			if (target === "ghost" && name) {
-				await this.app.ghostController?.switchGhost?.(name);
-			}
-		} else if (rawCmd === "call") {
-			const [target, name] = args.slice(1);
-			if (target === "ghost" && name) {
-				await this.app.ghostController?.callGhost?.(name);
-			}
-		} else if (rawCmd === "setwallpaper") {
-			const [filename, option] = args.slice(1);
-			console.log(`🖼️ Wallpaper set: ${filename} (option: ${option})`);
-		} else if (rawCmd === "savewallpaper" || rawCmd === "restorewallpaper") {
-			console.log(`🖼️ Wallpaper ${rawCmd} executed`);
-		} else if (rawCmd === "cancel" || rawCmd === "close") {
-			const [service, target] = args.slice(1);
-			console.log(`🛑 Network service ${rawCmd}: ${service} (${target})`);
-		} else if (rawCmd === "archiveexec") {
-			const [action, filename, dest] = args.slice(1);
-			console.log(
-				`📦 Archive action ${action}: file=${filename}, dest=${dest}`,
-			);
-			if (action === "createnar" && isTauriAvailable()) {
-				try {
-					const ghostPath = this.app.ghostController?.currentGhost?.path || "";
-					const outputPath = filename || `${ghostPath}.nar`;
-					await invoke("create_nar_archive", {
-						folderPath: ghostPath,
-						outputNarPath: outputPath,
-					});
-					console.log(`📦 Created NAR archive: ${outputPath}`);
-				} catch (err) {
-					console.warn("Failed to create NAR archive:", err);
-				}
-			}
-		} else if (rawCmd === "downloadexec") {
-			const [url, savePath] = args.slice(1);
-			console.log(`📥 Download requested: url=${url}, savePath=${savePath}`);
-		} else if (rawCmd === "uploadexec") {
-			const [url, filePath] = args.slice(1);
-			console.log(`📤 Upload requested: url=${url}, filePath=${filePath}`);
-		} else if (rawCmd === "mailcheckexec") {
-			const [account] = args.slice(1);
-			console.log(`✉️ Mail check requested for account: ${account}`);
-			await this.app.networkActions?.checkEmail?.(account);
-		} else if (rawCmd === "mailexec") {
-			const [action, target] = args.slice(1);
-			console.log(`✉️ Mail action ${action}: target=${target}`);
-		} else if (rawCmd === "fileexec") {
-			const [action, path, dest] = args.slice(1);
-			console.log(`📁 File action ${action}: path=${path}, dest=${dest}`);
-		} else if (rawCmd === "sethttptimeout") {
-			const [timeout] = args.slice(1);
-			console.log(`⏱️ HTTP timeout set: ${timeout}s`);
-		} else if (rawCmd === "setproxy") {
-			const [server, port] = args.slice(1);
-			console.log(`🌐 Proxy set: ${server}:${port}`);
-		} else if (rawCmd === "update" || rawCmd === "updatebymyself") {
-			await this.app.startNetworkUpdate?.();
+		const handler = getCommandHandler(rawCmd, rawSub);
+		if (handler) {
+			await handler(this, args);
 		} else {
 			console.debug("未対応の \\! コマンド:", args);
 		}
@@ -175,6 +291,14 @@ export class SakuraCommandHandler {
 		closeTeachBox(this);
 	}
 
+	openCommunicateBox(params = []) {
+		openCommunicateBox(this, params);
+	}
+
+	closeCommunicateBox(notifyCancel = false) {
+		closeCommunicateBox(this, notifyCancel);
+	}
+
 	async setAlignmentToDesktop(mode) {
 		await setAlignmentToDesktop(this, mode);
 	}
@@ -182,4 +306,15 @@ export class SakuraCommandHandler {
 	async handleWindowState(state) {
 		await handleWindowState(state);
 	}
+
+	async handleJump(target, args = []) {
+		await handleJumpCommand(this, target, args);
+	}
 }
+
+export {
+	CommandHandlerMap,
+	getCommandHandler,
+	initDefaultCommandHandlers,
+	registerCommandHandler,
+};

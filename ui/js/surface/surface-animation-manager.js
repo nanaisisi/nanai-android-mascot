@@ -14,6 +14,95 @@ import { surfaceAnimationTimers } from "./surface-animation-timers.js";
 // Re-export helper functions for backwards compatibility
 export { buildAnimationTimeline, parseInterval, resolvePatternWait };
 
+/**
+ * SERIKO フレーム更新ステップイベント (Slot-08 外部インターフェース規約)
+ */
+export class FrameStepEvent {
+	/**
+	 * @param {object} params
+	 * @param {number} params.scopeId
+	 * @param {number|string} params.baseSurfaceId
+	 * @param {number|string} params.animationId
+	 * @param {object} params.pattern
+	 * @param {number} params.elapsedMs
+	 * @param {boolean} params.isFinished
+	 */
+	constructor({
+		scopeId,
+		baseSurfaceId,
+		animationId,
+		pattern,
+		elapsedMs,
+		isFinished,
+	}) {
+		this.scopeId = scopeId;
+		this.baseSurfaceId = baseSurfaceId;
+		this.animationId = animationId;
+		this.pattern = pattern;
+		this.elapsedMs = elapsedMs;
+		this.isFinished = isFinished;
+	}
+}
+
+/**
+ * SERIKO アニメーションスケジューラ (Slot-08 外部インターフェース規約)
+ */
+export class AnimationScheduler {
+	/**
+	 * @param {SurfaceAnimationManager} animationManager
+	 */
+	constructor(animationManager) {
+		this.animationManager = animationManager;
+		/** @type {Set<(event: FrameStepEvent) => void>} */
+		this.listeners = new Set();
+	}
+
+	onFrameStep(listener) {
+		this.listeners.add(listener);
+		return () => this.listeners.delete(listener);
+	}
+
+	notifyFrameStep(event) {
+		for (const listener of this.listeners) {
+			try {
+				listener(event);
+			} catch (err) {
+				console.error("Error in AnimationScheduler frame listener:", err);
+			}
+		}
+	}
+}
+
+/**
+ * ダミープレースホルダーCanvas生成 (Slot-08 先行構築・画像バッファ未存在時フォールバック)
+ * @param {number} width
+ * @param {number} height
+ * @param {string} color
+ * @returns {HTMLCanvasElement}
+ */
+export function createPlaceholderCanvas(
+	width = 200,
+	height = 400,
+	color = "rgba(0,0,0,0)",
+) {
+	if (typeof document === "undefined") {
+		return {
+			width,
+			height,
+			toDataURL: () => "data:image/png;base64,mockPlaceholder",
+		};
+	}
+	const canvas = document.createElement("canvas");
+	canvas.width = width;
+	canvas.height = height;
+	const ctx = canvas.getContext("2d");
+	if (ctx) {
+		ctx.fillStyle = color;
+		ctx.fillRect(0, 0, width, height);
+	}
+	return canvas;
+}
+
 export class SurfaceAnimationManager {
 	/**
 	 * @param {import('./surface.js').SurfaceManager} manager
@@ -29,6 +118,8 @@ export class SurfaceAnimationManager {
 		/** @type {Map<string, Promise<void>>} 再生中のアニメーション */
 		this._runningAnimations = new Map();
 		this._stoppedAnimations = new Set();
+		/** @type {AnimationScheduler} Slot-08 外部インターフェース規約スケジューラ */
+		this.scheduler = new AnimationScheduler(this);
 	}
 
 	stopAnimations(scopeId = 0) {
@@ -113,6 +204,17 @@ export class SurfaceAnimationManager {
 			String(this.manager.currentSurfaceIdFor(scopeId)) ===
 				String(baseSurfaceId);
 
+		this.scheduler?.notifyFrameStep(
+			new FrameStepEvent({
+				scopeId,
+				baseSurfaceId,
+				animationId: anim?.id ?? 0,
+				pattern: anim.patterns[0],
+				elapsedMs: 0,
+				isFinished: false,
+			}),
+		);
+
 		const timeline = await buildAnimationTimeline(anim.patterns);
 		if (timeline) {
 			await this._playTimelineFrames(
@@ -142,6 +244,17 @@ export class SurfaceAnimationManager {
 		) {
 			await gc.updateSurface(baseSurfaceId, scopeId, []);
 		}
+
+		this.scheduler?.notifyFrameStep(
+			new FrameStepEvent({
+				scopeId,
+				baseSurfaceId,
+				animationId: anim?.id ?? 0,
+				pattern: anim.patterns[anim.patterns.length - 1],
+				elapsedMs: Date.now(),
+				isFinished: true,
+			}),
+		);
 	}
 
 	async _playTimelineFrames(timeline, anim, baseSurfaceId, scopeId, key) {
@@ -208,9 +321,21 @@ export class SurfaceAnimationManager {
 		const framePromise = this.renderAnimationFrame(pat, baseSurfaceId, scopeId);
 		if (framePromise) {
 			await framePromise;
-		} else {
+		} else if (patSurface && patSurface !== "-1" && patSurface !== "-2") {
+			// 通常のサーフィス更新またはプレースホルダー描画
 			await gc.updateSurface(patSurface, scopeId, null);
 		}
+
+		this.scheduler?.notifyFrameStep(
+			new FrameStepEvent({
+				scopeId,
+				baseSurfaceId,
+				animationId: anim?.id ?? 0,
+				pattern: pat,
+				elapsedMs: Date.now(),
+				isFinished: false,
+			}),
+		);
 		return true;
 	}
 
@@ -231,21 +356,47 @@ export class SurfaceAnimationManager {
 	renderAnimationFrame(pat, baseSurfaceId, scopeId) {
 		if (baseSurfaceId === -1 || baseSurfaceId === "-1") return false;
 		const resolved = this.manager.resolveSurfaceNumber(pat.surface, scopeId);
-		const file = patternSurfaceFile(resolved);
-		if (!file) return false;
+		const file = pat.placeholder === true ? null : patternSurfaceFile(resolved);
 		const gc = this.manager.app?.ghostController;
 		if (!gc) return false;
-		return Promise.resolve(
-			gc.updateSurface(baseSurfaceId, scopeId, [
-				{
-					file,
-					x: pat.x ?? 0,
-					y: pat.y ?? 0,
-					type: (pat.type || "overlay").toLowerCase(),
-					options: pat.options || [],
-				},
-			]),
-		);
+
+		const patType = (pat.type || "overlay").toLowerCase();
+		const options = pat.options || [];
+
+		// ダミーのプレースホルダー画像バッファ（カラー矩形Canvas）フォールバック
+		if (!file && resolved !== -1 && resolved !== "-1") {
+			const dummyCanvas = createPlaceholderCanvas(
+				200,
+				400,
+				"rgba(255,100,100,0.5)",
+			);
+			return Promise.resolve(
+				gc.updateSurface(baseSurfaceId, scopeId, [
+					{
+						file: dummyCanvas.toDataURL("image/png"),
+						x: pat.x ?? 0,
+						y: pat.y ?? 0,
+						type: patType,
+						options,
+					},
+				]),
+			);
+		}
+
+		if (file) {
+			return Promise.resolve(
+				gc.updateSurface(baseSurfaceId, scopeId, [
+					{
+						file,
+						x: pat.x ?? 0,
+						y: pat.y ?? 0,
+						type: patType,
+						options,
+					},
+				]),
+			);
+		}
+		return false;
 	}
 
 	async playAnimationById(animId, scopeId = 0, waitForComplete = false) {

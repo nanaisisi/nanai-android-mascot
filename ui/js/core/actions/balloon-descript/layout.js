@@ -1,6 +1,6 @@
 /**
  * @file layout.js
- * @brief バルーンレイアウト・DPI・領域・位置・数字・SSTPメッセージ設定反映 (UKADOC準拠)
+ * @brief バルーンレイアウト・DPI・領域・位置・数字・SSTPメッセージ・9スライス設定反映 (UKADOC準拠)
  * // [descript.txt（Balloonの）]: Balloon descript.txt レイアウト・領域・座標バインディング
  */
 import { rgbFromComponents } from "./utils.js";
@@ -99,6 +99,23 @@ export function applyLayoutProperties(root, props, instance) {
 		if (balloonEl) {
 			balloonEl.style.padding = `${padTop} ${padRight} ${padBottom} ${padLeft}`;
 		}
+		// 9スライス分割トークンの自動算出
+		const sliceTop = Math.max(8, vt);
+		const sliceRight = Math.max(8, vr);
+		const sliceBottom = Math.max(8, vb);
+		const sliceLeft = Math.max(8, vl);
+		root.style.setProperty(
+			"--balloon-border-image-slice",
+			`${sliceTop} ${sliceRight} ${sliceBottom} ${sliceLeft} fill`,
+		);
+		root.style.setProperty(
+			"--balloon-border-image-width",
+			`${sliceTop}px ${sliceRight}px ${sliceBottom}px ${sliceLeft}px`,
+		);
+		root.style.setProperty(
+			"--balloon-border-image-repeat",
+			props["border.repeat"] || "repeat",
+		);
 	}
 
 	// [wordwrappoint.x,座標], [wordwrappoint.y,座標]:

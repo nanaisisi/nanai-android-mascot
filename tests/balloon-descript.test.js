@@ -67,9 +67,9 @@ test("balloonDescriptActions covers rgbFromComponents and applyBalloonDescript f
 		"communicatebox.font.color.g": "0",
 		"communicatebox.font.color.b": "0",
 		"validrect.left": "10",
-		"validrect.top": "10",
-		"validrect.right": "10",
-		"validrect.bottom": "10",
+		"validrect.top": "12",
+		"validrect.right": "14",
+		"validrect.bottom": "16",
 		"wordwrappoint.x": "300",
 		"wordwrappoint.y": "150",
 		"origin.x": "5",
@@ -163,7 +163,7 @@ test("balloonDescriptActions covers rgbFromComponents and applyBalloonDescript f
 	assert.equal(cssVars["--balloon-font-size"], "14px");
 	assert.equal(cssVars["--balloon-font-outline"], "1");
 	assert.equal(cssVars["--balloon-font-shadow-color"], "rgb(200, 200, 200)");
-	assert.equal(cssVars["--balloon-font-shadow-style"], "outline");
+	assert.equal(cssVars["--balloon-font-shadowstyle"], "outline");
 	assert.equal(cssVars["--balloon-anchor-style"], "square+underline");
 	assert.equal(cssVars["--balloon-anchor-visited-style"], "underline");
 	assert.equal(cssVars["--balloon-anchor-notselect-style"], "none");
@@ -179,6 +179,11 @@ test("balloonDescriptActions covers rgbFromComponents and applyBalloonDescript f
 	assert.equal(cssVars["--balloon-sstpmessage-x"], "30px");
 	assert.equal(cssVars["--balloon-writing-mode"], "vertical-rl");
 	assert.equal(cssVars["--balloon-paint-black"], "1");
+
+	// 9-slice tokens validation
+	assert.equal(cssVars["--balloon-border-image-slice"], "12 14 16 10 fill");
+	assert.equal(cssVars["--balloon-border-image-width"], "12px 14px 16px 10px");
+	assert.equal(cssVars["--balloon-border-image-repeat"], "repeat");
 
 	delete globalThis.__TAURI__;
 	assert.ok(true);

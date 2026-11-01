@@ -1,0 +1,205 @@
+import assert from "node:assert/strict";
+import { beforeEach, describe, it } from "vitest";
+import {
+	BalloonThemeManager,
+	balloonThemeActions,
+} from "../ui/js/core/actions/balloon-theme.js";
+
+describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
+	let cssVars = {};
+	let docAttrs = {};
+	let mockEl = null;
+
+	beforeEach(() => {
+		cssVars = {};
+		docAttrs = {};
+		mockEl = {
+			style: {
+				transform: "",
+				transformOrigin: "",
+				padding: "",
+				maxWidth: "",
+				borderImage: "",
+				setProperty(k, v) {
+					cssVars[k] = v;
+				},
+				removeProperty(k) {
+					delete cssVars[k];
+				},
+			},
+			setAttribute(k, v) {
+				docAttrs[k] = v;
+			},
+		};
+
+		globalThis.document = {
+			documentElement: {
+				setAttribute(k, v) {
+					docAttrs[k] = v;
+				},
+				getAttribute(k) {
+					return docAttrs[k];
+				},
+				style: {
+					setProperty(k, v) {
+						cssVars[k] = v;
+					},
+					removeProperty(k) {
+						delete cssVars[k];
+					},
+				},
+			},
+			body: {
+				className: "",
+				style: {},
+			},
+			querySelector(sel) {
+				if (sel === ".balloon") return mockEl;
+				return null;
+			},
+		};
+
+		globalThis.localStorage = {
+			_data: {},
+			getItem(k) {
+				return this._data[k] || null;
+			},
+			setItem(k, v) {
+				this._data[k] = String(v);
+			},
+			removeItem(k) {
+				delete this._data[k];
+			},
+		};
+	});
+
+	it("initializes BalloonThemeManager with default or app properties", () => {
+		const mgr = new BalloonThemeManager();
+		assert.equal(mgr.currentTheme, "ivory");
+		assert.equal(mgr.userScale, 1);
+		assert.equal(mgr.dpiScale, 1);
+
+		const customApp = {
+			currentBalloonTheme: "dark",
+			balloonUserScale: 1.5,
+			balloonDpiScale: 1.25,
+			availableBalloons: [{ dir_name: "custom_skin", name: "Custom Skin" }],
+		};
+		const mgrCustom = new BalloonThemeManager(customApp);
+		assert.equal(mgrCustom.currentTheme, "dark");
+		assert.equal(mgrCustom.userScale, 1.5);
+		assert.equal(mgrCustom.dpiScale, 1.25);
+		assert.equal(mgrCustom.availableBalloons.length, 1);
+	});
+
+	it("computes 9-slice border-image tokens correctly based on validrect", () => {
+		const mgr = new BalloonThemeManager();
+		const nineSlice = mgr.computeNineSlice(
+			{
+				"validrect.left": "20",
+				"validrect.top": "24",
+				"validrect.right": "20",
+				"validrect.bottom": "28",
+			},
+			"assets/balloon/test.png",
+		);
+
+		assert.equal(nineSlice.source, "assets/balloon/test.png");
+		assert.equal(nineSlice.slice, "24 20 28 20 fill");
+		assert.equal(nineSlice.width, "24px 20px 28px 20px");
+		assert.equal(nineSlice.repeat, "repeat");
+		assert.ok(nineSlice.cssBorderImage.includes("url("));
+
+		// Fallback when values are missing or NaN
+		const fallback = mgr.computeNineSlice({});
+		assert.equal(fallback.slice, "16 16 16 16 fill");
+		assert.equal(fallback.width, "16px 16px 16px 16px");
+	});
+
+	it("cycles balloon themes correctly with default and custom lists", () => {
+		let shownMessage = "";
+		const mockApp = {
+			currentBalloonTheme: "ivory",
+			showBalloon(msg) {
+				shownMessage = msg;
+			},
+			hideBalloon() {},
+		};
+		const mgr = new BalloonThemeManager(mockApp);
+
+		const next1 = mgr.cycleTheme();
+		assert.equal(next1, "pixel");
+		assert.equal(mgr.currentTheme, "pixel");
+		assert.equal(mockApp.currentBalloonTheme, "pixel");
+		assert.ok(shownMessage.includes("ピクセル"));
+
+		// Custom list
+		mgr.availableBalloons = [
+			{ dir_name: "themeA", name: "Theme Alpha" },
+			{ dir_name: "themeB", name: "Theme Beta" },
+		];
+		mgr.currentTheme = "themeA";
+		const nextCustom = mgr.cycleTheme();
+		assert.equal(nextCustom, "themeB");
+		assert.ok(shownMessage.includes("Theme Beta"));
+	});
+
+	it("applies balloon scale with numeric and action inputs", () => {
+		const mockApp = {
+			balloonUserScale: 1,
+			balloonDpiScale: 1,
+			showBalloon() {},
+			hideBalloon() {},
+		};
+		const mgr = new BalloonThemeManager(mockApp);
+
+		const res1 = mgr.applyScale("balloon-scale-150");
+		assert.equal(res1.scale, 1.5);
+		assert.equal(res1.percent, 150);
+		assert.equal(cssVars["--balloon-user-scale"], "1.5");
+		assert.equal(mockEl.style.transform, "scale(1.5)");
+
+		const res2 = mgr.applyScale(2);
+		assert.equal(res2.scale, 2);
+		assert.equal(res2.percent, 200);
+	});
+
+	it("resets descript properties properly", () => {
+		const mockApp = {
+			balloonDpiScale: 1.25,
+			balloonUserScale: 1.5,
+			elements: { balloonDisplay: { style: {} } },
+		};
+		const mgr = new BalloonThemeManager(mockApp);
+		cssVars["--balloon-font-family"] = "Arial";
+		cssVars["--balloon-border-image-slice"] = "16 16 16 16 fill";
+
+		mgr.resetDescript();
+		assert.equal(cssVars["--balloon-font-family"], undefined);
+		assert.equal(cssVars["--balloon-border-image-slice"], undefined);
+		assert.equal(mockApp.balloonDpiScale, 1);
+		assert.equal(mgr.dpiScale, 1);
+	});
+
+	it("delegates balloonThemeActions to BalloonThemeManager preserving backward compatibility", async () => {
+		const app = {
+			...balloonThemeActions,
+			currentBalloonTheme: "ivory",
+			balloonUserScale: 1,
+			balloonDpiScale: 1,
+			availableBalloons: [],
+			showBalloon() {},
+			hideBalloon() {},
+		};
+
+		app.cycleBalloonTheme();
+		assert.equal(app.currentBalloonTheme, "pixel");
+		assert.ok(app.balloonThemeManager instanceof BalloonThemeManager);
+
+		app.applyBalloonScaleAction("balloon-scale-125");
+		assert.equal(app.balloonUserScale, 1.25);
+
+		app.resetBalloonDescript();
+		assert.equal(app.balloonDpiScale, 1);
+	});
+});

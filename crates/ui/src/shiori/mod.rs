@@ -9,9 +9,11 @@
 //! 改行コードは CR+LF、末尾は空行（CRLF×2）で終端する。
 //! `Charset` は UTF-8 を既定とする。
 
+pub mod engine;
 pub mod protocol;
 pub mod types;
 
+pub use engine::{MockShioriEngine, MultiStageShioriLoader, ShioriEngine, ShioriEngineCandidate};
 pub use protocol::{ShioriRequest, ShioriResponse};
 pub use types::{
     ErrorLevel, GhostStatusToken, SecurityLevel, SenderTypeTag, ShioriMethod, StatusCode,

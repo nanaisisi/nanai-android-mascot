@@ -4,7 +4,9 @@
 //! YAYAとSATORIYAのC++コードとのFFI（Foreign Function Interface）定義およびShioriInterfaceラッパー
 
 use libc::{c_int, c_long, c_void};
+use nanai_android_mascot_ui::ShioriEngine;
 use std::ffi::CString;
+use std::path::Path;
 
 /// SHIORI/3.0プロトコルの戻り値
 #[allow(clippy::upper_case_acronyms)]
@@ -106,5 +108,23 @@ impl Drop for ShioriInterface {
         if self.is_loaded {
             let _ = self.unload();
         }
+    }
+}
+
+impl ShioriEngine for ShioriInterface {
+    fn load(&mut self, dir_path: &Path) -> Result<(), String> {
+        self.load(&dir_path.to_string_lossy())
+    }
+
+    fn request(&self, request_str: &str) -> Result<String, String> {
+        self.request(request_str)
+    }
+
+    fn unload(&mut self) -> Result<(), String> {
+        self.unload()
+    }
+
+    fn is_loaded(&self) -> bool {
+        self.is_loaded
     }
 }

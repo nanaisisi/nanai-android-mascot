@@ -5,3 +5,6 @@ pub mod fmo;
 pub mod headline;
 pub mod property;
 pub mod saori;
+pub mod wasm;
+
+pub use wasm::WasmShioriEngine;

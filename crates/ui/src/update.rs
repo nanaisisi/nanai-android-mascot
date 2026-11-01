@@ -265,5 +265,4 @@ mod tests {
 
         assert_eq!(pkg.total_download_size(), 1200);
     }
-
 }

@@ -70,7 +70,8 @@ mod tests {
             commands[5],
             SakuraCommand::Choice {
                 label: "はい".into(),
-                id: "id_yes".into()
+                id: "id_yes".into(),
+                args: Vec::new(),
             }
         );
         assert_eq!(commands[6], SakuraCommand::End);
@@ -90,6 +91,7 @@ mod tests {
             SakuraCommand::Anchor {
                 id: "anchor01".into(),
                 text: "リンク".into(),
+                args: Vec::new(),
             }
         );
         assert_eq!(
@@ -203,8 +205,10 @@ mod tests {
 
         assert_eq!(
             commands[1],
-            SakuraCommand::Command {
-                args: vec!["open".into(), "inputbox".into(), "--timeout=5".into()]
+            SakuraCommand::OpenDialog {
+                dialog_type: "inputbox".into(),
+                id: "--timeout=5".into(),
+                args: Vec::new(),
             }
         );
         assert_eq!(

@@ -241,7 +241,8 @@ export class SurfaceAnimationManager {
 					file,
 					x: pat.x ?? 0,
 					y: pat.y ?? 0,
-					type: pat.type ?? "overlay",
+					type: (pat.type || "overlay").toLowerCase(),
+					options: pat.options || [],
 				},
 			]),
 		);

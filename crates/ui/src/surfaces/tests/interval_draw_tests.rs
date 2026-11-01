@@ -47,6 +47,10 @@ fn test_parse_draw_method_variants() {
     assert_eq!(DrawMethod::parse("replace"), DrawMethod::Replace);
     assert_eq!(DrawMethod::parse("add"), DrawMethod::Add);
     assert_eq!(DrawMethod::parse("bind"), DrawMethod::Bind);
+    assert_eq!(DrawMethod::parse("asis"), DrawMethod::AsIs);
+    assert_eq!(DrawMethod::parse("auto"), DrawMethod::Auto);
+    assert_eq!(DrawMethod::parse("move"), DrawMethod::Move);
+    assert_eq!(DrawMethod::parse("insert"), DrawMethod::Insert);
     assert_eq!(
         DrawMethod::parse("blend-multiply"),
         DrawMethod::Blend("multiply".to_string())
@@ -68,14 +72,6 @@ fn test_parse_draw_method_variants() {
         DrawMethod::Custom("stop".to_string())
     );
     assert_eq!(
-        DrawMethod::parse("move"),
-        DrawMethod::Custom("move".to_string())
-    );
-    assert_eq!(
-        DrawMethod::parse("insert"),
-        DrawMethod::Custom("insert".to_string())
-    );
-    assert_eq!(
         DrawMethod::parse("custom_method"),
         DrawMethod::Custom("custom_method".to_string())
     );
@@ -92,6 +88,10 @@ fn test_parse_draw_method_formatting() {
     assert_eq!(DrawMethod::parse("REPLACE"), DrawMethod::Replace);
     assert_eq!(DrawMethod::parse("ADD"), DrawMethod::Add);
     assert_eq!(DrawMethod::parse("BIND"), DrawMethod::Bind);
+    assert_eq!(DrawMethod::parse("ASIS"), DrawMethod::AsIs);
+    assert_eq!(DrawMethod::parse("AUTO"), DrawMethod::Auto);
+    assert_eq!(DrawMethod::parse("MOVE"), DrawMethod::Move);
+    assert_eq!(DrawMethod::parse("INSERT"), DrawMethod::Insert);
     assert_eq!(
         DrawMethod::parse("BLEND-MULTIPLY"),
         DrawMethod::Blend("multiply".to_string())

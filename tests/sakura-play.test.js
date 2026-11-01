@@ -121,3 +121,57 @@ test("playScript covers all tokens (scope, char, newline, clear, pause, anchor, 
 	await playScript(player, "\\0あ\\e");
 	assert.equal(player.timeCritical, true);
 });
+
+test("playScript applies punctuation delay and waitMultiplier via playbackController", async () => {
+	const sleptDurations = [];
+	const sakuraText = createEl("div");
+
+	const { SakuraPlaybackController } = await import(
+		"../ui/js/ghost/sakura-play.js"
+	);
+
+	const player = {
+		playbackId: 10,
+		parse: async () => [
+			{ type: "scope", value: 0 },
+			{ type: "char", value: "あ" }, // normal: 40ms
+			{ type: "char", value: "。" }, // punctuation: 140ms
+			{ type: "wait", value: 50 }, // wait: 50ms
+		],
+		sleep: (ms) => {
+			sleptDurations.push(ms);
+			return Promise.resolve();
+		},
+		waitForClickOrTimeout: () => Promise.resolve(),
+		onChoiceSelected: () => {},
+		onChoiceTimeout: () => {},
+		scheduleSurfaceRestore: () => {},
+		app: {
+			ghostId: "main",
+			currentBalloonTheme: "ivory",
+			elements: {
+				balloonText: sakuraText,
+				balloonDisplay: createEl("div"),
+				keroBalloonText: createEl("div"),
+				keroBalloonDisplay: createEl("div"),
+			},
+			surfaceManager: {
+				onCharSpoken() {},
+				onTalkEnd() {},
+				onScriptEnd() {},
+			},
+			ghostController: {
+				updateSurface() {},
+				sendShioriEvent: async () => {},
+			},
+		},
+	};
+
+	const controller = new SakuraPlaybackController({ player });
+	controller.setWaitMultiplier(2.0);
+
+	await playScript(player, "\\0あ。\\w1\\e");
+
+	// 40ms * 2.0 = 80ms, 140ms * 2.0 = 280ms, 50ms * 2.0 = 100ms
+	assert.deepEqual(sleptDurations, [80, 280, 100]);
+});

@@ -77,6 +77,10 @@ export const surfaceAnimationTimers = {
 			String(this.manager.currentSurfaceIdFor(scopeId)) === String(surfaceId);
 		const play = () => this.playAnimationPatterns(anim, surfaceId, scopeId);
 
+		if (kinds.has("never")) {
+			return;
+		}
+
 		if (kinds.has("bind")) {
 			if (kinds.size === 1) return;
 			if (!this.manager.isBindAnimationActive?.(scopeId, anim.id, surfaceId)) {

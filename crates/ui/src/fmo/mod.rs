@@ -120,7 +120,10 @@ pub fn parse_fmo_buffer(buf: &[u8]) -> Result<Vec<FmoRecord>, String> {
 
     // 4バイト目以降のNULL終端または末尾まで
     let data_slice = &buf[4..];
-    let null_pos = data_slice.iter().position(|&b| b == 0).unwrap_or(data_slice.len());
+    let null_pos = data_slice
+        .iter()
+        .position(|&b| b == 0)
+        .unwrap_or(data_slice.len());
     let text = String::from_utf8_lossy(&data_slice[..null_pos]);
 
     // prefix -> Map<key, value>

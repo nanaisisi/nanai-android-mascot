@@ -1,5 +1,5 @@
 use super::super::super::SakuraCommand;
-use super::super::utils::{consume_tag_tail, read_bracketed, CharsIter};
+use super::super::utils::{CharsIter, consume_tag_tail, read_bracketed};
 
 pub(crate) fn handle_underscore(
     chars: &mut CharsIter<'_>,

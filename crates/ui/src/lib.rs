@@ -26,9 +26,7 @@ pub use shiori::{
     ErrorLevel, GhostStatusToken, SecurityLevel, SenderTypeTag, ShioriMethod, ShioriRequest,
     ShioriResponse, StatusCode, parse_sender_types,
 };
-pub use sstp::{
-    IfGhostEntry, SstpMethod, SstpRequest, SstpResponse, SstpStatusCode,
-};
+pub use sstp::{IfGhostEntry, SstpMethod, SstpRequest, SstpResponse, SstpStatusCode};
 pub use surfaces::{
     BalloonOffset, CollisionArea, CollisionShape, CompositionLayer, CompositionPlan, DrawMethod,
     ElementDef, Interval, SerikoAnimation, SurfacesTxt, parse_surfaces_txt,

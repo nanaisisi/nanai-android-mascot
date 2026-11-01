@@ -39,12 +39,8 @@ pub fn scan_shells_from_ghost(ghost_dir: &Path) -> Vec<ShellInfo> {
                     }
 
                     if !merged.is_empty() {
-                        menu_theme = extract_shell_menu_theme(
-                            &merged,
-                            &path,
-                            &ghost_master_dir,
-                            ghost_dir,
-                        );
+                        menu_theme =
+                            extract_shell_menu_theme(&merged, &path, &ghost_master_dir, ghost_dir);
                     }
                     shells.push(ShellInfo {
                         name: shell_name,

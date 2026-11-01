@@ -1,8 +1,8 @@
 pub mod dau;
-pub mod network;
 pub mod generation;
+pub mod network;
 
 #[allow(unused_imports)]
 pub use dau::*;
-pub use network::*;
 pub use generation::*;
+pub use network::*;

@@ -91,7 +91,10 @@ pub async fn create_nar_archive(
     folder_path: String,
     output_nar_path: String,
 ) -> Result<u64, String> {
-    println!("📦 Creating NAR archive from folder: {} -> {}", folder_path, output_nar_path);
+    println!(
+        "📦 Creating NAR archive from folder: {} -> {}",
+        folder_path, output_nar_path
+    );
     let src = Path::new(&folder_path);
     let dst = Path::new(&output_nar_path);
     archive::create_nar_from_directory(src, dst)

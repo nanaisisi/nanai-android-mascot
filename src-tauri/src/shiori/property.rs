@@ -35,18 +35,36 @@ pub fn evaluate_property_query(query: &str) -> String {
         "craftman" => "Ukagaka Creator".to_string(),
         "craftmanw" => "Ukagaka Creator".to_string(),
         "log_path" => "".to_string(),
-        "sakura.defaultleft" | "sakura.defaulttop" | "sakura.defaultx" | "sakura.defaulty" => "0".to_string(),
-        "sakura.popupmenu.applybindtoself" | "sakura.popupmenu.type" | "sakura.popupmenu.visible" => "1".to_string(),
-        "sakura.portalbuttoncaption" | "sakura.portalsites" | "sakura.recommendbuttoncaption" | "sakura.recommendsites" => "".to_string(),
-        "kero.defaultleft" | "kero.defaulttop" | "kero.defaultx" | "kero.defaulty" => "0".to_string(),
-        "kero.popupmenu.applybindtoself" | "kero.popupmenu.type" | "kero.popupmenu.visible" => "1".to_string(),
+        "sakura.defaultleft" | "sakura.defaulttop" | "sakura.defaultx" | "sakura.defaulty" => {
+            "0".to_string()
+        }
+        "sakura.popupmenu.applybindtoself"
+        | "sakura.popupmenu.type"
+        | "sakura.popupmenu.visible" => "1".to_string(),
+        "sakura.portalbuttoncaption"
+        | "sakura.portalsites"
+        | "sakura.recommendbuttoncaption"
+        | "sakura.recommendsites" => "".to_string(),
+        "kero.defaultleft" | "kero.defaulttop" | "kero.defaultx" | "kero.defaulty" => {
+            "0".to_string()
+        }
+        "kero.popupmenu.applybindtoself" | "kero.popupmenu.type" | "kero.popupmenu.visible" => {
+            "1".to_string()
+        }
         "kero.recommendbuttoncaption" | "kero.recommendsites" => "".to_string(),
-        "char.defaultleft" | "char.defaulttop" | "char.defaultx" | "char.defaulty" => "0".to_string(),
-        "char.popupmenu.applybindtoself" | "char.popupmenu.type" | "char.popupmenu.visible" => "1".to_string(),
+        "char.defaultleft" | "char.defaulttop" | "char.defaultx" | "char.defaulty" => {
+            "0".to_string()
+        }
+        "char.popupmenu.applybindtoself" | "char.popupmenu.type" | "char.popupmenu.visible" => {
+            "1".to_string()
+        }
         "char.recommendbuttoncaption" | "char.recommendsites" => "".to_string(),
         "boxname.defaultleft" | "inputbox.defaultleft" => "0".to_string(),
         "getaistate" | "getaistateex" | "legacyinterface" | "useorigin1" => "0".to_string(),
-        "readmebuttoncaption" | "updatebuttoncaption" | "vanishbuttoncaption" | "vanishbuttonvisible" => "1".to_string(),
+        "readmebuttoncaption"
+        | "updatebuttoncaption"
+        | "vanishbuttoncaption"
+        | "vanishbuttonvisible" => "1".to_string(),
         _ => {
             if q.starts_with("currentghost.scope(") {
                 if q.contains(".name") {

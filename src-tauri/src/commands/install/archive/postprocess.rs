@@ -23,10 +23,7 @@ pub fn process_delete_txt(target_dir: &Path) {
     }
 }
 
-pub fn build_extracted_ghost_info(
-    target_dir: &Path,
-    safe_dir_name: &str,
-) -> GhostInfo {
+pub fn build_extracted_ghost_info(target_dir: &Path, safe_dir_name: &str) -> GhostInfo {
     let shells = crate::ghost::scan::scan_shells_from_ghost(target_dir);
     let descript_candidates = [
         target_dir.join("ghost").join("master").join("descript.txt"),

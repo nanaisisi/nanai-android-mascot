@@ -5,7 +5,10 @@ fn test_sstp_method_parsing_and_as_str() {
     assert_eq!(SstpMethod::parse("SEND"), Some(SstpMethod::Send));
     assert_eq!(SstpMethod::parse("notify"), Some(SstpMethod::Notify));
     assert_eq!(SstpMethod::parse("EXECUTE"), Some(SstpMethod::Execute));
-    assert_eq!(SstpMethod::parse("COMMUNICATE"), Some(SstpMethod::Communicate));
+    assert_eq!(
+        SstpMethod::parse("COMMUNICATE"),
+        Some(SstpMethod::Communicate)
+    );
     assert_eq!(SstpMethod::parse("give"), Some(SstpMethod::Give));
     assert_eq!(SstpMethod::parse("UNKNOWN"), None);
 
@@ -88,8 +91,10 @@ fn test_sstp_execute_and_communicate() {
 #[test]
 fn test_sstp_response_build() {
     let mut res = SstpResponse::ok(Some("\\0Hi\r\n\\e".to_string()));
-    res.references.insert("Reference0".to_string(), "Val0".to_string());
-    res.pass_thru.insert("X-SSTP-PassThru-Custom".to_string(), "Value".to_string());
+    res.references
+        .insert("Reference0".to_string(), "Val0".to_string());
+    res.pass_thru
+        .insert("X-SSTP-PassThru-Custom".to_string(), "Value".to_string());
     let built = res.build();
 
     assert!(built.starts_with("SSTP/1.4 200 OK\r\n"));

@@ -82,7 +82,11 @@ pub fn check_named_mutex(name: &str) -> bool {
     }
 
     let guard = FALLBACK_MUTEXES.lock().unwrap();
-    guard.as_ref().and_then(|m| m.get(name)).copied().unwrap_or(false)
+    guard
+        .as_ref()
+        .and_then(|m| m.get(name))
+        .copied()
+        .unwrap_or(false)
 }
 
 static HELD_HANDLES: Mutex<Vec<usize>> = Mutex::new(Vec::new());

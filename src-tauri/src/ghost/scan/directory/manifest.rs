@@ -1,5 +1,5 @@
-use std::path::Path;
 use super::super::descript::read_descript_file;
+use std::path::Path;
 
 pub struct GhostManifest {
     pub display_name: String,

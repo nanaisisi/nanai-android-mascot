@@ -1,5 +1,5 @@
 use super::super::super::SakuraCommand;
-use super::super::utils::{read_bracketed, CharsIter};
+use super::super::utils::{CharsIter, read_bracketed};
 
 pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnMut(SakuraCommand)) {
     let Some(cmd_str) = read_bracketed(chars) else {
@@ -59,27 +59,47 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
                     title,
                     memo,
                 });
-            } else if parts.get(1).is_some_and(|p| *p == "extractarchive" || *p == "compressarchive" || *p == "createnar" || *p == "createupdatedata") {
+            } else if parts.get(1).is_some_and(|p| {
+                *p == "extractarchive"
+                    || *p == "compressarchive"
+                    || *p == "createnar"
+                    || *p == "createupdatedata"
+            }) {
                 let action = parts.get(1).unwrap_or(&"").to_string();
                 let filename = parts.get(2).unwrap_or(&"").to_string();
                 let dest = parts.get(3).unwrap_or(&"").to_string();
-                callback(SakuraCommand::ArchiveExec { action, filename, dest });
-            } else if parts.get(1).is_some_and(|p| *p == "download" || *p == "http-get") {
+                callback(SakuraCommand::ArchiveExec {
+                    action,
+                    filename,
+                    dest,
+                });
+            } else if parts
+                .get(1)
+                .is_some_and(|p| *p == "download" || *p == "http-get")
+            {
                 let url = parts.get(2).unwrap_or(&"").to_string();
                 let save_path = parts.get(3).unwrap_or(&"").to_string();
                 callback(SakuraCommand::DownloadExec { url, save_path });
-            } else if parts.get(1).is_some_and(|p| *p == "upload" || *p == "http-post") {
+            } else if parts
+                .get(1)
+                .is_some_and(|p| *p == "upload" || *p == "http-post")
+            {
                 let url = parts.get(2).unwrap_or(&"").to_string();
                 let file_path = parts.get(3).unwrap_or(&"").to_string();
                 callback(SakuraCommand::UploadExec { url, file_path });
             } else if parts.get(1).is_some_and(|p| *p == "mailcheck") {
                 let account = parts.get(2).unwrap_or(&"").to_string();
                 callback(SakuraCommand::MailCheckExec { account });
-            } else if parts.get(1).is_some_and(|p| *p == "mailsend" || *p == "mailsettings") {
+            } else if parts
+                .get(1)
+                .is_some_and(|p| *p == "mailsend" || *p == "mailsettings")
+            {
                 let action = parts.get(1).unwrap_or(&"").to_string();
                 let target = parts.get(2).unwrap_or(&"").to_string();
                 callback(SakuraCommand::MailExec { action, target });
-            } else if parts.get(1).is_some_and(|p| *p == "deletefile" || *p == "renamefile" || *p == "copyfile" || *p == "movefile") {
+            } else if parts.get(1).is_some_and(|p| {
+                *p == "deletefile" || *p == "renamefile" || *p == "copyfile" || *p == "movefile"
+            }) {
                 let action = parts.get(1).unwrap_or(&"").to_string();
                 let path = parts.get(2).unwrap_or(&"").to_string();
                 let dest = parts.get(3).unwrap_or(&"").to_string();
@@ -163,7 +183,8 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
                     let port = parts.get(3).and_then(|s| s.parse().ok()).unwrap_or(80);
                     callback(SakuraCommand::SetProxy { server, port });
                 }
-                "autoscroll" | "balloonalign" | "balloonmarker" | "balloonnum" | "balloonwait" | "serikotalk" => {
+                "autoscroll" | "balloonalign" | "balloonmarker" | "balloonnum" | "balloonwait"
+                | "serikotalk" => {
                     let key = setting.clone();
                     let value = parts.get(2).unwrap_or(&"").to_string();
                     let extra = if parts.len() > 3 {

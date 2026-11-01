@@ -1,4 +1,4 @@
-use super::super::utils::{read_bracketed, read_digit, CharsIter};
+use super::super::utils::{CharsIter, read_bracketed, read_digit};
 
 pub(crate) fn handle_target_p(chars: &mut CharsIter<'_>) -> Option<u8> {
     if let Some(bracketed) = read_bracketed(chars) {

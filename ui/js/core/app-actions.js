@@ -134,8 +134,12 @@ export const actionMethods = {
 		if (action === "reset-balloon-position" || action === "resetballoonpos") {
 			localStorage.removeItem("nanai_balloon_offset");
 			if (isTauriAvailable()) {
-				invoke("set_balloon_offset", { scopeId: 0, x: 0, y: 0 }).catch(() => {});
-				invoke("set_balloon_offset", { scopeId: 1, x: 0, y: 0 }).catch(() => {});
+				invoke("set_balloon_offset", { scopeId: 0, x: 0, y: 0 }).catch(
+					() => {},
+				);
+				invoke("set_balloon_offset", { scopeId: 1, x: 0, y: 0 }).catch(
+					() => {},
+				);
 			}
 			this.showBalloon("📍 バルーン位置を初期リセットしました");
 			setTimeout(() => this.hideBalloon(), 2000);

@@ -115,7 +115,11 @@ export function rustCommandsToTokens(rustCommands) {
 				tokens.push({ type: "choice_timeout", timeout: cmd.payload ?? 0 });
 				break;
 			case "BalloonOffset":
-				tokens.push({ type: "balloon_offset", x: cmd.payload?.x ?? 0, y: cmd.payload?.y ?? 0 });
+				tokens.push({
+					type: "balloon_offset",
+					x: cmd.payload?.x ?? 0,
+					y: cmd.payload?.y ?? 0,
+				});
 				break;
 			case "BalloonTimeout":
 				tokens.push({ type: "balloon_timeout", timeout: cmd.payload ?? 0 });
@@ -124,7 +128,11 @@ export function rustCommandsToTokens(rustCommands) {
 				tokens.push({ type: "lock_balloon_move", locked: cmd.payload ?? true });
 				break;
 			case "WindowState":
-				tokens.push({ type: "command", command: "windowstate", args: [cmd.payload ?? ""] });
+				tokens.push({
+					type: "command",
+					command: "windowstate",
+					args: [cmd.payload ?? ""],
+				});
 				break;
 			case "Change":
 				tokens.push({
@@ -171,7 +179,11 @@ export function rustCommandsToTokens(rustCommands) {
 				tokens.push({
 					type: "command",
 					command: "archiveexec",
-					args: [cmd.payload?.action ?? "", cmd.payload?.filename ?? "", cmd.payload?.dest ?? ""],
+					args: [
+						cmd.payload?.action ?? "",
+						cmd.payload?.filename ?? "",
+						cmd.payload?.dest ?? "",
+					],
 				});
 				break;
 			case "DownloadExec":
@@ -206,7 +218,11 @@ export function rustCommandsToTokens(rustCommands) {
 				tokens.push({
 					type: "command",
 					command: "fileexec",
-					args: [cmd.payload?.action ?? "", cmd.payload?.path ?? "", cmd.payload?.dest ?? ""],
+					args: [
+						cmd.payload?.action ?? "",
+						cmd.payload?.path ?? "",
+						cmd.payload?.dest ?? "",
+					],
 				});
 				break;
 			case "SetHttpTimeout":
@@ -236,7 +252,11 @@ export function rustCommandsToTokens(rustCommands) {
 				tokens.push({
 					type: "command",
 					command: "open",
-					args: [cmd.payload?.dialog_type ?? "", cmd.payload?.id ?? "", ...(cmd.payload?.args ?? [])],
+					args: [
+						cmd.payload?.dialog_type ?? "",
+						cmd.payload?.id ?? "",
+						...(cmd.payload?.args ?? []),
+					],
 				});
 				break;
 			case "Text":

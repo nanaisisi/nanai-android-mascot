@@ -2,10 +2,11 @@
  * @file sakura-play.js
  * @brief トークン列をバルーンにアニメーション再生するさくらスクリプトプレイヤー本体
  */
-import { createBalloonSyncManager } from "./sakura-play-sync.js";
+
+import { handleToken } from "./sakura-play/handlers.js";
 import { translateScript } from "./sakura-play/translator.js";
 import { initBalloonWindows } from "./sakura-play/window.js";
-import { handleToken } from "./sakura-play/handlers.js";
+import { createBalloonSyncManager } from "./sakura-play-sync.js";
 
 /**
  * トークン列をバルーンにアニメーション再生（SakuraScriptPlayer.play の本体）
@@ -38,10 +39,10 @@ export async function playScript(player, script) {
 	const shownScopes = new Set();
 	await initBalloonWindows(app, tokens, hasTextContent, shownScopes);
 
-	let currentBalloonText = sakuraText;
-	let isQuickMode = false;
-	let ended = false;
-	let currentAnchor = null;
+	const currentBalloonText = sakuraText;
+	const isQuickMode = false;
+	const ended = false;
+	const currentAnchor = null;
 
 	const { flushDesktopBalloon, scheduleDesktopBalloonSync } =
 		createBalloonSyncManager(player, app, sakuraText, keroText);

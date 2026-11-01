@@ -17,8 +17,7 @@ export function applyGroupProperties(root, props, prefix, cssPrefix) {
 		props[`${prefix}.font.shadowcolor.b`]
 			? rgbFromComponents(props, `${prefix}.font.shadowcolor`)
 			: null;
-	if (shadowCol)
-		root.style.setProperty(`${cssPrefix}-shadow-color`, shadowCol);
+	if (shadowCol) root.style.setProperty(`${cssPrefix}-shadow-color`, shadowCol);
 
 	if (props[`${prefix}.font.shadowstyle`]) {
 		root.style.setProperty(

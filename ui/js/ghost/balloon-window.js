@@ -1,6 +1,8 @@
 /**
  * Nanai Android Mascot - 独立バルーンウィンドウ制御スクリプト
  */
+
+import { applyFontProperties } from "../core/actions/balloon-descript/font.js";
 import {
 	emit,
 	invoke,
@@ -9,7 +11,6 @@ import {
 	startDraggingWindow,
 } from "../core/tauri-helper.js";
 import { processChromaKey } from "../surface/surface-compositor.js";
-import { applyFontProperties } from "../core/actions/balloon-descript/font.js";
 
 const urlParams = new URLSearchParams(globalThis.location.search);
 const scopeId = parseInt(urlParams.get("scope") || "0", 10);

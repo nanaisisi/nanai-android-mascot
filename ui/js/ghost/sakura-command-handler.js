@@ -2,8 +2,11 @@
  * さくらスクリプトの \! 拡張コマンドおよび入力ボックス (\![open,inputbox]) ハンドラ
  */
 import { openInputBox } from "./command-handler/inputbox.js";
-import { openTeachBox, closeTeachBox } from "./command-handler/teachbox.js";
-import { handleWindowState, setAlignmentToDesktop } from "./command-handler/window.js";
+import { closeTeachBox, openTeachBox } from "./command-handler/teachbox.js";
+import {
+	handleWindowState,
+	setAlignmentToDesktop,
+} from "./command-handler/window.js";
 
 export class SakuraCommandHandler {
 	/**
@@ -109,7 +112,9 @@ export class SakuraCommandHandler {
 			console.log(`🛑 Network service ${rawCmd}: ${service} (${target})`);
 		} else if (rawCmd === "archiveexec") {
 			const [action, filename, dest] = args.slice(1);
-			console.log(`📦 Archive action ${action}: file=${filename}, dest=${dest}`);
+			console.log(
+				`📦 Archive action ${action}: file=${filename}, dest=${dest}`,
+			);
 			if (action === "createnar" && isTauriAvailable()) {
 				try {
 					const ghostPath = this.app.ghostController?.currentGhost?.path || "";

@@ -10,7 +10,12 @@ export function applyFontProperties(root, props, _instance) {
 	applyBaseFontProperties(root, props);
 
 	applyGroupProperties(root, props, "anchor", "--balloon-anchor");
-	applyGroupProperties(root, props, "anchor.visited", "--balloon-anchor-visited");
+	applyGroupProperties(
+		root,
+		props,
+		"anchor.visited",
+		"--balloon-anchor-visited",
+	);
 	applyGroupProperties(
 		root,
 		props,

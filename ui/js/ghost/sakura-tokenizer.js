@@ -14,6 +14,20 @@ export function parseSakuraScript(script) {
 			i++;
 			if (i >= len) break;
 
+			// エスケープされたバックスラッシュ: \\ -> 通常文字 '\'
+			if (script[i] === "\\") {
+				tokens.push({ type: "char", value: "\\" });
+				i++;
+				continue;
+			}
+
+			// エスケープされたパーセント: \% -> 通常文字 '%'
+			if (script[i] === "%") {
+				tokens.push({ type: "char", value: "%" });
+				i++;
+				continue;
+			}
+
 			const char = script[i];
 
 			// \0 または \h (メインキャラ指定)

@@ -152,4 +152,34 @@ test("SakuraCommandHandler covers all commands and boxes", async () => {
 	assert.ok(handler.teachForm);
 	handler.runCommand(["close", "teachbox"]);
 	assert.equal(handler.teachForm, null);
+
+	// 11. open communicatebox and close communicatebox
+	eventsSent.length = 0;
+	handler.runCommand([
+		"open",
+		"communicatebox",
+		"helloWorld",
+		"--timeout=150",
+		"--placeholder=SaySomething",
+	]);
+	assert.ok(handler.communicateForm);
+	const commForm = handler.communicateForm;
+	const commSubmit = commForm.children.find((c) => c.tagName === "BUTTON");
+	commSubmit.click();
+	assert.ok(eventsSent.some((e) => e.ev === "OnCommunicate"));
+
+	// communicatebox escape/cancel
+	eventsSent.length = 0;
+	handler.openCommunicateBox([]);
+	const commInput = handler.communicateForm.children.find(
+		(c) => c.tagName === "INPUT",
+	);
+	commInput._listeners?.keydown?.({ key: "Escape", stopPropagation() {} });
+	assert.ok(eventsSent.some((e) => e.ev === "OnCommunicateInputCancel"));
+
+	// close communicatebox command
+	handler.openCommunicateBox([]);
+	assert.ok(handler.communicateForm);
+	handler.runCommand(["close", "communicatebox"]);
+	assert.equal(handler.communicateForm, null);
 });

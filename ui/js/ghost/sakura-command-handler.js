@@ -1,6 +1,10 @@
 /**
  * さくらスクリプトの \! 拡張コマンドおよび入力ボックス (\![open,inputbox]) ハンドラ
  */
+import {
+	closeCommunicateBox,
+	openCommunicateBox,
+} from "./command-handler/communicatebox.js";
 import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 import { openInputBox } from "./command-handler/inputbox.js";
 import { handleJumpCommand } from "./command-handler/jump.js";
@@ -31,6 +35,14 @@ function initDefaultCommandHandlers() {
 
 	registerCommandHandler("close:teachbox", async (handler) => {
 		closeTeachBox(handler);
+	});
+
+	registerCommandHandler("open:communicatebox", async (handler, args) => {
+		openCommunicateBox(handler, args.slice(2));
+	});
+
+	registerCommandHandler("close:communicatebox", async (handler) => {
+		closeCommunicateBox(handler, false);
 	});
 
 	registerCommandHandler("open:dressupexplorer", async (handler) => {
@@ -246,6 +258,7 @@ export class SakuraCommandHandler {
 		this.player = player;
 		this.app = player.app;
 		this.teachForm = null;
+		this.communicateForm = null;
 		// 必要に応じてハンドラ初期化
 		initDefaultCommandHandlers();
 	}
@@ -276,6 +289,14 @@ export class SakuraCommandHandler {
 
 	closeTeachBox() {
 		closeTeachBox(this);
+	}
+
+	openCommunicateBox(params = []) {
+		openCommunicateBox(this, params);
+	}
+
+	closeCommunicateBox(notifyCancel = false) {
+		closeCommunicateBox(this, notifyCancel);
 	}
 
 	async setAlignmentToDesktop(mode) {

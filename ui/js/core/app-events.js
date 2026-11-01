@@ -15,6 +15,19 @@ export const eventMethods = {
 				el,
 				(x, y, rect) => this.onGhostClick(x, y, rect, scopeId),
 				(x, y, rect) => this.onGhostStroke(x, y, rect, scopeId),
+				{
+					onGhostMouseDown: (x, y, rect, button, device) =>
+						this.onGhostMouseDown(x, y, rect, button, device, scopeId),
+					onGhostMouseUp: (x, y, rect, button, device) =>
+						this.onGhostMouseUp(x, y, rect, button, device, scopeId),
+					onGhostWheel: (x, y, rect, delta) =>
+						this.onGhostWheel(x, y, rect, delta, scopeId),
+					onGhostDragStart: (x, y, rect) =>
+						this.onGhostDragStart(x, y, rect, scopeId),
+					onGhostDragEnd: (x, y, rect) =>
+						this.onGhostDragEnd(x, y, rect, scopeId),
+					onGhostHover: (x, y, rect) => this.onGhostHover(x, y, rect, scopeId),
+				},
 			);
 			el.addEventListener("contextmenu", (e) => {
 				e.preventDefault();
@@ -159,6 +172,99 @@ export const eventMethods = {
 		);
 		// Reference0: X座標, Reference1: Y座標, Reference2: ホイール/移動, Reference3: スコープ, Reference4: 部位名
 		this.ghostController.sendShioriEvent("OnMouseMove", [
+			col.canvasX,
+			col.canvasY,
+			0,
+			scopeId,
+			col.name || "",
+		]);
+	},
+
+	onGhostMouseDown(
+		clientX,
+		clientY,
+		rect,
+		button = 0,
+		device = "mouse",
+		scopeId = 0,
+	) {
+		if (this.sakuraPlayer?.timeCritical && this.sakuraPlayer?.isPlaying) return;
+		const col = this.getCollisionInfo(clientX, clientY, rect, scopeId);
+		// UKADOC Reference0..Reference6
+		this.ghostController.sendShioriEvent("OnMouseDown", [
+			col.canvasX,
+			col.canvasY,
+			0,
+			scopeId,
+			col.name || "",
+			button,
+			device,
+		]);
+	},
+
+	onGhostMouseUp(
+		clientX,
+		clientY,
+		rect,
+		button = 0,
+		device = "mouse",
+		scopeId = 0,
+	) {
+		if (this.sakuraPlayer?.timeCritical && this.sakuraPlayer?.isPlaying) return;
+		const col = this.getCollisionInfo(clientX, clientY, rect, scopeId);
+		// UKADOC Reference0..Reference6
+		this.ghostController.sendShioriEvent("OnMouseUp", [
+			col.canvasX,
+			col.canvasY,
+			0,
+			scopeId,
+			col.name || "",
+			button,
+			device,
+		]);
+	},
+
+	onGhostWheel(clientX, clientY, rect, delta = 0, scopeId = 0) {
+		if (this.sakuraPlayer?.timeCritical && this.sakuraPlayer?.isPlaying) return;
+		const col = this.getCollisionInfo(clientX, clientY, rect, scopeId);
+		// Reference0: X, Reference1: Y, Reference2: ホイール回転量, Reference3: スコープ, Reference4: 部位名
+		this.ghostController.sendShioriEvent("OnMouseWheel", [
+			col.canvasX,
+			col.canvasY,
+			delta,
+			scopeId,
+			col.name || "",
+		]);
+	},
+
+	onGhostDragStart(clientX, clientY, rect, scopeId = 0) {
+		if (this.sakuraPlayer?.timeCritical && this.sakuraPlayer?.isPlaying) return;
+		const col = this.getCollisionInfo(clientX, clientY, rect, scopeId);
+		this.ghostController.sendShioriEvent("OnMouseDragStart", [
+			col.canvasX,
+			col.canvasY,
+			0,
+			scopeId,
+			col.name || "",
+		]);
+	},
+
+	onGhostDragEnd(clientX, clientY, rect, scopeId = 0) {
+		if (this.sakuraPlayer?.timeCritical && this.sakuraPlayer?.isPlaying) return;
+		const col = this.getCollisionInfo(clientX, clientY, rect, scopeId);
+		this.ghostController.sendShioriEvent("OnMouseDragEnd", [
+			col.canvasX,
+			col.canvasY,
+			0,
+			scopeId,
+			col.name || "",
+		]);
+	},
+
+	onGhostHover(clientX, clientY, rect, scopeId = 0) {
+		if (this.sakuraPlayer?.timeCritical && this.sakuraPlayer?.isPlaying) return;
+		const col = this.getCollisionInfo(clientX, clientY, rect, scopeId);
+		this.ghostController.sendShioriEvent("OnMouseHover", [
 			col.canvasX,
 			col.canvasY,
 			0,

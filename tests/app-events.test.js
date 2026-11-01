@@ -62,9 +62,10 @@ test("eventMethods covers 100% of event listeners, buttons, external menus, and 
 	const mockApp = {
 		...eventMethods,
 		interactionManager: {
-			setupDragging(el, onClick, onStroke) {
+			setupDragging(el, onClick, onStroke, options) {
 				el._onClick = onClick;
 				el._onStroke = onStroke;
+				el._options = options;
 			},
 		},
 		elements: {
@@ -205,7 +206,54 @@ test("eventMethods covers 100% of event listeners, buttons, external menus, and 
 	await mockApp.onGhostClick(10, 20, {}, 0);
 	await mockApp.onGhostStroke(10, 20, {}, 0);
 
-	// 6. Test getCollisionInfo & detectPart
+	// 6. Test onGhostMouseDown, onGhostMouseUp, onGhostWheel, onGhostDragStart, onGhostDragEnd, onGhostHover
+	mockApp.sakuraPlayer.timeCritical = false;
+	mockApp.sakuraPlayer.isPlaying = false;
+	await mockApp.onGhostMouseDown(10, 20, {}, 0, "mouse", 0);
+	await mockApp.onGhostMouseUp(10, 20, {}, 0, "mouse", 0);
+	await mockApp.onGhostWheel(10, 20, {}, 120, 0);
+	await mockApp.onGhostDragStart(10, 20, {}, 0);
+	await mockApp.onGhostDragEnd(10, 20, {}, 0);
+	await mockApp.onGhostHover(10, 20, {}, 0);
+
+	// Test timeCritical early return for new mouse handlers
+	mockApp.sakuraPlayer.timeCritical = true;
+	mockApp.sakuraPlayer.isPlaying = true;
+	await mockApp.onGhostMouseDown(10, 20, {}, 0, "mouse", 0);
+	await mockApp.onGhostMouseUp(10, 20, {}, 0, "mouse", 0);
+	await mockApp.onGhostWheel(10, 20, {}, 120, 0);
+	await mockApp.onGhostDragStart(10, 20, {}, 0);
+	await mockApp.onGhostDragEnd(10, 20, {}, 0);
+	await mockApp.onGhostHover(10, 20, {}, 0);
+
+	// Verify eventsSent contains the new events
+	const eventNames = eventsSent.map((e) => e.ev);
+	assert.ok(eventNames.includes("OnMouseDown"));
+	assert.ok(eventNames.includes("OnMouseUp"));
+	assert.ok(eventNames.includes("OnMouseWheel"));
+	assert.ok(eventNames.includes("OnMouseDragStart"));
+	assert.ok(eventNames.includes("OnMouseDragEnd"));
+	assert.ok(eventNames.includes("OnMouseHover"));
+
+	// Check Reference parameters of OnMouseDown
+	const mouseDownEv = eventsSent.find((e) => e.ev === "OnMouseDown");
+	assert.deepEqual(mouseDownEv.args, [10, 20, 0, 0, "Head", 0, "mouse"]);
+
+	// Check Reference parameters of OnMouseWheel
+	const wheelEv = eventsSent.find((e) => e.ev === "OnMouseWheel");
+	assert.deepEqual(wheelEv.args, [10, 20, 120, 0, "Head"]);
+
+	// 7. Test interactionManager setup options invocation
+	const ghostOpts = mockApp.elements.ghostDisplay._options;
+	assert.ok(ghostOpts);
+	ghostOpts.onGhostMouseDown?.(10, 20, {}, 0, "mouse");
+	ghostOpts.onGhostMouseUp?.(10, 20, {}, 0, "mouse");
+	ghostOpts.onGhostWheel?.(10, 20, {}, 120);
+	ghostOpts.onGhostDragStart?.(10, 20, {});
+	ghostOpts.onGhostDragEnd?.(10, 20, {});
+	ghostOpts.onGhostHover?.(10, 20, {});
+
+	// 8. Test getCollisionInfo & detectPart
 	const col = mockApp.getCollisionInfo(10, 20, {}, 0);
 	assert.equal(col.name, "Head");
 	const part = mockApp.detectPart(10, 20, {});

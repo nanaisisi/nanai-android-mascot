@@ -48,4 +48,16 @@ test("update-protocol covers buildUpdateArgs, parseErrorReason, and progressHand
 	assert.equal(eventsSent.length, 4);
 	assert.equal(eventsSent[0].ev, PROGRESS_PHASE_EVENTS["download-begin"]);
 	assert.equal(eventsSent[3].ev, PROGRESS_PHASE_EVENTS["md5-failed"]);
+
+	// 4. Unknown phase or null payload does not throw
+	handler({ payload: null });
+	handler({ payload: { phase: "unknown-phase", path: "file2.txt" } });
+
+	// 5. Handler without onFailedFile callback
+	const handlerNoCallback = createUpdateProgressHandler(mockGc);
+	handlerNoCallback({ payload: { phase: "md5-failed", path: "file3.txt" } });
+
+	// 6. Handler with null gc
+	const handlerNoGc = createUpdateProgressHandler(null);
+	handlerNoGc({ payload: { phase: "download-begin", path: "file4.txt" } });
 });

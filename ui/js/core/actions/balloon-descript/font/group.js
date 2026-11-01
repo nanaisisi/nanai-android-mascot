@@ -47,7 +47,6 @@ export function applyGroupProperties(root, props, prefix, cssPrefix) {
 	if (blendVal) {
 		root.style.setProperty(`${cssPrefix}-blendmethod`, blendVal);
 	}
-
 	// [anchor.pen.color / *.pen.color.r,g,b]:
 	const penKey = `${prefix}.pen.color`;
 	const penCol =

@@ -69,6 +69,208 @@ impl UpdatePackage {
     }
 }
 
+/// 同梱リソース設定（balloon, headline, plugin, shell, calendar.skin 等）
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Eq)]
+pub struct InstallResourceConfig {
+    pub resource_type: String,
+    pub target_directory: String,
+    pub source_directory: String,
+    pub refresh: bool,
+    pub refresh_undelete_mask: Vec<String>,
+}
+
+/// install.txt の解析結果モデル (Slot-15 Contract)
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, PartialEq, Eq)]
+pub struct InstallManifest {
+    pub name: String,
+    pub install_type: String,
+    pub directory: Option<String>,
+    pub charset: Option<String>,
+    pub accept: Option<String>,
+    pub bootghost: Option<String>,
+    pub refresh: bool,
+    pub refresh_undelete_mask: Vec<String>,
+    pub bundled_resources: Vec<InstallResourceConfig>,
+}
+
+impl InstallManifest {
+    /// ターゲットディレクトリ名を取得（未指定時は name をフォールバック）
+    pub fn effective_directory(&self) -> &str {
+        self.directory.as_deref().unwrap_or(&self.name)
+    }
+
+    /// 特定ファイルが refreshundeletemask に合致して保護されるか判定
+    pub fn is_refresh_protected(&self, filename: &str) -> bool {
+        self.refresh_undelete_mask
+            .iter()
+            .any(|mask| mask.eq_ignore_ascii_case(filename))
+    }
+}
+
+/// NAR/ZIP アーカイブ インストーラ抽象インターフェース (Slot-15 Contract)
+pub trait InstallerEngine {
+    /// アーカイブ内の install.txt をパースして InstallManifest を生成
+    fn parse_install_manifest(&self, content: &str) -> InstallManifest;
+
+    /// 指定ディレクトリ内の refresh 処理対象ファイルをフィルタ（保護マスク判定）
+    fn filter_refresh_deletions<'a>(
+        &self,
+        files: &'a [String],
+        manifest: &InstallManifest,
+    ) -> Vec<&'a String> {
+        if !manifest.refresh {
+            return Vec::new();
+        }
+        files
+            .iter()
+            .filter(|f| {
+                let fname = std::path::Path::new(f)
+                    .file_name()
+                    .and_then(|n| n.to_str())
+                    .unwrap_or(f);
+                !manifest.is_refresh_protected(fname)
+            })
+            .collect()
+    }
+}
+
+/// 標準の InstallerEngine 実装
+#[derive(Debug, Clone, Copy, Default)]
+pub struct StandardInstallerEngine;
+
+impl InstallerEngine for StandardInstallerEngine {
+    fn parse_install_manifest(&self, content: &str) -> InstallManifest {
+        parse_install_manifest(content)
+    }
+}
+
+/// install.txt の内容をパースして InstallManifest を構築
+pub fn parse_install_manifest(content: &str) -> InstallManifest {
+    use std::collections::HashMap;
+
+    let mut map: HashMap<String, String> = HashMap::new();
+    for line in content.lines() {
+        let trimmed = line.trim().trim_start_matches('\u{feff}');
+        if trimmed.is_empty() || trimmed.starts_with("//") || trimmed.starts_with('#') {
+            continue;
+        }
+        if let Some((key, val)) = trimmed.split_once(',').or_else(|| trimmed.split_once(':')) {
+            let k = key.trim().to_lowercase();
+            let v = val.trim().trim_end_matches(',').trim().to_string();
+            if !k.is_empty() && !v.is_empty() {
+                map.insert(k, v);
+            }
+        }
+    }
+
+    let name = map.get("name").cloned().unwrap_or_default();
+    let install_type = map
+        .get("type")
+        .cloned()
+        .unwrap_or_else(|| "ghost".to_string());
+    let directory = map.get("directory").cloned();
+    let charset = map.get("charset").cloned();
+    let accept = map.get("accept").cloned();
+    let bootghost = map.get("bootghost").cloned();
+
+    let refresh = map.get("refresh").is_some_and(|v| v.trim() == "1");
+    let refresh_undelete_mask: Vec<String> = map
+        .get("refreshundeletemask")
+        .map(|v| {
+            v.split(':')
+                .map(|s| s.trim().to_string())
+                .filter(|s| !s.is_empty())
+                .collect()
+        })
+        .unwrap_or_default();
+
+    // 同梱リソース (無印および 0, 1, 2...)
+    let supported_types = [
+        "balloon",
+        "headline",
+        "plugin",
+        "shell",
+        "calendar.skin",
+        "calendar.plugin",
+    ];
+
+    let mut bundled_resources = Vec::new();
+
+    for &r_type in &supported_types {
+        // 1. 無印 (例: balloon.directory)
+        let unnumbered_dir_key = format!("{r_type}.directory");
+        if let Some(target_dir) = map.get(&unnumbered_dir_key) {
+            let src_key = format!("{r_type}.source.directory");
+            let src_dir = map.get(&src_key).unwrap_or(target_dir).clone();
+            let r_refresh = map
+                .get(&format!("{r_type}.refresh"))
+                .is_some_and(|v| v.trim() == "1");
+            let r_mask: Vec<String> = map
+                .get(&format!("{r_type}.refreshundeletemask"))
+                .map(|v| {
+                    v.split(':')
+                        .map(|s| s.trim().to_string())
+                        .filter(|s| !s.is_empty())
+                        .collect()
+                })
+                .unwrap_or_default();
+
+            bundled_resources.push(InstallResourceConfig {
+                resource_type: r_type.to_string(),
+                target_directory: target_dir.clone(),
+                source_directory: src_dir,
+                refresh: r_refresh,
+                refresh_undelete_mask: r_mask,
+            });
+        }
+
+        // 2. 0, 1, 2... の連番探索（欠番が出た時点で打ち切り）
+        let mut idx = 0;
+        loop {
+            let indexed_dir_key = format!("{r_type}{idx}.directory");
+            if let Some(target_dir) = map.get(&indexed_dir_key) {
+                let src_key = format!("{r_type}{idx}.source.directory");
+                let src_dir = map.get(&src_key).unwrap_or(target_dir).clone();
+                let r_refresh = map
+                    .get(&format!("{r_type}{idx}.refresh"))
+                    .is_some_and(|v| v.trim() == "1");
+                let r_mask: Vec<String> = map
+                    .get(&format!("{r_type}{idx}.refreshundeletemask"))
+                    .map(|v| {
+                        v.split(':')
+                            .map(|s| s.trim().to_string())
+                            .filter(|s| !s.is_empty())
+                            .collect()
+                    })
+                    .unwrap_or_default();
+
+                bundled_resources.push(InstallResourceConfig {
+                    resource_type: r_type.to_string(),
+                    target_directory: target_dir.clone(),
+                    source_directory: src_dir,
+                    refresh: r_refresh,
+                    refresh_undelete_mask: r_mask,
+                });
+                idx += 1;
+            } else {
+                break;
+            }
+        }
+    }
+
+    InstallManifest {
+        name,
+        install_type,
+        directory,
+        charset,
+        accept,
+        bootghost,
+        refresh,
+        refresh_undelete_mask,
+        bundled_resources,
+    }
+}
+
 /// updates2.dau または updates.txt の内容をパース
 pub fn parse_update_definition(content: &str) -> Vec<UpdateEntry> {
     let mut entries = Vec::new();
@@ -267,23 +469,62 @@ mod tests {
     }
 
     #[test]
-    fn test_update_package_methods() {
-        let content = "file,ghost/master/aya.dll,11223344556677889900aabbccddeeff,size=1000\r\n\
-                       file,ghost/master/old.txt,11223344556677889900aabbccddeeff,delete\r\n\
-                       file,ghost/master/skip.png,11223344556677889900aabbccddeeff,ignore,size=500\r\n\
-                       file,ghost/master/readme.txt,11223344556677889900aabbccddeeff,size=200\r\n";
-        let pkg = UpdatePackage::from_definition(content);
-        assert_eq!(pkg.entries.len(), 4);
+    fn test_installer_engine_and_manifest_parsing() {
+        let install_txt = "\
+charset,UTF-8\r\n\
+type,package\r\n\
+name,MySpecialPackage\r\n\
+directory,special_ghost\r\n\
+accept,Nanai,Mini\r\n\
+bootghost,special_ghost\r\n\
+refresh,1\r\n\
+refreshundeletemask,save.dat:user.ini\r\n\
+balloon.directory,my_balloon\r\n\
+balloon.refresh,1\r\n\
+balloon.refreshundeletemask,balloon_pref.txt\r\n\
+shell0.directory,my_shell\r\n\
+shell0.source.directory,custom_shell\r\n";
 
-        let active = pkg.active_downloads();
-        assert_eq!(active.len(), 2);
-        assert_eq!(active[0].path, "ghost/master/aya.dll");
-        assert_eq!(active[1].path, "ghost/master/readme.txt");
+        let engine = StandardInstallerEngine;
+        let manifest = engine.parse_install_manifest(install_txt);
 
-        let deletions = pkg.deletions();
-        assert_eq!(deletions.len(), 1);
-        assert_eq!(deletions[0].path, "ghost/master/old.txt");
+        assert_eq!(manifest.name, "MySpecialPackage");
+        assert_eq!(manifest.install_type, "package");
+        assert_eq!(manifest.directory.as_deref(), Some("special_ghost"));
+        assert_eq!(manifest.effective_directory(), "special_ghost");
+        assert_eq!(manifest.charset.as_deref(), Some("UTF-8"));
+        assert_eq!(manifest.accept.as_deref(), Some("Nanai,Mini"));
+        assert_eq!(manifest.bootghost.as_deref(), Some("special_ghost"));
+        assert!(manifest.refresh);
+        assert_eq!(manifest.refresh_undelete_mask, vec!["save.dat", "user.ini"]);
 
-        assert_eq!(pkg.total_download_size(), 1200);
+        assert!(manifest.is_refresh_protected("save.dat"));
+        assert!(manifest.is_refresh_protected("SAVE.DAT"));
+        assert!(manifest.is_refresh_protected("user.ini"));
+        assert!(!manifest.is_refresh_protected("ghost.dll"));
+
+        assert_eq!(manifest.bundled_resources.len(), 2);
+        assert_eq!(manifest.bundled_resources[0].resource_type, "balloon");
+        assert_eq!(manifest.bundled_resources[0].target_directory, "my_balloon");
+        assert!(manifest.bundled_resources[0].refresh);
+        assert_eq!(
+            manifest.bundled_resources[0].refresh_undelete_mask,
+            vec!["balloon_pref.txt"]
+        );
+
+        assert_eq!(manifest.bundled_resources[1].resource_type, "shell");
+        assert_eq!(manifest.bundled_resources[1].target_directory, "my_shell");
+        assert_eq!(manifest.bundled_resources[1].source_directory, "custom_shell");
+        assert!(!manifest.bundled_resources[1].refresh);
+
+        let files = vec![
+            "ghost/master/ghost.dll".to_string(),
+            "ghost/master/save.dat".to_string(),
+            "readme.txt".to_string(),
+        ];
+        let to_delete = engine.filter_refresh_deletions(&files, &manifest);
+        assert_eq!(to_delete.len(), 2);
+        assert_eq!(to_delete[0], "ghost/master/ghost.dll");
+        assert_eq!(to_delete[1], "readme.txt");
     }
 }

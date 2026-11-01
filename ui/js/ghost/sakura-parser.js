@@ -17,6 +17,7 @@
  * @property {string[]} [args] - コマンドやアンカーの引数リスト
  */
 
+export { tokensToAst } from "./parser/ast.js";
 export {
 	parseSakuraScriptAsync,
 	rustCommandsToTokens,

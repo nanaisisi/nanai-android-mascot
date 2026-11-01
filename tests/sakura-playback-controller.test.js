@@ -98,6 +98,7 @@ test("SakuraPlaybackController executes jobs sequentially via mock player", asyn
 	};
 
 	const controller = new SakuraPlaybackController({ player: mockPlayer });
+	assert.equal(mockPlayer.playbackController, controller);
 
 	const res1 = await controller.enqueue("\\0Hello\\e");
 	const res2 = await controller.enqueue("\\1World\\e");
@@ -105,4 +106,67 @@ test("SakuraPlaybackController executes jobs sequentially via mock player", asyn
 	assert.equal(res1, "done:\\0Hello\\e");
 	assert.equal(res2, "done:\\1World\\e");
 	assert.deepEqual(playedScripts, ["\\0Hello\\e", "\\1World\\e"]);
+});
+
+test("SakuraPlaybackController pause, resume, accessors, waitMultiplier, and char/scope notifications", async () => {
+	const controller = new SakuraPlaybackController();
+	const events = [];
+
+	controller.on("queue:paused", () => events.push("paused"));
+	controller.on("queue:resumed", () => events.push("resumed"));
+	controller.on("playback:wait-multiplier", (d) =>
+		events.push(["wait-mul", d.waitMultiplier]),
+	);
+	controller.on("playback:char", (d) => events.push(["char", d.char, d.scope]));
+	controller.on("playback:scope", (d) => events.push(["scope", d.scope]));
+
+	assert.equal(controller.getIsPaused(), false);
+	assert.equal(controller.getIsProcessing(), false);
+	assert.equal(controller.getIsQuickMode(), false);
+	assert.equal(controller.getQueueLength(), 0);
+	assert.deepEqual(controller.getQueue(), []);
+	assert.equal(controller.getCurrentJob(), null);
+
+	controller.pause();
+	assert.equal(controller.getIsPaused(), true);
+
+	controller.setWaitMultiplier(1.5);
+	assert.equal(controller.getWaitMultiplier(), 1.5);
+	assert.equal(controller.calculateWait(40), 60);
+
+	controller.setQuickMode(true);
+	assert.equal(controller.calculateWait(40), 0);
+	controller.setQuickMode(false);
+
+	controller.notifyChar("あ", 0);
+	controller.notifyScope(1);
+
+	let executed = false;
+	const mockPlayer = {
+		play: async () => {
+			executed = true;
+			return "done";
+		},
+		skip: () => {},
+	};
+	controller.player = mockPlayer;
+
+	const p = controller.enqueue("\\0テスト\\e");
+	assert.equal(controller.getQueueLength(), 1);
+	assert.equal(executed, false);
+
+	controller.resume();
+	assert.equal(controller.getIsPaused(), false);
+
+	await p;
+	assert.equal(executed, true);
+	assert.equal(controller.getQueueLength(), 0);
+
+	assert.deepEqual(events, [
+		"paused",
+		["wait-mul", 1.5],
+		["char", "あ", 0],
+		["scope", 1],
+		"resumed",
+	]);
 });

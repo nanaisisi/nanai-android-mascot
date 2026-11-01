@@ -70,7 +70,9 @@ export function openInputBox(handler, params) {
 
 	const cancel = async () => {
 		cleanup();
-		await handler.app.ghostController.sendShioriEvent("OnUserInputCancel", [id]);
+		await handler.app.ghostController.sendShioriEvent("OnUserInputCancel", [
+			id,
+		]);
 	};
 
 	submitBtn.addEventListener("click", (e) => {

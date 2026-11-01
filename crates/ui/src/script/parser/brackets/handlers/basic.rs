@@ -1,4 +1,3 @@
-use super::super::super::SakuraCommand;
 use super::super::utils::{read_bracketed, read_digit, CharsIter};
 
 pub(crate) fn handle_target_p(chars: &mut CharsIter<'_>) -> Option<u8> {

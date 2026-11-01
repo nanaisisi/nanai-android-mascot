@@ -34,6 +34,7 @@ export class FrameStepEvent {
 		pattern,
 		elapsedMs,
 		isFinished,
+		isBackground = false,
 	}) {
 		this.scopeId = scopeId;
 		this.baseSurfaceId = baseSurfaceId;
@@ -41,6 +42,7 @@ export class FrameStepEvent {
 		this.pattern = pattern;
 		this.elapsedMs = elapsedMs;
 		this.isFinished = isFinished;
+		this.isBackground = isBackground;
 	}
 }
 
@@ -118,8 +120,69 @@ export class SurfaceAnimationManager {
 		/** @type {Map<string, Promise<void>>} 再生中のアニメーション */
 		this._runningAnimations = new Map();
 		this._stoppedAnimations = new Set();
+		/** @type {Map<number, { animId: number|string, targets: Set<number>|null }>} exclusive 排他ロック中のアニメーション (scopeId -> exclusive info) */
+		this._exclusiveLocks = new Map();
+		/** @type {Map<string, number>} shared-index 保持テーブル (`${scopeId}__${animId}` -> lastPatternIndex) */
+		this._sharedIndices = new Map();
 		/** @type {AnimationScheduler} Slot-08 外部インターフェース規約スケジューラ */
 		this.scheduler = new AnimationScheduler(this);
+	}
+
+	/**
+	 * animation*.option 文字列配列を解析
+	 * @param {string[]|undefined} options
+	 * @returns {{ isExclusive: boolean, exclusiveTargets: Set<number>|null, isBackground: boolean, isSharedIndex: boolean }}
+	 */
+	parseAnimationOptions(options = []) {
+		let isExclusive = false;
+		let exclusiveTargets = null;
+		let isBackground = false;
+		let isSharedIndex = false;
+
+		for (const raw of options) {
+			const str = String(raw).trim().toLowerCase();
+			for (const part of str.split("+")) {
+				const trimmed = part.trim();
+				if (trimmed.startsWith("exclusive")) {
+					isExclusive = true;
+					const match = trimmed.match(/\(([\d,\s]+)\)/);
+					if (match) {
+						const targets = new Set(
+							match[1]
+								.split(",")
+								.map((s) => Number.parseInt(s.trim(), 10))
+								.filter((n) => !Number.isNaN(n)),
+						);
+						if (targets.size > 0) exclusiveTargets = targets;
+					}
+				} else if (trimmed.startsWith("background")) {
+					isBackground = true;
+				} else if (
+					trimmed.startsWith("shared-index") ||
+					trimmed.startsWith("shared_index")
+				) {
+					isSharedIndex = true;
+				}
+			}
+		}
+
+		return { isExclusive, exclusiveTargets, isBackground, isSharedIndex };
+	}
+
+	/**
+	 * 指定アニメーションが現在排他ロックにより開始をブロックされているか
+	 * @param {number} scopeId
+	 * @param {number|string} animId
+	 * @returns {boolean}
+	 */
+	isBlockedByExclusive(scopeId = 0, animId) {
+		const lock = this._exclusiveLocks.get(scopeId);
+		if (!lock) return false;
+		const targetId = Number.parseInt(animId, 10);
+		if (lock.targets) {
+			return lock.targets.has(targetId);
+		}
+		return String(lock.animId) !== String(animId);
 	}
 
 	stopAnimations(scopeId = 0) {
@@ -171,6 +234,10 @@ export class SurfaceAnimationManager {
 	 * アニメーションパターンの順次実行
 	 */
 	playAnimationPatterns(anim, baseSurfaceId, scopeId) {
+		if (anim?.id != null && this.isBlockedByExclusive(scopeId, anim.id)) {
+			return Promise.resolve();
+		}
+
 		const key = `${scopeId}__${baseSurfaceId}__${anim?.id ?? anim?.interval ?? ""}`;
 		const running = this._runningAnimations.get(key);
 		const { kinds } = parseInterval(anim.interval);
@@ -204,18 +271,52 @@ export class SurfaceAnimationManager {
 			String(this.manager.currentSurfaceIdFor(scopeId)) ===
 				String(baseSurfaceId);
 
+		const options = this.parseAnimationOptions(anim.options);
+
+		// exclusive オプション処理: 他のアニメーションを停止しロック取得
+		if (options.isExclusive) {
+			this._exclusiveLocks.set(scopeId, {
+				animId: anim.id,
+				targets: options.exclusiveTargets,
+			});
+			for (const [otherKey] of this._runningAnimations.entries()) {
+				if (otherKey !== key && otherKey.startsWith(`${scopeId}__`)) {
+					const otherId = otherKey.split("__")[2];
+					if (
+						!options.exclusiveTargets ||
+						options.exclusiveTargets.has(Number.parseInt(otherId, 10))
+					) {
+						this._stoppedAnimations.add(otherKey);
+					}
+				}
+			}
+		}
+
+		// shared-index 保持判定
+		const sharedKey = `${scopeId}__${anim.id}`;
+		const startIndex = options.isSharedIndex
+			? this._sharedIndices.get(sharedKey) || 0
+			: 0;
+
 		this.scheduler?.notifyFrameStep(
 			new FrameStepEvent({
 				scopeId,
 				baseSurfaceId,
 				animationId: anim?.id ?? 0,
-				pattern: anim.patterns[0],
+				pattern: anim.patterns[startIndex] || anim.patterns[0],
 				elapsedMs: 0,
 				isFinished: false,
+				isBackground: options.isBackground,
 			}),
 		);
 
-		const timeline = await buildAnimationTimeline(anim.patterns);
+		const patternsToPlay =
+			startIndex > 0 && startIndex < anim.patterns.length
+				? anim.patterns.slice(startIndex)
+				: anim.patterns;
+
+		const timeline = await buildAnimationTimeline(patternsToPlay);
+		let finalPatternIndex = 0;
 		if (timeline) {
 			await this._playTimelineFrames(
 				timeline,
@@ -223,9 +324,15 @@ export class SurfaceAnimationManager {
 				baseSurfaceId,
 				scopeId,
 				key,
+				options,
 			);
 		} else {
-			for (const pat of anim.patterns) {
+			for (let i = 0; i < patternsToPlay.length; i++) {
+				const pat = patternsToPlay[i];
+				finalPatternIndex = startIndex + i;
+				if (options.isSharedIndex) {
+					this._sharedIndices.set(sharedKey, finalPatternIndex);
+				}
 				const cont = await this._playOnePat(
 					pat,
 					anim,
@@ -233,6 +340,7 @@ export class SurfaceAnimationManager {
 					scopeId,
 					key,
 					isCurrent,
+					options,
 				);
 				if (!cont) break;
 			}
@@ -245,6 +353,12 @@ export class SurfaceAnimationManager {
 			await gc.updateSurface(baseSurfaceId, scopeId, []);
 		}
 
+		if (options.isExclusive) {
+			if (this._exclusiveLocks.get(scopeId)?.animId === anim.id) {
+				this._exclusiveLocks.delete(scopeId);
+			}
+		}
+
 		this.scheduler?.notifyFrameStep(
 			new FrameStepEvent({
 				scopeId,
@@ -253,11 +367,19 @@ export class SurfaceAnimationManager {
 				pattern: anim.patterns[anim.patterns.length - 1],
 				elapsedMs: Date.now(),
 				isFinished: true,
+				isBackground: options.isBackground,
 			}),
 		);
 	}
 
-	async _playTimelineFrames(timeline, anim, baseSurfaceId, scopeId, key) {
+	async _playTimelineFrames(
+		timeline,
+		anim,
+		baseSurfaceId,
+		scopeId,
+		key,
+		options = {},
+	) {
 		if (!anim.patterns?.length || !timeline?.frames?.length) return;
 		const isCurrent = () =>
 			!this._stoppedAnimations.has(key) &&
@@ -283,6 +405,7 @@ export class SurfaceAnimationManager {
 				scopeId,
 				key,
 				isCurrent,
+				options,
 			);
 			if (!cont) return;
 		}
@@ -295,6 +418,7 @@ export class SurfaceAnimationManager {
 		scopeId,
 		key,
 		isCurrent,
+		options = {},
 	) {
 		const gc = this.manager.app?.ghostController;
 		if (!gc) return false;
@@ -318,7 +442,12 @@ export class SurfaceAnimationManager {
 			return true;
 		}
 
-		const framePromise = this.renderAnimationFrame(pat, baseSurfaceId, scopeId);
+		const framePromise = this.renderAnimationFrame(
+			pat,
+			baseSurfaceId,
+			scopeId,
+			options,
+		);
 		if (framePromise) {
 			await framePromise;
 		} else if (patSurface && patSurface !== "-1" && patSurface !== "-2") {
@@ -334,12 +463,21 @@ export class SurfaceAnimationManager {
 				pattern: pat,
 				elapsedMs: Date.now(),
 				isFinished: false,
+				isBackground: options.isBackground,
 			}),
 		);
 		return true;
 	}
 
-	async _playOnePat(pat, anim, baseSurfaceId, scopeId, key, isCurrent) {
+	async _playOnePat(
+		pat,
+		anim,
+		baseSurfaceId,
+		scopeId,
+		key,
+		isCurrent,
+		options = {},
+	) {
 		const waitMs = resolvePatternWait(pat.wait);
 		if (waitMs > 0) await new Promise((r) => setTimeout(r, waitMs));
 		if (!isCurrent()) return false;
@@ -350,10 +488,11 @@ export class SurfaceAnimationManager {
 			scopeId,
 			key,
 			isCurrent,
+			options,
 		);
 	}
 
-	renderAnimationFrame(pat, baseSurfaceId, scopeId) {
+	renderAnimationFrame(pat, baseSurfaceId, scopeId, animationOptions = {}) {
 		if (baseSurfaceId === -1 || baseSurfaceId === "-1") return false;
 		const resolved = this.manager.resolveSurfaceNumber(pat.surface, scopeId);
 		const file = pat.placeholder === true ? null : patternSurfaceFile(resolved);
@@ -361,7 +500,10 @@ export class SurfaceAnimationManager {
 		if (!gc) return false;
 
 		const patType = (pat.type || "overlay").toLowerCase();
-		const options = pat.options || [];
+		const options = pat.options ? [...pat.options] : [];
+		if (animationOptions.isBackground) {
+			options.push("background");
+		}
 
 		// ダミーのプレースホルダー画像バッファ（カラー矩形Canvas）フォールバック
 		if (!file && resolved !== -1 && resolved !== "-1") {

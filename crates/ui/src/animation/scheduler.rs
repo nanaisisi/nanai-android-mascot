@@ -19,6 +19,77 @@ pub struct FrameStepEvent {
     pub elapsed_ms: u32,
     /// アニメーション全体の終了（-1 到達または最終パターン完了）
     pub is_finished: bool,
+    /// 背面描画オプション（background）指定の有無
+    pub is_background: bool,
+}
+
+/// アニメーションオプション解析結果
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct ParsedAnimationOptions {
+    /// exclusive オプション (排他実行)
+    pub is_exclusive: bool,
+    /// exclusive の限定対象ID群 (None の場合は全アニメーション対象)
+    pub exclusive_targets: Option<HashSet<u32>>,
+    /// background オプション (ベースサーフィスの奥側で実行)
+    pub is_background: bool,
+    /// shared-index オプション (\s 切り替えを跨いでパターン番号を継続)
+    pub is_shared_index: bool,
+}
+
+impl ParsedAnimationOptions {
+    pub fn from_raw_options(raw_options: &[Vec<String>]) -> Self {
+        let mut parsed = Self::default();
+        for group in raw_options {
+            for raw_token in group {
+                let token = raw_token.trim().to_lowercase();
+                if token.is_empty() {
+                    continue;
+                }
+
+                // exclusive+(1,2) 形式や + 区切りオプション
+                for subpart in token.split('+') {
+                    let sub = subpart.trim();
+                    if sub.starts_with("exclusive") {
+                        parsed.is_exclusive = true;
+                        // exclusive,(1,3,5) のような限定対象の抽出
+                        if let Some(paren_open) = sub.find('(') {
+                            if let Some(paren_close) = sub[paren_open..].find(')') {
+                                let inner = &sub[paren_open + 1..paren_open + paren_close];
+                                let mut targets = HashSet::new();
+                                for id_str in inner.split(',') {
+                                    if let Ok(id) = id_str.trim().parse::<u32>() {
+                                        targets.insert(id);
+                                    }
+                                }
+                                if !targets.is_empty() {
+                                    parsed.exclusive_targets = Some(targets);
+                                }
+                            }
+                        }
+                    } else if sub.starts_with("background") {
+                        parsed.is_background = true;
+                    } else if sub.starts_with("shared-index") || sub.starts_with("shared_index") {
+                        parsed.is_shared_index = true;
+                    }
+                }
+
+                // 括弧指定が別トークンにある場合: "exclusive", "(1,2)"
+                if raw_token.trim().starts_with('(') && raw_token.trim().ends_with(')') {
+                    let inner = &raw_token.trim()[1..raw_token.trim().len() - 1];
+                    let mut targets = HashSet::new();
+                    for id_str in inner.split(',') {
+                        if let Ok(id) = id_str.trim().parse::<u32>() {
+                            targets.insert(id);
+                        }
+                    }
+                    if !targets.is_empty() {
+                        parsed.exclusive_targets = Some(targets);
+                    }
+                }
+            }
+        }
+        parsed
+    }
 }
 
 /// 実行中の単一アニメーションインスタンス状態
@@ -32,6 +103,10 @@ pub struct ActiveAnimation {
     pub next_step_at_ms: u32,
     pub is_paused: bool,
     pub is_finished: bool,
+    pub is_background: bool,
+    pub is_exclusive: bool,
+    pub exclusive_targets: Option<HashSet<u32>>,
+    pub is_shared_index: bool,
 }
 
 impl ActiveAnimation {
@@ -46,7 +121,19 @@ impl ActiveAnimation {
             next_step_at_ms: first_wait,
             is_paused: false,
             is_finished: false,
+            is_background: false,
+            is_exclusive: false,
+            exclusive_targets: None,
+            is_shared_index: false,
         }
+    }
+
+    pub fn with_options(mut self, options: &ParsedAnimationOptions) -> Self {
+        self.is_background = options.is_background;
+        self.is_exclusive = options.is_exclusive;
+        self.exclusive_targets = options.exclusive_targets.clone();
+        self.is_shared_index = options.is_shared_index;
+        self
     }
 
     /// 経過時間を進め、フレーム更新が発生した場合は `FrameStepEvent` を生成する
@@ -87,6 +174,7 @@ impl ActiveAnimation {
             pattern: pat,
             elapsed_ms: self.elapsed_ms,
             is_finished: self.is_finished,
+            is_background: self.is_background,
         })
     }
 }
@@ -113,10 +201,48 @@ impl AnimationScheduler {
         Self::default()
     }
 
-    /// 現在のサーフィスを設定し、既存のアニメーションをクリア
+    /// 現在のサーフィスを設定し、既存のアニメーションをクリア（shared-index 指定がないもの）
     pub fn set_surface(&mut self, scope_id: u32, surface_id: i32) {
         self.current_surfaces.insert(scope_id, surface_id);
         self.stop_animations(scope_id);
+    }
+
+    /// 現在のサーフィスを切り替え、新旧サーフィスの shared-index アニメーションの再生インデックスを継承する
+    pub fn set_surface_with_shared_index(
+        &mut self,
+        scope_id: u32,
+        new_surface_id: i32,
+        new_animations: &[SerikoAnimation],
+    ) {
+        self.current_surfaces.insert(scope_id, new_surface_id);
+
+        let mut preserved: HashMap<u32, usize> = HashMap::new();
+        if let Some(active) = self.active_animations.get(&scope_id) {
+            for a in active {
+                if a.is_shared_index && !a.is_finished {
+                    preserved.insert(a.animation_id, a.current_pattern_index);
+                }
+            }
+        }
+
+        self.stop_animations(scope_id);
+
+        // 新サーフィス側にも shared-index 指定のアニメーションが存在すれば、保存した pattern index から復帰開始
+        for anim in new_animations {
+            let opts = ParsedAnimationOptions::from_raw_options(&anim.options);
+            if opts.is_shared_index {
+                if let Some(&saved_index) = preserved.get(&anim.id) {
+                    if saved_index < anim.patterns.len() {
+                        let mut active =
+                            ActiveAnimation::new(anim.id, new_surface_id, anim.patterns.clone())
+                                .with_options(&opts);
+                        active.current_pattern_index = saved_index;
+                        let anims = self.active_animations.entry(scope_id).or_default();
+                        anims.push(active);
+                    }
+                }
+            }
+        }
     }
 
     /// 現在のサーフィスIDを取得
@@ -187,6 +313,24 @@ impl AnimationScheduler {
         self.paused_animations.remove(&scope_id);
     }
 
+    /// 指定アニメーションが現在排他ロックにより開始をブロックされているか
+    pub fn is_blocked_by_exclusive(&self, scope_id: u32, anim_id: u32) -> bool {
+        if let Some(anims) = self.active_animations.get(&scope_id) {
+            for a in anims {
+                if a.is_exclusive && !a.is_finished {
+                    if let Some(ref targets) = a.exclusive_targets {
+                        if targets.contains(&anim_id) {
+                            return true;
+                        }
+                    } else if a.animation_id != anim_id {
+                        return true;
+                    }
+                }
+            }
+        }
+        false
+    }
+
     /// アニメーションを手動またはトリガーによって開始登録する
     pub fn start_animation(
         &mut self,
@@ -198,7 +342,30 @@ impl AnimationScheduler {
             return;
         }
 
-        let mut active = ActiveAnimation::new(anim.id, base_surface_id, anim.patterns.clone());
+        // 実行中の exclusive によるブロック判定
+        if self.is_blocked_by_exclusive(scope_id, anim.id) {
+            return;
+        }
+
+        let options = ParsedAnimationOptions::from_raw_options(&anim.options);
+
+        // 新規アニメーションが exclusive の場合、既存のアニメーションを停止
+        if options.is_exclusive {
+            if let Some(anims) = self.active_animations.get_mut(&scope_id) {
+                for a in anims.iter_mut() {
+                    if let Some(ref targets) = options.exclusive_targets {
+                        if targets.contains(&a.animation_id) {
+                            a.is_finished = true;
+                        }
+                    } else if a.animation_id != anim.id {
+                        a.is_finished = true;
+                    }
+                }
+            }
+        }
+
+        let mut active = ActiveAnimation::new(anim.id, base_surface_id, anim.patterns.clone())
+            .with_options(&options);
         if self.is_animation_paused(scope_id, anim.id) {
             active.is_paused = true;
         }

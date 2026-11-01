@@ -75,7 +75,12 @@ export const surfaceAnimationTimers = {
 		const { kinds, param } = parseInterval(anim.interval);
 		const isCurrent = () =>
 			String(this.manager.currentSurfaceIdFor(scopeId)) === String(surfaceId);
-		const play = () => this.playAnimationPatterns(anim, surfaceId, scopeId);
+		const play = () => {
+			if (anim?.id != null && this.isBlockedByExclusive?.(scopeId, anim.id)) {
+				return Promise.resolve();
+			}
+			return this.playAnimationPatterns(anim, surfaceId, scopeId);
+		};
 
 		if (kinds.has("never")) {
 			return;

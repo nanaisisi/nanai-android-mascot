@@ -27,9 +27,7 @@ export function applyGroupProperties(root, props, prefix, cssPrefix) {
 		props[`${shadowKey}.b`]
 			? rgbFromComponents(props, shadowKey)
 			: null;
-	if (shadowCol) {
-		root.style.setProperty(`${cssPrefix}-shadow-color`, shadowCol);
-	}
+	if (shadowCol) root.style.setProperty(`${cssPrefix}-shadow-color`, shadowCol);
 
 	// [anchor.font.shadowstyle / cursor.font.shadowstyle / *.font.shadowstyle]:
 	const shadowStyleVal =
@@ -49,7 +47,6 @@ export function applyGroupProperties(root, props, prefix, cssPrefix) {
 	if (blendVal) {
 		root.style.setProperty(`${cssPrefix}-blendmethod`, blendVal);
 	}
-
 	// [anchor.pen.color / *.pen.color.r,g,b]:
 	const penKey = `${prefix}.pen.color`;
 	const penCol =

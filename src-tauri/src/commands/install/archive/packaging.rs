@@ -4,8 +4,8 @@ use std::fs::File;
 use std::io::{Read, Write};
 use std::path::Path;
 use walkdir::WalkDir;
-use zip::write::SimpleFileOptions;
 use zip::ZipWriter;
+use zip::write::SimpleFileOptions;
 
 const IGNORE_FILE_NAMES: &[&str] = &[
     "thumbs.db",
@@ -16,17 +16,15 @@ const IGNORE_FILE_NAMES: &[&str] = &[
     ".idea",
 ];
 
-const IGNORE_DIR_NAMES: &[&str] = &[
-    ".git",
-    ".vscode",
-    ".idea",
-    "profile",
-];
+const IGNORE_DIR_NAMES: &[&str] = &[".git", ".vscode", ".idea", "profile"];
 
 /// Create a .nar archive from `source_dir` and write to `output_nar_path`
 pub fn create_nar_from_directory(source_dir: &Path, output_nar_path: &Path) -> Result<u64, String> {
     if !source_dir.is_dir() {
-        return Err(format!("Source path '{}' is not a directory", source_dir.display()));
+        return Err(format!(
+            "Source path '{}' is not a directory",
+            source_dir.display()
+        ));
     }
 
     if let Some(parent) = output_nar_path.parent() {
@@ -34,8 +32,12 @@ pub fn create_nar_from_directory(source_dir: &Path, output_nar_path: &Path) -> R
             .map_err(|e| format!("Failed to create output directory for nar: {e}"))?;
     }
 
-    let file = File::create(output_nar_path)
-        .map_err(|e| format!("Failed to create output nar file '{}': {e}", output_nar_path.display()))?;
+    let file = File::create(output_nar_path).map_err(|e| {
+        format!(
+            "Failed to create output nar file '{}': {e}",
+            output_nar_path.display()
+        )
+    })?;
 
     let mut zip_writer = ZipWriter::new(file);
     let options = SimpleFileOptions::default()
@@ -50,13 +52,18 @@ pub fn create_nar_from_directory(source_dir: &Path, output_nar_path: &Path) -> R
             continue;
         }
 
-        let rel_path = path.strip_prefix(source_dir)
+        let rel_path = path
+            .strip_prefix(source_dir)
             .map_err(|e| format!("Failed to strip prefix: {e}"))?;
         let name_str = rel_path.to_string_lossy().replace('\\', "/");
         let lower_name = name_str.to_lowercase();
 
         // Check for ignored files/directories
-        let file_name = path.file_name().and_then(|s| s.to_str()).unwrap_or("").to_lowercase();
+        let file_name = path
+            .file_name()
+            .and_then(|s| s.to_str())
+            .unwrap_or("")
+            .to_lowercase();
         if IGNORE_FILE_NAMES.contains(&file_name.as_str()) {
             continue;
         }
@@ -65,15 +72,21 @@ pub fn create_nar_from_directory(source_dir: &Path, output_nar_path: &Path) -> R
             if IGNORE_DIR_NAMES.contains(&file_name.as_str()) {
                 continue;
             }
-            let dir_name = if name_str.ends_with('/') { name_str } else { format!("{name_str}/") };
-            zip_writer.add_directory(&dir_name, options)
+            let dir_name = if name_str.ends_with('/') {
+                name_str
+            } else {
+                format!("{name_str}/")
+            };
+            zip_writer
+                .add_directory(&dir_name, options)
                 .map_err(|e| format!("Failed to add directory '{dir_name}' to nar: {e}"))?;
         } else if path.is_file() {
             if lower_name.contains("/.git/") || lower_name.contains("/profile/") {
                 continue;
             }
 
-            zip_writer.start_file(&name_str, options)
+            zip_writer
+                .start_file(&name_str, options)
                 .map_err(|e| format!("Failed to add file '{name_str}' to nar: {e}"))?;
 
             let mut f = File::open(path)
@@ -82,16 +95,22 @@ pub fn create_nar_from_directory(source_dir: &Path, output_nar_path: &Path) -> R
             f.read_to_end(&mut buffer)
                 .map_err(|e| format!("Failed to read content of '{}': {e}", path.display()))?;
 
-            zip_writer.write_all(&buffer)
+            zip_writer
+                .write_all(&buffer)
                 .map_err(|e| format!("Failed to write content of '{name_str}' to nar: {e}"))?;
             added_count += 1;
         }
     }
 
-    zip_writer.finish()
+    zip_writer
+        .finish()
         .map_err(|e| format!("Failed to finalize nar archive: {e}"))?;
 
-    println!("📦 Successfully created NAR archive: {} ({} files)", output_nar_path.display(), added_count);
+    println!(
+        "📦 Successfully created NAR archive: {} ({} files)",
+        output_nar_path.display(),
+        added_count
+    );
     Ok(added_count)
 }
 
@@ -109,12 +128,20 @@ mod tests {
         let _ = fs::remove_dir_all(&temp_dir);
         fs::create_dir_all(&source_dir).unwrap();
 
-        fs::write(source_dir.join("install.txt"), "type,ghost\nname,TestGhost\n").unwrap();
+        fs::write(
+            source_dir.join("install.txt"),
+            "type,ghost\nname,TestGhost\n",
+        )
+        .unwrap();
         fs::write(source_dir.join("readme.txt"), "Ghost Readme\n").unwrap();
 
         let ghost_dir = source_dir.join("ghost").join("master");
         fs::create_dir_all(&ghost_dir).unwrap();
-        fs::write(ghost_dir.join("descript.txt"), "type,ghost\nname,TestGhost\n").unwrap();
+        fs::write(
+            ghost_dir.join("descript.txt"),
+            "type,ghost\nname,TestGhost\n",
+        )
+        .unwrap();
 
         let count = create_nar_from_directory(&source_dir, &output_nar).unwrap();
         assert_eq!(count, 3);

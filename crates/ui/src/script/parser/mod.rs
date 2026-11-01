@@ -29,7 +29,9 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
                 // \0, \1, \2, \3, \4, \5, \6, \7, \8, \9 target scope tags (\0..\9, \h, \u)
                 Some('0') | Some('h') => callback(SakuraCommand::Target(0)),
                 Some('1') | Some('u') => callback(SakuraCommand::Target(1)),
-                Some(c @ '2'..='9') => callback(SakuraCommand::Target(c.to_digit(10).unwrap() as u8)),
+                Some(c @ '2'..='9') => {
+                    callback(SakuraCommand::Target(c.to_digit(10).unwrap() as u8))
+                }
                 Some('p') => {
                     // \p[N]
                     if let Some(n) = brackets::handle_target_p(&mut chars) {
@@ -90,15 +92,15 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
                     }
                 }
                 Some('C') => callback(SakuraCommand::Clear),
-                Some('e') => callback(SakuraCommand::End),   // \e
+                Some('e') => callback(SakuraCommand::End), // \e
                 Some('q') => {
                     // \q[テキスト,ID] / \q[temp,テキスト,ID]
                     if let Some((label, id, args)) = brackets::handle_choice(&mut chars) {
                         callback(SakuraCommand::Choice { label, id, args });
                     }
                 }
-                Some('*') => callback(SakuraCommand::Star),  // \*
-                Some('z') => callback(SakuraCommand::Z),     // \z
+                Some('*') => callback(SakuraCommand::Star), // \*
+                Some('z') => callback(SakuraCommand::Z),    // \z
                 Some('a') => callback(SakuraCommand::AudioWait), // \a
                 Some('v') => callback(SakuraCommand::Voice("".into())), // \v
                 Some('j') => {
@@ -107,7 +109,7 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
                         callback(SakuraCommand::Jump(target));
                     }
                 }
-                Some('+') => callback(SakuraCommand::Plus),  // \+
+                Some('+') => callback(SakuraCommand::Plus), // \+
                 Some('&') => {
                     // \&[ID] entity / property interpolation (\&[amp], \&[lt], \&[gt], \&[quot], \&[ID])
                     if let Some(id) = brackets::read_bracketed(&mut chars) {

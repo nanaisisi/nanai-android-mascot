@@ -48,10 +48,7 @@ pub async fn scan_ghost_directory(
                     let dir_name = entry.file_name().to_string_lossy().to_string();
                     if !dir_name.starts_with('.') {
                         if should_skip_directory(&path) {
-                            println!(
-                                "🚫 Skipping ghost directory with ignore file: {:?}",
-                                path
-                            );
+                            println!("🚫 Skipping ghost directory with ignore file: {:?}", path);
                             continue;
                         }
 

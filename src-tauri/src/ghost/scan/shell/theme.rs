@@ -1,7 +1,7 @@
+use super::bitmap::load_menu_bitmap_data_url;
 use crate::common::*;
 use std::collections::HashMap;
 use std::path::Path;
-use super::bitmap::load_menu_bitmap_data_url;
 
 pub fn extract_shell_menu_theme(
     merged: &HashMap<String, String>,
@@ -20,10 +20,7 @@ pub fn extract_shell_menu_theme(
         if let Some(val) = merged.get(key_base) {
             let parts: Vec<&str> = val.split(',').map(|s| s.trim()).collect();
             if parts.len() == 3 {
-                return Some(format!(
-                    "rgb({}, {}, {})",
-                    parts[0], parts[1], parts[2]
-                ));
+                return Some(format!("rgb({}, {}, {})", parts[0], parts[1], parts[2]));
             } else if val.starts_with('#') || val.starts_with("rgb") {
                 return Some(val.clone());
             }
@@ -34,8 +31,7 @@ pub fn extract_shell_menu_theme(
     let font_col = parse_color("font.color");
     let bg_color = parse_color("menu.background.color");
     let fg_color = parse_color("menu.foreground.color");
-    let bg_font_col =
-        parse_color("menu.background.font.color").or_else(|| font_col.clone());
+    let bg_font_col = parse_color("menu.background.font.color").or_else(|| font_col.clone());
     let fg_font_col = parse_color("menu.foreground.font.color");
     let dis_font_col = parse_color("menu.disable.font.color");
     let sep_col = parse_color("menu.separator.color");

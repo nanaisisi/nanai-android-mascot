@@ -82,7 +82,11 @@ pub fn check_named_mutex(name: &str) -> bool {
     }
 
     let guard = FALLBACK_MUTEXES.lock().unwrap();
-    guard.as_ref().and_then(|m| m.get(name)).copied().unwrap_or(false)
+    guard
+        .as_ref()
+        .and_then(|m| m.get(name))
+        .copied()
+        .unwrap_or(false)
 }
 
 static HELD_HANDLES: Mutex<Vec<usize>> = Mutex::new(Vec::new());
@@ -113,38 +117,25 @@ pub fn set_fallback_mutex(name: &str, active: bool) {
 
 /// Generate FMO 64KB shared memory byte buffer conforming to UKADOC fmo spec
 pub fn generate_fmo_buffer(records: &[FmoRecord]) -> Vec<u8> {
-    let mut content = String::new();
-    for rec in records {
-        let prefix = format!("ssp_fmo_header_{}", rec.id);
-        content.push_str(&format!("{}.path\x01{}\r\n", prefix, rec.path));
-        content.push_str(&format!("{}.hwnd\x01{}\r\n", prefix, rec.hwnd));
-        content.push_str(&format!("{}.name\x01{}\r\n", prefix, rec.name));
-        content.push_str(&format!("{}.keroname\x01{}\r\n", prefix, rec.keroname));
-        content.push_str(&format!(
-            "{}.sakura.surface\x01{}\r\n",
-            prefix, rec.sakura_surface
-        ));
-        content.push_str(&format!(
-            "{}.kero.surface\x01{}\r\n",
-            prefix, rec.kero_surface
-        ));
-        content.push_str(&format!("{}.ghostpath\x01{}\r\n", prefix, rec.ghost_path));
-        content.push_str(&format!(
-            "{}.modulestate\x01{}\r\n",
-            prefix, rec.module_state
-        ));
-    }
+    let core_records: Vec<nanai_android_mascot_ui::fmo::FmoRecord> = records
+        .iter()
+        .map(|rec| nanai_android_mascot_ui::fmo::FmoRecord {
+            id: rec.id.clone(),
+            path: rec.path.clone(),
+            hwnd: rec.hwnd,
+            name: rec.name.clone(),
+            keroname: rec.keroname.clone(),
+            sakura_surface: rec.sakura_surface,
+            kero_surface: rec.kero_surface,
+            ghostpath: rec.ghost_path.clone(),
+            kerohwnd: None,
+            hwndlist: Vec::new(),
+            fullname: None,
+            modulestate: Some(rec.module_state.clone()),
+        })
+        .collect();
 
-    let mut buf = vec![0u8; 65536];
-    let size_bytes = (65536u32).to_le_bytes();
-    buf[0..4].copy_from_slice(&size_bytes);
-
-    let bytes = content.as_bytes();
-    let write_len = std::cmp::min(bytes.len(), 65531);
-    buf[4..4 + write_len].copy_from_slice(&bytes[0..write_len]);
-    buf[4 + write_len] = 0;
-
-    buf
+    nanai_android_mascot_ui::fmo::generate_fmo_buffer(&core_records)
 }
 
 pub async fn get_fmo_status() -> Result<FmoStatus, String> {

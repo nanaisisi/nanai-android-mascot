@@ -13,7 +13,7 @@ pub enum SakuraCommand {
         half: bool,
     }, // \n / \n[half]
     NewLineNoPause, // \_n
-    AutoPause,      // \_?
+    AutoPause,    // \_?
     InlineBitmap {
         path: String,
         mode: String,
@@ -22,7 +22,9 @@ pub enum SakuraCommand {
         opaque: bool,
     }, // \_b[...]
     Clear,        // \c
-    ClearArg { arg: String }, // \c[char,n], \c[line,n]
+    ClearArg {
+        arg: String,
+    }, // \c[char,n], \c[line,n]
     Choice {
         label: String,
         id: String,
@@ -33,11 +35,11 @@ pub enum SakuraCommand {
         text: String,
         args: Vec<String>,
     }, // \_a[id,r2,...]text\_a
-    Star, // \*
-    Z,    // \z
-    AudioWait, // \a
+    Star,         // \*
+    Z,            // \z
+    AudioWait,    // \a
     Jump(String), // \j[ID] / \j[URL] ジャンプ
-    Plus,      // \+ / \_+
+    Plus,         // \+ / \_+
     Raise {
         event: String,
         references: Vec<String>,
@@ -55,19 +57,26 @@ pub enum SakuraCommand {
     }, // \![bind,cat,part,status]
     Balloon(i32), // \b[n], \b[-1], \b0..\b9
     NoUserBreak(bool), // \_!
-    Voice(String),     // \__v[opt]
-    Midi(String),      // \_m[hex] MIDI/サウンドRAWコマンド
-    ModeChange { mode: String, active: bool },
+    Voice(String), // \__v[opt]
+    Midi(String), // \_m[hex] MIDI/サウンドRAWコマンド
+    ModeChange {
+        mode: String,
+        active: bool,
+    },
     LockBalloonRepaint(bool),
-    BalloonSetting { key: String, value: String, extra: Vec<String> },
+    BalloonSetting {
+        key: String,
+        value: String,
+        extra: Vec<String>,
+    },
     Marker,
     Animation {
         id: u32,
         wait: bool,
     }, // \i[ID], \i[ID,wait]
-    Timeout,      // \t (タイムアウト抑止)
-    Halt,         // \- (ゴースト終了)
-    Sync(bool),   // \_s (複数キャラ同期発話トグル)
+    Timeout,    // \t (タイムアウト抑止)
+    Halt,       // \- (ゴースト終了)
+    Sync(bool), // \_s (複数キャラ同期発話トグル)
     Offset {
         x: String,
         y: String,
@@ -77,7 +86,7 @@ pub enum SakuraCommand {
         param: Option<String>,
     }, // \f[tag,param], \f[tag]
     Text(String), // 通常テキスト
-    End,          // \e
+    End,        // \e
     ScheduleAdd {
         date: String,
         time: String,

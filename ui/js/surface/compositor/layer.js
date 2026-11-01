@@ -46,6 +46,32 @@ export async function drawLayer(
 				ctx.globalCompositeOperation = "overlay";
 			} else if (method === "blend-add" || method === "add") {
 				ctx.globalCompositeOperation = "lighter";
+			} else if (method === "blend-darken" || method === "darken") {
+				ctx.globalCompositeOperation = "darken";
+			} else if (method === "blend-lighten" || method === "lighten") {
+				ctx.globalCompositeOperation = "lighten";
+			} else if (method === "blend-color-dodge" || method === "color-dodge") {
+				ctx.globalCompositeOperation = "color-dodge";
+			} else if (method === "blend-color-burn" || method === "color-burn") {
+				ctx.globalCompositeOperation = "color-burn";
+			} else if (method === "blend-hard-light" || method === "hard-light") {
+				ctx.globalCompositeOperation = "hard-light";
+			} else if (method === "blend-soft-light" || method === "soft-light") {
+				ctx.globalCompositeOperation = "soft-light";
+			} else if (method === "blend-difference" || method === "difference") {
+				ctx.globalCompositeOperation = "difference";
+			} else if (method === "blend-exclusion" || method === "exclusion") {
+				ctx.globalCompositeOperation = "exclusion";
+			} else if (method === "blend-hue" || method === "hue") {
+				ctx.globalCompositeOperation = "hue";
+			} else if (method === "blend-saturation" || method === "saturation") {
+				ctx.globalCompositeOperation = "saturation";
+			} else if (method === "blend-color" || method === "color") {
+				ctx.globalCompositeOperation = "color";
+			} else if (method === "blend-luminosity" || method === "luminosity") {
+				ctx.globalCompositeOperation = "luminosity";
+			} else if (method === "asis" || method === "base") {
+				ctx.globalCompositeOperation = "source-over";
 			}
 
 			ctx.drawImage(partImg, x, y);

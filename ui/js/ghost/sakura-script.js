@@ -27,6 +27,16 @@ export class SakuraScriptPlayer {
 		 * @type {boolean}
 		 */
 		this.timeCritical = false;
+		/** @type {number} */
+		this.choiceTimeout = 0;
+		/** @type {any} */
+		this.choiceTimeoutTimer = null;
+		/** @type {number} */
+		this.balloonTimeout = 0;
+		/** @type {any} */
+		this.balloonTimeoutTimer = null;
+		/** @type {string} */
+		this.lastScript = "";
 
 		this.commandHandler = new SakuraCommandHandler(this);
 
@@ -98,9 +108,6 @@ export class SakuraScriptPlayer {
 	/**
 	 * アニメーション早送り（スキップ）
 	 */
-	/**
-	 * アニメーション早送り（スキップ）
-	 */
 	skip() {
 		if (this.isPlaying) {
 			this.skipRequested = true;
@@ -113,10 +120,31 @@ export class SakuraScriptPlayer {
 	}
 
 	/**
+	 * 選択肢タイムアウト時の処理 (OnChoiceTimeout)
+	 */
+	async onChoiceTimeout() {
+		if (this.choiceTimeoutTimer) {
+			clearTimeout(this.choiceTimeoutTimer);
+			this.choiceTimeoutTimer = null;
+		}
+		try {
+			await this.app.ghostController?.sendShioriEvent("OnChoiceTimeout", [
+				this.lastScript || "",
+			]);
+		} catch (_e) {
+			// ignore
+		}
+	}
+
+	/**
 	 * 選択肢クリック時の処理
 	 */
 	async onChoiceSelected(choiceId, choiceText) {
 		console.log(`🎯 選択肢選択: ${choiceId} (${choiceText})`);
+		if (this.choiceTimeoutTimer) {
+			clearTimeout(this.choiceTimeoutTimer);
+			this.choiceTimeoutTimer = null;
+		}
 		if (choiceId.startsWith("On")) {
 			// SSP拡張: Onで始まるIDは直接そのイベントを発行
 			await this.app.ghostController.sendShioriEvent(choiceId, [choiceText]);

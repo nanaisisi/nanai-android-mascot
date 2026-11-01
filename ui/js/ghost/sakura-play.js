@@ -24,6 +24,15 @@ export async function playScript(player, script) {
 	player.skipRequested = false;
 	player.timeCritical = false;
 	player.currentScope = 0;
+	player.lastScript = script;
+	if (player.choiceTimeoutTimer) {
+		clearTimeout(player.choiceTimeoutTimer);
+		player.choiceTimeoutTimer = null;
+	}
+	if (player.balloonTimeoutTimer) {
+		clearTimeout(player.balloonTimeoutTimer);
+		player.balloonTimeoutTimer = null;
+	}
 
 	const app = player.app;
 	const sakuraText = app.elements.balloonText;
@@ -77,4 +86,37 @@ export async function playScript(player, script) {
 	}
 	player.isPlaying = false;
 	player.scheduleSurfaceRestore(currentId);
+
+	const hasChoices = tokens.some((t) => t.type === "choice");
+
+	// 選択肢タイムアウトのスケジュール (\![set,choicetimeout,N])
+	// UKADOC仕様: 時間のカウントはトークの表示が全て終わってから開始される
+	if (hasChoices && player.choiceTimeout > 0) {
+		if (player.choiceTimeoutTimer) clearTimeout(player.choiceTimeoutTimer);
+		player.choiceTimeoutTimer = setTimeout(() => {
+			if (player.playbackId === currentId) {
+				player.onChoiceTimeout?.();
+			}
+		}, player.choiceTimeout);
+	}
+
+	// バルーンタイムアウトのスケジュール (\![set,balloontimeout,N])
+	// UKADOC仕様: タイムアウトの時間はスクリプトの表示が終わってからカウントされる (0以下はなし)
+	if (!hasChoices && player.balloonTimeout > 0) {
+		if (player.balloonTimeoutTimer) clearTimeout(player.balloonTimeoutTimer);
+		player.balloonTimeoutTimer = setTimeout(async () => {
+			if (player.playbackId === currentId && !player.isPlaying) {
+				try {
+					if (sakuraDisplay) sakuraDisplay.style.display = "none";
+					if (keroDisplay) keroDisplay.style.display = "none";
+					await app.ghostController?.sendShioriEvent?.("OnBalloonTimeout", [
+						player.lastScript || "",
+						"0",
+					]);
+				} catch (_e) {
+					// ignore
+				}
+			}
+		}, player.balloonTimeout);
+	}
 }

@@ -7,10 +7,22 @@ const { parseSakuraScript } = await import(
 
 test("parseSakuraScript tokenizes all JS fallback SakuraScript tags and text", () => {
 	const script =
-		"\\0\\hHello\\1\\uWorld\\p[2]\\p0\\s[10]\\s0\\i[1,wait]\\i2\\w5\\_w[200]\\n\\n[half]\\c\\x\\_q\\_q[1]\\_q[0]\\_a[a1,arg1]Link\\_a\\![open,box]\\q[Opt,opt1]\\_l[10,20]\\_s\\_s[1]\\_s[0]\\b[0]\\b1\\f[bold,1]\\f[default]\\t\\-\\custom[arg]Text\\e";
+		"\\0\\hHello\\1\\uWorld\\p[2]\\p0\\s[10]\\s0\\i[1,wait]\\i2\\w5\\_w[200]\\n\\n[half]\\c\\c[char,3]\\c[line,2]\\x\\x[noclear]\\_q\\_q[1]\\_q[0]\\_a[a1,arg1]Link\\_a\\![open,box]\\q[Opt,opt1]\\_l[10,20]\\_s\\_s[1]\\_s[0]\\b[0]\\b1\\f[bold,1]\\f[default]\\t\\-\\custom[arg]Text\\e";
 
 	const tokens = parseSakuraScript(script);
 	assert.ok(tokens.length > 0);
+
+	// Partial clear
+	const charClear = tokens.find((t) => t.type === "clear" && t.mode === "char");
+	assert.equal(charClear?.count, 3);
+	const lineClear = tokens.find((t) => t.type === "clear" && t.mode === "line");
+	assert.equal(lineClear?.count, 2);
+
+	// Pause noclear
+	const noclearPause = tokens.find(
+		(t) => t.type === "pause" && t.noClear === true,
+	);
+	assert.ok(noclearPause);
 
 	// Scope tokens
 	assert.equal(tokens.filter((t) => t.type === "scope").length, 6);

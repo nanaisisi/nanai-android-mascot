@@ -19,9 +19,17 @@ pub enum DrawMethod {
     Add,
     /// `bind`：着せ替えパーツのトグル
     Bind,
+    /// `asis`：透過処理を行わずそのまま描画
+    AsIs,
+    /// `auto`：画像フォーマットに応じて自動判定
+    Auto,
+    /// `move`：表示位置の移動
+    Move,
+    /// `insert`：アニメーションパターン挿入
+    Insert,
     /// `blend-xxx`：各種アルファブレンド合成（例: `blend-multiply`）
     Blend(String),
-    /// その他の拡張メソッド（`start` / `stop` / `move` / `import` 等）
+    /// その他の拡張メソッド（`start` / `stop` / `import` 等）
     Custom(String),
 }
 
@@ -37,6 +45,10 @@ impl DrawMethod {
             "replace" => Self::Replace,
             "add" => Self::Add,
             "bind" => Self::Bind,
+            "asis" => Self::AsIs,
+            "auto" => Self::Auto,
+            "move" => Self::Move,
+            "insert" => Self::Insert,
             s if s.starts_with("blend-") => Self::Blend(s.trim_start_matches("blend-").to_string()),
             other => Self::Custom(other.to_string()),
         }

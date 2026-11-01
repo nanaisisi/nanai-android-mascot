@@ -40,7 +40,10 @@ pub async fn generate_updates2_dau(
             };
 
             let file_name = path.file_name().and_then(|n| n.to_str()).unwrap_or("");
-            if file_name.starts_with('.') || file_name == "updates2.dau" || file_name == "updates.txt" {
+            if file_name.starts_with('.')
+                || file_name == "updates2.dau"
+                || file_name == "updates.txt"
+            {
                 continue;
             }
 
@@ -72,5 +75,8 @@ pub async fn generate_updates2_dau(
         std::fs::write(&master_dau, &content).ok();
     }
 
-    Ok(format!("Generated updates2.dau with {} entries", lines.len()))
+    Ok(format!(
+        "Generated updates2.dau with {} entries",
+        lines.len()
+    ))
 }

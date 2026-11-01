@@ -20,6 +20,12 @@
 	--balloon-highlight-text: #ffffff;
 	--balloon-separator-color: #dcdcdc;
 	--balloon-tail-color: #f9f9f9;
+
+	/* 9スライス・ボーダー画像トークン */
+	--balloon-border-image-source: none;
+	--balloon-border-image-slice: 16 16 16 16 fill;
+	--balloon-border-image-width: 16px;
+	--balloon-border-image-repeat: repeat;
 }
 
 /* 象牙色レトロ伺かスキン (SSP風) */

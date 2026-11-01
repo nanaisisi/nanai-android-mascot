@@ -11,7 +11,10 @@ pub struct SakuraToken {
 
 impl SakuraToken {
     pub fn new(command: SakuraCommand) -> Self {
-        Self { command, raw: None }
+        Self {
+            command,
+            raw: None,
+        }
     }
 
     pub fn with_raw(command: SakuraCommand, raw: impl Into<String>) -> Self {
@@ -41,7 +44,9 @@ pub enum SakuraAstNode {
         children: Vec<SakuraAstNode>,
     },
     /// スクリプト全体のルートノード
-    Root { children: Vec<SakuraAstNode> },
+    Root {
+        children: Vec<SakuraAstNode>,
+    },
 }
 
 /// フラットな SakuraCommand 列から階層的な AST を構築する
@@ -114,21 +119,13 @@ mod tests {
         let ast = build_sakura_ast(&commands);
         if let SakuraAstNode::Root { children } = ast {
             assert_eq!(children.len(), 2);
-            if let SakuraAstNode::Scope {
-                scope,
-                children: s0,
-            } = &children[0]
-            {
+            if let SakuraAstNode::Scope { scope, children: s0 } = &children[0] {
                 assert_eq!(*scope, 0);
                 assert_eq!(s0.len(), 2);
             } else {
                 panic!("Expected Scope node");
             }
-            if let SakuraAstNode::Scope {
-                scope,
-                children: s1,
-            } = &children[1]
-            {
+            if let SakuraAstNode::Scope { scope, children: s1 } = &children[1] {
                 assert_eq!(*scope, 1);
                 assert_eq!(s1.len(), 2);
             } else {

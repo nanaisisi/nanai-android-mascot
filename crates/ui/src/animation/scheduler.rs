@@ -188,7 +188,12 @@ impl AnimationScheduler {
     }
 
     /// アニメーションを手動またはトリガーによって開始登録する
-    pub fn start_animation(&mut self, scope_id: u32, base_surface_id: i32, anim: &SerikoAnimation) {
+    pub fn start_animation(
+        &mut self,
+        scope_id: u32,
+        base_surface_id: i32,
+        anim: &SerikoAnimation,
+    ) {
         if anim.patterns.is_empty() {
             return;
         }
@@ -229,10 +234,7 @@ impl AnimationScheduler {
                         self.start_animation(scope_id, base_surface_id, anim);
                         continue;
                     }
-                    Interval::Sometimes
-                    | Interval::Rarely
-                    | Interval::Random(_)
-                    | Interval::Periodic(_) => {
+                    Interval::Sometimes | Interval::Rarely | Interval::Random(_) | Interval::Periodic(_) => {
                         // 1秒あたりの発火判定
                         if interval.should_fire(1000, rng01) {
                             self.start_animation(scope_id, base_surface_id, anim);

@@ -1,4 +1,4 @@
-use crate::surfaces::compositor::{SurfaceFrameBuffer, composite_elements};
+use crate::surfaces::compositor::{composite_elements, SurfaceFrameBuffer};
 use crate::surfaces::types::DrawMethod;
 
 #[test]
@@ -103,9 +103,6 @@ fn test_composite_layer_overlay_and_replace() {
     // ブレンド Multiply 合成
     let mut blend_layer = SurfaceFrameBuffer::new(2, 2);
     blend_layer.set_pixel(0, 0, 255, 255, 255, 255);
-    let blended = composite_elements(
-        &base,
-        &[(&blend_layer, 0, 0, DrawMethod::Blend("multiply".into()))],
-    );
+    let blended = composite_elements(&base, &[(&blend_layer, 0, 0, DrawMethod::Blend("multiply".into()))]);
     assert_eq!(blended.get_pixel(0, 0), Some((50, 50, 50, 255)));
 }

@@ -171,7 +171,12 @@ fn test_animation_scheduler_basic() {
         id: 1,
         interval: Some(Interval::RunOnce),
         name: None,
-        patterns: vec![pattern(0, 101, 50), pattern(1, 102, 50), pattern(2, -1, 0)],
+        patterns: vec![
+            pattern(0, 101, 50),
+            pattern(1, 102, 50),
+            pattern(2, -1, 0),
+        ],
+        collisions: vec![],
         options: vec![],
     };
 
@@ -212,6 +217,7 @@ fn test_animation_scheduler_pause_resume() {
         interval: Some(Interval::Always),
         name: None,
         patterns: vec![pattern(0, 10, 100)],
+        collisions: vec![],
         options: vec![],
     };
 
@@ -242,6 +248,7 @@ fn test_animation_scheduler_talk_and_bind() {
         interval: Some(Interval::Custom("talk,2".into())),
         name: None,
         patterns: vec![pattern(0, 20, 0)],
+        collisions: vec![],
         options: vec![],
     };
     let start_anim = SerikoAnimation {
@@ -249,6 +256,7 @@ fn test_animation_scheduler_talk_and_bind() {
         interval: Some(Interval::StartTalk),
         name: None,
         patterns: vec![pattern(0, 21, 0)],
+        collisions: vec![],
         options: vec![],
     };
     let end_anim = SerikoAnimation {
@@ -256,6 +264,7 @@ fn test_animation_scheduler_talk_and_bind() {
         interval: Some(Interval::EndTalk),
         name: None,
         patterns: vec![pattern(0, 22, 0)],
+        collisions: vec![],
         options: vec![],
     };
     let bind_anim = SerikoAnimation {
@@ -263,6 +272,7 @@ fn test_animation_scheduler_talk_and_bind() {
         interval: Some(Interval::Bind),
         name: None,
         patterns: vec![pattern(0, 23, 0)],
+        collisions: vec![],
         options: vec![],
     };
 
@@ -301,6 +311,7 @@ fn test_animation_scheduler_talk_and_bind() {
         interval: Some(Interval::YenE),
         name: None,
         patterns: vec![pattern(0, 99, 0)],
+        collisions: vec![],
         options: vec![],
     };
     scheduler.on_script_end(0, &[yene_anim]);

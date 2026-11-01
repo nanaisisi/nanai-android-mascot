@@ -10,22 +10,21 @@ pub struct UpdateEntry {
 }
 
 impl UpdateEntry {
-    fn has_flag(&self, expected: &str) -> bool {
+    /// 削除対象 (`delete` フラグ指定) かどうか判定
+    pub fn is_delete(&self) -> bool {
+        self.flags.iter().any(|f| f.eq_ignore_ascii_case("delete"))
+    }
+
+    /// 更新除外対象 (`ignore` フラグ指定) かどうか判定
+    pub fn is_ignore(&self) -> bool {
+        self.flags.iter().any(|f| f.eq_ignore_ascii_case("ignore"))
+    }
+
+    /// 読取専用 (`readonly` フラグ指定) かどうか判定
+    pub fn is_readonly(&self) -> bool {
         self.flags
             .iter()
-            .any(|flag| flag.eq_ignore_ascii_case(expected))
-    }
-
-    pub fn is_delete(&self) -> bool {
-        self.has_flag("delete")
-    }
-
-    pub fn is_ignore(&self) -> bool {
-        self.has_flag("ignore")
-    }
-
-    pub fn is_readonly(&self) -> bool {
-        self.has_flag("readonly")
+            .any(|f| f.eq_ignore_ascii_case("readonly"))
     }
 }
 
@@ -57,7 +56,10 @@ impl UpdatePackage {
 
     /// 総ダウンロード予定サイズ (サイズが指定されているエントリの合算)
     pub fn total_download_size(&self) -> u64 {
-        self.active_downloads().iter().filter_map(|e| e.size).sum()
+        self.active_downloads()
+            .iter()
+            .filter_map(|e| e.size)
+            .sum()
     }
 }
 
@@ -101,13 +103,11 @@ pub fn parse_update_definition(content: &str) -> Vec<UpdateEntry> {
         let mut option_flags = Vec::new();
         let mut size = None;
         let mut date = None;
-
         for &extra in parts.iter().skip(2) {
             let extra_trimmed = extra.trim();
             if extra_trimmed.is_empty() {
                 continue;
             }
-
             if let Some(s) = extra_trimmed.strip_prefix("size=") {
                 if let Ok(val) = s.parse::<u64>() {
                     size = Some(val);
@@ -133,7 +133,6 @@ pub fn parse_update_definition(content: &str) -> Vec<UpdateEntry> {
             flags: option_flags,
         });
     }
-
     entries
 }
 

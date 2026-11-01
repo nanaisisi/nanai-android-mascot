@@ -179,9 +179,7 @@ pub fn inspect_zip_archive<R: std::io::Read + std::io::Seek>(
                     "plugin" => resolve_asset_path("assets/plugin", app_handle).ok(),
                     "shell" => resolve_asset_path("assets/shell", app_handle).ok(),
                     "calendar.skin" => resolve_asset_path("assets/calendar/skin", app_handle).ok(),
-                    "calendar.plugin" => {
-                        resolve_asset_path("assets/calendar/plugin", app_handle).ok()
-                    }
+                    "calendar.plugin" => resolve_asset_path("assets/calendar/plugin", app_handle).ok(),
                     _ => None,
                 };
 
@@ -216,66 +214,19 @@ mod tests {
         map.insert("type".to_string(), "ghost".to_string());
         map.insert("balloon.directory".to_string(), "balloon_main".to_string());
         map.insert("balloon0.directory".to_string(), "balloon_zero".to_string());
-        map.insert(
-            "balloon0.source.directory".to_string(),
-            "custom_b0".to_string(),
-        );
+        map.insert("balloon0.source.directory".to_string(), "custom_b0".to_string());
         map.insert("balloon1.directory".to_string(), "balloon_one".to_string());
-        map.insert(
-            "balloon3.directory".to_string(),
-            "balloon_three".to_string(),
-        ); // 2が欠番なのでスキップされる
-        map.insert(
-            "calendar.skin0.directory".to_string(),
-            "cal_skin".to_string(),
-        );
-        map.insert(
-            "calendar.plugin0.directory".to_string(),
-            "cal_plugin".to_string(),
-        );
+        map.insert("balloon3.directory".to_string(), "balloon_three".to_string()); // 2が欠番なのでスキップされる
+        map.insert("calendar.skin0.directory".to_string(), "cal_skin".to_string());
+        map.insert("calendar.plugin0.directory".to_string(), "cal_plugin".to_string());
 
         let res = resolve_bundled_resources_config(&map);
         assert_eq!(res.len(), 5);
 
-        assert_eq!(
-            res[0],
-            (
-                "balloon".to_string(),
-                "balloon_main".to_string(),
-                "balloon_main".to_string()
-            )
-        );
-        assert_eq!(
-            res[1],
-            (
-                "balloon".to_string(),
-                "balloon_zero".to_string(),
-                "custom_b0".to_string()
-            )
-        );
-        assert_eq!(
-            res[2],
-            (
-                "balloon".to_string(),
-                "balloon_one".to_string(),
-                "balloon_one".to_string()
-            )
-        );
-        assert_eq!(
-            res[3],
-            (
-                "calendar.skin".to_string(),
-                "cal_skin".to_string(),
-                "cal_skin".to_string()
-            )
-        );
-        assert_eq!(
-            res[4],
-            (
-                "calendar.plugin".to_string(),
-                "cal_plugin".to_string(),
-                "cal_plugin".to_string()
-            )
-        );
+        assert_eq!(res[0], ("balloon".to_string(), "balloon_main".to_string(), "balloon_main".to_string()));
+        assert_eq!(res[1], ("balloon".to_string(), "balloon_zero".to_string(), "custom_b0".to_string()));
+        assert_eq!(res[2], ("balloon".to_string(), "balloon_one".to_string(), "balloon_one".to_string()));
+        assert_eq!(res[3], ("calendar.skin".to_string(), "cal_skin".to_string(), "cal_skin".to_string()));
+        assert_eq!(res[4], ("calendar.plugin".to_string(), "cal_plugin".to_string(), "cal_plugin".to_string()));
     }
 }

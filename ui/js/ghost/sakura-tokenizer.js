@@ -128,15 +128,52 @@ export function parseSakuraScript(script) {
 					tokens.push({ type: "newline", half: false });
 				}
 			}
-			// \c (クリア)
+			// \c (クリア: \c, \c[char,N], \c[line,N])
 			else if (char === "c") {
-				tokens.push({ type: "clear" });
 				i++;
+				if (script[i] === "[") {
+					const end = script.indexOf("]", i);
+					if (end !== -1) {
+						const content = script.substring(i + 1, end).trim();
+						const parts = content.split(",").map((s) => s.trim());
+						if (parts[0] === "char" || parts[0] === "line") {
+							tokens.push({
+								type: "clear",
+								mode: parts[0],
+								count: Number.parseInt(parts[1], 10) || 1,
+							});
+						} else {
+							tokens.push({ type: "clear" });
+						}
+						i = end + 1;
+					} else {
+						tokens.push({ type: "clear" });
+					}
+				} else {
+					tokens.push({ type: "clear" });
+				}
 			}
-			// \x (クリック待ち・改ページ)
+			// \x (クリック待ち・改ページ: \x, \x[noclear])
 			else if (char === "x") {
-				tokens.push({ type: "pause" });
 				i++;
+				if (script[i] === "[") {
+					const end = script.indexOf("]", i);
+					if (end !== -1) {
+						const opt = script
+							.substring(i + 1, end)
+							.trim()
+							.toLowerCase();
+						tokens.push({
+							type: "pause",
+							noClear: opt === "noclear",
+						});
+						i = end + 1;
+					} else {
+						tokens.push({ type: "pause" });
+					}
+				} else {
+					tokens.push({ type: "pause" });
+				}
 			}
 			// \_q / \_q[1] / \_q[0] (クイック描画切替)
 			else if (char === "_" && script[i + 1] === "q") {

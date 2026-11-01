@@ -48,6 +48,73 @@ impl FmoRecord {
     }
 }
 
+/// Slot-01 Contract: FmoEntry 構造体 (FMO共有メモリ同期エントリ)
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct FmoEntry {
+    pub id: String,
+    pub name: String,
+    pub keroname: String,
+    pub hwnd: u64,
+    pub sakura_surface: i32,
+    pub kero_surface: i32,
+    pub ghostpath: String,
+    pub balloon0: String,
+    pub balloon1: String,
+}
+
+impl FmoEntry {
+    pub fn new(id: impl Into<String>, name: impl Into<String>) -> Self {
+        Self {
+            id: id.into(),
+            name: name.into(),
+            keroname: String::new(),
+            hwnd: 0,
+            sakura_surface: 0,
+            kero_surface: 10,
+            ghostpath: String::new(),
+            balloon0: String::new(),
+            balloon1: String::new(),
+        }
+    }
+
+    /// FmoRecord へ変換する
+    pub fn to_record(&self) -> FmoRecord {
+        FmoRecord {
+            id: self.id.clone(),
+            path: String::new(),
+            hwnd: self.hwnd,
+            name: self.name.clone(),
+            keroname: self.keroname.clone(),
+            sakura_surface: self.sakura_surface,
+            kero_surface: self.kero_surface,
+            ghostpath: self.ghostpath.clone(),
+            kerohwnd: None,
+            hwndlist: if self.hwnd != 0 {
+                vec![self.hwnd]
+            } else {
+                Vec::new()
+            },
+            fullname: Some(self.name.clone()),
+            modulestate: None,
+        }
+    }
+
+    /// FmoRecord から FmoEntry を生成する
+    pub fn from_record(rec: &FmoRecord) -> Self {
+        Self {
+            id: rec.id.clone(),
+            name: rec.name.clone(),
+            keroname: rec.keroname.clone(),
+            hwnd: rec.hwnd,
+            sakura_surface: rec.sakura_surface,
+            kero_surface: rec.kero_surface,
+            ghostpath: rec.ghostpath.clone(),
+            balloon0: String::new(),
+            balloon1: String::new(),
+        }
+    }
+}
+
 /// FMO 64KB 共有メモリバッファを生成する (ukadoc-spec 準拠)
 pub fn generate_fmo_buffer(records: &[FmoRecord]) -> Vec<u8> {
     let mut content = String::new();

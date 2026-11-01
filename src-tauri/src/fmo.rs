@@ -2,6 +2,7 @@
 //! 起動中ゴーストの状態（サーフィス、名前、バルーンテキスト等）を外部ツールや他プロセスへ公開するインターフェース
 
 use crate::common::*;
+pub use nanai_android_mascot_ui::fmo::FmoEntry;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -31,16 +32,28 @@ pub async fn get_fmo_status(state: tauri::State<'_, AppState>) -> Result<String,
         .clone()
         .unwrap_or_else(|| "Nanai".to_string());
 
+    let entry = FmoEntry {
+        id: "0".to_string(),
+        name: current_name.clone(),
+        keroname: String::new(),
+        hwnd: 0,
+        sakura_surface: 0,
+        kero_surface: 10,
+        ghostpath: String::new(),
+        balloon0: String::new(),
+        balloon1: String::new(),
+    };
+
     let mut ghosts = HashMap::new();
     ghosts.insert(
-        "0".to_string(),
+        entry.id,
         FmoGhostStatus {
-            name: current_name,
-            surface0: 0,
-            surface1: 10,
-            balloon0: "".to_string(),
-            balloon1: "".to_string(),
-            path: "".to_string(),
+            name: entry.name,
+            surface0: entry.sakura_surface as u32,
+            surface1: entry.kero_surface as u32,
+            balloon0: entry.balloon0,
+            balloon1: entry.balloon1,
+            path: entry.ghostpath,
         },
     );
 

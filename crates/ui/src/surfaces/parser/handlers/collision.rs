@@ -3,11 +3,11 @@
 use super::utils::split_id_suffix;
 use crate::surfaces::types::*;
 
-pub(crate) fn apply_collisionex(txt: &mut SurfacesTxt, ids: &[u32], id_part: &str, value: &str) {
+pub(crate) fn parse_collisionex_area(id_part: &str, value: &str) -> Option<CollisionArea> {
     let (_word, id) = split_id_suffix(id_part);
     let tokens: Vec<&str> = value.split(',').map(str::trim).collect();
     if tokens.len() < 3 {
-        return;
+        return None;
     }
     let name = tokens[0].to_string();
     let shape_kind = tokens[1].to_lowercase();
@@ -68,63 +68,57 @@ pub(crate) fn apply_collisionex(txt: &mut SurfacesTxt, ids: &[u32], id_part: &st
         }
     };
 
-    let Some(shape) = shape else { return };
-    for num in ids {
-        txt.surfaces
-            .entry(*num)
-            .or_default()
-            .collisions
-            .push(CollisionArea {
-                id,
-                name: name.clone(),
-                shape: shape.clone(),
-            });
-    }
+    shape.map(|shape| CollisionArea { id, name, shape })
 }
 
-pub(crate) fn apply_collision(txt: &mut SurfacesTxt, ids: &[u32], id_part: &str, value: &str) {
+pub(crate) fn parse_collision_area(id_part: &str, value: &str) -> Option<CollisionArea> {
     let (_word, mut id) = split_id_suffix(id_part);
     let tokens: Vec<&str> = value.split(',').map(str::trim).collect();
 
     if id.is_none() && tokens.len() >= 6 {
         id = tokens[0].parse().ok();
-        apply_collision_body(txt, ids, id, &tokens[1..]);
+        parse_collision_area_body(id, &tokens[1..])
     } else {
-        apply_collision_body(txt, ids, id, &tokens);
+        parse_collision_area_body(id, &tokens)
     }
 }
 
-pub(crate) fn apply_collision_body(
-    txt: &mut SurfacesTxt,
-    ids: &[u32],
-    id: Option<u32>,
-    tokens: &[&str],
-) {
+pub(crate) fn parse_collision_area_body(id: Option<u32>, tokens: &[&str]) -> Option<CollisionArea> {
     if tokens.len() < 5 {
-        return;
+        return None;
     }
-    let Ok(x1) = tokens[0].parse::<i32>() else {
-        return;
-    };
-    let Ok(y1) = tokens[1].parse::<i32>() else {
-        return;
-    };
-    let Ok(x2) = tokens[2].parse::<i32>() else {
-        return;
-    };
-    let Ok(y2) = tokens[3].parse::<i32>() else {
-        return;
-    };
+    let x1 = tokens[0].parse::<i32>().ok()?;
+    let y1 = tokens[1].parse::<i32>().ok()?;
+    let x2 = tokens[2].parse::<i32>().ok()?;
+    let y2 = tokens[3].parse::<i32>().ok()?;
     let name = tokens[4].trim().to_string();
-    for num in ids {
-        txt.surfaces
-            .entry(*num)
-            .or_default()
-            .collisions
-            .push(CollisionArea {
-                id,
-                name: name.clone(),
-                shape: CollisionShape::Rect { x1, y1, x2, y2 },
-            });
+    Some(CollisionArea {
+        id,
+        name,
+        shape: CollisionShape::Rect { x1, y1, x2, y2 },
+    })
+}
+
+pub(crate) fn apply_collisionex(txt: &mut SurfacesTxt, ids: &[u32], id_part: &str, value: &str) {
+    if let Some(area) = parse_collisionex_area(id_part, value) {
+        for num in ids {
+            txt.surfaces
+                .entry(*num)
+                .or_default()
+                .collisions
+                .push(area.clone());
+        }
+    }
+}
+
+pub(crate) fn apply_collision(txt: &mut SurfacesTxt, ids: &[u32], id_part: &str, value: &str) {
+    if let Some(area) = parse_collision_area(id_part, value) {
+        for num in ids {
+            txt.surfaces
+                .entry(*num)
+                .or_default()
+                .collisions
+                .push(area.clone());
+        }
     }
 }

@@ -98,7 +98,12 @@ impl SurfaceFrameBuffer {
 
             // 完全一致または純緑（許容差判定: R<=35, G>=220, B<=35）
             let is_match = (r == target_r && g == target_g && b == target_b)
-                || (target_r == 0 && target_g >= 220 && target_b == 0 && r <= 35 && g >= 220 && b <= 35);
+                || (target_r == 0
+                    && target_g >= 220
+                    && target_b == 0
+                    && r <= 35
+                    && g >= 220
+                    && b <= 35);
 
             if is_match {
                 self.data[offset + 3] = 0;
@@ -186,7 +191,8 @@ impl SurfaceFrameBuffer {
                         self.data[dst_idx] = (br as f32 * alpha + dr as f32 * inv_alpha) as u8;
                         self.data[dst_idx + 1] = (bg as f32 * alpha + dg as f32 * inv_alpha) as u8;
                         self.data[dst_idx + 2] = (bb as f32 * alpha + db as f32 * inv_alpha) as u8;
-                        self.data[dst_idx + 3] = (sa as f32 + da as f32 * inv_alpha).min(255.0) as u8;
+                        self.data[dst_idx + 3] =
+                            (sa as f32 + da as f32 * inv_alpha).min(255.0) as u8;
                     }
                     _ => {
                         // 通常の Overlay / Base (標準Porter-Duffアルファ合成)
@@ -208,9 +214,12 @@ impl SurfaceFrameBuffer {
                             let inv_alpha = 1.0 - alpha;
 
                             self.data[dst_idx] = (sr as f32 * alpha + dr as f32 * inv_alpha) as u8;
-                            self.data[dst_idx + 1] = (sg as f32 * alpha + dg as f32 * inv_alpha) as u8;
-                            self.data[dst_idx + 2] = (sb as f32 * alpha + db as f32 * inv_alpha) as u8;
-                            self.data[dst_idx + 3] = (sa as f32 + da as f32 * inv_alpha).min(255.0) as u8;
+                            self.data[dst_idx + 1] =
+                                (sg as f32 * alpha + dg as f32 * inv_alpha) as u8;
+                            self.data[dst_idx + 2] =
+                                (sb as f32 * alpha + db as f32 * inv_alpha) as u8;
+                            self.data[dst_idx + 3] =
+                                (sa as f32 + da as f32 * inv_alpha).min(255.0) as u8;
                         }
                     }
                 }

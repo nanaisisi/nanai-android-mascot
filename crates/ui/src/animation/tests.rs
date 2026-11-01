@@ -171,11 +171,7 @@ fn test_animation_scheduler_basic() {
         id: 1,
         interval: Some(Interval::RunOnce),
         name: None,
-        patterns: vec![
-            pattern(0, 101, 50),
-            pattern(1, 102, 50),
-            pattern(2, -1, 0),
-        ],
+        patterns: vec![pattern(0, 101, 50), pattern(1, 102, 50), pattern(2, -1, 0)],
         options: vec![],
     };
 

@@ -260,7 +260,9 @@ mod tests {
         assert!(text.contains("name,マスター"));
 
         // read_binary
-        let bin = resolver.read_binary("shell/master/surface0000.png").unwrap();
+        let bin = resolver
+            .read_binary("shell/master/surface0000.png")
+            .unwrap();
         assert_eq!(bin, vec![0x89, 0x50, 0x4E, 0x47]);
 
         // not found errors

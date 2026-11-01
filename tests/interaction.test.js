@@ -40,6 +40,7 @@ test("InteractionManager covers dragging, stroke, longpress, docking, and native
 
 	const clicked = [];
 	const stroked = [];
+	const mouseEvents = [];
 	let menuToggled = false;
 	const mockApp = {
 		toggleMenu() {
@@ -111,6 +112,20 @@ test("InteractionManager covers dragging, stroke, longpress, docking, and native
 		mockTarget,
 		(x, y, rect) => clicked.push({ x, y, rect }),
 		(x, y, rect) => stroked.push({ x, y, rect }),
+		{
+			onGhostMouseDown: (x, y, rect, button, dev) =>
+				mouseEvents.push({ ev: "down", x, y, button, dev, rect }),
+			onGhostMouseUp: (x, y, rect, button, dev) =>
+				mouseEvents.push({ ev: "up", x, y, button, dev, rect }),
+			onGhostWheel: (x, y, rect, delta) =>
+				mouseEvents.push({ ev: "wheel", x, y, rect, delta }),
+			onGhostDragStart: (x, y, rect) =>
+				mouseEvents.push({ ev: "dragstart", x, y, rect }),
+			onGhostDragEnd: (x, y, rect) =>
+				mouseEvents.push({ ev: "dragend", x, y, rect }),
+			onGhostHover: (x, y, rect) =>
+				mouseEvents.push({ ev: "hover", x, y, rect }),
+		},
 	);
 
 	listeners.mousedown?.({
@@ -163,6 +178,17 @@ test("InteractionManager covers dragging, stroke, longpress, docking, and native
 	});
 	emitGlobal("touchend", {});
 	assert.equal(classes.has("is-docked-left"), false);
+
+	// 4. Test wheel, hover, and mousemove hover timeout
+	listeners.wheel?.({ deltaY: 100, clientX: 15, clientY: 25 });
+	listeners.mousemove?.({ clientX: 30, clientY: 30 });
+	vi.advanceTimersByTime(350);
+	listeners.mouseleave?.();
+
+	assert.ok(mouseEvents.some((e) => e.ev === "down"));
+	assert.ok(mouseEvents.some((e) => e.ev === "up"));
+	assert.ok(mouseEvents.some((e) => e.ev === "wheel" && e.delta === 100));
+	assert.ok(mouseEvents.some((e) => e.ev === "hover"));
 
 	vi.useRealTimers();
 	assert.ok(true);

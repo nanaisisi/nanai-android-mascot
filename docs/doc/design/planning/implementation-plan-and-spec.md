@@ -189,6 +189,7 @@ flowchart TD
 
 ## 4. ドキュメント相互参照
 
+- [Rust側へのコード移行および外部クレート・ライブラリ利用検討書](rust-migration-and-crate-evaluation.md) - Rust移行とクレート選定検討書
 - [PROJECT-SPEC.md](../../developer/PROJECT-SPEC.md) - プロジェクト全体仕様書
 - [TODO.md](../../developer/TODO.md) - 詳細タスクチェックリスト
 - [docs/spec/sakura-script-and-balloon-spec.md](../../shiori-script/sakura-script-and-balloon-spec.md) - さくらスクリプト & バルーン仕様

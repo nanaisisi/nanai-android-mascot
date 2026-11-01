@@ -60,4 +60,5 @@ src-tauri/shiori-host/target
 coverage
 ui/coverage
 coverage-run
-coverage-final
+coverage-final__pycache__/
+*.pyc

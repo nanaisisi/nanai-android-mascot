@@ -1,6 +1,7 @@
 //! SSTP (SakuraScript Transfer Protocol) 1.x receiver and protocol handler (UKADOC spec compliance)
 //! [SSTP/1.x], [method_send], [method_execute], [method_give], [method_communicate], [method_notify], [keepalive]
 
+use nanai_android_mascot_ui::sstp::SstpRequest as CoreSstpRequest;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use tauri::Emitter;
@@ -26,66 +27,19 @@ pub struct SstpResponse {
     pub reference0: Option<String>,
 }
 
-/// Parse raw SSTP/1.x request text conforming to UKADOC spec
+/// Parse raw SSTP/1.x request text conforming to UKADOC spec using core parser
 pub fn parse_raw_sstp_request(raw: &str) -> Result<SstpRequest, String> {
-    let mut lines = raw.lines();
-    let first_line = lines.next().ok_or("Empty SSTP request")?;
-    let mut method = "SEND".to_string();
-    let upper = first_line.to_uppercase();
-    if upper.starts_with("SEND") {
-        method = "SEND".to_string();
-    } else if upper.starts_with("EXECUTE") {
-        method = "EXECUTE".to_string();
-    } else if upper.starts_with("NOTIFY") {
-        method = "NOTIFY".to_string();
-    } else if upper.starts_with("COMMUNICATE") {
-        method = "COMMUNICATE".to_string();
-    } else if upper.starts_with("GIVE") {
-        method = "GIVE".to_string();
-    }
-
-    let mut sender = "Unknown".to_string();
-    let mut script = None;
-    let mut event = None;
-    let mut hwnd = None;
-    let mut security_level = Some("local".to_string());
-    let mut references = HashMap::new();
-    let mut keep_alive = Some(false);
-
-    for line in lines {
-        let line = line.trim();
-        if line.is_empty() {
-            continue;
-        }
-        if let Some((key, val)) = line.split_once(':') {
-            let key = key.trim();
-            let val = val.trim().to_string();
-            match key.to_lowercase().as_str() {
-                "sender" => sender = val,
-                "script" => script = Some(val),
-                "event" => event = Some(val),
-                "hwnd" => hwnd = val.parse().ok(),
-                "securitylevel" => security_level = Some(val),
-                "keepalive" => keep_alive = Some(val.to_lowercase() == "true" || val == "1"),
-                _ => {
-                    if key.starts_with("Reference") {
-                        references.insert(key.to_string(), val);
-                    }
-                }
-            }
-        }
-    }
-
+    let core_req = CoreSstpRequest::parse(raw)?;
     Ok(SstpRequest {
-        method: Some(method),
-        sender,
-        script,
-        event,
-        hwnd,
-        security_level,
-        security_origin: None,
-        references,
-        keep_alive,
+        method: Some(core_req.method.as_str().to_string()),
+        sender: core_req.sender,
+        script: core_req.script,
+        event: core_req.event,
+        hwnd: core_req.hwnd,
+        security_level: core_req.security_level,
+        security_origin: core_req.security_origin,
+        references: core_req.references,
+        keep_alive: Some(core_req.keep_alive),
     })
 }
 

@@ -1,10 +1,12 @@
 pub mod animation;
 pub mod app;
 pub mod descript;
+pub mod fmo;
 pub mod manifest;
 pub mod script;
 pub mod shell;
 pub mod shiori;
+pub mod sstp;
 pub mod surfaces;
 pub mod surfacetable;
 pub mod update;
@@ -13,12 +15,19 @@ pub mod vfs;
 // 外部公開・後方互換のための再エクスポート
 pub use animation::{ScheduledFrame, Timeline, build_timeline, cycle_len_ms};
 pub use descript::{BindGroup, BindOptionGroup, CharDefaults, Descript};
+pub use fmo::{
+    FmoRecord, MUTEX_SAKURA, MUTEX_SAKURA_FMO, MUTEX_SAKURA_UNICODE_FMO, MUTEX_SSP,
+    generate_fmo_buffer, parse_fmo_buffer,
+};
 pub use manifest::{ShellManifest, SurfaceManifest};
 pub use script::{SakuraCommand, execute_sakura_script, parse_sakura_script};
 pub use shell::Shell;
 pub use shiori::{
     ErrorLevel, GhostStatusToken, SecurityLevel, SenderTypeTag, ShioriMethod, ShioriRequest,
     ShioriResponse, StatusCode, parse_sender_types,
+};
+pub use sstp::{
+    IfGhostEntry, SstpMethod, SstpRequest, SstpResponse, SstpStatusCode,
 };
 pub use surfaces::{
     BalloonOffset, CollisionArea, CollisionShape, CompositionLayer, CompositionPlan, DrawMethod,

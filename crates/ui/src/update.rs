@@ -262,6 +262,7 @@ mod tests {
         let deletions = pkg.deletions();
         assert_eq!(deletions.len(), 1);
         assert_eq!(deletions[0].path, "ghost/master/old.txt");
+
         assert_eq!(pkg.total_download_size(), 1200);
     }
 }

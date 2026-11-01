@@ -26,8 +26,9 @@ pub use manifest::{ShellManifest, SurfaceManifest};
 pub use script::{SakuraCommand, execute_sakura_script, parse_sakura_script};
 pub use shell::Shell;
 pub use shiori::{
-    ErrorLevel, GhostStatusToken, SecurityLevel, SenderTypeTag, ShioriMethod, ShioriRequest,
-    ShioriResponse, StatusCode, parse_sender_types,
+    ErrorLevel, GhostStatusToken, MockShioriEngine, MultiStageShioriLoader, SecurityLevel,
+    SenderTypeTag, ShioriEngine, ShioriEngineCandidate, ShioriMethod, ShioriRequest, ShioriResponse,
+    StatusCode, parse_sender_types,
 };
 pub use sstp::{IfGhostEntry, SstpMessage, SstpMethod, SstpRequest, SstpResponse, SstpStatusCode};
 pub use surfaces::{

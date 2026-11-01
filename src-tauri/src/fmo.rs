@@ -9,10 +9,16 @@ use std::collections::HashMap;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FmoGhostStatus {
     pub name: String,
+    #[serde(default)]
+    pub keroname: String,
     pub surface0: u32,
     pub surface1: u32,
     pub balloon0: String,
     pub balloon1: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub kerohwnd: Option<u64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub modulestate: Option<String>,
     pub path: String,
 }
 
@@ -35,13 +41,15 @@ pub async fn get_fmo_status(state: tauri::State<'_, AppState>) -> Result<String,
     let entry = FmoEntry {
         id: "0".to_string(),
         name: current_name.clone(),
-        keroname: String::new(),
+        keroname: "Kero".to_string(),
         hwnd: 0,
         sakura_surface: 0,
         kero_surface: 10,
         ghostpath: String::new(),
         balloon0: String::new(),
         balloon1: String::new(),
+        kerohwnd: None,
+        modulestate: Some("shiori:running".to_string()),
     };
 
     let mut ghosts = HashMap::new();
@@ -49,10 +57,13 @@ pub async fn get_fmo_status(state: tauri::State<'_, AppState>) -> Result<String,
         entry.id,
         FmoGhostStatus {
             name: entry.name,
+            keroname: entry.keroname,
             surface0: entry.sakura_surface as u32,
             surface1: entry.kero_surface as u32,
             balloon0: entry.balloon0,
             balloon1: entry.balloon1,
+            kerohwnd: entry.kerohwnd,
+            modulestate: entry.modulestate,
             path: entry.ghostpath,
         },
     );

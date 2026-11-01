@@ -111,6 +111,20 @@ test("balloonDescriptActions covers rgbFromComponents and applyBalloonDescript f
 		"cursor.notselect.font.color.r": "80",
 		"cursor.notselect.font.color.g": "80",
 		"cursor.notselect.font.color.b": "80",
+		"anchor.blendmethod": "overlay",
+		"anchor.pen.color.r": "10",
+		"anchor.pen.color.g": "20",
+		"anchor.pen.color.b": "30",
+		"anchor.brush.color.r": "40",
+		"anchor.brush.color.g": "50",
+		"anchor.brush.color.b": "60",
+		"cursor.blendmethod": "multiply",
+		"cursor.pen.color.r": "70",
+		"cursor.pen.color.g": "80",
+		"cursor.pen.color.b": "90",
+		"cursor.brush.color.r": "100",
+		"cursor.brush.color.g": "110",
+		"cursor.brush.color.b": "120",
 		"number.x": "10",
 		"number.y": "20",
 		"number.xr": "-10",
@@ -154,6 +168,12 @@ test("balloonDescriptActions covers rgbFromComponents and applyBalloonDescript f
 	assert.equal(cssVars["--balloon-anchor-visited-style"], "underline");
 	assert.equal(cssVars["--balloon-anchor-notselect-style"], "none");
 	assert.equal(cssVars["--balloon-cursor-style"], "square");
+	assert.equal(cssVars["--balloon-anchor-blendmethod"], "overlay");
+	assert.equal(cssVars["--balloon-anchor-pen-color"], "rgb(10, 20, 30)");
+	assert.equal(cssVars["--balloon-anchor-brush-color"], "rgb(40, 50, 60)");
+	assert.equal(cssVars["--balloon-cursor-blendmethod"], "multiply");
+	assert.equal(cssVars["--balloon-cursor-pen-color"], "rgb(70, 80, 90)");
+	assert.equal(cssVars["--balloon-cursor-brush-color"], "rgb(100, 110, 120)");
 	assert.equal(cssVars["--balloon-number-x"], "10px");
 	assert.equal(cssVars["--balloon-sstpmarker-x"], "15px");
 	assert.equal(cssVars["--balloon-sstpmessage-x"], "30px");

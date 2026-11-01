@@ -4,7 +4,9 @@ export function openTeachBox(handler, params = [], options = {}) {
 	if (handler.teachForm) return;
 
 	if (notifyStart) {
-		handler.app.ghostController?.sendShioriEvent("OnTeachStart").catch(() => {});
+		handler.app.ghostController
+			?.sendShioriEvent("OnTeachStart")
+			.catch(() => {});
 	}
 
 	let defaultText = "";

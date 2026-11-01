@@ -96,9 +96,11 @@ export function processChromaKey(
 					let corner32 = 0;
 
 					if (isLittleEndian) {
-						corner32 = (cornerA << 24) | (cornerB << 16) | (cornerG << 8) | cornerR;
+						corner32 =
+							(cornerA << 24) | (cornerB << 16) | (cornerG << 8) | cornerR;
 					} else {
-						corner32 = (cornerR << 24) | (cornerG << 16) | (cornerB << 8) | cornerA;
+						corner32 =
+							(cornerR << 24) | (cornerG << 16) | (cornerB << 8) | cornerA;
 					}
 
 					if (isLittleEndian) {

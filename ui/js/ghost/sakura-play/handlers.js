@@ -278,9 +278,7 @@ export async function handleToken(player, app, token, context) {
 					token.param === "0" || token.param === "false" ? "normal" : "bold";
 			} else if (token.tag === "italic") {
 				player.currentFontStyles.fontStyle =
-					token.param === "0" || token.param === "false"
-						? "normal"
-						: "italic";
+					token.param === "0" || token.param === "false" ? "normal" : "italic";
 			} else if (token.tag === "strike") {
 				player.currentFontStyles.textDecoration =
 					token.param === "0" || token.param === "false"
@@ -288,9 +286,7 @@ export async function handleToken(player, app, token, context) {
 						: "line-through";
 			} else if (token.tag === "underline") {
 				player.currentFontStyles.textDecoration =
-					token.param === "0" || token.param === "false"
-						? "none"
-						: "underline";
+					token.param === "0" || token.param === "false" ? "none" : "underline";
 			} else if (token.tag === "height") {
 				if (token.param) {
 					const size =

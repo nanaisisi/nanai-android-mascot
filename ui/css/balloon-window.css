@@ -62,23 +62,55 @@ body {
 	font-size: 1em;
 	font-family: inherit;
 	line-height: 1.2;
-	color: #0078d7;
-	background: rgba(0, 120, 215, 0.08);
-	border: 1px solid rgba(0, 120, 215, 0.3);
+	color: var(
+		--balloon-cursor-notselect-color,
+		var(--balloon-cursor-color, #0078d7)
+	);
+	background: var(
+		--balloon-cursor-notselect-brush-color,
+		var(--balloon-cursor-brush-color, rgba(0, 120, 215, 0.08))
+	);
+	border: 1px solid
+		var(
+			--balloon-cursor-notselect-pen-color,
+			var(--balloon-cursor-pen-color, rgba(0, 120, 215, 0.3))
+		);
 	border-radius: 4px;
 	cursor: pointer;
 	transition: all 0.15s ease;
 }
 
 .balloon-choice-btn:hover {
-	background: #0078d7;
-	color: #ffffff;
+	background: var(
+		--balloon-cursor-brush-color,
+		var(--balloon-highlight-bg, #0078d7)
+	);
+	color: var(--balloon-cursor-color, var(--balloon-highlight-text, #ffffff));
+	border-color: var(
+		--balloon-cursor-pen-color,
+		var(--balloon-highlight-bg, #0078d7)
+	);
 }
 
 .balloon-anchor {
-	color: var(--balloon-highlight-bg, #0078d7);
+	color: var(
+		--balloon-anchor-notselect-color,
+		var(--balloon-anchor-color, var(--balloon-highlight-bg, #0078d7))
+	);
 	text-decoration: underline;
 	cursor: pointer;
+	mix-blend-mode: var(--balloon-anchor-blendmethod, normal);
+}
+
+.balloon-anchor:hover {
+	color: var(--balloon-anchor-color, var(--balloon-highlight-bg, #0078d7));
+}
+
+.balloon-anchor:visited {
+	color: var(
+		--balloon-anchor-visited-color,
+		var(--balloon-anchor-color, #551a8b)
+	);
 }
 
 /* バルーンオプション画像 (arrow.filename, clickwaitmarker.filename 等) */

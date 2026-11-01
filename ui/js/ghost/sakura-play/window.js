@@ -1,6 +1,11 @@
 import { invoke, isTauriAvailable } from "../../core/tauri-helper.js";
 
-export async function initBalloonWindows(app, tokens, hasTextContent, shownScopes) {
+export async function initBalloonWindows(
+	app,
+	tokens,
+	hasTextContent,
+	shownScopes,
+) {
 	if (!hasTextContent) return;
 	const sakuraText = app.elements.balloonText;
 	const keroText = app.elements.keroBalloonText;

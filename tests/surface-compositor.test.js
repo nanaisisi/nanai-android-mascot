@@ -35,9 +35,44 @@ globalThis.document = {
 	},
 };
 
-const { processChromaKey, drawLayer, composeSurfaceElements } = await import(
-	"../ui/js/surface/surface-compositor.js"
-);
+const {
+	processChromaKey,
+	drawLayer,
+	composeSurfaceElements,
+	SurfaceFrameBuffer,
+	compositeElements,
+} = await import("../ui/js/surface/surface-compositor.js");
+
+test("surface-compositor covers SurfaceFrameBuffer and Contract functions", async () => {
+	const fb = new SurfaceFrameBuffer(10, 10);
+	assert.equal(fb.width, 10);
+	assert.equal(fb.height, 10);
+	assert.equal(fb.data.length, 10 * 10 * 4);
+
+	fb.setPixel(0, 0, 255, 128, 64, 255);
+	assert.deepEqual(fb.getPixel(0, 0), [255, 128, 64, 255]);
+	assert.equal(fb.getPixel(100, 100), null);
+
+	fb.setPixel(100, 100, 0, 0, 0, 0); // out of bounds check
+
+	const fromImg = SurfaceFrameBuffer.fromImageData({
+		width: 2,
+		height: 2,
+		data: new Uint8ClampedArray(16),
+	});
+	assert.equal(fromImg.width, 2);
+
+	const mockCanvas = document.createElement("canvas");
+	mockCanvas.width = 2;
+	mockCanvas.height = 2;
+	const fromCanvas = SurfaceFrameBuffer.fromCanvas(mockCanvas);
+	assert.ok(fromCanvas);
+
+	// compositeElements contract alias
+	assert.equal(typeof compositeElements, "function");
+	const res = await compositeElements([], "", async () => null);
+	assert.equal(res, "");
+});
 
 test("surface-compositor covers processChromaKey, drawLayer, and composeSurfaceElements", async () => {
 	// 1. processChromaKey empty source

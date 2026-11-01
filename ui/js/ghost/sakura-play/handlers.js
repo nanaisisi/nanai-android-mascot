@@ -92,6 +92,10 @@ export async function handleToken(player, app, token, context) {
 			break;
 
 		case "clear":
+			player.playbackController?.notifyClear?.(
+				token.mode || "all",
+				token.count || 1,
+			);
 			if (token.mode === "char") {
 				const count = Math.max(1, token.count || 1);
 				let removed = 0;
@@ -134,6 +138,7 @@ export async function handleToken(player, app, token, context) {
 
 		case "pause":
 			flushDesktopBalloon();
+			player.playbackController?.notifyPause?.(Boolean(token.noClear));
 			if (!player.skipRequested && !isQuickMode) {
 				const activeDisplay =
 					player.currentScope === 1 ? keroDisplay : sakuraDisplay;
@@ -187,9 +192,11 @@ export async function handleToken(player, app, token, context) {
 			} else {
 				isQuickMode = !isQuickMode;
 			}
+			player.playbackController?.setQuickMode?.(isQuickMode);
 			break;
 
 		case "wait":
+			player.playbackController?.notifyWait?.(token.value);
 			if (!player.skipRequested && !isQuickMode) {
 				await player.sleep(token.value);
 			}

@@ -75,6 +75,14 @@ describe("TouchGestureEvent & Helpers", () => {
 		expect(getTouchDistance(p1, p2)).toBe(50);
 		expect(getTouchCenter(p1, p2)).toEqual({ x: 15, y: 20 });
 		expect(Math.round(getTouchAngle(p1, p2))).toBe(53);
+
+		// Robustness check for invalid/undefined inputs
+		expect(getTouchDistance(null, undefined)).toBe(0);
+		expect(getTouchCenter({}, { clientX: NaN, clientY: Infinity })).toEqual({
+			x: 0,
+			y: 0,
+		});
+		expect(getTouchAngle(null, null)).toBe(0);
 	});
 });
 
@@ -349,6 +357,103 @@ describe("TouchGestureRecognizer", () => {
 			"touchcancel",
 		);
 
+		expect(recognizer._isDragging).toBe(false);
+	});
+
+	it("recognizes double tap within specified delay and distance", () => {
+		const tapHandler = vi.fn();
+		const doubleTapHandler = vi.fn();
+
+		recognizer.on(TOUCH_GESTURE_TYPES.TAP, tapHandler);
+		recognizer.on(TOUCH_GESTURE_TYPES.DOUBLE_TAP, doubleTapHandler);
+
+		// First tap at (50, 50)
+		element.dispatchEvent(
+			{
+				type: "touchstart",
+				touches: [{ clientX: 50, clientY: 50 }],
+			},
+			"touchstart",
+		);
+		element.dispatchEvent(
+			{
+				type: "touchend",
+				touches: [],
+				changedTouches: [{ clientX: 50, clientY: 50 }],
+			},
+			"touchend",
+		);
+
+		expect(tapHandler).toHaveBeenCalledTimes(1);
+		expect(doubleTapHandler).not.toHaveBeenCalled();
+
+		// Second tap 100ms later at (52, 51)
+		vi.advanceTimersByTime(100);
+		element.dispatchEvent(
+			{
+				type: "touchstart",
+				touches: [{ clientX: 52, clientY: 51 }],
+			},
+			"touchstart",
+		);
+		element.dispatchEvent(
+			{
+				type: "touchend",
+				touches: [],
+				changedTouches: [{ clientX: 52, clientY: 51 }],
+			},
+			"touchend",
+		);
+
+		expect(doubleTapHandler).toHaveBeenCalledTimes(1);
+		expect(doubleTapHandler.mock.calls[0][0].tapCount).toBe(2);
+		expect(doubleTapHandler.mock.calls[0][0].centerX).toBe(52);
+	});
+
+	it("clamps pinch scale within minScale and maxScale bounds", () => {
+		const pinchHandler = vi.fn();
+		recognizer.on(TOUCH_GESTURE_TYPES.PINCH, pinchHandler);
+
+		// Initial distance = 100
+		element.dispatchEvent(
+			{
+				type: "touchstart",
+				touches: [
+					{ clientX: 100, clientY: 100 },
+					{ clientX: 200, clientY: 100 },
+				],
+			},
+			"touchstart",
+		);
+
+		// Extreme expand: distance = 1000 (rawScale = 10, maxScale = 5.0)
+		element.dispatchEvent(
+			{
+				type: "touchmove",
+				touches: [
+					{ clientX: 0, clientY: 100 },
+					{ clientX: 1000, clientY: 100 },
+				],
+			},
+			"touchmove",
+		);
+
+		expect(pinchHandler).toHaveBeenCalled();
+		expect(pinchHandler.mock.calls[0][0].scale).toBe(5.0);
+	});
+
+	it("resets state on recognizer.reset()", () => {
+		element.dispatchEvent(
+			{
+				type: "touchstart",
+				touches: [{ clientX: 100, clientY: 100 }],
+			},
+			"touchstart",
+		);
+
+		recognizer.reset();
+		expect(recognizer._longPressTimer).toBeNull();
+		expect(recognizer._isPinching).toBe(false);
 		expect(recognizer._isDragging).toBe(false);
 	});
 });

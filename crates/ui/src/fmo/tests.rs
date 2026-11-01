@@ -79,3 +79,37 @@ fn test_parse_fmo_buffer_error_on_small_buffer() {
     let small_buf = vec![0u8; 3];
     assert!(parse_fmo_buffer(&small_buf).is_err());
 }
+
+#[test]
+fn test_fmo_entry_conversion_and_sync() {
+    let entry = FmoEntry {
+        id: "ghost_nanai".to_string(),
+        name: "Nanai".to_string(),
+        keroname: "Kero".to_string(),
+        hwnd: 54321,
+        sakura_surface: 5,
+        kero_surface: 15,
+        ghostpath: "/app/assets/ghost/nanai/".to_string(),
+        balloon0: "Hello".to_string(),
+        balloon1: "KeroHi".to_string(),
+    };
+
+    let rec = entry.to_record();
+    assert_eq!(rec.id, "ghost_nanai");
+    assert_eq!(rec.name, "Nanai");
+    assert_eq!(rec.keroname, "Kero");
+    assert_eq!(rec.hwnd, 54321);
+    assert_eq!(rec.sakura_surface, 5);
+    assert_eq!(rec.kero_surface, 15);
+    assert_eq!(rec.ghostpath, "/app/assets/ghost/nanai/");
+    assert_eq!(rec.hwndlist, vec![54321]);
+
+    let entry_back = FmoEntry::from_record(&rec);
+    assert_eq!(entry_back.id, entry.id);
+    assert_eq!(entry_back.name, entry.name);
+    assert_eq!(entry_back.keroname, entry.keroname);
+    assert_eq!(entry_back.hwnd, entry.hwnd);
+    assert_eq!(entry_back.sakura_surface, entry.sakura_surface);
+    assert_eq!(entry_back.kero_surface, entry.kero_surface);
+    assert_eq!(entry_back.ghostpath, entry.ghostpath);
+}

@@ -109,3 +109,12 @@ fn test_sstp_response_build() {
     let built_data = res_data.build();
     assert!(built_data.contains("\r\n\r\nNanai,Kero\r\n\r\n"));
 }
+
+#[test]
+fn test_sstp_message_alias_and_give_parsing() {
+    let raw_give = "GIVE SSTP/1.1\r\nSender: ExternalClient\r\nScript: \\0\\s[0]プレゼント\\e\r\n";
+    let msg: SstpMessage = SstpRequest::parse(raw_give).unwrap();
+    assert_eq!(msg.method, SstpMethod::Give);
+    assert_eq!(msg.sender, "ExternalClient");
+    assert_eq!(msg.script, Some("\\0\\s[0]プレゼント\\e".to_string()));
+}

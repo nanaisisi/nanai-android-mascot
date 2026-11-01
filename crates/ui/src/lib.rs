@@ -19,7 +19,7 @@ pub use animation::{
 };
 pub use descript::{BindGroup, BindOptionGroup, CharDefaults, Descript};
 pub use fmo::{
-    FmoRecord, MUTEX_SAKURA, MUTEX_SAKURA_FMO, MUTEX_SAKURA_UNICODE_FMO, MUTEX_SSP,
+    FmoEntry, FmoRecord, MUTEX_SAKURA, MUTEX_SAKURA_FMO, MUTEX_SAKURA_UNICODE_FMO, MUTEX_SSP,
     generate_fmo_buffer, parse_fmo_buffer,
 };
 pub use manifest::{ShellManifest, SurfaceManifest};
@@ -29,7 +29,7 @@ pub use shiori::{
     ErrorLevel, GhostStatusToken, SecurityLevel, SenderTypeTag, ShioriMethod, ShioriRequest,
     ShioriResponse, StatusCode, parse_sender_types,
 };
-pub use sstp::{IfGhostEntry, SstpMethod, SstpRequest, SstpResponse, SstpStatusCode};
+pub use sstp::{IfGhostEntry, SstpMessage, SstpMethod, SstpRequest, SstpResponse, SstpStatusCode};
 pub use surfaces::{
     BalloonOffset, CollisionArea, CollisionShape, CompositionLayer, CompositionPlan, DrawMethod,
     ElementDef, Interval, SerikoAnimation, SurfacesTxt, parse_surfaces_txt,

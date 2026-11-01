@@ -15,6 +15,25 @@ pub struct UpdateEntry {
     pub flags: Vec<String>,
 }
 
+impl UpdateEntry {
+    /// 削除対象 (`delete` フラグ指定) かどうか判定
+    pub fn is_delete(&self) -> bool {
+        self.flags.iter().any(|f| f.eq_ignore_ascii_case("delete"))
+    }
+
+    /// 更新除外対象 (`ignore` フラグ指定) かどうか判定
+    pub fn is_ignore(&self) -> bool {
+        self.flags.iter().any(|f| f.eq_ignore_ascii_case("ignore"))
+    }
+
+    /// 読取専用 (`readonly` フラグ指定) かどうか判定
+    pub fn is_readonly(&self) -> bool {
+        self.flags
+            .iter()
+            .any(|f| f.eq_ignore_ascii_case("readonly"))
+    }
+}
+
 /// ネットワーク更新パッケージ定義 (Slot-15 Contract)
 #[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, PartialEq, Eq)]
 pub struct UpdatePackage {
@@ -221,6 +240,30 @@ mod tests {
         assert!(entries[0].is_delete);
         assert_eq!(entries[0].date, Some("2026-10-31".to_string()));
         assert_eq!(entries[0].flags, vec!["ignore", "readonly", "delete"]);
+        assert!(entries[0].is_ignore());
+        assert!(entries[0].is_readonly());
+        assert!(entries[0].is_delete());
+    }
+
+    #[test]
+    fn test_update_package_methods() {
+        let content = "file,ghost/master/aya.dll,11223344556677889900aabbccddeeff,size=1000\r\n\
+                       file,ghost/master/old.txt,11223344556677889900aabbccddeeff,delete\r\n\
+                       file,ghost/master/skip.png,11223344556677889900aabbccddeeff,ignore,size=500\r\n\
+                       file,ghost/master/readme.txt,11223344556677889900aabbccddeeff,size=200\r\n";
+        let pkg = UpdatePackage::from_definition(content);
+        assert_eq!(pkg.entries.len(), 4);
+
+        let active = pkg.active_downloads();
+        assert_eq!(active.len(), 2);
+        assert_eq!(active[0].path, "ghost/master/aya.dll");
+        assert_eq!(active[1].path, "ghost/master/readme.txt");
+
+        let deletions = pkg.deletions();
+        assert_eq!(deletions.len(), 1);
+        assert_eq!(deletions[0].path, "ghost/master/old.txt");
+
+        assert_eq!(pkg.total_download_size(), 1200);
     }
 
     #[test]

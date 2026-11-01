@@ -13,7 +13,10 @@ pub mod update;
 pub mod vfs;
 
 // 外部公開・後方互換のための再エクスポート
-pub use animation::{ScheduledFrame, Timeline, build_timeline, cycle_len_ms};
+pub use animation::{
+    ActiveAnimation, AnimationScheduler, FrameStepEvent, ScheduledFrame, Timeline, build_timeline,
+    cycle_len_ms,
+};
 pub use descript::{BindGroup, BindOptionGroup, CharDefaults, Descript};
 pub use fmo::{
     FmoRecord, MUTEX_SAKURA, MUTEX_SAKURA_FMO, MUTEX_SAKURA_UNICODE_FMO, MUTEX_SSP,

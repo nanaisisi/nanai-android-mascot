@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { SurfaceAnimationManager } from "../ui/js/surface/surface-animation-manager.js";
+import {
+	createPlaceholderCanvas,
+	SurfaceAnimationManager,
+} from "../ui/js/surface/surface-animation-manager.js";
 import { parseSurfacesTxt } from "../ui/js/surface/surface-parser.js";
 
 function animationFixture() {
@@ -149,4 +152,46 @@ animation10.pattern2,overlay,-1,0,0,0
 		{ surface: "201", wait: 700, type: "overlay", x: 200, y: 120 },
 		{ surface: "-1", wait: 0, type: "overlay", x: 0, y: 0 },
 	]);
+});
+
+test("AnimationScheduler and FrameStepEvent fire during pattern playback", async () => {
+	const { animation } = animationFixture();
+	const events = [];
+	animation.scheduler.onFrameStep((ev) => {
+		events.push(ev);
+	});
+
+	await animation.playAnimationPatterns(
+		{
+			id: 42,
+			patterns: [
+				{ surface: 101, wait: 10 },
+				{ surface: 102, wait: 10 },
+			],
+		},
+		0,
+		0,
+	);
+
+	assert.ok(events.length >= 3);
+	assert.equal(events[0].animationId, 42);
+	assert.equal(events[events.length - 1].isFinished, true);
+});
+
+test("createPlaceholderCanvas generates valid dummy canvas", () => {
+	const canvas = createPlaceholderCanvas(100, 200, "rgba(255,0,0,1)");
+	assert.equal(canvas.width, 100);
+	assert.equal(canvas.height, 200);
+});
+
+test("renderAnimationFrame falls back to placeholder dataUrl if pattern placeholder flag is set", async () => {
+	const { animation, frames } = animationFixture();
+	await animation.playAnimationPatterns(
+		{ id: 9, patterns: [{ surface: 9999, wait: 0, placeholder: true }] },
+		0,
+		0,
+	);
+	assert.equal(frames.length, 2);
+	const layer = frames[0][2][0];
+	assert.ok(layer.file.startsWith("data:image/png;base64,"));
 });

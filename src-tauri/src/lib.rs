@@ -159,6 +159,7 @@ pub fn run() {
             shiori::headline::fetch_headline_feed,
             shiori::property::get_system_property,
             fmo::get_fmo_status,
+            fmo::update_fmo_lifecycle_state,
             shiori::fmo::check_base_ware_mutex,
             sstp::send_sstp_request,
             sstp::parse_and_send_sstp_raw,

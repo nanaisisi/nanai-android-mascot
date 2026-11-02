@@ -2,6 +2,7 @@
 //!
 //! Windows FMO 形式の共有メモリバッファ (64KB, Little-Endian 先頭サイズ, `\x01` キー値区切り, CRLF 行区切り, NULL終端)
 //! の生成および解析を行う。
+//! モバイル (Android/マルチプラットフォーム) 環境における省メモリ・バックグラウンド生存状態の同期に対応。
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -64,6 +65,20 @@ pub struct FmoEntry {
     pub kerohwnd: Option<u64>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub modulestate: Option<String>,
+    /// モバイル/ライフサイクル状態: 表示中 (true) / 最小化・バックグラウンド非表示 (false)
+    #[serde(default = "default_visible")]
+    pub is_visible: bool,
+    /// ライフサイクルステートタグ ("active", "paused", "stopped")
+    #[serde(default = "default_lifecycle_state")]
+    pub lifecycle_state: String,
+}
+
+fn default_visible() -> bool {
+    true
+}
+
+fn default_lifecycle_state() -> String {
+    "active".to_string()
 }
 
 impl FmoEntry {
@@ -80,7 +95,30 @@ impl FmoEntry {
             balloon1: String::new(),
             kerohwnd: None,
             modulestate: None,
+            is_visible: true,
+            lifecycle_state: "active".to_string(),
         }
+    }
+
+    /// モジュールステートをライフサイクル状態と統合して更新
+    pub fn update_lifecycle(&mut self, state: &str, is_visible: bool) {
+        self.lifecycle_state = state.to_string();
+        self.is_visible = is_visible;
+
+        // modulestate が存在する場合、lifecycleタグを付与
+        let base_state = self.modulestate.as_deref().unwrap_or("shiori:running");
+
+        // 既存の lifecycle: タグを除去して置換
+        let mut parts: Vec<&str> = base_state
+            .split(',')
+            .filter(|p| !p.starts_with("lifecycle:"))
+            .collect();
+
+        let lifecycle_tag = format!("lifecycle:{}", state);
+        if !parts.contains(&lifecycle_tag.as_str()) {
+            parts.push(&lifecycle_tag);
+        }
+        self.modulestate = Some(parts.join(","));
     }
 
     /// FmoRecord へ変換する
@@ -96,6 +134,8 @@ impl FmoEntry {
             hwndlist.push(khwnd);
         }
 
+        // 非表示時のサーフィスは不可視扱い（-1）へフォールバック可能だが
+        // FMOレコードでは現在サーフィス値を保持しつつ modulestate で補完
         FmoRecord {
             id: self.id.clone(),
             path: String::new(),
@@ -114,6 +154,22 @@ impl FmoEntry {
 
     /// FmoRecord から FmoEntry を生成する
     pub fn from_record(rec: &FmoRecord) -> Self {
+        let (lifecycle_state, is_visible) = if let Some(ref ms) = rec.modulestate {
+            let mut state = "active".to_string();
+            let mut visible = true;
+            for part in ms.split(',') {
+                if let Some(s) = part.strip_prefix("lifecycle:") {
+                    state = s.to_string();
+                    if s == "paused" || s == "stopped" || s == "invisible" {
+                        visible = false;
+                    }
+                }
+            }
+            (state, visible)
+        } else {
+            ("active".to_string(), true)
+        };
+
         Self {
             id: rec.id.clone(),
             name: rec.name.clone(),
@@ -126,6 +182,8 @@ impl FmoEntry {
             balloon1: String::new(),
             kerohwnd: rec.kerohwnd,
             modulestate: rec.modulestate.clone(),
+            is_visible,
+            lifecycle_state,
         }
     }
 }

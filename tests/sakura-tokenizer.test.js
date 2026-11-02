@@ -178,11 +178,29 @@ test("parseSakuraScript handles bracket escaping and quoted arguments with comma
 	assert.equal(callCmd.args[2], 'the "MobileMaster"');
 });
 
-test("AST traversal functions (traverseAst and collectAstTokens)", async () => {
-	const { traverseAst, collectAstTokens } = await import(
-		"../ui/js/ghost/parser/ast.js"
-	);
-	const script = "\\0\\s[0]Text\\q[Option 1,id1]";
+test("parseSakuraScript tokenizes \\m[umsg,wparam,lparam] post_message", () => {
+	const script = "\\0\\m[WM_CLOSE,0,0]Text";
+	const tokens = parseSakuraScript(script);
+	const postMsg = tokens.find((t) => t.type === "post_message");
+	assert.ok(postMsg);
+	assert.equal(postMsg.umsg, "WM_CLOSE");
+	assert.equal(postMsg.wparam, "0");
+	assert.equal(postMsg.lparam, "0");
+});
+
+test("AST traversal functions and lifetime filtering", async () => {
+	const {
+		traverseAst,
+		collectAstTokens,
+		collectAstTokensByLifetime,
+		getSakuraTokenLifetime,
+	} = await import("../ui/js/ghost/parser/ast.js");
+
+	assert.equal(getSakuraTokenLifetime({ type: "font" }), "Scope");
+	assert.equal(getSakuraTokenLifetime({ type: "surface" }), "Permanent");
+	assert.equal(getSakuraTokenLifetime({ type: "char" }), "Script");
+
+	const script = "\\0\\s[0]\\f[bold,1]Text\\q[Option 1,id1]";
 	const tokens = parseSakuraScript(script);
 	const ast = tokensToAst(tokens);
 
@@ -202,4 +220,12 @@ test("AST traversal functions (traverseAst and collectAstTokens)", async () => {
 	assert.ok(choiceTok);
 	assert.equal(choiceTok.id, "id1");
 	assert.equal(choiceTok.text, "Option 1");
+
+	const scopeTokens = collectAstTokensByLifetime(ast, "Scope");
+	assert.equal(scopeTokens.length, 1);
+	assert.equal(scopeTokens[0].type, "font");
+
+	const permanentTokens = collectAstTokensByLifetime(ast, "Permanent");
+	assert.equal(permanentTokens.length, 1);
+	assert.equal(permanentTokens[0].type, "surface");
 });

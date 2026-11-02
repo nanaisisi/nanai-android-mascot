@@ -2,17 +2,11 @@
  * Nanai Android Mascot - 独立バルーンウィンドウ制御スクリプト
  */
 
-import { applyAssetProperties } from "../core/actions/balloon-descript/assets.js";
-import { applyFontProperties } from "../core/actions/balloon-descript/font.js";
-import { applyLayoutProperties } from "../core/actions/balloon-descript/layout.js";
-import {
-	emit,
-	invoke,
-	isTauriAvailable,
-	listen,
-	startDraggingWindow,
-} from "../core/tauri-helper.js";
-import { processChromaKey } from "../surface/surface-compositor.js";
+import { emit, isTauriAvailable, listen } from "../core/tauri-helper.js";
+import { setupWindowGestures } from "./balloon-window/gesture.js";
+import { setupInteractiveElements } from "./balloon-window/interactive.js";
+import { updateBalloonWindowScale } from "./balloon-window/scale.js";
+import { applyBalloonDescript as applyThemeDescript } from "./balloon-window/theme.js";
 
 const urlParams = new URLSearchParams(globalThis.location.search);
 const scopeId = parseInt(urlParams.get("scope") || "0", 10);
@@ -22,175 +16,40 @@ let currentDpiScale = 1;
 let currentUserScale = 1;
 let isBalloonDontMove = false;
 
-function updateBalloonWindowScale(balloonBox) {
-	const root = document.documentElement;
-	const finalScale = +(currentUserScale * currentDpiScale).toFixed(4);
-	root.style.setProperty("--balloon-dpi-scale", String(currentDpiScale));
-	root.style.setProperty("--balloon-user-scale", String(currentUserScale));
-	if (balloonBox) {
-		balloonBox.style.transform = finalScale !== 1 ? `scale(${finalScale})` : "";
-		balloonBox.style.transformOrigin = "top left";
-	}
-}
-
-function setupInteractiveElements(balloonText) {
-	if (!balloonText) return;
-
-	// 選択肢ボタン (\q)
-	balloonText.querySelectorAll(".balloon-choice-btn").forEach((btn) => {
-		btn.addEventListener("click", (e) => {
-			e.stopPropagation();
-			const choiceId = btn.getAttribute("data-choice-id");
-			const choiceText = btn.textContent;
-			void emit("balloon-choice-selected", { scopeId, choiceId, choiceText });
-		});
-	});
-
-	// アンカーリンク (\_a)
-	balloonText.querySelectorAll(".balloon-anchor").forEach((anchor) => {
-		anchor.addEventListener("click", (e) => {
-			e.stopPropagation();
-			const anchorId = anchor.getAttribute("data-anchor-id");
-			void emit("balloon-anchor-selected", { scopeId, anchorId });
-		});
-	});
-}
+// 外部参照および後方互換性のためエクスポート
+export {
+	setupInteractiveElements,
+	setupWindowGestures,
+	updateBalloonWindowScale,
+};
 
 /**
  * バルーン descript.txt の定義をスタイルへ動的反映（UKADOC準拠）
  * // [descript.txt（Balloonの）]: balloon_manifest パースとスタイル適用
  * @param {string} theme
  */
-async function applyBalloonDescript(theme) {
+export async function applyBalloonDescript(theme) {
 	if (!isTauriAvailable()) return;
 	if (appliedTheme === theme) return;
 	if (applyingTheme === theme) return;
 	applyingTheme = theme;
 	try {
-		const props = await invoke("balloon_manifest", { name: theme, scopeId });
-		if (!props || typeof props !== "object") return;
-		const balloonBox = document.getElementById("balloon-box");
-		const root = document.documentElement;
-
-		// 推奨 DPI (dpi,推奨DPI / 既定値: 96, SSP 2.7.21準拠)
-		const parsedDpi = parseInt(props.dpi, 10);
-		const balloonDpi =
-			!Number.isNaN(parsedDpi) && parsedDpi > 0 ? parsedDpi : 96;
-		currentDpiScale = +(96 / balloonDpi).toFixed(4);
-		root.style.setProperty("--balloon-dpi", String(balloonDpi));
-		updateBalloonWindowScale(balloonBox);
-
-		const instanceContext = {
-			balloonDpiScale: currentDpiScale,
-			balloonUserScale: currentUserScale,
-			currentBalloonTheme: theme,
-			elements: { balloonDisplay: balloonBox },
-		};
-
-		// descript.txt のレイアウト、フォント、色、アンカー、カーソル、装飾、アセットプロパティを完全適用
-		applyLayoutProperties(balloonBox || root, props, instanceContext);
-		applyFontProperties(balloonBox || root, props, instanceContext);
-		applyAssetProperties(balloonBox || root, props, instanceContext);
-
-		isBalloonDontMove = !!instanceContext.balloonDontMove;
-
-		// 有効テキスト領域 (validrect) による余白調整
-		const vl = parseInt(props["validrect.left"], 10);
-		const vt = parseInt(props["validrect.top"], 10);
-		const vr = parseInt(props["validrect.right"], 10);
-		const vb = parseInt(props["validrect.bottom"], 10);
-		if (
-			!Number.isNaN(vl) &&
-			!Number.isNaN(vt) &&
-			!Number.isNaN(vr) &&
-			!Number.isNaN(vb)
-		) {
-			balloonBox?.style.setProperty(
-				"padding",
-				`${Math.max(8, vt)}px ${Math.max(8, vr)}px ${Math.max(8, vb)}px ${Math.max(8, vl)}px`,
-			);
+		const result = await applyThemeDescript({
+			theme,
+			scopeId,
+			currentUserScale,
+			onDpiScaleChange: (newDpiScale) => {
+				currentDpiScale = newDpiScale;
+			},
+			onDontMoveChange: (dontMove) => {
+				isBalloonDontMove = dontMove;
+			},
+		});
+		if (result) {
+			currentDpiScale = result.dpiScale;
+			isBalloonDontMove = result.isBalloonDontMove;
+			appliedTheme = theme;
 		}
-		// 折り返し幅 (wordwrappoint.x は原点右基準の負オフセット指定)
-		const ww = parseInt(props["wordwrappoint.x"], 10);
-		if (!Number.isNaN(ww)) {
-			balloonBox?.style.setProperty(
-				"max-width",
-				`calc(100% + ${Math.abs(ww)}px)`,
-			);
-		}
-
-		// [balloons*s.txt/balloonk*s.txt/balloonp*]: 背景画像（scope 0: balloons0.png, scope 1: balloonk0.png, scope >= 2: balloonp{scopeId}.png）+ PNAアルファマスク対応
-		const imageFile =
-			scopeId === 0
-				? "balloons0.png"
-				: scopeId === 1
-					? "balloonk0.png"
-					: `balloonp${scopeId}.png`;
-		const pnaFile =
-			scopeId === 0
-				? "balloons0.pna"
-				: scopeId === 1
-					? "balloonk0.pna"
-					: `balloonp${scopeId}.pna`;
-		let bgImageRaw = await invoke("load_balloon_image", {
-			name: theme,
-			file: imageFile,
-		}).catch(() => null);
-
-		if (!bgImageRaw && scopeId >= 2) {
-			bgImageRaw = await invoke("load_balloon_image", {
-				name: theme,
-				file: "balloons0.png",
-			}).catch(() => null);
-		}
-
-		let pnaImage = await invoke("load_balloon_image", {
-			name: theme,
-			file: pnaFile,
-		}).catch(() => null);
-
-		if (!pnaImage && scopeId >= 2) {
-			pnaImage = await invoke("load_balloon_image", {
-				name: theme,
-				file: "balloons0.pna",
-			}).catch(() => null);
-		}
-
-		const bgImage = bgImageRaw
-			? await processChromaKey(bgImageRaw, pnaImage)
-			: null;
-
-		// オプションアセット (balloonc, arrow0/1, sstp, online) のロード試行
-		await Promise.all([
-			invoke("load_balloon_image", {
-				name: theme,
-				file: "balloonc0.png",
-			}).catch(() => null),
-			invoke("load_balloon_image", { name: theme, file: "arrow0.png" }).catch(
-				() => null,
-			),
-			invoke("load_balloon_image", { name: theme, file: "arrow1.png" }).catch(
-				() => null,
-			),
-			invoke("load_balloon_image", { name: theme, file: "sstp.png" }).catch(
-				() => null,
-			),
-			invoke("load_balloon_image", {
-				name: theme,
-				file: "online0.png",
-			}).catch(() => null),
-		]);
-
-		if (bgImage) {
-			const t = Number.isNaN(vt) ? 38 : Math.max(8, vt);
-			const r = Number.isNaN(vr) ? 40 : Math.max(8, vr);
-			const b = Number.isNaN(vb) ? 60 : Math.max(8, vb);
-			const l = Number.isNaN(vl) ? 40 : Math.max(8, vl);
-			document.body.style.borderImage = `url("${bgImage}") ${t} ${r} ${b} ${l} fill / ${t}px ${r}px ${b}px ${l}px stretch`;
-			document.body.style.borderStyle = "solid";
-			document.body.style.borderWidth = "0";
-		}
-		appliedTheme = theme;
 	} catch (_e) {
 		// スキン descript 未定義（CSS テーマのみ）の場合は無視
 	} finally {
@@ -198,7 +57,7 @@ async function applyBalloonDescript(theme) {
 	}
 }
 
-function initBalloonWindow() {
+export function initBalloonWindow() {
 	const balloonBox = document.getElementById("balloon-box");
 	const _balloonText = document.getElementById("balloon-text");
 
@@ -208,7 +67,7 @@ function initBalloonWindow() {
 		localStorage.getItem("nanai_balloon_theme") ||
 		"default";
 	document.documentElement.setAttribute("data-balloon-theme", savedTheme);
-	applyBalloonDescript(savedTheme);
+	void applyBalloonDescript(savedTheme);
 
 	if (!isTauriAvailable()) return;
 
@@ -217,13 +76,13 @@ function initBalloonWindow() {
 		const { html, theme } = event.payload || {};
 		if (theme) {
 			document.documentElement.setAttribute("data-balloon-theme", theme);
-			applyBalloonDescript(theme);
+			void applyBalloonDescript(theme);
 		}
 		const targetText = document.getElementById("balloon-text");
 		if (targetText && html !== undefined) {
 			targetText.innerHTML = html;
 			// クリックイベントの再バインド (選択肢・アンカー等)
-			setupInteractiveElements(targetText);
+			setupInteractiveElements(targetText, scopeId);
 		}
 	});
 
@@ -233,7 +92,7 @@ function initBalloonWindow() {
 		if (theme) {
 			document.documentElement.setAttribute("data-balloon-theme", theme);
 			localStorage.setItem("nanai_balloon_theme", theme);
-			applyBalloonDescript(theme);
+			void applyBalloonDescript(theme);
 		}
 	});
 
@@ -242,102 +101,22 @@ function initBalloonWindow() {
 		const userScale = Number(event.payload?.userScale);
 		if (!Number.isNaN(userScale) && userScale > 0) {
 			currentUserScale = userScale;
-			updateBalloonWindowScale(balloonBox);
+			updateBalloonWindowScale(balloonBox, currentUserScale, currentDpiScale);
 		}
 	});
 
 	void emit("balloon-ready", { scopeId });
 
-	// バルーン本体のクリックでスキップまたは改ページ通知
-	balloonBox?.addEventListener("click", () => {
-		void emit("balloon-clicked", { scopeId });
-	});
-
-	// ドラッグ移動 (Tauri v2 startDragging)
-	balloonBox?.addEventListener("mousedown", (e) => {
-		if (e.button === 0 && !isBalloonDontMove) {
-			void startDraggingWindow();
-		}
-	});
-
-	balloonBox?.addEventListener("mouseup", () => {
-		if (!isBalloonDontMove) {
-			void invoke("save_balloon_offset_from_position", { scopeId });
-		}
-	});
-
-	// モバイル/タッチ操作対応 (Slot-10 Cycle 3)
-	let touchStartDistance = 0;
-	let lastTouchTapTime = 0;
-	let isTouchDragging = false;
-
-	balloonBox?.addEventListener(
-		"touchstart",
-		(e) => {
-			if (e.touches.length === 1) {
-				const now = Date.now();
-				// ダブルタップでバルーン倍率切替 (100% <-> 125%)
-				if (now - lastTouchTapTime < 300) {
-					currentUserScale = currentUserScale === 1 ? 1.25 : 1;
-					updateBalloonWindowScale(balloonBox);
-					void emit("balloon-scale-changed", {
-						userScale: currentUserScale,
-						dpiScale: currentDpiScale,
-						finalScale: +(currentUserScale * currentDpiScale).toFixed(4),
-					});
-					lastTouchTapTime = 0;
-					return;
-				}
-				lastTouchTapTime = now;
-				if (!isBalloonDontMove) {
-					isTouchDragging = true;
-					void startDraggingWindow();
-				}
-			} else if (e.touches.length === 2) {
-				// ピンチ操作の初期距離記録
-				const dx = e.touches[0].clientX - e.touches[1].clientX;
-				const dy = e.touches[0].clientY - e.touches[1].clientY;
-				touchStartDistance = Math.hypot(dx, dy);
-			}
+	// ジェスチャーとマウスドラッグの設定
+	setupWindowGestures(balloonBox, {
+		scopeId,
+		getIsBalloonDontMove: () => isBalloonDontMove,
+		getUserScale: () => currentUserScale,
+		getDpiScale: () => currentDpiScale,
+		onUserScaleChange: (newScale) => {
+			currentUserScale = newScale;
 		},
-		{ passive: true },
-	);
-
-	balloonBox?.addEventListener(
-		"touchmove",
-		(e) => {
-			if (e.touches.length === 2 && touchStartDistance > 0) {
-				const dx = e.touches[0].clientX - e.touches[1].clientX;
-				const dy = e.touches[0].clientY - e.touches[1].clientY;
-				const currentDistance = Math.hypot(dx, dy);
-				const ratio = currentDistance / touchStartDistance;
-				if (Math.abs(ratio - 1) > 0.15) {
-					const newScale = Math.min(
-						2.0,
-						Math.max(0.5, currentUserScale * ratio),
-					);
-					currentUserScale = +newScale.toFixed(2);
-					touchStartDistance = currentDistance;
-					updateBalloonWindowScale(balloonBox);
-				}
-			}
-		},
-		{ passive: true },
-	);
-
-	balloonBox?.addEventListener(
-		"touchend",
-		(e) => {
-			if (e.touches.length === 0) {
-				touchStartDistance = 0;
-				if (isTouchDragging) {
-					isTouchDragging = false;
-					void invoke("save_balloon_offset_from_position", { scopeId });
-				}
-			}
-		},
-		{ passive: true },
-	);
+	});
 }
 
 if (document.readyState === "loading") {

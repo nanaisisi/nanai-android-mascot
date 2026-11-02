@@ -4,6 +4,15 @@ import { test } from "vitest";
 globalThis.window = globalThis;
 globalThis.location = { search: "?scope=0&theme=ivory" };
 globalThis.localStorage = { getItem: () => "ivory", setItem: () => {} };
+globalThis.Image = class {
+	constructor() {
+		this.naturalWidth = 100;
+		this.naturalHeight = 100;
+		setTimeout(() => {
+			this.onload?.();
+		}, 0);
+	}
+};
 
 const emittedEvents = [];
 const listenHandlers = {};
@@ -66,13 +75,36 @@ const getEl = (id) => {
 const docListeners = {};
 globalThis.document = {
 	documentElement: { style: { setProperty() {} }, setAttribute() {} },
-	body: { style: {} },
+	body: { style: { setProperty() {} } },
 	getElementById(id) {
 		return getEl(id);
+	},
+	querySelector(_selector) {
+		return null;
 	},
 	readyState: "loading",
 	addEventListener(type, cb) {
 		docListeners[type] = cb;
+	},
+	createElement(tag) {
+		if (tag === "canvas") {
+			return {
+				width: 0,
+				height: 0,
+				toDataURL: () => "data:image/png;base64,mock",
+				getContext() {
+					return {
+						drawImage() {},
+						clearRect() {},
+						putImageData() {},
+						getImageData: () => ({
+							data: new Uint8Array([0, 255, 0, 255, 255, 255, 255, 255]),
+						}),
+					};
+				},
+			};
+		}
+		return {};
 	},
 };
 
@@ -120,7 +152,23 @@ globalThis.__TAURI_INTERNALS__ = {
 	},
 };
 
-await import("../ui/js/ghost/balloon-window.js");
+const {
+	updateBalloonWindowScale,
+	setupInteractiveElements,
+	setupWindowGestures,
+} = await import("../ui/js/ghost/balloon-window.js");
+const { updateBalloonWindowScale: updateScaleDirect } = await import(
+	"../ui/js/ghost/balloon-window/scale.js"
+);
+const { setupInteractiveElements: setupInteractiveDirect } = await import(
+	"../ui/js/ghost/balloon-window/interactive.js"
+);
+const { loadBalloonSkinImages, applyBalloonDescript } = await import(
+	"../ui/js/ghost/balloon-window/theme.js"
+);
+const { setupWindowGestures: setupGesturesDirect } = await import(
+	"../ui/js/ghost/balloon-window/gesture.js"
+);
 
 test("balloon-window covers interactive elements, theme/manifest loading, and Tauri scale/drag events", async () => {
 	// Trigger DOMContentLoaded listener
@@ -192,10 +240,126 @@ test("balloon-window covers interactive elements, theme/manifest loading, and Ta
 		touches: [],
 	});
 
-	// 6. Test Non-Tauri environment early return
+	// 6. Test submodules directly
+	// scale.js
+	const mockBox = { style: { transform: "", transformOrigin: "" } };
+	const scaleResult = updateBalloonWindowScale(mockBox, 1.25, 0.8);
+	assert.strictEqual(scaleResult, 1);
+	const scaleResult2 = updateScaleDirect(mockBox, 1.5, 1.0);
+	assert.strictEqual(scaleResult2, 1.5);
+	assert.strictEqual(mockBox.style.transform, "scale(1.5)");
+	updateScaleDirect(null, 1.0, 1.0);
+
+	// interactive.js
+	setupInteractiveElements(null, 0);
+	const choiceBtn = {
+		getAttribute: () => "choice_direct",
+		textContent: "Direct Choice",
+		addEventListener(_t, cb) {
+			this._cb = cb;
+		},
+	};
+	const anchorLink = {
+		getAttribute: () => "anchor_direct",
+		addEventListener(_t, cb) {
+			this._cb = cb;
+		},
+	};
+	const mockText = {
+		querySelectorAll: (selector) => {
+			if (selector === ".balloon-choice-btn") {
+				return [choiceBtn];
+			}
+			if (selector === ".balloon-anchor") {
+				return [anchorLink];
+			}
+			return [];
+		},
+	};
+	setupInteractiveDirect(mockText, 1);
+	choiceBtn._cb?.({ stopPropagation() {} });
+	anchorLink._cb?.({ stopPropagation() {} });
+
+	// theme.js
+	const loadedBg = await loadBalloonSkinImages("ivory", 0);
+	assert.ok(loadedBg);
+	const loadedKero = await loadBalloonSkinImages("ivory", 1);
+	assert.ok(loadedKero);
+	const loadedChar = await loadBalloonSkinImages("ivory", 2);
+	assert.ok(loadedChar);
+
+	let callbackDpi = 0;
+	let callbackDontMove = null;
+	const themeRes = await applyBalloonDescript({
+		theme: "ivory",
+		scopeId: 0,
+		currentUserScale: 1.0,
+		onDpiScaleChange: (dpi) => {
+			callbackDpi = dpi;
+		},
+		onDontMoveChange: (dontMove) => {
+			callbackDontMove = dontMove;
+		},
+	});
+	assert.ok(themeRes);
+	assert.strictEqual(callbackDpi, 0.8);
+	assert.strictEqual(callbackDontMove, true);
+
+	// gesture.js
+	let userScaleState = 1.0;
+	const mockGestureBox = {
+		style: { transform: "", transformOrigin: "" },
+		listeners: {},
+		addEventListener(ev, cb) {
+			this.listeners[ev] = cb;
+		},
+	};
+	setupGesturesDirect(mockGestureBox, {
+		scopeId: 0,
+		getIsBalloonDontMove: () => false,
+		getUserScale: () => userScaleState,
+		getDpiScale: () => 1.0,
+		onUserScaleChange: (s) => {
+			userScaleState = s;
+		},
+	});
+	// Click & Mouse events
+	mockGestureBox.listeners.click();
+	mockGestureBox.listeners.mousedown({ button: 0 });
+	mockGestureBox.listeners.mouseup();
+	// Touch pinch & tap
+	mockGestureBox.listeners.touchstart({
+		touches: [{ clientX: 10, clientY: 10 }],
+	});
+	mockGestureBox.listeners.touchstart({
+		touches: [{ clientX: 10, clientY: 10 }],
+	}); // double tap triggers 1.25 scale
+	assert.strictEqual(userScaleState, 1.25);
+	mockGestureBox.listeners.touchstart({
+		touches: [
+			{ clientX: 10, clientY: 10 },
+			{ clientX: 110, clientY: 10 },
+		],
+	});
+	mockGestureBox.listeners.touchmove({
+		touches: [
+			{ clientX: 10, clientY: 10 },
+			{ clientX: 160, clientY: 10 },
+		],
+	});
+	mockGestureBox.listeners.touchend({ touches: [] });
+	setupWindowGestures(null, {});
+
+	// 7. Test Non-Tauri environment early return
 	delete globalThis.__TAURI__;
 	delete globalThis.__TAURI_INTERNALS__;
 	docListeners.DOMContentLoaded?.();
+	const nonTauriThemeRes = await applyBalloonDescript({
+		theme: "ivory",
+		scopeId: 0,
+		currentUserScale: 1.0,
+	});
+	assert.strictEqual(nonTauriThemeRes, null);
 
 	assert.ok(true);
 });

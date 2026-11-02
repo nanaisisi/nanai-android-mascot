@@ -130,6 +130,13 @@ test("surface-compositor covers Cycle 3 mobile optimizations: data32, clearRect,
 	assert.deepEqual(fb.getPixel(0, 0), [200, 100, 50, 255]);
 	assert.deepEqual(fb.getPixel(1, 0), [10, 20, 30, 255]);
 
+	// test reduce mode (alpha multiplication)
+	const reduceLayer = new SurfaceFrameBuffer(2, 2);
+	reduceLayer.setPixel(0, 0, 0, 0, 0, 128); // 50% opacity
+	fb.compositeBuffer(reduceLayer, 0, 0, "reduce");
+	// fb(0, 0) original alpha was 255, now Math.round((255 * 128) / 255) = 128
+	assert.deepEqual(fb.getPixel(0, 0), [200, 100, 50, 128]);
+
 	// test destroy
 	fb.destroy();
 	assert.equal(fb.width, 0);
@@ -151,6 +158,12 @@ test("surface-compositor covers processChromaKey, drawLayer, and composeSurfaceE
 	// 3. processChromaKey normal execution
 	const chromaRes = await processChromaKey("image.png", "mask.png", cache);
 	assert.ok(chromaRes);
+
+	// 3b. processChromaKey with useSelfAlpha: bypasses chromakeying
+	const selfAlphaRes = await processChromaKey("selfalpha.png", null, cache, {
+		useSelfAlpha: true,
+	});
+	assert.equal(selfAlphaRes, "selfalpha.png");
 
 	// 4. drawLayer & drawImageLayer
 	const mockCtx = {
@@ -194,6 +207,23 @@ test("surface-compositor covers processChromaKey, drawLayer, and composeSurfaceE
 	await drawLayer(mockCtx, "asis.png", resolvePath, 0, 0, "asis");
 	await drawLayer(mockCtx, "base.png", resolvePath, 0, 0, "base");
 	await drawLayer(mockCtx, "interpolate.png", resolvePath, 0, 0, "interpolate");
+	await drawLayer(mockCtx, "reduce.png", resolvePath, 0, 0, "reduce");
+	await drawLayer(
+		mockCtx,
+		"overlaymul.png",
+		resolvePath,
+		0,
+		0,
+		"overlaymultiply",
+	);
+	await drawLayer(
+		mockCtx,
+		"overlayscreen.png",
+		resolvePath,
+		0,
+		0,
+		"overlayscreen",
+	);
 	await drawLayer(mockCtx, "", resolvePath, 0, 0, "overlay");
 
 	const mockImg = new globalThis.Image();

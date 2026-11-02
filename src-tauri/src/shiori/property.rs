@@ -67,7 +67,45 @@ pub fn evaluate_property_query(query: &str) -> String {
         | "updatebuttoncaption"
         | "vanishbuttoncaption"
         | "vanishbuttonvisible" => "1".to_string(),
+        "system.year" => "2026".to_string(),
+        "system.month" => "11".to_string(),
+        "system.day" => "3".to_string(),
+        "system.hour" => "12".to_string(),
+        "system.minute" => "0".to_string(),
+        "system.second" => "0".to_string(),
+        "system.millisecond" => "0".to_string(),
+        "system.dayofweek" => "2".to_string(),
+        "system.cursor.pos" => "0,0".to_string(),
+        "system.theme.app.mode" => "dark".to_string(),
+        "system.theme.os.mode" => "dark".to_string(),
+        "system.dnd.mode" => "none".to_string(),
+        "system.monitor.count" => "1".to_string(),
+        "system.disk.count" => "1".to_string(),
+        "update_time" => "0".to_string(),
+        "sakura.bind.menu" => "".to_string(),
+        "kero.bind.menu" => "".to_string(),
         _ => {
+            if q.starts_with("system.os.") {
+                return "Linux".to_string();
+            }
+            if q.starts_with("system.cpu.") {
+                return "x86_64".to_string();
+            }
+            if q.starts_with("system.memory.") {
+                return "1024".to_string();
+            }
+            if q.starts_with("system.power.") {
+                return "ac".to_string();
+            }
+            if q.starts_with("system.network.") {
+                return "online".to_string();
+            }
+            if q.starts_with("system.monitor.index") {
+                return "0,0,1920,1080".to_string();
+            }
+            if q.starts_with("system.disk.index") {
+                return "100000".to_string();
+            }
             if q.starts_with("currentghost.scope(") {
                 if q.contains(".name") {
                     return "Sakura".to_string();
@@ -97,6 +135,36 @@ mod tests {
         );
         assert_eq!(evaluate_property_query("currentghost.name"), "Mock Ghost");
         assert_eq!(evaluate_property_query("username"), "User");
+        assert_eq!(evaluate_property_query("system.year"), "2026");
+        assert_eq!(evaluate_property_query("system.month"), "11");
+        assert_eq!(evaluate_property_query("system.day"), "3");
+        assert_eq!(evaluate_property_query("system.hour"), "12");
+        assert_eq!(evaluate_property_query("system.minute"), "0");
+        assert_eq!(evaluate_property_query("system.second"), "0");
+        assert_eq!(evaluate_property_query("system.millisecond"), "0");
+        assert_eq!(evaluate_property_query("system.dayofweek"), "2");
+        assert_eq!(evaluate_property_query("system.cursor.pos"), "0,0");
+        assert_eq!(evaluate_property_query("system.theme.app.mode"), "dark");
+        assert_eq!(evaluate_property_query("system.theme.os.mode"), "dark");
+        assert_eq!(evaluate_property_query("system.dnd.mode"), "none");
+        assert_eq!(evaluate_property_query("system.monitor.count"), "1");
+        assert_eq!(evaluate_property_query("system.disk.count"), "1");
+        assert_eq!(evaluate_property_query("system.os.name"), "Linux");
+        assert_eq!(evaluate_property_query("system.cpu.name"), "x86_64");
+        assert_eq!(evaluate_property_query("system.memory.total"), "1024");
+        assert_eq!(evaluate_property_query("system.power.state"), "ac");
+        assert_eq!(evaluate_property_query("system.network.state"), "online");
+        assert_eq!(
+            evaluate_property_query("system.monitor.index(0).rect"),
+            "0,0,1920,1080"
+        );
+        assert_eq!(
+            evaluate_property_query("system.disk.index(0).free"),
+            "100000"
+        );
+        assert_eq!(evaluate_property_query("update_time"), "0");
+        assert_eq!(evaluate_property_query("sakura.bind.menu"), "");
+        assert_eq!(evaluate_property_query("kero.bind.menu"), "");
         assert_eq!(
             evaluate_property_query("unknown.prop"),
             "(unknown property: unknown.prop)"

@@ -108,4 +108,46 @@ describe("system/desktop.js", () => {
 
 		delete globalThis.__TAURI_INTERNALS__;
 	});
+
+	it("handleSetTrayBalloon and reset commands trigger SHIORI events", async () => {
+		vi.useFakeTimers();
+		const events = [];
+		const handler = {
+			app: {
+				dispatchAction: vi.fn(),
+				ghostController: {
+					sendShioriEvent: vi.fn(async (name, refs) => {
+						events.push({ name, refs });
+					}),
+				},
+			},
+		};
+
+		await handleSetTrayBalloon(handler, [
+			"set",
+			"trayballoon",
+			"Test Title",
+			"Test Text",
+			"500",
+		]);
+		vi.advanceTimersByTime(500);
+
+		expect(events.some((e) => e.name === "OnTrayBalloonTimeout")).toBe(true);
+
+		await handleExecuteResetWindowPos(handler, []);
+		expect(
+			events.some(
+				(e) => e.name === "OnResetWindowPos" && e.refs[0] === "shell",
+			),
+		).toBe(true);
+
+		await handleExecuteResetBalloonPos(handler, []);
+		expect(
+			events.some(
+				(e) => e.name === "OnResetWindowPos" && e.refs[0] === "balloon",
+			),
+		).toBe(true);
+
+		vi.useRealTimers();
+	});
 });

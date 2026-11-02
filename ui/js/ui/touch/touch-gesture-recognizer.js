@@ -88,6 +88,10 @@ export class TouchGestureRecognizer {
 			swipeMinVelocity: options.swipeMinVelocity ?? 0.3,
 			twoFingerTapDelay: options.twoFingerTapDelay ?? 300,
 			throttleWithRaf: options.throttleWithRaf ?? false,
+			snapThreshold: options.snapThreshold ?? 40,
+			screenWidth:
+				options.screenWidth ??
+				(typeof window !== "undefined" ? window.innerWidth || 360 : 360),
 		};
 
 		this._listeners = new Map();
@@ -96,6 +100,7 @@ export class TouchGestureRecognizer {
 		// ジェスチャー状態
 		this._isPinching = false;
 		this._isDragging = false;
+		this._dockState = "none"; // "none" | "left" | "right"
 		this._initialPinchDist = 0;
 		this._initialAngle = 0;
 		this._lastPinchScale = 1.0;
@@ -200,6 +205,24 @@ export class TouchGestureRecognizer {
 			}
 		}
 		return event;
+	}
+
+	/**
+	 * 現在のドッキング・スナップ状態を取得 ("none" | "left" | "right")
+	 * @returns {"none" | "left" | "right"}
+	 */
+	getDockState() {
+		return this._dockState;
+	}
+
+	/**
+	 * ドッキング・スナップ状態を設定
+	 * @param {"none" | "left" | "right"} state
+	 */
+	setDockState(state) {
+		if (state === "left" || state === "right" || state === "none") {
+			this._dockState = state;
+		}
 	}
 
 	/**
@@ -498,19 +521,19 @@ export class TouchGestureRecognizer {
 			const totalTime = Math.max(1, Date.now() - this._startTime);
 			const velocity = totalDist / totalTime;
 
+			let swipeDirection = null;
 			if (
 				totalDist >= this.options.swipeMinDistance &&
 				velocity >= this.options.swipeMinVelocity
 			) {
-				let direction = "right";
 				if (Math.abs(totalDeltaX) > Math.abs(totalDeltaY)) {
-					direction = totalDeltaX > 0 ? "right" : "left";
+					swipeDirection = totalDeltaX > 0 ? "right" : "left";
 				} else {
-					direction = totalDeltaY > 0 ? "down" : "up";
+					swipeDirection = totalDeltaY > 0 ? "down" : "up";
 				}
 
 				this.emit(TOUCH_GESTURE_TYPES.SWIPE, {
-					direction,
+					direction: swipeDirection,
 					distance: totalDist,
 					velocity,
 					deltaX: totalDeltaX,
@@ -519,6 +542,35 @@ export class TouchGestureRecognizer {
 					centerY: endY,
 					originalEvent: e,
 				});
+			}
+
+			// 画面端スナップ（Docked State / Snap）の判定
+			const screenW = this.options.screenWidth;
+			const snapThreshold = this.options.snapThreshold;
+			let snapEdge = null;
+
+			if (
+				endX <= snapThreshold ||
+				(swipeDirection === "left" && endX < screenW / 2)
+			) {
+				snapEdge = "left";
+			} else if (
+				endX >= screenW - snapThreshold ||
+				(swipeDirection === "right" && endX > screenW / 2)
+			) {
+				snapEdge = "right";
+			}
+
+			if (snapEdge) {
+				this._dockState = snapEdge;
+				this.emit(TOUCH_GESTURE_TYPES.SNAP, {
+					dockState: snapEdge,
+					centerX: endX,
+					centerY: endY,
+					originalEvent: e,
+				});
+			} else {
+				this._dockState = "none";
 			}
 			return;
 		}

@@ -19,6 +19,7 @@ export const ANDROID_EVENTS = {
 	CLICK_THROUGH_CHANGED: "nas:android:click-through-changed",
 	TRIM_MEMORY: "nas:android:trim-memory",
 	BACK_BUTTON: "nas:android:back-button",
+	DOCK_CHANGED: "nas:android:dock-changed",
 };
 
 /**
@@ -41,15 +42,20 @@ export class AndroidBridge {
 	 */
 	constructor(options = {}) {
 		this._invoke = options.invokeHandler || invoke;
-		this._gestureRecognizer = options.gestureRecognizer || null;
+		this._gestureRecognizer = null;
 		this._listeners = new Map();
 		this._backHandlers = [];
 		this._isForegroundServiceActive = false;
 		this._isOverlayEnabled = false;
 		this._lifecycleState = ANDROID_LIFECYCLE_STATES.ACTIVE;
+		this._dockState = "none"; // "none" | "left" | "right"
 		this._overlayTransparency = 1.0;
 		this._isClickThrough = false;
 		this._cleanupFns = [];
+
+		if (options.gestureRecognizer) {
+			this.setGestureRecognizer(options.gestureRecognizer);
+		}
 
 		// ブラウザ/WebViewの可視性変更およびライフサイクル監視
 		this._setupVisibilityListeners();
@@ -61,6 +67,48 @@ export class AndroidBridge {
 	 */
 	setGestureRecognizer(recognizer) {
 		this._gestureRecognizer = recognizer;
+		if (
+			this._gestureRecognizer &&
+			typeof this._gestureRecognizer.on === "function"
+		) {
+			const unbind = this._gestureRecognizer.on("nas:touch:snap", (event) => {
+				if (event.dockState) {
+					this.setDockMode(event.dockState);
+				}
+			});
+			this._cleanupFns.push(unbind);
+		}
+	}
+
+	/**
+	 * ドッキング・スナップモードを設定
+	 * @param {"none" | "left" | "right"} dockState
+	 */
+	setDockMode(dockState) {
+		const state =
+			dockState === "left" || dockState === "right" ? dockState : "none";
+		if (this._dockState !== state) {
+			this._dockState = state;
+			if (
+				this._gestureRecognizer &&
+				typeof this._gestureRecognizer.setDockState === "function"
+			) {
+				this._gestureRecognizer.setDockState(state);
+			}
+			this._dispatch(ANDROID_EVENTS.DOCK_CHANGED, {
+				dockState: state,
+				timestamp: Date.now(),
+			});
+		}
+		return this._dockState;
+	}
+
+	/**
+	 * 現在のドッキング・スナップモードを取得
+	 * @returns {"none" | "left" | "right"}
+	 */
+	getDockMode() {
+		return this._dockState;
 	}
 
 	/**
@@ -256,6 +304,7 @@ export class AndroidBridge {
 			overlayTransparency: this._overlayTransparency,
 			isClickThrough: this._isClickThrough,
 			isThrottled: this.isThrottled(),
+			dockState: this._dockState,
 		};
 	}
 

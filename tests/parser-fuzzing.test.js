@@ -59,6 +59,23 @@ test("SakuraScript parser fuzzing and edge cases", () => {
 		"\\s[-1]\\s[99999]\\s[]\\s[non_number]",
 		"\\![bind,category,part,true]\\![bind-noevent,category,part,0]",
 		"\\![set,choicetimeout,-500]\\![set,balloontimeout,invalid]",
+		// Cycle 3 & 4: named animations, \__w wait_animation, escapes & quotes
+		"\\i[smile]\\i[talk_01,wait]\\i[invalid/char]\\i[]\\i[999999999999999999999999]",
+		"\\__w[animation,smile]\\__w[animation,]\\__w[animation,-1]\\__w[invalid,tag]\\__w[]",
+		'\\![anim,offset,smile,NaN,Infinity]\\![anim,offset,"smile with spaces",10,-20]',
+		'\\![anim,stop,"anim,quoted,commas"]\\![anim,clear,]',
+		'\\q["Choice, with comma",id_1,"arg1,with,comma","arg2"]',
+		'\\![open,passwordinput,id_pass,--title="Password, Required"]',
+		'\\![open,textareabox,id_text,--text="Line1\\1Line2\\1Line3"]',
+		"\\![open,sliderinput,id_slider,--min=-100,--max=100,--default=0]",
+		"\\![close,inputbox,__SYSTEM_ALL_INPUT__]\\![close,dialog,__SYSTEM_ALL_DIALOG__]",
+		"\\![set,balloonwait,200%]\\![set,balloonwait,50ms]\\![set,balloonwait,invalid]",
+		"\\![quicksection,true]\\![quicksection,0]",
+		"\\0\\_sMirror dual output with \\i[test]\\_s\\1\\e",
+		"\\x[noclear]\\x[invalid]\\x[]",
+		"\\_q[1]\\_q[0]\\_q[invalid]",
+		"\\f[color,default]\\f[height,150%]",
+		'\\0\\s[0]\\]\\]\\]\\"\\]"\\e',
 	];
 
 	for (const input of edgeCases) {

@@ -142,11 +142,11 @@ export function parseSurfacesTxt(text) {
 				const interval = match[2].trim();
 				currentSurfaces.forEach((s) => {
 					if (!animations[s]) animations[s] = [];
-					if (!animationMaps[s]) animationMaps[s] = new Map();
-					let anim = animationMaps[s].get(animId);
+					if (!animationMaps[s]) animationMaps[s] = {};
+					let anim = animationMaps[s][animId];
 					if (!anim) {
 						anim = { id: animId, interval, patterns: [] };
-						animationMaps[s].set(animId, anim);
+						animationMaps[s][animId] = anim;
 						animations[s].push(anim);
 					} else {
 						anim.interval = interval;
@@ -161,11 +161,11 @@ export function parseSurfacesTxt(text) {
 				const optionStr = match[2].trim();
 				currentSurfaces.forEach((s) => {
 					if (!animations[s]) animations[s] = [];
-					if (!animationMaps[s]) animationMaps[s] = new Map();
-					let anim = animationMaps[s].get(animId);
+					if (!animationMaps[s]) animationMaps[s] = {};
+					let anim = animationMaps[s][animId];
 					if (!anim) {
 						anim = { id: animId, interval: "sometimes", patterns: [] };
-						animationMaps[s].set(animId, anim);
+						animationMaps[s][animId] = anim;
 						animations[s].push(anim);
 					}
 					if (!anim.options) anim.options = [];
@@ -192,11 +192,11 @@ export function parseSurfacesTxt(text) {
 
 					currentSurfaces.forEach((s) => {
 						if (!animations[s]) animations[s] = [];
-						if (!animationMaps[s]) animationMaps[s] = new Map();
-						let anim = animationMaps[s].get(animId);
+						if (!animationMaps[s]) animationMaps[s] = {};
+						let anim = animationMaps[s][animId];
 						if (!anim) {
 							anim = { id: animId, interval: "sometimes", patterns: [] };
-							animationMaps[s].set(animId, anim);
+							animationMaps[s][animId] = anim;
 							animations[s].push(anim);
 						}
 						anim.patterns.push({

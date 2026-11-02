@@ -1,5 +1,6 @@
 //! FMO (File Mapping Object) 共有状態管理 (UKADOC 規格準拠)
 //! 起動中ゴーストの状態（サーフィス、名前、バルーンテキスト等）を外部ツールや他プロセスへ公開するインターフェース
+//! モバイルライフサイクル（バックグラウンド/フォアグラウンド）状態の同期に対応
 
 use crate::common::*;
 pub use nanai_android_mascot_ui::fmo::FmoEntry;
@@ -20,6 +21,18 @@ pub struct FmoGhostStatus {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub modulestate: Option<String>,
     pub path: String,
+    #[serde(default = "default_true")]
+    pub is_visible: bool,
+    #[serde(default = "default_active")]
+    pub lifecycle_state: String,
+}
+
+fn default_true() -> bool {
+    true
+}
+
+fn default_active() -> String {
+    "active".to_string()
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -38,23 +51,14 @@ pub async fn get_fmo_status(state: tauri::State<'_, AppState>) -> Result<String,
         .clone()
         .unwrap_or_else(|| "Nanai".to_string());
 
-    let entry = FmoEntry {
-        id: "0".to_string(),
-        name: current_name.clone(),
-        keroname: "Kero".to_string(),
-        hwnd: 0,
-        sakura_surface: 0,
-        kero_surface: 10,
-        ghostpath: String::new(),
-        balloon0: String::new(),
-        balloon1: String::new(),
-        kerohwnd: None,
-        modulestate: Some("shiori:running".to_string()),
-    };
+    let mut entry = FmoEntry::new("0", current_name);
+    entry.keroname = "Kero".to_string();
+    entry.modulestate = Some("shiori:running".to_string());
+    entry.update_lifecycle("active", true);
 
     let mut ghosts = HashMap::new();
     ghosts.insert(
-        entry.id,
+        entry.id.clone(),
         FmoGhostStatus {
             name: entry.name,
             keroname: entry.keroname,
@@ -65,6 +69,8 @@ pub async fn get_fmo_status(state: tauri::State<'_, AppState>) -> Result<String,
             kerohwnd: entry.kerohwnd,
             modulestate: entry.modulestate,
             path: entry.ghostpath,
+            is_visible: entry.is_visible,
+            lifecycle_state: entry.lifecycle_state,
         },
     );
 
@@ -75,4 +81,75 @@ pub async fn get_fmo_status(state: tauri::State<'_, AppState>) -> Result<String,
     };
 
     serde_json::to_string(&fmo).map_err(|e| e.to_string())
+}
+
+/// モバイルライフサイクル変更時の FMO 状態更新 Tauri コマンド
+#[tauri::command]
+pub async fn update_fmo_lifecycle_state(
+    lifecycle_state: String,
+    is_visible: bool,
+    state: tauri::State<'_, AppState>,
+) -> Result<String, String> {
+    let current_name = state
+        .current_ghost_name
+        .lock()
+        .clone()
+        .unwrap_or_else(|| "Nanai".to_string());
+
+    let mut entry = FmoEntry::new("0", current_name);
+    entry.keroname = "Kero".to_string();
+    entry.modulestate = Some("shiori:running".to_string());
+    entry.update_lifecycle(&lifecycle_state, is_visible);
+
+    let mut ghosts = HashMap::new();
+    ghosts.insert(
+        entry.id.clone(),
+        FmoGhostStatus {
+            name: entry.name,
+            keroname: entry.keroname,
+            surface0: entry.sakura_surface as u32,
+            surface1: entry.kero_surface as u32,
+            balloon0: entry.balloon0,
+            balloon1: entry.balloon1,
+            kerohwnd: entry.kerohwnd,
+            modulestate: entry.modulestate,
+            path: entry.ghostpath,
+            is_visible: entry.is_visible,
+            lifecycle_state: entry.lifecycle_state,
+        },
+    );
+
+    let fmo = FmoSystemStatus {
+        ghosts,
+        hwnd: 0,
+        craftman: "Nanai Project".to_string(),
+    };
+
+    serde_json::to_string(&fmo).map_err(|e| e.to_string())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_fmo_ghost_status_serialization() {
+        let status = FmoGhostStatus {
+            name: "Nanai".to_string(),
+            keroname: "Kero".to_string(),
+            surface0: 0,
+            surface1: 10,
+            balloon0: "".to_string(),
+            balloon1: "".to_string(),
+            kerohwnd: None,
+            modulestate: Some("shiori:running,lifecycle:active".to_string()),
+            path: "".to_string(),
+            is_visible: true,
+            lifecycle_state: "active".to_string(),
+        };
+
+        let json = serde_json::to_string(&status).unwrap();
+        assert!(json.contains("\"lifecycle_state\":\"active\""));
+        assert!(json.contains("\"is_visible\":true"));
+    }
 }

@@ -1,8 +1,9 @@
 //! SSTP (SakuraScript Transfer Protocol) 1.x receiver and protocol handler (UKADOC spec compliance)
-//! [SSTP/1.x], [req_res], [method_send], [method_execute], [method_give], [method_communicate], [method_notify], [keepalive]
+//! [SSTP/1.x], [req_res], [direct], [method_send], [method_execute], [method_give], [method_communicate], [method_notify], [keepalive]
 
 use nanai_android_mascot_ui::sstp::{
-    SstpRequest as CoreSstpRequest, SstpResponse as CoreSstpResponse,
+    SstpGhostContext, SstpRequest as CoreSstpRequest, SstpResponse as CoreSstpResponse,
+    handle_execute_command,
 };
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -21,6 +22,18 @@ pub struct SstpRequest {
     pub options: Vec<String>,
     pub references: HashMap<String, String>,
     pub keep_alive: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub surface: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub document: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub song: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub command: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub module: Option<String>,
+    #[serde(default)]
+    pub is_direct: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -29,6 +42,10 @@ pub struct SstpResponse {
     pub value: String,
     pub id: Option<String>,
     pub reference0: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub additional_data: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub error_description: Option<String>,
 }
 
 /// Parse raw SSTP/1.x request text conforming to UKADOC spec using core parser
@@ -46,12 +63,60 @@ pub fn parse_raw_sstp_request(raw: &str) -> Result<SstpRequest, String> {
         options: core_req.options,
         references: core_req.references,
         keep_alive: Some(core_req.keep_alive),
+        surface: core_req.surface,
+        document: core_req.document,
+        song: core_req.song,
+        command: core_req.command,
+        module: core_req.module,
+        is_direct: core_req.is_direct,
+    })
+}
+
+/// Parse DirectSSTP raw text (WM_COPYDATA) conforming to UKADOC DirectSSTP spec
+pub fn parse_raw_direct_sstp_request(raw: &str) -> Result<SstpRequest, String> {
+    let core_req = CoreSstpRequest::parse_direct(raw)?;
+    Ok(SstpRequest {
+        method: Some(core_req.method.as_str().to_string()),
+        sender: core_req.sender,
+        script: core_req.script,
+        event: core_req.event,
+        hwnd: core_req.hwnd,
+        security_level: core_req.security_level,
+        security_origin: core_req.security_origin,
+        id: core_req.id,
+        options: core_req.options,
+        references: core_req.references,
+        keep_alive: Some(core_req.keep_alive),
+        surface: core_req.surface,
+        document: core_req.document,
+        song: core_req.song,
+        command: core_req.command,
+        module: core_req.module,
+        is_direct: true,
     })
 }
 
 /// Parse raw SSTP text and format standard UKADOC SSTP response string [req_res]
 pub fn parse_and_build_sstp_raw_response(raw_request: &str) -> Result<String, String> {
     let core_req = CoreSstpRequest::parse(raw_request)?;
+    if core_req.method == nanai_android_mascot_ui::sstp::SstpMethod::Execute {
+        let ctx = SstpGhostContext {
+            name: "Nanai".to_string(),
+            sakura_name: "Nanai".to_string(),
+            kero_name: "Kero".to_string(),
+            shell_name: "master".to_string(),
+            balloon_name: "standard".to_string(),
+            version: "Nanai 0.1.0".to_string(),
+            short_version: "0.1.0".to_string(),
+            status: String::new(),
+            fmo_text: String::new(),
+            installed_ghosts: vec!["Nanai".to_string()],
+        };
+        let cmd = core_req.command.as_deref().unwrap_or("");
+        let resp = handle_execute_command(cmd, &ctx);
+        return Ok(resp.build());
+    }
+
     let mut resp = CoreSstpResponse::ok(core_req.script);
     if let Some(ref_val) = core_req.references.get("Reference0") {
         resp.references
@@ -83,21 +148,49 @@ pub async fn send_sstp_request(
             }
         }
         "EXECUTE" => {
-            if let Some(ref event) = request.event {
+            if let Some(ref cmd) = request.command {
+                let ctx = SstpGhostContext {
+                    name: "Nanai".to_string(),
+                    sakura_name: "Nanai".to_string(),
+                    kero_name: "Kero".to_string(),
+                    shell_name: "master".to_string(),
+                    balloon_name: "standard".to_string(),
+                    version: "Nanai 0.1.0".to_string(),
+                    short_version: "0.1.0".to_string(),
+                    status: String::new(),
+                    fmo_text: String::new(),
+                    installed_ghosts: vec!["Nanai".to_string()],
+                };
+                let resp = handle_execute_command(cmd, &ctx);
+                return Ok(SstpResponse {
+                    status: format!("{} {}", resp.status.code(), resp.status.reason_phrase()),
+                    value: resp.additional_data.clone().unwrap_or_default(),
+                    id: request.event,
+                    reference0: request.references.get("Reference0").cloned(),
+                    additional_data: resp.additional_data,
+                    error_description: resp.error_description,
+                });
+            } else if let Some(ref event) = request.event {
                 app_handle
                     .emit("sstp-execute-event", event)
                     .map_err(|e| e.to_string())?;
             }
         }
         "COMMUNICATE" => {
-            if let Some(ref script) = request.script {
+            let payload = request.script.as_deref().or(request.sentence.as_deref());
+            if let Some(script) = payload {
                 app_handle
                     .emit("sstp-communicate", script)
                     .map_err(|e| e.to_string())?;
             }
         }
         "GIVE" => {
-            if let Some(ref script) = request.script {
+            let payload = request
+                .script
+                .as_deref()
+                .or(request.document.as_deref())
+                .or(request.song.as_deref());
+            if let Some(script) = payload {
                 app_handle
                     .emit("sstp-give", script)
                     .map_err(|e| e.to_string())?;
@@ -109,6 +202,8 @@ pub async fn send_sstp_request(
                 value: format!("Unsupported SSTP method: {}", method),
                 id: None,
                 reference0: None,
+                additional_data: None,
+                error_description: Some("unsupported method".to_string()),
             });
         }
     }
@@ -118,6 +213,8 @@ pub async fn send_sstp_request(
         value: "SSTP request processed successfully".to_string(),
         id: request.event,
         reference0: request.references.get("Reference0").cloned(),
+        additional_data: None,
+        error_description: None,
     })
 }
 
@@ -158,6 +255,14 @@ mod tests {
         assert!(raw_resp.contains("Script: \\0Hi\\e"));
     }
 
+    #[test]
+    fn test_parse_raw_execute_command_response() {
+        let raw_exec = "EXECUTE SSTP/1.1\r\nSender: Client\r\nCommand: GetName\r\n";
+        let resp_str = parse_and_build_sstp_raw_response(raw_exec).unwrap();
+        assert!(resp_str.contains("200 OK"));
+        assert!(resp_str.contains("Nanai,Kero"));
+    }
+
     #[tokio::test]
     async fn test_sstp_send_request() {
         let req = SstpRequest {
@@ -172,6 +277,12 @@ mod tests {
             options: vec!["nobreak".to_string()],
             references: HashMap::new(),
             keep_alive: Some(false),
+            surface: None,
+            document: None,
+            song: None,
+            command: None,
+            module: None,
+            is_direct: false,
         };
         assert_eq!(req.sender, "TestApp");
     }

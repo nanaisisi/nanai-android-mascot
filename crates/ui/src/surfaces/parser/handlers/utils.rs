@@ -41,14 +41,22 @@ pub(crate) fn first_i32(value: &str) -> Option<i32> {
 }
 
 pub(crate) fn parse_balloon_offset_key(key: &str) -> Option<(String, char)> {
+    // balloon.offsetx, balloon.offsety, balloon.offset.x, balloon.offset.y
     if let Some(axis_str) = key.strip_prefix("balloon.offset") {
         let axis = axis_str.trim().trim_start_matches('.').chars().next()?;
-        return Some(("*".to_string(), axis));
+        if axis == 'x' || axis == 'y' {
+            return Some(("*".to_string(), axis));
+        }
     }
+    // sakura.balloon.offsetx / kero.balloon.offsetx / sakura.balloon.offset.x 等
     let (head, rest) = key.split_once(".balloon.offset")?;
     if head.is_empty() {
         return None;
     }
     let axis = rest.trim().trim_start_matches('.').chars().next()?;
-    Some((head.to_string(), axis))
+    if axis == 'x' || axis == 'y' {
+        Some((head.to_string(), axis))
+    } else {
+        None
+    }
 }

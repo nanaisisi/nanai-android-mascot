@@ -251,3 +251,26 @@ point.kinoko.center.y,660
     assert_eq!(s0.points.kinoko_center_x, Some(550));
     assert_eq!(s0.points.kinoko_center_y, Some(660));
 }
+
+#[test]
+fn test_parse_balloon_offset_scope_prefixes() {
+    let sample = r"charset,UTF-8
+surface0
+{
+sakura.balloon.offsetx,-15
+sakura.balloon.offsety,-30
+kero.balloon.offsetx,45
+kero.balloon.offsety,60
+balloon.offsetx,5
+balloon.offsety,10
+}
+";
+    let txt = SurfacesTxt::parse(sample);
+    let s0 = txt.surface(0).unwrap();
+    assert_eq!(s0.balloon_offsets.get("sakura").unwrap().x, Some(-15));
+    assert_eq!(s0.balloon_offsets.get("sakura").unwrap().y, Some(-30));
+    assert_eq!(s0.balloon_offsets.get("kero").unwrap().x, Some(45));
+    assert_eq!(s0.balloon_offsets.get("kero").unwrap().y, Some(60));
+    assert_eq!(s0.balloon_offsets.get("*").unwrap().x, Some(5));
+    assert_eq!(s0.balloon_offsets.get("*").unwrap().y, Some(10));
+}

@@ -60,3 +60,76 @@ test("surfaceCollisionMethods covers resolveSurfaceNumber and detectCollision", 
 
 	assert.ok(true);
 });
+
+test("surfaceCollisionMethods respects collisionSort (ascend, descend, none)", async () => {
+	const manager = {
+		...surfaceCollisionMethods,
+		baseWidth: 200,
+		baseHeight: 200,
+		currentSurfaceIdFor: () => 0,
+		collisions: {
+			0: [
+				{
+					id: 1,
+					name: "bottom_id1",
+					shape: "rect",
+					x1: 0,
+					y1: 0,
+					x2: 100,
+					y2: 100,
+					minX: 0,
+					minY: 0,
+					maxX: 100,
+					maxY: 100,
+				},
+				{
+					id: 5,
+					name: "middle_id5",
+					shape: "rect",
+					x1: 0,
+					y1: 0,
+					x2: 100,
+					y2: 100,
+					minX: 0,
+					minY: 0,
+					maxX: 100,
+					maxY: 100,
+				},
+				{
+					id: 2,
+					name: "top_id2",
+					shape: "rect",
+					x1: 0,
+					y1: 0,
+					x2: 100,
+					y2: 100,
+					minX: 0,
+					minY: 0,
+					maxX: 100,
+					maxY: 100,
+				},
+			],
+		},
+	};
+
+	const rect = { left: 0, top: 0, width: 200, height: 200 };
+
+	// 1. none (デフォルト: 末尾定義が手前優先 -> top_id2)
+	manager.collisionSort = "none";
+	let hit = manager.detectCollision(50, 50, rect, 0, 0);
+	assert.equal(hit.name, "top_id2");
+
+	// 2. ascend (ID昇順: id=1 が最優先)
+	manager.collisionSort = "ascend";
+	hit = manager.detectCollision(50, 50, rect, 0, 0);
+	assert.equal(hit.name, "bottom_id1");
+
+	// 3. descend (ID降順: id=5 が最優先)
+	manager.collisionSort = "descend";
+	hit = manager.detectCollision(50, 50, rect, 0, 0);
+	assert.equal(hit.name, "middle_id5");
+
+	// 4. 空当たり判定リスト
+	const emptyHit = manager.detectCollision(50, 50, rect, 999, 0);
+	assert.equal(emptyHit.name, "");
+});

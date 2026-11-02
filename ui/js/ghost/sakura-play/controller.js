@@ -20,6 +20,8 @@ export class SakuraPlaybackController {
 		this.isPaused = false;
 		this.isQuickMode = false;
 		this.waitMultiplier = 1.0;
+		/** @type {number|null} ミリ秒絶対指定時の待機時間 (\![set,balloonwait,<N>ms]) */
+		this.charWaitMs = null;
 		this.nextJobId = 1;
 		/** @type {Map<string, Set<Function>>} */
 		this.listeners = new Map();
@@ -122,12 +124,25 @@ export class SakuraPlaybackController {
 	 */
 	stop() {
 		this.clearQueue();
-		if (this.currentJob && this.player) {
+		if (this.player) {
 			this.player.skip();
 		}
 		this.currentJob = null;
 		this.isProcessing = false;
 		this.emit("playback:stopped");
+	}
+
+	/**
+	 * コントローラーの破棄・全タイマーおよびキューの完全クリーンアップ (Cycle 3 モバイル最適化)
+	 */
+	destroy() {
+		this.stop();
+		this.emit("playback:destroyed");
+		this.listeners.clear();
+		this.isPaused = true;
+		if (this.player?.destroy) {
+			this.player.destroy();
+		}
 	}
 
 	/**
@@ -207,6 +222,7 @@ export class SakuraPlaybackController {
 		const valid =
 			typeof ratio === "number" && !Number.isNaN(ratio) && ratio >= 0;
 		this.waitMultiplier = valid ? ratio : 1.0;
+		this.charWaitMs = null;
 		this.emit("playback:wait-multiplier", {
 			waitMultiplier: this.waitMultiplier,
 		});
@@ -221,12 +237,75 @@ export class SakuraPlaybackController {
 	}
 
 	/**
-	 * 与えられたベースウェイト(ms)に倍率を掛けた実効ウェイトを算出
+	 * バルーンウェイト設定 (\![set,balloonwait,倍率])
+	 * 仕様:
+	 * - 数値のみ: 0〜100 (1で等倍、0で即時表示、小数可)
+	 * - %指定: 0%〜10000% (100%で等倍)
+	 * - ms指定: 0ms〜10000ms (1文字あたりの待機時間をミリ秒絶対指定)
+	 * - 省略または "1": デフォルトに戻す
+	 * @param {string|number} [param]
+	 */
+	setBalloonWait(param) {
+		if (
+			param === undefined ||
+			param === null ||
+			param === "" ||
+			param === "1"
+		) {
+			this.resetBalloonWait();
+			return;
+		}
+
+		const str = String(param).trim().toLowerCase();
+		if (str.endsWith("ms")) {
+			const ms = Number.parseFloat(str.slice(0, -2));
+			if (!Number.isNaN(ms) && ms >= 0) {
+				this.charWaitMs = Math.min(10000, ms);
+				this.waitMultiplier = 1.0;
+			}
+		} else if (str.endsWith("%")) {
+			const pct = Number.parseFloat(str.slice(0, -1));
+			if (!Number.isNaN(pct) && pct >= 0) {
+				this.charWaitMs = null;
+				this.waitMultiplier = Math.min(100, pct / 100);
+			}
+		} else {
+			const num = Number.parseFloat(str);
+			if (!Number.isNaN(num) && num >= 0) {
+				this.charWaitMs = null;
+				this.waitMultiplier = Math.min(100, num);
+			}
+		}
+
+		this.emit("playback:balloon-wait", {
+			waitMultiplier: this.waitMultiplier,
+			charWaitMs: this.charWaitMs,
+		});
+	}
+
+	/**
+	 * バルーンウェイトをデフォルトにリセット
+	 */
+	resetBalloonWait() {
+		this.waitMultiplier = 1.0;
+		this.charWaitMs = null;
+		this.emit("playback:balloon-wait", {
+			waitMultiplier: 1.0,
+			charWaitMs: null,
+		});
+	}
+
+	/**
+	 * 与えられたベースウェイト(ms)に倍率または絶対値を適用した実効ウェイトを算出
 	 * @param {number} baseMs
+	 * @param {boolean} [isCharWait=false]
 	 * @returns {number}
 	 */
-	calculateWait(baseMs) {
+	calculateWait(baseMs, isCharWait = false) {
 		if (this.isQuickMode) return 0;
+		if (isCharWait && this.charWaitMs !== null) {
+			return Math.round(this.charWaitMs);
+		}
 		const ms = Math.max(0, Number(baseMs) || 0);
 		return Math.round(ms * this.waitMultiplier);
 	}

@@ -157,7 +157,50 @@ export class SakuraScriptPlayer {
 	}
 
 	sleep(ms) {
-		return new Promise((resolve) => setTimeout(resolve, ms));
+		return new Promise((resolve) => {
+			let timer = null;
+			const onCancel = () => {
+				if (timer) clearTimeout(timer);
+				resolve();
+			};
+			timer = setTimeout(() => {
+				this._sleepResolvers?.delete(onCancel);
+				resolve();
+			}, ms);
+			if (!this._sleepResolvers) this._sleepResolvers = new Set();
+			this._sleepResolvers.add(onCancel);
+		});
+	}
+
+	/**
+	 * プレイヤーの破棄・全タイマークリア (Cycle 3 モバイル最適化・ライフサイクル破棄対応)
+	 */
+	destroy() {
+		this.isPlaying = false;
+		this.playbackId++;
+		if (this._restoreTimer) {
+			clearTimeout(this._restoreTimer);
+			this._restoreTimer = null;
+		}
+		if (this.choiceTimeoutTimer) {
+			clearTimeout(this.choiceTimeoutTimer);
+			this.choiceTimeoutTimer = null;
+		}
+		if (this.balloonTimeoutTimer) {
+			clearTimeout(this.balloonTimeoutTimer);
+			this.balloonTimeoutTimer = null;
+		}
+		if (typeof this._pauseResolver === "function") {
+			const resolve = this._pauseResolver;
+			this._pauseResolver = null;
+			resolve();
+		}
+		if (this._sleepResolvers) {
+			for (const cancel of this._sleepResolvers) {
+				cancel();
+			}
+			this._sleepResolvers.clear();
+		}
 	}
 
 	/**

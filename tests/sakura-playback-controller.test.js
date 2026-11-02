@@ -170,3 +170,62 @@ test("SakuraPlaybackController pause, resume, accessors, waitMultiplier, and cha
 		"resumed",
 	]);
 });
+
+test("SakuraPlaybackController setBalloonWait formats and calculateWait behavior", () => {
+	const controller = new SakuraPlaybackController();
+	const events = [];
+
+	controller.on("playback:balloon-wait", (d) =>
+		events.push([d.waitMultiplier, d.charWaitMs]),
+	);
+
+	// Multiplier format (e.g. 1.5)
+	controller.setBalloonWait("1.5");
+	assert.equal(controller.getWaitMultiplier(), 1.5);
+	assert.equal(controller.calculateWait(40, true), 60);
+	assert.equal(controller.calculateWait(100, false), 150);
+
+	// Percent format (e.g. 200%)
+	controller.setBalloonWait("200%");
+	assert.equal(controller.getWaitMultiplier(), 2.0);
+	assert.equal(controller.calculateWait(40, true), 80);
+
+	// Millisecond format (e.g. 50ms)
+	controller.setBalloonWait("50ms");
+	assert.equal(controller.calculateWait(40, true), 50); // char wait fixed to 50ms
+	assert.equal(controller.calculateWait(100, false), 100); // base wait uses waitMultiplier
+
+	// 0: instant display
+	controller.setBalloonWait(0);
+	assert.equal(controller.calculateWait(40, true), 0);
+
+	// Reset
+	controller.resetBalloonWait();
+	assert.equal(controller.getWaitMultiplier(), 1.0);
+	assert.equal(controller.calculateWait(40, true), 40);
+
+	// Quick mode overrides everything
+	controller.setQuickMode(true);
+	assert.equal(controller.calculateWait(40, true), 0);
+});
+
+test("SakuraPlaybackController destroy stops queue and cleans up resources", () => {
+	let playerDestroyed = false;
+	const mockPlayer = {
+		play: async () => {},
+		skip: () => {},
+		destroy: () => {
+			playerDestroyed = true;
+		},
+	};
+
+	const controller = new SakuraPlaybackController({ player: mockPlayer });
+	controller.enqueue("\\0テスト\\e").catch(() => {});
+
+	assert.equal(controller.getQueueLength(), 0); // taken by _processQueue
+	controller.destroy();
+
+	assert.equal(playerDestroyed, true);
+	assert.equal(controller.getIsPaused(), true);
+	assert.equal(controller.listeners.size, 0);
+});

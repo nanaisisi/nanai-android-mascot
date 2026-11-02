@@ -171,11 +171,7 @@ fn test_animation_scheduler_basic() {
         id: 1,
         interval: Some(Interval::RunOnce),
         name: None,
-        patterns: vec![
-            pattern(0, 101, 50),
-            pattern(1, 102, 50),
-            pattern(2, -1, 0),
-        ],
+        patterns: vec![pattern(0, 101, 50), pattern(1, 102, 50), pattern(2, -1, 0)],
         collisions: vec![],
         options: vec![],
     };
@@ -376,7 +372,7 @@ fn test_animation_scheduler_exclusive_and_background() {
     // exclusive アニメーション: 1フレーム目(100ms) -> 2フレーム目(surface -1) で終了
     let _ = scheduler.step(100); // 1フレーム目 (pattern 0, surface 103)
     assert_eq!(scheduler.active_count(0), 1);
-    let _ = scheduler.step(0);   // 2フレーム目 (pattern 1, surface -1 で終了)
+    let _ = scheduler.step(0); // 2フレーム目 (pattern 1, surface -1 で終了)
     assert_eq!(scheduler.active_count(0), 0);
     assert!(!scheduler.is_blocked_by_exclusive(0, 1));
 

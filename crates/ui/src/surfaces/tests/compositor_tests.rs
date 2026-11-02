@@ -1,4 +1,4 @@
-use crate::surfaces::compositor::{composite_elements, SurfaceFrameBuffer};
+use crate::surfaces::compositor::{SurfaceFrameBuffer, composite_elements};
 use crate::surfaces::types::DrawMethod;
 
 #[test]
@@ -103,7 +103,10 @@ fn test_composite_layer_overlay_and_replace() {
     // ブレンド Multiply 合成
     let mut blend_layer = SurfaceFrameBuffer::new(2, 2);
     blend_layer.set_pixel(0, 0, 255, 255, 255, 255);
-    let blended = composite_elements(&base, &[(&blend_layer, 0, 0, DrawMethod::Blend("multiply".into()))]);
+    let blended = composite_elements(
+        &base,
+        &[(&blend_layer, 0, 0, DrawMethod::Blend("multiply".into()))],
+    );
     assert_eq!(blended.get_pixel(0, 0), Some((50, 50, 50, 255)));
 }
 
@@ -140,7 +143,10 @@ fn test_extended_blend_modes() {
     assert_eq!(added.get_pixel(0, 0), Some((150, 150, 150, 255)));
 
     // Blend difference
-    let diff = composite_elements(&base, &[(&layer, 0, 0, DrawMethod::Blend("difference".into()))]);
+    let diff = composite_elements(
+        &base,
+        &[(&layer, 0, 0, DrawMethod::Blend("difference".into()))],
+    );
     assert_eq!(diff.get_pixel(0, 0), Some((50, 50, 50, 255)));
 
     // Blend darken
@@ -148,6 +154,9 @@ fn test_extended_blend_modes() {
     assert_eq!(darken.get_pixel(0, 0), Some((50, 50, 50, 255)));
 
     // Blend lighten
-    let lighten = composite_elements(&base, &[(&layer, 0, 0, DrawMethod::Blend("lighten".into()))]);
+    let lighten = composite_elements(
+        &base,
+        &[(&layer, 0, 0, DrawMethod::Blend("lighten".into()))],
+    );
     assert_eq!(lighten.get_pixel(0, 0), Some((100, 100, 100, 255)));
 }

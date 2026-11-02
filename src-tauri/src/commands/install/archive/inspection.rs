@@ -250,7 +250,9 @@ pub fn inspect_zip_archive<R: std::io::Read + std::io::Seek>(
                     "plugin" => resolve_asset_path("assets/plugin", app_handle).ok(),
                     "shell" => resolve_asset_path("assets/shell", app_handle).ok(),
                     "calendar.skin" => resolve_asset_path("assets/calendar/skin", app_handle).ok(),
-                    "calendar.plugin" => resolve_asset_path("assets/calendar/plugin", app_handle).ok(),
+                    "calendar.plugin" => {
+                        resolve_asset_path("assets/calendar/plugin", app_handle).ok()
+                    }
                     _ => None,
                 };
 
@@ -294,13 +296,28 @@ mod tests {
         map.insert("type".to_string(), "ghost".to_string());
         map.insert("balloon.directory".to_string(), "balloon_main".to_string());
         map.insert("balloon.refresh".to_string(), "1".to_string());
-        map.insert("balloon.refreshundeletemask".to_string(), "keep.txt:save.dat".to_string());
+        map.insert(
+            "balloon.refreshundeletemask".to_string(),
+            "keep.txt:save.dat".to_string(),
+        );
         map.insert("balloon0.directory".to_string(), "balloon_zero".to_string());
-        map.insert("balloon0.source.directory".to_string(), "custom_b0".to_string());
+        map.insert(
+            "balloon0.source.directory".to_string(),
+            "custom_b0".to_string(),
+        );
         map.insert("balloon1.directory".to_string(), "balloon_one".to_string());
-        map.insert("balloon3.directory".to_string(), "balloon_three".to_string()); // 2が欠番なのでスキップされる
-        map.insert("calendar.skin0.directory".to_string(), "cal_skin".to_string());
-        map.insert("calendar.plugin0.directory".to_string(), "cal_plugin".to_string());
+        map.insert(
+            "balloon3.directory".to_string(),
+            "balloon_three".to_string(),
+        ); // 2が欠番なのでスキップされる
+        map.insert(
+            "calendar.skin0.directory".to_string(),
+            "cal_skin".to_string(),
+        );
+        map.insert(
+            "calendar.plugin0.directory".to_string(),
+            "cal_plugin".to_string(),
+        );
 
         let res = resolve_bundled_resources_config(&map);
         assert_eq!(res.len(), 5);
@@ -335,12 +352,18 @@ mod tests {
         map.insert("bootghost".to_string(), "master_ghost".to_string());
         map.insert("accept".to_string(), "Nanai".to_string());
         map.insert("refresh".to_string(), "1".to_string());
-        map.insert("refreshundeletemask".to_string(), "important.dat:config.xml".to_string());
+        map.insert(
+            "refreshundeletemask".to_string(),
+            "important.dat:config.xml".to_string(),
+        );
 
         let res = resolve_bundled_resources_config(&map);
         assert!(res.is_empty());
 
-        assert_eq!(map.get("bootghost").map(|s| s.as_str()), Some("master_ghost"));
+        assert_eq!(
+            map.get("bootghost").map(|s| s.as_str()),
+            Some("master_ghost")
+        );
         assert_eq!(map.get("accept").map(|s| s.as_str()), Some("Nanai"));
         assert_eq!(map.get("refresh").map(|s| s.as_str()), Some("1"));
         let masks: Vec<String> = map

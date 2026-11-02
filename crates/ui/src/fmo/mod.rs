@@ -90,9 +90,11 @@ impl FmoEntry {
             hwndlist.push(self.hwnd);
         }
         if let Some(khwnd) = self.kerohwnd
-            && khwnd != 0 && !hwndlist.contains(&khwnd) {
-                hwndlist.push(khwnd);
-            }
+            && khwnd != 0
+            && !hwndlist.contains(&khwnd)
+        {
+            hwndlist.push(khwnd);
+        }
 
         FmoRecord {
             id: self.id.clone(),

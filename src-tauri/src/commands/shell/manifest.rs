@@ -118,6 +118,10 @@ fn method_string(method: &DrawMethod) -> String {
         DrawMethod::Interpolate => "interpolate".to_string(),
         DrawMethod::Replace => "replace".to_string(),
         DrawMethod::Add | DrawMethod::Bind => "add".to_string(),
+        DrawMethod::AsIs => "asis".to_string(),
+        DrawMethod::Auto => "auto".to_string(),
+        DrawMethod::Move => "move".to_string(),
+        DrawMethod::Insert => "insert".to_string(),
         DrawMethod::Blend(name) => format!("blend-{name}"),
         DrawMethod::Custom(name) => name.clone(),
     }

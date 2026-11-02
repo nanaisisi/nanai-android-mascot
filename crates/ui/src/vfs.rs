@@ -24,9 +24,10 @@ pub fn normalize_vfs_path(path: &str) -> String {
 pub fn detect_and_decode(buffer: &[u8]) -> (String, &'static str) {
     // 1. UTF-8 BOM チェック (0xEF, 0xBB, 0xBF)
     if buffer.starts_with(&[0xEF, 0xBB, 0xBF])
-        && let Ok(utf8_str) = std::str::from_utf8(&buffer[3..]) {
-            return (utf8_str.to_string(), "UTF-8 (BOM)");
-        }
+        && let Ok(utf8_str) = std::str::from_utf8(&buffer[3..])
+    {
+        return (utf8_str.to_string(), "UTF-8 (BOM)");
+    }
 
     // 2. ヘッダー宣言チェック (charset,Shift_JIS / charset,CP932 / charset,UTF-8 等)
     // 最初の1024バイト程度をチェック
@@ -56,9 +57,10 @@ pub fn detect_and_decode(buffer: &[u8]) -> (String, &'static str) {
             }
             return (cow.into_owned(), "Shift_JIS");
         } else if (charset_decl == "utf-8" || charset_decl == "utf8")
-            && let Ok(utf8_str) = std::str::from_utf8(buffer) {
-                return (utf8_str.to_string(), "UTF-8");
-            }
+            && let Ok(utf8_str) = std::str::from_utf8(buffer)
+        {
+            return (utf8_str.to_string(), "UTF-8");
+        }
     }
 
     // 3. 標準 UTF-8 としてのパース試行
@@ -262,9 +264,11 @@ impl MockVfs {
                 &key[prefix.len()..]
             };
             if let Some(first_segment) = sub.split('/').next()
-                && !first_segment.is_empty() && !entries.contains(&first_segment.to_string()) {
-                    entries.push(first_segment.to_string());
-                }
+                && !first_segment.is_empty()
+                && !entries.contains(&first_segment.to_string())
+            {
+                entries.push(first_segment.to_string());
+            }
         }
         entries.sort();
         entries

@@ -4,8 +4,8 @@
 //! Shift_JIS(CP932)/UTF-8自動判定、およびインメモリVFSスタブ (MockVfs) を提供します。
 
 pub use nanai_android_mascot_ui::{
-    detect_and_decode, normalize_vfs_path, open_shift_jis_file, open_text_file, resolve_vfs_path,
-    MockVfs, VfsResolver,
+    MockVfs, VfsResolver, detect_and_decode, normalize_vfs_path, open_shift_jis_file,
+    open_text_file, resolve_vfs_path,
 };
 
 #[cfg(test)]

@@ -53,18 +53,19 @@ impl ParsedAnimationOptions {
                         parsed.is_exclusive = true;
                         // exclusive,(1,3,5) のような限定対象の抽出
                         if let Some(paren_open) = sub.find('(')
-                            && let Some(paren_close) = sub[paren_open..].find(')') {
-                                let inner = &sub[paren_open + 1..paren_open + paren_close];
-                                let mut targets = HashSet::new();
-                                for id_str in inner.split(',') {
-                                    if let Ok(id) = id_str.trim().parse::<u32>() {
-                                        targets.insert(id);
-                                    }
-                                }
-                                if !targets.is_empty() {
-                                    parsed.exclusive_targets = Some(targets);
+                            && let Some(paren_close) = sub[paren_open..].find(')')
+                        {
+                            let inner = &sub[paren_open + 1..paren_open + paren_close];
+                            let mut targets = HashSet::new();
+                            for id_str in inner.split(',') {
+                                if let Ok(id) = id_str.trim().parse::<u32>() {
+                                    targets.insert(id);
                                 }
                             }
+                            if !targets.is_empty() {
+                                parsed.exclusive_targets = Some(targets);
+                            }
+                        }
                     } else if sub.starts_with("background") {
                         parsed.is_background = true;
                     } else if sub.starts_with("shared-index") || sub.starts_with("shared_index") {
@@ -231,14 +232,15 @@ impl AnimationScheduler {
             let opts = ParsedAnimationOptions::from_raw_options(&anim.options);
             if opts.is_shared_index
                 && let Some(&saved_index) = preserved.get(&anim.id)
-                    && saved_index < anim.patterns.len() {
-                        let mut active =
-                            ActiveAnimation::new(anim.id, new_surface_id, anim.patterns.clone())
-                                .with_options(&opts);
-                        active.current_pattern_index = saved_index;
-                        let anims = self.active_animations.entry(scope_id).or_default();
-                        anims.push(active);
-                    }
+                && saved_index < anim.patterns.len()
+            {
+                let mut active =
+                    ActiveAnimation::new(anim.id, new_surface_id, anim.patterns.clone())
+                        .with_options(&opts);
+                active.current_pattern_index = saved_index;
+                let anims = self.active_animations.entry(scope_id).or_default();
+                anims.push(active);
+            }
         }
     }
 
@@ -329,12 +331,7 @@ impl AnimationScheduler {
     }
 
     /// アニメーションを手動またはトリガーによって開始登録する
-    pub fn start_animation(
-        &mut self,
-        scope_id: u32,
-        base_surface_id: i32,
-        anim: &SerikoAnimation,
-    ) {
+    pub fn start_animation(&mut self, scope_id: u32, base_surface_id: i32, anim: &SerikoAnimation) {
         if anim.patterns.is_empty() {
             return;
         }
@@ -348,17 +345,18 @@ impl AnimationScheduler {
 
         // 新規アニメーションが exclusive の場合、既存のアニメーションを停止
         if options.is_exclusive
-            && let Some(anims) = self.active_animations.get_mut(&scope_id) {
-                for a in anims.iter_mut() {
-                    if let Some(ref targets) = options.exclusive_targets {
-                        if targets.contains(&a.animation_id) {
-                            a.is_finished = true;
-                        }
-                    } else if a.animation_id != anim.id {
+            && let Some(anims) = self.active_animations.get_mut(&scope_id)
+        {
+            for a in anims.iter_mut() {
+                if let Some(ref targets) = options.exclusive_targets {
+                    if targets.contains(&a.animation_id) {
                         a.is_finished = true;
                     }
+                } else if a.animation_id != anim.id {
+                    a.is_finished = true;
                 }
             }
+        }
 
         let mut active = ActiveAnimation::new(anim.id, base_surface_id, anim.patterns.clone())
             .with_options(&options);
@@ -397,7 +395,10 @@ impl AnimationScheduler {
                         self.start_animation(scope_id, base_surface_id, anim);
                         continue;
                     }
-                    Interval::Sometimes | Interval::Rarely | Interval::Random(_) | Interval::Periodic(_) => {
+                    Interval::Sometimes
+                    | Interval::Rarely
+                    | Interval::Random(_)
+                    | Interval::Periodic(_) => {
                         // 1秒あたりの発火判定
                         if interval.should_fire(1000, rng01) {
                             self.start_animation(scope_id, base_surface_id, anim);
@@ -437,12 +438,13 @@ impl AnimationScheduler {
             }
             // talk,N パターン等の処理
             if let Some(Interval::Custom(ref s)) = anim.interval
-                && s.starts_with("talk,") {
-                    let n: u32 = s.trim_start_matches("talk,").parse().unwrap_or(1);
-                    if n > 0 && current_count.is_multiple_of(n) {
-                        self.start_animation(scope_id, base_surface, anim);
-                    }
+                && s.starts_with("talk,")
+            {
+                let n: u32 = s.trim_start_matches("talk,").parse().unwrap_or(1);
+                if n > 0 && current_count.is_multiple_of(n) {
+                    self.start_animation(scope_id, base_surface, anim);
                 }
+            }
         }
     }
 

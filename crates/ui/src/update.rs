@@ -62,10 +62,7 @@ impl UpdatePackage {
 
     /// 総ダウンロード予定サイズ (サイズが指定されているエントリの合算)
     pub fn total_download_size(&self) -> u64 {
-        self.active_downloads()
-            .iter()
-            .filter_map(|e| e.size)
-            .sum()
+        self.active_downloads().iter().filter_map(|e| e.size).sum()
     }
 }
 
@@ -514,7 +511,10 @@ shell0.source.directory,custom_shell\r\n";
 
         assert_eq!(manifest.bundled_resources[1].resource_type, "shell");
         assert_eq!(manifest.bundled_resources[1].target_directory, "my_shell");
-        assert_eq!(manifest.bundled_resources[1].source_directory, "custom_shell");
+        assert_eq!(
+            manifest.bundled_resources[1].source_directory,
+            "custom_shell"
+        );
         assert!(!manifest.bundled_resources[1].refresh);
 
         let files = vec![

@@ -51,7 +51,7 @@ fn parse_id_list_inner(s: &str) -> Vec<u32> {
     let trimmed = s.trim().trim_start_matches(',').trim();
     let trimmed = trimmed.trim_matches(|c| c == '(' || c == ')' || c == '[' || c == ']');
     trimmed
-        .split(|c| c == ',' || c == '.' || c == ' ' || c == '+')
+        .split([',', '.', ' ', '+'])
         .filter_map(|p| p.trim().parse::<u32>().ok())
         .collect()
 }

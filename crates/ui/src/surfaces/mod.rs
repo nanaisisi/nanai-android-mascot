@@ -15,6 +15,6 @@ pub use compositor::{SurfaceFrameBuffer, composite_elements};
 pub use parser::{expand_range, parse_surfaces_txt};
 pub use types::{
     AnimationPattern, BalloonOffset, CollisionArea, CollisionShape, CompositionLayer,
-    CompositionPlan, DrawMethod, ElementDef, HitTestResult, Interval, Points, SerikoAnimation,
-    SortKind, SurfaceDefinition, SurfacesTxt,
+    CompositionPlan, CursorDefinition, DrawMethod, ElementDef, HitTestResult, Interval, Points,
+    SerikoAnimation, SortKind, SurfaceDefinition, SurfacesTxt,
 };

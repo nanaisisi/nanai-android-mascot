@@ -274,3 +274,83 @@ balloon.offsety,10
     assert_eq!(s0.balloon_offsets.get("*").unwrap().x, Some(5));
     assert_eq!(s0.balloon_offsets.get("*").unwrap().y, Some(10));
 }
+
+#[test]
+fn test_parse_cursor_and_tooltips_blocks() {
+    let sample = r"charset,UTF-8
+sakura.cursor
+{
+mouseup0,Head,system:hand
+mousedown0,Head,system:finger
+mouseup1,Bust,system:hand
+mousedown1,Bust,system:grip
+mousehover0,Face,system:cross
+}
+
+kero.cursor
+{
+mousedown0,Tail,system:finger
+}
+
+sakura.tooltips
+{
+Bust,怒ります。
+Head,つつかれると痛いです。
+}
+
+kero.tooltips
+{
+Tail,しっぽです
+}
+";
+    let txt = SurfacesTxt::parse(sample);
+
+    // Cursors
+    assert_eq!(txt.get_cursor("0", "mouseup", "Head"), Some("system:hand"));
+    assert_eq!(
+        txt.get_cursor("sakura", "mousedown", "Head"),
+        Some("system:finger")
+    );
+    assert_eq!(
+        txt.get_cursor("sakura", "mousedown", "Bust"),
+        Some("system:grip")
+    );
+    assert_eq!(
+        txt.get_cursor("sakura", "mousehover", "Face"),
+        Some("system:cross")
+    );
+    assert_eq!(
+        txt.get_cursor("1", "mousedown", "Tail"),
+        Some("system:finger")
+    );
+    assert_eq!(txt.get_cursor("sakura", "mousedown", "Tail"), None);
+
+    // Tooltips
+    assert_eq!(txt.get_tooltip("0", "Bust"), Some("怒ります。"));
+    assert_eq!(
+        txt.get_tooltip("sakura", "Head"),
+        Some("つつかれると痛いです。")
+    );
+    assert_eq!(txt.get_tooltip("kero", "Tail"), Some("しっぽです"));
+    assert_eq!(txt.get_tooltip("kero", "Head"), None);
+
+    // Merge testing
+    let sample2 = r"sakura.cursor
+{
+mousedown2,Bust,custom_grip.cur
+}
+sakura.tooltips
+{
+Bust,触らないで！
+}
+";
+    let mut txt1 = txt;
+    let txt2 = SurfacesTxt::parse(sample2);
+    txt1.merge(txt2);
+
+    assert_eq!(
+        txt1.get_cursor("sakura", "mousedown", "Bust"),
+        Some("custom_grip.cur")
+    );
+    assert_eq!(txt1.get_tooltip("sakura", "Bust"), Some("触らないで！"));
+}

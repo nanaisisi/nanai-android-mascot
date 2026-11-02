@@ -13,4 +13,4 @@ pub use surface::{
     AnimationPattern, BalloonOffset, ElementDef, Points, SerikoAnimation, SortKind,
     SurfaceDefinition,
 };
-pub use txt::SurfacesTxt;
+pub use txt::{CursorDefinition, SurfacesTxt};

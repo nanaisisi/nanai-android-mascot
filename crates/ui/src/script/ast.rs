@@ -50,6 +50,39 @@ pub enum SakuraAstNode {
     Root { children: Vec<SakuraAstNode> },
 }
 
+impl SakuraAstNode {
+    /// ASTツリーを深さ優先で走査し、各ノードに対してビジターコールバックを実行する
+    pub fn walk<'a>(&'a self, visitor: &mut impl FnMut(&'a SakuraAstNode)) {
+        visitor(self);
+        match self {
+            SakuraAstNode::Root { children }
+            | SakuraAstNode::Scope { children, .. }
+            | SakuraAstNode::Anchor { children, .. } => {
+                for child in children {
+                    child.walk(visitor);
+                }
+            }
+            SakuraAstNode::Command(_) | SakuraAstNode::Choice { .. } => {}
+        }
+    }
+
+    /// ASTツリー内の全 SakuraCommand を順序通りに抽出する
+    pub fn collect_commands(&self) -> Vec<SakuraCommand> {
+        let mut commands = Vec::new();
+        self.walk(&mut |node| match node {
+            SakuraAstNode::Command(cmd) => commands.push(cmd.clone()),
+            SakuraAstNode::Scope { scope, .. } => commands.push(SakuraCommand::Target(*scope)),
+            SakuraAstNode::Choice { id, text, args } => commands.push(SakuraCommand::Choice {
+                label: text.clone(),
+                id: id.clone(),
+                args: args.clone(),
+            }),
+            _ => {}
+        });
+        commands
+    }
+}
+
 /// フラットな SakuraCommand 列から階層的な AST を構築する
 pub fn build_sakura_ast(commands: &[SakuraCommand]) -> SakuraAstNode {
     let mut root_children: Vec<SakuraAstNode> = Vec::new();
@@ -202,5 +235,40 @@ mod tests {
         let tok2 = SakuraToken::with_raw(SakuraCommand::Clear, "\\c");
         assert_eq!(tok2.command, SakuraCommand::Clear);
         assert_eq!(tok2.raw, Some("\\c".to_string()));
+    }
+
+    #[test]
+    fn test_ast_walk_and_collect_commands() {
+        let commands = vec![
+            SakuraCommand::Target(0),
+            SakuraCommand::Surface(1),
+            SakuraCommand::Text("Hello".into()),
+            SakuraCommand::Choice {
+                label: "Go".into(),
+                id: "OnGo".into(),
+                args: vec!["extra".into()],
+            },
+        ];
+        let ast = build_sakura_ast(&commands);
+
+        let mut node_count = 0;
+        ast.walk(&mut |_node| {
+            node_count += 1;
+        });
+        assert!(node_count >= 4);
+
+        let collected = ast.collect_commands();
+        assert_eq!(collected.len(), 4);
+        assert_eq!(collected[0], SakuraCommand::Target(0));
+        assert_eq!(collected[1], SakuraCommand::Surface(1));
+        assert_eq!(collected[2], SakuraCommand::Text("Hello".into()));
+        assert_eq!(
+            collected[3],
+            SakuraCommand::Choice {
+                label: "Go".into(),
+                id: "OnGo".into(),
+                args: vec!["extra".into()],
+            }
+        );
     }
 }

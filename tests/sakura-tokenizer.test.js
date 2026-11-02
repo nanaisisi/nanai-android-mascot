@@ -149,3 +149,57 @@ test("parseSakuraScript tokenizes all JS fallback SakuraScript tags and text", (
 		true,
 	);
 });
+
+test("parseSakuraScript handles bracket escaping and quoted arguments with commas and double quotes", () => {
+	const script =
+		'\\0\\q[Option \\] with bracket,opt_id]\\![raise,OnTest,"100,2"]\\![call,ghost,"the ""MobileMaster"""]';
+	const tokens = parseSakuraScript(script);
+
+	// Choice with escaped bracket
+	const choice = tokens.find((t) => t.type === "choice");
+	assert.ok(choice);
+	assert.equal(choice.text, "Option ] with bracket");
+	assert.equal(choice.id, "opt_id");
+
+	// Raise command with comma inside quotes
+	const raiseCmd = tokens.find(
+		(t) => t.type === "command" && t.args[0] === "raise",
+	);
+	assert.ok(raiseCmd);
+	assert.equal(raiseCmd.args[1], "OnTest");
+	assert.equal(raiseCmd.args[2], "100,2");
+
+	// Call command with escaped double quote
+	const callCmd = tokens.find(
+		(t) => t.type === "command" && t.args[0] === "call",
+	);
+	assert.ok(callCmd);
+	assert.equal(callCmd.args[1], "ghost");
+	assert.equal(callCmd.args[2], 'the "MobileMaster"');
+});
+
+test("AST traversal functions (traverseAst and collectAstTokens)", async () => {
+	const { traverseAst, collectAstTokens } = await import(
+		"../ui/js/ghost/parser/ast.js"
+	);
+	const script = "\\0\\s[0]Text\\q[Option 1,id1]";
+	const tokens = parseSakuraScript(script);
+	const ast = tokensToAst(tokens);
+
+	let visitedNodes = 0;
+	traverseAst(ast, (_node) => {
+		visitedNodes++;
+	});
+	assert.ok(visitedNodes >= 3);
+
+	const collected = collectAstTokens(ast);
+	assert.ok(collected.length >= 3);
+	assert.equal(collected[0].type, "scope");
+	assert.equal(collected[0].value, 0);
+	assert.equal(collected[1].type, "surface");
+	assert.equal(collected[1].value, 0);
+	const choiceTok = collected.find((t) => t.type === "choice");
+	assert.ok(choiceTok);
+	assert.equal(choiceTok.id, "id1");
+	assert.equal(choiceTok.text, "Option 1");
+});

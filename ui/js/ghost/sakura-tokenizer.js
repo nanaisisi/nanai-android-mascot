@@ -1,4 +1,72 @@
 /**
+ * 括弧内の引数文字列をカンマ区切りでパースする。
+ * UKADOC [notes_escape.md]:
+ * - ダブルクォート `"` で囲まれた区間では、カンマ `,` は区切り文字とみなされない。
+ * - クォート内の `""` は単一の `"` としてエスケープ解決される。
+ * - 外側クォートおよび前後の空白は除去される。
+ * @param {string} content
+ * @returns {string[]}
+ */
+export function splitBracketArgs(content) {
+	const args = [];
+	let current = "";
+	let inQuotes = false;
+	const len = content.length;
+	let idx = 0;
+
+	while (idx < len) {
+		const ch = content[idx];
+		if (ch === '"') {
+			if (inQuotes) {
+				if (idx + 1 < len && content[idx + 1] === '"') {
+					current += '"';
+					idx += 2;
+					continue;
+				}
+				inQuotes = false;
+			} else {
+				inQuotes = true;
+			}
+		} else if (ch === "," && !inQuotes) {
+			args.push(current.trim());
+			current = "";
+		} else {
+			current += ch;
+		}
+		idx++;
+	}
+	args.push(current.trim());
+	return args;
+}
+
+/**
+ * [ ... ] の引数を安全に読み取り、`\]` エスケープを考慮する。
+ * @param {string} script
+ * @param {number} startIdx - `[` の位置
+ * @returns {{ content: string, nextIdx: number } | null}
+ */
+function readBracketContent(script, startIdx) {
+	if (script[startIdx] !== "[") return null;
+	let j = startIdx + 1;
+	let content = "";
+	const len = script.length;
+
+	while (j < len) {
+		if (script[j] === "\\" && script[j + 1] === "]") {
+			content += "]";
+			j += 2;
+			continue;
+		}
+		if (script[j] === "]") {
+			return { content, nextIdx: j + 1 };
+		}
+		content += script[j];
+		j++;
+	}
+	return null;
+}
+
+/**
  * さくらスクリプト文字列を解析してトークン列に変換（JSフォールバックパーサー）
  * @typedef {import('./sakura-parser.js').SakuraScriptToken} SakuraScriptToken
  * @param {string} script
@@ -44,12 +112,11 @@ export function parseSakuraScript(script) {
 			else if (char === "p") {
 				i++;
 				if (script[i] === "[") {
-					const end = script.indexOf("]", i);
-					if (end !== -1) {
-						const scopeVal =
-							Number.parseInt(script.substring(i + 1, end), 10) || 0;
+					const parsed = readBracketContent(script, i);
+					if (parsed) {
+						const scopeVal = Number.parseInt(parsed.content.trim(), 10) || 0;
 						tokens.push({ type: "scope", value: scopeVal });
-						i = end + 1;
+						i = parsed.nextIdx;
 					} else {
 						i++;
 					}
@@ -65,15 +132,15 @@ export function parseSakuraScript(script) {
 			else if (char === "s") {
 				i++;
 				if (script[i] === "[") {
-					const end = script.indexOf("]", i);
-					if (end !== -1) {
-						const val = script.substring(i + 1, end).trim();
+					const parsed = readBracketContent(script, i);
+					if (parsed) {
+						const val = parsed.content.trim();
 						const parsedId = Number.parseInt(val, 10);
 						tokens.push({
 							type: "surface",
 							value: Number.isNaN(parsedId) ? 0 : parsedId,
 						});
-						i = end + 1;
+						i = parsed.nextIdx;
 					} else {
 						i++;
 					}
@@ -89,18 +156,17 @@ export function parseSakuraScript(script) {
 			else if (char === "i") {
 				i++;
 				if (script[i] === "[") {
-					const end = script.indexOf("]", i);
-					if (end !== -1) {
-						const val = script.substring(i + 1, end).trim();
-						const parts = val.split(",");
+					const parsed = readBracketContent(script, i);
+					if (parsed) {
+						const parts = splitBracketArgs(parsed.content);
 						const animId = Number.parseInt(parts[0], 10);
-						const wait = parts[1]?.trim().toLowerCase() === "wait";
+						const wait = parts[1]?.toLowerCase() === "wait";
 						tokens.push({
 							type: "animation",
 							animId: Number.isNaN(animId) ? 0 : animId,
 							wait,
 						});
-						i = end + 1;
+						i = parsed.nextIdx;
 					} else {
 						i++;
 					}
@@ -122,12 +188,11 @@ export function parseSakuraScript(script) {
 			}
 			// \_w[ms] (ミリ秒ウェイト)
 			else if (char === "_" && script[i + 1] === "w" && script[i + 2] === "[") {
-				const start = i + 3;
-				const end = script.indexOf("]", start);
-				if (end !== -1) {
-					const ms = Number.parseInt(script.substring(start, end), 10) || 100;
+				const parsed = readBracketContent(script, i + 2);
+				if (parsed) {
+					const ms = Number.parseInt(parsed.content.trim(), 10) || 100;
 					tokens.push({ type: "wait", value: ms });
-					i = end + 1;
+					i = parsed.nextIdx;
 				} else {
 					i += 2;
 				}
@@ -146,10 +211,9 @@ export function parseSakuraScript(script) {
 			else if (char === "c") {
 				i++;
 				if (script[i] === "[") {
-					const end = script.indexOf("]", i);
-					if (end !== -1) {
-						const content = script.substring(i + 1, end).trim();
-						const parts = content.split(",").map((s) => s.trim());
+					const parsed = readBracketContent(script, i);
+					if (parsed) {
+						const parts = splitBracketArgs(parsed.content);
 						if (parts[0] === "char" || parts[0] === "line") {
 							tokens.push({
 								type: "clear",
@@ -159,7 +223,7 @@ export function parseSakuraScript(script) {
 						} else {
 							tokens.push({ type: "clear" });
 						}
-						i = end + 1;
+						i = parsed.nextIdx;
 					} else {
 						tokens.push({ type: "clear" });
 					}
@@ -171,17 +235,14 @@ export function parseSakuraScript(script) {
 			else if (char === "x") {
 				i++;
 				if (script[i] === "[") {
-					const end = script.indexOf("]", i);
-					if (end !== -1) {
-						const opt = script
-							.substring(i + 1, end)
-							.trim()
-							.toLowerCase();
+					const parsed = readBracketContent(script, i);
+					if (parsed) {
+						const opt = parsed.content.trim().toLowerCase();
 						tokens.push({
 							type: "pause",
 							noClear: opt === "noclear",
 						});
-						i = end + 1;
+						i = parsed.nextIdx;
 					} else {
 						tokens.push({ type: "pause" });
 					}
@@ -192,14 +253,14 @@ export function parseSakuraScript(script) {
 			// \_q / \_q[1] / \_q[0] (クイック描画切替)
 			else if (char === "_" && script[i + 1] === "q") {
 				if (script[i + 2] === "[") {
-					const end = script.indexOf("]", i + 2);
-					if (end !== -1) {
-						const val = script.substring(i + 3, end).trim();
+					const parsed = readBracketContent(script, i + 2);
+					if (parsed) {
+						const val = parsed.content.trim();
 						tokens.push({
 							type: "quick_toggle",
 							value: val !== "0" && val !== "false",
 						});
-						i = end + 1;
+						i = parsed.nextIdx;
 					} else {
 						tokens.push({ type: "quick_toggle", value: true });
 						i += 2;
@@ -212,17 +273,15 @@ export function parseSakuraScript(script) {
 			// \_a[ID,arg...] / \_a (アンカーリンク)
 			else if (char === "_" && script[i + 1] === "a") {
 				if (script[i + 2] === "[") {
-					const start = i + 3;
-					const end = script.indexOf("]", start);
-					if (end !== -1) {
-						const content = script.substring(start, end);
-						const args = content.split(",").map((s) => s.trim());
+					const parsed = readBracketContent(script, i + 2);
+					if (parsed) {
+						const args = splitBracketArgs(parsed.content);
 						tokens.push({
 							type: "anchor_begin",
 							id: args[0] || "",
 							args,
 						});
-						i = end + 1;
+						i = parsed.nextIdx;
 					} else {
 						i += 2;
 					}
@@ -233,47 +292,51 @@ export function parseSakuraScript(script) {
 			}
 			// \![command,arg,...] (内部コマンド)
 			else if (char === "!" && script[i + 1] === "[") {
-				let j = i + 2;
-				let content = "";
-				while (j < len && script[j] !== "]") {
-					// \] はエスケープされた ]
-					if (script[j] === "\\" && script[j + 1] === "]") j++;
-					content += script[j];
-					j++;
+				const parsed = readBracketContent(script, i + 1);
+				if (parsed) {
+					const args = splitBracketArgs(parsed.content);
+					tokens.push({ type: "command", args });
+					i = parsed.nextIdx;
+				} else {
+					i++;
 				}
-				const args = content
-					.split(",")
-					.map((s) => s.trim().replace(/^"|"$/g, ""));
-				tokens.push({ type: "command", args });
-				i = j + 1;
 			}
 			// \q[テキスト,ID] (選択肢)
 			else if (char === "q" && script[i + 1] === "[") {
-				const start = i + 2;
-				const end = script.indexOf("]", start);
-				if (end !== -1) {
-					const content = script.substring(start, end);
-					const comma = content.indexOf(",");
-					const text = comma !== -1 ? content.substring(0, comma) : content;
-					const id = comma !== -1 ? content.substring(comma + 1) : content;
-					tokens.push({ type: "choice", text: text.trim(), id: id.trim() });
-					i = end + 1;
+				const parsed = readBracketContent(script, i + 1);
+				if (parsed) {
+					const parts = splitBracketArgs(parsed.content);
+					if (parts.length >= 3 && parts[0] === "temp") {
+						tokens.push({
+							type: "choice",
+							text: parts[1] || "",
+							id: parts[2] || "",
+							args: parts.slice(3),
+						});
+					} else {
+						tokens.push({
+							type: "choice",
+							text: parts[0] || "",
+							id: parts[1] || "",
+							args: parts.slice(2),
+						});
+					}
+					i = parsed.nextIdx;
 				} else {
 					i++;
 				}
 			}
 			// \_l[x,y] (座標移動)
 			else if (char === "_" && script[i + 1] === "l" && script[i + 2] === "[") {
-				const start = i + 3;
-				const end = script.indexOf("]", start);
-				if (end !== -1) {
-					const coords = script.substring(start, end).split(",");
+				const parsed = readBracketContent(script, i + 2);
+				if (parsed) {
+					const coords = splitBracketArgs(parsed.content);
 					tokens.push({
 						type: "offset",
-						x: coords[0]?.trim() || "0",
-						y: coords[1]?.trim() || "0",
+						x: coords[0] || "0",
+						y: coords[1] || "0",
 					});
-					i = end + 1;
+					i = parsed.nextIdx;
 				} else {
 					i += 2;
 				}
@@ -281,14 +344,14 @@ export function parseSakuraScript(script) {
 			// \_s (複数キャラ同期表示トグル / \_s[1], \_s[0])
 			else if (char === "_" && script[i + 1] === "s") {
 				if (script[i + 2] === "[") {
-					const end = script.indexOf("]", i + 2);
-					if (end !== -1) {
-						const val = script.substring(i + 3, end).trim();
+					const parsed = readBracketContent(script, i + 2);
+					if (parsed) {
+						const val = parsed.content.trim();
 						tokens.push({
 							type: "sync_toggle",
 							value: val !== "0" && val !== "false",
 						});
-						i = end + 1;
+						i = parsed.nextIdx;
 					} else {
 						tokens.push({ type: "sync_toggle", value: true });
 						i += 2;
@@ -302,17 +365,14 @@ export function parseSakuraScript(script) {
 			else if (char === "b") {
 				i++;
 				if (script[i] === "[") {
-					const end = script.indexOf("]", i);
-					if (end !== -1) {
-						const val = Number.parseInt(
-							script.substring(i + 1, end).trim(),
-							10,
-						);
+					const parsed = readBracketContent(script, i);
+					if (parsed) {
+						const val = Number.parseInt(parsed.content.trim(), 10);
 						tokens.push({
 							type: "balloon",
 							value: Number.isNaN(val) ? 0 : val,
 						});
-						i = end + 1;
+						i = parsed.nextIdx;
 					} else {
 						i++;
 					}
@@ -326,17 +386,15 @@ export function parseSakuraScript(script) {
 			}
 			// \f (フォント指定: \f[tag,param], \f[tag])
 			else if (char === "f" && script[i + 1] === "[") {
-				const start = i + 2;
-				const end = script.indexOf("]", start);
-				if (end !== -1) {
-					const content = script.substring(start, end);
-					const parts = content.split(",").map((s) => s.trim());
+				const parsed = readBracketContent(script, i + 1);
+				if (parsed) {
+					const parts = splitBracketArgs(parsed.content);
 					tokens.push({
 						type: "font",
 						tag: parts[0] || "",
 						param: parts.length > 1 ? parts.slice(1).join(",") : null,
 					});
-					i = end + 1;
+					i = parsed.nextIdx;
 				} else {
 					i++;
 				}
@@ -367,12 +425,12 @@ export function parseSakuraScript(script) {
 				}
 				// 引数 [ ... ] があれば本文に出さず読み飛ばす
 				if (i < len && script[i] === "[") {
-					let j = i + 1;
-					while (j < len && script[j] !== "]") {
-						if (script[j] === "\\" && script[j + 1] === "]") j++;
-						j++;
+					const parsed = readBracketContent(script, i);
+					if (parsed) {
+						i = parsed.nextIdx;
+					} else {
+						i++;
 					}
-					i = j + 1;
 				}
 			}
 		} else {

@@ -2,7 +2,7 @@
 
 - **規格**: [anchor.blendmethod.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/anchor.blendmethod.md)
 - **検索語**: anchor.blendmethod
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-実装コード内に「anchor.blendmethod」は検出されませんでした。
+- `ui/js/core/actions/balloon-descript/font/group.js:5` `* UKADOC仕様 (anchor.style, anchor.blendmethod, anchor.font.color.r/g/b, anchor.fo`
+- `ui/js/core/actions/balloon-descript/font/group.js:45` `// [anchor.blendmethod / cursor.blendmethod / *.blendmethod]:`

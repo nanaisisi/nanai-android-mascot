@@ -2,7 +2,7 @@
 
 - **規格**: [collision-sort.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/descript-brace/collision-sort/) (ukadoc-spec/descript/shell-surfaces/descript-brace/collision-sort.md)
 - **検索語**: collision-sort
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-実装コード内に「collision-sort」は検出されませんでした。
+- `crates/ui/src/surfaces/types/surface.rs:95` `/// ソート順（collision-sort: ascend / descend / none / id 等）を考慮してヒットテストを行う`

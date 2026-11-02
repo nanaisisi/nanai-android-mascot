@@ -37,6 +37,7 @@ import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
  * - menu.frame.color.r, menu.frame.color.g, menu.frame.color.b
  * - menu.font.name, menu.font.height
  * - updatebutton.caption, quitbutton.caption, closebutton.caption, configurationbutton.caption, readmebutton.caption, vanishbutton.caption
+ * - callsstpsendboxbutton.caption, updatefmobutton.caption, switchlocalsstpbutton.caption, switchremotesstpbutton.caption
  */
 export const shioriNotifyMethods = {
 	/**

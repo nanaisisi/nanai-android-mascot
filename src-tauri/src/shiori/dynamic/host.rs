@@ -7,33 +7,33 @@ use std::path::{Path, PathBuf};
 
 pub type Hglobal = *mut c_void;
 // [ライフサイクル関数 (loadu)]: load / loadu FFI シグネチャ
-pub(super) type ShioriLoadFn = unsafe extern "C" fn(h: Hglobal, len: i64) -> i32;
+pub(crate) type ShioriLoadFn = unsafe extern "C" fn(h: Hglobal, len: i64) -> i32;
 // [ライフサイクル関数 (loadu)]: unload FFI シグネチャ
-pub(super) type ShioriUnloadFn = unsafe extern "C" fn() -> i32;
+pub(crate) type ShioriUnloadFn = unsafe extern "C" fn() -> i32;
 // [request関数]: request FFI シグネチャ
-pub(super) type ShioriRequestFn = unsafe extern "C" fn(h: Hglobal, len: *mut i64) -> Hglobal;
+pub(crate) type ShioriRequestFn = unsafe extern "C" fn(h: Hglobal, len: *mut i64) -> Hglobal;
 
 #[cfg(windows)]
 unsafe extern "system" {
     // [メモリ管理]: GlobalAlloc Win32 API 連携
-    pub(super) fn GlobalAlloc(uFlags: u32, dwBytes: usize) -> Hglobal;
+    pub(crate) fn GlobalAlloc(uFlags: u32, dwBytes: usize) -> Hglobal;
     // [メモリ管理]: GlobalFree Win32 API 連携
-    pub(super) fn GlobalFree(hMem: Hglobal) -> Hglobal;
+    pub(crate) fn GlobalFree(hMem: Hglobal) -> Hglobal;
 }
 
 #[allow(dead_code)]
-pub(super) const GMEM_FIXED: u32 = 0x0000;
+pub(crate) const GMEM_FIXED: u32 = 0x0000;
 
 /// 32bit DLL 用ホストプロセス (shiori-host32.exe) との stdio ブリッジ
 #[cfg(windows)]
-pub(super) struct HostProc {
+pub(crate) struct HostProc {
     child: std::process::Child,
     stdin: std::process::ChildStdin,
     stdout: std::process::ChildStdout,
 }
 
 #[cfg(not(windows))]
-pub(super) struct HostProc;
+pub(crate) struct HostProc;
 
 #[cfg(windows)]
 impl HostProc {
@@ -58,7 +58,7 @@ impl HostProc {
         cands.into_iter().find(|p| p.exists())
     }
 
-    pub(super) fn spawn(dll_path: &Path) -> Result<Self, String> {
+    pub(crate) fn spawn(dll_path: &Path) -> Result<Self, String> {
         use std::process::{Command, Stdio};
         let exe = Self::find_exe().ok_or(
             "shiori-host32.exe が見つかりません。`cargo build --release --target i686-pc-windows-msvc --manifest-path src-tauri/shiori-host/Cargo.toml` を実行してください",
@@ -87,7 +87,7 @@ impl HostProc {
         read_reply_stream(&mut self.stdout)
     }
 
-    pub(super) fn call(&mut self, cmd: u8, payload: &[u8]) -> Result<(i32, Vec<u8>), String> {
+    pub(crate) fn call(&mut self, cmd: u8, payload: &[u8]) -> Result<(i32, Vec<u8>), String> {
         use std::io::Write;
         let mut msg = Vec::with_capacity(5 + payload.len());
         msg.push(cmd);
@@ -108,14 +108,14 @@ impl Drop for HostProc {
 
 #[cfg(not(windows))]
 impl HostProc {
-    pub(super) fn call(&mut self, _cmd: u8, _payload: &[u8]) -> Result<(i32, Vec<u8>), String> {
+    pub(crate) fn call(&mut self, _cmd: u8, _payload: &[u8]) -> Result<(i32, Vec<u8>), String> {
         Err("host unsupported".into())
     }
 }
 
 /// PE ヘッダから x86 (0x14C) DLL かどうか判定
 #[cfg(windows)]
-pub(super) fn is_x86_dll(path: &Path) -> bool {
+pub(crate) fn is_x86_dll(path: &Path) -> bool {
     let Ok(b) = std::fs::read(path) else {
         return false;
     };
@@ -127,7 +127,7 @@ pub(super) fn is_x86_dll(path: &Path) -> bool {
 }
 
 /// ホストプロセス (shiori-host32) の stdout ストリームから (status, payload) を読み取る
-pub(super) fn read_reply_stream(reader: &mut impl std::io::Read) -> Result<(i32, Vec<u8>), String> {
+pub(crate) fn read_reply_stream(reader: &mut impl std::io::Read) -> Result<(i32, Vec<u8>), String> {
     let mut head = [0u8; 8];
     reader.read_exact(&mut head).map_err(|e| e.to_string())?;
     let status = i32::from_le_bytes(

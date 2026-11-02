@@ -44,6 +44,14 @@ body {
 	color: var(--balloon-text-color, #111111);
 	word-break: break-word;
 	cursor: grab;
+	touch-action: pan-y;
+}
+
+@media (max-width: 600px) {
+	.balloon {
+		max-width: 95vw;
+		box-sizing: border-box;
+	}
 }
 
 .balloon:active {

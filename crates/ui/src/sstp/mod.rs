@@ -89,6 +89,9 @@ impl SstpStatusCode {
     }
 }
 
+/// DirectSSTP 関連定数 (Windows WM_COPYDATA 互換 dwData)
+pub const DIRECT_SSTP_DWDATA: usize = 9801;
+
 /// IfGhost によるスクリプト振り分けエントリ
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct IfGhostEntry {
@@ -119,6 +122,24 @@ pub struct SstpRequest {
     pub references: HashMap<String, String>,
     pub pass_thru: HashMap<String, String>,
     pub keep_alive: bool,
+    /// COMMUNICATE / GIVE 拡張ヘッダ: 送信元サーフィス番号 (例: "0,10")
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub surface: Option<String>,
+    /// GIVE/旧仕様 拡張ヘッダ: 文書
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub document: Option<String>,
+    /// GIVE/旧仕様 拡張ヘッダ: 楽曲名
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub song: Option<String>,
+    /// 対象ゴースト名 (descript.txt の name)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub ghost: Option<String>,
+    /// SAORI over DirectSSTP: Module ヘッダ
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub module: Option<String>,
+    /// DirectSSTP フラグ
+    #[serde(default)]
+    pub is_direct: bool,
 }
 
 /// Slot-01 Contract: SSTP メッセージ型エイリアス
@@ -127,6 +148,15 @@ pub type SstpMessage = SstpRequest;
 impl SstpRequest {
     /// 生テキストから SSTP リクエストをパースする
     pub fn parse(raw: &str) -> Result<Self, String> {
+        Self::parse_internal(raw, false)
+    }
+
+    /// DirectSSTP 生テキスト（WM_COPYDATA経由）をパースする
+    pub fn parse_direct(raw: &str) -> Result<Self, String> {
+        Self::parse_internal(raw, true)
+    }
+
+    fn parse_internal(raw: &str, is_direct: bool) -> Result<Self, String> {
         let mut lines = raw.lines();
         let first_line = lines.next().ok_or("Empty SSTP request")?.trim();
         if first_line.is_empty() {
@@ -138,8 +168,10 @@ impl SstpRequest {
             return Err(format!("Invalid SSTP request line: {}", first_line));
         }
 
-        let method = SstpMethod::parse(parts[0])
-            .ok_or_else(|| format!("Unsupported SSTP method: {}", parts[0]))?;
+        // SAORI over DirectSSTP: "EXECUTE SAORI/1.0" or "GET Version SAORI/1.0"
+        let method_str = parts[0];
+        let method = SstpMethod::parse(method_str)
+            .ok_or_else(|| format!("Unsupported SSTP method: {}", method_str))?;
         let version = parts[1].to_string();
 
         let mut charset = None;
@@ -161,6 +193,11 @@ impl SstpRequest {
         let mut references = HashMap::new();
         let mut pass_thru = HashMap::new();
         let mut keep_alive = false;
+        let mut surface = None;
+        let mut document = None;
+        let mut song = None;
+        let mut ghost = None;
+        let mut module = None;
 
         for line in lines {
             let line = line.trim();
@@ -193,7 +230,8 @@ impl SstpRequest {
                     event = Some(val);
                 } else if key_lower == "sentence" {
                     sentence = Some(val);
-                } else if key_lower == "command" {
+                } else if key_lower.starts_with("command") {
+                    // Command or Command[param1,param2...]
                     command = Some(val);
                 } else if key_lower == "hwnd" {
                     hwnd = val.parse().ok();
@@ -216,8 +254,24 @@ impl SstpRequest {
                     entry = Some(val);
                 } else if key_lower == "keepalive" {
                     keep_alive = val.to_lowercase() == "true" || val == "1";
-                } else if key_lower.starts_with("reference") {
-                    references.insert(key.to_string(), val);
+                } else if key_lower == "surface" {
+                    surface = Some(val);
+                } else if key_lower == "document" {
+                    document = Some(val);
+                } else if key_lower == "song" {
+                    song = Some(val);
+                } else if key_lower == "ghost" {
+                    ghost = Some(val);
+                } else if key_lower == "module" {
+                    module = Some(val);
+                } else if key_lower.starts_with("reference") || key_lower.starts_with("argument") {
+                    // Argument0 -> Reference0 正規化
+                    let norm_key = if key_lower.starts_with("argument") {
+                        format!("Reference{}", &key[8..])
+                    } else {
+                        key.to_string()
+                    };
+                    references.insert(norm_key, val);
                 } else if key_lower.starts_with("x-sstp-passthru-") {
                     pass_thru.insert(key.to_string(), val);
                 }
@@ -226,6 +280,11 @@ impl SstpRequest {
 
         if sender.is_empty() {
             sender = "Unknown".to_string();
+        }
+
+        // DirectSSTP または Owned SSTP (ID指定) の場合 SecurityLevel は Local
+        if is_direct || id.is_some() {
+            security_level = Some("local".to_string());
         }
 
         Ok(Self {
@@ -249,6 +308,12 @@ impl SstpRequest {
             references,
             pass_thru,
             keep_alive,
+            surface,
+            document,
+            song,
+            ghost,
+            module,
+            is_direct,
         })
     }
 
@@ -292,6 +357,16 @@ impl SstpRequest {
     pub fn is_strict(&self) -> bool {
         self.has_option("strict")
     }
+
+    /// notify オプション指定
+    pub fn is_notify(&self) -> bool {
+        self.has_option("notify")
+    }
+
+    /// SAORI over DirectSSTP のリクエストであるか判定
+    pub fn is_saori_request(&self) -> bool {
+        self.module.is_some() || self.version.to_uppercase().contains("SAORI")
+    }
 }
 
 /// SSTP レスポンス構造体
@@ -304,6 +379,9 @@ pub struct SstpResponse {
     pub references: HashMap<String, String>,
     pub pass_thru: HashMap<String, String>,
     pub additional_data: Option<String>,
+    /// SAORI / エラー応答ヘッダ (ErrorDescription)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub error_description: Option<String>,
 }
 
 impl SstpResponse {
@@ -316,6 +394,7 @@ impl SstpResponse {
             references: HashMap::new(),
             pass_thru: HashMap::new(),
             additional_data: None,
+            error_description: None,
         }
     }
 
@@ -345,12 +424,36 @@ impl SstpResponse {
         Self::new(SstpStatusCode::Refuse)
     }
 
+    pub fn payload_too_large() -> Self {
+        Self::new(SstpStatusCode::PayloadTooLarge)
+    }
+
+    pub fn internal_server_error() -> Self {
+        Self::new(SstpStatusCode::InternalServerError)
+    }
+
+    pub fn invisible() -> Self {
+        Self::new(SstpStatusCode::Invisible)
+    }
+
     pub fn service_unavailable() -> Self {
         Self::new(SstpStatusCode::ServiceUnavailable)
     }
 
     pub fn version_not_supported() -> Self {
         Self::new(SstpStatusCode::VersionNotSupported)
+    }
+
+    /// EXECUTE コマンド用のレスポンス構築（追加データ付き）
+    pub fn with_additional_data(mut self, data: impl Into<String>) -> Self {
+        self.additional_data = Some(data.into());
+        self
+    }
+
+    /// ErrorDescription ヘッダを設定
+    pub fn with_error_description(mut self, desc: impl Into<String>) -> Self {
+        self.error_description = Some(desc.into());
+        self
     }
 
     /// SSTP レスポンス文字列を構築する
@@ -366,6 +469,10 @@ impl SstpResponse {
             // スクリプト内の改行は除去する（仕様準拠）
             let flat_script = script.replace(['\r', '\n'], "");
             out.push_str(&format!("Script: {}\r\n", flat_script));
+        }
+
+        if let Some(ref err) = self.error_description {
+            out.push_str(&format!("ErrorDescription: {}\r\n", err));
         }
 
         // References
@@ -393,6 +500,57 @@ impl SstpResponse {
         }
 
         out
+    }
+}
+
+/// SSTP EXECUTE コマンドのディスパッチ処理ヘルパー
+#[derive(Debug, Clone, Default)]
+pub struct SstpGhostContext {
+    pub name: String,
+    pub sakura_name: String,
+    pub kero_name: String,
+    pub shell_name: String,
+    pub balloon_name: String,
+    pub version: String,
+    pub short_version: String,
+    pub status: String,
+    pub fmo_text: String,
+    pub installed_ghosts: Vec<String>,
+}
+
+/// EXECUTE コマンドを処理して適切な SstpResponse を生成する
+pub fn handle_execute_command(command_str: &str, ctx: &SstpGhostContext) -> SstpResponse {
+    let cmd = command_str.trim();
+    let (cmd_name, _args) = if let Some((name, rest)) = cmd.split_once('[') {
+        (name.trim(), rest.trim_end_matches(']').trim())
+    } else {
+        (cmd, "")
+    };
+
+    match cmd_name.to_lowercase().as_str() {
+        "getname" => {
+            let data = format!("{},{}", ctx.sakura_name, ctx.kero_name);
+            SstpResponse::ok(None).with_additional_data(data)
+        }
+        "getnames" => {
+            let data = ctx.installed_ghosts.join("\r\n");
+            SstpResponse::ok(None).with_additional_data(data)
+        }
+        "getghostname" => SstpResponse::ok(None).with_additional_data(ctx.name.clone()),
+        "getshellname" => SstpResponse::ok(None).with_additional_data(ctx.shell_name.clone()),
+        "getballoonname" => SstpResponse::ok(None).with_additional_data(ctx.balloon_name.clone()),
+        "getversion" => SstpResponse::ok(None).with_additional_data(ctx.version.clone()),
+        "getshortversion" => SstpResponse::ok(None).with_additional_data(ctx.short_version.clone()),
+        "getstatus" => {
+            if ctx.status.is_empty() {
+                SstpResponse::ok(None)
+            } else {
+                SstpResponse::ok(None).with_additional_data(ctx.status.clone())
+            }
+        }
+        "getfmo" => SstpResponse::ok(None).with_additional_data(ctx.fmo_text.clone()),
+        "quiet" | "restore" => SstpResponse::ok(None),
+        _ => SstpResponse::bad_request().with_error_description("unknown command"),
     }
 }
 

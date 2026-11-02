@@ -33,10 +33,12 @@ export class BalloonThemeManager {
 		this.userScale = app?.balloonUserScale || 1;
 		this.dpiScale = app?.balloonDpiScale || 1;
 		this.availableBalloons = app?.availableBalloons || [];
+		/** @type {Map<string, { source: string, slice: string, width: string, repeat: string, cssBorderImage: string }>} */
+		this._nineSliceCache = new Map();
 	}
 
 	/**
-	 * 9スライス分割設定 (border-image) を有効矩形 (validrect) 等から算出
+	 * 9スライス分割設定 (border-image) を有効矩形 (validrect) 等から算出 (キャッシュ対応)
 	 * @param {Record<string, string>} props
 	 * @param {string | null} [bgImageUrl]
 	 * @returns {{ source: string, slice: string, width: string, repeat: string, cssBorderImage: string } | null}
@@ -52,22 +54,30 @@ export class BalloonThemeManager {
 		const b = !Number.isNaN(vb) && vb >= 0 ? Math.max(8, vb) : 16;
 		const l = !Number.isNaN(vl) && vl >= 0 ? Math.max(8, vl) : 16;
 
-		const slice = `${t} ${r} ${b} ${l} fill`;
-		const width = `${t}px ${r}px ${b}px ${l}px`;
 		const repeat = props["border.repeat"] || "repeat";
 		const source = bgImageUrl || props["balloon.image"] || "";
+		const cacheKey = `${t}_${r}_${b}_${l}_${repeat}_${source}`;
+
+		if (this._nineSliceCache.has(cacheKey)) {
+			return this._nineSliceCache.get(cacheKey);
+		}
+
+		const slice = `${t} ${r} ${b} ${l} fill`;
+		const width = `${t}px ${r}px ${b}px ${l}px`;
 
 		const cssBorderImage = source
 			? `url("${source}") ${t} ${r} ${b} ${l} fill / ${width} ${repeat}`
 			: "";
 
-		return {
+		const result = {
 			source,
 			slice,
 			width,
 			repeat,
 			cssBorderImage,
 		};
+		this._nineSliceCache.set(cacheKey, result);
+		return result;
 	}
 
 	/**

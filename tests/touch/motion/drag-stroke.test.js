@@ -122,4 +122,38 @@ describe("TouchGestureRecognizer - Drag & Stroke", () => {
 			strokeHandler.mock.calls[0][0].strokeDistance,
 		).toBeGreaterThanOrEqual(40);
 	});
+
+	it("falls back to recognizer last coordinates when changedTouches is empty or undefined on drag end", () => {
+		const dragEndHandler = vi.fn();
+		recognizer.on(TOUCH_GESTURE_TYPES.DRAG_END, dragEndHandler);
+
+		element.dispatchEvent(
+			{
+				type: "touchstart",
+				touches: [{ clientX: 50, clientY: 50 }],
+			},
+			"touchstart",
+		);
+
+		element.dispatchEvent(
+			{
+				type: "touchmove",
+				touches: [{ clientX: 75, clientY: 85 }],
+			},
+			"touchmove",
+		);
+
+		element.dispatchEvent(
+			{
+				type: "touchend",
+				touches: [],
+				changedTouches: [],
+			},
+			"touchend",
+		);
+
+		expect(dragEndHandler).toHaveBeenCalledTimes(1);
+		expect(dragEndHandler.mock.calls[0][0].centerX).toBe(75);
+		expect(dragEndHandler.mock.calls[0][0].centerY).toBe(85);
+	});
 });

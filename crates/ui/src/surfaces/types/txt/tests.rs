@@ -60,3 +60,31 @@ fn test_plan_composition_bind_and_unmapped() {
     assert_eq!(plan.layer_files(), vec!["20"]);
     assert!(txt.plan_composition(999, &[]).is_none());
 }
+
+#[test]
+fn test_surfaces_txt_cursor_tooltip_and_merge() {
+    use crate::surfaces::types::CursorDefinition;
+    use std::collections::BTreeMap;
+
+    let mut txt = SurfacesTxt::default();
+    txt.cursors.insert("sakura".into(), vec![
+        CursorDefinition { event: "Enter".into(), collision: "Head".into(), cursor: "pointer".into() }
+    ]);
+    txt.tooltips.insert("kero".into(), {
+        let mut m = BTreeMap::new();
+        m.insert("Body".into(), "Tooltip Text".into());
+        m
+    });
+
+    assert_eq!(txt.get_cursor("sakura", "Enter", "Head"), Some("pointer"));
+    assert_eq!(txt.get_cursor("0", "Enter", "Head"), Some("pointer"));
+    assert_eq!(txt.get_cursor("unknown", "Enter", "Head"), None);
+    assert_eq!(txt.get_tooltip("kero", "Body"), Some("Tooltip Text"));
+    assert_eq!(txt.get_tooltip("1", "Body"), Some("Tooltip Text"));
+    assert_eq!(txt.get_tooltip("unknown", "Body"), None);
+
+    let mut txt2 = SurfacesTxt::default();
+    txt2.surfaces.insert(1, SurfaceDefinition::default());
+    txt.merge(txt2);
+    assert!(txt.surface(1).is_some());
+}

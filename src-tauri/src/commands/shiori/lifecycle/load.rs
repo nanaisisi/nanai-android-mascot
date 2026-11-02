@@ -116,3 +116,18 @@ pub async fn load_ghost(
         Ok(format!("Ghost '{}' loaded (fallback mode)", ghost_name))
     }
 }
+
+/// ゴーストの SHIORI を再読み込み (`\![reload,shiori]` 対応)
+#[tauri::command]
+pub async fn reload_current_ghost_shiori(
+    state: tauri::State<'_, AppState>,
+    app_handle: tauri::AppHandle,
+) -> Result<String, String> {
+    let current_name = state.current_ghost_name.lock().clone();
+    if let Some(ghost_name) = current_name {
+        println!("🔄 Reloading SHIORI for ghost: {}", ghost_name);
+        load_ghost(state, ghost_name, None, app_handle).await
+    } else {
+        Err("No active ghost loaded to reload SHIORI".to_string())
+    }
+}

@@ -128,3 +128,41 @@ fn test_multistage_shiori_loader_fallback() {
     assert!(loader.unload().is_ok());
     assert!(!loader.is_loaded());
 }
+
+#[test]
+fn test_multistage_shiori_loader_reload_and_prioritization() {
+    let mut loader = MultiStageShioriLoader::new();
+    assert_eq!(loader.candidate_count(), 0);
+
+    let mut mock1 = MockShioriEngine::new();
+    mock1.set_response("OnCheck", r"\0\s[0]初版\e");
+    loader.add_candidate(ShioriEngineCandidate::Mock(Box::new(mock1)));
+    assert_eq!(loader.candidate_count(), 1);
+
+    // 優先候補の挿入
+    let mut mock_priority = MockShioriEngine::new();
+    mock_priority.set_response("OnCheck", r"\0\s[0]優先版\e");
+    loader.prepend_candidate(ShioriEngineCandidate::Mock(Box::new(mock_priority)));
+    assert_eq!(loader.candidate_count(), 2);
+
+    let dir = Path::new("/dummy/ghost/master");
+    let load_res = loader.load_first_working(
+        dir,
+        |_path| Err("No dynamic".to_string()),
+        |_path| Err("No wasm".to_string()),
+    );
+    assert!(load_res.is_ok());
+    assert!(loader.last_error().is_none());
+
+    let req = "GET SHIORI/3.0\r\nSender: SSP\r\nCharset: UTF-8\r\nID: OnCheck\r\n\r\n";
+    let res = loader.request(req).unwrap();
+    assert!(res.contains("優先版"));
+
+    // reload 動作検証
+    assert!(loader.reload().is_ok());
+    let res_after_reload = loader.request(req).unwrap();
+    assert!(res_after_reload.contains("優先版"));
+
+    // アンロード
+    assert!(loader.unload().is_ok());
+}

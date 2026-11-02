@@ -5,9 +5,11 @@ use crate::surfaces::types::*;
 
 pub(crate) fn apply_point(txt: &mut SurfacesTxt, ids: &[u32], field: &str, value: &str) {
     let parsed = first_i32(value);
+    let field_lower = field.to_lowercase();
+    let f = field_lower.strip_prefix("point.").unwrap_or(&field_lower);
     for num in ids {
         let points = &mut txt.surfaces.entry(*num).or_default().points;
-        match field {
+        match f {
             "centerx" | "center.x" => points.center_x = parsed,
             "centery" | "center.y" => points.center_y = parsed,
             "basepos.x" | "baseposx" => points.basepos_x = parsed,

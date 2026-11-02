@@ -133,3 +133,60 @@ test("surfaceCollisionMethods respects collisionSort (ascend, descend, none)", a
 	const emptyHit = manager.detectCollision(50, 50, rect, 999, 0);
 	assert.equal(emptyHit.name, "");
 });
+
+test("surfaceCollisionMethods handles cursors and tooltips resolution", async () => {
+	const manager = {
+		...surfaceCollisionMethods,
+		cursors: {
+			sakura: [
+				{ event: "mouseup", collision: "head", cursor: "system:hand" },
+				{ event: "mousedown", collision: "head", cursor: "system:finger" },
+				{ event: "mousedown", collision: "bust", cursor: "system:grip" },
+			],
+			kero: [
+				{ event: "mousedown", collision: "tail", cursor: "system:finger" },
+			],
+			"*": [{ event: "mousehover", collision: "face", cursor: "system:cross" }],
+		},
+		tooltips: {
+			sakura: {
+				head: "つつかないで！",
+				bust: "怒ります。",
+			},
+			kero: {
+				tail: "しっぽです",
+			},
+		},
+	};
+
+	// 1. getCursorForCollision
+	assert.equal(
+		manager.getCursorForCollision(0, "mouseup", "Head"),
+		"system:hand",
+	);
+	assert.equal(
+		manager.getCursorForCollision("sakura", "mousedown", "head"),
+		"system:finger",
+	);
+	assert.equal(
+		manager.getCursorForCollision(0, "mousedown", "bust"),
+		"system:grip",
+	);
+	assert.equal(
+		manager.getCursorForCollision(1, "mousedown", "tail"),
+		"system:finger",
+	);
+	assert.equal(
+		manager.getCursorForCollision(0, "mousehover", "face"),
+		"system:cross",
+	);
+	assert.equal(manager.getCursorForCollision(1, "mouseup", "head"), null);
+	assert.equal(manager.getCursorForCollision(0, "mousedown", null), null);
+
+	// 2. getTooltipForCollision
+	assert.equal(manager.getTooltipForCollision(0, "Head"), "つつかないで！");
+	assert.equal(manager.getTooltipForCollision("sakura", "bust"), "怒ります。");
+	assert.equal(manager.getTooltipForCollision(1, "tail"), "しっぽです");
+	assert.equal(manager.getTooltipForCollision(1, "head"), null);
+	assert.equal(manager.getTooltipForCollision(0, null), null);
+});

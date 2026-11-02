@@ -322,4 +322,45 @@ describe("AndroidBridge", () => {
 			ANDROID_LIFECYCLE_STATES.STOPPED,
 		);
 	});
+
+	it("manages dockMode and coordinates with gestureRecognizer snap events", () => {
+		let snapHandler = null;
+		const mockRecognizer = {
+			setDockState: vi.fn(),
+			on: vi.fn((event, cb) => {
+				if (event === "nas:touch:snap") {
+					snapHandler = cb;
+				}
+				return () => {};
+			}),
+		};
+
+		const bridge = new AndroidBridge({ gestureRecognizer: mockRecognizer });
+		const dockListener = vi.fn();
+		bridge.on(ANDROID_EVENTS.DOCK_CHANGED, dockListener);
+
+		expect(bridge.getDockMode()).toBe("none");
+
+		// setDockMode to left
+		bridge.setDockMode("left");
+		expect(bridge.getDockMode()).toBe("left");
+		expect(bridge.getState().dockState).toBe("left");
+		expect(mockRecognizer.setDockState).toHaveBeenCalledWith("left");
+		expect(dockListener).toHaveBeenCalledWith(
+			expect.objectContaining({ dockState: "left" }),
+		);
+
+		// Trigger snap event via recognizer listener
+		expect(snapHandler).toBeDefined();
+		snapHandler({ dockState: "right" });
+		expect(bridge.getDockMode()).toBe("right");
+		expect(mockRecognizer.setDockState).toHaveBeenCalledWith("right");
+		expect(dockListener).toHaveBeenCalledWith(
+			expect.objectContaining({ dockState: "right" }),
+		);
+
+		// Reset to none
+		bridge.setDockMode("none");
+		expect(bridge.getDockMode()).toBe("none");
+	});
 });

@@ -175,11 +175,37 @@ export class SakuraPlaybackController {
 	}
 
 	/**
+	 * キューのスナップショット（シリアライズ可能な情報のみ）を取得 (Cycle 4 拡張)
+	 * @returns {Array<{ id: number, script: string }>}
+	 */
+	getQueueSnapshot() {
+		return this.queue.map((job) => ({ id: job.id, script: job.script }));
+	}
+
+	/**
 	 * キュー残数を取得
 	 * @returns {number}
 	 */
 	getQueueLength() {
 		return this.queue.length;
+	}
+
+	/**
+	 * キューまたは再生中の未完了ジョブが存在するかどうかを取得
+	 * @returns {boolean}
+	 */
+	hasPendingJobs() {
+		return this.isProcessing || this.queue.length > 0;
+	}
+
+	/**
+	 * キューの先頭ジョブをデキューせずに参照
+	 * @returns {{ id: number, script: string }|null}
+	 */
+	peekNextJob() {
+		if (this.queue.length === 0) return null;
+		const job = this.queue[0];
+		return { id: job.id, script: job.script };
 	}
 
 	/**

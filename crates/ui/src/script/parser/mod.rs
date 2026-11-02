@@ -103,6 +103,16 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
                 }
                 Some('C') => callback(SakuraCommand::Clear),
                 Some('e') => callback(SakuraCommand::End), // \e
+                Some('m') => {
+                    // \m[umsg,wparam,lparam] (m-umsg-wparam-lparam.md)
+                    if let Some((umsg, wparam, lparam)) = brackets::handle_postmessage(&mut chars) {
+                        callback(SakuraCommand::PostMessage {
+                            umsg,
+                            wparam,
+                            lparam,
+                        });
+                    }
+                }
                 Some('q') => {
                     // \q[テキスト,ID] / \q[temp,テキスト,ID]
                     if let Some((label, id, args)) = brackets::handle_choice(&mut chars) {

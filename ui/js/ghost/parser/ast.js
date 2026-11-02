@@ -153,6 +153,29 @@ export function traverseAst(node, visitor) {
 }
 
 /**
+ * トークンの寿命分類を判定する (notes_lifespan.md に準拠)
+ * @param {any} token
+ * @returns {'Scope' | 'Script' | 'Permanent'}
+ */
+export function getSakuraTokenLifetime(token) {
+	if (!token) return "Script";
+	const type = token.type;
+
+	// スコープ固有のフォントや修飾
+	if (type === "font") {
+		return "Scope";
+	}
+
+	// 永続設定（サーフィス、壁紙、プロキシ、バインド等）
+	if (type === "surface" || type === "bind") {
+		return "Permanent";
+	}
+
+	// スクリプト単位で維持され、\e でリセットされる状態
+	return "Script";
+}
+
+/**
  * AST ツリー内のすべてのトークン／コマンドを抽出する
  * @param {SakuraAstNode} ast
  * @returns {any[]}
@@ -177,4 +200,16 @@ export function collectAstTokens(ast) {
 		}
 	});
 	return tokens;
+}
+
+/**
+ * 寿命区分 ('Scope' | 'Script' | 'Permanent') でトークンをフィルタリング抽出する
+ * @param {SakuraAstNode} ast
+ * @param {'Scope' | 'Script' | 'Permanent'} lifetime
+ * @returns {any[]}
+ */
+export function collectAstTokensByLifetime(ast, lifetime) {
+	return collectAstTokens(ast).filter(
+		(token) => getSakuraTokenLifetime(token) === lifetime,
+	);
 }

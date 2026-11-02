@@ -187,7 +187,7 @@ export function parseSakuraScript(script) {
 				tokens.push({ type: "wait", value: weight * 50 });
 				i++;
 			}
-			// \_w[ms] (ミリ秒ウェイト) または \__w[animation,ID] (アニメーション待ち)
+			// \_w[ms] (ミリ秒ウェイト)
 			else if (char === "_" && script[i + 1] === "w" && script[i + 2] === "[") {
 				const parsed = readBracketContent(script, i + 2);
 				if (parsed) {
@@ -205,11 +205,9 @@ export function parseSakuraScript(script) {
 				script[i + 2] === "w" &&
 				script[i + 3] === "["
 			) {
-				const start = i + 4;
-				const end = script.indexOf("]", start);
-				if (end !== -1) {
-					const content = script.substring(start, end).trim();
-					const parts = content.split(",").map((s) => s.trim());
+				const parsed = readBracketContent(script, i + 3);
+				if (parsed) {
+					const parts = splitBracketArgs(parsed.content);
 					if (parts[0]?.toLowerCase() === "animation" && parts[1]) {
 						const rawTarget = parts[1];
 						const num = Number.parseInt(rawTarget, 10);
@@ -218,7 +216,7 @@ export function parseSakuraScript(script) {
 							animId: Number.isNaN(num) ? rawTarget : num,
 						});
 					}
-					i = end + 1;
+					i = parsed.nextIdx;
 				} else {
 					i += 3;
 				}
@@ -322,6 +320,22 @@ export function parseSakuraScript(script) {
 				if (parsed) {
 					const args = splitBracketArgs(parsed.content);
 					tokens.push({ type: "command", args });
+					i = parsed.nextIdx;
+				} else {
+					i++;
+				}
+			}
+			// \m[umsg,wparam,lparam] (ウィンドウメッセージ送信 / PostMessage)
+			else if (char === "m" && script[i + 1] === "[") {
+				const parsed = readBracketContent(script, i + 1);
+				if (parsed) {
+					const parts = splitBracketArgs(parsed.content);
+					tokens.push({
+						type: "post_message",
+						umsg: parts[0] || "",
+						wparam: parts[1] || "",
+						lparam: parts[2] || "",
+					});
 					i = parsed.nextIdx;
 				} else {
 					i++;

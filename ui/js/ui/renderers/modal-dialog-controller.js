@@ -15,6 +15,63 @@ export class ModalDialogController {
 		/** @type {Map<string, { id?: string, type?: string, form: HTMLElement, cleanup: (force?: boolean) => void }>} */
 		this.activeBoxes = new Map();
 		this.choiceTimeoutTimer = null;
+		this.autocompleteCounter = 0;
+	}
+
+	/**
+	 * inputbox.autocomplete イベントを問い合わせて datalist を設定
+	 * UKADOC 仕様: ボックス展開時に発生。バイト値1区切り(\x01 または \1)で候補リストを取得
+	 * Reference0: 入力ボックスの種類 (inputbox, teachbox, communicatebox)
+	 * Reference1: inputboxの場合のみ、入力完了時に起きるイベント名/識別子
+	 * @param {HTMLInputElement} inputEl 対象の入力要素
+	 * @param {string} boxType 入力ボックスの種別
+	 * @param {string} [id=""] ボックスID
+	 * @param {HTMLElement} [parentForm] 親フォーム要素
+	 * @returns {Promise<HTMLDataListElement|null>}
+	 */
+	async attachAutocomplete(inputEl, boxType, id = "", parentForm = null) {
+		if (!this.app?.ghostController?.sendShioriEvent || !inputEl) return null;
+		try {
+			const res = await this.app.ghostController.sendShioriEvent(
+				"inputbox.autocomplete",
+				boxType === "inputbox" ? [boxType, id] : [boxType],
+			);
+			const rawVal =
+				typeof res === "string"
+					? res
+					: res?.value || res?.response || res?.toString?.() || "";
+			if (!rawVal || typeof rawVal !== "string") return null;
+
+			// バイト値1 (\x01) またはエスケープ \1 で分割
+			const byteOne = String.fromCharCode(1);
+			const items = rawVal
+				.replaceAll("\\1", byteOne)
+				.split(byteOne)
+				.map((s) => s.trim())
+				.filter(Boolean);
+
+			if (items.length === 0) return null;
+
+			const listId = `dl-${boxType}-${++this.autocompleteCounter}`;
+			const dataList = document.createElement("datalist");
+			dataList.id = listId;
+
+			for (const item of items) {
+				const opt = document.createElement("option");
+				opt.value = item;
+				dataList.appendChild(opt);
+			}
+
+			inputEl.setAttribute("list", listId);
+			if (parentForm) {
+				parentForm.appendChild(dataList);
+			} else {
+				inputEl.parentElement?.appendChild(dataList);
+			}
+			return dataList;
+		} catch {
+			return null;
+		}
 	}
 
 	/**
@@ -117,6 +174,13 @@ export class ModalDialogController {
 		input.style.background = "var(--balloon-bg, #fff)";
 		input.style.color = "var(--balloon-text-color, #000)";
 
+		// モバイルタッチ対応: フォーカス時の視認性確保
+		input.addEventListener("focus", () => {
+			try {
+				form.scrollIntoView?.({ behavior: "smooth", block: "nearest" });
+			} catch {}
+		});
+
 		const submitBtn = document.createElement("button");
 		submitBtn.textContent = "OK";
 		submitBtn.className = "balloon-choice-btn";
@@ -124,11 +188,16 @@ export class ModalDialogController {
 
 		let timer = null;
 		const boxKey = `inputbox:${opts.id}`;
+		let dataListEl = null;
 
 		const cleanup = (force = false) => {
 			if (timer) {
 				clearTimeout(timer);
 				timer = null;
+			}
+			if (dataListEl) {
+				dataListEl.remove?.();
+				dataListEl = null;
 			}
 			if (force || !opts.noClose) {
 				form.remove();
@@ -189,6 +258,13 @@ export class ModalDialogController {
 		form.appendChild(submitBtn);
 		balloon.appendChild(form);
 		setTimeout(() => input.focus?.(), 50);
+
+		// Autocomplete 設定 (inputbox かつ 非password の場合)
+		if (!isPassword) {
+			this.attachAutocomplete(input, "inputbox", opts.id, form).then((dl) => {
+				dataListEl = dl;
+			});
+		}
 
 		if (opts.timeoutMs > 0) {
 			timer = setTimeout(() => {
@@ -286,6 +362,13 @@ export class ModalDialogController {
 		textarea.style.border = "1px solid var(--balloon-border-color, #888)";
 		textarea.style.background = "var(--balloon-bg, #fff)";
 		textarea.style.color = "var(--balloon-text-color, #000)";
+
+		// モバイルタッチ対応: フォーカス時の視認性確保
+		textarea.addEventListener("focus", () => {
+			try {
+				form.scrollIntoView?.({ behavior: "smooth", block: "nearest" });
+			} catch {}
+		});
 
 		const submitBtn = document.createElement("button");
 		submitBtn.textContent = "OK";
@@ -620,12 +703,24 @@ export class ModalDialogController {
 		input.style.background = "var(--balloon-bg, #fff)";
 		input.style.color = "var(--balloon-text-color, #000)";
 
+		// モバイルタッチ対応: フォーカス時の視認性確保
+		input.addEventListener("focus", () => {
+			try {
+				form.scrollIntoView?.({ behavior: "smooth", block: "nearest" });
+			} catch {}
+		});
+
 		const submitBtn = document.createElement("button");
 		submitBtn.textContent = "OK";
 		submitBtn.className = "balloon-choice-btn";
 		submitBtn.style.marginTop = "0";
 
+		let dataListEl = null;
 		const cleanup = () => {
+			if (dataListEl) {
+				dataListEl.remove?.();
+				dataListEl = null;
+			}
 			form.remove();
 			this.activeBoxes.delete("teachbox");
 		};
@@ -664,6 +759,11 @@ export class ModalDialogController {
 		form.appendChild(submitBtn);
 		balloon.appendChild(form);
 		setTimeout(() => input.focus?.(), 50);
+
+		// Autocomplete 設定 (teachbox)
+		this.attachAutocomplete(input, "teachbox", "", form).then((dl) => {
+			dataListEl = dl;
+		});
 
 		this.activeBoxes.set("teachbox", {
 			type: "teachbox",
@@ -718,16 +818,28 @@ export class ModalDialogController {
 		input.style.color =
 			"var(--communicatebox-font-color, var(--balloon-text-color, #000))";
 
+		// モバイルタッチ対応: フォーカス時の視認性確保
+		input.addEventListener("focus", () => {
+			try {
+				form.scrollIntoView?.({ behavior: "smooth", block: "nearest" });
+			} catch {}
+		});
+
 		const submitBtn = document.createElement("button");
 		submitBtn.textContent = "送信";
 		submitBtn.className = "balloon-choice-btn";
 		submitBtn.style.marginTop = "0";
 
 		let timer = null;
+		let dataListEl = null;
 		const cleanup = (force = false) => {
 			if (timer) {
 				clearTimeout(timer);
 				timer = null;
+			}
+			if (dataListEl) {
+				dataListEl.remove?.();
+				dataListEl = null;
 			}
 			if (force || !opts.noClose) {
 				form.remove();
@@ -774,6 +886,11 @@ export class ModalDialogController {
 		form.appendChild(submitBtn);
 		balloon.appendChild(form);
 		setTimeout(() => input.focus?.(), 50);
+
+		// Autocomplete 設定 (communicatebox)
+		this.attachAutocomplete(input, "communicatebox", "", form).then((dl) => {
+			dataListEl = dl;
+		});
 
 		if (opts.timeoutMs > 0) {
 			timer = setTimeout(() => {

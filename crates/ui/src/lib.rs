@@ -23,7 +23,10 @@ pub use fmo::{
     generate_fmo_buffer, parse_fmo_buffer,
 };
 pub use manifest::{ShellManifest, SurfaceManifest};
-pub use script::{SakuraCommand, execute_sakura_script, parse_sakura_script};
+pub use script::{
+    SakuraAstNode, SakuraCommand, SakuraScriptLifetime, SakuraToken, build_sakura_ast,
+    execute_sakura_script, parse_sakura_script,
+};
 pub use shell::Shell;
 pub use shiori::{
     ErrorLevel, GhostStatusToken, MockShioriEngine, MultiStageShioriLoader, SecurityLevel,

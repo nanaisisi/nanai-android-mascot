@@ -44,6 +44,14 @@ body {
 	color: var(--balloon-text-color, #111111);
 	word-break: break-word;
 	cursor: grab;
+	touch-action: pan-y;
+}
+
+@media (max-width: 600px) {
+	.balloon {
+		max-width: 95vw;
+		box-sizing: border-box;
+	}
 }
 
 .balloon:active {
@@ -62,7 +70,10 @@ body {
 	vertical-align: middle;
 	margin-top: 0.3em;
 	margin-right: 0.25em;
-	padding: 0.25em 0.6em;
+	padding: 0.35em 0.65em;
+	min-height: 28px;
+	touch-action: manipulation;
+	-webkit-tap-highlight-color: transparent;
 	font-size: 1em;
 	font-family: inherit;
 	line-height: 1.2;
@@ -82,6 +93,11 @@ body {
 	border-radius: 4px;
 	cursor: pointer;
 	transition: all 0.15s ease;
+}
+
+.balloon-input {
+	touch-action: manipulation;
+	-webkit-tap-highlight-color: transparent;
 }
 
 .balloon-choice-btn:hover {

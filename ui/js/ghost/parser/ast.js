@@ -136,3 +136,45 @@ export function tokensToAst(tokens) {
 		children: rootChildren,
 	};
 }
+
+/**
+ * AST ツリーを深さ優先探索で走査する
+ * @param {SakuraAstNode} node
+ * @param {(node: SakuraAstNode) => void} visitor
+ */
+export function traverseAst(node, visitor) {
+	if (!node) return;
+	visitor(node);
+	if (Array.isArray(node.children)) {
+		for (const child of node.children) {
+			traverseAst(child, visitor);
+		}
+	}
+}
+
+/**
+ * AST ツリー内のすべてのトークン／コマンドを抽出する
+ * @param {SakuraAstNode} ast
+ * @returns {any[]}
+ */
+export function collectAstTokens(ast) {
+	const tokens = [];
+	traverseAst(ast, (node) => {
+		if (node.nodeType === "command" && node.token) {
+			tokens.push(node.token);
+		} else if (node.nodeType === "choice") {
+			tokens.push({
+				type: "choice",
+				id: node.id,
+				text: node.text,
+				args: node.args,
+			});
+		} else if (node.nodeType === "scope") {
+			tokens.push({
+				type: "scope",
+				value: node.scope,
+			});
+		}
+	});
+	return tokens;
+}

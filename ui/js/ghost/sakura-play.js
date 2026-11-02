@@ -26,6 +26,7 @@ export async function playScript(player, script) {
 	player.skipRequested = false;
 	player.timeCritical = false;
 	player.currentScope = 0;
+	player.isSyncMode = false;
 	player.lastScript = script;
 	if (player.choiceTimeoutTimer) {
 		clearTimeout(player.choiceTimeoutTimer);
@@ -88,6 +89,9 @@ export async function playScript(player, script) {
 	}
 	player.isPlaying = false;
 	player.scheduleSurfaceRestore(currentId);
+
+	// スクリプト実行終了後にバルーンウェイトをデフォルト(等倍)にリセット (UKADOC準拠)
+	player.playbackController?.resetBalloonWait?.();
 
 	const hasChoices = tokens.some((t) => t.type === "choice");
 

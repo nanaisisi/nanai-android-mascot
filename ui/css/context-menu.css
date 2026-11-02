@@ -79,6 +79,9 @@ body.has-sidebar {
 .menu-item {
 	width: 100%;
 	padding: 0.5rem 0.875rem;
+	min-height: 32px;
+	touch-action: manipulation;
+	-webkit-tap-highlight-color: transparent;
 	background: none;
 	border: none;
 	text-align: left;

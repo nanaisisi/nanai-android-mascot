@@ -29,9 +29,16 @@ import {
 } from "./command-handler/registry.js";
 import {
 	handleBiffCommand,
+	handleExecuteResetBalloonPos,
+	handleExecuteResetWindowPos,
 	handleExecuteSntpCommand,
 	handleOpenSystemTarget,
 	handleSetAlignmentOnDesktop,
+	handleSetAlphaCommand,
+	handleSetPositionCommand,
+	handleSetPropertyCommand,
+	handleSetScalingCommand,
+	handleSetShioriDebugMode,
 	handleSetTaskTrayIcon,
 	handleSetTrayBalloon,
 } from "./command-handler/system.js";
@@ -161,12 +168,51 @@ function initDefaultCommandHandlers() {
 		handler.player.balloonTimeout = Number.isFinite(timeout) ? timeout : 0;
 	});
 
+	registerCommandHandler("set:balloonwait", async (handler, args) => {
+		const param = args[2];
+		handler.player.playbackController?.setBalloonWait?.(param);
+	});
+
+	registerCommandHandler("quicksection", async (handler, args) => {
+		const val = String(args[1] ?? "").toLowerCase();
+		const enable = val === "1" || val === "true";
+		handler.player.playbackController?.setQuickMode?.(enable);
+	});
+
 	registerCommandHandler("set:alignmenttodesktop", async (handler, args) => {
 		await setAlignmentToDesktop(handler, args[2]);
 	});
 
 	registerCommandHandler("set:alignmentondesktop", async (handler, args) => {
 		await handleSetAlignmentOnDesktop(handler, args);
+	});
+
+	registerCommandHandler("set:property", async (handler, args) => {
+		await handleSetPropertyCommand(handler, args);
+	});
+
+	registerCommandHandler("set:scaling", async (handler, args) => {
+		await handleSetScalingCommand(handler, args);
+	});
+
+	registerCommandHandler("set:alpha", async (handler, args) => {
+		await handleSetAlphaCommand(handler, args);
+	});
+
+	registerCommandHandler("set:position", async (handler, args) => {
+		await handleSetPositionCommand(handler, args);
+	});
+
+	registerCommandHandler("set:shioridebugmode", async (handler, args) => {
+		await handleSetShioriDebugMode(handler, args);
+	});
+
+	registerCommandHandler("execute:resetwindowpos", async (handler, args) => {
+		await handleExecuteResetWindowPos(handler, args);
+	});
+
+	registerCommandHandler("execute:resetballoonpos", async (handler, args) => {
+		await handleExecuteResetBalloonPos(handler, args);
 	});
 
 	registerCommandHandler("set:tasktrayicon", async (handler, args) => {

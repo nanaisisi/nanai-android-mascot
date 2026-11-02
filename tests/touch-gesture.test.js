@@ -456,4 +456,212 @@ describe("TouchGestureRecognizer", () => {
 		expect(recognizer._isPinching).toBe(false);
 		expect(recognizer._isDragging).toBe(false);
 	});
+
+	it("recognizes swipe in four directions (left, right, up, down)", () => {
+		const swipeHandler = vi.fn();
+		recognizer.on(TOUCH_GESTURE_TYPES.SWIPE, swipeHandler);
+
+		// Swipe Right
+		element.dispatchEvent(
+			{
+				type: "touchstart",
+				touches: [{ clientX: 100, clientY: 100 }],
+			},
+			"touchstart",
+		);
+		vi.advanceTimersByTime(50);
+		element.dispatchEvent(
+			{
+				type: "touchmove",
+				touches: [{ clientX: 180, clientY: 100 }],
+			},
+			"touchmove",
+		);
+		element.dispatchEvent(
+			{
+				type: "touchend",
+				touches: [],
+				changedTouches: [{ clientX: 180, clientY: 100 }],
+			},
+			"touchend",
+		);
+
+		expect(swipeHandler).toHaveBeenCalledTimes(1);
+		expect(swipeHandler.mock.calls[0][0].direction).toBe("right");
+		expect(swipeHandler.mock.calls[0][0].distance).toBe(80);
+		expect(swipeHandler.mock.calls[0][0].velocity).toBeGreaterThan(0.3);
+
+		// Swipe Left
+		swipeHandler.mockClear();
+		element.dispatchEvent(
+			{
+				type: "touchstart",
+				touches: [{ clientX: 200, clientY: 100 }],
+			},
+			"touchstart",
+		);
+		vi.advanceTimersByTime(50);
+		element.dispatchEvent(
+			{
+				type: "touchmove",
+				touches: [{ clientX: 120, clientY: 100 }],
+			},
+			"touchmove",
+		);
+		element.dispatchEvent(
+			{
+				type: "touchend",
+				touches: [],
+				changedTouches: [{ clientX: 120, clientY: 100 }],
+			},
+			"touchend",
+		);
+		expect(swipeHandler).toHaveBeenCalledTimes(1);
+		expect(swipeHandler.mock.calls[0][0].direction).toBe("left");
+
+		// Swipe Down
+		swipeHandler.mockClear();
+		element.dispatchEvent(
+			{
+				type: "touchstart",
+				touches: [{ clientX: 100, clientY: 100 }],
+			},
+			"touchstart",
+		);
+		vi.advanceTimersByTime(50);
+		element.dispatchEvent(
+			{
+				type: "touchmove",
+				touches: [{ clientX: 100, clientY: 180 }],
+			},
+			"touchmove",
+		);
+		element.dispatchEvent(
+			{
+				type: "touchend",
+				touches: [],
+				changedTouches: [{ clientX: 100, clientY: 180 }],
+			},
+			"touchend",
+		);
+		expect(swipeHandler).toHaveBeenCalledTimes(1);
+		expect(swipeHandler.mock.calls[0][0].direction).toBe("down");
+
+		// Swipe Up
+		swipeHandler.mockClear();
+		element.dispatchEvent(
+			{
+				type: "touchstart",
+				touches: [{ clientX: 100, clientY: 200 }],
+			},
+			"touchstart",
+		);
+		vi.advanceTimersByTime(50);
+		element.dispatchEvent(
+			{
+				type: "touchmove",
+				touches: [{ clientX: 100, clientY: 120 }],
+			},
+			"touchmove",
+		);
+		element.dispatchEvent(
+			{
+				type: "touchend",
+				touches: [],
+				changedTouches: [{ clientX: 100, clientY: 120 }],
+			},
+			"touchend",
+		);
+		expect(swipeHandler).toHaveBeenCalledTimes(1);
+		expect(swipeHandler.mock.calls[0][0].direction).toBe("up");
+	});
+
+	it("recognizes two-finger tap when 2 fingers touch and release without moving", () => {
+		const twoFingerHandler = vi.fn();
+		recognizer.on(TOUCH_GESTURE_TYPES.TWO_FINGER_TAP, twoFingerHandler);
+
+		element.dispatchEvent(
+			{
+				type: "touchstart",
+				touches: [
+					{ clientX: 100, clientY: 100 },
+					{ clientX: 200, clientY: 100 },
+				],
+			},
+			"touchstart",
+		);
+
+		vi.advanceTimersByTime(80);
+
+		element.dispatchEvent(
+			{
+				type: "touchend",
+				touches: [],
+				changedTouches: [
+					{ clientX: 100, clientY: 100 },
+					{ clientX: 200, clientY: 100 },
+				],
+			},
+			"touchend",
+		);
+
+		expect(twoFingerHandler).toHaveBeenCalledTimes(1);
+		expect(twoFingerHandler.mock.calls[0][0].centerX).toBe(150);
+		expect(twoFingerHandler.mock.calls[0][0].centerY).toBe(100);
+	});
+
+	it("supports throttleWithRaf option for move handling", () => {
+		const originalRaf = globalThis.requestAnimationFrame;
+		const originalCaf = globalThis.cancelAnimationFrame;
+
+		let _rafCallback = null;
+		globalThis.requestAnimationFrame = vi.fn((cb) => {
+			_rafCallback = cb;
+			return 123;
+		});
+		globalThis.cancelAnimationFrame = vi.fn();
+
+		const rafRecognizer = new TouchGestureRecognizer(element, {
+			throttleWithRaf: true,
+			slopThreshold: 2,
+		});
+
+		const dragHandler = vi.fn();
+		rafRecognizer.on(TOUCH_GESTURE_TYPES.DRAG, dragHandler);
+
+		element.dispatchEvent(
+			{
+				type: "touchstart",
+				touches: [{ clientX: 50, clientY: 50 }],
+			},
+			"touchstart",
+		);
+
+		element.dispatchEvent(
+			{
+				type: "touchmove",
+				touches: [{ clientX: 70, clientY: 70 }],
+			},
+			"touchmove",
+		);
+
+		expect(globalThis.requestAnimationFrame).toHaveBeenCalled();
+		expect(dragHandler).not.toHaveBeenCalled();
+
+		// Trigger another move while RAF is pending
+		element.dispatchEvent(
+			{
+				type: "touchmove",
+				touches: [{ clientX: 75, clientY: 75 }],
+			},
+			"touchmove",
+		);
+
+		// Now destroy before RAF fires
+		rafRecognizer.destroy();
+		expect(globalThis.cancelAnimationFrame).toHaveBeenCalled();
+
+		globalThis.requestAnimationFrame = originalRaf;
+		globalThis.cancelAnimationFrame = originalCaf;
+	});
 });

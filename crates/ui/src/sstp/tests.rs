@@ -1,4 +1,5 @@
 use super::*;
+use std::collections::HashMap;
 
 #[test]
 fn test_sstp_method_parsing_and_as_str() {

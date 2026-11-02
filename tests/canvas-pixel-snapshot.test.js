@@ -124,6 +124,91 @@ test("Canvas ChromaKey pixel manipulation & PNA alpha mask comparison", async ()
 	globalThis.Image = origImage;
 });
 
+test("SurfaceFrameBuffer 32-bit pixel operations, clone, and high-frequency multi-layer composite snapshot", async () => {
+	const { SurfaceFrameBuffer } = await import(
+		"../ui/js/surface/compositor/framebuffer.js"
+	);
+
+	// 1. Pixel buffer manipulation & boundary checks
+	const fb = new SurfaceFrameBuffer(4, 4);
+	assert.equal(fb.width, 4);
+	assert.equal(fb.height, 4);
+	assert.equal(fb.data.length, 64);
+
+	// Out of bounds getter/setter checks
+	assert.equal(fb.getPixel(-1, 0), null);
+	assert.equal(fb.getPixel(4, 4), null);
+	fb.setPixel(-1, 0, 255, 0, 0, 255); // No-op
+	fb.setPixel(4, 4, 255, 0, 0, 255); // No-op
+
+	// Set and get pixel
+	fb.setPixel(1, 2, 100, 150, 200, 255);
+	assert.deepEqual(fb.getPixel(1, 2), [100, 150, 200, 255]);
+
+	// Clone should be independent deep copy
+	const cloned = fb.clone();
+	assert.deepEqual(cloned.getPixel(1, 2), [100, 150, 200, 255]);
+	cloned.setPixel(1, 2, 10, 20, 30, 40);
+	assert.deepEqual(cloned.getPixel(1, 2), [10, 20, 30, 40]);
+	assert.deepEqual(fb.getPixel(1, 2), [100, 150, 200, 255]);
+
+	// Clear should zero out buffer
+	cloned.clear();
+	assert.deepEqual(cloned.getPixel(1, 2), [0, 0, 0, 0]);
+
+	// 2. High-frequency 32-bit pixel buffer throughput & composite simulation
+	const origDocument = globalThis.document;
+	const origImage = globalThis.Image;
+
+	const canvas = createMockCanvas(32, 32);
+	globalThis.document = {
+		createElement(tag) {
+			if (tag === "canvas") return canvas;
+			return {};
+		},
+	};
+
+	globalThis.Image = class {
+		constructor() {
+			this.naturalWidth = 16;
+			this.naturalHeight = 16;
+			this.width = 16;
+			this.height = 16;
+			this._mockData = new Uint8ClampedArray(16 * 16 * 4).fill(200);
+			setTimeout(() => {
+				this.onload?.();
+			}, 0);
+		}
+	};
+
+	// Benchmark: batch compose 20 iterations
+	const startTime = Date.now();
+	const multiElements = [
+		{ file: "base.png", x: 0, y: 0, type: "base" },
+		{ file: "dress.png", x: 4, y: 4, type: "overlay" },
+		{ file: "face.png", x: 8, y: 8, type: "replace" },
+		{ file: "acc.png", x: 12, y: 12, type: "add" },
+	];
+
+	for (let i = 0; i < 20; i++) {
+		const out = await composeSurfaceElements(
+			`surf_${i}`,
+			multiElements,
+			async (name) => `http://mock/${name}`,
+		);
+		assert.ok(out.startsWith("data:image/png;base64,"));
+	}
+	const elapsed = Date.now() - startTime;
+	assert.ok(
+		elapsed < 500,
+		`20 batch compositing should complete rapidly (<500ms), took ${elapsed}ms`,
+	);
+
+	// Restore
+	globalThis.document = origDocument;
+	globalThis.Image = origImage;
+});
+
 test("BalloonThemeManager computeNineSlice snapshot calculation and CSS border properties", () => {
 	const mgr = new BalloonThemeManager();
 

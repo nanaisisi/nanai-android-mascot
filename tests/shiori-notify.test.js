@@ -56,12 +56,21 @@ test("shioriNotifyMethods covers sendShioriNotify and sendBootNotifyEvents", asy
 	// 3. sendBootNotifyEvents with full ghost/shell metadata
 	calls.length = 0;
 	await controller.sendBootNotifyEvents();
+	assert.ok(calls.some((c) => c.args.event === "capability"));
 	assert.ok(calls.some((c) => c.args.event === "installedghostname"));
 	assert.ok(calls.some((c) => c.args.event === "installedkeroname"));
 	assert.ok(calls.some((c) => c.args.event === "installedshellname"));
 	assert.ok(calls.some((c) => c.args.event === "ghostpathlist"));
 	assert.ok(calls.some((c) => c.args.event === "basewareversion"));
 	assert.ok(calls.some((c) => c.args.event === "uniqueid"));
+
+	// capability 単体送信の確認
+	calls.length = 0;
+	await controller.sendCapabilityNotify();
+	assert.equal(calls.length, 1);
+	assert.equal(calls[0].args.event, "capability");
+	assert.ok(calls[0].args.references.includes("request.status"));
+	assert.ok(calls[0].args.references.includes("response.value"));
 
 	// 4. sendShioriNotify with invoke error (catch branch)
 	globalThis.__TAURI_INTERNALS__.invoke = async () => {

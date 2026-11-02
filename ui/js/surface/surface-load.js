@@ -225,6 +225,8 @@ export const surfaceLoadMethods = {
 		this.animations = data.animations;
 		this.aliases = data.aliases;
 		this.keroAliases = data.keroAliases;
+		this.cursors = data.cursors ?? {};
+		this.tooltips = data.tooltips ?? {};
 		this.collisionSort = data.collisionSort ?? "none";
 		this.animationSort = data.animationSort ?? "none";
 		this.shellManifest = manifest;
@@ -267,6 +269,8 @@ export const surfaceLoadMethods = {
 		this.collisions = parsed.collisions;
 		this.elements = parsed.elements;
 		this.animations = parsed.animations;
+		this.cursors = parsed.cursors ?? {};
+		this.tooltips = parsed.tooltips ?? {};
 		this.collisionSort = parsed.collisionSort ?? "none";
 		this.animationSort = parsed.animationSort ?? "none";
 

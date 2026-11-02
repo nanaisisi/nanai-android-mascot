@@ -119,4 +119,69 @@ export const surfaceCollisionMethods = {
 			canvasY,
 		};
 	},
+
+	/**
+	 * 当たり判定名・イベント種別に対応するカーソル定義を取得
+	 * @this {import('./surface-manager.js').SurfaceManager}
+	 * @param {number|string} scopeId - 0 / 1 または "sakura" / "kero" / "char*"
+	 * @param {string} eventType - mouseup, mousedown, mouserightdown, mousewheel, mousehover
+	 * @param {string} collisionName - 当たり判定名 (例: "Head", "Bust")
+	 * @returns {string|null} カーソル識別子 (例: "system:hand", "system:finger") または画像ファイルパス
+	 */
+	getCursorForCollision(scopeId, eventType, collisionName) {
+		if (!this.cursors || !collisionName) return null;
+		const scopeKey =
+			scopeId === 0 || scopeId === "0"
+				? "sakura"
+				: scopeId === 1 || scopeId === "1"
+					? "kero"
+					: String(scopeId).toLowerCase();
+
+		const evLower = String(eventType || "").toLowerCase();
+		const colLower = String(collisionName).toLowerCase();
+
+		const lists = [this.cursors[scopeKey], this.cursors["*"]].filter(Boolean);
+		for (const list of lists) {
+			for (let i = list.length - 1; i >= 0; i--) {
+				const entry = list[i];
+				if (
+					entry.event.toLowerCase() === evLower &&
+					entry.collision.toLowerCase() === colLower
+				) {
+					return entry.cursor;
+				}
+			}
+		}
+
+		return null;
+	},
+
+	/**
+	 * 当たり判定名に対応するツールチップテキストを取得
+	 * @this {import('./surface-manager.js').SurfaceManager}
+	 * @param {number|string} scopeId - 0 / 1 または "sakura" / "kero" / "char*"
+	 * @param {string} collisionName - 当たり判定名 (例: "Head", "Bust")
+	 * @returns {string|null} ツールチップ本文
+	 */
+	getTooltipForCollision(scopeId, collisionName) {
+		if (!this.tooltips || !collisionName) return null;
+		const scopeKey =
+			scopeId === 0 || scopeId === "0"
+				? "sakura"
+				: scopeId === 1 || scopeId === "1"
+					? "kero"
+					: String(scopeId).toLowerCase();
+
+		const maps = [this.tooltips[scopeKey], this.tooltips["*"]].filter(Boolean);
+		const colLower = String(collisionName).toLowerCase();
+		for (const map of maps) {
+			for (const key in map) {
+				if (key.toLowerCase() === colLower) {
+					return map[key];
+				}
+			}
+		}
+
+		return null;
+	},
 };

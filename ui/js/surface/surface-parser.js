@@ -55,24 +55,33 @@ export function expandSurfaceRange(rangeStr) {
 }
 
 /**
- * surfaces.txt をパースして collisions, elements, animations, collisionSort, animationSort を抽出
+ * surfaces.txt をパースして collisions, elements, animations, collisionSort, animationSort, cursors, tooltips を抽出
  * @param {string} text
- * @returns {{ collisions: Record<string, CollisionArea[]>, elements: Record<string, SurfaceElement[]>, animations: Record<string, SurfaceAnimation[]>, collisionSort: string, animationSort: string }}
+ * @returns {{ collisions: Record<string, CollisionArea[]>, elements: Record<string, SurfaceElement[]>, animations: Record<string, SurfaceAnimation[]>, collisionSort: string, animationSort: string, cursors: Record<string, Array<{ event: string, collision: string, cursor: string }>>, tooltips: Record<string, Record<string, string>> }}
  */
 export function parseSurfacesTxt(text) {
 	const collisions = {};
 	const elements = {};
 	const animations = {};
 	const animationMaps = {};
+	const cursors = {};
+	const tooltips = {};
 	let collisionSort = "none";
 	let animationSort = "none";
 
 	const lines = text.split(/\r?\n/);
 	let currentSurfaces = ["default"];
+	let currentScopeBlock = null; // { type: 'cursor'|'tooltip', scope: string }
 
 	lines.forEach((line) => {
 		const trimmed = line.trim();
 		if (!trimmed || trimmed.startsWith("//")) return;
+
+		if (trimmed === "{") return;
+		if (trimmed === "}") {
+			currentScopeBlock = null;
+			return;
+		}
 
 		// collision-sort / collision.sort / animation-sort / animation.sort
 		const sortMatch = trimmed.match(
@@ -89,9 +98,68 @@ export function parseSurfacesTxt(text) {
 			return;
 		}
 
+		// *.cursor ブロック開始判定
+		const cursorMatch = trimmed.match(
+			/^(sakura|kero|char\d+|\*)?\.?cursor\s*\{?$/i,
+		);
+		if (cursorMatch) {
+			let scope = (cursorMatch[1] || "*").toLowerCase();
+			if (scope === "char0") scope = "sakura";
+			if (scope === "char1") scope = "kero";
+			currentScopeBlock = { type: "cursor", scope };
+			if (!cursors[scope]) cursors[scope] = [];
+			return;
+		}
+
+		// *.tooltips ブロック開始判定
+		const tooltipsMatch = trimmed.match(
+			/^(sakura|kero|char\d+|\*)?\.?tooltips\s*\{?$/i,
+		);
+		if (tooltipsMatch) {
+			let scope = (tooltipsMatch[1] || "*").toLowerCase();
+			if (scope === "char0") scope = "sakura";
+			if (scope === "char1") scope = "kero";
+			currentScopeBlock = { type: "tooltip", scope };
+			if (!tooltips[scope]) tooltips[scope] = {};
+			return;
+		}
+
+		// スコープブロック内の行処理
+		if (currentScopeBlock?.type === "cursor") {
+			const parts = trimmed.split(",");
+			if (parts.length >= 3) {
+				const rawEvent = parts[0].trim().toLowerCase();
+				const collision = parts[1].trim();
+				const cursor = parts[2].trim();
+				let event = rawEvent;
+				if (rawEvent.startsWith("mouseup")) event = "mouseup";
+				else if (rawEvent.startsWith("mousedown")) event = "mousedown";
+				else if (rawEvent.startsWith("mouserightdown"))
+					event = "mouserightdown";
+				else if (rawEvent.startsWith("mousewheel")) event = "mousewheel";
+				else if (rawEvent.startsWith("mousehover")) event = "mousehover";
+
+				cursors[currentScopeBlock.scope].push({ event, collision, cursor });
+			}
+			return;
+		}
+
+		if (currentScopeBlock?.type === "tooltip") {
+			const commaIdx = trimmed.indexOf(",");
+			if (commaIdx !== -1) {
+				const collision = trimmed.slice(0, commaIdx).trim();
+				const text = trimmed.slice(commaIdx + 1).trim();
+				if (collision) {
+					tooltips[currentScopeBlock.scope][collision] = text;
+				}
+			}
+			return;
+		}
+
 		// surface[ID] または surface.append[ID] ブロック開始
 		const surfaceMatch = trimmed.match(/^surface(?:\.append)?([\d,-]+)/);
 		if (surfaceMatch) {
+			currentScopeBlock = null;
 			currentSurfaces = expandSurfaceRange(surfaceMatch[1]);
 			currentSurfaces.forEach((s) => {
 				if (!collisions[s]) collisions[s] = [];
@@ -295,5 +363,13 @@ export function parseSurfacesTxt(text) {
 				.map(({ index, ...pattern }) => pattern);
 		}
 	}
-	return { collisions, elements, animations, collisionSort, animationSort };
+	return {
+		collisions,
+		elements,
+		animations,
+		collisionSort,
+		animationSort,
+		cursors,
+		tooltips,
+	};
 }

@@ -3,13 +3,13 @@
 - **規格**: [ukadoc-spec/manual/directory.md](https://github.com/ukatech/ukadoc-spec/blob/main/manual/directory.md)
 - **判定基準**: このリポジトリで確認できるゴースト・シェル・バルーン・インストーラのフォルダ階層ハンドリング
 
-| 項目                                                    | 対応状況 |
-| ------------------------------------------------------- | -------- |
-| [ゴーストフォルダ (`ghost/`)](ghost-folder.md)          | ✅ 実装済  |
-| [シェルフォルダ (`shell/`)](shell-folder.md)            | ✅ 実装済  |
-| [バルーンフォルダ (`balloon/`)](balloon-folder.md)      | ✅ 実装済  |
-| [インストールファイル (`install.txt`)](install-files.md) | ✅ 実装済  |
-| [更新・管理ファイル (`updates2.plist`)](update-files.md)  | ✅ 実装済  |
+| 項目                                                     | 対応状況  |
+| -------------------------------------------------------- | --------- |
+| [ゴーストフォルダ (`ghost/`)](ghost-folder.md)           | ✅ 実装済 |
+| [シェルフォルダ (`shell/`)](shell-folder.md)             | ✅ 実装済 |
+| [バルーンフォルダ (`balloon/`)](balloon-folder.md)       | ✅ 実装済 |
+| [インストールファイル (`install.txt`)](install-files.md) | ✅ 実装済 |
+| [更新・管理ファイル (`updates2.plist`)](update-files.md) | ✅ 実装済 |
 
 ## 対応範囲の共通事項
 

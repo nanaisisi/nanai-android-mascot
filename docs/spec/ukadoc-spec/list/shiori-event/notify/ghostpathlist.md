@@ -10,6 +10,6 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/shiori/protocol.rs:111` `/// `installedghostname` / `ghostpathlist` / `uniqueid` / `basewareversion` 等の`
+- `src-tauri/src/commands/shiori/protocol.rs:111` `/// `installedghostname`/`ghostpathlist`/`uniqueid`/`basewareversion` 等の`
 - `ui/js/ghost/shiori-notify.js:13` `* - ghostpathlist (読み込み可能なゴーストフォルダのフルパス)`
 - `ui/js/ghost/shiori-notify.js:181` `await this.sendShioriNotify("ghostpathlist", ghostPaths);`

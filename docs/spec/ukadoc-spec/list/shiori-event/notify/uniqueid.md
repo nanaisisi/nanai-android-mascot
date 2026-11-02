@@ -10,7 +10,7 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/shiori/protocol.rs:111` `/// `installedghostname` / `ghostpathlist` / `uniqueid` / `basewareversion` 等の`
+- `src-tauri/src/commands/shiori/protocol.rs:111` `/// `installedghostname`/`ghostpathlist`/`uniqueid`/`basewareversion` 等の`
 - `ui/js/ghost/shiori-notify.js:14` `* - basewareversion / uniqueid`
 - `ui/js/ghost/shiori-notify.js:189` `// uniqueid: ゴーストインストールディレクトリ名を自前IDとする`
 - `ui/js/ghost/shiori-notify.js:195` `await this.sendShioriNotify("uniqueid", [dirName]);`

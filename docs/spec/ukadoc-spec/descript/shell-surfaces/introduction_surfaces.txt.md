@@ -14,4 +14,4 @@
 - `crates/ui/src/app.rs:51` `extract_filename("assets/ghost/mock_nanai/surfaces.txt"),`
 - `crates/ui/src/app.rs:52` `"surfaces.txt"`
 - `crates/ui/src/app.rs:54` `assert_eq!(extract_filename("surfaces.txt"), "surfaces.txt");`
-- `crates/ui/src/manifest.rs:20` `/// `surfaces.txt` の `name,` / surfacetable の表示名（無ければ None）`
+- `crates/ui/src/manifest.rs:20` `/// `surfaces.txt`の`name,` / surfacetable の表示名（無ければ None）`

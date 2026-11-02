@@ -10,5 +10,5 @@ OnFirstBoot SHIORIイベント送信処理を実装 (ui/js/ghost/shiori-notify.j
 
 ## 実装箇所
 
-- `crates/ui/src/shiori/protocol/request.rs:24` `/// 互換可能な基本イベント名（SSP拡張。`OnFirstBoot` → `OnBoot` など）`
+- `crates/ui/src/shiori/protocol/request.rs:24` `/// 互換可能な基本イベント名（SSP拡張。`OnFirstBoot`→`OnBoot` など）`
 - `ui/js/ghost/shiori-notify.js:17` `* - OnClose, OnCloseAll, OnDestroy, OnDressupChanged, OnFirstBoot, OnFullScreenA`

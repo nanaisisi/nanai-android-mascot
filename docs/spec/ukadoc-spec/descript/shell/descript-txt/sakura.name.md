@@ -14,4 +14,4 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 - `src-tauri/src/ghost/scan/directory/manifest.rs:39` `m.get("sakura.name")`
 - `src-tauri/src/ghost/scan/directory/manifest.rs:41` `.or_else(|| m.get("sakura.name2").cloned())`
 - `crates/ui/src/lib.rs:49` `let sample = "charset,Shift_JIS\r\nname,SampleGhost\r\nsakura.name,Nanai\r\nkero`
-- `crates/ui/src/descript/parser.rs:56` `/// キャラクター本体名（`kero.name` または `sakura.name`）`
+- `crates/ui/src/descript/parser.rs:56` `/// キャラクター本体名（`kero.name`または`sakura.name`）`

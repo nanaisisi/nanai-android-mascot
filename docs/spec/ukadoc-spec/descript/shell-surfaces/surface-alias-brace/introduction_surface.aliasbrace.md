@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `crates/ui/src/manifest.rs:39` `/// `surface.alias` / `sakura.surface.alias` ブロックの エイリアス名 → サーフィス番号列`
-- `crates/ui/src/manifest.rs:41` `/// `kero.surface.alias` / `char1.surface.alias` ブロックの エイリアス名 → 番号列`
+- `crates/ui/src/manifest.rs:39` `/// `surface.alias`/`sakura.surface.alias` ブロックの エイリアス名 → サーフィス番号列`
+- `crates/ui/src/manifest.rs:41` `/// `kero.surface.alias`/`char1.surface.alias` ブロックの エイリアス名 → 番号列`
 - `crates/ui/src/shell.rs:66` `/// `surface.alias` ブロック（エイリアス名）からサーフィス定義を解決する`
-- `crates/ui/src/surfaces/parser/mod.rs:15` `/// `surface.alias {}` / `sakura.surface.alias {}` / `kero.surface.alias {}` ブロッ`
-- `crates/ui/src/surfaces/parser/mod.rs:76` `/// ブロック開始行（`surface[N]` / `surface.append[N]` / `*.surface.alias` / `descript`）`
+- `crates/ui/src/surfaces/parser/mod.rs:15` `/// `surface.alias {}`/`sakura.surface.alias {}`/`kero.surface.alias {}` ブロッ`
+- `crates/ui/src/surfaces/parser/mod.rs:76` `/// ブロック開始行（`surface[N]`/`surface.append[N]`/`*.surface.alias`/`descript`）`

@@ -10,9 +10,6 @@ use super::utils::flatten_balloon_directory;
 use crate::common::*;
 use extraction::extract_zip_entries;
 use inspection::inspect_zip_archive;
-pub use inspection::{
-    BundledResourceTarget, InstallInspectionResult, resolve_bundled_resources_config,
-};
 use postprocess::build_extracted_ghost_info;
 
 pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(

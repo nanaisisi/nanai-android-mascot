@@ -121,8 +121,8 @@ pub fn balloon_manifest(
         };
         for cand in candidates {
             let p = dir.join(&cand);
-            if p.is_file() {
-                if let Some(sub_map) = nanai_android_mascot_ui::resolve_vfs_path(&dir, &cand)
+            if p.is_file()
+                && let Some(sub_map) = nanai_android_mascot_ui::resolve_vfs_path(&dir, &cand)
                     .and_then(|fp| crate::ghost::scan::read_descript_file(&fp))
                 {
                     for (k, v) in sub_map {
@@ -130,7 +130,6 @@ pub fn balloon_manifest(
                     }
                     break;
                 }
-            }
         }
     }
 

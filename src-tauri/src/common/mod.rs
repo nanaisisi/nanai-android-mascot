@@ -6,4 +6,3 @@ pub mod vfs;
 pub use logging::*;
 pub use models::*;
 pub use paths::*;
-pub use vfs::*;

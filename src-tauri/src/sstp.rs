@@ -2,7 +2,7 @@
 //! [SSTP/1.x], [req_res], [method_send], [method_execute], [method_give], [method_communicate], [method_notify], [keepalive]
 
 use nanai_android_mascot_ui::sstp::{
-    SstpRequest as CoreSstpRequest, SstpResponse as CoreSstpResponse, SstpStatusCode,
+    SstpRequest as CoreSstpRequest, SstpResponse as CoreSstpResponse,
 };
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;

@@ -1,6 +1,7 @@
 use super::super::descript::read_descript_file;
 use std::path::Path;
 
+#[allow(dead_code)]
 pub struct GhostManifest {
     pub display_name: String,
     pub version: Option<String>,

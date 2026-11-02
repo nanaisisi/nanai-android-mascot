@@ -2,6 +2,8 @@
 //!
 //! WASM 形式の SHIORI エンジン実行、およびメモリ上仮想ファイルシステムとの連携準備。
 
+#![allow(dead_code)]
+
 use nanai_android_mascot_ui::{ShioriEngine, ShioriLifecycleState};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};

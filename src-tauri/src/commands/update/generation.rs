@@ -21,8 +21,8 @@ pub async fn generate_updates2_dau(
     {
         for line in content.lines() {
             let trimmed = line.trim();
-            if trimmed.starts_with("noupdate=") {
-                let file_pattern = trimmed[9..].trim().replace('\\', "/");
+            if let Some(stripped) = trimmed.strip_prefix("noupdate=") {
+                let file_pattern = stripped.trim().replace('\\', "/");
                 noupdate_files.push(file_pattern);
             }
         }

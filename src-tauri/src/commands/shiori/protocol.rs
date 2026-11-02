@@ -123,6 +123,7 @@ pub async fn send_shiori_notify(
 }
 
 /// SHIORI へ UKADOC 準拠の capability Notify イベントを送信
+#[allow(dead_code)]
 #[tauri::command]
 pub async fn send_shiori_capability(
     state: tauri::State<'_, AppState>,

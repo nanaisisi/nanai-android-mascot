@@ -1,6 +1,8 @@
 //! FMO (File Mapping Object) & Mutex implementation (UKADOC / SSP fmo-mutex spec)
 //! [FMO用Mutex], [FMO (File Mapping Object)], [Mutex]
 
+#![allow(dead_code)]
+
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::Mutex;
@@ -25,6 +27,7 @@ pub struct FmoStatus {
 }
 
 #[cfg(target_os = "windows")]
+#[allow(non_camel_case_types, clippy::upper_case_acronyms)]
 mod win_mutex {
     type HANDLE = *mut std::ffi::c_void;
     type BOOL = i32;

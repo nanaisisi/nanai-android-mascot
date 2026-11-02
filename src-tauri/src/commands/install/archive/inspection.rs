@@ -11,6 +11,7 @@ pub struct BundledResourceTarget {
     pub refresh_undelete_mask: Vec<String>,
 }
 
+#[allow(dead_code)]
 pub struct InstallInspectionResult {
     pub ghost_name: String,
     pub root_prefix: String,

@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 /// Androidオーバーレイ権限リクエスト・案内コマンド
 #[tauri::command]
 #[specta::specta]

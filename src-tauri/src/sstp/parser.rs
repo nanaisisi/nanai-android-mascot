@@ -1,5 +1,7 @@
 //! SSTP parser module
 
+#![allow(dead_code)]
+
 use super::types::SstpRequest;
 use nanai_android_mascot_ui::sstp::{
     SstpGhostConfig, SstpGhostContext, SstpMethod, SstpRequest as CoreSstpRequest,

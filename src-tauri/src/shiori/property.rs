@@ -1,6 +1,8 @@
 //! Property System evaluation engine specification implementation (UKADOC propertysystem spec)
 //! [Property System]
 
+#![allow(dead_code)]
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

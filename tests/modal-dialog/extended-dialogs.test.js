@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test, vi } from "vitest";
-import { setupMockDom, resetCreatedElements } from "./helpers.js";
+import { resetCreatedElements, setupMockDom } from "./helpers.js";
 
 setupMockDom();
 
@@ -144,6 +144,97 @@ test("ModalDialogController Cycle 2: passwordinput, textareabox, sliderinput, an
 				e.args[3] === "sliderRef",
 		),
 	);
+
+	// sliderinput with --text option, min/max/default, and Enter key submit
+	events.length = 0;
+	const sliderTextForm = controller.openSliderInput([
+		"SliderText1",
+		"--text=40,10,100",
+		"--reference=sliderRef1",
+		null, // non-string param
+	]);
+	assert.ok(sliderTextForm);
+	const sliderTextInput = sliderTextForm.children.find(
+		(c) => c.tagName === "INPUT",
+	);
+	assert.equal(sliderTextInput.value, "40");
+	assert.equal(sliderTextInput.min, "10");
+	assert.equal(sliderTextInput.max, "100");
+
+	// Submit via Enter key
+	events.length = 0;
+	sliderTextInput._listeners?.keydown?.({ key: "Enter", stopPropagation() {} });
+	await vi.runAllTimersAsync();
+	assert.ok(
+		events.some(
+			(e) =>
+				e.ev === "OnUserInput" &&
+				e.args[0] === "SliderText1" &&
+				e.args[1] === "40" &&
+				e.args[2] === "10,100" &&
+				e.args[3] === "sliderRef1",
+		),
+	);
+
+	// sliderinput with On... ID, --option=noclose, and Escape key cancel
+	events.length = 0;
+	const sliderFormCustom = controller.openSliderInput([
+		"OnSliderCustom",
+		"0",
+		"50",
+		"0",
+		"100",
+		"--option=noclose",
+	]);
+	const sliderInputCustom = sliderFormCustom.children.find(
+		(c) => c.tagName === "INPUT",
+	);
+	// Escape cancel
+	events.length = 0;
+	sliderInputCustom._listeners?.keydown?.({
+		key: "Escape",
+		stopPropagation() {},
+	});
+	await vi.runAllTimersAsync();
+	assert.ok(
+		events.some(
+			(e) =>
+				e.ev === "OnUserInputCancel" &&
+				e.args[0] === "OnSliderCustom" &&
+				e.args[1] === "close" &&
+				e.args[2] === "0,100",
+		),
+	);
+
+	// sliderinput timeout
+	events.length = 0;
+	controller.openSliderInput(["SliderTimeout", "--timeout=100"]);
+	await vi.advanceTimersByTimeAsync(150);
+	assert.ok(
+		events.some(
+			(e) =>
+				e.ev === "OnUserInputCancel" &&
+				e.args[0] === "SliderTimeout" &&
+				e.args[1] === "timeout",
+		),
+	);
+
+	// sliderinput with fallback defaults (NaN inputs)
+	const sliderFormFallback = controller.openSliderInput([
+		"SliderFallback",
+		"--text=invalid,invalid,invalid",
+	]);
+	const sliderInputFallback = sliderFormFallback.children.find(
+		(c) => c.tagName === "INPUT",
+	);
+	assert.equal(sliderInputFallback.min, "0");
+	assert.equal(sliderInputFallback.max, "100");
+
+	// Fail balloon container
+	const savedBalloon = mockApp.elements.balloonText;
+	mockApp.elements.balloonText = null;
+	assert.equal(controller.openSliderInput(["FailSlider"]), null);
+	mockApp.elements.balloonText = savedBalloon;
 
 	// 4. Close logic: closeInputBox(__SYSTEM_ALL_INPUT__), closeTextAreaBox, closeDialog
 	controller.openInputBox(["InputA"]);

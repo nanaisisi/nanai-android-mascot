@@ -27,14 +27,11 @@ export function openSliderInput(params, scope) {
 			references.push(p.replace("--reference=", ""));
 		} else if (p.startsWith("--option=")) {
 			if (p.toLowerCase().includes("noclose")) noClose = true;
-		} else if (i === 1 && !p.startsWith("--")) {
-			timeoutMs = Number.parseInt(p, 10) || 0;
-		} else if (i === 2 && !p.startsWith("--")) {
-			currentVal = Number.parseInt(p, 10) || 0;
-		} else if (i === 3 && !p.startsWith("--")) {
-			minVal = Number.parseInt(p, 10) || 0;
-		} else if (i === 4 && !p.startsWith("--")) {
-			maxVal = Number.parseInt(p, 10) || 100;
+		} else if (!p.startsWith("--") && p !== "") {
+			if (i === 1) timeoutMs = Number.parseInt(p, 10) || 0;
+			else if (i === 2) currentVal = Number.parseInt(p, 10) || 0;
+			else if (i === 3) minVal = Number.parseInt(p, 10) || 0;
+			else if (i === 4) maxVal = Number.parseInt(p, 10) || 100;
 		}
 	}
 

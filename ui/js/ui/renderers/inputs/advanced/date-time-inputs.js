@@ -27,14 +27,11 @@ export function openDateInput(params, scope) {
 			references.push(p.replace("--reference=", ""));
 		} else if (p.startsWith("--option=")) {
 			if (p.toLowerCase().includes("noclose")) noClose = true;
-		} else if (i === 1 && !p.startsWith("--")) {
-			timeoutMs = Number.parseInt(p, 10) || 0;
-		} else if (i === 2 && !p.startsWith("--")) {
-			year = p.trim();
-		} else if (i === 3 && !p.startsWith("--")) {
-			month = p.trim();
-		} else if (i === 4 && !p.startsWith("--")) {
-			day = p.trim();
+		} else if (!p.startsWith("--") && p !== "") {
+			if (i === 1) timeoutMs = Number.parseInt(p, 10) || 0;
+			else if (i === 2) year = p.trim();
+			else if (i === 3) month = p.trim();
+			else if (i === 4) day = p.trim();
 		}
 	}
 
@@ -195,14 +192,11 @@ export function openTimeInput(params, scope) {
 			references.push(p.replace("--reference=", ""));
 		} else if (p.startsWith("--option=")) {
 			if (p.toLowerCase().includes("noclose")) noClose = true;
-		} else if (i === 1 && !p.startsWith("--")) {
-			timeoutMs = Number.parseInt(p, 10) || 0;
-		} else if (i === 2 && !p.startsWith("--")) {
-			hour = p.trim();
-		} else if (i === 3 && !p.startsWith("--")) {
-			min = p.trim();
-		} else if (i === 4 && !p.startsWith("--")) {
-			sec = p.trim();
+		} else if (!p.startsWith("--") && p !== "") {
+			if (i === 1) timeoutMs = Number.parseInt(p, 10) || 0;
+			else if (i === 2) hour = p.trim();
+			else if (i === 3) min = p.trim();
+			else if (i === 4) sec = p.trim();
 		}
 	}
 

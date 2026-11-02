@@ -2,7 +2,7 @@
 
 - **規格**: [animation-sort.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/descript-brace/animation-sort/) (ukadoc-spec/descript/shell-surfaces/descript-brace/animation-sort.md)
 - **検索語**: animation-sort
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-実装コード内に「animation-sort」は検出されませんでした。
+- `crates/ui/src/surfaces/parser/mod.rs:150` `"animation-sort" | "animation.sort" => txt.animation_sort = Some(SortKind::parse`

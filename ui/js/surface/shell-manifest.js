@@ -179,7 +179,7 @@ export function collisionContains(col, x, y) {
 /**
  * ShellManifest → SurfaceManager 用レコード（レガシー構造）へ変換
  * @param {Record<string, any>} manifest - Rust `ShellManifest`
- * @returns {{ collisions: Record<string, any[]>, elements: Record<string, any[]>, animations: Record<string, any[]>, aliases: Record<string, number[]>, keroAliases: Record<string, number[]>, collisionSort: string, animationSort: string }}
+ * @returns {{ collisions: Record<string, any[]>, elements: Record<string, any[]>, animations: Record<string, any[]>, aliases: Record<string, number[]>, keroAliases: Record<string, number[]>, collisionSort: string, animationSort: string, cursors: Record<string, Array<{ event: string, collision: string, cursor: string }>>, tooltips: Record<string, Record<string, string>> }}
  */
 export function manifestToSurfaceData(manifest) {
 	const collisions = {};
@@ -187,6 +187,8 @@ export function manifestToSurfaceData(manifest) {
 	const animations = {};
 	const aliases = manifest?.aliases ?? {};
 	const keroAliases = manifest?.kero_aliases ?? {};
+	const cursors = manifest?.cursors ?? {};
+	const tooltips = manifest?.tooltips ?? {};
 	const collisionSort = enumToString(manifest?.collision_sort) || "none";
 	const animationSort = enumToString(manifest?.animation_sort) || "none";
 
@@ -234,6 +236,8 @@ export function manifestToSurfaceData(manifest) {
 		keroAliases,
 		collisionSort,
 		animationSort,
+		cursors,
+		tooltips,
 	};
 }
 

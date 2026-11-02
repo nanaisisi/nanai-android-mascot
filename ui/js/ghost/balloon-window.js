@@ -2,7 +2,9 @@
  * Nanai Android Mascot - 独立バルーンウィンドウ制御スクリプト
  */
 
+import { applyAssetProperties } from "../core/actions/balloon-descript/assets.js";
 import { applyFontProperties } from "../core/actions/balloon-descript/font.js";
+import { applyLayoutProperties } from "../core/actions/balloon-descript/layout.js";
 import {
 	emit,
 	invoke,
@@ -18,6 +20,7 @@ let appliedTheme = null;
 let applyingTheme = null;
 let currentDpiScale = 1;
 let currentUserScale = 1;
+let isBalloonDontMove = false;
 
 function updateBalloonWindowScale(balloonBox) {
 	const root = document.documentElement;
@@ -77,8 +80,19 @@ async function applyBalloonDescript(theme) {
 		root.style.setProperty("--balloon-dpi", String(balloonDpi));
 		updateBalloonWindowScale(balloonBox);
 
-		// descript.txt のフォント、色、アンカー、カーソル、装飾プロパティを完全適用
-		applyFontProperties(balloonBox || root, props);
+		const instanceContext = {
+			balloonDpiScale: currentDpiScale,
+			balloonUserScale: currentUserScale,
+			currentBalloonTheme: theme,
+			elements: { balloonDisplay: balloonBox },
+		};
+
+		// descript.txt のレイアウト、フォント、色、アンカー、カーソル、装飾、アセットプロパティを完全適用
+		applyLayoutProperties(balloonBox || root, props, instanceContext);
+		applyFontProperties(balloonBox || root, props, instanceContext);
+		applyAssetProperties(balloonBox || root, props, instanceContext);
+
+		isBalloonDontMove = !!instanceContext.balloonDontMove;
 
 		// 有効テキスト領域 (validrect) による余白調整
 		const vl = parseInt(props["validrect.left"], 10);
@@ -241,13 +255,15 @@ function initBalloonWindow() {
 
 	// ドラッグ移動 (Tauri v2 startDragging)
 	balloonBox?.addEventListener("mousedown", (e) => {
-		if (e.button === 0) {
+		if (e.button === 0 && !isBalloonDontMove) {
 			void startDraggingWindow();
 		}
 	});
 
 	balloonBox?.addEventListener("mouseup", () => {
-		void invoke("save_balloon_offset_from_position", { scopeId });
+		if (!isBalloonDontMove) {
+			void invoke("save_balloon_offset_from_position", { scopeId });
+		}
 	});
 
 	// モバイル/タッチ操作対応 (Slot-10 Cycle 3)
@@ -273,8 +289,10 @@ function initBalloonWindow() {
 					return;
 				}
 				lastTouchTapTime = now;
-				isTouchDragging = true;
-				void startDraggingWindow();
+				if (!isBalloonDontMove) {
+					isTouchDragging = true;
+					void startDraggingWindow();
+				}
 			} else if (e.touches.length === 2) {
 				// ピンチ操作の初期距離記録
 				const dx = e.touches[0].clientX - e.touches[1].clientX;

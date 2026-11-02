@@ -89,6 +89,15 @@ pub async fn scan_ghost_directory(
                             recommended_balloon: manifest.recommended_balloon,
                             recommended_balloon_path: manifest.recommended_balloon_path,
                             default_balloon_path: manifest.default_balloon_path,
+                            shiori_version: manifest.shiori_version,
+                            shiori_cache: manifest.shiori_cache,
+                            shiori_encoding: manifest.shiori_encoding,
+                            shiori_forceencoding: manifest.shiori_forceencoding,
+                            shiori_escape_unknown: manifest.shiori_escape_unknown,
+                            shiori_logo_file: manifest.shiori_logo_file,
+                            shiori_logo_align: manifest.shiori_logo_align,
+                            shiori_logo_x: manifest.shiori_logo_x,
+                            shiori_logo_y: manifest.shiori_logo_y,
                         });
                     }
                 }
@@ -125,6 +134,15 @@ pub async fn scan_ghost_directory(
                 recommended_balloon: Some("default".to_string()),
                 recommended_balloon_path: None,
                 default_balloon_path: None,
+                shiori_version: None,
+                shiori_cache: None,
+                shiori_encoding: None,
+                shiori_forceencoding: None,
+                shiori_escape_unknown: None,
+                shiori_logo_file: None,
+                shiori_logo_align: None,
+                shiori_logo_x: None,
+                shiori_logo_y: None,
             });
         }
     }

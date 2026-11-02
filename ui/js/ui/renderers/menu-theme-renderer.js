@@ -58,6 +58,26 @@ export const menuThemeRenderer = {
 				rootStyle.setProperty("--balloon-separator-color", mt.separator_color);
 			else rootStyle.removeProperty("--balloon-separator-color");
 
+			if (mt.frame_color)
+				rootStyle.setProperty("--balloon-border-color", mt.frame_color);
+			else rootStyle.removeProperty("--balloon-border-color");
+
+			if (mt.font_name)
+				rootStyle.setProperty("--balloon-font-family", mt.font_name);
+			else rootStyle.removeProperty("--balloon-font-family");
+
+			if (mt.font_height) {
+				const heightVal =
+					typeof mt.font_height === "number"
+						? `${mt.font_height}px`
+						: String(mt.font_height).includes("px")
+							? mt.font_height
+							: `${mt.font_height}px`;
+				rootStyle.setProperty("--balloon-font-size", heightVal);
+			} else {
+				rootStyle.removeProperty("--balloon-font-size");
+			}
+
 			const shellPath = activeShell.path || "";
 			const resolveImg = (relPath) => {
 				if (!relPath) return null;
@@ -148,6 +168,9 @@ export const menuThemeRenderer = {
 			rootStyle.removeProperty("--balloon-highlight-text");
 			rootStyle.removeProperty("--balloon-disable-text");
 			rootStyle.removeProperty("--balloon-separator-color");
+			rootStyle.removeProperty("--balloon-border-color");
+			rootStyle.removeProperty("--balloon-font-family");
+			rootStyle.removeProperty("--balloon-font-size");
 			rootStyle.removeProperty("--menu-bg-image");
 			rootStyle.removeProperty("--menu-bg-position");
 			rootStyle.removeProperty("--menu-bg-repeat");

@@ -1,9 +1,9 @@
 //! SSTP (SakuraScript Transfer Protocol) 1.x receiver and protocol handler (UKADOC spec compliance)
 //! [SSTP/1.x], [req_res], [direct], [method_send], [method_execute], [method_give], [method_communicate], [method_notify], [keepalive]
 
-use nanai_android_mascot_ui::sstp::{
-    SstpGhostContext, SstpRequest as CoreSstpRequest, SstpResponse as CoreSstpResponse,
-    handle_execute_command,
+pub use nanai_android_mascot_ui::sstp::{
+    SstpEventBuilder, SstpGhostConfig, SstpGhostContext, SstpRequest as CoreSstpRequest,
+    SstpResponse as CoreSstpResponse, handle_execute_command,
 };
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -34,6 +34,12 @@ pub struct SstpRequest {
     pub module: Option<String>,
     #[serde(default)]
     pub is_direct: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub sentence: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub receiver_ghost_name: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub receiver_ghost_hwnd: Option<u64>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -69,6 +75,9 @@ pub fn parse_raw_sstp_request(raw: &str) -> Result<SstpRequest, String> {
         command: core_req.command,
         module: core_req.module,
         is_direct: core_req.is_direct,
+        sentence: core_req.sentence,
+        receiver_ghost_name: core_req.receiver_ghost_name,
+        receiver_ghost_hwnd: core_req.receiver_ghost_hwnd,
     })
 }
 
@@ -93,12 +102,28 @@ pub fn parse_raw_direct_sstp_request(raw: &str) -> Result<SstpRequest, String> {
         command: core_req.command,
         module: core_req.module,
         is_direct: true,
+        sentence: core_req.sentence,
+        receiver_ghost_name: core_req.receiver_ghost_name,
+        receiver_ghost_hwnd: core_req.receiver_ghost_hwnd,
     })
 }
 
 /// Parse raw SSTP text and format standard UKADOC SSTP response string [req_res]
 pub fn parse_and_build_sstp_raw_response(raw_request: &str) -> Result<String, String> {
+    parse_and_build_sstp_raw_response_with_config(raw_request, &SstpGhostConfig::default())
+}
+
+/// Parse raw SSTP text with ghost-specific SSTP configuration [sstp.allowcommunicate], [sstp.allowunspecifiedsend]
+pub fn parse_and_build_sstp_raw_response_with_config(
+    raw_request: &str,
+    config: &SstpGhostConfig,
+) -> Result<String, String> {
     let core_req = CoreSstpRequest::parse(raw_request)?;
+
+    if let Err(refuse_resp) = config.validate_request(&core_req) {
+        return Ok(refuse_resp.build());
+    }
+
     if core_req.method == nanai_android_mascot_ui::sstp::SstpMethod::Execute {
         let ctx = SstpGhostContext {
             name: "Nanai".to_string(),
@@ -111,6 +136,7 @@ pub fn parse_and_build_sstp_raw_response(raw_request: &str) -> Result<String, St
             status: String::new(),
             fmo_text: String::new(),
             installed_ghosts: vec!["Nanai".to_string()],
+            sstp_config: config.clone(),
         };
         let cmd = core_req.command.as_deref().unwrap_or("");
         let resp = handle_execute_command(cmd, &ctx);
@@ -125,19 +151,94 @@ pub fn parse_and_build_sstp_raw_response(raw_request: &str) -> Result<String, St
     Ok(resp.build())
 }
 
+/// SSTP ブレイク発生時の通知ペイロード (UKADOC OnSSTPBreak 規格準拠)
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SstpBreakEvent {
+    pub script: String,
+    pub scope: u32,
+    pub break_position: usize,
+}
+
+/// SSTP ブラックリスト登録発生時の通知ペイロード (UKADOC OnSSTPBlacklisting 規格準拠)
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SstpBlacklistingEvent {
+    pub client_ip: String,
+}
+
+/// SSTP 中断 (Break) を通知し OnSSTPBreak イベントペイロードを構築する
+#[tauri::command]
+pub async fn notify_sstp_break(
+    event: SstpBreakEvent,
+    app_handle: tauri::AppHandle,
+) -> Result<HashMap<String, String>, String> {
+    let params =
+        SstpEventBuilder::build_on_sstp_break(&event.script, event.scope, event.break_position);
+    app_handle
+        .emit("sstp-break", &params)
+        .map_err(|e| e.to_string())?;
+    Ok(params)
+}
+
+/// クライアントのブラックリスト登録を通知し OnSSTPBlacklisting イベントペイロードを構築する
+#[tauri::command]
+pub async fn notify_sstp_blacklisting(
+    event: SstpBlacklistingEvent,
+    app_handle: tauri::AppHandle,
+) -> Result<HashMap<String, String>, String> {
+    let params = SstpEventBuilder::build_on_sstp_blacklisting(&event.client_ip);
+    app_handle
+        .emit("sstp-blacklisting", &params)
+        .map_err(|e| e.to_string())?;
+    Ok(params)
+}
+
 #[tauri::command]
 pub async fn send_sstp_request(
     request: SstpRequest,
     app_handle: tauri::AppHandle,
 ) -> Result<SstpResponse, String> {
-    let method = request
-        .method
-        .unwrap_or_else(|| "SEND".to_string())
-        .to_uppercase();
+    send_sstp_request_with_config(request, &SstpGhostConfig::default(), app_handle).await
+}
+
+/// Send SSTP request with ghost configuration validation ([sstp.allowcommunicate], [sstp.allowunspecifiedsend])
+pub async fn send_sstp_request_with_config(
+    request: SstpRequest,
+    config: &SstpGhostConfig,
+    app_handle: tauri::AppHandle,
+) -> Result<SstpResponse, String> {
+    let method = request.method.as_deref().unwrap_or("SEND").to_uppercase();
     println!(
         "📨 [SSTP/1.1] Method: {}, Sender: {}",
         method, request.sender
     );
+
+    // [sstp.allowcommunicate]: COMMUNICATE メソッド拒否判定
+    if method == "COMMUNICATE" && !config.allow_communicate {
+        return Ok(SstpResponse {
+            status: "420 Refuse".to_string(),
+            value: "COMMUNICATE disabled by ghost".to_string(),
+            id: None,
+            reference0: None,
+            additional_data: None,
+            error_description: Some("COMMUNICATE disabled by ghost".to_string()),
+        });
+    }
+
+    // [sstp.allowunspecifiedsend]: 無指定 SEND 拒否判定
+    if method == "SEND" && !config.allow_unspecified_send {
+        let is_specified =
+            request.receiver_ghost_name.is_some() || request.receiver_ghost_hwnd.is_some();
+        if !is_specified {
+            return Ok(SstpResponse {
+                status: "420 Refuse".to_string(),
+                value: "Unspecified SEND disabled by ghost".to_string(),
+                id: None,
+                reference0: None,
+                additional_data: None,
+                error_description: Some("Unspecified SEND disabled by ghost".to_string()),
+            });
+        }
+    }
 
     match method.as_str() {
         "SEND" | "NOTIFY" => {
@@ -160,6 +261,7 @@ pub async fn send_sstp_request(
                     status: String::new(),
                     fmo_text: String::new(),
                     installed_ghosts: vec!["Nanai".to_string()],
+                    sstp_config: config.clone(),
                 };
                 let resp = handle_execute_command(cmd, &ctx);
                 return Ok(SstpResponse {
@@ -261,6 +363,46 @@ mod tests {
         let resp_str = parse_and_build_sstp_raw_response(raw_exec).unwrap();
         assert!(resp_str.contains("200 OK"));
         assert!(resp_str.contains("Nanai,Kero"));
+    }
+
+    #[test]
+    fn test_parse_and_build_sstp_with_config_validation() {
+        let mut map = HashMap::new();
+        map.insert("sstp.allowcommunicate".to_string(), "0".to_string());
+        map.insert("sstp.allowunspecifiedsend".to_string(), "0".to_string());
+        let config = SstpGhostConfig::from_descript_map(&map);
+
+        let raw_comm = "COMMUNICATE SSTP/1.1\r\nSentence: hello\r\n";
+        let resp_comm = parse_and_build_sstp_raw_response_with_config(raw_comm, &config).unwrap();
+        assert!(resp_comm.contains("420 Refuse"));
+        assert!(resp_comm.contains("COMMUNICATE disabled by ghost"));
+
+        let raw_unspec = "SEND SSTP/1.1\r\nScript: \\0Hello\\e\r\n";
+        let resp_unspec =
+            parse_and_build_sstp_raw_response_with_config(raw_unspec, &config).unwrap();
+        assert!(resp_unspec.contains("420 Refuse"));
+        assert!(resp_unspec.contains("Unspecified SEND disabled by ghost"));
+    }
+
+    #[test]
+    fn test_sstp_break_and_blacklisting_event_structs() {
+        let ev = SstpBreakEvent {
+            script: "\\0\\s[0]テスト\\e".to_string(),
+            scope: 0,
+            break_position: 10,
+        };
+        assert_eq!(ev.scope, 0);
+        assert_eq!(ev.break_position, 10);
+
+        let params = SstpEventBuilder::build_on_sstp_break(&ev.script, ev.scope, ev.break_position);
+        assert_eq!(params.get("ID"), Some(&"OnSSTPBreak".to_string()));
+
+        let bl_ev = SstpBlacklistingEvent {
+            client_ip: "127.0.0.1".to_string(),
+        };
+        let bl_params = SstpEventBuilder::build_on_sstp_blacklisting(&bl_ev.client_ip);
+        assert_eq!(bl_params.get("ID"), Some(&"OnSSTPBlacklisting".to_string()));
+        assert_eq!(bl_params.get("Reference0"), Some(&"127.0.0.1".to_string()));
     }
 
     #[tokio::test]

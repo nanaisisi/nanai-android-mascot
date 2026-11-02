@@ -87,6 +87,11 @@ pub struct InstallManifest {
     pub bootghost: Option<String>,
     pub refresh: bool,
     pub refresh_undelete_mask: Vec<String>,
+    pub notice: Option<String>,
+    pub readme: Option<String>,
+    pub execute: Option<String>,
+    pub oninstall_script: Option<String>,
+    pub onuninstall_script: Option<String>,
     pub bundled_resources: Vec<InstallResourceConfig>,
 }
 
@@ -104,10 +109,49 @@ impl InstallManifest {
     }
 }
 
+/// アーカイブエントリパスのパストラバーサル（Zip-Slip）および不正コンポーネント検証
+pub fn validate_archive_entry_path(path: &str) -> Result<(), String> {
+    use std::path::{Component, Path};
+
+    let normalized = path.replace('\\', "/");
+    let trimmed = normalized.trim();
+    if trimmed.is_empty() {
+        return Err("Archive entry path is empty".to_string());
+    }
+
+    if trimmed.starts_with('/') {
+        return Err(format!("Absolute path not allowed in archive: {path}"));
+    }
+
+    let p = Path::new(trimmed);
+    for component in p.components() {
+        match component {
+            Component::ParentDir => {
+                return Err(format!(
+                    "Parent directory traversal ('..') detected: {path}"
+                ));
+            }
+            Component::RootDir | Component::Prefix(_) => {
+                return Err(format!(
+                    "Root or prefix component not allowed in archive: {path}"
+                ));
+            }
+            _ => {}
+        }
+    }
+
+    Ok(())
+}
+
 /// NAR/ZIP アーカイブ インストーラ抽象インターフェース (Slot-15 Contract)
 pub trait InstallerEngine {
     /// アーカイブ内の install.txt をパースして InstallManifest を生成
     fn parse_install_manifest(&self, content: &str) -> InstallManifest;
+
+    /// アーカイブエントリパスのセキュリティ検証 (Zip-Slip防止)
+    fn validate_entry_path(&self, path: &str) -> Result<(), String> {
+        validate_archive_entry_path(path)
+    }
 
     /// 指定ディレクトリ内の refresh 処理対象ファイルをフィルタ（保護マスク判定）
     fn filter_refresh_deletions<'a>(
@@ -169,6 +213,17 @@ pub fn parse_install_manifest(content: &str) -> InstallManifest {
     let charset = map.get("charset").cloned();
     let accept = map.get("accept").cloned();
     let bootghost = map.get("bootghost").cloned();
+    let notice = map.get("notice").cloned();
+    let readme = map.get("readme").cloned();
+    let execute = map.get("execute").cloned();
+    let oninstall_script = map
+        .get("oninstall.script")
+        .cloned()
+        .or_else(|| map.get("oninstallscript").cloned());
+    let onuninstall_script = map
+        .get("onuninstall.script")
+        .cloned()
+        .or_else(|| map.get("onuninstallscript").cloned());
 
     let refresh = map.get("refresh").is_some_and(|v| v.trim() == "1");
     let refresh_undelete_mask: Vec<String> = map
@@ -264,6 +319,11 @@ pub fn parse_install_manifest(content: &str) -> InstallManifest {
         bootghost,
         refresh,
         refresh_undelete_mask,
+        notice,
+        readme,
+        execute,
+        oninstall_script,
+        onuninstall_script,
         bundled_resources,
     }
 }
@@ -526,5 +586,71 @@ shell0.source.directory,custom_shell\r\n";
         assert_eq!(to_delete.len(), 2);
         assert_eq!(to_delete[0], "ghost/master/ghost.dll");
         assert_eq!(to_delete[1], "readme.txt");
+    }
+
+    #[test]
+    fn test_validate_archive_entry_path() {
+        let engine = StandardInstallerEngine;
+
+        // Valid paths
+        assert!(
+            engine
+                .validate_entry_path("ghost/master/descript.txt")
+                .is_ok()
+        );
+        assert!(
+            engine
+                .validate_entry_path("shell/master/surface0.png")
+                .is_ok()
+        );
+        assert!(engine.validate_entry_path("readme.txt").is_ok());
+        assert!(
+            engine
+                .validate_entry_path("nested\\sub\\dir\\file.txt")
+                .is_ok()
+        );
+
+        // Invalid paths (Zip-slip / path traversal)
+        assert!(engine.validate_entry_path("../evil.txt").is_err());
+        assert!(
+            engine
+                .validate_entry_path("ghost/../../etc/passwd")
+                .is_err()
+        );
+        assert!(engine.validate_entry_path("shell/../foo").is_err());
+        assert!(engine.validate_entry_path("/absolute/path").is_err());
+        assert!(engine.validate_entry_path("").is_err());
+    }
+
+    #[test]
+    fn test_installer_engine_extended_directives() {
+        let install_txt = "\
+name,ExtendedGhost\r\n\
+type,ghost\r\n\
+directory,ext_ghost\r\n\
+notice,Please confirm the terms of use.\r\n\
+readme,readme_jp.txt\r\n\
+execute,setup.exe\r\n\
+oninstall.script,\\0\\s[0]インストールが完了しました。\\e\r\n\
+onuninstall.script,\\0\\s[0]アンインストールしました。\\e\r\n";
+
+        let engine = StandardInstallerEngine;
+        let manifest = engine.parse_install_manifest(install_txt);
+
+        assert_eq!(manifest.name, "ExtendedGhost");
+        assert_eq!(
+            manifest.notice.as_deref(),
+            Some("Please confirm the terms of use.")
+        );
+        assert_eq!(manifest.readme.as_deref(), Some("readme_jp.txt"));
+        assert_eq!(manifest.execute.as_deref(), Some("setup.exe"));
+        assert_eq!(
+            manifest.oninstall_script.as_deref(),
+            Some("\\0\\s[0]インストールが完了しました。\\e")
+        );
+        assert_eq!(
+            manifest.onuninstall_script.as_deref(),
+            Some("\\0\\s[0]アンインストールしました。\\e")
+        );
     }
 }

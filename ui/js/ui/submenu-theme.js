@@ -19,6 +19,19 @@ export function applyShellMenuTheme(activeShell) {
 	setOrRemove("--balloon-highlight-text", theme?.foreground_font_color);
 	setOrRemove("--balloon-disable-text", theme?.disable_font_color);
 	setOrRemove("--balloon-separator-color", theme?.separator_color);
+	setOrRemove("--balloon-border-color", theme?.frame_color);
+	setOrRemove("--balloon-font-family", theme?.font_name);
+	if (theme?.font_height) {
+		const h =
+			typeof theme.font_height === "number"
+				? `${theme.font_height}px`
+				: String(theme.font_height).includes("px")
+					? theme.font_height
+					: `${theme.font_height}px`;
+		setOrRemove("--balloon-font-size", h);
+	} else {
+		setOrRemove("--balloon-font-size", null);
+	}
 
 	const shellPath = activeShell?.path?.replace(/\\/g, "/") || "";
 	const setImage = (property, relativePath) => {

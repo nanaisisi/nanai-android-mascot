@@ -186,3 +186,41 @@ fn test_clear_and_clear_rect() {
     assert_eq!(fb.get_pixel(0, 0), Some((0, 0, 0, 0)));
     assert_eq!(fb.get_pixel(3, 3), Some((0, 0, 0, 0)));
 }
+
+#[test]
+fn test_reduce_and_fast_blend_compositing() {
+    let mut base = SurfaceFrameBuffer::new(2, 2);
+    // Base layer: color (100, 150, 200), alpha 200
+    base.set_pixel(0, 0, 100, 150, 200, 200);
+    base.set_pixel(1, 0, 100, 150, 200, 200);
+
+    let mut layer = SurfaceFrameBuffer::new(2, 2);
+    // New layer: color doesn't matter for reduce, alpha 128 (~50%)
+    layer.set_pixel(0, 0, 255, 255, 255, 128);
+    // Alpha 0 (transparent)
+    layer.set_pixel(1, 0, 0, 0, 0, 0);
+
+    let reduced = composite_elements(&base, &[(&layer, 0, 0, DrawMethod::Reduce)]);
+    // Pixel (0, 0): alpha should be (200 * 128 + 127) / 255 = 100, RGB preserved
+    let p0 = reduced.get_pixel(0, 0).unwrap();
+    assert_eq!((p0.0, p0.1, p0.2), (100, 150, 200));
+    assert_eq!(p0.3, 100);
+
+    // Pixel (1, 0): alpha 0 * 200 = 0
+    let p1 = reduced.get_pixel(1, 0).unwrap();
+    assert_eq!((p1.0, p1.1, p1.2), (100, 150, 200));
+    assert_eq!(p1.3, 0);
+
+    // overlaymultiply / blend-multiply-fast test
+    let mut base2 = SurfaceFrameBuffer::new(1, 1);
+    base2.set_pixel(0, 0, 200, 200, 200, 255);
+    let mut fast_layer = SurfaceFrameBuffer::new(1, 1);
+    fast_layer.set_pixel(0, 0, 128, 128, 128, 255);
+
+    let fast_mul = composite_elements(
+        &base2,
+        &[(&fast_layer, 0, 0, DrawMethod::Blend("multiply-fast".into()))],
+    );
+    let p_mul = fast_mul.get_pixel(0, 0).unwrap();
+    assert_eq!(p_mul, (100, 100, 100, 255));
+}

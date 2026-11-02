@@ -135,4 +135,17 @@ test("MenuRenderer covers initialization, delegation, and dynamic item creation"
 	// 4. Theme application
 	renderer.applyTheme("dark");
 	renderer.applyShellTheme(null);
+
+	// 5. Shell Menu Theme with frame color & font (Cycle 4)
+	renderer.applyShellTheme({
+		path: "/dummy/shell",
+		menu_theme: {
+			frame_color: "rgb(20, 30, 40)",
+			font_name: "MS Gothic",
+			font_height: 12,
+		},
+	});
+	assert.equal(styleProps["--balloon-border-color"], "rgb(20, 30, 40)");
+	assert.equal(styleProps["--balloon-font-family"], "MS Gothic");
+	assert.equal(styleProps["--balloon-font-size"], "12px");
 });

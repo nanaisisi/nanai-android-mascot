@@ -194,6 +194,13 @@ impl SurfaceFrameBuffer {
                         self.data[dst_idx + 3] =
                             (sa as f32 + da as f32 * inv_alpha).min(255.0) as u8;
                     }
+                    DrawMethod::Reduce => {
+                        // reduce: ベースレイヤと新規レイヤの不透明度（アルファ）を乗算 (UKADOC準拠)
+                        // RGB値はベースレイヤのまま保持し、アルファのみ乗算更新
+                        let da = self.data[dst_idx + 3];
+                        let out_a = ((da as u16 * sa as u16 + 127) / 255) as u8;
+                        self.data[dst_idx + 3] = out_a;
+                    }
                     DrawMethod::Add => {
                         // Add 加算合成
                         let dr = self.data[dst_idx];
@@ -228,7 +235,11 @@ impl SurfaceFrameBuffer {
                             continue;
                         }
 
-                        let (br, bg, bb) = match blend_type.to_lowercase().as_str() {
+                        let b_lower = blend_type.to_lowercase();
+                        let is_fast = b_lower.ends_with("-fast");
+                        let mode = b_lower.trim_end_matches("-fast");
+
+                        let (br, bg, bb) = match mode {
                             "multiply" => (
                                 ((sr as u16 * dr as u16) / 255) as u8,
                                 ((sg as u16 * dg as u16) / 255) as u8,
@@ -262,14 +273,23 @@ impl SurfaceFrameBuffer {
                             _ => (sr, sg, sb),
                         };
 
-                        // 一般アルファ合成
-                        let alpha = sa as f32 / 255.0;
-                        let inv_alpha = 1.0 - alpha;
-                        self.data[dst_idx] = (br as f32 * alpha + dr as f32 * inv_alpha) as u8;
-                        self.data[dst_idx + 1] = (bg as f32 * alpha + dg as f32 * inv_alpha) as u8;
-                        self.data[dst_idx + 2] = (bb as f32 * alpha + db as f32 * inv_alpha) as u8;
-                        self.data[dst_idx + 3] =
-                            (sa as f32 + da as f32 * inv_alpha).min(255.0) as u8;
+                        // 一般アルファ合成（-fast 指定時はダイレクト代入）
+                        if is_fast {
+                            self.data[dst_idx] = br;
+                            self.data[dst_idx + 1] = bg;
+                            self.data[dst_idx + 2] = bb;
+                            self.data[dst_idx + 3] = sa;
+                        } else {
+                            let alpha = sa as f32 / 255.0;
+                            let inv_alpha = 1.0 - alpha;
+                            self.data[dst_idx] = (br as f32 * alpha + dr as f32 * inv_alpha) as u8;
+                            self.data[dst_idx + 1] =
+                                (bg as f32 * alpha + dg as f32 * inv_alpha) as u8;
+                            self.data[dst_idx + 2] =
+                                (bb as f32 * alpha + db as f32 * inv_alpha) as u8;
+                            self.data[dst_idx + 3] =
+                                (sa as f32 + da as f32 * inv_alpha).min(255.0) as u8;
+                        }
                     }
                     _ => {
                         // 通常の Overlay / Base (標準Porter-Duffアルファ合成)

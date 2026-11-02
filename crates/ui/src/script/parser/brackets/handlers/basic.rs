@@ -88,3 +88,12 @@ pub(crate) fn handle_choice(chars: &mut CharsIter<'_>) -> Option<(String, String
     };
     Some((label, id, args))
 }
+
+pub(crate) fn handle_postmessage(chars: &mut CharsIter<'_>) -> Option<(String, String, String)> {
+    let content = read_bracketed(chars)?;
+    let parts = split_bracket_args(&content);
+    let umsg = parts.first().cloned().unwrap_or_default();
+    let wparam = parts.get(1).cloned().unwrap_or_default();
+    let lparam = parts.get(2).cloned().unwrap_or_default();
+    Some((umsg, wparam, lparam))
+}

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::command::SakuraCommand;
+use super::command::{SakuraCommand, SakuraScriptLifetime};
 
 /// さくらスクリプトの単一トークン表現
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -80,6 +80,17 @@ impl SakuraAstNode {
             _ => {}
         });
         commands
+    }
+
+    /// 指定した寿命（Scope / Script / Permanent）に合致するコマンド群を抽出する
+    pub fn collect_commands_by_lifetime(
+        &self,
+        lifetime: SakuraScriptLifetime,
+    ) -> Vec<SakuraCommand> {
+        self.collect_commands()
+            .into_iter()
+            .filter(|cmd| cmd.lifetime() == lifetime)
+            .collect()
     }
 }
 
@@ -242,6 +253,10 @@ mod tests {
         let commands = vec![
             SakuraCommand::Target(0),
             SakuraCommand::Surface(1),
+            SakuraCommand::Font {
+                tag: "bold".into(),
+                param: Some("1".into()),
+            },
             SakuraCommand::Text("Hello".into()),
             SakuraCommand::Choice {
                 label: "Go".into(),
@@ -255,20 +270,41 @@ mod tests {
         ast.walk(&mut |_node| {
             node_count += 1;
         });
-        assert!(node_count >= 4);
+        assert!(node_count >= 5);
 
         let collected = ast.collect_commands();
-        assert_eq!(collected.len(), 4);
+        assert_eq!(collected.len(), 5);
         assert_eq!(collected[0], SakuraCommand::Target(0));
         assert_eq!(collected[1], SakuraCommand::Surface(1));
-        assert_eq!(collected[2], SakuraCommand::Text("Hello".into()));
         assert_eq!(
-            collected[3],
+            collected[2],
+            SakuraCommand::Font {
+                tag: "bold".into(),
+                param: Some("1".into())
+            }
+        );
+        assert_eq!(collected[3], SakuraCommand::Text("Hello".into()));
+        assert_eq!(
+            collected[4],
             SakuraCommand::Choice {
                 label: "Go".into(),
                 id: "OnGo".into(),
                 args: vec!["extra".into()],
             }
         );
+
+        let scope_cmds = ast.collect_commands_by_lifetime(SakuraScriptLifetime::Scope);
+        assert_eq!(scope_cmds.len(), 1);
+        assert_eq!(
+            scope_cmds[0],
+            SakuraCommand::Font {
+                tag: "bold".into(),
+                param: Some("1".into())
+            }
+        );
+
+        let perm_cmds = ast.collect_commands_by_lifetime(SakuraScriptLifetime::Permanent);
+        assert_eq!(perm_cmds.len(), 1);
+        assert_eq!(perm_cmds[0], SakuraCommand::Surface(1));
     }
 }

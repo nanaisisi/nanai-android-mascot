@@ -67,3 +67,48 @@ test("surface-parser correctly resolves multiple animations and patterns using I
 	assert.equal(anim2.patterns.length, 1);
 	assert.equal(anim2.patterns[0].surface, "200");
 });
+
+test("surface-parser extracts *.cursor and *.tooltips blocks", () => {
+	const sampleTxt = `
+		sakura.cursor
+		{
+			mouseup0,Head,system:hand
+			mousedown0,Head,system:finger
+			mousehover0,Face,system:cross
+		}
+
+		kero.cursor
+		{
+			mousedown0,Tail,system:finger
+		}
+
+		sakura.tooltips
+		{
+			Head,つつかないで！
+			Bust,怒ります。
+		}
+
+		kero.tooltips
+		{
+			Tail,しっぽです
+		}
+	`;
+
+	const parsed = parseSurfacesTxt(sampleTxt);
+	assert.ok(parsed.cursors.sakura);
+	assert.equal(parsed.cursors.sakura.length, 3);
+	assert.equal(parsed.cursors.sakura[0].event, "mouseup");
+	assert.equal(parsed.cursors.sakura[0].collision, "Head");
+	assert.equal(parsed.cursors.sakura[0].cursor, "system:hand");
+
+	assert.ok(parsed.cursors.kero);
+	assert.equal(parsed.cursors.kero.length, 1);
+	assert.equal(parsed.cursors.kero[0].cursor, "system:finger");
+
+	assert.ok(parsed.tooltips.sakura);
+	assert.equal(parsed.tooltips.sakura.Head, "つつかないで！");
+	assert.equal(parsed.tooltips.sakura.Bust, "怒ります。");
+
+	assert.ok(parsed.tooltips.kero);
+	assert.equal(parsed.tooltips.kero.Tail, "しっぽです");
+});

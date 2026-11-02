@@ -16,6 +16,7 @@ mod tests {
     fn test_common_vfs_reexports() {
         let mut mock = MockVfs::new();
         mock.add_text_file("Shell/Master/descript.txt", "name,Master");
+        mock.add_text_file("Shell/Master/surface0000.png", "img-bytes");
         assert!(mock.exists("shell/master/descript.txt"));
 
         let text = mock.read_text("SHELL/MASTER/DESCRIPT.TXT").unwrap();
@@ -23,5 +24,13 @@ mod tests {
 
         let norm = normalize_vfs_path("foo\\bar//baz/../qux");
         assert_eq!(norm, "foo/bar/qux");
+
+        // Cycle 4 functions
+        let found = mock.find_files("surface");
+        assert_eq!(found, vec!["Shell/Master/surface0000.png".to_string()]);
+
+        let removed = mock.remove_dir("shell/master");
+        assert_eq!(removed, 2);
+        assert!(mock.is_empty());
     }
 }

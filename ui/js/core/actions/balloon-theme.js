@@ -81,6 +81,13 @@ export class BalloonThemeManager {
 	}
 
 	/**
+	 * 9スライスキャッシュの明示的クリア
+	 */
+	clearNineSliceCache() {
+		this._nineSliceCache.clear();
+	}
+
+	/**
 	 * バルーンテーマを順繰りに切り替え
 	 */
 	cycleTheme() {
@@ -188,6 +195,7 @@ export class BalloonThemeManager {
 			emit("sync-theme", themeName);
 		}
 
+		this.clearNineSliceCache();
 		this.resetDescript();
 		if (isTauriAvailable()) {
 			try {
@@ -227,6 +235,7 @@ export class BalloonThemeManager {
 	 * バルーン descript スタイルを初期化
 	 */
 	resetDescript() {
+		this.clearNineSliceCache();
 		const root = document.documentElement;
 		this.dpiScale = 1;
 		if (this.app) {

@@ -21,6 +21,11 @@ pub enum SakuraCommand {
         y: Option<i32>,
         opaque: bool,
     }, // \_b[...]
+    PostMessage {
+        umsg: String,
+        wparam: String,
+        lparam: String,
+    }, // \m[umsg,wparam,lparam] (m-umsg-wparam-lparam.md)
     Clear,        // \c
     ClearArg {
         arg: String,

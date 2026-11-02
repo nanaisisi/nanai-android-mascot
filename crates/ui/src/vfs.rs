@@ -1,4 +1,4 @@
-use encoding_rs::{EUC_JP, SHIFT_JIS, UTF_16BE, UTF_16LE};
+use encoding_rs::{EUC_JP, ISO_2022_JP, SHIFT_JIS, UTF_16BE, UTF_16LE};
 use std::collections::HashMap;
 use std::io;
 use std::path::{Path, PathBuf};
@@ -58,9 +58,8 @@ pub fn detect_and_decode(buffer: &[u8]) -> (String, &'static str) {
             .iter()
             .position(|&b| b == b'\r' || b == b'\n' || b == b',' || b == b';')
             .unwrap_or(remainder.len());
-        let charset_decl = String::from_utf8_lossy(&remainder[..end])
-            .trim()
-            .to_string();
+        let raw_decl = String::from_utf8_lossy(&remainder[..end]);
+        let charset_decl = raw_decl.trim().trim_matches(|c| c == '"' || c == '\'');
 
         if charset_decl == "shift_jis"
             || charset_decl == "shift-jis"
@@ -83,10 +82,31 @@ pub fn detect_and_decode(buffer: &[u8]) -> (String, &'static str) {
                 eprintln!("Warning: Some EUC-JP characters couldn't be decoded properly");
             }
             return (cow.into_owned(), "EUC-JP");
+        } else if charset_decl == "iso-2022-jp"
+            || charset_decl == "iso2022jp"
+            || charset_decl == "jis"
+        {
+            let (cow, _, had_errors) = ISO_2022_JP.decode(buffer);
+            if had_errors {
+                eprintln!("Warning: Some ISO-2022-JP characters couldn't be decoded properly");
+            }
+            return (cow.into_owned(), "ISO-2022-JP");
         } else if (charset_decl == "utf-8" || charset_decl == "utf8")
             && let Ok(utf8_str) = std::str::from_utf8(buffer)
         {
             return (utf8_str.to_string(), "UTF-8");
+        }
+    }
+
+    // 2-2. ISO-2022-JP (JISエスケープシーケンス ESC $ B / ESC ( B 等) チェック
+    if buffer.windows(3).any(|w| {
+        w == [0x1B, 0x24, 0x42] // ESC $ B (JIS X 0208-1983)
+            || w == [0x1B, 0x24, 0x40] // ESC $ @ (JIS X 0208-1978)
+            || w == [0x1B, 0x28, 0x4A] // ESC ( J (JIS X 0201 Roman)
+    }) {
+        let (cow, _, had_errors) = ISO_2022_JP.decode(buffer);
+        if !had_errors {
+            return (cow.into_owned(), "ISO-2022-JP");
         }
     }
 
@@ -225,6 +245,57 @@ impl VfsResolver {
         if let Ok(mut guard) = self.resolve_cache.lock() {
             guard.clear();
         }
+    }
+
+    /// 現在キャッシュされているエントリ数を取得
+    pub fn cache_size(&self) -> usize {
+        self.resolve_cache.lock().map(|g| g.len()).unwrap_or(0)
+    }
+
+    /// 指定ディレクトリ配下の全ファイルを再帰的に走査（相対パスのリストを返す）
+    pub fn walk_files(&self, relative_dir: &str) -> Result<Vec<String>, io::Error> {
+        let base = match relative_dir.trim() {
+            "" | "." => self.root_dir.clone(),
+            _ => self.resolve(relative_dir).ok_or_else(|| {
+                io::Error::new(
+                    io::ErrorKind::NotFound,
+                    format!("Directory not found in VFS: {}", relative_dir),
+                )
+            })?,
+        };
+
+        let mut collected = Vec::new();
+        fn recurse(
+            dir: &Path,
+            base: &Path,
+            rel_prefix: &str,
+            out: &mut Vec<String>,
+        ) -> io::Result<()> {
+            if !dir.is_dir() {
+                return Ok(());
+            }
+            for entry in std::fs::read_dir(dir)? {
+                let entry = entry?;
+                let file_type = entry.file_type()?;
+                let name = entry.file_name().to_string_lossy().to_string();
+                let sub_rel = if rel_prefix.is_empty() {
+                    name.clone()
+                } else {
+                    format!("{}/{}", rel_prefix, name)
+                };
+
+                if file_type.is_dir() {
+                    recurse(&entry.path(), base, &sub_rel, out)?;
+                } else if file_type.is_file() {
+                    out.push(sub_rel);
+                }
+            }
+            Ok(())
+        }
+
+        recurse(&base, &base, "", &mut collected)?;
+        collected.sort();
+        Ok(collected)
     }
 
     /// 大文字・小文字の差異を吸収して対象ファイルが存在するか判定
@@ -366,6 +437,22 @@ impl MockVfs {
         self.files.remove(&key).is_some()
     }
 
+    /// 指定ディレクトリ配下の全ファイルを再帰的に削除し、削除されたファイル数を返す
+    pub fn remove_dir(&mut self, dir_path: &str) -> usize {
+        let norm_dir = normalize_vfs_path(dir_path);
+        if norm_dir.is_empty() {
+            let count = self.files.len();
+            self.files.clear();
+            return count;
+        }
+
+        let prefix_lower = format!("{}/", norm_dir.to_lowercase());
+        let before_count = self.files.len();
+        self.files
+            .retain(|k, _| !k.starts_with(&prefix_lower) && k != &norm_dir.to_lowercase());
+        before_count - self.files.len()
+    }
+
     /// 全ファイルをクリア
     pub fn clear(&mut self) {
         self.files.clear();
@@ -418,6 +505,19 @@ impl MockVfs {
     /// インメモリVFSが保持している全ファイルの合計バイト数を取得
     pub fn total_bytes(&self) -> usize {
         self.files.values().map(|(_, data)| data.len()).sum()
+    }
+
+    /// 部分一致パターン（ファイル名またはパス内のキーワード、大小文字不問）でファイルを検索
+    pub fn find_files(&self, pattern: &str) -> Vec<String> {
+        let pat_lower = pattern.to_lowercase();
+        let mut matched = Vec::new();
+        for (key, (orig, _)) in &self.files {
+            if key.contains(&pat_lower) {
+                matched.push(orig.clone());
+            }
+        }
+        matched.sort();
+        matched
     }
 }
 
@@ -779,5 +879,123 @@ mod tests {
             + "png-content".len()
             + "png-content-2".len();
         assert_eq!(mock.total_bytes(), expected_bytes);
+    }
+
+    #[test]
+    fn test_iso_2022_jp_and_quoted_charset_headers() {
+        // Quoted charset in header
+        let quoted_sjis = "charset,\"Shift_JIS\"\r\nname,クォートSJIS";
+        let (sjis_bytes, _, _) = SHIFT_JIS.encode(quoted_sjis);
+        let (decoded_q_sjis, enc_q_sjis) = detect_and_decode(&sjis_bytes);
+        assert_eq!(decoded_q_sjis, quoted_sjis);
+        assert_eq!(enc_q_sjis, "Shift_JIS");
+
+        let single_quoted_utf8 = "charset, 'UTF-8' \r\nname,SingleQuoteUTF8";
+        let (decoded_q_utf8, enc_q_utf8) = detect_and_decode(single_quoted_utf8.as_bytes());
+        assert_eq!(decoded_q_utf8, single_quoted_utf8);
+        assert_eq!(enc_q_utf8, "UTF-8");
+
+        // Header declared ISO-2022-JP
+        let header_jis = "charset,ISO-2022-JP\r\nname,JISゴースト";
+        let (jis_bytes, _, _) = ISO_2022_JP.encode(header_jis);
+        let (decoded_jis, enc_jis) = detect_and_decode(&jis_bytes);
+        assert_eq!(decoded_jis, header_jis);
+        assert_eq!(enc_jis, "ISO-2022-JP");
+
+        // Raw ISO-2022-JP with escape sequence without charset declaration
+        let raw_jis_text = "こんにちは世界 (JIS)";
+        let (raw_jis_bytes, _, _) = ISO_2022_JP.encode(raw_jis_text);
+        let (decoded_raw, enc_raw) = detect_and_decode(&raw_jis_bytes);
+        assert_eq!(decoded_raw, raw_jis_text);
+        assert_eq!(enc_raw, "ISO-2022-JP");
+    }
+
+    #[test]
+    fn test_vfs_resolver_walk_files_and_cache_size() {
+        let temp_dir = std::env::temp_dir().join("nanai_vfs_walk_test_dir");
+        let _ = std::fs::remove_dir_all(&temp_dir);
+        let sub1 = temp_dir.join("ghost").join("master");
+        let sub2 = temp_dir.join("shell").join("master");
+        std::fs::create_dir_all(&sub1).unwrap();
+        std::fs::create_dir_all(&sub2).unwrap();
+
+        std::fs::write(sub1.join("descript.txt"), "ghost").unwrap();
+        std::fs::write(sub2.join("descript.txt"), "shell").unwrap();
+        std::fs::write(sub2.join("surface0000.png"), "png").unwrap();
+
+        let resolver = VfsResolver::new(&temp_dir);
+        assert_eq!(resolver.cache_size(), 0);
+
+        // キャッシュ蓄積確認
+        assert!(resolver.exists("ghost/master/descript.txt"));
+        assert_eq!(resolver.cache_size(), 1);
+        assert!(resolver.exists("shell/master/surface0000.png"));
+        assert_eq!(resolver.cache_size(), 2);
+
+        // walk_files (ルート起点)
+        let walked_all = resolver.walk_files("").unwrap();
+        assert_eq!(
+            walked_all,
+            vec![
+                "ghost/master/descript.txt".to_string(),
+                "shell/master/descript.txt".to_string(),
+                "shell/master/surface0000.png".to_string(),
+            ]
+        );
+
+        // walk_files (サブディレクトリ起点)
+        let walked_shell = resolver.walk_files("shell/master").unwrap();
+        assert_eq!(
+            walked_shell,
+            vec!["descript.txt".to_string(), "surface0000.png".to_string(),]
+        );
+
+        resolver.clear_cache();
+        assert_eq!(resolver.cache_size(), 0);
+
+        let _ = std::fs::remove_dir_all(&temp_dir);
+    }
+
+    #[test]
+    fn test_mock_vfs_remove_dir_and_find_files() {
+        let mut mock = MockVfs::new();
+        mock.add_text_file("ghost/master/descript.txt", "name,Ghost");
+        mock.add_text_file("ghost/master/shiori.dll", "mock-dll");
+        mock.add_text_file("shell/master/descript.txt", "name,Shell");
+        mock.add_text_file("shell/master/surface0000.png", "img-0");
+        mock.add_text_file("shell/master/surface0001.png", "img-1");
+        mock.add_text_file("shell/variant/descript.txt", "name,Variant");
+
+        // find_files
+        let surfaces = mock.find_files("surface");
+        assert_eq!(
+            surfaces,
+            vec![
+                "shell/master/surface0000.png".to_string(),
+                "shell/master/surface0001.png".to_string(),
+            ]
+        );
+
+        let descs = mock.find_files("DESCRIPT");
+        assert_eq!(
+            descs,
+            vec![
+                "ghost/master/descript.txt".to_string(),
+                "shell/master/descript.txt".to_string(),
+                "shell/variant/descript.txt".to_string(),
+            ]
+        );
+
+        // remove_dir (shell/master 配下の3ファイルを一括削除)
+        let removed = mock.remove_dir("shell/master");
+        assert_eq!(removed, 3);
+        assert_eq!(mock.len(), 3);
+        assert!(!mock.exists("shell/master/surface0000.png"));
+        assert!(mock.exists("shell/variant/descript.txt"));
+
+        // remove_dir (全クリア)
+        let removed_all = mock.remove_dir("");
+        assert_eq!(removed_all, 3);
+        assert!(mock.is_empty());
     }
 }

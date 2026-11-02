@@ -226,4 +226,33 @@ mod tests {
         let cmds = parse_sakura_script(script);
         assert!(!cmds.is_empty());
     }
+
+    #[test]
+    fn test_parse_sakura_script_underscore_extended() {
+        let script = "\
+            \\_w[200]\
+            \\_q[1]\
+            \\_q\
+            \\_?\
+            \\_n\
+            \\_!\
+            \\_b[surface0.png,inline,10,20,opaque]\
+            \\_a[id1,anchor text]\\_a\
+            \\_s[1]\
+            \\_s\
+            \\_m[FF00AA]\
+            \\_u[0x3042]\
+            \\_u[1234]\
+            \\_l[100,200]\
+            \\__c\
+            \\__t\
+            \\__v[voice_opt]\
+            \\__q[1]\
+            \\__q\
+            \\_+\
+            \\_unknown\
+        ";
+        let cmds = parse_sakura_script(script);
+        assert!(!cmds.is_empty());
+    }
 }

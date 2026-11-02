@@ -22,6 +22,9 @@ pub struct GhostManifest {
     pub shiori_logo_align: Option<String>,
     pub shiori_logo_x: Option<i32>,
     pub shiori_logo_y: Option<i32>,
+    pub sstp_allow_communicate: bool,
+    pub sstp_allow_unspecified_send: bool,
+    pub sstp_always_translate: bool,
 }
 
 pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
@@ -108,6 +111,23 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
         m.get("shiori.logo.y")
             .and_then(|v| v.trim().parse::<i32>().ok())
     });
+    let sstp_allow_communicate = meta_map
+        .as_ref()
+        .and_then(|m| m.get("sstp.allowcommunicate"))
+        .map(|v| v.trim() != "0")
+        .unwrap_or(true);
+
+    let sstp_allow_unspecified_send = meta_map
+        .as_ref()
+        .and_then(|m| m.get("sstp.allowunspecifiedsend"))
+        .map(|v| v.trim() != "0")
+        .unwrap_or(true);
+
+    let sstp_always_translate = meta_map
+        .as_ref()
+        .and_then(|m| m.get("sstp.alwaystranslate"))
+        .map(|v| v.trim() == "1")
+        .unwrap_or(false);
 
     GhostManifest {
         display_name,
@@ -130,5 +150,8 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
         shiori_logo_align,
         shiori_logo_x,
         shiori_logo_y,
+        sstp_allow_communicate,
+        sstp_allow_unspecified_send,
+        sstp_always_translate,
     }
 }

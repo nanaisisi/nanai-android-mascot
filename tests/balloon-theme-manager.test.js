@@ -114,6 +114,33 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 		const fallback = mgr.computeNineSlice({});
 		assert.equal(fallback.slice, "16 16 16 16 fill");
 		assert.equal(fallback.width, "16px 16px 16px 16px");
+
+		// Test cache hit and cache clearing
+		const cached = mgr.computeNineSlice(
+			{
+				"validrect.left": "20",
+				"validrect.top": "24",
+				"validrect.right": "20",
+				"validrect.bottom": "28",
+			},
+			"assets/balloon/test.png",
+		);
+		assert.strictEqual(cached, nineSlice);
+
+		mgr.clearNineSliceCache();
+		assert.strictEqual(mgr._nineSliceCache.size, 0);
+
+		const afterClear = mgr.computeNineSlice(
+			{
+				"validrect.left": "20",
+				"validrect.top": "24",
+				"validrect.right": "20",
+				"validrect.bottom": "28",
+			},
+			"assets/balloon/test.png",
+		);
+		assert.notStrictEqual(afterClear, nineSlice);
+		assert.deepStrictEqual(afterClear, nineSlice);
 	});
 
 	it("cycles balloon themes correctly with default and custom lists", () => {

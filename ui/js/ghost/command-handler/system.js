@@ -9,6 +9,102 @@ import { invoke, isTauriAvailable } from "../../core/tauri-helper.js";
 import { scriptLifetimeState } from "./env.js";
 
 /**
+ * タイマー実行管理マップ (timerraise用: timerKey -> timeoutId / intervalId)
+ */
+const activeScriptTimers = new Map();
+
+/**
+ * タイマーをすべてクリア
+ */
+export function clearAllScriptTimers() {
+	for (const timer of activeScriptTimers.values()) {
+		if (timer.type === "interval") {
+			clearInterval(timer.id);
+		} else {
+			clearTimeout(timer.id);
+		}
+	}
+	activeScriptTimers.clear();
+}
+
+/**
+ * \![notify,イベント名,r0,r1,...]
+ * [bang-notify-r0-r1-r2.md]
+ * @param {import('../sakura-command-handler.js').SakuraCommandHandler} handler
+ * @param {string[]} args
+ */
+export async function handleNotifyCommand(handler, args) {
+	const eventName = args[1];
+	if (!eventName) return;
+	const references = args.slice(2);
+	try {
+		// notifyは戻り値のスクリプトを反映・再生しない
+		if (handler.app.ghostController?.sendShioriNotify) {
+			await handler.app.ghostController.sendShioriNotify(eventName, references);
+		} else if (handler.app.ghostController?.sendShioriEvent) {
+			await handler.app.ghostController.sendShioriEvent(eventName, references);
+		}
+	} catch (err) {
+		console.warn(`Notify event failed (${eventName}):`, err);
+	}
+}
+
+/**
+ * \![timerraise,時間,繰り返すか否か,イベント名,r0,r1,...]
+ * [bang-timerraise-r0-r1-r2.md]
+ * @param {import('../sakura-command-handler.js').SakuraCommandHandler} handler
+ * @param {string[]} args
+ */
+export async function handleTimerRaiseCommand(handler, args) {
+	const delayMs = Number.parseInt(args[1] ?? "0", 10);
+	const repeatFlag = Number.parseInt(args[2] ?? "1", 10);
+	const eventName = args[3];
+	const references = args.slice(4);
+
+	if (!eventName) return;
+
+	// 同一イベント名のタイマーが既存にあればキャンセル
+	if (activeScriptTimers.has(eventName)) {
+		const existing = activeScriptTimers.get(eventName);
+		if (existing.type === "interval") {
+			clearInterval(existing.id);
+		} else {
+			clearTimeout(existing.id);
+		}
+		activeScriptTimers.delete(eventName);
+	}
+
+	// 時間が0以下の場合はキャンセル専用
+	if (delayMs <= 0) {
+		return;
+	}
+
+	const fireEvent = async () => {
+		try {
+			await handler.app.ghostController?.sendShioriEvent?.(
+				eventName,
+				references,
+			);
+		} catch (e) {
+			console.warn(`timerraise event failed (${eventName}):`, e);
+		}
+	};
+
+	if (repeatFlag === 0) {
+		// 0: 繰り返し実行
+		const intervalId = setInterval(fireEvent, delayMs);
+		activeScriptTimers.set(eventName, { id: intervalId, type: "interval" });
+	} else {
+		// 1以上: 一回のみ実行
+		const timeoutId = setTimeout(async () => {
+			activeScriptTimers.delete(eventName);
+			await fireEvent();
+		}, delayMs);
+		activeScriptTimers.set(eventName, { id: timeoutId, type: "timeout" });
+	}
+}
+
+/**
  * デスクトップ整列位置を設定 (\![set,alignmentondesktop,...])
  * @param {import('../sakura-command-handler.js').SakuraCommandHandler} handler
  * @param {string[]} args
@@ -114,12 +210,13 @@ export async function handleOpenSystemTarget(handler, args) {
 		case "explorer":
 		case "shellexplorer":
 		case "balloonexplorer":
-		case "ghostexplorer":
+		case "ghostexplorer": {
 			console.log(`📂 Open explorer requested: target=${target}`);
 			handler.app.toggleMenu?.();
 			break;
+		}
 
-		case "file":
+		case "file": {
 			console.log(`📄 Open file requested: path=${pathOrParam}`);
 			if (isTauriAvailable() && pathOrParam) {
 				try {
@@ -129,14 +226,59 @@ export async function handleOpenSystemTarget(handler, args) {
 				}
 			}
 			break;
+		}
 
-		case "browser":
+		case "browser": {
 			if (pathOrParam && /^https?:\/\//i.test(pathOrParam)) {
 				if (typeof globalThis !== "undefined" && globalThis.open) {
 					globalThis.open(pathOrParam, "_blank", "noopener,noreferrer");
 				}
 			}
 			break;
+		}
+
+		case "configurationdialog": {
+			const tabId = pathOrParam || "general";
+			console.log(`⚙️ Open configuration dialog requested (tab=${tabId})`);
+			if (handler.app.modalManager) {
+				handler.app.modalManager.show("settings-modal-content");
+			} else {
+				handler.app.toggleMenu?.();
+			}
+			break;
+		}
+
+		case "developer": {
+			console.log("🛠️ Open developer panel requested");
+			if (handler.app.ghostController) {
+				handler.app.ghostController.shioriDebugMode = true;
+			}
+			if (isTauriAvailable()) {
+				try {
+					await invoke("toggle_devtools");
+				} catch (err) {
+					console.debug("Devtools toggle:", err);
+				}
+			}
+			break;
+		}
+
+		case "readme":
+		case "history": {
+			console.log(`📄 Open document requested: ${target}`);
+			const currentGhost = handler.app.ghostController?.currentGhost;
+			const docPath = currentGhost?.path
+				? `${currentGhost.path}/${target}.txt`
+				: `${target}.txt`;
+			if (isTauriAvailable()) {
+				try {
+					await invoke("open_path", { path: docPath });
+				} catch (err) {
+					console.warn(`Failed to open ${target}:`, err);
+				}
+			}
+			break;
+		}
 
 		default:
 			console.debug(`未対応の open システムターゲット: ${target}`);

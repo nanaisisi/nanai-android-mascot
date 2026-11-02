@@ -28,10 +28,12 @@ import {
 	registerCommandHandler,
 } from "./command-handler/registry.js";
 import {
+	clearAllScriptTimers,
 	handleBiffCommand,
 	handleExecuteResetBalloonPos,
 	handleExecuteResetWindowPos,
 	handleExecuteSntpCommand,
+	handleNotifyCommand,
 	handleOpenSystemTarget,
 	handleReloadShiori,
 	handleSetAlignmentOnDesktop,
@@ -42,6 +44,7 @@ import {
 	handleSetShioriDebugMode,
 	handleSetTaskTrayIcon,
 	handleSetTrayBalloon,
+	handleTimerRaiseCommand,
 } from "./command-handler/system.js";
 import { closeTeachBox, openTeachBox } from "./command-handler/teachbox.js";
 import {
@@ -116,6 +119,18 @@ function initDefaultCommandHandlers() {
 				args.slice(2),
 			);
 		}
+	});
+
+	registerCommandHandler("notify", async (handler, args) => {
+		await handleNotifyCommand(handler, args);
+	});
+
+	registerCommandHandler("timerraise", async (handler, args) => {
+		await handleTimerRaiseCommand(handler, args);
+	});
+
+	registerCommandHandler("timernotify", async (handler, args) => {
+		await handleTimerRaiseCommand(handler, args);
 	});
 
 	registerCommandHandler("raiseplugin", handlePluginEvent);
@@ -250,6 +265,10 @@ function initDefaultCommandHandlers() {
 	registerCommandHandler("open:ghostexplorer", handleOpenSystemTarget);
 	registerCommandHandler("open:file", handleOpenSystemTarget);
 	registerCommandHandler("open:browser", handleOpenSystemTarget);
+	registerCommandHandler("open:configurationdialog", handleOpenSystemTarget);
+	registerCommandHandler("open:developer", handleOpenSystemTarget);
+	registerCommandHandler("open:readme", handleOpenSystemTarget);
+	registerCommandHandler("open:history", handleOpenSystemTarget);
 
 	registerCommandHandler("windowstate", async (_handler, args) => {
 		const state = args[1];
@@ -447,17 +466,21 @@ export class SakuraCommandHandler {
 		return expandSakuraScriptEnv(script, {
 			username: this.player?.app?.ghostController?.username,
 			selfname: this.player?.app?.ghostController?.currentGhost?.name,
+			lastghostname: this.player?.app?.ghostController?.lastGhostName,
+			lastobjectname: this.player?.app?.ghostController?.lastObjectName,
 			...options,
 		});
 	}
 
 	resetLifetimeState() {
 		resetScriptScopeState();
+		clearAllScriptTimers();
 	}
 }
 
 export {
 	CommandHandlerMap,
+	clearAllScriptTimers,
 	expandSakuraScriptEnv,
 	getCommandHandler,
 	initDefaultCommandHandlers,

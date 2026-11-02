@@ -329,15 +329,57 @@ test("SakuraCommandHandler covers all commands and boxes", async () => {
 			(e) => e.ev === "dispatchAction" && e.action === "reset-balloon-position",
 		),
 	);
+
+	// 14. Cycle 4 features: notify, timerraise/cancel, open configurationdialog/developer/readme
+	eventsSent.length = 0;
+	await handler.runCommand(["notify", "OnTestNotify", "ref0", "ref1"]);
+	assert.ok(
+		eventsSent.some(
+			(e) =>
+				e.ev === "OnTestNotify" && e.args[0] === "ref0" && e.args[1] === "ref1",
+		),
+	);
+
+	// timerraise one-shot and cancel
+	await handler.runCommand([
+		"timerraise",
+		"10",
+		"1",
+		"OnTimerTest",
+		"timeoutVal",
+	]);
+	// cancel timer immediately with 0 delay
+	await handler.runCommand(["timerraise", "0", "1", "OnTimerTest"]);
+
+	// open targets
+	mockApp.modalManager = {
+		show(contentId) {
+			eventsSent.push({ ev: "modalShow", contentId });
+		},
+	};
+	await handler.runCommand(["open", "configurationdialog", "talk"]);
+	assert.ok(
+		eventsSent.some(
+			(e) => e.ev === "modalShow" && e.contentId === "settings-modal-content",
+		),
+	);
+
+	await handler.runCommand(["open", "developer"]);
+	assert.equal(mockApp.ghostController.shioriDebugMode, true);
+
+	await handler.runCommand(["open", "readme"]);
+	await handler.runCommand(["open", "history"]);
 });
 
 test("expandSakuraScriptEnv properly resolves UKADOC/SSP variables", () => {
 	const script =
-		"Hello %username! I am %selfname (alias %ms, %selfname2) and partner is %keroname. Escaped: \\%username. Star: %*. Word: %m?. Prop: %property[username], %property[currentghost.name]. Screen: %screenwidthx%screenheight.";
+		"Hello %username! I am %selfname (alias %ms, %selfname2) and partner is %keroname. Last: %lastghostname (%lastobjectname). Escaped: \\%username. Star: %*. Word: %m?. Prop: %property[username], %property[currentghost.name], %property[lastghostname]. Screen: %screenwidthx%screenheight.";
 	const expanded = expandSakuraScriptEnv(script, {
 		username: "Master",
 		selfname: "Nanai",
 		keroname: "Kero",
+		lastghostname: "PreviousGhost",
+		lastobjectname: "PreviousObject",
 		screenWidth: 1920,
 		screenHeight: 1080,
 		randomWords: ["TestWord"],
@@ -346,10 +388,11 @@ test("expandSakuraScriptEnv properly resolves UKADOC/SSP variables", () => {
 	assert.ok(expanded.includes("Hello Master!"));
 	assert.ok(expanded.includes("I am Nanai (alias Nanai, Nanai)"));
 	assert.ok(expanded.includes("partner is Kero"));
+	assert.ok(expanded.includes("Last: PreviousGhost (PreviousObject)"));
 	assert.ok(expanded.includes("Escaped: %username"));
 	assert.ok(expanded.includes("Star: \\![*]"));
 	assert.ok(expanded.includes("Word: TestWord"));
-	assert.ok(expanded.includes("Prop: Master, Nanai."));
+	assert.ok(expanded.includes("Prop: Master, Nanai, PreviousGhost."));
 	assert.ok(expanded.includes("Screen: 1920x1080."));
 
 	// Lifetime state testing

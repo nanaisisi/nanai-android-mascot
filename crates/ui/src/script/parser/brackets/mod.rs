@@ -4,8 +4,8 @@ pub mod handlers;
 pub mod utils;
 
 pub(crate) use handlers::{
-    handle_animation, handle_balloon, handle_choice, handle_font, handle_newline, handle_raiselike,
-    handle_surface, handle_target_p, handle_underscore,
+    handle_animation, handle_balloon, handle_choice, handle_font, handle_newline,
+    handle_postmessage, handle_raiselike, handle_surface, handle_target_p, handle_underscore,
 };
 pub(crate) use utils::{consume_tag_tail, read_bracketed};
 
@@ -99,6 +99,13 @@ mod tests {
         assert_eq!(
             choice_temp,
             Some(("TempText".to_string(), "TempID".to_string(), Vec::new()))
+        );
+
+        let mut chars = "[WM_CLOSE,0,0]".chars().peekable();
+        let postmsg = handle_postmessage(&mut chars);
+        assert_eq!(
+            postmsg,
+            Some(("WM_CLOSE".to_string(), "0".to_string(), "0".to_string()))
         );
     }
 

@@ -4,6 +4,9 @@
  */
 import { collisionContains } from "./shell-manifest.js";
 
+/** @type {WeakMap<object, Map<string, number[]>>} */
+const aliasCaseCache = new WeakMap();
+
 export const surfaceCollisionMethods = {
 	/**
 	 * サーフィスエイリアス名（surface.alias ブロック）をサーフィス番号へ解決する
@@ -23,14 +26,19 @@ export const surfaceCollisionMethods = {
 		const map = scopeId === 1 ? this.keroAliases : this.aliases;
 		let list = Array.isArray(map?.[name]) ? map[name] : null;
 		if (!list && map) {
-			const lowerName = name.toLowerCase();
-			for (const key in map) {
-				if (key.toLowerCase() === lowerName) {
+			let lowerMap = aliasCaseCache.get(map);
+			if (!lowerMap) {
+				lowerMap = new Map();
+				for (const key in map) {
 					const val = map[key];
-					list = Array.isArray(val) ? val : null;
-					break;
+					if (Array.isArray(val)) {
+						const lowerKey = key.toLowerCase();
+						if (!lowerMap.has(lowerKey)) lowerMap.set(lowerKey, val);
+					}
 				}
+				aliasCaseCache.set(map, lowerMap);
 			}
+			list = lowerMap.get(name.toLowerCase()) ?? null;
 		}
 		if (!list || list.length === 0) {
 			return surfaceId;

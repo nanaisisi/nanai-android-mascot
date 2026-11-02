@@ -161,6 +161,17 @@ function initDefaultCommandHandlers() {
 		handler.player.balloonTimeout = Number.isFinite(timeout) ? timeout : 0;
 	});
 
+	registerCommandHandler("set:balloonwait", async (handler, args) => {
+		const param = args[2];
+		handler.player.playbackController?.setBalloonWait?.(param);
+	});
+
+	registerCommandHandler("quicksection", async (handler, args) => {
+		const val = String(args[1] ?? "").toLowerCase();
+		const enable = val === "1" || val === "true";
+		handler.player.playbackController?.setQuickMode?.(enable);
+	});
+
 	registerCommandHandler("set:alignmenttodesktop", async (handler, args) => {
 		await setAlignmentToDesktop(handler, args[2]);
 	});

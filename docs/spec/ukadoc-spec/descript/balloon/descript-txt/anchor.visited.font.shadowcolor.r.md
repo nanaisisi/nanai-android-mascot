@@ -2,7 +2,7 @@
 
 - **規格**: [anchor.visited.font.shadowcolor.r.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/anchor.visited.font.shadowcolor.r.md)
 - **検索語**: anchor.visited.font.shadowcolor.r
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-実装コード内に「anchor.visited.font.shadowcolor.r」は検出されませんでした。
+- `ui/js/core/actions/balloon-descript/font/group.js:20` `* [anchor.visited.font.shadowcolor.r,数値], [anchor.visited.font.shadowcolor.g,数値]`

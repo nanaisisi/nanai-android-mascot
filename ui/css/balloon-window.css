@@ -101,7 +101,16 @@ body {
 		--balloon-anchor-notselect-color,
 		var(--balloon-anchor-color, var(--balloon-highlight-bg, #0078d7))
 	);
-	text-decoration: underline;
+	text-decoration: var(
+		--balloon-anchor-notselect-style,
+		var(--balloon-anchor-style, underline)
+	);
+	text-shadow: var(
+		--balloon-anchor-notselect-shadow-color,
+		var(--balloon-anchor-shadow-color, none)
+	);
+	background: var(--balloon-anchor-notselect-brush-color, transparent);
+	outline-color: var(--balloon-anchor-notselect-pen-color, transparent);
 	cursor: pointer;
 	mix-blend-mode: var(--balloon-anchor-blendmethod, normal);
 }
@@ -111,10 +120,23 @@ body {
 		--balloon-anchor-visited-color,
 		var(--balloon-anchor-color, #551a8b)
 	);
+	text-decoration: var(
+		--balloon-anchor-visited-style,
+		var(--balloon-anchor-style, underline)
+	);
+	text-shadow: var(--balloon-anchor-visited-shadow-color, none);
+	background: var(--balloon-anchor-visited-brush-color, transparent);
+	outline-color: var(--balloon-anchor-visited-pen-color, transparent);
 }
 
 .balloon-anchor:hover {
 	color: var(--balloon-anchor-color, var(--balloon-highlight-bg, #0078d7));
+	background: var(--balloon-anchor-brush-color, rgba(0, 120, 215, 0.12));
+	outline-color: var(
+		--balloon-anchor-pen-color,
+		var(--balloon-highlight-bg, #0078d7)
+	);
+	text-shadow: var(--balloon-anchor-shadow-color, none);
 }
 
 /* バルーンオプション画像 (arrow.filename, clickwaitmarker.filename 等) */

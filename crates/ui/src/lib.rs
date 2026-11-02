@@ -26,8 +26,9 @@ pub use manifest::{ShellManifest, SurfaceManifest};
 pub use script::{SakuraCommand, execute_sakura_script, parse_sakura_script};
 pub use shell::Shell;
 pub use shiori::{
-    ErrorLevel, GhostStatusToken, SecurityLevel, SenderTypeTag, ShioriMethod, ShioriRequest,
-    ShioriResponse, StatusCode, parse_sender_types,
+    ErrorLevel, GhostStatusToken, MockShioriEngine, MultiStageShioriLoader, SecurityLevel,
+    SenderTypeTag, ShioriEngine, ShioriEngineCandidate, ShioriMethod, ShioriRequest, ShioriResponse,
+    StatusCode, parse_sender_types,
 };
 pub use sstp::{IfGhostEntry, SstpMessage, SstpMethod, SstpRequest, SstpResponse, SstpStatusCode};
 pub use surfaces::{
@@ -42,7 +43,10 @@ pub use update::{
     InstallManifest, InstallResourceConfig, InstallerEngine, StandardInstallerEngine,
     UpdateEntry, UpdatePackage, parse_install_manifest, parse_update_definition,
 };
-pub use vfs::{VfsResolver, detect_and_decode, open_shift_jis_file, open_text_file, resolve_vfs_path};
+pub use vfs::{
+    MockVfs, VfsResolver, detect_and_decode, normalize_vfs_path, open_shift_jis_file,
+    open_text_file, resolve_vfs_path,
+};
 
 #[cfg(test)]
 mod tests {

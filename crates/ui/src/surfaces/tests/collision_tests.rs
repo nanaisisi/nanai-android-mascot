@@ -140,3 +140,48 @@ group,TestGroup
     assert!(!table.has_option("nonexistent"));
     assert!(table.disable_no_define_surfaces());
 }
+
+#[test]
+fn test_hyphen_sort_and_icon_rect() {
+    let sample = r"charset,UTF-8
+descript
+{
+version,1
+collision-sort,descend
+animation-sort,ascend
+}
+
+surface0
+{
+collision0,0,0,100,100,body
+collision1,10,10,50,50,face
+icon.rect,10,20,60,40
+}
+
+surface1
+{
+collision0,0,0,100,100,body
+collision1,20,10,60,70,head
+}
+";
+    let txt = SurfacesTxt::parse(sample);
+    assert_eq!(txt.collision_sort, Some(SortKind::Descend));
+    assert_eq!(txt.animation_sort, Some(SortKind::Ascend));
+
+    let s0 = txt.surface(0).unwrap();
+    assert_eq!(s0.icon_rect, Some([10, 20, 60, 40]));
+
+    // icon.rect: width = 50, height = 20 -> max side is 50.
+    // center_x = (10 + 60) / 2 = 35, center_y = (20 + 40) / 2 = 30
+    // half = 25 -> x1 = 35 - 25 = 10, y1 = 30 - 25 = 5, x2 = 60, y2 = 55.
+    let square0 = s0.effective_icon_rect().unwrap();
+    assert_eq!(square0, [10, 5, 60, 55]);
+
+    // s1 has no icon.rect, but has a "head" collision [20, 10, 60, 70]
+    // width = 40, height = 60 -> max side is 60.
+    // center_x = 40, center_y = 40 -> half = 30 -> [10, 10, 70, 70]
+    let s1 = txt.surface(1).unwrap();
+    assert_eq!(s1.icon_rect, None);
+    let square1 = s1.effective_icon_rect().unwrap();
+    assert_eq!(square1, [10, 10, 70, 70]);
+}

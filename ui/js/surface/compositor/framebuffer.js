@@ -79,6 +79,22 @@ export class SurfaceFrameBuffer {
 		this.data[idx + 2] = b;
 		this.data[idx + 3] = a;
 	}
+
+	/**
+	 * バッファ全体を透明クリア (RGBA = 0)
+	 */
+	clear() {
+		this.data.fill(0);
+	}
+
+	/**
+	 * 新しい独立したコピーを生成
+	 * @returns {SurfaceFrameBuffer}
+	 */
+	clone() {
+		const copyData = new Uint8ClampedArray(this.data);
+		return new SurfaceFrameBuffer(this.width, this.height, copyData);
+	}
 }
 
 /**

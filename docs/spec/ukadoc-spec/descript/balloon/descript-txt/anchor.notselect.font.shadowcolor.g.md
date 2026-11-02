@@ -2,7 +2,7 @@
 
 - **規格**: [anchor.notselect.font.shadowcolor.g.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/anchor.notselect.font.shadowcolor.g.md)
 - **検索語**: anchor.notselect.font.shadowcolor.g
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-実装コード内に「anchor.notselect.font.shadowcolor.g」は検出されませんでした。
+- `ui/js/core/actions/balloon-descript/font/group.js:27` `* [anchor.notselect.font.shadowcolor.r,数値], [anchor.notselect.font.shadowcolor.g`

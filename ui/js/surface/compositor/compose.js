@@ -1,4 +1,4 @@
-import { drawLayer } from "./layer.js";
+import { drawImageLayer, loadLayerImage } from "./layer.js";
 
 /**
  * element0〜elementN で定義されたレイヤー画像 + 着せ替え bind レイヤーを
@@ -52,27 +52,23 @@ export function composeSurfaceElements(
 
 				ctx.drawImage(baseImg, 0, 0);
 
-				for (const element of elementList) {
-					if (!element.file) continue;
-					await drawLayer(
-						ctx,
-						element.file,
-						resolveImagePath,
-						element.x,
-						element.y,
-						element.type,
-					);
-				}
+				// Pre-fetch all images concurrently for faster composition
+				const allElements = [...(elementList || []), ...(bindLayers || [])];
+				const loadPromises = allElements.map((el) =>
+					el.file
+						? loadLayerImage(el.file, resolveImagePath)
+						: Promise.resolve(null),
+				);
 
-				for (const layer of bindLayers) {
-					await drawLayer(
-						ctx,
-						layer.file,
-						resolveImagePath,
-						layer.x,
-						layer.y,
-						layer.type,
-					);
+				const loadedImages = await Promise.all(loadPromises);
+
+				// Draw sequentially to preserve z-order (blending operations depend on previous operations)
+				for (let i = 0; i < allElements.length; i++) {
+					const element = allElements[i];
+					const img = loadedImages[i];
+					if (!img || !element.file) continue;
+
+					drawImageLayer(ctx, img, element.x, element.y, element.type);
 				}
 
 				const dataUrl = canvas.toDataURL("image/png");

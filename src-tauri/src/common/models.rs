@@ -47,6 +47,15 @@ pub struct GhostInfo {
     pub recommended_balloon_path: Option<String>,
     /// [default.balloon.path,パス]:
     pub default_balloon_path: Option<String>,
+    pub shiori_version: Option<String>,
+    pub shiori_cache: Option<String>,
+    pub shiori_encoding: Option<String>,
+    pub shiori_forceencoding: Option<String>,
+    pub shiori_escape_unknown: Option<String>,
+    pub shiori_logo_file: Option<String>,
+    pub shiori_logo_align: Option<String>,
+    pub shiori_logo_x: Option<i32>,
+    pub shiori_logo_y: Option<i32>,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]

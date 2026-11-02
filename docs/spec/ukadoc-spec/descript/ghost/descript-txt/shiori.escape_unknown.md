@@ -2,7 +2,7 @@
 
 - **規格**: [shiori.escape_unknown.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/shiori.escape_unknown.md)
 - **検索語**: shiori.escape_unknown
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-実装コード内に「shiori.escape_unknown」は検出されませんでした。
+- `src-tauri/src/ghost/scan/directory/manifest.rs:90` `.and_then(|m| m.get("shiori.escape_unknown").cloned());`

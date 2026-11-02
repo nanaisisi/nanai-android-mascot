@@ -2,7 +2,7 @@
 
 - **規格**: [shiori.encoding.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/shiori.encoding.md)
 - **検索語**: shiori.encoding
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-実装コード内に「shiori.encoding」は検出されませんでした。
+- `src-tauri/src/ghost/scan/directory/manifest.rs:84` `let shiori_encoding = meta_map.as_ref().and_then(|m| m.get("shiori.encoding").cl`

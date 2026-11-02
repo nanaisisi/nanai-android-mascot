@@ -2,7 +2,7 @@
 
 - **規格**: [anchor.notselect.brush.color.b.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/anchor.notselect.brush.color.b.md)
 - **検索語**: anchor.notselect.brush.color.b
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-実装コード内に「anchor.notselect.brush.color.b」は検出されませんでした。
+- `ui/js/core/actions/balloon-descript/font/group.js:30` `* [anchor.notselect.brush.color.r,数値], [anchor.notselect.brush.color.g,数値], [anc`

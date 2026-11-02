@@ -153,7 +153,6 @@ function _triggerSubmenuWindow(menuType, buttonEl) {
 				wrapper.classList.add("open");
 			}
 		});
-		_triggerSubmenuWindow.lastRequest = null;
 	}
 }
 

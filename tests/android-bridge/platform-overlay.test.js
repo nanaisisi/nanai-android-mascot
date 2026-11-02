@@ -141,4 +141,59 @@ describe("AndroidBridge - Platform & Overlay", () => {
 			expect.objectContaining({ level: 80 }),
 		);
 	});
+
+	it("supports backward compatibility proxy getters, setters, and utility methods", () => {
+		const bridge = new AndroidBridge();
+
+		// _listeners
+		expect(bridge._listeners).toBeDefined();
+
+		// _gestureRecognizer & setGestureRecognizer
+		expect(bridge._gestureRecognizer).toBeNull();
+		const mockRecognizer = { reset: vi.fn() };
+		bridge._gestureRecognizer = mockRecognizer;
+		expect(bridge._gestureRecognizer).toBe(mockRecognizer);
+		bridge.setGestureRecognizer(null);
+		expect(bridge._gestureRecognizer).toBeNull();
+
+		// _dockState
+		expect(bridge._dockState).toBe("none");
+		bridge._dockState = "right";
+		expect(bridge._dockState).toBe("right");
+
+		// _backHandlers
+		expect(Array.isArray(bridge._backHandlers)).toBe(true);
+		bridge._backHandlers = [() => true];
+		expect(bridge._backHandlers.length).toBe(1);
+
+		// _overlayTransparency
+		bridge._overlayTransparency = 0.8;
+		expect(bridge._overlayTransparency).toBe(0.8);
+
+		// _isClickThrough
+		bridge._isClickThrough = true;
+		expect(bridge._isClickThrough).toBe(true);
+
+		// _isForegroundServiceActive
+		bridge._isForegroundServiceActive = true;
+		expect(bridge._isForegroundServiceActive).toBe(true);
+
+		// _isOverlayEnabled
+		bridge._isOverlayEnabled = true;
+		expect(bridge._isOverlayEnabled).toBe(true);
+
+		// isNativeAndroid
+		expect(typeof bridge.isNativeAndroid()).toBe("boolean");
+
+		// off method
+		const testCb = vi.fn();
+		bridge.on(ANDROID_EVENTS.OVERLAY_MODE_CHANGED, testCb);
+		bridge.off(ANDROID_EVENTS.OVERLAY_MODE_CHANGED, testCb);
+
+		// cleanup error catch handling in destroy
+		bridge._cleanupFns.push(() => {
+			throw new Error("Cleanup test error");
+		});
+		bridge.destroy();
+	});
 });

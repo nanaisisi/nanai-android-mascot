@@ -4,56 +4,29 @@
  * Contract: TouchGestureEvent ディスパッチ, ドメインイベント連携
  */
 
+import { TouchGestureEvent } from "./touch-gesture-event.js";
 import {
-	TOUCH_GESTURE_TYPES,
-	TouchGestureEvent,
-} from "./touch-gesture-event.js";
+	getTouchAngle,
+	getTouchCenter,
+	getTouchDistance,
+} from "./touch-helpers.js";
+import {
+	handleDragEndAndSnap,
+	processMultiTouchMove,
+	processSingleTouchMove,
+} from "./touch-motion-handler.js";
+import {
+	clearLongPressTimer,
+	handleTapOrDoubleTapEnd,
+	handleTwoFingerTapEnd,
+	startLongPressTimer,
+} from "./touch-tap-handler.js";
 
-/**
- * 2点間のユークリッド距離を計算
- * @param {{ clientX: number, clientY: number }} p1
- * @param {{ clientX: number, clientY: number }} p2
- * @returns {number}
- */
-export function getTouchDistance(p1, p2) {
-	const x1 = Number.isFinite(p1?.clientX) ? p1.clientX : 0;
-	const y1 = Number.isFinite(p1?.clientY) ? p1.clientY : 0;
-	const x2 = Number.isFinite(p2?.clientX) ? p2.clientX : 0;
-	const y2 = Number.isFinite(p2?.clientY) ? p2.clientY : 0;
-	return Math.hypot(x1 - x2, y1 - y2);
-}
-
-/**
- * 2点間の中心座標を計算
- * @param {{ clientX: number, clientY: number }} p1
- * @param {{ clientX: number, clientY: number }} p2
- * @returns {{ x: number, y: number }}
- */
-export function getTouchCenter(p1, p2) {
-	const x1 = Number.isFinite(p1?.clientX) ? p1.clientX : 0;
-	const y1 = Number.isFinite(p1?.clientY) ? p1.clientY : 0;
-	const x2 = Number.isFinite(p2?.clientX) ? p2.clientX : 0;
-	const y2 = Number.isFinite(p2?.clientY) ? p2.clientY : 0;
-	return {
-		x: (x1 + x2) / 2,
-		y: (y1 + y2) / 2,
-	};
-}
-
-/**
- * 2点間の回転角度（度数法）を計算
- * @param {{ clientX: number, clientY: number }} p1
- * @param {{ clientX: number, clientY: number }} p2
- * @returns {number}
- */
-export function getTouchAngle(p1, p2) {
-	const x1 = Number.isFinite(p1?.clientX) ? p1.clientX : 0;
-	const y1 = Number.isFinite(p1?.clientY) ? p1.clientY : 0;
-	const x2 = Number.isFinite(p2?.clientX) ? p2.clientX : 0;
-	const y2 = Number.isFinite(p2?.clientY) ? p2.clientY : 0;
-	const rad = Math.atan2(y2 - y1, x2 - x1);
-	return (rad * 180) / Math.PI;
-}
+export {
+	getTouchAngle,
+	getTouchCenter,
+	getTouchDistance,
+} from "./touch-helpers.js";
 
 /**
  * タッチジェスチャー認識クラス
@@ -273,10 +246,7 @@ export class TouchGestureRecognizer {
 	}
 
 	_clearLongPressTimer() {
-		if (this._longPressTimer) {
-			clearTimeout(this._longPressTimer);
-			this._longPressTimer = null;
-		}
+		clearLongPressTimer(this);
 	}
 
 	_handleTouchStart(e) {
@@ -302,16 +272,7 @@ export class TouchGestureRecognizer {
 			this._longPressTriggered = false;
 			this._isPinching = false;
 
-			this._longPressTimer = setTimeout(() => {
-				if (!this._hasMoved && !this._strokeTriggered && !this._isPinching) {
-					this._longPressTriggered = true;
-					this.emit(TOUCH_GESTURE_TYPES.LONG_PRESS, {
-						centerX: this._startX,
-						centerY: this._startY,
-						originalEvent: e,
-					});
-				}
-			}, this.options.longPressDelay);
+			startLongPressTimer(this, e);
 		} else if (touches.length === 2) {
 			// 2本指タッチ（ピンチ/回転/2本指タップ）の開始
 			this._clearLongPressTimer();
@@ -356,112 +317,9 @@ export class TouchGestureRecognizer {
 	_processTouchMove(e) {
 		const touches = e.touches;
 		if (touches.length === 1) {
-			if (this._isPinching) return;
-
-			const t = touches[0];
-			const now = Date.now();
-			const deltaX = t.clientX - this._startX;
-			const deltaY = t.clientY - this._startY;
-			const stepDist = Math.hypot(
-				t.clientX - this._lastX,
-				t.clientY - this._lastY,
-			);
-
-			const dt = Math.max(1, now - this._lastTime);
-			this._vx = (t.clientX - this._lastX) / dt;
-			this._vy = (t.clientY - this._lastY) / dt;
-
-			this._lastX = t.clientX;
-			this._lastY = t.clientY;
-			this._lastTime = now;
-
-			if (
-				!this._hasMoved &&
-				Math.hypot(deltaX, deltaY) > this.options.slopThreshold
-			) {
-				this._hasMoved = true;
-				this._clearLongPressTimer();
-			}
-
-			if (this._hasMoved && !this._longPressTriggered) {
-				// 撫で認識の判定
-				this._accumulatedStroke += stepDist;
-				if (
-					this._accumulatedStroke >= this.options.strokeThreshold &&
-					!this._strokeTriggered
-				) {
-					this._strokeTriggered = true;
-					this.emit(TOUCH_GESTURE_TYPES.STROKE, {
-						centerX: t.clientX,
-						centerY: t.clientY,
-						strokeDistance: this._accumulatedStroke,
-						originalEvent: e,
-					});
-				}
-
-				// ドラッグイベントの発火
-				if (!this._isDragging) {
-					this._isDragging = true;
-					this.emit(TOUCH_GESTURE_TYPES.DRAG_START, {
-						centerX: this._startX,
-						centerY: this._startY,
-						originalEvent: e,
-					});
-				}
-
-				this.emit(TOUCH_GESTURE_TYPES.DRAG, {
-					deltaX,
-					deltaY,
-					centerX: t.clientX,
-					centerY: t.clientY,
-					velocityX: this._vx,
-					velocityY: this._vy,
-					strokeDistance: this._accumulatedStroke,
-					originalEvent: e,
-				});
-			}
+			processSingleTouchMove(this, e);
 		} else if (touches.length >= 2) {
-			// ピンチ/回転の継続
-			this._clearLongPressTimer();
-			const t1 = touches[0];
-			const t2 = touches[1];
-			const currentDist = getTouchDistance(t1, t2);
-			const currentAngle = getTouchAngle(t1, t2);
-			const center = getTouchCenter(t1, t2);
-
-			const rawScale =
-				this._initialPinchDist > 0 ? currentDist / this._initialPinchDist : 1.0;
-			const scale = Math.min(
-				Math.max(rawScale, this.options.minScale),
-				this.options.maxScale,
-			);
-			const rotation = currentAngle - this._initialAngle;
-
-			if (
-				Math.abs(currentDist - this._initialPinchDist) >
-					this.options.slopThreshold ||
-				Math.abs(rotation) > 5
-			) {
-				this._twoFingerMoved = true;
-			}
-
-			this._lastPinchScale = scale;
-
-			this.emit(TOUCH_GESTURE_TYPES.PINCH, {
-				scale,
-				centerX: center.x,
-				centerY: center.y,
-				originalEvent: e,
-			});
-
-			if (Math.abs(rotation) > 5) {
-				this.emit(TOUCH_GESTURE_TYPES.ROTATE, {
-					rotation,
-					centerX: center.x,
-					centerY: center.y,
-					originalEvent: e,
-				});
-			}
+			processMultiTouchMove(this, e);
 		}
 	}
 
@@ -469,157 +327,17 @@ export class TouchGestureRecognizer {
 		this._clearLongPressTimer();
 
 		// 2本指タップ判定
-		if (this._isPinching || this._twoFingerStartTime > 0) {
-			const elapsed = Date.now() - this._twoFingerStartTime;
-			if (
-				!this._twoFingerMoved &&
-				this._twoFingerStartTime > 0 &&
-				elapsed <= this.options.twoFingerTapDelay &&
-				e.touches.length === 0
-			) {
-				this._isPinching = false;
-				this._twoFingerStartTime = 0;
-				this.emit(TOUCH_GESTURE_TYPES.TWO_FINGER_TAP, {
-					centerX: this._twoFingerCenter.x,
-					centerY: this._twoFingerCenter.y,
-					originalEvent: e,
-				});
-				return;
-			}
-
-			if (e.touches.length < 2) {
-				this._isPinching = false;
-				if (e.touches.length === 1) {
-					// 1本指が残っている場合はドラッグ起点に更新
-					const t = e.touches[0];
-					this._startX = t.clientX;
-					this._startY = t.clientY;
-					this._lastX = t.clientX;
-					this._lastY = t.clientY;
-					this._hasMoved = false;
-				}
-			}
+		if (handleTwoFingerTapEnd(this, e)) {
 			return;
 		}
 
 		if (this._isDragging) {
-			this._isDragging = false;
-			const lastTouch = e.changedTouches?.[0];
-			const endX = lastTouch ? lastTouch.clientX : this._lastX;
-			const endY = lastTouch ? lastTouch.clientY : this._lastY;
-
-			this.emit(TOUCH_GESTURE_TYPES.DRAG_END, {
-				centerX: endX,
-				centerY: endY,
-				originalEvent: e,
-			});
-
-			// スワイプ（フリック）判定
-			const totalDeltaX = endX - this._startX;
-			const totalDeltaY = endY - this._startY;
-			const totalDist = Math.hypot(totalDeltaX, totalDeltaY);
-			const totalTime = Math.max(1, Date.now() - this._startTime);
-			const velocity = totalDist / totalTime;
-
-			let swipeDirection = null;
-			if (
-				totalDist >= this.options.swipeMinDistance &&
-				velocity >= this.options.swipeMinVelocity
-			) {
-				if (Math.abs(totalDeltaX) > Math.abs(totalDeltaY)) {
-					swipeDirection = totalDeltaX > 0 ? "right" : "left";
-				} else {
-					swipeDirection = totalDeltaY > 0 ? "down" : "up";
-				}
-
-				this.emit(TOUCH_GESTURE_TYPES.SWIPE, {
-					direction: swipeDirection,
-					distance: totalDist,
-					velocity,
-					deltaX: totalDeltaX,
-					deltaY: totalDeltaY,
-					centerX: endX,
-					centerY: endY,
-					originalEvent: e,
-				});
-			}
-
-			// 画面端スナップ（Docked State / Snap）の判定
-			const screenW = this.options.screenWidth;
-			const snapThreshold = this.options.snapThreshold;
-			let snapEdge = null;
-
-			if (
-				endX <= snapThreshold ||
-				(swipeDirection === "left" && endX < screenW / 2)
-			) {
-				snapEdge = "left";
-			} else if (
-				endX >= screenW - snapThreshold ||
-				(swipeDirection === "right" && endX > screenW / 2)
-			) {
-				snapEdge = "right";
-			}
-
-			if (snapEdge) {
-				this._dockState = snapEdge;
-				this.emit(TOUCH_GESTURE_TYPES.SNAP, {
-					dockState: snapEdge,
-					centerX: endX,
-					centerY: endY,
-					originalEvent: e,
-				});
-			} else {
-				this._dockState = "none";
-			}
+			handleDragEndAndSnap(this, e);
 			return;
 		}
 
 		// 移動も長押しも撫でも発生していない場合はタップ/ダブルタップとして判定
-		if (
-			!this._hasMoved &&
-			!this._longPressTriggered &&
-			!this._strokeTriggered
-		) {
-			const touch = e.changedTouches?.[0];
-			const tapX = touch ? touch.clientX : this._startX;
-			const tapY = touch ? touch.clientY : this._startY;
-			const now = Date.now();
-
-			const elapsed = now - this._lastTapTime;
-			const distFromLastTap = Math.hypot(
-				tapX - this._lastTapX,
-				tapY - this._lastTapY,
-			);
-
-			if (
-				elapsed > 0 &&
-				elapsed <= this.options.doubleTapDelay &&
-				distFromLastTap <= this.options.doubleTapDistance
-			) {
-				// ダブルタップ成立
-				this._lastTapTime = 0;
-				this._lastTapX = 0;
-				this._lastTapY = 0;
-				this.emit(TOUCH_GESTURE_TYPES.DOUBLE_TAP, {
-					centerX: tapX,
-					centerY: tapY,
-					tapCount: 2,
-					originalEvent: e,
-				});
-			} else {
-				// 通常のシングルタップ
-				this._lastTapTime = now;
-				this._lastTapX = tapX;
-				this._lastTapY = tapY;
-				this.emit(TOUCH_GESTURE_TYPES.TAP, {
-					centerX: tapX,
-					centerY: tapY,
-					tapCount: 1,
-					originalEvent: e,
-				});
-			}
-		}
+		handleTapOrDoubleTapEnd(this, e);
 	}
 
 	_handleTouchCancel() {

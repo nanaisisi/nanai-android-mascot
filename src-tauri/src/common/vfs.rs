@@ -8,7 +8,6 @@ mod tests {
     use super::*;
     use nanai_android_mascot_ui::{MockVfs, normalize_vfs_path};
 
-
     #[test]
     fn test_common_vfs_reexports() {
         let mut mock = MockVfs::new();

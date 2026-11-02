@@ -1,7 +1,7 @@
 //! 描画メソッドの型
 
-use serde::{Deserialize, Serialize};
 use super::interval::parse_id_list_inner;
+use serde::{Deserialize, Serialize};
 
 /// `element[N]` / `animation[N].pattern[K]` の第1パラメータ（描画メソッド）
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

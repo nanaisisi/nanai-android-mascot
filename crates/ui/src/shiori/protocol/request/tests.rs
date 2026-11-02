@@ -101,8 +101,7 @@ fn test_shiori_request_parse_security_origin_variations() {
     assert_eq!(req_null_upper.security_origin, Some(None));
 
     // explicit origin URL -> Some(Some(...))
-    let text_url =
-        "GET SHIORI/3.0\r\nID: OnTest\r\nSecurityOrigin: https://example.com\r\n\r\n";
+    let text_url = "GET SHIORI/3.0\r\nID: OnTest\r\nSecurityOrigin: https://example.com\r\n\r\n";
     let req_url = ShioriRequest::parse(text_url).unwrap();
     assert_eq!(
         req_url.security_origin,

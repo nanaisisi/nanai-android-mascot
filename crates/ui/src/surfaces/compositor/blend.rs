@@ -1,7 +1,7 @@
 //! サーフィス画像コンポジタ - ブレンド、クロマキー処理、レイヤー合成拡張
 
-use super::framebuffer::SurfaceFrameBuffer;
 use super::super::types::DrawMethod;
+use super::framebuffer::SurfaceFrameBuffer;
 
 impl SurfaceFrameBuffer {
     /// PNA アルファマスク（8bit グレースケールマスク: 幅*高さバイト）を適用する

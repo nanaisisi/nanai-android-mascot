@@ -1,7 +1,7 @@
 //! サーフィス画像コンポジタ - 要素（レイヤー群）一括合成関数
 
-use super::framebuffer::SurfaceFrameBuffer;
 use super::super::types::DrawMethod;
+use super::framebuffer::SurfaceFrameBuffer;
 
 /// 複数のレイヤー定義に従い、ベースフレームバッファ上に一括合成する
 pub fn composite_elements(

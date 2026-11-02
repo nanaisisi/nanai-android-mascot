@@ -2,8 +2,8 @@
 
 use super::types::SstpRequest;
 use nanai_android_mascot_ui::sstp::{
-    SstpGhostConfig, SstpGhostContext, SstpRequest as CoreSstpRequest,
-    SstpResponse as CoreSstpResponse, handle_execute_command, SstpMethod,
+    SstpGhostConfig, SstpGhostContext, SstpMethod, SstpRequest as CoreSstpRequest,
+    SstpResponse as CoreSstpResponse, handle_execute_command,
 };
 
 /// Parse raw SSTP/1.x request text conforming to UKADOC spec using core parser

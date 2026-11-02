@@ -160,3 +160,29 @@ fn test_extended_blend_modes() {
     );
     assert_eq!(lighten.get_pixel(0, 0), Some((100, 100, 100, 255)));
 }
+
+#[test]
+fn test_clear_and_clear_rect() {
+    let mut fb = SurfaceFrameBuffer::new(4, 4);
+    for y in 0..4 {
+        for x in 0..4 {
+            fb.set_pixel(x, y, 200, 200, 200, 255);
+        }
+    }
+    assert_eq!(fb.get_pixel(1, 1), Some((200, 200, 200, 255)));
+
+    // clear_rect (1, 1) width 2, height 2
+    fb.clear_rect(1, 1, 2, 2);
+    assert_eq!(fb.get_pixel(0, 0), Some((200, 200, 200, 255)));
+    assert_eq!(fb.get_pixel(1, 1), Some((0, 0, 0, 0)));
+    assert_eq!(fb.get_pixel(2, 2), Some((0, 0, 0, 0)));
+    assert_eq!(fb.get_pixel(3, 3), Some((200, 200, 200, 255)));
+
+    // out-of-bounds clear_rect
+    fb.clear_rect(10, 10, 5, 5);
+
+    // clear all
+    fb.clear();
+    assert_eq!(fb.get_pixel(0, 0), Some((0, 0, 0, 0)));
+    assert_eq!(fb.get_pixel(3, 3), Some((0, 0, 0, 0)));
+}

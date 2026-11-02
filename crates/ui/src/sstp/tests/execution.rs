@@ -105,6 +105,32 @@ fn test_handle_execute_command() {
         Some("ssp_fmo_header_001.name\x01Nanai\r\n".to_string())
     );
 
+    let res_shell = handle_execute_command("GetShellName", &ctx);
+    assert_eq!(res_shell.additional_data, Some("master".to_string()));
+
+    let res_balloon = handle_execute_command("GetBalloonName", &ctx);
+    assert_eq!(res_balloon.additional_data, Some("standard".to_string()));
+
+    let res_version = handle_execute_command("GetVersion", &ctx);
+    assert_eq!(res_version.additional_data, Some("2.0.0".to_string()));
+
+    let res_shortversion = handle_execute_command("GetShortVersion", &ctx);
+    assert_eq!(res_shortversion.additional_data, Some("2.0".to_string()));
+
+    let res_status = handle_execute_command("GetStatus", &ctx);
+    assert_eq!(res_status.additional_data, Some("talking".to_string()));
+
+    let mut ctx_empty_status = ctx.clone();
+    ctx_empty_status.status.clear();
+    let res_empty_status = handle_execute_command("GetStatus", &ctx_empty_status);
+    assert!(res_empty_status.additional_data.is_none());
+
+    let res_quiet = handle_execute_command("quiet", &ctx);
+    assert_eq!(res_quiet.status, SstpStatusCode::Ok);
+
+    let res_restore = handle_execute_command("restore", &ctx);
+    assert_eq!(res_restore.status, SstpStatusCode::Ok);
+
     let res_unknown = handle_execute_command("InvalidCommand", &ctx);
     assert_eq!(res_unknown.status, SstpStatusCode::BadRequest);
     assert_eq!(

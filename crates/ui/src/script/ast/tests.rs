@@ -163,4 +163,13 @@ fn test_ast_walk_and_collect_commands() {
     let perm_cmds = ast.collect_commands_by_lifetime(SakuraScriptLifetime::Permanent);
     assert_eq!(perm_cmds.len(), 1);
     assert_eq!(perm_cmds[0], SakuraCommand::Surface(1));
+
+    // Ast walk and node command accessors
+    let mut visited = 0;
+    let mut visitor = |_node: &SakuraAstNode| visited += 1;
+    ast.walk(&mut visitor);
+    assert!(visited > 0);
+
+    let script_cmds = ast.collect_commands_by_lifetime(SakuraScriptLifetime::Script);
+    assert_eq!(script_cmds.len(), 3);
 }

@@ -205,6 +205,7 @@ fn test_validate_archive_entry_path() {
     assert!(engine.validate_entry_path("shell/../foo").is_err());
     assert!(engine.validate_entry_path("/absolute/path").is_err());
     assert!(engine.validate_entry_path("").is_err());
+    assert!(engine.validate_entry_path("foo/bar").is_ok());
 }
 
 #[test]

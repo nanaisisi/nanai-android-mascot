@@ -77,3 +77,122 @@ fn test_parsed_animation_options_coverage() {
     assert!(opts.is_shared_index);
     assert!(opts.exclusive_targets.is_some());
 }
+
+#[test]
+fn test_animation_scheduler_stepping_and_control_methods() {
+    use crate::surfaces::SerikoAnimation;
+
+    let mut scheduler = AnimationScheduler::new();
+
+    let anim_controller = SerikoAnimation {
+        id: 10,
+        name: None,
+        interval: Some(Interval::RunOnce),
+        options: vec![],
+        collisions: vec![],
+        patterns: vec![
+            AnimationPattern {
+                index: 0,
+                surface: 101,
+                wait: 10,
+                wait_max: None,
+                method: DrawMethod::Start(Some(20)),
+                x: 0,
+                y: 0,
+                options: vec![],
+            },
+            AnimationPattern {
+                index: 1,
+                surface: 102,
+                wait: 10,
+                wait_max: None,
+                method: DrawMethod::Stop(Some(20)),
+                x: 0,
+                y: 0,
+                options: vec![],
+            },
+            AnimationPattern {
+                index: 2,
+                surface: 103,
+                wait: 10,
+                wait_max: None,
+                method: DrawMethod::ParallelStart(vec![30, 31]),
+                x: 0,
+                y: 0,
+                options: vec![],
+            },
+            AnimationPattern {
+                index: 3,
+                surface: 104,
+                wait: 10,
+                wait_max: None,
+                method: DrawMethod::ParallelStop(vec![30, 31]),
+                x: 0,
+                y: 0,
+                options: vec![],
+            },
+            AnimationPattern {
+                index: 4,
+                surface: 105,
+                wait: 10,
+                wait_max: None,
+                method: DrawMethod::AlternativeStart(vec![40]),
+                x: 0,
+                y: 0,
+                options: vec![],
+            },
+            AnimationPattern {
+                index: 5,
+                surface: 106,
+                wait: 10,
+                wait_max: None,
+                method: DrawMethod::AlternativeStop(vec![40]),
+                x: 0,
+                y: 0,
+                options: vec![],
+            },
+            AnimationPattern {
+                index: 6,
+                surface: -2,
+                wait: 10,
+                wait_max: None,
+                method: DrawMethod::Overlay,
+                x: 0,
+                y: 0,
+                options: vec![],
+            },
+        ],
+    };
+
+    let target_anim = SerikoAnimation {
+        id: 20,
+        name: None,
+        interval: Some(Interval::RunOnce),
+        options: vec![],
+        collisions: vec![],
+        patterns: vec![AnimationPattern {
+            index: 0,
+            surface: 200,
+            wait: 100,
+            wait_max: None,
+            method: DrawMethod::Overlay,
+            x: 0,
+            y: 0,
+            options: vec![],
+        }],
+    };
+
+    let catalog = vec![anim_controller.clone(), target_anim];
+
+    scheduler.start_animation(0, 0, &anim_controller);
+    assert_eq!(scheduler.active_count(0), 1);
+    assert_eq!(scheduler.active_count(999), 0);
+
+    for _ in 0..10 {
+        let _ = scheduler.step_with_catalog(15, &catalog);
+    }
+
+    scheduler.set_animation_offset(0, 10, 5, 10);
+    assert_eq!(scheduler.get_animation_offset(0, 10), (5, 10));
+    assert_eq!(scheduler.get_animation_offset(0, 999), (0, 0));
+}

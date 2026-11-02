@@ -24,18 +24,105 @@ fn test_sstp_status_codes() {
     assert_eq!(SstpStatusCode::Ok.code(), 200);
     assert_eq!(SstpStatusCode::Ok.reason_phrase(), "OK");
     assert_eq!(SstpStatusCode::NoContent.code(), 204);
+    assert_eq!(SstpStatusCode::NoContent.reason_phrase(), "No Content");
     assert_eq!(SstpStatusCode::BadRequest.code(), 400);
+    assert_eq!(SstpStatusCode::BadRequest.reason_phrase(), "Bad Request");
     assert_eq!(SstpStatusCode::NotFound.code(), 404);
+    assert_eq!(SstpStatusCode::NotFound.reason_phrase(), "Not Found");
     assert_eq!(SstpStatusCode::Conflict.code(), 409);
+    assert_eq!(SstpStatusCode::Conflict.reason_phrase(), "Conflict");
     assert_eq!(SstpStatusCode::Break.code(), 210);
+    assert_eq!(SstpStatusCode::Break.reason_phrase(), "Break");
     assert_eq!(SstpStatusCode::RequestTimeout.code(), 408);
+    assert_eq!(
+        SstpStatusCode::RequestTimeout.reason_phrase(),
+        "Request Timeout"
+    );
     assert_eq!(SstpStatusCode::PayloadTooLarge.code(), 413);
+    assert_eq!(
+        SstpStatusCode::PayloadTooLarge.reason_phrase(),
+        "Payload Too Large"
+    );
     assert_eq!(SstpStatusCode::Refuse.code(), 420);
+    assert_eq!(SstpStatusCode::Refuse.reason_phrase(), "Refuse");
     assert_eq!(SstpStatusCode::InternalServerError.code(), 500);
+    assert_eq!(
+        SstpStatusCode::InternalServerError.reason_phrase(),
+        "Internal Server Error"
+    );
     assert_eq!(SstpStatusCode::NotImplemented.code(), 501);
+    assert_eq!(
+        SstpStatusCode::NotImplemented.reason_phrase(),
+        "Not Implemented"
+    );
     assert_eq!(SstpStatusCode::ServiceUnavailable.code(), 503);
+    assert_eq!(
+        SstpStatusCode::ServiceUnavailable.reason_phrase(),
+        "Service Unavailable"
+    );
     assert_eq!(SstpStatusCode::VersionNotSupported.code(), 505);
+    assert_eq!(
+        SstpStatusCode::VersionNotSupported.reason_phrase(),
+        "Version Not Supported"
+    );
     assert_eq!(SstpStatusCode::Invisible.code(), 512);
+    assert_eq!(SstpStatusCode::Invisible.reason_phrase(), "Invisible");
+}
+
+#[test]
+fn test_sstp_response_helpers_and_additional_data_formatting() {
+    let nc = SstpResponse::no_content();
+    assert_eq!(nc.status, SstpStatusCode::NoContent);
+
+    let bad = SstpResponse::bad_request();
+    assert_eq!(bad.status, SstpStatusCode::BadRequest);
+
+    let not_found = SstpResponse::not_found();
+    assert_eq!(not_found.status, SstpStatusCode::NotFound);
+
+    let server_err = SstpResponse::internal_server_error();
+    assert_eq!(server_err.status, SstpStatusCode::InternalServerError);
+
+    let mut res_without_trailing_newline = SstpResponse::ok(None);
+    res_without_trailing_newline.additional_data = Some("single line data".to_string());
+    let built = res_without_trailing_newline.build();
+    assert!(built.contains("single line data\r\n\r\n"));
+
+    let err_res = SstpResponse::bad_request().with_error_description("custom error");
+    assert!(
+        err_res
+            .build()
+            .contains("ErrorDescription: custom error\r\n")
+    );
+}
+
+#[test]
+fn test_sstp_request_parser_edge_cases() {
+    // Empty request
+    assert!(SstpRequest::parse("").is_err());
+    assert!(SstpRequest::parse("   \r\n").is_err());
+    // Invalid request line
+    assert!(SstpRequest::parse("INVALID").is_err());
+    // Unsupported method
+    assert!(SstpRequest::parse("FOOBAR SSTP/1.1\r\n").is_err());
+
+    // Comprehensive headers: Event, SecurityOrigin, ReceiverGhostHWnd, Ghost, etc.
+    let full_raw = "NOTIFY SSTP/1.1\r\n\
+        Event: OnTest\r\n\
+        SecurityOrigin: null\r\n\
+        ReceiverGhostHWnd: 9999\r\n\
+        Ghost: Sakura\r\n\
+        Entry: EntryVal\r\n\
+        KeepAlive: true\r\n\
+        \r\n";
+    let req = SstpRequest::parse(full_raw).unwrap();
+    assert_eq!(req.event, Some("OnTest".to_string()));
+    assert_eq!(req.security_origin, Some("null".to_string()));
+    assert_eq!(req.receiver_ghost_hwnd, Some(9999));
+    assert_eq!(req.ghost, Some("Sakura".to_string()));
+    assert_eq!(req.entry, Some("EntryVal".to_string()));
+    assert!(req.keep_alive);
+    assert_eq!(req.sender, "Unknown");
 }
 
 #[test]

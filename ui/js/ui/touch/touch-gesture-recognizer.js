@@ -69,6 +69,10 @@ export class TouchGestureRecognizer {
 	 * @param {number} [options.doubleTapDistance=24] ダブルタップ判定許容半径(px)
 	 * @param {number} [options.minScale=0.2] 最小ピンチ倍率
 	 * @param {number} [options.maxScale=5.0] 最大ピンチ倍率
+	 * @param {number} [options.swipeMinDistance=40] スワイプ判定最小移動距離(px)
+	 * @param {number} [options.swipeMinVelocity=0.3] スワイプ判定最小速度(px/ms)
+	 * @param {number} [options.twoFingerTapDelay=300] 2本指タップ最大許容時間(ms)
+	 * @param {boolean} [options.throttleWithRaf=false] requestAnimationFrameによるMoveイベントの間引き
 	 */
 	constructor(element, options = {}) {
 		this.element = element;
@@ -80,6 +84,10 @@ export class TouchGestureRecognizer {
 			doubleTapDistance: options.doubleTapDistance ?? 24,
 			minScale: options.minScale ?? 0.2,
 			maxScale: options.maxScale ?? 5.0,
+			swipeMinDistance: options.swipeMinDistance ?? 40,
+			swipeMinVelocity: options.swipeMinVelocity ?? 0.3,
+			twoFingerTapDelay: options.twoFingerTapDelay ?? 300,
+			throttleWithRaf: options.throttleWithRaf ?? false,
 		};
 
 		this._listeners = new Map();
@@ -94,18 +102,31 @@ export class TouchGestureRecognizer {
 
 		this._startX = 0;
 		this._startY = 0;
+		this._startTime = 0;
 		this._lastX = 0;
 		this._lastY = 0;
+		this._lastTime = 0;
+		this._vx = 0;
+		this._vy = 0;
 		this._accumulatedStroke = 0;
 		this._hasMoved = false;
 		this._strokeTriggered = false;
 		this._longPressTimer = null;
 		this._longPressTriggered = false;
 
+		// 2本指タップ管理
+		this._twoFingerStartTime = 0;
+		this._twoFingerMoved = false;
+		this._twoFingerCenter = { x: 0, y: 0 };
+
 		// ダブルタップ管理
 		this._lastTapTime = 0;
 		this._lastTapX = 0;
 		this._lastTapY = 0;
+
+		// RAFスロットル管理
+		this._rafId = null;
+		this._pendingMoveEvent = null;
 
 		this._boundTouchStart = this._handleTouchStart.bind(this);
 		this._boundTouchMove = this._handleTouchMove.bind(this);
@@ -186,13 +207,28 @@ export class TouchGestureRecognizer {
 	 */
 	reset() {
 		this._clearLongPressTimer();
+		this._cancelRaf();
 		this._isPinching = false;
 		this._isDragging = false;
 		this._hasMoved = false;
 		this._strokeTriggered = false;
 		this._longPressTriggered = false;
 		this._accumulatedStroke = 0;
+		this._vx = 0;
+		this._vy = 0;
+		this._twoFingerStartTime = 0;
+		this._twoFingerMoved = false;
 		this._activeTouches.clear();
+	}
+
+	_cancelRaf() {
+		if (this._rafId !== null) {
+			if (typeof cancelAnimationFrame === "function") {
+				cancelAnimationFrame(this._rafId);
+			}
+			this._rafId = null;
+			this._pendingMoveEvent = null;
+		}
 	}
 
 	/**
@@ -227,10 +263,15 @@ export class TouchGestureRecognizer {
 		if (touches.length === 1) {
 			// シングルタッチの開始
 			const t = touches[0];
+			const now = Date.now();
 			this._startX = t.clientX;
 			this._startY = t.clientY;
+			this._startTime = now;
 			this._lastX = t.clientX;
 			this._lastY = t.clientY;
+			this._lastTime = now;
+			this._vx = 0;
+			this._vy = 0;
 			this._hasMoved = false;
 			this._isDragging = false;
 			this._accumulatedStroke = 0;
@@ -248,8 +289,8 @@ export class TouchGestureRecognizer {
 					});
 				}
 			}, this.options.longPressDelay);
-		} else if (touches.length >= 2) {
-			// マルチタッチ（ピンチ/回転）の開始
+		} else if (touches.length === 2) {
+			// 2本指タッチ（ピンチ/回転/2本指タップ）の開始
 			this._clearLongPressTimer();
 			this._isPinching = true;
 			this._isDragging = false;
@@ -258,23 +299,58 @@ export class TouchGestureRecognizer {
 			this._initialPinchDist = getTouchDistance(t1, t2);
 			this._initialAngle = getTouchAngle(t1, t2);
 			this._lastPinchScale = 1.0;
+
+			this._twoFingerStartTime = Date.now();
+			this._twoFingerMoved = false;
+			this._twoFingerCenter = getTouchCenter(t1, t2);
+		} else if (touches.length > 2) {
+			this._clearLongPressTimer();
+			this._twoFingerMoved = true;
 		}
 	}
 
 	_handleTouchMove(e) {
+		if (
+			this.options.throttleWithRaf &&
+			typeof requestAnimationFrame === "function"
+		) {
+			this._pendingMoveEvent = e;
+			if (this._rafId === null) {
+				this._rafId = requestAnimationFrame(() => {
+					this._rafId = null;
+					if (this._pendingMoveEvent) {
+						const ev = this._pendingMoveEvent;
+						this._pendingMoveEvent = null;
+						this._processTouchMove(ev);
+					}
+				});
+			}
+		} else {
+			this._processTouchMove(e);
+		}
+	}
+
+	_processTouchMove(e) {
 		const touches = e.touches;
 		if (touches.length === 1) {
 			if (this._isPinching) return;
 
 			const t = touches[0];
+			const now = Date.now();
 			const deltaX = t.clientX - this._startX;
 			const deltaY = t.clientY - this._startY;
 			const stepDist = Math.hypot(
 				t.clientX - this._lastX,
 				t.clientY - this._lastY,
 			);
+
+			const dt = Math.max(1, now - this._lastTime);
+			this._vx = (t.clientX - this._lastX) / dt;
+			this._vy = (t.clientY - this._lastY) / dt;
+
 			this._lastX = t.clientX;
 			this._lastY = t.clientY;
+			this._lastTime = now;
 
 			if (
 				!this._hasMoved &&
@@ -315,6 +391,8 @@ export class TouchGestureRecognizer {
 					deltaY,
 					centerX: t.clientX,
 					centerY: t.clientY,
+					velocityX: this._vx,
+					velocityY: this._vy,
 					strokeDistance: this._accumulatedStroke,
 					originalEvent: e,
 				});
@@ -335,6 +413,14 @@ export class TouchGestureRecognizer {
 				this.options.maxScale,
 			);
 			const rotation = currentAngle - this._initialAngle;
+
+			if (
+				Math.abs(currentDist - this._initialPinchDist) >
+					this.options.slopThreshold ||
+				Math.abs(rotation) > 5
+			) {
+				this._twoFingerMoved = true;
+			}
 
 			this._lastPinchScale = scale;
 
@@ -359,7 +445,25 @@ export class TouchGestureRecognizer {
 	_handleTouchEnd(e) {
 		this._clearLongPressTimer();
 
-		if (this._isPinching) {
+		// 2本指タップ判定
+		if (this._isPinching || this._twoFingerStartTime > 0) {
+			const elapsed = Date.now() - this._twoFingerStartTime;
+			if (
+				!this._twoFingerMoved &&
+				this._twoFingerStartTime > 0 &&
+				elapsed <= this.options.twoFingerTapDelay &&
+				e.touches.length === 0
+			) {
+				this._isPinching = false;
+				this._twoFingerStartTime = 0;
+				this.emit(TOUCH_GESTURE_TYPES.TWO_FINGER_TAP, {
+					centerX: this._twoFingerCenter.x,
+					centerY: this._twoFingerCenter.y,
+					originalEvent: e,
+				});
+				return;
+			}
+
 			if (e.touches.length < 2) {
 				this._isPinching = false;
 				if (e.touches.length === 1) {
@@ -378,11 +482,44 @@ export class TouchGestureRecognizer {
 		if (this._isDragging) {
 			this._isDragging = false;
 			const lastTouch = e.changedTouches?.[0];
+			const endX = lastTouch ? lastTouch.clientX : this._lastX;
+			const endY = lastTouch ? lastTouch.clientY : this._lastY;
+
 			this.emit(TOUCH_GESTURE_TYPES.DRAG_END, {
-				centerX: lastTouch ? lastTouch.clientX : this._lastX,
-				centerY: lastTouch ? lastTouch.clientY : this._lastY,
+				centerX: endX,
+				centerY: endY,
 				originalEvent: e,
 			});
+
+			// スワイプ（フリック）判定
+			const totalDeltaX = endX - this._startX;
+			const totalDeltaY = endY - this._startY;
+			const totalDist = Math.hypot(totalDeltaX, totalDeltaY);
+			const totalTime = Math.max(1, Date.now() - this._startTime);
+			const velocity = totalDist / totalTime;
+
+			if (
+				totalDist >= this.options.swipeMinDistance &&
+				velocity >= this.options.swipeMinVelocity
+			) {
+				let direction = "right";
+				if (Math.abs(totalDeltaX) > Math.abs(totalDeltaY)) {
+					direction = totalDeltaX > 0 ? "right" : "left";
+				} else {
+					direction = totalDeltaY > 0 ? "down" : "up";
+				}
+
+				this.emit(TOUCH_GESTURE_TYPES.SWIPE, {
+					direction,
+					distance: totalDist,
+					velocity,
+					deltaX: totalDeltaX,
+					deltaY: totalDeltaY,
+					centerX: endX,
+					centerY: endY,
+					originalEvent: e,
+				});
+			}
 			return;
 		}
 

@@ -47,6 +47,18 @@ test("SakuraScript parser fuzzing and edge cases", () => {
 		`\\_s${"\\0A".repeat(100)}\\_s`,
 		"\\%\\%\\\\%\\%[nested\\tags]",
 		"Mixed multibyte 日本語 𠮷野家 🍣🍺 \r\n\t",
+		// Cycle 2 SSP extensions & deeply nested malformed tokens
+		"\\__q[id,arg1,arg2]Nested\\__q",
+		"\\_?quick_mode\\_?",
+		"\\![open,teachbox,teachbox,--text=\\\\0\\\\s[0]Injected\\\\e]",
+		"\\![open,communicatebox,--reference=ref1,ref2,ref3,--timeout=NaN]",
+		"\\_l[100,100]\\_l[-50,-50]\\_l[@+10,@-10]\\_l[invalid,syntax]",
+		"\\f[color,default]\\f[height,+5]\\f[name,Courier New]\\f[strike,1]\\f[underline,0]",
+		"\\![anim,pause,not_a_number]\\![anim,resume,-1]",
+		"\\b[-1]\\b[999999]\\b[invalid]",
+		"\\s[-1]\\s[99999]\\s[]\\s[non_number]",
+		"\\![bind,category,part,true]\\![bind-noevent,category,part,0]",
+		"\\![set,choicetimeout,-500]\\![set,balloontimeout,invalid]",
 	];
 
 	for (const input of edgeCases) {
@@ -160,6 +172,10 @@ test("surfaces.txt parser fuzzing and edge cases", () => {
 		"}\n", // stray closing brace
 		"surface0-5\n{\n}\n",
 		"surface10-5\n{\n}\n", // reverse range
+		// Cycle 2 surfaces.txt extended edge cases (surfaces2 overlay patterns, collisionex)
+		"surface.append0,1,2\n{\ncollisionex0,Head,rect,10,20,30,40\ncollisionex1,Bust,circle,50,50,20\ncollisionex2,Arm,ellipse,80,80,15,25\n}\n",
+		"surface0\n{\nanimation0.interval,periodic,5\nanimation0.pattern0,replace,0,0,10,10\nanimation0.pattern1,add,1,50,15,15\nanimation0.pattern2,bind,2,100,0,0\n}\n",
+		"charset,Shift_JIS\n// Multi-surface def\nsurface0,surface1\n{\n}\n",
 	];
 
 	for (const txt of edgeCases) {

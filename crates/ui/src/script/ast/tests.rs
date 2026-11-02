@@ -88,6 +88,24 @@ fn test_sakura_token_constructors() {
 }
 
 #[test]
+fn test_build_sakura_ast_root_level_anchor_and_commands() {
+    let commands = vec![
+        SakuraCommand::Anchor {
+            id: "anchor1".into(),
+            text: "click".into(),
+            args: vec![],
+        },
+        SakuraCommand::Text("Plain text at root".into()),
+    ];
+    let ast = build_sakura_ast(&commands);
+    if let SakuraAstNode::Root { children } = ast {
+        assert_eq!(children.len(), 2);
+    } else {
+        panic!("Expected Root node");
+    }
+}
+
+#[test]
 fn test_ast_walk_and_collect_commands() {
     let commands = vec![
         SakuraCommand::Target(0),

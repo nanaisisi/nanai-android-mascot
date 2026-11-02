@@ -40,13 +40,66 @@ pub(crate) fn apply_animation_line(txt: &mut SurfacesTxt, ids: &[u32], rest: &st
             } else {
                 split_id_suffix(&field["pattern".len()..]).1.unwrap_or(0)
             };
-            let tokens: Vec<&str> = value.split(',').map(str::trim).collect();
+            let mut tokens: Vec<String> = Vec::new();
+            let mut current = String::new();
+            let mut depth_paren = 0;
+            let mut depth_bracket = 0;
+            for ch in value.chars() {
+                match ch {
+                    '(' => {
+                        depth_paren += 1;
+                        current.push(ch);
+                    }
+                    ')' => {
+                        if depth_paren > 0 {
+                            depth_paren -= 1;
+                        }
+                        current.push(ch);
+                    }
+                    '[' => {
+                        depth_bracket += 1;
+                        current.push(ch);
+                    }
+                    ']' => {
+                        if depth_bracket > 0 {
+                            depth_bracket -= 1;
+                        }
+                        current.push(ch);
+                    }
+                    ',' if depth_paren == 0 && depth_bracket == 0 => {
+                        tokens.push(current.trim().to_string());
+                        current.clear();
+                    }
+                    _ => {
+                        current.push(ch);
+                    }
+                }
+            }
+            if !current.trim().is_empty() {
+                tokens.push(current.trim().to_string());
+            }
+
+            let first = tokens.first().map(|s| s.as_str()).unwrap_or("");
+            let second = tokens.get(1).map(|s| s.as_str()).unwrap_or("");
+            let method = if tokens.len() >= 2
+                && (first == "start"
+                    || first == "stop"
+                    || first == "alternativestart"
+                    || first == "alternativestop"
+                    || first == "parallelstart"
+                    || first == "parallelstop")
+            {
+                DrawMethod::parse(&format!("{first},{second}"))
+            } else {
+                DrawMethod::parse(first)
+            };
+
             let (wait, wait_max) = tokens
                 .get(2)
                 .and_then(|t| {
                     let (low, high) = match t.split_once('-') {
                         Some((low, high)) => (low, high),
-                        None => (*t, ""),
+                        None => (t.as_str(), ""),
                     };
                     let low = low.parse::<u32>().ok()?;
                     let high = high.parse::<u32>().ok();
@@ -59,7 +112,7 @@ pub(crate) fn apply_animation_line(txt: &mut SurfacesTxt, ids: &[u32], rest: &st
                 .unwrap_or((0, None));
             let pattern = AnimationPattern {
                 index,
-                method: DrawMethod::parse(tokens[0]),
+                method,
                 surface: tokens.get(1).and_then(|t| t.parse().ok()).unwrap_or(0),
                 wait,
                 wait_max,

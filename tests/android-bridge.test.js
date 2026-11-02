@@ -3,6 +3,10 @@ import {
 	ANDROID_EVENTS,
 	ANDROID_LIFECYCLE_STATES,
 	AndroidBridge,
+	BackButtonManager,
+	BridgeEventEmitter,
+	DockManager,
+	OverlayManager,
 } from "../ui/js/ui/touch/index.js";
 
 describe("AndroidBridge", () => {
@@ -362,5 +366,35 @@ describe("AndroidBridge", () => {
 		// Reset to none
 		bridge.setDockMode("none");
 		expect(bridge.getDockMode()).toBe("none");
+	});
+
+	it("exports modular classes (BridgeEventEmitter, DockManager, BackButtonManager, OverlayManager) directly and functions correctly", () => {
+		expect(BridgeEventEmitter).toBeDefined();
+		expect(DockManager).toBeDefined();
+		expect(BackButtonManager).toBeDefined();
+		expect(OverlayManager).toBeDefined();
+
+		// Test BridgeEventEmitter in isolation
+		const emitter = new BridgeEventEmitter();
+		const handler = vi.fn();
+		const unbind = emitter.on("test-event", handler);
+		emitter.dispatch("test-event", { value: 123 });
+		expect(handler).toHaveBeenCalledWith({ value: 123 });
+		unbind();
+		emitter.dispatch("test-event", { value: 456 });
+		expect(handler).toHaveBeenCalledTimes(1);
+
+		// Test DockManager in isolation
+		const mockDispatch = vi.fn();
+		const dock = new DockManager({ dispatchFn: mockDispatch });
+		expect(dock.dockState).toBe("none");
+		dock.dockState = "left";
+		expect(dock.dockState).toBe("left");
+		expect(mockDispatch).toHaveBeenCalledWith(
+			ANDROID_EVENTS.DOCK_CHANGED,
+			expect.objectContaining({ dockState: "left" }),
+		);
+		dock.destroy();
+		expect(dock.dockState).toBe("none");
 	});
 });

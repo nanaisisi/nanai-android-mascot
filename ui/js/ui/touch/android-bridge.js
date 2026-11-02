@@ -4,22 +4,24 @@
  * Contract: AndroidBridge, イベント命名規約 nas:android:*
  */
 
-import { BackButtonManager } from "./bridge/back-button.js";
 import {
 	ANDROID_EVENTS,
 	ANDROID_LIFECYCLE_STATES,
-} from "./bridge/constants.js";
-import { setupVisibilityListeners } from "./bridge/lifecycle.js";
-import {
+	BackButtonManager,
+	BridgeEventEmitter,
+	DockManager,
 	isAndroidPlatform,
 	isNativeAndroidPlatform,
 	OverlayManager,
-} from "./bridge/overlay.js";
+	setupVisibilityListeners,
+} from "./bridge/index.js";
 
 export {
 	ANDROID_EVENTS,
 	ANDROID_LIFECYCLE_STATES,
 	BackButtonManager,
+	BridgeEventEmitter,
+	DockManager,
 	OverlayManager,
 };
 
@@ -33,15 +35,23 @@ export class AndroidBridge {
 	 * @param {TouchGestureRecognizer} [options.gestureRecognizer] 連携するジェスチャー認識器（バックグラウンド移行時のリセット用）
 	 */
 	constructor(options = {}) {
-		this._listeners = new Map();
 		this._cleanupFns = [];
-		this._dockState = "none"; // "none" | "left" | "right"
 		this._lifecycleState = ANDROID_LIFECYCLE_STATES.ACTIVE;
-		this._gestureRecognizer = null;
+
+		// イベントディスパッチ & リスナー管理モジュール
+		this._emitter = new BridgeEventEmitter();
 
 		// 戻るボタン管理モジュール
 		this._backButtonManager = new BackButtonManager((eventName, data) => {
 			this._dispatch(eventName, data);
+		});
+
+		// ドッキング & ジェスチャー連携管理モジュール
+		this._dockManager = new DockManager({
+			gestureRecognizer: options.gestureRecognizer,
+			dispatchFn: (eventName, data) => {
+				this._dispatch(eventName, data);
+			},
 		});
 
 		// オーバーレイ & プラットフォーム管理モジュール
@@ -52,21 +62,49 @@ export class AndroidBridge {
 			},
 		});
 
-		if (options.gestureRecognizer) {
-			this.setGestureRecognizer(options.gestureRecognizer);
-		}
-
 		// ブラウザ/WebViewの可視性変更およびライフサイクル監視
 		const visibilityCleanups = setupVisibilityListeners({
 			setLifecycleState: (state) => {
 				this._lifecycleState = state;
 			},
-			getGestureRecognizer: () => this._gestureRecognizer,
+			getGestureRecognizer: () => this._dockManager.gestureRecognizer,
 			dispatch: (eventName, data) => {
 				this._dispatch(eventName, data);
 			},
 		});
 		this._cleanupFns.push(...visibilityCleanups);
+	}
+
+	/**
+	 * 内部リスナーMapへのプロキシ（後方互換用）
+	 * @private
+	 */
+	get _listeners() {
+		return this._emitter.listeners;
+	}
+
+	/**
+	 * 内部保持ジェスチャー認識器へのプロキシ（後方互換用）
+	 * @private
+	 */
+	get _gestureRecognizer() {
+		return this._dockManager.gestureRecognizer;
+	}
+
+	set _gestureRecognizer(val) {
+		this._dockManager.setGestureRecognizer(val);
+	}
+
+	/**
+	 * 内部ドッキング状態へのプロキシ（後方互換用）
+	 * @private
+	 */
+	get _dockState() {
+		return this._dockManager.dockState;
+	}
+
+	set _dockState(val) {
+		this._dockManager.setDockMode(val);
 	}
 
 	/**
@@ -134,41 +172,16 @@ export class AndroidBridge {
 	 * @param {TouchGestureRecognizer|null} recognizer
 	 */
 	setGestureRecognizer(recognizer) {
-		this._gestureRecognizer = recognizer;
-		if (
-			this._gestureRecognizer &&
-			typeof this._gestureRecognizer.on === "function"
-		) {
-			const unbind = this._gestureRecognizer.on("nas:touch:snap", (event) => {
-				if (event.dockState) {
-					this.setDockMode(event.dockState);
-				}
-			});
-			this._cleanupFns.push(unbind);
-		}
+		this._dockManager.setGestureRecognizer(recognizer);
 	}
 
 	/**
 	 * ドッキング・スナップモードを設定
 	 * @param {"none" | "left" | "right"} dockState
+	 * @returns {"none" | "left" | "right"}
 	 */
 	setDockMode(dockState) {
-		const state =
-			dockState === "left" || dockState === "right" ? dockState : "none";
-		if (this._dockState !== state) {
-			this._dockState = state;
-			if (
-				this._gestureRecognizer &&
-				typeof this._gestureRecognizer.setDockState === "function"
-			) {
-				this._gestureRecognizer.setDockState(state);
-			}
-			this._dispatch(ANDROID_EVENTS.DOCK_CHANGED, {
-				dockState: state,
-				timestamp: Date.now(),
-			});
-		}
-		return this._dockState;
+		return this._dockManager.setDockMode(dockState);
 	}
 
 	/**
@@ -176,7 +189,7 @@ export class AndroidBridge {
 	 * @returns {"none" | "left" | "right"}
 	 */
 	getDockMode() {
-		return this._dockState;
+		return this._dockManager.getDockMode();
 	}
 
 	/**
@@ -281,7 +294,7 @@ export class AndroidBridge {
 			overlayTransparency: this._overlayManager.overlayTransparency,
 			isClickThrough: this._overlayManager.isClickThrough,
 			isThrottled: this.isThrottled(),
-			dockState: this._dockState,
+			dockState: this._dockManager.dockState,
 		};
 	}
 
@@ -297,15 +310,9 @@ export class AndroidBridge {
 			}
 		}
 		this._cleanupFns = [];
-		this._listeners.clear();
+		this._emitter.clear();
 		this._backButtonManager.clear();
-		if (
-			this._gestureRecognizer &&
-			typeof this._gestureRecognizer.destroy === "function"
-		) {
-			this._gestureRecognizer.destroy();
-		}
-		this._gestureRecognizer = null;
+		this._dockManager.destroy();
 		this._lifecycleState = ANDROID_LIFECYCLE_STATES.STOPPED;
 	}
 
@@ -316,14 +323,7 @@ export class AndroidBridge {
 	 * @returns {() => void} リスナー解除関数
 	 */
 	on(eventName, callback) {
-		if (!this._listeners.has(eventName)) {
-			this._listeners.set(eventName, new Set());
-		}
-		this._listeners.get(eventName).add(callback);
-
-		return () => {
-			this.off(eventName, callback);
-		};
+		return this._emitter.on(eventName, callback);
 	}
 
 	/**
@@ -332,13 +332,7 @@ export class AndroidBridge {
 	 * @param {Function} callback
 	 */
 	off(eventName, callback) {
-		const set = this._listeners.get(eventName);
-		if (set) {
-			set.delete(callback);
-			if (set.size === 0) {
-				this._listeners.delete(eventName);
-			}
-		}
+		this._emitter.off(eventName, callback);
 	}
 
 	/**
@@ -348,15 +342,6 @@ export class AndroidBridge {
 	 * @param {any} data
 	 */
 	_dispatch(eventName, data) {
-		const set = this._listeners.get(eventName);
-		if (set) {
-			for (const cb of set) {
-				try {
-					cb(data);
-				} catch (e) {
-					console.error(`AndroidBridge event error in ${eventName}:`, e);
-				}
-			}
-		}
+		this._emitter.dispatch(eventName, data);
 	}
 }

@@ -63,6 +63,29 @@ class TestVerifySpecCompliance(unittest.TestCase):
         # Empty keyword should return empty
         self.assertEqual(search_keyword("", codebase), [])
 
+    def test_search_keyword_caching_and_stats(self):
+        codebase = [
+            ("src/main.rs", ["fn cached_func() {}\n"]),
+            ("src/other.rs", ["// comment\n"]),
+        ]
+        cache = {}
+        stats = {"cache_hits": 0, "cache_misses": 0, "unique_terms": 0}
+
+        # First call: cache miss
+        res1 = search_keyword("cached_func", codebase, cache=cache, stats=stats)
+        self.assertEqual(len(res1), 1)
+        self.assertEqual(stats["cache_hits"], 0)
+        self.assertEqual(stats["cache_misses"], 1)
+        self.assertEqual(stats["unique_terms"], 1)
+        self.assertIn("cached_func", cache)
+
+        # Second call: cache hit
+        res2 = search_keyword("cached_func", codebase, cache=cache, stats=stats)
+        self.assertEqual(res1, res2)
+        self.assertEqual(stats["cache_hits"], 1)
+        self.assertEqual(stats["cache_misses"], 1)
+        self.assertEqual(stats["unique_terms"], 1)
+
     def test_compliance_report_json_and_markdown(self):
         category_stats = {
             "ukadoc-spec/spec": {"✅": 2, "⚠️": 1, "❌": 1, "❓": 0, "合計": 4},
@@ -74,11 +97,18 @@ class TestVerifySpecCompliance(unittest.TestCase):
             "previous_status": "✅ 実装済",
             "new_status": "❌ 未実装"
         }]
+        perf_stats = {
+            "elapsed_seconds": 1.234,
+            "cache_hits": 10,
+            "cache_misses": 5,
+            "unique_terms": 5,
+        }
         report = ComplianceReport(
             category_stats,
             updated_files=["file1.md"],
             total_files=10,
-            regressions=regressions
+            regressions=regressions,
+            perf_stats=perf_stats
         )
 
         # Totals
@@ -96,6 +126,9 @@ class TestVerifySpecCompliance(unittest.TestCase):
         self.assertEqual(data["summary"]["compliance_rate_percent"], 70.0)
         self.assertEqual(data["regressions_count"], 1)
         self.assertIn("ukadoc-spec/spec", data["categories"])
+        self.assertIn("perf_stats", data)
+        self.assertEqual(data["perf_stats"]["elapsed_seconds"], 1.234)
+        self.assertEqual(data["perf_stats"]["cache_hits"], 10)
 
         # Markdown
         md = report.to_markdown()
@@ -103,6 +136,8 @@ class TestVerifySpecCompliance(unittest.TestCase):
         self.assertIn("ukadoc-spec/spec", md)
         self.assertIn("70.0%", md)
         self.assertIn("- **リグレッション検知数**: 1", md)
+        self.assertIn("- **監査所要時間**: 1.23s", md)
+        self.assertIn("- **キャッシュ統計**: 固有検索語 5件, ヒット 10回, ミス 5回", md)
         self.assertIn("⚠️ リグレッション (未達へ後退した項目)", md)
 
     def test_process_audit_files_dry_run_vs_live(self):
@@ -169,6 +204,27 @@ class TestVerifySpecCompliance(unittest.TestCase):
         self.assertEqual(report.totals["合計"], 1)
         self.assertIn("ukadoc-spec/spec", report.category_stats)
         self.assertNotIn("ukadoc-spec/descript", report.category_stats)
+
+    def test_process_audit_files_caching(self):
+        spec1 = os.path.join(self.docs_dir, 'ukadoc-spec', 'spec', 's1.md')
+        spec2 = os.path.join(self.docs_dir, 'ukadoc-spec', 'spec', 's2.md')
+        for path in (spec1, spec2):
+            with open(path, 'w', encoding='utf-8') as f:
+                f.write("# Spec\n\n- **対応状況**: ❌ 未実装\n- **検索語**: shared_target\n")
+
+        codebase = [("crates/sample.rs", ["fn shared_target() {}\n"])]
+        # When use_cache=True, second file should hit cache
+        report = process_audit_files(codebase, docs_dir=self.docs_dir, dry_run=True, use_cache=True)
+        self.assertEqual(report.totals["✅"], 2)
+        self.assertEqual(report.perf_stats["cache_hits"], 1)
+        self.assertEqual(report.perf_stats["cache_misses"], 1)
+        self.assertEqual(report.perf_stats["unique_terms"], 1)
+
+        # When use_cache=False, both calls are misses (0 hits)
+        report_no_cache = process_audit_files(codebase, docs_dir=self.docs_dir, dry_run=True, use_cache=False)
+        self.assertEqual(report_no_cache.totals["✅"], 2)
+        self.assertEqual(report_no_cache.perf_stats["cache_hits"], 0)
+        self.assertEqual(report_no_cache.perf_stats["cache_misses"], 2)
 
     def test_update_summary(self):
         summary_file = os.path.join(self.test_dir, 'SUMMARY.md')

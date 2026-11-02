@@ -150,6 +150,46 @@ impl SurfaceFrameBuffer {
                         self.data[dst_idx + 2] = sb;
                         self.data[dst_idx + 3] = sa;
                     }
+                    DrawMethod::Interpolate => {
+                        // 下の絵と同一色の部分を透過して重ねる (UKADOC準拠)
+                        let dr = self.data[dst_idx];
+                        let dg = self.data[dst_idx + 1];
+                        let db = self.data[dst_idx + 2];
+                        let da = self.data[dst_idx + 3];
+
+                        if sa == 0 || (sr == dr && sg == dg && sb == db) {
+                            continue;
+                        }
+
+                        let alpha = sa as f32 / 255.0;
+                        let inv_alpha = 1.0 - alpha;
+                        self.data[dst_idx] = (sr as f32 * alpha + dr as f32 * inv_alpha) as u8;
+                        self.data[dst_idx + 1] = (sg as f32 * alpha + dg as f32 * inv_alpha) as u8;
+                        self.data[dst_idx + 2] = (sb as f32 * alpha + db as f32 * inv_alpha) as u8;
+                        self.data[dst_idx + 3] = (sa as f32 + da as f32 * inv_alpha).min(255.0) as u8;
+                    }
+                    DrawMethod::Add => {
+                        // Add 加算合成
+                        let dr = self.data[dst_idx];
+                        let dg = self.data[dst_idx + 1];
+                        let db = self.data[dst_idx + 2];
+                        let da = self.data[dst_idx + 3];
+
+                        if sa == 0 {
+                            continue;
+                        }
+
+                        let br = (sr as u16 + dr as u16).min(255) as u8;
+                        let bg = (sg as u16 + dg as u16).min(255) as u8;
+                        let bb = (sb as u16 + db as u16).min(255) as u8;
+
+                        let alpha = sa as f32 / 255.0;
+                        let inv_alpha = 1.0 - alpha;
+                        self.data[dst_idx] = (br as f32 * alpha + dr as f32 * inv_alpha) as u8;
+                        self.data[dst_idx + 1] = (bg as f32 * alpha + dg as f32 * inv_alpha) as u8;
+                        self.data[dst_idx + 2] = (bb as f32 * alpha + db as f32 * inv_alpha) as u8;
+                        self.data[dst_idx + 3] = (sa as f32 + da as f32 * inv_alpha).min(255.0) as u8;
+                    }
                     DrawMethod::Blend(blend_type) => {
                         // ブレンドモード合成
                         let dr = self.data[dst_idx];
@@ -176,6 +216,18 @@ impl SurfaceFrameBuffer {
                                 (sr as u16 + dr as u16).min(255) as u8,
                                 (sg as u16 + dg as u16).min(255) as u8,
                                 (sb as u16 + db as u16).min(255) as u8,
+                            ),
+                            "darken" => (sr.min(dr), sg.min(dg), sb.min(db)),
+                            "lighten" => (sr.max(dr), sg.max(dg), sb.max(db)),
+                            "difference" => (
+                                (sr as i16 - dr as i16).unsigned_abs() as u8,
+                                (sg as i16 - dg as i16).unsigned_abs() as u8,
+                                (sb as i16 - db as i16).unsigned_abs() as u8,
+                            ),
+                            "exclusion" => (
+                                (dr as i32 + sr as i32 - 2 * (dr as i32 * sr as i32) / 255).clamp(0, 255) as u8,
+                                (dg as i32 + sg as i32 - 2 * (dg as i32 * sg as i32) / 255).clamp(0, 255) as u8,
+                                (db as i32 + sb as i32 - 2 * (db as i32 * sb as i32) / 255).clamp(0, 255) as u8,
                             ),
                             _ => (sr, sg, sb),
                         };

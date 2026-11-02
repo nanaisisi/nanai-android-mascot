@@ -1,5 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { ANDROID_EVENTS, AndroidBridge } from "../ui/js/ui/touch/index.js";
+import {
+	ANDROID_EVENTS,
+	ANDROID_LIFECYCLE_STATES,
+	AndroidBridge,
+} from "../ui/js/ui/touch/index.js";
 
 describe("AndroidBridge", () => {
 	let originalNavigator;
@@ -141,5 +145,76 @@ describe("AndroidBridge", () => {
 		mockDoc.hidden = false;
 		listeners.visibilitychange();
 		expect(resumeListener).toHaveBeenCalledTimes(1);
+	});
+
+	it("updates lifecycle state and triggers reset on gestureRecognizer", () => {
+		const listeners = {};
+		const mockDoc = {
+			hidden: false,
+			addEventListener: (event, handler) => {
+				listeners[event] = handler;
+			},
+		};
+		Object.defineProperty(globalThis, "document", {
+			value: mockDoc,
+			configurable: true,
+			writable: true,
+		});
+
+		const mockRecognizer = { reset: vi.fn() };
+		const bridge = new AndroidBridge({ gestureRecognizer: mockRecognizer });
+
+		const stateListener = vi.fn();
+		bridge.on(ANDROID_EVENTS.STATE_CHANGED, stateListener);
+
+		expect(bridge.getState().lifecycleState).toBe(
+			ANDROID_LIFECYCLE_STATES.ACTIVE,
+		);
+
+		// Go background
+		mockDoc.hidden = true;
+		listeners.visibilitychange();
+
+		expect(mockRecognizer.reset).toHaveBeenCalledTimes(1);
+		expect(bridge.getState().lifecycleState).toBe(
+			ANDROID_LIFECYCLE_STATES.PAUSED,
+		);
+		expect(stateListener).toHaveBeenCalledWith(
+			expect.objectContaining({ state: ANDROID_LIFECYCLE_STATES.PAUSED }),
+		);
+
+		// Resume
+		mockDoc.hidden = false;
+		listeners.visibilitychange();
+		expect(bridge.getState().lifecycleState).toBe(
+			ANDROID_LIFECYCLE_STATES.ACTIVE,
+		);
+	});
+
+	it("manages overlay transparency and click-through settings", async () => {
+		const bridge = new AndroidBridge();
+
+		const alphaListener = vi.fn();
+		const clickThroughListener = vi.fn();
+
+		bridge.on(ANDROID_EVENTS.OVERLAY_TRANSPARENCY_CHANGED, alphaListener);
+		bridge.on(ANDROID_EVENTS.CLICK_THROUGH_CHANGED, clickThroughListener);
+
+		// Transparency clamped
+		const alpha = await bridge.setOverlayTransparency(0.75);
+		expect(alpha).toBe(0.75);
+		expect(alphaListener).toHaveBeenCalledWith({ alpha: 0.75 });
+
+		await bridge.setOverlayTransparency(1.5);
+		expect(bridge.getState().overlayTransparency).toBe(1.0);
+
+		await bridge.setOverlayTransparency(-0.2);
+		expect(bridge.getState().overlayTransparency).toBe(0.0);
+
+		// Click through
+		const ct = await bridge.setClickThrough(true);
+		expect(ct).toBe(true);
+		expect(clickThroughListener).toHaveBeenCalledWith({ enabled: true });
+		expect(bridge.getState().isClickThrough).toBe(true);
 	});
 });

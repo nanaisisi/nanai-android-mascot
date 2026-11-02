@@ -13,6 +13,18 @@ export const ANDROID_EVENTS = {
 	PAUSE: "nas:android:pause",
 	RESUME: "nas:android:resume",
 	OVERLAY_MODE_CHANGED: "nas:android:overlay-mode-changed",
+	STATE_CHANGED: "nas:android:state-changed",
+	OVERLAY_TRANSPARENCY_CHANGED: "nas:android:overlay-transparency-changed",
+	CLICK_THROUGH_CHANGED: "nas:android:click-through-changed",
+};
+
+/**
+ * ライフサイクル状態定数
+ */
+export const ANDROID_LIFECYCLE_STATES = {
+	ACTIVE: "active",
+	PAUSED: "paused",
+	STOPPED: "stopped",
 };
 
 /**
@@ -22,15 +34,28 @@ export class AndroidBridge {
 	/**
 	 * @param {object} [options={}]
 	 * @param {Function} [options.invokeHandler] カスタムinvoke関数（テスト用）
+	 * @param {TouchGestureRecognizer} [options.gestureRecognizer] 連携するジェスチャー認識器（バックグラウンド移行時のリセット用）
 	 */
 	constructor(options = {}) {
 		this._invoke = options.invokeHandler || invoke;
+		this._gestureRecognizer = options.gestureRecognizer || null;
 		this._listeners = new Map();
 		this._isForegroundServiceActive = false;
 		this._isOverlayEnabled = false;
+		this._lifecycleState = ANDROID_LIFECYCLE_STATES.ACTIVE;
+		this._overlayTransparency = 1.0;
+		this._isClickThrough = false;
 
 		// ブラウザ/WebViewの可視性変更を監視してライフサイクルイベントを発火
 		this._setupVisibilityListeners();
+	}
+
+	/**
+	 * 連携するジェスチャー認識器を設定
+	 * @param {TouchGestureRecognizer|null} recognizer
+	 */
+	setGestureRecognizer(recognizer) {
+		this._gestureRecognizer = recognizer;
 	}
 
 	/**
@@ -105,14 +130,59 @@ export class AndroidBridge {
 	}
 
 	/**
+	 * オーバーレイ透明度設定 (0.0 〜 1.0)
+	 * @param {number} alpha
+	 * @returns {Promise<number>}
+	 */
+	async setOverlayTransparency(alpha) {
+		const clamped = Math.max(0.0, Math.min(1.0, Number(alpha) || 0));
+		if (isTauriAvailable()) {
+			try {
+				await this._invoke("set_overlay_transparency", { alpha: clamped });
+			} catch (err) {
+				console.warn("setOverlayTransparency invoke error, falling back:", err);
+			}
+		}
+		this._overlayTransparency = clamped;
+		this._dispatch(ANDROID_EVENTS.OVERLAY_TRANSPARENCY_CHANGED, {
+			alpha: clamped,
+		});
+		return clamped;
+	}
+
+	/**
+	 * クリックスルー設定（背面タッチ透過の切り替え）
+	 * @param {boolean} enabled
+	 * @returns {Promise<boolean>}
+	 */
+	async setClickThrough(enabled) {
+		const val = Boolean(enabled);
+		if (isTauriAvailable()) {
+			try {
+				await this._invoke("set_click_through", { enabled: val });
+			} catch (err) {
+				console.warn("setClickThrough invoke error, falling back:", err);
+			}
+		}
+		this._isClickThrough = val;
+		this._dispatch(ANDROID_EVENTS.CLICK_THROUGH_CHANGED, {
+			enabled: val,
+		});
+		return val;
+	}
+
+	/**
 	 * 現在のオーバーレイおよびサービス稼働状態を取得
-	 * @returns {{ isAndroid: boolean, isOverlayEnabled: boolean, isForegroundServiceActive: boolean }}
+	 * @returns {{ isAndroid: boolean, isOverlayEnabled: boolean, isForegroundServiceActive: boolean, lifecycleState: string, overlayTransparency: number, isClickThrough: boolean }}
 	 */
 	getState() {
 		return {
 			isAndroid: this.isAndroid(),
 			isOverlayEnabled: this._isOverlayEnabled,
 			isForegroundServiceActive: this._isForegroundServiceActive,
+			lifecycleState: this._lifecycleState,
+			overlayTransparency: this._overlayTransparency,
+			isClickThrough: this._isClickThrough,
 		};
 	}
 
@@ -178,9 +248,25 @@ export class AndroidBridge {
 		) {
 			document.addEventListener("visibilitychange", () => {
 				if (document.hidden) {
+					this._lifecycleState = ANDROID_LIFECYCLE_STATES.PAUSED;
+					if (
+						this._gestureRecognizer &&
+						typeof this._gestureRecognizer.reset === "function"
+					) {
+						this._gestureRecognizer.reset();
+					}
 					this._dispatch(ANDROID_EVENTS.PAUSE, { timestamp: Date.now() });
+					this._dispatch(ANDROID_EVENTS.STATE_CHANGED, {
+						state: ANDROID_LIFECYCLE_STATES.PAUSED,
+						timestamp: Date.now(),
+					});
 				} else {
+					this._lifecycleState = ANDROID_LIFECYCLE_STATES.ACTIVE;
 					this._dispatch(ANDROID_EVENTS.RESUME, { timestamp: Date.now() });
+					this._dispatch(ANDROID_EVENTS.STATE_CHANGED, {
+						state: ANDROID_LIFECYCLE_STATES.ACTIVE,
+						timestamp: Date.now(),
+					});
 				}
 			});
 		}

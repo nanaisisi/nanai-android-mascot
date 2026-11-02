@@ -106,3 +106,48 @@ fn test_composite_layer_overlay_and_replace() {
     let blended = composite_elements(&base, &[(&blend_layer, 0, 0, DrawMethod::Blend("multiply".into()))]);
     assert_eq!(blended.get_pixel(0, 0), Some((50, 50, 50, 255)));
 }
+
+#[test]
+fn test_interpolate_compositing() {
+    let mut base = SurfaceFrameBuffer::new(2, 2);
+    base.set_pixel(0, 0, 100, 150, 200, 255);
+    base.set_pixel(1, 0, 100, 150, 200, 255);
+
+    let mut layer = SurfaceFrameBuffer::new(2, 2);
+    // (0, 0) は base と同一色 -> 透過されるべき
+    layer.set_pixel(0, 0, 100, 150, 200, 255);
+    // (1, 0) は 異なる色 -> 上書き描画されるべき
+    layer.set_pixel(1, 0, 255, 0, 0, 255);
+
+    let result = composite_elements(&base, &[(&layer, 0, 0, DrawMethod::Interpolate)]);
+
+    // 同一色は透過され元のbaseのまま
+    assert_eq!(result.get_pixel(0, 0), Some((100, 150, 200, 255)));
+    // 異なる色は上書きされる
+    assert_eq!(result.get_pixel(1, 0), Some((255, 0, 0, 255)));
+}
+
+#[test]
+fn test_extended_blend_modes() {
+    let mut base = SurfaceFrameBuffer::new(2, 2);
+    base.set_pixel(0, 0, 100, 100, 100, 255);
+
+    let mut layer = SurfaceFrameBuffer::new(2, 2);
+    layer.set_pixel(0, 0, 50, 50, 50, 255);
+
+    // DrawMethod::Add
+    let added = composite_elements(&base, &[(&layer, 0, 0, DrawMethod::Add)]);
+    assert_eq!(added.get_pixel(0, 0), Some((150, 150, 150, 255)));
+
+    // Blend difference
+    let diff = composite_elements(&base, &[(&layer, 0, 0, DrawMethod::Blend("difference".into()))]);
+    assert_eq!(diff.get_pixel(0, 0), Some((50, 50, 50, 255)));
+
+    // Blend darken
+    let darken = composite_elements(&base, &[(&layer, 0, 0, DrawMethod::Blend("darken".into()))]);
+    assert_eq!(darken.get_pixel(0, 0), Some((50, 50, 50, 255)));
+
+    // Blend lighten
+    let lighten = composite_elements(&base, &[(&layer, 0, 0, DrawMethod::Blend("lighten".into()))]);
+    assert_eq!(lighten.get_pixel(0, 0), Some((100, 100, 100, 255)));
+}

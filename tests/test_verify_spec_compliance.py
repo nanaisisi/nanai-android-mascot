@@ -40,13 +40,23 @@ class TestVerifySpecCompliance(unittest.TestCase):
     def test_search_keyword(self):
         codebase = [
             ("src/main.rs", ["fn handle_sstp_1() {}\n", "let x = 1;\n"]),
-            ("src/other.rs", ["// comment only\n"]),
+            ("src/other.rs", ["// comment only\n", "const ALT_FLAG = true;\n"]),
         ]
         results = search_keyword("handle_sstp_1", codebase)
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0][0], "src/main.rs")
         self.assertEqual(results[0][1], 1)
         self.assertIn("handle_sstp_1", results[0][2])
+
+        # Multiple keywords with comma / pipe
+        multi_results = search_keyword("not_found, ALT_FLAG", codebase)
+        self.assertEqual(len(multi_results), 1)
+        self.assertEqual(multi_results[0][0], "src/other.rs")
+        self.assertIn("ALT_FLAG", multi_results[0][2])
+
+        pipe_results = search_keyword("handle_sstp_1 | non_existent", codebase)
+        self.assertEqual(len(pipe_results), 1)
+        self.assertEqual(pipe_results[0][0], "src/main.rs")
 
         # Generic keyword should return empty
         self.assertEqual(search_keyword("format", codebase), [])
@@ -58,7 +68,18 @@ class TestVerifySpecCompliance(unittest.TestCase):
             "ukadoc-spec/spec": {"✅": 2, "⚠️": 1, "❌": 1, "❓": 0, "合計": 4},
             "ukadoc-spec/descript": {"✅": 5, "⚠️": 0, "❌": 1, "❓": 0, "合計": 6},
         }
-        report = ComplianceReport(category_stats, updated_files=["file1.md"], total_files=10)
+        regressions = [{
+            "path": "ukadoc-spec/spec/sample.md",
+            "keyword": "foo",
+            "previous_status": "✅ 実装済",
+            "new_status": "❌ 未実装"
+        }]
+        report = ComplianceReport(
+            category_stats,
+            updated_files=["file1.md"],
+            total_files=10,
+            regressions=regressions
+        )
 
         # Totals
         self.assertEqual(report.totals["合計"], 10)
@@ -66,12 +87,14 @@ class TestVerifySpecCompliance(unittest.TestCase):
         self.assertEqual(report.totals["⚠️"], 1)
         self.assertEqual(report.totals["❌"], 2)
         self.assertEqual(report.totals["compliance_rate_percent"], 70.0)
+        self.assertEqual(len(report.regressions), 1)
 
         # JSON
         json_str = report.to_json()
         data = json.loads(json_str)
         self.assertEqual(data["summary"]["implemented"], 7)
         self.assertEqual(data["summary"]["compliance_rate_percent"], 70.0)
+        self.assertEqual(data["regressions_count"], 1)
         self.assertIn("ukadoc-spec/spec", data["categories"])
 
         # Markdown
@@ -79,6 +102,8 @@ class TestVerifySpecCompliance(unittest.TestCase):
         self.assertIn("# UKADOC 仕様適合監査レポート (Compliance Report)", md)
         self.assertIn("ukadoc-spec/spec", md)
         self.assertIn("70.0%", md)
+        self.assertIn("- **リグレッション検知数**: 1", md)
+        self.assertIn("⚠️ リグレッション (未達へ後退した項目)", md)
 
     def test_process_audit_files_dry_run_vs_live(self):
         # Create a sample audit file
@@ -117,6 +142,15 @@ class TestVerifySpecCompliance(unittest.TestCase):
             content_live = f.read()
         self.assertIn("✅ 実装済", content_live)
         self.assertIn("custom_spec_function", content_live)
+
+        # 4. Regression detection: codebase loses the implementation
+        empty_codebase = [("crates/sample.rs", ["// removed\n"])]
+        report_reg = process_audit_files(empty_codebase, docs_dir=self.docs_dir, dry_run=False)
+        self.assertEqual(report_reg.totals["❌"], 1)
+        self.assertEqual(len(report_reg.regressions), 1)
+        self.assertEqual(report_reg.regressions[0]["keyword"], "custom_spec_function")
+        self.assertIn("✅", report_reg.regressions[0]["previous_status"])
+        self.assertIn("❌", report_reg.regressions[0]["new_status"])
 
     def test_target_category_filtering(self):
         spec1 = os.path.join(self.docs_dir, 'ukadoc-spec', 'spec', 's1.md')

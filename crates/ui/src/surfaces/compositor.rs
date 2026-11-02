@@ -69,6 +69,26 @@ impl SurfaceFrameBuffer {
         self.data[idx + 3] = a;
     }
 
+    /// バッファ全体を透明クリア (RGBA = 0)
+    pub fn clear(&mut self) {
+        self.data.fill(0);
+    }
+
+    /// 部分矩形領域のみを透明クリア (局所ダーティ領域の更新・描画負荷低減)
+    pub fn clear_rect(&mut self, x: u32, y: u32, w: u32, h: u32) {
+        if w == 0 || h == 0 || x >= self.width || y >= self.height {
+            return;
+        }
+        let end_x = (x + w).min(self.width);
+        let end_y = (y + h).min(self.height);
+        let row_bytes = ((end_x - x) as usize) * 4;
+
+        for cy in y..end_y {
+            let start_idx = ((cy as usize) * (self.width as usize) + (x as usize)) * 4;
+            self.data[start_idx..start_idx + row_bytes].fill(0);
+        }
+    }
+
     /// PNA アルファマスク（8bit グレースケールマスク: 幅*高さバイト）を適用する
     pub fn apply_pna_mask(&mut self, mask_data: &[u8]) -> Result<(), String> {
         let pixel_count = (self.width as usize) * (self.height as usize);
@@ -90,11 +110,11 @@ impl SurfaceFrameBuffer {
     /// 指定色または (0,0) ピクセル色に合致するピクセルを完全透明 (A=0) にする
     pub fn apply_chromakey(&mut self, target_r: u8, target_g: u8, target_b: u8) {
         let pixel_count = (self.width as usize) * (self.height as usize);
-        for i in 0..pixel_count {
-            let offset = i * 4;
-            let r = self.data[offset];
-            let g = self.data[offset + 1];
-            let b = self.data[offset + 2];
+        let chunks = self.data.chunks_exact_mut(4);
+        for chunk in chunks.take(pixel_count) {
+            let r = chunk[0];
+            let g = chunk[1];
+            let b = chunk[2];
 
             // 完全一致または純緑（許容差判定: R<=35, G>=220, B<=35）
             let is_match = (r == target_r && g == target_g && b == target_b)
@@ -106,7 +126,7 @@ impl SurfaceFrameBuffer {
                     && b <= 35);
 
             if is_match {
-                self.data[offset + 3] = 0;
+                chunk[3] = 0;
             }
         }
     }

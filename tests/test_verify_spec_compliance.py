@@ -63,6 +63,32 @@ class TestVerifySpecCompliance(unittest.TestCase):
         # Empty keyword should return empty
         self.assertEqual(search_keyword("", codebase), [])
 
+    def test_search_keyword_wildcard(self):
+        codebase = [
+            ("src/install.rs", ["let key = \"balloon.refresh\";\n", "let dir = \"balloon.directory\";\n"]),
+            ("src/script.rs", ["// %* (\\%\\*) placeholder\n"]),
+        ]
+        # Wildcard term: *.refresh
+        results_refresh = search_keyword("*.refresh", codebase)
+        self.assertEqual(len(results_refresh), 1)
+        self.assertEqual(results_refresh[0][0], "src/install.rs")
+        self.assertIn("balloon.refresh", results_refresh[0][2])
+
+        # Wildcard term: *.directory
+        results_dir = search_keyword("*.directory", codebase)
+        self.assertEqual(len(results_dir), 1)
+        self.assertEqual(results_dir[0][0], "src/install.rs")
+        self.assertIn("balloon.directory", results_dir[0][2])
+
+        # Non-matching wildcard
+        results_nomatch = search_keyword("*.unknown_prefix", codebase)
+        self.assertEqual(len(results_nomatch), 0)
+
+        # Escaped wildcard: %\* is treated as literal
+        results_escaped = search_keyword(r"%\*", codebase)
+        self.assertEqual(len(results_escaped), 1)
+        self.assertIn("%*", results_escaped[0][2])
+
     def test_search_keyword_caching_and_stats(self):
         codebase = [
             ("src/main.rs", ["fn cached_func() {}\n"]),
@@ -186,6 +212,31 @@ class TestVerifySpecCompliance(unittest.TestCase):
         self.assertEqual(report_reg.regressions[0]["keyword"], "custom_spec_function")
         self.assertIn("✅", report_reg.regressions[0]["previous_status"])
         self.assertIn("❌", report_reg.regressions[0]["new_status"])
+
+    def test_process_audit_files_escaped_newline_normalization(self):
+        # Create an audit file that contains literal \n
+        spec_file = os.path.join(self.docs_dir, 'ukadoc-spec', 'spec', 'escaped_newline.md')
+        raw_escaped_content = (
+            "# Escaped Spec\\n\\n"
+            "- **対応状況**: ❌ 未実装\\n"
+            "- **検索語**: escaped_func\\n\\n"
+            "## 実装箇所\\n\\n未実装\\n"
+        )
+        with open(spec_file, 'w', encoding='utf-8') as f:
+            f.write(raw_escaped_content)
+
+        codebase = [("crates/sample.rs", ["fn escaped_func() {}\n"])]
+        report = process_audit_files(codebase, docs_dir=self.docs_dir, dry_run=False)
+        self.assertEqual(report.totals["✅"], 1)
+        self.assertEqual(len(report.updated_files), 1)
+
+        with open(spec_file, 'r', encoding='utf-8') as f:
+            updated_content = f.read()
+
+        self.assertIn("✅ 実装済", updated_content)
+        self.assertIn("escaped_func", updated_content)
+        # Should be normalized with real newlines, not corrupted
+        self.assertNotIn(r"\n- **対応状況**", updated_content)
 
     def test_target_category_filtering(self):
         spec1 = os.path.join(self.docs_dir, 'ukadoc-spec', 'spec', 's1.md')

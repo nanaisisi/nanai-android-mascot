@@ -1,1 +1,10 @@
-# blend-hard-light-fast\n\n- **規格**: [blend-hard-light-fast.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-hard-light-fast/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-hard-light-fast.md)\n- **検索語**: blend-hard-light-fast\n- **対応状況**: ❌ 未実装
+# blend-hard-light-fast
+
+- **規格**: [blend-hard-light-fast.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-hard-light-fast/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-hard-light-fast.md)
+- **検索語**: blend-hard-light-fast
+- **対応状況**: ✅ 実装済
+
+
+## 実装箇所
+
+- `ui/js/surface/surface-load.js:81` `// [blend-hard-light-fast]`

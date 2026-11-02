@@ -2,7 +2,7 @@
 
 - **規格**: [shiori.cache.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/shiori.cache.md)
 - **検索語**: shiori.cache
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-実装コード内に「shiori.cache」は検出されませんでした。
+- `src-tauri/src/ghost/scan/directory/manifest.rs:83` `let shiori_cache = meta_map.as_ref().and_then(|m| m.get("shiori.cache").cloned()`

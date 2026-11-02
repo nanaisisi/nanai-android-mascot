@@ -46,6 +46,8 @@ export const scriptLifetimeState = new ScriptLifetimeState();
  * @param {string} [options.username] - ユーザー名 (%username)
  * @param {string} [options.selfname] - メインキャラ名 (%selfname, %selfname2, %ms)
  * @param {string} [options.keroname] - サブキャラ名 (%keroname)
+ * @param {string} [options.lastghostname] - 直前に起動していたゴースト名 (%lastghostname)
+ * @param {string} [options.lastobjectname] - 直前に選択/操作したオブジェクト名 (%lastobjectname)
  * @param {number} [options.screenWidth] - 画面幅 (%screenwidth)
  * @param {number} [options.screenHeight] - 画面高 (%screenheight)
  * @param {string[]} [options.randomWords] - %m? 置換用単語リスト
@@ -61,6 +63,8 @@ export function expandSakuraScriptEnv(script, options = {}) {
 	const username = options.username ?? "User";
 	const selfname = options.selfname ?? "Nanai";
 	const keroname = options.keroname ?? "Kero";
+	const lastghostname = options.lastghostname ?? "";
+	const lastobjectname = options.lastobjectname ?? "";
 	const screenWidth = String(
 		options.screenWidth ??
 			(typeof window !== "undefined" ? window.innerWidth : 1024),
@@ -93,6 +97,10 @@ export function expandSakuraScriptEnv(script, options = {}) {
 				return selfname;
 			case "keroname":
 				return keroname;
+			case "lastghostname":
+				return lastghostname;
+			case "lastobjectname":
+				return lastobjectname;
 			default:
 				return scriptLifetimeState.getVariable(key) ?? "";
 		}
@@ -125,8 +133,8 @@ export function expandSakuraScriptEnv(script, options = {}) {
 		"%et": "0",
 		"%exh": "0",
 		"%wronghour": "0",
-		"%lastghostname": "",
-		"%lastobjectname": "",
+		"%lastghostname": lastghostname,
+		"%lastobjectname": lastobjectname,
 		"%ms": selfname,
 		"%mp": "0",
 		"%mh": "0",

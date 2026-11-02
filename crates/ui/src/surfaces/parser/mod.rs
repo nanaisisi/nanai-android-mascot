@@ -16,6 +16,10 @@ pub(super) enum BlockKind {
     Alias { kero: bool },
     /// `surface[N...]` / `surface.append[N...]` / `sakura.surface[N...]` ブロック
     Surface { ids: Vec<u32>, append: bool },
+    /// `*.cursor {}` ブロック
+    Cursor { scope: String },
+    /// `*.tooltips {}` ブロック
+    Tooltip { scope: String },
 }
 
 /// テキスト内容から `surfaces.txt` をパースする
@@ -54,6 +58,8 @@ pub fn parse_surfaces_txt(text: &str) -> SurfacesTxt {
                 let ids = ids.clone();
                 handle_surface_line(&mut txt, &ids, line);
             }
+            Some(BlockKind::Cursor { scope }) => handle_cursor_line(&mut txt, scope, line),
+            Some(BlockKind::Tooltip { scope }) => handle_tooltip_line(&mut txt, scope, line),
             None => handle_root_line(&mut txt, line),
         }
     }
@@ -73,16 +79,88 @@ fn prepare_block(txt: &mut SurfacesTxt, kind: &BlockKind) {
     }
 }
 
-/// ブロック開始行（`surface[N]` / `surface.append[N]` / `*.surface.alias` / `descript`）を判定する
+/// ブロック開始行（`surface[N]` / `surface.append[N]` / `*.surface.alias` / `descript` / `*.cursor` / `*.tooltips`）を判定する
 fn parse_block_opener(line: &str) -> Option<BlockKind> {
-    let (line, kero) = match line {
+    let raw = line.trim();
+
+    // *.cursor ブロック
+    // 例: sakura.cursor, kero.cursor, char0.cursor, cursor
+    for prefix in [
+        "sakura.cursor",
+        "kero.cursor",
+        "char0.cursor",
+        "char1.cursor",
+        "cursor",
+    ] {
+        if let Some(rest) = raw.strip_prefix(prefix) {
+            let after = rest.trim();
+            if after.is_empty() || after == "{" {
+                let scope = match prefix {
+                    "sakura.cursor" | "char0.cursor" => "sakura",
+                    "kero.cursor" | "char1.cursor" => "kero",
+                    "cursor" => "*",
+                    _ => prefix,
+                };
+                return Some(BlockKind::Cursor {
+                    scope: scope.to_string(),
+                });
+            }
+        }
+    }
+    if raw.starts_with("char") && raw.contains(".cursor") {
+        if let Some((scope, rest)) = raw.split_once(".cursor") {
+            let after = rest.trim();
+            if after.is_empty() || after == "{" {
+                return Some(BlockKind::Cursor {
+                    scope: scope.to_string(),
+                });
+            }
+        }
+    }
+
+    // *.tooltips ブロック
+    // 例: sakura.tooltips, kero.tooltips, char0.tooltips, tooltips
+    for prefix in [
+        "sakura.tooltips",
+        "kero.tooltips",
+        "char0.tooltips",
+        "char1.tooltips",
+        "tooltips",
+    ] {
+        if let Some(rest) = raw.strip_prefix(prefix) {
+            let after = rest.trim();
+            if after.is_empty() || after == "{" {
+                let scope = match prefix {
+                    "sakura.tooltips" | "char0.tooltips" => "sakura",
+                    "kero.tooltips" | "char1.tooltips" => "kero",
+                    "tooltips" => "*",
+                    _ => prefix,
+                };
+                return Some(BlockKind::Tooltip {
+                    scope: scope.to_string(),
+                });
+            }
+        }
+    }
+    if raw.starts_with("char") && raw.contains(".tooltips") {
+        if let Some((scope, rest)) = raw.split_once(".tooltips") {
+            let after = rest.trim();
+            if after.is_empty() || after == "{" {
+                return Some(BlockKind::Tooltip {
+                    scope: scope.to_string(),
+                });
+            }
+        }
+    }
+
+    let (stripped_line, kero) = match raw {
         l if l.starts_with("sakura.surface") => (&l["sakura.".len()..], false),
         l if l.starts_with("kero.surface") => (&l["kero.".len()..], true),
         l if l.starts_with("char0.surface") => (&l["char0.".len()..], false),
         l if l.starts_with("char1.surface") => (&l["char1.".len()..], true),
-        _ => (line, false),
+        _ => (raw, false),
     };
-    if let Some(rest) = line.strip_prefix("surface") {
+    if let Some(rest) = stripped_line.strip_prefix("surface") {
         let rest = rest.replace(['[', ']'], " ");
         if let Some(spec) = rest.strip_prefix(".append") {
             if spec
@@ -114,8 +192,8 @@ fn parse_block_opener(line: &str) -> Option<BlockKind> {
         }
         return None;
     }
-    if line.strip_prefix("descript").is_some() {
-        let after = line["descript".len()..].trim();
+    if raw.strip_prefix("descript").is_some() {
+        let after = raw["descript".len()..].trim();
         if after.is_empty() || after == "{" {
             return Some(BlockKind::Descript);
         }
@@ -169,6 +247,55 @@ fn handle_alias_line(txt: &mut SurfacesTxt, kero: bool, line: &str) {
         txt.kero_aliases.insert(name, expand_range(rest));
     } else {
         txt.aliases.insert(name, expand_range(rest));
+    }
+}
+
+/// `*.cursor {}` ブロック内の行を処理する (例: `mouseup0,Head,system:hand` または `mouseup,Head,system:hand`)
+fn handle_cursor_line(txt: &mut SurfacesTxt, scope: &str, line: &str) {
+    let tokens: Vec<&str> = line.split(',').map(str::trim).collect();
+    if tokens.len() < 3 {
+        return;
+    }
+    let raw_event = tokens[0].to_lowercase();
+    let collision = tokens[1].to_string();
+    let cursor = tokens[2].to_string();
+
+    let event = if raw_event.starts_with("mouseup") {
+        "mouseup"
+    } else if raw_event.starts_with("mousedown") {
+        "mousedown"
+    } else if raw_event.starts_with("mouserightdown") {
+        "mouserightdown"
+    } else if raw_event.starts_with("mousewheel") {
+        "mousewheel"
+    } else if raw_event.starts_with("mousehover") {
+        "mousehover"
+    } else {
+        &raw_event
+    };
+
+    txt.cursors
+        .entry(scope.to_string())
+        .or_default()
+        .push(CursorDefinition {
+            event: event.to_string(),
+            collision,
+            cursor,
+        });
+}
+
+/// `*.tooltips {}` ブロック内の行を処理する (例: `Bust,怒ります。`)
+fn handle_tooltip_line(txt: &mut SurfacesTxt, scope: &str, line: &str) {
+    let Some((collision, text)) = split_key_value(line) else {
+        return;
+    };
+    let collision = collision.trim().to_string();
+    let text = text.trim().to_string();
+    if !collision.is_empty() {
+        txt.tooltips
+            .entry(scope.to_string())
+            .or_default()
+            .insert(collision, text);
     }
 }
 

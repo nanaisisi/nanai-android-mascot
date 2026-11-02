@@ -158,6 +158,33 @@ export function openSliderInput(handler, params) {
 	}
 }
 
+export function openDateInput(handler, params) {
+	if (handler.app?.modalDialogController?.openDateInput) {
+		return handler.app.modalDialogController.openDateInput(
+			params,
+			handler.player?.currentScope,
+		);
+	}
+}
+
+export function openTimeInput(handler, params) {
+	if (handler.app?.modalDialogController?.openTimeInput) {
+		return handler.app.modalDialogController.openTimeInput(
+			params,
+			handler.player?.currentScope,
+		);
+	}
+}
+
+export function openIpInput(handler, params) {
+	if (handler.app?.modalDialogController?.openIpInput) {
+		return handler.app.modalDialogController.openIpInput(
+			params,
+			handler.player?.currentScope,
+		);
+	}
+}
+
 export function closeInputBox(handler, id) {
 	if (handler.app?.modalDialogController?.closeInputBox) {
 		handler.app.modalDialogController.closeInputBox(id);

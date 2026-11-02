@@ -16,10 +16,13 @@ import {
 	closeDialog,
 	closeInputBox,
 	closeTextAreaBox,
+	openDateInput,
 	openInputBox,
+	openIpInput,
 	openPasswordInput,
 	openSliderInput,
 	openTextAreaBox,
+	openTimeInput,
 } from "./command-handler/inputbox.js";
 import { handleJumpCommand } from "./command-handler/jump.js";
 import {
@@ -28,11 +31,14 @@ import {
 	registerCommandHandler,
 } from "./command-handler/registry.js";
 import {
+	clearAllScriptTimers,
 	handleBiffCommand,
 	handleExecuteResetBalloonPos,
 	handleExecuteResetWindowPos,
 	handleExecuteSntpCommand,
+	handleNotifyCommand,
 	handleOpenSystemTarget,
+	handleReloadShiori,
 	handleSetAlignmentOnDesktop,
 	handleSetAlphaCommand,
 	handleSetPositionCommand,
@@ -41,6 +47,7 @@ import {
 	handleSetShioriDebugMode,
 	handleSetTaskTrayIcon,
 	handleSetTrayBalloon,
+	handleTimerRaiseCommand,
 } from "./command-handler/system.js";
 import { closeTeachBox, openTeachBox } from "./command-handler/teachbox.js";
 import {
@@ -70,12 +77,36 @@ function initDefaultCommandHandlers() {
 		openSliderInput(handler, args.slice(2));
 	});
 
+	registerCommandHandler("open:dateinput", async (handler, args) => {
+		openDateInput(handler, args.slice(2));
+	});
+
+	registerCommandHandler("open:timeinput", async (handler, args) => {
+		openTimeInput(handler, args.slice(2));
+	});
+
+	registerCommandHandler("open:ipinput", async (handler, args) => {
+		openIpInput(handler, args.slice(2));
+	});
+
 	registerCommandHandler("close:inputbox", async (handler, args) => {
 		closeInputBox(handler, args[2]);
 	});
 
 	registerCommandHandler("close:textareabox", async (handler, args) => {
 		closeTextAreaBox(handler, args[2]);
+	});
+
+	registerCommandHandler("close:dateinput", async (handler, args) => {
+		closeInputBox(handler, args[2]);
+	});
+
+	registerCommandHandler("close:timeinput", async (handler, args) => {
+		closeInputBox(handler, args[2]);
+	});
+
+	registerCommandHandler("close:ipinput", async (handler, args) => {
+		closeInputBox(handler, args[2]);
 	});
 
 	registerCommandHandler("close:dialog", async (handler, args) => {
@@ -115,6 +146,18 @@ function initDefaultCommandHandlers() {
 				args.slice(2),
 			);
 		}
+	});
+
+	registerCommandHandler("notify", async (handler, args) => {
+		await handleNotifyCommand(handler, args);
+	});
+
+	registerCommandHandler("timerraise", async (handler, args) => {
+		await handleTimerRaiseCommand(handler, args);
+	});
+
+	registerCommandHandler("timernotify", async (handler, args) => {
+		await handleTimerRaiseCommand(handler, args);
 	});
 
 	registerCommandHandler("raiseplugin", handlePluginEvent);
@@ -215,6 +258,10 @@ function initDefaultCommandHandlers() {
 		await handleSetShioriDebugMode(handler, args);
 	});
 
+	registerCommandHandler("reload:shiori", async (handler, args) => {
+		await handleReloadShiori(handler, args);
+	});
+
 	registerCommandHandler("execute:resetwindowpos", async (handler, args) => {
 		await handleExecuteResetWindowPos(handler, args);
 	});
@@ -245,6 +292,10 @@ function initDefaultCommandHandlers() {
 	registerCommandHandler("open:ghostexplorer", handleOpenSystemTarget);
 	registerCommandHandler("open:file", handleOpenSystemTarget);
 	registerCommandHandler("open:browser", handleOpenSystemTarget);
+	registerCommandHandler("open:configurationdialog", handleOpenSystemTarget);
+	registerCommandHandler("open:developer", handleOpenSystemTarget);
+	registerCommandHandler("open:readme", handleOpenSystemTarget);
+	registerCommandHandler("open:history", handleOpenSystemTarget);
 
 	registerCommandHandler("windowstate", async (_handler, args) => {
 		const state = args[1];
@@ -442,17 +493,21 @@ export class SakuraCommandHandler {
 		return expandSakuraScriptEnv(script, {
 			username: this.player?.app?.ghostController?.username,
 			selfname: this.player?.app?.ghostController?.currentGhost?.name,
+			lastghostname: this.player?.app?.ghostController?.lastGhostName,
+			lastobjectname: this.player?.app?.ghostController?.lastObjectName,
 			...options,
 		});
 	}
 
 	resetLifetimeState() {
 		resetScriptScopeState();
+		clearAllScriptTimers();
 	}
 }
 
 export {
 	CommandHandlerMap,
+	clearAllScriptTimers,
 	expandSakuraScriptEnv,
 	getCommandHandler,
 	initDefaultCommandHandlers,

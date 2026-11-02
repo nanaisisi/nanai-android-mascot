@@ -7,8 +7,19 @@ use super::collision::HitTestResult;
 use super::surface::{AnimationPattern, ElementDef, SortKind, SurfaceDefinition};
 use super::{CompositionLayer, CompositionPlan};
 
+/// `*.cursor` ブロック内の1登録（イベント種別、対象当たり判定名、カーソル指定）
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct CursorDefinition {
+    /// イベント種別（mouseup, mousedown, mouserightdown, mousewheel, mousehover）
+    pub event: String,
+    /// 当たり判定ID/名称（Head, Bust等）
+    pub collision: String,
+    /// システムカーソル名（`system:hand`, `system:finger` 等）または画像ファイルパス
+    pub cursor: String,
+}
+
 /// `surfaces.txt` のパース結果
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct SurfacesTxt {
     /// `charset,` 指定（例: Shift_JIS）
     pub charset: Option<String>,
@@ -25,6 +36,12 @@ pub struct SurfacesTxt {
     /// `kero.surface.alias` / `char1.surface.alias` ブロックのエイリアス名 → 番号列
     #[serde(default)]
     pub kero_aliases: BTreeMap<String, Vec<u32>>,
+    /// `*.cursor` ブロック定義（スコープ名 -> カーソル定義列）
+    #[serde(default)]
+    pub cursors: BTreeMap<String, Vec<CursorDefinition>>,
+    /// `*.tooltips` ブロック定義（スコープ名 -> (当たり判定名 -> ツールチップ本文)）
+    #[serde(default)]
+    pub tooltips: BTreeMap<String, BTreeMap<String, String>>,
     /// ルート（ブロック外）の未分類キー・バリュー
     pub properties: BTreeMap<String, String>,
 }
@@ -138,6 +155,55 @@ impl SurfacesTxt {
         self.hit_test(surface_id, x, y)
     }
 
+    /// スコープ、イベント種別、当たり判定名に応じたカーソル設定を検索
+    pub fn get_cursor(&self, scope: &str, event: &str, collision_name: &str) -> Option<&str> {
+        let list = self
+            .cursors
+            .get(scope)
+            .or_else(|| {
+                if scope == "0" || scope.eq_ignore_ascii_case("sakura") {
+                    self.cursors.get("sakura")
+                } else if scope == "1" || scope.eq_ignore_ascii_case("kero") {
+                    self.cursors.get("kero")
+                } else {
+                    None
+                }
+            })
+            .or_else(|| self.cursors.get("*"))?;
+
+        list.iter()
+            .rev()
+            .find(|c| {
+                c.event.eq_ignore_ascii_case(event)
+                    && c.collision.eq_ignore_ascii_case(collision_name)
+            })
+            .map(|c| c.cursor.as_str())
+    }
+
+    /// スコープおよび当たり判定名に応じたツールチップ本文を検索
+    pub fn get_tooltip(&self, scope: &str, collision_name: &str) -> Option<&str> {
+        let map = self
+            .tooltips
+            .get(scope)
+            .or_else(|| {
+                if scope == "0" || scope.eq_ignore_ascii_case("sakura") {
+                    self.tooltips.get("sakura")
+                } else if scope == "1" || scope.eq_ignore_ascii_case("kero") {
+                    self.tooltips.get("kero")
+                } else {
+                    None
+                }
+            })
+            .or_else(|| self.tooltips.get("*"))?;
+
+        for (k, v) in map {
+            if k.eq_ignore_ascii_case(collision_name) {
+                return Some(v.as_str());
+            }
+        }
+        None
+    }
+
     /// `surfaces2.txt` 等の上位定義でマージ（上書き・追記）する
     pub fn merge(&mut self, other: SurfacesTxt) {
         if other.charset.is_some() {
@@ -166,6 +232,17 @@ impl SurfacesTxt {
 
         for (alias, list) in other.kero_aliases {
             self.kero_aliases.insert(alias, list);
+        }
+
+        for (scope, cursor_list) in other.cursors {
+            self.cursors.entry(scope).or_default().extend(cursor_list);
+        }
+
+        for (scope, tooltip_map) in other.tooltips {
+            let cur_scope = self.tooltips.entry(scope).or_default();
+            for (col, text) in tooltip_map {
+                cur_scope.insert(col, text);
+            }
         }
 
         for (num, other_def) in other.surfaces {

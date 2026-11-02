@@ -174,6 +174,12 @@ export class SurfaceFrameBuffer {
 						continue;
 					}
 					dst32[dstIdx] = srcPixel;
+				} else if (m === "reduce") {
+					// ベースレイヤと新規レイヤの不透明度（アルファ）を乗算合成 (UKADOC準拠)
+					const sa = (srcPixel >>> 24) & 0xff;
+					const da = (dst32[dstIdx] >>> 24) & 0xff;
+					const outA = Math.round((da * sa) / 255);
+					dst32[dstIdx] = (dst32[dstIdx] & 0x00ffffff) | (outA << 24);
 				} else {
 					// 標準 overlay (完全透明はスキップ、完全不透明はダイレクト代入、半透明はブレンド)
 					const sa = (srcPixel >>> 24) & 0xff;

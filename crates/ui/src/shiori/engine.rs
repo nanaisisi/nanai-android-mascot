@@ -214,6 +214,8 @@ pub enum ShioriEngineCandidate {
 pub struct MultiStageShioriLoader {
     candidates: Vec<ShioriEngineCandidate>,
     active_engine: Option<Box<dyn ShioriEngine>>,
+    last_error: Option<String>,
+    last_dir_path: Option<PathBuf>,
 }
 
 impl MultiStageShioriLoader {
@@ -221,12 +223,29 @@ impl MultiStageShioriLoader {
         Self {
             candidates: Vec::new(),
             active_engine: None,
+            last_error: None,
+            last_dir_path: None,
         }
     }
 
     /// 候補の追加
     pub fn add_candidate(&mut self, candidate: ShioriEngineCandidate) {
         self.candidates.push(candidate);
+    }
+
+    /// 候補の優先追加（先頭に挿入）
+    pub fn prepend_candidate(&mut self, candidate: ShioriEngineCandidate) {
+        self.candidates.insert(0, candidate);
+    }
+
+    /// 候補数を取得
+    pub fn candidate_count(&self) -> usize {
+        self.candidates.len()
+    }
+
+    /// 直近のエラー文字列を取得
+    pub fn last_error(&self) -> Option<&str> {
+        self.last_error.as_deref()
     }
 
     /// アクティブなエンジンの参照を取得
@@ -247,6 +266,20 @@ impl MultiStageShioriLoader {
         Ok(())
     }
 
+    /// アクティブなエンジンを再読み込み (`\![reload,shiori]` 対応)
+    pub fn reload(&mut self) -> Result<(), String> {
+        if let Some(dir) = self.last_dir_path.clone() {
+            if let Some(engine) = self.active_engine.as_mut() {
+                engine.unload()?;
+                engine.load(&dir)?;
+                return Ok(());
+            }
+            Err("No active engine to reload".to_string())
+        } else {
+            Err("No directory previously loaded to reload".to_string())
+        }
+    }
+
     /// 登録済みの候補を順に解決・ロード (WASM ローダー解決フック対応)
     pub fn load_first_working<F, W>(
         &mut self,
@@ -259,6 +292,7 @@ impl MultiStageShioriLoader {
         W: FnMut(&Path) -> Result<Box<dyn ShioriEngine>, String>,
     {
         self.unload()?;
+        self.last_dir_path = Some(dir_path.to_path_buf());
 
         let mut last_error = "No SHIORI candidates available".to_string();
 
@@ -268,6 +302,7 @@ impl MultiStageShioriLoader {
                     Ok(mut engine) => match engine.load(dir_path) {
                         Ok(_) => {
                             self.active_engine = Some(engine);
+                            self.last_error = None;
                             return Ok(());
                         }
                         Err(e) => {
@@ -282,6 +317,7 @@ impl MultiStageShioriLoader {
                     Ok(mut engine) => match engine.load(dir_path) {
                         Ok(_) => {
                             self.active_engine = Some(engine);
+                            self.last_error = None;
                             return Ok(());
                         }
                         Err(e) => {
@@ -295,12 +331,14 @@ impl MultiStageShioriLoader {
                 ShioriEngineCandidate::Mock(mut engine) => {
                     if engine.load(dir_path).is_ok() {
                         self.active_engine = Some(engine);
+                        self.last_error = None;
                         return Ok(());
                     }
                 }
             }
         }
 
+        self.last_error = Some(last_error.clone());
         Err(last_error)
     }
 }

@@ -65,6 +65,9 @@ def parse_keywords(keyword_str):
     """Splits a keyword string by comma, slash, or pipe into distinct search terms."""
     if not keyword_str:
         return []
+    # If the string contains literal escaped newline (e.g. from markdown linebreaks), take first line
+    if r'\n' in keyword_str:
+        keyword_str = keyword_str.split(r'\n')[0]
     # Split by comma or pipe (e.g. 'OnMouseDown, OnMouseDownEx' or 'foo | bar')
     parts = re.split(r'[,|]', keyword_str)
     terms = []
@@ -75,10 +78,25 @@ def parse_keywords(keyword_str):
     return terms
 
 
+def build_wildcard_regex(term):
+    """Builds a compiled regular expression for wildcard search terms containing '*'.
+
+    Escaped asterisks (e.g. `\\*` as in `%\\*`) are treated as literal asterisks, not wildcards.
+    """
+    if '*' not in term or term == '*' or r'\*' in term:
+        return None
+    parts = term.split('*')
+    escaped_parts = [re.escape(p) for p in parts]
+    # Match any alphanumeric, underscore, hyphen or period between wildcard parts
+    pattern = r'[a-zA-Z0-9_\-]+'.join(escaped_parts)
+    return re.compile(pattern, re.IGNORECASE)
+
+
 def search_keyword(keyword, codebase, cache=None, stats=None):
     """Searches for occurrences of keyword terms in the codebase.
 
-    Supports optional caching (cache dict) and performance stats tracking.
+    Supports wildcard patterns (e.g. `*.refresh`, `char*.name`),
+    optional caching (cache dict), and performance stats tracking.
     """
     terms = parse_keywords(keyword)
     if not terms:
@@ -107,19 +125,33 @@ def search_keyword(keyword, codebase, cache=None, stats=None):
                 stats["cache_misses"] += 1
                 stats["unique_terms"] += 1
             term_matches = []
+            wildcard_regex = build_wildcard_regex(term)
+
             for path, lines, full_text in file_records:
                 # Avoid matching an audit file or test file against itself
                 if 'docs/' in path or 'tests/' in path:
                     continue
-                # Fast pre-check: skip line-by-line scan if term is not in file at all
-                if term not in full_text:
-                    continue
-                for idx, line in enumerate(lines, 1):
-                    if term in line:
-                        cleaned_line = sanitize_snippet(line.strip())
-                        term_matches.append((path, idx, cleaned_line))
-                        if len(term_matches) >= 10:
-                            break
+
+                if wildcard_regex is not None:
+                    # Fast pre-check: test against full text first if possible
+                    if not wildcard_regex.search(full_text):
+                        continue
+                    for idx, line in enumerate(lines, 1):
+                        if wildcard_regex.search(line):
+                            cleaned_line = sanitize_snippet(line.strip())
+                            term_matches.append((path, idx, cleaned_line))
+                            if len(term_matches) >= 10:
+                                break
+                else:
+                    # Fast pre-check: skip line-by-line scan if term is not in file at all
+                    if term not in full_text:
+                        continue
+                    for idx, line in enumerate(lines, 1):
+                        if term in line:
+                            cleaned_line = sanitize_snippet(line.strip())
+                            term_matches.append((path, idx, cleaned_line))
+                            if len(term_matches) >= 10:
+                                break
                 if len(term_matches) >= 10:
                     break
             if cache is not None:
@@ -320,8 +352,14 @@ def process_audit_files(codebase, docs_dir='docs/spec', dry_run=False, target_ca
         with open(filepath, 'r', encoding='utf-8') as f:
             content = f.read()
 
-        st_match = re.search(r'-\s*\*\*対応状況\*\*:\s*(.*)', content)
-        kw_match = re.search(r'-\s*\*\*検索語\*\*:\s*(.*)', content)
+        # Handle escaped literal \n in content for robust parsing
+        if r'\n' in content:
+            normalized_content = content.replace(r'\n', '\n')
+        else:
+            normalized_content = content
+
+        st_match = re.search(r'-\s*\*\*対応状況\*\*:\s*([^\r\n]+)', normalized_content)
+        kw_match = re.search(r'-\s*\*\*検索語\*\*:\s*([^\r\n]+)', normalized_content)
 
         if not st_match:
             continue
@@ -331,6 +369,10 @@ def process_audit_files(codebase, docs_dir='docs/spec', dry_run=False, target_ca
             keyword = kw_match.group(1).strip()
         else:
             keyword = os.path.splitext(os.path.basename(filepath))[0]
+
+        # Use normalized_content for downstream manipulation if it contained escaped newlines
+        if content != normalized_content:
+            content = normalized_content
 
         matches = search_keyword(keyword, prepped_codebase, cache=term_cache, stats=perf_stats)
 

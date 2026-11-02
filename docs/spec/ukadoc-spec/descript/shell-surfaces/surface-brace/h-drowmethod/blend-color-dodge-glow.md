@@ -1,1 +1,11 @@
-# blend-color-dodge-glow\n\n- **規格**: [blend-color-dodge-glow.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-color-dodge-glow/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-color-dodge-glow.md)\n- **検索語**: blend-color-dodge-glow\n- **対応状況**: ❌ 未実装
+# blend-color-dodge-glow
+
+- **規格**: [blend-color-dodge-glow.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-color-dodge-glow/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-color-dodge-glow.md)
+- **検索語**: blend-color-dodge-glow
+- **対応状況**: ✅ 実装済
+
+
+## 実装箇所
+
+- `ui/js/surface/surface-load.js:65` `// [blend-color-dodge-glow-fast]`
+- `ui/js/surface/surface-load.js:66` `// [blend-color-dodge-glow]`

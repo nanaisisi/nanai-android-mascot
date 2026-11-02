@@ -1,5 +1,6 @@
 use super::encoding::detect_and_decode;
 use super::path::normalize_vfs_path;
+use super::traits::VirtualFileSystem;
 use std::collections::HashMap;
 use std::io;
 
@@ -37,6 +38,39 @@ impl MockVfs {
     pub fn exists(&self, path: &str) -> bool {
         let key = normalize_vfs_path(path).to_lowercase();
         self.files.contains_key(&key)
+    }
+
+    /// 指定ディレクトリが存在するか（そのディレクトリ配下にファイルが存在するか）判定
+    pub fn has_dir(&self, dir_path: &str) -> bool {
+        let norm_dir = normalize_vfs_path(dir_path);
+        if norm_dir.is_empty() {
+            return !self.files.is_empty();
+        }
+        let prefix = format!("{}/", norm_dir.to_lowercase());
+        self.files.keys().any(|k| k.starts_with(&prefix))
+    }
+
+    /// ファイルをコピー（複製）する
+    pub fn copy_file(&mut self, src: &str, dst: &str) -> bool {
+        let src_key = normalize_vfs_path(src).to_lowercase();
+        if let Some((_, data)) = self.files.get(&src_key) {
+            let data_clone = data.clone();
+            self.add_file(dst, data_clone);
+            true
+        } else {
+            false
+        }
+    }
+
+    /// ファイル名を変更（移動）する
+    pub fn rename_file(&mut self, src: &str, dst: &str) -> bool {
+        let src_key = normalize_vfs_path(src).to_lowercase();
+        if let Some((_, data)) = self.files.remove(&src_key) {
+            self.add_file(dst, data);
+            true
+        } else {
+            false
+        }
     }
 
     /// 大小文字を区別せずバイナリデータを取得
@@ -175,5 +209,27 @@ impl MockVfs {
         }
         matched.sort();
         matched
+    }
+}
+
+impl VirtualFileSystem for MockVfs {
+    fn exists(&self, path: &str) -> bool {
+        self.exists(path)
+    }
+
+    fn read_binary(&self, path: &str) -> io::Result<Vec<u8>> {
+        self.read_binary(path)
+    }
+
+    fn read_text(&self, path: &str) -> io::Result<String> {
+        self.read_text(path)
+    }
+
+    fn list_dir(&self, dir_path: &str) -> io::Result<Vec<String>> {
+        Ok(self.list_dir(dir_path))
+    }
+
+    fn walk_files(&self, dir_path: &str) -> io::Result<Vec<String>> {
+        Ok(self.walk_dir(dir_path))
     }
 }

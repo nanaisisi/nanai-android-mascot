@@ -68,6 +68,26 @@ test("SakuraCommandHandler covers all commands and boxes", async () => {
 		startNetworkUpdate: async () => {
 			this.updated = true;
 		},
+		modalDialogController: {
+			openPasswordInput: (params, scope) => {
+				eventsSent.push({ ev: "openPasswordInput", params, scope });
+			},
+			openTextAreaBox: (params, scope) => {
+				eventsSent.push({ ev: "openTextAreaBox", params, scope });
+			},
+			openSliderInput: (params, scope) => {
+				eventsSent.push({ ev: "openSliderInput", params, scope });
+			},
+			closeInputBox: (id) => {
+				eventsSent.push({ ev: "closeInputBox", id });
+			},
+			closeTextAreaBox: (id) => {
+				eventsSent.push({ ev: "closeTextAreaBox", id });
+			},
+			closeDialog: (id) => {
+				eventsSent.push({ ev: "closeDialog", id });
+			},
+		},
 		elements: {
 			balloonText: {
 				appendChild(el) {
@@ -206,6 +226,55 @@ test("SakuraCommandHandler covers all commands and boxes", async () => {
 	assert.ok(handler.communicateForm);
 	handler.runCommand(["close", "communicatebox"]);
 	assert.equal(handler.communicateForm, null);
+
+	// 12. open passwordinput, textareabox, sliderinput & close dialogs
+	eventsSent.length = 0;
+	await handler.runCommand([
+		"open",
+		"passwordinput",
+		"PassID",
+		"--timeout=100",
+		"--text=secret",
+	]);
+	assert.ok(eventsSent.some((e) => e.ev === "openPasswordInput"));
+
+	await handler.runCommand([
+		"open",
+		"textareabox",
+		"TextAreaID",
+		"--timeout=100",
+		"--text=multiline",
+	]);
+	assert.ok(eventsSent.some((e) => e.ev === "openTextAreaBox"));
+
+	await handler.runCommand([
+		"open",
+		"sliderinput",
+		"SliderID",
+		"--timeout=100",
+		"--min=0",
+		"--max=100",
+		"--default=50",
+	]);
+	assert.ok(eventsSent.some((e) => e.ev === "openSliderInput"));
+
+	// Targeted close commands
+	await handler.runCommand(["close", "inputbox", "PassID"]);
+	assert.ok(
+		eventsSent.some((e) => e.ev === "closeInputBox" && e.id === "PassID"),
+	);
+
+	await handler.runCommand(["close", "textareabox", "TextAreaID"]);
+	assert.ok(
+		eventsSent.some(
+			(e) => e.ev === "closeTextAreaBox" && e.id === "TextAreaID",
+		),
+	);
+
+	await handler.runCommand(["close", "dialog", "SliderID"]);
+	assert.ok(
+		eventsSent.some((e) => e.ev === "closeDialog" && e.id === "SliderID"),
+	);
 });
 
 test("expandSakuraScriptEnv properly resolves UKADOC/SSP variables", () => {

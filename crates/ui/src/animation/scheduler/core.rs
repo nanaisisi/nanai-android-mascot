@@ -1,8 +1,8 @@
 //! SERIKO アニメーションスケジューラ (Slot-08 外部インターフェース規約)
 
-use crate::surfaces::{DrawMethod, Interval, SerikoAnimation};
-use super::events::{FrameStepEvent, ParsedAnimationOptions};
 use super::active::ActiveAnimation;
+use super::events::{FrameStepEvent, ParsedAnimationOptions};
+use crate::surfaces::{DrawMethod, Interval, SerikoAnimation};
 use std::collections::{HashMap, HashSet};
 
 /// SERIKO アニメーションスケジューラ (Slot-08 外部インターフェース規約)

@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use crate::update::types::{InstallManifest, InstallResourceConfig, UpdateEntry};
+use std::collections::HashMap;
 
 /// install.txt の内容をパースして InstallManifest を構築
 pub fn parse_install_manifest(content: &str) -> InstallManifest {

@@ -1,6 +1,6 @@
-mod timeline;
 mod coverage;
 mod scheduler;
+mod timeline;
 
 use super::*;
 use crate::surfaces::{AnimationPattern, DrawMethod, Interval, SurfacesTxt};

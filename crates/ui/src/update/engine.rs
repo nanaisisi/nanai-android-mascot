@@ -1,6 +1,6 @@
+use crate::update::parser::parse_install_manifest;
 use crate::update::types::InstallManifest;
 use crate::update::validation::validate_archive_entry_path;
-use crate::update::parser::parse_install_manifest;
 
 /// NAR/ZIP アーカイブ インストーラ抽象インターフェース (Slot-15 Contract)
 pub trait InstallerEngine {

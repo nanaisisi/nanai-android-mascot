@@ -3,7 +3,8 @@ use encoding_rs::SHIFT_JIS;
 
 #[test]
 fn test_vfs_resolver() {
-    let temp_dir = std::env::temp_dir().join(format!("nanai_vfs_resolver_dir_{}", std::process::id()));
+    let temp_dir =
+        std::env::temp_dir().join(format!("nanai_vfs_resolver_dir_{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&temp_dir);
     let sub = temp_dir.join("Shell").join("Master");
     std::fs::create_dir_all(&sub).unwrap();
@@ -108,7 +109,8 @@ fn test_mock_vfs() {
 
 #[test]
 fn test_vfs_resolver_cache_and_fast_path() {
-    let temp_dir = std::env::temp_dir().join(format!("nanai_vfs_cache_test_dir_{}", std::process::id()));
+    let temp_dir =
+        std::env::temp_dir().join(format!("nanai_vfs_cache_test_dir_{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&temp_dir);
     let sub = temp_dir.join("Shell").join("Master");
     std::fs::create_dir_all(&sub).unwrap();
@@ -190,7 +192,8 @@ fn test_mock_vfs_walk_filter_and_total_bytes() {
 
 #[test]
 fn test_vfs_resolver_walk_files_and_cache_size() {
-    let temp_dir = std::env::temp_dir().join(format!("nanai_vfs_walk_test_dir_{}", std::process::id()));
+    let temp_dir =
+        std::env::temp_dir().join(format!("nanai_vfs_walk_test_dir_{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&temp_dir);
     let sub1 = temp_dir.join("ghost").join("master");
     let sub2 = temp_dir.join("shell").join("master");

@@ -8,9 +8,9 @@ pub mod config;
 pub mod message;
 pub mod types;
 
-pub use builder::{handle_execute_command, SstpEventBuilder};
+pub use builder::{SstpEventBuilder, handle_execute_command};
 pub use config::{SstpGhostConfig, SstpGhostContext};
-pub use message::{IfGhostEntry, SstpMessage, SstpRequest, SstpResponse, DIRECT_SSTP_DWDATA};
+pub use message::{DIRECT_SSTP_DWDATA, IfGhostEntry, SstpMessage, SstpRequest, SstpResponse};
 pub use types::{SstpMethod, SstpStatusCode};
 
 #[cfg(test)]

@@ -107,15 +107,17 @@ fn parse_block_opener(line: &str) -> Option<BlockKind> {
             }
         }
     }
-    if raw.starts_with("char") && raw.contains(".cursor")
-        && let Some((scope, rest)) = raw.split_once(".cursor") {
-            let after = rest.trim();
-            if after.is_empty() || after == "{" {
-                return Some(BlockKind::Cursor {
-                    scope: scope.to_string(),
-                });
-            }
+    if raw.starts_with("char")
+        && raw.contains(".cursor")
+        && let Some((scope, rest)) = raw.split_once(".cursor")
+    {
+        let after = rest.trim();
+        if after.is_empty() || after == "{" {
+            return Some(BlockKind::Cursor {
+                scope: scope.to_string(),
+            });
         }
+    }
 
     // *.tooltips ブロック
     // 例: sakura.tooltips, kero.tooltips, char0.tooltips, tooltips
@@ -141,15 +143,17 @@ fn parse_block_opener(line: &str) -> Option<BlockKind> {
             }
         }
     }
-    if raw.starts_with("char") && raw.contains(".tooltips")
-        && let Some((scope, rest)) = raw.split_once(".tooltips") {
-            let after = rest.trim();
-            if after.is_empty() || after == "{" {
-                return Some(BlockKind::Tooltip {
-                    scope: scope.to_string(),
-                });
-            }
+    if raw.starts_with("char")
+        && raw.contains(".tooltips")
+        && let Some((scope, rest)) = raw.split_once(".tooltips")
+    {
+        let after = rest.trim();
+        if after.is_empty() || after == "{" {
+            return Some(BlockKind::Tooltip {
+                scope: scope.to_string(),
+            });
         }
+    }
 
     let (stripped_line, kero) = match raw {
         l if l.starts_with("sakura.surface") => (&l["sakura.".len()..], false),

@@ -48,15 +48,8 @@ fn test_multi_frame_timeline() {
 #[test]
 fn test_interval_firing() {
     assert_eq!(Interval::parse("random,5").fire_per_second(), Some(0.2));
-    assert!(
-        (Interval::parse("sometimes").fire_per_second().unwrap() - 0.1).abs()
-            < 1e-9
-    );
-    assert!(
-        (Interval::parse("rarely").fire_per_second().unwrap() - 1f64 / 30f64)
-            .abs()
-            < 1e-9
-    );
+    assert!((Interval::parse("sometimes").fire_per_second().unwrap() - 0.1).abs() < 1e-9);
+    assert!((Interval::parse("rarely").fire_per_second().unwrap() - 1f64 / 30f64).abs() < 1e-9);
 
     assert_eq!(Interval::parse("periodic,1000").periodic_ms(), Some(1000));
     assert!(Interval::parse("periodic,1000").should_fire(1_000, 0.99));

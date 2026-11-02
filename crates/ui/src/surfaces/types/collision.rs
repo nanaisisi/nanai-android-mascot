@@ -29,9 +29,10 @@ impl CollisionShape {
             CollisionShape::Polygon { vertices } if vertices.len() >= 3 => {
                 // AABB事前フィルタ
                 if let Some((min_x, min_y, max_x, max_y)) = self.bounding_box()
-                    && (x < min_x || x > max_x || y < min_y || y > max_y) {
-                        return false;
-                    }
+                    && (x < min_x || x > max_x || y < min_y || y > max_y)
+                {
+                    return false;
+                }
                 let mut inside = false;
                 let n = vertices.len();
                 let mut j = n - 1;

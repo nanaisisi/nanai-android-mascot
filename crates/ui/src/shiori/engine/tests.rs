@@ -163,3 +163,36 @@ fn test_multistage_shiori_loader_reload_and_prioritization() {
     // アンロード
     assert!(loader.unload().is_ok());
 }
+
+#[test]
+fn test_shiori_engine_trait_object_default_methods() {
+    let mut engine: Box<dyn ShioriEngine> = Box::new(MockShioriEngine::new());
+    assert_eq!(engine.lifecycle_state(), ShioriLifecycleState::Unloaded);
+    engine.load(Path::new("/dummy")).unwrap();
+    assert!(engine.suspend().is_ok());
+    assert!(engine.resume().is_ok());
+}
+
+#[test]
+fn test_multistage_shiori_loader_error_and_edge_cases() {
+    let mut loader = MultiStageShioriLoader::default();
+    assert!(loader.reload().is_err());
+
+    let dir = Path::new("/dummy/ghost/master");
+    let load_res = loader.load_first_working(
+        dir,
+        |_path| Err("No dynamic".to_string()),
+        |_path| Err("No wasm".to_string()),
+    );
+    assert!(load_res.is_err());
+    assert!(loader.last_error().is_some());
+    assert!(loader.reload().is_err());
+
+    assert!(loader.load(dir).is_err());
+    assert!(loader.request("GET SHIORI/3.0\r\n\r\n").is_err());
+
+    let mock = MockShioriEngine::new();
+    loader.add_candidate(ShioriEngineCandidate::Mock(Box::new(mock)));
+    assert!(loader.load_first_working(dir, |_| Err("".into()), |_| Err("".into())).is_ok());
+    assert!(loader.active_engine_mut().is_some());
+}

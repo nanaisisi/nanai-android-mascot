@@ -175,4 +175,55 @@ mod tests {
         let cmds = parse_sakura_script(script);
         assert!(!cmds.is_empty());
     }
+
+    #[test]
+    fn test_parse_sakura_script_raiselike_extended() {
+        let script = "\
+            \\![raise,OnEvent,ref0,ref1]\
+            \\![raiseplugin,pluginA,OnPlug,r1]\
+            \\![notifyplugin,pluginB,OnNotify]\
+            \\![timerraiseplugin,0,0,pluginC,OnTimer,r2]\
+            \\![timernotifyplugin,0,0,pluginD,OnTimerN]\
+            \\![execute,schedule-add,2026-10-31,12:00,Meeting,Notes]\
+            \\![execute,extractarchive,a.zip,dest]\
+            \\![execute,compressarchive,a.zip,dest]\
+            \\![execute,createnar,a.zip,dest]\
+            \\![execute,createupdatedata,a.zip,dest]\
+            \\![execute,download,http://example.com,path]\
+            \\![execute,upload,http://example.com,path]\
+            \\![execute,mailcheck,acc]\
+            \\![execute,mailsend,target]\
+            \\![execute,deletefile,path,dest]\
+            \\![execute,resetballoonpos]\
+            \\![execute,customcmd,arg1]\
+            \\![create,shortcut]\
+            \\![create,other]\
+            \\![save,wallpaper]\
+            \\![save,other]\
+            \\![restore,wallpaper]\
+            \\![restore,other]\
+            \\![cancel,service,target]\
+            \\![close,service,target]\
+            \\![biff]\
+            \\![executesntp]\
+            \\![enter,scope0]\
+            \\![leave,scope0]\
+            \\![bind,clothing,ribbon,1]\
+            \\![open,inputbox,id0,arg1]\
+            \\![set,choicetimeout,10]\
+            \\![set,balloonoffset,50,60]\
+            \\![set,balloontimeout,5]\
+            \\![set,windowstate,minimized]\
+            \\![set,wallpaper,bg.png,stretch]\
+            \\![set,httptimeout,30]\
+            \\![set,proxy,127.0.0.1,8080]\
+            \\![set,autoscroll,true]\
+            \\![lock,balloonmove]\
+            \\![unlock,balloonrepaint]\
+            \\![lock,other]\
+            \\*\\![change,ghost,sakura]\\![call,ghost,kero]\
+        ";
+        let cmds = parse_sakura_script(script);
+        assert!(!cmds.is_empty());
+    }
 }

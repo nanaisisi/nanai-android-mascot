@@ -48,6 +48,24 @@ mod tests {
 
         let mut chars = "[1,wait]".chars().peekable();
         assert_eq!(handle_animation(&mut chars), Some((1, true)));
+
+        // Escaped closing bracket \]
+        let mut chars = r"[tag\]with\]brackets]tail".chars().peekable();
+        assert_eq!(
+            read_bracketed(&mut chars),
+            Some("tag]with]brackets".to_string())
+        );
+    }
+
+    #[test]
+    fn test_split_bracket_args_escaping_and_quotes() {
+        use crate::script::parser::brackets::utils::split_bracket_args;
+
+        let res = split_bracket_args(r#"raise,OnTest,"100,2""#);
+        assert_eq!(res, vec!["raise", "OnTest", "100,2"]);
+
+        let res2 = split_bracket_args(r#"call,ghost,"the ""MobileMaster""""#);
+        assert_eq!(res2, vec!["call", "ghost", "the \"MobileMaster\""]);
     }
 
     #[test]
@@ -62,6 +80,18 @@ mod tests {
         assert_eq!(
             choice,
             Some(("ChoiceText".to_string(), "ChoiceID".to_string(), Vec::new()))
+        );
+
+        // Choice with escaped bracket in label
+        let mut chars = r"[Choice \] Bracket,ChoiceID]".chars().peekable();
+        let choice_esc = handle_choice(&mut chars);
+        assert_eq!(
+            choice_esc,
+            Some((
+                "Choice ] Bracket".to_string(),
+                "ChoiceID".to_string(),
+                Vec::new()
+            ))
         );
 
         let mut chars = "[temp,TempText,TempID]".chars().peekable();

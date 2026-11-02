@@ -1,11 +1,10 @@
 //! `surfaces.txt` メインパーサー関数
 
-use crate::surfaces::types::SurfacesTxt;
 use super::helpers::{
-    BlockKind, parse_block_opener, prepare_block, handle_root_line,
-    handle_descript_line, handle_alias_line, handle_cursor_line,
-    handle_tooltip_line, handle_surface_line,
+    BlockKind, handle_alias_line, handle_cursor_line, handle_descript_line, handle_root_line,
+    handle_surface_line, handle_tooltip_line, parse_block_opener, prepare_block,
 };
+use crate::surfaces::types::SurfacesTxt;
 
 /// テキスト内容から `surfaces.txt` をパースする
 pub fn parse_surfaces_txt(text: &str) -> SurfacesTxt {

@@ -1,5 +1,5 @@
-use super::types::{BundledResourceTarget, InstallInspectionResult};
 use super::super::super::utils::*;
+use super::types::{BundledResourceTarget, InstallInspectionResult};
 use crate::common::*;
 use std::collections::HashMap;
 

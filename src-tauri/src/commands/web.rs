@@ -35,7 +35,6 @@ pub async fn handle_ukagaka_uri(
 
 #[cfg(test)]
 mod tests {
-    use super::*;
 
     #[test]
     fn test_ukagaka_uri_parsing() {

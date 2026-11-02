@@ -1,7 +1,7 @@
 //! `surfaces.txt` パーサー補助関数・ブロック行ハンドラー
 
-use crate::surfaces::types::*;
 use super::handlers::*;
+use crate::surfaces::types::*;
 
 /// ブロック種別
 #[derive(Clone, Debug)]

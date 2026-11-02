@@ -7,4 +7,8 @@ export {
 	compositeElements,
 	SurfaceFrameBuffer,
 } from "./compositor/framebuffer.js";
-export { drawLayer } from "./compositor/layer.js";
+export {
+	drawImageLayer,
+	drawLayer,
+	loadLayerImage,
+} from "./compositor/layer.js";

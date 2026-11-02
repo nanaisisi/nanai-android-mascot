@@ -3,10 +3,10 @@
  * @brief サーフィスの描画・合成、当たり判定、着せ替え管理を統合するメイン mixin モジュール
  */
 
+import { drawImageLayer, loadLayerImage } from "./compositor/layer.js";
 import { surfaceCollisionMethods } from "./surface-collision.js";
 import {
 	composeSurfaceElements,
-	drawLayer,
 	processChromaKey,
 } from "./surface-compositor.js";
 import { surfaceDressupMethods } from "./surface-dressup.js";
@@ -32,16 +32,28 @@ export const surfaceRenderMethods = {
 		const ctx = canvas.getContext("2d");
 		if (!ctx) return null;
 		ctx.drawImage(baseCanvas, 0, 0);
-		for (const layer of frameLayers) {
-			await drawLayer(
-				ctx,
-				layer.file,
-				resolveImagePath,
-				layer.x ?? 0,
-				layer.y ?? 0,
-				layer.type ?? "overlay",
-			);
+
+		const loadPromises = frameLayers.map((layer) =>
+			layer.file
+				? loadLayerImage(layer.file, resolveImagePath)
+				: Promise.resolve(null),
+		);
+		const loadedImages = await Promise.all(loadPromises);
+
+		for (let i = 0; i < frameLayers.length; i++) {
+			const layer = frameLayers[i];
+			const img = loadedImages[i];
+			if (img && layer.file) {
+				drawImageLayer(
+					ctx,
+					img,
+					layer.x ?? 0,
+					layer.y ?? 0,
+					layer.type ?? "overlay",
+				);
+			}
 		}
+
 		const src = canvas.toDataURL("image/png");
 		const ms = (globalThis.performance?.now?.() ?? Date.now()) - t0;
 		this._frameComposeStats ??= { frames: 0, totalMs: 0, slowestMs: 0 };

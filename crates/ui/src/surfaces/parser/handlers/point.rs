@@ -8,12 +8,12 @@ pub(crate) fn apply_point(txt: &mut SurfacesTxt, ids: &[u32], field: &str, value
     for num in ids {
         let points = &mut txt.surfaces.entry(*num).or_default().points;
         match field {
-            "centerx" => points.center_x = parsed,
-            "centery" => points.center_y = parsed,
-            "basepos.x" => points.basepos_x = parsed,
-            "basepos.y" => points.basepos_y = parsed,
-            "kinoko.centerx" => points.kinoko_center_x = parsed,
-            "kinoko.centery" => points.kinoko_center_y = parsed,
+            "centerx" | "center.x" => points.center_x = parsed,
+            "centery" | "center.y" => points.center_y = parsed,
+            "basepos.x" | "baseposx" => points.basepos_x = parsed,
+            "basepos.y" | "baseposy" => points.basepos_y = parsed,
+            "kinoko.centerx" | "kinoko.center.x" => points.kinoko_center_x = parsed,
+            "kinoko.centery" | "kinoko.center.y" => points.kinoko_center_y = parsed,
             _ => {}
         }
     }

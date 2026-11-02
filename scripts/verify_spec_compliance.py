@@ -61,33 +61,55 @@ def load_codebase(base_dir="."):
     return codebase
 
 
+def parse_keywords(keyword_str):
+    """Splits a keyword string by comma, slash, or pipe into distinct search terms."""
+    if not keyword_str:
+        return []
+    # Split by comma or pipe (e.g. 'OnMouseDown, OnMouseDownEx' or 'foo | bar')
+    parts = re.split(r'[,|]', keyword_str)
+    terms = []
+    for p in parts:
+        term = p.strip()
+        if term and term.lower() not in GENERIC_KEYWORDS:
+            terms.append(term)
+    return terms
+
+
 def search_keyword(keyword, codebase):
-    if not keyword or keyword.lower() in GENERIC_KEYWORDS:
+    terms = parse_keywords(keyword)
+    if not terms:
         return []
 
     results = []
+    seen = set()
     for path, lines in codebase:
         # Avoid matching an audit file or test file against itself
         if 'docs/' in path or 'tests/' in path:
             continue
         for idx, line in enumerate(lines, 1):
-            if keyword in line:
-                cleaned_line = sanitize_snippet(line.strip())
-                results.append((path, idx, cleaned_line))
-                if len(results) >= 10:
+            for term in terms:
+                if term in line:
+                    loc = (path, idx)
+                    if loc not in seen:
+                        seen.add(loc)
+                        cleaned_line = sanitize_snippet(line.strip())
+                        results.append((path, idx, cleaned_line))
                     break
+            if len(results) >= 10:
+                break
         if len(results) >= 10:
             break
     return results
 
 
 class ComplianceReport:
-    """Represents a compliance audit report with serialization support."""
+    """Represents a compliance audit report with serialization support and regression tracking."""
 
-    def __init__(self, category_stats, updated_files=None, total_files=0, generated_at=None):
+    def __init__(self, category_stats, updated_files=None, total_files=0, regressions=None, generated_at=None):
         self.category_stats = category_stats
         self.updated_files = updated_files or []
         self.total_files = total_files
+        self.regressions = regressions or []
         self.generated_at = generated_at or datetime.datetime.now(datetime.timezone.utc).isoformat()
 
         tot_ok = sum(st["✅"] for st in category_stats.values())
@@ -125,6 +147,8 @@ class ComplianceReport:
             "generated_at": self.generated_at,
             "total_files_audited": self.total_files,
             "updated_files_count": len(self.updated_files),
+            "regressions_count": len(self.regressions),
+            "regressions": self.regressions,
             "summary": {
                 "implemented": self.totals["✅"],
                 "partial": self.totals["⚠️"],
@@ -146,6 +170,7 @@ class ComplianceReport:
             f"- **生成日時**: {self.generated_at}",
             f"- **監査対象総数**: {self.totals['合計']}",
             f"- **全体適合率**: {self.totals['compliance_rate_percent']}%",
+            f"- **リグレッション検知数**: {len(self.regressions)}",
             "",
             "## 規格別集計",
             "",
@@ -163,6 +188,18 @@ class ComplianceReport:
         lines.append(
             f"| **合計** | {tot['✅']:9d} | {tot['⚠️']:11d} | {tot['❌']:9d} | {tot['❓']:9d} | {tot['compliance_rate_percent']:5.1f}% | {tot['合計']:4d} |"
         )
+
+        if self.regressions:
+            lines.extend([
+                "",
+                "## ⚠️ リグレッション (未達へ後退した項目)",
+                "",
+                "| ファイルパス | 検索語 | 以前のステータス | 現在のステータス |",
+                "| :--- | :--- | :--- | :--- |"
+            ])
+            for reg in self.regressions:
+                lines.append(f"| `{reg['path']}` | `{reg['keyword']}` | {reg['previous_status']} | {reg['new_status']} |")
+
         lines.extend([
             "",
             "## 凡例",
@@ -192,6 +229,7 @@ def process_audit_files(codebase, docs_dir='docs/spec', dry_run=False, target_ca
     ]
 
     updated_files = []
+    regressions = []
     category_stats = {}
 
     for filepath in audit_files:
@@ -264,6 +302,14 @@ def process_audit_files(codebase, docs_dir='docs/spec', dry_run=False, target_ca
 
         file_changed = False
         if new_status != curr_status:
+            # Check for regression: was previously implemented, now missing
+            if curr_status.startswith("✅") and new_status.startswith("❌"):
+                regressions.append({
+                    "path": rel_path,
+                    "keyword": keyword,
+                    "previous_status": curr_status,
+                    "new_status": new_status,
+                })
             content = re.sub(r'(-\s*\*\*対応状況\*\*:\s*).*', r'\1' + new_status, content)
             file_changed = True
 
@@ -289,7 +335,8 @@ def process_audit_files(codebase, docs_dir='docs/spec', dry_run=False, target_ca
     report = ComplianceReport(
         category_stats=category_stats,
         updated_files=updated_files,
-        total_files=len(audit_files)
+        total_files=len(audit_files),
+        regressions=regressions
     )
 
     return report
@@ -367,6 +414,14 @@ def parse_args():
         "--docs-dir", dest="docs_dir", type=str, default="docs/spec",
         help="Path to spec docs directory (defaults to docs/spec)."
     )
+    parser.add_argument(
+        "--fail-on-regression", action="store_true", dest="fail_on_regression",
+        help="Exit with non-zero status code if any regression (✅ -> ❌) is detected."
+    )
+    parser.add_argument(
+        "--min-rate", dest="min_rate", type=float, default=None,
+        help="Minimum required compliance rate (percent). Exit with non-zero if below threshold."
+    )
     return parser.parse_args()
 
 
@@ -416,6 +471,21 @@ def main():
         print(f"[Dry-run] Would update {len(report.updated_files)} files.")
     else:
         print(f"Updated {len(report.updated_files)} audit files.")
+
+    if report.regressions:
+        print(f"WARNING: {len(report.regressions)} regressions detected!")
+        for reg in report.regressions:
+            print(f"  - {reg['path']} ({reg['keyword']}): {reg['previous_status']} -> {reg['new_status']}")
+
+    if args.fail_on_regression and report.regressions:
+        print(f"Error: Exiting with code 1 due to {len(report.regressions)} detected regressions.")
+        sys.exit(1)
+
+    if args.min_rate is not None and report.totals["compliance_rate_percent"] < args.min_rate:
+        print(
+            f"Error: Compliance rate {report.totals['compliance_rate_percent']}% is below the required {args.min_rate}%."
+        )
+        sys.exit(1)
 
 
 if __name__ == '__main__':

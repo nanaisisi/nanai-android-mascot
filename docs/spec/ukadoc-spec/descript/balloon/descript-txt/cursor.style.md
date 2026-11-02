@@ -10,5 +10,6 @@
 
 ## 実装箇所
 
+- `ui/js/core/actions/balloon-descript/font/group.js:39` `// [anchor.style / cursor.style / *.style]:`
 - `ui/js/core/actions/balloon-descript/font/group.js:32` `* [cursor.style,形状]`
 - `ui/js/core/actions/balloon-descript/font/group.js:79` `// [anchor.style / cursor.style / *.style]:`

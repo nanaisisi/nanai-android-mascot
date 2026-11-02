@@ -193,6 +193,10 @@ fn test_multistage_shiori_loader_error_and_edge_cases() {
 
     let mock = MockShioriEngine::new();
     loader.add_candidate(ShioriEngineCandidate::Mock(Box::new(mock)));
-    assert!(loader.load_first_working(dir, |_| Err("".into()), |_| Err("".into())).is_ok());
+    assert!(
+        loader
+            .load_first_working(dir, |_| Err("".into()), |_| Err("".into()))
+            .is_ok()
+    );
     assert!(loader.active_engine_mut().is_some());
 }

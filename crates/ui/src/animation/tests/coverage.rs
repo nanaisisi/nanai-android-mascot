@@ -64,7 +64,12 @@ fn test_animation_100_percent_perfect_coverage() {
 #[test]
 fn test_parsed_animation_options_coverage() {
     let opts = ParsedAnimationOptions::from_raw_options(&[
-        vec!["".to_string(), "exclusive+(1,2)".to_string(), "background".to_string(), "shared-index".to_string()],
+        vec![
+            "".to_string(),
+            "exclusive+(1,2)".to_string(),
+            "background".to_string(),
+            "shared-index".to_string(),
+        ],
         vec!["(3,4)".to_string(), "shared_index".to_string()],
     ]);
     assert!(opts.is_exclusive);

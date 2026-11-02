@@ -67,9 +67,14 @@ fn test_surfaces_txt_cursor_tooltip_and_merge() {
     use std::collections::BTreeMap;
 
     let mut txt = SurfacesTxt::default();
-    txt.cursors.insert("sakura".into(), vec![
-        CursorDefinition { event: "Enter".into(), collision: "Head".into(), cursor: "pointer".into() }
-    ]);
+    txt.cursors.insert(
+        "sakura".into(),
+        vec![CursorDefinition {
+            event: "Enter".into(),
+            collision: "Head".into(),
+            cursor: "pointer".into(),
+        }],
+    );
     txt.tooltips.insert("kero".into(), {
         let mut m = BTreeMap::new();
         m.insert("Body".into(), "Tooltip Text".into());

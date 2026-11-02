@@ -25,8 +25,8 @@ impl SurfaceFrameBuffer {
     /// 指定色または (0,0) ピクセル色に合致するピクセルを完全透明 (A=0) にする
     pub fn apply_chromakey(&mut self, target_r: u8, target_g: u8, target_b: u8) {
         let pixel_count = (self.width as usize) * (self.height as usize);
-        let chunks = self.data.chunks_exact_mut(4);
-        for chunk in chunks.take(pixel_count) {
+        let (chunks, _remainder) = self.data.as_chunks_mut::<4>();
+        for chunk in chunks.iter_mut().take(pixel_count) {
             let r = chunk[0];
             let g = chunk[1];
             let b = chunk[2];

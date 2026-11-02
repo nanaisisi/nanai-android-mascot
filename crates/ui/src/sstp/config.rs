@@ -66,6 +66,7 @@ impl SstpGhostConfig {
     }
 
     /// リクエストの受入判定（拒否理由があれば Refuse / BadRequest 等の SstpResponse を返す）
+    #[allow(clippy::result_large_err)]
     pub fn validate_request(&self, req: &SstpRequest) -> Result<(), SstpResponse> {
         // [sstp.allowcommunicate]: COMMUNICATE メソッドの拒否判定
         if req.method == SstpMethod::Communicate && !self.allow_communicate {

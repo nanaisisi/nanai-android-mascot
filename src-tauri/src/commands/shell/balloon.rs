@@ -124,12 +124,12 @@ pub fn balloon_manifest(
             if p.is_file()
                 && let Some(sub_map) = nanai_android_mascot_ui::resolve_vfs_path(&dir, &cand)
                     .and_then(|fp| crate::ghost::scan::read_descript_file(&fp))
-                {
-                    for (k, v) in sub_map {
-                        map.insert(k, v);
-                    }
-                    break;
+            {
+                for (k, v) in sub_map {
+                    map.insert(k, v);
                 }
+                break;
+            }
         }
     }
 

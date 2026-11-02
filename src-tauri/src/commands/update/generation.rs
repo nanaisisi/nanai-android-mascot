@@ -17,15 +17,16 @@ pub async fn generate_updates2_dau(
     let mut noupdate_files = Vec::new();
     let dev_opt_path = dir.join("developer_options.txt");
     if dev_opt_path.is_file()
-        && let Ok(content) = std::fs::read_to_string(&dev_opt_path) {
-            for line in content.lines() {
-                let trimmed = line.trim();
-                if trimmed.starts_with("noupdate=") {
-                    let file_pattern = trimmed[9..].trim().replace('\\', "/");
-                    noupdate_files.push(file_pattern);
-                }
+        && let Ok(content) = std::fs::read_to_string(&dev_opt_path)
+    {
+        for line in content.lines() {
+            let trimmed = line.trim();
+            if trimmed.starts_with("noupdate=") {
+                let file_pattern = trimmed[9..].trim().replace('\\', "/");
+                noupdate_files.push(file_pattern);
             }
         }
+    }
 
     let mut lines = Vec::new();
     let walker = WalkDir::new(&dir).follow_links(false).sort_by_file_name();

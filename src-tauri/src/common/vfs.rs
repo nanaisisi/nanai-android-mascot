@@ -3,7 +3,6 @@
 //! 大小文字不問パス解決 (Windows/Linux/Android差分吸収)、
 //! Shift_JIS(CP932)/UTF-8自動判定、およびインメモリVFSスタブ (MockVfs) を提供します。
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

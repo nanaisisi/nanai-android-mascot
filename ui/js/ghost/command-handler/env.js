@@ -107,47 +107,41 @@ export function expandSakuraScriptEnv(script, options = {}) {
 		return randomWords[idx];
 	});
 
-	// 5. 日時・システム環境変数
-	const year = String(now.getFullYear());
-	const month = String(now.getMonth() + 1);
-	const day = String(now.getDate());
-	const hour = String(now.getHours());
-	const minute = String(now.getMinutes()).padStart(2, "0");
-	const second = String(now.getSeconds()).padStart(2, "0");
+	// 5. 日時・システム環境変数マップの構築
+	const envMap = {
+		"%username": username,
+		"%selfname2": selfname,
+		"%selfname": selfname,
+		"%keroname": keroname,
+		"%screenwidth": screenWidth,
+		"%screenheight": screenHeight,
+		"%year": String(now.getFullYear()),
+		"%month": String(now.getMonth() + 1),
+		"%day": String(now.getDate()),
+		"%hour": String(now.getHours()),
+		"%minute": String(now.getMinutes()).padStart(2, "0"),
+		"%second": String(now.getSeconds()).padStart(2, "0"),
+		"%dms": "0",
+		"%et": "0",
+		"%exh": "0",
+		"%wronghour": "0",
+		"%lastghostname": "",
+		"%lastobjectname": "",
+		"%ms": selfname,
+		"%mp": "0",
+		"%mh": "0",
+		"%me": "0",
+		"%mt": "0",
+		"%mc": "0",
+		"%ml": "0",
+		"%mz": "0",
+	};
 
-	// 6. 既定環境変数の置換テーブル
-	const envTable = [
-		["%username", username],
-		["%selfname2", selfname],
-		["%selfname", selfname],
-		["%keroname", keroname],
-		["%screenwidth", screenWidth],
-		["%screenheight", screenHeight],
-		["%year", year],
-		["%month", month],
-		["%day", day],
-		["%hour", hour],
-		["%minute", minute],
-		["%second", second],
-		["%dms", "0"],
-		["%et", "0"],
-		["%exh", "0"],
-		["%wronghour", "0"],
-		["%lastghostname", ""],
-		["%lastobjectname", ""],
-		["%ms", selfname],
-		["%mp", "0"],
-		["%mh", "0"],
-		["%me", "0"],
-		["%mt", "0"],
-		["%mc", "0"],
-		["%ml", "0"],
-		["%mz", "0"],
-	];
-
-	for (const [varName, val] of envTable) {
-		result = result.replaceAll(varName, val);
-	}
+	// 6. 単一パス正規表現による既定環境変数の一括置換（最長一致プレフィックス順）
+	result = result.replace(
+		/%(lastobjectname|lastghostname|screenheight|screenwidth|wronghour|selfname2|selfname|username|keroname|minute|second|month|year|hour|dms|exh|et|ms|mp|mh|me|mt|mc|ml|mz|day)/g,
+		(matched) => envMap[matched] ?? matched,
+	);
 
 	// 7. 保護していたエスケープ \% をリテラル % に復元
 	result = result.replaceAll("\uE000", "%");

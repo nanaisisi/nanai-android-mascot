@@ -1,4 +1,4 @@
-use crate::common::GhostInfo;
+use crate::common::models::GhostInfo;
 use serde::Serialize;
 
 #[derive(Debug, Clone, Serialize)]

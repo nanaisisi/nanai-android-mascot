@@ -1,5 +1,5 @@
 use super::bitmap::load_menu_bitmap_data_url;
-use crate::common::*;
+use crate::common::models::ShellMenuTheme;
 use std::collections::HashMap;
 use std::path::Path;
 

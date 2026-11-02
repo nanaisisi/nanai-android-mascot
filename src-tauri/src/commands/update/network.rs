@@ -21,7 +21,7 @@ fn resolve_update_ghost_dir(
         format!("ghost/{}", ghost_name),
     ];
     for relative in candidates {
-        if let Ok(resolved) = crate::common::resolve_asset_path(&relative, app_handle)
+        if let Ok(resolved) = crate::common::paths::resolve_asset_path(&relative, app_handle)
             && resolved.is_dir()
         {
             return resolved;
@@ -58,7 +58,7 @@ fn report_progress(app_handle: &tauri::AppHandle, phase: &str, path: &str, detai
 /// ゴーストの更新チェック
 #[tauri::command]
 pub async fn check_ghost_update(
-    state: tauri::State<'_, crate::common::AppState>,
+    state: tauri::State<'_, crate::common::state::AppState>,
     app_handle: tauri::AppHandle,
     ghost_name: Option<String>,
     ghost_path: Option<String>,
@@ -163,7 +163,7 @@ pub async fn check_ghost_update(
 /// ゴーストのネットワーク更新を実行
 #[tauri::command]
 pub async fn execute_ghost_update(
-    state: tauri::State<'_, crate::common::AppState>,
+    state: tauri::State<'_, crate::common::state::AppState>,
     app_handle: tauri::AppHandle,
     ghost_name: Option<String>,
     ghost_path: Option<String>,

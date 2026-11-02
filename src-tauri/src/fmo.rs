@@ -2,7 +2,7 @@
 //! 起動中ゴーストの状態（サーフィス、名前、バルーンテキスト等）を外部ツールや他プロセスへ公開するインターフェース
 //! モバイルライフサイクル（バックグラウンド/フォアグラウンド）状態の同期に対応
 
-use crate::common::*;
+use crate::common::state::AppState;
 pub use nanai_android_mascot_ui::fmo::FmoEntry;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;

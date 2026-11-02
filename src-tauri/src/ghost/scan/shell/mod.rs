@@ -3,7 +3,7 @@
 mod bitmap;
 mod theme;
 
-use crate::common::*;
+use crate::common::models::ShellInfo;
 use std::collections::HashMap;
 use std::path::Path;
 

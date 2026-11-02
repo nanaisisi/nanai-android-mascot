@@ -1,4 +1,4 @@
-use crate::common::*;
+use crate::common::paths::resolve_asset_path;
 use base64::Engine;
 use std::path::PathBuf;
 

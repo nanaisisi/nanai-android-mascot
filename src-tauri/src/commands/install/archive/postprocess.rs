@@ -1,4 +1,4 @@
-use crate::common::*;
+use crate::common::models::GhostInfo;
 use std::path::Path;
 
 /// refresh 設定時に指定ディレクトリ内のファイルを消去（refreshundeletemask に含まれるファイル名は保護）

@@ -210,3 +210,71 @@ fn test_animation_scheduler_pattern_control_methods() {
     assert!(!events2.is_empty());
     assert_eq!(scheduler.active_count(0), 1); // target は停止
 }
+
+#[test]
+fn test_animation_scheduler_move_draw_method() {
+    use crate::surfaces::SerikoAnimation;
+
+    let mut scheduler = AnimationScheduler::new();
+
+    let move_anim = SerikoAnimation {
+        id: 7,
+        interval: Some(Interval::RunOnce),
+        name: None,
+        patterns: vec![
+            AnimationPattern {
+                index: 0,
+                method: DrawMethod::Move,
+                surface: 0,
+                wait: 30,
+                wait_max: None,
+                x: 15,
+                y: -20,
+                options: vec![],
+            },
+            AnimationPattern {
+                index: 1,
+                method: DrawMethod::Move,
+                surface: 0,
+                wait: 40,
+                wait_max: None,
+                x: 0,
+                y: 0,
+                options: vec![],
+            },
+            AnimationPattern {
+                index: 2,
+                method: DrawMethod::Overlay,
+                surface: -1,
+                wait: 0,
+                wait_max: None,
+                x: 0,
+                y: 0,
+                options: vec![],
+            },
+        ],
+        collisions: vec![],
+        options: vec![],
+    };
+
+    assert_eq!(scheduler.get_base_move_offset(0), (0, 0));
+
+    scheduler.start_animation(0, 0, &move_anim);
+    assert_eq!(scheduler.active_count(0), 1);
+
+    // pattern 0: move x=15, y=-20
+    let events = scheduler.step(30);
+    assert_eq!(events.len(), 1);
+    assert_eq!(events[0].pattern.method, DrawMethod::Move);
+    assert_eq!(scheduler.get_base_move_offset(0), (15, -20));
+
+    // pattern 1: move x=0, y=0 (位置復帰)
+    let events2 = scheduler.step(40);
+    assert_eq!(events2.len(), 1);
+    assert_eq!(scheduler.get_base_move_offset(0), (0, 0));
+
+    // pattern 2: -1 終了
+    let events3 = scheduler.step(0);
+    assert_eq!(events3.len(), 1);
+    assert_eq!(scheduler.active_count(0), 0);
+}

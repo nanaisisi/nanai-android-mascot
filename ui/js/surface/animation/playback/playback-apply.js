@@ -111,6 +111,44 @@ export async function _applyAnimationFrame(
 
 	const patType = (pat.type || "overlay").toLowerCase();
 
+	if (patType === "move") {
+		// UKADOC: move メソッド - ベースレイヤの表示位置を指定座標分ずらす (瞬間移動)
+		// サーフェスIDは無視され、(pat.x, pat.y) をベースオフセットとして適用
+		const moveX = pat.x ?? 0;
+		const moveY = pat.y ?? 0;
+		if (instance.manager?.setBaseMoveOffset) {
+			instance.manager.setBaseMoveOffset(scopeId, moveX, moveY);
+		} else if (instance._baseMoveOffsets) {
+			instance._baseMoveOffsets.set(scopeId, { x: moveX, y: moveY });
+		}
+		// 画面上のコンテナやプレースホルダーのトランスフォーム/マージンに反映
+		if (gc?.setScopeMoveOffset) {
+			gc.setScopeMoveOffset(scopeId, moveX, moveY);
+		} else if (typeof document !== "undefined") {
+			const isSubchar = scopeId >= 1;
+			const selector = isSubchar ? "kero-display" : "ghost-display";
+			const el = document.getElementById(selector);
+			if (el) {
+				el.style.transform = `translate(${moveX}px, ${moveY}px)`;
+			}
+		}
+
+		instance.scheduler?.notifyFrameStep(
+			new FrameStepEvent({
+				scopeId,
+				baseSurfaceId,
+				animationId: anim?.id ?? 0,
+				pattern: pat,
+				elapsedMs: Date.now(),
+				isFinished: false,
+				isBackground: options.isBackground,
+				offsetX: moveX,
+				offsetY: moveY,
+			}),
+		);
+		return true;
+	}
+
 	// start, stop, alternativestart, alternativestop, parallelstart, parallelstop 制御メソッド
 	if (
 		patType.startsWith("start") ||

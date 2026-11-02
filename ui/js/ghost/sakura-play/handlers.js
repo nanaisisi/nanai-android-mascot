@@ -1,494 +1,174 @@
-import { invoke, isTauriAvailable } from "../../core/tauri-helper.js";
+/**
+ * @file handlers.js
+ * @brief さくらスクリプト再生時のトークンハンドラ・ファサード
+ */
 
+import {
+	handleAnimation,
+	handleSurface,
+	handleWaitAnimation,
+} from "./handlers/animation.js";
+import {
+	handleAnchorBegin,
+	handleAnchorEnd,
+	handleChoice,
+} from "./handlers/choice.js";
+import {
+	handleBalloonTimeout,
+	handleChoiceTimeout,
+	handleCommand,
+	handleEnd,
+	handleHalt,
+	handlePause,
+	handleQuickToggle,
+	handleSyncToggle,
+	handleTimeout,
+	handleWait,
+} from "./handlers/control.js";
+import {
+	handleBalloon,
+	handleInlineBitmap,
+	handleScope,
+} from "./handlers/scope.js";
+import {
+	handleChar,
+	handleClear,
+	handleFont,
+	handleNewline,
+	handleOffset,
+} from "./handlers/text.js";
+
+export {
+	handleAnchorBegin,
+	handleAnchorEnd,
+	handleAnimation,
+	handleBalloon,
+	handleBalloonTimeout,
+	handleChar,
+	handleChoice,
+	handleChoiceTimeout,
+	handleClear,
+	handleCommand,
+	handleEnd,
+	handleFont,
+	handleHalt,
+	handleInlineBitmap,
+	handleNewline,
+	handleOffset,
+	handlePause,
+	handleQuickToggle,
+	handleScope,
+	handleSurface,
+	handleSyncToggle,
+	handleTimeout,
+	handleWait,
+	handleWaitAnimation,
+};
+
+/**
+ * 各トークンを対応するサブハンドラへディスパッチ
+ *
+ * @param {import('../sakura-script.js').SakuraScriptPlayer} player
+ * @param {any} app
+ * @param {any} token
+ * @param {any} context
+ */
 export async function handleToken(player, app, token, context) {
-	const {
-		sakuraText,
-		keroText,
-		sakuraDisplay,
-		keroDisplay,
-		hasTextContent,
-		shownScopes,
-		flushDesktopBalloon,
-		scheduleDesktopBalloonSync,
-	} = context;
-
-	let { currentBalloonText, isQuickMode, ended, currentAnchor } = context;
-
 	switch (token.type) {
 		case "scope":
-			player.currentScope = token.value;
-			player.playbackController?.notifyScope?.(player.currentScope);
-			if (player.currentScope === 1) {
-				app.surfaceManager?.onTalkEnd(0);
-				if (!isTauriAvailable()) {
-					if (app.elements.keroSlot) {
-						app.elements.keroSlot.style.display = "flex";
-					}
-					if (keroDisplay && keroText) {
-						keroDisplay.style.display = "block";
-					}
-				}
-				currentBalloonText = keroText || sakuraText;
-				if (isTauriAvailable() && hasTextContent && !shownScopes.has(1)) {
-					shownScopes.add(1);
-					invoke("show_balloon_window", {
-						scopeId: 1,
-						theme: app.currentBalloonTheme,
-					}).catch(() => {});
-				}
-			} else {
-				app.surfaceManager?.onTalkEnd(1);
-				if (!isTauriAvailable()) {
-					if (app.elements.sakuraSlot) {
-						app.elements.sakuraSlot.style.display = "flex";
-					}
-					sakuraDisplay.style.display = "block";
-				}
-				currentBalloonText = sakuraText;
-				if (
-					isTauriAvailable() &&
-					hasTextContent &&
-					!shownScopes.has(player.currentScope)
-				) {
-					shownScopes.add(player.currentScope);
-					invoke("show_balloon_window", {
-						scopeId: player.currentScope,
-						theme: app.currentBalloonTheme,
-					}).catch(() => {});
-				}
-			}
+			handleScope(player, app, token, context);
 			break;
 
-		case "char": {
-			const span = document.createElement("span");
-			span.textContent = token.value;
-			if (player.currentFontStyles) {
-				Object.assign(span.style, player.currentFontStyles);
-			}
-			if (currentAnchor) {
-				currentAnchor.appendChild(span);
-			} else {
-				currentBalloonText.appendChild(span);
-			}
-
-			// 同期セクション (\_s): サクラ側と相方側（両バルーン）へ同時に文字を出力
-			if (player.isSyncMode) {
-				const mirrorTarget =
-					currentBalloonText === sakuraText ? keroText : sakuraText;
-				if (mirrorTarget) {
-					const mirrorSpan = document.createElement("span");
-					mirrorSpan.textContent = token.value;
-					if (player.currentFontStyles) {
-						Object.assign(mirrorSpan.style, player.currentFontStyles);
-					}
-					mirrorTarget.appendChild(mirrorSpan);
-				}
-				scheduleDesktopBalloonSync(false, 0);
-				scheduleDesktopBalloonSync(false, 1);
-				app.surfaceManager?.onCharSpoken(0);
-				app.surfaceManager?.onCharSpoken(1);
-			} else {
-				scheduleDesktopBalloonSync(false);
-				app.surfaceManager?.onCharSpoken(player.currentScope);
-			}
-
-			player.playbackController?.notifyChar?.(token.value, player.currentScope);
-
-			if (!player.skipRequested && !isQuickMode) {
-				// 句読点ディレイ (仕様: 、。！？ などに +100ms 付加)
-				const isPunctuation = /[、。！？,!?]/.test(token.value);
-				const baseWait = isPunctuation ? 140 : 40;
-				const waitMs = player.playbackController?.calculateWait
-					? player.playbackController.calculateWait(baseWait, true)
-					: baseWait;
-				if (waitMs > 0) {
-					await player.sleep(waitMs);
-				}
-			}
+		case "char":
+			await handleChar(player, app, token, context);
 			break;
-		}
 
 		case "newline":
-			if (token.half) {
-				const halfBr = document.createElement("span");
-				halfBr.style.display = "block";
-				halfBr.style.height = "0.4em";
-				currentBalloonText.appendChild(halfBr);
-			} else {
-				currentBalloonText.appendChild(document.createElement("br"));
-			}
-
-			if (player.isSyncMode) {
-				const mirrorTarget =
-					currentBalloonText === sakuraText ? keroText : sakuraText;
-				if (mirrorTarget) {
-					if (token.half) {
-						const mirrorHalfBr = document.createElement("span");
-						mirrorHalfBr.style.display = "block";
-						mirrorHalfBr.style.height = "0.4em";
-						mirrorTarget.appendChild(mirrorHalfBr);
-					} else {
-						mirrorTarget.appendChild(document.createElement("br"));
-					}
-				}
-				scheduleDesktopBalloonSync(false, 0);
-				scheduleDesktopBalloonSync(false, 1);
-			} else {
-				scheduleDesktopBalloonSync(false);
-			}
+			handleNewline(player, app, token, context);
 			break;
 
 		case "clear":
-			player.playbackController?.notifyClear?.(
-				token.mode || "all",
-				token.count || 1,
-			);
-			if (token.mode === "char") {
-				const count = Math.max(1, token.count || 1);
-				let removed = 0;
-				while (removed < count && currentBalloonText.lastChild) {
-					const lastNode = currentBalloonText.lastChild;
-					if (lastNode.nodeType === Node.TEXT_NODE) {
-						const text = lastNode.nodeValue || "";
-						if (text.length <= count - removed) {
-							removed += text.length;
-							currentBalloonText.removeChild(lastNode);
-						} else {
-							lastNode.nodeValue = text.slice(0, -(count - removed));
-							removed = count;
-						}
-					} else {
-						// Element node (e.g. span, br, img)
-						currentBalloonText.removeChild(lastNode);
-						removed++;
-					}
-				}
-			} else if (token.mode === "line") {
-				const count = Math.max(1, token.count || 1);
-				let removedLines = 0;
-				while (removedLines < count && currentBalloonText.lastChild) {
-					const lastNode = currentBalloonText.lastChild;
-					const isBr =
-						lastNode.nodeName === "BR" ||
-						(lastNode.nodeName === "SPAN" &&
-							lastNode.style?.display === "block");
-					currentBalloonText.removeChild(lastNode);
-					if (isBr) {
-						removedLines++;
-					}
-				}
-			} else {
-				currentBalloonText.innerHTML = "";
-			}
-			scheduleDesktopBalloonSync(true);
+			handleClear(player, app, token, context);
 			break;
 
 		case "pause":
-			flushDesktopBalloon();
-			player.playbackController?.notifyPause?.(Boolean(token.noClear));
-			if (!player.skipRequested && !isQuickMode) {
-				const activeDisplay =
-					player.currentScope === 1 ? keroDisplay : sakuraDisplay;
-				await player.waitForClickOrTimeout(activeDisplay);
-			}
-			if (!token.noClear) {
-				// \x: クリック後にスコープをリセット (\0)、フォント装飾を解除、バルーン内容をクリア
-				currentBalloonText.innerHTML = "";
-				player.currentScope = 0;
-				currentBalloonText = sakuraText;
-				player.currentFontStyles = {};
-				scheduleDesktopBalloonSync(true);
-			}
+			await handlePause(player, app, token, context);
 			break;
 
-		case "anchor_begin": {
-			const anchorSpan = document.createElement("span");
-			anchorSpan.className = "balloon-anchor";
-			anchorSpan.dataset.anchorId = token.id;
-			anchorSpan.setAttribute("data-anchor-id", token.id);
-			let hoverTimer = null;
-			anchorSpan.addEventListener("click", (e) => {
-				e.stopPropagation();
-				if (hoverTimer) {
-					clearTimeout(hoverTimer);
-					hoverTimer = null;
-				}
-				app.ghostController.sendShioriEvent("OnAnchorSelect", [
-					token.id,
-					...(token.args || []),
-				]);
-			});
-			anchorSpan.addEventListener("mouseenter", () => {
-				app.ghostController?.sendShioriEvent("OnAnchorEnter", [
-					anchorSpan.textContent || token.id,
-					token.id,
-					...(token.args || []),
-				]);
-				if (hoverTimer) clearTimeout(hoverTimer);
-				hoverTimer = setTimeout(() => {
-					app.ghostController?.sendShioriEvent("OnAnchorHover", [
-						anchorSpan.textContent || token.id,
-						token.id,
-						...(token.args || []),
-					]);
-					hoverTimer = null;
-				}, 500);
-			});
-			anchorSpan.addEventListener("mouseleave", () => {
-				if (hoverTimer) {
-					clearTimeout(hoverTimer);
-					hoverTimer = null;
-				}
-				app.ghostController?.sendShioriEvent("OnAnchorEnter", []);
-			});
-			currentBalloonText.appendChild(anchorSpan);
-			currentAnchor = anchorSpan;
-			scheduleDesktopBalloonSync(false);
+		case "anchor_begin":
+			handleAnchorBegin(player, app, token, context);
 			break;
-		}
 
 		case "anchor_end":
-			currentAnchor = null;
+			handleAnchorEnd(player, app, token, context);
 			break;
 
 		case "quick_toggle":
-			if (typeof token.value === "boolean") {
-				isQuickMode = token.value;
-			} else {
-				isQuickMode = !isQuickMode;
-			}
-			player.playbackController?.setQuickMode?.(isQuickMode);
+			handleQuickToggle(player, app, token, context);
 			break;
 
 		case "wait":
-			player.playbackController?.notifyWait?.(token.value);
-			if (!player.skipRequested && !isQuickMode) {
-				const waitMs = player.playbackController?.calculateWait
-					? player.playbackController.calculateWait(token.value)
-					: token.value;
-				if (waitMs > 0) {
-					await player.sleep(waitMs);
-				}
-			}
+			await handleWait(player, app, token, context);
 			break;
 
 		case "surface":
-			app.ghostController.updateSurface(token.value, player.currentScope);
+			handleSurface(player, app, token, context);
 			break;
 
 		case "animation":
-			await app.surfaceManager?.playAnimationById(
-				token.animId,
-				player.currentScope,
-				token.wait,
-			);
+			await handleAnimation(player, app, token, context);
 			break;
 
 		case "wait_animation":
-			await app.surfaceManager?.waitForAnimation(
-				token.animId,
-				player.currentScope,
-			);
+			await handleWaitAnimation(player, app, token, context);
 			break;
 
-		case "choice": {
-			const choiceBtn = document.createElement("button");
-			choiceBtn.className = "balloon-choice-btn";
-			choiceBtn.setAttribute("data-choice-id", token.id);
-			choiceBtn.textContent = token.text;
-			let hoverTimer = null;
-			choiceBtn.addEventListener("click", (e) => {
-				e.stopPropagation();
-				if (hoverTimer) {
-					clearTimeout(hoverTimer);
-					hoverTimer = null;
-				}
-				if (player.choiceTimeoutTimer) {
-					clearTimeout(player.choiceTimeoutTimer);
-					player.choiceTimeoutTimer = null;
-				}
-				player.onChoiceSelected(token.id, token.text);
-			});
-			choiceBtn.addEventListener("mouseenter", () => {
-				app.ghostController?.sendShioriEvent("OnChoiceEnter", [
-					token.text,
-					token.id,
-					...(token.args || []),
-				]);
-				if (hoverTimer) clearTimeout(hoverTimer);
-				hoverTimer = setTimeout(() => {
-					app.ghostController?.sendShioriEvent("OnChoiceHover", [
-						token.text,
-						token.id,
-						...(token.args || []),
-					]);
-					hoverTimer = null;
-				}, 500);
-			});
-			choiceBtn.addEventListener("mouseleave", () => {
-				if (hoverTimer) {
-					clearTimeout(hoverTimer);
-					hoverTimer = null;
-				}
-				app.ghostController?.sendShioriEvent("OnChoiceEnter", []);
-			});
-			currentBalloonText.appendChild(document.createElement("br"));
-			currentBalloonText.appendChild(choiceBtn);
-			flushDesktopBalloon();
-
-			if (player.choiceTimeout > 0 && !player.choiceTimeoutTimer) {
-				player.choiceTimeoutTimer = setTimeout(() => {
-					player.onChoiceTimeout();
-				}, player.choiceTimeout);
-			}
+		case "choice":
+			handleChoice(player, app, token, context);
 			break;
-		}
 
-		case "balloon": {
-			const balloonDisplay =
-				player.currentScope === 1 ? keroDisplay : sakuraDisplay;
-			if (token.value === -1) {
-				if (balloonDisplay) balloonDisplay.style.display = "none";
-			} else {
-				if (balloonDisplay) balloonDisplay.style.display = "block";
-			}
+		case "balloon":
+			handleBalloon(player, app, token, context);
 			break;
-		}
 
-		case "inline_bitmap": {
-			const img = document.createElement("img");
-			img.className = "balloon-inline-bitmap";
-			const themeName = app.currentBalloonTheme || "default";
-			const rawPath = token.path || "";
-			const fullPath =
-				rawPath.startsWith("data:") ||
-				rawPath.startsWith("http://") ||
-				rawPath.startsWith("https://")
-					? rawPath
-					: `assets/balloon/${themeName}/${rawPath}`;
-			img.src = globalThis.__TAURI__?.core?.convertFileSrc
-				? globalThis.__TAURI__.core.convertFileSrc(fullPath)
-				: fullPath;
-			img.style.display = "inline-block";
-			img.style.verticalAlign = "middle";
-			img.style.maxHeight = "1.2em";
-			img.style.width = "auto";
-			if (token.mode === "inline" || !token.mode) {
-				currentBalloonText.appendChild(img);
-			} else {
-				if (token.x !== undefined) img.style.left = `${token.x}px`;
-				if (token.y !== undefined) img.style.top = `${token.y}px`;
-				img.style.position = "absolute";
-				currentBalloonText.appendChild(img);
-			}
-			scheduleDesktopBalloonSync(false);
+		case "inline_bitmap":
+			handleInlineBitmap(player, app, token, context);
 			break;
-		}
 
 		case "timeout":
-			player.timeCritical = true;
+			handleTimeout(player, app, token, context);
 			break;
 
 		case "choice_timeout":
-			player.choiceTimeout = token.timeout;
+			handleChoiceTimeout(player, app, token, context);
 			break;
 
 		case "balloon_timeout":
-			player.balloonTimeout = token.timeout;
+			handleBalloonTimeout(player, app, token, context);
 			break;
 
 		case "halt":
-			await app.ghostController?.closeGhost?.();
+			await handleHalt(player, app, token, context);
 			break;
 
-		case "offset": {
-			const spacer = document.createElement("span");
-			spacer.style.display = "inline-block";
-			if (token.x.startsWith("@")) {
-				spacer.style.marginLeft = `${token.x.slice(1)}px`;
-			} else {
-				spacer.style.position = "relative";
-				spacer.style.left = `${token.x}px`;
-			}
-			if (token.y.startsWith("@")) {
-				spacer.style.marginTop = `${token.y.slice(1)}px`;
-			} else {
-				spacer.style.top = `${token.y}px`;
-			}
-			currentBalloonText.appendChild(spacer);
-			scheduleDesktopBalloonSync(false);
+		case "offset":
+			handleOffset(player, app, token, context);
 			break;
-		}
 
-		case "font": {
-			player.currentFontStyles = player.currentFontStyles || {};
-			if (token.tag === "default") {
-				player.currentFontStyles = {};
-			} else if (token.tag === "color") {
-				if (token.param) player.currentFontStyles.color = token.param;
-				else delete player.currentFontStyles.color;
-			} else if (token.tag === "bold") {
-				player.currentFontStyles.fontWeight =
-					token.param === "0" || token.param === "false" ? "normal" : "bold";
-			} else if (token.tag === "italic") {
-				player.currentFontStyles.fontStyle =
-					token.param === "0" || token.param === "false" ? "normal" : "italic";
-			} else if (token.tag === "strike") {
-				player.currentFontStyles.textDecoration =
-					token.param === "0" || token.param === "false"
-						? "none"
-						: "line-through";
-			} else if (token.tag === "underline") {
-				player.currentFontStyles.textDecoration =
-					token.param === "0" || token.param === "false" ? "none" : "underline";
-			} else if (token.tag === "height") {
-				if (token.param) {
-					const size =
-						token.param.endsWith("px") ||
-						token.param.endsWith("pt") ||
-						token.param.endsWith("em")
-							? token.param
-							: `${token.param}px`;
-					player.currentFontStyles.fontSize = size;
-				}
-			} else if (token.tag === "shadow") {
-				if (token.param === "0" || token.param === "none") {
-					delete player.currentFontStyles.textShadow;
-				} else {
-					const col = token.param || "rgba(0,0,0,0.5)";
-					player.currentFontStyles.textShadow = `1px 1px 2px ${col}`;
-				}
-			} else if (token.tag === "name" && token.param) {
-				player.currentFontStyles.fontFamily = token.param;
-			}
+		case "font":
+			handleFont(player, app, token, context);
 			break;
-		}
 
 		case "sync_toggle":
-			if (typeof token.value === "boolean") {
-				player.isSyncMode = token.value;
-			} else {
-				player.isSyncMode = !player.isSyncMode;
-			}
-			player.playbackController?.emit?.("playback:sync-mode", {
-				enabled: player.isSyncMode,
-			});
+			handleSyncToggle(player, app, token, context);
 			break;
 
 		case "command":
-			await player.commandHandler.runCommand(token.args);
+			await handleCommand(player, app, token, context);
 			break;
 
 		case "end":
-			app.surfaceManager?.onTalkEnd(player.currentScope);
-			app.surfaceManager?.onScriptEnd(0);
-			app.surfaceManager?.onScriptEnd(1);
-			ended = true;
+			handleEnd(player, app, token, context);
 			break;
 	}
-
-	context.currentBalloonText = currentBalloonText;
-	context.isQuickMode = isQuickMode;
-	context.ended = ended;
-	context.currentAnchor = currentAnchor;
 }

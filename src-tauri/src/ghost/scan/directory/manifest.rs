@@ -13,6 +13,15 @@ pub struct GhostManifest {
     pub recommended_balloon: Option<String>,
     pub recommended_balloon_path: Option<String>,
     pub default_balloon_path: Option<String>,
+    pub shiori_version: Option<String>,
+    pub shiori_cache: Option<String>,
+    pub shiori_encoding: Option<String>,
+    pub shiori_forceencoding: Option<String>,
+    pub shiori_escape_unknown: Option<String>,
+    pub shiori_logo_file: Option<String>,
+    pub shiori_logo_align: Option<String>,
+    pub shiori_logo_x: Option<i32>,
+    pub shiori_logo_y: Option<i32>,
     pub sstp_allow_communicate: bool,
     pub sstp_allow_unspecified_send: bool,
     pub sstp_always_translate: bool,
@@ -73,6 +82,35 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
         .as_ref()
         .and_then(|m| m.get("default.balloon.path").cloned());
 
+    let shiori_version = meta_map
+        .as_ref()
+        .and_then(|m| m.get("shiori.version").cloned());
+    let shiori_cache = meta_map
+        .as_ref()
+        .and_then(|m| m.get("shiori.cache").cloned());
+    let shiori_encoding = meta_map
+        .as_ref()
+        .and_then(|m| m.get("shiori.encoding").cloned());
+    let shiori_forceencoding = meta_map
+        .as_ref()
+        .and_then(|m| m.get("shiori.forceencoding").cloned());
+    let shiori_escape_unknown = meta_map
+        .as_ref()
+        .and_then(|m| m.get("shiori.escape_unknown").cloned());
+    let shiori_logo_file = meta_map
+        .as_ref()
+        .and_then(|m| m.get("shiori.logo.file").cloned());
+    let shiori_logo_align = meta_map
+        .as_ref()
+        .and_then(|m| m.get("shiori.logo.align").cloned());
+    let shiori_logo_x = meta_map.as_ref().and_then(|m| {
+        m.get("shiori.logo.x")
+            .and_then(|v| v.trim().parse::<i32>().ok())
+    });
+    let shiori_logo_y = meta_map.as_ref().and_then(|m| {
+        m.get("shiori.logo.y")
+            .and_then(|v| v.trim().parse::<i32>().ok())
+    });
     let sstp_allow_communicate = meta_map
         .as_ref()
         .and_then(|m| m.get("sstp.allowcommunicate"))
@@ -103,6 +141,15 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
         recommended_balloon,
         recommended_balloon_path,
         default_balloon_path,
+        shiori_version,
+        shiori_cache,
+        shiori_encoding,
+        shiori_forceencoding,
+        shiori_escape_unknown,
+        shiori_logo_file,
+        shiori_logo_align,
+        shiori_logo_x,
+        shiori_logo_y,
         sstp_allow_communicate,
         sstp_allow_unspecified_send,
         sstp_always_translate,

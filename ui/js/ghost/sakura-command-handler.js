@@ -35,6 +35,7 @@ import {
 	handleExecuteSntpCommand,
 	handleNotifyCommand,
 	handleOpenSystemTarget,
+	handleReloadShiori,
 	handleSetAlignmentOnDesktop,
 	handleSetAlphaCommand,
 	handleSetPositionCommand,
@@ -228,6 +229,10 @@ function initDefaultCommandHandlers() {
 
 	registerCommandHandler("set:shioridebugmode", async (handler, args) => {
 		await handleSetShioriDebugMode(handler, args);
+	});
+
+	registerCommandHandler("reload:shiori", async (handler, args) => {
+		await handleReloadShiori(handler, args);
 	});
 
 	registerCommandHandler("execute:resetwindowpos", async (handler, args) => {

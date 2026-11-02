@@ -118,6 +118,7 @@ pub fn run() {
             commands::shiori::get_shiori_status,
             commands::shiori::lifecycle::close::unload_current_ghost,
             commands::shiori::lifecycle::spawn::spawn_ghost,
+            commands::shiori::lifecycle::load::reload_current_ghost_shiori,
             commands::shiori::lifecycle::close::close_ghost,
             commands::window::request_overlay_permission,
             commands::window::setup_foreground_service,

@@ -5,6 +5,6 @@ pub mod spawn;
 #[allow(unused_imports)]
 pub use close::{close_ghost, unload_current_ghost};
 #[allow(unused_imports)]
-pub use load::load_ghost;
+pub use load::{load_ghost, reload_current_ghost_shiori};
 #[allow(unused_imports)]
 pub use spawn::spawn_ghost;

@@ -383,6 +383,22 @@ export async function handleSetShioriDebugMode(handler, args) {
 }
 
 /**
+ * SHIORI再読み込み (\![reload,shiori])
+ * [bang-reload-shiori.md]
+ * @param {import('../sakura-command-handler.js').SakuraCommandHandler} handler
+ * @param {string[]} _args
+ */
+export async function handleReloadShiori(handler, _args) {
+	console.log("🔄 Execute reload,shiori triggered");
+	if (handler.app.ghostController) {
+		const ghost = handler.app.ghostController.currentGhost;
+		if (ghost) {
+			await handler.app.ghostController.initializeGhostSHIORI(ghost);
+		}
+	}
+}
+
+/**
  * シェル位置初期化 (\![execute,resetwindowpos])
  * [bang-execute-resetwindowpos.md]
  * @param {import('../sakura-command-handler.js').SakuraCommandHandler} handler

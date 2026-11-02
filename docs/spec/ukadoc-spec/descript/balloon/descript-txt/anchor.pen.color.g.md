@@ -2,7 +2,7 @@
 
 - **規格**: [anchor.pen.color.g.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/anchor.pen.color.g.md)
 - **検索語**: anchor.pen.color.g
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-実装コード内に「anchor.pen.color.g」は検出されませんでした。
+- `ui/js/core/actions/balloon-descript/font/group.js:15` `* [anchor.pen.color.r,数値], [anchor.pen.color.g,数値], [anchor.pen.color.b,数値]`

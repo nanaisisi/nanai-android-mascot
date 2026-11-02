@@ -15,13 +15,25 @@ import {
 	openPasswordInput,
 	openSliderInput,
 	openTextAreaBox,
-} from "./command-handler/inputbox.js";
+	expandSakuraScriptEnv,
+	resetScriptScopeState,
+	scriptLifetimeState,
+} from "./command-handler/env.js";
+import { openInputBox } from "./command-handler/inputbox.js";
 import { handleJumpCommand } from "./command-handler/jump.js";
 import {
 	CommandHandlerMap,
 	getCommandHandler,
 	registerCommandHandler,
 } from "./command-handler/registry.js";
+import {
+	handleBiffCommand,
+	handleExecuteSntpCommand,
+	handleOpenSystemTarget,
+	handleSetAlignmentOnDesktop,
+	handleSetTaskTrayIcon,
+	handleSetTrayBalloon,
+} from "./command-handler/system.js";
 import { closeTeachBox, openTeachBox } from "./command-handler/teachbox.js";
 import {
 	handleWindowState,
@@ -151,6 +163,33 @@ function initDefaultCommandHandlers() {
 	registerCommandHandler("set:alignmenttodesktop", async (handler, args) => {
 		await setAlignmentToDesktop(handler, args[2]);
 	});
+
+	registerCommandHandler("set:alignmentondesktop", async (handler, args) => {
+		await handleSetAlignmentOnDesktop(handler, args);
+	});
+
+	registerCommandHandler("set:tasktrayicon", async (handler, args) => {
+		await handleSetTaskTrayIcon(handler, args);
+	});
+
+	registerCommandHandler("set:trayballoon", async (handler, args) => {
+		await handleSetTrayBalloon(handler, args);
+	});
+
+	registerCommandHandler("biff", async (handler, args) => {
+		await handleBiffCommand(handler, args);
+	});
+
+	registerCommandHandler("executesntp", async (handler, args) => {
+		await handleExecuteSntpCommand(handler, args);
+	});
+
+	registerCommandHandler("open:explorer", handleOpenSystemTarget);
+	registerCommandHandler("open:shellexplorer", handleOpenSystemTarget);
+	registerCommandHandler("open:balloonexplorer", handleOpenSystemTarget);
+	registerCommandHandler("open:ghostexplorer", handleOpenSystemTarget);
+	registerCommandHandler("open:file", handleOpenSystemTarget);
+	registerCommandHandler("open:browser", handleOpenSystemTarget);
 
 	registerCommandHandler("windowstate", async (_handler, args) => {
 		const state = args[1];
@@ -343,11 +382,26 @@ export class SakuraCommandHandler {
 	async handleJump(target, args = []) {
 		await handleJumpCommand(this, target, args);
 	}
+
+	expandEnv(script, options = {}) {
+		return expandSakuraScriptEnv(script, {
+			username: this.player?.app?.ghostController?.username,
+			selfname: this.player?.app?.ghostController?.currentGhost?.name,
+			...options,
+		});
+	}
+
+	resetLifetimeState() {
+		resetScriptScopeState();
+	}
 }
 
 export {
 	CommandHandlerMap,
+	expandSakuraScriptEnv,
 	getCommandHandler,
 	initDefaultCommandHandlers,
 	registerCommandHandler,
+	resetScriptScopeState,
+	scriptLifetimeState,
 };

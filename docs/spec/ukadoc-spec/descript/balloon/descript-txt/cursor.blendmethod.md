@@ -2,7 +2,7 @@
 
 - **規格**: [cursor.blendmethod.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/cursor.blendmethod.md)
 - **検索語**: cursor.blendmethod
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-実装コード内に「cursor.blendmethod」は検出されませんでした。
+- `ui/js/core/actions/balloon-descript/font/group.js:33` `* [cursor.blendmethod,合成方法]`
+- `ui/js/core/actions/balloon-descript/font/group.js:85` `// [anchor.blendmethod / cursor.blendmethod / *.blendmethod]:`

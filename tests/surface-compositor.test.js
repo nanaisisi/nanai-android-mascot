@@ -68,6 +68,15 @@ test("surface-compositor covers SurfaceFrameBuffer and Contract functions", asyn
 	const fromCanvas = SurfaceFrameBuffer.fromCanvas(mockCanvas);
 	assert.ok(fromCanvas);
 
+	// clone and clear test
+	const cloned = fb.clone();
+	assert.equal(cloned.width, fb.width);
+	assert.equal(cloned.height, fb.height);
+	assert.deepEqual(cloned.getPixel(0, 0), [255, 128, 64, 255]);
+
+	cloned.clear();
+	assert.deepEqual(cloned.getPixel(0, 0), [0, 0, 0, 0]);
+
 	// compositeElements contract alias
 	assert.equal(typeof compositeElements, "function");
 	const res = await compositeElements([], "", async () => null);
@@ -126,6 +135,7 @@ test("surface-compositor covers processChromaKey, drawLayer, and composeSurfaceE
 	await drawLayer(mockCtx, "lum.png", resolvePath, 0, 0, "blend-luminosity");
 	await drawLayer(mockCtx, "asis.png", resolvePath, 0, 0, "asis");
 	await drawLayer(mockCtx, "base.png", resolvePath, 0, 0, "base");
+	await drawLayer(mockCtx, "interpolate.png", resolvePath, 0, 0, "interpolate");
 	await drawLayer(mockCtx, "", resolvePath, 0, 0, "overlay");
 
 	// 5. composeSurfaceElements

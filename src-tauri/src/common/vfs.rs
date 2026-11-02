@@ -1,0 +1,27 @@
+//! Slot-03: VFS & 文字コード正規化
+//!
+//! 大小文字不問パス解決 (Windows/Linux/Android差分吸収)、
+//! Shift_JIS(CP932)/UTF-8自動判定、およびインメモリVFSスタブ (MockVfs) を提供します。
+
+pub use nanai_android_mascot_ui::{
+    detect_and_decode, normalize_vfs_path, open_shift_jis_file, open_text_file, resolve_vfs_path,
+    MockVfs, VfsResolver,
+};
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_common_vfs_reexports() {
+        let mut mock = MockVfs::new();
+        mock.add_text_file("Shell/Master/descript.txt", "name,Master");
+        assert!(mock.exists("shell/master/descript.txt"));
+
+        let text = mock.read_text("SHELL/MASTER/DESCRIPT.TXT").unwrap();
+        assert_eq!(text, "name,Master");
+
+        let norm = normalize_vfs_path("foo\\bar//baz/../qux");
+        assert_eq!(norm, "foo/bar/qux");
+    }
+}

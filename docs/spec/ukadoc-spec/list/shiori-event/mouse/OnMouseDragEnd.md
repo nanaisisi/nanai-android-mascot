@@ -2,7 +2,7 @@
 
 - **規格**: [OnMouseDragEnd.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/mouse/OnMouseDragEnd/) (ukadoc-spec/list/shiori-event/mouse/OnMouseDragEnd.md)
 - **検索語**: OnMouseDragEnd
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-実装コード内に「OnMouseDragEnd」は検出されませんでした。
+- `ui/js/core/app-events.js:255` `this.ghostController.sendShioriEvent("OnMouseDragEnd", [`

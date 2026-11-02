@@ -4,6 +4,7 @@
 
 use super::error::ShioriError;
 use libloading::{Library, Symbol};
+use nanai_android_mascot_ui::ShioriEngine;
 use std::path::{Path, PathBuf};
 
 #[cfg(not(windows))]
@@ -278,6 +279,24 @@ impl ShioriDynamicEngine {
 impl Drop for ShioriDynamicEngine {
     fn drop(&mut self) {
         let _ = self.unload();
+    }
+}
+
+impl ShioriEngine for ShioriDynamicEngine {
+    fn load(&mut self, dir_path: &Path) -> Result<(), String> {
+        self.initialize(dir_path).map_err(|e| e.to_string())
+    }
+
+    fn request(&self, request_str: &str) -> Result<String, String> {
+        self.request(request_str)
+    }
+
+    fn unload(&mut self) -> Result<(), String> {
+        self.unload()
+    }
+
+    fn is_loaded(&self) -> bool {
+        self.is_loaded
     }
 }
 

@@ -92,6 +92,8 @@ fn test_fmo_entry_conversion_and_sync() {
         ghostpath: "/app/assets/ghost/nanai/".to_string(),
         balloon0: "Hello".to_string(),
         balloon1: "KeroHi".to_string(),
+        kerohwnd: None,
+        modulestate: None,
     };
 
     let rec = entry.to_record();
@@ -112,4 +114,22 @@ fn test_fmo_entry_conversion_and_sync() {
     assert_eq!(entry_back.sakura_surface, entry.sakura_surface);
     assert_eq!(entry_back.kero_surface, entry.kero_surface);
     assert_eq!(entry_back.ghostpath, entry.ghostpath);
+}
+
+#[test]
+fn test_fmo_entry_kerohwnd_and_modulestate_sync() {
+    let mut entry = FmoEntry::new("ghost_02", "Emily");
+    entry.keroname = "Teddy".to_string();
+    entry.hwnd = 10001;
+    entry.kerohwnd = Some(10002);
+    entry.modulestate = Some("shiori:running".to_string());
+
+    let rec = entry.to_record();
+    assert_eq!(rec.kerohwnd, Some(10002));
+    assert_eq!(rec.hwndlist, vec![10001, 10002]);
+    assert_eq!(rec.modulestate, Some("shiori:running".to_string()));
+
+    let back = FmoEntry::from_record(&rec);
+    assert_eq!(back.kerohwnd, Some(10002));
+    assert_eq!(back.modulestate, Some("shiori:running".to_string()));
 }

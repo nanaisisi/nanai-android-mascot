@@ -147,8 +147,8 @@ fn handle_descript_line(txt: &mut SurfacesTxt, line: &str) {
     match key.to_lowercase().as_str() {
         "version" => txt.version = value.trim().parse().unwrap_or(0),
         "maxwidth" => txt.maxwidth = value.trim().parse().ok(),
-        "animation.sort" => txt.animation_sort = Some(SortKind::parse(value)),
-        "collision.sort" => txt.collision_sort = Some(SortKind::parse(value)),
+        "animation-sort" | "animation.sort" => txt.animation_sort = Some(SortKind::parse(value)),
+        "collision-sort" | "collision.sort" => txt.collision_sort = Some(SortKind::parse(value)),
         k => {
             txt.properties
                 .insert(k.to_string(), value.trim().to_string());
@@ -193,6 +193,17 @@ fn handle_surface_line(txt: &mut SurfacesTxt, ids: &[u32], line: &str) {
     } else if key_lower == "name" {
         for id in ids {
             txt.surfaces.entry(*id).or_default().name = Some(value.trim().to_string());
+        }
+    } else if key_lower == "icon.rect" {
+        let coords: Vec<i32> = value
+            .split(',')
+            .filter_map(|t| t.trim().parse::<i32>().ok())
+            .collect();
+        if coords.len() >= 4 {
+            let rect = [coords[0], coords[1], coords[2], coords[3]];
+            for id in ids {
+                txt.surfaces.entry(*id).or_default().icon_rect = Some(rect);
+            }
         }
     } else if let Some(rest) = key_lower.strip_prefix("point.") {
         apply_point(txt, ids, rest, value);

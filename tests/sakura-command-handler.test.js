@@ -31,9 +31,12 @@ globalThis.document = {
 	},
 };
 
-const { SakuraCommandHandler } = await import(
-	"../ui/js/ghost/sakura-command-handler.js"
-);
+const {
+	SakuraCommandHandler,
+	expandSakuraScriptEnv,
+	resetScriptScopeState,
+	scriptLifetimeState,
+} = await import("../ui/js/ghost/sakura-command-handler.js");
 
 test("SakuraCommandHandler covers all commands and boxes", async () => {
 	const eventsSent = [];
@@ -41,7 +44,14 @@ test("SakuraCommandHandler covers all commands and boxes", async () => {
 		toggleMenu() {
 			this.menuToggled = true;
 		},
+		networkActions: {
+			checkEmail: async () => {
+				this.emailChecked = true;
+			},
+		},
 		ghostController: {
+			username: "Alice",
+			currentGhost: { name: "NanaiBot" },
 			sendShioriEvent: async (ev, args) => {
 				eventsSent.push({ ev, args });
 			},
@@ -93,15 +103,29 @@ test("SakuraCommandHandler covers all commands and boxes", async () => {
 	await handler.runCommand(["update"]);
 	await handler.runCommand(["updatebymyself"]);
 
-	// 6. alignmenttodesktop
+	// 6. alignmenttodesktop & alignmentondesktop
 	await handler.runCommand(["set", "alignmenttodesktop", "free"]);
 	await handler.runCommand(["set", "alignmenttodesktop", "bottom"]);
+	await handler.runCommand(["set", "alignmentondesktop", "top"]);
 
 	// 6b. choicetimeout / balloontimeout
 	await handler.runCommand(["set", "choicetimeout", "5000"]);
 	assert.equal(player.choiceTimeout, 5000);
 	await handler.runCommand(["set", "balloontimeout", "3000"]);
 	assert.equal(player.balloonTimeout, 3000);
+
+	// 6c. tasktrayicon, trayballoon, biff, executesntp
+	await handler.runCommand(["set", "tasktrayicon", "tray.ico"]);
+	await handler.runCommand(["set", "trayballoon", "Title", "Message"]);
+	await handler.runCommand(["biff"]);
+	await handler.runCommand(["executesntp"]);
+	assert.ok(eventsSent.some((e) => e.ev === "OnSNTPCompare"));
+
+	// 6d. open:explorer, shellexplorer, balloonexplorer, ghostexplorer, file, browser
+	await handler.runCommand(["open", "explorer"]);
+	await handler.runCommand(["open", "shellexplorer"]);
+	await handler.runCommand(["open", "file", "/tmp/test.txt"]);
+	await handler.runCommand(["open", "browser", "https://example.com"]);
 
 	// 7. unknown command
 	await handler.runCommand(["unknown"]);
@@ -182,4 +206,35 @@ test("SakuraCommandHandler covers all commands and boxes", async () => {
 	assert.ok(handler.communicateForm);
 	handler.runCommand(["close", "communicatebox"]);
 	assert.equal(handler.communicateForm, null);
+});
+
+test("expandSakuraScriptEnv properly resolves UKADOC/SSP variables", () => {
+	const script =
+		"Hello %username! I am %selfname (alias %ms, %selfname2) and partner is %keroname. Escaped: \\%username. Star: %*. Word: %m?. Prop: %property[username], %property[currentghost.name]. Screen: %screenwidthx%screenheight.";
+	const expanded = expandSakuraScriptEnv(script, {
+		username: "Master",
+		selfname: "Nanai",
+		keroname: "Kero",
+		screenWidth: 1920,
+		screenHeight: 1080,
+		randomWords: ["TestWord"],
+	});
+
+	assert.ok(expanded.includes("Hello Master!"));
+	assert.ok(expanded.includes("I am Nanai (alias Nanai, Nanai)"));
+	assert.ok(expanded.includes("partner is Kero"));
+	assert.ok(expanded.includes("Escaped: %username"));
+	assert.ok(expanded.includes("Star: \\![*]"));
+	assert.ok(expanded.includes("Word: TestWord"));
+	assert.ok(expanded.includes("Prop: Master, Nanai."));
+	assert.ok(expanded.includes("Screen: 1920x1080."));
+
+	// Lifetime state testing
+	scriptLifetimeState.setVariable("customVar", "ActiveValue");
+	const resWithCustom = expandSakuraScriptEnv("Value: %property[customVar]");
+	assert.equal(resWithCustom, "Value: ActiveValue");
+
+	resetScriptScopeState();
+	const resAfterReset = expandSakuraScriptEnv("Value: %property[customVar]");
+	assert.equal(resAfterReset, "Value: ");
 });

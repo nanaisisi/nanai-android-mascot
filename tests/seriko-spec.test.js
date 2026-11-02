@@ -195,3 +195,69 @@ test("renderAnimationFrame falls back to placeholder dataUrl if pattern placehol
 	const layer = frames[0][2][0];
 	assert.ok(layer.file.startsWith("data:image/png;base64,"));
 });
+
+test("SERIKO option exclusive stops other animations and blocks new ones", async () => {
+	const { animation } = animationFixture();
+	const events = [];
+	animation.scheduler.onFrameStep((ev) => {
+		events.push(ev);
+	});
+
+	// background アニメーション開始
+	animation.playAnimationPatterns(
+		{
+			id: 1,
+			options: ["background"],
+			patterns: [
+				{ surface: 101, wait: 0 },
+				{ surface: 102, wait: 100 },
+			],
+		},
+		0,
+		0,
+	);
+
+	// exclusive アニメーション開始
+	const exclusivePromise = animation.playAnimationPatterns(
+		{
+			id: 2,
+			options: ["exclusive"],
+			patterns: [
+				{ surface: 201, wait: 20 },
+				{ surface: -1, wait: 0 },
+			],
+		},
+		0,
+		0,
+	);
+
+	// exclusive 実行中に通常アニメーションを要求してもブロックされる
+	const blockedPromise = animation.playAnimationPatterns(
+		{
+			id: 3,
+			patterns: [{ surface: 301, wait: 0 }],
+		},
+		0,
+		0,
+	);
+	await blockedPromise;
+	await exclusivePromise;
+
+	assert.ok(events.some((e) => e.animationId === 1 && e.isBackground === true));
+	assert.ok(events.some((e) => e.animationId === 2));
+	assert.equal(
+		events.some((e) => e.animationId === 3),
+		false,
+	);
+});
+
+test("parseSurfacesTxt extracts animation options (exclusive, background, shared-index)", () => {
+	const { animations } = parseSurfacesTxt(`surface0
+{
+animation5.interval,always
+animation5.option,exclusive+background,(1,2)
+animation5.pattern0,overlay,500,0,0,0
+}`);
+	assert.equal(animations["0"][0].id, 5);
+	assert.deepEqual(animations["0"][0].options, ["exclusive+background,(1,2)"]);
+});

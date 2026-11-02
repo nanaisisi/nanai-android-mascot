@@ -83,6 +83,13 @@ export function processChromaKey(
 						}
 					}
 
+					// seriko.use_self_alpha 指定時はクロマキー透過をバイパス（32bit PNGのアルファをそのまま使用）
+					if (useSelfAlpha) {
+						cache?.set(cacheKey, imageSrc);
+						resolve(imageSrc);
+						return;
+					}
+
 					// 左上1ピクセル (0, 0) の色を取得（伺かの伝統的な透過色仕様）
 					const cornerR = data[0];
 					const cornerG = data[1];

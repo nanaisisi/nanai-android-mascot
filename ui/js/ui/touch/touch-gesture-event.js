@@ -19,6 +19,7 @@ export const TOUCH_GESTURE_TYPES = {
 	SWIPE: "nas:touch:swipe",
 	STROKE: "nas:touch:stroke",
 	ROTATE: "nas:touch:rotate",
+	SNAP: "nas:touch:snap",
 };
 
 /**
@@ -58,6 +59,7 @@ export class TouchGestureEvent {
 		this.velocity = detail.velocity ?? 0;
 		this.velocityX = detail.velocityX ?? 0;
 		this.velocityY = detail.velocityY ?? 0;
+		this.dockState = detail.dockState ?? "none";
 		this.originalEvent = detail.originalEvent ?? null;
 		this.timestamp = Date.now();
 		this.defaultPrevented = false;

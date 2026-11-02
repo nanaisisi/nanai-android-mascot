@@ -27,6 +27,8 @@ pub enum DrawMethod {
     Move,
     /// `insert`：アニメーションパターン挿入
     Insert,
+    /// `reduce`：ベースレイヤと新規レイヤの不透明度（アルファ）を乗算合成
+    Reduce,
     /// `blend-xxx`：各種アルファブレンド合成（例: `blend-multiply`）
     Blend(String),
     /// その他の拡張メソッド（`start` / `stop` / `import` 等）
@@ -49,6 +51,9 @@ impl DrawMethod {
             "auto" => Self::Auto,
             "move" => Self::Move,
             "insert" => Self::Insert,
+            "reduce" => Self::Reduce,
+            "overlaymultiply" => Self::Blend("multiply-fast".to_string()),
+            "overlayscreen" => Self::Blend("screen-fast".to_string()),
             s if s.starts_with("blend-") => Self::Blend(s.trim_start_matches("blend-").to_string()),
             other => Self::Custom(other.to_string()),
         }
@@ -180,6 +185,15 @@ mod tests {
         assert_eq!(DrawMethod::parse("auto"), DrawMethod::Auto);
         assert_eq!(DrawMethod::parse("move"), DrawMethod::Move);
         assert_eq!(DrawMethod::parse("insert"), DrawMethod::Insert);
+        assert_eq!(DrawMethod::parse("reduce"), DrawMethod::Reduce);
+        assert_eq!(
+            DrawMethod::parse("overlaymultiply"),
+            DrawMethod::Blend("multiply-fast".to_string())
+        );
+        assert_eq!(
+            DrawMethod::parse("overlayscreen"),
+            DrawMethod::Blend("screen-fast".to_string())
+        );
         assert_eq!(
             DrawMethod::parse("blend-multiply"),
             DrawMethod::Blend("multiply".to_string())
@@ -201,6 +215,7 @@ mod tests {
             DrawMethod::Auto,
             DrawMethod::Move,
             DrawMethod::Insert,
+            DrawMethod::Reduce,
             DrawMethod::Blend("screen".to_string()),
             DrawMethod::Custom("custom_mode".to_string()),
         ];

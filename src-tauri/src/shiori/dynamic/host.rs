@@ -84,26 +84,7 @@ impl HostProc {
     }
 
     fn read_reply(&mut self) -> Result<(i32, Vec<u8>), String> {
-        use std::io::Read;
-        let mut head = [0u8; 8];
-        self.stdout
-            .read_exact(&mut head)
-            .map_err(|e| e.to_string())?;
-        let status = i32::from_le_bytes(
-            head[0..4]
-                .try_into()
-                .map_err(|_| "Invalid status bytes".to_string())?,
-        );
-        let len = u32::from_le_bytes(
-            head[4..8]
-                .try_into()
-                .map_err(|_| "Invalid length bytes".to_string())?,
-        ) as usize;
-        let mut buf = vec![0u8; len];
-        self.stdout
-            .read_exact(&mut buf)
-            .map_err(|e| e.to_string())?;
-        Ok((status, buf))
+        read_reply_stream(&mut self.stdout)
     }
 
     pub(super) fn call(&mut self, cmd: u8, payload: &[u8]) -> Result<(i32, Vec<u8>), String> {
@@ -143,4 +124,81 @@ pub(super) fn is_x86_dll(path: &Path) -> bool {
     }
     let o = u32::from_le_bytes([b[0x3C], b[0x3D], b[0x3E], b[0x3F]]) as usize;
     b.len() > o + 6 && u16::from_le_bytes([b[o + 4], b[o + 5]]) == 0x14C
+}
+
+/// ホストプロセス (shiori-host32) の stdout ストリームから (status, payload) を読み取る
+pub(super) fn read_reply_stream(reader: &mut impl std::io::Read) -> Result<(i32, Vec<u8>), String> {
+    let mut head = [0u8; 8];
+    reader.read_exact(&mut head).map_err(|e| e.to_string())?;
+    let status = i32::from_le_bytes(
+        head[0..4]
+            .try_into()
+            .map_err(|_| "Invalid status bytes".to_string())?,
+    );
+    let len = u32::from_le_bytes(
+        head[4..8]
+            .try_into()
+            .map_err(|_| "Invalid length bytes".to_string())?,
+    ) as usize;
+    let mut buf = vec![0u8; len];
+    reader.read_exact(&mut buf).map_err(|e| e.to_string())?;
+    Ok((status, buf))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::read_reply_stream;
+    use std::io::Cursor;
+
+    #[test]
+    fn test_read_reply_stream_success() {
+        let mut data = Vec::new();
+        let status: i32 = 200;
+        let payload = b"SHIORI/3.0 200 OK\r\n\r\n";
+        data.extend_from_slice(&status.to_le_bytes());
+        data.extend_from_slice(&(payload.len() as u32).to_le_bytes());
+        data.extend_from_slice(payload);
+
+        let mut cursor = Cursor::new(data);
+        let res = read_reply_stream(&mut cursor).expect("expected successful read");
+        assert_eq!(res.0, 200);
+        assert_eq!(res.1, payload);
+    }
+
+    #[test]
+    fn test_read_reply_stream_empty_payload() {
+        let mut data = Vec::new();
+        let status: i32 = 1;
+        let payload: &[u8] = b"";
+        data.extend_from_slice(&status.to_le_bytes());
+        data.extend_from_slice(&(payload.len() as u32).to_le_bytes());
+
+        let mut cursor = Cursor::new(data);
+        let res =
+            read_reply_stream(&mut cursor).expect("expected successful read of empty payload");
+        assert_eq!(res.0, 1);
+        assert_eq!(res.1, Vec::<u8>::new());
+    }
+
+    #[test]
+    fn test_read_reply_stream_truncated_header() {
+        let data = vec![0u8; 4]; // only 4 bytes instead of 8
+        let mut cursor = Cursor::new(data);
+        let res = read_reply_stream(&mut cursor);
+        assert!(res.is_err());
+    }
+
+    #[test]
+    fn test_read_reply_stream_truncated_payload() {
+        let mut data = Vec::new();
+        let status: i32 = 0;
+        let len: u32 = 10;
+        data.extend_from_slice(&status.to_le_bytes());
+        data.extend_from_slice(&len.to_le_bytes());
+        data.extend_from_slice(b"12345"); // only 5 bytes instead of 10
+
+        let mut cursor = Cursor::new(data);
+        let res = read_reply_stream(&mut cursor);
+        assert!(res.is_err());
+    }
 }

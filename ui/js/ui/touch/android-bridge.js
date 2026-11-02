@@ -4,31 +4,23 @@
  * Contract: AndroidBridge, イベント命名規約 nas:android:*
  */
 
-import { invoke, isTauriAvailable } from "../../core/tauri-helper.js";
+import { BackButtonManager } from "./bridge/back-button.js";
+import {
+	ANDROID_EVENTS,
+	ANDROID_LIFECYCLE_STATES,
+} from "./bridge/constants.js";
+import { setupVisibilityListeners } from "./bridge/lifecycle.js";
+import {
+	isAndroidPlatform,
+	isNativeAndroidPlatform,
+	OverlayManager,
+} from "./bridge/overlay.js";
 
-/**
- * AndroidBridge イベント定数
- */
-export const ANDROID_EVENTS = {
-	PAUSE: "nas:android:pause",
-	RESUME: "nas:android:resume",
-	STOP: "nas:android:stop",
-	OVERLAY_MODE_CHANGED: "nas:android:overlay-mode-changed",
-	STATE_CHANGED: "nas:android:state-changed",
-	OVERLAY_TRANSPARENCY_CHANGED: "nas:android:overlay-transparency-changed",
-	CLICK_THROUGH_CHANGED: "nas:android:click-through-changed",
-	TRIM_MEMORY: "nas:android:trim-memory",
-	BACK_BUTTON: "nas:android:back-button",
-	DOCK_CHANGED: "nas:android:dock-changed",
-};
-
-/**
- * ライフサイクル状態定数
- */
-export const ANDROID_LIFECYCLE_STATES = {
-	ACTIVE: "active",
-	PAUSED: "paused",
-	STOPPED: "stopped",
+export {
+	ANDROID_EVENTS,
+	ANDROID_LIFECYCLE_STATES,
+	BackButtonManager,
+	OverlayManager,
 };
 
 /**
@@ -41,24 +33,100 @@ export class AndroidBridge {
 	 * @param {TouchGestureRecognizer} [options.gestureRecognizer] 連携するジェスチャー認識器（バックグラウンド移行時のリセット用）
 	 */
 	constructor(options = {}) {
-		this._invoke = options.invokeHandler || invoke;
-		this._gestureRecognizer = null;
 		this._listeners = new Map();
-		this._backHandlers = [];
-		this._isForegroundServiceActive = false;
-		this._isOverlayEnabled = false;
-		this._lifecycleState = ANDROID_LIFECYCLE_STATES.ACTIVE;
-		this._dockState = "none"; // "none" | "left" | "right"
-		this._overlayTransparency = 1.0;
-		this._isClickThrough = false;
 		this._cleanupFns = [];
+		this._dockState = "none"; // "none" | "left" | "right"
+		this._lifecycleState = ANDROID_LIFECYCLE_STATES.ACTIVE;
+		this._gestureRecognizer = null;
+
+		// 戻るボタン管理モジュール
+		this._backButtonManager = new BackButtonManager((eventName, data) => {
+			this._dispatch(eventName, data);
+		});
+
+		// オーバーレイ & プラットフォーム管理モジュール
+		this._overlayManager = new OverlayManager({
+			invokeHandler: options.invokeHandler,
+			dispatchFn: (eventName, data) => {
+				this._dispatch(eventName, data);
+			},
+		});
 
 		if (options.gestureRecognizer) {
 			this.setGestureRecognizer(options.gestureRecognizer);
 		}
 
 		// ブラウザ/WebViewの可視性変更およびライフサイクル監視
-		this._setupVisibilityListeners();
+		const visibilityCleanups = setupVisibilityListeners({
+			setLifecycleState: (state) => {
+				this._lifecycleState = state;
+			},
+			getGestureRecognizer: () => this._gestureRecognizer,
+			dispatch: (eventName, data) => {
+				this._dispatch(eventName, data);
+			},
+		});
+		this._cleanupFns.push(...visibilityCleanups);
+	}
+
+	/**
+	 * 内部で保持している戻るボタンハンドラ配列へのプロキシ（後方互換・内部参照用）
+	 * @private
+	 */
+	get _backHandlers() {
+		return this._backButtonManager._backHandlers;
+	}
+
+	set _backHandlers(val) {
+		this._backButtonManager._backHandlers = val;
+	}
+
+	/**
+	 * 内部オーバーレイ透過度（後方互換・内部参照用）
+	 * @private
+	 */
+	get _overlayTransparency() {
+		return this._overlayManager.overlayTransparency;
+	}
+
+	set _overlayTransparency(val) {
+		this._overlayManager._overlayTransparency = val;
+	}
+
+	/**
+	 * 内部クリックスルーフラグ（後方互換・内部参照用）
+	 * @private
+	 */
+	get _isClickThrough() {
+		return this._overlayManager.isClickThrough;
+	}
+
+	set _isClickThrough(val) {
+		this._overlayManager._isClickThrough = val;
+	}
+
+	/**
+	 * 内部フォアグラウンドサービス稼働フラグ（後方互換・内部参照用）
+	 * @private
+	 */
+	get _isForegroundServiceActive() {
+		return this._overlayManager.isForegroundServiceActive;
+	}
+
+	set _isForegroundServiceActive(val) {
+		this._overlayManager._isForegroundServiceActive = val;
+	}
+
+	/**
+	 * 内部オーバーレイ有効フラグ（後方互換・内部参照用）
+	 * @private
+	 */
+	get _isOverlayEnabled() {
+		return this._overlayManager.isOverlayEnabled;
+	}
+
+	set _isOverlayEnabled(val) {
+		this._overlayManager._isOverlayEnabled = val;
 	}
 
 	/**
@@ -116,10 +184,7 @@ export class AndroidBridge {
 	 * @returns {boolean}
 	 */
 	isAndroid() {
-		if (typeof navigator === "undefined" || !navigator.userAgent) {
-			return false;
-		}
-		return /android/i.test(navigator.userAgent);
+		return isAndroidPlatform();
 	}
 
 	/**
@@ -127,7 +192,7 @@ export class AndroidBridge {
 	 * @returns {boolean}
 	 */
 	isNativeAndroid() {
-		return isTauriAvailable() && this.isAndroid();
+		return isNativeAndroidPlatform();
 	}
 
 	/**
@@ -135,29 +200,7 @@ export class AndroidBridge {
 	 * @returns {Promise<string>}
 	 */
 	async requestOverlayPermission() {
-		if (isTauriAvailable()) {
-			try {
-				const result = await this._invoke("request_overlay_permission");
-				this._isOverlayEnabled = true;
-				this._dispatch(ANDROID_EVENTS.OVERLAY_MODE_CHANGED, {
-					enabled: true,
-					detail: result,
-				});
-				return result;
-			} catch (err) {
-				console.warn("requestOverlayPermission error:", err);
-				throw err;
-			}
-		}
-		// Web / モック環境フォールバック
-		this._isOverlayEnabled = true;
-		const fallbackMsg =
-			"Web/デスクトップ環境のためオーバーレイ権限は擬似的に許可されました";
-		this._dispatch(ANDROID_EVENTS.OVERLAY_MODE_CHANGED, {
-			enabled: true,
-			detail: fallbackMsg,
-		});
-		return fallbackMsg;
+		return this._overlayManager.requestOverlayPermission();
 	}
 
 	/**
@@ -166,20 +209,7 @@ export class AndroidBridge {
 	 * @returns {Promise<string>}
 	 */
 	async setupForegroundService(enabled) {
-		if (isTauriAvailable()) {
-			try {
-				const result = await this._invoke("setup_foreground_service", {
-					enabled,
-				});
-				this._isForegroundServiceActive = enabled;
-				return result;
-			} catch (err) {
-				console.warn("setupForegroundService error:", err);
-				throw err;
-			}
-		}
-		this._isForegroundServiceActive = enabled;
-		return `常駐モード状態 (Webモック): ${enabled}`;
+		return this._overlayManager.setupForegroundService(enabled);
 	}
 
 	/**
@@ -188,19 +218,7 @@ export class AndroidBridge {
 	 * @returns {Promise<number>}
 	 */
 	async setOverlayTransparency(alpha) {
-		const clamped = Math.max(0.0, Math.min(1.0, Number(alpha) || 0));
-		if (isTauriAvailable()) {
-			try {
-				await this._invoke("set_overlay_transparency", { alpha: clamped });
-			} catch (err) {
-				console.warn("setOverlayTransparency invoke error, falling back:", err);
-			}
-		}
-		this._overlayTransparency = clamped;
-		this._dispatch(ANDROID_EVENTS.OVERLAY_TRANSPARENCY_CHANGED, {
-			alpha: clamped,
-		});
-		return clamped;
+		return this._overlayManager.setOverlayTransparency(alpha);
 	}
 
 	/**
@@ -209,19 +227,7 @@ export class AndroidBridge {
 	 * @returns {Promise<boolean>}
 	 */
 	async setClickThrough(enabled) {
-		const val = Boolean(enabled);
-		if (isTauriAvailable()) {
-			try {
-				await this._invoke("set_click_through", { enabled: val });
-			} catch (err) {
-				console.warn("setClickThrough invoke error, falling back:", err);
-			}
-		}
-		this._isClickThrough = val;
-		this._dispatch(ANDROID_EVENTS.CLICK_THROUGH_CHANGED, {
-			enabled: val,
-		});
-		return val;
+		return this._overlayManager.setClickThrough(enabled);
 	}
 
 	/**
@@ -230,19 +236,7 @@ export class AndroidBridge {
 	 * @returns {Promise<number>}
 	 */
 	async trimMemory(level = 40) {
-		const numLevel = Number(level) || 40;
-		if (isTauriAvailable()) {
-			try {
-				await this._invoke("trim_memory_command", { level: numLevel });
-			} catch (err) {
-				console.warn("trimMemory invoke error, falling back:", err);
-			}
-		}
-		this._dispatch(ANDROID_EVENTS.TRIM_MEMORY, {
-			level: numLevel,
-			timestamp: Date.now(),
-		});
-		return numLevel;
+		return this._overlayManager.trimMemory(level);
 	}
 
 	/**
@@ -251,12 +245,7 @@ export class AndroidBridge {
 	 * @returns {() => void} 登録解除関数
 	 */
 	registerBackHandler(handler) {
-		if (typeof handler === "function") {
-			this._backHandlers.push(handler);
-		}
-		return () => {
-			this._backHandlers = this._backHandlers.filter((h) => h !== handler);
-		};
+		return this._backButtonManager.registerBackHandler(handler);
 	}
 
 	/**
@@ -265,19 +254,7 @@ export class AndroidBridge {
 	 * @returns {Promise<boolean>} ハンドラによって処理されたかどうか
 	 */
 	async handleBackButton() {
-		this._dispatch(ANDROID_EVENTS.BACK_BUTTON, { timestamp: Date.now() });
-		for (let i = this._backHandlers.length - 1; i >= 0; i--) {
-			const handler = this._backHandlers[i];
-			try {
-				const handled = await handler();
-				if (handled) {
-					return true;
-				}
-			} catch (err) {
-				console.error("Error in back button handler:", err);
-			}
-		}
-		return false;
+		return this._backButtonManager.handleBackButton();
 	}
 
 	/**
@@ -293,16 +270,16 @@ export class AndroidBridge {
 
 	/**
 	 * 現在のオーバーレイおよびサービス稼働状態を取得
-	 * @returns {{ isAndroid: boolean, isOverlayEnabled: boolean, isForegroundServiceActive: boolean, lifecycleState: string, overlayTransparency: number, isClickThrough: boolean, isThrottled: boolean }}
+	 * @returns {{ isAndroid: boolean, isOverlayEnabled: boolean, isForegroundServiceActive: boolean, lifecycleState: string, overlayTransparency: number, isClickThrough: boolean, isThrottled: boolean, dockState: string }}
 	 */
 	getState() {
 		return {
 			isAndroid: this.isAndroid(),
-			isOverlayEnabled: this._isOverlayEnabled,
-			isForegroundServiceActive: this._isForegroundServiceActive,
+			isOverlayEnabled: this._overlayManager.isOverlayEnabled,
+			isForegroundServiceActive: this._overlayManager.isForegroundServiceActive,
 			lifecycleState: this._lifecycleState,
-			overlayTransparency: this._overlayTransparency,
-			isClickThrough: this._isClickThrough,
+			overlayTransparency: this._overlayManager.overlayTransparency,
+			isClickThrough: this._overlayManager.isClickThrough,
 			isThrottled: this.isThrottled(),
 			dockState: this._dockState,
 		};
@@ -321,7 +298,7 @@ export class AndroidBridge {
 		}
 		this._cleanupFns = [];
 		this._listeners.clear();
-		this._backHandlers = [];
+		this._backButtonManager.clear();
 		if (
 			this._gestureRecognizer &&
 			typeof this._gestureRecognizer.destroy === "function"
@@ -380,99 +357,6 @@ export class AndroidBridge {
 					console.error(`AndroidBridge event error in ${eventName}:`, e);
 				}
 			}
-		}
-	}
-
-	/**
-	 * ライフサイクル (VisibilityState) リスナーの設定
-	 * @private
-	 */
-	_setupVisibilityListeners() {
-		if (
-			typeof document !== "undefined" &&
-			typeof document.addEventListener === "function"
-		) {
-			const onVisibilityChange = () => {
-				if (document.hidden) {
-					this._lifecycleState = ANDROID_LIFECYCLE_STATES.PAUSED;
-					if (
-						this._gestureRecognizer &&
-						typeof this._gestureRecognizer.reset === "function"
-					) {
-						this._gestureRecognizer.reset();
-					}
-					this._dispatch(ANDROID_EVENTS.PAUSE, { timestamp: Date.now() });
-					this._dispatch(ANDROID_EVENTS.STATE_CHANGED, {
-						state: ANDROID_LIFECYCLE_STATES.PAUSED,
-						timestamp: Date.now(),
-					});
-				} else {
-					this._lifecycleState = ANDROID_LIFECYCLE_STATES.ACTIVE;
-					this._dispatch(ANDROID_EVENTS.RESUME, { timestamp: Date.now() });
-					this._dispatch(ANDROID_EVENTS.STATE_CHANGED, {
-						state: ANDROID_LIFECYCLE_STATES.ACTIVE,
-						timestamp: Date.now(),
-					});
-				}
-			};
-
-			document.addEventListener("visibilitychange", onVisibilityChange);
-			this._cleanupFns.push(() => {
-				if (typeof document.removeEventListener === "function") {
-					document.removeEventListener("visibilitychange", onVisibilityChange);
-				}
-			});
-
-			const onFreeze = () => {
-				this._lifecycleState = ANDROID_LIFECYCLE_STATES.PAUSED;
-				if (
-					this._gestureRecognizer &&
-					typeof this._gestureRecognizer.reset === "function"
-				) {
-					this._gestureRecognizer.reset();
-				}
-				this._dispatch(ANDROID_EVENTS.PAUSE, { timestamp: Date.now() });
-				this._dispatch(ANDROID_EVENTS.STATE_CHANGED, {
-					state: ANDROID_LIFECYCLE_STATES.PAUSED,
-					timestamp: Date.now(),
-				});
-			};
-			document.addEventListener("freeze", onFreeze);
-			this._cleanupFns.push(() => {
-				if (typeof document.removeEventListener === "function") {
-					document.removeEventListener("freeze", onFreeze);
-				}
-			});
-		}
-
-		if (
-			typeof window !== "undefined" &&
-			typeof window.addEventListener === "function"
-		) {
-			const onPageHide = (e) => {
-				this._lifecycleState = ANDROID_LIFECYCLE_STATES.STOPPED;
-				if (
-					this._gestureRecognizer &&
-					typeof this._gestureRecognizer.reset === "function"
-				) {
-					this._gestureRecognizer.reset();
-				}
-				this._dispatch(ANDROID_EVENTS.STOP, {
-					persisted: Boolean(e?.persisted),
-					timestamp: Date.now(),
-				});
-				this._dispatch(ANDROID_EVENTS.STATE_CHANGED, {
-					state: ANDROID_LIFECYCLE_STATES.STOPPED,
-					timestamp: Date.now(),
-				});
-			};
-
-			window.addEventListener("pagehide", onPageHide);
-			this._cleanupFns.push(() => {
-				if (typeof window.removeEventListener === "function") {
-					window.removeEventListener("pagehide", onPageHide);
-				}
-			});
 		}
 	}
 }

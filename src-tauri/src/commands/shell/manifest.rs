@@ -124,6 +124,7 @@ fn method_string(method: &DrawMethod) -> String {
         DrawMethod::Insert => "insert".to_string(),
         DrawMethod::Blend(name) => format!("blend-{name}"),
         DrawMethod::Custom(name) => name.clone(),
+        _ => "".to_string(),
     }
 }
 

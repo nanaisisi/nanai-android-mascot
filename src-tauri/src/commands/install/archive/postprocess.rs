@@ -136,6 +136,7 @@ pub fn build_extracted_ghost_info(target_dir: &Path, safe_dir_name: &str) -> Gho
         recommended_balloon,
         recommended_balloon_path,
         default_balloon_path,
+        ..Default::default()
     }
 }
 

@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use tauri::Emitter;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct SstpRequest {
     pub method: Option<String>,
     pub sender: String,
@@ -425,6 +425,7 @@ mod tests {
             command: None,
             module: None,
             is_direct: false,
+            ..Default::default()
         };
         assert_eq!(req.sender, "TestApp");
     }

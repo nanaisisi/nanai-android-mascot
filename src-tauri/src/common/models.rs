@@ -26,7 +26,7 @@ pub struct ShellInfo {
     pub menu_theme: Option<ShellMenuTheme>,
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct GhostInfo {
     pub name: String,
     pub version: Option<String>,

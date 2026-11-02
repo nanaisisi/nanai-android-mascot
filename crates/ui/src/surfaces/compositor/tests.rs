@@ -226,3 +226,34 @@ fn test_reduce_and_fast_blend_compositing() {
     let p_mul = fast_mul.get_pixel(0, 0).unwrap();
     assert_eq!(p_mul, (100, 100, 100, 255));
 }
+
+#[test]
+fn test_compositor_blend_modes_and_bounds() {
+    let mut base = SurfaceFrameBuffer::new(2, 2);
+    base.set_pixel(0, 0, 100, 100, 100, 255);
+
+    let mut layer = SurfaceFrameBuffer::new(2, 2);
+    layer.set_pixel(0, 0, 100, 100, 100, 255);
+
+    // AsIs
+    let as_is = composite_elements(&base, &[(&layer, 0, 0, DrawMethod::AsIs)]);
+    assert_eq!(as_is.get_pixel(0, 0), Some((100, 100, 100, 255)));
+
+    // Screen & Screen-fast
+    let screen = composite_elements(&base, &[(&layer, 0, 0, DrawMethod::Blend("screen".into()))]);
+    assert!(screen.get_pixel(0, 0).is_some());
+
+    let screen_fast = composite_elements(&base, &[(&layer, 0, 0, DrawMethod::Blend("screen-fast".into()))]);
+    assert!(screen_fast.get_pixel(0, 0).is_some());
+
+    // Lighter & Exclusion
+    let lighter = composite_elements(&base, &[(&layer, 0, 0, DrawMethod::Blend("lighter".into()))]);
+    assert!(lighter.get_pixel(0, 0).is_some());
+
+    let exclusion = composite_elements(&base, &[(&layer, 0, 0, DrawMethod::Blend("exclusion".into()))]);
+    assert!(exclusion.get_pixel(0, 0).is_some());
+
+    // Out-of-bounds layer
+    let oob = composite_elements(&base, &[(&layer, -10, -10, DrawMethod::Overlay)]);
+    assert_eq!(oob.get_pixel(0, 0), Some((100, 100, 100, 255)));
+}

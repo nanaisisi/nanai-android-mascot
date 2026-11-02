@@ -1,8 +1,8 @@
 # ゴースト取り込み機能・アセット分離・ハードコード廃止仕様書
+
 - **規格**: [ghost-import-and-asset-separation-spec.md](ghost-import-and-asset-separation-spec.md)
 - **検索語**: extract_ghost_archive_from_reader
 - **対応状況**: ✅ 実装済
-
 
 - **言及規格の元ドキュメント・権利者・ライセンス**:
   - **SHIORI 仕様 / 各種サブシステム**:

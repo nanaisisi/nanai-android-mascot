@@ -4,7 +4,6 @@
 - **検索語**: request_overlay_permission
 - **対応状況**: ✅ 実装済
 
-
 - **言及規格の元ドキュメント・権利者・ライセンス**:
   - **バルーン仕様 (Balloon)**: [ukadoc-spec: balloon](https://ukatech.shillest.net/ukadoc-spec/) - © UKADOC project / Ukagaka Tech Team (CC BY 4.0)
   - **伺か標準仕様 / ゴースト / シェル**: [ukatech/ukadoc-spec (UKADOC project)](https://ukatech.shillest.net/ukadoc-spec/) - © UKADOC project / Ukagaka Tech Team (CC BY 4.0)

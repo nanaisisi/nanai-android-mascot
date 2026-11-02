@@ -20,12 +20,12 @@
 
 ## 2. ゴースト・シェル `descript.txt` 詳細プロパティ対応表 (`descript/ghost/`, `descript/shell/`)
 
-| プロパティカテゴリ         | 代表的なプロパティ名                                                                                 |   実装状態   | Nanai Android Mascot における実装・適用箇所                                                                                   |
-| :------------------------- | :--------------------------------------------------------------------------------------------------- | :----------: | :---------------------------------------------------------------------------------------------------------------------------- |
-| **基本情報**               | `name`, `version`, `craftman`, `craftmanurl`, `type`                                                 | **完全対応** | `../../../src-tauri/src/ghost/scan/mod.rs` および `descript.rs` にて Shift_JIS/UTF-8 両対応で完全パース。エクスプローラ表示に活用。    |
-| **スコープ名称**           | `sakura.name`, `kero.name`, `sakura.defaultleft` 等                                                  | **完全対応** | ゴーストのメイン（\0）および相方（\1）の識別名取得、初期配置座標の解釈。                                                      |
-| **SHIORI 指定**            | `shiori` (例: `satori.dll`, `yaya.dll`)                                                              | **完全対応** | `lifecycle.rs` にて `shiori` キー指定を最優先探索し、DLL / .so を VFS ケースインセンシティブにロード。                        |
-| **オーナードローメニュー** | `menu.background.bitmap.filename`, `menu.sidebar.bitmap.filename`, `menu.foreground.bitmap.filename` | **完全対応** | `shell.rs` にて配色・ビットマップを抽出、`submenu.js` (`applyShellMenuTheme`) で Tauri の `convertFileSrc` 経由セキュア適用。 |
+| プロパティカテゴリ         | 代表的なプロパティ名                                                                                 |   実装状態   | Nanai Android Mascot における実装・適用箇所                                                                                         |
+| :------------------------- | :--------------------------------------------------------------------------------------------------- | :----------: | :---------------------------------------------------------------------------------------------------------------------------------- |
+| **基本情報**               | `name`, `version`, `craftman`, `craftmanurl`, `type`                                                 | **完全対応** | `../../../src-tauri/src/ghost/scan/mod.rs` および `descript.rs` にて Shift_JIS/UTF-8 両対応で完全パース。エクスプローラ表示に活用。 |
+| **スコープ名称**           | `sakura.name`, `kero.name`, `sakura.defaultleft` 等                                                  | **完全対応** | ゴーストのメイン（\0）および相方（\1）の識別名取得、初期配置座標の解釈。                                                            |
+| **SHIORI 指定**            | `shiori` (例: `satori.dll`, `yaya.dll`)                                                              | **完全対応** | `lifecycle.rs` にて `shiori` キー指定を最優先探索し、DLL / .so を VFS ケースインセンシティブにロード。                              |
+| **オーナードローメニュー** | `menu.background.bitmap.filename`, `menu.sidebar.bitmap.filename`, `menu.foreground.bitmap.filename` | **完全対応** | `shell.rs` にて配色・ビットマップを抽出、`submenu.js` (`applyShellMenuTheme`) で Tauri の `convertFileSrc` 経由セキュア適用。       |
 
 ---
 

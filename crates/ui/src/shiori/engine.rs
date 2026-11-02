@@ -194,7 +194,7 @@ impl MultiStageShioriLoader {
                     last_error = format!("WASM runtime not configured for {:?}", path);
                 }
                 ShioriEngineCandidate::Mock(mut engine) => {
-                    if let Ok(_) = engine.load(dir_path) {
+                    if engine.load(dir_path).is_ok() {
                         self.active_engine = Some(engine);
                         return Ok(());
                     }

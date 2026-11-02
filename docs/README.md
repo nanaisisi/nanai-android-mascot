@@ -53,6 +53,7 @@
 - **[window-design.md](doc/design/ui/window-design.md)** - ウィンドウ設計（Windows検証 / Android Single Container）
 
 ## 📚 第2層: 外部リポジトリ (公式仕様)
+
 - **[ukadoc-spec (UKADOC project)](https://ukatech.shillest.net/ukadoc-spec/)** - 伺か標準仕様 / ゴースト / シェル (`ukadoc-spec/` サブモジュール)
 - **[ukadoc-ssp](https://github.com/ukatech/ukadoc-ssp)** - SSP 拡張仕様 / メニュー規格 (`ukadoc-ssp/` サブモジュール)
 
@@ -66,7 +67,8 @@
 - **[window-snap.md](spec/ssp-external-spec/window-snap.md)** - ウィンドウ・スナップ機能および位置リセット仕様
 
 ### 内部設計技術仕様書 (`doc/`)
-*(※現在各ドメインごとに整理中)*
+
+_(※現在各ドメインごとに整理中)_
 - **[standard-ghost-spec.md](doc/nas-spec/standard-ghost-spec.md)** - 公式サンプルキャラクター仕様書（モック & プチ）
 - **[sakura-script-and-balloon-spec.md](doc/nas-spec/sakura-script-and-balloon-spec.md)** - さくらスクリプトパーサー & バルーン文字送り仕様書
 - **[surfaces-and-collision-spec.md](doc/nas-spec/surfaces-and-collision-spec.md)** - surfaces.txt アニメーション合成 & 当たり判定仕様書

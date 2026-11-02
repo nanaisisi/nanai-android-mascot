@@ -1,8 +1,8 @@
 # 公式サンプルキャラクター仕様書 - モック (Mock) & プチ (Petit)
+
 - **規格**: [standard-ghost-spec.md](standard-ghost-spec.md)
 - **検索語**: mock_nanai
 - **対応状況**: ✅ 実装済
-
 
 - **言及規格の元ドキュメント・権利者・ライセンス**:
   - **SHIORI 仕様 / 各種サブシステム**:

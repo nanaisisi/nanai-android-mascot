@@ -6,14 +6,14 @@
 
 本プロジェクトには **SQL データベースは存在しない**。永続化は完全にファイルベース（`descript.txt` / `surfaces.txt` / `surfacetable.txt` / TOML 設定 / localStorage JSON）であり、以下の ER 図はそれらをパースして構築される serde 構造体群の関係性を表したものである。
 
-| ソースファイル                                       | 実体                           | 参照                                     |
-| ---------------------------------------------------- | ------------------------------ | ---------------------------------------- |
-| `assets/ghost/<名前>/ghost/master/descript.txt`      | ゴースト定義                   | `src-tauri/src/common.rs:33`             |
-| `assets/ghost/<名前>/ghost/<shell>/descript.txt`     | シェル定義・着せ替え           | `crates/ui/src/descript.rs:60`           |
-| `assets/ghost/<名前>/ghost/<shell>/surfaces.txt`     | サーフィス・アニメ・当たり判定 | `crates/ui/src/surfaces/types/txt.rs:11` |
-| `assets/ghost/<名前>/ghost/<shell>/surfacetable.txt` | サーフィス一覧（任意）         | `crates/ui/src/surfacetable.rs:35`       |
-| `../../../config.initial.toml` / `config.local.toml`          | アプリ設定・前回状態           | `../../../src-tauri/src/commands/config.rs`       |
-| localStorage 各キー                                  | フロントエンド設定             | `ui/js/core/config.js:35-42`             |
+| ソースファイル                                       | 実体                           | 参照                                        |
+| ---------------------------------------------------- | ------------------------------ | ------------------------------------------- |
+| `assets/ghost/<名前>/ghost/master/descript.txt`      | ゴースト定義                   | `src-tauri/src/common.rs:33`                |
+| `assets/ghost/<名前>/ghost/<shell>/descript.txt`     | シェル定義・着せ替え           | `crates/ui/src/descript.rs:60`              |
+| `assets/ghost/<名前>/ghost/<shell>/surfaces.txt`     | サーフィス・アニメ・当たり判定 | `crates/ui/src/surfaces/types/txt.rs:11`    |
+| `assets/ghost/<名前>/ghost/<shell>/surfacetable.txt` | サーフィス一覧（任意）         | `crates/ui/src/surfacetable.rs:35`          |
+| `../../../config.initial.toml` / `config.local.toml` | アプリ設定・前回状態           | `../../../src-tauri/src/commands/config.rs` |
+| localStorage 各キー                                  | フロントエンド設定             | `ui/js/core/config.js:35-42`                |
 
 ---
 
@@ -180,7 +180,7 @@ erDiagram
 
 | ストア                                       | 実体 / キー                                                                                         | 参照                                      |
 | -------------------------------------------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| `../../../config.initial.toml`（読取専用）            | `[paths]` / `[timing]` / `[scale]` / `[shiori]` / `[state]`                                         | リポジトリルート                          |
+| `../../../config.initial.toml`（読取専用）   | `[paths]` / `[timing]` / `[scale]` / `[shiori]` / `[state]`                                         | リポジトリルート                          |
 | `config.local.toml`（自動生成・書込）        | initial を shallow-merge。`[state].last_ghost` / `last_ghosts`（LRU 20）                            | `src-tauri/src/commands/config.rs:67-133` |
 | localStorage `nanai-android-mascot-settings` | `{autoLoadGhost, enableNotifications, darkMode, alwaysOnTop, shellScale, balloonScale, debugLevel}` | `ui/js/core/app-settings.js:6`            |
 | localStorage `nanai_last_ghost`              | 最終選択 GhostInfo の JSON                                                                          | `ui/js/ghost/ghost.js:155`                |

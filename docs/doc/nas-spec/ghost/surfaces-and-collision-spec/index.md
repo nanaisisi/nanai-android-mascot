@@ -1,8 +1,8 @@
 # surfaces.txt アニメーション合成 & 当たり判定（Collision）仕様書
+
 - **規格**: [surfaces-and-collision-spec.md](surfaces-and-collision-spec.md)
 - **検索語**: CollisionArea
 - **対応状況**: ✅ 実装済
-
 
 - **言及規格の元ドキュメント・権利者・ライセンス**:
   - **SHIORI 仕様 / 各種サブシステム**:

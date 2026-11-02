@@ -143,14 +143,14 @@ graph TB
 
 ## 5. VFS / ファイルシステム互換 (Windows → クロスプラットフォーム)
 
-| 項目                        | SSP仕様                         | Nanai実装                   | Windows強化                                                 |
-| --------------------------- | ------------------------------- | --------------------------- | ----------------------------------------------------------- |
-| **大文字小文字吸収**        | Windows前提                     | ✅ Case-insensitive VFS     | Linux/Androidでも同一パス解決                               |
-| **文字コード**              | Shift_JIS/CP932                 | ✅`encoding_rs` 自動判別    | BOM付きUTF-8、EUC-JPフォールバック                          |
-| **NAR展開**                 | `.nar` (ZIP準拠)                | ✅ Zip Slip防止、自動仕分け | **Shell/Plugin/Headline NAR対応** (未実装)                  |
+| 項目                        | SSP仕様                         | Nanai実装                   | Windows強化                                                          |
+| --------------------------- | ------------------------------- | --------------------------- | -------------------------------------------------------------------- |
+| **大文字小文字吸収**        | Windows前提                     | ✅ Case-insensitive VFS     | Linux/Androidでも同一パス解決                                        |
+| **文字コード**              | Shift_JIS/CP932                 | ✅`encoding_rs` 自動判別    | BOM付きUTF-8、EUC-JPフォールバック                                   |
+| **NAR展開**                 | `.nar` (ZIP準拠)                | ✅ Zip Slip防止、自動仕分け | **Shell/Plugin/Headline NAR対応** (未実装)                           |
 | **優先探索順序**            | `ghost/` → `shell/` → `plugin/` | 要再評価                    | `local/ghost` → `userData/ghost` → `../../../assets/ghost` SSP準拠化 |
-| **`accept` ディレクティブ** | `descript.txt` 内               | 未対応                      | 依存ゴースト/シェル自動導入                                 |
-| **FMO/Mutex**               | 排他制御                        | 未対応                      | 多重起動防止、ゴースト単位ロック                            |
+| **`accept` ディレクティブ** | `descript.txt` 内               | 未対応                      | 依存ゴースト/シェル自動導入                                          |
+| **FMO/Mutex**               | 排他制御                        | 未対応                      | 多重起動防止、ゴースト単位ロック                                     |
 
 ---
 

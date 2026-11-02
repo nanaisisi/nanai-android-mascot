@@ -168,4 +168,16 @@ fn test_detect_and_decode_utf16_and_eucjp() {
     let (decoded_ujis, enc_ujis) = detect_and_decode(&ujis_header_bytes);
     assert_eq!(decoded_ujis, header_ujis_text);
     assert_eq!(enc_ujis, "EUC-JP");
+
+    // Path resolution with . and .. (using case difference so direct_combined fails)
+    let temp_dir = std::env::temp_dir().join(format!("vfs_dot_test_{}", std::process::id()));
+    let sub = temp_dir.join("SubDir");
+    std::fs::create_dir_all(&sub).unwrap();
+    let target_file = temp_dir.join("RootFile.txt");
+    std::fs::write(&target_file, "root content").unwrap();
+
+    let resolved_dot = resolve_vfs_path(&temp_dir, "./subdir/../rootfile.txt");
+    assert_eq!(resolved_dot, Some(target_file.clone()));
+
+    let _ = std::fs::remove_dir_all(&temp_dir);
 }

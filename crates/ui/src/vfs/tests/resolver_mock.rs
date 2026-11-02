@@ -278,4 +278,33 @@ fn test_mock_vfs_remove_dir_and_find_files() {
     let removed_all = mock.remove_dir("");
     assert_eq!(removed_all, 3);
     assert!(mock.is_empty());
+
+    // remove_file
+    let mut mock2 = MockVfs::new();
+    mock2.add_text_file("test.txt", "content");
+    assert!(mock2.remove_file("test.txt"));
+    assert!(!mock2.remove_file("nonexistent.txt"));
+}
+
+#[test]
+fn test_vfs_resolver_cache_overflow_and_errors() {
+    let temp = std::env::temp_dir().join(format!("vfs_test_{}", std::process::id()));
+    std::fs::create_dir_all(&temp).unwrap();
+    let resolver = VfsResolver::new(&temp);
+
+    // Test cache overflow (>1000 items)
+    for i in 0..1005 {
+        let _ = resolver.resolve_cached(&format!("nonexistent_path_{}.txt", i));
+    }
+    assert!(resolver.cache_size() <= 1000);
+
+    // walk_files on non-existent directory
+    let walk_res = resolver.walk_files("does_not_exist_dir");
+    assert!(walk_res.is_err());
+
+    // list_dir with empty string / "."
+    let list_root = resolver.list_dir(".");
+    assert!(list_root.is_ok());
+
+    let _ = std::fs::remove_dir_all(&temp);
 }

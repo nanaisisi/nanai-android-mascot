@@ -177,4 +177,44 @@ fn test_fmo_entry_lifecycle_and_mobile_optimization() {
             .unwrap()
             .contains("lifecycle:paused")
     );
+
+    // stopped and invisible states
+    entry.update_lifecycle("stopped", false);
+    let rec_stopped = entry.to_record();
+    let back_stopped = FmoEntry::from_record(&rec_stopped);
+    assert_eq!(back_stopped.lifecycle_state, "stopped");
+    assert!(!back_stopped.is_visible);
+
+    entry.update_lifecycle("invisible", false);
+    let rec_invis = entry.to_record();
+    let back_invis = FmoEntry::from_record(&rec_invis);
+    assert_eq!(back_invis.lifecycle_state, "invisible");
+    assert!(!back_invis.is_visible);
+}
+
+#[test]
+fn test_fmo_buffer_edge_cases() {
+    // Prefix already starting with ssp_fmo_header_
+    let mut rec = FmoRecord::new("ssp_fmo_header_already_prefixed", "Custom");
+    rec.hwnd = 0; // test hwnd 0 branch in to_record / hwndlist
+    let buf = generate_fmo_buffer(&[rec]);
+    let parsed = parse_fmo_buffer(&buf).unwrap();
+    assert_eq!(parsed.len(), 1);
+    assert_eq!(parsed[0].name, "Custom");
+
+    // Malformed line without \x01, or without dot in key
+    let malformed_text =
+        "4\0\0\0random_header_without_delimiter\r\nssp_fmo_header_no_dot\x01val\r\n";
+    let mut padded = malformed_text.as_bytes().to_vec();
+    padded.resize(65536, 0);
+    let len_bytes = (padded.len() as u32).to_le_bytes();
+    padded[0..4].copy_from_slice(&len_bytes);
+    let res = parse_fmo_buffer(&padded).unwrap();
+    assert_eq!(res.len(), 0);
+
+    // serde deserialization of FmoEntry with defaults
+    let json_minimal = r#"{"id":"test","name":"test","keroname":"","hwnd":0,"sakura_surface":0,"kero_surface":10,"ghostpath":"","balloon0":"","balloon1":""}"#;
+    let entry_deser: FmoEntry = serde_json::from_str(json_minimal).unwrap();
+    assert!(entry_deser.is_visible);
+    assert_eq!(entry_deser.lifecycle_state, "active");
 }

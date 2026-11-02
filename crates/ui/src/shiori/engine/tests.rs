@@ -164,39 +164,217 @@ fn test_multistage_shiori_loader_reload_and_prioritization() {
     assert!(loader.unload().is_ok());
 }
 
-#[test]
-fn test_shiori_engine_trait_object_default_methods() {
-    let mut engine: Box<dyn ShioriEngine> = Box::new(MockShioriEngine::new());
-    assert_eq!(engine.lifecycle_state(), ShioriLifecycleState::Unloaded);
-    engine.load(Path::new("/dummy")).unwrap();
-    assert!(engine.suspend().is_ok());
-    assert!(engine.resume().is_ok());
+// Default trait implementations test struct
+struct MinimalShioriEngine {
+    loaded: bool,
+}
+
+impl ShioriEngine for MinimalShioriEngine {
+    fn load(&mut self, _dir_path: &Path) -> Result<(), String> {
+        self.loaded = true;
+        Ok(())
+    }
+    fn request(&self, _request_str: &str) -> Result<String, String> {
+        Ok("SHIORI/3.0 204 No Content\r\n\r\n".to_string())
+    }
+    fn unload(&mut self) -> Result<(), String> {
+        self.loaded = false;
+        Ok(())
+    }
+    fn is_loaded(&self) -> bool {
+        self.loaded
+    }
 }
 
 #[test]
-fn test_multistage_shiori_loader_error_and_edge_cases() {
+fn test_shiori_engine_trait_default_implementations() {
+    let mut engine = MinimalShioriEngine { loaded: false };
+    assert_eq!(engine.lifecycle_state(), ShioriLifecycleState::Unloaded);
+    assert!(engine.suspend().is_ok());
+    assert!(engine.resume().is_ok());
+
+    assert!(engine.load(Path::new("/dummy")).is_ok());
+    assert_eq!(engine.lifecycle_state(), ShioriLifecycleState::Active);
+    assert!(engine.is_loaded());
+    assert!(engine.unload().is_ok());
+}
+
+#[test]
+fn test_mock_shiori_engine_error_branches() {
+    let mut engine = MockShioriEngine::new();
+    // resume when already active
+    assert!(engine.load(Path::new("/dummy")).is_ok());
+    assert!(engine.resume().is_ok());
+
+    // request with invalid parsing string
+    let bad_req = "NOT_A_VALID_REQUEST";
+    let res = engine.request(bad_req);
+    assert!(res.is_err());
+
+    // empty response handler
+    let mut engine2 = MockShioriEngine::new();
+    engine2.load(Path::new("/dummy")).unwrap();
+    let sec_req = "GET SHIORI/3.0\r\nSender: SSP\r\nCharset: UTF-8\r\nID: OnSecondChange\r\n\r\n";
+    let res2 = engine2.request(sec_req).unwrap();
+    assert!(res2.contains("204 No Content"));
+
+    let mock_default = MockShioriEngine::default();
+    assert!(!mock_default.is_loaded());
+}
+
+#[test]
+fn test_multistage_shiori_loader_full_coverage() {
     let mut loader = MultiStageShioriLoader::default();
-    assert!(loader.reload().is_err());
+    assert!(!loader.is_loaded());
+    assert_eq!(loader.lifecycle_state(), ShioriLifecycleState::Unloaded);
+    assert!(loader.suspend().is_ok());
+    assert!(loader.resume().is_ok());
+    assert!(loader.unload().is_ok());
+    assert!(loader.active_engine().is_none());
+    assert!(loader.active_engine_mut().is_none());
 
     let dir = Path::new("/dummy/ghost/master");
-    let load_res = loader.load_first_working(
+
+    // Dynamic success
+    let mut l1 = MultiStageShioriLoader::new();
+    l1.add_candidate(ShioriEngineCandidate::Dynamic(PathBuf::from("good.so")));
+    let res = l1.load_first_working(
         dir,
-        |_path| Err("No dynamic".to_string()),
-        |_path| Err("No wasm".to_string()),
+        |_| Ok(Box::new(MockShioriEngine::new())),
+        |_| Err("err".into()),
     );
-    assert!(load_res.is_err());
-    assert!(loader.last_error().is_some());
-    assert!(loader.reload().is_err());
+    assert!(res.is_ok());
+    assert!(l1.is_loaded());
+    assert_eq!(l1.lifecycle_state(), ShioriLifecycleState::Active);
+    assert!(l1.active_engine().is_some());
+    assert!(l1.active_engine_mut().is_some());
+    assert!(l1.suspend().is_ok());
+    assert_eq!(l1.lifecycle_state(), ShioriLifecycleState::Suspended);
+    assert!(l1.resume().is_ok());
+    assert_eq!(l1.lifecycle_state(), ShioriLifecycleState::Active);
+    assert!(l1.load(dir).is_ok());
 
-    assert!(loader.load(dir).is_err());
-    assert!(loader.request("GET SHIORI/3.0\r\n\r\n").is_err());
+    // Dynamic load callback ok but engine.load fails
+    struct FailLoadEngine;
+    impl ShioriEngine for FailLoadEngine {
+        fn load(&mut self, _dir: &Path) -> Result<(), String> {
+            Err("failed init".into())
+        }
+        fn request(&self, _: &str) -> Result<String, String> {
+            Ok("".into())
+        }
+        fn unload(&mut self) -> Result<(), String> {
+            Ok(())
+        }
+        fn is_loaded(&self) -> bool {
+            false
+        }
+    }
+    let mut l2 = MultiStageShioriLoader::new();
+    l2.add_candidate(ShioriEngineCandidate::Dynamic(PathBuf::from(
+        "fail_init.so",
+    )));
+    let res2 = l2.load_first_working(dir, |_| Ok(Box::new(FailLoadEngine)), |_| Err("err".into()));
+    assert!(res2.is_err());
 
-    let mock = MockShioriEngine::new();
-    loader.add_candidate(ShioriEngineCandidate::Mock(Box::new(mock)));
+    // Wasm runtime success
+    let mut l3 = MultiStageShioriLoader::new();
+    l3.add_candidate(ShioriEngineCandidate::Wasm(PathBuf::from("good.wasm")));
+    let res3 = l3.load_first_working(
+        dir,
+        |_| Err("err".into()),
+        |_| Ok(Box::new(MockShioriEngine::new())),
+    );
+    assert!(res3.is_ok());
+
+    // Wasm runtime ok but engine.load fails
+    let mut l4 = MultiStageShioriLoader::new();
+    l4.add_candidate(ShioriEngineCandidate::Wasm(PathBuf::from("fail_wasm.wasm")));
+    let res4 = l4.load_first_working(dir, |_| Err("err".into()), |_| Ok(Box::new(FailLoadEngine)));
+    assert!(res4.is_err());
+
+    // Mock candidate engine.load fails
+    let mut l5 = MultiStageShioriLoader::new();
+    l5.add_candidate(ShioriEngineCandidate::Mock(Box::new(FailLoadEngine)));
+    let res5 = l5.load_first_working(dir, |_| Err("err".into()), |_| Err("err".into()));
+    assert!(res5.is_err());
+
+    // MultiStageShioriLoader as ShioriEngine::unload & load on active engine
+    let mut l5_trait: Box<dyn ShioriEngine> = Box::new(MultiStageShioriLoader::new());
+    assert!(l5_trait.unload().is_ok());
+    assert!(l5_trait.load(Path::new("/dummy")).is_err());
+
+    // reload when last_dir_path is None
+    let mut l_no_dir = MultiStageShioriLoader::new();
+    assert!(l_no_dir.reload().is_err());
+
+    // reload error when second load fails during reload
+    struct FailSecondLoadEngine {
+        count: usize,
+    }
+    impl ShioriEngine for FailSecondLoadEngine {
+        fn load(&mut self, _: &Path) -> Result<(), String> {
+            self.count += 1;
+            if self.count > 1 {
+                Err("second load failed".into())
+            } else {
+                Ok(())
+            }
+        }
+        fn request(&self, _: &str) -> Result<String, String> {
+            Ok("".into())
+        }
+        fn unload(&mut self) -> Result<(), String> {
+            Ok(())
+        }
+        fn is_loaded(&self) -> bool {
+            true
+        }
+    }
+    let mut l_second = MultiStageShioriLoader::new();
+    l_second.add_candidate(ShioriEngineCandidate::Mock(Box::new(
+        FailSecondLoadEngine { count: 0 },
+    )));
+    l_second
+        .load_first_working(dir, |_| Err("".into()), |_| Err("".into()))
+        .unwrap();
+    assert!(l_second.reload().is_err());
+
+    // reload error when unload fails
+    struct FailUnloadEngine;
+    impl ShioriEngine for FailUnloadEngine {
+        fn load(&mut self, _: &Path) -> Result<(), String> {
+            Ok(())
+        }
+        fn request(&self, _: &str) -> Result<String, String> {
+            Ok("".into())
+        }
+        fn unload(&mut self) -> Result<(), String> {
+            Err("unload failed".into())
+        }
+        fn is_loaded(&self) -> bool {
+            true
+        }
+    }
+    let mut l_unload = MultiStageShioriLoader::new();
+    l_unload.add_candidate(ShioriEngineCandidate::Mock(Box::new(FailUnloadEngine)));
+    l_unload
+        .load_first_working(dir, |_| Err("".into()), |_| Err("".into()))
+        .unwrap();
+    assert!(l_unload.reload().is_err());
+
+    // Reload with no active engine but with last_dir_path
+    let mut l6 = MultiStageShioriLoader::new();
+    l6.add_candidate(ShioriEngineCandidate::Mock(Box::new(
+        MockShioriEngine::new(),
+    )));
+    l6.load_first_working(dir, |_| Err("".into()), |_| Err("".into()))
+        .unwrap();
     assert!(
-        loader
-            .load_first_working(dir, |_| Err("".into()), |_| Err("".into()))
+        l6.request("GET SHIORI/3.0\r\nSender: SSP\r\nCharset: UTF-8\r\nID: OnBoot\r\n\r\n")
             .is_ok()
     );
-    assert!(loader.active_engine_mut().is_some());
+    l6.unload().unwrap();
+    assert!(l6.reload().is_err());
+    assert!(l6.request("GET SHIORI/3.0\r\n\r\n").is_err());
 }

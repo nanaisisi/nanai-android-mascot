@@ -69,6 +69,22 @@ sakura.balloon.offsetx,-10
     assert_eq!(def0.points.center_x, Some(96));
     assert_eq!(def0.balloon_offsets["sakura"].x, Some(-10));
 
+    // char2.cursor and char2.tooltips blocks
+    let char_cursor_tooltips = r"
+char2.cursor
+{
+mouseup0,Hand,0,0,50,50
+}
+
+char2.tooltips
+{
+Head,Head tooltip
+}
+";
+    let parsed_char = SurfacesTxt::parse(char_cursor_tooltips);
+    assert_eq!(parsed_char.cursors["char2"].len(), 1);
+    assert_eq!(parsed_char.tooltips["char2"]["Head"], "Head tooltip");
+
     assert!(txt.surface(22).is_some());
     assert_eq!(
         txt.surface(22).unwrap().element(0).unwrap().method,

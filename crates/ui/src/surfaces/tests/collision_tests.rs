@@ -69,6 +69,42 @@ animation100.collisionex0,ArmorBust,rect,10,10,60,60
 
     // 当たり判定外をクリックした場合 -> None
     assert!(txt.hit_test_with_binds(0, 200, 200, &[100]).is_none());
+
+    // 存在しない surface_id
+    assert!(txt.hit_test_with_binds(999, 20, 20, &[100]).is_none());
+
+    // CollisionShape::bounding_box tests for circle, ellipse, and empty/negative edge cases
+    use crate::surfaces::types::CollisionShape;
+    let circle = CollisionShape::Circle {
+        cx: 50,
+        cy: 50,
+        r: 10.5,
+    };
+    assert_eq!(circle.bounding_box(), Some((39, 39, 61, 61)));
+    let circle_zero = CollisionShape::Circle {
+        cx: 50,
+        cy: 50,
+        r: 0.0,
+    };
+    assert_eq!(circle_zero.bounding_box(), None);
+
+    let ellipse = CollisionShape::Ellipse {
+        cx: 50,
+        cy: 50,
+        rx: 10.5,
+        ry: 20.2,
+    };
+    assert_eq!(ellipse.bounding_box(), Some((39, 29, 61, 71)));
+    let ellipse_zero = CollisionShape::Ellipse {
+        cx: 50,
+        cy: 50,
+        rx: -1.0,
+        ry: 20.2,
+    };
+    assert_eq!(ellipse_zero.bounding_box(), None);
+
+    let empty_poly = CollisionShape::Polygon { vertices: vec![] };
+    assert_eq!(empty_poly.bounding_box(), None);
 }
 
 #[test]
@@ -92,19 +128,45 @@ animation10.pattern0,overlay,1,500,0,0
     let s2_sample = r"charset,UTF-8
 descript
 {
+version,2
+maxwidth,600
+animation.sort,ascend
 collision.sort,descend
+root.prop,custom_value
 }
 
 surface0
 {
+name,OverwrittenName
+point.centerx,150
+point.centery,200
+point.baseposx,100
+point.baseposy,250
+point.kinoko.centerx,80
+point.kinoko.centery,120
+sakura.balloon.offsetx,30
+custom.surface.prop,val
 element1,overlay,acc.png,0,0
 collision1,0,0,50,50,Hat
+animation10.interval,always
 animation10.pattern1,overlay,2,500,0,0
+animation20.interval,runonce
+animation20.pattern0,overlay,3,100,0,0
 }
 
 surface1
 {
 element0,base,surface1.png,0,0
+}
+
+surface.alias
+{
+alias_face,0,1
+}
+
+kero.surface.alias
+{
+kero_face,10
 }
 ";
 

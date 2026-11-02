@@ -8,6 +8,47 @@ use std::path::{Path, PathBuf};
 
 use super::protocol::{ShioriRequest, ShioriResponse};
 
+/// SHIORI エンジンのライフサイクル状態 (Slot-02 Cycle 3: モバイル・省電力最適化)
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum ShioriLifecycleState {
+    /// 未初期化・アンロード状態
+    #[default]
+    Unloaded,
+    /// アクティブ・稼働中状態
+    Active,
+    /// バックグラウンド一時停止・省電力待機状態
+    Suspended,
+    /// 破棄済み状態
+    Destroyed,
+}
+
+/// UKADOC SHIORI/3.0 `capability` Notify イベント用リファレンス一覧を生成
+///
+/// SSP/UKADOC spec `list/shiori-event/notify/capability.md` 準拠:
+/// request.(ヘッダ小文字), response.(ヘッダ小文字) を Reference0..N に設定する
+pub fn build_standard_capability_references() -> Vec<String> {
+    vec![
+        // Request ヘッダ対応状況
+        "request.sender".to_string(),
+        "request.sendertype".to_string(),
+        "request.securitylevel".to_string(),
+        "request.securityorigin".to_string(),
+        "request.status".to_string(),
+        "request.baseid".to_string(),
+        "request.x-sstp-passthru".to_string(),
+        // Response ヘッダ対応状況
+        "response.value".to_string(),
+        "response.valuenotify".to_string(),
+        "response.marker".to_string(),
+        "response.markersend".to_string(),
+        "response.balloonoffset".to_string(),
+        "response.age".to_string(),
+        "response.errorlevel".to_string(),
+        "response.errordescription".to_string(),
+        "response.x-sstp-passthru".to_string(),
+    ]
+}
+
 /// SHIORI/3.0 エンジントレイト
 pub trait ShioriEngine: Send + Sync {
     /// SHIORI エンジンのロード・初期化
@@ -23,11 +64,30 @@ pub trait ShioriEngine: Send + Sync {
 
     /// エンジンがロード済みか否か
     fn is_loaded(&self) -> bool;
+
+    /// モバイル/バックグラウンド移行時のサスペンド (省電力・メモリ圧縮)
+    fn suspend(&mut self) -> Result<(), String> {
+        Ok(())
+    }
+
+    /// フォアグラウンド復帰時のレジューム
+    fn resume(&mut self) -> Result<(), String> {
+        Ok(())
+    }
+
+    /// 現在のライフサイクル状態を取得
+    fn lifecycle_state(&self) -> ShioriLifecycleState {
+        if self.is_loaded() {
+            ShioriLifecycleState::Active
+        } else {
+            ShioriLifecycleState::Unloaded
+        }
+    }
 }
 
 /// テスト・スタンドアロン実行用のモック SHIORI エンジン
 pub struct MockShioriEngine {
-    loaded: bool,
+    state: ShioriLifecycleState,
     dir_path: Option<PathBuf>,
     handlers: HashMap<String, String>,
 }
@@ -50,7 +110,7 @@ impl MockShioriEngine {
         );
 
         Self {
-            loaded: false,
+            state: ShioriLifecycleState::Unloaded,
             dir_path: None,
             handlers,
         }
@@ -70,13 +130,16 @@ impl Default for MockShioriEngine {
 
 impl ShioriEngine for MockShioriEngine {
     fn load(&mut self, dir_path: &Path) -> Result<(), String> {
-        self.loaded = true;
+        self.state = ShioriLifecycleState::Active;
         self.dir_path = Some(dir_path.to_path_buf());
         Ok(())
     }
 
     fn request(&self, request_str: &str) -> Result<String, String> {
-        if !self.loaded {
+        if self.state == ShioriLifecycleState::Suspended {
+            return Err("SHIORI is suspended".to_string());
+        }
+        if self.state != ShioriLifecycleState::Active {
             return Err("SHIORI is not loaded".to_string());
         }
 
@@ -102,13 +165,37 @@ impl ShioriEngine for MockShioriEngine {
     }
 
     fn unload(&mut self) -> Result<(), String> {
-        self.loaded = false;
+        self.state = ShioriLifecycleState::Unloaded;
         self.dir_path = None;
         Ok(())
     }
 
     fn is_loaded(&self) -> bool {
-        self.loaded
+        self.state == ShioriLifecycleState::Active || self.state == ShioriLifecycleState::Suspended
+    }
+
+    fn suspend(&mut self) -> Result<(), String> {
+        if self.is_loaded() {
+            self.state = ShioriLifecycleState::Suspended;
+            Ok(())
+        } else {
+            Err("Cannot suspend unloaded SHIORI".to_string())
+        }
+    }
+
+    fn resume(&mut self) -> Result<(), String> {
+        if self.state == ShioriLifecycleState::Suspended {
+            self.state = ShioriLifecycleState::Active;
+            Ok(())
+        } else if self.state == ShioriLifecycleState::Active {
+            Ok(())
+        } else {
+            Err("Cannot resume unloaded SHIORI".to_string())
+        }
+    }
+
+    fn lifecycle_state(&self) -> ShioriLifecycleState {
+        self.state
     }
 }
 
@@ -160,14 +247,16 @@ impl MultiStageShioriLoader {
         Ok(())
     }
 
-    /// 登録済みの候補を順に解決・ロード
-    pub fn load_first_working<F>(
+    /// 登録済みの候補を順に解決・ロード (WASM ローダー解決フック対応)
+    pub fn load_first_working<F, W>(
         &mut self,
         dir_path: &Path,
         mut dynamic_loader: F,
+        mut wasm_loader: W,
     ) -> Result<(), String>
     where
         F: FnMut(&Path) -> Result<Box<dyn ShioriEngine>, String>,
+        W: FnMut(&Path) -> Result<Box<dyn ShioriEngine>, String>,
     {
         self.unload()?;
 
@@ -189,10 +278,20 @@ impl MultiStageShioriLoader {
                         last_error = format!("Dynamic load failed for {:?}: {}", path, e);
                     }
                 },
-                ShioriEngineCandidate::Wasm(path) => {
-                    // WASM ローダー (将来の Wasmtime/Wasmer 実装)
-                    last_error = format!("WASM runtime not configured for {:?}", path);
-                }
+                ShioriEngineCandidate::Wasm(path) => match wasm_loader(&path) {
+                    Ok(mut engine) => match engine.load(dir_path) {
+                        Ok(_) => {
+                            self.active_engine = Some(engine);
+                            return Ok(());
+                        }
+                        Err(e) => {
+                            last_error = format!("WASM load failed for {:?}: {}", path, e);
+                        }
+                    },
+                    Err(e) => {
+                        last_error = format!("WASM runtime failed for {:?}: {}", path, e);
+                    }
+                },
                 ShioriEngineCandidate::Mock(mut engine) => {
                     if engine.load(dir_path).is_ok() {
                         self.active_engine = Some(engine);
@@ -238,5 +337,28 @@ impl ShioriEngine for MultiStageShioriLoader {
             .as_ref()
             .map(|e| e.is_loaded())
             .unwrap_or(false)
+    }
+
+    fn suspend(&mut self) -> Result<(), String> {
+        if let Some(engine) = self.active_engine.as_mut() {
+            engine.suspend()
+        } else {
+            Ok(())
+        }
+    }
+
+    fn resume(&mut self) -> Result<(), String> {
+        if let Some(engine) = self.active_engine.as_mut() {
+            engine.resume()
+        } else {
+            Ok(())
+        }
+    }
+
+    fn lifecycle_state(&self) -> ShioriLifecycleState {
+        self.active_engine
+            .as_ref()
+            .map(|e| e.lifecycle_state())
+            .unwrap_or(ShioriLifecycleState::Unloaded)
     }
 }

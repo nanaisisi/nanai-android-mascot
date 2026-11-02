@@ -44,6 +44,13 @@ impl ShioriRequest {
         }
     }
 
+    /// UKADOC `capability` Notify イベント用リクエストを構築
+    ///
+    /// SHIORI/3.0 拡張ヘッダの対応状況 (request.* / response.*) を Reference* として列挙
+    pub fn capability(references: &[String]) -> Self {
+        Self::notify("capability", references)
+    }
+
     /// NOTIFY（返値無視）リクエストを作る
     pub fn notify(id: &str, references: &[String]) -> Self {
         let mut req = Self::get(id, references);

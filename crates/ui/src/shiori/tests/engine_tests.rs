@@ -1,7 +1,57 @@
 use crate::shiori::{
     MockShioriEngine, MultiStageShioriLoader, ShioriEngine, ShioriEngineCandidate,
+    ShioriLifecycleState, build_standard_capability_references,
 };
 use std::path::{Path, PathBuf};
+
+#[test]
+fn test_mock_shiori_engine_suspend_and_resume() {
+    let mut engine = MockShioriEngine::new();
+    assert_eq!(engine.lifecycle_state(), ShioriLifecycleState::Unloaded);
+
+    // ロード前は suspend / resume 不可
+    assert!(engine.suspend().is_err());
+    assert!(engine.resume().is_err());
+
+    // ロード
+    assert!(engine.load(Path::new("/dummy/dir")).is_ok());
+    assert_eq!(engine.lifecycle_state(), ShioriLifecycleState::Active);
+    assert!(engine.is_loaded());
+
+    // 通常リクエスト
+    let boot_req = "GET SHIORI/3.0\r\nSender: SSP\r\nCharset: UTF-8\r\nID: OnBoot\r\n\r\n";
+    assert!(engine.request(boot_req).is_ok());
+
+    // サスペンド (バックグラウンド移行)
+    assert!(engine.suspend().is_ok());
+    assert_eq!(engine.lifecycle_state(), ShioriLifecycleState::Suspended);
+    assert!(engine.is_loaded()); // メモリ上ロード状態は維持
+
+    // サスペンド中はリクエスト送信不可
+    assert!(engine.request(boot_req).is_err());
+
+    // レジューム (フォアグラウンド復帰)
+    assert!(engine.resume().is_ok());
+    assert_eq!(engine.lifecycle_state(), ShioriLifecycleState::Active);
+    assert!(engine.request(boot_req).is_ok());
+
+    // アンロード
+    assert!(engine.unload().is_ok());
+    assert_eq!(engine.lifecycle_state(), ShioriLifecycleState::Unloaded);
+    assert!(!engine.is_loaded());
+}
+
+#[test]
+fn test_build_standard_capability_references() {
+    let refs = build_standard_capability_references();
+    assert!(!refs.is_empty());
+    assert!(refs.iter().any(|r| r == "request.status"));
+    assert!(refs.iter().any(|r| r == "request.securitylevel"));
+    assert!(refs.iter().any(|r| r == "response.value"));
+    assert!(refs.iter().any(|r| r == "response.valuenotify"));
+    assert!(refs.iter().any(|r| r == "response.marker"));
+    assert!(refs.iter().any(|r| r == "response.x-sstp-passthru"));
+}
 
 #[test]
 fn test_mock_shiori_engine_lifecycle() {
@@ -61,9 +111,11 @@ fn test_multistage_shiori_loader_fallback() {
     loader.add_candidate(ShioriEngineCandidate::Mock(Box::new(mock)));
 
     let dir = Path::new("/dummy/ghost/master");
-    let load_res = loader.load_first_working(dir, |_path| {
-        Err("Dynamic load failed (simulated)".to_string())
-    });
+    let load_res = loader.load_first_working(
+        dir,
+        |_path| Err("Dynamic load failed (simulated)".to_string()),
+        |_path| Err("WASM load failed (simulated)".to_string()),
+    );
 
     assert!(load_res.is_ok());
     assert!(loader.is_loaded());

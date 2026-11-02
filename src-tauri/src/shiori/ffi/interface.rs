@@ -127,4 +127,20 @@ impl ShioriEngine for ShioriInterface {
     fn is_loaded(&self) -> bool {
         self.is_loaded
     }
+
+    fn suspend(&mut self) -> Result<(), String> {
+        Ok(())
+    }
+
+    fn resume(&mut self) -> Result<(), String> {
+        Ok(())
+    }
+
+    fn lifecycle_state(&self) -> nanai_android_mascot_ui::ShioriLifecycleState {
+        if self.is_loaded {
+            nanai_android_mascot_ui::ShioriLifecycleState::Active
+        } else {
+            nanai_android_mascot_ui::ShioriLifecycleState::Unloaded
+        }
+    }
 }

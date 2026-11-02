@@ -16,10 +16,13 @@ import {
 	closeDialog,
 	closeInputBox,
 	closeTextAreaBox,
+	openDateInput,
 	openInputBox,
+	openIpInput,
 	openPasswordInput,
 	openSliderInput,
 	openTextAreaBox,
+	openTimeInput,
 } from "./command-handler/inputbox.js";
 import { handleJumpCommand } from "./command-handler/jump.js";
 import {
@@ -70,12 +73,36 @@ function initDefaultCommandHandlers() {
 		openSliderInput(handler, args.slice(2));
 	});
 
+	registerCommandHandler("open:dateinput", async (handler, args) => {
+		openDateInput(handler, args.slice(2));
+	});
+
+	registerCommandHandler("open:timeinput", async (handler, args) => {
+		openTimeInput(handler, args.slice(2));
+	});
+
+	registerCommandHandler("open:ipinput", async (handler, args) => {
+		openIpInput(handler, args.slice(2));
+	});
+
 	registerCommandHandler("close:inputbox", async (handler, args) => {
 		closeInputBox(handler, args[2]);
 	});
 
 	registerCommandHandler("close:textareabox", async (handler, args) => {
 		closeTextAreaBox(handler, args[2]);
+	});
+
+	registerCommandHandler("close:dateinput", async (handler, args) => {
+		closeInputBox(handler, args[2]);
+	});
+
+	registerCommandHandler("close:timeinput", async (handler, args) => {
+		closeInputBox(handler, args[2]);
+	});
+
+	registerCommandHandler("close:ipinput", async (handler, args) => {
+		closeInputBox(handler, args[2]);
 	});
 
 	registerCommandHandler("close:dialog", async (handler, args) => {

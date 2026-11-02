@@ -1,0 +1,173 @@
+//! SSTP handler and notification module
+
+use super::parser::parse_raw_sstp_request;
+use super::types::{SstpBlacklistingEvent, SstpBreakEvent, SstpRequest, SstpResponse};
+use nanai_android_mascot_ui::sstp::{
+    SstpEventBuilder, SstpGhostConfig, SstpGhostContext, handle_execute_command,
+};
+use std::collections::HashMap;
+use tauri::Emitter;
+
+/// SSTP 中断 (Break) を通知し OnSSTPBreak イベントペイロードを構築する
+#[tauri::command]
+pub async fn notify_sstp_break(
+    event: SstpBreakEvent,
+    app_handle: tauri::AppHandle,
+) -> Result<HashMap<String, String>, String> {
+    let params =
+        SstpEventBuilder::build_on_sstp_break(&event.script, event.scope, event.break_position);
+    app_handle
+        .emit("sstp-break", &params)
+        .map_err(|e| e.to_string())?;
+    Ok(params)
+}
+
+/// クライアントのブラックリスト登録を通知し OnSSTPBlacklisting イベントペイロードを構築する
+#[tauri::command]
+pub async fn notify_sstp_blacklisting(
+    event: SstpBlacklistingEvent,
+    app_handle: tauri::AppHandle,
+) -> Result<HashMap<String, String>, String> {
+    let params = SstpEventBuilder::build_on_sstp_blacklisting(&event.client_ip);
+    app_handle
+        .emit("sstp-blacklisting", &params)
+        .map_err(|e| e.to_string())?;
+    Ok(params)
+}
+
+#[tauri::command]
+pub async fn send_sstp_request(
+    request: SstpRequest,
+    app_handle: tauri::AppHandle,
+) -> Result<SstpResponse, String> {
+    send_sstp_request_with_config(request, &SstpGhostConfig::default(), app_handle).await
+}
+
+/// Send SSTP request with ghost configuration validation ([sstp.allowcommunicate], [sstp.allowunspecifiedsend])
+pub async fn send_sstp_request_with_config(
+    request: SstpRequest,
+    config: &SstpGhostConfig,
+    app_handle: tauri::AppHandle,
+) -> Result<SstpResponse, String> {
+    let method = request.method.as_deref().unwrap_or("SEND").to_uppercase();
+    println!(
+        "📨 [SSTP/1.1] Method: {}, Sender: {}",
+        method, request.sender
+    );
+
+    // [sstp.allowcommunicate]: COMMUNICATE メソッド拒否判定
+    if method == "COMMUNICATE" && !config.allow_communicate {
+        return Ok(SstpResponse {
+            status: "420 Refuse".to_string(),
+            value: "COMMUNICATE disabled by ghost".to_string(),
+            id: None,
+            reference0: None,
+            additional_data: None,
+            error_description: Some("COMMUNICATE disabled by ghost".to_string()),
+        });
+    }
+
+    // [sstp.allowunspecifiedsend]: 無指定 SEND 拒否判定
+    if method == "SEND" && !config.allow_unspecified_send {
+        let is_specified =
+            request.receiver_ghost_name.is_some() || request.receiver_ghost_hwnd.is_some();
+        if !is_specified {
+            return Ok(SstpResponse {
+                status: "420 Refuse".to_string(),
+                value: "Unspecified SEND disabled by ghost".to_string(),
+                id: None,
+                reference0: None,
+                additional_data: None,
+                error_description: Some("Unspecified SEND disabled by ghost".to_string()),
+            });
+        }
+    }
+
+    match method.as_str() {
+        "SEND" | "NOTIFY" => {
+            if let Some(ref script) = request.script {
+                app_handle
+                    .emit("sstp-execute-script", script)
+                    .map_err(|e| e.to_string())?;
+            }
+        }
+        "EXECUTE" => {
+            if let Some(ref cmd) = request.command {
+                let ctx = SstpGhostContext {
+                    name: "Nanai".to_string(),
+                    sakura_name: "Nanai".to_string(),
+                    kero_name: "Kero".to_string(),
+                    shell_name: "master".to_string(),
+                    balloon_name: "standard".to_string(),
+                    version: "Nanai 0.1.0".to_string(),
+                    short_version: "0.1.0".to_string(),
+                    status: String::new(),
+                    fmo_text: String::new(),
+                    installed_ghosts: vec!["Nanai".to_string()],
+                    sstp_config: config.clone(),
+                };
+                let resp = handle_execute_command(cmd, &ctx);
+                return Ok(SstpResponse {
+                    status: format!("{} {}", resp.status.code(), resp.status.reason_phrase()),
+                    value: resp.additional_data.clone().unwrap_or_default(),
+                    id: request.event,
+                    reference0: request.references.get("Reference0").cloned(),
+                    additional_data: resp.additional_data,
+                    error_description: resp.error_description,
+                });
+            } else if let Some(ref event) = request.event {
+                app_handle
+                    .emit("sstp-execute-event", event)
+                    .map_err(|e| e.to_string())?;
+            }
+        }
+        "COMMUNICATE" => {
+            let payload = request.script.as_deref().or(request.sentence.as_deref());
+            if let Some(script) = payload {
+                app_handle
+                    .emit("sstp-communicate", script)
+                    .map_err(|e| e.to_string())?;
+            }
+        }
+        "GIVE" => {
+            let payload = request
+                .script
+                .as_deref()
+                .or(request.document.as_deref())
+                .or(request.song.as_deref());
+            if let Some(script) = payload {
+                app_handle
+                    .emit("sstp-give", script)
+                    .map_err(|e| e.to_string())?;
+            }
+        }
+        _ => {
+            return Ok(SstpResponse {
+                status: "400 Bad Request".to_string(),
+                value: format!("Unsupported SSTP method: {}", method),
+                id: None,
+                reference0: None,
+                additional_data: None,
+                error_description: Some("unsupported method".to_string()),
+            });
+        }
+    }
+
+    Ok(SstpResponse {
+        status: "200 OK".to_string(),
+        value: "SSTP request processed successfully".to_string(),
+        id: request.event,
+        reference0: request.references.get("Reference0").cloned(),
+        additional_data: None,
+        error_description: None,
+    })
+}
+
+#[tauri::command]
+pub async fn parse_and_send_sstp_raw(
+    raw_request: String,
+    app_handle: tauri::AppHandle,
+) -> Result<SstpResponse, String> {
+    let req = parse_raw_sstp_request(&raw_request)?;
+    send_sstp_request(req, app_handle).await
+}

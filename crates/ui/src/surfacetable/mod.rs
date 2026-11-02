@@ -13,3 +13,10 @@ mod tests;
 
 pub use parser::{is_parts_name, parse_surface_table};
 pub use types::{SurfTableEntry, SurfTableGroup, SurfaceTable};
+
+impl SurfaceTable {
+    /// テキスト内容から `surfacetable.txt` をパースする
+    pub fn parse(text: &str) -> Self {
+        parse_surface_table(text)
+    }
+}

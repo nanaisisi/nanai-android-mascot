@@ -1,4 +1,3 @@
-use super::parser::parse_surface_table;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
@@ -42,11 +41,6 @@ pub struct SurfaceTable {
 }
 
 impl SurfaceTable {
-    /// テキスト内容から `surfacetable.txt` をパースする
-    pub fn parse(text: &str) -> Self {
-        parse_surface_table(text)
-    }
-
     /// グループ名で検索（大文字小文字・前後の空白は無視）
     pub fn group(&self, name: &str) -> Option<&SurfTableGroup> {
         self.groups

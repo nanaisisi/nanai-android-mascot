@@ -1,5 +1,6 @@
 use super::super::utils::*;
 use crate::common::*;
+use nanai_android_mascot_ui::validate_archive_entry_path;
 use std::path::Path;
 
 use super::inspection::BundledResourceTarget;
@@ -17,6 +18,9 @@ pub fn extract_zip_entries<R: std::io::Read + std::io::Seek>(
 
         let decoded_name = decode_zip_entry_name(entry.name_raw());
         let entry_name = decoded_name.replace('\\', "/");
+
+        // Zip-Slip事前検証
+        validate_archive_entry_path(&entry_name)?;
 
         let relative_path = if !root_prefix.is_empty() && entry_name.starts_with(root_prefix) {
             &entry_name[root_prefix.len()..]

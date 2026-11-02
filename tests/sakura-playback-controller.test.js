@@ -229,3 +229,36 @@ test("SakuraPlaybackController destroy stops queue and cleans up resources", () 
 	assert.equal(controller.getIsPaused(), true);
 	assert.equal(controller.listeners.size, 0);
 });
+
+test("SakuraPlaybackController queue inspection helpers (hasPendingJobs, getQueueSnapshot, peekNextJob)", async () => {
+	const controller = new SakuraPlaybackController();
+
+	assert.equal(controller.hasPendingJobs(), false);
+	assert.equal(controller.peekNextJob(), null);
+	assert.deepEqual(controller.getQueueSnapshot(), []);
+
+	controller.isProcessing = true; // Hold queue processing
+	assert.equal(controller.hasPendingJobs(), true);
+
+	const p1 = controller.enqueue("\\0First\\e").catch(() => {});
+	const p2 = controller.enqueue("\\0Second\\e").catch(() => {});
+
+	assert.equal(controller.hasPendingJobs(), true);
+	assert.equal(controller.getQueueLength(), 2);
+
+	const peeked = controller.peekNextJob();
+	assert.ok(peeked);
+	assert.equal(peeked.script, "\\0First\\e");
+
+	const snapshot = controller.getQueueSnapshot();
+	assert.equal(snapshot.length, 2);
+	assert.equal(snapshot[0].script, "\\0First\\e");
+	assert.equal(snapshot[1].script, "\\0Second\\e");
+
+	controller.clearQueue();
+	await Promise.all([p1, p2]);
+
+	assert.equal(controller.getQueueLength(), 0);
+	assert.equal(controller.peekNextJob(), null);
+	assert.deepEqual(controller.getQueueSnapshot(), []);
+});

@@ -13,6 +13,9 @@ pub struct GhostManifest {
     pub recommended_balloon: Option<String>,
     pub recommended_balloon_path: Option<String>,
     pub default_balloon_path: Option<String>,
+    pub sstp_allow_communicate: bool,
+    pub sstp_allow_unspecified_send: bool,
+    pub sstp_always_translate: bool,
 }
 
 pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
@@ -70,6 +73,24 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
         .as_ref()
         .and_then(|m| m.get("default.balloon.path").cloned());
 
+    let sstp_allow_communicate = meta_map
+        .as_ref()
+        .and_then(|m| m.get("sstp.allowcommunicate"))
+        .map(|v| v.trim() != "0")
+        .unwrap_or(true);
+
+    let sstp_allow_unspecified_send = meta_map
+        .as_ref()
+        .and_then(|m| m.get("sstp.allowunspecifiedsend"))
+        .map(|v| v.trim() != "0")
+        .unwrap_or(true);
+
+    let sstp_always_translate = meta_map
+        .as_ref()
+        .and_then(|m| m.get("sstp.alwaystranslate"))
+        .map(|v| v.trim() == "1")
+        .unwrap_or(false);
+
     GhostManifest {
         display_name,
         version,
@@ -82,5 +103,8 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
         recommended_balloon,
         recommended_balloon_path,
         default_balloon_path,
+        sstp_allow_communicate,
+        sstp_allow_unspecified_send,
+        sstp_always_translate,
     }
 }

@@ -38,9 +38,19 @@ export function drawImageLayer(ctx, img, x, y, type = "overlay") {
 			img.naturalWidth || img.width,
 			img.naturalHeight || img.height,
 		);
-	} else if (method === "blend-multiply" || method === "multiply") {
+	} else if (
+		method === "overlaymultiply" ||
+		method === "blend-multiply-fast" ||
+		method === "blend-multiply" ||
+		method === "multiply"
+	) {
 		ctx.globalCompositeOperation = "multiply";
-	} else if (method === "blend-screen" || method === "screen") {
+	} else if (
+		method === "overlayscreen" ||
+		method === "blend-screen-fast" ||
+		method === "blend-screen" ||
+		method === "screen"
+	) {
 		ctx.globalCompositeOperation = "screen";
 	} else if (method === "blend-overlay" || method === "blend-softlight") {
 		ctx.globalCompositeOperation = "overlay";
@@ -101,6 +111,41 @@ export function drawImageLayer(ctx, img, x, y, type = "overlay") {
 
 					tempCtx.putImageData(overlayImgData, 0, 0);
 					ctx.drawImage(tempCanvas, x, y);
+					ctx.globalCompositeOperation = savedOp;
+					return;
+				}
+			}
+		} catch (_err) {
+			// フォールバック
+		}
+	} else if (method === "reduce") {
+		// ベースレイヤと新規レイヤの不透明度（アルファ）を乗算合成 (UKADOC準拠)
+		try {
+			const pWidth = img.naturalWidth || img.width;
+			const pHeight = img.naturalHeight || img.height;
+			if (pWidth > 0 && pHeight > 0 && typeof document !== "undefined") {
+				const tempCanvas = document.createElement("canvas");
+				tempCanvas.width = pWidth;
+				tempCanvas.height = pHeight;
+				const tempCtx = tempCanvas.getContext("2d", {
+					willReadFrequently: true,
+				});
+				if (tempCtx && typeof ctx.getImageData === "function") {
+					tempCtx.drawImage(img, 0, 0);
+					const overlayImgData = tempCtx.getImageData(0, 0, pWidth, pHeight);
+					const dstImgData = ctx.getImageData(x, y, pWidth, pHeight);
+
+					const oData = overlayImgData.data;
+					const dData = dstImgData.data;
+					const totalBytes = oData.length;
+
+					for (let i = 3; i < totalBytes; i += 4) {
+						const srcAlpha = oData[i];
+						const dstAlpha = dData[i];
+						dData[i] = Math.round((dstAlpha * srcAlpha) / 255);
+					}
+
+					ctx.putImageData(dstImgData, x, y);
 					ctx.globalCompositeOperation = savedOp;
 					return;
 				}

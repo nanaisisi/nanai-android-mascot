@@ -97,6 +97,9 @@ globalThis.__TAURI_INTERNALS__ = {
 				"validrect.right": "10",
 				"validrect.bottom": "10",
 				"wordwrappoint.x": "-50",
+				"balloon.dontmove": "1",
+				"arrow.filename": "arrow",
+				mousecursor: "cursor.png",
 			};
 		}
 		if (cmd === "load_balloon_image") return "data:image/png;base64,bg";

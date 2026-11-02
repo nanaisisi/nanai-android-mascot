@@ -114,7 +114,7 @@ pub async fn show_subchar_window(
 #[tauri::command]
 pub async fn sync_character_balloon(
     app_handle: tauri::AppHandle,
-    state: tauri::State<'_, crate::common::AppState>,
+    state: tauri::State<'_, crate::common::state::AppState>,
     scope_id: i32,
 ) -> Result<(), String> {
     super::balloon_window::sync_balloon_position_impl(&app_handle, &state, scope_id).await

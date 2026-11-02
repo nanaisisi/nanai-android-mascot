@@ -1,4 +1,4 @@
-use crate::common::*;
+use crate::common::state::AppState;
 use std::path::PathBuf;
 
 pub fn resolve_ghost_dir_opt(ghost_name: &str, app_handle: &tauri::AppHandle) -> Option<PathBuf> {

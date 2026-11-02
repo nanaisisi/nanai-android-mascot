@@ -62,7 +62,7 @@ pub fn handle_window_event(window: &tauri::Window, event: &tauri::WindowEvent) {
                     .map(|w| w.is_focused().unwrap_or(false))
                     .unwrap_or(false);
 
-                let state = app.state::<crate::common::AppState>();
+                let state = app.state::<crate::common::state::AppState>();
                 let is_dialog_open = *state.is_dialog_open.lock();
 
                 if !menu_focused && !sub_focused && !is_dialog_open {

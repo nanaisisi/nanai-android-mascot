@@ -1,4 +1,5 @@
-use crate::common::*;
+use crate::common::models::GhostInfo;
+use crate::common::state::AppState;
 use crate::ghost::scan::{ScanResult, scan_ghost_directory};
 
 /// 現在のゴースト情報を取得（簡易版）

@@ -1,7 +1,7 @@
 #[tauri::command]
 pub async fn set_balloon_offset(
     app_handle: tauri::AppHandle,
-    state: tauri::State<'_, crate::common::AppState>,
+    state: tauri::State<'_, crate::common::state::AppState>,
     scope_id: i32,
     x: i32,
     y: i32,
@@ -12,7 +12,7 @@ pub async fn set_balloon_offset(
 
 pub async fn sync_balloon_position_impl(
     app_handle: &tauri::AppHandle,
-    state: &tauri::State<'_, crate::common::AppState>,
+    state: &tauri::State<'_, crate::common::state::AppState>,
     scope_id: i32,
 ) -> Result<(), String> {
     use tauri::Manager;
@@ -44,7 +44,7 @@ pub async fn sync_balloon_position_impl(
 #[tauri::command]
 pub async fn sync_balloon_position(
     app_handle: tauri::AppHandle,
-    state: tauri::State<'_, crate::common::AppState>,
+    state: tauri::State<'_, crate::common::state::AppState>,
     scope_id: i32,
 ) -> Result<(), String> {
     sync_balloon_position_impl(&app_handle, &state, scope_id).await
@@ -53,7 +53,7 @@ pub async fn sync_balloon_position(
 #[tauri::command]
 pub async fn save_balloon_offset_from_position(
     app_handle: tauri::AppHandle,
-    state: tauri::State<'_, crate::common::AppState>,
+    state: tauri::State<'_, crate::common::state::AppState>,
     scope_id: i32,
 ) -> Result<(), String> {
     use tauri::Manager;

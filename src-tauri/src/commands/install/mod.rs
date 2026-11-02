@@ -1,7 +1,8 @@
 pub mod archive;
 pub mod utils;
 
-use crate::common::*;
+use crate::common::models::GhostInfo;
+use crate::common::state::AppState;
 use std::path::Path;
 use tauri::Manager;
 

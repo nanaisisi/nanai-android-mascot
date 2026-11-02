@@ -1,6 +1,6 @@
 //! プラグインおよびヘッドラインセンサーのスキャンコマンド (UKADOC / SSP 規格)
 
-use crate::common::*;
+use crate::common::models::{HeadlineInfo, PluginInfo};
 use crate::ghost::scan::read_descript_file;
 use tauri::Manager;
 

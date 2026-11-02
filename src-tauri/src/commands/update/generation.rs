@@ -1,7 +1,7 @@
 //! Update definition generation implementation (updates2.dau / updates.txt)
 //! spec/update-file/generation.md 準拠
 
-use crate::common::*;
+use crate::common::paths::resolve_asset_path;
 use walkdir::WalkDir;
 
 #[tauri::command]

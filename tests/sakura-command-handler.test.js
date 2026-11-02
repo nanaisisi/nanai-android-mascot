@@ -64,6 +64,18 @@ test("SakuraCommandHandler covers all commands and boxes", async () => {
 			bindDressup: async () => {},
 			pauseAnimationById: () => {},
 			resumeAnimationById: () => {},
+			setScale: (sx, sy, scope) => {
+				eventsSent.push({ ev: "setScale", sx, sy, scope });
+			},
+			setAlpha: (alpha, scope) => {
+				eventsSent.push({ ev: "setAlpha", alpha, scope });
+			},
+			setPosition: (x, y, scope) => {
+				eventsSent.push({ ev: "setPosition", x, y, scope });
+			},
+		},
+		dispatchAction: async (action) => {
+			eventsSent.push({ ev: "dispatchAction", action });
 		},
 		startNetworkUpdate: async () => {
 			this.updated = true;
@@ -274,6 +286,48 @@ test("SakuraCommandHandler covers all commands and boxes", async () => {
 	await handler.runCommand(["close", "dialog", "SliderID"]);
 	assert.ok(
 		eventsSent.some((e) => e.ev === "closeDialog" && e.id === "SliderID"),
+	);
+
+	// 13. set:property, scaling, alpha, position, shioridebugmode, resetwindowpos, resetballoonpos
+	eventsSent.length = 0;
+	await handler.runCommand(["set", "property", "theme.color", "blue"]);
+	assert.equal(scriptLifetimeState.getVariable("theme.color"), "blue");
+
+	await handler.runCommand(["set", "scaling", "150", "150"]);
+	assert.ok(
+		eventsSent.some((e) => e.ev === "setScale" && e.sx === 150 && e.sy === 150),
+	);
+
+	await handler.runCommand(["set", "alpha", "80"]);
+	assert.ok(eventsSent.some((e) => e.ev === "setAlpha" && e.alpha === 80));
+
+	// Test alpha clamping
+	await handler.runCommand(["set", "alpha", "150"]);
+	assert.ok(eventsSent.some((e) => e.ev === "setAlpha" && e.alpha === 100));
+
+	await handler.runCommand(["set", "position", "200", "400", "1"]);
+	assert.ok(
+		eventsSent.some(
+			(e) =>
+				e.ev === "setPosition" && e.x === 200 && e.y === 400 && e.scope === 1,
+		),
+	);
+
+	await handler.runCommand(["set", "shioridebugmode", "true"]);
+	assert.equal(mockApp.ghostController.shioriDebugMode, true);
+
+	await handler.runCommand(["execute", "resetwindowpos"]);
+	assert.ok(
+		eventsSent.some(
+			(e) => e.ev === "dispatchAction" && e.action === "reset-shell-position",
+		),
+	);
+
+	await handler.runCommand(["execute", "resetballoonpos"]);
+	assert.ok(
+		eventsSent.some(
+			(e) => e.ev === "dispatchAction" && e.action === "reset-balloon-position",
+		),
 	);
 });
 

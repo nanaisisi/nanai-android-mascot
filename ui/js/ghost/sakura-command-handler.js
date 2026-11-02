@@ -29,9 +29,16 @@ import {
 } from "./command-handler/registry.js";
 import {
 	handleBiffCommand,
+	handleExecuteResetBalloonPos,
+	handleExecuteResetWindowPos,
 	handleExecuteSntpCommand,
 	handleOpenSystemTarget,
 	handleSetAlignmentOnDesktop,
+	handleSetAlphaCommand,
+	handleSetPositionCommand,
+	handleSetPropertyCommand,
+	handleSetScalingCommand,
+	handleSetShioriDebugMode,
 	handleSetTaskTrayIcon,
 	handleSetTrayBalloon,
 } from "./command-handler/system.js";
@@ -167,6 +174,34 @@ function initDefaultCommandHandlers() {
 
 	registerCommandHandler("set:alignmentondesktop", async (handler, args) => {
 		await handleSetAlignmentOnDesktop(handler, args);
+	});
+
+	registerCommandHandler("set:property", async (handler, args) => {
+		await handleSetPropertyCommand(handler, args);
+	});
+
+	registerCommandHandler("set:scaling", async (handler, args) => {
+		await handleSetScalingCommand(handler, args);
+	});
+
+	registerCommandHandler("set:alpha", async (handler, args) => {
+		await handleSetAlphaCommand(handler, args);
+	});
+
+	registerCommandHandler("set:position", async (handler, args) => {
+		await handleSetPositionCommand(handler, args);
+	});
+
+	registerCommandHandler("set:shioridebugmode", async (handler, args) => {
+		await handleSetShioriDebugMode(handler, args);
+	});
+
+	registerCommandHandler("execute:resetwindowpos", async (handler, args) => {
+		await handleExecuteResetWindowPos(handler, args);
+	});
+
+	registerCommandHandler("execute:resetballoonpos", async (handler, args) => {
+		await handleExecuteResetBalloonPos(handler, args);
 	});
 
 	registerCommandHandler("set:tasktrayicon", async (handler, args) => {

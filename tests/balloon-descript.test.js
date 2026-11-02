@@ -190,6 +190,11 @@ test("balloonDescriptActions covers rgbFromComponents and applyBalloonDescript f
 		"cursor.notselect.brush.color.r": "47",
 		"cursor.notselect.brush.color.g": "57",
 		"cursor.notselect.brush.color.b": "67",
+		"balloon.dontmove": "1",
+		"balloon.syncscale": "true",
+		"sakura.balloon.alignment": "left,bottom",
+		"sakura.balloon.offsetx": "25",
+		"sakura.balloon.offsety": "-15",
 	};
 
 	balloonDescriptActions.applyBalloonDescript.call(mockInstance, props);
@@ -263,6 +268,14 @@ test("balloonDescriptActions covers rgbFromComponents and applyBalloonDescript f
 	assert.equal(cssVars["--balloon-sstpmessage-x"], "30px");
 	assert.equal(cssVars["--balloon-writing-mode"], "vertical-rl");
 	assert.equal(cssVars["--balloon-paint-black"], "1");
+	assert.equal(cssVars["--balloon-dontmove"], "1");
+	assert.equal(cssVars["--balloon-syncscale"], "1");
+	assert.equal(cssVars["--balloon-alignment"], "left,bottom");
+	assert.equal(cssVars["--balloon-offset-x"], "25px");
+	assert.equal(cssVars["--balloon-offset-y"], "-15px");
+	assert.equal(mockInstance.balloonDontMove, true);
+	assert.equal(mockInstance.balloonSyncScale, true);
+	assert.equal(mockInstance.balloonAlignment, "left,bottom");
 
 	// 9-slice tokens validation
 	assert.equal(cssVars["--balloon-border-image-slice"], "12 14 16 10 fill");

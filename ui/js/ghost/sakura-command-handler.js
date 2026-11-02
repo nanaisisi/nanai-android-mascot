@@ -8,6 +8,13 @@ import {
 	openCommunicateBox,
 } from "./command-handler/communicatebox.js";
 import {
+	closeDialog,
+	closeInputBox,
+	closeTextAreaBox,
+	openInputBox,
+	openPasswordInput,
+	openSliderInput,
+	openTextAreaBox,
 	expandSakuraScriptEnv,
 	resetScriptScopeState,
 	scriptLifetimeState,
@@ -41,6 +48,30 @@ function initDefaultCommandHandlers() {
 
 	registerCommandHandler("open:inputbox", async (handler, args) => {
 		openInputBox(handler, args.slice(2));
+	});
+
+	registerCommandHandler("open:passwordinput", async (handler, args) => {
+		openPasswordInput(handler, args.slice(2));
+	});
+
+	registerCommandHandler("open:textareabox", async (handler, args) => {
+		openTextAreaBox(handler, args.slice(2));
+	});
+
+	registerCommandHandler("open:sliderinput", async (handler, args) => {
+		openSliderInput(handler, args.slice(2));
+	});
+
+	registerCommandHandler("close:inputbox", async (handler, args) => {
+		closeInputBox(handler, args[2]);
+	});
+
+	registerCommandHandler("close:textareabox", async (handler, args) => {
+		closeTextAreaBox(handler, args[2]);
+	});
+
+	registerCommandHandler("close:dialog", async (handler, args) => {
+		closeDialog(handler, args[2]);
 	});
 
 	registerCommandHandler("open:teachbox", async (handler, args) => {

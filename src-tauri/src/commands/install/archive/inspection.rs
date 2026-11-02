@@ -2,6 +2,15 @@ use super::super::utils::*;
 use crate::common::*;
 use std::collections::HashMap;
 
+use nanai_android_mascot_ui::InstallResourceConfig;
+
+pub struct BundledResourceTarget {
+    pub source_prefix: String,
+    pub destination_dir: std::path::PathBuf,
+    pub refresh: bool,
+    pub refresh_undelete_mask: Vec<String>,
+}
+
 pub struct InstallInspectionResult {
     pub ghost_name: String,
     pub root_prefix: String,
@@ -9,14 +18,18 @@ pub struct InstallInspectionResult {
     pub target_base_path: String,
     pub safe_dir_name: String,
     pub alt_safe_name: String,
-    pub bundled_resources: Vec<(String, std::path::PathBuf)>,
+    pub bundled_resources: Vec<BundledResourceTarget>,
+    pub accept: Option<String>,
+    pub bootghost: Option<String>,
+    pub refresh: bool,
+    pub refresh_undelete_mask: Vec<String>,
 }
 
 /// install.txt の規約に従い、同梱リソース (balloon, headline, plugin, shell, calendar.skin, calendar.plugin) を
-/// 無印 → 0 → 1 → 2... の順に連続探索し、欠番が出た時点で打ち切る
+/// 無印 → 0 → 1 → 2... の順に連続探索し、欠番が出た時点で打ち切る (refresh / refreshundeletemask 拡張対応)
 pub fn resolve_bundled_resources_config(
     map: &HashMap<String, String>,
-) -> Vec<(String, String, String)> {
+) -> Vec<InstallResourceConfig> {
     let supported_types = [
         "balloon",
         "headline",
@@ -29,12 +42,31 @@ pub fn resolve_bundled_resources_config(
     let mut result = Vec::new();
 
     for &r_type in &supported_types {
-        // 1. 無印 (例: balloon.directory)
+        // 1. 無印 (例: balloon.directory, balloon.refresh, balloon.refreshundeletemask)
         let unnumbered_dir_key = format!("{r_type}.directory");
         if let Some(target_dir) = map.get(&unnumbered_dir_key) {
             let src_key = format!("{r_type}.source.directory");
             let src_dir = map.get(&src_key).unwrap_or(target_dir).clone();
-            result.push((r_type.to_string(), target_dir.clone(), src_dir));
+            let r_refresh = map
+                .get(&format!("{r_type}.refresh"))
+                .is_some_and(|v| v.trim() == "1");
+            let r_mask: Vec<String> = map
+                .get(&format!("{r_type}.refreshundeletemask"))
+                .map(|v| {
+                    v.split(':')
+                        .map(|s| s.trim().to_string())
+                        .filter(|s| !s.is_empty())
+                        .collect()
+                })
+                .unwrap_or_default();
+
+            result.push(InstallResourceConfig {
+                resource_type: r_type.to_string(),
+                target_directory: target_dir.clone(),
+                source_directory: src_dir,
+                refresh: r_refresh,
+                refresh_undelete_mask: r_mask,
+            });
         }
 
         // 2. 0, 1, 2... の連番探索（欠番が出た時点で打ち切り）
@@ -44,7 +76,26 @@ pub fn resolve_bundled_resources_config(
             if let Some(target_dir) = map.get(&indexed_dir_key) {
                 let src_key = format!("{r_type}{idx}.source.directory");
                 let src_dir = map.get(&src_key).unwrap_or(target_dir).clone();
-                result.push((r_type.to_string(), target_dir.clone(), src_dir));
+                let r_refresh = map
+                    .get(&format!("{r_type}{idx}.refresh"))
+                    .is_some_and(|v| v.trim() == "1");
+                let r_mask: Vec<String> = map
+                    .get(&format!("{r_type}{idx}.refreshundeletemask"))
+                    .map(|v| {
+                        v.split(':')
+                            .map(|s| s.trim().to_string())
+                            .filter(|s| !s.is_empty())
+                            .collect()
+                    })
+                    .unwrap_or_default();
+
+                result.push(InstallResourceConfig {
+                    resource_type: r_type.to_string(),
+                    target_directory: target_dir.clone(),
+                    source_directory: src_dir,
+                    refresh: r_refresh,
+                    refresh_undelete_mask: r_mask,
+                });
                 idx += 1;
             } else {
                 break;
@@ -91,7 +142,11 @@ pub fn inspect_zip_archive<R: std::io::Read + std::io::Seek>(
     let mut root_prefix = String::new();
     let mut install_type: Option<String> = None;
     let mut install_directory: Option<String> = None;
-    let mut bundled_resources_config: Vec<(String, String, String)> = Vec::new();
+    let mut accept: Option<String> = None;
+    let mut bootghost: Option<String> = None;
+    let mut refresh = false;
+    let mut refresh_undelete_mask: Vec<String> = Vec::new();
+    let mut bundled_resources_config: Vec<InstallResourceConfig> = Vec::new();
 
     if let Some((_, idx)) = best_install_idx
         && let Ok(mut entry) = zip.by_index(idx)
@@ -110,6 +165,22 @@ pub fn inspect_zip_archive<R: std::io::Read + std::io::Seek>(
         }
         if let Some(val) = map.get("directory") {
             install_directory = Some(val.clone());
+        }
+        if let Some(val) = map.get("accept") {
+            accept = Some(val.clone());
+        }
+        if let Some(val) = map.get("bootghost") {
+            bootghost = Some(val.clone());
+        }
+        if let Some(val) = map.get("refresh") {
+            refresh = val.trim() == "1";
+        }
+        if let Some(val) = map.get("refreshundeletemask") {
+            refresh_undelete_mask = val
+                .split(':')
+                .map(|s| s.trim().to_string())
+                .filter(|s| !s.is_empty())
+                .collect();
         }
 
         bundled_resources_config = resolve_bundled_resources_config(&map);
@@ -169,11 +240,11 @@ pub fn inspect_zip_archive<R: std::io::Read + std::io::Seek>(
 
     let mut bundled_resources = Vec::new();
     if kind == "ghost" || kind == "package" || kind == "shell" {
-        for (r_kind, b_dir, b_src_dir) in bundled_resources_config {
-            let src_dir = b_src_dir.trim_matches('/').to_string();
-            let dest_name = sanitize_dir_name(&b_dir);
+        for res_config in bundled_resources_config {
+            let src_dir = res_config.source_directory.trim_matches('/').to_string();
+            let dest_name = sanitize_dir_name(&res_config.target_directory);
             if !src_dir.is_empty() && !dest_name.is_empty() {
-                let base_path = match r_kind.as_str() {
+                let base_path = match res_config.resource_type.as_str() {
                     "balloon" => resolve_asset_path("assets/balloon", app_handle).ok(),
                     "headline" => resolve_asset_path("assets/headline", app_handle).ok(),
                     "plugin" => resolve_asset_path("assets/plugin", app_handle).ok(),
@@ -186,7 +257,12 @@ pub fn inspect_zip_archive<R: std::io::Read + std::io::Seek>(
                 if let Some(base) = base_path {
                     let dest = base.join(&dest_name);
                     std::fs::create_dir_all(&dest).ok();
-                    bundled_resources.push((format!("{src_dir}/"), dest));
+                    bundled_resources.push(BundledResourceTarget {
+                        source_prefix: format!("{src_dir}/"),
+                        destination_dir: dest,
+                        refresh: res_config.refresh,
+                        refresh_undelete_mask: res_config.refresh_undelete_mask,
+                    });
                 }
             }
         }
@@ -200,6 +276,10 @@ pub fn inspect_zip_archive<R: std::io::Read + std::io::Seek>(
         safe_dir_name,
         alt_safe_name,
         bundled_resources,
+        accept,
+        bootghost,
+        refresh,
+        refresh_undelete_mask,
     })
 }
 
@@ -213,6 +293,8 @@ mod tests {
         map.insert("name".to_string(), "Test".to_string());
         map.insert("type".to_string(), "ghost".to_string());
         map.insert("balloon.directory".to_string(), "balloon_main".to_string());
+        map.insert("balloon.refresh".to_string(), "1".to_string());
+        map.insert("balloon.refreshundeletemask".to_string(), "keep.txt:save.dat".to_string());
         map.insert("balloon0.directory".to_string(), "balloon_zero".to_string());
         map.insert("balloon0.source.directory".to_string(), "custom_b0".to_string());
         map.insert("balloon1.directory".to_string(), "balloon_one".to_string());
@@ -223,10 +305,50 @@ mod tests {
         let res = resolve_bundled_resources_config(&map);
         assert_eq!(res.len(), 5);
 
-        assert_eq!(res[0], ("balloon".to_string(), "balloon_main".to_string(), "balloon_main".to_string()));
-        assert_eq!(res[1], ("balloon".to_string(), "balloon_zero".to_string(), "custom_b0".to_string()));
-        assert_eq!(res[2], ("balloon".to_string(), "balloon_one".to_string(), "balloon_one".to_string()));
-        assert_eq!(res[3], ("calendar.skin".to_string(), "cal_skin".to_string(), "cal_skin".to_string()));
-        assert_eq!(res[4], ("calendar.plugin".to_string(), "cal_plugin".to_string(), "cal_plugin".to_string()));
+        assert_eq!(res[0].resource_type, "balloon");
+        assert_eq!(res[0].target_directory, "balloon_main");
+        assert_eq!(res[0].source_directory, "balloon_main");
+        assert!(res[0].refresh);
+        assert_eq!(res[0].refresh_undelete_mask, vec!["keep.txt", "save.dat"]);
+
+        assert_eq!(res[1].resource_type, "balloon");
+        assert_eq!(res[1].target_directory, "balloon_zero");
+        assert_eq!(res[1].source_directory, "custom_b0");
+        assert!(!res[1].refresh);
+
+        assert_eq!(res[2].resource_type, "balloon");
+        assert_eq!(res[2].target_directory, "balloon_one");
+        assert_eq!(res[2].source_directory, "balloon_one");
+
+        assert_eq!(res[3].resource_type, "calendar.skin");
+        assert_eq!(res[3].target_directory, "cal_skin");
+
+        assert_eq!(res[4].resource_type, "calendar.plugin");
+        assert_eq!(res[4].target_directory, "cal_plugin");
+    }
+
+    #[test]
+    fn test_inspect_extended_options_and_refresh() {
+        let mut map = HashMap::new();
+        map.insert("name".to_string(), "ExtendedGhost".to_string());
+        map.insert("type".to_string(), "package".to_string());
+        map.insert("bootghost".to_string(), "master_ghost".to_string());
+        map.insert("accept".to_string(), "Nanai".to_string());
+        map.insert("refresh".to_string(), "1".to_string());
+        map.insert("refreshundeletemask".to_string(), "important.dat:config.xml".to_string());
+
+        let res = resolve_bundled_resources_config(&map);
+        assert!(res.is_empty());
+
+        assert_eq!(map.get("bootghost").map(|s| s.as_str()), Some("master_ghost"));
+        assert_eq!(map.get("accept").map(|s| s.as_str()), Some("Nanai"));
+        assert_eq!(map.get("refresh").map(|s| s.as_str()), Some("1"));
+        let masks: Vec<String> = map
+            .get("refreshundeletemask")
+            .unwrap()
+            .split(':')
+            .map(|s| s.to_string())
+            .collect();
+        assert_eq!(masks, vec!["important.dat", "config.xml"]);
     }
 }

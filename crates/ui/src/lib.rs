@@ -39,7 +39,10 @@ pub use surfaces::{
 pub use surfacetable::{
     SurfTableEntry, SurfTableGroup, SurfaceTable, is_parts_name, parse_surface_table,
 };
-pub use update::{UpdateEntry, UpdatePackage, parse_update_definition};
+pub use update::{
+    InstallManifest, InstallResourceConfig, InstallerEngine, StandardInstallerEngine,
+    UpdateEntry, UpdatePackage, parse_install_manifest, parse_update_definition,
+};
 pub use vfs::{
     MockVfs, VfsResolver, detect_and_decode, normalize_vfs_path, open_shift_jis_file,
     open_text_file, resolve_vfs_path,

@@ -4,12 +4,13 @@ mod packaging;
 mod postprocess;
 
 pub use packaging::create_nar_from_directory;
-pub use postprocess::process_delete_txt;
+pub use postprocess::{perform_refresh_cleanup, process_delete_txt};
 
 use super::utils::flatten_balloon_directory;
 use crate::common::*;
 use extraction::extract_zip_entries;
 use inspection::inspect_zip_archive;
+pub use inspection::{BundledResourceTarget, InstallInspectionResult, resolve_bundled_resources_config};
 use postprocess::build_extracted_ghost_info;
 
 pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
@@ -29,6 +30,29 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
     if !target_dir.exists() {
         std::fs::create_dir_all(&target_dir)
             .map_err(|e| format!("Failed to create destination dir: {}", e))?;
+    }
+
+    // refresh 指定時のディレクトリクリーンアップ（メインターゲット）
+    if inspection.refresh {
+        println!(
+            "🧹 Performing refresh cleanup on target_dir: {:?} (masks: {:?})",
+            target_dir, inspection.refresh_undelete_mask
+        );
+        perform_refresh_cleanup(&target_dir, &inspection.refresh_undelete_mask);
+    }
+
+    // 同梱リソース側の refresh クリーンアップ
+    for res_target in &inspection.bundled_resources {
+        if res_target.refresh && res_target.destination_dir.exists() {
+            println!(
+                "🧹 Performing refresh cleanup on bundled resource dir: {:?} (masks: {:?})",
+                res_target.destination_dir, res_target.refresh_undelete_mask
+            );
+            perform_refresh_cleanup(
+                &res_target.destination_dir,
+                &res_target.refresh_undelete_mask,
+            );
+        }
     }
 
     extract_zip_entries(

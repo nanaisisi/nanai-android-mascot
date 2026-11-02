@@ -2,11 +2,13 @@ use super::super::utils::*;
 use crate::common::*;
 use std::path::Path;
 
+use super::inspection::BundledResourceTarget;
+
 pub fn extract_zip_entries<R: std::io::Read + std::io::Seek>(
     zip: &mut zip::ZipArchive<R>,
     root_prefix: &str,
     target_dir: &Path,
-    bundled_resources: &[(String, std::path::PathBuf)],
+    bundled_resources: &[BundledResourceTarget],
 ) -> Result<(), String> {
     for i in 0..zip.len() {
         let mut entry = zip
@@ -29,11 +31,12 @@ pub fn extract_zip_entries<R: std::io::Read + std::io::Seek>(
         let mut active_target_dir = target_dir;
         let mut active_rel_path = relative_path;
 
-        for (src_prefix, dest_dir) in bundled_resources {
+        for res_target in bundled_resources {
+            let src_prefix = &res_target.source_prefix;
             if relative_path.len() >= src_prefix.len()
                 && relative_path[..src_prefix.len()].eq_ignore_ascii_case(src_prefix)
             {
-                active_target_dir = dest_dir;
+                active_target_dir = &res_target.destination_dir;
                 active_rel_path = &relative_path[src_prefix.len()..];
                 break;
             }

@@ -220,6 +220,27 @@ export class SurfaceAnimationManager {
 	}
 
 	/**
+	 * 指定アニメーションが再生中かどうか判定
+	 * @param {number} scopeId
+	 * @param {number|string} animIdOrName
+	 * @returns {boolean}
+	 */
+	isAnimationRunning(scopeId = 0, animIdOrName) {
+		const anim = this.findAnimation(animIdOrName, scopeId);
+		const id = anim ? anim.id : animIdOrName;
+		const prefix = `${scopeId}__`;
+		for (const [key] of this._runningAnimations.entries()) {
+			if (key.startsWith(prefix)) {
+				const parts = key.split("__");
+				if (parts[2] === String(id) && !this._stoppedAnimations.has(key)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * 特定のアニメーションのみ停止 (\![anim,stop,ID] / \![anim,clear,ID])
 	 * @param {number} [scopeId]
 	 * @param {number|string} animIdOrName
@@ -526,6 +547,63 @@ export class SurfaceAnimationManager {
 			for (const otherKey of this._runningAnimations.keys()) {
 				if (otherKey !== key && otherKey.startsWith(`${scopeId}__`)) {
 					this._stoppedAnimations.add(otherKey);
+				}
+			}
+			return true;
+		}
+
+		const patType = (pat.type || "overlay").toLowerCase();
+
+		// start, stop, alternativestart, alternativestop, parallelstart, parallelstop 制御メソッド
+		const parseTargetIds = (param) => {
+			if (!param) return [];
+			const cleaned = String(param)
+				.replace(/^[([]|[)\]]$/g, "")
+				.trim();
+			return cleaned
+				.split(/[,.+ ]+/)
+				.map((s) => Number.parseInt(s.trim(), 10))
+				.filter((n) => !Number.isNaN(n));
+		};
+
+		if (
+			patType.startsWith("start") ||
+			patType.startsWith("stop") ||
+			patType.startsWith("alternativestart") ||
+			patType.startsWith("alternativestop") ||
+			patType.startsWith("parallelstart") ||
+			patType.startsWith("parallelstop")
+		) {
+			const targetRaw = pat.targetParam || patSurface;
+			const targetIds = parseTargetIds(targetRaw);
+
+			if (patType.startsWith("alternativestart")) {
+				if (targetIds.length > 0) {
+					const picked =
+						targetIds[Math.floor(Math.random() * targetIds.length)];
+					this.playAnimationById(picked, scopeId).catch(() => {});
+				}
+			} else if (patType.startsWith("alternativestop")) {
+				if (targetIds.length > 0) {
+					const picked =
+						targetIds[Math.floor(Math.random() * targetIds.length)];
+					this.stopAnimation(scopeId, picked);
+				}
+			} else if (patType.startsWith("parallelstart")) {
+				for (const id of targetIds) {
+					this.playAnimationById(id, scopeId).catch(() => {});
+				}
+			} else if (patType.startsWith("parallelstop")) {
+				for (const id of targetIds) {
+					this.stopAnimation(scopeId, id);
+				}
+			} else if (patType.startsWith("start")) {
+				if (targetIds.length > 0) {
+					this.playAnimationById(targetIds[0], scopeId).catch(() => {});
+				}
+			} else if (patType.startsWith("stop")) {
+				if (targetIds.length > 0) {
+					this.stopAnimation(scopeId, targetIds[0]);
 				}
 			}
 			return true;

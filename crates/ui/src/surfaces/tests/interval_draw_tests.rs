@@ -63,13 +63,25 @@ fn test_parse_draw_method_variants() {
         DrawMethod::parse("blend-sub"),
         DrawMethod::Blend("sub".to_string())
     );
+    assert_eq!(DrawMethod::parse("start"), DrawMethod::Start(None));
+    assert_eq!(DrawMethod::parse("start,5"), DrawMethod::Start(Some(5)));
+    assert_eq!(DrawMethod::parse("stop"), DrawMethod::Stop(None));
+    assert_eq!(DrawMethod::parse("stop,2"), DrawMethod::Stop(Some(2)));
     assert_eq!(
-        DrawMethod::parse("start"),
-        DrawMethod::Custom("start".to_string())
+        DrawMethod::parse("alternativestart,(1,2)"),
+        DrawMethod::AlternativeStart(vec![1, 2])
     );
     assert_eq!(
-        DrawMethod::parse("stop"),
-        DrawMethod::Custom("stop".to_string())
+        DrawMethod::parse("alternativestop,[1.2]"),
+        DrawMethod::AlternativeStop(vec![1, 2])
+    );
+    assert_eq!(
+        DrawMethod::parse("parallelstart,(3,4)"),
+        DrawMethod::ParallelStart(vec![3, 4])
+    );
+    assert_eq!(
+        DrawMethod::parse("parallelstop,[3.4]"),
+        DrawMethod::ParallelStop(vec![3, 4])
     );
     assert_eq!(
         DrawMethod::parse("custom_method"),

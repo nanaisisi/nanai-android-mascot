@@ -27,19 +27,41 @@ pub enum DrawMethod {
     Move,
     /// `insert`：アニメーションパターン挿入
     Insert,
+    /// `start`：指定IDのアニメーションを開始
+    Start(Option<u32>),
+    /// `stop`：指定IDのアニメーションを停止
+    Stop(Option<u32>),
+    /// `alternativestart`：指定ID群の中からランダムに1つ開始
+    AlternativeStart(Vec<u32>),
+    /// `alternativestop`：指定ID群の中からランダムに1つ停止
+    AlternativeStop(Vec<u32>),
+    /// `parallelstart`：指定ID群のすべてのアニメーションを開始
+    ParallelStart(Vec<u32>),
+    /// `parallelstop`：指定ID群のすべてのアニメーションを停止
+    ParallelStop(Vec<u32>),
     /// `reduce`：ベースレイヤと新規レイヤの不透明度（アルファ）を乗算合成
     Reduce,
     /// `blend-xxx`：各種アルファブレンド合成（例: `blend-multiply`）
     Blend(String),
-    /// その他の拡張メソッド（`start` / `stop` / `import` 等）
+    /// その他の拡張メソッド（`import` 等）
     Custom(String),
+}
+
+fn parse_id_list_inner(s: &str) -> Vec<u32> {
+    let trimmed = s.trim().trim_start_matches(',').trim();
+    let trimmed = trimmed.trim_matches(|c| c == '(' || c == ')' || c == '[' || c == ']');
+    trimmed
+        .split(|c| c == ',' || c == '.' || c == ' ' || c == '+')
+        .filter_map(|p| p.trim().parse::<u32>().ok())
+        .collect()
 }
 
 impl DrawMethod {
     /// 文字列から描画メソッドを構築する（大文字小文字は無視）
     pub fn parse(method: &str) -> Self {
-        let m = method.trim().to_lowercase();
-        match m.as_str() {
+        let m = method.trim();
+        let lower = m.to_lowercase();
+        match lower.as_str() {
             "base" => Self::Base,
             "overlay" => Self::Overlay,
             "overlayfast" | "fast" | "overlay-fast" => Self::OverlayFast,
@@ -55,6 +77,32 @@ impl DrawMethod {
             "overlaymultiply" => Self::Blend("multiply-fast".to_string()),
             "overlayscreen" => Self::Blend("screen-fast".to_string()),
             s if s.starts_with("blend-") => Self::Blend(s.trim_start_matches("blend-").to_string()),
+            s if s.starts_with("start") => {
+                let rest = s.trim_start_matches("start").trim();
+                let ids = parse_id_list_inner(rest);
+                Self::Start(ids.first().copied())
+            }
+            s if s.starts_with("stop") => {
+                let rest = s.trim_start_matches("stop").trim();
+                let ids = parse_id_list_inner(rest);
+                Self::Stop(ids.first().copied())
+            }
+            s if s.starts_with("alternativestart") => {
+                let rest = s.trim_start_matches("alternativestart").trim();
+                Self::AlternativeStart(parse_id_list_inner(rest))
+            }
+            s if s.starts_with("alternativestop") => {
+                let rest = s.trim_start_matches("alternativestop").trim();
+                Self::AlternativeStop(parse_id_list_inner(rest))
+            }
+            s if s.starts_with("parallelstart") => {
+                let rest = s.trim_start_matches("parallelstart").trim();
+                Self::ParallelStart(parse_id_list_inner(rest))
+            }
+            s if s.starts_with("parallelstop") => {
+                let rest = s.trim_start_matches("parallelstop").trim();
+                Self::ParallelStop(parse_id_list_inner(rest))
+            }
             other => Self::Custom(other.to_string()),
         }
     }
@@ -198,6 +246,24 @@ mod tests {
             DrawMethod::parse("blend-multiply"),
             DrawMethod::Blend("multiply".to_string())
         );
+        assert_eq!(DrawMethod::parse("start,1"), DrawMethod::Start(Some(1)));
+        assert_eq!(DrawMethod::parse("stop,2"), DrawMethod::Stop(Some(2)));
+        assert_eq!(
+            DrawMethod::parse("alternativestart,(1,2)"),
+            DrawMethod::AlternativeStart(vec![1, 2])
+        );
+        assert_eq!(
+            DrawMethod::parse("alternativestop,[1.2]"),
+            DrawMethod::AlternativeStop(vec![1, 2])
+        );
+        assert_eq!(
+            DrawMethod::parse("parallelstart,(3,4)"),
+            DrawMethod::ParallelStart(vec![3, 4])
+        );
+        assert_eq!(
+            DrawMethod::parse("parallelstop,[3.4]"),
+            DrawMethod::ParallelStop(vec![3, 4])
+        );
         assert_eq!(
             DrawMethod::parse("custom_val"),
             DrawMethod::Custom("custom_val".to_string())
@@ -215,6 +281,12 @@ mod tests {
             DrawMethod::Auto,
             DrawMethod::Move,
             DrawMethod::Insert,
+            DrawMethod::Start(Some(1)),
+            DrawMethod::Stop(Some(2)),
+            DrawMethod::AlternativeStart(vec![1, 2]),
+            DrawMethod::AlternativeStop(vec![1, 2]),
+            DrawMethod::ParallelStart(vec![3, 4]),
+            DrawMethod::ParallelStop(vec![3, 4]),
             DrawMethod::Reduce,
             DrawMethod::Blend("screen".to_string()),
             DrawMethod::Custom("custom_mode".to_string()),

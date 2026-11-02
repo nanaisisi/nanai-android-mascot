@@ -333,3 +333,54 @@ test("SurfaceAnimationManager setAnimationOffset shifts animation layer coordina
 	assert.equal(layer.x, 40); // 10 + 30
 	assert.equal(layer.y, 60); // 20 + 40
 });
+
+test("parseSurfacesTxt extracts start, stop, alternativestart, parallelstart pattern control methods", () => {
+	const parsed = parseSurfacesTxt(`surface0
+{
+animation0.interval,runonce
+animation0.pattern0,start,10
+animation0.pattern1,alternativestart,(20,21)
+animation0.pattern2,parallelstart,(30,31)
+animation0.pattern3,stop,10
+}`);
+
+	const patterns = parsed.animations["0"][0].patterns;
+	assert.equal(patterns[0].type, "start");
+	assert.equal(patterns[0].targetParam, "10");
+	assert.equal(patterns[1].type, "alternativestart");
+	assert.equal(patterns[1].targetParam, "(20,21)");
+	assert.equal(patterns[2].type, "parallelstart");
+	assert.equal(patterns[2].targetParam, "(30,31)");
+	assert.equal(patterns[3].type, "stop");
+	assert.equal(patterns[3].targetParam, "10");
+});
+
+test("SurfaceAnimationManager pattern execution handles start and stop control methods", async () => {
+	const { animation } = animationFixture();
+
+	const targetAnim = {
+		id: 10,
+		interval: "never",
+		patterns: [
+			{ surface: 101, wait: 0 },
+			{ surface: 102, wait: 150 },
+		],
+	};
+
+	const controllerAnim = {
+		id: 1,
+		interval: "runonce",
+		patterns: [
+			{ type: "start", targetParam: "10", wait: 0 },
+			{ type: "stop", targetParam: "10", wait: 50 },
+		],
+	};
+
+	animation.manager.animations = { 0: [targetAnim, controllerAnim] };
+
+	// controllerAnim を再生
+	await animation.playAnimationPatterns(controllerAnim, 0, 0);
+
+	// targetAnim は開始されたが 50ms 後に stop されたため実行中リストに残らない
+	assert.equal(animation.isAnimationRunning(0, 10), false);
+});

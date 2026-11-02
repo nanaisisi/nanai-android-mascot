@@ -324,14 +324,59 @@ export function parseSurfacesTxt(text) {
 			if (match) {
 				const animId = Number.parseInt(match[1], 10);
 				const index = Number.parseInt(match[2], 10);
-				const parts = match[3].split(",");
-				if (parts.length >= 3) {
-					const legacy = !trimmed.startsWith("animation");
-					const surface = (legacy ? parts[0] : parts[1]).trim();
-					const wait = Number.parseInt(legacy ? parts[1] : parts[2], 10);
-					const type = (legacy ? parts[2] : parts[0]).trim().toLowerCase();
+
+				// 括弧内のカンマを保護しながら分割
+				const rawValue = match[3];
+				const parts = [];
+				let current = "";
+				let depthParen = 0;
+				let depthBracket = 0;
+				for (let i = 0; i < rawValue.length; i++) {
+					const ch = rawValue[i];
+					if (ch === "(") depthParen++;
+					else if (ch === ")") depthParen = Math.max(0, depthParen - 1);
+					else if (ch === "[") depthBracket++;
+					else if (ch === "]") depthBracket = Math.max(0, depthBracket - 1);
+					else if (ch === "," && depthParen === 0 && depthBracket === 0) {
+						parts.push(current.trim());
+						current = "";
+						continue;
+					}
+					current += ch;
+				}
+				if (current.trim().length > 0) parts.push(current.trim());
+
+				const legacy = !trimmed.startsWith("animation");
+				const rawType = (legacy ? parts[2] : parts[0]) || "";
+				const typeLower = rawType.trim().toLowerCase();
+				const isControlMethod =
+					typeLower.startsWith("start") ||
+					typeLower.startsWith("stop") ||
+					typeLower.startsWith("alternativestart") ||
+					typeLower.startsWith("alternativestop") ||
+					typeLower.startsWith("parallelstart") ||
+					typeLower.startsWith("parallelstop");
+
+				if (parts.length >= 3 || (isControlMethod && parts.length >= 1)) {
+					const surface =
+						(legacy ? parts[0] : (parts[1] ?? "-1"))?.trim() ?? "-1";
+					const wait = Number.parseInt(
+						legacy ? parts[1] : (parts[2] ?? "0"),
+						10,
+					);
 					const x = Number.parseInt(parts[3], 10) || 0;
 					const y = Number.parseInt(parts[4], 10) || 0;
+
+					let targetParam = "";
+					if (isControlMethod) {
+						// パラメータが同一トークンにある場合: alternativestart,(1,2)
+						// または第2引数にある場合: start,1
+						if (legacy) {
+							targetParam = surface;
+						} else {
+							targetParam = parts[1] ?? "";
+						}
+					}
 
 					currentSurfaces.forEach((s) => {
 						if (!animations[s]) animations[s] = [];
@@ -342,14 +387,18 @@ export function parseSurfacesTxt(text) {
 							animationMaps[s][animId] = anim;
 							animations[s].push(anim);
 						}
-						anim.patterns.push({
+						const patternEntry = {
 							surface,
 							wait: Number.isNaN(wait) ? 0 : wait * (legacy ? 10 : 1),
-							type,
+							type: typeLower,
 							x,
 							y,
 							index,
-						});
+						};
+						if (targetParam) {
+							patternEntry.targetParam = targetParam;
+						}
+						anim.patterns.push(patternEntry);
 					});
 				}
 			}

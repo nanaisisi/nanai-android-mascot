@@ -45,7 +45,7 @@ pub use surfacetable::{
 };
 pub use update::{
     InstallManifest, InstallResourceConfig, InstallerEngine, StandardInstallerEngine, UpdateEntry,
-    UpdatePackage, parse_install_manifest, parse_update_definition,
+    UpdatePackage, parse_install_manifest, parse_update_definition, validate_archive_entry_path,
 };
 pub use vfs::{
     MockVfs, VfsResolver, detect_and_decode, normalize_vfs_path, open_shift_jis_file,

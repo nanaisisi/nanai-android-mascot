@@ -8,6 +8,11 @@ import {
 	openCommunicateBox,
 } from "./command-handler/communicatebox.js";
 import {
+	expandSakuraScriptEnv,
+	resetScriptScopeState,
+	scriptLifetimeState,
+} from "./command-handler/env.js";
+import {
 	closeDialog,
 	closeInputBox,
 	closeTextAreaBox,
@@ -15,11 +20,7 @@ import {
 	openPasswordInput,
 	openSliderInput,
 	openTextAreaBox,
-	expandSakuraScriptEnv,
-	resetScriptScopeState,
-	scriptLifetimeState,
-} from "./command-handler/env.js";
-import { openInputBox } from "./command-handler/inputbox.js";
+} from "./command-handler/inputbox.js";
 import { handleJumpCommand } from "./command-handler/jump.js";
 import {
 	CommandHandlerMap,

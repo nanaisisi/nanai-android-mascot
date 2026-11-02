@@ -65,7 +65,9 @@ pub(crate) fn handle_execute(parts: &[String], callback: &mut dyn FnMut(SakuraCo
             args: vec!["execute".to_string(), "resetballoonpos".to_string()],
         });
     } else {
-        callback(SakuraCommand::Command { args: parts.to_vec() });
+        callback(SakuraCommand::Command {
+            args: parts.to_vec(),
+        });
     }
 }
 
@@ -73,7 +75,9 @@ pub(crate) fn handle_create(parts: &[String], callback: &mut dyn FnMut(SakuraCom
     if parts.get(1).is_some_and(|p| p == "shortcut") {
         callback(SakuraCommand::CreateShortcut);
     } else {
-        callback(SakuraCommand::Command { args: parts.to_vec() });
+        callback(SakuraCommand::Command {
+            args: parts.to_vec(),
+        });
     }
 }
 
@@ -81,7 +85,9 @@ pub(crate) fn handle_save(parts: &[String], callback: &mut dyn FnMut(SakuraComma
     if parts.get(1).is_some_and(|p| p == "wallpaper") {
         callback(SakuraCommand::SaveWallpaper);
     } else {
-        callback(SakuraCommand::Command { args: parts.to_vec() });
+        callback(SakuraCommand::Command {
+            args: parts.to_vec(),
+        });
     }
 }
 
@@ -89,7 +95,9 @@ pub(crate) fn handle_restore(parts: &[String], callback: &mut dyn FnMut(SakuraCo
     if parts.get(1).is_some_and(|p| p == "wallpaper") {
         callback(SakuraCommand::RestoreWallpaper);
     } else {
-        callback(SakuraCommand::Command { args: parts.to_vec() });
+        callback(SakuraCommand::Command {
+            args: parts.to_vec(),
+        });
     }
 }
 

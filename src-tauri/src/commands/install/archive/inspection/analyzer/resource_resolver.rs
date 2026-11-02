@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use nanai_android_mascot_ui::InstallResourceConfig;
+use std::collections::HashMap;
 
 /// install.txt の規約に従い、同梱リソース (balloon, headline, plugin, shell, calendar.skin, calendar.plugin) を
 /// 無印 → 0 → 1 → 2... の順に連続探索し、欠番が出た時点で打ち切る (refresh / refreshundeletemask 拡張対応)

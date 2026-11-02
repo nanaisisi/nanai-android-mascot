@@ -1,6 +1,6 @@
+use super::super::command::{SakuraCommand, SakuraScriptLifetime};
 use super::builder::build_sakura_ast;
 use super::types::{SakuraAstNode, SakuraToken};
-use super::super::command::{SakuraCommand, SakuraScriptLifetime};
 
 #[test]
 fn test_build_sakura_ast_scope_grouping() {

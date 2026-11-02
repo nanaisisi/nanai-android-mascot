@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
-use crate::surfaces::types::surface::{SortKind, SurfaceDefinition};
 use crate::surfaces::types::CursorDefinition;
+use crate::surfaces::types::surface::{SortKind, SurfaceDefinition};
 
 /// `surfaces.txt` のパース結果
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]

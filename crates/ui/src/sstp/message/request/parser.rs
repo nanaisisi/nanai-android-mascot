@@ -1,7 +1,7 @@
-use crate::sstp::types::SstpMethod;
-use std::collections::HashMap;
 use super::core::SstpRequest;
 use super::types::IfGhostEntry;
+use crate::sstp::types::SstpMethod;
+use std::collections::HashMap;
 
 impl SstpRequest {
     /// 生テキストから SSTP リクエストをパースする

@@ -84,7 +84,9 @@ pub(crate) fn handle_set(parts: &[String], callback: &mut dyn FnMut(SakuraComman
             callback(SakuraCommand::BalloonSetting { key, value, extra });
         }
         _ => {
-            callback(SakuraCommand::Command { args: parts.to_vec() });
+            callback(SakuraCommand::Command {
+                args: parts.to_vec(),
+            });
         }
     }
 }
@@ -96,7 +98,9 @@ pub(crate) fn handle_lock_unlock(parts: &[String], callback: &mut dyn FnMut(Saku
     } else if target == "balloonrepaint" {
         callback(SakuraCommand::LockBalloonRepaint(parts[0] == "lock"));
     } else {
-        callback(SakuraCommand::Command { args: parts.to_vec() });
+        callback(SakuraCommand::Command {
+            args: parts.to_vec(),
+        });
     }
 }
 

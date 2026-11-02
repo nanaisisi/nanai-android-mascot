@@ -1,5 +1,5 @@
-use std::path::Path;
 use super::state::ShioriLifecycleState;
+use std::path::Path;
 
 /// SHIORI/3.0 エンジントレイト
 pub trait ShioriEngine: Send + Sync {

@@ -1,6 +1,6 @@
+use super::parser::parse_surface_table;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
-use super::parser::parse_surface_table;
 
 /// グループ内の1登録（`[サーフィス番号],[名前]`）
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]

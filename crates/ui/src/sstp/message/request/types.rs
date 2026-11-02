@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use super::core::SstpRequest;
+use serde::{Deserialize, Serialize};
 
 /// DirectSSTP 関連定数 (Windows WM_COPYDATA 互換 dwData)
 pub const DIRECT_SSTP_DWDATA: usize = 9801;

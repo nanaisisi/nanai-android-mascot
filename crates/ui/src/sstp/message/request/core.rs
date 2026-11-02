@@ -1,7 +1,7 @@
+use super::types::IfGhostEntry;
 use crate::sstp::types::SstpMethod;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use super::types::IfGhostEntry;
 
 /// SSTP リクエスト構造体
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

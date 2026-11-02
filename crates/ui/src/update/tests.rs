@@ -108,6 +108,9 @@ fn test_update_package_methods() {
     assert_eq!(deletions[0].path, "ghost/master/old.txt");
 
     assert_eq!(pkg.total_download_size(), 1200);
+
+    assert!(pkg.find_entry("ghost\\master\\aya.dll").is_some());
+    assert!(pkg.find_entry("ghost/master/nonexistent.txt").is_none());
 }
 
 #[test]
@@ -144,6 +147,13 @@ shell0.source.directory,custom_shell\r\n";
     assert!(manifest.is_refresh_protected("SAVE.DAT"));
     assert!(manifest.is_refresh_protected("user.ini"));
     assert!(!manifest.is_refresh_protected("ghost.dll"));
+
+    // Accept and refusal evaluation
+    assert!(manifest.is_acceptable_by("Nanai"));
+    assert!(manifest.is_acceptable_by("mini"));
+    assert!(!manifest.is_acceptable_by("OtherGhost"));
+    assert_eq!(manifest.evaluate_refusal("Nanai"), None);
+    assert_eq!(manifest.evaluate_refusal("OtherGhost"), Some("accept failed"));
 
     assert_eq!(manifest.bundled_resources.len(), 2);
     assert_eq!(manifest.bundled_resources[0].resource_type, "balloon");
@@ -237,5 +247,15 @@ onuninstall.script,\\0\\s[0]アンインストールしました。\\e\r\n";
     assert_eq!(
         manifest.onuninstall_script.as_deref(),
         Some("\\0\\s[0]アンインストールしました。\\e")
+    );
+    assert_eq!(manifest.evaluate_refusal("AnyGhost"), None);
+
+    let empty_name_manifest = InstallManifest {
+        name: "".to_string(),
+        ..Default::default()
+    };
+    assert_eq!(
+        empty_name_manifest.evaluate_refusal("AnyGhost"),
+        Some("invalid name")
     );
 }

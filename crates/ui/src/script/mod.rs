@@ -4,7 +4,7 @@ pub mod env;
 pub mod parser;
 
 pub use ast::{SakuraAstNode, SakuraToken, build_sakura_ast};
-pub use command::SakuraCommand;
+pub use command::{SakuraCommand, SakuraScriptLifetime};
 pub use env::expand_sakura_script_env;
 pub use parser::{execute_sakura_script, parse_sakura_script};
 

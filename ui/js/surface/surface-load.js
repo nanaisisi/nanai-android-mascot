@@ -225,6 +225,8 @@ export const surfaceLoadMethods = {
 		this.animations = data.animations;
 		this.aliases = data.aliases;
 		this.keroAliases = data.keroAliases;
+		this.collisionSort = data.collisionSort ?? "none";
+		this.animationSort = data.animationSort ?? "none";
 		this.shellManifest = manifest;
 		// シェル単位の Rust 合成計画キャッシュは消去（composition-plan-integration-spec 2.3）
 		this.planCache?.clear();
@@ -265,6 +267,8 @@ export const surfaceLoadMethods = {
 		this.collisions = parsed.collisions;
 		this.elements = parsed.elements;
 		this.animations = parsed.animations;
+		this.collisionSort = parsed.collisionSort ?? "none";
+		this.animationSort = parsed.animationSort ?? "none";
 
 		console.log(
 			`🎯 当たり判定・合成要素登録完了 (JS fallback): ${Object.keys(this.collisions).length} サーフィス登録済み`,

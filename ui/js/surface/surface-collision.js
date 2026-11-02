@@ -48,6 +48,7 @@ export const surfaceCollisionMethods = {
 
 	/**
 	 * マウス・タッチ座標から当たり部位（head, bust等）を判定
+	 * `collision-sort` (ascend, descend, id, none) を反映し、AABB事前判定による高速化を行う
 	 * @this {import('./surface-manager.js').SurfaceManager}
 	 */
 	detectCollision(clickX, clickY, targetRect, surfaceId = null, scopeId = 0) {
@@ -63,12 +64,49 @@ export const surfaceCollisionMethods = {
 		const canvasY = Math.round(relY * this.baseHeight);
 
 		const colList = this.collisions[sid] || this.collisions.default || [];
+		if (colList.length === 0) {
+			return { name: "", canvasX, canvasY };
+		}
 
-		for (let i = colList.length - 1; i >= 0; i--) {
-			const col = colList[i];
+		const sortKind = String(this.collisionSort || "none").toLowerCase();
+
+		let candidates;
+		if (sortKind === "ascend" || sortKind === "id") {
+			// ID昇順: 0, 1, 2... の順に手前として判定
+			candidates = colList.slice().sort((a, b) => {
+				const idA = a.id != null ? a.id : Number.MAX_SAFE_INTEGER;
+				const idB = b.id != null ? b.id : Number.MAX_SAFE_INTEGER;
+				return idA - idB;
+			});
+		} else if (sortKind === "descend") {
+			// ID降順: 10, 9, 8... の順に手前として判定
+			candidates = colList.slice().sort((a, b) => {
+				const idA = a.id != null ? a.id : -1;
+				const idB = b.id != null ? b.id : -1;
+				return idB - idA;
+			});
+		} else {
+			// none または未指定: surfaces.txt で後に定義されたものが手前（逆順探索）
+			for (let i = colList.length - 1; i >= 0; i--) {
+				const col = colList[i];
+				if (collisionContains(col, canvasX, canvasY)) {
+					return {
+						name: col.name,
+						id: col.id,
+						canvasX,
+						canvasY,
+					};
+				}
+			}
+			return { name: "", canvasX, canvasY };
+		}
+
+		for (let i = 0; i < candidates.length; i++) {
+			const col = candidates[i];
 			if (collisionContains(col, canvasX, canvasY)) {
 				return {
 					name: col.name,
+					id: col.id,
 					canvasX,
 					canvasY,
 				};

@@ -165,3 +165,78 @@ pub enum SakuraCommand {
         args: Vec<String>,
     }, // その他の \![...] 汎用透過
 }
+
+/// さくらスクリプトタグ・状態の寿命区分 (notes_lifespan.md)
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum SakuraScriptLifetime {
+    /// 現在のスコープ（\0, \1 等）が切り替わるまで有効
+    Scope,
+    /// 現在のさくらスクリプト再生セッション終了（\e 等）まで有効
+    Script,
+    /// 次回明示的に変更されるまで永続的に有効
+    Permanent,
+}
+
+impl SakuraCommand {
+    /// コマンドの寿命分類を返す (notes_lifespan.md)
+    pub fn lifetime(&self) -> SakuraScriptLifetime {
+        match self {
+            // スコープ固有のフォントや設定
+            SakuraCommand::Font { .. } => SakuraScriptLifetime::Scope,
+
+            // スクリプトセッション全体で維持され、\e でリセットされる状態
+            SakuraCommand::Quick(_)
+            | SakuraCommand::Sync(_)
+            | SakuraCommand::NoUserBreak(_)
+            | SakuraCommand::ChoiceTimeout(_)
+            | SakuraCommand::BalloonTimeout(_) => SakuraScriptLifetime::Script,
+
+            // サーフィス、バインド、壁紙、プロキシ等の永続設定
+            SakuraCommand::Surface(_)
+            | SakuraCommand::Bind { .. }
+            | SakuraCommand::SetWallpaper { .. }
+            | SakuraCommand::SetProxy { .. }
+            | SakuraCommand::SetHttpTimeout(_) => SakuraScriptLifetime::Permanent,
+
+            // 一時的・瞬時発火コマンドはデフォルトでスクリプトスコープ
+            _ => SakuraScriptLifetime::Script,
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_sakura_command_lifetime() {
+        assert_eq!(
+            SakuraCommand::Font {
+                tag: "bold".into(),
+                param: Some("1".into())
+            }
+            .lifetime(),
+            SakuraScriptLifetime::Scope
+        );
+        assert_eq!(
+            SakuraCommand::Quick(true).lifetime(),
+            SakuraScriptLifetime::Script
+        );
+        assert_eq!(
+            SakuraCommand::Sync(true).lifetime(),
+            SakuraScriptLifetime::Script
+        );
+        assert_eq!(
+            SakuraCommand::Surface(10).lifetime(),
+            SakuraScriptLifetime::Permanent
+        );
+        assert_eq!(
+            SakuraCommand::SetWallpaper {
+                filename: "bg.png".into(),
+                option: "center".into()
+            }
+            .lifetime(),
+            SakuraScriptLifetime::Permanent
+        );
+    }
+}

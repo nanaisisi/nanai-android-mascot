@@ -9,7 +9,7 @@ use std::collections::BTreeMap;
 
 use crate::descript::{BindGroup, Descript};
 use crate::shell::Shell;
-use crate::surfaces::SurfaceDefinition;
+use crate::surfaces::{SortKind, SurfaceDefinition};
 use crate::surfacetable::SurfaceTable;
 
 /// 1サーフィス分のマニフェスト（番号 + 定義 + 表示名）
@@ -46,6 +46,12 @@ pub struct ShellManifest {
     pub sakura_bind_groups: Vec<BindGroup>,
     /// うにゅう（\1 / kero）の着せ替えパーツ定義
     pub kero_bind_groups: Vec<BindGroup>,
+    /// `collision-sort` / `collision.sort` 設定（ascend, descend, id, none）
+    #[serde(default)]
+    pub collision_sort: Option<SortKind>,
+    /// `animation-sort` / `animation.sort` 設定
+    #[serde(default)]
+    pub animation_sort: Option<SortKind>,
 }
 
 impl Shell {
@@ -77,6 +83,8 @@ impl Shell {
             surface_table: self.surface_table.clone(),
             sakura_bind_groups: self.sakura_bind_groups(),
             kero_bind_groups: self.kero_bind_groups(),
+            collision_sort: self.surfaces_txt.collision_sort.clone(),
+            animation_sort: self.surfaces_txt.animation_sort.clone(),
         }
     }
 }

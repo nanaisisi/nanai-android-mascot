@@ -141,6 +141,34 @@ export const shioriNotifyMethods = {
 	},
 
 	/**
+	 * UKADOC capability Notify イベントを送信 (SHIORI 実行初期)
+	 * @this {import('./ghost.js').GhostController}
+	 */
+	async sendCapabilityNotify() {
+		if (!isTauriAvailable()) return null;
+		// UKADOC capability 準拠の標準対応ヘッダ一覧
+		const capabilities = [
+			"request.sender",
+			"request.sendertype",
+			"request.securitylevel",
+			"request.securityorigin",
+			"request.status",
+			"request.baseid",
+			"request.x-sstp-passthru",
+			"response.value",
+			"response.valuenotify",
+			"response.marker",
+			"response.markersend",
+			"response.balloonoffset",
+			"response.age",
+			"response.errorlevel",
+			"response.errordescription",
+			"response.x-sstp-passthru",
+		];
+		return await this.sendShioriNotify("capability", capabilities);
+	},
+
+	/**
 	 * 起動時通知一式を送信 (SHIORI ロード後 / OnBoot 後に呼ぶ)
 	 * @this {import('./ghost.js').GhostController}
 	 */
@@ -150,6 +178,9 @@ export const shioriNotifyMethods = {
 		if (!ghost) return;
 
 		console.log("🔔 起動時 NOTIFY イベント送信...");
+
+		// UKADOC capability 通知 (SHIORI 実行の初期に通知される規約)
+		await this.sendCapabilityNotify();
 
 		// インストール済みゴースト情報 (Reference*: 1ゴーストにつき1つのReference)
 		const ghosts = this.ghosts.length > 0 ? this.ghosts : [ghost];

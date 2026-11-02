@@ -15,6 +15,8 @@ export const TOUCH_GESTURE_TYPES = {
 	LONG_PRESS: "nas:touch:longpress",
 	TAP: "nas:touch:tap",
 	DOUBLE_TAP: "nas:touch:doubletap",
+	TWO_FINGER_TAP: "nas:touch:twofingertap",
+	SWIPE: "nas:touch:swipe",
 	STROKE: "nas:touch:stroke",
 	ROTATE: "nas:touch:rotate",
 };
@@ -35,6 +37,10 @@ export class TouchGestureEvent {
 	 * @param {number} [detail.rotation=0] 回転角 (度数法)
 	 * @param {number} [detail.strokeDistance=0] 撫で操作の積算距離
 	 * @param {number} [detail.tapCount=1] タップ回数 (1=シングルタップ, 2=ダブルタップ)
+	 * @param {string} [detail.direction=""] スワイプ方向 ("left" | "right" | "up" | "down")
+	 * @param {number} [detail.velocity=0] スワイプ速度 (px/ms)
+	 * @param {number} [detail.velocityX=0] X軸速度 (px/ms)
+	 * @param {number} [detail.velocityY=0] Y軸速度 (px/ms)
 	 * @param {Event} [detail.originalEvent=null] 元のDOMイベント (TouchEvent/PointerEvent)
 	 */
 	constructor(type, detail = {}) {
@@ -47,6 +53,11 @@ export class TouchGestureEvent {
 		this.rotation = detail.rotation ?? 0;
 		this.strokeDistance = detail.strokeDistance ?? 0;
 		this.tapCount = detail.tapCount ?? 1;
+		this.direction = detail.direction ?? "";
+		this.distance = detail.distance ?? 0;
+		this.velocity = detail.velocity ?? 0;
+		this.velocityX = detail.velocityX ?? 0;
+		this.velocityY = detail.velocityY ?? 0;
 		this.originalEvent = detail.originalEvent ?? null;
 		this.timestamp = Date.now();
 		this.defaultPrevented = false;

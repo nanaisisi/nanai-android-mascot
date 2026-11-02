@@ -70,9 +70,28 @@ export async function handleToken(player, app, token, context) {
 			} else {
 				currentBalloonText.appendChild(span);
 			}
-			scheduleDesktopBalloonSync(false);
 
-			app.surfaceManager?.onCharSpoken(player.currentScope);
+			// 同期セクション (\_s): サクラ側と相方側（両バルーン）へ同時に文字を出力
+			if (player.isSyncMode) {
+				const mirrorTarget =
+					currentBalloonText === sakuraText ? keroText : sakuraText;
+				if (mirrorTarget) {
+					const mirrorSpan = document.createElement("span");
+					mirrorSpan.textContent = token.value;
+					if (player.currentFontStyles) {
+						Object.assign(mirrorSpan.style, player.currentFontStyles);
+					}
+					mirrorTarget.appendChild(mirrorSpan);
+				}
+				scheduleDesktopBalloonSync(false, 0);
+				scheduleDesktopBalloonSync(false, 1);
+				app.surfaceManager?.onCharSpoken(0);
+				app.surfaceManager?.onCharSpoken(1);
+			} else {
+				scheduleDesktopBalloonSync(false);
+				app.surfaceManager?.onCharSpoken(player.currentScope);
+			}
+
 			player.playbackController?.notifyChar?.(token.value, player.currentScope);
 
 			if (!player.skipRequested && !isQuickMode) {
@@ -80,7 +99,7 @@ export async function handleToken(player, app, token, context) {
 				const isPunctuation = /[、。！？,!?]/.test(token.value);
 				const baseWait = isPunctuation ? 140 : 40;
 				const waitMs = player.playbackController?.calculateWait
-					? player.playbackController.calculateWait(baseWait)
+					? player.playbackController.calculateWait(baseWait, true)
 					: baseWait;
 				if (waitMs > 0) {
 					await player.sleep(waitMs);
@@ -98,7 +117,25 @@ export async function handleToken(player, app, token, context) {
 			} else {
 				currentBalloonText.appendChild(document.createElement("br"));
 			}
-			scheduleDesktopBalloonSync(false);
+
+			if (player.isSyncMode) {
+				const mirrorTarget =
+					currentBalloonText === sakuraText ? keroText : sakuraText;
+				if (mirrorTarget) {
+					if (token.half) {
+						const mirrorHalfBr = document.createElement("span");
+						mirrorHalfBr.style.display = "block";
+						mirrorHalfBr.style.height = "0.4em";
+						mirrorTarget.appendChild(mirrorHalfBr);
+					} else {
+						mirrorTarget.appendChild(document.createElement("br"));
+					}
+				}
+				scheduleDesktopBalloonSync(false, 0);
+				scheduleDesktopBalloonSync(false, 1);
+			} else {
+				scheduleDesktopBalloonSync(false);
+			}
 			break;
 
 		case "clear":
@@ -397,6 +434,9 @@ export async function handleToken(player, app, token, context) {
 			} else {
 				player.isSyncMode = !player.isSyncMode;
 			}
+			player.playbackController?.emit?.("playback:sync-mode", {
+				enabled: player.isSyncMode,
+			});
 			break;
 
 		case "command":

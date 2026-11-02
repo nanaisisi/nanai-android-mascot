@@ -17,6 +17,7 @@ pub enum CollisionShape {
 
 impl CollisionShape {
     /// 座標がこの shape に含まれるか（矩形内側 or 多角形の奇偶規則 or 円・楕円の式）
+    /// AABB（Axis-Aligned Bounding Box）による事前判定でモバイル・タッチ等のホットパスを高速化する
     pub fn contains(&self, x: i32, y: i32) -> bool {
         let fx = x as f64;
         let fy = y as f64;
@@ -26,6 +27,12 @@ impl CollisionShape {
                 x >= x1.min(x2) && x <= x1.max(x2) && y >= y1.min(y2) && y <= y1.max(y2)
             }
             CollisionShape::Polygon { vertices } if vertices.len() >= 3 => {
+                // AABB事前フィルタ
+                if let Some((min_x, min_y, max_x, max_y)) = self.bounding_box() {
+                    if x < min_x || x > max_x || y < min_y || y > max_y {
+                        return false;
+                    }
+                }
                 let mut inside = false;
                 let n = vertices.len();
                 let mut j = n - 1;
@@ -41,19 +48,28 @@ impl CollisionShape {
             }
             CollisionShape::Circle { cx, cy, r } => {
                 if *r <= 0.0 {
-                    false
-                } else {
-                    let (dx, dy) = (fx - *cx as f64, fy - *cy as f64);
-                    dx * dx + dy * dy <= *r * *r
+                    return false;
                 }
+                // AABB事前フィルタ
+                let ri = r.ceil() as i32;
+                if x < cx - ri || x > cx + ri || y < cy - ri || y > cy + ri {
+                    return false;
+                }
+                let (dx, dy) = (fx - *cx as f64, fy - *cy as f64);
+                dx * dx + dy * dy <= *r * *r
             }
             CollisionShape::Ellipse { cx, cy, rx, ry } => {
                 if *rx <= 0.0 || *ry <= 0.0 {
-                    false
-                } else {
-                    let (dx, dy) = ((fx - *cx as f64) / *rx, (fy - *cy as f64) / *ry);
-                    dx * dx + dy * dy <= 1.0
+                    return false;
                 }
+                // AABB事前フィルタ
+                let rxi = rx.ceil() as i32;
+                let ryi = ry.ceil() as i32;
+                if x < cx - rxi || x > cx + rxi || y < cy - ryi || y > cy + ryi {
+                    return false;
+                }
+                let (dx, dy) = ((fx - *cx as f64) / *rx, (fy - *cy as f64) / *ry);
+                dx * dx + dy * dy <= 1.0
             }
             _ => false,
         }

@@ -94,6 +94,8 @@ fn test_fmo_entry_conversion_and_sync() {
         balloon1: "KeroHi".to_string(),
         kerohwnd: None,
         modulestate: None,
+        is_visible: true,
+        lifecycle_state: "active".to_string(),
     };
 
     let rec = entry.to_record();
@@ -114,6 +116,8 @@ fn test_fmo_entry_conversion_and_sync() {
     assert_eq!(entry_back.sakura_surface, entry.sakura_surface);
     assert_eq!(entry_back.kero_surface, entry.kero_surface);
     assert_eq!(entry_back.ghostpath, entry.ghostpath);
+    assert!(entry_back.is_visible);
+    assert_eq!(entry_back.lifecycle_state, "active");
 }
 
 #[test]
@@ -132,4 +136,45 @@ fn test_fmo_entry_kerohwnd_and_modulestate_sync() {
     let back = FmoEntry::from_record(&rec);
     assert_eq!(back.kerohwnd, Some(10002));
     assert_eq!(back.modulestate, Some("shiori:running".to_string()));
+}
+
+#[test]
+fn test_fmo_entry_lifecycle_and_mobile_optimization() {
+    let mut entry = FmoEntry::new("ghost_mobile", "Nanai");
+    assert!(entry.is_visible);
+    assert_eq!(entry.lifecycle_state, "active");
+
+    entry.update_lifecycle("paused", false);
+    assert!(!entry.is_visible);
+    assert_eq!(entry.lifecycle_state, "paused");
+    assert!(
+        entry
+            .modulestate
+            .as_ref()
+            .unwrap()
+            .contains("lifecycle:paused")
+    );
+
+    let rec = entry.to_record();
+    let back = FmoEntry::from_record(&rec);
+    assert_eq!(back.lifecycle_state, "paused");
+    assert!(!back.is_visible);
+
+    entry.update_lifecycle("active", true);
+    assert!(entry.is_visible);
+    assert_eq!(entry.lifecycle_state, "active");
+    assert!(
+        entry
+            .modulestate
+            .as_ref()
+            .unwrap()
+            .contains("lifecycle:active")
+    );
+    assert!(
+        !entry
+            .modulestate
+            .as_ref()
+            .unwrap()
+            .contains("lifecycle:paused")
+    );
 }

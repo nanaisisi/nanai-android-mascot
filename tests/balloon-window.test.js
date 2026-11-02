@@ -162,7 +162,34 @@ test("balloon-window covers interactive elements, theme/manifest loading, and Ta
 		});
 	}
 
-	// 5. Test Non-Tauri environment early return
+	// 5. Test touch events (Slot-10 Cycle 3)
+	// Single touch drag
+	balloonBox._listeners?.touchstart?.({
+		touches: [{ clientX: 50, clientY: 50 }],
+	});
+	// Double tap within 300ms
+	balloonBox._listeners?.touchstart?.({
+		touches: [{ clientX: 50, clientY: 50 }],
+	});
+	// Pinch touchmove
+	balloonBox._listeners?.touchstart?.({
+		touches: [
+			{ clientX: 50, clientY: 50 },
+			{ clientX: 150, clientY: 50 },
+		],
+	});
+	balloonBox._listeners?.touchmove?.({
+		touches: [
+			{ clientX: 20, clientY: 50 },
+			{ clientX: 180, clientY: 50 },
+		],
+	});
+	// Touchend
+	balloonBox._listeners?.touchend?.({
+		touches: [],
+	});
+
+	// 6. Test Non-Tauri environment early return
 	delete globalThis.__TAURI__;
 	delete globalThis.__TAURI_INTERNALS__;
 	docListeners.DOMContentLoaded?.();

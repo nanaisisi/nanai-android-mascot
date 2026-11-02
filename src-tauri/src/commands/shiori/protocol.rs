@@ -108,7 +108,7 @@ pub async fn send_shiori_event(
 ///
 /// [@manual: manual/translator.md] Translator integration / OnTranslate hook support for script post-processing
 /// NOTIFY の SHIORI 応答は baseware が無視する規約のため、応答テキストはそのまま返す。
-/// `installedghostname` / `ghostpathlist` / `uniqueid` / `basewareversion` 等の
+/// `installedghostname` / `ghostpathlist` / `uniqueid` / `basewareversion` / `capability` 等の
 /// 起動時情報提示に使用する。
 #[tauri::command]
 pub async fn send_shiori_notify(
@@ -118,6 +118,18 @@ pub async fn send_shiori_notify(
     ghost_id: Option<String>,
 ) -> Result<String, String> {
     let mut req = ShioriRequest::notify(&event, &references.unwrap_or_default());
+    req.sender = "NanaiMascot".to_string();
+    send_shiori_request(state, req.build(), ghost_id).await
+}
+
+/// SHIORI へ UKADOC 準拠の capability Notify イベントを送信
+#[tauri::command]
+pub async fn send_shiori_capability(
+    state: tauri::State<'_, AppState>,
+    ghost_id: Option<String>,
+) -> Result<String, String> {
+    let refs = nanai_android_mascot_ui::build_standard_capability_references();
+    let mut req = ShioriRequest::capability(&refs);
     req.sender = "NanaiMascot".to_string();
     send_shiori_request(state, req.build(), ghost_id).await
 }

@@ -37,6 +37,7 @@ globalThis.document = {
 
 const {
 	processChromaKey,
+	drawImageLayer,
 	drawLayer,
 	composeSurfaceElements,
 	SurfaceFrameBuffer,
@@ -83,6 +84,59 @@ test("surface-compositor covers SurfaceFrameBuffer and Contract functions", asyn
 	assert.equal(res, "");
 });
 
+test("surface-compositor covers Cycle 3 mobile optimizations: data32, clearRect, compositeBuffer, destroy", () => {
+	const fb = new SurfaceFrameBuffer(4, 4);
+	assert.equal(fb.data32.length, 16);
+
+	// Fill all pixels with white opaque
+	for (let y = 0; y < 4; y++) {
+		for (let x = 0; x < 4; x++) {
+			fb.setPixel(x, y, 255, 255, 255, 255);
+		}
+	}
+	assert.deepEqual(fb.getPixel(1, 1), [255, 255, 255, 255]);
+
+	// clearRect: (1, 1) width 2, height 2
+	fb.clearRect(1, 1, 2, 2);
+	assert.deepEqual(fb.getPixel(0, 0), [255, 255, 255, 255]);
+	assert.deepEqual(fb.getPixel(1, 1), [0, 0, 0, 0]);
+	assert.deepEqual(fb.getPixel(2, 2), [0, 0, 0, 0]);
+	assert.deepEqual(fb.getPixel(3, 3), [255, 255, 255, 255]);
+
+	// out of bounds clearRect no throw
+	fb.clearRect(-5, -5, 1, 1);
+	fb.clearRect(0, 0, 0, 0);
+
+	// compositeBuffer test
+	const layer = new SurfaceFrameBuffer(2, 2);
+	layer.setPixel(0, 0, 200, 100, 50, 255); // opaque
+	layer.setPixel(1, 0, 200, 100, 50, 128); // semi-transparent
+	layer.setPixel(0, 1, 0, 0, 0, 0); // transparent
+
+	fb.compositeBuffer(layer, 0, 0, "overlay");
+	assert.deepEqual(fb.getPixel(0, 0), [200, 100, 50, 255]);
+	// layer (0, 1) is transparent, so fb (0, 1) keeps original white
+	assert.deepEqual(fb.getPixel(0, 1), [255, 255, 255, 255]);
+
+	// test replace mode
+	fb.compositeBuffer(layer, 2, 2, "replace");
+	assert.deepEqual(fb.getPixel(2, 2), [200, 100, 50, 255]);
+
+	// test interpolate mode
+	const interpLayer = new SurfaceFrameBuffer(2, 2);
+	interpLayer.setPixel(0, 0, 200, 100, 50, 255); // same color as fb (0,0) -> should skip
+	interpLayer.setPixel(1, 0, 10, 20, 30, 255); // different -> should apply
+	fb.compositeBuffer(interpLayer, 0, 0, "interpolate");
+	assert.deepEqual(fb.getPixel(0, 0), [200, 100, 50, 255]);
+	assert.deepEqual(fb.getPixel(1, 0), [10, 20, 30, 255]);
+
+	// test destroy
+	fb.destroy();
+	assert.equal(fb.width, 0);
+	assert.equal(fb.height, 0);
+	assert.equal(fb.data.length, 0);
+});
+
 test("surface-compositor covers processChromaKey, drawLayer, and composeSurfaceElements", async () => {
 	// 1. processChromaKey empty source
 	const emptyRes = await processChromaKey("");
@@ -98,11 +152,15 @@ test("surface-compositor covers processChromaKey, drawLayer, and composeSurfaceE
 	const chromaRes = await processChromaKey("image.png", "mask.png", cache);
 	assert.ok(chromaRes);
 
-	// 4. drawLayer
+	// 4. drawLayer & drawImageLayer
 	const mockCtx = {
 		globalCompositeOperation: "source-over",
 		drawImage() {},
 		clearRect() {},
+		putImageData() {},
+		getImageData: () => ({
+			data: new Uint8Array([0, 255, 0, 255, 255, 255, 255, 255]),
+		}),
 	};
 	const resolvePath = async (f) => (f ? `resolved_${f}` : null);
 	await drawLayer(mockCtx, "part.png", resolvePath, 0, 0, "replace");
@@ -137,6 +195,10 @@ test("surface-compositor covers processChromaKey, drawLayer, and composeSurfaceE
 	await drawLayer(mockCtx, "base.png", resolvePath, 0, 0, "base");
 	await drawLayer(mockCtx, "interpolate.png", resolvePath, 0, 0, "interpolate");
 	await drawLayer(mockCtx, "", resolvePath, 0, 0, "overlay");
+
+	const mockImg = new globalThis.Image();
+	drawImageLayer(mockCtx, mockImg, 0, 0, "interpolate");
+	drawImageLayer(mockCtx, null, 0, 0);
 
 	// 5. composeSurfaceElements
 	const compEmpty = await composeSurfaceElements([], "", resolvePath, [], {

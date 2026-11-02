@@ -1,4 +1,4 @@
-use super::super::utils::{CharsIter, read_bracketed, read_digit};
+use super::super::utils::{CharsIter, read_bracketed, read_digit, split_bracket_args};
 
 pub(crate) fn handle_target_p(chars: &mut CharsIter<'_>) -> Option<u8> {
     if let Some(bracketed) = read_bracketed(chars) {
@@ -68,21 +68,21 @@ pub(crate) fn handle_font(chars: &mut CharsIter<'_>) -> Option<(String, Option<S
 
 pub(crate) fn handle_choice(chars: &mut CharsIter<'_>) -> Option<(String, String, Vec<String>)> {
     let content = read_bracketed(chars)?;
-    let parts: Vec<&str> = content.split(',').map(|s| s.trim()).collect();
+    let parts = split_bracket_args(&content);
     if parts.len() >= 3 && parts[0] == "temp" {
-        let label = parts[1].to_string();
-        let id = parts[2].to_string();
+        let label = parts[1].clone();
+        let id = parts[2].clone();
         let args = if parts.len() > 3 {
-            parts[3..].iter().map(|s| s.to_string()).collect()
+            parts[3..].to_vec()
         } else {
             Vec::new()
         };
         return Some((label, id, args));
     }
-    let label = parts.first().copied().unwrap_or("").to_string();
-    let id = parts.get(1).copied().unwrap_or("").to_string();
+    let label = parts.first().cloned().unwrap_or_default();
+    let id = parts.get(1).cloned().unwrap_or_default();
     let args = if parts.len() > 2 {
-        parts[2..].iter().map(|s| s.to_string()).collect()
+        parts[2..].to_vec()
     } else {
         Vec::new()
     };

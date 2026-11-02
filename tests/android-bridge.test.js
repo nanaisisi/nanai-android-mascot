@@ -217,4 +217,109 @@ describe("AndroidBridge", () => {
 		expect(clickThroughListener).toHaveBeenCalledWith({ enabled: true });
 		expect(bridge.getState().isClickThrough).toBe(true);
 	});
+
+	it("handles trimMemory and dispatches TRIM_MEMORY event", async () => {
+		const bridge = new AndroidBridge();
+		const trimListener = vi.fn();
+		bridge.on(ANDROID_EVENTS.TRIM_MEMORY, trimListener);
+
+		const level = await bridge.trimMemory(80);
+		expect(level).toBe(80);
+		expect(trimListener).toHaveBeenCalledWith(
+			expect.objectContaining({ level: 80 }),
+		);
+	});
+
+	it("manages back button handler stack in LIFO order", async () => {
+		const bridge = new AndroidBridge();
+		const backListener = vi.fn();
+		bridge.on(ANDROID_EVENTS.BACK_BUTTON, backListener);
+
+		const firstHandler = vi.fn().mockReturnValue(false);
+		const secondHandler = vi.fn().mockReturnValue(true);
+
+		const unregisterFirst = bridge.registerBackHandler(firstHandler);
+		const unregisterSecond = bridge.registerBackHandler(secondHandler);
+
+		const handled = await bridge.handleBackButton();
+		expect(handled).toBe(true);
+		expect(secondHandler).toHaveBeenCalled();
+		expect(firstHandler).not.toHaveBeenCalled(); // stopped by secondHandler returning true
+
+		// Unregister second handler
+		unregisterSecond();
+		const handled2 = await bridge.handleBackButton();
+		expect(handled2).toBe(false);
+		expect(firstHandler).toHaveBeenCalled();
+
+		unregisterFirst();
+	});
+
+	it("handles freeze and pagehide lifecycle transitions and destroy cleanup", () => {
+		const docListeners = {};
+		const winListeners = {};
+
+		const mockDoc = {
+			hidden: false,
+			addEventListener: (event, handler) => {
+				docListeners[event] = handler;
+			},
+			removeEventListener: (event) => {
+				delete docListeners[event];
+			},
+		};
+		const mockWin = {
+			addEventListener: (event, handler) => {
+				winListeners[event] = handler;
+			},
+			removeEventListener: (event) => {
+				delete winListeners[event];
+			},
+		};
+
+		Object.defineProperty(globalThis, "document", {
+			value: mockDoc,
+			configurable: true,
+			writable: true,
+		});
+		Object.defineProperty(globalThis, "window", {
+			value: mockWin,
+			configurable: true,
+			writable: true,
+		});
+
+		const mockRecognizer = { reset: vi.fn(), destroy: vi.fn() };
+		const bridge = new AndroidBridge({ gestureRecognizer: mockRecognizer });
+
+		expect(bridge.isThrottled()).toBe(false);
+
+		// Freeze event
+		const pauseListener = vi.fn();
+		bridge.on(ANDROID_EVENTS.PAUSE, pauseListener);
+		docListeners.freeze();
+		expect(bridge.getState().lifecycleState).toBe(
+			ANDROID_LIFECYCLE_STATES.PAUSED,
+		);
+		expect(bridge.isThrottled()).toBe(true);
+		expect(pauseListener).toHaveBeenCalled();
+
+		// Pagehide event
+		const stopListener = vi.fn();
+		bridge.on(ANDROID_EVENTS.STOP, stopListener);
+		winListeners.pagehide({ persisted: true });
+		expect(bridge.getState().lifecycleState).toBe(
+			ANDROID_LIFECYCLE_STATES.STOPPED,
+		);
+		expect(bridge.isThrottled()).toBe(true);
+		expect(stopListener).toHaveBeenCalledWith(
+			expect.objectContaining({ persisted: true }),
+		);
+
+		// Destroy
+		bridge.destroy();
+		expect(mockRecognizer.destroy).toHaveBeenCalled();
+		expect(bridge.getState().lifecycleState).toBe(
+			ANDROID_LIFECYCLE_STATES.STOPPED,
+		);
+	});
 });

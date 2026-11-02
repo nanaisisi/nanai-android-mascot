@@ -75,41 +75,78 @@ def parse_keywords(keyword_str):
     return terms
 
 
-def search_keyword(keyword, codebase):
+def search_keyword(keyword, codebase, cache=None, stats=None):
+    """Searches for occurrences of keyword terms in the codebase.
+
+    Supports optional caching (cache dict) and performance stats tracking.
+    """
     terms = parse_keywords(keyword)
     if not terms:
         return []
 
+    # If codebase is tuple format (path, lines) convert/cache full_text if available
+    # Prepare list of (path, lines, full_text)
+    file_records = []
+    for item in codebase:
+        if len(item) == 3:
+            file_records.append(item)
+        else:
+            path, lines = item
+            file_records.append((path, lines, "".join(lines)))
+
     results = []
     seen = set()
-    for path, lines in codebase:
-        # Avoid matching an audit file or test file against itself
-        if 'docs/' in path or 'tests/' in path:
-            continue
-        for idx, line in enumerate(lines, 1):
-            for term in terms:
-                if term in line:
-                    loc = (path, idx)
-                    if loc not in seen:
-                        seen.add(loc)
+
+    for term in terms:
+        if cache is not None and term in cache:
+            if stats is not None:
+                stats["cache_hits"] += 1
+            term_matches = cache[term]
+        else:
+            if stats is not None:
+                stats["cache_misses"] += 1
+                stats["unique_terms"] += 1
+            term_matches = []
+            for path, lines, full_text in file_records:
+                # Avoid matching an audit file or test file against itself
+                if 'docs/' in path or 'tests/' in path:
+                    continue
+                # Fast pre-check: skip line-by-line scan if term is not in file at all
+                if term not in full_text:
+                    continue
+                for idx, line in enumerate(lines, 1):
+                    if term in line:
                         cleaned_line = sanitize_snippet(line.strip())
-                        results.append((path, idx, cleaned_line))
+                        term_matches.append((path, idx, cleaned_line))
+                        if len(term_matches) >= 10:
+                            break
+                if len(term_matches) >= 10:
                     break
-            if len(results) >= 10:
-                break
+            if cache is not None:
+                cache[term] = term_matches
+
+        for path, idx, cleaned_line in term_matches:
+            loc = (path, idx)
+            if loc not in seen:
+                seen.add(loc)
+                results.append((path, idx, cleaned_line))
+                if len(results) >= 10:
+                    break
         if len(results) >= 10:
             break
+
     return results
 
 
 class ComplianceReport:
     """Represents a compliance audit report with serialization support and regression tracking."""
 
-    def __init__(self, category_stats, updated_files=None, total_files=0, regressions=None, generated_at=None):
+    def __init__(self, category_stats, updated_files=None, total_files=0, regressions=None, generated_at=None, perf_stats=None):
         self.category_stats = category_stats
         self.updated_files = updated_files or []
         self.total_files = total_files
         self.regressions = regressions or []
+        self.perf_stats = perf_stats or {}
         self.generated_at = generated_at or datetime.datetime.now(datetime.timezone.utc).isoformat()
 
         tot_ok = sum(st["✅"] for st in category_stats.values())
@@ -143,7 +180,7 @@ class ComplianceReport:
                 "compliance_rate_percent": rate
             }
 
-        return {
+        data = {
             "generated_at": self.generated_at,
             "total_files_audited": self.total_files,
             "updated_files_count": len(self.updated_files),
@@ -159,6 +196,9 @@ class ComplianceReport:
             },
             "categories": categories_dict
         }
+        if self.perf_stats:
+            data["perf_stats"] = self.perf_stats
+        return data
 
     def to_json(self, indent=2):
         return json.dumps(self.to_dict(), ensure_ascii=False, indent=indent)
@@ -171,12 +211,23 @@ class ComplianceReport:
             f"- **監査対象総数**: {self.totals['合計']}",
             f"- **全体適合率**: {self.totals['compliance_rate_percent']}%",
             f"- **リグレッション検知数**: {len(self.regressions)}",
+        ]
+        if self.perf_stats:
+            elapsed = self.perf_stats.get("elapsed_seconds", 0.0)
+            hits = self.perf_stats.get("cache_hits", 0)
+            misses = self.perf_stats.get("cache_misses", 0)
+            terms = self.perf_stats.get("unique_terms", 0)
+            lines.extend([
+                f"- **監査所要時間**: {elapsed:.2f}s",
+                f"- **キャッシュ統計**: 固有検索語 {terms}件, ヒット {hits}回, ミス {misses}回",
+            ])
+        lines.extend([
             "",
             "## 規格別集計",
             "",
             "| 規格 (カテゴリ) | ✅ 実装済 | ⚠️ 一部対応 | ❌ 未実装 | ❓ 未確認 | 適合率 | 合計 |",
             "| :--- | --------: | ----------: | --------: | --------: | -----: | ---: |"
-        ]
+        ])
 
         for cat in sorted(self.category_stats.keys()):
             st = self.category_stats[cat]
@@ -212,7 +263,8 @@ class ComplianceReport:
         return "\n".join(lines)
 
 
-def process_audit_files(codebase, docs_dir='docs/spec', dry_run=False, target_category=None):
+def process_audit_files(codebase, docs_dir='docs/spec', dry_run=False, target_category=None, use_cache=True):
+    start_time = datetime.datetime.now(datetime.timezone.utc)
     patterns = [
         os.path.join(docs_dir, 'ukadoc-spec/**/*.md'),
         os.path.join(docs_dir, 'ukadoc-ssp/**/*.md'),
@@ -231,6 +283,22 @@ def process_audit_files(codebase, docs_dir='docs/spec', dry_run=False, target_ca
     updated_files = []
     regressions = []
     category_stats = {}
+
+    # Pre-index codebase lines and full_text for fast pre-checks
+    prepped_codebase = []
+    for item in codebase:
+        if len(item) == 3:
+            prepped_codebase.append(item)
+        else:
+            path, lines = item
+            prepped_codebase.append((path, lines, "".join(lines)))
+
+    term_cache = {} if use_cache else None
+    perf_stats = {
+        "cache_hits": 0,
+        "cache_misses": 0,
+        "unique_terms": 0,
+    }
 
     for filepath in audit_files:
         # Determine category from relative path under docs_dir
@@ -264,7 +332,7 @@ def process_audit_files(codebase, docs_dir='docs/spec', dry_run=False, target_ca
         else:
             keyword = os.path.splitext(os.path.basename(filepath))[0]
 
-        matches = search_keyword(keyword, codebase)
+        matches = search_keyword(keyword, prepped_codebase, cache=term_cache, stats=perf_stats)
 
         is_japanese_prose = bool(re.search(r'[\u3040-\u30ff\u4e00-\u9faf]', keyword))
         is_guide_or_note = (
@@ -332,11 +400,15 @@ def process_audit_files(codebase, docs_dir='docs/spec', dry_run=False, target_ca
             category_stats[cat]["❌"] += 1
         category_stats[cat]["合計"] += 1
 
+    end_time = datetime.datetime.now(datetime.timezone.utc)
+    perf_stats["elapsed_seconds"] = round((end_time - start_time).total_seconds(), 3)
+
     report = ComplianceReport(
         category_stats=category_stats,
         updated_files=updated_files,
         total_files=len(audit_files),
-        regressions=regressions
+        regressions=regressions,
+        perf_stats=perf_stats
     )
 
     return report
@@ -422,15 +494,26 @@ def parse_args():
         "--min-rate", dest="min_rate", type=float, default=None,
         help="Minimum required compliance rate (percent). Exit with non-zero if below threshold."
     )
+    parser.add_argument(
+        "--benchmark", action="store_true", dest="benchmark",
+        help="Print detailed execution time and search cache performance statistics."
+    )
+    parser.add_argument(
+        "--no-cache", action="store_true", dest="no_cache",
+        help="Disable search term caching across audit files."
+    )
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
+    total_start = datetime.datetime.now(datetime.timezone.utc)
 
     if not args.summary_only:
         print("Loading codebase...")
+    load_start = datetime.datetime.now(datetime.timezone.utc)
     codebase = load_codebase()
+    load_end = datetime.datetime.now(datetime.timezone.utc)
     if not args.summary_only:
         print(f"Loaded {len(codebase)} source files.")
 
@@ -440,7 +523,8 @@ def main():
         codebase,
         docs_dir=args.docs_dir,
         dry_run=args.dry_run,
-        target_category=args.target_category
+        target_category=args.target_category,
+        use_cache=not args.no_cache
     )
 
     if not args.dry_run and not args.target_category:
@@ -471,6 +555,20 @@ def main():
         print(f"[Dry-run] Would update {len(report.updated_files)} files.")
     else:
         print(f"Updated {len(report.updated_files)} audit files.")
+
+    total_end = datetime.datetime.now(datetime.timezone.utc)
+    if args.benchmark:
+        total_sec = round((total_end - total_start).total_seconds(), 3)
+        load_sec = round((load_end - load_start).total_seconds(), 3)
+        proc_sec = report.perf_stats.get("elapsed_seconds", 0.0)
+        hits = report.perf_stats.get("cache_hits", 0)
+        misses = report.perf_stats.get("cache_misses", 0)
+        terms = report.perf_stats.get("unique_terms", 0)
+        hit_ratio = round((hits / (hits + misses) * 100), 1) if (hits + misses) > 0 else 0.0
+        print("\n--- Performance Benchmark ---")
+        print(f"Total Execution Time: {total_sec:.3f}s (Load: {load_sec:.3f}s, Process: {proc_sec:.3f}s)")
+        print(f"Cache Statistics    : {hits} hits, {misses} misses, {terms} unique terms ({hit_ratio}% hit ratio)")
+        print("-----------------------------\n")
 
     if report.regressions:
         print(f"WARNING: {len(report.regressions)} regressions detected!")

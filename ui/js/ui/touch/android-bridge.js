@@ -12,10 +12,13 @@ import { invoke, isTauriAvailable } from "../../core/tauri-helper.js";
 export const ANDROID_EVENTS = {
 	PAUSE: "nas:android:pause",
 	RESUME: "nas:android:resume",
+	STOP: "nas:android:stop",
 	OVERLAY_MODE_CHANGED: "nas:android:overlay-mode-changed",
 	STATE_CHANGED: "nas:android:state-changed",
 	OVERLAY_TRANSPARENCY_CHANGED: "nas:android:overlay-transparency-changed",
 	CLICK_THROUGH_CHANGED: "nas:android:click-through-changed",
+	TRIM_MEMORY: "nas:android:trim-memory",
+	BACK_BUTTON: "nas:android:back-button",
 };
 
 /**
@@ -40,13 +43,15 @@ export class AndroidBridge {
 		this._invoke = options.invokeHandler || invoke;
 		this._gestureRecognizer = options.gestureRecognizer || null;
 		this._listeners = new Map();
+		this._backHandlers = [];
 		this._isForegroundServiceActive = false;
 		this._isOverlayEnabled = false;
 		this._lifecycleState = ANDROID_LIFECYCLE_STATES.ACTIVE;
 		this._overlayTransparency = 1.0;
 		this._isClickThrough = false;
+		this._cleanupFns = [];
 
-		// ブラウザ/WebViewの可視性変更を監視してライフサイクルイベントを発火
+		// ブラウザ/WebViewの可視性変更およびライフサイクル監視
 		this._setupVisibilityListeners();
 	}
 
@@ -172,8 +177,75 @@ export class AndroidBridge {
 	}
 
 	/**
+	 * Android低メモリ通知 (ComponentCallbacks2.onTrimMemory) の処理
+	 * @param {number|string} level トリムレベル (例: 10, 15, 20, 40, 60, 80)
+	 * @returns {Promise<number>}
+	 */
+	async trimMemory(level = 40) {
+		const numLevel = Number(level) || 40;
+		if (isTauriAvailable()) {
+			try {
+				await this._invoke("trim_memory_command", { level: numLevel });
+			} catch (err) {
+				console.warn("trimMemory invoke error, falling back:", err);
+			}
+		}
+		this._dispatch(ANDROID_EVENTS.TRIM_MEMORY, {
+			level: numLevel,
+			timestamp: Date.now(),
+		});
+		return numLevel;
+	}
+
+	/**
+	 * Android戻るボタンハンドラを登録 (スタック方式)
+	 * @param {() => boolean|Promise<boolean>} handler trueを返すと戻る処理を消費(consume)したとみなす
+	 * @returns {() => void} 登録解除関数
+	 */
+	registerBackHandler(handler) {
+		if (typeof handler === "function") {
+			this._backHandlers.push(handler);
+		}
+		return () => {
+			this._backHandlers = this._backHandlers.filter((h) => h !== handler);
+		};
+	}
+
+	/**
+	 * Android戻るボタン押下イベントの処理
+	 * スタックの末尾（最前面）から順にハンドラを実行し、trueが返されたら停止
+	 * @returns {Promise<boolean>} ハンドラによって処理されたかどうか
+	 */
+	async handleBackButton() {
+		this._dispatch(ANDROID_EVENTS.BACK_BUTTON, { timestamp: Date.now() });
+		for (let i = this._backHandlers.length - 1; i >= 0; i--) {
+			const handler = this._backHandlers[i];
+			try {
+				const handled = await handler();
+				if (handled) {
+					return true;
+				}
+			} catch (err) {
+				console.error("Error in back button handler:", err);
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * 現在のライフサイクル状態においてフレームレート抑制/省電力モードが有効か
+	 * @returns {boolean}
+	 */
+	isThrottled() {
+		return (
+			this._lifecycleState === ANDROID_LIFECYCLE_STATES.PAUSED ||
+			this._lifecycleState === ANDROID_LIFECYCLE_STATES.STOPPED
+		);
+	}
+
+	/**
 	 * 現在のオーバーレイおよびサービス稼働状態を取得
-	 * @returns {{ isAndroid: boolean, isOverlayEnabled: boolean, isForegroundServiceActive: boolean, lifecycleState: string, overlayTransparency: number, isClickThrough: boolean }}
+	 * @returns {{ isAndroid: boolean, isOverlayEnabled: boolean, isForegroundServiceActive: boolean, lifecycleState: string, overlayTransparency: number, isClickThrough: boolean, isThrottled: boolean }}
 	 */
 	getState() {
 		return {
@@ -183,7 +255,32 @@ export class AndroidBridge {
 			lifecycleState: this._lifecycleState,
 			overlayTransparency: this._overlayTransparency,
 			isClickThrough: this._isClickThrough,
+			isThrottled: this.isThrottled(),
 		};
+	}
+
+	/**
+	 * リソースの完全破棄 (リスナー解除・タイマーリセット)
+	 */
+	destroy() {
+		for (const cleanup of this._cleanupFns) {
+			try {
+				cleanup();
+			} catch (err) {
+				console.error("Error running cleanup in AndroidBridge:", err);
+			}
+		}
+		this._cleanupFns = [];
+		this._listeners.clear();
+		this._backHandlers = [];
+		if (
+			this._gestureRecognizer &&
+			typeof this._gestureRecognizer.destroy === "function"
+		) {
+			this._gestureRecognizer.destroy();
+		}
+		this._gestureRecognizer = null;
+		this._lifecycleState = ANDROID_LIFECYCLE_STATES.STOPPED;
 	}
 
 	/**
@@ -246,7 +343,7 @@ export class AndroidBridge {
 			typeof document !== "undefined" &&
 			typeof document.addEventListener === "function"
 		) {
-			document.addEventListener("visibilitychange", () => {
+			const onVisibilityChange = () => {
 				if (document.hidden) {
 					this._lifecycleState = ANDROID_LIFECYCLE_STATES.PAUSED;
 					if (
@@ -267,6 +364,64 @@ export class AndroidBridge {
 						state: ANDROID_LIFECYCLE_STATES.ACTIVE,
 						timestamp: Date.now(),
 					});
+				}
+			};
+
+			document.addEventListener("visibilitychange", onVisibilityChange);
+			this._cleanupFns.push(() => {
+				if (typeof document.removeEventListener === "function") {
+					document.removeEventListener("visibilitychange", onVisibilityChange);
+				}
+			});
+
+			const onFreeze = () => {
+				this._lifecycleState = ANDROID_LIFECYCLE_STATES.PAUSED;
+				if (
+					this._gestureRecognizer &&
+					typeof this._gestureRecognizer.reset === "function"
+				) {
+					this._gestureRecognizer.reset();
+				}
+				this._dispatch(ANDROID_EVENTS.PAUSE, { timestamp: Date.now() });
+				this._dispatch(ANDROID_EVENTS.STATE_CHANGED, {
+					state: ANDROID_LIFECYCLE_STATES.PAUSED,
+					timestamp: Date.now(),
+				});
+			};
+			document.addEventListener("freeze", onFreeze);
+			this._cleanupFns.push(() => {
+				if (typeof document.removeEventListener === "function") {
+					document.removeEventListener("freeze", onFreeze);
+				}
+			});
+		}
+
+		if (
+			typeof window !== "undefined" &&
+			typeof window.addEventListener === "function"
+		) {
+			const onPageHide = (e) => {
+				this._lifecycleState = ANDROID_LIFECYCLE_STATES.STOPPED;
+				if (
+					this._gestureRecognizer &&
+					typeof this._gestureRecognizer.reset === "function"
+				) {
+					this._gestureRecognizer.reset();
+				}
+				this._dispatch(ANDROID_EVENTS.STOP, {
+					persisted: Boolean(e?.persisted),
+					timestamp: Date.now(),
+				});
+				this._dispatch(ANDROID_EVENTS.STATE_CHANGED, {
+					state: ANDROID_LIFECYCLE_STATES.STOPPED,
+					timestamp: Date.now(),
+				});
+			};
+
+			window.addEventListener("pagehide", onPageHide);
+			this._cleanupFns.push(() => {
+				if (typeof window.removeEventListener === "function") {
+					window.removeEventListener("pagehide", onPageHide);
 				}
 			});
 		}

@@ -264,4 +264,39 @@ mod tests {
         assert_eq!(SortKind::parse("u-scoped"), SortKind::UScoped);
         assert_eq!(SortKind::parse("other"), SortKind::Custom("other".into()));
     }
+
+    #[test]
+    fn test_surface_definition_effective_icon_rect_and_sorting() {
+        let mut def = SurfaceDefinition::default();
+
+        // 1. Explicit icon_rect
+        def.icon_rect = Some([10, 20, 110, 70]);
+        let rect = def.effective_icon_rect().unwrap();
+        assert_eq!(rect[2] - rect[0], rect[3] - rect[1]); // Square
+
+        // 2. Fallback to "face" collision
+        def.icon_rect = None;
+        def.collisions.push(CollisionArea {
+            id: Some(2),
+            name: "face".into(),
+            shape: CollisionShape::Rect { x1: 0, y1: 0, x2: 50, y2: 50 },
+        });
+        def.collisions.push(CollisionArea {
+            id: Some(1),
+            name: "head".into(),
+            shape: CollisionShape::Rect { x1: 0, y1: 0, x2: 100, y2: 100 },
+        });
+
+        assert_eq!(def.effective_icon_rect().unwrap(), [0, 0, 50, 50]);
+
+        // 3. hit_test_sorted: Ascend & Descend
+        let res_asc = def.hit_test_sorted(25, 25, Some(&SortKind::Ascend)).unwrap();
+        assert_eq!(res_asc.name, "head"); // ID 1
+
+        let res_desc = def.hit_test_sorted(25, 25, Some(&SortKind::Descend)).unwrap();
+        assert_eq!(res_desc.name, "face"); // ID 2
+
+        let res_id = def.hit_test_sorted(25, 25, Some(&SortKind::Id)).unwrap();
+        assert_eq!(res_id.name, "head"); // ID 1
+    }
 }

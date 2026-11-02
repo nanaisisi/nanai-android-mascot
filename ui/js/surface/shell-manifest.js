@@ -46,6 +46,7 @@ export function methodToString(value) {
  */
 export function collisionRecord(area) {
 	const shape = area?.shape ?? {};
+	const id = area?.id != null ? Number(area.id) : undefined;
 	let kind = "rect";
 	let coords = shape;
 	if (typeof shape === "object") {
@@ -64,43 +65,90 @@ export function collisionRecord(area) {
 	}
 
 	if (kind === "polygon") {
+		const vertices = (coords?.vertices ?? []).map((p) =>
+			Array.isArray(p) ? p : [p?.x ?? 0, p?.y ?? 0],
+		);
+		let minX = Infinity;
+		let maxX = -Infinity;
+		let minY = Infinity;
+		let maxY = -Infinity;
+		for (const [vx, vy] of vertices) {
+			if (vx < minX) minX = vx;
+			if (vx > maxX) maxX = vx;
+			if (vy < minY) minY = vy;
+			if (vy > maxY) maxY = vy;
+		}
 		return {
+			id,
 			name: String(area?.name ?? "").toLowerCase(),
 			shape: "polygon",
-			vertices: (coords?.vertices ?? []).map((p) =>
-				Array.isArray(p) ? p : [p?.x ?? 0, p?.y ?? 0],
-			),
+			vertices,
+			minX: Number.isFinite(minX) ? minX : 0,
+			minY: Number.isFinite(minY) ? minY : 0,
+			maxX: Number.isFinite(maxX) ? maxX : 0,
+			maxY: Number.isFinite(maxY) ? maxY : 0,
 		};
 	}
 	if (kind === "circle" || kind === "ellipse") {
+		const cx = Number(coords?.cx ?? 0);
+		const cy = Number(coords?.cy ?? 0);
+		const rx = Number(coords?.rx ?? coords?.r ?? 0);
+		const ry = Number(coords?.ry ?? coords?.r ?? 0);
 		return {
+			id,
 			name: String(area?.name ?? "").toLowerCase(),
 			shape: kind,
-			cx: Number(coords?.cx ?? 0),
-			cy: Number(coords?.cy ?? 0),
-			rx: Number(coords?.rx ?? coords?.r ?? 0),
-			ry: Number(coords?.ry ?? coords?.r ?? 0),
+			cx,
+			cy,
+			rx,
+			ry,
+			minX: cx - rx,
+			minY: cy - ry,
+			maxX: cx + rx,
+			maxY: cy + ry,
 		};
 	}
+	const x1 = Number(coords?.x1 ?? 0);
+	const y1 = Number(coords?.y1 ?? 0);
+	const x2 = Number(coords?.x2 ?? 0);
+	const y2 = Number(coords?.y2 ?? 0);
 	return {
+		id,
 		name: String(area?.name ?? "").toLowerCase(),
 		shape: "rect",
-		x1: Number(coords?.x1 ?? 0),
-		y1: Number(coords?.y1 ?? 0),
-		x2: Number(coords?.x2 ?? 0),
-		y2: Number(coords?.y2 ?? 0),
+		x1,
+		y1,
+		x2,
+		y2,
+		minX: Math.min(x1, x2),
+		minY: Math.min(y1, y2),
+		maxX: Math.max(x1, x2),
+		maxY: Math.max(y1, y2),
 	};
 }
 
 /**
- * 当たり判定レコードへの点内包判定（rect / polygon 偶奇規則）
- * @param {{ name: string, shape: string, x1?: number, y1?: number, x2?: number, y2?: number, vertices?: number[][] }} col
+ * 当たり判定レコードへの点内包判定（AABB事前判定 + rect / polygon 偶奇規則）
+ * @param {{ name: string, shape: string, x1?: number, y1?: number, x2?: number, y2?: number, minX?: number, minY?: number, maxX?: number, maxY?: number, vertices?: number[][] }} col
  * @param {number} x
  * @param {number} y
  * @returns {boolean}
  */
 export function collisionContains(col, x, y) {
 	if (!col) return false;
+
+	// AABB高速事前判定
+	if (
+		col.minX != null &&
+		col.maxX != null &&
+		col.minY != null &&
+		col.maxY != null
+	) {
+		if (x < col.minX || x > col.maxX || y < col.minY || y > col.maxY) {
+			return false;
+		}
+	}
+
 	if (col.shape === "polygon") {
 		const vertices = col.vertices ?? [];
 		if (vertices.length < 3) return false;
@@ -131,7 +179,7 @@ export function collisionContains(col, x, y) {
 /**
  * ShellManifest → SurfaceManager 用レコード（レガシー構造）へ変換
  * @param {Record<string, any>} manifest - Rust `ShellManifest`
- * @returns {{ collisions: Record<string, any[]>, elements: Record<string, any[]>, animations: Record<string, any[]>, aliases: Record<string, number[]>, keroAliases: Record<string, number[]> }}
+ * @returns {{ collisions: Record<string, any[]>, elements: Record<string, any[]>, animations: Record<string, any[]>, aliases: Record<string, number[]>, keroAliases: Record<string, number[]>, collisionSort: string, animationSort: string }}
  */
 export function manifestToSurfaceData(manifest) {
 	const collisions = {};
@@ -139,6 +187,8 @@ export function manifestToSurfaceData(manifest) {
 	const animations = {};
 	const aliases = manifest?.aliases ?? {};
 	const keroAliases = manifest?.kero_aliases ?? {};
+	const collisionSort = enumToString(manifest?.collision_sort) || "none";
+	const animationSort = enumToString(manifest?.animation_sort) || "none";
 
 	for (const surfaceEntry of manifest?.surfaces ?? []) {
 		const sid = String(surfaceEntry.number);
@@ -176,7 +226,15 @@ export function manifestToSurfaceData(manifest) {
 			}));
 	}
 
-	return { collisions, elements, animations, aliases, keroAliases };
+	return {
+		collisions,
+		elements,
+		animations,
+		aliases,
+		keroAliases,
+		collisionSort,
+		animationSort,
+	};
 }
 
 /**

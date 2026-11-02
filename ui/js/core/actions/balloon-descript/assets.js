@@ -75,7 +75,9 @@ export function applyAssetProperties(root, props, instance) {
 		}
 	};
 	// [cursor,ファイル名 / mousecursor,ファイル名]:
+	// [cursor, mousecursor]:
 	setMouseCursor("cursor", "--balloon-cursor-default");
+	setMouseCursor("mousecursor", "--balloon-cursor-default");
 	// [mousecursor.arrow,ファイル名]:
 	setMouseCursor("mousecursor.arrow", "--balloon-cursor-arrow");
 	// [mousecursor.text,ファイル名]:

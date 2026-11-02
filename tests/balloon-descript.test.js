@@ -142,6 +142,7 @@ test("balloonDescriptActions covers rgbFromComponents and applyBalloonDescript f
 		"sstpmessage.yb": "-40",
 		"arrow.filename": "arrow.png",
 		"clickwaitmarker.filename": "marker.png",
+		mousecursor: "mousecursor.cur",
 		"mousecursor.arrow": "cursor.cur",
 		"arrow0.x": "5",
 		"arrow0.y": "5",
@@ -151,6 +152,44 @@ test("balloonDescriptActions covers rgbFromComponents and applyBalloonDescript f
 		use_self_alpha: "true",
 		use_input_alpha: "1",
 		overlay_outside_balloon: "1",
+		"anchor.font.shadowcolor.r": "11",
+		"anchor.font.shadowcolor.g": "22",
+		"anchor.font.shadowcolor.b": "33",
+		"anchor.font.shadowstyle": "underline",
+		"anchor.visited.font.shadowcolor.r": "44",
+		"anchor.visited.font.shadowcolor.g": "55",
+		"anchor.visited.font.shadowcolor.b": "66",
+		"anchor.visited.font.shadowstyle": "outline",
+		"anchor.visited.pen.color.r": "15",
+		"anchor.visited.pen.color.g": "25",
+		"anchor.visited.pen.color.b": "35",
+		"anchor.visited.brush.color.r": "45",
+		"anchor.visited.brush.color.g": "55",
+		"anchor.visited.brush.color.b": "65",
+		"anchor.notselect.font.shadowcolor.r": "77",
+		"anchor.notselect.font.shadowcolor.g": "88",
+		"anchor.notselect.font.shadowcolor.b": "99",
+		"anchor.notselect.font.shadowstyle": "square",
+		"anchor.notselect.pen.color.r": "12",
+		"anchor.notselect.pen.color.g": "24",
+		"anchor.notselect.pen.color.b": "36",
+		"anchor.notselect.brush.color.r": "48",
+		"anchor.notselect.brush.color.g": "60",
+		"anchor.notselect.brush.color.b": "72",
+		"cursor.font.shadowcolor.r": "101",
+		"cursor.font.shadowcolor.g": "102",
+		"cursor.font.shadowcolor.b": "103",
+		"cursor.font.shadowstyle": "outline",
+		"cursor.notselect.font.shadowcolor.r": "104",
+		"cursor.notselect.font.shadowcolor.g": "105",
+		"cursor.notselect.font.shadowcolor.b": "106",
+		"cursor.notselect.font.shadowstyle": "none",
+		"cursor.notselect.pen.color.r": "17",
+		"cursor.notselect.pen.color.g": "27",
+		"cursor.notselect.pen.color.b": "37",
+		"cursor.notselect.brush.color.r": "47",
+		"cursor.notselect.brush.color.g": "57",
+		"cursor.notselect.brush.color.b": "67",
 	};
 
 	balloonDescriptActions.applyBalloonDescript.call(mockInstance, props);
@@ -171,9 +210,54 @@ test("balloonDescriptActions covers rgbFromComponents and applyBalloonDescript f
 	assert.equal(cssVars["--balloon-anchor-blendmethod"], "overlay");
 	assert.equal(cssVars["--balloon-anchor-pen-color"], "rgb(10, 20, 30)");
 	assert.equal(cssVars["--balloon-anchor-brush-color"], "rgb(40, 50, 60)");
+	assert.equal(cssVars["--balloon-anchor-shadow-color"], "rgb(11, 22, 33)");
+	assert.equal(cssVars["--balloon-anchor-shadow-style"], "underline");
+	assert.equal(
+		cssVars["--balloon-anchor-visited-shadow-color"],
+		"rgb(44, 55, 66)",
+	);
+	assert.equal(cssVars["--balloon-anchor-visited-shadow-style"], "outline");
+	assert.equal(
+		cssVars["--balloon-anchor-visited-pen-color"],
+		"rgb(15, 25, 35)",
+	);
+	assert.equal(
+		cssVars["--balloon-anchor-visited-brush-color"],
+		"rgb(45, 55, 65)",
+	);
+	assert.equal(
+		cssVars["--balloon-anchor-notselect-shadow-color"],
+		"rgb(77, 88, 99)",
+	);
+	assert.equal(cssVars["--balloon-anchor-notselect-shadow-style"], "square");
+	assert.equal(
+		cssVars["--balloon-anchor-notselect-pen-color"],
+		"rgb(12, 24, 36)",
+	);
+	assert.equal(
+		cssVars["--balloon-anchor-notselect-brush-color"],
+		"rgb(48, 60, 72)",
+	);
+
 	assert.equal(cssVars["--balloon-cursor-blendmethod"], "multiply");
 	assert.equal(cssVars["--balloon-cursor-pen-color"], "rgb(70, 80, 90)");
 	assert.equal(cssVars["--balloon-cursor-brush-color"], "rgb(100, 110, 120)");
+	assert.equal(cssVars["--balloon-cursor-shadow-color"], "rgb(101, 102, 103)");
+	assert.equal(cssVars["--balloon-cursor-shadow-style"], "outline");
+	assert.equal(
+		cssVars["--balloon-cursor-notselect-shadow-color"],
+		"rgb(104, 105, 106)",
+	);
+	assert.equal(cssVars["--balloon-cursor-notselect-shadow-style"], "none");
+	assert.equal(
+		cssVars["--balloon-cursor-notselect-pen-color"],
+		"rgb(17, 27, 37)",
+	);
+	assert.equal(
+		cssVars["--balloon-cursor-notselect-brush-color"],
+		"rgb(47, 57, 67)",
+	);
+
 	assert.equal(cssVars["--balloon-number-x"], "10px");
 	assert.equal(cssVars["--balloon-sstpmarker-x"], "15px");
 	assert.equal(cssVars["--balloon-sstpmessage-x"], "30px");

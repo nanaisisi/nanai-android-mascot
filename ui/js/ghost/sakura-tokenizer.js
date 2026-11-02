@@ -156,11 +156,10 @@ export function parseSakuraScript(script) {
 			else if (char === "i") {
 				i++;
 				if (script[i] === "[") {
-					const end = script.indexOf("]", i);
-					if (end !== -1) {
-						const val = script.substring(i + 1, end).trim();
-						const parts = val.split(",");
-						const rawTarget = parts[0].trim();
+					const parsed = readBracketContent(script, i);
+					if (parsed) {
+						const parts = splitBracketArgs(parsed.content);
+						const rawTarget = parts[0]?.trim() || "";
 						const animId = Number.parseInt(rawTarget, 10);
 						const wait = parts[1]?.trim().toLowerCase() === "wait";
 						tokens.push({

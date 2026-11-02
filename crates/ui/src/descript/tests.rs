@@ -104,3 +104,15 @@ fn test_descript_parser_edge_cases() {
     assert_eq!(defaults.left, Some(10));
     assert_eq!(defaults.top, Some(20));
 }
+
+#[test]
+fn test_descript_seriko_use_self_alpha() {
+    let desc1 = Descript::parse("seriko.use_self_alpha,1\n");
+    assert!(desc1.seriko_use_self_alpha());
+
+    let desc2 = Descript::parse("seriko.use_self_alpha,true\n");
+    assert!(desc2.seriko_use_self_alpha());
+
+    let desc3 = Descript::parse("seriko.use_self_alpha,0\n");
+    assert!(!desc3.seriko_use_self_alpha());
+}

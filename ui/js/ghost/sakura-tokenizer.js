@@ -159,9 +159,9 @@ export function parseSakuraScript(script) {
 					const parsed = readBracketContent(script, i);
 					if (parsed) {
 						const parts = splitBracketArgs(parsed.content);
-						const rawTarget = parts[0]?.trim() || "";
+						const rawTarget = parts[0] ? parts[0].trim() : "";
 						const animId = Number.parseInt(rawTarget, 10);
-						const wait = parts[1]?.trim().toLowerCase() === "wait";
+						const wait = parts[1]?.toLowerCase() === "wait";
 						tokens.push({
 							type: "animation",
 							animId: Number.isNaN(animId) ? rawTarget : animId,

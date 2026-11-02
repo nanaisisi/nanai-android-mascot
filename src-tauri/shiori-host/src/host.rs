@@ -3,11 +3,7 @@ use super::protocol::run_command_loop;
 use libloading::{Library, Symbol};
 use std::io::{Read, Write};
 
-pub fn load_and_run(
-    dll: &str,
-    stdin: &mut impl Read,
-    stdout: &mut impl Write,
-) -> Result<(), i32> {
+pub fn load_and_run(dll: &str, stdin: &mut impl Read, stdout: &mut impl Write) -> Result<(), i32> {
     let lib = unsafe { Library::new(dll) }.map_err(|e| {
         eprintln!("load failed: {e}");
         2

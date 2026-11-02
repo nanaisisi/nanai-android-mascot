@@ -156,4 +156,20 @@ mod tests {
         assert_eq!(map.get("name"), Some(&"TestGhost".to_string()));
         assert_eq!(map.get("version"), Some(&"1.0.0".to_string()));
     }
+
+    #[test]
+    fn test_additional_sanitize_and_descript_edge_cases() {
+        assert_eq!(sanitize_dir_name(""), "");
+        assert_eq!(sanitize_dir_name("a:b*c\"d<e>f|g\\h"), "a_b_c_d_e_f_g_h");
+
+        let empty = b"";
+        let mut cursor = std::io::Cursor::new(empty);
+        let map = parse_zip_entry_descript(&mut cursor);
+        assert!(map.is_empty());
+
+        let lines_with_empty = b"\n\nkey,value\n\n";
+        let mut cursor2 = std::io::Cursor::new(lines_with_empty);
+        let map2 = parse_zip_entry_descript(&mut cursor2);
+        assert_eq!(map2.get("key"), Some(&"value".to_string()));
+    }
 }

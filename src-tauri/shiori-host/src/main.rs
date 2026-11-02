@@ -78,6 +78,7 @@ mod tests {
             assert_eq!(slice, data);
             assert_eq!(*(h as *const u8).add(data.len()), 0);
             GlobalFree(h);
+            assert!(GlobalFree(std::ptr::null_mut()).is_null());
         }
     }
 
@@ -176,11 +177,25 @@ mod tests {
             &src_path,
             r#"
 use std::ffi::c_void;
+#[cfg(windows)]
 #[link(name = "kernel32")]
 extern "system" {
     fn GlobalAlloc(flags: u32, bytes: usize) -> *mut c_void;
     fn GlobalFree(h: *mut c_void) -> *mut c_void;
 }
+#[cfg(not(windows))]
+extern "C" {
+    fn malloc(size: usize) -> *mut c_void;
+    fn free(ptr: *mut c_void);
+}
+#[cfg(not(windows))]
+unsafe fn GlobalAlloc(_flags: u32, bytes: usize) -> *mut c_void { malloc(bytes) }
+#[cfg(not(windows))]
+unsafe fn GlobalFree(h: *mut c_void) -> *mut c_void {
+    if !h.is_null() { free(h); }
+    std::ptr::null_mut()
+}
+
 #[no_mangle]
 pub unsafe extern "C" fn load(h: *mut c_void, _len: i32) -> i32 {
     if !h.is_null() { GlobalFree(h); }

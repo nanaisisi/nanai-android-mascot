@@ -10,12 +10,16 @@ export class SakuraPlaybackController {
 	 */
 	constructor(options = {}) {
 		this.player = options.player || null;
+		if (this.player && !this.player.playbackController) {
+			this.player.playbackController = this;
+		}
 		/** @type {Array<{ id: number, script: string, resolve: Function, reject: Function }>} */
 		this.queue = [];
 		this.currentJob = null;
 		this.isProcessing = false;
 		this.isPaused = false;
 		this.isQuickMode = false;
+		this.waitMultiplier = 1.0;
 		this.nextJobId = 1;
 		/** @type {Map<string, Set<Function>>} */
 		this.listeners = new Map();
@@ -127,6 +131,107 @@ export class SakuraPlaybackController {
 	}
 
 	/**
+	 * キュー処理の一時停止
+	 */
+	pause() {
+		if (!this.isPaused) {
+			this.isPaused = true;
+			this.emit("queue:paused");
+		}
+	}
+
+	/**
+	 * キュー処理の再開
+	 */
+	resume() {
+		if (this.isPaused) {
+			this.isPaused = false;
+			this.emit("queue:resumed");
+			this._processQueue();
+		}
+	}
+
+	/**
+	 * 現在のキュー配列の浅いコピーを取得
+	 * @returns {Array<{ id: number, script: string, resolve: Function, reject: Function }>}
+	 */
+	getQueue() {
+		return [...this.queue];
+	}
+
+	/**
+	 * キュー残数を取得
+	 * @returns {number}
+	 */
+	getQueueLength() {
+		return this.queue.length;
+	}
+
+	/**
+	 * 現在処理中のジョブを取得
+	 * @returns {{ id: number, script: string, resolve: Function, reject: Function }|null}
+	 */
+	getCurrentJob() {
+		return this.currentJob;
+	}
+
+	/**
+	 * 一時停止中かどうかを取得
+	 * @returns {boolean}
+	 */
+	getIsPaused() {
+		return this.isPaused;
+	}
+
+	/**
+	 * 処理実行中かどうかを取得
+	 * @returns {boolean}
+	 */
+	getIsProcessing() {
+		return this.isProcessing;
+	}
+
+	/**
+	 * 即時表示モードかどうかを取得
+	 * @returns {boolean}
+	 */
+	getIsQuickMode() {
+		return this.isQuickMode;
+	}
+
+	/**
+	 * ウェイト倍率の設定
+	 * @param {number} ratio
+	 */
+	setWaitMultiplier(ratio) {
+		const valid =
+			typeof ratio === "number" && !Number.isNaN(ratio) && ratio >= 0;
+		this.waitMultiplier = valid ? ratio : 1.0;
+		this.emit("playback:wait-multiplier", {
+			waitMultiplier: this.waitMultiplier,
+		});
+	}
+
+	/**
+	 * 現在のウェイト倍率を取得
+	 * @returns {number}
+	 */
+	getWaitMultiplier() {
+		return this.waitMultiplier;
+	}
+
+	/**
+	 * 与えられたベースウェイト(ms)に倍率を掛けた実効ウェイトを算出
+	 * @param {number} baseMs
+	 * @returns {number}
+	 */
+	calculateWait(baseMs) {
+		if (this.isQuickMode) return 0;
+		const ms = Math.max(0, Number(baseMs) || 0);
+		return Math.round(ms * this.waitMultiplier);
+	}
+
+	/**
 	 * 即時表示モード (\\_q) の切り替え
 	 * @param {boolean} [enable]
 	 */
@@ -159,6 +264,23 @@ export class SakuraPlaybackController {
 	 */
 	notifyClear(mode, count) {
 		this.emit("playback:clear", { mode, count });
+	}
+
+	/**
+	 * 1文字発話イベント発火
+	 * @param {string} char
+	 * @param {number} scope
+	 */
+	notifyChar(char, scope) {
+		this.emit("playback:char", { char, scope, isQuickMode: this.isQuickMode });
+	}
+
+	/**
+	 * スコープ切り替えイベント発火
+	 * @param {number} scope
+	 */
+	notifyScope(scope) {
+		this.emit("playback:scope", { scope });
 	}
 
 	/**

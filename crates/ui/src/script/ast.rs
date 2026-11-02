@@ -43,6 +43,12 @@ pub enum SakuraAstNode {
         args: Vec<String>,
         children: Vec<SakuraAstNode>,
     },
+    /// 選択肢（\\q[label,id,...]）ノード
+    Choice {
+        id: String,
+        text: String,
+        args: Vec<String>,
+    },
     /// スクリプト全体のルートノード
     Root {
         children: Vec<SakuraAstNode>,
@@ -77,6 +83,18 @@ pub fn build_sakura_ast(commands: &[SakuraCommand]) -> SakuraAstNode {
                     scope_children.push(anchor_node);
                 } else {
                     root_children.push(anchor_node);
+                }
+            }
+            SakuraCommand::Choice { label, id, args } => {
+                let choice_node = SakuraAstNode::Choice {
+                    id: id.clone(),
+                    text: label.clone(),
+                    args: args.clone(),
+                };
+                if current_scope.is_some() {
+                    scope_children.push(choice_node);
+                } else {
+                    root_children.push(choice_node);
                 }
             }
             _ => {
@@ -128,6 +146,38 @@ mod tests {
             if let SakuraAstNode::Scope { scope, children: s1 } = &children[1] {
                 assert_eq!(*scope, 1);
                 assert_eq!(s1.len(), 2);
+            } else {
+                panic!("Expected Scope node");
+            }
+        } else {
+            panic!("Expected Root node");
+        }
+    }
+
+    #[test]
+    fn test_build_sakura_ast_choice_node() {
+        let commands = vec![
+            SakuraCommand::Target(0),
+            SakuraCommand::Choice {
+                label: "Select Me".into(),
+                id: "OnChoice1".into(),
+                args: vec!["arg1".into()],
+            },
+        ];
+        let ast = build_sakura_ast(&commands);
+        if let SakuraAstNode::Root { children } = ast {
+            assert_eq!(children.len(), 1);
+            if let SakuraAstNode::Scope { scope, children: s0 } = &children[0] {
+                assert_eq!(*scope, 0);
+                assert_eq!(s0.len(), 1);
+                assert_eq!(
+                    s0[0],
+                    SakuraAstNode::Choice {
+                        id: "OnChoice1".into(),
+                        text: "Select Me".into(),
+                        args: vec!["arg1".into()],
+                    }
+                );
             } else {
                 panic!("Expected Scope node");
             }

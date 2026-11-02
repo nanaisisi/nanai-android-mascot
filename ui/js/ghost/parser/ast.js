@@ -5,7 +5,7 @@
 
 /**
  * @typedef {Object} SakuraAstNode
- * @property {string} nodeType - ノード種別 ('root' | 'scope' | 'anchor' | 'command')
+ * @property {string} nodeType - ノード種別 ('root' | 'scope' | 'anchor' | 'choice' | 'command')
  * @property {number} [scope] - スコープ番号 (\0, \1, \p[n])
  * @property {string} [id] - アンカーや選択肢ID
  * @property {string} [text] - テキスト
@@ -93,6 +93,13 @@ export function tokensToAst(tokens) {
 					rootChildren.push(anchorNode);
 				}
 			}
+		} else if (token.type === "choice") {
+			pushToCurrentContainer({
+				nodeType: "choice",
+				id: token.id || "",
+				text: token.text || "",
+				args: token.args || [],
+			});
 		} else {
 			pushToCurrentContainer({
 				nodeType: "command",

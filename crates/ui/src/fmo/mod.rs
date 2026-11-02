@@ -60,6 +60,10 @@ pub struct FmoEntry {
     pub ghostpath: String,
     pub balloon0: String,
     pub balloon1: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub kerohwnd: Option<u64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub modulestate: Option<String>,
 }
 
 impl FmoEntry {
@@ -74,11 +78,23 @@ impl FmoEntry {
             ghostpath: String::new(),
             balloon0: String::new(),
             balloon1: String::new(),
+            kerohwnd: None,
+            modulestate: None,
         }
     }
 
     /// FmoRecord へ変換する
     pub fn to_record(&self) -> FmoRecord {
+        let mut hwndlist = Vec::new();
+        if self.hwnd != 0 {
+            hwndlist.push(self.hwnd);
+        }
+        if let Some(khwnd) = self.kerohwnd {
+            if khwnd != 0 && !hwndlist.contains(&khwnd) {
+                hwndlist.push(khwnd);
+            }
+        }
+
         FmoRecord {
             id: self.id.clone(),
             path: String::new(),
@@ -88,14 +104,10 @@ impl FmoEntry {
             sakura_surface: self.sakura_surface,
             kero_surface: self.kero_surface,
             ghostpath: self.ghostpath.clone(),
-            kerohwnd: None,
-            hwndlist: if self.hwnd != 0 {
-                vec![self.hwnd]
-            } else {
-                Vec::new()
-            },
+            kerohwnd: self.kerohwnd,
+            hwndlist,
             fullname: Some(self.name.clone()),
-            modulestate: None,
+            modulestate: self.modulestate.clone(),
         }
     }
 
@@ -111,6 +123,8 @@ impl FmoEntry {
             ghostpath: rec.ghostpath.clone(),
             balloon0: String::new(),
             balloon1: String::new(),
+            kerohwnd: rec.kerohwnd,
+            modulestate: rec.modulestate.clone(),
         }
     }
 }

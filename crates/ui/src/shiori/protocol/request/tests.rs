@@ -11,6 +11,11 @@ fn test_shiori_request_get_and_notify() {
     let notify_req = ShioriRequest::notify("OnClose", &[]);
     assert_eq!(notify_req.method, ShioriMethod::Notify);
     assert_eq!(notify_req.id, "OnClose");
+
+    let cap_req = ShioriRequest::capability(&["test.ref".into()]);
+    assert_eq!(cap_req.method, ShioriMethod::Notify);
+    assert_eq!(cap_req.id, "capability");
+    assert_eq!(cap_req.references, vec!["test.ref".to_string()]);
 }
 
 #[test]

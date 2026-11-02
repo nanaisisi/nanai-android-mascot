@@ -1,4 +1,3 @@
-use super::core::SstpRequest;
 use serde::{Deserialize, Serialize};
 
 /// DirectSSTP 関連定数 (Windows WM_COPYDATA 互換 dwData)
@@ -10,6 +9,3 @@ pub struct IfGhostEntry {
     pub target: String,
     pub script: String,
 }
-
-/// Slot-01 Contract: SSTP メッセージ型エイリアス
-pub type SstpMessage = SstpRequest;

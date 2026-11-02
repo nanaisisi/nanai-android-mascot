@@ -229,6 +229,13 @@ export async function handleToken(player, app, token, context) {
 			);
 			break;
 
+		case "wait_animation":
+			await app.surfaceManager?.waitForAnimation(
+				token.animId,
+				player.currentScope,
+			);
+			break;
+
 		case "choice": {
 			const choiceBtn = document.createElement("button");
 			choiceBtn.className = "balloon-choice-btn";

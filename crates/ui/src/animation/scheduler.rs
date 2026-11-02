@@ -21,6 +21,12 @@ pub struct FrameStepEvent {
     pub is_finished: bool,
     /// 背面描画オプション（background）指定の有無
     pub is_background: bool,
+    /// X方向動的オフセット (\![anim,offset,ID,x,y])
+    #[serde(default)]
+    pub offset_x: i32,
+    /// Y方向動的オフセット (\![anim,offset,ID,x,y])
+    #[serde(default)]
+    pub offset_y: i32,
 }
 
 /// アニメーションオプション解析結果
@@ -107,6 +113,8 @@ pub struct ActiveAnimation {
     pub is_exclusive: bool,
     pub exclusive_targets: Option<HashSet<u32>>,
     pub is_shared_index: bool,
+    pub offset_x: i32,
+    pub offset_y: i32,
 }
 
 impl ActiveAnimation {
@@ -125,6 +133,8 @@ impl ActiveAnimation {
             is_exclusive: false,
             exclusive_targets: None,
             is_shared_index: false,
+            offset_x: 0,
+            offset_y: 0,
         }
     }
 
@@ -175,6 +185,8 @@ impl ActiveAnimation {
             elapsed_ms: self.elapsed_ms,
             is_finished: self.is_finished,
             is_background: self.is_background,
+            offset_x: self.offset_x,
+            offset_y: self.offset_y,
         })
     }
 }
@@ -194,6 +206,8 @@ pub struct AnimationScheduler {
     spoken_counts: HashMap<u32, u32>,
     /// 発話中フラグ (scope_id -> bool)
     talking_flags: HashMap<u32, bool>,
+    /// 動的アニメーション座標オフセット (scope_id -> (anim_id -> (offset_x, offset_y)))
+    animation_offsets: HashMap<u32, HashMap<u32, (i32, i32)>>,
 }
 
 impl AnimationScheduler {
@@ -205,6 +219,7 @@ impl AnimationScheduler {
     pub fn set_surface(&mut self, scope_id: u32, surface_id: i32) {
         self.current_surfaces.insert(scope_id, surface_id);
         self.stop_animations(scope_id);
+        self.animation_offsets.remove(&scope_id);
     }
 
     /// 現在のサーフィスを切り替え、新旧サーフィスの shared-index アニメーションの再生インデックスを継承する
@@ -226,6 +241,7 @@ impl AnimationScheduler {
         }
 
         self.stop_animations(scope_id);
+        self.animation_offsets.remove(&scope_id);
 
         // 新サーフィス側にも shared-index 指定のアニメーションが存在すれば、保存した pattern index から復帰開始
         for anim in new_animations {
@@ -312,6 +328,41 @@ impl AnimationScheduler {
         self.paused_animations.remove(&scope_id);
     }
 
+    /// 指定アニメーションを単独で停止 (\![anim,stop,ID] / \![anim,clear,ID])
+    pub fn stop_animation(&mut self, scope_id: u32, anim_id: u32) {
+        if let Some(anims) = self.active_animations.get_mut(&scope_id) {
+            for a in anims.iter_mut() {
+                if a.animation_id == anim_id {
+                    a.is_finished = true;
+                }
+            }
+            anims.retain(|a| !a.is_finished);
+        }
+    }
+
+    /// 動的アニメーション座標オフセットを設定 (\![anim,offset,ID,x,y])
+    pub fn set_animation_offset(&mut self, scope_id: u32, anim_id: u32, x: i32, y: i32) {
+        let offsets = self.animation_offsets.entry(scope_id).or_default();
+        offsets.insert(anim_id, (x, y));
+
+        if let Some(anims) = self.active_animations.get_mut(&scope_id) {
+            for a in anims.iter_mut() {
+                if a.animation_id == anim_id {
+                    a.offset_x = x;
+                    a.offset_y = y;
+                }
+            }
+        }
+    }
+
+    /// 動的アニメーション座標オフセットを取得
+    pub fn get_animation_offset(&self, scope_id: u32, anim_id: u32) -> (i32, i32) {
+        self.animation_offsets
+            .get(&scope_id)
+            .and_then(|m| m.get(&anim_id).copied())
+            .unwrap_or((0, 0))
+    }
+
     /// 指定アニメーションが現在排他ロックにより開始をブロックされているか
     pub fn is_blocked_by_exclusive(&self, scope_id: u32, anim_id: u32) -> bool {
         if let Some(anims) = self.active_animations.get(&scope_id) {
@@ -360,6 +411,9 @@ impl AnimationScheduler {
 
         let mut active = ActiveAnimation::new(anim.id, base_surface_id, anim.patterns.clone())
             .with_options(&options);
+        let (ox, oy) = self.get_animation_offset(scope_id, anim.id);
+        active.offset_x = ox;
+        active.offset_y = oy;
         if self.is_animation_paused(scope_id, anim.id) {
             active.is_paused = true;
         }

@@ -261,3 +261,75 @@ animation5.pattern0,overlay,500,0,0,0
 	assert.equal(animations["0"][0].id, 5);
 	assert.deepEqual(animations["0"][0].options, ["exclusive+background,(1,2)"]);
 });
+
+test("parseSurfacesTxt extracts animation name", () => {
+	const { animations } = parseSurfacesTxt(`surface0
+{
+animation12.interval,rarely
+animation12.name,blink_smile
+animation12.pattern0,overlay,100,50,0,0
+}`);
+	assert.equal(animations["0"][0].id, 12);
+	assert.equal(animations["0"][0].name, "blink_smile");
+});
+
+test("SurfaceAnimationManager findAnimation supports both numeric ID and name", () => {
+	const manager = {
+		animations: {
+			0: [
+				{ id: 10, name: "blink", patterns: [] },
+				{ id: 20, name: "mouth", patterns: [] },
+			],
+		},
+		currentSurfaceIdFor: () => 0,
+	};
+	const animManager = new SurfaceAnimationManager(manager);
+	assert.equal(animManager.findAnimation(10)?.name, "blink");
+	assert.equal(animManager.findAnimation("blink")?.id, 10);
+	assert.equal(animManager.findAnimation("MOUTH")?.id, 20);
+	assert.equal(animManager.findAnimation("nonexistent"), null);
+});
+
+test("SurfaceAnimationManager stopAnimation stops running animation by ID or name", async () => {
+	const { animation, frames } = animationFixture();
+	const animDef = {
+		id: 99,
+		name: "long_running",
+		patterns: [
+			{ surface: 101, wait: 0 },
+			{ surface: 102, wait: 100 },
+			{ surface: 103, wait: 100 },
+		],
+	};
+	animation.manager.animations = { 0: [animDef] };
+
+	const playPromise = animation.playAnimationPatterns(animDef, 0, 0);
+	await new Promise((resolve) => setTimeout(resolve, 20));
+
+	// 名前で停止
+	animation.stopAnimation(0, "long_running");
+	await playPromise;
+
+	// 102, 103 は停止されたため描画されない
+	assert.equal(
+		frames.some(([, , layers]) => layers?.[0]?.file?.includes("103")),
+		false,
+	);
+});
+
+test("SurfaceAnimationManager setAnimationOffset shifts animation layer coordinates", async () => {
+	const { animation, frames } = animationFixture();
+	const animDef = {
+		id: 55,
+		name: "shifted",
+		patterns: [{ surface: 105, wait: 0, x: 10, y: 20 }],
+	};
+	animation.manager.animations = { 0: [animDef] };
+
+	animation.setAnimationOffset(0, "shifted", 30, 40);
+	await animation.playAnimationPatterns(animDef, 0, 0);
+
+	const layer = frames[0][2][0];
+	assert.equal(layer.x, 40); // 10 + 30
+	assert.equal(layer.y, 60); // 20 + 40
+});

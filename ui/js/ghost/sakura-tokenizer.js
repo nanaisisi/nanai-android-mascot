@@ -85,7 +85,7 @@ export function parseSakuraScript(script) {
 					i++;
 				}
 			}
-			// \i (アニメーション呼出: \i[ID], \i[ID,wait], \i1〜\i9)
+			// \i (アニメーション呼出: \i[ID], \i[ID,wait], \i[name], \i1〜\i9)
 			else if (char === "i") {
 				i++;
 				if (script[i] === "[") {
@@ -93,11 +93,12 @@ export function parseSakuraScript(script) {
 					if (end !== -1) {
 						const val = script.substring(i + 1, end).trim();
 						const parts = val.split(",");
-						const animId = Number.parseInt(parts[0], 10);
+						const rawTarget = parts[0].trim();
+						const animId = Number.parseInt(rawTarget, 10);
 						const wait = parts[1]?.trim().toLowerCase() === "wait";
 						tokens.push({
 							type: "animation",
-							animId: Number.isNaN(animId) ? 0 : animId,
+							animId: Number.isNaN(animId) ? rawTarget : animId,
 							wait,
 						});
 						i = end + 1;
@@ -120,7 +121,7 @@ export function parseSakuraScript(script) {
 				tokens.push({ type: "wait", value: weight * 50 });
 				i++;
 			}
-			// \_w[ms] (ミリ秒ウェイト)
+			// \_w[ms] (ミリ秒ウェイト) または \__w[animation,ID] (アニメーション待ち)
 			else if (char === "_" && script[i + 1] === "w" && script[i + 2] === "[") {
 				const start = i + 3;
 				const end = script.indexOf("]", start);
@@ -130,6 +131,31 @@ export function parseSakuraScript(script) {
 					i = end + 1;
 				} else {
 					i += 2;
+				}
+			}
+			// \__w[animation,ID] (アニメーション再生終了待ち)
+			else if (
+				char === "_" &&
+				script[i + 1] === "_" &&
+				script[i + 2] === "w" &&
+				script[i + 3] === "["
+			) {
+				const start = i + 4;
+				const end = script.indexOf("]", start);
+				if (end !== -1) {
+					const content = script.substring(start, end).trim();
+					const parts = content.split(",").map((s) => s.trim());
+					if (parts[0]?.toLowerCase() === "animation" && parts[1]) {
+						const rawTarget = parts[1];
+						const num = Number.parseInt(rawTarget, 10);
+						tokens.push({
+							type: "wait_animation",
+							animId: Number.isNaN(num) ? rawTarget : num,
+						});
+					}
+					i = end + 1;
+				} else {
+					i += 3;
 				}
 			}
 			// \n (改行)

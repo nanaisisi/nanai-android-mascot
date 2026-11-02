@@ -1,11 +1,24 @@
 /**
  * さくらスクリプトの \! 拡張コマンドおよび入力ボックス (\![open,inputbox]) ハンドラ
  */
+
+import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 import {
 	closeCommunicateBox,
 	openCommunicateBox,
 } from "./command-handler/communicatebox.js";
-import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
+import {
+	closeDialog,
+	closeInputBox,
+	closeTextAreaBox,
+	openInputBox,
+	openPasswordInput,
+	openSliderInput,
+	openTextAreaBox,
+	expandSakuraScriptEnv,
+	resetScriptScopeState,
+	scriptLifetimeState,
+} from "./command-handler/env.js";
 import { openInputBox } from "./command-handler/inputbox.js";
 import { handleJumpCommand } from "./command-handler/jump.js";
 import {
@@ -13,6 +26,14 @@ import {
 	getCommandHandler,
 	registerCommandHandler,
 } from "./command-handler/registry.js";
+import {
+	handleBiffCommand,
+	handleExecuteSntpCommand,
+	handleOpenSystemTarget,
+	handleSetAlignmentOnDesktop,
+	handleSetTaskTrayIcon,
+	handleSetTrayBalloon,
+} from "./command-handler/system.js";
 import { closeTeachBox, openTeachBox } from "./command-handler/teachbox.js";
 import {
 	handleWindowState,
@@ -27,6 +48,30 @@ function initDefaultCommandHandlers() {
 
 	registerCommandHandler("open:inputbox", async (handler, args) => {
 		openInputBox(handler, args.slice(2));
+	});
+
+	registerCommandHandler("open:passwordinput", async (handler, args) => {
+		openPasswordInput(handler, args.slice(2));
+	});
+
+	registerCommandHandler("open:textareabox", async (handler, args) => {
+		openTextAreaBox(handler, args.slice(2));
+	});
+
+	registerCommandHandler("open:sliderinput", async (handler, args) => {
+		openSliderInput(handler, args.slice(2));
+	});
+
+	registerCommandHandler("close:inputbox", async (handler, args) => {
+		closeInputBox(handler, args[2]);
+	});
+
+	registerCommandHandler("close:textareabox", async (handler, args) => {
+		closeTextAreaBox(handler, args[2]);
+	});
+
+	registerCommandHandler("close:dialog", async (handler, args) => {
+		closeDialog(handler, args[2]);
 	});
 
 	registerCommandHandler("open:teachbox", async (handler, args) => {
@@ -118,6 +163,33 @@ function initDefaultCommandHandlers() {
 	registerCommandHandler("set:alignmenttodesktop", async (handler, args) => {
 		await setAlignmentToDesktop(handler, args[2]);
 	});
+
+	registerCommandHandler("set:alignmentondesktop", async (handler, args) => {
+		await handleSetAlignmentOnDesktop(handler, args);
+	});
+
+	registerCommandHandler("set:tasktrayicon", async (handler, args) => {
+		await handleSetTaskTrayIcon(handler, args);
+	});
+
+	registerCommandHandler("set:trayballoon", async (handler, args) => {
+		await handleSetTrayBalloon(handler, args);
+	});
+
+	registerCommandHandler("biff", async (handler, args) => {
+		await handleBiffCommand(handler, args);
+	});
+
+	registerCommandHandler("executesntp", async (handler, args) => {
+		await handleExecuteSntpCommand(handler, args);
+	});
+
+	registerCommandHandler("open:explorer", handleOpenSystemTarget);
+	registerCommandHandler("open:shellexplorer", handleOpenSystemTarget);
+	registerCommandHandler("open:balloonexplorer", handleOpenSystemTarget);
+	registerCommandHandler("open:ghostexplorer", handleOpenSystemTarget);
+	registerCommandHandler("open:file", handleOpenSystemTarget);
+	registerCommandHandler("open:browser", handleOpenSystemTarget);
 
 	registerCommandHandler("windowstate", async (_handler, args) => {
 		const state = args[1];
@@ -310,11 +382,26 @@ export class SakuraCommandHandler {
 	async handleJump(target, args = []) {
 		await handleJumpCommand(this, target, args);
 	}
+
+	expandEnv(script, options = {}) {
+		return expandSakuraScriptEnv(script, {
+			username: this.player?.app?.ghostController?.username,
+			selfname: this.player?.app?.ghostController?.currentGhost?.name,
+			...options,
+		});
+	}
+
+	resetLifetimeState() {
+		resetScriptScopeState();
+	}
 }
 
 export {
 	CommandHandlerMap,
+	expandSakuraScriptEnv,
 	getCommandHandler,
 	initDefaultCommandHandlers,
 	registerCommandHandler,
+	resetScriptScopeState,
+	scriptLifetimeState,
 };

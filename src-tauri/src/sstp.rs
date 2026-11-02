@@ -1,7 +1,9 @@
 //! SSTP (SakuraScript Transfer Protocol) 1.x receiver and protocol handler (UKADOC spec compliance)
-//! [SSTP/1.x], [method_send], [method_execute], [method_give], [method_communicate], [method_notify], [keepalive]
+//! [SSTP/1.x], [req_res], [method_send], [method_execute], [method_give], [method_communicate], [method_notify], [keepalive]
 
-use nanai_android_mascot_ui::sstp::SstpRequest as CoreSstpRequest;
+use nanai_android_mascot_ui::sstp::{
+    SstpRequest as CoreSstpRequest, SstpResponse as CoreSstpResponse, SstpStatusCode,
+};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use tauri::Emitter;
@@ -15,6 +17,8 @@ pub struct SstpRequest {
     pub hwnd: Option<u64>,
     pub security_level: Option<String>,
     pub security_origin: Option<String>,
+    pub id: Option<String>,
+    pub options: Vec<String>,
     pub references: HashMap<String, String>,
     pub keep_alive: Option<bool>,
 }
@@ -38,9 +42,22 @@ pub fn parse_raw_sstp_request(raw: &str) -> Result<SstpRequest, String> {
         hwnd: core_req.hwnd,
         security_level: core_req.security_level,
         security_origin: core_req.security_origin,
+        id: core_req.id,
+        options: core_req.options,
         references: core_req.references,
         keep_alive: Some(core_req.keep_alive),
     })
+}
+
+/// Parse raw SSTP text and format standard UKADOC SSTP response string [req_res]
+pub fn parse_and_build_sstp_raw_response(raw_request: &str) -> Result<String, String> {
+    let core_req = CoreSstpRequest::parse(raw_request)?;
+    let mut resp = CoreSstpResponse::ok(core_req.script);
+    if let Some(ref_val) = core_req.references.get("Reference0") {
+        resp.references
+            .insert("Reference0".to_string(), ref_val.clone());
+    }
+    Ok(resp.build())
 }
 
 #[tauri::command]
@@ -129,6 +146,18 @@ mod tests {
         );
     }
 
+    #[test]
+    fn test_parse_raw_sstp_with_id_and_options() {
+        let raw = "SEND SSTP/1.4\r\nSender: TestApp\r\nID: unique_id_01\r\nOption: nobreak, notranslate\r\nScript: \\0Hi\\e\r\n";
+        let req = parse_raw_sstp_request(raw).unwrap();
+        assert_eq!(req.id, Some("unique_id_01".to_string()));
+        assert_eq!(req.options, vec!["nobreak", "notranslate"]);
+
+        let raw_resp = parse_and_build_sstp_raw_response(raw).unwrap();
+        assert!(raw_resp.contains("SSTP/1.4 200 OK"));
+        assert!(raw_resp.contains("Script: \\0Hi\\e"));
+    }
+
     #[tokio::test]
     async fn test_sstp_send_request() {
         let req = SstpRequest {
@@ -139,6 +168,8 @@ mod tests {
             hwnd: None,
             security_level: Some("local".to_string()),
             security_origin: None,
+            id: Some("id123".to_string()),
+            options: vec!["nobreak".to_string()],
             references: HashMap::new(),
             keep_alive: Some(false),
         };

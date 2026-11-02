@@ -6,6 +6,7 @@
 
 export {
 	ANDROID_EVENTS,
+	ANDROID_LIFECYCLE_STATES,
 	AndroidBridge,
 } from "./android-bridge.js";
 export {

@@ -70,6 +70,47 @@ export async function drawLayer(
 				ctx.globalCompositeOperation = "color";
 			} else if (method === "blend-luminosity" || method === "luminosity") {
 				ctx.globalCompositeOperation = "luminosity";
+			} else if (method === "interpolate") {
+				// 下の絵と同一色の部分を透過して重ねる (UKADOC準拠)
+				try {
+					const pWidth = partImg.naturalWidth || partImg.width;
+					const pHeight = partImg.naturalHeight || partImg.height;
+					if (pWidth > 0 && pHeight > 0 && typeof document !== "undefined") {
+						const tempCanvas = document.createElement("canvas");
+						tempCanvas.width = pWidth;
+						tempCanvas.height = pHeight;
+						const tempCtx = tempCanvas.getContext("2d", {
+							willReadFrequently: true,
+						});
+						if (tempCtx && typeof ctx.getImageData === "function") {
+							tempCtx.drawImage(partImg, 0, 0);
+							const overlayData = tempCtx.getImageData(0, 0, pWidth, pHeight);
+							const dstData = ctx.getImageData(x, y, pWidth, pHeight);
+
+							const oData = overlayData.data;
+							const dData = dstData.data;
+							const len = oData.length;
+
+							for (let i = 0; i < len; i += 4) {
+								if (oData[i + 3] === 0) continue;
+								if (
+									oData[i] === dData[i] &&
+									oData[i + 1] === dData[i + 1] &&
+									oData[i + 2] === dData[i + 2]
+								) {
+									oData[i + 3] = 0;
+								}
+							}
+							tempCtx.putImageData(overlayData, 0, 0);
+							ctx.drawImage(tempCanvas, x, y);
+							ctx.globalCompositeOperation = savedOp;
+							imgResolve();
+							return;
+						}
+					}
+				} catch (_err) {
+					// フォールバック
+				}
 			} else if (method === "asis" || method === "base") {
 				ctx.globalCompositeOperation = "source-over";
 			}

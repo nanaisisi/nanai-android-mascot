@@ -11,3 +11,4 @@
 ## 実装箇所
 
 - `ui/js/core/actions/balloon-descript/font/group.js:5` `* UKADOC仕様 (anchor.style, anchor.blendmethod, anchor.font.color.r/g/b, anchor.fo`
+- `ui/js/core/actions/balloon-descript/font/group.js:13` `* [anchor.font.shadowcolor.r,数値], [anchor.font.shadowcolor.g,数値], [anchor.font.s`

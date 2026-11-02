@@ -228,3 +228,26 @@ fn test_parse_mock_nanai_file() {
     assert!(def0.animations.contains_key(&0));
     assert!(txt.surface(100).is_some());
 }
+
+#[test]
+fn test_parse_point_aliases_and_syntax_variations() {
+    let sample = r"charset,UTF-8
+surface0
+{
+point.center.x,110
+point.center.y,220
+point.baseposx,330
+point.baseposy,440
+point.kinoko.center.x,550
+point.kinoko.center.y,660
+}
+";
+    let txt = SurfacesTxt::parse(sample);
+    let s0 = txt.surface(0).unwrap();
+    assert_eq!(s0.points.center_x, Some(110));
+    assert_eq!(s0.points.center_y, Some(220));
+    assert_eq!(s0.points.basepos_x, Some(330));
+    assert_eq!(s0.points.basepos_y, Some(440));
+    assert_eq!(s0.points.kinoko_center_x, Some(550));
+    assert_eq!(s0.points.kinoko_center_y, Some(660));
+}

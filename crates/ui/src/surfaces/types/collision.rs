@@ -58,6 +58,38 @@ impl CollisionShape {
             _ => false,
         }
     }
+
+    /// 形状を包含するバウンディングボックス `(x1, y1, x2, y2)` を計算する
+    pub fn bounding_box(&self) -> Option<(i32, i32, i32, i32)> {
+        match self {
+            CollisionShape::Rect { x1, y1, x2, y2 } => {
+                Some((*x1.min(x2), *y1.min(y2), *x1.max(x2), *y1.max(y2)))
+            }
+            CollisionShape::Polygon { vertices } if !vertices.is_empty() => {
+                let mut min_x = i32::MAX;
+                let mut max_x = i32::MIN;
+                let mut min_y = i32::MAX;
+                let mut max_y = i32::MIN;
+                for &(x, y) in vertices {
+                    min_x = min_x.min(x);
+                    max_x = max_x.max(x);
+                    min_y = min_y.min(y);
+                    max_y = max_y.max(y);
+                }
+                Some((min_x, min_y, max_x, max_y))
+            }
+            CollisionShape::Circle { cx, cy, r } if *r > 0.0 => {
+                let ri = r.ceil() as i32;
+                Some((cx - ri, cy - ri, cx + ri, cy + ri))
+            }
+            CollisionShape::Ellipse { cx, cy, rx, ry } if *rx > 0.0 && *ry > 0.0 => {
+                let rxi = rx.ceil() as i32;
+                let ryi = ry.ceil() as i32;
+                Some((cx - rxi, cy - ryi, cx + rxi, cy + ryi))
+            }
+            _ => None,
+        }
+    }
 }
 
 /// 一つの当たり判定領域

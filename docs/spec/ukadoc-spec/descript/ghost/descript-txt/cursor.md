@@ -15,3 +15,4 @@
 - `src-tauri/shiori-host/src/main.rs:227` `let mut cursor_in = std::io::Cursor::new(input);`
 - `src-tauri/shiori-host/src/main.rs:230` `load_and_run(dll_path.to_str().unwrap(), &mut cursor_in, &mut out_ok),`
 - `ui/css/character.css:27` `cursor: grab;`
+- `ui/js/core/actions/balloon-descript/assets.js:78` `// [cursor, mousecursor]:`

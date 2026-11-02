@@ -2,7 +2,7 @@
 
 - **規格**: [anchor.notselect.style.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/anchor.notselect.style.md)
 - **検索語**: anchor.notselect.style
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-実装コード内に「anchor.notselect.style」は検出されませんでした。
+- `ui/js/core/actions/balloon-descript/font/group.js:25` `* [anchor.notselect.style,形状]`

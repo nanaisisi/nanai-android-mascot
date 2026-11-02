@@ -11,4 +11,5 @@
 ## 実装箇所
 
 - `ui/js/core/actions/balloon-descript/font/group.js:6` `*  anchor.font.shadowstyle, anchor.pen.color.r/g/b, anchor.brush.color.r/g/b,`
-- `ui/js/core/actions/balloon-descript/font/group.js:32` `// [anchor.font.shadowstyle / cursor.font.shadowstyle / *.font.shadowstyle]:`
+- `ui/js/core/actions/balloon-descript/font/group.js:14` `* [anchor.font.shadowstyle,影の形状]`
+- `ui/js/core/actions/balloon-descript/font/group.js:72` `// [anchor.font.shadowstyle / cursor.font.shadowstyle / *.font.shadowstyle]:`

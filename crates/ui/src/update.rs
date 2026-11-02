@@ -265,25 +265,4 @@ mod tests {
 
         assert_eq!(pkg.total_download_size(), 1200);
     }
-
-    #[test]
-    fn test_update_package_methods() {
-        let content = "file,ghost/master/aya.dll,11223344556677889900aabbccddeeff,size=1000\r\n\
-                       file,ghost/master/old.txt,11223344556677889900aabbccddeeff,delete\r\n\
-                       file,ghost/master/skip.png,11223344556677889900aabbccddeeff,ignore,size=500\r\n\
-                       file,ghost/master/readme.txt,11223344556677889900aabbccddeeff,size=200\r\n";
-        let pkg = UpdatePackage::from_definition(content);
-        assert_eq!(pkg.entries.len(), 4);
-
-        let active = pkg.active_downloads();
-        assert_eq!(active.len(), 2);
-        assert_eq!(active[0].path, "ghost/master/aya.dll");
-        assert_eq!(active[1].path, "ghost/master/readme.txt");
-
-        let deletions = pkg.deletions();
-        assert_eq!(deletions.len(), 1);
-        assert_eq!(deletions[0].path, "ghost/master/old.txt");
-
-        assert_eq!(pkg.total_download_size(), 1200);
-    }
 }

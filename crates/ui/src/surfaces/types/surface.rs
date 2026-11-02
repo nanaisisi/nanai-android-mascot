@@ -82,11 +82,37 @@ pub struct SurfaceDefinition {
     pub balloon_offsets: BTreeMap<String, BalloonOffset>,
     /// サーフィス表示名（`name,`）
     pub name: Option<String>,
+    /// 顔サムネイル切り出し矩形（`icon.rect,始点X,始点Y,終点X,終点Y`）
+    #[serde(default)]
+    pub icon_rect: Option<[i32; 4]>,
     /// 未分類のキー・バリュー（拡張記載の退避先）
     pub properties: BTreeMap<String, String>,
 }
 
 impl SurfaceDefinition {
+    /// 顔サムネイル矩形を取得する。
+    /// 明示指定（`icon.rect`）があればそれを長辺基準で正方形に整形して採用する。
+    /// 未指定の場合は `face` または `head` の当たり判定（collision）から自動検出する。
+    pub fn effective_icon_rect(&self) -> Option<[i32; 4]> {
+        if let Some([x1, y1, x2, y2]) = self.icon_rect {
+            return Some(make_square_rect(x1, y1, x2, y2));
+        }
+
+        // face または head の collision を検索
+        let area = self
+            .collisions
+            .iter()
+            .find(|c| c.name.eq_ignore_ascii_case("face") || c.name.eq_ignore_ascii_case("顔"))
+            .or_else(|| {
+                self.collisions.iter().find(|c| {
+                    c.name.eq_ignore_ascii_case("head") || c.name.eq_ignore_ascii_case("頭")
+                })
+            })?;
+
+        let (x1, y1, x2, y2) = area.shape.bounding_box()?;
+        Some(make_square_rect(x1, y1, x2, y2))
+    }
+
     /// 座標に該当する当たり判定（先に定義されたものを優先）を返す
     pub fn hit_test(&self, x: i32, y: i32) -> Option<&CollisionArea> {
         self.collisions.iter().find(|c| c.contains(x, y))
@@ -135,6 +161,33 @@ impl SurfaceDefinition {
     pub fn element(&self, id: u32) -> Option<&ElementDef> {
         self.elements.iter().find(|e| e.id == id)
     }
+}
+
+/// 指定矩形を、中心を維持したまま長辺基準の正方形に整形する
+pub fn make_square_rect(x1: i32, y1: i32, x2: i32, y2: i32) -> [i32; 4] {
+    let min_x = x1.min(x2);
+    let max_x = x1.max(x2);
+    let min_y = y1.min(y2);
+    let max_y = y1.max(y2);
+
+    let w = max_x - min_x;
+    let h = max_y - min_y;
+
+    if w == h {
+        return [min_x, min_y, max_x, max_y];
+    }
+
+    let side = w.max(h);
+    let center_x = (min_x + max_x) / 2;
+    let center_y = (min_y + max_y) / 2;
+
+    let half = side / 2;
+    let new_x1 = center_x - half;
+    let new_y1 = center_y - half;
+    let new_x2 = new_x1 + side;
+    let new_y2 = new_y1 + side;
+
+    [new_x1, new_y1, new_x2, new_y2]
 }
 
 /// `descript` ブロックの `animation.sort` / `collision.sort` 値

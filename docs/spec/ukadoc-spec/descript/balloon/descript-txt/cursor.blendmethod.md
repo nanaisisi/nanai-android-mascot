@@ -11,3 +11,5 @@
 ## 実装箇所
 
 - `ui/js/core/actions/balloon-descript/font/group.js:45` `// [anchor.blendmethod / cursor.blendmethod / *.blendmethod]:`
+- `ui/js/core/actions/balloon-descript/font/group.js:33` `* [cursor.blendmethod,合成方法]`
+- `ui/js/core/actions/balloon-descript/font/group.js:85` `// [anchor.blendmethod / cursor.blendmethod / *.blendmethod]:`

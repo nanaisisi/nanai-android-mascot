@@ -124,6 +124,8 @@ export class SurfaceAnimationManager {
 		this._exclusiveLocks = new Map();
 		/** @type {Map<string, number>} shared-index 保持テーブル (`${scopeId}__${animId}` -> lastPatternIndex) */
 		this._sharedIndices = new Map();
+		/** @type {Map<string, { x: number, y: number }>} \![anim,offset,ID,x,y] による動的オフセット (`${scopeId}__${animId}`) */
+		this._animationOffsets = new Map();
 		/** @type {AnimationScheduler} Slot-08 外部インターフェース規約スケジューラ */
 		this.scheduler = new AnimationScheduler(this);
 	}
@@ -185,20 +187,98 @@ export class SurfaceAnimationManager {
 		return String(lock.animId) !== String(animId);
 	}
 
+	/**
+	 * アニメーション定義を検索（IDまたはname文字列による）
+	 * @param {number|string} animIdOrName
+	 * @param {number} [scopeId]
+	 * @returns {object|null}
+	 */
+	findAnimation(animIdOrName, scopeId = 0) {
+		const sid = String(this.manager.currentSurfaceIdFor(scopeId));
+		const animList =
+			this.manager.animations?.[sid] || this.manager.animations?.default || [];
+		const targetStr = String(animIdOrName).trim().toLowerCase();
+		const targetNum = Number.parseInt(targetStr, 10);
+		return (
+			animList.find((a) => {
+				if (!Number.isNaN(targetNum) && a.id === targetNum) return true;
+				if (String(a.id).toLowerCase() === targetStr) return true;
+				if (a.name && String(a.name).trim().toLowerCase() === targetStr)
+					return true;
+				return false;
+			}) || null
+		);
+	}
+
 	stopAnimations(scopeId = 0) {
 		surfaceAnimationTimers.stopAnimations.call(this, scopeId);
+		for (const key of [...this._animationOffsets.keys()]) {
+			if (key.startsWith(`${scopeId}__`)) {
+				this._animationOffsets.delete(key);
+			}
+		}
 	}
 
-	pauseAnimation(scopeId = 0, animId) {
-		surfaceAnimationTimers.pauseAnimation.call(this, scopeId, animId);
+	/**
+	 * 特定のアニメーションのみ停止 (\![anim,stop,ID] / \![anim,clear,ID])
+	 * @param {number} [scopeId]
+	 * @param {number|string} animIdOrName
+	 */
+	stopAnimation(scopeId = 0, animIdOrName) {
+		const anim = this.findAnimation(animIdOrName, scopeId);
+		const id = anim ? anim.id : animIdOrName;
+		const prefix = `${scopeId}__`;
+		for (const key of this._runningAnimations.keys()) {
+			if (key.startsWith(prefix)) {
+				const parts = key.split("__");
+				if (parts[2] === String(id)) {
+					this._stoppedAnimations.add(key);
+				}
+			}
+		}
 	}
 
-	resumeAnimation(scopeId = 0, animId) {
-		surfaceAnimationTimers.resumeAnimation.call(this, scopeId, animId);
+	/**
+	 * アニメーションの動的オフセット設定 (\![anim,offset,ID,x,y])
+	 * @param {number} scopeId
+	 * @param {number|string} animIdOrName
+	 * @param {number} x
+	 * @param {number} y
+	 */
+	setAnimationOffset(scopeId = 0, animIdOrName, x = 0, y = 0) {
+		const anim = this.findAnimation(animIdOrName, scopeId);
+		const id = anim ? anim.id : animIdOrName;
+		this._animationOffsets.set(`${scopeId}__${id}`, { x, y });
 	}
 
-	isAnimationPaused(scopeId = 0, animId) {
-		return surfaceAnimationTimers.isAnimationPaused.call(this, scopeId, animId);
+	/**
+	 * アニメーションの動的オフセット取得
+	 * @param {number} scopeId
+	 * @param {number|string} animIdOrName
+	 * @returns {{ x: number, y: number }}
+	 */
+	getAnimationOffset(scopeId = 0, animIdOrName) {
+		const anim = this.findAnimation(animIdOrName, scopeId);
+		const id = anim ? anim.id : animIdOrName;
+		return this._animationOffsets.get(`${scopeId}__${id}`) || { x: 0, y: 0 };
+	}
+
+	pauseAnimation(scopeId = 0, animIdOrName) {
+		const anim = this.findAnimation(animIdOrName, scopeId);
+		const id = anim ? anim.id : animIdOrName;
+		surfaceAnimationTimers.pauseAnimation.call(this, scopeId, id);
+	}
+
+	resumeAnimation(scopeId = 0, animIdOrName) {
+		const anim = this.findAnimation(animIdOrName, scopeId);
+		const id = anim ? anim.id : animIdOrName;
+		surfaceAnimationTimers.resumeAnimation.call(this, scopeId, id);
+	}
+
+	isAnimationPaused(scopeId = 0, animIdOrName) {
+		const anim = this.findAnimation(animIdOrName, scopeId);
+		const id = anim ? anim.id : animIdOrName;
+		return surfaceAnimationTimers.isAnimationPaused.call(this, scopeId, id);
 	}
 
 	clearPausedAnimations(scopeId = 0) {
@@ -271,7 +351,10 @@ export class SurfaceAnimationManager {
 			String(this.manager.currentSurfaceIdFor(scopeId)) ===
 				String(baseSurfaceId);
 
-		const options = this.parseAnimationOptions(anim.options);
+		const options = {
+			...this.parseAnimationOptions(anim.options),
+			animId: anim.id,
+		};
 
 		// exclusive オプション処理: 他のアニメーションを停止しロック取得
 		if (options.isExclusive) {
@@ -298,6 +381,8 @@ export class SurfaceAnimationManager {
 			? this._sharedIndices.get(sharedKey) || 0
 			: 0;
 
+		const currentOffset = this.getAnimationOffset(scopeId, anim.id);
+
 		this.scheduler?.notifyFrameStep(
 			new FrameStepEvent({
 				scopeId,
@@ -307,6 +392,8 @@ export class SurfaceAnimationManager {
 				elapsedMs: 0,
 				isFinished: false,
 				isBackground: options.isBackground,
+				offsetX: currentOffset.x,
+				offsetY: currentOffset.y,
 			}),
 		);
 
@@ -368,6 +455,8 @@ export class SurfaceAnimationManager {
 				elapsedMs: Date.now(),
 				isFinished: true,
 				isBackground: options.isBackground,
+				offsetX: currentOffset.x,
+				offsetY: currentOffset.y,
 			}),
 		);
 	}
@@ -455,6 +544,7 @@ export class SurfaceAnimationManager {
 			await gc.updateSurface(patSurface, scopeId, null);
 		}
 
+		const currentOffset = this.getAnimationOffset(scopeId, anim?.id ?? 0);
 		this.scheduler?.notifyFrameStep(
 			new FrameStepEvent({
 				scopeId,
@@ -464,6 +554,8 @@ export class SurfaceAnimationManager {
 				elapsedMs: Date.now(),
 				isFinished: false,
 				isBackground: options.isBackground,
+				offsetX: currentOffset.x,
+				offsetY: currentOffset.y,
 			}),
 		);
 		return true;
@@ -505,6 +597,13 @@ export class SurfaceAnimationManager {
 			options.push("background");
 		}
 
+		const offset = this.getAnimationOffset(
+			scopeId,
+			pat.animId ?? pat.animationId ?? animationOptions.animId ?? 0,
+		);
+		const finalX = (pat.x ?? 0) + (offset.x || 0);
+		const finalY = (pat.y ?? 0) + (offset.y || 0);
+
 		// ダミーのプレースホルダー画像バッファ（カラー矩形Canvas）フォールバック
 		if (!file && resolved !== -1 && resolved !== "-1") {
 			const dummyCanvas = createPlaceholderCanvas(
@@ -516,8 +615,8 @@ export class SurfaceAnimationManager {
 				gc.updateSurface(baseSurfaceId, scopeId, [
 					{
 						file: dummyCanvas.toDataURL("image/png"),
-						x: pat.x ?? 0,
-						y: pat.y ?? 0,
+						x: finalX,
+						y: finalY,
 						type: patType,
 						options,
 					},
@@ -530,8 +629,8 @@ export class SurfaceAnimationManager {
 				gc.updateSurface(baseSurfaceId, scopeId, [
 					{
 						file,
-						x: pat.x ?? 0,
-						y: pat.y ?? 0,
+						x: finalX,
+						y: finalY,
 						type: patType,
 						options,
 					},
@@ -541,18 +640,31 @@ export class SurfaceAnimationManager {
 		return false;
 	}
 
-	async playAnimationById(animId, scopeId = 0, waitForComplete = false) {
+	async playAnimationById(animIdOrName, scopeId = 0, waitForComplete = false) {
 		const sid = String(this.manager.currentSurfaceIdFor(scopeId));
-		const animList =
-			this.manager.animations[sid] || this.manager.animations.default || [];
-		const anim = animList.find(
-			(a) => a.id === animId || String(a.id) === String(animId),
-		);
+		const anim = this.findAnimation(animIdOrName, scopeId);
 		if (!anim) return;
 
 		const playPromise = this.playAnimationPatterns(anim, sid, scopeId);
 		if (waitForComplete) {
 			await playPromise;
+		}
+	}
+
+	/**
+	 * アニメーション完了まで待機 (\__w[animation,ID])
+	 * @param {number|string} animIdOrName
+	 * @param {number} [scopeId]
+	 * @returns {Promise<void>}
+	 */
+	async waitForAnimation(animIdOrName, scopeId = 0) {
+		const anim = this.findAnimation(animIdOrName, scopeId);
+		const id = anim ? anim.id : animIdOrName;
+		const sid = String(this.manager.currentSurfaceIdFor(scopeId));
+		const key = `${scopeId}__${sid}__${id}`;
+		const promise = this._runningAnimations.get(key);
+		if (promise) {
+			await promise;
 		}
 	}
 

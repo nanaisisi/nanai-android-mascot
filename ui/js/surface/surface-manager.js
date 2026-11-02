@@ -115,6 +115,35 @@ export class SurfaceManager {
 		this.animationManager.resumeAnimation(scopeId, animId);
 	}
 
+	/**
+	 * `\![anim,stop,ID]` / `\![anim,clear,ID]` (SSP): アニメーションの停止
+	 * @param {number|string} animId
+	 * @param {number} [scopeId]
+	 */
+	stopAnimationById(animId, scopeId = 0) {
+		this.animationManager.stopAnimation(scopeId, animId);
+	}
+
+	/**
+	 * `\![anim,offset,ID,x,y]` (SSP): アニメーションの動的オフセット設定
+	 * @param {number|string} animId
+	 * @param {number} x
+	 * @param {number} y
+	 * @param {number} [scopeId]
+	 */
+	setAnimationOffset(animId, x = 0, y = 0, scopeId = 0) {
+		this.animationManager.setAnimationOffset(scopeId, animId, x, y);
+	}
+
+	/**
+	 * `\__w[animation,ID]` (SSP): アニメーション完了まで待機
+	 * @param {number|string} animId
+	 * @param {number} [scopeId]
+	 */
+	waitForAnimation(animId, scopeId = 0) {
+		return this.animationManager.waitForAnimation(animId, scopeId);
+	}
+
 	onTalkEnd(scopeId = 0) {
 		this.animationManager.onTalkEnd(scopeId);
 	}

@@ -145,16 +145,24 @@ function initDefaultCommandHandlers() {
 	});
 
 	registerCommandHandler("anim", async (handler, args) => {
-		const [verbRaw, idVal] = args.slice(1);
-		const animId = Number.parseInt(String(idVal ?? ""), 10);
+		const [verbRaw, idVal, arg3, arg4] = args.slice(1);
+		const targetStr = String(idVal ?? "").trim();
+		const animIdNum = Number.parseInt(targetStr, 10);
+		const animTarget = Number.isNaN(animIdNum) ? targetStr : animIdNum;
 		const verb = String(verbRaw ?? "").toLowerCase();
-		if (Number.isFinite(animId)) {
-			const sm = handler.app.surfaceManager;
-			if (verb === "pause" || verb === "pouse") {
-				sm?.pauseAnimationById?.(animId, handler.player.currentScope);
-			} else if (verb === "resume") {
-				sm?.resumeAnimationById?.(animId, handler.player.currentScope);
-			}
+		const sm = handler.app.surfaceManager;
+		const scope = handler.player.currentScope;
+
+		if (verb === "pause" || verb === "pouse") {
+			sm?.pauseAnimationById?.(animTarget, scope);
+		} else if (verb === "resume") {
+			sm?.resumeAnimationById?.(animTarget, scope);
+		} else if (verb === "stop" || verb === "clear") {
+			sm?.stopAnimationById?.(animTarget, scope);
+		} else if (verb === "offset") {
+			const x = Number.parseInt(String(arg3 ?? "0"), 10) || 0;
+			const y = Number.parseInt(String(arg4 ?? "0"), 10) || 0;
+			sm?.setAnimationOffset?.(animTarget, x, y, scope);
 		}
 	});
 

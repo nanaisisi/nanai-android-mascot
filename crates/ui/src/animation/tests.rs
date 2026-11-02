@@ -473,3 +473,58 @@ fn test_animation_scheduler_shared_index() {
     assert_eq!(events.len(), 1);
     assert_eq!(events[0].pattern.surface, 301);
 }
+
+#[test]
+fn test_animation_scheduler_stop_and_offset() {
+    use crate::surfaces::SerikoAnimation;
+
+    let mut scheduler = AnimationScheduler::new();
+
+    let anim1 = SerikoAnimation {
+        id: 10,
+        interval: Some(Interval::Always),
+        name: Some("test_anim".to_string()),
+        patterns: vec![pattern(0, 100, 50), pattern(1, 101, 50)],
+        collisions: vec![],
+        options: vec![],
+    };
+    let anim2 = SerikoAnimation {
+        id: 20,
+        interval: Some(Interval::Always),
+        name: None,
+        patterns: vec![pattern(0, 200, 50), pattern(1, 201, 50)],
+        collisions: vec![],
+        options: vec![],
+    };
+
+    // 動的オフセットを設定
+    scheduler.set_animation_offset(0, 10, 40, -25);
+    assert_eq!(scheduler.get_animation_offset(0, 10), (40, -25));
+    assert_eq!(scheduler.get_animation_offset(0, 20), (0, 0));
+
+    scheduler.start_animation(0, 0, &anim1);
+    scheduler.start_animation(0, 0, &anim2);
+    assert_eq!(scheduler.active_count(0), 2);
+
+    let events = scheduler.step(50);
+    assert_eq!(events.len(), 2);
+    let ev1 = events.iter().find(|e| e.animation_id == 10).unwrap();
+    let ev2 = events.iter().find(|e| e.animation_id == 20).unwrap();
+    assert_eq!(ev1.offset_x, 40);
+    assert_eq!(ev1.offset_y, -25);
+    assert_eq!(ev2.offset_x, 0);
+    assert_eq!(ev2.offset_y, 0);
+
+    // stop_animation で ID=10 のみ停止
+    scheduler.stop_animation(0, 10);
+    assert_eq!(scheduler.active_count(0), 1);
+
+    // 次フレームで ID=20 のみステップされる
+    let events2 = scheduler.step(50);
+    assert_eq!(events2.len(), 1);
+    assert_eq!(events2[0].animation_id, 20);
+
+    // サーフィス切り替えでオフセットがクリアされることを確認
+    scheduler.set_surface(0, 1);
+    assert_eq!(scheduler.get_animation_offset(0, 10), (0, 0));
+}

@@ -210,6 +210,24 @@ export function parseSurfacesTxt(text) {
 					}
 				});
 			}
+		} else if (/^(?:animation\d+\.|\d+)name,/.test(trimmed)) {
+			// SERIKO/2 animation[ID].name,定義名 / SERIKO/1 [ID]name,定義名
+			const match = trimmed.match(/^(?:animation)?(\d+)\.?name,\s*(.+)$/);
+			if (match) {
+				const animId = Number.parseInt(match[1], 10);
+				const nameStr = match[2].trim();
+				currentSurfaces.forEach((s) => {
+					if (!animations[s]) animations[s] = [];
+					if (!animationMaps[s]) animationMaps[s] = {};
+					let anim = animationMaps[s][animId];
+					if (!anim) {
+						anim = { id: animId, interval: "sometimes", patterns: [] };
+						animationMaps[s][animId] = anim;
+						animations[s].push(anim);
+					}
+					anim.name = nameStr;
+				});
+			}
 		} else if (/^(?:animation\d+\.|\d+)option,/.test(trimmed)) {
 			// SERIKO/2 animation[ID].option,exclusive / SERIKO/1 [ID]option,exclusive
 			const match = trimmed.match(/^(?:animation)?(\d+)\.?option,\s*(.+)$/);

@@ -163,6 +163,8 @@ pub fn run() {
             shiori::fmo::check_base_ware_mutex,
             sstp::send_sstp_request,
             sstp::parse_and_send_sstp_raw,
+            sstp::notify_sstp_break,
+            sstp::notify_sstp_blacklisting,
             commands::web::handle_ukagaka_uri,
             commands::calendar::get_schedules,
             commands::calendar::add_schedule,

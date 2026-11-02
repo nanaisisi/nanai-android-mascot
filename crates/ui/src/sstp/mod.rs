@@ -1,4 +1,5 @@
 //! SSTP (Sakura Script Transfer Protocol) 実装（ukadoc-spec / sstp 準拠）
+//! [req_res], [direct], [http], [keepalive], [method_send], [method_execute], [method_give], [method_communicate], [method_notify]
 //!
 //! SSTP/1.1, SSTP/1.2, SSTP/1.3, SSTP/1.4, DirectSSTP のリクエスト・レスポンス解析および構築を行う。
 
@@ -111,6 +112,7 @@ pub struct SstpRequest {
     pub receiver_ghost_name: Option<String>,
     pub security_level: Option<String>,
     pub security_origin: Option<String>,
+    pub id: Option<String>,
     pub options: Vec<String>,
     pub entry: Option<String>,
     pub if_ghosts: Vec<IfGhostEntry>,
@@ -150,6 +152,7 @@ impl SstpRequest {
         let mut receiver_ghost_hwnd = None;
         let mut receiver_ghost_name = None;
         let mut security_level = None;
+        let mut id = None;
         let mut security_origin = None;
         let mut options = Vec::new();
         let mut entry = None;
@@ -169,7 +172,9 @@ impl SstpRequest {
                 let val = v.trim().to_string();
                 let key_lower = key.to_lowercase();
 
-                if key_lower == "charset" {
+                if key_lower == "id" {
+                    id = Some(val);
+                } else if key_lower == "charset" {
                     charset = Some(val);
                 } else if key_lower == "sender" {
                     sender = val;
@@ -237,6 +242,7 @@ impl SstpRequest {
             receiver_ghost_name,
             security_level,
             security_origin,
+            id,
             options,
             entry,
             if_ghosts,
@@ -260,6 +266,31 @@ impl SstpRequest {
             }
         }
         self.script.as_deref()
+    }
+
+    /// 指定されたオプションが含まれるか判定
+    pub fn has_option(&self, opt: &str) -> bool {
+        self.options.iter().any(|o| o.eq_ignore_ascii_case(opt))
+    }
+
+    /// nobreak オプション指定（実行中スクリプト終了待ち）
+    pub fn is_nobreak(&self) -> bool {
+        self.has_option("nobreak")
+    }
+
+    /// notranslate オプション指定（OnTranslate等の変換スキップ）
+    pub fn is_notranslate(&self) -> bool {
+        self.has_option("notranslate")
+    }
+
+    /// nodescript オプション指定（バルーンのSSTP表示無効化）
+    pub fn is_nodescript(&self) -> bool {
+        self.has_option("nodescript")
+    }
+
+    /// strict オプション指定（SakuraScript解釈失敗をログ記録）
+    pub fn is_strict(&self) -> bool {
+        self.has_option("strict")
     }
 }
 
@@ -304,6 +335,22 @@ impl SstpResponse {
 
     pub fn not_found() -> Self {
         Self::new(SstpStatusCode::NotFound)
+    }
+
+    pub fn conflict() -> Self {
+        Self::new(SstpStatusCode::Conflict)
+    }
+
+    pub fn refuse() -> Self {
+        Self::new(SstpStatusCode::Refuse)
+    }
+
+    pub fn service_unavailable() -> Self {
+        Self::new(SstpStatusCode::ServiceUnavailable)
+    }
+
+    pub fn version_not_supported() -> Self {
+        Self::new(SstpStatusCode::VersionNotSupported)
     }
 
     /// SSTP レスポンス文字列を構築する

@@ -153,6 +153,25 @@ export function parseSurfacesTxt(text) {
 					}
 				});
 			}
+		} else if (/^(?:animation\d+\.|\d+)option,/.test(trimmed)) {
+			// SERIKO/2 animation[ID].option,exclusive / SERIKO/1 [ID]option,exclusive
+			const match = trimmed.match(/^(?:animation)?(\d+)\.?option,\s*(.+)$/);
+			if (match) {
+				const animId = Number.parseInt(match[1], 10);
+				const optionStr = match[2].trim();
+				currentSurfaces.forEach((s) => {
+					if (!animations[s]) animations[s] = [];
+					if (!animationMaps[s]) animationMaps[s] = new Map();
+					let anim = animationMaps[s].get(animId);
+					if (!anim) {
+						anim = { id: animId, interval: "sometimes", patterns: [] };
+						animationMaps[s].set(animId, anim);
+						animations[s].push(anim);
+					}
+					if (!anim.options) anim.options = [];
+					anim.options.push(optionStr);
+				});
+			}
 		} else if (/^(?:animation\d+\.|\d+)pattern\d+,/.test(trimmed)) {
 			// SERIKO/2: animation[ID].pattern[P],method,surface,wait,x,y
 			// SERIKO/1: [ID]pattern[P],surface,wait,method,x,y

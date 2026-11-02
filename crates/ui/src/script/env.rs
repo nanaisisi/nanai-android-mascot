@@ -54,6 +54,9 @@ pub fn expand_sakura_script_env(
     result = result.replace("%mc", "0");
     result = result.replace("%ml", "0");
     result = result.replace("%mz", "0");
+    // %m? 単語-非限定環境変数クエリ [pct-m-q.md]
+    result = result.replace("%m?", "");
+    // %* (%\*) 環境変数展開 [pct-star.md]
     result = result.replace("%*", "");
 
     // Restore escaped \% as literal %
@@ -67,9 +70,11 @@ mod tests {
 
     #[test]
     fn test_expand_env() {
-        let script = "%username, hello! Property: %property[currentghost.name]";
+        let script = "%username, hello! Property: %property[currentghost.name] %m? %*";
         let expanded = expand_sakura_script_env(script, "TestUser", "Nanai", "Kero");
         assert!(expanded.contains("TestUser"));
         assert!(expanded.contains("Nanai"));
+        assert!(!expanded.contains("%m?"));
+        assert!(!expanded.contains("%*"));
     }
 }

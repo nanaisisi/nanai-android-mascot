@@ -17,6 +17,7 @@ export async function handleToken(player, app, token, context) {
 	switch (token.type) {
 		case "scope":
 			player.currentScope = token.value;
+			player.playbackController?.notifyScope?.(player.currentScope);
 			if (player.currentScope === 1) {
 				app.surfaceManager?.onTalkEnd(0);
 				if (!isTauriAvailable()) {
@@ -72,9 +73,18 @@ export async function handleToken(player, app, token, context) {
 			scheduleDesktopBalloonSync(false);
 
 			app.surfaceManager?.onCharSpoken(player.currentScope);
+			player.playbackController?.notifyChar?.(token.value, player.currentScope);
 
 			if (!player.skipRequested && !isQuickMode) {
-				await player.sleep(40);
+				// 句読点ディレイ (仕様: 、。！？ などに +100ms 付加)
+				const isPunctuation = /[、。！？,!?]/.test(token.value);
+				const baseWait = isPunctuation ? 140 : 40;
+				const waitMs = player.playbackController?.calculateWait
+					? player.playbackController.calculateWait(baseWait)
+					: baseWait;
+				if (waitMs > 0) {
+					await player.sleep(waitMs);
+				}
 			}
 			break;
 		}
@@ -198,7 +208,12 @@ export async function handleToken(player, app, token, context) {
 		case "wait":
 			player.playbackController?.notifyWait?.(token.value);
 			if (!player.skipRequested && !isQuickMode) {
-				await player.sleep(token.value);
+				const waitMs = player.playbackController?.calculateWait
+					? player.playbackController.calculateWait(token.value)
+					: token.value;
+				if (waitMs > 0) {
+					await player.sleep(waitMs);
+				}
 			}
 			break;
 

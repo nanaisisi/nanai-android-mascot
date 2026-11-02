@@ -52,6 +52,38 @@ fn test_parse_raw_send_request() {
 }
 
 #[test]
+fn test_sstp_id_and_options_parsing() {
+    let raw = "SEND SSTP/1.4\r\nSender: TestTool\r\nID: ssp_fmo_header_001\r\nOption: nobreak, nodescript, strict, notranslate\r\nScript: \\0Hello\\e\r\n";
+    let req = SstpRequest::parse(raw).unwrap();
+    assert_eq!(req.id, Some("ssp_fmo_header_001".to_string()));
+    assert!(req.is_nobreak());
+    assert!(req.is_nodescript());
+    assert!(req.is_strict());
+    assert!(req.is_notranslate());
+    assert!(req.has_option("nobreak"));
+    assert!(!req.has_option("unknown_opt"));
+}
+
+#[test]
+fn test_sstp_additional_status_constructors() {
+    let res_conflict = SstpResponse::conflict();
+    assert_eq!(res_conflict.status, SstpStatusCode::Conflict);
+    assert!(res_conflict.build().contains("409 Conflict"));
+
+    let res_refuse = SstpResponse::refuse();
+    assert_eq!(res_refuse.status, SstpStatusCode::Refuse);
+    assert!(res_refuse.build().contains("420 Refuse"));
+
+    let res_unavailable = SstpResponse::service_unavailable();
+    assert_eq!(res_unavailable.status, SstpStatusCode::ServiceUnavailable);
+    assert!(res_unavailable.build().contains("503 Service Unavailable"));
+
+    let res_version = SstpResponse::version_not_supported();
+    assert_eq!(res_version.status, SstpStatusCode::VersionNotSupported);
+    assert!(res_version.build().contains("505 Version Not Supported"));
+}
+
+#[test]
 fn test_parse_if_ghost_and_resolution() {
     let raw = "SEND SSTP/1.4\r\nSender: SampleApp\r\nScript: \\h\\s[0]デフォルト\\e\r\nIfGhost: まゆら\r\nScript: \\h\\s[0]まゆらさん\\e\r\nIfGhost: 花ちゃん,妹\r\nScript: \\h\\s[0]花ちゃんと妹さん\\e\r\n";
     let req = SstpRequest::parse(raw).unwrap();

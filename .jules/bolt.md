@@ -9,3 +9,7 @@
 ## 2024-05-23 - [Canvas Promise.all Optimization for Surface Render]
 **Learning:** `composeSurfaceElements` and `composeFrameOnBase` originally iterated through each layer in a sequence, loaded the layer image from the cache via `drawLayer()`, and synchronously awaited the load before processing the next layer. We can improve performance by separating image loading and image drawing, and pre-fetching all layer images concurrently using `Promise.all`. This significantly reduces the blocking time in multi-layer composites, while still drawing images sequentially to preserve proper z-order blending.
 **Action:** When a method needs to draw multiple layers in HTML5 Canvas context from URLs, separate the `Image` load from `CanvasRenderingContext2D` manipulation. Always use `Promise.all` to fetch all `Image` objects concurrently, then loop sequentially to draw them to preserve operations that depend on z-order.
+
+## 2026-11-02 - [Parser Animation ID Lookup Optimization]
+**Learning:** In `ui/js/surface/surface-parser.js`, indexing animations per surface via a plain object dictionary (`animationMaps[s] = {}`) rather than allocating `new Map()` instances avoids constructor and method call overhead (`.get()`/`.set()`) and GC pressure across hundreds of surface declarations.
+**Action:** When building temporary index maps for small integer/string keys inside hot parsing loops, prefer plain objects over `Map` instances to minimize heap allocations and lookup latency.

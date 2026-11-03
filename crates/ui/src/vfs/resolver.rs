@@ -165,6 +165,13 @@ impl VfsResolver {
             })?,
         };
 
+        if !base.is_dir() {
+            return Err(io::Error::new(
+                io::ErrorKind::NotADirectory,
+                format!("Not a directory: {}", relative_dir),
+            ));
+        }
+
         let mut collected = Vec::new();
         fn recurse(
             dir: &Path,

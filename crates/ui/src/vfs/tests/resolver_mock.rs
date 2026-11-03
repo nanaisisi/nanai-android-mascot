@@ -290,6 +290,9 @@ fn test_mock_vfs_remove_dir_and_find_files() {
 fn test_vfs_resolver_cache_overflow_and_errors() {
     let temp = std::env::temp_dir().join(format!("vfs_test_{}", std::process::id()));
     std::fs::create_dir_all(&temp).unwrap();
+    let file_path = temp.join("not_a_dir.txt");
+    std::fs::write(&file_path, "content").unwrap();
+
     let resolver = VfsResolver::new(&temp);
 
     // Test cache overflow (>1000 items)
@@ -301,6 +304,14 @@ fn test_vfs_resolver_cache_overflow_and_errors() {
     // walk_files on non-existent directory
     let walk_res = resolver.walk_files("does_not_exist_dir");
     assert!(walk_res.is_err());
+
+    // walk_files on a file
+    let walk_file_res = resolver.walk_files("not_a_dir.txt");
+    assert!(walk_file_res.is_err());
+
+    // list_dir on a file (triggers read_dir error)
+    let list_file_res = resolver.list_dir("not_a_dir.txt");
+    assert!(list_file_res.is_err());
 
     // list_dir with empty string / "."
     let list_root = resolver.list_dir(".");

@@ -10,6 +10,7 @@ impl AnimationScheduler {
         self.current_surfaces.insert(scope_id, surface_id);
         self.stop_animations(scope_id);
         self.animation_offsets.remove(&scope_id);
+        self.base_move_offsets.remove(&scope_id);
     }
 
     /// 現在のサーフィスを切り替え、新旧サーフィスの shared-index アニメーションの再生インデックスを継承する
@@ -32,6 +33,7 @@ impl AnimationScheduler {
 
         self.stop_animations(scope_id);
         self.animation_offsets.remove(&scope_id);
+        self.base_move_offsets.remove(&scope_id);
 
         // 新サーフィス側にも shared-index 指定のアニメーションが存在すれば、保存した pattern index から復帰開始
         for anim in new_animations {
@@ -150,6 +152,19 @@ impl AnimationScheduler {
         self.animation_offsets
             .get(&scope_id)
             .and_then(|m| m.get(&anim_id).copied())
+            .unwrap_or((0, 0))
+    }
+
+    /// move 描画メソッドによるベースサーフィス相対位置オフセットを設定
+    pub fn set_base_move_offset(&mut self, scope_id: u32, x: i32, y: i32) {
+        self.base_move_offsets.insert(scope_id, (x, y));
+    }
+
+    /// move 描画メソッドによるベースサーフィス相対位置オフセットを取得
+    pub fn get_base_move_offset(&self, scope_id: u32) -> (i32, i32) {
+        self.base_move_offsets
+            .get(&scope_id)
+            .copied()
             .unwrap_or((0, 0))
     }
 }

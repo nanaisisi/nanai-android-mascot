@@ -44,3 +44,54 @@ element1,overlay,surface01.png,0,0
         })
     );
 }
+
+#[test]
+fn test_plan_composition_insert_method() {
+    let sample = r"charset,UTF-8
+surface0
+{
+element0,base,surface0.png,0,0
+
+// 着せ替えA: 下着 (10) と 上着 (11) の間に スカート (20) を挿入
+animation10.interval,bind
+animation10.pattern0,add,1001,0,0,0
+animation10.pattern1,insert,20,0,0,0
+animation10.pattern2,add,1002,0,0,0
+
+// 着せ替えB: スカート
+animation20.interval,bind
+animation20.pattern0,add,2001,0,0,0
+}
+";
+    let txt = SurfacesTxt::parse(sample);
+
+    // 両方有効な場合: 1001 -> 2001 -> 1002 の順に挟まる
+    let plan = txt.plan_composition(0, &[10, 20]).unwrap();
+    assert_eq!(
+        plan.layer_files(),
+        vec![
+            "surface0.png".to_string(),
+            "1001".to_string(),
+            "2001".to_string(),
+            "1002".to_string()
+        ]
+    );
+
+    // 20 が無効な場合: 1001 -> 1002 のみ
+    let plan2 = txt.plan_composition(0, &[10]).unwrap();
+    assert_eq!(
+        plan2.layer_files(),
+        vec![
+            "surface0.png".to_string(),
+            "1001".to_string(),
+            "1002".to_string()
+        ]
+    );
+
+    // 20 単体の場合: 通常描画
+    let plan3 = txt.plan_composition(0, &[20]).unwrap();
+    assert_eq!(
+        plan3.layer_files(),
+        vec!["surface0.png".to_string(), "2001".to_string()]
+    );
+}

@@ -4,12 +4,6 @@
  */
 
 import {
-	buildAnimationTimeline,
-	parseInterval,
-	resolvePatternWait,
-} from "./animation-parser.js";
-
-import {
 	clearPausedAnimations,
 	findAnimation,
 	getAnimationOffset,
@@ -22,7 +16,6 @@ import {
 	setAnimationOffset,
 	stopAnimation,
 } from "./animation/animation-options.js";
-
 import {
 	_applyAnimationFrame,
 	_playAnimationPatterns,
@@ -37,44 +30,50 @@ import {
 	renderAnimationFrame,
 	waitForAnimation,
 } from "./animation/animation-playback.js";
-
 import {
 	AnimationScheduler,
 	createPlaceholderCanvas,
 	FrameStepEvent,
 } from "./animation/scheduler-events.js";
+import {
+	buildAnimationTimeline,
+	parseInterval,
+	resolvePatternWait,
+} from "./animation-parser.js";
 
 import { surfaceAnimationTimers } from "./surface-animation-timers.js";
 
 // Re-export helper functions for backwards compatibility
-export { buildAnimationTimeline, parseInterval, resolvePatternWait };
-export { FrameStepEvent, AnimationScheduler, createPlaceholderCanvas };
 export {
-	parseAnimationOptions,
-	isBlockedByExclusive,
-	findAnimation,
-	isAnimationRunning,
-	stopAnimation,
-	setAnimationOffset,
-	getAnimationOffset,
-	pauseAnimation,
-	resumeAnimation,
-	isAnimationPaused,
-	clearPausedAnimations,
-};
-export {
-	playAnimationPatterns,
-	_playAnimationPatterns,
-	_playTimelineFrames,
 	_applyAnimationFrame,
+	_playAnimationPatterns,
 	_playOnePat,
-	renderAnimationFrame,
-	playAnimationById,
-	waitForAnimation,
-	onTalkStart,
-	onTalkEnd,
-	onScriptEnd,
+	_playTimelineFrames,
+	AnimationScheduler,
+	buildAnimationTimeline,
+	clearPausedAnimations,
+	createPlaceholderCanvas,
+	FrameStepEvent,
+	findAnimation,
+	getAnimationOffset,
+	isAnimationPaused,
+	isAnimationRunning,
+	isBlockedByExclusive,
 	onCharSpoken,
+	onScriptEnd,
+	onTalkEnd,
+	onTalkStart,
+	parseAnimationOptions,
+	parseInterval,
+	pauseAnimation,
+	playAnimationById,
+	playAnimationPatterns,
+	renderAnimationFrame,
+	resolvePatternWait,
+	resumeAnimation,
+	setAnimationOffset,
+	stopAnimation,
+	waitForAnimation,
 };
 
 export class SurfaceAnimationManager {
@@ -98,6 +97,8 @@ export class SurfaceAnimationManager {
 		this._sharedIndices = new Map();
 		/** @type {Map<string, { x: number, y: number }>} \![anim,offset,ID,x,y] による動的オフセット (`${scopeId}__${animId}`) */
 		this._animationOffsets = new Map();
+		/** @type {Map<number, { x: number, y: number }>} move 描画メソッドによるベースサーフィス相対位置オフセット */
+		this._baseMoveOffsets = new Map();
 		/** @type {AnimationScheduler} Slot-08 外部インターフェース規約スケジューラ */
 		this.scheduler = new AnimationScheduler(this);
 	}
@@ -121,6 +122,15 @@ export class SurfaceAnimationManager {
 				this._animationOffsets.delete(key);
 			}
 		}
+		this._baseMoveOffsets.delete(scopeId);
+	}
+
+	setBaseMoveOffset(scopeId = 0, x = 0, y = 0) {
+		this._baseMoveOffsets.set(scopeId, { x, y });
+	}
+
+	getBaseMoveOffset(scopeId = 0) {
+		return this._baseMoveOffsets.get(scopeId) || { x: 0, y: 0 };
 	}
 
 	isAnimationRunning(scopeId = 0, animIdOrName) {
@@ -188,20 +198,67 @@ export class SurfaceAnimationManager {
 		return _playAnimationPatterns(this, anim, baseSurfaceId, scopeId, key);
 	}
 
-	_playTimelineFrames(timeline, anim, baseSurfaceId, scopeId, key, options = {}) {
-		return _playTimelineFrames(this, timeline, anim, baseSurfaceId, scopeId, key, options);
+	_playTimelineFrames(
+		timeline,
+		anim,
+		baseSurfaceId,
+		scopeId,
+		key,
+		options = {},
+	) {
+		return _playTimelineFrames(
+			this,
+			timeline,
+			anim,
+			baseSurfaceId,
+			scopeId,
+			key,
+			options,
+		);
 	}
 
-	_applyAnimationFrame(pat, anim, baseSurfaceId, scopeId, key, isCurrent, options = {}) {
-		return _applyAnimationFrame(this, pat, anim, baseSurfaceId, scopeId, key, isCurrent, options);
+	_applyAnimationFrame(
+		pat,
+		anim,
+		baseSurfaceId,
+		scopeId,
+		key,
+		isCurrent,
+		options = {},
+	) {
+		return _applyAnimationFrame(
+			this,
+			pat,
+			anim,
+			baseSurfaceId,
+			scopeId,
+			key,
+			isCurrent,
+			options,
+		);
 	}
 
 	_playOnePat(pat, anim, baseSurfaceId, scopeId, key, isCurrent, options = {}) {
-		return _playOnePat(this, pat, anim, baseSurfaceId, scopeId, key, isCurrent, options);
+		return _playOnePat(
+			this,
+			pat,
+			anim,
+			baseSurfaceId,
+			scopeId,
+			key,
+			isCurrent,
+			options,
+		);
 	}
 
 	renderAnimationFrame(pat, baseSurfaceId, scopeId, animationOptions = {}) {
-		return renderAnimationFrame(this, pat, baseSurfaceId, scopeId, animationOptions);
+		return renderAnimationFrame(
+			this,
+			pat,
+			baseSurfaceId,
+			scopeId,
+			animationOptions,
+		);
 	}
 
 	playAnimationById(animIdOrName, scopeId = 0, waitForComplete = false) {

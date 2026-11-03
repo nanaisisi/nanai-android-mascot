@@ -284,6 +284,8 @@ fn test_update_parser_more_edge_cases() {
     let install_txt = "\
 # comment line\n\
 // another comment\n\
+,missing_key\n\
+missing_value,\n\
 name:ColonGhost\n\
 balloon.directory:my_balloon\n\
 oninstallscript,\\0Hello\\e\n\

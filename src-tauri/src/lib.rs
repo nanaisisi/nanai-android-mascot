@@ -41,6 +41,9 @@ pub fn run() {
         commands::shiori::get_shiori_status,
         commands::window::request_overlay_permission,
         commands::window::setup_foreground_service,
+        commands::window::set_overlay_transparency,
+        commands::window::set_click_through,
+        commands::window::trim_memory_command,
     ]);
 
     #[cfg(debug_assertions)]
@@ -124,6 +127,9 @@ pub fn run() {
             commands::shiori::lifecycle::close::close_ghost,
             commands::window::request_overlay_permission,
             commands::window::setup_foreground_service,
+            commands::window::set_overlay_transparency,
+            commands::window::set_click_through,
+            commands::window::trim_memory_command,
             commands::window::test_command,
             commands::window::minimize_app,
             commands::window::exit_app,

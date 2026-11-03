@@ -167,6 +167,9 @@ fn test_handle_execute_command() {
     let res_set_prop = handle_execute_command("SetProperty[my.prop,val]", &ctx);
     assert_eq!(res_set_prop.status, SstpStatusCode::Ok);
 
+    let res_set_prop_empty = handle_execute_command("SetProperty[]", &ctx);
+    assert_eq!(res_set_prop_empty.status, SstpStatusCode::BadRequest);
+
     let res_cookie = handle_execute_command("GetCookie[user_token]", &ctx);
     assert_eq!(res_cookie.status, SstpStatusCode::Ok);
     assert_eq!(res_cookie.additional_data, Some("abc123xyz".to_string()));
@@ -176,6 +179,27 @@ fn test_handle_execute_command() {
 
     let res_set_cookie = handle_execute_command("SetCookie[theme,dark]", &ctx);
     assert_eq!(res_set_cookie.status, SstpStatusCode::Ok);
+
+    let res_set_cookie_empty = handle_execute_command("SetCookie[]", &ctx);
+    assert_eq!(res_set_cookie_empty.status, SstpStatusCode::BadRequest);
+
+    let res_prop_missing = handle_execute_command("GetProperty[nonexistent.prop]", &ctx);
+    assert_eq!(res_prop_missing.status, SstpStatusCode::Ok);
+    assert_eq!(res_prop_missing.additional_data, Some("".to_string()));
+
+    let res_prop_lc = handle_execute_command("GetProperty[CURRENTGHOST.NAME]", &ctx);
+    assert_eq!(res_prop_lc.status, SstpStatusCode::Ok);
+    assert_eq!(res_prop_lc.additional_data, Some("Nanai Ghost".to_string()));
+
+    let res_cookie_missing = handle_execute_command("GetCookie[nonexistent_token]", &ctx);
+    assert_eq!(res_cookie_missing.status, SstpStatusCode::Ok);
+    assert_eq!(res_cookie_missing.additional_data, Some("".to_string()));
+
+    let mut ctx_other_sender = ctx.clone();
+    ctx_other_sender.sender = "UnknownSender".to_string();
+    let res_cookie_other = handle_execute_command("GetCookie[user_token]", &ctx_other_sender);
+    assert_eq!(res_cookie_other.status, SstpStatusCode::Ok);
+    assert_eq!(res_cookie_other.additional_data, Some("".to_string()));
 
     let res_version = handle_execute_command("GetVersion", &ctx);
     assert_eq!(res_version.additional_data, Some("2.0.0".to_string()));

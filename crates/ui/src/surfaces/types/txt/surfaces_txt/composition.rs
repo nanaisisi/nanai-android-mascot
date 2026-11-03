@@ -110,4 +110,54 @@ mod tests {
         let txt = SurfacesTxt::default();
         assert!(txt.plan_composition(999, &[]).is_none());
     }
+
+    #[test]
+    fn test_plan_composition_edge_cases() {
+        use crate::surfaces::types::{SurfaceDefinition, AnimationPattern, SerikoAnimation};
+
+        let mut txt = SurfacesTxt::default();
+        let mut def = SurfaceDefinition::default();
+
+        let anim1 = SerikoAnimation {
+            id: 1,
+            name: None,
+            interval: Some(Interval::Bind),
+            options: vec![],
+            collisions: vec![],
+            patterns: vec![
+                AnimationPattern { index: 0, method: DrawMethod::Insert, surface: 2, wait: 0, wait_max: None, x: 0, y: 0, options: vec![] },
+            ],
+        };
+        let anim2 = SerikoAnimation {
+            id: 2,
+            name: None,
+            interval: Some(Interval::Bind),
+            options: vec![],
+            collisions: vec![],
+            patterns: vec![
+                AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 10, wait: 0, wait_max: None, x: 0, y: 0, options: vec![] },
+            ],
+        };
+        let anim_non_bind = SerikoAnimation {
+            id: 3,
+            name: None,
+            interval: Some(Interval::Always),
+            options: vec![],
+            collisions: vec![],
+            patterns: vec![
+                AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 11, wait: 0, wait_max: None, x: 0, y: 0, options: vec![] },
+            ],
+        };
+
+        def.animations.insert(1, anim1);
+        def.animations.insert(2, anim2);
+        def.animations.insert(3, anim_non_bind);
+        txt.surfaces.insert(0, def);
+
+        let plan = txt.plan_composition(0, &[1, 2]);
+        assert!(plan.is_some());
+
+        let plan_inactive = txt.plan_composition(0, &[1]);
+        assert!(plan_inactive.is_some());
+    }
 }

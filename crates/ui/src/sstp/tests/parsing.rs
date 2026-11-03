@@ -208,3 +208,21 @@ fn test_direct_sstp_and_saori_request() {
         Some(&"test_text".to_string())
     );
 }
+
+#[test]
+fn test_sstp_request_parser_more_edge_cases() {
+    let raw = "SEND SSTP/1.4\r\n\
+        Sender: Tool\r\n\
+        HWnd: invalid_number\r\n\
+        ReceiverGhostHWnd: invalid_number\r\n\
+        KeepAlive: 1\r\n\
+        Option: opt1, , opt2\r\n\
+        Argument0: arg_val\r\n\
+        \r\n";
+    let req = SstpRequest::parse(raw).unwrap();
+    assert!(req.keep_alive);
+    assert_eq!(req.hwnd, None);
+    assert_eq!(req.receiver_ghost_hwnd, None);
+    assert_eq!(req.options, vec!["opt1", "opt2"]);
+    assert_eq!(req.references.get("Reference0"), Some(&"arg_val".to_string()));
+}

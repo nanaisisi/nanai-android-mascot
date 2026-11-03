@@ -311,3 +311,81 @@ fn test_extended_blend_modes_subtract_divide_overlay_softlight() {
     );
     assert!(softlight.get_pixel(0, 0).is_some());
 }
+
+#[test]
+fn test_chromakey_edge_cases() {
+    let mut fb_zero = SurfaceFrameBuffer::new(0, 0);
+    fb_zero.apply_corner_chromakey();
+
+    let mut fb_custom = SurfaceFrameBuffer::new(1, 1);
+    fb_custom.set_pixel(0, 0, 100, 150, 200, 255);
+    fb_custom.apply_chromakey(100, 150, 200);
+    assert_eq!(fb_custom.get_pixel(0, 0).unwrap().3, 0);
+}
+
+#[test]
+fn test_framebuffer_edge_cases() {
+    let mut fb = SurfaceFrameBuffer::new(2, 2);
+    assert!(fb.get_pixel(5, 0).is_none());
+    assert!(fb.get_pixel(0, 5).is_none());
+
+    fb.set_pixel(5, 0, 255, 255, 255, 255);
+    fb.set_pixel(0, 5, 255, 255, 255, 255);
+
+    fb.clear_rect(0, 0, 0, 2);
+    fb.clear_rect(0, 0, 2, 0);
+    fb.clear_rect(5, 0, 1, 1);
+    fb.clear_rect(0, 5, 1, 1);
+    fb.clear_rect(1, 1, 5, 5);
+    fb.clear();
+}
+
+#[test]
+fn test_compositor_layer_edge_cases() {
+    let mut base = SurfaceFrameBuffer::new(2, 2);
+    base.set_pixel(0, 0, 100, 100, 100, 255);
+
+    let layer_empty = SurfaceFrameBuffer::new(1, 1);
+    let mut layer_sa0 = SurfaceFrameBuffer::new(1, 1);
+    layer_sa0.set_pixel(0, 0, 50, 50, 50, 0);
+
+    base.composite_layer(&layer_empty, -10, -10, &DrawMethod::Overlay);
+    base.composite_layer(&layer_empty, 10, 10, &DrawMethod::Overlay);
+
+    base.composite_layer(&layer_sa0, 0, 0, &DrawMethod::Interpolate);
+    let mut layer_interp_same = SurfaceFrameBuffer::new(1, 1);
+    layer_interp_same.set_pixel(0, 0, 100, 100, 100, 255);
+    base.composite_layer(&layer_interp_same, 0, 0, &DrawMethod::Interpolate);
+
+    base.composite_layer(&layer_sa0, 0, 0, &DrawMethod::Add);
+
+    base.composite_layer(&layer_sa0, 0, 0, &DrawMethod::Blend("unknown-mode".into()));
+
+    let mut layer_sr0 = SurfaceFrameBuffer::new(1, 1);
+    layer_sr0.set_pixel(0, 0, 0, 0, 0, 255);
+    base.composite_layer(&layer_sr0, 0, 0, &DrawMethod::Blend("divide".into()));
+
+    let mut layer_overlay_dark = SurfaceFrameBuffer::new(1, 1);
+    layer_overlay_dark.set_pixel(0, 0, 50, 50, 50, 255);
+    base.composite_layer(&layer_overlay_dark, 0, 0, &DrawMethod::Blend("overlay".into()));
+
+    let mut layer_overlay_light = SurfaceFrameBuffer::new(1, 1);
+    layer_overlay_light.set_pixel(0, 0, 200, 200, 200, 255);
+    base.composite_layer(&layer_overlay_light, 0, 0, &DrawMethod::Blend("overlay".into()));
+
+    let mut layer_soft_dark = SurfaceFrameBuffer::new(1, 1);
+    layer_soft_dark.set_pixel(0, 0, 50, 50, 50, 255);
+    base.composite_layer(&layer_soft_dark, 0, 0, &DrawMethod::Blend("softlight".into()));
+
+    let mut layer_soft_light = SurfaceFrameBuffer::new(1, 1);
+    layer_soft_light.set_pixel(0, 0, 200, 200, 200, 255);
+    base.composite_layer(&layer_soft_light, 0, 0, &DrawMethod::Blend("softlight".into()));
+
+    let mut layer_sa255 = SurfaceFrameBuffer::new(1, 1);
+    layer_sa255.set_pixel(0, 0, 200, 200, 200, 255);
+    base.composite_layer(&layer_sa255, 0, 0, &DrawMethod::Overlay);
+
+    let mut layer_sa128 = SurfaceFrameBuffer::new(1, 1);
+    layer_sa128.set_pixel(0, 0, 200, 200, 200, 128);
+    base.composite_layer(&layer_sa128, 0, 0, &DrawMethod::Overlay);
+}

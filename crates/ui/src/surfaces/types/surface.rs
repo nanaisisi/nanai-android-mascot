@@ -282,4 +282,32 @@ mod tests {
         let res_id = def.hit_test_sorted(25, 25, Some(&SortKind::Id)).unwrap();
         assert_eq!(res_id.name, "head"); // ID 1
     }
+
+    #[test]
+    fn test_surface_definition_more_edge_cases() {
+        let def = SurfaceDefinition::default();
+        assert!(def.effective_icon_rect().is_none());
+
+        let mut def2 = SurfaceDefinition::default();
+        def2.collisions.push(CollisionArea {
+            id: Some(1),
+            name: "顔".into(),
+            shape: CollisionShape::Rect { x1: 0, y1: 0, x2: 50, y2: 50 },
+        });
+        assert!(def2.effective_icon_rect().is_some());
+
+        let mut def3 = SurfaceDefinition::default();
+        def3.collisions.push(CollisionArea {
+            id: Some(1),
+            name: "頭".into(),
+            shape: CollisionShape::Rect { x1: 0, y1: 0, x2: 50, y2: 50 },
+        });
+        assert!(def3.effective_icon_rect().is_some());
+
+        let square = make_square_rect(0, 0, 50, 50);
+        assert_eq!(square, [0, 0, 50, 50]);
+
+        let hit = def2.hit_test_sorted(25, 25, Some(&SortKind::None));
+        assert!(hit.is_some());
+    }
 }

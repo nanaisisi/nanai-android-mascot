@@ -89,4 +89,20 @@ mod tests {
             _ => panic!("Expected Root"),
         }
     }
+
+    #[test]
+    fn test_build_sakura_ast_root_only() {
+        let commands = vec![
+            SakuraCommand::Text("Root only text".to_string()),
+            SakuraCommand::Anchor { id: "a_root".to_string(), text: "Root Anchor".to_string(), args: vec![] },
+            SakuraCommand::Choice { label: "Root Choice".to_string(), id: "c_root".to_string(), args: vec![] },
+        ];
+        let ast = build_sakura_ast(&commands);
+        match ast {
+            SakuraAstNode::Root { children } => {
+                assert_eq!(children.len(), 3);
+            }
+            _ => panic!("Expected Root"),
+        }
+    }
 }

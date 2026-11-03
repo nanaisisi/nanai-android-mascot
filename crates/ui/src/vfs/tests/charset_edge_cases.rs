@@ -29,3 +29,15 @@ fn test_iso_2022_jp_and_quoted_charset_headers() {
     assert_eq!(decoded_raw, raw_jis_text);
     assert_eq!(enc_raw, "ISO-2022-JP");
 }
+
+#[test]
+fn test_encoding_edge_cases() {
+    assert!(encode_to_charset("test", "unknown_charset").is_none());
+    assert!(encode_to_charset("🚀", "shift_jis").is_none());
+
+    let normalized = normalize_newlines("line1\r\nline2\rline3\nline4");
+    assert_eq!(normalized, "line1\nline2\nline3\nline4");
+
+    assert!(encode_to_charset("test", "utf-16le").is_some());
+    assert!(encode_to_charset("test", "utf-16be").is_some());
+}

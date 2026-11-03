@@ -518,6 +518,66 @@ fn test_stepping_empty_parallel_methods() {
 }
 
 #[test]
+fn test_stepping_catalog_missing_animation_id() {
+    use crate::surfaces::SerikoAnimation;
+
+    let mut scheduler = AnimationScheduler::new();
+    let anim = SerikoAnimation {
+        id: 200,
+        name: None,
+        interval: Some(Interval::RunOnce),
+        options: vec![],
+        collisions: vec![],
+        patterns: vec![
+            AnimationPattern { index: 0, method: DrawMethod::Start(Some(9999)), surface: 10, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] },
+        ],
+    };
+    scheduler.start_animation(0, 0, &anim);
+    let non_matching_catalog = vec![
+        SerikoAnimation {
+            id: 8888,
+            name: None,
+            interval: Some(Interval::RunOnce),
+            options: vec![],
+            collisions: vec![],
+            patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 10, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] }],
+        }
+    ];
+    let _ = scheduler.step_with_catalog(15, &non_matching_catalog);
+}
+
+#[test]
+fn test_stepping_stop_others_retains_and_drops() {
+    use crate::surfaces::SerikoAnimation;
+
+    let mut scheduler = AnimationScheduler::new();
+    let anim_stop = SerikoAnimation {
+        id: 50,
+        name: None,
+        interval: Some(Interval::RunOnce),
+        options: vec![],
+        collisions: vec![],
+        patterns: vec![
+            AnimationPattern { index: 0, surface: -2, wait: 10, wait_max: None, method: DrawMethod::Overlay, x: 0, y: 0, options: vec![] },
+        ],
+    };
+    let anim_normal = SerikoAnimation {
+        id: 51,
+        name: None,
+        interval: Some(Interval::Always),
+        options: vec![],
+        collisions: vec![],
+        patterns: vec![
+            AnimationPattern { index: 0, surface: 300, wait: 100, wait_max: None, method: DrawMethod::Overlay, x: 0, y: 0, options: vec![] },
+        ],
+    };
+    scheduler.start_animation(0, 0, &anim_normal);
+    scheduler.start_animation(0, 0, &anim_stop);
+    assert_eq!(scheduler.active_count(0), 2);
+    let _ = scheduler.step(15);
+}
+
+#[test]
 fn test_triggers_coverage_boost() {
     use crate::surfaces::SerikoAnimation;
 
@@ -600,6 +660,7 @@ fn test_triggers_coverage_boost() {
     ];
     scheduler.set_bind_active(0, 2, true);
     scheduler.schedule_surface_animations(0, 0, &anims, 0.0);
+    scheduler.schedule_surface_animations(0, 0, &anims, 1.0); // exercises should_fire returning false branch
 
     // 5. on_talk_end when talking_flags is false
     scheduler.on_talk_end(0, &anims);

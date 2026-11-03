@@ -87,4 +87,30 @@ mod tests {
         assert!(txt.resolve_alias("nonexistent").is_none());
         assert!(txt.resolve_kero_alias("nonexistent").is_none());
     }
+
+    #[test]
+    fn test_alias_resolution_edge_cases() {
+        let mut txt = SurfacesTxt::default();
+        txt.aliases.insert("smile".to_string(), vec![10, 20]);
+        assert!(txt.resolve_alias("smile").is_none());
+
+        txt.surfaces.insert(20, SurfaceDefinition::default());
+        assert!(txt.resolve_alias("smile").is_some());
+
+        let mut def = SurfaceDefinition::default();
+        def.name = Some("Blink".to_string());
+        txt.surfaces.insert(0, def);
+        assert!(txt.resolve_name_or_alias("Blink").is_some());
+        assert!(txt.resolve_name_or_alias("smile").is_some());
+        assert!(txt.resolve_name_or_alias("nonexistent").is_none());
+
+        txt.kero_aliases.insert("ksmile".to_string(), vec![30]);
+        assert!(txt.resolve_kero_alias("ksmile").is_none());
+        txt.surfaces.insert(30, SurfaceDefinition::default());
+        assert!(txt.resolve_kero_alias("ksmile").is_some());
+
+        assert!(txt.resolve_kero_name_or_alias("Blink").is_some());
+        assert!(txt.resolve_kero_name_or_alias("ksmile").is_some());
+        assert!(txt.resolve_kero_name_or_alias("nonexistent").is_none());
+    }
 }

@@ -73,8 +73,10 @@ impl ActiveAnimation {
 
         if is_last || is_surface_minus_one {
             self.is_finished = true;
-        } else if let Some(next_pat) = self.patterns.get(self.current_pattern_index) {
-            self.next_step_at_ms = self.next_step_at_ms.saturating_add(next_pat.wait);
+        } else {
+            self.next_step_at_ms = self.next_step_at_ms.saturating_add(
+                self.patterns[self.current_pattern_index].wait
+            );
         }
 
         Some(FrameStepEvent {

@@ -318,3 +318,9 @@ name,Test\n\
     let manifest = parse_install_manifest(install_txt);
     assert_eq!(manifest.name, "Test");
 }
+
+#[test]
+fn test_parse_install_manifest_empty() {
+    let manifest = parse_install_manifest("");
+    assert!(manifest.name.is_empty());
+}

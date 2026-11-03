@@ -372,6 +372,32 @@ Bust,触らないで！
 }
 
 #[test]
+fn test_parse_block_opener_edge_cases() {
+    let sample = r"
+char2.cursor
+{
+}
+char3.tooltips
+{
+}
+surface.append.foo
+{
+}
+surface.alias.bar
+{
+}
+surface.foo
+{
+}
+descript_extra
+{
+}
+";
+    let txt = SurfacesTxt::parse(sample);
+    assert_eq!(txt.version, 0);
+}
+
+#[test]
 fn test_animation_handler_edge_cases() {
     let sample = r"surface0
 {

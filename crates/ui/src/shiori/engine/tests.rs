@@ -447,3 +447,41 @@ fn test_multistage_shiori_loader_unload_errors() {
     let res = l2.load_first_working(dir, |_| Err("".into()), |_| Err("".into()));
     assert!(res.is_err());
 }
+
+#[test]
+fn test_loader_candidate_kind_and_load_attempt_derives_and_last_error() {
+    // Test CandidateKind derives (Debug, Clone, Copy, PartialEq, Eq)
+    let kind1 = CandidateKind::Dynamic;
+    let kind2 = kind1;
+    let kind3 = kind1.clone();
+    assert_eq!(kind1, kind2);
+    assert_eq!(kind1, kind3);
+    assert_ne!(kind1, CandidateKind::Wasm);
+    assert_ne!(kind1, CandidateKind::Mock);
+    assert!(format!("{:?}", kind1).contains("Dynamic"));
+    assert!(format!("{:?}", CandidateKind::Wasm).contains("Wasm"));
+    assert!(format!("{:?}", CandidateKind::Mock).contains("Mock"));
+
+    // Test LoadAttempt derives (Debug, Clone, PartialEq, Eq)
+    let attempt1 = LoadAttempt {
+        kind: CandidateKind::Dynamic,
+        path: Some(PathBuf::from("ghost.dll")),
+        success: false,
+        error: Some("File not found".to_string()),
+    };
+    let attempt2 = attempt1.clone();
+    assert_eq!(attempt1, attempt2);
+    assert!(format!("{:?}", attempt1).contains("LoadAttempt"));
+    assert!(format!("{:?}", attempt1).contains("ghost.dll"));
+
+    // Test MultiStageShioriLoader last_error() on failed load
+    let mut loader = MultiStageShioriLoader::new();
+    loader.add_candidate(ShioriEngineCandidate::Dynamic(PathBuf::from("invalid.dll")));
+    let res = loader.load_first_working(
+        Path::new("/dummy"),
+        |_| Err("DLL load symbol missing".to_string()),
+        |_| Err("WASM not invoked".to_string()),
+    );
+    assert!(res.is_err());
+    assert_eq!(loader.last_error(), Some("Dynamic load failed for \"invalid.dll\": DLL load symbol missing"));
+}

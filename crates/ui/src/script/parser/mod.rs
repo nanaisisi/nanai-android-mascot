@@ -269,4 +269,11 @@ mod tests {
         assert_eq!(cmds[3], SakuraCommand::Text("NoAutoWrapText".to_string()));
         assert_eq!(cmds[4], SakuraCommand::NewLineNoPause);
     }
+
+    #[test]
+    fn test_parse_sakura_script_parser_edge_cases() {
+        let script = "\\2\\3\\4\\5\\6\\7\\8\\9\\c[arg_clear]\\j[my_jump]\\&[amp]\\&[lt]\\&[gt]\\&[quot]\\&[apos]\\&[nbsp]\\&[custom]";
+        let cmds = parse_sakura_script(script);
+        assert!(!cmds.is_empty());
+    }
 }

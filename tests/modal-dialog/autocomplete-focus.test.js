@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test, vi } from "vitest";
-import { setupMockDom, resetCreatedElements } from "./helpers.js";
+import { resetCreatedElements, setupMockDom } from "./helpers.js";
 
 setupMockDom();
 

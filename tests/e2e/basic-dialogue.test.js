@@ -2,7 +2,9 @@ import assert from "node:assert/strict";
 import { test, vi } from "vitest";
 import { createMockElement } from "./helpers.js";
 
-const { SakuraScriptPlayer } = await import("../../ui/js/ghost/sakura-script.js");
+const { SakuraScriptPlayer } = await import(
+	"../../ui/js/ghost/sakura-script.js"
+);
 const { parseSakuraScript } = await import(
 	"../../ui/js/ghost/sakura-tokenizer.js"
 );

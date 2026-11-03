@@ -205,3 +205,59 @@ collisionex1,halo,ellipse,100,100,60,30
     assert_eq!(halo.name, "halo");
     assert!(def2.hit_test(150, 40).is_none()); // 楕円の外側（y方向 半径30）
 }
+
+#[test]
+fn test_sakura_script_postmessage_command() {
+    let script = r"\0\m[1024,10,20]本文";
+    let mut commands = Vec::new();
+    execute_sakura_script(script, |cmd| commands.push(cmd));
+
+    assert_eq!(commands[0], SakuraCommand::Target(0));
+    assert_eq!(
+        commands[1],
+        SakuraCommand::PostMessage {
+            umsg: "1024".into(),
+            wparam: "10".into(),
+            lparam: "20".into(),
+        }
+    );
+    assert_eq!(commands[2], SakuraCommand::Text("本文".into()));
+}
+
+#[test]
+fn test_surfaces_txt_cursor_and_tooltip_wildcards() {
+    let sample = r"cursor
+{
+mouseup,Head,system:hand
+mousedown,Bust,system:finger
+}
+tooltips
+{
+Head,Pat here!
+Bust,Poke here!
+}
+";
+    let txt = SurfacesTxt::parse(sample);
+    // Cursor query using scope 0 and scope 1 should both fall back to '*'
+    assert_eq!(
+        txt.get_cursor("sakura", "mouseup", "Head"),
+        Some("system:hand")
+    );
+    assert_eq!(txt.get_cursor("0", "mouseup", "Head"), Some("system:hand"));
+    assert_eq!(
+        txt.get_cursor("kero", "mousedown", "Bust"),
+        Some("system:finger")
+    );
+    assert_eq!(
+        txt.get_cursor("1", "mousedown", "Bust"),
+        Some("system:finger")
+    );
+    assert_eq!(txt.get_cursor("0", "nonexistent", "Head"), None);
+
+    // Tooltip query fallback to '*'
+    assert_eq!(txt.get_tooltip("sakura", "Head"), Some("Pat here!"));
+    assert_eq!(txt.get_tooltip("0", "Head"), Some("Pat here!"));
+    assert_eq!(txt.get_tooltip("kero", "Bust"), Some("Poke here!"));
+    assert_eq!(txt.get_tooltip("1", "Bust"), Some("Poke here!"));
+    assert_eq!(txt.get_tooltip("0", "NonExistent"), None);
+}

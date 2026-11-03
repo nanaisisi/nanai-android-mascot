@@ -304,3 +304,17 @@ fn test_fmo_types_lifecycle_variations() {
     assert!(entry2.is_visible);
     assert_eq!(entry2.lifecycle_state, "unknown");
 }
+
+#[test]
+fn test_fmo_types_stopped_invisible() {
+    let mut rec = FmoRecord::new("test_si", "SI");
+    rec.modulestate = Some("lifecycle:stopped".to_string());
+    let entry_stop = FmoEntry::from_record(&rec);
+    assert!(!entry_stop.is_visible);
+    assert_eq!(entry_stop.lifecycle_state, "stopped");
+
+    rec.modulestate = Some("lifecycle:invisible".to_string());
+    let entry_invis = FmoEntry::from_record(&rec);
+    assert!(!entry_invis.is_visible);
+    assert_eq!(entry_invis.lifecycle_state, "invisible");
+}

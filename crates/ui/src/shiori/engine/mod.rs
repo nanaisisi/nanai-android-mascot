@@ -11,7 +11,7 @@ pub mod trait_def;
 #[cfg(test)]
 mod tests;
 
-pub use loader::{MultiStageShioriLoader, ShioriEngineCandidate};
+pub use loader::{CandidateKind, LoadAttempt, MultiStageShioriLoader, ShioriEngineCandidate};
 pub use mock::MockShioriEngine;
 pub use state::{ShioriLifecycleState, build_standard_capability_references};
 pub use trait_def::ShioriEngine;

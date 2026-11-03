@@ -378,3 +378,46 @@ fn test_multistage_shiori_loader_full_coverage() {
     assert!(l6.reload().is_err());
     assert!(l6.request("GET SHIORI/3.0\r\n\r\n").is_err());
 }
+
+#[test]
+fn test_multistage_shiori_loader_attempts_and_active_kind() {
+    let mut loader = MultiStageShioriLoader::new();
+    assert_eq!(loader.active_kind(), None);
+    assert_eq!(loader.load_attempts().len(), 0);
+
+    let dir = Path::new("/dummy/ghost/master");
+
+    // Dynamic fail -> Wasm fail -> Mock success
+    loader.add_candidate(ShioriEngineCandidate::Dynamic(PathBuf::from("dyn.dll")));
+    loader.add_candidate(ShioriEngineCandidate::Wasm(PathBuf::from("script.wasm")));
+    let mut mock = MockShioriEngine::new();
+    mock.set_response("OnTest", r" \s[0]MockOK\e");
+    loader.add_candidate(ShioriEngineCandidate::Mock(Box::new(mock)));
+
+    let res = loader.load_first_working(
+        dir,
+        |_| Err("Dyn failed".into()),
+        |_| Err("Wasm failed".into()),
+    );
+    assert!(res.is_ok());
+    assert_eq!(loader.active_kind(), Some(CandidateKind::Mock));
+
+    let attempts = loader.load_attempts();
+    assert_eq!(attempts.len(), 3);
+    assert_eq!(attempts[0].kind, CandidateKind::Dynamic);
+    assert!(!attempts[0].success);
+    assert!(attempts[0].error.is_some());
+
+    assert_eq!(attempts[1].kind, CandidateKind::Wasm);
+    assert!(!attempts[1].success);
+
+    assert_eq!(attempts[2].kind, CandidateKind::Mock);
+    assert!(attempts[2].success);
+    assert!(attempts[2].error.is_none());
+
+    loader.clear_attempts();
+    assert_eq!(loader.load_attempts().len(), 0);
+
+    loader.clear_candidates();
+    assert_eq!(loader.candidate_count(), 0);
+}

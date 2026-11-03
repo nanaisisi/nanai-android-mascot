@@ -1,3 +1,4 @@
+use crate::common::paths::resolve_ghost_directory;
 use crate::common::state::AppState;
 use std::path::PathBuf;
 

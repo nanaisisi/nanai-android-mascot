@@ -51,15 +51,35 @@ test("setupExplorerListeners covers load, render, filtering, sorting, and user a
 			querySelector: (sel) => getEl(sel.replace("#", "")),
 			querySelectorAll: (sel) => {
 				if (sel === "th[data-sort]") {
-					return [
-						{
-							dataset: { sort: "name" },
-							textContent: "Name",
-							addEventListener(_t, cb) {
-								this._cb = cb;
+					if (!mockModalManager._thList) {
+						mockModalManager._thList = [
+							{
+								dataset: { sort: "name" },
+								textContent: "Name",
+								addEventListener(t, cb) {
+									this._listeners = this._listeners || {};
+									this._listeners[t] = cb;
+								},
 							},
-						},
-					];
+							{
+								dataset: { sort: "craftman" },
+								textContent: "Craftman",
+								addEventListener(t, cb) {
+									this._listeners = this._listeners || {};
+									this._listeners[t] = cb;
+								},
+							},
+							{
+								dataset: {},
+								textContent: "NoKey",
+								addEventListener(t, cb) {
+									this._listeners = this._listeners || {};
+									this._listeners[t] = cb;
+								},
+							},
+						];
+					}
+					return mockModalManager._thList;
 				}
 				return [];
 			},
@@ -94,8 +114,28 @@ test("setupExplorerListeners covers load, render, filtering, sorting, and user a
 	const refreshBtn = getEl("explorer-refresh-btn");
 	refreshBtn._listeners?.click?.({});
 
+	// Test sorting: click header ascending, then descending, then new key, then no-key header
+	const thList = mockModalManager.content.querySelectorAll("th[data-sort]");
+	thList[0]._listeners?.click?.({});
+	thList[0]._listeners?.click?.({});
+	thList[1]._listeners?.click?.({});
+	thList[2]._listeners?.click?.({});
+
+	// Test row click and dblclick
+	const rows = getEl("explorer-rows");
+	if (rows.children.length > 0) {
+		rows.children[0].click();
+		rows.children[0].dblclick();
+	}
+
 	// Test switch btn
 	const switchBtn = getEl("explorer-switch-btn");
+	switchBtn._listeners?.click?.({});
+
+	// Test switch btn with no selection
+	mockApp.ghostController.scanGhosts = async () => [];
+	refreshBtn._listeners?.click?.({});
+	await new Promise((r) => setTimeout(r, 20));
 	switchBtn._listeners?.click?.({});
 
 	// Test close btn

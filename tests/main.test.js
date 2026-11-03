@@ -223,6 +223,17 @@ test("NanaiAndroidMascotApp scanPlugins covers success and error branches", asyn
 		});
 
 		await app.scanPlugins();
+
+		// 3. Tauri environment empty plugins (branch coverage)
+		delete globalThis.__TAURI__;
+		delete globalThis.window.__TAURI__;
+		globalThis.__TAURI_INTERNALS__ = createTauriInternals(async (cmd) => {
+			if (cmd === "scan_plugins") return [];
+		});
+
+		app.availablePlugins = null;
+		await app.scanPlugins();
+		assert.equal(app.availablePlugins, null);
 	} finally {
 		NanaiAndroidMascotApp.prototype.init = origInit;
 		delete globalThis.__TAURI__;

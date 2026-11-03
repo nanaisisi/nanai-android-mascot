@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ANDROID_EVENTS, AndroidBridge } from "../../ui/js/ui/touch/index.js";
+import { isAndroidPlatform } from "../../ui/js/ui/touch/bridge/overlay.js";
 
 describe("AndroidBridge - Platform & Overlay", () => {
 	let originalNavigator;
@@ -227,5 +228,21 @@ describe("AndroidBridge - Platform & Overlay", () => {
 
 		unbind3();
 		expect(bridge.getListenerCount()).toBe(0);
+	});
+
+	it("returns false for isAndroidPlatform when navigator or userAgent is missing", () => {
+		Object.defineProperty(globalThis, "navigator", {
+			value: undefined,
+			configurable: true,
+			writable: true,
+		});
+		expect(isAndroidPlatform()).toBe(false);
+
+		Object.defineProperty(globalThis, "navigator", {
+			value: {},
+			configurable: true,
+			writable: true,
+		});
+		expect(isAndroidPlatform()).toBe(false);
 	});
 });

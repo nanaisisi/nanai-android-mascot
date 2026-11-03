@@ -67,6 +67,12 @@ fn test_virtual_file_system_trait_and_overlay() {
     // 未存在ファイルの読み込みエラー
     assert!(overlay.read_text("not_found.txt").is_err());
     assert!(overlay.read_binary("not_found.bin").is_err());
+    assert!(overlay.list_dir("nonexistent_dir").is_err());
+    assert!(overlay.walk_files("nonexistent_dir").is_err());
+
+    let empty_overlay = OverlayVfs::new();
+    assert!(empty_overlay.list_dir("any").unwrap().is_empty());
+    assert!(empty_overlay.walk_files("any").unwrap().is_empty());
 
     // クリア
     overlay.clear();

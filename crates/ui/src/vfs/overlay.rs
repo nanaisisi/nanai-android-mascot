@@ -85,10 +85,12 @@ impl VirtualFileSystem for OverlayVfs {
 
         for layer in &self.layers {
             if let Ok(entries) = layer.list_dir(dir_path) {
-                any_found = true;
-                for entry in entries {
-                    if !merged.contains(&entry) {
-                        merged.push(entry);
+                if !entries.is_empty() {
+                    any_found = true;
+                    for entry in entries {
+                        if !merged.contains(&entry) {
+                            merged.push(entry);
+                        }
                     }
                 }
             }
@@ -111,10 +113,12 @@ impl VirtualFileSystem for OverlayVfs {
 
         for layer in &self.layers {
             if let Ok(files) = layer.walk_files(dir_path) {
-                any_found = true;
-                for file in files {
-                    if !merged.contains(&file) {
-                        merged.push(file);
+                if !files.is_empty() {
+                    any_found = true;
+                    for file in files {
+                        if !merged.contains(&file) {
+                            merged.push(file);
+                        }
                     }
                 }
             }

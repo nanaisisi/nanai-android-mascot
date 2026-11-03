@@ -105,4 +105,18 @@ mod tests {
             _ => panic!("Expected Root"),
         }
     }
+
+    #[test]
+    fn test_build_sakura_ast_trailing_target() {
+        let commands = vec![
+            SakuraCommand::Target(0),
+        ];
+        let ast = build_sakura_ast(&commands);
+        match ast {
+            SakuraAstNode::Root { children } => {
+                assert_eq!(children.len(), 1);
+            }
+            _ => panic!("Expected Root"),
+        }
+    }
 }

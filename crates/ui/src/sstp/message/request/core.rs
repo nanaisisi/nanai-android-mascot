@@ -26,6 +26,9 @@ pub struct SstpRequest {
     pub references: HashMap<String, String>,
     pub pass_thru: HashMap<String, String>,
     pub keep_alive: bool,
+    /// HTTP 互換 Connection ヘッダ ("keep-alive" / "close")
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub connection: Option<String>,
     /// COMMUNICATE / GIVE 拡張ヘッダ: 送信元サーフィス番号 (例: "0,10")
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub surface: Option<String>,

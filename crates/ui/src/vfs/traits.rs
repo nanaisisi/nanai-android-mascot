@@ -19,4 +19,30 @@ pub trait VirtualFileSystem: Send + Sync {
 
     /// 指定ディレクトリ配下の全ファイルを再帰的に走査（相対パスのリストを返す）
     fn walk_files(&self, dir_path: &str) -> io::Result<Vec<String>>;
+
+    /// ファイルのバイトサイズを取得
+    fn file_size(&self, path: &str) -> io::Result<u64> {
+        self.read_binary(path).map(|data| data.len() as u64)
+    }
+
+    /// 通常ファイルとして存在するか判定
+    fn is_file(&self, path: &str) -> bool {
+        self.exists(path) && !self.is_dir(path)
+    }
+
+    /// ディレクトリとして存在するか判定
+    fn is_dir(&self, path: &str) -> bool {
+        self.list_dir(path).is_ok()
+    }
+
+    /// テキストファイルを読み込み、改行コードを正規化して行ごとの文字列リストとして返す
+    fn read_lines(&self, path: &str) -> io::Result<Vec<String>> {
+        let text = self.read_text(path)?;
+        let normalized = super::encoding::normalize_newlines(&text);
+        let trimmed_content = normalized.strip_suffix('\n').unwrap_or(&normalized);
+        if trimmed_content.is_empty() {
+            return Ok(Vec::new());
+        }
+        Ok(trimmed_content.split('\n').map(|s| s.to_string()).collect())
+    }
 }

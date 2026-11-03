@@ -2,3 +2,6 @@ import "./sakura-play/tokens-playback.test.js";
 import "./sakura-play/timing-wait.test.js";
 import "./sakura-play/sync-mode.test.js";
 import "./sakura-play/interactive-events.test.js";
+import "./sakura-play/sync-object.test.js";
+import "./sakura-play/queue-control.test.js";
+import "./sakura-play/sync-command.test.js";

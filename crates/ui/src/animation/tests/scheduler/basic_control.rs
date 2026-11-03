@@ -67,6 +67,8 @@ fn test_animation_scheduler_pause_resume() {
     assert_eq!(scheduler.active_count(0), 1);
 
     scheduler.pause_animation(0, 5);
+    assert_eq!(scheduler.active_animation_ids(0), vec![5]);
+    assert_eq!(scheduler.active_animation_ids(1), Vec::<u32>::new());
     assert!(scheduler.is_animation_paused(0, 5));
 
     let events = scheduler.step(200);

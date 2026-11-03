@@ -42,10 +42,34 @@ pub fn handle_execute_command(command_str: &str, ctx: &SstpGhostContext) -> Sstp
         (cmd, "")
     };
 
-    let args: Vec<&str> = if raw_args.is_empty() {
+    // 引数の取得：大かっこ内パラメータを優先し、空の場合は Reference0〜 から解決 (UKADOC method_execute.md)
+    let mut args: Vec<String> = if raw_args.is_empty() {
         Vec::new()
     } else {
-        raw_args.split(',').map(|s| s.trim()).collect()
+        raw_args.split(',').map(|s| s.trim().to_string()).collect()
+    };
+
+    if args.is_empty() {
+        let mut idx = 0;
+        while let Some(val) = ctx.references.get(&format!("Reference{}", idx)) {
+            args.push(val.clone());
+            idx += 1;
+        }
+    }
+
+    // リモート不可判定ヘルパー
+    let is_remote = ctx
+        .security_level
+        .as_deref()
+        .map(|s| s.eq_ignore_ascii_case("external"))
+        .unwrap_or(false);
+
+    let check_remote_prohibited = || -> Result<(), SstpResponse> {
+        if is_remote {
+            Err(SstpResponse::refuse().with_error_description("command prohibited from remote"))
+        } else {
+            Ok(())
+        }
     };
 
     match cmd_name.to_lowercase().as_str() {
@@ -89,9 +113,37 @@ pub fn handle_execute_command(command_str: &str, ctx: &SstpGhostContext) -> Sstp
                 SstpResponse::ok(None).with_additional_data(ctx.status.clone())
             }
         }
-        "getfmo" => SstpResponse::ok(None).with_additional_data(ctx.fmo_text.clone()),
+        "getfmo" => {
+            let fmo_data = if is_remote {
+                // リモート時は path, ghostpath を除去し hwnd をダミー化 (UKADOC method_execute.md)
+                let lines: Vec<String> = ctx
+                    .fmo_text
+                    .lines()
+                    .filter_map(|line| {
+                        if line.contains(".path\x01") || line.contains(".ghostpath\x01") {
+                            None
+                        } else if line.contains(".hwnd\x01") {
+                            let prefix = line.split_once(".hwnd\x01").map(|(p, _)| p).unwrap_or("");
+                            Some(format!("{}.hwnd\x01{}", prefix, 0))
+                        } else if line.contains(".kerohwnd\x01") {
+                            let prefix = line.split_once(".kerohwnd\x01").map(|(p, _)| p).unwrap_or("");
+                            Some(format!("{}.kerohwnd\x01{}", prefix, 0))
+                        } else if line.contains(".hwndlist\x01") {
+                            let prefix = line.split_once(".hwndlist\x01").map(|(p, _)| p).unwrap_or("");
+                            Some(format!("{}.hwndlist\x01{}", prefix, 0))
+                        } else {
+                            Some(line.to_string())
+                        }
+                    })
+                    .collect();
+                lines.join("\r\n")
+            } else {
+                ctx.fmo_text.clone()
+            };
+            SstpResponse::ok(None).with_additional_data(fmo_data)
+        }
         "getproperty" => {
-            let prop_name = args.first().copied().unwrap_or("");
+            let prop_name = args.first().map(|s| s.as_str()).unwrap_or("");
             if prop_name.is_empty() {
                 SstpResponse::bad_request().with_error_description("missing property name")
             } else {
@@ -105,15 +157,17 @@ pub fn handle_execute_command(command_str: &str, ctx: &SstpGhostContext) -> Sstp
             }
         }
         "setproperty" => {
+            if let Err(err_resp) = check_remote_prohibited() {
+                return err_resp;
+            }
             if args.is_empty() {
                 SstpResponse::bad_request().with_error_description("missing property name")
             } else {
-                // SetProperty 成功時は 200 OK
                 SstpResponse::ok(None)
             }
         }
         "getcookie" => {
-            let cookie_name = args.first().copied().unwrap_or("");
+            let cookie_name = args.first().map(|s| s.as_str()).unwrap_or("");
             if cookie_name.is_empty() {
                 SstpResponse::bad_request().with_error_description("missing cookie name")
             } else {
@@ -133,7 +187,28 @@ pub fn handle_execute_command(command_str: &str, ctx: &SstpGhostContext) -> Sstp
                 SstpResponse::ok(None)
             }
         }
-        "quiet" | "restore" => SstpResponse::ok(None),
+        "quiet" | "restore" => {
+            if let Err(err_resp) = check_remote_prohibited() {
+                return err_resp;
+            }
+            SstpResponse::ok(None)
+        }
+        "dumpsurface" | "moveasync" | "settrayicon" | "settrayballoon" => {
+            if let Err(err_resp) = check_remote_prohibited() {
+                return err_resp;
+            }
+            SstpResponse::ok(None)
+        }
+        "compressarchive" | "extractarchive" => {
+            if let Err(err_resp) = check_remote_prohibited() {
+                return err_resp;
+            }
+            if args.len() < 2 {
+                SstpResponse::bad_request().with_error_description("missing archive paths")
+            } else {
+                SstpResponse::ok(None)
+            }
+        }
         _ => SstpResponse::bad_request().with_error_description("unknown command"),
     }
 }

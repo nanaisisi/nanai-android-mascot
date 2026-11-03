@@ -43,6 +43,23 @@ fn test_sakura_script_extended() {
     assert_eq!(commands[6], SakuraCommand::End);
 }
 
+    #[test]
+    fn test_sakura_script_quicksection_and_choice_scope() {
+        let script = r"\![quicksection,1]\__q[OnTest,arg1]ChoiceText\__q\![quicksection,false]";
+        let cmds = parse_sakura_script(script);
+        assert_eq!(cmds.len(), 3);
+        assert_eq!(cmds[0], SakuraCommand::Quick(true));
+        assert_eq!(
+            cmds[1],
+            SakuraCommand::Choice {
+                label: "ChoiceText".to_string(),
+                id: "OnTest".to_string(),
+                args: vec!["arg1".to_string()],
+            }
+        );
+        assert_eq!(cmds[2], SakuraCommand::Quick(false));
+    }
+
 #[test]
 fn test_sakura_script_new_tags() {
     let script = r"\0\_q\x\_a[anchor01]リンク\_a\![raise,OnTest,1,2]\![bind,clothing,ribbon,1]";

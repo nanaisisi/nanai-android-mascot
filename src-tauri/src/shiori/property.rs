@@ -67,10 +67,14 @@ pub fn evaluate_property_query(query: &str) -> String {
         | "updatebuttoncaption"
         | "vanishbuttoncaption"
         | "vanishbuttonvisible"
+        | "definedsurfaceonlybutton.caption"
+        | "collisionvisiblebutton.caption"
         | "callsstpsendboxbutton.caption"
         | "updatefmobutton.caption"
         | "switchlocalsstpbutton.caption"
         | "switchremotesstpbutton.caption" => "1".to_string(),
+        "currentghost.seriko.surfacelist.defined" => "0,1,10".to_string(),
+        "currentghost.seriko.surfacelist.all" => "0,1,10".to_string(),
         "system.year" => "2026".to_string(),
         "system.month" => "11".to_string(),
         "system.day" => "3".to_string(),
@@ -185,6 +189,22 @@ mod tests {
         assert_eq!(evaluate_property_query("update_time"), "0");
         assert_eq!(evaluate_property_query("sakura.bind.menu"), "");
         assert_eq!(evaluate_property_query("kero.bind.menu"), "");
+        assert_eq!(
+            evaluate_property_query("definedsurfaceonlybutton.caption"),
+            "1"
+        );
+        assert_eq!(
+            evaluate_property_query("collisionvisiblebutton.caption"),
+            "1"
+        );
+        assert_eq!(
+            evaluate_property_query("currentghost.seriko.surfacelist.defined"),
+            "0,1,10"
+        );
+        assert_eq!(
+            evaluate_property_query("currentghost.seriko.surfacelist.all"),
+            "0,1,10"
+        );
         assert_eq!(
             evaluate_property_query("callsstpsendboxbutton.caption"),
             "1"

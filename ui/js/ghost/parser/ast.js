@@ -30,8 +30,14 @@ export function tokensToAst(tokens) {
 	/** @type {SakuraAstNode[]} */
 	let anchorChildren = [];
 
+	let currentChoiceScope = null;
+	/** @type {SakuraAstNode[]} */
+	let choiceScopeChildren = [];
+
 	const pushToCurrentContainer = (node) => {
-		if (currentAnchor) {
+		if (currentChoiceScope) {
+			choiceScopeChildren.push(node);
+		} else if (currentAnchor) {
 			anchorChildren.push(node);
 		} else if (currentScope !== null) {
 			scopeChildren.push(node);
@@ -43,6 +49,25 @@ export function tokensToAst(tokens) {
 	for (const token of tokens) {
 		if (token.type === "scope") {
 			// スコープの切り替え
+			if (currentChoiceScope) {
+				const choiceNode = {
+					nodeType: "choice",
+					id: currentChoiceScope.id,
+					text: choiceScopeChildren
+						.filter((n) => n.token?.type === "char")
+						.map((n) => n.token.value)
+						.join(""),
+					args: currentChoiceScope.args || [],
+					children: choiceScopeChildren,
+				};
+				currentChoiceScope = null;
+				choiceScopeChildren = [];
+				if (currentScope !== null) {
+					scopeChildren.push(choiceNode);
+				} else {
+					rootChildren.push(choiceNode);
+				}
+			}
 			if (currentAnchor) {
 				const anchorNode = {
 					nodeType: "anchor",
@@ -69,6 +94,34 @@ export function tokensToAst(tokens) {
 				scopeChildren = [];
 			}
 			currentScope = typeof token.value === "number" ? token.value : 0;
+		} else if (token.type === "choice_scope_begin") {
+			currentChoiceScope = {
+				id: token.id || "",
+				args: token.args || [],
+			};
+			choiceScopeChildren = [];
+		} else if (token.type === "choice_scope_end") {
+			if (currentChoiceScope) {
+				const choiceNode = {
+					nodeType: "choice",
+					id: currentChoiceScope.id,
+					text: choiceScopeChildren
+						.filter((n) => n.token?.type === "char")
+						.map((n) => n.token.value)
+						.join(""),
+					args: currentChoiceScope.args || [],
+					children: choiceScopeChildren,
+				};
+				currentChoiceScope = null;
+				choiceScopeChildren = [];
+				if (currentAnchor) {
+					anchorChildren.push(choiceNode);
+				} else if (currentScope !== null) {
+					scopeChildren.push(choiceNode);
+				} else {
+					rootChildren.push(choiceNode);
+				}
+			}
 		} else if (token.type === "anchor_begin") {
 			currentAnchor = {
 				id: token.id || "",
@@ -105,6 +158,26 @@ export function tokensToAst(tokens) {
 				nodeType: "command",
 				token,
 			});
+		}
+	}
+
+	if (currentChoiceScope) {
+		const choiceNode = {
+			nodeType: "choice",
+			id: currentChoiceScope.id,
+			text: choiceScopeChildren
+				.filter((n) => n.token?.type === "char")
+				.map((n) => n.token.value)
+				.join(""),
+			args: currentChoiceScope.args || [],
+			children: choiceScopeChildren,
+		};
+		if (currentAnchor) {
+			anchorChildren.push(choiceNode);
+		} else if (currentScope !== null) {
+			scopeChildren.push(choiceNode);
+		} else {
+			rootChildren.push(choiceNode);
 		}
 	}
 
@@ -221,4 +294,38 @@ export function collectAstTokensByLifetime(ast, lifetime) {
 	return collectAstTokens(ast).filter(
 		(token) => getSakuraTokenLifetime(token) === lifetime,
 	);
+}
+
+/**
+ * AST 内のすべての選択肢 (id, text, args) を抽出する
+ * @param {SakuraAstNode} ast
+ * @returns {Array<{ id: string, text: string, args: string[] }>}
+ */
+export function collectChoices(ast) {
+	const choices = [];
+	traverseAst(ast, (node) => {
+		if (node.nodeType === "choice") {
+			choices.push({
+				id: node.id || "",
+				text: node.text || "",
+				args: node.args || [],
+			});
+		}
+	});
+	return choices;
+}
+
+/**
+ * AST 内のすべてのサーフィス番号を抽出する
+ * @param {SakuraAstNode} ast
+ * @returns {number[]}
+ */
+export function collectSurfaces(ast) {
+	const surfaces = [];
+	traverseAst(ast, (node) => {
+		if (node.nodeType === "command" && node.token?.type === "surface") {
+			surfaces.push(node.token.value);
+		}
+	});
+	return surfaces;
 }

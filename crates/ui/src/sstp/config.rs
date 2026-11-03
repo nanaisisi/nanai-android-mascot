@@ -120,4 +120,8 @@ pub struct SstpGhostContext {
     pub cookies: HashMap<String, HashMap<String, String>>,
     pub sender: String,
     pub sstp_config: SstpGhostConfig,
+    /// 呼び出し元のセキュリティレベル ("local" / "external")
+    pub security_level: Option<String>,
+    /// リクエストに付随する References (Reference0〜)
+    pub references: HashMap<String, String>,
 }

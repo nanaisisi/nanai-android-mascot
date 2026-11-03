@@ -168,15 +168,39 @@ pub(crate) fn handle_underscore(
                     callback(SakuraCommand::Voice(opt));
                 }
                 Some('q') => {
-                    // \__q[ID] quick choice mode
-                    let enabled = if chars.peek() == Some(&'[') {
-                        read_bracketed(chars)
-                            .map(|v| !matches!(v.trim(), "0" | "false"))
-                            .unwrap_or(true)
-                    } else {
-                        true
-                    };
-                    callback(SakuraCommand::Quick(enabled));
+                    // \__q[ID,...] / \__q (インライン選択肢スコープ / On... または ID)
+                    if chars.peek() == Some(&'[') {
+                        if let Some(content) = read_bracketed(chars) {
+                            let parts: Vec<String> = content.split(',').map(|s| s.trim().to_string()).collect();
+                            let id = parts.first().cloned().unwrap_or_default();
+                            let args = if parts.len() > 1 {
+                                parts[1..].to_vec()
+                            } else {
+                                Vec::new()
+                            };
+                            let mut choice_text = String::new();
+                            while let Some(qc) = chars.next() {
+                                if qc == '\\' && chars.peek() == Some(&'_') {
+                                    chars.next();
+                                    if chars.peek() == Some(&'_') {
+                                        chars.next();
+                                        if chars.peek() == Some(&'q') {
+                                            chars.next();
+                                            break;
+                                        }
+                                    }
+                                }
+                                choice_text.push(qc);
+                            }
+                            callback(SakuraCommand::Choice {
+                                label: choice_text,
+                                id,
+                                args,
+                            });
+                            return;
+                        }
+                    }
+                    callback(SakuraCommand::Quick(true));
                 }
                 Some('+') => {
                     // \_+

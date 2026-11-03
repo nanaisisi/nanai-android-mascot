@@ -8,7 +8,7 @@
   - **FMO / Mutex 規格**: [ukadoc-spec: fmo-mutex](https://ukatech.shillest.net/ukadoc-spec/spec/fmo-mutex/) - © UKADOC project / Ukagaka Tech Team (CC BY 4.0)
 
 - **インターフェース**: Windows File Mapping Object (FMO), 名前付きミューテックス, プロセス間排他
-- **対応ステータス**: **設計・一部実装（50%）**
+- **対応ステータス**: **実装済（90%）**
 
 ---
 
@@ -16,6 +16,10 @@
 
 FMO (File Mapping Object) と Mutex は、Windows 上で起動中のベースウェアやゴーストの情報を共有メモリ上に公開し、ゴースト間の二重起動防止や SSTP 送信先検出を行うための規格です。
 
+- **メモリ表現・シリアライズ**:
+  - 64KB Little-Endian サイズヘッダ、`\x01` キー値区切り、CRLF 区切り、NULL終端構造を完全実装 (`crates/ui/src/fmo/buffer.rs`)。
+  - `format_fmo_text` による UKADOC 準拠テキスト出力と、リモート要求時の機密パス秘匿および HWND ダミー化。
+  - `balloon0`, `balloon1`, `sakura_surface`, `kero_surface`, `modulestate`, `is_visible`, `lifecycle_state` の双方向同期。
 - **Windows 環境**:
   - `Sakura` / `SSP` 等の標準 FMO 形式（共有メモリ `\Sakura`）の読取・登録に対応可能。
   - 多重起動防止用 Named Mutex のハンドリング。
@@ -27,9 +31,9 @@ FMO (File Mapping Object) と Mutex は、Windows 上で起動中のベースウ
 
 ## 2. 規格項目対応状況
 
-| 項目                    | 仕様                           | 対応状況  | 動作仕様・備考                                                      |
-| :---------------------- | :----------------------------- | :-------: | :------------------------------------------------------------------ |
-| **名前付き Mutex**      | 二重起動排他制御               | ✅ 対応済 | Tauri / OS 側のシングルインスタンス制御                             |
-| **FMO (`\Sakura`)**     | 起動中ゴースト一覧             | 🚧 開発中 | Windows では共有メモリ参照、Android では内蔵レジストリ              |
-| **FMO フィールド**      | `name`, `hwnd`, `ghostpath` 等 | 🚧 開発中 | ゴースト情報エントリの保持・参照                                    |
-| **DirectSSTP 宛先特定** | HWND 取得                      | 🚧 開発中 | ウィンドウハンドル連携（Windows） / 内部イベントバス連携（Android） |
+| 項目                    | 仕様                           | 対応状況  | 動作仕様・備考                                                                            |
+| :---------------------- | :----------------------------- | :-------: | :---------------------------------------------------------------------------------------- |
+| **名前付き Mutex**      | 二重起動排他制御               | ✅ 対応済 | Tauri / OS 側のシングルインスタンス制御                                                   |
+| **FMO (`\Sakura`)**     | 起動中ゴースト一覧             | ✅ 対応済 | 64KB 共有バッファの生成・解析、GetFMO コマンドとの連携                                     |
+| **FMO フィールド**      | `name`, `hwnd`, `ghostpath` 等 | ✅ 対応済 | 全標準キー (`path`, `hwnd`, `name`, `keroname`, `sakura.surface`, `balloon0` 等) を完全保持 |
+| **DirectSSTP 宛先特定** | HWND 取得                      | ✅ 対応済 | ウィンドウハンドル連携（Windows） / 内部イベントバス連携（Android）                       |

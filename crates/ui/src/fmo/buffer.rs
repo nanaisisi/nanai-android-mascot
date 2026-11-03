@@ -1,8 +1,9 @@
 use crate::fmo::types::FmoRecord;
 use std::collections::HashMap;
 
-/// FMO 64KB 共有メモリバッファを生成する (ukadoc-spec 準拠)
-pub fn generate_fmo_buffer(records: &[FmoRecord]) -> Vec<u8> {
+/// FMO レコード群から UKADOC 規格準拠のテキスト表現を生成する (GetFMO / FMO/1.0 準拠)
+/// `is_remote` が true の場合、機密パス情報 (path, ghostpath) を隠蔽し、HWND を 0 にダミー化する
+pub fn format_fmo_text(records: &[FmoRecord], is_remote: bool) -> String {
     let mut content = String::new();
     for rec in records {
         let prefix = if rec.id.starts_with("ssp_fmo_header_") {
@@ -11,8 +12,13 @@ pub fn generate_fmo_buffer(records: &[FmoRecord]) -> Vec<u8> {
             format!("ssp_fmo_header_{}", rec.id)
         };
 
-        content.push_str(&format!("{}.path\x01{}\r\n", prefix, rec.path));
-        content.push_str(&format!("{}.hwnd\x01{}\r\n", prefix, rec.hwnd));
+        if !is_remote {
+            content.push_str(&format!("{}.path\x01{}\r\n", prefix, rec.path));
+        }
+
+        let hwnd_val = if is_remote { 0 } else { rec.hwnd };
+        content.push_str(&format!("{}.hwnd\x01{}\r\n", prefix, hwnd_val));
+
         content.push_str(&format!("{}.name\x01{}\r\n", prefix, rec.name));
         content.push_str(&format!("{}.keroname\x01{}\r\n", prefix, rec.keroname));
         content.push_str(&format!(
@@ -25,20 +31,26 @@ pub fn generate_fmo_buffer(records: &[FmoRecord]) -> Vec<u8> {
         ));
 
         if let Some(khwnd) = rec.kerohwnd {
-            content.push_str(&format!("{}.kerohwnd\x01{}\r\n", prefix, khwnd));
+            let khwnd_val = if is_remote { 0 } else { khwnd };
+            content.push_str(&format!("{}.kerohwnd\x01{}\r\n", prefix, khwnd_val));
         }
 
         if !rec.hwndlist.is_empty() {
-            let list_str = rec
-                .hwndlist
-                .iter()
-                .map(|h| h.to_string())
-                .collect::<Vec<_>>()
-                .join(",");
+            let list_str = if is_remote {
+                "0".to_string()
+            } else {
+                rec.hwndlist
+                    .iter()
+                    .map(|h| h.to_string())
+                    .collect::<Vec<_>>()
+                    .join(",")
+            };
             content.push_str(&format!("{}.hwndlist\x01{}\r\n", prefix, list_str));
         }
 
-        content.push_str(&format!("{}.ghostpath\x01{}\r\n", prefix, rec.ghostpath));
+        if !is_remote {
+            content.push_str(&format!("{}.ghostpath\x01{}\r\n", prefix, rec.ghostpath));
+        }
 
         if let Some(ref fn_str) = rec.fullname {
             content.push_str(&format!("{}.fullname\x01{}\r\n", prefix, fn_str));
@@ -48,6 +60,12 @@ pub fn generate_fmo_buffer(records: &[FmoRecord]) -> Vec<u8> {
             content.push_str(&format!("{}.modulestate\x01{}\r\n", prefix, ms));
         }
     }
+    content
+}
+
+/// FMO 64KB 共有メモリバッファを生成する (ukadoc-spec 準拠)
+pub fn generate_fmo_buffer(records: &[FmoRecord]) -> Vec<u8> {
+    let content = format_fmo_text(records, false);
 
     let mut buf = vec![0u8; 65536];
     let size_bytes = (65536u32).to_le_bytes();

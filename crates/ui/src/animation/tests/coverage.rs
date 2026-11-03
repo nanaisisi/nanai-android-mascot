@@ -518,6 +518,35 @@ fn test_stepping_empty_parallel_methods() {
 }
 
 #[test]
+fn test_stepping_catalog_missing_animation_id() {
+    use crate::surfaces::SerikoAnimation;
+
+    let mut scheduler = AnimationScheduler::new();
+    let anim = SerikoAnimation {
+        id: 200,
+        name: None,
+        interval: Some(Interval::RunOnce),
+        options: vec![],
+        collisions: vec![],
+        patterns: vec![
+            AnimationPattern { index: 0, method: DrawMethod::Start(Some(9999)), surface: 10, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] },
+        ],
+    };
+    scheduler.start_animation(0, 0, &anim);
+    let non_matching_catalog = vec![
+        SerikoAnimation {
+            id: 8888,
+            name: None,
+            interval: Some(Interval::RunOnce),
+            options: vec![],
+            collisions: vec![],
+            patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 10, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] }],
+        }
+    ];
+    let _ = scheduler.step_with_catalog(15, &non_matching_catalog);
+}
+
+#[test]
 fn test_triggers_coverage_boost() {
     use crate::surfaces::SerikoAnimation;
 

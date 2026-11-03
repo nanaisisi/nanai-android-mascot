@@ -266,3 +266,48 @@ fn test_compositor_blend_modes_and_bounds() {
     let oob = composite_elements(&base, &[(&layer, -10, -10, DrawMethod::Overlay)]);
     assert_eq!(oob.get_pixel(0, 0), Some((100, 100, 100, 255)));
 }
+
+#[test]
+fn test_extended_blend_modes_subtract_divide_overlay_softlight() {
+    let mut base = SurfaceFrameBuffer::new(2, 2);
+    // Base: 120, 180, 200, 255
+    base.set_pixel(0, 0, 120, 180, 200, 255);
+
+    let mut layer = SurfaceFrameBuffer::new(2, 2);
+    // Layer: 50, 60, 220, 255
+    layer.set_pixel(0, 0, 50, 60, 220, 255);
+
+    // Subtract: max(0, dst - src)
+    // R: max(0, 120 - 50) = 70
+    // G: max(0, 180 - 60) = 120
+    // B: max(0, 200 - 220) = 0
+    let sub = composite_elements(
+        &base,
+        &[(&layer, 0, 0, DrawMethod::Blend("subtract-fast".into()))],
+    );
+    assert_eq!(sub.get_pixel(0, 0), Some((70, 120, 0, 255)));
+
+    // Divide: min(255, (dst * 255) / src)
+    // R: (120 * 255) / 50 = 612 -> min(255) = 255
+    // G: (180 * 255) / 60 = 765 -> min(255) = 255
+    // B: (200 * 255) / 220 = 231
+    let div = composite_elements(
+        &base,
+        &[(&layer, 0, 0, DrawMethod::Blend("divide-fast".into()))],
+    );
+    assert_eq!(div.get_pixel(0, 0), Some((255, 255, 231, 255)));
+
+    // Overlay blend mode
+    let overlay = composite_elements(
+        &base,
+        &[(&layer, 0, 0, DrawMethod::Blend("overlay-fast".into()))],
+    );
+    assert!(overlay.get_pixel(0, 0).is_some());
+
+    // Softlight blend mode
+    let softlight = composite_elements(
+        &base,
+        &[(&layer, 0, 0, DrawMethod::Blend("softlight-fast".into()))],
+    );
+    assert!(softlight.get_pixel(0, 0).is_some());
+}

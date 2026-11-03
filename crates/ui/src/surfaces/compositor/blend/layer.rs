@@ -136,6 +136,53 @@ impl SurfaceFrameBuffer {
                                 (db as i32 + sb as i32 - 2 * (db as i32 * sb as i32) / 255)
                                     .clamp(0, 255) as u8,
                             ),
+                            "subtract" => (
+                                (dr as i16 - sr as i16).max(0) as u8,
+                                (dg as i16 - sg as i16).max(0) as u8,
+                                (db as i16 - sb as i16).max(0) as u8,
+                            ),
+                            "divide" => (
+                                if sr == 0 {
+                                    255
+                                } else {
+                                    (((dr as u32) * 255) / (sr as u32)).min(255) as u8
+                                },
+                                if sg == 0 {
+                                    255
+                                } else {
+                                    (((dg as u32) * 255) / (sg as u32)).min(255) as u8
+                                },
+                                if sb == 0 {
+                                    255
+                                } else {
+                                    (((db as u32) * 255) / (sb as u32)).min(255) as u8
+                                },
+                            ),
+                            "overlay" => {
+                                let calc = |d: u8, s: u8| -> u8 {
+                                    if d < 128 {
+                                        ((2 * (d as u32) * (s as u32)) / 255).min(255) as u8
+                                    } else {
+                                        (255 - (2 * (255 - d as u32) * (255 - s as u32)) / 255)
+                                            .min(255) as u8
+                                    }
+                                };
+                                (calc(dr, sr), calc(dg, sg), calc(db, sb))
+                            }
+                            "softlight" | "soft-light" => {
+                                let calc = |d: u8, s: u8| -> u8 {
+                                    let d_f = d as f32 / 255.0;
+                                    let s_f = s as f32 / 255.0;
+                                    let res = if s_f < 0.5 {
+                                        d_f - (1.0 - 2.0 * s_f) * d_f * (1.0 - d_f)
+                                    } else {
+                                        let d_sqrt = d_f.sqrt();
+                                        d_f + (2.0 * s_f - 1.0) * (d_sqrt - d_f)
+                                    };
+                                    (res * 255.0).clamp(0.0, 255.0).round() as u8
+                                };
+                                (calc(dr, sr), calc(dg, sg), calc(db, sb))
+                            }
                             _ => (sr, sg, sb),
                         };
 

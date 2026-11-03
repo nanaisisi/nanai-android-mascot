@@ -4,6 +4,7 @@
  */
 
 import { closeCommunicateBox, openCommunicateBox } from "./communicatebox.js";
+import { handleOpenDialogCommand } from "./dialog.js";
 import {
 	handleCallCommand,
 	handleChangeCommand,
@@ -102,6 +103,8 @@ export function initDefaultCommandHandlers() {
 	registerCommandHandler("open:ipinput", async (handler, args) => {
 		openIpInput(handler, args.slice(2));
 	});
+
+	registerCommandHandler("open:dialog", handleOpenDialogCommand);
 
 	registerCommandHandler("close:inputbox", async (handler, args) => {
 		closeInputBox(handler, args[2]);

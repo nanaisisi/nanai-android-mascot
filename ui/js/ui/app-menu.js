@@ -82,6 +82,7 @@ export const menuMethods = {
 				scope,
 				dressup,
 				recentGhosts,
+				captions: this.cachedMenuCaptions || {},
 			});
 			emit("sync-theme", this.currentBalloonTheme);
 			if (this.availableBalloons) {
@@ -101,6 +102,7 @@ export const menuMethods = {
 					scope,
 					dressup,
 					recentGhosts,
+					captions: this.cachedMenuCaptions || {},
 				},
 				"*",
 			);

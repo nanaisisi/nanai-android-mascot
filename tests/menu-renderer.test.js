@@ -148,4 +148,38 @@ test("MenuRenderer covers initialization, delegation, and dynamic item creation"
 	assert.equal(styleProps["--balloon-border-color"], "rgb(20, 30, 40)");
 	assert.equal(styleProps["--balloon-font-family"], "MS Gothic");
 	assert.equal(styleProps["--balloon-font-size"], "12px");
+
+	// 6. Dynamic Captions (Cycle 5)
+	const mockBiffBtn = {
+		id: "biff-btn",
+		querySelector(_sel) {
+			return this.span;
+		},
+		span: { textContent: "Mail" },
+	};
+	const mockDocument = {
+		getElementById(id) {
+			if (id === "biff-btn") return mockBiffBtn;
+			return null;
+		},
+	};
+
+	renderer.applyCaptions(
+		{ "biffbutton.caption": "Check Mail Now" },
+		mockDocument,
+	);
+	assert.equal(mockBiffBtn.span.textContent, "Check Mail Now");
+
+	// Fetch captions from ghost controller mock
+	const mockGhostController = {
+		async requestShioriResource(id) {
+			if (id === "biffbutton.caption") return "Custom Biff";
+			if (id === "calendarbutton.caption") return "My Calendar";
+			return "";
+		},
+	};
+	return renderer.fetchCaptions(mockGhostController).then((captions) => {
+		assert.equal(captions["biffbutton.caption"], "Custom Biff");
+		assert.equal(captions["calendarbutton.caption"], "My Calendar");
+	});
 });

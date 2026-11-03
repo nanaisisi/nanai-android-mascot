@@ -215,6 +215,31 @@ describe("command-handler/media.js", () => {
 		expect(updateSpy).toHaveBeenCalled();
 		await handleUpdateByMyself(handler);
 		expect(updateSpy).toHaveBeenCalledTimes(2);
+
+		const events = [];
+		const soundHandler = {
+			app: {
+				ghostController: {
+					sendShioriEvent: vi.fn(async (name, refs) => {
+						events.push({ name, refs });
+					}),
+				},
+			},
+		};
+		const { handleSoundEventNotify } = await import(
+			"../ui/js/ghost/command-handler/media.js"
+		);
+		await handleSoundEventNotify(soundHandler, "stop", ["sound1"]);
+		await handleSoundEventNotify(soundHandler, "loop", ["sound2"]);
+		await handleSoundEventNotify(soundHandler, "error", ["err"]);
+		await handleSoundEventNotify(soundHandler, "playex", ["file.mp3"]);
+
+		expect(events.map((e) => e.name)).toEqual([
+			"OnSoundStop",
+			"OnSoundLoop",
+			"OnSoundError",
+			"OnMusicPlayEx",
+		]);
 	});
 });
 

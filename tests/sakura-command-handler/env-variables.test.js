@@ -43,4 +43,20 @@ describe("SakuraCommandHandler - Environment Variables", () => {
 		const resAfterReset = expandSakuraScriptEnv("Value: %property[customVar]");
 		assert.equal(resAfterReset, "Value: ");
 	});
+
+	it("expandSakuraScriptEnv properly resolves system.* properties", () => {
+		const script =
+			"Date: %property[system.year]-%property[system.month]-%property[system.day] %property[system.hour]:%property[system.minute]:%property[system.second] (ms:%property[system.millisecond], dow:%property[system.dayofweek]). OS:%property[system.os.name], CPU:%property[system.cpu.model], Mem:%property[system.memory.total], Theme:%property[system.theme.app.mode], Pos:%property[system.cursor.pos], DND:%property[system.dnd.mode], Mon:%property[system.monitor.count], Disk:%property[system.disk.count]";
+		const expanded = expandSakuraScriptEnv(script);
+		assert.ok(expanded.includes("OS:Linux"));
+		assert.ok(expanded.includes("CPU:x86_64"));
+		assert.ok(expanded.includes("Mem:1024"));
+		assert.ok(expanded.includes("Theme:dark"));
+		assert.ok(expanded.includes("Pos:0,0"));
+		assert.ok(expanded.includes("DND:none"));
+		assert.ok(expanded.includes("Mon:1"));
+		assert.ok(expanded.includes("Disk:1"));
+		const now = new Date();
+		assert.ok(expanded.includes(String(now.getFullYear())));
+	});
 });

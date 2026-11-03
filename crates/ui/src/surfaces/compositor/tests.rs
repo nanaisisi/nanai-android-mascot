@@ -311,3 +311,14 @@ fn test_extended_blend_modes_subtract_divide_overlay_softlight() {
     );
     assert!(softlight.get_pixel(0, 0).is_some());
 }
+
+#[test]
+fn test_chromakey_edge_cases() {
+    let mut fb_zero = SurfaceFrameBuffer::new(0, 0);
+    fb_zero.apply_corner_chromakey();
+
+    let mut fb_custom = SurfaceFrameBuffer::new(1, 1);
+    fb_custom.set_pixel(0, 0, 100, 150, 200, 255);
+    fb_custom.apply_chromakey(100, 150, 200);
+    assert_eq!(fb_custom.get_pixel(0, 0).unwrap().3, 0);
+}

@@ -82,11 +82,8 @@ mod tests {
             SakuraCommand::Text("Scope 1 text".to_string()),
         ];
         let ast = build_sakura_ast(&commands);
-        match ast {
-            SakuraAstNode::Root { children } => {
-                assert!(!children.is_empty());
-            }
-            _ => panic!("Expected Root"),
+        if let SakuraAstNode::Root { children } = ast {
+            assert!(!children.is_empty());
         }
     }
 
@@ -98,11 +95,8 @@ mod tests {
             SakuraCommand::Choice { label: "Root Choice".to_string(), id: "c_root".to_string(), args: vec![] },
         ];
         let ast = build_sakura_ast(&commands);
-        match ast {
-            SakuraAstNode::Root { children } => {
-                assert_eq!(children.len(), 3);
-            }
-            _ => panic!("Expected Root"),
+        if let SakuraAstNode::Root { children } = ast {
+            assert_eq!(children.len(), 3);
         }
     }
 
@@ -112,11 +106,8 @@ mod tests {
             SakuraCommand::Target(0),
         ];
         let ast = build_sakura_ast(&commands);
-        match ast {
-            SakuraAstNode::Root { children } => {
-                assert_eq!(children.len(), 1);
-            }
-            _ => panic!("Expected Root"),
+        if let SakuraAstNode::Root { children } = ast {
+            assert_eq!(children.len(), 1);
         }
     }
 }

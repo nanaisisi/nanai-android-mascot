@@ -349,8 +349,10 @@ fn test_compositor_layer_edge_cases() {
     let mut layer_sa0 = SurfaceFrameBuffer::new(1, 1);
     layer_sa0.set_pixel(0, 0, 50, 50, 50, 0);
 
-    base.composite_layer(&layer_empty, -10, -10, &DrawMethod::Overlay);
-    base.composite_layer(&layer_empty, 10, 10, &DrawMethod::Overlay);
+    base.composite_layer(&layer_empty, -5, -5, &DrawMethod::Overlay);
+    base.composite_layer(&layer_empty, 5, 5, &DrawMethod::Overlay);
+    base.composite_layer(&layer_empty, -10, 0, &DrawMethod::Overlay);
+    base.composite_layer(&layer_empty, 0, -10, &DrawMethod::Overlay);
 
     base.composite_layer(&layer_sa0, 0, 0, &DrawMethod::Interpolate);
     let mut layer_interp_same = SurfaceFrameBuffer::new(1, 1);
@@ -360,6 +362,9 @@ fn test_compositor_layer_edge_cases() {
     base.composite_layer(&layer_sa0, 0, 0, &DrawMethod::Add);
 
     base.composite_layer(&layer_sa0, 0, 0, &DrawMethod::Blend("unknown-mode".into()));
+    let mut layer_unknown = SurfaceFrameBuffer::new(1, 1);
+    layer_unknown.set_pixel(0, 0, 100, 100, 100, 255);
+    base.composite_layer(&layer_unknown, 0, 0, &DrawMethod::Blend("unknown-mode".into()));
 
     let mut layer_sr0 = SurfaceFrameBuffer::new(1, 1);
     layer_sr0.set_pixel(0, 0, 0, 0, 0, 255);

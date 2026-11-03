@@ -703,3 +703,22 @@ fn test_triggers_coverage_boost() {
     assert_eq!(scheduler.active_count(0), 1);
     scheduler.start_animation(0, 0, &excl_stopping);
 }
+
+#[test]
+fn test_triggers_uncovered_branches() {
+    use crate::surfaces::SerikoAnimation;
+
+    let mut scheduler = AnimationScheduler::new();
+    let anim = SerikoAnimation {
+        id: 100,
+        name: None,
+        interval: Some(Interval::RunOnce),
+        options: vec![vec!["exclusive".to_string()]],
+        collisions: vec![],
+        patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 10, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] }],
+    };
+    scheduler.start_animation(0, 0, &anim);
+    scheduler.start_animation(0, 0, &anim);
+
+    scheduler.schedule_surface_animations(0, 0, &[anim], 0.0);
+}

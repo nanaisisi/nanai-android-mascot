@@ -279,3 +279,17 @@ fn test_fmo_types_edge_cases() {
     entry_lifecycle.update_lifecycle("paused", false);
     assert_eq!(entry_lifecycle.lifecycle_state, "paused");
 }
+
+#[test]
+fn test_fmo_types_lifecycle_variations() {
+    let mut rec = FmoRecord::new("test_var", "Var");
+    rec.modulestate = Some("shiori:running,lifecycle:active".to_string());
+    let entry = FmoEntry::from_record(&rec);
+    assert!(entry.is_visible);
+    assert_eq!(entry.lifecycle_state, "active");
+
+    rec.modulestate = Some("shiori:running,lifecycle:unknown".to_string());
+    let entry2 = FmoEntry::from_record(&rec);
+    assert!(entry2.is_visible);
+    assert_eq!(entry2.lifecycle_state, "unknown");
+}

@@ -262,3 +262,18 @@ onuninstall.script,\\0\\s[0]アンインストールしました。\\e\r\n";
         Some("invalid name")
     );
 }
+
+#[test]
+fn test_installer_engine_edge_cases() {
+    let install_txt = "name,NoRefresh\nrefresh,0\n";
+    let engine = StandardInstallerEngine;
+    let manifest = engine.parse_install_manifest(install_txt);
+    let files = vec!["ghost.dll".to_string(), "save.dat".to_string()];
+    let filtered = engine.filter_refresh_deletions(&files, &manifest);
+    assert!(filtered.is_empty());
+
+    let manifest_ref = engine.parse_install_manifest("name,Refresh\nrefresh,1\n");
+    let files_edge = vec!["".to_string(), "/".to_string(), "ghost.dll".to_string()];
+    let filtered_edge = engine.filter_refresh_deletions(&files_edge, &manifest_ref);
+    assert!(!filtered_edge.is_empty());
+}

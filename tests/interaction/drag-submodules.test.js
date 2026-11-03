@@ -22,6 +22,14 @@ import { setupInteractionDomGlobals } from "./helpers.js";
 setupInteractionDomGlobals();
 
 describe("drag interaction submodules", () => {
+	test("createLongPressController and createStrokeTracker default options fallback", () => {
+		const controller = createLongPressController();
+		assert.equal(controller.isTriggered(), false);
+
+		const tracker = createStrokeTracker();
+		assert.equal(tracker.getDistance(), 0);
+	});
+
 	test("createLongPressController handles start, timer trigger, cancellation, reset, and cleanup", () => {
 		vi.useFakeTimers();
 		let triggeredCount = 0;

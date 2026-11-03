@@ -4,6 +4,7 @@
  */
 
 import { menuBalloonDressupRenderer } from "./menu-balloon-dressup-renderer.js";
+import { menuCaptionRenderer } from "./menu-caption-renderer.js";
 import { menuGhostShellRenderer } from "./menu-ghost-shell-renderer.js";
 import { menuThemeRenderer } from "./menu-theme-renderer.js";
 
@@ -109,6 +110,24 @@ export class MenuRenderer {
 	 */
 	applyShellTheme(activeShell) {
 		menuThemeRenderer.applyShellTheme(activeShell);
+	}
+
+	/**
+	 * メニュー項目キャプションを動的に更新 (UKADOC ownerdraw-item-name 準拠)
+	 * @param {Record<string, string>} captions
+	 * @param {HTMLElement|Document} [rootEl=document]
+	 */
+	applyCaptions(captions, rootEl = document) {
+		menuCaptionRenderer.applyCaptions(captions, rootEl);
+	}
+
+	/**
+	 * SHIORIからメニューキャプションリソースを取得
+	 * @param {object} ghostController
+	 * @returns {Promise<Record<string, string>>}
+	 */
+	async fetchCaptions(ghostController) {
+		return await menuCaptionRenderer.fetchShioriCaptions(ghostController);
 	}
 
 	/**

@@ -4,30 +4,31 @@
  */
 
 import {
-	attachAutocomplete,
-	parseBoxOptions,
-	openInputBox,
-	openPasswordInput,
-	closeInputBox,
-	openTextAreaBox,
-	closeTextAreaBox,
-	openSliderInput,
-	openDateInput,
-	openTimeInput,
-	openIpInput,
-} from "./modal-dialog-inputs.js";
-import {
-	openTeachBox,
-	closeTeachBox,
-	openCommunicateBox,
-	closeCommunicateBox,
-} from "./modal-dialog-communication.js";
-import {
+	closeAll,
 	closeDialog,
 	createChoiceButton,
 	setChoiceTimeout,
-	closeAll,
 } from "./modal-dialog-choices.js";
+import {
+	closeCommunicateBox,
+	closeTeachBox,
+	openCommunicateBox,
+	openTeachBox,
+} from "./modal-dialog-communication.js";
+import {
+	attachAutocomplete,
+	closeInputBox,
+	closeTextAreaBox,
+	openDateInput,
+	openInputBox,
+	openIpInput,
+	openPasswordInput,
+	openSliderInput,
+	openTextAreaBox,
+	openTimeInput,
+	parseBoxOptions,
+} from "./modal-dialog-inputs.js";
+import { openSystemDialog } from "./modal-dialog-system.js";
 
 export class ModalDialogController {
 	/**
@@ -69,6 +70,7 @@ ModalDialogController.prototype.openSliderInput = openSliderInput;
 ModalDialogController.prototype.openDateInput = openDateInput;
 ModalDialogController.prototype.openTimeInput = openTimeInput;
 ModalDialogController.prototype.openIpInput = openIpInput;
+ModalDialogController.prototype.openSystemDialog = openSystemDialog;
 
 ModalDialogController.prototype.openTeachBox = openTeachBox;
 ModalDialogController.prototype.closeTeachBox = closeTeachBox;

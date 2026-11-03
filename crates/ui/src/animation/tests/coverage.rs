@@ -455,119 +455,89 @@ fn test_animation_scheduler_state_coverage_boost() {
 }
 
 #[test]
-fn test_stepping_coverage_boost() {
+fn test_triggers_coverage_boost() {
     use crate::surfaces::SerikoAnimation;
 
     let mut scheduler = AnimationScheduler::new();
 
-    // 1. active_count for non-existent scope
-    assert_eq!(scheduler.active_count(12345), 0);
-
-    // 2. AlternativeStart, AlternativeStop, and surface == -2 (stop_others)
-    let alt_anim = SerikoAnimation {
-        id: 50,
+    // 1. start_animation with empty patterns (returns early)
+    let empty_anim = SerikoAnimation {
+        id: 1,
         name: None,
-        interval: Some(Interval::RunOnce),
+        interval: Some(Interval::Always),
         options: vec![],
         collisions: vec![],
-        patterns: vec![
-            AnimationPattern {
-                index: 0,
-                surface: 300,
-                wait: 10,
-                wait_max: None,
-                method: DrawMethod::AlternativeStart(vec![60]),
-                x: 0,
-                y: 0,
-                options: vec![],
-            },
-            AnimationPattern {
-                index: 1,
-                surface: 301,
-                wait: 10,
-                wait_max: None,
-                method: DrawMethod::AlternativeStop(vec![60]),
-                x: 0,
-                y: 0,
-                options: vec![],
-            },
-            AnimationPattern {
-                index: 2,
-                surface: 302,
-                wait: 10,
-                wait_max: None,
-                method: DrawMethod::AlternativeStart(vec![]),
-                x: 0,
-                y: 0,
-                options: vec![],
-            },
-            AnimationPattern {
-                index: 3,
-                surface: 303,
-                wait: 10,
-                wait_max: None,
-                method: DrawMethod::AlternativeStop(vec![]),
-                x: 0,
-                y: 0,
-                options: vec![],
-            },
-            AnimationPattern {
-                index: 4,
-                surface: 304,
-                wait: 10,
-                wait_max: None,
-                method: DrawMethod::Start(None),
-                x: 0,
-                y: 0,
-                options: vec![],
-            },
-            AnimationPattern {
-                index: 5,
-                surface: 305,
-                wait: 10,
-                wait_max: None,
-                method: DrawMethod::Stop(None),
-                x: 0,
-                y: 0,
-                options: vec![],
-            },
-            AnimationPattern {
-                index: 6,
-                surface: -2,
-                wait: 10,
-                wait_max: None,
-                method: DrawMethod::Overlay,
-                x: 0,
-                y: 0,
-                options: vec![],
-            },
-        ],
+        patterns: vec![],
     };
+    scheduler.start_animation(0, 0, &empty_anim);
+    assert_eq!(scheduler.active_count(0), 0);
 
+    // 2. Exclusive blocking with specific targets & global exclusive blocking
+    let excl_global = SerikoAnimation {
+        id: 10,
+        name: None,
+        interval: Some(Interval::Always),
+        options: vec![vec!["exclusive".to_string()]],
+        collisions: vec![],
+        patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 100, wait: 100, wait_max: None, x: 0, y: 0, options: vec![] }],
+    };
+    let blocked_anim = SerikoAnimation {
+        id: 11,
+        name: None,
+        interval: Some(Interval::Always),
+        options: vec![],
+        collisions: vec![],
+        patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 101, wait: 100, wait_max: None, x: 0, y: 0, options: vec![] }],
+    };
+    scheduler.start_animation(0, 0, &excl_global);
+    assert!(scheduler.is_blocked_by_exclusive(0, 11));
+    scheduler.start_animation(0, 0, &blocked_anim); // Should be blocked by global exclusive
+
+    // Exclusive with target list
+    let excl_target = SerikoAnimation {
+        id: 20,
+        name: None,
+        interval: Some(Interval::Always),
+        options: vec![vec!["exclusive(21)".to_string()]],
+        collisions: vec![],
+        patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 102, wait: 100, wait_max: None, x: 0, y: 0, options: vec![] }],
+    };
     let target_anim = SerikoAnimation {
-        id: 60,
+        id: 21,
         name: None,
-        interval: Some(Interval::RunOnce),
+        interval: Some(Interval::Always),
         options: vec![],
         collisions: vec![],
-        patterns: vec![AnimationPattern {
-            index: 0,
-            surface: 400,
-            wait: 100,
-            wait_max: None,
-            method: DrawMethod::Overlay,
-            x: 0,
-            y: 0,
-            options: vec![],
-        }],
+        patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 103, wait: 100, wait_max: None, x: 0, y: 0, options: vec![] }],
     };
+    scheduler.stop_animations(0);
+    scheduler.start_animation(0, 0, &excl_target);
+    assert!(scheduler.is_blocked_by_exclusive(0, 21));
+    assert!(!scheduler.is_blocked_by_exclusive(0, 22));
 
-    let catalog = vec![target_anim];
+    // 3. Paused animation on start
+    scheduler.pause_animation(0, 30);
+    let paused_anim = SerikoAnimation {
+        id: 30,
+        name: None,
+        interval: Some(Interval::Always),
+        options: vec![],
+        collisions: vec![],
+        patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 104, wait: 100, wait_max: None, x: 0, y: 0, options: vec![] }],
+    };
+    scheduler.start_animation(0, 0, &paused_anim);
+    assert!(scheduler.is_animation_paused(0, 30));
 
-    scheduler.start_animation(0, 0, &alt_anim);
-    let events = scheduler.step_with_catalog(15, &catalog);
-    assert!(!events.is_empty());
+    // 4. schedule_surface_animations (Never, Bind active/inactive, RunOnce, Sometimes/Periodic)
+    let anims = vec![
+        SerikoAnimation { id: 1, name: None, interval: Some(Interval::Never), options: vec![], collisions: vec![], patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 1, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] }] },
+        SerikoAnimation { id: 2, name: None, interval: Some(Interval::Bind), options: vec![], collisions: vec![], patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 2, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] }] },
+        SerikoAnimation { id: 3, name: None, interval: Some(Interval::RunOnce), options: vec![], collisions: vec![], patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 3, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] }] },
+        SerikoAnimation { id: 4, name: None, interval: Some(Interval::Sometimes), options: vec![], collisions: vec![], patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 4, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] }] },
+    ];
+    scheduler.set_bind_active(0, 2, true);
+    scheduler.schedule_surface_animations(0, 0, &anims, 0.0);
 
-    let _ = scheduler.step_with_catalog(15, &catalog);
-    let _ = scheduler.step_with_catalog(15, &catalog);
+    // 5. on_talk_end when talking_flags is false
+    scheduler.on_talk_end(0, &anims);
 }

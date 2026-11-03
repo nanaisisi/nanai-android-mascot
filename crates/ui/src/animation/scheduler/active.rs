@@ -64,12 +64,8 @@ impl ActiveAnimation {
             return None;
         }
 
-        let pat = match self.patterns.get(self.current_pattern_index) {
-            Some(p) => p.clone(),
-            None => {
-                self.is_finished = true;
-                return None;
-            }
+        let Some(pat) = self.patterns.get(self.current_pattern_index).cloned() else {
+            return None;
         };
 
         // 次のステップのインデックスと待ち時間計算

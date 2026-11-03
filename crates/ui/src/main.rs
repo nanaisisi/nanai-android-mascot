@@ -53,7 +53,7 @@ mod tests {
     fn test_locale_split_edge_cases() {
         let locales = ["ja-JP", "en_US.UTF-8", "zh", "de-DE-POSIX"];
         for l in locales {
-            let code = l.split(|c| c == '-' || c == '_').next().unwrap_or("en");
+            let code = l.split(['-', '_']).next().unwrap_or("en");
             assert!(!code.is_empty());
         }
     }

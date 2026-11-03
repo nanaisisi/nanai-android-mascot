@@ -232,6 +232,8 @@ fn test_multistage_shiori_loader_full_coverage() {
     assert!(loader.unload().is_ok());
     assert!(loader.active_engine().is_none());
     assert!(loader.active_engine_mut().is_none());
+    assert!(loader.request("GET SHIORI/3.0\r\n\r\n").is_err());
+    assert!(loader.load_first_working(Path::new("/dummy"), |_| Ok(Box::new(MockShioriEngine::new())), |_| Ok(Box::new(MockShioriEngine::new()))).is_err());
 
     let dir = Path::new("/dummy/ghost/master");
 

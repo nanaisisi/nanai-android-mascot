@@ -14,6 +14,10 @@ pub struct GhostManifest {
     pub recommended_balloon: Option<String>,
     pub recommended_balloon_path: Option<String>,
     pub default_balloon_path: Option<String>,
+    pub balloon_defaultsurface: Option<i32>,
+    pub sakura_balloon_defaultsurface: Option<i32>,
+    pub kero_balloon_defaultsurface: Option<i32>,
+    pub char_balloon_defaultsurfaces: std::collections::BTreeMap<i32, i32>,
     pub shiori_version: Option<String>,
     pub shiori_cache: Option<String>,
     pub shiori_encoding: Option<String>,
@@ -83,6 +87,38 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
         .as_ref()
         .and_then(|m| m.get("default.balloon.path").cloned());
 
+    // [balloon.defaultsurface,数値]: 全身・ベース規定バルーンサーフィス
+    let balloon_defaultsurface = meta_map.as_ref().and_then(|m| {
+        m.get("balloon.defaultsurface")
+            .and_then(|v| v.trim().parse::<i32>().ok())
+    });
+
+    // [sakura.balloon.defaultsurface,数値]: sakura側規定バルーンサーフィス
+    let sakura_balloon_defaultsurface = meta_map.as_ref().and_then(|m| {
+        m.get("sakura.balloon.defaultsurface")
+            .and_then(|v| v.trim().parse::<i32>().ok())
+    });
+
+    // [kero.balloon.defaultsurface,数値]: kero側規定バルーンサーフィス
+    let kero_balloon_defaultsurface = meta_map.as_ref().and_then(|m| {
+        m.get("kero.balloon.defaultsurface")
+            .and_then(|v| v.trim().parse::<i32>().ok())
+    });
+
+    // [char*.balloon.defaultsurface,数値]: 任意キャラID規定バルーンサーフィス (例: char0.balloon.defaultsurface, char1.balloon.defaultsurface, char2.balloon.defaultsurface)
+    let mut char_balloon_defaultsurfaces = std::collections::BTreeMap::new();
+    if let Some(ref m) = meta_map {
+        for (k, v) in m.iter() {
+            if let Some(rest) = k.strip_prefix("char")
+                && let Some(num_str) = rest.strip_suffix(".balloon.defaultsurface")
+                && let Ok(char_id) = num_str.trim().parse::<i32>()
+                && let Ok(surface_id) = v.trim().parse::<i32>()
+            {
+                char_balloon_defaultsurfaces.insert(char_id, surface_id);
+            }
+        }
+    }
+
     let shiori_version = meta_map
         .as_ref()
         .and_then(|m| m.get("shiori.version").cloned());
@@ -142,6 +178,10 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
         recommended_balloon,
         recommended_balloon_path,
         default_balloon_path,
+        balloon_defaultsurface,
+        sakura_balloon_defaultsurface,
+        kero_balloon_defaultsurface,
+        char_balloon_defaultsurfaces,
         shiori_version,
         shiori_cache,
         shiori_encoding,

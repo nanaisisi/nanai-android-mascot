@@ -280,6 +280,76 @@ export class SurfaceFrameBuffer {
 						br = softCalc(dr, sr);
 						bg = softCalc(dg, sg);
 						bb = softCalc(db, sb);
+					} else if (baseMode === "color-dodge" || baseMode === "colordodge") {
+						const dodgeCalc = (d, s) =>
+							d === 0
+								? 0
+								: s >= 255
+									? 255
+									: Math.min(255, ((d * 255) / (255 - s)) | 0);
+						br = dodgeCalc(dr, sr);
+						bg = dodgeCalc(dg, sg);
+						bb = dodgeCalc(db, sb);
+					} else if (baseMode === "color-burn" || baseMode === "colorburn") {
+						const burnCalc = (d, s) =>
+							d === 255
+								? 255
+								: s === 0
+									? 0
+									: Math.max(0, 255 - ((((255 - d) * 255) / s) | 0));
+						br = burnCalc(dr, sr);
+						bg = burnCalc(dg, sg);
+						bb = burnCalc(db, sb);
+					} else if (baseMode === "hard-light" || baseMode === "hardlight") {
+						const hardCalc = (d, s) =>
+							s < 128
+								? Math.min(255, ((2 * s * d) / 255) | 0)
+								: Math.min(
+										255,
+										255 - (((2 * (255 - s) * (255 - d)) / 255) | 0 || 0),
+									);
+						br = hardCalc(dr, sr);
+						bg = hardCalc(dg, sg);
+						bb = hardCalc(db, sb);
+					} else if (baseMode === "vivid-light" || baseMode === "vividlight") {
+						const vividCalc = (d, s) => {
+							if (s < 128) {
+								if (d === 255) return 255;
+								if (s === 0) return 0;
+								const s2 = s * 2;
+								return Math.max(0, 255 - ((((255 - d) * 255) / s2) | 0));
+							}
+							if (d === 0) return 0;
+							if (s >= 255) return 255;
+							const sVal = 2 * (s - 128);
+							return sVal >= 255
+								? 255
+								: Math.min(255, ((d * 255) / (255 - sVal)) | 0);
+						};
+						br = vividCalc(dr, sr);
+						bg = vividCalc(dg, sg);
+						bb = vividCalc(db, sb);
+					} else if (baseMode === "linear-burn" || baseMode === "linearburn") {
+						br = Math.max(0, dr + sr - 255);
+						bg = Math.max(0, dg + sg - 255);
+						bb = Math.max(0, db + sb - 255);
+					} else if (
+						baseMode === "linear-light" ||
+						baseMode === "linearlight"
+					) {
+						br = Math.max(0, Math.min(255, dr + 2 * sr - 255));
+						bg = Math.max(0, Math.min(255, dg + 2 * sg - 255));
+						bb = Math.max(0, Math.min(255, db + 2 * sb - 255));
+					} else if (baseMode === "pin-light" || baseMode === "pinlight") {
+						const pinCalc = (d, s) =>
+							s < 128 ? Math.min(d, 2 * s) : Math.max(d, 2 * (s - 128));
+						br = pinCalc(dr, sr);
+						bg = pinCalc(dg, sg);
+						bb = pinCalc(db, sb);
+					} else if (baseMode === "hard-mix" || baseMode === "hardmix") {
+						br = dr + 2 * sr - 255 >= 128 ? 255 : 0;
+						bg = dg + 2 * sg - 255 >= 128 ? 255 : 0;
+						bb = db + 2 * sb - 255 >= 128 ? 255 : 0;
 					}
 
 					if (isFast) {

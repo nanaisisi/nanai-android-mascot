@@ -15,6 +15,7 @@ pub struct SstpRequest {
     pub id: Option<String>,
     pub options: Vec<String>,
     pub references: HashMap<String, String>,
+    pub connection: Option<String>,
     pub keep_alive: Option<bool>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub surface: Option<String>,

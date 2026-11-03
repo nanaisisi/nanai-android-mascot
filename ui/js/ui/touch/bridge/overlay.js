@@ -172,6 +172,22 @@ export class OverlayManager {
 	}
 
 	/**
+	 * クリックスルー（背面タッチ透過）状態を反転
+	 * @returns {Promise<boolean>}
+	 */
+	async toggleClickThrough() {
+		return this.setClickThrough(!this._isClickThrough);
+	}
+
+	/**
+	 * フォアグラウンドサービス稼働状態を反転
+	 * @returns {Promise<string>}
+	 */
+	async toggleForegroundService() {
+		return this.setupForegroundService(!this._isForegroundServiceActive);
+	}
+
+	/**
 	 * Android低メモリ通知 (ComponentCallbacks2.onTrimMemory) の処理
 	 * @param {number|string} level トリムレベル (例: 10, 15, 20, 40, 60, 80)
 	 * @returns {Promise<number>}

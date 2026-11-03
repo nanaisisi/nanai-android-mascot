@@ -196,3 +196,31 @@ fn test_ast_cycle5_lifetime_classification() {
     let perm_cmds = ast.collect_commands_by_lifetime(SakuraScriptLifetime::Permanent);
     assert_eq!(perm_cmds.len(), 2);
 }
+
+#[test]
+fn test_ast_find_choices_and_surfaces() {
+    let commands = vec![
+        SakuraCommand::Target(0),
+        SakuraCommand::Surface(10),
+        SakuraCommand::Choice {
+            label: "Select A".into(),
+            id: "OnSelectA".into(),
+            args: vec![],
+        },
+        SakuraCommand::Target(1),
+        SakuraCommand::Surface(20),
+        SakuraCommand::Choice {
+            label: "Select B".into(),
+            id: "OnSelectB".into(),
+            args: vec!["arg1".into()],
+        },
+    ];
+    let ast = build_sakura_ast(&commands);
+    let choices = ast.find_choices();
+    assert_eq!(choices.len(), 2);
+    assert_eq!(choices[0], ("OnSelectA".to_string(), "Select A".to_string()));
+    assert_eq!(choices[1], ("OnSelectB".to_string(), "Select B".to_string()));
+
+    let surfaces = ast.find_surfaces();
+    assert_eq!(surfaces, vec![10, 20]);
+}

@@ -193,6 +193,48 @@ export class AndroidBridge {
 	}
 
 	/**
+	 * 画面端にドッキング（退避）されているか判定
+	 * @returns {boolean}
+	 */
+	get isDocked() {
+		return this._dockManager.isDocked;
+	}
+
+	/**
+	 * 画面端へ折りたたみ退避
+	 * @param {"left" | "right"} [edge="right"]
+	 * @returns {"none" | "left" | "right"}
+	 */
+	collapse(edge = "right") {
+		return this._dockManager.collapse(edge);
+	}
+
+	/**
+	 * ドッキング状態から元の浮遊状態に復帰
+	 * @returns {"none" | "left" | "right"}
+	 */
+	restore() {
+		return this._dockManager.restore();
+	}
+
+	/**
+	 * ドッキング状態から元の浮遊状態に復帰 (restore のエイリアス)
+	 * @returns {"none" | "left" | "right"}
+	 */
+	expand() {
+		return this._dockManager.expand();
+	}
+
+	/**
+	 * ドッキング退避と復帰をトグル切り替え
+	 * @param {"left" | "right"} [edge="right"]
+	 * @returns {"none" | "left" | "right"}
+	 */
+	toggleDock(edge = "right") {
+		return this._dockManager.toggle(edge);
+	}
+
+	/**
 	 * Android環境かどうかを判定
 	 * @returns {boolean}
 	 */
@@ -241,6 +283,22 @@ export class AndroidBridge {
 	 */
 	async setClickThrough(enabled) {
 		return this._overlayManager.setClickThrough(enabled);
+	}
+
+	/**
+	 * クリックスルー（背面タッチ透過）状態を反転
+	 * @returns {Promise<boolean>}
+	 */
+	async toggleClickThrough() {
+		return this._overlayManager.toggleClickThrough();
+	}
+
+	/**
+	 * フォアグラウンドサービス稼働状態を反転
+	 * @returns {Promise<string>}
+	 */
+	async toggleForegroundService() {
+		return this._overlayManager.toggleForegroundService();
 	}
 
 	/**

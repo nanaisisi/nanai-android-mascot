@@ -40,6 +40,52 @@ export class DockManager {
 	}
 
 	/**
+	 * 画面端にドッキング（退避）されているか判定
+	 * @returns {boolean}
+	 */
+	get isDocked() {
+		return this._dockState === "left" || this._dockState === "right";
+	}
+
+	/**
+	 * 画面端へ折りたたみ退避
+	 * @param {"left" | "right"} [edge="right"]
+	 * @returns {"none" | "left" | "right"}
+	 */
+	collapse(edge = "right") {
+		const targetEdge = edge === "left" ? "left" : "right";
+		return this.setDockMode(targetEdge);
+	}
+
+	/**
+	 * ドッキング状態から元の浮遊状態に復帰
+	 * @returns {"none" | "left" | "right"}
+	 */
+	restore() {
+		return this.setDockMode("none");
+	}
+
+	/**
+	 * ドッキング状態から元の浮遊状態に復帰 (restore のエイリアス)
+	 * @returns {"none" | "left" | "right"}
+	 */
+	expand() {
+		return this.restore();
+	}
+
+	/**
+	 * ドッキング退避と復帰をトグル切り替え
+	 * @param {"left" | "right"} [edge="right"]
+	 * @returns {"none" | "left" | "right"}
+	 */
+	toggle(edge = "right") {
+		if (this.isDocked) {
+			return this.restore();
+		}
+		return this.collapse(edge);
+	}
+
+	/**
 	 * 連携中のジェスチャー認識器を取得
 	 * @returns {TouchGestureRecognizer|null}
 	 */

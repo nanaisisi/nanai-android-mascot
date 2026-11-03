@@ -43,6 +43,24 @@ impl SurfacesTxt {
         self.surfaces.get(&number)
     }
 
+    /// 定義済みの全サーフィスID（昇順）を取得する (`currentghost.seriko.surfacelist.defined`)
+    pub fn defined_surface_ids(&self) -> Vec<u32> {
+        self.surfaces.keys().copied().collect()
+    }
+
+    /// 定義済みおよびエイリアスを含むすべての利用可能サーフィスID（昇順・重複なし）を取得する (`currentghost.seriko.surfacelist.all`)
+    pub fn all_surface_ids(&self) -> Vec<u32> {
+        let mut set = std::collections::BTreeSet::new();
+        set.extend(self.surfaces.keys().copied());
+        for list in self.aliases.values() {
+            set.extend(list.iter().copied());
+        }
+        for list in self.kero_aliases.values() {
+            set.extend(list.iter().copied());
+        }
+        set.into_iter().collect()
+    }
+
     /// `surfaces2.txt` 等の上位定義でマージ（上書き・追記）する
     pub fn merge(&mut self, other: SurfacesTxt) {
         if other.charset.is_some() {
@@ -194,5 +212,14 @@ mod tests {
         assert_eq!(base.collision_sort, Some(SortKind::Ascend));
         assert!(base.surface(0).unwrap().name.is_some());
         assert!(base.surface(1).is_some());
+
+        // Surface ID enumeration queries
+        assert_eq!(base.defined_surface_ids(), vec![0, 1]);
+        assert_eq!(base.all_surface_ids(), vec![0, 1]);
+
+        base.aliases.insert("extra".into(), vec![2, 5]);
+        base.kero_aliases.insert("kextra".into(), vec![5, 10]);
+        assert_eq!(base.defined_surface_ids(), vec![0, 1]);
+        assert_eq!(base.all_surface_ids(), vec![0, 1, 2, 5, 10]);
     }
 }

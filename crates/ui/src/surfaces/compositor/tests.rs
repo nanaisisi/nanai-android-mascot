@@ -324,6 +324,23 @@ fn test_chromakey_edge_cases() {
 }
 
 #[test]
+fn test_framebuffer_edge_cases() {
+    let mut fb = SurfaceFrameBuffer::new(2, 2);
+    assert!(fb.get_pixel(5, 0).is_none());
+    assert!(fb.get_pixel(0, 5).is_none());
+
+    fb.set_pixel(5, 0, 255, 255, 255, 255);
+    fb.set_pixel(0, 5, 255, 255, 255, 255);
+
+    fb.clear_rect(0, 0, 0, 2);
+    fb.clear_rect(0, 0, 2, 0);
+    fb.clear_rect(5, 0, 1, 1);
+    fb.clear_rect(0, 5, 1, 1);
+    fb.clear_rect(1, 1, 5, 5);
+    fb.clear();
+}
+
+#[test]
 fn test_compositor_layer_edge_cases() {
     let mut base = SurfaceFrameBuffer::new(2, 2);
     base.set_pixel(0, 0, 100, 100, 100, 255);

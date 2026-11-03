@@ -220,6 +220,8 @@ fn test_direct_sstp_and_saori_request() {
 fn test_sstp_request_parser_more_edge_cases() {
     let raw = "SEND SSTP/1.4\r\n\
         Sender: Tool\r\n\
+        SecurityLevel: external\r\n\
+        X-SSTP-PassThru-Header1: pass_val\r\n\
         HWnd: invalid_number\r\n\
         ReceiverGhostHWnd: invalid_number\r\n\
         KeepAlive: 1\r\n\
@@ -228,6 +230,8 @@ fn test_sstp_request_parser_more_edge_cases() {
         \r\n";
     let req = SstpRequest::parse(raw).unwrap();
     assert!(req.keep_alive);
+    assert_eq!(req.security_level, Some("external".to_string()));
+    assert_eq!(req.pass_thru.get("X-SSTP-PassThru-Header1"), Some(&"pass_val".to_string()));
     assert_eq!(req.hwnd, None);
     assert_eq!(req.receiver_ghost_hwnd, None);
     assert_eq!(req.options, vec!["opt1", "opt2"]);

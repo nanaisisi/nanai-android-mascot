@@ -341,11 +341,26 @@ fn test_animation_scheduler_state_coverage_boost() {
 
     let mut scheduler = AnimationScheduler::new();
 
+    // scope_id == 2 (returns 0)
+    assert_eq!(scheduler.current_surface(2), 0);
+    // scope_id == 1 (returns 10)
+    assert_eq!(scheduler.current_surface(1), 10);
+
     // 1. unbind (active = false)
     scheduler.set_bind_active(0, 5, true);
     assert!(scheduler.is_bind_active(0, 5));
     scheduler.set_bind_active(0, 5, false);
     assert!(!scheduler.is_bind_active(0, 5));
+
+    // pause/resume/stop/offset on non-existent scope/animation (None branches)
+    scheduler.pause_animation(99, 999);
+    scheduler.resume_animation(99, 999);
+    scheduler.stop_animation(99, 999);
+    scheduler.set_animation_offset(99, 999, 1, 1);
+    assert_eq!(scheduler.get_animation_offset(99, 999), (1, 1));
+
+    // is_animation_paused for non-existent scope
+    assert!(!scheduler.is_animation_paused(99, 999));
 
     // 2. pause_animation, resume_animation, is_animation_paused on active animation
     let anim = SerikoAnimation {
@@ -367,6 +382,11 @@ fn test_animation_scheduler_state_coverage_boost() {
     };
     scheduler.start_animation(0, 0, &anim);
     assert_eq!(scheduler.active_count(0), 1);
+
+    scheduler.pause_animation(0, 999); // id mismatch branch
+    scheduler.resume_animation(0, 999); // id mismatch branch
+    scheduler.stop_animation(0, 999); // id mismatch branch
+    scheduler.set_animation_offset(0, 999, 5, 5); // id mismatch branch
 
     scheduler.pause_animation(0, 77);
     assert!(scheduler.is_animation_paused(0, 77));

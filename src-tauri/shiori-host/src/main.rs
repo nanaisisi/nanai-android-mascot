@@ -7,6 +7,7 @@ mod ffi;
 mod host;
 mod protocol;
 
+#[cfg(not(test))]
 use host::load_and_run;
 
 #[cfg(not(test))]

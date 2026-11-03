@@ -247,3 +247,32 @@ fn test_fmo_buffer_more_edge_cases() {
     assert_eq!(parsed[0].fullname, None);
     assert_eq!(parsed[0].modulestate, None);
 }
+
+#[test]
+fn test_fmo_types_edge_cases() {
+    let mut entry = FmoEntry::new("test_0", "Name");
+    entry.hwnd = 0;
+    entry.kerohwnd = Some(123);
+    let rec = entry.to_record();
+    assert_eq!(rec.hwndlist, vec![123]);
+
+    entry.hwnd = 123;
+    entry.kerohwnd = Some(123); // duplicate
+    let rec2 = entry.to_record();
+    assert_eq!(rec2.hwndlist, vec![123]);
+
+    entry.kerohwnd = Some(0); // zero kerohwnd
+    let rec3 = entry.to_record();
+    assert_eq!(rec3.hwndlist, vec![123]);
+
+    let mut rec_mod = FmoRecord::new("test_mod", "Mod");
+    rec_mod.modulestate = Some("custom:running,other_part".to_string());
+    let entry_mod = FmoEntry::from_record(&rec_mod);
+    assert!(entry_mod.is_visible);
+    assert_eq!(entry_mod.lifecycle_state, "active");
+
+    let mut entry_lifecycle = FmoEntry::new("test_lc", "LC");
+    entry_lifecycle.update_lifecycle("paused", false);
+    entry_lifecycle.update_lifecycle("paused", false);
+    assert_eq!(entry_lifecycle.lifecycle_state, "paused");
+}

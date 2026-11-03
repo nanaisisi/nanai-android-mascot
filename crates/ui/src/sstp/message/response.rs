@@ -15,6 +15,19 @@ pub struct SstpResponse {
     /// SAORI / エラー応答ヘッダ (ErrorDescription)
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub error_description: Option<String>,
+    /// Keep-Alive 接続維持フラグ (UKADOC keepalive.md 規格準拠)
+    #[serde(default)]
+    pub keep_alive: bool,
+    /// Keep-Alive タイムアウト秒数 (既定: 5秒)
+    #[serde(default = "default_keep_alive_timeout")]
+    pub keep_alive_timeout: u32,
+    /// 明示的な Connection ヘッダ出力指示 (例: Connection: close)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub connection_header: Option<String>,
+}
+
+fn default_keep_alive_timeout() -> u32 {
+    5
 }
 
 impl SstpResponse {
@@ -28,6 +41,9 @@ impl SstpResponse {
             pass_thru: HashMap::new(),
             additional_data: None,
             error_description: None,
+            keep_alive: false,
+            keep_alive_timeout: 5,
+            connection_header: None,
         }
     }
 
@@ -89,7 +105,24 @@ impl SstpResponse {
         self
     }
 
-    /// SSTP レスポンス文字列を構築する
+    /// Keep-Alive 接続維持を設定
+    pub fn with_keep_alive(mut self, keep_alive: bool) -> Self {
+        self.keep_alive = keep_alive;
+        if keep_alive {
+            self.connection_header = Some("keep-alive".to_string());
+        } else {
+            self.connection_header = Some("close".to_string());
+        }
+        self
+    }
+
+    /// Keep-Alive タイムアウト秒数を設定
+    pub fn with_keep_alive_timeout(mut self, timeout: u32) -> Self {
+        self.keep_alive_timeout = timeout;
+        self
+    }
+
+    /// SSTP レスポンス文字列を構築する (UKADOC req_res / keepalive 準拠)
     pub fn build(&self) -> String {
         let mut out = format!(
             "{} {} {}\r\n",
@@ -98,6 +131,14 @@ impl SstpResponse {
             self.status.reason_phrase()
         );
         out.push_str(&format!("Charset: {}\r\n", self.charset));
+
+        if let Some(ref conn) = self.connection_header {
+            out.push_str(&format!("Connection: {}\r\n", conn));
+            if conn.eq_ignore_ascii_case("keep-alive") {
+                out.push_str(&format!("Keep-Alive: timeout={}\r\n", self.keep_alive_timeout));
+            }
+        }
+
         if let Some(ref script) = self.script {
             // スクリプト内の改行は除去する（仕様準拠）
             let flat_script = script.replace(['\r', '\n'], "");
@@ -120,6 +161,17 @@ impl SstpResponse {
         pt_keys.sort();
         for k in pt_keys {
             out.push_str(&format!("{}: {}\r\n", k, self.pass_thru[k]));
+        }
+
+        // Keep-Alive 時の Content-Length ヘッダ (UKADOC keepalive.md 規格準拠)
+        if self.keep_alive && self.connection_header.as_deref() == Some("keep-alive") {
+            if let Some(ref data) = self.additional_data {
+                out.push_str(&format!("Content-Length: {}\r\n", data.as_bytes().len()));
+                out.push_str("\r\n");
+                out.push_str(data);
+                // keepalive 時は追加データ後ろに空行を付けない
+                return out;
+            }
         }
 
         out.push_str("\r\n");

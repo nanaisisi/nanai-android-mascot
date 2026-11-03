@@ -130,6 +130,46 @@ export function tokenizeTextFormatTag(script, i, _len) {
 		};
 	}
 
+	// \_u[0xXXXX] または \_u[XXXX] (UCS-2 / Unicode 文字コード埋め込み)
+	if (char === "_" && script[i + 1] === "u" && script[i + 2] === "[") {
+		const parsed = readBracketContent(script, i + 2);
+		if (parsed) {
+			const raw = parsed.content.trim();
+			const code =
+				raw.startsWith("0x") || raw.startsWith("0X")
+					? Number.parseInt(raw.slice(2), 16)
+					: Number.parseInt(raw, 10);
+			if (!Number.isNaN(code) && code >= 0 && code <= 0x10ffff) {
+				return {
+					tokens: [{ type: "char", value: String.fromCodePoint(code) }],
+					nextIdx: parsed.nextIdx,
+				};
+			}
+			return { tokens: [], nextIdx: parsed.nextIdx };
+		}
+		return { tokens: [], nextIdx: i + 2 };
+	}
+
+	// \_m[0xXX] または \_m[XX] (ASCII 文字コード埋め込み)
+	if (char === "_" && script[i + 1] === "m" && script[i + 2] === "[") {
+		const parsed = readBracketContent(script, i + 2);
+		if (parsed) {
+			const raw = parsed.content.trim();
+			const code =
+				raw.startsWith("0x") || raw.startsWith("0X")
+					? Number.parseInt(raw.slice(2), 16)
+					: Number.parseInt(raw, 10);
+			if (!Number.isNaN(code) && code >= 0 && code <= 0xff) {
+				return {
+					tokens: [{ type: "char", value: String.fromCharCode(code) }],
+					nextIdx: parsed.nextIdx,
+				};
+			}
+			return { tokens: [], nextIdx: parsed.nextIdx };
+		}
+		return { tokens: [], nextIdx: i + 2 };
+	}
+
 	// \f (フォント指定: \f[tag,param], \f[tag])
 	if (char === "f" && script[i + 1] === "[") {
 		const parsed = readBracketContent(script, i + 1);

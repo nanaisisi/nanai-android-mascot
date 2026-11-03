@@ -2,6 +2,13 @@
 members = ["src-tauri", "crates/ui"]
 resolver = "2"
 
+[profile.dev]
+# デバッグ情報が正しく生成されるようにする
+debug = true
+
+[profile.test]
+debug = true
+
 [profile.wasm-dev]
 inherits = "dev"
 opt-level = 1
@@ -14,5 +21,3 @@ inherits = "dev"
 
 [patch.crates-io]
 dpi = { git = "https://github.com/nanaisisi/winit.git", branch = "fix-windows-scale-factor" }
-
-

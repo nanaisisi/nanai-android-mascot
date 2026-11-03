@@ -41,6 +41,16 @@ pub(crate) fn handle_open(parts: &[String], callback: &mut dyn FnMut(SakuraComma
 pub(crate) fn handle_set(parts: &[String], callback: &mut dyn FnMut(SakuraCommand)) {
     let setting = parts.get(1).cloned().unwrap_or_default();
     match setting.to_lowercase().as_str() {
+        "quicksection" => {
+            let enabled = parts
+                .get(2)
+                .map(|v| match v.as_str() {
+                    "0" | "false" => false,
+                    _ => true,
+                })
+                .unwrap_or(true);
+            callback(SakuraCommand::Quick(enabled));
+        }
         "choicetimeout" => {
             let timeout = parts.get(2).and_then(|s| s.parse().ok()).unwrap_or(0);
             callback(SakuraCommand::ChoiceTimeout(timeout));

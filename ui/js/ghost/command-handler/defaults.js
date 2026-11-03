@@ -42,9 +42,12 @@ import {
 } from "./media.js";
 import {
 	handleQuickSection,
+	handleResetSyncObject,
 	handleSetBalloonTimeout,
 	handleSetBalloonWait,
 	handleSetChoiceTimeout,
+	handleSetSyncObject,
+	handleWaitSyncObject,
 } from "./playback.js";
 import { handlePluginEvent } from "./plugin.js";
 import { CommandHandlerMap, registerCommandHandler } from "./registry.js";
@@ -178,6 +181,9 @@ export function initDefaultCommandHandlers() {
 	registerCommandHandler("set:choicetimeout", handleSetChoiceTimeout);
 	registerCommandHandler("set:balloontimeout", handleSetBalloonTimeout);
 	registerCommandHandler("set:balloonwait", handleSetBalloonWait);
+	registerCommandHandler("set:syncobject", handleSetSyncObject);
+	registerCommandHandler("reset:syncobject", handleResetSyncObject);
+	registerCommandHandler("wait:syncobject", handleWaitSyncObject);
 	registerCommandHandler("quicksection", handleQuickSection);
 
 	registerCommandHandler("set:alignmenttodesktop", async (handler, args) => {

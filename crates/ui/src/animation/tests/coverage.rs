@@ -341,11 +341,12 @@ fn test_animation_scheduler_state_coverage_boost() {
 
     let mut scheduler = AnimationScheduler::new();
 
-    // current_surface explicit set vs fallback
-    scheduler.set_surface(0, 42);
-    assert_eq!(scheduler.current_surface(0), 42);
+    // current_surface fallback for scope 0 (scope_id == 1 is false -> 0)
+    assert_eq!(scheduler.current_surface(0), 0);
     assert_eq!(scheduler.current_surface(1), 10);
     assert_eq!(scheduler.current_surface(2), 0);
+    scheduler.set_surface(0, 42);
+    assert_eq!(scheduler.current_surface(0), 42);
 
     // 1. unbind (active = false)
     scheduler.set_bind_active(0, 5, true);
@@ -359,8 +360,6 @@ fn test_animation_scheduler_state_coverage_boost() {
     scheduler.stop_animation(99, 999);
     scheduler.set_animation_offset(99, 999, 1, 1);
     assert_eq!(scheduler.get_animation_offset(99, 999), (1, 1));
-
-    // is_animation_paused for non-existent scope
     assert!(!scheduler.is_animation_paused(99, 999));
 
     // 2. pause_animation, resume_animation, is_animation_paused on active animation
@@ -404,8 +403,9 @@ fn test_animation_scheduler_state_coverage_boost() {
 
     scheduler.pause_animation(0, 999); // id mismatch branch
     scheduler.resume_animation(0, 999); // id mismatch branch
-    scheduler.stop_animation(0, 999); // id mismatch branch
+    scheduler.stop_animation(0, 999); // id mismatch branch (tests retain keeping all)
     scheduler.set_animation_offset(0, 999, 5, 5); // id mismatch branch
+    assert_eq!(scheduler.active_count(0), 2);
 
     scheduler.pause_animation(0, 77);
     assert!(scheduler.is_animation_paused(0, 77));
@@ -421,7 +421,7 @@ fn test_animation_scheduler_state_coverage_boost() {
     scheduler.stop_animation(0, 77);
     assert_eq!(scheduler.active_count(0), 1);
 
-    // 5. set_surface_with_shared_index (with empty preserved & out of bounds saved index)
+    // 5. set_surface_with_shared_index (with finished shared-index animation where !a.is_finished is false)
     let shared_anim = SerikoAnimation {
         id: 88,
         name: None,
@@ -433,8 +433,13 @@ fn test_animation_scheduler_state_coverage_boost() {
             AnimationPattern { index: 1, method: DrawMethod::Overlay, surface: 101, wait: 50, wait_max: None, x: 0, y: 0, options: vec![] },
         ],
     };
-    // Test empty preserved shared index
-    scheduler.set_surface_with_shared_index(0, 1, &[shared_anim.clone()]);
+    scheduler.start_animation(0, 0, &shared_anim);
+    if let Some(anims) = scheduler.active_animations.get_mut(&0) {
+        for a in anims.iter_mut() {
+            a.is_finished = true;
+        }
+    }
+    scheduler.set_surface_with_shared_index(0, 1, &[shared_anim]);
 }
 
 #[test]

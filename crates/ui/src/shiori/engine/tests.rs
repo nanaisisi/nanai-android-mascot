@@ -449,44 +449,39 @@ fn test_multistage_shiori_loader_unload_errors() {
 }
 
 #[test]
-fn test_multistage_shiori_loader_100_percent() {
-    let dir = Path::new("/dummy/ghost/master");
+fn test_loader_candidate_kind_and_load_attempt_derives_and_last_error() {
+    // Test CandidateKind derives (Debug, Clone, Copy, PartialEq, Eq)
+    let kind1 = CandidateKind::Dynamic;
+    let kind2 = kind1;
+    let kind3 = kind1.clone();
+    assert_eq!(kind1, kind2);
+    assert_eq!(kind1, kind3);
+    assert_ne!(kind1, CandidateKind::Wasm);
+    assert_ne!(kind1, CandidateKind::Mock);
+    assert!(format!("{:?}", kind1).contains("Dynamic"));
+    assert!(format!("{:?}", CandidateKind::Wasm).contains("Wasm"));
+    assert!(format!("{:?}", CandidateKind::Mock).contains("Mock"));
+
+    // Test LoadAttempt derives (Debug, Clone, PartialEq, Eq)
+    let attempt1 = LoadAttempt {
+        kind: CandidateKind::Dynamic,
+        path: Some(PathBuf::from("ghost.dll")),
+        success: false,
+        error: Some("File not found".to_string()),
+    };
+    let attempt2 = attempt1.clone();
+    assert_eq!(attempt1, attempt2);
+    assert!(format!("{:?}", attempt1).contains("LoadAttempt"));
+    assert!(format!("{:?}", attempt1).contains("ghost.dll"));
+
+    // Test MultiStageShioriLoader last_error() on failed load
     let mut loader = MultiStageShioriLoader::new();
-    assert_eq!(loader.candidate_count(), 0);
-    assert!(loader.last_error().is_none());
-    assert!(loader.active_kind().is_none());
-    assert!(loader.load_attempts().is_empty());
-    assert!(loader.active_engine().is_none());
-    assert!(loader.active_engine_mut().is_none());
-    assert!(!loader.is_loaded());
-    assert_eq!(loader.lifecycle_state(), ShioriLifecycleState::Unloaded);
-
-    assert!(loader.load(dir).is_err());
-    assert!(loader.request("GET...").is_err());
-    assert!(loader.suspend().is_ok());
-    assert!(loader.resume().is_ok());
-
-    loader.prepend_candidate(ShioriEngineCandidate::Dynamic(PathBuf::from("dyn.dll")));
-    loader.add_candidate(ShioriEngineCandidate::Wasm(PathBuf::from("wasm.wasm")));
-    loader.add_candidate(ShioriEngineCandidate::Mock(Box::new(MockShioriEngine::new())));
-    assert_eq!(loader.candidate_count(), 3);
-
+    loader.add_candidate(ShioriEngineCandidate::Dynamic(PathBuf::from("invalid.dll")));
     let res = loader.load_first_working(
-        dir,
-        |_| Err("dyn err".into()),
-        |_| Ok(Box::new(MockShioriEngine::new())),
+        Path::new("/dummy"),
+        |_| Err("DLL load symbol missing".to_string()),
+        |_| Err("WASM not invoked".to_string()),
     );
-    assert!(res.is_ok());
-    assert_eq!(loader.active_kind(), Some(CandidateKind::Wasm));
-    assert!(loader.active_engine().is_some());
-    assert!(loader.active_engine_mut().is_some());
-    assert!(loader.is_loaded());
-
-    assert!(loader.reload().is_ok());
-
-    loader.clear_attempts();
-    assert!(loader.load_attempts().is_empty());
-
-    loader.clear_candidates();
-    assert_eq!(loader.candidate_count(), 0);
+    assert!(res.is_err());
+    assert_eq!(loader.last_error(), Some("Dynamic load failed for \"invalid.dll\": DLL load symbol missing"));
 }

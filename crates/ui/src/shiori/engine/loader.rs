@@ -137,6 +137,15 @@ impl MultiStageShioriLoader {
         F: FnMut(&Path) -> Result<Box<dyn ShioriEngine>, String>,
         W: FnMut(&Path) -> Result<Box<dyn ShioriEngine>, String>,
     {
+        self.load_first_working_inner(dir_path, &mut dynamic_loader, &mut wasm_loader)
+    }
+
+    fn load_first_working_inner(
+        &mut self,
+        dir_path: &Path,
+        dynamic_loader: &mut dyn FnMut(&Path) -> Result<Box<dyn ShioriEngine>, String>,
+        wasm_loader: &mut dyn FnMut(&Path) -> Result<Box<dyn ShioriEngine>, String>,
+    ) -> Result<(), String> {
         self.unload()?;
         self.last_dir_path = Some(dir_path.to_path_buf());
         self.attempts.clear();

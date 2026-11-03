@@ -304,6 +304,14 @@ mod tests {
         });
         assert!(def3.effective_icon_rect().is_some());
 
+        let mut def4 = SurfaceDefinition::default();
+        def4.collisions.push(CollisionArea {
+            id: Some(1),
+            name: "face".into(),
+            shape: CollisionShape::Circle { cx: 0, cy: 0, r: 0.0 },
+        });
+        assert!(def4.effective_icon_rect().is_none());
+
         let square = make_square_rect(0, 0, 50, 50);
         assert_eq!(square, [0, 0, 50, 50]);
 

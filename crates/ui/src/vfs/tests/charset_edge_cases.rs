@@ -56,9 +56,25 @@ fn test_encoding_uncovered_branches() {
     let (_, enc_sjis_err) = detect_and_decode(bad_sjis_header);
     assert_eq!(enc_sjis_err, "Shift_JIS");
 
+    let bad_euc_header = b"charset,euc-jp\r\n\xff\xff\xff";
+    let (_, enc_euc_err) = detect_and_decode(bad_euc_header);
+    assert_eq!(enc_euc_err, "EUC-JP");
+
+    let bad_jis_header = b"charset,iso-2022-jp\r\n\xff\xff\xff";
+    let (_, enc_jis_err) = detect_and_decode(bad_jis_header);
+    assert_eq!(enc_jis_err, "ISO-2022-JP");
+
     let utf8_header = b"charset,utf-8\r\nHello UTF-8 header";
     let (_, enc_utf8_h) = detect_and_decode(utf8_header);
     assert_eq!(enc_utf8_h, "UTF-8");
+
+    let (euc_bytes, _, _) = encoding_rs::EUC_JP.encode("漢字テスト");
+    let (_, enc_heuristic) = detect_and_decode(&euc_bytes);
+    assert!(!enc_heuristic.is_empty());
+
+    let euc_only_bytes = &[0xA4, 0xA2, 0x80, 0xFF];
+    let (_, enc_euc_only) = detect_and_decode(euc_only_bytes);
+    assert!(!enc_euc_only.is_empty());
 
     assert!(encode_to_charset("🚀", "euc-jp").is_none());
 }

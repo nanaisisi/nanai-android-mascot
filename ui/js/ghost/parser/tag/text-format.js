@@ -15,6 +15,28 @@ import { readBracketContent, splitBracketArgs } from "../bracket-utils.js";
 export function tokenizeTextFormatTag(script, i, _len) {
 	const char = script[i];
 
+	// \_n (自動改行無効トグル: NewLineNoPause)
+	if (char === "_" && script[i + 1] === "n") {
+		return {
+			tokens: [{ type: "no_autowrap" }],
+			nextIdx: i + 2,
+		};
+	}
+
+	// \_? / \_! (生テキスト・スクリプト無効化トグル)
+	if (char === "_" && (script[i + 1] === "?" || script[i + 1] === "!")) {
+		return {
+			tokens: [
+				{
+					type: "raw_toggle",
+					active: true,
+					delimiter: `_${script[i + 1]}`,
+				},
+			],
+			nextIdx: i + 2,
+		};
+	}
+
 	// \n (改行)
 	if (char === "n") {
 		i++;

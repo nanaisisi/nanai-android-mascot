@@ -198,6 +198,11 @@ test("AST traversal functions and lifetime filtering", async () => {
 
 	assert.equal(getSakuraTokenLifetime({ type: "font" }), "Scope");
 	assert.equal(getSakuraTokenLifetime({ type: "surface" }), "Permanent");
+	assert.equal(getSakuraTokenLifetime({ type: "bind" }), "Permanent");
+	assert.equal(
+		getSakuraTokenLifetime({ type: "command", command: "windowstate" }),
+		"Permanent",
+	);
 	assert.equal(getSakuraTokenLifetime({ type: "char" }), "Script");
 
 	const script = "\\0\\s[0]\\f[bold,1]Text\\q[Option 1,id1]";
@@ -228,4 +233,100 @@ test("AST traversal functions and lifetime filtering", async () => {
 	const permanentTokens = collectAstTokensByLifetime(ast, "Permanent");
 	assert.equal(permanentTokens.length, 1);
 	assert.equal(permanentTokens[0].type, "surface");
+});
+
+test("parseSakuraScript handles raw mode (\\_?, \\_!) and auto-wrap disable (\\_n)", () => {
+	const script = "\\_?\\0\\s[0]\\nRawText\\_?\\_nLineWithoutAutoWrap\\_n";
+	const tokens = parseSakuraScript(script);
+
+	// Raw toggle begins
+	const rawBegins = tokens.filter(
+		(t) => t.type === "raw_toggle" && t.active === true,
+	);
+	assert.equal(rawBegins.length, 1);
+	assert.equal(rawBegins[0].delimiter, "_?");
+
+	// Content inside \_? is captured as literal characters
+	const insideChars = tokens
+		.filter((t) => t.type === "char")
+		.map((t) => t.value)
+		.join("");
+	assert.ok(insideChars.includes("\\0\\s[0]\\nRawText"));
+
+	// Raw toggle ends
+	const rawEnds = tokens.filter(
+		(t) => t.type === "raw_toggle" && t.active === false,
+	);
+	assert.equal(rawEnds.length, 1);
+
+	// No-autowrap tokens (\_n)
+	const noAutoWraps = tokens.filter((t) => t.type === "no_autowrap");
+	assert.equal(noAutoWraps.length, 2);
+});
+
+test("rustCommandsToTokens maps Cycle 5 commands correctly", async () => {
+	const { rustCommandsToTokens } = await import(
+		"../ui/js/ghost/sakura-rust-bridge.js"
+	);
+
+	const commands = [
+		{ type: "NewLineNoPause" },
+		{ type: "AutoPause" },
+		{
+			type: "PostMessage",
+			payload: { umsg: "1024", wparam: "1", lparam: "2" },
+		},
+		{ type: "Star" },
+		{ type: "Marker" },
+		{ type: "AudioWait" },
+		{ type: "Jump", payload: "OnOther" },
+		{ type: "Plus" },
+		{
+			type: "PluginEvent",
+			payload: {
+				plugin: "plug1",
+				event: "OnTest",
+				references: ["r0"],
+				is_notify: false,
+			},
+		},
+		{ type: "NoUserBreak", payload: true },
+		{ type: "Voice", payload: "voice.wav" },
+		{ type: "Midi", payload: "1234" },
+		{ type: "ModeChange", payload: { mode: "passive", active: true } },
+		{ type: "LockBalloonRepaint", payload: true },
+		{
+			type: "BalloonSetting",
+			payload: { key: "align", value: "left", extra: [] },
+		},
+		{
+			type: "ScheduleAdd",
+			payload: {
+				date: "2026-11-02",
+				time: "12:00",
+				title: "Meeting",
+				memo: "Agenda",
+			},
+		},
+	];
+
+	const tokens = rustCommandsToTokens(commands);
+	assert.equal(tokens.length, 16);
+	assert.equal(tokens[0].type, "no_autowrap");
+	assert.equal(tokens[1].type, "auto_pause");
+	assert.equal(tokens[2].type, "post_message");
+	assert.equal(tokens[2].umsg, "1024");
+	assert.equal(tokens[3].type, "command");
+	assert.equal(tokens[3].command, "marker");
+	assert.equal(tokens[5].type, "wait_audio");
+	assert.equal(tokens[6].command, "jump");
+	assert.equal(tokens[7].type, "plus");
+	assert.equal(tokens[8].command, "raiseplugin");
+	assert.equal(tokens[9].type, "no_user_break");
+	assert.equal(tokens[10].type, "voice");
+	assert.equal(tokens[11].type, "midi");
+	assert.equal(tokens[12].command, "entermode");
+	assert.equal(tokens[13].command, "lockrepaint");
+	assert.equal(tokens[14].command, "setballoon");
+	assert.equal(tokens[15].command, "schedule-add");
 });

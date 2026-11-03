@@ -22,7 +22,31 @@ pub(crate) fn handle_underscore(
             callback(SakuraCommand::Quick(enabled));
         }
         Some('?') => {
-            callback(SakuraCommand::AutoPause);
+            // \_? raw text mode toggle: read raw text until matching \_?
+            let mut raw_text = String::new();
+            let mut closed = false;
+            while let Some(rc) = chars.next() {
+                if rc == '\\' && chars.peek() == Some(&'_') {
+                    // Peek ahead for \_?
+                    chars.next(); // consume '_'
+                    if chars.peek() == Some(&'?') {
+                        chars.next(); // consume '?'
+                        closed = true;
+                        break;
+                    } else {
+                        raw_text.push('\\');
+                        raw_text.push('_');
+                        continue;
+                    }
+                }
+                raw_text.push(rc);
+            }
+            if !raw_text.is_empty() {
+                callback(SakuraCommand::Text(raw_text));
+            }
+            if closed {
+                callback(SakuraCommand::AutoPause);
+            }
         }
         Some('n') => {
             callback(SakuraCommand::NewLineNoPause);

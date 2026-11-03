@@ -17,3 +17,6 @@
 
 **Learning:** In `ui/js/surface/surface-collision.js`, `resolveSurfaceNumber` fell back to an O(N) `for...in` scan on case-mismatched or missing aliases. By caching a lazily built case-folded `Map` in a module-scoped `WeakMap` keyed by the alias object, lookups become O(1) without memory leaks. Case-mismatched lookup latency dropped from ~1360 ms to ~26.6 ms per 100k calls (a ~50x speedup), and misses dropped from ~1371 ms to ~19.2 ms (a ~71x speedup).
 **Action:** When performing case-insensitive lookups against immutable or long-lived plain dictionary objects, use `WeakMap<object, Map<string, V>>` to cache lowercased keys lazily, converting repeated O(N) traversals into O(1) lookups while guaranteeing automatic garbage collection.
+## 2026-11-03 - Cache parsed interval string
+**Learning:** Found a hotspot during interval triggers where every tick evaluates and parses the animation interval string dynamically. This was inefficient as the object and set is constantly created.
+**Action:** Caching the parsed outcome string as a property directly onto the animation object prevents unnecessary repetitive re-evaluation.

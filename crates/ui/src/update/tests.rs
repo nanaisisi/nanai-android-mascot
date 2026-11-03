@@ -285,10 +285,22 @@ fn test_update_parser_more_edge_cases() {
 // another comment\n\
 oninstallscript,\\0Hello\\e\n\
 onuninstallscript,\\0Bye\\e\n\
+refreshundeletemask,save.dat::user.ini\n\
+balloon0.directory,balloon_a\n\
+balloon0.refresh,1\n\
+balloon0.refreshundeletemask,pref1.txt\n\
+balloon1.directory,balloon_b\n\
+balloon1.refresh,0\n\
 ";
     let manifest = parse_install_manifest(install_txt);
     assert_eq!(manifest.oninstall_script.as_deref(), Some("\\0Hello\\e"));
     assert_eq!(manifest.onuninstall_script.as_deref(), Some("\\0Bye\\e"));
+    assert_eq!(manifest.refresh_undelete_mask, vec!["save.dat", "user.ini"]);
+    assert_eq!(manifest.bundled_resources.len(), 2);
+    assert_eq!(manifest.bundled_resources[0].target_directory, "balloon_a");
+    assert!(manifest.bundled_resources[0].refresh);
+    assert_eq!(manifest.bundled_resources[1].target_directory, "balloon_b");
+    assert!(!manifest.bundled_resources[1].refresh);
 
     let update_txt = "charset,UTF-8\r\nfile,test.txt,md5,charset=UTF-8,size=100\r\n";
     let entries = parse_update_definition(update_txt);

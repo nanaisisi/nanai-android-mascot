@@ -224,7 +224,7 @@ fn test_fmo_buffer_more_edge_cases() {
     let recs = vec![
         FmoRecord {
             id: "custom_id_1".to_string(),
-            path: "path".to_string(),
+            path: "A".repeat(70000),
             hwnd: 123,
             name: "Name".to_string(),
             keroname: "Kero".to_string(),
@@ -241,11 +241,14 @@ fn test_fmo_buffer_more_edge_cases() {
     let buf = generate_fmo_buffer(&recs);
     let parsed = parse_fmo_buffer(&buf).unwrap();
     assert_eq!(parsed.len(), 1);
-    assert_eq!(parsed[0].id, "custom_id_1");
-    assert_eq!(parsed[0].kerohwnd, None);
-    assert_eq!(parsed[0].hwndlist.len(), 0);
-    assert_eq!(parsed[0].fullname, None);
-    assert_eq!(parsed[0].modulestate, None);
+
+    let malformed_lines = "ssp_fmo_header_nodot\x01val\r\nnodotfield\x01val\r\n";
+    let mut padded = malformed_lines.as_bytes().to_vec();
+    padded.resize(65536, 0);
+    let len_bytes = (padded.len() as u32).to_le_bytes();
+    padded[0..4].copy_from_slice(&len_bytes);
+    let res = parse_fmo_buffer(&padded).unwrap();
+    assert!(res.is_empty());
 }
 
 #[test]

@@ -1,5 +1,11 @@
 import { AppConfig } from "../config.js";
 import { invoke, isTauriAvailable } from "../tauri-helper.js";
+import {
+	buildInstallBeginArgs,
+	buildInstallCompleteArgs,
+	buildInstallCompleteExArgs,
+	buildInstallFailureArgs,
+} from "./install-protocol.js";
 
 const SCALE_MAP = {
 	"scale-50": { width: "100px", height: "200px" },
@@ -88,15 +94,33 @@ export const ghostActions = {
 		if (!isTauriAvailable()) {
 			return this.modalManager?.show("install-modal-content");
 		}
+		const gc = this.ghostController;
 		try {
+			// OnInstallBegin 送信 (UKADOC準拠)
+			await gc?.sendShioriEvent?.(
+				"OnInstallBegin",
+				buildInstallBeginArgs("install"),
+			);
+
 			const result = await invoke("pick_and_install_ghost_archive");
 			if (!result) return;
+
 			await this.ghostController.scanGhosts();
 			await this.scanBalloons();
+
 			const importedGhost = this.ghostController.ghosts.find(
 				(ghost) => ghost.name === result.name,
 			);
 			if (importedGhost) {
+				// OnInstallComplete / OnInstallCompleteEx 送信 (UKADOC準拠)
+				await gc?.sendShioriEvent?.(
+					"OnInstallCompleteEx",
+					buildInstallCompleteExArgs("ghost", result.name, result.path || ""),
+				);
+				await gc?.sendShioriEvent?.(
+					"OnInstallComplete",
+					buildInstallCompleteArgs("ghost", result.name, result.path || ""),
+				);
 				await this.ghostController.selectGhost(importedGhost.name);
 				return;
 			}
@@ -105,12 +129,35 @@ export const ghostActions = {
 					balloon.name === result.name || balloon.dir_name === result.name,
 			);
 			if (importedBalloon) {
+				await gc?.sendShioriEvent?.(
+					"OnInstallCompleteEx",
+					buildInstallCompleteExArgs(
+						"balloon",
+						importedBalloon.name,
+						importedBalloon.dir_name,
+					),
+				);
+				await gc?.sendShioriEvent?.(
+					"OnInstallComplete",
+					buildInstallCompleteArgs("balloon", importedBalloon.name),
+				);
 				await this.setBalloonTheme(importedBalloon.dir_name);
 				this.showBalloon(`バルーン「${importedBalloon.name}」を導入しました`);
 				setTimeout(() => this.hideBalloon(), 2000);
+				return;
 			}
+
+			// その他リソース (shell, plugin等)
+			await gc?.sendShioriEvent?.(
+				"OnInstallComplete",
+				buildInstallCompleteArgs("package", result.name),
+			);
 		} catch (error) {
 			console.error("メニューからのゴースト取り込みに失敗しました:", error);
+			await gc?.sendShioriEvent?.(
+				"OnInstallFailure",
+				buildInstallFailureArgs(error),
+			);
 			this.modalManager?.showNotification(
 				"ゴースト取り込み失敗",
 				String(error),

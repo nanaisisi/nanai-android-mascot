@@ -11,6 +11,21 @@ fn test_animation_extra_coverage() {
 }
 
 #[test]
+fn test_active_animation_edge_cases() {
+    use crate::animation::scheduler::ActiveAnimation;
+
+    let mut empty_anim = ActiveAnimation::new(1, 0, vec![]);
+    assert!(empty_anim.advance(100, 0).is_none());
+
+    let mut anim = ActiveAnimation::new(1, 0, vec![
+        AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: -1, wait: 0, wait_max: None, x: 0, y: 0, options: vec![] }
+    ]);
+    let ev = anim.advance(0, 0);
+    assert!(ev.is_some());
+    assert!(anim.is_finished);
+}
+
+#[test]
 fn test_animation_100_percent_coverage() {
     assert_eq!(Interval::parse("random,abc"), Interval::Random(10));
     assert_eq!(Interval::parse("periodic,abc"), Interval::Periodic(1000));

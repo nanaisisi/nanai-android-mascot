@@ -2,8 +2,13 @@
 
 - **規格**: [point.kinoko.centerx.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/point.kinoko.centerx/) (ukadoc-spec/descript/shell-surfaces/surface-brace/point.kinoko.centerx.md)
 - **検索語**: point.kinoko.centerx
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
 実装コードに「point.kinoko.centerx」が見つからない。
+
+
+## 実装箇所
+
+- `ui/js/surface/surface-load.js:139` `// [point.kinoko.centerx]`

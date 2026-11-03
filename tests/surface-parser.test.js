@@ -112,3 +112,40 @@ test("surface-parser extracts *.cursor and *.tooltips blocks", () => {
 	assert.ok(parsed.tooltips.kero);
 	assert.equal(parsed.tooltips.kero.Tail, "しっぽです");
 });
+
+test("surface-parser extracts point and balloon offset definitions", () => {
+	const sampleTxt = `
+		surface0
+		{
+			point.centerx,150
+			point.centery,250
+			point.basepos.x,120
+			point.basepos.y,380
+			point.kinoko.centerx,140
+			point.kinoko.centery,220
+			balloon.offsetx,10
+			balloon.offsety,20
+			sakura.balloon.offsetx,-15
+			sakura.balloon.offsety,-30
+			kero.balloon.offsetx,45
+			kero.balloon.offsety,60
+		}
+	`;
+
+	const parsed = parseSurfacesTxt(sampleTxt);
+	assert.ok(parsed.points["0"]);
+	assert.equal(parsed.points["0"].center_x, 150);
+	assert.equal(parsed.points["0"].center_y, 250);
+	assert.equal(parsed.points["0"].basepos_x, 120);
+	assert.equal(parsed.points["0"].basepos_y, 380);
+	assert.equal(parsed.points["0"].kinoko_center_x, 140);
+	assert.equal(parsed.points["0"].kinoko_center_y, 220);
+
+	assert.ok(parsed.balloonOffsets["0"]);
+	assert.equal(parsed.balloonOffsets["0"]["*"].x, 10);
+	assert.equal(parsed.balloonOffsets["0"]["*"].y, 20);
+	assert.equal(parsed.balloonOffsets["0"].sakura.x, -15);
+	assert.equal(parsed.balloonOffsets["0"].sakura.y, -30);
+	assert.equal(parsed.balloonOffsets["0"].kero.x, 45);
+	assert.equal(parsed.balloonOffsets["0"].kero.y, 60);
+});

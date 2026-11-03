@@ -2,7 +2,12 @@
  * surfaces.txt パーサーモジュール
  */
 
-export { expandSurfaceRange, parseSurfacesTxt } from "./parser/index.js";
+export {
+	expandSurfaceRange,
+	handleBalloonOffset,
+	handlePoint,
+	parseSurfacesTxt,
+} from "./parser/index.js";
 
 /**
  * @typedef {Object} CollisionArea

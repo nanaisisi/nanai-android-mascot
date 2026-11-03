@@ -192,13 +192,19 @@ impl SakuraCommand {
             // スクリプトセッション全体で維持され、\e でリセットされる状態
             SakuraCommand::Quick(_)
             | SakuraCommand::Sync(_)
+            | SakuraCommand::NewLineNoPause
+            | SakuraCommand::AutoPause
             | SakuraCommand::NoUserBreak(_)
+            | SakuraCommand::LockBalloonRepaint(_)
+            | SakuraCommand::LockBalloonMove(_)
             | SakuraCommand::ChoiceTimeout(_)
-            | SakuraCommand::BalloonTimeout(_) => SakuraScriptLifetime::Script,
+            | SakuraCommand::BalloonTimeout(_)
+            | SakuraCommand::BalloonOffset { .. } => SakuraScriptLifetime::Script,
 
             // サーフィス、バインド、壁紙、プロキシ等の永続設定
             SakuraCommand::Surface(_)
             | SakuraCommand::Bind { .. }
+            | SakuraCommand::WindowState(_)
             | SakuraCommand::SetWallpaper { .. }
             | SakuraCommand::SetProxy { .. }
             | SakuraCommand::SetHttpTimeout(_) => SakuraScriptLifetime::Permanent,

@@ -4,6 +4,7 @@
  */
 
 import { menuBalloonDressupRenderer } from "./renderers/menu-balloon-dressup-renderer.js";
+import { menuCaptionRenderer } from "./renderers/menu-caption-renderer.js";
 import { menuGhostShellRenderer } from "./renderers/menu-ghost-shell-renderer.js";
 import { menuThemeRenderer } from "./renderers/menu-theme-renderer.js";
 
@@ -51,5 +52,9 @@ export class MenuSubmenuRenderer {
 
 	applyShellTheme(activeShell) {
 		menuThemeRenderer.applyShellTheme(activeShell);
+	}
+
+	applyCaptions(captions, rootEl = document) {
+		menuCaptionRenderer.applyCaptions(captions, rootEl);
 	}
 }

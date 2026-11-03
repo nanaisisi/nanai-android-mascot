@@ -130,3 +130,70 @@ pub fn open_text_file(path: &Path) -> Result<String, io::Error> {
 pub fn open_shift_jis_file(path: &str) -> Result<String, io::Error> {
     open_text_file(Path::new(path))
 }
+
+/// 文字列を指定された文字コード名（Shift_JIS, CP932, EUC-JP, ISO-2022-JP, UTF-8, UTF-16LE/BE等）にエンコード
+pub fn encode_to_charset(text: &str, charset: &str) -> Option<Vec<u8>> {
+    let clean = charset
+        .trim()
+        .trim_matches(|c| c == '"' || c == '\'')
+        .to_lowercase();
+    match clean.as_str() {
+        "shift_jis" | "shift-jis" | "sjis" | "cp932" | "windows-31j" => {
+            let (cow, _, had_errors) = SHIFT_JIS.encode(text);
+            if had_errors {
+                None
+            } else {
+                Some(cow.into_owned())
+            }
+        }
+        "euc-jp" | "euc_jp" | "ujis" | "x-euc-jp" => {
+            let (cow, _, had_errors) = EUC_JP.encode(text);
+            if had_errors {
+                None
+            } else {
+                Some(cow.into_owned())
+            }
+        }
+        "iso-2022-jp" | "iso2022jp" | "jis" => {
+            let (cow, _, had_errors) = ISO_2022_JP.encode(text);
+            if had_errors {
+                None
+            } else {
+                Some(cow.into_owned())
+            }
+        }
+        "utf-8" | "utf8" => Some(text.as_bytes().to_vec()),
+        "utf-16le" | "utf-16" | "utf16le" => {
+            let mut out = Vec::new();
+            for u in text.encode_utf16() {
+                out.extend_from_slice(&u.to_le_bytes());
+            }
+            Some(out)
+        }
+        "utf-16be" | "utf16be" => {
+            let mut out = Vec::new();
+            for u in text.encode_utf16() {
+                out.extend_from_slice(&u.to_be_bytes());
+            }
+            Some(out)
+        }
+        _ => None,
+    }
+}
+
+/// CRLF / CR / LF の改行コードをすべて単一の LF (`\n`) に正規化
+pub fn normalize_newlines(text: &str) -> String {
+    let mut result = String::with_capacity(text.len());
+    let mut chars = text.chars().peekable();
+    while let Some(ch) = chars.next() {
+        if ch == '\r' {
+            if chars.peek() == Some(&'\n') {
+                chars.next();
+            }
+            result.push('\n');
+        } else {
+            result.push(ch);
+        }
+    }
+    result
+}

@@ -23,6 +23,18 @@ fn test_surfaces_txt_methods() {
 
     assert!(txt.resolve_kero_alias("KERO_MAIN").is_some());
     assert!(txt.resolve_kero_alias("UNKNOWN").is_none());
+
+    // find_by_name & resolve_name_or_alias
+    assert_eq!(txt.find_by_name("Surface0").map(|(id, _)| id), Some(0));
+    assert_eq!(txt.find_by_name("surface0").map(|(id, _)| id), Some(0));
+    assert!(txt.find_by_name("unknown").is_none());
+
+    assert_eq!(txt.resolve_name_or_alias("Surface0").map(|(id, _)| id), Some(0));
+    assert_eq!(txt.resolve_name_or_alias("main").map(|(id, _)| id), Some(0));
+    assert!(txt.resolve_name_or_alias("unknown").is_none());
+
+    assert_eq!(txt.resolve_kero_name_or_alias("kero_main").map(|(id, _)| id), Some(0));
+    assert_eq!(txt.resolve_kero_name_or_alias("Surface0").map(|(id, _)| id), Some(0));
 }
 
 #[test]

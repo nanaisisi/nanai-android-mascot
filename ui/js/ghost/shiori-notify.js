@@ -14,7 +14,7 @@ import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
  * - installedballoonname / balloonpathlist (バルーン情報一覧)
  * - basewareversion / uniqueid
  * - OnNotifyOSInfo, OnNotifySelfInfo, OnNotifyBalloonInfo
- * - OnBalloonBreak, OnBalloonClose, OnBalloonTimeout (バルーン操作イベント)
+ * - OnBalloonBreak, OnBalloonClose, OnBalloonTimeout, OnBalloonScaling (バルーン操作イベント)
  * - OnBalloonChange, OnBasewareUpdated, OnBasewareUpdating, OnBoot, OnCacheRestore, OnCacheSuspend
  * - OnClose, OnCloseAll, OnDestroy, OnDressupChanged, OnFirstBoot, OnFullScreenAppMinimize
  * - OnFullScreenAppRestore, OnGhostCallComplete, OnGhostCalled, OnGhostCalling, OnGhostChanged, OnGhostChanging
@@ -39,6 +39,7 @@ import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
  * - menu.frame.color.r, menu.frame.color.g, menu.frame.color.b
  * - menu.font.name, menu.font.height
  * - updatebutton.caption, quitbutton.caption, closebutton.caption, configurationbutton.caption, readmebutton.caption, vanishbutton.caption
+ * - callsstpsendboxbutton.caption, updatefmobutton.caption, switchlocalsstpbutton.caption, switchremotesstpbutton.caption
  */
 export const shioriNotifyMethods = {
 	/**
@@ -183,6 +184,28 @@ export const shioriNotifyMethods = {
 		return await this.sendShioriNotify("OnWebsiteUpdateNotify", [
 			url,
 			updateTime,
+		]);
+	},
+
+	/**
+	 * バルーン倍率変更通知 (OnBalloonScaling) を送信 (UKADOC準拠)
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {number|string} afterX 変更後の横倍率(%)
+	 * @param {number|string} beforeX 変更前の横倍率(%)
+	 * @param {number|string} [afterY] 変更後の縦倍率(%) (省略時はafterX)
+	 * @param {number|string} [beforeY] 変更前の縦倍率(%) (省略時はbeforeX)
+	 */
+	async sendBalloonScalingNotify(
+		afterX,
+		beforeX,
+		afterY = afterX,
+		beforeY = beforeX,
+	) {
+		return await this.sendShioriNotify("OnBalloonScaling", [
+			String(afterX),
+			String(beforeX),
+			String(afterY),
+			String(beforeY),
 		]);
 	},
 

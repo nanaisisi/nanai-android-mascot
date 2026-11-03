@@ -69,6 +69,15 @@ fn test_sstp_response_build() {
 
 #[test]
 fn test_handle_execute_command() {
+    let mut properties = HashMap::new();
+    properties.insert("ghostlist.count".to_string(), "2".to_string());
+    properties.insert("currentghost.name".to_string(), "Nanai Ghost".to_string());
+
+    let mut cookies = HashMap::new();
+    let mut client_cookies = HashMap::new();
+    client_cookies.insert("user_token".to_string(), "abc123xyz".to_string());
+    cookies.insert("ClientApp".to_string(), client_cookies);
+
     let ctx = SstpGhostContext {
         name: "Nanai Ghost".to_string(),
         sakura_name: "Nanai".to_string(),
@@ -80,6 +89,13 @@ fn test_handle_execute_command() {
         status: "talking".to_string(),
         fmo_text: "ssp_fmo_header_001.name\x01Nanai\r\n".to_string(),
         installed_ghosts: vec!["Nanai".to_string(), "Emily".to_string()],
+        installed_shells: vec!["master".to_string(), "winter".to_string()],
+        installed_balloons: vec!["standard".to_string(), "retro".to_string()],
+        installed_headlines: vec!["News RSS".to_string()],
+        installed_plugins: vec!["TTS Plugin".to_string()],
+        properties,
+        cookies,
+        sender: "ClientApp".to_string(),
         sstp_config: SstpGhostConfig::default(),
     };
 
@@ -110,6 +126,56 @@ fn test_handle_execute_command() {
 
     let res_balloon = handle_execute_command("GetBalloonName", &ctx);
     assert_eq!(res_balloon.additional_data, Some("standard".to_string()));
+
+    let res_ghost_list = handle_execute_command("GetGhostNameList", &ctx);
+    assert_eq!(
+        res_ghost_list.additional_data,
+        Some("Nanai\r\nEmily".to_string())
+    );
+
+    let res_shell_list = handle_execute_command("GetShellNameList", &ctx);
+    assert_eq!(
+        res_shell_list.additional_data,
+        Some("master\r\nwinter".to_string())
+    );
+
+    let res_balloon_list = handle_execute_command("GetBalloonNameList", &ctx);
+    assert_eq!(
+        res_balloon_list.additional_data,
+        Some("standard\r\nretro".to_string())
+    );
+
+    let res_headline_list = handle_execute_command("GetHeadlineNameList", &ctx);
+    assert_eq!(
+        res_headline_list.additional_data,
+        Some("News RSS".to_string())
+    );
+
+    let res_plugin_list = handle_execute_command("GetPluginNameList", &ctx);
+    assert_eq!(
+        res_plugin_list.additional_data,
+        Some("TTS Plugin".to_string())
+    );
+
+    let res_prop = handle_execute_command("GetProperty[ghostlist.count]", &ctx);
+    assert_eq!(res_prop.status, SstpStatusCode::Ok);
+    assert_eq!(res_prop.additional_data, Some("2".to_string()));
+
+    let res_prop_empty = handle_execute_command("GetProperty[]", &ctx);
+    assert_eq!(res_prop_empty.status, SstpStatusCode::BadRequest);
+
+    let res_set_prop = handle_execute_command("SetProperty[my.prop,val]", &ctx);
+    assert_eq!(res_set_prop.status, SstpStatusCode::Ok);
+
+    let res_cookie = handle_execute_command("GetCookie[user_token]", &ctx);
+    assert_eq!(res_cookie.status, SstpStatusCode::Ok);
+    assert_eq!(res_cookie.additional_data, Some("abc123xyz".to_string()));
+
+    let res_cookie_empty = handle_execute_command("GetCookie[]", &ctx);
+    assert_eq!(res_cookie_empty.status, SstpStatusCode::BadRequest);
+
+    let res_set_cookie = handle_execute_command("SetCookie[theme,dark]", &ctx);
+    assert_eq!(res_set_cookie.status, SstpStatusCode::Ok);
 
     let res_version = handle_execute_command("GetVersion", &ctx);
     assert_eq!(res_version.additional_data, Some("2.0.0".to_string()));

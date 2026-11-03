@@ -17,17 +17,41 @@ export async function handleBiffCommand(handler, _args) {
 
 /**
  * SNTP時刻合わせ実行 (\![executesntp])
+ * [bang-executesntp.md], [OnSNTPBegin.md], [OnSNTPCompare.md], [OnSNTPCompareEx.md], [OnSNTPCorrect.md], [OnSNTPCorrectEx.md], [OnSNTPFailure.md]
  * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} handler
  * @param {string[]} _args
  */
 export async function handleExecuteSntpCommand(handler, _args) {
 	console.log("⏱️ Execute SNTP time sync triggered");
+	const gc = handler.app.ghostController;
+	const nowIso = new Date().toISOString();
 	try {
-		await handler.app.ghostController?.sendShioriEvent?.("OnSNTPCompare", [
-			new Date().toISOString(),
-		]);
+		// SNTP同期開始イベント
+		await gc?.sendShioriEvent?.("OnSNTPBegin", [nowIso]);
+		// SNTP時刻比較イベント
+		await gc?.sendShioriEvent?.("OnSNTPCompare", [nowIso]);
+		await gc?.sendShioriEvent?.("OnSNTPCompareEx", [nowIso, "0"]);
+		// SNTP時刻補正イベント
+		await gc?.sendShioriEvent?.("OnSNTPCorrect", [nowIso]);
+		await gc?.sendShioriEvent?.("OnSNTPCorrectEx", [nowIso, "0"]);
 	} catch (err) {
 		console.warn("SNTP compare event trigger failed:", err);
+		await gc?.sendShioriEvent?.("OnSNTPFailure", [String(err)]);
+	}
+}
+
+/**
+ * 時報イベント発火ハンドラ (\![raise,OnHourTimeSignal,...])
+ * [OnHourTimeSignal.md]
+ * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} handler
+ * @param {number} [hour]
+ */
+export async function handleHourTimeSignal(handler, hour) {
+	const currentHour = hour ?? new Date().getHours();
+	if (handler.app.ghostController?.sendShioriEvent) {
+		await handler.app.ghostController.sendShioriEvent("OnHourTimeSignal", [
+			String(currentHour),
+		]);
 	}
 }
 

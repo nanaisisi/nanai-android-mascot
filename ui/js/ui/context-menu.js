@@ -59,6 +59,14 @@ if (isTauriAvailable()) {
 				data.shells?.find((s) => s.name === data.currentShell) ||
 				data.shells?.[0];
 			renderer.applyShellTheme(activeShell);
+			if (data.captions) {
+				renderer.applyCaptions(data.captions);
+			}
+		}
+	});
+	listen("sync-menu-captions", (event) => {
+		if (event.payload) {
+			renderer.applyCaptions(event.payload);
 		}
 	});
 	listen("sync-theme", (event) => {
@@ -111,6 +119,13 @@ globalThis.addEventListener("message", (event) => {
 			event.data.shells?.[0];
 		if (activeShell) {
 			renderer.applyShellTheme(activeShell);
+		}
+		if (event.data.captions) {
+			renderer.applyCaptions(event.data.captions);
+		}
+	} else if (event.data?.type === "sync-menu-captions") {
+		if (event.data.captions) {
+			renderer.applyCaptions(event.data.captions);
 		}
 	} else if (event.data?.type === "sync-theme") {
 		renderer.applyTheme(event.data.theme);

@@ -255,4 +255,18 @@ mod tests {
         let cmds = parse_sakura_script(script);
         assert!(!cmds.is_empty());
     }
+
+    #[test]
+    fn test_parse_sakura_script_raw_mode_and_no_autowrap() {
+        let script = "\\_?\\0\\s0\\nRawText\\_?\\_nNoAutoWrapText\\_n";
+        let cmds = parse_sakura_script(script);
+        assert_eq!(
+            cmds[0],
+            SakuraCommand::Text("\\0\\s0\\nRawText".to_string())
+        );
+        assert_eq!(cmds[1], SakuraCommand::AutoPause);
+        assert_eq!(cmds[2], SakuraCommand::NewLineNoPause);
+        assert_eq!(cmds[3], SakuraCommand::Text("NoAutoWrapText".to_string()));
+        assert_eq!(cmds[4], SakuraCommand::NewLineNoPause);
+    }
 }

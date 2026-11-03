@@ -33,4 +33,43 @@ impl SurfacesTxt {
         let list = self.kero_alias_numbers(name)?;
         list.iter().find_map(|n| self.surfaces.get(n))
     }
+
+    /// `name,` 定義名から該当するサーフィス（番号と定義）を検索する
+    pub fn find_by_name(&self, name: &str) -> Option<(u32, &SurfaceDefinition)> {
+        for (&id, def) in &self.surfaces {
+            if let Some(def_name) = &def.name {
+                if def_name.eq_ignore_ascii_case(name) {
+                    return Some((id, def));
+                }
+            }
+        }
+        None
+    }
+
+    /// 名前（`name,` 定義）またはエイリアス名からサーフィスを解決する
+    pub fn resolve_name_or_alias(&self, name_or_alias: &str) -> Option<(u32, &SurfaceDefinition)> {
+        if let Some((id, def)) = self.find_by_name(name_or_alias) {
+            return Some((id, def));
+        }
+        if let Some(list) = self.alias_numbers(name_or_alias) {
+            for &id in list {
+                if let Some(def) = self.surfaces.get(&id) {
+                    return Some((id, def));
+                }
+            }
+        }
+        None
+    }
+
+    /// 相方（kero / char1）の名前またはエイリアス名からサーフィスを解決する
+    pub fn resolve_kero_name_or_alias(&self, name_or_alias: &str) -> Option<(u32, &SurfaceDefinition)> {
+        if let Some(list) = self.kero_alias_numbers(name_or_alias) {
+            for &id in list {
+                if let Some(def) = self.surfaces.get(&id) {
+                    return Some((id, def));
+                }
+            }
+        }
+        self.find_by_name(name_or_alias)
+    }
 }

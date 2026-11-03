@@ -101,7 +101,45 @@ export function expandSakuraScriptEnv(script, options = {}) {
 				return lastghostname;
 			case "lastobjectname":
 				return lastobjectname;
+			case "system.year":
+				return String(now.getFullYear());
+			case "system.month":
+				return String(now.getMonth() + 1);
+			case "system.day":
+				return String(now.getDate());
+			case "system.hour":
+				return String(now.getHours());
+			case "system.minute":
+				return String(now.getMinutes());
+			case "system.second":
+				return String(now.getSeconds());
+			case "system.millisecond":
+				return String(now.getMilliseconds());
+			case "system.dayofweek":
+				return String(now.getDay());
+			case "system.cursor.pos":
+				return "0,0";
+			case "system.theme.app.mode":
+			case "system.theme.os.mode":
+				return "dark";
+			case "system.dnd.mode":
+				return "none";
+			case "system.monitor.count":
+			case "system.disk.count":
+				return "1";
+			case "update_time":
+				return "0";
+			case "sakura.bind.menu":
+			case "kero.bind.menu":
+				return "";
 			default:
+				if (key.startsWith("system.os.")) return "Linux";
+				if (key.startsWith("system.cpu.")) return "x86_64";
+				if (key.startsWith("system.memory.")) return "1024";
+				if (key.startsWith("system.power.")) return "ac";
+				if (key.startsWith("system.network.")) return "online";
+				if (key.startsWith("system.monitor.index")) return "0,0,1920,1080";
+				if (key.startsWith("system.disk.index")) return "100000";
 				return scriptLifetimeState.getVariable(key) ?? "";
 		}
 	});

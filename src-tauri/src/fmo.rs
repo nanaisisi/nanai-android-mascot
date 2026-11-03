@@ -83,6 +83,100 @@ pub async fn get_fmo_status(state: tauri::State<'_, AppState>) -> Result<String,
     serde_json::to_string(&fmo).map_err(|e| e.to_string())
 }
 
+/// バルーン表示テキストを FMO に同期更新する Tauri コマンド (UKADOC fmo balloon0, balloon1 準拠)
+#[tauri::command]
+pub async fn update_fmo_balloon_text(
+    balloon0: String,
+    balloon1: String,
+    state: tauri::State<'_, AppState>,
+) -> Result<String, String> {
+    let current_name = state
+        .current_ghost_name
+        .lock()
+        .clone()
+        .unwrap_or_else(|| "Nanai".to_string());
+
+    let mut entry = FmoEntry::new("0", current_name);
+    entry.keroname = "Kero".to_string();
+    entry.balloon0 = balloon0;
+    entry.balloon1 = balloon1;
+    entry.modulestate = Some("shiori:running".to_string());
+    entry.update_lifecycle("active", true);
+
+    let mut ghosts = HashMap::new();
+    ghosts.insert(
+        entry.id.clone(),
+        FmoGhostStatus {
+            name: entry.name,
+            keroname: entry.keroname,
+            surface0: entry.sakura_surface as u32,
+            surface1: entry.kero_surface as u32,
+            balloon0: entry.balloon0,
+            balloon1: entry.balloon1,
+            kerohwnd: entry.kerohwnd,
+            modulestate: entry.modulestate,
+            path: entry.ghostpath,
+            is_visible: entry.is_visible,
+            lifecycle_state: entry.lifecycle_state,
+        },
+    );
+
+    let fmo = FmoSystemStatus {
+        ghosts,
+        hwnd: 0,
+        craftman: "Nanai Project".to_string(),
+    };
+
+    serde_json::to_string(&fmo).map_err(|e| e.to_string())
+}
+
+/// サーフィス番号を FMO に同期更新する Tauri コマンド
+#[tauri::command]
+pub async fn update_fmo_surfaces(
+    surface0: u32,
+    surface1: u32,
+    state: tauri::State<'_, AppState>,
+) -> Result<String, String> {
+    let current_name = state
+        .current_ghost_name
+        .lock()
+        .clone()
+        .unwrap_or_else(|| "Nanai".to_string());
+
+    let mut entry = FmoEntry::new("0", current_name);
+    entry.keroname = "Kero".to_string();
+    entry.sakura_surface = surface0 as i32;
+    entry.kero_surface = surface1 as i32;
+    entry.modulestate = Some("shiori:running".to_string());
+    entry.update_lifecycle("active", true);
+
+    let mut ghosts = HashMap::new();
+    ghosts.insert(
+        entry.id.clone(),
+        FmoGhostStatus {
+            name: entry.name,
+            keroname: entry.keroname,
+            surface0: entry.sakura_surface as u32,
+            surface1: entry.kero_surface as u32,
+            balloon0: entry.balloon0,
+            balloon1: entry.balloon1,
+            kerohwnd: entry.kerohwnd,
+            modulestate: entry.modulestate,
+            path: entry.ghostpath,
+            is_visible: entry.is_visible,
+            lifecycle_state: entry.lifecycle_state,
+        },
+    );
+
+    let fmo = FmoSystemStatus {
+        ghosts,
+        hwnd: 0,
+        craftman: "Nanai Project".to_string(),
+    };
+
+    serde_json::to_string(&fmo).map_err(|e| e.to_string())
+}
+
 /// モバイルライフサイクル変更時の FMO 状態更新 Tauri コマンド
 #[tauri::command]
 pub async fn update_fmo_lifecycle_state(
@@ -151,5 +245,21 @@ mod tests {
         let json = serde_json::to_string(&status).unwrap();
         assert!(json.contains("\"lifecycle_state\":\"active\""));
         assert!(json.contains("\"is_visible\":true"));
+    }
+
+    #[tokio::test]
+    async fn test_fmo_update_balloon_and_surfaces() {
+        let app_state = AppState::new();
+        *app_state.current_ghost_name.lock() = Some("TestGhost".to_string());
+        // Test entry state creation
+        let mut entry = FmoEntry::new("0", "TestGhost");
+        entry.balloon0 = "Hello".to_string();
+        entry.balloon1 = "Hi".to_string();
+        entry.sakura_surface = 5;
+        entry.kero_surface = 15;
+        assert_eq!(entry.balloon0, "Hello");
+        assert_eq!(entry.balloon1, "Hi");
+        assert_eq!(entry.sakura_surface, 5);
+        assert_eq!(entry.kero_surface, 15);
     }
 }

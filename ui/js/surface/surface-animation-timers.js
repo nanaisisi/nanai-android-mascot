@@ -72,7 +72,10 @@ export const surfaceAnimationTimers = {
 	 * アニメーションの interval 指定に応じたタイマースケジュール
 	 */
 	scheduleAnimation(anim, surfaceId, scopeId) {
-		const { kinds, param } = parseInterval(anim.interval);
+		if (!anim._parsedInterval) {
+			anim._parsedInterval = parseInterval(anim.interval);
+		}
+		const { kinds, param } = anim._parsedInterval;
 		const isCurrent = () =>
 			String(this.manager.currentSurfaceIdFor(scopeId)) === String(surfaceId);
 		const play = () => {
@@ -137,7 +140,12 @@ export const surfaceAnimationTimers = {
 		const animList =
 			this.manager.animations[sid] || this.manager.animations.default || [];
 		return animList
-			.map((anim) => ({ anim, sid, ...parseInterval(anim.interval) }))
+			.map((anim) => {
+				if (!anim._parsedInterval) {
+					anim._parsedInterval = parseInterval(anim.interval);
+				}
+				return { anim, sid, ...anim._parsedInterval };
+			})
 			.filter(
 				({ anim, kinds }) =>
 					kinds.has(kind) &&

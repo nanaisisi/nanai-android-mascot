@@ -66,6 +66,14 @@ impl UpdatePackage {
     pub fn total_download_size(&self) -> u64 {
         self.active_downloads().iter().filter_map(|e| e.size).sum()
     }
+
+    /// パスに合致するエントリを取得
+    pub fn find_entry(&self, path: &str) -> Option<&UpdateEntry> {
+        let norm = path.replace('\\', "/");
+        self.entries
+            .iter()
+            .find(|e| e.path.eq_ignore_ascii_case(&norm))
+    }
 }
 
 /// 同梱リソース設定（balloon, headline, plugin, shell, calendar.skin 等）
@@ -108,5 +116,28 @@ impl InstallManifest {
         self.refresh_undelete_mask
             .iter()
             .any(|mask| mask.eq_ignore_ascii_case(filename))
+    }
+
+    /// accept 設定に基づき、現在稼働中/対象のゴーストにインストール受入可能か判定
+    /// accept 未指定時は常に true
+    pub fn is_acceptable_by(&self, ghost_name: &str) -> bool {
+        let Some(accept_str) = &self.accept else {
+            return true;
+        };
+        let target = ghost_name.trim();
+        accept_str
+            .split(',')
+            .any(|item| item.trim().eq_ignore_ascii_case(target))
+    }
+
+    /// インストール拒否理由を評価 (UKADOC OnInstallRefuse 準拠)
+    pub fn evaluate_refusal(&self, current_ghost_name: &str) -> Option<&'static str> {
+        if self.name.trim().is_empty() {
+            return Some("invalid name");
+        }
+        if !self.is_acceptable_by(current_ghost_name) {
+            return Some("accept failed");
+        }
+        None
     }
 }

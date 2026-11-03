@@ -5,7 +5,11 @@
  * 参考仕様:
  * - OnInstallBegin: Reference0=識別子 ("install" 等)
  * - OnInstallComplete: Reference0=種別 ("ghost", "shell", "balloon", "plugin", "headline", "package" 等), Reference1=名前
- * - OnInstallFailure: Reference0=失敗理由 ("unsupported", "extraction", "unlha32 error", "artificial", "write error" 等)
+ * - OnInstallCompleteEx: Reference0=種別, Reference1=名前, Reference2=パス/追加情報, Reference3=実行スクリプト(任意)
+ * - OnInstallCompleteAll: Reference0=インストール数, Reference1=インストール済みリソース一覧 (Byte1 区切りまたはカンマ区切り)
+ * - OnInstallFailure: Reference0=失敗理由 ("unsupported", "extraction", "unlha32 error", "artificial", "write error", "invalid path" 等)
+ * - OnInstallRefuse: Reference0=拒否理由 ("invalid name", "unsupported", "accept failed" 等), Reference1=拒否対象リソース
+ * - OnInstallReroute: Reference0=転送先ゴースト名, Reference1=種別, Reference2=名前
  */
 
 /**
@@ -52,6 +56,71 @@ export function buildInstallBeginArgs(identifier = "install") {
  */
 export function buildInstallCompleteArgs(installType, name, extra = "") {
 	return [normalizeInstallType(installType), String(name ?? ""), String(extra)];
+}
+
+/**
+ * OnInstallCompleteEx SHIORI 引数生成 (UKADOC拡張)
+ * [Ref0=種別, Ref1=名前, Ref2=インストール先パス/情報, Ref3=実行スクリプト]
+ * @param {string} installType
+ * @param {string} name
+ * @param {string} [pathOrExtra=""]
+ * @param {string} [onInstallScript=""]
+ * @returns {[string, string, string, string]}
+ */
+export function buildInstallCompleteExArgs(
+	installType,
+	name,
+	pathOrExtra = "",
+	onInstallScript = "",
+) {
+	return [
+		normalizeInstallType(installType),
+		String(name ?? ""),
+		String(pathOrExtra ?? ""),
+		String(onInstallScript ?? ""),
+	];
+}
+
+/**
+ * OnInstallCompleteAll SHIORI 引数生成 (複数リソース一括展開完了時)
+ * [Ref0=インストール件数, Ref1=インストール結果一覧 (種別\1名前)]
+ * @param {Array<{ type: string, name: string }>} installedList
+ * @returns {[string, string]}
+ */
+export function buildInstallCompleteAllArgs(installedList = []) {
+	const count = String(installedList.length);
+	const sep = String.fromCharCode(1); // Byte1
+	const listStr = installedList
+		.map((item) => `${normalizeInstallType(item.type)}${sep}${item.name}`)
+		.join("\n");
+	return [count, listStr];
+}
+
+/**
+ * OnInstallRefuse SHIORI 引数生成 (accept不一致や拒否条件合致時)
+ * [Ref0=理由, Ref1=対象リソース/名前]
+ * @param {string} reason - "accept failed" | "invalid name" | "unsupported"
+ * @param {string} [target=""]
+ * @returns {[string, string]}
+ */
+export function buildInstallRefuseArgs(reason, target = "") {
+	return [String(reason ?? "refused"), String(target ?? "")];
+}
+
+/**
+ * OnInstallReroute SHIORI 引数生成 (別ゴーストへの転送指定時)
+ * [Ref0=転送先ゴースト名, Ref1=種別, Ref2=名前]
+ * @param {string} targetGhost
+ * @param {string} installType
+ * @param {string} name
+ * @returns {[string, string, string]}
+ */
+export function buildInstallRerouteArgs(targetGhost, installType, name) {
+	return [
+		String(targetGhost ?? ""),
+		normalizeInstallType(installType),
+		String(name ?? ""),
+	];
 }
 
 /**

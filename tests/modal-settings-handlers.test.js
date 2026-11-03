@@ -92,11 +92,42 @@ test("ModalSettingsHandlers covers settings, plugins, and debug listeners", asyn
 	// Test overlay button click (non-Tauri)
 	getEl("open-overlay-settings-btn").click();
 
+	// Test overlay button click (Tauri success and catch branch)
+	globalThis.__TAURI_INTERNALS__ = {
+		invoke: async (cmd) => {
+			if (cmd === "request_overlay_permission") return;
+		},
+		transformCallback: (cb) => cb,
+	};
+	getEl("open-overlay-settings-btn").click();
+	await new Promise((r) => setTimeout(r, 10));
+
+	globalThis.__TAURI_INTERNALS__.invoke = async () => {
+		throw new Error("permission denied");
+	};
+	getEl("open-overlay-settings-btn").click();
+	await new Promise((r) => setTimeout(r, 10));
+	delete globalThis.__TAURI_INTERNALS__;
+
+	// Test help button click
+	let shioriHelpEvent = null;
+	mockManager.app.ghostController = {
+		sendShioriEvent: (event, args) => {
+			shioriHelpEvent = { event, args };
+		},
+	};
+	getEl("config-help-btn").click();
+	assert.equal(shioriHelpEvent?.event, "OnConfigurationDialogHelp");
+
 	// Test save button click
 	getEl("save-settings-btn").click();
 	assert.equal(mockManager.hidden, true);
 
-	// Test reset button click
+	// Test reset button click with confirm = false, then true
+	globalThis.confirm = () => false;
+	getEl("reset-settings-btn").click();
+
+	globalThis.confirm = () => true;
 	getEl("reset-settings-btn").click();
 
 	// 2. setupPluginListeners

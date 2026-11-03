@@ -183,6 +183,107 @@ impl SurfaceFrameBuffer {
                                 };
                                 (calc(dr, sr), calc(dg, sg), calc(db, sb))
                             }
+                            "color-dodge" => {
+                                let calc = |d: u8, s: u8| -> u8 {
+                                    if d == 0 {
+                                        0
+                                    } else if s >= 255 {
+                                        255
+                                    } else {
+                                        (((d as u32) * 255) / (255 - s as u32)).min(255) as u8
+                                    }
+                                };
+                                (calc(dr, sr), calc(dg, sg), calc(db, sb))
+                            }
+                            "color-burn" => {
+                                let calc = |d: u8, s: u8| -> u8 {
+                                    if d == 255 {
+                                        255
+                                    } else if s == 0 {
+                                        0
+                                    } else {
+                                        let inv_d = 255 - d as i32;
+                                        (255 - (inv_d * 255) / (s as i32)).clamp(0, 255) as u8
+                                    }
+                                };
+                                (calc(dr, sr), calc(dg, sg), calc(db, sb))
+                            }
+                            "hard-light" => {
+                                let calc = |d: u8, s: u8| -> u8 {
+                                    if s < 128 {
+                                        ((2 * (s as u32) * (d as u32)) / 255).min(255) as u8
+                                    } else {
+                                        (255 - (2 * (255 - s as u32) * (255 - d as u32)) / 255)
+                                            .min(255) as u8
+                                    }
+                                };
+                                (calc(dr, sr), calc(dg, sg), calc(db, sb))
+                            }
+                            "vivid-light" => {
+                                let calc = |d: u8, s: u8| -> u8 {
+                                    if s < 128 {
+                                        // color-burn with 2*s
+                                        if d == 255 {
+                                            255
+                                        } else if s == 0 {
+                                            0
+                                        } else {
+                                            let s2 = (s as i32) * 2;
+                                            let inv_d = 255 - d as i32;
+                                            (255 - (inv_d * 255) / s2).clamp(0, 255) as u8
+                                        }
+                                    } else {
+                                        // color-dodge with 2*(s - 128)
+                                        if d == 0 {
+                                            0
+                                        } else if s >= 255 {
+                                            255
+                                        } else {
+                                            let s_val = 2 * (s as u32 - 128);
+                                            if s_val >= 255 {
+                                                255
+                                            } else {
+                                                (((d as u32) * 255) / (255 - s_val)).min(255) as u8
+                                            }
+                                        }
+                                    }
+                                };
+                                (calc(dr, sr), calc(dg, sg), calc(db, sb))
+                            }
+                            "linear-burn" => {
+                                let calc = |d: u8, s: u8| -> u8 {
+                                    (d as i32 + s as i32 - 255).max(0) as u8
+                                };
+                                (calc(dr, sr), calc(dg, sg), calc(db, sb))
+                            }
+                            "linear-light" => {
+                                let calc = |d: u8, s: u8| -> u8 {
+                                    (d as i32 + 2 * (s as i32) - 255).clamp(0, 255) as u8
+                                };
+                                (calc(dr, sr), calc(dg, sg), calc(db, sb))
+                            }
+                            "pin-light" => {
+                                let calc = |d: u8, s: u8| -> u8 {
+                                    if s < 128 {
+                                        d.min(2 * s)
+                                    } else {
+                                        let s2 = 2 * (s as u16 - 128);
+                                        (d as u16).max(s2).min(255) as u8
+                                    }
+                                };
+                                (calc(dr, sr), calc(dg, sg), calc(db, sb))
+                            }
+                            "hard-mix" => {
+                                let calc = |d: u8, s: u8| -> u8 {
+                                    let linear_light = d as i32 + 2 * (s as i32) - 255;
+                                    if linear_light >= 128 {
+                                        255
+                                    } else {
+                                        0
+                                    }
+                                };
+                                (calc(dr, sr), calc(dg, sg), calc(db, sb))
+                            }
                             _ => (sr, sg, sb),
                         };
 

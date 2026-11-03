@@ -27,6 +27,54 @@ export async function handleSetPropertyCommand(handler, args) {
 }
 
 /**
+ * モード開始ハンドラ (\![enter,passivemode], \![enter,inductionmode], etc.)
+ * [bang-enter-passivemode.md], [bang-enter-inductionmode.md], [bang-enter-collisionmode-bang-enter-collisionmode-rect.md], [bang-enter-selectmode-rect-bang-enter-selectmode-rect-bang-enter-selectmode-rect.md]
+ * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} handler
+ * @param {string[]} args
+ */
+export async function handleEnterMode(handler, args) {
+	const mode = (args[1] ?? "").toLowerCase();
+	if (mode) {
+		scriptLifetimeState.setMode(mode, true);
+		if (handler.player) {
+			handler.player[`is_${mode}`] = true;
+		}
+		const gc = handler.app.ghostController;
+		if (gc?.sendShioriEvent) {
+			await gc.sendShioriEvent("OnModeChange", [
+				mode,
+				"enter",
+				...args.slice(2),
+			]);
+		}
+	}
+}
+
+/**
+ * モード終了ハンドラ (\![leave,passivemode], \![leave,inductionmode], etc.)
+ * [bang-leave-passivemode.md], [bang-leave-inductionmode.md], [bang-leave-collisionmode.md], [bang-leave-selectmode.md]
+ * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} handler
+ * @param {string[]} args
+ */
+export async function handleLeaveMode(handler, args) {
+	const mode = (args[1] ?? "").toLowerCase();
+	if (mode) {
+		scriptLifetimeState.setMode(mode, false);
+		if (handler.player) {
+			handler.player[`is_${mode}`] = false;
+		}
+		const gc = handler.app.ghostController;
+		if (gc?.sendShioriEvent) {
+			await gc.sendShioriEvent("OnModeChange", [
+				mode,
+				"leave",
+				...args.slice(2),
+			]);
+		}
+	}
+}
+
+/**
  * プロパティ値をSHIORIへ要求/取得
  * [property.get.md]
  * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} handler

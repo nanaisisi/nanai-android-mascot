@@ -324,3 +324,86 @@ export function clearPausedAnimations(target = 0, scopeIdParam = 0) {
 
 	surfaceAnimationTimers.clearPausedAnimations.call(instance, scopeId);
 }
+
+/**
+ * スコープ内で現在再生中のアクティブアニメーション数を取得
+ * @param {any} target
+ * @param {number} [scopeIdParam=0]
+ * @returns {number}
+ */
+export function getActiveAnimationCount(target = 0, scopeIdParam = 0) {
+	let instance, scopeId;
+	if (isInstance(target)) {
+		instance = target;
+		scopeId = scopeIdParam ?? 0;
+	} else {
+		instance = this;
+		scopeId = target ?? 0;
+	}
+
+	const prefix = `${scopeId}__`;
+	let count = 0;
+	for (const key of instance._runningAnimations.keys()) {
+		if (key.startsWith(prefix) && !instance._stoppedAnimations.has(key)) {
+			count++;
+		}
+	}
+	return count;
+}
+
+/**
+ * スコープ内で現在再生中のアクティブアニメーション定義リストを取得
+ * @param {any} target
+ * @param {number} [scopeIdParam=0]
+ * @returns {object[]}
+ */
+export function getActiveAnimations(target = 0, scopeIdParam = 0) {
+	let instance, scopeId;
+	if (isInstance(target)) {
+		instance = target;
+		scopeId = scopeIdParam ?? 0;
+	} else {
+		instance = this;
+		scopeId = target ?? 0;
+	}
+
+	const prefix = `${scopeId}__`;
+	const activeList = [];
+	for (const key of instance._runningAnimations.keys()) {
+		if (key.startsWith(prefix) && !instance._stoppedAnimations.has(key)) {
+			const parts = key.split("__");
+			const animId = parts[2];
+			const anim = findAnimation(instance, animId, scopeId);
+			if (anim) {
+				activeList.push(anim);
+			}
+		}
+	}
+	return activeList;
+}
+
+/**
+ * スコープ内で現在再生中のアニメーションに紐づくアクティブな当たり判定領域リストを取得
+ * @param {any} target
+ * @param {number} [scopeIdParam=0]
+ * @returns {import('../surface-parser.js').CollisionArea[]}
+ */
+export function getActiveCollisions(target = 0, scopeIdParam = 0) {
+	let instance, scopeId;
+	if (isInstance(target)) {
+		instance = target;
+		scopeId = scopeIdParam ?? 0;
+	} else {
+		instance = this;
+		scopeId = target ?? 0;
+	}
+
+	const activeAnims = getActiveAnimations(instance, scopeId);
+	const activeCols = [];
+	for (const anim of activeAnims) {
+		if (Array.isArray(anim.collisions)) {
+			activeCols.push(...anim.collisions);
+		}
+	}
+	return activeCols;
+}

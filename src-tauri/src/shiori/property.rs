@@ -66,7 +66,11 @@ pub fn evaluate_property_query(query: &str) -> String {
         "readmebuttoncaption"
         | "updatebuttoncaption"
         | "vanishbuttoncaption"
-        | "vanishbuttonvisible" => "1".to_string(),
+        | "vanishbuttonvisible"
+        | "callsstpsendboxbutton.caption"
+        | "updatefmobutton.caption"
+        | "switchlocalsstpbutton.caption"
+        | "switchremotesstpbutton.caption" => "1".to_string(),
         _ => {
             if q.starts_with("currentghost.scope(") {
                 if q.contains(".name") {
@@ -97,6 +101,22 @@ mod tests {
         );
         assert_eq!(evaluate_property_query("currentghost.name"), "Mock Ghost");
         assert_eq!(evaluate_property_query("username"), "User");
+        assert_eq!(
+            evaluate_property_query("callsstpsendboxbutton.caption"),
+            "1"
+        );
+        assert_eq!(
+            evaluate_property_query("updatefmobutton.caption"),
+            "1"
+        );
+        assert_eq!(
+            evaluate_property_query("switchlocalsstpbutton.caption"),
+            "1"
+        );
+        assert_eq!(
+            evaluate_property_query("switchremotesstpbutton.caption"),
+            "1"
+        );
         assert_eq!(
             evaluate_property_query("unknown.prop"),
             "(unknown property: unknown.prop)"

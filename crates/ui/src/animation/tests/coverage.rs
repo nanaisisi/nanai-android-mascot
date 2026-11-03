@@ -547,6 +547,37 @@ fn test_stepping_catalog_missing_animation_id() {
 }
 
 #[test]
+fn test_stepping_stop_others_retains_and_drops() {
+    use crate::surfaces::SerikoAnimation;
+
+    let mut scheduler = AnimationScheduler::new();
+    let anim_stop = SerikoAnimation {
+        id: 50,
+        name: None,
+        interval: Some(Interval::RunOnce),
+        options: vec![],
+        collisions: vec![],
+        patterns: vec![
+            AnimationPattern { index: 0, surface: -2, wait: 10, wait_max: None, method: DrawMethod::Overlay, x: 0, y: 0, options: vec![] },
+        ],
+    };
+    let anim_normal = SerikoAnimation {
+        id: 51,
+        name: None,
+        interval: Some(Interval::Always),
+        options: vec![],
+        collisions: vec![],
+        patterns: vec![
+            AnimationPattern { index: 0, surface: 300, wait: 100, wait_max: None, method: DrawMethod::Overlay, x: 0, y: 0, options: vec![] },
+        ],
+    };
+    scheduler.start_animation(0, 0, &anim_normal);
+    scheduler.start_animation(0, 0, &anim_stop);
+    assert_eq!(scheduler.active_count(0), 2);
+    let _ = scheduler.step(15);
+}
+
+#[test]
 fn test_triggers_coverage_boost() {
     use crate::surfaces::SerikoAnimation;
 

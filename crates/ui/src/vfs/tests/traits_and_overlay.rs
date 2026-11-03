@@ -21,7 +21,21 @@ fn test_virtual_file_system_trait_and_overlay() {
     overlay.push_top(Arc::new(custom_layer));
 
     assert_eq!(overlay.layer_count(), 2);
+    assert_eq!(overlay.layers().len(), 2);
     assert!(!overlay.is_empty());
+
+    // is_file, is_dir, file_size
+    assert!(overlay.is_file("shell/master/descript.txt"));
+    assert!(!overlay.is_dir("shell/master/descript.txt"));
+    assert!(overlay.is_dir("shell/master"));
+    assert_eq!(
+        overlay.file_size("shell/master/extra.txt").unwrap(),
+        "extra-data".len() as u64
+    );
+
+    // read_lines
+    let lines = overlay.read_lines("shell/master/descript.txt").unwrap();
+    assert_eq!(lines, vec!["name,BaseShell", "version,1.0"]);
 
     // exists
     assert!(overlay.exists("shell/master/descript.txt"));
@@ -73,6 +87,12 @@ fn test_virtual_file_system_trait_and_overlay() {
     let empty_overlay = OverlayVfs::new();
     assert!(empty_overlay.list_dir("any").unwrap().is_empty());
     assert!(empty_overlay.walk_files("any").unwrap().is_empty());
+
+    // remove_layer
+    let removed = overlay.remove_layer(0);
+    assert!(removed.is_some());
+    assert_eq!(overlay.layer_count(), 1);
+    assert!(overlay.remove_layer(10).is_none());
 
     // クリア
     overlay.clear();
@@ -209,6 +229,19 @@ fn test_mock_vfs_extended_operations() {
     assert!(!mock.exists("shell/master/surface0001.png"));
     assert!(mock.exists("shell/master/surface0002.png"));
     assert!(!mock.rename_file("nonexistent.png", "target.png"));
+
+    // write_file, write_text_file, append_file, create_dir
+    mock.write_text_file("notes/todo.txt", "line1\n");
+    mock.append_file("notes/todo.txt", b"line2\n");
+    assert_eq!(mock.read_text("notes/todo.txt").unwrap(), "line1\nline2\n");
+    assert_eq!(mock.file_size("notes/todo.txt").unwrap(), "line1\nline2\n".len() as u64);
+    assert!(mock.is_file("notes/todo.txt"));
+    assert!(!mock.is_dir("notes/todo.txt"));
+    assert!(mock.is_dir("notes"));
+
+    mock.create_dir("empty_folder");
+    assert!(mock.has_dir("empty_folder"));
+    assert!(mock.is_dir("empty_folder"));
 
     // VfsResolver dir_cache_size & directory caching
     let temp_dir = std::env::temp_dir().join(format!("nanai_dircache_{}", std::process::id()));

@@ -451,7 +451,35 @@ fn test_animation_scheduler_state_coverage_boost() {
             }
         }
     }
-    scheduler.set_surface_with_shared_index(0, 1, &[shared_anim1, shared_anim2]);
+    // Non-existent scope base move offset and bind active check
+    assert_eq!(scheduler.get_base_move_offset(99), (0, 0));
+    assert!(!scheduler.is_bind_active(99, 5));
+
+    // Shared index with out of bounds saved index (saved_index >= anim.patterns.len())
+    let long_shared = SerikoAnimation {
+        id: 90,
+        name: None,
+        interval: Some(Interval::Always),
+        options: vec![vec!["shared-index".to_string()]],
+        collisions: vec![],
+        patterns: vec![
+            AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 100, wait: 50, wait_max: None, x: 0, y: 0, options: vec![] },
+            AnimationPattern { index: 1, method: DrawMethod::Overlay, surface: 101, wait: 50, wait_max: None, x: 0, y: 0, options: vec![] },
+        ],
+    };
+    let short_shared = SerikoAnimation {
+        id: 90,
+        name: None,
+        interval: Some(Interval::Always),
+        options: vec![vec!["shared-index".to_string()]],
+        collisions: vec![],
+        patterns: vec![
+            AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 100, wait: 50, wait_max: None, x: 0, y: 0, options: vec![] },
+        ],
+    };
+    scheduler.start_animation(0, 0, &long_shared);
+    let _ = scheduler.step(60);
+    scheduler.set_surface_with_shared_index(0, 1, &[short_shared]);
 }
 
 #[test]

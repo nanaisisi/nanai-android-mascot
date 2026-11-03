@@ -6,7 +6,8 @@ mod resolver;
 mod traits;
 
 pub use encoding::{
-    detect_and_decode, encode_to_charset, normalize_newlines, open_shift_jis_file, open_text_file,
+    DecodeResult, detect_and_decode, detect_and_decode_ext, detect_mime_type, encode_to_charset,
+    normalize_newlines, open_shift_jis_file, open_text_file,
 };
 pub use mock::MockVfs;
 pub use overlay::OverlayVfs;

@@ -125,4 +125,16 @@ mod tests {
         };
         assert_eq!(req.sender, "TestApp");
     }
+
+    #[test]
+    fn test_sstp_receiver_ghost_not_found_handling() {
+        let req = SstpRequest {
+            method: Some("SEND".to_string()),
+            sender: "ClientApp".to_string(),
+            receiver_ghost_name: Some("NonExistentGhost".to_string()),
+            script: Some("\\0Hi\\e".to_string()),
+            ..Default::default()
+        };
+        assert_eq!(req.receiver_ghost_name, Some("NonExistentGhost".to_string()));
+    }
 }

@@ -8,7 +8,11 @@ import { handleOpenDialogCommand } from "./dialog.js";
 import {
 	handleCallCommand,
 	handleChangeCommand,
+	handleEmbedCommand,
+	handleNotifyOtherCommand,
 	handleRaiseCommand,
+	handleRaiseOtherCommand,
+	handleVanishByMyself,
 } from "./ghost.js";
 import {
 	closeDialog,
@@ -42,21 +46,31 @@ import {
 } from "./media.js";
 import {
 	handleQuickSection,
+	handleResetSyncObject,
 	handleSetBalloonTimeout,
 	handleSetBalloonWait,
 	handleSetChoiceTimeout,
+	handleSetSyncObject,
+	handleWaitSyncObject,
 } from "./playback.js";
 import { handlePluginEvent } from "./plugin.js";
 import { CommandHandlerMap, registerCommandHandler } from "./registry.js";
 import { handleAnimCommand, handleBindCommand } from "./surface.js";
 import {
 	handleBiffCommand,
+	handleEnterMode,
 	handleExecuteResetBalloonPos,
 	handleExecuteResetWindowPos,
 	handleExecuteSntpCommand,
+	handleLeaveMode,
 	handleNotifyCommand,
 	handleOpenSystemTarget,
+	handleReloadBalloon,
+	handleReloadDescript,
+	handleReloadGhost,
+	handleReloadShell,
 	handleReloadShiori,
+	handleReloadSurface,
 	handleSetAlignmentOnDesktop,
 	handleSetAlphaCommand,
 	handleSetPositionCommand,
@@ -66,6 +80,7 @@ import {
 	handleSetTaskTrayIcon,
 	handleSetTrayBalloon,
 	handleTimerRaiseCommand,
+	handleTimerRaiseOtherCommand,
 } from "./system.js";
 import { closeTeachBox, openTeachBox } from "./teachbox.js";
 import { handleWindowState, setAlignmentToDesktop } from "./window.js";
@@ -159,6 +174,11 @@ export function initDefaultCommandHandlers() {
 	registerCommandHandler("notify", handleNotifyCommand);
 	registerCommandHandler("timerraise", handleTimerRaiseCommand);
 	registerCommandHandler("timernotify", handleTimerRaiseCommand);
+	registerCommandHandler("raiseother", handleRaiseOtherCommand);
+	registerCommandHandler("notifyother", handleNotifyOtherCommand);
+	registerCommandHandler("timerraiseother", handleTimerRaiseOtherCommand);
+	registerCommandHandler("timernotifyother", handleTimerRaiseOtherCommand);
+	registerCommandHandler("embed", handleEmbedCommand);
 
 	registerCommandHandler("raiseplugin", handlePluginEvent);
 	registerCommandHandler("notifyplugin", handlePluginEvent);
@@ -178,6 +198,9 @@ export function initDefaultCommandHandlers() {
 	registerCommandHandler("set:choicetimeout", handleSetChoiceTimeout);
 	registerCommandHandler("set:balloontimeout", handleSetBalloonTimeout);
 	registerCommandHandler("set:balloonwait", handleSetBalloonWait);
+	registerCommandHandler("set:syncobject", handleSetSyncObject);
+	registerCommandHandler("reset:syncobject", handleResetSyncObject);
+	registerCommandHandler("wait:syncobject", handleWaitSyncObject);
 	registerCommandHandler("quicksection", handleQuickSection);
 
 	registerCommandHandler("set:alignmenttodesktop", async (handler, args) => {
@@ -191,6 +214,11 @@ export function initDefaultCommandHandlers() {
 	registerCommandHandler("set:position", handleSetPositionCommand);
 	registerCommandHandler("set:shioridebugmode", handleSetShioriDebugMode);
 	registerCommandHandler("reload:shiori", handleReloadShiori);
+	registerCommandHandler("reload:shell", handleReloadShell);
+	registerCommandHandler("reload:ghost", handleReloadGhost);
+	registerCommandHandler("reload:balloon", handleReloadBalloon);
+	registerCommandHandler("reload:descript", handleReloadDescript);
+	registerCommandHandler("reloadsurface", handleReloadSurface);
 
 	registerCommandHandler("execute:resetwindowpos", handleExecuteResetWindowPos);
 	registerCommandHandler(
@@ -243,4 +271,14 @@ export function initDefaultCommandHandlers() {
 
 	registerCommandHandler("update", handleUpdate);
 	registerCommandHandler("updatebymyself", handleUpdateByMyself);
+	registerCommandHandler("vanishbymyself", handleVanishByMyself);
+
+	registerCommandHandler("enter", handleEnterMode);
+	registerCommandHandler("leave", handleLeaveMode);
+	registerCommandHandler("entermode", async (handler, args) => {
+		await handleEnterMode(handler, ["enter", ...args.slice(1)]);
+	});
+	registerCommandHandler("leavemode", async (handler, args) => {
+		await handleLeaveMode(handler, ["leave", ...args.slice(1)]);
+	});
 }

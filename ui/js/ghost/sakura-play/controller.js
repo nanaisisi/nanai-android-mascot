@@ -16,6 +16,7 @@ import {
 	dequeue,
 	destroy,
 	enqueue,
+	enqueuePriority,
 	getCurrentJob,
 	getIsPaused,
 	getIsProcessing,
@@ -23,7 +24,9 @@ import {
 	getQueue,
 	getQueueLength,
 	getQueueSnapshot,
+	getStatus,
 	hasPendingJobs,
+	interrupt,
 	pause,
 	peekNextJob,
 	processQueue,
@@ -38,6 +41,7 @@ import {
 	setQuickMode,
 	setWaitMultiplier,
 } from "./controller/wait.js";
+import { SyncObjectManager } from "./sync-object.js";
 
 export class SakuraPlaybackController {
 	/**
@@ -61,6 +65,8 @@ export class SakuraPlaybackController {
 		this.nextJobId = 1;
 		/** @type {Map<string, Set<Function>>} */
 		this.listeners = new Map();
+		/** @type {SyncObjectManager} UKADOC同期オブジェクト管理 (Cycle 6) */
+		this.syncObjects = new SyncObjectManager();
 	}
 }
 
@@ -71,6 +77,8 @@ SakuraPlaybackController.prototype.emit = emit;
 
 // キュー操作・制御・状態参照
 SakuraPlaybackController.prototype.enqueue = enqueue;
+SakuraPlaybackController.prototype.enqueuePriority = enqueuePriority;
+SakuraPlaybackController.prototype.interrupt = interrupt;
 SakuraPlaybackController.prototype.dequeue = dequeue;
 SakuraPlaybackController.prototype.clearQueue = clearQueue;
 SakuraPlaybackController.prototype.stop = stop;
@@ -86,6 +94,7 @@ SakuraPlaybackController.prototype.getCurrentJob = getCurrentJob;
 SakuraPlaybackController.prototype.getIsPaused = getIsPaused;
 SakuraPlaybackController.prototype.getIsProcessing = getIsProcessing;
 SakuraPlaybackController.prototype.getIsQuickMode = getIsQuickMode;
+SakuraPlaybackController.prototype.getStatus = getStatus;
 SakuraPlaybackController.prototype._processQueue = processQueue;
 
 // ウェイト・倍率・即時表示制御

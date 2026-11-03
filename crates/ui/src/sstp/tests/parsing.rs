@@ -123,6 +123,17 @@ fn test_sstp_request_parser_edge_cases() {
     assert_eq!(req.entry, Some("EntryVal".to_string()));
     assert!(req.keep_alive);
     assert_eq!(req.sender, "Unknown");
+
+    // Connection: keep-alive ヘッダテスト
+    let keep_raw = "EXECUTE SSTP/1.4\r\nCharset: UTF-8\r\nSender: Client\r\nCommand: GetVersion\r\nConnection: keep-alive\r\n\r\n";
+    let req_k = SstpRequest::parse(keep_raw).unwrap();
+    assert!(req_k.keep_alive);
+    assert_eq!(req_k.connection, Some("keep-alive".to_string()));
+
+    let close_raw = "EXECUTE SSTP/1.4\r\nCharset: UTF-8\r\nSender: Client\r\nCommand: GetVersion\r\nConnection: close\r\n\r\n";
+    let req_c = SstpRequest::parse(close_raw).unwrap();
+    assert!(!req_c.keep_alive);
+    assert_eq!(req_c.connection, Some("close".to_string()));
 }
 
 #[test]

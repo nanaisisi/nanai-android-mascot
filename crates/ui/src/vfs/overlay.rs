@@ -48,6 +48,20 @@ impl OverlayVfs {
     pub fn clear(&mut self) {
         self.layers.clear();
     }
+
+    /// 保持しているレイヤーの参照一覧を取得
+    pub fn layers(&self) -> &[Arc<dyn VirtualFileSystem>] {
+        &self.layers
+    }
+
+    /// 指定インデックスのレイヤーを削除
+    pub fn remove_layer(&mut self, index: usize) -> Option<Arc<dyn VirtualFileSystem>> {
+        if index < self.layers.len() {
+            Some(self.layers.remove(index))
+        } else {
+            None
+        }
+    }
 }
 
 impl VirtualFileSystem for OverlayVfs {
@@ -133,5 +147,35 @@ impl VirtualFileSystem for OverlayVfs {
 
         merged.sort();
         Ok(merged)
+    }
+
+    fn file_size(&self, path: &str) -> io::Result<u64> {
+        for layer in &self.layers {
+            if layer.exists(path) {
+                return layer.file_size(path);
+            }
+        }
+        Err(io::Error::new(
+            io::ErrorKind::NotFound,
+            format!("File not found in any OverlayVfs layers: {}", path),
+        ))
+    }
+
+    fn is_file(&self, path: &str) -> bool {
+        for layer in &self.layers {
+            if layer.exists(path) {
+                return layer.is_file(path);
+            }
+        }
+        false
+    }
+
+    fn is_dir(&self, path: &str) -> bool {
+        for layer in &self.layers {
+            if layer.is_dir(path) {
+                return true;
+            }
+        }
+        false
     }
 }

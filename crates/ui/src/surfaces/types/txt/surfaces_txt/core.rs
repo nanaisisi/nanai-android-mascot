@@ -146,3 +146,53 @@ impl SurfacesTxt {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::surfaces::types::{SerikoAnimation, Interval};
+
+    #[test]
+    fn test_surfaces_txt_merge_comprehensive() {
+        let mut base = SurfacesTxt::default();
+        base.surfaces.insert(0, SurfaceDefinition::default());
+
+        let mut other = SurfacesTxt::default();
+        other.charset = Some("UTF-8".into());
+        other.version = 1;
+        other.maxwidth = Some(800);
+        other.animation_sort = Some(SortKind::Id);
+        other.collision_sort = Some(SortKind::Ascend);
+
+        let mut other_def = SurfaceDefinition::default();
+        other_def.name = Some("SurfaceZero".into());
+        other_def.points.center_x = Some(10);
+        other_def.points.center_y = Some(20);
+        other_def.points.basepos_x = Some(30);
+        other_def.points.basepos_y = Some(40);
+        other_def.points.kinoko_center_x = Some(50);
+        other_def.points.kinoko_center_y = Some(60);
+
+        let anim = SerikoAnimation {
+            id: 0,
+            name: Some("Anim0".into()),
+            interval: Some(Interval::Always),
+            options: vec![],
+            collisions: vec![],
+            patterns: vec![],
+        };
+        other_def.animations.insert(0, anim.clone());
+        other.surfaces.insert(0, other_def);
+
+        let other_def1 = SurfaceDefinition::default();
+        other.surfaces.insert(1, other_def1);
+
+        base.merge(other);
+        assert_eq!(base.version, 1);
+        assert_eq!(base.maxwidth, Some(800));
+        assert_eq!(base.animation_sort, Some(SortKind::Id));
+        assert_eq!(base.collision_sort, Some(SortKind::Ascend));
+        assert!(base.surface(0).unwrap().name.is_some());
+        assert!(base.surface(1).is_some());
+    }
+}

@@ -308,3 +308,43 @@ fn test_vfs_resolver_cache_overflow_and_errors() {
 
     let _ = std::fs::remove_dir_all(&temp);
 }
+
+#[test]
+fn test_vfs_resolver_virtual_file_system_trait() {
+    let temp = std::env::temp_dir().join(format!("vfs_trait_{}", std::process::id()));
+    let sub = temp.join("sub");
+    std::fs::create_dir_all(&sub).unwrap();
+    std::fs::write(sub.join("test.txt"), "hello trait").unwrap();
+
+    let resolver = VfsResolver::new(&temp);
+    let vfs: &dyn VirtualFileSystem = &resolver;
+
+    assert!(vfs.exists("sub/test.txt"));
+    assert_eq!(vfs.read_text("sub/test.txt").unwrap(), "hello trait");
+    assert_eq!(vfs.read_binary("sub/test.txt").unwrap(), b"hello trait".to_vec());
+    assert_eq!(vfs.list_dir("sub").unwrap(), vec!["test.txt".to_string()]);
+    assert_eq!(vfs.walk_files("").unwrap(), vec!["sub/test.txt".to_string()]);
+
+    let _ = std::fs::remove_dir_all(&temp);
+}
+
+#[test]
+fn test_vfs_resolver_dir_cache_overflow() {
+    let temp = std::env::temp_dir().join(format!("vfs_dircache_overflow_{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&temp);
+    std::fs::create_dir_all(&temp).unwrap();
+
+    for i in 0..505 {
+        let sub = temp.join(format!("dir_{}", i));
+        std::fs::create_dir_all(&sub).unwrap();
+        std::fs::write(sub.join("file.txt"), "content").unwrap();
+    }
+
+    let resolver = VfsResolver::new(&temp);
+    for i in 0..505 {
+        let _ = resolver.resolve(&format!("dir_{}/file.txt", i));
+    }
+    assert!(resolver.dir_cache_size() <= 500);
+
+    let _ = std::fs::remove_dir_all(&temp);
+}

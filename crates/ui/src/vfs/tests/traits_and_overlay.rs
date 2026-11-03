@@ -82,6 +82,17 @@ fn test_virtual_file_system_trait_and_overlay() {
 }
 
 #[test]
+fn test_overlay_vfs_with_layers_and_binary() {
+    let mut base_layer = MockVfs::new();
+    base_layer.add_file("bin.dat", vec![10, 20, 30]);
+
+    let overlay = OverlayVfs::with_layers(vec![Arc::new(base_layer)]);
+    assert_eq!(overlay.layer_count(), 1);
+    let bin = overlay.read_binary("bin.dat").unwrap();
+    assert_eq!(bin, vec![10, 20, 30]);
+}
+
+#[test]
 fn test_path_safety_and_sanitization() {
     // 正常な相対パス
     assert!(is_safe_vfs_path("shell/master/surface0000.png"));

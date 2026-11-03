@@ -284,8 +284,6 @@ fn test_update_parser_more_edge_cases() {
     let install_txt = "\
 # comment line\n\
 // another comment\n\
-,missing_key\n\
-missing_value,\n\
 name:ColonGhost\n\
 balloon.directory:my_balloon\n\
 oninstallscript,\\0Hello\\e\n\
@@ -308,4 +306,15 @@ balloon1.refresh,0\n\
     let entries = parse_update_definition(update_txt);
     assert_eq!(entries.len(), 1);
     assert_eq!(entries[0].size, Some(100));
+}
+
+#[test]
+fn test_parse_install_manifest_malformed_lines() {
+    let install_txt = "\
+,missing_key\n\
+missing_value,\n\
+name,Test\n\
+";
+    let manifest = parse_install_manifest(install_txt);
+    assert_eq!(manifest.name, "Test");
 }

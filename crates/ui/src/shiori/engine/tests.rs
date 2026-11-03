@@ -447,3 +447,46 @@ fn test_multistage_shiori_loader_unload_errors() {
     let res = l2.load_first_working(dir, |_| Err("".into()), |_| Err("".into()));
     assert!(res.is_err());
 }
+
+#[test]
+fn test_multistage_shiori_loader_100_percent() {
+    let dir = Path::new("/dummy/ghost/master");
+    let mut loader = MultiStageShioriLoader::new();
+    assert_eq!(loader.candidate_count(), 0);
+    assert!(loader.last_error().is_none());
+    assert!(loader.active_kind().is_none());
+    assert!(loader.load_attempts().is_empty());
+    assert!(loader.active_engine().is_none());
+    assert!(loader.active_engine_mut().is_none());
+    assert!(!loader.is_loaded());
+    assert_eq!(loader.lifecycle_state(), ShioriLifecycleState::Unloaded);
+
+    assert!(loader.load(dir).is_err());
+    assert!(loader.request("GET...").is_err());
+    assert!(loader.suspend().is_ok());
+    assert!(loader.resume().is_ok());
+
+    loader.prepend_candidate(ShioriEngineCandidate::Dynamic(PathBuf::from("dyn.dll")));
+    loader.add_candidate(ShioriEngineCandidate::Wasm(PathBuf::from("wasm.wasm")));
+    loader.add_candidate(ShioriEngineCandidate::Mock(Box::new(MockShioriEngine::new())));
+    assert_eq!(loader.candidate_count(), 3);
+
+    let res = loader.load_first_working(
+        dir,
+        |_| Err("dyn err".into()),
+        |_| Ok(Box::new(MockShioriEngine::new())),
+    );
+    assert!(res.is_ok());
+    assert_eq!(loader.active_kind(), Some(CandidateKind::Wasm));
+    assert!(loader.active_engine().is_some());
+    assert!(loader.active_engine_mut().is_some());
+    assert!(loader.is_loaded());
+
+    assert!(loader.reload().is_ok());
+
+    loader.clear_attempts();
+    assert!(loader.load_attempts().is_empty());
+
+    loader.clear_candidates();
+    assert_eq!(loader.candidate_count(), 0);
+}

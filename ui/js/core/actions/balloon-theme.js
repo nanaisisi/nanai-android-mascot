@@ -2,7 +2,7 @@
  * @file balloon-theme.js
  * @brief バルーンスキンテーマ切替およびスキャン・リセット処理 (BalloonThemeManager)
  */
-import { emit, invoke, isTauriAvailable } from "../tauri-helper.js";
+import { emit, invoke, isTauriAvailable, listen } from "../tauri-helper.js";
 
 export const BALLOON_THEMES = ["ivory", "pixel", "comic", "dark"];
 export const THEME_LABELS = {
@@ -35,6 +35,15 @@ export class BalloonThemeManager {
 		this.availableBalloons = app?.availableBalloons || [];
 		/** @type {Map<string, { source: string, slice: string, width: string, repeat: string, cssBorderImage: string }>} */
 		this._nineSliceCache = new Map();
+
+		if (isTauriAvailable()) {
+			void listen("request-balloon-scale-change", (event) => {
+				const userScale = Number(event.payload?.userScale);
+				if (!Number.isNaN(userScale) && userScale > 0) {
+					this.applyScale(userScale);
+				}
+			});
+		}
 	}
 
 	/**
@@ -121,6 +130,9 @@ export class BalloonThemeManager {
 	 * @param {string | number} actionOrScale
 	 */
 	applyScale(actionOrScale) {
+		const prevScale = this.userScale || 1;
+		const prevPercent = Math.round(prevScale * 100);
+
 		let scale = 1;
 		if (typeof actionOrScale === "number") {
 			scale = actionOrScale;
@@ -154,6 +166,27 @@ export class BalloonThemeManager {
 				finalScale,
 			});
 		}
+
+		// UKADOC準拠: OnBalloonScaling SHIORIイベント送信 (Reference0: afterX, Reference1: beforeX, Reference2: afterY, Reference3: beforeY)
+		if (percent !== prevPercent) {
+			const gc = this.app?.ghostController;
+			if (gc?.sendBalloonScalingNotify) {
+				void gc.sendBalloonScalingNotify(
+					percent,
+					prevPercent,
+					percent,
+					prevPercent,
+				);
+			} else if (gc?.sendShioriEvent) {
+				void gc.sendShioriEvent("OnBalloonScaling", [
+					String(percent),
+					String(prevPercent),
+					String(percent),
+					String(prevPercent),
+				]);
+			}
+		}
+
 		if (this.app?.showBalloon) {
 			this.app.showBalloon(`バルーン倍率を ${percent}% に変更しました`);
 			setTimeout(() => this.app?.hideBalloon?.(), 1500);

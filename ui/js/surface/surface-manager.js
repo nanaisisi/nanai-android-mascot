@@ -136,6 +136,25 @@ export class SurfaceManager {
 	}
 
 	/**
+	 * move 描画メソッドによるベースサーフィス相対位置オフセット設定
+	 * @param {number} scopeId
+	 * @param {number} x
+	 * @param {number} y
+	 */
+	setBaseMoveOffset(scopeId = 0, x = 0, y = 0) {
+		this.animationManager.setBaseMoveOffset(scopeId, x, y);
+	}
+
+	/**
+	 * move 描画メソッドによるベースサーフィス相対位置オフセット取得
+	 * @param {number} scopeId
+	 * @returns {{ x: number, y: number }}
+	 */
+	getBaseMoveOffset(scopeId = 0) {
+		return this.animationManager.getBaseMoveOffset(scopeId);
+	}
+
+	/**
 	 * `\__w[animation,ID]` (SSP): アニメーション完了まで待機
 	 * @param {number|string} animId
 	 * @param {number} [scopeId]

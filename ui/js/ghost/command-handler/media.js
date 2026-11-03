@@ -89,3 +89,32 @@ export async function handleUpdate(handler) {
 export async function handleUpdateByMyself(handler) {
 	await handler.app.startNetworkUpdate?.();
 }
+
+/**
+ * サウンド停止・ループ・エラー・拡張再生SHIORIイベント通知ハンドラ
+ * [OnSoundStop.md], [OnSoundLoop.md], [OnSoundError.md], [OnMusicPlayEx.md]
+ * @param {import('../sakura-command-handler.js').SakuraCommandHandler} handler
+ * @param {'stop' | 'loop' | 'error' | 'playex'} action
+ * @param {string[]} [params=[]]
+ */
+export async function handleSoundEventNotify(handler, action, params = []) {
+	const gc = handler?.app?.ghostController;
+	if (!gc?.sendShioriEvent) return;
+
+	switch (action) {
+		case "stop":
+			await gc.sendShioriEvent("OnSoundStop", params);
+			break;
+		case "loop":
+			await gc.sendShioriEvent("OnSoundLoop", params);
+			break;
+		case "error":
+			await gc.sendShioriEvent("OnSoundError", params);
+			break;
+		case "playex":
+			await gc.sendShioriEvent("OnMusicPlayEx", params);
+			break;
+		default:
+			break;
+	}
+}

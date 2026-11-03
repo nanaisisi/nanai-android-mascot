@@ -12,17 +12,45 @@ import { scriptLifetimeState } from "../env.js";
  * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} _handler
  * @param {string[]} args
  */
-export async function handleSetPropertyCommand(_handler, args) {
+export async function handleSetPropertyCommand(handler, args) {
 	const key = args[2] ?? "";
 	const val = args[3] ?? "";
 	if (key) {
 		scriptLifetimeState.setVariable(key, val);
+		// UKADOC property.set / property.get SHIORI連携
+		if (handler?.app?.ghostController?.sendShioriEvent) {
+			handler.app.ghostController
+				.sendShioriEvent("property.set", [key, val])
+				.catch(() => {});
+		}
 	}
 }
 
 /**
+ * プロパティ値をSHIORIへ要求/取得
+ * [property.get.md]
+ * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} handler
+ * @param {string} key
+ */
+export async function handleGetPropertyCommand(handler, key) {
+	if (!key) return "";
+	if (handler?.app?.ghostController?.sendShioriEvent) {
+		try {
+			const res = await handler.app.ghostController.sendShioriEvent(
+				"property.get",
+				[key],
+			);
+			return res?.response?.value ?? "";
+		} catch {
+			return "";
+		}
+	}
+	return scriptLifetimeState.getVariable(key) ?? "";
+}
+
+/**
  * サーフェス拡大縮小倍率を設定 (\![set,scaling,横倍率,縦倍率,オプション])
- * [bang-set-scaling.md], [bang-set-scaling-2.md], [bang-set-scaling-3.md]
+ * [bang-set-scaling.md], [bang-set-scaling-2.md], [bang-set-scaling-3.md], [OnShellScaling.md], [OnBalloonScaling.md]
  * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} handler
  * @param {string[]} args
  */
@@ -42,6 +70,39 @@ export async function handleSetScalingCommand(handler, args) {
 				console.warn("set_character_scale failed:", err);
 			}
 		}
+		// UKADOCスケーリングイベント連携: OnShellScaling, OnBalloonScaling
+		if (handler.app.ghostController?.sendShioriEvent) {
+			handler.app.ghostController
+				.sendShioriEvent("OnShellScaling", [
+					String(scaleX),
+					String(scaleY),
+					String(scope),
+				])
+				.catch(() => {});
+			handler.app.ghostController
+				.sendShioriEvent("OnBalloonScaling", [
+					String(scaleX),
+					String(scaleY),
+					String(scope),
+				])
+				.catch(() => {});
+		}
+	}
+}
+
+/**
+ * キー押下イベントハンドラ (\![raise,OnKeyPress,...])
+ * [OnKeyPress.md]
+ * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} handler
+ * @param {string} key
+ * @param {string} [modifiers=""]
+ */
+export async function handleKeyPressEvent(handler, key, modifiers = "") {
+	if (handler?.app?.ghostController?.sendShioriEvent && key) {
+		await handler.app.ghostController.sendShioriEvent("OnKeyPress", [
+			key,
+			modifiers,
+		]);
 	}
 }
 

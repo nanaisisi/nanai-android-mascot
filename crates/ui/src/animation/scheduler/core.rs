@@ -27,6 +27,8 @@ pub struct AnimationScheduler {
     pub(crate) talking_flags: HashMap<u32, bool>,
     /// 動的アニメーション座標オフセット (scope_id -> (anim_id -> (offset_x, offset_y)))
     pub(crate) animation_offsets: HashMap<u32, HashMap<u32, (i32, i32)>>,
+    /// move 描画メソッドによるベースサーフィスの表示位置オフセット (scope_id -> (move_x, move_y))
+    pub(crate) base_move_offsets: HashMap<u32, (i32, i32)>,
 }
 
 impl AnimationScheduler {

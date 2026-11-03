@@ -26,4 +26,34 @@ describe("AndroidBridge - Back Button", () => {
 
 		unregisterFirst();
 	});
+
+	it("tracks back handler count and handles throwing handlers without breaking stack evaluation", async () => {
+		const bridge = new AndroidBridge();
+		expect(bridge.getBackHandlerCount()).toBe(0);
+
+		const throwingHandler = vi.fn(() => {
+			throw new Error("handler explosion");
+		});
+		const fallbackHandler = vi.fn().mockReturnValue(true);
+
+		const unregThrow = bridge.registerBackHandler(throwingHandler);
+		const unregFallback = bridge.registerBackHandler(fallbackHandler);
+
+		expect(bridge.getBackHandlerCount()).toBe(2);
+
+		// Fallback handler runs first (LIFO) and returns true
+		let handled = await bridge.handleBackButton();
+		expect(handled).toBe(true);
+
+		// Now unregister fallback, so throwingHandler is evaluated
+		unregFallback();
+		expect(bridge.getBackHandlerCount()).toBe(1);
+
+		handled = await bridge.handleBackButton();
+		expect(throwingHandler).toHaveBeenCalled();
+		expect(handled).toBe(false);
+
+		unregThrow();
+		expect(bridge.getBackHandlerCount()).toBe(0);
+	});
 });

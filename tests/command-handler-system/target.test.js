@@ -5,6 +5,7 @@ globalThis.window = globalThis;
 import {
 	handleBiffCommand,
 	handleExecuteSntpCommand,
+	handleHourTimeSignal,
 	handleOpenSystemTarget,
 } from "../../ui/js/ghost/command-handler/system/target.js";
 
@@ -25,7 +26,7 @@ describe("system/target.js", () => {
 		expect(checked).toBe(true);
 	});
 
-	it("handleExecuteSntpCommand fires OnSNTPCompare", async () => {
+	it("handleExecuteSntpCommand fires OnSNTP events", async () => {
 		const events = [];
 		const handler = {
 			app: {
@@ -38,8 +39,17 @@ describe("system/target.js", () => {
 		};
 
 		await handleExecuteSntpCommand(handler, ["executesntp"]);
-		expect(events.length).toBe(1);
-		expect(events[0].ev).toBe("OnSNTPCompare");
+		const names = events.map((e) => e.ev);
+		expect(names).toContain("OnSNTPBegin");
+		expect(names).toContain("OnSNTPCompare");
+		expect(names).toContain("OnSNTPCompareEx");
+		expect(names).toContain("OnSNTPCorrect");
+		expect(names).toContain("OnSNTPCorrectEx");
+
+		await handleHourTimeSignal(handler, 15);
+		expect(
+			events.some((e) => e.ev === "OnHourTimeSignal" && e.args[0] === "15"),
+		).toBe(true);
 	});
 
 	it("handleOpenSystemTarget handles explorer, browser, and modal dialogs", async () => {

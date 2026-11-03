@@ -161,6 +161,8 @@ pub fn run() {
             shiori::property::get_system_property,
             fmo::get_fmo_status,
             fmo::update_fmo_lifecycle_state,
+            fmo::update_fmo_balloon_text,
+            fmo::update_fmo_surfaces,
             shiori::fmo::check_base_ware_mutex,
             sstp::handler::send_sstp_request,
             sstp::handler::parse_and_send_sstp_raw,

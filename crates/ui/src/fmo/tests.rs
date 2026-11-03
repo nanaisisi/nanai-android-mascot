@@ -218,3 +218,32 @@ fn test_fmo_buffer_edge_cases() {
     assert!(entry_deser.is_visible);
     assert_eq!(entry_deser.lifecycle_state, "active");
 }
+
+#[test]
+fn test_fmo_buffer_more_edge_cases() {
+    let recs = vec![
+        FmoRecord {
+            id: "custom_id_1".to_string(),
+            path: "path".to_string(),
+            hwnd: 123,
+            name: "Name".to_string(),
+            keroname: "Kero".to_string(),
+            sakura_surface: 0,
+            kero_surface: 10,
+            ghostpath: "ghostpath".to_string(),
+            kerohwnd: None,
+            hwndlist: vec![],
+            fullname: None,
+            modulestate: None,
+        },
+    ];
+
+    let buf = generate_fmo_buffer(&recs);
+    let parsed = parse_fmo_buffer(&buf).unwrap();
+    assert_eq!(parsed.len(), 1);
+    assert_eq!(parsed[0].id, "custom_id_1");
+    assert_eq!(parsed[0].kerohwnd, None);
+    assert_eq!(parsed[0].hwndlist.len(), 0);
+    assert_eq!(parsed[0].fullname, None);
+    assert_eq!(parsed[0].modulestate, None);
+}

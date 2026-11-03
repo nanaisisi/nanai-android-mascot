@@ -22,6 +22,10 @@ import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
  * - OnSysResume, OnSysSuspend, OnVirtualDesktopChanged, OnWindowStateMinimize, OnWindowStateRestore
  * - OnSchedule5MinutesToGo, OnSchedulepostBegin, OnSchedulepostComplete, OnScheduleRead
  * - OnSchedulesenseBegin, OnSchedulesenseComplete, OnSchedulesenseFailure, OnScheduleTodayNotify
+ * - OnHeadlinesenseBegin, OnHeadlinesense.OnFind, OnHeadlinesenseComplete, OnHeadlinesenseFailure
+ * - OnRSSBegin, OnRSSComplete, OnRSSFailure
+ * - OnMouseEnter, OnMouseLeave, OnMouseClickEx, OnMouseDoubleClickEx, OnMouseDownEx, OnMouseUpEx
+ * - OnMouseMultipleClick, OnMouseMultipleClickEx, OnMouseEnterAll, OnMouseLeaveAll, OnMouseGesture
  * - OnAnchorEnter, OnAnchorHover, OnAnchorSelect, OnAnchorSelectEx
  * - OnChoiceEnter, OnChoiceHover, OnChoiceSelect, OnChoiceSelectEx, OnChoiceTimeout
  * - OnConfigurationDialogHelp, OnGhostTermsAccept, OnGhostTermsDecline, OnSystemDialog, OnSystemDialogCancel
@@ -207,6 +211,98 @@ export const shioriNotifyMethods = {
 			String(afterY),
 			String(beforeY),
 		]);
+	},
+
+	/**
+	 * マウス拡張イベント (OnMouseEnter / OnMouseLeave / OnMouseEnterAll / OnMouseLeaveAll / OnMouseClickEx / OnMouseDoubleClickEx / OnMouseDownEx / OnMouseUpEx / OnMouseMultipleClick / OnMouseMultipleClickEx / OnMouseGesture) 送信
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} eventName イベント名
+	 * @param {Array<string|number>} args Reference0..N 引数
+	 */
+	async notifyMouseEvent(eventName, args) {
+		return await this.sendShioriNotify(eventName, args);
+	},
+
+	/**
+	 * ヘッドラインセンス開始通知 (OnHeadlinesenseBegin)
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} siteName サイト名
+	 * @param {string} url 取得URL
+	 */
+	async sendHeadlineSenseBegin(siteName, url) {
+		return await this.sendShioriNotify("OnHeadlinesenseBegin", [siteName, url]);
+	},
+
+	/**
+	 * ヘッドライン発見通知 (OnHeadlinesense.OnFind)
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} siteName サイト名
+	 * @param {string} url 取得URL
+	 * @param {string} phase フェーズ (first/next/last)
+	 * @param {string} content ヘッドライン内容
+	 */
+	async sendHeadlineSenseOnFind(siteName, url, phase, content) {
+		return await this.sendShioriNotify("OnHeadlinesense.OnFind", [
+			siteName,
+			url,
+			phase,
+			content,
+		]);
+	},
+
+	/**
+	 * ヘッドラインセンス完了通知 (OnHeadlinesenseComplete)
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} reason 終了理由 ("no update" 等)
+	 */
+	async sendHeadlineSenseComplete(reason = "no update") {
+		return await this.sendShioriNotify("OnHeadlinesenseComplete", [reason]);
+	},
+
+	/**
+	 * ヘッドラインセンス失敗通知 (OnHeadlinesenseFailure)
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} reason 失敗理由 ("can't open", "timeout", "not headline" 等)
+	 */
+	async sendHeadlineSenseFailure(reason) {
+		return await this.sendShioriNotify("OnHeadlinesenseFailure", [reason]);
+	},
+
+	/**
+	 * RSSセンス開始通知 (OnRSSBegin)
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} siteName サイト名
+	 * @param {string} url 取得URL
+	 */
+	async sendRssBegin(siteName, url) {
+		return await this.sendShioriNotify("OnRSSBegin", [siteName, url]);
+	},
+
+	/**
+	 * RSSセンス完了通知 (OnRSSComplete)
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} siteNameOrStatus サイト名または "no update"
+	 * @param {string} [siteUrl] サイトURL
+	 * @param {string[]} [entries] 各記事エントリ
+	 */
+	async sendRssComplete(siteNameOrStatus, siteUrl = "", entries = []) {
+		if (siteNameOrStatus === "no update") {
+			return await this.sendShioriNotify("OnRSSComplete", ["no update"]);
+		}
+		return await this.sendShioriNotify("OnRSSComplete", [
+			siteNameOrStatus,
+			siteUrl,
+			...entries,
+		]);
+	},
+
+	/**
+	 * RSSセンス失敗通知 (OnRSSFailure)
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} reason 失敗理由
+	 */
+	async sendRssFailure(reason) {
+		return await this.sendShioriNotify("OnRSSFailure", [reason]);
 	},
 
 	/**

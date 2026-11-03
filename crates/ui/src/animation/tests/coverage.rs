@@ -660,6 +660,7 @@ fn test_triggers_coverage_boost() {
     ];
     scheduler.set_bind_active(0, 2, true);
     scheduler.schedule_surface_animations(0, 0, &anims, 0.0);
+    scheduler.schedule_surface_animations(0, 0, &anims, 1.0); // exercises should_fire returning false branch
 
     // 5. on_talk_end when talking_flags is false
     scheduler.on_talk_end(0, &anims);

@@ -179,7 +179,7 @@ describe("drag interaction submodules", () => {
 		assert.equal(restoreFromDocking(mockEl, 1000), false);
 	});
 
-	test("drag-motion helpers calculate clamped coordinates and native drag sessions", () => {
+	test("drag-motion helpers calculate clamped coordinates and native drag sessions", async () => {
 		assert.equal(clampPosition(5, 10, 50), 10);
 		assert.equal(clampPosition(25, 10, 50), 25);
 		assert.equal(clampPosition(60, 10, 50), 50);
@@ -199,9 +199,30 @@ describe("drag interaction submodules", () => {
 		const nativeSession = createNativeDragSession();
 		assert.equal(nativeSession.hasStarted(), false);
 		assert.equal(nativeSession.canStartNativeDrag("touchstart"), false);
-		assert.doesNotThrow(() => nativeSession.moveNativeWindow(10, 20));
+		assert.equal(nativeSession.canStartNativeDrag("mousedown"), false);
+
+		nativeSession.startNativeDrag(() => true);
+		assert.equal(nativeSession.hasStarted(), true);
+		nativeSession.moveNativeWindow(10, 20);
 		nativeSession.reset();
 		assert.equal(nativeSession.hasStarted(), false);
+
+		// With Tauri and resolved window position
+		globalThis.__TAURI_INTERNALS__ = {
+			metadata: { currentWindow: { label: "main" } },
+			invoke: async (cmd) => {
+				if (cmd === "plugin:window|current_window_position") return { type: "Physical", x: 100, y: 100 };
+				if (cmd === "plugin:window|set_window_position") return {};
+			},
+			transformCallback: (cb) => cb,
+		};
+		const nativeSessionTauri = createNativeDragSession();
+		assert.equal(nativeSessionTauri.canStartNativeDrag("mousedown"), true);
+		nativeSessionTauri.startNativeDrag(() => true);
+		await new Promise((r) => setTimeout(r, 30));
+		nativeSessionTauri.moveNativeWindow(15, 25);
+		nativeSessionTauri.reset();
+		delete globalThis.__TAURI_INTERNALS__;
 
 		// Check exported constants
 		assert.equal(LONG_PRESS_DELAY, 600);

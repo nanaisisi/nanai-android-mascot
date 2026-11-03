@@ -374,10 +374,40 @@ Bust,触らないで！
 #[test]
 fn test_parse_block_opener_edge_cases() {
     let sample = r"
+sakura.cursor {
+}
+kero.cursor {
+}
+char0.cursor {
+}
+char1.cursor {
+}
+cursor {
+}
 char2.cursor
 {
 }
+char2.cursor {
+}
+char2.cursor_invalid
+{
+}
+sakura.tooltips {
+}
+kero.tooltips {
+}
+char0.tooltips {
+}
+char1.tooltips {
+}
+tooltips {
+}
 char3.tooltips
+{
+}
+char3.tooltips {
+}
+char3.tooltips_invalid
 {
 }
 surface.append.foo

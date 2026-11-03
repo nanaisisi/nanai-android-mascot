@@ -510,6 +510,8 @@ fn test_stepping_empty_parallel_methods() {
         patterns: vec![
             AnimationPattern { index: 0, method: DrawMethod::ParallelStart(vec![]), surface: 10, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] },
             AnimationPattern { index: 1, method: DrawMethod::ParallelStop(vec![]), surface: 11, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] },
+            AnimationPattern { index: 2, method: DrawMethod::AlternativeStart(vec![]), surface: 12, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] },
+            AnimationPattern { index: 3, method: DrawMethod::AlternativeStop(vec![]), surface: 13, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] },
         ],
     };
     scheduler.start_animation(0, 0, &anim);

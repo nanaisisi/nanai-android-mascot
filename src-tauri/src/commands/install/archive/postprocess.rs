@@ -1,5 +1,5 @@
-use crate::common::paths::normalize_path;
 use crate::common::models::GhostInfo;
+use crate::common::paths::normalize_path;
 use std::path::Path;
 
 /// refresh 設定時に指定ディレクトリ内のファイルを消去（refreshundeletemask に含まれるファイル名は保護）

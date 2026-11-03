@@ -66,7 +66,11 @@ pub fn sanitize_vfs_path(path: &str) -> Option<String> {
 /// 大文字・小文字の差異を吸収してファイルパスを解決する VFS リゾルバー（Linux/Android対応）
 pub fn resolve_vfs_path(base_dir: &Path, relative_path: &str) -> Option<PathBuf> {
     let norm = normalize_vfs_path(relative_path);
-    let path_str = if norm.is_empty() { relative_path } else { &norm };
+    let path_str = if norm.is_empty() {
+        relative_path
+    } else {
+        &norm
+    };
 
     let mut current = base_dir.to_path_buf();
 

@@ -84,11 +84,11 @@ impl VfsResolver {
 
             // ディレクトリエントリのキャッシュを取得または生成
             let target_lower = part.to_lowercase();
-            let mut matched_name = self
-                .dir_entries_cache
-                .lock()
-                .ok()
-                .and_then(|guard| guard.get(&current).and_then(|m| m.get(&target_lower).cloned()));
+            let mut matched_name = self.dir_entries_cache.lock().ok().and_then(|guard| {
+                guard
+                    .get(&current)
+                    .and_then(|m| m.get(&target_lower).cloned())
+            });
 
             if matched_name.is_none() {
                 // キャッシュミス: ディレクトリをスキャンしてキャッシュ

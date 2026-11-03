@@ -96,7 +96,10 @@ pub async fn send_sstp_request_with_config(
                 let mut properties = HashMap::new();
                 properties.insert("ghostlist.count".to_string(), "1".to_string());
                 properties.insert("currentghost.name".to_string(), "Nanai".to_string());
-                properties.insert("baseware.name".to_string(), "Nanai Android Mascot".to_string());
+                properties.insert(
+                    "baseware.name".to_string(),
+                    "Nanai Android Mascot".to_string(),
+                );
                 properties.insert("baseware.version".to_string(), "1.0.0".to_string());
 
                 let ctx = SstpGhostContext {

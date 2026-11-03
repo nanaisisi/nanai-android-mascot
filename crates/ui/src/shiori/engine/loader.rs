@@ -217,32 +217,30 @@ impl MultiStageShioriLoader {
                         last_error = err_msg;
                     }
                 },
-                ShioriEngineCandidate::Mock(mut engine) => {
-                    match engine.load(dir_path) {
-                        Ok(_) => {
-                            self.active_engine = Some(engine);
-                            self.active_kind = Some(CandidateKind::Mock);
-                            self.last_error = None;
-                            self.attempts.push(LoadAttempt {
-                                kind: CandidateKind::Mock,
-                                path: None,
-                                success: true,
-                                error: None,
-                            });
-                            return Ok(());
-                        }
-                        Err(e) => {
-                            let err_msg = format!("Mock load failed: {}", e);
-                            self.attempts.push(LoadAttempt {
-                                kind: CandidateKind::Mock,
-                                path: None,
-                                success: false,
-                                error: Some(err_msg.clone()),
-                            });
-                            last_error = err_msg;
-                        }
+                ShioriEngineCandidate::Mock(mut engine) => match engine.load(dir_path) {
+                    Ok(_) => {
+                        self.active_engine = Some(engine);
+                        self.active_kind = Some(CandidateKind::Mock);
+                        self.last_error = None;
+                        self.attempts.push(LoadAttempt {
+                            kind: CandidateKind::Mock,
+                            path: None,
+                            success: true,
+                            error: None,
+                        });
+                        return Ok(());
                     }
-                }
+                    Err(e) => {
+                        let err_msg = format!("Mock load failed: {}", e);
+                        self.attempts.push(LoadAttempt {
+                            kind: CandidateKind::Mock,
+                            path: None,
+                            success: false,
+                            error: Some(err_msg.clone()),
+                        });
+                        last_error = err_msg;
+                    }
+                },
             }
         }
 

@@ -153,7 +153,10 @@ shell0.source.directory,custom_shell\r\n";
     assert!(manifest.is_acceptable_by("mini"));
     assert!(!manifest.is_acceptable_by("OtherGhost"));
     assert_eq!(manifest.evaluate_refusal("Nanai"), None);
-    assert_eq!(manifest.evaluate_refusal("OtherGhost"), Some("accept failed"));
+    assert_eq!(
+        manifest.evaluate_refusal("OtherGhost"),
+        Some("accept failed")
+    );
 
     assert_eq!(manifest.bundled_resources.len(), 2);
     assert_eq!(manifest.bundled_resources[0].resource_type, "balloon");

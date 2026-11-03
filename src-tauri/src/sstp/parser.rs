@@ -91,6 +91,7 @@ pub fn parse_and_build_sstp_raw_response_with_config(
             fmo_text: String::new(),
             installed_ghosts: vec!["Nanai".to_string()],
             sstp_config: config.clone(),
+            ..Default::default()
         };
         let cmd = core_req.command.as_deref().unwrap_or("");
         let resp = handle_execute_command(cmd, &ctx);

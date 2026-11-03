@@ -37,10 +37,10 @@ impl SurfacesTxt {
     /// `name,` 定義名から該当するサーフィス（番号と定義）を検索する
     pub fn find_by_name(&self, name: &str) -> Option<(u32, &SurfaceDefinition)> {
         for (&id, def) in &self.surfaces {
-            if let Some(def_name) = &def.name {
-                if def_name.eq_ignore_ascii_case(name) {
-                    return Some((id, def));
-                }
+            if let Some(def_name) = &def.name
+                && def_name.eq_ignore_ascii_case(name)
+            {
+                return Some((id, def));
             }
         }
         None
@@ -62,7 +62,10 @@ impl SurfacesTxt {
     }
 
     /// 相方（kero / char1）の名前またはエイリアス名からサーフィスを解決する
-    pub fn resolve_kero_name_or_alias(&self, name_or_alias: &str) -> Option<(u32, &SurfaceDefinition)> {
+    pub fn resolve_kero_name_or_alias(
+        &self,
+        name_or_alias: &str,
+    ) -> Option<(u32, &SurfaceDefinition)> {
         if let Some(list) = self.kero_alias_numbers(name_or_alias) {
             for &id in list {
                 if let Some(def) = self.surfaces.get(&id) {

@@ -25,14 +25,14 @@ impl SurfacesTxt {
         // どのbindアニメーションが他からinsertされているかを収集
         let mut inserted_ids = HashSet::new();
         for &bind_id in &bind_ids {
-            if let Some(anim) = def.animations.get(&bind_id) {
-                if anim.interval.as_ref() == Some(&Interval::Bind) {
-                    for pat in &anim.patterns {
-                        if pat.method == DrawMethod::Insert {
-                            if let Ok(target_id) = pat.surface.to_string().parse::<u32>() {
-                                inserted_ids.insert(target_id);
-                            }
-                        }
+            if let Some(anim) = def.animations.get(&bind_id)
+                && anim.interval.as_ref() == Some(&Interval::Bind)
+            {
+                for pat in &anim.patterns {
+                    if pat.method == DrawMethod::Insert
+                        && let Ok(target_id) = pat.surface.to_string().parse::<u32>()
+                    {
+                        inserted_ids.insert(target_id);
                     }
                 }
             }
@@ -52,13 +52,7 @@ impl SurfacesTxt {
                 continue;
             }
 
-            self.expand_bind_animation(
-                def,
-                bind_id,
-                &active_binds_set,
-                &mut visited,
-                &mut layers,
-            );
+            self.expand_bind_animation(def, bind_id, &active_binds_set, &mut visited, &mut layers);
         }
 
         Some(CompositionPlan {
@@ -91,7 +85,13 @@ impl SurfacesTxt {
                 if let Ok(child_id) = pat.surface.to_string().parse::<u32>() {
                     // insert先の着せ替えが現在装着中(ON)の場合のみ挿入
                     if active_binds.contains(&child_id) {
-                        self.expand_bind_animation(def, child_id, active_binds, visited, out_layers);
+                        self.expand_bind_animation(
+                            def,
+                            child_id,
+                            active_binds,
+                            visited,
+                            out_layers,
+                        );
                     }
                 }
             } else {

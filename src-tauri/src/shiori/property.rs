@@ -66,7 +66,11 @@ pub fn evaluate_property_query(query: &str) -> String {
         "readmebuttoncaption"
         | "updatebuttoncaption"
         | "vanishbuttoncaption"
-        | "vanishbuttonvisible" => "1".to_string(),
+        | "vanishbuttonvisible"
+        | "callsstpsendboxbutton.caption"
+        | "updatefmobutton.caption"
+        | "switchlocalsstpbutton.caption"
+        | "switchremotesstpbutton.caption" => "1".to_string(),
         "system.year" => "2026".to_string(),
         "system.month" => "11".to_string(),
         "system.day" => "3".to_string(),
@@ -84,11 +88,6 @@ pub fn evaluate_property_query(query: &str) -> String {
         "update_time" => "0".to_string(),
         "sakura.bind.menu" => "".to_string(),
         "kero.bind.menu" => "".to_string(),
-        | "vanishbuttonvisible"
-        | "callsstpsendboxbutton.caption"
-        | "updatefmobutton.caption"
-        | "switchlocalsstpbutton.caption"
-        | "switchremotesstpbutton.caption" => "1".to_string(),
         _ => {
             if let Some(shiori_var) = q.strip_prefix("shiori.") {
                 return match shiori_var {
@@ -99,6 +98,7 @@ pub fn evaluate_property_query(query: &str) -> String {
                     "encoding" => "UTF-8".to_string(),
                     _ => format!("(unknown shiori property: {})", shiori_var),
                 };
+            }
             if q.starts_with("system.os.") {
                 return "Linux".to_string();
             }
@@ -150,7 +150,10 @@ mod tests {
         assert_eq!(evaluate_property_query("currentghost.name"), "Mock Ghost");
         assert_eq!(evaluate_property_query("username"), "User");
         assert_eq!(evaluate_property_query("shiori.version"), "3.0");
-        assert_eq!(evaluate_property_query("shiori.name"), "SHIORI/3.0 Standard");
+        assert_eq!(
+            evaluate_property_query("shiori.name"),
+            "SHIORI/3.0 Standard"
+        );
         assert_eq!(evaluate_property_query("shiori.encoding"), "UTF-8");
         assert_eq!(evaluate_property_query("system.year"), "2026");
         assert_eq!(evaluate_property_query("system.month"), "11");
@@ -186,10 +189,7 @@ mod tests {
             evaluate_property_query("callsstpsendboxbutton.caption"),
             "1"
         );
-        assert_eq!(
-            evaluate_property_query("updatefmobutton.caption"),
-            "1"
-        );
+        assert_eq!(evaluate_property_query("updatefmobutton.caption"), "1");
         assert_eq!(
             evaluate_property_query("switchlocalsstpbutton.caption"),
             "1"

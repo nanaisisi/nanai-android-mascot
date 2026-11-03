@@ -180,6 +180,120 @@ export class SurfaceFrameBuffer {
 					const da = (dst32[dstIdx] >>> 24) & 0xff;
 					const outA = Math.round((da * sa) / 255);
 					dst32[dstIdx] = (dst32[dstIdx] & 0x00ffffff) | (outA << 24);
+				} else if (
+					m.startsWith("blend-") ||
+					m.endsWith("-fast") ||
+					m === "multiply" ||
+					m === "screen" ||
+					m === "add" ||
+					m === "lighter" ||
+					m === "darken" ||
+					m === "lighten" ||
+					m === "difference" ||
+					m === "exclusion" ||
+					m === "subtract" ||
+					m === "divide" ||
+					m === "softlight" ||
+					m === "soft-light" ||
+					m === "overlaymultiply" ||
+					m === "overlayscreen"
+				) {
+					const sa = (srcPixel >>> 24) & 0xff;
+					if (sa === 0) continue;
+
+					const isFast =
+						m.endsWith("-fast") ||
+						m === "overlaymultiply" ||
+						m === "overlayscreen";
+					const baseMode = m
+						.replace(/^blend-/, "")
+						.replace(/-fast$/, "")
+						.replace(/^overlay(?=multiply|screen)/, "");
+
+					const sr = srcPixel & 0xff;
+					const sg = (srcPixel >>> 8) & 0xff;
+					const sb = (srcPixel >>> 16) & 0xff;
+
+					const dr = dst32[dstIdx] & 0xff;
+					const dg = (dst32[dstIdx] >>> 8) & 0xff;
+					const db = (dst32[dstIdx] >>> 16) & 0xff;
+					const da = (dst32[dstIdx] >>> 24) & 0xff;
+
+					let br = sr;
+					let bg = sg;
+					let bb = sb;
+
+					if (baseMode === "multiply") {
+						br = ((sr * dr) / 255) | 0;
+						bg = ((sg * dg) / 255) | 0;
+						bb = ((sb * db) / 255) | 0;
+					} else if (baseMode === "screen") {
+						br = (255 - ((255 - sr) * (255 - dr)) / 255) | 0;
+						bg = (255 - ((255 - sg) * (255 - dg)) / 255) | 0;
+						bb = (255 - ((255 - sb) * (255 - db)) / 255) | 0;
+					} else if (baseMode === "add" || baseMode === "lighter") {
+						br = Math.min(255, sr + dr);
+						bg = Math.min(255, sg + dg);
+						bb = Math.min(255, sb + db);
+					} else if (baseMode === "darken") {
+						br = Math.min(sr, dr);
+						bg = Math.min(sg, dg);
+						bb = Math.min(sb, db);
+					} else if (baseMode === "lighten") {
+						br = Math.max(sr, dr);
+						bg = Math.max(sg, dg);
+						bb = Math.max(sb, db);
+					} else if (baseMode === "difference") {
+						br = Math.abs(sr - dr);
+						bg = Math.abs(sg - dg);
+						bb = Math.abs(sb - db);
+					} else if (baseMode === "exclusion") {
+						br = Math.max(0, Math.min(255, dr + sr - (2 * dr * sr) / 255)) | 0;
+						bg = Math.max(0, Math.min(255, dg + sg - (2 * dg * sg) / 255)) | 0;
+						bb = Math.max(0, Math.min(255, db + sb - (2 * db * sb) / 255)) | 0;
+					} else if (baseMode === "subtract") {
+						br = Math.max(0, dr - sr);
+						bg = Math.max(0, dg - sg);
+						bb = Math.max(0, db - sb);
+					} else if (baseMode === "divide") {
+						br = sr === 0 ? 255 : Math.min(255, ((dr * 255) / sr) | 0);
+						bg = sg === 0 ? 255 : Math.min(255, ((dg * 255) / sg) | 0);
+						bb = sb === 0 ? 255 : Math.min(255, ((db * 255) / sb) | 0);
+					} else if (baseMode === "overlay") {
+						const overlayCalc = (d, s) =>
+							d < 128
+								? Math.min(255, ((2 * d * s) / 255) | 0)
+								: Math.min(255, (255 - (2 * (255 - d) * (255 - s)) / 255) | 0);
+						br = overlayCalc(dr, sr);
+						bg = overlayCalc(dg, sg);
+						bb = overlayCalc(db, sb);
+					} else if (baseMode === "softlight" || baseMode === "soft-light") {
+						const softCalc = (d, s) => {
+							const df = d / 255;
+							const sf = s / 255;
+							const res =
+								sf < 0.5
+									? df - (1 - 2 * sf) * df * (1 - df)
+									: df + (2 * sf - 1) * (Math.sqrt(df) - df);
+							return Math.max(0, Math.min(255, Math.round(res * 255)));
+						};
+						br = softCalc(dr, sr);
+						bg = softCalc(dg, sg);
+						bb = softCalc(db, sb);
+					}
+
+					if (isFast) {
+						dst32[dstIdx] = ((sa << 24) | (bb << 16) | (bg << 8) | br) >>> 0;
+					} else {
+						const alphaNorm = sa / 255;
+						const invAlpha = 1 - alphaNorm;
+						const outR = Math.min(255, (br * alphaNorm + dr * invAlpha) | 0);
+						const outG = Math.min(255, (bg * alphaNorm + dg * invAlpha) | 0);
+						const outB = Math.min(255, (bb * alphaNorm + db * invAlpha) | 0);
+						const outA = Math.min(255, (sa + da * invAlpha) | 0);
+						dst32[dstIdx] =
+							((outA << 24) | (outB << 16) | (outG << 8) | outR) >>> 0;
+					}
 				} else {
 					// 標準 overlay (完全透明はスキップ、完全不透明はダイレクト代入、半透明はブレンド)
 					const sa = (srcPixel >>> 24) & 0xff;

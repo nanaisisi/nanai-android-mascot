@@ -93,6 +93,12 @@ pub async fn send_sstp_request_with_config(
         }
         "EXECUTE" => {
             if let Some(ref cmd) = request.command {
+                let mut properties = HashMap::new();
+                properties.insert("ghostlist.count".to_string(), "1".to_string());
+                properties.insert("currentghost.name".to_string(), "Nanai".to_string());
+                properties.insert("baseware.name".to_string(), "Nanai Android Mascot".to_string());
+                properties.insert("baseware.version".to_string(), "1.0.0".to_string());
+
                 let ctx = SstpGhostContext {
                     name: "Nanai".to_string(),
                     sakura_name: "Nanai".to_string(),
@@ -104,6 +110,13 @@ pub async fn send_sstp_request_with_config(
                     status: String::new(),
                     fmo_text: String::new(),
                     installed_ghosts: vec!["Nanai".to_string()],
+                    installed_shells: vec!["master".to_string()],
+                    installed_balloons: vec!["standard".to_string()],
+                    installed_headlines: Vec::new(),
+                    installed_plugins: Vec::new(),
+                    properties,
+                    cookies: HashMap::new(),
+                    sender: request.sender.clone(),
                     sstp_config: config.clone(),
                 };
                 let resp = handle_execute_command(cmd, &ctx);

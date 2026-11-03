@@ -262,6 +262,23 @@ export class AndroidBridge {
 	}
 
 	/**
+	 * 登録されている戻るボタンハンドラ数を取得
+	 * @returns {number}
+	 */
+	getBackHandlerCount() {
+		return this._backButtonManager.handlerCount;
+	}
+
+	/**
+	 * 登録されているイベントリスナー数を取得
+	 * @param {string} [eventName]
+	 * @returns {number}
+	 */
+	getListenerCount(eventName) {
+		return this._emitter.listenerCount(eventName);
+	}
+
+	/**
 	 * Android戻るボタン押下イベントの処理
 	 * スタックの末尾（最前面）から順にハンドラを実行し、trueが返されたら停止
 	 * @returns {Promise<boolean>} ハンドラによって処理されたかどうか

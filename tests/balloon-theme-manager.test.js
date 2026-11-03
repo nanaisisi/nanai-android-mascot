@@ -171,10 +171,20 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 		assert.ok(shownMessage.includes("Theme Beta"));
 	});
 
-	it("applies balloon scale with numeric and action inputs", () => {
+	it("applies balloon scale with numeric and action inputs and dispatches OnBalloonScaling", () => {
+		let scalingEvent = null;
+		let scalingNotifyArgs = null;
 		const mockApp = {
 			balloonUserScale: 1,
 			balloonDpiScale: 1,
+			ghostController: {
+				sendShioriEvent(event, args) {
+					scalingEvent = { event, args };
+				},
+				sendBalloonScalingNotify(afterX, beforeX, afterY, beforeY) {
+					scalingNotifyArgs = { afterX, beforeX, afterY, beforeY };
+				},
+			},
 			showBalloon() {},
 			hideBalloon() {},
 		};
@@ -185,10 +195,22 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 		assert.equal(res1.percent, 150);
 		assert.equal(cssVars["--balloon-user-scale"], "1.5");
 		assert.equal(mockEl.style.transform, "scale(1.5)");
+		assert.deepEqual(scalingNotifyArgs, {
+			afterX: 150,
+			beforeX: 100,
+			afterY: 150,
+			beforeY: 100,
+		});
 
+		// Fallback to sendShioriEvent if sendBalloonScalingNotify is not available
+		delete mockApp.ghostController.sendBalloonScalingNotify;
 		const res2 = mgr.applyScale(2);
 		assert.equal(res2.scale, 2);
 		assert.equal(res2.percent, 200);
+		assert.deepEqual(scalingEvent, {
+			event: "OnBalloonScaling",
+			args: ["200", "150", "200", "150"],
+		});
 	});
 
 	it("resets descript properties properly", () => {

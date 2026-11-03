@@ -16,6 +16,53 @@ pub fn normalize_vfs_path(path: &str) -> String {
     parts.join("/")
 }
 
+/// パス文字列が安全な相対パス（Nullバイトを含まず、親ディレクトリ脱出を行わない）か検証
+pub fn is_safe_vfs_path(path: &str) -> bool {
+    // Nullバイトまたは不正制御文字チェック
+    if path.contains('\0') {
+        return false;
+    }
+
+    // Windows ドライブレター (`C:`, `D:`) または絶対プレフィックス (`/`, `\`)
+    let trimmed = path.trim();
+    if trimmed.starts_with('/') || trimmed.starts_with('\\') {
+        return false;
+    }
+    if trimmed.len() >= 2
+        && trimmed.as_bytes()[1] == b':'
+        && trimmed.as_bytes()[0].is_ascii_alphabetic()
+    {
+        return false;
+    }
+
+    // `..` によるルート外脱出の検証
+    let mut depth: isize = 0;
+    for part in path.split(['/', '\\']) {
+        if part.is_empty() || part == "." {
+            continue;
+        }
+        if part == ".." {
+            depth -= 1;
+            if depth < 0 {
+                return false;
+            }
+        } else {
+            depth += 1;
+        }
+    }
+
+    true
+}
+
+/// パスをサニタイズして安全な正規化相対パスを返す。安全でない場合は `None` を返す。
+pub fn sanitize_vfs_path(path: &str) -> Option<String> {
+    if !is_safe_vfs_path(path) {
+        return None;
+    }
+    let norm = normalize_vfs_path(path);
+    if norm.is_empty() { None } else { Some(norm) }
+}
+
 /// 大文字・小文字の差異を吸収してファイルパスを解決する VFS リゾルバー（Linux/Android対応）
 pub fn resolve_vfs_path(base_dir: &Path, relative_path: &str) -> Option<PathBuf> {
     let mut current = base_dir.to_path_buf();

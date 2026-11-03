@@ -13,12 +13,15 @@ export {
 	handleSetAlignmentOnDesktop,
 	handleSetTaskTrayIcon,
 	handleSetTrayBalloon,
+	triggerTrayBalloonClick,
 } from "./system/desktop.js";
 export {
 	handleReloadShiori,
 	handleSetShioriDebugMode,
 } from "./system/shiori.js";
 export {
+	handleGetPropertyCommand,
+	handleKeyPressEvent,
 	handleSetAlphaCommand,
 	handleSetPositionCommand,
 	handleSetPropertyCommand,
@@ -27,6 +30,7 @@ export {
 export {
 	handleBiffCommand,
 	handleExecuteSntpCommand,
+	handleHourTimeSignal,
 	handleOpenSystemTarget,
 } from "./system/target.js";
 export {

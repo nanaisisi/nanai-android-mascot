@@ -113,7 +113,7 @@ fn test_parsed_animation_options_coverage() {
             "background".to_string(),
             "shared-index".to_string(),
         ],
-        vec!["(3,4)".to_string(), "shared_index".to_string()],
+        vec!["exclusive".to_string(), "(5,6)".to_string(), "shared_index".to_string()],
     ]);
     assert!(opts.is_exclusive);
     assert!(opts.is_background);

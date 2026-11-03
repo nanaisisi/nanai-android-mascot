@@ -82,6 +82,7 @@ fn test_mock_vfs() {
     // read_text (Shift_JIS auto-decode)
     let desc = mock.read_text("ghost/master/descript.txt").unwrap();
     assert!(desc.contains("name,モック"));
+    assert!(mock.read_text("nonexistent_text.txt").is_err());
 
     // list_dir
     let root_list = mock.list_dir("");

@@ -405,3 +405,29 @@ fn test_mock_vfs_extended_resolver_operations() {
     assert_eq!(removed_all, 3);
     assert!(mock.is_empty());
 }
+
+#[test]
+fn test_vfs_resolver_edge_cases() {
+    let temp = std::env::temp_dir().join(format!("vfs_resolver_edge_{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&temp);
+    std::fs::create_dir_all(&temp).unwrap();
+    let file_path = temp.join("file.txt");
+    std::fs::write(&file_path, "content").unwrap();
+
+    let resolver = VfsResolver::new(&temp);
+    assert!(resolver.walk_files("file.txt").is_err());
+
+    let sub = temp.join("SubDir");
+    std::fs::create_dir_all(&sub).unwrap();
+    std::fs::write(sub.join("a.txt"), "a").unwrap();
+    std::fs::write(sub.join("b.txt"), "b").unwrap();
+    assert!(resolver.resolve("subdir/A.TXT").is_some());
+    assert!(resolver.resolve("subdir/B.TXT").is_some());
+
+    for i in 0..1005 {
+        let _ = resolver.resolve(&format!("file_{}.txt", i));
+    }
+    assert!(resolver.cache_size() <= 1000);
+
+    let _ = std::fs::remove_dir_all(&temp);
+}

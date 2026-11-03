@@ -139,9 +139,9 @@ export function processMultiTouchMove(recognizer, e) {
  */
 export function handleDragEndAndSnap(recognizer, e) {
 	recognizer._isDragging = false;
-	const lastTouch = e.changedTouches?.[0];
-	const endX = lastTouch ? lastTouch.clientX : recognizer._lastX;
-	const endY = lastTouch ? lastTouch.clientY : recognizer._lastY;
+	const lastTouch = e?.changedTouches?.[0];
+	const endX = lastTouch?.clientX ?? recognizer._lastX ?? 0;
+	const endY = lastTouch?.clientY ?? recognizer._lastY ?? 0;
 
 	recognizer.emit(TOUCH_GESTURE_TYPES.DRAG_END, {
 		centerX: endX,

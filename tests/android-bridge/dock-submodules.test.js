@@ -66,6 +66,16 @@ describe("AndroidBridge - Dock & Submodules", () => {
 		emitter.dispatch("test-event", { value: 456 });
 		expect(handler).toHaveBeenCalledTimes(1);
 
+		// Test BridgeEventEmitter error isolation in dispatch
+		const explodingListener = () => {
+			throw new Error("listener boom");
+		};
+		const safeListener = vi.fn();
+		emitter.on("error-event", explodingListener);
+		emitter.on("error-event", safeListener);
+		emitter.dispatch("error-event", { pass: true });
+		expect(safeListener).toHaveBeenCalledWith({ pass: true });
+
 		// Test DockManager in isolation
 		const mockDispatch = vi.fn();
 		const dock = new DockManager({ dispatchFn: mockDispatch });
@@ -77,6 +87,31 @@ describe("AndroidBridge - Dock & Submodules", () => {
 			expect.objectContaining({ dockState: "left" }),
 		);
 		dock.destroy();
+		expect(dock.dockState).toBe("none");
+	});
+
+	it("handles unbind exceptions gracefully in DockManager when re-assigning recognizer", () => {
+		const mockDispatch = vi.fn();
+		const dock = new DockManager({ dispatchFn: mockDispatch });
+
+		dock._gestureUnbind = () => {
+			throw new Error("mock unbind error");
+		};
+
+		// Should not throw even when _gestureUnbind throws
+		expect(() => {
+			dock.setGestureRecognizer({
+				on: vi.fn(() => () => {}),
+			});
+		}).not.toThrow();
+
+		// Setting null should unbind without throwing
+		dock._gestureUnbind = () => {
+			throw new Error("mock unbind error on destroy");
+		};
+		expect(() => {
+			dock.destroy();
+		}).not.toThrow();
 		expect(dock.dockState).toBe("none");
 	});
 });

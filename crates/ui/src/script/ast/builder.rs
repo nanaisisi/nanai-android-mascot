@@ -65,3 +65,28 @@ pub fn build_sakura_ast(commands: &[SakuraCommand]) -> SakuraAstNode {
         children: root_children,
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_build_sakura_ast_edge_cases() {
+        let commands = vec![
+            SakuraCommand::Text("Root text".to_string()),
+            SakuraCommand::Target(0),
+            SakuraCommand::Text("Scope 0 text".to_string()),
+            SakuraCommand::Choice { label: "Choice 1".to_string(), id: "id1".to_string(), args: vec![] },
+            SakuraCommand::Anchor { id: "a1".to_string(), text: "Anchor".to_string(), args: vec![] },
+            SakuraCommand::Target(1),
+            SakuraCommand::Text("Scope 1 text".to_string()),
+        ];
+        let ast = build_sakura_ast(&commands);
+        match ast {
+            SakuraAstNode::Root { children } => {
+                assert!(!children.is_empty());
+            }
+            _ => panic!("Expected Root"),
+        }
+    }
+}

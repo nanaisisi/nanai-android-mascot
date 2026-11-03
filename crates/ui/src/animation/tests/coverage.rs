@@ -502,7 +502,7 @@ fn test_triggers_coverage_boost() {
         collisions: vec![],
         patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 102, wait: 100, wait_max: None, x: 0, y: 0, options: vec![] }],
     };
-    let target_anim = SerikoAnimation {
+    let _target_anim = SerikoAnimation {
         id: 21,
         name: None,
         interval: Some(Interval::Always),

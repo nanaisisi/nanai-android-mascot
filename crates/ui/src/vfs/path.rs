@@ -65,15 +65,18 @@ pub fn sanitize_vfs_path(path: &str) -> Option<String> {
 
 /// 大文字・小文字の差異を吸収してファイルパスを解決する VFS リゾルバー（Linux/Android対応）
 pub fn resolve_vfs_path(base_dir: &Path, relative_path: &str) -> Option<PathBuf> {
+    let norm = normalize_vfs_path(relative_path);
+    let path_str = if norm.is_empty() { relative_path } else { &norm };
+
     let mut current = base_dir.to_path_buf();
 
-    // 高速パス: base_dir + relative_path で直接ファイルまたはディレクトリが存在する場合
-    let direct_combined = base_dir.join(relative_path);
+    // 高速パス: base_dir + path_str で直接ファイルまたはディレクトリが存在する場合
+    let direct_combined = base_dir.join(path_str);
     if direct_combined.exists() {
         return Some(direct_combined);
     }
 
-    for part in relative_path.split(['/', '\\']) {
+    for part in path_str.split(['/', '\\']) {
         if part.is_empty() || part == "." {
             continue;
         }

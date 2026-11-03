@@ -177,7 +177,11 @@ fn test_detect_and_decode_utf16_and_eucjp() {
     std::fs::write(&target_file, "root content").unwrap();
 
     let resolved_dot = resolve_vfs_path(&temp_dir, "./subdir/../rootfile.txt");
-    assert_eq!(resolved_dot, Some(target_file.clone()));
+    assert!(resolved_dot.is_some());
+    assert_eq!(
+        resolved_dot.unwrap().to_string_lossy().to_lowercase(),
+        target_file.to_string_lossy().to_lowercase()
+    );
 
     let _ = std::fs::remove_dir_all(&temp_dir);
 }

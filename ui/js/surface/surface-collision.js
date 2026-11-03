@@ -63,6 +63,21 @@ export const surfaceCollisionMethods = {
 		const canvasX = Math.round(relX * this.baseWidth);
 		const canvasY = Math.round(relY * this.baseHeight);
 
+		// 再生中アニメーションの動的当たり判定（SERIKO animation*.collision*）を手前として最優先判定
+		const activeAnimationCols =
+			this.animationManager?.getActiveCollisions?.(scopeId) || [];
+		for (let i = activeAnimationCols.length - 1; i >= 0; i--) {
+			const col = activeAnimationCols[i];
+			if (collisionContains(col, canvasX, canvasY)) {
+				return {
+					name: col.name,
+					id: col.id,
+					canvasX,
+					canvasY,
+				};
+			}
+		}
+
 		const colList = this.collisions[sid] || this.collisions.default || [];
 		if (colList.length === 0) {
 			return { name: "", canvasX, canvasY };

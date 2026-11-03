@@ -16,12 +16,19 @@ export {
 	triggerTrayBalloonClick,
 } from "./system/desktop.js";
 export {
+	handleReloadBalloon,
+	handleReloadDescript,
+	handleReloadGhost,
+	handleReloadShell,
 	handleReloadShiori,
+	handleReloadSurface,
 	handleSetShioriDebugMode,
 } from "./system/shiori.js";
 export {
+	handleEnterMode,
 	handleGetPropertyCommand,
 	handleKeyPressEvent,
+	handleLeaveMode,
 	handleSetAlphaCommand,
 	handleSetPositionCommand,
 	handleSetPropertyCommand,
@@ -37,4 +44,5 @@ export {
 	clearAllScriptTimers,
 	handleNotifyCommand,
 	handleTimerRaiseCommand,
+	handleTimerRaiseOtherCommand,
 } from "./system/timer.js";

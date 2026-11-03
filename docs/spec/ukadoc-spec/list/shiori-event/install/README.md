@@ -4,12 +4,12 @@
 
 | 項目                                                         | 検索語                 |  対応状況   |
 | :----------------------------------------------------------- | :--------------------- | :---------: |
-| [インストールの識別子](caption_install-identifier.md)        | インストールの識別子   | ❌ 検出なし |
-| [インストールの失敗理由](caption_install-reasonoffailure.md) | インストールの失敗理由 | ❌ 検出なし |
-| [OnInstallBegin](OnInstallBegin.md)                          | OnInstallBegin         | ❌ 検出なし |
-| [OnInstallComplete](OnInstallComplete.md)                    | OnInstallComplete      | ❌ 検出なし |
-| [OnInstallCompleteAll](OnInstallCompleteAll.md)              | OnInstallCompleteAll   | ❌ 検出なし |
-| [OnInstallCompleteEx](OnInstallCompleteEx.md)                | OnInstallCompleteEx    | ❌ 検出なし |
-| [OnInstallFailure](OnInstallFailure.md)                      | OnInstallFailure       | ❌ 検出なし |
-| [OnInstallRefuse](OnInstallRefuse.md)                        | OnInstallRefuse        | ❌ 検出なし |
-| [OnInstallReroute](OnInstallReroute.md)                      | OnInstallReroute       | ❌ 検出なし |
+| [インストールの識別子](caption_install-identifier.md) | インストールの識別子 | ❌ 未実装 |
+| [インストールの失敗理由](caption_install-reasonoffailure.md) | インストールの失敗理由 | ❌ 未実装 |
+| [OnInstallBegin](OnInstallBegin.md) | OnInstallBegin | ✅ 実装済 |
+| [OnInstallComplete](OnInstallComplete.md) | OnInstallComplete | ✅ 実装済 |
+| [OnInstallCompleteAll](OnInstallCompleteAll.md) | OnInstallCompleteAll | ✅ 実装済 |
+| [OnInstallCompleteEx](OnInstallCompleteEx.md) | OnInstallCompleteEx | ✅ 実装済 |
+| [OnInstallFailure](OnInstallFailure.md) | OnInstallFailure | ✅ 実装済 |
+| [OnInstallRefuse](OnInstallRefuse.md) | OnInstallRefuse | ✅ 実装済 |
+| [OnInstallReroute](OnInstallReroute.md) | OnInstallReroute | ✅ 実装済 |

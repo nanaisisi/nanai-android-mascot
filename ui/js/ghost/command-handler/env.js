@@ -21,6 +21,7 @@ const DEFAULT_RANDOM_WORDS = [
 class ScriptLifetimeState {
 	constructor() {
 		this.customVariables = new Map();
+		this.activeModes = new Set();
 	}
 
 	setVariable(name, value) {
@@ -31,8 +32,26 @@ class ScriptLifetimeState {
 		return this.customVariables.get(name);
 	}
 
+	setMode(mode, active = true) {
+		const key = String(mode).toLowerCase();
+		if (active) {
+			this.activeModes.add(key);
+		} else {
+			this.activeModes.delete(key);
+		}
+	}
+
+	hasMode(mode) {
+		return this.activeModes.has(String(mode).toLowerCase());
+	}
+
+	clearModes() {
+		this.activeModes.clear();
+	}
+
 	reset() {
 		this.customVariables.clear();
+		this.activeModes.clear();
 	}
 }
 

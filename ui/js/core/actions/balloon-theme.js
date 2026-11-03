@@ -287,6 +287,7 @@ export class BalloonThemeManager {
 				"--balloon-border-image-slice",
 				"--balloon-border-image-width",
 				"--balloon-border-image-repeat",
+				"--balloon-writing-mode",
 			]) {
 				root.style.removeProperty(key);
 			}

@@ -22,6 +22,7 @@ pub fn parse_raw_sstp_request(raw: &str) -> Result<SstpRequest, String> {
         id: core_req.id,
         options: core_req.options,
         references: core_req.references,
+        connection: core_req.connection,
         keep_alive: Some(core_req.keep_alive),
         surface: core_req.surface,
         document: core_req.document,
@@ -49,6 +50,7 @@ pub fn parse_raw_direct_sstp_request(raw: &str) -> Result<SstpRequest, String> {
         id: core_req.id,
         options: core_req.options,
         references: core_req.references,
+        connection: core_req.connection,
         keep_alive: Some(core_req.keep_alive),
         surface: core_req.surface,
         document: core_req.document,
@@ -91,10 +93,17 @@ pub fn parse_and_build_sstp_raw_response_with_config(
             fmo_text: String::new(),
             installed_ghosts: vec!["Nanai".to_string()],
             sstp_config: config.clone(),
+            security_level: core_req.security_level.clone(),
+            references: core_req.references.clone(),
             ..Default::default()
         };
         let cmd = core_req.command.as_deref().unwrap_or("");
-        let resp = handle_execute_command(cmd, &ctx);
+        let mut resp = handle_execute_command(cmd, &ctx);
+        if let Some(ref conn) = core_req.connection {
+            resp = resp.with_keep_alive(conn.eq_ignore_ascii_case("keep-alive"));
+        } else if core_req.keep_alive {
+            resp = resp.with_keep_alive(true);
+        }
         return Ok(resp.build());
     }
 
@@ -102,6 +111,11 @@ pub fn parse_and_build_sstp_raw_response_with_config(
     if let Some(ref_val) = core_req.references.get("Reference0") {
         resp.references
             .insert("Reference0".to_string(), ref_val.clone());
+    }
+    if let Some(ref conn) = core_req.connection {
+        resp = resp.with_keep_alive(conn.eq_ignore_ascii_case("keep-alive"));
+    } else if core_req.keep_alive {
+        resp = resp.with_keep_alive(true);
     }
     Ok(resp.build())
 }

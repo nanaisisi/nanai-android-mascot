@@ -105,4 +105,17 @@ impl AnimationScheduler {
             .map(|a| a.iter().filter(|x| !x.is_finished).count())
             .unwrap_or(0)
     }
+
+    /// アクティブなアニメーションIDリストを取得
+    pub fn active_animation_ids(&self, scope_id: u32) -> Vec<u32> {
+        self.active_animations
+            .get(&scope_id)
+            .map(|a| {
+                a.iter()
+                    .filter(|x| !x.is_finished)
+                    .map(|x| x.animation_id)
+                    .collect()
+            })
+            .unwrap_or_default()
+    }
 }

@@ -67,6 +67,36 @@ pub async fn send_sstp_request_with_config(
         });
     }
 
+    // ReceiverGhostName / ReceiverGhostHWnd の宛先検証 (UKADOC SSTP req_res 規格準拠)
+    // 指定されたゴーストが存在しない、または合致しない場合は 404 Not Found を返却
+    if let Some(ref target_name) = request.receiver_ghost_name {
+        let current_name = "Nanai"; // デフォルト/アクティブゴースト名
+        if !target_name.eq_ignore_ascii_case(current_name) {
+            return Ok(SstpResponse {
+                status: "404 Not Found".to_string(),
+                value: format!("Ghost '{}' not found", target_name),
+                id: None,
+                reference0: None,
+                additional_data: None,
+                error_description: Some("receiver ghost not found".to_string()),
+            });
+        }
+    }
+    if let Some(target_hwnd) = request.receiver_ghost_hwnd {
+        // HWND 指定がある場合、0 (未設定) 以外の不一致をチェック
+        let current_hwnd = 0u64;
+        if current_hwnd != 0 && target_hwnd != current_hwnd {
+            return Ok(SstpResponse {
+                status: "404 Not Found".to_string(),
+                value: format!("Ghost HWND '{}' not found", target_hwnd),
+                id: None,
+                reference0: None,
+                additional_data: None,
+                error_description: Some("receiver ghost hwnd not found".to_string()),
+            });
+        }
+    }
+
     // [sstp.allowunspecifiedsend]: 無指定 SEND 拒否判定
     if method == "SEND" && !config.allow_unspecified_send {
         let is_specified =
@@ -121,6 +151,8 @@ pub async fn send_sstp_request_with_config(
                     cookies: HashMap::new(),
                     sender: request.sender.clone(),
                     sstp_config: config.clone(),
+                    security_level: request.security_level.clone(),
+                    references: request.references.clone(),
                 };
                 let resp = handle_execute_command(cmd, &ctx);
                 return Ok(SstpResponse {

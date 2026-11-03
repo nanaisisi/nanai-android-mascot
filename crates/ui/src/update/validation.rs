@@ -16,6 +16,15 @@ pub fn validate_archive_entry_path(path: &str) -> Result<(), String> {
         return Err(format!("Absolute path not allowed in archive: {path}"));
     }
 
+    if trimmed.len() >= 2
+        && trimmed.as_bytes()[1] == b':'
+        && trimmed.as_bytes()[0].is_ascii_alphabetic()
+    {
+        return Err(format!(
+            "Drive letter prefix not allowed in archive: {path}"
+        ));
+    }
+
     let p = Path::new(trimmed);
     for component in p.components() {
         match component {

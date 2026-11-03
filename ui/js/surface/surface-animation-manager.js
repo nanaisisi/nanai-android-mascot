@@ -6,6 +6,9 @@
 import {
 	clearPausedAnimations,
 	findAnimation,
+	getActiveAnimationCount,
+	getActiveAnimations,
+	getActiveCollisions,
 	getAnimationOffset,
 	isAnimationPaused,
 	isAnimationRunning,
@@ -55,6 +58,9 @@ export {
 	createPlaceholderCanvas,
 	FrameStepEvent,
 	findAnimation,
+	getActiveAnimationCount,
+	getActiveAnimations,
+	getActiveCollisions,
 	getAnimationOffset,
 	isAnimationPaused,
 	isAnimationRunning,
@@ -131,6 +137,18 @@ export class SurfaceAnimationManager {
 
 	getBaseMoveOffset(scopeId = 0) {
 		return this._baseMoveOffsets.get(scopeId) || { x: 0, y: 0 };
+	}
+
+	getActiveAnimationCount(scopeId = 0) {
+		return getActiveAnimationCount(this, scopeId);
+	}
+
+	getActiveAnimations(scopeId = 0) {
+		return getActiveAnimations(this, scopeId);
+	}
+
+	getActiveCollisions(scopeId = 0) {
+		return getActiveCollisions(this, scopeId);
 	}
 
 	isAnimationRunning(scopeId = 0, animIdOrName) {

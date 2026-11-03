@@ -19,12 +19,24 @@ fn test_active_animation_edge_cases() {
     let _ = format!("{:?}", empty_anim);
     let _ = empty_anim.clone();
 
-    let mut anim = ActiveAnimation::new(1, 0, vec![
+    // Single pattern
+    let mut anim1 = ActiveAnimation::new(1, 0, vec![
         AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 100, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] }
     ]);
-    assert!(anim.advance(15, 0).is_some());
-    assert!(anim.advance(15, 0).is_none());
-    assert!(anim.is_finished);
+    assert!(anim1.advance(15, 0).is_some());
+    assert!(anim1.advance(15, 0).is_none());
+    assert!(anim1.is_finished);
+
+    // Multi pattern (exercises else if branch for next_pat wait)
+    let mut anim2 = ActiveAnimation::new(2, 0, vec![
+        AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 100, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] },
+        AnimationPattern { index: 1, method: DrawMethod::Overlay, surface: 101, wait: 20, wait_max: None, x: 0, y: 0, options: vec![] },
+    ]);
+    assert_eq!(anim2.next_step_at_ms, 10);
+    assert!(anim2.advance(15, 0).is_some()); // pattern 0
+    assert_eq!(anim2.next_step_at_ms, 30); // 10 + 20
+    assert!(anim2.advance(25, 0).is_some()); // pattern 1
+    assert!(anim2.is_finished);
 }
 
 #[test]

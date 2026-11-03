@@ -336,6 +336,70 @@ fn test_animation_scheduler_stepping_and_control_methods() {
 }
 
 #[test]
+fn test_animation_scheduler_state_coverage_boost() {
+    use crate::surfaces::SerikoAnimation;
+
+    let mut scheduler = AnimationScheduler::new();
+
+    // 1. unbind (active = false)
+    scheduler.set_bind_active(0, 5, true);
+    assert!(scheduler.is_bind_active(0, 5));
+    scheduler.set_bind_active(0, 5, false);
+    assert!(!scheduler.is_bind_active(0, 5));
+
+    // 2. pause_animation, resume_animation, is_animation_paused on active animation
+    let anim = SerikoAnimation {
+        id: 77,
+        name: None,
+        interval: Some(Interval::Always),
+        options: vec![],
+        collisions: vec![],
+        patterns: vec![AnimationPattern {
+            index: 0,
+            surface: 100,
+            wait: 100,
+            wait_max: None,
+            method: DrawMethod::Overlay,
+            x: 0,
+            y: 0,
+            options: vec![],
+        }],
+    };
+    scheduler.start_animation(0, 0, &anim);
+    assert_eq!(scheduler.active_count(0), 1);
+
+    scheduler.pause_animation(0, 77);
+    assert!(scheduler.is_animation_paused(0, 77));
+
+    scheduler.resume_animation(0, 77);
+    assert!(!scheduler.is_animation_paused(0, 77));
+
+    // 3. set_animation_offset on active animation
+    scheduler.set_animation_offset(0, 77, 10, 20);
+    assert_eq!(scheduler.get_animation_offset(0, 77), (10, 20));
+
+    // 4. stop_animation
+    scheduler.stop_animation(0, 77);
+    assert_eq!(scheduler.active_count(0), 0);
+
+    // 5. set_surface_with_shared_index
+    let shared_anim = SerikoAnimation {
+        id: 88,
+        name: None,
+        interval: Some(Interval::Always),
+        options: vec![vec!["shared-index".to_string()]],
+        collisions: vec![],
+        patterns: vec![
+            AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 100, wait: 50, wait_max: None, x: 0, y: 0, options: vec![] },
+            AnimationPattern { index: 1, method: DrawMethod::Overlay, surface: 101, wait: 50, wait_max: None, x: 0, y: 0, options: vec![] },
+        ],
+    };
+    scheduler.start_animation(0, 0, &shared_anim);
+    let _ = scheduler.step(60);
+    scheduler.set_surface_with_shared_index(0, 1, &[shared_anim]);
+}
+
+#[test]
 fn test_stepping_coverage_boost() {
     use crate::surfaces::SerikoAnimation;
 

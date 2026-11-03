@@ -120,3 +120,42 @@ pub(crate) fn handle_biff(callback: &mut dyn FnMut(SakuraCommand)) {
 pub(crate) fn handle_executesntp(callback: &mut dyn FnMut(SakuraCommand)) {
     callback(SakuraCommand::ExecuteSntp);
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_execution_handlers() {
+        let mut commands = Vec::new();
+        let mut cb = |cmd| commands.push(cmd);
+
+        handle_execute(&["execute".to_string(), "schedule-add".to_string()], &mut cb);
+        handle_execute(&["execute".to_string(), "schedule-add".to_string(), "2026-03-30".to_string(), "10:00".to_string(), "Meeting".to_string(), "Note".to_string()], &mut cb);
+        handle_execute(&["execute".to_string(), "extractarchive".to_string(), "a.nar".to_string(), "dest".to_string()], &mut cb);
+        handle_execute(&["execute".to_string(), "download".to_string(), "http://url".to_string(), "path".to_string()], &mut cb);
+        handle_execute(&["execute".to_string(), "upload".to_string(), "http://url".to_string(), "path".to_string()], &mut cb);
+        handle_execute(&["execute".to_string(), "mailcheck".to_string(), "default".to_string()], &mut cb);
+        handle_execute(&["execute".to_string(), "mailsend".to_string(), "target".to_string()], &mut cb);
+        handle_execute(&["execute".to_string(), "deletefile".to_string(), "path".to_string(), "dest".to_string()], &mut cb);
+        handle_execute(&["execute".to_string(), "resetballoonpos".to_string()], &mut cb);
+        handle_execute(&["execute".to_string(), "unknown".to_string()], &mut cb);
+
+        handle_create(&["create".to_string(), "shortcut".to_string()], &mut cb);
+        handle_create(&["create".to_string(), "other".to_string()], &mut cb);
+
+        handle_save(&["save".to_string(), "wallpaper".to_string()], &mut cb);
+        handle_save(&["save".to_string(), "other".to_string()], &mut cb);
+
+        handle_restore(&["restore".to_string(), "wallpaper".to_string()], &mut cb);
+        handle_restore(&["restore".to_string(), "other".to_string()], &mut cb);
+
+        handle_cancel(&["cancel".to_string(), "service".to_string(), "target".to_string()], &mut cb);
+        handle_close(&["close".to_string(), "service".to_string(), "target".to_string()], &mut cb);
+
+        handle_biff(&mut cb);
+        handle_executesntp(&mut cb);
+
+        assert!(!commands.is_empty());
+    }
+}

@@ -65,6 +65,23 @@ fn test_sstp_response_build() {
     res_data.additional_data = Some("Nanai,Kero\r\n".to_string());
     let built_data = res_data.build();
     assert!(built_data.contains("\r\n\r\nNanai,Kero\r\n\r\n"));
+
+    // Keep-Alive レスポンスの検証 (UKADOC keepalive.md 規格準拠)
+    let res_keepalive = SstpResponse::ok(None)
+        .with_keep_alive(true)
+        .with_keep_alive_timeout(5)
+        .with_additional_data("1.0.0");
+    let built_keepalive = res_keepalive.build();
+    assert!(built_keepalive.contains("Connection: keep-alive\r\n"));
+    assert!(built_keepalive.contains("Keep-Alive: timeout=5\r\n"));
+    assert!(built_keepalive.contains("Content-Length: 5\r\n"));
+    assert!(built_keepalive.ends_with("\r\n\r\n1.0.0"));
+
+    // Keep-Alive close レスポンスの検証
+    let res_close = SstpResponse::no_content().with_keep_alive(false);
+    let built_close = res_close.build();
+    assert!(built_close.contains("Connection: close\r\n"));
+    assert!(!built_close.contains("Keep-Alive:"));
 }
 
 #[test]
@@ -97,6 +114,8 @@ fn test_handle_execute_command() {
         cookies,
         sender: "ClientApp".to_string(),
         sstp_config: SstpGhostConfig::default(),
+        security_level: Some("local".to_string()),
+        references: HashMap::new(),
     };
 
     let res_getname = handle_execute_command("GetName", &ctx);
@@ -227,6 +246,56 @@ fn test_handle_execute_command() {
         res_unknown.error_description,
         Some("unknown command".to_string())
     );
+
+    // Reference によるパラメータ解決 (UKADOC method_execute.md)
+    let mut ctx_ref = ctx.clone();
+    ctx_ref.references.insert("Reference0".to_string(), "currentghost.name".to_string());
+    let res_prop_ref = handle_execute_command("GetProperty", &ctx_ref);
+    assert_eq!(res_prop_ref.status, SstpStatusCode::Ok);
+    assert_eq!(res_prop_ref.additional_data, Some("Nanai Ghost".to_string()));
+
+    // 新規 EXECUTE コマンドのローカル実行確認
+    assert_eq!(handle_execute_command("DumpSurface", &ctx).status, SstpStatusCode::Ok);
+    assert_eq!(handle_execute_command("MoveAsync", &ctx).status, SstpStatusCode::Ok);
+    assert_eq!(handle_execute_command("SetTrayIcon", &ctx).status, SstpStatusCode::Ok);
+    assert_eq!(handle_execute_command("SetTrayBalloon", &ctx).status, SstpStatusCode::Ok);
+    assert_eq!(
+        handle_execute_command("CompressArchive[/path/out.zip,/path/in]", &ctx).status,
+        SstpStatusCode::Ok
+    );
+    assert_eq!(
+        handle_execute_command("ExtractArchive[/path/in.zip,/path/out]", &ctx).status,
+        SstpStatusCode::Ok
+    );
+    assert_eq!(
+        handle_execute_command("CompressArchive[]", &ctx).status,
+        SstpStatusCode::BadRequest
+    );
+
+    // リモート呼び出し時の拒否判定 (UKADOC [リモート不可] 規格準拠)
+    let mut ctx_remote = ctx.clone();
+    ctx_remote.security_level = Some("external".to_string());
+    assert_eq!(handle_execute_command("Quiet", &ctx_remote).status, SstpStatusCode::Refuse);
+    assert_eq!(handle_execute_command("Restore", &ctx_remote).status, SstpStatusCode::Refuse);
+    assert_eq!(handle_execute_command("SetProperty[a,b]", &ctx_remote).status, SstpStatusCode::Refuse);
+    assert_eq!(handle_execute_command("DumpSurface", &ctx_remote).status, SstpStatusCode::Refuse);
+    assert_eq!(handle_execute_command("MoveAsync", &ctx_remote).status, SstpStatusCode::Refuse);
+    assert_eq!(handle_execute_command("SetTrayIcon", &ctx_remote).status, SstpStatusCode::Refuse);
+    assert_eq!(handle_execute_command("SetTrayBalloon", &ctx_remote).status, SstpStatusCode::Refuse);
+    assert_eq!(handle_execute_command("CompressArchive[/a,/b]", &ctx_remote).status, SstpStatusCode::Refuse);
+    assert_eq!(handle_execute_command("ExtractArchive[/a,/b]", &ctx_remote).status, SstpStatusCode::Refuse);
+
+    // GetFMO リモート時のパス情報除去 & ダミーHWND化
+    let mut ctx_fmo_remote = ctx.clone();
+    ctx_fmo_remote.security_level = Some("external".to_string());
+    ctx_fmo_remote.fmo_text = "ssp_fmo_header_001.path\x01/secret/path\r\nssp_fmo_header_001.hwnd\x011234\r\nssp_fmo_header_001.name\x01Nanai\r\nssp_fmo_header_001.ghostpath\x01/secret/ghost\r\n".to_string();
+    let res_fmo_remote = handle_execute_command("GetFMO", &ctx_fmo_remote);
+    assert_eq!(res_fmo_remote.status, SstpStatusCode::Ok);
+    let fmo_out = res_fmo_remote.additional_data.unwrap();
+    assert!(!fmo_out.contains(".path\x01"));
+    assert!(!fmo_out.contains(".ghostpath\x01"));
+    assert!(fmo_out.contains("ssp_fmo_header_001.hwnd\x010"));
+    assert!(fmo_out.contains("ssp_fmo_header_001.name\x01Nanai"));
 }
 
 #[test]

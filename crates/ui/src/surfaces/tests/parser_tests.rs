@@ -370,3 +370,26 @@ Bust,触らないで！
     );
     assert_eq!(txt1.get_tooltip("sakura", "Bust"), Some("触らないで！"));
 }
+
+#[test]
+fn test_animation_handler_edge_cases() {
+    let sample = r"surface0
+{
+animation
+animationabc.interval,always
+animation0.name,TestAnimation
+animation0.option,optA,optB
+animation0.collision0,0,0,10,10
+animation0.pattern,base,0,10
+animation1.pattern0,start,100,50
+animation1.pattern1,stop,100,50
+animation1.pattern2,alternativestart,100,50
+animation1.pattern3,alternativestop,100,50
+animation1.pattern4,parallelstart,100,50
+animation1.pattern5,parallelstop,100,50
+animation1.pattern6,base,6,100-50,0,0,(text),[bracket]
+}
+";
+    let txt = SurfacesTxt::parse(sample);
+    assert!(txt.surface(0).is_some());
+}

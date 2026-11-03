@@ -41,6 +41,14 @@ fn test_active_animation_edge_cases() {
     assert!(anim_minus_one.advance(15, 0).is_some());
     assert!(anim_minus_one.is_finished);
 
+    // Intermediate surface -1 test (tests is_surface_minus_one when is_last is false)
+    let mut anim_mid_minus_one = ActiveAnimation::new(3, 0, vec![
+        AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: -1, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] },
+        AnimationPattern { index: 1, method: DrawMethod::Overlay, surface: 102, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] },
+    ]);
+    assert!(anim_mid_minus_one.advance(15, 0).is_some());
+    assert!(anim_mid_minus_one.is_finished);
+
     // Multi pattern (exercises else if branch for next_pat wait)
     let mut anim2 = ActiveAnimation::new(2, 0, vec![
         AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 100, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] },

@@ -76,5 +76,9 @@ fn test_encoding_uncovered_branches() {
     let (_, enc_euc_only) = detect_and_decode(euc_only_bytes);
     assert!(!enc_euc_only.is_empty());
 
+    let euc_valid_sjis_invalid = &[0xE0, 0xFD];
+    let (_, enc_euc_exact) = detect_and_decode(euc_valid_sjis_invalid);
+    assert_eq!(enc_euc_exact, "EUC-JP");
+
     assert!(encode_to_charset("🚀", "euc-jp").is_none());
 }

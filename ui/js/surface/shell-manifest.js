@@ -185,6 +185,8 @@ export function manifestToSurfaceData(manifest) {
 	const collisions = {};
 	const elements = {};
 	const animations = {};
+	const points = {};
+	const balloonOffsets = {};
 	const aliases = manifest?.aliases ?? {};
 	const keroAliases = manifest?.kero_aliases ?? {};
 	const cursors = manifest?.cursors ?? {};
@@ -197,6 +199,13 @@ export function manifestToSurfaceData(manifest) {
 		const def = surfaceEntry.definition ?? {};
 
 		collisions[sid] = (def.collisions ?? []).map(collisionRecord);
+
+		if (def.points) {
+			points[sid] = { ...def.points };
+		}
+		if (def.balloon_offsets) {
+			balloonOffsets[sid] = { ...def.balloon_offsets };
+		}
 
 		elements[sid] = (def.elements ?? [])
 			.slice()
@@ -232,6 +241,8 @@ export function manifestToSurfaceData(manifest) {
 		collisions,
 		elements,
 		animations,
+		points,
+		balloonOffsets,
 		aliases,
 		keroAliases,
 		collisionSort,
@@ -275,6 +286,8 @@ export async function parseSurfacesTextWithRust(content) {
 			collisions: data.collisions,
 			elements: data.elements,
 			animations: data.animations,
+			points: data.points,
+			balloonOffsets: data.balloonOffsets,
 		};
 	} catch (err) {
 		console.warn("⚠️ Rust parse_surfaces_text 失敗:", err);

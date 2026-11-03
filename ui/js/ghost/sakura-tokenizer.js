@@ -25,12 +25,36 @@ export function parseSakuraScript(script) {
 	const tokens = [];
 	let i = 0;
 	const len = script.length;
+	/** @type {string | null} 生テキストモード区切り ('_?' または '_!') */
+	let rawModeDelimiter = null;
 
 	while (i < len) {
+		if (rawModeDelimiter) {
+			// 生テキストモード中: 終了タグ（例: \_? または \_!）を検出するまで文字として扱う
+			if (script[i] === "\\" && script.startsWith(`\\${rawModeDelimiter}`, i)) {
+				tokens.push({
+					type: "raw_toggle",
+					active: false,
+					delimiter: rawModeDelimiter,
+				});
+				i += 1 + rawModeDelimiter.length;
+				rawModeDelimiter = null;
+			} else {
+				tokens.push({ type: "char", value: script[i] });
+				i++;
+			}
+			continue;
+		}
+
 		if (script[i] === "\\") {
 			const res = tokenizeTag(script, i, len);
 			if (res.tokens.length > 0) {
-				tokens.push(...res.tokens);
+				for (const tok of res.tokens) {
+					if (tok.type === "raw_toggle" && tok.active) {
+						rawModeDelimiter = tok.delimiter || "_?";
+					}
+					tokens.push(tok);
+				}
 			}
 			i = res.nextIdx;
 			if (res.haltParsing) {

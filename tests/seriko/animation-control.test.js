@@ -148,3 +148,27 @@ test("SurfaceAnimationManager pattern execution handles start and stop control m
 	// targetAnim は開始されたが 50ms 後に stop されたため実行中リストに残らない
 	assert.equal(animation.isAnimationRunning(0, 10), false);
 });
+
+test("SurfaceAnimationManager pattern execution handles move draw method", async () => {
+	const { animation } = animationFixture();
+
+	const moveAnim = {
+		id: 8,
+		interval: "runonce",
+		patterns: [
+			{ type: "move", x: 25, y: -15, wait: 0 },
+			{ type: "move", x: 0, y: 0, wait: 50 },
+		],
+	};
+
+	animation.manager.animations = { 0: [moveAnim] };
+
+	const events = [];
+	animation.scheduler.onFrameStep((e) => events.push(e));
+
+	await animation.playAnimationPatterns(moveAnim, 0, 0);
+
+	assert.equal(animation.getBaseMoveOffset(0).x, 0);
+	assert.equal(animation.getBaseMoveOffset(0).y, 0);
+	assert.ok(events.some((e) => e.pattern.type === "move" && e.offsetX === 25));
+});

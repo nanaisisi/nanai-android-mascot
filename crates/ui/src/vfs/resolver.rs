@@ -1,5 +1,6 @@
 use super::encoding::open_text_file;
-use super::path::{normalize_vfs_path, resolve_vfs_path};
+use super::path::normalize_vfs_path;
+use super::traits::VirtualFileSystem;
 use std::collections::HashMap;
 use std::io;
 use std::path::{Path, PathBuf};
@@ -11,6 +12,8 @@ pub struct VfsResolver {
     root_dir: PathBuf,
     /// パス解決結果の内部キャッシュ (キー: 正規化・小文字化相対パス, 値: 解決結果)
     resolve_cache: Arc<Mutex<HashMap<String, Option<PathBuf>>>>,
+    /// ディレクトリ配下エントリの内部キャッシュ (キー: ディレクトリ絶対パス, 値: (小文字名 -> 実際のファイル名))
+    dir_entries_cache: Arc<Mutex<HashMap<PathBuf, HashMap<String, String>>>>,
 }
 
 impl VfsResolver {
@@ -19,6 +22,7 @@ impl VfsResolver {
         Self {
             root_dir: root_dir.into(),
             resolve_cache: Arc::new(Mutex::new(HashMap::new())),
+            dir_entries_cache: Arc::new(Mutex::new(HashMap::new())),
         }
     }
 
@@ -35,15 +39,92 @@ impl VfsResolver {
     /// キャッシュ付きのパス解決メソッド
     pub fn resolve_cached(&self, relative_path: &str) -> Option<PathBuf> {
         let norm_key = normalize_vfs_path(relative_path).to_lowercase();
-        if let Ok(guard) = self.resolve_cache.lock()
-            && let Some(cached) = guard.get(&norm_key)
+        if let Some(cached) = self
+            .resolve_cache
+            .lock()
+            .ok()
+            .and_then(|guard| guard.get(&norm_key).cloned())
         {
-            return cached.clone();
+            return cached;
         }
 
-        let resolved = resolve_vfs_path(&self.root_dir, relative_path);
+        // 高速パス: `..` を含まずルート直下にそのまま存在するか確認
+        if !relative_path.contains("..") {
+            let direct_combined = self.root_dir.join(relative_path);
+            if direct_combined.exists() {
+                if let Ok(mut guard) = self.resolve_cache.lock() {
+                    if guard.len() >= 1000 {
+                        guard.clear();
+                    }
+                    guard.insert(norm_key, Some(direct_combined.clone()));
+                }
+                return Some(direct_combined);
+            }
+        }
+
+        // ディレクトリエントリキャッシュを活用したステップ解決
+        let mut current = self.root_dir.clone();
+        let mut failed = false;
+
+        for part in relative_path.split(['/', '\\']) {
+            if part.is_empty() || part == "." {
+                continue;
+            }
+            if part == ".." {
+                current.pop();
+                continue;
+            }
+
+            // 直接ステップが存在するか
+            let direct_step = current.join(part);
+            if direct_step.exists() {
+                current = direct_step;
+                continue;
+            }
+
+            // ディレクトリエントリのキャッシュを取得または生成
+            let target_lower = part.to_lowercase();
+            let mut matched_name = self
+                .dir_entries_cache
+                .lock()
+                .ok()
+                .and_then(|guard| guard.get(&current).and_then(|m| m.get(&target_lower).cloned()));
+
+            if matched_name.is_none() {
+                // キャッシュミス: ディレクトリをスキャンしてキャッシュ
+                if let Ok(read_entries) = std::fs::read_dir(&current) {
+                    let mut map = HashMap::new();
+                    for entry in read_entries.flatten() {
+                        let original_name = entry.file_name().to_string_lossy().to_string();
+                        let lower = original_name.to_lowercase();
+                        if lower == target_lower && matched_name.is_none() {
+                            matched_name = Some(original_name.clone());
+                        }
+                        map.insert(lower, original_name);
+                    }
+                    if let Ok(mut guard) = self.dir_entries_cache.lock() {
+                        if guard.len() >= 500 {
+                            guard.clear();
+                        }
+                        guard.insert(current.clone(), map);
+                    }
+                }
+            }
+
+            match matched_name {
+                Some(real_name) => {
+                    current.push(real_name);
+                }
+                None => {
+                    failed = true;
+                    break;
+                }
+            }
+        }
+
+        let resolved = if failed { None } else { Some(current) };
+
         if let Ok(mut guard) = self.resolve_cache.lock() {
-            // キャッシュ上限 (1000件) を超えた場合はクリアして再利用
             if guard.len() >= 1000 {
                 guard.clear();
             }
@@ -57,11 +138,19 @@ impl VfsResolver {
         if let Ok(mut guard) = self.resolve_cache.lock() {
             guard.clear();
         }
+        if let Ok(mut guard) = self.dir_entries_cache.lock() {
+            guard.clear();
+        }
     }
 
-    /// 現在キャッシュされているエントリ数を取得
+    /// 現在キャッシュされているエントリ数を取得（パス解決キャッシュ数）
     pub fn cache_size(&self) -> usize {
         self.resolve_cache.lock().map(|g| g.len()).unwrap_or(0)
+    }
+
+    /// 現在キャッシュされているディレクトリ数
+    pub fn dir_cache_size(&self) -> usize {
+        self.dir_entries_cache.lock().map(|g| g.len()).unwrap_or(0)
     }
 
     /// 指定ディレクトリ配下の全ファイルを再帰的に走査（相対パスのリストを返す）
@@ -155,5 +244,27 @@ impl VfsResolver {
         }
         results.sort();
         Ok(results)
+    }
+}
+
+impl VirtualFileSystem for VfsResolver {
+    fn exists(&self, path: &str) -> bool {
+        self.exists(path)
+    }
+
+    fn read_binary(&self, path: &str) -> io::Result<Vec<u8>> {
+        self.read_binary(path)
+    }
+
+    fn read_text(&self, path: &str) -> io::Result<String> {
+        self.read_text(path)
+    }
+
+    fn list_dir(&self, dir_path: &str) -> io::Result<Vec<String>> {
+        self.list_dir(dir_path)
+    }
+
+    fn walk_files(&self, dir_path: &str) -> io::Result<Vec<String>> {
+        self.walk_files(dir_path)
     }
 }

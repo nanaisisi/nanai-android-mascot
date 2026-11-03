@@ -196,4 +196,36 @@ describe("AndroidBridge - Platform & Overlay", () => {
 		});
 		bridge.destroy();
 	});
+
+	it("manages listenerCount accurately and ignores non-function callbacks", () => {
+		const bridge = new AndroidBridge();
+		expect(bridge.getListenerCount()).toBe(0);
+		expect(bridge.getListenerCount(ANDROID_EVENTS.TRIM_MEMORY)).toBe(0);
+
+		// Passing invalid non-function callback returns noop unbind and adds nothing
+		const unbindNoop = bridge.on(ANDROID_EVENTS.TRIM_MEMORY, null);
+		expect(typeof unbindNoop).toBe("function");
+		expect(bridge.getListenerCount()).toBe(0);
+
+		const cb1 = vi.fn();
+		const cb2 = vi.fn();
+		const unbind1 = bridge.on(ANDROID_EVENTS.TRIM_MEMORY, cb1);
+		const unbind2 = bridge.on(ANDROID_EVENTS.TRIM_MEMORY, cb2);
+		const unbind3 = bridge.on(ANDROID_EVENTS.OVERLAY_MODE_CHANGED, cb1);
+
+		expect(bridge.getListenerCount()).toBe(3);
+		expect(bridge.getListenerCount(ANDROID_EVENTS.TRIM_MEMORY)).toBe(2);
+		expect(bridge.getListenerCount(ANDROID_EVENTS.OVERLAY_MODE_CHANGED)).toBe(
+			1,
+		);
+
+		unbind1();
+		expect(bridge.getListenerCount(ANDROID_EVENTS.TRIM_MEMORY)).toBe(1);
+
+		unbind2();
+		expect(bridge.getListenerCount(ANDROID_EVENTS.TRIM_MEMORY)).toBe(0);
+
+		unbind3();
+		expect(bridge.getListenerCount()).toBe(0);
+	});
 });

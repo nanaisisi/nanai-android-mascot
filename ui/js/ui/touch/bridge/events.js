@@ -75,6 +75,22 @@ export class BridgeEventEmitter {
 	}
 
 	/**
+	 * 指定イベントまたは全イベントのリスナー数を取得
+	 * @param {string} [eventName]
+	 * @returns {number}
+	 */
+	listenerCount(eventName) {
+		if (eventName) {
+			return this._listeners.get(eventName)?.size ?? 0;
+		}
+		let total = 0;
+		for (const set of this._listeners.values()) {
+			total += set.size;
+		}
+		return total;
+	}
+
+	/**
 	 * 全リスナーの解除
 	 */
 	clear() {

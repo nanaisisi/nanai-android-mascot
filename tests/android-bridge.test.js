@@ -7,3 +7,4 @@ import "./android-bridge/platform-overlay.test.js";
 import "./android-bridge/lifecycle.test.js";
 import "./android-bridge/back-button.test.js";
 import "./android-bridge/dock-submodules.test.js";
+import "./android-bridge/overlay-coverage.test.js";

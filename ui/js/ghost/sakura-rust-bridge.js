@@ -29,6 +29,12 @@ export function rustCommandsToTokens(rustCommands) {
 			case "NewLine":
 				tokens.push({ type: "newline", half: cmd.payload?.half === true });
 				break;
+			case "NewLineNoPause":
+				tokens.push({ type: "no_autowrap" });
+				break;
+			case "AutoPause":
+				tokens.push({ type: "auto_pause" });
+				break;
 			case "Clear":
 				tokens.push({ type: "clear" });
 				break;
@@ -277,6 +283,99 @@ export function rustCommandsToTokens(rustCommands) {
 				for (const ch of cmd.payload ?? "") {
 					tokens.push({ type: "char", value: ch });
 				}
+				break;
+			case "PostMessage":
+				tokens.push({
+					type: "post_message",
+					umsg: cmd.payload?.umsg ?? "",
+					wparam: cmd.payload?.wparam ?? "",
+					lparam: cmd.payload?.lparam ?? "",
+				});
+				break;
+			case "Star":
+				tokens.push({ type: "command", command: "marker", args: [] });
+				break;
+			case "Marker":
+				tokens.push({ type: "command", command: "marker", args: [] });
+				break;
+			case "AudioWait":
+				tokens.push({ type: "wait_audio" });
+				break;
+			case "Jump":
+				tokens.push({
+					type: "command",
+					command: "jump",
+					args: [cmd.payload ?? ""],
+				});
+				break;
+			case "Plus":
+				tokens.push({ type: "plus" });
+				break;
+			case "PluginEvent":
+				tokens.push({
+					type: "command",
+					command: cmd.payload?.is_notify ? "notifyplugin" : "raiseplugin",
+					args: [
+						cmd.payload?.plugin ?? "",
+						cmd.payload?.event ?? "",
+						...(cmd.payload?.references ?? []),
+					],
+				});
+				break;
+			case "NoUserBreak":
+				tokens.push({
+					type: "no_user_break",
+					enabled: cmd.payload ?? true,
+				});
+				break;
+			case "Voice":
+				tokens.push({
+					type: "voice",
+					value: cmd.payload ?? "",
+				});
+				break;
+			case "Midi":
+				tokens.push({
+					type: "midi",
+					value: cmd.payload ?? "",
+				});
+				break;
+			case "ModeChange":
+				tokens.push({
+					type: "command",
+					command: cmd.payload?.active ? "entermode" : "leavemode",
+					args: [cmd.payload?.mode ?? ""],
+				});
+				break;
+			case "LockBalloonRepaint":
+				tokens.push({
+					type: "command",
+					command: cmd.payload ? "lockrepaint" : "unlockrepaint",
+					args: [],
+				});
+				break;
+			case "BalloonSetting":
+				tokens.push({
+					type: "command",
+					command: "setballoon",
+					args: [
+						cmd.payload?.key ?? "",
+						cmd.payload?.value ?? "",
+						...(cmd.payload?.extra ?? []),
+					],
+				});
+				break;
+			case "ScheduleAdd":
+				tokens.push({
+					type: "command",
+					command: "schedule-add",
+					args: [
+						cmd.payload?.date ?? "",
+						cmd.payload?.time ?? "",
+						cmd.payload?.title ?? "",
+						cmd.payload?.memo ?? "",
+					],
+				});
 				break;
 			case "End":
 				tokens.push({ type: "end" });

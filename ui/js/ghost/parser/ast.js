@@ -166,8 +166,17 @@ export function getSakuraTokenLifetime(token) {
 		return "Scope";
 	}
 
-	// 永続設定（サーフィス、壁紙、プロキシ、バインド等）
-	if (type === "surface" || type === "bind") {
+	// 永続設定（サーフィス、壁紙、プロキシ、バインド、ウィンドウ状態等）
+	if (
+		type === "surface" ||
+		type === "bind" ||
+		(type === "command" &&
+			(token.command === "bind" ||
+				token.command === "windowstate" ||
+				token.command === "setwallpaper" ||
+				token.command === "setproxy" ||
+				token.command === "sethttptimeout"))
+	) {
 		return "Permanent";
 	}
 

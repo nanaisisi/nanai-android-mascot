@@ -70,6 +70,52 @@ export const surfaceDressupMethods = {
 		const animById = new Map(animList.map((a) => [String(a.id), a]));
 
 		const layers = [];
+		const activeIds = new Set(this.activeBindAnimationIds(scopeId));
+
+		// どの着せ替えが他から insert されているか調査
+		const insertedIds = new Set();
+		for (const animId of activeIds) {
+			const anim = animById.get(String(animId));
+			for (const p of anim?.patterns ?? []) {
+				const typeLower = (p.type || "").toLowerCase();
+				if (typeLower === "insert") {
+					const targetId = Number.parseInt(String(p.surface).trim(), 10);
+					if (!Number.isNaN(targetId)) {
+						insertedIds.add(targetId);
+					}
+				}
+			}
+		}
+
+		const visited = new Set();
+		const expandAnim = (id) => {
+			if (visited.has(id)) return;
+			visited.add(id);
+			const anim = animById.get(String(id));
+			if (!anim) return;
+			for (const pattern of anim.patterns ?? []) {
+				const typeLower = (pattern.type || "overlay").toLowerCase();
+				if (typeLower === "insert") {
+					const childId = Number.parseInt(String(pattern.surface).trim(), 10);
+					if (!Number.isNaN(childId) && activeIds.has(childId)) {
+						expandAnim(childId);
+					}
+				} else {
+					const file = patternSurfaceFile(
+						this.resolveSurfaceNumber(pattern.surface, scopeId),
+					);
+					if (file) {
+						layers.push({
+							file,
+							x: pattern.x ?? 0,
+							y: pattern.y ?? 0,
+							type: typeLower,
+						});
+					}
+				}
+			}
+		};
+
 		for (const group of bindGroupsForScope(this.shellManifest, scopeId)) {
 			if (
 				!this.dressupState.get(dressupKey(scopeId, group.category, group.part))
@@ -77,18 +123,8 @@ export const surfaceDressupMethods = {
 				continue;
 			}
 			for (const animId of bindAnimationIds(group.number, group.add_ids)) {
-				const anim = animById.get(String(animId));
-				for (const pattern of anim?.patterns ?? []) {
-					const file = patternSurfaceFile(
-						this.resolveSurfaceNumber(pattern.surface, scopeId),
-					);
-					if (!file) continue;
-					layers.push({
-						file,
-						x: pattern.x ?? 0,
-						y: pattern.y ?? 0,
-						type: pattern.type ?? "overlay",
-					});
+				if (!insertedIds.has(animId)) {
+					expandAnim(animId);
 				}
 			}
 		}

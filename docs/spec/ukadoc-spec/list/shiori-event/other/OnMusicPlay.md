@@ -2,7 +2,7 @@
 
 - **規格**: [OnMusicPlay.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/other/OnMusicPlay/) (ukadoc-spec/list/shiori-event/other/OnMusicPlay.md)
 - **検索語**: OnMusicPlay
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -11,4 +11,5 @@
 
 ## 実装箇所
 
-実装コード内に「OnMusicPlay」は検出されませんでした。
+- `ui/js/ghost/command-handler/media.js:95` `* [OnSoundStop.md], [OnSoundLoop.md], [OnSoundError.md], [OnMusicPlayEx.md]`
+- `ui/js/ghost/command-handler/media.js:115` `await gc.sendShioriEvent("OnMusicPlayEx", params);`

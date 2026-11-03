@@ -4,6 +4,8 @@ globalThis.window = globalThis;
 
 import { scriptLifetimeState } from "../../ui/js/ghost/command-handler/env.js";
 import {
+	handleGetPropertyCommand,
+	handleKeyPressEvent,
 	handleSetAlphaCommand,
 	handleSetPositionCommand,
 	handleSetPropertyCommand,
@@ -57,5 +59,31 @@ describe("system/surface.js", () => {
 			"0",
 		]);
 		expect(position).toEqual({ x: 50, y: 60, scope: 0 });
+	});
+
+	it("handleGetPropertyCommand and handleKeyPressEvent dispatch SHIORI events", async () => {
+		const events = [];
+		const handler = {
+			app: {
+				ghostController: {
+					sendShioriEvent: async (name, args) => {
+						events.push({ name, args });
+						return { response: { value: "mockVal" } };
+					},
+				},
+			},
+		};
+
+		const propVal = await handleGetPropertyCommand(handler, "test.prop");
+		expect(propVal).toBe("mockVal");
+		expect(events.some((e) => e.name === "property.get")).toBe(true);
+
+		await handleKeyPressEvent(handler, "A", "ctrl");
+		expect(
+			events.some(
+				(e) =>
+					e.name === "OnKeyPress" && e.args[0] === "A" && e.args[1] === "ctrl",
+			),
+		).toBe(true);
 	});
 });

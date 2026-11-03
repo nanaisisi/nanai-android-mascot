@@ -277,6 +277,32 @@ class TestVerifySpecCompliance(unittest.TestCase):
         self.assertEqual(report_no_cache.perf_stats["cache_hits"], 0)
         self.assertEqual(report_no_cache.perf_stats["cache_misses"], 2)
 
+    def test_process_audit_files_supplementary_status_and_notes(self):
+        # Create audit files with supplementary statuses like 📝 and guide notes
+        spec_note = os.path.join(self.docs_dir, 'ukadoc-spec', 'spec', 'note-test.md')
+        with open(spec_note, 'w', encoding='utf-8') as f:
+            f.write(
+                "# Note Test\n\n"
+                "- **対応状況**: 📝 コメントのみ(未実装の可能性大)\n"
+                "- **検索語**: custom_note_item\n\n"
+            )
+
+        spec_guide = os.path.join(self.docs_dir, 'ukadoc-spec', 'spec', 'japanese_term.md')
+        with open(spec_guide, 'w', encoding='utf-8') as f:
+            f.write(
+                "# Japanese Term Guide\n\n"
+                "- **対応状況**: ❓ 未確認\n"
+                "- **検索語**: さくらスクリプト解説\n\n"
+            )
+
+        codebase = [("crates/sample.rs", ["// no matches\n"])]
+        report = process_audit_files(codebase, docs_dir=self.docs_dir, dry_run=True)
+        # Note / Japanese prose guides preserve their statuses and count in ❓
+        self.assertEqual(report.totals["合計"], 2)
+        self.assertEqual(report.totals["❓"], 2)
+        self.assertEqual(report.totals["❌"], 0)
+        self.assertEqual(report.totals["✅"], 0)
+
     def test_update_summary(self):
         summary_file = os.path.join(self.test_dir, 'SUMMARY.md')
         category_stats = {

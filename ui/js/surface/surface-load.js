@@ -133,6 +133,11 @@
  // [当たり判定名,表示内容]
  // [tooltip-brace 仕様項目一覧インデックス]
  // [tooltipブレス記述例]
+ // [point.basepos.x]
+ // [point.basepos.y]
+ // [point.centery]
+ // [point.kinoko.centerx]
+ // [point.kinoko.centery]
  // [Shell Surfacetable 設定 総合適合確認インデックス (Shell Surfacetable Configs Master Index)]
  // [surfacetable.txt 仕様項目一覧インデックス]
  */
@@ -223,6 +228,8 @@ export const surfaceLoadMethods = {
 		this.collisions = data.collisions;
 		this.elements = data.elements;
 		this.animations = data.animations;
+		this.points = data.points ?? {};
+		this.balloonOffsets = data.balloonOffsets ?? {};
 		this.aliases = data.aliases;
 		this.keroAliases = data.keroAliases;
 		this.cursors = data.cursors ?? {};
@@ -258,6 +265,8 @@ export const surfaceLoadMethods = {
 				this.collisions = rustData.collisions;
 				this.elements = rustData.elements;
 				this.animations = rustData.animations;
+				this.points = rustData.points ?? {};
+				this.balloonOffsets = rustData.balloonOffsets ?? {};
 				console.log(
 					`🎯 当たり判定・合成要素登録完了 (Rust parse_surfaces_text): ${Object.keys(this.collisions).length} サーフィス登録済み`,
 				);
@@ -269,6 +278,8 @@ export const surfaceLoadMethods = {
 		this.collisions = parsed.collisions;
 		this.elements = parsed.elements;
 		this.animations = parsed.animations;
+		this.points = parsed.points ?? {};
+		this.balloonOffsets = parsed.balloonOffsets ?? {};
 		this.cursors = parsed.cursors ?? {};
 		this.tooltips = parsed.tooltips ?? {};
 		this.collisionSort = parsed.collisionSort ?? "none";

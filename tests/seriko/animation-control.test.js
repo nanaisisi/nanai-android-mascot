@@ -172,3 +172,101 @@ test("SurfaceAnimationManager pattern execution handles move draw method", async
 	assert.equal(animation.getBaseMoveOffset(0).y, 0);
 	assert.ok(events.some((e) => e.pattern.type === "move" && e.offsetX === 25));
 });
+
+test("SurfaceAnimationManager active animation count, list, and dynamic collision integration", async () => {
+	const { animation } = animationFixture();
+
+	const animWithCollision = {
+		id: 77,
+		name: "shield_animation",
+		interval: "runonce",
+		collisions: [
+			{
+				id: 900,
+				name: "ActiveShield",
+				shape: "rect",
+				x1: 10,
+				y1: 10,
+				x2: 100,
+				y2: 100,
+				minX: 10,
+				minY: 10,
+				maxX: 100,
+				maxY: 100,
+			},
+		],
+		patterns: [
+			{ surface: 701, wait: 60 },
+			{ surface: -1, wait: 0 },
+		],
+	};
+
+	animation.manager.animations = { 0: [animWithCollision] };
+	animation.manager.animationManager = animation;
+	animation.manager.baseWidth = 200;
+	animation.manager.baseHeight = 200;
+	animation.manager.collisions = {
+		0: [
+			{
+				id: 1,
+				name: "BaseBody",
+				shape: "rect",
+				x1: 0,
+				y1: 0,
+				x2: 200,
+				y2: 200,
+				minX: 0,
+				minY: 0,
+				maxX: 200,
+				maxY: 200,
+			},
+		],
+	};
+
+	assert.equal(animation.getActiveAnimationCount(0), 0);
+	assert.equal(animation.getActiveAnimations(0).length, 0);
+	assert.equal(animation.getActiveCollisions(0).length, 0);
+
+	// アニメーション再生開始（非同期）
+	const playPromise = animation.playAnimationPatterns(animWithCollision, 0, 0);
+
+	// 再生中確認
+	assert.equal(animation.getActiveAnimationCount(0), 1);
+	assert.equal(animation.getActiveAnimations(0).length, 1);
+	assert.equal(animation.getActiveAnimations(0)[0].id, 77);
+	assert.equal(animation.getActiveCollisions(0).length, 1);
+	assert.equal(animation.getActiveCollisions(0)[0].name, "ActiveShield");
+
+	// 当たり判定テスト (SurfaceManager.detectCollision 連携)
+	// targetRect: (0, 0, 200, 200) -> clickX=50, clickY=50 -> canvasX=50, canvasY=50
+	const { surfaceCollisionMethods } = await import(
+		"../../ui/js/surface/surface-collision.js"
+	);
+	const hitResult = surfaceCollisionMethods.detectCollision.call(
+		animation.manager,
+		50,
+		50,
+		{ left: 0, top: 0, width: 200, height: 200 },
+		0,
+		0,
+	);
+	assert.equal(hitResult.name, "ActiveShield");
+	assert.equal(hitResult.id, 900);
+
+	await playPromise;
+
+	// 再生終了後はアクティブリストおよび動的当たり判定から解除
+	assert.equal(animation.getActiveAnimationCount(0), 0);
+	assert.equal(animation.getActiveAnimations(0).length, 0);
+	assert.equal(animation.getActiveCollisions(0).length, 0);
+
+	const hitAfter = surfaceCollisionMethods.detectCollision.call(
+		animation.manager,
+		50,
+		50,
+		{ left: 0, top: 0, width: 200, height: 200 },
+		0,
+		0,
+	);
+	assert.equal(hitAfter.name, "BaseBody");
+});

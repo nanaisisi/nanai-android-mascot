@@ -185,3 +185,15 @@ fn test_detect_and_decode_utf16_and_eucjp() {
 
     let _ = std::fs::remove_dir_all(&temp_dir);
 }
+
+#[test]
+fn test_resolve_vfs_path_empty() {
+    let temp_dir = std::env::temp_dir().join(format!("nanai_vfs_empty_{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&temp_dir);
+    std::fs::create_dir_all(&temp_dir).unwrap();
+
+    let resolved = resolve_vfs_path(&temp_dir, "");
+    assert!(resolved.is_some());
+
+    let _ = std::fs::remove_dir_all(&temp_dir);
+}

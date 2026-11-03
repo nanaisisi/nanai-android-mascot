@@ -239,3 +239,81 @@ fn test_animation_scheduler_stepping_and_control_methods() {
     assert_eq!(scheduler.get_animation_offset(0, 10), (5, 10));
     assert_eq!(scheduler.get_animation_offset(0, 999), (0, 0));
 }
+
+#[test]
+fn test_stepping_coverage_boost() {
+    use crate::surfaces::SerikoAnimation;
+
+    let mut scheduler = AnimationScheduler::new();
+
+    // 1. active_count for non-existent scope
+    assert_eq!(scheduler.active_count(12345), 0);
+
+    // 2. AlternativeStart, AlternativeStop, and surface == -2 (stop_others)
+    let alt_anim = SerikoAnimation {
+        id: 50,
+        name: None,
+        interval: Some(Interval::RunOnce),
+        options: vec![],
+        collisions: vec![],
+        patterns: vec![
+            AnimationPattern {
+                index: 0,
+                surface: 300,
+                wait: 10,
+                wait_max: None,
+                method: DrawMethod::AlternativeStart(vec![60]),
+                x: 0,
+                y: 0,
+                options: vec![],
+            },
+            AnimationPattern {
+                index: 1,
+                surface: 301,
+                wait: 10,
+                wait_max: None,
+                method: DrawMethod::AlternativeStop(vec![60]),
+                x: 0,
+                y: 0,
+                options: vec![],
+            },
+            AnimationPattern {
+                index: 2,
+                surface: -2,
+                wait: 10,
+                wait_max: None,
+                method: DrawMethod::Overlay,
+                x: 0,
+                y: 0,
+                options: vec![],
+            },
+        ],
+    };
+
+    let target_anim = SerikoAnimation {
+        id: 60,
+        name: None,
+        interval: Some(Interval::RunOnce),
+        options: vec![],
+        collisions: vec![],
+        patterns: vec![AnimationPattern {
+            index: 0,
+            surface: 400,
+            wait: 100,
+            wait_max: None,
+            method: DrawMethod::Overlay,
+            x: 0,
+            y: 0,
+            options: vec![],
+        }],
+    };
+
+    let catalog = vec![target_anim];
+
+    scheduler.start_animation(0, 0, &alt_anim);
+    let events = scheduler.step_with_catalog(15, &catalog);
+    assert!(!events.is_empty());
+
+    let _ = scheduler.step_with_catalog(15, &catalog);
+    let _ = scheduler.step_with_catalog(15, &catalog);
+}

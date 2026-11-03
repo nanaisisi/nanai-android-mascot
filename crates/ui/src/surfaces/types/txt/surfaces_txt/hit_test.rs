@@ -33,3 +33,15 @@ impl SurfacesTxt {
         self.hit_test(surface_id, x, y)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_hit_test_none() {
+        let txt = SurfacesTxt::default();
+        assert!(txt.hit_test(999, 0, 0).is_none());
+        assert!(txt.hit_test_with_binds(999, 0, 0, &[]).is_none());
+    }
+}

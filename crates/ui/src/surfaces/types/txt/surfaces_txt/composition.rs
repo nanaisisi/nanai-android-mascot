@@ -100,3 +100,14 @@ impl SurfacesTxt {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_plan_composition_none() {
+        let txt = SurfacesTxt::default();
+        assert!(txt.plan_composition(999, &[]).is_none());
+    }
+}

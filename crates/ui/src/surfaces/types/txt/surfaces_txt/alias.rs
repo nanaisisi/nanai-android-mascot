@@ -76,3 +76,15 @@ impl SurfacesTxt {
         self.find_by_name(name_or_alias)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_resolve_alias_none() {
+        let txt = SurfacesTxt::default();
+        assert!(txt.resolve_alias("nonexistent").is_none());
+        assert!(txt.resolve_kero_alias("nonexistent").is_none());
+    }
+}

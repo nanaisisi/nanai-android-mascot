@@ -77,6 +77,7 @@ fn test_mock_vfs() {
         mock.read_binary("GHOST/master/aya.dll").unwrap(),
         vec![1, 2, 3, 4]
     );
+    assert!(mock.read_binary("nonexistent.bin").is_err());
 
     // read_text (Shift_JIS auto-decode)
     let desc = mock.read_text("ghost/master/descript.txt").unwrap();
@@ -96,10 +97,14 @@ fn test_mock_vfs() {
         ]
     );
 
+    mock.add_file("test.bin", vec![99]);
+    let vfs: &dyn VirtualFileSystem = &mock;
+    assert_eq!(vfs.read_binary("test.bin").unwrap(), vec![99]);
+
     // remove_file
     assert!(mock.remove_file("GHOST/MASTER/AYA.DLL"));
     assert!(!mock.exists("ghost/master/aya.dll"));
-    assert_eq!(mock.len(), 2);
+    assert_eq!(mock.len(), 3);
 
     // clear
     mock.clear();

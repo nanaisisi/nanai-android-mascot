@@ -62,3 +62,4 @@ ui/coverage
 coverage-run
 coverage-final/
 *.pyc
+lcov.info

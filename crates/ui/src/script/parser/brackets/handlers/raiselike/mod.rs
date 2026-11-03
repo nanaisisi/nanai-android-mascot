@@ -35,6 +35,16 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
         "set" => {
             settings::handle_set(&parts, callback);
         }
+        "quicksection" => {
+            let enabled = parts
+                .get(1)
+                .map(|v| match v.as_str() {
+                    "0" | "false" => false,
+                    _ => true,
+                })
+                .unwrap_or(true);
+            callback(SakuraCommand::Quick(enabled));
+        }
         "lock" | "unlock" => {
             settings::handle_lock_unlock(&parts, callback);
         }

@@ -1,25 +1,52 @@
 //! `handlers` 用の共通ユーティリティ関数
 
-/// `0-9,20-22` のような範囲文字列をサーフィス番号列へ展開する
+use std::collections::BTreeSet;
+
+/// `0-9,20-22` や SSP 専用除外指定 `surface1-30,!15,!20-25` のような範囲文字列をサーフィス番号列へ展開する。
+/// `!` で指定された除外IDは、記述の位置によらず他の指定よりも優先される。
 pub fn expand_range(spec: &str) -> Vec<u32> {
-    let mut out = Vec::new();
+    let mut included = Vec::new();
+    let mut excluded = BTreeSet::new();
+
     for part in spec.split(',') {
-        let part = part.trim().trim_start_matches('[').trim_end_matches(']');
+        let mut part = part.trim().trim_start_matches('[').trim_end_matches(']');
         if part.is_empty() {
             continue;
         }
+
+        let is_exclude = if let Some(stripped) = part.strip_prefix('!') {
+            part = stripped.trim();
+            true
+        } else {
+            false
+        };
+
         if let Some((start, end)) = part.split_once('-')
             && let (Ok(s), Ok(e)) = (start.trim().parse::<u32>(), end.trim().parse::<u32>())
             && s <= e
         {
-            out.extend(s..=e);
+            if is_exclude {
+                excluded.extend(s..=e);
+            } else {
+                included.extend(s..=e);
+            }
             continue;
         }
+
         if let Ok(n) = part.parse::<u32>() {
-            out.push(n);
+            if is_exclude {
+                excluded.insert(n);
+            } else {
+                included.push(n);
+            }
         }
     }
-    out
+
+    if excluded.is_empty() {
+        included
+    } else {
+        included.into_iter().filter(|id| !excluded.contains(id)).collect()
+    }
 }
 
 pub(crate) fn split_id_suffix(token: &str) -> (&str, Option<u32>) {

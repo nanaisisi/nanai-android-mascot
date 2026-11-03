@@ -26,6 +26,9 @@
 	--balloon-border-image-slice: 16 16 16 16 fill;
 	--balloon-border-image-width: 16px;
 	--balloon-border-image-repeat: repeat;
+
+	/* 縦書き・文字組トークン */
+	--balloon-writing-mode: horizontal-tb;
 }
 
 /* 象牙色レトロ伺かスキン (SSP風) */

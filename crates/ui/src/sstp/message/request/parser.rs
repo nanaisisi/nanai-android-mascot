@@ -51,6 +51,7 @@ impl SstpRequest {
         let mut references = HashMap::new();
         let mut pass_thru = HashMap::new();
         let mut keep_alive = false;
+        let mut connection = None;
         let mut surface = None;
         let mut document = None;
         let mut song = None;
@@ -112,6 +113,13 @@ impl SstpRequest {
                     entry = Some(val);
                 } else if key_lower == "keepalive" {
                     keep_alive = val.to_lowercase() == "true" || val == "1";
+                } else if key_lower == "connection" {
+                    connection = Some(val.clone());
+                    if val.eq_ignore_ascii_case("keep-alive") {
+                        keep_alive = true;
+                    } else if val.eq_ignore_ascii_case("close") {
+                        keep_alive = false;
+                    }
                 } else if key_lower == "surface" {
                     surface = Some(val);
                 } else if key_lower == "document" {
@@ -166,6 +174,7 @@ impl SstpRequest {
             references,
             pass_thru,
             keep_alive,
+            connection,
             surface,
             document,
             song,

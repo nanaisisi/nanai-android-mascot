@@ -1,6 +1,6 @@
 /**
  * @file interactive.js
- * @brief アンカー・内部コマンド・メッセージ・選択肢タグのトークナイズ処理 (\_a, \!, \m, \q)
+ * @brief アンカー・内部コマンド・メッセージ・選択肢タグのトークナイズ処理 (\_a, \!, \m, \q, \__q)
  */
 
 import { readBracketContent, splitBracketArgs } from "../bracket-utils.js";
@@ -71,6 +71,31 @@ export function tokenizeInteractiveTag(script, i, _len) {
 			};
 		}
 		return { tokens: [], nextIdx: i + 1 };
+	}
+
+	// \__q[ID,...] / \__q (インライン選択肢スコープ)
+	if (char === "_" && script[i + 1] === "_" && script[i + 2] === "q") {
+		if (script[i + 3] === "[") {
+			const parsed = readBracketContent(script, i + 3);
+			if (parsed) {
+				const args = splitBracketArgs(parsed.content);
+				return {
+					tokens: [
+						{
+							type: "choice_scope_begin",
+							id: args[0] || "",
+							args,
+						},
+					],
+					nextIdx: parsed.nextIdx,
+				};
+			}
+			return { tokens: [], nextIdx: i + 3 };
+		}
+		return {
+			tokens: [{ type: "choice_scope_end" }],
+			nextIdx: i + 3,
+		};
 	}
 
 	// \q[テキスト,ID] (選択肢)

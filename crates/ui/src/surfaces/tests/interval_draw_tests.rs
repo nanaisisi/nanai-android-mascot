@@ -9,6 +9,17 @@ fn test_expand_range() {
     assert_eq!(expand_range("19,100,101"), [19, 100, 101]);
     assert_eq!(expand_range("[7]"), [7]);
     assert!(expand_range("abc").is_empty());
+
+    // SSP exclamation mark '!' exclusion specifications
+    assert_eq!(expand_range("1-10,!5"), vec![1, 2, 3, 4, 6, 7, 8, 9, 10]);
+    assert_eq!(expand_range("1-30,!15,!20-25"), {
+        let mut expected = (1..=14).collect::<Vec<_>>();
+        expected.extend(16..=19);
+        expected.extend(26..=30);
+        expected
+    });
+    // Exclusion priority irrespective of placement (e.g. !2-4 placed before 3)
+    assert_eq!(expand_range("1-10,!2-4,3"), vec![1, 5, 6, 7, 8, 9, 10]);
 }
 
 #[test]

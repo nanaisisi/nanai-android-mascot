@@ -180,6 +180,147 @@ export const eventMethods = {
 		]);
 	},
 
+	/**
+	 * マウス当たり判定進入通知 (OnMouseEnter / OnMouseEnterAll)
+	 */
+	onGhostMouseEnter(clientX, clientY, rect, scopeId = 0, isWindow = false) {
+		if (this.sakuraPlayer?.timeCritical && this.sakuraPlayer?.isPlaying) return;
+		const col = this.getCollisionInfo(clientX, clientY, rect, scopeId);
+		const eventName = isWindow ? "OnMouseEnterAll" : "OnMouseEnter";
+		this.ghostController.sendShioriEvent(eventName, [
+			col.canvasX,
+			col.canvasY,
+			0,
+			scopeId,
+			col.name || "",
+			0,
+			"mouse",
+		]);
+	},
+
+	/**
+	 * マウス当たり判定退出通知 (OnMouseLeave / OnMouseLeaveAll)
+	 */
+	onGhostMouseLeave(clientX, clientY, rect, scopeId = 0, isWindow = false) {
+		if (this.sakuraPlayer?.timeCritical && this.sakuraPlayer?.isPlaying) return;
+		const col = this.getCollisionInfo(clientX, clientY, rect, scopeId);
+		const eventName = isWindow ? "OnMouseLeaveAll" : "OnMouseLeave";
+		this.ghostController.sendShioriEvent(eventName, [
+			col.canvasX,
+			col.canvasY,
+			0,
+			scopeId,
+			col.name || "",
+			0,
+			"mouse",
+		]);
+	},
+
+	/**
+	 * マウス拡張ボタンプッシュ通知 (OnMouseDownEx / OnMouseUpEx)
+	 */
+	onGhostMouseEx(
+		type,
+		clientX,
+		clientY,
+		rect,
+		button = "middle",
+		device = "mouse",
+		scopeId = 0,
+	) {
+		if (this.sakuraPlayer?.timeCritical && this.sakuraPlayer?.isPlaying) return;
+		const col = this.getCollisionInfo(clientX, clientY, rect, scopeId);
+		const eventName = type === "up" ? "OnMouseUpEx" : "OnMouseDownEx";
+		this.ghostController.sendShioriEvent(eventName, [
+			col.canvasX,
+			col.canvasY,
+			0,
+			scopeId,
+			col.name || "",
+			button,
+			device,
+		]);
+	},
+
+	/**
+	 * マウス拡張ボタンクリック通知 (OnMouseClickEx / OnMouseDoubleClickEx)
+	 */
+	onGhostMouseClickEx(
+		clientX,
+		clientY,
+		rect,
+		button = "middle",
+		device = "mouse",
+		scopeId = 0,
+		isDouble = false,
+	) {
+		if (this.sakuraPlayer?.timeCritical && this.sakuraPlayer?.isPlaying) return;
+		const col = this.getCollisionInfo(clientX, clientY, rect, scopeId);
+		const eventName = isDouble ? "OnMouseDoubleClickEx" : "OnMouseClickEx";
+		this.ghostController.sendShioriEvent(eventName, [
+			col.canvasX,
+			col.canvasY,
+			0,
+			scopeId,
+			col.name || "",
+			button,
+			device,
+		]);
+	},
+
+	/**
+	 * 連続マウスクリック通知 (OnMouseMultipleClick / OnMouseMultipleClickEx)
+	 */
+	onGhostMultipleClick(
+		clientX,
+		clientY,
+		rect,
+		count = 3,
+		button = 0,
+		device = "mouse",
+		scopeId = 0,
+		isEx = false,
+	) {
+		if (this.sakuraPlayer?.timeCritical && this.sakuraPlayer?.isPlaying) return;
+		const col = this.getCollisionInfo(clientX, clientY, rect, scopeId);
+		const eventName = isEx ? "OnMouseMultipleClickEx" : "OnMouseMultipleClick";
+		this.ghostController.sendShioriEvent(eventName, [
+			col.canvasX,
+			col.canvasY,
+			0,
+			scopeId,
+			col.name || "",
+			button,
+			device,
+			count,
+		]);
+	},
+
+	/**
+	 * マウスジェスチャー通知 (OnMouseGesture)
+	 */
+	onGhostGesture(
+		startX,
+		startY,
+		startPart,
+		endX,
+		endY,
+		endPart,
+		direction,
+		scopeId = 0,
+	) {
+		if (this.sakuraPlayer?.timeCritical && this.sakuraPlayer?.isPlaying) return;
+		const coord = (x, y) => `${x}\x01${y}`;
+		this.ghostController.sendShioriEvent("OnMouseGesture", [
+			scopeId,
+			coord(endX, endY),
+			endPart || "",
+			coord(startX, startY),
+			startPart || "",
+			direction,
+		]);
+	},
+
 	onGhostMouseDown(
 		clientX,
 		clientY,

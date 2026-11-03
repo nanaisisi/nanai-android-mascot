@@ -1,7 +1,8 @@
 ﻿# SHIORI/3.0 response: Reference0 (コミュニケート)
 
 - **規格**: [response.md](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/response/) (ukadoc-spec/spec/shiori3/response.md)
-- **対応状況**: ❌ 未実装
+- **検索語**: reference0
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -11,3 +12,12 @@ Rust 通信層として `crates/ui/src/shiori.rs`（SHIORI/3.0 リクエスト/�
 
 - 突合は実装コード (src-tauri/src、ui/js) の文字列検索に基づく一次調査です。
 - 規格の詳細は参照元ドキュメントを参照してください。
+
+
+## 実装箇所
+
+- `src-tauri/src/sstp/types.rs:44` `pub reference0: Option<String>,`
+- `src-tauri/src/sstp/handler.rs:64` `reference0: None,`
+- `src-tauri/src/sstp/handler.rs:79` `reference0: None,`
+- `src-tauri/src/sstp/handler.rs:130` `reference0: request.references.get("Reference0").cloned(),`
+- `src-tauri/src/sstp/handler.rs:165` `reference0: None,`

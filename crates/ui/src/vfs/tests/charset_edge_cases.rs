@@ -40,6 +40,32 @@ fn test_encoding_edge_cases() {
 
     assert!(encode_to_charset("test", "utf-16le").is_some());
     assert!(encode_to_charset("test", "utf-16be").is_some());
+
+    // Cycle 6: detect_and_decode_ext & headers with '=' and ':'
+    let eq_header = b"charset=Shift_JIS\r\nname=EquTest";
+    let res_eq = detect_and_decode_ext(eq_header);
+    assert_eq!(res_eq.encoding, "Shift_JIS");
+    assert!(!res_eq.had_errors);
+
+    let colon_header = b"charset:utf-8\r\nname:ColonTest";
+    let res_colon = detect_and_decode_ext(colon_header);
+    assert_eq!(res_colon.encoding, "UTF-8");
+    assert!(!res_colon.had_errors);
+
+    // detect_mime_type
+    assert_eq!(detect_mime_type("surface0.png"), "image/png");
+    assert_eq!(detect_mime_type("surface0.pna"), "image/x-nar-pna");
+    assert_eq!(detect_mime_type("surface0.bmp"), "image/bmp");
+    assert_eq!(detect_mime_type("descript.txt"), "text/plain");
+    assert_eq!(detect_mime_type("info.json"), "application/json");
+    assert_eq!(detect_mime_type("sound.wav"), "audio/wav");
+    assert_eq!(detect_mime_type("music.mp3"), "audio/mpeg");
+    assert_eq!(detect_mime_type("bgm.ogg"), "audio/ogg");
+    assert_eq!(detect_mime_type("song.mid"), "audio/midi");
+    assert_eq!(detect_mime_type("archive.zip"), "application/zip");
+    assert_eq!(detect_mime_type("ghost.nar"), "application/zip");
+    assert_eq!(detect_mime_type("shiori.dll"), "application/octet-stream");
+    assert_eq!(detect_mime_type("unknown.xyz"), "application/octet-stream");
 }
 
 #[test]

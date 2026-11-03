@@ -24,6 +24,36 @@ fn test_vfs_resolver() {
     assert!(resolver.exists("SHELL/MASTER/SURFACE0000.PNG"));
     assert!(!resolver.exists("shell/master/nonexistent.txt"));
 
+    // Cycle 6: resolve_with_extensions
+    let ext_resolved = resolver.resolve_with_extensions("shell/master/surface0000", &[".png", ".bmp"]);
+    assert!(ext_resolved.is_some());
+    assert!(ext_resolved.unwrap().ends_with("surface0000.png"));
+
+    let ext_resolved_dotless = resolver.resolve_with_extensions("shell/master/surface0000", &["png", "bmp"]);
+    assert!(ext_resolved_dotless.is_some());
+
+    let ext_none = resolver.resolve_with_extensions("shell/master/nonexistent", &[".png", ".bmp"]);
+    assert!(ext_none.is_none());
+
+    // is_file, is_dir, file_size
+    assert!(resolver.is_file("shell/master/descript.txt"));
+    assert!(!resolver.is_dir("shell/master/descript.txt"));
+    assert!(resolver.is_dir("shell/master"));
+    assert!(resolver.is_dir(""));
+    assert!(!resolver.is_file("shell/master"));
+    assert_eq!(
+        resolver.file_size("shell/master/surface0000.png").unwrap(),
+        4
+    );
+    assert!(resolver.file_size("shell/master").is_err());
+    assert!(resolver.file_size("nonexistent.txt").is_err());
+
+    // read_lines
+    let lines = resolver.read_lines("shell/master/descript.txt").unwrap();
+    assert_eq!(lines.len(), 2);
+    assert_eq!(lines[0], "charset,Shift_JIS");
+    assert_eq!(lines[1], "name,マスター");
+
     // read_text
     let text = resolver.read_text("shell/master/descript.txt").unwrap();
     assert!(text.contains("charset,Shift_JIS"));

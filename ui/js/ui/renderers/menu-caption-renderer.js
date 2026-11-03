@@ -551,6 +551,27 @@ export const MENU_CAPTION_DEFINITIONS = [
 		id: "utilityrootbutton-btn",
 		resource: "utilityrootbutton.caption",
 		fallback: "utilityrootbutton",
+		id: "enable-balloon-move-btn",
+		resource: "enableballoonmovebutton.caption",
+		fallback: "✋ バルーン移動許可",
+		shortcut: "",
+	},
+	{
+		id: "balloon-history-btn",
+		resource: "balloonhistorybutton.caption",
+		fallback: "📜 バルーン履歴 (Ctrl+H)",
+		shortcut: "Ctrl+H",
+	},
+	{
+		id: "rate-of-use-balloon-btn",
+		resource: "rateofuseballoonbutton.caption",
+		fallback: "📊 バルーン使用率",
+		shortcut: "",
+	},
+	{
+		id: "debug-balloon-btn",
+		resource: "debugballoonbutton.caption",
+		fallback: "🐞 バルーンデバッグ",
 		shortcut: "",
 	},
 ];

@@ -421,8 +421,8 @@ fn test_animation_scheduler_state_coverage_boost() {
     scheduler.stop_animation(0, 77);
     assert_eq!(scheduler.active_count(0), 1);
 
-    // 5. set_surface_with_shared_index (with finished shared-index animation where !a.is_finished is false)
-    let shared_anim = SerikoAnimation {
+    // 5. set_surface_with_shared_index (with mixed finished and active shared-index animations)
+    let shared_anim1 = SerikoAnimation {
         id: 88,
         name: None,
         interval: Some(Interval::Always),
@@ -430,16 +430,28 @@ fn test_animation_scheduler_state_coverage_boost() {
         collisions: vec![],
         patterns: vec![
             AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 100, wait: 50, wait_max: None, x: 0, y: 0, options: vec![] },
-            AnimationPattern { index: 1, method: DrawMethod::Overlay, surface: 101, wait: 50, wait_max: None, x: 0, y: 0, options: vec![] },
         ],
     };
-    scheduler.start_animation(0, 0, &shared_anim);
+    let shared_anim2 = SerikoAnimation {
+        id: 89,
+        name: None,
+        interval: Some(Interval::Always),
+        options: vec![vec!["shared-index".to_string()]],
+        collisions: vec![],
+        patterns: vec![
+            AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 100, wait: 50, wait_max: None, x: 0, y: 0, options: vec![] },
+        ],
+    };
+    scheduler.start_animation(0, 0, &shared_anim1);
+    scheduler.start_animation(0, 0, &shared_anim2);
     if let Some(anims) = scheduler.active_animations.get_mut(&0) {
         for a in anims.iter_mut() {
-            a.is_finished = true;
+            if a.animation_id == 88 {
+                a.is_finished = true; // finished one (!a.is_finished is false)
+            }
         }
     }
-    scheduler.set_surface_with_shared_index(0, 1, &[shared_anim]);
+    scheduler.set_surface_with_shared_index(0, 1, &[shared_anim1, shared_anim2]);
 }
 
 #[test]

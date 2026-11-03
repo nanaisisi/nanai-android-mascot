@@ -36,6 +36,33 @@ impl VfsResolver {
         self.resolve_cached(relative_path)
     }
 
+    /// 拡張子候補群を順次試行してファイルパスを解決
+    ///
+    /// 例: `surface0` に対して `[".png", ".pna", ".bmp"]` を指定すると、
+    /// `surface0.png`、`surface0.pna`、`surface0.bmp` を大文字小文字不問で順に探索します。
+    pub fn resolve_with_extensions(&self, relative_path: &str, extensions: &[&str]) -> Option<PathBuf> {
+        if let Some(direct) = self.resolve(relative_path) {
+            if direct.is_file() {
+                return Some(direct);
+            }
+        }
+
+        for ext in extensions {
+            let candidate = if ext.starts_with('.') {
+                format!("{}{}", relative_path, ext)
+            } else {
+                format!("{}.{}", relative_path, ext)
+            };
+            if let Some(found) = self.resolve(&candidate) {
+                if found.is_file() {
+                    return Some(found);
+                }
+            }
+        }
+
+        None
+    }
+
     /// キャッシュ付きのパス解決メソッド
     pub fn resolve_cached(&self, relative_path: &str) -> Option<PathBuf> {
         let norm_key = normalize_vfs_path(relative_path).to_lowercase();
@@ -273,5 +300,36 @@ impl VirtualFileSystem for VfsResolver {
 
     fn walk_files(&self, dir_path: &str) -> io::Result<Vec<String>> {
         self.walk_files(dir_path)
+    }
+
+    fn file_size(&self, path: &str) -> io::Result<u64> {
+        match self.resolve(path) {
+            Some(resolved) => {
+                let metadata = std::fs::metadata(&resolved)?;
+                if metadata.is_dir() {
+                    Err(io::Error::new(
+                        io::ErrorKind::Other,
+                        format!("Path is a directory, not a file: {}", path),
+                    ))
+                } else {
+                    Ok(metadata.len())
+                }
+            }
+            None => Err(io::Error::new(
+                io::ErrorKind::NotFound,
+                format!("File not found in VFS: {}", path),
+            )),
+        }
+    }
+
+    fn is_file(&self, path: &str) -> bool {
+        self.resolve(path).map(|p| p.is_file()).unwrap_or(false)
+    }
+
+    fn is_dir(&self, path: &str) -> bool {
+        match path.trim() {
+            "" | "." => self.root_dir.is_dir(),
+            _ => self.resolve(path).map(|p| p.is_dir()).unwrap_or(false),
+        }
     }
 }

@@ -70,10 +70,11 @@ mod tests {
 
     #[test]
     fn test_expand_env() {
-        let script = "%username, hello! Property: %property[currentghost.name] %m? %*";
+        let script = "%username, hello! Property: %property[currentghost.name] %property[unknown_prop] %property[unclosed %m? %* \\%";
         let expanded = expand_sakura_script_env(script, "TestUser", "Nanai", "Kero");
         assert!(expanded.contains("TestUser"));
         assert!(expanded.contains("Nanai"));
+        assert!(expanded.contains("%property[unclosed"));
         assert!(!expanded.contains("%m?"));
         assert!(!expanded.contains("%*"));
     }

@@ -29,6 +29,8 @@ test("shioriNotifyMethods covers sendShioriNotify and sendBootNotifyEvents", asy
 			},
 		],
 		shells: ["master", "alt"],
+		balloons: ["default", "modern"],
+		balloonPaths: ["assets/balloon/default", "assets/balloon/modern"],
 	};
 
 	// 1. Non-Tauri environment (sendShioriNotify / sendBootNotifyEvents)
@@ -61,6 +63,8 @@ test("shioriNotifyMethods covers sendShioriNotify and sendBootNotifyEvents", asy
 	assert.ok(calls.some((c) => c.args.event === "installedkeroname"));
 	assert.ok(calls.some((c) => c.args.event === "installedshellname"));
 	assert.ok(calls.some((c) => c.args.event === "ghostpathlist"));
+	assert.ok(calls.some((c) => c.args.event === "installedballoonname"));
+	assert.ok(calls.some((c) => c.args.event === "balloonpathlist"));
 	assert.ok(calls.some((c) => c.args.event === "basewareversion"));
 	assert.ok(calls.some((c) => c.args.event === "uniqueid"));
 
@@ -71,6 +75,25 @@ test("shioriNotifyMethods covers sendShioriNotify and sendBootNotifyEvents", asy
 	assert.equal(calls[0].args.event, "capability");
 	assert.ok(calls[0].args.references.includes("request.status"));
 	assert.ok(calls[0].args.references.includes("response.value"));
+
+	// Extended Notify helper methods
+	calls.length = 0;
+	await controller.notifyOSInfo("Linux", "6.1");
+	assert.equal(calls.length, 1);
+	assert.equal(calls[0].args.event, "OnNotifyOSInfo");
+	assert.equal(calls[0].args.references[0], "Linux");
+
+	calls.length = 0;
+	await controller.notifySelfInfo("Ghost1", "master", "default");
+	assert.equal(calls.length, 1);
+	assert.equal(calls[0].args.event, "OnNotifySelfInfo");
+	assert.equal(calls[0].args.references[0], "Ghost1");
+
+	calls.length = 0;
+	await controller.notifyBalloonInfo("default", "assets/balloon/default");
+	assert.equal(calls.length, 1);
+	assert.equal(calls[0].args.event, "OnNotifyBalloonInfo");
+	assert.equal(calls[0].args.references[0], "default");
 
 	// 4. sendShioriNotify with invoke error (catch branch)
 	globalThis.__TAURI_INTERNALS__.invoke = async () => {

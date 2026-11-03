@@ -1,4 +1,3 @@
-use crate::common::logging::LogLevel;
 use crate::common::state::AppState;
 use nanai_android_mascot_ui::{ShioriRequest, ShioriResponse};
 

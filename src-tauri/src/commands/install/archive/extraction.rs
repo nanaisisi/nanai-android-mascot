@@ -1,3 +1,4 @@
+use crate::common::paths::normalize_path;
 use super::super::utils::*;
 
 use nanai_android_mascot_ui::validate_archive_entry_path;

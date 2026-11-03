@@ -10,6 +10,23 @@ pub enum ShioriEngineCandidate {
     Mock(Box<dyn ShioriEngine>),
 }
 
+/// 候補種別の識別タグ
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CandidateKind {
+    Dynamic,
+    Wasm,
+    Mock,
+}
+
+/// ロード試行ログ（フェイルオーバーテレメトリ）
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct LoadAttempt {
+    pub kind: CandidateKind,
+    pub path: Option<PathBuf>,
+    pub success: bool,
+    pub error: Option<String>,
+}
+
 /// 多段 SHIORI ローダー (Multi-stage fallback loader)
 ///
 /// 1. ネイティブ DLL / .so (動的ロード)
@@ -18,8 +35,10 @@ pub enum ShioriEngineCandidate {
 pub struct MultiStageShioriLoader {
     candidates: Vec<ShioriEngineCandidate>,
     active_engine: Option<Box<dyn ShioriEngine>>,
+    active_kind: Option<CandidateKind>,
     last_error: Option<String>,
     last_dir_path: Option<PathBuf>,
+    attempts: Vec<LoadAttempt>,
 }
 
 impl MultiStageShioriLoader {
@@ -27,8 +46,10 @@ impl MultiStageShioriLoader {
         Self {
             candidates: Vec::new(),
             active_engine: None,
+            active_kind: None,
             last_error: None,
             last_dir_path: None,
+            attempts: Vec::new(),
         }
     }
 
@@ -47,9 +68,29 @@ impl MultiStageShioriLoader {
         self.candidates.len()
     }
 
+    /// 候補一覧をクリア
+    pub fn clear_candidates(&mut self) {
+        self.candidates.clear();
+    }
+
     /// 直近のエラー文字列を取得
     pub fn last_error(&self) -> Option<&str> {
         self.last_error.as_deref()
+    }
+
+    /// アクティブなエンジンの種類を取得
+    pub fn active_kind(&self) -> Option<CandidateKind> {
+        self.active_kind
+    }
+
+    /// ロード試行履歴を取得
+    pub fn load_attempts(&self) -> &[LoadAttempt] {
+        &self.attempts
+    }
+
+    /// 試行履歴をクリア
+    pub fn clear_attempts(&mut self) {
+        self.attempts.clear();
     }
 
     /// アクティブなエンジンの参照を取得
@@ -64,6 +105,7 @@ impl MultiStageShioriLoader {
 
     /// 現在ロードされているエンジンをアンロード
     pub fn unload(&mut self) -> Result<(), String> {
+        self.active_kind = None;
         if let Some(mut engine) = self.active_engine.take() {
             engine.unload()?;
         }
@@ -97,6 +139,7 @@ impl MultiStageShioriLoader {
     {
         self.unload()?;
         self.last_dir_path = Some(dir_path.to_path_buf());
+        self.attempts.clear();
 
         let mut last_error = "No SHIORI candidates available".to_string();
 
@@ -106,37 +149,98 @@ impl MultiStageShioriLoader {
                     Ok(mut engine) => match engine.load(dir_path) {
                         Ok(_) => {
                             self.active_engine = Some(engine);
+                            self.active_kind = Some(CandidateKind::Dynamic);
                             self.last_error = None;
+                            self.attempts.push(LoadAttempt {
+                                kind: CandidateKind::Dynamic,
+                                path: Some(path),
+                                success: true,
+                                error: None,
+                            });
                             return Ok(());
                         }
                         Err(e) => {
-                            last_error = format!("Load failed for {:?}: {}", path, e);
+                            let err_msg = format!("Load failed for {:?}: {}", path, e);
+                            self.attempts.push(LoadAttempt {
+                                kind: CandidateKind::Dynamic,
+                                path: Some(path),
+                                success: false,
+                                error: Some(err_msg.clone()),
+                            });
+                            last_error = err_msg;
                         }
                     },
                     Err(e) => {
-                        last_error = format!("Dynamic load failed for {:?}: {}", path, e);
+                        let err_msg = format!("Dynamic load failed for {:?}: {}", path, e);
+                        self.attempts.push(LoadAttempt {
+                            kind: CandidateKind::Dynamic,
+                            path: Some(path),
+                            success: false,
+                            error: Some(err_msg.clone()),
+                        });
+                        last_error = err_msg;
                     }
                 },
                 ShioriEngineCandidate::Wasm(path) => match wasm_loader(&path) {
                     Ok(mut engine) => match engine.load(dir_path) {
                         Ok(_) => {
                             self.active_engine = Some(engine);
+                            self.active_kind = Some(CandidateKind::Wasm);
                             self.last_error = None;
+                            self.attempts.push(LoadAttempt {
+                                kind: CandidateKind::Wasm,
+                                path: Some(path),
+                                success: true,
+                                error: None,
+                            });
                             return Ok(());
                         }
                         Err(e) => {
-                            last_error = format!("WASM load failed for {:?}: {}", path, e);
+                            let err_msg = format!("WASM load failed for {:?}: {}", path, e);
+                            self.attempts.push(LoadAttempt {
+                                kind: CandidateKind::Wasm,
+                                path: Some(path),
+                                success: false,
+                                error: Some(err_msg.clone()),
+                            });
+                            last_error = err_msg;
                         }
                     },
                     Err(e) => {
-                        last_error = format!("WASM runtime failed for {:?}: {}", path, e);
+                        let err_msg = format!("WASM runtime failed for {:?}: {}", path, e);
+                        self.attempts.push(LoadAttempt {
+                            kind: CandidateKind::Wasm,
+                            path: Some(path),
+                            success: false,
+                            error: Some(err_msg.clone()),
+                        });
+                        last_error = err_msg;
                     }
                 },
                 ShioriEngineCandidate::Mock(mut engine) => {
-                    if engine.load(dir_path).is_ok() {
-                        self.active_engine = Some(engine);
-                        self.last_error = None;
-                        return Ok(());
+                    match engine.load(dir_path) {
+                        Ok(_) => {
+                            self.active_engine = Some(engine);
+                            self.active_kind = Some(CandidateKind::Mock);
+                            self.last_error = None;
+                            self.attempts.push(LoadAttempt {
+                                kind: CandidateKind::Mock,
+                                path: None,
+                                success: true,
+                                error: None,
+                            });
+                            return Ok(());
+                        }
+                        Err(e) => {
+                            let err_msg = format!("Mock load failed: {}", e);
+                            self.attempts.push(LoadAttempt {
+                                kind: CandidateKind::Mock,
+                                path: None,
+                                success: false,
+                                error: Some(err_msg.clone()),
+                            });
+                            last_error = err_msg;
+                        }
                     }
                 }
             }

@@ -11,7 +11,9 @@ import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
  * - installedghostname / installedsakuraname / installedkeroname
  * - installedshellname (現在のゴーストに同梱のシェル名)
  * - ghostpathlist (読み込み可能なゴーストフォルダのフルパス)
+ * - installedballoonname / balloonpathlist (バルーン情報一覧)
  * - basewareversion / uniqueid
+ * - OnNotifyOSInfo, OnNotifySelfInfo, OnNotifyBalloonInfo
  * - OnBalloonBreak, OnBalloonClose, OnBalloonTimeout (バルーン操作イベント)
  * - OnBalloonChange, OnBasewareUpdated, OnBasewareUpdating, OnBoot, OnCacheRestore, OnCacheSuspend
  * - OnClose, OnCloseAll, OnDestroy, OnDressupChanged, OnFirstBoot, OnFullScreenAppMinimize
@@ -58,6 +60,48 @@ export const shioriNotifyMethods = {
 			console.warn(`SHIORI 通知失敗 (${event}):`, error);
 			return null;
 		}
+	},
+
+	/**
+	 * OS情報通知 (OnNotifyOSInfo) を送信 (UKADOC 規格準拠)
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} osName OS名 (例: "Android", "Linux", "Windows")
+	 * @param {string} osVersion バージョン
+	 */
+	async notifyOSInfo(osName = "Android", osVersion = "14") {
+		return await this.sendShioriNotify("OnNotifyOSInfo", [osName, osVersion]);
+	},
+
+	/**
+	 * 自身（ゴースト本体）情報通知 (OnNotifySelfInfo) を送信 (UKADOC 規格準拠)
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} ghostName ゴースト名
+	 * @param {string} [shellName] 現在のシェル名
+	 * @param {string} [balloonName] 現在のバルーン名
+	 */
+	async notifySelfInfo(
+		ghostName,
+		shellName = "master",
+		balloonName = "default",
+	) {
+		return await this.sendShioriNotify("OnNotifySelfInfo", [
+			ghostName,
+			shellName,
+			balloonName,
+		]);
+	},
+
+	/**
+	 * バルーン構成情報通知 (OnNotifyBalloonInfo) を送信 (UKADOC 規格準拠)
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} balloonName バルーン名
+	 * @param {string} [balloonPath] バルーンのパス
+	 */
+	async notifyBalloonInfo(balloonName = "default", balloonPath = "") {
+		return await this.sendShioriNotify("OnNotifyBalloonInfo", [
+			balloonName,
+			balloonPath,
+		]);
 	},
 
 	/**
@@ -213,6 +257,17 @@ export const shioriNotifyMethods = {
 		if (ghostPaths.length > 0) {
 			await this.sendShioriNotify("ghostpathlist", ghostPaths);
 		}
+
+		// インストール済みバルーン情報 (installedballoonname / balloonpathlist)
+		const balloonNames =
+			this.balloons?.length > 0 ? this.balloons : ["default"];
+		await this.sendShioriNotify("installedballoonname", balloonNames);
+
+		const balloonPaths =
+			this.balloonPaths?.length > 0
+				? this.balloonPaths
+				: ["assets/balloon/default"];
+		await this.sendShioriNotify("balloonpathlist", balloonPaths);
 
 		// baseware の名前とバージョン
 		await this.sendShioriNotify("basewareversion", [

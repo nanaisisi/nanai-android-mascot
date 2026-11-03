@@ -68,6 +68,16 @@ pub fn evaluate_property_query(query: &str) -> String {
         | "vanishbuttoncaption"
         | "vanishbuttonvisible" => "1".to_string(),
         _ => {
+            if let Some(shiori_var) = q.strip_prefix("shiori.") {
+                return match shiori_var {
+                    "version" => "3.0".to_string(),
+                    "name" => "SHIORI/3.0 Standard".to_string(),
+                    "craftman" => "Nanai Project".to_string(),
+                    "craftmanurl" => "https://example.com/shiori".to_string(),
+                    "encoding" => "UTF-8".to_string(),
+                    _ => format!("(unknown shiori property: {})", shiori_var),
+                };
+            }
             if q.starts_with("currentghost.scope(") {
                 if q.contains(".name") {
                     return "Sakura".to_string();
@@ -97,6 +107,9 @@ mod tests {
         );
         assert_eq!(evaluate_property_query("currentghost.name"), "Mock Ghost");
         assert_eq!(evaluate_property_query("username"), "User");
+        assert_eq!(evaluate_property_query("shiori.version"), "3.0");
+        assert_eq!(evaluate_property_query("shiori.name"), "SHIORI/3.0 Standard");
+        assert_eq!(evaluate_property_query("shiori.encoding"), "UTF-8");
         assert_eq!(
             evaluate_property_query("unknown.prop"),
             "(unknown property: unknown.prop)"

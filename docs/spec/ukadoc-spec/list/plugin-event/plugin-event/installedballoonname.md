@@ -2,7 +2,7 @@
 
 - **規格**: [installedballoonname.md](https://ukatech.shillest.net/ukadoc-spec/list/plugin-event/plugin-event/installedballoonname/) (ukadoc-spec/list/plugin-event/plugin-event/installedballoonname.md)
 - **検索語**: installedballoonname
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -11,4 +11,6 @@
 
 ## 実装箇所
 
-実装コード内に「installedballoonname」は検出されませんでした。
+- `ui/js/ghost/shiori-notify.js:14` `* - installedballoonname / balloonpathlist (バルーン情報一覧)`
+- `ui/js/ghost/shiori-notify.js:261` `// インストール済みバルーン情報 (installedballoonname / balloonpathlist)`
+- `ui/js/ghost/shiori-notify.js:264` `await this.sendShioriNotify("installedballoonname", balloonNames);`

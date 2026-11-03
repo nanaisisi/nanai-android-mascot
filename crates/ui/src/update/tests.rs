@@ -277,3 +277,21 @@ fn test_installer_engine_edge_cases() {
     let filtered_edge = engine.filter_refresh_deletions(&files_edge, &manifest_ref);
     assert!(!filtered_edge.is_empty());
 }
+
+#[test]
+fn test_update_parser_more_edge_cases() {
+    let install_txt = "\
+# comment line\n\
+// another comment\n\
+oninstallscript,\\0Hello\\e\n\
+onuninstallscript,\\0Bye\\e\n\
+";
+    let manifest = parse_install_manifest(install_txt);
+    assert_eq!(manifest.oninstall_script.as_deref(), Some("\\0Hello\\e"));
+    assert_eq!(manifest.onuninstall_script.as_deref(), Some("\\0Bye\\e"));
+
+    let update_txt = "charset,UTF-8\r\nfile,test.txt,md5,charset=UTF-8,size=100\r\n";
+    let entries = parse_update_definition(update_txt);
+    assert_eq!(entries.len(), 1);
+    assert_eq!(entries[0].size, Some(100));
+}

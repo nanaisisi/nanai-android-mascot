@@ -423,3 +423,27 @@ fn test_multistage_shiori_loader_attempts_and_active_kind() {
     loader.clear_candidates();
     assert_eq!(loader.candidate_count(), 0);
 }
+
+#[test]
+fn test_multistage_shiori_loader_unload_errors() {
+    let dir = Path::new("/dummy/ghost/master");
+    struct FailUnloadEngine;
+    impl ShioriEngine for FailUnloadEngine {
+        fn load(&mut self, _: &Path) -> Result<(), String> { Ok(()) }
+        fn request(&self, _: &str) -> Result<String, String> { Ok("".into()) }
+        fn unload(&mut self) -> Result<(), String> { Err("unload error".into()) }
+        fn is_loaded(&self) -> bool { true }
+    }
+
+    let mut l1 = MultiStageShioriLoader::new();
+    l1.add_candidate(ShioriEngineCandidate::Mock(Box::new(FailUnloadEngine)));
+    l1.load_first_working(dir, |_| Err("".into()), |_| Err("".into())).unwrap();
+    assert!(l1.unload().is_err());
+
+    let mut l2 = MultiStageShioriLoader::new();
+    l2.add_candidate(ShioriEngineCandidate::Mock(Box::new(FailUnloadEngine)));
+    l2.load_first_working(dir, |_| Err("".into()), |_| Err("".into())).unwrap();
+    l2.add_candidate(ShioriEngineCandidate::Mock(Box::new(MockShioriEngine::new())));
+    let res = l2.load_first_working(dir, |_| Err("".into()), |_| Err("".into()));
+    assert!(res.is_err());
+}

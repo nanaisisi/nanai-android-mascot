@@ -136,6 +136,10 @@ globalThis.__TAURI_INTERNALS__ = {
 		}
 		if (cmd === "load_balloon_image") return "data:image/png;base64,bg";
 		if (cmd === "save_balloon_offset_from_position") return;
+		if (cmd === "plugin:event|emit" || cmd.includes("emit")) {
+			emittedEvents.push(_args);
+			return;
+		}
 		return null;
 	},
 	transformCallback: (cb) => cb,
@@ -335,6 +339,13 @@ test("balloon-window covers interactive elements, theme/manifest loading, and Ta
 		touches: [{ clientX: 10, clientY: 10 }],
 	}); // double tap triggers 1.25 scale
 	assert.strictEqual(userScaleState, 1.25);
+	const requestScaleEvent = emittedEvents.find(
+		(e) =>
+			e.event === "request-balloon-scale-change" &&
+			e.payload?.userScale === 1.25,
+	);
+	assert.ok(requestScaleEvent);
+
 	mockGestureBox.listeners.touchstart({
 		touches: [
 			{ clientX: 10, clientY: 10 },
@@ -348,6 +359,11 @@ test("balloon-window covers interactive elements, theme/manifest loading, and Ta
 		],
 	});
 	mockGestureBox.listeners.touchend({ touches: [] });
+	const pinchRequestEvent = emittedEvents.find(
+		(e) =>
+			e.event === "request-balloon-scale-change" && e.payload?.userScale > 1.25,
+	);
+	assert.ok(pinchRequestEvent);
 	setupWindowGestures(null, {});
 
 	// 7. Test Non-Tauri environment early return

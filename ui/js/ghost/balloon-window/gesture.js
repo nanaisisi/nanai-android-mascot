@@ -49,6 +49,7 @@ export function setupWindowGestures(
 	let touchStartDistance = 0;
 	let lastTouchTapTime = 0;
 	let isTouchDragging = false;
+	let pinchInitialScale = 1;
 
 	balloonBox.addEventListener(
 		"touchstart",
@@ -67,6 +68,9 @@ export function setupWindowGestures(
 						dpiScale: currentDpiScale,
 						finalScale: +(newScale * currentDpiScale).toFixed(4),
 					});
+					void emit("request-balloon-scale-change", {
+						userScale: newScale,
+					});
 					lastTouchTapTime = 0;
 					return;
 				}
@@ -80,6 +84,7 @@ export function setupWindowGestures(
 				const dx = e.touches[0].clientX - e.touches[1].clientX;
 				const dy = e.touches[0].clientY - e.touches[1].clientY;
 				touchStartDistance = Math.hypot(dx, dy);
+				pinchInitialScale = getUserScale();
 			}
 		},
 		{ passive: true },
@@ -93,12 +98,13 @@ export function setupWindowGestures(
 				const dy = e.touches[0].clientY - e.touches[1].clientY;
 				const currentDistance = Math.hypot(dx, dy);
 				const ratio = currentDistance / touchStartDistance;
-				if (Math.abs(ratio - 1) > 0.15) {
-					const currentScale = getUserScale();
-					const nextScale = Math.min(2.0, Math.max(0.5, currentScale * ratio));
+				if (Math.abs(ratio - 1) > 0.05) {
+					const nextScale = Math.min(
+						2.0,
+						Math.max(0.5, pinchInitialScale * ratio),
+					);
 					const roundedScale = +nextScale.toFixed(2);
 					onUserScaleChange(roundedScale);
-					touchStartDistance = currentDistance;
 					updateBalloonWindowScale(balloonBox, roundedScale, getDpiScale());
 				}
 			}
@@ -110,6 +116,18 @@ export function setupWindowGestures(
 		"touchend",
 		(e) => {
 			if (e.touches.length === 0) {
+				if (touchStartDistance > 0) {
+					const finalScale = getUserScale();
+					const currentDpiScale = getDpiScale();
+					void emit("balloon-scale-changed", {
+						userScale: finalScale,
+						dpiScale: currentDpiScale,
+						finalScale: +(finalScale * currentDpiScale).toFixed(4),
+					});
+					void emit("request-balloon-scale-change", {
+						userScale: finalScale,
+					});
+				}
 				touchStartDistance = 0;
 				if (isTouchDragging) {
 					isTouchDragging = false;

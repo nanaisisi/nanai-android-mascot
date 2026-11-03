@@ -480,6 +480,20 @@ fn test_animation_scheduler_state_coverage_boost() {
     scheduler.start_animation(0, 0, &long_shared);
     let _ = scheduler.step(60);
     scheduler.set_surface_with_shared_index(0, 1, &[short_shared]);
+
+    // Additional state edge cases
+    scheduler.set_surface_with_shared_index(5, 10, &[]);
+    scheduler.resume_animation(0, 9999);
+    let anim_active = SerikoAnimation {
+        id: 79,
+        name: None,
+        interval: Some(Interval::Always),
+        options: vec![],
+        collisions: vec![],
+        patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 100, wait: 50, wait_max: None, x: 0, y: 0, options: vec![] }],
+    };
+    scheduler.start_animation(0, 0, &anim_active);
+    assert!(!scheduler.is_animation_paused(0, 79));
 }
 
 #[test]

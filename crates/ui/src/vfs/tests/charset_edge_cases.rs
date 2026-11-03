@@ -41,3 +41,24 @@ fn test_encoding_edge_cases() {
     assert!(encode_to_charset("test", "utf-16le").is_some());
     assert!(encode_to_charset("test", "utf-16be").is_some());
 }
+
+#[test]
+fn test_encoding_uncovered_branches() {
+    let bad_utf16le = vec![0xFF, 0xFE, 0x00];
+    let (dec_le, _) = detect_and_decode(&bad_utf16le);
+    assert!(!dec_le.is_empty());
+
+    let bad_utf16be = vec![0xFE, 0xFF, 0x00];
+    let (dec_be, _) = detect_and_decode(&bad_utf16be);
+    assert!(!dec_be.is_empty());
+
+    let bad_sjis_header = b"charset,shift_jis\r\n\xff\xff\xff";
+    let (_, enc_sjis_err) = detect_and_decode(bad_sjis_header);
+    assert_eq!(enc_sjis_err, "Shift_JIS");
+
+    let utf8_header = b"charset,utf-8\r\nHello UTF-8 header";
+    let (_, enc_utf8_h) = detect_and_decode(utf8_header);
+    assert_eq!(enc_utf8_h, "UTF-8");
+
+    assert!(encode_to_charset("🚀", "euc-jp").is_none());
+}

@@ -173,3 +173,26 @@ fn test_ast_walk_and_collect_commands() {
     let script_cmds = ast.collect_commands_by_lifetime(SakuraScriptLifetime::Script);
     assert_eq!(script_cmds.len(), 3);
 }
+
+#[test]
+fn test_ast_cycle5_lifetime_classification() {
+    let commands = vec![
+        SakuraCommand::NewLineNoPause,
+        SakuraCommand::AutoPause,
+        SakuraCommand::NoUserBreak(true),
+        SakuraCommand::WindowState("minimize".into()),
+        SakuraCommand::SetWallpaper {
+            filename: "wall.png".into(),
+            option: "center".into(),
+        },
+        SakuraCommand::LockBalloonRepaint(true),
+        SakuraCommand::BalloonOffset { x: 10, y: 20 },
+    ];
+    let ast = build_sakura_ast(&commands);
+
+    let script_cmds = ast.collect_commands_by_lifetime(SakuraScriptLifetime::Script);
+    assert_eq!(script_cmds.len(), 5);
+
+    let perm_cmds = ast.collect_commands_by_lifetime(SakuraScriptLifetime::Permanent);
+    assert_eq!(perm_cmds.len(), 2);
+}

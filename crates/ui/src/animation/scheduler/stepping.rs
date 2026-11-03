@@ -52,13 +52,13 @@ impl AnimationScheduler {
                             }
                         }
                         DrawMethod::AlternativeStart(ids) => {
-                            if let Some(first) = ids.first() {
-                                to_start.push((scope_id, *first));
+                            if !ids.is_empty() {
+                                to_start.push((scope_id, ids[0]));
                             }
                         }
                         DrawMethod::AlternativeStop(ids) => {
-                            if let Some(first) = ids.first() {
-                                to_stop.push((scope_id, *first));
+                            if !ids.is_empty() {
+                                to_stop.push((scope_id, ids[0]));
                             }
                         }
                         _ => {}

@@ -207,6 +207,13 @@ fn test_direct_sstp_and_saori_request() {
         req.references.get("Reference2"),
         Some(&"test_text".to_string())
     );
+
+    let mut req_no_module = req.clone();
+    req_no_module.module = None;
+    assert!(req_no_module.is_saori_request());
+
+    req_no_module.version = "SSTP/1.4".to_string();
+    assert!(!req_no_module.is_saori_request());
 }
 
 #[test]

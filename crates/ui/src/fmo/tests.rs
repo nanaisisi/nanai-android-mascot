@@ -253,7 +253,7 @@ fn test_fmo_buffer_more_edge_cases() {
 
 #[test]
 fn test_fmo_buffer_uncovered_branches() {
-    let raw_lines = "custom_prefix.sakura.surface\x015\r\nssp_fmo_header_dup.path\x01path1\r\nssp_fmo_header_dup.path\x01path2\r\n";
+    let raw_lines = "ssp_fmo_header_nodot\x01val\r\ncustom_prefix.sakura.surface\x015\r\nssp_fmo_header_dup.path\x01path1\r\nssp_fmo_header_dup.path\x01path2\r\n";
     let mut padded = raw_lines.as_bytes().to_vec();
     padded.resize(65536, 0);
     let len_bytes = (padded.len() as u32).to_le_bytes();

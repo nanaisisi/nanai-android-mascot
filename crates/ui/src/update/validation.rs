@@ -8,8 +8,19 @@ pub fn validate_archive_entry_path(path: &str) -> Result<(), String> {
         return Err("Archive entry path is empty".to_string());
     }
 
-    if trimmed.starts_with('/') {
+    if trimmed.contains('\0') {
+        return Err(format!("Null byte not allowed in archive path: {path}"));
+    }
+
+    if trimmed.starts_with('/') || trimmed.starts_with('\\') {
         return Err(format!("Absolute path not allowed in archive: {path}"));
+    }
+
+    if trimmed.len() >= 2
+        && trimmed.as_bytes()[1] == b':'
+        && trimmed.as_bytes()[0].is_ascii_alphabetic()
+    {
+        return Err(format!("Windows drive letter not allowed in archive: {path}"));
     }
 
     let p = Path::new(trimmed);

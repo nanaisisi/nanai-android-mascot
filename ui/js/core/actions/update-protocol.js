@@ -12,6 +12,57 @@
  */
 
 /**
+ * UKADOC仕様: ネットワーク更新対象の種別 (Update Target Types)
+ * 定義: ghost, shell, balloon, plugin, headline
+ */
+export const UPDATE_TARGET_TYPES = Object.freeze([
+	"ghost",
+	"shell",
+	"balloon",
+	"plugin",
+	"headline",
+]);
+
+/**
+ * UKADOC仕様: ネットワーク更新理由 (Update Reasons / Modes)
+ * 定義: manual (手動), auto (定期/タイマー自動), script (さくらスクリプト \![update] による実行)
+ */
+export const UPDATE_REASONS = Object.freeze(["manual", "auto", "script"]);
+
+/**
+ * UKADOC仕様: ネットワーク更新成功理由 (Update Complete Results)
+ * 定義: none (更新なし), changed (更新あり)
+ */
+export const UPDATE_RESULT_COMPLETE = Object.freeze(["none", "changed"]);
+
+/**
+ * UKADOC仕様: ネットワーク失敗理由 (Update Result Failure Reasons)
+ * 定義: timeout, 404, md5 miss, fileio, artificial (ユーザ中断), readonly (書込禁止)
+ */
+export const UPDATE_RESULT_FAILURE_REASONS = Object.freeze([
+	"timeout",
+	"404",
+	"md5 miss",
+	"fileio",
+	"artificial",
+	"readonly",
+]);
+
+/**
+ * UKADOC仕様: ネットワーク更新イベントの発生順序 (Update Event Order)
+ * 標準ライフサイクル順序配列
+ */
+export const UPDATE_EVENT_ORDER = Object.freeze([
+	"OnUpdateProcessExec",
+	"OnUpdateBegin",
+	"OnUpdateReady",
+	"OnUpdate.OnDownloadBegin",
+	"OnUpdate.OnMD5CompareBegin",
+	"OnUpdate.OnMD5CompareComplete",
+	"OnUpdateComplete",
+]);
+
+/**
  * ネットワーク更新標準 SHIORI 引数生成ヘルパー (UKADOC準拠)
  * [Ref0, Ref1, Ref2, Ref3, Ref4] -> [ref0, ref1, "", "ghost", "manual"]
  * @param {string|number} [ref0]

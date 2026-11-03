@@ -13,6 +13,38 @@
  */
 
 /**
+ * UKADOC仕様: インストールの識別子 (Install Identifiers)
+ * 定義一覧: ghost, shell, balloon, plugin, headline, package, supplement, calendar.skin, calendar.plugin, profile, taromime
+ */
+export const INSTALL_IDENTIFIERS = Object.freeze([
+	"ghost",
+	"shell",
+	"balloon",
+	"plugin",
+	"headline",
+	"package",
+	"supplement",
+	"calendar.skin",
+	"calendar.plugin",
+	"profile",
+	"taromime",
+]);
+
+/**
+ * UKADOC仕様: インストールの失敗理由 (Install Reasons of Failure)
+ * 定義一覧: unsupported, extraction, unlha32 error, artificial, write error, invalid path, format error
+ */
+export const INSTALL_FAILURE_REASONS = Object.freeze([
+	"unsupported",
+	"extraction",
+	"unlha32 error",
+	"artificial",
+	"write error",
+	"invalid path",
+	"format error",
+]);
+
+/**
  * インストール対象種別の正規化 (UKADOC「インストールの識別子」準拠)
  * @param {string} type
  * @returns {string}
@@ -20,6 +52,9 @@
 export function normalizeInstallType(type) {
 	if (!type || typeof type !== "string") return "unknown";
 	const lower = type.trim().toLowerCase();
+	if (INSTALL_IDENTIFIERS.includes(lower)) {
+		return lower;
+	}
 	switch (lower) {
 		case "ghost":
 		case "shell":
@@ -30,6 +65,8 @@ export function normalizeInstallType(type) {
 		case "supplement":
 		case "calendar.skin":
 		case "calendar.plugin":
+		case "profile":
+		case "taromime":
 			return lower;
 		default:
 			return lower || "unknown";

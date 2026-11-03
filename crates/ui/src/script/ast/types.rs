@@ -66,6 +66,28 @@ impl SakuraAstNode {
         }
     }
 
+    /// AST 内のすべての選択肢 (id, label) を抽出する
+    pub fn find_choices(&self) -> Vec<(String, String)> {
+        let mut choices = Vec::new();
+        self.walk(&mut |node| {
+            if let SakuraAstNode::Choice { id, text, .. } = node {
+                choices.push((id.clone(), text.clone()));
+            }
+        });
+        choices
+    }
+
+    /// AST 内のすべてのサーフィス番号を抽出する
+    pub fn find_surfaces(&self) -> Vec<u32> {
+        let mut surfaces = Vec::new();
+        self.walk(&mut |node| {
+            if let SakuraAstNode::Command(SakuraCommand::Surface(s)) = node {
+                surfaces.push(*s);
+            }
+        });
+        surfaces
+    }
+
     /// ASTツリー内の全 SakuraCommand を順序通りに抽出する
     pub fn collect_commands(&self) -> Vec<SakuraCommand> {
         let mut commands = Vec::new();

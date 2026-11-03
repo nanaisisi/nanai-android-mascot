@@ -7,7 +7,7 @@
 
 ## 実装箇所
 
-- `crates/ui/src/surfaces/types/draw.rs:32` `/// その他の拡張メソッド（`start` / `stop` / `import` 等）`
+- `crates/ui/src/surfaces/types/draw.rs:32` `/// その他の拡張メソッド（`start`/`stop`/`import` 等）`
 - `crates/ui/src/shiori/protocol/response/parse/tests.rs:128` `fn test_parse_stop_at_empty_line() {`
 - `crates/ui/src/fmo/mod.rs:71` `/// ライフサイクルステートタグ ("active", "paused", "stopped")`
 - `crates/ui/src/fmo/mod.rs:163` `if s == "paused" || s == "stopped" || s == "invisible" {`

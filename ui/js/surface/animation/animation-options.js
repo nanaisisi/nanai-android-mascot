@@ -106,7 +106,9 @@ export function findAnimation(target, animIdOrNameOrScopeId, scopeIdParam = 0) {
 
 	const sid = String(instance.manager.currentSurfaceIdFor(scopeId));
 	const animList =
-		instance.manager.animations?.[sid] || instance.manager.animations?.default || [];
+		instance.manager.animations?.[sid] ||
+		instance.manager.animations?.default ||
+		[];
 	const targetStr = String(animIdOrName).trim().toLowerCase();
 	const targetNum = Number.parseInt(targetStr, 10);
 	return (
@@ -127,7 +129,11 @@ export function findAnimation(target, animIdOrNameOrScopeId, scopeIdParam = 0) {
  * @param {number|string} [animIdOrNameParam]
  * @returns {boolean}
  */
-export function isAnimationRunning(target = 0, scopeIdOrAnimId, animIdOrNameParam) {
+export function isAnimationRunning(
+	target = 0,
+	scopeIdOrAnimId,
+	animIdOrNameParam,
+) {
 	let instance, scopeId, animIdOrName;
 	if (isInstance(target)) {
 		instance = target;
@@ -226,7 +232,11 @@ export function setAnimationOffset(
  * @param {number|string} [animIdOrNameParam]
  * @returns {{ x: number, y: number }}
  */
-export function getAnimationOffset(target = 0, scopeIdOrAnimId, animIdOrNameParam) {
+export function getAnimationOffset(
+	target = 0,
+	scopeIdOrAnimId,
+	animIdOrNameParam,
+) {
 	let instance, scopeId, animIdOrName;
 	if (isInstance(target)) {
 		instance = target;
@@ -260,7 +270,11 @@ export function pauseAnimation(target = 0, scopeIdOrAnimId, animIdOrNameParam) {
 	surfaceAnimationTimers.pauseAnimation.call(instance, scopeId, id);
 }
 
-export function resumeAnimation(target = 0, scopeIdOrAnimId, animIdOrNameParam) {
+export function resumeAnimation(
+	target = 0,
+	scopeIdOrAnimId,
+	animIdOrNameParam,
+) {
 	let instance, scopeId, animIdOrName;
 	if (isInstance(target)) {
 		instance = target;
@@ -277,7 +291,11 @@ export function resumeAnimation(target = 0, scopeIdOrAnimId, animIdOrNameParam) 
 	surfaceAnimationTimers.resumeAnimation.call(instance, scopeId, id);
 }
 
-export function isAnimationPaused(target = 0, scopeIdOrAnimId, animIdOrNameParam) {
+export function isAnimationPaused(
+	target = 0,
+	scopeIdOrAnimId,
+	animIdOrNameParam,
+) {
 	let instance, scopeId, animIdOrName;
 	if (isInstance(target)) {
 		instance = target;

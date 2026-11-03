@@ -4,22 +4,20 @@
  */
 
 export {
-	_applyAnimationFrame,
-	_playAnimationPatterns,
-	_playOnePat,
-	_playTimelineFrames,
-	renderAnimationFrame,
-} from "./playback/playback-frames.js";
-
-export {
 	playAnimationById,
 	playAnimationPatterns,
 	waitForAnimation,
 } from "./playback/playback-control.js";
-
 export {
 	onCharSpoken,
 	onScriptEnd,
 	onTalkEnd,
 	onTalkStart,
 } from "./playback/playback-events.js";
+export {
+	_applyAnimationFrame,
+	_playAnimationPatterns,
+	_playOnePat,
+	_playTimelineFrames,
+	renderAnimationFrame,
+} from "./playback/playback-frames.js";

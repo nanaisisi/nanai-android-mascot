@@ -8,9 +8,7 @@ export function openTeachBox(params = [], options = {}) {
 	this.closeTeachBox();
 
 	if (notifyStart) {
-		this.app.ghostController
-			?.sendShioriEvent("OnTeachStart")
-			?.catch(() => {});
+		this.app.ghostController?.sendShioriEvent("OnTeachStart")?.catch(() => {});
 	}
 
 	let defaultText = "";

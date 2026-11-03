@@ -73,3 +73,25 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_handle_raiselike_edge_cases() {
+        let mut commands = Vec::new();
+        let mut cb = |cmd| commands.push(cmd);
+
+        let mut chars = "no_bracket".chars().peekable();
+        handle_raiselike(&mut chars, &mut cb);
+
+        let mut chars = "[]".chars().peekable();
+        handle_raiselike(&mut chars, &mut cb);
+
+        let mut chars = "[unknown_cmd, arg1, arg2]".chars().peekable();
+        handle_raiselike(&mut chars, &mut cb);
+
+        assert!(!commands.is_empty());
+    }
+}

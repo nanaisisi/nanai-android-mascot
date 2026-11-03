@@ -97,3 +97,84 @@ pub(crate) fn handle_postmessage(chars: &mut CharsIter<'_>) -> Option<(String, S
     let lparam = parts.get(2).cloned().unwrap_or_default();
     Some((umsg, wparam, lparam))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_basic_handlers_edge_cases() {
+        let mut chars = "invalid".chars().peekable();
+        assert_eq!(handle_target_p(&mut chars), None);
+
+        let mut chars = "[abc]".chars().peekable();
+        assert_eq!(handle_surface(&mut chars), None);
+
+        let mut chars = "[half]".chars().peekable();
+        assert_eq!(handle_newline(&mut chars), Some(true));
+
+        let mut chars = "[30]".chars().peekable();
+        assert_eq!(handle_newline(&mut chars), Some(true));
+
+        let mut chars = "[80]".chars().peekable();
+        assert_eq!(handle_newline(&mut chars), Some(false));
+
+        let mut chars = "[invalid]".chars().peekable();
+        assert_eq!(handle_newline(&mut chars), Some(false));
+
+        let mut chars = "3".chars().peekable();
+        assert_eq!(handle_newline(&mut chars), Some(false));
+
+        let mut chars = "".chars().peekable();
+        assert_eq!(handle_animation(&mut chars), None);
+
+        let mut chars = "[]".chars().peekable();
+        assert_eq!(handle_animation(&mut chars), None);
+
+        let mut chars = "[ , wait]".chars().peekable();
+        assert_eq!(handle_animation(&mut chars), None);
+
+        let mut chars = "[abc]".chars().peekable();
+        assert_eq!(handle_animation(&mut chars), None);
+
+        let mut chars = "[10, wait]".chars().peekable();
+        assert_eq!(handle_animation(&mut chars), Some((10, true)));
+
+        let mut chars = "5".chars().peekable();
+        assert_eq!(handle_animation(&mut chars), Some((5, false)));
+
+        let mut chars = "[invalid]".chars().peekable();
+        assert_eq!(handle_balloon(&mut chars), None);
+
+        let mut chars = "no_brackets".chars().peekable();
+        assert_eq!(handle_font(&mut chars), None);
+
+        let mut chars = "[Arial, 12]".chars().peekable();
+        assert_eq!(handle_font(&mut chars), Some(("Arial".to_string(), Some("12".to_string()))));
+
+        let mut chars = "no_brackets".chars().peekable();
+        assert_eq!(handle_choice(&mut chars), None);
+
+        let mut chars = "[temp, Label, ID, arg1, arg2]".chars().peekable();
+        let (label, id, args) = handle_choice(&mut chars).unwrap();
+        assert_eq!(label, "Label");
+        assert_eq!(id, "ID");
+        assert_eq!(args, vec!["arg1", "arg2"]);
+
+        let mut chars = "[Label, ID]".chars().peekable();
+        let (label, id, args) = handle_choice(&mut chars).unwrap();
+        assert_eq!(label, "Label");
+        assert_eq!(id, "ID");
+        assert!(args.is_empty());
+
+        let mut chars = "[Label, ID, arg1]".chars().peekable();
+        let (_, _, args) = handle_choice(&mut chars).unwrap();
+        assert_eq!(args, vec!["arg1"]);
+
+        let mut chars = "no_brackets".chars().peekable();
+        assert_eq!(handle_postmessage(&mut chars), None);
+
+        let mut chars = "[msg, w, l]".chars().peekable();
+        assert_eq!(handle_postmessage(&mut chars), Some(("msg".to_string(), "w".to_string(), "l".to_string())));
+    }
+}

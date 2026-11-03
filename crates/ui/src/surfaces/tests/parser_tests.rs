@@ -388,6 +388,8 @@ animation1.pattern3,alternativestop,100,50
 animation1.pattern4,parallelstart,100,50
 animation1.pattern5,parallelstop,100,50
 animation1.pattern6,base,6,100-50,0,0,(text),[bracket]
+animation1.pattern7,base,6,invalid,0,0
+animation1.pattern8,base,6,85-abc,0,0
 }
 ";
     let txt = SurfacesTxt::parse(sample);

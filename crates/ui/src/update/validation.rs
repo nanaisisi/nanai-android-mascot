@@ -8,7 +8,7 @@ pub fn validate_archive_entry_path(path: &str) -> Result<(), String> {
         return Err("Archive entry path is empty".to_string());
     }
 
-    if trimmed.starts_with('/') {
+    if trimmed.starts_with('/') || (trimmed.len() >= 2 && trimmed.as_bytes()[1] == b':' && trimmed.as_bytes()[0].is_ascii_alphabetic()) {
         return Err(format!("Absolute path not allowed in archive: {path}"));
     }
 

@@ -23,6 +23,42 @@ export function enqueue(script) {
 }
 
 /**
+ * 優先度付き（先頭割り込み）でスクリプトをキューに追加 (Cycle 6)
+ * @param {string} script
+ * @returns {Promise<any>}
+ */
+export function enqueuePriority(script) {
+	return new Promise((resolve, reject) => {
+		const job = {
+			id: this.nextJobId++,
+			script,
+			resolve,
+			reject,
+			priority: true,
+		};
+		this.queue.unshift(job);
+		this.emit("queue:enqueued", {
+			job,
+			priority: true,
+			queueLength: this.queue.length,
+		});
+		this._processQueue();
+	});
+}
+
+/**
+ * 現在再生中のスクリプトを中断して直ちに指定スクリプトを実行 (Cycle 6)
+ * @param {string} script
+ * @returns {Promise<any>}
+ */
+export function interrupt(script) {
+	if (this.player) {
+		this.player.skip();
+	}
+	return this.enqueuePriority(script);
+}
+
+/**
  * 再生キューから次のジョブを取得
  */
 export function dequeue() {
@@ -50,6 +86,9 @@ export function clearQueue() {
  */
 export function stop() {
 	this.clearQueue();
+	if (this.syncObjects) {
+		this.syncObjects.clear();
+	}
 	if (this.player) {
 		this.player.skip();
 	}
@@ -66,6 +105,9 @@ export function destroy() {
 	this.emit("playback:destroyed");
 	this.listeners.clear();
 	this.isPaused = true;
+	if (this.syncObjects) {
+		this.syncObjects.clear();
+	}
 	if (this.player?.destroy) {
 		this.player.destroy();
 	}
@@ -164,6 +206,30 @@ export function getIsProcessing() {
  */
 export function getIsQuickMode() {
 	return this.isQuickMode;
+}
+
+/**
+ * 再生コントローラーの総合ステータステレメトリを取得 (Cycle 6)
+ * @returns {{
+ *   isProcessing: boolean,
+ *   isPaused: boolean,
+ *   isQuickMode: boolean,
+ *   queueLength: number,
+ *   currentJobId: number|null,
+ *   waitMultiplier: number,
+ *   charWaitMs: number|null
+ * }}
+ */
+export function getStatus() {
+	return {
+		isProcessing: this.isProcessing,
+		isPaused: this.isPaused,
+		isQuickMode: this.isQuickMode,
+		queueLength: this.queue.length,
+		currentJobId: this.currentJob ? this.currentJob.id : null,
+		waitMultiplier: this.waitMultiplier,
+		charWaitMs: this.charWaitMs,
+	};
 }
 
 /**

@@ -30,7 +30,6 @@ test("menuMethods covers toggleMenu, toggleHtmlMenu, syncMenuGhosts, hideMenu, a
 			shells: ["master"],
 			currentShell: "master",
 		},
-		syncMenuGhosts() {},
 		currentBalloonTheme: "default",
 		availableBalloons: [{ name: "Default", dir_name: "default" }],
 	};
@@ -72,12 +71,14 @@ test("menuMethods covers toggleMenu, toggleHtmlMenu, syncMenuGhosts, hideMenu, a
 	globalThis.window = globalThis;
 
 	let syncCalled = false;
+	const originalSync = mockApp.syncMenuGhosts;
 	mockApp.syncMenuGhosts = () => {
 		syncCalled = true;
 	};
 	mockApp.toggleMenu(10, 20, 0);
 	await new Promise((r) => setTimeout(r, 10));
 	assert.equal(syncCalled, true);
+	mockApp.syncMenuGhosts = originalSync;
 
 	// 7. toggleMenu with Tauri show_menu_window fail falling back to show_context_menu
 	globalThis.__TAURI_INTERNALS__.invoke = async (cmd) => {
@@ -86,6 +87,64 @@ test("menuMethods covers toggleMenu, toggleHtmlMenu, syncMenuGhosts, hideMenu, a
 	};
 	mockApp.toggleMenu(10, 20, 0);
 	await new Promise((r) => setTimeout(r, 10));
+
+	// 7b. show_context_menu also fails, falling back to toggleHtmlMenu
+	let htmlMenuToggled = false;
+	const originalToggleHtml = mockApp.toggleHtmlMenu;
+	mockApp.toggleHtmlMenu = () => {
+		htmlMenuToggled = true;
+	};
+	globalThis.__TAURI_INTERNALS__.invoke = async (cmd) => {
+		throw new Error(`fail ${cmd}`);
+	};
+	mockApp.toggleMenu(10, 20, 0);
+	await new Promise((r) => setTimeout(r, 10));
+	assert.equal(htmlMenuToggled, true);
+	mockApp.toggleHtmlMenu = originalToggleHtml;
+
+	delete globalThis.__TAURI_INTERNALS__;
+
+	// 8. syncMenuGhosts full coverage: iframe postMessages and Tauri emits
+	const posted = [];
+	const mockIframe = {
+		contentWindow: {
+			postMessage(msg, origin) {
+				posted.push({ msg, origin });
+			},
+		},
+	};
+	globalThis.document = {
+		getElementById: (id) => (id === "menu-iframe" ? mockIframe : null),
+	};
+
+	// Test non-tauri branch with invalid JSON in localStorage to trigger catch branch
+	globalThis.localStorage.getItem = () => "INVALID_JSON{";
+	mockApp.syncMenuGhosts(0);
+	assert.ok(posted.length >= 4);
+
+	// Test with fallback ghost controller (no ghosts array, no shells array)
+	mockApp.ghostController = {
+		ghosts: null,
+		currentGhost: null,
+		shells: null,
+		currentShell: null,
+	};
+	mockApp.syncMenuGhosts(1);
+
+	// Test Tauri branch with emit
+	const emitted = [];
+	globalThis.__TAURI_INTERNALS__ = {
+		invoke: async (cmd, args) => {
+			if (cmd === "plugin:event|emit") {
+				emitted.push(args);
+				return;
+			}
+		},
+		transformCallback: (cb) => cb,
+	};
+	mockApp.cachedMenuCaptions = { "biffbutton.caption": "Check Mail" };
+	mockApp.syncMenuGhosts(0);
+	assert.ok(emitted.length > 0);
 
 	delete globalThis.__TAURI_INTERNALS__;
 	assert.ok(true);

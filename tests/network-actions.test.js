@@ -76,6 +76,20 @@ test("networkActions.checkEmail covers all branches (Tauri & non-Tauri)", async 
 	await mockApp.checkEmail("broken");
 	assert.ok(eventsSent.some((e) => e.ev === "OnBIFFFailure"));
 
+	// 5. Tauri environment where invoke("check_email") rejects (covers .catch(() => null) on line 20)
+	globalThis.__TAURI_INTERNALS__ = {
+		invoke: async (cmd) => {
+			if (cmd === "check_email") throw new Error("Rust check_email failed");
+		},
+		transformCallback: (cb) => cb,
+	};
+	eventsSent.length = 0;
+	mockApp.ghostController.sendShioriEvent = async (ev, args) => {
+		eventsSent.push({ ev, args });
+	};
+	await mockApp.checkEmail("fail_account");
+	assert.ok(eventsSent.some((e) => e.ev === "OnBIFFComplete"));
+
 	delete globalThis.__TAURI_INTERNALS__;
 	assert.ok(true);
 });

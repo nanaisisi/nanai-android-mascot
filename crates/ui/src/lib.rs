@@ -48,8 +48,9 @@ pub use update::{
     UpdatePackage, parse_install_manifest, parse_update_definition, validate_archive_entry_path,
 };
 pub use vfs::{
-    MockVfs, VfsResolver, detect_and_decode, normalize_vfs_path, open_shift_jis_file,
-    open_text_file, resolve_vfs_path,
+    MockVfs, OverlayVfs, VfsResolver, VirtualFileSystem, detect_and_decode, encode_to_charset,
+    is_safe_vfs_path, normalize_newlines, normalize_vfs_path, open_shift_jis_file, open_text_file,
+    resolve_vfs_path, sanitize_vfs_path,
 };
 
 #[cfg(test)]

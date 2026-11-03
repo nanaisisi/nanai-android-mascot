@@ -20,40 +20,117 @@ fn test_active_animation_edge_cases() {
     let _ = empty_anim.clone();
 
     // Single pattern
-    let mut anim1 = ActiveAnimation::new(1, 0, vec![
-        AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 100, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] }
-    ]);
+    let mut anim1 = ActiveAnimation::new(
+        1,
+        0,
+        vec![AnimationPattern {
+            index: 0,
+            method: DrawMethod::Overlay,
+            surface: 100,
+            wait: 10,
+            wait_max: None,
+            x: 0,
+            y: 0,
+            options: vec![],
+        }],
+    );
     assert!(anim1.advance(15, 0).is_some());
     assert!(anim1.advance(15, 0).is_none());
     assert!(anim1.is_finished);
 
     // Paused animation check
-    let mut anim_paused = ActiveAnimation::new(1, 0, vec![
-        AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 100, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] }
-    ]);
+    let mut anim_paused = ActiveAnimation::new(
+        1,
+        0,
+        vec![AnimationPattern {
+            index: 0,
+            method: DrawMethod::Overlay,
+            surface: 100,
+            wait: 10,
+            wait_max: None,
+            x: 0,
+            y: 0,
+            options: vec![],
+        }],
+    );
     anim_paused.is_paused = true;
     assert!(anim_paused.advance(100, 0).is_none());
 
     // Surface -1 check (is_surface_minus_one)
-    let mut anim_minus_one = ActiveAnimation::new(1, 0, vec![
-        AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: -1, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] }
-    ]);
+    let mut anim_minus_one = ActiveAnimation::new(
+        1,
+        0,
+        vec![AnimationPattern {
+            index: 0,
+            method: DrawMethod::Overlay,
+            surface: -1,
+            wait: 10,
+            wait_max: None,
+            x: 0,
+            y: 0,
+            options: vec![],
+        }],
+    );
     assert!(anim_minus_one.advance(15, 0).is_some());
     assert!(anim_minus_one.is_finished);
 
     // Intermediate surface -1 test (tests is_surface_minus_one when is_last is false)
-    let mut anim_mid_minus_one = ActiveAnimation::new(3, 0, vec![
-        AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: -1, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] },
-        AnimationPattern { index: 1, method: DrawMethod::Overlay, surface: 102, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] },
-    ]);
+    let mut anim_mid_minus_one = ActiveAnimation::new(
+        3,
+        0,
+        vec![
+            AnimationPattern {
+                index: 0,
+                method: DrawMethod::Overlay,
+                surface: -1,
+                wait: 10,
+                wait_max: None,
+                x: 0,
+                y: 0,
+                options: vec![],
+            },
+            AnimationPattern {
+                index: 1,
+                method: DrawMethod::Overlay,
+                surface: 102,
+                wait: 10,
+                wait_max: None,
+                x: 0,
+                y: 0,
+                options: vec![],
+            },
+        ],
+    );
     assert!(anim_mid_minus_one.advance(15, 0).is_some());
     assert!(anim_mid_minus_one.is_finished);
 
     // Multi pattern (exercises else if branch for next_pat wait)
-    let mut anim2 = ActiveAnimation::new(2, 0, vec![
-        AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 100, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] },
-        AnimationPattern { index: 1, method: DrawMethod::Overlay, surface: 101, wait: 20, wait_max: None, x: 0, y: 0, options: vec![] },
-    ]);
+    let mut anim2 = ActiveAnimation::new(
+        2,
+        0,
+        vec![
+            AnimationPattern {
+                index: 0,
+                method: DrawMethod::Overlay,
+                surface: 100,
+                wait: 10,
+                wait_max: None,
+                x: 0,
+                y: 0,
+                options: vec![],
+            },
+            AnimationPattern {
+                index: 1,
+                method: DrawMethod::Overlay,
+                surface: 101,
+                wait: 20,
+                wait_max: None,
+                x: 0,
+                y: 0,
+                options: vec![],
+            },
+        ],
+    );
     assert_eq!(anim2.next_step_at_ms, 10);
     assert!(anim2.advance(15, 0).is_some()); // pattern 0
     assert_eq!(anim2.next_step_at_ms, 30); // 10 + 20
@@ -121,8 +198,17 @@ fn test_parsed_animation_options_coverage() {
             "background".to_string(),
             "shared-index".to_string(),
         ],
-        vec!["exclusive".to_string(), "(5,6)".to_string(), "shared_index".to_string()],
-        vec!["exclusive()".to_string(), "()".to_string(), "exclusive+(abc)".to_string(), "(xyz)".to_string()],
+        vec![
+            "exclusive".to_string(),
+            "(5,6)".to_string(),
+            "shared_index".to_string(),
+        ],
+        vec![
+            "exclusive()".to_string(),
+            "()".to_string(),
+            "exclusive+(abc)".to_string(),
+            "(xyz)".to_string(),
+        ],
     ]);
     assert!(opts.is_exclusive);
     assert!(opts.is_background);

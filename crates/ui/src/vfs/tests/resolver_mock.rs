@@ -332,9 +332,15 @@ fn test_vfs_resolver_virtual_file_system_trait() {
 
     assert!(vfs.exists("sub/test.txt"));
     assert_eq!(vfs.read_text("sub/test.txt").unwrap(), "hello trait");
-    assert_eq!(vfs.read_binary("sub/test.txt").unwrap(), b"hello trait".to_vec());
+    assert_eq!(
+        vfs.read_binary("sub/test.txt").unwrap(),
+        b"hello trait".to_vec()
+    );
     assert_eq!(vfs.list_dir("sub").unwrap(), vec!["test.txt".to_string()]);
-    assert_eq!(vfs.walk_files("").unwrap(), vec!["sub/test.txt".to_string()]);
+    assert_eq!(
+        vfs.walk_files("").unwrap(),
+        vec!["sub/test.txt".to_string()]
+    );
 
     let _ = std::fs::remove_dir_all(&temp);
 }

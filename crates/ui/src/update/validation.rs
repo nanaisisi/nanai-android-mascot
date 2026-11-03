@@ -12,6 +12,15 @@ pub fn validate_archive_entry_path(path: &str) -> Result<(), String> {
         return Err(format!("Absolute path not allowed in archive: {path}"));
     }
 
+    // Reject Windows drive letter prefixes (e.g. C:, D:) regardless of host OS
+    let trimmed_bytes = trimmed.as_bytes();
+    if trimmed_bytes.len() >= 2
+        && trimmed_bytes[0].is_ascii_alphabetic()
+        && trimmed_bytes[1] == b':'
+    {
+        return Err(format!("Drive prefix not allowed in archive: {path}"));
+    }
+
     let p = Path::new(trimmed);
     for component in p.components() {
         match component {

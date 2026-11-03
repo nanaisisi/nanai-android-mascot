@@ -12,8 +12,23 @@ import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
  * - installedshellname (現在のゴーストに同梱のシェル名)
  * - ghostpathlist (読み込み可能なゴーストフォルダのフルパス)
  * - installedballoonname / balloonpathlist (バルーン情報一覧)
- * - basewareversion / uniqueid
- * - OnNotifyOSInfo, OnNotifySelfInfo, OnNotifyBalloonInfo
+ * - installedplugin / pluginpathlist / installedheadlinename / headlinepathlist
+ * - installedcalendarpluginname / calendarpluginpathlist / installedcalendarskinname / calendarskinpathlist
+ * - otherghostname / ownerghostname / configuredbiffname / enable_debug / enable_log / rateofusegraph
+ * - basewareversion / uniqueid / hwnd
+ * - OnNotifyOSInfo, OnNotifySelfInfo, OnNotifyBalloonInfo, OnNotifyShellInfo, OnNotifyDressupInfo
+ * - OnNotifyUserInfo, OnNotifyFontInfo, OnNotifyHolidayInfo, OnNotifyInternationalInfo
+ * - OnBatteryNotify, OnBatteryCritical, OnBatteryLow, OnBatteryChargingStart, OnBatteryChargingStop
+ * - OnDarkTheme, OnDisplayChange, OnDisplayChangeEx, OnDisplayPowerStatus, OnDisplayHandover
+ * - OnScreenSaverStart, OnScreenSaverEnd, OnDeviceArrival, OnDeviceRemove
+ * - OnSessionLock, OnSessionUnlock, OnSessionDisconnect, OnSessionReconnect
+ * - OnTabletMode, OnWindowModeChange, OnMemoryLoadHigh, OnMemoryLoadLow
+ * - OnCPULoadHigh, OnCPULoadLow, OnNetworkStatusChange, OnNetworkHeavy
+ * - OnDesktopWallpaperChange, OnRecycleBinEmpty, OnRecycleBinEmptyFromOther, OnRecycleBinStatusUpdate, OnOSUpdateInfo
+ * - OnVanished, OnVanishSelecting, OnVanishSelected, OnVanishCancel, OnVanishButtonHold, OnOtherGhostVanished
+ * - OnURLDropped, OnURLDropping, OnURLDragDropping, OnURLDropFailure, OnURLQuery, OnXUkagakaLinkOpen
+ * - OnHeadlinesenseBegin, OnHeadlinesense.OnFind, OnHeadlinesenseComplete, OnHeadlinesenseFailure
+ * - OnRSSBegin, OnRSSComplete, OnRSSFailure
  * - OnBalloonBreak, OnBalloonClose, OnBalloonTimeout, OnBalloonScaling (バルーン操作イベント)
  * - OnBalloonChange, OnBasewareUpdated, OnBasewareUpdating, OnBoot, OnCacheRestore, OnCacheSuspend
  * - OnClose, OnCloseAll, OnDestroy, OnDressupChanged, OnFirstBoot, OnFullScreenAppMinimize
@@ -103,6 +118,192 @@ export const shioriNotifyMethods = {
 			balloonName,
 			balloonPath,
 		]);
+	},
+
+	/**
+	 * シェル構成情報通知 (OnNotifyShellInfo) を送信 (UKADOC 規格準拠)
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} shellName シェル名
+	 * @param {string} [shellPath] シェルパス
+	 */
+	async notifyShellInfo(shellName = "master", shellPath = "") {
+		return await this.sendShioriNotify("OnNotifyShellInfo", [
+			shellName,
+			shellPath,
+		]);
+	},
+
+	/**
+	 * 着せ替え構成情報通知 (OnNotifyDressupInfo) を送信 (UKADOC 規格準拠)
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {Array<string>} dressupItems 着せ替えパーツ定義リスト
+	 */
+	async notifyDressupInfo(dressupItems = []) {
+		return await this.sendShioriNotify("OnNotifyDressupInfo", dressupItems);
+	},
+
+	/**
+	 * ユーザー設定情報通知 (OnNotifyUserInfo) を送信 (UKADOC 規格準拠)
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} userName ユーザー名
+	 * @param {string} [userBirthday] 誕生日
+	 * @param {string} [userGender] 性別
+	 */
+	async notifyUserInfo(
+		userName = "ユーザー",
+		userBirthday = "",
+		userGender = "",
+	) {
+		return await this.sendShioriNotify("OnNotifyUserInfo", [
+			userName,
+			userBirthday,
+			userGender,
+		]);
+	},
+
+	/**
+	 * フォント設定情報通知 (OnNotifyFontInfo) を送信 (UKADOC 規格準拠)
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} fontName フォント名
+	 * @param {string|number} fontSize フォントサイズ
+	 */
+	async notifyFontInfo(fontName = "sans-serif", fontSize = 12) {
+		return await this.sendShioriNotify("OnNotifyFontInfo", [
+			fontName,
+			String(fontSize),
+		]);
+	},
+
+	/**
+	 * 祝日・休日情報通知 (OnNotifyHolidayInfo) を送信 (UKADOC 規格準拠)
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} holidayName 祝日名
+	 * @param {string} [holidayDate] 日付 (YYYY-MM-DD)
+	 */
+	async notifyHolidayInfo(holidayName = "", holidayDate = "") {
+		return await this.sendShioriNotify("OnNotifyHolidayInfo", [
+			holidayName,
+			holidayDate,
+		]);
+	},
+
+	/**
+	 * 国際化・地域設定通知 (OnNotifyInternationalInfo) を送信 (UKADOC 規格準拠)
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} locale ロケール (例: "ja-JP")
+	 * @param {string} [timezone] タイムゾーン
+	 */
+	async notifyInternationalInfo(locale = "ja-JP", timezone = "Asia/Tokyo") {
+		return await this.sendShioriNotify("OnNotifyInternationalInfo", [
+			locale,
+			timezone,
+		]);
+	},
+
+	/**
+	 * バッテリー・電源状態通知 (OnBatteryNotify, OnBatteryCritical, OnBatteryLow, OnBatteryChargingStart, OnBatteryChargingStop)
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {'notify'|'critical'|'low'|'charging_start'|'charging_stop'} type 状態種別
+	 * @param {number|string} level バッテリー残量 (0..100)
+	 * @param {string|number} [status] 電源接続状態 (1: AC, 0: Battery)
+	 */
+	async notifyBatteryState(type = "notify", level = 100, status = "1") {
+		const eventMap = {
+			notify: "OnBatteryNotify",
+			critical: "OnBatteryCritical",
+			low: "OnBatteryLow",
+			charging_start: "OnBatteryChargingStart",
+			charging_stop: "OnBatteryChargingStop",
+		};
+		const event = eventMap[type] || "OnBatteryNotify";
+		return await this.sendShioriNotify(event, [String(level), String(status)]);
+	},
+
+	/**
+	 * OS環境・ディスプレイ・テーマ状態通知 (OnDarkTheme, OnDisplayChange, OnDisplayChangeEx, OnDisplayPowerStatus, OnDisplayHandover)
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} event イベントID
+	 * @param {Array<string|number>} [references=[]]
+	 */
+	async notifyOsEnvironment(event, references = []) {
+		return await this.sendShioriNotify(event, references);
+	},
+
+	/**
+	 * スクリーンセーバー状態通知 (OnScreenSaverStart, OnScreenSaverEnd)
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {boolean} isStarted
+	 */
+	async notifyScreenSaver(isStarted) {
+		const event = isStarted ? "OnScreenSaverStart" : "OnScreenSaverEnd";
+		return await this.sendShioriNotify(event, []);
+	},
+
+	/**
+	 * デバイス着脱通知 (OnDeviceArrival, OnDeviceRemove)
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {'arrival'|'remove'} action
+	 * @param {string} deviceName デバイス名
+	 */
+	async notifyDeviceChange(action, deviceName = "") {
+		const event = action === "arrival" ? "OnDeviceArrival" : "OnDeviceRemove";
+		return await this.sendShioriNotify(event, [deviceName]);
+	},
+
+	/**
+	 * セッション状態通知 (OnSessionLock, OnSessionUnlock, OnSessionDisconnect, OnSessionReconnect)
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {'lock'|'unlock'|'disconnect'|'reconnect'} sessionState
+	 */
+	async notifySessionState(sessionState) {
+		const eventMap = {
+			lock: "OnSessionLock",
+			unlock: "OnSessionUnlock",
+			disconnect: "OnSessionDisconnect",
+			reconnect: "OnSessionReconnect",
+		};
+		const event = eventMap[sessionState] || "OnSessionLock";
+		return await this.sendShioriNotify(event, []);
+	},
+
+	/**
+	 * モード・負荷・ネットワーク通知
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} event イベント名 (OnTabletMode, OnWindowModeChange, OnMemoryLoadHigh, OnMemoryLoadLow, OnCPULoadHigh, OnCPULoadLow, OnNetworkStatusChange, OnNetworkHeavy, OnDesktopWallpaperChange, OnRecycleBinEmpty, OnRecycleBinEmptyFromOther, OnRecycleBinStatusUpdate, OnOSUpdateInfo)
+	 * @param {Array<string|number>} [references=[]]
+	 */
+	async notifySystemStatus(event, references = []) {
+		return await this.sendShioriNotify(event, references);
+	},
+
+	/**
+	 * 消滅・アンインストール通知 (OnVanished, OnVanishSelecting, OnVanishSelected, OnVanishCancel, OnVanishButtonHold, OnOtherGhostVanished)
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} event イベント名
+	 * @param {Array<string|number>} [references=[]]
+	 */
+	async notifyVanishEvent(event, references = []) {
+		return await this.sendShioriNotify(event, references);
+	},
+
+	/**
+	 * URL ドロップイベント通知 (OnURLDropped, OnURLDropping, OnURLDragDropping, OnURLDropFailure, OnURLQuery, OnXUkagakaLinkOpen)
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} event イベント名
+	 * @param {Array<string|number>} [references=[]]
+	 */
+	async notifyUrlDropEvent(event, references = []) {
+		return await this.sendShioriNotify(event, references);
+	},
+
+	/**
+	 * RSS / ヘッドラインセンス通知 (OnHeadlinesenseBegin, OnHeadlinesense.OnFind, OnHeadlinesenseComplete, OnHeadlinesenseFailure, OnRSSBegin, OnRSSComplete, OnRSSFailure)
+	 * @this {import('./ghost.js').GhostController}
+	 * @param {string} event イベント名
+	 * @param {Array<string|number>} [references=[]]
+	 */
+	async notifyHeadlineRssEvent(event, references = []) {
+		return await this.sendShioriNotify(event, references);
 	},
 
 	/**
@@ -305,6 +506,71 @@ export const shioriNotifyMethods = {
 		if (dirName) {
 			await this.sendShioriNotify("uniqueid", [dirName]);
 		}
+
+		// hwnd / ウィンドウハンドル (Web/Android擬似ハンドル)
+		await this.sendShioriNotify("hwnd", [1001, 1002]);
+
+		// プラグイン・拡張情報通知 (installedplugin / pluginpathlist)
+		if (this.plugins?.length > 0) {
+			await this.sendShioriNotify("installedplugin", this.plugins);
+			await this.sendShioriNotify(
+				"pluginpathlist",
+				this.pluginPaths || this.plugins.map((p) => `plugins/${p}`),
+			);
+		}
+
+		// ヘッドライン情報通知 (installedheadlinename / headlinepathlist)
+		if (this.headlines?.length > 0) {
+			await this.sendShioriNotify("installedheadlinename", this.headlines);
+			await this.sendShioriNotify(
+				"headlinepathlist",
+				this.headlinePaths || this.headlines.map((h) => `headlines/${h}`),
+			);
+		}
+
+		// カレンダープラグイン・スキン情報通知
+		if (this.calendarPlugins?.length > 0) {
+			await this.sendShioriNotify(
+				"installedcalendarpluginname",
+				this.calendarPlugins,
+			);
+			await this.sendShioriNotify(
+				"calendarpluginpathlist",
+				this.calendarPluginPaths ||
+					this.calendarPlugins.map((c) => `calendar/plugins/${c}`),
+			);
+		}
+		if (this.calendarSkins?.length > 0) {
+			await this.sendShioriNotify(
+				"installedcalendarskinname",
+				this.calendarSkins,
+			);
+			await this.sendShioriNotify(
+				"calendarskinpathlist",
+				this.calendarSkinPaths ||
+					this.calendarSkins.map((s) => `calendar/skins/${s}`),
+			);
+		}
+
+		// 他ゴースト・オーナー情報 (otherghostname / ownerghostname)
+		const otherGhosts = ghosts.filter((g) => g.name !== ghost.name);
+		if (otherGhosts.length > 0) {
+			await this.sendShioriNotify(
+				"otherghostname",
+				otherGhosts.map((g) => g.name),
+			);
+		}
+		await this.sendShioriNotify("ownerghostname", [ghost.name]);
+
+		// BIFF 設定情報 (configuredbiffname)
+		await this.sendShioriNotify("configuredbiffname", ["default"]);
+
+		// デバッグ・ログ・使用率情報 (enable_debug / enable_log / rateofusegraph)
+		if (this.app?.debugMode) {
+			await this.sendShioriNotify("enable_debug", ["1"]);
+			await this.sendShioriNotify("enable_log", ["1"]);
+		}
+		await this.sendShioriNotify("rateofusegraph", ["1"]);
 
 		console.log("🔔 起動時 NOTIFY イベント送信完了");
 	},

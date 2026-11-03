@@ -533,6 +533,18 @@ def parse_args():
         help="Exit with non-zero status code if any regression (✅ -> ❌) is detected."
     )
     parser.add_argument(
+        "--max-regressions", dest="max_regressions", type=int, default=None,
+        help="Maximum allowed number of regressions before exiting with non-zero status code."
+    )
+    parser.add_argument(
+        "--format", dest="export_format", choices=["json", "markdown", "summary"], default=None,
+        help="Format for output export or stdout (choices: json, markdown, summary)."
+    )
+    parser.add_argument(
+        "--export", dest="export_path", type=str, default=None,
+        help="Target file path when exporting with --format (supports .json, .md)."
+    )
+    parser.add_argument(
         "--min-rate", dest="min_rate", type=float, default=None,
         help="Minimum required compliance rate (percent). Exit with non-zero if below threshold."
     )
@@ -575,6 +587,20 @@ def main():
         update_summary(report.category_stats, summary_path=args.summary_path)
         if not args.summary_only:
             print("SUMMARY.md updated successfully.")
+
+    # Handle direct --format / --export
+    if args.export_format and args.export_path:
+        out_dir = os.path.dirname(args.export_path)
+        if out_dir and not os.path.exists(out_dir):
+            os.makedirs(out_dir, exist_ok=True)
+        with open(args.export_path, 'w', encoding='utf-8') as f:
+            if args.export_format == "json":
+                f.write(report.to_json())
+            elif args.export_format == "markdown":
+                f.write(report.to_markdown())
+            else:
+                f.write(report.to_markdown())
+        print(f"Exported {args.export_format} compliance report to {args.export_path}")
 
     if args.json_path:
         json_dir = os.path.dirname(args.json_path)
@@ -619,6 +645,10 @@ def main():
 
     if args.fail_on_regression and report.regressions:
         print(f"Error: Exiting with code 1 due to {len(report.regressions)} detected regressions.")
+        sys.exit(1)
+
+    if args.max_regressions is not None and len(report.regressions) > args.max_regressions:
+        print(f"Error: Detected {len(report.regressions)} regressions, exceeding allowed limit of {args.max_regressions}.")
         sys.exit(1)
 
     if args.min_rate is not None and report.totals["compliance_rate_percent"] < args.min_rate:

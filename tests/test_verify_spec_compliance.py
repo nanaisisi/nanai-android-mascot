@@ -315,6 +315,30 @@ class TestVerifySpecCompliance(unittest.TestCase):
         self.assertIn("ukadoc-spec/spec", content)
         self.assertIn("| **合計** |", content)
 
+    def test_export_and_cli_arguments(self):
+        category_stats = {
+            "ukadoc-spec/spec": {"✅": 2, "⚠️": 0, "❌": 0, "❓": 0, "合計": 2}
+        }
+        report = ComplianceReport(category_stats, total_files=2)
+        json_export_path = os.path.join(self.test_dir, "export.json")
+        md_export_path = os.path.join(self.test_dir, "export.md")
+
+        with open(json_export_path, "w", encoding="utf-8") as f:
+            f.write(report.to_json())
+        with open(md_export_path, "w", encoding="utf-8") as f:
+            f.write(report.to_markdown())
+
+        self.assertTrue(os.path.exists(json_export_path))
+        self.assertTrue(os.path.exists(md_export_path))
+
+        with open(json_export_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            self.assertEqual(data["summary"]["implemented"], 2)
+
+        with open(md_export_path, "r", encoding="utf-8") as f:
+            md_text = f.read()
+            self.assertIn("# UKADOC 仕様適合監査レポート", md_text)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -226,4 +226,49 @@ describe("TouchGestureRecognizer - Tap & Press", () => {
 		expect(twoFingerHandler.mock.calls[0][0].centerX).toBe(150);
 		expect(twoFingerHandler.mock.calls[0][0].centerY).toBe(100);
 	});
+
+	it("transitions smoothly when one of two fingers is lifted during multi-touch", () => {
+		element.dispatchEvent(
+			{
+				type: "touchstart",
+				touches: [
+					{ clientX: 100, clientY: 100 },
+					{ clientX: 200, clientY: 100 },
+				],
+			},
+			"touchstart",
+		);
+
+		// One finger lifts, leaving 1 finger at (200, 100)
+		element.dispatchEvent(
+			{
+				type: "touchend",
+				touches: [{ clientX: 200, clientY: 100 }],
+				changedTouches: [{ clientX: 100, clientY: 100 }],
+			},
+			"touchend",
+		);
+
+		expect(recognizer._isPinching).toBe(false);
+		expect(recognizer._startX).toBe(200);
+		expect(recognizer._startY).toBe(100);
+		expect(recognizer._hasMoved).toBe(false);
+	});
+
+	it("handles 3 or more touches by clearing long press and marking multi-finger movement", () => {
+		element.dispatchEvent(
+			{
+				type: "touchstart",
+				touches: [
+					{ clientX: 50, clientY: 50 },
+					{ clientX: 100, clientY: 50 },
+					{ clientX: 150, clientY: 50 },
+				],
+			},
+			"touchstart",
+		);
+
+		expect(recognizer._longPressTimer).toBeNull();
+		expect(recognizer._twoFingerMoved).toBe(true);
+	});
 });

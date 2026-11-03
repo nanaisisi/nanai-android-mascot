@@ -114,6 +114,7 @@ describe("Ghost Actions and Balloon Theme Coverage Boost", () => {
 				if (cmd === "scan_balloons") return [{ name: "B1", dir_name: "b1" }];
 				return null;
 			},
+			transformCallback: (cb) => cb,
 		};
 
 		const btm = new BalloonThemeManager(app);

@@ -198,6 +198,38 @@ test("NanaiAndroidMascotApp closeApp (lines 164-183) covers all exit fallbacks a
 	}
 });
 
+test("NanaiAndroidMascotApp scanPlugins covers success and error branches", async () => {
+	const origInit = NanaiAndroidMascotApp.prototype.init;
+	NanaiAndroidMascotApp.prototype.init = async () => {};
+
+	try {
+		const app = new NanaiAndroidMascotApp();
+
+		// 1. Tauri environment success with plugins
+		delete globalThis.__TAURI__;
+		delete globalThis.window.__TAURI__;
+		globalThis.__TAURI_INTERNALS__ = createTauriInternals(async (cmd) => {
+			if (cmd === "scan_plugins") return ["pluginA", "pluginB"];
+		});
+
+		await app.scanPlugins();
+		assert.deepEqual(app.availablePlugins, ["pluginA", "pluginB"]);
+
+		// 2. Tauri environment error
+		delete globalThis.__TAURI__;
+		delete globalThis.window.__TAURI__;
+		globalThis.__TAURI_INTERNALS__ = createTauriInternals(async (cmd) => {
+			if (cmd === "scan_plugins") throw new Error("scan error");
+		});
+
+		await app.scanPlugins();
+	} finally {
+		NanaiAndroidMascotApp.prototype.init = origInit;
+		delete globalThis.__TAURI__;
+		delete globalThis.__TAURI_INTERNALS__;
+	}
+});
+
 test("NanaiAndroidMascotApp initialization and mixin delegation", async () => {
 	delete globalThis.__TAURI__;
 	delete globalThis.__TAURI_INTERNALS__;

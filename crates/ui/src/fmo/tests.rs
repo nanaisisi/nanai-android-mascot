@@ -289,6 +289,11 @@ fn test_fmo_types_edge_cases() {
     entry_lifecycle.update_lifecycle("paused", false);
     entry_lifecycle.update_lifecycle("paused", false);
     assert_eq!(entry_lifecycle.lifecycle_state, "paused");
+
+    let mut entry_lifecycle2 = FmoEntry::new("test_lc2", "LC2");
+    entry_lifecycle2.modulestate = Some("shiori:running,lifecycle:old".to_string());
+    entry_lifecycle2.update_lifecycle("active", true);
+    assert_eq!(entry_lifecycle2.lifecycle_state, "active");
 }
 
 #[test]

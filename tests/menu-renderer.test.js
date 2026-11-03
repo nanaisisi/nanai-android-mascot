@@ -183,3 +183,48 @@ test("MenuRenderer covers initialization, delegation, and dynamic item creation"
 		assert.equal(captions["calendarbutton.caption"], "My Calendar");
 	});
 });
+
+test("MENU_CAPTION_DEFINITIONS contains 92 standard UKADOC captions and resolves correctly", async () => {
+	const { MENU_CAPTION_DEFINITIONS, menuCaptionRenderer } = await import(
+		"../ui/js/ui/renderers/menu-caption-renderer.js"
+	);
+	assert.equal(MENU_CAPTION_DEFINITIONS.length, 92);
+
+	const resources = new Set(MENU_CAPTION_DEFINITIONS.map((d) => d.resource));
+	assert.ok(resources.has("switchreloadbutton.caption"));
+	assert.ok(resources.has("switchrootbutton.caption"));
+	assert.ok(resources.has("historyrootbutton.caption"));
+	assert.ok(resources.has("sntpbutton.caption"));
+	assert.ok(resources.has("alignrootbutton.caption"));
+	assert.ok(resources.has("termsbutton.caption"));
+
+	const elementMap = new Map();
+	const mockDoc = {
+		getElementById(id) {
+			if (!elementMap.has(id)) {
+				elementMap.set(id, {
+					id,
+					span: { textContent: "Original" },
+					querySelector(sel) {
+						return sel.includes("span") ? this.span : null;
+					},
+				});
+			}
+			return elementMap.get(id);
+		},
+	};
+
+	menuCaptionRenderer.applyCaptions(
+		{
+			"switchreloadbutton.caption": "リロード切替",
+			"sntpbutton.caption": "時計合わせ",
+		},
+		mockDoc,
+	);
+
+	const reloadEl = mockDoc.getElementById("switch-reload-btn");
+	assert.equal(reloadEl.span.textContent, "リロード切替");
+
+	const sntpEl = mockDoc.getElementById("sntp-btn");
+	assert.equal(sntpEl.span.textContent, "時計合わせ");
+});

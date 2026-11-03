@@ -70,7 +70,71 @@ pub fn evaluate_property_query(query: &str) -> String {
         | "callsstpsendboxbutton.caption"
         | "updatefmobutton.caption"
         | "switchlocalsstpbutton.caption"
-        | "switchremotesstpbutton.caption" => "1".to_string(),
+        | "switchremotesstpbutton.caption"
+        | "switchreloadbutton.caption"
+        | "switchrootbutton.caption"
+        | "historyrootbutton.caption"
+        | "sntpbutton.caption"
+        | "termsbutton.caption"
+        | "alignrootbutton.caption"
+        | "activaterootbutton.caption"
+        | "addressbarbutton.caption"
+        | "aistatebutton.caption"
+        | "alwaysstayontopbutton.caption"
+        | "alwaystrayiconvisiblebutton.caption"
+        | "balloonhistorybutton.caption"
+        | "biffallbutton.caption"
+        | "callghosthistorybutton.caption"
+        | "charsetbutton.caption"
+        | "collisionvisiblebutton.caption"
+        | "configurationrootbutton.caption"
+        | "debugballoonbutton.caption"
+        | "definedsurfaceonlybutton.caption"
+        | "dictationbutton.caption"
+        | "duibutton.caption"
+        | "enableballoonmovebutton.caption"
+        | "firststaffbutton.caption"
+        | "ghostexplorerbutton.caption"
+        | "ghosthistorybutton.caption"
+        | "ghostinstallbutton.caption"
+        | "headlinesensehistorybutton.caption"
+        | "leavepassivebutton.caption"
+        | "messengerbutton.caption"
+        | "pluginhistorybutton.caption"
+        | "purgeghostcachebutton.caption"
+        | "rateofuseballoonbutton.caption"
+        | "rateofusebutton.caption"
+        | "rateofuserootbutton.caption"
+        | "rateofusetotalbutton.caption"
+        | "regionenabledbutton.caption"
+        | "reloadinfobutton.caption"
+        | "scriptlogbutton.caption"
+        | "shellscaleotherbutton.caption"
+        | "shellscalerootbutton.caption"
+        | "switchactivatewhentalkbutton.caption"
+        | "switchactivatewhentalkexceptupdatebutton.caption"
+        | "switchautobiffbutton.caption"
+        | "switchautoheadlinesensebutton.caption"
+        | "switchblacklistingbutton.caption"
+        | "switchcompatiblemodebutton.caption"
+        | "switchconsolealwaysvisiblebutton.caption"
+        | "switchconsolevisiblebutton.caption"
+        | "switchdeactivatebutton.caption"
+        | "switchdontactivatebutton.caption"
+        | "switchdontforcealignbutton.caption"
+        | "switchduivisiblebutton.caption"
+        | "switchforcealignfreebutton.caption"
+        | "switchforcealignlimitbutton.caption"
+        | "switchignoreserikomovebutton.caption"
+        | "switchmovetodefaultpositionbutton.caption"
+        | "switchproxybutton.caption"
+        | "switchquietbutton.caption"
+        | "switchreloadtempghostbutton.caption"
+        | "switchtalkghostbutton.caption"
+        | "systeminfobutton.caption"
+        | "texttospeechbutton.caption"
+        | "updateplatformbutton.caption"
+        | "utilityrootbutton.caption" => "1".to_string(),
         "system.year" => "2026".to_string(),
         "system.month" => "11".to_string(),
         "system.day" => "3".to_string(),
@@ -196,6 +260,18 @@ mod tests {
         );
         assert_eq!(
             evaluate_property_query("switchremotesstpbutton.caption"),
+            "1"
+        );
+        assert_eq!(
+            evaluate_property_query("switchreloadbutton.caption"),
+            "1"
+        );
+        assert_eq!(
+            evaluate_property_query("historyrootbutton.caption"),
+            "1"
+        );
+        assert_eq!(
+            evaluate_property_query("sntpbutton.caption"),
             "1"
         );
         assert_eq!(

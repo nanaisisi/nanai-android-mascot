@@ -365,3 +365,43 @@ fn test_vfs_resolver_dir_cache_overflow() {
 
     let _ = std::fs::remove_dir_all(&temp);
 }
+
+#[test]
+fn test_mock_vfs_extended_resolver_operations() {
+    let mut mock = MockVfs::new();
+    assert!(!mock.has_dir(""));
+    assert_eq!(mock.remove_dir(""), 0);
+
+    mock.add_text_file("ghost/master/desc.txt", "desc");
+    mock.add_text_file("ghost/master/surface.png", "png");
+    mock.add_text_file("other/readme.txt", "readme");
+
+    assert!(mock.has_dir("ghost"));
+    assert!(mock.has_dir(""));
+
+    assert!(!mock.copy_file("nonexistent.txt", "dst.txt"));
+    assert!(!mock.rename_file("nonexistent.txt", "dst.txt"));
+
+    assert!(mock.copy_file("ghost/master/desc.txt", "ghost/master/desc_copy.txt"));
+    assert!(mock.exists("ghost/master/desc_copy.txt"));
+
+    assert!(mock.rename_file("ghost/master/desc_copy.txt", "ghost/master/desc_renamed.txt"));
+    assert!(!mock.exists("ghost/master/desc_copy.txt"));
+    assert!(mock.exists("ghost/master/desc_renamed.txt"));
+
+    let txt_files = mock.filter_by_extension(".txt");
+    assert_eq!(txt_files.len(), 3);
+
+    let found = mock.find_files("desc_renamed.txt");
+    assert_eq!(found.len(), 1);
+
+    assert!(mock.total_bytes() > 0);
+
+    let removed = mock.remove_dir("other");
+    assert_eq!(removed, 1);
+    assert!(!mock.exists("other/readme.txt"));
+
+    let removed_all = mock.remove_dir("");
+    assert_eq!(removed_all, 3);
+    assert!(mock.is_empty());
+}

@@ -53,24 +53,23 @@ impl MockVfs {
     /// ファイルをコピー（複製）する
     pub fn copy_file(&mut self, src: &str, dst: &str) -> bool {
         let src_key = normalize_vfs_path(src).to_lowercase();
-        if let Some((_, data)) = self.files.get(&src_key) {
-            let data_clone = data.clone();
-            self.add_file(dst, data_clone);
-            true
-        } else {
-            false
-        }
+        let data = match self.files.get(&src_key) {
+            Some((_, data)) => data.clone(),
+            None => return false,
+        };
+        self.add_file(dst, data);
+        true
     }
 
     /// ファイル名を変更（移動）する
     pub fn rename_file(&mut self, src: &str, dst: &str) -> bool {
         let src_key = normalize_vfs_path(src).to_lowercase();
-        if let Some((_, data)) = self.files.remove(&src_key) {
-            self.add_file(dst, data);
-            true
-        } else {
-            false
-        }
+        let data = match self.files.remove(&src_key) {
+            Some((_, data)) => data,
+            None => return false,
+        };
+        self.add_file(dst, data);
+        true
     }
 
     /// 大小文字を区別せずバイナリデータを取得

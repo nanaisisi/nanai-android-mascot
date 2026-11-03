@@ -84,6 +84,11 @@ pub fn evaluate_property_query(query: &str) -> String {
         "update_time" => "0".to_string(),
         "sakura.bind.menu" => "".to_string(),
         "kero.bind.menu" => "".to_string(),
+        | "vanishbuttonvisible"
+        | "callsstpsendboxbutton.caption"
+        | "updatefmobutton.caption"
+        | "switchlocalsstpbutton.caption"
+        | "switchremotesstpbutton.caption" => "1".to_string(),
         _ => {
             if q.starts_with("system.os.") {
                 return "Linux".to_string();
@@ -165,6 +170,22 @@ mod tests {
         assert_eq!(evaluate_property_query("update_time"), "0");
         assert_eq!(evaluate_property_query("sakura.bind.menu"), "");
         assert_eq!(evaluate_property_query("kero.bind.menu"), "");
+        assert_eq!(
+            evaluate_property_query("callsstpsendboxbutton.caption"),
+            "1"
+        );
+        assert_eq!(
+            evaluate_property_query("updatefmobutton.caption"),
+            "1"
+        );
+        assert_eq!(
+            evaluate_property_query("switchlocalsstpbutton.caption"),
+            "1"
+        );
+        assert_eq!(
+            evaluate_property_query("switchremotesstpbutton.caption"),
+            "1"
+        );
         assert_eq!(
             evaluate_property_query("unknown.prop"),
             "(unknown property: unknown.prop)"

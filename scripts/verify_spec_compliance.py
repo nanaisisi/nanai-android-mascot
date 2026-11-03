@@ -436,7 +436,7 @@ def process_audit_files(codebase, docs_dir='docs/spec', dry_run=False, target_ca
             category_stats[cat]["✅"] += 1
         elif "⚠️" in new_status:
             category_stats[cat]["⚠️"] += 1
-        elif "❓" in new_status:
+        elif "❓" in new_status or "📝" in new_status:
             category_stats[cat]["❓"] += 1
         else:
             category_stats[cat]["❌"] += 1

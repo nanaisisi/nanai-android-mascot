@@ -112,5 +112,12 @@ pub struct SstpGhostContext {
     pub status: String,
     pub fmo_text: String,
     pub installed_ghosts: Vec<String>,
+    pub installed_shells: Vec<String>,
+    pub installed_balloons: Vec<String>,
+    pub installed_headlines: Vec<String>,
+    pub installed_plugins: Vec<String>,
+    pub properties: HashMap<String, String>,
+    pub cookies: HashMap<String, HashMap<String, String>>,
+    pub sender: String,
     pub sstp_config: SstpGhostConfig,
 }

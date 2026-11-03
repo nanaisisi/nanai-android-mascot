@@ -67,12 +67,14 @@ export function handleTwoFingerTapEnd(recognizer, e) {
 		if (e.touches.length < 2) {
 			recognizer._isPinching = false;
 			if (e.touches.length === 1) {
-				// 1本指が残っている場合はドラッグ起点に更新
+				// 1本指が残っている場合はドラッグ起点およびタイムスタンプを更新
 				const t = e.touches[0];
 				recognizer._startX = t.clientX;
 				recognizer._startY = t.clientY;
 				recognizer._lastX = t.clientX;
 				recognizer._lastY = t.clientY;
+				recognizer._lastTime = Date.now();
+				recognizer._startTime = recognizer._lastTime;
 				recognizer._hasMoved = false;
 			}
 		}

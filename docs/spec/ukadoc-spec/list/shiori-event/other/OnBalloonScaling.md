@@ -11,6 +11,8 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/command-handler/system/surface.js:53` `* [bang-set-scaling.md], [bang-set-scaling-2.md], [bang-set-scaling-3.md], [OnSh`
-- `ui/js/ghost/command-handler/system/surface.js:73` `// UKADOCスケーリングイベント連携: OnShellScaling, OnBalloonScaling`
-- `ui/js/ghost/command-handler/system/surface.js:83` `.sendShioriEvent("OnBalloonScaling", [`
+- `ui/js/ghost/shiori-notify.js:15` `* - OnBalloonBreak, OnBalloonClose, OnBalloonTimeout, OnBalloonScaling (バルーン操作イベ`
+- `ui/js/ghost/shiori-notify.js:146` `* バルーン倍率変更通知 (OnBalloonScaling) を送信 (UKADOC準拠)`
+- `ui/js/ghost/shiori-notify.js:159` `return await this.sendShioriNotify("OnBalloonScaling", [`
+- `ui/js/core/actions/balloon-theme.js:170` `// UKADOC準拠: OnBalloonScaling SHIORIイベント送信 (Reference0: afterX, Reference1: befo`
+- `ui/js/core/actions/balloon-theme.js:181` `void gc.sendShioriEvent("OnBalloonScaling", [`

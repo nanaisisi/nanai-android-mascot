@@ -243,14 +243,23 @@ fn test_compositor_blend_modes_and_bounds() {
     let screen = composite_elements(&base, &[(&layer, 0, 0, DrawMethod::Blend("screen".into()))]);
     assert!(screen.get_pixel(0, 0).is_some());
 
-    let screen_fast = composite_elements(&base, &[(&layer, 0, 0, DrawMethod::Blend("screen-fast".into()))]);
+    let screen_fast = composite_elements(
+        &base,
+        &[(&layer, 0, 0, DrawMethod::Blend("screen-fast".into()))],
+    );
     assert!(screen_fast.get_pixel(0, 0).is_some());
 
     // Lighter & Exclusion
-    let lighter = composite_elements(&base, &[(&layer, 0, 0, DrawMethod::Blend("lighter".into()))]);
+    let lighter = composite_elements(
+        &base,
+        &[(&layer, 0, 0, DrawMethod::Blend("lighter".into()))],
+    );
     assert!(lighter.get_pixel(0, 0).is_some());
 
-    let exclusion = composite_elements(&base, &[(&layer, 0, 0, DrawMethod::Blend("exclusion".into()))]);
+    let exclusion = composite_elements(
+        &base,
+        &[(&layer, 0, 0, DrawMethod::Blend("exclusion".into()))],
+    );
     assert!(exclusion.get_pixel(0, 0).is_some());
 
     // Out-of-bounds layer

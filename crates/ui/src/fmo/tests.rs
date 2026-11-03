@@ -252,6 +252,17 @@ fn test_fmo_buffer_more_edge_cases() {
 }
 
 #[test]
+fn test_fmo_buffer_uncovered_branches() {
+    let raw_lines = "custom_prefix.sakura.surface\x015\r\nssp_fmo_header_dup.path\x01path1\r\nssp_fmo_header_dup.path\x01path2\r\n";
+    let mut padded = raw_lines.as_bytes().to_vec();
+    padded.resize(65536, 0);
+    let len_bytes = (padded.len() as u32).to_le_bytes();
+    padded[0..4].copy_from_slice(&len_bytes);
+    let res = parse_fmo_buffer(&padded).unwrap();
+    assert_eq!(res.len(), 2);
+}
+
+#[test]
 fn test_fmo_types_edge_cases() {
     let mut entry = FmoEntry::new("test_0", "Name");
     entry.hwnd = 0;

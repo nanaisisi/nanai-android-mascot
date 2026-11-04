@@ -229,6 +229,8 @@ test("SurfaceAnimationManager active animation count, list, and dynamic collisio
 
 	// アニメーション再生開始（非同期）
 	const playPromise = animation.playAnimationPatterns(animWithCollision, 0, 0);
+	await Promise.resolve();
+	await Promise.resolve();
 
 	// 再生中確認
 	assert.equal(animation.getActiveAnimationCount(0), 1);

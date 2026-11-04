@@ -192,6 +192,38 @@ mod tests {
         handle_set(
             &[
                 "set".to_string(),
+                "quicksection".to_string(),
+            ],
+            &mut cb,
+        );
+        handle_set(
+            &[
+                "set".to_string(),
+                "quicksection".to_string(),
+                "0".to_string(),
+            ],
+            &mut cb,
+        );
+        handle_set(
+            &[
+                "set".to_string(),
+                "quicksection".to_string(),
+                "false".to_string(),
+            ],
+            &mut cb,
+        );
+        handle_set(
+            &[
+                "set".to_string(),
+                "quicksection".to_string(),
+                "1".to_string(),
+            ],
+            &mut cb,
+        );
+
+        handle_set(
+            &[
+                "set".to_string(),
                 "choicetimeout".to_string(),
                 "10".to_string(),
             ],
@@ -244,7 +276,23 @@ mod tests {
                 "set".to_string(),
                 "proxy".to_string(),
                 "proxy.com".to_string(),
+            ],
+            &mut cb,
+        );
+        handle_set(
+            &[
+                "set".to_string(),
+                "proxy".to_string(),
+                "proxy.com".to_string(),
                 "8080".to_string(),
+            ],
+            &mut cb,
+        );
+        handle_set(
+            &[
+                "set".to_string(),
+                "autoscroll".to_string(),
+                "true".to_string(),
             ],
             &mut cb,
         );

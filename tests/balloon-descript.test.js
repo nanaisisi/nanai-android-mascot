@@ -285,3 +285,19 @@ test("balloonDescriptActions covers rgbFromComponents and applyBalloonDescript f
 	delete globalThis.__TAURI__;
 	assert.ok(true);
 });
+
+test("balloonDescriptActions applyAssetProperties handles non-Tauri environment (fallback path)", () => {
+	delete globalThis.__TAURI__;
+	const mockInstance = {
+		currentBalloonTheme: "default",
+		elements: { balloonDisplay: { style: {} } },
+	};
+	const props = {
+		mousecursor: "test.cur",
+	};
+	balloonDescriptActions.applyBalloonDescript.call(mockInstance, props);
+	assert.equal(
+		cssVars["--balloon-cursor-default"],
+		'url("assets/balloon/default/test.cur"), auto',
+	);
+});

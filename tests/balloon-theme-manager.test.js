@@ -1,9 +1,13 @@
 import assert from "node:assert/strict";
-import { beforeEach, describe, it } from "vitest";
+import { beforeEach, describe, it, vi } from "vitest";
+
+globalThis.window = globalThis;
+
 import {
 	BalloonThemeManager,
 	balloonThemeActions,
 } from "../ui/js/core/actions/balloon-theme.js";
+import * as tauriHelper from "../ui/js/core/tauri-helper.js";
 
 describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 	let cssVars = {};
@@ -248,7 +252,44 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 		app.applyBalloonScaleAction("balloon-scale-125");
 		assert.equal(app.balloonUserScale, 1.25);
 
+		await app.scanBalloons();
+		assert.ok(app.balloonThemeManager instanceof BalloonThemeManager);
+
 		app.resetBalloonDescript();
 		assert.equal(app.balloonDpiScale, 1);
+	});
+
+	it("listens to request-balloon-scale-change when Tauri is available", async () => {
+		let listenHandler = null;
+		vi.spyOn(tauriHelper, "isTauriAvailable").mockReturnValue(true);
+		vi.spyOn(tauriHelper, "listen").mockImplementation(async (eventName, handler) => {
+			if (eventName === "request-balloon-scale-change") {
+				listenHandler = handler;
+			}
+			return () => {};
+		});
+		vi.spyOn(tauriHelper, "emit").mockResolvedValue();
+
+		const mockApp = { balloonUserScale: 1, showBalloon() {}, hideBalloon() {} };
+		new BalloonThemeManager(mockApp);
+		await Promise.resolve();
+		assert.ok(listenHandler);
+
+		await listenHandler({ payload: { userScale: 1.75 } });
+		await listenHandler({ payload: { userScale: "invalid" } });
+		await listenHandler({ payload: { userScale: 0 } });
+
+		vi.restoreAllMocks();
+	});
+
+	it("handles scanBalloons error catch block gracefully", async () => {
+		vi.spyOn(tauriHelper, "isTauriAvailable").mockReturnValue(true);
+		vi.spyOn(tauriHelper, "invoke").mockRejectedValue(new Error("scan fail"));
+
+		const mgr = new BalloonThemeManager();
+		const result = await mgr.scanBalloons();
+		assert.deepEqual(result, []);
+
+		vi.restoreAllMocks();
 	});
 });

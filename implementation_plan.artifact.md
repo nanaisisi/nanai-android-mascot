@@ -1,24 +1,36 @@
-# Frontend TypeScript Migration Plan [COMPLETED]
+# Comprehensive Frontend TypeScript Migration Plan
 
-Migrate the frontend codebase (`ui/js/**/*.js`) to TypeScript (`.ts`) incrementally, leveraging existing JSDoc annotations, `tsconfig.json`, and `tauri-specta` generated types, while ensuring 100% test pass rates and successful Vite builds.
+Comprehensive migration of the remaining frontend codebase (`ui/js/**/*.js`) to TypeScript (`.ts`) following a domain-by-domain incremental strategy, ensuring 100% test pass rates and successful typechecks at every step.
 
-## Status: COMPLETED
-All phases (Phase 1 through Phase 5) have been successfully executed, typechecked, and verified against all unit tests (`vitest`).
+## User Review Required
 
-## Proposed Changes (Completed)
+> [!IMPORTANT]
+> This plan covers all remaining frontend subdirectories (`surface`, `ghost`, `ui`, `renderers`, `templates`, `touch`). Each milestone will be converted, tested with `vitest`, and verified with `npm run typecheck`.
 
-### Phase 1: Configuration & Tooling Setup [COMPLETED]
-- Updated [tsconfig.json](tsconfig.json) to include `ui/**/*.ts`, `ui/**/*.js` and `allowJs: true`.
+## Open Questions
 
-### Phase 2: Core Utilities & Protocols (.ts) [COMPLETED]
-- `tauri-helper.ts`, `config.ts`, `update-protocol.ts`, `install-protocol.ts` migrated and verified.
+- None.
 
-### Phase 3: Application Actions & State Layer [COMPLETED]
-- `app-actions.ts`, `app-events.ts`, `app-settings.ts`, `app-update.ts`, `ghost-actions.ts`, `network-actions.ts` migrated and verified.
+## Proposed Changes (Milestones)
 
-### Phase 4 & 5: Main Entry & Verification [COMPLETED]
-- `ui/main.ts` migrated and verified with 100% test pass rates and successful typecheck (`npm run typecheck`).
+### Milestone 1: Surface, Animation & Compositor Subsystem
+- Migrate files in `ui/js/surface/` (compositor, framebuffers, collision, shell manifest, animation playback, character surface loading).
 
-## Verification Plan (Executed)
-- Run `npm run typecheck` (`tsc --noEmit`) -> Passed (0 errors)
-- Run `npx vitest run` -> Passed (All 154 test files / 568 tests passed)
+### Milestone 2: Ghost Control, Sakura Script Parser & Shiori Engine
+- Migrate files in `ui/js/ghost/` (ghost controllers, shiori communication, command handlers, sakura script tokens and parsers).
+
+### Milestone 3: UI Modals, Inputs & Renderers
+- Migrate files in `ui/js/ui/`, `ui/renderers/`, and `ui/templates/` (menus, context menus, advanced inputs, markdown/ghost/system templates).
+
+### Milestone 4: Touch & Android Bridge
+- Migrate files in `ui/js/touch/` (android bridge, back button, overlay).
+
+### Milestone 5: Final Verification & Typecheck
+- Execute full typecheck (`npm run typecheck`), run all frontend unit tests (`npx vitest run`), and verify Vite build.
+
+## Verification Plan
+
+### Automated Tests
+- Run `npm run typecheck` (`tsc --noEmit`)
+- Run `npx vitest run` (All test suites)
+- Run `npm run build` (Vite build)

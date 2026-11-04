@@ -80,7 +80,21 @@ test("actionMethods.handleMenuAction covers all branches including Tauri folder 
 	handle("recommend");
 	await handle("scan");
 
-	// Test open-ghost-folder in Tauri environment with error catch
+	// 1. Non-Tauri open-ghost-folder
+	delete globalThis.__TAURI_INTERNALS__;
+	handle("open-ghost-folder");
+
+	// 2. Tauri open-ghost-folder success (resolves .then)
+	globalThis.__TAURI_INTERNALS__ = {
+		invoke: async (_cmd) => {},
+		transformCallback: (cb) => cb,
+	};
+	handle("open-ghost-folder");
+	handle("openghostfolder");
+	handle("open-ghost-directory");
+	await new Promise((r) => setTimeout(r, 10));
+
+	// 3. Tauri open-ghost-folder error catch
 	globalThis.__TAURI_INTERNALS__ = {
 		invoke: async (cmd) => {
 			if (cmd === "open_ghost_directory") throw new Error("folder fail");
@@ -88,10 +102,21 @@ test("actionMethods.handleMenuAction covers all branches including Tauri folder 
 		transformCallback: (cb) => cb,
 	};
 	handle("open-ghost-folder");
+	await new Promise((r) => setTimeout(r, 10));
 	delete globalThis.__TAURI_INTERNALS__;
 
+	// Uninstall aliases
 	await handle("uninstall");
+	await handle("uninstall-ghost");
+	await handle("uninstallghost");
+	await handle("delete-ghost");
+
+	// Install aliases
 	handle("install");
+	handle("install-ghost");
+	handle("installghost");
+	handle("add-ghost");
+
 	handle("balloon");
 	handle("balloon-cycle");
 

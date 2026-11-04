@@ -2,7 +2,7 @@
 
 - **規格**: [OnDisplayChange.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/os-state/OnDisplayChange/) (ukadoc-spec/list/shiori-event/os-state/OnDisplayChange.md)
 - **検索語**: OnDisplayChange
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -11,4 +11,5 @@
 
 ## 実装箇所
 
-実装コード内に「OnDisplayChange」は検出されませんでした。
+- `ui/js/ghost/shiori-notify.js:22` `* - OnDarkTheme, OnDisplayChange, OnDisplayChangeEx, OnDisplayPowerStatus, OnDis`
+- `ui/js/ghost/shiori-notify.js:228` `* OS環境・ディスプレイ・テーマ状態通知 (OnDarkTheme, OnDisplayChange, OnDisplayChangeEx, OnDispla`

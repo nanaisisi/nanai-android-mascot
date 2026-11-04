@@ -2,7 +2,7 @@
 
 - **規格**: [updatebuttoncaption.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ghost/updatebuttoncaption/) (ukadoc-spec/list/shiori-resource/ghost/updatebuttoncaption.md)
 - **検索語**: updatebuttoncaption
-- **対応状況**: ✅ 実装済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,4 +10,4 @@ updatebuttoncaption SHIORIリソース・プロパティ評価処理を実装 (s
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:49` `"readmebuttoncaption" | "updatebuttoncaption" | "vanishbuttoncaption" | "vanishb`
+実装コード内に「updatebuttoncaption」は検出されませんでした。

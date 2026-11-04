@@ -2,7 +2,7 @@
 
 - **規格**: [OnVanishButtonHold.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/vanish/OnVanishButtonHold/) (ukadoc-spec/list/shiori-event/vanish/OnVanishButtonHold.md)
 - **検索語**: OnVanishButtonHold
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -11,4 +11,5 @@
 
 ## 実装箇所
 
-実装コード内に「OnVanishButtonHold」は検出されませんでした。
+- `ui/js/ghost/shiori-notify.js:28` `* - OnVanished, OnVanishSelecting, OnVanishSelected, OnVanishCancel, OnVanishBut`
+- `ui/js/ghost/shiori-notify.js:285` `* 消滅・アンインストール通知 (OnVanished, OnVanishSelecting, OnVanishSelected, OnVanishCancel`

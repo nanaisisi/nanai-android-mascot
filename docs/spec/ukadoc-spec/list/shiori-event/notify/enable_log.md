@@ -2,7 +2,7 @@
 
 - **規格**: [enable_log.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/notify/enable_log/) (ukadoc-spec/list/shiori-event/notify/enable_log.md)
 - **検索語**: enable_log
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -11,4 +11,6 @@
 
 ## 実装箇所
 
-実装コード内に「enable_log」は検出されませんでした。
+- `ui/js/ghost/shiori-notify.js:17` `* - otherghostname / ownerghostname / configuredbiffname / enable_debug / enable`
+- `ui/js/ghost/shiori-notify.js:665` `// デバッグ・ログ・使用率情報 (enable_debug / enable_log / rateofusegraph)`
+- `ui/js/ghost/shiori-notify.js:668` `await this.sendShioriNotify("enable_log", ["1"]);`

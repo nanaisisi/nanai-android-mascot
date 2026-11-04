@@ -168,7 +168,14 @@ export const actionMethods = {
 		) {
 			return (this as any).uninstallCurrentGhost();
 		}
-		if (action === "install") return (this as any).installGhostFromMenu();
+		if (
+			action === "install" ||
+			action === "install-ghost" ||
+			action === "installghost" ||
+			action === "add-ghost"
+		) {
+			return (this as any).installGhostFromMenu();
+		}
 		if (action === "balloon" || action === "balloon-cycle")
 			return (this as any).cycleBalloonTheme();
 		if (action.startsWith("balloon-theme-")) {

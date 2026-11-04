@@ -1,15 +1,9 @@
 /**
- * @file events.js
+ * @file events.ts
  * @brief SakuraPlaybackController 向けイベントリスナー管理・発行ロジック
  */
 
-/**
- * イベントリスナーの登録
- * @param {string} event
- * @param {Function} handler
- * @returns {() => void} リスナー解除関数
- */
-export function on(event, handler) {
+export function on(this: any, event: string, handler: Function): () => void {
 	if (!this.listeners.has(event)) {
 		this.listeners.set(event, new Set());
 	}
@@ -17,12 +11,7 @@ export function on(event, handler) {
 	return () => this.off(event, handler);
 }
 
-/**
- * イベントリスナーの解除
- * @param {string} event
- * @param {Function} handler
- */
-export function off(event, handler) {
+export function off(this: any, event: string, handler: Function) {
 	const handlers = this.listeners.get(event);
 	if (handlers) {
 		handlers.delete(handler);
@@ -32,17 +21,12 @@ export function off(event, handler) {
 	}
 }
 
-/**
- * イベントの発行
- * @param {string} event
- * @param {...any} args
- */
-export function emit(event, ...args) {
+export function emit(this: any, event: string, ...args: any[]) {
 	const handlers = this.listeners.get(event);
 	if (handlers) {
 		for (const handler of Array.from(handlers)) {
 			try {
-				handler(...args);
+				(handler as Function)(...args);
 			} catch (err) {
 				console.error(
 					`Error in SakuraPlaybackController event '${event}':`,

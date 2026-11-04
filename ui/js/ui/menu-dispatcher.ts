@@ -4,13 +4,15 @@
 import { emit, invoke, isTauriAvailable } from "../core/tauri-helper.js";
 
 export class MenuDispatcher {
+	currentScope: number;
+
 	constructor() {
 		const urlParams = new URLSearchParams(globalThis.location.search);
 		this.currentScope = parseInt(urlParams.get("scope") || "0", 10);
 		this.setScope(this.currentScope);
 	}
 
-	setScope(scope) {
+	setScope(scope: number) {
 		this.currentScope = scope;
 		if (scope > 0) {
 			document.body.classList.add("subchar-mode");
@@ -19,7 +21,7 @@ export class MenuDispatcher {
 		}
 	}
 
-	async dispatchAction(action, payload = null) {
+	async dispatchAction(action: string, payload: any = null) {
 		if (!action) return;
 		console.log(
 			`Context Menu Action: ${action}`,
@@ -27,7 +29,6 @@ export class MenuDispatcher {
 			`Scope: ${this.currentScope}`,
 		);
 
-		// アクションに scope 情報を付与（payloadがオブジェクトの場合は合成、プリミティブの場合はラップ）
 		let finalPayload = payload;
 		if (finalPayload === null || finalPayload === undefined) {
 			finalPayload = { scope: this.currentScope };
@@ -38,8 +39,7 @@ export class MenuDispatcher {
 			finalPayload = { scope: this.currentScope, ...finalPayload };
 		}
 
-		// iframe 環境の場合
-		if (globalThis.parent && globalThis.parent !== globalThis) {
+		if (globalThis.parent && (globalThis.parent as any) !== globalThis) {
 			globalThis.parent.postMessage(
 				{
 					type: "menu-action",
@@ -51,7 +51,6 @@ export class MenuDispatcher {
 			);
 		}
 
-		// 独立ウィンドウ（WebviewWindow）環境の場合
 		if (isTauriAvailable()) {
 			try {
 				await emit("menu-action", { action, payload: finalPayload });

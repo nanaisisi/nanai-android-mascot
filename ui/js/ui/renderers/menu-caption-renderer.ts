@@ -1,12 +1,8 @@
 /**
- * @file menu-caption-renderer.js
+ * @file menu-caption-renderer.ts
  * @brief UKADOC ownerdraw-item-name 準拠のメニュー項目キャプション動的解決・反映モジュール
  */
 
-/**
- * 標準メニュー項目IDと対応するSHIORIリソース名 / セレクタのマッピング定義
- * 全92件のUKADOC ownerdraw-item-name 標準ボタンキャプションを網羅
- */
 export const MENU_CAPTION_DEFINITIONS = [
 	{
 		id: "activate-root-btn",
@@ -453,7 +449,7 @@ export const MENU_CAPTION_DEFINITIONS = [
 		shortcut: "",
 	},
 	{
-		id: "switch-ignore-seriko-move-btn",
+		id: "switch-ignore-serikomove-btn",
 		resource: "switchignoreserikomovebutton.caption",
 		fallback: "🛑 SERIKO座標移動を無視",
 		shortcut: "",
@@ -563,18 +559,13 @@ export const MENU_CAPTION_DEFINITIONS = [
 ];
 
 export const menuCaptionRenderer = {
-	/**
-	 * メニュー要素へキャプション辞書を適用
-	 * @param {Record<string, string>} captions - リソース名またはIDをキーとするキャプションマップ
-	 * @param {HTMLElement|Document} [rootEl=document]
-	 */
-	applyCaptions(captions = {}, rootEl = document) {
+	applyCaptions(captions: Record<string, string> = {}, rootEl: ParentNode = document) {
 		if (!captions || typeof captions !== "object") return;
 
 		for (const def of MENU_CAPTION_DEFINITIONS) {
 			const customVal = captions[def.resource] || captions[def.id];
 			const el =
-				rootEl.getElementById?.(def.id) || rootEl.querySelector?.(`#${def.id}`);
+				(rootEl as any).getElementById?.(def.id) || (rootEl as any).querySelector?.(`#${def.id}`);
 			if (!el) continue;
 
 			if (customVal && typeof customVal === "string" && customVal.trim()) {
@@ -586,14 +577,9 @@ export const menuCaptionRenderer = {
 		}
 	},
 
-	/**
-	 * SHIORIへ各キャプションリソースをリクエストしてマップを生成
-	 * @param {object} ghostController
-	 * @returns {Promise<Record<string, string>>}
-	 */
-	async fetchShioriCaptions(ghostController) {
+	async fetchShioriCaptions(ghostController: any): Promise<Record<string, string>> {
 		if (!ghostController?.requestShioriResource) return {};
-		const captions = {};
+		const captions: Record<string, string> = {};
 		for (const def of MENU_CAPTION_DEFINITIONS) {
 			try {
 				const res = await ghostController.requestShioriResource(

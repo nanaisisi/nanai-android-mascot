@@ -1,40 +1,30 @@
 /**
- * @file ast.js
+ * @file ast.ts
  * @brief さくらスクリプト AST (Abstract Syntax Tree) 構築モジュール
  */
 
-/**
- * @typedef {Object} SakuraAstNode
- * @property {string} nodeType - ノード種別 ('root' | 'scope' | 'anchor' | 'choice' | 'command')
- * @property {number} [scope] - スコープ番号 (\0, \1, \p[n])
- * @property {string} [id] - アンカーや選択肢ID
- * @property {string} [text] - テキスト
- * @property {string[]} [args] - 引数リスト
- * @property {any} [token] - コマンドトークン本体
- * @property {SakuraAstNode[]} [children] - 子ノード配列
- */
+export interface SakuraAstNode {
+	nodeType: 'root' | 'scope' | 'anchor' | 'choice' | 'command';
+	scope?: number;
+	id?: string;
+	text?: string;
+	args?: string[];
+	token?: any;
+	children?: SakuraAstNode[];
+}
 
-/**
- * トークン列から階層的な AST ツリーを構築する
- * @param {import('../sakura-parser.js').SakuraScriptToken[]} tokens
- * @returns {SakuraAstNode}
- */
-export function tokensToAst(tokens) {
-	/** @type {SakuraAstNode[]} */
-	const rootChildren = [];
-	let currentScope = null;
-	/** @type {SakuraAstNode[]} */
-	let scopeChildren = [];
+export function tokensToAst(tokens: any[]): SakuraAstNode {
+	const rootChildren: SakuraAstNode[] = [];
+	let currentScope: number | null = null;
+	let scopeChildren: SakuraAstNode[] = [];
 
-	let currentAnchor = null;
-	/** @type {SakuraAstNode[]} */
-	let anchorChildren = [];
+	let currentAnchor: any = null;
+	let anchorChildren: SakuraAstNode[] = [];
 
-	let currentChoiceScope = null;
-	/** @type {SakuraAstNode[]} */
-	let choiceScopeChildren = [];
+	let currentChoiceScope: any = null;
+	let choiceScopeChildren: SakuraAstNode[] = [];
 
-	const pushToCurrentContainer = (node) => {
+	const pushToCurrentContainer = (node: SakuraAstNode) => {
 		if (currentChoiceScope) {
 			choiceScopeChildren.push(node);
 		} else if (currentAnchor) {
@@ -48,9 +38,8 @@ export function tokensToAst(tokens) {
 
 	for (const token of tokens) {
 		if (token.type === "scope") {
-			// スコープの切り替え
 			if (currentChoiceScope) {
-				const choiceNode = {
+				const choiceNode: SakuraAstNode = {
 					nodeType: "choice",
 					id: currentChoiceScope.id,
 					text: choiceScopeChildren
@@ -69,7 +58,7 @@ export function tokensToAst(tokens) {
 				}
 			}
 			if (currentAnchor) {
-				const anchorNode = {
+				const anchorNode: SakuraAstNode = {
 					nodeType: "anchor",
 					id: currentAnchor.id,
 					text: currentAnchor.text,
@@ -102,7 +91,7 @@ export function tokensToAst(tokens) {
 			choiceScopeChildren = [];
 		} else if (token.type === "choice_scope_end") {
 			if (currentChoiceScope) {
-				const choiceNode = {
+				const choiceNode: SakuraAstNode = {
 					nodeType: "choice",
 					id: currentChoiceScope.id,
 					text: choiceScopeChildren
@@ -131,7 +120,7 @@ export function tokensToAst(tokens) {
 			anchorChildren = [];
 		} else if (token.type === "anchor_end") {
 			if (currentAnchor) {
-				const anchorNode = {
+				const anchorNode: SakuraAstNode = {
 					nodeType: "anchor",
 					id: currentAnchor.id,
 					text: currentAnchor.text,
@@ -162,7 +151,7 @@ export function tokensToAst(tokens) {
 	}
 
 	if (currentChoiceScope) {
-		const choiceNode = {
+		const choiceNode: SakuraAstNode = {
 			nodeType: "choice",
 			id: currentChoiceScope.id,
 			text: choiceScopeChildren
@@ -180,9 +169,8 @@ export function tokensToAst(tokens) {
 			rootChildren.push(choiceNode);
 		}
 	}
-
 	if (currentAnchor) {
-		const anchorNode = {
+		const anchorNode: SakuraAstNode = {
 			nodeType: "anchor",
 			id: currentAnchor.id,
 			text: currentAnchor.text,
@@ -195,7 +183,6 @@ export function tokensToAst(tokens) {
 			rootChildren.push(anchorNode);
 		}
 	}
-
 	if (currentScope !== null) {
 		rootChildren.push({
 			nodeType: "scope",
@@ -210,12 +197,7 @@ export function tokensToAst(tokens) {
 	};
 }
 
-/**
- * AST ツリーを深さ優先探索で走査する
- * @param {SakuraAstNode} node
- * @param {(node: SakuraAstNode) => void} visitor
- */
-export function traverseAst(node, visitor) {
+export function traverseAst(node: SakuraAstNode, visitor: (node: SakuraAstNode) => void) {
 	if (!node) return;
 	visitor(node);
 	if (Array.isArray(node.children)) {
@@ -225,21 +207,14 @@ export function traverseAst(node, visitor) {
 	}
 }
 
-/**
- * トークンの寿命分類を判定する (notes_lifespan.md に準拠)
- * @param {any} token
- * @returns {'Scope' | 'Script' | 'Permanent'}
- */
-export function getSakuraTokenLifetime(token) {
+export function getSakuraTokenLifetime(token: any): 'Scope' | 'Script' | 'Permanent' {
 	if (!token) return "Script";
 	const type = token.type;
 
-	// スコープ固有のフォントや修飾
 	if (type === "font") {
 		return "Scope";
 	}
 
-	// 永続設定（サーフィス、壁紙、プロキシ、バインド、ウィンドウ状態等）
 	if (
 		type === "surface" ||
 		type === "bind" ||
@@ -253,17 +228,11 @@ export function getSakuraTokenLifetime(token) {
 		return "Permanent";
 	}
 
-	// スクリプト単位で維持され、\e でリセットされる状態
 	return "Script";
 }
 
-/**
- * AST ツリー内のすべてのトークン／コマンドを抽出する
- * @param {SakuraAstNode} ast
- * @returns {any[]}
- */
-export function collectAstTokens(ast) {
-	const tokens = [];
+export function collectAstTokens(ast: SakuraAstNode): any[] {
+	const tokens: any[] = [];
 	traverseAst(ast, (node) => {
 		if (node.nodeType === "command" && node.token) {
 			tokens.push(node.token);
@@ -284,25 +253,14 @@ export function collectAstTokens(ast) {
 	return tokens;
 }
 
-/**
- * 寿命区分 ('Scope' | 'Script' | 'Permanent') でトークンをフィルタリング抽出する
- * @param {SakuraAstNode} ast
- * @param {'Scope' | 'Script' | 'Permanent'} lifetime
- * @returns {any[]}
- */
-export function collectAstTokensByLifetime(ast, lifetime) {
+export function collectAstTokensByLifetime(ast: SakuraAstNode, lifetime: 'Scope' | 'Script' | 'Permanent'): any[] {
 	return collectAstTokens(ast).filter(
 		(token) => getSakuraTokenLifetime(token) === lifetime,
 	);
 }
 
-/**
- * AST 内のすべての選択肢 (id, text, args) を抽出する
- * @param {SakuraAstNode} ast
- * @returns {Array<{ id: string, text: string, args: string[] }>}
- */
-export function collectChoices(ast) {
-	const choices = [];
+export function collectChoices(ast: SakuraAstNode): Array<{ id: string; text: string; args: string[] }> {
+	const choices: Array<{ id: string; text: string; args: string[] }> = [];
 	traverseAst(ast, (node) => {
 		if (node.nodeType === "choice") {
 			choices.push({
@@ -315,13 +273,8 @@ export function collectChoices(ast) {
 	return choices;
 }
 
-/**
- * AST 内のすべてのサーフィス番号を抽出する
- * @param {SakuraAstNode} ast
- * @returns {number[]}
- */
-export function collectSurfaces(ast) {
-	const surfaces = [];
+export function collectSurfaces(ast: SakuraAstNode): number[] {
+	const surfaces: number[] = [];
 	traverseAst(ast, (node) => {
 		if (node.nodeType === "command" && node.token?.type === "surface") {
 			surfaces.push(node.token.value);

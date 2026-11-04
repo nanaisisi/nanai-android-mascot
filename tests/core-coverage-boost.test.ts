@@ -530,7 +530,7 @@ describe("core-coverage-boost: tauri-helper & app-actions", () => {
 				handleMenuAction: () => {},
 			};
 
-			app.setupExternalMenuListeners();
+			await app.setupExternalMenuListeners();
 
 			// Simulate trigger of request-subchar-image
 			assert.ok(typeof subcharHandler === "function");
@@ -567,6 +567,14 @@ describe("core-coverage-boost: tauri-helper & app-actions", () => {
 					return null;
 				},
 				transformCallback: (cb) => cb,
+				plugins: {
+					event: {
+						listeners: {},
+						listen: async () => () => {},
+						emit: async () => {},
+						unregisterListener: () => {},
+					},
+				},
 			};
 
 			const app = {
@@ -606,6 +614,14 @@ describe("core-coverage-boost: tauri-helper & app-actions", () => {
 					return null;
 				},
 				transformCallback: (cb) => cb,
+				plugins: {
+					event: {
+						listeners: {},
+						listen: async () => () => {},
+						emit: async () => {},
+						unregisterListener: () => {},
+					},
+				},
 			};
 
 			const app = {

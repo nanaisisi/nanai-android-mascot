@@ -196,7 +196,7 @@ test("SurfaceAnimationManager active animation count, list, and dynamic collisio
 			},
 		],
 		patterns: [
-			{ surface: 701, wait: 500 },
+			{ surface: 701, wait: 200 },
 			{ surface: -1, wait: 0 },
 		],
 	};
@@ -254,6 +254,7 @@ test("SurfaceAnimationManager active animation count, list, and dynamic collisio
 	assert.equal(hitResult.name, "ActiveShield");
 	assert.equal(hitResult.id, 900);
 
+	animation.stopAnimation(0, 77);
 	await playPromise;
 
 	// 再生終了後はアクティブリストおよび動的当たり判定から解除

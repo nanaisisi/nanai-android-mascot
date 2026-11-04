@@ -49,6 +49,9 @@ test("actionMethods.handleMenuAction covers all branches including Tauri folder 
 	// Bind mockApp to actionMethods
 	const handle = actionMethods.handleMenuAction.bind(mockApp);
 
+	// Empty action branch
+	assert.equal(handle(""), undefined);
+
 	assert.equal(handle("talk", { scope: 1 }), "talk-result");
 	assert.equal(handle("talk"), "talk-result");
 	await handle("update");
@@ -57,7 +60,13 @@ test("actionMethods.handleMenuAction covers all branches including Tauri folder 
 	assert.equal(handle("explorer"), undefined);
 	assert.equal(handle("backlog"), undefined);
 
+	// reload-ghost with currentGhost present
 	await handle("reload-ghost");
+	// reload-ghost with currentGhost null (fallbackGhostName branch)
+	mockApp.ghostController.currentGhost = null;
+	await handle("reload-ghost");
+	mockApp.ghostController.currentGhost = { name: "Mock", isTemporary: true };
+
 	handle("reset-shell-position");
 	handle("reset-balloon-position");
 	handle("close-balloon");
@@ -98,6 +107,16 @@ test("actionMethods.handleMenuAction covers all branches including Tauri folder 
 	handle("reset-balloon-position");
 	handle("resetballoonpos");
 	handle("reset-shell-position");
+	handle("resetwindowpos");
+
+	// Reset positions with elements null / interactionManager null
+	mockApp.elements = null;
+	mockApp.interactionManager = null;
+	handle("reset-shell-position");
+	handle("reset-balloon-position");
+	mockApp.elements = { ghostDisplay: { style: {}, classList: { remove() {} } } };
+	mockApp.interactionManager = { balloonOffsetX: 0, balloonOffsetY: 0 };
+
 	mockApp.availableBalloons = undefined;
 	handle("balloon-theme-ivory");
 	delete globalThis.__TAURI_INTERNALS__;
@@ -113,12 +132,34 @@ test("actionMethods.handleMenuAction covers all branches including Tauri folder 
 	handle("close-menu");
 	handle("minimize");
 
+	// switch-ghost payload variants
 	await handle("switch-to-ghost", "TestGhost");
 	await handle("switch-ghost", { name: "TestGhost2" });
+	await handle("switch-ghost", { ghostName: "TestGhost3" });
+	await handle("switch-ghost", {});
+
+	// call-ghost payload variants
 	await handle("call-ghost", "TestGhost");
-	await handle("recent-ghost", { ghostName: "TestGhost" });
+	await handle("call-ghost", { name: "TestGhost2" });
+	await handle("call-ghost", { ghostName: "TestGhost3" });
+	await handle("call-ghost", {});
+
+	// recent-ghost payload variants
+	await handle("recent-ghost", "TestGhost");
+	await handle("recent-ghost", { name: "TestGhost2" });
+	await handle("recent-ghost", { ghostName: "TestGhost3" });
+	await handle("recent-ghost", {});
+
+	// switch-shell payload variants
 	await handle("switch-to-shell", "Default");
+	await handle("switch-shell", { name: "Shell1" });
+	await handle("switch-shell", { shellName: "Shell2" });
+	await handle("switch-shell", {});
+
 	await handle("dressup-toggle", { part: "hat" });
+
+	// ghost-switch modal key
+	handle("ghost-switch");
 	handle("unknown-action");
 
 	assert.ok(true);

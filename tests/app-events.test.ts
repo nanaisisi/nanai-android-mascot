@@ -132,7 +132,11 @@ test("eventMethods covers 100% of event listeners, buttons, external menus, and 
 		switchToNextGhost() {},
 	};
 
-	mockApp.setupEventListeners();
+	await mockApp.setupEventListeners();
+
+	// Test setupDragging onClick & onStroke callbacks (lines 16-17 in setup.ts)
+	mockApp.elements.ghostDisplay._onClick?.(10, 20, {});
+	mockApp.elements.ghostDisplay._onStroke?.(10, 20, {});
 
 	// 1. Test contextmenu on ghost & kero display
 	listeners.contextmenu?.({
@@ -172,6 +176,7 @@ test("eventMethods covers 100% of event listeners, buttons, external menus, and 
 	documentListeners.keydown?.({ key: "q", metaKey: true, preventDefault() {} });
 
 	// 4. Test external menu listeners (Tauri + postMessage)
+	await tauriListeners["menu-action"]?.({});
 	await tauriListeners["menu-action"]?.({
 		payload: { action: "request-sync", payload: { scope: 1 } },
 	});
@@ -179,7 +184,10 @@ test("eventMethods covers 100% of event listeners, buttons, external menus, and 
 		payload: { action: "talk", payload: null },
 	});
 	await tauriListeners["request-subchar-image"]?.({ payload: { scopeId: 1 } });
+	await new Promise((r) => setTimeout(r, 10));
 
+	globalListeners.message?.({ data: null });
+	globalListeners.message?.({ data: { type: "other" } });
 	globalListeners.message?.({
 		data: {
 			type: "menu-action",
@@ -268,10 +276,19 @@ test("eventMethods covers edge branches in setupGhostInteractions (null element)
 		...eventMethods,
 		interactionManager: { setupDragging() {} },
 		elements: {},
+		ghostController: {
+			currentSurfaces: new Map([[1, "cached.png"]]),
+		},
+		syncMenuGhosts() {},
+		handleMenuAction() {},
+		hideMenu() {},
 	};
 	mockApp.setupGhostInteractions();
+	await mockApp.setupExternalMenuListeners();
 
 	await tauriListeners["request-subchar-image"]?.({ payload: { scopeId: "invalid" } });
 	await tauriListeners["request-subchar-image"]?.({ payload: { scopeId: 999 } });
+	await tauriListeners["request-subchar-image"]?.({ payload: { scopeId: 1 } });
+	await new Promise((r) => setTimeout(r, 10));
 	assert.ok(true);
 });

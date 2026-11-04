@@ -1,16 +1,16 @@
 import { emit, listen } from "../tauri-helper.js";
 
 export const setupMethods = {
-	setupEventListeners() {
+	async setupEventListeners() {
 		(this as any).setupGhostInteractions();
 		(this as any).setupUiButtons();
 		(this as any).setupGlobalListeners();
-		(this as any).setupExternalMenuListeners();
+		await (this as any).setupExternalMenuListeners();
 	},
 
 	setupGhostInteractions() {
 		const bind = (el: HTMLElement | null, scopeId: number) => {
-			if (!el) return;
+			if (!el || !(this as any).interactionManager) return;
 			(this as any).interactionManager.setupDragging(
 				el,
 				(x: number, y: number, rect: any) => (this as any).onGhostClick(x, y, rect, scopeId),
@@ -35,12 +35,12 @@ export const setupMethods = {
 				(this as any).toggleMenu(e.screenX, e.screenY, scopeId);
 			});
 		};
-		bind((this as any).elements.ghostDisplay, 0);
-		bind((this as any).elements.keroDisplay, 1);
+		bind((this as any).elements?.ghostDisplay, 0);
+		bind((this as any).elements?.keroDisplay, 1);
 	},
 
 	setupUiButtons() {
-		(this as any).elements.menuBtn?.addEventListener("click", (e: MouseEvent) => {
+		(this as any).elements?.menuBtn?.addEventListener("click", (e: MouseEvent) => {
 			e.stopPropagation();
 			const rect = (this as any).elements.menuBtn.getBoundingClientRect();
 			const sX = (globalThis as any).screenX ?? 0;
@@ -51,7 +51,7 @@ export const setupMethods = {
 			);
 		});
 
-		(this as any).elements.quickBubble?.addEventListener("click", (e: MouseEvent) => {
+		(this as any).elements?.quickBubble?.addEventListener("click", (e: MouseEvent) => {
 			e.stopPropagation();
 			(this as any).toggleQuickActionsPanel();
 		});
@@ -70,8 +70,8 @@ export const setupMethods = {
 			});
 		}
 
-		(this as any).elements.balloonDisplay?.addEventListener("click", () =>
-			(this as any).sakuraPlayer.skip(),
+		(this as any).elements?.balloonDisplay?.addEventListener("click", () =>
+			(this as any).sakuraPlayer?.skip(),
 		);
 	},
 
@@ -98,7 +98,7 @@ export const setupMethods = {
 		});
 	},
 
-	setupExternalMenuListeners() {
+	async setupExternalMenuListeners() {
 		const forward = (event: any) => {
 			const data = event.payload;
 			if (!data) return;
@@ -109,10 +109,10 @@ export const setupMethods = {
 			}
 			(this as any).handleMenuAction(data.action, data.payload);
 		};
-		listen("menu-action", forward);
-		listen("native-menu-action", forward);
+		await listen("menu-action", forward);
+		await listen("native-menu-action", forward);
 
-		listen("request-subchar-image", (event: any) => {
+		await listen("request-subchar-image", (event: any) => {
 			const scopeId = event.payload?.scopeId;
 			if (typeof scopeId === "number") {
 				const cachedSrc = (this as any).ghostController?.currentSurfaces?.get(scopeId);

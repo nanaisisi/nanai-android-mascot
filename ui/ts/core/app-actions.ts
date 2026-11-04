@@ -148,7 +148,12 @@ export const actionMethods = {
 			action === "open-ghost-directory"
 		) {
 			if (isTauriAvailable()) {
-				invoke("open_ghost_directory").catch((e) => console.error(e));
+				invoke("open_ghost_directory")
+					.then(() => {
+						(this as any).showBalloon("📁 ゴーストフォルダを開きました");
+						setTimeout(() => (this as any).hideBalloon(), 2000);
+					})
+					.catch((e) => console.error(e));
 			} else {
 				(this as any).showBalloon("📁 ゴーストフォルダを開く機能はアプリ版でのみ利用可能です");
 				setTimeout(() => (this as any).hideBalloon(), 2000);

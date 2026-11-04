@@ -90,6 +90,22 @@ test("networkActions.checkEmail covers all branches (Tauri & non-Tauri)", async 
 	await mockApp.checkEmail("fail_account");
 	assert.ok(eventsSent.some((e) => e.ev === "OnBIFFComplete"));
 
+	// 6. Tauri environment where result.headers is not an array (covers Array.isArray false branch)
+	globalThis.__TAURI_INTERNALS__ = {
+		invoke: async (cmd) => {
+			if (cmd === "check_email") {
+				return { count: 1, size: 100, unread: 1, headers: "not-an-array" };
+			}
+		},
+		transformCallback: (cb) => cb,
+	};
+	eventsSent.length = 0;
+	mockApp.ghostController.sendShioriEvent = async (ev, args) => {
+		eventsSent.push({ ev, args });
+	};
+	await mockApp.checkEmail("non_array_headers");
+	assert.ok(eventsSent.some((e) => e.ev === "OnBIFFComplete"));
+
 	delete globalThis.__TAURI_INTERNALS__;
 	assert.ok(true);
 });

@@ -230,3 +230,25 @@ fn test_ast_find_choices_and_surfaces() {
     let surfaces = ast.find_surfaces();
     assert_eq!(surfaces, vec![10, 20]);
 }
+
+#[test]
+fn test_ast_walk_anchor_and_empty_containers() {
+    let anchor_child = SakuraAstNode::Command(SakuraCommand::Surface(5));
+    let anchor_node = SakuraAstNode::Anchor {
+        id: "anchor1".to_string(),
+        text: "Link".to_string(),
+        args: vec![],
+        children: vec![anchor_child],
+    };
+
+    let mut visited = 0;
+    anchor_node.walk(&mut |_| visited += 1);
+    assert_eq!(visited, 2);
+
+    assert_eq!(anchor_node.find_surfaces(), vec![5]);
+
+    let empty_root = SakuraAstNode::Root { children: vec![] };
+    let mut empty_visited = 0;
+    empty_root.walk(&mut |_| empty_visited += 1);
+    assert_eq!(empty_visited, 1);
+}

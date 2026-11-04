@@ -275,6 +275,8 @@ mod tests {
         let script = "\\\\\\C\\a\\v\\+\\k[ignored]\\2\\3\\4\\5\\6\\7\\8\\9\\c[arg_clear]\\j[my_jump]\\&[amp]\\&[lt]\\&[gt]\\&[quot]\\&[apos]\\&[nbsp]\\&[custom]";
         let cmds = parse_sakura_script(script);
         assert!(!cmds.is_empty());
+        assert!(cmds.contains(&SakuraCommand::Target(2)));
+        assert!(cmds.contains(&SakuraCommand::Target(9)));
         assert!(cmds.contains(&SakuraCommand::Clear));
         assert!(cmds.contains(&SakuraCommand::AudioWait));
         assert!(cmds.contains(&SakuraCommand::Voice("".into())));

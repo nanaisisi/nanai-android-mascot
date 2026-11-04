@@ -55,6 +55,13 @@ mod tests {
             read_bracketed(&mut chars),
             Some("tag]with]brackets".to_string())
         );
+
+        // Backslash not followed by ]
+        let mut chars = r"[path\to\file]tail".chars().peekable();
+        assert_eq!(
+            read_bracketed(&mut chars),
+            Some(r"path\to\file".to_string())
+        );
     }
 
     #[test]

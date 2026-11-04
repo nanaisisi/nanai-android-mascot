@@ -66,8 +66,10 @@ test("updateMethods.startNetworkUpdate covers 100% of network update flows, prog
 			selectGhost() {},
 		},
 		showBalloon() {},
-		wait: async () => {},
 	};
+
+	// Test real wait method
+	await updateMethods.wait(1);
 
 	// 1. OnUpdateProcessExec returns script (early return)
 	scriptReturn = "custom script";
@@ -188,8 +190,10 @@ test("updateMethods.startNetworkUpdate covers 100% of network update flows, prog
 	assert.ok(true);
 });
 
-test("updateMethods.startNetworkUpdate handles update-progress listen failure", async () => {
+test("updateMethods.startNetworkUpdate handles update-progress listen failure and unlisten failure", async () => {
 	const savedInternals = globalThis.__TAURI_INTERNALS__;
+
+	// Listen failure
 	globalThis.__TAURI_INTERNALS__ = {
 		metadata: { currentWindow: { label: "main" } },
 		invoke: async (cmd) => {
@@ -222,10 +226,16 @@ test("updateMethods.startNetworkUpdate handles update-progress listen failure", 
 			sendShioriEvent: async () => ({ script: "" }),
 		},
 		showBalloon() {},
-		wait: async () => {},
 	};
 
 	await mockApp.startNetworkUpdate();
+
+	// Unlisten failure
+	globalThis.__TAURI_INTERNALS__.plugins.event.listen = async () => () => {
+		throw new Error("unlisten fail");
+	};
+	await mockApp.startNetworkUpdate();
+
 	globalThis.__TAURI_INTERNALS__ = savedInternals;
 	assert.ok(true);
 });

@@ -1,19 +1,10 @@
 /**
- * @file bracket-utils.js
+ * @file bracket-utils.ts
  * @brief さくらスクリプトのブラケット `[...]` 引数パースおよびクォート・エスケープ処理ユーティリティ
  */
 
-/**
- * 括弧内の引数文字列をカンマ区切りでパースする。
- * UKADOC [notes_escape.md]:
- * - ダブルクォート `"` で囲まれた区間では、カンマ `,` は区切り文字とみなされない。
- * - クォート内の `""` は単一の `"` としてエスケープ解決される。
- * - 外側クォートおよび前後の空白は除去される。
- * @param {string} content
- * @returns {string[]}
- */
-export function splitBracketArgs(content) {
-	const args = [];
+export function splitBracketArgs(content: string): string[] {
+	const args: string[] = [];
 	let current = "";
 	let inQuotes = false;
 	const len = content.length;
@@ -44,13 +35,7 @@ export function splitBracketArgs(content) {
 	return args;
 }
 
-/**
- * [ ... ] の引数を安全に読み取り、`\]` エスケープを考慮する。
- * @param {string} script
- * @param {number} startIdx - `[` の位置
- * @returns {{ content: string, nextIdx: number } | null}
- */
-export function readBracketContent(script, startIdx) {
+export function readBracketContent(script: string, startIdx: number): { content: string; nextIdx: number } | null {
 	if (script[startIdx] !== "[") return null;
 	let j = startIdx + 1;
 	let content = "";

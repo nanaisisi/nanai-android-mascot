@@ -166,4 +166,24 @@ describe("DictationManager", () => {
 		const manager = new DictationManager(null);
 		expect(manager.recognition).toBeInstanceOf(MockWebkitSpeechRecognition);
 	});
+
+	it("handles onresult when app or ghostController or sendShioriEvent is missing", () => {
+		class MockSpeechRecognition {
+			constructor() {
+				this.onresult = null;
+			}
+			start() {}
+			stop() {}
+		}
+		globalThis.window = {
+			SpeechRecognition: MockSpeechRecognition,
+			speechSynthesis: {},
+		};
+
+		const manager1 = new DictationManager(null);
+		expect(() => manager1.recognition.onresult({ results: [[{ transcript: "test" }]] })).not.toThrow();
+
+		const manager2 = new DictationManager({});
+		expect(() => manager2.recognition.onresult({ results: [[{ transcript: "test" }]] })).not.toThrow();
+	});
 });

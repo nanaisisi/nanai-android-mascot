@@ -1,5 +1,5 @@
 import { getAllWindows } from "@tauri-apps/api/window";
-import { invoke, isTauriAvailable } from "../js/core/tauri-helper.js";
+import { invoke, isTauriAvailable } from "../ts/core/tauri-helper.js";
 
 async function findWindow(label) {
 	if (!globalThis.__TAURI__ && !globalThis.__TAURI_INTERNALS__) return null;

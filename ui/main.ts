@@ -9,19 +9,19 @@
  * - OnBoot, OnClose, OnWindowStateMinimize, OnWindowStateRestore
  * - AppConfig / loadAppConfig (設定およびプロパティシステム)
  */
-import { DictationManager } from "./js/core/actions/dictation.js";
-import { actionMethods } from "./js/core/app-actions.js";
-import { eventMethods } from "./js/core/app-events.js";
-import { settingsMethods } from "./js/core/app-settings.js";
-import { updateMethods } from "./js/core/app-update.js";
-import { AppConfig, loadAppConfig } from "./js/core/config.js";
-import { invoke, isTauriAvailable } from "./js/core/tauri-helper.js";
-import { GhostController } from "./js/ghost/ghost.js";
-import { SakuraScriptPlayer } from "./js/ghost/sakura-script.js";
-import { InteractionManager } from "./js/surface/interaction.js";
-import { SurfaceManager } from "./js/surface/surface.js";
-import { menuMethods } from "./js/ui/app-menu.js";
-import { ModalManager } from "./js/ui/modal.js";
+import { DictationManager } from "./ts/core/actions/dictation.js";
+import { actionMethods } from "./ts/core/app-actions.js";
+import { eventMethods } from "./ts/core/app-events.js";
+import { settingsMethods } from "./ts/core/app-settings.js";
+import { updateMethods } from "./ts/core/app-update.js";
+import { AppConfig, loadAppConfig } from "./ts/core/config.js";
+import { invoke, isTauriAvailable } from "./ts/core/tauri-helper.js";
+import { GhostController } from "./ts/ghost/ghost.js";
+import { SakuraScriptPlayer } from "./ts/ghost/sakura-script.js";
+import { InteractionManager } from "./ts/surface/interaction.js";
+import { SurfaceManager } from "./ts/surface/surface.js";
+import { menuMethods } from "./ts/ui/app-menu.js";
+import { ModalManager } from "./ts/ui/modal.js";
 
 export interface AppSettings {
 	autoLoadGhost: boolean;

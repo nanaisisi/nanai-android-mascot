@@ -2,8 +2,14 @@
 
 - **規格**: [configurationrootbutton.caption.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ownerdraw-item-name/configurationrootbutton.caption/) (ukadoc-spec/list/shiori-resource/ownerdraw-item-name/configurationrootbutton.caption.md)
 - **検索語**: configurationrootbutton.caption
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
 実装コードに「configurationrootbutton.caption」が見つからない。
+
+
+## 実装箇所
+
+- `src-tauri/src/shiori/property.rs:90` `| "configurationrootbutton.caption"`
+- `ui/js/ui/renderers/menu-caption-renderer.js:133` `resource: "configurationrootbutton.caption",`

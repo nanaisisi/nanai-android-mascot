@@ -11,4 +11,5 @@
 
 ## 実装箇所
 
-- `ui/js/ui/renderers/menu-caption-renderer.js:150` `resource: "enableballoonmovebutton.caption",`
+- `src-tauri/src/shiori/property.rs:95` `| "enableballoonmovebutton.caption"`
+- `ui/js/ui/renderers/menu-caption-renderer.js:169` `resource: "enableballoonmovebutton.caption",`

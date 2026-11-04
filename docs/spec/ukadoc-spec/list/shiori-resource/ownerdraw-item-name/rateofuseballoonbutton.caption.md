@@ -11,4 +11,5 @@
 
 ## 実装箇所
 
-- `ui/js/ui/renderers/menu-caption-renderer.js:162` `resource: "rateofuseballoonbutton.caption",`
+- `src-tauri/src/shiori/property.rs:105` `| "rateofuseballoonbutton.caption"`
+- `ui/js/ui/renderers/menu-caption-renderer.js:283` `resource: "rateofuseballoonbutton.caption",`

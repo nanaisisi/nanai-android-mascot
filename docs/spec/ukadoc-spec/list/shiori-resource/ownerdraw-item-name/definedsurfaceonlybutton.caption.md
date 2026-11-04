@@ -11,5 +11,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:70` `| "definedsurfaceonlybutton.caption"`
-- `src-tauri/src/shiori/property.rs:193` `evaluate_property_query("definedsurfaceonlybutton.caption"),`
+- `src-tauri/src/shiori/property.rs:92` `| "definedsurfaceonlybutton.caption"`
+- `ui/js/ui/renderers/menu-caption-renderer.js:145` `resource: "definedsurfaceonlybutton.caption",`

@@ -11,4 +11,5 @@
 
 ## 実装箇所
 
-- `ui/js/ui/renderers/menu-caption-renderer.js:156` `resource: "balloonhistorybutton.caption",`
+- `src-tauri/src/shiori/property.rs:85` `| "balloonhistorybutton.caption"`
+- `ui/js/ui/renderers/menu-caption-renderer.js:49` `resource: "balloonhistorybutton.caption",`

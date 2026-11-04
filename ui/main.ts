@@ -1,3 +1,14 @@
+/**
+ * @file main.ts
+ * @brief Nanai Android Mascot メインアプリケーションエントリーポイント (UKADOC / SSP仕様準拠)
+ *
+ * 統合制御クラス `NanaiAndroidMascotApp` を提供し、ゴーストコントローラー、サーフィス管理、
+ * さくらスクリプトプレイヤー、インタラクション管理、設定・イベント・更新ハンドラーを統合。
+ *
+ * 参考仕様:
+ * - OnBoot, OnClose, OnWindowStateMinimize, OnWindowStateRestore
+ * - AppConfig / loadAppConfig (設定およびプロパティシステム)
+ */
 import { DictationManager } from "./js/core/actions/dictation.js";
 import { actionMethods } from "./js/core/app-actions.js";
 import { eventMethods } from "./js/core/app-events.js";

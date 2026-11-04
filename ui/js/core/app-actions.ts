@@ -1,3 +1,13 @@
+/**
+ * @file app-actions.ts
+ * @brief アプリケーションメニューアクション・SHIORIイベント連携・ゴースト切り替え・バルーンテーマ切り替え制御モジュール (UKADOC準拠)
+ *
+ * 参考仕様:
+ * - OnChoiceSelect: リコメンド・ポータル等の選択イベント
+ * - OnUpdate: ネットワーク更新トリガー
+ * - OnHeadline: ヘッドラインセンス参照
+ * - OnBoot: 起動時イベント
+ */
 import { balloonActions } from "./actions/balloon-actions.js";
 import { ghostActions } from "./actions/ghost-actions.js";
 import { networkActions } from "./actions/network-actions.js";

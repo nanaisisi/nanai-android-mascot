@@ -83,6 +83,8 @@ test("actionMethods.handleMenuAction covers all branches including Tauri folder 
 
 	await handle("uninstall");
 	handle("install");
+	handle("balloon");
+	handle("balloon-cycle");
 
 	// Test balloon-theme with availableBalloons matching
 	handle("balloon-theme-ivory");

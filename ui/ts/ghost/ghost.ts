@@ -131,6 +131,14 @@ export class GhostController {
 
 		this.currentShell = this.shells[0] || AppConfig.paths.fallbackShellName;
 		await this.selectShell(this.currentShell);
+		const loadId = {};
+		(this as any)._currentLoadToken = loadId;
+		const isCurrentLoad = () => (this as any)._currentLoadToken === loadId;
+		await (this as any).initializeGhostSHIORI(
+			ghost,
+			this.app.surfaceManager?.loadSurfacesTxt?.(ghost.path),
+			isCurrentLoad,
+		);
 	}
 
 	async selectShell(shellName: string) {

@@ -1,5 +1,5 @@
 /**
- * @file sakura-play.js
+ * @file sakura-play.ts
  * @brief トークン列をバルーンにアニメーション再生するさくらスクリプトプレイヤー本体
  */
 
@@ -10,13 +10,7 @@ import { createBalloonSyncManager } from "./sakura-play-sync.js";
 
 export { SakuraPlaybackController } from "./sakura-play/controller.js";
 
-/**
- * トークン列をバルーンにアニメーション再生（SakuraScriptPlayer.play の本体）
- *
- * @param {import('./sakura-script.js').SakuraScriptPlayer} player
- * @param {string} script
- */
-export async function playScript(player, script) {
+export async function playScript(player: any, script: string) {
 	const finalScript = await translateScript(player, script);
 
 	const tokens = await player.parse(finalScript);
@@ -44,11 +38,11 @@ export async function playScript(player, script) {
 	const keroDisplay = app.elements.keroBalloonDisplay;
 
 	const hasTextContent = tokens.some(
-		(t) =>
+		(t: any) =>
 			t.type === "char" || t.type === "choice" || t.type === "anchor_begin",
 	);
 
-	const shownScopes = new Set();
+	const shownScopes = new Set<number>();
 	await initBalloonWindows(app, tokens, hasTextContent, shownScopes);
 
 	const currentBalloonText = sakuraText;
@@ -90,13 +84,10 @@ export async function playScript(player, script) {
 	player.isPlaying = false;
 	player.scheduleSurfaceRestore(currentId);
 
-	// スクリプト実行終了後にバルーンウェイトをデフォルト(等倍)にリセット (UKADOC準拠)
 	player.playbackController?.resetBalloonWait?.();
 
-	const hasChoices = tokens.some((t) => t.type === "choice");
+	const hasChoices = tokens.some((t: any) => t.type === "choice");
 
-	// 選択肢タイムアウトのスケジュール (\![set,choicetimeout,N])
-	// UKADOC仕様: 時間のカウントはトークの表示が全て終わってから開始される
 	if (hasChoices && player.choiceTimeout > 0) {
 		if (player.choiceTimeoutTimer) clearTimeout(player.choiceTimeoutTimer);
 		player.choiceTimeoutTimer = setTimeout(() => {
@@ -106,8 +97,6 @@ export async function playScript(player, script) {
 		}, player.choiceTimeout);
 	}
 
-	// バルーンタイムアウトのスケジュール (\![set,balloontimeout,N])
-	// UKADOC仕様: タイムアウトの時間はスクリプトの表示が終わってからカウントされる (0以下はなし)
 	if (!hasChoices && player.balloonTimeout > 0) {
 		if (player.balloonTimeoutTimer) clearTimeout(player.balloonTimeoutTimer);
 		player.balloonTimeoutTimer = setTimeout(async () => {
@@ -119,9 +108,7 @@ export async function playScript(player, script) {
 						player.lastScript || "",
 						"0",
 					]);
-				} catch (_e) {
-					// ignore
-				}
+				} catch (_e) {}
 			}
 		}, player.balloonTimeout);
 	}

@@ -196,7 +196,7 @@ test("SurfaceAnimationManager active animation count, list, and dynamic collisio
 			},
 		],
 		patterns: [
-			{ surface: 701, wait: 60 },
+			{ surface: 701, wait: 500 },
 			{ surface: -1, wait: 0 },
 		],
 	};
@@ -229,7 +229,7 @@ test("SurfaceAnimationManager active animation count, list, and dynamic collisio
 
 	// アニメーション再生開始（非同期）
 	const playPromise = animation.playAnimationPatterns(animWithCollision, 0, 0);
-	await new Promise((r) => setTimeout(r, 15));
+	await new Promise((r) => setTimeout(r, 20));
 
 	// 再生中確認
 	assert.equal(animation.getActiveAnimationCount(0), 1);

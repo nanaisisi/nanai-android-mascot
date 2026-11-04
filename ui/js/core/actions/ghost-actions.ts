@@ -7,7 +7,7 @@ import {
 	buildInstallFailureArgs,
 } from "./install-protocol.js";
 
-const SCALE_MAP = {
+const SCALE_MAP: Record<string, { width: string; height: string }> = {
 	"scale-50": { width: "100px", height: "200px" },
 	"scale-75": { width: "150px", height: "300px" },
 	"scale-100": { width: "200px", height: "400px" },
@@ -18,22 +18,22 @@ const SCALE_MAP = {
 
 export const ghostActions = {
 	showGhostInformation() {
-		const ghost = this.ghostController?.currentGhost;
-		if (!ghost || !this.modalManager?.content || !this.modalManager?.overlay) {
+		const ghost = (this as any).ghostController?.currentGhost;
+		if (!ghost || !(this as any).modalManager?.content || !(this as any).modalManager?.overlay) {
 			return;
 		}
 
-		const escapeHtml = (value) =>
+		const escapeHtml = (value: any) =>
 			String(value ?? "不明")
 				.replaceAll("&", "&amp;")
 				.replaceAll("<", "&lt;")
 				.replaceAll(">", "&gt;")
 				.replaceAll('"', "&quot;")
 				.replaceAll("'", "&#39;");
-		const row = (label, value) =>
+		const row = (label: string, value: any) =>
 			`<div class="info-item"><strong>${escapeHtml(label)}:</strong> <span>${escapeHtml(value)}</span></div>`;
 
-		this.modalManager.content.innerHTML = `
+		(this as any).modalManager.content.innerHTML = `
       <h2>👻 ゴースト情報</h2>
       <div class="form-section">
         ${row("名前", ghost.name)}
@@ -49,15 +49,15 @@ export const ghostActions = {
         <button id="modal-ok-btn" class="primary">OK</button>
       </div>
     `;
-		this.modalManager.overlay.style.display = "flex";
-		this.modalManager.showWindowIfNeeded?.();
-		this.modalManager.content
+		(this as any).modalManager.overlay.style.display = "flex";
+		(this as any).modalManager.showWindowIfNeeded?.();
+		(this as any).modalManager.content
 			.querySelector("#modal-ok-btn")
-			?.addEventListener("click", () => this.modalManager.hide());
+			?.addEventListener("click", () => (this as any).modalManager.hide());
 	},
 
 	async uninstallCurrentGhost() {
-		const gc = this.ghostController;
+		const gc = (this as any).ghostController;
 		const name = gc.currentGhost?.name;
 		if (!name) return;
 		if (!isTauriAvailable()) {
@@ -74,10 +74,10 @@ export const ghostActions = {
 			const removed = await invoke("uninstall_ghost", { ghostName: name });
 			if (!removed) return;
 			console.log(`🗑️ ゴーストアンインストール: ${name} (removed=${removed})`);
-			this.showBalloon(`ゴースト「${name}」を削除しました`);
-			setTimeout(() => this.hideBalloon(), 2500);
+			(this as any).showBalloon(`ゴースト「${name}」を削除しました`);
+			setTimeout(() => (this as any).hideBalloon(), 2500);
 			await gc.scanGhosts();
-			const next = (gc.ghosts || []).find((g) => g.name !== name);
+			const next = (gc.ghosts || []).find((g: any) => g.name !== name);
 			if (next) {
 				await gc.selectGhost(next.name);
 			} else {
@@ -85,34 +85,32 @@ export const ghostActions = {
 			}
 		} catch (err) {
 			console.error("🗑️ アンインストール失敗:", err);
-			this.showBalloon(`アンインストールに失敗しました: ${err}`);
-			setTimeout(() => this.hideBalloon(), 3000);
+			(this as any).showBalloon(`アンインストールに失敗しました: ${err}`);
+			setTimeout(() => (this as any).hideBalloon(), 3000);
 		}
 	},
 
 	async installGhostFromMenu() {
 		if (!isTauriAvailable()) {
-			return this.modalManager?.show("install-modal-content");
+			return (this as any).modalManager?.show("install-modal-content");
 		}
-		const gc = this.ghostController;
+		const gc = (this as any).ghostController;
 		try {
-			// OnInstallBegin 送信 (UKADOC準拠)
 			await gc?.sendShioriEvent?.(
 				"OnInstallBegin",
 				buildInstallBeginArgs("install"),
 			);
 
-			const result = await invoke("pick_and_install_ghost_archive");
+			const result: any = await invoke("pick_and_install_ghost_archive");
 			if (!result) return;
 
-			await this.ghostController.scanGhosts();
-			await this.scanBalloons();
+			await (this as any).ghostController.scanGhosts();
+			await (this as any).scanBalloons();
 
-			const importedGhost = this.ghostController.ghosts.find(
-				(ghost) => ghost.name === result.name,
+			const importedGhost = (this as any).ghostController.ghosts.find(
+				(ghost: any) => ghost.name === result.name,
 			);
 			if (importedGhost) {
-				// OnInstallComplete / OnInstallCompleteEx 送信 (UKADOC準拠)
 				await gc?.sendShioriEvent?.(
 					"OnInstallCompleteEx",
 					buildInstallCompleteExArgs("ghost", result.name, result.path || ""),
@@ -121,11 +119,11 @@ export const ghostActions = {
 					"OnInstallComplete",
 					buildInstallCompleteArgs("ghost", result.name, result.path || ""),
 				);
-				await this.ghostController.selectGhost(importedGhost.name);
+				await (this as any).ghostController.selectGhost(importedGhost.name);
 				return;
 			}
-			const importedBalloon = this.availableBalloons?.find(
-				(balloon) =>
+			const importedBalloon = (this as any).availableBalloons?.find(
+				(balloon: any) =>
 					balloon.name === result.name || balloon.dir_name === result.name,
 			);
 			if (importedBalloon) {
@@ -141,13 +139,12 @@ export const ghostActions = {
 					"OnInstallComplete",
 					buildInstallCompleteArgs("balloon", importedBalloon.name),
 				);
-				await this.setBalloonTheme(importedBalloon.dir_name);
-				this.showBalloon(`バルーン「${importedBalloon.name}」を導入しました`);
-				setTimeout(() => this.hideBalloon(), 2000);
+				await (this as any).setBalloonTheme(importedBalloon.dir_name);
+				(this as any).showBalloon(`バルーン「${importedBalloon.name}」を導入しました`);
+				setTimeout(() => (this as any).hideBalloon(), 2000);
 				return;
 			}
 
-			// その他リソース (shell, plugin等)
 			await gc?.sendShioriEvent?.(
 				"OnInstallComplete",
 				buildInstallCompleteArgs("package", result.name),
@@ -158,7 +155,7 @@ export const ghostActions = {
 				"OnInstallFailure",
 				buildInstallFailureArgs(error),
 			);
-			this.modalManager?.showNotification(
+			(this as any).modalManager?.showNotification(
 				"ゴースト取り込み失敗",
 				String(error),
 				true,
@@ -166,7 +163,7 @@ export const ghostActions = {
 		}
 	},
 
-	recordRecentGhost(ghostName) {
+	recordRecentGhost(ghostName: string) {
 		if (!ghostName) return;
 		const MAX_RECENT = 8;
 		try {
@@ -175,7 +172,7 @@ export const ghostActions = {
 			);
 			const next = [
 				ghostName,
-				...list.filter((/** @type {string} */ g) => g !== ghostName),
+				...list.filter((g: string) => g !== ghostName),
 			];
 			localStorage.setItem(
 				"nanai_recent_ghosts",
@@ -186,26 +183,21 @@ export const ghostActions = {
 		}
 	},
 
-	/**
-	 * @param {{ category: string, part: string, scope?: number }} payload
-	 */
-	async handleDressupToggle(payload) {
-		const sm = this.surfaceManager;
+	async handleDressupToggle(payload: { category: string; part: string; scope?: number }) {
+		const sm = (this as any).surfaceManager;
 		if (!sm || !payload?.category) return;
-		const scopeId = Number.isFinite(payload.scope) ? payload.scope : 0;
+		const scopeId = Number.isFinite(payload.scope) ? (payload.scope as number) : 0;
 		const { category, part } = payload;
 
 		const willOn =
 			sm.dressupState.get(`${scopeId}__${category}__${part}`) !== true;
 
-		/** @type {string | string[]} */
-		let options = [];
-		/** @type {{ number: number; part: string; thumbnail?: string | null; on: boolean; }[]} */
-		let siblingParts = [];
+		let options: string[] = [];
+		let siblingParts: any[] = [];
 		if (sm.shellManifest) {
 			const { bindMenuData } = await import("../../surface/bind-menu.js");
 			const cat = bindMenuData(sm.shellManifest, scopeId).categories.find(
-				(c) => c.category === category,
+				(c: any) => c.category === category,
 			);
 			options = cat?.options ?? [];
 			siblingParts = cat?.parts ?? [];
@@ -221,37 +213,34 @@ export const ghostActions = {
 	},
 
 	switchToNextGhost() {
-		const ghosts = this.ghostController.ghosts || [];
+		const ghosts = (this as any).ghostController.ghosts || [];
 		if (ghosts.length <= 1) return;
-		const currentName = this.ghostController.currentGhost?.name;
+		const currentName = (this as any).ghostController.currentGhost?.name;
 		const idx = ghosts.findIndex(
-			(/** @type {{ name: any; }} */ g) => g.name === currentName,
+			(g: any) => g.name === currentName,
 		);
 		const next = ghosts[(idx + 1) % ghosts.length];
-		if (next) this.ghostController.selectGhost(next.name);
+		if (next) (this as any).ghostController.selectGhost(next.name);
 	},
 
-	/**
-	 * @param {string} action
-	 */
-	applyShellScaleAction(action) {
+	applyShellScaleAction(action: string) {
 		const conf = SCALE_MAP[action] || SCALE_MAP["scale-100"];
 		const scalePercent = parseInt(action.replace("scale-", ""), 10) || 100;
-		if (this.elements.ghostDisplay) {
-			this.elements.ghostDisplay.style.width = conf.width;
-			this.elements.ghostDisplay.style.height = conf.height;
+		if ((this as any).elements.ghostDisplay) {
+			(this as any).elements.ghostDisplay.style.width = conf.width;
+			(this as any).elements.ghostDisplay.style.height = conf.height;
 		}
 		if (isTauriAvailable()) {
 			invoke("set_character_scale", { scalePercent }).catch(() => {});
 		}
-		this.showBalloon(`シェル倍率を ${scalePercent}% に変更しました`);
-		setTimeout(() => this.hideBalloon(), 1500);
+		(this as any).showBalloon(`シェル倍率を ${scalePercent}% に変更しました`);
+		setTimeout(() => (this as any).hideBalloon(), 1500);
 	},
 
 	minimizeApp() {
-		this.hideMenu();
+		(this as any).hideMenu();
 		try {
-			this.ghostController.sendShioriEvent("OnWindowStateMinimize");
+			(this as any).ghostController.sendShioriEvent("OnWindowStateMinimize");
 		} catch (_e) {}
 		if (isTauriAvailable()) {
 			invoke("minimize_app").catch((err) =>

@@ -3,19 +3,17 @@ import { invoke, isTauriAvailable } from "../tauri-helper.js";
 export const networkActions = {
 	/**
 	 * メールチェック (UKADOC OnBIFF 準拠)
-	 * @this {import('../../main.js').NanaiAndroidMascotApp}
-	 * @param {string} [accountName]
 	 */
-	async checkEmail(accountName = "default") {
-		const gc = this.ghostController;
+	async checkEmail(accountName: string = "default") {
+		const gc = (this as any).ghostController;
 		console.log(`📬 メールチェック開始 (OnBIFF): account=${accountName}`);
-		this.showBalloon?.("📬 メールを確認中...");
+		(this as any).showBalloon?.("📬 メールを確認中...");
 
 		try {
 			await gc.sendShioriEvent("OnBIFFBegin", [accountName]);
 
 			if (isTauriAvailable()) {
-				const result = await invoke("check_email", {
+				const result: any = await invoke("check_email", {
 					account: accountName,
 				}).catch(() => null);
 				if (result && typeof result === "object") {

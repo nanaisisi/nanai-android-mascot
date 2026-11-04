@@ -4,7 +4,7 @@ import { networkActions } from "./actions/network-actions.js";
 import { AppConfig } from "./config.js";
 import { invoke, isTauriAvailable } from "./tauri-helper.js";
 
-const THEME_LABELS = {
+const THEME_LABELS: Record<string, string> = {
 	ivory: "アイボリー（象牙色レトロ）",
 	pixel: "ドット絵・ピクセル風（レトロゲーム）",
 	comic: "ポップコミック（太枠丸み）",
@@ -12,7 +12,7 @@ const THEME_LABELS = {
 };
 
 /** SHIORIイベントへ単純転送するアクション */
-const SHIORI_ACTIONS = {
+const SHIORI_ACTIONS: Record<string, any> = {
 	recommend: ["OnChoiceSelect", ["recommendlink"]],
 	portal: ["OnChoiceSelect", ["portal"]],
 	update: ["OnUpdate"],
@@ -24,90 +24,84 @@ export const actionMethods = {
 	...ghostActions,
 	...networkActions,
 
-	/**
-	 * メニューアクションを処理
-	 * @this {import('../../main.js').NanaiAndroidMascotApp}
-	 * @param {string} action
-	 * @param {any} [payload]
-	 */
-	handleMenuAction(action, payload = null) {
+	handleMenuAction(action: string, payload: any = null) {
 		if (!action) return;
-		const gc = this.ghostController;
+		const gc = (this as any).ghostController;
 
 		if (action === "talk") {
 			const scopeId =
 				payload && typeof payload === "object" && "scope" in payload
 					? payload.scope
 					: 0;
-			return this.onGhostClick(undefined, undefined, undefined, scopeId);
+			return (this as any).onGhostClick(undefined, undefined, undefined, scopeId);
 		}
 
 		if (action === "update") {
-			return this.startNetworkUpdate();
+			return (this as any).startNetworkUpdate();
 		}
 
 		if (action === "updatecheck") {
-			return this.startNetworkUpdate(null, { checkOnly: true });
+			return (this as any).startNetworkUpdate(null, { checkOnly: true });
 		}
 
 		if (action === "ghost-info") {
-			return this.showGhostInformation();
+			return (this as any).showGhostInformation();
 		}
 		if (action === "explorer") {
-			return this.modalManager?.show("explorer-modal-content");
+			return (this as any).modalManager?.show("explorer-modal-content");
 		}
 		if (action === "backlog") {
-			return this.modalManager?.show("backlog-modal-content");
+			return (this as any).modalManager?.show("backlog-modal-content");
 		}
 		if (action === "reload-ghost") {
 			const currentName =
 				gc.currentGhost?.name || AppConfig.paths.fallbackGhostName;
 			return gc.selectGhost(currentName).then(() => {
-				this.showBalloon("🔄 ゴーストを再読み込みしました");
-				setTimeout(() => this.hideBalloon(), 2000);
+				(this as any).showBalloon("🔄 ゴーストを再読み込みしました");
+				setTimeout(() => (this as any).hideBalloon(), 2000);
 			});
 		}
 		if (action === "reset-shell-position") {
-			if (this.elements.ghostDisplay) {
-				this.elements.ghostDisplay.style.left = "";
-				this.elements.ghostDisplay.style.top = "";
-				this.elements.ghostDisplay.style.transform = "";
-				this.elements.ghostDisplay.classList.remove(
+			if ((this as any).elements.ghostDisplay) {
+				(this as any).elements.ghostDisplay.style.left = "";
+				(this as any).elements.ghostDisplay.style.top = "";
+				(this as any).elements.ghostDisplay.style.transform = "";
+				(this as any).elements.ghostDisplay.classList.remove(
 					"is-docked-left",
 					"is-docked-right",
 				);
 			}
-			this.showBalloon("📍 シェル位置を初期化しました");
-			setTimeout(() => this.hideBalloon(), 2000);
+			(this as any).showBalloon("📍 シェル位置を初期化しました");
+			setTimeout(() => (this as any).hideBalloon(), 2000);
 			return;
 		}
 		if (action === "reset-balloon-position") {
-			if (this.interactionManager) {
-				this.interactionManager.balloonOffsetX = 0;
-				this.interactionManager.balloonOffsetY = 0;
+			if ((this as any).interactionManager) {
+				(this as any).interactionManager.balloonOffsetX = 0;
+				(this as any).interactionManager.balloonOffsetY = 0;
 			}
-			this.showBalloon("🎈 バルーン位置を初期化しました");
-			setTimeout(() => this.hideBalloon(), 2000);
+			(this as any).showBalloon("🎈 バルーン位置を初期化しました");
+			setTimeout(() => (this as any).hideBalloon(), 2000);
 			return;
 		}
 		if (action === "close-balloon") {
-			return this.hideBalloon();
+			return (this as any).hideBalloon();
 		}
 		if (action === "keep-temporary-ghost") {
-			const gc = this.ghostController;
+			const gc = (this as any).ghostController;
 			if (gc.currentGhost?.isTemporary) {
 				gc.currentGhost.isTemporary = false;
-				this.showBalloon("📌 一時起動ゴーストを通常起動状態として保持しました");
+				(this as any).showBalloon("📌 一時起動ゴーストを通常起動状態として保持しました");
 				gc.sendShioriEvent("OnBoot");
 			} else {
-				this.showBalloon("⚠️ 一時起動中のゴーストではありません");
+				(this as any).showBalloon("⚠️ 一時起動中のゴーストではありません");
 			}
-			setTimeout(() => this.hideBalloon(), 2000);
+			setTimeout(() => (this as any).hideBalloon(), 2000);
 			return;
 		}
 
 		if (action === "biff" || action === "mail") {
-			return this.checkEmail();
+			return (this as any).checkEmail();
 		}
 
 		if (SHIORI_ACTIONS[action]) {
@@ -117,9 +111,9 @@ export const actionMethods = {
 
 		if (action === "scan") {
 			return gc.scanGhosts().then(() => {
-				this.syncMenuGhosts?.();
-				this.showBalloon("🔄 ゴーストフォルダを再スキャンしました");
-				setTimeout(() => this.hideBalloon(), 2000);
+				(this as any).syncMenuGhosts?.();
+				(this as any).showBalloon("🔄 ゴーストフォルダを再スキャンしました");
+				setTimeout(() => (this as any).hideBalloon(), 2000);
 			});
 		}
 		if (action === "open-ghost-folder") {
@@ -129,7 +123,7 @@ export const actionMethods = {
 			return;
 		}
 		if (action === "uninstall-ghost" || action === "uninstall") {
-			return this.uninstallCurrentGhost();
+			return (this as any).uninstallCurrentGhost();
 		}
 		if (action === "reset-balloon-position" || action === "resetballoonpos") {
 			localStorage.removeItem("nanai_balloon_offset");
@@ -141,42 +135,42 @@ export const actionMethods = {
 					() => {},
 				);
 			}
-			this.showBalloon("📍 バルーン位置を初期リセットしました");
-			setTimeout(() => this.hideBalloon(), 2000);
+			(this as any).showBalloon("📍 バルーン位置を初期リセットしました");
+			setTimeout(() => (this as any).hideBalloon(), 2000);
 			return;
 		}
 		if (action === "reset-shell-position") {
 			if (isTauriAvailable()) {
 				invoke("set_character_scale", { scale: 1.0 }).catch(() => {});
 			}
-			this.showBalloon("📍 シェル位置・倍率を初期リセットしました");
-			setTimeout(() => this.hideBalloon(), 2000);
+			(this as any).showBalloon("📍 シェル位置・倍率を初期リセットしました");
+			setTimeout(() => (this as any).hideBalloon(), 2000);
 			return;
 		}
-		if (action === "install") return this.installGhostFromMenu();
+		if (action === "install") return (this as any).installGhostFromMenu();
 		if (action === "balloon" || action === "balloon-cycle")
-			return this.cycleBalloonTheme();
+			return (this as any).cycleBalloonTheme();
 		if (action.startsWith("balloon-theme-")) {
 			const theme = action.replace("balloon-theme-", "");
-			this.setBalloonTheme(theme);
+			(this as any).setBalloonTheme(theme);
 			let label = THEME_LABELS[theme] || theme;
-			if (this.availableBalloons) {
-				const bInfo = this.availableBalloons.find(
-					(/** @type {{ dir_name: string; }} */ b) => b.dir_name === theme,
+			if ((this as any).availableBalloons) {
+				const bInfo = (this as any).availableBalloons.find(
+					(b: any) => b.dir_name === theme,
 				);
 				if (bInfo) label = bInfo.name;
 			}
-			this.showBalloon(`バルーンスキンを「${label}」に変更しました`);
-			setTimeout(() => this.hideBalloon(), 2000);
+			(this as any).showBalloon(`バルーンスキンを「${label}」に変更しました`);
+			setTimeout(() => (this as any).hideBalloon(), 2000);
 			return;
 		}
-		if (action.startsWith("scale-")) return this.applyShellScaleAction(action);
+		if (action.startsWith("scale-")) return (this as any).applyShellScaleAction(action);
 		if (action.startsWith("balloon-scale-"))
-			return this.applyBalloonScaleAction(action);
-		if (action === "close" || action === "exit") return this.closeApp();
-		if (action === "close-all" || action === "exit-all") return this.closeApp();
+			return (this as any).applyBalloonScaleAction(action);
+		if (action === "close" || action === "exit") return (this as any).closeApp();
+		if (action === "close-all" || action === "exit-all") return (this as any).closeApp();
 		if (action === "close-menu") return;
-		if (action === "minimize") return this.minimizeApp();
+		if (action === "minimize") return (this as any).minimizeApp();
 		if (
 			(action === "switch-to-ghost" || action === "switch-ghost") &&
 			payload
@@ -192,7 +186,7 @@ export const actionMethods = {
 				typeof payload === "string"
 					? payload
 					: payload.name || payload.ghostName;
-			if (ghostName) return this.callGhost(ghostName);
+			if (ghostName) return (this as any).callGhost(ghostName);
 		}
 		if (action === "recent-ghost" && payload) {
 			const ghostName =
@@ -212,10 +206,10 @@ export const actionMethods = {
 			if (shellName) return gc.selectShell(shellName);
 		}
 		if (action === "dressup-toggle" && payload) {
-			return this.handleDressupToggle(payload);
+			return (this as any).handleDressupToggle(payload);
 		}
 
 		const modalKey = action === "ghost-switch" ? "ghost" : action;
-		this.modalManager?.show(`${modalKey}-modal-content`);
+		(this as any).modalManager?.show(`${modalKey}-modal-content`);
 	},
 };

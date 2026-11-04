@@ -1,15 +1,9 @@
 /**
- * @file surface.js
+ * @file surface.ts
  * @brief サーフェス操作・着せ替え・SERIKOアニメーション制御コマンド (\![bind,...], \![anim,...])
  */
 
-/**
- * 着せ替え設定コマンド (\![bind,category,part,status])
- * @param {import('../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {string[]} args
- * @param {boolean} [raiseEvent=true]
- */
-export async function handleBindCommand(handler, args, raiseEvent = true) {
+export async function handleBindCommand(handler: any, args: string[], raiseEvent: boolean = true) {
 	const [category, part, statusVal] = args.slice(1);
 	await handler.app.surfaceManager?.bindDressup?.(
 		category,
@@ -20,12 +14,7 @@ export async function handleBindCommand(handler, args, raiseEvent = true) {
 	);
 }
 
-/**
- * アニメーション制御コマンド (\![anim,verb,id,...])
- * @param {import('../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {string[]} args
- */
-export async function handleAnimCommand(handler, args) {
+export async function handleAnimCommand(handler: any, args: string[]) {
 	const [verbRaw, idVal, arg3, arg4] = args.slice(1);
 	const targetStr = String(idVal ?? "").trim();
 	const animIdNum = Number.parseInt(targetStr, 10);
@@ -45,17 +34,11 @@ export async function handleAnimCommand(handler, args) {
 		const y = Number.parseInt(String(arg4 ?? "0"), 10) || 0;
 		sm?.setAnimationOffset?.(animTarget, x, y, scope);
 	} else if (verb === "add") {
-		// UKADOC/CROW: \![anim,add,...] 動的アニメーション・オーバーレイ追加
 		await handleAnimAddCommand(handler, args.slice(2));
 	}
 }
 
-/**
- * \![anim,add,...] サブコマンドの処理
- * @param {import('../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {string[]} subArgs
- */
-async function handleAnimAddCommand(handler, subArgs) {
+async function handleAnimAddCommand(handler: any, subArgs: string[]) {
 	if (!subArgs.length) return;
 	const method = String(subArgs[0] ?? "").toLowerCase();
 	const sm = handler.app.surfaceManager;
@@ -63,7 +46,6 @@ async function handleAnimAddCommand(handler, subArgs) {
 	const scope = handler.player.currentScope;
 
 	if (method === "move") {
-		// \![anim,add,move,x,y]
 		const x = Number.parseInt(String(subArgs[1] ?? "0"), 10) || 0;
 		const y = Number.parseInt(String(subArgs[2] ?? "0"), 10) || 0;
 		sm?.setBaseMoveOffset?.(scope, x, y);
@@ -78,13 +60,11 @@ async function handleAnimAddCommand(handler, subArgs) {
 			}
 		}
 	} else if (method === "base") {
-		// \![anim,add,base,ID]
 		const targetSurface = subArgs[1];
 		if (targetSurface != null && gc?.updateSurface) {
 			await gc.updateSurface(targetSurface, scope);
 		}
 	} else if (method === "overlay" || method === "overlayfast") {
-		// \![anim,add,overlay,ID(,x,y)] またはアニメーションパターン列
 		const targetSurface = subArgs[1];
 		const x = Number.parseInt(String(subArgs[2] ?? "0"), 10) || 0;
 		const y = Number.parseInt(String(subArgs[3] ?? "0"), 10) || 0;

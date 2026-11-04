@@ -96,7 +96,9 @@ export const actionMethods = {
 			if (typeof localStorage !== "undefined") {
 				try {
 					localStorage.removeItem("nanai_balloon_offset");
-				} catch (_e) {}
+				} catch (_e) {
+					// Fallback if localStorage access fails
+				}
 			}
 			if (isTauriAvailable()) {
 				invoke("set_balloon_offset", { scopeId: 0, x: 0, y: 0 }).catch(

@@ -310,6 +310,71 @@ fn test_extended_blend_modes_subtract_divide_overlay_softlight() {
         &[(&layer, 0, 0, DrawMethod::Blend("softlight-fast".into()))],
     );
     assert!(softlight.get_pixel(0, 0).is_some());
+
+    // Color-dodge: min(255, (dst * 255) / (255 - src))
+    // R: (120 * 255) / (255 - 50) = 30600 / 205 = 149
+    // G: (180 * 255) / (255 - 60) = 45900 / 195 = 235
+    // B: (200 * 255) / (255 - 220) = 51000 / 35 = 1457 -> 255
+    let dodge = composite_elements(
+        &base,
+        &[(&layer, 0, 0, DrawMethod::Blend("color-dodge-fast".into()))],
+    );
+    assert_eq!(dodge.get_pixel(0, 0), Some((149, 235, 255, 255)));
+
+    // Color-burn: max(0, 255 - ((255 - dst) * 255) / src)
+    // R: 255 - (135 * 255) / 50 = 255 - 688 -> 0
+    // G: 255 - (75 * 255) / 60 = 255 - 318 -> 0
+    // B: 255 - (55 * 255) / 220 = 255 - 63 = 192
+    let burn = composite_elements(
+        &base,
+        &[(&layer, 0, 0, DrawMethod::Blend("color-burn-fast".into()))],
+    );
+    assert_eq!(burn.get_pixel(0, 0), Some((0, 0, 192, 255)));
+
+    // Linear-burn: max(0, dst + src - 255)
+    // R: 0, G: 0, B: 200 + 220 - 255 = 165
+    let l_burn = composite_elements(
+        &base,
+        &[(&layer, 0, 0, DrawMethod::Blend("linear-burn-fast".into()))],
+    );
+    assert_eq!(l_burn.get_pixel(0, 0), Some((0, 0, 165, 255)));
+
+    // Linear-light: clamp(dst + 2*src - 255, 0, 255)
+    // R: 120 + 100 - 255 = 0
+    // G: 180 + 120 - 255 = 45
+    // B: 200 + 440 - 255 = 385 -> 255
+    let l_light = composite_elements(
+        &base,
+        &[(&layer, 0, 0, DrawMethod::Blend("linear-light-fast".into()))],
+    );
+    assert_eq!(l_light.get_pixel(0, 0), Some((0, 45, 255, 255)));
+
+    // Hard-mix: linear-light >= 128 ? 255 : 0
+    let h_mix = composite_elements(
+        &base,
+        &[(&layer, 0, 0, DrawMethod::Blend("hard-mix-fast".into()))],
+    );
+    assert_eq!(h_mix.get_pixel(0, 0), Some((0, 0, 255, 255)));
+
+    // Pin-light: src < 128 ? min(dst, 2*src) : max(dst, 2*(src - 128))
+    // R: min(120, 100) = 100
+    // G: min(180, 120) = 120
+    // B: max(200, 184) = 200
+    let p_light = composite_elements(
+        &base,
+        &[(&layer, 0, 0, DrawMethod::Blend("pin-light-fast".into()))],
+    );
+    assert_eq!(p_light.get_pixel(0, 0), Some((100, 120, 200, 255)));
+
+    // Hard-light: src < 128 ? (2*src*dst)/255 : 255 - 2*(255-src)*(255-dst)/255
+    // R: (2 * 50 * 120) / 255 = 47
+    // G: (2 * 60 * 180) / 255 = 84
+    // B: 255 - 2*(35)*(55)/255 = 255 - 15 = 240
+    let h_light = composite_elements(
+        &base,
+        &[(&layer, 0, 0, DrawMethod::Blend("hard-light-fast".into()))],
+    );
+    assert_eq!(h_light.get_pixel(0, 0), Some((47, 84, 240, 255)));
 }
 
 #[test]

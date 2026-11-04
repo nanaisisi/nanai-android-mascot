@@ -67,8 +67,82 @@ pub fn evaluate_property_query(query: &str) -> String {
         | "updatebuttoncaption"
         | "vanishbuttoncaption"
         | "vanishbuttonvisible"
+        | "activaterootbutton.caption"
+        | "addressbarbutton.caption"
+        | "aistatebutton.caption"
+        | "alignrootbutton.caption"
+        | "alwaysstayontopbutton.caption"
+        | "alwaystrayiconvisiblebutton.caption"
+        | "balloonhistorybutton.caption"
+        | "balloonrootbutton.caption"
+        | "biffallbutton.caption"
+        | "biffbutton.caption"
+        | "calendarbutton.caption"
+        | "callghosthistorybutton.caption"
+        | "callghostrootbutton.caption"
+        | "definedsurfaceonlybutton.caption"
+        | "collisionvisiblebutton.caption"
         | "callsstpsendboxbutton.caption"
-        | "updatefmobutton.caption"
+        | "charsetbutton.caption"
+        | "closeballoonbutton.caption"
+        | "closebutton.caption"
+        | "collisionvisiblebutton.caption"
+        | "configurationbutton.caption"
+        | "configurationrootbutton.caption"
+        | "debugballoonbutton.caption"
+        | "definedsurfaceonlybutton.caption"
+        | "dictationbutton.caption"
+        | "dressuprootbutton.caption"
+        | "duibutton.caption"
+        | "enableballoonmovebutton.caption"
+        | "firststaffbutton.caption"
+        | "ghostexplorerbutton.caption"
+        | "ghosthistorybutton.caption"
+        | "ghostinstallbutton.caption"
+        | "ghostrootbutton.caption"
+        | "headlinesensehistorybutton.caption"
+        | "headlinesenserootbutton.caption"
+        | "helpbutton.caption"
+        | "hidebutton.caption"
+        | "historyrootbutton.caption"
+        | "inforootbutton.caption"
+        | "leavepassivebutton.caption"
+        | "messengerbutton.caption"
+        | "pluginhistorybutton.caption"
+        | "pluginrootbutton.caption"
+        | "portalrootbutton.caption"
+        | "purgeghostcachebutton.caption"
+        | "quitbutton.caption"
+        | "rateofuseballoonbutton.caption"
+        | "rateofusebutton.caption"
+        | "rateofuserootbutton.caption"
+        | "rateofusetotalbutton.caption"
+        | "readmebutton.caption"
+        | "recommendrootbutton.caption"
+        | "regionenabledbutton.caption"
+        | "reloadinfobutton.caption"
+        | "resetballoonpositionbutton.caption"
+        | "resettodefaultbutton.caption"
+        | "scriptlogbutton.caption"
+        | "shellrootbutton.caption"
+        | "shellscaleotherbutton.caption"
+        | "shellscalerootbutton.caption"
+        | "sntpbutton.caption"
+        | "switchactivatewhentalkbutton.caption"
+        | "switchactivatewhentalkexceptupdatebutton.caption"
+        | "switchautobiffbutton.caption"
+        | "switchautoheadlinesensebutton.caption"
+        | "switchblacklistingbutton.caption"
+        | "switchcompatiblemodebutton.caption"
+        | "switchconsolealwaysvisiblebutton.caption"
+        | "switchconsolevisiblebutton.caption"
+        | "switchdeactivatebutton.caption"
+        | "switchdontactivatebutton.caption"
+        | "switchdontforcealignbutton.caption"
+        | "switchduivisiblebutton.caption"
+        | "switchforcealignfreebutton.caption"
+        | "switchforcealignlimitbutton.caption"
+        | "switchignoreserikomovebutton.caption"
         | "switchlocalsstpbutton.caption"
         | "switchremotesstpbutton.caption"
         | "switchreloadbutton.caption"
@@ -135,6 +209,24 @@ pub fn evaluate_property_query(query: &str) -> String {
         | "texttospeechbutton.caption"
         | "updateplatformbutton.caption"
         | "utilityrootbutton.caption" => "1".to_string(),
+        | "switchmovetodefaultpositionbutton.caption"
+        | "switchproxybutton.caption"
+        | "switchquietbutton.caption"
+        | "switchreloadbutton.caption"
+        | "switchreloadtempghostbutton.caption"
+        | "switchremotesstpbutton.caption"
+        | "switchrootbutton.caption"
+        | "switchtalkghostbutton.caption"
+        | "systeminfobutton.caption"
+        | "termsbutton.caption"
+        | "texttospeechbutton.caption"
+        | "updatebutton.caption"
+        | "updatefmobutton.caption"
+        | "updateplatformbutton.caption"
+        | "utilityrootbutton.caption" => "1".to_string(),
+        | "switchremotesstpbutton.caption" => "1".to_string(),
+        "currentghost.seriko.surfacelist.defined" => "0,1,10".to_string(),
+        "currentghost.seriko.surfacelist.all" => "0,1,10".to_string(),
         "system.year" => "2026".to_string(),
         "system.month" => "11".to_string(),
         "system.day" => "3".to_string(),
@@ -249,6 +341,22 @@ mod tests {
         assert_eq!(evaluate_property_query("update_time"), "0");
         assert_eq!(evaluate_property_query("sakura.bind.menu"), "");
         assert_eq!(evaluate_property_query("kero.bind.menu"), "");
+        assert_eq!(
+            evaluate_property_query("definedsurfaceonlybutton.caption"),
+            "1"
+        );
+        assert_eq!(
+            evaluate_property_query("collisionvisiblebutton.caption"),
+            "1"
+        );
+        assert_eq!(
+            evaluate_property_query("currentghost.seriko.surfacelist.defined"),
+            "0,1,10"
+        );
+        assert_eq!(
+            evaluate_property_query("currentghost.seriko.surfacelist.all"),
+            "0,1,10"
+        );
         assert_eq!(
             evaluate_property_query("callsstpsendboxbutton.caption"),
             "1"

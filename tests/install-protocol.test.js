@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { describe, test } from "vitest";
 
 const {
+	INSTALL_IDENTIFIERS,
+	INSTALL_FAILURE_REASONS,
 	normalizeInstallType,
 	buildInstallBeginArgs,
 	buildInstallCompleteArgs,
@@ -14,6 +16,11 @@ const {
 } = await import("../ui/js/core/actions/install-protocol.js");
 
 const {
+	UPDATE_TARGET_TYPES,
+	UPDATE_REASONS,
+	UPDATE_RESULT_COMPLETE,
+	UPDATE_RESULT_FAILURE_REASONS,
+	UPDATE_EVENT_ORDER,
 	buildUpdateArgs,
 	buildUpdateOtherArgs,
 	PROGRESS_PHASE_EVENTS,
@@ -23,6 +30,23 @@ const {
 } = await import("../ui/js/core/actions/update-protocol.js");
 
 describe("install-protocol", () => {
+	test("UKADOC install constants are defined and frozen", () => {
+		assert.ok(Array.isArray(INSTALL_IDENTIFIERS));
+		assert.ok(INSTALL_IDENTIFIERS.includes("ghost"));
+		assert.ok(INSTALL_IDENTIFIERS.includes("balloon"));
+		assert.ok(INSTALL_IDENTIFIERS.includes("shell"));
+		assert.ok(INSTALL_IDENTIFIERS.includes("calendar.skin"));
+		assert.ok(INSTALL_IDENTIFIERS.includes("profile"));
+		assert.ok(Object.isFrozen(INSTALL_IDENTIFIERS));
+
+		assert.ok(Array.isArray(INSTALL_FAILURE_REASONS));
+		assert.ok(INSTALL_FAILURE_REASONS.includes("unsupported"));
+		assert.ok(INSTALL_FAILURE_REASONS.includes("extraction"));
+		assert.ok(INSTALL_FAILURE_REASONS.includes("unlha32 error"));
+		assert.ok(INSTALL_FAILURE_REASONS.includes("invalid path"));
+		assert.ok(Object.isFrozen(INSTALL_FAILURE_REASONS));
+	});
+
 	test("normalizeInstallType normalizes resource identifiers", () => {
 		assert.equal(normalizeInstallType("Ghost"), "ghost");
 		assert.equal(normalizeInstallType("SHELL"), "shell");
@@ -32,6 +56,9 @@ describe("install-protocol", () => {
 		assert.equal(normalizeInstallType("package"), "package");
 		assert.equal(normalizeInstallType("supplement"), "supplement");
 		assert.equal(normalizeInstallType("calendar.skin"), "calendar.skin");
+		assert.equal(normalizeInstallType("calendar.plugin"), "calendar.plugin");
+		assert.equal(normalizeInstallType("profile"), "profile");
+		assert.equal(normalizeInstallType("taromime"), "taromime");
 		assert.equal(normalizeInstallType(null), "unknown");
 		assert.equal(normalizeInstallType(""), "unknown");
 		assert.equal(normalizeInstallType("custom_type"), "custom_type");
@@ -145,6 +172,42 @@ describe("install-protocol", () => {
 });
 
 describe("update-protocol", () => {
+	test("UKADOC update constants are defined and frozen", () => {
+		assert.ok(Array.isArray(UPDATE_TARGET_TYPES));
+		assert.ok(UPDATE_TARGET_TYPES.includes("ghost"));
+		assert.ok(UPDATE_TARGET_TYPES.includes("shell"));
+		assert.ok(UPDATE_TARGET_TYPES.includes("balloon"));
+		assert.ok(Object.isFrozen(UPDATE_TARGET_TYPES));
+
+		assert.ok(Array.isArray(UPDATE_REASONS));
+		assert.ok(UPDATE_REASONS.includes("manual"));
+		assert.ok(UPDATE_REASONS.includes("auto"));
+		assert.ok(UPDATE_REASONS.includes("script"));
+		assert.ok(Object.isFrozen(UPDATE_REASONS));
+
+		assert.ok(Array.isArray(UPDATE_RESULT_COMPLETE));
+		assert.ok(UPDATE_RESULT_COMPLETE.includes("none"));
+		assert.ok(UPDATE_RESULT_COMPLETE.includes("changed"));
+		assert.ok(Object.isFrozen(UPDATE_RESULT_COMPLETE));
+
+		assert.ok(Array.isArray(UPDATE_RESULT_FAILURE_REASONS));
+		assert.ok(UPDATE_RESULT_FAILURE_REASONS.includes("timeout"));
+		assert.ok(UPDATE_RESULT_FAILURE_REASONS.includes("404"));
+		assert.ok(UPDATE_RESULT_FAILURE_REASONS.includes("md5 miss"));
+		assert.ok(UPDATE_RESULT_FAILURE_REASONS.includes("fileio"));
+		assert.ok(UPDATE_RESULT_FAILURE_REASONS.includes("artificial"));
+		assert.ok(UPDATE_RESULT_FAILURE_REASONS.includes("readonly"));
+		assert.ok(Object.isFrozen(UPDATE_RESULT_FAILURE_REASONS));
+
+		assert.ok(Array.isArray(UPDATE_EVENT_ORDER));
+		assert.equal(UPDATE_EVENT_ORDER[0], "OnUpdateProcessExec");
+		assert.equal(
+			UPDATE_EVENT_ORDER[UPDATE_EVENT_ORDER.length - 1],
+			"OnUpdateComplete",
+		);
+		assert.ok(Object.isFrozen(UPDATE_EVENT_ORDER));
+	});
+
 	test("buildUpdateArgs generates standard 5-element update arguments", () => {
 		assert.deepEqual(buildUpdateArgs("file.txt", "1024"), [
 			"file.txt",

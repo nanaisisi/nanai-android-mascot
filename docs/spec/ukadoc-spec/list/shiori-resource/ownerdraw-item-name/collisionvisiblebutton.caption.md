@@ -11,5 +11,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:89` `| "collisionvisiblebutton.caption"`
-- `ui/js/ui/renderers/menu-caption-renderer.js:121` `resource: "collisionvisiblebutton.caption",`
+- `src-tauri/src/shiori/property.rs:71` `| "collisionvisiblebutton.caption"`
+- `src-tauri/src/shiori/property.rs:197` `evaluate_property_query("collisionvisiblebutton.caption"),`

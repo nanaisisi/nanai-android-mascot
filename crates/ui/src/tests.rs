@@ -43,6 +43,23 @@ fn test_sakura_script_extended() {
     assert_eq!(commands[6], SakuraCommand::End);
 }
 
+    #[test]
+    fn test_sakura_script_quicksection_and_choice_scope() {
+        let script = r"\![quicksection,1]\__q[OnTest,arg1]ChoiceText\__q\![quicksection,false]";
+        let cmds = parse_sakura_script(script);
+        assert_eq!(cmds.len(), 3);
+        assert_eq!(cmds[0], SakuraCommand::Quick(true));
+        assert_eq!(
+            cmds[1],
+            SakuraCommand::Choice {
+                label: "ChoiceText".to_string(),
+                id: "OnTest".to_string(),
+                args: vec!["arg1".to_string()],
+            }
+        );
+        assert_eq!(cmds[2], SakuraCommand::Quick(false));
+    }
+
 #[test]
 fn test_sakura_script_new_tags() {
     let script = r"\0\_q\x\_a[anchor01]リンク\_a\![raise,OnTest,1,2]\![bind,clothing,ribbon,1]";
@@ -260,4 +277,36 @@ Bust,Poke here!
     assert_eq!(txt.get_tooltip("kero", "Bust"), Some("Poke here!"));
     assert_eq!(txt.get_tooltip("1", "Bust"), Some("Poke here!"));
     assert_eq!(txt.get_tooltip("0", "NonExistent"), None);
+}
+
+#[test]
+fn test_sakura_script_raw_mode_and_no_autowrap() {
+    let script = r"\0\_n本文1\_?\s[0]\w9\_?本文2\_n";
+    let mut commands = Vec::new();
+    execute_sakura_script(script, |cmd| commands.push(cmd));
+
+    assert_eq!(commands[0], SakuraCommand::Target(0));
+    assert_eq!(commands[1], SakuraCommand::NewLineNoPause);
+    assert_eq!(commands[2], SakuraCommand::Text("本文1".into()));
+    assert_eq!(commands[3], SakuraCommand::Text(r"\s[0]\w9".into()));
+    assert_eq!(commands[4], SakuraCommand::AutoPause);
+    assert_eq!(commands[5], SakuraCommand::Text("本文2".into()));
+    assert_eq!(commands[6], SakuraCommand::NewLineNoPause);
+}
+
+#[test]
+fn test_archive_entry_path_drive_letter_and_traversal() {
+    use crate::update::validate_archive_entry_path;
+
+    assert!(validate_archive_entry_path("ghost/master/aya.dll").is_ok());
+    assert!(validate_archive_entry_path("shell/master/surface0.png").is_ok());
+
+    assert!(validate_archive_entry_path("C:/evil.txt").is_err());
+    assert!(validate_archive_entry_path("d:\\windows\\system32").is_err());
+    assert!(validate_archive_entry_path("z:/path").is_err());
+
+    assert!(validate_archive_entry_path("../traversal.txt").is_err());
+    assert!(validate_archive_entry_path("/etc/passwd").is_err());
+    assert!(validate_archive_entry_path("").is_err());
+    assert!(validate_archive_entry_path("   ").is_err());
 }

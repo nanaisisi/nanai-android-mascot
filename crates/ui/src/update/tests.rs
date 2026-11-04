@@ -218,7 +218,11 @@ fn test_validate_archive_entry_path() {
     assert!(engine.validate_entry_path("shell/../foo").is_err());
     assert!(engine.validate_entry_path("/absolute/path").is_err());
     assert!(engine.validate_entry_path("C:/foo").is_err());
+    assert!(engine.validate_entry_path("d:\\bar").is_err());
+    assert!(engine.validate_entry_path("\\absolute\\win").is_err());
+    assert!(engine.validate_entry_path("foo\0bar.txt").is_err());
     assert!(engine.validate_entry_path("").is_err());
+    assert!(engine.validate_entry_path("   ").is_err());
     assert!(engine.validate_entry_path("foo/bar").is_ok());
 }
 

@@ -1,7 +1,8 @@
 ﻿# SHIORI/3.0 request: ID
 
 - **規格**: [request.md](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/request/) (ukadoc-spec/spec/shiori3/request.md)
-- **対応状況**: ❌ 未実装
+- **検索語**: ID:
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -11,3 +12,12 @@ Rust 通信層として `crates/ui/src/shiori.rs`（SHIORI/3.0 リクエスト/�
 
 - 突合は実装コード (src-tauri/src、ui/js) の文字列検索に基づく一次調査です。
 - 規格の詳細は参照元ドキュメントを参照してください。
+
+
+## 実装箇所
+
+- `src-tauri/src/commands/shiori/protocol.rs:60` `let noisy = request.contains("ID: OnSecondChange");`
+- `src-tauri/src/sstp/mod.rs:46` `let raw = "SEND SSTP/1.4\r\nSender: TestApp\r\nID: unique_id_01\r\nOption: nobre`
+- `crates/ui/src/shiori/protocol/request/builder.rs:38` `out.push_str(&format!("BaseID: {}\r\n", base));`
+- `crates/ui/src/shiori/protocol/request/builder.rs:40` `out.push_str(&format!("ID: {}\r\n", self.id));`
+- `crates/ui/src/shiori/protocol/request/tests.rs:23` `let raw = "GET SHIORI/3.0\r\nCharset: UTF-8\r\nSender: TestGhost\r\nID: OnBoot\r`

@@ -3,21 +3,58 @@
  */
 
 /**
- * "0-5,10,12" のような範囲文字列を展開して文字列配列にする
+ * "0-5,10,12" や SSP 専用除外指定 "1-30,!15,!20-25" のような範囲文字列を展開して文字列配列にする。
+ * "!" による除外指定は記述位置によらず最優先される。
  * @param {string} rangeStr
  * @returns {string[]}
  */
 export function expandSurfaceRange(rangeStr) {
-	const res = [];
-	rangeStr.split(",").forEach((part) => {
+	const included = [];
+	const excluded = new Set();
+
+	rangeStr.split(",").forEach((rawPart) => {
+		let part = rawPart.trim().replace(/^\[/, "").replace(/\]$/, "");
+		if (!part) return;
+
+		const isExclude = part.startsWith("!");
+		if (isExclude) {
+			part = part.slice(1).trim();
+		}
+
 		if (part.includes("-")) {
-			const [start, end] = part.split("-").map((v) => Number.parseInt(v, 10));
-			for (let i = start; i <= end; i++) res.push(String(i));
-		} else {
-			res.push(part.trim());
+			const [sStr, eStr] = part.split("-");
+			const start = Number.parseInt(sStr, 10);
+			const end = Number.parseInt(eStr, 10);
+			if (!Number.isNaN(start) && !Number.isNaN(end)) {
+				if (start <= end) {
+					for (let i = start; i <= end; i++) {
+						if (isExclude) {
+							excluded.add(String(i));
+						} else {
+							included.push(String(i));
+						}
+					}
+				}
+				return;
+			}
+		}
+
+		const num = Number.parseInt(part, 10);
+		if (!Number.isNaN(num)) {
+			if (isExclude) {
+				excluded.add(String(num));
+			} else {
+				included.push(String(num));
+			}
+		} else if (!isExclude && part.length > 0) {
+			included.push(part);
 		}
 	});
-	return res;
+
+	if (excluded.size === 0) {
+		return included;
+	}
+	return included.filter((id) => !excluded.has(id));
 }
 
 /**

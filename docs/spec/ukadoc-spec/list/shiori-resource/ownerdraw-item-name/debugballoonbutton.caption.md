@@ -11,5 +11,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:91` `| "debugballoonbutton.caption"`
-- `ui/js/ui/renderers/menu-caption-renderer.js:139` `resource: "debugballoonbutton.caption",`
+- `ui/js/ui/renderers/menu-caption-renderer.js:168` `resource: "debugballoonbutton.caption",`

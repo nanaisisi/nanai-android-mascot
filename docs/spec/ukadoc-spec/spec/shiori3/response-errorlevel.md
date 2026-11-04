@@ -1,7 +1,8 @@
 ﻿# SHIORI/3.0 response: ErrorLevel [SSP拡張]
 
 - **規格**: [response.md](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/response/) (ukadoc-spec/spec/shiori3/response.md)
-- **対応状況**: ❌ 未実装
+- **検索語**: error_level
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -11,3 +12,12 @@ Rust 通信層として `crates/ui/src/shiori.rs`（SHIORI/3.0 リクエスト/�
 
 - 突合は実装コード (src-tauri/src、ui/js) の文字列検索に基づく一次調査です。
 - 規格の詳細は参照元ドキュメントを参照してください。
+
+
+## 実装箇所
+
+- `crates/ui/src/shiori/protocol/response/build.rs:37` `if !self.error_level.is_empty() {`
+- `crates/ui/src/shiori/protocol/response/build.rs:40` `ErrorLevel::join_tokens(&self.error_level)`
+- `crates/ui/src/shiori/protocol/response/build.rs:82` `res.error_level = vec![ErrorLevel::Warning];`
+- `crates/ui/src/shiori/protocol/response/mod.rs:32` `pub error_level: Vec<ErrorLevel>,`
+- `crates/ui/src/shiori/protocol/response/parse/core.rs:61` `"errorlevel" => res.error_level = ErrorLevel::parse_list(value),`

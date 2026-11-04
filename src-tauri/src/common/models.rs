@@ -44,6 +44,14 @@ pub struct GhostInfo {
     pub recommended_balloon_path: Option<String>,
     /// [default.balloon.path,パス]:
     pub default_balloon_path: Option<String>,
+    /// [balloon.defaultsurface,数値]:
+    pub balloon_defaultsurface: Option<i32>,
+    /// [sakura.balloon.defaultsurface,数値]:
+    pub sakura_balloon_defaultsurface: Option<i32>,
+    /// [kero.balloon.defaultsurface,数値]:
+    pub kero_balloon_defaultsurface: Option<i32>,
+    /// [char*.balloon.defaultsurface,数値]:
+    pub char_balloon_defaultsurfaces: std::collections::BTreeMap<i32, i32>,
     pub shiori_version: Option<String>,
     pub shiori_cache: Option<String>,
     pub shiori_encoding: Option<String>,

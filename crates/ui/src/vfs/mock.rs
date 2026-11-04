@@ -34,6 +34,38 @@ impl MockVfs {
         self.add_file(path, content.as_bytes().to_vec());
     }
 
+    /// ファイルにバイトデータを上書きまたは新規作成
+    pub fn write_file<P: AsRef<str>>(&mut self, path: P, data: Vec<u8>) {
+        self.add_file(path, data);
+    }
+
+    /// ファイルにテキストデータを上書きまたは新規作成
+    pub fn write_text_file<P: AsRef<str>>(&mut self, path: P, content: &str) {
+        self.add_text_file(path, content);
+    }
+
+    /// 既存ファイルにバイト列を追記（存在しない場合は新規作成）
+    pub fn append_file<P: AsRef<str>>(&mut self, path: P, data: &[u8]) {
+        let norm_orig = normalize_vfs_path(path.as_ref());
+        let key = norm_orig.to_lowercase();
+        if let Some((_, existing)) = self.files.get_mut(&key) {
+            existing.extend_from_slice(data);
+        } else {
+            self.files.insert(key, (norm_orig, data.to_vec()));
+        }
+    }
+
+    /// 空のディレクトリマーカーを作成
+    pub fn create_dir<P: AsRef<str>>(&mut self, dir_path: P) {
+        let norm = normalize_vfs_path(dir_path.as_ref());
+        if !norm.is_empty() {
+            let marker = format!("{}/.keep", norm);
+            if !self.exists(&marker) {
+                self.add_file(marker, Vec::new());
+            }
+        }
+    }
+
     /// 大小文字を区別せず、ファイルが存在するか判定
     pub fn exists(&self, path: &str) -> bool {
         let key = normalize_vfs_path(path).to_lowercase();
@@ -213,7 +245,7 @@ impl MockVfs {
 
 impl VirtualFileSystem for MockVfs {
     fn exists(&self, path: &str) -> bool {
-        self.exists(path)
+        self.exists(path) || self.has_dir(path)
     }
 
     fn read_binary(&self, path: &str) -> io::Result<Vec<u8>> {
@@ -230,5 +262,25 @@ impl VirtualFileSystem for MockVfs {
 
     fn walk_files(&self, dir_path: &str) -> io::Result<Vec<String>> {
         Ok(self.walk_dir(dir_path))
+    }
+
+    fn file_size(&self, path: &str) -> io::Result<u64> {
+        let key = normalize_vfs_path(path).to_lowercase();
+        match self.files.get(&key) {
+            Some((_, data)) => Ok(data.len() as u64),
+            None => Err(io::Error::new(
+                io::ErrorKind::NotFound,
+                format!("File not found in MockVfs: {}", path),
+            )),
+        }
+    }
+
+    fn is_file(&self, path: &str) -> bool {
+        let key = normalize_vfs_path(path).to_lowercase();
+        self.files.contains_key(&key)
+    }
+
+    fn is_dir(&self, path: &str) -> bool {
+        self.has_dir(path)
     }
 }

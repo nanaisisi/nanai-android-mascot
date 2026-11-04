@@ -301,3 +301,22 @@ test("balloonDescriptActions applyAssetProperties handles non-Tauri environment 
 		'url("assets/balloon/default/test.cur"), auto',
 	);
 });
+
+test("applyBaseFontProperties covers default font size and component-based color/shadowcolor fallbacks", () => {
+	const mockInstance = {
+		currentBalloonTheme: "default",
+		elements: { balloonDisplay: { style: {} } },
+	};
+	const props = {
+		"font.color.r": "100",
+		"font.color.g": "150",
+		"font.color.b": "200",
+		"font.shadowcolor.r": "10",
+		"font.shadowcolor.g": "20",
+		"font.shadowcolor.b": "30",
+	};
+	balloonDescriptActions.applyBalloonDescript.call(mockInstance, props);
+	assert.equal(cssVars["--balloon-font-size"], "12px");
+	assert.equal(cssVars["--balloon-text-color"], "rgb(100, 150, 200)");
+	assert.equal(cssVars["--balloon-font-shadow-color"], "rgb(10, 20, 30)");
+});

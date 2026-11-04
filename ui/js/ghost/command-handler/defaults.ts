@@ -181,7 +181,15 @@ export function initDefaultCommandHandlers() {
 	});
 
 	registerCommandHandler("bind", async (handler, args) => {
-		await handleBindCommand(handler, args);
+		await handleBindCommand(handler, args, true);
+	});
+
+	registerCommandHandler("bind-noevent", async (handler, args) => {
+		await handleBindCommand(handler, args, false);
+	});
+
+	registerCommandHandler("open:dressupexplorer", async (handler, _args) => {
+		handler.app.toggleMenu?.();
 	});
 
 	registerCommandHandler("anim", async (handler, args) => {
@@ -255,13 +263,35 @@ export function initDefaultCommandHandlers() {
 	registerCommandHandler("setchoicetimeout", async (handler, args) => {
 		handleSetChoiceTimeout(handler, args);
 	});
+	registerCommandHandler("set:choicetimeout", async (handler, args) => {
+		handleSetChoiceTimeout(handler, args);
+	});
 
 	registerCommandHandler("setballoontimeout", async (handler, args) => {
+		handleSetBalloonTimeout(handler, args);
+	});
+	registerCommandHandler("set:balloontimeout", async (handler, args) => {
 		handleSetBalloonTimeout(handler, args);
 	});
 
 	registerCommandHandler("setballoonwait", async (handler, args) => {
 		handleSetBalloonWait(handler, args);
+	});
+	registerCommandHandler("set:balloonwait", async (handler, args) => {
+		handleSetBalloonWait(handler, args);
+	});
+
+	registerCommandHandler("set:alignmenttodesktop", async (handler, args) => {
+		handleSetAlignmentOnDesktop(handler, args);
+	});
+	registerCommandHandler("set:alignmentondesktop", async (handler, args) => {
+		handleSetAlignmentOnDesktop(handler, args);
+	});
+	registerCommandHandler("set:tasktrayicon", async (handler, args) => {
+		handleSetTaskTrayIcon(handler, args);
+	});
+	registerCommandHandler("set:trayballoon", async (handler, args) => {
+		handleSetTrayBalloon(handler, args);
 	});
 
 	registerCommandHandler("setsyncobject", async (handler, args) => {
@@ -319,6 +349,9 @@ export function initDefaultCommandHandlers() {
 
 	registerCommandHandler("opensystemtarget", async (handler, args) => {
 		handleOpenSystemTarget(handler, args);
+	});
+	registerCommandHandler("open", async (handler, args) => {
+		await handleOpenSystemTarget(handler, args);
 	});
 
 	registerCommandHandler("reloadghost", async (handler, args) => {

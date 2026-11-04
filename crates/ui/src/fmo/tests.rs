@@ -350,3 +350,17 @@ fn test_format_fmo_text_local_and_remote() {
     assert!(text_remote.contains("ssp_fmo_header_001.hwndlist\x010\r\n"));
     assert!(text_remote.contains("ssp_fmo_header_001.name\x01Nanai\r\n"));
 }
+
+#[test]
+fn test_fmo_buffer_line107_and_144_coverage() {
+    let raw_text = "ssp_fmo_header_nodot\x01val\r\nssp_fmo_header_dup1.name\x01Ghost1\r\ndup1.name\x01Ghost2\r\n";
+    let mut padded = raw_text.as_bytes().to_vec();
+    padded.resize(65536, 0);
+    let len_bytes = (padded.len() as u32).to_le_bytes();
+    padded[0..4].copy_from_slice(&len_bytes);
+
+    let parsed = parse_fmo_buffer(&padded).unwrap();
+    assert_eq!(parsed.len(), 1);
+    assert_eq!(parsed[0].id, "dup1");
+    assert_eq!(parsed[0].name, "Ghost1");
+}

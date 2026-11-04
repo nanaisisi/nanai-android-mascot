@@ -5,6 +5,8 @@
 		"build": "vite build",
 		"preview": "vite preview",
 		"typecheck": "tsc --noEmit -p tsconfig.json",
+		"test": "vitest run",
+		"test:ui": "vitest",
 		"tauri": "tauri"
 	},
 	"devDependencies": {

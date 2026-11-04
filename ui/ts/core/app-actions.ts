@@ -71,8 +71,8 @@ export const actionMethods = {
 				setTimeout(() => (this as any).hideBalloon(), 2000);
 			});
 		}
-		if (action === "reset-shell-position") {
-			if ((this as any).elements.ghostDisplay) {
+		if (action === "reset-shell-position" || action === "resetwindowpos") {
+			if ((this as any).elements?.ghostDisplay) {
 				(this as any).elements.ghostDisplay.style.left = "";
 				(this as any).elements.ghostDisplay.style.top = "";
 				(this as any).elements.ghostDisplay.style.transform = "";
@@ -81,16 +81,32 @@ export const actionMethods = {
 					"is-docked-right",
 				);
 			}
-			(this as any).showBalloon("📍 シェル位置を初期化しました");
+			if (isTauriAvailable()) {
+				invoke("set_character_scale", { scale: 1.0 }).catch(() => {});
+			}
+			(this as any).showBalloon("📍 シェル位置・倍率を初期リセットしました");
 			setTimeout(() => (this as any).hideBalloon(), 2000);
 			return;
 		}
-		if (action === "reset-balloon-position") {
+		if (action === "reset-balloon-position" || action === "resetballoonpos") {
 			if ((this as any).interactionManager) {
 				(this as any).interactionManager.balloonOffsetX = 0;
 				(this as any).interactionManager.balloonOffsetY = 0;
 			}
-			(this as any).showBalloon("🎈 バルーン位置を初期化しました");
+			if (typeof localStorage !== "undefined") {
+				try {
+					localStorage.removeItem("nanai_balloon_offset");
+				} catch (_e) {}
+			}
+			if (isTauriAvailable()) {
+				invoke("set_balloon_offset", { scopeId: 0, x: 0, y: 0 }).catch(
+					() => {},
+				);
+				invoke("set_balloon_offset", { scopeId: 1, x: 0, y: 0 }).catch(
+					() => {},
+				);
+			}
+			(this as any).showBalloon("📍 バルーン位置を初期リセットしました");
 			setTimeout(() => (this as any).hideBalloon(), 2000);
 			return;
 		}
@@ -134,28 +150,6 @@ export const actionMethods = {
 		}
 		if (action === "uninstall-ghost" || action === "uninstall") {
 			return (this as any).uninstallCurrentGhost();
-		}
-		if (action === "reset-balloon-position" || action === "resetballoonpos") {
-			localStorage.removeItem("nanai_balloon_offset");
-			if (isTauriAvailable()) {
-				invoke("set_balloon_offset", { scopeId: 0, x: 0, y: 0 }).catch(
-					() => {},
-				);
-				invoke("set_balloon_offset", { scopeId: 1, x: 0, y: 0 }).catch(
-					() => {},
-				);
-			}
-			(this as any).showBalloon("📍 バルーン位置を初期リセットしました");
-			setTimeout(() => (this as any).hideBalloon(), 2000);
-			return;
-		}
-		if (action === "reset-shell-position") {
-			if (isTauriAvailable()) {
-				invoke("set_character_scale", { scale: 1.0 }).catch(() => {});
-			}
-			(this as any).showBalloon("📍 シェル位置・倍率を初期リセットしました");
-			setTimeout(() => (this as any).hideBalloon(), 2000);
-			return;
 		}
 		if (action === "install") return (this as any).installGhostFromMenu();
 		if (action === "balloon" || action === "balloon-cycle")

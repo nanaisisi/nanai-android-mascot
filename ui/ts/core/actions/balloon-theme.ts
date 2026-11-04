@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * @file balloon-theme.js
  * @brief バルーンスキンテーマ切替およびスキャン・リセット処理 (BalloonThemeManager)

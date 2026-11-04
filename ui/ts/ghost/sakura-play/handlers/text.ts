@@ -47,7 +47,7 @@ export async function handleChar(player: any, app: any, token: any, context: any
 			? player.playbackController.calculateWait(baseWait, true)
 			: baseWait;
 		if (waitMs > 0) {
-			await player.sleep(waitMs);
+			await (player.sleep ? player.sleep(waitMs) : new Promise((r) => setTimeout(r, waitMs)));
 		}
 	}
 }

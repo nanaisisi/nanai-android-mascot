@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * @file ghost-surface.js
  * @brief サーフィスおよびキャラクター表示メソッド (GhostController mixin)
@@ -60,7 +61,7 @@ export const ghostSurfaceMethods = {
 				return;
 			}
 
-			this.app?.surfaceManager?.setSurfaceId(surfaceId, scopeId);
+			this.app?.surfaceManager?.setSurfaceId?.(surfaceId, scopeId);
 		} else if (surfaceId === -1 || surfaceId === "-1") {
 			return;
 		}

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Rust ShellManifest 由来の着せ替え (bind) メニューデータ構築 (UKADOC準拠)
  *

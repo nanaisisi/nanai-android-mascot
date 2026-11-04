@@ -130,7 +130,9 @@ export const ghostActions = {
 					"OnInstallComplete",
 					buildInstallCompleteArgs("ghost", result.name, result.path || ""),
 				);
-				await (this as any).ghostController.selectGhost(importedGhost.name);
+				(this as any).showBalloon?.(`ゴースト「${importedGhost.name}」を導入しました`);
+				setTimeout(() => (this as any).hideBalloon?.(), 2000);
+				await (this as any).ghostController?.selectGhost?.(importedGhost.name);
 				return;
 			}
 			const importedBalloon = (this as any).availableBalloons?.find(
@@ -224,14 +226,14 @@ export const ghostActions = {
 	},
 
 	switchToNextGhost() {
-		const ghosts = (this as any).ghostController.ghosts || [];
+		const ghosts = (this as any).ghostController?.ghosts || [];
 		if (ghosts.length <= 1) return;
-		const currentName = (this as any).ghostController.currentGhost?.name;
+		const currentName = (this as any).ghostController?.currentGhost?.name;
 		const idx = ghosts.findIndex(
 			(g: any) => g.name === currentName,
 		);
 		const next = ghosts[(idx + 1) % ghosts.length];
-		if (next) (this as any).ghostController.selectGhost(next.name);
+		if (next) (this as any).ghostController?.selectGhost?.(next.name);
 	},
 
 	applyShellScaleAction(action: string) {

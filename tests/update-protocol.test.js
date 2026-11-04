@@ -3,12 +3,13 @@ import { test } from "vitest";
 
 const {
 	buildUpdateArgs,
+	buildUpdateOtherArgs,
 	parseErrorReason,
 	createUpdateProgressHandler,
 	PROGRESS_PHASE_EVENTS,
 } = await import("../ui/js/core/actions/update-protocol.js");
 
-test("update-protocol covers buildUpdateArgs, parseErrorReason, and progressHandler", () => {
+test("update-protocol covers buildUpdateArgs, buildUpdateOtherArgs, parseErrorReason, and progressHandler", () => {
 	// 1. buildUpdateArgs
 	const args = buildUpdateArgs("ref0", "ref1");
 	assert.deepEqual(args, ["ref0", "ref1", "", "ghost", "manual"]);
@@ -18,6 +19,13 @@ test("update-protocol covers buildUpdateArgs, parseErrorReason, and progressHand
 
 	const customTypeArgs = buildUpdateArgs("ok", "none", "shell", "automatic");
 	assert.deepEqual(customTypeArgs, ["ok", "none", "", "shell", "automatic"]);
+
+	// 1.5. buildUpdateOtherArgs
+	const otherArgs1 = buildUpdateOtherArgs("ShellName", "shell", "1.0", "auto");
+	assert.deepEqual(otherArgs1, ["ShellName", "shell", "1.0", "auto"]);
+
+	const otherArgsDefault = buildUpdateOtherArgs();
+	assert.deepEqual(otherArgsDefault, ["", "shell", "", "manual"]);
 
 	// 2. parseErrorReason
 	assert.equal(parseErrorReason(new Error("HTTP 404 Not Found")), "404");

@@ -345,4 +345,35 @@ describe("balloon layout submodules", () => {
 			globalThis.document = originalDoc;
 		}
 	});
+
+	it("communicate-box module handles missing element and empty props", () => {
+		const originalDoc = globalThis.document;
+		globalThis.document = { querySelector: () => null };
+		try {
+			directCommunicateBox({ "communicatebox.width": "100" });
+			assert.ok(true);
+		} finally {
+			globalThis.document = originalDoc;
+		}
+	});
+
+	it("position module handles partial origin and missing balloonDisplay element", () => {
+		const root = createMockRoot();
+		directPosition(root, { "origin.x": "10" }, { elements: {} });
+		directPosition(root, { "origin.y": "20" }, { elements: { balloonDisplay: { style: {} } } });
+		assert.ok(true);
+	});
+
+	it("rect module handles wordwrappoint <= threshold, invalid numbers, and missing balloon element", () => {
+		const root = createMockRoot();
+		const originalDoc = globalThis.document;
+		globalThis.document = { querySelector: () => null };
+		try {
+			directValidRect(root, { "wordwrappoint.x": "30", "wordwrappoint.y": "10" });
+			directValidRect(root, { "wordwrappoint.x": "invalid", "wordwrappoint.y": "invalid" });
+			assert.ok(true);
+		} finally {
+			globalThis.document = originalDoc;
+		}
+	});
 });

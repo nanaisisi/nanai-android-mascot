@@ -103,14 +103,18 @@ test("settingsMethods coverage for loadSettings, applySettings, showBalloon, hid
 	const res = mockApp.playSakuraScript("\\0Hello");
 	assert.equal(res, "played:\\0Hello");
 
-	// Test startSecondTimer visibilitychange
+	// Test startSecondTimer visibilitychange (visible & hidden branches)
 	mockApp.startSecondTimer();
+	document.visibilityState = "visible";
 	document._listeners?.visibilitychange?.();
+	document.visibilityState = "hidden";
+	document._listeners?.visibilitychange?.();
+	document.visibilityState = "visible";
 
 	assert.ok(true);
 });
 
-test("settingsMethods edge branches (missing elements, localStorage error/null, theme fallbacks)", () => {
+test("settingsMethods edge branches (missing elements, localStorage error/null, theme fallbacks)", async () => {
 	const mockApp = {
 		...settingsMethods,
 		settings: {},
@@ -140,13 +144,40 @@ test("settingsMethods edge branches (missing elements, localStorage error/null, 
 	mockApp.showBalloon("no elements");
 	mockApp.hideBalloon();
 
+	// Test Tauri success with empty innerHTML and null currentBalloonTheme
 	globalThis.__TAURI_INTERNALS__ = {
 		invoke: async () => {},
 		transformCallback: (cb) => cb,
 		plugins: { event: { emit: async () => {} } },
 	};
-	mockApp.elements = {};
+	mockApp.elements = {
+		balloonText: { textContent: "", innerHTML: "" },
+		balloonDisplay: { style: {} },
+	};
+	mockApp.currentBalloonTheme = null;
 	mockApp.showBalloon("fallback text");
+	await new Promise((r) => setTimeout(r, 20));
+	delete globalThis.__TAURI_INTERNALS__;
+
+	// Test Tauri error catch for showBalloon, hideBalloon, set_character_scale, & empty innerHTML / null currentBalloonTheme
+	globalThis.__TAURI_INTERNALS__ = {
+		invoke: async (cmd) => {
+			if (cmd === "show_balloon_window") throw new Error("show fail");
+			if (cmd === "hide_balloon_window") throw new Error("hide fail");
+			if (cmd === "set_character_scale") throw new Error("scale fail");
+		},
+		transformCallback: (cb) => cb,
+		plugins: { event: { emit: async () => {} } },
+	};
+	mockApp.elements = {
+		balloonText: { textContent: "", innerHTML: "" },
+		balloonDisplay: { style: {} },
+	};
+	mockApp.currentBalloonTheme = null;
+	mockApp.showBalloon("fallback text");
+	await new Promise((r) => setTimeout(r, 20));
+	mockApp.hideBalloon();
+	mockApp.applySettings();
 	delete globalThis.__TAURI_INTERNALS__;
 
 	assert.ok(true);

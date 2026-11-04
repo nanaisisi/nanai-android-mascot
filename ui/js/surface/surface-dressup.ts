@@ -1,5 +1,5 @@
 /**
- * @file surface-dressup.js
+ * @file surface-dressup.ts
  * @brief 着せ替え (bindgroup) 管理および Rust 合成計画 (Composition Plan) 連携モジュール
  */
 import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
@@ -12,16 +12,13 @@ import {
 import { methodToString } from "./shell-manifest.js";
 
 export const surfaceDressupMethods = {
-	/**
-	 * 着せ替えパーツの装着/解除 (\![bind,category,part,status] UKADOC準拠)
-	 * @this {import('./surface-manager.js').SurfaceManager}
-	 */
 	async bindDressup(
-		category,
-		part = "",
-		statusVal = "",
-		scopeId = 0,
-		notifyEvent = true,
+		this: any,
+		category: string,
+		part: string = "",
+		statusVal: string = "",
+		scopeId: number = 0,
+		notifyEvent: boolean = true,
 	) {
 		const key = `${scopeId}__${category}__${part}`;
 		let newStatus = true;
@@ -53,29 +50,22 @@ export const surfaceDressupMethods = {
 					newStatus ? 1 : 0,
 					scopeId,
 				]);
-			} catch (_err) {
-				// イベント送信エラーは無視
-			}
+			} catch (_err) {}
 		}
 	},
 
-	/**
-	 * 現在装着中の着せ替え (bindgroup) に対応する SERIKO bind アニメーションレイヤーを取得
-	 * @this {import('./surface-manager.js').SurfaceManager}
-	 */
-	activeBindLayers(scopeId = 0, surfaceId = null) {
+	activeBindLayers(this: any, scopeId: number = 0, surfaceId: number | string | null = null) {
 		if (!this.shellManifest) return [];
 		const sid = String(surfaceId ?? this.currentSurfaceIdFor(scopeId));
 		const animList = this.animations[sid] ?? [];
-		const animById = new Map(animList.map((a) => [String(a.id), a]));
+		const animById = new Map<string, any>(animList.map((a: any) => [String(a.id), a]));
 
-		const layers = [];
+		const layers: any[] = [];
 		const activeIds = new Set(this.activeBindAnimationIds(scopeId));
 
-		// どの着せ替えが他から insert されているか調査
 		const insertedIds = new Set();
 		for (const animId of activeIds) {
-			const anim = animById.get(String(animId));
+			const anim: any = animById.get(String(animId));
 			for (const p of anim?.patterns ?? []) {
 				const typeLower = (p.type || "").toLowerCase();
 				if (typeLower === "insert") {
@@ -88,10 +78,10 @@ export const surfaceDressupMethods = {
 		}
 
 		const visited = new Set();
-		const expandAnim = (id) => {
+		const expandAnim = (id: any) => {
 			if (visited.has(id)) return;
 			visited.add(id);
-			const anim = animById.get(String(id));
+			const anim: any = animById.get(String(id));
 			if (!anim) return;
 			for (const pattern of anim.patterns ?? []) {
 				const typeLower = (pattern.type || "overlay").toLowerCase();
@@ -131,33 +121,21 @@ export const surfaceDressupMethods = {
 		return layers;
 	},
 
-	/**
-	 * 装着中 bindgroup に対応する bind アニメーションID列
-	 * @this {import('./surface-manager.js').SurfaceManager}
-	 */
-	activeBindAnimationIds(scopeId = 0) {
+	activeBindAnimationIds(this: any, scopeId: number = 0): number[] {
 		if (!this.shellManifest) return [];
 		return bindGroupsForScope(this.shellManifest, scopeId)
-			.filter((group) =>
+			.filter((group: any) =>
 				this.dressupState.get(dressupKey(scopeId, group.category, group.part)),
 			)
-			.flatMap((group) => bindAnimationIds(group.number, group.add_ids))
-			.sort((a, b) => a - b);
+			.flatMap((group: any) => bindAnimationIds(group.number, group.add_ids))
+			.sort((a: number, b: number) => a - b);
 	},
 
-	/**
-	 * planCache / baseCanvasCache のキー（scope + surface + 装着 bind 列）
-	 * @this {import('./surface-manager.js').SurfaceManager}
-	 */
-	planCacheKey(surfaceId, scopeId = 0) {
+	planCacheKey(this: any, surfaceId: number | string, scopeId: number = 0): string {
 		return `${scopeId}__${surfaceId}__${this.activeBindAnimationIds(scopeId).join(",")}`;
 	},
 
-	/**
-	 * Rust 合成計画（element + 装着 bind pattern）を取得する
-	 * @this {import('./surface-manager.js').SurfaceManager}
-	 */
-	async getCompositionPlan(surfaceId, scopeId = 0) {
+	async getCompositionPlan(this: any, surfaceId: number | string, scopeId: number = 0) {
 		if (!this.shellManifest || !isTauriAvailable()) return null;
 		const sid = Number(surfaceId);
 		if (!Number.isFinite(sid) || sid < 0) return null;
@@ -170,7 +148,7 @@ export const surfaceDressupMethods = {
 			return this.planCache.get(key);
 		}
 		try {
-			const plan = await invoke("surface_composition_plan", {
+			const plan: any = await invoke("surface_composition_plan", {
 				ghostName,
 				shellName: gc?.currentShell || "master",
 				surfaceId: sid,
@@ -184,14 +162,10 @@ export const surfaceDressupMethods = {
 		}
 	},
 
-	/**
-	 * Rust 合成計画をレガシー描画レイヤー列へ変換する
-	 * @this {import('./surface-manager.js').SurfaceManager}
-	 */
-	planToRenderLayers(plan, scopeId = 0) {
+	planToRenderLayers(this: any, plan: any, scopeId: number = 0) {
 		if (!plan?.layers?.length) return null;
-		const elements = [];
-		const bindLayers = [];
+		const elements: any[] = [];
+		const bindLayers: any[] = [];
 		let hasElement = false;
 		for (const layer of plan.layers) {
 			const raw = layer.Element ?? layer.Pattern;

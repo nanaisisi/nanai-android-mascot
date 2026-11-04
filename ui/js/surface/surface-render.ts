@@ -1,5 +1,5 @@
 /**
- * @file surface-render.js
+ * @file surface-render.ts
  * @brief サーフィスの描画・合成、当たり判定、着せ替え管理を統合するメイン mixin モジュール
  */
 
@@ -15,17 +15,9 @@ export const surfaceRenderMethods = {
 	...surfaceCollisionMethods,
 	...surfaceDressupMethods,
 
-	/**
-	 * SERIKO フレーム差分レイヤーをベース合成済みキャンバス上に描画する
-	 * @this {import('./surface-manager.js').SurfaceManager}
-	 * @param {HTMLCanvasElement} baseCanvas
-	 * @param {Array<{ file: string, x?: number, y?: number, type?: string }>} frameLayers
-	 * @param {Function} resolveImagePath
-	 * @returns {Promise<string|null>} 合成後のDataURL (PNG)
-	 */
-	async composeFrameOnBase(baseCanvas, frameLayers, resolveImagePath) {
+	async composeFrameOnBase(this: any, baseCanvas: HTMLCanvasElement, frameLayers: any[], resolveImagePath: (file: string) => Promise<string | null>): Promise<string | null> {
 		if (!baseCanvas || !frameLayers?.length) return null;
-		const t0 = globalThis.performance?.now?.() ?? Date.now();
+		const t0 = (globalThis.performance?.now?.() ?? Date.now()) as number;
 		const canvas = document.createElement("canvas");
 		canvas.width = baseCanvas.width;
 		canvas.height = baseCanvas.height;
@@ -64,23 +56,14 @@ export const surfaceRenderMethods = {
 		return src;
 	},
 
-	/**
-	 * element / bind レイヤーおよび SERIKO アニメーションフレームを合成します。
-	 * @this {import('./surface-manager.js').SurfaceManager}
-	 * @param {number|string} surfaceId
-	 * @param {string} baseImgSrc
-	 * @param {Function} resolveImagePath
-	 * @param {number} [scopeId]
-	 * @param {Array<{ file: string, x: number, y: number, type: string }>|null} [frameLayers]
-	 * @returns {Promise<string>}
-	 */
 	async composeSurfaceElements(
-		surfaceId,
-		baseImgSrc,
-		resolveImagePath,
-		scopeId = 0,
-		frameLayers = null,
-	) {
+		this: any,
+		surfaceId: number | string,
+		baseImgSrc: string,
+		resolveImagePath: (file: string) => Promise<string | null>,
+		scopeId: number = 0,
+		frameLayers: any[] | null = null,
+	): Promise<string> {
 		const sid = String(surfaceId);
 		const isFrame = Array.isArray(frameLayers);
 		const cacheKey = this.planCacheKey(sid, scopeId);
@@ -99,7 +82,7 @@ export const surfaceRenderMethods = {
 			const layers = this.planToRenderLayers(plan, scopeId);
 			if (layers) {
 				if (!isFrame) {
-					const result = await composeSurfaceElements(
+					const result: any = await composeSurfaceElements(
 						layers.elements,
 						baseImgSrc,
 						resolveImagePath,
@@ -117,9 +100,7 @@ export const surfaceRenderMethods = {
 					withFrames,
 				);
 			}
-		} catch (_err) {
-			// レガシー経路へフォールバック
-		}
+		} catch (_err) {}
 
 		const elementList = this.elements[sid] || this.elements.default || [];
 		const bindLayers =
@@ -129,7 +110,7 @@ export const surfaceRenderMethods = {
 		const layers = frameLayers?.length
 			? [...bindLayers, ...frameLayers]
 			: bindLayers;
-		const result = await composeSurfaceElements(
+		const result: any = await composeSurfaceElements(
 			elementList,
 			baseImgSrc,
 			resolveImagePath,
@@ -142,11 +123,7 @@ export const surfaceRenderMethods = {
 		return result?.src ?? baseImgSrc;
 	},
 
-	/**
-	 * PNAアルファマスク合成およびクロマキー透過処理
-	 * @this {import('./surface-manager.js').SurfaceManager}
-	 */
-	processChromaKey(imageSrc, pnaSrc = null) {
+	processChromaKey(this: any, imageSrc: string, pnaSrc: string | null = null) {
 		const useSelfAlpha =
 			this.shellManifest?.descript?.properties?.["seriko.use_self_alpha"] ===
 				"1" ||

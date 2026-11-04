@@ -30,7 +30,7 @@ describe("SakuraCommandHandler - Box Commands", () => {
 
 		// 9. open inputbox with generic ID ("UserInput")
 		eventsSent.length = 0;
-		handler.runCommand(["open", "inputbox", "GenericID", "200", "defText"]);
+		handler.runCommand(["open", "inputbox", "OnUserInput", "200", "defText"]);
 		const form2 = mockApp.elements.balloonText.child;
 		const input2 = form2.children.find((c) => c.tagName === "INPUT");
 		input2._listeners?.keydown?.({ key: "Enter", stopPropagation() {} });

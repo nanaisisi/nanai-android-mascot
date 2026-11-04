@@ -1,39 +1,27 @@
 import { defineConfig } from "vitest/config";
-import fs from "node:fs";
 import path from "node:path";
+import fs from "node:fs";
 
 export default defineConfig({
 	plugins: [
 		{
-			name: "resolve-ui-js-to-ts",
+			name: "alias-ui-js-to-ts",
 			enforce: "pre",
 			resolveId(source, importer) {
 				if (source.includes("ui/js/") || source.includes("ui\\js\\")) {
-					const converted = source
+					const tsRel = source
 						.replace(/ui\/js\//g, "ui/ts/")
 						.replace(/ui\\js\\/g, "ui\\ts\\");
 					if (importer) {
-						const resolvedPath = path.resolve(path.dirname(importer), converted);
-						if (fs.existsSync(resolvedPath)) {
-							return resolvedPath;
-						}
-						if (!resolvedPath.endsWith(".ts") && !resolvedPath.endsWith(".js") && fs.existsSync(resolvedPath + ".ts")) {
-							return resolvedPath + ".ts";
-						}
-						// also try changing extension from .js to .ts
-						const tsPath = resolvedPath.replace(/\.js$/, ".ts");
-						if (fs.existsSync(tsPath)) {
-							return tsPath;
-						}
+						const resolved = path.resolve(path.dirname(importer), tsRel);
+						if (fs.existsSync(resolved)) return resolved;
+						const withTs = resolved.replace(/\.js$/, ".ts");
+						if (fs.existsSync(withTs)) return withTs;
 					}
-					const absPath = path.resolve(process.cwd(), converted.replace(/^\.\//, ""));
-					if (fs.existsSync(absPath)) {
-						return absPath;
-					}
-					const absTs = absPath.replace(/\.js$/, ".ts");
-					if (fs.existsSync(absTs)) {
-						return absTs;
-					}
+					const abs = path.resolve(process.cwd(), tsRel.replace(/^\.\//, ""));
+					if (fs.existsSync(abs)) return abs;
+					const absWithTs = abs.replace(/\.js$/, ".ts");
+					if (fs.existsSync(absWithTs)) return absWithTs;
 				}
 				return null;
 			},

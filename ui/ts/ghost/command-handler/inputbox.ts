@@ -4,6 +4,12 @@
  */
 
 export function openInputBox(handler: any, params: string[], isPassword: boolean = false) {
+	if (isPassword && handler.app?.modalDialogController?.openPasswordInput) {
+		return handler.app.modalDialogController.openPasswordInput(
+			params,
+			handler.player?.currentScope,
+		);
+	}
 	if (handler.app?.modalDialogController?.openInputBox) {
 		return handler.app.modalDialogController.openInputBox(
 			params,
@@ -48,71 +54,46 @@ export function openInputBox(handler: any, params: string[], isPassword: boolean
 		: "balloon-inputbox-form";
 	form.style.marginTop = "0.5rem";
 	form.style.display = "flex";
-	form.style.gap = "0.25rem";
+	form.style.gap = "4px";
 
 	const input = document.createElement("input");
 	input.type = isPassword ? "password" : "text";
-	input.className = "balloon-input";
 	input.value = defaultText;
 	input.placeholder = placeholder;
 	input.style.flex = "1";
-	input.style.fontSize = "0.8rem";
-	input.style.padding = "0.2rem 0.4rem";
-	input.style.borderRadius = "0.25rem";
-	input.style.border = "1px solid var(--balloon-border-color, #888)";
-	input.style.background = "var(--balloon-bg, #fff)";
-	input.style.color = "var(--balloon-text-color, #000)";
+	input.style.padding = "2px 4px";
 
 	const submitBtn = document.createElement("button");
 	submitBtn.textContent = "OK";
-	submitBtn.className = "balloon-choice-btn";
-	submitBtn.style.marginTop = "0";
+	submitBtn.style.padding = "2px 8px";
 
 	let timer: any = null;
-	const cleanup = () => {
+
+	const cancel = (reason: string = "cancel") => {
 		if (timer) clearTimeout(timer);
 		form.remove();
-	};
-
-	const submit = async () => {
-		const val = input.value;
-		cleanup();
-		if (id.startsWith("On")) {
-			await handler.app.ghostController?.sendShioriEvent(id, [
-				val,
-				"",
-				...references,
-			]);
-		} else {
-			await handler.app.ghostController?.sendShioriEvent("OnUserInput", [
-				id,
-				val,
-				"",
-				...references,
-			]);
-		}
-	};
-
-	const cancel = async (reason = "close") => {
-		cleanup();
-		await handler.app.ghostController?.sendShioriEvent("OnUserInputCancel", [
+		handler.app.ghostController?.sendShioriEvent(`${id}Cancel`, [reason]);
+		handler.app.ghostController?.sendShioriEvent("OnSystemDialogCancel", [
 			id,
 			reason,
 		]);
 	};
 
-	submitBtn.addEventListener("click", (e: MouseEvent) => {
-		e.stopPropagation();
-		submit();
-	});
+	const submit = () => {
+		if (timer) clearTimeout(timer);
+		const val = input.value;
+		form.remove();
+		handler.app.ghostController?.sendShioriEvent(id, [val, ...references]);
+		handler.app.ghostController?.sendShioriEvent("OnUserInput", [id, val, ...references]);
+		handler.app.ghostController?.sendShioriEvent("OnSystemDialog", [id, val]);
+	};
 
-	input.addEventListener("keydown", (e: KeyboardEvent) => {
+	submitBtn.addEventListener("click", () => submit());
+	input.addEventListener("keydown", (e: any) => {
 		if (e.key === "Enter") {
-			e.stopPropagation();
 			submit();
 		} else if (e.key === "Escape") {
-			e.stopPropagation();
-			cancel("cancel");
+			cancel("escape");
 		}
 	});
 
@@ -182,17 +163,45 @@ export function openTimeInput(handler: any, params: string[]) {
 	return openInputBox(handler, params);
 }
 
-export function closeInputBox(_handler: any, _notifyCancel: boolean = false) {
-	const forms = document.querySelectorAll(".balloon-inputbox-form");
+export function closeInputBox(handler: any, paramsOrNotify: any = false) {
+	let notifyCancel = false;
+	let id: string | undefined = undefined;
+	if (Array.isArray(paramsOrNotify)) {
+		id = paramsOrNotify[0];
+	} else {
+		notifyCancel = Boolean(paramsOrNotify);
+	}
+	if (handler.app?.modalDialogController?.closeInputBox) {
+		return handler.app.modalDialogController.closeInputBox(
+			id,
+			handler.player?.currentScope,
+			notifyCancel,
+		);
+	}
+	const forms = document.querySelectorAll?.(".balloon-inputbox-form") || [];
 	for (const f of Array.from(forms)) {
-		f.remove();
+		(f as any).remove?.();
 	}
 }
 
-export function closeTextAreaBox(handler: any, notifyCancel: boolean = false) {
-	closeInputBox(handler, notifyCancel);
+export function closeTextAreaBox(handler: any, paramsOrNotify: any = false) {
+	if (handler.app?.modalDialogController?.closeTextAreaBox) {
+		const id = Array.isArray(paramsOrNotify) ? paramsOrNotify[0] : undefined;
+		return handler.app.modalDialogController.closeTextAreaBox(
+			id,
+			handler.player?.currentScope,
+		);
+	}
+	closeInputBox(handler, paramsOrNotify);
 }
 
-export function closeDialog(handler: any, notifyCancel: boolean = false) {
-	closeInputBox(handler, notifyCancel);
+export function closeDialog(handler: any, paramsOrNotify: any = false) {
+	if (handler.app?.modalDialogController?.closeDialog) {
+		const id = Array.isArray(paramsOrNotify) ? paramsOrNotify[0] : undefined;
+		return handler.app.modalDialogController.closeDialog(
+			id,
+			handler.player?.currentScope,
+		);
+	}
+	closeInputBox(handler, paramsOrNotify);
 }

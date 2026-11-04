@@ -99,8 +99,14 @@ export function initDefaultCommandHandlers() {
 	registerCommandHandler("open:textarea", async (handler, args) => {
 		openTextAreaBox(handler, args.slice(2));
 	});
+	registerCommandHandler("open:textareabox", async (handler, args) => {
+		openTextAreaBox(handler, args.slice(2));
+	});
 
 	registerCommandHandler("open:slider", async (handler, args) => {
+		openSliderInput(handler, args.slice(2));
+	});
+	registerCommandHandler("open:sliderinput", async (handler, args) => {
 		openSliderInput(handler, args.slice(2));
 	});
 
@@ -111,8 +117,14 @@ export function initDefaultCommandHandlers() {
 	registerCommandHandler("open:date", async (handler, args) => {
 		openDateInput(handler, args.slice(2));
 	});
+	registerCommandHandler("open:dateinput", async (handler, args) => {
+		openDateInput(handler, args.slice(2));
+	});
 
 	registerCommandHandler("open:time", async (handler, args) => {
+		openTimeInput(handler, args.slice(2));
+	});
+	registerCommandHandler("open:timeinput", async (handler, args) => {
 		openTimeInput(handler, args.slice(2));
 	});
 
@@ -124,16 +136,19 @@ export function initDefaultCommandHandlers() {
 		openCommunicateBox(handler, args.slice(2));
 	});
 
-	registerCommandHandler("close:inputbox", async (handler, _args) => {
-		closeInputBox(handler, true);
+	registerCommandHandler("close:inputbox", async (handler, args) => {
+		closeInputBox(handler, args.slice(2));
 	});
 
-	registerCommandHandler("close:textarea", async (handler, _args) => {
-		closeTextAreaBox(handler, true);
+	registerCommandHandler("close:textarea", async (handler, args) => {
+		closeTextAreaBox(handler, args.slice(2));
+	});
+	registerCommandHandler("close:textareabox", async (handler, args) => {
+		closeTextAreaBox(handler, args.slice(2));
 	});
 
-	registerCommandHandler("close:dialog", async (handler, _args) => {
-		closeDialog(handler, true);
+	registerCommandHandler("close:dialog", async (handler, args) => {
+		closeDialog(handler, args.slice(2));
 	});
 
 	registerCommandHandler("close:teachbox", async (handler, _args) => {
@@ -326,24 +341,48 @@ export function initDefaultCommandHandlers() {
 	registerCommandHandler("entermode", async (handler, args) => {
 		handleEnterMode(handler, args);
 	});
+	registerCommandHandler("enter:passivemode", async (handler, args) => {
+		handleEnterMode(handler, args);
+	});
+	registerCommandHandler("enter:talkmode", async (handler, args) => {
+		handleEnterMode(handler, args);
+	});
 
 	registerCommandHandler("leavemode", async (handler, args) => {
+		handleLeaveMode(handler, args);
+	});
+	registerCommandHandler("leave:passivemode", async (handler, args) => {
+		handleLeaveMode(handler, args);
+	});
+	registerCommandHandler("leave:talkmode", async (handler, args) => {
 		handleLeaveMode(handler, args);
 	});
 
 	registerCommandHandler("setposition", async (handler, args) => {
 		handleSetPositionCommand(handler, args);
 	});
+	registerCommandHandler("set:position", async (handler, args) => {
+		handleSetPositionCommand(handler, args);
+	});
 
 	registerCommandHandler("setsensing", async (handler, args) => {
+		handleSetScalingCommand(handler, args);
+	});
+	registerCommandHandler("set:scaling", async (handler, args) => {
 		handleSetScalingCommand(handler, args);
 	});
 
 	registerCommandHandler("setalpha", async (handler, args) => {
 		handleSetAlphaCommand(handler, args);
 	});
+	registerCommandHandler("set:alpha", async (handler, args) => {
+		handleSetAlphaCommand(handler, args);
+	});
 
 	registerCommandHandler("setproperty", async (handler, args) => {
+		handleSetPropertyCommand(handler, args);
+	});
+	registerCommandHandler("set:property", async (handler, args) => {
 		handleSetPropertyCommand(handler, args);
 	});
 
@@ -357,24 +396,42 @@ export function initDefaultCommandHandlers() {
 	registerCommandHandler("reloadghost", async (handler, args) => {
 		await handleReloadGhost(handler, args);
 	});
+	registerCommandHandler("reload:ghost", async (handler, args) => {
+		await handleReloadGhost(handler, args);
+	});
 
 	registerCommandHandler("reloadshell", async (handler, args) => {
+		await handleReloadShell(handler, args);
+	});
+	registerCommandHandler("reload:shell", async (handler, args) => {
 		await handleReloadShell(handler, args);
 	});
 
 	registerCommandHandler("reloadballoon", async (handler, args) => {
 		await handleReloadBalloon(handler, args);
 	});
+	registerCommandHandler("reload:balloon", async (handler, args) => {
+		await handleReloadBalloon(handler, args);
+	});
 
 	registerCommandHandler("reloaddescript", async (handler, args) => {
+		await handleReloadDescript(handler, args);
+	});
+	registerCommandHandler("reload:descript", async (handler, args) => {
 		await handleReloadDescript(handler, args);
 	});
 
 	registerCommandHandler("reloadsurface", async (handler, args) => {
 		await handleReloadSurface(handler, args);
 	});
+	registerCommandHandler("reload:surface", async (handler, args) => {
+		await handleReloadSurface(handler, args);
+	});
 
 	registerCommandHandler("reloadshiori", async (handler, args) => {
+		await handleReloadShiori(handler, args);
+	});
+	registerCommandHandler("reload:shiori", async (handler, args) => {
 		await handleReloadShiori(handler, args);
 	});
 
@@ -385,8 +442,14 @@ export function initDefaultCommandHandlers() {
 	registerCommandHandler("executeresetwindowpos", async (handler, args) => {
 		handleExecuteResetWindowPos(handler, args);
 	});
+	registerCommandHandler("execute:resetwindowpos", async (handler, args) => {
+		handleExecuteResetWindowPos(handler, args);
+	});
 
 	registerCommandHandler("executeresetballoonpos", async (handler, args) => {
+		handleExecuteResetBalloonPos(handler, args);
+	});
+	registerCommandHandler("execute:resetballoonpos", async (handler, args) => {
 		handleExecuteResetBalloonPos(handler, args);
 	});
 
@@ -407,6 +470,9 @@ export function initDefaultCommandHandlers() {
 	});
 
 	registerCommandHandler("setshioridebugmode", async (handler, args) => {
+		handleSetShioriDebugMode(handler, args);
+	});
+	registerCommandHandler("set:shioridebugmode", async (handler, args) => {
 		handleSetShioriDebugMode(handler, args);
 	});
 

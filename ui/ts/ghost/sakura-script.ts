@@ -1,11 +1,13 @@
+/**
+ * @file sakura-script.ts
+ * @brief Nanai Android Mascot - さくらスクリプト（SakuraScript）プレイヤー
+ */
+
 import { emit, isTauriAvailable, listen } from "../core/tauri-helper.js";
 import { SakuraCommandHandler } from "./sakura-command-handler.js";
 import { parseSakuraScriptAsync } from "./sakura-parser.js";
 import { playScript } from "./sakura-play.js";
 
-/**
- * Nanai Android Mascot - さくらスクリプト（SakuraScript）プレイヤー
- */
 export class SakuraScriptPlayer {
 	app: any;
 	isPlaying: boolean;
@@ -20,6 +22,8 @@ export class SakuraScriptPlayer {
 	lastScript: string;
 	commandHandler: SakuraCommandHandler;
 	_restoreTimer?: any;
+	_pauseResolver?: any;
+	_sleepResolvers?: Set<Function>;
 
 	constructor(app: any) {
 		this.app = app;
@@ -40,7 +44,7 @@ export class SakuraScriptPlayer {
 			listen("balloon-choice-selected", (event: any) => {
 				const { choiceId, choiceText } = event.payload || {};
 				if (choiceId) {
-					(this as any).onChoiceSelected(choiceId, choiceText || "");
+					this.onChoiceSelected(choiceId, choiceText || "");
 				}
 			});
 			listen("balloon-anchor-selected", (event: any) => {
@@ -87,10 +91,124 @@ export class SakuraScriptPlayer {
 					await this.app.ghostController.sendShioriEvent("OnSurfaceRestore");
 				} catch (_e) {}
 			}
-		}, 300);
+		}, 8000);
 	}
 
 	skip() {
-		this.skipRequested = true;
+		if (this.isPlaying) {
+			this.skipRequested = true;
+			if (typeof this._pauseResolver === "function") {
+				const resolve = this._pauseResolver;
+				this._pauseResolver = null;
+				resolve();
+			}
+		}
+	}
+
+	async onChoiceTimeout() {
+		if (this.choiceTimeoutTimer) {
+			clearTimeout(this.choiceTimeoutTimer);
+			this.choiceTimeoutTimer = null;
+		}
+		try {
+			await this.app.ghostController?.sendShioriEvent("OnChoiceTimeout", [
+				this.lastScript || "",
+			]);
+		} catch (_e) {}
+	}
+
+	async onChoiceSelected(choiceId: string, choiceText: string) {
+		console.log(`💡 選択肢選択: ${choiceId} (${choiceText})`);
+		if (this.choiceTimeoutTimer) {
+			clearTimeout(this.choiceTimeoutTimer);
+			this.choiceTimeoutTimer = null;
+		}
+		if (choiceId.startsWith("On")) {
+			await this.app.ghostController.sendShioriEvent(choiceId, [choiceText]);
+		} else {
+			await this.app.ghostController.sendShioriEvent("OnChoiceSelect", [
+				choiceId,
+				choiceText,
+			]);
+		}
+	}
+
+	sleep(ms: number) {
+		return new Promise<void>((resolve) => {
+			let timer: any = null;
+			const onCancel = () => {
+				if (timer) clearTimeout(timer);
+				resolve();
+			};
+			timer = setTimeout(() => {
+				this._sleepResolvers?.delete(onCancel);
+				resolve();
+			}, ms);
+			if (!this._sleepResolvers) this._sleepResolvers = new Set();
+			this._sleepResolvers.add(onCancel);
+		});
+	}
+
+	destroy() {
+		this.isPlaying = false;
+		this.playbackId++;
+		if (this._restoreTimer) {
+			clearTimeout(this._restoreTimer);
+			this._restoreTimer = null;
+		}
+		if (this.choiceTimeoutTimer) {
+			clearTimeout(this.choiceTimeoutTimer);
+			this.choiceTimeoutTimer = null;
+		}
+		if (this.balloonTimeoutTimer) {
+			clearTimeout(this.balloonTimeoutTimer);
+			this.balloonTimeoutTimer = null;
+		}
+		if (typeof this._pauseResolver === "function") {
+			const resolve = this._pauseResolver;
+			this._pauseResolver = null;
+			resolve();
+		}
+		if (this._sleepResolvers) {
+			for (const cancel of this._sleepResolvers) {
+				cancel();
+			}
+			this._sleepResolvers.clear();
+		}
+	}
+
+	waitForClickOrTimeout(element: HTMLElement | null, timeoutMs = 15000) {
+		return new Promise<void>((resolve) => {
+			let timer: any = null;
+			let resolved = false;
+
+			const done = () => {
+				if (resolved) return;
+				resolved = true;
+				this._pauseResolver = null;
+				if (timer) clearTimeout(timer);
+				element?.removeEventListener("click", onClick);
+				document.removeEventListener("keydown", onKey);
+				resolve();
+			};
+
+			this._pauseResolver = done;
+
+			const onClick = (e: MouseEvent) => {
+				e.stopPropagation();
+				done();
+			};
+			const onKey = (e: KeyboardEvent) => {
+				if (e.key === "Enter" || e.key === " " || e.key === "Escape") {
+					done();
+				}
+			};
+
+			element?.addEventListener("click", onClick as EventListener);
+			document.addEventListener("keydown", onKey as EventListener);
+			timer = setTimeout(done, timeoutMs);
+		});
 	}
 }
+
+export { parseSakuraScript } from "./sakura-tokenizer.js";

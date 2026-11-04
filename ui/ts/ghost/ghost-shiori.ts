@@ -9,18 +9,20 @@ export const ghostShioriMethods = {
 	) {
 		if (!isTauriAvailable()) return;
 		try {
-			await Promise.all([
-				invoke("load_ghost", {
-					ghostName: ghost.name,
-					ghostPath: ghost.path,
-				}),
-				readinessGatePromise,
-			]);
+			await invoke("load_ghost", {
+				ghostName: ghost.name,
+				ghostPath: ghost.path,
+			});
 			if (!isCurrentLoad()) return;
 
 			try {
 				await invoke("hide_loading_banner_window");
 			} catch (_e) {}
+			if (!isCurrentLoad()) return;
+
+			if (readinessGatePromise) {
+				await readinessGatePromise;
+			}
 			if (!isCurrentLoad()) return;
 
 			try {
@@ -92,23 +94,58 @@ export const ghostShioriMethods = {
 
 	async sendShioriEvent(eventId: string, references: any[] = []) {
 		if (!isTauriAvailable()) {
-			return { script: "" };
+			return undefined;
 		}
 		try {
 			const ghostName = (this as any).currentGhost?.name || "";
-			const rawRes: any = await invoke("request_shiori", {
-				request: {
-					id: eventId,
-					sender: "NanaiAndroidMascot",
+			let rawRes: any = null;
+			try {
+				rawRes = await invoke("send_shiori_event_typed", {
+					event: eventId,
 					references: references.map(String),
-					securityOrigin: "Local",
 					ghostName,
-				},
-			});
+				});
+			} catch (_e) {
+				rawRes = await invoke("request_shiori", {
+					request: {
+						id: eventId,
+						sender: "NanaiAndroidMascot",
+						references: references.map(String),
+						securityOrigin: "Local",
+						ghostName,
+					},
+				});
+			}
 			return fromRustResponse(rawRes);
 		} catch (err) {
 			console.warn(`⚠️ SHIORIイベント送信失敗 (${eventId}):`, err);
-			return { script: "" };
+			return undefined;
 		}
+	},
+
+	async sendTeachInput(this: any, input: string) {
+		const res: any = await this.sendShioriEvent("OnTeach", [input]);
+		if (res?.status === 200 && res?.value) {
+			this.app?.playSakuraScript?.(res.value);
+		} else if (res?.status === 311 || res?.status === 312) {
+			const adviceRes: any = await this.sendShioriEvent("OnAdvice", [
+				input,
+				res.value || "",
+			]);
+			if (adviceRes?.status === 200 && adviceRes?.value) {
+				this.app?.playSakuraScript?.(adviceRes.value);
+			}
+		}
+		return res;
+	},
+
+	triggerRandomTalk(this: any) {
+		this.sendShioriEvent("OnRandomTalk")
+			.then((res: any) => {
+				if (res?.status === 200 && res?.value) {
+					this.app?.playSakuraScript?.(res.value);
+				}
+			})
+			.catch(() => {});
 	},
 };

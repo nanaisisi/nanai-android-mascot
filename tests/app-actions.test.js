@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 globalThis.window = globalThis;
+globalThis.localStorage = { removeItem() {} };
 globalThis.document = {
 	createElement: () => ({
 		textContent: "",
@@ -86,6 +87,18 @@ test("actionMethods.handleMenuAction covers all branches including Tauri folder 
 	// Test balloon-theme with availableBalloons matching
 	handle("balloon-theme-ivory");
 	handle("balloon-theme-custom");
+
+	// Test Tauri available branch for reset positions & availableBalloons undefined branch
+	globalThis.__TAURI_INTERNALS__ = {
+		invoke: async (_cmd, _args) => {},
+		transformCallback: (cb) => cb,
+	};
+	handle("reset-balloon-position");
+	handle("resetballoonpos");
+	handle("reset-shell-position");
+	mockApp.availableBalloons = undefined;
+	handle("balloon-theme-ivory");
+	delete globalThis.__TAURI_INTERNALS__;
 
 	handle("scale-100");
 	handle("balloon-scale-100");

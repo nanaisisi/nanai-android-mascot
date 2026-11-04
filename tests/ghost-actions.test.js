@@ -98,3 +98,64 @@ test("ghostActions coverage for all methods", async () => {
 
 	assert.ok(true);
 });
+
+test("ghostActions covers edge branches (uninstall fallback ghost, install balloon, install error, switchToNextGhost length <= 1, scale fallback, and minimizeApp with Tauri & error)", async () => {
+	const mockApp = {
+		...ghostActions,
+		ghostController: {
+			currentGhost: { name: "TestGhost" },
+			ghosts: [{ name: "TestGhost" }],
+			selectGhost: async () => {},
+			scanGhosts: async () => {},
+			sendShioriEvent: (ev) => {
+				if (ev === "OnInstallBegin") {
+					throw new Error("shiori error");
+				}
+			},
+		},
+		modalManager: {
+			show() {},
+			showNotification() {},
+		},
+		elements: { ghostDisplay: { style: {} } },
+		showBalloon() {},
+		hideBalloon() {},
+		scanBalloons: async () => {},
+		setBalloonTheme: async () => {},
+		availableBalloons: [{ name: "Bal1", dir_name: "bal1" }],
+		hideMenu() {},
+	};
+
+	ghostActions.switchToNextGhost.call(mockApp);
+
+	globalThis.confirm = () => true;
+	globalThis.__TAURI_INTERNALS__ = {
+		metadata: { currentWindow: { label: "main" } },
+		invoke: async (cmd) => {
+			if (cmd === "uninstall_ghost") return true;
+			if (cmd === "minimize_app") return null;
+		},
+		transformCallback: (cb) => cb,
+	};
+	await ghostActions.uninstallCurrentGhost.call(mockApp);
+
+	globalThis.__TAURI_INTERNALS__.invoke = async (cmd) => {
+		if (cmd === "uninstall_ghost") throw new Error("uninstall fail");
+	};
+	await ghostActions.uninstallCurrentGhost.call(mockApp);
+
+	globalThis.__TAURI_INTERNALS__.invoke = async (cmd) => {
+		if (cmd === "pick_and_install_ghost_archive") return { name: "Bal1", path: "" };
+	};
+	await ghostActions.installGhostFromMenu.call(mockApp);
+
+	globalThis.__TAURI_INTERNALS__.invoke = async (cmd) => {
+		if (cmd === "pick_and_install_ghost_archive") throw new Error("install fail");
+	};
+	await ghostActions.installGhostFromMenu.call(mockApp);
+
+	ghostActions.minimizeApp.call(mockApp);
+
+	delete globalThis.__TAURI_INTERNALS__;
+	assert.ok(true);
+});

@@ -7,17 +7,17 @@ import { modalTemplates } from "./modal-templates.js";
  * Nanai Android Mascot - モーダル & UIダイアログ管理
  */
 export class ModalManager {
-	/**
-	 * @param {import('../../main.js').NanaiAndroidMascotApp} app
-	 */
-	constructor(app) {
-		/** @type {import('../../main.js').NanaiAndroidMascotApp} */
+	app: any;
+	overlay: HTMLElement | null;
+	content: HTMLElement | null;
+	closeBtn: HTMLElement | null;
+	ghostHandlers: ModalGhostHandlers;
+	settingsHandlers: ModalSettingsHandlers;
+
+	constructor(app: any) {
 		this.app = app;
-		/** @type {HTMLElement|null} */
 		this.overlay = document.getElementById("modal-overlay");
-		/** @type {HTMLElement|null} */
 		this.content = document.getElementById("modal-content");
-		/** @type {HTMLElement|null} */
 		this.closeBtn = document.getElementById("modal-close");
 
 		this.ghostHandlers = new ModalGhostHandlers(this);
@@ -28,7 +28,7 @@ export class ModalManager {
 
 	init() {
 		this.closeBtn?.addEventListener("click", () => this.hide());
-		this.overlay?.addEventListener("click", (e) => {
+		this.overlay?.addEventListener("click", (e: MouseEvent) => {
 			if (e.target === this.overlay) {
 				this.hide();
 			}
@@ -43,8 +43,8 @@ export class ModalManager {
 		}
 	}
 
-	show(contentId) {
-		let html = modalTemplates[contentId];
+	show(contentId: string) {
+		let html: string | undefined = (modalTemplates as Record<string, string>)[contentId];
 		if (!html) {
 			const source = document.getElementById(contentId);
 			html = source?.innerHTML;
@@ -66,28 +66,25 @@ export class ModalManager {
 		}
 	}
 
-	setupListeners(contentId) {
+	setupListeners(contentId: string) {
 		if (contentId === "ghost-modal-content") {
-			this.ghostHandlers.setupGhostListeners?.();
+			(this.ghostHandlers as any).setupGhostListeners?.();
 		} else if (contentId === "explorer-modal-content") {
-			this.ghostHandlers.setupExplorerListeners?.();
+			(this.ghostHandlers as any).setupExplorerListeners?.();
 		} else if (contentId === "install-modal-content") {
-			this.ghostHandlers.setupInstallListeners?.();
+			(this.ghostHandlers as any).setupInstallListeners?.();
 		} else if (contentId === "balloon-modal-content") {
-			this.ghostHandlers.renderBalloonList?.();
+			(this.ghostHandlers as any).renderBalloonList?.();
 		} else if (contentId === "settings-modal-content") {
-			this.settingsHandlers.setupSettingsListeners?.();
+			(this.settingsHandlers as any).setupSettingsListeners?.();
 		} else if (contentId === "plugins-modal-content") {
-			this.settingsHandlers.setupPluginListeners?.();
+			(this.settingsHandlers as any).setupPluginListeners?.();
 		} else if (contentId === "debug-modal-content") {
-			this.settingsHandlers.setupDebugListeners?.();
+			(this.settingsHandlers as any).setupDebugListeners?.();
 		}
 	}
 
-	/**
-	 * 共通エラー・情報通知モーダル表示ヘルパー
-	 */
-	showNotification(title, message, isError = false) {
+	showNotification(title: string, message: string, isError: boolean = false) {
 		if (!this.content || !this.overlay) return;
 		this.content.innerHTML = `
       <h2>${isError ? "⚠️ " : "ℹ️ "}${title}</h2>
@@ -105,12 +102,11 @@ export class ModalManager {
 			?.addEventListener("click", () => this.hide());
 	}
 
-	// 下位互換プロキシメソッド
 	renderGhostList() {
-		this.ghostHandlers.renderGhostList?.();
+		(this.ghostHandlers as any).renderGhostList?.();
 	}
 
 	renderBalloonList() {
-		this.ghostHandlers.renderBalloonList?.();
+		(this.ghostHandlers as any).renderBalloonList?.();
 	}
 }

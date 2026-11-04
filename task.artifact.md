@@ -3,6 +3,6 @@
 - [x] Phase 3: Migrate Application Actions & State Layer to TypeScript (.ts)
 - [/] Phase 4: Migrate Renderers, Surface & Animation Modules to TypeScript (.ts)
   - [x] Milestone 1: Surface, Animation & Compositor Subsystem (.ts)
-  - [x] Milestone 2: Ghost Control & Shiori Engine (.ts)
+  - [x] Milestone 2: Ghost Control, Sakura Script Parser & Shiori Engine (.ts)
   - [/] Milestone 3: UI Modals, Inputs & Renderers (.ts)
 - [ ] Phase 5: Migrate Main Entry Point and Execute Final Typecheck & Vitest Verification

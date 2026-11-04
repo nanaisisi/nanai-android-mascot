@@ -1,3 +1,14 @@
+/**
+ * @file ghost-actions.ts
+ * @brief ゴースト管理・インストール・アンインストール・着せ替え・倍率設定モジュール (UKADOC準拠)
+ *
+ * 準拠仕様:
+ * - OnInstallBegin: インストール開始通知 (Ref0=識別子)
+ * - OnInstallComplete / OnInstallCompleteEx: インストール完了通知 (Ref0=種別, Ref1=名前, Ref2=パス, Ref3=スクリプト)
+ * - OnInstallFailure: インストール失敗通知 (Ref0=失敗理由)
+ * - OnWindowStateMinimize / OnWindowStateRestore: ウィンドウ最小化・復元イベント
+ * - uninstall_ghost: ゴーストファイル削除・アンインストール処理
+ */
 import { AppConfig } from "../config.js";
 import { invoke, isTauriAvailable } from "../tauri-helper.js";
 import {

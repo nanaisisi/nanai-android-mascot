@@ -242,9 +242,15 @@ fn test_sstp_request_parser_more_edge_cases() {
     let req = SstpRequest::parse(raw).unwrap();
     assert!(req.keep_alive);
     assert_eq!(req.security_level, Some("external".to_string()));
-    assert_eq!(req.pass_thru.get("X-SSTP-PassThru-Header1"), Some(&"pass_val".to_string()));
+    assert_eq!(
+        req.pass_thru.get("X-SSTP-PassThru-Header1"),
+        Some(&"pass_val".to_string())
+    );
     assert_eq!(req.hwnd, None);
     assert_eq!(req.receiver_ghost_hwnd, None);
     assert_eq!(req.options, vec!["opt1", "opt2"]);
-    assert_eq!(req.references.get("Reference0"), Some(&"arg_val".to_string()));
+    assert_eq!(
+        req.references.get("Reference0"),
+        Some(&"arg_val".to_string())
+    );
 }

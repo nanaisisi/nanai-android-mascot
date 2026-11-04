@@ -234,7 +234,10 @@ fn test_mock_vfs_extended_operations() {
     mock.write_text_file("notes/todo.txt", "line1\n");
     mock.append_file("notes/todo.txt", b"line2\n");
     assert_eq!(mock.read_text("notes/todo.txt").unwrap(), "line1\nline2\n");
-    assert_eq!(mock.file_size("notes/todo.txt").unwrap(), "line1\nline2\n".len() as u64);
+    assert_eq!(
+        mock.file_size("notes/todo.txt").unwrap(),
+        "line1\nline2\n".len() as u64
+    );
     assert!(mock.is_file("notes/todo.txt"));
     assert!(!mock.is_dir("notes/todo.txt"));
     assert!(mock.is_dir("notes"));
@@ -244,7 +247,8 @@ fn test_mock_vfs_extended_operations() {
     assert!(mock.is_dir("empty_folder"));
 
     // VfsResolver dir_cache_size & directory caching
-    let temp_dir = std::env::temp_dir().join(format!("nanai_dircache_traits_ext_{}", std::process::id()));
+    let temp_dir =
+        std::env::temp_dir().join(format!("nanai_dircache_traits_ext_{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&temp_dir);
     let sub = temp_dir.join("Shell").join("Master");
     std::fs::create_dir_all(&sub).unwrap();

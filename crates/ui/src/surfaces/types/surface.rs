@@ -292,7 +292,12 @@ mod tests {
         def2.collisions.push(CollisionArea {
             id: Some(1),
             name: "顔".into(),
-            shape: CollisionShape::Rect { x1: 0, y1: 0, x2: 50, y2: 50 },
+            shape: CollisionShape::Rect {
+                x1: 0,
+                y1: 0,
+                x2: 50,
+                y2: 50,
+            },
         });
         assert!(def2.effective_icon_rect().is_some());
 
@@ -300,7 +305,12 @@ mod tests {
         def3.collisions.push(CollisionArea {
             id: Some(1),
             name: "頭".into(),
-            shape: CollisionShape::Rect { x1: 0, y1: 0, x2: 50, y2: 50 },
+            shape: CollisionShape::Rect {
+                x1: 0,
+                y1: 0,
+                x2: 50,
+                y2: 50,
+            },
         });
         assert!(def3.effective_icon_rect().is_some());
 
@@ -308,7 +318,11 @@ mod tests {
         def4.collisions.push(CollisionArea {
             id: Some(1),
             name: "face".into(),
-            shape: CollisionShape::Circle { cx: 0, cy: 0, r: 0.0 },
+            shape: CollisionShape::Circle {
+                cx: 0,
+                cy: 0,
+                r: 0.0,
+            },
         });
         assert!(def4.effective_icon_rect().is_none());
 

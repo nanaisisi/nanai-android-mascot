@@ -47,7 +47,9 @@ mod tests {
 
     #[test]
     fn test_hit_test_with_binds_comprehensive() {
-        use crate::surfaces::types::{SurfaceDefinition, CollisionArea, CollisionShape, SerikoAnimation};
+        use crate::surfaces::types::{
+            CollisionArea, CollisionShape, SerikoAnimation, SurfaceDefinition,
+        };
 
         let mut txt = SurfacesTxt::default();
         let mut def = SurfaceDefinition::default();
@@ -55,7 +57,12 @@ mod tests {
         def.collisions.push(CollisionArea {
             id: Some(0),
             name: "BaseArea".into(),
-            shape: CollisionShape::Rect { x1: 0, y1: 0, x2: 50, y2: 50 },
+            shape: CollisionShape::Rect {
+                x1: 0,
+                y1: 0,
+                x2: 50,
+                y2: 50,
+            },
         });
 
         let anim = SerikoAnimation {
@@ -63,13 +70,16 @@ mod tests {
             name: None,
             interval: Some(crate::surfaces::types::Interval::Bind),
             options: vec![],
-            collisions: vec![
-                CollisionArea {
-                    id: Some(1),
-                    name: "BindArea".into(),
-                    shape: CollisionShape::Rect { x1: 10, y1: 10, x2: 30, y2: 30 },
+            collisions: vec![CollisionArea {
+                id: Some(1),
+                name: "BindArea".into(),
+                shape: CollisionShape::Rect {
+                    x1: 10,
+                    y1: 10,
+                    x2: 30,
+                    y2: 30,
                 },
-            ],
+            }],
             patterns: vec![],
         };
         def.animations.insert(10, anim);

@@ -209,7 +209,7 @@ pub fn evaluate_property_query(query: &str) -> String {
         | "texttospeechbutton.caption"
         | "updateplatformbutton.caption"
         | "utilityrootbutton.caption" => "1".to_string(),
-        | "switchmovetodefaultpositionbutton.caption"
+        "switchmovetodefaultpositionbutton.caption"
         | "switchproxybutton.caption"
         | "switchquietbutton.caption"
         | "switchreloadbutton.caption"
@@ -224,7 +224,7 @@ pub fn evaluate_property_query(query: &str) -> String {
         | "updatefmobutton.caption"
         | "updateplatformbutton.caption"
         | "utilityrootbutton.caption" => "1".to_string(),
-        | "switchremotesstpbutton.caption" => "1".to_string(),
+        "switchremotesstpbutton.caption" => "1".to_string(),
         "currentghost.seriko.surfacelist.defined" => "0,1,10".to_string(),
         "currentghost.seriko.surfacelist.all" => "0,1,10".to_string(),
         "system.year" => "2026".to_string(),
@@ -370,18 +370,9 @@ mod tests {
             evaluate_property_query("switchremotesstpbutton.caption"),
             "1"
         );
-        assert_eq!(
-            evaluate_property_query("switchreloadbutton.caption"),
-            "1"
-        );
-        assert_eq!(
-            evaluate_property_query("historyrootbutton.caption"),
-            "1"
-        );
-        assert_eq!(
-            evaluate_property_query("sntpbutton.caption"),
-            "1"
-        );
+        assert_eq!(evaluate_property_query("switchreloadbutton.caption"), "1");
+        assert_eq!(evaluate_property_query("historyrootbutton.caption"), "1");
+        assert_eq!(evaluate_property_query("sntpbutton.caption"), "1");
         assert_eq!(
             evaluate_property_query("unknown.prop"),
             "(unknown property: unknown.prop)"

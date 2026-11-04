@@ -56,10 +56,8 @@ impl AnimationScheduler {
                                 to_start.push((scope_id, ids[0]));
                             }
                         }
-                        DrawMethod::AlternativeStop(ids) => {
-                            if !ids.is_empty() {
-                                to_stop.push((scope_id, ids[0]));
-                            }
+                        DrawMethod::AlternativeStop(ids) if !ids.is_empty() => {
+                            to_stop.push((scope_id, ids[0]));
                         }
                         _ => {}
                     }

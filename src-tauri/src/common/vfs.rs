@@ -32,7 +32,10 @@ mod tests {
         // Cycle 6 functions
         mock.append_file("Shell/Master/descript.txt", b"\nversion,2.0");
         let vfs: &dyn VirtualFileSystem = &mock;
-        assert_eq!(vfs.file_size("shell/master/descript.txt").unwrap(), ("name,Master\nversion,2.0".len() as u64));
+        assert_eq!(
+            vfs.file_size("shell/master/descript.txt").unwrap(),
+            ("name,Master\nversion,2.0".len() as u64)
+        );
         assert!(vfs.is_file("shell/master/descript.txt"));
         assert!(vfs.is_dir("shell/master"));
 

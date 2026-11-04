@@ -45,7 +45,10 @@ pub fn expand_range(spec: &str) -> Vec<u32> {
     if excluded.is_empty() {
         included
     } else {
-        included.into_iter().filter(|id| !excluded.contains(id)).collect()
+        included
+            .into_iter()
+            .filter(|id| !excluded.contains(id))
+            .collect()
     }
 }
 

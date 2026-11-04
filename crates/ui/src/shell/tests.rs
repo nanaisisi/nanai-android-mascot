@@ -79,8 +79,16 @@ fn test_shell_hit_test_results_and_surfaces2() {
     let empty_dir = std::env::temp_dir().join("nanai_shell_s2_dir");
     let _ = std::fs::remove_dir_all(&empty_dir);
     std::fs::create_dir_all(&empty_dir).unwrap();
-    std::fs::write(empty_dir.join("surfaces.txt"), "surface0\n{\ncollision0,0,0,50,50,Head\n}\n").unwrap();
-    std::fs::write(empty_dir.join("surfaces2.txt"), "surface0\n{\ncollision1,10,10,20,20,Extra\n}\n").unwrap();
+    std::fs::write(
+        empty_dir.join("surfaces.txt"),
+        "surface0\n{\ncollision0,0,0,50,50,Head\n}\n",
+    )
+    .unwrap();
+    std::fs::write(
+        empty_dir.join("surfaces2.txt"),
+        "surface0\n{\ncollision1,10,10,20,20,Extra\n}\n",
+    )
+    .unwrap();
 
     let shell = Shell::load(&empty_dir).unwrap();
     assert!(shell.hit_test_result(0, 25, 25).is_some());

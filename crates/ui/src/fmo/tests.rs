@@ -221,22 +221,20 @@ fn test_fmo_buffer_edge_cases() {
 
 #[test]
 fn test_fmo_buffer_more_edge_cases() {
-    let recs = vec![
-        FmoRecord {
-            id: "custom_id_1".to_string(),
-            path: "A".repeat(70000),
-            hwnd: 123,
-            name: "Name".to_string(),
-            keroname: "Kero".to_string(),
-            sakura_surface: 0,
-            kero_surface: 10,
-            ghostpath: "ghostpath".to_string(),
-            kerohwnd: None,
-            hwndlist: vec![],
-            fullname: None,
-            modulestate: None,
-        },
-    ];
+    let recs = vec![FmoRecord {
+        id: "custom_id_1".to_string(),
+        path: "A".repeat(70000),
+        hwnd: 123,
+        name: "Name".to_string(),
+        keroname: "Kero".to_string(),
+        sakura_surface: 0,
+        kero_surface: 10,
+        ghostpath: "ghostpath".to_string(),
+        kerohwnd: None,
+        hwndlist: vec![],
+        fullname: None,
+        modulestate: None,
+    }];
 
     let buf = generate_fmo_buffer(&recs);
     let parsed = parse_fmo_buffer(&buf).unwrap();

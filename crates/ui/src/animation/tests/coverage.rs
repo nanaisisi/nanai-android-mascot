@@ -428,9 +428,16 @@ fn test_animation_scheduler_state_coverage_boost() {
         interval: Some(Interval::Always),
         options: vec![vec!["shared-index".to_string()]],
         collisions: vec![],
-        patterns: vec![
-            AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 100, wait: 50, wait_max: None, x: 0, y: 0, options: vec![] },
-        ],
+        patterns: vec![AnimationPattern {
+            index: 0,
+            method: DrawMethod::Overlay,
+            surface: 100,
+            wait: 50,
+            wait_max: None,
+            x: 0,
+            y: 0,
+            options: vec![],
+        }],
     };
     let shared_anim2 = SerikoAnimation {
         id: 89,
@@ -438,9 +445,16 @@ fn test_animation_scheduler_state_coverage_boost() {
         interval: Some(Interval::Always),
         options: vec![vec!["shared-index".to_string()]],
         collisions: vec![],
-        patterns: vec![
-            AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 100, wait: 50, wait_max: None, x: 0, y: 0, options: vec![] },
-        ],
+        patterns: vec![AnimationPattern {
+            index: 0,
+            method: DrawMethod::Overlay,
+            surface: 100,
+            wait: 50,
+            wait_max: None,
+            x: 0,
+            y: 0,
+            options: vec![],
+        }],
     };
     scheduler.start_animation(0, 0, &shared_anim1);
     scheduler.start_animation(0, 0, &shared_anim2);
@@ -463,8 +477,26 @@ fn test_animation_scheduler_state_coverage_boost() {
         options: vec![vec!["shared-index".to_string()]],
         collisions: vec![],
         patterns: vec![
-            AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 100, wait: 50, wait_max: None, x: 0, y: 0, options: vec![] },
-            AnimationPattern { index: 1, method: DrawMethod::Overlay, surface: 101, wait: 50, wait_max: None, x: 0, y: 0, options: vec![] },
+            AnimationPattern {
+                index: 0,
+                method: DrawMethod::Overlay,
+                surface: 100,
+                wait: 50,
+                wait_max: None,
+                x: 0,
+                y: 0,
+                options: vec![],
+            },
+            AnimationPattern {
+                index: 1,
+                method: DrawMethod::Overlay,
+                surface: 101,
+                wait: 50,
+                wait_max: None,
+                x: 0,
+                y: 0,
+                options: vec![],
+            },
         ],
     };
     let short_shared = SerikoAnimation {
@@ -473,9 +505,16 @@ fn test_animation_scheduler_state_coverage_boost() {
         interval: Some(Interval::Always),
         options: vec![vec!["shared-index".to_string()]],
         collisions: vec![],
-        patterns: vec![
-            AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 100, wait: 50, wait_max: None, x: 0, y: 0, options: vec![] },
-        ],
+        patterns: vec![AnimationPattern {
+            index: 0,
+            method: DrawMethod::Overlay,
+            surface: 100,
+            wait: 50,
+            wait_max: None,
+            x: 0,
+            y: 0,
+            options: vec![],
+        }],
     };
     scheduler.start_animation(0, 0, &long_shared);
     let _ = scheduler.step(60);
@@ -490,7 +529,16 @@ fn test_animation_scheduler_state_coverage_boost() {
         interval: Some(Interval::Always),
         options: vec![],
         collisions: vec![],
-        patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 100, wait: 50, wait_max: None, x: 0, y: 0, options: vec![] }],
+        patterns: vec![AnimationPattern {
+            index: 0,
+            method: DrawMethod::Overlay,
+            surface: 100,
+            wait: 50,
+            wait_max: None,
+            x: 0,
+            y: 0,
+            options: vec![],
+        }],
     };
     scheduler.start_animation(0, 0, &anim_active);
     assert!(!scheduler.is_animation_paused(0, 79));
@@ -508,12 +556,66 @@ fn test_stepping_empty_parallel_methods() {
         options: vec![],
         collisions: vec![],
         patterns: vec![
-            AnimationPattern { index: 0, method: DrawMethod::ParallelStart(vec![]), surface: 10, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] },
-            AnimationPattern { index: 1, method: DrawMethod::ParallelStop(vec![]), surface: 11, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] },
-            AnimationPattern { index: 2, method: DrawMethod::AlternativeStart(vec![]), surface: 12, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] },
-            AnimationPattern { index: 3, method: DrawMethod::AlternativeStop(vec![]), surface: 13, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] },
-            AnimationPattern { index: 4, method: DrawMethod::AlternativeStart(vec![10]), surface: 14, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] },
-            AnimationPattern { index: 5, method: DrawMethod::AlternativeStop(vec![11]), surface: 15, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] },
+            AnimationPattern {
+                index: 0,
+                method: DrawMethod::ParallelStart(vec![]),
+                surface: 10,
+                wait: 10,
+                wait_max: None,
+                x: 0,
+                y: 0,
+                options: vec![],
+            },
+            AnimationPattern {
+                index: 1,
+                method: DrawMethod::ParallelStop(vec![]),
+                surface: 11,
+                wait: 10,
+                wait_max: None,
+                x: 0,
+                y: 0,
+                options: vec![],
+            },
+            AnimationPattern {
+                index: 2,
+                method: DrawMethod::AlternativeStart(vec![]),
+                surface: 12,
+                wait: 10,
+                wait_max: None,
+                x: 0,
+                y: 0,
+                options: vec![],
+            },
+            AnimationPattern {
+                index: 3,
+                method: DrawMethod::AlternativeStop(vec![]),
+                surface: 13,
+                wait: 10,
+                wait_max: None,
+                x: 0,
+                y: 0,
+                options: vec![],
+            },
+            AnimationPattern {
+                index: 4,
+                method: DrawMethod::AlternativeStart(vec![10]),
+                surface: 14,
+                wait: 10,
+                wait_max: None,
+                x: 0,
+                y: 0,
+                options: vec![],
+            },
+            AnimationPattern {
+                index: 5,
+                method: DrawMethod::AlternativeStop(vec![11]),
+                surface: 15,
+                wait: 10,
+                wait_max: None,
+                x: 0,
+                y: 0,
+                options: vec![],
+            },
         ],
     };
     scheduler.start_animation(0, 0, &anim);
@@ -532,21 +634,35 @@ fn test_stepping_catalog_missing_animation_id() {
         interval: Some(Interval::RunOnce),
         options: vec![],
         collisions: vec![],
-        patterns: vec![
-            AnimationPattern { index: 0, method: DrawMethod::Start(Some(9999)), surface: 10, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] },
-        ],
+        patterns: vec![AnimationPattern {
+            index: 0,
+            method: DrawMethod::Start(Some(9999)),
+            surface: 10,
+            wait: 10,
+            wait_max: None,
+            x: 0,
+            y: 0,
+            options: vec![],
+        }],
     };
     scheduler.start_animation(0, 0, &anim);
-    let non_matching_catalog = vec![
-        SerikoAnimation {
-            id: 8888,
-            name: None,
-            interval: Some(Interval::RunOnce),
+    let non_matching_catalog = vec![SerikoAnimation {
+        id: 8888,
+        name: None,
+        interval: Some(Interval::RunOnce),
+        options: vec![],
+        collisions: vec![],
+        patterns: vec![AnimationPattern {
+            index: 0,
+            method: DrawMethod::Overlay,
+            surface: 10,
+            wait: 10,
+            wait_max: None,
+            x: 0,
+            y: 0,
             options: vec![],
-            collisions: vec![],
-            patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 10, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] }],
-        }
-    ];
+        }],
+    }];
     let _ = scheduler.step_with_catalog(15, &non_matching_catalog);
 }
 
@@ -561,9 +677,16 @@ fn test_stepping_stop_others_retains_and_drops() {
         interval: Some(Interval::RunOnce),
         options: vec![],
         collisions: vec![],
-        patterns: vec![
-            AnimationPattern { index: 0, surface: -2, wait: 10, wait_max: None, method: DrawMethod::Overlay, x: 0, y: 0, options: vec![] },
-        ],
+        patterns: vec![AnimationPattern {
+            index: 0,
+            surface: -2,
+            wait: 10,
+            wait_max: None,
+            method: DrawMethod::Overlay,
+            x: 0,
+            y: 0,
+            options: vec![],
+        }],
     };
     let anim_normal = SerikoAnimation {
         id: 51,
@@ -571,9 +694,16 @@ fn test_stepping_stop_others_retains_and_drops() {
         interval: Some(Interval::Always),
         options: vec![],
         collisions: vec![],
-        patterns: vec![
-            AnimationPattern { index: 0, surface: 300, wait: 100, wait_max: None, method: DrawMethod::Overlay, x: 0, y: 0, options: vec![] },
-        ],
+        patterns: vec![AnimationPattern {
+            index: 0,
+            surface: 300,
+            wait: 100,
+            wait_max: None,
+            method: DrawMethod::Overlay,
+            x: 0,
+            y: 0,
+            options: vec![],
+        }],
     };
     scheduler.start_animation(0, 0, &anim_normal);
     scheduler.start_animation(0, 0, &anim_stop);
@@ -606,7 +736,16 @@ fn test_triggers_coverage_boost() {
         interval: Some(Interval::Always),
         options: vec![vec!["exclusive".to_string()]],
         collisions: vec![],
-        patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 100, wait: 100, wait_max: None, x: 0, y: 0, options: vec![] }],
+        patterns: vec![AnimationPattern {
+            index: 0,
+            method: DrawMethod::Overlay,
+            surface: 100,
+            wait: 100,
+            wait_max: None,
+            x: 0,
+            y: 0,
+            options: vec![],
+        }],
     };
     let blocked_anim = SerikoAnimation {
         id: 11,
@@ -614,7 +753,16 @@ fn test_triggers_coverage_boost() {
         interval: Some(Interval::Always),
         options: vec![],
         collisions: vec![],
-        patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 101, wait: 100, wait_max: None, x: 0, y: 0, options: vec![] }],
+        patterns: vec![AnimationPattern {
+            index: 0,
+            method: DrawMethod::Overlay,
+            surface: 101,
+            wait: 100,
+            wait_max: None,
+            x: 0,
+            y: 0,
+            options: vec![],
+        }],
     };
     scheduler.start_animation(0, 0, &excl_global);
     assert!(scheduler.is_blocked_by_exclusive(0, 11));
@@ -627,7 +775,16 @@ fn test_triggers_coverage_boost() {
         interval: Some(Interval::Always),
         options: vec![vec!["exclusive(21)".to_string()]],
         collisions: vec![],
-        patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 102, wait: 100, wait_max: None, x: 0, y: 0, options: vec![] }],
+        patterns: vec![AnimationPattern {
+            index: 0,
+            method: DrawMethod::Overlay,
+            surface: 102,
+            wait: 100,
+            wait_max: None,
+            x: 0,
+            y: 0,
+            options: vec![],
+        }],
     };
     let _target_anim = SerikoAnimation {
         id: 21,
@@ -635,7 +792,16 @@ fn test_triggers_coverage_boost() {
         interval: Some(Interval::Always),
         options: vec![],
         collisions: vec![],
-        patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 103, wait: 100, wait_max: None, x: 0, y: 0, options: vec![] }],
+        patterns: vec![AnimationPattern {
+            index: 0,
+            method: DrawMethod::Overlay,
+            surface: 103,
+            wait: 100,
+            wait_max: None,
+            x: 0,
+            y: 0,
+            options: vec![],
+        }],
     };
     scheduler.stop_animations(0);
     scheduler.start_animation(0, 0, &excl_target);
@@ -650,17 +816,90 @@ fn test_triggers_coverage_boost() {
         interval: Some(Interval::Always),
         options: vec![],
         collisions: vec![],
-        patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 104, wait: 100, wait_max: None, x: 0, y: 0, options: vec![] }],
+        patterns: vec![AnimationPattern {
+            index: 0,
+            method: DrawMethod::Overlay,
+            surface: 104,
+            wait: 100,
+            wait_max: None,
+            x: 0,
+            y: 0,
+            options: vec![],
+        }],
     };
     scheduler.start_animation(0, 0, &paused_anim);
     assert!(scheduler.is_animation_paused(0, 30));
 
     // 4. schedule_surface_animations (Never, Bind active/inactive, RunOnce, Sometimes/Periodic)
     let anims = vec![
-        SerikoAnimation { id: 1, name: None, interval: Some(Interval::Never), options: vec![], collisions: vec![], patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 1, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] }] },
-        SerikoAnimation { id: 2, name: None, interval: Some(Interval::Bind), options: vec![], collisions: vec![], patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 2, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] }] },
-        SerikoAnimation { id: 3, name: None, interval: Some(Interval::RunOnce), options: vec![], collisions: vec![], patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 3, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] }] },
-        SerikoAnimation { id: 4, name: None, interval: Some(Interval::Sometimes), options: vec![], collisions: vec![], patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 4, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] }] },
+        SerikoAnimation {
+            id: 1,
+            name: None,
+            interval: Some(Interval::Never),
+            options: vec![],
+            collisions: vec![],
+            patterns: vec![AnimationPattern {
+                index: 0,
+                method: DrawMethod::Overlay,
+                surface: 1,
+                wait: 10,
+                wait_max: None,
+                x: 0,
+                y: 0,
+                options: vec![],
+            }],
+        },
+        SerikoAnimation {
+            id: 2,
+            name: None,
+            interval: Some(Interval::Bind),
+            options: vec![],
+            collisions: vec![],
+            patterns: vec![AnimationPattern {
+                index: 0,
+                method: DrawMethod::Overlay,
+                surface: 2,
+                wait: 10,
+                wait_max: None,
+                x: 0,
+                y: 0,
+                options: vec![],
+            }],
+        },
+        SerikoAnimation {
+            id: 3,
+            name: None,
+            interval: Some(Interval::RunOnce),
+            options: vec![],
+            collisions: vec![],
+            patterns: vec![AnimationPattern {
+                index: 0,
+                method: DrawMethod::Overlay,
+                surface: 3,
+                wait: 10,
+                wait_max: None,
+                x: 0,
+                y: 0,
+                options: vec![],
+            }],
+        },
+        SerikoAnimation {
+            id: 4,
+            name: None,
+            interval: Some(Interval::Sometimes),
+            options: vec![],
+            collisions: vec![],
+            patterns: vec![AnimationPattern {
+                index: 0,
+                method: DrawMethod::Overlay,
+                surface: 4,
+                wait: 10,
+                wait_max: None,
+                x: 0,
+                y: 0,
+                options: vec![],
+            }],
+        },
     ];
     scheduler.set_bind_active(0, 2, true);
     scheduler.schedule_surface_animations(0, 0, &anims, 0.0);
@@ -671,11 +910,91 @@ fn test_triggers_coverage_boost() {
 
     // 6. Talk triggers (StartTalk, Talk, Custom("talk,2"), EndTalk, YenE)
     let talk_anims = vec![
-        SerikoAnimation { id: 100, name: None, interval: Some(Interval::StartTalk), options: vec![], collisions: vec![], patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 10, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] }] },
-        SerikoAnimation { id: 101, name: None, interval: Some(Interval::Talk), options: vec![], collisions: vec![], patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 11, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] }] },
-        SerikoAnimation { id: 102, name: None, interval: Some(Interval::Custom("talk,2".to_string())), options: vec![], collisions: vec![], patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 12, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] }] },
-        SerikoAnimation { id: 103, name: None, interval: Some(Interval::EndTalk), options: vec![], collisions: vec![], patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 13, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] }] },
-        SerikoAnimation { id: 104, name: None, interval: Some(Interval::YenE), options: vec![], collisions: vec![], patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 14, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] }] },
+        SerikoAnimation {
+            id: 100,
+            name: None,
+            interval: Some(Interval::StartTalk),
+            options: vec![],
+            collisions: vec![],
+            patterns: vec![AnimationPattern {
+                index: 0,
+                method: DrawMethod::Overlay,
+                surface: 10,
+                wait: 10,
+                wait_max: None,
+                x: 0,
+                y: 0,
+                options: vec![],
+            }],
+        },
+        SerikoAnimation {
+            id: 101,
+            name: None,
+            interval: Some(Interval::Talk),
+            options: vec![],
+            collisions: vec![],
+            patterns: vec![AnimationPattern {
+                index: 0,
+                method: DrawMethod::Overlay,
+                surface: 11,
+                wait: 10,
+                wait_max: None,
+                x: 0,
+                y: 0,
+                options: vec![],
+            }],
+        },
+        SerikoAnimation {
+            id: 102,
+            name: None,
+            interval: Some(Interval::Custom("talk,2".to_string())),
+            options: vec![],
+            collisions: vec![],
+            patterns: vec![AnimationPattern {
+                index: 0,
+                method: DrawMethod::Overlay,
+                surface: 12,
+                wait: 10,
+                wait_max: None,
+                x: 0,
+                y: 0,
+                options: vec![],
+            }],
+        },
+        SerikoAnimation {
+            id: 103,
+            name: None,
+            interval: Some(Interval::EndTalk),
+            options: vec![],
+            collisions: vec![],
+            patterns: vec![AnimationPattern {
+                index: 0,
+                method: DrawMethod::Overlay,
+                surface: 13,
+                wait: 10,
+                wait_max: None,
+                x: 0,
+                y: 0,
+                options: vec![],
+            }],
+        },
+        SerikoAnimation {
+            id: 104,
+            name: None,
+            interval: Some(Interval::YenE),
+            options: vec![],
+            collisions: vec![],
+            patterns: vec![AnimationPattern {
+                index: 0,
+                method: DrawMethod::Overlay,
+                surface: 14,
+                wait: 10,
+                wait_max: None,
+                x: 0,
+                y: 0,
+                options: vec![],
+            }],
+        },
     ];
     scheduler.on_talk_start(0, &talk_anims);
     scheduler.on_char_spoken(0, &talk_anims); // count 1
@@ -690,7 +1009,16 @@ fn test_triggers_coverage_boost() {
         interval: Some(Interval::Always),
         options: vec![],
         collisions: vec![],
-        patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 50, wait: 100, wait_max: None, x: 0, y: 0, options: vec![] }],
+        patterns: vec![AnimationPattern {
+            index: 0,
+            method: DrawMethod::Overlay,
+            surface: 50,
+            wait: 100,
+            wait_max: None,
+            x: 0,
+            y: 0,
+            options: vec![],
+        }],
     };
     let excl_stopping = SerikoAnimation {
         id: 51,
@@ -698,7 +1026,16 @@ fn test_triggers_coverage_boost() {
         interval: Some(Interval::Always),
         options: vec![vec!["exclusive(50)".to_string()]],
         collisions: vec![],
-        patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 51, wait: 100, wait_max: None, x: 0, y: 0, options: vec![] }],
+        patterns: vec![AnimationPattern {
+            index: 0,
+            method: DrawMethod::Overlay,
+            surface: 51,
+            wait: 100,
+            wait_max: None,
+            x: 0,
+            y: 0,
+            options: vec![],
+        }],
     };
     scheduler.stop_animations(0);
     scheduler.start_animation(0, 0, &target_to_stop);
@@ -717,7 +1054,16 @@ fn test_triggers_uncovered_branches() {
         interval: Some(Interval::RunOnce),
         options: vec![vec!["exclusive".to_string()]],
         collisions: vec![],
-        patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 10, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] }],
+        patterns: vec![AnimationPattern {
+            index: 0,
+            method: DrawMethod::Overlay,
+            surface: 10,
+            wait: 10,
+            wait_max: None,
+            x: 0,
+            y: 0,
+            options: vec![],
+        }],
     };
     scheduler.start_animation(0, 0, &anim);
     scheduler.start_animation(0, 0, &anim);
@@ -736,7 +1082,16 @@ fn test_triggers_runonce_always() {
         interval: Some(Interval::RunOnce),
         options: vec![],
         collisions: vec![],
-        patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 10, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] }],
+        patterns: vec![AnimationPattern {
+            index: 0,
+            method: DrawMethod::Overlay,
+            surface: 10,
+            wait: 10,
+            wait_max: None,
+            x: 0,
+            y: 0,
+            options: vec![],
+        }],
     };
     let anim_always = SerikoAnimation {
         id: 201,
@@ -744,7 +1099,16 @@ fn test_triggers_runonce_always() {
         interval: Some(Interval::Always),
         options: vec![],
         collisions: vec![],
-        patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 11, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] }],
+        patterns: vec![AnimationPattern {
+            index: 0,
+            method: DrawMethod::Overlay,
+            surface: 11,
+            wait: 10,
+            wait_max: None,
+            x: 0,
+            y: 0,
+            options: vec![],
+        }],
     };
     scheduler.schedule_surface_animations(0, 0, &[anim_runonce, anim_always], 0.5);
 }
@@ -760,7 +1124,16 @@ fn test_triggers_custom_interval_fallback() {
         interval: Some(Interval::Talk),
         options: vec![],
         collisions: vec![],
-        patterns: vec![AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 10, wait: 10, wait_max: None, x: 0, y: 0, options: vec![] }],
+        patterns: vec![AnimationPattern {
+            index: 0,
+            method: DrawMethod::Overlay,
+            surface: 10,
+            wait: 10,
+            wait_max: None,
+            x: 0,
+            y: 0,
+            options: vec![],
+        }],
     };
     scheduler.schedule_surface_animations(0, 0, &[anim_talk], 0.5);
 }

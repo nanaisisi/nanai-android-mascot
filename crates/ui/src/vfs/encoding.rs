@@ -73,10 +73,15 @@ pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
             let remainder = &lower_ascii[pos + sep.len()..];
             let end = remainder
                 .iter()
-                .position(|&b| b == b'\r' || b == b'\n' || b == b',' || b == b';' || b == b' ' || b == b'\t')
+                .position(|&b| {
+                    b == b'\r' || b == b'\n' || b == b',' || b == b';' || b == b' ' || b == b'\t'
+                })
                 .unwrap_or(remainder.len());
             let raw_decl = String::from_utf8_lossy(&remainder[..end]);
-            let charset_decl = raw_decl.trim().trim_matches(|c| c == '"' || c == '\'').to_string();
+            let charset_decl = raw_decl
+                .trim()
+                .trim_matches(|c| c == '"' || c == '\'')
+                .to_string();
             if !charset_decl.is_empty() {
                 found_charset_decl = Some(charset_decl);
                 break;

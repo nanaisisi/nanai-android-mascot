@@ -150,7 +150,10 @@ mod tests {
         assert_eq!(handle_font(&mut chars), None);
 
         let mut chars = "[Arial, 12]".chars().peekable();
-        assert_eq!(handle_font(&mut chars), Some(("Arial".to_string(), Some("12".to_string()))));
+        assert_eq!(
+            handle_font(&mut chars),
+            Some(("Arial".to_string(), Some("12".to_string())))
+        );
 
         let mut chars = "no_brackets".chars().peekable();
         assert_eq!(handle_choice(&mut chars), None);
@@ -175,6 +178,9 @@ mod tests {
         assert_eq!(handle_postmessage(&mut chars), None);
 
         let mut chars = "[msg, w, l]".chars().peekable();
-        assert_eq!(handle_postmessage(&mut chars), Some(("msg".to_string(), "w".to_string(), "l".to_string())));
+        assert_eq!(
+            handle_postmessage(&mut chars),
+            Some(("msg".to_string(), "w".to_string(), "l".to_string()))
+        );
     }
 }

@@ -168,7 +168,7 @@ impl SurfacesTxt {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::surfaces::types::{SerikoAnimation, Interval};
+    use crate::surfaces::types::{Interval, SerikoAnimation};
 
     #[test]
     fn test_surfaces_txt_merge_comprehensive() {

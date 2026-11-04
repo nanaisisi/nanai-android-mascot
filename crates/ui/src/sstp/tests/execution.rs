@@ -249,16 +249,33 @@ fn test_handle_execute_command() {
 
     // Reference によるパラメータ解決 (UKADOC method_execute.md)
     let mut ctx_ref = ctx.clone();
-    ctx_ref.references.insert("Reference0".to_string(), "currentghost.name".to_string());
+    ctx_ref
+        .references
+        .insert("Reference0".to_string(), "currentghost.name".to_string());
     let res_prop_ref = handle_execute_command("GetProperty", &ctx_ref);
     assert_eq!(res_prop_ref.status, SstpStatusCode::Ok);
-    assert_eq!(res_prop_ref.additional_data, Some("Nanai Ghost".to_string()));
+    assert_eq!(
+        res_prop_ref.additional_data,
+        Some("Nanai Ghost".to_string())
+    );
 
     // 新規 EXECUTE コマンドのローカル実行確認
-    assert_eq!(handle_execute_command("DumpSurface", &ctx).status, SstpStatusCode::Ok);
-    assert_eq!(handle_execute_command("MoveAsync", &ctx).status, SstpStatusCode::Ok);
-    assert_eq!(handle_execute_command("SetTrayIcon", &ctx).status, SstpStatusCode::Ok);
-    assert_eq!(handle_execute_command("SetTrayBalloon", &ctx).status, SstpStatusCode::Ok);
+    assert_eq!(
+        handle_execute_command("DumpSurface", &ctx).status,
+        SstpStatusCode::Ok
+    );
+    assert_eq!(
+        handle_execute_command("MoveAsync", &ctx).status,
+        SstpStatusCode::Ok
+    );
+    assert_eq!(
+        handle_execute_command("SetTrayIcon", &ctx).status,
+        SstpStatusCode::Ok
+    );
+    assert_eq!(
+        handle_execute_command("SetTrayBalloon", &ctx).status,
+        SstpStatusCode::Ok
+    );
     assert_eq!(
         handle_execute_command("CompressArchive[/path/out.zip,/path/in]", &ctx).status,
         SstpStatusCode::Ok
@@ -275,15 +292,42 @@ fn test_handle_execute_command() {
     // リモート呼び出し時の拒否判定 (UKADOC [リモート不可] 規格準拠)
     let mut ctx_remote = ctx.clone();
     ctx_remote.security_level = Some("external".to_string());
-    assert_eq!(handle_execute_command("Quiet", &ctx_remote).status, SstpStatusCode::Refuse);
-    assert_eq!(handle_execute_command("Restore", &ctx_remote).status, SstpStatusCode::Refuse);
-    assert_eq!(handle_execute_command("SetProperty[a,b]", &ctx_remote).status, SstpStatusCode::Refuse);
-    assert_eq!(handle_execute_command("DumpSurface", &ctx_remote).status, SstpStatusCode::Refuse);
-    assert_eq!(handle_execute_command("MoveAsync", &ctx_remote).status, SstpStatusCode::Refuse);
-    assert_eq!(handle_execute_command("SetTrayIcon", &ctx_remote).status, SstpStatusCode::Refuse);
-    assert_eq!(handle_execute_command("SetTrayBalloon", &ctx_remote).status, SstpStatusCode::Refuse);
-    assert_eq!(handle_execute_command("CompressArchive[/a,/b]", &ctx_remote).status, SstpStatusCode::Refuse);
-    assert_eq!(handle_execute_command("ExtractArchive[/a,/b]", &ctx_remote).status, SstpStatusCode::Refuse);
+    assert_eq!(
+        handle_execute_command("Quiet", &ctx_remote).status,
+        SstpStatusCode::Refuse
+    );
+    assert_eq!(
+        handle_execute_command("Restore", &ctx_remote).status,
+        SstpStatusCode::Refuse
+    );
+    assert_eq!(
+        handle_execute_command("SetProperty[a,b]", &ctx_remote).status,
+        SstpStatusCode::Refuse
+    );
+    assert_eq!(
+        handle_execute_command("DumpSurface", &ctx_remote).status,
+        SstpStatusCode::Refuse
+    );
+    assert_eq!(
+        handle_execute_command("MoveAsync", &ctx_remote).status,
+        SstpStatusCode::Refuse
+    );
+    assert_eq!(
+        handle_execute_command("SetTrayIcon", &ctx_remote).status,
+        SstpStatusCode::Refuse
+    );
+    assert_eq!(
+        handle_execute_command("SetTrayBalloon", &ctx_remote).status,
+        SstpStatusCode::Refuse
+    );
+    assert_eq!(
+        handle_execute_command("CompressArchive[/a,/b]", &ctx_remote).status,
+        SstpStatusCode::Refuse
+    );
+    assert_eq!(
+        handle_execute_command("ExtractArchive[/a,/b]", &ctx_remote).status,
+        SstpStatusCode::Refuse
+    );
 
     // GetFMO リモート時のパス情報除去 & ダミーHWND化
     let mut ctx_fmo_remote = ctx.clone();

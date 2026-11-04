@@ -76,8 +76,16 @@ mod tests {
             SakuraCommand::Text("Root text".to_string()),
             SakuraCommand::Target(0),
             SakuraCommand::Text("Scope 0 text".to_string()),
-            SakuraCommand::Choice { label: "Choice 1".to_string(), id: "id1".to_string(), args: vec![] },
-            SakuraCommand::Anchor { id: "a1".to_string(), text: "Anchor".to_string(), args: vec![] },
+            SakuraCommand::Choice {
+                label: "Choice 1".to_string(),
+                id: "id1".to_string(),
+                args: vec![],
+            },
+            SakuraCommand::Anchor {
+                id: "a1".to_string(),
+                text: "Anchor".to_string(),
+                args: vec![],
+            },
             SakuraCommand::Target(1),
             SakuraCommand::Text("Scope 1 text".to_string()),
         ];
@@ -91,8 +99,16 @@ mod tests {
     fn test_build_sakura_ast_root_only() {
         let commands = vec![
             SakuraCommand::Text("Root only text".to_string()),
-            SakuraCommand::Anchor { id: "a_root".to_string(), text: "Root Anchor".to_string(), args: vec![] },
-            SakuraCommand::Choice { label: "Root Choice".to_string(), id: "c_root".to_string(), args: vec![] },
+            SakuraCommand::Anchor {
+                id: "a_root".to_string(),
+                text: "Root Anchor".to_string(),
+                args: vec![],
+            },
+            SakuraCommand::Choice {
+                label: "Root Choice".to_string(),
+                id: "c_root".to_string(),
+                args: vec![],
+            },
         ];
         let ast = build_sakura_ast(&commands);
         if let SakuraAstNode::Root { children } = ast {
@@ -102,9 +118,7 @@ mod tests {
 
     #[test]
     fn test_build_sakura_ast_trailing_target() {
-        let commands = vec![
-            SakuraCommand::Target(0),
-        ];
+        let commands = vec![SakuraCommand::Target(0)];
         let ast = build_sakura_ast(&commands);
         if let SakuraAstNode::Root { children } = ast {
             assert_eq!(children.len(), 1);

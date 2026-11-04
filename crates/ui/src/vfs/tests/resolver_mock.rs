@@ -33,11 +33,19 @@ fn test_vfs_resolver() {
     assert!(!resolver.exists("shell/master/nonexistent.txt"));
 
     // Cycle 6: resolve_with_extensions
-    let ext_resolved = resolver.resolve_with_extensions("shell/master/surface0000", &[".png", ".bmp"]);
+    let ext_resolved =
+        resolver.resolve_with_extensions("shell/master/surface0000", &[".png", ".bmp"]);
     assert!(ext_resolved.is_some());
-    assert!(ext_resolved.unwrap().to_string_lossy().to_lowercase().ends_with("surface0000.png"));
+    assert!(
+        ext_resolved
+            .unwrap()
+            .to_string_lossy()
+            .to_lowercase()
+            .ends_with("surface0000.png")
+    );
 
-    let ext_resolved_dotless = resolver.resolve_with_extensions("shell/master/surface0000", &["png", "bmp"]);
+    let ext_resolved_dotless =
+        resolver.resolve_with_extensions("shell/master/surface0000", &["png", "bmp"]);
     assert!(ext_resolved_dotless.is_some());
 
     let ext_none = resolver.resolve_with_extensions("shell/master/nonexistent", &[".png", ".bmp"]);
@@ -406,7 +414,10 @@ fn test_mock_vfs_extended_resolver_operations() {
     assert!(mock.copy_file("ghost/master/desc.txt", "ghost/master/desc_copy.txt"));
     assert!(mock.exists("ghost/master/desc_copy.txt"));
 
-    assert!(mock.rename_file("ghost/master/desc_copy.txt", "ghost/master/desc_renamed.txt"));
+    assert!(mock.rename_file(
+        "ghost/master/desc_copy.txt",
+        "ghost/master/desc_renamed.txt"
+    ));
     assert!(!mock.exists("ghost/master/desc_copy.txt"));
     assert!(mock.exists("ghost/master/desc_renamed.txt"));
 

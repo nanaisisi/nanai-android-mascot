@@ -40,11 +40,15 @@ impl VfsResolver {
     ///
     /// 例: `surface0` に対して `[".png", ".pna", ".bmp"]` を指定すると、
     /// `surface0.png`、`surface0.pna`、`surface0.bmp` を大文字小文字不問で順に探索します。
-    pub fn resolve_with_extensions(&self, relative_path: &str, extensions: &[&str]) -> Option<PathBuf> {
-        if let Some(direct) = self.resolve(relative_path) {
-            if direct.is_file() {
-                return Some(direct);
-            }
+    pub fn resolve_with_extensions(
+        &self,
+        relative_path: &str,
+        extensions: &[&str],
+    ) -> Option<PathBuf> {
+        if let Some(direct) = self.resolve(relative_path)
+            && direct.is_file()
+        {
+            return Some(direct);
         }
 
         for ext in extensions {
@@ -53,10 +57,10 @@ impl VfsResolver {
             } else {
                 format!("{}.{}", relative_path, ext)
             };
-            if let Some(found) = self.resolve(&candidate) {
-                if found.is_file() {
-                    return Some(found);
-                }
+            if let Some(found) = self.resolve(&candidate)
+                && found.is_file()
+            {
+                return Some(found);
             }
         }
 
@@ -311,10 +315,10 @@ impl VirtualFileSystem for VfsResolver {
             Some(resolved) => {
                 let metadata = std::fs::metadata(&resolved)?;
                 if metadata.is_dir() {
-                    Err(io::Error::new(
-                        io::ErrorKind::Other,
-                        format!("Path is a directory, not a file: {}", path),
-                    ))
+                    Err(io::Error::other(format!(
+                        "Path is a directory, not a file: {}",
+                        path
+                    )))
                 } else {
                     Ok(metadata.len())
                 }

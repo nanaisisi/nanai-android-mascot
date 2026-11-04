@@ -429,7 +429,12 @@ fn test_compositor_layer_edge_cases() {
     base.composite_layer(&layer_sa0, 0, 0, &DrawMethod::Blend("unknown-mode".into()));
     let mut layer_unknown = SurfaceFrameBuffer::new(1, 1);
     layer_unknown.set_pixel(0, 0, 100, 100, 100, 255);
-    base.composite_layer(&layer_unknown, 0, 0, &DrawMethod::Blend("unknown-mode".into()));
+    base.composite_layer(
+        &layer_unknown,
+        0,
+        0,
+        &DrawMethod::Blend("unknown-mode".into()),
+    );
 
     let mut layer_sr0 = SurfaceFrameBuffer::new(1, 1);
     layer_sr0.set_pixel(0, 0, 0, 0, 0, 255);
@@ -437,19 +442,39 @@ fn test_compositor_layer_edge_cases() {
 
     let mut layer_overlay_dark = SurfaceFrameBuffer::new(1, 1);
     layer_overlay_dark.set_pixel(0, 0, 50, 50, 50, 255);
-    base.composite_layer(&layer_overlay_dark, 0, 0, &DrawMethod::Blend("overlay".into()));
+    base.composite_layer(
+        &layer_overlay_dark,
+        0,
+        0,
+        &DrawMethod::Blend("overlay".into()),
+    );
 
     let mut layer_overlay_light = SurfaceFrameBuffer::new(1, 1);
     layer_overlay_light.set_pixel(0, 0, 200, 200, 200, 255);
-    base.composite_layer(&layer_overlay_light, 0, 0, &DrawMethod::Blend("overlay".into()));
+    base.composite_layer(
+        &layer_overlay_light,
+        0,
+        0,
+        &DrawMethod::Blend("overlay".into()),
+    );
 
     let mut layer_soft_dark = SurfaceFrameBuffer::new(1, 1);
     layer_soft_dark.set_pixel(0, 0, 50, 50, 50, 255);
-    base.composite_layer(&layer_soft_dark, 0, 0, &DrawMethod::Blend("softlight".into()));
+    base.composite_layer(
+        &layer_soft_dark,
+        0,
+        0,
+        &DrawMethod::Blend("softlight".into()),
+    );
 
     let mut layer_soft_light = SurfaceFrameBuffer::new(1, 1);
     layer_soft_light.set_pixel(0, 0, 200, 200, 200, 255);
-    base.composite_layer(&layer_soft_light, 0, 0, &DrawMethod::Blend("softlight".into()));
+    base.composite_layer(
+        &layer_soft_light,
+        0,
+        0,
+        &DrawMethod::Blend("softlight".into()),
+    );
 
     let mut layer_sa255 = SurfaceFrameBuffer::new(1, 1);
     layer_sa255.set_pixel(0, 0, 200, 200, 200, 255);

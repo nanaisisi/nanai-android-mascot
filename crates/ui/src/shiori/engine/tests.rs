@@ -233,7 +233,15 @@ fn test_multistage_shiori_loader_full_coverage() {
     assert!(loader.active_engine().is_none());
     assert!(loader.active_engine_mut().is_none());
     assert!(loader.request("GET SHIORI/3.0\r\n\r\n").is_err());
-    assert!(loader.load_first_working(Path::new("/dummy"), |_| Ok(Box::new(MockShioriEngine::new())), |_| Ok(Box::new(MockShioriEngine::new()))).is_err());
+    assert!(
+        loader
+            .load_first_working(
+                Path::new("/dummy"),
+                |_| Ok(Box::new(MockShioriEngine::new())),
+                |_| Ok(Box::new(MockShioriEngine::new()))
+            )
+            .is_err()
+    );
 
     let dir = Path::new("/dummy/ghost/master");
 
@@ -429,21 +437,33 @@ fn test_multistage_shiori_loader_unload_errors() {
     let dir = Path::new("/dummy/ghost/master");
     struct FailUnloadEngine;
     impl ShioriEngine for FailUnloadEngine {
-        fn load(&mut self, _: &Path) -> Result<(), String> { Ok(()) }
-        fn request(&self, _: &str) -> Result<String, String> { Ok("".into()) }
-        fn unload(&mut self) -> Result<(), String> { Err("unload error".into()) }
-        fn is_loaded(&self) -> bool { true }
+        fn load(&mut self, _: &Path) -> Result<(), String> {
+            Ok(())
+        }
+        fn request(&self, _: &str) -> Result<String, String> {
+            Ok("".into())
+        }
+        fn unload(&mut self) -> Result<(), String> {
+            Err("unload error".into())
+        }
+        fn is_loaded(&self) -> bool {
+            true
+        }
     }
 
     let mut l1 = MultiStageShioriLoader::new();
     l1.add_candidate(ShioriEngineCandidate::Mock(Box::new(FailUnloadEngine)));
-    l1.load_first_working(dir, |_| Err("".into()), |_| Err("".into())).unwrap();
+    l1.load_first_working(dir, |_| Err("".into()), |_| Err("".into()))
+        .unwrap();
     assert!(l1.unload().is_err());
 
     let mut l2 = MultiStageShioriLoader::new();
     l2.add_candidate(ShioriEngineCandidate::Mock(Box::new(FailUnloadEngine)));
-    l2.load_first_working(dir, |_| Err("".into()), |_| Err("".into())).unwrap();
-    l2.add_candidate(ShioriEngineCandidate::Mock(Box::new(MockShioriEngine::new())));
+    l2.load_first_working(dir, |_| Err("".into()), |_| Err("".into()))
+        .unwrap();
+    l2.add_candidate(ShioriEngineCandidate::Mock(Box::new(
+        MockShioriEngine::new(),
+    )));
     let res = l2.load_first_working(dir, |_| Err("".into()), |_| Err("".into()));
     assert!(res.is_err());
 }
@@ -483,5 +503,8 @@ fn test_loader_candidate_kind_and_load_attempt_derives_and_last_error() {
         |_| Err("WASM not invoked".to_string()),
     );
     assert!(res.is_err());
-    assert_eq!(loader.last_error(), Some("Dynamic load failed for \"invalid.dll\": DLL load symbol missing"));
+    assert_eq!(
+        loader.last_error(),
+        Some("Dynamic load failed for \"invalid.dll\": DLL load symbol missing")
+    );
 }

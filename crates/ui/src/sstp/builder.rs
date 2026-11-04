@@ -126,10 +126,16 @@ pub fn handle_execute_command(command_str: &str, ctx: &SstpGhostContext) -> Sstp
                             let prefix = line.split_once(".hwnd\x01").map(|(p, _)| p).unwrap_or("");
                             Some(format!("{}.hwnd\x01{}", prefix, 0))
                         } else if line.contains(".kerohwnd\x01") {
-                            let prefix = line.split_once(".kerohwnd\x01").map(|(p, _)| p).unwrap_or("");
+                            let prefix = line
+                                .split_once(".kerohwnd\x01")
+                                .map(|(p, _)| p)
+                                .unwrap_or("");
                             Some(format!("{}.kerohwnd\x01{}", prefix, 0))
                         } else if line.contains(".hwndlist\x01") {
-                            let prefix = line.split_once(".hwndlist\x01").map(|(p, _)| p).unwrap_or("");
+                            let prefix = line
+                                .split_once(".hwndlist\x01")
+                                .map(|(p, _)| p)
+                                .unwrap_or("");
                             Some(format!("{}.hwndlist\x01{}", prefix, 0))
                         } else {
                             Some(line.to_string())

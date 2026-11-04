@@ -135,6 +135,9 @@ mod tests {
             script: Some("\\0Hi\\e".to_string()),
             ..Default::default()
         };
-        assert_eq!(req.receiver_ghost_name, Some("NonExistentGhost".to_string()));
+        assert_eq!(
+            req.receiver_ghost_name,
+            Some("NonExistentGhost".to_string())
+        );
     }
 }

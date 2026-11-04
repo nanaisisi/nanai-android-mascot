@@ -218,8 +218,14 @@ fn test_ast_find_choices_and_surfaces() {
     let ast = build_sakura_ast(&commands);
     let choices = ast.find_choices();
     assert_eq!(choices.len(), 2);
-    assert_eq!(choices[0], ("OnSelectA".to_string(), "Select A".to_string()));
-    assert_eq!(choices[1], ("OnSelectB".to_string(), "Select B".to_string()));
+    assert_eq!(
+        choices[0],
+        ("OnSelectA".to_string(), "Select A".to_string())
+    );
+    assert_eq!(
+        choices[1],
+        ("OnSelectB".to_string(), "Select B".to_string())
+    );
 
     let surfaces = ast.find_surfaces();
     assert_eq!(surfaces, vec![10, 20]);

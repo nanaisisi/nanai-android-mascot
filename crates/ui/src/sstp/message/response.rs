@@ -135,7 +135,10 @@ impl SstpResponse {
         if let Some(ref conn) = self.connection_header {
             out.push_str(&format!("Connection: {}\r\n", conn));
             if conn.eq_ignore_ascii_case("keep-alive") {
-                out.push_str(&format!("Keep-Alive: timeout={}\r\n", self.keep_alive_timeout));
+                out.push_str(&format!(
+                    "Keep-Alive: timeout={}\r\n",
+                    self.keep_alive_timeout
+                ));
             }
         }
 
@@ -164,14 +167,15 @@ impl SstpResponse {
         }
 
         // Keep-Alive 時の Content-Length ヘッダ (UKADOC keepalive.md 規格準拠)
-        if self.keep_alive && self.connection_header.as_deref() == Some("keep-alive") {
-            if let Some(ref data) = self.additional_data {
-                out.push_str(&format!("Content-Length: {}\r\n", data.as_bytes().len()));
-                out.push_str("\r\n");
-                out.push_str(data);
-                // keepalive 時は追加データ後ろに空行を付けない
-                return out;
-            }
+        if self.keep_alive
+            && self.connection_header.as_deref() == Some("keep-alive")
+            && let Some(ref data) = self.additional_data
+        {
+            out.push_str(&format!("Content-Length: {}\r\n", data.len()));
+            out.push_str("\r\n");
+            out.push_str(data);
+            // keepalive 時は追加データ後ろに空行を付けない
+            return out;
         }
 
         out.push_str("\r\n");

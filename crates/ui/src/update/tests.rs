@@ -306,7 +306,8 @@ balloon1.refresh,0\n\
     assert_eq!(manifest.refresh_undelete_mask, vec!["save.dat", "user.ini"]);
     assert_eq!(manifest.bundled_resources.len(), 3);
 
-    let update_txt = "charset,UTF-8\r\nfile,test.txt,md5,charset=UTF-8,size=100,size=not_a_number\r\n";
+    let update_txt =
+        "charset,UTF-8\r\nfile,test.txt,md5,charset=UTF-8,size=100,size=not_a_number\r\n";
     let entries = parse_update_definition(update_txt);
     assert_eq!(entries.len(), 1);
     assert_eq!(entries[0].size, Some(100));

@@ -113,7 +113,7 @@ mod tests {
 
     #[test]
     fn test_plan_composition_edge_cases() {
-        use crate::surfaces::types::{SurfaceDefinition, AnimationPattern, SerikoAnimation};
+        use crate::surfaces::types::{AnimationPattern, SerikoAnimation, SurfaceDefinition};
 
         let mut txt = SurfacesTxt::default();
         let mut def = SurfaceDefinition::default();
@@ -124,9 +124,16 @@ mod tests {
             interval: Some(Interval::Bind),
             options: vec![],
             collisions: vec![],
-            patterns: vec![
-                AnimationPattern { index: 0, method: DrawMethod::Insert, surface: 2, wait: 0, wait_max: None, x: 0, y: 0, options: vec![] },
-            ],
+            patterns: vec![AnimationPattern {
+                index: 0,
+                method: DrawMethod::Insert,
+                surface: 2,
+                wait: 0,
+                wait_max: None,
+                x: 0,
+                y: 0,
+                options: vec![],
+            }],
         };
         let anim2 = SerikoAnimation {
             id: 2,
@@ -134,9 +141,16 @@ mod tests {
             interval: Some(Interval::Bind),
             options: vec![],
             collisions: vec![],
-            patterns: vec![
-                AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 10, wait: 0, wait_max: None, x: 0, y: 0, options: vec![] },
-            ],
+            patterns: vec![AnimationPattern {
+                index: 0,
+                method: DrawMethod::Overlay,
+                surface: 10,
+                wait: 0,
+                wait_max: None,
+                x: 0,
+                y: 0,
+                options: vec![],
+            }],
         };
         let anim_non_bind = SerikoAnimation {
             id: 3,
@@ -144,9 +158,16 @@ mod tests {
             interval: Some(Interval::Always),
             options: vec![],
             collisions: vec![],
-            patterns: vec![
-                AnimationPattern { index: 0, method: DrawMethod::Overlay, surface: 11, wait: 0, wait_max: None, x: 0, y: 0, options: vec![] },
-            ],
+            patterns: vec![AnimationPattern {
+                index: 0,
+                method: DrawMethod::Overlay,
+                surface: 11,
+                wait: 0,
+                wait_max: None,
+                x: 0,
+                y: 0,
+                options: vec![],
+            }],
         };
 
         def.animations.insert(1, anim1);

@@ -276,11 +276,7 @@ impl SurfaceFrameBuffer {
                             "hard-mix" => {
                                 let calc = |d: u8, s: u8| -> u8 {
                                     let linear_light = d as i32 + 2 * (s as i32) - 255;
-                                    if linear_light >= 128 {
-                                        255
-                                    } else {
-                                        0
-                                    }
+                                    if linear_light >= 128 { 255 } else { 0 }
                                 };
                                 (calc(dr, sr), calc(dg, sg), calc(db, sb))
                             }

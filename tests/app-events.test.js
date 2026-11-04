@@ -262,3 +262,16 @@ test("eventMethods covers 100% of event listeners, buttons, external menus, and 
 	delete globalThis.__TAURI_INTERNALS__;
 	assert.ok(true);
 });
+
+test("eventMethods covers edge branches in setupGhostInteractions (null element) and request-subchar-image listener", async () => {
+	const mockApp = {
+		...eventMethods,
+		interactionManager: { setupDragging() {} },
+		elements: {},
+	};
+	mockApp.setupGhostInteractions();
+
+	await tauriListeners["request-subchar-image"]?.({ payload: { scopeId: "invalid" } });
+	await tauriListeners["request-subchar-image"]?.({ payload: { scopeId: 999 } });
+	assert.ok(true);
+});

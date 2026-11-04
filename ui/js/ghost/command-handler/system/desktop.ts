@@ -1,22 +1,17 @@
 /**
- * @file desktop.js
+ * @file desktop.ts
  * @brief デスクトップ整列・タスクトレイ・ウィンドウ位置操作コマンドハンドラ
  */
 
 import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 
-/**
- * デスクトップ整列位置を設定 (\![set,alignmentondesktop,...])
- * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {string[]} args
- */
-export async function handleSetAlignmentOnDesktop(handler, args) {
+export async function handleSetAlignmentOnDesktop(handler: any, args: string[]) {
 	const mode = (args[2] ?? "").toLowerCase();
 	handler.app.alignmentToDesktop = mode;
 	if (mode === "free") return;
 
 	try {
-		const api = globalThis.__TAURI__?.window;
+		const api = (globalThis as any).__TAURI__?.window;
 		if (!api) return;
 		const win = api.getCurrentWindow();
 		const monitor = await api.currentMonitor();
@@ -37,12 +32,7 @@ export async function handleSetAlignmentOnDesktop(handler, args) {
 	}
 }
 
-/**
- * タスクトレイアイコン設定 (\![set,tasktrayicon,...])
- * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} _handler
- * @param {string[]} args
- */
-export async function handleSetTaskTrayIcon(_handler, args) {
+export async function handleSetTaskTrayIcon(_handler: any, args: string[]) {
 	const iconPath = args[2] ?? "";
 	console.log(`📌 Task tray icon set: ${iconPath}`);
 	if (isTauriAvailable()) {
@@ -54,12 +44,7 @@ export async function handleSetTaskTrayIcon(_handler, args) {
 	}
 }
 
-/**
- * トレイバルーン表示通知 (\![set,trayballoon,...])
- * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {string[]} args
- */
-export async function handleSetTrayBalloon(handler, args) {
+export async function handleSetTrayBalloon(handler: any, args: string[]) {
 	const title = args[2] ?? "";
 	const text = args[3] ?? "";
 	const iconOrTimeout = args[4];
@@ -71,10 +56,8 @@ export async function handleSetTrayBalloon(handler, args) {
 			console.warn("show_tray_notification failed:", err);
 		}
 	}
-	// UKADOCトレイバルーンイベント連携: OnTrayBalloonClick, OnTrayBalloonTimeout
 	if (handler?.app?.ghostController?.sendShioriEvent) {
 		const timeoutMs = Number.parseInt(iconOrTimeout ?? "10000", 10) || 10000;
-		// コールバック機構またはタイムアウト通知用タイマー
 		setTimeout(() => {
 			handler.app.ghostController
 				?.sendShioriEvent?.("OnTrayBalloonTimeout", [title, text])
@@ -83,13 +66,7 @@ export async function handleSetTrayBalloon(handler, args) {
 	}
 }
 
-/**
- * トレイバルーンクリックイベント発火ハンドラ
- * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {string} [title=""]
- * @param {string} [text=""]
- */
-export async function triggerTrayBalloonClick(handler, title = "", text = "") {
+export async function triggerTrayBalloonClick(handler: any, title: string = "", text: string = "") {
 	if (handler?.app?.ghostController?.sendShioriEvent) {
 		await handler.app.ghostController.sendShioriEvent("OnTrayBalloonClick", [
 			title,
@@ -98,13 +75,7 @@ export async function triggerTrayBalloonClick(handler, title = "", text = "") {
 	}
 }
 
-/**
- * シェル位置初期化 (\![execute,resetwindowpos])
- * [bang-execute-resetwindowpos.md]
- * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {string[]} _args
- */
-export async function handleExecuteResetWindowPos(handler, _args) {
+export async function handleExecuteResetWindowPos(handler: any, _args: string[]) {
 	console.log("📍 Execute resetwindowpos triggered");
 	await handler.app.dispatchAction?.("reset-shell-position");
 	if (handler.app.ghostController?.sendShioriEvent) {
@@ -114,13 +85,7 @@ export async function handleExecuteResetWindowPos(handler, _args) {
 	}
 }
 
-/**
- * バルーン位置初期化 (\![execute,resetballoonpos])
- * [bang-execute-resetballoonpos.md]
- * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {string[]} _args
- */
-export async function handleExecuteResetBalloonPos(handler, _args) {
+export async function handleExecuteResetBalloonPos(handler: any, _args: string[]) {
 	console.log("🎈 Execute resetballoonpos triggered");
 	await handler.app.dispatchAction?.("reset-balloon-position");
 	if (handler.app.ghostController?.sendShioriEvent) {

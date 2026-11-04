@@ -1,37 +1,23 @@
 /**
- * @file target.js
+ * @file target.ts
  * @brief メールチェック・時刻同期・エクスプローラー/ファイルオープンハンドラ
  */
 
 import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 
-/**
- * メールチェック実行 (\![biff])
- * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {string[]} _args
- */
-export async function handleBiffCommand(handler, _args) {
+export async function handleBiffCommand(handler: any, _args: string[]) {
 	console.log("✉️ Biff mail check triggered");
 	await handler.app.networkActions?.checkEmail?.();
 }
 
-/**
- * SNTP時刻合わせ実行 (\![executesntp])
- * [bang-executesntp.md], [OnSNTPBegin.md], [OnSNTPCompare.md], [OnSNTPCompareEx.md], [OnSNTPCorrect.md], [OnSNTPCorrectEx.md], [OnSNTPFailure.md]
- * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {string[]} _args
- */
-export async function handleExecuteSntpCommand(handler, _args) {
+export async function handleExecuteSntpCommand(handler: any, _args: string[]) {
 	console.log("⏱️ Execute SNTP time sync triggered");
 	const gc = handler.app.ghostController;
 	const nowIso = new Date().toISOString();
 	try {
-		// SNTP同期開始イベント
 		await gc?.sendShioriEvent?.("OnSNTPBegin", [nowIso]);
-		// SNTP時刻比較イベント
 		await gc?.sendShioriEvent?.("OnSNTPCompare", [nowIso]);
 		await gc?.sendShioriEvent?.("OnSNTPCompareEx", [nowIso, "0"]);
-		// SNTP時刻補正イベント
 		await gc?.sendShioriEvent?.("OnSNTPCorrect", [nowIso]);
 		await gc?.sendShioriEvent?.("OnSNTPCorrectEx", [nowIso, "0"]);
 	} catch (err) {
@@ -40,13 +26,7 @@ export async function handleExecuteSntpCommand(handler, _args) {
 	}
 }
 
-/**
- * 時報イベント発火ハンドラ (\![raise,OnHourTimeSignal,...])
- * [OnHourTimeSignal.md]
- * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {number} [hour]
- */
-export async function handleHourTimeSignal(handler, hour) {
+export async function handleHourTimeSignal(handler: any, hour?: number) {
 	const currentHour = hour ?? new Date().getHours();
 	if (handler.app.ghostController?.sendShioriEvent) {
 		await handler.app.ghostController.sendShioriEvent("OnHourTimeSignal", [
@@ -55,12 +35,7 @@ export async function handleHourTimeSignal(handler, hour) {
 	}
 }
 
-/**
- * 各種ダイアログ/エクスプローラーオープン (\![open,explorer,...], \![open,file,...] 等)
- * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {string[]} args
- */
-export async function handleOpenSystemTarget(handler, args) {
+export async function handleOpenSystemTarget(handler: any, args: string[]) {
 	const target = (args[1] ?? "").toLowerCase();
 	const pathOrParam = args[2] ?? "";
 

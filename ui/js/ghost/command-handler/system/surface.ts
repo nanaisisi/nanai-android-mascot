@@ -1,23 +1,16 @@
 /**
- * @file surface.js
+ * @file surface.ts
  * @brief サーフェスプロパティ・拡大縮小・透明度・位置設定コマンドハンドラ
  */
 
 import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 import { scriptLifetimeState } from "../env.js";
 
-/**
- * プロパティ値をスクリプト寿命内に設定 (\![set,property,名前,値])
- * [bang-set-property.md]
- * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} _handler
- * @param {string[]} args
- */
-export async function handleSetPropertyCommand(handler, args) {
+export async function handleSetPropertyCommand(handler: any, args: string[]) {
 	const key = args[2] ?? "";
 	const val = args[3] ?? "";
 	if (key) {
 		scriptLifetimeState.setVariable(key, val);
-		// UKADOC property.set / property.get SHIORI連携
 		if (handler?.app?.ghostController?.sendShioriEvent) {
 			handler.app.ghostController
 				.sendShioriEvent("property.set", [key, val])
@@ -26,13 +19,7 @@ export async function handleSetPropertyCommand(handler, args) {
 	}
 }
 
-/**
- * モード開始ハンドラ (\![enter,passivemode], \![enter,inductionmode], etc.)
- * [bang-enter-passivemode.md], [bang-enter-inductionmode.md], [bang-enter-collisionmode-bang-enter-collisionmode-rect.md], [bang-enter-selectmode-rect-bang-enter-selectmode-rect-bang-enter-selectmode-rect.md]
- * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {string[]} args
- */
-export async function handleEnterMode(handler, args) {
+export async function handleEnterMode(handler: any, args: string[]) {
 	const mode = (args[1] ?? "").toLowerCase();
 	if (mode) {
 		scriptLifetimeState.setMode(mode, true);
@@ -50,13 +37,7 @@ export async function handleEnterMode(handler, args) {
 	}
 }
 
-/**
- * モード終了ハンドラ (\![leave,passivemode], \![leave,inductionmode], etc.)
- * [bang-leave-passivemode.md], [bang-leave-inductionmode.md], [bang-leave-collisionmode.md], [bang-leave-selectmode.md]
- * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {string[]} args
- */
-export async function handleLeaveMode(handler, args) {
+export async function handleLeaveMode(handler: any, args: string[]) {
 	const mode = (args[1] ?? "").toLowerCase();
 	if (mode) {
 		scriptLifetimeState.setMode(mode, false);
@@ -74,17 +55,11 @@ export async function handleLeaveMode(handler, args) {
 	}
 }
 
-/**
- * プロパティ値をSHIORIへ要求/取得
- * [property.get.md]
- * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {string} key
- */
-export async function handleGetPropertyCommand(handler, key) {
+export async function handleGetPropertyCommand(handler: any, key: string) {
 	if (!key) return "";
 	if (handler?.app?.ghostController?.sendShioriEvent) {
 		try {
-			const res = await handler.app.ghostController.sendShioriEvent(
+			const res: any = await handler.app.ghostController.sendShioriEvent(
 				"property.get",
 				[key],
 			);
@@ -96,13 +71,7 @@ export async function handleGetPropertyCommand(handler, key) {
 	return scriptLifetimeState.getVariable(key) ?? "";
 }
 
-/**
- * サーフェス拡大縮小倍率を設定 (\![set,scaling,横倍率,縦倍率,オプション])
- * [bang-set-scaling.md], [bang-set-scaling-2.md], [bang-set-scaling-3.md], [OnShellScaling.md], [OnBalloonScaling.md]
- * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {string[]} args
- */
-export async function handleSetScalingCommand(handler, args) {
+export async function handleSetScalingCommand(handler: any, args: string[]) {
 	const scaleXStr = args[2] ?? "100";
 	const scaleYStr = args[3] ?? scaleXStr;
 	const scaleX = Number.parseFloat(scaleXStr);
@@ -118,7 +87,6 @@ export async function handleSetScalingCommand(handler, args) {
 				console.warn("set_character_scale failed:", err);
 			}
 		}
-		// UKADOCスケーリングイベント連携: OnShellScaling, OnBalloonScaling
 		if (handler.app.ghostController?.sendShioriEvent) {
 			handler.app.ghostController
 				.sendShioriEvent("OnShellScaling", [
@@ -138,14 +106,7 @@ export async function handleSetScalingCommand(handler, args) {
 	}
 }
 
-/**
- * キー押下イベントハンドラ (\![raise,OnKeyPress,...])
- * [OnKeyPress.md]
- * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {string} key
- * @param {string} [modifiers=""]
- */
-export async function handleKeyPressEvent(handler, key, modifiers = "") {
+export async function handleKeyPressEvent(handler: any, key: string, modifiers: string = "") {
 	if (handler?.app?.ghostController?.sendShioriEvent && key) {
 		await handler.app.ghostController.sendShioriEvent("OnKeyPress", [
 			key,
@@ -154,13 +115,7 @@ export async function handleKeyPressEvent(handler, key, modifiers = "") {
 	}
 }
 
-/**
- * サーフェス透過度を設定 (\![set,alpha,透過度,オプション])
- * [bang-set-alpha.md]
- * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {string[]} args
- */
-export async function handleSetAlphaCommand(handler, args) {
+export async function handleSetAlphaCommand(handler: any, args: string[]) {
 	const alphaVal = Number.parseInt(args[2] ?? "100", 10);
 	const scope = handler.player?.currentScope ?? 0;
 	if (Number.isFinite(alphaVal)) {
@@ -169,13 +124,7 @@ export async function handleSetAlphaCommand(handler, args) {
 	}
 }
 
-/**
- * サーフェス固定位置を設定 (\![set,position,x,y,スコープID])
- * [bang-set-position-x-y-ID.md]
- * @param {import('../../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {string[]} args
- */
-export async function handleSetPositionCommand(handler, args) {
+export async function handleSetPositionCommand(handler: any, args: string[]) {
 	const x = Number.parseInt(args[2] ?? "0", 10);
 	const y = Number.parseInt(args[3] ?? "0", 10);
 	const scopeStr = args[4];
@@ -187,7 +136,7 @@ export async function handleSetPositionCommand(handler, args) {
 	if (Number.isFinite(x) && Number.isFinite(y)) {
 		handler.app.surfaceManager?.setPosition?.(x, y, scope);
 		try {
-			const api = globalThis.__TAURI__?.window;
+			const api = (globalThis as any).__TAURI__?.window;
 			if (api) {
 				const win = api.getCurrentWindow();
 				await win.setPosition(new api.PhysicalPosition(x, y));

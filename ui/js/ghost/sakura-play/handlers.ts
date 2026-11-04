@@ -1,5 +1,5 @@
 /**
- * @file handlers.js
+ * @file handlers.ts
  * @brief さくらスクリプト再生時のトークンハンドラ・ファサード
  */
 
@@ -65,15 +65,7 @@ export {
 	handleWaitAnimation,
 };
 
-/**
- * 各トークンを対応するサブハンドラへディスパッチ
- *
- * @param {import('../sakura-script.js').SakuraScriptPlayer} player
- * @param {any} app
- * @param {any} token
- * @param {any} context
- */
-export async function handleToken(player, app, token, context) {
+export async function handleToken(player: any, app: any, token: any, context: any) {
 	switch (token.type) {
 		case "scope":
 			handleScope(player, app, token, context);

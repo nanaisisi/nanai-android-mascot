@@ -66,6 +66,7 @@ test("ghostActions coverage for all methods", async () => {
 
 	// 2. recordRecentGhost
 	ghostActions.recordRecentGhost("Ghost2");
+	ghostActions.recordRecentGhost("");
 
 	// 3. switchToNextGhost
 	ghostActions.switchToNextGhost.call(mockApp);
@@ -99,7 +100,8 @@ test("ghostActions coverage for all methods", async () => {
 	assert.ok(true);
 });
 
-test("ghostActions covers edge branches (uninstall fallback ghost, install balloon, install error, switchToNextGhost length <= 1, scale fallback, and minimizeApp with Tauri & error)", async () => {
+test("ghostActions covers edge branches (imported ghost, mustselect dressup, uninstall fallback ghost, install balloon, install error, switchToNextGhost length <= 1, scale fallback, and minimizeApp with Tauri & error)", async () => {
+	const sentEvents = [];
 	const mockApp = {
 		...ghostActions,
 		ghostController: {
@@ -107,7 +109,8 @@ test("ghostActions covers edge branches (uninstall fallback ghost, install ballo
 			ghosts: [{ name: "TestGhost" }],
 			selectGhost: async () => {},
 			scanGhosts: async () => {},
-			sendShioriEvent: (ev) => {
+			sendShioriEvent: async (ev, args) => {
+				sentEvents.push({ ev, args });
 				if (ev === "OnInstallBegin") {
 					throw new Error("shiori error");
 				}
@@ -126,8 +129,15 @@ test("ghostActions covers edge branches (uninstall fallback ghost, install ballo
 		hideMenu() {},
 	};
 
+	// switchToNextGhost with length <= 1
 	ghostActions.switchToNextGhost.call(mockApp);
 
+	// switchToNextGhost with empty ghosts array
+	mockApp.ghostController.ghosts = [];
+	ghostActions.switchToNextGhost.call(mockApp);
+	mockApp.ghostController.ghosts = [{ name: "TestGhost" }];
+
+	// uninstallCurrentGhost with Tauri
 	globalThis.confirm = () => true;
 	globalThis.__TAURI_INTERNALS__ = {
 		metadata: { currentWindow: { label: "main" } },
@@ -139,22 +149,55 @@ test("ghostActions covers edge branches (uninstall fallback ghost, install ballo
 	};
 	await ghostActions.uninstallCurrentGhost.call(mockApp);
 
+	// uninstallCurrentGhost with Tauri error
 	globalThis.__TAURI_INTERNALS__.invoke = async (cmd) => {
 		if (cmd === "uninstall_ghost") throw new Error("uninstall fail");
 	};
 	await ghostActions.uninstallCurrentGhost.call(mockApp);
 
+	// installGhostFromMenu - imported ghost branch (lines 125-134)
+	globalThis.__TAURI_INTERNALS__.invoke = async (cmd) => {
+		if (cmd === "pick_and_install_ghost_archive") {
+			return { name: "TestGhost", path: "/installed/path" };
+		}
+	};
+	await ghostActions.installGhostFromMenu.call(mockApp);
+
+	// installGhostFromMenu - imported balloon branch
 	globalThis.__TAURI_INTERNALS__.invoke = async (cmd) => {
 		if (cmd === "pick_and_install_ghost_archive") return { name: "Bal1", path: "" };
 	};
 	await ghostActions.installGhostFromMenu.call(mockApp);
 
+	// installGhostFromMenu - install failure catch branch (line 159)
 	globalThis.__TAURI_INTERNALS__.invoke = async (cmd) => {
 		if (cmd === "pick_and_install_ghost_archive") throw new Error("install fail");
 	};
 	await ghostActions.installGhostFromMenu.call(mockApp);
 
+	// minimizeApp in Tauri with error catch (line 258)
+	globalThis.__TAURI_INTERNALS__.invoke = async (cmd) => {
+		if (cmd === "minimize_app") throw new Error("minimize error");
+	};
 	ghostActions.minimizeApp.call(mockApp);
+
+	// handleDressupToggle with mustselect option (line 211)
+	const dressUpCalls = [];
+	mockApp.surfaceManager = {
+		dressupState: new Map(),
+		shellManifest: {
+			categories: [{ category: "hat", options: ["mustselect"], parts: [{ part: "ribbon" }, { part: "bow" }] }],
+		},
+		bindDressup: async (cat, part, state, scope) => {
+			dressUpCalls.push({ cat, part, state, scope });
+		},
+	};
+	await ghostActions.handleDressupToggle.call(mockApp, {
+		category: "hat",
+		part: "ribbon",
+		scope: 0,
+	});
+	assert.ok(dressUpCalls.length > 0);
 
 	delete globalThis.__TAURI_INTERNALS__;
 	assert.ok(true);

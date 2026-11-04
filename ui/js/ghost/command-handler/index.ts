@@ -1,5 +1,5 @@
 /**
- * @file index.js
+ * @file index.ts
  * @brief command-handler 配下のモジュール集約エクスポート
  */
 

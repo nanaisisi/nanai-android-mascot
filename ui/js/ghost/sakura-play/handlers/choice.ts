@@ -1,17 +1,17 @@
 /**
- * @file choice.js
+ * @file choice.ts
  * @brief さくらスクリプト再生時の選択肢(\q)およびアンカー(\_a)要素生成・イベントハンドラ
  */
 
-export function handleChoice(player, app, token, context) {
+export function handleChoice(player: any, app: any, token: any, context: any) {
 	const { currentBalloonText, flushDesktopBalloon } = context;
 
 	const choiceBtn = document.createElement("button");
 	choiceBtn.className = "balloon-choice-btn";
 	choiceBtn.setAttribute("data-choice-id", token.id);
 	choiceBtn.textContent = token.text;
-	let hoverTimer = null;
-	choiceBtn.addEventListener("click", (e) => {
+	let hoverTimer: any = null;
+	choiceBtn.addEventListener("click", (e: MouseEvent) => {
 		e.stopPropagation();
 		if (hoverTimer) {
 			clearTimeout(hoverTimer);
@@ -57,15 +57,15 @@ export function handleChoice(player, app, token, context) {
 	}
 }
 
-export function handleAnchorBegin(_player, app, token, context) {
+export function handleAnchorBegin(_player: any, app: any, token: any, context: any) {
 	const { currentBalloonText, scheduleDesktopBalloonSync } = context;
 
 	const anchorSpan = document.createElement("span");
 	anchorSpan.className = "balloon-anchor";
 	anchorSpan.dataset.anchorId = token.id;
 	anchorSpan.setAttribute("data-anchor-id", token.id);
-	let hoverTimer = null;
-	anchorSpan.addEventListener("click", (e) => {
+	let hoverTimer: any = null;
+	anchorSpan.addEventListener("click", (e: MouseEvent) => {
 		e.stopPropagation();
 		if (hoverTimer) {
 			clearTimeout(hoverTimer);
@@ -104,6 +104,6 @@ export function handleAnchorBegin(_player, app, token, context) {
 	scheduleDesktopBalloonSync(false);
 }
 
-export function handleAnchorEnd(_player, _app, _token, context) {
+export function handleAnchorEnd(_player: any, _app: any, _token: any, context: any) {
 	context.currentAnchor = null;
 }

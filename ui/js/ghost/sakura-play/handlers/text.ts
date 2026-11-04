@@ -1,9 +1,9 @@
 /**
- * @file text.js
+ * @file text.ts
  * @brief さくらスクリプト再生時のテキスト出力、改行、文字消去、文字装飾、相対位置ハンドラ
  */
 
-export async function handleChar(player, app, token, context) {
+export async function handleChar(player: any, app: any, token: any, context: any) {
 	const { sakuraText, keroText, scheduleDesktopBalloonSync } = context;
 	const { currentBalloonText, currentAnchor, isQuickMode } = context;
 
@@ -18,7 +18,6 @@ export async function handleChar(player, app, token, context) {
 		currentBalloonText.appendChild(span);
 	}
 
-	// 同期セクション (\_s): サクラ側と相方側（両バルーン）へ同時に文字を出力
 	if (player.isSyncMode) {
 		const mirrorTarget =
 			currentBalloonText === sakuraText ? keroText : sakuraText;
@@ -42,7 +41,6 @@ export async function handleChar(player, app, token, context) {
 	player.playbackController?.notifyChar?.(token.value, player.currentScope);
 
 	if (!player.skipRequested && !isQuickMode) {
-		// 句読点ディレイ (仕様: 、。！？ などに +100ms 付加)
 		const isPunctuation = /[、。！？,!?]/.test(token.value);
 		const baseWait = isPunctuation ? 140 : 40;
 		const waitMs = player.playbackController?.calculateWait
@@ -54,7 +52,7 @@ export async function handleChar(player, app, token, context) {
 	}
 }
 
-export function handleNewline(player, _app, token, context) {
+export function handleNewline(player: any, _app: any, token: any, context: any) {
 	const { sakuraText, keroText, scheduleDesktopBalloonSync } = context;
 	const { currentBalloonText } = context;
 
@@ -87,7 +85,7 @@ export function handleNewline(player, _app, token, context) {
 	}
 }
 
-export function handleClear(player, _app, token, context) {
+export function handleClear(player: any, _app: any, token: any, context: any) {
 	const { scheduleDesktopBalloonSync } = context;
 	const { currentBalloonText } = context;
 
@@ -110,7 +108,6 @@ export function handleClear(player, _app, token, context) {
 					removed = count;
 				}
 			} else {
-				// Element node (e.g. span, br, img)
 				currentBalloonText.removeChild(lastNode);
 				removed++;
 			}
@@ -119,7 +116,7 @@ export function handleClear(player, _app, token, context) {
 		const count = Math.max(1, token.count || 1);
 		let removedLines = 0;
 		while (removedLines < count && currentBalloonText.lastChild) {
-			const lastNode = currentBalloonText.lastChild;
+			const lastNode: any = currentBalloonText.lastChild;
 			const isBr =
 				lastNode.nodeName === "BR" ||
 				(lastNode.nodeName === "SPAN" && lastNode.style?.display === "block");
@@ -134,7 +131,7 @@ export function handleClear(player, _app, token, context) {
 	scheduleDesktopBalloonSync(true);
 }
 
-export function handleOffset(_player, _app, token, context) {
+export function handleOffset(_player: any, _app: any, token: any, context: any) {
 	const { scheduleDesktopBalloonSync, currentBalloonText } = context;
 
 	const spacer = document.createElement("span");
@@ -154,7 +151,7 @@ export function handleOffset(_player, _app, token, context) {
 	scheduleDesktopBalloonSync(false);
 }
 
-export function handleFont(player, _app, token, _context) {
+export function handleFont(player: any, _app: any, token: any, _context: any) {
 	player.currentFontStyles = player.currentFontStyles || {};
 	if (token.tag === "default") {
 		player.currentFontStyles = {};

@@ -1,11 +1,11 @@
 /**
- * @file scope.js
+ * @file scope.ts
  * @brief さくらスクリプト再生時のスコープ切替、バルーン表示・非表示、インライン画像出力ハンドラ
  */
 
 import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 
-export function handleScope(player, app, token, context) {
+export function handleScope(player: any, app: any, token: any, context: any) {
 	const {
 		sakuraText,
 		keroText,
@@ -58,7 +58,7 @@ export function handleScope(player, app, token, context) {
 	}
 }
 
-export function handleBalloon(player, _app, token, context) {
+export function handleBalloon(player: any, _app: any, token: any, context: any) {
 	const { sakuraDisplay, keroDisplay } = context;
 	const balloonDisplay =
 		player.currentScope === 1 ? keroDisplay : sakuraDisplay;
@@ -69,7 +69,7 @@ export function handleBalloon(player, _app, token, context) {
 	}
 }
 
-export function handleInlineBitmap(_player, app, token, context) {
+export function handleInlineBitmap(_player: any, app: any, token: any, context: any) {
 	const { currentBalloonText, scheduleDesktopBalloonSync } = context;
 
 	const img = document.createElement("img");
@@ -82,8 +82,8 @@ export function handleInlineBitmap(_player, app, token, context) {
 		rawPath.startsWith("https://")
 			? rawPath
 			: `assets/balloon/${themeName}/${rawPath}`;
-	img.src = globalThis.__TAURI__?.core?.convertFileSrc
-		? globalThis.__TAURI__.core.convertFileSrc(fullPath)
+	img.src = (globalThis as any).__TAURI__?.core?.convertFileSrc
+		? (globalThis as any).__TAURI__.core.convertFileSrc(fullPath)
 		: fullPath;
 	img.style.display = "inline-block";
 	img.style.verticalAlign = "middle";

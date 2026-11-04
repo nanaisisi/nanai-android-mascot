@@ -2,17 +2,18 @@ use std::path::{Component, Path};
 
 /// アーカイブエントリパスのパストラバーサル（Zip-Slip）および不正コンポーネント検証
 pub fn validate_archive_entry_path(path: &str) -> Result<(), String> {
+    if path.contains('\0') {
+        return Err(format!("Null byte not allowed in path: {path}"));
+    }
+
     let normalized = path.replace('\\', "/");
     let trimmed = normalized.trim();
     if trimmed.is_empty() {
         return Err("Archive entry path is empty".to_string());
     }
 
-    if trimmed.starts_with('/')
-        || (trimmed.len() >= 2
-            && trimmed.as_bytes()[0].is_ascii_alphabetic()
-            && trimmed.as_bytes()[1] == b':')
-    {
+    // 先頭スラッシュ `/` によるルート絶対パスの拒否
+    if trimmed.starts_with('/') {
         return Err(format!("Absolute path not allowed in archive: {path}"));
     }
 

@@ -2,6 +2,14 @@ use super::super::*;
 use encoding_rs::{EUC_JP, SHIFT_JIS};
 use std::fs::File;
 use std::io::Write;
+use std::sync::atomic::{AtomicUsize, Ordering};
+
+static TEMP_COUNTER: AtomicUsize = AtomicUsize::new(0);
+
+fn unique_temp_dir(prefix: &str) -> std::path::PathBuf {
+    let count = TEMP_COUNTER.fetch_add(1, Ordering::SeqCst);
+    std::env::temp_dir().join(format!("{}_{}_{}", prefix, std::process::id(), count))
+}
 
 #[test]
 fn test_normalize_vfs_path() {
@@ -14,8 +22,7 @@ fn test_normalize_vfs_path() {
 
 #[test]
 fn test_open_text_file_utf8_and_sjis() {
-    let temp_dir = std::env::temp_dir();
-    let file_path = temp_dir.join(format!("nanai_test_vfs_{}.txt", std::process::id()));
+    let file_path = unique_temp_dir("nanai_test_vfs_utf8_sjis").with_extension("txt");
 
     // Write UTF-8 with BOM
     {
@@ -43,27 +50,22 @@ fn test_open_text_file_utf8_and_sjis() {
     let _ = open_text_file(&file_path).unwrap();
 
     assert!(open_shift_jis_file(file_path.to_str().unwrap()).is_ok());
-    let _ = std::fs::remove_file(&file_path);
 }
 
 #[test]
 fn test_open_text_file_plain_utf8_and_error() {
-    let temp_dir = std::env::temp_dir();
-    let file_path = temp_dir.join(format!("nanai_plain_utf8_{}.txt", std::process::id()));
+    let file_path = unique_temp_dir("nanai_plain_utf8").with_extension("txt");
 
     std::fs::write(&file_path, "Hello UTF8").unwrap();
     assert_eq!(open_text_file(&file_path).unwrap(), "Hello UTF8");
 
-    let bad_path = temp_dir.join("non_existent_file_12345.txt");
+    let bad_path = std::env::temp_dir().join("non_existent_file_12345.txt");
     assert!(open_text_file(&bad_path).is_err());
-
-    let _ = std::fs::remove_file(&file_path);
 }
 
 #[test]
 fn test_resolve_vfs_path() {
-    let temp_dir = std::env::temp_dir().join(format!("nanai_vfs_test_dir_{}", std::process::id()));
-    let _ = std::fs::remove_dir_all(&temp_dir);
+    let temp_dir = unique_temp_dir("nanai_vfs_test_dir");
     let sub_dir = temp_dir.join("SubFolder");
     std::fs::create_dir_all(&sub_dir).unwrap();
     let file_path = sub_dir.join("Target.txt");
@@ -71,14 +73,11 @@ fn test_resolve_vfs_path() {
 
     let resolved = resolve_vfs_path(&temp_dir, "subfolder/target.txt");
     assert!(resolved.is_some());
-
-    let _ = std::fs::remove_dir_all(&temp_dir);
 }
 
 #[test]
 fn test_resolve_vfs_path_edge_cases() {
-    let temp_dir = std::env::temp_dir().join(format!("nanai_vfs_edge_dir_{}", std::process::id()));
-    let _ = std::fs::remove_dir_all(&temp_dir);
+    let temp_dir = unique_temp_dir("nanai_vfs_edge_dir");
     let sub = temp_dir.join("SubFolder");
     std::fs::create_dir_all(&sub).unwrap();
 
@@ -94,8 +93,6 @@ fn test_resolve_vfs_path_edge_cases() {
     assert!(resolve_vfs_path(&temp_dir, "subfolder/nonexistent.txt").is_none());
     assert!(resolve_vfs_path(&temp_dir, "nonexistent/file.txt").is_none());
     assert!(resolve_vfs_path(&file, "sub/file.txt").is_none());
-
-    let _ = std::fs::remove_dir_all(&temp_dir);
 }
 
 #[test]
@@ -170,7 +167,7 @@ fn test_detect_and_decode_utf16_and_eucjp() {
     assert_eq!(enc_ujis, "EUC-JP");
 
     // Path resolution with . and .. (using case difference so direct_combined fails)
-    let temp_dir = std::env::temp_dir().join(format!("vfs_dot_test_{}", std::process::id()));
+    let temp_dir = unique_temp_dir("vfs_dot_test");
     let sub = temp_dir.join("SubDir");
     std::fs::create_dir_all(&sub).unwrap();
     let target_file = temp_dir.join("RootFile.txt");
@@ -182,18 +179,12 @@ fn test_detect_and_decode_utf16_and_eucjp() {
         resolved_dot.unwrap().to_string_lossy().to_lowercase(),
         target_file.to_string_lossy().to_lowercase()
     );
-
-    let _ = std::fs::remove_dir_all(&temp_dir);
 }
 
 #[test]
 fn test_resolve_vfs_path_empty() {
-    let temp_dir = std::env::temp_dir().join(format!("nanai_vfs_empty_{}", std::process::id()));
-    let _ = std::fs::remove_dir_all(&temp_dir);
-    std::fs::create_dir_all(&temp_dir).unwrap();
+    let temp_dir = unique_temp_dir("nanai_vfs_empty");
 
     let resolved = resolve_vfs_path(&temp_dir, "");
     assert!(resolved.is_some());
-
-    let _ = std::fs::remove_dir_all(&temp_dir);
 }

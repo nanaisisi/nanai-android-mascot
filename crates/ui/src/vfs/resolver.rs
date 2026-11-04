@@ -204,14 +204,18 @@ impl VfsResolver {
             dir: &Path,
             _base: &Path,
             rel_prefix: &str,
+            depth: usize,
             out: &mut Vec<String>,
         ) -> io::Result<()> {
-            if !dir.is_dir() {
+            if depth > 32 || !dir.is_dir() {
                 return Ok(());
             }
             for entry in std::fs::read_dir(dir)? {
                 let entry = entry?;
                 let file_type = entry.file_type()?;
+                if file_type.is_symlink() {
+                    continue;
+                }
                 let name = entry.file_name().to_string_lossy().to_string();
                 let sub_rel = if rel_prefix.is_empty() {
                     name.clone()
@@ -220,7 +224,7 @@ impl VfsResolver {
                 };
 
                 if file_type.is_dir() {
-                    recurse(&entry.path(), _base, &sub_rel, out)?;
+                    recurse(&entry.path(), _base, &sub_rel, depth + 1, out)?;
                 } else if file_type.is_file() {
                     out.push(sub_rel);
                 }
@@ -228,7 +232,7 @@ impl VfsResolver {
             Ok(())
         }
 
-        recurse(&base, &base, "", &mut collected)?;
+        recurse(&base, &base, "", 0, &mut collected)?;
         collected.sort();
         Ok(collected)
     }
@@ -283,23 +287,23 @@ impl VfsResolver {
 
 impl VirtualFileSystem for VfsResolver {
     fn exists(&self, path: &str) -> bool {
-        self.exists(path)
+        VfsResolver::exists(self, path)
     }
 
     fn read_binary(&self, path: &str) -> io::Result<Vec<u8>> {
-        self.read_binary(path)
+        VfsResolver::read_binary(self, path)
     }
 
     fn read_text(&self, path: &str) -> io::Result<String> {
-        self.read_text(path)
+        VfsResolver::read_text(self, path)
     }
 
     fn list_dir(&self, dir_path: &str) -> io::Result<Vec<String>> {
-        self.list_dir(dir_path)
+        VfsResolver::list_dir(self, dir_path)
     }
 
     fn walk_files(&self, dir_path: &str) -> io::Result<Vec<String>> {
-        self.walk_files(dir_path)
+        VfsResolver::walk_files(self, dir_path)
     }
 
     fn file_size(&self, path: &str) -> io::Result<u64> {

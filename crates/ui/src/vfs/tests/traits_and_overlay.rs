@@ -244,7 +244,7 @@ fn test_mock_vfs_extended_operations() {
     assert!(mock.is_dir("empty_folder"));
 
     // VfsResolver dir_cache_size & directory caching
-    let temp_dir = std::env::temp_dir().join(format!("nanai_dircache_{}", std::process::id()));
+    let temp_dir = std::env::temp_dir().join(format!("nanai_dircache_traits_ext_{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&temp_dir);
     let sub = temp_dir.join("Shell").join("Master");
     std::fs::create_dir_all(&sub).unwrap();

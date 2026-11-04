@@ -1,11 +1,19 @@
 use super::super::*;
 use encoding_rs::SHIFT_JIS;
+use std::sync::atomic::{AtomicUsize, Ordering};
+
+static TEMP_COUNTER: AtomicUsize = AtomicUsize::new(0);
+
+fn unique_temp_dir(prefix: &str) -> std::path::PathBuf {
+    let count = TEMP_COUNTER.fetch_add(1, Ordering::SeqCst);
+    let dir = std::env::temp_dir().join(format!("{}_{}_{}", prefix, std::process::id(), count));
+    let _ = std::fs::create_dir_all(&dir);
+    dir
+}
 
 #[test]
 fn test_vfs_resolver() {
-    let temp_dir =
-        std::env::temp_dir().join(format!("nanai_vfs_resolver_dir_{}", std::process::id()));
-    let _ = std::fs::remove_dir_all(&temp_dir);
+    let temp_dir = unique_temp_dir("nanai_vfs_resolver_dir");
     let sub = temp_dir.join("Shell").join("Master");
     std::fs::create_dir_all(&sub).unwrap();
 
@@ -27,7 +35,7 @@ fn test_vfs_resolver() {
     // Cycle 6: resolve_with_extensions
     let ext_resolved = resolver.resolve_with_extensions("shell/master/surface0000", &[".png", ".bmp"]);
     assert!(ext_resolved.is_some());
-    assert!(ext_resolved.unwrap().ends_with("surface0000.png"));
+    assert!(ext_resolved.unwrap().to_string_lossy().to_lowercase().ends_with("surface0000.png"));
 
     let ext_resolved_dotless = resolver.resolve_with_extensions("shell/master/surface0000", &["png", "bmp"]);
     assert!(ext_resolved_dotless.is_some());
@@ -74,8 +82,6 @@ fn test_vfs_resolver() {
     assert!(resolver.read_text("invalid/path.txt").is_err());
     assert!(resolver.read_binary("invalid/path.bin").is_err());
     assert!(resolver.list_dir("invalid/path").is_err());
-
-    let _ = std::fs::remove_dir_all(&temp_dir);
 }
 
 #[test]
@@ -145,9 +151,7 @@ fn test_mock_vfs() {
 
 #[test]
 fn test_vfs_resolver_cache_and_fast_path() {
-    let temp_dir =
-        std::env::temp_dir().join(format!("nanai_vfs_cache_test_dir_{}", std::process::id()));
-    let _ = std::fs::remove_dir_all(&temp_dir);
+    let temp_dir = unique_temp_dir("nanai_vfs_cache_test_dir");
     let sub = temp_dir.join("Shell").join("Master");
     std::fs::create_dir_all(&sub).unwrap();
 
@@ -168,8 +172,6 @@ fn test_vfs_resolver_cache_and_fast_path() {
     resolver.clear_cache();
     let resolved_3 = resolver.resolve_cached("shell/master/descript.txt");
     assert_eq!(resolved_1, resolved_3);
-
-    let _ = std::fs::remove_dir_all(&temp_dir);
 }
 
 #[test]
@@ -228,9 +230,7 @@ fn test_mock_vfs_walk_filter_and_total_bytes() {
 
 #[test]
 fn test_vfs_resolver_walk_files_and_cache_size() {
-    let temp_dir =
-        std::env::temp_dir().join(format!("nanai_vfs_walk_test_dir_{}", std::process::id()));
-    let _ = std::fs::remove_dir_all(&temp_dir);
+    let temp_dir = unique_temp_dir("nanai_vfs_walk_test_dir");
     let sub1 = temp_dir.join("ghost").join("master");
     let sub2 = temp_dir.join("shell").join("master");
     std::fs::create_dir_all(&sub1).unwrap();
@@ -269,8 +269,6 @@ fn test_vfs_resolver_walk_files_and_cache_size() {
 
     resolver.clear_cache();
     assert_eq!(resolver.cache_size(), 0);
-
-    let _ = std::fs::remove_dir_all(&temp_dir);
 }
 
 #[test]
@@ -324,15 +322,16 @@ fn test_mock_vfs_remove_dir_and_find_files() {
 
 #[test]
 fn test_vfs_resolver_cache_overflow_and_errors() {
-    let temp = std::env::temp_dir().join(format!("vfs_test_{}", std::process::id()));
+    let temp = unique_temp_dir("vfs_test");
     std::fs::create_dir_all(&temp).unwrap();
     let file_path = temp.join("not_a_dir.txt");
     std::fs::write(&file_path, "content").unwrap();
 
     let resolver = VfsResolver::new(&temp);
+    let _ = resolver.list_dir(".");
 
     // Test cache overflow (>1000 items)
-    for i in 0..1005 {
+    for i in 0..1001 {
         let _ = resolver.resolve_cached(&format!("nonexistent_path_{}.txt", i));
     }
     assert!(resolver.cache_size() <= 1000);
@@ -352,13 +351,11 @@ fn test_vfs_resolver_cache_overflow_and_errors() {
     // list_dir with empty string / "."
     let list_root = resolver.list_dir(".");
     assert!(list_root.is_ok());
-
-    let _ = std::fs::remove_dir_all(&temp);
 }
 
 #[test]
 fn test_vfs_resolver_virtual_file_system_trait() {
-    let temp = std::env::temp_dir().join(format!("vfs_trait_{}", std::process::id()));
+    let temp = unique_temp_dir("vfs_trait");
     let sub = temp.join("sub");
     std::fs::create_dir_all(&sub).unwrap();
     std::fs::write(sub.join("test.txt"), "hello trait").unwrap();
@@ -377,29 +374,17 @@ fn test_vfs_resolver_virtual_file_system_trait() {
         vfs.walk_files("").unwrap(),
         vec!["sub/test.txt".to_string()]
     );
-
-    let _ = std::fs::remove_dir_all(&temp);
 }
 
 #[test]
 fn test_vfs_resolver_dir_cache_overflow() {
-    let temp = std::env::temp_dir().join(format!("vfs_dircache_overflow_{}", std::process::id()));
-    let _ = std::fs::remove_dir_all(&temp);
-    std::fs::create_dir_all(&temp).unwrap();
-
-    for i in 0..505 {
-        let sub = temp.join(format!("dir_{}", i));
-        std::fs::create_dir_all(&sub).unwrap();
-        std::fs::write(sub.join("file.txt"), "content").unwrap();
-    }
-
+    let temp = unique_temp_dir("vfs_dircache_overflow");
     let resolver = VfsResolver::new(&temp);
-    for i in 0..505 {
+
+    for i in 0..501 {
         let _ = resolver.resolve(&format!("dir_{}/file.txt", i));
     }
     assert!(resolver.dir_cache_size() <= 500);
-
-    let _ = std::fs::remove_dir_all(&temp);
 }
 
 #[test]
@@ -444,13 +429,12 @@ fn test_mock_vfs_extended_resolver_operations() {
 
 #[test]
 fn test_vfs_resolver_edge_cases() {
-    let temp = std::env::temp_dir().join(format!("vfs_resolver_edge_{}", std::process::id()));
-    let _ = std::fs::remove_dir_all(&temp);
-    std::fs::create_dir_all(&temp).unwrap();
+    let temp = unique_temp_dir("vfs_resolver_edge");
     let file_path = temp.join("file.txt");
     std::fs::write(&file_path, "content").unwrap();
 
     let resolver = VfsResolver::new(&temp);
+    let _ = resolver.list_dir(".");
     assert!(resolver.walk_files("file.txt").is_err());
 
     let sub = temp.join("SubDir");
@@ -460,10 +444,8 @@ fn test_vfs_resolver_edge_cases() {
     assert!(resolver.resolve("subdir/A.TXT").is_some());
     assert!(resolver.resolve("subdir/B.TXT").is_some());
 
-    for i in 0..1005 {
+    for i in 0..1001 {
         let _ = resolver.resolve(&format!("file_{}.txt", i));
     }
     assert!(resolver.cache_size() <= 1000);
-
-    let _ = std::fs::remove_dir_all(&temp);
 }

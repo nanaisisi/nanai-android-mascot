@@ -15,12 +15,11 @@ import { getCurrentWindow, PhysicalPosition } from "@tauri-apps/api/window";
 
 /**
  * Tauri環境で動作しているかどうかを判定
- * @returns {boolean}
  */
-export function isTauriAvailable() {
+export function isTauriAvailable(): boolean {
 	return (
 		typeof globalThis !== "undefined" &&
-		(!!globalThis.__TAURI__ || !!globalThis.__TAURI_INTERNALS__)
+		(!!(globalThis as any).__TAURI__ || !!(globalThis as any).__TAURI_INTERNALS__)
 	);
 }
 
@@ -40,12 +39,8 @@ export const ipcQueueStats = {
 
 /**
  * Tauri IPCコマンドの呼び出しラッパー
- * @template T
- * @param {string} cmd - 実行するTauriコマンド名
- * @param {Record<string, any>} [args] - コマンド引数
- * @returns {Promise<T>}
  */
-export async function invoke(cmd, args = {}) {
+export async function invoke<T = any>(cmd: string, args: Record<string, any> = {}): Promise<T> {
 	if (!isTauriAvailable()) {
 		throw new Error(`Tauri is not available to invoke command: ${cmd}`);
 	}
@@ -59,7 +54,6 @@ export async function invoke(cmd, args = {}) {
 		);
 	}
 
-	// 多段階の警戒域アラート（100件: 軽度滞留 / 1000件: 重度滞留 / 5000件: 危険域・Win32クォータ枯渇寸前）
 	if (ipcQueueStats.pendingCount === 100) {
 		console.warn(
 			`⚠️ [IPC Queue Alert] キュー軽度滞留 (100件到達): 直近実行=${cmd}, 最大記録=${ipcQueueStats.peakPendingCount}`,
@@ -83,16 +77,12 @@ export async function invoke(cmd, args = {}) {
 
 /**
  * ローカルファイルパスをアセットURLに変換
- * @param {string} filePath - ローカルパス
- * @param {string} [protocol] - プロトコル名 (デフォルト: 'asset')
- * @returns {string}
  */
-export function convertFileSrc(filePath, protocol = "asset") {
+export function convertFileSrc(filePath: string | null | undefined, protocol: string = "asset"): string {
 	if (!filePath) return "";
 	if (isTauriAvailable()) {
 		return tauriConvertFileSrc(filePath, protocol);
 	}
-	// 相対パスまたはWeb URLはそのまま
 	if (
 		filePath.startsWith("http://") ||
 		filePath.startsWith("https://") ||
@@ -102,38 +92,30 @@ export function convertFileSrc(filePath, protocol = "asset") {
 	) {
 		return filePath;
 	}
-	// Windows絶対パスなどをフォールバック形式に変換
 	const normalized = filePath.replace(/\\/g, "/");
 	return `asset://localhost/${encodeURI(normalized)}`;
 }
 
 /**
  * イベントリスナー登録
- * @param {string} event
- * @param {(event: any) => void} handler
- * @returns {Promise<() => void>}
  */
-export async function listen(event, handler) {
+export async function listen(event: string, handler: (event: any) => void): Promise<() => void> {
 	if (!isTauriAvailable()) return () => {};
 	return await tauriListen(event, handler);
 }
 
 /**
  * イベント発火
- * @param {string} event
- * @param {any} [payload]
- * @returns {Promise<void>}
  */
-export async function emit(event, payload) {
+export async function emit(event: string, payload?: any): Promise<void> {
 	if (!isTauriAvailable()) return;
 	await tauriEmit(event, payload);
 }
 
 /**
  * 現在のウィンドウのドラッグ移動を開始
- * @returns {Promise<void>}
  */
-export async function startDraggingWindow() {
+export async function startDraggingWindow(): Promise<void> {
 	if (!isTauriAvailable()) return;
 	try {
 		await getCurrentWindow().startDragging();
@@ -144,13 +126,8 @@ export async function startDraggingWindow() {
 
 /**
  * 現在のウィンドウを指定量だけ移動する。
- * ネイティブドラッグが WebView のイベント経路で失われる環境向けのフォールバック。
- * @param {number} x
- * @param {number} y
- * @param {{x: number, y: number}} origin
- * @returns {Promise<void>}
  */
-export async function moveCurrentWindowBy(x, y, origin) {
+export async function moveCurrentWindowBy(x: number, y: number, origin: { x: number; y: number }): Promise<void> {
 	if (!isTauriAvailable()) return;
 	try {
 		await getCurrentWindow().setPosition(
@@ -161,10 +138,7 @@ export async function moveCurrentWindowBy(x, y, origin) {
 	}
 }
 
-/**
- * @returns {Promise<{x: number, y: number} | null>}
- */
-export async function getCurrentWindowPosition() {
+export async function getCurrentWindowPosition(): Promise<{ x: number; y: number } | null> {
 	if (!isTauriAvailable()) return null;
 	try {
 		const position = await getCurrentWindow().outerPosition();
@@ -175,7 +149,6 @@ export async function getCurrentWindowPosition() {
 	}
 }
 
-// 開発・診断用グローバルアクセス
 if (typeof globalThis !== "undefined") {
-	globalThis.__NANAI_IPC_QUEUE_STATS__ = ipcQueueStats;
+	(globalThis as any).__NANAI_IPC_QUEUE_STATS__ = ipcQueueStats;
 }

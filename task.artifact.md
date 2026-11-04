@@ -1,0 +1,5 @@
+- [ ] Phase 1: Update tsconfig.json and build/test configuration for TypeScript migration
+- [ ] Phase 2: Migrate Core Utilities & Protocol Modules to TypeScript (.ts)
+- [ ] Phase 3: Migrate Application Actions & State Layer to TypeScript (.ts)
+- [ ] Phase 4: Migrate Renderers, Surface & Animation Modules to TypeScript (.ts)
+- [ ] Phase 5: Migrate Main Entry Point and Execute Final Typecheck & Vitest Verification

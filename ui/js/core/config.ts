@@ -1,7 +1,14 @@
 /**
  * アプリケーション設定および定数の一元管理モジュール
  */
-export const AppConfig = {
+export const AppConfig: {
+	paths: Record<string, string>;
+	timing: Record<string, number>;
+	scale: Record<string, number>;
+	storageKeys: Record<string, string>;
+	shiori?: Record<string, any>;
+	state?: Record<string, any>;
+} = {
 	// パス関連
 	paths: {
 		defaultGhostDir: "assets/ghost",
@@ -45,11 +52,11 @@ export const AppConfig = {
 /**
  * TauriバックエンドまたはJSONファイルから設定を非同期ロードして反映
  */
-export async function loadAppConfig() {
+export async function loadAppConfig(): Promise<void> {
 	try {
-		const tauriInternals = globalThis.__TAURI_INTERNALS__;
+		const tauriInternals = (globalThis as any).__TAURI_INTERNALS__;
 		if (tauriInternals?.invoke) {
-			const config = await tauriInternals.invoke("get_app_config");
+			const config: any = await tauriInternals.invoke("get_app_config");
 
 			if (config) {
 				if (config.paths) Object.assign(AppConfig.paths, config.paths);

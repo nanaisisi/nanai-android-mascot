@@ -63,6 +63,9 @@ pub fn evaluate_property_query(query: &str) -> String {
         "char.recommendbuttoncaption" | "char.recommendsites" => "".to_string(),
         "boxname.defaultleft" | "inputbox.defaultleft" => "0".to_string(),
         "getaistate" | "getaistateex" | "legacyinterface" | "useorigin1" => "0".to_string(),
+        "readmebuttoncaption"
+        | "updatebuttoncaption"
+        | "vanishbuttoncaption" => "1".to_string(),
         s if s.ends_with(".caption") || s.ends_with("buttoncaption") || s == "vanishbuttonvisible" => {
             "1".to_string()
         }

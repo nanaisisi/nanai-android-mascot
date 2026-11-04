@@ -267,12 +267,21 @@ export function initDefaultCommandHandlers() {
 	registerCommandHandler("setsyncobject", async (handler, args) => {
 		handleSetSyncObject(handler, args);
 	});
+	registerCommandHandler("set:syncobject", async (handler, args) => {
+		handleSetSyncObject(handler, args);
+	});
 
 	registerCommandHandler("resetsyncobject", async (handler, args) => {
 		handleResetSyncObject(handler, args);
 	});
+	registerCommandHandler("reset:syncobject", async (handler, args) => {
+		handleResetSyncObject(handler, args);
+	});
 
 	registerCommandHandler("waitsyncobject", async (handler, args) => {
+		await handleWaitSyncObject(handler, args);
+	});
+	registerCommandHandler("wait:syncobject", async (handler, args) => {
 		await handleWaitSyncObject(handler, args);
 	});
 

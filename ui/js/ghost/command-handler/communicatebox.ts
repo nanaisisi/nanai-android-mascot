@@ -1,16 +1,16 @@
 /**
- * @file communicatebox.js
+ * @file communicatebox.ts
  * @brief \![open,communicatebox] および \![close,communicatebox] ハンドラ
  */
 
-export function openCommunicateBox(handler, params = []) {
+export function openCommunicateBox(handler: any, params: string[] = []) {
 	closeCommunicateBox(handler, false);
 
 	let defaultText = "";
 	let placeholder = "話しかける...";
 	let timeoutMs = 0;
 	let limit = 0;
-	const references = [];
+	const references: string[] = [];
 
 	for (let i = 0; i < params.length; i++) {
 		const p = params[i] ?? "";
@@ -64,7 +64,7 @@ export function openCommunicateBox(handler, params = []) {
 	submitBtn.className = "balloon-choice-btn";
 	submitBtn.style.marginTop = "0";
 
-	let timer = null;
+	let timer: any = null;
 	handler.communicateForm = form;
 
 	const cleanup = () => {
@@ -94,12 +94,12 @@ export function openCommunicateBox(handler, params = []) {
 		);
 	};
 
-	submitBtn.addEventListener("click", (e) => {
+	submitBtn.addEventListener("click", (e: MouseEvent) => {
 		e.stopPropagation();
 		submit();
 	});
 
-	input.addEventListener("keydown", (e) => {
+	input.addEventListener("keydown", (e: KeyboardEvent) => {
 		if (e.key === "Enter") {
 			e.stopPropagation();
 			submit();
@@ -121,7 +121,7 @@ export function openCommunicateBox(handler, params = []) {
 	}
 }
 
-export function closeCommunicateBox(handler, notifyCancel = false) {
+export function closeCommunicateBox(handler: any, notifyCancel: boolean = false) {
 	if (handler.communicateForm) {
 		handler.communicateForm.remove();
 		handler.communicateForm = null;

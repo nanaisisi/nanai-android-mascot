@@ -1,14 +1,9 @@
 /**
- * @file ghost.js
+ * @file ghost.ts
  * @brief ゴースト操作・イベント送信コマンド (\![raise,...], \![change,ghost,...], \![call,ghost,...])
  */
 
-/**
- * SHIORI イベント発火コマンド (\![raise,イベント名,r0,r1,...])
- * @param {import('../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {string[]} args
- */
-export async function handleRaiseCommand(handler, args) {
+export async function handleRaiseCommand(handler: any, args: string[]) {
 	const eventName = args[1];
 	if (eventName) {
 		await handler.app.ghostController?.sendShioriEvent?.(
@@ -18,14 +13,7 @@ export async function handleRaiseCommand(handler, args) {
 	}
 }
 
-/**
- * ゴースト・シェル・バルーン切り替えコマンド
- * (\![change,ghost,ゴースト名], \![change,shell,シェル名(,--option=raise-event)], \![change,balloon,バルーン名])
- * [bang-change-ghost-option-eq-raise-event.md], [bang-change-shell-option-eq-raise-event.md], [bang-change-balloon.md]
- * @param {import('../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {string[]} args
- */
-export async function handleChangeCommand(handler, args) {
+export async function handleChangeCommand(handler: any, args: string[]) {
 	const target = (args[1] ?? "").toLowerCase();
 	const name = args[2] ?? "";
 	const options = args.slice(3);
@@ -58,13 +46,7 @@ export async function handleChangeCommand(handler, args) {
 	}
 }
 
-/**
- * 自律消滅・終了コマンド (\![vanishbymyself])
- * [bang-vanishbymyself.md]
- * @param {import('../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {string[]} [_args]
- */
-export async function handleVanishByMyself(handler, _args) {
+export async function handleVanishByMyself(handler: any, _args: string[]) {
 	console.log("👻 Vanish by myself requested");
 	const gc = handler.app.ghostController;
 	if (gc?.sendShioriEvent) {
@@ -81,25 +63,14 @@ export async function handleVanishByMyself(handler, _args) {
 	}
 }
 
-/**
- * ゴースト呼び出しコマンド (\![call,ghost,ゴースト名])
- * @param {import('../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {string[]} args
- */
-export async function handleCallCommand(handler, args) {
+export async function handleCallCommand(handler: any, args: string[]) {
 	const [target, name] = args.slice(1);
 	if (target === "ghost" && name) {
 		await handler.app.ghostController?.callGhost?.(name);
 	}
 }
 
-/**
- * 他ゴーストへのイベント発火コマンド (\![raiseother,ゴースト名,イベント名,r0,r1,...])
- * [bang-raiseother-r0-r1-r2.md]
- * @param {import('../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {string[]} args
- */
-export async function handleRaiseOtherCommand(handler, args) {
+export async function handleRaiseOtherCommand(handler: any, args: string[]) {
 	const ghostName = args[1];
 	const eventName = args[2];
 	const references = args.slice(3);
@@ -117,13 +88,7 @@ export async function handleRaiseOtherCommand(handler, args) {
 	}
 }
 
-/**
- * 他ゴーストへのNotify送信コマンド (\![notifyother,ゴースト名,イベント名,r0,r1,...])
- * [bang-notifyother-r0-r1-r2.md]
- * @param {import('../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {string[]} args
- */
-export async function handleNotifyOtherCommand(handler, args) {
+export async function handleNotifyOtherCommand(handler: any, args: string[]) {
 	const ghostName = args[1];
 	const eventName = args[2];
 	const references = args.slice(3);
@@ -147,19 +112,13 @@ export async function handleNotifyOtherCommand(handler, args) {
 	}
 }
 
-/**
- * 埋め込みイベント評価コマンド (\![embed,イベント名,r0,r1,...])
- * [bang-embed-r0-r1-r2.md]
- * @param {import('../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {string[]} args
- */
-export async function handleEmbedCommand(handler, args) {
+export async function handleEmbedCommand(handler: any, args: string[]) {
 	const eventName = args[1];
 	if (!eventName) return;
 	const references = args.slice(2);
 	const gc = handler.app.ghostController;
 	if (gc?.sendShioriEvent) {
-		const res = await gc.sendShioriEvent(eventName, references);
+		const res: any = await gc.sendShioriEvent(eventName, references);
 		const embeddedScript = res?.response?.value;
 		if (embeddedScript && handler.player?.playScript) {
 			await handler.player.playScript(embeddedScript);

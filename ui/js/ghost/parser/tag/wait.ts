@@ -1,31 +1,21 @@
 /**
- * @file wait.js
+ * @file wait.ts
  * @brief ウェイト・タイムアウト・停止・終了タグのトークナイズ処理 (\w, \_w, \__w, \t, \-, \e)
  */
 
 import { readBracketContent, splitBracketArgs } from "../bracket-utils.js";
 
-/**
- * ウェイト・タイムアウト・停止・終了タグを解析
- * @param {string} script - スクリプト文字列
- * @param {number} i - `\` 直後のインデックス
- * @param {number} _len - スクリプト長
- * @returns {{ tokens: import('../../sakura-parser.js').SakuraScriptToken[], nextIdx: number, haltParsing?: boolean } | null}
- */
-export function tokenizeWaitTag(script, i, _len) {
+export function tokenizeWaitTag(script: string, i: number, _len: number) {
 	const char = script[i];
 
-	// \w1 〜 \w9 (ウェイト)
 	if (char === "w" && /\d/.test(script[i + 1])) {
-		i++;
-		const weight = Number.parseInt(script[i], 10);
+		const weight = Number.parseInt(script[i + 1], 10);
 		return {
 			tokens: [{ type: "wait", value: weight * 50 }],
-			nextIdx: i + 1,
+			nextIdx: i + 2,
 		};
 	}
 
-	// \_w[ms] (ミリ秒ウェイト)
 	if (char === "_" && script[i + 1] === "w" && script[i + 2] === "[") {
 		const parsed = readBracketContent(script, i + 2);
 		if (parsed) {
@@ -38,7 +28,6 @@ export function tokenizeWaitTag(script, i, _len) {
 		return { tokens: [], nextIdx: i + 2 };
 	}
 
-	// \__w[animation,ID] (アニメーション再生終了待ち)
 	if (
 		char === "_" &&
 		script[i + 1] === "_" &&
@@ -66,7 +55,6 @@ export function tokenizeWaitTag(script, i, _len) {
 		return { tokens: [], nextIdx: i + 3 };
 	}
 
-	// \t (タイムアウト抑止)
 	if (char === "t") {
 		return {
 			tokens: [{ type: "timeout" }],
@@ -74,7 +62,6 @@ export function tokenizeWaitTag(script, i, _len) {
 		};
 	}
 
-	// \- (ゴースト終了)
 	if (char === "-") {
 		return {
 			tokens: [{ type: "halt" }],
@@ -82,7 +69,6 @@ export function tokenizeWaitTag(script, i, _len) {
 		};
 	}
 
-	// \e (終了)
 	if (char === "e") {
 		return {
 			tokens: [{ type: "end" }],

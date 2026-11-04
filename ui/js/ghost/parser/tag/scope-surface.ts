@@ -1,21 +1,13 @@
 /**
- * @file scope-surface.js
+ * @file scope-surface.ts
  * @brief スコープ・サーフィス・アニメーションタグのトークナイズ処理 (\0, \1, \p, \s, \i)
  */
 
 import { readBracketContent, splitBracketArgs } from "../bracket-utils.js";
 
-/**
- * スコープ・サーフィス・アニメーションタグを解析
- * @param {string} script - スクリプト文字列
- * @param {number} i - `\` 直後のインデックス
- * @param {number} _len - スクリプト長
- * @returns {{ tokens: import('../../sakura-parser.js').SakuraScriptToken[], nextIdx: number } | null}
- */
-export function tokenizeScopeSurfaceTag(script, i, _len) {
+export function tokenizeScopeSurfaceTag(script: string, i: number, _len: number) {
 	const char = script[i];
 
-	// \0 または \h (メインキャラ指定)
 	if (char === "0" || char === "h") {
 		return {
 			tokens: [{ type: "scope", value: 0 }],
@@ -23,7 +15,6 @@ export function tokenizeScopeSurfaceTag(script, i, _len) {
 		};
 	}
 
-	// \1 または \u (サブキャラ指定)
 	if (char === "1" || char === "u") {
 		return {
 			tokens: [{ type: "scope", value: 1 }],
@@ -31,11 +22,10 @@ export function tokenizeScopeSurfaceTag(script, i, _len) {
 		};
 	}
 
-	// \p[n] または \p0..\p9 (スコープ指定)
 	if (char === "p") {
-		i++;
-		if (script[i] === "[") {
-			const parsed = readBracketContent(script, i);
+		let curr = i + 1;
+		if (script[curr] === "[") {
+			const parsed = readBracketContent(script, curr);
 			if (parsed) {
 				const scopeVal = Number.parseInt(parsed.content.trim(), 10) || 0;
 				return {
@@ -43,22 +33,21 @@ export function tokenizeScopeSurfaceTag(script, i, _len) {
 					nextIdx: parsed.nextIdx,
 				};
 			}
-			return { tokens: [], nextIdx: i + 1 };
+			return { tokens: [], nextIdx: curr + 1 };
 		}
-		if (/\d/.test(script[i])) {
+		if (/\d/.test(script[curr])) {
 			return {
-				tokens: [{ type: "scope", value: Number.parseInt(script[i], 10) }],
-				nextIdx: i + 1,
+				tokens: [{ type: "scope", value: Number.parseInt(script[curr], 10) }],
+				nextIdx: curr + 1,
 			};
 		}
 		return { tokens: [], nextIdx: i };
 	}
 
-	// \s (サーフィス指定: \s0 または \s[10], \s[-1])
 	if (char === "s") {
-		i++;
-		if (script[i] === "[") {
-			const parsed = readBracketContent(script, i);
+		let curr = i + 1;
+		if (script[curr] === "[") {
+			const parsed = readBracketContent(script, curr);
 			if (parsed) {
 				const val = parsed.content.trim();
 				const parsedId = Number.parseInt(val, 10);
@@ -72,22 +61,21 @@ export function tokenizeScopeSurfaceTag(script, i, _len) {
 					nextIdx: parsed.nextIdx,
 				};
 			}
-			return { tokens: [], nextIdx: i + 1 };
+			return { tokens: [], nextIdx: curr + 1 };
 		}
-		if (/\d/.test(script[i])) {
+		if (/\d/.test(script[curr])) {
 			return {
-				tokens: [{ type: "surface", value: Number.parseInt(script[i], 10) }],
-				nextIdx: i + 1,
+				tokens: [{ type: "surface", value: Number.parseInt(script[curr], 10) }],
+				nextIdx: curr + 1,
 			};
 		}
 		return { tokens: [], nextIdx: i };
 	}
 
-	// \i (アニメーション呼出: \i[ID], \i[ID,wait], \i[name], \i1〜\i9)
 	if (char === "i") {
-		i++;
-		if (script[i] === "[") {
-			const parsed = readBracketContent(script, i);
+		let curr = i + 1;
+		if (script[curr] === "[") {
+			const parsed = readBracketContent(script, curr);
 			if (parsed) {
 				const parts = splitBracketArgs(parsed.content);
 				const rawTarget = parts[0] ? parts[0].trim() : "";
@@ -104,18 +92,18 @@ export function tokenizeScopeSurfaceTag(script, i, _len) {
 					nextIdx: parsed.nextIdx,
 				};
 			}
-			return { tokens: [], nextIdx: i + 1 };
+			return { tokens: [], nextIdx: curr + 1 };
 		}
-		if (/\d/.test(script[i])) {
+		if (/\d/.test(script[curr])) {
 			return {
 				tokens: [
 					{
 						type: "animation",
-						animId: Number.parseInt(script[i], 10),
+						animId: Number.parseInt(script[curr], 10),
 						wait: false,
 					},
 				],
-				nextIdx: i + 1,
+				nextIdx: curr + 1,
 			};
 		}
 		return { tokens: [], nextIdx: i };

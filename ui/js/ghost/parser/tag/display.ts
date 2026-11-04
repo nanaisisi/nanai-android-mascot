@@ -1,21 +1,13 @@
 /**
- * @file display.js
+ * @file display.ts
  * @brief 座標移動・同期表示・バルーンタグのトークナイズ処理 (\_l, \_s, \b)
  */
 
 import { readBracketContent, splitBracketArgs } from "../bracket-utils.js";
 
-/**
- * 座標移動・同期表示・バルーンタグを解析
- * @param {string} script - スクリプト文字列
- * @param {number} i - `\` 直後のインデックス
- * @param {number} _len - スクリプト長
- * @returns {{ tokens: import('../../sakura-parser.js').SakuraScriptToken[], nextIdx: number } | null}
- */
-export function tokenizeDisplayTag(script, i, _len) {
+export function tokenizeDisplayTag(script: string, i: number, _len: number) {
 	const char = script[i];
 
-	// \_l[x,y] (座標移動)
 	if (char === "_" && script[i + 1] === "l" && script[i + 2] === "[") {
 		const parsed = readBracketContent(script, i + 2);
 		if (parsed) {
@@ -34,7 +26,6 @@ export function tokenizeDisplayTag(script, i, _len) {
 		return { tokens: [], nextIdx: i + 2 };
 	}
 
-	// \_s (複数キャラ同期表示トグル / \_s[1], \_s[0])
 	if (char === "_" && script[i + 1] === "s") {
 		if (script[i + 2] === "[") {
 			const parsed = readBracketContent(script, i + 2);
@@ -61,11 +52,10 @@ export function tokenizeDisplayTag(script, i, _len) {
 		};
 	}
 
-	// \b (バルーン指定: \b[0], \b[-1], \b0..\b9)
 	if (char === "b") {
-		i++;
-		if (script[i] === "[") {
-			const parsed = readBracketContent(script, i);
+		let curr = i + 1;
+		if (script[curr] === "[") {
+			const parsed = readBracketContent(script, curr);
 			if (parsed) {
 				const val = Number.parseInt(parsed.content.trim(), 10);
 				return {
@@ -78,12 +68,12 @@ export function tokenizeDisplayTag(script, i, _len) {
 					nextIdx: parsed.nextIdx,
 				};
 			}
-			return { tokens: [], nextIdx: i + 1 };
+			return { tokens: [], nextIdx: curr + 1 };
 		}
-		if (/\d/.test(script[i])) {
+		if (/\d/.test(script[curr])) {
 			return {
-				tokens: [{ type: "balloon", value: Number.parseInt(script[i], 10) }],
-				nextIdx: i + 1,
+				tokens: [{ type: "balloon", value: Number.parseInt(script[curr], 10) }],
+				nextIdx: curr + 1,
 			};
 		}
 		return { tokens: [], nextIdx: i };

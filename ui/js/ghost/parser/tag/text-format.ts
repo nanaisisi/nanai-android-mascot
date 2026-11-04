@@ -1,21 +1,13 @@
 /**
- * @file text-format.js
+ * @file text-format.ts
  * @brief 改行・クリア・ポーズ・描画速度・フォントタグのトークナイズ処理 (\n, \c, \x, \_q, \f)
  */
 
 import { readBracketContent, splitBracketArgs } from "../bracket-utils.js";
 
-/**
- * 改行・クリア・ポーズ・描画速度・フォントタグを解析
- * @param {string} script - スクリプト文字列
- * @param {number} i - `\` 直後のインデックス
- * @param {number} _len - スクリプト長
- * @returns {{ tokens: import('../../sakura-parser.js').SakuraScriptToken[], nextIdx: number } | null}
- */
-export function tokenizeTextFormatTag(script, i, _len) {
+export function tokenizeTextFormatTag(script: string, i: number, _len: number) {
 	const char = script[i];
 
-	// \_n (自動改行無効トグル: NewLineNoPause)
 	if (char === "_" && script[i + 1] === "n") {
 		return {
 			tokens: [{ type: "no_autowrap" }],
@@ -23,7 +15,6 @@ export function tokenizeTextFormatTag(script, i, _len) {
 		};
 	}
 
-	// \_? / \_! (生テキスト・スクリプト無効化トグル)
 	if (char === "_" && (script[i + 1] === "?" || script[i + 1] === "!")) {
 		return {
 			tokens: [
@@ -37,26 +28,24 @@ export function tokenizeTextFormatTag(script, i, _len) {
 		};
 	}
 
-	// \n (改行)
 	if (char === "n") {
-		i++;
-		if (script.substr(i, 6) === "[half]") {
+		let curr = i + 1;
+		if (script.substr(curr, 6) === "[half]") {
 			return {
 				tokens: [{ type: "newline", half: true }],
-				nextIdx: i + 6,
+				nextIdx: curr + 6,
 			};
 		}
 		return {
 			tokens: [{ type: "newline", half: false }],
-			nextIdx: i,
+			nextIdx: curr,
 		};
 	}
 
-	// \c (クリア: \c, \c[char,N], \c[line,N])
 	if (char === "c") {
-		i++;
-		if (script[i] === "[") {
-			const parsed = readBracketContent(script, i);
+		let curr = i + 1;
+		if (script[curr] === "[") {
+			const parsed = readBracketContent(script, curr);
 			if (parsed) {
 				const parts = splitBracketArgs(parsed.content);
 				if (parts[0] === "char" || parts[0] === "line") {
@@ -76,16 +65,15 @@ export function tokenizeTextFormatTag(script, i, _len) {
 					nextIdx: parsed.nextIdx,
 				};
 			}
-			return { tokens: [{ type: "clear" }], nextIdx: i };
+			return { tokens: [{ type: "clear" }], nextIdx: curr };
 		}
-		return { tokens: [{ type: "clear" }], nextIdx: i };
+		return { tokens: [{ type: "clear" }], nextIdx: curr };
 	}
 
-	// \x (クリック待ち・改ページ: \x, \x[noclear])
 	if (char === "x") {
-		i++;
-		if (script[i] === "[") {
-			const parsed = readBracketContent(script, i);
+		let curr = i + 1;
+		if (script[curr] === "[") {
+			const parsed = readBracketContent(script, curr);
 			if (parsed) {
 				const opt = parsed.content.trim().toLowerCase();
 				return {
@@ -98,12 +86,11 @@ export function tokenizeTextFormatTag(script, i, _len) {
 					nextIdx: parsed.nextIdx,
 				};
 			}
-			return { tokens: [{ type: "pause" }], nextIdx: i };
+			return { tokens: [{ type: "pause" }], nextIdx: curr };
 		}
-		return { tokens: [{ type: "pause" }], nextIdx: i };
+		return { tokens: [{ type: "pause" }], nextIdx: curr };
 	}
 
-	// \_q / \_q[1] / \_q[0] (クイック描画切替)
 	if (char === "_" && script[i + 1] === "q") {
 		if (script[i + 2] === "[") {
 			const parsed = readBracketContent(script, i + 2);
@@ -130,7 +117,6 @@ export function tokenizeTextFormatTag(script, i, _len) {
 		};
 	}
 
-	// \_u[0xXXXX] または \_u[XXXX] (UCS-2 / Unicode 文字コード埋め込み)
 	if (char === "_" && script[i + 1] === "u" && script[i + 2] === "[") {
 		const parsed = readBracketContent(script, i + 2);
 		if (parsed) {
@@ -150,7 +136,6 @@ export function tokenizeTextFormatTag(script, i, _len) {
 		return { tokens: [], nextIdx: i + 2 };
 	}
 
-	// \_m[0xXX] または \_m[XX] (ASCII 文字コード埋め込み)
 	if (char === "_" && script[i + 1] === "m" && script[i + 2] === "[") {
 		const parsed = readBracketContent(script, i + 2);
 		if (parsed) {
@@ -170,7 +155,6 @@ export function tokenizeTextFormatTag(script, i, _len) {
 		return { tokens: [], nextIdx: i + 2 };
 	}
 
-	// \f (フォント指定: \f[tag,param], \f[tag])
 	if (char === "f" && script[i + 1] === "[") {
 		const parsed = readBracketContent(script, i + 1);
 		if (parsed) {

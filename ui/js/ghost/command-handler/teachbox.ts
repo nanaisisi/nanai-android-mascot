@@ -1,4 +1,9 @@
-export function openTeachBox(handler, params = [], options = {}) {
+/**
+ * @file teachbox.ts
+ * @brief \![open,teachbox] および \![close,teachbox] ハンドラ
+ */
+
+export function openTeachBox(handler: any, params: string[] = [], options: any = {}) {
 	const { notifyStart = true } = options;
 	handler.closeTeachBox();
 	if (handler.teachForm) return;
@@ -68,12 +73,12 @@ export function openTeachBox(handler, params = [], options = {}) {
 		handler.app.ghostController?.clearTeachHistory?.();
 	};
 
-	submitBtn.addEventListener("click", (e) => {
+	submitBtn.addEventListener("click", (e: MouseEvent) => {
 		e.stopPropagation();
 		submit();
 	});
 
-	input.addEventListener("keydown", (e) => {
+	input.addEventListener("keydown", (e: KeyboardEvent) => {
 		if (e.key === "Enter") {
 			e.stopPropagation();
 			submit();
@@ -89,7 +94,7 @@ export function openTeachBox(handler, params = [], options = {}) {
 	setTimeout(() => input.focus(), 50);
 }
 
-export function closeTeachBox(handler) {
+export function closeTeachBox(handler: any) {
 	if (handler.teachForm) {
 		handler.teachForm.remove();
 		handler.teachForm = null;

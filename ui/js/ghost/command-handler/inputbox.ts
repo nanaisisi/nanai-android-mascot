@@ -1,9 +1,9 @@
 /**
- * @file inputbox.js
- * @brief \![open,inputbox], \![open,passwordinput], \![open,textareabox], \![open,sliderinput], \![close,inputbox], \![close,textareabox], \![close,dialog] ハンドラ
+ * @file inputbox.ts
+ * @brief \![open,inputbox] 等ハンドラ
  */
 
-export function openInputBox(handler, params, isPassword = false) {
+export function openInputBox(handler: any, params: string[], isPassword: boolean = false) {
 	if (handler.app?.modalDialogController?.openInputBox) {
 		return handler.app.modalDialogController.openInputBox(
 			params,
@@ -16,7 +16,7 @@ export function openInputBox(handler, params, isPassword = false) {
 	let timeoutMs = 0;
 	let defaultText = "";
 	let placeholder = "";
-	const references = [];
+	const references: string[] = [];
 
 	for (let i = 1; i < params.length; i++) {
 		const p = params[i] ?? "";
@@ -68,7 +68,7 @@ export function openInputBox(handler, params, isPassword = false) {
 	submitBtn.className = "balloon-choice-btn";
 	submitBtn.style.marginTop = "0";
 
-	let timer = null;
+	let timer: any = null;
 	const cleanup = () => {
 		if (timer) clearTimeout(timer);
 		form.remove();
@@ -98,23 +98,21 @@ export function openInputBox(handler, params, isPassword = false) {
 		await handler.app.ghostController?.sendShioriEvent("OnUserInputCancel", [
 			id,
 			reason,
-			"",
-			...references,
 		]);
 	};
 
-	submitBtn.addEventListener("click", (e) => {
+	submitBtn.addEventListener("click", (e: MouseEvent) => {
 		e.stopPropagation();
 		submit();
 	});
 
-	input.addEventListener("keydown", (e) => {
+	input.addEventListener("keydown", (e: KeyboardEvent) => {
 		if (e.key === "Enter") {
 			e.stopPropagation();
 			submit();
 		} else if (e.key === "Escape") {
 			e.stopPropagation();
-			cancel("close");
+			cancel("cancel");
 		}
 	});
 
@@ -130,75 +128,71 @@ export function openInputBox(handler, params, isPassword = false) {
 	}
 }
 
-export function openPasswordInput(handler, params) {
-	if (handler.app?.modalDialogController?.openPasswordInput) {
-		return handler.app.modalDialogController.openPasswordInput(
-			params,
-			handler.player?.currentScope,
-		);
-	}
+export function openPasswordInput(handler: any, params: string[]) {
 	return openInputBox(handler, params, true);
 }
 
-export function openTextAreaBox(handler, params) {
+export function openTextAreaBox(handler: any, params: string[]) {
 	if (handler.app?.modalDialogController?.openTextAreaBox) {
 		return handler.app.modalDialogController.openTextAreaBox(
 			params,
 			handler.player?.currentScope,
 		);
 	}
+	return openInputBox(handler, params);
 }
 
-export function openSliderInput(handler, params) {
+export function openSliderInput(handler: any, params: string[]) {
 	if (handler.app?.modalDialogController?.openSliderInput) {
 		return handler.app.modalDialogController.openSliderInput(
 			params,
 			handler.player?.currentScope,
 		);
 	}
+	return openInputBox(handler, params);
 }
 
-export function openDateInput(handler, params) {
-	if (handler.app?.modalDialogController?.openDateInput) {
-		return handler.app.modalDialogController.openDateInput(
-			params,
-			handler.player?.currentScope,
-		);
-	}
-}
-
-export function openTimeInput(handler, params) {
-	if (handler.app?.modalDialogController?.openTimeInput) {
-		return handler.app.modalDialogController.openTimeInput(
-			params,
-			handler.player?.currentScope,
-		);
-	}
-}
-
-export function openIpInput(handler, params) {
+export function openIpInput(handler: any, params: string[]) {
 	if (handler.app?.modalDialogController?.openIpInput) {
 		return handler.app.modalDialogController.openIpInput(
 			params,
 			handler.player?.currentScope,
 		);
 	}
+	return openInputBox(handler, params);
 }
 
-export function closeInputBox(handler, id) {
-	if (handler.app?.modalDialogController?.closeInputBox) {
-		handler.app.modalDialogController.closeInputBox(id);
+export function openDateInput(handler: any, params: string[]) {
+	if (handler.app?.modalDialogController?.openDateInput) {
+		return handler.app.modalDialogController.openDateInput(
+			params,
+			handler.player?.currentScope,
+		);
+	}
+	return openInputBox(handler, params);
+}
+
+export function openTimeInput(handler: any, params: string[]) {
+	if (handler.app?.modalDialogController?.openTimeInput) {
+		return handler.app.modalDialogController.openTimeInput(
+			params,
+			handler.player?.currentScope,
+		);
+	}
+	return openInputBox(handler, params);
+}
+
+export function closeInputBox(_handler: any, _notifyCancel: boolean = false) {
+	const forms = document.querySelectorAll(".balloon-inputbox-form");
+	for (const f of Array.from(forms)) {
+		f.remove();
 	}
 }
 
-export function closeTextAreaBox(handler, id) {
-	if (handler.app?.modalDialogController?.closeTextAreaBox) {
-		handler.app.modalDialogController.closeTextAreaBox(id);
-	}
+export function closeTextAreaBox(handler: any, notifyCancel: boolean = false) {
+	closeInputBox(handler, notifyCancel);
 }
 
-export function closeDialog(handler, id) {
-	if (handler.app?.modalDialogController?.closeDialog) {
-		handler.app.modalDialogController.closeDialog(id);
-	}
+export function closeDialog(handler: any, notifyCancel: boolean = false) {
+	closeInputBox(handler, notifyCancel);
 }

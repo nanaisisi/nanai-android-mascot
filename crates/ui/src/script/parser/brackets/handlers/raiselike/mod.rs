@@ -99,6 +99,21 @@ mod tests {
         let mut chars = "[]".chars().peekable();
         handle_raiselike(&mut chars, &mut cb);
 
+        let mut chars = "[*]".chars().peekable();
+        handle_raiselike(&mut chars, &mut cb);
+
+        let mut chars = "[quicksection,1]".chars().peekable();
+        handle_raiselike(&mut chars, &mut cb);
+
+        let mut chars = "[quicksection,0]".chars().peekable();
+        handle_raiselike(&mut chars, &mut cb);
+
+        let mut chars = "[biff]".chars().peekable();
+        handle_raiselike(&mut chars, &mut cb);
+
+        let mut chars = "[executesntp]".chars().peekable();
+        handle_raiselike(&mut chars, &mut cb);
+
         let mut chars = "[unknown_cmd, arg1, arg2]".chars().peekable();
         handle_raiselike(&mut chars, &mut cb);
 

@@ -55,22 +55,7 @@ export function normalizeInstallType(type) {
 	if (INSTALL_IDENTIFIERS.includes(lower)) {
 		return lower;
 	}
-	switch (lower) {
-		case "ghost":
-		case "shell":
-		case "balloon":
-		case "plugin":
-		case "headline":
-		case "package":
-		case "supplement":
-		case "calendar.skin":
-		case "calendar.plugin":
-		case "profile":
-		case "taromime":
-			return lower;
-		default:
-			return lower || "unknown";
-	}
+	return lower || "unknown";
 }
 
 /**

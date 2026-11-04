@@ -1,22 +1,12 @@
 import { drawImageLayer, loadLayerImage } from "./layer.js";
 
-/**
- * element0〜elementN で定義されたレイヤー画像 + 着せ替え bind レイヤーを
- * ベース画像上に合成 (UKADOC準拠)
- * @param {import('./surface-parser.js').SurfaceElement[]} elementList
- * @param {string} baseImgSrc
- * @param {Function} resolveImagePath - ファイル名から画像URL/DataURLを解決する関数
- * @param {Array<{ file: string, x: number, y: number, type: string }>} [bindLayers] - 装着中の着せ替えレイヤー（element 合成後に追加）
- * @param {{ returnCanvas?: boolean }} [options] - returnCanvas 時は `{ src, canvas }` を返す（SERIKO 差分描画の下地として再利用）
- * @returns {Promise<string|{ src: string, canvas: HTMLCanvasElement }>} - 合成後のDataURL (PNG)
- */
 export function composeSurfaceElements(
-	elementList,
-	baseImgSrc,
-	resolveImagePath,
-	bindLayers = [],
+	elementList: any[],
+	baseImgSrc: string,
+	resolveImagePath: (file: string) => Promise<string | null>,
+	bindLayers: any[] = [],
 	{ returnCanvas = false } = {},
-) {
+): Promise<any> {
 	if ((!elementList || elementList.length === 0) && bindLayers.length === 0) {
 		return returnCanvas
 			? (async () => {
@@ -52,7 +42,6 @@ export function composeSurfaceElements(
 
 				ctx.drawImage(baseImg, 0, 0);
 
-				// Pre-fetch all images concurrently for faster composition
 				const allElements = [...(elementList || []), ...(bindLayers || [])];
 				const loadPromises = allElements.map((el) =>
 					el.file
@@ -62,7 +51,6 @@ export function composeSurfaceElements(
 
 				const loadedImages = await Promise.all(loadPromises);
 
-				// Draw sequentially to preserve z-order (blending operations depend on previous operations)
 				for (let i = 0; i < allElements.length; i++) {
 					const element = allElements[i];
 					const img = loadedImages[i];

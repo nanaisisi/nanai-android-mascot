@@ -1,10 +1,4 @@
-/**
- * レイヤーの画像URLを解決し、Imageオブジェクトをロードする
- * @param {string} fileName
- * @param {Function} resolveImagePath
- * @returns {Promise<HTMLImageElement|null>}
- */
-export async function loadLayerImage(fileName, resolveImagePath) {
+export async function loadLayerImage(fileName: string, resolveImagePath: (file: string) => Promise<string | null>): Promise<HTMLImageElement | null> {
 	if (!fileName) return null;
 	const layerSrc = await resolveImagePath(fileName);
 	if (!layerSrc) return null;
@@ -18,15 +12,7 @@ export async function loadLayerImage(fileName, resolveImagePath) {
 	});
 }
 
-/**
- * 読み込み済みのImageオブジェクトをキャンバスに描画する
- * @param {CanvasRenderingContext2D} ctx
- * @param {HTMLImageElement} img
- * @param {number} x
- * @param {number} y
- * @param {string} [type]
- */
-export function drawImageLayer(ctx, img, x, y, type = "overlay") {
+export function drawImageLayer(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, type: string = "overlay") {
 	if (!img) return;
 	const savedOp = ctx.globalCompositeOperation;
 	const method = (type || "overlay").toLowerCase();
@@ -81,7 +67,6 @@ export function drawImageLayer(ctx, img, x, y, type = "overlay") {
 	} else if (method === "blend-luminosity" || method === "luminosity") {
 		ctx.globalCompositeOperation = "luminosity";
 	} else if (method === "interpolate") {
-		// 下の絵と同一色の部分を透過して重ねる (UKADOC準拠: Uint32Array 高速処理)
 		try {
 			const pWidth = img.naturalWidth || img.width;
 			const pHeight = img.naturalHeight || img.height;
@@ -115,11 +100,8 @@ export function drawImageLayer(ctx, img, x, y, type = "overlay") {
 					return;
 				}
 			}
-		} catch (_err) {
-			// フォールバック
-		}
+		} catch (_err) {}
 	} else if (method === "reduce") {
-		// ベースレイヤと新規レイヤの不透明度（アルファ）を乗算合成 (UKADOC準拠)
 		try {
 			const pWidth = img.naturalWidth || img.width;
 			const pHeight = img.naturalHeight || img.height;
@@ -150,9 +132,7 @@ export function drawImageLayer(ctx, img, x, y, type = "overlay") {
 					return;
 				}
 			}
-		} catch (_err) {
-			// フォールバック
-		}
+		} catch (_err) {}
 	} else if (method === "asis" || method === "base") {
 		ctx.globalCompositeOperation = "source-over";
 	}
@@ -161,24 +141,14 @@ export function drawImageLayer(ctx, img, x, y, type = "overlay") {
 	ctx.globalCompositeOperation = savedOp;
 }
 
-/**
- * 1レイヤー画像を読み込んでキャンバスに描画する（drawImageLayer への委譲ラッパー）
- * @param {CanvasRenderingContext2D} ctx
- * @param {string} fileName
- * @param {Function} resolveImagePath
- * @param {number} x
- * @param {number} y
- * @param {string} [type]
- * @returns {Promise<void>}
- */
 export async function drawLayer(
-	ctx,
-	fileName,
-	resolveImagePath,
-	x,
-	y,
-	type = "overlay",
-) {
+	ctx: CanvasRenderingContext2D,
+	fileName: string,
+	resolveImagePath: (file: string) => Promise<string | null>,
+	x: number,
+	y: number,
+	type: string = "overlay",
+): Promise<void> {
 	if (!fileName) return;
 	const img = await loadLayerImage(fileName, resolveImagePath);
 	if (img) {

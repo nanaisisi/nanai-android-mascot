@@ -1,31 +1,27 @@
 /**
  * 伺か標準仕様のPNAアルファマスク合成およびクロマキー（緑透過 #00FF00 / 左上ピクセル色）透過処理
- * @param {string} imageSrc - 画像URLまたはDataURL
- * @param {string|null} [pnaSrc] - PNAアルファマスク画像のURLまたはDataURL
- * @param {Map<string, string>} [cache] - キャッシュMap
- * @returns {Promise<string>} - 透過合成後のDataURL (PNG)
  */
 export function processChromaKey(
-	imageSrc,
-	pnaSrc = null,
-	cache = null,
-	options = {},
-) {
+	imageSrc: string,
+	pnaSrc: string | null = null,
+	cache: Map<string, string> | null = null,
+	options: any = {},
+): Promise<string> {
 	if (!imageSrc) return Promise.resolve(imageSrc);
 	if (cache?.has(imageSrc)) {
-		return Promise.resolve(cache.get(imageSrc));
+		return Promise.resolve(cache.get(imageSrc)!);
 	}
 	const useSelfAlpha = Boolean(options?.useSelfAlpha);
 	const cacheKey = `${imageSrc}__pna__${pnaSrc || "none"}__selfalpha__${useSelfAlpha}`;
 	if (cache?.has(cacheKey)) {
-		return Promise.resolve(cache.get(cacheKey));
+		return Promise.resolve(cache.get(cacheKey)!);
 	}
 
 	return new Promise((resolve) => {
 		const img = new Image();
 		img.crossOrigin = "anonymous";
 		img.onload = () => {
-			const onBaseLoaded = (pnaImg = null) => {
+			const onBaseLoaded = (pnaImg: HTMLImageElement | null = null) => {
 				try {
 					const canvas = document.createElement("canvas");
 					const width = img.naturalWidth || img.width;
@@ -45,7 +41,6 @@ export function processChromaKey(
 					const data = imgData.data;
 
 					if (pnaImg) {
-						// PNA アルファマスク合成 (UKADOC準拠)
 						const pnaCanvas = document.createElement("canvas");
 						pnaCanvas.width = width;
 						pnaCanvas.height = height;
@@ -83,20 +78,17 @@ export function processChromaKey(
 						}
 					}
 
-					// seriko.use_self_alpha 指定時はクロマキー透過をバイパス（32bit PNGのアルファをそのまま使用）
 					if (useSelfAlpha) {
 						cache?.set(cacheKey, imageSrc);
 						resolve(imageSrc);
 						return;
 					}
 
-					// 左上1ピクセル (0, 0) の色を取得（伺かの伝統的な透過色仕様）
 					const cornerR = data[0];
 					const cornerG = data[1];
 					const cornerB = data[2];
 					const cornerA = data[3];
 
-					// 左上が透過でなく、純緑(#00FF00)または特定背景色の場合にクロマキー判定
 					const isCornerPureGreen =
 						cornerR === 0 && cornerG >= 250 && cornerB === 0 && cornerA === 255;
 					const isCornerTarget =
@@ -110,8 +102,6 @@ export function processChromaKey(
 					const data32 = new Uint32Array(data.buffer);
 					const len32 = data32.length;
 
-					// Pre-calculate target color for fast matching
-					// Uint32Array format is ABGR in little-endian architectures (most common)
 					const isLittleEndian =
 						new Uint8Array(new Uint32Array([0x11223344]).buffer)[0] === 0x44;
 
@@ -129,20 +119,16 @@ export function processChromaKey(
 						for (let i = 0; i < len32; i++) {
 							const pixel = data32[i];
 
-							// Fast exit if alpha is 0
 							if ((pixel & 0xff000000) === 0) continue;
 
 							const r = pixel & 0xff;
 							const g = (pixel >> 8) & 0xff;
 							const b = (pixel >> 16) & 0xff;
 
-							// 純緑 (#00FF00) 判定 (許容差あり: R <= 35, G >= 220, B <= 35)
 							const isGreen = r <= 35 && g >= 220 && b <= 35;
-							// または左上ピクセルと完全一致
 							const isMatchCorner = isCornerTarget && pixel === corner32;
 
 							if (isGreen || isMatchCorner) {
-								// アルファ値を 0（完全透明）に設定
 								data32[i] = pixel & 0x00ffffff;
 								modified = true;
 							}

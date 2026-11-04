@@ -142,13 +142,25 @@ export const actionMethods = {
 				setTimeout(() => (this as any).hideBalloon(), 2000);
 			});
 		}
-		if (action === "open-ghost-folder") {
+		if (
+			action === "open-ghost-folder" ||
+			action === "openghostfolder" ||
+			action === "open-ghost-directory"
+		) {
 			if (isTauriAvailable()) {
 				invoke("open_ghost_directory").catch((e) => console.error(e));
+			} else {
+				(this as any).showBalloon("📁 ゴーストフォルダを開く機能はアプリ版でのみ利用可能です");
+				setTimeout(() => (this as any).hideBalloon(), 2000);
 			}
 			return;
 		}
-		if (action === "uninstall-ghost" || action === "uninstall") {
+		if (
+			action === "uninstall-ghost" ||
+			action === "uninstall" ||
+			action === "uninstallghost" ||
+			action === "delete-ghost"
+		) {
 			return (this as any).uninstallCurrentGhost();
 		}
 		if (action === "install") return (this as any).installGhostFromMenu();

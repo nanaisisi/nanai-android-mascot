@@ -2,9 +2,9 @@
 
 - **規格**: [menu.foreground.font.color.r.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell/descript-txt/menu.foreground.font.color.r/) (ukadoc-spec/descript/shell/descript-txt/menu.foreground.font.color.r.md)
 - **検索語**: menu.foreground.font.color.r
-- **対応状況**: ✅ 実装済
+- **対応状況**: ❌ 未実装
 
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:34` `* - menu.foreground.font.color.r, menu.foreground.font.color.g, menu.foreground.`
+実装コード内に「menu.foreground.font.color.r」は検出されませんでした。

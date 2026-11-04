@@ -2,7 +2,7 @@
 
 - **規格**: [OnVanishSelecting.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/vanish/OnVanishSelecting/) (ukadoc-spec/list/shiori-event/vanish/OnVanishSelecting.md)
 - **検索語**: OnVanishSelecting
-- **対応状況**: ✅ 実装済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -11,5 +11,4 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:28` `* - OnVanished, OnVanishSelecting, OnVanishSelected, OnVanishCancel, OnVanishBut`
-- `ui/js/ghost/shiori-notify.js:285` `* 消滅・アンインストール通知 (OnVanished, OnVanishSelecting, OnVanishSelected, OnVanishCancel`
+実装コード内に「OnVanishSelecting」は検出されませんでした。

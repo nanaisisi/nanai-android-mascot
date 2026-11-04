@@ -2,7 +2,7 @@
 
 - **規格**: [OnXUkagakaLinkOpen.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/url-drop/OnXUkagakaLinkOpen/) (ukadoc-spec/list/shiori-event/url-drop/OnXUkagakaLinkOpen.md)
 - **検索語**: OnXUkagakaLinkOpen
-- **対応状況**: ✅ 実装済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -11,5 +11,4 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:29` `* - OnURLDropped, OnURLDropping, OnURLDragDropping, OnURLDropFailure, OnURLQuery`
-- `ui/js/ghost/shiori-notify.js:295` `* URL ドロップイベント通知 (OnURLDropped, OnURLDropping, OnURLDragDropping, OnURLDropFailu`
+実装コード内に「OnXUkagakaLinkOpen」は検出されませんでした。

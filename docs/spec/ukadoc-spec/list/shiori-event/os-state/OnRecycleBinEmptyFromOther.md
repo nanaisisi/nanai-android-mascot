@@ -2,7 +2,7 @@
 
 - **規格**: [OnRecycleBinEmptyFromOther.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/os-state/OnRecycleBinEmptyFromOther/) (ukadoc-spec/list/shiori-event/os-state/OnRecycleBinEmptyFromOther.md)
 - **検索語**: OnRecycleBinEmptyFromOther
-- **対応状況**: ✅ 実装済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -11,5 +11,4 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:27` `* - OnDesktopWallpaperChange, OnRecycleBinEmpty, OnRecycleBinEmptyFromOther, OnR`
-- `ui/js/ghost/shiori-notify.js:277` `* @param {string} event イベント名 (OnTabletMode, OnWindowModeChange, OnMemoryLoadHig`
+実装コード内に「OnRecycleBinEmptyFromOther」は検出されませんでした。

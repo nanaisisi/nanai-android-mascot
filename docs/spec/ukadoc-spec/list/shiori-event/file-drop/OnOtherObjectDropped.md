@@ -2,7 +2,7 @@
 
 - **規格**: [OnOtherObjectDropped.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/file-drop/OnOtherObjectDropped/) (ukadoc-spec/list/shiori-event/file-drop/OnOtherObjectDropped.md)
 - **検索語**: OnOtherObjectDropped
-- **対応状況**: ✅ 実装済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,4 +10,4 @@ OnOtherObjectDropped ファイルドロップ/外部連携SHIORIイベント通�
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:28` `* - OnFileDropping, OnMediaPlayerOpen, OnNarCreated, OnNarCreating, OnOtherObjec`
+実装コード内に「OnOtherObjectDropped」は検出されませんでした。

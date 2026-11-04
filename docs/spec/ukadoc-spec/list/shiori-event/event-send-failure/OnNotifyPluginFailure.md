@@ -2,7 +2,7 @@
 
 - **規格**: [OnNotifyPluginFailure.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/event-send-failure/OnNotifyPluginFailure/) (ukadoc-spec/list/shiori-event/event-send-failure/OnNotifyPluginFailure.md)
 - **検索語**: OnNotifyPluginFailure
-- **対応状況**: ✅ 実装済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,4 +10,4 @@ OnNotifyPluginFailure イベント送信失敗時のSHIORI通知イベントを�
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:26` `* - OnNotifyOtherFailure, OnNotifyPluginFailure, OnRaiseOtherFailure, OnRaisePlu`
+実装コード内に「OnNotifyPluginFailure」は検出されませんでした。

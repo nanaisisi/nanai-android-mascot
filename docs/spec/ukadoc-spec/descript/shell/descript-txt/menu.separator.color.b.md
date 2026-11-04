@@ -2,9 +2,9 @@
 
 - **規格**: [menu.separator.color.b.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell/descript-txt/menu.separator.color.b/) (ukadoc-spec/descript/shell/descript-txt/menu.separator.color.b.md)
 - **検索語**: menu.separator.color.b
-- **対応状況**: ✅ 実装済
+- **対応状況**: ❌ 未実装
 
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:36` `* - menu.separator.color.r, menu.separator.color.g, menu.separator.color.b`
+実装コード内に「menu.separator.color.b」は検出されませんでした。

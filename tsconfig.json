@@ -4,9 +4,25 @@
 		"module": "ESNext",
 		"moduleResolution": "Bundler",
 		"strict": true,
+		"skipLibCheck": true,
 		"noEmit": true,
 		"allowJs": true
 	},
-	"include": ["ui/**/*.ts", "ui/**/*.js", "ui/**/*.d.ts"],
+	"include": [
+		"ui/ts/main.ts",
+		"ui/ts/bindings.ts",
+		"ui/ts/global.d.ts",
+		"ui/ts/core/app-actions.ts",
+		"ui/ts/core/app-events.ts",
+		"ui/ts/core/app-settings.ts",
+		"ui/ts/core/app-update.ts",
+		"ui/ts/core/config.ts",
+		"ui/ts/core/tauri-helper.ts",
+		"ui/ts/ghost/ghost.ts",
+		"ui/ts/ghost/ghost-shiori.ts",
+		"ui/ts/ghost/sakura-script.ts",
+		"ui/ts/ghost/sakura-play.ts",
+		"ui/ts/ghost/shiori-notify.ts"
+	],
 	"exclude": ["node_modules", "target", "src-tauri"]
 }

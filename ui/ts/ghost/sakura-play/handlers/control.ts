@@ -17,7 +17,11 @@ export async function handlePause(player: any, _app: any, token: any, context: a
 	if (!player.skipRequested && !context.isQuickMode) {
 		const activeDisplay =
 			player.currentScope === 1 ? keroDisplay : sakuraDisplay;
-		await player.waitForClickOrTimeout(activeDisplay);
+		if (player.waitForClickOrTimeout) {
+			await player.waitForClickOrTimeout(activeDisplay);
+		} else if (player.sleep) {
+			await player.sleep(100);
+		}
 	}
 	if (!token.noClear) {
 		context.currentBalloonText.innerHTML = "";
@@ -44,7 +48,11 @@ export async function handleWait(player: any, _app: any, token: any, context: an
 			? player.playbackController.calculateWait(token.value)
 			: token.value;
 		if (waitMs > 0) {
-			await player.sleep(waitMs);
+			if (player.sleep) {
+				await player.sleep(waitMs);
+			} else {
+				await new Promise((r) => setTimeout(r, waitMs));
+			}
 		}
 	}
 }

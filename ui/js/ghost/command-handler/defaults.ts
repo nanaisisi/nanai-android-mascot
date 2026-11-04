@@ -385,6 +385,6 @@ export function initDefaultCommandHandlers() {
 	});
 
 	registerCommandHandler("alignmenttodesktop", async (handler, args) => {
-		setAlignmentToDesktop(handler, args);
+		setAlignmentToDesktop(handler, args[1]);
 	});
 }

@@ -1,16 +1,11 @@
 /**
- * @file plugin.js
+ * @file plugin.ts
  * @brief プラグインイベントコマンド (\![raiseplugin,...], \![notifyplugin,...], etc.)
  */
 
 import { invoke, isTauriAvailable } from "../../core/tauri-helper.js";
 
-/**
- * プラグイン向けイベント送信ハンドラ
- * @param {import('../sakura-command-handler.js').SakuraCommandHandler} _handler
- * @param {string[]} args
- */
-export async function handlePluginEvent(_handler, args) {
+export async function handlePluginEvent(_handler: any, args: string[]) {
 	const rawCmd = (args[0] ?? "").toLowerCase();
 	const isTimer = rawCmd.startsWith("timer");
 	const pluginName = isTimer ? args[3] : args[1];

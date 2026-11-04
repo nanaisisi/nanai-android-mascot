@@ -1,21 +1,12 @@
 /**
- * @file jump.js
+ * @file jump.ts
  * @brief \j[ID] / \j[URL] ジャンプコマンドハンドラ
- * UKADOC仕様: 指定したスクリプトまたはURLへジャンプする。
- * URL(http://やhttps://)の場合はブラウザで開き、それ以外はSHIORIイベント(OnChoiceSelect等)を発火する。
  */
 
-/**
- * ジャンプコマンドを実行
- * @param {import('../sakura-command-handler.js').SakuraCommandHandler} handler
- * @param {string} target - ジャンプ先URLまたはID
- * @param {string[]} [args] - 追加パラメータ
- */
-export async function handleJumpCommand(handler, target, args = []) {
+export async function handleJumpCommand(handler: any, target: string, args: string[] = []) {
 	const destination = (target ?? "").trim();
 	if (!destination) return;
 
-	// URL形式判定 (http://, https://)
 	if (/^https?:\/\//i.test(destination)) {
 		try {
 			if (typeof globalThis !== "undefined" && globalThis.open) {
@@ -27,7 +18,6 @@ export async function handleJumpCommand(handler, target, args = []) {
 		return;
 	}
 
-	// イベント/ラベルジャンプ
 	if (destination.startsWith("On")) {
 		await handler.app.ghostController?.sendShioriEvent?.(destination, args);
 	} else {

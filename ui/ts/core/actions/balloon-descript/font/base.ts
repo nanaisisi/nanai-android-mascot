@@ -1,6 +1,6 @@
 import { rgbFromComponents } from "../utils.js";
 
-export function applyBaseFontProperties(root, props) {
+export function applyBaseFontProperties(root: any, props: Record<string, any>) {
 	if (props.id) root.style.setProperty("--balloon-id", props.id);
 
 	if (props["font.name"]) {
@@ -41,7 +41,7 @@ export function applyBaseFontProperties(root, props) {
 		root.style.setProperty("--balloon-font-style", "italic");
 	}
 
-	const decorations = [];
+	const decorations: string[] = [];
 	if (
 		props["font.underline"] === "1" ||
 		props["font.underline"]?.toLowerCase() === "true"
@@ -66,26 +66,14 @@ export function applyBaseFontProperties(root, props) {
 		root.style.setProperty("--balloon-font-outline", "1");
 	}
 
-	const fontColor =
-		rgbFromComponents(props, "font.color") ||
-		props["font.color.r"] ||
-		props["font.color.g"] ||
-		props["font.color.b"]
-			? rgbFromComponents(props, "font.color")
-			: null;
+	const fontColor = rgbFromComponents(props, "font.color");
 	if (props["font.color"]) {
 		root.style.setProperty("--balloon-text-color", props["font.color"]);
 	} else if (fontColor) {
 		root.style.setProperty("--balloon-text-color", fontColor);
 	}
 
-	const fontShadowColor =
-		rgbFromComponents(props, "font.shadowcolor") ||
-		props["font.shadowcolor.r"] ||
-		props["font.shadowcolor.g"] ||
-		props["font.shadowcolor.b"]
-			? rgbFromComponents(props, "font.shadowcolor")
-			: null;
+	const fontShadowColor = rgbFromComponents(props, "font.shadowcolor");
 	if (fontShadowColor) {
 		root.style.setProperty("--balloon-font-shadow-color", fontShadowColor);
 	}

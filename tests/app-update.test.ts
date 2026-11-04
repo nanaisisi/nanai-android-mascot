@@ -38,7 +38,7 @@ globalThis.__TAURI_INTERNALS__ = {
 			listeners: createPersistentListenersProxy(),
 			listen: async (_eventName, handler) => {
 				progressCb = handler;
-				return 1;
+				return () => {};
 			},
 			emit: async () => {},
 			unregisterListener: () => {},

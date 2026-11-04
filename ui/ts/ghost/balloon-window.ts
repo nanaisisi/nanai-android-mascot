@@ -85,4 +85,14 @@ export function initBalloonWindow() {
 			void applyBalloonDescript(theme);
 		}
 	});
+
+	void listen("balloon-scale-changed", (event: any) => {
+		const scale = event.payload?.userScale ?? event.payload?.scale ?? event.payload;
+		if (typeof scale === "number" && !Number.isNaN(scale)) {
+			currentUserScale = scale;
+			if (balloonBox) {
+				updateBalloonWindowScale(balloonBox, currentUserScale, currentDpiScale);
+			}
+		}
+	});
 }

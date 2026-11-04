@@ -98,12 +98,10 @@ export const updateMethods = {
 			});
 
 			let unlisten: (() => void) | null = null;
-			if (isTauriAvailable()) {
-				try {
-					unlisten = await listen("update-progress", progressHandler);
-				} catch (_) {
-					// 進捗リスナーの登録失敗時は無効化して続行
-				}
+			try {
+				unlisten = await listen("update-progress", progressHandler);
+			} catch (_) {
+				// 進捗リスナーの登録失敗時は無効化して続行
 			}
 
 			try {

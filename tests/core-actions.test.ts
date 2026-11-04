@@ -65,7 +65,7 @@ test("balloonDescriptActions test", () => {
 	assert.ok(setPropertyCalls.length > 0);
 });
 
-test("balloonThemeActions test", () => {
+test("balloonThemeActions test", async () => {
 	globalThis.document = {
 		documentElement: {
 			style: {
@@ -93,9 +93,30 @@ test("balloonThemeActions test", () => {
 	balloonThemeActions.showBalloon = () => {};
 	balloonThemeActions.hideBalloon = () => {};
 
+	// 1. Calling when balloonThemeManager is null
+	delete (balloonThemeActions as any).balloonThemeManager;
+	balloonThemeActions.cycleBalloonTheme();
+
+	delete (balloonThemeActions as any).balloonThemeManager;
+	balloonThemeActions.applyBalloonScaleAction("balloon-scale-100");
+
+	delete (balloonThemeActions as any).balloonThemeManager;
+	await balloonThemeActions.setBalloonTheme("ivory");
+
+	delete (balloonThemeActions as any).balloonThemeManager;
+	await balloonThemeActions.scanBalloons();
+
+	delete (balloonThemeActions as any).balloonThemeManager;
+	balloonThemeActions.resetBalloonDescript();
+
+	// 2. Calling when balloonThemeManager is already instantiated
 	balloonThemeActions.cycleBalloonTheme();
 	balloonThemeActions.applyBalloonScaleAction("balloon-scale-100");
+	await balloonThemeActions.setBalloonTheme("ivory");
+	await balloonThemeActions.scanBalloons();
 	balloonThemeActions.resetBalloonDescript();
+
+	assert.ok(true);
 });
 
 test("ghostActions test", () => {

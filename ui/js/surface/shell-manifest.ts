@@ -1,20 +1,9 @@
 /**
  * Rust パース済みシェルマニフェスト（`shell_manifest` Tauri コマンド）の消費モジュール
- *
- * Rust `crates/ui`（descript.txt / surfaces.txt / surfacetable.txt パーサー）の
- * 解析結果を JSON マニフェストとして受け取り、既存の SurfaceManager 構造
- * （collisions / elements / animations）へ変換する。
- * ukadoc-spec の突合は Rust パーサー側で実施済みのため、JS 側は変換のみを行う。
  */
 import { invoke } from "../core/tauri-helper.js";
 
-/**
- * serde の externally tagged enum → レガシー文字列へ変換
- * 例: "Sometimes" → "sometimes" / { Random: 3 } → "random,3" / { Custom: "foo" } → "foo"
- * @param {string|Record<string, any>|null|undefined} value
- * @returns {string}
- */
-export function enumToString(value) {
+export function enumToString(value: any): string {
 	if (value == null) return "";
 	if (typeof value === "string") return value.toLowerCase();
 	if (typeof value === "object") {
@@ -26,25 +15,17 @@ export function enumToString(value) {
 	return String(value).toLowerCase();
 }
 
-/** interval 文字列化（\e は yen-e とみなす） */
-export function intervalToString(value) {
+export function intervalToString(value: any): string {
 	const s = enumToString(value);
 	return s === "yene" ? "\\e" : s;
 }
 
-/** 描画メソッド文字列化（Blend → "blend-xxx"） */
-export function methodToString(value) {
+export function methodToString(value: any): string {
 	const s = enumToString(value);
 	return s.startsWith("blend,") ? s.replace("blend,", "blend-") : s;
 }
 
-/**
- * Rust CollisionShape（{ Rect: {...} } / { Polygon: { vertices: [[x,y],...] } }）を
- * レガシー当たり判定レコードへ変換
- * @param {Record<string, any>} area
- * @returns {{ name: string, shape: string, x1?: number, y1?: number, x2?: number, y2?: number, vertices?: number[][] }}
- */
-export function collisionRecord(area) {
+export function collisionRecord(area: any) {
 	const shape = area?.shape ?? {};
 	const id = area?.id != null ? Number(area.id) : undefined;
 	let kind = "rect";
@@ -65,7 +46,7 @@ export function collisionRecord(area) {
 	}
 
 	if (kind === "polygon") {
-		const vertices = (coords?.vertices ?? []).map((p) =>
+		const vertices = (coords?.vertices ?? []).map((p: any) =>
 			Array.isArray(p) ? p : [p?.x ?? 0, p?.y ?? 0],
 		);
 		let minX = Infinity;
@@ -127,17 +108,9 @@ export function collisionRecord(area) {
 	};
 }
 
-/**
- * 当たり判定レコードへの点内包判定（AABB事前判定 + rect / polygon 偶奇規則）
- * @param {{ name: string, shape: string, x1?: number, y1?: number, x2?: number, y2?: number, minX?: number, minY?: number, maxX?: number, maxY?: number, vertices?: number[][] }} col
- * @param {number} x
- * @param {number} y
- * @returns {boolean}
- */
-export function collisionContains(col, x, y) {
+export function collisionContains(col: any, x: number, y: number): boolean {
 	if (!col) return false;
 
-	// AABB高速事前判定
 	if (
 		col.minX != null &&
 		col.maxX != null &&
@@ -176,17 +149,12 @@ export function collisionContains(col, x, y) {
 	);
 }
 
-/**
- * ShellManifest → SurfaceManager 用レコード（レガシー構造）へ変換
- * @param {Record<string, any>} manifest - Rust `ShellManifest`
- * @returns {{ collisions: Record<string, any[]>, elements: Record<string, any[]>, animations: Record<string, any[]>, aliases: Record<string, number[]>, keroAliases: Record<string, number[]>, collisionSort: string, animationSort: string, cursors: Record<string, Array<{ event: string, collision: string, cursor: string }>>, tooltips: Record<string, Record<string, string>> }}
- */
-export function manifestToSurfaceData(manifest) {
-	const collisions = {};
-	const elements = {};
-	const animations = {};
-	const points = {};
-	const balloonOffsets = {};
+export function manifestToSurfaceData(manifest: any) {
+	const collisions: Record<string, any[]> = {};
+	const elements: Record<string, any[]> = {};
+	const animations: Record<string, any[]> = {};
+	const points: Record<string, any> = {};
+	const balloonOffsets: Record<string, any> = {};
 	const aliases = manifest?.aliases ?? {};
 	const keroAliases = manifest?.kero_aliases ?? {};
 	const cursors = manifest?.cursors ?? {};
@@ -209,8 +177,8 @@ export function manifestToSurfaceData(manifest) {
 
 		elements[sid] = (def.elements ?? [])
 			.slice()
-			.sort((a, b) => (a.id ?? 0) - (b.id ?? 0))
-			.map((e) => ({
+			.sort((a: any, b: any) => (a.id ?? 0) - (b.id ?? 0))
+			.map((e: any) => ({
 				id: e.id ?? 0,
 				type: methodToString(e.method) || "overlay",
 				file: e.file ?? "",
@@ -219,14 +187,14 @@ export function manifestToSurfaceData(manifest) {
 			}));
 
 		animations[sid] = Object.values(def.animations ?? {})
-			.sort((a, b) => (a.id ?? 0) - (b.id ?? 0))
-			.map((anim) => ({
+			.sort((a: any, b: any) => (a.id ?? 0) - (b.id ?? 0))
+			.map((anim: any) => ({
 				id: anim.id ?? 0,
 				interval: intervalToString(anim.interval) || "never",
 				patterns: (anim.patterns ?? [])
 					.slice()
-					.sort((a, b) => (a.index ?? 0) - (b.index ?? 0))
-					.map((p) => ({
+					.sort((a: any, b: any) => (a.index ?? 0) - (b.index ?? 0))
+					.map((p: any) => ({
 						surface: String(p.surface ?? -1),
 						wait: p.wait ?? 100,
 						waitMax: p.wait_max ?? null,
@@ -252,13 +220,7 @@ export function manifestToSurfaceData(manifest) {
 	};
 }
 
-/**
- * Rust 側でシェルをパースしてマニフェストを取得する（失敗時 null）
- * @param {string} ghostName - ゴースト名
- * @param {string} shellName - シェル名
- * @returns {Promise<Record<string, any>|null>}
- */
-export async function getShellManifest(ghostName, shellName) {
+export async function getShellManifest(ghostName: string, shellName: string) {
 	try {
 		return await invoke("shell_manifest", { ghostName, shellName });
 	} catch (err) {
@@ -270,14 +232,9 @@ export async function getShellManifest(ghostName, shellName) {
 	}
 }
 
-/**
- * Rust 側で surfaces.txt のテキスト内容をパースしてサーフィスデータを取得する
- * @param {string} content
- * @returns {Promise<{ collisions: Record<string, any[]>, elements: Record<string, any[]>, animations: Record<string, any[]> }|null>}
- */
-export async function parseSurfacesTextWithRust(content) {
+export async function parseSurfacesTextWithRust(content: string) {
 	try {
-		const rawMap = await invoke("parse_surfaces_text", { content });
+		const rawMap: any = await invoke("parse_surfaces_text", { content });
 		if (!rawMap || typeof rawMap !== "object") return null;
 
 		const surfaces = Object.values(rawMap);

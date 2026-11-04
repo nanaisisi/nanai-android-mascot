@@ -1,29 +1,18 @@
 /**
- * @file surface-collision.js
+ * @file surface-collision.ts
  * @brief サーフィスエイリアス解決およびマウス・タッチ当たり判定モジュール
  */
 import { collisionContains } from "./shell-manifest.js";
 
-/** @type {WeakMap<object, Map<string, number[]>>} */
-const aliasCaseCache = new WeakMap();
+const aliasCaseCache = new WeakMap<object, Map<string, number[]>>();
 
 export const surfaceCollisionMethods = {
-	/**
-	 * サーフィスエイリアス名（surface.alias ブロック）をサーフィス番号へ解決する
-	 * (UKADOC準拠: 複数番号が設定されている場合はランダム抽選)
-	 *
-	 * 数値または未登録の名前はそのまま返す。
-	 * @this {import('./surface-manager.js').SurfaceManager}
-	 * @param {number|string|null|undefined} surfaceId
-	 * @param {number} [scopeId] - 0 (さくら / 共通) または 1 (うにゅ)
-	 * @returns {number|string} 解決済みサーフィス番号（文字列）または元の値
-	 */
-	resolveSurfaceNumber(surfaceId, scopeId = 0) {
+	resolveSurfaceNumber(surfaceId: number | string | null | undefined, scopeId: number = 0): number | string {
 		const name = String(surfaceId ?? "").trim();
 		if (name === "" || /^-?\d+$/.test(name)) {
-			return surfaceId;
+			return surfaceId as any;
 		}
-		const map = scopeId === 1 ? this.keroAliases : this.aliases;
+		const map = scopeId === 1 ? (this as any).keroAliases : (this as any).aliases;
 		let list = Array.isArray(map?.[name]) ? map[name] : null;
 		if (!list && map) {
 			let lowerMap = aliasCaseCache.get(map);
@@ -41,31 +30,25 @@ export const surfaceCollisionMethods = {
 			list = lowerMap.get(name.toLowerCase()) ?? null;
 		}
 		if (!list || list.length === 0) {
-			return surfaceId;
+			return surfaceId as any;
 		}
 		return String(list[Math.floor(Math.random() * list.length)]);
 	},
 
-	/**
-	 * マウス・タッチ座標から当たり部位（head, bust等）を判定
-	 * `collision-sort` (ascend, descend, id, none) を反映し、AABB事前判定による高速化を行う
-	 * @this {import('./surface-manager.js').SurfaceManager}
-	 */
-	detectCollision(clickX, clickY, targetRect, surfaceId = null, scopeId = 0) {
+	detectCollision(clickX: number, clickY: number, targetRect: any, surfaceId: number | string | null = null, scopeId: number = 0) {
 		const sid =
 			surfaceId !== null
 				? String(surfaceId)
-				: String(this.currentSurfaceIdFor(scopeId));
+				: String((this as any).currentSurfaceIdFor(scopeId));
 
 		const relX = (clickX - targetRect.left) / targetRect.width;
 		const relY = (clickY - targetRect.top) / targetRect.height;
 
-		const canvasX = Math.round(relX * this.baseWidth);
-		const canvasY = Math.round(relY * this.baseHeight);
+		const canvasX = Math.round(relX * (this as any).baseWidth);
+		const canvasY = Math.round(relY * (this as any).baseHeight);
 
-		// 再生中アニメーションの動的当たり判定（SERIKO animation*.collision*）を手前として最優先判定
 		const activeAnimationCols =
-			this.animationManager?.getActiveCollisions?.(scopeId) || [];
+			(this as any).animationManager?.getActiveCollisions?.(scopeId) || [];
 		for (let i = activeAnimationCols.length - 1; i >= 0; i--) {
 			const col = activeAnimationCols[i];
 			if (collisionContains(col, canvasX, canvasY)) {
@@ -78,30 +61,27 @@ export const surfaceCollisionMethods = {
 			}
 		}
 
-		const colList = this.collisions[sid] || this.collisions.default || [];
+		const colList = (this as any).collisions[sid] || (this as any).collisions.default || [];
 		if (colList.length === 0) {
 			return { name: "", canvasX, canvasY };
 		}
 
-		const sortKind = String(this.collisionSort || "none").toLowerCase();
+		const sortKind = String((this as any).collisionSort || "none").toLowerCase();
 
 		let candidates;
 		if (sortKind === "ascend" || sortKind === "id") {
-			// ID昇順: 0, 1, 2... の順に手前として判定
-			candidates = colList.slice().sort((a, b) => {
+			candidates = colList.slice().sort((a: any, b: any) => {
 				const idA = a.id != null ? a.id : Number.MAX_SAFE_INTEGER;
 				const idB = b.id != null ? b.id : Number.MAX_SAFE_INTEGER;
 				return idA - idB;
 			});
 		} else if (sortKind === "descend") {
-			// ID降順: 10, 9, 8... の順に手前として判定
-			candidates = colList.slice().sort((a, b) => {
+			candidates = colList.slice().sort((a: any, b: any) => {
 				const idA = a.id != null ? a.id : -1;
 				const idB = b.id != null ? b.id : -1;
 				return idB - idA;
 			});
 		} else {
-			// none または未指定: surfaces.txt で後に定義されたものが手前（逆順探索）
 			for (let i = colList.length - 1; i >= 0; i--) {
 				const col = colList[i];
 				if (collisionContains(col, canvasX, canvasY)) {
@@ -135,16 +115,8 @@ export const surfaceCollisionMethods = {
 		};
 	},
 
-	/**
-	 * 当たり判定名・イベント種別に対応するカーソル定義を取得
-	 * @this {import('./surface-manager.js').SurfaceManager}
-	 * @param {number|string} scopeId - 0 / 1 または "sakura" / "kero" / "char*"
-	 * @param {string} eventType - mouseup, mousedown, mouserightdown, mousewheel, mousehover
-	 * @param {string} collisionName - 当たり判定名 (例: "Head", "Bust")
-	 * @returns {string|null} カーソル識別子 (例: "system:hand", "system:finger") または画像ファイルパス
-	 */
-	getCursorForCollision(scopeId, eventType, collisionName) {
-		if (!this.cursors || !collisionName) return null;
+	getCursorForCollision(scopeId: number | string, eventType: string, collisionName: string): string | null {
+		if (!(this as any).cursors || !collisionName) return null;
 		const scopeKey =
 			scopeId === 0 || scopeId === "0"
 				? "sakura"
@@ -155,7 +127,7 @@ export const surfaceCollisionMethods = {
 		const evLower = String(eventType || "").toLowerCase();
 		const colLower = String(collisionName).toLowerCase();
 
-		const lists = [this.cursors[scopeKey], this.cursors["*"]].filter(Boolean);
+		const lists = [(this as any).cursors[scopeKey], (this as any).cursors["*"]].filter(Boolean);
 		for (const list of lists) {
 			for (let i = list.length - 1; i >= 0; i--) {
 				const entry = list[i];
@@ -171,15 +143,8 @@ export const surfaceCollisionMethods = {
 		return null;
 	},
 
-	/**
-	 * 当たり判定名に対応するツールチップテキストを取得
-	 * @this {import('./surface-manager.js').SurfaceManager}
-	 * @param {number|string} scopeId - 0 / 1 または "sakura" / "kero" / "char*"
-	 * @param {string} collisionName - 当たり判定名 (例: "Head", "Bust")
-	 * @returns {string|null} ツールチップ本文
-	 */
-	getTooltipForCollision(scopeId, collisionName) {
-		if (!this.tooltips || !collisionName) return null;
+	getTooltipForCollision(scopeId: number | string, collisionName: string): string | null {
+		if (!(this as any).tooltips || !collisionName) return null;
 		const scopeKey =
 			scopeId === 0 || scopeId === "0"
 				? "sakura"
@@ -187,7 +152,7 @@ export const surfaceCollisionMethods = {
 					? "kero"
 					: String(scopeId).toLowerCase();
 
-		const maps = [this.tooltips[scopeKey], this.tooltips["*"]].filter(Boolean);
+		const maps = [(this as any).tooltips[scopeKey], (this as any).tooltips["*"]].filter(Boolean);
 		const colLower = String(collisionName).toLowerCase();
 		for (const map of maps) {
 			for (const key in map) {

@@ -9,12 +9,15 @@ globalThis.document = {
 		style: {},
 		classList: { remove() {} },
 	}),
+	querySelector: () => ({ style: {} }),
+	querySelectorAll: () => [],
 };
 
 const { actionMethods } = await import("../ui/js/core/app-actions.js");
 
 test("actionMethods.handleMenuAction covers all branches including Tauri folder open, balloon labels, and close-all", async () => {
 	const mockApp = {
+		...actionMethods,
 		ghostController: {
 			currentGhost: { name: "Mock", isTemporary: true },
 			selectGhost: async () => {},
@@ -28,22 +31,11 @@ test("actionMethods.handleMenuAction covers all branches including Tauri folder 
 		interactionManager: { balloonOffsetX: 0, balloonOffsetY: 0 },
 		showBalloon() {},
 		hideBalloon() {},
-		startNetworkUpdate: async () => {},
-		showGhostInformation: async () => {},
-		uninstallCurrentGhost: async () => {},
-		installGhostFromMenu: async () => {},
-		cycleBalloonTheme: async () => {},
-		setBalloonTheme() {},
-		applyShellScaleAction() {},
-		applyBalloonScaleAction() {},
 		closeApp() {},
 		minimizeApp() {},
-		callGhost: async () => {},
-		handleDressupToggle: async () => {},
 		onGhostClick() {
 			return "talk-result";
 		},
-		checkEmail: async () => {},
 	};
 
 	// Bind mockApp to actionMethods
@@ -133,6 +125,15 @@ test("actionMethods.handleMenuAction covers all branches including Tauri folder 
 	handle("resetballoonpos");
 	handle("reset-shell-position");
 	handle("resetwindowpos");
+
+	// Trigger catch block in localStorage.removeItem
+	globalThis.localStorage = {
+		removeItem() {
+			throw new Error("storage fail");
+		},
+	};
+	handle("reset-balloon-position");
+	globalThis.localStorage = { removeItem() {} };
 
 	// Reset positions with elements null / interactionManager null
 	mockApp.elements = null;

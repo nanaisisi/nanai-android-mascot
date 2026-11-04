@@ -43,19 +43,19 @@ export const actionMethods = {
 				payload && typeof payload === "object" && "scope" in payload
 					? payload.scope
 					: 0;
-			return (this as any).onGhostClick(undefined, undefined, undefined, scopeId);
+			return (this as any).onGhostClick?.(undefined, undefined, undefined, scopeId);
 		}
 
 		if (action === "update") {
-			return (this as any).startNetworkUpdate();
+			return (this as any).startNetworkUpdate?.();
 		}
 
 		if (action === "updatecheck") {
-			return (this as any).startNetworkUpdate(null, { checkOnly: true });
+			return (this as any).startNetworkUpdate?.(null, { checkOnly: true });
 		}
 
 		if (action === "ghost-info") {
-			return (this as any).showGhostInformation();
+			return (this as any).showGhostInformation?.();
 		}
 		if (action === "explorer") {
 			return (this as any).modalManager?.show("explorer-modal-content");
@@ -67,8 +67,8 @@ export const actionMethods = {
 			const currentName =
 				gc.currentGhost?.name || AppConfig.paths.fallbackGhostName;
 			return gc.selectGhost(currentName).then(() => {
-				(this as any).showBalloon("🔄 ゴーストを再読み込みしました");
-				setTimeout(() => (this as any).hideBalloon(), 2000);
+				(this as any).showBalloon?.("🔄 ゴーストを再読み込みしました");
+				setTimeout(() => (this as any).hideBalloon?.(), 2000);
 			});
 		}
 		if (action === "reset-shell-position" || action === "resetwindowpos") {
@@ -84,8 +84,8 @@ export const actionMethods = {
 			if (isTauriAvailable()) {
 				invoke("set_character_scale", { scale: 1.0 }).catch(() => {});
 			}
-			(this as any).showBalloon("📍 シェル位置・倍率を初期リセットしました");
-			setTimeout(() => (this as any).hideBalloon(), 2000);
+			(this as any).showBalloon?.("📍 シェル位置・倍率を初期リセットしました");
+			setTimeout(() => (this as any).hideBalloon?.(), 2000);
 			return;
 		}
 		if (action === "reset-balloon-position" || action === "resetballoonpos") {
@@ -106,28 +106,28 @@ export const actionMethods = {
 					() => {},
 				);
 			}
-			(this as any).showBalloon("📍 バルーン位置を初期リセットしました");
-			setTimeout(() => (this as any).hideBalloon(), 2000);
+			(this as any).showBalloon?.("📍 バルーン位置を初期リセットしました");
+			setTimeout(() => (this as any).hideBalloon?.(), 2000);
 			return;
 		}
 		if (action === "close-balloon") {
-			return (this as any).hideBalloon();
+			return (this as any).hideBalloon?.();
 		}
 		if (action === "keep-temporary-ghost") {
 			const gc = (this as any).ghostController;
 			if (gc.currentGhost?.isTemporary) {
 				gc.currentGhost.isTemporary = false;
-				(this as any).showBalloon("📌 一時起動ゴーストを通常起動状態として保持しました");
+				(this as any).showBalloon?.("📌 一時起動ゴーストを通常起動状態として保持しました");
 				gc.sendShioriEvent("OnBoot");
 			} else {
-				(this as any).showBalloon("⚠️ 一時起動中のゴーストではありません");
+				(this as any).showBalloon?.("⚠️ 一時起動中のゴーストではありません");
 			}
-			setTimeout(() => (this as any).hideBalloon(), 2000);
+			setTimeout(() => (this as any).hideBalloon?.(), 2000);
 			return;
 		}
 
 		if (action === "biff" || action === "mail") {
-			return (this as any).checkEmail();
+			return (this as any).checkEmail?.();
 		}
 
 		if (SHIORI_ACTIONS[action]) {
@@ -138,8 +138,8 @@ export const actionMethods = {
 		if (action === "scan") {
 			return gc.scanGhosts().then(() => {
 				(this as any).syncMenuGhosts?.();
-				(this as any).showBalloon("🔄 ゴーストフォルダを再スキャンしました");
-				setTimeout(() => (this as any).hideBalloon(), 2000);
+				(this as any).showBalloon?.("🔄 ゴーストフォルダを再スキャンしました");
+				setTimeout(() => (this as any).hideBalloon?.(), 2000);
 			});
 		}
 		if (
@@ -150,13 +150,13 @@ export const actionMethods = {
 			if (isTauriAvailable()) {
 				invoke("open_ghost_directory")
 					.then(() => {
-						(this as any).showBalloon("📁 ゴーストフォルダを開きました");
-						setTimeout(() => (this as any).hideBalloon(), 2000);
+						(this as any).showBalloon?.("📁 ゴーストフォルダを開きました");
+						setTimeout(() => (this as any).hideBalloon?.(), 2000);
 					})
 					.catch((e) => console.error(e));
 			} else {
-				(this as any).showBalloon("📁 ゴーストフォルダを開く機能はアプリ版でのみ利用可能です");
-				setTimeout(() => (this as any).hideBalloon(), 2000);
+				(this as any).showBalloon?.("📁 ゴーストフォルダを開く機能はアプリ版でのみ利用可能です");
+				setTimeout(() => (this as any).hideBalloon?.(), 2000);
 			}
 			return;
 		}
@@ -166,7 +166,7 @@ export const actionMethods = {
 			action === "uninstallghost" ||
 			action === "delete-ghost"
 		) {
-			return (this as any).uninstallCurrentGhost();
+			return (this as any).uninstallCurrentGhost?.();
 		}
 		if (
 			action === "install" ||
@@ -174,13 +174,13 @@ export const actionMethods = {
 			action === "installghost" ||
 			action === "add-ghost"
 		) {
-			return (this as any).installGhostFromMenu();
+			return (this as any).installGhostFromMenu?.();
 		}
 		if (action === "balloon" || action === "balloon-cycle")
-			return (this as any).cycleBalloonTheme();
+			return (this as any).cycleBalloonTheme?.();
 		if (action.startsWith("balloon-theme-")) {
 			const theme = action.replace("balloon-theme-", "");
-			(this as any).setBalloonTheme(theme);
+			(this as any).setBalloonTheme?.(theme);
 			let label = THEME_LABELS[theme] || theme;
 			if ((this as any).availableBalloons) {
 				const bInfo = (this as any).availableBalloons.find(
@@ -188,17 +188,17 @@ export const actionMethods = {
 				);
 				if (bInfo) label = bInfo.name;
 			}
-			(this as any).showBalloon(`バルーンスキンを「${label}」に変更しました`);
-			setTimeout(() => (this as any).hideBalloon(), 2000);
+			(this as any).showBalloon?.(`バルーンスキンを「${label}」に変更しました`);
+			setTimeout(() => (this as any).hideBalloon?.(), 2000);
 			return;
 		}
-		if (action.startsWith("scale-")) return (this as any).applyShellScaleAction(action);
+		if (action.startsWith("scale-")) return (this as any).applyShellScaleAction?.(action);
 		if (action.startsWith("balloon-scale-"))
-			return (this as any).applyBalloonScaleAction(action);
-		if (action === "close" || action === "exit") return (this as any).closeApp();
-		if (action === "close-all" || action === "exit-all") return (this as any).closeApp();
+			return (this as any).applyBalloonScaleAction?.(action);
+		if (action === "close" || action === "exit") return (this as any).closeApp?.();
+		if (action === "close-all" || action === "exit-all") return (this as any).closeApp?.();
 		if (action === "close-menu") return;
-		if (action === "minimize") return (this as any).minimizeApp();
+		if (action === "minimize") return (this as any).minimizeApp?.();
 		if (
 			(action === "switch-to-ghost" || action === "switch-ghost") &&
 			payload
@@ -214,7 +214,7 @@ export const actionMethods = {
 				typeof payload === "string"
 					? payload
 					: payload.name || payload.ghostName;
-			if (ghostName) return (this as any).callGhost(ghostName);
+			if (ghostName) return (this as any).callGhost?.(ghostName);
 		}
 		if (action === "recent-ghost" && payload) {
 			const ghostName =
@@ -234,7 +234,7 @@ export const actionMethods = {
 			if (shellName) return gc.selectShell(shellName);
 		}
 		if (action === "dressup-toggle" && payload) {
-			return (this as any).handleDressupToggle(payload);
+			return (this as any).handleDressupToggle?.(payload);
 		}
 
 		const modalKey = action === "ghost-switch" ? "ghost" : action;

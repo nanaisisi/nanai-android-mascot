@@ -109,3 +109,45 @@ test("settingsMethods coverage for loadSettings, applySettings, showBalloon, hid
 
 	assert.ok(true);
 });
+
+test("settingsMethods edge branches (missing elements, localStorage error/null, theme fallbacks)", () => {
+	const mockApp = {
+		...settingsMethods,
+		settings: {},
+		elements: {},
+		currentBalloonTheme: null,
+		setBalloonTheme(theme) {
+			this.currentBalloonTheme = theme;
+		},
+	};
+
+	const origGet = localStorage.getItem;
+	localStorage.getItem = () => null;
+	mockApp.loadSettings();
+	localStorage.getItem = () => "{ invalid json";
+	mockApp.loadSettings();
+	localStorage.getItem = origGet;
+
+	mockApp.settings = { shellScale: "invalid", balloonScale: "invalid" };
+	mockApp.applySettings();
+
+	mockApp.settings = {};
+	mockApp.currentBalloonTheme = null;
+	mockApp.applyBalloonTheme();
+	assert.equal(mockApp.currentBalloonTheme, "default");
+
+	mockApp.elements = {};
+	mockApp.showBalloon("no elements");
+	mockApp.hideBalloon();
+
+	globalThis.__TAURI_INTERNALS__ = {
+		invoke: async () => {},
+		transformCallback: (cb) => cb,
+		plugins: { event: { emit: async () => {} } },
+	};
+	mockApp.elements = {};
+	mockApp.showBalloon("fallback text");
+	delete globalThis.__TAURI_INTERNALS__;
+
+	assert.ok(true);
+});

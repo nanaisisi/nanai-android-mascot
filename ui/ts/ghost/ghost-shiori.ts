@@ -26,7 +26,11 @@ export const ghostShioriMethods = {
 			if (!isCurrentLoad()) return;
 
 			try {
-				await (this as any).sendShioriEvent("OnBoot");
+				const bootRes: any = await (this as any).sendShioriEvent("OnBoot");
+				const scriptText = bootRes?.value || bootRes?.headers?.value;
+				if (bootRes?.status === 200 && scriptText) {
+					(this as any).app?.playSakuraScript?.(scriptText);
+				}
 				if ((this as any).app?.availablePlugins && isTauriAvailable()) {
 					for (const plugin of (this as any).app.availablePlugins) {
 						invoke("execute_plugin_event", {

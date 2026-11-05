@@ -15,10 +15,20 @@ export function handleScope(player: any, app: any, token: any, context: any) {
 		shownScopes,
 	} = context;
 
-	const rawScope = token.value;
-	player.currentScope = rawScope >= 1 ? 1 : 0;
+	const rawScope = token.value ?? 0;
+	player.currentScope = rawScope;
 	player.playbackController?.notifyScope?.(player.currentScope);
-	if (player.currentScope === 1) {
+
+	if (player.currentScope === 0) {
+		app.surfaceManager?.onTalkEnd(1);
+		if (!isTauriAvailable()) {
+			if (app.elements.sakuraSlot) {
+				app.elements.sakuraSlot.style.display = "flex";
+			}
+			sakuraDisplay.style.display = "block";
+		}
+		context.currentBalloonText = sakuraText;
+	} else if (player.currentScope === 1) {
 		app.surfaceManager?.onTalkEnd(0);
 		if (!isTauriAvailable()) {
 			if (app.elements.keroSlot) {
@@ -29,33 +39,17 @@ export function handleScope(player: any, app: any, token: any, context: any) {
 			}
 		}
 		context.currentBalloonText = keroText || sakuraText;
-		if (isTauriAvailable() && hasTextContent && !shownScopes.has(1)) {
-			shownScopes.add(1);
-			invoke("show_balloon_window", {
-				scopeId: 1,
-				theme: app.currentBalloonTheme,
-			}).catch(() => {});
-		}
 	} else {
-		app.surfaceManager?.onTalkEnd(1);
-		if (!isTauriAvailable()) {
-			if (app.elements.sakuraSlot) {
-				app.elements.sakuraSlot.style.display = "flex";
-			}
-			sakuraDisplay.style.display = "block";
-		}
-		context.currentBalloonText = sakuraText;
-		if (
-			isTauriAvailable() &&
-			hasTextContent &&
-			!shownScopes.has(0)
-		) {
-			shownScopes.add(0);
-			invoke("show_balloon_window", {
-				scopeId: 0,
-				theme: app.currentBalloonTheme,
-			}).catch(() => {});
-		}
+		app.surfaceManager?.onTalkEnd(0);
+		context.currentBalloonText = keroText || sakuraText;
+	}
+
+	if (isTauriAvailable() && hasTextContent && !shownScopes.has(player.currentScope)) {
+		shownScopes.add(player.currentScope);
+		invoke("show_balloon_window", {
+			scopeId: player.currentScope,
+			theme: app.currentBalloonTheme,
+		}).catch(() => {});
 	}
 }
 

@@ -15,7 +15,8 @@ export function handleScope(player: any, app: any, token: any, context: any) {
 		shownScopes,
 	} = context;
 
-	player.currentScope = token.value;
+	const rawScope = token.value;
+	player.currentScope = rawScope >= 1 ? 1 : 0;
 	player.playbackController?.notifyScope?.(player.currentScope);
 	if (player.currentScope === 1) {
 		app.surfaceManager?.onTalkEnd(0);
@@ -47,11 +48,11 @@ export function handleScope(player: any, app: any, token: any, context: any) {
 		if (
 			isTauriAvailable() &&
 			hasTextContent &&
-			!shownScopes.has(player.currentScope)
+			!shownScopes.has(0)
 		) {
-			shownScopes.add(player.currentScope);
+			shownScopes.add(0);
 			invoke("show_balloon_window", {
-				scopeId: player.currentScope,
+				scopeId: 0,
 				theme: app.currentBalloonTheme,
 			}).catch(() => {});
 		}

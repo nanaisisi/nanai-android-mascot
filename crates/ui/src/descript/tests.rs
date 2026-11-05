@@ -65,6 +65,8 @@ fn test_descript_more_properties() {
         icon,icon.png\n\
         craftman,Author\n\
         craftmanurl,https://author.url\n\
+        cinfo,Copyright 2026 Nanai\n\
+        shiori,shiori.dll\n\
         type,ghost\n";
     let desc = Descript::parse(sample);
     assert_eq!(desc.name().unwrap(), "MockGhost");
@@ -81,6 +83,8 @@ fn test_descript_more_properties() {
     assert_eq!(desc.icon().unwrap(), "icon.png");
     assert_eq!(desc.craftmanw().unwrap(), "Author");
     assert_eq!(desc.craftmanurl().unwrap(), "https://author.url");
+    assert_eq!(desc.cinfo().unwrap(), "Copyright 2026 Nanai");
+    assert_eq!(desc.shiori_path().unwrap(), "shiori.dll");
     assert_eq!(desc.type_().unwrap(), "ghost");
 
     let sample2 = "craftmanw,AuthorW\ncraftman,Author\n";

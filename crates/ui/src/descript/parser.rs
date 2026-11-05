@@ -103,6 +103,16 @@ impl Descript {
         self.get("craftmanurl")
     }
 
+    /// 作者情報 / コピーライト (`cinfo` / `cinfow` キー)
+    pub fn cinfo(&self) -> Option<&String> {
+        self.get("cinfow").or_else(|| self.get("cinfo"))
+    }
+
+    /// SHIORI DLL パス (`shiori` キー)
+    pub fn shiori_path(&self) -> Option<&String> {
+        self.get("shiori")
+    }
+
     /// ウィンドウ種別 (`type` キー: ghost / shell / balloon / headline / plugin)
     pub fn type_(&self) -> Option<&String> {
         self.get("type")

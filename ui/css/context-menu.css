@@ -11,9 +11,9 @@
 }
 
 body {
-	font-family: var(--balloon-font-family);
-	background-color: var(--balloon-bg, #f9f9f9);
-	color: var(--balloon-text-color);
+	font-family: var(--balloon-font-family, sans-serif);
+	background: transparent;
+	color: var(--balloon-text-color, #111111);
 	user-select: none;
 	-webkit-user-select: none;
 	overflow: hidden;
@@ -37,7 +37,7 @@ body.subchar-mode .main-only {
 	min-height: 100%;
 	overflow-y: hidden;
 	overflow-x: visible;
-	background-color: var(--balloon-bg, #f9f9f9);
+	background: transparent;
 	background-image: var(--menu-bg-image, var(--balloon-pattern));
 	background-repeat: var(--menu-bg-repeat, repeat);
 	background-position: var(--menu-bg-position, left top);
@@ -56,7 +56,7 @@ body.subchar-mode .main-only {
 	width: var(--menu-sidebar-width, 24px);
 	height: 100%;
 	min-height: 100%;
-	background-color: var(--balloon-bg, #f9f9f9);
+	background: transparent;
 	background-image: var(--menu-sidebar-image, none);
 	background-repeat: repeat-y;
 	background-position: var(--menu-sidebar-position, left bottom);

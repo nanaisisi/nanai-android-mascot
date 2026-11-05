@@ -19,7 +19,7 @@ body {
 	overflow: hidden;
 	padding: 0;
 	display: flex;
-	justify-content: flex-start;
+	flex-direction: row;
 	align-items: stretch;
 	height: 100%;
 	min-height: 100vh;
@@ -52,7 +52,7 @@ body.subchar-mode .main-only {
 }
 
 .menu-sidebar {
-	display: none;
+	display: block;
 	width: var(--menu-sidebar-width, 24px);
 	height: 100%;
 	min-height: 100%;
@@ -62,18 +62,6 @@ body.subchar-mode .main-only {
 	background-position: var(--menu-sidebar-position, left bottom);
 	background-size: 100% auto;
 	flex-shrink: 0;
-}
-
-body.has-sidebar .menu-sidebar {
-	display: block;
-}
-
-body.has-sidebar {
-	display: flex;
-	flex-direction: row;
-	align-items: stretch;
-	height: 100%;
-	min-height: 100vh;
 }
 
 .menu-container::-webkit-scrollbar,

@@ -3,6 +3,7 @@
  * @brief トークン列をバルーンにアニメーション再生するさくらスクリプトプレイヤー本体
  */
 
+import { isTauriAvailable } from "../core/tauri-helper.js";
 import { handleToken } from "./sakura-play/handlers.js";
 import { translateScript } from "./sakura-play/translator.js";
 import { initBalloonWindows } from "./sakura-play/window.js";
@@ -107,6 +108,8 @@ export async function playScript(player: any, script: string) {
 				try {
 					if (sakuraDisplay) sakuraDisplay.style.display = "none";
 					if (keroDisplay) keroDisplay.style.display = "none";
+					app.hideBalloon?.(0);
+					app.hideBalloon?.(1);
 					await app.ghostController?.sendShioriEvent?.("OnBalloonTimeout", [
 						player.lastScript || "",
 						"0",
@@ -114,5 +117,12 @@ export async function playScript(player: any, script: string) {
 				} catch (_e) {}
 			}
 		}, player.balloonTimeout);
+	} else if (!hasChoices && isTauriAvailable()) {
+		setTimeout(() => {
+			if (player.playbackId === currentId && !player.isPlaying) {
+				app.hideBalloon?.(0);
+				app.hideBalloon?.(1);
+			}
+		}, 4000);
 	}
 }

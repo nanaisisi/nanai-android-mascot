@@ -1,4 +1,4 @@
-import { invoke, isTauriAvailable } from "../../core/tauri-helper.js";
+import { emit, invoke, isTauriAvailable } from "../../core/tauri-helper.js";
 
 export async function initBalloonWindows(
 	app: any,
@@ -22,7 +22,14 @@ export async function initBalloonWindows(
 			invoke("show_balloon_window", {
 				scopeId: 0,
 				theme: app.currentBalloonTheme,
-			}).catch(() => {}),
+			})
+				.then(() => {
+					emit("update-balloon-content-0", {
+						html: sakuraText.innerHTML || "",
+						theme: app.currentBalloonTheme || "default",
+					});
+				})
+				.catch(() => {}),
 		];
 		const hasKero = tokens.some((t: any) => t.type === "scope" && t.value >= 1);
 		if (hasKero) {
@@ -31,7 +38,14 @@ export async function initBalloonWindows(
 				invoke("show_balloon_window", {
 					scopeId: 1,
 					theme: app.currentBalloonTheme,
-				}).catch(() => {}),
+				})
+					.then(() => {
+						emit("update-balloon-content-1", {
+							html: (keroText || sakuraText)?.innerHTML || "",
+							theme: app.currentBalloonTheme || "default",
+						});
+					})
+					.catch(() => {}),
 			);
 		}
 		await Promise.all(winPromises);

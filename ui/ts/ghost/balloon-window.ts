@@ -98,3 +98,13 @@ export function initBalloonWindow() {
 
 	void emit("balloon-ready", { scopeId });
 }
+
+if (typeof document !== "undefined") {
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", () => {
+			initBalloonWindow();
+		});
+	} else {
+		initBalloonWindow();
+	}
+}

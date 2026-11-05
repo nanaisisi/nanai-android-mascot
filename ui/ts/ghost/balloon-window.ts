@@ -95,4 +95,6 @@ export function initBalloonWindow() {
 			}
 		}
 	});
+
+	void emit("balloon-ready", { scopeId });
 }

@@ -71,7 +71,8 @@
 	display: block;
 	border: none;
 	width: 100%;
-	height: clamp(22rem, 85vh, 42rem);
+	height: max-content;
+	max-height: 85vh;
 	background: transparent;
 	pointer-events: auto;
 }

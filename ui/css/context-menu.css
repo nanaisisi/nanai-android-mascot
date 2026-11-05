@@ -30,11 +30,11 @@ body.subchar-mode .main-only {
 }
 
 .menu-container {
-	padding: 0.25rem 0;
+	padding: 0;
 	width: clamp(11rem, 280px, 16rem);
 	height: 100%;
 	max-height: 100vh;
-	overflow-y: auto;
+	overflow-y: hidden;
 	overflow-x: visible;
 	background-color: var(--balloon-bg, #f9f9f9);
 	background-image: var(--menu-bg-image, var(--balloon-pattern));
@@ -84,8 +84,8 @@ body.has-sidebar {
 
 .menu-item {
 	width: 100%;
-	padding: 0.5rem 0.875rem;
-	min-height: 32px;
+	padding: 0.35rem 0.75rem;
+	min-height: 26px;
 	touch-action: manipulation;
 	-webkit-tap-highlight-color: transparent;
 	background: none;

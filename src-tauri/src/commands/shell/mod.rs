@@ -6,11 +6,13 @@
 
 pub mod animation;
 pub mod balloon;
+pub mod compositor;
 pub mod ghost;
 pub mod manifest;
 
 pub use animation::*;
 pub use balloon::*;
+pub use compositor::*;
 pub use ghost::*;
 pub use manifest::*;
 

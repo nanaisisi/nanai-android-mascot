@@ -11,26 +11,66 @@
     <div class="menu-sidebar" id="menu-sidebar" aria-hidden="true"></div>
     <div class="menu-container" role="menu" aria-label="標準メニュー">
       <!-- ================================================================= -->
-      <!-- SSP 互換右クリックメニュー階層構造定義 (HTML仕様表現) -->
+      <!-- ユーザー様ご指定・SSP正式メニュー構造完全一致実装 -->
       <!-- ================================================================= -->
 
-      <!-- 0. ゴースト側メニュー -->
       <button
         type="button"
-        class="menu-item main-only"
-        id="talk-btn"
+        class="menu-item"
+        id="friends-btn"
         role="menuitem"
       >
-        <span>💬 もう一度話す (A)</span>
+        <span>おともだち</span>
       </button>
 
       <button
         type="button"
         class="menu-item main-only"
-        id="autotalk-btn"
+        id="favorite-btn"
         role="menuitem"
       >
-        <span>🗣️ 自動会話 (T)</span>
+        <span>おきにいり</span>
+      </button>
+
+      <button
+        type="button"
+        class="menu-item main-only"
+        id="update-btn"
+        role="menuitem"
+      >
+        <span>こうしんCtrl+U</span>
+      </button>
+
+      <hr class="menu-separator main-only" />
+
+      <button
+        type="button"
+        class="menu-item main-only"
+        id="uninstall-btn"
+        role="menuitem"
+      >
+        <span>アンインストール(U)</span>
+      </button>
+
+      <hr class="menu-separator main-only" />
+
+      <button
+        type="button"
+        class="menu-item main-only"
+        id="headlines-btn"
+        role="menuitem"
+      >
+        <span>RSS/ヘッドライン(H)</span>
+      </button>
+
+      <button
+        type="button"
+        class="menu-item main-only"
+        id="plugin-btn"
+        role="menuitem"
+        aria-haspopup="true"
+      >
+        <span>プラグイン(P)</span>
       </button>
 
       <button
@@ -39,19 +79,75 @@
         id="biff-btn"
         role="menuitem"
       >
-        <span>✉️ メールチェック (B)</span>
+        <span>メールチェック (M)</span>
       </button>
 
       <button
         type="button"
         class="menu-item main-only"
-        id="headlines-btn"
+        id="shell-scale-root-btn"
         role="menuitem"
       >
-        <span>🌐 ヘッドライン (H)</span>
+        <span>シェル倍率(E)</span>
+      </button>
+
+      <button
+        type="button"
+        class="menu-item main-only"
+        id="balloon-scale-btn"
+        role="menuitem"
+      >
+        <span>バルーン倍率(D)</span>
+      </button>
+
+      <button
+        type="button"
+        class="menu-item main-only"
+        id="utility-root-btn"
+        role="menuitem"
+      >
+        <span>機能(E)</span>
+      </button>
+
+      <button
+        type="button"
+        class="menu-item main-only"
+        id="config-btn"
+        role="menuitem"
+      >
+        <span>設定(Q)</span>
       </button>
 
       <hr class="menu-separator main-only" />
+
+      <button
+        type="button"
+        class="menu-item main-only"
+        id="ghost-btn"
+        role="menuitem"
+        aria-haspopup="true"
+      >
+        <span>ゴースト切り替え(G)</span>
+      </button>
+
+      <button
+        type="button"
+        class="menu-item main-only"
+        id="call-ghost-btn"
+        role="menuitem"
+      >
+        <span>他のゴーストを呼ぶ(乙)</span>
+      </button>
+
+      <button
+        type="button"
+        class="menu-item main-only"
+        id="shell-btn"
+        role="menuitem"
+        aria-haspopup="true"
+      >
+        <span>シェル(S)</span>
+      </button>
 
       <button
         type="button"
@@ -60,123 +156,55 @@
         role="menuitem"
         aria-haspopup="true"
       >
-        <span>👗 着せ替え (D)</span>
+        <span>着せ替え(C)</span>
       </button>
 
       <button
         type="button"
-        class="menu-item"
-        id="shell-btn"
-        role="menuitem"
-        aria-haspopup="true"
-      >
-        <span>🐚 シェル切替 (S)</span>
-      </button>
-
-      <button
-        type="button"
-        class="menu-item"
-        id="ghost-btn"
-        role="menuitem"
-        aria-haspopup="true"
-      >
-        <span>👻 ゴースト切替 (G)</span>
-      </button>
-
-      <button
-        type="button"
-        class="menu-item"
+        class="menu-item main-only"
         id="balloon-btn"
         role="menuitem"
         aria-haspopup="true"
       >
-        <span>💭 バルーン切替 (L)</span>
+        <span>バルーン(B)</span>
       </button>
-
-      <hr class="menu-separator" />
 
       <button
         type="button"
-        class="menu-item"
-        id="update-btn"
+        class="menu-item main-only"
+        id="ghost-history-btn"
         role="menuitem"
       >
-        <span>🔄 ネットワーク更新 (U)</span>
+        <span>最近使ったもの(Y)</span>
       </button>
+
+      <hr class="menu-separator main-only" />
 
       <button
         type="button"
-        class="menu-item"
-        id="export-btn"
-        role="menuitem"
-      >
-        <span>📦 ゴースト・バルーン取込 (I)</span>
-      </button>
-
-      <button
-        type="button"
-        class="menu-item"
-        id="uninstall-btn"
-        role="menuitem"
-      >
-        <span>🗑️ アンインストール (X)</span>
-      </button>
-
-      <hr class="menu-separator" />
-
-      <button
-        type="button"
-        class="menu-item"
+        class="menu-item main-only"
         id="inquire-btn"
         role="menuitem"
       >
-        <span>❓ 質問・情報 (I)</span>
+        <span>情報(A)</span>
       </button>
 
       <button
         type="button"
-        class="menu-item"
-        id="readme-btn"
+        class="menu-item main-only"
+        id="language-btn"
         role="menuitem"
       >
-        <span>📖 リードミー (R)</span>
+        <span>Language</span>
       </button>
 
       <button
         type="button"
-        class="menu-item"
-        id="config-btn"
+        class="menu-item main-only"
+        id="minimize-btn"
         role="menuitem"
       >
-        <span>⚙️ 設定 (C)</span>
-      </button>
-
-      <button
-        type="button"
-        class="menu-item"
-        id="dev-btn"
-        role="menuitem"
-      >
-        <span>🛠️ 開発者パネル (P)</span>
-      </button>
-
-      <button
-        type="button"
-        class="menu-item"
-        id="sakura-script-btn"
-        role="menuitem"
-      >
-        <span>⌨️ さくらスクリプトテスト</span>
-      </button>
-
-      <button
-        type="button"
-        class="menu-item"
-        id="plugin-btn"
-        role="menuitem"
-        aria-haspopup="true"
-      >
-        <span>🔌 プラグイン</span>
+        <span>アイコン化 (1)Ctrl+1</span>
       </button>
 
       <hr class="menu-separator" />
@@ -184,11 +212,13 @@
       <button
         type="button"
         class="menu-item"
-        id="minimize-btn"
+        id="move-ghost-btn"
         role="menuitem"
       >
-        <span>🗕 最小化 (M)</span>
+        <span>ゴースト本体移動</span>
       </button>
+
+      <hr class="menu-separator" />
 
       <button
         type="button"
@@ -196,7 +226,7 @@
         id="close-btn"
         role="menuitem"
       >
-        <span>❌ 終了 (E)</span>
+        <span>終了(W)Ctrl+W</span>
       </button>
 
       <button
@@ -205,7 +235,7 @@
         id="close-all-btn"
         role="menuitem"
       >
-        <span>⏹️ 全終了 (Q)</span>
+        <span>全て終了(X)Ctrl+Q</span>
       </button>
     </div>
   </body>

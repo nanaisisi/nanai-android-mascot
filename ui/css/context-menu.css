@@ -27,7 +27,11 @@ body {
 }
 
 body.subchar-mode .main-only {
-	display: none;
+	display: none !important;
+}
+
+body:not(.subchar-mode) .subchar-only {
+	display: none !important;
 }
 
 .menu-container {

@@ -32,10 +32,13 @@ export async function playScript(player: any, script: string) {
 	}
 
 	const app = player.app;
-	const sakuraText = app.elements.balloonText;
-	const sakuraDisplay = app.elements.balloonDisplay;
-	const keroText = app.elements.keroBalloonText;
-	const keroDisplay = app.elements.keroBalloonDisplay;
+	const fallbackEl = (typeof document !== "undefined" && typeof document.getElementById === "function")
+		? (document.getElementById("balloon-text") || (typeof document.createElement === "function" ? document.createElement("div") : null))
+		: null;
+	const sakuraText = app?.elements?.balloonText || fallbackEl;
+	const sakuraDisplay = app?.elements?.balloonDisplay || (typeof document !== "undefined" && typeof document.getElementById === "function" ? document.getElementById("balloon-display") : null);
+	const keroText = app?.elements?.keroBalloonText || (typeof document !== "undefined" && typeof document.getElementById === "function" ? document.getElementById("kero-balloon-text") : null);
+	const keroDisplay = app?.elements?.keroBalloonDisplay || (typeof document !== "undefined" && typeof document.getElementById === "function" ? document.getElementById("kero-balloon-display") : null);
 
 	const hasTextContent = tokens.some(
 		(t: any) =>

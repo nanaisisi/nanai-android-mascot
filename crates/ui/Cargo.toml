@@ -13,10 +13,10 @@ rust-i18n = "4.2.4"
 sys-locale = "0.3.2"
 encoding_rs = "0.8.42"
 wasmi = "0.38"
-nanai_surface = { path = "../nanai-surface" }
-nanai_core = { path = "../nanai-core" }
-nanai_vfs = { path = "../nanai-vfs" }
-nanai_shiori_vm = { path = "../nanai-shiori-vm" }
+nanai-core = { path = "../nanai-core" }
+nanai-surface = { path = "../nanai-surface" }
+nanai-shiori-vm = { path = "../nanai-shiori-vm" }
+nanai-vfs = { path = "../nanai-vfs" }
 
 [dev-dependencies]
 serde_json = "1.0.154"

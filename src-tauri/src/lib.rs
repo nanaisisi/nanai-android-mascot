@@ -65,16 +65,17 @@ pub fn run() {
     }
 
     let builder = tauri::Builder::default()
+        .manage(AppState::new())
         .setup(|app| {
-            println!("🟢 Tauri .setup() 呼び出し開始！ OS: {}", std::env::consts::OS);
+            std::println!("🟢 Tauri .setup() 呼び出し開始！ OS: {}", std::env::consts::OS);
             #[cfg(not(target_os = "android"))]
             {
-                println!("🟢 not(target_os = \"android\") ブロック突入");
+                std::println!("🟢 not(target_os = \"android\") ブロック突入");
                 let tray = tray::setup_tray(app)?;
                 let state = app.state::<AppState>();
                 *state.tray_icon.lock() = Some(tray.clone());
                 app.manage(tray);
-                println!("🟢 システムトレイのセットアップが完了しました");
+                std::println!("🟢 システムトレイのセットアップが完了しました");
 
                 // バルーン・メニュー等の補助ウィンドウを先行キャッシュ（起動時のもたつき解消）
                 let app_handle_preload = app.handle().clone();
@@ -85,8 +86,7 @@ pub fn run() {
             #[cfg(target_os = "android")]
             let _ = app;
             Ok(())
-        })
-        .manage(AppState::new());
+        });
 
     #[cfg(desktop)]
     let builder = builder.on_menu_event(move |app_handle, event| {

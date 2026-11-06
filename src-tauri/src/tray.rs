@@ -7,6 +7,7 @@ use std::path::Path;
 use crate::common::state::AppState;
 
 fn log_tray(msg: &str) {
+    std::println!("{}", msg);
     if let Ok(mut f) = OpenOptions::new().create(true).append(true).open("nanai_tray_debug.log") {
         let _ = writeln!(f, "[{}] {}", chrono::Local::now().format("%H:%M:%S"), msg);
     }
@@ -14,17 +15,17 @@ fn log_tray(msg: &str) {
 
 #[cfg(not(target_os = "android"))]
 pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error> {
-    log_tray("setup_tray 開始...");
+    log_tray("🟢 setup_tray 開始...");
 
     let icon = app
         .default_window_icon()
         .cloned()
         .unwrap_or_else(|| {
-            log_tray("警告: default_window_icon が取得できなかったため、32x32赤色フォールバックを使用します");
+            log_tray("⚠️ default_window_icon が取得できなかったため、32x32赤色フォールバックを使用します");
             Image::new_owned(vec![255u8; 32 * 32 * 4], 32, 32)
         });
 
-    let tray = TrayIconBuilder::new()
+    let tray = TrayIconBuilder::with_id("main-tray")
         .icon(icon)
         .tooltip("Nanai Android Mascot")
         .show_menu_on_left_click(false)
@@ -41,7 +42,7 @@ pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error
             }
             | TrayIconEvent::DoubleClick { .. } = event
             {
-                log_tray("システムトレイアイコンがクリックされました");
+                log_tray("🖱️ システムトレイアイコンがクリックされました");
                 let app_handle = tray.app_handle().clone();
                 tauri::async_runtime::spawn(async move {
                     let (x, y) = if let Ok(Some(monitor)) = app_handle.primary_monitor() {
@@ -62,8 +63,8 @@ pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error
         .build(app);
 
     match &tray {
-        Ok(_) => log_tray("setup_tray 完了（トレイ登録成功）"),
-        Err(e) => log_tray(&format!("エラー: トレイ登録失敗: {:?}", e)),
+        Ok(_) => log_tray("🟢 setup_tray 完了（トレイ登録成功）"),
+        Err(e) => log_tray(&format!("❌ エラー: トレイ登録失敗: {:?}", e)),
     }
 
     tray
@@ -81,7 +82,7 @@ pub fn update_tray_icon_from_path(app_handle: &tauri::AppHandle, icon_path: &Pat
                 let (width, height) = rgba.dimensions();
                 let icon = Image::new_owned(rgba.into_raw(), width, height);
                 tray.set_icon(Some(icon)).map_err(|e| e.to_string())?;
-                log_tray(&format!("トレイアイコンをゴースト固有の画像に差し替えました: {:?}", icon_path));
+                log_tray(&format!("🟢 トレイアイコンをゴースト固有の画像に差し替えました: {:?}", icon_path));
             }
         }
     }

@@ -1,7 +1,7 @@
 use tauri::image::Image;
 use tauri::tray::{TrayIcon, TrayIconBuilder, TrayIconEvent};
 
-#[cfg(desktop)]
+#[cfg(not(target_os = "android"))]
 pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error> {
     println!("🟢 setup_tray 開始...");
     let icon = match image::load_from_memory(include_bytes!("../icons/32x32.png")) {
@@ -60,7 +60,7 @@ pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error
     Ok(tray)
 }
 
-#[cfg(not(desktop))]
+#[cfg(target_os = "android")]
 pub fn setup_tray(_app: &tauri::App) -> Result<(), ()> {
     Ok(())
 }

@@ -66,10 +66,17 @@ pub fn run() {
 
     let builder = tauri::Builder::default()
         .setup(|app| {
-            #[cfg(desktop)]
+            #[cfg(not(target_os = "android"))]
             {
-                let tray = tray::setup_tray(app)?;
-                app.manage(tray);
+                match tray::setup_tray(app) {
+                    Ok(tray) => {
+                        app.manage(tray);
+                        println!("🟢 システムトレイのセットアップが完了しました");
+                    }
+                    Err(e) => {
+                        eprintln!("❌ システムトレイのセットアップに失敗しました: {:?}", e);
+                    }
+                }
 
                 // バルーン・メニュー等の補助ウィンドウを先行キャッシュ（起動時のもたつき解消）
                 let app_handle_preload = app.handle().clone();
@@ -77,7 +84,7 @@ pub fn run() {
                     let _ = commands::window::preload_auxiliary_windows(app_handle_preload).await;
                 });
             }
-            #[cfg(not(desktop))]
+            #[cfg(target_os = "android")]
             let _ = app;
             Ok(())
         })

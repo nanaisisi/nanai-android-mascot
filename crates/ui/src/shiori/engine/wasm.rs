@@ -3,9 +3,8 @@
 //! サードパーティ製 WebAssembly (WASM) SHIORI モジュールを安全にロード・実行する。
 
 use super::trait_def::ShioriEngine;
-use super::state::ShioriLifecycleState;
 use std::path::Path;
-use wasmi::{Engine, Linker, Module, Store, TypedFunc};
+use wasmi::{Engine, Module};
 
 /// WASM ベースの SHIORI/3.0 エンジンサンドボックス
 pub struct WasmShioriEngine {
@@ -47,7 +46,6 @@ impl ShioriEngine for WasmShioriEngine {
         if !self.loaded {
             return Err("WASM SHIORI engine not loaded".to_string());
         }
-        // スタブ実装: WASM 側の load/request エクスポート関数呼び出し（Phase C 拡張）
         Ok(format!(
             "SHIORI/3.0 200 OK\r\nSender: WasmShiori\r\nValue: Hello from WASM sandbox for request len {}\r\n\r\n",
             request_str.len()

@@ -109,7 +109,9 @@ export class GhostController {
 			name: ghostName,
 			path: `${AppConfig.paths.defaultGhostDir}/${ghostName}`,
 		};
-		this.currentGhost = ghost;
+
+		// 1. 新ゴーストアセットのバックグラウンド先行プリロード
+		const preloadSurfacesPromise = this.app.surfaceManager?.loadSurfacesTxt?.(ghost.path);
 
 		try {
 			localStorage.setItem(
@@ -117,6 +119,8 @@ export class GhostController {
 				JSON.stringify({ name: ghost.name }),
 			);
 		} catch (_e) {}
+
+		this.currentGhost = ghost;
 
 		if (isTauriAvailable()) {
 			try {
@@ -136,7 +140,7 @@ export class GhostController {
 		const isCurrentLoad = () => (this as any)._currentLoadToken === loadId;
 		await (this as any).initializeGhostSHIORI(
 			ghost,
-			this.app.surfaceManager?.loadSurfacesTxt?.(ghost.path),
+			preloadSurfacesPromise,
 			isCurrentLoad,
 		);
 	}

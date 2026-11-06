@@ -107,24 +107,12 @@ pub async fn load_ghost(
         }
     }
 
+    #[cfg(not(target_os = "android"))]
+    {
+        let _ = crate::tray::update_tray_for_ghost(&app_handle, &ghost_name, &ghost_master_dir);
+    }
+
     if loaded {
-        let tray_ico = ghost_master_dir.join("tray.ico");
-        let tray_png = ghost_master_dir.join("tray.png");
-        let tray_path = if tray_ico.exists() {
-            Some(tray_ico)
-        } else if tray_png.exists() {
-            Some(tray_png)
-        } else {
-            None
-        };
-
-        if let Some(path) = tray_path {
-            #[cfg(not(target_os = "android"))]
-            {
-                let _ = crate::tray::update_tray_icon_from_path(&app_handle, &path);
-            }
-        }
-
         Ok(format!("Ghost '{}' loaded with native SHIORI", ghost_name))
     } else {
         println!(

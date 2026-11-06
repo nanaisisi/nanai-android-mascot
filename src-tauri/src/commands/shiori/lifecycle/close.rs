@@ -26,6 +26,10 @@ pub async fn close_ghost(
     drop(active);
 
     if remaining_count == 0 {
+        #[cfg(not(target_os = "android"))]
+        {
+            let _ = crate::tray::reset_tray_to_default(&app_handle);
+        }
         println!("🚪 すべてのゴーストが終了したためアプリケーションを終了します");
         let _ = app_handle.exit(0);
     }
@@ -37,9 +41,14 @@ pub async fn close_ghost(
 #[tauri::command]
 pub async fn unload_current_ghost(
     state: tauri::State<'_, AppState>,
+    app_handle: tauri::AppHandle,
 ) -> Result<(), String> {
     if let Some(mut engine) = state.shiori_engine.lock().take() {
         let _ = engine.unload();
+    }
+    #[cfg(not(target_os = "android"))]
+    {
+        let _ = crate::tray::reset_tray_to_default(&app_handle);
     }
     Ok(())
 }

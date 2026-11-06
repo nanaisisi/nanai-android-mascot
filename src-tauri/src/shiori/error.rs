@@ -5,18 +5,24 @@ use thiserror::Error;
 #[derive(Debug, Error)]
 #[allow(dead_code)]
 pub enum ShioriError {
+    #[cfg(not(target_os = "android"))]
     #[error("Failed to load library '{path}': {source}")]
     LibraryLoad {
         path: PathBuf,
         source: libloading::Error,
     },
 
+    #[cfg(not(target_os = "android"))]
     #[error("Symbol '{symbol}' not found in '{path}': {source}")]
     SymbolNotFound {
         symbol: &'static str,
         path: PathBuf,
         source: libloading::Error,
     },
+
+    #[cfg(target_os = "android")]
+    #[error("Dynamic DLL loading is not supported on Android: {0}")]
+    LibraryLoadAndroid(String),
 
     #[error("Host process error: {0}")]
     HostProcess(String),

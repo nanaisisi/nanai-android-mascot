@@ -1,7 +1,7 @@
 use crate::common::paths::resolve_ghost_directory;
 use crate::common::state::AppState;
 use crate::shiori::dynamic::ShioriDynamicEngine;
-use nanai_android_mascot_ui::resolve_vfs_path;
+use nanai_android_mascot_ui::{ShioriEngine, resolve_vfs_path};
 use std::path::PathBuf;
 
 /// ゴーストを読み込み（動的SHIORIローダー対応）
@@ -87,7 +87,7 @@ pub async fn load_ghost(
             println!("🔍 Attempting to load SHIORI binary: {:?}", cand_path);
             match ShioriDynamicEngine::load_library(&cand_path) {
                 Ok(mut engine) => {
-                    if let Err(e) = engine.initialize(&ghost_master_dir) {
+                    if let Err(e) = engine.load(&ghost_master_dir) {
                         eprintln!("⚠️ Failed to initialize SHIORI at {:?}: {}", cand_path, e);
                     } else {
                         *state.shiori_engine.lock() = Some(engine);

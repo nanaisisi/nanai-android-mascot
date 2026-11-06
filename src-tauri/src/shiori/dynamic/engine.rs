@@ -1,29 +1,36 @@
 //! SHIORI Dynamic Engine Definition
 
 use crate::shiori::error::ShioriError;
-use libloading::{Library, Symbol};
 use std::path::{Path, PathBuf};
 
-#[cfg(not(windows))]
+#[cfg(not(target_os = "android"))]
+use libloading::Library;
+#[cfg(all(not(windows), not(target_os = "android")))]
 use super::host::Hglobal;
-#[cfg(windows)]
+#[cfg(all(windows, not(target_os = "android")))]
 use super::host::{GMEM_FIXED, GlobalAlloc, GlobalFree, is_x86_dll};
+#[cfg(not(target_os = "android"))]
 use super::host::{HostProc, ShioriLoadFn, ShioriRequestFn, ShioriUnloadFn};
 
+#[allow(dead_code)]
 pub struct ShioriDynamicEngine {
+    #[cfg(not(target_os = "android"))]
     pub(crate) _lib: Option<Library>,
     pub(crate) dll_path: PathBuf,
+    #[cfg(not(target_os = "android"))]
     pub(crate) fns: Option<(ShioriLoadFn, ShioriUnloadFn, ShioriRequestFn)>,
+    #[cfg(not(target_os = "android"))]
     pub(crate) host: Option<std::sync::Mutex<HostProc>>,
     pub(crate) is_loaded: bool,
 }
 
-// Library handles can be sent across threads if properly synchronized
+#[cfg(not(target_os = "android"))]
 unsafe impl Send for ShioriDynamicEngine {}
+#[cfg(not(target_os = "android"))]
 unsafe impl Sync for ShioriDynamicEngine {}
 
 impl ShioriDynamicEngine {
-    /// SHIORI DLL / .so を動的ロード (32bit DLL は 64bit 本体では別プロセスで実行)
+    #[cfg(not(target_os = "android"))]
     pub fn load_library(dll_path: &Path) -> Result<Self, ShioriError> {
         #[cfg(windows)]
         if cfg!(target_pointer_width = "64") && is_x86_dll(dll_path) {
@@ -48,132 +55,132 @@ impl ShioriDynamicEngine {
             })?
         };
 
-        let fn_load: ShioriLoadFn = unsafe {
-            if let Ok(sym) = lib.get::<ShioriLoadFn>(b"loadu") {
-                *sym
-            } else {
-                let sym: Symbol<ShioriLoadFn> =
-                    lib.get(b"load")
-                        .map_err(|source| ShioriError::SymbolNotFound {
-                            symbol: "load",
-                            path: dll_path.to_path_buf(),
-                            source,
-                        })?;
-                *sym
-            }
+        let load_fn: ShioriLoadFn = unsafe {
+            *lib.get(b"load\0").map_err(|source| ShioriError::SymbolNotFound {
+                symbol: "load",
+                path: dll_path.to_path_buf(),
+                source,
+            })?
         };
 
-        let fn_unload: ShioriUnloadFn = unsafe {
-            let sym: Symbol<ShioriUnloadFn> =
-                lib.get(b"unload")
-                    .map_err(|source| ShioriError::SymbolNotFound {
-                        symbol: "unload",
-                        path: dll_path.to_path_buf(),
-                        source,
-                    })?;
-            *sym
+        let unload_fn: ShioriUnloadFn = unsafe {
+            *lib.get(b"unload\0").map_err(|source| ShioriError::SymbolNotFound {
+                symbol: "unload",
+                path: dll_path.to_path_buf(),
+                source,
+            })?
         };
 
-        let fn_request: ShioriRequestFn = unsafe {
-            let sym: Symbol<ShioriRequestFn> =
-                lib.get(b"request")
-                    .map_err(|source| ShioriError::SymbolNotFound {
-                        symbol: "request",
-                        path: dll_path.to_path_buf(),
-                        source,
-                    })?;
-            *sym
+        let request_fn: ShioriRequestFn = unsafe {
+            *lib.get(b"request\0").map_err(|source| ShioriError::SymbolNotFound {
+                symbol: "request",
+                path: dll_path.to_path_buf(),
+                source,
+            })?
         };
 
         Ok(Self {
             _lib: Some(lib),
             dll_path: dll_path.to_path_buf(),
-            fns: Some((fn_load, fn_unload, fn_request)),
+            fns: Some((load_fn, unload_fn, request_fn)),
             host: None,
             is_loaded: false,
         })
     }
 
-    /// SHIORI::load(dirpath)
-    pub fn initialize(&mut self, dir_path: &Path) -> Result<(), ShioriError> {
-        if self.is_loaded {
-            return Ok(());
-        }
+    #[cfg(target_os = "android")]
+    pub fn load_library(dll_path: &Path) -> Result<Self, ShioriError> {
+        Err(ShioriError::LibraryLoadAndroid(format!(
+            "Dynamic C-ABI DLL loading ({:?}) is not supported on Android mobile target.",
+            dll_path
+        )))
+    }
 
-        let dir_str = dir_path.to_string_lossy().to_string();
-        let bytes = dir_str.as_bytes();
+    #[cfg(not(target_os = "android"))]
+    pub fn load_engine(&mut self, dir_path: &Path) -> Result<(), String> {
+        let path_str = dir_path.to_string_lossy();
+        let bytes = path_str.as_bytes();
         let len = bytes.len() as i64;
 
         if let Some(host) = &self.host {
-            let (r, _) = host
-                .lock()
-                .map_err(|e| ShioriError::HostProcess(e.to_string()))?
-                .call(1, bytes)
-                .map_err(ShioriError::HostProcess)?;
-            if r == 0 {
-                return Err(ShioriError::LoadFailed(r));
+            let (code, _) = host.lock().map_err(|e| e.to_string())?.call(1, bytes)?;
+            if code == 1 {
+                self.is_loaded = true;
+                Ok(())
+            } else {
+                Err(format!("Host load failed with code {}", code))
             }
-            self.is_loaded = true;
-            return Ok(());
+        } else if let Some((fn_load, _, _)) = self.fns {
+            #[cfg(windows)]
+            unsafe {
+                let hmem = GlobalAlloc(GMEM_FIXED, bytes.len() + 1);
+                if hmem.is_null() {
+                    return Err("GlobalAlloc failed".to_string());
+                }
+                std::ptr::copy_nonoverlapping(bytes.as_ptr(), hmem as *mut u8, bytes.len());
+                *(hmem as *mut u8).add(bytes.len()) = 0;
+                let res = (fn_load)(hmem, len);
+                GlobalFree(hmem);
+                if res == 1 {
+                    self.is_loaded = true;
+                    Ok(())
+                } else {
+                    Err(format!("SHIORI load failed with code {}", res))
+                }
+            }
+            #[cfg(not(windows))]
+            unsafe {
+                let mut buf = bytes.to_vec();
+                buf.push(0);
+                let ptr = buf.as_mut_ptr() as Hglobal;
+                let res = (fn_load)(ptr, len);
+                if res == 1 {
+                    self.is_loaded = true;
+                    Ok(())
+                } else {
+                    Err(format!("SHIORI load failed with code {}", res))
+                }
+            }
+        } else {
+            Err("Not loaded".to_string())
         }
-        let (fn_load, _, _) = self.fns.ok_or(ShioriError::NotLoaded)?;
-
-        #[cfg(windows)]
-        unsafe {
-            let hmem = GlobalAlloc(GMEM_FIXED, bytes.len() + 1);
-            if hmem.is_null() {
-                return Err(ShioriError::MemoryAllocationFailed);
-            }
-            std::ptr::copy_nonoverlapping(bytes.as_ptr(), hmem as *mut u8, bytes.len());
-            *(hmem as *mut u8).add(bytes.len()) = 0;
-
-            let res = (fn_load)(hmem, len);
-            GlobalFree(hmem);
-
-            if res == 0 {
-                return Err(ShioriError::LoadFailed(res));
-            }
-        }
-
-        #[cfg(not(windows))]
-        unsafe {
-            let mut buf = bytes.to_vec();
-            buf.push(0);
-            let ptr = buf.as_mut_ptr() as Hglobal;
-            let res = (fn_load)(ptr, len);
-            if res == 0 {
-                return Err(ShioriError::LoadFailed(res));
-            }
-        }
-
-        self.is_loaded = true;
-        println!("✅ SHIORI loaded successfully from {:?}", self.dll_path);
-        Ok(())
     }
 
-    /// SHIORI::unload()
-    pub fn unload(&mut self) -> Result<(), String> {
+    #[cfg(target_os = "android")]
+    pub fn load_engine(&mut self, _dir_path: &Path) -> Result<(), String> {
+        Err("Dynamic DLL loading not supported on Android".to_string())
+    }
+
+    pub fn unload_engine(&mut self) -> Result<(), String> {
         if !self.is_loaded {
             return Ok(());
         }
 
-        if let Some(host) = &self.host {
-            if let Ok(mut h) = host.lock() {
-                let _ = h.call(3, &[]);
-            }
-        } else if let Some((_, fn_unload, _)) = self.fns {
-            unsafe {
-                (fn_unload)();
+        #[cfg(not(target_os = "android"))]
+        {
+            if let Some(host) = &self.host {
+                let _ = host.lock().map_err(|e| e.to_string())?.call(3, &[]);
+                self.is_loaded = false;
+                Ok(())
+            } else if let Some((_, fn_unload, _)) = self.fns {
+                unsafe {
+                    let res = (fn_unload)();
+                    self.is_loaded = false;
+                    if res == 1 {
+                        Ok(())
+                    } else {
+                        Err(format!("SHIORI unload failed with code {}", res))
+                    }
+                }
+            } else {
+                self.is_loaded = false;
+                Ok(())
             }
         }
-        self.is_loaded = false;
-        println!("🔌 SHIORI unloaded: {:?}", self.dll_path);
-        Ok(())
-    }
-}
-
-impl Drop for ShioriDynamicEngine {
-    fn drop(&mut self) {
-        let _ = self.unload();
+        #[cfg(target_os = "android")]
+        {
+            self.is_loaded = false;
+            Ok(())
+        }
     }
 }

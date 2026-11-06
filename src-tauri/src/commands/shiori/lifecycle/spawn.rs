@@ -1,6 +1,7 @@
 use crate::common::paths::resolve_ghost_directory;
 use crate::common::state::AppState;
 use crate::shiori::dynamic::ShioriDynamicEngine;
+use nanai_android_mascot_ui::ShioriEngine;
 use std::path::PathBuf;
 
 /// ゴーストを新規インスタンスとして追加起動 (マルチゴースト)
@@ -66,7 +67,7 @@ pub async fn spawn_ghost(
     for cand in candidates {
         if cand.exists()
             && let Ok(mut engine) = ShioriDynamicEngine::load_library(&cand)
-            && engine.initialize(&ghost_master_dir).is_ok()
+            && engine.load(&ghost_master_dir).is_ok()
         {
             state
                 .ghost_engines

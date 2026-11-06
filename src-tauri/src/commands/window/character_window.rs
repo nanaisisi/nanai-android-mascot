@@ -19,6 +19,10 @@ pub async fn show_character_window(
         if let Some(sub_win) = app_handle.get_webview_window(&label) {
             let _ = sub_win.set_decorations(false);
             let _ = sub_win.set_shadow(false);
+            let _ = sub_win.set_size(tauri::Size::Logical(tauri::LogicalSize {
+                width: win_width,
+                height: win_height,
+            }));
             if let (Some(px), Some(py)) = (x, y) {
                 let _ = sub_win.set_position(tauri::Position::Physical(tauri::PhysicalPosition {
                     x: px as i32,

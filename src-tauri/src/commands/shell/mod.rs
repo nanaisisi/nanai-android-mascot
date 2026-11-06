@@ -12,6 +12,7 @@ pub mod manifest;
 
 pub use animation::*;
 pub use balloon::*;
+#[allow(unused_imports)]
 pub use compositor::*;
 pub use ghost::*;
 pub use manifest::*;

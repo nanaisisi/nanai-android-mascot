@@ -81,8 +81,8 @@ body:not(.subchar-mode) .subchar-only {
 
 .menu-item {
 	width: 100%;
-	padding: 0.35rem 0.75rem;
-	min-height: 26px;
+	padding: 0.15rem 0.5rem;
+	min-height: 20px;
 	touch-action: manipulation;
 	-webkit-tap-highlight-color: transparent;
 	background: none;

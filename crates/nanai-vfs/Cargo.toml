@@ -7,3 +7,6 @@ edition = "2024"
 serde = { version = "1.0.229", features = ["derive"] }
 zip = { version = "9.2.2", default-features = false, features = ["deflate"] }
 encoding_rs = "0.8.42"
+walkdir = "2.5.0"
+thiserror = "2.0.21"
+anyhow = "1.0.104"

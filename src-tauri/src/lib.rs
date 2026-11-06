@@ -1,6 +1,7 @@
 #[allow(unused_imports)]
 use specta_typescript::Typescript;
 use tauri_specta::{Builder as SpectaBuilder, collect_commands};
+use tauri::Manager;
 
 macro_rules! println {
     ($($arg:tt)*) => {
@@ -67,7 +68,8 @@ pub fn run() {
         .setup(|app| {
             #[cfg(desktop)]
             {
-                let _tray = tray::setup_tray(app)?;
+                let tray = tray::setup_tray(app)?;
+                app.manage(tray);
 
                 // バルーン・メニュー等の補助ウィンドウを先行キャッシュ（起動時のもたつき解消）
                 let app_handle_preload = app.handle().clone();

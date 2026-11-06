@@ -27,7 +27,6 @@ encoding_rs = { version = "0.8.44", features = ["simd-accel", "std"] }
 nanai_android_mascot_ui = { package = "nanai-android-mascot-ui", path = "../crates/ui" }
 # SHIORI連携用 - C++統合
 libc = "0.2.191"
-regex = "1.13.1"
 walkdir = "2.5.0"
 # 文字列処理とメモリ管理
 zip = { version = "9.2.2", default-features = false, features = ["deflate"] }

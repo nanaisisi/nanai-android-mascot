@@ -66,6 +66,15 @@ function initCharacterWindow() {
 		(/** @type {{ payload?: { src?: string } }} */ event) => {
 			const src = event.payload?.src;
 			if (src && img) {
+				img.onload = () => {
+					if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+						void invoke("show_subchar_window", {
+							scopeId,
+							width: img.naturalWidth,
+							height: img.naturalHeight,
+						}).catch(() => {});
+					}
+				};
 				img.src = src;
 				img.style.display = "block";
 			} else if (img) {

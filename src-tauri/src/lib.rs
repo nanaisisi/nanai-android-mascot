@@ -68,15 +68,9 @@ pub fn run() {
         .setup(|app| {
             #[cfg(not(target_os = "android"))]
             {
-                match tray::setup_tray(app) {
-                    Ok(tray) => {
-                        app.manage(tray);
-                        println!("🟢 システムトレイのセットアップが完了しました");
-                    }
-                    Err(e) => {
-                        eprintln!("❌ システムトレイのセットアップに失敗しました: {:?}", e);
-                    }
-                }
+                let tray = tray::setup_tray(app)?;
+                app.manage(tray);
+                println!("🟢 システムトレイのセットアップが完了しました");
 
                 // バルーン・メニュー等の補助ウィンドウを先行キャッシュ（起動時のもたつき解消）
                 let app_handle_preload = app.handle().clone();

@@ -4,6 +4,8 @@ use tauri::tray::{TrayIcon, TrayIconBuilder, TrayIconEvent};
 #[cfg(not(target_os = "android"))]
 pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error> {
     println!("🟢 setup_tray 開始...");
+
+    let fallback_rgba = vec![255u8; 32 * 32 * 4];
     let icon = match image::load_from_memory(include_bytes!("../icons/32x32.png")) {
         Ok(img) => {
             let rgba = img.to_rgba8();
@@ -12,10 +14,8 @@ pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error
             Image::new_owned(rgba.into_raw(), width, height)
         }
         Err(e) => {
-            eprintln!("⚠️ トレイアイコン画像読み込み失敗 ({:?})、フォールバック使用", e);
-            app.default_window_icon()
-                .cloned()
-                .unwrap_or_else(|| Image::new_owned(vec![255, 0, 0, 255], 32, 32))
+            eprintln!("⚠️ トレイアイコン画像読み込み失敗 ({:?})、32x32白色フォールバック使用", e);
+            Image::new_owned(fallback_rgba, 32, 32)
         }
     };
 

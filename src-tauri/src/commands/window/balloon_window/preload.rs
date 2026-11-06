@@ -37,7 +37,7 @@ pub async fn preload_auxiliary_windows(app_handle: tauri::AppHandle) -> Result<(
                 tauri::WebviewUrl::App("menu-iframe.html?scope=0".into()),
             )
             .title("Nanai Menu")
-            .inner_size(240.0, 540.0)
+            .inner_size(260.0, 720.0)
             .transparent(true)
             .decorations(false)
             .shadow(false)

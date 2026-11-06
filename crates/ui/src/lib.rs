@@ -12,6 +12,12 @@ pub mod surfacetable;
 pub mod update;
 pub mod vfs;
 
+// モジュールクレートの参照 (Phase D ワークスペース再編)
+pub use nanai_core;
+pub use nanai_shiori_vm;
+pub use nanai_surface;
+pub use nanai_vfs;
+
 // 外部公開・後方互換のための再エクスポート
 pub use animation::{
     ActiveAnimation, AnimationScheduler, FrameStepEvent, ScheduledFrame, Timeline, build_timeline,

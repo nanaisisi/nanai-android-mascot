@@ -1,5 +1,12 @@
 [workspace]
-members = ["src-tauri", "crates/ui"]
+members = [
+    "src-tauri",
+    "crates/ui",
+    "crates/nanai-core",
+    "crates/nanai-surface",
+    "crates/nanai-shiori-vm",
+    "crates/nanai-vfs"
+]
 resolver = "2"
 
 [profile.dev]

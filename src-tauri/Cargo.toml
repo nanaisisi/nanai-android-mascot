@@ -43,6 +43,7 @@ parking_lot = "0.13.0"
 thiserror = "2.0.21"
 anyhow = "1.0.104"
 tauri-plugin-dialog = "2.8.4"
+wasmi = "0.38"
 tauri-specta = { version = "=2.0.0-rc.25", features = ["derive", "typescript"] }
 specta-typescript = "=0.0.12"
 specta = { version = "=2.0.0-rc.25", features = ["derive", "function"] }

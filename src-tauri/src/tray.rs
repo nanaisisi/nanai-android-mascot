@@ -1,15 +1,23 @@
 use tauri::image::Image;
 use tauri::tray::{TrayIcon, TrayIconBuilder, TrayIconEvent};
+use std::fs::OpenOptions;
+use std::io::Write;
+
+fn log_tray(msg: &str) {
+    if let Ok(mut f) = OpenOptions::new().create(true).append(true).open("nanai_tray_debug.log") {
+        let _ = writeln!(f, "[{}] {}", chrono::Local::now().format("%H:%M:%S"), msg);
+    }
+}
 
 #[cfg(not(target_os = "android"))]
 pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error> {
-    println!("🟢 setup_tray 開始...");
+    log_tray("setup_tray 開始...");
 
     let icon = app
         .default_window_icon()
         .cloned()
         .unwrap_or_else(|| {
-            println!("⚠️ default_window_icon が取得できなかったため、フォールバックアイコンを使用します");
+            log_tray("警告: default_window_icon が取得できなかったため、32x32赤色フォールバックを使用します");
             Image::new_owned(vec![255u8; 32 * 32 * 4], 32, 32)
         });
 
@@ -30,7 +38,7 @@ pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error
             }
             | TrayIconEvent::DoubleClick { .. } = event
             {
-                println!("🖱️ システムトレイアイコンがクリックされました");
+                log_tray("システムトレイアイコンがクリックされました");
                 let app_handle = tray.app_handle().clone();
                 tauri::async_runtime::spawn(async move {
                     let (x, y) = if let Ok(Some(monitor)) = app_handle.primary_monitor() {
@@ -48,10 +56,14 @@ pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error
                 });
             }
         })
-        .build(app)?;
+        .build(app);
 
-    println!("🟢 setup_tray 完了（トレイ登録成功）");
-    Ok(tray)
+    match &tray {
+        Ok(_) => log_tray("setup_tray 完了（トレイ登録成功）"),
+        Err(e) => log_tray(&format!("エラー: トレイ登録失敗: {:?}", e)),
+    }
+
+    tray
 }
 
 #[cfg(target_os = "android")]

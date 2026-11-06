@@ -1,52 +1,44 @@
 # ゴースト初期起動・切替における統一ライフサイクル仕様書
 
-本ドキュメントは、アプリケーションの「初期起動時（Initial Boot）」および「ゴースト切替時（Ghost Switch）」における、バナー表示・キャラクターウィンドウ・システムトレイ・タスクバーの統一されたUI・アセット制御シーケンスを定義した仕様書です。
+本ドキュメントは、アプリケーションの「初期起動時（Initial Boot）」および「ゴースト切替時（Ghost Switch）」における、バナー表示および各ターゲット要素（キャラクターウィンドウ・システムトレイ・タスクバー）の統一されたUI・アセット制御シーケンスを定義した仕様書です。
 
 ---
 
 ## 1. 統一ライフサイクルの原則 (Unified Lifecycle Principle)
 
-アプリの初期起動であっても、実行中のゴースト切り替えであっても、ユーザーへ提示されるアセット読み込み・表示シーケンスは**完全に同一の順序（バナー → キャラクターウィンドウ → システムトレイ → タスクバー）**で進行します。
+アプリの初期起動・実行中のゴースト切替の双方において、表示制御は**「1. 準備中のバナー表示」→「2. キャラクターウィンドウ・システムトレイ・タスクバーの一括同期反映（アトミック展開）」**という2段階の統一モデルに従います。
 
-これにより、画面の崩れや未読み込み画像のチラつき（1頭身化等）を完全に防ぎます。
+バナー表示中のバックグラウンド準備完了と同時に、キャラクター表示・トレイアイコン/ツールチップ・タスクバー状態を同期させて一度に展開（Atomic Reveal）することで、アセット未読み込みによる崩れや個別の表示遅延を防止します。
 
 ```mermaid
-sequenceDiagram
-    autonumber
-    participant U as User / System Event
-    participant B as Loading Banner Window
-    participant C as Character Window & Surface Manager
-    participant T as System Tray
-    participant K as Taskbar & App State
+graph TD
+    subgraph Phase 1: Preload & Banner
+        A[1. 準備開始] --> B[バナー表示]
+        B --> C[裏でアセット・SHIORI・トレイ・サーフィス先行ロード]
+    end
 
-    U->>B: 1. 読み込み開始（バナー表示）
-    Note over B: バックグラウンドでアセット・SHIORI先行準備
-    B->>C: 2. キャラクターウィンドウ生成・画像実寸反映
-    C->>T: 3. トレイアイコン & ツールチップ更新 (tray.ico / ghost.name)
-    T->>K: 4. タスクバー状態同期 & バナー非表示化
+    subgraph Phase 2: Simultaneous Reveal & Sync
+        C --> D[2. 一括同期反映 Atomic Reveal]
+        D --> E1[キャラクターウィンドウ表示 & 実寸リサイズ]
+        D --> E2[システムトレイアイコン & ツールチップ更新]
+        D --> E3[タスクバー状態同期]
+        D --> F[バナー非表示化]
+    end
 ```
 
 ---
 
-## 2. フェーズ別制御仕様
+## 2. 段階別制御仕様
 
-### フェーズ 1: バナー表示フェーズ (Banner Phase)
+### 第1段階: バナー表示 & プリロード段階 (Banner & Preload Phase)
 - **動作**:
   - `show_loading_banner_window` を発火し、画面上にローディングバナーを表示。
-  - バックグラウンドで新ゴーストの `descript.txt` / `surfaces.txt` / シェルマニフェスト、および `surface0` / `surface10`（または `tray.ico`）を非同期でパース・プリロード。
-  - SHIORI エンジンのロード (`load_ghost`) と `OnBoot` イベント送信を実行。
+  - 裏で新ゴーストのアセット（`descript.txt` / `surfaces.txt` / シェルマニフェスト）、サーフィス画像（`surface0` / `surface10` 等）、トレイアイコン（`tray.ico` / `tray.png`）、および SHIORI エンジン（`load_ghost`）を非同期プリロード。
 
-### フェーズ 2: キャラクターウィンドウフェーズ (Character Window Phase)
-- **動作**:
-  - バックグラウンドで読み込みが完了したサーフィス画像の自然解像度（`naturalWidth` / `naturalHeight`）を取得。
-  - キャラクターウィンドウ（`subchar_window_0`, `subchar_window_1` 等）の枠サイズを画像実寸にピタリと一致させて表示（`set_size` / `show`）。
-
-### フェーズ 3: システムトレイ同期フェーズ (System Tray Phase)
-- **動作**:
-  - ゴーストマスターフォルダ内の `tray.ico` または `tray.png` を読み込み、タスクトレイのアイコンを切り替え (`update_tray_for_ghost`)。
-  - ツールチップの文字列を `Nanai Mascot - <GhostName>` に自動更新。
-
-### フェーズ 4: タスクバー同期・完了フェーズ (Taskbar & Completion Phase)
-- **動作**:
-  - タスクバー上の表示・状態を同期。
-  - ローディングバナーウィンドウをフェードアウト / 非表示（`hide_loading_banner_window`）。
+### 第2段階: キャラクターウィンドウ・システムトレイ・タスクバー一括反映段階 (Simultaneous Sync Phase)
+- **動作（アトミック展開）**:
+  - プリロード完了と同時に、以下の状態を一度に同期反映：
+    1. **キャラクターウィンドウ**: 画像の実寸解像度に合わせたウィンドウリサイズ・位置適用・表示。
+    2. **システムトレイ**: ゴースト固有アイコン（`tray.ico` / `tray.png`）およびツールチップ（`Nanai Mascot - <GhostName>`）の更新。
+    3. **タスクバー**: タスクバー上の表示・アイコン状態の同期。
+  - 反映完了後、ローディングバナーをフェードアウト / 非表示（`hide_loading_banner_window`）。

@@ -1,27 +1,53 @@
 use tauri::image::Image;
+use tauri::menu::{Menu, MenuItem};
 use tauri::tray::{TrayIcon, TrayIconBuilder, TrayIconEvent};
 
 #[cfg(desktop)]
 pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error> {
-    let icon = app
-        .default_window_icon()
-        .cloned()
-        .unwrap_or_else(|| Image::new_owned(vec![0, 0, 0, 0], 1, 1));
+    let icon = match image::load_from_memory(include_bytes!("../icons/32x32.png")) {
+        Ok(img) => {
+            let rgba = img.to_rgba8();
+            let (width, height) = rgba.dimensions();
+            Image::new_owned(rgba.into_raw(), width, height)
+        }
+        Err(_) => Image::new_owned(vec![255, 0, 0, 255], 1, 1),
+    };
+
+    let menu = Menu::with_items(
+        app,
+        &[
+            &MenuItem::with_id(app, "show_menu", "メニューを表示", true, None::<&str>)?,
+            &MenuItem::with_id(app, "quit", "終了", true, None::<&str>)?,
+        ],
+    )?;
 
     TrayIconBuilder::new()
         .icon(icon)
+        .menu(&menu)
+        .show_menu_on_left_click(false)
+        .on_menu_event(|app_handle, event| {
+            match event.id.as_ref() {
+                "show_menu" => {
+                    let app_handle = app_handle.clone();
+                    tauri::async_runtime::spawn(async move {
+                        let _ = crate::commands::window::show_menu_window(
+                            app_handle, 100.0, 100.0, Some(0),
+                        )
+                        .await;
+                    });
+                }
+                "quit" => {
+                    app_handle.exit(0);
+                }
+                _ => {}
+            }
+        })
         .on_tray_icon_event(move |tray, event| {
             if let TrayIconEvent::Click {
                 button: tauri::tray::MouseButton::Left,
                 button_state: tauri::tray::MouseButtonState::Up,
                 ..
-            }
-            | TrayIconEvent::Click {
-                button: tauri::tray::MouseButton::Right,
-                button_state: tauri::tray::MouseButtonState::Up,
-                ..
-            }
-            | TrayIconEvent::DoubleClick { .. } = event
+            } = event
             {
                 let app_handle = tray.app_handle().clone();
                 tauri::async_runtime::spawn(async move {

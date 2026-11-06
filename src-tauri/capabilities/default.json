@@ -1,12 +1,10 @@
 {
-	"$schema": "../gen/schemas/desktop-schema.json",
-	"identifier": "default",
-	"description": "Capability for the main window",
-	"windows": ["*"],
-	"permissions": [
-		"core:default",
-		"opener:default",
-		"dialog:default",
-		"core:webview:allow-create-webview-window"
-	]
+  "identifier": "main-capability",
+  "windows": ["*"],
+  "permissions": [
+    "core:default",
+    "core:tray:default",
+    "opener:default",
+    "dialog:default"
+  ]
 }

@@ -66,8 +66,10 @@ pub fn run() {
 
     let builder = tauri::Builder::default()
         .setup(|app| {
+            println!("🟢 Tauri .setup() 呼び出し開始！ OS: {}", std::env::consts::OS);
             #[cfg(not(target_os = "android"))]
             {
+                println!("🟢 not(target_os = \"android\") ブロック突入");
                 let tray = tray::setup_tray(app)?;
                 app.manage(tray);
                 println!("🟢 システムトレイのセットアップが完了しました");

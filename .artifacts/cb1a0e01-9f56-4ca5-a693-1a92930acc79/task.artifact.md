@@ -1,4 +1,5 @@
-# Refactoring Tasks
+# Preload Improvement Tasks
 
-- `[x]` Clean up dead code, unused imports, and optimize visibility across Rust and TypeScript modules
-- `[x]` Verify all tests pass (`cargo test` and `npm test`)
+- `[x]` Optimize App Initial Boot Preloading (auxiliary windows and loading banner)
+- `[x]` Optimize Ghost Switching Preloading (double-buffering asset and surface load before switch)
+- `[x]` Verify all unit and E2E tests pass (`cargo test` and `npm test`)

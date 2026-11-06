@@ -1,8 +1,10 @@
 use tauri::image::Image;
 use tauri::tray::{TrayIcon, TrayIconBuilder, TrayIconEvent};
+use tauri::Manager;
 use std::fs::OpenOptions;
 use std::io::Write;
 use std::path::Path;
+use crate::common::state::AppState;
 
 fn log_tray(msg: &str) {
     if let Ok(mut f) = OpenOptions::new().create(true).append(true).open("nanai_tray_debug.log") {
@@ -14,22 +16,15 @@ fn log_tray(msg: &str) {
 pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error> {
     log_tray("setup_tray 開始...");
 
-    let icon = match image::load_from_memory(include_bytes!("../icons/icon.ico")) {
-        Ok(img) => {
-            let rgba = img.to_rgba8();
-            let (width, height) = rgba.dimensions();
-            log_tray(&format!("トレイアイコン (ICO) 読み込み成功: {}x{}", width, height));
-            Image::new_owned(rgba.into_raw(), width, height)
-        }
-        Err(e) => {
-            log_tray(&format!("警告: icon.ico 読み込み失敗 ({:?})、デフォルトアイコン使用", e));
-            app.default_window_icon()
-                .cloned()
-                .unwrap_or_else(|| Image::new_owned(vec![255u8; 32 * 32 * 4], 32, 32))
-        }
-    };
+    let icon = app
+        .default_window_icon()
+        .cloned()
+        .unwrap_or_else(|| {
+            log_tray("警告: default_window_icon が取得できなかったため、32x32赤色フォールバックを使用します");
+            Image::new_owned(vec![255u8; 32 * 32 * 4], 32, 32)
+        });
 
-    let tray = TrayIconBuilder::with_id("main-tray")
+    let tray = TrayIconBuilder::new()
         .icon(icon)
         .tooltip("Nanai Android Mascot")
         .show_menu_on_left_click(false)
@@ -76,7 +71,9 @@ pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error
 
 #[cfg(not(target_os = "android"))]
 pub fn update_tray_icon_from_path(app_handle: &tauri::AppHandle, icon_path: &Path) -> Result<(), String> {
-    if let Some(tray) = app_handle.tray_by_id("main-tray") {
+    let state = app_handle.state::<AppState>();
+    let tray_lock = state.tray_icon.lock();
+    if let Some(tray) = &*tray_lock {
         if icon_path.exists() {
             let bytes = std::fs::read(icon_path).map_err(|e| e.to_string())?;
             if let Ok(img) = image::load_from_memory(&bytes) {

@@ -9,6 +9,7 @@ pub struct AppState {
     pub active_ghosts: Mutex<std::collections::HashMap<String, String>>,
     pub is_dialog_open: Mutex<bool>,
     pub balloon_offsets: Mutex<std::collections::HashMap<i32, (i32, i32)>>,
+    pub tray_icon: Mutex<Option<tauri::tray::TrayIcon<tauri::Wry>>>,
 }
 
 impl AppState {
@@ -21,6 +22,7 @@ impl AppState {
             active_ghosts: Mutex::new(std::collections::HashMap::new()),
             is_dialog_open: Mutex::new(false),
             balloon_offsets: Mutex::new(std::collections::HashMap::new()),
+            tray_icon: Mutex::new(None),
         }
     }
 }

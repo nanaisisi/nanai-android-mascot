@@ -71,6 +71,8 @@ pub fn run() {
             {
                 println!("🟢 not(target_os = \"android\") ブロック突入");
                 let tray = tray::setup_tray(app)?;
+                let state = app.state::<AppState>();
+                *state.tray_icon.lock() = Some(tray.clone());
                 app.manage(tray);
                 println!("🟢 システムトレイのセットアップが完了しました");
 

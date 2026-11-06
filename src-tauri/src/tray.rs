@@ -48,10 +48,11 @@ pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error
                     let (x, y) = if let Ok(Some(monitor)) = app_handle.primary_monitor() {
                         let size = monitor.size();
                         let pos = monitor.position();
-                        (
-                            (pos.x + size.width as i32) as f64 - 280.0,
-                            (pos.y + size.height as i32) as f64 - 620.0,
-                        )
+                        let win_width = 260.0;
+                        let win_height = 720.0;
+                        let target_x = (pos.x + size.width as i32) as f64 - win_width - 16.0;
+                        let target_y = (pos.y + size.height as i32) as f64 - win_height - 48.0;
+                        (target_x.max(pos.x as f64), target_y.max(pos.y as f64))
                     } else {
                         (100.0, 100.0)
                     };

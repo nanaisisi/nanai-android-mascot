@@ -20,6 +20,7 @@ import {
 import { createLongPressController } from "./drag/long-press.js";
 import { createStrokeTracker } from "./drag/stroke.js";
 import { isPixelTransparent } from "./transparency.js";
+import { isTauriAvailable } from "../../core/tauri-helper.js";
 
 // Re-export submodules for direct usage
 export {
@@ -263,8 +264,12 @@ export function setupGhostDragging(
 		}
 
 		if (isDragging) {
-			// 画面端スナップ（ドッキング退避判定: 画面幅の 12% 以内）
-			applyDockingSnap(target, globalThis.innerWidth);
+			// 画面端スナップ（ドッキング退避判定: 非Tauri環境(Web/モバイル)または明示的なオプション指定時）
+			if (!isTauriAvailable() || options.enableDocking) {
+				applyDockingSnap(target, globalThis.innerWidth);
+			} else {
+				target.classList.remove("is-docked-left", "is-docked-right");
+			}
 		} else {
 			// ドッキング中のタップで復帰
 			if (restoreFromDocking(target, globalThis.innerWidth)) {

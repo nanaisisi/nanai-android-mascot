@@ -2,6 +2,7 @@ use tauri::image::Image;
 use tauri::tray::{TrayIcon, TrayIconBuilder, TrayIconEvent};
 use std::fs::OpenOptions;
 use std::io::Write;
+use std::path::Path;
 
 fn log_tray(msg: &str) {
     if let Ok(mut f) = OpenOptions::new().create(true).append(true).open("nanai_tray_debug.log") {
@@ -28,7 +29,7 @@ pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error
         }
     };
 
-    let tray = TrayIconBuilder::new()
+    let tray = TrayIconBuilder::with_id("main-tray")
         .icon(icon)
         .tooltip("Nanai Android Mascot")
         .show_menu_on_left_click(false)
@@ -73,7 +74,29 @@ pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error
     tray
 }
 
+#[cfg(not(target_os = "android"))]
+pub fn update_tray_icon_from_path(app_handle: &tauri::AppHandle, icon_path: &Path) -> Result<(), String> {
+    if let Some(tray) = app_handle.tray_by_id("main-tray") {
+        if icon_path.exists() {
+            let bytes = std::fs::read(icon_path).map_err(|e| e.to_string())?;
+            if let Ok(img) = image::load_from_memory(&bytes) {
+                let rgba = img.to_rgba8();
+                let (width, height) = rgba.dimensions();
+                let icon = Image::new_owned(rgba.into_raw(), width, height);
+                tray.set_icon(Some(icon)).map_err(|e| e.to_string())?;
+                log_tray(&format!("トレイアイコンをゴースト固有の画像に差し替えました: {:?}", icon_path));
+            }
+        }
+    }
+    Ok(())
+}
+
 #[cfg(target_os = "android")]
 pub fn setup_tray(_app: &tauri::App) -> Result<(), ()> {
+    Ok(())
+}
+
+#[cfg(target_os = "android")]
+pub fn update_tray_icon_from_path(_app_handle: &tauri::AppHandle, _icon_path: &Path) -> Result<(), String> {
     Ok(())
 }

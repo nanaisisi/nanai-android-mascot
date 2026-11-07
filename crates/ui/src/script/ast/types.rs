@@ -146,19 +146,22 @@ impl SakuraAstNode {
         let mut nodes = Vec::new();
         if let SakuraAstNode::Root { children } = self {
             for child in children {
-                if let SakuraAstNode::Scope { scope, children: s_children } = child {
-                    if *scope == target_scope {
-                        for sc in s_children {
-                            nodes.push(sc);
-                        }
+                if let SakuraAstNode::Scope {
+                    scope,
+                    children: s_children,
+                } = child
+                    && *scope == target_scope
+                {
+                    for sc in s_children {
+                        nodes.push(sc);
                     }
                 }
             }
-        } else if let SakuraAstNode::Scope { scope, children } = self {
-            if *scope == target_scope {
-                for c in children {
-                    nodes.push(c);
-                }
+        } else if let SakuraAstNode::Scope { scope, children } = self
+            && *scope == target_scope
+        {
+            for c in children {
+                nodes.push(c);
             }
         }
         nodes

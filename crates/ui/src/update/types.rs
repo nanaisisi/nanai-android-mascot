@@ -77,14 +77,14 @@ impl UpdatePackage {
 
     /// 複数パスリストから合致するエントリ一覧を取得
     pub fn find_entries<'a>(&'a self, paths: &[&str]) -> Vec<&'a UpdateEntry> {
-        paths
-            .iter()
-            .filter_map(|p| self.find_entry(p))
-            .collect()
+        paths.iter().filter_map(|p| self.find_entry(p)).collect()
     }
 
     /// ローカル既存ファイルパスとMD5ペアから、未更新またはMD5が異なる更新対象エントリのみを抽出
-    pub fn pending_downloads(&self, local_checksums: &std::collections::HashMap<String, String>) -> Vec<&UpdateEntry> {
+    pub fn pending_downloads(
+        &self,
+        local_checksums: &std::collections::HashMap<String, String>,
+    ) -> Vec<&UpdateEntry> {
         self.active_downloads()
             .into_iter()
             .filter(|e| {

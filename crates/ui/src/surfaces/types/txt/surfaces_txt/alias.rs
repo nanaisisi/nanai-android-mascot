@@ -97,8 +97,10 @@ mod tests {
         txt.surfaces.insert(20, SurfaceDefinition::default());
         assert!(txt.resolve_alias("smile").is_some());
 
-        let mut def = SurfaceDefinition::default();
-        def.name = Some("Blink".to_string());
+        let def = SurfaceDefinition {
+            name: Some("Blink".to_string()),
+            ..Default::default()
+        };
         txt.surfaces.insert(0, def);
         assert!(txt.resolve_name_or_alias("Blink").is_some());
         assert!(txt.resolve_name_or_alias("smile").is_some());

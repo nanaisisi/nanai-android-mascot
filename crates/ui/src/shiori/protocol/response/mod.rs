@@ -131,8 +131,10 @@ mod tests {
         assert_eq!(ok_res.value.as_deref(), Some("\\hHello"));
         assert!(!ok_res.is_teach_pending());
 
-        let mut teach_res = ShioriResponse::default();
-        teach_res.status = StatusCode::NotEnough;
+        let mut teach_res = ShioriResponse {
+            status: StatusCode::NotEnough,
+            ..Default::default()
+        };
         assert!(teach_res.is_teach_pending());
         teach_res.status = StatusCode::Advice;
         assert!(teach_res.is_teach_pending());

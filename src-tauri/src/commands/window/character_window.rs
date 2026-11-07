@@ -12,8 +12,8 @@ pub async fn show_character_window(
     #[cfg(desktop)]
     {
         use tauri::Manager;
-        let mut win_width = width.unwrap_or(200.0).max(100.0);
-        let mut win_height = height.unwrap_or(360.0).max(100.0);
+        let win_width = width.unwrap_or(200.0).max(100.0);
+        let win_height = height.unwrap_or(360.0).max(100.0);
         let label = format!("subchar_window_{}", scope_id);
 
         let mut is_new = false;

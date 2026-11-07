@@ -38,10 +38,7 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
         "quicksection" => {
             let enabled = parts
                 .get(1)
-                .map(|v| match v.as_str() {
-                    "0" | "false" => false,
-                    _ => true,
-                })
+                .map(|v| !matches!(v.as_str(), "0" | "false"))
                 .unwrap_or(true);
             callback(SakuraCommand::Quick(enabled));
         }

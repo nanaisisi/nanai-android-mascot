@@ -113,15 +113,25 @@ fn test_update_package_methods() {
     assert!(pkg.find_entry("ghost/master/nonexistent.txt").is_none());
 
     // find_entries
-    let found = pkg.find_entries(&["ghost/master/aya.dll", "nonexistent.txt", "ghost/master/readme.txt"]);
+    let found = pkg.find_entries(&[
+        "ghost/master/aya.dll",
+        "nonexistent.txt",
+        "ghost/master/readme.txt",
+    ]);
     assert_eq!(found.len(), 2);
     assert_eq!(found[0].path, "ghost/master/aya.dll");
     assert_eq!(found[1].path, "ghost/master/readme.txt");
 
     // pending_downloads
     let mut local_checksums = std::collections::HashMap::new();
-    local_checksums.insert("ghost/master/aya.dll".to_string(), "11223344556677889900aabbccddeeff".to_string()); // matches
-    local_checksums.insert("ghost/master/readme.txt".to_string(), "wrong_md5".to_string()); // mismatch
+    local_checksums.insert(
+        "ghost/master/aya.dll".to_string(),
+        "11223344556677889900aabbccddeeff".to_string(),
+    ); // matches
+    local_checksums.insert(
+        "ghost/master/readme.txt".to_string(),
+        "wrong_md5".to_string(),
+    ); // mismatch
 
     let pending = pkg.pending_downloads(&local_checksums);
     assert_eq!(pending.len(), 1);

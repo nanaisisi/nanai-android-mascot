@@ -172,7 +172,8 @@ impl AnimationScheduler {
 
     /// scaling 描画メソッドによるベースサーフィス倍率を設定
     pub fn set_base_scaling_offset(&mut self, scope_id: u32, scale_x: f64, scale_y: f64) {
-        self.base_scaling_offsets.insert(scope_id, (scale_x, scale_y));
+        self.base_scaling_offsets
+            .insert(scope_id, (scale_x, scale_y));
     }
 
     /// scaling 描画メソッドによるベースサーフィス倍率を取得

@@ -4,8 +4,10 @@ use crate::surfaces::types::SurfaceDefinition;
 #[test]
 fn test_surfaces_txt_methods() {
     let mut txt = SurfacesTxt::default();
-    let mut def = SurfaceDefinition::default();
-    def.name = Some("Surface0".into());
+    let def = SurfaceDefinition {
+        name: Some("Surface0".into()),
+        ..Default::default()
+    };
     txt.surfaces.insert(0, def);
 
     txt.aliases.insert("main".into(), vec![0]);
@@ -54,23 +56,27 @@ fn test_plan_composition_bind_and_unmapped() {
     let mut txt = SurfacesTxt::default();
     let mut def = SurfaceDefinition::default();
 
-    let mut bind_anim = SerikoAnimation::default();
-    bind_anim.id = 100;
-    bind_anim.interval = Some(Interval::Bind);
-    bind_anim.patterns.push(AnimationPattern {
-        index: 0,
-        method: DrawMethod::Overlay,
-        surface: 20,
-        wait: 85,
-        wait_max: None,
-        x: 0,
-        y: 0,
-        options: vec![],
-    });
+    let bind_anim = SerikoAnimation {
+        id: 100,
+        interval: Some(Interval::Bind),
+        patterns: vec![AnimationPattern {
+            index: 0,
+            method: DrawMethod::Overlay,
+            surface: 20,
+            wait: 85,
+            wait_max: None,
+            x: 0,
+            y: 0,
+            options: vec![],
+        }],
+        ..Default::default()
+    };
 
-    let mut always_anim = SerikoAnimation::default();
-    always_anim.id = 101;
-    always_anim.interval = Some(Interval::Always);
+    let always_anim = SerikoAnimation {
+        id: 101,
+        interval: Some(Interval::Always),
+        ..Default::default()
+    };
 
     def.animations.insert(100, bind_anim);
     def.animations.insert(101, always_anim);

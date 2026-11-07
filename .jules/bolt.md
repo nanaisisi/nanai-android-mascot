@@ -22,6 +22,9 @@
 **Learning:** Found a hotspot during interval triggers where every tick evaluates and parses the animation interval string dynamically. This was inefficient as the object and set is constantly created.
 **Action:** Caching the parsed outcome string as a property directly onto the animation object prevents unnecessary repetitive re-evaluation.
 
+## 2026-11-08 - UKADOC SHIORI Event Protocol & Parallel Merge Safety
+**Learning:** During parallel multi-agent development cycles, running non-dry-run specification compliance audits that modify hundreds of individual `docs/spec/**/*.md` audit files will cause massive Git merge conflicts across branches. However, updating the central `docs/spec/SUMMARY.md` directly via `verify_spec_compliance` preserves accurate project-wide metric tracking (jumping from 69.83% to 76.76%, +143 verified items) cleanly and safely.
+**Action:** When expanding specification definitions, rely on central protocol registries (like `SHIORI_EVENTS`) and typed notification methods, test against them, and keep audit file changes localized to avoid merge collisions across parallel slots.
 ## 2026-11-08 - [Compositor Advanced Blend Modes and Transparent Region Black]
 
 **Learning:** When applying `seriko.paint_transparent_region_black`, checking corner pixel chroma key match on non-zero alpha pixels requires endian-aware bit manipulation on `Uint32Array` in HTML5 Canvas context. Clamping RGB channels to zero while preserving the alpha channel directly in 32-bit integer arithmetic avoids expensive unpacking and repacking.

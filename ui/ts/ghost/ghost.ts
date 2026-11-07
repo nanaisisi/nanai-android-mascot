@@ -104,10 +104,25 @@ export class GhostController {
 	}
 
 	async selectGhost(ghostName: string) {
+		const prevGhostName = this.currentGhost?.name || "";
 		const ghost = this.ghosts.find((g) => g.name === ghostName) || {
 			name: ghostName,
 			path: `${AppConfig.paths.defaultGhostDir}/${ghostName}`,
 		};
+
+		if (
+			prevGhostName &&
+			prevGhostName !== ghost.name &&
+			(this as any).sendShioriEvent
+		) {
+			try {
+				await (this as any).sendShioriEvent("OnGhostChanging", [
+					ghost.name,
+					"manual",
+					prevGhostName,
+				]);
+			} catch (_e) {}
+		}
 
 		const startTime = Date.now();
 
@@ -193,6 +208,7 @@ export class GhostController {
 	}
 
 	async selectShell(shellName: string) {
+		const prevShell = this.currentShell || "";
 		this.currentShell = shellName;
 		if (this.currentGhost) {
 			try {
@@ -205,6 +221,18 @@ export class GhostController {
 			} catch (_e) {}
 			await (this as any).updateSurface(0, 0);
 			await (this as any).updateSurface(10, 1);
+			if (
+				prevShell &&
+				prevShell !== shellName &&
+				(this as any).sendShioriEvent
+			) {
+				try {
+					await (this as any).sendShioriEvent("OnShellChanged", [
+						shellName,
+						prevShell,
+					]);
+				} catch (_e) {}
+			}
 		}
 	}
 }

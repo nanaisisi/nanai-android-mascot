@@ -26,6 +26,8 @@ pub enum DrawMethod {
     Auto,
     /// `move`：表示位置の移動
     Move,
+    /// `scaling`：表示倍率の動的変更 (scale_x, scale_y)
+    Scaling,
     /// `insert`：アニメーションパターン挿入
     Insert,
     /// `start`：指定IDのアニメーションを開始
@@ -64,6 +66,7 @@ impl DrawMethod {
             "asis" => Self::AsIs,
             "auto" => Self::Auto,
             "move" => Self::Move,
+            "scaling" => Self::Scaling,
             "insert" => Self::Insert,
             "reduce" => Self::Reduce,
             "overlaymultiply" => Self::Blend("multiply-fast".to_string()),

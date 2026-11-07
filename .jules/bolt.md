@@ -21,3 +21,7 @@
 
 **Learning:** Found a hotspot during interval triggers where every tick evaluates and parses the animation interval string dynamically. This was inefficient as the object and set is constantly created.
 **Action:** Caching the parsed outcome string as a property directly onto the animation object prevents unnecessary repetitive re-evaluation.
+
+## 2026-11-07 - [Slot-08 Cycle 8: SERIKO Scaling DrawMethod & Surface Change Events]
+**Learning:** During continuous animation stepping, SERIKO `scaling` modifies the character window scale multipliers (scaleX, scaleY). Coupling scaling changes with `_baseScalingOffsets` and notifying `FrameStepEvent` preserves frame rate stability while avoiding unnecessary DOM style recalculations when scale remains constant. Furthermore, gating lip-sync triggered by `onCharSpoken` behind an O(1) scope-indexed boolean map (`isSerikoTalkEnabled`) completely eliminates useless animation scheduling when `\![set,serikotalk,false]` is active.
+**Action:** Always maintain per-scope toggle maps for SERIKO talking and scaling offsets, and fire SHIORI notification hooks (`OnSurfaceChange`, `OnOtherSurfaceChange`) asynchronously without blocking the render pipeline.

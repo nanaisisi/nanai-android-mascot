@@ -12,7 +12,11 @@ export function processChromaKey(
 		return Promise.resolve(cache.get(imageSrc)!);
 	}
 	const useSelfAlpha = Boolean(options?.useSelfAlpha);
-	const cacheKey = `${imageSrc}__pna__${pnaSrc || "none"}__selfalpha__${useSelfAlpha}`;
+	const paintTransparentRegionBlack = Boolean(
+		options?.paintTransparentRegionBlack ??
+			options?.paint_transparent_region_black,
+	);
+	const cacheKey = `${imageSrc}__pna__${pnaSrc || "none"}__selfalpha__${useSelfAlpha}__black__${paintTransparentRegionBlack}`;
 	if (cache?.has(cacheKey)) {
 		return Promise.resolve(cache.get(cacheKey)!);
 	}
@@ -67,6 +71,50 @@ export function processChromaKey(
 								for (let i = 0; i < len32; i++) {
 									const pnaR = (pnaData32[i] >>> 24) & 0xff;
 									data32[i] = (data32[i] & 0xffffff00) | pnaR;
+								}
+							}
+
+							// seriko.paint_transparent_region_black: PNA適用後に左上色と合致する不透明/半透明ピクセルを黒に塗りつぶす
+							if (paintTransparentRegionBlack) {
+								const cornerR = data[0];
+								const cornerG = data[1];
+								const cornerB = data[2];
+								const isCornerTarget =
+									(cornerR === 0 && cornerG >= 250 && cornerB === 0) ||
+									(cornerR === 0 && cornerG === 255 && cornerB === 0);
+
+								if (isLittleEndian) {
+									const cornerRgb = (cornerB << 16) | (cornerG << 8) | cornerR;
+									for (let i = 0; i < len32; i++) {
+										const pixel = data32[i];
+										const alpha = (pixel >>> 24) & 0xff;
+										if (alpha === 0) continue;
+										const rgb = pixel & 0x00ffffff;
+										const r = pixel & 0xff;
+										const g = (pixel >> 8) & 0xff;
+										const b = (pixel >> 16) & 0xff;
+										const isGreen = r <= 35 && g >= 220 && b <= 35;
+										if ((isCornerTarget && rgb === cornerRgb) || isGreen) {
+											// RGBを黒(0,0,0)にしてアルファは保持
+											data32[i] = (alpha << 24) >>> 0;
+										}
+									}
+								} else {
+									const cornerRgb =
+										(cornerR << 24) | (cornerG << 16) | (cornerB << 8);
+									for (let i = 0; i < len32; i++) {
+										const pixel = data32[i];
+										const alpha = pixel & 0xff;
+										if (alpha === 0) continue;
+										const rgb = pixel & 0xffffff00;
+										const r = (pixel >> 24) & 0xff;
+										const g = (pixel >> 16) & 0xff;
+										const b = (pixel >> 8) & 0xff;
+										const isGreen = r <= 35 && g >= 220 && b <= 35;
+										if ((isCornerTarget && rgb === cornerRgb) || isGreen) {
+											data32[i] = alpha;
+										}
+									}
 								}
 							}
 

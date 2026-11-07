@@ -21,3 +21,17 @@
 
 **Learning:** Found a hotspot during interval triggers where every tick evaluates and parses the animation interval string dynamically. This was inefficient as the object and set is constantly created.
 **Action:** Caching the parsed outcome string as a property directly onto the animation object prevents unnecessary repetitive re-evaluation.
+
+## 2026-11-08 - UKADOC SHIORI Event Protocol & Parallel Merge Safety
+**Learning:** During parallel multi-agent development cycles, running non-dry-run specification compliance audits that modify hundreds of individual `docs/spec/**/*.md` audit files will cause massive Git merge conflicts across branches. However, updating the central `docs/spec/SUMMARY.md` directly via `verify_spec_compliance` preserves accurate project-wide metric tracking (jumping from 69.83% to 76.76%, +143 verified items) cleanly and safely.
+**Action:** When expanding specification definitions, rely on central protocol registries (like `SHIORI_EVENTS`) and typed notification methods, test against them, and keep audit file changes localized to avoid merge collisions across parallel slots.
+## 2026-11-08 - [Compositor Advanced Blend Modes and Transparent Region Black]
+
+**Learning:** When applying `seriko.paint_transparent_region_black`, checking corner pixel chroma key match on non-zero alpha pixels requires endian-aware bit manipulation on `Uint32Array` in HTML5 Canvas context. Clamping RGB channels to zero while preserving the alpha channel directly in 32-bit integer arithmetic avoids expensive unpacking and repacking.
+**Action:** When performing color replacement or masked coloring on Canvas buffers with alpha preserved, update the 32-bit pixel with `(alpha << 24) >>> 0` (or `alpha` for big-endian), ensuring immediate single-instruction writes.
+## 2026-11-07 - [Slot-08 Cycle 8: SERIKO Scaling DrawMethod & Surface Change Events]
+**Learning:** During continuous animation stepping, SERIKO `scaling` modifies the character window scale multipliers (scaleX, scaleY). Coupling scaling changes with `_baseScalingOffsets` and notifying `FrameStepEvent` preserves frame rate stability while avoiding unnecessary DOM style recalculations when scale remains constant. Furthermore, gating lip-sync triggered by `onCharSpoken` behind an O(1) scope-indexed boolean map (`isSerikoTalkEnabled`) completely eliminates useless animation scheduling when `\![set,serikotalk,false]` is active.
+**Action:** Always maintain per-scope toggle maps for SERIKO talking and scaling offsets, and fire SHIORI notification hooks (`OnSurfaceChange`, `OnOtherSurfaceChange`) asynchronously without blocking the render pipeline.
+## 2026-11-08 - [UKADOC Compliance Audit Engine Conflict Prevention & Scoped Sync]
+**Learning:** Running batch spec updates across all audit READMEs causes substantial git churn and increases merge conflict risk in a 15-slot parallel engineering workflow. Isolating `--target` matching and implementing idempotent `--sync-readmes` (only modifying files when content differs) keeps the codebase clean and safe.
+**Action:** When updating compliance tables or tooling, default to safe dry-run/read-only behavior, scope operations with exact category filters, and verify that 0 unexpected files are touched.

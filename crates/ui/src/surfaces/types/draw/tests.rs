@@ -120,6 +120,7 @@ fn test_draw_method_parse_and_serde() {
     assert_eq!(DrawMethod::parse("asis"), DrawMethod::AsIs);
     assert_eq!(DrawMethod::parse("auto"), DrawMethod::Auto);
     assert_eq!(DrawMethod::parse("move"), DrawMethod::Move);
+    assert_eq!(DrawMethod::parse("scaling"), DrawMethod::Scaling);
     assert_eq!(DrawMethod::parse("insert"), DrawMethod::Insert);
     assert_eq!(DrawMethod::parse("reduce"), DrawMethod::Reduce);
     assert_eq!(

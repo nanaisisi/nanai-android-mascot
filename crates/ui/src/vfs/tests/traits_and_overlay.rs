@@ -88,6 +88,21 @@ fn test_virtual_file_system_trait_and_overlay() {
     assert!(empty_overlay.list_dir("any").unwrap().is_empty());
     assert!(empty_overlay.walk_files("any").unwrap().is_empty());
 
+    // find_files (VirtualFileSystem トレイト経由での多層検索・重複排除テスト)
+    let found_surfaces = overlay.find_files("surface").unwrap();
+    assert_eq!(
+        found_surfaces,
+        vec!["shell/master/surface0000.png".to_string()]
+    );
+    let found_txt = overlay.find_files(".txt").unwrap();
+    assert_eq!(
+        found_txt,
+        vec![
+            "shell/master/descript.txt".to_string(),
+            "shell/master/extra.txt".to_string(),
+        ]
+    );
+
     // remove_layer
     let removed = overlay.remove_layer(0);
     assert!(removed.is_some());
@@ -99,6 +114,7 @@ fn test_virtual_file_system_trait_and_overlay() {
     assert!(overlay.is_empty());
     assert_eq!(overlay.layer_count(), 0);
     assert!(!overlay.exists("shell/master/descript.txt"));
+    assert!(overlay.find_files("surface").unwrap().is_empty());
 }
 
 #[test]

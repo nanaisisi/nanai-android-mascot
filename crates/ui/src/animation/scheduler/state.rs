@@ -11,6 +11,7 @@ impl AnimationScheduler {
         self.stop_animations(scope_id);
         self.animation_offsets.remove(&scope_id);
         self.base_move_offsets.remove(&scope_id);
+        self.base_scaling_offsets.remove(&scope_id);
     }
 
     /// 現在のサーフィスを切り替え、新旧サーフィスの shared-index アニメーションの再生インデックスを継承する
@@ -34,6 +35,7 @@ impl AnimationScheduler {
         self.stop_animations(scope_id);
         self.animation_offsets.remove(&scope_id);
         self.base_move_offsets.remove(&scope_id);
+        self.base_scaling_offsets.remove(&scope_id);
 
         // 新サーフィス側にも shared-index 指定のアニメーションが存在すれば、保存した pattern index から復帰開始
         for anim in new_animations {
@@ -166,5 +168,31 @@ impl AnimationScheduler {
             .get(&scope_id)
             .copied()
             .unwrap_or((0, 0))
+    }
+
+    /// scaling 描画メソッドによるベースサーフィス倍率を設定
+    pub fn set_base_scaling_offset(&mut self, scope_id: u32, scale_x: f64, scale_y: f64) {
+        self.base_scaling_offsets.insert(scope_id, (scale_x, scale_y));
+    }
+
+    /// scaling 描画メソッドによるベースサーフィス倍率を取得
+    pub fn get_base_scaling_offset(&self, scope_id: u32) -> (f64, f64) {
+        self.base_scaling_offsets
+            .get(&scope_id)
+            .copied()
+            .unwrap_or((100.0, 100.0))
+    }
+
+    /// SERIKO 口パクの有効/無効を設定 (\![set,serikotalk,true/false])
+    pub fn set_seriko_talk_enabled(&mut self, scope_id: u32, enabled: bool) {
+        self.seriko_talk_enabled.insert(scope_id, enabled);
+    }
+
+    /// SERIKO 口パクが有効か取得 (未設定時は true)
+    pub fn is_seriko_talk_enabled(&self, scope_id: u32) -> bool {
+        self.seriko_talk_enabled
+            .get(&scope_id)
+            .copied()
+            .unwrap_or(true)
     }
 }

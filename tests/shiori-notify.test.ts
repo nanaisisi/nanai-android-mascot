@@ -182,3 +182,145 @@ test("shioriNotifyMethods covers sendShioriNotify and sendBootNotifyEvents", asy
 	delete globalThis.__TAURI_INTERNALS__;
 	assert.ok(true);
 });
+
+test("shioriNotifyMethods covers lifecycle, dialog, balloon, surface, and overlap events", async () => {
+	const calls: any[] = [];
+	const controller = {
+		...shioriNotifyMethods,
+		app: { ghostId: "main" },
+	};
+
+	globalThis.__TAURI_INTERNALS__ = {
+		invoke: async (cmd: string, args: any) => {
+			calls.push({ cmd, args });
+			return "ok";
+		},
+		transformCallback: (cb: any) => cb,
+	};
+	globalThis.window = globalThis;
+
+	// Dialogbox events
+	await controller.sendGhostTermsAccept("GhostA");
+	assert.equal(calls.at(-1).args.event, "OnGhostTermsAccept");
+	assert.equal(calls.at(-1).args.references[0], "GhostA");
+
+	await controller.sendGhostTermsDecline("GhostA");
+	assert.equal(calls.at(-1).args.event, "OnGhostTermsDecline");
+	assert.equal(calls.at(-1).args.references[0], "GhostA");
+
+	// Balloon events
+	await controller.sendBalloonClose(0, "timeout");
+	assert.equal(calls.at(-1).args.event, "OnBalloonClose");
+	assert.deepEqual(calls.at(-1).args.references, ["0", "timeout"]);
+
+	await controller.sendBalloonBreak(1, "user");
+	assert.equal(calls.at(-1).args.event, "OnBalloonBreak");
+	assert.deepEqual(calls.at(-1).args.references, ["1", "user"]);
+
+	// Surface events
+	await controller.sendSurfaceChange(0, 10);
+	assert.equal(calls.at(-1).args.event, "OnSurfaceChange");
+	assert.deepEqual(calls.at(-1).args.references, ["0", "10"]);
+
+	await controller.sendOtherSurfaceChange("GhostB", 0, 5);
+	assert.equal(calls.at(-1).args.event, "OnOtherSurfaceChange");
+	assert.deepEqual(calls.at(-1).args.references, ["GhostB", "0", "5"]);
+
+	// Boot-close-change lifecycle events
+	await controller.sendGhostChanging("Ghost2", "Ghost1", "manual");
+	assert.equal(calls.at(-1).args.event, "OnGhostChanging");
+	assert.deepEqual(calls.at(-1).args.references, [
+		"Ghost2",
+		"manual",
+		"Ghost1",
+	]);
+
+	await controller.sendGhostChanged("Ghost2", "Ghost1");
+	assert.equal(calls.at(-1).args.event, "OnGhostChanged");
+	assert.deepEqual(calls.at(-1).args.references, ["Ghost2", "Ghost1"]);
+
+	await controller.sendShellChanged("alt", "master");
+	assert.equal(calls.at(-1).args.event, "OnShellChanged");
+	assert.deepEqual(calls.at(-1).args.references, ["alt", "master"]);
+
+	await controller.sendCloseAll("user");
+	assert.equal(calls.at(-1).args.event, "OnCloseAll");
+	assert.deepEqual(calls.at(-1).args.references, ["user"]);
+
+	await controller.sendGhostCalling("GhostB");
+	assert.equal(calls.at(-1).args.event, "OnGhostCalling");
+	assert.deepEqual(calls.at(-1).args.references, ["GhostB"]);
+
+	await controller.sendGhostCalled("GhostA");
+	assert.equal(calls.at(-1).args.event, "OnGhostCalled");
+	assert.deepEqual(calls.at(-1).args.references, ["GhostA"]);
+
+	await controller.sendGhostCallComplete("GhostB");
+	assert.equal(calls.at(-1).args.event, "OnGhostCallComplete");
+	assert.deepEqual(calls.at(-1).args.references, ["GhostB"]);
+
+	await controller.sendOtherGhostBooted("GhostC");
+	assert.equal(calls.at(-1).args.event, "OnOtherGhostBooted");
+	assert.deepEqual(calls.at(-1).args.references, ["GhostC"]);
+
+	await controller.sendOtherGhostChanged("GhostC", "GhostD");
+	assert.equal(calls.at(-1).args.event, "OnOtherGhostChanged");
+	assert.deepEqual(calls.at(-1).args.references, ["GhostC", "GhostD"]);
+
+	await controller.sendOtherGhostClosed("GhostC");
+	assert.equal(calls.at(-1).args.event, "OnOtherGhostClosed");
+	assert.deepEqual(calls.at(-1).args.references, ["GhostC"]);
+
+	await controller.sendSysSuspend();
+	assert.equal(calls.at(-1).args.event, "OnSysSuspend");
+
+	await controller.sendSysResume();
+	assert.equal(calls.at(-1).args.event, "OnSysResume");
+
+	await controller.sendDestroy();
+	assert.equal(calls.at(-1).args.event, "OnDestroy");
+
+	await controller.sendInitialize();
+	assert.equal(calls.at(-1).args.event, "OnInitialize");
+
+	await controller.sendVirtualDesktopChanged(2);
+	assert.equal(calls.at(-1).args.event, "OnVirtualDesktopChanged");
+	assert.deepEqual(calls.at(-1).args.references, ["2"]);
+
+	await controller.sendFullScreenAppMinimize();
+	assert.equal(calls.at(-1).args.event, "OnFullScreenAppMinimize");
+
+	await controller.sendFullScreenAppRestore();
+	assert.equal(calls.at(-1).args.event, "OnFullScreenAppRestore");
+
+	await controller.sendBasewareUpdating();
+	assert.equal(calls.at(-1).args.event, "OnBasewareUpdating");
+
+	await controller.sendBasewareUpdated();
+	assert.equal(calls.at(-1).args.event, "OnBasewareUpdated");
+
+	await controller.sendCacheSuspend();
+	assert.equal(calls.at(-1).args.event, "OnCacheSuspend");
+
+	await controller.sendCacheRestore();
+	assert.equal(calls.at(-1).args.event, "OnCacheRestore");
+
+	// Overlap events
+	await controller.sendOverlap(0, 1, "0,0,100,100");
+	assert.equal(calls.at(-1).args.event, "OnOverlap");
+	assert.deepEqual(calls.at(-1).args.references, ["0", "1", "0,0,100,100"]);
+
+	await controller.sendOffscreen(0, "0,0,100,100");
+	assert.equal(calls.at(-1).args.event, "OnOffscreen");
+	assert.deepEqual(calls.at(-1).args.references, ["0", "0,0,100,100"]);
+
+	await controller.sendOtherOverlap("GhostB", "0,0,100,100");
+	assert.equal(calls.at(-1).args.event, "OnOtherOverlap");
+	assert.deepEqual(calls.at(-1).args.references, ["GhostB", "0,0,100,100"]);
+
+	await controller.sendOtherOffscreen("GhostB", "0,0,100,100");
+	assert.equal(calls.at(-1).args.event, "OnOtherOffscreen");
+	assert.deepEqual(calls.at(-1).args.references, ["GhostB", "0,0,100,100"]);
+
+	delete (globalThis as any).__TAURI_INTERNALS__;
+});

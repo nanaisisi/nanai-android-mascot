@@ -73,9 +73,11 @@ import {
 	handleReloadSurface,
 	handleSetAlignmentOnDesktop,
 	handleSetAlphaCommand,
+	handleSetOtherSurfaceChangeCommand,
 	handleSetPositionCommand,
 	handleSetPropertyCommand,
 	handleSetScalingCommand,
+	handleSetSerikoTalkCommand,
 	handleSetShioriDebugMode,
 	handleSetTaskTrayIcon,
 	handleSetTrayBalloon,
@@ -386,6 +388,20 @@ export function initDefaultCommandHandlers() {
 		handleSetPropertyCommand(handler, args);
 	});
 
+	registerCommandHandler("setserikotalk", async (handler, args) => {
+		handleSetSerikoTalkCommand(handler, args);
+	});
+	registerCommandHandler("set:serikotalk", async (handler, args) => {
+		handleSetSerikoTalkCommand(handler, args);
+	});
+
+	registerCommandHandler("setothersurfacechange", async (handler, args) => {
+		handleSetOtherSurfaceChangeCommand(handler, args);
+	});
+	registerCommandHandler("set:othersurfacechange", async (handler, args) => {
+		handleSetOtherSurfaceChangeCommand(handler, args);
+	});
+
 	registerCommandHandler("opensystemtarget", async (handler, args) => {
 		handleOpenSystemTarget(handler, args);
 	});
@@ -488,8 +504,11 @@ export function initDefaultCommandHandlers() {
 		handleSetAlignmentOnDesktop(handler, args);
 	});
 
-	registerCommandHandler("windowstate", async (_handler, args) => {
-		handleWindowState(args[1]);
+	registerCommandHandler("windowstate", async (handler, args) => {
+		await handleWindowState(args[1], handler);
+	});
+	registerCommandHandler("set:windowstate", async (handler, args) => {
+		await handleWindowState(args[2] ?? args[1], handler);
 	});
 
 	registerCommandHandler("alignmenttodesktop", async (handler, args) => {

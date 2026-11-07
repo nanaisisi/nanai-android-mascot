@@ -178,4 +178,20 @@ impl VirtualFileSystem for OverlayVfs {
         }
         false
     }
+
+    fn find_files(&self, pattern: &str) -> io::Result<Vec<String>> {
+        let pat_lower = pattern.to_lowercase();
+        let mut merged = Vec::new();
+        for layer in &self.layers {
+            if let Ok(matched) = layer.find_files(&pat_lower) {
+                for file in matched {
+                    if !merged.contains(&file) {
+                        merged.push(file);
+                    }
+                }
+            }
+        }
+        merged.sort();
+        Ok(merged)
+    }
 }

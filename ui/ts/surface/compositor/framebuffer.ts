@@ -231,7 +231,12 @@ export class SurfaceFrameBuffer {
 						br = (255 - ((255 - sr) * (255 - dr)) / 255) | 0;
 						bg = (255 - ((255 - sg) * (255 - dg)) / 255) | 0;
 						bb = (255 - ((255 - sb) * (255 - db)) / 255) | 0;
-					} else if (baseMode === "add" || baseMode === "lighter") {
+					} else if (
+						baseMode === "add" ||
+						baseMode === "lighter" ||
+						baseMode === "add-glow" ||
+						baseMode === "addglow"
+					) {
 						br = Math.min(255, sr + dr);
 						bg = Math.min(255, sg + dg);
 						bb = Math.min(255, sb + db);
@@ -239,10 +244,40 @@ export class SurfaceFrameBuffer {
 						br = Math.min(sr, dr);
 						bg = Math.min(sg, dg);
 						bb = Math.min(sb, db);
+					} else if (
+						baseMode === "darker-color" ||
+						baseMode === "darkercolor"
+					) {
+						const lumSrc = (sr * 299 + sg * 587 + sb * 114) / 1000;
+						const lumDst = (dr * 299 + dg * 587 + db * 114) / 1000;
+						if (lumSrc < lumDst) {
+							br = sr;
+							bg = sg;
+							bb = sb;
+						} else {
+							br = dr;
+							bg = dg;
+							bb = db;
+						}
 					} else if (baseMode === "lighten") {
 						br = Math.max(sr, dr);
 						bg = Math.max(sg, dg);
 						bb = Math.max(sb, db);
+					} else if (
+						baseMode === "lighter-color" ||
+						baseMode === "lightercolor"
+					) {
+						const lumSrc = (sr * 299 + sg * 587 + sb * 114) / 1000;
+						const lumDst = (dr * 299 + dg * 587 + db * 114) / 1000;
+						if (lumSrc > lumDst) {
+							br = sr;
+							bg = sg;
+							bb = sb;
+						} else {
+							br = dr;
+							bg = dg;
+							bb = db;
+						}
 					} else if (baseMode === "difference") {
 						br = Math.abs(sr - dr);
 						bg = Math.abs(sg - dg);
@@ -280,7 +315,12 @@ export class SurfaceFrameBuffer {
 						br = softCalc(dr, sr);
 						bg = softCalc(dg, sg);
 						bb = softCalc(db, sb);
-					} else if (baseMode === "color-dodge" || baseMode === "colordodge") {
+					} else if (
+						baseMode === "color-dodge" ||
+						baseMode === "colordodge" ||
+						baseMode === "color-dodge-glow" ||
+						baseMode === "colordodgeglow"
+					) {
 						const dodgeCalc = (d, s) =>
 							d === 0
 								? 0

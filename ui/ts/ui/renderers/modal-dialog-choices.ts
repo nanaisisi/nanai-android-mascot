@@ -46,6 +46,10 @@ export function createChoiceButton({ id, text, onSelect }) {
 		} else if (this.player?.onChoiceSelected) {
 			this.player.onChoiceSelected(id, text);
 		} else {
+			this.app.ghostController?.sendShioriEvent?.("OnChoiceSelectEx", [
+				text,
+				id,
+			]);
 			this.app.ghostController?.sendShioriEvent("OnChoiceSelect", [id, text]);
 		}
 	});

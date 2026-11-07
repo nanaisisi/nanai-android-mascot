@@ -127,6 +127,10 @@ impl AnimationScheduler {
         let current_count = *count;
         let base_surface = self.current_surface(scope_id);
 
+        if !self.is_seriko_talk_enabled(scope_id) {
+            return;
+        }
+
         for anim in animations {
             if let Some(Interval::Talk) = anim.interval {
                 self.start_animation(scope_id, base_surface, anim);

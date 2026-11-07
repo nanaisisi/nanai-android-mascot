@@ -70,6 +70,13 @@ fn test_vfs_resolver() {
     assert_eq!(lines[0], "charset,Shift_JIS");
     assert_eq!(lines[1], "name,マスター");
 
+    // find_files (VirtualFileSystem トレイト経由)
+    let vfs_resolver: &dyn VirtualFileSystem = &resolver;
+    let found_surf = vfs_resolver.find_files("surface").unwrap();
+    assert_eq!(found_surf, vec!["Shell/Master/surface0000.png".to_string()]);
+    let found_desc = vfs_resolver.find_files("descript").unwrap();
+    assert_eq!(found_desc, vec!["Shell/Master/descript.txt".to_string()]);
+
     // read_text
     let text = resolver.read_text("shell/master/descript.txt").unwrap();
     assert!(text.contains("charset,Shift_JIS"));

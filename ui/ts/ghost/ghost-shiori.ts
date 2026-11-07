@@ -26,7 +26,19 @@ export const ghostShioriMethods = {
 			if (!isCurrentLoad()) return;
 
 			try {
-				const bootRes: any = await (this as any).sendShioriEvent("OnBoot");
+				const prevGhost = (this as any)._previousGhostName || "";
+				let bootRes: any = null;
+				if (prevGhost && prevGhost !== ghost.name) {
+					bootRes = await (this as any).sendShioriEvent("OnGhostChanged", [
+						ghost.name,
+						"manual",
+						prevGhost,
+					]);
+				}
+				if (!bootRes || bootRes.status === 204 || !bootRes.value) {
+					bootRes = await (this as any).sendShioriEvent("OnBoot");
+				}
+				(this as any)._previousGhostName = ghost.name;
 				const scriptText = bootRes?.value || bootRes?.headers?.value;
 				if (bootRes?.status === 200 && scriptText) {
 					(this as any).app?.playSakuraScript?.(scriptText);

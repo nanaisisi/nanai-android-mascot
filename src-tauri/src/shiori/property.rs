@@ -99,6 +99,30 @@ pub fn evaluate_property_query(query: &str) -> String {
         "update_time" => "0".to_string(),
         "sakura.bind.menu" => "".to_string(),
         "kero.bind.menu" => "".to_string(),
+        "sakura.menu" | "kero.menu" => "auto".to_string(),
+        "menu.font.name" => "sans-serif".to_string(),
+        "menu.font.height" => "12".to_string(),
+        "menu.frame.color.r" => "0".to_string(),
+        "menu.frame.color.g" => "0".to_string(),
+        "menu.frame.color.b" => "0".to_string(),
+        "menu.background.font.color.r" => "0".to_string(),
+        "menu.background.font.color.g" => "0".to_string(),
+        "menu.background.font.color.b" => "0".to_string(),
+        "menu.foreground.font.color.r" => "255".to_string(),
+        "menu.foreground.font.color.g" => "255".to_string(),
+        "menu.foreground.font.color.b" => "255".to_string(),
+        "menu.disable.font.color.r" => "128".to_string(),
+        "menu.disable.font.color.g" => "128".to_string(),
+        "menu.disable.font.color.b" => "128".to_string(),
+        "menu.separator.color.r" => "192".to_string(),
+        "menu.separator.color.g" => "192".to_string(),
+        "menu.separator.color.b" => "192".to_string(),
+        s if s.starts_with("sakura.menuitem")
+            || s.starts_with("kero.menuitem")
+            || s.starts_with("char.menuitem") =>
+        {
+            "".to_string()
+        }
         _ => {
             if let Some(shiori_var) = q.strip_prefix("shiori.") {
                 return match shiori_var {
@@ -292,6 +316,19 @@ mod tests {
         assert_eq!(evaluate_property_query("switchreloadbutton.caption"), "1");
         assert_eq!(evaluate_property_query("historyrootbutton.caption"), "1");
         assert_eq!(evaluate_property_query("sntpbutton.caption"), "1");
+        assert_eq!(evaluate_property_query("sakura.menu"), "auto");
+        assert_eq!(evaluate_property_query("kero.menu"), "auto");
+        assert_eq!(evaluate_property_query("menu.font.name"), "sans-serif");
+        assert_eq!(evaluate_property_query("menu.font.height"), "12");
+        assert_eq!(evaluate_property_query("menu.frame.color.r"), "0");
+        assert_eq!(evaluate_property_query("menu.frame.color.g"), "0");
+        assert_eq!(evaluate_property_query("menu.frame.color.b"), "0");
+        assert_eq!(evaluate_property_query("menu.background.font.color.r"), "0");
+        assert_eq!(evaluate_property_query("menu.foreground.font.color.r"), "255");
+        assert_eq!(evaluate_property_query("menu.disable.font.color.r"), "128");
+        assert_eq!(evaluate_property_query("menu.separator.color.r"), "192");
+        assert_eq!(evaluate_property_query("sakura.menuitem0"), "");
+        assert_eq!(evaluate_property_query("kero.menuitemex1"), "");
         assert_eq!(
             evaluate_property_query("unknown.prop"),
             "(unknown property: unknown.prop)"

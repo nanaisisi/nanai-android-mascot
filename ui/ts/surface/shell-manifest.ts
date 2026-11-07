@@ -191,6 +191,7 @@ export function manifestToSurfaceData(manifest: any) {
 			.map((anim: any) => ({
 				id: anim.id ?? 0,
 				interval: intervalToString(anim.interval) || "never",
+				collisions: (anim.collisions ?? []).map(collisionRecord),
 				patterns: (anim.patterns ?? [])
 					.slice()
 					.sort((a: any, b: any) => (a.index ?? 0) - (b.index ?? 0))

@@ -488,8 +488,11 @@ export function initDefaultCommandHandlers() {
 		handleSetAlignmentOnDesktop(handler, args);
 	});
 
-	registerCommandHandler("windowstate", async (_handler, args) => {
-		handleWindowState(args[1]);
+	registerCommandHandler("windowstate", async (handler, args) => {
+		await handleWindowState(args[1], handler);
+	});
+	registerCommandHandler("set:windowstate", async (handler, args) => {
+		await handleWindowState(args[2] ?? args[1], handler);
 	});
 
 	registerCommandHandler("alignmenttodesktop", async (handler, args) => {

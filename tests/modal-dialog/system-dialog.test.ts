@@ -7,9 +7,9 @@ import {
 } from "./helpers.js";
 
 describe("ModalDialogController System Dialogs (Cycle 5)", () => {
-	let app;
-	let controller;
-	let sentEvents;
+	let app: any;
+	let controller: any;
+	let sentEvents: any[];
 
 	beforeEach(() => {
 		setupMockDom();
@@ -110,5 +110,51 @@ describe("ModalDialogController System Dialogs (Cycle 5)", () => {
 		expect(sentEvents[0].name).toBe("OnCustomColor");
 		expect(sentEvents[0].args[0]).toBe("color");
 		expect(sentEvents[0].args[2]).toBe("0,0,255");
+	});
+
+	it("handles terms dialog with accept and decline events", async () => {
+		const form = await controller.openSystemDialog("terms", [
+			"--id=TestGhostTerms",
+			"--title=利用規約",
+		]);
+
+		expect(form).toBeDefined();
+		expect(form.className).toContain("balloon-terms-dialog");
+
+		const btnRow = form.children.find(
+			(c) => c.children && c.children.length === 2,
+		);
+		expect(btnRow).toBeDefined();
+
+		const acceptBtn = btnRow.children.find((c) => c.textContent === "同意する");
+		const declineBtn = btnRow.children.find(
+			(c) => c.textContent === "同意しない",
+		);
+
+		expect(acceptBtn).toBeDefined();
+		expect(declineBtn).toBeDefined();
+
+		// Test Accept
+		acceptBtn.click();
+		expect(sentEvents.length).toBe(1);
+		expect(sentEvents[0].name).toBe("OnGhostTermsAccept");
+		expect(sentEvents[0].args).toEqual(["TestGhostTerms"]);
+
+		// Test Decline on another dialog instance
+		sentEvents = [];
+		const form2 = await controller.openSystemDialog("terms", [
+			"--id=TestGhostTerms2",
+		]);
+		const btnRow2 = form2.children.find(
+			(c) => c.children && c.children.length === 2,
+		);
+		const declineBtn2 = btnRow2.children.find(
+			(c) => c.textContent === "同意しない",
+		);
+		declineBtn2.click();
+
+		expect(sentEvents.length).toBe(1);
+		expect(sentEvents[0].name).toBe("OnGhostTermsDecline");
+		expect(sentEvents[0].args).toEqual(["TestGhostTerms2"]);
 	});
 });

@@ -49,6 +49,7 @@ export class AndroidBridge {
 		// ドッキング & ジェスチャー連携管理モジュール
 		this._dockManager = new DockManager({
 			gestureRecognizer: options.gestureRecognizer,
+			element: options.element,
 			dispatchFn: (eventName, data) => {
 				this._dispatch(eventName, data);
 			},
@@ -198,6 +199,29 @@ export class AndroidBridge {
 	 */
 	get isDocked() {
 		return this._dockManager.isDocked;
+	}
+
+	/**
+	 * アタッチ中のDOM要素を取得
+	 * @returns {HTMLElement|null}
+	 */
+	get attachedElement() {
+		return this._dockManager.attachedElement;
+	}
+
+	/**
+	 * ゴースト・マスコットDOM要素をドッキング管理にアタッチ
+	 * @param {HTMLElement} element
+	 */
+	attachDockElement(element) {
+		this._dockManager.attachElement(element);
+	}
+
+	/**
+	 * アタッチ中のDOM要素を解除
+	 */
+	detachDockElement() {
+		this._dockManager.detachElement();
 	}
 
 	/**
@@ -370,6 +394,8 @@ export class AndroidBridge {
 			isClickThrough: this._overlayManager.isClickThrough,
 			isThrottled: this.isThrottled(),
 			dockState: this._dockManager.dockState,
+			isDocked: this._dockManager.isDocked,
+			hasAttachedElement: Boolean(this._dockManager.attachedElement),
 		};
 	}
 

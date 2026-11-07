@@ -247,3 +247,37 @@ collision1,20,10,60,70,head
     let square1 = s1.effective_icon_rect().unwrap();
     assert_eq!(square1, [10, 10, 70, 70]);
 }
+
+#[test]
+fn test_collisionex_polygon_parsing_and_hit_test() {
+    let sample = r"charset,UTF-8
+surface0
+{
+// 四角形ポリゴン (0,0), (100,0), (100,50), (0,50)
+collisionex0,ArmPoly,polygon,0,0,100,0,100,50,0,50
+// アニメーション内の多角形当たり判定
+animation5.interval,sometimes
+animation5.collisionex0,WingPoly,polygon,50,50,150,50,150,100,50,100
+}
+";
+    let txt = SurfacesTxt::parse(sample);
+    let s0 = txt.surface(0).unwrap();
+    assert_eq!(s0.collisions.len(), 1);
+    assert_eq!(s0.collisions[0].name, "ArmPoly");
+
+    let hit = txt.hit_test(0, 50, 25);
+    assert!(hit.is_some());
+    assert_eq!(hit.unwrap().name, "ArmPoly");
+
+    let miss = txt.hit_test(0, 150, 25);
+    assert!(miss.is_none());
+
+    let anim5 = s0.animations.get(&5).unwrap();
+    assert_eq!(anim5.collisions.len(), 1);
+    assert_eq!(anim5.collisions[0].name, "WingPoly");
+
+    // binds &[5] で WingPoly が判定される
+    let hit_bind = txt.hit_test_with_binds(0, 100, 75, &[5]);
+    assert!(hit_bind.is_some());
+    assert_eq!(hit_bind.unwrap().name, "WingPoly");
+}

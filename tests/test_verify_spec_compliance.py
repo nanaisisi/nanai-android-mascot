@@ -16,6 +16,7 @@ from scripts.verify_spec_compliance import (
     process_audit_files,
     sanitize_snippet,
     search_keyword,
+    sync_category_readmes,
     update_summary,
 )
 
@@ -338,6 +339,37 @@ class TestVerifySpecCompliance(unittest.TestCase):
         with open(md_export_path, "r", encoding="utf-8") as f:
             md_text = f.read()
             self.assertIn("# UKADOC 仕様適合監査レポート", md_text)
+
+    def test_sync_category_readmes_dry_run_vs_live(self):
+        cat_dir = os.path.join(self.docs_dir, 'ukadoc-spec', 'spec')
+        spec_file = os.path.join(cat_dir, 'item1.md')
+        with open(spec_file, 'w', encoding='utf-8') as f:
+            f.write("# Item One\n\n- **対応状況**: ✅ 実装済\n- **検索語**: item_one\n")
+
+        # 1. Dry run: README.md not yet created
+        updated = sync_category_readmes(docs_dir=self.docs_dir, dry_run=True, target_category='ukadoc-spec/spec')
+        self.assertEqual(len(updated), 1)
+        readme_path = os.path.join(cat_dir, 'README.md')
+        self.assertFalse(os.path.exists(readme_path))
+
+        # 2. Live run: README.md created
+        updated_live = sync_category_readmes(docs_dir=self.docs_dir, dry_run=False, target_category='ukadoc-spec/spec')
+        self.assertEqual(len(updated_live), 1)
+        self.assertTrue(os.path.exists(readme_path))
+
+        with open(readme_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        self.assertIn("[Item One](item1.md)", content)
+        self.assertIn("item_one", content)
+        self.assertIn("✅ 実装済", content)
+
+        # 3. Running again without changes should NOT write or report update
+        updated_repeat = sync_category_readmes(docs_dir=self.docs_dir, dry_run=False, target_category='ukadoc-spec/spec')
+        self.assertEqual(len(updated_repeat), 0)
+
+        # 4. Target filtering: if target category does not match, it is skipped
+        updated_other = sync_category_readmes(docs_dir=self.docs_dir, dry_run=False, target_category='ukadoc-spec/descript')
+        self.assertEqual(len(updated_other), 0)
 
 
 if __name__ == '__main__':

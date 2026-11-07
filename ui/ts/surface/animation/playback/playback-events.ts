@@ -76,6 +76,10 @@ export function onCharSpoken(target = 0, scopeIdParam = 0) {
 		scopeId = target ?? 0;
 	}
 
+	if (instance.isSerikoTalkEnabled && !instance.isSerikoTalkEnabled(scopeId)) {
+		return;
+	}
+
 	if (!instance._talkStarted[scopeId]) {
 		if (instance.onTalkStart) {
 			instance.onTalkStart(scopeId);

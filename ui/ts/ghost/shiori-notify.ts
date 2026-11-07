@@ -582,6 +582,56 @@ export const shioriNotifyMethods = {
 	},
 
 	/**
+	 * バルーン閉じる通知 (OnBalloonClose) を送信 (UKADOC準拠)
+	 * @param {string} [lastScript=""] 閉じる直前に表示されていたスクリプト
+	 * @param {number|string} [scopeId=0] バルーンのスコープID
+	 */
+	async sendBalloonCloseNotify(
+		this: any,
+		lastScript: string = "",
+		scopeId: number | string = 0,
+	) {
+		return await this.sendShioriNotify("OnBalloonClose", [
+			lastScript,
+			String(scopeId),
+		]);
+	 * @param {string} lastScript 閉じる際に表示されていたスクリプト
+	 */
+	async sendBalloonCloseNotify(this: any, lastScript = "") {
+		return await this.sendShioriNotify("OnBalloonClose", [lastScript]);
+	},
+
+	/**
+	 * バルーン中断通知 (OnBalloonBreak) を送信 (UKADOC準拠)
+	 * @param {string} [lastScript=""] 中断されたスクリプト
+	 * @param {number|string} [scopeId=0] バルーンのスコープID
+	 */
+	async sendBalloonBreakNotify(
+		this: any,
+		lastScript: string = "",
+		scopeId: number | string = 0,
+	) {
+		return await this.sendShioriNotify("OnBalloonBreak", [
+			lastScript,
+			String(scopeId),
+	 * @param {string} script 中断の操作が起きたスクリプト
+	 * @param {number|string} scopeId 中断の操作が起きたスコープ番号 (本体側0, 相方側1...)
+	 * @param {number|string} charPosition 中断位置 (スクリプト先頭からの文字数)
+	 */
+	async sendBalloonBreakNotify(
+		this: any,
+		script = "",
+		scopeId: number | string = 0,
+		charPosition: number | string = 0,
+	) {
+		return await this.sendShioriNotify("OnBalloonBreak", [
+			script,
+			String(scopeId),
+			String(charPosition),
+		]);
+	},
+
+	/**
 	 * マウス拡張イベント送信
 	 */
 	async notifyMouseEvent(
@@ -709,6 +759,11 @@ export const shioriNotifyMethods = {
 			ghosts.map((g: any) => g.name),
 		);
 		await this.sendShioriNotify(
+			"installedsakuraname",
+			ghosts.map((g: any) => g.sakura_name || g.name),
+		);
+		// Legacy alias for backward compatibility
+		await this.sendShioriNotify(
 			"installsakuraname",
 			ghosts.map((g: any) => g.sakura_name || g.name),
 		);
@@ -813,5 +868,294 @@ export const shioriNotifyMethods = {
 		await this.sendShioriNotify("rateofusegraph", ["1"]);
 
 		console.log("✅ 起動時 NOTIFY イベント送信完了");
+	},
+
+	/**
+	 * サーフェス変更通知 (OnSurfaceChange) を送信 (UKADOC 規格準拠)
+	 * @param {number} scopeId 切り替わったウインドウ・キャラID (Sakura=0, Kero=1)
+	 * @param {number|string} surface0 Sakura側の現在サーフィスID
+	 * @param {number|string} surface1 Kero側の現在サーフィスID
+	 * @param {number} [width=0] サーフィス横幅
+	 * @param {number} [height=0] サーフィス高さ
+	 */
+	async notifySurfaceChange(
+		this: any,
+		scopeId: number,
+		surface0: number | string = 0,
+		surface1: number | string = 10,
+		width: number = 0,
+		height: number = 0,
+	) {
+		const ref2 = `${scopeId},${scopeId === 0 ? surface0 : surface1},${width},${height}`;
+		return await this.sendShioriNotify("OnSurfaceChange", [
+			String(surface0),
+			String(surface1),
+			ref2,
+		]);
+	},
+
+	/**
+	 * 他ゴーストのサーフェス変更通知 (OnOtherSurfaceChange) を送信 (UKADOC 規格準拠)
+	 * @param {string} ghostName ゴースト名
+	 * @param {string} sakuraName Sakura名
+	 * @param {number} scopeId ウインドウID (0=Sakura, 1=Kero)
+	 * @param {number|string} newSurface 新サーフィスID
+	 * @param {number|string} oldSurface 旧サーフィスID
+	 * @param {{ left: number, top: number, right: number, bottom: number }|string} [rect="0,0,0,0"]
+	 */
+	async notifyOtherSurfaceChange(
+		this: any,
+		ghostName: string,
+		sakuraName: string,
+		scopeId: number,
+		newSurface: number | string,
+		oldSurface: number | string,
+		rect:
+			| { left: number; top: number; right: number; bottom: number }
+			| string = "0,0,0,0",
+	) {
+		const rectStr =
+			typeof rect === "object"
+				? `${rect.left},${rect.top},${rect.right},${rect.bottom}`
+				: String(rect);
+		return await this.sendShioriNotify("OnOtherSurfaceChange", [
+			ghostName,
+			sakuraName,
+			String(scopeId),
+			String(newSurface),
+			String(oldSurface),
+			rectStr,
+		]);
+	},
+	 * 選択肢拡張通知 (OnChoiceSelectEx) を送信 (UKADOC 規格準拠)
+	 * Reference0: ラベル(text), Reference1: ID, Reference2..: 拡張引数
+	 */
+	async sendChoiceSelectExNotify(
+		this: any,
+		id: string,
+		text: string,
+		args: string[] = [],
+	) {
+		return await this.sendShioriNotify("OnChoiceSelectEx", [text, id, ...args]);
+	},
+
+	/**
+	 * アンカー拡張通知 (OnAnchorSelectEx) を送信 (UKADOC 規格準拠)
+	 * Reference0: テキスト, Reference1: ID, Reference2..: 拡張引数
+	 */
+	async sendAnchorSelectExNotify(
+		this: any,
+		id: string,
+		text: string,
+		args: string[] = [],
+	) {
+		return await this.sendShioriNotify("OnAnchorSelectEx", [text, id, ...args]);
+	},
+
+	/**
+	 * 利用条件受諾通知 (OnGhostTermsAccept) を送信 (UKADOC 規格準拠)
+	 */
+	async sendGhostTermsAcceptNotify(this: any, id: string = "") {
+		return await this.sendShioriNotify("OnGhostTermsAccept", id ? [id] : []);
+	},
+
+	/**
+	 * 利用条件拒否通知 (OnGhostTermsDecline) を送信 (UKADOC 規格準拠)
+	 */
+	async sendGhostTermsDeclineNotify(this: any, id: string = "") {
+		return await this.sendShioriNotify("OnGhostTermsDecline", id ? [id] : []);
+	 * ダイアログ関連 SHIORI イベント通知 (UKADOC dialogbox spec)
+	 */
+	async sendGhostTermsAccept(this: any, ghostName: string) {
+		return await this.sendShioriNotify("OnGhostTermsAccept", [ghostName]);
+	},
+
+	async sendGhostTermsDecline(this: any, ghostName: string) {
+		return await this.sendShioriNotify("OnGhostTermsDecline", [ghostName]);
+	},
+
+	/**
+	 * バルーン関連 SHIORI イベント通知 (UKADOC balloon spec)
+	 */
+	async sendBalloonClose(
+		this: any,
+		scopeId: number | string = 0,
+		reason: string = "",
+	) {
+		return await this.sendShioriNotify("OnBalloonClose", [
+			String(scopeId),
+			reason,
+		]);
+	},
+
+	async sendBalloonBreak(
+		this: any,
+		scopeId: number | string = 0,
+		reason: string = "",
+	) {
+		return await this.sendShioriNotify("OnBalloonBreak", [
+			String(scopeId),
+			reason,
+		]);
+	},
+
+	/**
+	 * サーフィス関連 SHIORI イベント通知 (UKADOC surface spec)
+	 */
+	async sendSurfaceChange(
+		this: any,
+		scopeId: number | string = 0,
+		surfaceId: number | string = 0,
+	) {
+		return await this.sendShioriNotify("OnSurfaceChange", [
+			String(scopeId),
+			String(surfaceId),
+		]);
+	},
+
+	async sendOtherSurfaceChange(
+		this: any,
+		ghostName: string,
+		scopeId: number | string = 0,
+		surfaceId: number | string = 0,
+	) {
+		return await this.sendShioriNotify("OnOtherSurfaceChange", [
+			ghostName,
+			String(scopeId),
+			String(surfaceId),
+		]);
+	},
+
+	/**
+	 * ゴースト切替・シェル切替・システムライフサイクル通知 (UKADOC boot-close-change spec)
+	 */
+	async sendGhostChanging(
+		this: any,
+		toGhost: string,
+		fromGhost: string = "",
+		reason: string = "manual",
+	) {
+		return await this.sendShioriNotify("OnGhostChanging", [
+			toGhost,
+			reason,
+			fromGhost,
+		]);
+	},
+
+	async sendGhostChanged(this: any, toGhost: string, fromGhost: string = "") {
+		return await this.sendShioriNotify("OnGhostChanged", [toGhost, fromGhost]);
+	},
+
+	async sendShellChanged(this: any, toShell: string, fromShell: string = "") {
+		return await this.sendShioriNotify("OnShellChanged", [toShell, fromShell]);
+	},
+
+	async sendCloseAll(this: any, reason: string = "user") {
+		return await this.sendShioriNotify("OnCloseAll", [reason]);
+	},
+
+	async sendGhostCalling(this: any, targetGhost: string) {
+		return await this.sendShioriNotify("OnGhostCalling", [targetGhost]);
+	},
+
+	async sendGhostCalled(this: any, callerGhost: string) {
+		return await this.sendShioriNotify("OnGhostCalled", [callerGhost]);
+	},
+
+	async sendGhostCallComplete(this: any, targetGhost: string) {
+		return await this.sendShioriNotify("OnGhostCallComplete", [targetGhost]);
+	},
+
+	async sendOtherGhostBooted(this: any, ghostName: string) {
+		return await this.sendShioriNotify("OnOtherGhostBooted", [ghostName]);
+	},
+
+	async sendOtherGhostChanged(
+		this: any,
+		ghostName: string,
+		toGhost: string = "",
+	) {
+		return await this.sendShioriNotify("OnOtherGhostChanged", [
+			ghostName,
+			toGhost,
+		]);
+	},
+
+	async sendOtherGhostClosed(this: any, ghostName: string) {
+		return await this.sendShioriNotify("OnOtherGhostClosed", [ghostName]);
+	},
+
+	async sendSysSuspend(this: any) {
+		return await this.sendShioriNotify("OnSysSuspend", []);
+	},
+
+	async sendSysResume(this: any) {
+		return await this.sendShioriNotify("OnSysResume", []);
+	},
+
+	async sendDestroy(this: any) {
+		return await this.sendShioriNotify("OnDestroy", []);
+	},
+
+	async sendInitialize(this: any) {
+		return await this.sendShioriNotify("OnInitialize", []);
+	},
+
+	async sendVirtualDesktopChanged(this: any, desktopId: string | number) {
+		return await this.sendShioriNotify("OnVirtualDesktopChanged", [
+			String(desktopId),
+		]);
+	},
+
+	async sendFullScreenAppMinimize(this: any) {
+		return await this.sendShioriNotify("OnFullScreenAppMinimize", []);
+	},
+
+	async sendFullScreenAppRestore(this: any) {
+		return await this.sendShioriNotify("OnFullScreenAppRestore", []);
+	},
+
+	async sendBasewareUpdating(this: any) {
+		return await this.sendShioriNotify("OnBasewareUpdating", []);
+	},
+
+	async sendBasewareUpdated(this: any) {
+		return await this.sendShioriNotify("OnBasewareUpdated", []);
+	},
+
+	async sendCacheSuspend(this: any) {
+		return await this.sendShioriNotify("OnCacheSuspend", []);
+	},
+
+	async sendCacheRestore(this: any) {
+		return await this.sendShioriNotify("OnCacheRestore", []);
+	},
+
+	/**
+	 * 重なり・画面外通知 (UKADOC overlap spec)
+	 */
+	async sendOverlap(
+		this: any,
+		scope0: number | string,
+		scope1: number | string,
+		rect: string = "",
+	) {
+		return await this.sendShioriNotify("OnOverlap", [
+			String(scope0),
+			String(scope1),
+			rect,
+		]);
+	},
+
+	async sendOffscreen(this: any, scope: number | string, rect: string = "") {
+		return await this.sendShioriNotify("OnOffscreen", [String(scope), rect]);
+	},
+
+	async sendOtherOverlap(this: any, ghostName: string, rect: string = "") {
+		return await this.sendShioriNotify("OnOtherOverlap", [ghostName, rect]);
+	},
+
+	async sendOtherOffscreen(this: any, ghostName: string, rect: string = "") {
+		return await this.sendShioriNotify("OnOtherOffscreen", [ghostName, rect]);
 	},
 };

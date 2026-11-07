@@ -105,6 +105,10 @@ export class SurfaceAnimationManager {
 		this._animationOffsets = new Map();
 		/** @type {Map<number, { x: number, y: number }>} move 描画メソッドによるベースサーフィス相対位置オフセット */
 		this._baseMoveOffsets = new Map();
+		/** @type {Map<number, { scaleX: number, scaleY: number }>} scaling 描画メソッドによるベースサーフィス倍率 */
+		this._baseScalingOffsets = new Map();
+		/** @type {Map<number, boolean>} SERIKO 口パクの有効/無効フラグ (\![set,serikotalk,true/false]) */
+		this._serikoTalkEnabled = new Map();
 		/** @type {AnimationScheduler} Slot-08 外部インターフェース規約スケジューラ */
 		this.scheduler = new AnimationScheduler(this);
 	}
@@ -129,6 +133,23 @@ export class SurfaceAnimationManager {
 			}
 		}
 		this._baseMoveOffsets.delete(scopeId);
+		this._baseScalingOffsets.delete(scopeId);
+	}
+
+	setBaseScalingOffset(scopeId = 0, scaleX = 100, scaleY = 100) {
+		this._baseScalingOffsets.set(scopeId, { scaleX, scaleY });
+	}
+
+	getBaseScalingOffset(scopeId = 0) {
+		return this._baseScalingOffsets.get(scopeId) || { scaleX: 100, scaleY: 100 };
+	}
+
+	setSerikoTalkEnabled(scopeId = 0, enabled = true) {
+		this._serikoTalkEnabled.set(scopeId, enabled);
+	}
+
+	isSerikoTalkEnabled(scopeId = 0) {
+		return this._serikoTalkEnabled.get(scopeId) ?? true;
 	}
 
 	setBaseMoveOffset(scopeId = 0, x = 0, y = 0) {

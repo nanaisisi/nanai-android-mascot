@@ -26,6 +26,7 @@ export async function openSystemDialog(dialogType, params = [], scope) {
 	else if (type === "save") title = "Save File";
 	else if (type === "folder") title = "Select Folder";
 	else if (type === "color") title = "色の設定";
+	else if (type === "terms") title = "利用規約";
 
 	for (const p of params) {
 		if (typeof p !== "string") continue;
@@ -171,6 +172,84 @@ export async function openSystemDialog(dialogType, params = [], scope) {
 		const g = Number.parseInt(hex.slice(2, 4), 16) || 0;
 		const b = Number.parseInt(hex.slice(4, 6), 16) || 0;
 		await sendSuccess(`${r},${g},${b}`);
+		return null;
+	}
+
+	// 1.5. 利用条件ダイアログ (terms)
+	if (type === "terms") {
+		const balloon = this.getBalloonContainer(scope);
+		const form = document.createElement("div");
+		form.className = "balloon-inputbox-form balloon-terms-dialog";
+		form.style.marginTop = "0.5rem";
+		form.style.display = "flex";
+		form.style.flexDirection = "column";
+		form.style.gap = "0.5rem";
+
+		if (title) {
+			const label = document.createElement("span");
+			label.textContent = title;
+			label.style.fontWeight = "bold";
+			form.appendChild(label);
+		}
+
+		const btnRow = document.createElement("div");
+		btnRow.style.display = "flex";
+		btnRow.style.gap = "0.5rem";
+
+		const acceptBtn = document.createElement("button");
+		acceptBtn.textContent = "同意する";
+		acceptBtn.className = "balloon-choice-btn";
+
+		const declineBtn = document.createElement("button");
+		declineBtn.textContent = "同意しない";
+		declineBtn.className = "balloon-choice-btn";
+
+		btnRow.appendChild(acceptBtn);
+		btnRow.appendChild(declineBtn);
+		form.appendChild(btnRow);
+
+		const boxKey = `dialog:${eventId}`;
+		const cleanup = () => {
+			form.remove();
+			this.activeBoxes.delete(boxKey);
+		};
+
+		acceptBtn.addEventListener("click", async (e) => {
+			e.stopPropagation();
+			cleanup();
+			await this.app?.ghostController?.sendShioriEvent?.(
+				"OnGhostTermsAccept",
+				id ? [id] : [],
+			);
+		});
+
+		declineBtn.addEventListener("click", async (e) => {
+			e.stopPropagation();
+			cleanup();
+			await this.app?.ghostController?.sendShioriEvent?.(
+				"OnGhostTermsDecline",
+				id ? [id] : [],
+			);
+		});
+
+		if (balloon) {
+			balloon.appendChild(form);
+			this.activeBoxes.set(boxKey, {
+				id: eventId,
+				type: "terms",
+				form,
+				cleanup: () => {
+					cleanup();
+					// 右上の閉じる等ではイベントを発生させない (UKADOC規約)
+				},
+			});
+			return form;
+		}
+
+		await this.app?.ghostController?.sendShioriEvent?.(
+			"OnGhostTermsAccept",
+			id ? [id] : [],
+		);
 		return null;
 	}
 

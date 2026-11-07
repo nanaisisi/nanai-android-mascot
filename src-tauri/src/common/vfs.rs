@@ -42,6 +42,10 @@ mod tests {
         let lines = vfs.read_lines("shell/master/descript.txt").unwrap();
         assert_eq!(lines, vec!["name,Master", "version,2.0"]);
 
+        // Cycle 8 functions: VirtualFileSystem::find_files
+        let vfs_found = vfs.find_files("surface").unwrap();
+        assert_eq!(vfs_found, vec!["Shell/Master/surface0000.png".to_string()]);
+
         assert_eq!(detect_mime_type("surface0000.png"), "image/png");
 
         let dec = detect_and_decode_ext(b"charset=Shift_JIS\r\ntext");

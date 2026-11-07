@@ -132,8 +132,14 @@ export class GhostController {
 		if (isTauriAvailable()) {
 			try {
 				const info: any = await invoke("get_ghost_info", { ghostName: ghost.name });
-				if (info && Array.isArray(info.shells) && info.shells.length > 0) {
-					this.shells = info.shells;
+				if (info) {
+					if (Array.isArray(info.shells) && info.shells.length > 0) {
+						this.shells = info.shells;
+					}
+					// 一旦、読み込んだゴーストのバルーンを使用する形にする
+					if (info.recommended_balloon) {
+						await this.app.setBalloonTheme?.(info.recommended_balloon);
+					}
 				}
 			} catch (_e) {
 				this.shells = [AppConfig.paths.fallbackShellName];

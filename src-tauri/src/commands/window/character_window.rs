@@ -70,7 +70,7 @@ pub async fn show_character_window(
             .decorations(false)
             .shadow(false)
             .always_on_top(true)
-            .skip_taskbar(true)
+            .skip_taskbar(scope_id != 0)
             .resizable(false)
             .position(target_x, target_y)
             .build()

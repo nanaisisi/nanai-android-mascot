@@ -160,6 +160,7 @@ export const ghostSurfaceMethods = {
 
 			if (isTauriAvailable()) {
 				emit(`update-subchar-image-${scopeId}`, { src: transparentSrc });
+				return transparentSrc;
 			}
 
 			if (img) {

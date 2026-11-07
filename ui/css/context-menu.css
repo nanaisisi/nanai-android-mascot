@@ -20,7 +20,7 @@ body {
 	padding: 0;
 	display: flex;
 	flex-direction: row;
-	align-items: stretch;
+	align-items: flex-start;
 	height: auto;
 	min-height: auto;
 	width: max-content;
@@ -36,10 +36,13 @@ body:not(.subchar-mode) .subchar-only {
 
 .menu-container {
 	padding: 0;
-	width: clamp(11rem, 280px, 16rem);
-	align-self: stretch;
+	padding-top: 6px;
+	width: auto;
+	min-width: 150px;
+	max-width: 300px;
+	align-self: flex-start;
 	height: auto;
-	min-height: 100%;
+	min-height: auto;
 	overflow-y: hidden;
 	overflow-x: visible;
 	background: transparent;
@@ -53,7 +56,6 @@ body:not(.subchar-mode) .subchar-only {
 	outline: 0;
 	position: relative;
 	cursor: move;
-	flex: 1;
 }
 
 .menu-sidebar {
@@ -64,8 +66,8 @@ body:not(.subchar-mode) .subchar-only {
 	background: transparent;
 	background-image: var(--menu-sidebar-image, none);
 	background-repeat: no-repeat;
-	background-position: var(--menu-sidebar-position, left bottom);
-	background-size: auto;
+	background-position: var(--menu-sidebar-position, left top);
+	background-size: auto 100%;
 	flex-shrink: 0;
 }
 
@@ -86,8 +88,8 @@ body.has-sidebar .menu-sidebar {
 
 .menu-item {
 	width: 100%;
-	padding: 0.15rem 0.5rem;
-	min-height: 20px;
+	padding: 0.04rem 0.3rem;
+	min-height: 14px;
 	touch-action: manipulation;
 	-webkit-tap-highlight-color: transparent;
 	background: none;
@@ -95,7 +97,7 @@ body.has-sidebar .menu-sidebar {
 	text-align: left;
 	cursor: pointer;
 	font-family: inherit;
-	font-size: var(--balloon-font-size, 0.8125rem);
+	font-size: var(--balloon-font-size, 0.7rem);
 	color: var(--balloon-text-color, #111111);
 	display: flex;
 	justify-content: space-between;
@@ -132,5 +134,5 @@ body.has-sidebar .menu-sidebar {
 	height: 1px;
 	border: none;
 	background-color: var(--balloon-separator-color, #808080);
-	margin: 2px 4px;
+	margin: 1px 2px;
 }

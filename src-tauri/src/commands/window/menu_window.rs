@@ -17,9 +17,9 @@ pub async fn show_menu_window(
     {
         use tauri::Manager;
         let menu_scope = scope.unwrap_or(0);
-        // メインメニュー (260x720) / サブキャラクターメニュー (260x200)
+        // メインメニュー (260x560) / サブキャラクターメニュー (260x200)
         let win_width = 260.0;
-        let win_height = if menu_scope > 0 { 200.0 } else { 720.0 };
+        let win_height = if menu_scope > 0 { 200.0 } else { 560.0 };
 
         let mut target_x = x;
         let mut target_y = y;
@@ -29,14 +29,16 @@ pub async fn show_menu_window(
             let screen_size = monitor.size();
             let screen_pos = monitor.position();
             let max_x = (screen_pos.x + screen_size.width as i32) as f64 - win_width;
-            let max_y = (screen_pos.y + screen_size.height as i32) as f64 - win_height;
+            let screen_bottom = (screen_pos.y + screen_size.height as i32) as f64;
+            let max_y = screen_bottom - win_height;
 
             if target_x > max_x {
                 target_x = max_x.max(screen_pos.x as f64);
             }
             if target_y > max_y {
-                target_y = max_y.max(screen_pos.y as f64);
+                target_y = y - win_height;
             }
+            target_y = target_y.max(screen_pos.y as f64).min(max_y);
         }
 
         if let Some(menu_win) = app_handle.get_webview_window("menu_window") {

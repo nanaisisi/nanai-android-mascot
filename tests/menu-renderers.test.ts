@@ -207,16 +207,16 @@ test("menu renderers cover 100% of balloon, dressup, recent, shell, ghost, and t
 	assert.equal(styleProps["--menu-bg-repeat"], "repeat");
 	assert.equal(styleProps["--menu-sidebar-position"], "left top");
 
-	// Test sidebar_alignment = "bottom" & activeShell without path
+	// Test sidebar_alignment = "top" & activeShell without path
 	menuThemeRenderer.applyShellTheme({
 		menu_theme: {
 			background_bitmap: "data:image/png;base64,abc",
 			background_alignment: "right, repeat-y",
 			sidebar_bitmap: "asset://side.png",
-			sidebar_alignment: "bottom",
+			sidebar_alignment: "top",
 		},
 	});
-	assert.equal(styleProps["--menu-sidebar-position"], "left bottom");
+	assert.equal(styleProps["--menu-sidebar-position"], "left top");
 
 	// Test sidebar_alignment omitted & background_alignment undefined (covers line 81 & 101 falsy align)
 	menuThemeRenderer.applyShellTheme({
@@ -226,7 +226,7 @@ test("menu renderers cover 100% of balloon, dressup, recent, shell, ghost, and t
 			sidebar_bitmap: "side.png",
 		},
 	});
-	assert.equal(styleProps["--menu-sidebar-position"], "left bottom");
+	assert.equal(styleProps["--menu-sidebar-position"], "left top");
 
 	// Test background_alignment = "repeat-x" (covers line 91 repeat-x branch)
 	menuThemeRenderer.applyShellTheme({

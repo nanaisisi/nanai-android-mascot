@@ -319,3 +319,29 @@ document.addEventListener("keydown", (e) => {
 		dispatcher.dispatchAction(action);
 	}
 });
+
+async function adjustMenuWindowSize() {
+	if (!isTauriAvailable()) return;
+	try {
+		const { getCurrentWindow } = await import("@tauri-apps/api/window");
+		const win = getCurrentWindow();
+		const bodyHeight =
+			document.body.scrollHeight || document.documentElement.scrollHeight;
+		if (bodyHeight > 50) {
+			await win.setSize({
+				type: "Logical",
+				width: 260,
+				height: Math.min(720, Math.max(150, bodyHeight + 12)),
+			});
+		}
+	} catch (_e) {
+		// Non-Tauri environment
+	}
+}
+
+if (isTauriAvailable() && typeof ResizeObserver !== "undefined") {
+	const observer = new ResizeObserver(() => {
+		void adjustMenuWindowSize();
+	});
+	observer.observe(document.body);
+}

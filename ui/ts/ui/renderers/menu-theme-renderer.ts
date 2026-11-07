@@ -185,11 +185,11 @@ export const menuThemeRenderer = {
 			if (sideUrl) {
 				rootStyle.setProperty("--menu-sidebar-image", `url("${sideUrl}")`);
 				const sideAlign = String(
-					mt.sidebar_alignment || "bottom",
+					mt.sidebar_alignment || "top",
 				).toLowerCase();
 				rootStyle.setProperty(
 					"--menu-sidebar-position",
-					sideAlign.includes("top") ? "left top" : "left bottom",
+					sideAlign.includes("bottom") ? "left bottom" : "left top",
 				);
 				document.body.classList.add("has-sidebar");
 			} else {

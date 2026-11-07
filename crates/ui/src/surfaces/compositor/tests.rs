@@ -484,3 +484,67 @@ fn test_compositor_layer_edge_cases() {
     layer_sa128.set_pixel(0, 0, 200, 200, 200, 128);
     base.composite_layer(&layer_sa128, 0, 0, &DrawMethod::Overlay);
 }
+
+#[test]
+fn test_paint_transparent_region_black() {
+    let mut fb = SurfaceFrameBuffer::new(2, 2);
+    // (0, 0) is corner: green (0, 255, 0, 255)
+    fb.set_pixel(0, 0, 0, 255, 0, 255);
+    // (1, 0) has same color as corner but semi-transparent (0, 255, 0, 128)
+    fb.set_pixel(1, 0, 0, 255, 0, 128);
+    // (0, 1) has same color as corner but is completely transparent (0, 255, 0, 0)
+    fb.set_pixel(0, 1, 0, 255, 0, 0);
+    // (1, 1) is a different color (255, 0, 0, 255)
+    fb.set_pixel(1, 1, 255, 0, 0, 255);
+
+    fb.paint_corner_transparent_region_black();
+
+    // (0, 0) was (0, 255, 0, 255) matching corner and alpha != 0 -> painted black (0, 0, 0, 255)
+    assert_eq!(fb.get_pixel(0, 0), Some((0, 0, 0, 255)));
+    // (1, 0) matching corner and alpha == 128 -> painted black (0, 0, 0, 128)
+    assert_eq!(fb.get_pixel(1, 0), Some((0, 0, 0, 128)));
+    // (0, 1) alpha == 0 -> skipped
+    assert_eq!(fb.get_pixel(0, 1), Some((0, 255, 0, 0)));
+    // (1, 1) different color -> unchanged
+    assert_eq!(fb.get_pixel(1, 1), Some((255, 0, 0, 255)));
+}
+
+#[test]
+fn test_advanced_blend_modes_add_glow_darker_lighter_color() {
+    let mut base = SurfaceFrameBuffer::new(2, 2);
+    base.set_pixel(0, 0, 100, 100, 100, 255);
+    base.set_pixel(1, 0, 200, 200, 200, 255);
+    base.set_pixel(0, 1, 50, 50, 50, 255);
+    base.set_pixel(1, 1, 100, 100, 100, 255);
+
+    let mut layer = SurfaceFrameBuffer::new(2, 2);
+    // add-glow
+    layer.set_pixel(0, 0, 100, 100, 100, 255);
+    // darker-color: src is darker than dst(200,200,200)
+    layer.set_pixel(1, 0, 50, 50, 50, 255);
+    // lighter-color: src is brighter than dst(50,50,50)
+    layer.set_pixel(0, 1, 150, 150, 150, 255);
+    // color-dodge-glow
+    layer.set_pixel(1, 1, 128, 128, 128, 255);
+
+    // Test add-glow-fast on (0, 0)
+    let mut b1 = base.clone();
+    let mut l1 = SurfaceFrameBuffer::new(1, 1);
+    l1.set_pixel(0, 0, 100, 100, 100, 255);
+    b1.composite_layer(&l1, 0, 0, &DrawMethod::Blend("add-glow-fast".into()));
+    assert_eq!(b1.get_pixel(0, 0), Some((200, 200, 200, 255)));
+
+    // Test darker-color-fast on (1, 0)
+    let mut b2 = base.clone();
+    let mut l2 = SurfaceFrameBuffer::new(1, 1);
+    l2.set_pixel(0, 0, 50, 50, 50, 255);
+    b2.composite_layer(&l2, 1, 0, &DrawMethod::Blend("darker-color-fast".into()));
+    assert_eq!(b2.get_pixel(1, 0), Some((50, 50, 50, 255)));
+
+    // Test lighter-color-fast on (0, 1)
+    let mut b3 = base.clone();
+    let mut l3 = SurfaceFrameBuffer::new(1, 1);
+    l3.set_pixel(0, 0, 150, 150, 150, 255);
+    b3.composite_layer(&l3, 0, 1, &DrawMethod::Blend("lighter-color-fast".into()));
+    assert_eq!(b3.get_pixel(0, 1), Some((150, 150, 150, 255)));
+}

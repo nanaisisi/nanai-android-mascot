@@ -135,8 +135,16 @@ export const surfaceRenderMethods = {
 			this.shellManifest?.descript?.properties?.[
 				"seriko.use_self_alpha"
 			]?.toLowerCase() === "true";
+		const paintTransparentRegionBlack =
+			this.shellManifest?.descript?.properties?.[
+				"seriko.paint_transparent_region_black"
+			] === "1" ||
+			this.shellManifest?.descript?.properties?.[
+				"seriko.paint_transparent_region_black"
+			]?.toLowerCase() === "true";
 		return processChromaKey(imageSrc, pnaSrc, this.chromaKeyCache, {
 			useSelfAlpha,
+			paintTransparentRegionBlack,
 		});
 	},
 };

@@ -121,8 +121,36 @@ impl SurfaceFrameBuffer {
                                 (sg as u16 + dg as u16).min(255) as u8,
                                 (sb as u16 + db as u16).min(255) as u8,
                             ),
+                            "add-glow" => {
+                                // 加算(発光): 加算結果をクランプ
+                                (
+                                    (sr as u16 + dr as u16).min(255) as u8,
+                                    (sg as u16 + dg as u16).min(255) as u8,
+                                    (sb as u16 + db as u16).min(255) as u8,
+                                )
+                            }
                             "darken" => (sr.min(dr), sg.min(dg), sb.min(db)),
+                            "darker-color" => {
+                                // Darker Color (カラーが暗い方): 輝度/合成値が低い方のピクセル全体を選択
+                                let lum_src = (sr as u32 * 299 + sg as u32 * 587 + sb as u32 * 114) / 1000;
+                                let lum_dst = (dr as u32 * 299 + dg as u32 * 587 + db as u32 * 114) / 1000;
+                                if lum_src < lum_dst {
+                                    (sr, sg, sb)
+                                } else {
+                                    (dr, dg, db)
+                                }
+                            }
                             "lighten" => (sr.max(dr), sg.max(dg), sb.max(db)),
+                            "lighter-color" => {
+                                // Lighter Color (カラーが明るい方): 輝度/合成値が高い方のピクセル全体を選択
+                                let lum_src = (sr as u32 * 299 + sg as u32 * 587 + sb as u32 * 114) / 1000;
+                                let lum_dst = (dr as u32 * 299 + dg as u32 * 587 + db as u32 * 114) / 1000;
+                                if lum_src > lum_dst {
+                                    (sr, sg, sb)
+                                } else {
+                                    (dr, dg, db)
+                                }
+                            }
                             "difference" => (
                                 (sr as i16 - dr as i16).unsigned_abs() as u8,
                                 (sg as i16 - dg as i16).unsigned_abs() as u8,
@@ -183,7 +211,7 @@ impl SurfaceFrameBuffer {
                                 };
                                 (calc(dr, sr), calc(dg, sg), calc(db, sb))
                             }
-                            "color-dodge" => {
+                            "color-dodge" | "color-dodge-glow" => {
                                 let calc = |d: u8, s: u8| -> u8 {
                                     if d == 0 {
                                         0

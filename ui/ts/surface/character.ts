@@ -8,12 +8,13 @@ import {
 	isTauriAvailable,
 	listen,
 	moveCurrentWindowBy,
+	startDraggingWindow,
 } from "../core/tauri-helper.js";
 
 const urlParams = new URLSearchParams(globalThis.location.search);
 const scopeId = parseInt(urlParams.get("scope") || "0", 10);
 
-function isTransparentPixel(img, clientX, clientY) {
+function isTransparentPixel(img: HTMLImageElement, clientX: number, clientY: number) {
 	const rect = img.getBoundingClientRect();
 	if (!rect.width || !rect.height || !img.naturalWidth || !img.naturalHeight) {
 		return false;
@@ -36,7 +37,7 @@ function isTransparentPixel(img, clientX, clientY) {
 	return ctx.getImageData(0, 0, 1, 1).data[3] === 0;
 }
 
-function openCharacterMenu(screenX, screenY) {
+function openCharacterMenu(screenX: number, screenY: number) {
 	const sX = globalThis.screenX ?? 0;
 	const sY = globalThis.screenY ?? 0;
 	const posX = screenX !== null && screenX !== undefined ? screenX : sX + 100;
@@ -60,10 +61,9 @@ function initCharacterWindow() {
 
 	if (!isTauriAvailable()) return;
 
-	// Tauri 2 は __TAURI__ ではなく __TAURI_INTERNALS__ のみ提供する場合がある。
 	void listen(
 		`update-subchar-image-${scopeId}`,
-		(/** @type {{ payload?: { src?: string } }} */ event) => {
+		(/** @type {{ payload?: { src?: string } }} */ event: any) => {
 			const src = event.payload?.src;
 			if (src && img) {
 				img.onload = () => {
@@ -88,12 +88,12 @@ function initCharacterWindow() {
 	let hasMoved = false;
 	let startX = 0;
 	let startY = 0;
-	let origin = null;
-	let longPressTimer = null;
+	let origin: { x: number; y: number } | null = null;
+	let longPressTimer: any = null;
 	let longPressTriggered = false;
 	const LONG_PRESS_DELAY = 600;
 
-	const onPointerDown = (e) => {
+	const onPointerDown = (e: any) => {
 		if (e.button !== undefined && e.button !== 0) return;
 
 		const clientX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
@@ -111,8 +111,13 @@ function initCharacterWindow() {
 		startX = clientX;
 		startY = clientY;
 
+		// Tauri ネイティブウィンドウドラッグ起動
+		if (isTauriAvailable()) {
+			void startDraggingWindow();
+		}
+
 		void getCurrentWindowPosition().then((position) => {
-			if (isInteracting) origin = position;
+			if (isInteracting && position) origin = position;
 		});
 
 		if (longPressTimer) clearTimeout(longPressTimer);
@@ -124,7 +129,7 @@ function initCharacterWindow() {
 		}, LONG_PRESS_DELAY);
 	};
 
-	const onPointerMove = (e) => {
+	const onPointerMove = (e: any) => {
 		if (!isInteracting) return;
 
 		const clientX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
@@ -141,9 +146,12 @@ function initCharacterWindow() {
 			}
 		}
 
-		if (hasMoved && origin) {
-			void moveCurrentWindowBy(deltaX, deltaY, origin);
-			void invoke("sync_character_balloon", { scopeId });
+		if (hasMoved) {
+			if (isTauriAvailable()) {
+				void invoke("sync_character_balloon", { scopeId });
+			} else if (origin) {
+				void moveCurrentWindowBy(deltaX, deltaY, origin);
+			}
 		}
 	};
 
@@ -177,8 +185,7 @@ function initCharacterWindow() {
 	});
 }
 
-if (document.readyState === "loading") {
-	document.addEventListener("DOMContentLoaded", initCharacterWindow);
+if (document.readyState === "loading") {document.addEventListener("DOMContentLoaded", initCharacterWindow);
 } else {
 	initCharacterWindow();
 }

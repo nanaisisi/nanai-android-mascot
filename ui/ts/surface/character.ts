@@ -170,11 +170,10 @@ function initCharacterWindow() {
 			}
 		}
 
-		if (hasMoved) {
+		if (hasMoved && origin) {
+			void moveCurrentWindowBy(deltaX, deltaY, origin);
 			if (isTauriAvailable()) {
 				void invoke("sync_character_balloon", { scopeId });
-			} else if (origin) {
-				void moveCurrentWindowBy(deltaX, deltaY, origin);
 			}
 		}
 	};

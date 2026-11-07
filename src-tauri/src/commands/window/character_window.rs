@@ -32,12 +32,25 @@ pub async fn show_character_window(
             let _ = sub_win.unminimize();
             let _ = sub_win.show();
         } else {
-            // スコープ番号に応じた配置 (スコープ0: メイン位置、スコープ1以降: その横へ配置)
-            let (mut target_x, mut target_y) = if scope_id == 0 {
-                (200.0, 200.0)
-            } else {
-                (200.0 + (scope_id as f64 * 220.0), 200.0)
-            };
+            // モニター情報を取得して画面右下 (デスクトップの床) に標準配置
+            let mut target_x = 200.0;
+            let mut target_y = 200.0;
+
+            if let Ok(Some(monitor)) = app_handle.primary_monitor() {
+                let size = monitor.size();
+                let scale = monitor.scale_factor();
+                let screen_w = (size.width as f64) / scale;
+                let screen_h = (size.height as f64) / scale;
+
+                // スコープ0 (メイン): 右下 (タスクバー上)
+                // スコープ1 (サブ/うにゅう): メインの左隣
+                target_x = if scope_id == 0 {
+                    screen_w - win_width - 260.0
+                } else {
+                    screen_w - win_width - 40.0
+                };
+                target_y = (screen_h - win_height - 60.0).max(40.0);
+            }
 
             // スコープ0が既に存在する場合はそれを基準に横に並べる
             if scope_id > 0

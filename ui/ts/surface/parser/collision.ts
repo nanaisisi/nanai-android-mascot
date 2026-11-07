@@ -37,6 +37,37 @@ export function handleCollisionEx(trimmed, currentSurfaces, collisions) {
 				maxX: cx + rx,
 				maxY: cy + ry,
 			});
+		} else if (shape === "polygon" || parts.length > 7) {
+			const coords = parts
+				.slice(3)
+				.map((p) => Number.parseInt(p.trim(), 10))
+				.filter((n) => !Number.isNaN(n));
+			const vertices = [];
+			let minX = Infinity;
+			let maxX = -Infinity;
+			let minY = Infinity;
+			let maxY = -Infinity;
+			for (let i = 0; i + 1 < coords.length; i += 2) {
+				const vx = coords[i];
+				const vy = coords[i + 1];
+				vertices.push([vx, vy]);
+				if (vx < minX) minX = vx;
+				if (vx > maxX) maxX = vx;
+				if (vy < minY) minY = vy;
+				if (vy > maxY) maxY = vy;
+			}
+			if (vertices.length >= 3) {
+				collisions[s].push({
+					id,
+					name,
+					shape: "polygon",
+					vertices,
+					minX: Number.isFinite(minX) ? minX : 0,
+					minY: Number.isFinite(minY) ? minY : 0,
+					maxX: Number.isFinite(maxX) ? maxX : 0,
+					maxY: Number.isFinite(maxY) ? maxY : 0,
+				});
+			}
 		} else if (parts.length >= 7) {
 			const x1 = Number.parseInt(parts[3], 10);
 			const y1 = Number.parseInt(parts[4], 10);

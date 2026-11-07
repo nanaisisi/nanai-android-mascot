@@ -97,7 +97,7 @@ export function handleNewline(
 	}
 }
 
-export function handleClear(player: any, _app: any, token: any, context: any) {
+export function handleClear(player: any, app: any, token: any, context: any) {
 	const { scheduleDesktopBalloonSync } = context;
 	const { currentBalloonText } = context;
 
@@ -105,6 +105,12 @@ export function handleClear(player: any, _app: any, token: any, context: any) {
 		token.mode || "all",
 		token.count || 1,
 	);
+	if (
+		(!token.mode || token.mode === "all") &&
+		app.ghostController?.sendBalloonCloseNotify
+	) {
+		app.ghostController.sendBalloonCloseNotify(player.lastScript || "");
+	}
 	if (token.mode === "char") {
 		const count = Math.max(1, token.count || 1);
 		let removed = 0;

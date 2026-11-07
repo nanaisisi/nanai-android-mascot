@@ -234,6 +234,12 @@ export class BalloonThemeManager {
 
 		if (isTauriAvailable()) {
 			emit("sync-theme", themeName);
+			if (themeName === "nam_default_plus_overhead") {
+				void invoke("set_balloon_offset", { scopeId: 0, x: -40, y: -210 }).catch(() => {});
+				void invoke("set_balloon_offset", { scopeId: 1, x: -40, y: -210 }).catch(() => {});
+			} else if (themeName === "nam_default_plus") {
+				void invoke("reset_balloon_positions").catch(() => {});
+			}
 		}
 
 		this.clearNineSliceCache();

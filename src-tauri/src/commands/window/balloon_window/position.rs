@@ -27,12 +27,26 @@ pub async fn sync_balloon_position_impl(
     let Ok(char_pos) = char_win.outer_position() else {
         return Ok(());
     };
+    let (char_size, balloon_size) = (
+        char_win.outer_size().unwrap_or(tauri::PhysicalSize { width: 200, height: 360 }),
+        balloon_win.outer_size().unwrap_or(tauri::PhysicalSize { width: 280, height: 200 }),
+    );
+
+    // デフォルト位置計算:
+    // メインキャラ (scope 0): 右側配置
+    // サブキャラ (scope 1以降): 左側配置 (鏡像レイアウト)
+    let default_offset = if scope_id == 0 {
+        (char_size.width as i32 - 20, -(balloon_size.height as i32) + 20)
+    } else {
+        (-(balloon_size.width as i32) + 20, -(balloon_size.height as i32) + 20)
+    };
+
     let offset = state
         .balloon_offsets
         .lock()
         .get(&scope_id)
         .copied()
-        .unwrap_or((-40, -180));
+        .unwrap_or(default_offset);
     balloon_win
         .set_position(tauri::Position::Physical(tauri::PhysicalPosition {
             x: char_pos.x + offset.0,

@@ -27,6 +27,7 @@ pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
                 };
             }
             Err(_) => {
+                // BOMはあるが壊れたUTF-8の場合はロスありでデコード
                 let text = String::from_utf8_lossy(&buffer[3..]).to_string();
                 return DecodeResult {
                     text,
@@ -61,7 +62,7 @@ pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
         }
     }
 
-    // 2. ヘッダー宣言チェック
+    // 2. ヘッダー宣言チェック (charset,Shift_JIS / charset=Shift_JIS / charset:Shift_JIS 等)
     let check_len = buffer.len().min(1024);
     let slice = &buffer[..check_len];
     let lower_ascii: Vec<u8> = slice.iter().map(|b| b.to_ascii_lowercase()).collect();
@@ -126,10 +127,11 @@ pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
         }
     }
 
+    // 2-2. ISO-2022-JP (JISエスケープシーケンス ESC $ B / ESC ( B 等) チェック
     if buffer.windows(3).any(|w| {
-        w == [0x1B, 0x24, 0x42]
-            || w == [0x1B, 0x24, 0x40]
-            || w == [0x1B, 0x28, 0x4A]
+        w == [0x1B, 0x24, 0x42] // ESC $ B (JIS X 0208-1983)
+            || w == [0x1B, 0x24, 0x40] // ESC $ @ (JIS X 0208-1978)
+            || w == [0x1B, 0x28, 0x4A] // ESC ( J (JIS X 0201 Roman)
     }) {
         let (cow, _, had_errors) = ISO_2022_JP.decode(buffer);
         if !had_errors {
@@ -141,6 +143,7 @@ pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
         }
     }
 
+    // 3. 標準 UTF-8 としてのパース試行
     if let Ok(utf8_str) = std::str::from_utf8(buffer) {
         return DecodeResult {
             text: utf8_str.to_string(),
@@ -149,6 +152,7 @@ pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
         };
     }
 
+    // 4. EUC-JP パース試行（有効なEUC-JPでエラーなしの場合）
     let (euc_cow, _, euc_errors) = EUC_JP.decode(buffer);
     if !euc_errors && buffer.iter().any(|&b| b >= 0x80) {
         let (sjis_cow, _, sjis_errors) = SHIFT_JIS.decode(buffer);
@@ -168,7 +172,8 @@ pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
         }
     }
 
-    let (cow, _, had_errors) = SHIFT_JIS.decode(buffer);
+    // 5. Shift_JIS / CP932 フォールバックデコード
+    let (cow, _encoding_used, had_errors) = SHIFT_JIS.decode(buffer);
     DecodeResult {
         text: cow.into_owned(),
         encoding: "Shift_JIS",
@@ -176,21 +181,26 @@ pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
     }
 }
 
+/// バイト列から文字コードを自動判定（UTF-8 BOM / UTF-16 BOM / ヘッダー宣言 / UTF-8 / EUC-JP / Shift_JIS・CP932）してデコードし、
+/// デコード後の文字列と判定された文字コード名を返す。
 pub fn detect_and_decode(buffer: &[u8]) -> (String, &'static str) {
     let res = detect_and_decode_ext(buffer);
     (res.text, res.encoding)
 }
 
+/// テキストファイルを自動判定（UTF-8 / BOM / Shift_JIS / EUC-JP / UTF-16）で開き、UTF-8文字列として返す
 pub fn open_text_file(path: &Path) -> Result<String, io::Error> {
     let buffer = std::fs::read(path)?;
     let (decoded, _) = detect_and_decode(&buffer);
     Ok(decoded)
 }
 
+/// 後方互換用エイリアス
 pub fn open_shift_jis_file(path: &str) -> Result<String, io::Error> {
     open_text_file(Path::new(path))
 }
 
+/// 文字列を指定された文字コード名（Shift_JIS, CP932, EUC-JP, ISO-2022-JP, UTF-8, UTF-16LE/BE等）にエンコード
 pub fn encode_to_charset(text: &str, charset: &str) -> Option<Vec<u8>> {
     let clean = charset
         .trim()
@@ -199,15 +209,27 @@ pub fn encode_to_charset(text: &str, charset: &str) -> Option<Vec<u8>> {
     match clean.as_str() {
         "shift_jis" | "shift-jis" | "sjis" | "cp932" | "windows-31j" => {
             let (cow, _, had_errors) = SHIFT_JIS.encode(text);
-            if had_errors { None } else { Some(cow.into_owned()) }
+            if had_errors {
+                None
+            } else {
+                Some(cow.into_owned())
+            }
         }
         "euc-jp" | "euc_jp" | "ujis" | "x-euc-jp" => {
             let (cow, _, had_errors) = EUC_JP.encode(text);
-            if had_errors { None } else { Some(cow.into_owned()) }
+            if had_errors {
+                None
+            } else {
+                Some(cow.into_owned())
+            }
         }
         "iso-2022-jp" | "iso2022jp" | "jis" => {
             let (cow, _, had_errors) = ISO_2022_JP.encode(text);
-            if had_errors { None } else { Some(cow.into_owned()) }
+            if had_errors {
+                None
+            } else {
+                Some(cow.into_owned())
+            }
         }
         "utf-8" | "utf8" => Some(text.as_bytes().to_vec()),
         "utf-16le" | "utf-16" | "utf16le" => {
@@ -228,6 +250,7 @@ pub fn encode_to_charset(text: &str, charset: &str) -> Option<Vec<u8>> {
     }
 }
 
+/// CRLF / CR / LF の改行コードをすべて単一の LF (`\n`) に正規化
 pub fn normalize_newlines(text: &str) -> String {
     let mut result = String::with_capacity(text.len());
     let mut chars = text.chars().peekable();
@@ -244,6 +267,7 @@ pub fn normalize_newlines(text: &str) -> String {
     result
 }
 
+/// ファイルパスの拡張子から標準的な MIME タイプを取得
 pub fn detect_mime_type(path: &str) -> &'static str {
     let lower = path.to_lowercase();
     if lower.ends_with(".png") {
@@ -262,6 +286,16 @@ pub fn detect_mime_type(path: &str) -> &'static str {
         "text/plain"
     } else if lower.ends_with(".json") {
         "application/json"
+    } else if lower.ends_with(".wav") {
+        "audio/wav"
+    } else if lower.ends_with(".mp3") {
+        "audio/mpeg"
+    } else if lower.ends_with(".ogg") {
+        "audio/ogg"
+    } else if lower.ends_with(".mid") || lower.ends_with(".midi") {
+        "audio/midi"
+    } else if lower.ends_with(".dll") || lower.ends_with(".so") {
+        "application/octet-stream"
     } else if lower.ends_with(".zip") || lower.ends_with(".nar") {
         "application/zip"
     } else {

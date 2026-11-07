@@ -283,4 +283,8 @@ impl VirtualFileSystem for MockVfs {
     fn is_dir(&self, path: &str) -> bool {
         self.has_dir(path)
     }
+
+    fn find_files(&self, pattern: &str) -> io::Result<Vec<String>> {
+        Ok(self.find_files(pattern))
+    }
 }

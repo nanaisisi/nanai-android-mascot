@@ -32,3 +32,16 @@ SSP の Windows タスクバー右クリックジャンプリストにおいて�
    - `calendar-modal-content`: カレンダー UI の描画。
 2. **フロントエンド連携 (`ui/ts/core/app-actions.ts`)**:
    - アクション `explorer`（内部エクスプローラー起動）および `calendar`（カレンダーダイアログ表示）のハンドリング。
+3. **AppUserModelID 同期 (`src-tauri/src/jumplist.rs`)**:
+   - `SetCurrentProcessExplicitAppUserModelID` (`com.nanai-android-mascot.app`) により、OS タスクバーにアプリケーション固有識別子を登録。
+
+---
+
+## 3. Windows OS におけるジャンプリスト表示条件
+
+Windows 7/10/11 の Shell / DWM 仕様上、タスクバー右クリック時のカスタム「タスク (Tasks)」カテゴリは、以下の条件を満たした際に OS 側でアクティブ化・表示されます：
+
+- **ショートカット (.lnk) 登録**: アプリケーションが Windows スタートメニュー（`Start Menu\Programs`）やデスクトップに `.lnk` ショートカットとして登録・インストールされていること。
+- **動作の違い（開発時 vs ビルド時）**:
+  - `cargo run` や開発中のポータブル `.exe` 単体実行では、Windows OS のセキュリティ保護によりカスタムジャンプリストの生成が一時的に抑制されます。
+  - インストーラー（NSIS / MSIX）パッケージ経由でアプリをビルド・インストールした際、OS のショートカットと `AppUserModelID` がバインドされ、タスクバー右クリック時に「タスク（Explorer, Calendar）」が完全表示されます。

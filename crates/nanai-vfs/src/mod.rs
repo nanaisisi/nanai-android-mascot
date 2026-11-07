@@ -1,10 +1,9 @@
-//! Nanai VFS - Shift_JIS aware archive extraction and virtual file systems
-pub mod encoding;
-pub mod mock;
-pub mod overlay;
-pub mod path;
-pub mod resolver;
-pub mod traits;
+mod encoding;
+mod mock;
+mod overlay;
+mod path;
+mod resolver;
+mod traits;
 
 pub use encoding::{
     DecodeResult, detect_and_decode, detect_and_decode_ext, detect_mime_type, encode_to_charset,

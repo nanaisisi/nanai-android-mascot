@@ -96,6 +96,7 @@ export async function playScript(player: any, script: string) {
 		if (player.playbackId !== currentId) break;
 		if (context.ended) break;
 
+		player.currentProgressIndex = j;
 		await handleToken(player, app, tokens[j], context);
 	}
 
@@ -128,12 +129,17 @@ export async function playScript(player: any, script: string) {
 				try {
 					if (sakuraDisplay) sakuraDisplay.style.display = "none";
 					if (keroDisplay) keroDisplay.style.display = "none";
-					app.hideBalloon?.(0);
-					app.hideBalloon?.(1);
+					app.hideBalloon?.(0, "timeout");
+					app.hideBalloon?.(1, "timeout");
 					await app.ghostController?.sendShioriEvent?.("OnBalloonTimeout", [
 						player.lastScript || "",
 						"0",
 					]);
+					if (app.ghostController?.sendBalloonCloseNotify) {
+						await app.ghostController.sendBalloonCloseNotify(
+							player.lastScript || "",
+						);
+					}
 				} catch (_e) {}
 			}
 		}, player.balloonTimeout);

@@ -340,4 +340,15 @@ impl VirtualFileSystem for VfsResolver {
             _ => self.resolve(path).map(|p| p.is_dir()).unwrap_or(false),
         }
     }
+
+    fn find_files(&self, pattern: &str) -> io::Result<Vec<String>> {
+        let pat_lower = pattern.to_lowercase();
+        let all_files = self.walk_files("")?;
+        let mut matched: Vec<String> = all_files
+            .into_iter()
+            .filter(|f| f.to_lowercase().contains(&pat_lower))
+            .collect();
+        matched.sort();
+        Ok(matched)
+    }
 }

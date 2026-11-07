@@ -4,5 +4,5 @@
 
 | 項目                                        | 検索語             |  対応状況   |
 | :------------------------------------------ | :----------------- | :---------: |
-| [OnSSTPBlacklisting](OnSSTPBlacklisting.md) | OnSSTPBlacklisting | ❌ 検出なし |
-| [OnSSTPBreak](OnSSTPBreak.md)               | OnSSTPBreak        | ❌ 検出なし |
+| [OnSSTPBlacklisting](OnSSTPBlacklisting.md) | OnSSTPBlacklisting | ✅ 実装済   |
+| [OnSSTPBreak](OnSSTPBreak.md)               | OnSSTPBreak        | ✅ 実装済   |

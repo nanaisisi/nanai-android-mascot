@@ -246,7 +246,45 @@ export const ghostSurfaceMethods = {
 		const fallbackSvgUrl = convertFileSrc(
 			`${ghostPath}/shell/${shell}/surface${fallbackSurface}.svg`,
 		);
-		return await applyImageSrc(imgUrl, fallbackSvgUrl, pnaUrl);
+		const result = await applyImageSrc(imgUrl, fallbackSvgUrl, pnaUrl);
+
+		// サーフィス切り替え完了時、UKADOC OnSurfaceChange / OnOtherSurfaceChange を通知
+		if (!isAnimationFrame && surfaceId !== -1 && surfaceId !== "-1") {
+			try {
+				const surf0 =
+					this.app?.surfaceManager?.currentSurfaceIdFor?.(0) ??
+					(scopeId === 0 ? surfaceId : 0);
+				const surf1 =
+					this.app?.surfaceManager?.currentSurfaceIdFor?.(1) ??
+					(scopeId === 1 ? surfaceId : 10);
+				const width = img?.naturalWidth || img?.clientWidth || 0;
+				const height = img?.naturalHeight || img?.clientHeight || 0;
+
+				if (this.notifySurfaceChange) {
+					await this.notifySurfaceChange(scopeId, surf0, surf1, width, height);
+				}
+
+				if (this.otherSurfaceChangeEnabled && this.notifyOtherSurfaceChange) {
+					const ghostName = this.ghostManifest?.name || "master";
+					const sakuraName = this.ghostManifest?.sakura?.name || ghostName;
+					const prevSurf = this._prevSurfaceIds?.[scopeId] ?? surfaceId;
+					const rectStr = `0,0,${width},${height}`;
+					await this.notifyOtherSurfaceChange(
+						ghostName,
+						sakuraName,
+						scopeId,
+						surfaceId,
+						prevSurf,
+						rectStr,
+					);
+				}
+
+				this._prevSurfaceIds ??= {};
+				this._prevSurfaceIds[scopeId] = surfaceId;
+			} catch (_err) {}
+		}
+
+		return result;
 	},
 
 	async updateGhostCharacter(ghostName) {

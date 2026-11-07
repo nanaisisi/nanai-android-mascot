@@ -29,6 +29,10 @@ pub struct AnimationScheduler {
     pub(crate) animation_offsets: HashMap<u32, HashMap<u32, (i32, i32)>>,
     /// move 描画メソッドによるベースサーフィスの表示位置オフセット (scope_id -> (move_x, move_y))
     pub(crate) base_move_offsets: HashMap<u32, (i32, i32)>,
+    /// scaling 描画メソッドによるベースサーフィスの表示倍率 (scope_id -> (scale_x, scale_y))
+    pub(crate) base_scaling_offsets: HashMap<u32, (f64, f64)>,
+    /// SERIKO 口パクアニメーションの有効状態 (scope_id -> bool)
+    pub(crate) seriko_talk_enabled: HashMap<u32, bool>,
 }
 
 impl AnimationScheduler {

@@ -19,6 +19,7 @@ impl AnimationScheduler {
         let mut to_start: Vec<(u32, u32)> = Vec::new(); // (scope_id, anim_id)
         let mut to_stop: Vec<(u32, u32)> = Vec::new(); // (scope_id, anim_id)
         let mut to_move: Vec<(u32, i32, i32)> = Vec::new(); // (scope_id, x, y)
+        let mut to_scale: Vec<(u32, f64, f64)> = Vec::new(); // (scope_id, scale_x, scale_y)
 
         for (&scope_id, anims) in self.active_animations.iter_mut() {
             let mut stop_others = false;
@@ -34,6 +35,13 @@ impl AnimationScheduler {
                     match &event.pattern.method {
                         DrawMethod::Move => {
                             to_move.push((scope_id, event.pattern.x, event.pattern.y));
+                        }
+                        DrawMethod::Scaling => {
+                            to_scale.push((
+                                scope_id,
+                                event.pattern.x as f64,
+                                event.pattern.y as f64,
+                            ));
                         }
                         DrawMethod::Start(Some(target_id)) => {
                             to_start.push((scope_id, *target_id));
@@ -81,6 +89,11 @@ impl AnimationScheduler {
         // move 位置移動の反映
         for (scope_id, x, y) in to_move {
             self.set_base_move_offset(scope_id, x, y);
+        }
+
+        // scaling 倍率変更の反映
+        for (scope_id, sx, sy) in to_scale {
+            self.set_base_scaling_offset(scope_id, sx, sy);
         }
 
         // 開始処理の反映

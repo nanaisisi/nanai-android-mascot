@@ -2,7 +2,7 @@
 
 - **規格**: [OnGhostTermsDecline.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/dialogbox/OnGhostTermsDecline/) (ukadoc-spec/list/shiori-event/dialogbox/OnGhostTermsDecline.md)
 - **検索語**: OnGhostTermsDecline
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,4 @@ OnGhostTermsDecline ダイアログ関連SHIORIイベント通知処理を実装
 
 ## 実装箇所
 
-実装コード内に「OnGhostTermsDecline」は検出されませんでした。
+- `ui/ts/ghost/shiori-notify.ts:591` `return await this.sendShioriNotify("OnGhostTermsDecline", [ghostName]);`

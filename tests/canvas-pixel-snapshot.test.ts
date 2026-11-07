@@ -5,3 +5,4 @@ import "./canvas-pixel-snapshot/blend-modes.test.js";
 import "./canvas-pixel-snapshot/reduce-blend.test.js";
 import "./canvas-pixel-snapshot/cycle6-blend-modes.test.js";
 import "./canvas-pixel-snapshot/cycle7-blend-modes.test.js";
+import "./canvas-pixel-snapshot/cycle8-pixel-ops.test.js";

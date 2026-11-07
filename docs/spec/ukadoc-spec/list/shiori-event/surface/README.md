@@ -4,6 +4,6 @@
 
 | 項目                                            | 検索語               |        対応状況         |
 | :---------------------------------------------- | :------------------- | :---------------------: |
-| [OnOtherSurfaceChange](OnOtherSurfaceChange.md) | OnOtherSurfaceChange |       ❌ 検出なし       |
-| [OnSurfaceChange](OnSurfaceChange.md)           | OnSurfaceChange      |       ❌ 検出なし       |
+| [OnOtherSurfaceChange](OnOtherSurfaceChange.md) | OnOtherSurfaceChange | ✅ 実装済(SHIORIへ送信) |
+| [OnSurfaceChange](OnSurfaceChange.md)           | OnSurfaceChange      | ✅ 実装済(SHIORIへ送信) |
 | [OnSurfaceRestore](OnSurfaceRestore.md)         | OnSurfaceRestore     | ✅ 実装済(SHIORIへ送信) |

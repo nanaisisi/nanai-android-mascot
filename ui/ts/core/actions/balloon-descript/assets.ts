@@ -24,6 +24,17 @@ export function applyAssetProperties(root, props, instance) {
 			props["recommended.ghost.path"],
 		);
 
+	const preloadBalloonAsset = (url: string | null) => {
+		if (!url || typeof Image === "undefined") return;
+		const cleanUrl = url.replace(/^url\(["']?/, "").replace(/["']?\)$/, "");
+		if (!cleanUrl) return;
+		const img = new Image();
+		img.onload = () => {
+			if (img.decode) void img.decode().catch(() => {});
+		};
+		img.src = cleanUrl;
+	};
+
 	const setBalloonImage = (propName, cssVarName) => {
 		const filename = props[propName];
 		if (filename) {
@@ -32,6 +43,7 @@ export function applyAssetProperties(root, props, instance) {
 			const url = globalThis.__TAURI__?.core?.convertFileSrc
 				? globalThis.__TAURI__.core.convertFileSrc(fullPath)
 				: fullPath;
+			preloadBalloonAsset(url);
 			root.style.setProperty(cssVarName, `url("${url}")`);
 		}
 	};
@@ -41,9 +53,11 @@ export function applyAssetProperties(root, props, instance) {
 	const themeName = instance.currentBalloonTheme || "default";
 	const resolveArrowUrl = (file) => {
 		const fullPath = `assets/balloon/${themeName}/${file}`;
-		return globalThis.__TAURI__?.core?.convertFileSrc
+		const url = globalThis.__TAURI__?.core?.convertFileSrc
 			? globalThis.__TAURI__.core.convertFileSrc(fullPath)
 			: fullPath;
+		preloadBalloonAsset(url);
+		return url;
 	};
 	root.style.setProperty(
 		"--balloon-arrow0-image",

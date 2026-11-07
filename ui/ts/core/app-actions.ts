@@ -69,7 +69,13 @@ export const actionMethods = {
 			return (this as any).showGhostInformation?.();
 		}
 		if (action === "explorer") {
+			if (isTauriAvailable()) {
+				void invoke("open_ghost_directory").catch(() => {});
+			}
 			return (this as any).modalManager?.show("explorer-modal-content");
+		}
+		if (action === "calendar" || action === "schedule") {
+			return (this as any).modalManager?.show("calendar-modal-content");
 		}
 		if (action === "backlog") {
 			return (this as any).modalManager?.show("backlog-modal-content");

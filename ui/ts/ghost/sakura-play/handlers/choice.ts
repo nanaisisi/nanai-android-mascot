@@ -21,7 +21,20 @@ export function handleChoice(player: any, app: any, token: any, context: any) {
 			clearTimeout(player.choiceTimeoutTimer);
 			player.choiceTimeoutTimer = null;
 		}
-		player.onChoiceSelected(token.id, token.text);
+		if (player.onChoiceSelected) {
+			player.onChoiceSelected(token.id, token.text, token.args || []);
+		} else {
+			app.ghostController?.sendShioriEvent?.("OnChoiceSelectEx", [
+				token.text,
+				token.id,
+				...(token.args || []),
+			]);
+			app.ghostController?.sendShioriEvent?.("OnChoiceSelect", [
+				token.id,
+				token.text,
+				...(token.args || []),
+			]);
+		}
 	});
 	choiceBtn.addEventListener("mouseenter", () => {
 		app.ghostController?.sendShioriEvent("OnChoiceEnter", [
@@ -76,7 +89,12 @@ export function handleAnchorBegin(
 			clearTimeout(hoverTimer);
 			hoverTimer = null;
 		}
-		app.ghostController.sendShioriEvent("OnAnchorSelect", [
+		app.ghostController?.sendShioriEvent?.("OnAnchorSelectEx", [
+			anchorSpan.textContent || token.id,
+			token.id,
+			...(token.args || []),
+		]);
+		app.ghostController?.sendShioriEvent?.("OnAnchorSelect", [
 			token.id,
 			...(token.args || []),
 		]);

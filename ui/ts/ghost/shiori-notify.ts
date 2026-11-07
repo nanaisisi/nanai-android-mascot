@@ -500,6 +500,7 @@ export const shioriNotifyMethods = {
 			"installedsakuraname",
 			ghosts.map((g: any) => g.sakura_name || g.name),
 		);
+		// Legacy alias for backward compatibility
 		await this.sendShioriNotify(
 			"installsakuraname",
 			ghosts.map((g: any) => g.sakura_name || g.name),

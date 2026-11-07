@@ -27,8 +27,6 @@ body {
 	background-color: var(--balloon-bg, #f9f9f9);
 	background-image: var(--balloon-pattern, none);
 	border-radius: var(--balloon-border-radius, 6px);
-	border: var(--balloon-border-width, 1px) var(--balloon-border-style, solid)
-		var(--balloon-border-color, #7a7a7a);
 	border-image-source: var(--balloon-border-image-source, none);
 	border-image-slice: var(--balloon-border-image-slice, 16 16 16 16 fill);
 	border-image-width: var(--balloon-border-image-width, 16px);

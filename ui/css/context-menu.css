@@ -58,17 +58,17 @@ body:not(.subchar-mode) .subchar-only {
 .menu-sidebar {
 	display: none;
 	width: var(--menu-sidebar-width, 24px);
-	height: 100%;
-	min-height: 100%;
+	min-width: 24px;
+	align-self: stretch;
 	background: transparent;
 	background-image: var(--menu-sidebar-image, none);
 	background-repeat: no-repeat;
 	background-position: var(--menu-sidebar-position, left bottom);
-	background-size: contain;
+	background-size: auto 100%;
 	flex-shrink: 0;
 }
 
-body.has-sidebar:not(.subchar-mode) .menu-sidebar {
+body.has-sidebar .menu-sidebar {
 	display: block;
 }
 

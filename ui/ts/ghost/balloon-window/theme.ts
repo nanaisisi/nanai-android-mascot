@@ -119,8 +119,19 @@ export async function applyBalloonDescript({
 		document.documentElement.setAttribute("data-balloon-theme", theme);
 		document.body.className = `balloon-theme-${theme}`;
 
-		const props = await invoke("balloon_manifest", { name: theme, scopeId });
-		if (!props || typeof props !== "object") return null;
+		let props = await invoke("balloon_manifest", { name: theme, scopeId }).catch(() => null);
+		if (!props || typeof props !== "object") {
+			if (theme !== "default" && theme !== "nam_default_plus") {
+				return await applyBalloonDescript({
+					theme: "nam_default_plus",
+					scopeId,
+					currentUserScale,
+					onDpiScaleChange,
+					onDontMoveChange,
+				});
+			}
+			return null;
+		}
 		const balloonBox = document.getElementById("balloon-box");
 		const root = document.documentElement;
 
@@ -161,7 +172,7 @@ export async function applyBalloonDescript({
 		) {
 			balloonBox?.style.setProperty(
 				"padding",
-				`${Math.max(8, vt)}px ${Math.max(8, vr)}px ${Math.max(8, vb)}px ${Math.max(8, vl)}px`,
+				`${Math.max(4, Math.abs(vt))}px ${Math.max(4, Math.abs(vr))}px ${Math.max(4, Math.abs(vb))}px ${Math.max(4, Math.abs(vl))}px`,
 			);
 		}
 
@@ -174,12 +185,16 @@ export async function applyBalloonDescript({
 			);
 		}
 
-		const bgImage = await loadBalloonSkinImages(theme, scopeId);
+		let bgImage = await loadBalloonSkinImages(theme, scopeId);
+		if (!bgImage && theme !== "default" && theme !== "nam_default_plus") {
+			bgImage = await loadBalloonSkinImages("nam_default_plus", scopeId);
+		}
+
 		if (bgImage) {
-			const t = Number.isNaN(vt) ? 16 : Math.max(8, vt);
-			const r = Number.isNaN(vr) ? 16 : Math.max(8, vr);
-			const b = Number.isNaN(vb) ? 16 : Math.max(8, vb);
-			const l = Number.isNaN(vl) ? 16 : Math.max(8, vl);
+			const t = Number.isNaN(vt) ? 16 : Math.max(8, Math.abs(vt));
+			const r = Number.isNaN(vr) ? 16 : Math.max(8, Math.abs(vr));
+			const b = Number.isNaN(vb) ? 16 : Math.max(8, Math.abs(vb));
+			const l = Number.isNaN(vl) ? 16 : Math.max(8, Math.abs(vl));
 			const balloonEl = balloonBox || document.querySelector(".balloon");
 			if (balloonEl?.style) {
 				balloonEl.style.borderImageSource = `url("${bgImage}")`;
@@ -200,7 +215,15 @@ export async function applyBalloonDescript({
 			isBalloonDontMove,
 		};
 	} catch (_e) {
-		// スキン descript 未定義（CSS テーマのみ）の場合は無視
+		if (theme !== "default" && theme !== "nam_default_plus") {
+			return await applyBalloonDescript({
+				theme: "nam_default_plus",
+				scopeId,
+				currentUserScale,
+				onDpiScaleChange,
+				onDontMoveChange,
+			});
+		}
 		return null;
 	}
 }

@@ -36,7 +36,7 @@ export const menuThemeRenderer = {
 		if (theme) {
 			document.documentElement.setAttribute("data-balloon-theme", theme);
 			document.body.classList.remove(
-				"balloon-theme-ivory",
+				"balloon-theme-default",
 				"balloon-theme-pixel",
 				"balloon-theme-comic",
 				"balloon-theme-dark",

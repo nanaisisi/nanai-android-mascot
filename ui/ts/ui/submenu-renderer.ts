@@ -93,7 +93,7 @@ export function renderSubmenuContent({
 		(cachedBalloons.length > 0
 			? cachedBalloons
 			: [
-					{ dir_name: "ivory", name: "アイボリー" },
+					{ dir_name: "default", name: "デフォルト" },
 					{ dir_name: "pixel", name: "ピクセル" },
 					{ dir_name: "comic", name: "コミック" },
 					{ dir_name: "dark", name: "ダーク" },

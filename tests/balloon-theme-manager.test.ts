@@ -79,7 +79,7 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 
 	it("initializes BalloonThemeManager with default or app properties", () => {
 		const mgr = new BalloonThemeManager();
-		assert.equal(mgr.currentTheme, "ivory");
+		assert.equal(mgr.currentTheme, "default");
 		assert.equal(mgr.userScale, 1);
 		assert.equal(mgr.dpiScale, 1);
 
@@ -150,7 +150,7 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 	it("cycles balloon themes correctly with default and custom lists", () => {
 		let shownMessage = "";
 		const mockApp = {
-			currentBalloonTheme: "ivory",
+			currentBalloonTheme: "default",
 			showBalloon(msg) {
 				shownMessage = msg;
 			},
@@ -237,7 +237,7 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 	it("delegates balloonThemeActions to BalloonThemeManager preserving backward compatibility", async () => {
 		const app = {
 			...balloonThemeActions,
-			currentBalloonTheme: "ivory",
+			currentBalloonTheme: "default",
 			balloonUserScale: 1,
 			balloonDpiScale: 1,
 			availableBalloons: [],

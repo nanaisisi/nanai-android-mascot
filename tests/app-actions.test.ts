@@ -25,7 +25,7 @@ test("actionMethods.handleMenuAction covers all branches including Tauri folder 
 			sendShioriEvent: () => {},
 			scanGhosts: async () => {},
 		},
-		availableBalloons: [{ dir_name: "ivory", name: "Ivory Balloon" }],
+		availableBalloons: [{ dir_name: "default", name: "Default Balloon" }],
 		modalManager: { show() {} },
 		elements: { ghostDisplay: { style: {}, classList: { remove() {} } } },
 		interactionManager: { balloonOffsetX: 0, balloonOffsetY: 0 },
@@ -113,7 +113,7 @@ test("actionMethods.handleMenuAction covers all branches including Tauri folder 
 	handle("balloon-cycle");
 
 	// Test balloon-theme with availableBalloons matching
-	handle("balloon-theme-ivory");
+	handle("balloon-theme-default");
 	handle("balloon-theme-custom");
 
 	// Test Tauri available branch for reset positions & availableBalloons undefined branch
@@ -144,7 +144,7 @@ test("actionMethods.handleMenuAction covers all branches including Tauri folder 
 	mockApp.interactionManager = { balloonOffsetX: 0, balloonOffsetY: 0 };
 
 	mockApp.availableBalloons = undefined;
-	handle("balloon-theme-ivory");
+	handle("balloon-theme-default");
 	delete globalThis.__TAURI_INTERNALS__;
 
 	handle("scale-100");
@@ -201,7 +201,7 @@ test("actionMethods covers all spread helper functions directly", async () => {
 			scanGhosts: async () => {},
 			ghosts: [{ name: "Mock", path: "/mock" }],
 		},
-		availableBalloons: [{ dir_name: "ivory", name: "Ivory Balloon" }],
+		availableBalloons: [{ dir_name: "default", name: "Default Balloon" }],
 		modalManager: { show() {} },
 		elements: { ghostDisplay: { style: {}, classList: { remove() {} } } },
 		interactionManager: { balloonOffsetX: 0, balloonOffsetY: 0 },

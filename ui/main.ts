@@ -57,7 +57,7 @@ export class NanaiAndroidMascotApp {
 
 	constructor() {
 		this.isInitialized = false;
-		this.currentBalloonTheme = "ivory";
+		this.currentBalloonTheme = "default";
 		this.settings = {
 			autoLoadGhost: true,
 			enableNotifications: true,

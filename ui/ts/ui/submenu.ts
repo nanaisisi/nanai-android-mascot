@@ -116,7 +116,7 @@ if (isTauriAvailable()) {
 			currentBalloonTheme || "",
 		);
 		document.body.classList.remove(
-			"balloon-theme-ivory",
+			"balloon-theme-default",
 			"balloon-theme-pixel",
 			"balloon-theme-comic",
 			"balloon-theme-dark",

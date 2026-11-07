@@ -152,7 +152,7 @@ function _triggerSubmenuWindow(menuType, buttonEl) {
 		const rect = buttonEl.getBoundingClientRect();
 		const sX = globalThis.screenX ?? 0;
 		const sY = globalThis.screenY ?? 0;
-		const posX = sX + 240 + 2;
+		const posX = sX + 260 + 2;
 		const posY = sY + rect.top;
 		invoke("show_submenu_window", {
 			menuType: menuType,

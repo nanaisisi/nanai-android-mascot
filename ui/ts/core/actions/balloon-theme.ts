@@ -5,9 +5,9 @@
  */
 import { emit, invoke, isTauriAvailable, listen } from "../tauri-helper.js";
 
-export const BALLOON_THEMES = ["ivory", "pixel", "comic", "dark"];
+export const BALLOON_THEMES = ["default", "pixel", "comic", "dark"];
 export const THEME_LABELS = {
-	ivory: "アイボリー（象牙色レトロ）",
+	default: "デフォルト（標準バルーン）",
 	pixel: "ドット絵・ピクセル風（レトロゲーム）",
 	comic: "ポップコミック（太枠丸み）",
 	dark: "サイバーダーク（夜間・ハイコントラスト）",
@@ -30,7 +30,7 @@ export class BalloonThemeManager {
 	 */
 	constructor(app = null) {
 		this.app = app;
-		this.currentTheme = app?.currentBalloonTheme || "ivory";
+		this.currentTheme = app?.currentBalloonTheme || "default";
 		this.userScale = app?.balloonUserScale || 1;
 		this.dpiScale = app?.balloonDpiScale || 1;
 		this.availableBalloons = app?.availableBalloons || [];
@@ -317,7 +317,7 @@ export const balloonThemeActions = {
 			this.balloonThemeManager = new BalloonThemeManager(this);
 		}
 		this.balloonThemeManager.availableBalloons = this.availableBalloons || [];
-		this.balloonThemeManager.currentTheme = this.currentBalloonTheme || "ivory";
+		this.balloonThemeManager.currentTheme = this.currentBalloonTheme || "default";
 		return this.balloonThemeManager.cycleTheme();
 	},
 
@@ -339,7 +339,7 @@ export const balloonThemeActions = {
 		if (!this.balloonThemeManager) {
 			this.balloonThemeManager = new BalloonThemeManager(this);
 		}
-		this.balloonThemeManager.currentTheme = this.currentBalloonTheme || "ivory";
+		this.balloonThemeManager.currentTheme = this.currentBalloonTheme || "default";
 		await this.balloonThemeManager.setTheme(themeName);
 		this.currentBalloonTheme = this.balloonThemeManager.currentTheme;
 	},

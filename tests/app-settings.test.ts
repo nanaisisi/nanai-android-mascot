@@ -16,7 +16,7 @@ globalThis.localStorage = {
 			darkMode: true,
 			shellScale: "120",
 			balloonScale: "150",
-			balloonTheme: "ivory",
+			balloonTheme: "default",
 		}),
 	setItem: () => {},
 };

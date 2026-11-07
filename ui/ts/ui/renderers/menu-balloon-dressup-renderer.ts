@@ -43,7 +43,7 @@ export const menuBalloonDressupRenderer = {
 			});
 		} else {
 			const fallbackThemes = [
-				{ id: "ivory", label: "アイボリー (Ivory)" },
+				{ id: "default", label: "デフォルト (Default)" },
 				{ id: "pixel", label: "ピクセル (Pixel)" },
 				{ id: "comic", label: "コミック (Comic)" },
 				{ id: "dark", label: "ダーク (Dark)" },

@@ -221,6 +221,27 @@ function checkSubmenuFlip(wrapper) {
 }
 
 // ホバー時にも右/左展開を判定 & 独立サブメニューウィンドウ呼び出し
+document.addEventListener("mouseover", (e: any) => {
+	const btn = e.target.closest(".menu-item.has-submenu");
+	if (!btn) return;
+	const wrapper = btn.closest(".menu-item-wrapper") || btn.parentElement;
+	if (wrapper) {
+		checkSubmenuFlip(wrapper);
+	}
+	const menuType = btn.id
+		.replace("-menu-btn", "")
+		.replace("-switch-btn", "")
+		.replace("-btn", "");
+	if (isTauriAvailable()) {
+		_triggerSubmenuWindow(menuType, btn);
+	} else if (wrapper) {
+		document.querySelectorAll(".menu-item-wrapper.open").forEach((el) => {
+			if (el !== wrapper) el.classList.remove("open");
+		});
+		wrapper.classList.add("open");
+	}
+});
+
 document.querySelectorAll(".menu-item-wrapper").forEach((wrapper) => {
 	wrapper.addEventListener("mouseenter", () => {
 		checkSubmenuFlip(wrapper);

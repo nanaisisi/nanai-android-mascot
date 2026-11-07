@@ -65,12 +65,19 @@ function initCharacterWindow() {
 
 	if (!isTauriAvailable()) return;
 
+	let pollTimer: any = null;
+
 	void listen(
 		`update-subchar-image-${scopeId}`,
 		(/** @type {{ payload?: { src?: string } }} */ event: any) => {
 			const src = event.payload?.src;
 			if (src && img) {
+				if (pollTimer) {
+					clearInterval(pollTimer);
+					pollTimer = null;
+				}
 				img.onload = () => {
+					img.style.visibility = "visible";
 					img.style.display = "block";
 					if (img.naturalWidth > 0 && img.naturalHeight > 0) {
 						void invoke("show_subchar_window", {
@@ -81,6 +88,7 @@ function initCharacterWindow() {
 					}
 				};
 				img.src = src;
+				img.style.visibility = "visible";
 				img.style.display = "block";
 				if (img.complete && img.naturalWidth > 0) {
 					void invoke("show_subchar_window", {
@@ -94,6 +102,20 @@ function initCharacterWindow() {
 			}
 		},
 	);
+
+	pollTimer = setInterval(() => {
+		if (
+			img &&
+			img.style.display === "block" &&
+			img.complete &&
+			img.naturalWidth > 0
+		) {
+			clearInterval(pollTimer);
+			pollTimer = null;
+			return;
+		}
+		void emit("request-subchar-image", { scopeId });
+	}, 100);
 	void emit("request-subchar-image", { scopeId });
 
 	let isInteracting = false;

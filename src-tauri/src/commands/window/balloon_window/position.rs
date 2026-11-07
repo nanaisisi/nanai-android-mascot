@@ -76,7 +76,9 @@ pub async fn reset_balloon_positions(
     state: tauri::State<'_, crate::common::state::AppState>,
 ) -> Result<(), String> {
     state.balloon_offsets.lock().clear();
-    for scope_id in [0, 1] {
+    let n = *state.num_characters.lock();
+    let max_scopes = if n > 0 { n } else { 1 };
+    for scope_id in 0..max_scopes {
         let _ = sync_balloon_position_impl(&app_handle, &state, scope_id).await;
     }
     Ok(())

@@ -9,6 +9,19 @@ import { invoke, isTauriAvailable } from "../../core/tauri-helper.js";
 import { processChromaKey } from "../../surface/surface-compositor.js";
 import { updateBalloonWindowScale } from "./scale.js";
 
+const getImageDimensions = (url: string): Promise<{ width: number; height: number }> => {
+	return new Promise((resolve) => {
+		if (typeof Image === "undefined") {
+			resolve({ width: 280, height: 100 });
+			return;
+		}
+		const img = new Image();
+		img.onload = () => resolve({ width: img.width, height: img.height });
+		img.onerror = () => resolve({ width: 280, height: 100 });
+		img.src = url;
+	});
+};
+
 /**
  * バルーンの背景画像およびPNAアルファマスクのロード
  * // [balloons*s.txt/balloonk*s.txt/balloonp*]: 背景画像（scope 0: balloons0.png, scope 1: balloonk0.png, scope >= 2: balloonp{scopeId}.png）+ PNAアルファマスク対応
@@ -103,6 +116,9 @@ export async function applyBalloonDescript({
 	if (!isTauriAvailable()) return null;
 
 	try {
+		document.documentElement.setAttribute("data-balloon-theme", theme);
+		document.body.className = `balloon-theme-${theme}`;
+
 		const props = await invoke("balloon_manifest", { name: theme, scopeId });
 		if (!props || typeof props !== "object") return null;
 		const balloonBox = document.getElementById("balloon-box");
@@ -160,13 +176,23 @@ export async function applyBalloonDescript({
 
 		const bgImage = await loadBalloonSkinImages(theme, scopeId);
 		if (bgImage) {
-			const t = Number.isNaN(vt) ? 38 : Math.max(8, vt);
-			const r = Number.isNaN(vr) ? 40 : Math.max(8, vr);
-			const b = Number.isNaN(vb) ? 60 : Math.max(8, vb);
-			const l = Number.isNaN(vl) ? 40 : Math.max(8, vl);
-			document.body.style.borderImage = `url("${bgImage}") ${t} ${r} ${b} ${l} fill / ${t}px ${r}px ${b}px ${l}px stretch`;
-			document.body.style.borderStyle = "solid";
-			document.body.style.borderWidth = "0";
+			const t = Number.isNaN(vt) ? 16 : Math.max(8, vt);
+			const r = Number.isNaN(vr) ? 16 : Math.max(8, vr);
+			const b = Number.isNaN(vb) ? 16 : Math.max(8, vb);
+			const l = Number.isNaN(vl) ? 16 : Math.max(8, vl);
+			const balloonEl = balloonBox || document.querySelector(".balloon");
+			if (balloonEl?.style) {
+				balloonEl.style.borderImageSource = `url("${bgImage}")`;
+				balloonEl.style.borderImageSlice = `${t} ${r} ${b} ${l} fill`;
+				balloonEl.style.borderImageWidth = `${t}px ${r}px ${b}px ${l}px`;
+				balloonEl.style.borderImageRepeat = "repeat";
+				balloonEl.style.backgroundColor = "transparent";
+
+				const dims = await getImageDimensions(bgImage);
+				if (dims.height > 0) {
+					balloonEl.style.minHeight = `${dims.height}px`;
+				}
+			}
 		}
 
 		return {

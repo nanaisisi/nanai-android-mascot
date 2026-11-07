@@ -30,6 +30,7 @@ pub struct GhostInfo {
     pub path: String,
     pub sakura_name: Option<String>,
     pub kero_name: Option<String>,
+    pub num_characters: i32,
     pub shiori: Option<String>,
     pub craftman: Option<String>,
     pub craftman_url: Option<String>,

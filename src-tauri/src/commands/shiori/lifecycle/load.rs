@@ -26,6 +26,9 @@ pub async fn load_ghost(
         .or_else(|| resolve_ghost_directory(&ghost_name, &app_handle).ok())
         .unwrap_or_else(|| PathBuf::from(format!("assets/ghost/{}", ghost_name)));
 
+    let manifest = crate::ghost::scan::directory::manifest::parse_ghost_manifest(&ghost_dir, &ghost_name);
+    *state.num_characters.lock() = manifest.num_characters;
+
     let ghost_master_dir = ghost_dir.join("ghost").join("master");
 
     let mut candidates = Vec::new();

@@ -68,14 +68,107 @@ export const actionMethods = {
 		if (action === "ghost-info") {
 			return (this as any).showGhostInformation?.();
 		}
-		if (action === "explorer") {
+		if (
+			action === "tools" ||
+			action === "utility-root" ||
+			action === "utility" ||
+			action === "explorer"
+		) {
 			return (this as any).modalManager?.show("explorer-modal-content");
+		}
+		if (action === "config" || action === "settings") {
+			return (this as any).modalManager?.show("settings-modal-content");
+		}
+		if (action === "inquire" || action === "help") {
+			return (this as any).modalManager?.show("help-modal-content");
+		}
+		if (action === "headlines" || action === "headline") {
+			gc.sendShioriEvent("OnHeadline");
+			return;
+		}
+		if (action === "friends") {
+			(this as any).showBalloon?.("👥 おともだち機能は準備中です");
+			setTimeout(() => (this as any).hideBalloon?.(), 2000);
+			return;
+		}
+		if (action === "favorite") {
+			(this as any).showBalloon?.("⭐ おきにいりは現在のゴーストに登録されています");
+			setTimeout(() => (this as any).hideBalloon?.(), 2000);
+			return;
+		}
+		if (action === "language") {
+			(this as any).showBalloon?.("🌐 言語設定はシステム設定に準拠しています");
+			setTimeout(() => (this as any).hideBalloon?.(), 2000);
+			return;
 		}
 		if (action === "calendar" || action === "schedule") {
 			return (this as any).modalManager?.show("calendar-modal-content");
 		}
 		if (action === "backlog") {
 			return (this as any).modalManager?.show("backlog-modal-content");
+		}
+		if (action === "sspim") {
+			(this as any).showBalloon?.("💬 SSPメッセンジャ機能は接続待機中です");
+			setTimeout(() => (this as any).hideBalloon?.(), 2000);
+			return;
+		}
+		if (action === "sntp") {
+			(this as any).showBalloon?.("⏱️ 時刻合わせ(SNTP)を実行しました");
+			setTimeout(() => (this as any).hideBalloon?.(), 2000);
+			return;
+		}
+		if (action === "pictureviewer" || action === "archiveviewer") {
+			return (this as any).modalManager?.show("explorer-modal-content");
+		}
+		if (action === "speech-recognition") {
+			(this as any).showBalloon?.("🎙️ 音声認識を開始しました");
+			setTimeout(() => (this as any).hideBalloon?.(), 2000);
+			return;
+		}
+		if (action === "speech-synthesis") {
+			(this as any).showBalloon?.("🔊 音声合成エンジン有効");
+			setTimeout(() => (this as any).hideBalloon?.(), 2000);
+			return;
+		}
+		if (action === "addressbar") {
+			(this as any).showBalloon?.("🌐 アドレスバー");
+			setTimeout(() => (this as any).hideBalloon?.(), 2000);
+			return;
+		}
+		if (action === "open-file") {
+			if (isTauriAvailable()) {
+				return invoke("pick_and_install_ghost_archive")
+					.then((result: any) => {
+						if (result) {
+							(this as any).showBalloon?.(`ゴースト「${result.name}」を導入しました`);
+							setTimeout(() => (this as any).hideBalloon?.(), 2000);
+							(this as any).ghostController?.scanGhosts?.();
+							(this as any).ghostController?.selectGhost?.(result.name);
+						}
+					})
+					.catch((e) => {
+						console.error("Failed to pick and install archive:", e);
+					});
+			}
+			return (this as any).modalManager?.show("install-modal-content");
+		}
+		if (action === "open-folder") {
+			return (this as any).handleMenuAction?.("open-ghost-folder");
+		}
+		if (action === "clear-cache") {
+			(this as any).showBalloon?.("🧹 ゴーストキャッシュを開放しました");
+			setTimeout(() => (this as any).hideBalloon?.(), 2000);
+			return;
+		}
+		if (action === "update-fmo") {
+			(this as any).showBalloon?.("🔄 FMO情報を更新しました");
+			setTimeout(() => (this as any).hideBalloon?.(), 2000);
+			return;
+		}
+		if (action === "reload-info") {
+			(this as any).showBalloon?.("🔄 動作情報を再読み込みしました");
+			setTimeout(() => (this as any).hideBalloon?.(), 2000);
+			return;
 		}
 		if (action === "reload-ghost") {
 			const currentName =

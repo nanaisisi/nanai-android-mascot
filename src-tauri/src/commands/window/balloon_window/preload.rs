@@ -5,9 +5,15 @@ pub async fn preload_auxiliary_windows(app_handle: tauri::AppHandle) -> Result<(
     #[cfg(desktop)]
     {
         use tauri::Manager;
+        let max_scopes = if let Some(state) = app_handle.try_state::<crate::common::state::AppState>() {
+            let n = *state.num_characters.lock();
+            if n > 0 { n } else { 1 }
+        } else {
+            3
+        };
 
-        // 1. バルーンウィンドウ (scope 0: メイン, scope 1: サブキャラ) の事前キャッシュ
-        for scope_id in [0, 1] {
+        // 1. バルーンウィンドウ (scope 0..max_scopes - 動的キャラクター数対応) の事前キャッシュ
+        for scope_id in 0..max_scopes {
             let label = format!("balloon_window_{}", scope_id);
             if app_handle.get_webview_window(&label).is_none() {
                 let title = format!("Nanai Mascot - Balloon {}", scope_id);
@@ -66,8 +72,8 @@ pub async fn preload_auxiliary_windows(app_handle: tauri::AppHandle) -> Result<(
             .build();
         }
 
-        // 4. キャラクターウィンドウ (scope 0: メイン, scope 1: うにゅう/相方) を非表示状態で事前キャッシュ
-        for scope_id in [0, 1] {
+        // 4. キャラクターウィンドウ (scope 0..max_scopes - 動的キャラクター数対応) を非表示状態で事前キャッシュ
+        for scope_id in 0..max_scopes {
             let subchar_label = format!("subchar_window_{}", scope_id);
             if app_handle.get_webview_window(&subchar_label).is_none() {
                 let _ = tauri::WebviewWindowBuilder::new(
@@ -81,7 +87,7 @@ pub async fn preload_auxiliary_windows(app_handle: tauri::AppHandle) -> Result<(
                 .decorations(false)
                 .shadow(false)
                 .always_on_top(true)
-                .skip_taskbar(false)
+                .skip_taskbar(scope_id == 0)
                 .resizable(false)
                 .visible(false)
                 .build();

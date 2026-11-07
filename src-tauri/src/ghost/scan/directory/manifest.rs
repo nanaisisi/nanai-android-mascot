@@ -7,6 +7,7 @@ pub struct GhostManifest {
     pub version: Option<String>,
     pub sakura_name: Option<String>,
     pub kero_name: Option<String>,
+    pub num_characters: i32,
     pub shiori: Option<String>,
     pub craftman: Option<String>,
     pub craftman_url: Option<String>,
@@ -58,6 +59,23 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
             .or_else(|| m.get("sakura.name2").cloned())
     });
     let kero_name = meta_map.as_ref().and_then(|m| m.get("kero.name").cloned());
+
+    let has_kero = meta_map.as_ref().map_or(false, |m| m.contains_key("kero.name") || m.contains_key("char1.name"));
+    let mut max_char_id = if has_kero { 1 } else { 0 };
+    if let Some(ref m) = meta_map {
+        for k in m.keys() {
+            if let Some(rest) = k.strip_prefix("char") {
+                if let Some(idx_str) = rest.split('.').next() {
+                    if let Ok(id) = idx_str.parse::<i32>() {
+                        if id > max_char_id {
+                            max_char_id = id;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    let num_characters = max_char_id + 1;
 
     let shiori = meta_map.as_ref().and_then(|m| m.get("shiori").cloned());
     let craftman = meta_map.as_ref().and_then(|m| {
@@ -171,6 +189,7 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
         version,
         sakura_name,
         kero_name,
+        num_characters,
         shiori,
         craftman,
         craftman_url,

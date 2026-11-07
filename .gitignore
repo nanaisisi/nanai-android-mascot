@@ -43,11 +43,8 @@ assets/ghost/*
 !assets/ghost/mock_nanai/
 !assets/ghost/.gitkeep
 assets/balloon/*
-!assets/balloon/default/
-!assets/balloon/ivory/
-!assets/balloon/pixel/
-!assets/balloon/comic/
-!assets/balloon/dark/
+!assets/balloon/nam_default_plus
+!assets/balloon/nam_default_plus_overhead
 !assets/balloon/.gitkeep
 
 # User & temporary import data

@@ -35,12 +35,11 @@ export const menuThemeRenderer = {
 	applyTheme(theme: string) {
 		if (theme) {
 			document.documentElement.setAttribute("data-balloon-theme", theme);
-			document.body.classList.remove(
-				"balloon-theme-default",
-				"balloon-theme-pixel",
-				"balloon-theme-comic",
-				"balloon-theme-dark",
-			);
+			for (const cls of Array.from(document.body.classList)) {
+				if (cls.startsWith("balloon-theme-")) {
+					document.body.classList.remove(cls);
+				}
+			}
 			document.body.classList.add(`balloon-theme-${theme}`);
 		}
 	},

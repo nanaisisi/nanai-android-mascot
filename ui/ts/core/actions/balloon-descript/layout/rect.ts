@@ -15,19 +15,19 @@ export function applyValidRectProperties(root, props) {
 		!Number.isNaN(vr) &&
 		!Number.isNaN(vb)
 	) {
-		const padTop = `${Math.max(8, vt)}px`;
-		const padRight = `${Math.max(8, vr)}px`;
-		const padBottom = `${Math.max(8, vb)}px`;
-		const padLeft = `${Math.max(8, vl)}px`;
+		const padTop = `${Math.max(4, Math.abs(vt))}px`;
+		const padRight = `${Math.max(4, Math.abs(vr))}px`;
+		const padBottom = `${Math.max(4, Math.abs(vb))}px`;
+		const padLeft = `${Math.max(4, Math.abs(vl))}px`;
 		const balloonEl = document.querySelector(".balloon");
 		if (balloonEl) {
 			balloonEl.style.padding = `${padTop} ${padRight} ${padBottom} ${padLeft}`;
 		}
-		// 9スライス分割トークンの自動算出
-		const sliceTop = Math.max(8, vt);
-		const sliceRight = Math.max(8, vr);
-		const sliceBottom = Math.max(8, vb);
-		const sliceLeft = Math.max(8, vl);
+		// 9スライス分割トークンの自動算出 (validrect の絶対値を使用)
+		const sliceTop = Math.max(4, Math.abs(vt));
+		const sliceRight = Math.max(4, Math.abs(vr));
+		const sliceBottom = Math.max(4, Math.abs(vb));
+		const sliceLeft = Math.max(4, Math.abs(vl));
 		root.style.setProperty(
 			"--balloon-border-image-slice",
 			`${sliceTop} ${sliceRight} ${sliceBottom} ${sliceLeft} fill`,

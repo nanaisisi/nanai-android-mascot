@@ -4,6 +4,15 @@ use tauri::Emitter;
 static BALLOON_CREATION_LOCKS: LazyLock<Mutex<std::collections::HashSet<i32>>> =
     LazyLock::new(|| Mutex::new(std::collections::HashSet::new()));
 
+struct BalloonLockGuard(i32);
+impl Drop for BalloonLockGuard {
+    fn drop(&mut self) {
+        if let Ok(mut locks) = BALLOON_CREATION_LOCKS.lock() {
+            locks.remove(&self.0);
+        }
+    }
+}
+
 /// 独立バルーン（スコープ N）ウィンドウ表示コマンド
 #[tauri::command]
 #[allow(unused_variables)]
@@ -23,13 +32,14 @@ pub async fn show_balloon_window(
         let label = format!("balloon_window_{}", scope_id);
 
         if app_handle.get_webview_window(&label).is_none() {
-            let mut locks = BALLOON_CREATION_LOCKS.lock().unwrap();
+            let mut locks = BALLOON_CREATION_LOCKS.lock().map_err(|e| e.to_string())?;
             if locks.contains(&scope_id) {
                 println!("⚠️ show_balloon_window creation already in progress for scope {}, skipping duplicate request.", scope_id);
                 return Ok(());
             }
             locks.insert(scope_id);
         }
+        let _guard = BalloonLockGuard(scope_id);
 
         let win_width = width.unwrap_or(280.0);
         let win_height = height.unwrap_or(200.0);
@@ -122,8 +132,6 @@ pub async fn show_balloon_window(
                     serde_json::json!({ "theme": theme }),
                 );
             }
-
-            BALLOON_CREATION_LOCKS.lock().unwrap().remove(&scope_id);
         }
     }
     Ok(())

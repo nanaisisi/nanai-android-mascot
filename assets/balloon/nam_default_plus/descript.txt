@@ -1,10 +1,10 @@
 charset,Shift_JIS
 type,balloon
-name,Nanai Standard Balloon
+name,NAMデフォルト+
 
 craftmanw,Nanai Android Mascot Project
 
-// モダンニュートラル既定スキン（ui/css/balloon-theme.css の :root トークンに準拠）
+// SSP仕様準拠: 白地・青枠・標準横表示バルーン
 origin.x,12
 origin.y,28
 

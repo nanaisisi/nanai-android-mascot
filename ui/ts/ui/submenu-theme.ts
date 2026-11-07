@@ -1,11 +1,34 @@
 /**
- * @file submenu-theme.js
- * @brief シェルの descript.txt 由来のカスタムメニュー配色・背景ビットマップテーマ適用モジュール
+ * @file submenu-theme.ts
+ * @brief シェルの descript.txt 由来のカスタムメニュー配色・背景ビットマップテーマ適用および画像プリロードモジュール
  */
-export function applyShellMenuTheme(activeShell) {
+
+const imageCache = new Map<string, HTMLImageElement>();
+
+function preloadImage(url: string | null): Promise<void> {
+	if (!url) return Promise.resolve();
+	if (imageCache.has(url)) return Promise.resolve();
+	if (typeof Image === "undefined") return Promise.resolve();
+
+	return new Promise((resolve) => {
+		const img = new Image();
+		img.onload = () => {
+			if (img.decode) {
+				img.decode().then(() => resolve()).catch(() => resolve());
+			} else {
+				resolve();
+			}
+		};
+		img.onerror = () => resolve();
+		img.src = url;
+		imageCache.set(url, img);
+	});
+}
+
+export function applyShellMenuTheme(activeShell: any) {
 	const rootStyle = document.documentElement.style;
 	const theme = activeShell?.menu_theme;
-	const setOrRemove = (property, value) => {
+	const setOrRemove = (property: string, value: any) => {
 		if (value) rootStyle.setProperty(property, value);
 		else rootStyle.removeProperty(property);
 	};
@@ -34,11 +57,8 @@ export function applyShellMenuTheme(activeShell) {
 	}
 
 	const shellPath = activeShell?.path?.replace(/\\/g, "/") || "";
-	const setImage = (property, relativePath) => {
-		if (!relativePath) {
-			rootStyle.removeProperty(property);
-			return;
-		}
+	const resolveImg = (relativePath: string) => {
+		if (!relativePath) return null;
 		const relStr = String(relativePath);
 		if (
 			relStr.startsWith("data:") ||
@@ -46,19 +66,27 @@ export function applyShellMenuTheme(activeShell) {
 			relStr.startsWith("https://") ||
 			relStr.startsWith("asset:")
 		) {
-			rootStyle.setProperty(property, `url("${relStr}")`);
-			return;
+			return relStr;
 		}
 		const fullPath = shellPath
 			? `${shellPath}/${relStr.replace(/\\/g, "/")}`
 			: relStr;
-		const url = globalThis.__TAURI__?.core?.convertFileSrc
-			? globalThis.__TAURI__.core.convertFileSrc(fullPath)
+		return (globalThis as any).__TAURI__?.core?.convertFileSrc
+			? (globalThis as any).__TAURI__.core.convertFileSrc(fullPath)
 			: fullPath;
-		rootStyle.setProperty(property, `url("${url}")`);
 	};
 
-	const applyAlignment = (alignRaw, prefix) => {
+	const bgUrl = resolveImg(theme?.background_bitmap);
+	const fgUrl = resolveImg(theme?.foreground_bitmap);
+	const sideUrl = resolveImg(theme?.sidebar_bitmap);
+
+	void Promise.all([
+		preloadImage(bgUrl),
+		preloadImage(fgUrl),
+		preloadImage(sideUrl),
+	]);
+
+	const applyAlignment = (alignRaw: string, prefix: string) => {
 		const align = String(alignRaw || "").toLowerCase();
 		let pos = "left top";
 		if (align.includes("right") && align.includes("bottom")) {
@@ -86,31 +114,34 @@ export function applyShellMenuTheme(activeShell) {
 		rootStyle.setProperty(`--${prefix}-repeat`, repeat);
 	};
 
-	setImage("--menu-bg-image", theme?.background_bitmap);
-	if (theme?.background_bitmap) {
-		applyAlignment(theme.background_alignment, "menu-bg");
+	if (bgUrl) {
+		rootStyle.setProperty("--menu-bg-image", `url("${bgUrl}")`);
+		applyAlignment(theme?.background_alignment, "menu-bg");
 	} else {
+		rootStyle.removeProperty("--menu-bg-image");
 		rootStyle.removeProperty("--menu-bg-position");
 		rootStyle.removeProperty("--menu-bg-repeat");
 	}
 
-	setImage("--menu-fg-image", theme?.foreground_bitmap);
-	if (theme?.foreground_bitmap) {
-		applyAlignment(theme.foreground_alignment, "menu-fg");
+	if (fgUrl) {
+		rootStyle.setProperty("--menu-fg-image", `url("${fgUrl}")`);
+		applyAlignment(theme?.foreground_alignment, "menu-fg");
 	} else {
+		rootStyle.removeProperty("--menu-fg-image");
 		rootStyle.removeProperty("--menu-fg-position");
 		rootStyle.removeProperty("--menu-fg-repeat");
 	}
 
-	setImage("--menu-sidebar-image", theme?.sidebar_bitmap);
-	if (theme?.sidebar_bitmap) {
-		const sideAlign = String(theme.sidebar_alignment || "bottom").toLowerCase();
+	if (sideUrl) {
+		rootStyle.setProperty("--menu-sidebar-image", `url("${sideUrl}")`);
+		const sideAlign = String(theme?.sidebar_alignment || "bottom").toLowerCase();
 		rootStyle.setProperty(
 			"--menu-sidebar-position",
 			sideAlign.includes("top") ? "left top" : "left bottom",
 		);
 	} else {
+		rootStyle.removeProperty("--menu-sidebar-image");
 		rootStyle.removeProperty("--menu-sidebar-position");
 	}
-	document.body.classList.toggle("has-sidebar", Boolean(theme?.sidebar_bitmap));
+	document.body.classList.toggle("has-sidebar", Boolean(sideUrl));
 }

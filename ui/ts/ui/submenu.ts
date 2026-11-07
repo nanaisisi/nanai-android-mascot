@@ -97,8 +97,21 @@ if (isTauriAvailable()) {
 				dressupScope = data.scope;
 			}
 			const activeShell =
-				data.shells?.find((s) => s.name === data.currentShell) ||
+				data.shells?.find((s: any) => s.name === data.currentShell) ||
 				data.shells?.[0];
+			applyShellMenuTheme(activeShell);
+			renderContent();
+		}
+	});
+
+	listen("sync-shells", (event) => {
+		const data = event.payload;
+		if (data) {
+			cachedShells = data.shells || cachedShells;
+			currentShellName = data.currentShell || currentShellName;
+			const activeShell =
+				cachedShells?.find((s: any) => s.name === currentShellName) ||
+				cachedShells?.[0];
 			applyShellMenuTheme(activeShell);
 			renderContent();
 		}
@@ -115,12 +128,11 @@ if (isTauriAvailable()) {
 			"data-balloon-theme",
 			currentBalloonTheme || "",
 		);
-		document.body.classList.remove(
-			"balloon-theme-default",
-			"balloon-theme-pixel",
-			"balloon-theme-comic",
-			"balloon-theme-dark",
-		);
+		for (const cls of Array.from(document.body.classList)) {
+			if (cls.startsWith("balloon-theme-")) {
+				document.body.classList.remove(cls);
+			}
+		}
 		if (currentBalloonTheme) {
 			document.body.classList.add(`balloon-theme-${currentBalloonTheme}`);
 		}

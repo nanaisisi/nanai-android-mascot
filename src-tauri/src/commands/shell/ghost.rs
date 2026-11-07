@@ -26,6 +26,7 @@ pub async fn get_ghost_info(
         path: dir.to_string_lossy().to_string(),
         sakura_name: manifest.sakura_name,
         kero_name: manifest.kero_name,
+        num_characters: manifest.num_characters,
         shiori: manifest.shiori,
         craftman: manifest.craftman,
         craftman_url: manifest.craftman_url,

@@ -126,7 +126,7 @@ export const menuBalloonDressupRenderer = {
 
 		container.innerHTML = "";
 
-		if (recentGhosts.length === 0) {
+		if (!recentGhosts || recentGhosts.length === 0) {
 			const empty = document.createElement("div");
 			empty.className = "menu-item is-disabled";
 			empty.innerHTML = `<span>(履歴はありません)</span>`;
@@ -134,13 +134,30 @@ export const menuBalloonDressupRenderer = {
 			return;
 		}
 
-		recentGhosts.forEach((ghostName) => {
+		recentGhosts.forEach((item) => {
+			const ghostName = typeof item === "string" ? item : item?.name || "";
+			const hasSub =
+				typeof item === "object" &&
+				item !== null &&
+				(item.hasSubmenu ||
+					(item.subitems && item.subitems.length > 0) ||
+					(item.shells && item.shells.length > 0));
+
 			const btn = document.createElement("button");
-			btn.className = "menu-item";
+			btn.className = `menu-item${hasSub ? " has-submenu" : ""}`;
+			if (hasSub) {
+				btn.setAttribute("aria-haspopup", "true");
+			}
 			btn.dataset.ghostName = ghostName;
 			btn.innerHTML = `<span>🕘 ${ghostName}</span>`;
+
 			btn.addEventListener("click", () => {
-				this.dispatcher.dispatchAction("recent-ghost", ghostName);
+				const action =
+					typeof item === "object" && item?.action ? item.action : "recent-ghost";
+				this.dispatcher.dispatchAction(
+					action,
+					typeof item === "object" ? item : ghostName,
+				);
 			});
 			container.appendChild(btn);
 		});

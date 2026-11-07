@@ -1,0 +1,95 @@
+/**
+ * SSP 仕様準拠: ウィンドウドラッグ時のスナップ機能 (Snap X/Y) およびツールチップ表示
+ */
+
+export interface SnapResult {
+	x: number;
+	y: number;
+	snapXType: "Character" | "Desktop" | "None";
+	snapYType: "Character" | "Desktop" | "None";
+}
+
+/**
+ * 他のキャラクターウィンドウや画面端に対するスナップ位置計算
+ */
+export function calculateWindowSnap(
+	currentX: number,
+	currentY: number,
+	winWidth: number,
+	winHeight: number,
+	otherWindows: Array<{ x: number; y: number; width: number; height: number }>,
+	screenSize: { width: number; height: number },
+	isCtrlPressed: boolean = false,
+	snapThreshold: number = 12,
+): SnapResult {
+	if (isCtrlPressed) {
+		return { x: currentX, y: currentY, snapXType: "None", snapYType: "None" };
+	}
+
+	let snappedX = currentX;
+	let snappedY = currentY;
+	let snapXType: "Character" | "Desktop" | "None" = "None";
+	let snapYType: "Character" | "Desktop" | "None" = "None";
+
+	// 1. デスクトップ境界（画面端）スナップ判定
+	if (Math.abs(currentX) < snapThreshold) {
+		snappedX = 0;
+		snapXType = "Desktop";
+	} else if (Math.abs(currentX + winWidth - screenSize.width) < snapThreshold) {
+		snappedX = screenSize.width - winWidth;
+		snapXType = "Desktop";
+	}
+
+	if (Math.abs(currentY) < snapThreshold) {
+		snappedY = 0;
+		snapYType = "Desktop";
+	} else if (Math.abs(currentY + winHeight - screenSize.height) < snapThreshold) {
+		snappedY = screenSize.height - winHeight;
+		snapYType = "Desktop";
+	}
+
+	// 2. 他キャラウィンドウとの接触スナップ判定
+	for (const other of otherWindows) {
+		// X軸スナップ (隣接)
+		if (Math.abs(currentX - (other.x + other.width)) < snapThreshold) {
+			snappedX = other.x + other.width;
+			snapXType = "Character";
+		} else if (Math.abs(currentX + winWidth - other.x) < snapThreshold) {
+			snappedX = other.x - winWidth;
+			snapXType = "Character";
+		}
+
+		// Y軸スナップ (上端/下端揃え)
+		if (Math.abs(currentY - other.y) < snapThreshold) {
+			snappedY = other.y;
+			snapYType = "Character";
+		} else if (Math.abs(currentY + winHeight - (other.y + other.height)) < snapThreshold) {
+			snappedY = other.y + other.height - winHeight;
+			snapYType = "Character";
+		}
+	}
+
+	return {
+		x: snappedX,
+		y: snappedY,
+		snapXType,
+		snapYType,
+	};
+}
+
+/**
+ * SSP 準拠のスナップツールチップ HTML テキスト生成
+ */
+export function formatSnapTooltipText(
+	x: number,
+	y: number,
+	snapXType: string,
+	snapYType: string,
+): string {
+	const snapDetails: string[] = [];
+	if (snapXType !== "None") snapDetails.push(`Snap X:${snapXType}`);
+	if (snapYType !== "None") snapDetails.push(`Snap Y:${snapYType}`);
+
+	const snapText = snapDetails.length > 0 ? ` (${snapDetails.join(", ")})` : "";
+	return `${Math.round(x)},${Math.round(y)}${snapText}<br><span style="font-size: 10px; opacity: 0.8;">Press Ctrl to disable</span>`;
+}

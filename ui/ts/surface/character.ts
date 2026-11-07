@@ -94,7 +94,31 @@ function initCharacterWindow() {
 	const LONG_PRESS_DELAY = 600;
 
 	const onPointerDown = (e: any) => {
-		if (e.button !== undefined && e.button !== 0) return;
+		const button = e.button !== undefined ? e.button : 0;
+
+		// 1. 右クリック (button === 2): コンテキストメニュー表示
+		if (button === 2) {
+			if (e.cancelable) e.preventDefault();
+			const clientX = e.clientX ?? 0;
+			const clientY = e.clientY ?? 0;
+			if (img && !isTransparentPixel(img, clientX, clientY)) {
+				openCharacterMenu(e.screenX ?? clientX, e.screenY ?? clientY);
+			}
+			return;
+		}
+
+		// 2. ホイールクリック / ミドルクリック (button === 1): デベロッパーパネル/クイック機能の起動
+		if (button === 1) {
+			if (e.cancelable) e.preventDefault();
+			const clientX = e.clientX ?? 0;
+			const clientY = e.clientY ?? 0;
+			if (img && !isTransparentPixel(img, clientX, clientY)) {
+				void emit("menu-action", { action: "open-dev", payload: { scope: scopeId } });
+			}
+			return;
+		}
+
+		if (button !== 0) return;
 
 		const clientX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
 		const clientY = e.clientY ?? e.touches?.[0]?.clientY ?? 0;
@@ -171,10 +195,32 @@ function initCharacterWindow() {
 		}
 	};
 
+	// マウスホイール (拡大縮小 / スケール調整)
+	const onWheel = (e: WheelEvent) => {
+		if (img && isTransparentPixel(img, e.clientX, e.clientY)) {
+			return;
+		}
+		if (e.cancelable) e.preventDefault();
+		const delta = Math.sign(e.deltaY);
+		// ホイール下スクロールで縮小 (90%), 上スクロールで拡大 (110%)
+		const newScale = delta > 0 ? 90 : 110;
+		if (isTauriAvailable()) {
+			void invoke("set_character_scale", { scalePercent: newScale });
+		}
+	};
+
+	if (typeof img?.addEventListener === "function") {
+		img.addEventListener("mousedown", onPointerDown);
+		img.addEventListener("wheel", onWheel, { passive: false });
+	}
 	root?.addEventListener("mousedown", onPointerDown);
+	root?.addEventListener("wheel", onWheel, { passive: false });
 	globalThis.addEventListener("mousemove", onPointerMove);
 	globalThis.addEventListener("mouseup", onPointerUp);
 
+	if (typeof img?.addEventListener === "function") {
+		img.addEventListener("touchstart", onPointerDown, { passive: true });
+	}
 	root?.addEventListener("touchstart", onPointerDown, { passive: true });
 	globalThis.addEventListener("touchmove", onPointerMove, { passive: true });
 	globalThis.addEventListener("touchend", onPointerUp);
@@ -185,7 +231,8 @@ function initCharacterWindow() {
 	});
 }
 
-if (document.readyState === "loading") {document.addEventListener("DOMContentLoaded", initCharacterWindow);
+if (document.readyState === "loading") {
+	document.addEventListener("DOMContentLoaded", initCharacterWindow);
 } else {
 	initCharacterWindow();
 }

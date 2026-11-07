@@ -21,3 +21,8 @@
 
 **Learning:** Found a hotspot during interval triggers where every tick evaluates and parses the animation interval string dynamically. This was inefficient as the object and set is constantly created.
 **Action:** Caching the parsed outcome string as a property directly onto the animation object prevents unnecessary repetitive re-evaluation.
+
+## 2026-11-08 - [Compositor Advanced Blend Modes and Transparent Region Black]
+
+**Learning:** When applying `seriko.paint_transparent_region_black`, checking corner pixel chroma key match on non-zero alpha pixels requires endian-aware bit manipulation on `Uint32Array` in HTML5 Canvas context. Clamping RGB channels to zero while preserving the alpha channel directly in 32-bit integer arithmetic avoids expensive unpacking and repacking.
+**Action:** When performing color replacement or masked coloring on Canvas buffers with alpha preserved, update the 32-bit pixel with `(alpha << 24) >>> 0` (or `alpha` for big-endian), ensuring immediate single-instruction writes.

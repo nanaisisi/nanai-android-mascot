@@ -148,6 +148,13 @@ impl Descript {
             .unwrap_or(false)
     }
 
+    /// `seriko.paint_transparent_region_black,1`（透過色と同じ色かつ非透明な領域を黒で塗りつぶす）
+    pub fn seriko_paint_transparent_region_black(&self) -> bool {
+        self.get("seriko.paint_transparent_region_black")
+            .map(|v| v.trim() == "1" || v.trim().eq_ignore_ascii_case("true"))
+            .unwrap_or(false)
+    }
+
     /// `[target].bindoption.group,[カテゴリ名],[オプション...]`（着せ替えグループ設定）
     pub fn bindoption_group(&self, target: &str) -> Option<BindOptionGroup> {
         let value = self.get(&format!("{target}.bindoption.group"))?;

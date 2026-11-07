@@ -9,7 +9,9 @@ import { invoke, isTauriAvailable } from "../../core/tauri-helper.js";
 import { processChromaKey } from "../../surface/surface-compositor.js";
 import { updateBalloonWindowScale } from "./scale.js";
 
-const getImageDimensions = (url: string): Promise<{ width: number; height: number }> => {
+const getImageDimensions = (
+	url: string,
+): Promise<{ width: number; height: number }> => {
 	return new Promise((resolve) => {
 		if (typeof Image === "undefined") {
 			resolve({ width: 280, height: 100 });
@@ -119,7 +121,10 @@ export async function applyBalloonDescript({
 		document.documentElement.setAttribute("data-balloon-theme", theme);
 		document.body.className = `balloon-theme-${theme}`;
 
-		let props = await invoke("balloon_manifest", { name: theme, scopeId }).catch(() => null);
+		const props = await invoke("balloon_manifest", {
+			name: theme,
+			scopeId,
+		}).catch(() => null);
 		if (!props || typeof props !== "object") {
 			if (theme !== "default" && theme !== "nam_default_plus") {
 				return await applyBalloonDescript({

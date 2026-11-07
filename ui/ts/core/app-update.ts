@@ -9,7 +9,10 @@ import { invoke, isTauriAvailable, listen } from "./tauri-helper.js";
  * ネットワーク更新制御モジュール
  */
 export const updateMethods = {
-	async startNetworkUpdate(targetGhostName: string | null = null, options: { checkOnly?: boolean } = {}) {
+	async startNetworkUpdate(
+		targetGhostName: string | null = null,
+		options: { checkOnly?: boolean } = {},
+	) {
 		const gc = (this as any).ghostController;
 		const checkOnly = options?.checkOnly === true;
 		const ghostName =
@@ -19,7 +22,9 @@ export const updateMethods = {
 
 		console.log(`🌐 ネットワーク更新プロセス開始: ${ghostName}`);
 
-		const execRes: any = await gc.sendShioriEvent("OnUpdateProcessExec", ["manual"]);
+		const execRes: any = await gc.sendShioriEvent("OnUpdateProcessExec", [
+			"manual",
+		]);
 		if (execRes?.script?.trim()) {
 			console.log(
 				"OnUpdateProcessExec でスクリプトが返されたため標準処理を委譲",
@@ -42,7 +47,12 @@ export const updateMethods = {
 				"⚠️ ブラウザ環境のためネットワーク更新はシミュレーションのみです",
 			);
 			await gc.sendShioriEvent("OnUpdateFailure", buildUpdateArgs("fileio"));
-			await (this as any).sendUpdateResultSummary(ghostName, false, "fileio", null);
+			await (this as any).sendUpdateResultSummary(
+				ghostName,
+				false,
+				"fileio",
+				null,
+			);
 			return;
 		}
 
@@ -76,7 +86,9 @@ export const updateMethods = {
 
 			if (!checkResult.has_update || checkResult.update_files.length === 0) {
 				console.log("✨ 更新ファイルなし (none)");
-				(this as any).showBalloon?.("✨ 最新の状態です。更新ファイルはありません。");
+				(this as any).showBalloon?.(
+					"✨ 最新の状態です。更新ファイルはありません。",
+				);
 				await gc.sendShioriEvent("OnUpdateComplete", buildUpdateArgs("none"));
 				await (this as any).sendUpdateResultSummary(ghostName, true, 0, null);
 				return;
@@ -143,7 +155,9 @@ export const updateMethods = {
 							updateResult.updated_files?.join(",") ?? "",
 						),
 					);
-					(this as any).showBalloon?.(`❌ ネットワーク更新失敗: ${failureReason}`);
+					(this as any).showBalloon?.(
+						`❌ ネットワーク更新失敗: ${failureReason}`,
+					);
 					await (this as any).sendUpdateResultSummary(
 						ghostName,
 						false,
@@ -181,8 +195,15 @@ export const updateMethods = {
 			}
 
 			await gc.sendShioriEvent("OnUpdateFailure", buildUpdateArgs(reason));
-			await (this as any).sendUpdateResultSummary(ghostName, false, reason, failedFile);
-			(this as any).showBalloon?.(`❌ 更新処理中にエラーが発生しました: ${err}`);
+			await (this as any).sendUpdateResultSummary(
+				ghostName,
+				false,
+				reason,
+				failedFile,
+			);
+			(this as any).showBalloon?.(
+				`❌ 更新処理中にエラーが発生しました: ${err}`,
+			);
 		}
 	},
 

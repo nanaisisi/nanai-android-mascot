@@ -54,11 +54,17 @@ export const surfaceDressupMethods = {
 		}
 	},
 
-	activeBindLayers(this: any, scopeId: number = 0, surfaceId: number | string | null = null) {
+	activeBindLayers(
+		this: any,
+		scopeId: number = 0,
+		surfaceId: number | string | null = null,
+	) {
 		if (!this.shellManifest) return [];
 		const sid = String(surfaceId ?? this.currentSurfaceIdFor(scopeId));
 		const animList = this.animations[sid] ?? [];
-		const animById = new Map<string, any>(animList.map((a: any) => [String(a.id), a]));
+		const animById = new Map<string, any>(
+			animList.map((a: any) => [String(a.id), a]),
+		);
 
 		const layers: any[] = [];
 		const activeIds = new Set(this.activeBindAnimationIds(scopeId));
@@ -131,11 +137,19 @@ export const surfaceDressupMethods = {
 			.sort((a: number, b: number) => a - b);
 	},
 
-	planCacheKey(this: any, surfaceId: number | string, scopeId: number = 0): string {
+	planCacheKey(
+		this: any,
+		surfaceId: number | string,
+		scopeId: number = 0,
+	): string {
 		return `${scopeId}__${surfaceId}__${this.activeBindAnimationIds(scopeId).join(",")}`;
 	},
 
-	async getCompositionPlan(this: any, surfaceId: number | string, scopeId: number = 0) {
+	async getCompositionPlan(
+		this: any,
+		surfaceId: number | string,
+		scopeId: number = 0,
+	) {
 		if (!this.shellManifest || !isTauriAvailable()) return null;
 		const sid = Number(surfaceId);
 		if (!Number.isFinite(sid) || sid < 0) return null;

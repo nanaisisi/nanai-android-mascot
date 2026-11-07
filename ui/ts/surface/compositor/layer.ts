@@ -1,4 +1,7 @@
-export async function loadLayerImage(fileName: string, resolveImagePath: (file: string) => Promise<string | null>): Promise<HTMLImageElement | null> {
+export async function loadLayerImage(
+	fileName: string,
+	resolveImagePath: (file: string) => Promise<string | null>,
+): Promise<HTMLImageElement | null> {
 	if (!fileName) return null;
 	const layerSrc = await resolveImagePath(fileName);
 	if (!layerSrc) return null;
@@ -12,7 +15,13 @@ export async function loadLayerImage(fileName: string, resolveImagePath: (file: 
 	});
 }
 
-export function drawImageLayer(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, type: string = "overlay") {
+export function drawImageLayer(
+	ctx: CanvasRenderingContext2D,
+	img: HTMLImageElement,
+	x: number,
+	y: number,
+	type: string = "overlay",
+) {
 	if (!img) return;
 	const savedOp = ctx.globalCompositeOperation;
 	const method = (type || "overlay").toLowerCase();

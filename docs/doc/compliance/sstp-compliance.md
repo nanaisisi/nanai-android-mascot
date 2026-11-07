@@ -42,7 +42,7 @@ SSTP (Sakura Script Transfer Protocol) は、外部アプリケーションか�
 | `NOTIFY SSTP/1.1`      | 1.1        | ✅ 対応済 | SHIORI へのイベント通知エージェントとしての動作                                              |
 | `EXECUTE SSTP/1.1`     | 1.1        | ✅ 対応済 | ゴースト情報取得（GetName, GetNames, GetVersion, GetStatus, GetFMO等）およびリモート制限制御 |
 | `GIVE SSTP/1.1`        | 1.1        | ✅ 対応済 | さくらスクリプトトークの挿入（Document, Song, Script ヘッダ）                                |
-| `COMMUNICATE SSTP/1.1` | 1.1        | ✅ 対応済 | ゴースト間会話（コミュニケート）機能 (`sstp.allowcommunicate` 制御連動)                     |
+| `COMMUNICATE SSTP/1.1` | 1.1        | ✅ 対応済 | ゴースト間会話（コミュニケート）機能 (`sstp.allowcommunicate` 制御連動)                      |
 | `DirectSSTP`           | 全般       | ✅ 対応済 | プロセス間直接通信（Win32 / SAORI over DirectSSTP）                                          |
 
 ---

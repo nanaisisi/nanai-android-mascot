@@ -35,7 +35,10 @@ export function splitBracketArgs(content: string): string[] {
 	return args;
 }
 
-export function readBracketContent(script: string, startIdx: number): { content: string; nextIdx: number } | null {
+export function readBracketContent(
+	script: string,
+	startIdx: number,
+): { content: string; nextIdx: number } | null {
 	if (script[startIdx] !== "[") return null;
 	let j = startIdx + 1;
 	let content = "";

@@ -187,7 +187,7 @@ impl SurfaceFrameBuffer {
                                 let calc = |d: u8, s: u8| -> u8 {
                                     if d == 0 {
                                         0
-                                    } else if s >= 255 {
+                                    } else if s == 255 {
                                         255
                                     } else {
                                         (((d as u32) * 255) / (255 - s as u32)).min(255) as u8
@@ -236,7 +236,7 @@ impl SurfaceFrameBuffer {
                                         // color-dodge with 2*(s - 128)
                                         if d == 0 {
                                             0
-                                        } else if s >= 255 {
+                                        } else if s == 255 {
                                             255
                                         } else {
                                             let s_val = 2 * (s as u32 - 128);

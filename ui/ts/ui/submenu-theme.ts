@@ -14,7 +14,10 @@ function preloadImage(url: string | null): Promise<void> {
 		const img = new Image();
 		img.onload = () => {
 			if (img.decode) {
-				img.decode().then(() => resolve()).catch(() => resolve());
+				img
+					.decode()
+					.then(() => resolve())
+					.catch(() => resolve());
 			} else {
 				resolve();
 			}
@@ -134,7 +137,9 @@ export function applyShellMenuTheme(activeShell: any) {
 
 	if (sideUrl) {
 		rootStyle.setProperty("--menu-sidebar-image", `url("${sideUrl}")`);
-		const sideAlign = String(theme?.sidebar_alignment || "bottom").toLowerCase();
+		const sideAlign = String(
+			theme?.sidebar_alignment || "bottom",
+		).toLowerCase();
 		rootStyle.setProperty(
 			"--menu-sidebar-position",
 			sideAlign.includes("top") ? "left top" : "left bottom",

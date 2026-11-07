@@ -51,7 +51,9 @@ export function calculateWindowSnap(
 		if (Math.abs(currentX) < snapThreshold) {
 			snappedX = 0;
 			snapXType = "Monitor";
-		} else if (Math.abs(currentX + winWidth - screenSize.width) < snapThreshold) {
+		} else if (
+			Math.abs(currentX + winWidth - screenSize.width) < snapThreshold
+		) {
 			snappedX = screenSize.width - winWidth;
 			snapXType = "Monitor";
 		}
@@ -61,7 +63,9 @@ export function calculateWindowSnap(
 		if (Math.abs(currentY) < snapThreshold) {
 			snappedY = 0;
 			snapYType = "Monitor";
-		} else if (Math.abs(currentY + winHeight - screenSize.height) < snapThreshold) {
+		} else if (
+			Math.abs(currentY + winHeight - screenSize.height) < snapThreshold
+		) {
 			snappedY = screenSize.height - winHeight;
 			snapYType = "Monitor";
 		}
@@ -83,7 +87,10 @@ export function calculateWindowSnap(
 			if (Math.abs(currentY - other.y) < snapThreshold) {
 				snappedY = other.y;
 				snapYType = "Character";
-			} else if (Math.abs(currentY + winHeight - (other.y + other.height)) < snapThreshold) {
+			} else if (
+				Math.abs(currentY + winHeight - (other.y + other.height)) <
+				snapThreshold
+			) {
 				snappedY = other.y + other.height - winHeight;
 				snapYType = "Character";
 			}

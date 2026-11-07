@@ -1,14 +1,18 @@
-use tauri::image::Image;
-use tauri::tray::{TrayIcon, TrayIconBuilder, TrayIconEvent};
-use tauri::Manager;
+use crate::common::state::AppState;
 use std::fs::OpenOptions;
 use std::io::Write;
 use std::path::Path;
-use crate::common::state::AppState;
+use tauri::Manager;
+use tauri::image::Image;
+use tauri::tray::{TrayIcon, TrayIconBuilder, TrayIconEvent};
 
 fn log_tray(msg: &str) {
     std::println!("{}", msg);
-    if let Ok(mut f) = OpenOptions::new().create(true).append(true).open("nanai_tray_debug.log") {
+    if let Ok(mut f) = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open("nanai_tray_debug.log")
+    {
         let _ = writeln!(f, "[{}] {}", chrono::Local::now().format("%H:%M:%S"), msg);
     }
 }
@@ -17,45 +21,40 @@ fn log_tray(msg: &str) {
 pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error> {
     log_tray("🟢 setup_tray 開始...");
 
-    let icon = app
-        .default_window_icon()
-        .cloned()
-        .unwrap_or_else(|| {
-            log_tray("⚠️ default_window_icon が取得できなかったため、32x32赤色フォールバックを使用します");
-            Image::new_owned(vec![255u8; 32 * 32 * 4], 32, 32)
-        });
+    let icon = app.default_window_icon().cloned().unwrap_or_else(|| {
+        log_tray(
+            "⚠️ default_window_icon が取得できなかったため、32x32赤色フォールバックを使用します",
+        );
+        Image::new_owned(vec![255u8; 32 * 32 * 4], 32, 32)
+    });
 
     let tray = TrayIconBuilder::with_id("main-tray")
         .icon(icon)
         .tooltip("Nanai Android Mascot")
         .show_menu_on_left_click(false)
         .on_tray_icon_event(move |tray, event| {
-            if let TrayIconEvent::Click {
-                button: tauri::tray::MouseButton::Left,
-                button_state: tauri::tray::MouseButtonState::Up,
-                ..
-            }
-            | TrayIconEvent::Click {
-                button: tauri::tray::MouseButton::Right,
-                button_state: tauri::tray::MouseButtonState::Up,
-                ..
-            }
-            | TrayIconEvent::DoubleClick { .. } = event
+            if let TrayIconEvent::Click { rect, .. } | TrayIconEvent::DoubleClick { rect, .. } =
+                event
             {
                 log_tray("🖱️ システムトレイアイコンがクリックされました");
                 let app_handle = tray.app_handle().clone();
+                let r = rect;
                 tauri::async_runtime::spawn(async move {
-                    let (x, y) = if let Ok(Some(monitor)) = app_handle.primary_monitor() {
-                        let size = monitor.size();
-                        let pos = monitor.position();
-                        let win_width = 260.0;
-                        let win_height = 720.0;
-                        let target_x = (pos.x + size.width as i32) as f64 - win_width - 16.0;
-                        let target_y = (pos.y + size.height as i32) as f64 - win_height - 48.0;
-                        (target_x.max(pos.x as f64), target_y.max(pos.y as f64))
-                    } else {
-                        (100.0, 100.0)
+                    let px = match r.position {
+                        tauri::Position::Physical(p) => p.x as f64,
+                        tauri::Position::Logical(l) => l.x,
                     };
+                    let py = match r.position {
+                        tauri::Position::Physical(p) => p.y as f64,
+                        tauri::Position::Logical(l) => l.y,
+                    };
+                    let ph = match r.size {
+                        tauri::Size::Physical(s) => s.height as f64,
+                        tauri::Size::Logical(s) => s.height,
+                    };
+                    // システムトレイアイコンの左下を起点とする (Left: px, Bottom: py + ph)
+                    let x = px;
+                    let y = py + ph;
                     let _ =
                         crate::commands::window::show_menu_window(app_handle, x, y, Some(0)).await;
                 });
@@ -101,7 +100,10 @@ pub fn update_tray_for_ghost(
                 let (width, height) = rgba.dimensions();
                 let icon = Image::new_owned(rgba.into_raw(), width, height);
                 let _ = tray.set_icon(Some(icon));
-                log_tray(&format!("🟢 トレイアイコン & ツールチップ更新: ghost={}, icon={:?}", ghost_name, icon_path));
+                log_tray(&format!(
+                    "🟢 トレイアイコン & ツールチップ更新: ghost={}, icon={:?}",
+                    ghost_name, icon_path
+                ));
             }
         } else {
             log_tray(&format!("🟢 トレイツールチップ更新: ghost={}", ghost_name));
@@ -126,7 +128,10 @@ pub fn reset_tray_to_default(app_handle: &tauri::AppHandle) -> Result<(), String
 
 #[allow(dead_code)]
 #[cfg(not(target_os = "android"))]
-pub fn update_tray_icon_from_path(app_handle: &tauri::AppHandle, icon_path: &Path) -> Result<(), String> {
+pub fn update_tray_icon_from_path(
+    app_handle: &tauri::AppHandle,
+    icon_path: &Path,
+) -> Result<(), String> {
     let state = app_handle.state::<AppState>();
     let tray_lock = state.tray_icon.lock();
     if let Some(tray) = &*tray_lock {
@@ -137,7 +142,10 @@ pub fn update_tray_icon_from_path(app_handle: &tauri::AppHandle, icon_path: &Pat
                 let (width, height) = rgba.dimensions();
                 let icon = Image::new_owned(rgba.into_raw(), width, height);
                 let _ = tray.set_icon(Some(icon)).map_err(|e| e.to_string())?;
-                log_tray(&format!("🟢 トレイアイコンをゴースト固有の画像に差し替えました: {:?}", icon_path));
+                log_tray(&format!(
+                    "🟢 トレイアイコンをゴースト固有の画像に差し替えました: {:?}",
+                    icon_path
+                ));
             }
         }
     }
@@ -164,6 +172,9 @@ pub fn reset_tray_to_default(_app_handle: &tauri::AppHandle) -> Result<(), Strin
 }
 
 #[cfg(target_os = "android")]
-pub fn update_tray_icon_from_path(_app_handle: &tauri::AppHandle, _icon_path: &Path) -> Result<(), String> {
+pub fn update_tray_icon_from_path(
+    _app_handle: &tauri::AppHandle,
+    _icon_path: &Path,
+) -> Result<(), String> {
     Ok(())
 }

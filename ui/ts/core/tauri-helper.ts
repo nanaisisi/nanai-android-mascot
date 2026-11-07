@@ -17,7 +17,9 @@ import { getCurrentWindow, PhysicalPosition } from "@tauri-apps/api/window";
  * Tauri環境で動作しているかどうかを判定
  */
 export function isTauriAvailable(): boolean {
-	return !!(globalThis as any).__TAURI__ || !!(globalThis as any).__TAURI_INTERNALS__;
+	return (
+		!!(globalThis as any).__TAURI__ || !!(globalThis as any).__TAURI_INTERNALS__
+	);
 }
 
 /**
@@ -37,7 +39,10 @@ export const ipcQueueStats = {
 /**
  * Tauri IPCコマンドの呼び出しラッパー
  */
-export async function invoke<T = any>(cmd: string, args: Record<string, any> = {}): Promise<T> {
+export async function invoke<T = any>(
+	cmd: string,
+	args: Record<string, any> = {},
+): Promise<T> {
 	if (!isTauriAvailable()) {
 		throw new Error(`Tauri is not available to invoke command: ${cmd}`);
 	}
@@ -75,7 +80,10 @@ export async function invoke<T = any>(cmd: string, args: Record<string, any> = {
 /**
  * ローカルファイルパスをアセットURLに変換
  */
-export function convertFileSrc(filePath: string | null | undefined, protocol: string = "asset"): string {
+export function convertFileSrc(
+	filePath: string | null | undefined,
+	protocol: string = "asset",
+): string {
 	if (!filePath) return "";
 	if (isTauriAvailable()) {
 		return tauriConvertFileSrc(filePath, protocol);
@@ -96,7 +104,10 @@ export function convertFileSrc(filePath: string | null | undefined, protocol: st
 /**
  * イベントリスナー登録
  */
-export async function listen(event: string, handler: (event: any) => void): Promise<() => void> {
+export async function listen(
+	event: string,
+	handler: (event: any) => void,
+): Promise<() => void> {
 	if (!isTauriAvailable()) return () => {};
 	return await tauriListen(event, handler);
 }
@@ -124,7 +135,11 @@ export async function startDraggingWindow(): Promise<void> {
 /**
  * 現在のウィンドウを指定量だけ移動する。
  */
-export async function moveCurrentWindowBy(x: number, y: number, origin: { x: number; y: number }): Promise<void> {
+export async function moveCurrentWindowBy(
+	x: number,
+	y: number,
+	origin: { x: number; y: number },
+): Promise<void> {
 	if (!isTauriAvailable()) return;
 	try {
 		await getCurrentWindow().setPosition(
@@ -135,7 +150,10 @@ export async function moveCurrentWindowBy(x: number, y: number, origin: { x: num
 	}
 }
 
-export async function getCurrentWindowPosition(): Promise<{ x: number; y: number } | null> {
+export async function getCurrentWindowPosition(): Promise<{
+	x: number;
+	y: number;
+} | null> {
 	if (!isTauriAvailable()) return null;
 	try {
 		const position = await getCurrentWindow().outerPosition();

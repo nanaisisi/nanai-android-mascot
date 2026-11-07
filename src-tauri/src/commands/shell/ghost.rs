@@ -1,5 +1,5 @@
-use crate::common::paths::resolve_ghost_directory;
 use crate::common::models::GhostInfo;
+use crate::common::paths::resolve_ghost_directory;
 use crate::ghost::scan::directory::manifest::parse_ghost_manifest;
 use crate::ghost::scan::shell::scan_shells_from_ghost;
 use std::path::PathBuf;

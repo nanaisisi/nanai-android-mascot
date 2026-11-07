@@ -14,7 +14,11 @@ import {
 const urlParams = new URLSearchParams(globalThis.location.search);
 const scopeId = parseInt(urlParams.get("scope") || "0", 10);
 
-function isTransparentPixel(img: HTMLImageElement, clientX: number, clientY: number) {
+function isTransparentPixel(
+	img: HTMLImageElement,
+	clientX: number,
+	clientY: number,
+) {
 	const rect = img.getBoundingClientRect();
 	if (!rect.width || !rect.height || !img.naturalWidth || !img.naturalHeight) {
 		return false;
@@ -113,7 +117,10 @@ function initCharacterWindow() {
 			const clientX = e.clientX ?? 0;
 			const clientY = e.clientY ?? 0;
 			if (img && !isTransparentPixel(img, clientX, clientY)) {
-				void emit("menu-action", { action: "open-dev", payload: { scope: scopeId } });
+				void emit("menu-action", {
+					action: "open-dev",
+					payload: { scope: scopeId },
+				});
 			}
 			return;
 		}

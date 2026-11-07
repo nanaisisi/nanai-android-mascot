@@ -30,7 +30,11 @@ const SCALE_MAP: Record<string, { width: string; height: string }> = {
 export const ghostActions = {
 	showGhostInformation() {
 		const ghost = (this as any).ghostController?.currentGhost;
-		if (!ghost || !(this as any).modalManager?.content || !(this as any).modalManager?.overlay) {
+		if (
+			!ghost ||
+			!(this as any).modalManager?.content ||
+			!(this as any).modalManager?.overlay
+		) {
 			return;
 		}
 
@@ -130,7 +134,9 @@ export const ghostActions = {
 					"OnInstallComplete",
 					buildInstallCompleteArgs("ghost", result.name, result.path || ""),
 				);
-				(this as any).showBalloon?.(`ゴースト「${importedGhost.name}」を導入しました`);
+				(this as any).showBalloon?.(
+					`ゴースト「${importedGhost.name}」を導入しました`,
+				);
 				setTimeout(() => (this as any).hideBalloon?.(), 2000);
 				await (this as any).ghostController?.selectGhost?.(importedGhost.name);
 				return;
@@ -153,7 +159,9 @@ export const ghostActions = {
 					buildInstallCompleteArgs("balloon", importedBalloon.name),
 				);
 				await (this as any).setBalloonTheme(importedBalloon.dir_name);
-				(this as any).showBalloon(`バルーン「${importedBalloon.name}」を導入しました`);
+				(this as any).showBalloon(
+					`バルーン「${importedBalloon.name}」を導入しました`,
+				);
 				setTimeout(() => (this as any).hideBalloon(), 2000);
 				return;
 			}
@@ -183,10 +191,7 @@ export const ghostActions = {
 			const list = JSON.parse(
 				localStorage.getItem("nanai_recent_ghosts") || "[]",
 			);
-			const next = [
-				ghostName,
-				...list.filter((g: string) => g !== ghostName),
-			];
+			const next = [ghostName, ...list.filter((g: string) => g !== ghostName)];
 			localStorage.setItem(
 				"nanai_recent_ghosts",
 				JSON.stringify(next.slice(0, MAX_RECENT)),
@@ -196,10 +201,16 @@ export const ghostActions = {
 		}
 	},
 
-	async handleDressupToggle(payload: { category: string; part: string; scope?: number }) {
+	async handleDressupToggle(payload: {
+		category: string;
+		part: string;
+		scope?: number;
+	}) {
 		const sm = (this as any).surfaceManager;
 		if (!sm || !payload?.category) return;
-		const scopeId = Number.isFinite(payload.scope) ? (payload.scope as number) : 0;
+		const scopeId = Number.isFinite(payload.scope)
+			? (payload.scope as number)
+			: 0;
 		const { category, part } = payload;
 
 		const willOn =
@@ -229,9 +240,7 @@ export const ghostActions = {
 		const ghosts = (this as any).ghostController?.ghosts || [];
 		if (ghosts.length <= 1) return;
 		const currentName = (this as any).ghostController?.currentGhost?.name;
-		const idx = ghosts.findIndex(
-			(g: any) => g.name === currentName,
-		);
+		const idx = ghosts.findIndex((g: any) => g.name === currentName);
 		const next = ghosts[(idx + 1) % ghosts.length];
 		if (next) (this as any).ghostController?.selectGhost?.(next.name);
 	},

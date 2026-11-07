@@ -2,9 +2,7 @@
 
 #[cfg(target_os = "windows")]
 pub fn setup_taskbar_jumplist(_app: &tauri::App) -> Result<(), String> {
-    use windows_sys::Win32::System::Com::{
-        CoInitializeEx, COINIT_APARTMENTTHREADED,
-    };
+    use windows_sys::Win32::System::Com::{COINIT_APARTMENTTHREADED, CoInitializeEx};
     use windows_sys::Win32::UI::Shell::SetCurrentProcessExplicitAppUserModelID;
 
     println!("🟢 Windows タスクバー・ジャンプリスト（タスク: Explorer / Calendar）初期化中...");

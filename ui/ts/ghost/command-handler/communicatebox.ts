@@ -121,7 +121,10 @@ export function openCommunicateBox(handler: any, params: string[] = []) {
 	}
 }
 
-export function closeCommunicateBox(handler: any, notifyCancel: boolean = false) {
+export function closeCommunicateBox(
+	handler: any,
+	notifyCancel: boolean = false,
+) {
 	if (handler.communicateForm) {
 		handler.communicateForm.remove();
 		handler.communicateForm = null;

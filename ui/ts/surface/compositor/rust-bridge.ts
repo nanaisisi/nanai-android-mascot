@@ -11,10 +11,16 @@ export interface SurfaceFrameBufferDto {
 	data: number[]; // RGBA8888 byte array
 }
 
-export async function createSurfaceFrameBufferViaRust(width: number, height: number): Promise<SurfaceFrameBufferDto | null> {
+export async function createSurfaceFrameBufferViaRust(
+	width: number,
+	height: number,
+): Promise<SurfaceFrameBufferDto | null> {
 	if (!isTauriAvailable()) return null;
 	try {
-		return await invoke<SurfaceFrameBufferDto>("create_surface_frame_buffer", { width, height });
+		return await invoke<SurfaceFrameBufferDto>("create_surface_frame_buffer", {
+			width,
+			height,
+		});
 	} catch (err) {
 		console.warn("create_surface_frame_buffer failed:", err);
 		return null;
@@ -30,7 +36,13 @@ export async function clearFrameBufferRectViaRust(
 ): Promise<SurfaceFrameBufferDto | null> {
 	if (!isTauriAvailable()) return null;
 	try {
-		return await invoke<SurfaceFrameBufferDto>("clear_frame_buffer_rect", { fb, x, y, w, h });
+		return await invoke<SurfaceFrameBufferDto>("clear_frame_buffer_rect", {
+			fb,
+			x,
+			y,
+			w,
+			h,
+		});
 	} catch (err) {
 		console.warn("clear_frame_buffer_rect failed:", err);
 		return null;

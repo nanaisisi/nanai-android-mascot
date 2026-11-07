@@ -3,7 +3,10 @@
  * @brief さくらスクリプト拡張コマンド (\![...], \j[...]) のハンドラ登録・管理 (CommandHandlerMap)
  */
 
-export type CommandHandlerFn = (handler: any, args: string[]) => Promise<void> | void;
+export type CommandHandlerFn = (
+	handler: any,
+	args: string[],
+) => Promise<void> | void;
 
 export const CommandHandlerMap = new Map<string, CommandHandlerFn>();
 
@@ -20,7 +23,10 @@ export function registerCommandHandler(cmd: string, fn: CommandHandlerFn) {
 	CommandHandlerMap.set(cmd.toLowerCase().trim(), fn);
 }
 
-export function getCommandHandler(cmd: string, subCmd: string = ""): CommandHandlerFn | undefined {
+export function getCommandHandler(
+	cmd: string,
+	subCmd: string = "",
+): CommandHandlerFn | undefined {
 	const combinedKey = normalizeCommandKey(cmd, subCmd);
 	if (CommandHandlerMap.has(combinedKey)) {
 		return CommandHandlerMap.get(combinedKey);
@@ -29,7 +35,10 @@ export function getCommandHandler(cmd: string, subCmd: string = ""): CommandHand
 	return CommandHandlerMap.get(baseKey);
 }
 
-export function unregisterCommandHandler(cmd: string, subCmd: string = ""): boolean {
+export function unregisterCommandHandler(
+	cmd: string,
+	subCmd: string = "",
+): boolean {
 	const key = normalizeCommandKey(cmd, subCmd);
 	return CommandHandlerMap.delete(key);
 }

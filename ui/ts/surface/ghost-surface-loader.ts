@@ -8,7 +8,12 @@ export const ghostSurfaceLoaderMethods = {
 	/**
 	 * サーフィス画像 / PNA の読み込み（ゴースト・シェル・ID 単位でキャッシュ）
 	 */
-	loadSurfaceAsset(cmd: "load_surface_image" | "load_surface_pna", ghostPath: string, shellName: string, surfaceId: number | string): Promise<string> {
+	loadSurfaceAsset(
+		cmd: "load_surface_image" | "load_surface_pna",
+		ghostPath: string,
+		shellName: string,
+		surfaceId: number | string,
+	): Promise<string> {
 		(this as any)._surfaceAssetCache ??= new Map();
 		const key = `${cmd}|${ghostPath}|${shellName}|${surfaceId}`;
 		let pending = (this as any)._surfaceAssetCache.get(key);

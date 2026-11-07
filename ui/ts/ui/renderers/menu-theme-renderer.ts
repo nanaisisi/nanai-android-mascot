@@ -17,7 +17,10 @@ function preloadImage(url: string | null): Promise<void> {
 		const img = new Image();
 		img.onload = () => {
 			if (img.decode) {
-				img.decode().then(() => resolve()).catch(() => resolve());
+				img
+					.decode()
+					.then(() => resolve())
+					.catch(() => resolve());
 			} else {
 				resolve();
 			}

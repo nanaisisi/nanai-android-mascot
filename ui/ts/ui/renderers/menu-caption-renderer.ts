@@ -7,13 +7,17 @@ import { MENU_CAPTION_DEFINITIONS } from "./menu-caption-definitions.js";
 export { MENU_CAPTION_DEFINITIONS };
 
 export const menuCaptionRenderer = {
-	applyCaptions(captions: Record<string, string> = {}, rootEl: ParentNode = document) {
+	applyCaptions(
+		captions: Record<string, string> = {},
+		rootEl: ParentNode = document,
+	) {
 		if (!captions || typeof captions !== "object") return;
 
 		for (const def of MENU_CAPTION_DEFINITIONS) {
 			const customVal = captions[def.resource] || captions[def.id];
 			const el =
-				(rootEl as any).getElementById?.(def.id) || (rootEl as any).querySelector?.(`#${def.id}`);
+				(rootEl as any).getElementById?.(def.id) ||
+				(rootEl as any).querySelector?.(`#${def.id}`);
 			if (!el) continue;
 
 			if (customVal && typeof customVal === "string" && customVal.trim()) {
@@ -25,7 +29,9 @@ export const menuCaptionRenderer = {
 		}
 	},
 
-	async fetchShioriCaptions(ghostController: any): Promise<Record<string, string>> {
+	async fetchShioriCaptions(
+		ghostController: any,
+	): Promise<Record<string, string>> {
 		if (!ghostController?.requestShioriResource) return {};
 		const captions: Record<string, string> = {};
 		for (const def of MENU_CAPTION_DEFINITIONS) {

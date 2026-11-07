@@ -70,7 +70,11 @@ export class SurfaceManager {
 		this.animationManager.startAnimations(surfaceId, scopeId);
 	}
 
-	playAnimationPatterns(anim: any, baseSurfaceId: number | string, scopeId: number) {
+	playAnimationPatterns(
+		anim: any,
+		baseSurfaceId: number | string,
+		scopeId: number,
+	) {
 		return this.animationManager.playAnimationPatterns(
 			anim,
 			baseSurfaceId,
@@ -78,7 +82,11 @@ export class SurfaceManager {
 		);
 	}
 
-	playAnimationById(animId: number | string, scopeId: number = 0, waitForComplete: boolean = false) {
+	playAnimationById(
+		animId: number | string,
+		scopeId: number = 0,
+		waitForComplete: boolean = false,
+	) {
 		return this.animationManager.playAnimationById(
 			animId,
 			scopeId,
@@ -98,7 +106,12 @@ export class SurfaceManager {
 		this.animationManager.stopAnimation(scopeId, animId);
 	}
 
-	setAnimationOffset(animId: number | string, x: number = 0, y: number = 0, scopeId: number = 0) {
+	setAnimationOffset(
+		animId: number | string,
+		x: number = 0,
+		y: number = 0,
+		scopeId: number = 0,
+	) {
 		this.animationManager.setAnimationOffset(scopeId, animId, x, y);
 	}
 

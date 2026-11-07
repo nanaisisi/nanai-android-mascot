@@ -43,7 +43,12 @@ export const actionMethods = {
 				payload && typeof payload === "object" && "scope" in payload
 					? payload.scope
 					: 0;
-			return (this as any).onGhostClick?.(undefined, undefined, undefined, scopeId);
+			return (this as any).onGhostClick?.(
+				undefined,
+				undefined,
+				undefined,
+				scopeId,
+			);
 		}
 
 		if (action === "hide-character" || action === "close-character") {
@@ -92,7 +97,9 @@ export const actionMethods = {
 			return;
 		}
 		if (action === "favorite") {
-			(this as any).showBalloon?.("⭐ おきにいりは現在のゴーストに登録されています");
+			(this as any).showBalloon?.(
+				"⭐ おきにいりは現在のゴーストに登録されています",
+			);
 			setTimeout(() => (this as any).hideBalloon?.(), 2000);
 			return;
 		}
@@ -140,7 +147,9 @@ export const actionMethods = {
 				return invoke("pick_and_install_ghost_archive")
 					.then((result: any) => {
 						if (result) {
-							(this as any).showBalloon?.(`ゴースト「${result.name}」を導入しました`);
+							(this as any).showBalloon?.(
+								`ゴースト「${result.name}」を導入しました`,
+							);
 							setTimeout(() => (this as any).hideBalloon?.(), 2000);
 							(this as any).ghostController?.scanGhosts?.();
 							(this as any).ghostController?.selectGhost?.(result.name);
@@ -226,7 +235,9 @@ export const actionMethods = {
 			const gc = (this as any).ghostController;
 			if (gc.currentGhost?.isTemporary) {
 				gc.currentGhost.isTemporary = false;
-				(this as any).showBalloon?.("📌 一時起動ゴーストを通常起動状態として保持しました");
+				(this as any).showBalloon?.(
+					"📌 一時起動ゴーストを通常起動状態として保持しました",
+				);
 				gc.sendShioriEvent("OnBoot");
 			} else {
 				(this as any).showBalloon?.("⚠️ 一時起動中のゴーストではありません");
@@ -264,7 +275,9 @@ export const actionMethods = {
 					})
 					.catch((e) => console.error(e));
 			} else {
-				(this as any).showBalloon?.("📁 ゴーストフォルダを開く機能はアプリ版でのみ利用可能です");
+				(this as any).showBalloon?.(
+					"📁 ゴーストフォルダを開く機能はアプリ版でのみ利用可能です",
+				);
 				setTimeout(() => (this as any).hideBalloon?.(), 2000);
 			}
 			return;
@@ -301,11 +314,14 @@ export const actionMethods = {
 			setTimeout(() => (this as any).hideBalloon?.(), 2000);
 			return;
 		}
-		if (action.startsWith("scale-")) return (this as any).applyShellScaleAction?.(action);
+		if (action.startsWith("scale-"))
+			return (this as any).applyShellScaleAction?.(action);
 		if (action.startsWith("balloon-scale-"))
 			return (this as any).applyBalloonScaleAction?.(action);
-		if (action === "close" || action === "exit") return (this as any).closeApp?.();
-		if (action === "close-all" || action === "exit-all") return (this as any).closeApp?.();
+		if (action === "close" || action === "exit")
+			return (this as any).closeApp?.();
+		if (action === "close-all" || action === "exit-all")
+			return (this as any).closeApp?.();
 		if (action === "close-menu") return;
 		if (action === "minimize") return (this as any).minimizeApp?.();
 		if (

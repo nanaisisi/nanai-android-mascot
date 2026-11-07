@@ -198,7 +198,11 @@ test("updateMethods.startNetworkUpdate handles update-progress listen failure an
 		metadata: { currentWindow: { label: "main" } },
 		invoke: async (cmd) => {
 			if (cmd === "check_ghost_update") {
-				return { has_update: true, total_count: 1, update_files: [{ path: "f.txt" }] };
+				return {
+					has_update: true,
+					total_count: 1,
+					update_files: [{ path: "f.txt" }],
+				};
 			}
 			if (cmd === "execute_ghost_update") {
 				return { success: true, updated_files: ["f.txt"] };

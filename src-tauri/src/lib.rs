@@ -1,7 +1,7 @@
 #[allow(unused_imports)]
 use specta_typescript::Typescript;
-use tauri_specta::{Builder as SpectaBuilder, collect_commands};
 use tauri::Manager;
+use tauri_specta::{Builder as SpectaBuilder, collect_commands};
 
 macro_rules! println {
     ($($arg:tt)*) => {
@@ -68,7 +68,10 @@ pub fn run() {
     let builder = tauri::Builder::default()
         .manage(AppState::new())
         .setup(|app| {
-            std::println!("🟢 Tauri .setup() 呼び出し開始！ OS: {}", std::env::consts::OS);
+            std::println!(
+                "🟢 Tauri .setup() 呼び出し開始！ OS: {}",
+                std::env::consts::OS
+            );
             shiori::fmo::acquire_base_ware_mutexes();
             let _ = jumplist::setup_taskbar_jumplist(app);
             #[cfg(not(target_os = "android"))]

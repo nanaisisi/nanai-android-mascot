@@ -21,8 +21,8 @@ body {
 	display: flex;
 	flex-direction: row;
 	align-items: stretch;
-	height: 100%;
-	min-height: 100vh;
+	height: auto;
+	min-height: auto;
 	width: max-content;
 }
 
@@ -37,7 +37,8 @@ body:not(.subchar-mode) .subchar-only {
 .menu-container {
 	padding: 0;
 	width: clamp(11rem, 280px, 16rem);
-	height: 100%;
+	align-self: stretch;
+	height: auto;
 	min-height: 100%;
 	overflow-y: hidden;
 	overflow-x: visible;
@@ -64,7 +65,7 @@ body:not(.subchar-mode) .subchar-only {
 	background-image: var(--menu-sidebar-image, none);
 	background-repeat: no-repeat;
 	background-position: var(--menu-sidebar-position, left bottom);
-	background-size: auto 100%;
+	background-size: auto;
 	flex-shrink: 0;
 }
 

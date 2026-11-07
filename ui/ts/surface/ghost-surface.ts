@@ -65,7 +65,8 @@ export const ghostSurfaceMethods = {
 		};
 
 		const target = getScopeTarget(scopeId);
-		const { selector, placeholder, container, slot, fallbackSurface, isMain } = target;
+		const { selector, placeholder, container, slot, fallbackSurface, isMain } =
+			target;
 
 		const isAnimationFrame = Array.isArray(extraLayers);
 		this._surfaceSeq ??= {};

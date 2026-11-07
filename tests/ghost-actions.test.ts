@@ -165,13 +165,15 @@ test("ghostActions covers edge branches (imported ghost, mustselect dressup, uni
 
 	// installGhostFromMenu - imported balloon branch
 	globalThis.__TAURI_INTERNALS__.invoke = async (cmd) => {
-		if (cmd === "pick_and_install_ghost_archive") return { name: "Bal1", path: "" };
+		if (cmd === "pick_and_install_ghost_archive")
+			return { name: "Bal1", path: "" };
 	};
 	await ghostActions.installGhostFromMenu.call(mockApp);
 
 	// installGhostFromMenu - install failure catch branch (line 159)
 	globalThis.__TAURI_INTERNALS__.invoke = async (cmd) => {
-		if (cmd === "pick_and_install_ghost_archive") throw new Error("install fail");
+		if (cmd === "pick_and_install_ghost_archive")
+			throw new Error("install fail");
 	};
 	await ghostActions.installGhostFromMenu.call(mockApp);
 
@@ -186,7 +188,13 @@ test("ghostActions covers edge branches (imported ghost, mustselect dressup, uni
 	mockApp.surfaceManager = {
 		dressupState: new Map(),
 		shellManifest: {
-			categories: [{ category: "hat", options: ["mustselect"], parts: [{ part: "ribbon" }, { part: "bow" }] }],
+			categories: [
+				{
+					category: "hat",
+					options: ["mustselect"],
+					parts: [{ part: "ribbon" }, { part: "bow" }],
+				},
+			],
 		},
 		bindDressup: async (cat, part, state, scope) => {
 			dressUpCalls.push({ cat, part, state, scope });

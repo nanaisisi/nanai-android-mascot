@@ -3,7 +3,11 @@
  * @brief サーフェス操作・着せ替え・SERIKOアニメーション制御コマンド (\![bind,...], \![anim,...])
  */
 
-export async function handleBindCommand(handler: any, args: string[], raiseEvent: boolean = true) {
+export async function handleBindCommand(
+	handler: any,
+	args: string[],
+	raiseEvent: boolean = true,
+) {
 	const [category, part, statusVal] = args.slice(1);
 	await handler.app.surfaceManager?.bindDressup?.(
 		category,
@@ -52,7 +56,12 @@ async function handleAnimAddCommand(handler: any, subArgs: string[]) {
 		if (gc?.setScopeMoveOffset) {
 			gc.setScopeMoveOffset(scope, x, y);
 		} else if (typeof document !== "undefined") {
-			const selector = scope === 0 ? "ghost-display" : (scope === 1 ? "kero-display" : `char-display-${scope}`);
+			const selector =
+				scope === 0
+					? "ghost-display"
+					: scope === 1
+						? "kero-display"
+						: `char-display-${scope}`;
 			const el = document.getElementById(selector);
 			if (el) {
 				el.style.transform = `translate(${x}px, ${y}px)`;

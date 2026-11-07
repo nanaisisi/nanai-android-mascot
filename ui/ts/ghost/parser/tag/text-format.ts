@@ -29,7 +29,7 @@ export function tokenizeTextFormatTag(script: string, i: number, _len: number) {
 	}
 
 	if (char === "n") {
-		let curr = i + 1;
+		const curr = i + 1;
 		if (script.substr(curr, 6) === "[half]") {
 			return {
 				tokens: [{ type: "newline", half: true }],
@@ -43,7 +43,7 @@ export function tokenizeTextFormatTag(script: string, i: number, _len: number) {
 	}
 
 	if (char === "c") {
-		let curr = i + 1;
+		const curr = i + 1;
 		if (script[curr] === "[") {
 			const parsed = readBracketContent(script, curr);
 			if (parsed) {
@@ -71,7 +71,7 @@ export function tokenizeTextFormatTag(script: string, i: number, _len: number) {
 	}
 
 	if (char === "x") {
-		let curr = i + 1;
+		const curr = i + 1;
 		if (script[curr] === "[") {
 			const parsed = readBracketContent(script, curr);
 			if (parsed) {

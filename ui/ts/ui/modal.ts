@@ -44,7 +44,9 @@ export class ModalManager {
 	}
 
 	show(contentId: string) {
-		let html: string | undefined = (modalTemplates as Record<string, string>)[contentId];
+		let html: string | undefined = (modalTemplates as Record<string, string>)[
+			contentId
+		];
 		if (!html) {
 			const source = document.getElementById(contentId);
 			html = source?.innerHTML;

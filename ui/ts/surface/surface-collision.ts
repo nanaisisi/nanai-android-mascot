@@ -7,12 +7,16 @@ import { collisionContains } from "./shell-manifest.js";
 const aliasCaseCache = new WeakMap<object, Map<string, number[]>>();
 
 export const surfaceCollisionMethods = {
-	resolveSurfaceNumber(surfaceId: number | string | null | undefined, scopeId: number = 0): number | string {
+	resolveSurfaceNumber(
+		surfaceId: number | string | null | undefined,
+		scopeId: number = 0,
+	): number | string {
 		const name = String(surfaceId ?? "").trim();
 		if (name === "" || /^-?\d+$/.test(name)) {
 			return surfaceId as any;
 		}
-		const map = scopeId === 1 ? (this as any).keroAliases : (this as any).aliases;
+		const map =
+			scopeId === 1 ? (this as any).keroAliases : (this as any).aliases;
 		let list = Array.isArray(map?.[name]) ? map[name] : null;
 		if (!list && map) {
 			let lowerMap = aliasCaseCache.get(map);
@@ -35,7 +39,13 @@ export const surfaceCollisionMethods = {
 		return String(list[Math.floor(Math.random() * list.length)]);
 	},
 
-	detectCollision(clickX: number, clickY: number, targetRect: any, surfaceId: number | string | null = null, scopeId: number = 0) {
+	detectCollision(
+		clickX: number,
+		clickY: number,
+		targetRect: any,
+		surfaceId: number | string | null = null,
+		scopeId: number = 0,
+	) {
 		const sid =
 			surfaceId !== null
 				? String(surfaceId)
@@ -61,12 +71,15 @@ export const surfaceCollisionMethods = {
 			}
 		}
 
-		const colList = (this as any).collisions[sid] || (this as any).collisions.default || [];
+		const colList =
+			(this as any).collisions[sid] || (this as any).collisions.default || [];
 		if (colList.length === 0) {
 			return { name: "", canvasX, canvasY };
 		}
 
-		const sortKind = String((this as any).collisionSort || "none").toLowerCase();
+		const sortKind = String(
+			(this as any).collisionSort || "none",
+		).toLowerCase();
 
 		let candidates;
 		if (sortKind === "ascend" || sortKind === "id") {
@@ -115,7 +128,11 @@ export const surfaceCollisionMethods = {
 		};
 	},
 
-	getCursorForCollision(scopeId: number | string, eventType: string, collisionName: string): string | null {
+	getCursorForCollision(
+		scopeId: number | string,
+		eventType: string,
+		collisionName: string,
+	): string | null {
 		if (!(this as any).cursors || !collisionName) return null;
 		const scopeKey =
 			scopeId === 0 || scopeId === "0"
@@ -127,7 +144,10 @@ export const surfaceCollisionMethods = {
 		const evLower = String(eventType || "").toLowerCase();
 		const colLower = String(collisionName).toLowerCase();
 
-		const lists = [(this as any).cursors[scopeKey], (this as any).cursors["*"]].filter(Boolean);
+		const lists = [
+			(this as any).cursors[scopeKey],
+			(this as any).cursors["*"],
+		].filter(Boolean);
 		for (const list of lists) {
 			for (let i = list.length - 1; i >= 0; i--) {
 				const entry = list[i];
@@ -143,7 +163,10 @@ export const surfaceCollisionMethods = {
 		return null;
 	},
 
-	getTooltipForCollision(scopeId: number | string, collisionName: string): string | null {
+	getTooltipForCollision(
+		scopeId: number | string,
+		collisionName: string,
+	): string | null {
 		if (!(this as any).tooltips || !collisionName) return null;
 		const scopeKey =
 			scopeId === 0 || scopeId === "0"
@@ -152,7 +175,10 @@ export const surfaceCollisionMethods = {
 					? "kero"
 					: String(scopeId).toLowerCase();
 
-		const maps = [(this as any).tooltips[scopeKey], (this as any).tooltips["*"]].filter(Boolean);
+		const maps = [
+			(this as any).tooltips[scopeKey],
+			(this as any).tooltips["*"],
+		].filter(Boolean);
 		const colLower = String(collisionName).toLowerCase();
 		for (const map of maps) {
 			for (const key in map) {

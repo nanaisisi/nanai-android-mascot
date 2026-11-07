@@ -26,7 +26,9 @@ self.addEventListener("message", async (e: MessageEvent) => {
 					shioriInstance = instance;
 					_memoryBuffer = instance.exports.memory;
 
-					const loadFn: any = (instance.exports.load as any) || (instance.exports.shiori_load as any);
+					const loadFn: any =
+						(instance.exports.load as any) ||
+						(instance.exports.shiori_load as any);
 					if (typeof loadFn === "function") {
 						loadFn(0, 0);
 					}
@@ -57,7 +59,10 @@ self.addEventListener("message", async (e: MessageEvent) => {
 				}
 
 				const requestText = payload?.request || "";
-				const responseText = (self as any).executeWasmRequest(shioriInstance, requestText);
+				const responseText = (self as any).executeWasmRequest(
+					shioriInstance,
+					requestText,
+				);
 
 				(self as any).postMessage({
 					type: "REQUEST_RESULT",

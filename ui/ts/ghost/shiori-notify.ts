@@ -16,7 +16,11 @@ export const shioriNotifyMethods = {
 	 * @param {string} event イベントID (例: "installedghostname")
 	 * @param {Array<string|number>} references Reference0..N
 	 */
-	async sendShioriNotify(this: any, event: string, references: Array<string | number>) {
+	async sendShioriNotify(
+		this: any,
+		event: string,
+		references: Array<string | number>,
+	) {
 		if (!isTauriAvailable()) return null;
 		const ghostId = this.app?.ghostId || "main";
 		try {
@@ -57,7 +61,11 @@ export const shioriNotifyMethods = {
 	/**
 	 * バルーン構成情報通知 (OnNotifyBalloonInfo) を送信 (UKADOC 規格準拠)
 	 */
-	async notifyBalloonInfo(this: any, balloonName = "default", balloonPath = "") {
+	async notifyBalloonInfo(
+		this: any,
+		balloonName = "default",
+		balloonPath = "",
+	) {
 		return await this.sendShioriNotify("OnNotifyBalloonInfo", [
 			balloonName,
 			balloonPath,
@@ -120,7 +128,11 @@ export const shioriNotifyMethods = {
 	/**
 	 * 国際化・地域設定通知 (OnNotifyInternationalInfo) を送信 (UKADOC 規格準拠)
 	 */
-	async notifyInternationalInfo(this: any, locale = "ja-JP", timezone = "Asia/Tokyo") {
+	async notifyInternationalInfo(
+		this: any,
+		locale = "ja-JP",
+		timezone = "Asia/Tokyo",
+	) {
 		return await this.sendShioriNotify("OnNotifyInternationalInfo", [
 			locale,
 			timezone,
@@ -130,7 +142,17 @@ export const shioriNotifyMethods = {
 	/**
 	 * バッテリー・電源状態通知
 	 */
-	async notifyBatteryState(this: any, type: "notify" | "critical" | "low" | "charging_start" | "charging_stop" = "notify", level = 100, status: string | number = "1") {
+	async notifyBatteryState(
+		this: any,
+		type:
+			| "notify"
+			| "critical"
+			| "low"
+			| "charging_start"
+			| "charging_stop" = "notify",
+		level = 100,
+		status: string | number = "1",
+	) {
 		const eventMap: Record<string, string> = {
 			notify: "OnBatteryNotify",
 			critical: "OnBatteryCritical",
@@ -145,7 +167,11 @@ export const shioriNotifyMethods = {
 	/**
 	 * OS環境・ディスプレイ・テーマ状態通知
 	 */
-	async notifyOsEnvironment(this: any, event: string, references: Array<string | number> = []) {
+	async notifyOsEnvironment(
+		this: any,
+		event: string,
+		references: Array<string | number> = [],
+	) {
 		return await this.sendShioriNotify(event, references);
 	},
 
@@ -160,7 +186,11 @@ export const shioriNotifyMethods = {
 	/**
 	 * デバイス着脱通知
 	 */
-	async notifyDeviceChange(this: any, action: "arrival" | "remove", deviceName = "") {
+	async notifyDeviceChange(
+		this: any,
+		action: "arrival" | "remove",
+		deviceName = "",
+	) {
 		const event = action === "arrival" ? "OnDeviceArrival" : "OnDeviceRemove";
 		return await this.sendShioriNotify(event, [deviceName]);
 	},
@@ -168,7 +198,10 @@ export const shioriNotifyMethods = {
 	/**
 	 * セッション状態通知
 	 */
-	async notifySessionState(this: any, sessionState: "lock" | "unlock" | "disconnect" | "reconnect") {
+	async notifySessionState(
+		this: any,
+		sessionState: "lock" | "unlock" | "disconnect" | "reconnect",
+	) {
 		const eventMap: Record<string, string> = {
 			lock: "OnSessionLock",
 			unlock: "OnSessionUnlock",
@@ -182,28 +215,44 @@ export const shioriNotifyMethods = {
 	/**
 	 * モード・負荷・ネットワーク通知
 	 */
-	async notifySystemStatus(this: any, event: string, references: Array<string | number> = []) {
+	async notifySystemStatus(
+		this: any,
+		event: string,
+		references: Array<string | number> = [],
+	) {
 		return await this.sendShioriNotify(event, references);
 	},
 
 	/**
 	 * 消滅・アンインストール通知
 	 */
-	async notifyVanishEvent(this: any, event: string, references: Array<string | number> = []) {
+	async notifyVanishEvent(
+		this: any,
+		event: string,
+		references: Array<string | number> = [],
+	) {
 		return await this.sendShioriNotify(event, references);
 	},
 
 	/**
 	 * URL ドロップイベント通知
 	 */
-	async notifyUrlDropEvent(this: any, event: string, references: Array<string | number> = []) {
+	async notifyUrlDropEvent(
+		this: any,
+		event: string,
+		references: Array<string | number> = [],
+	) {
 		return await this.sendShioriNotify(event, references);
 	},
 
 	/**
 	 * RSS / ヘッドラインセンス通知
 	 */
-	async notifyHeadlineRssEvent(this: any, event: string, references: Array<string | number> = []) {
+	async notifyHeadlineRssEvent(
+		this: any,
+		event: string,
+		references: Array<string | number> = [],
+	) {
 		return await this.sendShioriNotify(event, references);
 	},
 
@@ -225,7 +274,9 @@ export const shioriNotifyMethods = {
 	 * 外部アプリケーション存在確認 (OnApplicationExist) を送信
 	 */
 	async checkApplicationExist(this: any, appName: string): Promise<boolean> {
-		const res: any = await this.sendShioriNotify("OnApplicationExist", [appName]);
+		const res: any = await this.sendShioriNotify("OnApplicationExist", [
+			appName,
+		]);
 		return res === "1" || res === "true";
 	},
 
@@ -242,7 +293,11 @@ export const shioriNotifyMethods = {
 	/**
 	 * 外部アプリケーション操作完了通知 (OnApplicationOperationFinish) を送信
 	 */
-	async notifyApplicationOperationFinish(this: any, appName: string, operationName = "") {
+	async notifyApplicationOperationFinish(
+		this: any,
+		appName: string,
+		operationName = "",
+	) {
 		return await this.sendShioriNotify("OnApplicationOperationFinish", [
 			appName,
 			operationName,
@@ -290,7 +345,11 @@ export const shioriNotifyMethods = {
 	/**
 	 * マウス拡張イベント送信
 	 */
-	async notifyMouseEvent(this: any, eventName: string, args: Array<string | number>) {
+	async notifyMouseEvent(
+		this: any,
+		eventName: string,
+		args: Array<string | number>,
+	) {
 		return await this.sendShioriNotify(eventName, args);
 	},
 
@@ -304,7 +363,13 @@ export const shioriNotifyMethods = {
 	/**
 	 * ヘッドライン発見通知 (OnHeadlinesense.OnFind)
 	 */
-	async sendHeadlineSenseOnFind(this: any, siteName: string, url: string, phase: string, content: string) {
+	async sendHeadlineSenseOnFind(
+		this: any,
+		siteName: string,
+		url: string,
+		phase: string,
+		content: string,
+	) {
 		return await this.sendShioriNotify("OnHeadlinesense.OnFind", [
 			siteName,
 			url,
@@ -337,7 +402,12 @@ export const shioriNotifyMethods = {
 	/**
 	 * RSSセンス完了通知 (OnRSSComplete)
 	 */
-	async sendRssComplete(this: any, siteNameOrStatus: string, siteUrl = "", entries: string[] = []) {
+	async sendRssComplete(
+		this: any,
+		siteNameOrStatus: string,
+		siteUrl = "",
+		entries: string[] = [],
+	) {
 		if (siteNameOrStatus === "no update") {
 			return await this.sendShioriNotify("OnRSSComplete", ["no update"]);
 		}
@@ -415,7 +485,9 @@ export const shioriNotifyMethods = {
 			await this.sendShioriNotify("installedshellname", this.shells);
 		}
 
-		const ghostPaths = ghosts.map((g: any) => g.path).filter((p: string) => Boolean(p));
+		const ghostPaths = ghosts
+			.map((g: any) => g.path)
+			.filter((p: string) => Boolean(p));
 		if (ghostPaths.length > 0) {
 			await this.sendShioriNotify("ghostpathlist", ghostPaths);
 		}
@@ -456,7 +528,8 @@ export const shioriNotifyMethods = {
 			await this.sendShioriNotify("installedheadlinename", this.headlines);
 			await this.sendShioriNotify(
 				"headlinepathlist",
-				this.headlinePaths || this.headlines.map((h: string) => `headlines/${h}`),
+				this.headlinePaths ||
+					this.headlines.map((h: string) => `headlines/${h}`),
 			);
 		}
 

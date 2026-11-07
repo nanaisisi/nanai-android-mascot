@@ -11,7 +11,11 @@ export function notifyPause(this: any, noClear: boolean) {
 	this.emit("playback:pause", { noClear });
 }
 
-export function notifyClear(this: any, mode: "all" | "char" | "line", count: number) {
+export function notifyClear(
+	this: any,
+	mode: "all" | "char" | "line",
+	count: number,
+) {
 	this.emit("playback:clear", { mode, count });
 }
 

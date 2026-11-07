@@ -6,7 +6,12 @@
 export class SyncObject {
 	name: string;
 	signaled: boolean;
-	waiters: Set<{ resolve: Function; reject: Function; timer: any; resetOnWait: boolean }>;
+	waiters: Set<{
+		resolve: Function;
+		reject: Function;
+		timer: any;
+		resetOnWait: boolean;
+	}>;
 
 	constructor(name: string) {
 		this.name = name;
@@ -37,7 +42,9 @@ export class SyncObject {
 		this.signaled = false;
 	}
 
-	wait(options: { timeout?: number; resetOnWait?: boolean } = {}): Promise<boolean> {
+	wait(
+		options: { timeout?: number; resetOnWait?: boolean } = {},
+	): Promise<boolean> {
 		const { timeout = 0, resetOnWait = true } = options;
 
 		if (this.signaled) {
@@ -111,7 +118,10 @@ export class SyncObjectManager {
 		}
 	}
 
-	async wait(name: string, options: { timeout?: number; resetOnWait?: boolean } = {}): Promise<boolean> {
+	async wait(
+		name: string,
+		options: { timeout?: number; resetOnWait?: boolean } = {},
+	): Promise<boolean> {
 		const obj = this.getOrCreate(name);
 		return await obj.wait(options);
 	}

@@ -3,7 +3,11 @@
  * @brief \![open,teachbox] および \![close,teachbox] ハンドラ
  */
 
-export function openTeachBox(handler: any, params: string[] = [], options: any = {}) {
+export function openTeachBox(
+	handler: any,
+	params: string[] = [],
+	options: any = {},
+) {
 	const { notifyStart = true } = options;
 	handler.closeTeachBox();
 	if (handler.teachForm) return;

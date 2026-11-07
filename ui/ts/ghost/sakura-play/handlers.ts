@@ -65,7 +65,12 @@ export {
 	handleWaitAnimation,
 };
 
-export async function handleToken(player: any, app: any, token: any, context: any) {
+export async function handleToken(
+	player: any,
+	app: any,
+	token: any,
+	context: any,
+) {
 	switch (token.type) {
 		case "scope":
 			handleScope(player, app, token, context);

@@ -360,7 +360,11 @@ describe("balloon layout submodules", () => {
 	it("position module handles partial origin and missing balloonDisplay element", () => {
 		const root = createMockRoot();
 		directPosition(root, { "origin.x": "10" }, { elements: {} });
-		directPosition(root, { "origin.y": "20" }, { elements: { balloonDisplay: { style: {} } } });
+		directPosition(
+			root,
+			{ "origin.y": "20" },
+			{ elements: { balloonDisplay: { style: {} } } },
+		);
 		assert.ok(true);
 	});
 
@@ -369,8 +373,14 @@ describe("balloon layout submodules", () => {
 		const originalDoc = globalThis.document;
 		globalThis.document = { querySelector: () => null };
 		try {
-			directValidRect(root, { "wordwrappoint.x": "30", "wordwrappoint.y": "10" });
-			directValidRect(root, { "wordwrappoint.x": "invalid", "wordwrappoint.y": "invalid" });
+			directValidRect(root, {
+				"wordwrappoint.x": "30",
+				"wordwrappoint.y": "10",
+			});
+			directValidRect(root, {
+				"wordwrappoint.x": "invalid",
+				"wordwrappoint.y": "invalid",
+			});
 			assert.ok(true);
 		} finally {
 			globalThis.document = originalDoc;

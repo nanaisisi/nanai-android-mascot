@@ -3,7 +3,12 @@
  * @brief さくらスクリプト再生時のテキスト出力、改行、文字消去、文字装飾、相対位置ハンドラ
  */
 
-export async function handleChar(player: any, app: any, token: any, context: any) {
+export async function handleChar(
+	player: any,
+	app: any,
+	token: any,
+	context: any,
+) {
 	const { sakuraText, keroText, scheduleDesktopBalloonSync } = context;
 	const { currentBalloonText, currentAnchor, isQuickMode } = context;
 
@@ -47,12 +52,19 @@ export async function handleChar(player: any, app: any, token: any, context: any
 			? player.playbackController.calculateWait(baseWait, true)
 			: baseWait;
 		if (waitMs > 0) {
-			await (player.sleep ? player.sleep(waitMs) : new Promise((r) => setTimeout(r, waitMs)));
+			await (player.sleep
+				? player.sleep(waitMs)
+				: new Promise((r) => setTimeout(r, waitMs)));
 		}
 	}
 }
 
-export function handleNewline(player: any, _app: any, token: any, context: any) {
+export function handleNewline(
+	player: any,
+	_app: any,
+	token: any,
+	context: any,
+) {
 	const { sakuraText, keroText, scheduleDesktopBalloonSync } = context;
 	const { currentBalloonText } = context;
 
@@ -131,7 +143,12 @@ export function handleClear(player: any, _app: any, token: any, context: any) {
 	scheduleDesktopBalloonSync(true);
 }
 
-export function handleOffset(_player: any, _app: any, token: any, context: any) {
+export function handleOffset(
+	_player: any,
+	_app: any,
+	token: any,
+	context: any,
+) {
 	const { scheduleDesktopBalloonSync, currentBalloonText } = context;
 
 	const spacer = document.createElement("span");

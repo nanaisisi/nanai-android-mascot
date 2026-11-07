@@ -57,7 +57,12 @@ export function handleChoice(player: any, app: any, token: any, context: any) {
 	}
 }
 
-export function handleAnchorBegin(_player: any, app: any, token: any, context: any) {
+export function handleAnchorBegin(
+	_player: any,
+	app: any,
+	token: any,
+	context: any,
+) {
 	const { currentBalloonText, scheduleDesktopBalloonSync } = context;
 
 	const anchorSpan = document.createElement("span");
@@ -104,6 +109,11 @@ export function handleAnchorBegin(_player: any, app: any, token: any, context: a
 	scheduleDesktopBalloonSync(false);
 }
 
-export function handleAnchorEnd(_player: any, _app: any, _token: any, context: any) {
+export function handleAnchorEnd(
+	_player: any,
+	_app: any,
+	_token: any,
+	context: any,
+) {
 	context.currentAnchor = null;
 }

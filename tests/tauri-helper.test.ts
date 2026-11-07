@@ -5,14 +5,14 @@ globalThis.window = globalThis;
 
 import {
 	convertFileSrc,
-	listen,
 	emit,
-	startDraggingWindow,
-	isTauriAvailable,
+	getCurrentWindowPosition,
 	invoke,
 	ipcQueueStats,
+	isTauriAvailable,
+	listen,
 	moveCurrentWindowBy,
-	getCurrentWindowPosition,
+	startDraggingWindow,
 } from "../ui/js/core/tauri-helper.js";
 
 test("convertFileSrc covers empty path, Tauri available, protocol startsWith branches, and fallback normalization", async () => {
@@ -25,13 +25,25 @@ test("convertFileSrc covers empty path, Tauri available, protocol startsWith bra
 		metadata: { currentWindow: { label: "main" } },
 		convertFileSrc: (p, proto) => `${proto}://custom/${p}`,
 	};
-	assert.equal(convertFileSrc("image.png", "asset"), "asset://custom/image.png");
+	assert.equal(
+		convertFileSrc("image.png", "asset"),
+		"asset://custom/image.png",
+	);
 	delete globalThis.__TAURI_INTERNALS__;
 
 	// 3. Tauri unavailable, startsWith matching
-	assert.equal(convertFileSrc("http://example.com/img.png"), "http://example.com/img.png");
-	assert.equal(convertFileSrc("https://example.com/img.png"), "https://example.com/img.png");
-	assert.equal(convertFileSrc("asset://localhost/img.png"), "asset://localhost/img.png");
+	assert.equal(
+		convertFileSrc("http://example.com/img.png"),
+		"http://example.com/img.png",
+	);
+	assert.equal(
+		convertFileSrc("https://example.com/img.png"),
+		"https://example.com/img.png",
+	);
+	assert.equal(
+		convertFileSrc("asset://localhost/img.png"),
+		"asset://localhost/img.png",
+	);
 	assert.equal(convertFileSrc("./img.png"), "./img.png");
 	assert.equal(convertFileSrc("/img.png"), "/img.png");
 

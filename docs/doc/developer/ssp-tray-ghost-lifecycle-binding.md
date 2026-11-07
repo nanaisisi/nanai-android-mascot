@@ -20,12 +20,14 @@
 ## 2. アーキテクチャ設計
 
 ### A. Rust バックエンド (`../../../src-tauri/src/tray.rs`, `load.rs`, `close.rs`)
+
 - **`update_tray_for_ghost(app_handle, ghost_name, ghost_master_dir)`**:
   - ゴーストロード時にトレイアイコン (`tray.ico` / `tray.png`) とツールチップ (`ghost_name`) 一括同期更新。
 - **`reset_tray_to_default(app_handle)`**:
   - 全ゴーストアンロード時にトレイアイコンとツールチップをデフォルトへ復元。
 
 ### B. フロントエンド / イベント連携 (`../../../ui/ts/ghost/ghost.ts`)
+
 - ゴースト読み込み・切り替えイベント発生時、Tauri コマンド経由でトレイアイコンおよびツールチップ更新を発火。
 
 ---

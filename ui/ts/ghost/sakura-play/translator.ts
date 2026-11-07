@@ -1,4 +1,7 @@
-export async function translateScript(player: any, script: string): Promise<string> {
+export async function translateScript(
+	player: any,
+	script: string,
+): Promise<string> {
 	let finalScript = script;
 	try {
 		const app = player.app;

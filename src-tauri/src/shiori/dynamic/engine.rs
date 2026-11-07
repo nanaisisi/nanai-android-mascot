@@ -3,14 +3,14 @@
 use crate::shiori::error::ShioriError;
 use std::path::{Path, PathBuf};
 
-#[cfg(not(target_os = "android"))]
-use libloading::Library;
 #[cfg(all(not(windows), not(target_os = "android")))]
 use super::host::Hglobal;
 #[cfg(all(windows, not(target_os = "android")))]
 use super::host::{GMEM_FIXED, GlobalAlloc, GlobalFree, is_x86_dll};
 #[cfg(not(target_os = "android"))]
 use super::host::{HostProc, ShioriLoadFn, ShioriRequestFn, ShioriUnloadFn};
+#[cfg(not(target_os = "android"))]
+use libloading::Library;
 
 #[allow(dead_code)]
 pub struct ShioriDynamicEngine {
@@ -56,27 +56,30 @@ impl ShioriDynamicEngine {
         };
 
         let load_fn: ShioriLoadFn = unsafe {
-            *lib.get(b"load\0").map_err(|source| ShioriError::SymbolNotFound {
-                symbol: "load",
-                path: dll_path.to_path_buf(),
-                source,
-            })?
+            *lib.get(b"load\0")
+                .map_err(|source| ShioriError::SymbolNotFound {
+                    symbol: "load",
+                    path: dll_path.to_path_buf(),
+                    source,
+                })?
         };
 
         let unload_fn: ShioriUnloadFn = unsafe {
-            *lib.get(b"unload\0").map_err(|source| ShioriError::SymbolNotFound {
-                symbol: "unload",
-                path: dll_path.to_path_buf(),
-                source,
-            })?
+            *lib.get(b"unload\0")
+                .map_err(|source| ShioriError::SymbolNotFound {
+                    symbol: "unload",
+                    path: dll_path.to_path_buf(),
+                    source,
+                })?
         };
 
         let request_fn: ShioriRequestFn = unsafe {
-            *lib.get(b"request\0").map_err(|source| ShioriError::SymbolNotFound {
-                symbol: "request",
-                path: dll_path.to_path_buf(),
-                source,
-            })?
+            *lib.get(b"request\0")
+                .map_err(|source| ShioriError::SymbolNotFound {
+                    symbol: "request",
+                    path: dll_path.to_path_buf(),
+                    source,
+                })?
         };
 
         Ok(Self {

@@ -5,12 +5,13 @@ pub async fn preload_auxiliary_windows(app_handle: tauri::AppHandle) -> Result<(
     #[cfg(desktop)]
     {
         use tauri::Manager;
-        let max_scopes = if let Some(state) = app_handle.try_state::<crate::common::state::AppState>() {
-            let n = *state.num_characters.lock();
-            if n > 0 { n } else { 1 }
-        } else {
-            3
-        };
+        let max_scopes =
+            if let Some(state) = app_handle.try_state::<crate::common::state::AppState>() {
+                let n = *state.num_characters.lock();
+                if n > 0 { n } else { 1 }
+            } else {
+                3
+            };
 
         // 1. バルーンウィンドウ (scope 0..max_scopes - 動的キャラクター数対応) の事前キャッシュ
         for scope_id in 0..max_scopes {

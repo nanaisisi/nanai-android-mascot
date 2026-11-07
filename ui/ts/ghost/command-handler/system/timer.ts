@@ -3,7 +3,10 @@
  * @brief スクリプトタイマー管理・Notify/TimerRaise コマンドハンドラ
  */
 
-const activeScriptTimers = new Map<string, { id: any; type: "interval" | "timeout" }>();
+const activeScriptTimers = new Map<
+	string,
+	{ id: any; type: "interval" | "timeout" }
+>();
 
 export function clearAllScriptTimers() {
 	for (const timer of activeScriptTimers.values()) {
@@ -76,7 +79,10 @@ export async function handleTimerRaiseCommand(handler: any, args: string[]) {
 	}
 }
 
-export async function handleTimerRaiseOtherCommand(handler: any, args: string[]) {
+export async function handleTimerRaiseOtherCommand(
+	handler: any,
+	args: string[],
+) {
 	const delayMs = Number.parseInt(args[1] ?? "0", 10);
 	const repeatFlag = Number.parseInt(args[2] ?? "1", 10);
 	const ghostName = args[3];

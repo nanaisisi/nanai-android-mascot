@@ -1,10 +1,10 @@
 {
-  "identifier": "main-capability",
-  "windows": ["*"],
-  "permissions": [
-    "core:default",
-    "core:tray:default",
-    "opener:default",
-    "dialog:default"
-  ]
+	"identifier": "main-capability",
+	"windows": ["*"],
+	"permissions": [
+		"core:default",
+		"core:tray:default",
+		"opener:default",
+		"dialog:default"
+	]
 }

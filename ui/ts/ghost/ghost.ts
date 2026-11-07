@@ -69,9 +69,8 @@ export class GhostController {
 				ghostPath: ghostInfo.path || AppConfig.paths.defaultGhostDir,
 			});
 			return (
-				result.ghosts?.some(
-					(g: GhostInfo) => g.name === ghostInfo.name,
-				) || false
+				result.ghosts?.some((g: GhostInfo) => g.name === ghostInfo.name) ||
+				false
 			);
 		} catch (error) {
 			console.error("ゴースト存在確認エラー:", error);
@@ -120,7 +119,9 @@ export class GhostController {
 		}
 
 		// バックグラウンドアセット先行プリロード
-		const preloadSurfacesPromise = this.app.surfaceManager?.loadSurfacesTxt?.(ghost.path);
+		const preloadSurfacesPromise = this.app.surfaceManager?.loadSurfacesTxt?.(
+			ghost.path,
+		);
 
 		try {
 			localStorage.setItem(
@@ -133,7 +134,9 @@ export class GhostController {
 
 		if (isTauriAvailable()) {
 			try {
-				const info: any = await invoke("get_ghost_info", { ghostName: ghost.name });
+				const info: any = await invoke("get_ghost_info", {
+					ghostName: ghost.name,
+				});
 				if (info) {
 					if (Array.isArray(info.shells) && info.shells.length > 0) {
 						this.shells = info.shells;
@@ -168,8 +171,8 @@ export class GhostController {
 		if (typeof globalThis.requestAnimationFrame === "function") {
 			await new Promise((resolve) =>
 				requestAnimationFrame(() =>
-					requestAnimationFrame(() => requestAnimationFrame(resolve))
-				)
+					requestAnimationFrame(() => requestAnimationFrame(resolve)),
+				),
 			);
 		} else {
 			await new Promise((resolve) => setTimeout(resolve, 50));
@@ -193,7 +196,12 @@ export class GhostController {
 		this.currentShell = shellName;
 		if (this.currentGhost) {
 			try {
-				await (this as any).loadSurfaceAsset("load_surface_image", this.currentGhost.path || AppConfig.paths.defaultGhostDir, shellName, 0);
+				await (this as any).loadSurfaceAsset(
+					"load_surface_image",
+					this.currentGhost.path || AppConfig.paths.defaultGhostDir,
+					shellName,
+					0,
+				);
 			} catch (_e) {}
 			await (this as any).updateSurface(0, 0);
 			await (this as any).updateSurface(10, 1);

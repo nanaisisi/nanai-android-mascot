@@ -33,11 +33,20 @@ export class InteractionManager {
 		this.balloonDragManager.balloonOffsetY = val;
 	}
 
-	isPixelTransparent(img: HTMLElement, clientX: number, clientY: number): boolean {
+	isPixelTransparent(
+		img: HTMLElement,
+		clientX: number,
+		clientY: number,
+	): boolean {
 		return isPixelTransparent(img, clientX, clientY);
 	}
 
-	setupDragging(target: HTMLElement, onGhostClick: any, onGhostStroke: any, options: any = {}) {
+	setupDragging(
+		target: HTMLElement,
+		onGhostClick: any,
+		onGhostStroke: any,
+		options: any = {},
+	) {
 		if (!target) return;
 
 		const { onGhostWheel, onGhostHover, ...dragOptions } = options;
@@ -52,8 +61,11 @@ export class InteractionManager {
 				updateFollowPosition: (newX: number, newY: number) => {
 					this.balloonDragManager.updateFollowPosition(newX, newY);
 				},
-				isPixelTransparent: (img: HTMLElement, clientX: number, clientY: number) =>
-					this.isPixelTransparent(img, clientX, clientY),
+				isPixelTransparent: (
+					img: HTMLElement,
+					clientX: number,
+					clientY: number,
+				) => this.isPixelTransparent(img, clientX, clientY),
 			},
 		);
 

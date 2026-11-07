@@ -140,7 +140,9 @@ test("actionMethods.handleMenuAction covers all branches including Tauri folder 
 	mockApp.interactionManager = null;
 	handle("reset-shell-position");
 	handle("reset-balloon-position");
-	mockApp.elements = { ghostDisplay: { style: {}, classList: { remove() {} } } };
+	mockApp.elements = {
+		ghostDisplay: { style: {}, classList: { remove() {} } },
+	};
 	mockApp.interactionManager = { balloonOffsetX: 0, balloonOffsetY: 0 };
 
 	mockApp.availableBalloons = undefined;

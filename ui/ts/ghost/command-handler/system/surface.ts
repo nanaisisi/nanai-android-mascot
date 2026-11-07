@@ -106,7 +106,11 @@ export async function handleSetScalingCommand(handler: any, args: string[]) {
 	}
 }
 
-export async function handleKeyPressEvent(handler: any, key: string, modifiers: string = "") {
+export async function handleKeyPressEvent(
+	handler: any,
+	key: string,
+	modifiers: string = "",
+) {
 	if (handler?.app?.ghostController?.sendShioriEvent && key) {
 		await handler.app.ghostController.sendShioriEvent("OnKeyPress", [
 			key,

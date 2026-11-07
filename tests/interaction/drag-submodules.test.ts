@@ -211,7 +211,8 @@ describe("drag interaction submodules", () => {
 		globalThis.__TAURI_INTERNALS__ = {
 			metadata: { currentWindow: { label: "main" } },
 			invoke: async (cmd) => {
-				if (cmd === "plugin:window|current_window_position") return { type: "Physical", x: 100, y: 100 };
+				if (cmd === "plugin:window|current_window_position")
+					return { type: "Physical", x: 100, y: 100 };
 				if (cmd === "plugin:window|set_window_position") return {};
 			},
 			transformCallback: (cb) => cb,

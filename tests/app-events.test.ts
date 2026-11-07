@@ -286,8 +286,12 @@ test("eventMethods covers edge branches in setupGhostInteractions (null element)
 	mockApp.setupGhostInteractions();
 	await mockApp.setupExternalMenuListeners();
 
-	await tauriListeners["request-subchar-image"]?.({ payload: { scopeId: "invalid" } });
-	await tauriListeners["request-subchar-image"]?.({ payload: { scopeId: 999 } });
+	await tauriListeners["request-subchar-image"]?.({
+		payload: { scopeId: "invalid" },
+	});
+	await tauriListeners["request-subchar-image"]?.({
+		payload: { scopeId: 999 },
+	});
 	await tauriListeners["request-subchar-image"]?.({ payload: { scopeId: 1 } });
 	await new Promise((r) => setTimeout(r, 10));
 	assert.ok(true);

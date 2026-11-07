@@ -262,12 +262,14 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 	it("listens to request-balloon-scale-change when Tauri is available", async () => {
 		let listenHandler = null;
 		vi.spyOn(tauriHelper, "isTauriAvailable").mockReturnValue(true);
-		vi.spyOn(tauriHelper, "listen").mockImplementation(async (eventName, handler) => {
-			if (eventName === "request-balloon-scale-change") {
-				listenHandler = handler;
-			}
-			return () => {};
-		});
+		vi.spyOn(tauriHelper, "listen").mockImplementation(
+			async (eventName, handler) => {
+				if (eventName === "request-balloon-scale-change") {
+					listenHandler = handler;
+				}
+				return () => {};
+			},
+		);
 		vi.spyOn(tauriHelper, "emit").mockResolvedValue();
 
 		const mockApp = { balloonUserScale: 1, showBalloon() {}, hideBalloon() {} };

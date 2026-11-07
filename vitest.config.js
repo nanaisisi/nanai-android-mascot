@@ -1,6 +1,6 @@
-import { defineConfig } from "vitest/config";
-import path from "node:path";
 import fs from "node:fs";
+import path from "node:path";
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
 	plugins: [
@@ -33,11 +33,7 @@ export default defineConfig({
 		coverage: {
 			provider: "v8",
 			reporter: ["text", "json", "html"],
-			include: [
-				"ui/ts/**/*.ts",
-				"ui/js/**/*.js",
-				"ui/windows/*.js",
-			],
+			include: ["ui/ts/**/*.ts", "ui/js/**/*.js", "ui/windows/*.js"],
 		},
 	},
 });

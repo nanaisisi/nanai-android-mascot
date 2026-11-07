@@ -5,7 +5,11 @@
 
 import { readBracketContent, splitBracketArgs } from "../bracket-utils.js";
 
-export function tokenizeScopeSurfaceTag(script: string, i: number, _len: number) {
+export function tokenizeScopeSurfaceTag(
+	script: string,
+	i: number,
+	_len: number,
+) {
 	const char = script[i];
 
 	if (char === "0" || char === "h") {
@@ -23,7 +27,7 @@ export function tokenizeScopeSurfaceTag(script: string, i: number, _len: number)
 	}
 
 	if (char === "p") {
-		let curr = i + 1;
+		const curr = i + 1;
 		if (script[curr] === "[") {
 			const parsed = readBracketContent(script, curr);
 			if (parsed) {
@@ -45,7 +49,7 @@ export function tokenizeScopeSurfaceTag(script: string, i: number, _len: number)
 	}
 
 	if (char === "s") {
-		let curr = i + 1;
+		const curr = i + 1;
 		if (script[curr] === "[") {
 			const parsed = readBracketContent(script, curr);
 			if (parsed) {
@@ -73,7 +77,7 @@ export function tokenizeScopeSurfaceTag(script: string, i: number, _len: number)
 	}
 
 	if (char === "i") {
-		let curr = i + 1;
+		const curr = i + 1;
 		if (script[curr] === "[") {
 			const parsed = readBracketContent(script, curr);
 			if (parsed) {

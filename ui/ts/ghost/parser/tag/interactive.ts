@@ -5,7 +5,11 @@
 
 import { readBracketContent, splitBracketArgs } from "../bracket-utils.js";
 
-export function tokenizeInteractiveTag(script: string, i: number, _len: number) {
+export function tokenizeInteractiveTag(
+	script: string,
+	i: number,
+	_len: number,
+) {
 	const char = script[i];
 
 	if (char === "_" && script[i + 1] === "a") {

@@ -15,7 +15,12 @@ export const surfaceRenderMethods = {
 	...surfaceCollisionMethods,
 	...surfaceDressupMethods,
 
-	async composeFrameOnBase(this: any, baseCanvas: HTMLCanvasElement, frameLayers: any[], resolveImagePath: (file: string) => Promise<string | null>): Promise<string | null> {
+	async composeFrameOnBase(
+		this: any,
+		baseCanvas: HTMLCanvasElement,
+		frameLayers: any[],
+		resolveImagePath: (file: string) => Promise<string | null>,
+	): Promise<string | null> {
 		if (!baseCanvas || !frameLayers?.length) return null;
 		const t0 = (globalThis.performance?.now?.() ?? Date.now()) as number;
 		const canvas = document.createElement("canvas");

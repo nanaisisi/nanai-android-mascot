@@ -34,7 +34,10 @@ pub async fn show_balloon_window(
         if app_handle.get_webview_window(&label).is_none() {
             let mut locks = BALLOON_CREATION_LOCKS.lock().map_err(|e| e.to_string())?;
             if locks.contains(&scope_id) {
-                println!("⚠️ show_balloon_window creation already in progress for scope {}, skipping duplicate request.", scope_id);
+                println!(
+                    "⚠️ show_balloon_window creation already in progress for scope {}, skipping duplicate request.",
+                    scope_id
+                );
                 return Ok(());
             }
             locks.insert(scope_id);
@@ -80,11 +83,10 @@ pub async fn show_balloon_window(
 
             // 可視・不可視に関わらず位置を必ず同期する
             let (target_x, target_y) = get_pos();
-            let _ =
-                balloon_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
-                    x: target_x,
-                    y: target_y,
-                }));
+            let _ = balloon_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
+                x: target_x,
+                y: target_y,
+            }));
 
             if !is_vis {
                 let _ = balloon_win.show();

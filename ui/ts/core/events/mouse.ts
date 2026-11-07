@@ -1,8 +1,17 @@
 import { invoke, isTauriAvailable } from "../tauri-helper.js";
 
 export const mouseMethods = {
-	onGhostClick(clientX?: number, clientY?: number, rect?: any, scopeId: number = 0) {
-		if ((this as any).sakuraPlayer?.timeCritical && (this as any).sakuraPlayer?.isPlaying) return;
+	onGhostClick(
+		clientX?: number,
+		clientY?: number,
+		rect?: any,
+		scopeId: number = 0,
+	) {
+		if (
+			(this as any).sakuraPlayer?.timeCritical &&
+			(this as any).sakuraPlayer?.isPlaying
+		)
+			return;
 		const col = (this as any).getCollisionInfo(clientX, clientY, rect, scopeId);
 		console.log(
 			`🖱️ ゴーストタップ: スコープ=${scopeId}, 部位=${col.name || "なし"} (X:${col.canvasX}, Y:${col.canvasY})`,
@@ -22,8 +31,17 @@ export const mouseMethods = {
 			});
 	},
 
-	onGhostStroke(clientX?: number, clientY?: number, rect?: any, scopeId: number = 0) {
-		if ((this as any).sakuraPlayer?.timeCritical && (this as any).sakuraPlayer?.isPlaying) return;
+	onGhostStroke(
+		clientX?: number,
+		clientY?: number,
+		rect?: any,
+		scopeId: number = 0,
+	) {
+		if (
+			(this as any).sakuraPlayer?.timeCritical &&
+			(this as any).sakuraPlayer?.isPlaying
+		)
+			return;
 		const col = (this as any).getCollisionInfo(clientX, clientY, rect, scopeId);
 		console.log(
 			`🖐️ ゴースト撫で（Stroke）: スコープ=${scopeId}, 部位=${col.name || "なし"}`,
@@ -37,8 +55,18 @@ export const mouseMethods = {
 		]);
 	},
 
-	onGhostMouseEnter(clientX?: number, clientY?: number, rect?: any, scopeId: number = 0, isWindow: boolean = false) {
-		if ((this as any).sakuraPlayer?.timeCritical && (this as any).sakuraPlayer?.isPlaying) return;
+	onGhostMouseEnter(
+		clientX?: number,
+		clientY?: number,
+		rect?: any,
+		scopeId: number = 0,
+		isWindow: boolean = false,
+	) {
+		if (
+			(this as any).sakuraPlayer?.timeCritical &&
+			(this as any).sakuraPlayer?.isPlaying
+		)
+			return;
 		const col = (this as any).getCollisionInfo(clientX, clientY, rect, scopeId);
 		const eventName = isWindow ? "OnMouseEnterAll" : "OnMouseEnter";
 		(this as any).ghostController.sendShioriEvent(eventName, [
@@ -52,8 +80,18 @@ export const mouseMethods = {
 		]);
 	},
 
-	onGhostMouseLeave(clientX?: number, clientY?: number, rect?: any, scopeId: number = 0, isWindow: boolean = false) {
-		if ((this as any).sakuraPlayer?.timeCritical && (this as any).sakuraPlayer?.isPlaying) return;
+	onGhostMouseLeave(
+		clientX?: number,
+		clientY?: number,
+		rect?: any,
+		scopeId: number = 0,
+		isWindow: boolean = false,
+	) {
+		if (
+			(this as any).sakuraPlayer?.timeCritical &&
+			(this as any).sakuraPlayer?.isPlaying
+		)
+			return;
 		const col = (this as any).getCollisionInfo(clientX, clientY, rect, scopeId);
 		const eventName = isWindow ? "OnMouseLeaveAll" : "OnMouseLeave";
 		(this as any).ghostController.sendShioriEvent(eventName, [
@@ -76,7 +114,11 @@ export const mouseMethods = {
 		device: string = "mouse",
 		scopeId: number = 0,
 	) {
-		if ((this as any).sakuraPlayer?.timeCritical && (this as any).sakuraPlayer?.isPlaying) return;
+		if (
+			(this as any).sakuraPlayer?.timeCritical &&
+			(this as any).sakuraPlayer?.isPlaying
+		)
+			return;
 		const col = (this as any).getCollisionInfo(clientX, clientY, rect, scopeId);
 		const eventName = type === "up" ? "OnMouseUpEx" : "OnMouseDownEx";
 		(this as any).ghostController.sendShioriEvent(eventName, [
@@ -99,7 +141,11 @@ export const mouseMethods = {
 		scopeId: number = 0,
 		isDouble: boolean = false,
 	) {
-		if ((this as any).sakuraPlayer?.timeCritical && (this as any).sakuraPlayer?.isPlaying) return;
+		if (
+			(this as any).sakuraPlayer?.timeCritical &&
+			(this as any).sakuraPlayer?.isPlaying
+		)
+			return;
 		const col = (this as any).getCollisionInfo(clientX, clientY, rect, scopeId);
 		const eventName = isDouble ? "OnMouseDoubleClickEx" : "OnMouseClickEx";
 		(this as any).ghostController.sendShioriEvent(eventName, [
@@ -123,7 +169,11 @@ export const mouseMethods = {
 		scopeId: number = 0,
 		isEx: boolean = false,
 	) {
-		if ((this as any).sakuraPlayer?.timeCritical && (this as any).sakuraPlayer?.isPlaying) return;
+		if (
+			(this as any).sakuraPlayer?.timeCritical &&
+			(this as any).sakuraPlayer?.isPlaying
+		)
+			return;
 		const col = (this as any).getCollisionInfo(clientX, clientY, rect, scopeId);
 		const eventName = isEx ? "OnMouseMultipleClickEx" : "OnMouseMultipleClick";
 		(this as any).ghostController.sendShioriEvent(eventName, [
@@ -148,7 +198,11 @@ export const mouseMethods = {
 		direction: string,
 		scopeId: number = 0,
 	) {
-		if ((this as any).sakuraPlayer?.timeCritical && (this as any).sakuraPlayer?.isPlaying) return;
+		if (
+			(this as any).sakuraPlayer?.timeCritical &&
+			(this as any).sakuraPlayer?.isPlaying
+		)
+			return;
 		const coord = (x: number, y: number) => `${x}\x01${y}`;
 		(this as any).ghostController.sendShioriEvent("OnMouseGesture", [
 			scopeId,
@@ -168,7 +222,11 @@ export const mouseMethods = {
 		device: string = "mouse",
 		scopeId: number = 0,
 	) {
-		if ((this as any).sakuraPlayer?.timeCritical && (this as any).sakuraPlayer?.isPlaying) return;
+		if (
+			(this as any).sakuraPlayer?.timeCritical &&
+			(this as any).sakuraPlayer?.isPlaying
+		)
+			return;
 		const col = (this as any).getCollisionInfo(clientX, clientY, rect, scopeId);
 		(this as any).ghostController.sendShioriEvent("OnMouseDown", [
 			col.canvasX,
@@ -189,7 +247,11 @@ export const mouseMethods = {
 		device: string = "mouse",
 		scopeId: number = 0,
 	) {
-		if ((this as any).sakuraPlayer?.timeCritical && (this as any).sakuraPlayer?.isPlaying) return;
+		if (
+			(this as any).sakuraPlayer?.timeCritical &&
+			(this as any).sakuraPlayer?.isPlaying
+		)
+			return;
 		const col = (this as any).getCollisionInfo(clientX, clientY, rect, scopeId);
 		(this as any).ghostController.sendShioriEvent("OnMouseUp", [
 			col.canvasX,
@@ -202,8 +264,18 @@ export const mouseMethods = {
 		]);
 	},
 
-	onGhostWheel(clientX?: number, clientY?: number, rect?: any, delta: number = 0, scopeId: number = 0) {
-		if ((this as any).sakuraPlayer?.timeCritical && (this as any).sakuraPlayer?.isPlaying) return;
+	onGhostWheel(
+		clientX?: number,
+		clientY?: number,
+		rect?: any,
+		delta: number = 0,
+		scopeId: number = 0,
+	) {
+		if (
+			(this as any).sakuraPlayer?.timeCritical &&
+			(this as any).sakuraPlayer?.isPlaying
+		)
+			return;
 		const col = (this as any).getCollisionInfo(clientX, clientY, rect, scopeId);
 		(this as any).ghostController.sendShioriEvent("OnMouseWheel", [
 			col.canvasX,
@@ -214,8 +286,17 @@ export const mouseMethods = {
 		]);
 	},
 
-	onGhostDragStart(clientX?: number, clientY?: number, rect?: any, scopeId: number = 0) {
-		if ((this as any).sakuraPlayer?.timeCritical && (this as any).sakuraPlayer?.isPlaying) return;
+	onGhostDragStart(
+		clientX?: number,
+		clientY?: number,
+		rect?: any,
+		scopeId: number = 0,
+	) {
+		if (
+			(this as any).sakuraPlayer?.timeCritical &&
+			(this as any).sakuraPlayer?.isPlaying
+		)
+			return;
 		const col = (this as any).getCollisionInfo(clientX, clientY, rect, scopeId);
 		(this as any).ghostController.sendShioriEvent("OnMouseDragStart", [
 			col.canvasX,
@@ -226,8 +307,17 @@ export const mouseMethods = {
 		]);
 	},
 
-	onGhostDragEnd(clientX?: number, clientY?: number, rect?: any, scopeId: number = 0) {
-		if ((this as any).sakuraPlayer?.timeCritical && (this as any).sakuraPlayer?.isPlaying) return;
+	onGhostDragEnd(
+		clientX?: number,
+		clientY?: number,
+		rect?: any,
+		scopeId: number = 0,
+	) {
+		if (
+			(this as any).sakuraPlayer?.timeCritical &&
+			(this as any).sakuraPlayer?.isPlaying
+		)
+			return;
 		const col = (this as any).getCollisionInfo(clientX, clientY, rect, scopeId);
 		(this as any).ghostController.sendShioriEvent("OnMouseDragEnd", [
 			col.canvasX,
@@ -238,8 +328,17 @@ export const mouseMethods = {
 		]);
 	},
 
-	onGhostHover(clientX?: number, clientY?: number, rect?: any, scopeId: number = 0) {
-		if ((this as any).sakuraPlayer?.timeCritical && (this as any).sakuraPlayer?.isPlaying) return;
+	onGhostHover(
+		clientX?: number,
+		clientY?: number,
+		rect?: any,
+		scopeId: number = 0,
+	) {
+		if (
+			(this as any).sakuraPlayer?.timeCritical &&
+			(this as any).sakuraPlayer?.isPlaying
+		)
+			return;
 		const col = (this as any).getCollisionInfo(clientX, clientY, rect, scopeId);
 		(this as any).ghostController.sendShioriEvent("OnMouseHover", [
 			col.canvasX,
@@ -250,7 +349,12 @@ export const mouseMethods = {
 		]);
 	},
 
-	getCollisionInfo(clientX?: number, clientY?: number, rect?: any, scopeId: number = 0) {
+	getCollisionInfo(
+		clientX?: number,
+		clientY?: number,
+		rect?: any,
+		scopeId: number = 0,
+	) {
 		if (
 			clientX !== undefined &&
 			clientY !== undefined &&

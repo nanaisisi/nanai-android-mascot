@@ -1,3 +1,4 @@
+import { isTauriAvailable } from "../../core/tauri-helper.js";
 import {
 	DOCK_LEFT_THRESHOLD,
 	DOCK_RESTORE_OFFSET,
@@ -20,7 +21,6 @@ import {
 import { createLongPressController } from "./drag/long-press.js";
 import { createStrokeTracker } from "./drag/stroke.js";
 import { isPixelTransparent } from "./transparency.js";
-import { isTauriAvailable } from "../../core/tauri-helper.js";
 
 // Re-export submodules for direct usage
 export {

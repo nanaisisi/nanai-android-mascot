@@ -3,7 +3,11 @@
  * @brief \![open,inputbox] 等ハンドラ
  */
 
-export function openInputBox(handler: any, params: string[], isPassword: boolean = false) {
+export function openInputBox(
+	handler: any,
+	params: string[],
+	isPassword: boolean = false,
+) {
 	if (isPassword && handler.app?.modalDialogController?.openPasswordInput) {
 		return handler.app.modalDialogController.openPasswordInput(
 			params,
@@ -84,7 +88,11 @@ export function openInputBox(handler: any, params: string[], isPassword: boolean
 		const val = input.value;
 		form.remove();
 		handler.app.ghostController?.sendShioriEvent(id, [val, ...references]);
-		handler.app.ghostController?.sendShioriEvent("OnUserInput", [id, val, ...references]);
+		handler.app.ghostController?.sendShioriEvent("OnUserInput", [
+			id,
+			val,
+			...references,
+		]);
 		handler.app.ghostController?.sendShioriEvent("OnSystemDialog", [id, val]);
 	};
 
@@ -165,7 +173,7 @@ export function openTimeInput(handler: any, params: string[]) {
 
 export function closeInputBox(handler: any, paramsOrNotify: any = false) {
 	let notifyCancel = false;
-	let id: string | undefined = undefined;
+	let id: string | undefined;
 	if (Array.isArray(paramsOrNotify)) {
 		id = paramsOrNotify[0];
 	} else {

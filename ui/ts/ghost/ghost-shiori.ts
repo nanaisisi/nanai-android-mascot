@@ -82,7 +82,8 @@ export const ghostShioriMethods = {
 					isMinimized,
 					cantTalk,
 				]);
-			} catch (_e) {} finally {
+			} catch (_e) {
+			} finally {
 				(this as any)._secondSending = false;
 			}
 		}, 1000);

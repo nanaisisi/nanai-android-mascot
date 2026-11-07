@@ -3,7 +3,11 @@
  * @brief \j[ID] / \j[URL] ジャンプコマンドハンドラ
  */
 
-export async function handleJumpCommand(handler: any, target: string, args: string[] = []) {
+export async function handleJumpCommand(
+	handler: any,
+	target: string,
+	args: string[] = [],
+) {
 	const destination = (target ?? "").trim();
 	if (!destination) return;
 

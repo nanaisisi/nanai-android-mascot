@@ -53,7 +53,7 @@ export function tokenizeDisplayTag(script: string, i: number, _len: number) {
 	}
 
 	if (char === "b") {
-		let curr = i + 1;
+		const curr = i + 1;
 		if (script[curr] === "[") {
 			const parsed = readBracketContent(script, curr);
 			if (parsed) {

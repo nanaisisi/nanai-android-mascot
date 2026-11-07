@@ -94,7 +94,10 @@ export function renderSubmenuContent({
 			? cachedBalloons
 			: [
 					{ dir_name: "nam_default_plus", name: "NAMデフォルト+" },
-					{ dir_name: "nam_default_plus_overhead", name: "NAMデフォルト+(頭上)" },
+					{
+						dir_name: "nam_default_plus_overhead",
+						name: "NAMデフォルト+(頭上)",
+					},
 					{ dir_name: "pixel", name: "ピクセル" },
 					{ dir_name: "comic", name: "コミック" },
 					{ dir_name: "dark", name: "ダーク" },
@@ -138,7 +141,9 @@ export function renderSubmenuContent({
 			btn.innerHTML = `<span>${ghostName}</span>`;
 			btn.addEventListener("click", () => {
 				const action =
-					typeof item === "object" && item?.action ? item.action : "recent-ghost";
+					typeof item === "object" && item?.action
+						? item.action
+						: "recent-ghost";
 				dispatchSubmenuAction(
 					action,
 					typeof item === "object" ? item : ghostName,
@@ -164,15 +169,39 @@ export function renderSubmenuContent({
 			{ action: "speech-synthesis", label: "音声合成 (V)", shortcut: "" },
 			{ action: "addressbar", label: "アドレスバー (A)", shortcut: "" },
 			{ action: "open-file", label: "ファイルを開く (1)", shortcut: "Ctrl+O" },
-			{ action: "open-folder", label: "フォルダを選択する (S)", shortcut: "Ctrl+Shift+U" },
-			{ action: "clear-cache", label: "ゴーストキャッシュ開放 (G)", shortcut: "Ctrl+F" },
+			{
+				action: "open-folder",
+				label: "フォルダを選択する (S)",
+				shortcut: "Ctrl+Shift+U",
+			},
+			{
+				action: "clear-cache",
+				label: "ゴーストキャッシュ開放 (G)",
+				shortcut: "Ctrl+F",
+			},
 			{ action: "update-fmo", label: "FMOの整理/更新 (E)", shortcut: "" },
 			{ action: "reload-info", label: "動作情報再読み込み (R)", shortcut: "" },
 			{ action: "reload-ghost", label: "ゴースト再読み込み (○)", shortcut: "" },
-			{ action: "keep-temporary-ghost", label: "一時起動ゴーストを保持 (K)", shortcut: "Ctrl+K" },
-			{ action: "reset-shell-position", label: "シェル位置初期化 (H)", shortcut: "Ctrl+Shift+F12" },
-			{ action: "reset-balloon-position", label: "バルーン位置初期化 (N)", shortcut: "Ctrl+Shift+F10" },
-			{ action: "close-balloon", label: "バルーンを消す (B)", shortcut: "Ctrl+Shift+Del" },
+			{
+				action: "keep-temporary-ghost",
+				label: "一時起動ゴーストを保持 (K)",
+				shortcut: "Ctrl+K",
+			},
+			{
+				action: "reset-shell-position",
+				label: "シェル位置初期化 (H)",
+				shortcut: "Ctrl+Shift+F12",
+			},
+			{
+				action: "reset-balloon-position",
+				label: "バルーン位置初期化 (N)",
+				shortcut: "Ctrl+Shift+F10",
+			},
+			{
+				action: "close-balloon",
+				label: "バルーンを消す (B)",
+				shortcut: "Ctrl+Shift+Del",
+			},
 		];
 		utilityItems.forEach((item) => {
 			const btn = document.createElement("button");

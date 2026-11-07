@@ -125,7 +125,12 @@ export async function _applyAnimationFrame(
 		if (gc?.setScopeMoveOffset) {
 			gc.setScopeMoveOffset(scopeId, moveX, moveY);
 		} else if (typeof document !== "undefined") {
-			const selector = scopeId === 0 ? "ghost-display" : (scopeId === 1 ? "kero-display" : `char-display-${scopeId}`);
+			const selector =
+				scopeId === 0
+					? "ghost-display"
+					: scopeId === 1
+						? "kero-display"
+						: `char-display-${scopeId}`;
 			const el = document.getElementById(selector);
 			if (el) {
 				el.style.transform = `translate(${moveX}px, ${moveY}px)`;

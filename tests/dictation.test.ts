@@ -181,9 +181,13 @@ describe("DictationManager", () => {
 		};
 
 		const manager1 = new DictationManager(null);
-		expect(() => manager1.recognition.onresult({ results: [[{ transcript: "test" }]] })).not.toThrow();
+		expect(() =>
+			manager1.recognition.onresult({ results: [[{ transcript: "test" }]] }),
+		).not.toThrow();
 
 		const manager2 = new DictationManager({});
-		expect(() => manager2.recognition.onresult({ results: [[{ transcript: "test" }]] })).not.toThrow();
+		expect(() =>
+			manager2.recognition.onresult({ results: [[{ transcript: "test" }]] }),
+		).not.toThrow();
 	});
 });

@@ -153,7 +153,9 @@ export const menuBalloonDressupRenderer = {
 
 			btn.addEventListener("click", () => {
 				const action =
-					typeof item === "object" && item?.action ? item.action : "recent-ghost";
+					typeof item === "object" && item?.action
+						? item.action
+						: "recent-ghost";
 				this.dispatcher.dispatchAction(
 					action,
 					typeof item === "object" ? item : ghostName,

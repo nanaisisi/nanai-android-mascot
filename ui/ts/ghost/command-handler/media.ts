@@ -18,7 +18,10 @@ export async function handleRestoreWallpaper(_handler: any, _args: string[]) {
 	console.log("🖼️ Wallpaper restorewallpaper executed");
 }
 
-export async function handleCancelNetworkService(_handler: any, args: string[]) {
+export async function handleCancelNetworkService(
+	_handler: any,
+	args: string[],
+) {
 	const [service, target] = args.slice(1);
 	console.log(`🛑 Network service cancel: ${service} (${target})`);
 }
@@ -90,7 +93,11 @@ export async function handleUpdateByMyself(handler: any) {
 	await handler.app.startNetworkUpdate?.();
 }
 
-export async function handleSoundEventNotify(handler: any, action: string, params: string[] = []) {
+export async function handleSoundEventNotify(
+	handler: any,
+	action: string,
+	params: string[] = [],
+) {
 	const gc = handler?.app?.ghostController;
 	if (!gc?.sendShioriEvent) return;
 

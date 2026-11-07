@@ -235,8 +235,16 @@ export class BalloonThemeManager {
 		if (isTauriAvailable()) {
 			emit("sync-theme", themeName);
 			if (themeName === "nam_default_plus_overhead") {
-				void invoke("set_balloon_offset", { scopeId: 0, x: -40, y: -210 }).catch(() => {});
-				void invoke("set_balloon_offset", { scopeId: 1, x: -40, y: -210 }).catch(() => {});
+				void invoke("set_balloon_offset", {
+					scopeId: 0,
+					x: -40,
+					y: -210,
+				}).catch(() => {});
+				void invoke("set_balloon_offset", {
+					scopeId: 1,
+					x: -40,
+					y: -210,
+				}).catch(() => {});
 			} else if (themeName === "nam_default_plus") {
 				void invoke("reset_balloon_positions").catch(() => {});
 			}
@@ -330,7 +338,8 @@ export const balloonThemeActions = {
 			this.balloonThemeManager = new BalloonThemeManager(this);
 		}
 		this.balloonThemeManager.availableBalloons = this.availableBalloons || [];
-		this.balloonThemeManager.currentTheme = this.currentBalloonTheme || "default";
+		this.balloonThemeManager.currentTheme =
+			this.currentBalloonTheme || "default";
 		return this.balloonThemeManager.cycleTheme();
 	},
 
@@ -352,7 +361,8 @@ export const balloonThemeActions = {
 		if (!this.balloonThemeManager) {
 			this.balloonThemeManager = new BalloonThemeManager(this);
 		}
-		this.balloonThemeManager.currentTheme = this.currentBalloonTheme || "default";
+		this.balloonThemeManager.currentTheme =
+			this.currentBalloonTheme || "default";
 		await this.balloonThemeManager.setTheme(themeName);
 		this.currentBalloonTheme = this.balloonThemeManager.currentTheme;
 	},

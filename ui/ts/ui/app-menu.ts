@@ -4,7 +4,11 @@ import { dressupMenuPayload } from "../surface/bind-menu.js";
 
 /** メニュー/クイックパネル関連メソッド (NanaiAndroidMascotApp に mixin) */
 export const menuMethods = {
-	toggleMenu(screenX: number | null = null, screenY: number | null = null, scope: number = 0) {
+	toggleMenu(
+		screenX: number | null = null,
+		screenY: number | null = null,
+		scope: number = 0,
+	) {
 		if (isTauriAvailable()) {
 			const sX = (globalThis as any).screenX ?? 0;
 			const sY = (globalThis as any).screenY ?? 0;
@@ -33,7 +37,8 @@ export const menuMethods = {
 
 	toggleHtmlMenu(scope: number = 0) {
 		if (!(this as any).elements.menuContainer) return;
-		const isVisible = (this as any).elements.menuContainer.style.display !== "none";
+		const isVisible =
+			(this as any).elements.menuContainer.style.display !== "none";
 		const nextState = isVisible ? "none" : "block";
 		(this as any).elements.menuContainer.style.display = nextState;
 		if (nextState === "block") {
@@ -77,7 +82,8 @@ export const menuMethods = {
 			}
 		}
 
-		const win = (document.getElementById("menu-iframe") as HTMLIFrameElement)?.contentWindow;
+		const win = (document.getElementById("menu-iframe") as HTMLIFrameElement)
+			?.contentWindow;
 		if (win) {
 			win.postMessage({ type: "sync-scope", scope }, "*");
 			win.postMessage(
@@ -122,8 +128,11 @@ export const menuMethods = {
 
 	toggleQuickActionsPanel() {
 		if (!(this as any).elements.quickActionsPanel) return;
-		const isVisible = (this as any).elements.quickActionsPanel.style.display !== "none";
-		(this as any).elements.quickActionsPanel.style.display = isVisible ? "none" : "flex";
+		const isVisible =
+			(this as any).elements.quickActionsPanel.style.display !== "none";
+		(this as any).elements.quickActionsPanel.style.display = isVisible
+			? "none"
+			: "flex";
 	},
 
 	hideQuickActionsPanel() {

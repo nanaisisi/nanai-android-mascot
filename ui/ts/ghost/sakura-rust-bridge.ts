@@ -104,22 +104,39 @@ export function rustCommandsToTokens(rustCommands: any[]): SakuraScriptToken[] {
 				tokens.push({ type: "end" });
 				break;
 			case "Animation":
-				tokens.push({ type: "animation", animId: cmd.payload?.id, wait: cmd.payload?.wait });
+				tokens.push({
+					type: "animation",
+					animId: cmd.payload?.id,
+					wait: cmd.payload?.wait,
+				});
 				break;
 			case "Sync":
 				tokens.push({ type: "sync_toggle", value: cmd.payload });
 				break;
 			case "Offset":
-				tokens.push({ type: "offset", x: String(cmd.payload?.x ?? "0"), y: String(cmd.payload?.y ?? "0") });
+				tokens.push({
+					type: "offset",
+					x: String(cmd.payload?.x ?? "0"),
+					y: String(cmd.payload?.y ?? "0"),
+				});
 				break;
 			case "Font":
-				tokens.push({ type: "font", tag: cmd.payload?.tag, param: cmd.payload?.param });
+				tokens.push({
+					type: "font",
+					tag: cmd.payload?.tag,
+					param: cmd.payload?.param,
+				});
 				break;
 			case "Command":
 				tokens.push({ type: "command", args: cmd.payload?.args });
 				break;
 			case "PostMessage":
-				tokens.push({ type: "post_message", umsg: cmd.payload?.umsg, wparam: cmd.payload?.wparam, lparam: cmd.payload?.lparam });
+				tokens.push({
+					type: "post_message",
+					umsg: cmd.payload?.umsg,
+					wparam: cmd.payload?.wparam,
+					lparam: cmd.payload?.lparam,
+				});
 				break;
 			case "Star":
 				tokens.push({ type: "command", command: "marker", args: [] });
@@ -131,13 +148,21 @@ export function rustCommandsToTokens(rustCommands: any[]): SakuraScriptToken[] {
 				tokens.push({ type: "wait_audio" });
 				break;
 			case "Jump":
-				tokens.push({ type: "command", command: "jump", args: [cmd.payload ?? ""] });
+				tokens.push({
+					type: "command",
+					command: "jump",
+					args: [cmd.payload ?? ""],
+				});
 				break;
 			case "Plus":
 				tokens.push({ type: "plus" });
 				break;
 			case "PluginEvent":
-				tokens.push({ type: "command", command: "raiseplugin", args: [cmd.payload?.plugin ?? "", cmd.payload?.event ?? ""] });
+				tokens.push({
+					type: "command",
+					command: "raiseplugin",
+					args: [cmd.payload?.plugin ?? "", cmd.payload?.event ?? ""],
+				});
 				break;
 			case "NoUserBreak":
 				tokens.push({ type: "no_user_break", value: cmd.payload });
@@ -149,13 +174,25 @@ export function rustCommandsToTokens(rustCommands: any[]): SakuraScriptToken[] {
 				tokens.push({ type: "midi", value: cmd.payload });
 				break;
 			case "ModeChange":
-				tokens.push({ type: "command", command: "entermode", args: [cmd.payload?.mode ?? ""] });
+				tokens.push({
+					type: "command",
+					command: "entermode",
+					args: [cmd.payload?.mode ?? ""],
+				});
 				break;
 			case "LockBalloonRepaint":
-				tokens.push({ type: "command", command: "lockrepaint", args: [cmd.payload ? "1" : "0"] });
+				tokens.push({
+					type: "command",
+					command: "lockrepaint",
+					args: [cmd.payload ? "1" : "0"],
+				});
 				break;
 			case "BalloonSetting":
-				tokens.push({ type: "command", command: "setballoon", args: [cmd.payload?.key ?? "", cmd.payload?.value ?? ""] });
+				tokens.push({
+					type: "command",
+					command: "setballoon",
+					args: [cmd.payload?.key ?? "", cmd.payload?.value ?? ""],
+				});
 				break;
 			case "ScheduleAdd":
 				tokens.push({ type: "command", command: "schedule-add", args: [] });
@@ -172,7 +209,9 @@ export function rustCommandsToTokens(rustCommands: any[]): SakuraScriptToken[] {
 	return tokens;
 }
 
-export async function parseSakuraScriptAsync(script: string): Promise<SakuraScriptToken[] | undefined> {
+export async function parseSakuraScriptAsync(
+	script: string,
+): Promise<SakuraScriptToken[] | undefined> {
 	if (!script || typeof script !== "string") return [];
 	if (!isTauriAvailable()) {
 		return undefined;

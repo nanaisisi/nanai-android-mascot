@@ -58,7 +58,11 @@ export function resetBalloonWait(this: any) {
 	});
 }
 
-export function calculateWait(this: any, baseMs: number, isCharWait: boolean = false): number {
+export function calculateWait(
+	this: any,
+	baseMs: number,
+	isCharWait: boolean = false,
+): number {
 	if (this.isQuickMode) return 0;
 	if (isCharWait && this.charWaitMs !== null) {
 		return Math.round(this.charWaitMs);

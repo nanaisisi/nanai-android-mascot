@@ -6,15 +6,15 @@ ukadoc-spec および SSP（Sakura Script Player）のオーナードローメ�
 
 ## 1. 適合項目・仕様マッピング
 
-| SSP メニュー項目 / 仕様要件 | 実装対応状況 (`../../../ui/menu-iframe.html` / `context-menu.ts`) | 備考・仕様準拠状況 |
-| :--- | :--- | :--- |
-| **ゴースト側/標準メニュー階層** | 実装済み (`talk-btn`, `autotalk-btn`, `biff-btn`, `headlines-btn` 等) | ukadoc-spec 準拠の標準機能順序 |
-| **サブシステム切替 (着せ替え・シェル・ゴースト・バルーン)** | 実装済み (`dressup-btn`, `shell-btn`, `ghost-btn`, `balloon-btn`) | サブメニュー連動対応 |
-| **ネットワーク更新・取込・アンインストール** | 実装済み (`update-btn`, `export-btn`, `uninstall-btn`) | 管理アクション完備 |
-| **システムパネル・設定・開発者パネル** | 実装済み (`config-btn`, `dev-btn`, `readme-btn`, `inquire-btn`) | デバッグ・設定機能統合 |
-| **終了・全終了・最小化** | 実装済み (`minimize-btn`, `close-btn`, `close-all-btn`) | ウィンドウライフサイクル制御 |
-| **ビジュアルスキン (Sidebar & Background Bitmap)** | 実装済み (`.menu-sidebar`, `.menu-container`, `menu-theme-renderer.ts`) | `sidebar_bitmap`, `background_bitmap` 動的反映 |
-| **透過背景 & スクロールなしジャストフィット** | 実装済み (`background: transparent`, `overflow-y: hidden`) | アイボリー等の不要なデフォルト背景を廃止し、SSPのオーナードロー透過挙動を再現 |
+| SSP メニュー項目 / 仕様要件                                 | 実装対応状況 (`../../../ui/menu-iframe.html` / `context-menu.ts`)       | 備考・仕様準拠状況                                                            |
+| :---------------------------------------------------------- | :---------------------------------------------------------------------- | :---------------------------------------------------------------------------- |
+| **ゴースト側/標準メニュー階層**                             | 実装済み (`talk-btn`, `autotalk-btn`, `biff-btn`, `headlines-btn` 等)   | ukadoc-spec 準拠の標準機能順序                                                |
+| **サブシステム切替 (着せ替え・シェル・ゴースト・バルーン)** | 実装済み (`dressup-btn`, `shell-btn`, `ghost-btn`, `balloon-btn`)       | サブメニュー連動対応                                                          |
+| **ネットワーク更新・取込・アンインストール**                | 実装済み (`update-btn`, `export-btn`, `uninstall-btn`)                  | 管理アクション完備                                                            |
+| **システムパネル・設定・開発者パネル**                      | 実装済み (`config-btn`, `dev-btn`, `readme-btn`, `inquire-btn`)         | デバッグ・設定機能統合                                                        |
+| **終了・全終了・最小化**                                    | 実装済み (`minimize-btn`, `close-btn`, `close-all-btn`)                 | ウィンドウライフサイクル制御                                                  |
+| **ビジュアルスキン (Sidebar & Background Bitmap)**          | 実装済み (`.menu-sidebar`, `.menu-container`, `menu-theme-renderer.ts`) | `sidebar_bitmap`, `background_bitmap` 動的反映                                |
+| **透過背景 & スクロールなしジャストフィット**               | 実装済み (`background: transparent`, `overflow-y: hidden`)              | アイボリー等の不要なデフォルト背景を廃止し、SSPのオーナードロー透過挙動を再現 |
 
 ---
 

@@ -44,9 +44,11 @@ graph TD
 伺か（Ukagaka）のエコシステムにおいて、サードパーティ製ゴースト（YAYA, 里々, 華和梨, 各種C++製SHIORI）の多くは歴史的経緯から **Windows 32-bit (x86) DLL** としてビルドされています。
 
 ### A. 64-bit プロセスからの直接ロードの壁
+
 - 現代の主要な開発・実行環境（Windows x86_64 の 64-bit Rust/Tauri アプリケーション）において、64-bit プロセスが 32-bit DLL を直接 `LoadLibrary` (`libloading`) することは **Windows OS のアーキテクチャ制約により不可能** です（32bitプロセス空間と64bitプロセス空間の混在不可）。
 
 ### B. 採用すべき解決アプローチ（プロキシ/ブリッジ設計）
+
 将来的に Windows デスクトップ環境でレガシーな 32-bit SHIORI DLL をサポートする場合、以下のアーキテクチャ設計についての言及・備えをドキュメントおよびローダー層に残すことが重要です：
 
 1. **Out-of-Process 32-bit Helper Proxy (`nanai-shiori-proxy-32.exe`)**:
@@ -62,10 +64,12 @@ graph TD
 ## 4. 今後の Rust 移行・統合の検討事項 (Re-evaluation Points)
 
 ### A. WebView / DOM レンダリング層の扱い
+
 - **現状**: UI描画、コンテキストメニュー、タッチジェスチャー認識、ダイアログ等は TypeScript (`../../../ui/ts`) および Android Compose (`nanai-android-mascot`) で実装。
 - **評価**: UI層は頻繁なビューの変更やプラットフォーム固有のAPI（Android Native / WebView）に依存するため、**TypeScript / Kotlin (Compose) に維持するのが最も開発生産性と保守性が高い**。
 
 ### B. SHIORI DLL / 外部プラグイン実行のホスティング
+
 - **現状**: Rust バックエンド側で SHIORI プロトコル（YAYA / KAWARI / などのネイティブ/WASMモジュール）のロード・通信抽象化基盤を整備中。
 - **方向性**: 将来的により高度なサンドボックス化やクロスプラットフォーム（Android上でのWASM/ネイティブSHIORI実行）を進める場合、SHIORI ローダー層の Rust 側での完全カプセル化を深化させる。
 

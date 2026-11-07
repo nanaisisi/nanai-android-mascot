@@ -84,7 +84,9 @@ describe("Window Snapping & SSP Tooltip", () => {
 	});
 
 	it("formats coordinates only when coordsOnly option is true", () => {
-		const text = formatSnapTooltipText(1363, 842, "Character", "None", { coordsOnly: true });
+		const text = formatSnapTooltipText(1363, 842, "Character", "None", {
+			coordsOnly: true,
+		});
 		assert.equal(text, "1363,842");
 	});
 });

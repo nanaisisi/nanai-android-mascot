@@ -3,7 +3,9 @@
  * @brief Nanai Android Mascot - SHIORI レスポンス変換ヘルパー
  */
 
-export function statusCodeFromRust(status: string | Record<string, any> | undefined): number {
+export function statusCodeFromRust(
+	status: string | Record<string, any> | undefined,
+): number {
 	const codes: Record<string, number> = {
 		Ok: 200,
 		NoContent: 204,

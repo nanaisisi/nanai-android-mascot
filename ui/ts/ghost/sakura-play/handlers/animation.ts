@@ -3,11 +3,21 @@
  * @brief さくらスクリプト再生時のサーフィス変更(\s)、SERIKOアニメーション再生・待機ハンドラ
  */
 
-export function handleSurface(player: any, app: any, token: any, _context: any) {
+export function handleSurface(
+	player: any,
+	app: any,
+	token: any,
+	_context: any,
+) {
 	app.ghostController.updateSurface(token.value, player.currentScope);
 }
 
-export async function handleAnimation(player: any, app: any, token: any, _context: any) {
+export async function handleAnimation(
+	player: any,
+	app: any,
+	token: any,
+	_context: any,
+) {
 	await app.surfaceManager?.playAnimationById(
 		token.animId,
 		player.currentScope,
@@ -15,6 +25,11 @@ export async function handleAnimation(player: any, app: any, token: any, _contex
 	);
 }
 
-export async function handleWaitAnimation(player: any, app: any, token: any, _context: any) {
+export async function handleWaitAnimation(
+	player: any,
+	app: any,
+	token: any,
+	_context: any,
+) {
 	await app.surfaceManager?.waitForAnimation(token.animId, player.currentScope);
 }

@@ -4,7 +4,7 @@
  */
 
 export interface SakuraAstNode {
-	nodeType: 'root' | 'scope' | 'anchor' | 'choice' | 'command';
+	nodeType: "root" | "scope" | "anchor" | "choice" | "command";
 	scope?: number;
 	id?: string;
 	text?: string;
@@ -197,7 +197,10 @@ export function tokensToAst(tokens: any[]): SakuraAstNode {
 	};
 }
 
-export function traverseAst(node: SakuraAstNode, visitor: (node: SakuraAstNode) => void) {
+export function traverseAst(
+	node: SakuraAstNode,
+	visitor: (node: SakuraAstNode) => void,
+) {
 	if (!node) return;
 	visitor(node);
 	if (Array.isArray(node.children)) {
@@ -207,7 +210,9 @@ export function traverseAst(node: SakuraAstNode, visitor: (node: SakuraAstNode) 
 	}
 }
 
-export function getSakuraTokenLifetime(token: any): 'Scope' | 'Script' | 'Permanent' {
+export function getSakuraTokenLifetime(
+	token: any,
+): "Scope" | "Script" | "Permanent" {
 	if (!token) return "Script";
 	const type = token.type;
 
@@ -253,13 +258,18 @@ export function collectAstTokens(ast: SakuraAstNode): any[] {
 	return tokens;
 }
 
-export function collectAstTokensByLifetime(ast: SakuraAstNode, lifetime: 'Scope' | 'Script' | 'Permanent'): any[] {
+export function collectAstTokensByLifetime(
+	ast: SakuraAstNode,
+	lifetime: "Scope" | "Script" | "Permanent",
+): any[] {
 	return collectAstTokens(ast).filter(
 		(token) => getSakuraTokenLifetime(token) === lifetime,
 	);
 }
 
-export function collectChoices(ast: SakuraAstNode): Array<{ id: string; text: string; args: string[] }> {
+export function collectChoices(
+	ast: SakuraAstNode,
+): Array<{ id: string; text: string; args: string[] }> {
 	const choices: Array<{ id: string; text: string; args: string[] }> = [];
 	traverseAst(ast, (node) => {
 		if (node.nodeType === "choice") {

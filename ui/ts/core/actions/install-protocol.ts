@@ -64,7 +64,9 @@ export function normalizeInstallType(type: string | null | undefined): string {
  * @param {string} [identifier="install"]
  * @returns {[string]}
  */
-export function buildInstallBeginArgs(identifier: string = "install"): [string] {
+export function buildInstallBeginArgs(
+	identifier: string = "install",
+): [string] {
 	return [String(identifier)];
 }
 
@@ -131,7 +133,10 @@ export function buildInstallCompleteAllArgs(
  * @param {string} [target=""]
  * @returns {[string, string]}
  */
-export function buildInstallRefuseArgs(reason: string = "refused", target: string = ""): [string, string] {
+export function buildInstallRefuseArgs(
+	reason: string = "refused",
+	target: string = "",
+): [string, string] {
 	return [String(reason ?? "refused"), String(target ?? "")];
 }
 

@@ -44,7 +44,11 @@ export function handleScope(player: any, app: any, token: any, context: any) {
 		context.currentBalloonText = keroText || sakuraText;
 	}
 
-	if (isTauriAvailable() && hasTextContent && !shownScopes.has(player.currentScope)) {
+	if (
+		isTauriAvailable() &&
+		hasTextContent &&
+		!shownScopes.has(player.currentScope)
+	) {
 		shownScopes.add(player.currentScope);
 		invoke("show_balloon_window", {
 			scopeId: player.currentScope,
@@ -53,7 +57,12 @@ export function handleScope(player: any, app: any, token: any, context: any) {
 	}
 }
 
-export function handleBalloon(player: any, _app: any, token: any, context: any) {
+export function handleBalloon(
+	player: any,
+	_app: any,
+	token: any,
+	context: any,
+) {
 	const { sakuraDisplay, keroDisplay } = context;
 	const balloonDisplay =
 		player.currentScope === 1 ? keroDisplay : sakuraDisplay;
@@ -64,7 +73,12 @@ export function handleBalloon(player: any, _app: any, token: any, context: any) 
 	}
 }
 
-export function handleInlineBitmap(_player: any, app: any, token: any, context: any) {
+export function handleInlineBitmap(
+	_player: any,
+	app: any,
+	token: any,
+	context: any,
+) {
 	const { currentBalloonText, scheduleDesktopBalloonSync } = context;
 
 	const img = document.createElement("img");

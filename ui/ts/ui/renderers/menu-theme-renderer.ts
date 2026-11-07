@@ -1,12 +1,38 @@
 /**
- * @file menu-theme-renderer.js
- * @brief コンテキストメニューのテーマ（BalloonTheme および Shell Menu Theme）適用ロジック
+ * @file menu-theme-renderer.ts
+ * @brief コンテキストメニューのテーマ（BalloonTheme および Shell Menu Theme）適用・アセット事前ロード処理
  */
+
+const imageCache = new Map<string, HTMLImageElement>();
+
+/**
+ * 画像アセットをメモリ・GPUへ事前デコード読み込み (初回メニュー表示時のチラつき・ロード不全防止)
+ */
+function preloadImage(url: string | null): Promise<void> {
+	if (!url) return Promise.resolve();
+	if (imageCache.has(url)) return Promise.resolve();
+	if (typeof Image === "undefined") return Promise.resolve();
+
+	return new Promise((resolve) => {
+		const img = new Image();
+		img.onload = () => {
+			if (img.decode) {
+				img.decode().then(() => resolve()).catch(() => resolve());
+			} else {
+				resolve();
+			}
+		};
+		img.onerror = () => resolve();
+		img.src = url;
+		imageCache.set(url, img);
+	});
+}
+
 export const menuThemeRenderer = {
 	/**
 	 * @param {string} theme
 	 */
-	applyTheme(theme) {
+	applyTheme(theme: string) {
 		if (theme) {
 			document.documentElement.setAttribute("data-balloon-theme", theme);
 			document.body.classList.remove(
@@ -20,9 +46,9 @@ export const menuThemeRenderer = {
 	},
 
 	/**
-	 * @param {{ menu_theme: any; path: string; }} activeShell
+	 * @param {{ menu_theme?: any; path?: string; }} activeShell
 	 */
-	applyShellTheme(activeShell) {
+	applyShellTheme(activeShell: any) {
 		const rootStyle = document.documentElement.style;
 		if (activeShell?.menu_theme) {
 			const mt = activeShell.menu_theme;
@@ -79,7 +105,7 @@ export const menuThemeRenderer = {
 			}
 
 			const shellPath = activeShell.path || "";
-			const resolveImg = (relPath) => {
+			const resolveImg = (relPath: string) => {
 				if (!relPath) return null;
 				if (
 					relPath.startsWith("data:") ||
@@ -92,12 +118,12 @@ export const menuThemeRenderer = {
 				const full = shellPath
 					? `${shellPath.replace(/\\/g, "/")}/${relPath.replace(/\\/g, "/")}`
 					: relPath;
-				return globalThis.__TAURI__?.core?.convertFileSrc
-					? globalThis.__TAURI__.core.convertFileSrc(full)
+				return (globalThis as any).__TAURI__?.core?.convertFileSrc
+					? (globalThis as any).__TAURI__.core.convertFileSrc(full)
 					: full;
 			};
 
-			const applyAlignment = (alignRaw, prefix) => {
+			const applyAlignment = (alignRaw: string, prefix: string) => {
 				const align = String(alignRaw || "").toLowerCase();
 				let pos = "left top";
 				if (align.includes("right") && align.includes("bottom")) {
@@ -125,8 +151,18 @@ export const menuThemeRenderer = {
 				rootStyle.setProperty(`--${prefix}-repeat`, repeat);
 			};
 
-			if (mt.background_bitmap) {
-				const bgUrl = resolveImg(mt.background_bitmap);
+			const bgUrl = resolveImg(mt.background_bitmap);
+			const fgUrl = resolveImg(mt.foreground_bitmap);
+			const sideUrl = resolveImg(mt.sidebar_bitmap);
+
+			// 初回表示の画像読み込み遅延・非表示防止用プリロード
+			void Promise.all([
+				preloadImage(bgUrl),
+				preloadImage(fgUrl),
+				preloadImage(sideUrl),
+			]);
+
+			if (bgUrl) {
 				rootStyle.setProperty("--menu-bg-image", `url("${bgUrl}")`);
 				applyAlignment(mt.background_alignment, "menu-bg");
 			} else {
@@ -135,8 +171,7 @@ export const menuThemeRenderer = {
 				rootStyle.removeProperty("--menu-bg-repeat");
 			}
 
-			if (mt.foreground_bitmap) {
-				const fgUrl = resolveImg(mt.foreground_bitmap);
+			if (fgUrl) {
 				rootStyle.setProperty("--menu-fg-image", `url("${fgUrl}")`);
 				applyAlignment(mt.foreground_alignment, "menu-fg");
 			} else {
@@ -145,8 +180,7 @@ export const menuThemeRenderer = {
 				rootStyle.removeProperty("--menu-fg-repeat");
 			}
 
-			if (mt.sidebar_bitmap) {
-				const sideUrl = resolveImg(mt.sidebar_bitmap);
+			if (sideUrl) {
 				rootStyle.setProperty("--menu-sidebar-image", `url("${sideUrl}")`);
 				const sideAlign = String(
 					mt.sidebar_alignment || "bottom",

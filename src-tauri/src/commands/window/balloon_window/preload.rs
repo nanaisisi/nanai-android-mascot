@@ -66,24 +66,26 @@ pub async fn preload_auxiliary_windows(app_handle: tauri::AppHandle) -> Result<(
             .build();
         }
 
-        // 4. サブキャラクターウィンドウ (scope 1: うにゅう/相方) を非表示状態で事前キャッシュ
-        let subchar_label = "subchar_window_1";
-        if app_handle.get_webview_window(subchar_label).is_none() {
-            let _ = tauri::WebviewWindowBuilder::new(
-                &app_handle,
-                subchar_label,
-                tauri::WebviewUrl::App("character.html?scope=1".into()),
-            )
-            .title("Nanai Android Mascot - Character 1")
-            .inner_size(200.0, 360.0)
-            .transparent(true)
-            .decorations(false)
-            .shadow(false)
-            .always_on_top(true)
-            .skip_taskbar(false)
-            .resizable(false)
-            .visible(false)
-            .build();
+        // 4. キャラクターウィンドウ (scope 0: メイン, scope 1: うにゅう/相方) を非表示状態で事前キャッシュ
+        for scope_id in [0, 1] {
+            let subchar_label = format!("subchar_window_{}", scope_id);
+            if app_handle.get_webview_window(&subchar_label).is_none() {
+                let _ = tauri::WebviewWindowBuilder::new(
+                    &app_handle,
+                    &subchar_label,
+                    tauri::WebviewUrl::App(format!("character.html?scope={}", scope_id).into()),
+                )
+                .title(format!("Nanai Android Mascot - Character {}", scope_id))
+                .inner_size(200.0, 360.0)
+                .transparent(true)
+                .decorations(false)
+                .shadow(false)
+                .always_on_top(true)
+                .skip_taskbar(false)
+                .resizable(false)
+                .visible(false)
+                .build();
+            }
         }
     }
     Ok(())

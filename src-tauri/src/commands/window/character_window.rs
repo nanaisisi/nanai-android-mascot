@@ -12,26 +12,54 @@ pub async fn show_character_window(
     #[cfg(desktop)]
     {
         use tauri::Manager;
-        let win_width = width.unwrap_or(200.0);
-        let win_height = height.unwrap_or(360.0);
+        let mut win_width = width.unwrap_or(200.0).max(100.0);
+        let mut win_height = height.unwrap_or(360.0).max(100.0);
         let label = format!("subchar_window_{}", scope_id);
 
-        if let Some(sub_win) = app_handle.get_webview_window(&label) {
-            let _ = sub_win.set_decorations(false);
-            let _ = sub_win.set_shadow(false);
-            let _ = sub_win.set_size(tauri::Size::Physical(tauri::PhysicalSize {
-                width: win_width.round() as u32,
-                height: win_height.round() as u32,
-            }));
-            if let (Some(px), Some(py)) = (x, y) {
-                let _ = sub_win.set_position(tauri::Position::Physical(tauri::PhysicalPosition {
-                    x: px as i32,
-                    y: py as i32,
-                }));
-            }
-            let _ = sub_win.unminimize();
-            let _ = sub_win.show();
+        let mut is_new = false;
+        let sub_win = if let Some(win) = app_handle.get_webview_window(&label) {
+            win
         } else {
+            is_new = true;
+            let title = if scope_id == 0 {
+                "Nanai Android Mascot - Main Character".to_string()
+            } else {
+                format!("Nanai Android Mascot - Character {}", scope_id)
+            };
+
+            tauri::WebviewWindowBuilder::new(
+                &app_handle,
+                &label,
+                tauri::WebviewUrl::App(format!("character.html?scope={}", scope_id).into()),
+            )
+            .title(title)
+            .inner_size(win_width, win_height)
+            .transparent(true)
+            .decorations(false)
+            .shadow(false)
+            .always_on_top(true)
+            .skip_taskbar(false)
+            .resizable(false)
+            .visible(false)
+            .build()
+            .map_err(|e| e.to_string())?
+        };
+
+        let is_visible = sub_win.is_visible().unwrap_or(false);
+
+        let _ = sub_win.set_decorations(false);
+        let _ = sub_win.set_shadow(false);
+        let _ = sub_win.set_size(tauri::Size::Physical(tauri::PhysicalSize {
+            width: win_width.round() as u32,
+            height: win_height.round() as u32,
+        }));
+
+        if let (Some(px), Some(py)) = (x, y) {
+            let _ = sub_win.set_position(tauri::Position::Physical(tauri::PhysicalPosition {
+                x: px as i32,
+                y: py as i32,
+            }));
+        } else if is_new || !is_visible || (win_width <= 150.0 && win_height <= 150.0) {
             // モニター情報を取得して画面右下 (デスクトップの床) に標準配置
             let mut target_x = 200.0;
             let mut target_y = 200.0;
@@ -57,45 +85,23 @@ pub async fn show_character_window(
                 && let Some(char0_win) = app_handle.get_webview_window("subchar_window_0")
                 && let Ok(pos) = char0_win.outer_position()
             {
-                target_x = (pos.x as f64) + (scope_id as f64 * 220.0);
-                target_y = pos.y as f64;
+                let scale = char0_win
+                    .current_monitor()
+                    .unwrap_or(None)
+                    .map(|m| m.scale_factor())
+                    .unwrap_or(1.0);
+                target_x = (pos.x as f64 / scale) - 220.0;
+                target_y = pos.y as f64 / scale;
             }
 
-            if let (Some(px), Some(py)) = (x, y) {
-                target_x = px;
-                target_y = py;
-            }
-
-            let title = if scope_id == 0 {
-                "Nanai Android Mascot - Main Character".to_string()
-            } else {
-                format!("Nanai Android Mascot - Character {}", scope_id)
-            };
-
-            let sub_win = tauri::WebviewWindowBuilder::new(
-                &app_handle,
-                &label,
-                tauri::WebviewUrl::App(format!("character.html?scope={}", scope_id).into()),
-            )
-            .title(title)
-            .inner_size(win_width, win_height)
-            .transparent(true)
-            .decorations(false)
-            .shadow(false)
-            .always_on_top(true)
-            .skip_taskbar(false)
-            .resizable(false)
-            .position(target_x, target_y)
-            .build()
-            .map_err(|e| e.to_string())?;
-
-            let _ = sub_win.set_size(tauri::Size::Physical(tauri::PhysicalSize {
-                width: win_width.round() as u32,
-                height: win_height.round() as u32,
+            let _ = sub_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
+                x: target_x,
+                y: target_y,
             }));
-
-            let _ = sub_win.show();
         }
+
+        let _ = sub_win.unminimize();
+        let _ = sub_win.show();
     }
     Ok(())
 }

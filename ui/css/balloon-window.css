@@ -48,6 +48,8 @@ body {
 	touch-action: pan-y;
 	writing-mode: var(--balloon-writing-mode, horizontal-tb);
 	-webkit-writing-mode: var(--balloon-writing-mode, horizontal-tb);
+	contain: layout paint;
+	will-change: contents;
 }
 
 @media (max-width: 600px) {

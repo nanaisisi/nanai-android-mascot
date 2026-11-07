@@ -11,8 +11,8 @@ path = "src/lib.rs"
 serde = { version = "1.0.229", features = ["derive"] }
 rust-i18n = "4.2.4"
 sys-locale = "0.3.2"
-encoding_rs = "0.8.42"
-wasmi = "0.38"
+encoding_rs = "0.8.44"
+wasmi = "2.0.0"
 nanai-core = { path = "../nanai-core" }
 nanai-surface = { path = "../nanai-surface" }
 nanai-shiori-vm = { path = "../nanai-shiori-vm" }

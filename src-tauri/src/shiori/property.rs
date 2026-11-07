@@ -18,7 +18,17 @@ pub fn evaluate_property_query(query: &str) -> String {
         "ghostlist.index(0).name" | "ghostlist.index(0)" => "Mock Ghost".to_string(),
         "ghostlist.index(0).path" => "mock_ghost".to_string(),
         "balloonlist.count" => "1".to_string(),
-        "balloonlist.index(0).name" => "Default Balloon".to_string(),
+        "balloonlist.index(0).name" | "balloonlist.index(0)" => "Default Balloon".to_string(),
+        "balloonlist.index(0).path" => "default_balloon".to_string(),
+        "currentghost.balloon.count" => "1".to_string(),
+        "currentghost.balloon.name" => "Default Balloon".to_string(),
+        "currentghost.balloon.path" => "default_balloon".to_string(),
+        "currentghost.balloon.mousecursor.arrow" => "arrow.cur".to_string(),
+        "currentghost.balloon.mousecursor.text" => "text.cur".to_string(),
+        "currentghost.balloon.mousecursor.wait" => "wait.cur".to_string(),
+        "currentghost.balloon.mousecursor" => "arrow.cur".to_string(),
+        "history.balloon.count" => "1".to_string(),
+        "history.balloon.index(0).name" | "history.balloon.index(0)" => "Default Balloon".to_string(),
         "pluginlist.count" => "0".to_string(),
         "headlinelist.count" => "0".to_string(),
         "baseware.name" | "system.baseware.name" => "Nanai Android Mascot".to_string(),
@@ -151,6 +161,31 @@ pub fn evaluate_property_query(query: &str) -> String {
                 }
                 return "0".to_string();
             }
+            if let Some(scope_prop) = q.strip_prefix("currentghost.balloon.scope(") {
+                // currentghost.balloon.scope(ID).* evaluation
+                if let Some(idx) = scope_prop.find(").") {
+                    let subprop = &scope_prop[idx + 2..];
+                    return match subprop {
+                        "x" | "y" | "basepos.x" | "basepos.y" => "0".to_string(),
+                        "rect" => "0,0,280,100".to_string(),
+                        "num" | "count" => "1".to_string(),
+                        "lines" | "lines.initial" => "4".to_string(),
+                        "validwidth" | "validwidth.initial" => "260".to_string(),
+                        "validheight" | "validheight.initial" => "80".to_string(),
+                        "char_width" => "12".to_string(),
+                        "background.color" => "255,255,255".to_string(),
+                        "vertical" => "0".to_string(),
+                        "scaling" => "100".to_string(),
+                        _ => "0".to_string(),
+                    };
+                }
+            }
+            if q.starts_with("currentghost.balloon.") {
+                return "1".to_string();
+            }
+            if q.starts_with("history.balloon.index(") || q.starts_with("history.balloon(") || q.starts_with("history.balloon") {
+                return "1".to_string();
+            }
             format!("(unknown property: {})", query)
         }
     }
@@ -217,6 +252,45 @@ mod tests {
         assert_eq!(
             evaluate_property_query("collisionvisiblebutton.caption"),
             "1"
+        );
+        assert_eq!(evaluate_property_query("balloonlist.count"), "1");
+        assert_eq!(
+            evaluate_property_query("balloonlist.index(0).name"),
+            "Default Balloon"
+        );
+        assert_eq!(evaluate_property_query("currentghost.balloon.count"), "1");
+        assert_eq!(
+            evaluate_property_query("currentghost.balloon.name"),
+            "Default Balloon"
+        );
+        assert_eq!(
+            evaluate_property_query("currentghost.balloon.mousecursor.arrow"),
+            "arrow.cur"
+        );
+        assert_eq!(
+            evaluate_property_query("currentghost.balloon.scope(0).rect"),
+            "0,0,280,100"
+        );
+        assert_eq!(
+            evaluate_property_query("currentghost.balloon.scope(0).validwidth"),
+            "260"
+        );
+        assert_eq!(
+            evaluate_property_query("currentghost.balloon.scope(0).validheight"),
+            "80"
+        );
+        assert_eq!(
+            evaluate_property_query("currentghost.balloon.scope(0).scaling"),
+            "100"
+        );
+        assert_eq!(
+            evaluate_property_query("currentghost.balloon.scope(0).vertical"),
+            "0"
+        );
+        assert_eq!(evaluate_property_query("history.balloon.count"), "1");
+        assert_eq!(
+            evaluate_property_query("history.balloon.index(0).name"),
+            "Default Balloon"
         );
         assert_eq!(
             evaluate_property_query("currentghost.seriko.surfacelist.defined"),

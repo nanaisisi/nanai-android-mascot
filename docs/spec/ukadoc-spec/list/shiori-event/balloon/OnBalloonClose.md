@@ -11,4 +11,5 @@
 ## 実装箇所
 
 - `ui/ts/ghost/shiori-notify.ts:346` `* バルーン閉じる通知 (OnBalloonClose) を送信 (UKADOC準拠)`
-- `ui/ts/ghost/shiori-notify.ts:350` `return await this.sendShioriNotify("OnBalloonClose", [lastScript]);`
+- `ui/ts/ghost/shiori-notify.ts:355` `return await this.sendShioriNotify("OnBalloonClose", [`
+- `ui/ts/core/app-settings.ts:100` `void (this as any).ghostController.sendShioriEvent("OnBalloonClose", [`

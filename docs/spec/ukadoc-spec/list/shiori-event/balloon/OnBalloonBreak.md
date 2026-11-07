@@ -10,5 +10,6 @@
 
 ## 実装箇所
 
-- `ui/ts/ghost/shiori-notify.ts:354` `* バルーン中断通知 (OnBalloonBreak) を送信 (UKADOC準拠)`
-- `ui/ts/ghost/shiori-notify.ts:365` `return await this.sendShioriNotify("OnBalloonBreak", [`
+- `ui/ts/ghost/shiori-notify.ts:362` `* バルーン中断通知 (OnBalloonBreak) を送信 (UKADOC準拠)`
+- `ui/ts/ghost/shiori-notify.ts:371` `return await this.sendShioriNotify("OnBalloonBreak", [`
+- `ui/ts/core/app-settings.ts:113` `void (this as any).ghostController.sendShioriEvent("OnBalloonBreak", [`

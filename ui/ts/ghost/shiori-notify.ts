@@ -609,6 +609,43 @@ export const shioriNotifyMethods = {
 	},
 
 	/**
+	 * 選択肢拡張通知 (OnChoiceSelectEx) を送信 (UKADOC 規格準拠)
+	 * Reference0: ラベル(text), Reference1: ID, Reference2..: 拡張引数
+	 */
+	async sendChoiceSelectExNotify(
+		this: any,
+		id: string,
+		text: string,
+		args: string[] = [],
+	) {
+		return await this.sendShioriNotify("OnChoiceSelectEx", [text, id, ...args]);
+	},
+
+	/**
+	 * アンカー拡張通知 (OnAnchorSelectEx) を送信 (UKADOC 規格準拠)
+	 * Reference0: テキスト, Reference1: ID, Reference2..: 拡張引数
+	 */
+	async sendAnchorSelectExNotify(
+		this: any,
+		id: string,
+		text: string,
+		args: string[] = [],
+	) {
+		return await this.sendShioriNotify("OnAnchorSelectEx", [text, id, ...args]);
+	},
+
+	/**
+	 * 利用条件受諾通知 (OnGhostTermsAccept) を送信 (UKADOC 規格準拠)
+	 */
+	async sendGhostTermsAcceptNotify(this: any, id: string = "") {
+		return await this.sendShioriNotify("OnGhostTermsAccept", id ? [id] : []);
+	},
+
+	/**
+	 * 利用条件拒否通知 (OnGhostTermsDecline) を送信 (UKADOC 規格準拠)
+	 */
+	async sendGhostTermsDeclineNotify(this: any, id: string = "") {
+		return await this.sendShioriNotify("OnGhostTermsDecline", id ? [id] : []);
 	 * ダイアログ関連 SHIORI イベント通知 (UKADOC dialogbox spec)
 	 */
 	async sendGhostTermsAccept(this: any, ghostName: string) {

@@ -130,6 +130,7 @@ export class SakuraScriptPlayer {
 	async onChoiceSelected(
 		choiceId: string,
 		choiceText: string,
+		extraArgs: string[] = [],
 		choiceArgs: string[] = [],
 	) {
 		console.log(`💡 選択肢選択: ${choiceId} (${choiceText})`);
@@ -140,6 +141,17 @@ export class SakuraScriptPlayer {
 		if (choiceId.startsWith("On")) {
 			await this.app.ghostController.sendShioriEvent(choiceId, [
 				choiceText,
+				...extraArgs,
+			]);
+		} else {
+			// UKADOC: OnChoiceSelectEx は OnChoiceSelect よりも先に開始
+			try {
+				await this.app.ghostController?.sendShioriEvent?.("OnChoiceSelectEx", [
+					choiceText,
+					choiceId,
+					...extraArgs,
+				]);
+			} catch (_e) {}
 				...choiceArgs,
 			]);
 		} else {
@@ -154,6 +166,7 @@ export class SakuraScriptPlayer {
 			await this.app.ghostController.sendShioriEvent("OnChoiceSelect", [
 				choiceId,
 				choiceText,
+				...extraArgs,
 			]);
 		}
 	}

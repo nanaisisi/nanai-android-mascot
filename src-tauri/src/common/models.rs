@@ -13,6 +13,9 @@ pub struct ShellMenuTheme {
     pub background_alignment: Option<String>,
     pub foreground_alignment: Option<String>,
     pub sidebar_alignment: Option<String>,
+    pub frame_color: Option<String>,
+    pub font_name: Option<String>,
+    pub font_height: Option<String>,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]

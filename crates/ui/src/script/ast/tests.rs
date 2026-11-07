@@ -252,3 +252,53 @@ fn test_ast_walk_anchor_and_empty_containers() {
     empty_root.walk(&mut |_| empty_visited += 1);
     assert_eq!(empty_visited, 1);
 }
+
+#[test]
+fn test_ast_cycle8_find_anchors_text_length_and_scope_nodes() {
+    let commands = vec![
+        SakuraCommand::Target(0),
+        SakuraCommand::Surface(0),
+        SakuraCommand::Text("Hello ".into()),
+        SakuraCommand::Anchor {
+            id: "a1".into(),
+            text: "World".into(),
+            args: vec!["a1".into(), "r1".into()],
+        },
+        SakuraCommand::Choice {
+            label: "Option 1".into(),
+            id: "OnOpt1".into(),
+            args: vec![],
+        },
+        SakuraCommand::Target(1),
+        SakuraCommand::Surface(10),
+        SakuraCommand::Text("Kero".into()),
+    ];
+    let ast = build_sakura_ast(&commands);
+
+    // 1. find_anchors
+    let anchors = ast.find_anchors();
+    assert_eq!(anchors.len(), 1);
+    assert_eq!(anchors[0], ("a1".to_string(), "World".to_string()));
+
+    // 2. calculate_text_length
+    // "Hello " (6) + "World" (5 from Anchor child text) + "Option 1" (8) + "Kero" (4) = 23
+    let length = ast.calculate_text_length();
+    assert_eq!(length, 23);
+
+    // 3. scope_nodes
+    let s0_nodes = ast.scope_nodes(0);
+    assert_eq!(s0_nodes.len(), 4); // Surface, Text, Anchor, Choice
+    let s1_nodes = ast.scope_nodes(1);
+    assert_eq!(s1_nodes.len(), 2); // Surface, Text
+    let s2_nodes = ast.scope_nodes(2);
+    assert!(s2_nodes.is_empty());
+
+    // Direct Scope node test
+    if let SakuraAstNode::Root { children } = &ast {
+        let direct_s0 = &children[0];
+        let nodes_from_scope = direct_s0.scope_nodes(0);
+        assert_eq!(nodes_from_scope.len(), 4);
+        let nodes_from_scope_mismatch = direct_s0.scope_nodes(1);
+        assert!(nodes_from_scope_mismatch.is_empty());
+    }
+}

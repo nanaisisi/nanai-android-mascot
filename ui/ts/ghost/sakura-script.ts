@@ -97,6 +97,16 @@ export class SakuraScriptPlayer {
 	skip() {
 		if (this.isPlaying) {
 			this.skipRequested = true;
+			if (this.app?.ghostController?.sendBalloonBreakNotify) {
+				const script = this.lastScript || "";
+				const scopeId = this.currentScope || 0;
+				const position = (this as any).currentProgressIndex || 0;
+				this.app.ghostController.sendBalloonBreakNotify(
+					script,
+					scopeId,
+					position,
+				);
+			}
 			if (typeof this._pauseResolver === "function") {
 				const resolve = this._pauseResolver;
 				this._pauseResolver = null;
@@ -117,18 +127,46 @@ export class SakuraScriptPlayer {
 		} catch (_e) {}
 	}
 
-	async onChoiceSelected(choiceId: string, choiceText: string) {
+	async onChoiceSelected(
+		choiceId: string,
+		choiceText: string,
+		extraArgs: string[] = [],
+		choiceArgs: string[] = [],
+	) {
 		console.log(`💡 選択肢選択: ${choiceId} (${choiceText})`);
 		if (this.choiceTimeoutTimer) {
 			clearTimeout(this.choiceTimeoutTimer);
 			this.choiceTimeoutTimer = null;
 		}
 		if (choiceId.startsWith("On")) {
-			await this.app.ghostController.sendShioriEvent(choiceId, [choiceText]);
+			await this.app.ghostController.sendShioriEvent(choiceId, [
+				choiceText,
+				...extraArgs,
+			]);
 		} else {
+			// UKADOC: OnChoiceSelectEx は OnChoiceSelect よりも先に開始
+			try {
+				await this.app.ghostController?.sendShioriEvent?.("OnChoiceSelectEx", [
+					choiceText,
+					choiceId,
+					...extraArgs,
+				]);
+			} catch (_e) {}
+				...choiceArgs,
+			]);
+		} else {
+			// UKADOC: OnChoiceSelectEx is sent first (Reference0: text, Reference1: ID, Reference2..N: args)
+			const resEx: any = await this.app.ghostController.sendShioriEvent(
+				"OnChoiceSelectEx",
+				[choiceText, choiceId, ...choiceArgs],
+			);
+			if (resEx && (resEx.response || resEx.script)) {
+				return;
+			}
 			await this.app.ghostController.sendShioriEvent("OnChoiceSelect", [
 				choiceId,
 				choiceText,
+				...extraArgs,
 			]);
 		}
 	}

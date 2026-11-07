@@ -21,7 +21,20 @@ export function handleChoice(player: any, app: any, token: any, context: any) {
 			clearTimeout(player.choiceTimeoutTimer);
 			player.choiceTimeoutTimer = null;
 		}
-		player.onChoiceSelected(token.id, token.text);
+		if (player.onChoiceSelected) {
+			player.onChoiceSelected(token.id, token.text, token.args || []);
+		} else {
+			app.ghostController?.sendShioriEvent?.("OnChoiceSelectEx", [
+				token.text,
+				token.id,
+				...(token.args || []),
+			]);
+			app.ghostController?.sendShioriEvent?.("OnChoiceSelect", [
+				token.id,
+				token.text,
+				...(token.args || []),
+			]);
+		}
 	});
 	choiceBtn.addEventListener("mouseenter", () => {
 		app.ghostController?.sendShioriEvent("OnChoiceEnter", [
@@ -70,16 +83,37 @@ export function handleAnchorBegin(
 	anchorSpan.dataset.anchorId = token.id;
 	anchorSpan.setAttribute("data-anchor-id", token.id);
 	let hoverTimer: any = null;
-	anchorSpan.addEventListener("click", (e: MouseEvent) => {
+	anchorSpan.addEventListener("click", async (e: MouseEvent) => {
 		e.stopPropagation();
 		if (hoverTimer) {
 			clearTimeout(hoverTimer);
 			hoverTimer = null;
 		}
-		app.ghostController.sendShioriEvent("OnAnchorSelect", [
+		app.ghostController?.sendShioriEvent?.("OnAnchorSelectEx", [
+			anchorSpan.textContent || token.id,
 			token.id,
 			...(token.args || []),
 		]);
+		app.ghostController?.sendShioriEvent?.("OnAnchorSelect", [
+			token.id,
+			...(token.args || []),
+		]);
+		const anchorText = anchorSpan.textContent || token.id;
+		const args = token.args || [];
+		if (app.ghostController?.sendShioriEvent) {
+			// UKADOC: OnAnchorSelectEx is sent first (Reference0: text, Reference1: ID, Reference2..N: args)
+			const resEx: any = await app.ghostController.sendShioriEvent(
+				"OnAnchorSelectEx",
+				[anchorText, token.id, ...args],
+			);
+			if (resEx && (resEx.response || resEx.script)) {
+				return;
+			}
+			await app.ghostController.sendShioriEvent("OnAnchorSelect", [
+				token.id,
+				...args,
+			]);
+		}
 	});
 	anchorSpan.addEventListener("mouseenter", () => {
 		app.ghostController?.sendShioriEvent("OnAnchorEnter", [

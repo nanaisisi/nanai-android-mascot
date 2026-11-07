@@ -120,10 +120,16 @@ export function tokensToAst(tokens: any[]): SakuraAstNode {
 			anchorChildren = [];
 		} else if (token.type === "anchor_end") {
 			if (currentAnchor) {
+				const derivedText =
+					currentAnchor.text ||
+					anchorChildren
+						.filter((n) => n.token?.type === "char")
+						.map((n) => n.token.value)
+						.join("");
 				const anchorNode: SakuraAstNode = {
 					nodeType: "anchor",
 					id: currentAnchor.id,
-					text: currentAnchor.text,
+					text: derivedText,
 					args: currentAnchor.args || [],
 					children: anchorChildren,
 				};
@@ -170,10 +176,16 @@ export function tokensToAst(tokens: any[]): SakuraAstNode {
 		}
 	}
 	if (currentAnchor) {
+		const derivedText =
+			currentAnchor.text ||
+			anchorChildren
+				.filter((n) => n.token?.type === "char")
+				.map((n) => n.token.value)
+				.join("");
 		const anchorNode: SakuraAstNode = {
 			nodeType: "anchor",
 			id: currentAnchor.id,
-			text: currentAnchor.text,
+			text: derivedText,
 			args: currentAnchor.args || [],
 			children: anchorChildren,
 		};
@@ -291,4 +303,57 @@ export function collectSurfaces(ast: SakuraAstNode): number[] {
 		}
 	});
 	return surfaces;
+}
+
+export function collectAnchors(
+	ast: SakuraAstNode,
+): Array<{ id: string; text: string; args: string[] }> {
+	const anchors: Array<{ id: string; text: string; args: string[] }> = [];
+	traverseAst(ast, (node) => {
+		if (node.nodeType === "anchor") {
+			anchors.push({
+				id: node.id || "",
+				text: node.text || "",
+				args: node.args || [],
+			});
+		}
+	});
+	return anchors;
+}
+
+export function calculateAstTextLength(ast: SakuraAstNode): number {
+	let length = 0;
+	traverseAst(ast, (node) => {
+		if (node.nodeType === "command" && node.token?.type === "char") {
+			length += 1;
+		} else if (
+			node.nodeType === "choice" &&
+			(!node.children || node.children.length === 0) &&
+			node.text
+		) {
+			length += Array.from(node.text).length;
+		}
+	});
+	return length;
+}
+
+export function collectScopeNodes(
+	ast: SakuraAstNode,
+	targetScope: number,
+): SakuraAstNode[] {
+	const nodes: SakuraAstNode[] = [];
+	if (ast.nodeType === "root" && Array.isArray(ast.children)) {
+		for (const child of ast.children) {
+			if (child.nodeType === "scope" && child.scope === targetScope) {
+				if (Array.isArray(child.children)) {
+					nodes.push(...child.children);
+				}
+			}
+		}
+	} else if (ast.nodeType === "scope" && ast.scope === targetScope) {
+		if (Array.isArray(ast.children)) {
+			nodes.push(...ast.children);
+		}
+	}
+	return nodes;
 }

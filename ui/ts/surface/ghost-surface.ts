@@ -32,15 +32,41 @@ export const ghostSurfaceMethods = {
 			this.currentGhost?.path ||
 			`${AppConfig.paths.defaultGhostDir}/${ghostName}`;
 		const shell = this.currentShell || AppConfig.paths.fallbackShellName;
-		const isSubchar = scopeId >= 1;
-		const selector = isSubchar
-			? "#kero-placeholder img"
-			: "#sakura-placeholder img";
-		const placeholder = byId(
-			isSubchar ? "kero-placeholder" : "sakura-placeholder",
-		);
-		const container = byId(isSubchar ? "kero-display" : "ghost-display");
-		const slot = byId(isSubchar ? "kero-slot" : "ghost-container");
+
+		const getScopeTarget = (sId) => {
+			if (sId === 0) {
+				return {
+					selector: "#sakura-placeholder img",
+					placeholder: byId("sakura-placeholder"),
+					container: byId("ghost-display"),
+					slot: byId("ghost-container"),
+					fallbackSurface: 0,
+					isMain: true,
+				};
+			}
+			if (sId === 1) {
+				return {
+					selector: "#kero-placeholder img",
+					placeholder: byId("kero-placeholder"),
+					container: byId("kero-display"),
+					slot: byId("kero-slot"),
+					fallbackSurface: 10,
+					isMain: false,
+				};
+			}
+			return {
+				selector: `#char-placeholder-${sId} img`,
+				placeholder: byId(`char-placeholder-${sId}`),
+				container: byId(`char-display-${sId}`),
+				slot: byId(`char-slot-${sId}`),
+				fallbackSurface: 0,
+				isMain: false,
+			};
+		};
+
+		const target = getScopeTarget(scopeId);
+		const { selector, placeholder, container, slot, fallbackSurface, isMain } = target;
+
 		const isAnimationFrame = Array.isArray(extraLayers);
 		this._surfaceSeq ??= {};
 		this._surfaceSeq[scopeId] = (this._surfaceSeq[scopeId] ?? 0) + 1;
@@ -76,12 +102,11 @@ export const ghostSurfaceMethods = {
 			if (slot && slot.style.display === "none") slot.style.display = "flex";
 			if (container && container.style.display === "none")
 				container.style.display = "flex";
-			if (!isSubchar) {
+			if (isMain) {
 				if (container) container.style.visibility = "visible";
 			}
 		}
 
-		const fallbackSurface = isSubchar ? 10 : 0;
 		const img = document.querySelector(selector);
 
 		const applyImageSrc = async (src, fallbackSrc = null, pnaSrc = null) => {
@@ -205,7 +230,7 @@ export const ghostSurfaceMethods = {
 						return await applyImageSrc(fallbackUrl);
 					} catch (_err) {
 						if (img) img.style.display = "none";
-						if (isSubchar && slot) slot.style.display = "none";
+						if (!isMain && slot) slot.style.display = "none";
 						return null;
 					}
 				});

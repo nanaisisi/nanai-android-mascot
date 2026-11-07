@@ -52,8 +52,7 @@ async function handleAnimAddCommand(handler: any, subArgs: string[]) {
 		if (gc?.setScopeMoveOffset) {
 			gc.setScopeMoveOffset(scope, x, y);
 		} else if (typeof document !== "undefined") {
-			const isSubchar = scope >= 1;
-			const selector = isSubchar ? "kero-display" : "ghost-display";
+			const selector = scope === 0 ? "ghost-display" : (scope === 1 ? "kero-display" : `char-display-${scope}`);
 			const el = document.getElementById(selector);
 			if (el) {
 				el.style.transform = `translate(${x}px, ${y}px)`;

@@ -52,5 +52,6 @@ export {
  * @property {string} interval
  * @property {string} [name]
  * @property {string[]} [options]
+ * @property {CollisionArea[]} [collisions]
  * @property {AnimationPattern[]} patterns
  */

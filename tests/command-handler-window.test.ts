@@ -5,7 +5,7 @@ import {
 } from "../ui/js/ghost/command-handler/window.js";
 
 describe("Sakura command window handlers", () => {
-	let originalTauri;
+	let originalTauri: any;
 
 	beforeEach(() => {
 		originalTauri = globalThis.__TAURI__;
@@ -52,7 +52,7 @@ describe("Sakura command window handlers", () => {
 			expect(win.setAlwaysOnTop).toHaveBeenCalledWith(false);
 		});
 
-		it("minimizes the window for minimize", async () => {
+		it("minimizes the window for minimize and sends OnWindowStateMinimize", async () => {
 			const win = {
 				setAlwaysOnTop: vi.fn(),
 				minimize: vi.fn().mockResolvedValue(undefined),
@@ -62,9 +62,46 @@ describe("Sakura command window handlers", () => {
 					getCurrentWindow: () => win,
 				},
 			};
+			const handler = {
+				app: {
+					ghostController: {
+						sendShioriEvent: vi.fn().mockResolvedValue(undefined),
+					},
+				},
+			};
 
-			await handleWindowState("minimize");
+			await handleWindowState("minimize", handler);
 			expect(win.minimize).toHaveBeenCalled();
+			expect(handler.app.ghostController.sendShioriEvent).toHaveBeenCalledWith(
+				"OnWindowStateMinimize",
+				[],
+			);
+		});
+
+		it("restores the window for restore and sends OnWindowStateRestore", async () => {
+			const win = {
+				setAlwaysOnTop: vi.fn(),
+				unminimize: vi.fn().mockResolvedValue(undefined),
+			};
+			globalThis.__TAURI__ = {
+				window: {
+					getCurrentWindow: () => win,
+				},
+			};
+			const handler = {
+				app: {
+					ghostController: {
+						sendShioriEvent: vi.fn().mockResolvedValue(undefined),
+					},
+				},
+			};
+
+			await handleWindowState("restore", handler);
+			expect(win.unminimize).toHaveBeenCalled();
+			expect(handler.app.ghostController.sendShioriEvent).toHaveBeenCalledWith(
+				"OnWindowStateRestore",
+				[],
+			);
 		});
 
 		it("catches and logs errors when window operation fails", async () => {

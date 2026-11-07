@@ -76,7 +76,8 @@ export async function handleRaiseOtherCommand(handler: any, args: string[]) {
 	const references = args.slice(3);
 	if (!ghostName || !eventName) return;
 
-	const gc = handler.app.ghostController;
+	const gc =
+		handler.app?.ghostController ?? handler.player?.app?.ghostController;
 	if (gc?.sendRaiseOther) {
 		await gc.sendRaiseOther(ghostName, eventName, references);
 	} else if (gc?.sendShioriEvent) {
@@ -94,7 +95,8 @@ export async function handleNotifyOtherCommand(handler: any, args: string[]) {
 	const references = args.slice(3);
 	if (!ghostName || !eventName) return;
 
-	const gc = handler.app.ghostController;
+	const gc =
+		handler.app?.ghostController ?? handler.player?.app?.ghostController;
 	if (gc?.sendNotifyOther) {
 		await gc.sendNotifyOther(ghostName, eventName, references);
 	} else if (gc?.sendShioriNotify) {

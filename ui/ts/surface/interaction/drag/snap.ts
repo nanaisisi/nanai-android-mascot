@@ -2,15 +2,17 @@
  * SSP 仕様準拠: ウィンドウドラッグ時のスナップ機能 (Snap X/Y) およびツールチップ表示
  */
 
+export type SnapTargetType = "Character" | "Desktop" | "Initial" | "None";
+
 export interface SnapResult {
 	x: number;
 	y: number;
-	snapXType: "Character" | "Desktop" | "None";
-	snapYType: "Character" | "Desktop" | "None";
+	snapXType: SnapTargetType;
+	snapYType: SnapTargetType;
 }
 
 /**
- * 他のキャラクターウィンドウや画面端に対するスナップ位置計算
+ * 他のキャラクターウィンドウ、画面端、および初期位置に対するスナップ位置計算
  */
 export function calculateWindowSnap(
 	currentX: number,
@@ -19,6 +21,7 @@ export function calculateWindowSnap(
 	winHeight: number,
 	otherWindows: Array<{ x: number; y: number; width: number; height: number }>,
 	screenSize: { width: number; height: number },
+	initialPos?: { x: number; y: number } | null,
 	isCtrlPressed: boolean = false,
 	snapThreshold: number = 12,
 ): SnapResult {
@@ -28,44 +31,62 @@ export function calculateWindowSnap(
 
 	let snappedX = currentX;
 	let snappedY = currentY;
-	let snapXType: "Character" | "Desktop" | "None" = "None";
-	let snapYType: "Character" | "Desktop" | "None" = "None";
+	let snapXType: SnapTargetType = "None";
+	let snapYType: SnapTargetType = "None";
 
-	// 1. デスクトップ境界（画面端）スナップ判定
-	if (Math.abs(currentX) < snapThreshold) {
-		snappedX = 0;
-		snapXType = "Desktop";
-	} else if (Math.abs(currentX + winWidth - screenSize.width) < snapThreshold) {
-		snappedX = screenSize.width - winWidth;
-		snapXType = "Desktop";
+	// 1. 初期位置 (Initial) スナップ判定
+	if (initialPos) {
+		if (Math.abs(currentX - initialPos.x) < snapThreshold) {
+			snappedX = initialPos.x;
+			snapXType = "Initial";
+		}
+		if (Math.abs(currentY - initialPos.y) < snapThreshold) {
+			snappedY = initialPos.y;
+			snapYType = "Initial";
+		}
 	}
 
-	if (Math.abs(currentY) < snapThreshold) {
-		snappedY = 0;
-		snapYType = "Desktop";
-	} else if (Math.abs(currentY + winHeight - screenSize.height) < snapThreshold) {
-		snappedY = screenSize.height - winHeight;
-		snapYType = "Desktop";
+	// 2. デスクトップ境界（画面端）スナップ判定
+	if (snapXType === "None") {
+		if (Math.abs(currentX) < snapThreshold) {
+			snappedX = 0;
+			snapXType = "Desktop";
+		} else if (Math.abs(currentX + winWidth - screenSize.width) < snapThreshold) {
+			snappedX = screenSize.width - winWidth;
+			snapXType = "Desktop";
+		}
 	}
 
-	// 2. 他キャラウィンドウとの接触スナップ判定
+	if (snapYType === "None") {
+		if (Math.abs(currentY) < snapThreshold) {
+			snappedY = 0;
+			snapYType = "Desktop";
+		} else if (Math.abs(currentY + winHeight - screenSize.height) < snapThreshold) {
+			snappedY = screenSize.height - winHeight;
+			snapYType = "Desktop";
+		}
+	}
+
+	// 3. 他キャラウィンドウとの接触スナップ判定
 	for (const other of otherWindows) {
-		// X軸スナップ (隣接)
-		if (Math.abs(currentX - (other.x + other.width)) < snapThreshold) {
-			snappedX = other.x + other.width;
-			snapXType = "Character";
-		} else if (Math.abs(currentX + winWidth - other.x) < snapThreshold) {
-			snappedX = other.x - winWidth;
-			snapXType = "Character";
+		if (snapXType === "None") {
+			if (Math.abs(currentX - (other.x + other.width)) < snapThreshold) {
+				snappedX = other.x + other.width;
+				snapXType = "Character";
+			} else if (Math.abs(currentX + winWidth - other.x) < snapThreshold) {
+				snappedX = other.x - winWidth;
+				snapXType = "Character";
+			}
 		}
 
-		// Y軸スナップ (上端/下端揃え)
-		if (Math.abs(currentY - other.y) < snapThreshold) {
-			snappedY = other.y;
-			snapYType = "Character";
-		} else if (Math.abs(currentY + winHeight - (other.y + other.height)) < snapThreshold) {
-			snappedY = other.y + other.height - winHeight;
-			snapYType = "Character";
+		if (snapYType === "None") {
+			if (Math.abs(currentY - other.y) < snapThreshold) {
+				snappedY = other.y;
+				snapYType = "Character";
+			} else if (Math.abs(currentY + winHeight - (other.y + other.height)) < snapThreshold) {
+				snappedY = other.y + other.height - winHeight;
+				snapYType = "Character";
+			}
 		}
 	}
 

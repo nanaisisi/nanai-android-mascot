@@ -13,6 +13,7 @@ describe("Window Snapping & SSP Tooltip", () => {
 			300,
 			[],
 			{ width: 1920, height: 1080 },
+			null,
 			false,
 			12,
 		);
@@ -20,6 +21,24 @@ describe("Window Snapping & SSP Tooltip", () => {
 		assert.equal(res.y, 0);
 		assert.equal(res.snapXType, "Desktop");
 		assert.equal(res.snapYType, "Desktop");
+	});
+
+	it("snaps to initial starting position (Initial)", () => {
+		const res = calculateWindowSnap(
+			105,
+			205,
+			200,
+			300,
+			[],
+			{ width: 1920, height: 1080 },
+			{ x: 100, y: 200 },
+			false,
+			12,
+		);
+		assert.equal(res.x, 100);
+		assert.equal(res.y, 200);
+		assert.equal(res.snapXType, "Initial");
+		assert.equal(res.snapYType, "Initial");
 	});
 
 	it("snaps to other character window", () => {
@@ -30,6 +49,7 @@ describe("Window Snapping & SSP Tooltip", () => {
 			300,
 			[{ x: 0, y: 100, width: 200, height: 300 }],
 			{ width: 1920, height: 1080 },
+			null,
 			false,
 			12,
 		);
@@ -45,6 +65,7 @@ describe("Window Snapping & SSP Tooltip", () => {
 			300,
 			[],
 			{ width: 1920, height: 1080 },
+			null,
 			true,
 			12,
 		);
@@ -54,8 +75,8 @@ describe("Window Snapping & SSP Tooltip", () => {
 	});
 
 	it("formats SSP snap tooltip text correctly", () => {
-		const text = formatSnapTooltipText(1363, 842, "Character", "None");
-		assert.include(text, "1363,842 (Snap X:Character)");
+		const text = formatSnapTooltipText(1363, 842, "Initial", "None");
+		assert.include(text, "1363,842 (Snap X:Initial)");
 		assert.include(text, "Press Ctrl to disable");
 	});
 });

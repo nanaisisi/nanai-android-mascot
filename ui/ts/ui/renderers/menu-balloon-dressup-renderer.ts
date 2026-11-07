@@ -43,7 +43,8 @@ export const menuBalloonDressupRenderer = {
 			});
 		} else {
 			const fallbackThemes = [
-				{ id: "default", label: "デフォルト (Default)" },
+				{ id: "nam_default_plus", label: "NAMデフォルト+" },
+				{ id: "nam_default_plus_overhead", label: "NAMデフォルト+(頭上)" },
 				{ id: "pixel", label: "ピクセル (Pixel)" },
 				{ id: "comic", label: "コミック (Comic)" },
 				{ id: "dark", label: "ダーク (Dark)" },

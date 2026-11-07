@@ -93,7 +93,8 @@ export function renderSubmenuContent({
 		(cachedBalloons.length > 0
 			? cachedBalloons
 			: [
-					{ dir_name: "default", name: "デフォルト" },
+					{ dir_name: "nam_default_plus", name: "NAMデフォルト+" },
+					{ dir_name: "nam_default_plus_overhead", name: "NAMデフォルト+(頭上)" },
 					{ dir_name: "pixel", name: "ピクセル" },
 					{ dir_name: "comic", name: "コミック" },
 					{ dir_name: "dark", name: "ダーク" },

@@ -150,7 +150,7 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 	it("cycles balloon themes correctly with default and custom lists", () => {
 		let shownMessage = "";
 		const mockApp = {
-			currentBalloonTheme: "default",
+			currentBalloonTheme: "nam_default_plus",
 			showBalloon(msg) {
 				shownMessage = msg;
 			},
@@ -159,10 +159,10 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 		const mgr = new BalloonThemeManager(mockApp);
 
 		const next1 = mgr.cycleTheme();
-		assert.equal(next1, "pixel");
-		assert.equal(mgr.currentTheme, "pixel");
-		assert.equal(mockApp.currentBalloonTheme, "pixel");
-		assert.ok(shownMessage.includes("ピクセル"));
+		assert.equal(next1, "nam_default_plus_overhead");
+		assert.equal(mgr.currentTheme, "nam_default_plus_overhead");
+		assert.equal(mockApp.currentBalloonTheme, "nam_default_plus_overhead");
+		assert.ok(shownMessage.includes("NAMデフォルト+(頭上)"));
 
 		// Custom list
 		mgr.availableBalloons = [
@@ -237,7 +237,7 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 	it("delegates balloonThemeActions to BalloonThemeManager preserving backward compatibility", async () => {
 		const app = {
 			...balloonThemeActions,
-			currentBalloonTheme: "default",
+			currentBalloonTheme: "nam_default_plus",
 			balloonUserScale: 1,
 			balloonDpiScale: 1,
 			availableBalloons: [],
@@ -246,7 +246,7 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 		};
 
 		app.cycleBalloonTheme();
-		assert.equal(app.currentBalloonTheme, "pixel");
+		assert.equal(app.currentBalloonTheme, "nam_default_plus_overhead");
 		assert.ok(app.balloonThemeManager instanceof BalloonThemeManager);
 
 		app.applyBalloonScaleAction("balloon-scale-125");

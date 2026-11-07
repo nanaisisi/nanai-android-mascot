@@ -99,4 +99,75 @@ mod tests {
         let direct_hit = txt.hit_test(0, 5, 5);
         assert!(direct_hit.is_some());
     }
+
+    #[test]
+    fn test_hit_test_shapes_and_polygons() {
+        use crate::surfaces::types::{
+            CollisionArea, CollisionShape, SurfaceDefinition,
+        };
+
+        let mut txt = SurfacesTxt::default();
+        let mut def = SurfaceDefinition::default();
+
+        // Polygon (triangle (0,0), (50, 0), (0, 50))
+        def.collisions.push(CollisionArea {
+            id: Some(1),
+            name: "Triangle".into(),
+            shape: CollisionShape::Polygon {
+                vertices: vec![(0, 0), (50, 0), (0, 50)],
+            },
+        });
+
+        // Circle at (100, 100) with r=20
+        def.collisions.push(CollisionArea {
+            id: Some(2),
+            name: "CircleArea".into(),
+            shape: CollisionShape::Circle {
+                cx: 100,
+                cy: 100,
+                r: 20.0,
+            },
+        });
+
+        // Ellipse at (200, 200) with rx=30, ry=15
+        def.collisions.push(CollisionArea {
+            id: Some(3),
+            name: "EllipseArea".into(),
+            shape: CollisionShape::Ellipse {
+                cx: 200,
+                cy: 200,
+                rx: 30.0,
+                ry: 15.0,
+            },
+        });
+
+        txt.surfaces.insert(0, def);
+
+        // Inside triangle
+        let hit_tri = txt.hit_test(0, 10, 10);
+        assert!(hit_tri.is_some());
+        assert_eq!(hit_tri.unwrap().name, "Triangle");
+
+        // Outside triangle (e.g. 40, 40)
+        let miss_tri = txt.hit_test(0, 40, 40);
+        assert!(miss_tri.is_none());
+
+        // Inside circle
+        let hit_cir = txt.hit_test(0, 105, 105);
+        assert!(hit_cir.is_some());
+        assert_eq!(hit_cir.unwrap().name, "CircleArea");
+
+        // Outside circle
+        let miss_cir = txt.hit_test(0, 130, 130);
+        assert!(miss_cir.is_none());
+
+        // Inside ellipse
+        let hit_ell = txt.hit_test(0, 215, 205);
+        assert!(hit_ell.is_some());
+        assert_eq!(hit_ell.unwrap().name, "EllipseArea");
+
+        // Outside ellipse
+        let miss_ell = txt.hit_test(0, 235, 215);
+        assert!(miss_ell.is_none());
+    }
 }

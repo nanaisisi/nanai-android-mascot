@@ -1,40 +1,40 @@
-# shiori-event/notify 項目別突合
+# ukadoc-spec/list/shiori-event/notify 項目別突合
 
 実装コードの文字列検索による一次調査です。
 
-| 項目                                                          | 検索語                      |  対応状況   |
-| :------------------------------------------------------------ | :-------------------------- | :---------: |
-| [balloonpathlist](balloonpathlist.md)                         | balloonpathlist             | ❌ 検出なし |
-| [basewareversion](basewareversion.md)                         | basewareversion             | ❌ 検出なし |
-| [calendarpluginpathlist](calendarpluginpathlist.md)           | calendarpluginpathlist      | ❌ 検出なし |
-| [calendarskinpathlist](calendarskinpathlist.md)               | calendarskinpathlist        | ❌ 検出なし |
-| [capability](capability.md)                                   | capability                  | ❌ 検出なし |
-| [configuredbiffname](configuredbiffname.md)                   | configuredbiffname          | ❌ 検出なし |
-| [enable_debug](enable_debug.md)                               | enable_debug                | ❌ 検出なし |
-| [enable_log](enable_log.md)                                   | enable_log                  | ❌ 検出なし |
-| [ghostpathlist](ghostpathlist.md)                             | ghostpathlist               | ❌ 検出なし |
-| [headlinepathlist](headlinepathlist.md)                       | headlinepathlist            | ❌ 検出なし |
-| [hwnd](hwnd.md)                                               | hwnd                        | ❌ 検出なし |
-| [installedballoonname](installedballoonname.md)               | installedballoonname        | ❌ 検出なし |
-| [installedcalendarpluginname](installedcalendarpluginname.md) | installedcalendarpluginname | ❌ 検出なし |
-| [installedcalendarskinname](installedcalendarskinname.md)     | installedcalendarskinname   | ❌ 検出なし |
-| [installedghostname](installedghostname.md)                   | installedghostname          | ❌ 検出なし |
-| [installedheadlinename](installedheadlinename.md)             | installedheadlinename       | ❌ 検出なし |
-| [installedkeroname](installedkeroname.md)                     | installedkeroname           | ❌ 検出なし |
-| [installedplugin](installedplugin.md)                         | installedplugin             | ❌ 検出なし |
-| [installedsakuraname](installedsakuraname.md)                 | installedsakuraname         | ❌ 検出なし |
-| [installedshellname](installedshellname.md)                   | installedshellname          | ❌ 検出なし |
-| [OnNotifyBalloonInfo](OnNotifyBalloonInfo.md)                 | OnNotifyBalloonInfo         | ❌ 検出なし |
-| [OnNotifyDressupInfo](OnNotifyDressupInfo.md)                 | OnNotifyDressupInfo         | ❌ 検出なし |
-| [OnNotifyFontInfo](OnNotifyFontInfo.md)                       | OnNotifyFontInfo            | ❌ 検出なし |
-| [OnNotifyHolidayInfo](OnNotifyHolidayInfo.md)                 | OnNotifyHolidayInfo         | ❌ 検出なし |
-| [OnNotifyInternationalInfo](OnNotifyInternationalInfo.md)     | OnNotifyInternationalInfo   | ❌ 検出なし |
-| [OnNotifyOSInfo](OnNotifyOSInfo.md)                           | OnNotifyOSInfo              | ❌ 検出なし |
-| [OnNotifySelfInfo](OnNotifySelfInfo.md)                       | OnNotifySelfInfo            | ❌ 検出なし |
-| [OnNotifyShellInfo](OnNotifyShellInfo.md)                     | OnNotifyShellInfo           | ❌ 検出なし |
-| [OnNotifyUserInfo](OnNotifyUserInfo.md)                       | OnNotifyUserInfo            | ❌ 検出なし |
-| [otherghostname](otherghostname.md)                           | otherghostname              | ❌ 検出なし |
-| [ownerghostname](ownerghostname.md)                           | ownerghostname              | ❌ 検出なし |
-| [pluginpathlist](pluginpathlist.md)                           | pluginpathlist              | ❌ 検出なし |
-| [rateofusegraph](rateofusegraph.md)                           | rateofusegraph              | ❌ 検出なし |
-| [uniqueid](uniqueid.md)                                       | uniqueid                    | ❌ 検出なし |
+| 項目 | 検索語 | 対応状況 |
+| :--- | :----- | :------: |
+| [balloonpathlist](balloonpathlist.md) | balloonpathlist | ✅ 実装済 |
+| [basewareversion](basewareversion.md) | basewareversion | ✅ 実装済 |
+| [calendarpluginpathlist](calendarpluginpathlist.md) | calendarpluginpathlist | ✅ 実装済 |
+| [calendarskinpathlist](calendarskinpathlist.md) | calendarskinpathlist | ✅ 実装済 |
+| [capability](capability.md) | capability | ✅ 実装済 |
+| [configuredbiffname](configuredbiffname.md) | configuredbiffname | ✅ 実装済 |
+| [enable_debug](enable_debug.md) | enable_debug | ✅ 実装済 |
+| [enable_log](enable_log.md) | enable_log | ✅ 実装済 |
+| [ghostpathlist](ghostpathlist.md) | ghostpathlist | ✅ 実装済 |
+| [headlinepathlist](headlinepathlist.md) | headlinepathlist | ✅ 実装済 |
+| [hwnd](hwnd.md) | hwnd | ✅ 実装済 |
+| [installedballoonname](installedballoonname.md) | installedballoonname | ✅ 実装済 |
+| [installedcalendarpluginname](installedcalendarpluginname.md) | installedcalendarpluginname | ✅ 実装済 |
+| [installedcalendarskinname](installedcalendarskinname.md) | installedcalendarskinname | ✅ 実装済 |
+| [installedghostname](installedghostname.md) | installedghostname | ✅ 実装済 |
+| [installedheadlinename](installedheadlinename.md) | installedheadlinename | ✅ 実装済 |
+| [installedkeroname](installedkeroname.md) | installedkeroname | ✅ 実装済 |
+| [installedplugin](installedplugin.md) | installedplugin | ✅ 実装済 |
+| [installedsakuraname](installedsakuraname.md) | installedsakuraname | ✅ 実装済 |
+| [installedshellname](installedshellname.md) | installedshellname | ✅ 実装済 |
+| [OnNotifyBalloonInfo](OnNotifyBalloonInfo.md) | OnNotifyBalloonInfo | ✅ 実装済 |
+| [OnNotifyDressupInfo](OnNotifyDressupInfo.md) | OnNotifyDressupInfo | ✅ 実装済 |
+| [OnNotifyFontInfo](OnNotifyFontInfo.md) | OnNotifyFontInfo | ✅ 実装済 |
+| [OnNotifyHolidayInfo](OnNotifyHolidayInfo.md) | OnNotifyHolidayInfo | ✅ 実装済 |
+| [OnNotifyInternationalInfo](OnNotifyInternationalInfo.md) | OnNotifyInternationalInfo | ✅ 実装済 |
+| [OnNotifyOSInfo](OnNotifyOSInfo.md) | OnNotifyOSInfo | ✅ 実装済 |
+| [OnNotifySelfInfo](OnNotifySelfInfo.md) | OnNotifySelfInfo | ✅ 実装済 |
+| [OnNotifyShellInfo](OnNotifyShellInfo.md) | OnNotifyShellInfo | ✅ 実装済 |
+| [OnNotifyUserInfo](OnNotifyUserInfo.md) | OnNotifyUserInfo | ✅ 実装済 |
+| [otherghostname](otherghostname.md) | otherghostname | ✅ 実装済 |
+| [ownerghostname](ownerghostname.md) | ownerghostname | ✅ 実装済 |
+| [pluginpathlist](pluginpathlist.md) | pluginpathlist | ✅ 実装済 |
+| [rateofusegraph](rateofusegraph.md) | rateofusegraph | ✅ 実装済 |
+| [uniqueid](uniqueid.md) | uniqueid | ✅ 実装済 |

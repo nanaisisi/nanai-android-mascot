@@ -21,10 +21,102 @@ export class DockManager {
 		this._dockState = "none"; // "none" | "left" | "right"
 		this._gestureRecognizer = null;
 		this._gestureUnbind = null;
+		this._attachedElement = null;
+		this._elementClickUnbind = null;
 
 		if (options.gestureRecognizer) {
 			this.setGestureRecognizer(options.gestureRecognizer);
 		}
+		if (options.element) {
+			this.attachElement(options.element);
+		}
+	}
+
+	/**
+	 * 連動中のDOM要素を取得
+	 * @returns {HTMLElement|null}
+	 */
+	get attachedElement() {
+		return this._attachedElement;
+	}
+
+	/**
+	 * ゴースト・マスコットDOM要素をドッキング管理にアタッチ
+	 * ドッキングクラス (is-docked-left, is-docked-right) を動的に同期し、
+	 * ドッキング状態でのタップ/クリックで自動展開(restore)するリスナーを登録
+	 * @param {HTMLElement} element
+	 */
+	attachElement(element) {
+		if (this._attachedElement === element) {
+			return;
+		}
+		this.detachElement();
+
+		if (!element) return;
+		this._attachedElement = element;
+
+		// 現在のドッキング状態を反映
+		this._syncElementClasses();
+
+		// ドッキング時のタップ/クリックによる復帰リスナー
+		const handleTapRestore = (e) => {
+			if (this.isDocked) {
+				if (typeof e.stopPropagation === "function") {
+					e.stopPropagation();
+				}
+				if (typeof e.preventDefault === "function") {
+					e.preventDefault();
+				}
+				this.restore();
+			}
+		};
+
+		element.addEventListener("click", handleTapRestore);
+		element.addEventListener("touchend", handleTapRestore);
+		this._elementClickUnbind = () => {
+			element.removeEventListener("click", handleTapRestore);
+			element.removeEventListener("touchend", handleTapRestore);
+		};
+	}
+
+	/**
+	 * アタッチ中のDOM要素を解除し、ドッキングクラスをクリーンアップ
+	 */
+	detachElement() {
+		if (this._elementClickUnbind) {
+			try {
+				this._elementClickUnbind();
+			} catch (_) {}
+			this._elementClickUnbind = null;
+		}
+		if (this._attachedElement) {
+			try {
+				this._attachedElement.classList.remove(
+					"is-docked-left",
+					"is-docked-right",
+				);
+			} catch (_) {}
+			this._attachedElement = null;
+		}
+	}
+
+	/**
+	 * アタッチされた要素へドッキングクラスを同期
+	 * @private
+	 */
+	_syncElementClasses() {
+		if (!this._attachedElement) return;
+		try {
+			this._attachedElement.classList.remove(
+				"is-docked-left",
+				"is-docked-right",
+			);
+			if (this._dockState === "left") {
+				this._attachedElement.classList.add("is-docked-left");
+			} else if (this._dockState === "right") {
+				this._attachedElement.classList.add("is-docked-right");
+			}
+		} catch (_) {}
 	}
 
 	/**
@@ -140,6 +232,7 @@ export class DockManager {
 			) {
 				this._gestureRecognizer.setDockState(state);
 			}
+			this._syncElementClasses();
 			this._dispatch(ANDROID_EVENTS.DOCK_CHANGED, {
 				dockState: state,
 				timestamp: Date.now(),
@@ -157,9 +250,10 @@ export class DockManager {
 	}
 
 	/**
-	 * ジェスチャー認識器および内部状態の破棄・クリーンアップ
+	 * ジェスチャー認識器、アタッチ要素および内部状態の破棄・クリーンアップ
 	 */
 	destroy() {
+		this.detachElement();
 		if (this._gestureUnbind) {
 			try {
 				this._gestureUnbind();

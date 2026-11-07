@@ -1,9 +1,14 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import {
-	parseSakuraScript,
+	calculateAstTextLength,
+	collectAnchors,
+	collectChoices,
+	collectScopeNodes,
+	collectSurfaces,
 	tokensToAst,
-} from "../ui/js/ghost/sakura-parser.js";
+} from "../ui/ts/ghost/parser/ast.js";
+import { parseSakuraScript } from "../ui/ts/ghost/sakura-tokenizer.js";
 
 test("tokensToAst builds structured AST from SakuraScript tokens", () => {
 	const script = "\\0\\s[0]Hello!\\_a[id1,arg1]Link\\_a\\1\\s[10]Kero!\\e";
@@ -71,4 +76,48 @@ test("tokensToAst handles unclosed anchors and top-level commands gracefully", (
 	assert.equal(ast.children.length, 2); // char A, then anchor unclosed
 	assert.equal(ast.children[1].nodeType, "anchor");
 	assert.equal(ast.children[1].id, "unclosed");
+});
+
+test("collectAnchors, calculateAstTextLength, and collectScopeNodes operate accurately", () => {
+	const script =
+		"\\0\\s[0]Hello \\_a[anchor1,r1]Documentation\\_a\\q[Click Here,choice1]\\1\\s[10]Kero world\\e";
+	const tokens = parseSakuraScript(script);
+	const ast = tokensToAst(tokens);
+
+	// collectAnchors
+	const anchors = collectAnchors(ast);
+	assert.equal(anchors.length, 1);
+	assert.equal(anchors[0].id, "anchor1");
+	assert.equal(anchors[0].text, "Documentation");
+	assert.deepEqual(anchors[0].args, ["anchor1", "r1"]);
+
+	// collectChoices
+	const choices = collectChoices(ast);
+	assert.equal(choices.length, 1);
+	assert.equal(choices[0].id, "choice1");
+	assert.equal(choices[0].text, "Click Here");
+
+	// collectSurfaces
+	const surfaces = collectSurfaces(ast);
+	assert.deepEqual(surfaces, [0, 10]);
+
+	// calculateAstTextLength
+	// "Hello " (6) + "Documentation" (13) + "Click Here" (10) + "Kero world" (10) = 39
+	const textLen = calculateAstTextLength(ast);
+	assert.equal(textLen, 39);
+
+	// collectScopeNodes
+	const scope0Nodes = collectScopeNodes(ast, 0);
+	assert.ok(scope0Nodes.length >= 3);
+	const scope1Nodes = collectScopeNodes(ast, 1);
+	assert.ok(scope1Nodes.length >= 2);
+	const scope2Nodes = collectScopeNodes(ast, 2);
+	assert.equal(scope2Nodes.length, 0);
+
+	// Direct Scope node test
+	const scopeNode = ast.children?.find((c) => c.nodeType === "scope");
+	if (scopeNode) {
+		const directScopeNodes = collectScopeNodes(scopeNode, 0);
+		assert.equal(directScopeNodes.length, scopeNode.children?.length);
+	}
 });

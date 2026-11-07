@@ -27,14 +27,22 @@ export async function handleQuickSection(handler: any, args: string[]) {
 export async function handleSetSyncObject(handler: any, args: string[]) {
 	const name = args[2];
 	if (name) {
-		handler.player.playbackController?.syncObjects?.set(name);
+		const syncMgr =
+			handler.player?.playbackController?.syncObjects ??
+			handler.app?.syncObjectManager ??
+			handler.player?.app?.syncObjectManager;
+		syncMgr?.set(name);
 	}
 }
 
 export async function handleResetSyncObject(handler: any, args: string[]) {
 	const name = args[2];
 	if (name) {
-		handler.player.playbackController?.syncObjects?.reset(name);
+		const syncMgr =
+			handler.player?.playbackController?.syncObjects ??
+			handler.app?.syncObjectManager ??
+			handler.player?.app?.syncObjectManager;
+		syncMgr?.reset(name);
 	}
 }
 
@@ -63,7 +71,10 @@ export async function handleWaitSyncObject(handler: any, args: string[]) {
 		}
 	}
 
-	const syncManager = handler.player.playbackController?.syncObjects;
+	const syncManager =
+		handler.player?.playbackController?.syncObjects ??
+		handler.app?.syncObjectManager ??
+		handler.player?.app?.syncObjectManager;
 	if (syncManager) {
 		await syncManager.wait(name, { timeout, resetOnWait });
 	}

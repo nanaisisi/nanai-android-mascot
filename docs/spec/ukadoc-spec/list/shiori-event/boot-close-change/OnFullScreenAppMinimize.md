@@ -2,7 +2,7 @@
 
 - **規格**: [OnFullScreenAppMinimize.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/boot-close-change/OnFullScreenAppMinimize/) (ukadoc-spec/list/shiori-event/boot-close-change/OnFullScreenAppMinimize.md)
 - **検索語**: OnFullScreenAppMinimize
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,4 @@ OnFullScreenAppMinimize SHIORIイベント送信処理を実装 (ui/js/ghost/shi
 
 ## 実装箇所
 
-実装コード内に「OnFullScreenAppMinimize」は検出されませんでした。
+- `ui/ts/ghost/shiori-notify.ts:680` `return await this.sendShioriNotify("OnFullScreenAppMinimize", []);`

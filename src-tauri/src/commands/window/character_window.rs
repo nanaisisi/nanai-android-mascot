@@ -59,7 +59,7 @@ pub async fn show_character_window(
                 format!("Nanai Android Mascot - Character {}", scope_id)
             };
 
-            let mut builder = tauri::WebviewWindowBuilder::new(
+            let sub_win = tauri::WebviewWindowBuilder::new(
                 &app_handle,
                 &label,
                 tauri::WebviewUrl::App(format!("character.html?scope={}", scope_id).into()),
@@ -72,15 +72,9 @@ pub async fn show_character_window(
             .always_on_top(true)
             .skip_taskbar(false)
             .resizable(false)
-            .position(target_x, target_y);
-
-            if scope_id > 0
-                && let Some(char0_win) = app_handle.get_webview_window("subchar_window_0")
-            {
-                builder = builder.owner(&char0_win).map_err(|e| e.to_string())?;
-            }
-
-            let sub_win = builder.build().map_err(|e| e.to_string())?;
+            .position(target_x, target_y)
+            .build()
+            .map_err(|e| e.to_string())?;
 
             let _ = sub_win.show();
         }

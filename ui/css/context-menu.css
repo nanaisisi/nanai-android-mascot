@@ -36,7 +36,6 @@ body:not(.subchar-mode) .subchar-only {
 
 .menu-container {
 	padding: 0;
-	padding-top: 6px;
 	width: auto;
 	min-width: 150px;
 	max-width: 300px;

@@ -3,18 +3,31 @@
  * @brief ウィンドウ状態およびデスクトップ整列コマンドハンドラ
  */
 
-export async function handleWindowState(state: string) {
+export async function handleWindowState(state: string, handler?: any) {
 	try {
 		const api = (globalThis as any).__TAURI__?.window;
 		if (!api) return;
 		const win = api.getCurrentWindow();
 		const lower = state.toLowerCase();
+		const gc = handler?.app?.ghostController;
 		if (lower === "stayontop") {
 			await win.setAlwaysOnTop(true);
 		} else if (lower === "!stayontop") {
 			await win.setAlwaysOnTop(false);
 		} else if (lower === "minimize") {
 			await win.minimize();
+			if (gc?.sendShioriEvent) {
+				await gc.sendShioriEvent("OnWindowStateMinimize", []);
+			}
+		} else if (lower === "restore") {
+			if (win.unminimize) {
+				await win.unminimize();
+			} else if (win.show) {
+				await win.show();
+			}
+			if (gc?.sendShioriEvent) {
+				await gc.sendShioriEvent("OnWindowStateRestore", []);
+			}
 		}
 	} catch (e) {
 		console.warn("windowstate 失敗:", e);

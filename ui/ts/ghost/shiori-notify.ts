@@ -497,6 +497,10 @@ export const shioriNotifyMethods = {
 			ghosts.map((g: any) => g.name),
 		);
 		await this.sendShioriNotify(
+			"installedsakuraname",
+			ghosts.map((g: any) => g.sakura_name || g.name),
+		);
+		await this.sendShioriNotify(
 			"installsakuraname",
 			ghosts.map((g: any) => g.sakura_name || g.name),
 		);
@@ -601,5 +605,201 @@ export const shioriNotifyMethods = {
 		await this.sendShioriNotify("rateofusegraph", ["1"]);
 
 		console.log("✅ 起動時 NOTIFY イベント送信完了");
+	},
+
+	/**
+	 * ダイアログ関連 SHIORI イベント通知 (UKADOC dialogbox spec)
+	 */
+	async sendGhostTermsAccept(this: any, ghostName: string) {
+		return await this.sendShioriNotify("OnGhostTermsAccept", [ghostName]);
+	},
+
+	async sendGhostTermsDecline(this: any, ghostName: string) {
+		return await this.sendShioriNotify("OnGhostTermsDecline", [ghostName]);
+	},
+
+	/**
+	 * バルーン関連 SHIORI イベント通知 (UKADOC balloon spec)
+	 */
+	async sendBalloonClose(
+		this: any,
+		scopeId: number | string = 0,
+		reason: string = "",
+	) {
+		return await this.sendShioriNotify("OnBalloonClose", [
+			String(scopeId),
+			reason,
+		]);
+	},
+
+	async sendBalloonBreak(
+		this: any,
+		scopeId: number | string = 0,
+		reason: string = "",
+	) {
+		return await this.sendShioriNotify("OnBalloonBreak", [
+			String(scopeId),
+			reason,
+		]);
+	},
+
+	/**
+	 * サーフィス関連 SHIORI イベント通知 (UKADOC surface spec)
+	 */
+	async sendSurfaceChange(
+		this: any,
+		scopeId: number | string = 0,
+		surfaceId: number | string = 0,
+	) {
+		return await this.sendShioriNotify("OnSurfaceChange", [
+			String(scopeId),
+			String(surfaceId),
+		]);
+	},
+
+	async sendOtherSurfaceChange(
+		this: any,
+		ghostName: string,
+		scopeId: number | string = 0,
+		surfaceId: number | string = 0,
+	) {
+		return await this.sendShioriNotify("OnOtherSurfaceChange", [
+			ghostName,
+			String(scopeId),
+			String(surfaceId),
+		]);
+	},
+
+	/**
+	 * ゴースト切替・シェル切替・システムライフサイクル通知 (UKADOC boot-close-change spec)
+	 */
+	async sendGhostChanging(
+		this: any,
+		toGhost: string,
+		fromGhost: string = "",
+		reason: string = "manual",
+	) {
+		return await this.sendShioriNotify("OnGhostChanging", [
+			toGhost,
+			reason,
+			fromGhost,
+		]);
+	},
+
+	async sendGhostChanged(this: any, toGhost: string, fromGhost: string = "") {
+		return await this.sendShioriNotify("OnGhostChanged", [toGhost, fromGhost]);
+	},
+
+	async sendShellChanged(this: any, toShell: string, fromShell: string = "") {
+		return await this.sendShioriNotify("OnShellChanged", [toShell, fromShell]);
+	},
+
+	async sendCloseAll(this: any, reason: string = "user") {
+		return await this.sendShioriNotify("OnCloseAll", [reason]);
+	},
+
+	async sendGhostCalling(this: any, targetGhost: string) {
+		return await this.sendShioriNotify("OnGhostCalling", [targetGhost]);
+	},
+
+	async sendGhostCalled(this: any, callerGhost: string) {
+		return await this.sendShioriNotify("OnGhostCalled", [callerGhost]);
+	},
+
+	async sendGhostCallComplete(this: any, targetGhost: string) {
+		return await this.sendShioriNotify("OnGhostCallComplete", [targetGhost]);
+	},
+
+	async sendOtherGhostBooted(this: any, ghostName: string) {
+		return await this.sendShioriNotify("OnOtherGhostBooted", [ghostName]);
+	},
+
+	async sendOtherGhostChanged(
+		this: any,
+		ghostName: string,
+		toGhost: string = "",
+	) {
+		return await this.sendShioriNotify("OnOtherGhostChanged", [
+			ghostName,
+			toGhost,
+		]);
+	},
+
+	async sendOtherGhostClosed(this: any, ghostName: string) {
+		return await this.sendShioriNotify("OnOtherGhostClosed", [ghostName]);
+	},
+
+	async sendSysSuspend(this: any) {
+		return await this.sendShioriNotify("OnSysSuspend", []);
+	},
+
+	async sendSysResume(this: any) {
+		return await this.sendShioriNotify("OnSysResume", []);
+	},
+
+	async sendDestroy(this: any) {
+		return await this.sendShioriNotify("OnDestroy", []);
+	},
+
+	async sendInitialize(this: any) {
+		return await this.sendShioriNotify("OnInitialize", []);
+	},
+
+	async sendVirtualDesktopChanged(this: any, desktopId: string | number) {
+		return await this.sendShioriNotify("OnVirtualDesktopChanged", [
+			String(desktopId),
+		]);
+	},
+
+	async sendFullScreenAppMinimize(this: any) {
+		return await this.sendShioriNotify("OnFullScreenAppMinimize", []);
+	},
+
+	async sendFullScreenAppRestore(this: any) {
+		return await this.sendShioriNotify("OnFullScreenAppRestore", []);
+	},
+
+	async sendBasewareUpdating(this: any) {
+		return await this.sendShioriNotify("OnBasewareUpdating", []);
+	},
+
+	async sendBasewareUpdated(this: any) {
+		return await this.sendShioriNotify("OnBasewareUpdated", []);
+	},
+
+	async sendCacheSuspend(this: any) {
+		return await this.sendShioriNotify("OnCacheSuspend", []);
+	},
+
+	async sendCacheRestore(this: any) {
+		return await this.sendShioriNotify("OnCacheRestore", []);
+	},
+
+	/**
+	 * 重なり・画面外通知 (UKADOC overlap spec)
+	 */
+	async sendOverlap(
+		this: any,
+		scope0: number | string,
+		scope1: number | string,
+		rect: string = "",
+	) {
+		return await this.sendShioriNotify("OnOverlap", [
+			String(scope0),
+			String(scope1),
+			rect,
+		]);
+	},
+
+	async sendOffscreen(this: any, scope: number | string, rect: string = "") {
+		return await this.sendShioriNotify("OnOffscreen", [String(scope), rect]);
+	},
+
+	async sendOtherOverlap(this: any, ghostName: string, rect: string = "") {
+		return await this.sendShioriNotify("OnOtherOverlap", [ghostName, rect]);
+	},
+
+	async sendOtherOffscreen(this: any, ghostName: string, rect: string = "") {
+		return await this.sendShioriNotify("OnOtherOffscreen", [ghostName, rect]);
 	},
 };

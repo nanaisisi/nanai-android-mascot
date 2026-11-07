@@ -20,17 +20,38 @@ export async function handleChangeCommand(handler: any, args: string[]) {
 	const gc = handler.app.ghostController;
 
 	if (target === "ghost" && name) {
+		const shouldRaiseEvent = options.some(
+			(opt) => opt.toLowerCase() === "--option=raise-event",
+		);
+		const fromGhost = gc?.currentGhost?.name ?? "";
+		if (shouldRaiseEvent && gc?.sendGhostChanging) {
+			await gc.sendGhostChanging(name, fromGhost, "manual");
+		} else if (shouldRaiseEvent && gc?.sendShioriEvent) {
+			await gc.sendShioriEvent("OnGhostChanging", [name, "manual", fromGhost]);
+		}
 		await gc?.switchGhost?.(name);
+		if (shouldRaiseEvent && gc?.sendGhostChanged) {
+			await gc.sendGhostChanged(name, fromGhost);
+		} else if (shouldRaiseEvent && gc?.sendShioriEvent) {
+			await gc.sendShioriEvent("OnGhostChanged", [name, fromGhost]);
+		}
 	} else if (target === "shell" && name) {
 		const shouldRaiseEvent = options.some(
 			(opt) => opt.toLowerCase() === "--option=raise-event",
 		);
 		const fromShell = gc?.currentShell ?? "";
-		if (shouldRaiseEvent && gc?.sendShioriEvent) {
+		if (shouldRaiseEvent && gc?.sendShellChanging) {
+			await gc.sendShellChanging(name, fromShell);
+		} else if (shouldRaiseEvent && gc?.sendShioriEvent) {
 			await gc.sendShioriEvent("OnShellChanging", [name, fromShell]);
 		}
 		if (gc?.selectShell) {
 			await gc.selectShell(name);
+		}
+		if (shouldRaiseEvent && gc?.sendShellChanged) {
+			await gc.sendShellChanged(name, fromShell);
+		} else if (shouldRaiseEvent && gc?.sendShioriEvent) {
+			await gc.sendShioriEvent("OnShellChanged", [name, fromShell]);
 		}
 	} else if (target === "balloon" && name) {
 		const fromBalloon =

@@ -110,7 +110,12 @@ export class GhostController {
 			path: `${AppConfig.paths.defaultGhostDir}/${ghostName}`,
 		};
 
-		// 1. 新ゴーストアセットのバックグラウンド先行プリロード
+		// 【フェーズ 1: プリロードバナー表示】
+		if (isTauriAvailable()) {
+			void invoke("show_loading_banner_window", { ghostName: ghost.name }).catch(() => {});
+		}
+
+		// バックグラウンドアセット先行プリロード
 		const preloadSurfacesPromise = this.app.surfaceManager?.loadSurfacesTxt?.(ghost.path);
 
 		try {
@@ -134,15 +139,25 @@ export class GhostController {
 		}
 
 		this.currentShell = this.shells[0] || AppConfig.paths.fallbackShellName;
-		await this.selectShell(this.currentShell);
+
+		// 【フェーズ 2: シェル表示 & SHIORI 初期化のパラレル実行 (Atomic Reveal)】
 		const loadId = {};
 		(this as any)._currentLoadToken = loadId;
 		const isCurrentLoad = () => (this as any)._currentLoadToken === loadId;
-		await (this as any).initializeGhostSHIORI(
-			ghost,
-			preloadSurfacesPromise,
-			isCurrentLoad,
-		);
+
+		await Promise.all([
+			this.selectShell(this.currentShell),
+			(this as any).initializeGhostSHIORI(
+				ghost,
+				preloadSurfacesPromise,
+				isCurrentLoad,
+			),
+		]);
+
+		// アトミック反映完了後にバナー非表示化
+		if (isTauriAvailable()) {
+			void invoke("hide_loading_banner_window").catch(() => {});
+		}
 	}
 
 	async selectShell(shellName: string) {

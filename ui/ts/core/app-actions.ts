@@ -46,6 +46,17 @@ export const actionMethods = {
 			return (this as any).onGhostClick?.(undefined, undefined, undefined, scopeId);
 		}
 
+		if (action === "hide-character" || action === "close-character") {
+			const scopeId =
+				payload && typeof payload === "object" && "scope" in payload
+					? payload.scope
+					: 1;
+			if (isTauriAvailable()) {
+				void invoke("hide_subchar_window", { scopeId }).catch(() => {});
+			}
+			return;
+		}
+
 		if (action === "update") {
 			return (this as any).startNetworkUpdate?.();
 		}

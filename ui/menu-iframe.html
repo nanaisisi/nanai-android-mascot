@@ -11,41 +11,54 @@
     <div class="menu-sidebar" id="menu-sidebar" aria-hidden="true"></div>
     <div class="menu-container" role="menu" aria-label="標準メニュー">
       <!-- ================================================================= -->
-      <!-- ssp_menu_exact_spec.artifact.md 準拠：正確なメニュー構成（記述の2表現に対応） -->
+      <!-- SSP標準仕様準拠：メイン/サブキャラクター別 コンテキストメニュー構成 -->
       <!-- ================================================================= -->
 
-      <button type="button" class="menu-item" id="friends-btn" role="menuitem">
+      <!-- サブキャラクター用専用項目 -->
+      <button type="button" class="menu-item subchar-only" id="subchar-talk-btn" data-action="talk" role="menuitem">
+        <span>話す(T)</span>
+      </button>
+
+      <button type="button" class="menu-item subchar-only" id="hide-subchar-btn" data-action="hide-character" role="menuitem">
+        <span>このキャラクターを非表示(H)</span>
+      </button>
+
+      <hr class="menu-separator subchar-only" />
+
+      <!-- メインキャラクター専用項目 -->
+      <button type="button" class="menu-item main-only" id="friends-btn" role="menuitem">
         <span>おともだち</span>
       </button>
 
-      <button type="button" class="menu-item" id="favorite-btn" role="menuitem">
+      <button type="button" class="menu-item main-only" id="favorite-btn" role="menuitem">
         <span>おきにいり</span>
       </button>
 
-      <button type="button" class="menu-item" id="update-btn" role="menuitem">
+      <button type="button" class="menu-item main-only" id="update-btn" role="menuitem">
         <span>こうしんCtrl+U</span>
       </button>
 
-      <hr class="menu-separator" />
+      <hr class="menu-separator main-only" />
 
-      <button type="button" class="menu-item" id="uninstall-btn" role="menuitem">
+      <button type="button" class="menu-item main-only" id="uninstall-btn" role="menuitem">
         <span>アンインストール(U)</span>
       </button>
 
-      <hr class="menu-separator" />
+      <hr class="menu-separator main-only" />
 
-      <button type="button" class="menu-item" id="headlines-btn" role="menuitem">
+      <button type="button" class="menu-item main-only" id="headlines-btn" role="menuitem">
         <span>RSS/ヘッドライン(H)</span>
       </button>
 
-      <button type="button" class="menu-item" id="plugin-btn" role="menuitem" aria-haspopup="true">
+      <button type="button" class="menu-item main-only" id="plugin-btn" role="menuitem" aria-haspopup="true">
         <span>プラグイン(P)</span>
       </button>
 
-      <button type="button" class="menu-item" id="biff-btn" role="menuitem">
+      <button type="button" class="menu-item main-only" id="biff-btn" role="menuitem">
         <span>メールチェック (M)</span>
       </button>
 
+      <!-- 共通操作項目 -->
       <button type="button" class="menu-item" id="shell-scale-root-btn" role="menuitem">
         <span>シェル倍率(E)</span>
       </button>
@@ -84,37 +97,37 @@
         <span>バルーン(B)</span>
       </button>
 
-      <button type="button" class="menu-item" id="ghost-history-btn" role="menuitem">
+      <button type="button" class="menu-item main-only" id="ghost-history-btn" role="menuitem">
         <span>最近使ったもの(Y)</span>
       </button>
 
-      <hr class="menu-separator" />
+      <hr class="menu-separator main-only" />
 
-      <button type="button" class="menu-item" id="inquire-btn" role="menuitem">
+      <button type="button" class="menu-item main-only" id="inquire-btn" role="menuitem">
         <span>情報(A)</span>
       </button>
 
-      <button type="button" class="menu-item" id="language-btn" role="menuitem">
+      <button type="button" class="menu-item main-only" id="language-btn" role="menuitem">
         <span>Language</span>
       </button>
 
-      <button type="button" class="menu-item" id="minimize-btn" role="menuitem">
+      <button type="button" class="menu-item main-only" id="minimize-btn" role="menuitem">
         <span>アイコン化 (1)Ctrl+1</span>
       </button>
 
       <hr class="menu-separator" />
 
-      <button type="button" class="menu-item" id="move-ghost-btn" role="menuitem">
+      <button type="button" class="menu-item main-only" id="move-ghost-btn" role="menuitem">
         <span>ゴースト本体移動</span>
       </button>
 
-      <hr class="menu-separator" />
+      <hr class="menu-separator main-only" />
 
       <button type="button" class="menu-item" id="close-btn" role="menuitem">
         <span>終了(W)Ctrl+W</span>
       </button>
 
-      <button type="button" class="menu-item" id="close-all-btn" role="menuitem">
+      <button type="button" class="menu-item main-only" id="close-all-btn" role="menuitem">
         <span>全て終了(X)Ctrl+Q</span>
       </button>
     </div>

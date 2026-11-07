@@ -595,40 +595,25 @@ export const shioriNotifyMethods = {
 			lastScript,
 			String(scopeId),
 		]);
-	 * @param {string} lastScript 閉じる際に表示されていたスクリプト
-	 */
-	async sendBalloonCloseNotify(this: any, lastScript = "") {
-		return await this.sendShioriNotify("OnBalloonClose", [lastScript]);
 	},
 
 	/**
 	 * バルーン中断通知 (OnBalloonBreak) を送信 (UKADOC準拠)
-	 * @param {string} [lastScript=""] 中断されたスクリプト
-	 * @param {number|string} [scopeId=0] バルーンのスコープID
+	 * @param {string} [script=""] 中断の操作が起きたスクリプト
+	 * @param {number|string} [scopeId=0] 中断の操作が起きたスコープ番号 (本体側0, 相方側1...)
+	 * @param {number|string} [charPosition] 中断位置 (スクリプト先頭からの文字数)
 	 */
 	async sendBalloonBreakNotify(
 		this: any,
-		lastScript: string = "",
+		script: string = "",
 		scopeId: number | string = 0,
+		charPosition?: number | string,
 	) {
-		return await this.sendShioriNotify("OnBalloonBreak", [
-			lastScript,
-			String(scopeId),
-	 * @param {string} script 中断の操作が起きたスクリプト
-	 * @param {number|string} scopeId 中断の操作が起きたスコープ番号 (本体側0, 相方側1...)
-	 * @param {number|string} charPosition 中断位置 (スクリプト先頭からの文字数)
-	 */
-	async sendBalloonBreakNotify(
-		this: any,
-		script = "",
-		scopeId: number | string = 0,
-		charPosition: number | string = 0,
-	) {
-		return await this.sendShioriNotify("OnBalloonBreak", [
-			script,
-			String(scopeId),
-			String(charPosition),
-		]);
+		const refs = [script, String(scopeId)];
+		if (charPosition !== undefined) {
+			refs.push(String(charPosition));
+		}
+		return await this.sendShioriNotify("OnBalloonBreak", refs);
 	},
 
 	/**
@@ -928,6 +913,8 @@ export const shioriNotifyMethods = {
 			rectStr,
 		]);
 	},
+
+	/**
 	 * 選択肢拡張通知 (OnChoiceSelectEx) を送信 (UKADOC 規格準拠)
 	 * Reference0: ラベル(text), Reference1: ID, Reference2..: 拡張引数
 	 */
@@ -965,6 +952,9 @@ export const shioriNotifyMethods = {
 	 */
 	async sendGhostTermsDeclineNotify(this: any, id: string = "") {
 		return await this.sendShioriNotify("OnGhostTermsDecline", id ? [id] : []);
+	},
+
+	/**
 	 * ダイアログ関連 SHIORI イベント通知 (UKADOC dialogbox spec)
 	 */
 	async sendGhostTermsAccept(this: any, ghostName: string) {

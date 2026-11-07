@@ -138,35 +138,26 @@ export class SakuraScriptPlayer {
 			clearTimeout(this.choiceTimeoutTimer);
 			this.choiceTimeoutTimer = null;
 		}
+		const allExtraArgs = choiceArgs.length > 0 ? choiceArgs : extraArgs;
 		if (choiceId.startsWith("On")) {
 			await this.app.ghostController.sendShioriEvent(choiceId, [
 				choiceText,
-				...extraArgs,
-			]);
-		} else {
-			// UKADOC: OnChoiceSelectEx は OnChoiceSelect よりも先に開始
-			try {
-				await this.app.ghostController?.sendShioriEvent?.("OnChoiceSelectEx", [
-					choiceText,
-					choiceId,
-					...extraArgs,
-				]);
-			} catch (_e) {}
-				...choiceArgs,
+				...allExtraArgs,
 			]);
 		} else {
 			// UKADOC: OnChoiceSelectEx is sent first (Reference0: text, Reference1: ID, Reference2..N: args)
-			const resEx: any = await this.app.ghostController.sendShioriEvent(
-				"OnChoiceSelectEx",
-				[choiceText, choiceId, ...choiceArgs],
-			);
-			if (resEx && (resEx.response || resEx.script)) {
-				return;
-			}
+			try {
+				const resEx: any = await this.app.ghostController?.sendShioriEvent?.(
+					"OnChoiceSelectEx",
+					[choiceText, choiceId, ...allExtraArgs],
+				);
+				if (resEx && (resEx.response || resEx.script)) {
+					return;
+				}
+			} catch (_e) {}
 			await this.app.ghostController.sendShioriEvent("OnChoiceSelect", [
 				choiceId,
 				choiceText,
-				...extraArgs,
 			]);
 		}
 	}

@@ -56,7 +56,7 @@ body:not(.subchar-mode) .subchar-only {
 }
 
 .menu-sidebar {
-	display: block;
+	display: none;
 	width: var(--menu-sidebar-width, 24px);
 	height: 100%;
 	min-height: 100%;
@@ -66,6 +66,10 @@ body:not(.subchar-mode) .subchar-only {
 	background-position: var(--menu-sidebar-position, left bottom);
 	background-size: 100% auto;
 	flex-shrink: 0;
+}
+
+body.has-sidebar .menu-sidebar {
+	display: block;
 }
 
 .menu-container::-webkit-scrollbar,

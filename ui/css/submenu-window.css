@@ -25,6 +25,7 @@ body {
 	font-size: var(--balloon-font-size, 0.8125rem);
 	color: var(--balloon-text-color, #111111);
 	cursor: move;
+	position: relative;
 }
 
 .submenu-window-container .menu-item {
@@ -44,27 +45,6 @@ body {
 
 .submenu-window-container .menu-separator {
 	background-color: var(--balloon-separator-color, #999999);
-}
-
-.submenu-window-container {
-	position: relative;
-}
-
-body.has-sidebar .submenu-window-container {
-	padding-left: var(--menu-sidebar-width, 24px);
-}
-
-body.has-sidebar .submenu-window-container::before {
-	content: "";
-	position: absolute;
-	inset: 0 auto 0 0;
-	width: var(--menu-sidebar-width, 24px);
-	background-color: var(--balloon-bg, transparent);
-	background-image: var(--menu-sidebar-image, none);
-	background-repeat: no-repeat;
-	background-position: var(--menu-sidebar-position, left bottom);
-	background-size: auto;
-	pointer-events: none;
 }
 
 .submenu-window-container::-webkit-scrollbar {

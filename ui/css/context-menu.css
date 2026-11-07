@@ -62,13 +62,13 @@ body:not(.subchar-mode) .subchar-only {
 	min-height: 100%;
 	background: transparent;
 	background-image: var(--menu-sidebar-image, none);
-	background-repeat: repeat-y;
+	background-repeat: no-repeat;
 	background-position: var(--menu-sidebar-position, left bottom);
-	background-size: 100% auto;
+	background-size: contain;
 	flex-shrink: 0;
 }
 
-body.has-sidebar .menu-sidebar {
+body.has-sidebar:not(.subchar-mode) .menu-sidebar {
 	display: block;
 }
 

@@ -173,6 +173,9 @@ export const ghostSurfaceMethods = {
 					img.onerror = null;
 				}
 				img.src = transparentSrc;
+				if (img.decode) {
+					await img.decode().catch(() => {});
+				}
 			} else if (placeholder) {
 				const errorAttr = fallbackSrc
 					? `onerror="this.onerror=null; this.src='${fallbackSrc}';"`

@@ -110,6 +110,8 @@ export class GhostController {
 			path: `${AppConfig.paths.defaultGhostDir}/${ghostName}`,
 		};
 
+		const startTime = Date.now();
+
 		// 【フェーズ 1: プリロードバナー表示】
 		if (isTauriAvailable()) {
 			void invoke("show_loading_banner_window", { ghostName: ghost.name }).catch(() => {});
@@ -153,6 +155,19 @@ export class GhostController {
 				isCurrentLoad,
 			),
 		]);
+
+		// レンダリングフレーム完了の待機 (ダブル rAF による GPU 描画確定。テスト環境フォールバック付)
+		if (typeof globalThis.requestAnimationFrame === "function") {
+			await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+		} else {
+			await new Promise((resolve) => setTimeout(resolve, 16));
+		}
+
+		// 最小バナー表示維持時間 (チラつき防止)
+		const elapsed = Date.now() - startTime;
+		if (elapsed < 600) {
+			await new Promise((resolve) => setTimeout(resolve, 600 - elapsed));
+		}
 
 		// アトミック反映完了後にバナー非表示化
 		if (isTauriAvailable()) {

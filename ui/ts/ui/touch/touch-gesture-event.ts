@@ -1,25 +1,25 @@
 /**
  * @file touch-gesture-event.js
  * @description Slot-12 Android タッチ & ジェスチャーイベント定義
- * Contract: TouchGestureEvent, イベント命名規約 nas:touch:*
+ * Contract: TouchGestureEvent, イベント命名規約 nam:touch:*
  */
 
 /**
  * ジェスチャーイベント種別定数
  */
 export const TOUCH_GESTURE_TYPES = {
-	PINCH: "nas:touch:pinch",
-	DRAG: "nas:touch:drag",
-	DRAG_START: "nas:touch:dragstart",
-	DRAG_END: "nas:touch:dragend",
-	LONG_PRESS: "nas:touch:longpress",
-	TAP: "nas:touch:tap",
-	DOUBLE_TAP: "nas:touch:doubletap",
-	TWO_FINGER_TAP: "nas:touch:twofingertap",
-	SWIPE: "nas:touch:swipe",
-	STROKE: "nas:touch:stroke",
-	ROTATE: "nas:touch:rotate",
-	SNAP: "nas:touch:snap",
+	PINCH: "nam:touch:pinch",
+	DRAG: "nam:touch:drag",
+	DRAG_START: "nam:touch:dragstart",
+	DRAG_END: "nam:touch:dragend",
+	LONG_PRESS: "nam:touch:longpress",
+	TAP: "nam:touch:tap",
+	DOUBLE_TAP: "nam:touch:doubletap",
+	TWO_FINGER_TAP: "nam:touch:twofingertap",
+	SWIPE: "nam:touch:swipe",
+	STROKE: "nam:touch:stroke",
+	ROTATE: "nam:touch:rotate",
+	SNAP: "nam:touch:snap",
 };
 
 /**
@@ -28,7 +28,7 @@ export const TOUCH_GESTURE_TYPES = {
  */
 export class TouchGestureEvent {
 	/**
-	 * @param {string} type イベント種別 (nas:touch:*)
+	 * @param {string} type イベント種別 (nam:touch:*)
 	 * @param {object} detail イベント詳細データ
 	 * @param {number} [detail.scale=1.0] ピンチ操作の拡大縮小率
 	 * @param {number} [detail.deltaX=0] X軸移動量

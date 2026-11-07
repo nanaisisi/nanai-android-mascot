@@ -44,7 +44,7 @@ test("TouchGestureRecognizer and mobile gesture event stream fuzzing", () => {
 	);
 
 	// 2. TouchGestureEvent defensive properties with malformed details
-	const malformedEvent = new TouchGestureEvent("nas:touch:fuzz", {
+	const malformedEvent = new TouchGestureEvent("nam:touch:fuzz", {
 		scale: -5,
 		deltaX: NaN,
 		tapCount: -1,

@@ -9,8 +9,8 @@ import {
 
 describe("TouchGestureEvent & Helpers", () => {
 	it("initializes TouchGestureEvent with defaults and custom properties", () => {
-		const defaultEv = new TouchGestureEvent("nas:touch:custom");
-		expect(defaultEv.type).toBe("nas:touch:custom");
+		const defaultEv = new TouchGestureEvent("nam:touch:custom");
+		expect(defaultEv.type).toBe("nam:touch:custom");
 		expect(defaultEv.scale).toBe(1.0);
 		expect(defaultEv.deltaX).toBe(0);
 		expect(defaultEv.deltaY).toBe(0);

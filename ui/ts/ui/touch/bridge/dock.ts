@@ -112,7 +112,7 @@ export class DockManager {
 			typeof this._gestureRecognizer.on === "function"
 		) {
 			this._gestureUnbind = this._gestureRecognizer.on(
-				"nas:touch:snap",
+				"nam:touch:snap",
 				(event) => {
 					if (event?.dockState) {
 						this.setDockMode(event.dockState);

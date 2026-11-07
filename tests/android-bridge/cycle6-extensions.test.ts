@@ -109,7 +109,7 @@ describe("Slot-12 Cycle 6 Extensions & Complete Branch Coverage", () => {
 		const mockOriginalEvent = {
 			preventDefault: vi.fn(),
 		};
-		const ev = new TouchGestureEvent("nas:touch:test", {
+		const ev = new TouchGestureEvent("nam:touch:test", {
 			originalEvent: mockOriginalEvent,
 		});
 		expect(ev.defaultPrevented).toBe(false);
@@ -118,7 +118,7 @@ describe("Slot-12 Cycle 6 Extensions & Complete Branch Coverage", () => {
 		expect(mockOriginalEvent.preventDefault).toHaveBeenCalled();
 
 		// without originalEvent
-		const evNoOrig = new TouchGestureEvent("nas:touch:test2");
+		const evNoOrig = new TouchGestureEvent("nam:touch:test2");
 		evNoOrig.preventDefault();
 		expect(evNoOrig.defaultPrevented).toBe(true);
 	});
@@ -142,8 +142,8 @@ describe("Slot-12 Cycle 6 Extensions & Complete Branch Coverage", () => {
 
 		const rotateListener = vi.fn();
 		const pinchListener = vi.fn();
-		recognizer.on("nas:touch:rotate", rotateListener);
-		recognizer.on("nas:touch:pinch", pinchListener);
+		recognizer.on("nam:touch:rotate", rotateListener);
+		recognizer.on("nam:touch:pinch", pinchListener);
 
 		// Touch start with 2 fingers
 		const touch1 = { clientX: 100, clientY: 100 };
@@ -178,11 +178,11 @@ describe("Slot-12 Cycle 6 Extensions & Complete Branch Coverage", () => {
 		};
 		const safeListener = vi.fn();
 
-		recognizer.on("nas:touch:tap", errListener);
-		recognizer.on("nas:touch:tap", safeListener);
+		recognizer.on("nam:touch:tap", errListener);
+		recognizer.on("nam:touch:tap", safeListener);
 
 		expect(() =>
-			recognizer.emit("nas:touch:tap", { tapCount: 1 }),
+			recognizer.emit("nam:touch:tap", { tapCount: 1 }),
 		).not.toThrow();
 		expect(safeListener).toHaveBeenCalled();
 		recognizer.destroy();

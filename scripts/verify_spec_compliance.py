@@ -301,7 +301,7 @@ def process_audit_files(codebase, docs_dir='docs/spec', dry_run=False, target_ca
         os.path.join(docs_dir, 'ukadoc-spec/**/*.md'),
         os.path.join(docs_dir, 'ukadoc-ssp/**/*.md'),
         os.path.join(docs_dir, 'ssp-external-spec/**/*.md'),
-        os.path.join(docs_dir, 'nas-spec/**/*.md')
+        os.path.join(docs_dir, 'nam-spec/**/*.md')
     ]
     audit_files = []
     for p in patterns:

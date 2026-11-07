@@ -1,7 +1,7 @@
 /**
  * @file android-bridge.js
  * @description Slot-12 Android プラットフォームブリッジ & ライフサイクル・オーバーレイ制御
- * Contract: AndroidBridge, イベント命名規約 nas:android:*
+ * Contract: AndroidBridge, イベント命名規約 nam:android:*
  */
 
 import {

@@ -3,26 +3,26 @@ import shutil
 import glob
 
 # Mapping of file name to its new destination folder
-nas_mapping = {
-    "standard-ghost-spec.md": "docs/doc-nas-spec/ghost/standard-ghost-spec.md",
-    "surfaces-and-collision-spec.md": "docs/doc-nas-spec/ghost/surfaces-and-collision-spec.md",
-    "ghost-import-and-asset-separation-spec.md": "docs/doc-nas-spec/ghost/ghost-import-and-asset-separation-spec.md",
-    "ghost-compatibility-gap-and-roadmap.md": "docs/doc-nas-spec/ghost/ghost-compatibility-gap-and-roadmap.md",
-    "surface-and-subchar-spec.md": "docs/doc-nas-spec/ghost/surface-and-subchar-spec.md",
+nam_mapping = {
+    "standard-ghost-spec.md": "docs/doc-nam-spec/ghost/standard-ghost-spec.md",
+    "surfaces-and-collision-spec.md": "docs/doc-nam-spec/ghost/surfaces-and-collision-spec.md",
+    "ghost-import-and-asset-separation-spec.md": "docs/doc-nam-spec/ghost/ghost-import-and-asset-separation-spec.md",
+    "ghost-compatibility-gap-and-roadmap.md": "docs/doc-nam-spec/ghost/ghost-compatibility-gap-and-roadmap.md",
+    "surface-and-subchar-spec.md": "docs/doc-nam-spec/ghost/surface-and-subchar-spec.md",
 
-    "shiori-integration.md": "docs/doc-nas-spec/shiori-script/shiori-integration.md",
-    "sakura-script-and-balloon-spec.md": "docs/doc-nas-spec/shiori-script/sakura-script-and-balloon-spec.md",
-    "plugin-and-shiori-fallback-spec.md": "docs/doc-nas-spec/shiori-script/plugin-and-shiori-fallback-spec.md",
+    "shiori-integration.md": "docs/doc-nam-spec/shiori-script/shiori-integration.md",
+    "sakura-script-and-balloon-spec.md": "docs/doc-nam-spec/shiori-script/sakura-script-and-balloon-spec.md",
+    "plugin-and-shiori-fallback-spec.md": "docs/doc-nam-spec/shiori-script/plugin-and-shiori-fallback-spec.md",
 
-    "encoding-and-vfs-spec.md": "docs/doc-nas-spec/platform/encoding-and-vfs-spec.md",
-    "wasm-and-plugin-extensibility.md": "docs/doc-nas-spec/platform/wasm-and-plugin-extensibility.md",
-    "android-overlay-and-service-spec.md": "docs/doc-nas-spec/platform/android-overlay-and-service-spec.md",
+    "encoding-and-vfs-spec.md": "docs/doc-nam-spec/platform/encoding-and-vfs-spec.md",
+    "wasm-and-plugin-extensibility.md": "docs/doc-nam-spec/platform/wasm-and-plugin-extensibility.md",
+    "android-overlay-and-service-spec.md": "docs/doc-nam-spec/platform/android-overlay-and-service-spec.md",
 
-    "context-menu-spec.md": "docs/doc-nas-spec/ui/context-menu-spec.md",
-    "submenu-window-spec.md": "docs/doc-nas-spec/ui/submenu-window-spec.md",
-    "shell-menu-pictures-spec.md": "docs/doc-nas-spec/ui/shell-menu-pictures-spec.md",
-    "composition-plan-integration-spec.md": "docs/doc-nas-spec/ui/composition-plan-integration-spec.md",
-    "compatibility-implementation-plan.md": "docs/doc-nas-spec/compatibility-implementation-plan.md"
+    "context-menu-spec.md": "docs/doc-nam-spec/ui/context-menu-spec.md",
+    "submenu-window-spec.md": "docs/doc-nam-spec/ui/submenu-window-spec.md",
+    "shell-menu-pictures-spec.md": "docs/doc-nam-spec/ui/shell-menu-pictures-spec.md",
+    "composition-plan-integration-spec.md": "docs/doc-nam-spec/ui/composition-plan-integration-spec.md",
+    "compatibility-implementation-plan.md": "docs/doc-nam-spec/compatibility-implementation-plan.md"
 }
 
 ssp_mapping = {
@@ -36,7 +36,7 @@ ssp_mapping = {
 }
 
 source_dirs = [
-    "docs/doc/nas-spec",
+    "docs/doc/nam-spec",
     "docs/doc/ssp-spec",
     "docs/doc/ghost",
     "docs/doc/shiori-script",
@@ -44,7 +44,7 @@ source_dirs = [
     "docs/doc/reference"
 ]
 
-all_mapping = {**nas_mapping, **ssp_mapping}
+all_mapping = {**nam_mapping, **ssp_mapping}
 
 moved = set()
 

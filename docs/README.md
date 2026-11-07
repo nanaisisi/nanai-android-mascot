@@ -60,8 +60,8 @@
 ## 🔧 第3層: 突合文書 (実装適合マスタ: `spec/`)
 
 - **[SUMMARY.md](spec/SUMMARY.md)** - **規格別実装適合度自動集計マスタサマリ**
-- **[ssp-master-compatibility-spec.md](spec/nas-spec/ssp-master-compatibility-spec.md)** - SSP 互換・暗黙規格統括マスター仕様書 (96 DPI換算, Mutex, DLL, `seriko.use_self_alpha`等)
-- **[ssp-font-and-ui-spec.md](spec/nas-spec/ssp-font-and-ui-spec.md)** - SSP 暗黙仕様: フォントサイズ・インライン要素サイズフィット規格
+- **[ssp-master-compatibility-spec.md](spec/nam-spec/ssp-master-compatibility-spec.md)** - SSP 互換・暗黙規格統括マスター仕様書 (96 DPI換算, Mutex, DLL, `seriko.use_self_alpha`等)
+- **[ssp-font-and-ui-spec.md](spec/nam-spec/ssp-font-and-ui-spec.md)** - SSP 暗黙仕様: フォントサイズ・インライン要素サイズフィット規格
 - **[explorer.md](spec/ssp-external-spec/explorer.md)** - エクスプローラ機能仕様
 - **[menu-bitmap.md](spec/ssp-external-spec/menu-bitmap.md)** - オーナードローメニュー・背景画像仕様
 - **[window-snap.md](spec/ssp-external-spec/window-snap.md)** - ウィンドウ・スナップ機能および位置リセット仕様
@@ -69,19 +69,19 @@
 ### 内部設計技術仕様書 (`doc/`)
 
 _(※現在各ドメインごとに整理中)_
-- **[standard-ghost-spec.md](doc/nas-spec/standard-ghost-spec.md)** - 公式サンプルキャラクター仕様書（モック & プチ）
-- **[sakura-script-and-balloon-spec.md](doc/nas-spec/sakura-script-and-balloon-spec.md)** - さくらスクリプトパーサー & バルーン文字送り仕様書
-- **[surfaces-and-collision-spec.md](doc/nas-spec/surfaces-and-collision-spec.md)** - surfaces.txt アニメーション合成 & 当たり判定仕様書
-- **[encoding-and-vfs-spec.md](doc/nas-spec/encoding-and-vfs-spec.md)** - 文字コード変換 (Shift_JIS ↔ UTF-8) & 仮想ファイルシステム (VFS) 仕様書
-- **[android-overlay-and-service-spec.md](doc/nas-spec/android-overlay-and-service-spec.md)** - Android システムオーバーレイ & 常駐生存仕様書
-- **[plugin-and-shiori-fallback-spec.md](doc/nas-spec/plugin-and-shiori-fallback-spec.md)** - プラグイン & SHIORI 読込み・代替読込み (Fallback) 仕様書
-- **[wasm-and-plugin-extensibility.md](doc/nas-spec/wasm-and-plugin-extensibility.md)** - WASM化指針 & JavaScript拡張システム仕様書
-- **[shiori-integration.md](doc/nas-spec/shiori-integration.md)** - SHIORI 組み込み統合技術仕様
-- **[ssp-compatibility-reference.md](doc/nas-spec/ssp-compatibility-reference.md)** - SSP 仕様ベース 統合互換リファレンスマニュアル
-- **[local-reference-and-test-spec.md](doc/nas-spec/local-reference-and-test-spec.md)** - ローカル外部仕様・試験環境（local/）連携仕様書
-- **[ghost-compatibility-gap-and-roadmap.md](doc/nas-spec/ghost-compatibility-gap-and-roadmap.md)** - 伺かゴースト互換性ギャップ分析と実装改善ロードマップ仕様書
-- **[compatibility-implementation-plan.md](doc/nas-spec/compatibility-implementation-plan.md)** - 互換実装計画仕様書
-- **[specification-compliance-matrix.md](doc/nas-spec/specification-compliance-matrix.md)** - 仕様適合マトリクス
+- **[standard-ghost-spec.md](doc/nam-spec/standard-ghost-spec.md)** - 公式サンプルキャラクター仕様書（モック & プチ）
+- **[sakura-script-and-balloon-spec.md](doc/nam-spec/sakura-script-and-balloon-spec.md)** - さくらスクリプトパーサー & バルーン文字送り仕様書
+- **[surfaces-and-collision-spec.md](doc/nam-spec/surfaces-and-collision-spec.md)** - surfaces.txt アニメーション合成 & 当たり判定仕様書
+- **[encoding-and-vfs-spec.md](doc/nam-spec/encoding-and-vfs-spec.md)** - 文字コード変換 (Shift_JIS ↔ UTF-8) & 仮想ファイルシステム (VFS) 仕様書
+- **[android-overlay-and-service-spec.md](doc/nam-spec/android-overlay-and-service-spec.md)** - Android システムオーバーレイ & 常駐生存仕様書
+- **[plugin-and-shiori-fallback-spec.md](doc/nam-spec/plugin-and-shiori-fallback-spec.md)** - プラグイン & SHIORI 読込み・代替読込み (Fallback) 仕様書
+- **[wasm-and-plugin-extensibility.md](doc/nam-spec/wasm-and-plugin-extensibility.md)** - WASM化指針 & JavaScript拡張システム仕様書
+- **[shiori-integration.md](doc/nam-spec/shiori-integration.md)** - SHIORI 組み込み統合技術仕様
+- **[ssp-compatibility-reference.md](doc/nam-spec/ssp-compatibility-reference.md)** - SSP 仕様ベース 統合互換リファレンスマニュアル
+- **[local-reference-and-test-spec.md](doc/nam-spec/local-reference-and-test-spec.md)** - ローカル外部仕様・試験環境（local/）連携仕様書
+- **[ghost-compatibility-gap-and-roadmap.md](doc/nam-spec/ghost-compatibility-gap-and-roadmap.md)** - 伺かゴースト互換性ギャップ分析と実装改善ロードマップ仕様書
+- **[compatibility-implementation-plan.md](doc/nam-spec/compatibility-implementation-plan.md)** - 互換実装計画仕様書
+- **[specification-compliance-matrix.md](doc/nam-spec/specification-compliance-matrix.md)** - 仕様適合マトリクス
 
 ## 📋 プロセス・調査研究
 

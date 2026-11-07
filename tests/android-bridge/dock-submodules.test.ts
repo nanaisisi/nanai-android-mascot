@@ -14,7 +14,7 @@ describe("AndroidBridge - Dock & Submodules", () => {
 		const mockRecognizer = {
 			setDockState: vi.fn(),
 			on: vi.fn((event, cb) => {
-				if (event === "nas:touch:snap") {
+				if (event === "nam:touch:snap") {
 					snapHandler = cb;
 				}
 				return () => {};

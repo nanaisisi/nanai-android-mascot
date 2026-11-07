@@ -74,6 +74,12 @@ body.has-sidebar .menu-sidebar {
 	display: block;
 }
 
+body.subchar-mode .menu-sidebar {
+	overflow: hidden;
+	background-position: left bottom;
+	background-size: auto;
+}
+
 .menu-container::-webkit-scrollbar,
 .submenu-container::-webkit-scrollbar {
 	width: 4px;

@@ -71,6 +71,7 @@ function initCharacterWindow() {
 			const src = event.payload?.src;
 			if (src && img) {
 				img.onload = () => {
+					img.style.display = "block";
 					if (img.naturalWidth > 0 && img.naturalHeight > 0) {
 						void invoke("show_subchar_window", {
 							scopeId,
@@ -81,6 +82,13 @@ function initCharacterWindow() {
 				};
 				img.src = src;
 				img.style.display = "block";
+				if (img.complete && img.naturalWidth > 0) {
+					void invoke("show_subchar_window", {
+						scopeId,
+						width: img.naturalWidth,
+						height: img.naturalHeight,
+					}).catch(() => {});
+				}
 			} else if (img) {
 				img.style.display = "none";
 			}

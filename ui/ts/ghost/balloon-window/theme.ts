@@ -88,6 +88,12 @@ export async function loadBalloonSkinImages(theme, scopeId) {
 		invoke("load_balloon_image", { name: theme, file: "sstp.png" }).catch(
 			() => null,
 		),
+		invoke("load_balloon_image", { name: theme, file: "sstp_new.png" }).catch(
+			() => null,
+		),
+		invoke("load_balloon_image", { name: theme, file: "sstp_newk.png" }).catch(
+			() => null,
+		),
 		invoke("load_balloon_image", {
 			name: theme,
 			file: "online0.png",

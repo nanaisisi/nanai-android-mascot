@@ -4,6 +4,8 @@
 
 import {
 	finalizeAnimations,
+	handleAnimationCollision,
+	handleAnimationCollisionEx,
 	handleAnimationInterval,
 	handleAnimationName,
 	handleAnimationOption,
@@ -105,6 +107,20 @@ export function parseSurfacesTxt(text) {
 			/[a-z0-9_.]+\.balloon\.offset/i.test(trimmed)
 		) {
 			handleBalloonOffset(trimmed, currentSurfaces, balloonOffsets);
+		} else if (/^(?:animation\d+\.|\d+)collisionex\d*,/i.test(trimmed)) {
+			handleAnimationCollisionEx(
+				trimmed,
+				currentSurfaces,
+				animations,
+				animationMaps,
+			);
+		} else if (/^(?:animation\d+\.|\d+)collision\d*,/i.test(trimmed)) {
+			handleAnimationCollision(
+				trimmed,
+				currentSurfaces,
+				animations,
+				animationMaps,
+			);
 		} else if (/^(?:animation\d+\.|\d+)interval,/.test(trimmed)) {
 			handleAnimationInterval(
 				trimmed,

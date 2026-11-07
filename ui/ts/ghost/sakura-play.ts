@@ -96,6 +96,7 @@ export async function playScript(player: any, script: string) {
 		if (player.playbackId !== currentId) break;
 		if (context.ended) break;
 
+		player.currentProgressIndex = j;
 		await handleToken(player, app, tokens[j], context);
 	}
 
@@ -134,6 +135,11 @@ export async function playScript(player: any, script: string) {
 						player.lastScript || "",
 						"0",
 					]);
+					if (app.ghostController?.sendBalloonCloseNotify) {
+						await app.ghostController.sendBalloonCloseNotify(
+							player.lastScript || "",
+						);
+					}
 				} catch (_e) {}
 			}
 		}, player.balloonTimeout);

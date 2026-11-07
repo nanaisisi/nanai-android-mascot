@@ -13,8 +13,7 @@
 | ukadoc-ssp/about                     |         3 |           0 |         2 |         0 |    5 |
 | ukadoc-ssp/config                    |        10 |           0 |         7 |         0 |   17 |
 | ukadoc-ssp/dev                       |         3 |           0 |         2 |         0 |    5 |
-| ukadoc-ssp/functions                 |        15 |           0 |         2 |         0 |   17 |
-| ukadoc-ssp/howto                     |         5 |           0 |         2 |         0 |    7 |
+| ukadoc-ssp/functions                 |        15 |           0 |         2 |         0 |   17 || ukadoc-ssp/howto                     |         5 |           0 |         2 |         0 |    7 |
 | **合計** |      1474 |           3 |       585 |         3 | 2065 |
 
 ## 注意

@@ -13,16 +13,17 @@
 		"withGlobalTauri": true,
 		"windows": [
 			{
-				"title": "Nanai Android Mascot",
-				"width": 400,
-				"height": 600,
+				"title": "Nanai Android Mascot Orchestrator",
+				"width": 1,
+				"height": 1,
 				"transparent": true,
 				"decorations": false,
 				"shadow": false,
-				"alwaysOnTop": true,
-				"resizable": true,
+				"alwaysOnTop": false,
+				"resizable": false,
 				"minimizable": false,
 				"maximizable": false,
+				"skipTaskbar": true,
 				"visible": false
 			}
 		],

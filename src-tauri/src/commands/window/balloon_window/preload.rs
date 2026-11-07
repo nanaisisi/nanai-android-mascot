@@ -80,8 +80,8 @@ pub async fn preload_auxiliary_windows(app_handle: tauri::AppHandle) -> Result<(
             .decorations(false)
             .shadow(false)
             .always_on_top(true)
-            .skip_taskbar(true)
-            .resizable(true)
+            .skip_taskbar(false)
+            .resizable(false)
             .visible(false)
             .build();
         }

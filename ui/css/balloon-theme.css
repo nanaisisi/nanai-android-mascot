@@ -4,11 +4,11 @@
    ==================================================== */
 
 :root {
-	/* NAMデフォルト+ (青っぽい白地 + クッキリ2px青外枠) */
+	/* NAMデフォルト+ (青っぽい白地 + 1px青外枠) */
 	--balloon-bg: #f4f8fc;
 	--balloon-pattern: none;
 	--balloon-border-color: #2b579a;
-	--balloon-border-width: 2px;
+	--balloon-border-width: 1px;
 	--balloon-border-style: solid;
 	--balloon-border-radius: 0.375rem;
 	--balloon-box-shadow: 0 0.125rem 0.5rem rgba(0, 120, 215, 0.25);
@@ -31,7 +31,7 @@
 	--balloon-writing-mode: horizontal-tb;
 }
 
-/* NAMデフォルト+ スキン (標準横表示: 青っぽい白地 + 2pxクッキリ青外枠) */
+/* NAMデフォルト+ スキン (標準横表示: 青っぽい白地 + 1px青外枠) */
 [data-balloon-theme="nam_default_plus"],
 body.balloon-theme-nam_default_plus,
 [data-balloon-theme="default"],
@@ -39,7 +39,7 @@ body.balloon-theme-default {
 	--balloon-bg: #f4f8fc;
 	--balloon-pattern: none;
 	--balloon-border-color: #2b579a;
-	--balloon-border-width: 2px;
+	--balloon-border-width: 1px;
 	--balloon-border-style: solid;
 	--balloon-border-radius: 0.375rem;
 	--balloon-box-shadow: 0 0.125rem 0.5rem rgba(0, 120, 215, 0.25);
@@ -52,13 +52,13 @@ body.balloon-theme-default {
 	--balloon-tail-color: #f4f8fc;
 }
 
-/* NAMデフォルト+(頭上) スキン (頭上表示: 真ん中下アライメント + 2pxクッキリ青外枠) */
+/* NAMデフォルト+(頭上) スキン (頭上表示: 真ん中下アライメント + 1px青外枠) */
 [data-balloon-theme="nam_default_plus_overhead"],
 body.balloon-theme-nam_default_plus_overhead {
 	--balloon-bg: #f4f8fc;
 	--balloon-pattern: none;
 	--balloon-border-color: #2b579a;
-	--balloon-border-width: 2px;
+	--balloon-border-width: 1px;
 	--balloon-border-style: solid;
 	--balloon-border-radius: 0.375rem;
 	--balloon-box-shadow: 0 0.125rem 0.5rem rgba(0, 120, 215, 0.25);

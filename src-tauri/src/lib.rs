@@ -68,6 +68,7 @@ pub fn run() {
         .manage(AppState::new())
         .setup(|app| {
             std::println!("🟢 Tauri .setup() 呼び出し開始！ OS: {}", std::env::consts::OS);
+            shiori::fmo::acquire_base_ware_mutexes();
             #[cfg(not(target_os = "android"))]
             {
                 std::println!("🟢 not(target_os = \"android\") ブロック突入");

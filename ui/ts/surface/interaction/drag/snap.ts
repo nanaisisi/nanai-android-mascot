@@ -100,17 +100,35 @@ export function calculateWindowSnap(
 
 /**
  * SSP 準拠のスナップツールチップ HTML テキスト生成
+ * @param x X座標
+ * @param y Y座標
+ * @param snapXType X軸スナップ種別
+ * @param snapYType Y軸スナップ種別
+ * @param options オプション（coordsOnly: 座標表示のみモード, showCtrlHint: Ctrlヒントの表示制御）
  */
 export function formatSnapTooltipText(
 	x: number,
 	y: number,
-	snapXType: string,
-	snapYType: string,
+	snapXType: string = "None",
+	snapYType: string = "None",
+	options: { coordsOnly?: boolean; showCtrlHint?: boolean } = {},
 ): string {
+	const roundedX = Math.round(x);
+	const roundedY = Math.round(y);
+	const { coordsOnly = false, showCtrlHint = true } = options;
+
+	if (coordsOnly) {
+		return `${roundedX},${roundedY}`;
+	}
+
 	const snapDetails: string[] = [];
 	if (snapXType !== "None") snapDetails.push(`Snap X:${snapXType}`);
 	if (snapYType !== "None") snapDetails.push(`Snap Y:${snapYType}`);
 
 	const snapText = snapDetails.length > 0 ? ` (${snapDetails.join(", ")})` : "";
-	return `${Math.round(x)},${Math.round(y)}${snapText}<br><span style="font-size: 10px; opacity: 0.8;">Press Ctrl to disable</span>`;
+	const ctrlHint = showCtrlHint
+		? `<br><span style="font-size: 10px; opacity: 0.8;">Press Ctrl to disable</span>`
+		: "";
+
+	return `${roundedX},${roundedY}${snapText}${ctrlHint}`;
 }

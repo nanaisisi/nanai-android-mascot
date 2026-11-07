@@ -112,9 +112,11 @@ export class GhostController {
 
 		const startTime = Date.now();
 
-		// 【フェーズ 1: プリロードバナー表示】
+		// 【フェーズ 1: プリロードバナー表示 (完全待機)】
 		if (isTauriAvailable()) {
-			void invoke("show_loading_banner_window", { ghostName: ghost.name }).catch(() => {});
+			try {
+				await invoke("show_loading_banner_window", { ghostName: ghost.name });
+			} catch (_e) {}
 		}
 
 		// バックグラウンドアセット先行プリロード
@@ -162,22 +164,28 @@ export class GhostController {
 			),
 		]);
 
-		// レンダリングフレーム完了の待機 (ダブル rAF による GPU 描画確定。テスト環境フォールバック付)
+		// レンダリングフレーム完了の待機 (トリプル rAF による GPU 描画・コンポジット完全確定。テスト環境フォールバック付)
 		if (typeof globalThis.requestAnimationFrame === "function") {
-			await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+			await new Promise((resolve) =>
+				requestAnimationFrame(() =>
+					requestAnimationFrame(() => requestAnimationFrame(resolve))
+				)
+			);
 		} else {
-			await new Promise((resolve) => setTimeout(resolve, 16));
+			await new Promise((resolve) => setTimeout(resolve, 50));
 		}
 
-		// 最小バナー表示維持時間 (チラつき防止)
+		// 最小バナー表示維持時間 (チラつき防止を強化)
 		const elapsed = Date.now() - startTime;
-		if (elapsed < 600) {
-			await new Promise((resolve) => setTimeout(resolve, 600 - elapsed));
+		if (elapsed < 800) {
+			await new Promise((resolve) => setTimeout(resolve, 800 - elapsed));
 		}
 
-		// アトミック反映完了後にバナー非表示化
+		// アトミック反映完了後にバナー非表示化 (完全待機)
 		if (isTauriAvailable()) {
-			void invoke("hide_loading_banner_window").catch(() => {});
+			try {
+				await invoke("hide_loading_banner_window");
+			} catch (_e) {}
 		}
 	}
 

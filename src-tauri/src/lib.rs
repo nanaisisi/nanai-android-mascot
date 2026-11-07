@@ -20,6 +20,7 @@ mod common;
 mod events;
 mod fmo;
 mod ghost;
+mod jumplist;
 mod shiori;
 mod sstp;
 mod tray;
@@ -69,6 +70,7 @@ pub fn run() {
         .setup(|app| {
             std::println!("🟢 Tauri .setup() 呼び出し開始！ OS: {}", std::env::consts::OS);
             shiori::fmo::acquire_base_ware_mutexes();
+            let _ = jumplist::setup_taskbar_jumplist(app);
             #[cfg(not(target_os = "android"))]
             {
                 std::println!("🟢 not(target_os = \"android\") ブロック突入");

@@ -1,12 +1,12 @@
 # SSP メニュー仕様適合性再確認レポート (SSP Menu Specification Compliance Review)
 
-ukadoc-spec および SSP（Sakura Script Player）のオーナードローメニュー仕様に基づき、現在の実装 (`ui/menu-iframe.html`, `ui/css/context-menu.css`, `ui/ts/ui/`) の適合性を再確認しました。
+ukadoc-spec および SSP（Sakura Script Player）のオーナードローメニュー仕様に基づき、現在の実装 (`../../../ui/menu-iframe.html`, `ui/css/context-menu.css`, `ui/ts/ui/`) の適合性を再確認しました。
 
 ---
 
 ## 1. 適合項目・仕様マッピング
 
-| SSP メニュー項目 / 仕様要件 | 実装対応状況 (`ui/menu-iframe.html` / `context-menu.ts`) | 備考・仕様準拠状況 |
+| SSP メニュー項目 / 仕様要件 | 実装対応状況 (`../../../ui/menu-iframe.html` / `context-menu.ts`) | 備考・仕様準拠状況 |
 | :--- | :--- | :--- |
 | **ゴースト側/標準メニュー階層** | 実装済み (`talk-btn`, `autotalk-btn`, `biff-btn`, `headlines-btn` 等) | ukadoc-spec 準拠の標準機能順序 |
 | **サブシステム切替 (着せ替え・シェル・ゴースト・バルーン)** | 実装済み (`dressup-btn`, `shell-btn`, `ghost-btn`, `balloon-btn`) | サブメニュー連動対応 |

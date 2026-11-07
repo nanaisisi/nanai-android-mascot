@@ -1,6 +1,6 @@
 # Rustへの移行検討の再検討 (Rust Migration Strategy Re-evaluation)
 
-本プロジェクトにおける **Rust バックエンド（`crates/ui`）** と **TypeScript / Kotlin フロントエンド・UI層** の役割分担および、今後の Rust 移行戦略について再検討した結果をまとめます。
+本プロジェクトにおける **Rust バックエンド（`../../../crates/ui`）** と **TypeScript / Kotlin フロントエンド・UI層** の役割分担および、今後の Rust 移行戦略について再検討した結果をまとめます。
 
 ---
 
@@ -24,17 +24,17 @@ graph TD
 
 ---
 
-## 2. すでに Rust 化されているコア領域 (`crates/ui`)
+## 2. すでに Rust 化されているコア領域 (`../../../crates/ui`)
 
 現在、以下の重い処理やコアロジックはすべて **高パフォーマンスかつメモリ安全な Rust** で実装されています：
 
-1. **さくらスクリプト解析・AST構築** (`crates/ui/src/script/`)
+1. **さくらスクリプト解析・AST構築** (`../../../crates/ui/src/script`)
    - トークナイザ、ASTビルダー、コマンドライフサイクル分類、括弧タグハンドラー（`raiselike`, `underscore`, `basic`）。
-2. **SERIKO アニメーションエンジン & サーフィス合成** (`crates/ui/src/animation/`, `surfaces/`)
+2. **SERIKO アニメーションエンジン & サーフィス合成** (`../../../crates/ui/src/animation`, `surfaces/`)
    - タイムライン構築、イージング、アニメーションスケジューラー、動的当たり判定（Collision）、サーフィスレイヤー合成（Chromakey / Blend modes）、フレームバッファ。
-3. **ファイルシステム・文字コード処理** (`crates/ui/src/vfs/`)
+3. **ファイルシステム・文字コード処理** (`../../../crates/ui/src/vfs`)
    - VFSオーバーレイ、SJIS / EUC-JP / UTF-8 / UTF-16 自動文字コード検出・デコード。
-4. **SHIORI プロトコル & SSTP / FMO** (`crates/ui/src/shiori/`, `sstp/`, `fmo/`)
+4. **SHIORI プロトコル & SSTP / FMO** (`../../../crates/ui/src/shiori`, `sstp/`, `fmo/`)
    - SHIORI リクエスト/レスポンスパーサ、マルチステージローダー、FMO共有メモリバッファ生成。
 
 ---
@@ -62,7 +62,7 @@ graph TD
 ## 4. 今後の Rust 移行・統合の検討事項 (Re-evaluation Points)
 
 ### A. WebView / DOM レンダリング層の扱い
-- **現状**: UI描画、コンテキストメニュー、タッチジェスチャー認識、ダイアログ等は TypeScript (`ui/ts/`) および Android Compose (`nanai-android-mascot`) で実装。
+- **現状**: UI描画、コンテキストメニュー、タッチジェスチャー認識、ダイアログ等は TypeScript (`../../../ui/ts`) および Android Compose (`nanai-android-mascot`) で実装。
 - **評価**: UI層は頻繁なビューの変更やプラットフォーム固有のAPI（Android Native / WebView）に依存するため、**TypeScript / Kotlin (Compose) に維持するのが最も開発生産性と保守性が高い**。
 
 ### B. SHIORI DLL / 外部プラグイン実行のホスティング
@@ -73,6 +73,6 @@ graph TD
 
 ## 5. 推奨ロードマップと戦略
 
-1. **コアロジックの Rust 完結を維持**: パーサ、アニメーション、VFS、SHIORI 通信は引き続き Rust (`crates/ui`) を唯一の真実の源（Single Source of Truth）とする。
+1. **コアロジックの Rust 完結を維持**: パーサ、アニメーション、VFS、SHIORI 通信は引き続き Rust (`../../../crates/ui`) を唯一の真実の源（Single Source of Truth）とする。
 2. **IPCの型安全性強化**: TypeScript 側と Rust 側の IPC コマンド（Tauri Commands）間での型定義の自動同期（Specta または ts-rs 等の導入検討）。
 3. **テスト駆動の維持**: 現在達成している高水準のカバレッジ（Rust 288テスト、TS 154ファイル / 570テスト全通過）を維持し、リファクタリング時の安全性を担保する。

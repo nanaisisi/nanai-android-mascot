@@ -19,9 +19,9 @@ pub async fn show_character_window(
         if let Some(sub_win) = app_handle.get_webview_window(&label) {
             let _ = sub_win.set_decorations(false);
             let _ = sub_win.set_shadow(false);
-            let _ = sub_win.set_size(tauri::Size::Logical(tauri::LogicalSize {
-                width: win_width,
-                height: win_height,
+            let _ = sub_win.set_size(tauri::Size::Physical(tauri::PhysicalSize {
+                width: win_width.round() as u32,
+                height: win_height.round() as u32,
             }));
             if let (Some(px), Some(py)) = (x, y) {
                 let _ = sub_win.set_position(tauri::Position::Physical(tauri::PhysicalPosition {
@@ -76,6 +76,11 @@ pub async fn show_character_window(
             .build()
             .map_err(|e| e.to_string())?;
 
+            let _ = sub_win.set_size(tauri::Size::Physical(tauri::PhysicalSize {
+                width: win_width.round() as u32,
+                height: win_height.round() as u32,
+            }));
+
             let _ = sub_win.show();
         }
     }
@@ -94,7 +99,6 @@ pub async fn hide_character_window(
         use tauri::Manager;
         let label = format!("subchar_window_{}", scope_id);
         if let Some(sub_win) = app_handle.get_webview_window(&label) {
-            let _ = sub_win.minimize();
             let _ = sub_win.hide();
         }
     }
@@ -139,9 +143,9 @@ pub async fn set_character_scale(
         let win_height = (360.0 * factor).round().max(140.0);
         for (label, win) in app_handle.webview_windows() {
             if label.starts_with("subchar_window_") {
-                let _ = win.set_size(tauri::Size::Logical(tauri::LogicalSize {
-                    width: win_width,
-                    height: win_height,
+                let _ = win.set_size(tauri::Size::Physical(tauri::PhysicalSize {
+                    width: win_width as u32,
+                    height: win_height as u32,
                 }));
             }
         }

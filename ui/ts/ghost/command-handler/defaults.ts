@@ -73,9 +73,11 @@ import {
 	handleReloadSurface,
 	handleSetAlignmentOnDesktop,
 	handleSetAlphaCommand,
+	handleSetOtherSurfaceChangeCommand,
 	handleSetPositionCommand,
 	handleSetPropertyCommand,
 	handleSetScalingCommand,
+	handleSetSerikoTalkCommand,
 	handleSetShioriDebugMode,
 	handleSetTaskTrayIcon,
 	handleSetTrayBalloon,
@@ -384,6 +386,20 @@ export function initDefaultCommandHandlers() {
 	});
 	registerCommandHandler("set:property", async (handler, args) => {
 		handleSetPropertyCommand(handler, args);
+	});
+
+	registerCommandHandler("setserikotalk", async (handler, args) => {
+		handleSetSerikoTalkCommand(handler, args);
+	});
+	registerCommandHandler("set:serikotalk", async (handler, args) => {
+		handleSetSerikoTalkCommand(handler, args);
+	});
+
+	registerCommandHandler("setothersurfacechange", async (handler, args) => {
+		handleSetOtherSurfaceChangeCommand(handler, args);
+	});
+	registerCommandHandler("set:othersurfacechange", async (handler, args) => {
+		handleSetOtherSurfaceChangeCommand(handler, args);
 	});
 
 	registerCommandHandler("opensystemtarget", async (handler, args) => {

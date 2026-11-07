@@ -19,6 +19,36 @@ export async function handleSetPropertyCommand(handler: any, args: string[]) {
 	}
 }
 
+/**
+ * SERIKO口パク有効化トグル (\![set,serikotalk,true/false])
+ */
+export async function handleSetSerikoTalkCommand(handler: any, args: string[]) {
+	const valStr = String(args[2] ?? "true")
+		.trim()
+		.toLowerCase();
+	const enabled = valStr !== "false" && valStr !== "0";
+	const scope = handler.player?.currentScope ?? 0;
+	if (handler.app?.surfaceAnimationManager?.setSerikoTalkEnabled) {
+		handler.app.surfaceAnimationManager.setSerikoTalkEnabled(scope, enabled);
+	}
+}
+
+/**
+ * 他ゴーストサーフィス変更通知トグル (\![set,othersurfacechange,true/false])
+ */
+export async function handleSetOtherSurfaceChangeCommand(
+	handler: any,
+	args: string[],
+) {
+	const valStr = String(args[2] ?? "false")
+		.trim()
+		.toLowerCase();
+	const enabled = valStr === "true" || valStr === "1";
+	if (handler.app?.ghostController) {
+		handler.app.ghostController.otherSurfaceChangeEnabled = enabled;
+	}
+}
+
 export async function handleEnterMode(handler: any, args: string[]) {
 	const mode = (args[1] ?? "").toLowerCase();
 	if (mode) {

@@ -632,6 +632,62 @@ export const shioriNotifyMethods = {
 	},
 
 	/**
+	 * サーフェス変更通知 (OnSurfaceChange) を送信 (UKADOC 規格準拠)
+	 * @param {number} scopeId 切り替わったウインドウ・キャラID (Sakura=0, Kero=1)
+	 * @param {number|string} surface0 Sakura側の現在サーフィスID
+	 * @param {number|string} surface1 Kero側の現在サーフィスID
+	 * @param {number} [width=0] サーフィス横幅
+	 * @param {number} [height=0] サーフィス高さ
+	 */
+	async notifySurfaceChange(
+		this: any,
+		scopeId: number,
+		surface0: number | string = 0,
+		surface1: number | string = 10,
+		width: number = 0,
+		height: number = 0,
+	) {
+		const ref2 = `${scopeId},${scopeId === 0 ? surface0 : surface1},${width},${height}`;
+		return await this.sendShioriNotify("OnSurfaceChange", [
+			String(surface0),
+			String(surface1),
+			ref2,
+		]);
+	},
+
+	/**
+	 * 他ゴーストのサーフェス変更通知 (OnOtherSurfaceChange) を送信 (UKADOC 規格準拠)
+	 * @param {string} ghostName ゴースト名
+	 * @param {string} sakuraName Sakura名
+	 * @param {number} scopeId ウインドウID (0=Sakura, 1=Kero)
+	 * @param {number|string} newSurface 新サーフィスID
+	 * @param {number|string} oldSurface 旧サーフィスID
+	 * @param {{ left: number, top: number, right: number, bottom: number }|string} [rect="0,0,0,0"]
+	 */
+	async notifyOtherSurfaceChange(
+		this: any,
+		ghostName: string,
+		sakuraName: string,
+		scopeId: number,
+		newSurface: number | string,
+		oldSurface: number | string,
+		rect:
+			| { left: number; top: number; right: number; bottom: number }
+			| string = "0,0,0,0",
+	) {
+		const rectStr =
+			typeof rect === "object"
+				? `${rect.left},${rect.top},${rect.right},${rect.bottom}`
+				: String(rect);
+		return await this.sendShioriNotify("OnOtherSurfaceChange", [
+			ghostName,
+			sakuraName,
+			String(scopeId),
+			String(newSurface),
+			String(oldSurface),
+			rectStr,
+		]);
+	},
 	 * 選択肢拡張通知 (OnChoiceSelectEx) を送信 (UKADOC 規格準拠)
 	 * Reference0: ラベル(text), Reference1: ID, Reference2..: 拡張引数
 	 */

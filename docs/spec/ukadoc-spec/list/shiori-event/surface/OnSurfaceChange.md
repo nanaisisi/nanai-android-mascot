@@ -11,4 +11,6 @@
 
 ## 実装箇所
 
-- `ui/ts/ghost/shiori-notify.ts:609` `return await this.sendShioriNotify("OnSurfaceChange", [String(scopeId), String(s`
+- `ui/ts/ghost/shiori-notify.ts:580` `* サーフェス変更通知 (OnSurfaceChange) を送信 (UKADOC 規格準拠)`
+- `ui/ts/ghost/shiori-notify.ts:596` `return await this.sendShioriNotify("OnSurfaceChange", [`
+- `ui/ts/surface/ghost-surface.ts:251` `// サーフィス切り替え完了時、UKADOC OnSurfaceChange / OnOtherSurfaceChange を通知`

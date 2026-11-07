@@ -26,9 +26,11 @@ export {
 	handleKeyPressEvent,
 	handleLeaveMode,
 	handleSetAlphaCommand,
+	handleSetOtherSurfaceChangeCommand,
 	handleSetPositionCommand,
 	handleSetPropertyCommand,
 	handleSetScalingCommand,
+	handleSetSerikoTalkCommand,
 } from "./system/surface.js";
 export {
 	handleBiffCommand,

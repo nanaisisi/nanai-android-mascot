@@ -153,6 +153,47 @@ export async function _applyAnimationFrame(
 		return true;
 	}
 
+	if (patType === "scaling") {
+		// UKADOC: scaling メソッド - キャラクターウインドウを指定した倍率(%)で拡大縮小表示
+		// pat.x: 横倍率(%), pat.y: 縦倍率(%)
+		const scaleX = pat.x ?? 100;
+		const scaleY = pat.y ?? scaleX;
+		if (instance.manager?.setScale) {
+			instance.manager.setScale(scaleX, scaleY, scopeId);
+		} else if (instance._baseScalingOffsets) {
+			instance._baseScalingOffsets.set(scopeId, { scaleX, scaleY });
+		}
+		if (gc?.setScopeScale) {
+			gc.setScopeScale(scopeId, scaleX, scaleY);
+		} else if (typeof document !== "undefined") {
+			const selector =
+				scopeId === 0
+					? "ghost-display"
+					: scopeId === 1
+						? "kero-display"
+						: `char-display-${scopeId}`;
+			const el = document.getElementById(selector);
+			if (el) {
+				el.style.transform = `scale(${scaleX / 100}, ${scaleY / 100})`;
+			}
+		}
+
+		instance.scheduler?.notifyFrameStep(
+			new FrameStepEvent({
+				scopeId,
+				baseSurfaceId,
+				animationId: anim?.id ?? 0,
+				pattern: pat,
+				elapsedMs: Date.now(),
+				isFinished: false,
+				isBackground: options.isBackground,
+				offsetX: scaleX,
+				offsetY: scaleY,
+			}),
+		);
+		return true;
+	}
+
 	// start, stop, alternativestart, alternativestop, parallelstart, parallelstop 制御メソッド
 	if (
 		patType.startsWith("start") ||

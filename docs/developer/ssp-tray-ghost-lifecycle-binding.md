@@ -21,9 +21,23 @@
 
 ### A. Rust バックエンド (`src-tauri/src/tray.rs`, `load.rs`, `close.rs`)
 - **`update_tray_for_ghost(app_handle, ghost_name, ghost_master_dir)`**:
-  - ゴーストロード時にトレイアイコン (`tray.ico` / `tray.png`) とツールチップ (`ghost_name`) を一括同期更新。
+  - ゴーストロード時にトレイアイコン (`tray.ico` / `tray.png`) とツールチップ (`ghost_name`) 一括同期更新。
 - **`reset_tray_to_default(app_handle)`**:
   - 全ゴーストアンロード時にトレイアイコンとツールチップをデフォルトへ復元。
 
 ### B. フロントエンド / イベント連携 (`ui/ts/ghost/ghost.ts`)
 - ゴースト読み込み・切り替えイベント発生時、Tauri コマンド経由でトレイアイコンおよびツールチップ更新を発火。
+
+---
+
+## 3. 単一アプリケーション・タスクバー集約 & プレビュー連結仕様 (Single Application & Taskbar Preview Linking)
+
+デスクトップ（Windows等）環境において、複数キャラクター（さくら/うにゅう等）や各種補助ウィンドウ（バルーン、コンテキストメニュー）が別々のタスクバーボタンとして乱立するのを防ぎ、かつタスクバーホバー時に**全キャラクターのライブサムネイルプレビューを連結表示**するため、以下の統一集約ルールを適用します：
+
+1. **メインキャラクター（`scope_id = 0`）が単一アプリ代表としてタスクバー表示**:
+   - `subchar_window_0` のみ `.skip_taskbar(false)` を設定し、OSのタスクバーに「Nanai Android Mascot」として単一のアプリケーションアイコンを表示。
+2. **Win32 ウィンドウ所有権（`owner`）によるプレビュー連結**:
+   - サブキャラクター（`scope_id = 1`）や追加キャラクター（`scope_id >= 2`）の生成時、メインウィンドウ（`subchar_window_0`）を所有者（`.owner(&char0_win)`）として紐付け設定。
+   - これにより、Windows DWM（Desktop Window Manager）が同一プロセス・所有権下の全アクティブキャラクターウィンドウを認識し、タスクバーアイコンホバー時に全キャラクターのライブプレビューを連結表示。
+3. **一括最小化・一括復元連動**:
+   - メインウィンドウ（`subchar_window_0`）の最小化・復元イベント発生時、全サブキャラクターウィンドウおよびバルーンウィンドウを同期して一括表示/非表示（`hide`/`show`）制御。

@@ -17,9 +17,9 @@ pub async fn show_menu_window(
     {
         use tauri::Manager;
         let menu_scope = scope.unwrap_or(0);
-        // メインメニューの実寸 (260x720: 全29項目・全フッターが完璧に収まる高さ)
+        // メインメニュー (260x720) / サブキャラクターメニュー (260x220)
         let win_width = 260.0;
-        let win_height = if menu_scope > 0 { 420.0 } else { 720.0 };
+        let win_height = if menu_scope > 0 { 220.0 } else { 720.0 };
 
         let mut target_x = x;
         let mut target_y = y;

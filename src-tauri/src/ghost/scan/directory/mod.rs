@@ -1,5 +1,5 @@
 mod filter;
-mod manifest;
+pub mod manifest;
 mod types;
 
 pub use types::ScanResult;

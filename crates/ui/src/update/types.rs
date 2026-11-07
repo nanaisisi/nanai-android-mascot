@@ -74,6 +74,28 @@ impl UpdatePackage {
             .iter()
             .find(|e| e.path.eq_ignore_ascii_case(&norm))
     }
+
+    /// 複数パスリストから合致するエントリ一覧を取得
+    pub fn find_entries<'a>(&'a self, paths: &[&str]) -> Vec<&'a UpdateEntry> {
+        paths
+            .iter()
+            .filter_map(|p| self.find_entry(p))
+            .collect()
+    }
+
+    /// ローカル既存ファイルパスとMD5ペアから、未更新またはMD5が異なる更新対象エントリのみを抽出
+    pub fn pending_downloads(&self, local_checksums: &std::collections::HashMap<String, String>) -> Vec<&UpdateEntry> {
+        self.active_downloads()
+            .into_iter()
+            .filter(|e| {
+                let norm = e.path.replace('\\', "/");
+                match local_checksums.get(&norm) {
+                    Some(local_md5) => !local_md5.eq_ignore_ascii_case(&e.md5),
+                    None => true,
+                }
+            })
+            .collect()
+    }
 }
 
 /// 同梱リソース設定（balloon, headline, plugin, shell, calendar.skin 等）
@@ -139,5 +161,25 @@ impl InstallManifest {
             return Some("accept failed");
         }
         None
+    }
+
+    /// 同梱リソースを含めた同時インストール（複数リソース展開）かどうか判定
+    pub fn is_multi_install(&self) -> bool {
+        !self.bundled_resources.is_empty()
+    }
+
+    /// アーカイブ展開対象の全ターゲットディレクトリ名（主ディレクトリ + 同梱リソース）
+    pub fn all_target_directories(&self) -> Vec<&str> {
+        let mut dirs = Vec::new();
+        let eff = self.effective_directory();
+        if !eff.is_empty() {
+            dirs.push(eff);
+        }
+        for res in &self.bundled_resources {
+            if !res.target_directory.is_empty() && !dirs.contains(&res.target_directory.as_str()) {
+                dirs.push(&res.target_directory);
+            }
+        }
+        dirs
     }
 }

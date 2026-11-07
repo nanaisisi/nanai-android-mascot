@@ -762,6 +762,7 @@ export const shioriNotifyMethods = {
 			"installedsakuraname",
 			ghosts.map((g: any) => g.sakura_name || g.name),
 		);
+		// 後方互換性フォールバック（旧コードからの呼出用）
 		// Legacy alias for backward compatibility
 		await this.sendShioriNotify(
 			"installsakuraname",

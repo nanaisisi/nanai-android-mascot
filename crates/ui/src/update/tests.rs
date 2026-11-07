@@ -111,6 +111,37 @@ fn test_update_package_methods() {
 
     assert!(pkg.find_entry("ghost\\master\\aya.dll").is_some());
     assert!(pkg.find_entry("ghost/master/nonexistent.txt").is_none());
+
+    // find_entries
+    let found = pkg.find_entries(&["ghost/master/aya.dll", "nonexistent.txt", "ghost/master/readme.txt"]);
+    assert_eq!(found.len(), 2);
+    assert_eq!(found[0].path, "ghost/master/aya.dll");
+    assert_eq!(found[1].path, "ghost/master/readme.txt");
+
+    // pending_downloads
+    let mut local_checksums = std::collections::HashMap::new();
+    local_checksums.insert("ghost/master/aya.dll".to_string(), "11223344556677889900aabbccddeeff".to_string()); // matches
+    local_checksums.insert("ghost/master/readme.txt".to_string(), "wrong_md5".to_string()); // mismatch
+
+    let pending = pkg.pending_downloads(&local_checksums);
+    assert_eq!(pending.len(), 1);
+    assert_eq!(pending[0].path, "ghost/master/readme.txt");
+}
+
+#[test]
+fn test_install_manifest_install_accept_alias_and_multi_install() {
+    let install_txt = "\
+name,MultiGhost\r\n\
+type,ghost\r\n\
+install.accept,Nanai,Master\r\n\
+";
+    let manifest = parse_install_manifest(install_txt);
+    assert_eq!(manifest.accept.as_deref(), Some("Nanai,Master"));
+    assert!(manifest.is_acceptable_by("Nanai"));
+    assert!(manifest.is_acceptable_by("master"));
+    assert!(!manifest.is_acceptable_by("other"));
+    assert!(!manifest.is_multi_install());
+    assert_eq!(manifest.all_target_directories(), vec!["MultiGhost"]);
 }
 
 #[test]
@@ -141,6 +172,11 @@ shell0.source.directory,custom_shell\r\n";
     assert_eq!(manifest.accept.as_deref(), Some("Nanai,Mini"));
     assert_eq!(manifest.bootghost.as_deref(), Some("special_ghost"));
     assert!(manifest.refresh);
+    assert!(manifest.is_multi_install());
+    assert_eq!(
+        manifest.all_target_directories(),
+        vec!["special_ghost", "my_balloon", "my_shell"]
+    );
     assert_eq!(manifest.refresh_undelete_mask, vec!["save.dat", "user.ini"]);
 
     assert!(manifest.is_refresh_protected("save.dat"));

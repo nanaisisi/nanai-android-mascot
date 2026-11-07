@@ -2,7 +2,7 @@
 
 - **規格**: [install.accept.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/install.accept.md)
 - **検索語**: install.accept
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,6 @@
 
 ## 実装箇所
 
-実装コード内に「install.accept」は検出されませんでした。
+- `src-tauri/src/ghost/scan/directory/manifest.rs:191` `m.get("install.accept")`
+- `crates/ui/src/update/parser.rs:31` `.or_else(|| map.get("install.accept").cloned());`
+- `crates/ui/src/update/tests.rs:136` `install.accept,Nanai,Master\r\n\`

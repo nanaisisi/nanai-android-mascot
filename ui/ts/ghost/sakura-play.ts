@@ -128,8 +128,8 @@ export async function playScript(player: any, script: string) {
 				try {
 					if (sakuraDisplay) sakuraDisplay.style.display = "none";
 					if (keroDisplay) keroDisplay.style.display = "none";
-					app.hideBalloon?.(0);
-					app.hideBalloon?.(1);
+					app.hideBalloon?.(0, "timeout");
+					app.hideBalloon?.(1, "timeout");
 					await app.ghostController?.sendShioriEvent?.("OnBalloonTimeout", [
 						player.lastScript || "",
 						"0",

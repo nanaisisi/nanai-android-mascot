@@ -343,6 +343,38 @@ export const shioriNotifyMethods = {
 	},
 
 	/**
+	 * バルーン閉じる通知 (OnBalloonClose) を送信 (UKADOC準拠)
+	 * @param {string} [lastScript=""] 閉じる直前に表示されていたスクリプト
+	 * @param {number|string} [scopeId=0] バルーンのスコープID
+	 */
+	async sendBalloonCloseNotify(
+		this: any,
+		lastScript: string = "",
+		scopeId: number | string = 0,
+	) {
+		return await this.sendShioriNotify("OnBalloonClose", [
+			lastScript,
+			String(scopeId),
+		]);
+	},
+
+	/**
+	 * バルーン中断通知 (OnBalloonBreak) を送信 (UKADOC準拠)
+	 * @param {string} [lastScript=""] 中断されたスクリプト
+	 * @param {number|string} [scopeId=0] バルーンのスコープID
+	 */
+	async sendBalloonBreakNotify(
+		this: any,
+		lastScript: string = "",
+		scopeId: number | string = 0,
+	) {
+		return await this.sendShioriNotify("OnBalloonBreak", [
+			lastScript,
+			String(scopeId),
+		]);
+	},
+
+	/**
 	 * マウス拡張イベント送信
 	 */
 	async notifyMouseEvent(

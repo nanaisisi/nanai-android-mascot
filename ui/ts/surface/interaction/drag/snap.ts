@@ -2,7 +2,7 @@
  * SSP 仕様準拠: ウィンドウドラッグ時のスナップ機能 (Snap X/Y) およびツールチップ表示
  */
 
-export type SnapTargetType = "Character" | "Desktop" | "Initial" | "None";
+export type SnapTargetType = "Character" | "Monitor" | "Initial" | "None";
 
 export interface SnapResult {
 	x: number;
@@ -12,7 +12,7 @@ export interface SnapResult {
 }
 
 /**
- * 他のキャラクターウィンドウ、画面端、および初期位置に対するスナップ位置計算
+ * 他のキャラクターウィンドウ、画面端 (Monitor)、および初期位置 (Initial) に対するスナップ位置計算
  */
 export function calculateWindowSnap(
 	currentX: number,
@@ -46,24 +46,24 @@ export function calculateWindowSnap(
 		}
 	}
 
-	// 2. デスクトップ境界（画面端）スナップ判定
+	// 2. モニター境界（画面端 Monitor）スナップ判定
 	if (snapXType === "None") {
 		if (Math.abs(currentX) < snapThreshold) {
 			snappedX = 0;
-			snapXType = "Desktop";
+			snapXType = "Monitor";
 		} else if (Math.abs(currentX + winWidth - screenSize.width) < snapThreshold) {
 			snappedX = screenSize.width - winWidth;
-			snapXType = "Desktop";
+			snapXType = "Monitor";
 		}
 	}
 
 	if (snapYType === "None") {
 		if (Math.abs(currentY) < snapThreshold) {
 			snappedY = 0;
-			snapYType = "Desktop";
+			snapYType = "Monitor";
 		} else if (Math.abs(currentY + winHeight - screenSize.height) < snapThreshold) {
 			snappedY = screenSize.height - winHeight;
-			snapYType = "Desktop";
+			snapYType = "Monitor";
 		}
 	}
 

@@ -5,7 +5,7 @@ import {
 } from "../../../ui/ts/surface/interaction/drag/snap.js";
 
 describe("Window Snapping & SSP Tooltip", () => {
-	it("snaps to desktop boundary", () => {
+	it("snaps to monitor boundary (Monitor)", () => {
 		const res = calculateWindowSnap(
 			5,
 			5,
@@ -19,8 +19,8 @@ describe("Window Snapping & SSP Tooltip", () => {
 		);
 		assert.equal(res.x, 0);
 		assert.equal(res.y, 0);
-		assert.equal(res.snapXType, "Desktop");
-		assert.equal(res.snapYType, "Desktop");
+		assert.equal(res.snapXType, "Monitor");
+		assert.equal(res.snapYType, "Monitor");
 	});
 
 	it("snaps to initial starting position (Initial)", () => {
@@ -41,7 +41,7 @@ describe("Window Snapping & SSP Tooltip", () => {
 		assert.equal(res.snapYType, "Initial");
 	});
 
-	it("snaps to other character window", () => {
+	it("snaps to other character window (Character)", () => {
 		const res = calculateWindowSnap(
 			205,
 			100,
@@ -74,9 +74,12 @@ describe("Window Snapping & SSP Tooltip", () => {
 		assert.equal(res.snapXType, "None");
 	});
 
-	it("formats SSP snap tooltip text correctly", () => {
-		const text = formatSnapTooltipText(1363, 842, "Initial", "None");
-		assert.include(text, "1363,842 (Snap X:Initial)");
-		assert.include(text, "Press Ctrl to disable");
+	it("formats SSP snap tooltip text correctly for Monitor and Character", () => {
+		const textMon = formatSnapTooltipText(1363, 842, "Monitor", "None");
+		assert.include(textMon, "1363,842 (Snap X:Monitor)");
+		assert.include(textMon, "Press Ctrl to disable");
+
+		const textChar = formatSnapTooltipText(1363, 842, "Character", "None");
+		assert.include(textChar, "1363,842 (Snap X:Character)");
 	});
 });

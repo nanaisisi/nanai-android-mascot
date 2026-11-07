@@ -2,7 +2,7 @@
 
 - **規格**: [OnSurfaceChange.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/surface/OnSurfaceChange/) (ukadoc-spec/list/shiori-event/surface/OnSurfaceChange.md)
 - **検索語**: OnSurfaceChange
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-実装コード内に「OnSurfaceChange」は検出されませんでした。
+- `ui/ts/ghost/shiori-notify.ts:609` `return await this.sendShioriNotify("OnSurfaceChange", [String(scopeId), String(s`

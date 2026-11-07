@@ -2,7 +2,7 @@
 
 - **規格**: [OnBalloonClose.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/balloon/OnBalloonClose/) (ukadoc-spec/list/shiori-event/balloon/OnBalloonClose.md)
 - **検索語**: OnBalloonClose
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-実装コード内に「OnBalloonClose」は検出されませんでした。
+- `ui/ts/ghost/shiori-notify.ts:598` `return await this.sendShioriNotify("OnBalloonClose", [String(scopeId), reason]);`

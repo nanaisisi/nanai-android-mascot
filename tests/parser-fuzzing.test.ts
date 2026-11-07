@@ -5,3 +5,4 @@ import "./parser-fuzzing/surfaces-txt-fuzzing.test.js";
 import "./parser-fuzzing/touch-gesture-fuzzing.test.js";
 import "./parser-fuzzing/cycle5-syntax-fuzzing.test.js";
 import "./parser-fuzzing/cycle6-syntax-fuzzing.test.js";
+import "./parser-fuzzing/cycle8-syntax-fuzzing.test.js";

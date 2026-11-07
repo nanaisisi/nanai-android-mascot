@@ -114,4 +114,53 @@ impl SakuraAstNode {
             .filter(|cmd| cmd.lifetime() == lifetime)
             .collect()
     }
+
+    /// AST 内のすべてのアンカー (id, text) を抽出する
+    pub fn find_anchors(&self) -> Vec<(String, String)> {
+        let mut anchors = Vec::new();
+        self.walk(&mut |node| {
+            if let SakuraAstNode::Anchor { id, text, .. } = node {
+                anchors.push((id.clone(), text.clone()));
+            }
+        });
+        anchors
+    }
+
+    /// AST 内の通常テキストの合計文字数（発話文字数）を算出する
+    pub fn calculate_text_length(&self) -> usize {
+        let mut length = 0;
+        self.walk(&mut |node| match node {
+            SakuraAstNode::Command(SakuraCommand::Text(t)) => {
+                length += t.chars().count();
+            }
+            SakuraAstNode::Choice { text, .. } => {
+                length += text.chars().count();
+            }
+            _ => {}
+        });
+        length
+    }
+
+    /// 指定したスコープ（\\0, \\1, \\p[N]）配下のトップレベル子ノード群を取得する
+    pub fn scope_nodes(&self, target_scope: u8) -> Vec<&SakuraAstNode> {
+        let mut nodes = Vec::new();
+        if let SakuraAstNode::Root { children } = self {
+            for child in children {
+                if let SakuraAstNode::Scope { scope, children: s_children } = child {
+                    if *scope == target_scope {
+                        for sc in s_children {
+                            nodes.push(sc);
+                        }
+                    }
+                }
+            }
+        } else if let SakuraAstNode::Scope { scope, children } = self {
+            if *scope == target_scope {
+                for c in children {
+                    nodes.push(c);
+                }
+            }
+        }
+        nodes
+    }
 }

@@ -11,6 +11,9 @@
 import { balloonActions } from "./actions/balloon-actions.js";
 import { ghostActions } from "./actions/ghost-actions.js";
 import { networkActions } from "./actions/network-actions.js";
+
+export * from "./actions/sstp-fmo-actions.js";
+
 import { AppConfig } from "./config.js";
 import { invoke, isTauriAvailable } from "./tauri-helper.js";
 

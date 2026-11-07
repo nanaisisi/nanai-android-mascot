@@ -56,7 +56,8 @@ export async function handleEnterMode(handler: any, args: string[]) {
 		if (handler.player) {
 			handler.player[`is_${mode}`] = true;
 		}
-		const gc = handler.app.ghostController;
+		const gc =
+			handler.app?.ghostController ?? handler.player?.app?.ghostController;
 		if (gc?.sendShioriEvent) {
 			await gc.sendShioriEvent("OnModeChange", [
 				mode,
@@ -74,7 +75,8 @@ export async function handleLeaveMode(handler: any, args: string[]) {
 		if (handler.player) {
 			handler.player[`is_${mode}`] = false;
 		}
-		const gc = handler.app.ghostController;
+		const gc =
+			handler.app?.ghostController ?? handler.player?.app?.ghostController;
 		if (gc?.sendShioriEvent) {
 			await gc.sendShioriEvent("OnModeChange", [
 				mode,

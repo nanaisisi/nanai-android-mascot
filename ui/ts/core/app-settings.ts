@@ -79,12 +79,42 @@ export const settingsMethods = {
 		}
 	},
 
-	hideBalloon(scopeId: number = 0) {
+	hideBalloon(
+		scopeId: number = 0,
+		reason: "close" | "break" | "timeout" | "silent" = "close",
+	) {
 		if ((this as any).elements.balloonDisplay) {
 			(this as any).elements.balloonDisplay.style.display = "none";
 		}
 		if (isTauriAvailable()) {
 			invoke("hide_balloon_window", { scopeId }).catch(() => {});
+		}
+		if (reason === "close") {
+			const lastScript = (this as any).sakuraPlayer?.lastScript || "";
+			if ((this as any).ghostController?.sendBalloonCloseNotify) {
+				void (this as any).ghostController.sendBalloonCloseNotify(
+					lastScript,
+					scopeId,
+				);
+			} else if ((this as any).ghostController?.sendShioriEvent) {
+				void (this as any).ghostController.sendShioriEvent("OnBalloonClose", [
+					lastScript,
+					String(scopeId),
+				]);
+			}
+		} else if (reason === "break") {
+			const lastScript = (this as any).sakuraPlayer?.lastScript || "";
+			if ((this as any).ghostController?.sendBalloonBreakNotify) {
+				void (this as any).ghostController.sendBalloonBreakNotify(
+					lastScript,
+					scopeId,
+				);
+			} else if ((this as any).ghostController?.sendShioriEvent) {
+				void (this as any).ghostController.sendShioriEvent("OnBalloonBreak", [
+					lastScript,
+					String(scopeId),
+				]);
+			}
 		}
 	},
 

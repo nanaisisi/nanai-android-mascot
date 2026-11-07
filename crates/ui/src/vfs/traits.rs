@@ -45,4 +45,16 @@ pub trait VirtualFileSystem: Send + Sync {
         }
         Ok(trimmed_content.split('\n').map(|s| s.to_string()).collect())
     }
+
+    /// 部分一致パターン（ファイル名またはパス内のキーワード、大小文字不問）でファイルを検索
+    fn find_files(&self, pattern: &str) -> io::Result<Vec<String>> {
+        let pat_lower = pattern.to_lowercase();
+        let all_files = self.walk_files("")?;
+        let mut matched: Vec<String> = all_files
+            .into_iter()
+            .filter(|f| f.to_lowercase().contains(&pat_lower))
+            .collect();
+        matched.sort();
+        Ok(matched)
+    }
 }

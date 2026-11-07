@@ -27,9 +27,19 @@ pub async fn show_balloon_window(
                 let char_label = format!("subchar_window_{}", scope_id);
                 if let Some(char_win) = app_handle.get_webview_window(&char_label) {
                     if let Ok(pos) = char_win.outer_position() {
-                        let bx = (pos.x as f64) - 40.0;
-                        let by = ((pos.y as f64) - win_height + 20.0).max(10.0);
-                        (bx, by)
+                        let scale = char_win
+                            .current_monitor()
+                            .unwrap_or(None)
+                            .map(|m| m.scale_factor())
+                            .unwrap_or(1.0);
+                        let base_x = pos.x as f64 / scale;
+                        let base_y = pos.y as f64 / scale;
+
+                        if scope_id == 0 {
+                            (base_x + 180.0, base_y - 180.0) // メインは右上に配置
+                        } else {
+                            (base_x - 260.0, base_y - 180.0) // サブは左上に配置
+                        }
                     } else {
                         (200.0 + (scope_id as f64 * 220.0), 100.0)
                     }
@@ -43,13 +53,16 @@ pub async fn show_balloon_window(
             let is_vis = balloon_win
                 .is_visible()
                 .map_err(|e| format!("Failed to check balloon window visibility: {e}"))?;
+
+            // 可視・不可視に関わらず位置を必ず同期する
+            let (target_x, target_y) = get_pos();
+            let _ =
+                balloon_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
+                    x: target_x,
+                    y: target_y,
+                }));
+
             if !is_vis {
-                let (target_x, target_y) = get_pos();
-                let _ =
-                    balloon_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
-                        x: target_x,
-                        y: target_y,
-                    }));
                 let _ = balloon_win.show();
             }
             if let Some(theme) = theme.filter(|value| !value.is_empty()) {

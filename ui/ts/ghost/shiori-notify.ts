@@ -470,6 +470,11 @@ export const shioriNotifyMethods = {
 			ghosts.map((g: any) => g.name),
 		);
 		await this.sendShioriNotify(
+			"installedsakuraname",
+			ghosts.map((g: any) => g.sakura_name || g.name),
+		);
+		// 後方互換性フォールバック（旧コードからの呼出用）
+		await this.sendShioriNotify(
 			"installsakuraname",
 			ghosts.map((g: any) => g.sakura_name || g.name),
 		);

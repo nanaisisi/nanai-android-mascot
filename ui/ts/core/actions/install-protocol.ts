@@ -222,3 +222,30 @@ export function buildInstallFailureArgs(errorOrReason: any): [string] {
 	const reason = parseErrorReason(errorOrReason);
 	return [reason];
 }
+
+/**
+ * 複数リソース同時展開（同時インストール）の判定およびメタデータ抽出
+ * @param {Array<{ type: string, name: string }>} resources
+ * @returns {boolean}
+ */
+export function isMultiResourceInstall(
+	resources: Array<{ type: string; name: string }> = [],
+): boolean {
+	return Array.isArray(resources) && resources.length > 1;
+}
+
+/**
+ * 同時インストール時のSHIORI引数構築 (OnInstallCompleteAll 連携)
+ * @param {Array<{ type: string, name: string }>} resources
+ * @returns {{ count: string, listText: string, isMulti: boolean }}
+ */
+export function buildInstallMultiArgs(
+	resources: Array<{ type: string; name: string }> = [],
+): { count: string; listText: string; isMulti: boolean } {
+	const [count, listText] = buildInstallCompleteAllArgs(resources);
+	return {
+		count,
+		listText,
+		isMulti: isMultiResourceInstall(resources),
+	};
+}

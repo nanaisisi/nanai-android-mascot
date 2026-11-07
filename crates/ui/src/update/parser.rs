@@ -25,7 +25,10 @@ pub fn parse_install_manifest(content: &str) -> InstallManifest {
         .unwrap_or_else(|| "ghost".to_string());
     let directory = map.get("directory").cloned();
     let charset = map.get("charset").cloned();
-    let accept = map.get("accept").cloned();
+    let accept = map
+        .get("accept")
+        .cloned()
+        .or_else(|| map.get("install.accept").cloned());
     let bootghost = map.get("bootghost").cloned();
     let notice = map.get("notice").cloned();
     let readme = map.get("readme").cloned();
@@ -142,7 +145,7 @@ pub fn parse_install_manifest(content: &str) -> InstallManifest {
     }
 }
 
-/// updates2.dau または updates.txt の内容をパース
+/// updates2.dau (updates2dau) または updates.txt (updatestxt) の内容をパース
 pub fn parse_update_definition(content: &str) -> Vec<UpdateEntry> {
     let mut entries = Vec::new();
     for line in content.lines() {

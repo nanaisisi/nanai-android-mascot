@@ -89,15 +89,6 @@ export function handleAnchorBegin(
 			clearTimeout(hoverTimer);
 			hoverTimer = null;
 		}
-		app.ghostController?.sendShioriEvent?.("OnAnchorSelectEx", [
-			anchorSpan.textContent || token.id,
-			token.id,
-			...(token.args || []),
-		]);
-		app.ghostController?.sendShioriEvent?.("OnAnchorSelect", [
-			token.id,
-			...(token.args || []),
-		]);
 		const anchorText = anchorSpan.textContent || token.id;
 		const args = token.args || [];
 		if (app.ghostController?.sendShioriEvent) {

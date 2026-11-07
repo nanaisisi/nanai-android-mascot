@@ -4,22 +4,22 @@
    ==================================================== */
 
 :root {
-	/* NAMデフォルト+ (SSP準拠 白地+青枠スタイル) */
-	--balloon-bg: #ffffff;
+	/* NAMデフォルト+ (青っぽい白地 + 控えめ1dot青外枠) */
+	--balloon-bg: #f4f8fc;
 	--balloon-pattern: none;
-	--balloon-border-color: #2b579a;
-	--balloon-border-width: 2px;
+	--balloon-border-color: rgba(74, 119, 186, 0.4);
+	--balloon-border-width: 1px;
 	--balloon-border-style: solid;
 	--balloon-border-radius: 0.25rem;
-	--balloon-box-shadow: 0 0.125rem 0.5rem rgba(0, 120, 215, 0.25);
+	--balloon-box-shadow: 0 0.125rem 0.5rem rgba(0, 80, 160, 0.15);
 	--balloon-font-family:
 		-apple-system, BlinkMacSystemFont, "Segoe UI", "Meiryo", sans-serif;
 	--balloon-font-size: 0.8125rem;
 	--balloon-text-color: #111111;
 	--balloon-highlight-bg: #0078d7;
 	--balloon-highlight-text: #ffffff;
-	--balloon-separator-color: #b0c4de;
-	--balloon-tail-color: #ffffff;
+	--balloon-separator-color: #d0e0f5;
+	--balloon-tail-color: #f4f8fc;
 
 	/* 9スライス・ボーダー画像トークン */
 	--balloon-border-image-source: none;
@@ -31,44 +31,44 @@
 	--balloon-writing-mode: horizontal-tb;
 }
 
-/* NAMデフォルト+ スキン (標準横表示) */
+/* NAMデフォルト+ スキン (標準横表示: 青っぽい白地 + 1dot控えめ青外枠) */
 [data-balloon-theme="nam_default_plus"],
 body.balloon-theme-nam_default_plus,
 [data-balloon-theme="default"],
 body.balloon-theme-default {
-	--balloon-bg: #ffffff;
+	--balloon-bg: #f4f8fc;
 	--balloon-pattern: none;
-	--balloon-border-color: #2b579a;
-	--balloon-border-width: 2px;
+	--balloon-border-color: rgba(74, 119, 186, 0.4);
+	--balloon-border-width: 1px;
 	--balloon-border-style: solid;
 	--balloon-border-radius: 0.25rem;
-	--balloon-box-shadow: 0 0.125rem 0.5rem rgba(0, 120, 215, 0.25);
+	--balloon-box-shadow: 0 0.125rem 0.5rem rgba(0, 80, 160, 0.15);
 	--balloon-font-family: "Meiryo", -apple-system, BlinkMacSystemFont, sans-serif;
 	--balloon-font-size: 0.8125rem;
 	--balloon-text-color: #111111;
 	--balloon-highlight-bg: #0078d7;
 	--balloon-highlight-text: #ffffff;
-	--balloon-separator-color: #b0c4de;
-	--balloon-tail-color: #ffffff;
+	--balloon-separator-color: #d0e0f5;
+	--balloon-tail-color: #f4f8fc;
 }
 
-/* NAMデフォルト+(頭上) スキン (頭上表示) */
+/* NAMデフォルト+(頭上) スキン (頭上表示: 青っぽい白地 + 1dot控えめ青外枠) */
 [data-balloon-theme="nam_default_plus_overhead"],
 body.balloon-theme-nam_default_plus_overhead {
-	--balloon-bg: #ffffff;
+	--balloon-bg: #f4f8fc;
 	--balloon-pattern: none;
-	--balloon-border-color: #2b579a;
-	--balloon-border-width: 2px;
+	--balloon-border-color: rgba(74, 119, 186, 0.4);
+	--balloon-border-width: 1px;
 	--balloon-border-style: solid;
 	--balloon-border-radius: 0.25rem;
-	--balloon-box-shadow: 0 0.125rem 0.5rem rgba(0, 120, 215, 0.25);
+	--balloon-box-shadow: 0 0.125rem 0.5rem rgba(0, 80, 160, 0.15);
 	--balloon-font-family: "Meiryo", -apple-system, BlinkMacSystemFont, sans-serif;
 	--balloon-font-size: 0.8125rem;
 	--balloon-text-color: #111111;
 	--balloon-highlight-bg: #0078d7;
 	--balloon-highlight-text: #ffffff;
-	--balloon-separator-color: #b0c4de;
-	--balloon-tail-color: #ffffff;
+	--balloon-separator-color: #d0e0f5;
+	--balloon-tail-color: #f4f8fc;
 }
 
 /* 象牙色レトロ伺かスキン (SSP風) */

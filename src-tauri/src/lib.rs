@@ -157,6 +157,7 @@ pub fn run() {
             commands::window::set_character_scale,
             commands::window::show_balloon_window,
             commands::window::set_balloon_offset,
+            commands::window::reset_balloon_positions,
             commands::window::sync_balloon_position,
             commands::window::save_balloon_offset_from_position,
             commands::window::sync_character_balloon,

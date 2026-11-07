@@ -51,6 +51,18 @@ pub async fn sync_balloon_position(
 }
 
 #[tauri::command]
+pub async fn reset_balloon_positions(
+    app_handle: tauri::AppHandle,
+    state: tauri::State<'_, crate::common::state::AppState>,
+) -> Result<(), String> {
+    state.balloon_offsets.lock().clear();
+    for scope_id in [0, 1] {
+        let _ = sync_balloon_position_impl(&app_handle, &state, scope_id).await;
+    }
+    Ok(())
+}
+
+#[tauri::command]
 pub async fn save_balloon_offset_from_position(
     app_handle: tauri::AppHandle,
     state: tauri::State<'_, crate::common::state::AppState>,

@@ -94,6 +94,11 @@ export const setupMethods = {
 			} else if ((e.ctrlKey || e.metaKey) && (key === "w" || key === "q")) {
 				e.preventDefault();
 				(this as any).closeApp();
+			} else if (e.ctrlKey && e.shiftKey && (e.key === "F10" || key === "f10")) {
+				e.preventDefault();
+				if (isTauriAvailable()) {
+					void invoke("reset_balloon_positions").catch(() => {});
+				}
 			}
 		});
 	},

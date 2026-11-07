@@ -1,4 +1,8 @@
+use std::sync::{LazyLock, Mutex};
 use tauri::Emitter;
+
+static BALLOON_CREATION_LOCKS: LazyLock<Mutex<std::collections::HashSet<i32>>> =
+    LazyLock::new(|| Mutex::new(std::collections::HashSet::new()));
 
 /// 独立バルーン（スコープ N）ウィンドウ表示コマンド
 #[tauri::command]
@@ -16,9 +20,19 @@ pub async fn show_balloon_window(
     #[cfg(desktop)]
     {
         use tauri::Manager;
+        let label = format!("balloon_window_{}", scope_id);
+
+        if app_handle.get_webview_window(&label).is_none() {
+            let mut locks = BALLOON_CREATION_LOCKS.lock().unwrap();
+            if locks.contains(&scope_id) {
+                println!("⚠️ show_balloon_window creation already in progress for scope {}, skipping duplicate request.", scope_id);
+                return Ok(());
+            }
+            locks.insert(scope_id);
+        }
+
         let win_width = width.unwrap_or(280.0);
         let win_height = height.unwrap_or(200.0);
-        let label = format!("balloon_window_{}", scope_id);
 
         let get_pos = || {
             if let (Some(px), Some(py)) = (x, y) {
@@ -108,6 +122,8 @@ pub async fn show_balloon_window(
                     serde_json::json!({ "theme": theme }),
                 );
             }
+
+            BALLOON_CREATION_LOCKS.lock().unwrap().remove(&scope_id);
         }
     }
     Ok(())

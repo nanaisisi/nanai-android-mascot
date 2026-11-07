@@ -70,6 +70,24 @@ pub fn evaluate_property_query(query: &str) -> String {
         {
             "1".to_string()
         }
+        // UKADOC ownerdraw menu colors
+        "menu.frame.color.r"
+        | "menu.frame.color.g"
+        | "menu.frame.color.b"
+        | "menu.foreground.font.color.r"
+        | "menu.foreground.font.color.g"
+        | "menu.foreground.font.color.b"
+        | "menu.background.font.color.r"
+        | "menu.background.font.color.g"
+        | "menu.background.font.color.b"
+        | "menu.disable.font.color.r"
+        | "menu.disable.font.color.g"
+        | "menu.disable.font.color.b"
+        | "menu.separator.color.r"
+        | "menu.separator.color.g"
+        | "menu.separator.color.b" => {
+            "0".to_string()
+        }
         "currentghost.seriko.surfacelist.defined" => "0,1,10".to_string(),
         "currentghost.seriko.surfacelist.all" => "0,1,10".to_string(),
         "system.year" => "2026".to_string(),

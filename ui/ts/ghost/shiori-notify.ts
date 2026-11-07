@@ -165,11 +165,272 @@ export const shioriNotifyMethods = {
 	},
 
 	/**
-	 * OS環境・ディスプレイ・テーマ状態通知
+	 * ゴースト・シェル切替およびライフサイクル通知 (UKADOC boot-close-change)
+	 */
+	async notifyGhostLifecycle(
+		this: any,
+		event:
+			| "OnGhostChanging"
+			| "OnGhostChanged"
+			| "OnGhostCalling"
+			| "OnGhostCalled"
+			| "OnGhostCallComplete"
+			| "OnOtherGhostBooted"
+			| "OnOtherGhostChanged"
+			| "OnOtherGhostClosed"
+			| "OnShellChanging"
+			| "OnShellChanged"
+			| "OnCloseAll"
+			| "OnInitialize"
+			| "OnDestroy"
+			| "OnSysSuspend"
+			| "OnSysResume"
+			| "OnVirtualDesktopChanged"
+			| "OnBasewareUpdating"
+			| "OnBasewareUpdated"
+			| "OnCacheSuspend"
+			| "OnCacheRestore"
+			| string,
+		references: Array<string | number> = [],
+	) {
+		return await this.sendShioriNotify(event, references);
+	},
+
+	/**
+	 * 消滅・アンインストール通知 (UKADOC vanish)
+	 */
+	async notifyVanishEvent(
+		this: any,
+		event:
+			| "OnVanished"
+			| "OnVanishSelecting"
+			| "OnVanishSelected"
+			| "OnVanishCancel"
+			| "OnVanishButtonHold"
+			| "OnOtherGhostVanished"
+			| string,
+		references: Array<string | number> = [],
+	) {
+		return await this.sendShioriNotify(event, references);
+	},
+
+	/**
+	 * URL ドロップイベント通知 (UKADOC url-drop)
+	 */
+	async notifyUrlDropEvent(
+		this: any,
+		event:
+			| "OnURLDropped"
+			| "OnURLDropping"
+			| "OnURLDragDropping"
+			| "OnURLDropFailure"
+			| "OnURLQuery"
+			| "OnXUkagakaLinkOpen"
+			| string,
+		references: Array<string | number> = [],
+	) {
+		return await this.sendShioriNotify(event, references);
+	},
+
+	/**
+	 * ファイルドロップイベント通知 (UKADOC file-drop)
+	 */
+	async notifyFileDropEvent(
+		this: any,
+		event:
+			| "OnFileDrop"
+			| "OnFileDrop2"
+			| "OnFileDropEx"
+			| "OnFileDropped"
+			| "OnFileDropping"
+			| "OnDirectoryDrop"
+			| "OnArchiveViewerOpen"
+			| "OnMediaPlayerOpen"
+			| "OnPictureViewerOpen"
+			| "OnNarCreating"
+			| "OnNarCreated"
+			| "OnUpdatedataCreating"
+			| "OnUpdatedataCreated"
+			| "OnOtherObjectDropping"
+			| "OnOtherObjectDropped"
+			| "OnWallpaperChange"
+			| string,
+		references: Array<string | number> = [],
+	) {
+		return await this.sendShioriNotify(event, references);
+	},
+
+	/**
+	 * OS環境・ディスプレイ・テーマ・負荷状態通知 (UKADOC os-state)
 	 */
 	async notifyOsEnvironment(
 		this: any,
-		event: string,
+		event:
+			| "OnDisplayChange"
+			| "OnDisplayChangeEx"
+			| "OnDisplayHandover"
+			| "OnDisplayPowerStatus"
+			| "OnDarkTheme"
+			| "OnTabletMode"
+			| "OnWindowModeChange"
+			| "OnNetworkStatusChange"
+			| "OnNetworkHeavy"
+			| "OnCPULoadHigh"
+			| "OnCPULoadLow"
+			| "OnMemoryLoadHigh"
+			| "OnMemoryLoadLow"
+			| "OnRecycleBinEmpty"
+			| "OnRecycleBinEmptyFromOther"
+			| "OnRecycleBinStatusUpdate"
+			| "OnOSUpdateInfo"
+			| "OnDesktopWallpaperChange"
+			| string,
+		references: Array<string | number> = [],
+	) {
+		return await this.sendShioriNotify(event, references);
+	},
+
+	/**
+	 * 重なり・画面外判定通知 (UKADOC overlap)
+	 */
+	async notifyOverlapEvent(
+		this: any,
+		event:
+			| "OnOffscreen"
+			| "OnOtherOffscreen"
+			| "OnOverlap"
+			| "OnOtherOverlap"
+			| string,
+		references: Array<string | number> = [],
+	) {
+		return await this.sendShioriNotify(event, references);
+	},
+
+	/**
+	 * サーフィス・バルーン状態通知 (UKADOC surface / balloon)
+	 */
+	async notifySurfaceBalloonEvent(
+		this: any,
+		event:
+			| "OnSurfaceChange"
+			| "OnOtherSurfaceChange"
+			| "OnBalloonClose"
+			| "OnBalloonBreak"
+			| string,
+		references: Array<string | number> = [],
+	) {
+		return await this.sendShioriNotify(event, references);
+	},
+
+	/**
+	 * 選択肢・アンカー拡張通知 (UKADOC choice)
+	 */
+	async notifyChoiceAnchorEx(
+		this: any,
+		event: "OnChoiceSelectEx" | "OnAnchorSelectEx" | string,
+		references: Array<string | number> = [],
+	) {
+		return await this.sendShioriNotify(event, references);
+	},
+
+	/**
+	 * 利用規約・ダイアログ通知 (UKADOC dialogbox)
+	 */
+	async notifyTermsDialogEvent(
+		this: any,
+		event: "OnGhostTermsAccept" | "OnGhostTermsDecline" | string,
+		references: Array<string | number> = [],
+	) {
+		return await this.sendShioriNotify(event, references);
+	},
+
+	/**
+	 * イベント送信・通知失敗イベント (UKADOC event-send-failure)
+	 */
+	async notifyEventSendFailure(
+		this: any,
+		event:
+			| "OnNotifyOtherFailure"
+			| "OnNotifyPluginFailure"
+			| "OnRaiseOtherFailure"
+			| "OnRaisePluginFailure"
+			| string,
+		references: Array<string | number> = [],
+	) {
+		return await this.sendShioriNotify(event, references);
+	},
+
+	/**
+	 * ゲームパッドイベント通知 (UKADOC gamepad)
+	 */
+	async notifyGamepadEvent(
+		this: any,
+		event:
+			| "OnGamepadAxisMove"
+			| "OnGamepadButtonDown"
+			| "OnGamepadButtonUp"
+			| "OnGamepadConnected"
+			| "OnGamepadDisconnected"
+			| string,
+		references: Array<string | number> = [],
+	) {
+		return await this.sendShioriNotify(event, references);
+	},
+
+	/**
+	 * 矩形選択モードイベント通知 (UKADOC select-region-mode)
+	 */
+	async notifySelectRegionModeEvent(
+		this: any,
+		event:
+			| "OnSelectModeBegin"
+			| "OnSelectModeCancel"
+			| "OnSelectModeComplete"
+			| "OnSelectModeMouseDown"
+			| "OnSelectModeMouseUp"
+			| string,
+		references: Array<string | number> = [],
+	) {
+		return await this.sendShioriNotify(event, references);
+	},
+
+	/**
+	 * 音声認識・合成イベント通知 (UKADOC speech)
+	 */
+	async notifySpeechEvent(
+		this: any,
+		event:
+			| "OnSpeechSynthesisStatus"
+			| "OnVoiceRecognitionStatus"
+			| "OnVoiceRecognitionWord"
+			| string,
+		references: Array<string | number> = [],
+	) {
+		return await this.sendShioriNotify(event, references);
+	},
+
+	/**
+	 * その他の各種通知 (UKADOC other)
+	 */
+	async notifyOtherEvent(
+		this: any,
+		event:
+			| "OnAITalk"
+			| "OnCompressArchiveComplete"
+			| "OnCompressArchiveFailure"
+			| "OnEmbryoExist"
+			| "OnExtractArchiveComplete"
+			| "OnExtractArchiveFailure"
+			| "OnInternalSaoriComplete"
+			| "OnInternalSaoriFailure"
+			| "OnLanguageChange"
+			| "OnNekodorifExist"
+			| "OnOtherGhostTalk"
+			| "OnRecommendsiteChoice"
+			| "OnSoundSpectrum"
+			| "OnTextDrop"
+			| "OnVideoPlayEx"
+			| string,
 		references: Array<string | number> = [],
 	) {
 		return await this.sendShioriNotify(event, references);
@@ -216,28 +477,6 @@ export const shioriNotifyMethods = {
 	 * モード・負荷・ネットワーク通知
 	 */
 	async notifySystemStatus(
-		this: any,
-		event: string,
-		references: Array<string | number> = [],
-	) {
-		return await this.sendShioriNotify(event, references);
-	},
-
-	/**
-	 * 消滅・アンインストール通知
-	 */
-	async notifyVanishEvent(
-		this: any,
-		event: string,
-		references: Array<string | number> = [],
-	) {
-		return await this.sendShioriNotify(event, references);
-	},
-
-	/**
-	 * URL ドロップイベント通知
-	 */
-	async notifyUrlDropEvent(
 		this: any,
 		event: string,
 		references: Array<string | number> = [],

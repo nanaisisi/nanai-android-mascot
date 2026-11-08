@@ -548,3 +548,70 @@ fn test_advanced_blend_modes_add_glow_darker_lighter_color() {
     b3.composite_layer(&l3, 0, 1, &DrawMethod::Blend("lighter-color-fast".into()));
     assert_eq!(b3.get_pixel(0, 1), Some((150, 150, 150, 255)));
 }
+
+#[test]
+fn test_hsl_blend_modes_and_dither() {
+    let mut base = SurfaceFrameBuffer::new(4, 4);
+    for y in 0..4 {
+        for x in 0..4 {
+            base.set_pixel(x, y, 100, 150, 200, 255);
+        }
+    }
+
+    let mut layer = SurfaceFrameBuffer::new(4, 4);
+    for y in 0..4 {
+        for x in 0..4 {
+            layer.set_pixel(x, y, 220, 80, 50, 255);
+        }
+    }
+
+    // Hue blend
+    let mut b_hue = base.clone();
+    b_hue.composite_layer(&layer, 0, 0, &DrawMethod::Blend("hue-fast".into()));
+    let p_hue = b_hue.get_pixel(0, 0).unwrap();
+    assert_eq!(p_hue.3, 255);
+
+    // Saturation blend
+    let mut b_sat = base.clone();
+    b_sat.composite_layer(&layer, 0, 0, &DrawMethod::Blend("saturation-fast".into()));
+    let p_sat = b_sat.get_pixel(0, 0).unwrap();
+    assert_eq!(p_sat.3, 255);
+
+    // Color blend
+    let mut b_col = base.clone();
+    b_col.composite_layer(&layer, 0, 0, &DrawMethod::Blend("color-fast".into()));
+    let p_col = b_col.get_pixel(0, 0).unwrap();
+    assert_eq!(p_col.3, 255);
+
+    // Luminosity blend
+    let mut b_lum = base.clone();
+    b_lum.composite_layer(&layer, 0, 0, &DrawMethod::Blend("luminosity-fast".into()));
+    let p_lum = b_lum.get_pixel(0, 0).unwrap();
+    assert_eq!(p_lum.3, 255);
+
+    // Dither blend: semi-transparent layer over base
+    let mut dither_layer = SurfaceFrameBuffer::new(4, 4);
+    for y in 0..4 {
+        for x in 0..4 {
+            // Half transparent (alpha 128)
+            dither_layer.set_pixel(x, y, 255, 255, 255, 128);
+        }
+    }
+
+    let mut b_dither = base.clone();
+    b_dither.composite_layer(&dither_layer, 0, 0, &DrawMethod::Blend("dither".into()));
+
+    // In a 4x4 Bayer matrix with alpha 128, exactly half of the pixels exceed the threshold
+    let mut over_threshold_count = 0;
+    for y in 0..4 {
+        for x in 0..4 {
+            let p = b_dither.get_pixel(x, y).unwrap();
+            if p == (255, 255, 255, 255) {
+                over_threshold_count += 1;
+            } else {
+                assert_eq!(p, (100, 150, 200, 255));
+            }
+        }
+    }
+    assert_eq!(over_threshold_count, 8);
+}

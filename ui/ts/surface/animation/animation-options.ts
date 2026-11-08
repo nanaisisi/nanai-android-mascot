@@ -7,16 +7,18 @@ import { surfaceAnimationTimers } from "../surface-animation-timers.js";
 
 /**
  * SERIKO アニメーションオプション文字列のパース (\![anim,option,ID,...])
- * @param {string|string[]|null} [optionParam=null]
+ * @param {string|string[]|Record<string, any>|null} [optionParam=null]
  */
-export function parseAnimationOptions(
-	optionParam: string | string[] | null = null,
-) {
+export function parseAnimationOptions(optionParam: any = null) {
+	if (optionParam && typeof optionParam === "object" && !Array.isArray(optionParam)) {
+		return optionParam;
+	}
+
 	const optionsList = Array.isArray(optionParam)
 		? optionParam
 		: optionParam && typeof optionParam === "string"
-			? [optionParam]
-			: [];
+		? [optionParam]
+		: [];
 
 	const optionStr = optionsList.join(" ").toLowerCase();
 
@@ -45,7 +47,7 @@ export function parseAnimationOptions(
 		isAsync: optionStr.includes("async"),
 		isOverlay: optionStr.includes("overlay"),
 		isBackground: optionStr.includes("background"),
-		isSharedIndex: optionStr.includes("sharedindex"),
+		isSharedIndex: optionStr.includes("sharedindex") || optionStr.includes("shared-index"),
 	};
 }
 
@@ -124,11 +126,7 @@ export function findAnimation(
 
 	if (!instance?.manager) return null;
 	const currentSurfaceIdFor = instance.manager.currentSurfaceIdFor;
-	const sid = String(
-		currentSurfaceIdFor
-			? currentSurfaceIdFor.call(instance.manager, scopeId)
-			: 0,
-	);
+	const sid = String(currentSurfaceIdFor ? currentSurfaceIdFor.call(instance.manager, scopeId) : 0);
 	const animList =
 		instance.manager.animations?.[sid] ||
 		instance.manager.animations?.default ||

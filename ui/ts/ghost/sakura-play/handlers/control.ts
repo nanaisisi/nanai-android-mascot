@@ -78,7 +78,11 @@ export function handleTimeout(
 	_token: unknown,
 	_context: unknown,
 ) {
-	player.timeCritical = true;
+	if (player.playbackController) {
+		player.playbackController.timeCritical = true;
+	} else {
+		player.timeCritical = true;
+	}
 }
 
 export function handleChoiceTimeout(

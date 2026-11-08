@@ -105,12 +105,21 @@ test("balloon events: OnBalloonTimeout triggered via sendBalloonTimeoutNotify", 
 	player.scheduleSurfaceRestore = () => {};
 	player.activeScopes = new Set([1]);
 	// Add the method to ghostController explicitly in this test since we're mocking it
-	(app.ghostController as any).sendBalloonTimeoutNotify = async (lastScript: string, scopeId: number) => {
-		notifyEvents.push({ event: "OnBalloonTimeout", args: [scopeId.toString()] });
+	(app.ghostController as any).sendBalloonTimeoutNotify = async (
+		_lastScript: string,
+		scopeId: number,
+	) => {
+		notifyEvents.push({
+			event: "OnBalloonTimeout",
+			args: [scopeId.toString()],
+		});
 		return null;
 	};
 
-	await (app.ghostController as any).sendBalloonTimeoutNotify(player.lastScript, 1);
+	await (app.ghostController as any).sendBalloonTimeoutNotify(
+		player.lastScript,
+		1,
+	);
 
 	assert.ok(
 		notifyEvents.some(

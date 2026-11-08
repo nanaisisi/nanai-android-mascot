@@ -96,22 +96,16 @@ export function onCharSpoken(this: unknown, target = 0, scopeIdParam = 0) {
 	if (instance.findAnimationsForEvent) {
 		const anims = instance.findAnimationsForEvent(scopeId, "talk");
 		for (const anim of anims) {
-			const sid = String(
-				instance.manager?.currentSurfaceIdFor
-					? instance.manager.currentSurfaceIdFor(scopeId)
-					: 0,
-			);
-			playAnimationPatterns.call(instance, anim, sid, scopeId);
+			const sid = String(instance.manager?.currentSurfaceIdFor ? instance.manager.currentSurfaceIdFor(scopeId) : 0);
+			const playFn = instance.playAnimationPatterns || playAnimationPatterns;
+			playFn.call(instance, anim, sid, scopeId);
 		}
 		return;
 	}
 
 	const manager = instance.manager;
-	const sid = String(
-		manager?.currentSurfaceIdFor ? manager.currentSurfaceIdFor(scopeId) : 0,
-	);
-	const animList =
-		manager?.animations?.[sid] || manager?.animations?.default || [];
+	const sid = String(manager?.currentSurfaceIdFor ? manager.currentSurfaceIdFor(scopeId) : 0);
+	const animList = manager?.animations?.[sid] || manager?.animations?.default || [];
 
 	for (const anim of animList) {
 		const interval = String(anim.interval || "").toLowerCase();
@@ -119,7 +113,8 @@ export function onCharSpoken(this: unknown, target = 0, scopeIdParam = 0) {
 			const parts = interval.split(",");
 			const n = parts[1] ? Number.parseInt(parts[1], 10) : 1;
 			if (!Number.isNaN(n) && n > 0 && count % n === 0) {
-				playAnimationPatterns.call(instance, anim, sid, scopeId);
+				const playFn = instance.playAnimationPatterns || playAnimationPatterns;
+				playFn.call(instance, anim, sid, scopeId);
 			}
 		}
 	}

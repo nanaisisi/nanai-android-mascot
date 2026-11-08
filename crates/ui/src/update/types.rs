@@ -96,6 +96,49 @@ impl UpdatePackage {
             })
             .collect()
     }
+
+    /// developer_options.txt の noupdate パターンに合致するファイルを除外したエントリ一覧を取得
+    pub fn filter_noupdate(&self, noupdate_patterns: &[&str]) -> Vec<&UpdateEntry> {
+        self.entries
+            .iter()
+            .filter(|e| {
+                let norm = e.path.replace('\\', "/");
+                !noupdate_patterns.iter().any(|pattern| {
+                    let pat_norm = pattern.replace('\\', "/");
+                    norm.eq_ignore_ascii_case(&pat_norm)
+                        || norm.ends_with(&format!("/{}", pat_norm.trim_start_matches('/')))
+                })
+            })
+            .collect()
+    }
+
+    /// エントリのハッシュおよびパスの健全性検証（32文字の16進MD5または空、不正な制御文字等）
+    pub fn validate_entries_integrity(&self) -> Result<(), String> {
+        for entry in &self.entries {
+            if entry.path.trim().is_empty() {
+                return Err("Empty path in update entry".to_string());
+            }
+            if entry.path.contains('\0') {
+                return Err(format!("Null byte in update path: {}", entry.path));
+            }
+            if !entry.md5.is_empty() {
+                if entry.md5.len() != 32 {
+                    return Err(format!(
+                        "Invalid MD5 hash length ({}) for path: {}",
+                        entry.md5.len(),
+                        entry.path
+                    ));
+                }
+                if !entry.md5.chars().all(|c| c.is_ascii_hexdigit()) {
+                    return Err(format!(
+                        "Invalid hex characters in MD5 hash for path: {}",
+                        entry.path
+                    ));
+                }
+            }
+        }
+        Ok(())
+    }
 }
 
 /// 同梱リソース設定（balloon, headline, plugin, shell, calendar.skin 等）

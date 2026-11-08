@@ -287,4 +287,8 @@ impl VirtualFileSystem for MockVfs {
     fn find_files(&self, pattern: &str) -> io::Result<Vec<String>> {
         Ok(self.find_files(pattern))
     }
+
+    fn filter_by_extension(&self, ext: &str) -> io::Result<Vec<String>> {
+        Ok(self.filter_by_extension(ext))
+    }
 }

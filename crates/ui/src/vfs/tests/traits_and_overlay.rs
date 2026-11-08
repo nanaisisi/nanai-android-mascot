@@ -103,6 +103,34 @@ fn test_virtual_file_system_trait_and_overlay() {
         ]
     );
 
+    // Cycle 9 utilities: filter_by_extension, glob_files, resolve_file_with_extensions, read_binary_range
+    let filtered_png = overlay.filter_by_extension(".png").unwrap();
+    assert_eq!(
+        filtered_png,
+        vec!["shell/master/surface0000.png".to_string()]
+    );
+
+    let glob_res = overlay.glob_files("*master/*.txt").unwrap();
+    assert_eq!(
+        glob_res,
+        vec![
+            "shell/master/descript.txt".to_string(),
+            "shell/master/extra.txt".to_string(),
+        ]
+    );
+
+    let resolved_opt =
+        overlay.resolve_file_with_extensions("shell/master/surface0000", &[".bmp", ".png"]);
+    assert_eq!(
+        resolved_opt,
+        Some("shell/master/surface0000.png".to_string())
+    );
+
+    let range_bytes = overlay
+        .read_binary_range("shell/master/extra.txt", 0, 5)
+        .unwrap();
+    assert_eq!(range_bytes, b"extra");
+
     // remove_layer
     let removed = overlay.remove_layer(0);
     assert!(removed.is_some());
@@ -160,6 +188,16 @@ fn test_path_safety_and_sanitization() {
     assert!(!is_safe_vfs_path("D:/Data/file.txt"));
     assert_eq!(sanitize_vfs_path("/root/test"), None);
 
+    // Cycle 9: Windows予約デバイス名とNTFS代替データストリーム/URI
+    assert!(!is_safe_vfs_path("con"));
+    assert!(!is_safe_vfs_path("aux.txt"));
+    assert!(!is_safe_vfs_path("sub/prn/file.png"));
+    assert!(!is_safe_vfs_path("file://host/path"));
+    assert!(!is_safe_vfs_path("surface.png:stream"));
+    assert!(is_windows_reserved_name("NUL"));
+    assert!(is_windows_reserved_name("com9"));
+    assert!(!is_windows_reserved_name("content.txt"));
+
     // 空文字列
     assert_eq!(sanitize_vfs_path(""), None);
 }
@@ -171,6 +209,17 @@ fn test_encode_to_charset_and_normalize_newlines() {
     // normalize_newlines
     let norm = normalize_newlines(test_str);
     assert_eq!(norm, "こんにちは\n世界\nテスト\n完了");
+
+    // denormalize_newlines
+    let denorm_crlf = denormalize_newlines(&norm, "\r\n");
+    assert_eq!(denorm_crlf, "こんにちは\r\n世界\r\nテスト\r\n完了");
+
+    // normalize_charset_name
+    assert_eq!(normalize_charset_name("sjis"), Some("Shift_JIS"));
+    assert_eq!(normalize_charset_name("windows-31j"), Some("Shift_JIS"));
+    assert_eq!(normalize_charset_name("euc_jp"), Some("EUC-JP"));
+    assert_eq!(normalize_charset_name("jis"), Some("ISO-2022-JP"));
+    assert_eq!(normalize_charset_name("utf-8"), Some("UTF-8"));
 
     // Shift_JIS エンコード
     let sjis_bytes = encode_to_charset("こんにちは", "Shift_JIS").unwrap();
@@ -277,6 +326,12 @@ fn test_mock_vfs_extended_operations() {
     let resolved = resolver.resolve("shell/master/surface0000.png");
     assert!(resolved.is_some());
     let _ = resolver.dir_cache_size();
+
+    // VfsResolver read_binary_range
+    let range = resolver
+        .read_binary_range("shell/master/surface0000.png", 0, 2)
+        .unwrap();
+    assert_eq!(range, b"pn");
 
     let _ = std::fs::remove_dir_all(&temp_dir);
 }

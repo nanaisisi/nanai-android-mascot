@@ -32,6 +32,7 @@ pub struct GhostManifest {
     pub sstp_allow_unspecified_send: bool,
     pub sstp_always_translate: bool,
     pub install_accept: Option<String>,
+    pub makoto: Option<String>,
 }
 
 pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
@@ -191,6 +192,8 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
             .or_else(|| m.get("accept").cloned())
     });
 
+    let makoto = meta_map.as_ref().and_then(|m| m.get("makoto").cloned());
+
     GhostManifest {
         display_name,
         version,
@@ -221,5 +224,6 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
         sstp_allow_unspecified_send,
         sstp_always_translate,
         install_accept,
+        makoto,
     }
 }

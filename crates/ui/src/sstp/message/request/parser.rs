@@ -57,6 +57,9 @@ impl SstpRequest {
         let mut song = None;
         let mut ghost = None;
         let mut module = None;
+        let mut content_type = None;
+        let mut user_agent = None;
+        let mut host = None;
 
         for line in lines {
             let line = line.trim();
@@ -130,6 +133,12 @@ impl SstpRequest {
                     ghost = Some(val);
                 } else if key_lower == "module" {
                     module = Some(val);
+                } else if key_lower == "content-type" {
+                    content_type = Some(val);
+                } else if key_lower == "user-agent" {
+                    user_agent = Some(val);
+                } else if key_lower == "host" {
+                    host = Some(val);
                 } else if key_lower.starts_with("reference") || key_lower.starts_with("argument") {
                     // Argument0 -> Reference0 正規化
                     let norm_key = if key_lower.starts_with("argument") {
@@ -181,6 +190,9 @@ impl SstpRequest {
             ghost,
             module,
             is_direct,
+            content_type,
+            user_agent,
+            host,
         })
     }
 }

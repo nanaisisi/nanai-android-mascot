@@ -28,6 +28,9 @@ export interface SstpRequestPayload {
 	sentence?: string;
 	receiver_ghost_name?: string;
 	receiver_ghost_hwnd?: number;
+	content_type?: string;
+	user_agent?: string;
+	host?: string;
 }
 
 export interface SstpResponsePayload {
@@ -37,6 +40,8 @@ export interface SstpResponsePayload {
 	reference0?: string;
 	additional_data?: string;
 	error_description?: string;
+	references?: Record<string, string>;
+	content_type?: string;
 }
 
 export interface SstpBreakEventPayload {
@@ -256,6 +261,15 @@ export function buildRawSstpRequest(payload: SstpRequestPayload): string {
 	if (payload.module) {
 		lines.push(`Module: ${payload.module}`);
 	}
+	if (payload.content_type) {
+		lines.push(`Content-Type: ${payload.content_type}`);
+	}
+	if (payload.user_agent) {
+		lines.push(`User-Agent: ${payload.user_agent}`);
+	}
+	if (payload.host) {
+		lines.push(`Host: ${payload.host}`);
+	}
 
 	if (payload.references) {
 		const sortedKeys = Object.keys(payload.references).sort();
@@ -292,7 +306,9 @@ export function parseRawSstpResponse(raw: string): SstpResponsePayload {
 	let script: string | undefined;
 	let error_description: string | undefined;
 	let reference0: string | undefined;
+	let content_type: string | undefined;
 	let id: string | undefined;
+	const references: Record<string, string> = {};
 	let readingHeaders = true;
 	const bodyLines: string[] = [];
 
@@ -314,6 +330,14 @@ export function parseRawSstpResponse(raw: string): SstpResponsePayload {
 					error_description = val;
 				} else if (key === "reference0") {
 					reference0 = val;
+					references.Reference0 = val;
+				} else if (key.startsWith("reference") || key.startsWith("argument")) {
+					const normKey = key.startsWith("argument")
+						? `Reference${key.slice(8)}`
+						: `Reference${key.slice(9)}`;
+					references[normKey] = val;
+				} else if (key === "content-type") {
+					content_type = val;
 				} else if (key === "id") {
 					id = val;
 				}
@@ -334,5 +358,40 @@ export function parseRawSstpResponse(raw: string): SstpResponsePayload {
 		reference0,
 		additional_data,
 		error_description,
+		references: Object.keys(references).length > 0 ? references : undefined,
+		content_type,
 	};
+}
+
+/**
+ * Filter active ghosts from FMO status (excludes stopped/paused)
+ */
+export function filterActiveGhosts(
+	status: FmoSystemStatus,
+): Record<string, FmoGhostStatus> {
+	const result: Record<string, FmoGhostStatus> = {};
+	for (const [id, ghost] of Object.entries(status.ghosts)) {
+		if (
+			ghost.lifecycle_state !== "stopped" &&
+			ghost.lifecycle_state !== "paused"
+		) {
+			result[id] = ghost;
+		}
+	}
+	return result;
+}
+
+/**
+ * Filter visible ghosts from FMO status
+ */
+export function filterVisibleGhosts(
+	status: FmoSystemStatus,
+): Record<string, FmoGhostStatus> {
+	const result: Record<string, FmoGhostStatus> = {};
+	for (const [id, ghost] of Object.entries(status.ghosts)) {
+		if (ghost.is_visible) {
+			result[id] = ghost;
+		}
+	}
+	return result;
 }

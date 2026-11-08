@@ -13,6 +13,10 @@ impl SstpResponse {
         );
         out.push_str(&format!("Charset: {}\r\n", self.charset));
 
+        if let Some(ref ct) = self.content_type {
+            out.push_str(&format!("Content-Type: {}\r\n", ct));
+        }
+
         if let Some(ref conn) = self.connection_header {
             out.push_str(&format!("Connection: {}\r\n", conn));
             if conn.eq_ignore_ascii_case("keep-alive") {

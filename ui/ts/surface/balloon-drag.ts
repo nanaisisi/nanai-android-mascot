@@ -5,7 +5,7 @@ export class BalloonDragManager {
 	/**
 	 * @param {import('./interaction.js').InteractionManager} interaction
 	 */
-	constructor(interaction) {
+	constructor(interaction: this) {
 		this.interaction = interaction;
 		this.balloonOffsetX = undefined;
 		this.balloonOffsetY = undefined;
@@ -28,7 +28,7 @@ export class BalloonDragManager {
 		}
 	}
 
-	updateFollowPosition(newX, newY) {
+	updateFollowPosition(newX: number, newY: number) {
 		const balloon = document.getElementById("balloon-display");
 		if (!balloon) return;
 
@@ -39,7 +39,7 @@ export class BalloonDragManager {
 		balloon.style.top = `${Math.max(20, newY + offsetY)}px`;
 	}
 
-	setupBalloonDragging(ghostTarget) {
+	setupBalloonDragging(ghostTarget: HTMLElement) {
 		const balloon = document.getElementById("balloon-display");
 		if (!balloon) return;
 
@@ -49,7 +49,11 @@ export class BalloonDragManager {
 		let bInitialLeft = 0;
 		let bInitialTop = 0;
 
-		const onStart = (clientX, clientY, targetEl) => {
+		const onStart = (
+			clientX: number,
+			clientY: number,
+			targetEl: EventTarget | null,
+		) => {
 			if (
 				targetEl &&
 				(targetEl.tagName === "A" || targetEl.tagName === "BUTTON")
@@ -71,7 +75,7 @@ export class BalloonDragManager {
 		let targetLeft = 0;
 		let targetTop = 0;
 
-		const onMove = (clientX, clientY) => {
+		const onMove = (clientX: number, clientY: number) => {
 			if (!isBalloonDragging) return;
 
 			const deltaX = clientX - bStartX;

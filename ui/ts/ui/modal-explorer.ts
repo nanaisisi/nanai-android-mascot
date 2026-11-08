@@ -2,30 +2,35 @@
  * @file modal-explorer.js
  * @brief ゴーストエクスプローラモーダルのリスナーおよびテーブル描画・操作ロジック
  */
-export function setupExplorerListeners(modalManager, app) {
+export function setupExplorerListeners(modalManager: unknown, app: unknown) {
 	const rows = modalManager.content?.querySelector("#explorer-rows");
 	const status = modalManager.content?.querySelector("#explorer-status");
 	const search = modalManager.content?.querySelector("#explorer-search");
-	let ghosts = [];
-	let selected = null;
+	let ghosts: unknown[] = [];
+	let selected: { name: unknown } | null = null;
 	let sortKey = "name";
 	let sortAsc = true;
 	let _searchIndex = -1;
 
-	const format = (value) => value || "—";
+	const format = (value: unknown) => value || "—";
 	const updateSortHeaderIndicators = () => {
 		modalManager.content
 			?.querySelectorAll("th[data-sort]")
-			.forEach((header) => {
-				const baseLabel =
-					header.dataset.label || header.textContent.replace(/ [▲▼]$/, "");
-				header.dataset.label = baseLabel;
-				if (header.dataset.sort === sortKey) {
-					header.textContent = `${baseLabel} ${sortAsc ? "▲" : "▼"}`;
-				} else {
-					header.textContent = baseLabel;
-				}
-			});
+			.forEach(
+				(header: {
+					dataset: { label: unknown; sort: string };
+					textContent: string;
+				}) => {
+					const baseLabel =
+						header.dataset.label || header.textContent.replace(/ [▲▼]$/, "");
+					header.dataset.label = baseLabel;
+					if (header.dataset.sort === sortKey) {
+						header.textContent = `${baseLabel} ${sortAsc ? "▲" : "▼"}`;
+					} else {
+						header.textContent = baseLabel;
+					}
+				},
+			);
 	};
 	const render = () => {
 		if (!rows) return;
@@ -85,7 +90,8 @@ export function setupExplorerListeners(modalManager, app) {
 		ghosts = (await app.ghostController.scanGhosts()) || [];
 		selected =
 			ghosts.find(
-				(ghost) => ghost.name === app.ghostController.currentGhost?.name,
+				(ghost: { name: unknown }) =>
+					ghost.name === app.ghostController.currentGhost?.name,
 			) ||
 			ghosts[0] ||
 			null;
@@ -99,19 +105,26 @@ export function setupExplorerListeners(modalManager, app) {
 		render();
 	});
 
-	modalManager.content?.querySelectorAll("th[data-sort]").forEach((th) => {
-		th.addEventListener("click", () => {
-			const key = th.dataset.sort;
-			if (!key) return;
-			if (sortKey === key) {
-				sortAsc = !sortAsc;
-			} else {
-				sortKey = key;
-				sortAsc = true;
-			}
-			render();
-		});
-	});
+	modalManager.content
+		?.querySelectorAll("th[data-sort]")
+		.forEach(
+			(th: {
+				addEventListener: (arg0: string, arg1: () => void) => void;
+				dataset: unknown[];
+			}) => {
+				th.addEventListener("click", () => {
+					const key = th.dataset.sort;
+					if (!key) return;
+					if (sortKey === key) {
+						sortAsc = !sortAsc;
+					} else {
+						sortKey = key;
+						sortAsc = true;
+					}
+					render();
+				});
+			},
+		);
 
 	modalManager.content
 		?.querySelector("#explorer-switch-btn")

@@ -15,7 +15,10 @@ import {
  * @param {import("./touch-gesture-recognizer.js").TouchGestureRecognizer} recognizer
  * @param {TouchEvent} e
  */
-export function processSingleTouchMove(recognizer, e) {
+export function processSingleTouchMove(
+	recognizer: this,
+	e: { touches: unknown[] },
+) {
 	if (recognizer._isPinching) return;
 
 	const t = e.touches[0];
@@ -87,7 +90,10 @@ export function processSingleTouchMove(recognizer, e) {
  * @param {import("./touch-gesture-recognizer.js").TouchGestureRecognizer} recognizer
  * @param {TouchEvent} e
  */
-export function processMultiTouchMove(recognizer, e) {
+export function processMultiTouchMove(
+	recognizer: this,
+	e: { touches: string | unknown[] },
+) {
 	recognizer._clearLongPressTimer();
 	if (!e?.touches || e.touches.length < 2) return;
 	const t1 = e.touches[0];
@@ -141,7 +147,10 @@ export function processMultiTouchMove(recognizer, e) {
  * @param {import("./touch-gesture-recognizer.js").TouchGestureRecognizer} recognizer
  * @param {TouchEvent} e
  */
-export function handleDragEndAndSnap(recognizer, e) {
+export function handleDragEndAndSnap(
+	recognizer: this,
+	e: { changedTouches: unknown[] },
+) {
 	recognizer._isDragging = false;
 	const lastTouch = e?.changedTouches?.[0];
 	const endX = lastTouch?.clientX ?? recognizer._lastX ?? 0;

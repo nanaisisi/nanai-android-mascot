@@ -56,8 +56,9 @@ if (isTauriAvailable()) {
 			renderer.renderRecentSubmenu(data.recentGhosts || []);
 			// ゴースト/シェルの descript.txt 由来のメニュー配色を適用
 			const activeShell =
-				data.shells?.find((s) => s.name === data.currentShell) ||
-				data.shells?.[0];
+				data.shells?.find(
+					(s: { name: unknown }) => s.name === data.currentShell,
+				) || data.shells?.[0];
 			renderer.applyShellTheme(activeShell);
 			if (data.captions) {
 				renderer.applyCaptions(data.captions);
@@ -115,8 +116,9 @@ globalThis.addEventListener("message", (event) => {
 			event.data.currentShell || "master",
 		);
 		const activeShell =
-			event.data.shells?.find((s) => s.name === event.data.currentShell) ||
-			event.data.shells?.[0];
+			event.data.shells?.find(
+				(s: { name: unknown }) => s.name === event.data.currentShell,
+			) || event.data.shells?.[0];
 		if (activeShell) {
 			renderer.applyShellTheme(activeShell);
 		}
@@ -142,7 +144,7 @@ globalThis.addEventListener("message", (event) => {
 });
 
 // 独立サブメニューウィンドウを開く補助関数 (デスクトップ環境用)
-function _triggerSubmenuWindow(menuType, buttonEl) {
+function _triggerSubmenuWindow(menuType: string, buttonEl: Element) {
 	const now = Date.now();
 	const last = _triggerSubmenuWindow.lastRequest;
 	if (last?.type === menuType && now - last.time < 180) return;
@@ -205,7 +207,7 @@ document.addEventListener("click", (e) => {
 });
 
 // SSP準拠: サブメニューが画面右端を超える場合は左側へ反転展開
-function checkSubmenuFlip(wrapper) {
+function checkSubmenuFlip(wrapper: Element) {
 	const container = document.querySelector(".menu-container");
 	if (!container) return;
 
@@ -353,6 +355,12 @@ async function adjustMenuWindowSize() {
 				type: "Logical",
 				width: 260,
 				height: Math.min(720, Math.max(150, bodyHeight + 12)),
+				toJSON: (): { width: number; height: number } => {
+					throw new Error("Function not implemented.");
+				},
+				__TAURI_TO_IPC_KEY__: (): { width: number; height: number } => {
+					throw new Error("Function not implemented.");
+				},
 			});
 		}
 	} catch (_e) {

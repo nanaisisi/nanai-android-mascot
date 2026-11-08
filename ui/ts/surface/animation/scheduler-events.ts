@@ -7,6 +7,15 @@
  * SERIKO フレーム更新ステップイベント (Slot-08 外部インターフェース規約)
  */
 export class FrameStepEvent {
+	scopeId: unknown;
+	baseSurfaceId: unknown;
+	animationId: unknown;
+	pattern: unknown;
+	elapsedMs: unknown;
+	isFinished: unknown;
+	isBackground: boolean;
+	offsetX: number;
+	offsetY: number;
 	/**
 	 * @param {object} params
 	 * @param {number} params.scopeId
@@ -46,21 +55,23 @@ export class FrameStepEvent {
  * SERIKO アニメーションスケジューラ (Slot-08 外部インターフェース規約)
  */
 export class AnimationScheduler {
+	animationManager: unknown;
+	listeners: Set<unknown>;
 	/**
 	 * @param {import('../surface-animation-manager.js').SurfaceAnimationManager} animationManager
 	 */
-	constructor(animationManager) {
+	constructor(animationManager: this) {
 		this.animationManager = animationManager;
 		/** @type {Set<(event: FrameStepEvent) => void>} */
 		this.listeners = new Set();
 	}
 
-	onFrameStep(listener) {
+	onFrameStep(listener: unknown) {
 		this.listeners.add(listener);
 		return () => this.listeners.delete(listener);
 	}
 
-	notifyFrameStep(event) {
+	notifyFrameStep(event: unknown) {
 		for (const listener of this.listeners) {
 			try {
 				listener(event);

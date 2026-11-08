@@ -30,6 +30,12 @@ export function isNativeAndroidPlatform() {
  * オーバーレイおよびプラットフォームIPC機能を管理するクラス
  */
 export class OverlayManager {
+	_invoke: unknown;
+	_dispatch: unknown;
+	_isForegroundServiceActive: boolean;
+	_isOverlayEnabled: boolean;
+	_overlayTransparency: number;
+	_isClickThrough: boolean;
 	/**
 	 * @param {object} [options={}]
 	 * @param {Function} [options.invokeHandler] カスタムinvoke関数
@@ -112,7 +118,7 @@ export class OverlayManager {
 	 * @param {boolean} enabled
 	 * @returns {Promise<string>}
 	 */
-	async setupForegroundService(enabled) {
+	async setupForegroundService(enabled: boolean) {
 		if (isTauriAvailable()) {
 			try {
 				const result = await this._invoke("setup_foreground_service", {
@@ -134,7 +140,7 @@ export class OverlayManager {
 	 * @param {number} alpha
 	 * @returns {Promise<number>}
 	 */
-	async setOverlayTransparency(alpha) {
+	async setOverlayTransparency(alpha: unknown) {
 		const parsed = Number(alpha);
 		const safeAlpha = Number.isFinite(parsed) ? parsed : 1.0;
 		const clamped = Math.max(0.0, Math.min(1.0, safeAlpha));
@@ -157,7 +163,7 @@ export class OverlayManager {
 	 * @param {boolean} enabled
 	 * @returns {Promise<boolean>}
 	 */
-	async setClickThrough(enabled) {
+	async setClickThrough(enabled: boolean) {
 		const val = Boolean(enabled);
 		if (isTauriAvailable()) {
 			try {

@@ -16,7 +16,7 @@ if (globalThis.__TAURI__) {
 	const listenFn =
 		globalThis.__TAURI__.event?.listen || globalThis.__TAURI__.listen;
 	if (typeof listenFn === "function") {
-		listenFn("update-loading-banner", (event) => {
+		listenFn("update-loading-banner", (event: { payload: unknown }) => {
 			const data = event.payload;
 			if (data?.name && nameEl) nameEl.textContent = data.name;
 			if (data?.version && verEl) verEl.textContent = `v${data.version}`;

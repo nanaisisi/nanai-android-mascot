@@ -8,6 +8,7 @@
  * AndroidBridge 内部イベントの購読とディスパッチを担うイベントエミッター
  */
 export class BridgeEventEmitter {
+	_listeners: Map<unknown, unknown>;
 	constructor() {
 		/** @type {Map<string, Set<Function>>} */
 		this._listeners = new Map();
@@ -27,7 +28,7 @@ export class BridgeEventEmitter {
 	 * @param {Function} callback
 	 * @returns {() => void} リスナー解除関数
 	 */
-	on(eventName, callback) {
+	on(eventName: unknown, callback: unknown) {
 		if (typeof callback !== "function") {
 			return () => {};
 		}
@@ -46,7 +47,7 @@ export class BridgeEventEmitter {
 	 * @param {string} eventName
 	 * @param {Function} callback
 	 */
-	off(eventName, callback) {
+	off(eventName: unknown, callback: unknown) {
 		const set = this._listeners.get(eventName);
 		if (set) {
 			set.delete(callback);
@@ -59,9 +60,9 @@ export class BridgeEventEmitter {
 	/**
 	 * イベントディスパッチ
 	 * @param {string} eventName
-	 * @param {any} data
+	 * @param {unknown} data
 	 */
-	dispatch(eventName, data) {
+	dispatch(eventName: unknown, data: unknown) {
 		const set = this._listeners.get(eventName);
 		if (set) {
 			for (const cb of Array.from(set)) {
@@ -79,7 +80,7 @@ export class BridgeEventEmitter {
 	 * @param {string} [eventName]
 	 * @returns {number}
 	 */
-	listenerCount(eventName) {
+	listenerCount(eventName: unknown) {
 		if (eventName) {
 			return this._listeners.get(eventName)?.size ?? 0;
 		}

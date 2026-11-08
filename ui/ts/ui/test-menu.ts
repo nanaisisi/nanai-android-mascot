@@ -11,7 +11,7 @@ export function toggleMenu() {
 	}
 }
 
-export function openModal(title) {
+export function openModal(title: unknown) {
 	console.log("モーダルを開きます:", title);
 	const modalText = document.getElementById("modal-text");
 	const modal = document.getElementById("modal");

@@ -27,6 +27,24 @@ export const TOUCH_GESTURE_TYPES = {
  * カスタムイベントとしてディスパッチ可能
  */
 export class TouchGestureEvent {
+	type: unknown;
+	scale: unknown;
+	deltaX: unknown;
+	deltaY: unknown;
+	centerX: unknown;
+	centerY: unknown;
+	rotation: unknown;
+	strokeDistance: unknown;
+	tapCount: unknown;
+	direction: unknown;
+	distance: unknown;
+	velocity: unknown;
+	velocityX: unknown;
+	velocityY: unknown;
+	dockState: unknown;
+	originalEvent: unknown;
+	timestamp: number;
+	defaultPrevented: boolean;
 	/**
 	 * @param {string} type イベント種別 (nam:touch:*)
 	 * @param {object} detail イベント詳細データ
@@ -44,7 +62,7 @@ export class TouchGestureEvent {
 	 * @param {number} [detail.velocityY=0] Y軸速度 (px/ms)
 	 * @param {Event} [detail.originalEvent=null] 元のDOMイベント (TouchEvent/PointerEvent)
 	 */
-	constructor(type, detail = {}) {
+	constructor(type: unknown, detail = {}) {
 		this.type = type;
 		this.scale = detail.scale ?? 1.0;
 		this.deltaX = detail.deltaX ?? 0;

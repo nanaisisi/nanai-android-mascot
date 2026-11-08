@@ -173,12 +173,16 @@ function blendLuminosity(
  * @description メモリ上のサーフィス画像ピクセルバッファおよび Canvas ラッパー (Slot-07 Contract 準拠)
  */
 export class SurfaceFrameBuffer {
+	width: unknown;
+	height: unknown;
+	data: Uint8ClampedArray<ArrayBuffer>;
+	_data32: null;
 	/**
 	 * @param {number} width
 	 * @param {number} height
 	 * @param {Uint8ClampedArray|Uint8Array|null} [data]
 	 */
-	constructor(width, height, data = null) {
+	constructor(width: unknown, height: unknown, data = null) {
 		this.width = width;
 		this.height = height;
 		this.data = data || new Uint8ClampedArray(width * height * 4);
@@ -210,7 +214,11 @@ export class SurfaceFrameBuffer {
 	 * @param {ImageData} imageData
 	 * @returns {SurfaceFrameBuffer}
 	 */
-	static fromImageData(imageData) {
+	static fromImageData(imageData: {
+		width: unknown;
+		height: unknown;
+		data: null | undefined;
+	}) {
 		return new SurfaceFrameBuffer(
 			imageData.width,
 			imageData.height,
@@ -223,7 +231,14 @@ export class SurfaceFrameBuffer {
 	 * @param {HTMLCanvasElement} canvas
 	 * @returns {SurfaceFrameBuffer|null}
 	 */
-	static fromCanvas(canvas) {
+	static fromCanvas(canvas: {
+		getContext: (
+			arg0: string,
+			arg1: { willReadFrequently: boolean },
+		) => unknown;
+		width: unknown;
+		height: unknown;
+	}) {
 		const ctx = canvas.getContext("2d", { willReadFrequently: true });
 		if (!ctx) return null;
 		const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -236,7 +251,7 @@ export class SurfaceFrameBuffer {
 	 * @param {number} y
 	 * @returns {[number, number, number, number]|null}
 	 */
-	getPixel(x, y) {
+	getPixel(x: number, y: number) {
 		if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
 			return null;
 		}
@@ -258,7 +273,7 @@ export class SurfaceFrameBuffer {
 	 * @param {number} b
 	 * @param {number} a
 	 */
-	setPixel(x, y, r, g, b, a) {
+	setPixel(x: number, y: number, r: number, g: number, b: number, a: number) {
 		if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
 			return;
 		}
@@ -283,7 +298,7 @@ export class SurfaceFrameBuffer {
 	 * @param {number} w
 	 * @param {number} h
 	 */
-	clearRect(x, y, w, h) {
+	clearRect(x: number, y: number, w: number, h: number) {
 		if (w <= 0 || h <= 0) return;
 		const startX = Math.max(0, x | 0);
 		const startY = Math.max(0, y | 0);
@@ -309,7 +324,12 @@ export class SurfaceFrameBuffer {
 	 * @param {number} [dy=0]
 	 * @param {string} [method="overlay"]
 	 */
-	compositeBuffer(src, dx = 0, dy = 0, method = "overlay") {
+	compositeBuffer(
+		src: { width: unknown; height: unknown; data32: unknown },
+		dx = 0,
+		dy = 0,
+		method = "overlay",
+	) {
 		if (!src?.width || !src.height) return;
 
 		const m = (method || "overlay").toLowerCase();
@@ -468,7 +488,7 @@ export class SurfaceFrameBuffer {
 						bg = sg === 0 ? 255 : Math.min(255, ((dg * 255) / sg) | 0);
 						bb = sb === 0 ? 255 : Math.min(255, ((db * 255) / sb) | 0);
 					} else if (baseMode === "overlay") {
-						const overlayCalc = (d, s) =>
+						const overlayCalc = (d: number, s: number) =>
 							d < 128
 								? Math.min(255, ((2 * d * s) / 255) | 0)
 								: Math.min(255, (255 - (2 * (255 - d) * (255 - s)) / 255) | 0);
@@ -476,7 +496,7 @@ export class SurfaceFrameBuffer {
 						bg = overlayCalc(dg, sg);
 						bb = overlayCalc(db, sb);
 					} else if (baseMode === "softlight" || baseMode === "soft-light") {
-						const softCalc = (d, s) => {
+						const softCalc = (d: number, s: number) => {
 							const df = d / 255;
 							const sf = s / 255;
 							const res =
@@ -494,7 +514,7 @@ export class SurfaceFrameBuffer {
 						baseMode === "color-dodge-glow" ||
 						baseMode === "colordodgeglow"
 					) {
-						const dodgeCalc = (d, s) =>
+						const dodgeCalc = (d: number, s: number) =>
 							d === 0
 								? 0
 								: s >= 255
@@ -504,7 +524,7 @@ export class SurfaceFrameBuffer {
 						bg = dodgeCalc(dg, sg);
 						bb = dodgeCalc(db, sb);
 					} else if (baseMode === "color-burn" || baseMode === "colorburn") {
-						const burnCalc = (d, s) =>
+						const burnCalc = (d: number, s: number) =>
 							d === 255
 								? 255
 								: s === 0
@@ -514,7 +534,7 @@ export class SurfaceFrameBuffer {
 						bg = burnCalc(dg, sg);
 						bb = burnCalc(db, sb);
 					} else if (baseMode === "hard-light" || baseMode === "hardlight") {
-						const hardCalc = (d, s) =>
+						const hardCalc = (d: number, s: number) =>
 							s < 128
 								? Math.min(255, ((2 * s * d) / 255) | 0)
 								: Math.min(
@@ -525,7 +545,7 @@ export class SurfaceFrameBuffer {
 						bg = hardCalc(dg, sg);
 						bb = hardCalc(db, sb);
 					} else if (baseMode === "vivid-light" || baseMode === "vividlight") {
-						const vividCalc = (d, s) => {
+						const vividCalc = (d: number, s: number) => {
 							if (s < 128) {
 								if (d === 255) return 255;
 								if (s === 0) return 0;
@@ -554,7 +574,7 @@ export class SurfaceFrameBuffer {
 						bg = Math.max(0, Math.min(255, dg + 2 * sg - 255));
 						bb = Math.max(0, Math.min(255, db + 2 * sb - 255));
 					} else if (baseMode === "pin-light" || baseMode === "pinlight") {
-						const pinCalc = (d, s) =>
+						const pinCalc = (d: number, s: number) =>
 							s < 128 ? Math.min(d, 2 * s) : Math.max(d, 2 * (s - 128));
 						br = pinCalc(dr, sr);
 						bg = pinCalc(dg, sg);

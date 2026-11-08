@@ -29,6 +29,12 @@ export {
  * AndroidプラットフォームとのIPCおよびライフサイクル管理を提供するブリッジクラス
  */
 export class AndroidBridge {
+	_cleanupFns: never[];
+	_lifecycleState: string;
+	_emitter: BridgeEventEmitter;
+	_backButtonManager: BackButtonManager;
+	_dockManager: DockManager;
+	_overlayManager: OverlayManager;
 	/**
 	 * @param {object} [options={}]
 	 * @param {Function} [options.invokeHandler] カスタムinvoke関数（テスト用）
@@ -42,15 +48,17 @@ export class AndroidBridge {
 		this._emitter = new BridgeEventEmitter();
 
 		// 戻るボタン管理モジュール
-		this._backButtonManager = new BackButtonManager((eventName, data) => {
-			this._dispatch(eventName, data);
-		});
+		this._backButtonManager = new BackButtonManager(
+			(eventName: unknown, data: unknown) => {
+				this._dispatch(eventName, data);
+			},
+		);
 
 		// ドッキング & ジェスチャー連携管理モジュール
 		this._dockManager = new DockManager({
 			gestureRecognizer: options.gestureRecognizer,
 			element: options.element,
-			dispatchFn: (eventName, data) => {
+			dispatchFn: (eventName: unknown, data: unknown) => {
 				this._dispatch(eventName, data);
 			},
 		});
@@ -58,18 +66,18 @@ export class AndroidBridge {
 		// オーバーレイ & プラットフォーム管理モジュール
 		this._overlayManager = new OverlayManager({
 			invokeHandler: options.invokeHandler,
-			dispatchFn: (eventName, data) => {
+			dispatchFn: (eventName: unknown, data: unknown) => {
 				this._dispatch(eventName, data);
 			},
 		});
 
 		// ブラウザ/WebViewの可視性変更およびライフサイクル監視
 		const visibilityCleanups = setupVisibilityListeners({
-			setLifecycleState: (state) => {
+			setLifecycleState: (state: string) => {
 				this._lifecycleState = state;
 			},
 			getGestureRecognizer: () => this._dockManager.gestureRecognizer,
-			dispatch: (eventName, data) => {
+			dispatch: (eventName: unknown, data: unknown) => {
 				this._dispatch(eventName, data);
 			},
 		});
@@ -172,7 +180,7 @@ export class AndroidBridge {
 	 * 連携するジェスチャー認識器を設定
 	 * @param {TouchGestureRecognizer|null} recognizer
 	 */
-	setGestureRecognizer(recognizer) {
+	setGestureRecognizer(recognizer: unknown) {
 		this._dockManager.setGestureRecognizer(recognizer);
 	}
 
@@ -181,7 +189,7 @@ export class AndroidBridge {
 	 * @param {"none" | "left" | "right"} dockState
 	 * @returns {"none" | "left" | "right"}
 	 */
-	setDockMode(dockState) {
+	setDockMode(dockState: unknown) {
 		return this._dockManager.setDockMode(dockState);
 	}
 
@@ -213,7 +221,7 @@ export class AndroidBridge {
 	 * ゴースト・マスコットDOM要素をドッキング管理にアタッチ
 	 * @param {HTMLElement} element
 	 */
-	attachDockElement(element) {
+	attachDockElement(element: unknown) {
 		this._dockManager.attachElement(element);
 	}
 
@@ -287,7 +295,7 @@ export class AndroidBridge {
 	 * @param {boolean} enabled
 	 * @returns {Promise<string>}
 	 */
-	async setupForegroundService(enabled) {
+	async setupForegroundService(enabled: boolean) {
 		return this._overlayManager.setupForegroundService(enabled);
 	}
 
@@ -296,7 +304,7 @@ export class AndroidBridge {
 	 * @param {number} alpha
 	 * @returns {Promise<number>}
 	 */
-	async setOverlayTransparency(alpha) {
+	async setOverlayTransparency(alpha: unknown) {
 		return this._overlayManager.setOverlayTransparency(alpha);
 	}
 
@@ -305,7 +313,7 @@ export class AndroidBridge {
 	 * @param {boolean} enabled
 	 * @returns {Promise<boolean>}
 	 */
-	async setClickThrough(enabled) {
+	async setClickThrough(enabled: boolean) {
 		return this._overlayManager.setClickThrough(enabled);
 	}
 
@@ -339,7 +347,7 @@ export class AndroidBridge {
 	 * @param {() => boolean|Promise<boolean>} handler trueを返すと戻る処理を消費(consume)したとみなす
 	 * @returns {() => void} 登録解除関数
 	 */
-	registerBackHandler(handler) {
+	registerBackHandler(handler: unknown) {
 		return this._backButtonManager.registerBackHandler(handler);
 	}
 
@@ -356,7 +364,7 @@ export class AndroidBridge {
 	 * @param {string} [eventName]
 	 * @returns {number}
 	 */
-	getListenerCount(eventName) {
+	getListenerCount(eventName: unknown) {
 		return this._emitter.listenerCount(eventName);
 	}
 
@@ -424,7 +432,7 @@ export class AndroidBridge {
 	 * @param {Function} callback
 	 * @returns {() => void} リスナー解除関数
 	 */
-	on(eventName, callback) {
+	on(eventName: unknown, callback: unknown) {
 		return this._emitter.on(eventName, callback);
 	}
 
@@ -433,7 +441,7 @@ export class AndroidBridge {
 	 * @param {string} eventName
 	 * @param {Function} callback
 	 */
-	off(eventName, callback) {
+	off(eventName: unknown, callback: unknown) {
 		this._emitter.off(eventName, callback);
 	}
 
@@ -441,9 +449,9 @@ export class AndroidBridge {
 	 * 内部イベントディスパッチ
 	 * @private
 	 * @param {string} eventName
-	 * @param {any} data
+	 * @param {unknown} data
 	 */
-	_dispatch(eventName, data) {
+	_dispatch(eventName: unknown, data: unknown) {
 		this._emitter.dispatch(eventName, data);
 	}
 }

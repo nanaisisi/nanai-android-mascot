@@ -10,6 +10,12 @@ import { ANDROID_EVENTS } from "./constants.js";
  * ゴースト画面端ドッキング状態およびジェスチャー認識器との連携を管理するクラス
  */
 export class DockManager {
+	_dispatch: unknown;
+	_dockState: string;
+	_gestureRecognizer: null;
+	_gestureUnbind: null;
+	_attachedElement: null;
+	_elementClickUnbind: null;
 	/**
 	 * @param {object} [options={}]
 	 * @param {Function} [options.dispatchFn] イベントディスパッチ用コールバック
@@ -46,7 +52,7 @@ export class DockManager {
 	 * ドッキング状態でのタップ/クリックで自動展開(restore)するリスナーを登録
 	 * @param {HTMLElement} element
 	 */
-	attachElement(element) {
+	attachElement(element: unknown) {
 		if (this._attachedElement === element) {
 			return;
 		}
@@ -59,7 +65,10 @@ export class DockManager {
 		this._syncElementClasses();
 
 		// ドッキング時のタップ/クリックによる復帰リスナー
-		const handleTapRestore = (e) => {
+		const handleTapRestore = (e: {
+			stopPropagation: () => void;
+			preventDefault: () => void;
+		}) => {
 			if (this.isDocked) {
 				if (typeof e?.stopPropagation === "function") {
 					e.stopPropagation();
@@ -201,7 +210,7 @@ export class DockManager {
 	 * @param {TouchGestureRecognizer|null} recognizer
 	 * @returns {(() => void)|null} 登録解除関数
 	 */
-	setGestureRecognizer(recognizer) {
+	setGestureRecognizer(recognizer: unknown) {
 		if (this._gestureUnbind) {
 			try {
 				this._gestureUnbind();
@@ -216,7 +225,7 @@ export class DockManager {
 		) {
 			this._gestureUnbind = this._gestureRecognizer.on(
 				"nam:touch:snap",
-				(event) => {
+				(event: { dockState: unknown }) => {
 					if (event?.dockState) {
 						this.setDockMode(event.dockState);
 					}
@@ -232,7 +241,7 @@ export class DockManager {
 	 * @param {"none" | "left" | "right"} dockState
 	 * @returns {"none" | "left" | "right"}
 	 */
-	setDockMode(dockState) {
+	setDockMode(dockState: unknown) {
 		const state =
 			dockState === "left" || dockState === "right" ? dockState : "none";
 		if (this._dockState !== state) {

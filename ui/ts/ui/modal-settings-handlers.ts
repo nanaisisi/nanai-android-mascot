@@ -4,10 +4,12 @@ import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
  * 設定・プラグイン・デバッグ用のモーダルハンドラ
  */
 export class ModalSettingsHandlers {
+	manager: unknown;
+	app: unknown;
 	/**
 	 * @param {import('./modal.js').ModalManager} manager
 	 */
-	constructor(manager) {
+	constructor(manager: this) {
 		this.manager = manager;
 		this.app = manager.app;
 	}

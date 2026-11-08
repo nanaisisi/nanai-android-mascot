@@ -10,10 +10,12 @@ import { ANDROID_EVENTS } from "./constants.js";
  * Android戻るボタンハンドラを管理するクラス
  */
 export class BackButtonManager {
+	_dispatch: (eventName: unknown, data: unknown) => void;
+	_backHandlers: never[];
 	/**
 	 * @param {Function} [dispatchFn] イベントディスパッチ用コールバック
 	 */
-	constructor(dispatchFn) {
+	constructor(dispatchFn: (eventName: unknown, data: unknown) => void) {
 		this._dispatch = typeof dispatchFn === "function" ? dispatchFn : () => {};
 		this._backHandlers = [];
 	}
@@ -23,12 +25,14 @@ export class BackButtonManager {
 	 * @param {() => boolean|Promise<boolean>} handler trueを返すと戻る処理を消費(consume)したとみなす
 	 * @returns {() => void} 登録解除関数
 	 */
-	registerBackHandler(handler) {
+	registerBackHandler(handler: unknown) {
 		if (typeof handler === "function") {
 			this._backHandlers.push(handler);
 		}
 		return () => {
-			this._backHandlers = this._backHandlers.filter((h) => h !== handler);
+			this._backHandlers = this._backHandlers.filter(
+				(h: unknown) => h !== handler,
+			);
 		};
 	}
 

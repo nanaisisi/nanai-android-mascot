@@ -24,7 +24,7 @@ export function renderSubmenuContent({
 	container.innerHTML = "";
 
 	if (currentSubmenuType === "ghost") {
-		cachedGhosts.forEach((ghostItem) => {
+		cachedGhosts.forEach((ghostItem: { name: unknown }) => {
 			const ghostName =
 				typeof ghostItem === "string" ? ghostItem : ghostItem?.name || "";
 			const isCurrent = ghostName === currentGhostName;
@@ -39,7 +39,7 @@ export function renderSubmenuContent({
 		});
 	} else if (currentSubmenuType === "shell") {
 		(cachedShells.length > 0 ? cachedShells : ["master"]).forEach(
-			(shellItem) => {
+			(shellItem: { name: unknown; display_name: unknown }) => {
 				const shellName =
 					typeof shellItem === "string"
 						? shellItem
@@ -102,7 +102,7 @@ export function renderSubmenuContent({
 					{ dir_name: "comic", name: "コミック" },
 					{ dir_name: "dark", name: "ダーク" },
 				]
-		).forEach((balloonItem) => {
+		).forEach((balloonItem: { dir_name: unknown; name: unknown }) => {
 			const dirName = balloonItem.dir_name || balloonItem.name;
 			const displayName = balloonItem.name || dirName;
 			const isCurrent = dirName === currentBalloonTheme;
@@ -123,34 +123,44 @@ export function renderSubmenuContent({
 			container.appendChild(empty);
 			return;
 		}
-		cachedRecentGhosts.forEach((item) => {
-			const ghostName = typeof item === "string" ? item : item?.name || "";
-			const hasSub =
-				typeof item === "object" &&
-				item !== null &&
-				(item.hasSubmenu ||
-					(item.subitems && item.subitems.length > 0) ||
-					(item.shells && item.shells.length > 0));
+		cachedRecentGhosts.forEach(
+			(
+				item: {
+					name: unknown;
+					hasSubmenu: unknown;
+					subitems: string | unknown[];
+					shells: string | unknown[];
+					action: unknown;
+				} | null,
+			) => {
+				const ghostName = typeof item === "string" ? item : item?.name || "";
+				const hasSub =
+					typeof item === "object" &&
+					item !== null &&
+					(item.hasSubmenu ||
+						(item.subitems && item.subitems.length > 0) ||
+						(item.shells && item.shells.length > 0));
 
-			const btn = document.createElement("button");
-			btn.type = "button";
-			btn.className = `menu-item${hasSub ? " has-submenu" : ""}`;
-			if (hasSub) {
-				btn.setAttribute("aria-haspopup", "true");
-			}
-			btn.innerHTML = `<span>${ghostName}</span>`;
-			btn.addEventListener("click", () => {
-				const action =
-					typeof item === "object" && item?.action
-						? item.action
-						: "recent-ghost";
-				dispatchSubmenuAction(
-					action,
-					typeof item === "object" ? item : ghostName,
-				);
-			});
-			container.appendChild(btn);
-		});
+				const btn = document.createElement("button");
+				btn.type = "button";
+				btn.className = `menu-item${hasSub ? " has-submenu" : ""}`;
+				if (hasSub) {
+					btn.setAttribute("aria-haspopup", "true");
+				}
+				btn.innerHTML = `<span>${ghostName}</span>`;
+				btn.addEventListener("click", () => {
+					const action =
+						typeof item === "object" && item?.action
+							? item.action
+							: "recent-ghost";
+					dispatchSubmenuAction(
+						action,
+						typeof item === "object" ? item : ghostName,
+					);
+				});
+				container.appendChild(btn);
+			},
+		);
 	} else if (
 		currentSubmenuType === "utility" ||
 		currentSubmenuType === "utility-root" ||

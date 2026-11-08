@@ -3,7 +3,22 @@
  * @brief バルーン画像・矢印・マーカー・カーソル・アルファ・推奨ゴースト設定反映 (UKADOC準拠)
  * // [descript.txt（Balloonの）]: Balloon descript.txt アセット・画像属性バインディング
  */
-export function applyAssetProperties(root, props, instance) {
+export function applyAssetProperties(
+	root: HTMLElement,
+	props: object,
+	instance: {
+		rgbFromComponents?: (
+			props: Record<string, unknown>,
+			base: string,
+		) => string | null;
+		applyBalloonDescript?: (props?: unknown) => void;
+		balloonDpiScale?: number;
+		balloonUserScale?: unknown;
+		currentBalloonTheme?: unknown;
+		elements?: { balloonDisplay: HTMLElement | null };
+		onlineMarkerInterval?: unknown;
+	},
+) {
 	// [descript.txt（Balloonの）]: props
 	// [readme,ファイル名]: props["readme"]
 	if (props.readme) root.style.setProperty("--balloon-readme", props.readme);
@@ -35,7 +50,7 @@ export function applyAssetProperties(root, props, instance) {
 		img.src = cleanUrl;
 	};
 
-	const setBalloonImage = (propName, cssVarName) => {
+	const setBalloonImage = (propName: string, cssVarName: string) => {
 		const filename = props[propName];
 		if (filename) {
 			const themeName = instance.currentBalloonTheme || "default";
@@ -51,7 +66,7 @@ export function applyAssetProperties(root, props, instance) {
 	const arrowBase = props["arrow.filename"] || "arrow";
 	const arrowBaseName = arrowBase.replace(/\.png$/i, "");
 	const themeName = instance.currentBalloonTheme || "default";
-	const resolveArrowUrl = (file) => {
+	const resolveArrowUrl = (file: string) => {
 		const fullPath = `assets/balloon/${themeName}/${file}`;
 		const url = globalThis.__TAURI__?.core?.convertFileSrc
 			? globalThis.__TAURI__.core.convertFileSrc(fullPath)
@@ -77,7 +92,7 @@ export function applyAssetProperties(root, props, instance) {
 	// [sstpmarker.filename,ファイル名]:
 	setBalloonImage("sstpmarker.filename", "--balloon-sstpmarker-image");
 
-	const setMouseCursor = (propName, varName) => {
+	const setMouseCursor = (propName: string, varName: string) => {
 		const filename = props[propName];
 		if (filename) {
 			const themeName = instance.currentBalloonTheme || "default";

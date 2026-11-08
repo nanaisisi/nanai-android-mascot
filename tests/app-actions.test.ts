@@ -78,8 +78,8 @@ test("actionMethods.handleMenuAction covers all branches including Tauri folder 
 
 	// 2. Tauri open-ghost-folder success (resolves .then)
 	globalThis.__TAURI_INTERNALS__ = {
-		invoke: async (_cmd) => {},
-		transformCallback: (cb) => cb,
+		invoke: async (_cmd: unknown) => {},
+		transformCallback: (cb: unknown) => cb,
 	};
 	handle("open-ghost-folder");
 	handle("openghostfolder");
@@ -88,10 +88,10 @@ test("actionMethods.handleMenuAction covers all branches including Tauri folder 
 
 	// 3. Tauri open-ghost-folder error catch
 	globalThis.__TAURI_INTERNALS__ = {
-		invoke: async (cmd) => {
+		invoke: async (cmd: string) => {
 			if (cmd === "open_ghost_directory") throw new Error("folder fail");
 		},
-		transformCallback: (cb) => cb,
+		transformCallback: (cb: unknown) => cb,
 	};
 	handle("open-ghost-folder");
 	await new Promise((r) => setTimeout(r, 10));
@@ -118,8 +118,8 @@ test("actionMethods.handleMenuAction covers all branches including Tauri folder 
 
 	// Test Tauri available branch for reset positions & availableBalloons undefined branch
 	globalThis.__TAURI_INTERNALS__ = {
-		invoke: async (_cmd, _args) => {},
-		transformCallback: (cb) => cb,
+		invoke: async (_cmd: unknown, _args: unknown) => {},
+		transformCallback: (cb: unknown) => cb,
 	};
 	handle("reset-balloon-position");
 	handle("resetballoonpos");

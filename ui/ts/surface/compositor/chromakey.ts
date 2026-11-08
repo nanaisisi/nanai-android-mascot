@@ -9,16 +9,20 @@ export function processChromaKey(
 ): Promise<string> {
 	if (!imageSrc) return Promise.resolve(imageSrc);
 	if (cache?.has(imageSrc)) {
-		return Promise.resolve(cache.get(imageSrc)!);
+		const cached = cache.get(imageSrc);
+		if (cached) return Promise.resolve(cached);
 	}
-	const useSelfAlpha = Boolean(options?.useSelfAlpha);
+	const useSelfAlpha = Boolean(
+		(options as Record<string, unknown>)?.useSelfAlpha,
+	);
 	const paintTransparentRegionBlack = Boolean(
-		options?.paintTransparentRegionBlack ??
-			options?.paint_transparent_region_black,
+		(options as Record<string, unknown>)?.paintTransparentRegionBlack ??
+			(options as Record<string, unknown>)?.paint_transparent_region_black,
 	);
 	const cacheKey = `${imageSrc}__pna__${pnaSrc || "none"}__selfalpha__${useSelfAlpha}__black__${paintTransparentRegionBlack}`;
 	if (cache?.has(cacheKey)) {
-		return Promise.resolve(cache.get(cacheKey)!);
+		const cached = cache.get(cacheKey);
+		if (cached) return Promise.resolve(cached);
 	}
 
 	return new Promise((resolve) => {

@@ -54,7 +54,7 @@ export class SakuraPlaybackController {
 	waitMultiplier: number;
 	charWaitMs: number | null;
 	nextJobId: number;
-	listeners: Map<string, Set<Function>>;
+	listeners: Map<string, Set<(...args: unknown[]) => unknown>>;
 	syncObjects: SyncObjectManager;
 
 	constructor(options: unknown = {}) {

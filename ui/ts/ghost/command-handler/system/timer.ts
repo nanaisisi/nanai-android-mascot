@@ -11,12 +11,16 @@ const activeScriptTimers = new Map<
 export function clearAllScriptTimers() {
 	for (const timer of activeScriptTimers.values()) {
 		if (timer.type === "interval") {
-			clearInterval(timer.id);
+			clearInterval(timer.id as number);
 		} else {
-			clearTimeout(timer.id);
+			clearTimeout(timer.id as number);
 		}
 	}
 	activeScriptTimers.clear();
+}
+
+export function getActiveScriptTimersCount(): number {
+	return activeScriptTimers.size;
 }
 
 export async function handleNotifyCommand(handler: unknown, args: string[]) {
@@ -24,10 +28,19 @@ export async function handleNotifyCommand(handler: unknown, args: string[]) {
 	if (!eventName) return;
 	const references = args.slice(2);
 	try {
-		if (handler.app.ghostController?.sendShioriNotify) {
-			await handler.app.ghostController.sendShioriNotify(eventName, references);
-		} else if (handler.app.ghostController?.sendShioriEvent) {
-			await handler.app.ghostController.sendShioriEvent(eventName, references);
+		const h = handler as Record<string, unknown>;
+		const app = h.app as Record<string, unknown> | undefined;
+		const gc = app?.ghostController as Record<string, unknown> | undefined;
+		const sendNotify = gc?.sendShioriNotify as
+			| ((event: string, refs: string[]) => Promise<unknown>)
+			| undefined;
+		const sendEvent = gc?.sendShioriEvent as
+			| ((event: string, refs: string[]) => Promise<unknown>)
+			| undefined;
+		if (sendNotify) {
+			await sendNotify(eventName, references);
+		} else if (sendEvent) {
+			await sendEvent(eventName, references);
 		}
 	} catch (err) {
 		console.warn(`Notify event failed (${eventName}):`, err);
@@ -47,13 +60,15 @@ export async function handleTimerRaiseCommand(
 
 	const timerKey = `raise:${eventName}`;
 	if (activeScriptTimers.has(timerKey)) {
-		const existing = activeScriptTimers.get(timerKey)!;
-		if (existing.type === "interval") {
-			clearInterval(existing.id);
-		} else {
-			clearTimeout(existing.id);
+		const existing = activeScriptTimers.get(timerKey);
+		if (existing) {
+			if (existing.type === "interval") {
+				clearInterval(existing.id as number);
+			} else {
+				clearTimeout(existing.id as number);
+			}
+			activeScriptTimers.delete(timerKey);
 		}
-		activeScriptTimers.delete(timerKey);
 	}
 
 	if (delayMs <= 0) {
@@ -62,10 +77,15 @@ export async function handleTimerRaiseCommand(
 
 	const fireEvent = async () => {
 		try {
-			await handler.app.ghostController?.sendShioriEvent?.(
-				eventName,
-				references,
-			);
+			const h = handler as Record<string, unknown>;
+			const app = h.app as Record<string, unknown> | undefined;
+			const gc = app?.ghostController as Record<string, unknown> | undefined;
+			const sendEvent = gc?.sendShioriEvent as
+				| ((event: string, refs: string[]) => Promise<unknown>)
+				| undefined;
+			if (sendEvent) {
+				await sendEvent(eventName, references);
+			}
 		} catch (e) {
 			console.warn(`timerraise event failed (${eventName}):`, e);
 		}
@@ -96,13 +116,15 @@ export async function handleTimerNotifyCommand(
 
 	const timerKey = `notify:${eventName}`;
 	if (activeScriptTimers.has(timerKey)) {
-		const existing = activeScriptTimers.get(timerKey)!;
-		if (existing.type === "interval") {
-			clearInterval(existing.id);
-		} else {
-			clearTimeout(existing.id);
+		const existing = activeScriptTimers.get(timerKey);
+		if (existing) {
+			if (existing.type === "interval") {
+				clearInterval(existing.id as number);
+			} else {
+				clearTimeout(existing.id as number);
+			}
+			activeScriptTimers.delete(timerKey);
 		}
-		activeScriptTimers.delete(timerKey);
 	}
 
 	if (delayMs <= 0) {
@@ -111,16 +133,19 @@ export async function handleTimerNotifyCommand(
 
 	const fireEvent = async () => {
 		try {
-			if (handler.app.ghostController?.sendShioriNotify) {
-				await handler.app.ghostController.sendShioriNotify(
-					eventName,
-					references,
-				);
-			} else if (handler.app.ghostController?.sendShioriEvent) {
-				await handler.app.ghostController.sendShioriEvent(
-					eventName,
-					references,
-				);
+			const h = handler as Record<string, unknown>;
+			const app = h.app as Record<string, unknown> | undefined;
+			const gc = app?.ghostController as Record<string, unknown> | undefined;
+			const sendNotify = gc?.sendShioriNotify as
+				| ((event: string, refs: string[]) => Promise<unknown>)
+				| undefined;
+			const sendEvent = gc?.sendShioriEvent as
+				| ((event: string, refs: string[]) => Promise<unknown>)
+				| undefined;
+			if (sendNotify) {
+				await sendNotify(eventName, references);
+			} else if (sendEvent) {
+				await sendEvent(eventName, references);
 			}
 		} catch (e) {
 			console.warn(`timernotify event failed (${eventName}):`, e);
@@ -154,35 +179,51 @@ export async function handleTimerRaiseOtherCommand(
 	const timerKey = `other:${isNotify ? "notify" : "raise"}:${ghostName}:${eventName}`;
 
 	if (activeScriptTimers.has(timerKey)) {
-		const existing = activeScriptTimers.get(timerKey)!;
-		if (existing.type === "interval") {
-			clearInterval(existing.id);
-		} else {
-			clearTimeout(existing.id);
+		const existing = activeScriptTimers.get(timerKey);
+		if (existing) {
+			if (existing.type === "interval") {
+				clearInterval(existing.id as number);
+			} else {
+				clearTimeout(existing.id as number);
+			}
+			activeScriptTimers.delete(timerKey);
 		}
-		activeScriptTimers.delete(timerKey);
 	}
 
 	if (delayMs <= 0) return;
 
 	const fireEvent = async () => {
 		try {
-			const gc = handler.app.ghostController;
+			const h = handler as Record<string, unknown>;
+			const app = h.app as Record<string, unknown> | undefined;
+			const gc = app?.ghostController as Record<string, unknown> | undefined;
 			if (isNotify) {
-				if (gc?.sendNotifyOther) {
-					await gc.sendNotifyOther(ghostName, eventName, references);
-				} else if (gc?.sendShioriNotify) {
-					await gc.sendShioriNotify("OnNotifyOther", [
+				const sendNotifyOther = gc?.sendNotifyOther as
+					| ((ghost: string, event: string, refs: string[]) => Promise<unknown>)
+					| undefined;
+				const sendShioriNotify = gc?.sendShioriNotify as
+					| ((event: string, refs: string[]) => Promise<unknown>)
+					| undefined;
+				if (sendNotifyOther) {
+					await sendNotifyOther(ghostName, eventName, references);
+				} else if (sendShioriNotify) {
+					await sendShioriNotify("OnNotifyOther", [
 						ghostName,
 						eventName,
 						...references,
 					]);
 				}
 			} else {
-				if (gc?.sendRaiseOther) {
-					await gc.sendRaiseOther(ghostName, eventName, references);
-				} else if (gc?.sendShioriEvent) {
-					await gc.sendShioriEvent("OnRaiseOther", [
+				const sendRaiseOther = gc?.sendRaiseOther as
+					| ((ghost: string, event: string, refs: string[]) => Promise<unknown>)
+					| undefined;
+				const sendShioriEvent = gc?.sendShioriEvent as
+					| ((event: string, refs: string[]) => Promise<unknown>)
+					| undefined;
+				if (sendRaiseOther) {
+					await sendRaiseOther(ghostName, eventName, references);
+				} else if (sendShioriEvent) {
+					await sendShioriEvent("OnRaiseOther", [
 						ghostName,
 						eventName,
 						...references,
@@ -222,22 +263,34 @@ export async function handleTimerPluginCommand(
 	const timerKey = `plugin:${isNotify ? "notify" : "raise"}:${pluginId}:${eventName}`;
 
 	if (activeScriptTimers.has(timerKey)) {
-		const existing = activeScriptTimers.get(timerKey)!;
-		if (existing.type === "interval") {
-			clearInterval(existing.id);
-		} else {
-			clearTimeout(existing.id);
+		const existing = activeScriptTimers.get(timerKey);
+		if (existing) {
+			if (existing.type === "interval") {
+				clearInterval(existing.id as number);
+			} else {
+				clearTimeout(existing.id as number);
+			}
+			activeScriptTimers.delete(timerKey);
 		}
-		activeScriptTimers.delete(timerKey);
 	}
 
 	if (delayMs <= 0) return;
 
 	const fireEvent = async () => {
 		try {
-			const gc = handler.app?.ghostController;
-			if (gc?.sendPluginEvent) {
-				await gc.sendPluginEvent(pluginId, eventName, references, isNotify);
+			const h = handler as Record<string, unknown>;
+			const app = h.app as Record<string, unknown> | undefined;
+			const gc = app?.ghostController as Record<string, unknown> | undefined;
+			const sendPluginEvent = gc?.sendPluginEvent as
+				| ((
+						plugin: string,
+						event: string,
+						refs: string[],
+						notify: boolean,
+				  ) => Promise<unknown>)
+				| undefined;
+			if (sendPluginEvent) {
+				await sendPluginEvent(pluginId, eventName, references, isNotify);
 			} else {
 				const { invoke, isTauriAvailable } = await import(
 					"../../../core/tauri-helper.js"
@@ -268,8 +321,4 @@ export async function handleTimerPluginCommand(
 		}, delayMs);
 		activeScriptTimers.set(timerKey, { id: timeoutId, type: "timeout" });
 	}
-}
-
-export function getActiveScriptTimersCount(): number {
-	return activeScriptTimers.size;
 }

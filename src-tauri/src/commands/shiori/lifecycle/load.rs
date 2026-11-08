@@ -43,8 +43,8 @@ pub async fn load_ghost(
             candidates.push(ghost_master_dir.join(rel_path));
             #[cfg(not(windows))]
             {
-                if rel_path.ends_with(".dll") {
-                    let so_name = format!("{}.so", &rel_path[..rel_path.len() - 4]);
+                if let Some(stem) = rel_path.strip_suffix(".dll") {
+                    let so_name = format!("{}.so", stem);
                     candidates.push(ghost_master_dir.join(&so_name));
                     candidates.push(ghost_master_dir.join(format!("lib{}", so_name)));
                 }

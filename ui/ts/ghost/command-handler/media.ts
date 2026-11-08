@@ -31,6 +31,186 @@ export async function handleCloseNetworkService(_handler: any, args: string[]) {
 	console.log(`🛑 Network service close: ${service} (${target})`);
 }
 
+export async function handleFileWatchCommand(
+	_handler: any,
+	args: string[],
+	isCancel: boolean = false,
+) {
+	const path = args.slice(1).join(",") || args[0] || "";
+	console.log(
+		`👁️ File watch ${isCancel ? "cancel" : "execute"}: path=${path}`,
+	);
+	if (isTauriAvailable()) {
+		try {
+			await invoke(isCancel ? "cancel_file_watch" : "execute_file_watch", {
+				path,
+			});
+		} catch (err) {
+			console.warn("File watch operation failed:", err);
+		}
+	}
+}
+
+export async function handleEmptyRecycleBin(_handler: any, _args: string[]) {
+	console.log("🗑️ Empty recycle bin requested");
+	if (isTauriAvailable()) {
+		try {
+			await invoke("empty_recycle_bin");
+		} catch (err) {
+			console.warn("empty_recycle_bin failed:", err);
+		}
+	}
+}
+
+export async function handlePingCommand(handler: any, args: string[]) {
+	const host = args[1] ?? args[0] ?? "";
+	console.log(`📡 Ping requested: host=${host}`);
+	if (isTauriAvailable()) {
+		try {
+			const res = await invoke("execute_ping", { host });
+			if (handler?.app?.ghostController?.sendShioriEvent) {
+				await handler.app.ghostController.sendShioriEvent("OnPingComplete", [
+					host,
+					String(res ?? ""),
+				]);
+			}
+		} catch (err) {
+			console.warn("Ping failed:", err);
+			if (handler?.app?.ghostController?.sendShioriEvent) {
+				await handler.app.ghostController.sendShioriEvent("OnPingFailure", [
+					host,
+					String(err),
+				]);
+			}
+		}
+	}
+}
+
+export async function handleNslookupCommand(handler: any, args: string[]) {
+	const host = args[1] ?? args[0] ?? "";
+	console.log(`🔍 Nslookup requested: host=${host}`);
+	if (isTauriAvailable()) {
+		try {
+			const res = await invoke("execute_nslookup", { host });
+			if (handler?.app?.ghostController?.sendShioriEvent) {
+				await handler.app.ghostController.sendShioriEvent(
+					"OnNslookupComplete",
+					[host, String(res ?? "")],
+				);
+			}
+		} catch (err) {
+			console.warn("Nslookup failed:", err);
+			if (handler?.app?.ghostController?.sendShioriEvent) {
+				await handler.app.ghostController.sendShioriEvent(
+					"OnNslookupFailure",
+					[host, String(err)],
+				);
+			}
+		}
+	}
+}
+
+export async function handleScheduleAddCommand(handler: any, args: string[]) {
+	const rawArgs = args[0]?.toLowerCase().includes("schedule") ? args.slice(1) : args;
+	const date = rawArgs[0] ?? "";
+	const time = rawArgs[1] ?? "";
+	const title = rawArgs[2] ?? "スケジュール";
+	const memo = rawArgs[3] ?? "";
+	console.log(
+		`📅 Schedule add: date=${date}, time=${time}, title=${title}, memo=${memo}`,
+	);
+	if (isTauriAvailable()) {
+		try {
+			await invoke("add_schedule", { date, time, title, memo });
+		} catch (err) {
+			console.warn("add_schedule failed:", err);
+		}
+	}
+	if (handler?.app?.ghostController?.sendShioriEvent) {
+		await handler.app.ghostController.sendShioriEvent("OnScheduleAdd", [
+			date,
+			time,
+			title,
+			memo,
+		]);
+	}
+}
+
+export async function handleExecuteCommand(handler: any, args: string[]) {
+	const subCmd = (args[1] ?? "").toLowerCase();
+	const restArgs = args.slice(1);
+
+	switch (subCmd) {
+		case "emptyrecyclebin":
+			await handleEmptyRecycleBin(handler, restArgs);
+			break;
+		case "filewatch":
+			await handleFileWatchCommand(handler, restArgs, false);
+			break;
+		case "ping":
+			await handlePingCommand(handler, restArgs);
+			break;
+		case "nslookup":
+			await handleNslookupCommand(handler, restArgs);
+			break;
+		case "schedule-add":
+		case "schedule_add":
+			await handleScheduleAddCommand(handler, restArgs);
+			break;
+		case "createnar":
+		case "createupdatedata":
+		case "compressarchive":
+		case "extractarchive":
+			await handleArchiveExec(handler, [args[0], subCmd, ...args.slice(2)]);
+			break;
+		case "download":
+		case "http-get":
+			await handleDownloadExec(handler, restArgs);
+			break;
+		case "upload":
+		case "http-post":
+			await handleUploadExec(handler, restArgs);
+			break;
+		case "mailcheck":
+			await handleMailCheckExec(handler, restArgs);
+			break;
+		case "mailsend":
+		case "mailsettings":
+			await handleMailExec(handler, restArgs);
+			break;
+		case "deletefile":
+		case "renamefile":
+		case "copyfile":
+		case "movefile":
+			await handleFileExec(handler, restArgs);
+			break;
+		case "sntp": {
+			const { handleExecuteSntpCommand } = await import(
+				"./system/target.js"
+			);
+			await handleExecuteSntpCommand(handler, restArgs);
+			break;
+		}
+		case "resetwindowpos": {
+			const { handleExecuteResetWindowPos } = await import(
+				"./system/desktop.js"
+			);
+			await handleExecuteResetWindowPos(handler, restArgs);
+			break;
+		}
+		case "resetballoonpos": {
+			const { handleExecuteResetBalloonPos } = await import(
+				"./system/desktop.js"
+			);
+			await handleExecuteResetBalloonPos(handler, restArgs);
+			break;
+		}
+		default:
+			console.debug(`未対応の \\![execute,...] サブコマンド: ${subCmd}`);
+			break;
+	}
+}
+
 export async function handleArchiveExec(handler: any, args: string[]) {
 	const [action, filename, dest] = args.slice(1);
 	console.log(`📦 Archive action ${action}: file=${filename}, dest=${dest}`);

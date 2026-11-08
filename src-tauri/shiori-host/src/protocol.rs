@@ -1,4 +1,4 @@
-use super::ffi::{GlobalFree, LoadFn, RequestFn, UnloadFn, to_hglobal};
+use super::ffi::{to_hglobal, GlobalFree, LoadFn, RequestFn, UnloadFn};
 use std::io::{Read, Write};
 
 pub fn reply(out: &mut impl Write, status: i32, payload: &[u8]) {

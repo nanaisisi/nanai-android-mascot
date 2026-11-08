@@ -81,4 +81,24 @@ impl SstpStatusCode {
             Self::Invisible => "Invisible",
         }
     }
+
+    pub fn from_code(code: u16) -> Option<Self> {
+        match code {
+            200 => Some(Self::Ok),
+            204 => Some(Self::NoContent),
+            210 => Some(Self::Break),
+            400 => Some(Self::BadRequest),
+            404 => Some(Self::NotFound),
+            408 => Some(Self::RequestTimeout),
+            409 => Some(Self::Conflict),
+            413 => Some(Self::PayloadTooLarge),
+            420 => Some(Self::Refuse),
+            500 => Some(Self::InternalServerError),
+            501 => Some(Self::NotImplemented),
+            503 => Some(Self::ServiceUnavailable),
+            505 => Some(Self::VersionNotSupported),
+            512 => Some(Self::Invisible),
+            _ => None,
+        }
+    }
 }

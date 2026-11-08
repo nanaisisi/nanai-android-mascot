@@ -77,14 +77,14 @@ impl UpdatePackage {
 
     /// 複数パスリストから合致するエントリ一覧を取得
     pub fn find_entries<'a>(&'a self, paths: &[&str]) -> Vec<&'a UpdateEntry> {
-        paths
-            .iter()
-            .filter_map(|p| self.find_entry(p))
-            .collect()
+        paths.iter().filter_map(|p| self.find_entry(p)).collect()
     }
 
     /// ローカル既存ファイルパスとMD5ペアから、未更新またはMD5が異なる更新対象エントリのみを抽出
-    pub fn pending_downloads(&self, local_checksums: &std::collections::HashMap<String, String>) -> Vec<&UpdateEntry> {
+    pub fn pending_downloads(
+        &self,
+        local_checksums: &std::collections::HashMap<String, String>,
+    ) -> Vec<&UpdateEntry> {
         self.active_downloads()
             .into_iter()
             .filter(|e| {
@@ -95,6 +95,49 @@ impl UpdatePackage {
                 }
             })
             .collect()
+    }
+
+    /// developer_options.txt の noupdate パターンに合致するファイルを除外したエントリ一覧を取得
+    pub fn filter_noupdate(&self, noupdate_patterns: &[&str]) -> Vec<&UpdateEntry> {
+        self.entries
+            .iter()
+            .filter(|e| {
+                let norm = e.path.replace('\\', "/");
+                !noupdate_patterns.iter().any(|pattern| {
+                    let pat_norm = pattern.replace('\\', "/");
+                    norm.eq_ignore_ascii_case(&pat_norm)
+                        || norm.ends_with(&format!("/{}", pat_norm.trim_start_matches('/')))
+                })
+            })
+            .collect()
+    }
+
+    /// エントリのハッシュおよびパスの健全性検証（32文字の16進MD5または空、不正な制御文字等）
+    pub fn validate_entries_integrity(&self) -> Result<(), String> {
+        for entry in &self.entries {
+            if entry.path.trim().is_empty() {
+                return Err("Empty path in update entry".to_string());
+            }
+            if entry.path.contains('\0') {
+                return Err(format!("Null byte in update path: {}", entry.path));
+            }
+            if !entry.md5.is_empty() {
+                if entry.md5.len() != 32 {
+                    return Err(format!(
+                        "Invalid MD5 hash length ({}) for path: {}",
+                        entry.md5.len(),
+                        entry.path
+                    ));
+                }
+                if !entry.md5.chars().all(|c| c.is_ascii_hexdigit()) {
+                    return Err(format!(
+                        "Invalid hex characters in MD5 hash for path: {}",
+                        entry.path
+                    ));
+                }
+            }
+        }
+        Ok(())
     }
 }
 

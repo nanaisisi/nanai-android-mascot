@@ -134,19 +134,19 @@ pub fn update_tray_icon_from_path(
 ) -> Result<(), String> {
     let state = app_handle.state::<AppState>();
     let tray_lock = state.tray_icon.lock();
-    if let Some(tray) = &*tray_lock {
-        if icon_path.exists() {
-            let bytes = std::fs::read(icon_path).map_err(|e| e.to_string())?;
-            if let Ok(img) = image::load_from_memory(&bytes) {
-                let rgba = img.to_rgba8();
-                let (width, height) = rgba.dimensions();
-                let icon = Image::new_owned(rgba.into_raw(), width, height);
-                let _ = tray.set_icon(Some(icon)).map_err(|e| e.to_string())?;
-                log_tray(&format!(
-                    "🟢 トレイアイコンをゴースト固有の画像に差し替えました: {:?}",
-                    icon_path
-                ));
-            }
+    if let Some(tray) = &*tray_lock
+        && icon_path.exists()
+    {
+        let bytes = std::fs::read(icon_path).map_err(|e| e.to_string())?;
+        if let Ok(img) = image::load_from_memory(&bytes) {
+            let rgba = img.to_rgba8();
+            let (width, height) = rgba.dimensions();
+            let icon = Image::new_owned(rgba.into_raw(), width, height);
+            tray.set_icon(Some(icon)).map_err(|e| e.to_string())?;
+            log_tray(&format!(
+                "🟢 トレイアイコンをゴースト固有の画像に差し替えました: {:?}",
+                icon_path
+            ));
         }
     }
     Ok(())

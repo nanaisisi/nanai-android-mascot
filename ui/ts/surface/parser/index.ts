@@ -34,6 +34,8 @@ export function parseSurfacesTxt(text) {
 	const balloonOffsets = {};
 	const cursors = {};
 	const tooltips = {};
+	const names = {};
+	const iconRects = {};
 	let collisionSort = "none";
 	let animationSort = "none";
 
@@ -79,14 +81,43 @@ export function parseSurfacesTxt(text) {
 			return;
 		}
 
-		// surface[ID] または surface.append[ID] ブロック開始
-		const surfaceMatch = trimmed.match(/^surface(?:\.append)?([\d,-]+)/);
+		// surface[ID] または surface.append[ID] または sakura.surface[ID] / kero.surface[ID] / charN.surface[ID] ブロック開始
+		const surfaceMatch = trimmed.match(
+			/^(?:(?:sakura|kero|char\d+)\.)?surface(?:\.append)?(?:\[([^\]]+)\]|([0-9,\-!]+))(?:\s*\{.*)?$/i,
+		);
 		if (surfaceMatch) {
 			currentScopeBlock = null;
-			currentSurfaces = expandSurfaceRange(surfaceMatch[1]);
+			const rangeSpec = surfaceMatch[1] ?? surfaceMatch[2];
+			currentSurfaces = expandSurfaceRange(rangeSpec);
 			currentSurfaces.forEach((s) => {
 				if (!collisions[s]) collisions[s] = [];
 			});
+			return;
+		}
+
+		// name,定義名
+		const nameMatch = trimmed.match(/^name,\s*(.+)$/i);
+		if (nameMatch) {
+			const defName = nameMatch[1].trim();
+			currentSurfaces.forEach((s) => {
+				names[s] = defName;
+			});
+			return;
+		}
+
+		// icon.rect,x1,y1,x2,y2
+		const iconRectMatch = trimmed.match(/^icon\.rect,\s*(.+)$/i);
+		if (iconRectMatch) {
+			const coords = iconRectMatch[1]
+				.split(",")
+				.map((n) => Number.parseInt(n.trim(), 10))
+				.filter((n) => !Number.isNaN(n));
+			if (coords.length >= 4) {
+				const rect = [coords[0], coords[1], coords[2], coords[3]];
+				currentSurfaces.forEach((s) => {
+					iconRects[s] = rect;
+				});
+			}
 			return;
 		}
 
@@ -159,5 +190,7 @@ export function parseSurfacesTxt(text) {
 		animationSort,
 		cursors,
 		tooltips,
+		names,
+		iconRects,
 	};
 }

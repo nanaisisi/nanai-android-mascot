@@ -139,6 +139,10 @@ export function getIsQuickMode(this: any): boolean {
 	return this.isQuickMode;
 }
 
+export function isEmpty(this: any): boolean {
+	return this.queue.length === 0;
+}
+
 export function getStatus(this: any) {
 	return {
 		isProcessing: this.isProcessing,

@@ -5,19 +5,48 @@
 import { collisionContains } from "./shell-manifest.js";
 
 const aliasCaseCache = new WeakMap<object, Map<string, number[]>>();
+const nameCaseCache = new WeakMap<object, Map<string, string>>();
+const tooltipCaseCache = new WeakMap<object, Map<string, string>>();
+const cursorCaseCache = new WeakMap<object, Map<string, string>>();
 
 export const surfaceCollisionMethods = {
 	resolveSurfaceNumber(
 		surfaceId: number | string | null | undefined,
 		scopeId: number = 0,
 	): number | string {
-		const name = String(surfaceId ?? "").trim();
-		if (name === "" || /^-?\d+$/.test(name)) {
+		const rawName = String(surfaceId ?? "").trim();
+		if (rawName === "" || /^-?\d+$/.test(rawName)) {
 			return surfaceId as any;
 		}
+		const lowerTarget = rawName.toLowerCase();
+
+		// 1. Defined surface name lookup (`name,定義名`)
+		const namesMap = (this as any).names;
+		if (namesMap) {
+			let lowerNames = nameCaseCache.get(namesMap);
+			if (!lowerNames) {
+				lowerNames = new Map();
+				for (const sid in namesMap) {
+					const defName = String(namesMap[sid] ?? "").trim();
+					if (defName) {
+						const k = defName.toLowerCase();
+						if (!lowerNames.has(k)) {
+							lowerNames.set(k, String(sid));
+						}
+					}
+				}
+				nameCaseCache.set(namesMap, lowerNames);
+			}
+			const foundSid = lowerNames.get(lowerTarget);
+			if (foundSid !== undefined) {
+				return foundSid;
+			}
+		}
+
+		// 2. Alias lookup (`surface.alias` / `kero.surface.alias`)
 		const map =
 			scopeId === 1 ? (this as any).keroAliases : (this as any).aliases;
-		let list = Array.isArray(map?.[name]) ? map[name] : null;
+		let list = Array.isArray(map?.[rawName]) ? map[rawName] : null;
 		if (!list && map) {
 			let lowerMap = aliasCaseCache.get(map);
 			if (!lowerMap) {
@@ -31,7 +60,7 @@ export const surfaceCollisionMethods = {
 				}
 				aliasCaseCache.set(map, lowerMap);
 			}
-			list = lowerMap.get(name.toLowerCase()) ?? null;
+			list = lowerMap.get(lowerTarget) ?? null;
 		}
 		if (!list || list.length === 0) {
 			return surfaceId as any;
@@ -81,7 +110,7 @@ export const surfaceCollisionMethods = {
 			(this as any).collisionSort || "none",
 		).toLowerCase();
 
-		let candidates;
+		let candidates: any[] = [];
 		if (sortKind === "ascend" || sortKind === "id") {
 			candidates = colList.slice().sort((a: any, b: any) => {
 				const idA = a.id != null ? a.id : Number.MAX_SAFE_INTEGER;
@@ -143,20 +172,30 @@ export const surfaceCollisionMethods = {
 
 		const evLower = String(eventType || "").toLowerCase();
 		const colLower = String(collisionName).toLowerCase();
+		const cacheKey = `${evLower}\0${colLower}`;
 
 		const lists = [
 			(this as any).cursors[scopeKey],
 			(this as any).cursors["*"],
 		].filter(Boolean);
+
 		for (const list of lists) {
-			for (let i = list.length - 1; i >= 0; i--) {
-				const entry = list[i];
-				if (
-					entry.event.toLowerCase() === evLower &&
-					entry.collision.toLowerCase() === colLower
-				) {
-					return entry.cursor;
+			let lowerMap = cursorCaseCache.get(list);
+			if (!lowerMap) {
+				lowerMap = new Map();
+				// Iterate forwards so that later matching items overwrite earlier ones
+				// matching the backwards iteration of the original implementation.
+				for (let i = 0; i < list.length; i++) {
+					const entry = list[i];
+					const entryKey = `${entry.event.toLowerCase()}\0${entry.collision.toLowerCase()}`;
+					lowerMap.set(entryKey, entry.cursor);
 				}
+				cursorCaseCache.set(list, lowerMap);
+			}
+
+			const cursor = lowerMap.get(cacheKey);
+			if (cursor !== undefined) {
+				return cursor;
 			}
 		}
 
@@ -175,16 +214,26 @@ export const surfaceCollisionMethods = {
 					? "kero"
 					: String(scopeId).toLowerCase();
 
+		const colLower = String(collisionName).toLowerCase();
+
 		const maps = [
 			(this as any).tooltips[scopeKey],
 			(this as any).tooltips["*"],
 		].filter(Boolean);
-		const colLower = String(collisionName).toLowerCase();
+
 		for (const map of maps) {
-			for (const key in map) {
-				if (key.toLowerCase() === colLower) {
-					return map[key];
+			let lowerMap = tooltipCaseCache.get(map);
+			if (!lowerMap) {
+				lowerMap = new Map();
+				for (const key in map) {
+					lowerMap.set(key.toLowerCase(), map[key]);
 				}
+				tooltipCaseCache.set(map, lowerMap);
+			}
+
+			const tooltip = lowerMap.get(colLower);
+			if (tooltip !== undefined) {
+				return tooltip;
 			}
 		}
 

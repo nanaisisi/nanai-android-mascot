@@ -44,10 +44,7 @@ pub(crate) fn handle_set(parts: &[String], callback: &mut dyn FnMut(SakuraComman
         "quicksection" => {
             let enabled = parts
                 .get(2)
-                .map(|v| match v.as_str() {
-                    "0" | "false" => false,
-                    _ => true,
-                })
+                .map(|v| !matches!(v.as_str(), "0" | "false"))
                 .unwrap_or(true);
             callback(SakuraCommand::Quick(enabled));
         }
@@ -189,13 +186,7 @@ mod tests {
             &mut cb,
         );
 
-        handle_set(
-            &[
-                "set".to_string(),
-                "quicksection".to_string(),
-            ],
-            &mut cb,
-        );
+        handle_set(&["set".to_string(), "quicksection".to_string()], &mut cb);
         handle_set(
             &[
                 "set".to_string(),

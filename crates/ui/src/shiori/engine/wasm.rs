@@ -13,6 +13,12 @@ pub struct WasmShioriEngine {
     loaded: bool,
 }
 
+impl Default for WasmShioriEngine {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl WasmShioriEngine {
     /// 新しい WASM SHIORI エンジンインスタンスを生成する
     pub fn new() -> Self {

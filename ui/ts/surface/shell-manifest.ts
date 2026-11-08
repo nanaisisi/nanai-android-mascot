@@ -161,12 +161,20 @@ export function manifestToSurfaceData(manifest: any) {
 	const tooltips = manifest?.tooltips ?? {};
 	const collisionSort = enumToString(manifest?.collision_sort) || "none";
 	const animationSort = enumToString(manifest?.animation_sort) || "none";
+	const names: Record<string, string> = {};
+	const iconRects: Record<string, number[]> = {};
 
 	for (const surfaceEntry of manifest?.surfaces ?? []) {
 		const sid = String(surfaceEntry.number);
 		const def = surfaceEntry.definition ?? {};
 
 		collisions[sid] = (def.collisions ?? []).map(collisionRecord);
+		if (def.name) {
+			names[sid] = String(def.name);
+		}
+		if (def.icon_rect) {
+			iconRects[sid] = [...def.icon_rect];
+		}
 
 		if (def.points) {
 			points[sid] = { ...def.points };
@@ -218,6 +226,8 @@ export function manifestToSurfaceData(manifest: any) {
 		animationSort,
 		cursors,
 		tooltips,
+		names,
+		iconRects,
 	};
 }
 

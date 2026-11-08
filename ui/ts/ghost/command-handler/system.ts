@@ -40,7 +40,10 @@ export {
 } from "./system/target.js";
 export {
 	clearAllScriptTimers,
+	getActiveScriptTimersCount,
 	handleNotifyCommand,
+	handleTimerNotifyCommand,
+	handleTimerPluginCommand,
 	handleTimerRaiseCommand,
 	handleTimerRaiseOtherCommand,
 } from "./system/timer.js";

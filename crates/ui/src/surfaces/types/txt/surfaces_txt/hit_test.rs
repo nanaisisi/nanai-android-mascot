@@ -102,9 +102,7 @@ mod tests {
 
     #[test]
     fn test_hit_test_shapes_and_polygons() {
-        use crate::surfaces::types::{
-            CollisionArea, CollisionShape, SurfaceDefinition,
-        };
+        use crate::surfaces::types::{CollisionArea, CollisionShape, SurfaceDefinition};
 
         let mut txt = SurfacesTxt::default();
         let mut def = SurfaceDefinition::default();

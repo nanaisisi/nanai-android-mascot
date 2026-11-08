@@ -359,10 +359,15 @@ fn test_animation_scheduler_scaling_and_talk_toggle() {
     };
 
     // seriko_talk_enabled が false の場合、on_char_spoken によるアニメーション開始が抑止される
-    scheduler.on_char_spoken(0, &[talk_anim.clone()]);
+    scheduler.on_char_spoken(0, std::slice::from_ref(&talk_anim));
     assert_eq!(scheduler.active_count(0), 1); // 終了待ちの pattern 2 のみ残存
 
     scheduler.set_seriko_talk_enabled(0, true);
     scheduler.on_char_spoken(0, &[talk_anim]);
     assert!(scheduler.active_count(0) >= 2);
+
+    // is_animation_running の検証
+    assert!(scheduler.is_animation_running(0, 99));
+    assert!(!scheduler.is_animation_running(0, 12345));
+    assert!(!scheduler.is_animation_running(1, 99));
 }

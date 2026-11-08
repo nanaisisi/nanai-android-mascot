@@ -111,12 +111,14 @@ export async function playAnimationById(
  * @param {any} target
  * @param {number|string} [animIdOrNameOrScopeId]
  * @param {number} [scopeIdParam=0]
+ * @param {number} [timeoutMs=30000]
  * @returns {Promise<void>}
  */
 export async function waitForAnimation(
 	target,
 	animIdOrNameOrScopeId,
 	scopeIdParam = 0,
+	timeoutMs = 30000,
 ) {
 	let instance, animIdOrName, scopeId;
 	if (isInstance(target)) {
@@ -137,6 +139,20 @@ export async function waitForAnimation(
 	const key = `${scopeId}__${sid}__${id}`;
 	const promise = instance._runningAnimations.get(key);
 	if (promise) {
-		await promise;
+		if (timeoutMs > 0) {
+			let timer: ReturnType<typeof setTimeout> | undefined;
+			const timeoutPromise = new Promise((resolve) => {
+				timer = setTimeout(resolve, timeoutMs);
+			});
+			try {
+				await Promise.race([promise, timeoutPromise]);
+			} finally {
+				if (timer !== undefined) {
+					clearTimeout(timer);
+				}
+			}
+		} else {
+			await promise;
+		}
 	}
 }

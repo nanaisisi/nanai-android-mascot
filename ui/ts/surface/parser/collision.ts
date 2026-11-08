@@ -99,15 +99,25 @@ export function handleCollisionEx(trimmed, currentSurfaces, collisions) {
 export function handleCollision(trimmed, currentSurfaces, collisions) {
 	const parts = trimmed.split(",");
 	// collision[ID],[x1],[y1],[x2],[y2],[name]
+	// または legacy 7-part: collision,[ID],[x1],[y1],[x2],[y2],[name]
 	if (parts.length < 6) return;
 
 	const idMatch = parts[0].match(/collision(\d+)/i);
-	const id = idMatch ? Number.parseInt(idMatch[1], 10) : undefined;
-	const x1 = Number.parseInt(parts[1], 10);
-	const y1 = Number.parseInt(parts[2], 10);
-	const x2 = Number.parseInt(parts[3], 10);
-	const y2 = Number.parseInt(parts[4], 10);
-	const name = parts[5].trim().toLowerCase();
+	let id = idMatch ? Number.parseInt(idMatch[1], 10) : undefined;
+	let offset = 0;
+	if (id === undefined && parts.length >= 7) {
+		const parsedId = Number.parseInt(parts[1], 10);
+		if (!Number.isNaN(parsedId)) {
+			id = parsedId;
+			offset = 1;
+		}
+	}
+
+	const x1 = Number.parseInt(parts[offset + 1], 10);
+	const y1 = Number.parseInt(parts[offset + 2], 10);
+	const x2 = Number.parseInt(parts[offset + 3], 10);
+	const y2 = Number.parseInt(parts[offset + 4], 10);
+	const name = parts[offset + 5].trim().toLowerCase();
 
 	currentSurfaces.forEach((s) => {
 		if (!collisions[s]) collisions[s] = [];

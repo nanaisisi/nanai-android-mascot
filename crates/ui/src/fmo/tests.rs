@@ -72,6 +72,45 @@ fn test_fmo_constants_and_constructors() {
     assert_eq!(rec.name, "Nanai");
     assert_eq!(rec.sakura_surface, 0);
     assert_eq!(rec.kero_surface, 10);
+
+    // FmoRecord builders
+    let built_rec = FmoRecord::new("1", "Ghost1")
+        .with_surfaces(10, 20)
+        .with_hwnd(1234, Some(5678))
+        .with_paths("/path/ghost", "/ghostpath")
+        .with_modulestate("shiori:running");
+    assert_eq!(built_rec.sakura_surface, 10);
+    assert_eq!(built_rec.kero_surface, 20);
+    assert_eq!(built_rec.hwnd, 1234);
+    assert_eq!(built_rec.kerohwnd, Some(5678));
+    assert_eq!(built_rec.hwndlist, vec![1234, 5678]);
+    assert_eq!(built_rec.path, "/path/ghost");
+    assert_eq!(built_rec.ghostpath, "/ghostpath");
+    assert_eq!(built_rec.modulestate, Some("shiori:running".to_string()));
+
+    // FmoEntry builders
+    let built_entry = FmoEntry::new("2", "Ghost2")
+        .with_surfaces(3, 4)
+        .with_balloons("Hello", "World")
+        .with_hwnd(999, None)
+        .with_ghostpath("/gp2")
+        .with_modulestate("state:active");
+    assert_eq!(built_entry.sakura_surface, 3);
+    assert_eq!(built_entry.kero_surface, 4);
+    assert_eq!(built_entry.balloon0, "Hello");
+    assert_eq!(built_entry.balloon1, "World");
+    assert_eq!(built_entry.hwnd, 999);
+    assert_eq!(built_entry.ghostpath, "/gp2");
+    assert_eq!(built_entry.modulestate, Some("state:active".to_string()));
+
+    // Record search helpers
+    let records = vec![built_rec.clone(), FmoRecord::new("2", "SecondGhost")];
+    assert_eq!(find_record_by_name(&records, "ghost1"), Some(&built_rec));
+    assert_eq!(find_record_by_name(&records, "nonexistent"), None);
+    assert_eq!(find_record_by_hwnd(&records, 1234), Some(&built_rec));
+    assert_eq!(find_record_by_hwnd(&records, 5678), Some(&built_rec));
+    assert_eq!(find_record_by_hwnd(&records, 0), None);
+    assert_eq!(find_record_by_hwnd(&records, 9999), None);
 }
 
 #[test]

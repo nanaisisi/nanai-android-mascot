@@ -16,9 +16,17 @@ export interface SakuraScriptToken {
 }
 
 export {
+	calculateAstTextLength,
+	collectAnchors,
+	collectAnimations,
 	collectAstTokens,
 	collectAstTokensByLifetime,
+	collectChoices,
+	collectScopeNodes,
+	collectSurfaces,
+	filterAstByScope,
 	getSakuraTokenLifetime,
+	stripWaitsFromAst,
 	tokensToAst,
 	traverseAst,
 } from "./parser/ast.js";

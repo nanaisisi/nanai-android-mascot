@@ -48,6 +48,11 @@ impl SurfaceTable {
             .find(|g| g.name.eq_ignore_ascii_case(name))
     }
 
+    /// 全グループの全登録エントリを取得する
+    pub fn all_entries(&self) -> Vec<&SurfTableEntry> {
+        self.groups.iter().flat_map(|g| g.entries.iter()).collect()
+    }
+
     /// サーフィステストに表示すべき登録（`__disabled` グループを除外）
     pub fn visible_entries(&self) -> Vec<&SurfTableEntry> {
         self.groups
@@ -63,6 +68,29 @@ impl SurfaceTable {
             .iter()
             .find(|e| e.surface_id == surface_id)
             .map(|e| e.name.as_str())
+    }
+
+    /// サーフィスIDから名前を検索（非表示グループも含む全登録から検索）
+    pub fn name_of_all(&self, surface_id: u32) -> Option<&str> {
+        self.all_entries()
+            .iter()
+            .find(|e| e.surface_id == surface_id)
+            .map(|e| e.name.as_str())
+    }
+
+    /// 名前からサーフィスIDを検索（大文字小文字無視、可視グループ優先）
+    pub fn surface_id_of(&self, name: &str) -> Option<u32> {
+        let trimmed = name.trim();
+        self.visible_entries()
+            .iter()
+            .find(|e| e.name.eq_ignore_ascii_case(trimmed))
+            .map(|e| e.surface_id)
+            .or_else(|| {
+                self.all_entries()
+                    .iter()
+                    .find(|e| e.name.eq_ignore_ascii_case(trimmed))
+                    .map(|e| e.surface_id)
+            })
     }
 
     /// 指定されたオプションが含まれているか判定する（大文字小文字無視）

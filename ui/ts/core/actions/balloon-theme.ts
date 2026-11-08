@@ -4,33 +4,25 @@
  * @brief バルーンスキンテーマ切替およびスキャン・リセット処理 (BalloonThemeManager)
  */
 import { emit, invoke, isTauriAvailable, listen } from "../tauri-helper.js";
+import {
+	BALLOON_SCALE_MAP,
+	BALLOON_THEMES,
+	MAX_BALLOON_SCALE,
+	MIN_BALLOON_SCALE,
+	THEME_LABELS,
+} from "./balloon-theme-constants.js";
+import {
+	computeNineSliceLayout,
+	resetBalloonDescriptDom,
+} from "./balloon-theme-dom.js";
 
-export const BALLOON_THEMES = [
-	"nam_default_plus",
-	"nam_default_plus_overhead",
-	"pixel",
-	"comic",
-	"dark",
-];
-export const THEME_LABELS = {
-	nam_default_plus: "NAMデフォルト+",
-	nam_default_plus_overhead: "NAMデフォルト+(頭上)",
-	pixel: "ドット絵・ピクセル風（レトロゲーム）",
-	comic: "ポップコミック（太枠丸み）",
-	dark: "サイバーダーク（夜間・ハイコントラスト）",
-};
-export const BALLOON_SCALE_MAP = {
-	"balloon-scale-50": "0.5",
-	"balloon-scale-75": "0.75",
-	"balloon-scale-100": "1",
-	"balloon-scale-125": "1.25",
-	"balloon-scale-150": "1.5",
-	"balloon-scale-200": "2",
-};
-
-/** 許容されるバルーン倍率の境界値 */
-export const MIN_BALLOON_SCALE = 0.1;
-export const MAX_BALLOON_SCALE = 5.0;
+export {
+	BALLOON_SCALE_MAP,
+	BALLOON_THEMES,
+	MAX_BALLOON_SCALE,
+	MIN_BALLOON_SCALE,
+	THEME_LABELS,
+} from "./balloon-theme-constants.js";
 
 /**
  * バルーンスキン・テーマ・9スライスおよびタイポグラフィ統合マネージャー
@@ -65,40 +57,7 @@ export class BalloonThemeManager {
 	 * @returns {{ source: string, slice: string, width: string, repeat: string, cssBorderImage: string } | null}
 	 */
 	computeNineSlice(props = {}, bgImageUrl = null) {
-		const vl = parseInt(props["validrect.left"], 10);
-		const vt = parseInt(props["validrect.top"], 10);
-		const vr = parseInt(props["validrect.right"], 10);
-		const vb = parseInt(props["validrect.bottom"], 10);
-
-		const t = !Number.isNaN(vt) && vt >= 0 ? Math.max(8, vt) : 16;
-		const r = !Number.isNaN(vr) && vr >= 0 ? Math.max(8, vr) : 16;
-		const b = !Number.isNaN(vb) && vb >= 0 ? Math.max(8, vb) : 16;
-		const l = !Number.isNaN(vl) && vl >= 0 ? Math.max(8, vl) : 16;
-
-		const repeat = props["border.repeat"] || "repeat";
-		const source = bgImageUrl || props["balloon.image"] || "";
-		const cacheKey = `${t}_${r}_${b}_${l}_${repeat}_${source}`;
-
-		if (this._nineSliceCache.has(cacheKey)) {
-			return this._nineSliceCache.get(cacheKey);
-		}
-
-		const slice = `${t} ${r} ${b} ${l} fill`;
-		const width = `${t}px ${r}px ${b}px ${l}px`;
-
-		const cssBorderImage = source
-			? `url("${source}") ${t} ${r} ${b} ${l} fill / ${width} ${repeat}`
-			: "";
-
-		const result = {
-			source,
-			slice,
-			width,
-			repeat,
-			cssBorderImage,
-		};
-		this._nineSliceCache.set(cacheKey, result);
-		return result;
+		return computeNineSliceLayout(this._nineSliceCache, props, bgImageUrl);
 	}
 
 	/**
@@ -209,7 +168,7 @@ export class BalloonThemeManager {
 			});
 		}
 
-		// UKADOC準拠: OnBalloonScaling SHIORIイベント送信 (Reference0: afterX, Reference1: beforeX, Reference2: afterY, Reference3: beforeY)
+		// UKADOC準拠: OnBalloonScaling SHIORIイベント送信
 		if (percent !== prevPercent) {
 			const gc = this.app?.ghostController;
 			if (gc?.sendBalloonScalingNotify) {
@@ -333,46 +292,7 @@ export class BalloonThemeManager {
 		if (this.app) {
 			this.app.balloonDpiScale = 1;
 		}
-		if (typeof document !== "undefined") {
-			const root = document.documentElement;
-			if (root) {
-				for (const key of [
-					"--balloon-dpi",
-					"--balloon-dpi-scale",
-					"--balloon-font-family",
-					"--balloon-font-size",
-					"--balloon-text-color",
-					"--balloon-highlight-bg",
-					"--balloon-highlight-text",
-					"--balloon-border-image-source",
-					"--balloon-border-image-slice",
-					"--balloon-border-image-width",
-					"--balloon-border-image-repeat",
-					"--balloon-writing-mode",
-					"--balloon-valign",
-					"--balloon-halign",
-					"--balloon-text-stroke",
-					"--balloon-text-shadow",
-					"--balloon-font-shadow-style",
-					"--balloon-font-shadowstyle",
-				]) {
-					root.style.removeProperty(key);
-				}
-			}
-			const balloonEl = document.querySelector(".balloon");
-			if (balloonEl?.style) {
-				balloonEl.style.padding = "";
-				balloonEl.style.maxWidth = "";
-				balloonEl.style.borderImage = "";
-				const userScale = this.userScale || this.app?.balloonUserScale || 1;
-				balloonEl.style.transform =
-					userScale !== 1 ? `scale(${userScale})` : "";
-			}
-		}
-		if (this.app?.elements?.balloonDisplay) {
-			this.app.elements.balloonDisplay.style.left = "";
-			this.app.elements.balloonDisplay.style.top = "";
-		}
+		resetBalloonDescriptDom(this.userScale, this.app);
 	}
 }
 

@@ -17,9 +17,8 @@ import { getCurrentWindow, PhysicalPosition } from "@tauri-apps/api/window";
  * Tauri環境で動作しているかどうかを判定
  */
 export function isTauriAvailable(): boolean {
-	return (
-		!!(globalThis as any).__TAURI__ || !!(globalThis as any).__TAURI_INTERNALS__
-	);
+	const g = globalThis as unknown as Record<string, unknown>;
+	return !!g.__TAURI__ || !!g.__TAURI_INTERNALS__;
 }
 
 /**
@@ -39,7 +38,7 @@ export const ipcQueueStats = {
 /**
  * Tauri IPCコマンドの呼び出しラッパー
  */
-export async function invoke<T = any>(
+export async function invoke<T = unknown>(
 	cmd: string,
 	args: Record<string, any> = {},
 ): Promise<T> {
@@ -164,4 +163,4 @@ export async function getCurrentWindowPosition(): Promise<{
 	}
 }
 
-(globalThis as any).__NANAI_IPC_QUEUE_STATS__ = ipcQueueStats;
+(globalThis as unknown as Record<string, unknown>).__NANAI_IPC_QUEUE_STATS__ = ipcQueueStats;

@@ -95,45 +95,46 @@ describe("SERIKO and Surface Change Event Coordination (Slot-08 Cycle 8)", () =>
 	});
 
 	it("suppresses lip-sync when seriko talk is disabled", () => {
-
-		const mockManager: unknown = {
-
-
-		const _mockManager: any = {
-,
+		const mockManager: Record<string, unknown> = {
+			manager: {},
 			animationsForTrigger: vi
 				.fn()
-				.mockReturnValue([id: 1, patterns: [] , sid: "0", param: 1 ,
+				.mockReturnValue([
+					{ anim: { id: 1, patterns: [] }, sid: "0", param: 1 },
 				]),
 			playAnimationPatterns: vi.fn(),
 			isSerikoTalkEnabled: vi.fn().mockReturnValue(false),
-			_spokenCount: ,
-			_talkStarted: ,
+			_spokenCount: {},
+			_talkStarted: {},
 		};
 
-		onCharSpoken(mockManager, 0);
+		onCharSpoken(
+			mockManager as unknown as Parameters<typeof onCharSpoken>[0],
+			0,
+		);
 		expect(mockManager.playAnimationPatterns).not.toHaveBeenCalled();
 
-		mockManager.isSerikoTalkEnabled.mockReturnValue(true);
-		onCharSpoken(mockManager, 0);
+		(mockManager.isSerikoTalkEnabled as any).mockReturnValue(true);
+		onCharSpoken(
+			mockManager as unknown as Parameters<typeof onCharSpoken>[0],
+			0,
+		);
 		expect(mockManager.playAnimationPatterns).toHaveBeenCalled();
 	});
 
 	it("handles scaling draw method in _applyAnimationFrame", async () => {
-		const _setScale = vi.fn();
-		const _notifyFrameStep = vi.fn();
-
-		const instance: unknown = {
-
-
-		const _instance: any = {
-,
+		const setScale = vi.fn();
+		const notifyFrameStep = vi.fn();
+		const instance = {
+			manager: {
+				app: { ghostController: {} },
 				currentSurfaceIdFor: vi.fn().mockReturnValue(0),
-				animations: "0": [id: 1 ] ,
-				setScale,,
+				animations: { "0": [{ id: 1 }] },
+				setScale,
+			},
 			isAnimationPaused: vi.fn().mockReturnValue(false),
-			scheduler: _notifyFrameStep ,
-		};
+			scheduler: { notifyFrameStep },
+		} as unknown as Parameters<typeof _applyAnimationFrame>[0];
 
 		const pat = { type: "scaling", x: 150, y: 150 };
 		const result = await _applyAnimationFrame(
@@ -157,12 +158,11 @@ describe("SERIKO and Surface Change Event Coordination (Slot-08 Cycle 8)", () =>
 	});
 
 	it("manages scaling and serikotalk state in SurfaceAnimationManager", () => {
-
-		const _sam = new SurfaceAnimationManager({} as unknown);
-
-
-		const sam = new SurfaceAnimationManager({} as any);
-
+		const sam = new SurfaceAnimationManager(
+			{} as unknown as Parameters<
+				typeof SurfaceAnimationManager.prototype.constructor
+			>[0],
+		);
 		expect(sam.isSerikoTalkEnabled(0)).toBe(true);
 		expect(sam.getBaseScalingOffset(0)).toEqual({ scaleX: 100, scaleY: 100 });
 

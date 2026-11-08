@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 globalThis.window = globalThis;
 
@@ -11,15 +11,11 @@ import {
 } from "../../ui/js/ghost/command-handler/system/desktop.js";
 
 describe("system/desktop.js", () => {
+	let originalTauri: unknown;
 
-	const _originalTauri: unknown = null;
-
-
-	let originalTauri;
-
-
-	beforeEach(() =>
-		originalTauri = globalThis.__TAURI__;);
+	beforeEach(() => {
+		originalTauri = globalThis.__TAURI__;
+	});
 
 	afterEach(() => {
 		globalThis.__TAURI__ = originalTauri;

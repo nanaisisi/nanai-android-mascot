@@ -1,19 +1,15 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
 	handleWindowState,
 	setAlignmentToDesktop,
 } from "../ui/js/ghost/command-handler/window.js";
 
 describe("Sakura command window handlers", () => {
+	let originalTauri: unknown;
 
-	let _originalTauri: unknown;
-
-
-	let originalTauri;
-
-
-	beforeEach(() =>
-		originalTauri = globalThis.__TAURI__;);
+	beforeEach(() => {
+		originalTauri = globalThis.__TAURI__;
+	});
 
 	afterEach(() => {
 		globalThis.__TAURI__ = originalTauri;
@@ -163,7 +159,6 @@ describe("Sakura command window handlers", () => {
 
 		it("calculates correct positions for bottom, top, left, and right modes", async () => {
 			class MockPhysicalPosition {
-				y;
 				constructor(x, y) {
 					this.x = x;
 					this.y = y;

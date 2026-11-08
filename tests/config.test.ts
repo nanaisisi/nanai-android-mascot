@@ -5,7 +5,7 @@ import { AppConfig, loadAppConfig } from "../ui/js/core/config.js";
 test("loadAppConfig covers success with full properties, null config, and error catch handling", async () => {
 	// 1. Success with full config
 	globalThis.__TAURI_INTERNALS__ = {
-		invoke: async (cmd: string) => {
+		invoke: async (cmd) => {
 			if (cmd === "get_app_config") {
 				return {
 					paths: { defaultGhostDir: "custom/ghost" },

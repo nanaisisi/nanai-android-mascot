@@ -10,12 +10,17 @@
  * - AppConfig / loadAppConfig (設定およびプロパティシステム)
  */
 import { DictationManager } from "./ts/core/actions/dictation.js";
+import { actionMethods } from "./ts/core/app-actions.js";
+import { eventMethods } from "./ts/core/app-events.js";
+import { settingsMethods } from "./ts/core/app-settings.js";
+import { updateMethods } from "./ts/core/app-update.js";
 import { AppConfig, loadAppConfig } from "./ts/core/config.js";
 import { invoke, isTauriAvailable } from "./ts/core/tauri-helper.js";
 import { GhostController } from "./ts/ghost/ghost.js";
 import { SakuraScriptPlayer } from "./ts/ghost/sakura-script.js";
 import { InteractionManager } from "./ts/surface/interaction.js";
 import { SurfaceManager } from "./ts/surface/surface.js";
+import { menuMethods } from "./ts/ui/app-menu.js";
 import { ModalManager } from "./ts/ui/modal.js";
 
 export interface AppSettings {
@@ -41,10 +46,8 @@ export class NanaiAndroidMascotApp {
 	sakuraPlayer: SakuraScriptPlayer;
 	modalManager: ModalManager | null;
 	elements: Record<string, HTMLElement | null>;
-
-	availableBalloons?: unknown[];
-	availablePlugins?: unknown[];
-
+	availableBalloons?: any[];
+	availablePlugins?: any[];
 	balloonUserScale?: number;
 	balloonDpiScale?: number;
 	balloonDontMove?: boolean;
@@ -97,18 +100,9 @@ export class NanaiAndroidMascotApp {
 		this.initUIEnvironment();
 
 		this.modalManager = new ModalManager(this);
-
-		(this as unknown).loadSettings();
-		(this as unknown).setupEventListeners();
-		(this as unknown).applySettings();
-
-
 		(this as any).loadSettings();
-
 		(this as any).setupEventListeners();
-
 		(this as any).applySettings();
-
 
 		await Promise.all([this.scanBalloons(), this.scanPlugins()]);
 
@@ -118,34 +112,19 @@ export class NanaiAndroidMascotApp {
 			this.ghostController.selectGhost(AppConfig.paths.fallbackGhostName);
 		}
 
-
-		(this as unknown).startSecondTimer();
-
-
 		(this as any).startSecondTimer();
-
 		this.isInitialized = true;
 		console.log("✅ Nanai Android Mascot 初期化完了");
 	}
 
 	async scanBalloons() {
-
-		return (this as unknown).scanBalloons?.() || [];
-
-
 		return (this as any).scanBalloons?.() || [];
-
 	}
 
 	async scanPlugins() {
 		if (!isTauriAvailable()) return;
 		try {
-
-			const _plugins: unknown = await invoke("scan_plugins");
-
-
 			const plugins: any = await invoke("scan_plugins");
-
 			if (plugins && plugins.length > 0) {
 				this.availablePlugins = plugins;
 				console.log("🔌 プラグインスキャン完了:", plugins.length);
@@ -189,12 +168,7 @@ export class NanaiAndroidMascotApp {
 		this._isExiting = true;
 
 		const exit = async () => {
-
-			(this.ghostController as unknown)?.stopSecondChangeTimer?.();
-
-
 			(this.ghostController as any)?.stopSecondChangeTimer?.();
-
 			if (isTauriAvailable()) {
 				try {
 					await invoke("unload_current_ghost");
@@ -213,19 +187,10 @@ export class NanaiAndroidMascotApp {
 		};
 
 		try {
-
-			(this as unknown).hideMenu();
-			this.modalManager?.hide();
-			try {
-				await (this.ghostController as unknown).sendShioriEvent("OnClose");
-
-
 			(this as any).hideMenu();
 			this.modalManager?.hide();
 			try {
-
 				await (this.ghostController as any).sendShioriEvent("OnClose");
-
 			} catch (_e) {}
 			const exitDelay = this.sakuraPlayer?.isPlaying ? 1500 : 400;
 			setTimeout(exit, exitDelay);
@@ -235,20 +200,15 @@ export class NanaiAndroidMascotApp {
 	}
 }
 
-Object: any.assign(
-	NanaiAndroidMascotApp: any.prototype: any,
-	menuMethods: any,
-	actionMethods: any,
-	eventMethods: any,
-	settingsMethods: any,
-	updateMethods: any,
+Object.assign(
+	NanaiAndroidMascotApp.prototype,
+	menuMethods,
+	actionMethods,
+	eventMethods,
+	settingsMethods,
+	updateMethods,
 );
 
-globalThis: any.addEventListener("DOMContentLoaded", () => {
-
-	(_globalThis _as _unknown).mascotApp = new NanaiAndroidMascotApp();
-
-
-	(_globalThis _as _any).mascotApp = new NanaiAndroidMascotApp();
-
+globalThis.addEventListener("DOMContentLoaded", () => {
+	(globalThis as any).mascotApp = new NanaiAndroidMascotApp();
 });

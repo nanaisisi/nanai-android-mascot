@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { ModalDialogController } from "../../ui/js/ui/renderers/modal-dialog-controller.js";
 import {
 	createMockElement,
@@ -7,15 +7,9 @@ import {
 } from "./helpers.js";
 
 describe("ModalDialogController System Dialogs (Cycle 5)", () => {
-	let _app: unknown;
-	let _controller: unknown;
-	let _sentEvents: unknown[];
-
-	let app: any;
-
-	let controller: any;
-
-	let sentEvents: any[];
+	let app: unknown;
+	let controller: unknown;
+	let sentEvents: unknown[];
 
 	beforeEach(() => {
 		setupMockDom();
@@ -29,7 +23,7 @@ describe("ModalDialogController System Dialogs (Cycle 5)", () => {
 				keroBalloonText: createMockElement("div"),
 			},
 			ghostController: {
-				sendShioriEvent: async (name, args) => {
+				sendShioriEvent: async (name: string, args: unknown) => {
 					sentEvents.push({ name, args });
 				},
 			},
@@ -48,13 +42,17 @@ describe("ModalDialogController System Dialogs (Cycle 5)", () => {
 		expect(form).toBeDefined();
 		expect(form.className).toContain("balloon-color-dialog");
 
-		const colorInput = form.children.find((c) => c.type === "color");
+		const colorInput = form.children.find(
+			(c: { type: string }) => c.type === "color",
+		);
 		expect(colorInput).toBeDefined();
 		expect(colorInput.value).toBe("#ff8000");
 
 		// Change color and submit
 		colorInput.value = "#00ff80";
-		const okBtn = form.children.find((c) => c.textContent === "OK");
+		const okBtn = form.children.find(
+			(c: { textContent: string }) => c.textContent === "OK",
+		);
 		okBtn.click();
 
 		expect(sentEvents.length).toBe(1);
@@ -70,7 +68,9 @@ describe("ModalDialogController System Dialogs (Cycle 5)", () => {
 			"--color=#ff0000",
 		]);
 
-		const cancelBtn = form.children.find((c) => c.textContent === "Cancel");
+		const cancelBtn = form.children.find(
+			(c: { textContent: string }) => c.textContent === "Cancel",
+		);
 		cancelBtn.click();
 
 		expect(sentEvents.length).toBe(1);
@@ -107,9 +107,13 @@ describe("ModalDialogController System Dialogs (Cycle 5)", () => {
 			"--color=0,0,255",
 		]);
 
-		const colorInput = form.children.find((c) => c.type === "color");
+		const colorInput = form.children.find(
+			(c: { type: string }) => c.type === "color",
+		);
 		colorInput.value = "#0000ff";
-		const okBtn = form.children.find((c) => c.textContent === "OK");
+		const okBtn = form.children.find(
+			(c: { textContent: string }) => c.textContent === "OK",
+		);
 		okBtn.click();
 
 		expect(sentEvents.length).toBe(1);
@@ -128,13 +132,16 @@ describe("ModalDialogController System Dialogs (Cycle 5)", () => {
 		expect(form.className).toContain("balloon-terms-dialog");
 
 		const btnRow = form.children.find(
-			(c) => c.children && c.children.length === 2,
+			(c: { children: string | unknown[] }) =>
+				c.children && c.children.length === 2,
 		);
 		expect(btnRow).toBeDefined();
 
-		const acceptBtn = btnRow.children.find((c) => c.textContent === "同意する");
+		const acceptBtn = btnRow.children.find(
+			(c: { textContent: string }) => c.textContent === "同意する",
+		);
 		const declineBtn = btnRow.children.find(
-			(c) => c.textContent === "同意しない",
+			(c: { textContent: string }) => c.textContent === "同意しない",
 		);
 
 		expect(acceptBtn).toBeDefined();
@@ -152,10 +159,11 @@ describe("ModalDialogController System Dialogs (Cycle 5)", () => {
 			"--id=TestGhostTerms2",
 		]);
 		const btnRow2 = form2.children.find(
-			(c) => c.children && c.children.length === 2,
+			(c: { children: string | unknown[] }) =>
+				c.children && c.children.length === 2,
 		);
 		const declineBtn2 = btnRow2.children.find(
-			(c) => c.textContent === "同意しない",
+			(c: { textContent: string }) => c.textContent === "同意しない",
 		);
 		declineBtn2.click();
 

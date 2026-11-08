@@ -184,31 +184,18 @@ test("shioriNotifyMethods covers sendShioriNotify and sendBootNotifyEvents", asy
 });
 
 test("shioriNotifyMethods covers lifecycle, dialog, balloon, surface, and overlap events", async () => {
-
 	const calls: unknown[] = [];
-
-
-	const calls: any[] = [];
-
-	const _controller = {
+	const controller = {
 		...shioriNotifyMethods,
 		app: { ghostId: "main" },
 	};
 
 	globalThis.__TAURI_INTERNALS__ = {
-
-		invoke: async (cmd: string, args: unknown) =>
+		invoke: async (cmd: string, args: unknown) => {
 			calls.push({ cmd, args });
-			return "ok";,
+			return "ok";
+		},
 		transformCallback: (cb: unknown) => cb,
-
-
-		invoke: async (cmd: string, args: any) =>
-			calls.push(cmd, args );
-			return "ok";,
-
-		transformCallback: (cb: any) => cb,
-
 	};
 	globalThis.window = globalThis;
 
@@ -335,10 +322,5 @@ test("shioriNotifyMethods covers lifecycle, dialog, balloon, surface, and overla
 	assert.equal(calls.at(-1).args.event, "OnOtherOffscreen");
 	assert.deepEqual(calls.at(-1).args.references, ["GhostB", "0,0,100,100"]);
 
-
-	delete (globalThis as unknown).__TAURI_INTERNALS__;
-
-
-	delete (globalThis as any).__TAURI_INTERNALS__;
-
+	delete (globalThis as unknown as Record<string, unknown>).__TAURI_INTERNALS__;
 });

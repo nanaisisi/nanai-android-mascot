@@ -15,23 +15,23 @@ import { applyShellMenuTheme } from "./submenu-theme.js";
 /** @type {string} */
 let currentSubmenuType = "ghost";
 /** @type {string[]} */
-let cachedGhosts = [];
+let cachedGhosts: never[] = [];
 /** @type {string|null} */
-let currentGhostName = null;
+let currentGhostName: null = null;
 /** @type {string[]} */
-let cachedShells = [];
+let cachedShells: unknown[] = [];
 /** @type {string|null} */
-let currentShellName = null;
+let currentShellName: null = null;
 /** @type {{ sakura: object, kero: object }|null} */
-let cachedDressup = null;
+let cachedDressup: null = null;
 /** @type {number} */
 let dressupScope = 0;
 /** @type {any[]} */
-let cachedBalloons = [];
+let cachedBalloons: never[] = [];
 /** @type {string|null} */
-let currentBalloonTheme = null;
+let currentBalloonTheme: null = null;
 /** @type {string[]} */
-let cachedRecentGhosts = [];
+let cachedRecentGhosts: never[] = [];
 
 document.addEventListener("mousedown", (event) => {
 	if (event.button !== 0 || !isTauriAvailable()) return;
@@ -44,7 +44,7 @@ document.addEventListener("mousedown", (event) => {
  * @param {string} action
  * @param {any} [payload]
  */
-async function dispatchSubmenuAction(action, payload = null) {
+async function dispatchSubmenuAction(action: unknown, payload = null) {
 	if (isTauriAvailable()) {
 		try {
 			await emit("menu-action", { action, payload });
@@ -97,7 +97,7 @@ if (isTauriAvailable()) {
 				dressupScope = data.scope;
 			}
 			const activeShell =
-				data.shells?.find((s: any) => s.name === data.currentShell) ||
+				data.shells?.find((s: unknown) => s.name === data.currentShell) ||
 				data.shells?.[0];
 			applyShellMenuTheme(activeShell);
 			renderContent();
@@ -110,7 +110,7 @@ if (isTauriAvailable()) {
 			cachedShells = data.shells || cachedShells;
 			currentShellName = data.currentShell || currentShellName;
 			const activeShell =
-				cachedShells?.find((s: any) => s.name === currentShellName) ||
+				cachedShells?.find((s: unknown) => s.name === currentShellName) ||
 				cachedShells?.[0];
 			applyShellMenuTheme(activeShell);
 			renderContent();

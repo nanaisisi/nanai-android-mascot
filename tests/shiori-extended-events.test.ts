@@ -1,19 +1,12 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { eventMethods } from "../ui/js/core/app-events.js";
 import { shioriNotifyMethods } from "../ui/js/ghost/shiori-notify.js";
 
 describe("SHIORI Extended Events & Notifications", () => {
-
-	let _mockController: unknown;
-	let _mockAppEvents: unknown;
-
-
 	let mockController: any;
-
 	let mockAppEvents: any;
 
-
-	beforeEach(() =>
+	beforeEach(() => {
 		mockController = {
 			app: { ghostId: "test-ghost" },
 			currentGhost: {
@@ -43,7 +36,8 @@ describe("SHIORI Extended Events & Notifications", () => {
 					canvasY: 85,
 				}),
 			},
-		};);
+		};
+	});
 
 	describe("shiori-notify HEADLINE & RSS protocols", () => {
 		it("sends OnHeadlinesenseBegin with siteName and url", async () => {

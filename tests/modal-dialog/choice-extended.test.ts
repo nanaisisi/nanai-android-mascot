@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { ModalDialogController } from "../../ui/js/ui/renderers/modal-dialog-controller.js";
 import {
 	createMockElement,
@@ -7,15 +7,9 @@ import {
 } from "./helpers.js";
 
 describe("ModalDialogController Choice & Extended Events (Slot-11 Cycle 8)", () => {
-	let _app: unknown;
-	let _controller: unknown;
-	let _sentEvents: unknown[];
-
-	let app: any;
-
-	let controller: any;
-
-	let sentEvents: any[];
+	let app: unknown;
+	let controller: unknown;
+	let sentEvents: unknown[];
 
 	beforeEach(() => {
 		setupMockDom();
@@ -29,7 +23,7 @@ describe("ModalDialogController Choice & Extended Events (Slot-11 Cycle 8)", () 
 				keroBalloonText: createMockElement("div"),
 			},
 			ghostController: {
-				sendShioriEvent: async (name, args) => {
+				sendShioriEvent: async (name: string, args: unknown) => {
 					sentEvents.push({ name, args });
 				},
 			},

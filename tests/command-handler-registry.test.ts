@@ -32,6 +32,7 @@ describe("CommandHandlerMap & Registry", () => {
 
 	it("throws if registering non-function handler", () => {
 		expect(() => {
+			// @ts-expect-error test invalid type
 			registerCommandHandler("invalid", "not-a-func");
 		}).toThrow(TypeError);
 	});

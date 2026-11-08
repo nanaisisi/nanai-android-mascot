@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-const calls: never[] = [];
-let loadDelay = async (_args: { surfaceId: any }) => {};
+const calls: { cmd: string; args: unknown }[] = [];
+let loadDelay = async (_args?: { surfaceId: unknown }) => {};
 globalThis.window = globalThis;
 globalThis.document = {
 	getElementById: () => null,
@@ -10,7 +10,7 @@ globalThis.document = {
 };
 globalThis.__TAURI_INTERNALS__ = {
 	transformCallback: () => 0,
-	invoke: async (cmd: string, args: { surfaceId: any }) => {
+	invoke: async (cmd: string, args: { surfaceId: unknown }) => {
 		calls.push({ cmd, args });
 		if (cmd === "load_surface_image") {
 			await loadDelay(args);
@@ -27,24 +27,24 @@ const { ghostSurfaceMethods } = await import(
 
 function makeController() {
 	const gc = Object.create(ghostSurfaceMethods);
-	const chromaCalls: { src: any; pna: any }[] = [];
+	const chromaCalls: { src: unknown; pna: unknown }[] = [];
 	gc.currentGhost = { name: "g", path: "ghost/g" };
 	gc.currentShell = "master";
 	gc.currentSurfaces = new Map();
 	gc.app = {
 		surfaceManager: {
-			resolveSurfaceNumber: (id: any) => id,
+			resolveSurfaceNumber: (id: unknown) => id,
 			setSurfaceId() {},
-			processChromaKey: async (src: any, pna: any) => {
+			processChromaKey: async (src: unknown, pna: unknown) => {
 				chromaCalls.push({ src, pna });
 				return src;
 			},
 			composeSurfaceElements: async (
-				_id: any,
-				src: any,
-				resolve: (arg0: any) => any,
-				_scope: any,
-				layers: any,
+				_id: unknown,
+				src: unknown,
+				resolve: (arg0: unknown) => unknown,
+				_scope: unknown,
+				layers: unknown[],
 			) => {
 				for (const layer of layers || []) {
 					await resolve(layer.file);
@@ -93,11 +93,7 @@ test("animation frame layer also runs chroma-key processing", async () => {
 test("a slower older surface update does not overwrite a newer one", async () => {
 	calls.length = 0;
 	const gc = makeController();
-
-	const _release: unknown = null;
-
-	let release;
-
+	let release: ((value?: unknown) => void) | undefined;
 	const gate = new Promise((r) => {
 		release = r;
 	});

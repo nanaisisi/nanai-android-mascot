@@ -56,18 +56,12 @@ test("Parser Fuzzing Cycle 8: SyncObject commands argument fuzzing and null-safe
 });
 
 test("Parser Fuzzing Cycle 8: Mode transition commands and cross-ghost IPC anomaly tolerance", async () => {
-
-	const _eventsSent: unknown[] = [];
-
-
-	const eventsSent: any[] = [];
-
+	const eventsSent: unknown[] = [];
 	const dummyHandler = {
 		player: {
 			currentScope: 0,
 			app: {
 				ghostController: {
-
 					sendShioriEvent: async (ev: string, args: unknown[]) => {
 						eventsSent.push({ ev, args });
 					},
@@ -83,17 +77,8 @@ test("Parser Fuzzing Cycle 8: Mode transition commands and cross-ghost IPC anoma
 						ev: string,
 						refs: unknown[],
 					) => {
-
-
-					sendShioriEvent: async (ev: string, args: any[]) =>
-						eventsSent.push({ ev, args });,
-
-					sendRaiseOther: async (ghost: string, ev: string, refs: any[]) =>
-						eventsSent.push(type: "raiseOther", ghost, ev, refs );,
-
-					sendNotifyOther: async (ghost: string, ev: string, refs: any[]) =>
-
-						eventsSent.push(type: "notifyOther", ghost, ev, refs );,
+						eventsSent.push({ type: "notifyOther", ghost, ev, refs });
+					},
 				},
 			},
 		},

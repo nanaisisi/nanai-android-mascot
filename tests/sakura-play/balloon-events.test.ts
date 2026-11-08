@@ -8,40 +8,31 @@ const { SakuraScriptPlayer } = await import(
 );
 
 test("choice click triggers OnChoiceSelectEx first, then falls back to OnChoiceSelect if no script", async () => {
-
-	const _shioriEvents: unknown[] = [];
-	const _sakuraText = createEl("div");
-
-	const _app: unknown = {
-
-
-	const shioriEvents: any[] = [];
+	const shioriEvents: unknown[] = [];
 	const sakuraText = createEl("div");
 
-
-	const app: any = {
-
+	const app: Record<string, unknown> = {
 		ghostId: "main",
-		elements:
+		elements: {
 			balloonText: sakuraText,
 			balloonDisplay: createEl("div"),
 			keroBalloonText: createEl("div"),
-			keroBalloonDisplay: createEl("div"),,
-		surfaceManager:
-			onCharSpoken() ,
-			onTalkEnd() ,
-			onScriptEnd() ,,
-		ghostController:
-
-			sendShioriEvent: async (_event: string, _args: unknown[]) =>
-
-
-			sendShioriEvent: async (_event: string, _args: any[]) =>
-
-				if (_event === "OnTranslate") return { script: null };
+			keroBalloonDisplay: createEl("div"),
+		},
+		surfaceManager: {
+			onCharSpoken() {},
+			onTalkEnd() {},
+			onScriptEnd() {},
+		},
+		ghostController: {
+			sendShioriEvent: async (event: string, args: unknown[]) => {
+				if (event === "OnTranslate") return { script: null };
 				shioriEvents.push({ event, args });
 				// Return no content (empty/falsy) to simulate fallback
-				return null;,,;
+				return null;
+			},
+		},
+	};
 
 	const player = new SakuraScriptPlayer(app);
 	player.parse = async () => [
@@ -82,42 +73,33 @@ test("choice click triggers OnChoiceSelectEx first, then falls back to OnChoiceS
 });
 
 test("choice click does not trigger OnChoiceSelect if OnChoiceSelectEx returns response script", async () => {
-
-	const _shioriEvents: unknown[] = [];
-	const _sakuraText = createEl("div");
-
-	const _app: unknown = {
-
-
-	const shioriEvents: any[] = [];
+	const shioriEvents: unknown[] = [];
 	const sakuraText = createEl("div");
 
-
-	const app: any = {
-
+	const app: Record<string, unknown> = {
 		ghostId: "main",
-		elements:
+		elements: {
 			balloonText: sakuraText,
 			balloonDisplay: createEl("div"),
 			keroBalloonText: createEl("div"),
-			keroBalloonDisplay: createEl("div"),,
-		surfaceManager:
-			onCharSpoken() ,
-			onTalkEnd() ,
-			onScriptEnd() ,,
-		ghostController:
-
-			sendShioriEvent: async (_event: string, _args: unknown[]) =>
-
-
-			sendShioriEvent: async (_event: string, _args: any[]) =>
-
-				if (_event === "OnTranslate") return { script: null };
+			keroBalloonDisplay: createEl("div"),
+		},
+		surfaceManager: {
+			onCharSpoken() {},
+			onTalkEnd() {},
+			onScriptEnd() {},
+		},
+		ghostController: {
+			sendShioriEvent: async (event: string, args: unknown[]) => {
+				if (event === "OnTranslate") return { script: null };
 				shioriEvents.push({ event, args });
 				if (event === "OnChoiceSelectEx") {
 					return { script: "\\0了解しました。\\e" };
 				}
-				return null;,,;
+				return null;
+			},
+		},
+	};
 
 	const player = new SakuraScriptPlayer(app);
 	player.parse = async () => [
@@ -145,52 +127,42 @@ test("choice click does not trigger OnChoiceSelect if OnChoiceSelectEx returns r
 });
 
 test("anchor click triggers OnAnchorSelectEx first, then falls back to OnAnchorSelect", async () => {
-
 	const shioriEvents: unknown[] = [];
-	const _sakuraText = createEl("div");
+	const sakuraText = createEl("div");
 
-	const _app: unknown = {
-
-
-	const shioriEvents: any[] = [];
-	const _sakuraText = createEl("div");
-
-
-	const _app: any = {
-
+	const app: Record<string, unknown> = {
 		ghostId: "main",
-		elements:
-			balloonText: _sakuraText,
+		elements: {
+			balloonText: sakuraText,
 			balloonDisplay: createEl("div"),
 			keroBalloonText: createEl("div"),
-			keroBalloonDisplay: createEl("div"),,
-		surfaceManager:
-			onCharSpoken() ,
-			onTalkEnd() ,
-			onScriptEnd() ,,
-		ghostController:
-
-			sendShioriEvent: async (_event: string, _args: unknown[]) =>
-
-
-			sendShioriEvent: async (_event: string, _args: any[]) =>
-
-				if (_event === "OnTranslate") return { script: null };
+			keroBalloonDisplay: createEl("div"),
+		},
+		surfaceManager: {
+			onCharSpoken() {},
+			onTalkEnd() {},
+			onScriptEnd() {},
+		},
+		ghostController: {
+			sendShioriEvent: async (event: string, args: unknown[]) => {
+				if (event === "OnTranslate") return { script: null };
 				shioriEvents.push({ event, args });
-				return null;,,;
+				return null;
+			},
+		},
+	};
 
-
-	const _player: unknown = {
-
-
-	const _player: any = {
-
+	const player: Record<string, unknown> = {
 		playbackId: 60,
-		parse: async () => [type: "scope", value: 0 ,type: "anchor_begin", id: "web_link", args: ["https://example.com"] ,type: "char", value: "公式サイト" ,type: "anchor_end" ,
+		parse: async () => [
+			{ type: "scope", value: 0 },
+			{ type: "anchor_begin", id: "web_link", args: ["https://example.com"] },
+			{ type: "char", value: "公式サイト" },
+			{ type: "anchor_end" },
 		],
 		sleep: () => Promise.resolve(),
 		waitForClickOrTimeout: () => Promise.resolve(),
-		scheduleSurfaceRestore: () => ,
+		scheduleSurfaceRestore: () => {},
 		app,
 	};
 
@@ -221,30 +193,23 @@ test("anchor click triggers OnAnchorSelectEx first, then falls back to OnAnchorS
 });
 
 test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip", async () => {
+	const notifyEvents: unknown[] = [];
+	const sakuraText = createEl("div");
 
-	const _notifyEvents: unknown[] = [];
-	const _sakuraText = createEl("div");
-
-	const _app: unknown = {
-
-
-	const notifyEvents: any[] = [];
-	const _sakuraText = createEl("div");
-
-
-	const _app: any = {
-
+	const app: Record<string, unknown> = {
 		ghostId: "main",
-		elements:
-			balloonText: _sakuraText,
+		elements: {
+			balloonText: sakuraText,
 			balloonDisplay: createEl("div"),
 			keroBalloonText: createEl("div"),
-			keroBalloonDisplay: createEl("div"),,
-		surfaceManager:
-			onCharSpoken() ,
-			onTalkEnd() ,
-			onScriptEnd() ,,
-		ghostController:
+			keroBalloonDisplay: createEl("div"),
+		},
+		surfaceManager: {
+			onCharSpoken() {},
+			onTalkEnd() {},
+			onScriptEnd() {},
+		},
+		ghostController: {
 			sendBalloonCloseNotify: async (lastScript: string) => {
 				notifyEvents.push({ event: "OnBalloonClose", script: lastScript });
 			},
@@ -252,16 +217,18 @@ test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip",
 				script: string,
 				scopeId: number,
 				position: number,
-			) =>
+			) => {
 				notifyEvents.push({
 					event: "OnBalloonBreak",
 					script,
 					scopeId,
 					position,
-				});,,
+				});
+			},
+		},
 	};
 
-	const _player = new SakuraScriptPlayer(app);
+	const player = new SakuraScriptPlayer(app);
 	player.parse = async () => [
 		{ type: "scope", value: 0 },
 		{ type: "char", value: "A" },
@@ -273,17 +240,12 @@ test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip",
 
 	// 1. Play script with clear token
 	await playScript(player, "\\0A\\c\\e");
-	assert.ok(notifyEvents.some((e) => e.event === "OnBalloonClose"));
+	assert.ok(notifyEvents.some((e: Unknown) => e.event === "OnBalloonClose"));
 
 	// 2. Test skip triggering OnBalloonBreak
 	player.isPlaying = true;
 	player.currentScope = 1;
-
-	(player as unknown).currentProgressIndex = 5;
-
-
-	(player as any).currentProgressIndex = 5;
-
+	(player as unknown as { currentProgressIndex: number }).currentProgressIndex = 5;
 	player.lastScript = "\\1テスト会話";
 	player.skip();
 
@@ -295,30 +257,23 @@ test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip",
 });
 
 test("balloon events: OnBalloonTimeout triggered via sendBalloonTimeoutNotify", async () => {
+	const notifyEvents: unknown[] = [];
+	const sakuraText = createEl("div");
 
-	const _notifyEvents: unknown[] = [];
-	const _sakuraText = createEl("div");
-
-	const _app: unknown = {
-
-
-	const notifyEvents: any[] = [];
-	const _sakuraText = createEl("div");
-
-
-	const _app: any = {
-
+	const app: Record<string, unknown> = {
 		ghostId: "main",
-		elements:
-			balloonText: _sakuraText,
+		elements: {
+			balloonText: sakuraText,
 			balloonDisplay: createEl("div"),
 			keroBalloonText: createEl("div"),
-			keroBalloonDisplay: createEl("div"),,
-		surfaceManager:
-			onCharSpoken() ,
-			onTalkEnd() ,
-			onScriptEnd() ,,
-		ghostController:
+			keroBalloonDisplay: createEl("div"),
+		},
+		surfaceManager: {
+			onCharSpoken() {},
+			onTalkEnd() {},
+			onScriptEnd() {},
+		},
+		ghostController: {
 			sendBalloonTimeoutNotify: async (
 				lastScript: string,
 				scopeId: number | string,
@@ -329,11 +284,13 @@ test("balloon events: OnBalloonTimeout triggered via sendBalloonTimeoutNotify", 
 					scopeId: String(scopeId),
 				});
 			},
-			sendBalloonCloseNotify: async (lastScript: string) =>
-				notifyEvents.push({ event: "OnBalloonClose", script: lastScript });,,
+			sendBalloonCloseNotify: async (lastScript: string) => {
+				notifyEvents.push({ event: "OnBalloonClose", script: lastScript });
+			},
+		},
 	};
 
-	const _player = new SakuraScriptPlayer(app);
+	const player = new SakuraScriptPlayer(app);
 	player.balloonTimeout = 10;
 	player.parse = async () => [
 		{ type: "scope", value: 0 },
@@ -356,33 +313,27 @@ test("balloon events: OnBalloonTimeout triggered via sendBalloonTimeoutNotify", 
 });
 
 test("\\t (timeCritical) suppresses balloonTimeout and click timeout auto-advance", async () => {
-
-	const notifyEvents: unknown[] = [];
+	const notifyEvents: any[] = [];
 	const sakuraText = createEl("div");
 
-	const app: unknown = {
-
-
-	const notifyEvents: any[] = [];
-	const _sakuraText = createEl("div");
-
-
-	const _app: any = {
-
+	const app: any = {
 		ghostId: "main",
-		elements:
-			balloonText: _sakuraText,
+		elements: {
+			balloonText: sakuraText,
 			balloonDisplay: createEl("div"),
 			keroBalloonText: createEl("div"),
-			keroBalloonDisplay: createEl("div"),,
-		surfaceManager:
-			onCharSpoken() ,
-			onTalkEnd() ,
-			onScriptEnd() ,,
-		ghostController:
+			keroBalloonDisplay: createEl("div"),
+		},
+		surfaceManager: {
+			onCharSpoken() {},
+			onTalkEnd() {},
+			onScriptEnd() {},
+		},
+		ghostController: {
 			sendBalloonTimeoutNotify: async (lastScript: string) => {
 				notifyEvents.push({ event: "OnBalloonTimeout", lastScript });
-			},,
+			},
+		},
 	};
 
 	const player = new SakuraScriptPlayer(app);

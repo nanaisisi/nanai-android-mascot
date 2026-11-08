@@ -231,10 +231,7 @@ test("actionMethods covers all spread helper functions directly", async () => {
 
 	// Directly call every method on actionMethods
 	for (const key of Object.keys(actionMethods)) {
-		const _fn = (actionMethods as unknown)[key];
-
-		const fn = actionMethods[key];
-
+		const fn = (actionMethods as unknown as Record<string, unknown>)[key];
 		if (typeof fn === "function") {
 			try {
 				await fn.call(mockApp, "test", {});

@@ -6,7 +6,6 @@
 
 実装コード内に「kero.menu」は検出されませんでした。
 
-
 ## 実装箇所
 
 - `src-tauri/src/shiori/property.rs:104` `"sakura.menu" | "kero.menu" => "auto".to_string(),`

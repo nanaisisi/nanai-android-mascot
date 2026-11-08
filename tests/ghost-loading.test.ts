@@ -2,25 +2,16 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 const deferred = () => {
-	const _resolve: unknown = null;
-
-	let resolve;
-
+	let resolve: ((value?: unknown) => void) | undefined;
 	const promise = new Promise((r) => {
 		resolve = r;
 	});
 	return { promise, resolve };
 };
 
-const calls = [];
-
-const _showGate: unknown = null;
-const _hideGate: unknown = null;
-
-let showGate;
-
-let hideGate;
-
+const calls: string[] = [];
+let showGate: ReturnType<typeof deferred> | undefined;
+let hideGate: ReturnType<typeof deferred> | undefined;
 globalThis.window = globalThis;
 globalThis.__TAURI_INTERNALS__ = {
 	transformCallback: () => 0,

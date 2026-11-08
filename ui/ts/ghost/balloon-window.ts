@@ -15,7 +15,7 @@ let appliedTheme: string | null = null;
 let applyingTheme: string | null = null;
 let currentDpiScale = 1;
 let currentUserScale = 1;
-let isBalloonDontMove = false;
+let _isBalloonDontMove = false;
 
 export {
 	setupInteractiveElements,
@@ -37,12 +37,12 @@ export async function applyBalloonDescript(theme: string) {
 				currentDpiScale = newDpiScale;
 			},
 			onDontMoveChange: (dontMove: boolean) => {
-				isBalloonDontMove = dontMove;
+				_isBalloonDontMove = dontMove;
 			},
 		});
 		if (result) {
 			currentDpiScale = result.dpiScale;
-			isBalloonDontMove = result.isBalloonDontMove;
+			_isBalloonDontMove = result.isBalloonDontMove;
 			appliedTheme = theme;
 		}
 	} catch (_e) {

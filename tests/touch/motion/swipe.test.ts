@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
 	TOUCH_GESTURE_TYPES,
 	TouchGestureRecognizer,
@@ -6,24 +6,18 @@ import {
 import { createMockElement } from "../helpers.js";
 
 describe("TouchGestureRecognizer - Swipe", () => {
-
-	const _element: unknown = null;
-	const _recognizer: unknown = null;
-
-
 	let element;
-
 	let recognizer;
 
-
-	beforeEach(() =>
+	beforeEach(() => {
 		vi.useFakeTimers();
 		element = createMockElement();
 		recognizer = new TouchGestureRecognizer(element, {
 			longPressDelay: 300,
 			strokeThreshold: 40,
 			slopThreshold: 5,
-		}););
+		});
+	});
 
 	afterEach(() => {
 		recognizer.destroy();

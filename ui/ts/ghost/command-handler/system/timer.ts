@@ -8,7 +8,7 @@ const activeScriptTimers = new Map<
 
 	{ id: unknown; type: "interval" | "timeout" }
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	{ id: any; type: "interval" | "timeout" }
 
 >();
@@ -27,7 +27,7 @@ export function clearAllScriptTimers() {
 
 export async function handleNotifyCommand(_handler: unknown, _args: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleNotifyCommand(handler: any, args: string[]) {
 
 	const eventName = args[1];
@@ -55,7 +55,7 @@ export async function _handleTimerRaiseCommand(
 	_args: string[],
 ) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleTimerRaiseCommand(handler: any, args: string[]) {
 
 	const delayMs = Number.parseInt(args[1] ?? "0", 10);
@@ -71,7 +71,7 @@ export async function _handleTimerRaiseCommand(handler: any, args: string[]) {
 	if (existing) {
 
 	if (activeScriptTimers.has(timerKey)) {
-		// biome-ignore lint/style/noNonNullAssertion: automated fix
+
 		const existing = activeScriptTimers.get(timerKey)!;
 
 		if (existing.type === "interval") {
@@ -116,7 +116,7 @@ export async function _handleTimerNotifyCommand(
 	_args: string[],
 ) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleTimerNotifyCommand(handler: any, args: string[]) {
 
 	const delayMs = Number.parseInt(args[1] ?? "0", 10);
@@ -132,7 +132,7 @@ export async function _handleTimerNotifyCommand(handler: any, args: string[]) {
 	if (existing) {
 
 	if (activeScriptTimers.has(timerKey)) {
-		// biome-ignore lint/style/noNonNullAssertion: automated fix
+
 		const existing = activeScriptTimers.get(timerKey)!;
 
 		if (existing.type === "interval") {
@@ -180,7 +180,7 @@ export async function _handleTimerRaiseOtherCommand(
 
 	_handler: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	handler: any,
 
 	args: string[],
@@ -200,7 +200,7 @@ export async function _handleTimerRaiseOtherCommand(
 	if (existing) {
 
 	if (activeScriptTimers.has(timerKey)) {
-		// biome-ignore lint/style/noNonNullAssertion: automated fix
+
 		const existing = activeScriptTimers.get(timerKey)!;
 
 		if (existing.type === "interval") {
@@ -273,7 +273,7 @@ export async function _handleTimerPluginCommand(
 	_args: string[],
 ) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleTimerPluginCommand(handler: any, args: string[]) {
 
 	const delayMs = Number.parseInt(args[1] ?? "0", 10);
@@ -292,7 +292,7 @@ export async function _handleTimerPluginCommand(handler: any, args: string[]) {
 	if (existing) {
 
 	if (activeScriptTimers.has(timerKey)) {
-		// biome-ignore lint/style/noNonNullAssertion: automated fix
+
 		const existing = activeScriptTimers.get(timerKey)!;
 
 		if (existing.type === "interval") {

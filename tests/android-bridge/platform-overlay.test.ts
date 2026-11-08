@@ -5,7 +5,6 @@ import { ANDROID_EVENTS, AndroidBridge } from "../../ui/js/ui/touch/index.js";
 describe("AndroidBridge - Platform & Overlay", () => {
 	const _originalNavigator: unknown = null;
 
-	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let originalNavigator;
 
 	beforeEach(() => {

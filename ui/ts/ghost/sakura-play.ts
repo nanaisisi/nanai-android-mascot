@@ -14,7 +14,7 @@ export { SakuraPlaybackController } from "./sakura-play/controller.js";
 
 export async function playScript(_player: unknown, _script: string) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _playScript(player: any, script: string) {
 
 	const finalScript = await translateScript(player, script);
@@ -70,7 +70,7 @@ export async function _playScript(player: any, script: string) {
 
 		(_t: unknown) =>
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		(t: any) =>
 
 			t.type === "char" || t.type === "choice" || t.type === "anchor_begin",
@@ -124,7 +124,7 @@ export async function _playScript(player: any, script: string) {
 
 	const _hasChoices = tokens.some((t: unknown) => t.type === "choice");
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	const hasChoices = tokens.some((t: any) => t.type === "choice");
 
 

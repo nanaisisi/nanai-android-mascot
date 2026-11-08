@@ -16,12 +16,12 @@ export interface SakuraAstNode {
 
 export function tokensToAst(_tokens: unknown[]): SakuraAstNode {
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	token?: any;
 	children?: SakuraAstNode[];
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function tokensToAst(tokens: any[]): SakuraAstNode {
 
 	const rootChildren: SakuraAstNode[] = [];
@@ -34,11 +34,11 @@ export function tokensToAst(tokens: any[]): SakuraAstNode {
 
 	const _currentChoiceScope: unknown = null;
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	let currentAnchor: any = null;
 	let anchorChildren: SakuraAstNode[] = [];
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	let currentChoiceScope: any = null;
 
 	let choiceScopeChildren: SakuraAstNode[] = [];
@@ -245,7 +245,7 @@ export function getSakuraTokenLifetime(
 
 	token: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	token: any,
 
 ): "Scope" | "Script" | "Permanent" {
@@ -276,9 +276,9 @@ export function getSakuraTokenLifetime(
 export function collectAstTokens(ast: SakuraAstNode): unknown[] {
 	const _tokens: unknown[] = [];
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function collectAstTokens(_ast: SakuraAstNode): any[] {
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	const tokens: any[] = [];
 
 	traverseAst(ast, (_node) =>
@@ -306,7 +306,7 @@ export function collectAstTokensByLifetime(
 
 ): unknown[]
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 ): any[]
 
 	return collectAstTokens(ast).filter(

@@ -4,7 +4,6 @@ import { test } from "vitest";
 const deferred = () => {
 	const _resolve: unknown = null;
 
-	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let resolve;
 
 	const promise = new Promise((r) => {
@@ -18,9 +17,8 @@ const calls = [];
 const _showGate: unknown = null;
 const _hideGate: unknown = null;
 
-// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 let showGate;
-// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
+
 let hideGate;
 
 globalThis.window = globalThis;

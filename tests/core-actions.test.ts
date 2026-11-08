@@ -109,23 +109,18 @@ test("balloonThemeActions test", async () => {
 
 	delete (balloonThemeActions as unknown).balloonThemeManager;
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	delete (balloonThemeActions as any).balloonThemeManager;
 	balloonThemeActions.cycleBalloonTheme();
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	delete (balloonThemeActions as any).balloonThemeManager;
 	balloonThemeActions.applyBalloonScaleAction("balloon-scale-100");
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	delete (balloonThemeActions as any).balloonThemeManager;
 	await balloonThemeActions.setBalloonTheme("ivory");
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	delete (balloonThemeActions as any).balloonThemeManager;
 	await balloonThemeActions.scanBalloons();
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	delete (balloonThemeActions as any).balloonThemeManager;
 
 	balloonThemeActions.resetBalloonDescript();

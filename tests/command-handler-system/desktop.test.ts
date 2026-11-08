@@ -14,7 +14,7 @@ describe("system/desktop.js", () => {
 
 	const _originalTauri: unknown = null;
 
-	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
+
 	let originalTauri;
 
 

@@ -10,13 +10,13 @@ export async function handleChar(
 	_token: unknown,
 	_context: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	player: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	app: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	token: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	context: any,
 
 ) {
@@ -77,13 +77,13 @@ export function handleNewline(
 	_token: unknown,
 	_context: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	player: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_app: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	token: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	context: any,
 
 ) {
@@ -127,7 +127,7 @@ export function handleClear(
 	_context: unknown,
 ) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _handleClear(player: any, app: any, token: any, context: any) {
 
 	const { scheduleDesktopBalloonSync } = context;
@@ -169,7 +169,7 @@ export function _handleClear(player: any, app: any, token: any, context: any) {
 
 			const _lastNode: unknown = currentBalloonText.lastChild;
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			const lastNode: any = currentBalloonText.lastChild;
 
 			const isBr =
@@ -193,13 +193,13 @@ export function _handleOffset(
 	_token: unknown,
 	_context: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_player: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_app: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	token: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	context: any,
 
 ) {
@@ -230,7 +230,7 @@ export function _handleFont(
 	_context: unknown,
 ) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _handleFont(player: any, _app: any, token: any, _context: any) {
 
 	player.currentFontStyles = player.currentFontStyles || ;

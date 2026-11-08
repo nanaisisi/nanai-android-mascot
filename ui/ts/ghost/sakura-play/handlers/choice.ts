@@ -11,7 +11,7 @@ export function handleChoice(
 	_context: unknown,
 ) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _handleChoice(player: any, app: any, token: any, context: any) {
 
 	const { currentBalloonText, flushDesktopBalloon } = context;
@@ -23,7 +23,7 @@ export function _handleChoice(player: any, app: any, token: any, context: any) {
 
 	const _hoverTimer: unknown = null;
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	let hoverTimer: any = null;
 
 	choiceBtn.addEventListener("click", (e: MouseEvent) =>
@@ -91,13 +91,13 @@ export function _handleAnchorBegin(
 	_token: unknown,
 	_context: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_player: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	app: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	token: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	context: any,
 
 ) {
@@ -110,7 +110,7 @@ export function _handleAnchorBegin(
 
 	const _hoverTimer: unknown = null;
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	let hoverTimer: any = null;
 
 	anchorSpan.addEventListener("click", async (e: MouseEvent) => {
@@ -126,7 +126,7 @@ export function _handleAnchorBegin(
 
 			const _resEx: unknown = await app.ghostController.sendShioriEvent(
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			const resEx: any = await app.ghostController.sendShioriEvent(
 
 				"OnAnchorSelectEx",
@@ -176,13 +176,13 @@ export function handleAnchorEnd(
 	_token: unknown,
 	context: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_player: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_app: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_token: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	context: any,
 
 )

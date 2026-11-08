@@ -12,7 +12,7 @@ export class SakuraScriptPlayer {
 
 	app: unknown;
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	app: any;
 
 	isPlaying: boolean;
@@ -33,21 +33,21 @@ export class SakuraScriptPlayer {
 
 	constructor(app: unknown) {
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	choiceTimeoutTimer: any;
 	balloonTimeout: number;
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	balloonTimeoutTimer: any;
 	lastScript: string;
 	commandHandler: SakuraCommandHandler;
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_restoreTimer?: any;
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_pauseResolver?: any;
-	// biome-ignore lint/complexity/noBannedTypes: automated fix
+
 	_sleepResolvers?: Set<Function>;
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	constructor(app: any)
 
 		this.app = app;
@@ -68,7 +68,7 @@ export class SakuraScriptPlayer {
 
 			listen("balloon-choice-selected", (_event: unknown) =>
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			listen("balloon-choice-selected", (event: any) => {
 
 				const { choiceId, choiceText } = event.payload || {};
@@ -79,7 +79,7 @@ export class SakuraScriptPlayer {
 
 			listen("balloon-anchor-selected", (_event: unknown) =>
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			listen("balloon-anchor-selected", (event: any) => {
 
 				const { anchorId } = event.payload || {};
@@ -95,7 +95,7 @@ export class SakuraScriptPlayer {
 
 			listen("balloon-ready", (_event: unknown) =>
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			listen("balloon-ready", (event: any) => {
 
 				const sid = event.payload?.scopeId ?? 0;
@@ -137,7 +137,7 @@ export class SakuraScriptPlayer {
 
 				const _position = (this as unknown).currentProgressIndex || 0;
 
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				const _position = (this as any).currentProgressIndex || 0;
 
 				this.app.ghostController.sendBalloonBreakNotify(
@@ -191,7 +191,7 @@ export class SakuraScriptPlayer {
 						[choiceText, choiceId, ...allExtraArgs],
 					);
 
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				const resEx: any = await this.app.ghostController?.sendShioriEvent?.(
 					"OnChoiceSelectEx",
 					[choiceText, choiceId, ...allExtraArgs],
@@ -213,7 +213,7 @@ export class SakuraScriptPlayer {
 
 			const _timer: unknown = null;
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			let timer: any = null;
 
 			const onCancel = () => {
@@ -260,7 +260,7 @@ export class SakuraScriptPlayer {
 
 			const _timer: unknown = null;
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			let timer: any = null;
 
 			let resolved = false;

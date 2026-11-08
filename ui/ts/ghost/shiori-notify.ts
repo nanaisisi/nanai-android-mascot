@@ -20,7 +20,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		event: string,
@@ -46,7 +46,7 @@ export const shioriNotifyMethods = {
 
 	async notifyOSInfo(this: unknown, osName = "Android", osVersion = "14") {
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async notifyOSInfo(this: any, osName = "Android", osVersion = "14")
 
 		return await this.sendShioriNotify("OnNotifyOSInfo", [osName, osVersion]);,
@@ -58,7 +58,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		ghostName: string,
@@ -78,7 +78,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		balloonName = "default",
@@ -95,7 +95,7 @@ export const shioriNotifyMethods = {
 
 	async notifyShellInfo(this: unknown, shellName = "master", shellPath = "")
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async notifyShellInfo(this: any, shellName = "master", shellPath = "")
 
 		return await this.sendShioriNotify("OnNotifyShellInfo", [
@@ -109,7 +109,7 @@ export const shioriNotifyMethods = {
 
 	async notifyDressupInfo(this: unknown, dressupItems: string[] = [])
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async notifyDressupInfo(this: any, dressupItems: string[] = [])
 
 		return await this.sendShioriNotify("OnNotifyDressupInfo", dressupItems);,
@@ -121,7 +121,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		userName = "ユーザー",
@@ -140,7 +140,7 @@ export const shioriNotifyMethods = {
 
 	async notifyFontInfo(this: unknown, fontName = "sans-serif", fontSize = 12)
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async notifyFontInfo(this: any, fontName = "sans-serif", fontSize = 12)
 
 		return await this.sendShioriNotify("OnNotifyFontInfo", [
@@ -154,7 +154,7 @@ export const shioriNotifyMethods = {
 
 	async notifyHolidayInfo(this: unknown, holidayName = "", holidayDate = "")
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async notifyHolidayInfo(this: any, holidayName = "", holidayDate = "")
 
 		return await this.sendShioriNotify("OnNotifyHolidayInfo", [
@@ -169,7 +169,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		locale = "ja-JP",
@@ -187,7 +187,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		type:
@@ -217,7 +217,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		event:
@@ -253,7 +253,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		event:
@@ -275,7 +275,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		event:
@@ -297,7 +297,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		event:
@@ -329,7 +329,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		event:
@@ -363,7 +363,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		event:
@@ -383,7 +383,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		event:
@@ -403,7 +403,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		event: "OnChoiceSelectEx" | "OnAnchorSelectEx" | string,
@@ -418,7 +418,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		event: "OnGhostTermsAccept" | "OnGhostTermsDecline" | string,
@@ -433,7 +433,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		event:
@@ -453,7 +453,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		event:
@@ -474,7 +474,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		event:
@@ -495,7 +495,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		event:
@@ -514,7 +514,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		event:
@@ -544,7 +544,7 @@ export const shioriNotifyMethods = {
 
 	async notifyScreenSaver(this: unknown, isStarted: boolean)
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async notifyScreenSaver(this: any, isStarted: boolean) {
 
 		const event = isStarted ? "OnScreenSaverStart" : "OnScreenSaverEnd";
@@ -558,7 +558,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		action: "arrival" | "remove",
@@ -575,7 +575,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		sessionState: "lock" | "unlock" | "disconnect" | "reconnect",
@@ -597,7 +597,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		event: string,
@@ -612,7 +612,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		event: string,
@@ -626,7 +626,7 @@ export const shioriNotifyMethods = {
 
 	async notifyApplicationBoot(this: unknown, appName: string, appPath = "")
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async notifyApplicationBoot(this: any, appName: string, appPath = "")
 
 		return await this.sendShioriNotify("OnApplicationBoot", [appName, appPath]);,
@@ -637,7 +637,7 @@ export const shioriNotifyMethods = {
 
 	async notifyApplicationClose(this: unknown, appName: string)
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async notifyApplicationClose(this: any, appName: string)
 
 		return await this.sendShioriNotify("OnApplicationClose", [appName]);,
@@ -652,9 +652,9 @@ export const shioriNotifyMethods = {
 	): Promise<boolean> {
 		const _res: unknown = await this.sendShioriNotify("OnApplicationExist", [
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async checkApplicationExist(this: any, appName: string): Promise<boolean> {
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const res: any = await this.sendShioriNotify("OnApplicationExist", [
 
 			appName,
@@ -672,7 +672,7 @@ export const shioriNotifyMethods = {
 		filePath = "",
 	) {
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async notifyApplicationFileOpen(this: any, appName: string, filePath = "")
 
 		return await this.sendShioriNotify("OnApplicationFileOpen", [
@@ -687,7 +687,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		appName: string,
@@ -704,7 +704,7 @@ export const shioriNotifyMethods = {
 
 	async notifyApplicationVersion(this: unknown, appName: string, version = "")
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async notifyApplicationVersion(this: any, appName: string, version = "")
 
 		return await this.sendShioriNotify("OnApplicationVersion", [
@@ -718,7 +718,7 @@ export const shioriNotifyMethods = {
 
 	async notifyWebsiteUpdate(this: unknown, url: string, updateTime = "")
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async notifyWebsiteUpdate(this: any, url: string, updateTime = "")
 
 		return await this.sendShioriNotify("OnWebsiteUpdateNotify", [
@@ -733,7 +733,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		afterX: number | string,
@@ -757,7 +757,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		lastScript: string = "",
@@ -778,7 +778,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		lastScript: string = "",
@@ -799,7 +799,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		script: string = "",
@@ -820,7 +820,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		eventName: string,
@@ -834,7 +834,7 @@ export const shioriNotifyMethods = {
 
 	async sendHeadlineSenseBegin(this: unknown, siteName: string, url: string)
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendHeadlineSenseBegin(this: any, siteName: string, url: string)
 
 		return await this.sendShioriNotify("OnHeadlinesenseBegin", [siteName, url]);,
@@ -846,7 +846,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		siteName: string,
@@ -867,7 +867,7 @@ export const shioriNotifyMethods = {
 
 	async sendHeadlineSenseComplete(this: unknown, reason = "no update")
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendHeadlineSenseComplete(this: any, reason = "no update")
 
 		return await this.sendShioriNotify("OnHeadlinesenseComplete", [reason]);,
@@ -878,7 +878,7 @@ export const shioriNotifyMethods = {
 
 	async sendHeadlineSenseFailure(this: unknown, reason: string)
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendHeadlineSenseFailure(this: any, reason: string)
 
 		return await this.sendShioriNotify("OnHeadlinesenseFailure", [reason]);,
@@ -889,7 +889,7 @@ export const shioriNotifyMethods = {
 
 	async sendRssBegin(this: unknown, siteName: string, url: string)
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendRssBegin(this: any, siteName: string, url: string)
 
 		return await this.sendShioriNotify("OnRSSBegin", [siteName, url]);,
@@ -901,7 +901,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		siteNameOrStatus: string,
@@ -923,7 +923,7 @@ export const shioriNotifyMethods = {
 
 	async sendRssFailure(this: unknown, reason: string)
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendRssFailure(this: any, reason: string)
 
 		return await this.sendShioriNotify("OnRSSFailure", [reason]);,
@@ -934,7 +934,7 @@ export const shioriNotifyMethods = {
 
 	async sendCapabilityNotify(this: unknown)
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendCapabilityNotify(this: any) {
 
 		if (!isTauriAvailable()) return null;
@@ -965,7 +965,7 @@ export const shioriNotifyMethods = {
 
 	async sendBootNotifyEvents(this: unknown)
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendBootNotifyEvents(this: any) {
 
 		if (!isTauriAvailable()) return;
@@ -987,12 +987,12 @@ export const shioriNotifyMethods = {
 			"installedsakuraname",
 			ghosts.map((g: unknown) => g.sakura_name || g.name),
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			ghosts.map((g: any) => g.name),
 		);
 		await this.sendShioriNotify(
 			"installedsakuraname",
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			ghosts.map((g: any) => g.sakura_name || g.name),
 
 		);
@@ -1007,12 +1007,12 @@ export const shioriNotifyMethods = {
 		const _keroNames = ghosts
 			.map((g: unknown) => g.kero_name)
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			ghosts.map((g: any) => g.sakura_name || g.name),
 		);
 
 		const keroNames = ghosts
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			.map((g: any) => g.kero_name)
 
 			.filter((n: string) => Boolean(n?.trim()));
@@ -1028,7 +1028,7 @@ export const shioriNotifyMethods = {
 
 			.map((g: unknown) => g.path)
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			.map((g: any) => g.path)
 
 			.filter((p: string) => Boolean(p));
@@ -1107,12 +1107,12 @@ export const shioriNotifyMethods = {
 				"otherghostname",
 				otherGhosts.map((g: unknown) => g.name),
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const otherGhosts = ghosts.filter((g: any) => g.name !== ghost.name);
 		if (otherGhosts.length > 0) {
 			await this.sendShioriNotify(
 				"otherghostname",
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				otherGhosts.map((g: any) => g.name),
 
 			);
@@ -1142,7 +1142,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		scopeId: number,
@@ -1172,7 +1172,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		ghostName: string,
@@ -1206,7 +1206,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		id: string,
@@ -1223,7 +1223,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		id: string,
@@ -1238,7 +1238,7 @@ export const shioriNotifyMethods = {
 
 	async sendGhostTermsAcceptNotify(this: unknown, id: string = "")
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendGhostTermsAcceptNotify(this: any, id: string = "")
 
 		return await this.sendShioriNotify("OnGhostTermsAccept", id ? [id] : []);,
@@ -1249,7 +1249,7 @@ export const shioriNotifyMethods = {
 
 	async sendGhostTermsDeclineNotify(this: unknown, id: string = "")
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendGhostTermsDeclineNotify(this: any, id: string = "")
 
 		return await this.sendShioriNotify("OnGhostTermsDecline", id ? [id] : []);,
@@ -1263,11 +1263,11 @@ export const shioriNotifyMethods = {
 
 	async sendGhostTermsDecline(this: unknown, ghostName: string)
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendGhostTermsAccept(this: any, ghostName: string)
 		return await this.sendShioriNotify("OnGhostTermsAccept", [ghostName]);,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendGhostTermsDecline(this: any, ghostName: string)
 
 		return await this.sendShioriNotify("OnGhostTermsDecline", [ghostName]);,
@@ -1279,7 +1279,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		scopeId: number | string = 0,
@@ -1294,7 +1294,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		scopeId: number | string = 0,
@@ -1312,7 +1312,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		scopeId: number | string = 0,
@@ -1327,7 +1327,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		ghostName: string,
@@ -1347,7 +1347,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		toGhost: string,
@@ -1389,31 +1389,31 @@ export const shioriNotifyMethods = {
 
 	async sendOtherGhostBooted(this: unknown, ghostName: string)
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendGhostChanged(this: any, toGhost: string, fromGhost: string = "")
 		return await this.sendShioriNotify("OnGhostChanged", [toGhost, fromGhost]);,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendShellChanged(this: any, toShell: string, fromShell: string = "")
 		return await this.sendShioriNotify("OnShellChanged", [toShell, fromShell]);,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendCloseAll(this: any, reason: string = "user")
 		return await this.sendShioriNotify("OnCloseAll", [reason]);,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendGhostCalling(this: any, targetGhost: string)
 		return await this.sendShioriNotify("OnGhostCalling", [targetGhost]);,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendGhostCalled(this: any, callerGhost: string)
 		return await this.sendShioriNotify("OnGhostCalled", [callerGhost]);,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendGhostCallComplete(this: any, targetGhost: string)
 		return await this.sendShioriNotify("OnGhostCallComplete", [targetGhost]);,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendOtherGhostBooted(this: any, ghostName: string)
 
 		return await this.sendShioriNotify("OnOtherGhostBooted", [ghostName]);,
@@ -1422,7 +1422,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		ghostName: string,
@@ -1451,27 +1451,27 @@ export const shioriNotifyMethods = {
 
 	async sendVirtualDesktopChanged(this: unknown, desktopId: string | number)
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendOtherGhostClosed(this: any, ghostName: string)
 		return await this.sendShioriNotify("OnOtherGhostClosed", [ghostName]);,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendSysSuspend(this: any)
 		return await this.sendShioriNotify("OnSysSuspend", []);,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendSysResume(this: any)
 		return await this.sendShioriNotify("OnSysResume", []);,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendDestroy(this: any)
 		return await this.sendShioriNotify("OnDestroy", []);,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendInitialize(this: any)
 		return await this.sendShioriNotify("OnInitialize", []);,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendVirtualDesktopChanged(this: any, desktopId: string | number)
 
 		return await this.sendShioriNotify("OnVirtualDesktopChanged", [
@@ -1496,27 +1496,27 @@ export const shioriNotifyMethods = {
 
 	async sendCacheRestore(this: unknown)
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendFullScreenAppMinimize(this: any)
 		return await this.sendShioriNotify("OnFullScreenAppMinimize", []);,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendFullScreenAppRestore(this: any)
 		return await this.sendShioriNotify("OnFullScreenAppRestore", []);,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendBasewareUpdating(this: any)
 		return await this.sendShioriNotify("OnBasewareUpdating", []);,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendBasewareUpdated(this: any)
 		return await this.sendShioriNotify("OnBasewareUpdated", []);,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendCacheSuspend(this: any)
 		return await this.sendShioriNotify("OnCacheSuspend", []);,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendCacheRestore(this: any)
 
 		return await this.sendShioriNotify("OnCacheRestore", []);,
@@ -1528,7 +1528,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		scope0: number | string,
@@ -1558,15 +1558,15 @@ export const shioriNotifyMethods = {
 		rect: string = "",
 	)
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendOffscreen(this: any, scope: number | string, rect: string = "")
 		return await this.sendShioriNotify("OnOffscreen", [String(scope), rect]);,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendOtherOverlap(this: any, ghostName: string, rect: string = "")
 		return await this.sendShioriNotify("OnOtherOverlap", [ghostName, rect]);,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendOtherOffscreen(this: any, ghostName: string, rect: string = "")
 
 		return await this.sendShioriNotify("OnOtherOffscreen", [ghostName, rect]);,
@@ -1578,7 +1578,7 @@ export const shioriNotifyMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		event:

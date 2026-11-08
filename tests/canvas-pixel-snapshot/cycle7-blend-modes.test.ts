@@ -79,7 +79,7 @@ test("Canvas Pixel Snapshot Cycle 7: processChromaKey options.paintTransparentRe
 
 	const baseCanvas: unknown = null;
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	let baseCanvas: any = null;
 
 	globalThis.document = {
@@ -96,7 +96,7 @@ test("Canvas Pixel Snapshot Cycle 7: processChromaKey options.paintTransparentRe
 
 	} as unknown;
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	} as any;
 
 
@@ -129,7 +129,7 @@ test("Canvas Pixel Snapshot Cycle 7: processChromaKey options.paintTransparentRe
 
 	} as unknown;
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	} as any;
 
 

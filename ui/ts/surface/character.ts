@@ -130,7 +130,7 @@ function _initCharacterWindow() {
 
 	const _onPointerDown = (_e: unknown) => {
 
-	// biome-ignore lint/suspicious/noExplicitAny: pointer event handler
+
 	const onPointerDown = (e: any) => {
 
 		const button = e.button !== undefined ? e.button : 0;
@@ -198,7 +198,7 @@ function _initCharacterWindow() {
 
 	const _onPointerMove = (_e: unknown) => {
 
-	// biome-ignore lint/suspicious/noExplicitAny: pointer event handler
+
 	const onPointerMove = (e: any) => {
 
 		if (!isInteracting) return;

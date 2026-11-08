@@ -6,7 +6,7 @@ import { invoke } from "../core/tauri-helper.js";
 
 export function enumToString(_value: unknown): string {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function enumToString(value: any): string {
 
 	if (value == null) return "";
@@ -23,7 +23,7 @@ export function enumToString(value: any): string {
 
 export function _intervalToString(_value: unknown): string {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _intervalToString(value: any): string {
 
 	const s = enumToString(value);
@@ -33,7 +33,7 @@ export function _intervalToString(value: any): string {
 
 export function _methodToString(_value: unknown): string {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _methodToString(value: any): string {
 
 	const s = enumToString(value);
@@ -43,7 +43,7 @@ export function _methodToString(value: any): string {
 
 export function _collisionRecord(_area: unknown) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function collisionRecord(area: any) {
 
 	const shape = area?.shape ?? {};
@@ -69,7 +69,7 @@ export function collisionRecord(area: any) {
 
 		const _vertices = (coords?.vertices ?? []).map((_p: unknown) =>
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const vertices = (coords?.vertices ?? []).map((_p: any) =>
 
 			Array.isArray(p) ? p : [p?.x ?? 0, p?.y ?? 0],
@@ -136,7 +136,7 @@ export function collisionRecord(area: any) {
 
 export function _collisionContains(_col: unknown, _x: number, _y: number): boolean {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _collisionContains(col: any, x: number, y: number): boolean {
 
 	if (!col) return false;
@@ -187,17 +187,17 @@ export function _manifestToSurfaceData(_manifest: unknown) {
 	const _points: Record<string, unknown> = {};
 	const _balloonOffsets: Record<string, unknown> = {};
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _manifestToSurfaceData(manifest: any) {
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	const collisions: Record<string, any[]> = {};
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	const elements: Record<string, any[]> = {};
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	const animations: Record<string, any[]> = {};
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	const points: Record<string, any> = {};
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	const balloonOffsets: Record<string, any> = {};
 
 	const _aliases = manifest?.aliases ?? {};
@@ -234,9 +234,9 @@ export function _manifestToSurfaceData(manifest: any) {
 			.sort((a: unknown, b: unknown) => (a.id ?? 0) - (b.id ?? 0))
 			.map((e: unknown) => ({
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			.sort((a: any, b: any) => (a.id ?? 0) - (b.id ?? 0))
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			.map((_e: any) => ({
 
 				id: e.id ?? 0,
@@ -251,9 +251,9 @@ export function _manifestToSurfaceData(manifest: any) {
 			.sort((a: unknown, b: unknown) => (a.id ?? 0) - (b.id ?? 0))
 			.map((anim: unknown) => ({
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			.sort((a: any, b: any) => (a.id ?? 0) - (b.id ?? 0))
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			.map((_anim: any) => ({
 
 				id: anim.id ?? 0,
@@ -265,9 +265,9 @@ export function _manifestToSurfaceData(manifest: any) {
 					.sort((a: unknown, b: unknown) => (a.index ?? 0) - (b.index ?? 0))
 					.map((p: unknown) => ({
 
-					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 					.sort((a: any, b: any) => (a.index ?? 0) - (b.index ?? 0))
-					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 					.map((_p: any) => ({
 
 						surface: String(p.surface ?? -1),
@@ -314,7 +314,7 @@ export async function _parseSurfacesTextWithRust(content: string) {
 
 		const _rawMap: unknown = await invoke("parse_surfaces_text", { content });
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const rawMap: any = await invoke("parse_surfaces_text", { content });
 
 		if (!rawMap || typeof rawMap !== "object") return null;

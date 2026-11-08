@@ -9,7 +9,7 @@ export async function handleOpenDialogCommand(
 	_args: string[],
 ) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleOpenDialogCommand(handler: any, args: string[]) {
 
 	const dialogType = args[2] || "open";

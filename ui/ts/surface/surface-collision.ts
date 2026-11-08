@@ -19,7 +19,7 @@ export const surfaceCollisionMethods = {
 
 			return surfaceId as unknown;
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			return surfaceId as any;
 
 		}
@@ -29,7 +29,7 @@ export const surfaceCollisionMethods = {
 
 		const _namesMap = (this as unknown).names;
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const namesMap = (this as any).names;
 
 		if (namesMap) {
@@ -58,7 +58,7 @@ export const surfaceCollisionMethods = {
 
 			scopeId === 1 ? (this as unknown).keroAliases : (this as unknown).aliases;
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			scopeId === 1 ? (this as any).keroAliases : (this as any).aliases;
 
 		let list = Array.isArray(map?.[rawName]) ? map[rawName] : null;
@@ -81,7 +81,7 @@ export const surfaceCollisionMethods = {
 
 			return surfaceId as unknown;
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			return surfaceId as any;
 
 		}
@@ -94,7 +94,7 @@ export const surfaceCollisionMethods = {
 
 		_targetRect: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		targetRect: any,
 
 		surfaceId: number | string | null = null,
@@ -106,7 +106,7 @@ export const surfaceCollisionMethods = {
 
 				: String((this as unknown).currentSurfaceIdFor(scopeId));
 
-				: // biome-ignore lint/suspicious/noExplicitAny: automated fix
+				:
 					String((this as any).currentSurfaceIdFor(scopeId));
 
 
@@ -120,13 +120,13 @@ export const surfaceCollisionMethods = {
 		const _activeAnimationCols =
 			(this as unknown).animationManager?.getActiveCollisions?.(scopeId) || [];
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const canvasX = Math.round(relX * (this as any).baseWidth);
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const canvasY = Math.round(relY * (this as any).baseHeight);
 
 		const activeAnimationCols =
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).animationManager?.getActiveCollisions?.(scopeId) || [];
 
 		for (let i = activeAnimationCols.length - 1; i >= 0; i--) {
@@ -147,7 +147,7 @@ export const surfaceCollisionMethods = {
 			(this as unknown).collisions.default ||
 			[];
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).collisions[sid] || (this as any).collisions.default || [];
 
 		if (colList.length === 0) {
@@ -163,14 +163,14 @@ export const surfaceCollisionMethods = {
 		if (sortKind === "ascend" || sortKind === "id") {
 			_candidates = colList.slice().sort((_a: unknown, _b: unknown) => {
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).collisionSort || "none",
 		).toLowerCase();
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		let candidates: any[] = [];
 		if (sortKind === "ascend" || sortKind === "id") {
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			candidates = colList.slice().sort((a: any, b: any) => {
 
 				const idA = a.id != null ? a.id : Number.MAX_SAFE_INTEGER;
@@ -181,7 +181,7 @@ export const surfaceCollisionMethods = {
 
 			candidates = colList.slice().sort((_a: unknown, _b: unknown) =>
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			candidates = colList.slice().sort((a: any, b: any) => {
 
 				const idA = a.id != null ? a.id : -1;
@@ -228,7 +228,7 @@ export const surfaceCollisionMethods = {
 
 		if (!(this as unknown).cursors || !collisionName) return null;
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		if (!(this as any).cursors || !collisionName) return null;
 
 		const scopeKey =
@@ -247,9 +247,9 @@ export const surfaceCollisionMethods = {
 			(this as unknown).cursors[scopeKey],
 			(this as unknown).cursors["*"],
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).cursors[scopeKey],
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).cursors["*"],
 
 		].filter(Boolean);
@@ -284,7 +284,7 @@ export const surfaceCollisionMethods = {
 
 		if (!(this as unknown).tooltips || !collisionName) return null;
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		if (!(this as any).tooltips || !collisionName) return null;
 
 		const scopeKey =
@@ -301,9 +301,9 @@ export const surfaceCollisionMethods = {
 			(this as unknown).tooltips[scopeKey],
 			(this as unknown).tooltips["*"],
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).tooltips[scopeKey],
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).tooltips["*"],
 
 		].filter(Boolean);

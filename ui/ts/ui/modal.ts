@@ -10,7 +10,7 @@ export class ModalManager {
 
 	app: unknown;
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	app: any;
 
 	overlay: HTMLElement | null;
@@ -22,7 +22,7 @@ export class ModalManager {
 
 	constructor(_app: unknown) {
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	constructor(app: any)
 
 		this.app = app;
@@ -91,25 +91,25 @@ export class ModalManager {
 		} else if (contentId === "debug-modal-content") {
 			(this.settingsHandlers as unknown).setupDebugListeners?.();
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this.ghostHandlers as any).setupGhostListeners?.();
 		} else if (contentId === "explorer-modal-content") {
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this.ghostHandlers as any).setupExplorerListeners?.();
 		} else if (contentId === "install-modal-content") {
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this.ghostHandlers as any).setupInstallListeners?.();
 		} else if (contentId === "balloon-modal-content") {
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this.ghostHandlers as any).renderBalloonList?.();
 		} else if (contentId === "settings-modal-content") {
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this.settingsHandlers as any).setupSettingsListeners?.();
 		} else if (contentId === "plugins-modal-content") {
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this.settingsHandlers as any).setupPluginListeners?.();
 		} else if (contentId === "debug-modal-content") {
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this.settingsHandlers as any).setupDebugListeners?.();
 
 		}
@@ -138,11 +138,11 @@ export class ModalManager {
 	renderBalloonList()
 		(this.ghostHandlers as unknown).renderBalloonList?.();
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		(this.ghostHandlers as any).renderGhostList?.();
 
 	renderBalloonList()
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		(this.ghostHandlers as any).renderBalloonList?.();
 
 }

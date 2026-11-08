@@ -6,9 +6,9 @@ describe("DictationManager", () => {
 	const _originalWindow: unknown = null;
 	const _originalSpeechSynthesisUtterance: unknown = null;
 
-	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
+
 	let originalWindow;
-	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
+
 	let originalSpeechSynthesisUtterance;
 
 

@@ -12,12 +12,12 @@ export function processChromaKey(
 	if (cache?.has(imageSrc)) {
 		return Promise.resolve(cache.get(imageSrc) ?? imageSrc);
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	options: any = ,
 ): Promise<string> {
 	if (!imageSrc) return Promise.resolve(imageSrc);
 	if (cache?.has(imageSrc)) {
-		// biome-ignore lint/style/noNonNullAssertion: automated fix
+
 		return Promise.resolve(cache.get(imageSrc)!);
 
 	}
@@ -31,7 +31,7 @@ export function processChromaKey(
 
 		return Promise.resolve(cache.get(cacheKey) ?? imageSrc);
 
-		// biome-ignore lint/style/noNonNullAssertion: automated fix
+
 		return Promise.resolve(cache.get(cacheKey)!);
 
 	}

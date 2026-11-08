@@ -22,7 +22,7 @@ export function isTauriAvailable(): boolean {
 		!!(globalThis as unknown).__TAURI__ ||
 		!!(globalThis as unknown).__TAURI_INTERNALS__
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		!!(globalThis as any).__TAURI__ || !!(globalThis as any).__TAURI_INTERNALS__
 
 	);
@@ -50,10 +50,10 @@ export async function invoke<_T = unknown>(
 	cmd: string,
 	args: Record<string, unknown> = {},
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function invoke<_T = any>(
 	cmd: string,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	args: Record<string, any> = {},
 
 ): Promise<T> {
@@ -123,7 +123,7 @@ export async function listen(
 
 	_handler: (event: unknown) => void,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	handler: (event: any) => void,
 
 ): Promise<() => void> {
@@ -137,7 +137,7 @@ export async function listen(
 
 export async function emit(_event: string, _payload?: unknown): Promise<void> {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _emit(event: string, payload?: any): Promise<void> {
 
 	if (!isTauriAvailable()) return;
@@ -191,5 +191,5 @@ export async function _getCurrentWindowPosition(): Promise<{
 
 (globalThis as unknown).__NANAI_IPC_QUEUE_STATS__ = ipcQueueStats;
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 (globalThis as any).__NANAI_IPC_QUEUE_STATS__ = ipcQueueStats;

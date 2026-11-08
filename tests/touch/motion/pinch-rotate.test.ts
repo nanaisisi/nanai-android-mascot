@@ -10,9 +10,9 @@ describe("TouchGestureRecognizer - Pinch & Rotate", () => {
 	const _element: unknown = null;
 	const _recognizer: unknown = null;
 
-	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
+
 	let element;
-	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
+
 	let recognizer;
 
 

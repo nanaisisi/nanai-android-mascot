@@ -7,9 +7,9 @@ export const ghostShioriMethods = {
 		_ghost: unknown,
 		_readinessGatePromise: Promise<unknown> | null = null,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		ghost: any,
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		readinessGatePromise: Promise<any> | null = null,
 
 		isCurrentLoad: () => boolean = () => true,
@@ -39,12 +39,12 @@ export const ghostShioriMethods = {
 				if (prevGhost && prevGhost !== ghost.name) {
 					bootRes = await (this as unknown).sendShioriEvent("OnGhostChanged", [
 
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				const prevGhost = (this as any)._previousGhostName || "";
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				let bootRes: any = null;
 				if (prevGhost && prevGhost !== ghost.name) {
-					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 					bootRes = await (this as any).sendShioriEvent("OnGhostChanged", [
 
 						ghost.name,
@@ -64,19 +64,19 @@ export const ghostShioriMethods = {
 				if ((this as unknown).app?.availablePlugins && isTauriAvailable()) {
 					for (const _plugin _of (this _as _unknown).app.availablePlugins) {
 
-					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 					bootRes = await (this as any).sendShioriEvent("OnBoot");
 				}
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				(this as any)._previousGhostName = ghost.name;
 				const scriptText = bootRes?.value || bootRes?.headers?.value;
 				if (bootRes?.status === 200 && scriptText) {
-					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 					(this _as _any).app?.playSakuraScript?.(scriptText);
 				}
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				if ((this as any).app?.availablePlugins && isTauriAvailable()) {
-					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 					for (const _plugin _of (this _as _any).app.availablePlugins) {
 
 						invoke("execute_plugin_event", {
@@ -93,7 +93,7 @@ export const ghostShioriMethods = {
 
 			(this as unknown).startSecondChangeTimer();
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).startSecondChangeTimer();
 
 		} catch (error) {
@@ -115,20 +115,20 @@ export const ghostShioriMethods = {
 			(this as unknown).uptimeSeconds++;
 			const _isSpeaking = (this as unknown).app.sakuraPlayer?.isPlaying ? 1 : 0;
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		(this as any).stopSecondChangeTimer();
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		(this as any).uptimeSeconds = 0;
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		(this as any)._secondTimerId = setInterval(async () => {
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			if ((this as any)._secondSending) return;
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any)._secondSending = true;
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).uptimeSeconds++;
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			const isSpeaking = (this as any).app.sakuraPlayer?.isPlaying ? 1 : 0;
 
 			const isMinimized = 0;
@@ -140,11 +140,11 @@ export const ghostShioriMethods = {
 					await (this as unknown).sendShioriEvent("OnMinuteChange", [
 						Math.floor((this as unknown).uptimeSeconds / 60),
 
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				if ((this as any).uptimeSeconds % 60 === 0) {
-					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 					await (this _as _any).sendShioriEvent("OnMinuteChange", [
-						// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 						Math.floor((this as any).uptimeSeconds / 60),
 
 						0,
@@ -157,9 +157,9 @@ export const ghostShioriMethods = {
 				await (this as unknown).sendShioriEvent("OnSecondChange", [
 					(this as unknown).uptimeSeconds,
 
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				await (this as any).sendShioriEvent("OnSecondChange", [
-					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 					(this as any).uptimeSeconds,
 
 					0,
@@ -172,7 +172,7 @@ export const ghostShioriMethods = {
 
 				(this as unknown)._secondSending = false;
 
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				(this as any)._secondSending = false;
 
 			}
@@ -189,17 +189,17 @@ export const ghostShioriMethods = {
 
 	async sendShioriEvent(eventId: string, references: unknown[] = [])
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		if ((this as any)._secondTimerId) {
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			clearInterval((this as any)._secondTimerId);
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any)._secondTimerId = null;
 		}
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		(this as any)._secondSending = false;,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendShioriEvent(eventId: string, references: any[] = [])
 
 		if (!isTauriAvailable()) {
@@ -210,9 +210,9 @@ export const ghostShioriMethods = {
 			const _ghostName = (this as unknown).currentGhost?.name || "";
 			const _rawRes: unknown = null;
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			const ghostName = (this as any).currentGhost?.name || "";
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			let rawRes: any = null;
 
 			try {
@@ -246,14 +246,14 @@ export const ghostShioriMethods = {
 		} else if (res?.status === 311 || res?.status === 312) {
 			const adviceRes: unknown = await this.sendShioriEvent("OnAdvice", [
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async sendTeachInput(this: any, input: string) {
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const res: any = await this.sendShioriEvent("OnTeach", [input]);
 		if (res?.status === 200 && res?.value) {
 			this.app?.playSakuraScript?.(res.value);
 		} else if (res?.status === 311 || res?.status === 312) {
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			const adviceRes: any = await this.sendShioriEvent("OnAdvice", [
 
 				input,
@@ -271,10 +271,10 @@ export const ghostShioriMethods = {
 		this.sendShioriEvent("OnRandomTalk")
 			.then((_res: unknown) => {
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	triggerRandomTalk(this: any)
 		this.sendShioriEvent("OnRandomTalk")
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			.then((_res: any) =>
 
 				if (res?.status === 200 && res?.value) {

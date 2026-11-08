@@ -6,7 +6,7 @@ export function rustCommandsToTokens(
 	_rustCommands: unknown[],
 ): SakuraScriptToken[] {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function rustCommandsToTokens(rustCommands: any[]): SakuraScriptToken[] {
 
 	const tokens: SakuraScriptToken[] = [];
@@ -229,7 +229,7 @@ export async function _parseSakuraScriptAsync(
 			script,
 		});
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const rustCommands: any = await invoke("parse_sakura_script", { script });
 
 		if (Array.isArray(rustCommands)) {

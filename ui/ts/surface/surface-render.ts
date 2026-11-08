@@ -21,10 +21,10 @@ export const surfaceRenderMethods = {
 		_baseCanvas: HTMLCanvasElement,
 		_frameLayers: unknown[],
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 		baseCanvas: HTMLCanvasElement,
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		frameLayers: any[],
 
 		resolveImagePath: (file: string) => Promise<string | null>,
@@ -73,7 +73,7 @@ export const surfaceRenderMethods = {
 
 		this: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		this: any,
 
 		surfaceId: number | string,
@@ -83,7 +83,7 @@ export const surfaceRenderMethods = {
 
 		_frameLayers: unknown[] | null = null,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		frameLayers: any[] | null = null,
 
 	): Promise<string> {
@@ -108,7 +108,7 @@ export const surfaceRenderMethods = {
 
 					const _result: unknown = await composeSurfaceElements(
 
-					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 					const result: any = await composeSurfaceElements(
 
 						layers.elements,
@@ -141,7 +141,7 @@ export const surfaceRenderMethods = {
 
 		const _result: unknown = await composeSurfaceElements(
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const result: any = await composeSurfaceElements(
 
 			elementList,
@@ -163,7 +163,7 @@ export const surfaceRenderMethods = {
 		pnaSrc: string | null = null,
 	) {
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	processChromaKey(this: any, imageSrc: string, pnaSrc: string | null = null) {
 
 		const useSelfAlpha =

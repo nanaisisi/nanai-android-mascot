@@ -2,7 +2,7 @@ export async function translateScript(
 
 	_player: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	player: any,
 
 	script: string,
@@ -14,7 +14,7 @@ export async function translateScript(
 
 			const _transRes: unknown = await app.ghostController.sendShioriEvent(
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			const transRes: any = await app.ghostController.sendShioriEvent(
 
 				"OnTranslate",

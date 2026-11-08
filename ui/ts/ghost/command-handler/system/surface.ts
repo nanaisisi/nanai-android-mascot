@@ -12,7 +12,7 @@ export async function handleSetPropertyCommand(
 	_args: string[],
 ) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleSetPropertyCommand(handler: any, args: string[]) {
 
 	const key = args[2] ?? "";
@@ -36,7 +36,7 @@ export async function _handleSetSerikoTalkCommand(
 	_args: string[],
 ) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleSetSerikoTalkCommand(handler: any, args: string[]) {
 
 	const valStr = String(args[2] ?? "true")
@@ -56,7 +56,7 @@ export async function _handleSetOtherSurfaceChangeCommand(
 
 	_handler: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	handler: any,
 
 	args: string[],
@@ -73,7 +73,7 @@ export async function _handleSetOtherSurfaceChangeCommand(
 
 export async function _handleEnterMode(_handler: unknown, _args: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleEnterMode(handler: any, args: string[]) {
 
 	const mode = (args[1] ?? "").toLowerCase();
@@ -97,7 +97,7 @@ export async function _handleEnterMode(handler: any, args: string[]) {
 
 export async function _handleLeaveMode(_handler: unknown, _args: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleLeaveMode(handler: any, args: string[]) {
 
 	const mode = (args[1] ?? "").toLowerCase();
@@ -125,12 +125,12 @@ export async function _handleGetPropertyCommand(_handler: unknown, key: string) 
 		try {
 			const _res: unknown = await handler.app.ghostController.sendShioriEvent(
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleGetPropertyCommand(handler: any, key: string) {
 	if (!key) return "";
 	if (handler?.app?.ghostController?.sendShioriEvent) {
 		try {
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			const res: any = await handler.app.ghostController.sendShioriEvent(
 
 				"property.get",
@@ -150,7 +150,7 @@ export async function _handleSetScalingCommand(
 	_args: string[],
 ) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleSetScalingCommand(handler: any, args: string[]) {
 
 	const scaleXStr = args[2] ?? "100";
@@ -191,7 +191,7 @@ export async function handleKeyPressEvent(
 
 	handler: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	handler: any,
 
 	key: string,
@@ -207,7 +207,7 @@ export async function handleKeyPressEvent(
 
 export async function _handleSetAlphaCommand(_handler: unknown, _args: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleSetAlphaCommand(handler: any, args: string[]) {
 
 	const alphaVal = Number.parseInt(args[2] ?? "100", 10);
@@ -224,7 +224,7 @@ export async function _handleSetPositionCommand(
 	_args: string[],
 ) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleSetPositionCommand(handler: any, args: string[]) {
 
 	const x = Number.parseInt(args[2] ?? "0", 10);
@@ -241,7 +241,7 @@ export async function _handleSetPositionCommand(handler: any, args: string[]) {
 
 			const _api = (globalThis as unknown).__TAURI__?.window;
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			const api = (globalThis as any).__TAURI__?.window;
 
 			if (api) {

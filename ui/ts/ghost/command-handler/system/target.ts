@@ -8,7 +8,7 @@ import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 
 export async function handleBiffCommand(_handler: unknown, _args: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleBiffCommand(handler: any, _args: string[]) {
 
 	console.log("✉️ Biff mail check triggered");
@@ -21,7 +21,7 @@ export async function _handleExecuteSntpCommand(
 	_args: string[],
 ) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleExecuteSntpCommand(handler: any, _args: string[]) {
 
 	console.log("⏱️ Execute SNTP time sync triggered");
@@ -42,7 +42,7 @@ export async function _handleExecuteSntpCommand(handler: any, _args: string[]) {
 
 export async function _handleHourTimeSignal(_handler: unknown, _hour?: number) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleHourTimeSignal(handler: any, hour?: number) {
 
 	const currentHour = hour ?? new Date().getHours();
@@ -56,7 +56,7 @@ export async function _handleHourTimeSignal(handler: any, hour?: number) {
 
 export async function _handleOpenSystemTarget(_handler: unknown, _args: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleOpenSystemTarget(handler: any, args: string[]) {
 
 	const target = (args[1] ?? "").toLowerCase();

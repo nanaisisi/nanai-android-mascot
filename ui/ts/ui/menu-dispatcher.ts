@@ -24,7 +24,7 @@ export class MenuDispatcher {
 
 	async dispatchAction(action: string, payload: unknown = null) {
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	async dispatchAction(action: string, payload: any = null) {
 
 		if (!action) return;
@@ -47,7 +47,7 @@ export class MenuDispatcher {
 
 		if (globalThis.parent && (globalThis.parent as unknown) !== globalThis) {
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		if (globalThis.parent && (globalThis.parent as any) !== globalThis) {
 
 			globalThis.parent.postMessage(

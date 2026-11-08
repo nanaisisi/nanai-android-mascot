@@ -6,7 +6,7 @@
 
 export async function handleRaiseCommand(_handler: unknown, _args: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleRaiseCommand(handler: any, args: string[]) {
 
 	const eventName = args[1];
@@ -21,7 +21,7 @@ export async function _handleRaiseCommand(handler: any, args: string[]) {
 
 export async function _handleChangeCommand(_handler: unknown, _args: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleChangeCommand(handler: any, args: string[]) {
 
 	const target = (args[1] ?? "").toLowerCase();
@@ -80,7 +80,7 @@ export async function _handleChangeCommand(handler: any, args: string[]) {
 
 export async function _handleVanishByMyself(_handler: unknown, _args: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleVanishByMyself(handler: any, _args: string[]) {
 
 	console.log("👻 Vanish by myself requested");
@@ -102,7 +102,7 @@ export async function _handleVanishByMyself(handler: any, _args: string[]) {
 
 export async function _handleCallCommand(_handler: unknown, _args: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleCallCommand(handler: any, args: string[]) {
 
 	const [target, name] = args.slice(1);
@@ -117,7 +117,7 @@ export async function _handleRaiseOtherCommand(
 	_args: string[],
 ) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleRaiseOtherCommand(handler: any, args: string[]) {
 
 	const ghostName = args[1];
@@ -144,7 +144,7 @@ export async function _handleNotifyOtherCommand(
 	_args: string[],
 ) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleNotifyOtherCommand(handler: any, args: string[]) {
 
 	const ghostName = args[1];
@@ -174,7 +174,7 @@ export async function _handleNotifyOtherCommand(handler: any, args: string[]) {
 
 export async function _handleEmbedCommand(_handler: unknown, _args: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleEmbedCommand(handler: any, args: string[]) {
 
 	const eventName = args[1];
@@ -185,7 +185,7 @@ export async function _handleEmbedCommand(handler: any, args: string[]) {
 
 		const _res: unknown = await gc.sendShioriEvent(eventName, references);
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const res: any = await gc.sendShioriEvent(eventName, references);
 
 		const embeddedScript = res?.response?.value;

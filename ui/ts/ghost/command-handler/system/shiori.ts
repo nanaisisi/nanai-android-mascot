@@ -9,7 +9,7 @@ export async function handleSetShioriDebugMode(
 	_args: string[],
 ) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleSetShioriDebugMode(handler: any, args: string[]) {
 
 	const mode = (args[2] ?? "").toLowerCase() === "true";
@@ -21,7 +21,7 @@ export async function _handleSetShioriDebugMode(handler: any, args: string[]) {
 
 export async function _handleReloadShiori(_handler: unknown, _args: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleReloadShiori(handler: any, _args: string[]) {
 
 	console.log("🔄 Execute reload,shiori triggered");
@@ -36,7 +36,7 @@ export async function _handleReloadShiori(handler: any, _args: string[]) {
 
 export async function _handleReloadShell(_handler: unknown, _args: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleReloadShell(handler: any, _args: string[]) {
 
 	console.log("🔄 Execute reload,shell triggered");
@@ -49,7 +49,7 @@ export async function _handleReloadShell(handler: any, _args: string[]) {
 
 export async function _handleReloadGhost(_handler: unknown, _args: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleReloadGhost(handler: any, _args: string[]) {
 
 	console.log("🔄 Execute reload,ghost triggered");
@@ -63,7 +63,7 @@ export async function _handleReloadGhost(handler: any, _args: string[]) {
 
 export async function _handleReloadBalloon(_handler: unknown, _args: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleReloadBalloon(handler: any, _args: string[]) {
 
 	console.log("🔄 Execute reload,balloon triggered");
@@ -77,7 +77,7 @@ export async function _handleReloadBalloon(handler: any, _args: string[]) {
 
 export async function _handleReloadDescript(_handler: unknown, _args: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleReloadDescript(handler: any, _args: string[]) {
 
 	console.log("🔄 Execute reload,descript triggered");
@@ -94,7 +94,7 @@ export async function _handleReloadDescript(handler: any, _args: string[]) {
 
 export async function _handleReloadSurface(_handler: unknown, _args: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleReloadSurface(handler: any, _args: string[]) {
 
 	console.log("🔄 Execute reloadsurface triggered");

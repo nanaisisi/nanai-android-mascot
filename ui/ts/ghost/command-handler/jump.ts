@@ -6,7 +6,6 @@
 export async function handleJumpCommand(
 	_handler: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
 
 	target: string,

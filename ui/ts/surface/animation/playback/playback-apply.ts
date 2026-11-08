@@ -70,7 +70,6 @@ export async function _applyAnimationFrame(
 		_isCurrent: unknown,
 		_options: unknown;
 
-	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, pat, anim, baseSurfaceId, scopeId, key, isCurrent, options;
 
 	if (isInstance(target)) {

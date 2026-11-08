@@ -5,7 +5,6 @@ import { SurfaceAnimationManager } from "../ui/js/surface/surface-animation-mana
 const deferred = () => {
 	const _resolve: unknown = null;
 
-	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let resolve;
 
 	const promise = new Promise((r) => {

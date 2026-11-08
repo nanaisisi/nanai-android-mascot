@@ -6,7 +6,7 @@
 
 export async function handleSetChoiceTimeout(_handler: unknown, _args: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleSetChoiceTimeout(handler: any, args: string[]) {
 
 	const timeout = Number.parseInt(args[2] ?? "", 10);
@@ -19,7 +19,7 @@ export async function _handleSetBalloonTimeout(
 	_args: string[],
 ) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleSetBalloonTimeout(handler: any, args: string[]) {
 
 	const timeout = Number.parseInt(args[2] ?? "", 10);
@@ -29,7 +29,7 @@ export async function _handleSetBalloonTimeout(handler: any, args: string[]) {
 
 export async function _handleSetBalloonWait(_handler: unknown, _args: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleSetBalloonWait(handler: any, args: string[]) {
 
 	const param = args[2];
@@ -39,7 +39,7 @@ export async function _handleSetBalloonWait(handler: any, args: string[]) {
 
 export async function _handleQuickSection(_handler: unknown, _args: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleQuickSection(handler: any, args: string[]) {
 
 	const val = String(args[1] ?? "").toLowerCase();
@@ -50,7 +50,7 @@ export async function _handleQuickSection(handler: any, args: string[]) {
 
 export async function _handleSetSyncObject(_handler: unknown, _args: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleSetSyncObject(handler: any, args: string[]) {
 
 	const name = args[2];
@@ -66,7 +66,7 @@ export async function _handleSetSyncObject(handler: any, args: string[]) {
 
 export async function _handleResetSyncObject(_handler: unknown, _args: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleResetSyncObject(handler: any, args: string[]) {
 
 	const name = args[2];
@@ -82,7 +82,7 @@ export async function _handleResetSyncObject(handler: any, args: string[]) {
 
 export async function _handleWaitSyncObject(_handler: unknown, _args: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handleWaitSyncObject(handler: any, args: string[]) {
 
 	const name = args[2];

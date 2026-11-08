@@ -15,7 +15,7 @@ export const updateMethods = {
 
 		const gc = (this as unknown).ghostController;
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const gc = (this as any).ghostController;
 
 		const _checkOnly = options?.checkOnly === true;
@@ -29,7 +29,7 @@ export const updateMethods = {
 
 		const execRes: unknown = await gc.sendShioriEvent("OnUpdateProcessExec", [
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const execRes: any = await gc.sendShioriEvent("OnUpdateProcessExec", [
 
 			"manual",
@@ -59,18 +59,18 @@ export const updateMethods = {
 			await gc.sendShioriEvent("OnUpdateFailure", buildUpdateArgs("fileio"));
 			await (this as unknown).sendUpdateResultSummary(
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		(this as any).showBalloon?.("🌐 ネットワーク更新を確認中...");
 
 		if (!isTauriAvailable()) {
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			await (this as any).wait(1500);
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).showBalloon?.(
 				"⚠️ ブラウザ環境のためネットワーク更新はシミュレーションのみです",
 			);
 			await gc.sendShioriEvent("OnUpdateFailure", buildUpdateArgs("fileio"));
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			await (this as any).sendUpdateResultSummary(
 
 				ghostName,
@@ -85,7 +85,7 @@ export const updateMethods = {
 
 			const checkResult: unknown = await invoke("check_ghost_update", {
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			const _checkResult: any = await invoke("check_ghost_update", {
 
 				ghostName,
@@ -99,11 +99,11 @@ export const updateMethods = {
 			if (checkOnly) {
 				(this as unknown).showBalloon?.(checkResult.message);
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			const fileNames = checkResult.update_files.map((f: any) => f.path);
 
 			if (checkOnly) {
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				(this as any).showBalloon?.(checkResult.message);
 
 				await gc.sendShioriEvent(
@@ -116,7 +116,7 @@ export const updateMethods = {
 
 				await (this as unknown).sendUpdateResultSummary(
 
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				await (this as any).sendUpdateResultSummary(
 
 					ghostName,
@@ -142,12 +142,12 @@ export const updateMethods = {
 					null,
 				);
 
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				(this as any).showBalloon?.(
 					"✨ 最新の状態です。更新ファイルはありません。",
 				);
 				await gc.sendShioriEvent("OnUpdateComplete", buildUpdateArgs("none"));
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				await (this as any).sendUpdateResultSummary(ghostName, true, 0, null);
 
 				return;
@@ -163,7 +163,7 @@ export const updateMethods = {
 
 			(this as unknown).showBalloon?.(
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).showBalloon?.(
 
 				`📥 更新ファイル $checkResult.total_count件をダウンロード中...`,
@@ -184,7 +184,7 @@ export const updateMethods = {
 
 				const updateResult: unknown = await invoke("execute_ghost_update", {
 
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				const _updateResult: any = await invoke("execute_ghost_update", {
 
 					ghostName,
@@ -212,7 +212,7 @@ export const updateMethods = {
 
 					await (this as unknown).sendUpdateResultSummary(
 
-					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 					await (this as any).sendUpdateResultSummary(
 
 						ghostName,
@@ -235,11 +235,11 @@ export const updateMethods = {
 					);
 					await (this as unknown).sendUpdateResultSummary(
 
-					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 					(this as any).showBalloon?.(
 						`❌ ネットワーク更新失敗: $failureReason`,
 					);
-					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 					await (this as any).sendUpdateResultSummary(
 
 						ghostName,
@@ -269,9 +269,9 @@ export const updateMethods = {
 				(this as unknown).showBalloon?.(`❌ 更新チェック失敗: $reason`);
 				await (this as unknown).sendUpdateResultSummary(
 
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				(this as any).showBalloon?.(`❌ 更新チェック失敗: $reason`);
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				await (this as any).sendUpdateResultSummary(
 
 					ghostName,
@@ -287,7 +287,7 @@ export const updateMethods = {
 
 			await (this as unknown).sendUpdateResultSummary(
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			await (this as any).sendUpdateResultSummary(
 
 				ghostName,
@@ -298,7 +298,7 @@ export const updateMethods = {
 
 			(this as unknown).showBalloon?.(
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).showBalloon?.(
 
 				`❌ 更新処理中にエラーが発生しました: $err`,
@@ -306,7 +306,7 @@ export const updateMethods = {
 		}
 	},
 
-	wait(ms: number): Promise<void> 
+	wait(ms: number): Promise<void>
 		return new Promise((resolve) => setTimeout(resolve, ms));,
 
 	async sendUpdateResultSummary(
@@ -319,7 +319,7 @@ export const updateMethods = {
 
 		const gc = (this as unknown).ghostController;
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const gc = (this as any).ghostController;
 
 		const sep = String.fromCharCode(1); // \1 (バイト値1)
@@ -330,7 +330,7 @@ export const updateMethods = {
 
 		const resEx: unknown = await gc.sendShioriEvent(`$baseEventEx`, [
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const resEx: any = await gc.sendShioriEvent(`$baseEventEx`, [
 
 			[ghostName, ...parts].join(sep),

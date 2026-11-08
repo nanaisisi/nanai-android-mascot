@@ -4,9 +4,8 @@ export async function initBalloonWindows(
 	_app: unknown,
 	_tokens: unknown[],
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	app: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_tokens: any[],
 
 	hasTextContent: boolean,

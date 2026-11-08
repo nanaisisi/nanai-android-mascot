@@ -53,7 +53,7 @@ export const menuThemeRenderer = {
 
 	applyShellTheme(activeShell: unknown) {
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	applyShellTheme(activeShell: any) {
 
 		const rootStyle = document.documentElement.style;
@@ -129,9 +129,9 @@ export const menuThemeRenderer = {
 				return (globalThis as unknown).__TAURI__?.core?.convertFileSrc
 					? (globalThis as unknown).__TAURI__.core.convertFileSrc(full)
 
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				return (globalThis as any).__TAURI__?.core?.convertFileSrc
-					? // biome-ignore lint/suspicious/noExplicitAny: automated fix
+					?
 						(globalThis as any).__TAURI__.core.convertFileSrc(full)
 
 					: full;

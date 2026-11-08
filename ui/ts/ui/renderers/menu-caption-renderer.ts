@@ -19,9 +19,7 @@ export const menuCaptionRenderer = {
 				(rootEl as unknown).getElementById?.(def.id) ||
 				(rootEl as unknown).querySelector?.(`#${def.id}`);
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(rootEl as any).getElementById?.(def.id) ||
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				(rootEl as any).querySelector?.(`#$def.id`);
 
 			if (!el) continue;
@@ -38,7 +36,6 @@ export const menuCaptionRenderer = {
 	async fetchShioriCaptions(
 		_ghostController: unknown,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		ghostController: any,
 	): Promise<Record<string, string>> {
 		if (!ghostController?.requestShioriResource) return {};

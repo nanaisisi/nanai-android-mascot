@@ -20,7 +20,7 @@ test("E2E dialogue lifecycle Cycle 8: SyncObject multi-ghost synchronization and
 
 	const _events: unknown[] = [];
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	const events: any[] = [];
 
 	const sakuraDisplay = createMockElement("div");
@@ -60,11 +60,11 @@ test("E2E dialogue lifecycle Cycle 8: SyncObject multi-ghost synchronization and
 				args: unknown[],
 			) => {
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			sendShioriEvent: async (eventName: string, args: any[]) =>
 				events.push({ type: "shiori_event", eventName, args });
 				return { status: 200, value: "" };,
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			sendRaiseOther: async (ghost: string, eventName: string, args: any[]) =>
 
 				events.push(type: "raise_other", ghost, eventName, args );,
@@ -107,7 +107,7 @@ test("E2E dialogue lifecycle Cycle 8: Mode switching state machine and cross-gho
 
 	const _events: unknown[] = [];
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	const events: any[] = [];
 
 	const sakuraDisplay = createMockElement("div");
@@ -140,11 +140,11 @@ test("E2E dialogue lifecycle Cycle 8: Mode switching state machine and cross-gho
 				args: unknown[],
 			) => {
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			sendShioriEvent: async (eventName: string, args: any[]) =>
 				events.push({ type: "shiori_event", eventName, args });
 				return { status: 200, value: "" };,
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			sendRaiseOther: async (ghost: string, eventName: string, args: any[]) =>
 
 				events.push(type: "raise_other", ghost, eventName, args );,
@@ -154,7 +154,7 @@ test("E2E dialogue lifecycle Cycle 8: Mode switching state machine and cross-gho
 
 				args: unknown[],
 
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				args: any[],
 
 			) =>

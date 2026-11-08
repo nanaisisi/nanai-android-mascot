@@ -12,12 +12,12 @@ export class ModalGhostHandlers {
 
 	constructor(manager: unknown) {
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	app: any;
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	manager: any;
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	constructor(manager: any)
 
 		this.manager = manager;
@@ -49,7 +49,7 @@ export class ModalGhostHandlers {
 						"pick_and_install_ghost_archive",
 					);
 
-					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 					const result: any = await invoke("pick_and_install_ghost_archive");
 
 					if (result) {
@@ -104,7 +104,7 @@ export class ModalGhostHandlers {
 
 					.then((result: unknown) => {
 
-					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 					.then((result: any) =>
 
 						if (result && statusEl) {
@@ -133,7 +133,7 @@ export class ModalGhostHandlers {
 						"pick_and_install_ghost_archive",
 					);
 
-					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 					const result: any = await invoke("pick_and_install_ghost_archive");
 
 					if (result && statusEl) {
@@ -178,7 +178,7 @@ export class ModalGhostHandlers {
 
 		ghosts.forEach((_ghost: unknown) =>
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		ghosts.forEach((ghost: any) => {
 
 			const item = document.createElement("div");
@@ -206,7 +206,7 @@ export class ModalGhostHandlers {
 
 			this.app.availableBalloons.forEach((_b: unknown) =>
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			this.app.availableBalloons.forEach((b: any) => {
 
 				const item = document.createElement("div");

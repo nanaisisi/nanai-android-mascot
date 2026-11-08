@@ -8,7 +8,7 @@ export function applyBaseFontProperties(
 	const el = root as HTMLElement;
 	if (props.id) el.style.setProperty("--balloon-id", String(props.id));
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _applyBaseFontProperties(root: any, props: Record<string, any>) {
 	if (props.id) root.style.setProperty("--balloon-id", props.id);
 

@@ -45,9 +45,9 @@ export class NanaiAndroidMascotApp {
 	availableBalloons?: unknown[];
 	availablePlugins?: unknown[];
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	availableBalloons?: any[];
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	availablePlugins?: any[];
 
 	balloonUserScale?: number;
@@ -107,11 +107,11 @@ export class NanaiAndroidMascotApp {
 		(this as unknown).setupEventListeners();
 		(this as unknown).applySettings();
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		(this as any).loadSettings();
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		(this as any).setupEventListeners();
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		(this as any).applySettings();
 
 
@@ -126,7 +126,7 @@ export class NanaiAndroidMascotApp {
 
 		(this as unknown).startSecondTimer();
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		(this as any).startSecondTimer();
 
 		this.isInitialized = true;
@@ -137,7 +137,7 @@ export class NanaiAndroidMascotApp {
 
 		return (this as unknown).scanBalloons?.() || [];
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		return (this as any).scanBalloons?.() || [];
 
 	}
@@ -148,7 +148,7 @@ export class NanaiAndroidMascotApp {
 
 			const _plugins: unknown = await invoke("scan_plugins");
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			const plugins: any = await invoke("scan_plugins");
 
 			if (plugins && plugins.length > 0) {
@@ -197,7 +197,7 @@ export class NanaiAndroidMascotApp {
 
 			(this.ghostController as unknown)?.stopSecondChangeTimer?.();
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this.ghostController as any)?.stopSecondChangeTimer?.();
 
 			if (isTauriAvailable()) {
@@ -224,11 +224,11 @@ export class NanaiAndroidMascotApp {
 			try {
 				await (this.ghostController as unknown).sendShioriEvent("OnClose");
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).hideMenu();
 			this.modalManager?.hide();
 			try {
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				await (this.ghostController as any).sendShioriEvent("OnClose");
 
 			} catch (_e) {}
@@ -253,7 +253,7 @@ globalThis.addEventListener("DOMContentLoaded", () => {
 
 	(_globalThis _as _unknown).mascotApp = new NanaiAndroidMascotApp();
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	(_globalThis _as _any).mascotApp = new NanaiAndroidMascotApp();
 
 });

@@ -6,7 +6,6 @@
 export type CommandHandlerFn = (
 	handler: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
 
 	args: string[],

@@ -19,7 +19,6 @@ function isInstance(obj) {
 export function onTalkStart(target = 0, scopeIdParam = 0) {
 	let _instance: unknown, _scopeId: unknown;
 
-	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId;
 
 	if (isInstance(target)) {
@@ -40,7 +39,6 @@ export function onTalkStart(target = 0, scopeIdParam = 0) {
 export function onTalkEnd(target = 0, scopeIdParam = 0) {
 	let _instance: unknown, _scopeId: unknown;
 
-	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId;
 
 	if (isInstance(target)) {
@@ -62,7 +60,6 @@ export function onTalkEnd(target = 0, scopeIdParam = 0) {
 export function onScriptEnd(target = 0, scopeIdParam = 0) {
 	let _instance: unknown, _scopeId: unknown;
 
-	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId;
 
 	if (isInstance(target)) {
@@ -81,7 +78,6 @@ export function onScriptEnd(target = 0, scopeIdParam = 0) {
 export function onCharSpoken(target = 0, scopeIdParam = 0) {
 	let _instance: unknown, _scopeId: unknown;
 
-	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId;
 
 	if (isInstance(target)) {

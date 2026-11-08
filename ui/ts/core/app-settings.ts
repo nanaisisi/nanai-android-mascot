@@ -9,9 +9,9 @@ export const settingsMethods = {
 				(this as unknown).settings =
 					...(this as unknown).settings,
 
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				(this as any).settings =
-					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 					...(this as any).settings,
 
 					...JSON.parse(saved),;
@@ -35,19 +35,19 @@ export const settingsMethods = {
 				`${Math.round((200 * scalePercent) / 100)}px`;
 			(this as unknown).elements.ghostDisplay.style.height =
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			!!(this as any).settings.darkMode,
 		);
 
 		// シェル倍率 (50%〜200%)
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const scalePercent = parseInt((this as any).settings.shellScale, 10) || 100;
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		if ((this as any).elements.ghostDisplay) {
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).elements.ghostDisplay.style.width =
 				`${Math.round((200 * scalePercent) / 100)}px`;
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).elements.ghostDisplay.style.height =
 
 				`${Math.round((400 * scalePercent) / 100)}px`;
@@ -75,27 +75,27 @@ export const settingsMethods = {
 			(this as unknown).settings.balloonTheme ||
 				(this as unknown).currentBalloonTheme ||
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			parseInt((this as any).settings.balloonScale, 10) || 100;
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		if ((this as any).elements.balloonDisplay) {
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).elements.balloonDisplay.style.transform =
 				`translateX(-50%) scale(${balloonPercent / 100})`;
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).elements.balloonDisplay.style.transformOrigin =
 				"bottom center";
 		}
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		(this as any).applyBalloonTheme();,
 
 	applyBalloonTheme()
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		(this as any).setBalloonTheme(
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).settings.balloonTheme ||
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				(this as any).currentBalloonTheme ||
 
 				"default",
@@ -111,15 +111,15 @@ export const settingsMethods = {
 			if (!isTauriAvailable()) {
 				(this as unknown).elements.balloonDisplay.style.display = "block";
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).elements.balloonText &&
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).elements.balloonDisplay
 		)
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).elements.balloonText.textContent = text;
 			if (!isTauriAvailable()) {
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				(this as any).elements.balloonDisplay.style.display = "block";
 
 			}
@@ -133,13 +133,13 @@ export const settingsMethods = {
 					emit(`update-balloon-content-$scopeId`, {
 						html: (this as unknown).elements.balloonText?.innerHTML || text,
 
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				theme: (this as any).currentBalloonTheme,)
 				.then(() =>
 					emit(`update-balloon-content-$scopeId`, {
-						// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 						html: (this as any).elements.balloonText?.innerHTML || text,
-						// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 						theme: (this as any).currentBalloonTheme || "default",
 );
 				})
@@ -154,9 +154,9 @@ export const settingsMethods = {
 		if ((this as unknown).elements.balloonDisplay) {
 			(this as unknown).elements.balloonDisplay.style.display = "none";
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		if ((this as any).elements.balloonDisplay) {
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).elements.balloonDisplay.style.display = "none";
 
 		}
@@ -190,36 +190,36 @@ export const settingsMethods = {
 					[lastScript, String(scopeId)],
 				);
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			const lastScript = (this as any).sakuraPlayer?.lastScript || "";
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			if ((this as any).ghostController?.sendBalloonCloseNotify) {
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				void (this as any).ghostController.sendBalloonCloseNotify(
 					lastScript,
 					scopeId,
 				);
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			} else if ((this as any).ghostController?.sendShioriEvent) {
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				void (this as any).ghostController.sendShioriEvent("OnBalloonClose", [
 					lastScript,
 					String(scopeId),
 				]);
 			}
 		} else if (reason === "break") {
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			const lastScript = (this as any).sakuraPlayer?.lastScript || "";
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			if ((this as any).ghostController?.sendBalloonBreakNotify) {
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				void (this as any).ghostController.sendBalloonBreakNotify(
 					lastScript,
 					scopeId,
 				);
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			} else if ((this as any).ghostController?.sendShioriEvent) {
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				void (this as any).ghostController.sendShioriEvent("OnBalloonBreak", [
 					lastScript,
 					String(scopeId),
@@ -233,19 +233,19 @@ export const settingsMethods = {
 
 		return (this as unknown).sakuraPlayer.play(script);
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		return (this as any).sakuraPlayer.play(script);
 ,
 
 	startSecondTimer()
-		document.addEventListener("visibilitychange", () => 
+		document.addEventListener("visibilitychange", () =>
 			if (document.visibilityState === "visible") {
 
 				(this as unknown).ghostController.sendShioriEvent(
 					"OnWindowStateRestore",
 				);
 
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				(this as any).ghostController.sendShioriEvent("OnWindowStateRestore");
 
 			});,

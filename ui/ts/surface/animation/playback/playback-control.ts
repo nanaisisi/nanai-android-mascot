@@ -32,7 +32,6 @@ export function playAnimationPatterns(
 		_baseSurfaceId: unknown,
 		_scopeId: unknown;
 
-	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, anim, baseSurfaceId, scopeId;
 
 	if (isInstance(target)) {
@@ -89,7 +88,6 @@ export async function playAnimationById(
 		_scopeId: unknown,
 		_waitForComplete: unknown;
 
-	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, animIdOrName, scopeId, waitForComplete;
 
 	if (isInstance(target)) {
@@ -136,7 +134,6 @@ export async function waitForAnimation(
 ) {
 	let _instance: unknown, _animIdOrName: unknown, _scopeId: unknown;
 
-	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, animIdOrName, scopeId;
 
 	if (isInstance(target)) {

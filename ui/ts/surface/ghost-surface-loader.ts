@@ -19,10 +19,10 @@ export const ghostSurfaceLoaderMethods = {
 		const _key = `${cmd}|${ghostPath}|${shellName}|${surfaceId}`;
 		const _pending = (this as unknown)._surfaceAssetCache.get(key);
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		(this as any)._surfaceAssetCache ??= new Map();
 		const key = `${cmd}|${ghostPath}|${shellName}|${surfaceId}`;
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		let pending = (this as any)._surfaceAssetCache.get(key);
 
 		if (!pending) {
@@ -37,13 +37,13 @@ export const ghostSurfaceLoaderMethods = {
 				(this as unknown)._surfaceAssetCache.delete(
 					(this as unknown)._surfaceAssetCache.keys().next().value,
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any)._surfaceAssetCache.set(key, pending);
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			if ((this as any)._surfaceAssetCache.size > 64) {
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				(this as any)._surfaceAssetCache.delete(
-					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 					(this as any)._surfaceAssetCache.keys().next().value,
 
 				);
@@ -59,11 +59,11 @@ export const ghostSurfaceLoaderMethods = {
 		(this as unknown).app?.surfaceManager?.chromaKeyCache?.clear();
 		(this as unknown).app?.surfaceManager?.baseCanvasCache?.clear();
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		(this as any)._surfaceAssetCache?.clear();
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		(this as any).app?.surfaceManager?.chromaKeyCache?.clear();
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		(this as any).app?.surfaceManager?.baseCanvasCache?.clear();
 ,
 };

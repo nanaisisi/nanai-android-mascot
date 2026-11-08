@@ -11,11 +11,10 @@ describe("ModalDialogController System Dialogs (Cycle 5)", () => {
 	let _controller: unknown;
 	let _sentEvents: unknown[];
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let app: any;
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	let controller: any;
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	let sentEvents: any[];
 
 	beforeEach(() => {

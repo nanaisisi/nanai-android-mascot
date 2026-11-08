@@ -14,9 +14,9 @@ export const menuMethods = {
 			const _sX = (globalThis as unknown).screenX ?? 0;
 			const _sY = (globalThis as unknown).screenY ?? 0;
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			const sX = (globalThis as any).screenX ?? 0;
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			const sY = (globalThis as any).screenY ?? 0;
 
 			const posX = screenX !== null ? screenX : sX + 200;
@@ -26,7 +26,7 @@ export const menuMethods = {
 
 				.then(() => (this as unknown).syncMenuGhosts(scope))
 
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				.then(() => (this as any).syncMenuGhosts(scope))
 
 				.catch((err) => {
@@ -57,34 +57,34 @@ export const menuMethods = {
 		if (nextState === "block") {
 			(this as unknown).syncMenuGhosts(scope);
 
-					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 					const gc = (this as any).ghostController;
 					invoke("show_context_menu", {
-						// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 						ghosts: (gc.ghosts || []).map((g: any) => g.name),
 						currentGhost: gc.currentGhost?.name || null,
 						shells: gc.shells || ["master"],
 						currentShell: gc.currentShell || "master",
-						// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 					}).catch(() => (this as any).toggleHtmlMenu(scope));
 				});
 			return;
 		}
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		(this _as _any).toggleHtmlMenu(scope);
 	},
 
 	toggleHtmlMenu(scope: number = 0) {
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		if (!(this as any).elements.menuContainer) return;
 		const isVisible =
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).elements.menuContainer.style.display !== "none";
 		const nextState = isVisible ? "none" : "block";
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		(this as any).elements.menuContainer.style.display = nextState;
 		if (nextState === "block") {
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).syncMenuGhosts(scope);
 
 		}
@@ -94,7 +94,7 @@ export const menuMethods = {
 
 		const _gc = (this as unknown).ghostController;
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const gc = (this as any).ghostController;
 
 		const shellNames = gc.shells || ["master"];
@@ -107,9 +107,9 @@ export const menuMethods = {
 			(this as unknown).surfaceManager?.shellManifest,
 			(this as unknown).surfaceManager,
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).surfaceManager?.shellManifest,
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).surfaceManager,
 
 		);
@@ -137,14 +137,14 @@ export const menuMethods = {
 			if ((this as unknown).availableBalloons) {
 				emit("sync-balloons", (this as unknown).availableBalloons);
 
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				captions: (this as any).cachedMenuCaptions || ,
 			});
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			emit("sync-theme", (this as any).currentBalloonTheme);
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			if ((this as any).availableBalloons) {
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				emit("sync-balloons", (this as any).availableBalloons);
 
 			}
@@ -163,7 +163,7 @@ export const menuMethods = {
 					dressup,
 					recentGhosts,
 
-					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 					captions: (this as any).cachedMenuCaptions || {},
 
 				},
@@ -189,14 +189,14 @@ export const menuMethods = {
 						balloons: (this as unknown).availableBalloons,
 					},
 
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				{ type: "sync-theme", theme: (this as any).currentBalloonTheme },
 				"*",
 			);
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			if ((this as any).availableBalloons) {
 				win.postMessage(
-					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 					{ type: "sync-balloons", balloons: (this as any).availableBalloons },
 
 					"*",
@@ -205,7 +205,7 @@ export const menuMethods = {
 		}
 	},
 
-	hideMenu() 
+	hideMenu()
 
 		if ((this as unknown).elements.menuContainer) {
 			(this as unknown).elements.menuContainer.style.display = "none";
@@ -218,36 +218,36 @@ export const menuMethods = {
 			(this as unknown).elements.quickActionsPanel.style.display !== "none";
 		(this as unknown).elements.quickActionsPanel.style.display = isVisible
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		if ((this as any).elements.menuContainer) {
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).elements.menuContainer.style.display = "none";
 		}
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		(this as any).hideQuickActionsPanel();
 	},
 
 	toggleQuickActionsPanel() {
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		if (!(this as any).elements.quickActionsPanel) return;
 		const isVisible =
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).elements.quickActionsPanel.style.display !== "none";
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		(this as any).elements.quickActionsPanel.style.display = isVisible
 
 			? "none"
 			: "flex";
 	},
 
-	hideQuickActionsPanel() 
+	hideQuickActionsPanel()
 
 		if ((this as unknown).elements.quickActionsPanel) {
 			(this as unknown).elements.quickActionsPanel.style.display = "none";
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		if ((this as any).elements.quickActionsPanel) {
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).elements.quickActionsPanel.style.display = "none";
 
 		}

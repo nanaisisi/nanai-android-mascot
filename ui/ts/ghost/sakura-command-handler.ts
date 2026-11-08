@@ -38,16 +38,16 @@ export class SakuraCommandHandler {
 
 	constructor(player: unknown) {
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	player: any;
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	app: any;
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	teachForm: any;
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	communicateForm: any;
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	constructor(player: any)
 
 		this.player = player;
@@ -74,7 +74,7 @@ export class SakuraCommandHandler {
 
 	openTeachBox(params: string[] = [], options: unknown = )
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	openTeachBox(params: string[] = [], options: any = )
 
 		openTeachBox(this, params, options);
@@ -100,7 +100,7 @@ export class SakuraCommandHandler {
 
 	expandEnv(script: string, options: unknown = )
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	expandEnv(script: string, options: any = )
 
 		return expandSakuraScriptEnv(script, {

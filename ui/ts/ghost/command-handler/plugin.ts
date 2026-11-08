@@ -8,7 +8,7 @@ import { invoke, isTauriAvailable } from "../../core/tauri-helper.js";
 
 export async function handlePluginEvent(_handler: unknown, _args: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _handlePluginEvent(_handler: any, args: string[]) {
 
 	const rawCmd = (args[0] ?? "").toLowerCase();

@@ -8,7 +8,7 @@ describe("Sakura command window handlers", () => {
 
 	let _originalTauri: unknown;
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	let originalTauri: any;
 
 

@@ -233,7 +233,6 @@ test("actionMethods covers all spread helper functions directly", async () => {
 	for (const key of Object.keys(actionMethods)) {
 		const _fn = (actionMethods as unknown)[key];
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const fn = (actionMethods as any)[key];
 
 		if (typeof fn === "function") {

@@ -3,10 +3,10 @@ const _shioriInstance: unknown = null;
 const _isLoaded = false;
 const _memoryBuffer: unknown = null;
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 let shioriInstance: any = null;
 let isLoaded = false;
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 let _memoryBuffer: any = null;
 
 
@@ -39,11 +39,11 @@ self.addEventListener("message", async (e: MessageEvent) => {
 						(instance.exports.load as unknown) ||
 						(instance.exports.shiori_load as unknown);
 
-					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 					const loadFn: any =
-						// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 						(instance.exports.load as any) ||
-						// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 						(instance.exports.shiori_load as any);
 
 					if (typeof loadFn === "function") {
@@ -61,12 +61,12 @@ self.addEventListener("message", async (e: MessageEvent) => {
 				isLoaded = false;
 				(self as unknown).postMessage({
 
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				(_self _as _any).postMessage({ type: "LOAD_RESULT", id, success: true });
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			} catch (err: any) {
 				isLoaded = false;
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				(self as any).postMessage({
 
 					type: "LOAD_RESULT",
@@ -83,7 +83,7 @@ self.addEventListener("message", async (e: MessageEvent) => {
 
 					(self as unknown).postMessage(
 
-					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 					(self as any).postMessage(
 
 						type: "REQUEST_RESULT",
@@ -95,7 +95,7 @@ self.addEventListener("message", async (e: MessageEvent) => {
 
 				const _responseText = (self as unknown).executeWasmRequest(
 
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				const _responseText = (self as any).executeWasmRequest(
 
 					shioriInstance,
@@ -105,7 +105,7 @@ self.addEventListener("message", async (e: MessageEvent) => {
 
 				(self as unknown).postMessage(
 
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				(self as any).postMessage(
 
 					type: "REQUEST_RESULT",
@@ -114,7 +114,7 @@ self.addEventListener("message", async (e: MessageEvent) => {
 catch (err: unknown)
 				(self as unknown).postMessage(
 catch (err: any)
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				(self as any).postMessage(
 
 					type: "REQUEST_RESULT",
@@ -130,11 +130,11 @@ catch (err: any)
 						(shioriInstance.exports.unload as unknown) ||
 						(shioriInstance.exports.shiori_unload as unknown);
 
-					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 					const unloadFn: any =
-						// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 						(shioriInstance.exports.unload as any) ||
-						// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 						(shioriInstance.exports.shiori_unload as any);
 
 					if (typeof unloadFn === "function") {
@@ -154,12 +154,12 @@ catch (err: any)
 		default:
 			(self as unknown).postMessage(
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(self as any).postMessage(type: "UNLOAD_RESULT", id, success: true );
 			break;
 
 		default:
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(self as any).postMessage(
 
 				type: "ERROR",

@@ -97,7 +97,6 @@ test("invoke, listen, emit, moveCurrentWindowBy, getCurrentWindowPosition, and i
 		ipcQueueStats,
 	);
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	assert.equal((globalThis as any).__NANAI_IPC_QUEUE_STATS__, ipcQueueStats);
 
 	// 1. invoke when Tauri unavailable (throws error)

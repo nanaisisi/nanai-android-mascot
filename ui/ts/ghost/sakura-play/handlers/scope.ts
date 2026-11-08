@@ -13,7 +13,7 @@ export function handleScope(
 	_context: unknown,
 ) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _handleScope(player: any, app: any, token: any, context: any) {
 
 	const {
@@ -74,13 +74,13 @@ export function _handleBalloon(
 	_token: unknown,
 	_context: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	player: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_app: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	token: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	context: any,
 
 ) {
@@ -101,13 +101,13 @@ export function _handleInlineBitmap(
 	_token: unknown,
 	_context: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_player: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	app: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	token: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	context: any,
 
 ) {
@@ -127,9 +127,9 @@ export function _handleInlineBitmap(
 	img.src = (globalThis as unknown).__TAURI__?.core?.convertFileSrc
 		? (globalThis as unknown).__TAURI__.core.convertFileSrc(fullPath)
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	img.src = (globalThis as any).__TAURI__?.core?.convertFileSrc
-		? // biome-ignore lint/suspicious/noExplicitAny: automated fix
+		?
 			(globalThis as any).__TAURI__.core.convertFileSrc(fullPath)
 
 		: fullPath;

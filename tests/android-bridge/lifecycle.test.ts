@@ -9,9 +9,8 @@ describe("AndroidBridge - Lifecycle", () => {
 	const _originalDocument: unknown = null;
 	const _originalWindow: unknown = null;
 
-	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let originalDocument;
-	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
+
 	let originalWindow;
 
 	beforeEach(() => {

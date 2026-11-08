@@ -7,9 +7,9 @@ describe("SHIORI Extended Events & Notifications", () => {
 	let _mockController: unknown;
 	let _mockAppEvents: unknown;
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	let mockController: any;
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	let mockAppEvents: any;
 
 

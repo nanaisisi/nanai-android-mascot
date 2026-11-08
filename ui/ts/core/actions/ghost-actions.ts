@@ -35,13 +35,13 @@ export const ghostActions = {
 			!(this as unknown).modalManager?.content ||
 			!(this as unknown).modalManager?.overlay
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const ghost = (this as any).ghostController?.currentGhost;
 		if (
 			!ghost ||
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			!(this as any).modalManager?.content ||
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			!(this as any).modalManager?.overlay
 
 		) {
@@ -51,7 +51,7 @@ export const ghostActions = {
 
 		const _escapeHtml = (_value: unknown) =>
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const escapeHtml = (_value: any) =>
 
 			String(value ?? "不明")
@@ -66,11 +66,11 @@ export const ghostActions = {
 
 		(this as unknown).modalManager.content.innerHTML = `
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const row = (label: string, value: any) =>
 			`<div class="info-item"><strong>${escapeHtml(label)}:</strong> <span>$escapeHtml(value)</span></div>`;
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		(this as any).modalManager.content.innerHTML = `
 
       <h2>👻 ゴースト情報</h2>
@@ -97,7 +97,7 @@ export const ghostActions = {
 	},
 
 	async uninstallCurrentGhost() {
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const gc = (this as any).ghostController;
 
 		const name = gc.currentGhost?.name;
@@ -122,12 +122,12 @@ export const ghostActions = {
 			await gc.scanGhosts();
 			const _next = (gc.ghosts || []).find((g: unknown) => g.name !== name);
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).showBalloon(`ゴースト「$name」を削除しました`);
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			setTimeout(() => (this as any).hideBalloon(), 2500);
 			await gc.scanGhosts();
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			const next = (gc.ghosts || []).find((g: any) => g.name !== name);
 
 			if (next) {
@@ -141,9 +141,9 @@ export const ghostActions = {
 			(this as unknown).showBalloon(`アンインストールに失敗しました: $err`);
 			setTimeout(() => (this as unknown).hideBalloon(), 3000);
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).showBalloon(`アンインストールに失敗しました: $err`);
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			setTimeout(() => (this as any).hideBalloon(), 3000);
 
 		}
@@ -156,10 +156,10 @@ export const ghostActions = {
 		}
 		const _gc = (this as unknown).ghostController;
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			return (this as any).modalManager?.show("install-modal-content");
 		}
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const gc = (this as any).ghostController;
 
 		try {
@@ -178,18 +178,18 @@ export const ghostActions = {
 			const _importedGhost = (this as unknown).ghostController.ghosts.find(
 				(ghost: unknown) => ghost.name === result.name,
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			const result: any = await invoke("pick_and_install_ghost_archive");
 			if (!result) return;
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			await (this as any).ghostController.scanGhosts();
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			await (this as any).scanBalloons();
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			const importedGhost = (this as any).ghostController.ghosts.find(
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				(ghost: any) => ghost.name === result.name,
 
 			);
@@ -215,19 +215,19 @@ export const ghostActions = {
 			const _importedBalloon = (this as unknown).availableBalloons?.find(
 				(_balloon: unknown) =>
 
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				(this as any).showBalloon?.(
 					`ゴースト「${importedGhost.name}」を導入しました`,
 				);
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				setTimeout(() => (this as any).hideBalloon?.(), 2000);
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				await (this as any).ghostController?.selectGhost?.(importedGhost.name);
 				return;
 			}
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			const importedBalloon = (this as any).availableBalloons?.find(
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				(_balloon: any) =>
 
 					balloon.name === result.name || balloon.dir_name === result.name,
@@ -252,13 +252,13 @@ export const ghostActions = {
 				);
 				setTimeout(() => (this as unknown).hideBalloon(), 2000);
 
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				await (this as any).setBalloonTheme(importedBalloon.dir_name);
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				(this as any).showBalloon(
 					`バルーン「${importedBalloon.name}」を導入しました`,
 				);
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				setTimeout(() => (this as any).hideBalloon(), 2000);
 
 				return;
@@ -277,7 +277,7 @@ export const ghostActions = {
 
 			(this as unknown).modalManager?.showNotification(
 
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).modalManager?.showNotification(
 
 				"ゴースト取り込み失敗",
@@ -312,7 +312,7 @@ export const ghostActions = {
 
 		const _sm = (this as unknown).surfaceManager;
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const sm = (this as any).surfaceManager;
 
 		if (!sm || !payload?.category) return;
@@ -332,12 +332,12 @@ export const ghostActions = {
 			const _cat = bindMenuData(sm.shellManifest, scopeId).categories.find(
 				(c: unknown) => c.category === category,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		let siblingParts: any[] = [];
 		if (sm.shellManifest) {
 			const { bindMenuData } = await import("../../surface/bind-menu.js");
 			const cat = bindMenuData(sm.shellManifest, scopeId).categories.find(
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 				(c: any) => c.category === category,
 
 			);
@@ -363,15 +363,15 @@ export const ghostActions = {
 		const _next = ghosts[(idx + 1) % ghosts.length];
 		if (next) (this as unknown).ghostController?.selectGhost?.(next.name);
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const ghosts = (this as any).ghostController?.ghosts || [];
 		if (ghosts.length <= 1) return;
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const currentName = (this as any).ghostController?.currentGhost?.name;
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const idx = ghosts.findIndex((g: any) => g.name === currentName);
 		const next = ghosts[(idx + 1) % ghosts.length];
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		if (next) (this as any).ghostController?.selectGhost?.(next.name);
 
 	},
@@ -384,11 +384,11 @@ export const ghostActions = {
 			(this as unknown).elements.ghostDisplay.style.width = conf.width;
 			(this as unknown).elements.ghostDisplay.style.height = conf.height;
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		if ((this as any).elements.ghostDisplay) {
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).elements.ghostDisplay.style.width = conf.width;
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).elements.ghostDisplay.style.height = conf.height;
 
 		}
@@ -409,17 +409,17 @@ export const ghostActions = {
 				"OnWindowStateMinimize",
 			);
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		(this as any).showBalloon(`シェル倍率を $scalePercent% に変更しました`);
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		setTimeout(() => (this as any).hideBalloon(), 1500);
 	},
 
 	minimizeApp()
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		(this as any).hideMenu();
 		try {
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			(this as any).ghostController.sendShioriEvent("OnWindowStateMinimize");
 
 		} catch (_e) {}

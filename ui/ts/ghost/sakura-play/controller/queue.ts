@@ -6,7 +6,7 @@
 
 export function enqueue(this: unknown, _script: string): Promise<unknown> {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _enqueue(this: any, script: string): Promise<any> {
 
 	return new Promise((resolve, reject) => {
@@ -28,7 +28,7 @@ export function _enqueuePriority(
 	_script: string,
 ): Promise<unknown> {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _enqueuePriority(this: any, script: string): Promise<any> {
 
 	return new Promise((resolve, reject) => {
@@ -52,7 +52,7 @@ export function _enqueuePriority(this: any, script: string): Promise<any> {
 
 export function _interrupt(this: unknown, _script: string): Promise<unknown> {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _interrupt(this: any, script: string): Promise<any> {
 
 	if (this.player) {
@@ -64,7 +64,7 @@ export function _interrupt(this: any, script: string): Promise<any> {
 
 export function _dequeue(this: unknown) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _dequeue(this: any) {
 
 	const job = this.queue.shift();
@@ -77,7 +77,7 @@ export function _dequeue(this: any) {
 
 export function _clearQueue(this: unknown) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _clearQueue(this: any) {
 
 	const canceled = [...this.queue];
@@ -91,7 +91,7 @@ export function _clearQueue(this: any) {
 
 export function _stop(this: unknown) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _stop(this: any) {
 
 	this.clearQueue();
@@ -109,7 +109,7 @@ export function _stop(this: any) {
 
 export function _destroy(this: unknown) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _destroy(this: any) {
 
 	this.stop();
@@ -127,7 +127,7 @@ export function _destroy(this: any) {
 
 export function _pause(this: unknown) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _pause(this: any) {
 
 	if (!this.isPaused) {
@@ -139,7 +139,7 @@ export function _pause(this: any) {
 
 export function _resume(this: unknown) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _resume(this: any) {
 
 	if (this.isPaused) {
@@ -168,28 +168,28 @@ export function _hasPendingJobs(this: unknown): boolean {
 
 export function _peekNextJob(this: unknown) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _getQueue(this: any) {
 	return [...this.queue];
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _getQueueSnapshot(this: any) {
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	return this.queue.map((job: any) => ({ id: job.id, script: job.script }));
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _getQueueLength(this: any): number {
 	return this.queue.length;
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _hasPendingJobs(this: any): boolean {
 	return this.isProcessing || this.queue.length > 0;
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _peekNextJob(this: any) {
 
 	if (this.queue.length === 0) return null;
@@ -220,32 +220,32 @@ export function _isEmpty(this: unknown): boolean {
 
 export function _getStatus(this: unknown) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _getCurrentJob(this: any) {
 	return this.currentJob;
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _getIsPaused(this: any): boolean {
 	return this.isPaused;
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _getIsProcessing(this: any): boolean {
 	return this.isProcessing;
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _getIsQuickMode(this: any): boolean {
 	return this.isQuickMode;
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _isEmpty(this: any): boolean {
 	return this.queue.length === 0;
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _getStatus(this: any) {
 
 	return {
@@ -262,7 +262,7 @@ export function _getStatus(this: any) {
 
 export async function _processQueue(this: unknown) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export async function _processQueue(this: any) {
 
 	if (this.isProcessing || this.isPaused || this.queue.length === 0) {

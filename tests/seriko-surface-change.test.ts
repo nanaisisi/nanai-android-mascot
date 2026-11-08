@@ -98,7 +98,7 @@ describe("SERIKO and Surface Change Event Coordination (Slot-08 Cycle 8)", () =>
 
 		const mockManager: unknown = {
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const _mockManager: any = {
 ,
 			animationsForTrigger: vi
@@ -125,7 +125,7 @@ describe("SERIKO and Surface Change Event Coordination (Slot-08 Cycle 8)", () =>
 
 		const instance: unknown = {
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const _instance: any = {
 ,
 				currentSurfaceIdFor: vi.fn().mockReturnValue(0),
@@ -160,7 +160,7 @@ describe("SERIKO and Surface Change Event Coordination (Slot-08 Cycle 8)", () =>
 
 		const _sam = new SurfaceAnimationManager({} as unknown);
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const sam = new SurfaceAnimationManager({} as any);
 
 		expect(sam.isSerikoTalkEnabled(0)).toBe(true);

@@ -6,7 +6,7 @@
 
 export function setWaitMultiplier(this: unknown, _ratio: number) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _setWaitMultiplier(this: any, ratio: number) {
 
 	const valid = typeof ratio === "number" && !Number.isNaN(ratio) && ratio >= 0;
@@ -27,12 +27,12 @@ export function _setBalloonWait(
 	_param: string | number | undefined,
 ) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _getWaitMultiplier(this: any): number {
 	return this.waitMultiplier;
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _setBalloonWait(this: any, param: string | number | undefined) {
 
 	if (param === undefined || param === null || param === "" || param === "1") {
@@ -70,7 +70,7 @@ export function _setBalloonWait(this: any, param: string | number | undefined) {
 
 export function _resetBalloonWait(this: unknown) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _resetBalloonWait(this: any) {
 
 	this.waitMultiplier = 1.0;
@@ -85,7 +85,7 @@ export function _calculateWait(
 
 	this: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	this: any,
 
 	baseMs: number,
@@ -102,7 +102,7 @@ export function _calculateWait(
 
 export function _setQuickMode(this: unknown, _enable?: boolean) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _setQuickMode(this: any, enable?: boolean) {
 
 	const prev = this.isQuickMode;

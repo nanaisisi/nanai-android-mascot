@@ -7,7 +7,7 @@ export function openInputBox(
 
 	_handler: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	handler: any,
 
 	params: string[],
@@ -79,7 +79,7 @@ export function openInputBox(
 
 	const _timer: unknown = null;
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	let timer: any = null;
 
 
@@ -110,7 +110,7 @@ export function openInputBox(
 
 	input.addEventListener("keydown", (_e: unknown) =>
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	input.addEventListener("keydown", (_e: any) =>
 
 		if (e.key === "Enter") {
@@ -137,12 +137,12 @@ export function _openPasswordInput(handler: unknown, params: string[]) {
 
 export function _openTextAreaBox(_handler: unknown, _params: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _openPasswordInput(handler: any, params: string[]) {
 	return openInputBox(handler, params, true);
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _openTextAreaBox(handler: any, params: string[]) {
 
 	if (handler.app?.modalDialogController?.openTextAreaBox) {
@@ -157,7 +157,7 @@ export function _openTextAreaBox(handler: any, params: string[]) {
 
 export function _openSliderInput(_handler: unknown, _params: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _openSliderInput(handler: any, params: string[]) {
 
 	if (handler.app?.modalDialogController?.openSliderInput) {
@@ -172,7 +172,7 @@ export function _openSliderInput(handler: any, params: string[]) {
 
 export function _openIpInput(_handler: unknown, _params: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _openIpInput(handler: any, params: string[]) {
 
 	if (handler.app?.modalDialogController?.openIpInput) {
@@ -187,7 +187,7 @@ export function _openIpInput(handler: any, params: string[]) {
 
 export function _openDateInput(_handler: unknown, _params: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _openDateInput(handler: any, params: string[]) {
 
 	if (handler.app?.modalDialogController?.openDateInput) {
@@ -202,7 +202,7 @@ export function _openDateInput(handler: any, params: string[]) {
 
 export function _openTimeInput(_handler: unknown, _params: string[]) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _openTimeInput(handler: any, params: string[]) {
 
 	if (handler.app?.modalDialogController?.openTimeInput) {
@@ -220,7 +220,7 @@ export function closeInputBox(
 	_paramsOrNotify: unknown = false,
 ) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _closeInputBox(handler: any, paramsOrNotify: any = false) {
 
 	let notifyCancel = false;
@@ -249,12 +249,12 @@ export function _closeTextAreaBox(
 	_paramsOrNotify: unknown = false,
 ) {
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		(f as any).remove?.();
 	}
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _closeTextAreaBox(handler: any, paramsOrNotify: any = false) {
 
 	if (handler.app?.modalDialogController?.closeTextAreaBox) {
@@ -270,7 +270,7 @@ export function _closeTextAreaBox(handler: any, paramsOrNotify: any = false) {
 
 export function _closeDialog(_handler: unknown, _paramsOrNotify: unknown = false) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _closeDialog(handler: any, paramsOrNotify: any = false) {
 
 	if (handler.app?.modalDialogController?.closeDialog) {

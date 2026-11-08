@@ -10,9 +10,9 @@ describe("TouchGestureRecognizer - RAF Throttle & Screen Snap", () => {
 	const _element: unknown = null;
 	const _recognizer: unknown = null;
 
-	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
+
 	let element;
-	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
+
 	let recognizer;
 
 

@@ -19,7 +19,6 @@ function clampChannel(val: number): number {
 export function rgbFromComponents(
 	_props: Record<string, unknown>,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	props: Record<string, any>,
 
 	base: string,

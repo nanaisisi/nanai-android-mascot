@@ -15,11 +15,11 @@ export class InteractionManager {
 
 	constructor(app: unknown) {
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	app: any;
 	balloonDragManager: BalloonDragManager;
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	constructor(app: any)
 
 		this.app = app;
@@ -51,11 +51,11 @@ export class InteractionManager {
 		onGhostStroke: unknown,
 		options: unknown = {},
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		onGhostClick: any,
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		onGhostStroke: any,
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		options: any = {},
 
 	) {

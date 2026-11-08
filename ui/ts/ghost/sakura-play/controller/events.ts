@@ -19,8 +19,8 @@ export function on(
 	if (!self.listeners.has(event)) {
 		self.listeners.set(event, new Set());
 
-// biome-ignore lint/complexity/noBannedTypes: automated fix
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
+
 export function _on(this: any, event: string, handler: Function): () => void {
 	if (!this.listeners.has(event)) {
 		this.listeners.set(event, new Set());
@@ -35,8 +35,8 @@ export function _off(this: unknown, event: string, _handler: ListenerFn) {
 	const self = this as ControllerWithListeners;
 	const _handlers = self.listeners.get(event);
 
-// biome-ignore lint/complexity/noBannedTypes: automated fix
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
+
 export function _off(this: any, event: string, handler: Function) {
 	const handlers = this.listeners.get(event);
 
@@ -57,13 +57,13 @@ export function _emit(this: unknown, event: string, ...args: unknown[]) {
 			try {
 				handler(...args);
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _emit(this: any, event: string, ...args: any[]) {
 	const handlers = this.listeners.get(event);
 	if (handlers) {
 		for (const handler of Array.from(handlers)) {
 			try {
-				// biome-ignore lint/complexity/noBannedTypes: automated fix
+
 				(handler as Function)(...args);
 
 			} catch (err) {

@@ -71,13 +71,12 @@ export async function handleToken(
 	_token: unknown,
 	_context: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	player: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	app: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	token: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	context: any,
 ) {
 	switch (token.type) {

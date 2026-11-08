@@ -187,7 +187,7 @@ test("shioriNotifyMethods covers lifecycle, dialog, balloon, surface, and overla
 
 	const calls: unknown[] = [];
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	const calls: any[] = [];
 
 	const _controller = {
@@ -202,11 +202,11 @@ test("shioriNotifyMethods covers lifecycle, dialog, balloon, surface, and overla
 			return "ok";,
 		transformCallback: (cb: unknown) => cb,
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		invoke: async (cmd: string, args: any) =>
 			calls.push(cmd, args );
 			return "ok";,
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		transformCallback: (cb: any) => cb,
 
 	};
@@ -338,7 +338,7 @@ test("shioriNotifyMethods covers lifecycle, dialog, balloon, surface, and overla
 
 	delete (globalThis as unknown).__TAURI_INTERNALS__;
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	delete (globalThis as any).__TAURI_INTERNALS__;
 
 });

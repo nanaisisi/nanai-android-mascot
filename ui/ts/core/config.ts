@@ -10,9 +10,9 @@ export const AppConfig: {
 	shiori?: Record<string, unknown>;
 	state?: Record<string, unknown>;
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	shiori?: Record<string, any>;
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	state?: Record<string, any>;
 
 } = {
@@ -60,10 +60,10 @@ export async function loadAppConfig(): Promise<void> {
 		if (tauriInternals?.invoke) {
 			const _config: unknown = await tauriInternals.invoke("get_app_config");
 
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 		const tauriInternals = (globalThis as any).__TAURI_INTERNALS__;
 		if (tauriInternals?.invoke) {
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 			const config: any = await tauriInternals.invoke("get_app_config");
 
 

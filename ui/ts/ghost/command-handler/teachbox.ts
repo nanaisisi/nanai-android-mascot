@@ -9,10 +9,10 @@ export function openTeachBox(
 	_params: string[] = [],
 	_options: unknown = {},
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	handler: any,
 	params: string[] = [],
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	options: any = {},
 
 ) {
@@ -109,7 +109,7 @@ export function openTeachBox(
 
 export function closeTeachBox(_handler: unknown) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _closeTeachBox(handler: any) {
 
 	if (handler.teachForm) {

@@ -168,7 +168,7 @@ export function buildInstallRerouteArgs(
 
 export function parseErrorReason(_err: unknown): string {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function parseErrorReason(err: any): string {
 
 	const msg = String(err?.message || err || "").toLowerCase();
@@ -226,7 +226,7 @@ export const _parseInstallErrorReason = parseErrorReason;
 
 export function _buildInstallFailureArgs(_errorOrReason: unknown): [string] {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _buildInstallFailureArgs(errorOrReason: any): [string] {
 
 	const reason = parseErrorReason(errorOrReason);

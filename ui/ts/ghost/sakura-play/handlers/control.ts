@@ -10,13 +10,13 @@ export async function handlePause(
 	_token: unknown,
 	_context: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	player: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_app: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	token: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	context: any,
 
 ) {
@@ -55,13 +55,13 @@ export function handleQuickToggle(
 	_token: unknown,
 	_context: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	player: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_app: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	token: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	context: any,
 
 ) {
@@ -80,13 +80,13 @@ export async function handleWait(
 	_token: unknown,
 	_context: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	player: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_app: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	token: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	context: any,
 
 ) {
@@ -112,13 +112,13 @@ export function handleTimeout(
 	_token: unknown,
 	_context: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	player: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_app: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_token: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_context: any,
 
 ) {
@@ -132,13 +132,13 @@ export function handleChoiceTimeout(
 	_token: unknown,
 	_context: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	player: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_app: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	token: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_context: any,
 
 ) {
@@ -152,13 +152,13 @@ export function handleBalloonTimeout(
 	_token: unknown,
 	_context: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	player: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_app: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	token: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_context: any,
 
 ) {
@@ -172,13 +172,13 @@ export async function handleHalt(
 	_token: unknown,
 	_context: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_player: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	app: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_token: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_context: any,
 
 ) {
@@ -192,13 +192,13 @@ export function handleSyncToggle(
 	_token: unknown,
 	_context: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	player: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_app: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	token: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_context: any,
 
 ) {
@@ -219,13 +219,13 @@ export async function handleCommand(
 	_token: unknown,
 	_context: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	player: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_app: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	token: any,
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	_context: any,
 
 ) {
@@ -240,7 +240,7 @@ export function handleEnd(
 	_context: unknown,
 ) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _handleEnd(_player: any, app: any, _token: any, context: any) {
 
 	app.surfaceManager?.onTalkEnd(player.currentScope);

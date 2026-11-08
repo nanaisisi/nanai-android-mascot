@@ -6,7 +6,7 @@
 
 export function openCommunicateBox(_handler: unknown, _params: string[] = []) {
 
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 export function _openCommunicateBox(handler: any, params: string[] = []) {
 
 	closeCommunicateBox(handler, false);
@@ -72,7 +72,7 @@ export function _openCommunicateBox(handler: any, params: string[] = []) {
 
 	const _timer: unknown = null;
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	let timer: any = null;
 
 	handler.communicateForm = form;
@@ -135,7 +135,7 @@ export function closeCommunicateBox(
 
 	handler: unknown,
 
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+
 	handler: any,
 
 	notifyCancel: boolean = false,

@@ -1,39 +1,12 @@
-//! SSTP handler and notification module
+//! SSTP リクエスト受信用・処理実行モジュール
 
-use super::parser::parse_raw_sstp_request;
-use super::types::{SstpBlacklistingEvent, SstpBreakEvent, SstpRequest, SstpResponse};
+use crate::sstp::parser::parse_raw_sstp_request;
+use crate::sstp::types::{SstpRequest, SstpResponse};
 use nanai_android_mascot_ui::sstp::{
-    SstpEventBuilder, SstpGhostConfig, SstpGhostContext, handle_execute_command,
+    SstpGhostConfig, SstpGhostContext, handle_execute_command,
 };
 use std::collections::HashMap;
 use tauri::Emitter;
-
-/// SSTP 中断 (Break) を通知し OnSSTPBreak イベントペイロードを構築する
-#[tauri::command]
-pub async fn notify_sstp_break(
-    event: SstpBreakEvent,
-    app_handle: tauri::AppHandle,
-) -> Result<HashMap<String, String>, String> {
-    let params =
-        SstpEventBuilder::build_on_sstp_break(&event.script, event.scope, event.break_position);
-    app_handle
-        .emit("sstp-break", &params)
-        .map_err(|e| e.to_string())?;
-    Ok(params)
-}
-
-/// クライアントのブラックリスト登録を通知し OnSSTPBlacklisting イベントペイロードを構築する
-#[tauri::command]
-pub async fn notify_sstp_blacklisting(
-    event: SstpBlacklistingEvent,
-    app_handle: tauri::AppHandle,
-) -> Result<HashMap<String, String>, String> {
-    let params = SstpEventBuilder::build_on_sstp_blacklisting(&event.client_ip);
-    app_handle
-        .emit("sstp-blacklisting", &params)
-        .map_err(|e| e.to_string())?;
-    Ok(params)
-}
 
 #[tauri::command]
 pub async fn send_sstp_request(
@@ -68,9 +41,8 @@ pub async fn send_sstp_request_with_config(
     }
 
     // ReceiverGhostName / ReceiverGhostHWnd の宛先検証 (UKADOC SSTP req_res 規格準拠)
-    // 指定されたゴーストが存在しない、または合致しない場合は 404 Not Found を返却
     if let Some(ref target_name) = request.receiver_ghost_name {
-        let current_name = "Nanai"; // デフォルト/アクティブゴースト名
+        let current_name = "Nanai";
         if !target_name.eq_ignore_ascii_case(current_name) {
             return Ok(SstpResponse {
                 status: "404 Not Found".to_string(),
@@ -83,7 +55,6 @@ pub async fn send_sstp_request_with_config(
         }
     }
     if let Some(target_hwnd) = request.receiver_ghost_hwnd {
-        // HWND 指定がある場合、0 (未設定) 以外の不一致をチェック
         let current_hwnd = 0u64;
         if current_hwnd != 0 && target_hwnd != current_hwnd {
             return Ok(SstpResponse {

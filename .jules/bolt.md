@@ -35,3 +35,6 @@
 ## 2026-11-08 - [UKADOC Compliance Audit Engine Conflict Prevention & Scoped Sync]
 **Learning:** Running batch spec updates across all audit READMEs causes substantial git churn and increases merge conflict risk in a 15-slot parallel engineering workflow. Isolating `--target` matching and implementing idempotent `--sync-readmes` (only modifying files when content differs) keeps the codebase clean and safe.
 **Action:** When updating compliance tables or tooling, default to safe dry-run/read-only behavior, scope operations with exact category filters, and verify that 0 unexpected files are touched.
+## 2026-11-13 - [Fast Case-Insensitive Tooltip and Cursor Lookups]
+**Learning:** In `ui/ts/surface/surface-collision.ts`, `getTooltipForCollision` and `getCursorForCollision` used O(N) linear array and object traversals per collision check. By caching a lazily built case-folded `Map` in a module-scoped `WeakMap` keyed by the tooltip or cursor configuration objects (matching the pattern previously used for surface aliases), lookups were converted to O(1) operations, significantly optimizing the collision resolution hot path.
+**Action:** Always prefer `WeakMap<object, Map<string, V>>` for fast case-insensitive lookups on immutable configuration objects to turn repeated O(N) scans into O(1) lookups without causing memory leaks.

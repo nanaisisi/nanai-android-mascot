@@ -2,7 +2,6 @@
  * @file tests.rs
  * @brief アンダースコア系ブラケットコマンドハンドラー単体テスト
  */
-
 use super::handlers::*;
 
 #[test]

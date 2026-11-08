@@ -2,7 +2,6 @@
  * @file tests.rs
  * @brief 設定系ブラケットコマンドハンドラー単体テスト
  */
-
 use super::handlers::*;
 
 #[test]

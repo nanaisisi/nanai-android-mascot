@@ -2,7 +2,6 @@
  * @file full_coverage.rs
  * @brief MultiStageShioriLoader の全機能カバレッジ（サスペンド/レジューム/アンロード/再読み込み異常系）単体テスト
  */
-
 use super::*;
 
 #[test]

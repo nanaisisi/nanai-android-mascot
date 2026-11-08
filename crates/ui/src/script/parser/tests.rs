@@ -2,7 +2,6 @@
  * @file tests.rs
  * @brief parse_sakura_script の総合動作単体テスト
  */
-
 use super::*;
 
 #[test]

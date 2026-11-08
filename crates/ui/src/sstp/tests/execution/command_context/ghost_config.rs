@@ -2,7 +2,6 @@
  * @file ghost_config.rs
  * @brief SstpGhostConfig の descript パースおよびリクエストバリデーション単体テスト
  */
-
 use super::*;
 
 #[test]

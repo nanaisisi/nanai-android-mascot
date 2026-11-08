@@ -2,7 +2,6 @@
  * @file names_status.rs
  * @brief GetName, GetGhostName, GetStatus 等の名前・状態取得コマンド単体テスト
  */
-
 use super::*;
 
 #[test]

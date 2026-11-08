@@ -2,7 +2,6 @@
  * @file basic_trait.rs
  * @brief VfsResolver の基本パス解決、拡張子補完、テキスト/バイナリ読み込み、WalkFiles、VirtualFileSystem トレイト実装単体テスト
  */
-
 use super::*;
 
 #[test]

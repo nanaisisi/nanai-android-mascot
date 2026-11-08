@@ -1,7 +1,7 @@
 //! ElementDef, Points, BalloonOffset, SortKind データ構造および make_square_rect ヘルパーモジュール
 
-use serde::{Deserialize, Serialize};
 use crate::surfaces::types::draw::DrawMethod;
+use serde::{Deserialize, Serialize};
 
 /// `element[N]` の1行分の定義
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

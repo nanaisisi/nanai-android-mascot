@@ -2,7 +2,6 @@
  * @file state_coverage.rs
  * @brief AnimationScheduler の状態管理・フォールバック・shared-index エッジケース単体テスト
  */
-
 use super::*;
 
 #[test]

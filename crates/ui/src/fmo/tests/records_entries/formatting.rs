@@ -2,7 +2,6 @@
  * @file formatting.rs
  * @brief format_fmo_text (ローカル・リモートサニタイズ) 単体テスト
  */
-
 use super::*;
 
 #[test]

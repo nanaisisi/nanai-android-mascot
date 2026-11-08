@@ -2,7 +2,6 @@
  * @file ast_building.rs
  * @brief build_sakura_ast による AST スコープグループ化・選択肢・トークン構造体単体テスト
  */
-
 use super::*;
 
 #[test]

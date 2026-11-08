@@ -2,7 +2,6 @@
  * @file exclusive_blocking.rs
  * @brief exclusive (全体・ターゲット指定) 排他ブロックおよび停止動作単体テスト
  */
-
 use super::*;
 
 #[test]

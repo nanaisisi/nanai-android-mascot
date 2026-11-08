@@ -2,7 +2,6 @@
  * @file vfs_traits.rs
  * @brief VirtualFileSystem トレイトおよび MockVfs/VfsResolver の拡張操作単体テスト
  */
-
 use super::*;
 
 #[test]

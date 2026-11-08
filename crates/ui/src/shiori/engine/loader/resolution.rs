@@ -1,9 +1,9 @@
 //! 多段 SHIORI 候補の優先順位解決・ロード実行モジュール
 
-use std::path::Path;
-use super::types::{CandidateKind, LoadAttempt, ShioriEngineCandidate};
-use super::MultiStageShioriLoader;
 use super::super::trait_def::ShioriEngine;
+use super::MultiStageShioriLoader;
+use super::types::{CandidateKind, LoadAttempt, ShioriEngineCandidate};
+use std::path::Path;
 
 impl MultiStageShioriLoader {
     #[allow(clippy::type_complexity)]

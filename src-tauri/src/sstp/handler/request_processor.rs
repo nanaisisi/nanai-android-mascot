@@ -2,9 +2,7 @@
 
 use crate::sstp::parser::parse_raw_sstp_request;
 use crate::sstp::types::{SstpRequest, SstpResponse};
-use nanai_android_mascot_ui::sstp::{
-    SstpGhostConfig, SstpGhostContext, handle_execute_command,
-};
+use nanai_android_mascot_ui::sstp::{SstpGhostConfig, SstpGhostContext, handle_execute_command};
 use std::collections::HashMap;
 use tauri::Emitter;
 

@@ -2,7 +2,6 @@
  * @file request_parser.rs
  * @brief SstpRequest パース・Option フラグ・IfGhost スクリプト選択・SAORI/Direct SSTP 単体テスト
  */
-
 use super::*;
 
 #[test]

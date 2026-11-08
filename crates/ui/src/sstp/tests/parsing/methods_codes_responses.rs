@@ -2,7 +2,6 @@
  * @file methods_codes_responses.rs
  * @brief SstpMethod, SstpStatusCode, SstpResponse ヘルパー構築単体テスト
  */
-
 use super::*;
 
 #[test]

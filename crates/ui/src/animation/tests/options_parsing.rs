@@ -2,7 +2,6 @@
  * @file options_parsing.rs
  * @brief SERIKO アニメーションオプション構文パース単体テスト
  */
-
 use crate::animation::scheduler::ParsedAnimationOptions;
 
 #[test]

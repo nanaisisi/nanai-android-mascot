@@ -2,7 +2,6 @@
  * @file descript.rs
  * @brief descript.txt 属性パース単体テスト
  */
-
 use super::*;
 
 #[test]

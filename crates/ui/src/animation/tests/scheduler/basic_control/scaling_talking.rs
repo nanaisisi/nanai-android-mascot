@@ -2,7 +2,6 @@
  * @file scaling_talking.rs
  * @brief Surface 拡大縮小 (Scaling) および SERIKO 発話を考慮したアニメーション制御単体テスト
  */
-
 use super::*;
 
 #[test]

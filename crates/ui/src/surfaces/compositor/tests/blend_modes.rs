@@ -2,7 +2,6 @@
  * @file blend_modes.rs
  * @brief 各種ブレンドモード（Add, Sub, Multiply, Screen, Overlay, Softlight, HSL, Dither等）単体テスト
  */
-
 use super::*;
 
 #[test]

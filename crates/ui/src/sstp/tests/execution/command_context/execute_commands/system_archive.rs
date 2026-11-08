@@ -2,7 +2,6 @@
  * @file system_archive.rs
  * @brief DumpSurface, MoveAsync, SetTrayIcon, CompressArchive, ExtractArchive 単体テスト
  */
-
 use super::*;
 
 #[test]

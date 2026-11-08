@@ -2,7 +2,6 @@
  * @file surfaces.rs
  * @brief surfaces.txt ワイルドカード・CollisionEx 定義単体テスト
  */
-
 use super::*;
 
 #[test]

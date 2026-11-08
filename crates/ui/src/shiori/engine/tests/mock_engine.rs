@@ -2,7 +2,6 @@
  * @file mock_engine.rs
  * @brief MockShioriEngine のライフサイクル、サスペンド/レジューム、機能参照テスト
  */
-
 use super::*;
 
 #[test]

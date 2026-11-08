@@ -58,7 +58,9 @@ pub fn handle_execute_command(command_str: &str, ctx: &SstpGhostContext) -> Sstp
         return res;
     }
 
-    if let Some(res) = handle_property_cookie_commands(&norm_cmd, &args, ctx, &check_remote_prohibited) {
+    if let Some(res) =
+        handle_property_cookie_commands(&norm_cmd, &args, ctx, &check_remote_prohibited)
+    {
         return res;
     }
 

@@ -2,7 +2,6 @@
  * @file intervals.rs
  * @brief インターバル（RunOnce, Always, Talk, Custom, Random）条件判定・トリガー分岐単体テスト
  */
-
 use super::*;
 
 #[test]

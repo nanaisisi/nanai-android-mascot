@@ -2,7 +2,6 @@
  * @file security_fmo.rs
  * @brief リモートアクセスのセキュリティ拒否判定および FMO サニタイズ単体テスト
  */
-
 use super::*;
 
 #[test]

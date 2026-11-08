@@ -2,7 +2,6 @@
  * @file layer_compositing.rs
  * @brief レイヤー合成（Overlay, Replace, Interpolate, Reduce, FastBlend）単体テスト
  */
-
 use super::*;
 
 #[test]

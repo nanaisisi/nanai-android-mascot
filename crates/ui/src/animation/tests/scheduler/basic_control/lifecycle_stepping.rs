@@ -2,7 +2,6 @@
  * @file lifecycle_stepping.rs
  * @brief AnimationScheduler の基本登録、ステップ進行、一時停止/再開、停止/オフセット単体テスト
  */
-
 use super::*;
 
 #[test]

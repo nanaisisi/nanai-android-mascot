@@ -1,8 +1,8 @@
 //! SSTP レスポンス文字列パースモジュール
 
+use super::SstpResponse;
 use crate::sstp::types::SstpStatusCode;
 use std::collections::HashMap;
-use super::SstpResponse;
 
 impl SstpResponse {
     /// 生テキストから SSTP レスポンスをパースする (UKADOC req_res / keepalive 準拠)

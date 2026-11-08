@@ -3,9 +3,9 @@
 pub mod modes;
 pub mod w3c_hsl;
 
-use modes::evaluate_blend_mode;
 use crate::surfaces::compositor::framebuffer::SurfaceFrameBuffer;
 use crate::surfaces::types::DrawMethod;
+use modes::evaluate_blend_mode;
 
 // 4x4 Bayer Dither Matrix (values 0..15 normalized to 0..255)
 const BAYER_MATRIX_4X4: [u8; 16] = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];

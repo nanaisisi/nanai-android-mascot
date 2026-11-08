@@ -2,7 +2,6 @@
  * @file tests.rs
  * @brief SurfaceDefinition ヒットテスト・有効アイコン矩形・ソート単体テスト
  */
-
 use super::definition::SurfaceDefinition;
 use super::elements::{ElementDef, SortKind, make_square_rect};
 use crate::surfaces::types::collision::{CollisionArea, CollisionShape};

@@ -2,7 +2,6 @@
  * @file response_building.rs
  * @brief SSTP レスポンスヘルパー構築・SSTP イベントビルダー単体テスト
  */
-
 use super::*;
 
 #[test]

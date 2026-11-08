@@ -2,7 +2,6 @@
  * @file surface_alias.rs
  * @brief surface, surface.append, surface.alias, sakura/kero/char1.surface.alias パース単体テスト
  */
-
 use super::*;
 
 #[test]

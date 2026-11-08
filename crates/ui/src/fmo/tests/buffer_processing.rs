@@ -2,7 +2,6 @@
  * @file buffer_processing.rs
  * @brief FMO 共有メモリバッファ (64KB Little-Endian) 生成・パース単体テスト
  */
-
 use super::*;
 
 #[test]
@@ -52,7 +51,10 @@ fn test_generate_and_parse_fmo_buffer() {
     assert_eq!(parsed[0].hwnd, 986602);
     assert_eq!(parsed[0].kerohwnd, Some(1052114));
     assert_eq!(parsed[0].hwndlist, vec![986602, 1052114]);
-    assert_eq!(parsed[0].fullname, Some("SampleGhost and SampleKero".to_string()));
+    assert_eq!(
+        parsed[0].fullname,
+        Some("SampleGhost and SampleKero".to_string())
+    );
     assert_eq!(parsed[0].modulestate, Some("shiori:running".to_string()));
 
     assert_eq!(parsed[1].id, "00004468_00120da6");

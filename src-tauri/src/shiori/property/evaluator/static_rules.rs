@@ -90,9 +90,7 @@ pub(super) fn evaluate_static_property(q: &str) -> Option<String> {
         "menu.separator.color.g" => "192",
         "menu.separator.color.b" => "192",
         _ => {
-            if q.ends_with(".caption")
-                || q.ends_with("buttoncaption")
-                || q == "vanishbuttonvisible"
+            if q.ends_with(".caption") || q.ends_with("buttoncaption") || q == "vanishbuttonvisible"
             {
                 "1"
             } else if q.starts_with("sakura.menuitem")

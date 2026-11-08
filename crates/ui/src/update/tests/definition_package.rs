@@ -2,7 +2,6 @@
  * @file definition_package.rs
  * @brief updates.txt / updates2.dau 構文パースおよび UpdatePackage メソッド単体テスト
  */
-
 use super::*;
 
 #[test]

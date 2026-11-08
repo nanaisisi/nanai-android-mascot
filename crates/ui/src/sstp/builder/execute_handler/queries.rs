@@ -20,7 +20,9 @@ pub(super) fn handle_query_commands(
         }
         "getghostname" => Some(SstpResponse::ok(None).with_additional_data(ctx.name.clone())),
         "getshellname" => Some(SstpResponse::ok(None).with_additional_data(ctx.shell_name.clone())),
-        "getballoonname" => Some(SstpResponse::ok(None).with_additional_data(ctx.balloon_name.clone())),
+        "getballoonname" => {
+            Some(SstpResponse::ok(None).with_additional_data(ctx.balloon_name.clone()))
+        }
         "getghostnamelist" => {
             let data = ctx.installed_ghosts.join("\r\n");
             Some(SstpResponse::ok(None).with_additional_data(data))
@@ -42,7 +44,9 @@ pub(super) fn handle_query_commands(
             Some(SstpResponse::ok(None).with_additional_data(data))
         }
         "getversion" => Some(SstpResponse::ok(None).with_additional_data(ctx.version.clone())),
-        "getshortversion" => Some(SstpResponse::ok(None).with_additional_data(ctx.short_version.clone())),
+        "getshortversion" => {
+            Some(SstpResponse::ok(None).with_additional_data(ctx.short_version.clone()))
+        }
         "getstatus" => {
             if ctx.status.is_empty() {
                 Some(SstpResponse::ok(None))

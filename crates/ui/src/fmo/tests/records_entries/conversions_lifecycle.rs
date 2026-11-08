@@ -2,7 +2,6 @@
  * @file conversions_lifecycle.rs
  * @brief FmoRecord / FmoEntry 相互変換・ビルダー・ライフサイクル状態同期単体テスト
  */
-
 use super::*;
 
 #[test]

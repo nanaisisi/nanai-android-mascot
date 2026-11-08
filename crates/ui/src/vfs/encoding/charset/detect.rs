@@ -142,11 +142,10 @@ pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
     }
 
     // 2-2. ISO-2022-JP (JISエスケープシーケンス) チェック
-    if buffer.windows(3).any(|w| {
-        w == [0x1B, 0x24, 0x42]
-            || w == [0x1B, 0x24, 0x40]
-            || w == [0x1B, 0x28, 0x4A]
-    }) {
+    if buffer
+        .windows(3)
+        .any(|w| w == [0x1B, 0x24, 0x42] || w == [0x1B, 0x24, 0x40] || w == [0x1B, 0x28, 0x4A])
+    {
         let (cow, _, had_errors) = ISO_2022_JP.decode(buffer);
         if !had_errors {
             return DecodeResult {

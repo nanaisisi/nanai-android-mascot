@@ -2,7 +2,6 @@
  * @file tests.rs
  * @brief UKADOC Property System クエリ評価エンジンの単体テスト
  */
-
 use super::evaluator::evaluate_property_query;
 
 #[test]

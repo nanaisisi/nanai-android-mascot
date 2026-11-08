@@ -2,7 +2,6 @@
  * @file tests.rs
  * @brief SurfacesTxt マージ・サーフィスID列挙クエリ単体テスト
  */
-
 use super::definition::SurfacesTxt;
 use crate::surfaces::types::surface::{SortKind, SurfaceDefinition};
 use crate::surfaces::types::{Interval, SerikoAnimation};

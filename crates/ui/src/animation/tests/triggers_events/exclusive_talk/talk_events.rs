@@ -2,32 +2,29 @@
  * @file talk_events.rs
  * @brief SERIKO 発話イベント（on_talk_start, on_char_spoken, on_talk_end, on_script_end）トリガー単体テスト
  */
-
 use super::*;
 
 #[test]
 fn test_talk_event_triggers() {
     let mut scheduler = AnimationScheduler::new();
 
-    let anims = vec![
-        SerikoAnimation {
-            id: 1,
-            name: None,
-            interval: Some(Interval::Talk),
+    let anims = vec![SerikoAnimation {
+        id: 1,
+        name: None,
+        interval: Some(Interval::Talk),
+        options: vec![],
+        collisions: vec![],
+        patterns: vec![AnimationPattern {
+            index: 0,
+            method: DrawMethod::Overlay,
+            surface: 1,
+            wait: 10,
+            wait_max: None,
+            x: 0,
+            y: 0,
             options: vec![],
-            collisions: vec![],
-            patterns: vec![AnimationPattern {
-                index: 0,
-                method: DrawMethod::Overlay,
-                surface: 1,
-                wait: 10,
-                wait_max: None,
-                x: 0,
-                y: 0,
-                options: vec![],
-            }],
-        },
-    ];
+        }],
+    }];
 
     // 発話未開始状態での on_talk_end 呼び出し (安全判定)
     scheduler.on_talk_end(0, &anims);

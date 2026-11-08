@@ -2,7 +2,6 @@
  * @file pattern_control.rs
  * @brief パターン描画方式 (Start, Stop, Parallel, Alternative, Bind) ステップ実行単体テスト
  */
-
 use super::*;
 
 #[test]

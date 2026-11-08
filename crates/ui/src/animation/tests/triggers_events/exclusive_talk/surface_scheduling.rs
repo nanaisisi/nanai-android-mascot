@@ -2,7 +2,6 @@
  * @file surface_scheduling.rs
  * @brief schedule_surface_animations によるインターバル別サーフィスアニメーション自動登録単体テスト
  */
-
 use super::*;
 
 #[test]

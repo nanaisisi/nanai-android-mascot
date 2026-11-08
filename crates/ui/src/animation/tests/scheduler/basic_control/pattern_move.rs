@@ -2,7 +2,6 @@
  * @file pattern_move.rs
  * @brief パターン連動アニメーション開始/停止制御および Move 描画方式単体テスト
  */
-
 use super::*;
 
 #[test]

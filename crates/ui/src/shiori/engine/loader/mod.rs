@@ -5,9 +5,9 @@ pub mod types;
 
 use std::path::{Path, PathBuf};
 
-pub use types::{CandidateKind, LoadAttempt, ShioriEngineCandidate};
 use super::state::ShioriLifecycleState;
 use super::trait_def::ShioriEngine;
+pub use types::{CandidateKind, LoadAttempt, ShioriEngineCandidate};
 
 /// 多段 SHIORI ローダー (Multi-stage fallback loader)
 ///

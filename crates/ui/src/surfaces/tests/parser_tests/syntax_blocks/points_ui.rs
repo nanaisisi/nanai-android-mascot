@@ -2,7 +2,6 @@
  * @file points_ui.rs
  * @brief point エイリアス、balloon.offset スコープ、cursor / tooltips ブロックパース単体テスト
  */
-
 use super::*;
 
 #[test]

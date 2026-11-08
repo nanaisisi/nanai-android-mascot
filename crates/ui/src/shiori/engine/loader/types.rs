@@ -1,7 +1,7 @@
 //! SHIORI ローダー候補・試行ログデータ構造定義
 
-use std::path::PathBuf;
 use super::super::trait_def::ShioriEngine;
+use std::path::PathBuf;
 
 /// 候補種別
 pub enum ShioriEngineCandidate {

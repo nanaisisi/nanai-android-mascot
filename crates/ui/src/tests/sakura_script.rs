@@ -2,7 +2,6 @@
  * @file sakura_script.rs
  * @brief さくらスクリプト構文パース・コマンド生成統合テスト
  */
-
 use super::*;
 
 #[test]

@@ -2,7 +2,6 @@
  * @file property_cookie.rs
  * @brief GetProperty, SetProperty, GetCookie, SetCookie 単体テスト
  */
-
 use super::*;
 
 #[test]

@@ -2,7 +2,6 @@
  * @file installer_manifest.rs
  * @brief install.txt マニフェスト・InstallerEngine・開発者オプション単体テスト
  */
-
 use super::*;
 
 #[test]

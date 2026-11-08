@@ -2,7 +2,6 @@
  * @file fallback.rs
  * @brief MultiStageShioriLoader の多段フォールバック（Dynamic -> WASM -> Mock）単体テスト
  */
-
 use super::*;
 
 #[test]

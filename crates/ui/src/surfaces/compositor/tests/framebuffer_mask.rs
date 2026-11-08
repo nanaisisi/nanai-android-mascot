@@ -2,7 +2,6 @@
  * @file framebuffer_mask.rs
  * @brief SurfaceFrameBuffer 生成・範囲・クロマキー・PNAアルファマスク操作単体テスト
  */
-
 use super::*;
 
 #[test]

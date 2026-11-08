@@ -2,7 +2,6 @@
  * @file active_animation.rs
  * @brief ActiveAnimation & Interval 動作単体テスト
  */
-
 use super::*;
 use crate::animation::scheduler::ActiveAnimation;
 

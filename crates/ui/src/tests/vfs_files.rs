@@ -2,7 +2,6 @@
  * @file vfs_files.rs
  * @brief Shift_JIS ファイル読み込みおよびパス検証テスト
  */
-
 use super::*;
 
 #[test]

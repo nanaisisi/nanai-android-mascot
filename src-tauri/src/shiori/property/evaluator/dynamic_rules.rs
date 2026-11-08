@@ -38,23 +38,23 @@ pub(super) fn evaluate_dynamic_property(q: &str, raw_query: &str) -> String {
         }
         return "0".to_string();
     }
-    if let Some(scope_prop) = q.strip_prefix("currentghost.balloon.scope(") {
-        if let Some(idx) = scope_prop.find(").") {
-            let subprop = &scope_prop[idx + 2..];
-            return match subprop {
-                "x" | "y" | "basepos.x" | "basepos.y" => "0".to_string(),
-                "rect" => "0,0,280,100".to_string(),
-                "num" | "count" => "1".to_string(),
-                "lines" | "lines.initial" => "4".to_string(),
-                "validwidth" | "validwidth.initial" => "260".to_string(),
-                "validheight" | "validheight.initial" => "80".to_string(),
-                "char_width" => "12".to_string(),
-                "background.color" => "255,255,255".to_string(),
-                "vertical" => "0".to_string(),
-                "scaling" => "100".to_string(),
-                _ => "0".to_string(),
-            };
-        }
+    if let Some(scope_prop) = q.strip_prefix("currentghost.balloon.scope(")
+        && let Some(idx) = scope_prop.find(").")
+    {
+        let subprop = &scope_prop[idx + 2..];
+        return match subprop {
+            "x" | "y" | "basepos.x" | "basepos.y" => "0".to_string(),
+            "rect" => "0,0,280,100".to_string(),
+            "num" | "count" => "1".to_string(),
+            "lines" | "lines.initial" => "4".to_string(),
+            "validwidth" | "validwidth.initial" => "260".to_string(),
+            "validheight" | "validheight.initial" => "80".to_string(),
+            "char_width" => "12".to_string(),
+            "background.color" => "255,255,255".to_string(),
+            "vertical" => "0".to_string(),
+            "scaling" => "100".to_string(),
+            _ => "0".to_string(),
+        };
     }
     if q.starts_with("currentghost.balloon.") {
         return "1".to_string();

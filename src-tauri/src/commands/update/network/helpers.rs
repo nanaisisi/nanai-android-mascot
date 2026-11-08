@@ -49,7 +49,12 @@ pub(super) fn validate_update_path(path: &str) -> Result<(), String> {
 
 /// 1ファイルごとの更新進捗をフロントエンドへ通知
 /// (フロント側で OnUpdate.OnDownloadBegin / OnUpdate.OnMD5Compare* として SHIORI に中継する)
-pub(super) fn report_progress(app_handle: &tauri::AppHandle, phase: &str, path: &str, detail: Option<&str>) {
+pub(super) fn report_progress(
+    app_handle: &tauri::AppHandle,
+    phase: &str,
+    path: &str,
+    detail: Option<&str>,
+) {
     let payload = serde_json::json!({ "phase": phase, "path": path, "detail": detail });
     let _ = app_handle.emit("update-progress", payload);
 }

@@ -4,7 +4,7 @@
  */
 import { rgbFromComponents } from "../utils.js";
 
-export function applyCommunicateBoxProperties(props) {
+export function applyCommunicateBoxProperties(props: Record<string, unknown>) {
 	// [communicatebox.width,サイズ], [communicatebox.height,サイズ], [communicatebox.x,座標], [communicatebox.y,座標]:
 	// [communicatebox.font.name,フォント名], [communicatebox.font.color.r/g/b,数値], [communicatebox.background.color.r/g/b,数値], [communicatebox.placeholder.color.r/g/b,数値]:
 	const cbWidth = props["communicatebox.width"];

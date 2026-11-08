@@ -3,7 +3,17 @@
  * @brief バルーンの移動禁止・スケール同期・アライメント・オフセット設定反映 (UKADOC準拠)
  */
 
-export function applyAlignmentProperties(root, props, instance) {
+export function applyAlignmentProperties(
+	root: { style: { setProperty: (arg0: string, arg1: string) => void } },
+	props: { [x: string]: unknown },
+	instance: {
+		scopeId: unknown;
+		currentScopeId: unknown;
+		balloonDontMove: boolean;
+		balloonSyncScale: boolean;
+		balloonAlignment: string;
+	},
+) {
 	const scopeId = instance?.scopeId ?? instance?.currentScopeId ?? 0;
 	const charPrefix = `char${scopeId}.balloon`;
 

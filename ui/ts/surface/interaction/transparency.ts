@@ -7,7 +7,11 @@
  * @param {number} clientY
  * @returns {boolean}
  */
-export function isPixelTransparent(img, clientX, clientY) {
+export function isPixelTransparent(
+	img: HTMLElement,
+	clientX: number,
+	clientY: number,
+) {
 	if (img?.tagName !== "IMG") return false;
 	try {
 		const htmlImg = /** @type {HTMLImageElement} */ (img);

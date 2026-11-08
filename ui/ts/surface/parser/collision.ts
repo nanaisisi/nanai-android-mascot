@@ -8,7 +8,25 @@
  * @param {string[]} currentSurfaces
  * @param {Record<string, import('../surface-parser.js').CollisionArea[]>} collisions
  */
-export function handleCollisionEx(trimmed, currentSurfaces, collisions) {
+export function handleCollisionEx(
+	trimmed: string,
+	currentSurfaces: unknown[],
+	collisions: {
+		[x: string]: {
+			id: number | undefined;
+			name: unknown;
+			shape: unknown;
+			x1: number;
+			y1: number;
+			x2: number;
+			y2: number;
+			minX: number;
+			minY: number;
+			maxX: number;
+			maxY: number;
+		}[];
+	},
+) {
 	const parts = trimmed.split(",");
 	if (parts.length < 5) return;
 
@@ -17,7 +35,7 @@ export function handleCollisionEx(trimmed, currentSurfaces, collisions) {
 	const name = parts[1].trim().toLowerCase();
 	const shape = parts[2].trim().toLowerCase();
 
-	currentSurfaces.forEach((s) => {
+	currentSurfaces.forEach((s: string | number) => {
 		if (!collisions[s]) collisions[s] = [];
 		if (shape === "circle" || shape === "ellipse") {
 			const cx = Number.parseInt(parts[3], 10);
@@ -40,8 +58,8 @@ export function handleCollisionEx(trimmed, currentSurfaces, collisions) {
 		} else if (shape === "polygon" || parts.length > 7) {
 			const coords = parts
 				.slice(3)
-				.map((p) => Number.parseInt(p.trim(), 10))
-				.filter((n) => !Number.isNaN(n));
+				.map((p: string) => Number.parseInt(p.trim(), 10))
+				.filter((n: unknown) => !Number.isNaN(n));
 			const vertices = [];
 			let minX = Infinity;
 			let maxX = -Infinity;
@@ -96,7 +114,25 @@ export function handleCollisionEx(trimmed, currentSurfaces, collisions) {
  * @param {string[]} currentSurfaces
  * @param {Record<string, import('../surface-parser.js').CollisionArea[]>} collisions
  */
-export function handleCollision(trimmed, currentSurfaces, collisions) {
+export function handleCollision(
+	trimmed: string,
+	currentSurfaces: unknown[],
+	collisions: {
+		[x: string]: {
+			id: number | undefined;
+			name: unknown;
+			shape: string;
+			x1: number;
+			y1: number;
+			x2: number;
+			y2: number;
+			minX: number;
+			minY: number;
+			maxX: number;
+			maxY: number;
+		}[];
+	},
+) {
 	const parts = trimmed.split(",");
 	// collision[ID],[x1],[y1],[x2],[y2],[name]
 	// または legacy 7-part: collision,[ID],[x1],[y1],[x2],[y2],[name]
@@ -119,7 +155,7 @@ export function handleCollision(trimmed, currentSurfaces, collisions) {
 	const y2 = Number.parseInt(parts[offset + 4], 10);
 	const name = parts[offset + 5].trim().toLowerCase();
 
-	currentSurfaces.forEach((s) => {
+	currentSurfaces.forEach((s: string | number) => {
 		if (!collisions[s]) collisions[s] = [];
 		collisions[s].push({
 			id,

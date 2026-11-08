@@ -1,6 +1,6 @@
 import { rgbFromComponents } from "../utils.js";
 
-export function applySpecialFontProperties(root, props) {
+export function applySpecialFontProperties(root: unknown, props: object) {
 	const cursorBg =
 		rgbFromComponents(props, "cursor.font.color") || props["cursor.font.color"];
 	if (cursorBg) {

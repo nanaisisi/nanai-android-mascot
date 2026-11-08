@@ -9,7 +9,11 @@
  * @param {Record<string, Record<string, string>>} tooltips
  * @returns {{ type: 'cursor'|'tooltip', scope: string } | null | false}
  */
-export function matchScopeBlockHeader(trimmed, cursors, tooltips) {
+export function matchScopeBlockHeader(
+	trimmed: string,
+	cursors: { [x: string]: never[] },
+	tooltips: { [x: string]: unknown },
+) {
 	// *.cursor ブロック開始判定
 	const cursorMatch = trimmed.match(
 		/^(sakura|kero|char\d+|\*)?\.?cursor\s*\{?$/i,
@@ -45,10 +49,12 @@ export function matchScopeBlockHeader(trimmed, cursors, tooltips) {
  * @param {Record<string, Record<string, string>>} tooltips
  */
 export function handleScopeBlockLine(
-	trimmed,
-	currentScopeBlock,
-	cursors,
-	tooltips,
+	trimmed: string,
+	currentScopeBlock: { type: string; scope: string | number },
+	cursors: {
+		[x: string]: { event: unknown; collision: unknown; cursor: unknown }[];
+	},
+	tooltips: { [x: string]: { [x: string]: unknown } },
 ) {
 	if (currentScopeBlock.type === "cursor") {
 		const parts = trimmed.split(",");

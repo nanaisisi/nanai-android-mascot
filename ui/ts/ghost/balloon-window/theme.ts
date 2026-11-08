@@ -31,7 +31,7 @@ const getImageDimensions = (
  * @param {number} scopeId
  * @returns {Promise<string | null>}
  */
-export async function loadBalloonSkinImages(theme, scopeId) {
+export async function loadBalloonSkinImages(theme: string, scopeId: number) {
 	const imageFile =
 		scopeId === 0
 			? "balloons0.png"

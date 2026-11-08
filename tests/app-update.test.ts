@@ -1055,7 +1055,15 @@ globalThis.document = {
 	querySelector: () => null,
 };
 
-let progressCb = null;
+let progressCb:
+	| ((arg0: {
+			payload:
+				| { phase: string; path: string }
+				| { phase: string; path: string }
+				| { phase: string; path: string }
+				| { phase: string; path: string };
+	  }) => void)
+	| null = null;
 
 const createPersistentListenersProxy = () => {
 	const map = {};
@@ -1080,11 +1088,11 @@ const createPersistentListenersProxy = () => {
 globalThis.__TAURI_INTERNALS__ = {
 	metadata: { currentWindow: { label: "main" } },
 	invoke: async () => null,
-	transformCallback: (cb) => cb,
+	transformCallback: (cb: unknown) => cb,
 	plugins: {
 		event: {
 			listeners: createPersistentListenersProxy(),
-			listen: async (_eventName, handler) => {
+			listen: async (_eventName: unknown, handler: unknown) => {
 				progressCb = handler;
 				return () => {};
 			},
@@ -1098,14 +1106,14 @@ const { updateMethods } = await import("../ui/js/core/app-update.js");
 
 test("updateMethods.startNetworkUpdate covers 100% of network update flows, progress events, and summaries", async () => {
 	const eventsSent = [];
-	let scriptReturn = null;
+	let scriptReturn: string | null = null;
 	let resExScript = "handled";
 
 	const mockApp = {
 		...updateMethods,
 		ghostController: {
 			currentGhost: { name: "MockGhost", path: "path/to/ghost" },
-			sendShioriEvent: async (ev, args) => {
+			sendShioriEvent: async (ev: string, args: unknown) => {
 				eventsSent.push({ ev, args });
 				if (ev === "OnUpdateProcessExec") return { script: scriptReturn };
 				if (ev.endsWith("Ex")) return { script: resExScript };
@@ -1133,7 +1141,7 @@ test("updateMethods.startNetworkUpdate covers 100% of network update flows, prog
 	// 3. Tauri available via __TAURI_INTERNALS__
 	globalThis.__TAURI_INTERNALS__ = savedInternals;
 
-	const origInvoke = async (cmd) => {
+	const origInvoke = async (cmd: string) => {
 		if (cmd === "check_ghost_update") {
 			return {
 				has_update: true,
@@ -1161,7 +1169,7 @@ test("updateMethods.startNetworkUpdate covers 100% of network update flows, prog
 	await mockApp.startNetworkUpdate(null, { checkOnly: true });
 
 	// 3b. checkOnly = true (no update)
-	globalThis.__TAURI_INTERNALS__.invoke = async (cmd) => {
+	globalThis.__TAURI_INTERNALS__.invoke = async (cmd: string) => {
 		if (cmd === "check_ghost_update") {
 			return {
 				has_update: false,
@@ -1176,7 +1184,7 @@ test("updateMethods.startNetworkUpdate covers 100% of network update flows, prog
 	await mockApp.startNetworkUpdate(null, { checkOnly: true });
 
 	// 4. checkOnly = true (error 404 in check)
-	globalThis.__TAURI_INTERNALS__.invoke = async (cmd) => {
+	globalThis.__TAURI_INTERNALS__.invoke = async (cmd: string) => {
 		if (cmd === "check_ghost_update") throw new Error("404 not found");
 		return null;
 	};
@@ -1184,7 +1192,7 @@ test("updateMethods.startNetworkUpdate covers 100% of network update flows, prog
 	await mockApp.startNetworkUpdate(null, { checkOnly: true });
 
 	// 5. Full update, no update files
-	globalThis.__TAURI_INTERNALS__.invoke = async (cmd) => {
+	globalThis.__TAURI_INTERNALS__.invoke = async (cmd: string) => {
 		if (cmd === "check_ghost_update") {
 			return { has_update: false, total_count: 0, update_files: [] };
 		}
@@ -1199,7 +1207,7 @@ test("updateMethods.startNetworkUpdate covers 100% of network update flows, prog
 	await mockApp.startNetworkUpdate();
 
 	// 7. Full update with execute_ghost_update failure
-	globalThis.__TAURI_INTERNALS__.invoke = async (cmd) => {
+	globalThis.__TAURI_INTERNALS__.invoke = async (cmd: string) => {
 		if (cmd === "check_ghost_update") {
 			return {
 				has_update: true,
@@ -1216,7 +1224,7 @@ test("updateMethods.startNetworkUpdate covers 100% of network update flows, prog
 	await mockApp.startNetworkUpdate();
 
 	// 8. Full update with timeout error in catch
-	globalThis.__TAURI_INTERNALS__.invoke = async (cmd) => {
+	globalThis.__TAURI_INTERNALS__.invoke = async (cmd: string) => {
 		if (cmd === "check_ghost_update") throw new Error("timeout error");
 		return null;
 	};
@@ -1244,7 +1252,7 @@ test("updateMethods.startNetworkUpdate handles update-progress listen failure an
 	// Listen failure
 	globalThis.__TAURI_INTERNALS__ = {
 		metadata: { currentWindow: { label: "main" } },
-		invoke: async (cmd) => {
+		invoke: async (cmd: string) => {
 			if (cmd === "check_ghost_update") {
 				return {
 					has_update: true,
@@ -1257,11 +1265,11 @@ test("updateMethods.startNetworkUpdate handles update-progress listen failure an
 			}
 			return null;
 		},
-		transformCallback: (cb) => cb,
+		transformCallback: (cb: unknown) => cb,
 		plugins: {
 			event: {
 				listeners: createPersistentListenersProxy(),
-				listen: async (eventName) => {
+				listen: async (eventName: string) => {
 					if (eventName === "update-progress") throw new Error("listen fail");
 					return () => {};
 				},

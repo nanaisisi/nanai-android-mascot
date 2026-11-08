@@ -8,7 +8,11 @@
  * @param {string[]} currentSurfaces
  * @param {Record<string, { center_x?: number, center_y?: number, basepos_x?: number, basepos_y?: number, kinoko_center_x?: number, kinoko_center_y?: number }>} points
  */
-export function handlePoint(line, currentSurfaces, points) {
+export function handlePoint(
+	line: string,
+	currentSurfaces: string[],
+	points: { [x: string]: unknown },
+) {
 	const commaIdx = line.indexOf(",");
 	if (commaIdx === -1) return;
 	const key = line.slice(0, commaIdx).trim().toLowerCase();
@@ -60,7 +64,11 @@ export function handlePoint(line, currentSurfaces, points) {
  * @param {string[]} currentSurfaces
  * @param {Record<string, Record<string, { x?: number, y?: number }>>} balloonOffsets
  */
-export function handleBalloonOffset(line, currentSurfaces, balloonOffsets) {
+export function handleBalloonOffset(
+	line: string,
+	currentSurfaces: string[],
+	balloonOffsets: { [x: string]: { [x: string]: { [x: string]: number } } },
+) {
 	const commaIdx = line.indexOf(",");
 	if (commaIdx === -1) return;
 	const key = line.slice(0, commaIdx).trim().toLowerCase();

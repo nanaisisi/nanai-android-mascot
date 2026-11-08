@@ -18,7 +18,7 @@ export function createLongPressController(options = {}) {
 	const delay = options.delay ?? LONG_PRESS_DELAY;
 	const onTrigger = options.onTrigger;
 
-	let timer = null;
+	let timer: string | number | NodeJS.Timeout | null | undefined = null;
 	let triggered = false;
 
 	const cancel = () => {
@@ -28,7 +28,7 @@ export function createLongPressController(options = {}) {
 		}
 	};
 
-	const start = (canTrigger) => {
+	const start = (canTrigger: () => unknown) => {
 		cancel();
 		triggered = false;
 		timer = setTimeout(() => {

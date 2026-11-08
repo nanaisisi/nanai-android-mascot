@@ -23,9 +23,9 @@ export { expandSurfaceRange } from "./utils.js";
 /**
  * surfaces.txt をパースして collisions, elements, animations, points, balloonOffsets, collisionSort, animationSort, cursors, tooltips を抽出
  * @param {string} text
- * @returns {{ collisions: Record<string, import('../surface-parser.js').CollisionArea[]>, elements: Record<string, import('../surface-parser.js').SurfaceElement[]>, animations: Record<string, import('../surface-parser.js').SurfaceAnimation[]>, points: Record<string, any>, balloonOffsets: Record<string, Record<string, { x?: number, y?: number }>>, collisionSort: string, animationSort: string, cursors: Record<string, Array<{ event: string, collision: string, cursor: string }>>, tooltips: Record<string, Record<string, string>> }}
+ * @returns {{ collisions: Record<string, import('../surface-parser.js').CollisionArea[]>, elements: Record<string, import('../surface-parser.js').SurfaceElement[]>, animations: Record<string, import('../surface-parser.js').SurfaceAnimation[]>, points: Record<string, unknown>, balloonOffsets: Record<string, Record<string, { x?: number, y?: number }>>, collisionSort: string, animationSort: string, cursors: Record<string, Array<{ event: string, collision: string, cursor: string }>>, tooltips: Record<string, Record<string, string>> }}
  */
-export function parseSurfacesTxt(text) {
+export function parseSurfacesTxt(text: string) {
 	const collisions = {};
 	const elements = {};
 	const animations = {};
@@ -41,9 +41,9 @@ export function parseSurfacesTxt(text) {
 
 	const lines = text.split(/\r?\n/);
 	let currentSurfaces = ["default"];
-	let currentScopeBlock = null; // { type: 'cursor'|'tooltip', scope: string }
+	let currentScopeBlock: { type: string; scope: string | number } | null = null; // { type: 'cursor'|'tooltip', scope: string }
 
-	lines.forEach((line) => {
+	lines.forEach((line: string) => {
 		const trimmed = line.trim();
 		if (!trimmed || trimmed.startsWith("//")) return;
 
@@ -110,8 +110,8 @@ export function parseSurfacesTxt(text) {
 		if (iconRectMatch) {
 			const coords = iconRectMatch[1]
 				.split(",")
-				.map((n) => Number.parseInt(n.trim(), 10))
-				.filter((n) => !Number.isNaN(n));
+				.map((n: string) => Number.parseInt(n.trim(), 10))
+				.filter((n: unknown) => !Number.isNaN(n));
 			if (coords.length >= 4) {
 				const rect = [coords[0], coords[1], coords[2], coords[3]];
 				currentSurfaces.forEach((s) => {

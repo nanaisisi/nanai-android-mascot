@@ -10,7 +10,9 @@ import {
  * @param {HTMLElement} target
  * @returns {boolean}
  */
-export function isElementDocked(target) {
+export function isElementDocked(target: {
+	classList: { contains: (arg0: string) => unknown };
+}) {
 	if (!target) return false;
 	return (
 		target.classList.contains("is-docked-left") ||
@@ -29,7 +31,17 @@ export function isElementDocked(target) {
  * @param {number} [options.rightThreshold=DOCK_RIGHT_THRESHOLD]
  * @returns {"left" | "right" | "none"} スナップ結果
  */
-export function applyDockingSnap(target, screenWidth, options = {}) {
+export function applyDockingSnap(
+	target: {
+		getBoundingClientRect: () => unknown;
+		classList: {
+			remove: (arg0: string, arg1: string) => void;
+			add: (arg0: string) => void;
+		};
+	},
+	screenWidth: number,
+	options = {},
+) {
 	if (!target) return "none";
 	const leftThreshold = options.leftThreshold ?? DOCK_LEFT_THRESHOLD;
 	const rightThreshold = options.rightThreshold ?? DOCK_RIGHT_THRESHOLD;
@@ -59,8 +71,14 @@ export function applyDockingSnap(target, screenWidth, options = {}) {
  * @returns {boolean} 復帰処理が行われたかどうか
  */
 export function restoreFromDocking(
-	target,
-	screenWidth,
+	target: {
+		classList: {
+			contains: (arg0: string) => unknown;
+			remove: (arg0: string, arg1: string) => void;
+		};
+		style: { left: string };
+	},
+	screenWidth: number,
 	restoreOffset = DOCK_RESTORE_OFFSET,
 ) {
 	if (!target || !isElementDocked(target)) {

@@ -12,10 +12,10 @@ import { splitProtectedCommas } from "./utils.js";
  * @param {Record<string, Record<number, import('../surface-parser.js').SurfaceAnimation>>} animationMaps
  */
 export function handleAnimationInterval(
-	trimmed,
-	currentSurfaces,
-	animations,
-	animationMaps,
+	trimmed: string,
+	currentSurfaces: unknown[],
+	animations: { [x: string]: unknown[] },
+	animationMaps: { [x: string]: unknown[] },
 ) {
 	// SERIKO/2 animation[ID].interval / SERIKO/1 [ID]interval
 	const match = trimmed.match(/^(?:animation)?(\d+)\.?interval,\s*(.+)$/);
@@ -23,7 +23,7 @@ export function handleAnimationInterval(
 
 	const animId = Number.parseInt(match[1], 10);
 	const interval = match[2].trim();
-	currentSurfaces.forEach((s) => {
+	currentSurfaces.forEach((s: string | number) => {
 		if (!animations[s]) animations[s] = [];
 		if (!animationMaps[s]) animationMaps[s] = {};
 		let anim = animationMaps[s][animId];
@@ -45,10 +45,10 @@ export function handleAnimationInterval(
  * @param {Record<string, Record<number, import('../surface-parser.js').SurfaceAnimation>>} animationMaps
  */
 export function handleAnimationCollision(
-	trimmed,
-	currentSurfaces,
-	animations,
-	animationMaps,
+	trimmed: string,
+	currentSurfaces: unknown[],
+	animations: { [x: string]: unknown[] },
+	animationMaps: { [x: string]: unknown[] },
 ) {
 	// SERIKO/2: animation[ID].collision[CID],x1,y1,x2,y2,name
 	// SERIKO/1: [ID]collision[CID],x1,y1,x2,y2,name
@@ -82,7 +82,7 @@ export function handleAnimationCollision(
 		maxY: Math.max(y1, y2),
 	};
 
-	currentSurfaces.forEach((s) => {
+	currentSurfaces.forEach((s: string | number) => {
 		if (!animations[s]) animations[s] = [];
 		if (!animationMaps[s]) animationMaps[s] = {};
 		let anim = animationMaps[s][animId];
@@ -109,10 +109,10 @@ export function handleAnimationCollision(
  * @param {Record<string, Record<number, import('../surface-parser.js').SurfaceAnimation>>} animationMaps
  */
 export function handleAnimationCollisionEx(
-	trimmed,
-	currentSurfaces,
-	animations,
-	animationMaps,
+	trimmed: string,
+	currentSurfaces: unknown[],
+	animations: { [x: string]: unknown[] },
+	animationMaps: { [x: string]: unknown[] },
 ) {
 	// SERIKO/2: animation[ID].collisionex[CID],name,shape,coords...
 	// SERIKO/1: [ID]collisionex[CID],name,shape,coords...
@@ -151,8 +151,8 @@ export function handleAnimationCollisionEx(
 	} else if (shape === "polygon" || parts.length > 6) {
 		const coords = parts
 			.slice(2)
-			.map((p) => Number.parseInt(p.trim(), 10))
-			.filter((n) => !Number.isNaN(n));
+			.map((p: string) => Number.parseInt(p.trim(), 10))
+			.filter((n: unknown) => !Number.isNaN(n));
 		const vertices = [];
 		let minX = Infinity;
 		let maxX = -Infinity;
@@ -201,7 +201,7 @@ export function handleAnimationCollisionEx(
 
 	if (!col) return;
 
-	currentSurfaces.forEach((s) => {
+	currentSurfaces.forEach((s: string | number) => {
 		if (!animations[s]) animations[s] = [];
 		if (!animationMaps[s]) animationMaps[s] = {};
 		let anim = animationMaps[s][animId];
@@ -228,10 +228,10 @@ export function handleAnimationCollisionEx(
  * @param {Record<string, Record<number, import('../surface-parser.js').SurfaceAnimation>>} animationMaps
  */
 export function handleAnimationName(
-	trimmed,
-	currentSurfaces,
-	animations,
-	animationMaps,
+	trimmed: string,
+	currentSurfaces: unknown[],
+	animations: { [x: string]: unknown[] },
+	animationMaps: { [x: string]: unknown[] },
 ) {
 	// SERIKO/2 animation[ID].name,定義名 / SERIKO/1 [ID]name,定義名
 	const match = trimmed.match(/^(?:animation)?(\d+)\.?name,\s*(.+)$/);
@@ -239,7 +239,7 @@ export function handleAnimationName(
 
 	const animId = Number.parseInt(match[1], 10);
 	const nameStr = match[2].trim();
-	currentSurfaces.forEach((s) => {
+	currentSurfaces.forEach((s: string | number) => {
 		if (!animations[s]) animations[s] = [];
 		if (!animationMaps[s]) animationMaps[s] = {};
 		let anim = animationMaps[s][animId];
@@ -260,10 +260,10 @@ export function handleAnimationName(
  * @param {Record<string, Record<number, import('../surface-parser.js').SurfaceAnimation>>} animationMaps
  */
 export function handleAnimationOption(
-	trimmed,
-	currentSurfaces,
-	animations,
-	animationMaps,
+	trimmed: string,
+	currentSurfaces: unknown[],
+	animations: { [x: string]: unknown[] },
+	animationMaps: { [x: string]: unknown[] },
 ) {
 	// SERIKO/2 animation[ID].option,exclusive / SERIKO/1 [ID]option,exclusive
 	const match = trimmed.match(/^(?:animation)?(\d+)\.?option,\s*(.+)$/);
@@ -271,7 +271,7 @@ export function handleAnimationOption(
 
 	const animId = Number.parseInt(match[1], 10);
 	const optionStr = match[2].trim();
-	currentSurfaces.forEach((s) => {
+	currentSurfaces.forEach((s: string | number) => {
 		if (!animations[s]) animations[s] = [];
 		if (!animationMaps[s]) animationMaps[s] = {};
 		let anim = animationMaps[s][animId];
@@ -293,10 +293,10 @@ export function handleAnimationOption(
  * @param {Record<string, Record<number, import('../surface-parser.js').SurfaceAnimation>>} animationMaps
  */
 export function handleAnimationPattern(
-	trimmed,
-	currentSurfaces,
-	animations,
-	animationMaps,
+	trimmed: string,
+	currentSurfaces: unknown[],
+	animations: { [x: string]: unknown[] },
+	animationMaps: { [x: string]: unknown[] },
 ) {
 	// SERIKO/2: animation[ID].pattern[P],method,surface,wait,x,y
 	// SERIKO/1: [ID]pattern[P],surface,wait,method,x,y
@@ -340,7 +340,7 @@ export function handleAnimationPattern(
 			}
 		}
 
-		currentSurfaces.forEach((s) => {
+		currentSurfaces.forEach((s: string | number) => {
 			if (!animations[s]) animations[s] = [];
 			if (!animationMaps[s]) animationMaps[s] = {};
 			let anim = animationMaps[s][animId];
@@ -369,11 +369,13 @@ export function handleAnimationPattern(
  * 全アニメーションのパターンインデックスソートと不要プロパティの除去
  * @param {Record<string, import('../surface-parser.js').SurfaceAnimation[]>} animations
  */
-export function finalizeAnimations(animations) {
+export function finalizeAnimations(
+	animations: { [s: string]: unknown } | ArrayLike<unknown>,
+) {
 	for (const animList of Object.values(animations)) {
 		for (const anim of animList) {
 			anim.patterns = anim.patterns
-				.sort((a, b) => a.index - b.index)
+				.sort((a: { index: number }, b: { index: number }) => a.index - b.index)
 				.map(({ index, ...pattern }) => pattern);
 		}
 	}

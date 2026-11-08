@@ -163,7 +163,7 @@ export const surfaceLoadMethods = {
 	 * @param {string} ghostPath
 	 * @param {string} shellName
 	 */
-	async loadSurfacesTxt(ghostPath, shellName = "master") {
+	async loadSurfacesTxt(ghostPath: string, shellName = "master") {
 		try {
 			// ghostPath が `..../shell/<シェル名>` 形式なら分割する
 			let basePath = ghostPath;
@@ -223,7 +223,7 @@ export const surfaceLoadMethods = {
 	 * Rust `shell_manifest` のマニフェストを内部レコードへ適用する
 	 * @this {import('./surface-manager.js').SurfaceManager}
 	 */
-	applyShellManifest(manifest) {
+	applyShellManifest(manifest: unknown) {
 		const data = manifestToSurfaceData(manifest);
 		this.collisions = data.collisions;
 		this.elements = data.elements;
@@ -256,7 +256,7 @@ export const surfaceLoadMethods = {
 	 * surfaces.txt のテキスト内容をパースして当たり判定を登録
 	 * @this {import('./surface-manager.js').SurfaceManager}
 	 */
-	async parseSurfacesTxt(text) {
+	async parseSurfacesTxt(text: string) {
 		this.planCache?.clear();
 		this.baseCanvasCache?.clear();
 		if (isTauriAvailable()) {
@@ -294,7 +294,7 @@ export const surfaceLoadMethods = {
 	 * `0-9,20-22` 形式の範囲指定をサーフィス番号列へ展開
 	 * @this {import('./surface-manager.js').SurfaceManager}
 	 */
-	expandSurfaceRange(rangeStr) {
+	expandSurfaceRange(rangeStr: string) {
 		return expandSurfaceRange(rangeStr);
 	},
 };

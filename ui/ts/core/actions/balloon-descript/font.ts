@@ -6,7 +6,21 @@ import { applyBaseFontProperties } from "./font/base.js";
 import { applyGroupProperties } from "./font/group.js";
 import { applySpecialFontProperties } from "./font/special.js";
 
-export function applyFontProperties(root, props, _instance) {
+export function applyFontProperties(
+	root: unknown,
+	props: object,
+	_instance: {
+		rgbFromComponents?: (
+			props: Record<string, unknown>,
+			base: string,
+		) => string | null;
+		applyBalloonDescript?: (props?: unknown) => void;
+		balloonDpiScale?: number;
+		balloonUserScale?: unknown;
+		currentBalloonTheme?: unknown;
+		elements?: { balloonDisplay: HTMLElement | null };
+	},
+) {
 	applyBaseFontProperties(root, props);
 
 	applyGroupProperties(root, props, "anchor", "--balloon-anchor");

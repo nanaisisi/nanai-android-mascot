@@ -20,7 +20,11 @@ export function createStrokeTracker(options = {}) {
 	let strokeDistance = 0;
 	let strokeTriggered = false;
 
-	const addDistance = (stepDist, clientX, clientY) => {
+	const addDistance = (
+		stepDist: number,
+		clientX: unknown,
+		clientY: unknown,
+	) => {
 		if (strokeTriggered) return true;
 		strokeDistance += stepDist;
 		if (strokeDistance >= threshold) {

@@ -10,9 +10,9 @@
  * @returns {number} 計算された最終倍率 (finalScale)
  */
 export function updateBalloonWindowScale(
-	balloonBox,
-	currentUserScale,
-	currentDpiScale,
+	balloonBox: HTMLElement | null,
+	currentUserScale: number,
+	currentDpiScale: number,
 ) {
 	const root = document.documentElement;
 	const finalScale = +(currentUserScale * currentDpiScale).toFixed(4);

@@ -6,7 +6,11 @@
 import { emit } from "../tauri-helper.js";
 
 export class DictationManager {
-	constructor(app) {
+	app: unknown;
+	synth: SpeechSynthesis | null;
+	recognition: null;
+	isListening: boolean;
+	constructor(app: this) {
 		this.app = app;
 		this.synth = typeof window !== "undefined" ? window.speechSynthesis : null;
 		this.recognition = null;
@@ -24,7 +28,9 @@ export class DictationManager {
 			this.recognition.interimResults = false;
 			this.recognition.maxAlternatives = 1;
 
-			this.recognition.onresult = (event) => {
+			this.recognition.onresult = (event: {
+				results: { transcript: unknown }[][];
+			}) => {
 				const text = event.results[0][0].transcript;
 				console.log("🎤 [Dictation] Speech recognized:", text);
 				if (this.app?.ghostController?.sendShioriEvent) {
@@ -33,7 +39,7 @@ export class DictationManager {
 				emit("dictation-result", { text });
 			};
 
-			this.recognition.onerror = (event) => {
+			this.recognition.onerror = (event: { error: unknown }) => {
 				console.warn("⚠️ [Dictation] Speech recognition error:", event.error);
 			};
 
@@ -64,7 +70,7 @@ export class DictationManager {
 		}
 	}
 
-	speakText(text, lang = "ja-JP") {
+	speakText(text: string, lang = "ja-JP") {
 		if (!this.synth) return;
 		const cleanText = text.replace(
 			/\\([0-9hwnsblfxtqea_]\[[^\]]*\]|[0-9hwnsblfxtqea_])/g,

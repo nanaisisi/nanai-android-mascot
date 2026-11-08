@@ -8,11 +8,11 @@
  * @param {string} rangeStr
  * @returns {string[]}
  */
-export function expandSurfaceRange(rangeStr) {
-	const included = [];
+export function expandSurfaceRange(rangeStr: string) {
+	const included: string[] = [];
 	const excluded = new Set();
 
-	rangeStr.split(",").forEach((rawPart) => {
+	rangeStr.split(",").forEach((rawPart: string) => {
 		let part = rawPart.trim().replace(/^\[/, "").replace(/\]$/, "");
 		if (!part) return;
 
@@ -62,7 +62,7 @@ export function expandSurfaceRange(rangeStr) {
  * @param {string} rawValue
  * @returns {string[]}
  */
-export function splitProtectedCommas(rawValue) {
+export function splitProtectedCommas(rawValue: string | unknown[]) {
 	const parts = [];
 	let current = "";
 	let depthParen = 0;

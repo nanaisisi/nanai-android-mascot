@@ -10,7 +10,7 @@
  * @returns {() => void} クリーンアップ関数
  */
 export function setupHoverAndWheel(
-	target,
+	target: HTMLElement,
 	options = {},
 	isInteractingOrDragging = () => false,
 	hoverDelay = 300,
@@ -20,7 +20,11 @@ export function setupHoverAndWheel(
 	const { onGhostWheel, onGhostHover } = options;
 
 	// マウスホイール (OnMouseWheel)
-	const onWheel = (e) => {
+	const onWheel = (e: {
+		clientX: number;
+		clientY: number;
+		deltaY: unknown;
+	}) => {
 		if (onGhostWheel) {
 			const clientX = e.clientX ?? 0;
 			const clientY = e.clientY ?? 0;
@@ -32,8 +36,8 @@ export function setupHoverAndWheel(
 	target.addEventListener("wheel", onWheel, { passive: true });
 
 	// マウスホバー (OnMouseHover)
-	let hoverTimer = null;
-	const onMouseMove = (e) => {
+	let hoverTimer: string | number | NodeJS.Timeout | null | undefined = null;
+	const onMouseMove = (e: { clientX: number; clientY: number }) => {
 		if (isInteractingOrDragging() || !onGhostHover) return;
 		const clientX = e.clientX ?? 0;
 		const clientY = e.clientY ?? 0;

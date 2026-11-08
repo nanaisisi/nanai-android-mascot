@@ -13,7 +13,7 @@ import { DRAG_PADDING } from "./constants.js";
  * @param {number} max
  * @returns {number}
  */
-export function clampPosition(val, min, max) {
+export function clampPosition(val: number, min: number, max: number) {
 	return Math.max(min, Math.min(max, val));
 }
 
@@ -30,10 +30,10 @@ export function clampPosition(val, min, max) {
  * @returns {{ x: number, y: number }}
  */
 export function calculateClampedCoordinates(
-	initialLeft,
-	initialTop,
-	deltaX,
-	deltaY,
+	initialLeft: number,
+	initialTop: number,
+	deltaX: number,
+	deltaY: number,
 	padding = DRAG_PADDING,
 	innerWidth = globalThis.innerWidth,
 	innerHeight = globalThis.innerHeight,
@@ -60,9 +60,9 @@ export function calculateClampedCoordinates(
  */
 export function createNativeDragSession() {
 	let nativeDragStarted = false;
-	let nativeWindowOrigin = null;
+	let nativeWindowOrigin: { x: number; y: number } | null = null;
 
-	const canStartNativeDrag = (eventType) => {
+	const canStartNativeDrag = (eventType: string) => {
 		return (
 			eventType === "mousedown" &&
 			isTauriAvailable() &&
@@ -70,7 +70,7 @@ export function createNativeDragSession() {
 		);
 	};
 
-	const startNativeDrag = (isInteracting) => {
+	const startNativeDrag = (isInteracting: () => unknown) => {
 		nativeDragStarted = true;
 		void getCurrentWindowPosition().then((position) => {
 			if (!isInteracting || isInteracting()) {
@@ -80,7 +80,7 @@ export function createNativeDragSession() {
 		return true;
 	};
 
-	const moveNativeWindow = (deltaX, deltaY) => {
+	const moveNativeWindow = (deltaX: number, deltaY: number) => {
 		if (nativeDragStarted && nativeWindowOrigin) {
 			void moveCurrentWindowBy(deltaX, deltaY, nativeWindowOrigin);
 		}

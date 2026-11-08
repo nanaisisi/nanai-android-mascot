@@ -83,12 +83,26 @@ export {
 };
 
 export class SurfaceAnimationManager {
+	activeAnimationTimers: unknown;
+	manager: unknown;
+	_spokenCount: unknown;
+	_talkStarted: unknown;
+	pausedAnimations: Map<unknown, unknown>;
+	_runningAnimations: Map<unknown, unknown>;
+	_stoppedAnimations: Set<unknown>;
+	_exclusiveLocks: Map<unknown, unknown>;
+	_sharedIndices: Map<unknown, unknown>;
+	_animationOffsets: Map<unknown, unknown>;
+	_baseMoveOffsets: Map<unknown, unknown>;
+	_baseScalingOffsets: Map<unknown, unknown>;
+	_serikoTalkEnabled: Map<unknown, unknown>;
+	scheduler: AnimationScheduler;
 	/**
 	 * @param {import('./surface.js').SurfaceManager} manager
 	 */
-	constructor(manager) {
+	constructor(manager: this) {
 		this.manager = manager;
-		/** @type {Record<number, any[]>} */
+		/** @type {Record<number, unknown[]>} */
 		this.activeAnimationTimers = {};
 		this._spokenCount = {};
 		this._talkStarted = {};
@@ -117,11 +131,11 @@ export class SurfaceAnimationManager {
 		return parseAnimationOptions(options);
 	}
 
-	isBlockedByExclusive(scopeId = 0, animId) {
+	isBlockedByExclusive(scopeId = 0, animId: unknown) {
 		return isBlockedByExclusive(this, scopeId, animId);
 	}
 
-	findAnimation(animIdOrName, scopeId = 0) {
+	findAnimation(animIdOrName: number, scopeId = 0) {
 		return findAnimation(this, animIdOrName, scopeId);
 	}
 
@@ -174,31 +188,31 @@ export class SurfaceAnimationManager {
 		return getActiveCollisions(this, scopeId);
 	}
 
-	isAnimationRunning(scopeId = 0, animIdOrName) {
+	isAnimationRunning(scopeId = 0, animIdOrName: unknown) {
 		return isAnimationRunning(this, scopeId, animIdOrName);
 	}
 
-	stopAnimation(scopeId = 0, animIdOrName) {
+	stopAnimation(scopeId = 0, animIdOrName: string | number | undefined) {
 		return stopAnimation(this, scopeId, animIdOrName);
 	}
 
-	setAnimationOffset(scopeId = 0, animIdOrName, x = 0, y = 0) {
+	setAnimationOffset(scopeId = 0, animIdOrName: number, x = 0, y = 0) {
 		return setAnimationOffset(this, scopeId, animIdOrName, x, y);
 	}
 
-	getAnimationOffset(scopeId = 0, animIdOrName) {
+	getAnimationOffset(scopeId = 0, animIdOrName: unknown) {
 		return getAnimationOffset(this, scopeId, animIdOrName);
 	}
 
-	pauseAnimation(scopeId = 0, animIdOrName) {
+	pauseAnimation(scopeId = 0, animIdOrName: unknown) {
 		return pauseAnimation(this, scopeId, animIdOrName);
 	}
 
-	resumeAnimation(scopeId = 0, animIdOrName) {
+	resumeAnimation(scopeId = 0, animIdOrName: unknown) {
 		return resumeAnimation(this, scopeId, animIdOrName);
 	}
 
-	isAnimationPaused(scopeId = 0, animIdOrName) {
+	isAnimationPaused(scopeId = 0, animIdOrName: unknown) {
 		return isAnimationPaused(this, scopeId, animIdOrName);
 	}
 
@@ -206,11 +220,11 @@ export class SurfaceAnimationManager {
 		return clearPausedAnimations(this, scopeId);
 	}
 
-	startAnimations(surfaceId, scopeId = 0) {
+	startAnimations(surfaceId: string | number, scopeId = 0) {
 		surfaceAnimationTimers.startAnimations.call(this, surfaceId, scopeId);
 	}
 
-	scheduleAnimation(anim, surfaceId, scopeId) {
+	scheduleAnimation(anim: unknown, surfaceId: unknown, scopeId: unknown) {
 		surfaceAnimationTimers.scheduleAnimation.call(
 			this,
 			anim,
@@ -219,7 +233,7 @@ export class SurfaceAnimationManager {
 		);
 	}
 
-	animationsForTrigger(scopeId, kind) {
+	animationsForTrigger(scopeId: unknown, kind: unknown) {
 		return surfaceAnimationTimers.animationsForTrigger.call(
 			this,
 			scopeId,
@@ -227,24 +241,33 @@ export class SurfaceAnimationManager {
 		);
 	}
 
-	triggerAnimations(scopeId, kind) {
+	triggerAnimations(scopeId: unknown, kind: unknown) {
 		surfaceAnimationTimers.triggerAnimations.call(this, scopeId, kind);
 	}
 
-	playAnimationPatterns(anim, baseSurfaceId, scopeId) {
+	playAnimationPatterns(
+		anim: unknown,
+		baseSurfaceId: string | number | undefined,
+		scopeId: number | undefined,
+	) {
 		return playAnimationPatterns(this, anim, baseSurfaceId, scopeId);
 	}
 
-	_playAnimationPatterns(anim, baseSurfaceId, scopeId, key) {
+	_playAnimationPatterns(
+		anim: unknown,
+		baseSurfaceId: undefined,
+		scopeId: undefined,
+		key: undefined,
+	) {
 		return _playAnimationPatterns(this, anim, baseSurfaceId, scopeId, key);
 	}
 
 	_playTimelineFrames(
-		timeline,
-		anim,
-		baseSurfaceId,
-		scopeId,
-		key,
+		timeline: unknown,
+		anim: undefined,
+		baseSurfaceId: undefined,
+		scopeId: undefined,
+		key: Record<string, unknown> | undefined,
 		options = {},
 	) {
 		return _playTimelineFrames(
@@ -259,12 +282,12 @@ export class SurfaceAnimationManager {
 	}
 
 	_applyAnimationFrame(
-		pat,
-		anim,
-		baseSurfaceId,
-		scopeId,
-		key,
-		isCurrent,
+		pat: unknown,
+		anim: unknown,
+		baseSurfaceId: undefined,
+		scopeId: undefined,
+		key: undefined,
+		isCurrent: Record<string, unknown> | undefined,
 		options = {},
 	) {
 		return _applyAnimationFrame(
@@ -279,7 +302,15 @@ export class SurfaceAnimationManager {
 		);
 	}
 
-	_playOnePat(pat, anim, baseSurfaceId, scopeId, key, isCurrent, options = {}) {
+	_playOnePat(
+		pat: unknown,
+		anim: undefined,
+		baseSurfaceId: undefined,
+		scopeId: undefined,
+		key: undefined,
+		isCurrent: Record<string, unknown> | undefined,
+		options = {},
+	) {
 		return _playOnePat(
 			this,
 			pat,
@@ -292,7 +323,12 @@ export class SurfaceAnimationManager {
 		);
 	}
 
-	renderAnimationFrame(pat, baseSurfaceId, scopeId, animationOptions = {}) {
+	renderAnimationFrame(
+		pat: unknown,
+		baseSurfaceId: undefined,
+		scopeId: Record<string, unknown> | undefined,
+		animationOptions = {},
+	) {
 		return renderAnimationFrame(
 			this,
 			pat,
@@ -302,11 +338,15 @@ export class SurfaceAnimationManager {
 		);
 	}
 
-	playAnimationById(animIdOrName, scopeId = 0, waitForComplete = false) {
+	playAnimationById(
+		animIdOrName: number,
+		scopeId = 0,
+		waitForComplete = false,
+	) {
 		return playAnimationById(this, animIdOrName, scopeId, waitForComplete);
 	}
 
-	waitForAnimation(animIdOrName, scopeId = 0, timeoutMs = 30000) {
+	waitForAnimation(animIdOrName: number, scopeId = 0, timeoutMs = 30000) {
 		return waitForAnimation(this, animIdOrName, scopeId, timeoutMs);
 	}
 

@@ -18,16 +18,23 @@ import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
  * @param {Array<{index?: number, wait?: number|string, waitMax?: number|string|null}>} patterns - アニメーションパターン列
  * @returns {Promise<{ frames: number[], totalMs: number }|null>} タイムラインフレーム情報または null
  */
-export async function buildAnimationTimeline(patterns) {
+export async function buildAnimationTimeline(patterns: unknown[]) {
 	if (!patterns?.length || !isTauriAvailable()) return null;
 	try {
 		const timeline = await invoke("animation_timeline", {
-			patterns: patterns.map((pat, index) => ({
-				index: pat.index ?? index,
-				waitMs: resolvePatternWait(pat.wait, pat.waitMax),
-			})),
+			patterns: patterns.map(
+				(
+					pat: { index: unknown; wait: unknown; waitMax: null | undefined },
+					index: unknown,
+				) => ({
+					index: pat.index ?? index,
+					waitMs: resolvePatternWait(pat.wait, pat.waitMax),
+				}),
+			),
 		});
-		const frames = (timeline?.frames ?? []).map((f) => f.atMs ?? f.at_ms ?? 0);
+		const frames = (timeline?.frames ?? []).map(
+			(f: { atMs: unknown; at_ms: unknown }) => f.atMs ?? f.at_ms ?? 0,
+		);
 		return {
 			frames,
 			totalMs: timeline?.totalMs ?? timeline?.total_ms ?? 0,
@@ -45,8 +52,8 @@ export async function buildAnimationTimeline(patterns) {
  * @param {number|string|null|undefined} [waitMax] - 上限（Rust パースの `wait_max`）
  * @returns {number} 解決されたウェイト値（ミリ秒）
  */
-export function resolvePatternWait(wait, waitMax = null) {
-	const toNumber = (value) => {
+export function resolvePatternWait(wait: unknown, waitMax = null) {
+	const toNumber = (value: null) => {
 		const match = String(value ?? "")
 			.trim()
 			.match(/^(\d+)(?:-(\d+))?$/);
@@ -73,7 +80,7 @@ export function resolvePatternWait(wait, waitMax = null) {
  * @param {string|undefined} interval - インターバル文字列（例: "sometimes", "always", "periodic,3"）
  * @returns {{ kinds: Set<string>, param: number|null }} 解析された種類セットと数値パラメータ
  */
-export function parseInterval(interval) {
+export function parseInterval(interval: unknown) {
 	const value = String(interval || "sometimes")
 		.trim()
 		.toLowerCase();

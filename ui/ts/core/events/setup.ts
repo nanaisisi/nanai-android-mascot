@@ -1,4 +1,4 @@
-import { emit, listen } from "../tauri-helper.js";
+import { emit, invoke, isTauriAvailable, listen } from "../tauri-helper.js";
 
 export const setupMethods = {
 	async setupEventListeners() {

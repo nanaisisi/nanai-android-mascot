@@ -59,9 +59,9 @@ export {
  * @returns {{ isInteractingOrDragging: () => boolean, cleanup: () => void }}
  */
 export function setupGhostDragging(
-	target,
-	onGhostClick,
-	onGhostStroke,
+	target: HTMLElement,
+	onGhostClick: unknown,
+	onGhostStroke: unknown,
 	options = {},
 	context = {},
 ) {
@@ -97,7 +97,7 @@ export function setupGhostDragging(
 
 	const strokeTracker = createStrokeTracker({
 		threshold: STROKE_THRESHOLD,
-		onStroke: (clientX, clientY) => {
+		onStroke: (clientX: unknown, clientY: unknown) => {
 			if (onGhostStroke) {
 				const rect = target.getBoundingClientRect();
 				onGhostStroke(clientX, clientY, rect);
@@ -107,7 +107,18 @@ export function setupGhostDragging(
 
 	const checkTransparency = context.isPixelTransparent || isPixelTransparent;
 
-	const onPointerDown = (e) => {
+	const onPointerDown = (e: {
+		button: number | undefined;
+		cancelable: unknown;
+		preventDefault: () => void;
+		clientX: unknown;
+		touches: {
+			clientX: unknown;
+			clientY: unknown;
+		}[];
+		clientY: unknown;
+		type: string;
+	}) => {
 		if (e.button !== undefined && e.button !== 0) return;
 
 		// ブラウザデフォルトの画像ドラッグやテキスト選択を防止
@@ -157,7 +168,14 @@ export function setupGhostDragging(
 		);
 	};
 
-	const onPointerMove = (e) => {
+	const onPointerMove = (e: {
+		clientX: unknown;
+		touches: {
+			clientX: unknown;
+			clientY: unknown;
+		}[];
+		clientY: unknown;
+	}) => {
 		if (!isInteracting) return;
 
 		const clientX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
@@ -224,7 +242,12 @@ export function setupGhostDragging(
 		}
 	};
 
-	const onPointerUp = (e) => {
+	const onPointerUp = (e: {
+		clientX: number;
+		clientY: number;
+		button: undefined;
+		changedTouches: unknown;
+	}) => {
 		if (!isInteracting) return;
 		const wasDragging = isDragging;
 		isInteracting = false;

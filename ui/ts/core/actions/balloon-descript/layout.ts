@@ -17,7 +17,26 @@ export {
 	applyValidRectProperties,
 };
 
-export function applyLayoutProperties(root, props, instance) {
+export function applyLayoutProperties(
+	root: HTMLElement,
+	props: object,
+	instance: {
+		rgbFromComponents?: (
+			props: Record<string, unknown>,
+			base: string,
+		) => string | null;
+		applyBalloonDescript?: (props?: unknown) => void;
+		balloonDpiScale?: number;
+		balloonUserScale?: unknown;
+		currentBalloonTheme?: unknown;
+		elements?: { balloonDisplay: HTMLElement | null };
+		scopeId?: unknown;
+		currentScopeId?: unknown;
+		balloonDontMove?: boolean;
+		balloonSyncScale?: boolean;
+		balloonAlignment?: string;
+	},
+) {
 	applyDpiAndScaleProperties(root, props, instance);
 	applyCommunicateBoxProperties(props);
 	applyValidRectProperties(root, props);

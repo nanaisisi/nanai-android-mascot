@@ -10,7 +10,7 @@ export const surfaceAnimationTimers = {
 	 */
 	stopAnimations(scopeId = 0) {
 		const timers = this.activeAnimationTimers[scopeId] || [];
-		timers.forEach((t) => {
+		timers.forEach((t: string | number | NodeJS.Timeout | undefined) => {
 			clearTimeout(t);
 			clearInterval(t);
 		});
@@ -21,21 +21,21 @@ export const surfaceAnimationTimers = {
 	/**
 	 * `\![anim,pause,ID]` (SSP): アニメーションの一時停止
 	 */
-	pauseAnimation(scopeId = 0, animId) {
+	pauseAnimation(scopeId = 0, animId: unknown) {
 		this.pausedAnimations.set(`${scopeId}__${animId}`, true);
 	},
 
 	/**
 	 * `\![anim,resume,ID]` (SSP): 一時停止の解除
 	 */
-	resumeAnimation(scopeId = 0, animId) {
+	resumeAnimation(scopeId = 0, animId: unknown) {
 		this.pausedAnimations.delete(`${scopeId}__${animId}`);
 	},
 
 	/**
 	 * アニメーションが一時停止中か
 	 */
-	isAnimationPaused(scopeId = 0, animId) {
+	isAnimationPaused(scopeId = 0, animId: unknown) {
 		return this.pausedAnimations.get(`${scopeId}__${animId}`) === true;
 	},
 
@@ -53,7 +53,7 @@ export const surfaceAnimationTimers = {
 	/**
 	 * 指定サーフィスのアニメーション定義（SERIKO）を開始
 	 */
-	startAnimations(surfaceId, scopeId = 0) {
+	startAnimations(surfaceId: unknown, scopeId = 0) {
 		const sid = String(surfaceId);
 		const animList =
 			this.manager.animations[sid] || this.manager.animations.default || [];
@@ -63,7 +63,7 @@ export const surfaceAnimationTimers = {
 			this.activeAnimationTimers[scopeId] = [];
 		}
 
-		animList.forEach((anim) => {
+		animList.forEach((anim: unknown) => {
 			this.scheduleAnimation(anim, surfaceId, scopeId);
 		});
 	},
@@ -71,7 +71,15 @@ export const surfaceAnimationTimers = {
 	/**
 	 * アニメーションの interval 指定に応じたタイマースケジュール
 	 */
-	scheduleAnimation(anim, surfaceId, scopeId) {
+	scheduleAnimation(
+		anim: {
+			_parsedInterval: { kinds: unknown; param: unknown };
+			interval: unknown;
+			id: null;
+		},
+		surfaceId: unknown,
+		scopeId: number,
+	) {
 		if (!anim._parsedInterval) {
 			anim._parsedInterval = parseInterval(anim.interval);
 		}
@@ -135,17 +143,22 @@ export const surfaceAnimationTimers = {
 		this.activeAnimationTimers[scopeId].push(timer);
 	},
 
-	animationsForTrigger(scopeId, kind) {
+	animationsForTrigger(scopeId: unknown, kind: unknown) {
 		const sid = String(this.manager.currentSurfaceIdFor(scopeId));
 		const animList =
 			this.manager.animations[sid] || this.manager.animations.default || [];
 		return animList
-			.map((anim) => {
-				if (!anim._parsedInterval) {
-					anim._parsedInterval = parseInterval(anim.interval);
-				}
-				return { anim, sid, ...anim._parsedInterval };
-			})
+			.map(
+				(anim: {
+					_parsedInterval: { kinds: Set<string>; param: number | null };
+					interval: unknown;
+				}) => {
+					if (!anim._parsedInterval) {
+						anim._parsedInterval = parseInterval(anim.interval);
+					}
+					return { anim, sid, ...anim._parsedInterval };
+				},
+			)
 			.filter(
 				({ anim, kinds }) =>
 					kinds.has(kind) &&
@@ -154,7 +167,7 @@ export const surfaceAnimationTimers = {
 			);
 	},
 
-	triggerAnimations(scopeId, kind) {
+	triggerAnimations(scopeId: unknown, kind: unknown) {
 		for (const { anim, sid } of this.animationsForTrigger(scopeId, kind)) {
 			this.playAnimationPatterns(anim, sid, scopeId).catch(() => {});
 		}

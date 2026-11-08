@@ -2,6 +2,9 @@
  * バルーンのドラッグ移動およびキャラクター追従・オフセット永続化管理
  */
 export class BalloonDragManager {
+	balloonOffsetX: number;
+	balloonOffsetY: number;
+	interaction: unknown;
 	/**
 	 * @param {import('./interaction.js').InteractionManager} interaction
 	 */

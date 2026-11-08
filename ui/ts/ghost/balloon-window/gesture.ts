@@ -16,14 +16,14 @@ import { updateBalloonWindowScale } from "./scale.js";
  * @param {(newScale: number) => void} options.onUserScaleChange
  */
 export function setupWindowGestures(
-	balloonBox,
+	balloonBox: HTMLElement | null,
 	{
 		scopeId,
 		getIsBalloonDontMove,
 		getUserScale,
 		getDpiScale,
 		onUserScaleChange,
-	},
+	}: unknown,
 ) {
 	if (!balloonBox) return;
 
@@ -33,7 +33,7 @@ export function setupWindowGestures(
 	});
 
 	// ドラッグ移動 (Tauri v2 startDragging)
-	balloonBox.addEventListener("mousedown", (e) => {
+	balloonBox.addEventListener("mousedown", (e: { button: number }) => {
 		if (e.button === 0 && !getIsBalloonDontMove()) {
 			void startDraggingWindow();
 		}
@@ -53,7 +53,7 @@ export function setupWindowGestures(
 
 	balloonBox.addEventListener(
 		"touchstart",
-		(e) => {
+		(e: { touches: string | unknown[] }) => {
 			if (e.touches.length === 1) {
 				const now = Date.now();
 				// ダブルタップでバルーン倍率切替 (100% <-> 125%)
@@ -92,7 +92,7 @@ export function setupWindowGestures(
 
 	balloonBox.addEventListener(
 		"touchmove",
-		(e) => {
+		(e: { touches: string | unknown[] }) => {
 			if (e.touches.length === 2 && touchStartDistance > 0) {
 				const dx = e.touches[0].clientX - e.touches[1].clientX;
 				const dy = e.touches[0].clientY - e.touches[1].clientY;
@@ -114,7 +114,7 @@ export function setupWindowGestures(
 
 	balloonBox.addEventListener(
 		"touchend",
-		(e) => {
+		(e: { touches: string | unknown[] }) => {
 			if (e.touches.length === 0) {
 				if (touchStartDistance > 0) {
 					const finalScale = getUserScale();

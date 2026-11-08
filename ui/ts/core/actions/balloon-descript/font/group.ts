@@ -44,7 +44,12 @@ import { rgbFromComponents } from "../utils.js";
  * [cursor.notselect.pen.color.r,数値], [cursor.notselect.pen.color.g,数値], [cursor.notselect.pen.color.b,数値]
  * [cursor.notselect.brush.color.r,数値], [cursor.notselect.brush.color.g,数値], [cursor.notselect.brush.color.b,数値]
  */
-export function applyGroupProperties(root, props, prefix, cssPrefix) {
+export function applyGroupProperties(
+	root: unknown,
+	props: object,
+	prefix: string,
+	cssPrefix: string,
+) {
 	// [anchor.font.color / cursor.font.color / *.font.color.r,g,b]:
 	const fontColorKey = `${prefix}.font.color`;
 	const col =

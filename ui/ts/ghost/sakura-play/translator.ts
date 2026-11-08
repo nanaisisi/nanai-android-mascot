@@ -1,12 +1,28 @@
+/**
+ * @file translator.ts
+ * @brief さくらスクリプト再生前トランスレータ (makoto / OnTranslate) 処理モジュール (Slot-05)
+ */
+
 export async function translateScript(
 	player: unknown,
 	script: string,
 ): Promise<string> {
 	let finalScript = script;
 	try {
-		const app = player.app;
+		const p = player as {
+			app?: {
+				ghostController?: {
+					sendShioriEvent?: (
+						event: string,
+						args: string[],
+					) => Promise<{ script?: string } | null>;
+				};
+			};
+		};
+		const app = p?.app;
 		if (app?.ghostController?.sendShioriEvent && !script.includes("\\_q")) {
-			const transRes: unknown = await app.ghostController.sendShioriEvent(
+			// UKADOC: makoto トランスレータパイプラインおよび OnTranslate イベントへの転送
+			const transRes = await app.ghostController.sendShioriEvent(
 				"OnTranslate",
 				[script],
 			);

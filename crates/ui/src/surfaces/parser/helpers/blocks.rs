@@ -10,6 +10,8 @@ pub(crate) enum BlockKind {
     Descript,
     /// `surface.alias {}` / `sakura.surface.alias {}` / `kero.surface.alias {}` ブロック
     Alias { kero: bool },
+    /// `char<N>.surface.alias {}` ブロック
+    CharAlias { char_id: u32 },
     /// `surface[N...]` / `surface.append[N...]` / `sakura.surface[N...]` ブロック
     Surface { ids: Vec<u32>, append: bool },
     /// `*.cursor {}` ブロック
@@ -106,12 +108,21 @@ pub(crate) fn parse_block_opener(line: &str) -> Option<BlockKind> {
         }
     }
 
-    let (stripped_line, kero) = match raw {
-        l if l.starts_with("sakura.surface") => (&l["sakura.".len()..], false),
-        l if l.starts_with("kero.surface") => (&l["kero.".len()..], true),
-        l if l.starts_with("char0.surface") => (&l["char0.".len()..], false),
-        l if l.starts_with("char1.surface") => (&l["char1.".len()..], true),
-        _ => (raw, false),
+    let (stripped_line, kero, char_scope) = match raw {
+        l if l.starts_with("sakura.surface") => (&l["sakura.".len()..], false, None),
+        l if l.starts_with("kero.surface") => (&l["kero.".len()..], true, None),
+        l if l.starts_with("char") => {
+            if let Some((id_str, _)) = l["char".len()..].split_once(".surface") {
+                if let Ok(cid) = id_str.trim().parse::<u32>() {
+                    (l[("char".len() + id_str.len() + 1)..].as_ref(), cid == 1, Some(cid))
+                } else {
+                    (l, false, None)
+                }
+            } else {
+                (l, false, None)
+            }
+        }
+        _ => (raw, false, None),
     };
     if let Some(rest) = stripped_line.strip_prefix("surface") {
         let rest = rest.replace(['[', ']'], " ");
@@ -129,6 +140,15 @@ pub(crate) fn parse_block_opener(line: &str) -> Option<BlockKind> {
         }
         if let Some(spec) = rest.strip_prefix(".alias") {
             if spec.trim().is_empty() || spec.trim() == "{" {
+                if let Some(cid) = char_scope {
+                    return if cid == 0 {
+                        Some(BlockKind::Alias { kero: false })
+                    } else if cid == 1 {
+                        Some(BlockKind::Alias { kero: true })
+                    } else {
+                        Some(BlockKind::CharAlias { char_id: cid })
+                    };
+                }
                 return Some(BlockKind::Alias { kero });
             }
             return None;

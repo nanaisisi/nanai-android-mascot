@@ -6,3 +6,4 @@ import "./sakura-play/sync-object.test.js";
 import "./sakura-play/queue-control.test.js";
 import "./sakura-play/sync-command.test.js";
 import "./sakura-play/balloon-events.test.js";
+import "./sakura-play/cycle10-playback-resilience.test.js";

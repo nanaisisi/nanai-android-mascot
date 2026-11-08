@@ -143,3 +143,60 @@ fn test_paint_transparent_region_black() {
     // (1, 1) different color -> unchanged
     assert_eq!(fb.get_pixel(1, 1), Some((255, 0, 0, 255)));
 }
+
+#[test]
+fn test_fill_and_fill_rect() {
+    let mut fb = SurfaceFrameBuffer::new(4, 4);
+
+    // 全体を青 (0, 0, 255, 255) で塗りつぶし
+    fb.fill(0, 0, 255, 255);
+    assert_eq!(fb.get_pixel(0, 0), Some((0, 0, 255, 255)));
+    assert_eq!(fb.get_pixel(3, 3), Some((0, 0, 255, 255)));
+
+    // (1, 1) から 2x2 の矩形領域を赤 (255, 0, 0, 200) で塗りつぶし
+    fb.fill_rect(1, 1, 2, 2, 255, 0, 0, 200);
+    assert_eq!(fb.get_pixel(0, 0), Some((0, 0, 255, 255)));
+    assert_eq!(fb.get_pixel(1, 1), Some((255, 0, 0, 200)));
+    assert_eq!(fb.get_pixel(2, 2), Some((255, 0, 0, 200)));
+    assert_eq!(fb.get_pixel(3, 3), Some((0, 0, 255, 255)));
+
+    // 境界外・幅0などのエッジケース
+    fb.fill_rect(0, 0, 0, 2, 10, 10, 10, 255);
+    fb.fill_rect(0, 0, 2, 0, 10, 10, 10, 255);
+    fb.fill_rect(10, 10, 2, 2, 10, 10, 10, 255);
+    fb.fill_rect(3, 3, 5, 5, 50, 50, 50, 255);
+    assert_eq!(fb.get_pixel(3, 3), Some((50, 50, 50, 255)));
+}
+
+#[test]
+fn test_copy_rect_and_composite_buffer() {
+    let mut fb = SurfaceFrameBuffer::new(6, 6);
+    fb.fill(10, 20, 30, 255);
+    fb.fill_rect(2, 2, 2, 2, 200, 100, 50, 255);
+
+    // 部分矩形切り出し
+    let sub = fb.copy_rect(2, 2, 2, 2).expect("copy_rect should succeed");
+    assert_eq!(sub.width, 2);
+    assert_eq!(sub.height, 2);
+    assert_eq!(sub.get_pixel(0, 0), Some((200, 100, 50, 255)));
+    assert_eq!(sub.get_pixel(1, 1), Some((200, 100, 50, 255)));
+
+    // 境界外や無効サイズでの copy_rect
+    assert!(fb.copy_rect(0, 0, 0, 2).is_none());
+    assert!(fb.copy_rect(0, 0, 2, 0).is_none());
+    assert!(fb.copy_rect(10, 10, 2, 2).is_none());
+
+    // 境界をはみ出す矩形の切り出し（クリッピング）
+    let sub_clip = fb.copy_rect(4, 4, 10, 10).expect("clipping copy");
+    assert_eq!(sub_clip.width, 2);
+    assert_eq!(sub_clip.height, 2);
+
+    // composite_buffer による合成確認
+    let mut dst = SurfaceFrameBuffer::new(4, 4);
+    dst.fill(0, 0, 0, 255);
+    dst.composite_buffer(&sub, 1, 1, &crate::surfaces::types::DrawMethod::Overlay);
+    assert_eq!(dst.get_pixel(0, 0), Some((0, 0, 0, 255)));
+    assert_eq!(dst.get_pixel(1, 1), Some((200, 100, 50, 255)));
+    assert_eq!(dst.get_pixel(2, 2), Some((200, 100, 50, 255)));
+    assert_eq!(dst.get_pixel(3, 3), Some((0, 0, 0, 255)));
+}

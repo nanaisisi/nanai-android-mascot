@@ -52,6 +52,27 @@ pub(crate) fn handle_alias_line(txt: &mut SurfacesTxt, kero: bool, line: &str) {
     }
 }
 
+/// `char<N>.surface.alias {}` ブロック内の行を処理する
+pub(crate) fn handle_char_alias_line(txt: &mut SurfacesTxt, char_id: u32, line: &str) {
+    let Some((name, rest)) = split_key_value(line) else {
+        return;
+    };
+    let name = name.trim().to_string();
+    if name.is_empty() {
+        return;
+    }
+    if char_id == 0 {
+        txt.aliases.insert(name, expand_range(rest));
+    } else if char_id == 1 {
+        txt.kero_aliases.insert(name, expand_range(rest));
+    } else {
+        txt.char_aliases
+            .entry(char_id)
+            .or_default()
+            .insert(name, expand_range(rest));
+    }
+}
+
 /// `*.cursor {}` ブロック内の行を処理する (例: `mouseup0,Head,system:hand` または `mouseup,Head,system:hand`)
 pub(crate) fn handle_cursor_line(txt: &mut SurfacesTxt, scope: &str, line: &str) {
     let tokens: Vec<&str> = line.split(',').map(str::trim).collect();

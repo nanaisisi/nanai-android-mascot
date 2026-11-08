@@ -28,6 +28,7 @@ pub async fn get_ghost_info(
         kero_name: manifest.kero_name,
         num_characters: manifest.num_characters,
         shiori: manifest.shiori,
+        makoto: manifest.makoto,
         craftman: manifest.craftman,
         craftman_url: manifest.craftman_url,
         shells,
@@ -51,6 +52,7 @@ pub async fn get_ghost_info(
         shiori_logo_align: manifest.shiori_logo_align,
         shiori_logo_x: manifest.shiori_logo_x,
         shiori_logo_y: manifest.shiori_logo_y,
+        makoto: manifest.makoto,
     })
 }
 

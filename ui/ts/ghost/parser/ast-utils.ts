@@ -229,3 +229,95 @@ export function stripWaitsFromAst(ast: SakuraAstNode): SakuraAstNode {
 		children: newChildren,
 	};
 }
+
+/**
+ * AST 内の各コマンドトークンに対して変換関数を適用し、新しい AST を生成する
+ */
+export function mapAstCommands(
+	ast: SakuraAstNode,
+	transform: (token: any) => any,
+): SakuraAstNode {
+	if (ast.nodeType === "command") {
+		return {
+			...ast,
+			token: transform(ast.token),
+		};
+	}
+
+	if (!ast.children || ast.children.length === 0) {
+		return { ...ast };
+	}
+
+	return {
+		...ast,
+		children: ast.children.map((child) => mapAstCommands(child, transform)),
+	};
+}
+
+/**
+ * AST 内の表示用プレーンテキストを連結して抽出する（ログ保存・スクリーンリーダー・TTS用）
+ */
+export function extractAstText(ast: SakuraAstNode): string {
+	let text = "";
+	traverseAst(ast, (node) => {
+		if (node.nodeType === "command" && (node.token as any)?.type === "char") {
+			text += (node.token as any).value ?? "";
+		} else if (
+			node.nodeType === "choice" &&
+			(!node.children || node.children.length === 0) &&
+			node.text
+		) {
+			text += node.text;
+		}
+	});
+	return text;
+}
+
+/**
+ * AST の構造診断情報（総ノード数、最大深さ、スコープ別ノード数など）を返す
+ */
+export interface AstDiagnostics {
+	nodeCount: number;
+	maxDepth: number;
+	scopeCounts: Record<number, number>;
+	commandCount: number;
+	choiceCount: number;
+	anchorCount: number;
+}
+
+export function getAstDiagnostics(ast: SakuraAstNode): AstDiagnostics {
+	let nodeCount = 0;
+	let commandCount = 0;
+	let choiceCount = 0;
+	let anchorCount = 0;
+	const scopeCounts: Record<number, number> = {};
+
+	const computeDepth = (node: SakuraAstNode): number => {
+		nodeCount += 1;
+		if (node.nodeType === "command") {
+			commandCount += 1;
+		} else if (node.nodeType === "choice") {
+			choiceCount += 1;
+		} else if (node.nodeType === "anchor") {
+			anchorCount += 1;
+		} else if (node.nodeType === "scope" && typeof node.scope === "number") {
+			scopeCounts[node.scope] = (scopeCounts[node.scope] || 0) + 1;
+		}
+
+		if (!node.children || node.children.length === 0) {
+			return 1;
+		}
+		return 1 + Math.max(...node.children.map(computeDepth));
+	};
+
+	const maxDepth = computeDepth(ast);
+
+	return {
+		nodeCount,
+		maxDepth,
+		scopeCounts,
+		commandCount,
+		choiceCount,
+		anchorCount,
+	};
+}

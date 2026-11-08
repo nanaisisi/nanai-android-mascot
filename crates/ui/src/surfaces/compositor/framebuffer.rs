@@ -84,4 +84,67 @@ impl SurfaceFrameBuffer {
             self.data[start_idx..start_idx + row_bytes].fill(0);
         }
     }
+
+    /// バッファ全体を指定色 (r, g, b, a) で塗りつぶす
+    pub fn fill(&mut self, r: u8, g: u8, b: u8, a: u8) {
+        let pixel_count = (self.width as usize) * (self.height as usize);
+        let (chunks, _remainder) = self.data.as_chunks_mut::<4>();
+        for chunk in chunks.iter_mut().take(pixel_count) {
+            chunk[0] = r;
+            chunk[1] = g;
+            chunk[2] = b;
+            chunk[3] = a;
+        }
+    }
+
+    /// 部分矩形領域を指定色 (r, g, b, a) で塗りつぶす
+    #[allow(clippy::too_many_arguments)]
+    pub fn fill_rect(&mut self, x: u32, y: u32, w: u32, h: u32, r: u8, g: u8, b: u8, a: u8) {
+        if w == 0 || h == 0 || x >= self.width || y >= self.height {
+            return;
+        }
+        let end_x = (x + w).min(self.width);
+        let end_y = (y + h).min(self.height);
+
+        for cy in y..end_y {
+            for cx in x..end_x {
+                let idx = ((cy as usize) * (self.width as usize) + (cx as usize)) * 4;
+                self.data[idx] = r;
+                self.data[idx + 1] = g;
+                self.data[idx + 2] = b;
+                self.data[idx + 3] = a;
+            }
+        }
+    }
+
+    /// 指定した部分矩形領域を切り出して新しい SurfaceFrameBuffer を作成する
+    pub fn copy_rect(&self, x: u32, y: u32, w: u32, h: u32) -> Option<Self> {
+        if w == 0 || h == 0 || x >= self.width || y >= self.height {
+            return None;
+        }
+        let actual_w = w.min(self.width - x);
+        let actual_h = h.min(self.height - y);
+
+        let mut sub = Self::new(actual_w, actual_h);
+        for cy in 0..actual_h {
+            let src_y = y + cy;
+            let src_start = ((src_y as usize) * (self.width as usize) + (x as usize)) * 4;
+            let src_end = src_start + (actual_w as usize) * 4;
+            let dst_start = (cy as usize) * (actual_w as usize) * 4;
+            let dst_end = dst_start + (actual_w as usize) * 4;
+            sub.data[dst_start..dst_end].copy_from_slice(&self.data[src_start..src_end]);
+        }
+        Some(sub)
+    }
+
+    /// 別のバッファを指定座標 (dx, dy) に指定描画メソッドで合成する便利メソッド
+    pub fn composite_buffer(
+        &mut self,
+        src: &SurfaceFrameBuffer,
+        dx: i32,
+        dy: i32,
+        method: &crate::surfaces::types::DrawMethod,
+    ) {
+        self.composite_layer(src, dx, dy, method);
+    }
 }

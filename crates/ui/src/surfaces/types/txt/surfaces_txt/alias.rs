@@ -22,6 +22,30 @@ impl SurfacesTxt {
         None
     }
 
+    /// 指定スコープ（キャラクタID）のエイリアス名に対応するサーフィス番号列を取得
+    pub fn alias_numbers_for_scope(&self, scope_id: u32, name: &str) -> Option<&Vec<u32>> {
+        if scope_id == 0 {
+            return self.alias_numbers(name);
+        }
+        if scope_id == 1 {
+            if let Some(list) = self.kero_alias_numbers(name) {
+                return Some(list);
+            }
+        }
+        if let Some(map) = self.char_aliases.get(&scope_id) {
+            for (key, list) in map {
+                if key.eq_ignore_ascii_case(name) {
+                    return Some(list);
+                }
+            }
+        }
+        if scope_id != 0 {
+            // スコープ固有エイリアスがない場合は共通エイリアスにフォールバック
+            return self.alias_numbers(name);
+        }
+        None
+    }
+
     /// エイリアス名から最初の有効なサーフィス定義を解決する
     pub fn resolve_alias(&self, name: &str) -> Option<&SurfaceDefinition> {
         let list = self.alias_numbers(name)?;
@@ -31,6 +55,16 @@ impl SurfacesTxt {
     /// 相方（kero / char1）のエイリアス名から最初の有効なサーフィス定義を解決する
     pub fn resolve_kero_alias(&self, name: &str) -> Option<&SurfaceDefinition> {
         let list = self.kero_alias_numbers(name)?;
+        list.iter().find_map(|n| self.surfaces.get(n))
+    }
+
+    /// 指定スコープ（キャラクタID）のエイリアス名から最初の有効なサーフィス定義を解決する
+    pub fn resolve_alias_for_scope(
+        &self,
+        scope_id: u32,
+        name: &str,
+    ) -> Option<&SurfaceDefinition> {
+        let list = self.alias_numbers_for_scope(scope_id, name)?;
         list.iter().find_map(|n| self.surfaces.get(n))
     }
 

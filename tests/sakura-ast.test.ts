@@ -7,7 +7,10 @@ import {
 	collectChoices,
 	collectScopeNodes,
 	collectSurfaces,
+	extractAstText,
 	filterAstByScope,
+	getAstDiagnostics,
+	mapAstCommands,
 	stripWaitsFromAst,
 	tokensToAst,
 } from "../ui/ts/ghost/parser/ast.js";
@@ -165,4 +168,47 @@ test("collectAnimations, filterAstByScope, and stripWaitsFromAst handle advanced
 	);
 	assert.equal(hasWait, false);
 	assert.equal(collectAnimations(cleanAst).length, 2);
+});
+
+test("mapAstCommands, extractAstText, and getAstDiagnostics provide Cycle 10 transformations and diagnostics", () => {
+	const script =
+		"\\0\\s[0]Hello, \\_a[id_link,arg1]World\\_a\\w5\\q[Click Me,choice1]\\1\\s[10]Kero!\\e";
+	const tokens = parseSakuraScript(script);
+	const ast = tokensToAst(tokens);
+
+	// 1. extractAstText
+	const text = extractAstText(ast);
+	assert.equal(text, "Hello, WorldClick MeKero!");
+
+	// 2. getAstDiagnostics
+	const diag = getAstDiagnostics(ast);
+	assert.ok(diag.nodeCount > 0);
+	assert.ok(diag.maxDepth >= 3);
+	assert.equal(diag.scopeCounts[0], 1);
+	assert.equal(diag.scopeCounts[1], 1);
+	assert.equal(diag.choiceCount, 1);
+	assert.equal(diag.anchorCount, 1);
+
+	// 3. mapAstCommands (Double all wait times)
+	const mappedAst = mapAstCommands(ast, (token: any) => {
+		if (token?.type === "wait") {
+			return { ...token, value: (token.value || 0) * 2 };
+		}
+		return token;
+	});
+
+	const allMappedTokens: any[] = [];
+	const extractCommands = (node: any) => {
+		if (node.nodeType === "command" && node.token) {
+			allMappedTokens.push(node.token);
+		}
+		if (node.children) {
+			node.children.forEach(extractCommands);
+		}
+	};
+	extractCommands(mappedAst);
+
+	const waitToken = allMappedTokens.find((t) => t.type === "wait");
+	assert.ok(waitToken);
+	assert.equal(waitToken.value, 500); // \w5 is 250ms originally (5 * 50ms) -> doubled to 500ms
 });

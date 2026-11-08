@@ -3,6 +3,8 @@
  * @brief SERIKO アニメーションフレーム適用・反映処理モジュール
  */
 
+import { FrameStepEvent } from "../scheduler-events.js";
+
 function isInstance(obj: unknown) {
 	return (
 		obj !== null &&
@@ -77,18 +79,15 @@ export function _applyAnimationFrame(
 	const manager = inst.manager;
 
 	// 特殊制御パターンの処理
-	const surfaceId = p.surfaceId !== undefined ? p.surfaceId : bSurfId;
-	const surfaceNum =
-		typeof surfaceId === "number"
-			? surfaceId
-			: Number.parseInt(String(surfaceId), 10);
+	const surfaceId = p.surfaceId !== undefined ? p.surfaceId : (p.surface !== undefined ? p.surface : bSurfId);
+	const surfaceNum = typeof surfaceId === "number" ? surfaceId : Number.parseInt(String(surfaceId), 10);
 
-	if (surfaceNum === -1) {
+	if (surfaceNum === -1 || p.surface === -1 || p.surfaceId === -1) {
 		// surface -1: このアニメーションの再生を終了しベース表示に戻す
 		return false;
 	}
 
-	if (surfaceNum === -2) {
+	if (surfaceNum === -2 || p.surface === -2 || p.surfaceId === -2) {
 		// surface -2: 同一スコープの他の再生中アニメーションを停止
 		if (inst._runningAnimations) {
 			for (const key of inst._runningAnimations.keys()) {
@@ -102,9 +101,7 @@ export function _applyAnimationFrame(
 
 	if (p.type === "start" || p.type === "stop") {
 		if (p.type === "start" && p.targetId != null) {
-			const anim = inst.findAnimation
-				? inst.findAnimation(p.targetId, sId)
-				: null;
+			const anim = inst.findAnimation ? inst.findAnimation(p.targetId, sId) : null;
 			if (anim) {
 				inst.playAnimationPatterns?.(anim, bSurfId, sId);
 			}
@@ -123,17 +120,26 @@ export function _applyAnimationFrame(
 		return true;
 	}
 
-	if (
-		p.type === "scaling" ||
-		p.scaleX != null ||
-		p.scaleY != null ||
-		p.scale != null
-	) {
-		const scaleX = p.scaleX ?? p.scale ?? 100;
-		const scaleY = p.scaleY ?? p.scale ?? 100;
+	if (p.type === "scaling" || p.scaleX != null || p.scaleY != null || p.scale != null) {
+		const scaleX = p.scaleX ?? p.scale ?? (p.x !== undefined ? p.x : 100);
+		const scaleY = p.scaleY ?? p.scale ?? (p.y !== undefined ? p.y : 100);
 		const setScale = inst.setScale || manager?.setScale;
 		if (setScale) {
 			setScale.call(inst, scaleX, scaleY, sId);
+		}
+		const scheduler = inst.scheduler || manager?.scheduler;
+		if (scheduler?.notifyFrameStep) {
+			scheduler.notifyFrameStep(
+				new FrameStepEvent({
+					animationId: p.animationId || 0,
+					scopeId: sId,
+					baseSurfaceId: bSurfId,
+					pattern: p,
+					offsetX: scaleX,
+					offsetY: scaleY,
+					isFinished: true,
+				}),
+			);
 		}
 		return true;
 	}
@@ -152,14 +158,7 @@ export function _applyAnimationFrame(
 	} else if (manager) {
 		const renderSurfaceLayer = manager.renderSurfaceLayer;
 		if (renderSurfaceLayer) {
-			renderSurfaceLayer.call(
-				manager,
-				surfaceId,
-				p.file,
-				p.x || 0,
-				p.y || 0,
-				opts,
-			);
+			renderSurfaceLayer.call(manager, surfaceId, p.file, p.x || 0, p.y || 0, opts);
 		}
 	}
 	return true;

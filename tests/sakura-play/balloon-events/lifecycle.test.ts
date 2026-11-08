@@ -42,11 +42,21 @@ test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip",
 	player.waitForClickOrTimeout = () => Promise.resolve();
 	player.scheduleSurfaceRestore = () => {};
 
+	(app.ghostController as any).sendBalloonCloseNotify = async (lastScript: string) => {
+		notifyEvents.push({ event: "OnBalloonClose", args: [lastScript, "0"] });
+		return null;
+	};
+
+	(app.ghostController as any).sendBalloonBreakNotify = async (script: string, scopeId: number) => {
+		notifyEvents.push({ event: "OnBalloonBreak", args: [script, scopeId.toString()] });
+		return null;
+	};
+
 	// Test 1: \c clear triggers OnBalloonClose
 	await playScript(player, "\\0テスト中\\c");
 	assert.ok(
 		notifyEvents.some(
-			(e: any) => e.event === "OnBalloonClose" && e.args[0] === "0",
+			(e: any) => e.event === "OnBalloonClose" && e.args[1] === "0",
 		),
 		"OnBalloonClose missing",
 	);
@@ -68,7 +78,7 @@ test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip",
 	await playScript(playerSkip, "\\0スキップ");
 	assert.ok(
 		notifyEvents.some(
-			(e: any) => e.event === "OnBalloonBreak" && e.args[0] === "0",
+			(e: any) => e.event === "OnBalloonBreak" && e.args[1] === "0",
 		),
 		"OnBalloonBreak missing",
 	);
@@ -103,15 +113,15 @@ test("balloon events: OnBalloonTimeout triggered via sendBalloonTimeoutNotify", 
 	player.sleep = () => Promise.resolve();
 	player.waitForClickOrTimeout = () => Promise.resolve();
 	player.scheduleSurfaceRestore = () => {};
-	player.activeScopes = new Set([1]);
+	player.playbackController = { activeScopes: new Set([1]) } as any;
 	// Add the method to ghostController explicitly in this test since we're mocking it
 	(app.ghostController as any).sendBalloonTimeoutNotify = async (
-		_lastScript: string,
+		lastScript: string,
 		scopeId: number,
 	) => {
 		notifyEvents.push({
 			event: "OnBalloonTimeout",
-			args: [scopeId.toString()],
+			args: [lastScript, scopeId.toString()],
 		});
 		return null;
 	};
@@ -123,7 +133,7 @@ test("balloon events: OnBalloonTimeout triggered via sendBalloonTimeoutNotify", 
 
 	assert.ok(
 		notifyEvents.some(
-			(e: any) => e.event === "OnBalloonTimeout" && e.args[0] === "1",
+			(e: any) => e.event === "OnBalloonTimeout" && e.args[1] === "1",
 		),
 		"OnBalloonTimeout should be fired with active scope",
 	);
@@ -153,7 +163,7 @@ test("\\t (timeCritical) suppresses balloonTimeout and click timeout auto-advanc
 
 	player.parse = async () => [
 		{ type: "scope", value: 0 },
-		{ type: "time_critical" },
+		{ type: "timeout" },
 		{ type: "char", value: "Time Critical Text" },
 	];
 

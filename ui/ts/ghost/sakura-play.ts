@@ -101,6 +101,18 @@ export async function playScript(player: unknown, script: string) {
 	}
 
 	context.flushDesktopBalloon();
+
+	// 外部要因で再生が打ち切られた場合は OnBalloonBreak を通知する
+	if (player.playbackId !== currentId) {
+		try {
+			await app?.ghostController?.sendBalloonBreakNotify?.(
+				script,
+				player.currentScope || 0,
+				player.currentProgressIndex || 0,
+			);
+		} catch (_e) {}
+	}
+
 	if (!context.ended) {
 		app.surfaceManager?.onTalkEnd(player.currentScope);
 		app.surfaceManager?.onScriptEnd(0);

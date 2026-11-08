@@ -42,13 +42,21 @@ test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip",
 	player.waitForClickOrTimeout = () => Promise.resolve();
 	player.scheduleSurfaceRestore = () => {};
 
-	(app.ghostController as any).sendBalloonCloseNotify = async (lastScript: string) => {
+	(app.ghostController as any).sendBalloonCloseNotify = async (
+		lastScript: string,
+	) => {
 		notifyEvents.push({ event: "OnBalloonClose", args: [lastScript, "0"] });
 		return null;
 	};
 
-	(app.ghostController as any).sendBalloonBreakNotify = async (script: string, scopeId: number) => {
-		notifyEvents.push({ event: "OnBalloonBreak", args: [script, scopeId.toString()] });
+	(app.ghostController as any).sendBalloonBreakNotify = async (
+		script: string,
+		scopeId: number,
+	) => {
+		notifyEvents.push({
+			event: "OnBalloonBreak",
+			args: [script, scopeId.toString()],
+		});
 		return null;
 	};
 
@@ -70,7 +78,7 @@ test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip",
 		{ type: "char", value: "スキップ" },
 	];
 	playerSkip.sleep = async () => {
-		playerSkip.playbackId = 100; // Force cancel during sleep
+		playerSkip.playbackId = 101; // Force cancel during sleep (playScript starts at 100)
 	};
 	playerSkip.waitForClickOrTimeout = () => Promise.resolve();
 	playerSkip.scheduleSurfaceRestore = () => {};
@@ -179,6 +187,8 @@ test("\\t (timeCritical) suppresses balloonTimeout and click timeout auto-advanc
 	player.playbackController = { timeCritical: false } as any;
 
 	await playScript(player, "\\0\\tTime Critical Text\\e");
+	// playScript only waits for a click when running under Tauri; invoke explicitly
+	await player.waitForClickOrTimeout();
 
 	assert.ok(
 		player.timeCritical,

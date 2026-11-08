@@ -80,9 +80,8 @@ export function handleTimeout(
 ) {
 	if (player.playbackController) {
 		player.playbackController.timeCritical = true;
-	} else {
-		player.timeCritical = true;
 	}
+	player.timeCritical = true;
 }
 
 export function handleChoiceTimeout(

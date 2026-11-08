@@ -60,3 +60,5 @@ coverage-run
 coverage-final/
 *.pyc
 lcov.info
+assets/ghost/mock_nanai/ghost/master/satori_savebackup.txt
+assets/ghost/mock_nanai/ghost/master/satori_savedata.txt

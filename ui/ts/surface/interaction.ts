@@ -9,55 +9,43 @@ export { isPixelTransparent, setupGhostDragging, setupHoverAndWheel };
  * Nanai Android Mascot - ドラッグ & タッチインタラクション管理
  */
 export class InteractionManager {
-
-	app: unknown;
-	balloonDragManager: BalloonDragManager;
-
-	constructor(app: unknown) {
-
-
 	app: any;
 	balloonDragManager: BalloonDragManager;
 
-
-	constructor(app: any)
-
+	constructor(app: any) {
 		this.app = app;
 		this.balloonDragManager = new BalloonDragManager(this);
+	}
 
-	get balloonOffsetX(): number
+	get balloonOffsetX(): number {
 		return this.balloonDragManager.balloonOffsetX;
+	}
 
-	set balloonOffsetX(val: number)
+	set balloonOffsetX(val: number) {
 		this.balloonDragManager.balloonOffsetX = val;
+	}
 
-	get balloonOffsetY(): number
+	get balloonOffsetY(): number {
 		return this.balloonDragManager.balloonOffsetY;
+	}
 
-	set balloonOffsetY(val: number)
+	set balloonOffsetY(val: number) {
 		this.balloonDragManager.balloonOffsetY = val;
+	}
 
 	isPixelTransparent(
 		img: HTMLElement,
 		clientX: number,
 		clientY: number,
-	): boolean
+	): boolean {
 		return isPixelTransparent(img, clientX, clientY);
+	}
 
 	setupDragging(
 		target: HTMLElement,
-
-		onGhostClick: unknown,
-		onGhostStroke: unknown,
-		options: unknown = {},
-
-
 		onGhostClick: any,
-
 		onGhostStroke: any,
-
 		options: any = {},
-
 	) {
 		if (!target) return;
 
@@ -90,6 +78,7 @@ export class InteractionManager {
 		this.setupBalloonDragging(target);
 	}
 
-	setupBalloonDragging(ghostTarget: HTMLElement)
+	setupBalloonDragging(ghostTarget: HTMLElement) {
 		this.balloonDragManager.setupBalloonDragging(ghostTarget);
+	}
 }

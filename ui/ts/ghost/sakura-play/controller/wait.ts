@@ -3,12 +3,7 @@
  * @brief SakuraPlaybackController 向けウェイト・倍率・即時表示制御ロジック
  */
 
-
-export function setWaitMultiplier(this: unknown, _ratio: number) {
-
-
-export function _setWaitMultiplier(this: any, ratio: number) {
-
+export function setWaitMultiplier(this: any, ratio: number) {
 	const valid = typeof ratio === "number" && !Number.isNaN(ratio) && ratio >= 0;
 	this.waitMultiplier = valid ? ratio : 1.0;
 	this.charWaitMs = null;
@@ -17,24 +12,11 @@ export function _setWaitMultiplier(this: any, ratio: number) {
 	});
 }
 
-
-export function _getWaitMultiplier(this: unknown): number {
+export function getWaitMultiplier(this: any): number {
 	return this.waitMultiplier;
 }
 
-export function _setBalloonWait(
-	this: unknown,
-	_param: string | number | undefined,
-) {
-
-
-export function _getWaitMultiplier(this: any): number {
-	return this.waitMultiplier;
-}
-
-
-export function _setBalloonWait(this: any, param: string | number | undefined) {
-
+export function setBalloonWait(this: any, param: string | number | undefined) {
 	if (param === undefined || param === null || param === "" || param === "1") {
 		this.resetBalloonWait();
 		return;
@@ -67,12 +49,7 @@ export function _setBalloonWait(this: any, param: string | number | undefined) {
 	});
 }
 
-
-export function _resetBalloonWait(this: unknown) {
-
-
-export function _resetBalloonWait(this: any) {
-
+export function resetBalloonWait(this: any) {
 	this.waitMultiplier = 1.0;
 	this.charWaitMs = null;
 	this.emit("playback:balloon-wait", {
@@ -81,13 +58,8 @@ export function _resetBalloonWait(this: any) {
 	});
 }
 
-export function _calculateWait(
-
-	this: unknown,
-
-
+export function calculateWait(
 	this: any,
-
 	baseMs: number,
 	isCharWait: boolean = false,
 ): number {
@@ -99,12 +71,7 @@ export function _calculateWait(
 	return Math.round(ms * this.waitMultiplier);
 }
 
-
-export function _setQuickMode(this: unknown, _enable?: boolean) {
-
-
-export function _setQuickMode(this: any, enable?: boolean) {
-
+export function setQuickMode(this: any, enable?: boolean) {
 	const prev = this.isQuickMode;
 	this.isQuickMode = typeof enable === "boolean" ? enable : !this.isQuickMode;
 	this.emit("playback:quick-mode", { enabled: this.isQuickMode, prev });

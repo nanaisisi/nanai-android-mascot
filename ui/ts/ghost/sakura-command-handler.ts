@@ -21,7 +21,7 @@ import {
 	registerCommandHandler,
 } from "./command-handler/registry.js";
 import { clearAllScriptTimers } from "./command-handler/system.js";
-import { closeTeachBox, } from "./command-handler/teachbox.js";
+import { closeTeachBox, openTeachBox } from "./command-handler/teachbox.js";
 import {
 	handleWindowState,
 	setAlignmentToDesktop,
@@ -30,31 +30,18 @@ import {
 initDefaultCommandHandlers();
 
 export class SakuraCommandHandler {
-
-	player: unknown;
-	app: unknown;
-	teachForm: unknown;
-	communicateForm: unknown;
-
-	constructor(player: unknown) {
-
-
 	player: any;
-
 	app: any;
-
 	teachForm: any;
-
 	communicateForm: any;
 
-
-	constructor(player: any)
-
+	constructor(player: any) {
 		this.player = player;
 		this.app = player.app;
 		this.teachForm = null;
 		this.communicateForm = null;
 		initDefaultCommandHandlers();
+	}
 
 	async runCommand(args: string[]) {
 		const rawCmd = (args[0] ?? "").toLowerCase();
@@ -68,41 +55,39 @@ export class SakuraCommandHandler {
 		}
 	}
 
-	openInputBox(params: string[])
+	openInputBox(params: string[]) {
 		openInputBox(this, params);
+	}
 
-
-	openTeachBox(params: string[] = [], options: unknown = )
-
-
-	openTeachBox(params: string[] = [], options: any = )
-
+	openTeachBox(params: string[] = [], options: any = {}) {
 		openTeachBox(this, params, options);
+	}
 
-	closeTeachBox()
+	closeTeachBox() {
 		closeTeachBox(this);
+	}
 
-	openCommunicateBox(params: string[] = [])
+	openCommunicateBox(params: string[] = []) {
 		openCommunicateBox(this, params);
+	}
 
-	closeCommunicateBox(notifyCancel: boolean = false)
+	closeCommunicateBox(notifyCancel: boolean = false) {
 		closeCommunicateBox(this, notifyCancel);
+	}
 
-	async setAlignmentToDesktop(mode: string)
+	async setAlignmentToDesktop(mode: string) {
 		await setAlignmentToDesktop(this, mode);
+	}
 
-	async handleWindowState(state: string)
+	async handleWindowState(state: string) {
 		await handleWindowState(state);
+	}
 
-	async handleJump(target: string, args: string[] = [])
+	async handleJump(target: string, args: string[] = []) {
 		await handleJumpCommand(this, target, args);
+	}
 
-
-	expandEnv(script: string, options: unknown = )
-
-
-	expandEnv(script: string, options: any = )
-
+	expandEnv(script: string, options: any = {}) {
 		return expandSakuraScriptEnv(script, {
 			username: this.player?.app?.ghostController?.username,
 			selfname: this.player?.app?.ghostController?.currentGhost?.name,
@@ -110,10 +95,13 @@ export class SakuraCommandHandler {
 			lastobjectname: this.player?.app?.ghostController?.lastObjectName,
 			...options,
 		});
+	}
 
-	resetLifetimeState()
+	resetLifetimeState() {
 		resetScriptScopeState();
 		clearAllScriptTimers();
+	}
+}
 
 export {
 	CommandHandlerMap,

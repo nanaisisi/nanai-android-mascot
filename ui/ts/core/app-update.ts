@@ -1,6 +1,7 @@
 import {
 	buildUpdateArgs,
 	createUpdateProgressHandler,
+	parseErrorReason,
 } from "./actions/update-protocol.js";
 import { invoke, isTauriAvailable, listen } from "./tauri-helper.js";
 
@@ -12,26 +13,16 @@ export const updateMethods = {
 		targetGhostName: string | null = null,
 		options: { checkOnly?: boolean } = {},
 	) {
-
-		const gc = (this as unknown).ghostController;
-
-
 		const gc = (this as any).ghostController;
-
-		const _checkOnly = options?.checkOnly === true;
+		const checkOnly = options?.checkOnly === true;
 		const ghostName =
 			targetGhostName || gc.currentGhost?.name || "とらふぃっく☆とれいん";
-		const _ghostPath = gc.currentGhost?.path || "";
-		const _failedFile: string | null = null;
+		const ghostPath = gc.currentGhost?.path || "";
+		let failedFile: string | null = null;
 
 		console.log(`🌐 ネットワーク更新プロセス開始: ${ghostName}`);
 
-
-		const execRes: unknown = await gc.sendShioriEvent("OnUpdateProcessExec", [
-
-
 		const execRes: any = await gc.sendShioriEvent("OnUpdateProcessExec", [
-
 			"manual",
 		]);
 		if (execRes?.script?.trim()) {
@@ -41,38 +32,22 @@ export const updateMethods = {
 			return;
 		}
 
-		if (!_checkOnly) {
+		if (!checkOnly) {
 			await gc.sendShioriEvent(
 				"OnUpdateBegin",
 				buildUpdateArgs(ghostName, ghostPath),
 			);
 		}
 
-
-		(this _as _unknown).showBalloon?.("🌐 ネットワーク更新を確認中...");
-
-		if (!isTauriAvailable()) {
-			await (this as unknown).wait(1500);
-			(this as unknown).showBalloon?.(
-				"⚠️ ブラウザ環境のためネットワーク更新はシミュレーションのみです",
-			);
-			await gc.sendShioriEvent("OnUpdateFailure", buildUpdateArgs("fileio"));
-			await (this as unknown).sendUpdateResultSummary(
-
-
 		(this as any).showBalloon?.("🌐 ネットワーク更新を確認中...");
 
 		if (!isTauriAvailable()) {
-
 			await (this as any).wait(1500);
-
 			(this as any).showBalloon?.(
 				"⚠️ ブラウザ環境のためネットワーク更新はシミュレーションのみです",
 			);
 			await gc.sendShioriEvent("OnUpdateFailure", buildUpdateArgs("fileio"));
-
 			await (this as any).sendUpdateResultSummary(
-
 				ghostName,
 				false,
 				"fileio",
@@ -82,30 +57,16 @@ export const updateMethods = {
 		}
 
 		try {
-
-			const checkResult: unknown = await invoke("check_ghost_update", {
-
-
-			const _checkResult: any = await invoke("check_ghost_update", {
-
+			const checkResult: any = await invoke("check_ghost_update", {
 				ghostName,
 				ghostPath,
 			});
 			console.log("🔍 更新チェック結果:", checkResult);
 
-
-			const _fileNames = checkResult.update_files.map((f: unknown) => f.path);
-
-			if (checkOnly) {
-				(this as unknown).showBalloon?.(checkResult.message);
-
-
 			const fileNames = checkResult.update_files.map((f: any) => f.path);
 
 			if (checkOnly) {
-
 				(this as any).showBalloon?.(checkResult.message);
-
 				await gc.sendShioriEvent(
 					"OnUpdateCheckComplete",
 					buildUpdateArgs(
@@ -113,12 +74,7 @@ export const updateMethods = {
 						fileNames.join(","),
 					),
 				);
-
-				await (this as unknown).sendUpdateResultSummary(
-
-
 				await (this as any).sendUpdateResultSummary(
-
 					ghostName,
 					true,
 					checkResult.has_update ? checkResult.total_count : 0,
@@ -130,26 +86,11 @@ export const updateMethods = {
 
 			if (!checkResult.has_update || checkResult.update_files.length === 0) {
 				console.log("✨ 更新ファイルなし (none)");
-
-				(this as unknown).showBalloon?.(
-					"✨ 最新の状態です。更新ファイルはありません。",
-				);
-				await gc.sendShioriEvent("OnUpdateComplete", buildUpdateArgs("none"));
-				await (this as unknown).sendUpdateResultSummary(
-					ghostName,
-					true,
-					0,
-					null,
-				);
-
-
 				(this as any).showBalloon?.(
 					"✨ 最新の状態です。更新ファイルはありません。",
 				);
 				await gc.sendShioriEvent("OnUpdateComplete", buildUpdateArgs("none"));
-
 				await (this as any).sendUpdateResultSummary(ghostName, true, 0, null);
-
 				return;
 			}
 
@@ -160,33 +101,23 @@ export const updateMethods = {
 				buildUpdateArgs(totalMinusOne, fileListStr),
 			);
 
-
-			(this as unknown).showBalloon?.(
-
-
 			(this as any).showBalloon?.(
-
-				`📥 更新ファイル $checkResult.total_count件をダウンロード中...`,
+				`📥 更新ファイル ${checkResult.total_count} 件をダウンロード中...`,
 			);
 
 			const progressHandler = createUpdateProgressHandler(gc, (fp) => {
 				failedFile = fp;
 			});
 
-			let _unlisten: (() => void) | null = null;
+			let unlisten: (() => void) | null = null;
 			try {
-				_unlisten = await listen("update-progress", progressHandler);
+				unlisten = await listen("update-progress", progressHandler);
 			} catch (_) {
 				// 進捗リスナーの登録失敗時は無効化して続行
 			}
 
 			try {
-
-				const updateResult: unknown = await invoke("execute_ghost_update", {
-
-
-				const _updateResult: any = await invoke("execute_ghost_update", {
-
+				const updateResult: any = await invoke("execute_ghost_update", {
 					ghostName,
 					ghostPath,
 				});
@@ -209,12 +140,7 @@ export const updateMethods = {
 							ghostName,
 						]);
 					}
-
-					await (this as unknown).sendUpdateResultSummary(
-
-
 					await (this as any).sendUpdateResultSummary(
-
 						ghostName,
 						true,
 						updateResult.updated_files.length,
@@ -229,26 +155,17 @@ export const updateMethods = {
 							updateResult.updated_files?.join(",") ?? "",
 						),
 					);
-
-					(this as unknown).showBalloon?.(
-						`❌ ネットワーク更新失敗: $failureReason`,
-					);
-					await (this as unknown).sendUpdateResultSummary(
-
-
 					(this as any).showBalloon?.(
-						`❌ ネットワーク更新失敗: $failureReason`,
+						`❌ ネットワーク更新失敗: ${failureReason}`,
 					);
-
 					await (this as any).sendUpdateResultSummary(
-
 						ghostName,
 						false,
 						failureReason,
 						failedFile,
 					);
 				}
-			} finally
+			} finally {
 				if (typeof unlisten === "function") {
 					try {
 						await unlisten();
@@ -256,6 +173,7 @@ export const updateMethods = {
 						// イベントリスナーの解除エラーは安全に無視
 					}
 				}
+			}
 		} catch (err) {
 			console.error("ネットワーク更新エラー:", err);
 			const reason = parseErrorReason(err);
@@ -265,15 +183,8 @@ export const updateMethods = {
 					"OnUpdateCheckFailure",
 					buildUpdateArgs(reason),
 				);
-
-				(this as unknown).showBalloon?.(`❌ 更新チェック失敗: $reason`);
-				await (this as unknown).sendUpdateResultSummary(
-
-
-				(this as any).showBalloon?.(`❌ 更新チェック失敗: $reason`);
-
+				(this as any).showBalloon?.(`❌ 更新チェック失敗: ${reason}`);
 				await (this as any).sendUpdateResultSummary(
-
 					ghostName,
 					false,
 					reason,
@@ -284,30 +195,21 @@ export const updateMethods = {
 			}
 
 			await gc.sendShioriEvent("OnUpdateFailure", buildUpdateArgs(reason));
-
-			await (this as unknown).sendUpdateResultSummary(
-
-
 			await (this as any).sendUpdateResultSummary(
-
 				ghostName,
 				false,
 				reason,
 				failedFile,
 			);
-
-			(this as unknown).showBalloon?.(
-
-
 			(this as any).showBalloon?.(
-
-				`❌ 更新処理中にエラーが発生しました: $err`,
+				`❌ 更新処理中にエラーが発生しました: ${err}`,
 			);
 		}
 	},
 
-	wait(ms: number): Promise<void>
-		return new Promise((resolve) => setTimeout(resolve, ms));,
+	wait(ms: number): Promise<void> {
+		return new Promise((resolve) => setTimeout(resolve, ms));
+	},
 
 	async sendUpdateResultSummary(
 		ghostName: string,
@@ -316,23 +218,13 @@ export const updateMethods = {
 		failedFile: string | null,
 		checkOnly: boolean = false,
 	) {
-
-		const gc = (this as unknown).ghostController;
-
-
 		const gc = (this as any).ghostController;
-
 		const sep = String.fromCharCode(1); // \1 (バイト値1)
 		const parts = ["ghost", success ? "OK" : "NG", String(detail)];
 		if (failedFile) parts.push(failedFile);
-		const _baseEvent = checkOnly ? "OnUpdateCheckResult" : "OnUpdateResult";
+		const baseEvent = checkOnly ? "OnUpdateCheckResult" : "OnUpdateResult";
 
-
-		const resEx: unknown = await gc.sendShioriEvent(`$baseEventEx`, [
-
-
-		const resEx: any = await gc.sendShioriEvent(`$baseEventEx`, [
-
+		const resEx: any = await gc.sendShioriEvent(`${baseEvent}Ex`, [
 			[ghostName, ...parts].join(sep),
 		]);
 		if (!resEx?.script?.trim()) {

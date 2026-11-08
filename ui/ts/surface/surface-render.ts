@@ -16,17 +16,9 @@ export const surfaceRenderMethods = {
 	...surfaceDressupMethods,
 
 	async composeFrameOnBase(
-
-		this: unknown,
-		_baseCanvas: HTMLCanvasElement,
-		_frameLayers: unknown[],
-
-
 		this: any,
 		baseCanvas: HTMLCanvasElement,
-
 		frameLayers: any[],
-
 		resolveImagePath: (file: string) => Promise<string | null>,
 	): Promise<string | null> {
 		if (!baseCanvas || !frameLayers?.length) return null;
@@ -70,22 +62,12 @@ export const surfaceRenderMethods = {
 	},
 
 	async composeSurfaceElements(
-
-		this: unknown,
-
-
 		this: any,
-
 		surfaceId: number | string,
 		baseImgSrc: string,
 		resolveImagePath: (file: string) => Promise<string | null>,
 		scopeId: number = 0,
-
-		_frameLayers: unknown[] | null = null,
-
-
 		frameLayers: any[] | null = null,
-
 	): Promise<string> {
 		const sid = String(surfaceId);
 		const isFrame = Array.isArray(frameLayers);
@@ -105,12 +87,7 @@ export const surfaceRenderMethods = {
 			const layers = this.planToRenderLayers(plan, scopeId);
 			if (layers) {
 				if (!isFrame) {
-
-					const _result: unknown = await composeSurfaceElements(
-
-
 					const result: any = await composeSurfaceElements(
-
 						layers.elements,
 						baseImgSrc,
 						resolveImagePath,
@@ -138,12 +115,7 @@ export const surfaceRenderMethods = {
 		const layers = frameLayers?.length
 			? [...bindLayers, ...frameLayers]
 			: bindLayers;
-
-		const _result: unknown = await composeSurfaceElements(
-
-
 		const result: any = await composeSurfaceElements(
-
 			elementList,
 			baseImgSrc,
 			resolveImagePath,
@@ -156,16 +128,7 @@ export const surfaceRenderMethods = {
 		return result?.src ?? baseImgSrc;
 	},
 
-
-	processChromaKey(
-		this: unknown,
-		imageSrc: string,
-		pnaSrc: string | null = null,
-	) {
-
-
 	processChromaKey(this: any, imageSrc: string, pnaSrc: string | null = null) {
-
 		const useSelfAlpha =
 			this.shellManifest?.descript?.properties?.["seriko.use_self_alpha"] ===
 				"1" ||

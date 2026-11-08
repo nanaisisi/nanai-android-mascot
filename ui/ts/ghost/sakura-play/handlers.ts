@@ -66,17 +66,9 @@ export {
 };
 
 export async function handleToken(
-	_player: unknown,
-	_app: unknown,
-	_token: unknown,
-	_context: unknown,
-
 	player: any,
-
 	app: any,
-
 	token: any,
-
 	context: any,
 ) {
 	switch (token.type) {

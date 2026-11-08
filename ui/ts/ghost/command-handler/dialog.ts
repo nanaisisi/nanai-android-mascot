@@ -3,15 +3,7 @@
  * @brief \![open,dialog,type,...] システムダイアログコマンドハンドラ
  */
 
-
-export async function handleOpenDialogCommand(
-	_handler: unknown,
-	_args: string[],
-) {
-
-
-export async function _handleOpenDialogCommand(handler: any, args: string[]) {
-
+export async function handleOpenDialogCommand(handler: any, args: string[]) {
 	const dialogType = args[2] || "open";
 	const dialogParams = args.slice(3);
 

@@ -18,13 +18,7 @@ import { getCurrentWindow, PhysicalPosition } from "@tauri-apps/api/window";
  */
 export function isTauriAvailable(): boolean {
 	return (
-
-		!!(globalThis as unknown).__TAURI__ ||
-		!!(globalThis as unknown).__TAURI_INTERNALS__
-
-
 		!!(globalThis as any).__TAURI__ || !!(globalThis as any).__TAURI_INTERNALS__
-
 	);
 }
 
@@ -45,17 +39,9 @@ export const ipcQueueStats = {
 /**
  * Tauri IPCコマンドの呼び出しラッパー
  */
-
-export async function invoke<_T = unknown>(
+export async function invoke<T = any>(
 	cmd: string,
-	args: Record<string, unknown> = {},
-
-
-export async function invoke<_T = any>(
-	cmd: string,
-
 	args: Record<string, any> = {},
-
 ): Promise<T> {
 	if (!isTauriAvailable()) {
 		throw new Error(`Tauri is not available to invoke command: ${cmd}`);
@@ -120,12 +106,7 @@ export function convertFileSrc(
  */
 export async function listen(
 	event: string,
-
-	_handler: (event: unknown) => void,
-
-
 	handler: (event: any) => void,
-
 ): Promise<() => void> {
 	if (!isTauriAvailable()) return () => {};
 	return await tauriListen(event, handler);
@@ -134,12 +115,7 @@ export async function listen(
 /**
  * イベント発火
  */
-
-export async function emit(_event: string, _payload?: unknown): Promise<void> {
-
-
-export async function _emit(event: string, payload?: any): Promise<void> {
-
+export async function emit(event: string, payload?: any): Promise<void> {
 	if (!isTauriAvailable()) return;
 	await tauriEmit(event, payload);
 }
@@ -147,7 +123,7 @@ export async function _emit(event: string, payload?: any): Promise<void> {
 /**
  * 現在のウィンドウのドラッグ移動を開始
  */
-export async function _startDraggingWindow(): Promise<void> {
+export async function startDraggingWindow(): Promise<void> {
 	if (!isTauriAvailable()) return;
 	try {
 		await getCurrentWindow().startDragging();
@@ -159,7 +135,7 @@ export async function _startDraggingWindow(): Promise<void> {
 /**
  * 現在のウィンドウを指定量だけ移動する。
  */
-export async function _moveCurrentWindowBy(
+export async function moveCurrentWindowBy(
 	x: number,
 	y: number,
 	origin: { x: number; y: number },
@@ -174,7 +150,7 @@ export async function _moveCurrentWindowBy(
 	}
 }
 
-export async function _getCurrentWindowPosition(): Promise<{
+export async function getCurrentWindowPosition(): Promise<{
 	x: number;
 	y: number;
 } | null> {
@@ -187,9 +163,5 @@ export async function _getCurrentWindowPosition(): Promise<{
 		return null;
 	}
 }
-
-
-(globalThis as unknown).__NANAI_IPC_QUEUE_STATS__ = ipcQueueStats;
-
 
 (globalThis as any).__NANAI_IPC_QUEUE_STATS__ = ipcQueueStats;

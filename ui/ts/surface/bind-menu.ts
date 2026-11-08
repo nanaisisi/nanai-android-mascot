@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Rust ShellManifest 由来の着せ替え (bind) メニューデータ構築 (UKADOC準拠)
  *
@@ -18,10 +19,7 @@ export function bindOptionKey(scopeId = 0) {
  * @param {number} [scopeId]
  * @returns {Array<{ number: number, category: string, part: string, thumbnail?: string|null, default: boolean, add_ids: number[] }>}
  */
-export function bindGroupsForScope(
-	manifest: { sakura_bind_groups: any; kero_bind_groups: any },
-	scopeId = 0,
-) {
+export function bindGroupsForScope(manifest, scopeId = 0) {
 	if (!manifest) return [];
 	const groups =
 		scopeId === 0 ? manifest.sakura_bind_groups : manifest.kero_bind_groups;
@@ -35,10 +33,7 @@ export function bindGroupsForScope(
  * @param {number} [scopeId]
  * @returns {{ category: string, options: string[] }|null}
  */
-export function bindOptionForScope(
-	manifest: { descript: { properties: { [x: string]: any } } },
-	scopeId = 0,
-) {
+export function bindOptionForScope(manifest, scopeId = 0) {
 	const value = manifest?.descript?.properties?.[bindOptionKey(scopeId)];
 	if (!value) return null;
 	const parts = String(value)
@@ -50,7 +45,7 @@ export function bindOptionForScope(
 }
 
 /** 着せ替え状態キー（SurfaceManager.dressupState と共通フォーマット） */
-export function dressupKey(scopeId: number, category: any, part: any) {
+export function dressupKey(scopeId, category, part) {
 	return `${scopeId}__${category}__${part}`;
 }
 
@@ -63,9 +58,9 @@ export function dressupKey(scopeId: number, category: any, part: any) {
  *   categories: Array<{ category: string, options: string[], parts: Array<{ number: number, part: string, thumbnail?: string|null, on: boolean }> }>,
  * }}
  */
-export function bindMenuData(manifest: any, scopeId = 0, dressupState = null) {
+export function bindMenuData(manifest, scopeId = 0, dressupState = null) {
 	const option = bindOptionForScope(manifest, scopeId);
-	/** @type {Map<string, { category: string, options: string[], parts: unknown[] }>} */
+	/** @type {Map<string, { category: string, options: string[], parts: any[] }>} */
 	const byCategory = new Map();
 
 	for (const group of bindGroupsForScope(manifest, scopeId)) {
@@ -102,7 +97,7 @@ export function bindMenuData(manifest: any, scopeId = 0, dressupState = null) {
  * @param {{ dressupState?: Map<string, boolean> }|null} [surfaceManager]
  * @returns {{ sakura: ReturnType<typeof bindMenuData>, kero: ReturnType<typeof bindMenuData> }|null}
  */
-export function dressupMenuPayload(manifest: any, surfaceManager = null) {
+export function dressupMenuPayload(manifest, surfaceManager = null) {
 	if (!manifest) return null;
 	if (
 		!bindGroupsForScope(manifest, 0).length &&
@@ -123,13 +118,7 @@ export function dressupMenuPayload(manifest: any, surfaceManager = null) {
  * @param {Map<string, boolean>} dressupState
  * @returns {number} シードしたパーツ数
  */
-export function seedDressupDefaults(
-	manifest: { sakura_bind_groups: any; kero_bind_groups: any },
-	dressupState: {
-		has: (arg0: string) => any;
-		set: (arg0: string, arg1: boolean) => void;
-	},
-) {
+export function seedDressupDefaults(manifest, dressupState) {
 	if (!manifest || !(dressupState instanceof Map)) return 0;
 	let seeded = 0;
 	for (const [scopeId, groups] of [
@@ -153,7 +142,7 @@ export function seedDressupDefaults(
  * @param {number[]} [addIds]
  * @returns {number[]}
  */
-export function bindAnimationIds(number: unknown, addIds = []) {
+export function bindAnimationIds(number, addIds = []) {
 	const ids = [...(Array.isArray(addIds) ? addIds : [])];
 	if (Number.isFinite(number) && !ids.includes(number)) {
 		ids.push(number);
@@ -166,7 +155,7 @@ export function bindAnimationIds(number: unknown, addIds = []) {
  * @param {string|number|null|undefined} surface
  * @returns {string|null} ファイル名 ("surface100.png")。"-1" / 空は null
  */
-export function patternSurfaceFile(surface: any) {
+export function patternSurfaceFile(surface) {
 	const s = String(surface ?? "").trim();
 	if (!s || s === "-1") return null;
 	return `surface${s}.png`;

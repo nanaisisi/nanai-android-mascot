@@ -6,48 +6,47 @@ export const AppConfig: {
 	timing: Record<string, number>;
 	scale: Record<string, number>;
 	storageKeys: Record<string, string>;
-
-	shiori?: Record<string, unknown>;
-	state?: Record<string, unknown>;
-
-
 	shiori?: Record<string, any>;
-
 	state?: Record<string, any>;
-
 } = {
+	// パス関連
+	paths: {
 		defaultGhostDir: "assets/ghost",
 		fallbackGhostName: "mock_nanai",
 		fallbackShellName: "master",
 		surfacesTxt: "surfaces.txt",
-		descriptTxt: "descript.txt",,
+		descriptTxt: "descript.txt",
+	},
 
 	// タイマー・同期間隔 (ミリ秒)
-	timing:
+	timing: {
 		randomTalkMin: 60000,
 		randomTalkMax: 180000,
 		secondChangeInterval: 1000,
 		longPressDuration: 600,
-		balloonTypeSpeed: 40,,
+		balloonTypeSpeed: 40,
+	},
 
 	// スケール・サイズ設定
-	scale:
+	scale: {
 		ghostDefault: 1.0,
 		ghostMin: 0.5,
 		ghostMax: 2.0,
 		balloonDefault: 1.0,
 		balloonMin: 0.8,
 		balloonMax: 1.5,
-		step: 0.1,,
+		step: 0.1,
+	},
 
 	// ローカルストレージキー
-	storageKeys:
+	storageKeys: {
 		lastGhost: "nanai_last_ghost",
 		lastShell: "nanai_last_shell",
 		ghostScale: "nanai_ghost_scale",
 		balloonScale: "nanai_balloon_scale",
 		balloonTheme: "nanai_balloon_theme",
-		settings: "nanai_app_settings",,
+		settings: "nanai_app_settings",
+	},
 };
 
 /**
@@ -55,17 +54,9 @@ export const AppConfig: {
  */
 export async function loadAppConfig(): Promise<void> {
 	try {
-
-		const tauriInternals = (globalThis as unknown).__TAURI_INTERNALS__;
-		if (tauriInternals?.invoke) {
-			const _config: unknown = await tauriInternals.invoke("get_app_config");
-
-
 		const tauriInternals = (globalThis as any).__TAURI_INTERNALS__;
 		if (tauriInternals?.invoke) {
-
 			const config: any = await tauriInternals.invoke("get_app_config");
-
 
 			if (config) {
 				if (config.paths) Object.assign(AppConfig.paths, config.paths);
@@ -79,6 +70,7 @@ export async function loadAppConfig(): Promise<void> {
 				);
 			}
 		}
-	} catch (err)
+	} catch (err) {
 		console.warn("⚠️ Could not load remote/file config, using defaults:", err);
+	}
 }

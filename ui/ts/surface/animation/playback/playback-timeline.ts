@@ -37,16 +37,7 @@ export async function _playTimelineFrames(
 	keyOrOptions,
 	optionsParam = {},
 ) {
-	let _instance: unknown,
-		_timeline: unknown,
-		_anim: unknown,
-		_baseSurfaceId: unknown,
-		_scopeId: unknown,
-		_key: unknown,
-		_options: unknown;
-
 	let instance, timeline, anim, baseSurfaceId, scopeId, key, options;
-
 	if (isInstance(target)) {
 		instance = target;
 		timeline = timelineOrAnim;
@@ -122,17 +113,7 @@ export async function _playOnePat(
 	isCurrentOrOptions,
 	optionsParam = {},
 ) {
-	let _instance: unknown,
-		_pat: unknown,
-		_anim: unknown,
-		_baseSurfaceId: unknown,
-		_scopeId: unknown,
-		_key: unknown,
-		_isCurrent: unknown,
-		_options: unknown;
-
 	let instance, pat, anim, baseSurfaceId, scopeId, key, isCurrent, options;
-
 	if (isInstance(target)) {
 		instance = target;
 		pat = patOrAnim;

@@ -3,12 +3,7 @@
  * @brief ゴースト操作・イベント送信コマンド (\![raise,...], \![change,ghost,...], \![call,ghost,...])
  */
 
-
-export async function handleRaiseCommand(_handler: unknown, _args: string[]) {
-
-
-export async function _handleRaiseCommand(handler: any, args: string[]) {
-
+export async function handleRaiseCommand(handler: any, args: string[]) {
 	const eventName = args[1];
 	if (eventName) {
 		await handler.app.ghostController?.sendShioriEvent?.(
@@ -18,12 +13,7 @@ export async function _handleRaiseCommand(handler: any, args: string[]) {
 	}
 }
 
-
-export async function _handleChangeCommand(_handler: unknown, _args: string[]) {
-
-
-export async function _handleChangeCommand(handler: any, args: string[]) {
-
+export async function handleChangeCommand(handler: any, args: string[]) {
 	const target = (args[1] ?? "").toLowerCase();
 	const name = args[2] ?? "";
 	const options = args.slice(3);
@@ -77,12 +67,7 @@ export async function _handleChangeCommand(handler: any, args: string[]) {
 	}
 }
 
-
-export async function _handleVanishByMyself(_handler: unknown, _args: string[]) {
-
-
-export async function _handleVanishByMyself(handler: any, _args: string[]) {
-
+export async function handleVanishByMyself(handler: any, _args: string[]) {
 	console.log("👻 Vanish by myself requested");
 	const gc = handler.app.ghostController;
 	if (gc?.sendShioriEvent) {
@@ -99,27 +84,14 @@ export async function _handleVanishByMyself(handler: any, _args: string[]) {
 	}
 }
 
-
-export async function _handleCallCommand(_handler: unknown, _args: string[]) {
-
-
-export async function _handleCallCommand(handler: any, args: string[]) {
-
+export async function handleCallCommand(handler: any, args: string[]) {
 	const [target, name] = args.slice(1);
 	if (target === "ghost" && name) {
 		await handler.app.ghostController?.callGhost?.(name);
 	}
 }
 
-
-export async function _handleRaiseOtherCommand(
-	_handler: unknown,
-	_args: string[],
-) {
-
-
-export async function _handleRaiseOtherCommand(handler: any, args: string[]) {
-
+export async function handleRaiseOtherCommand(handler: any, args: string[]) {
 	const ghostName = args[1];
 	const eventName = args[2];
 	const references = args.slice(3);
@@ -138,15 +110,7 @@ export async function _handleRaiseOtherCommand(handler: any, args: string[]) {
 	}
 }
 
-
-export async function _handleNotifyOtherCommand(
-	_handler: unknown,
-	_args: string[],
-) {
-
-
-export async function _handleNotifyOtherCommand(handler: any, args: string[]) {
-
+export async function handleNotifyOtherCommand(handler: any, args: string[]) {
 	const ghostName = args[1];
 	const eventName = args[2];
 	const references = args.slice(3);
@@ -171,23 +135,13 @@ export async function _handleNotifyOtherCommand(handler: any, args: string[]) {
 	}
 }
 
-
-export async function _handleEmbedCommand(_handler: unknown, _args: string[]) {
-
-
-export async function _handleEmbedCommand(handler: any, args: string[]) {
-
+export async function handleEmbedCommand(handler: any, args: string[]) {
 	const eventName = args[1];
 	if (!eventName) return;
 	const references = args.slice(2);
 	const gc = handler.app.ghostController;
 	if (gc?.sendShioriEvent) {
-
-		const _res: unknown = await gc.sendShioriEvent(eventName, references);
-
-
 		const res: any = await gc.sendShioriEvent(eventName, references);
-
 		const embeddedScript = res?.response?.value;
 		if (embeddedScript && handler.player?.playScript) {
 			await handler.player.playScript(embeddedScript);

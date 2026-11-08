@@ -1,23 +1,12 @@
 import { drawImageLayer, loadLayerImage } from "./layer.js";
 
 export function composeSurfaceElements(
-
-	elementList: unknown[],
-	baseImgSrc: string,
-	resolveImagePath: (file: string) => Promise<string | null>,
-	bindLayers: unknown[] = [],
-	{ returnCanvas = false } = {},
-): Promise<unknown> {
-
-
 	elementList: any[],
 	baseImgSrc: string,
 	resolveImagePath: (file: string) => Promise<string | null>,
-
-	bindLayers: any[] = [],returnCanvas = false = ,
-
-): Promise<any>
-
+	bindLayers: any[] = [],
+	{ returnCanvas = false } = {},
+): Promise<any> {
 	if ((!elementList || elementList.length === 0) && bindLayers.length === 0) {
 		return returnCanvas
 			? (async () => {
@@ -79,3 +68,4 @@ export function composeSurfaceElements(
 		baseImg.onerror = () => resolve(baseImgSrc);
 		baseImg.src = baseImgSrc;
 	});
+}

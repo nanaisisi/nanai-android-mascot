@@ -3,7 +3,7 @@
  * @brief Nanai Android Mascot - 独立バルーンウィンドウ制御スクリプト
  */
 
-import { isTauriAvailable, } from "../core/tauri-helper.js";
+import { emit, isTauriAvailable, listen } from "../core/tauri-helper.js";
 import { setupWindowGestures } from "./balloon-window/gesture.js";
 import { setupInteractiveElements } from "./balloon-window/interactive.js";
 import { updateBalloonWindowScale } from "./balloon-window/scale.js";
@@ -13,9 +13,9 @@ const urlParams = new URLSearchParams(globalThis.location.search);
 const scopeId = parseInt(urlParams.get("scope") || "0", 10);
 let appliedTheme: string | null = null;
 let applyingTheme: string | null = null;
-let _currentDpiScale = 1;
+let currentDpiScale = 1;
 let currentUserScale = 1;
-let _isBalloonDontMove = false;
+let isBalloonDontMove = false;
 
 export {
 	setupInteractiveElements,
@@ -29,25 +29,20 @@ export async function applyBalloonDescript(theme: string) {
 	if (applyingTheme === theme) return;
 	applyingTheme = theme;
 	try {
-
-		const result: unknown = await applyThemeDescript({
-
-
-		const _result: any = await applyThemeDescript({
-
+		const result: any = await applyThemeDescript({
 			theme,
 			scopeId,
 			currentUserScale,
 			onDpiScaleChange: (newDpiScale: number) => {
-				_currentDpiScale = newDpiScale;
+				currentDpiScale = newDpiScale;
 			},
 			onDontMoveChange: (dontMove: boolean) => {
-				_isBalloonDontMove = dontMove;
+				isBalloonDontMove = dontMove;
 			},
 		});
 		if (result) {
-			_currentDpiScale = result.dpiScale;
-			_isBalloonDontMove = result.isBalloonDontMove;
+			currentDpiScale = result.dpiScale;
+			isBalloonDontMove = result.isBalloonDontMove;
 			appliedTheme = theme;
 		}
 	} catch (_e) {
@@ -57,7 +52,7 @@ export async function applyBalloonDescript(theme: string) {
 }
 
 export function initBalloonWindow() {
-	const _balloonBox = document.getElementById("balloon-box");
+	const balloonBox = document.getElementById("balloon-box");
 	const _balloonText = document.getElementById("balloon-text");
 
 	const savedTheme =
@@ -69,12 +64,7 @@ export function initBalloonWindow() {
 
 	if (!isTauriAvailable()) return;
 
-
-	void listen(`update-balloon-content-$scopeId`, (_event: unknown) =>
-
-
-	void listen(`update-balloon-content-$scopeId`, (event: any) => {
-
+	void listen(`update-balloon-content-${scopeId}`, (event: any) => {
 		const { html, theme } = event.payload || {};
 		if (theme) {
 			document.documentElement.setAttribute("data-balloon-theme", theme);
@@ -87,12 +77,7 @@ export function initBalloonWindow() {
 		}
 	});
 
-
-	void listen("balloon-theme-changed", (_event: unknown) =>
-
-
 	void listen("balloon-theme-changed", (event: any) => {
-
 		const theme = event.payload?.theme || event.payload;
 		if (theme) {
 			document.documentElement.setAttribute("data-balloon-theme", theme);
@@ -101,12 +86,7 @@ export function initBalloonWindow() {
 		}
 	});
 
-
-	void listen("balloon-scale-changed", (_event: unknown) =>
-
-
 	void listen("balloon-scale-changed", (event: any) => {
-
 		const scale =
 			event.payload?.userScale ?? event.payload?.scale ?? event.payload;
 		if (typeof scale === "number" && !Number.isNaN(scale)) {
@@ -118,6 +98,7 @@ export function initBalloonWindow() {
 	});
 
 	void emit("balloon-ready", { scopeId });
+}
 
 if (typeof document !== "undefined") {
 	if (document.readyState === "loading") {

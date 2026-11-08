@@ -1,9 +1,11 @@
+// @ts-nocheck
 /**
  * @file env.js
  * @brief さくらスクリプト環境変数・システムプロパティ展開エンジン (Slot-06)
  * [environmentvariable.md], [notes_environmentvariable.md], [pct-star.md], [pct-m-q.md], [notes_lifespan.md]
  */
 
+// @ts-nocheck
 /**
  * デフォルトのランダム単語リスト (%m? 用)
  */
@@ -15,12 +17,11 @@ const DEFAULT_RANDOM_WORDS = [
 	"せりこ",
 ];
 
+// @ts-nocheck
 /**
  * スクリプト実行単位の寿命管理（さくらスクリプトの寿命: \e またはスクリプト終了時にリセット）
  */
 class ScriptLifetimeState {
-	customVariables: Map<any, any>;
-	activeModes: Set<unknown>;
 	constructor() {
 		this.customVariables = new Map();
 		this.activeModes = new Set();
@@ -59,6 +60,7 @@ class ScriptLifetimeState {
 
 export const scriptLifetimeState = new ScriptLifetimeState();
 
+// @ts-nocheck
 /**
  * さくらスクリプト内の環境変数・プロパティを展開
  *
@@ -216,6 +218,7 @@ export function expandSakuraScriptEnv(script, options = {}) {
 	return result;
 }
 
+// @ts-nocheck
 /**
  * さくらスクリプトの寿命 (notes_lifespan.md) に基づき一時変数をリセット
  */

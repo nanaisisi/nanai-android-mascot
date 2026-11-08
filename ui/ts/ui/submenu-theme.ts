@@ -28,44 +28,12 @@ function preloadImage(url: string | null): Promise<void> {
 	});
 }
 
-interface ShellThemeInfo {
-	background_color?: string;
-	foreground_color?: string;
-	background_font_color?: string;
-	font_color?: string;
-	foreground_font_color?: string;
-	disable_font_color?: string;
-	separator_color?: string;
-	frame_color?: string;
-	font_name?: string;
-	font_height?: number | string;
-	background_bitmap?: string;
-	foreground_bitmap?: string;
-	sidebar_bitmap?: string;
-	background_alignment?: string;
-	foreground_alignment?: string;
-	sidebar_alignment?: string;
-}
-
-interface ActiveShellInfo {
-	path?: string;
-	menu_theme?: ShellThemeInfo;
-}
-
-export function applyShellMenuTheme(
-	activeShell: ActiveShellInfo | null | undefined,
-) {
+export function applyShellMenuTheme(activeShell: any) {
 	const rootStyle = document.documentElement.style;
 	const theme = activeShell?.menu_theme;
-	const setOrRemove = (
-		property: string,
-		value: string | number | null | undefined,
-	) => {
-		if (value !== null && value !== undefined && value !== "") {
-			rootStyle.setProperty(property, String(value));
-		} else {
-			rootStyle.removeProperty(property);
-		}
+	const setOrRemove = (property: string, value: any) => {
+		if (value) rootStyle.setProperty(property, value);
+		else rootStyle.removeProperty(property);
 	};
 
 	setOrRemove("--balloon-bg", theme?.background_color);
@@ -92,7 +60,7 @@ export function applyShellMenuTheme(
 	}
 
 	const shellPath = activeShell?.path?.replace(/\\/g, "/") || "";
-	const resolveImg = (relativePath: string | undefined) => {
+	const resolveImg = (relativePath: string) => {
 		if (!relativePath) return null;
 		const relStr = String(relativePath);
 		if (
@@ -106,15 +74,8 @@ export function applyShellMenuTheme(
 		const fullPath = shellPath
 			? `${shellPath}/${relStr.replace(/\\/g, "/")}`
 			: relStr;
-		const tauriCore = (
-			globalThis as unknown as {
-				__TAURI__?: {
-					core?: { convertFileSrc?: (p: string) => string };
-				};
-			}
-		).__TAURI__?.core;
-		return tauriCore?.convertFileSrc
-			? tauriCore.convertFileSrc(fullPath)
+		return (globalThis as any).__TAURI__?.core?.convertFileSrc
+			? (globalThis as any).__TAURI__.core.convertFileSrc(fullPath)
 			: fullPath;
 	};
 
@@ -128,7 +89,7 @@ export function applyShellMenuTheme(
 		preloadImage(sideUrl),
 	]);
 
-	const applyAlignment = (alignRaw: string | undefined, prefix: string) => {
+	const applyAlignment = (alignRaw: string, prefix: string) => {
 		const align = String(alignRaw || "").toLowerCase();
 		let pos = "left top";
 		if (align.includes("right") && align.includes("bottom")) {

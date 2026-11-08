@@ -45,37 +45,19 @@ import {
 import { SyncObjectManager } from "./sync-object.js";
 
 export class SakuraPlaybackController {
-
-	player: unknown;
-	queue: unknown[];
-	currentJob: unknown;
-
-
 	player: any;
-
 	queue: any[];
-
 	currentJob: any;
-
 	isProcessing: boolean;
 	isPaused: boolean;
 	isQuickMode: boolean;
 	waitMultiplier: number;
 	charWaitMs: number | null;
 	nextJobId: number;
-
-	listeners: Map<string, Set<(...args: unknown[]) => void>>;
-	syncObjects: SyncObjectManager;
-
-	constructor(options: unknown = {}) {
-
-
 	listeners: Map<string, Set<Function>>;
 	syncObjects: SyncObjectManager;
 
-
-	constructor(options: any = {})
-
+	constructor(options: any = {}) {
 		this.player = options.player || null;
 		if (this.player && !this.player.playbackController) {
 			this.player.playbackController = this;
@@ -90,14 +72,10 @@ export class SakuraPlaybackController {
 		this.nextJobId = 1;
 		this.listeners = new Map();
 		this.syncObjects = new SyncObjectManager();
+	}
 }
 
-
-const proto: unknown = SakuraPlaybackController.prototype;
-
-
 const proto: any = SakuraPlaybackController.prototype;
-
 
 proto.on = on;
 proto.off = off;

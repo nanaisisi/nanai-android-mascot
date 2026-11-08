@@ -4,12 +4,7 @@
  */
 
 export function statusCodeFromRust(
-
-	_status: string | Record<string, unknown> | undefined,
-
-
 	status: string | Record<string, any> | undefined,
-
 ): number {
 	const codes: Record<string, number> = {
 		Ok: 200,
@@ -26,23 +21,11 @@ export function statusCodeFromRust(
 	return codes[status as string] ?? 0;
 }
 
-
-export function fromRustResponse(typed: Record<string, unknown> | null) {
-	if (!typed || typeof typed !== "object") return null;
-
-	const _status = statusCodeFromRust(
-		typed.status as string | Record<string, unknown> | undefined,
-	);
-	const _headers: Record<string, unknown> = {};
-
-
 export function fromRustResponse(typed: Record<string, any> | null) {
 	if (!typed || typeof typed !== "object") return null;
 
 	const status = statusCodeFromRust(typed.status);
-
 	const headers: Record<string, any> = {};
-
 	for (const [key, value] of Object.entries(typed)) {
 		if (value == null) continue;
 		if (Array.isArray(value)) {
@@ -55,7 +38,7 @@ export function fromRustResponse(typed: Record<string, any> | null) {
 	}
 	return {
 		status,
-		statusText: (typed.statusText as string) ?? "",
+		statusText: typed.statusText ?? "",
 		value: typed.value ?? "",
 		headers,
 	};
@@ -264,7 +247,7 @@ export const SHIORI_EVENTS = {
 	PING_PROGRESS: "OnPingProgress",
 } as const;
 
-export const _ShioriProtocol = {
+export const ShioriProtocol = {
 	statusCodeFromRust,
 	fromRustResponse,
 	SHIORI_EVENTS,

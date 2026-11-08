@@ -5,20 +5,13 @@
 
 export interface SakuraScriptToken {
 	type: string;
-
-	value?: unknown;
-
 	value?: any;
-
 	animId?: number | string;
 	wait?: boolean;
 	half?: boolean;
 	id?: string;
 	text?: string;
 	args?: string[];
-
-	[key: string]: unknown;
-
 	[key: string]: any;
 }
 

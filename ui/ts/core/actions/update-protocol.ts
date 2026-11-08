@@ -152,12 +152,7 @@ export const OTHER_PROGRESS_PHASE_EVENTS: Record<string, string> = {
  * @param {any} err
  * @returns {string}
  */
-
-export function parseErrorReason(_err: unknown): string {
-
-
-export function _parseErrorReason(err: any): string {
-
+export function parseErrorReason(err: any): string {
 	const msg = String(err);
 	if (msg.includes("404")) return "404";
 	if (msg.includes("timeout")) return "timeout";
@@ -170,27 +165,17 @@ export function _parseErrorReason(err: any): string {
  * @param {any} gc - GhostController
  * @param {(filePath: string) => void} [onFailedFile]
  * @param {boolean} [isOther=false] - 外部リソース更新時は true
- * @returns {(event: unknown) => void}
+ * @returns {(event: any) => void}
  */
-export function _createUpdateProgressHandler(
-
-	_gc: unknown,
-
-
+export function createUpdateProgressHandler(
 	gc: any,
-
 	onFailedFile?: (filePath: string) => void,
 	isOther: boolean = false,
 ) {
 	const eventMap = isOther
 		? OTHER_PROGRESS_PHASE_EVENTS
 		: PROGRESS_PHASE_EVENTS;
-
-	return (_event: unknown) => {
-
-
 	return (event: any) => {
-
 		const { phase, path: filePath } = event.payload || {};
 		if (!filePath) return;
 		const evName = eventMap[phase];

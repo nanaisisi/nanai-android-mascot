@@ -3,12 +3,7 @@
  * @brief SakuraPlaybackController 向け再生キュー操作およびループ処理ロジック
  */
 
-
-export function enqueue(this: unknown, _script: string): Promise<unknown> {
-
-
-export function _enqueue(this: any, script: string): Promise<any> {
-
+export function enqueue(this: any, script: string): Promise<any> {
 	return new Promise((resolve, reject) => {
 		const job = {
 			id: this.nextJobId++,
@@ -22,15 +17,7 @@ export function _enqueue(this: any, script: string): Promise<any> {
 	});
 }
 
-
-export function _enqueuePriority(
-	this: unknown,
-	_script: string,
-): Promise<unknown> {
-
-
-export function _enqueuePriority(this: any, script: string): Promise<any> {
-
+export function enqueuePriority(this: any, script: string): Promise<any> {
 	return new Promise((resolve, reject) => {
 		const job = {
 			id: this.nextJobId++,
@@ -49,24 +36,14 @@ export function _enqueuePriority(this: any, script: string): Promise<any> {
 	});
 }
 
-
-export function _interrupt(this: unknown, _script: string): Promise<unknown> {
-
-
-export function _interrupt(this: any, script: string): Promise<any> {
-
+export function interrupt(this: any, script: string): Promise<any> {
 	if (this.player) {
 		this.player.skip();
 	}
 	return this.enqueuePriority(script);
 }
 
-
-export function _dequeue(this: unknown) {
-
-
-export function _dequeue(this: any) {
-
+export function dequeue(this: any) {
 	const job = this.queue.shift();
 	if (job) {
 		this.emit("queue:dequeued", { job, queueLength: this.queue.length });
@@ -74,12 +51,7 @@ export function _dequeue(this: any) {
 	return job;
 }
 
-
-export function _clearQueue(this: unknown) {
-
-
-export function _clearQueue(this: any) {
-
+export function clearQueue(this: any) {
 	const canceled = [...this.queue];
 	this.queue = [];
 	for (const job of canceled) {
@@ -88,12 +60,7 @@ export function _clearQueue(this: any) {
 	this.emit("queue:cleared", { canceledCount: canceled.length });
 }
 
-
-export function _stop(this: unknown) {
-
-
-export function _stop(this: any) {
-
+export function stop(this: any) {
 	this.clearQueue();
 	if (this.syncObjects) {
 		this.syncObjects.clear();
@@ -106,12 +73,7 @@ export function _stop(this: any) {
 	this.emit("playback:stopped");
 }
 
-
-export function _destroy(this: unknown) {
-
-
-export function _destroy(this: any) {
-
+export function destroy(this: any) {
 	this.stop();
 	this.emit("playback:destroyed");
 	this.listeners.clear();
@@ -124,24 +86,14 @@ export function _destroy(this: any) {
 	}
 }
 
-
-export function _pause(this: unknown) {
-
-
-export function _pause(this: any) {
-
+export function pause(this: any) {
 	if (!this.isPaused) {
 		this.isPaused = true;
 		this.emit("queue:paused");
 	}
 }
 
-
-export function _resume(this: unknown) {
-
-
-export function _resume(this: any) {
-
+export function resume(this: any) {
 	if (this.isPaused) {
 		this.isPaused = false;
 		this.emit("queue:resumed");
@@ -149,105 +101,49 @@ export function _resume(this: any) {
 	}
 }
 
-
-export function _getQueue(this: unknown) {
+export function getQueue(this: any) {
 	return [...this.queue];
 }
 
-export function _getQueueSnapshot(this: unknown) {
-	return this.queue.map((job: unknown) => ({ id: job.id, script: job.script }));
-}
-
-export function _getQueueLength(this: unknown): number {
-	return this.queue.length;
-}
-
-export function _hasPendingJobs(this: unknown): boolean {
-	return this.isProcessing || this.queue.length > 0;
-}
-
-export function _peekNextJob(this: unknown) {
-
-
-export function _getQueue(this: any) {
-	return [...this.queue];
-}
-
-
-export function _getQueueSnapshot(this: any) {
-
+export function getQueueSnapshot(this: any) {
 	return this.queue.map((job: any) => ({ id: job.id, script: job.script }));
 }
 
-
-export function _getQueueLength(this: any): number {
+export function getQueueLength(this: any): number {
 	return this.queue.length;
 }
 
-
-export function _hasPendingJobs(this: any): boolean {
+export function hasPendingJobs(this: any): boolean {
 	return this.isProcessing || this.queue.length > 0;
 }
 
-
-export function _peekNextJob(this: any) {
-
+export function peekNextJob(this: any) {
 	if (this.queue.length === 0) return null;
 	const job = this.queue[0];
 	return { id: job.id, script: job.script };
 }
 
-
-export function _getCurrentJob(this: unknown) {
+export function getCurrentJob(this: any) {
 	return this.currentJob;
 }
 
-export function _getIsPaused(this: unknown): boolean {
+export function getIsPaused(this: any): boolean {
 	return this.isPaused;
 }
 
-export function _getIsProcessing(this: unknown): boolean {
+export function getIsProcessing(this: any): boolean {
 	return this.isProcessing;
 }
 
-export function _getIsQuickMode(this: unknown): boolean {
+export function getIsQuickMode(this: any): boolean {
 	return this.isQuickMode;
 }
 
-export function _isEmpty(this: unknown): boolean {
+export function isEmpty(this: any): boolean {
 	return this.queue.length === 0;
 }
 
-export function _getStatus(this: unknown) {
-
-
-export function _getCurrentJob(this: any) {
-	return this.currentJob;
-}
-
-
-export function _getIsPaused(this: any): boolean {
-	return this.isPaused;
-}
-
-
-export function _getIsProcessing(this: any): boolean {
-	return this.isProcessing;
-}
-
-
-export function _getIsQuickMode(this: any): boolean {
-	return this.isQuickMode;
-}
-
-
-export function _isEmpty(this: any): boolean {
-	return this.queue.length === 0;
-}
-
-
-export function _getStatus(this: any) {
-
+export function getStatus(this: any) {
 	return {
 		isProcessing: this.isProcessing,
 		isPaused: this.isPaused,
@@ -259,12 +155,7 @@ export function _getStatus(this: any) {
 	};
 }
 
-
-export async function _processQueue(this: unknown) {
-
-
-export async function _processQueue(this: any) {
-
+export async function processQueue(this: any) {
 	if (this.isProcessing || this.isPaused || this.queue.length === 0) {
 		return;
 	}

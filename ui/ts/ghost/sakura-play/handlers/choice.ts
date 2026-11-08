@@ -3,30 +3,15 @@
  * @brief さくらスクリプト再生時の選択肢(\q)およびアンカー(\_a)要素生成・イベントハンドラ
  */
 
-
-export function handleChoice(
-	_player: unknown,
-	_app: unknown,
-	_token: unknown,
-	_context: unknown,
-) {
-
-
-export function _handleChoice(player: any, app: any, token: any, context: any) {
-
+export function handleChoice(player: any, app: any, token: any, context: any) {
 	const { currentBalloonText, flushDesktopBalloon } = context;
 
 	const choiceBtn = document.createElement("button");
 	choiceBtn.className = "balloon-choice-btn";
 	choiceBtn.setAttribute("data-choice-id", token.id);
 	choiceBtn.textContent = token.text;
-
-	const _hoverTimer: unknown = null;
-
-
 	let hoverTimer: any = null;
-
-	choiceBtn.addEventListener("click", (e: MouseEvent) =>
+	choiceBtn.addEventListener("click", (e: MouseEvent) => {
 		e.stopPropagation();
 		if (hoverTimer) {
 			clearTimeout(hoverTimer);
@@ -49,7 +34,8 @@ export function _handleChoice(player: any, app: any, token: any, context: any) {
 				token.text,
 				...(token.args || []),
 			]);
-		});
+		}
+	});
 	choiceBtn.addEventListener("mouseenter", () => {
 		app.ghostController?.sendShioriEvent("OnChoiceEnter", [
 			token.text,
@@ -84,22 +70,11 @@ export function _handleChoice(player: any, app: any, token: any, context: any) {
 	}
 }
 
-export function _handleAnchorBegin(
-
-	_player: unknown,
-	_app: unknown,
-	_token: unknown,
-	_context: unknown,
-
-
+export function handleAnchorBegin(
 	_player: any,
-
 	app: any,
-
 	token: any,
-
 	context: any,
-
 ) {
 	const { currentBalloonText, scheduleDesktopBalloonSync } = context;
 
@@ -107,12 +82,7 @@ export function _handleAnchorBegin(
 	anchorSpan.className = "balloon-anchor";
 	anchorSpan.dataset.anchorId = token.id;
 	anchorSpan.setAttribute("data-anchor-id", token.id);
-
-	const _hoverTimer: unknown = null;
-
-
 	let hoverTimer: any = null;
-
 	anchorSpan.addEventListener("click", async (e: MouseEvent) => {
 		e.stopPropagation();
 		if (hoverTimer) {
@@ -123,12 +93,7 @@ export function _handleAnchorBegin(
 		const args = token.args || [];
 		if (app.ghostController?.sendShioriEvent) {
 			// UKADOC: OnAnchorSelectEx is sent first (Reference0: text, Reference1: ID, Reference2..N: args)
-
-			const _resEx: unknown = await app.ghostController.sendShioriEvent(
-
-
 			const resEx: any = await app.ghostController.sendShioriEvent(
-
 				"OnAnchorSelectEx",
 				[anchorText, token.id, ...args],
 			);
@@ -170,20 +135,10 @@ export function _handleAnchorBegin(
 }
 
 export function handleAnchorEnd(
-
-	_player: unknown,
-	_app: unknown,
-	_token: unknown,
-	context: unknown,
-
-
 	_player: any,
-
 	_app: any,
-
 	_token: any,
-
 	context: any,
-
-)
+) {
 	context.currentAnchor = null;
+}

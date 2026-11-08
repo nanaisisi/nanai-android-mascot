@@ -165,12 +165,7 @@ export function buildInstallRerouteArgs(
  * @param {any} err
  * @returns {string} - "unsupported" | "extraction" | "unlha32 error" | "artificial" | "write error" | "invalid path"
  */
-
-export function parseErrorReason(_err: unknown): string {
-
-
 export function parseErrorReason(err: any): string {
-
 	const msg = String(err?.message || err || "").toLowerCase();
 
 	if (
@@ -215,7 +210,7 @@ export function parseErrorReason(err: any): string {
 	return "extraction";
 }
 
-export const _parseInstallErrorReason = parseErrorReason;
+export const parseInstallErrorReason = parseErrorReason;
 
 /**
  * OnInstallFailure SHIORI 引数生成
@@ -223,12 +218,7 @@ export const _parseInstallErrorReason = parseErrorReason;
  * @param {any} errorOrReason
  * @returns {[string]}
  */
-
-export function _buildInstallFailureArgs(_errorOrReason: unknown): [string] {
-
-
-export function _buildInstallFailureArgs(errorOrReason: any): [string] {
-
+export function buildInstallFailureArgs(errorOrReason: any): [string] {
 	const reason = parseErrorReason(errorOrReason);
 	return [reason];
 }
@@ -249,7 +239,7 @@ export function isMultiResourceInstall(
  * @param {Array<{ type: string, name: string }>} resources
  * @returns {{ count: string, listText: string, isMulti: boolean }}
  */
-export function _buildInstallMultiArgs(
+export function buildInstallMultiArgs(
 	resources: Array<{ type: string; name: string }> = [],
 ): { count: string; listText: string; isMulti: boolean } {
 	const [count, listText] = buildInstallCompleteAllArgs(resources);

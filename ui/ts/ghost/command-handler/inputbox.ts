@@ -4,12 +4,7 @@
  */
 
 export function openInputBox(
-
-	_handler: unknown,
-
-
 	handler: any,
-
 	params: string[],
 	isPassword: boolean = false,
 ) {
@@ -76,12 +71,7 @@ export function openInputBox(
 	submitBtn.textContent = "OK";
 	submitBtn.style.padding = "2px 8px";
 
-
-	const _timer: unknown = null;
-
-
 	let timer: any = null;
-
 
 	const cancel = (reason: string = "cancel") => {
 		if (timer) clearTimeout(timer);
@@ -107,17 +97,13 @@ export function openInputBox(
 	};
 
 	submitBtn.addEventListener("click", () => submit());
-
-	input.addEventListener("keydown", (_e: unknown) =>
-
-
-	input.addEventListener("keydown", (_e: any) =>
-
+	input.addEventListener("keydown", (e: any) => {
 		if (e.key === "Enter") {
 			submit();
 		} else if (e.key === "Escape") {
 			cancel("escape");
-		});
+		}
+	});
 
 	form.appendChild(input);
 	form.appendChild(submitBtn);
@@ -129,22 +115,13 @@ export function openInputBox(
 			cancel("timeout");
 		}, timeoutMs);
 	}
+}
 
-
-export function _openPasswordInput(handler: unknown, params: string[]) {
+export function openPasswordInput(handler: any, params: string[]) {
 	return openInputBox(handler, params, true);
 }
 
-export function _openTextAreaBox(_handler: unknown, _params: string[]) {
-
-
-export function _openPasswordInput(handler: any, params: string[]) {
-	return openInputBox(handler, params, true);
-}
-
-
-export function _openTextAreaBox(handler: any, params: string[]) {
-
+export function openTextAreaBox(handler: any, params: string[]) {
 	if (handler.app?.modalDialogController?.openTextAreaBox) {
 		return handler.app.modalDialogController.openTextAreaBox(
 			params,
@@ -154,12 +131,7 @@ export function _openTextAreaBox(handler: any, params: string[]) {
 	return openInputBox(handler, params);
 }
 
-
-export function _openSliderInput(_handler: unknown, _params: string[]) {
-
-
-export function _openSliderInput(handler: any, params: string[]) {
-
+export function openSliderInput(handler: any, params: string[]) {
 	if (handler.app?.modalDialogController?.openSliderInput) {
 		return handler.app.modalDialogController.openSliderInput(
 			params,
@@ -169,12 +141,7 @@ export function _openSliderInput(handler: any, params: string[]) {
 	return openInputBox(handler, params);
 }
 
-
-export function _openIpInput(_handler: unknown, _params: string[]) {
-
-
-export function _openIpInput(handler: any, params: string[]) {
-
+export function openIpInput(handler: any, params: string[]) {
 	if (handler.app?.modalDialogController?.openIpInput) {
 		return handler.app.modalDialogController.openIpInput(
 			params,
@@ -184,12 +151,7 @@ export function _openIpInput(handler: any, params: string[]) {
 	return openInputBox(handler, params);
 }
 
-
-export function _openDateInput(_handler: unknown, _params: string[]) {
-
-
-export function _openDateInput(handler: any, params: string[]) {
-
+export function openDateInput(handler: any, params: string[]) {
 	if (handler.app?.modalDialogController?.openDateInput) {
 		return handler.app.modalDialogController.openDateInput(
 			params,
@@ -199,12 +161,7 @@ export function _openDateInput(handler: any, params: string[]) {
 	return openInputBox(handler, params);
 }
 
-
-export function _openTimeInput(_handler: unknown, _params: string[]) {
-
-
-export function _openTimeInput(handler: any, params: string[]) {
-
+export function openTimeInput(handler: any, params: string[]) {
 	if (handler.app?.modalDialogController?.openTimeInput) {
 		return handler.app.modalDialogController.openTimeInput(
 			params,
@@ -214,15 +171,7 @@ export function _openTimeInput(handler: any, params: string[]) {
 	return openInputBox(handler, params);
 }
 
-
-export function closeInputBox(
-	_handler: unknown,
-	_paramsOrNotify: unknown = false,
-) {
-
-
-export function _closeInputBox(handler: any, paramsOrNotify: any = false) {
-
+export function closeInputBox(handler: any, paramsOrNotify: any = false) {
 	let notifyCancel = false;
 	let id: string | undefined;
 	if (Array.isArray(paramsOrNotify)) {
@@ -238,25 +187,12 @@ export function _closeInputBox(handler: any, paramsOrNotify: any = false) {
 		);
 	}
 	const forms = document.querySelectorAll?.(".balloon-inputbox-form") || [];
-	for (const _f of Array.from(forms)) {
-
-		(f as unknown).remove?.();
-	}
-}
-
-export function _closeTextAreaBox(
-	_handler: unknown,
-	_paramsOrNotify: unknown = false,
-) {
-
-
+	for (const f of Array.from(forms)) {
 		(f as any).remove?.();
 	}
 }
 
-
-export function _closeTextAreaBox(handler: any, paramsOrNotify: any = false) {
-
+export function closeTextAreaBox(handler: any, paramsOrNotify: any = false) {
 	if (handler.app?.modalDialogController?.closeTextAreaBox) {
 		const id = Array.isArray(paramsOrNotify) ? paramsOrNotify[0] : undefined;
 		return handler.app.modalDialogController.closeTextAreaBox(
@@ -267,12 +203,7 @@ export function _closeTextAreaBox(handler: any, paramsOrNotify: any = false) {
 	closeInputBox(handler, paramsOrNotify);
 }
 
-
-export function _closeDialog(_handler: unknown, _paramsOrNotify: unknown = false) {
-
-
-export function _closeDialog(handler: any, paramsOrNotify: any = false) {
-
+export function closeDialog(handler: any, paramsOrNotify: any = false) {
 	if (handler.app?.modalDialogController?.closeDialog) {
 		const id = Array.isArray(paramsOrNotify) ? paramsOrNotify[0] : undefined;
 		return handler.app.modalDialogController.closeDialog(

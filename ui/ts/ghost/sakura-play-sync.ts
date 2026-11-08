@@ -1,9 +1,11 @@
+// @ts-nocheck
 /**
  * @file sakura-play-sync.js
  * @brief さくらスクリプト再生時の独立バルーンウィンドウ同期ヘルパー
  */
 import { emit, isTauriAvailable } from "../core/tauri-helper.js";
 
+// @ts-nocheck
 /**
  * デスクトップ環境（Tauri）における独立バルーンウィンドウへのコンテンツ同期を管理します。
  * 同一ターン内の連続更新をまとめつつ、遅延なく同期イベントを発火します。

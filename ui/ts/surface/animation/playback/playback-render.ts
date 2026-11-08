@@ -25,7 +25,7 @@ function isInstance(obj) {
  * @param {any} baseSurfaceIdOrScopeId
  * @param {any} [scopeIdOrAnimOptions]
  * @param {any} [animationOptionsParam={}]
- * @returns {Promise<unknown>|boolean}
+ * @returns {Promise<any>|boolean}
  */
 export function renderAnimationFrame(
 	target,
@@ -34,14 +34,7 @@ export function renderAnimationFrame(
 	scopeIdOrAnimOptions,
 	animationOptionsParam = {},
 ) {
-	let _instance: unknown,
-		_pat: unknown,
-		_baseSurfaceId: unknown,
-		_scopeId: unknown,
-		_animationOptions: unknown;
-
 	let instance, pat, baseSurfaceId, scopeId, animationOptions;
-
 	if (isInstance(target)) {
 		instance = target;
 		pat = patOrBaseSurfaceId;

@@ -1,24 +1,15 @@
 import { SurfaceAnimationManager } from "./surface-animation-manager.js";
+import { surfaceLoadMethods } from "./surface-load.js";
+import { surfaceRenderMethods } from "./surface-render.js";
 
 /**
  * Nanai Android Mascot - surfaces.txt パーサー & 当たり判定（Collision）マネージャー
  */
 export class SurfaceManager {
-
-	app: unknown;
-	collisions: Record<number | string, unknown[]>;
-	elements: Record<number | string, unknown[]>;
-	animations: Record<number | string, unknown[]>;
-
-
 	app: any;
-
 	collisions: Record<number | string, any[]>;
-
 	elements: Record<number | string, any[]>;
-
 	animations: Record<number | string, any[]>;
-
 	baseWidth: number;
 	baseHeight: number;
 	currentSurfaceIds: Map<number, number | string>;
@@ -26,24 +17,12 @@ export class SurfaceManager {
 	dressupState: Map<string, boolean>;
 	aliases: Record<string, number[]> | null;
 	keroAliases: Record<string, number[]> | null;
-
-	shellManifest: Record<string, unknown> | null;
-	planCache: Map<string, unknown>;
-	baseCanvasCache: Map<string, HTMLCanvasElement>;
-	animationManager: SurfaceAnimationManager;
-
-	constructor(app: unknown) {
-
-
 	shellManifest: Record<string, any> | null;
-
 	planCache: Map<string, any>;
 	baseCanvasCache: Map<string, HTMLCanvasElement>;
 	animationManager: SurfaceAnimationManager;
 
-
-	constructor(app: any)
-
+	constructor(app: any) {
 		this.app = app;
 		this.collisions = {};
 		this.elements = {};
@@ -63,88 +42,102 @@ export class SurfaceManager {
 		this.baseCanvasCache = new Map();
 
 		this.animationManager = new SurfaceAnimationManager(this);
+	}
 
-	get activeAnimationTimers()
+	get activeAnimationTimers() {
 		return this.animationManager.activeAnimationTimers;
+	}
 
-	get currentSurfaceId()
+	get currentSurfaceId() {
 		return this.currentSurfaceIds.get(0) ?? 0;
+	}
 
-	currentSurfaceIdFor(scopeId: number = 0): number | string
+	currentSurfaceIdFor(scopeId: number = 0): number | string {
 		return this.currentSurfaceIds.get(scopeId) ?? (scopeId === 1 ? 10 : 0);
+	}
 
-	setSurfaceId(surfaceId: number | string, scopeId: number = 0)
+	setSurfaceId(surfaceId: number | string, scopeId: number = 0) {
 		this.currentSurfaceIds.set(scopeId, surfaceId);
 		this.animationManager.stopAnimations(scopeId);
 		this.animationManager.startAnimations(surfaceId, scopeId);
+	}
 
-	stopAnimations(scopeId: number = 0)
+	stopAnimations(scopeId: number = 0) {
 		this.animationManager.stopAnimations(scopeId);
+	}
 
-	startAnimations(surfaceId: number | string, scopeId: number = 0)
+	startAnimations(surfaceId: number | string, scopeId: number = 0) {
 		this.animationManager.startAnimations(surfaceId, scopeId);
+	}
 
 	playAnimationPatterns(
-
-		anim: unknown,
-
-
 		anim: any,
-
 		baseSurfaceId: number | string,
 		scopeId: number,
-	)
+	) {
 		return this.animationManager.playAnimationPatterns(
 			anim,
 			baseSurfaceId,
 			scopeId,
 		);
+	}
 
 	playAnimationById(
 		animId: number | string,
 		scopeId: number = 0,
 		waitForComplete: boolean = false,
-	)
+	) {
 		return this.animationManager.playAnimationById(
 			animId,
 			scopeId,
 			waitForComplete,
 		);
+	}
 
-	pauseAnimationById(animId: number | string, scopeId: number = 0)
+	pauseAnimationById(animId: number | string, scopeId: number = 0) {
 		this.animationManager.pauseAnimation(scopeId, animId);
+	}
 
-	resumeAnimationById(animId: number | string, scopeId: number = 0)
+	resumeAnimationById(animId: number | string, scopeId: number = 0) {
 		this.animationManager.resumeAnimation(scopeId, animId);
+	}
 
-	stopAnimationById(animId: number | string, scopeId: number = 0)
+	stopAnimationById(animId: number | string, scopeId: number = 0) {
 		this.animationManager.stopAnimation(scopeId, animId);
+	}
 
 	setAnimationOffset(
 		animId: number | string,
 		x: number = 0,
 		y: number = 0,
 		scopeId: number = 0,
-	)
+	) {
 		this.animationManager.setAnimationOffset(scopeId, animId, x, y);
+	}
 
-	setBaseMoveOffset(scopeId: number = 0, x: number = 0, y: number = 0)
+	setBaseMoveOffset(scopeId: number = 0, x: number = 0, y: number = 0) {
 		this.animationManager.setBaseMoveOffset(scopeId, x, y);
+	}
 
-	getBaseMoveOffset(scopeId: number = 0)
+	getBaseMoveOffset(scopeId: number = 0) {
 		return this.animationManager.getBaseMoveOffset(scopeId);
+	}
 
-	waitForAnimation(animId: number | string, scopeId: number = 0)
+	waitForAnimation(animId: number | string, scopeId: number = 0) {
 		return this.animationManager.waitForAnimation(animId, scopeId);
+	}
 
-	onTalkEnd(scopeId: number = 0)
+	onTalkEnd(scopeId: number = 0) {
 		this.animationManager.onTalkEnd(scopeId);
+	}
 
-	onScriptEnd(scopeId: number = 0)
+	onScriptEnd(scopeId: number = 0) {
 		this.animationManager.onScriptEnd(scopeId);
+	}
 
-	onCharSpoken(scopeId: number = 0)
+	onCharSpoken(scopeId: number = 0) {
 		this.animationManager.onCharSpoken(scopeId);
+	}
 }
 
 Object.assign(SurfaceManager.prototype, surfaceLoadMethods);

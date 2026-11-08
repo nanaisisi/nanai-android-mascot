@@ -4,17 +4,9 @@
  */
 
 export function openTeachBox(
-
-	_handler: unknown,
-	_params: string[] = [],
-	_options: unknown = {},
-
-
 	handler: any,
 	params: string[] = [],
-
 	options: any = {},
-
 ) {
 	const { notifyStart = true } = options;
 	handler.closeTeachBox();
@@ -106,12 +98,7 @@ export function openTeachBox(
 	setTimeout(() => input.focus(), 50);
 }
 
-
-export function closeTeachBox(_handler: unknown) {
-
-
-export function _closeTeachBox(handler: any) {
-
+export function closeTeachBox(handler: any) {
 	if (handler.teachForm) {
 		handler.teachForm.remove();
 		handler.teachForm = null;

@@ -21,12 +21,7 @@ export class MenuDispatcher {
 		}
 	}
 
-
-	async dispatchAction(action: string, payload: unknown = null) {
-
-
 	async dispatchAction(action: string, payload: any = null) {
-
 		if (!action) return;
 		console.log(
 			`Context Menu Action: ${action}`,
@@ -44,17 +39,14 @@ export class MenuDispatcher {
 			finalPayload = { scope: this.currentScope, ...finalPayload };
 		}
 
-
-		if (globalThis.parent && (globalThis.parent as unknown) !== globalThis) {
-
-
 		if (globalThis.parent && (globalThis.parent as any) !== globalThis) {
-
 			globalThis.parent.postMessage(
+				{
 					type: "menu-action",
 					action: action,
 					payload: finalPayload,
-					timestamp: Date.now(),,
+					timestamp: Date.now(),
+				},
 				"*",
 			);
 		}

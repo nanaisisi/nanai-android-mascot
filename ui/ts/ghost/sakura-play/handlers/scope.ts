@@ -5,17 +5,7 @@
 
 import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 
-
-export function handleScope(
-	_player: unknown,
-	_app: unknown,
-	_token: unknown,
-	_context: unknown,
-) {
-
-
-export function _handleScope(player: any, app: any, token: any, context: any) {
-
+export function handleScope(player: any, app: any, token: any, context: any) {
 	const {
 		sakuraText,
 		keroText,
@@ -67,22 +57,11 @@ export function _handleScope(player: any, app: any, token: any, context: any) {
 	}
 }
 
-export function _handleBalloon(
-
-	_player: unknown,
-	_app: unknown,
-	_token: unknown,
-	_context: unknown,
-
-
+export function handleBalloon(
 	player: any,
-
 	_app: any,
-
 	token: any,
-
 	context: any,
-
 ) {
 	const { sakuraDisplay, keroDisplay } = context;
 	const balloonDisplay =
@@ -94,22 +73,11 @@ export function _handleBalloon(
 	}
 }
 
-export function _handleInlineBitmap(
-
-	_player: unknown,
-	_app: unknown,
-	_token: unknown,
-	_context: unknown,
-
-
+export function handleInlineBitmap(
 	_player: any,
-
 	app: any,
-
 	token: any,
-
 	context: any,
-
 ) {
 	const { currentBalloonText, scheduleDesktopBalloonSync } = context;
 
@@ -117,21 +85,14 @@ export function _handleInlineBitmap(
 	img.className = "balloon-inline-bitmap";
 	const themeName = app.currentBalloonTheme || "default";
 	const rawPath = token.path || "";
-	const _fullPath =
+	const fullPath =
 		rawPath.startsWith("data:") ||
 		rawPath.startsWith("http://") ||
 		rawPath.startsWith("https://")
 			? rawPath
 			: `assets/balloon/${themeName}/${rawPath}`;
-
-	img.src = (globalThis as unknown).__TAURI__?.core?.convertFileSrc
-		? (globalThis as unknown).__TAURI__.core.convertFileSrc(fullPath)
-
-
 	img.src = (globalThis as any).__TAURI__?.core?.convertFileSrc
-		?
-			(globalThis as any).__TAURI__.core.convertFileSrc(fullPath)
-
+		? (globalThis as any).__TAURI__.core.convertFileSrc(fullPath)
 		: fullPath;
 	img.style.display = "inline-block";
 	img.style.verticalAlign = "middle";

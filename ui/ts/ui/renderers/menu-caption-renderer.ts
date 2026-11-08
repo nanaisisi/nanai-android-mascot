@@ -14,14 +14,10 @@ export const menuCaptionRenderer = {
 		if (!captions || typeof captions !== "object") return;
 
 		for (const def of MENU_CAPTION_DEFINITIONS) {
-			const _customVal = captions[def.resource] || captions[def.id];
-			const _el =
-				(rootEl as unknown).getElementById?.(def.id) ||
-				(rootEl as unknown).querySelector?.(`#${def.id}`);
-
-			(rootEl as any).getElementById?.(def.id) ||
-				(rootEl as any).querySelector?.(`#$def.id`);
-
+			const customVal = captions[def.resource] || captions[def.id];
+			const el =
+				(rootEl as any).getElementById?.(def.id) ||
+				(rootEl as any).querySelector?.(`#${def.id}`);
 			if (!el) continue;
 
 			if (customVal && typeof customVal === "string" && customVal.trim()) {
@@ -34,8 +30,6 @@ export const menuCaptionRenderer = {
 	},
 
 	async fetchShioriCaptions(
-		_ghostController: unknown,
-
 		ghostController: any,
 	): Promise<Record<string, string>> {
 		if (!ghostController?.requestShioriResource) return {};

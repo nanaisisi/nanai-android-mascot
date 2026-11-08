@@ -9,7 +9,7 @@
  * @param {string} dialogType - "open" | "save" | "folder" | "color"
  * @param {string[]} params - オプション引数群
  * @param {number} [scope]
- * @returns {Promise<unknown>}
+ * @returns {Promise<any>}
  */
 export async function openSystemDialog(dialogType, params = [], scope) {
 	const type = (dialogType || "open").toLowerCase();

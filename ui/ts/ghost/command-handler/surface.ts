@@ -4,12 +4,7 @@
  */
 
 export async function handleBindCommand(
-
-	_handler: unknown,
-
-
 	handler: any,
-
 	args: string[],
 	raiseEvent: boolean = true,
 ) {
@@ -23,12 +18,7 @@ export async function handleBindCommand(
 	);
 }
 
-
-export async function handleAnimCommand(_handler: unknown, _args: string[]) {
-
-
-export async function _handleAnimCommand(handler: any, args: string[]) {
-
+export async function handleAnimCommand(handler: any, args: string[]) {
 	const [verbRaw, idVal, arg3, arg4] = args.slice(1);
 	const targetStr = String(idVal ?? "").trim();
 	const animIdNum = Number.parseInt(targetStr, 10);
@@ -52,12 +42,7 @@ export async function _handleAnimCommand(handler: any, args: string[]) {
 	}
 }
 
-
-async function handleAnimAddCommand(_handler: unknown, _subArgs: string[]) {
-
-
-async function _handleAnimAddCommand(handler: any, subArgs: string[]) {
-
+async function handleAnimAddCommand(handler: any, subArgs: string[]) {
 	if (!subArgs.length) return;
 	const method = String(subArgs[0] ?? "").toLowerCase();
 	const sm = handler.app.surfaceManager;

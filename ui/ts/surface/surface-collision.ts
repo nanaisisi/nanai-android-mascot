@@ -16,22 +16,12 @@ export const surfaceCollisionMethods = {
 	): number | string {
 		const rawName = String(surfaceId ?? "").trim();
 		if (rawName === "" || /^-?\d+$/.test(rawName)) {
-
-			return surfaceId as unknown;
-
-
 			return surfaceId as any;
-
 		}
 		const lowerTarget = rawName.toLowerCase();
 
 		// 1. Defined surface name lookup (`name,定義名`)
-
-		const _namesMap = (this as unknown).names;
-
-
 		const namesMap = (this as any).names;
-
 		if (namesMap) {
 			let lowerNames = nameCaseCache.get(namesMap);
 			if (!lowerNames) {
@@ -55,12 +45,7 @@ export const surfaceCollisionMethods = {
 
 		// 2. Alias lookup (`surface.alias` / `kero.surface.alias`)
 		const map =
-
-			scopeId === 1 ? (this as unknown).keroAliases : (this as unknown).aliases;
-
-
 			scopeId === 1 ? (this as any).keroAliases : (this as any).aliases;
-
 		let list = Array.isArray(map?.[rawName]) ? map[rawName] : null;
 		if (!list && map) {
 			let lowerMap = aliasCaseCache.get(map);
@@ -78,57 +63,31 @@ export const surfaceCollisionMethods = {
 			list = lowerMap.get(lowerTarget) ?? null;
 		}
 		if (!list || list.length === 0) {
-
-			return surfaceId as unknown;
-
-
 			return surfaceId as any;
-
 		}
 		return String(list[Math.floor(Math.random() * list.length)]);
 	},
 
 	detectCollision(
-		_clickX: number,
-		_clickY: number,
-
-		_targetRect: unknown,
-
-
+		clickX: number,
+		clickY: number,
 		targetRect: any,
-
 		surfaceId: number | string | null = null,
 		scopeId: number = 0,
 	) {
 		const sid =
 			surfaceId !== null
 				? String(surfaceId)
-
-				: String((this as unknown).currentSurfaceIdFor(scopeId));
-
-				:
-					String((this as any).currentSurfaceIdFor(scopeId));
-
+				: String((this as any).currentSurfaceIdFor(scopeId));
 
 		const relX = (clickX - targetRect.left) / targetRect.width;
 		const relY = (clickY - targetRect.top) / targetRect.height;
 
-
-		const _canvasX = Math.round(relX * (this as unknown).baseWidth);
-		const _canvasY = Math.round(relY * (this as unknown).baseHeight);
-
-		const _activeAnimationCols =
-			(this as unknown).animationManager?.getActiveCollisions?.(scopeId) || [];
-
-
 		const canvasX = Math.round(relX * (this as any).baseWidth);
-
 		const canvasY = Math.round(relY * (this as any).baseHeight);
 
 		const activeAnimationCols =
-
 			(this as any).animationManager?.getActiveCollisions?.(scopeId) || [];
-
 		for (let i = activeAnimationCols.length - 1; i >= 0; i--) {
 			const col = activeAnimationCols[i];
 			if (collisionContains(col, canvasX, canvasY)) {
@@ -142,52 +101,29 @@ export const surfaceCollisionMethods = {
 		}
 
 		const colList =
-
-			(this as unknown).collisions[sid] ||
-			(this as unknown).collisions.default ||
-			[];
-
-
 			(this as any).collisions[sid] || (this as any).collisions.default || [];
-
 		if (colList.length === 0) {
 			return { name: "", canvasX, canvasY };
 		}
 
 		const sortKind = String(
-
-			(this as unknown).collisionSort || "none",
-		).toLowerCase();
-
-		let _candidates: unknown[] = [];
-		if (sortKind === "ascend" || sortKind === "id") {
-			_candidates = colList.slice().sort((_a: unknown, _b: unknown) => {
-
-
 			(this as any).collisionSort || "none",
 		).toLowerCase();
 
-
 		let candidates: any[] = [];
 		if (sortKind === "ascend" || sortKind === "id") {
-
 			candidates = colList.slice().sort((a: any, b: any) => {
-
 				const idA = a.id != null ? a.id : Number.MAX_SAFE_INTEGER;
 				const idB = b.id != null ? b.id : Number.MAX_SAFE_INTEGER;
 				return idA - idB;
 			});
 		} else if (sortKind === "descend") {
-
-			candidates = colList.slice().sort((_a: unknown, _b: unknown) =>
-
-
 			candidates = colList.slice().sort((a: any, b: any) => {
-
 				const idA = a.id != null ? a.id : -1;
 				const idB = b.id != null ? b.id : -1;
 				return idB - idA;
-			});else
+			});
+		} else {
 			for (let i = colList.length - 1; i >= 0; i--) {
 				const col = colList[i];
 				if (collisionContains(col, canvasX, canvasY)) {
@@ -200,6 +136,7 @@ export const surfaceCollisionMethods = {
 				}
 			}
 			return { name: "", canvasX, canvasY };
+		}
 
 		for (let i = 0; i < candidates.length; i++) {
 			const col = candidates[i];
@@ -225,12 +162,7 @@ export const surfaceCollisionMethods = {
 		eventType: string,
 		collisionName: string,
 	): string | null {
-
-		if (!(this as unknown).cursors || !collisionName) return null;
-
-
 		if (!(this as any).cursors || !collisionName) return null;
-
 		const scopeKey =
 			scopeId === 0 || scopeId === "0"
 				? "sakura"
@@ -243,15 +175,8 @@ export const surfaceCollisionMethods = {
 		const cacheKey = `${evLower}\0${colLower}`;
 
 		const lists = [
-
-			(this as unknown).cursors[scopeKey],
-			(this as unknown).cursors["*"],
-
-
 			(this as any).cursors[scopeKey],
-
 			(this as any).cursors["*"],
-
 		].filter(Boolean);
 
 		for (const list of lists) {
@@ -281,12 +206,7 @@ export const surfaceCollisionMethods = {
 		scopeId: number | string,
 		collisionName: string,
 	): string | null {
-
-		if (!(this as unknown).tooltips || !collisionName) return null;
-
-
 		if (!(this as any).tooltips || !collisionName) return null;
-
 		const scopeKey =
 			scopeId === 0 || scopeId === "0"
 				? "sakura"
@@ -297,15 +217,8 @@ export const surfaceCollisionMethods = {
 		const colLower = String(collisionName).toLowerCase();
 
 		const maps = [
-
-			(this as unknown).tooltips[scopeKey],
-			(this as unknown).tooltips["*"],
-
-
 			(this as any).tooltips[scopeKey],
-
 			(this as any).tooltips["*"],
-
 		].filter(Boolean);
 
 		for (const map of maps) {

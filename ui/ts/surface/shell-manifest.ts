@@ -3,12 +3,7 @@
  */
 import { invoke } from "../core/tauri-helper.js";
 
-
-export function enumToString(_value: unknown): string {
-
-
 export function enumToString(value: any): string {
-
 	if (value == null) return "";
 	if (typeof value === "string") return value.toLowerCase();
 	if (typeof value === "object") {
@@ -20,32 +15,17 @@ export function enumToString(value: any): string {
 	return String(value).toLowerCase();
 }
 
-
-export function _intervalToString(_value: unknown): string {
-
-
-export function _intervalToString(value: any): string {
-
+export function intervalToString(value: any): string {
 	const s = enumToString(value);
 	return s === "yene" ? "\\e" : s;
 }
 
-
-export function _methodToString(_value: unknown): string {
-
-
-export function _methodToString(value: any): string {
-
+export function methodToString(value: any): string {
 	const s = enumToString(value);
 	return s.startsWith("blend,") ? s.replace("blend,", "blend-") : s;
 }
 
-
-export function _collisionRecord(_area: unknown) {
-
-
 export function collisionRecord(area: any) {
-
 	const shape = area?.shape ?? {};
 	const id = area?.id != null ? Number(area.id) : undefined;
 	let kind = "rect";
@@ -66,12 +46,7 @@ export function collisionRecord(area: any) {
 	}
 
 	if (kind === "polygon") {
-
-		const _vertices = (coords?.vertices ?? []).map((_p: unknown) =>
-
-
-		const vertices = (coords?.vertices ?? []).map((_p: any) =>
-
+		const vertices = (coords?.vertices ?? []).map((p: any) =>
 			Array.isArray(p) ? p : [p?.x ?? 0, p?.y ?? 0],
 		);
 		let minX = Infinity;
@@ -133,12 +108,7 @@ export function collisionRecord(area: any) {
 	};
 }
 
-
-export function _collisionContains(_col: unknown, _x: number, _y: number): boolean {
-
-
-export function _collisionContains(col: any, x: number, y: number): boolean {
-
+export function collisionContains(col: any, x: number, y: number): boolean {
 	if (!col) return false;
 
 	if (
@@ -179,33 +149,18 @@ export function _collisionContains(col: any, x: number, y: number): boolean {
 	);
 }
 
-
-export function _manifestToSurfaceData(_manifest: unknown) {
-	const _collisions: Record<string, unknown[]> = {};
-	const _elements: Record<string, unknown[]> = {};
-	const _animations: Record<string, unknown[]> = {};
-	const _points: Record<string, unknown> = {};
-	const _balloonOffsets: Record<string, unknown> = {};
-
-
-export function _manifestToSurfaceData(manifest: any) {
-
+export function manifestToSurfaceData(manifest: any) {
 	const collisions: Record<string, any[]> = {};
-
 	const elements: Record<string, any[]> = {};
-
 	const animations: Record<string, any[]> = {};
-
 	const points: Record<string, any> = {};
-
 	const balloonOffsets: Record<string, any> = {};
-
-	const _aliases = manifest?.aliases ?? {};
-	const _keroAliases = manifest?.kero_aliases ?? {};
-	const _cursors = manifest?.cursors ?? {};
-	const _tooltips = manifest?.tooltips ?? {};
-	const _collisionSort = enumToString(manifest?.collision_sort) || "none";
-	const _animationSort = enumToString(manifest?.animation_sort) || "none";
+	const aliases = manifest?.aliases ?? {};
+	const keroAliases = manifest?.kero_aliases ?? {};
+	const cursors = manifest?.cursors ?? {};
+	const tooltips = manifest?.tooltips ?? {};
+	const collisionSort = enumToString(manifest?.collision_sort) || "none";
+	const animationSort = enumToString(manifest?.animation_sort) || "none";
 	const names: Record<string, string> = {};
 	const iconRects: Record<string, number[]> = {};
 
@@ -230,15 +185,8 @@ export function _manifestToSurfaceData(manifest: any) {
 
 		elements[sid] = (def.elements ?? [])
 			.slice()
-
-			.sort((a: unknown, b: unknown) => (a.id ?? 0) - (b.id ?? 0))
-			.map((e: unknown) => ({
-
-
 			.sort((a: any, b: any) => (a.id ?? 0) - (b.id ?? 0))
-
-			.map((_e: any) => ({
-
+			.map((e: any) => ({
 				id: e.id ?? 0,
 				type: methodToString(e.method) || "overlay",
 				file: e.file ?? "",
@@ -247,29 +195,15 @@ export function _manifestToSurfaceData(manifest: any) {
 			}));
 
 		animations[sid] = Object.values(def.animations ?? {})
-
-			.sort((a: unknown, b: unknown) => (a.id ?? 0) - (b.id ?? 0))
-			.map((anim: unknown) => ({
-
-
 			.sort((a: any, b: any) => (a.id ?? 0) - (b.id ?? 0))
-
-			.map((_anim: any) => ({
-
+			.map((anim: any) => ({
 				id: anim.id ?? 0,
 				interval: intervalToString(anim.interval) || "never",
 				collisions: (anim.collisions ?? []).map(collisionRecord),
 				patterns: (anim.patterns ?? [])
 					.slice()
-
-					.sort((a: unknown, b: unknown) => (a.index ?? 0) - (b.index ?? 0))
-					.map((p: unknown) => ({
-
-
 					.sort((a: any, b: any) => (a.index ?? 0) - (b.index ?? 0))
-
-					.map((_p: any) => ({
-
+					.map((p: any) => ({
 						surface: String(p.surface ?? -1),
 						wait: p.wait ?? 100,
 						waitMax: p.wait_max ?? null,
@@ -297,7 +231,7 @@ export function _manifestToSurfaceData(manifest: any) {
 	};
 }
 
-export async function _getShellManifest(ghostName: string, shellName: string) {
+export async function getShellManifest(ghostName: string, shellName: string) {
 	try {
 		return await invoke("shell_manifest", { ghostName, shellName });
 	} catch (err) {
@@ -309,14 +243,9 @@ export async function _getShellManifest(ghostName: string, shellName: string) {
 	}
 }
 
-export async function _parseSurfacesTextWithRust(content: string) {
+export async function parseSurfacesTextWithRust(content: string) {
 	try {
-
-		const _rawMap: unknown = await invoke("parse_surfaces_text", { content });
-
-
 		const rawMap: any = await invoke("parse_surfaces_text", { content });
-
 		if (!rawMap || typeof rawMap !== "object") return null;
 
 		const surfaces = Object.values(rawMap);

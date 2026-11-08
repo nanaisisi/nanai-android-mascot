@@ -56,7 +56,7 @@ function openCharacterMenu(screenX: number, screenY: number) {
 	});
 }
 
-function _initCharacterWindow() {
+function initCharacterWindow() {
 	const img = /** @type {HTMLImageElement | null} */ (
 		document.getElementById("subchar-img")
 	);
@@ -65,11 +65,11 @@ function _initCharacterWindow() {
 
 	if (!isTauriAvailable()) return;
 
-	let pollTimer: ReturnType<typeof setInterval> | null = null;
+	let pollTimer: any = null;
 
 	void listen(
 		`update-subchar-image-${scopeId}`,
-		(event: { payload?: { src?: string } }) => {
+		(/** @type {{ payload?: { src?: string } }} */ event: any) => {
 			const src = event.payload?.src;
 			if (src && img) {
 				if (pollTimer) {
@@ -123,16 +123,11 @@ function _initCharacterWindow() {
 	let startX = 0;
 	let startY = 0;
 	let origin: { x: number; y: number } | null = null;
-	let longPressTimer: ReturnType<typeof setTimeout> | null = null;
+	let longPressTimer: any = null;
 	let longPressTriggered = false;
 	const LONG_PRESS_DELAY = 600;
 
-
-	const _onPointerDown = (_e: unknown) => {
-
-
 	const onPointerDown = (e: any) => {
-
 		const button = e.button !== undefined ? e.button : 0;
 
 		// 1. 右クリック (button === 2): コンテキストメニュー表示
@@ -195,12 +190,7 @@ function _initCharacterWindow() {
 		}, LONG_PRESS_DELAY);
 	};
 
-
-	const _onPointerMove = (_e: unknown) => {
-
-
 	const onPointerMove = (e: any) => {
-
 		if (!isInteracting) return;
 
 		const clientX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
@@ -278,7 +268,7 @@ function _initCharacterWindow() {
 }
 
 if (document.readyState === "loading") {
-	document.addEventListener("DOMContentLoaded", _initCharacterWindow);
+	document.addEventListener("DOMContentLoaded", initCharacterWindow);
 } else {
-	_initCharacterWindow();
+	initCharacterWindow();
 }

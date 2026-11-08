@@ -5,21 +5,11 @@ export function processChromaKey(
 	imageSrc: string,
 	pnaSrc: string | null = null,
 	cache: Map<string, string> | null = null,
-
-	options: Record<string, unknown> = {},
+	options: any = {},
 ): Promise<string> {
 	if (!imageSrc) return Promise.resolve(imageSrc);
 	if (cache?.has(imageSrc)) {
-		return Promise.resolve(cache.get(imageSrc) ?? imageSrc);
-
-
-	options: any = ,
-): Promise<string> {
-	if (!imageSrc) return Promise.resolve(imageSrc);
-	if (cache?.has(imageSrc)) {
-
 		return Promise.resolve(cache.get(imageSrc)!);
-
 	}
 	const useSelfAlpha = Boolean(options?.useSelfAlpha);
 	const paintTransparentRegionBlack = Boolean(
@@ -28,12 +18,7 @@ export function processChromaKey(
 	);
 	const cacheKey = `${imageSrc}__pna__${pnaSrc || "none"}__selfalpha__${useSelfAlpha}__black__${paintTransparentRegionBlack}`;
 	if (cache?.has(cacheKey)) {
-
-		return Promise.resolve(cache.get(cacheKey) ?? imageSrc);
-
-
 		return Promise.resolve(cache.get(cacheKey)!);
-
 	}
 
 	return new Promise((resolve) => {

@@ -3,56 +3,28 @@
  * @brief 再生・タイムアウト・ウェイト制御コマンド
  */
 
-
-export async function handleSetChoiceTimeout(_handler: unknown, _args: string[]) {
-
-
-export async function _handleSetChoiceTimeout(handler: any, args: string[]) {
-
+export async function handleSetChoiceTimeout(handler: any, args: string[]) {
 	const timeout = Number.parseInt(args[2] ?? "", 10);
 	handler.player.choiceTimeout = Number.isFinite(timeout) ? timeout : 0;
 }
 
-
-export async function _handleSetBalloonTimeout(
-	_handler: unknown,
-	_args: string[],
-) {
-
-
-export async function _handleSetBalloonTimeout(handler: any, args: string[]) {
-
+export async function handleSetBalloonTimeout(handler: any, args: string[]) {
 	const timeout = Number.parseInt(args[2] ?? "", 10);
 	handler.player.balloonTimeout = Number.isFinite(timeout) ? timeout : 0;
 }
 
-
-export async function _handleSetBalloonWait(_handler: unknown, _args: string[]) {
-
-
-export async function _handleSetBalloonWait(handler: any, args: string[]) {
-
+export async function handleSetBalloonWait(handler: any, args: string[]) {
 	const param = args[2];
 	handler.player.playbackController?.setBalloonWait?.(param);
 }
 
-
-export async function _handleQuickSection(_handler: unknown, _args: string[]) {
-
-
-export async function _handleQuickSection(handler: any, args: string[]) {
-
+export async function handleQuickSection(handler: any, args: string[]) {
 	const val = String(args[1] ?? "").toLowerCase();
 	const enable = val === "1" || val === "true";
 	handler.player.playbackController?.setQuickMode?.(enable);
 }
 
-
-export async function _handleSetSyncObject(_handler: unknown, _args: string[]) {
-
-
-export async function _handleSetSyncObject(handler: any, args: string[]) {
-
+export async function handleSetSyncObject(handler: any, args: string[]) {
 	const name = args[2];
 	if (name) {
 		const syncMgr =
@@ -63,12 +35,7 @@ export async function _handleSetSyncObject(handler: any, args: string[]) {
 	}
 }
 
-
-export async function _handleResetSyncObject(_handler: unknown, _args: string[]) {
-
-
-export async function _handleResetSyncObject(handler: any, args: string[]) {
-
+export async function handleResetSyncObject(handler: any, args: string[]) {
 	const name = args[2];
 	if (name) {
 		const syncMgr =
@@ -79,12 +46,7 @@ export async function _handleResetSyncObject(handler: any, args: string[]) {
 	}
 }
 
-
-export async function _handleWaitSyncObject(_handler: unknown, _args: string[]) {
-
-
-export async function _handleWaitSyncObject(handler: any, args: string[]) {
-
+export async function handleWaitSyncObject(handler: any, args: string[]) {
 	const name = args[2];
 	if (!name) return;
 

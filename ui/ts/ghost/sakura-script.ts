@@ -9,47 +9,23 @@ import { parseSakuraScriptAsync } from "./sakura-parser.js";
 import { playScript } from "./sakura-play.js";
 
 export class SakuraScriptPlayer {
-
-	app: unknown;
-
-
 	app: any;
-
 	isPlaying: boolean;
 	skipRequested: boolean;
 	currentScope: number;
 	playbackId: number;
 	timeCritical: boolean;
 	choiceTimeout: number;
-
-	choiceTimeoutTimer: unknown;
-	balloonTimeout: number;
-	balloonTimeoutTimer: unknown;
-	lastScript: string;
-	commandHandler: SakuraCommandHandler;
-	_restoreTimer?: unknown;
-	_pauseResolver?: unknown;
-	_sleepResolvers?: Set<() => void>;
-
-	constructor(app: unknown) {
-
-
 	choiceTimeoutTimer: any;
 	balloonTimeout: number;
-
 	balloonTimeoutTimer: any;
 	lastScript: string;
 	commandHandler: SakuraCommandHandler;
-
 	_restoreTimer?: any;
-
 	_pauseResolver?: any;
-
 	_sleepResolvers?: Set<Function>;
 
-
-	constructor(app: any)
-
+	constructor(app: any) {
 		this.app = app;
 		this.isPlaying = false;
 		this.skipRequested = false;
@@ -65,23 +41,13 @@ export class SakuraScriptPlayer {
 		this.commandHandler = new SakuraCommandHandler(this);
 
 		if (isTauriAvailable()) {
-
-			listen("balloon-choice-selected", (_event: unknown) =>
-
-
 			listen("balloon-choice-selected", (event: any) => {
-
 				const { choiceId, choiceText } = event.payload || {};
 				if (choiceId) {
 					this.onChoiceSelected(choiceId, choiceText || "");
 				}
 			});
-
-			listen("balloon-anchor-selected", (_event: unknown) =>
-
-
 			listen("balloon-anchor-selected", (event: any) => {
-
 				const { anchorId } = event.payload || {};
 				if (anchorId) {
 					this.app.ghostController.sendShioriEvent("OnAnchorSelect", [
@@ -92,12 +58,7 @@ export class SakuraScriptPlayer {
 			listen("balloon-clicked", () => {
 				this.skip();
 			});
-
-			listen("balloon-ready", (_event: unknown) =>
-
-
 			listen("balloon-ready", (event: any) => {
-
 				const sid = event.payload?.scopeId ?? 0;
 				const html =
 					(sid === 1
@@ -109,14 +70,18 @@ export class SakuraScriptPlayer {
 					theme: this.app.currentBalloonTheme || "default",
 				});
 			});
+		}
+	}
 
-	async parse(script: string)
+	async parse(script: string) {
 		return await parseSakuraScriptAsync(script);
+	}
 
-	async play(script: string)
+	async play(script: string) {
 		return await playScript(this, script);
+	}
 
-	scheduleSurfaceRestore(targetPlaybackId: number)
+	scheduleSurfaceRestore(targetPlaybackId: number) {
 		if (this._restoreTimer) {
 			clearTimeout(this._restoreTimer);
 		}
@@ -127,19 +92,15 @@ export class SakuraScriptPlayer {
 				} catch (_e) {}
 			}
 		}, 8000);
+	}
 
-	skip()
+	skip() {
 		if (this.isPlaying) {
 			this.skipRequested = true;
 			if (this.app?.ghostController?.sendBalloonBreakNotify) {
-				const _script = this.lastScript || "";
-				const _scopeId = this.currentScope || 0;
-
-				const _position = (this as unknown).currentProgressIndex || 0;
-
-
-				const _position = (this as any).currentProgressIndex || 0;
-
+				const script = this.lastScript || "";
+				const scopeId = this.currentScope || 0;
+				const position = (this as any).currentProgressIndex || 0;
 				this.app.ghostController.sendBalloonBreakNotify(
 					script,
 					scopeId,
@@ -152,8 +113,9 @@ export class SakuraScriptPlayer {
 				resolve();
 			}
 		}
+	}
 
-	async onChoiceTimeout()
+	async onChoiceTimeout() {
 		if (this.choiceTimeoutTimer) {
 			clearTimeout(this.choiceTimeoutTimer);
 			this.choiceTimeoutTimer = null;
@@ -163,6 +125,7 @@ export class SakuraScriptPlayer {
 				this.lastScript || "",
 			]);
 		} catch (_e) {}
+	}
 
 	async onChoiceSelected(
 		choiceId: string,
@@ -184,19 +147,10 @@ export class SakuraScriptPlayer {
 		} else {
 			// UKADOC: OnChoiceSelectEx is sent first (Reference0: text, Reference1: ID, Reference2..N: args)
 			try {
-
-				const _resEx: unknown =
-					await this.app.ghostController?.sendShioriEvent?.(
-						"OnChoiceSelectEx",
-						[choiceText, choiceId, ...allExtraArgs],
-					);
-
-
 				const resEx: any = await this.app.ghostController?.sendShioriEvent?.(
 					"OnChoiceSelectEx",
 					[choiceText, choiceId, ...allExtraArgs],
 				);
-
 				if (resEx && (resEx.response || resEx.script)) {
 					return;
 				}
@@ -208,14 +162,9 @@ export class SakuraScriptPlayer {
 		}
 	}
 
-	sleep(ms: number)
+	sleep(ms: number) {
 		return new Promise<void>((resolve) => {
-
-			const _timer: unknown = null;
-
-
 			let timer: any = null;
-
 			const onCancel = () => {
 				if (timer) clearTimeout(timer);
 				resolve();
@@ -227,8 +176,9 @@ export class SakuraScriptPlayer {
 			if (!this._sleepResolvers) this._sleepResolvers = new Set();
 			this._sleepResolvers.add(onCancel);
 		});
+	}
 
-	destroy()
+	destroy() {
 		this.isPlaying = false;
 		this.playbackId++;
 		if (this._restoreTimer) {
@@ -254,15 +204,11 @@ export class SakuraScriptPlayer {
 			}
 			this._sleepResolvers.clear();
 		}
+	}
 
-	waitForClickOrTimeout(element: HTMLElement | null, timeoutMs = 15000)
+	waitForClickOrTimeout(element: HTMLElement | null, timeoutMs = 15000) {
 		return new Promise<void>((resolve) => {
-
-			const _timer: unknown = null;
-
-
 			let timer: any = null;
-
 			let resolved = false;
 
 			const done = () => {
@@ -297,5 +243,7 @@ export class SakuraScriptPlayer {
 				timer = setTimeout(done, timeoutMs);
 			}
 		});
+	}
+}
 
 export { parseSakuraScript } from "./sakura-tokenizer.js";

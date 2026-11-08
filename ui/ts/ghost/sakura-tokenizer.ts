@@ -36,19 +36,10 @@ export function parseSakuraScript(script: string): SakuraScriptToken[] {
 		}
 
 		if (script[i] === "\\") {
-
-			const res: unknown = tokenizeTag(script, i, len);
-			if (res.tokens.length > 0) {
-				for (const t of res.tokens) {
-					const _tok: unknown = t;
-
-
 			const res: any = tokenizeTag(script, i, len);
 			if (res.tokens.length > 0) {
 				for (const t of res.tokens) {
-
 					const tok: any = t;
-
 					if (tok.type === "raw_toggle" && tok.active) {
 						rawModeDelimiter = tok.delimiter || "_?";
 					}
@@ -59,9 +50,10 @@ export function parseSakuraScript(script: string): SakuraScriptToken[] {
 			if (res.haltParsing) {
 				break;
 			}
-		} else
-			tokens.push(type: "char", value: script[i] );
+		} else {
+			tokens.push({ type: "char", value: script[i] });
 			i++;
+		}
 	}
 
 	return tokens;

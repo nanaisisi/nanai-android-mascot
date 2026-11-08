@@ -1,22 +1,12 @@
 export async function translateScript(
-
-	_player: unknown,
-
-
 	player: any,
-
 	script: string,
 ): Promise<string> {
 	let finalScript = script;
 	try {
 		const app = player.app;
 		if (app?.ghostController?.sendShioriEvent && !script.includes("\\_q")) {
-
-			const _transRes: unknown = await app.ghostController.sendShioriEvent(
-
-
 			const transRes: any = await app.ghostController.sendShioriEvent(
-
 				"OnTranslate",
 				[script],
 			);

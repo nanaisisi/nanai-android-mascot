@@ -6,25 +6,17 @@ import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 import { setupExplorerListeners } from "./modal-explorer.js";
 
 export class ModalGhostHandlers {
-
-	app: unknown;
-	manager: unknown;
-
-	constructor(manager: unknown) {
-
-
 	app: any;
-
 	manager: any;
 
-
-	constructor(manager: any)
-
+	constructor(manager: any) {
 		this.manager = manager;
 		this.app = manager.app;
+	}
 
-	setupExplorerListeners()
+	setupExplorerListeners() {
 		setupExplorerListeners(this.manager, this.app);
+	}
 
 	setupGhostListeners() {
 		const refreshBtn = document.getElementById("refresh-ghosts-btn");
@@ -44,14 +36,7 @@ export class ModalGhostHandlers {
 				try {
 					if (statusEl)
 						statusEl.textContent = "ファイル選択とインストールを実行中...";
-
-					const _result: unknown = await invoke(
-						"pick_and_install_ghost_archive",
-					);
-
-
 					const result: any = await invoke("pick_and_install_ghost_archive");
-
 					if (result) {
 						if (statusEl) statusEl.textContent = `導入成功: ${result.name}`;
 						await this.app?.ghostController?.scanGhosts?.();
@@ -62,7 +47,7 @@ export class ModalGhostHandlers {
 				} catch (e) {
 					if (statusEl) statusEl.textContent = `エラー: ${e}`;
 				}
-			} else if (fileInput?.files && fileInput.files.length > 0) {
+			} else if (fileInput && fileInput.files && fileInput.files.length > 0) {
 				const file = fileInput.files[0];
 				if (statusEl) statusEl.textContent = `ファイル読込中: ${file.name}`;
 				setTimeout(() => {
@@ -101,20 +86,18 @@ export class ModalGhostHandlers {
 		selectBtn?.addEventListener("click", () => {
 			if (isTauriAvailable()) {
 				invoke("pick_and_install_ghost_archive")
-
-					.then((result: unknown) => {
-
-
-					.then((result: any) =>
-
+					.then((result: any) => {
 						if (result && statusEl) {
 							statusEl.textContent = `導入成功: ${result.name}`;
 							this.app?.ghostController?.scanGhosts?.();
-						})
-					.catch((e) =>
-						if (statusEl) statusEl.textContent = `エラー: ${e}`;);
-			} else
+						}
+					})
+					.catch((e) => {
+						if (statusEl) statusEl.textContent = `エラー: ${e}`;
+					});
+			} else {
 				hiddenInput.click();
+			}
 		});
 
 		hiddenInput.addEventListener("change", () => {
@@ -128,14 +111,7 @@ export class ModalGhostHandlers {
 			if (isTauriAvailable()) {
 				try {
 					if (statusEl) statusEl.textContent = "インストール実行中...";
-
-					const _result: unknown = await invoke(
-						"pick_and_install_ghost_archive",
-					);
-
-
 					const result: any = await invoke("pick_and_install_ghost_archive");
-
 					if (result && statusEl) {
 						statusEl.textContent = `導入成功: ${result.name}`;
 						await this.app?.ghostController?.scanGhosts?.();
@@ -175,12 +151,7 @@ export class ModalGhostHandlers {
 		}
 
 		listEl.innerHTML = "";
-
-		ghosts.forEach((_ghost: unknown) =>
-
-
 		ghosts.forEach((ghost: any) => {
-
 			const item = document.createElement("div");
 			const isCurrent = gc?.currentGhost?.name === ghost.name;
 			item.className = `ghost-item${isCurrent ? " active" : ""}`;
@@ -194,6 +165,7 @@ export class ModalGhostHandlers {
 			});
 			listEl.appendChild(item);
 		});
+	}
 
 	renderBalloonList() {
 		const currentEl = document.getElementById("current-balloon");
@@ -203,12 +175,7 @@ export class ModalGhostHandlers {
 		}
 		if (listEl && this.app?.availableBalloons) {
 			listEl.innerHTML = "";
-
-			this.app.availableBalloons.forEach((_b: unknown) =>
-
-
 			this.app.availableBalloons.forEach((b: any) => {
-
 				const item = document.createElement("div");
 				const isCurrent = this.app.currentBalloonTheme === b.dir_name;
 				item.className = `balloon-item${isCurrent ? " active" : ""}`;
@@ -220,5 +187,6 @@ export class ModalGhostHandlers {
 				});
 				listEl.appendChild(item);
 			});
+		}
 	}
 }

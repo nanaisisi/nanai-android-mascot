@@ -6,12 +6,7 @@
 import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 
 export async function handleSetAlignmentOnDesktop(
-
-	_handler: unknown,
-
-
 	handler: any,
-
 	args: string[],
 ) {
 	const mode = (args[2] ?? "").toLowerCase();
@@ -19,12 +14,7 @@ export async function handleSetAlignmentOnDesktop(
 	if (mode === "free") return;
 
 	try {
-
-		const _api = (globalThis as unknown).__TAURI__?.window;
-
-
 		const api = (globalThis as any).__TAURI__?.window;
-
 		if (!api) return;
 		const win = api.getCurrentWindow();
 		const monitor = await api.currentMonitor();
@@ -45,12 +35,7 @@ export async function handleSetAlignmentOnDesktop(
 	}
 }
 
-
-export async function handleSetTaskTrayIcon(_handler: unknown, _args: string[]) {
-
-
-export async function _handleSetTaskTrayIcon(_handler: any, args: string[]) {
-
+export async function handleSetTaskTrayIcon(_handler: any, args: string[]) {
 	const iconPath = args[2] ?? "";
 	console.log(`📌 Task tray icon set: ${iconPath}`);
 	if (isTauriAvailable()) {
@@ -62,12 +47,7 @@ export async function _handleSetTaskTrayIcon(_handler: any, args: string[]) {
 	}
 }
 
-
-export async function _handleSetTrayBalloon(_handler: unknown, _args: string[]) {
-
-
-export async function _handleSetTrayBalloon(handler: any, args: string[]) {
-
+export async function handleSetTrayBalloon(handler: any, args: string[]) {
 	const title = args[2] ?? "";
 	const text = args[3] ?? "";
 	const iconOrTimeout = args[4];
@@ -90,31 +70,22 @@ export async function _handleSetTrayBalloon(handler: any, args: string[]) {
 }
 
 export async function triggerTrayBalloonClick(
-
-	handler: unknown,
-
-
 	handler: any,
-
 	title: string = "",
 	text: string = "",
-)
+) {
 	if (handler?.app?.ghostController?.sendShioriEvent) {
 		await handler.app.ghostController.sendShioriEvent("OnTrayBalloonClick", [
 			title,
 			text,
 		]);
 	}
+}
 
 export async function handleExecuteResetWindowPos(
-
-	handler: unknown,
-
-
 	handler: any,
-
 	_args: string[],
-)
+) {
 	console.log("📍 Execute resetwindowpos triggered");
 	await handler.app.dispatchAction?.("reset-shell-position");
 	if (handler.app.ghostController?.sendShioriEvent) {
@@ -122,16 +93,12 @@ export async function handleExecuteResetWindowPos(
 			"shell",
 		]);
 	}
+}
 
 export async function handleExecuteResetBalloonPos(
-
-	handler: unknown,
-
-
 	handler: any,
-
 	_args: string[],
-)
+) {
 	console.log("🎈 Execute resetballoonpos triggered");
 	await handler.app.dispatchAction?.("reset-balloon-position");
 	if (handler.app.ghostController?.sendShioriEvent) {
@@ -139,3 +106,4 @@ export async function handleExecuteResetBalloonPos(
 			"balloon",
 		]);
 	}
+}

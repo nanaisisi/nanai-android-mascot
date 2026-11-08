@@ -5,12 +5,39 @@
 
 import { TOUCH_GESTURE_TYPES } from "./touch-gesture-event.js";
 
+export interface TouchRecognizerTarget {
+	_longPressTimer: unknown;
+	_hasMoved: boolean;
+	_strokeTriggered: boolean;
+	_isPinching: boolean;
+	_longPressTriggered: boolean;
+	_startX: number;
+	_startY: number;
+	_lastX: number;
+	_lastY: number;
+	_lastTime: number;
+	_startTime: number;
+	_twoFingerStartTime: number;
+	_twoFingerMoved: boolean;
+	_twoFingerCenter: { x: number; y: number };
+	_lastTapTime: number;
+	_lastTapX: number;
+	_lastTapY: number;
+	options: {
+		longPressDelay: number;
+		twoFingerTapDelay: number;
+		doubleTapDelay: number;
+		doubleTapDistance: number;
+	};
+	emit: (event: string, payload: unknown) => void;
+}
+
 /**
  * シングルタッチ開始時の長押しタイマー設定
- * @param {import("./touch-gesture-recognizer.js").TouchGestureRecognizer} recognizer
- * @param {TouchEvent} e
+ * @param {TouchRecognizerTarget} recognizer
+ * @param {unknown} e
  */
-export function startLongPressTimer(recognizer: this, e: unknown) {
+export function startLongPressTimer(recognizer: TouchRecognizerTarget, e: unknown) {
 	clearLongPressTimer(recognizer);
 	recognizer._longPressTimer = setTimeout(() => {
 		if (
@@ -30,24 +57,24 @@ export function startLongPressTimer(recognizer: this, e: unknown) {
 
 /**
  * 長押しタイマーの解除
- * @param {import("./touch-gesture-recognizer.js").TouchGestureRecognizer} recognizer
+ * @param {TouchRecognizerTarget} recognizer
  */
-export function clearLongPressTimer(recognizer: this) {
+export function clearLongPressTimer(recognizer: TouchRecognizerTarget) {
 	if (recognizer._longPressTimer) {
-		clearTimeout(recognizer._longPressTimer);
+		clearTimeout(recognizer._longPressTimer as number);
 		recognizer._longPressTimer = null;
 	}
 }
 
 /**
  * 2本指タップ完了判定
- * @param {import("./touch-gesture-recognizer.js").TouchGestureRecognizer} recognizer
- * @param {TouchEvent} e
+ * @param {TouchRecognizerTarget} recognizer
+ * @param {unknown} e
  * @returns {boolean} 2本指タップが発火したかどうか
  */
 export function handleTwoFingerTapEnd(
-	recognizer: this,
-	e: { touches: string | unknown[] },
+	recognizer: TouchRecognizerTarget,
+	e: { touches: Array<{ clientX: number; clientY: number }> },
 ) {
 	if (recognizer._isPinching || recognizer._twoFingerStartTime > 0) {
 		const elapsed = Date.now() - recognizer._twoFingerStartTime;
@@ -88,12 +115,12 @@ export function handleTwoFingerTapEnd(
 
 /**
  * シングルタップ / ダブルタップ完了判定
- * @param {import("./touch-gesture-recognizer.js").TouchGestureRecognizer} recognizer
- * @param {TouchEvent} e
+ * @param {TouchRecognizerTarget} recognizer
+ * @param {unknown} e
  */
 export function handleTapOrDoubleTapEnd(
-	recognizer: this,
-	e: { changedTouches: unknown[] },
+	recognizer: TouchRecognizerTarget,
+	e: { changedTouches: Array<{ clientX: number; clientY: number }> },
 ) {
 	if (
 		!recognizer._hasMoved &&

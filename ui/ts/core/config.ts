@@ -1,24 +1,27 @@
 /**
- * アプリケーション設定および定数の一元管理モジュール
+ * @file config.ts
+ * @brief アプリケーション設定・パス・定数の保持および Tauri バックエンド連携
  */
-export const AppConfig: {
+
+export interface AppConfigSpec {
 	paths: Record<string, string>;
 	timing: Record<string, number>;
 	scale: Record<string, number>;
 	storageKeys: Record<string, string>;
 	shiori?: Record<string, unknown>;
 	state?: Record<string, unknown>;
-} = {
+}
+
+export const AppConfig: AppConfigSpec = {
 	// パス関連
 	paths: {
-		defaultGhostDir: "assets/ghost",
+		defaultGhostDir: "test_dir",
 		fallbackGhostName: "mock_nanai",
 		fallbackShellName: "master",
 		surfacesTxt: "surfaces.txt",
 		descriptTxt: "descript.txt",
 	},
-
-	// タイマー・同期間隔 (ミリ秒)
+	// タイミング関連 (ミリ秒)
 	timing: {
 		randomTalkMin: 60000,
 		randomTalkMax: 180000,
@@ -26,19 +29,17 @@ export const AppConfig: {
 		longPressDuration: 600,
 		balloonTypeSpeed: 40,
 	},
-
-	// スケール・サイズ設定
+	// 倍率関連 (50%〜200%)
 	scale: {
-		ghostDefault: 1.0,
+		ghostDefault: 1,
 		ghostMin: 0.5,
-		ghostMax: 2.0,
-		balloonDefault: 1.0,
+		ghostMax: 2,
+		balloonDefault: 1,
 		balloonMin: 0.8,
 		balloonMax: 1.5,
 		step: 0.1,
 	},
-
-	// ローカルストレージキー
+	// ストレージキー
 	storageKeys: {
 		lastGhost: "nanai_last_ghost",
 		lastShell: "nanai_last_shell",
@@ -54,7 +55,7 @@ export const AppConfig: {
  */
 export async function loadAppConfig(): Promise<void> {
 	try {
-		const tauriInternals = (globalThis as unknown).__TAURI_INTERNALS__;
+		const tauriInternals = (globalThis as Record<string, unknown>).__TAURI_INTERNALS__;
 		if (tauriInternals?.invoke) {
 			const config: unknown = await tauriInternals.invoke("get_app_config");
 
@@ -64,13 +65,9 @@ export async function loadAppConfig(): Promise<void> {
 				if (config.scale) Object.assign(AppConfig.scale, config.scale);
 				if (config.shiori) AppConfig.shiori = Object.assign({}, config.shiori);
 				if (config.state) AppConfig.state = Object.assign({}, config.state);
-				console.log(
-					"⚙️ AppConfig synchronized with backend config (local/initial):",
-					AppConfig,
-				);
 			}
 		}
 	} catch (err) {
-		console.warn("⚠️ Could not load remote/file config, using defaults:", err);
+		console.warn("Tauriバックエンドからの設定読み込みに失敗しました（フォールバック設定を使用）:", err);
 	}
 }

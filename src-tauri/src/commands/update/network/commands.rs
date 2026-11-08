@@ -4,7 +4,6 @@ use super::helpers::{report_progress, resolve_update_ghost_dir, validate_update_
 use crate::commands::update::dau::*;
 use md5::{Digest, Md5};
 use std::fs;
-use std::path::PathBuf;
 
 /// ゴーストの更新チェック
 #[tauri::command]

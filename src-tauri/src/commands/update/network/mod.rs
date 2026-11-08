@@ -2,5 +2,3 @@
 
 pub mod commands;
 pub mod helpers;
-
-pub use commands::{check_ghost_update, execute_ghost_update};

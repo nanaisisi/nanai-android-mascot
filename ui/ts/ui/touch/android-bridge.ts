@@ -59,7 +59,9 @@ export class AndroidBridge {
 		this._dockManager = new DockManager({
 			gestureRecognizer: options.gestureRecognizer,
 			element: options.element,
-			dispatchFn: (eventName: unknown, data: unknown) => {
+			dockMargin: options.dockMargin,
+			autoRestoreOnTap: options.autoRestoreOnTap,
+			dispatchFn: (eventName: string, data: unknown) => {
 				this._dispatch(eventName, data);
 			},
 		});
@@ -171,6 +173,14 @@ export class AndroidBridge {
 
 	detachDockElement() {
 		this._dockManager.detachElement();
+	}
+
+	getDockOptions() {
+		return this._dockManager.getDockOptions();
+	}
+
+	setDockOptions(options: any) {
+		return this._dockManager.setDockOptions(options);
 	}
 
 	collapse(edge = "right") {

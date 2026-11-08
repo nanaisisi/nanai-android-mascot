@@ -10,18 +10,24 @@ import { ANDROID_EVENTS } from "./constants.js";
  * ゴースト画面端ドッキング状態およびジェスチャー認識器との連携を管理するクラス
  */
 export class DockManager {
-	_dispatch: unknown;
+	_dispatch: (eventName: string, data: unknown) => void;
 	_dockState: string;
-	_gestureRecognizer: null;
-	_gestureUnbind: null;
-	_attachedElement: null;
-	_elementClickUnbind: null;
+	_gestureRecognizer: any;
+	_gestureUnbind: (() => void) | null;
+	_attachedElement: any;
+	_elementClickUnbind: (() => void) | null;
+	_dockMargin: number;
+	_autoRestoreOnTap: boolean;
+
 	/**
 	 * @param {object} [options={}]
 	 * @param {Function} [options.dispatchFn] イベントディスパッチ用コールバック
 	 * @param {TouchGestureRecognizer} [options.gestureRecognizer] 連携するジェスチャー認識器
+	 * @param {HTMLElement} [options.element] 連動する要素
+	 * @param {number} [options.dockMargin=0] ドッキング余白 (px)
+	 * @param {boolean} [options.autoRestoreOnTap=true] ドッキング時のタップによる自動復帰
 	 */
-	constructor(options = {}) {
+	constructor(options: any = {}) {
 		this._dispatch =
 			typeof options.dispatchFn === "function" ? options.dispatchFn : () => {};
 		this._dockState = "none"; // "none" | "left" | "right"
@@ -30,12 +36,61 @@ export class DockManager {
 		this._attachedElement = null;
 		this._elementClickUnbind = null;
 
+		const margin = Number(options.dockMargin);
+		this._dockMargin = Number.isFinite(margin) && margin >= 0 ? margin : 0;
+		this._autoRestoreOnTap = options.autoRestoreOnTap !== false;
+
 		if (options.gestureRecognizer) {
 			this.setGestureRecognizer(options.gestureRecognizer);
 		}
 		if (options.element) {
 			this.attachElement(options.element);
 		}
+	}
+
+	/**
+	 * ドッキング設定を取得
+	 * @returns {{ dockMargin: number, autoRestoreOnTap: boolean }}
+	 */
+	getDockOptions() {
+		return {
+			dockMargin: this._dockMargin,
+			autoRestoreOnTap: this._autoRestoreOnTap,
+		};
+	}
+
+	/**
+	 * ドッキング設定を動的に更新
+	 * @param {object} [options={}]
+	 * @param {number} [options.dockMargin]
+	 * @param {boolean} [options.autoRestoreOnTap]
+	 * @returns {{ dockMargin: number, autoRestoreOnTap: boolean }}
+	 */
+	setDockOptions(options: any = {}) {
+		let changed = false;
+		if (options.dockMargin !== undefined) {
+			const margin = Number(options.dockMargin);
+			const safeMargin = Number.isFinite(margin) && margin >= 0 ? margin : 0;
+			if (this._dockMargin !== safeMargin) {
+				this._dockMargin = safeMargin;
+				changed = true;
+			}
+		}
+		if (options.autoRestoreOnTap !== undefined) {
+			const autoRestore = Boolean(options.autoRestoreOnTap);
+			if (this._autoRestoreOnTap !== autoRestore) {
+				this._autoRestoreOnTap = autoRestore;
+				changed = true;
+			}
+		}
+		if (changed) {
+			this._dispatch(ANDROID_EVENTS.DOCK_OPTIONS_CHANGED, {
+				dockMargin: this._dockMargin,
+				autoRestoreOnTap: this._autoRestoreOnTap,
+				timestamp: Date.now(),
+			});
+		}
+		return this.getDockOptions();
 	}
 
 	/**
@@ -76,7 +131,9 @@ export class DockManager {
 				if (typeof e?.preventDefault === "function") {
 					e.preventDefault();
 				}
-				this.restore();
+				if (this._autoRestoreOnTap) {
+					this.restore();
+				}
 			}
 		};
 

@@ -36,12 +36,15 @@ export function parseSurfacesTxt(text: string) {
 	const tooltips = {};
 	const names = {};
 	const iconRects = {};
+	const aliases: Record<string, number[]> = {};
+	const keroAliases: Record<string, number[]> = {};
+	const charAliases: Record<number, Record<string, number[]>> = {};
 	let collisionSort = "none";
 	let animationSort = "none";
 
 	const lines = text.split(/\r?\n/);
 	let currentSurfaces = ["default"];
-	let currentScopeBlock: { type: string; scope: string | number } | null = null; // { type: 'cursor'|'tooltip', scope: string }
+	let currentScopeBlock: { type: string; scope: string | number } | null = null; // { type: 'cursor'|'tooltip'|'alias', scope: string }
 
 	lines.forEach((line: string) => {
 		const trimmed = line.trim();
@@ -68,6 +71,22 @@ export function parseSurfacesTxt(text: string) {
 			return;
 		}
 
+		// *.surface.alias ブロック開始判定
+		const aliasBlockMatch = trimmed.match(
+			/^(?:(sakura|kero|char\d+)\.)?surface\.alias\s*\{?$/i,
+		);
+		if (aliasBlockMatch) {
+			const rawScope = (aliasBlockMatch[1] || "sakura").toLowerCase();
+			let scopeKey = "sakura";
+			if (rawScope === "kero" || rawScope === "char1") {
+				scopeKey = "kero";
+			} else if (rawScope.startsWith("char")) {
+				scopeKey = rawScope;
+			}
+			currentScopeBlock = { type: "alias", scope: scopeKey };
+			return;
+		}
+
 		// *.cursor / *.tooltips ブロック開始判定
 		const scopeMatch = matchScopeBlockHeader(trimmed, cursors, tooltips);
 		if (scopeMatch) {
@@ -77,6 +96,31 @@ export function parseSurfacesTxt(text: string) {
 
 		// スコープブロック内の行処理
 		if (currentScopeBlock) {
+			if (currentScopeBlock.type === "alias") {
+				const commaIdx = trimmed.indexOf(",");
+				if (commaIdx !== -1) {
+					const name = trimmed.slice(0, commaIdx).trim();
+					const rest = trimmed.slice(commaIdx + 1).trim();
+					const nums = expandSurfaceRange(rest)
+						.map((n) => Number.parseInt(n, 10))
+						.filter((n) => !Number.isNaN(n));
+					if (name && nums.length > 0) {
+						const sc = String(currentScopeBlock.scope);
+						if (sc === "sakura" || sc === "char0") {
+							aliases[name] = nums;
+						} else if (sc === "kero" || sc === "char1") {
+							keroAliases[name] = nums;
+						} else if (sc.startsWith("char")) {
+							const cid = Number.parseInt(sc.slice(4), 10);
+							if (!Number.isNaN(cid)) {
+								if (!charAliases[cid]) charAliases[cid] = {};
+								charAliases[cid][name] = nums;
+							}
+						}
+					}
+				}
+				return;
+			}
 			handleScopeBlockLine(trimmed, currentScopeBlock, cursors, tooltips);
 			return;
 		}
@@ -192,5 +236,8 @@ export function parseSurfacesTxt(text: string) {
 		tooltips,
 		names,
 		iconRects,
+		aliases,
+		keroAliases,
+		charAliases,
 	};
 }

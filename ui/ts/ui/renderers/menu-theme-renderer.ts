@@ -184,9 +184,7 @@ export const menuThemeRenderer = {
 
 			if (sideUrl) {
 				rootStyle.setProperty("--menu-sidebar-image", `url("${sideUrl}")`);
-				const sideAlign = String(
-					mt.sidebar_alignment || "top",
-				).toLowerCase();
+				const sideAlign = String(mt.sidebar_alignment || "top").toLowerCase();
 				rootStyle.setProperty(
 					"--menu-sidebar-position",
 					sideAlign.includes("bottom") ? "left bottom" : "left top",

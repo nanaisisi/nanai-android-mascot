@@ -200,10 +200,7 @@ export async function handleTimerRaiseOtherCommand(
 	}
 }
 
-export async function handleTimerPluginCommand(
-	handler: any,
-	args: string[],
-) {
+export async function handleTimerPluginCommand(handler: any, args: string[]) {
 	const delayMs = Number.parseInt(args[1] ?? "0", 10);
 	const repeatFlag = Number.parseInt(args[2] ?? "1", 10);
 	const pluginId = args[3];
@@ -233,7 +230,9 @@ export async function handleTimerPluginCommand(
 			if (gc?.sendPluginEvent) {
 				await gc.sendPluginEvent(pluginId, eventName, references, isNotify);
 			} else {
-				const { invoke, isTauriAvailable } = await import("../../../core/tauri-helper.js");
+				const { invoke, isTauriAvailable } = await import(
+					"../../../core/tauri-helper.js"
+				);
 				if (isTauriAvailable()) {
 					await invoke("execute_plugin_event", {
 						request: {

@@ -17,7 +17,7 @@ function isInstance(obj: number | null) {
 }
 
 export function onTalkStart(this: unknown, target = 0, scopeIdParam = 0) {
-	let instance, scopeId;
+	let instance: unknown, scopeId: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
@@ -34,7 +34,7 @@ export function onTalkStart(this: unknown, target = 0, scopeIdParam = 0) {
 }
 
 export function onTalkEnd(this: unknown, target = 0, scopeIdParam = 0) {
-	let instance, scopeId;
+	let instance: unknown, scopeId: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
@@ -52,7 +52,7 @@ export function onTalkEnd(this: unknown, target = 0, scopeIdParam = 0) {
 }
 
 export function onScriptEnd(this: unknown, target = 0, scopeIdParam = 0) {
-	let instance, scopeId;
+	let instance: unknown, scopeId: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
@@ -67,7 +67,7 @@ export function onScriptEnd(this: unknown, target = 0, scopeIdParam = 0) {
 }
 
 export function onCharSpoken(this: unknown, target = 0, scopeIdParam = 0) {
-	let instance, scopeId;
+	let instance: unknown, scopeId: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
@@ -80,26 +80,21 @@ export function onCharSpoken(this: unknown, target = 0, scopeIdParam = 0) {
 		return;
 	}
 
-	if (!instance._talkStarted[scopeId]) {
-		if (instance.onTalkStart) {
-			instance.onTalkStart(scopeId);
-		} else {
-			onTalkStart(instance, scopeId);
-		}
-	}
-
 	instance._spokenCount[scopeId] = (instance._spokenCount[scopeId] || 0) + 1;
-	const anims = instance.animationsForTrigger
-		? instance.animationsForTrigger(scopeId, "talk")
+	const count = instance._spokenCount[scopeId];
+
+	const anims = instance.findAnimationsForEvent
+		? instance.findAnimationsForEvent(scopeId, "talk")
 		: [];
 
-	for (const { anim, sid, param } of anims) {
-		const n = Math.max(param || 1, 1);
-		if (instance._spokenCount[scopeId] % n === 0) {
-			const playFn = instance.playAnimationPatterns
-				? (...args: unknown) => instance.playAnimationPatterns(...args)
-				: (...args: unknown) => playAnimationPatterns(instance, ...args);
-			playFn(anim, sid, scopeId)?.catch?.(() => {});
+	for (const anim of anims) {
+		if (anim.option?.talkwait) {
+			const waitVal = parseInt(anim.option.talkwait, 10);
+			if (!Number.isNaN(waitVal) && count === waitVal) {
+				const sidNum = Number(scopeId);
+				const baseSurfaceId = instance.manager.currentSurfaceIdFor(sidNum);
+				playAnimationPatterns.call(instance, anim, baseSurfaceId, sidNum);
+			}
 		}
 	}
 }

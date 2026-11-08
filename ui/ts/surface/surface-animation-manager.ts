@@ -43,7 +43,7 @@ import {
 	parseInterval,
 	resolvePatternWait,
 } from "./animation-parser.js";
-
+import { surfaceAnimationPlaybackMethods } from "./surface-animation-playback-methods.js";
 import { surfaceAnimationTimers } from "./surface-animation-timers.js";
 
 // Re-export helper functions for backwards compatibility
@@ -97,34 +97,24 @@ export class SurfaceAnimationManager {
 	_baseScalingOffsets: Map<unknown, unknown>;
 	_serikoTalkEnabled: Map<unknown, unknown>;
 	scheduler: AnimationScheduler;
-	/**
-	 * @param {import('./surface.js').SurfaceManager} manager
-	 */
-	constructor(manager: this) {
+
+	constructor(manager: any) {
 		this.manager = manager;
-		/** @type {Record<number, unknown[]>} */
 		this.activeAnimationTimers = {};
 		this._spokenCount = {};
 		this._talkStarted = {};
-		/** @type {Map<string, boolean>} `\![anim,pause,ID]` で一時停止中のアニメーション */
 		this.pausedAnimations = new Map();
-		/** @type {Map<string, Promise<void>>} 再生中のアニメーション */
 		this._runningAnimations = new Map();
 		this._stoppedAnimations = new Set();
-		/** @type {Map<number, { animId: number|string, targets: Set<number>|null }>} exclusive 排他ロック中のアニメーション (scopeId -> exclusive info) */
 		this._exclusiveLocks = new Map();
-		/** @type {Map<string, number>} shared-index 保持テーブル (`${scopeId}__${animId}` -> lastPatternIndex) */
 		this._sharedIndices = new Map();
-		/** @type {Map<string, { x: number, y: number }>} \![anim,offset,ID,x,y] による動的オフセット (`${scopeId}__${animId}`) */
 		this._animationOffsets = new Map();
-		/** @type {Map<number, { x: number, y: number }>} move 描画メソッドによるベースサーフィス相対位置オフセット */
 		this._baseMoveOffsets = new Map();
-		/** @type {Map<number, { scaleX: number, scaleY: number }>} scaling 描画メソッドによるベースサーフィス倍率 */
 		this._baseScalingOffsets = new Map();
-		/** @type {Map<number, boolean>} SERIKO 口パクの有効/無効フラグ (\![set,serikotalk,true/false]) */
 		this._serikoTalkEnabled = new Map();
-		/** @type {AnimationScheduler} Slot-08 外部インターフェース規約スケジューラ */
 		this.scheduler = new AnimationScheduler(this);
+
+		Object.assign(this, surfaceAnimationPlaybackMethods);
 	}
 
 	parseAnimationOptions(options = []) {
@@ -244,125 +234,7 @@ export class SurfaceAnimationManager {
 	triggerAnimations(scopeId: unknown, kind: unknown) {
 		surfaceAnimationTimers.triggerAnimations.call(this, scopeId, kind);
 	}
-
-	playAnimationPatterns(
-		anim: unknown,
-		baseSurfaceId: string | number | undefined,
-		scopeId: number | undefined,
-	) {
-		return playAnimationPatterns(this, anim, baseSurfaceId, scopeId);
-	}
-
-	_playAnimationPatterns(
-		anim: unknown,
-		baseSurfaceId: undefined,
-		scopeId: undefined,
-		key: undefined,
-	) {
-		return _playAnimationPatterns(this, anim, baseSurfaceId, scopeId, key);
-	}
-
-	_playTimelineFrames(
-		timeline: unknown,
-		anim: undefined,
-		baseSurfaceId: undefined,
-		scopeId: undefined,
-		key: Record<string, unknown> | undefined,
-		options = {},
-	) {
-		return _playTimelineFrames(
-			this,
-			timeline,
-			anim,
-			baseSurfaceId,
-			scopeId,
-			key,
-			options,
-		);
-	}
-
-	_applyAnimationFrame(
-		pat: unknown,
-		anim: unknown,
-		baseSurfaceId: undefined,
-		scopeId: undefined,
-		key: undefined,
-		isCurrent: Record<string, unknown> | undefined,
-		options = {},
-	) {
-		return _applyAnimationFrame(
-			this,
-			pat,
-			anim,
-			baseSurfaceId,
-			scopeId,
-			key,
-			isCurrent,
-			options,
-		);
-	}
-
-	_playOnePat(
-		pat: unknown,
-		anim: undefined,
-		baseSurfaceId: undefined,
-		scopeId: undefined,
-		key: undefined,
-		isCurrent: Record<string, unknown> | undefined,
-		options = {},
-	) {
-		return _playOnePat(
-			this,
-			pat,
-			anim,
-			baseSurfaceId,
-			scopeId,
-			key,
-			isCurrent,
-			options,
-		);
-	}
-
-	renderAnimationFrame(
-		pat: unknown,
-		baseSurfaceId: undefined,
-		scopeId: Record<string, unknown> | undefined,
-		animationOptions = {},
-	) {
-		return renderAnimationFrame(
-			this,
-			pat,
-			baseSurfaceId,
-			scopeId,
-			animationOptions,
-		);
-	}
-
-	playAnimationById(
-		animIdOrName: number,
-		scopeId = 0,
-		waitForComplete = false,
-	) {
-		return playAnimationById(this, animIdOrName, scopeId, waitForComplete);
-	}
-
-	waitForAnimation(animIdOrName: number, scopeId = 0, timeoutMs = 30000) {
-		return waitForAnimation(this, animIdOrName, scopeId, timeoutMs);
-	}
-
-	onTalkStart(scopeId = 0) {
-		return onTalkStart(this, scopeId);
-	}
-
-	onTalkEnd(scopeId = 0) {
-		return onTalkEnd(this, scopeId);
-	}
-
-	onScriptEnd(scopeId = 0) {
-		return onScriptEnd(this, scopeId);
-	}
-
-	onCharSpoken(scopeId = 0) {
-		return onCharSpoken(this, scopeId);
-	}
 }
+
+// Inherit playback methods on prototype as well for prototype lookup
+Object.assign(SurfaceAnimationManager.prototype, surfaceAnimationPlaybackMethods);

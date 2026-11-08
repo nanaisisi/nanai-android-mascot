@@ -5,6 +5,10 @@
  */
 import { emit, invoke, isTauriAvailable, listen } from "../tauri-helper.js";
 import {
+	applyBalloonScale,
+	setBalloonThemeImpl,
+} from "./balloon-theme-apply.js";
+import {
 	BALLOON_SCALE_MAP,
 	BALLOON_THEMES,
 	MAX_BALLOON_SCALE,
@@ -23,6 +27,10 @@ export {
 	MIN_BALLOON_SCALE,
 	THEME_LABELS,
 } from "./balloon-theme-constants.js";
+export {
+	applyBalloonScale,
+	setBalloonThemeImpl,
+} from "./balloon-theme-apply.js";
 
 /**
  * バルーンスキン・テーマ・9スライスおよびタイポグラフィ統合マネージャー
@@ -118,81 +126,7 @@ export class BalloonThemeManager {
 	 * @param {string | number} actionOrScale
 	 */
 	applyScale(actionOrScale) {
-		const prevScale = this.userScale || 1;
-		const prevPercent = Math.round(prevScale * 100);
-
-		let rawScale = 1;
-		if (typeof actionOrScale === "number") {
-			rawScale = actionOrScale;
-		} else if (BALLOON_SCALE_MAP[actionOrScale]) {
-			rawScale = parseFloat(BALLOON_SCALE_MAP[actionOrScale]) || 1;
-		} else {
-			rawScale = parseFloat(actionOrScale) || 1;
-		}
-
-		if (Number.isNaN(rawScale) || !Number.isFinite(rawScale)) {
-			rawScale = 1;
-		}
-
-		// 境界値安全クランプ [0.1, 5.0]
-		const scale = Math.max(
-			MIN_BALLOON_SCALE,
-			Math.min(MAX_BALLOON_SCALE, rawScale),
-		);
-
-		this.userScale = scale;
-		if (this.app) {
-			this.app.balloonUserScale = scale;
-		}
-		const dpiScale = this.dpiScale || this.app?.balloonDpiScale || 1;
-		const finalScale = +(scale * dpiScale).toFixed(4);
-		const percent = Math.round(scale * 100);
-
-		if (typeof document !== "undefined") {
-			const root = document.documentElement;
-			if (root) {
-				root.style.setProperty("--balloon-user-scale", String(scale));
-			}
-			const balloonEl = document.querySelector(".balloon");
-			if (balloonEl?.style) {
-				balloonEl.style.transform = `scale(${finalScale})`;
-				balloonEl.style.transformOrigin = "bottom left";
-			}
-		}
-
-		if (isTauriAvailable()) {
-			emit("balloon-scale-changed", {
-				userScale: scale,
-				dpiScale,
-				finalScale,
-			});
-		}
-
-		// UKADOC準拠: OnBalloonScaling SHIORIイベント送信
-		if (percent !== prevPercent) {
-			const gc = this.app?.ghostController;
-			if (gc?.sendBalloonScalingNotify) {
-				void gc.sendBalloonScalingNotify(
-					percent,
-					prevPercent,
-					percent,
-					prevPercent,
-				);
-			} else if (gc?.sendShioriEvent) {
-				void gc.sendShioriEvent("OnBalloonScaling", [
-					String(percent),
-					String(prevPercent),
-					String(percent),
-					String(prevPercent),
-				]);
-			}
-		}
-
-		if (this.app?.showBalloon) {
-			this.app.showBalloon(`バルーン倍率を ${percent}% に変更しました`);
-			setTimeout(() => this.app?.hideBalloon?.(), 1500);
-		}
-		return { scale, finalScale, percent };
+		return applyBalloonScale(this, actionOrScale);
 	}
 
 	/**
@@ -200,65 +134,7 @@ export class BalloonThemeManager {
 	 * @param {string | undefined} themeName
 	 */
 	async setTheme(themeName) {
-		if (!themeName || themeName === this.currentTheme) {
-			return;
-		}
-		this.currentTheme = themeName;
-		if (this.app) {
-			this.app.currentBalloonTheme = themeName;
-		}
-		try {
-			if (typeof localStorage !== "undefined") {
-				localStorage.setItem("nanai_balloon_theme", themeName);
-			}
-		} catch (_) {
-			// localStorage unavailable
-		}
-
-		if (typeof document !== "undefined") {
-			const root = document.documentElement;
-			if (root) {
-				root.setAttribute("data-balloon-theme", themeName);
-			}
-			if (document.body) {
-				document.body.className = `balloon-theme-${themeName}`;
-			}
-		}
-		this.app?.elements?.balloonDisplay?.setAttribute(
-			"data-balloon-theme",
-			themeName,
-		);
-
-		if (isTauriAvailable()) {
-			emit("sync-theme", themeName);
-			if (themeName === "nam_default_plus_overhead") {
-				void invoke("set_balloon_offset", {
-					scopeId: 0,
-					x: -40,
-					y: -210,
-				}).catch(() => {});
-				void invoke("set_balloon_offset", {
-					scopeId: 1,
-					x: -40,
-					y: -210,
-				}).catch(() => {});
-			} else if (themeName === "nam_default_plus") {
-				void invoke("reset_balloon_positions").catch(() => {});
-			}
-		}
-
-		this.clearNineSliceCache();
-		this.resetDescript();
-		if (isTauriAvailable()) {
-			try {
-				const props = await invoke("balloon_manifest", { name: themeName });
-				if (props && typeof props === "object") {
-					this.app?.applyBalloonDescript?.(props);
-				}
-			} catch (_e) {
-				// スキン descript 未定義の場合は無視
-			}
-		}
+		return setBalloonThemeImpl(this, themeName);
 	}
 
 	/**

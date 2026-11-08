@@ -1,4 +1,3 @@
-import { isTauriAvailable } from "../../core/tauri-helper.js";
 import {
 	DOCK_LEFT_THRESHOLD,
 	DOCK_RESTORE_OFFSET,
@@ -18,6 +17,7 @@ import {
 	clampPosition,
 	createNativeDragSession,
 } from "./drag/drag-motion.js";
+import { handleGhostPointerUp } from "./drag/drag-pointer-up.js";
 import { createLongPressController } from "./drag/long-press.js";
 import { createStrokeTracker } from "./drag/stroke.js";
 import { isPixelTransparent } from "./transparency.js";
@@ -43,27 +43,13 @@ export {
 
 /**
  * ゴースト本体のドラッグ移動、スナップ退避、および部位撫で（Stroke）判定のセットアップ
- *
- * @param {HTMLElement} target
- * @param {(clientX: number, clientY: number, rect: DOMRect) => void} [onGhostClick]
- * @param {(clientX: number, clientY: number, rect: DOMRect) => void} [onGhostStroke]
- * @param {object} [options={}]
- * @param {(clientX: number, clientY: number, rect: DOMRect, button: number, device: string) => void} [options.onGhostMouseDown]
- * @param {(clientX: number, clientY: number, rect: DOMRect, button: number, device: string) => void} [options.onGhostMouseUp]
- * @param {(clientX: number, clientY: number, rect: DOMRect) => void} [options.onGhostDragStart]
- * @param {(clientX: number, clientY: number, rect: DOMRect) => void} [options.onGhostDragEnd]
- * @param {object} [context={}]
- * @param {() => void} [context.toggleMenu]
- * @param {(newX: number, newY: number) => void} [context.updateFollowPosition]
- * @param {(img: HTMLElement, clientX: number, clientY: number) => boolean} [context.isPixelTransparent]
- * @returns {{ isInteractingOrDragging: () => boolean, cleanup: () => void }}
  */
 export function setupGhostDragging(
 	target: HTMLElement,
 	onGhostClick: unknown,
 	onGhostStroke: unknown,
-	options = {},
-	context = {},
+	options: any = {},
+	context: any = {},
 ) {
 	if (!target) {
 		return {
@@ -75,15 +61,17 @@ export function setupGhostDragging(
 	const { onGhostMouseDown, onGhostMouseUp, onGhostDragStart, onGhostDragEnd } =
 		options;
 
-	let isInteracting = false;
-	let isDragging = false;
-	let startX = 0;
-	let startY = 0;
+	const dragInternalState = {
+		isInteracting: false,
+		isDragging: false,
+		startX: 0,
+		startY: 0,
+		hasMoved: false,
+	};
 	let lastX = 0;
 	let lastY = 0;
 	let initialLeft = 0;
 	let initialTop = 0;
-	let hasMoved = false;
 	let rafPending = false;
 
 	const nativeDrag = createNativeDragSession();
@@ -100,35 +88,23 @@ export function setupGhostDragging(
 		onStroke: (clientX: unknown, clientY: unknown) => {
 			if (onGhostStroke) {
 				const rect = target.getBoundingClientRect();
-				onGhostStroke(clientX, clientY, rect);
+				(onGhostStroke as any)(clientX, clientY, rect);
 			}
 		},
 	});
 
 	const checkTransparency = context.isPixelTransparent || isPixelTransparent;
 
-	const onPointerDown = (e: {
-		button: number | undefined;
-		cancelable: unknown;
-		preventDefault: () => void;
-		clientX: unknown;
-		touches: {
-			clientX: unknown;
-			clientY: unknown;
-		}[];
-		clientY: unknown;
-		type: string;
-	}) => {
+	const onPointerDown = (e: any) => {
 		if (e.button !== undefined && e.button !== 0) return;
 
-		// ブラウザデフォルトの画像ドラッグやテキスト選択を防止
 		if (e.cancelable) {
 			e.preventDefault();
 		}
 
-		isInteracting = true;
-		isDragging = false;
-		hasMoved = false;
+		dragInternalState.isInteracting = true;
+		dragInternalState.isDragging = false;
+		dragInternalState.hasMoved = false;
 		nativeDrag.reset();
 		strokeTracker.reset();
 		longPress.reset();
@@ -136,19 +112,17 @@ export function setupGhostDragging(
 		const clientX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
 		const clientY = e.clientY ?? e.touches?.[0]?.clientY ?? 0;
 
-		// 透明ピクセルの場合はドラッグやインタラクションを開始しない（クリックスルーの補助）
 		const img = target.querySelector("img");
 		if (img && checkTransparency(img, clientX, clientY)) {
 			return;
 		}
 
-		// Tauri のネイティブドラッグは、移動後ではなく押下イベント中に開始する必要がある。
 		if (nativeDrag.canStartNativeDrag(e.type)) {
-			nativeDrag.startNativeDrag(() => isInteracting);
+			nativeDrag.startNativeDrag(() => dragInternalState.isInteracting);
 		}
 
-		startX = clientX;
-		startY = clientY;
+		dragInternalState.startX = clientX;
+		dragInternalState.startY = clientY;
 		lastX = clientX;
 		lastY = clientY;
 
@@ -162,49 +136,40 @@ export function setupGhostDragging(
 			onGhostMouseDown(clientX, clientY, rect, button, device);
 		}
 
-		// 長押しタイマー開始
 		longPress.start(
-			() => isInteracting && !hasMoved && !strokeTracker.isTriggered(),
+			() =>
+				dragInternalState.isInteracting &&
+				!dragInternalState.hasMoved &&
+				!strokeTracker.isTriggered(),
 		);
 	};
 
-	const onPointerMove = (e: {
-		clientX: unknown;
-		touches: {
-			clientX: unknown;
-			clientY: unknown;
-		}[];
-		clientY: unknown;
-	}) => {
-		if (!isInteracting) return;
+	const onPointerMove = (e: any) => {
+		if (!dragInternalState.isInteracting) return;
 
 		const clientX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
 		const clientY = e.clientY ?? e.touches?.[0]?.clientY ?? 0;
 
-		const deltaX = clientX - startX;
-		const deltaY = clientY - startY;
+		const deltaX = clientX - dragInternalState.startX;
+		const deltaY = clientY - dragInternalState.startY;
 		const stepDist = Math.hypot(clientX - lastX, clientY - lastY);
 		lastX = clientX;
 		lastY = clientY;
 
-		// 初期の遊び（微小な手振れ）を超えたら動作判定開始
-		if (!hasMoved && Math.hypot(deltaX, deltaY) > DRAG_MIN_MOVE) {
-			hasMoved = true;
+		if (!dragInternalState.hasMoved && Math.hypot(deltaX, deltaY) > DRAG_MIN_MOVE) {
+			dragInternalState.hasMoved = true;
 			longPress.cancel();
 		}
 
-		// ドッキング中でない場合、ドラッグ移動または撫で判定
 		const isDocked = isElementDocked(target);
 
-		if (!isDocked && !isDragging) {
-			// 当たり部位内での往復運動か、一方向への大きなドラッグかを判別
+		if (!isDocked && !dragInternalState.isDragging) {
 			strokeTracker.addDistance(stepDist, clientX, clientY);
 		}
 
-		// 撫でが発動していなければ通常のドラッグ移動を行う
-		if (!strokeTracker.isTriggered() && hasMoved) {
-			if (!isDragging) {
-				isDragging = true;
+		if (!strokeTracker.isTriggered() && dragInternalState.hasMoved) {
+			if (!dragInternalState.isDragging) {
+				dragInternalState.isDragging = true;
 				target.classList.add("is-dragging");
 				if (onGhostDragStart) {
 					const rect = target.getBoundingClientRect();
@@ -212,9 +177,11 @@ export function setupGhostDragging(
 				}
 			}
 
-			// デスクトップ環境（Windows等）の場合はネイティブウィンドウ自体を移動
 			if (nativeDrag.hasStarted()) {
-				nativeDrag.moveNativeWindow(clientX - startX, clientY - startY);
+				nativeDrag.moveNativeWindow(
+					clientX - dragInternalState.startX,
+					clientY - dragInternalState.startY,
+				);
 				return;
 			}
 
@@ -230,83 +197,32 @@ export function setupGhostDragging(
 				rafPending = true;
 				requestAnimationFrame(() => {
 					rafPending = false;
-					if (!isInteracting && !isDragging) return;
+					if (!dragInternalState.isInteracting && !dragInternalState.isDragging)
+						return;
 					target.style.left = `${newX}px`;
 					target.style.top = `${newY}px`;
 					target.style.transform = "translate(-50%, -50%)";
 
-					// バルーンが存在する場合、設定された相対オフセットを維持してキャラクターに追従
 					context.updateFollowPosition?.(newX, newY);
 				});
 			}
 		}
 	};
 
-	const onPointerUp = (e: {
-		clientX: number;
-		clientY: number;
-		button: undefined;
-		changedTouches: unknown;
-	}) => {
-		if (!isInteracting) return;
-		const wasDragging = isDragging;
-		isInteracting = false;
+	const onPointerUp = (e: any) => {
 		rafPending = false;
-		target.classList.remove("is-dragging");
-
-		longPress.cancel();
-
-		const clientX = e.clientX ?? startX;
-		const clientY = e.clientY ?? startY;
-		const rect = target.getBoundingClientRect();
-
-		if (wasDragging && onGhostDragEnd) {
-			onGhostDragEnd(clientX, clientY, rect);
-		}
-
-		if (onGhostMouseUp) {
-			const button = e.button !== undefined ? e.button : 0;
-			const device = e.changedTouches ? "touch" : "mouse";
-			onGhostMouseUp(clientX, clientY, rect, button, device);
-		}
-
-		// 長押し発火後や撫で判定が発火していた場合はタップやドラッグ確定を行わない
-		if (longPress.isTriggered() || strokeTracker.isTriggered()) {
-			return;
-		}
-
-		if (nativeDrag.hasStarted()) {
-			if (!hasMoved && onGhostClick) {
-				const clickX = e.clientX ?? startX;
-				const clickY = e.clientY ?? startY;
-				const currentRect = target.getBoundingClientRect();
-				onGhostClick(clickX, clickY, currentRect);
-			}
-			target.classList.remove("is-dragging");
-			return;
-		}
-
-		if (isDragging) {
-			// 画面端スナップ（ドッキング退避判定: 非Tauri環境(Web/モバイル)または明示的なオプション指定時）
-			if (!isTauriAvailable() || options.enableDocking) {
-				applyDockingSnap(target, globalThis.innerWidth);
-			} else {
-				target.classList.remove("is-docked-left", "is-docked-right");
-			}
-		} else {
-			// ドッキング中のタップで復帰
-			if (restoreFromDocking(target, globalThis.innerWidth)) {
-				return;
-			}
-
-			// 通常タップ（Click）判定
-			if (onGhostClick) {
-				const clickX = e.clientX ?? startX;
-				const clickY = e.clientY ?? startY;
-				const currentRect = target.getBoundingClientRect();
-				onGhostClick(clickX, clickY, currentRect);
-			}
-		}
+		handleGhostPointerUp(
+			e,
+			dragInternalState,
+			target,
+			longPress,
+			strokeTracker,
+			nativeDrag,
+			options,
+			onGhostClick,
+			onGhostDragEnd,
+			onGhostMouseUp,
+		);
 	};
 
 	target.addEventListener("mousedown", onPointerDown);
@@ -329,7 +245,8 @@ export function setupGhostDragging(
 	};
 
 	return {
-		isInteractingOrDragging: () => isInteracting || isDragging,
+		isInteractingOrDragging: () =>
+			dragInternalState.isInteracting || dragInternalState.isDragging,
 		cleanup,
 	};
 }

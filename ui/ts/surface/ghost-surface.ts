@@ -6,11 +6,13 @@
 import { AppConfig } from "../core/config.js";
 import {
 	convertFileSrc,
-	emit,
 	invoke,
 	isTauriAvailable,
 } from "../core/tauri-helper.js";
+import { applySurfaceImageToDom } from "./ghost-surface-dom.js";
 import { ghostSurfaceLoaderMethods } from "./ghost-surface-loader.js";
+
+export { applySurfaceImageToDom } from "./ghost-surface-dom.js";
 
 const byId = (id) => document.getElementById(id);
 
@@ -109,110 +111,19 @@ export const ghostSurfaceMethods = {
 		}
 
 		const img = document.querySelector(selector);
-
-		const applyImageSrc = async (src, fallbackSrc = null, pnaSrc = null) => {
-			let transparentSrc = src;
-			if (src && this.app?.surfaceManager?.processChromaKey) {
-				try {
-					transparentSrc = await this.app.surfaceManager.processChromaKey(
-						src,
-						pnaSrc,
-					);
-				} catch (_e) {
-					transparentSrc = src;
-				}
-			}
-
-			if (transparentSrc && this.app?.surfaceManager?.composeSurfaceElements) {
-				try {
-					const resolveLayerImage = async (fileName) => {
-						const resolveId =
-							fileName.replace(/\.[^/.]+$/, "").replace(/^surface/i, "") || "0";
-						const pnaFileName = fileName.replace(/\.[^/.]+$/, ".pna");
-						let layerSrc = null;
-						let layerPnaSrc = null;
-
-						if (isTauriAvailable()) {
-							layerSrc = await this.loadSurfaceAsset(
-								"load_surface_image",
-								ghostPath,
-								shell,
-								resolveId,
-							).catch(() => null);
-							if (!layerSrc) return null;
-							layerPnaSrc = await this.loadSurfaceAsset(
-								"load_surface_pna",
-								ghostPath,
-								shell,
-								resolveId,
-							).catch(() => null);
-						} else {
-							layerSrc = convertFileSrc(
-								`${ghostPath}/shell/${shell}/${fileName}`,
-							);
-							layerPnaSrc = convertFileSrc(
-								`${ghostPath}/shell/${shell}/${pnaFileName}`,
-							);
-						}
-
-						if (!layerSrc || !this.app?.surfaceManager?.processChromaKey) {
-							return layerSrc;
-						}
-						try {
-							return await this.app.surfaceManager.processChromaKey(
-								layerSrc,
-								layerPnaSrc,
-							);
-						} catch (_e) {
-							return layerSrc;
-						}
-					};
-
-					transparentSrc = await this.app.surfaceManager.composeSurfaceElements(
-						surfaceId,
-						transparentSrc,
-						resolveLayerImage,
-						scopeId,
-						extraLayers,
-					);
-				} catch (_e) {}
-			}
-
-			if (isStale()) return null;
-
-			if (this.currentSurfaces) {
-				this.currentSurfaces.set(scopeId, transparentSrc);
-			}
-
-			if (isTauriAvailable()) {
-				emit(`update-subchar-image-${scopeId}`, { src: transparentSrc });
-				return transparentSrc;
-			}
-
-			if (img) {
-				img.style.display = "block";
-				if (fallbackSrc) {
-					img.onerror = () => {
-						img.onerror = null;
-						img.src = fallbackSrc;
-					};
-				} else {
-					img.onerror = null;
-				}
-				img.src = transparentSrc;
-				if (img.decode) {
-					await img.decode().catch(() => {});
-				}
-			} else if (placeholder) {
-				const errorAttr = fallbackSrc
-					? `onerror="this.onerror=null; this.src='${fallbackSrc}';"`
-					: "";
-				placeholder.innerHTML = `<img src="${transparentSrc}" 
-                                       alt="scope${scopeId}" 
-                                       ${errorAttr}
-                                       style="width: 100%; height: 100%; object-fit: contain; pointer-events: auto;">`;
-			}
+		const domContext = {
+			scopeId,
+			surfaceId,
+			ghostPath,
+			shell,
+			extraLayers,
+			isStale,
+			img,
+			placeholder,
 		};
+
+		const applyImageSrc = (src, fallbackSrc = null, pnaSrc = null) =>
+			applySurfaceImageToDom(this, src, fallbackSrc, pnaSrc, domContext);
 
 		if (isTauriAvailable()) {
 			const load = (id) =>
@@ -248,78 +159,10 @@ export const ghostSurfaceMethods = {
 		);
 		const result = await applyImageSrc(imgUrl, fallbackSvgUrl, pnaUrl);
 
-		// サーフィス切り替え完了時、UKADOC OnSurfaceChange / OnOtherSurfaceChange を通知
-		if (!isAnimationFrame && surfaceId !== -1 && surfaceId !== "-1") {
-			try {
-				const surf0 =
-					this.app?.surfaceManager?.currentSurfaceIdFor?.(0) ??
-					(scopeId === 0 ? surfaceId : 0);
-				const surf1 =
-					this.app?.surfaceManager?.currentSurfaceIdFor?.(1) ??
-					(scopeId === 1 ? surfaceId : 10);
-				const width = img?.naturalWidth || img?.clientWidth || 0;
-				const height = img?.naturalHeight || img?.clientHeight || 0;
-
-				if (this.notifySurfaceChange) {
-					await this.notifySurfaceChange(scopeId, surf0, surf1, width, height);
-				}
-
-				if (this.otherSurfaceChangeEnabled && this.notifyOtherSurfaceChange) {
-					const ghostName = this.ghostManifest?.name || "master";
-					const sakuraName = this.ghostManifest?.sakura?.name || ghostName;
-					const prevSurf = this._prevSurfaceIds?.[scopeId] ?? surfaceId;
-					const rectStr = `0,0,${width},${height}`;
-					await this.notifyOtherSurfaceChange(
-						ghostName,
-						sakuraName,
-						scopeId,
-						surfaceId,
-						prevSurf,
-						rectStr,
-					);
-				}
-
-				this._prevSurfaceIds ??= {};
-				this._prevSurfaceIds[scopeId] = surfaceId;
-			} catch (_err) {}
+		if (this.currentGhost) {
+			this.currentGhost.currentSurface = surfaceId;
 		}
 
 		return result;
-	},
-
-	async updateGhostCharacter(ghostName) {
-		const sakuraPlaceholder =
-			byId("sakura-placeholder") ||
-			document.querySelector(".character-placeholder");
-		const keroPlaceholder = byId("kero-placeholder");
-		const keroSlot = byId("kero-slot");
-		if (!sakuraPlaceholder) return;
-
-		if (!ghostName) {
-			sakuraPlaceholder.innerHTML = "";
-			if (keroPlaceholder) keroPlaceholder.innerHTML = "";
-			if (keroSlot) keroSlot.style.display = "none";
-			return;
-		}
-		sakuraPlaceholder.title = ghostName;
-		if (keroSlot) keroSlot.style.display = "none";
-		if (keroPlaceholder) keroPlaceholder.innerHTML = "";
-
-		const promises = [this.updateSurface(0, 0)];
-
-		const hasKero = Boolean(this.currentGhost?.kero_name);
-		if (hasKero) {
-			promises.push(this.updateSurface(10, 1));
-		} else if (isTauriAvailable()) {
-			invoke("hide_subchar_window", { scopeId: 1 }).catch(() => {});
-		}
-		await Promise.all(promises);
-	},
-
-	updateCurrentGhostDisplay() {
-		const el = byId("current-ghost");
-		if (el) {
-			el.textContent = this.currentGhost ? this.currentGhost.name : "未選択";
-		}
 	},
 };

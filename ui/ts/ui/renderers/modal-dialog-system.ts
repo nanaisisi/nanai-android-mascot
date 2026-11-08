@@ -4,6 +4,16 @@
  * UKADOC OnSystemDialog / OnSystemDialogCancel 準拠
  */
 
+import {
+	createColorDialogForm,
+	createTermsDialogForm,
+} from "./modal-dialog-ui.js";
+
+export {
+	createColorDialogForm,
+	createTermsDialogForm,
+} from "./modal-dialog-ui.js";
+
 /**
  * システムダイアログを開く (\![open,dialog,dialogType,...])
  * @param {string} dialogType - "open" | "save" | "folder" | "color"
@@ -92,65 +102,14 @@ export async function openSystemDialog(dialogType, params = [], scope) {
 	// 1. カラーピッカー (HTML5 <input type="color"> またはバルーン内ピッカー)
 	if (type === "color") {
 		const balloon = this.getBalloonContainer(scope);
-		const form = document.createElement("div");
-		form.className = "balloon-inputbox-form balloon-color-dialog";
-		form.style.marginTop = "0.5rem";
-		form.style.display = "flex";
-		form.style.alignItems = "center";
-		form.style.gap = "0.5rem";
-
-		if (title) {
-			const label = document.createElement("span");
-			label.textContent = title;
-			label.style.fontSize = "0.8rem";
-			form.appendChild(label);
-		}
-
-		const colorInput = document.createElement("input");
-		colorInput.type = "color";
-		colorInput.value = initialColor;
-		colorInput.style.cursor = "pointer";
-		colorInput.style.border = "none";
-		colorInput.style.background = "none";
-		colorInput.style.width = "2rem";
-		colorInput.style.height = "2rem";
-
-		const submitBtn = document.createElement("button");
-		submitBtn.textContent = "OK";
-		submitBtn.className = "balloon-choice-btn";
-		submitBtn.style.marginTop = "0";
-
-		const cancelBtn = document.createElement("button");
-		cancelBtn.textContent = "Cancel";
-		cancelBtn.className = "balloon-choice-btn";
-		cancelBtn.style.marginTop = "0";
-
-		const boxKey = `dialog:${eventId}`;
-		const cleanup = () => {
-			form.remove();
-			this.activeBoxes.delete(boxKey);
-		};
-
-		submitBtn.addEventListener("click", async (e) => {
-			e.stopPropagation();
-			const hex = colorInput.value.replace("#", "");
-			const r = Number.parseInt(hex.slice(0, 2), 16) || 0;
-			const g = Number.parseInt(hex.slice(2, 4), 16) || 0;
-			const b = Number.parseInt(hex.slice(4, 6), 16) || 0;
-			const rgbStr = `${r},${g},${b}`;
-			cleanup();
-			await sendSuccess(rgbStr);
-		});
-
-		cancelBtn.addEventListener("click", async (e) => {
-			e.stopPropagation();
-			cleanup();
-			await sendCancel();
-		});
-
-		form.appendChild(colorInput);
-		form.appendChild(submitBtn);
-		form.appendChild(cancelBtn);
+		const { form, boxKey, cleanup } = createColorDialogForm(
+			this,
+			title,
+			initialColor,
+			eventId,
+			sendSuccess,
+			sendCancel,
+		);
 
 		if (balloon) {
 			balloon.appendChild(form);
@@ -178,59 +137,12 @@ export async function openSystemDialog(dialogType, params = [], scope) {
 	// 1.5. 利用条件ダイアログ (terms)
 	if (type === "terms") {
 		const balloon = this.getBalloonContainer(scope);
-		const form = document.createElement("div");
-		form.className = "balloon-inputbox-form balloon-terms-dialog";
-		form.style.marginTop = "0.5rem";
-		form.style.display = "flex";
-		form.style.flexDirection = "column";
-		form.style.gap = "0.5rem";
-
-		if (title) {
-			const label = document.createElement("span");
-			label.textContent = title;
-			label.style.fontWeight = "bold";
-			form.appendChild(label);
-		}
-
-		const btnRow = document.createElement("div");
-		btnRow.style.display = "flex";
-		btnRow.style.gap = "0.5rem";
-
-		const acceptBtn = document.createElement("button");
-		acceptBtn.textContent = "同意する";
-		acceptBtn.className = "balloon-choice-btn";
-
-		const declineBtn = document.createElement("button");
-		declineBtn.textContent = "同意しない";
-		declineBtn.className = "balloon-choice-btn";
-
-		btnRow.appendChild(acceptBtn);
-		btnRow.appendChild(declineBtn);
-		form.appendChild(btnRow);
-
-		const boxKey = `dialog:${eventId}`;
-		const cleanup = () => {
-			form.remove();
-			this.activeBoxes.delete(boxKey);
-		};
-
-		acceptBtn.addEventListener("click", async (e) => {
-			e.stopPropagation();
-			cleanup();
-			await this.app?.ghostController?.sendShioriEvent?.(
-				"OnGhostTermsAccept",
-				id ? [id] : [],
-			);
-		});
-
-		declineBtn.addEventListener("click", async (e) => {
-			e.stopPropagation();
-			cleanup();
-			await this.app?.ghostController?.sendShioriEvent?.(
-				"OnGhostTermsDecline",
-				id ? [id] : [],
-			);
-		});
+		const { form, boxKey, cleanup } = createTermsDialogForm(
+			this,
+			title,
+			id,
+			eventId,
+		);
 
 		if (balloon) {
 			balloon.appendChild(form);
@@ -240,7 +152,6 @@ export async function openSystemDialog(dialogType, params = [], scope) {
 				form,
 				cleanup: () => {
 					cleanup();
-					// 右上の閉じる等ではイベントを発生させない (UKADOC規約)
 				},
 			});
 			return form;
@@ -254,7 +165,6 @@ export async function openSystemDialog(dialogType, params = [], scope) {
 	}
 
 	// 2. ファイル / フォルダ選択 (open, save, folder)
-	// ブラウザ / DOM 環境の input[type=file] によるフォールバック
 	if (typeof document !== "undefined") {
 		const fileInput = document.createElement("input");
 		fileInput.type = "file";
@@ -264,7 +174,6 @@ export async function openSystemDialog(dialogType, params = [], scope) {
 			fileInput.setAttribute("directory", "");
 		}
 		if (filter) {
-			// filter形式: "テキスト|*.txt;*.dic|すべて|*.*"
 			const exts = [];
 			const parts = filter.split("|");
 			for (let i = 1; i < parts.length; i += 2) {
@@ -285,7 +194,7 @@ export async function openSystemDialog(dialogType, params = [], scope) {
 			const file = fileInput.files?.[0];
 			fileInput.remove();
 			if (file) {
-				const filePath = file.path || file.name;
+				const filePath = (file as any).path || file.name;
 				await sendSuccess(filePath);
 			} else {
 				await sendCancel();
@@ -299,7 +208,6 @@ export async function openSystemDialog(dialogType, params = [], scope) {
 		});
 
 		document.body?.appendChild(fileInput);
-		// 登録して close:dialog 時に cancel できるようにする
 		const boxKey = `dialog:${eventId}`;
 		this.activeBoxes.set(boxKey, {
 			id: eventId,
@@ -313,11 +221,9 @@ export async function openSystemDialog(dialogType, params = [], scope) {
 			},
 		});
 
-		// ユーザー操作によるオープン発火（環境によりclick可能）
 		try {
 			fileInput.click();
 		} catch (_err) {
-			// clickが制限される環境ではフォールバック
 			if (defaultName || ext) {
 				const mockPath = `${dir ? `${dir}/` : ""}${defaultName || "file"}${ext ? `.${ext.replace(/^\./, "")}` : ""}`;
 				await sendSuccess(mockPath);

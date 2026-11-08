@@ -1,22 +1,12 @@
 /**
  * @file ghost-actions.ts
  * @brief ゴースト管理・インストール・アンインストール・着せ替え・倍率設定モジュール (UKADOC準拠)
- *
- * 準拠仕様:
- * - OnInstallBegin: インストール開始通知 (Ref0=識別子)
- * - OnInstallComplete / OnInstallCompleteEx: インストール完了通知 (Ref0=種別, Ref1=名前, Ref2=パス, Ref3=スクリプト)
- * - OnInstallFailure: インストール失敗通知 (Ref0=失敗理由)
- * - OnWindowStateMinimize / OnWindowStateRestore: ウィンドウ最小化・復元イベント
- * - uninstall_ghost: ゴーストファイル削除・アンインストール処理
  */
 import { AppConfig } from "../config.js";
 import { invoke, isTauriAvailable } from "../tauri-helper.js";
-import {
-	buildInstallBeginArgs,
-	buildInstallCompleteArgs,
-	buildInstallCompleteExArgs,
-	buildInstallFailureArgs,
-} from "./install-protocol.js";
+import { installGhostFromMenuImpl } from "./ghost-install-action.js";
+
+export { installGhostFromMenuImpl } from "./ghost-install-action.js";
 
 const SCALE_MAP: Record<string, { width: string; height: string }> = {
 	"scale-50": { width: "100px", height: "200px" },
@@ -106,84 +96,7 @@ export const ghostActions = {
 	},
 
 	async installGhostFromMenu() {
-		if (!isTauriAvailable()) {
-			return (this as unknown).modalManager?.show("install-modal-content");
-		}
-		const gc = (this as unknown).ghostController;
-		try {
-			await gc?.sendShioriEvent?.(
-				"OnInstallBegin",
-				buildInstallBeginArgs("install"),
-			);
-
-			const result: unknown = await invoke("pick_and_install_ghost_archive");
-			if (!result) return;
-
-			await (this as unknown).ghostController.scanGhosts();
-			await (this as unknown).scanBalloons();
-
-			const importedGhost = (this as unknown).ghostController.ghosts.find(
-				(ghost: unknown) => ghost.name === result.name,
-			);
-			if (importedGhost) {
-				await gc?.sendShioriEvent?.(
-					"OnInstallCompleteEx",
-					buildInstallCompleteExArgs("ghost", result.name, result.path || ""),
-				);
-				await gc?.sendShioriEvent?.(
-					"OnInstallComplete",
-					buildInstallCompleteArgs("ghost", result.name, result.path || ""),
-				);
-				(this as unknown).showBalloon?.(
-					`ゴースト「${importedGhost.name}」を導入しました`,
-				);
-				setTimeout(() => (this as unknown).hideBalloon?.(), 2000);
-				await (this as unknown).ghostController?.selectGhost?.(
-					importedGhost.name,
-				);
-				return;
-			}
-			const importedBalloon = (this as unknown).availableBalloons?.find(
-				(balloon: unknown) =>
-					balloon.name === result.name || balloon.dir_name === result.name,
-			);
-			if (importedBalloon) {
-				await gc?.sendShioriEvent?.(
-					"OnInstallCompleteEx",
-					buildInstallCompleteExArgs(
-						"balloon",
-						importedBalloon.name,
-						importedBalloon.dir_name,
-					),
-				);
-				await gc?.sendShioriEvent?.(
-					"OnInstallComplete",
-					buildInstallCompleteArgs("balloon", importedBalloon.name),
-				);
-				await (this as unknown).setBalloonTheme(importedBalloon.dir_name);
-				(this as unknown).showBalloon(
-					`バルーン「${importedBalloon.name}」を導入しました`,
-				);
-				setTimeout(() => (this as unknown).hideBalloon(), 2000);
-				return;
-			}
-
-			await gc?.sendShioriEvent?.(
-				"OnInstallComplete",
-				buildInstallCompleteArgs("package", result.name),
-			);
-		} catch (error) {
-			console.error("メニューからのゴースト取り込みに失敗しました:", error);
-			await gc?.sendShioriEvent?.(
-				"OnInstallFailure",
-				buildInstallFailureArgs(error),
-			);
-			(this as unknown).modalManager?.showNotification(
-				"ゴースト取り込み失敗",
-				String(error),
-				true,
-			);
-		}
+		return installGhostFromMenuImpl(this);
 	},
 
 	recordRecentGhost(ghostName: string) {

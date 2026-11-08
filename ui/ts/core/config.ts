@@ -15,7 +15,7 @@ export interface AppConfigSpec {
 export const AppConfig: AppConfigSpec = {
 	// パス関連
 	paths: {
-		defaultGhostDir: "test_dir",
+		defaultGhostDir: "assets/ghost",
 		fallbackGhostName: "mock_nanai",
 		fallbackShellName: "master",
 		surfacesTxt: "surfaces.txt",

@@ -9,13 +9,14 @@ import {
 	listen,
 	startDraggingWindow,
 } from "../core/tauri-helper.js";
+import { AppConfig } from "../core/config.js";
 import { renderSubmenuContent } from "./submenu-renderer.js";
 import { applyShellMenuTheme } from "./submenu-theme.js";
 
 /** @type {string} */
 let currentSubmenuType = "ghost";
 /** @type {string[]} */
-let cachedGhosts: never[] = [];
+let cachedGhosts: unknown[] = [];
 /** @type {string|null} */
 let currentGhostName: null = null;
 /** @type {string[]} */
@@ -85,6 +86,22 @@ if (isTauriAvailable()) {
 				cachedGhosts.length === 0
 			) {
 				void emit("menu-action", { action: "request-sync" });
+				invoke("scan_ghosts", {
+					ghostPath: AppConfig.paths.defaultGhostDir || "assets/ghost",
+				})
+					.then((res: unknown) => {
+						if (
+							res &&
+							typeof res === "object" &&
+							Array.isArray((res as { ghosts?: unknown[] }).ghosts) &&
+							(res as { ghosts: unknown[] }).ghosts.length > 0 &&
+							cachedGhosts.length === 0
+						) {
+							cachedGhosts = (res as { ghosts: unknown[] }).ghosts;
+							renderContent();
+						}
+					})
+					.catch(() => {});
 			}
 		}
 	});

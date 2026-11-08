@@ -24,6 +24,7 @@ function isInstance(obj: unknown) {
  * @param {unknown} keyOrIsCurrent
  * @param {Record<string, unknown> | undefined} [isCurrentOrOptions]
  * @param {unknown} [optionsParam={}]
+ * @returns {boolean}
  */
 export function _applyAnimationFrame(
 	this: unknown,
@@ -35,15 +36,15 @@ export function _applyAnimationFrame(
 	keyOrIsCurrent: undefined,
 	isCurrentOrOptions: Record<string, unknown> | undefined,
 	optionsParam = {},
-) {
-	let instance: unknown,
-		pat: unknown,
-		_anim: unknown,
-		baseSurfaceId: unknown,
-		scopeId: unknown,
-		_key: unknown,
-		isCurrent: unknown,
-		options: unknown;
+): boolean {
+	let instance: any,
+		pat: any,
+		_anim: any,
+		baseSurfaceId: any,
+		scopeId: any,
+		_key: any,
+		isCurrent: any,
+		options: any;
 	if (isInstance(target)) {
 		instance = target;
 		pat = patOrAnim;
@@ -64,30 +65,83 @@ export function _applyAnimationFrame(
 		options = isCurrentOrOptions || {};
 	}
 
-	const inst = instance as Record<string, unknown>;
-	const p = pat as Record<string, unknown>;
-	const sId = scopeId as number;
+	const inst = instance || {};
+	const p = pat || {};
+	const sId = (scopeId ?? 0) as number;
 	const bSurfId = baseSurfaceId as string | number;
 	const isCurr = isCurrent as (() => boolean) | undefined;
-	const opts = options as Record<string, unknown>;
+	const opts = options || {};
 
-	if (isCurr && !isCurr()) return;
+	if (isCurr && !isCurr()) return false;
 
-	const manager = inst.manager as Record<string, unknown> | undefined;
-	const renderAnimationFrameFn = inst.renderAnimationFrame as
-		| ((...args: unknown[]) => void)
-		| undefined;
+	const manager = inst.manager;
+
+	// 特殊制御パターンの処理
+	const surfaceId = p.surfaceId !== undefined ? p.surfaceId : bSurfId;
+	const surfaceNum = typeof surfaceId === "number" ? surfaceId : Number.parseInt(String(surfaceId), 10);
+
+	if (surfaceNum === -1) {
+		// surface -1: このアニメーションの再生を終了しベース表示に戻す
+		return false;
+	}
+
+	if (surfaceNum === -2) {
+		// surface -2: 同一スコープの他の再生中アニメーションを停止
+		if (inst._runningAnimations) {
+			for (const key of inst._runningAnimations.keys()) {
+				if (key.startsWith(`${sId}__`)) {
+					inst._stoppedAnimations?.add(key);
+				}
+			}
+		}
+		return true;
+	}
+
+	if (p.type === "start" || p.type === "stop") {
+		if (p.type === "start" && p.targetId != null) {
+			const anim = inst.findAnimation ? inst.findAnimation(p.targetId, sId) : null;
+			if (anim) {
+				inst.playAnimationPatterns?.(anim, bSurfId, sId);
+			}
+		} else if (p.type === "stop" && p.targetId != null) {
+			inst.stopAnimation?.(sId, p.targetId);
+		}
+		return true;
+	}
+
+	if (p.type === "sound" || p.soundFile) {
+		const soundPath = p.soundFile || p.file;
+		if (soundPath) {
+			const gc = manager?.app?.ghostController;
+			gc?.playSound?.(soundPath);
+		}
+		return true;
+	}
+
+	if (p.type === "scaling" || p.scaleX != null || p.scaleY != null) {
+		const setScale = inst.setScale || manager?.setScale;
+		if (setScale) {
+			setScale.call(inst, p.scaleX ?? 100, p.scaleY ?? 100, sId);
+		}
+		return true;
+	}
+
+	if (p.type === "move" || p.moveX != null || p.moveY != null) {
+		if (inst._baseMoveOffsets) {
+			inst._baseMoveOffsets.set(sId, { x: p.moveX || 0, y: p.moveY || 0 });
+		}
+		return true;
+	}
+
+	const renderAnimationFrameFn = inst.renderAnimationFrame;
 
 	if (renderAnimationFrameFn) {
 		renderAnimationFrameFn.call(inst, p, bSurfId, sId, opts);
 	} else if (manager) {
-		// デフォルト描画処理
-		const surfaceId = p.surfaceId !== undefined ? p.surfaceId : bSurfId;
-		const renderSurfaceLayer = manager.renderSurfaceLayer as
-			| ((...args: unknown[]) => void)
-			| undefined;
+		const renderSurfaceLayer = manager.renderSurfaceLayer;
 		if (renderSurfaceLayer) {
-			renderSurfaceLayer(surfaceId, p.file, p.x || 0, p.y || 0, opts);
+			renderSurfaceLayer.call(manager, surfaceId, p.file, p.x || 0, p.y || 0, opts);
 		}
 	}
+	return true;
 }

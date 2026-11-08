@@ -6,7 +6,7 @@
 | :--- | --------: | ----------: | --------: | --------: | ---: |
 | ukadoc-spec/descript                 |       518 |           3 |        40 |         2 |  563 |
 | ukadoc-spec/dev                      |         6 |           0 |         1 |         0 |    7 |
-| ukadoc-spec/list                     |       962 |           0 |       297 |         1 | 1260 |
+| ukadoc-spec/list                     |       989 |           0 |       270 |         1 | 1260 |
 | ukadoc-spec/manual                   |        32 |           0 |        34 |         0 |   66 |
 | ukadoc-spec/memo                     |         2 |           0 |         1 |         0 |    3 |
 | ukadoc-spec/spec                     |        78 |           0 |        37 |         0 |  115 |
@@ -15,7 +15,7 @@
 | ukadoc-ssp/dev                       |         3 |           0 |         2 |         0 |    5 |
 | ukadoc-ssp/functions                 |        15 |           0 |         2 |         0 |   17 |
 | ukadoc-ssp/howto                     |         5 |           0 |         2 |         0 |    7 |
-| **合計** |      1634 |           3 |       425 |         3 | 2065 |
+| **合計** |      1661 |           3 |       398 |         3 | 2065 |
 
 ## 注意
 

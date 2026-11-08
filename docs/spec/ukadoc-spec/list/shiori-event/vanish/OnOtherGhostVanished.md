@@ -2,7 +2,7 @@
 
 - **規格**: [OnOtherGhostVanished.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/vanish/OnOtherGhostVanished/) (ukadoc-spec/list/shiori-event/vanish/OnOtherGhostVanished.md)
 - **検索語**: OnOtherGhostVanished
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -11,4 +11,5 @@
 
 ## 実装箇所
 
-実装コード内に「OnOtherGhostVanished」は検出されませんでした。
+- `ui/ts/ghost/shiori-notify.ts:210` `| "OnOtherGhostVanished"`
+- `ui/ts/ghost/shiori-protocol.ts:88` `OTHER_GHOST_VANISHED: "OnOtherGhostVanished",`

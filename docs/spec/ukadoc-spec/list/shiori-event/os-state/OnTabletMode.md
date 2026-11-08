@@ -2,7 +2,7 @@
 
 - **規格**: [OnTabletMode.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/os-state/OnTabletMode/) (ukadoc-spec/list/shiori-event/os-state/OnTabletMode.md)
 - **検索語**: OnTabletMode
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -11,4 +11,5 @@
 
 ## 実装箇所
 
-実装コード内に「OnTabletMode」は検出されませんでした。
+- `ui/ts/ghost/shiori-notify.ts:274` `| "OnTabletMode"`
+- `ui/ts/ghost/shiori-protocol.ts:123` `TABLET_MODE: "OnTabletMode",`

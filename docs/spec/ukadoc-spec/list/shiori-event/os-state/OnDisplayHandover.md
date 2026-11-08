@@ -2,7 +2,7 @@
 
 - **規格**: [OnDisplayHandover.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/os-state/OnDisplayHandover/) (ukadoc-spec/list/shiori-event/os-state/OnDisplayHandover.md)
 - **検索語**: OnDisplayHandover
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -11,4 +11,5 @@
 
 ## 実装箇所
 
-実装コード内に「OnDisplayHandover」は検出されませんでした。
+- `ui/ts/ghost/shiori-notify.ts:271` `| "OnDisplayHandover"`
+- `ui/ts/ghost/shiori-protocol.ts:120` `DISPLAY_HANDOVER: "OnDisplayHandover",`

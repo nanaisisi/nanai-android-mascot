@@ -2,7 +2,7 @@
 
 - **規格**: [menu.background.font.color.g.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ownerdraw-color/menu.background.font.color.g/) (ukadoc-spec/list/shiori-resource/ownerdraw-color/menu.background.font.color.g.md)
 - **検索語**: menu.background.font.color.g
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-実装コード内に「menu.background.font.color.g」は検出されませんでした。
+- `src-tauri/src/shiori/property.rs:112` `"menu.background.font.color.g" => "0".to_string(),`

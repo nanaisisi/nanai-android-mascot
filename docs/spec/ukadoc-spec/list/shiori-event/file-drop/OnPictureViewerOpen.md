@@ -2,7 +2,7 @@
 
 - **規格**: [OnPictureViewerOpen.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/file-drop/OnPictureViewerOpen/) (ukadoc-spec/list/shiori-event/file-drop/OnPictureViewerOpen.md)
 - **検索語**: OnPictureViewerOpen
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,5 @@ OnPictureViewerOpen ファイルドロップ/外部連携SHIORIイベント通�
 
 ## 実装箇所
 
-実装コード内に「OnPictureViewerOpen」は検出されませんでした。
+- `ui/ts/ghost/shiori-notify.ts:249` `| "OnPictureViewerOpen"`
+- `ui/ts/ghost/shiori-protocol.ts:107` `PICTURE_VIEWER_OPEN: "OnPictureViewerOpen",`

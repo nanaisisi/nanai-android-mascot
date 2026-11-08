@@ -2,7 +2,7 @@
 
 - **規格**: [menu.foreground.font.color.b.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ownerdraw-color/menu.foreground.font.color.b/) (ukadoc-spec/list/shiori-resource/ownerdraw-color/menu.foreground.font.color.b.md)
 - **検索語**: menu.foreground.font.color.b
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-実装コード内に「menu.foreground.font.color.b」は検出されませんでした。
+- `src-tauri/src/shiori/property.rs:116` `"menu.foreground.font.color.b" => "255".to_string(),`

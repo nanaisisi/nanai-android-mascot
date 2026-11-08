@@ -203,13 +203,16 @@ impl SakuraAstNode {
             SakuraAstNode::Root { children } => {
                 let mut filtered = Vec::new();
                 for child in children {
-                    if let SakuraAstNode::Scope { scope, children: s_children } = child {
-                        if *scope == target_scope {
-                            filtered.push(SakuraAstNode::Scope {
-                                scope: *scope,
-                                children: s_children.clone(),
-                            });
-                        }
+                    if let SakuraAstNode::Scope {
+                        scope,
+                        children: s_children,
+                    } = child
+                        && *scope == target_scope
+                    {
+                        filtered.push(SakuraAstNode::Scope {
+                            scope: *scope,
+                            children: s_children.clone(),
+                        });
                     }
                 }
                 SakuraAstNode::Root { children: filtered }
@@ -218,34 +221,49 @@ impl SakuraAstNode {
                 if *scope == target_scope {
                     self.clone()
                 } else {
-                    SakuraAstNode::Root { children: Vec::new() }
+                    SakuraAstNode::Root {
+                        children: Vec::new(),
+                    }
                 }
             }
-            _ => SakuraAstNode::Root { children: Vec::new() },
+            _ => SakuraAstNode::Root {
+                children: Vec::new(),
+            },
         }
     }
 
     /// ログ保存や早送り再生用にウェイト（\\w, \\_w）コマンドを除去した AST ツリーを再帰生成する
     pub fn strip_waits(&self) -> SakuraAstNode {
         match self {
-            SakuraAstNode::Command(SakuraCommand::Wait(_)) => SakuraAstNode::Root { children: Vec::new() },
+            SakuraAstNode::Command(SakuraCommand::Wait(_)) => SakuraAstNode::Root {
+                children: Vec::new(),
+            },
             SakuraAstNode::Command(_) | SakuraAstNode::Choice { .. } => self.clone(),
             SakuraAstNode::Scope { scope, children } => {
                 let new_children: Vec<SakuraAstNode> = children
                     .iter()
                     .map(|c| c.strip_waits())
-                    .filter(|c| !matches!(c, SakuraAstNode::Root { children } if children.is_empty()))
+                    .filter(
+                        |c| !matches!(c, SakuraAstNode::Root { children } if children.is_empty()),
+                    )
                     .collect();
                 SakuraAstNode::Scope {
                     scope: *scope,
                     children: new_children,
                 }
             }
-            SakuraAstNode::Anchor { id, text, args, children } => {
+            SakuraAstNode::Anchor {
+                id,
+                text,
+                args,
+                children,
+            } => {
                 let new_children: Vec<SakuraAstNode> = children
                     .iter()
                     .map(|c| c.strip_waits())
-                    .filter(|c| !matches!(c, SakuraAstNode::Root { children } if children.is_empty()))
+                    .filter(
+                        |c| !matches!(c, SakuraAstNode::Root { children } if children.is_empty()),
+                    )
                     .collect();
                 SakuraAstNode::Anchor {
                     id: id.clone(),
@@ -258,7 +276,9 @@ impl SakuraAstNode {
                 let new_children: Vec<SakuraAstNode> = children
                     .iter()
                     .map(|c| c.strip_waits())
-                    .filter(|c| !matches!(c, SakuraAstNode::Root { children } if children.is_empty()))
+                    .filter(
+                        |c| !matches!(c, SakuraAstNode::Root { children } if children.is_empty()),
+                    )
                     .collect();
                 SakuraAstNode::Root {
                     children: new_children,

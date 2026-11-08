@@ -241,12 +241,12 @@ pub fn parse_developer_options(content: &str) -> Vec<String> {
             if !file_pattern.is_empty() {
                 noupdate_files.push(file_pattern);
             }
-        } else if let Some((key, val)) = trimmed.split_once(',').or_else(|| trimmed.split_once(':')) {
-            if key.trim().eq_ignore_ascii_case("noupdate") {
-                let file_pattern = val.trim().replace('\\', "/");
-                if !file_pattern.is_empty() {
-                    noupdate_files.push(file_pattern);
-                }
+        } else if let Some((key, val)) = trimmed.split_once(',').or_else(|| trimmed.split_once(':'))
+            && key.trim().eq_ignore_ascii_case("noupdate")
+        {
+            let file_pattern = val.trim().replace('\\', "/");
+            if !file_pattern.is_empty() {
+                noupdate_files.push(file_pattern);
             }
         }
     }

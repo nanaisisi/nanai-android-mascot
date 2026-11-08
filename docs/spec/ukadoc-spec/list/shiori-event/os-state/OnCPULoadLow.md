@@ -2,7 +2,7 @@
 
 - **規格**: [OnCPULoadLow.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/os-state/OnCPULoadLow/) (ukadoc-spec/list/shiori-event/os-state/OnCPULoadLow.md)
 - **検索語**: OnCPULoadLow
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -11,4 +11,5 @@
 
 ## 実装箇所
 
-実装コード内に「OnCPULoadLow」は検出されませんでした。
+- `ui/ts/ghost/shiori-notify.ts:279` `| "OnCPULoadLow"`
+- `ui/ts/ghost/shiori-protocol.ts:128` `CPU_LOAD_LOW: "OnCPULoadLow",`

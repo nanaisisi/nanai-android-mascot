@@ -54,10 +54,11 @@ impl FmoRecord {
         if hwnd != 0 {
             list.push(hwnd);
         }
-        if let Some(khwnd) = kerohwnd {
-            if khwnd != 0 && !list.contains(&khwnd) {
-                list.push(khwnd);
-            }
+        if let Some(khwnd) = kerohwnd
+            && khwnd != 0
+            && !list.contains(&khwnd)
+        {
+            list.push(khwnd);
         }
         self.hwndlist = list;
         self
@@ -132,7 +133,11 @@ impl FmoEntry {
         self
     }
 
-    pub fn with_balloons(mut self, balloon0: impl Into<String>, balloon1: impl Into<String>) -> Self {
+    pub fn with_balloons(
+        mut self,
+        balloon0: impl Into<String>,
+        balloon1: impl Into<String>,
+    ) -> Self {
         self.balloon0 = balloon0.into();
         self.balloon1 = balloon1.into();
         self

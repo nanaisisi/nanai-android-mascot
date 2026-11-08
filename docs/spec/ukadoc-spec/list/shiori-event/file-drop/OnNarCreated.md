@@ -2,7 +2,7 @@
 
 - **規格**: [OnNarCreated.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/file-drop/OnNarCreated/) (ukadoc-spec/list/shiori-event/file-drop/OnNarCreated.md)
 - **検索語**: OnNarCreated
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,5 @@ OnNarCreated ファイルドロップ/外部連携SHIORIイベント通知処理
 
 ## 実装箇所
 
-実装コード内に「OnNarCreated」は検出されませんでした。
+- `ui/ts/ghost/shiori-notify.ts:251` `| "OnNarCreated"`
+- `ui/ts/ghost/shiori-protocol.ts:109` `NAR_CREATED: "OnNarCreated",`

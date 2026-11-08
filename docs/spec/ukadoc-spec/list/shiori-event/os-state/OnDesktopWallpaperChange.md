@@ -2,7 +2,7 @@
 
 - **規格**: [OnDesktopWallpaperChange.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/os-state/OnDesktopWallpaperChange/) (ukadoc-spec/list/shiori-event/os-state/OnDesktopWallpaperChange.md)
 - **検索語**: OnDesktopWallpaperChange
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -11,4 +11,5 @@
 
 ## 実装箇所
 
-実装コード内に「OnDesktopWallpaperChange」は検出されませんでした。
+- `ui/ts/ghost/shiori-notify.ts:286` `| "OnDesktopWallpaperChange"`
+- `ui/ts/ghost/shiori-protocol.ts:135` `DESKTOP_WALLPAPER_CHANGE: "OnDesktopWallpaperChange",`

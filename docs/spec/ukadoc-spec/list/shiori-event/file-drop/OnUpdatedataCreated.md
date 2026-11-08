@@ -2,7 +2,7 @@
 
 - **規格**: [OnUpdatedataCreated.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/file-drop/OnUpdatedataCreated/) (ukadoc-spec/list/shiori-event/file-drop/OnUpdatedataCreated.md)
 - **検索語**: OnUpdatedataCreated
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,5 @@ OnUpdatedataCreated ファイルドロップ/外部連携SHIORIイベント通�
 
 ## 実装箇所
 
-実装コード内に「OnUpdatedataCreated」は検出されませんでした。
+- `ui/ts/ghost/shiori-notify.ts:253` `| "OnUpdatedataCreated"`
+- `ui/ts/ghost/shiori-protocol.ts:111` `UPDATEDATA_CREATED: "OnUpdatedataCreated",`

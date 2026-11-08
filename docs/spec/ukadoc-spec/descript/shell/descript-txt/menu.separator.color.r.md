@@ -2,11 +2,12 @@
 
 - **規格**: [menu.separator.color.r.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell/descript-txt/menu.separator.color.r/) (ukadoc-spec/descript/shell/descript-txt/menu.separator.color.r.md)
 - **検索語**: menu.separator.color.r
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 実装コード内に「menu.separator.color.r」は検出されませんでした。
 
 
 ## 実装箇所
 
-実装コード内に「menu.separator.color.r」は検出されませんでした。
+- `src-tauri/src/shiori/property.rs:120` `"menu.separator.color.r" => "192".to_string(),`
+- `src-tauri/src/shiori/property.rs:338` `assert_eq!(evaluate_property_query("menu.separator.color.r"), "192");`

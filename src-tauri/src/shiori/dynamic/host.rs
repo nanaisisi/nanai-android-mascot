@@ -2,7 +2,10 @@
 //!
 //! [DLL共通仕様], [メモリ管理], [request関数], [ライフサイクル関数 (loadu)]
 
-use std::ffi::c_void;
+use std::{
+    ffi::c_void,
+    path::{Path, PathBuf},
+};
 
 pub type Hglobal = *mut c_void;
 // [ライフサイクル関数 (loadu)]: load / loadu FFI シグネチャ

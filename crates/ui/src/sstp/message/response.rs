@@ -254,14 +254,16 @@ impl SstpResponse {
                         }
                     } else if key_lower == "keep-alive" {
                         // Keep-Alive: timeout=5
-                        if let Some((_, timeout_str)) = val.split_once("timeout=") {
-                            if let Ok(t) = timeout_str.trim().parse() {
-                                keep_alive_timeout = t;
-                            }
+                        if let Some((_, timeout_str)) = val.split_once("timeout=")
+                            && let Ok(t) = timeout_str.trim().parse()
+                        {
+                            keep_alive_timeout = t;
                         }
                     } else if key_lower == "content-length" {
                         content_length = val.parse().ok();
-                    } else if key_lower.starts_with("reference") || key_lower.starts_with("argument") {
+                    } else if key_lower.starts_with("reference")
+                        || key_lower.starts_with("argument")
+                    {
                         let norm_key = if key_lower.starts_with("argument") {
                             format!("Reference{}", &key[8..])
                         } else {

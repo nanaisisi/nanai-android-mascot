@@ -2,7 +2,7 @@
 
 - **規格**: [OnMediaPlayerOpen.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/file-drop/OnMediaPlayerOpen/) (ukadoc-spec/list/shiori-event/file-drop/OnMediaPlayerOpen.md)
 - **検索語**: OnMediaPlayerOpen
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,5 @@ OnMediaPlayerOpen ファイルドロップ/外部連携SHIORIイベント通知�
 
 ## 実装箇所
 
-実装コード内に「OnMediaPlayerOpen」は検出されませんでした。
+- `ui/ts/ghost/shiori-notify.ts:248` `| "OnMediaPlayerOpen"`
+- `ui/ts/ghost/shiori-protocol.ts:106` `MEDIA_PLAYER_OPEN: "OnMediaPlayerOpen",`

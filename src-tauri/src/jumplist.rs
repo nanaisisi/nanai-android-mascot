@@ -1,4 +1,4 @@
-/// Windows タスクバー・右クリックジャンプリスト（タスク: Explorer / Calendar）登録モジュール
+// Windows タスクバー・右クリックジャンプリスト（タスク: Explorer / Calendar）登録モジュール
 
 #[cfg(target_os = "windows")]
 pub fn setup_taskbar_jumplist(_app: &tauri::App) -> Result<(), String> {

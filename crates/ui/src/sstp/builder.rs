@@ -254,7 +254,10 @@ pub fn handle_execute_command(command_str: &str, ctx: &SstpGhostContext) -> Sstp
             if let Err(err_resp) = check_remote_prohibited() {
                 return *err_resp;
             }
-            let balloon_target = args.first().map(|s| s.as_str()).unwrap_or(&ctx.balloon_name);
+            let balloon_target = args
+                .first()
+                .map(|s| s.as_str())
+                .unwrap_or(&ctx.balloon_name);
             let path = ctx
                 .properties
                 .get(&format!("balloon.{}.path", balloon_target.to_lowercase()))

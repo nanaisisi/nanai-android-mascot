@@ -2,7 +2,7 @@
 
 - **規格**: [OnFileDrop2.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/file-drop/OnFileDrop2/) (ukadoc-spec/list/shiori-event/file-drop/OnFileDrop2.md)
 - **検索語**: OnFileDrop2
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,5 @@ OnFileDrop2 ファイルドロップ/外部連携SHIORIイベント通知処理�
 
 ## 実装箇所
 
-実装コード内に「OnFileDrop2」は検出されませんでした。
+- `ui/ts/ghost/shiori-notify.ts:242` `| "OnFileDrop2"`
+- `ui/ts/ghost/shiori-protocol.ts:100` `FILE_DROP2: "OnFileDrop2",`

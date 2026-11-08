@@ -2,8 +2,14 @@
 
 - **規格**: [OnExecuteHTTPProgress.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/other-communication/OnExecuteHTTPProgress/) (ukadoc-spec/list/shiori-event/other-communication/OnExecuteHTTPProgress.md)
 - **検索語**: OnExecuteHTTPProgress
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
 実装コードに「OnExecuteHTTPProgress」が見つからない。
+
+
+## 実装箇所
+
+- `ui/ts/ghost/shiori-notify.ts:1180` `| "OnExecuteHTTPProgress"`
+- `ui/ts/ghost/shiori-protocol.ts:225` `EXECUTE_HTTP_PROGRESS: "OnExecuteHTTPProgress",`

@@ -2,7 +2,7 @@
 
 - **規格**: [OnMemoryLoadLow.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/os-state/OnMemoryLoadLow/) (ukadoc-spec/list/shiori-event/os-state/OnMemoryLoadLow.md)
 - **検索語**: OnMemoryLoadLow
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -11,4 +11,5 @@
 
 ## 実装箇所
 
-実装コード内に「OnMemoryLoadLow」は検出されませんでした。
+- `ui/ts/ghost/shiori-notify.ts:281` `| "OnMemoryLoadLow"`
+- `ui/ts/ghost/shiori-protocol.ts:130` `MEMORY_LOAD_LOW: "OnMemoryLoadLow",`

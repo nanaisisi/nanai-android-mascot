@@ -61,20 +61,18 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
     });
     let kero_name = meta_map.as_ref().and_then(|m| m.get("kero.name").cloned());
 
-    let has_kero = meta_map.as_ref().map_or(false, |m| {
-        m.contains_key("kero.name") || m.contains_key("char1.name")
-    });
+    let has_kero = meta_map
+        .as_ref()
+        .is_some_and(|m| m.contains_key("kero.name") || m.contains_key("char1.name"));
     let mut max_char_id = if has_kero { 1 } else { 0 };
     if let Some(ref m) = meta_map {
         for k in m.keys() {
-            if let Some(rest) = k.strip_prefix("char") {
-                if let Some(idx_str) = rest.split('.').next() {
-                    if let Ok(id) = idx_str.parse::<i32>() {
-                        if id > max_char_id {
-                            max_char_id = id;
-                        }
-                    }
-                }
+            if let Some(rest) = k.strip_prefix("char")
+                && let Some(idx_str) = rest.split('.').next()
+                && let Ok(id) = idx_str.parse::<i32>()
+                && id > max_char_id
+            {
+                max_char_id = id;
             }
         }
     }

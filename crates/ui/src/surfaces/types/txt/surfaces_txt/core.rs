@@ -175,15 +175,19 @@ mod tests {
         let mut base = SurfacesTxt::default();
         base.surfaces.insert(0, SurfaceDefinition::default());
 
-        let mut other = SurfacesTxt::default();
-        other.charset = Some("UTF-8".into());
-        other.version = 1;
-        other.maxwidth = Some(800);
-        other.animation_sort = Some(SortKind::Id);
-        other.collision_sort = Some(SortKind::Ascend);
+        let mut other = SurfacesTxt {
+            charset: Some("UTF-8".into()),
+            version: 1,
+            maxwidth: Some(800),
+            animation_sort: Some(SortKind::Id),
+            collision_sort: Some(SortKind::Ascend),
+            ..Default::default()
+        };
 
-        let mut other_def = SurfaceDefinition::default();
-        other_def.name = Some("SurfaceZero".into());
+        let mut other_def = SurfaceDefinition {
+            name: Some("SurfaceZero".into()),
+            ..Default::default()
+        };
         other_def.points.center_x = Some(10);
         other_def.points.center_y = Some(20);
         other_def.points.basepos_x = Some(30);

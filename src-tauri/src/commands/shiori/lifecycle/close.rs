@@ -31,7 +31,7 @@ pub async fn close_ghost(
             let _ = crate::tray::reset_tray_to_default(&app_handle);
         }
         println!("🚪 すべてのゴーストが終了したためアプリケーションを終了します");
-        let _ = app_handle.exit(0);
+        app_handle.exit(0);
     }
 
     Ok(())

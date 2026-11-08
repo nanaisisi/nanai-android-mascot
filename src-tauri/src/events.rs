@@ -47,17 +47,15 @@ pub fn handle_menu_event(app_handle: &tauri::AppHandle, event: tauri::menu::Menu
 }
 
 pub fn handle_window_event(window: &tauri::Window, event: &tauri::WindowEvent) {
-    if window.label() == "subchar_window_0" {
-        if let Ok(is_min) = window.is_minimized() {
-            if is_min {
-                for (label, win) in window.app_handle().webview_windows() {
-                    if label != "subchar_window_0"
-                        && (label.starts_with("subchar_window_")
-                            || label.starts_with("balloon_window_"))
-                    {
-                        let _ = win.hide();
-                    }
-                }
+    if window.label() == "subchar_window_0"
+        && let Ok(is_min) = window.is_minimized()
+        && is_min
+    {
+        for (label, win) in window.app_handle().webview_windows() {
+            if label != "subchar_window_0"
+                && (label.starts_with("subchar_window_") || label.starts_with("balloon_window_"))
+            {
+                let _ = win.hide();
             }
         }
     }

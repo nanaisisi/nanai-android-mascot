@@ -132,8 +132,10 @@ impl SurfaceFrameBuffer {
                             "darken" => (sr.min(dr), sg.min(dg), sb.min(db)),
                             "darker-color" => {
                                 // Darker Color (カラーが暗い方): 輝度/合成値が低い方のピクセル全体を選択
-                                let lum_src = (sr as u32 * 299 + sg as u32 * 587 + sb as u32 * 114) / 1000;
-                                let lum_dst = (dr as u32 * 299 + dg as u32 * 587 + db as u32 * 114) / 1000;
+                                let lum_src =
+                                    (sr as u32 * 299 + sg as u32 * 587 + sb as u32 * 114) / 1000;
+                                let lum_dst =
+                                    (dr as u32 * 299 + dg as u32 * 587 + db as u32 * 114) / 1000;
                                 if lum_src < lum_dst {
                                     (sr, sg, sb)
                                 } else {
@@ -143,8 +145,10 @@ impl SurfaceFrameBuffer {
                             "lighten" => (sr.max(dr), sg.max(dg), sb.max(db)),
                             "lighter-color" => {
                                 // Lighter Color (カラーが明るい方): 輝度/合成値が高い方のピクセル全体を選択
-                                let lum_src = (sr as u32 * 299 + sg as u32 * 587 + sb as u32 * 114) / 1000;
-                                let lum_dst = (dr as u32 * 299 + dg as u32 * 587 + db as u32 * 114) / 1000;
+                                let lum_src =
+                                    (sr as u32 * 299 + sg as u32 * 587 + sb as u32 * 114) / 1000;
+                                let lum_dst =
+                                    (dr as u32 * 299 + dg as u32 * 587 + db as u32 * 114) / 1000;
                                 if lum_src > lum_dst {
                                     (sr, sg, sb)
                                 } else {

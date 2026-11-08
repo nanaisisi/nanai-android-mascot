@@ -236,10 +236,11 @@ mod tests {
 
     #[test]
     fn test_surface_definition_effective_icon_rect_and_sorting() {
-        let mut def = SurfaceDefinition::default();
-
         // 1. Explicit icon_rect
-        def.icon_rect = Some([10, 20, 110, 70]);
+        let mut def = SurfaceDefinition {
+            icon_rect: Some([10, 20, 110, 70]),
+            ..Default::default()
+        };
         let rect = def.effective_icon_rect().unwrap();
         assert_eq!(rect[2] - rect[0], rect[3] - rect[1]); // Square
 

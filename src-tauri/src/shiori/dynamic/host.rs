@@ -3,7 +3,6 @@
 //! [DLL共通仕様], [メモリ管理], [request関数], [ライフサイクル関数 (loadu)]
 
 use std::ffi::c_void;
-use std::path::{Path, PathBuf};
 
 pub type Hglobal = *mut c_void;
 // [ライフサイクル関数 (loadu)]: load / loadu FFI シグネチャ
@@ -127,6 +126,7 @@ pub(crate) fn is_x86_dll(path: &Path) -> bool {
 }
 
 /// ホストプロセス (shiori-host32) の stdout ストリームから (status, payload) を読み取る
+#[allow(dead_code)]
 pub(crate) fn read_reply_stream(reader: &mut impl std::io::Read) -> Result<(i32, Vec<u8>), String> {
     let mut head = [0u8; 8];
     reader.read_exact(&mut head).map_err(|e| e.to_string())?;

@@ -473,7 +473,7 @@ fn test_loader_candidate_kind_and_load_attempt_derives_and_last_error() {
     // Test CandidateKind derives (Debug, Clone, Copy, PartialEq, Eq)
     let kind1 = CandidateKind::Dynamic;
     let kind2 = kind1;
-    let kind3 = kind1.clone();
+    let kind3 = kind1;
     assert_eq!(kind1, kind2);
     assert_eq!(kind1, kind3);
     assert_ne!(kind1, CandidateKind::Wasm);

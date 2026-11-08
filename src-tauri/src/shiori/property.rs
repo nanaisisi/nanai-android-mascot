@@ -28,7 +28,9 @@ pub fn evaluate_property_query(query: &str) -> String {
         "currentghost.balloon.mousecursor.wait" => "wait.cur".to_string(),
         "currentghost.balloon.mousecursor" => "arrow.cur".to_string(),
         "history.balloon.count" => "1".to_string(),
-        "history.balloon.index(0).name" | "history.balloon.index(0)" => "Default Balloon".to_string(),
+        "history.balloon.index(0).name" | "history.balloon.index(0)" => {
+            "Default Balloon".to_string()
+        }
         "pluginlist.count" => "0".to_string(),
         "headlinelist.count" => "0".to_string(),
         "baseware.name" | "system.baseware.name" => "Nanai Android Mascot".to_string(),
@@ -80,24 +82,6 @@ pub fn evaluate_property_query(query: &str) -> String {
         {
             "1".to_string()
         }
-        // UKADOC ownerdraw menu colors
-        "menu.frame.color.r"
-        | "menu.frame.color.g"
-        | "menu.frame.color.b"
-        | "menu.foreground.font.color.r"
-        | "menu.foreground.font.color.g"
-        | "menu.foreground.font.color.b"
-        | "menu.background.font.color.r"
-        | "menu.background.font.color.g"
-        | "menu.background.font.color.b"
-        | "menu.disable.font.color.r"
-        | "menu.disable.font.color.g"
-        | "menu.disable.font.color.b"
-        | "menu.separator.color.r"
-        | "menu.separator.color.g"
-        | "menu.separator.color.b" => {
-            "0".to_string()
-        }
         "currentghost.seriko.surfacelist.defined" => "0,1,10".to_string(),
         "currentghost.seriko.surfacelist.all" => "0,1,10".to_string(),
         "system.year" => "2026".to_string(),
@@ -120,6 +104,7 @@ pub fn evaluate_property_query(query: &str) -> String {
         "sakura.menu" | "kero.menu" => "auto".to_string(),
         "menu.font.name" => "sans-serif".to_string(),
         "menu.font.height" => "12".to_string(),
+        // UKADOC ownerdraw menu colors
         "menu.frame.color.r" => "0".to_string(),
         "menu.frame.color.g" => "0".to_string(),
         "menu.frame.color.b" => "0".to_string(),
@@ -201,7 +186,10 @@ pub fn evaluate_property_query(query: &str) -> String {
             if q.starts_with("currentghost.balloon.") {
                 return "1".to_string();
             }
-            if q.starts_with("history.balloon.index(") || q.starts_with("history.balloon(") || q.starts_with("history.balloon") {
+            if q.starts_with("history.balloon.index(")
+                || q.starts_with("history.balloon(")
+                || q.starts_with("history.balloon")
+            {
                 return "1".to_string();
             }
             format!("(unknown property: {})", query)
@@ -342,7 +330,10 @@ mod tests {
         assert_eq!(evaluate_property_query("menu.frame.color.g"), "0");
         assert_eq!(evaluate_property_query("menu.frame.color.b"), "0");
         assert_eq!(evaluate_property_query("menu.background.font.color.r"), "0");
-        assert_eq!(evaluate_property_query("menu.foreground.font.color.r"), "255");
+        assert_eq!(
+            evaluate_property_query("menu.foreground.font.color.r"),
+            "255"
+        );
         assert_eq!(evaluate_property_query("menu.disable.font.color.r"), "128");
         assert_eq!(evaluate_property_query("menu.separator.color.r"), "192");
         assert_eq!(evaluate_property_query("sakura.menuitem0"), "");

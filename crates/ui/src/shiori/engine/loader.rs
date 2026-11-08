@@ -140,6 +140,7 @@ impl MultiStageShioriLoader {
         self.load_first_working_inner(dir_path, &mut dynamic_loader, &mut wasm_loader)
     }
 
+    #[allow(clippy::type_complexity)]
     fn load_first_working_inner(
         &mut self,
         dir_path: &Path,

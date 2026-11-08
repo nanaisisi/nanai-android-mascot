@@ -1,6 +1,6 @@
+//! 文字コード自動判定（Shift_JIS, EUC-JP, ISO-2022-JP, UTF-8/16）および相互変換処理モジュール
+
 use encoding_rs::{EUC_JP, ISO_2022_JP, SHIFT_JIS, UTF_16BE, UTF_16LE};
-use std::io;
-use std::path::Path;
 
 /// デコード結果の詳細情報
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -46,7 +46,6 @@ pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
                 };
             }
             Err(_) => {
-                // BOMはあるが壊れたUTF-8の場合はロスありでデコード
                 let text = String::from_utf8_lossy(&buffer[3..]).to_string();
                 return DecodeResult {
                     text,
@@ -171,11 +170,11 @@ pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
         }
     }
 
-    // 2-2. ISO-2022-JP (JISエスケープシーケンス ESC $ B / ESC ( B 等) チェック
+    // 2-2. ISO-2022-JP (JISエスケープシーケンス) チェック
     if buffer.windows(3).any(|w| {
-        w == [0x1B, 0x24, 0x42] // ESC $ B (JIS X 0208-1983)
-            || w == [0x1B, 0x24, 0x40] // ESC $ @ (JIS X 0208-1978)
-            || w == [0x1B, 0x28, 0x4A] // ESC ( J (JIS X 0201 Roman)
+        w == [0x1B, 0x24, 0x42]
+            || w == [0x1B, 0x24, 0x40]
+            || w == [0x1B, 0x28, 0x4A]
     }) {
         let (cow, _, had_errors) = ISO_2022_JP.decode(buffer);
         if !had_errors {
@@ -187,7 +186,7 @@ pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
         }
     }
 
-    // 3. 標準 UTF-8 としてのパース試行
+    // 3. 標準 UTF-8 パース試行
     if let Ok(utf8_str) = std::str::from_utf8(buffer) {
         return DecodeResult {
             text: utf8_str.to_string(),
@@ -196,7 +195,7 @@ pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
         };
     }
 
-    // 4. EUC-JP パース試行（有効なEUC-JPでエラーなしの場合）
+    // 4. EUC-JP パース試行
     let (euc_cow, _, euc_errors) = EUC_JP.decode(buffer);
     if !euc_errors && buffer.iter().any(|&b| b >= 0x80) {
         let (sjis_cow, _, sjis_errors) = SHIFT_JIS.decode(buffer);
@@ -225,26 +224,13 @@ pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
     }
 }
 
-/// バイト列から文字コードを自動判定（UTF-8 BOM / UTF-16 BOM / ヘッダー宣言 / UTF-8 / EUC-JP / Shift_JIS・CP932）してデコードし、
-/// デコード後の文字列と判定された文字コード名を返す。
+/// バイト列から文字コードを自動判定してデコードし、(文字列, 文字コード名) を返す
 pub fn detect_and_decode(buffer: &[u8]) -> (String, &'static str) {
     let res = detect_and_decode_ext(buffer);
     (res.text, res.encoding)
 }
 
-/// テキストファイルを自動判定（UTF-8 / BOM / Shift_JIS / EUC-JP / UTF-16）で開き、UTF-8文字列として返す
-pub fn open_text_file(path: &Path) -> Result<String, io::Error> {
-    let buffer = std::fs::read(path)?;
-    let (decoded, _) = detect_and_decode(&buffer);
-    Ok(decoded)
-}
-
-/// 後方互換用エイリアス
-pub fn open_shift_jis_file(path: &str) -> Result<String, io::Error> {
-    open_text_file(Path::new(path))
-}
-
-/// 文字列を指定された文字コード名（Shift_JIS, CP932, EUC-JP, ISO-2022-JP, UTF-8, UTF-16LE/BE等）にエンコード
+/// 文字列を指定された文字コード名にエンコード
 pub fn encode_to_charset(text: &str, charset: &str) -> Option<Vec<u8>> {
     let normalized = normalize_charset_name(charset)?;
     match normalized {
@@ -288,85 +274,5 @@ pub fn encode_to_charset(text: &str, charset: &str) -> Option<Vec<u8>> {
             Some(out)
         }
         _ => None,
-    }
-}
-
-/// CRLF / CR / LF の改行コードをすべて単一の LF (`\n`) に正規化
-pub fn normalize_newlines(text: &str) -> String {
-    let mut result = String::with_capacity(text.len());
-    let mut chars = text.chars().peekable();
-    while let Some(ch) = chars.next() {
-        if ch == '\r' {
-            if chars.peek() == Some(&'\n') {
-                chars.next();
-            }
-            result.push('\n');
-        } else {
-            result.push(ch);
-        }
-    }
-    result
-}
-
-/// LF (`\n`) 改行コードを指定された改行シーケンス（CRLF `\r\n` や CR `\r`）に復元
-pub fn denormalize_newlines(text: &str, newline_seq: &str) -> String {
-    let normalized = normalize_newlines(text);
-    if newline_seq == "\n" {
-        return normalized;
-    }
-    normalized.replace('\n', newline_seq)
-}
-
-/// ファイルパスの拡張子から標準的な MIME タイプを取得
-pub fn detect_mime_type(path: &str) -> &'static str {
-    let lower = path.to_lowercase();
-    if lower.ends_with(".png") {
-        "image/png"
-    } else if lower.ends_with(".pna") {
-        "image/x-nar-pna"
-    } else if lower.ends_with(".bmp") {
-        "image/bmp"
-    } else if lower.ends_with(".jpg") || lower.ends_with(".jpeg") {
-        "image/jpeg"
-    } else if lower.ends_with(".gif") {
-        "image/gif"
-    } else if lower.ends_with(".webp") {
-        "image/webp"
-    } else if lower.ends_with(".svg") {
-        "image/svg+xml"
-    } else if lower.ends_with(".ico") {
-        "image/x-icon"
-    } else if lower.ends_with(".txt") {
-        "text/plain"
-    } else if lower.ends_with(".json") {
-        "application/json"
-    } else if lower.ends_with(".xml") {
-        "application/xml"
-    } else if lower.ends_with(".html") || lower.ends_with(".htm") {
-        "text/html"
-    } else if lower.ends_with(".ini") || lower.ends_with(".inf") {
-        "text/plain"
-    } else if lower.ends_with(".plist") {
-        "application/x-plist"
-    } else if lower.ends_with(".wav") {
-        "audio/wav"
-    } else if lower.ends_with(".mp3") {
-        "audio/mpeg"
-    } else if lower.ends_with(".ogg") {
-        "audio/ogg"
-    } else if lower.ends_with(".flac") {
-        "audio/flac"
-    } else if lower.ends_with(".opus") {
-        "audio/opus"
-    } else if lower.ends_with(".m4a") || lower.ends_with(".aac") {
-        "audio/aac"
-    } else if lower.ends_with(".mid") || lower.ends_with(".midi") {
-        "audio/midi"
-    } else if lower.ends_with(".dll") || lower.ends_with(".so") {
-        "application/octet-stream"
-    } else if lower.ends_with(".zip") || lower.ends_with(".nar") {
-        "application/zip"
-    } else {
-        "application/octet-stream"
     }
 }

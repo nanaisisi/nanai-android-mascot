@@ -245,7 +245,8 @@ test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip",
 	// 2. Test skip triggering OnBalloonBreak
 	player.isPlaying = true;
 	player.currentScope = 1;
-	(player as unknown as { currentProgressIndex: number }).currentProgressIndex = 5;
+	(player as unknown as { currentProgressIndex: number }).currentProgressIndex =
+		5;
 	player.lastScript = "\\1テスト会話";
 	player.skip();
 

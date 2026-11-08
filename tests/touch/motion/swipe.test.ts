@@ -6,7 +6,12 @@ import {
 import { createMockElement } from "../helpers.js";
 
 describe("TouchGestureRecognizer - Swipe", () => {
-	let element;
+	let element: {
+		dispatchEvent: unknown;
+		listeners?: {};
+		addEventListener?: (event: unknown, fn: unknown) => void;
+		removeEventListener?: (event: unknown, fn: unknown) => void;
+	};
 	let recognizer;
 
 	beforeEach(() => {

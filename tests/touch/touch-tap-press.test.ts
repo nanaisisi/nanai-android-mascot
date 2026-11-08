@@ -6,7 +6,12 @@ import {
 import { createMockElement } from "./helpers.js";
 
 describe("TouchGestureRecognizer - Tap & Press", () => {
-	let element;
+	let element: {
+		dispatchEvent: unknown;
+		listeners?: {};
+		addEventListener?: (event: unknown, fn: unknown) => void;
+		removeEventListener?: (event: unknown, fn: unknown) => void;
+	};
 	let recognizer;
 
 	beforeEach(() => {

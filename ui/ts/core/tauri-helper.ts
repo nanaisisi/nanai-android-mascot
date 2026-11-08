@@ -163,4 +163,5 @@ export async function getCurrentWindowPosition(): Promise<{
 	}
 }
 
-(globalThis as unknown as Record<string, unknown>).__NANAI_IPC_QUEUE_STATS__ = ipcQueueStats;
+(globalThis as unknown as Record<string, unknown>).__NANAI_IPC_QUEUE_STATS__ =
+	ipcQueueStats;

@@ -7,11 +7,14 @@ import {
 	handleExecuteResetWindowPos,
 	handleExecuteSntpCommand,
 	handleLeaveMode,
+	handleLoadMakoto,
 	handleNotifyCommand,
 	handleOpenSystemTarget,
+	handleReloadAigraph,
 	handleReloadBalloon,
 	handleReloadDescript,
 	handleReloadGhost,
+	handleReloadMakoto,
 	handleReloadShell,
 	handleReloadShiori,
 	handleReloadSurface,
@@ -29,6 +32,7 @@ import {
 	handleTimerPluginCommand,
 	handleTimerRaiseCommand,
 	handleTimerRaiseOtherCommand,
+	handleUnloadMakoto,
 } from "../system.js";
 import { handleWindowState, setAlignmentToDesktop } from "../window.js";
 
@@ -247,5 +251,33 @@ export function registerSystemCommandHandlers() {
 
 	registerCommandHandler("alignmenttodesktop", async (handler, args) => {
 		setAlignmentToDesktop(handler, args[1]);
+	});
+
+	registerCommandHandler("loadmakoto", async (handler, args) => {
+		await handleLoadMakoto(handler, args);
+	});
+	registerCommandHandler("load:makoto", async (handler, args) => {
+		await handleLoadMakoto(handler, args);
+	});
+
+	registerCommandHandler("unloadmakoto", async (handler, args) => {
+		await handleUnloadMakoto(handler, args);
+	});
+	registerCommandHandler("unload:makoto", async (handler, args) => {
+		await handleUnloadMakoto(handler, args);
+	});
+
+	registerCommandHandler("reloadmakoto", async (handler, args) => {
+		await handleReloadMakoto(handler, args);
+	});
+	registerCommandHandler("reload:makoto", async (handler, args) => {
+		await handleReloadMakoto(handler, args);
+	});
+
+	registerCommandHandler("reloadaigraph", async (handler, args) => {
+		await handleReloadAigraph(handler, args);
+	});
+	registerCommandHandler("reload:aigraph", async (handler, args) => {
+		await handleReloadAigraph(handler, args);
 	});
 }

@@ -506,7 +506,7 @@ def update_summary(category_stats, summary_path='docs/spec/SUMMARY.md'):
 def detect_git_conflicts(docs_dir='docs/spec'):
     """
     Scans markdown and doc files under docs_dir for unresolved Git merge conflict markers
-    (<<<<<<<, , >>>>>>>). Returns a list of dicts with file path, line number, and marker.
+    (<<<<<<<, =======, >>>>>>>). Returns a list of dicts with file path, line number, and marker.
     """
     conflict_patterns = [
         re.compile(r'^(<{7}|={7}|>{7})(?:\s+.*)?$')
@@ -536,6 +536,54 @@ def detect_git_conflicts(docs_dir='docs/spec'):
                 except Exception:
                     pass
     return conflicts
+
+
+def is_parallel_branch():
+    """
+    Detects whether the current Git environment is running on a parallel feature/slot branch
+    rather than main/master, or if explicit parallel environment flags are set.
+    """
+    if os.environ.get("PARALLEL_SLOT") or os.environ.get("PARALLEL_WORKER"):
+        return True
+    try:
+        import subprocess
+        branch = subprocess.check_output(
+            ['git', 'rev-parse', '--abbrev-ref', 'HEAD'],
+            stderr=subprocess.DEVNULL,
+            text=True
+        ).strip()
+        if branch and branch not in ('main', 'master', 'HEAD'):
+            return True
+    except Exception:
+        pass
+    return False
+
+
+def validate_parallel_bulk_safety(args):
+    """
+    Validates that a live bulk audit update won't introduce massive Git merge conflicts
+    across parallel development branches. Returns (is_safe: bool, reason: str).
+    """
+    # Safe scenarios: dry-run, update-summary-only, target-category filtering (local scope)
+    if args.dry_run or args.update_summary_only or args.summary_only:
+        return True, "Safe mode / dry-run active."
+    if args.target_category:
+        return True, f"Target category '{args.target_category}' specified; bounded scope."
+    if getattr(args, 'allow_bulk_overwrite', False):
+        return True, "Explicit --allow-bulk-overwrite granted."
+
+    # If running on a parallel branch or slot environment, reject unfettered bulk updates
+    if is_parallel_branch():
+        return False, (
+            "Safety Guard: Bulk modification of hundreds of individual spec audit markdown files is blocked "
+            "on parallel feature branches to prevent massive Git merge conflicts across 15 development slots.\n"
+            "Options:\n"
+            "  1. Use '--update-summary-only' to safely update aggregate metrics in docs/spec/SUMMARY.md.\n"
+            "  2. Use '--dry-run' (or '--check') to inspect compliance without touching files.\n"
+            "  3. Use '--target <category>' to audit and update a specific bounded category.\n"
+            "  4. Use '--allow-bulk-overwrite' if you are intentionally performing a full repository synchronization."
+        )
+    return True, "On main branch."
 
 
 def sync_category_readmes(docs_dir='docs/spec', dry_run=False, target_category=None):
@@ -668,6 +716,10 @@ def parse_args():
         help="Scan docs directory for unresolved Git merge conflict markers and exit with error if any are found."
     )
     parser.add_argument(
+        "--allow-bulk-overwrite", action="store_true", dest="allow_bulk_overwrite",
+        help="Explicitly allow modifying all individual audit markdown files even when running on a parallel branch."
+    )
+    parser.add_argument(
         "--fail-on-regression", action="store_true", dest="fail_on_regression",
         help="Exit with non-zero status code if any regression (✅ -> ❌) is detected."
     )
@@ -714,6 +766,12 @@ def main():
             print(f"No Git merge conflict markers found in {args.docs_dir}.")
             if not args.dry_run and not args.update_summary_only and not args.sync_readmes and not args.json_path and not args.report_path and not args.export_path and not args.summary_only:
                 sys.exit(0)
+
+    # Validate parallel branch safety to prevent massive merge conflicts
+    is_safe, safety_msg = validate_parallel_bulk_safety(args)
+    if not is_safe:
+        print(f"\n{safety_msg}\n")
+        sys.exit(1)
 
     if not args.summary_only:
         print("Loading codebase...")

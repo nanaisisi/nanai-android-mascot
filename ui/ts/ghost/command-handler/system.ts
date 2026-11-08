@@ -12,13 +12,17 @@ export {
 	triggerTrayBalloonClick,
 } from "./system/desktop.js";
 export {
+	handleLoadMakoto,
+	handleReloadAigraph,
 	handleReloadBalloon,
 	handleReloadDescript,
 	handleReloadGhost,
+	handleReloadMakoto,
 	handleReloadShell,
 	handleReloadShiori,
 	handleReloadSurface,
 	handleSetShioriDebugMode,
+	handleUnloadMakoto,
 } from "./system/shiori.js";
 export {
 	handleEnterMode,

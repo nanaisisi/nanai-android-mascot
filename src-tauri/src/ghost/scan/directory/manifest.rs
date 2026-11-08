@@ -9,6 +9,7 @@ pub struct GhostManifest {
     pub kero_name: Option<String>,
     pub num_characters: i32,
     pub shiori: Option<String>,
+    pub makoto: Option<String>,
     pub craftman: Option<String>,
     pub craftman_url: Option<String>,
     pub group: Option<String>,
@@ -80,6 +81,7 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
     let num_characters = max_char_id + 1;
 
     let shiori = meta_map.as_ref().and_then(|m| m.get("shiori").cloned());
+    let makoto = meta_map.as_ref().and_then(|m| m.get("makoto").cloned());
     let craftman = meta_map.as_ref().and_then(|m| {
         m.get("craftman")
             .cloned()
@@ -192,6 +194,7 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
             .or_else(|| m.get("accept").cloned())
     });
 
+    // [makoto,ファイル名]: トランスレータモジュール指定
     let makoto = meta_map.as_ref().and_then(|m| m.get("makoto").cloned());
 
     GhostManifest {
@@ -201,6 +204,7 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
         kero_name,
         num_characters,
         shiori,
+        makoto,
         craftman,
         craftman_url,
         group,

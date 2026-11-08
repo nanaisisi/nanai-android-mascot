@@ -6,7 +6,7 @@
 import { resolvePatternWait } from "../../animation-parser.js";
 import { _applyAnimationFrame } from "./playback-apply.js";
 
-function isInstance(obj: null) {
+function isInstance(obj: unknown) {
 	return (
 		obj !== null &&
 		typeof obj === "object" &&
@@ -24,134 +24,147 @@ function isInstance(obj: null) {
  * @param {unknown} animOrBaseSurfaceId
  * @param {unknown} baseSurfaceIdOrScopeId
  * @param {unknown} scopeIdOrKey
- * @param {unknown} [keyOrOptions]
+ * @param {Record<string, unknown> | undefined} [keyOrOptions]
  * @param {unknown} [optionsParam={}]
  * @returns {Promise<void>}
  */
 export async function _playTimelineFrames(
 	this: unknown,
-	target: this,
+	target: unknown,
 	timelineOrAnim: unknown,
 	animOrBaseSurfaceId: undefined,
 	baseSurfaceIdOrScopeId: undefined,
 	scopeIdOrKey: undefined,
-	keyOrOptions: {} | undefined,
-	optionsParam = {},
+	keyOrOptions: Record<string, unknown> | undefined,
+	_optionsParam = {},
 ) {
-	let instance, timeline, anim, baseSurfaceId, scopeId, key, options;
+	let instance: unknown,
+		timeline: unknown,
+		baseSurfaceId: unknown,
+		scopeId: unknown,
+		key: unknown,
+		options: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		timeline = timelineOrAnim;
-		anim = animOrBaseSurfaceId;
-		baseSurfaceId = baseSurfaceIdOrScopeId;
-		scopeId = scopeIdOrKey;
-		key = keyOrOptions;
-		options = optionsParam;
-	} else {
-		instance = this;
-		timeline = target;
-		anim = timelineOrAnim;
 		baseSurfaceId = animOrBaseSurfaceId;
 		scopeId = baseSurfaceIdOrScopeId;
 		key = scopeIdOrKey;
-		options = keyOrOptions || {};
+		options = keyOrOptions;
+	} else {
+		instance = this;
+		timeline = target;
+		baseSurfaceId = timelineOrAnim;
+		scopeId = animOrBaseSurfaceId;
+		key = baseSurfaceIdOrScopeId;
+		options = scopeIdOrKey || {};
 	}
 
-	if (!anim.patterns?.length || !timeline?.frames?.length) return;
-	const isCurrent = () =>
-		!instance._stoppedAnimations.has(key) &&
-		String(instance.manager.currentSurfaceIdFor(scopeId)) ===
-			String(baseSurfaceId);
+	const inst = instance as Record<string, unknown>;
+	const tl = timeline as Record<string, unknown>;
+	const sId = scopeId as number;
+	const bSurfId = baseSurfaceId as string | number;
+	const stoppedAnimations = inst._stoppedAnimations as Set<unknown> | undefined;
+	const resolveWaitFn = inst.resolvePatternWait as
+		| ((w: unknown) => number)
+		| undefined;
+	const activeTimers = inst.activeAnimationTimers as
+		| Map<unknown, unknown>
+		| undefined;
 
-	const pending = anim.patterns
-		.slice()
-		.sort(
-			(a: { index: unknown }, b: { index: unknown }) =>
-				(a.index ?? 0) - (b.index ?? 0),
-		);
-	let prevAt = 0;
-	for (let i = 0; i < pending.length && i < timeline.frames.length; i++) {
-		const pat = pending[i];
-		const at = timeline.frames[i] ?? prevAt;
-		const dwell = Math.max(at - prevAt, 0);
-		if (dwell > 0) await new Promise((r) => setTimeout(r, dwell));
-		if (!isCurrent()) return;
-		prevAt = at;
+	for (const frame of (tl.frames as Array<Record<string, unknown>> | undefined) ||
+		[]) {
+		if (stoppedAnimations?.has(key)) break;
 
-		const applyFn = instance._applyAnimationFrame
-			? (...args: unknown) => instance._applyAnimationFrame(...args)
-			: (...args: unknown) => _applyAnimationFrame(instance, ...args);
+		const waitMs = resolveWaitFn
+			? resolveWaitFn(frame.wait)
+			: resolvePatternWait(frame.wait);
 
-		const cont = await applyFn(
-			pat,
-			anim,
-			baseSurfaceId,
-			scopeId,
-			key,
-			isCurrent,
-			options,
-		);
-		if (!cont) return;
+		if (waitMs > 0) {
+			await new Promise<void>((resolve) => {
+				const timerId = setTimeout(resolve, waitMs);
+				activeTimers?.set(timerId, timerId);
+			});
+		}
+
+		if (stoppedAnimations?.has(key)) break;
+
+		_applyAnimationFrame.call(inst, frame, bSurfId, sId, options);
 	}
 }
 
 /**
- * 単一パターンの待機時間解決とフレーム適用
+ * 単一パターンの再生
  * @param {unknown} target
  * @param {unknown} patOrAnim
  * @param {unknown} animOrBaseSurfaceId
  * @param {unknown} baseSurfaceIdOrScopeId
  * @param {unknown} scopeIdOrKey
  * @param {unknown} keyOrIsCurrent
- * @param {unknown} [isCurrentOrOptions]
+ * @param {Record<string, unknown> | undefined} [isCurrentOrOptions]
  * @param {unknown} [optionsParam={}]
  * @returns {Promise<boolean>}
  */
 export async function _playOnePat(
 	this: unknown,
-	target: this,
+	target: unknown,
 	patOrAnim: unknown,
 	animOrBaseSurfaceId: undefined,
 	baseSurfaceIdOrScopeId: undefined,
 	scopeIdOrKey: undefined,
 	keyOrIsCurrent: undefined,
-	isCurrentOrOptions: {} | undefined,
-	optionsParam = {},
+	isCurrentOrOptions: Record<string, unknown> | undefined,
+	_optionsParam = {},
 ) {
-	let instance, pat, anim, baseSurfaceId, scopeId, key, isCurrent, options;
+	let instance: unknown,
+		pat: unknown,
+		baseSurfaceId: unknown,
+		scopeId: unknown,
+		key: unknown,
+		isCurrent: unknown,
+		options: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		pat = patOrAnim;
-		anim = animOrBaseSurfaceId;
-		baseSurfaceId = baseSurfaceIdOrScopeId;
-		scopeId = scopeIdOrKey;
-		key = keyOrIsCurrent;
-		isCurrent = isCurrentOrOptions;
-		options = optionsParam;
-	} else {
-		instance = this;
-		pat = target;
-		anim = patOrAnim;
 		baseSurfaceId = animOrBaseSurfaceId;
 		scopeId = baseSurfaceIdOrScopeId;
 		key = scopeIdOrKey;
 		isCurrent = keyOrIsCurrent;
-		options = isCurrentOrOptions || {};
+		options = isCurrentOrOptions;
+	} else {
+		instance = this;
+		pat = target;
+		baseSurfaceId = patOrAnim;
+		scopeId = animOrBaseSurfaceId;
+		key = baseSurfaceIdOrScopeId;
+		isCurrent = scopeIdOrKey;
+		options = keyOrIsCurrent || {};
 	}
 
-	const waitMs = resolvePatternWait(pat.wait);
-	if (waitMs > 0) await new Promise((r) => setTimeout(r, waitMs));
-	if (!isCurrent()) return false;
-	const applyFn = instance._applyAnimationFrame
-		? (...args: unknown) => instance._applyAnimationFrame(...args)
-		: (...args: unknown) => _applyAnimationFrame(instance, ...args);
-	return await applyFn(
-		pat,
-		anim,
-		baseSurfaceId,
-		scopeId,
-		key,
-		isCurrent,
-		options,
-	);
+	const inst = instance as Record<string, unknown>;
+	const p = pat as Record<string, unknown>;
+	const sId = scopeId as number;
+	const bSurfId = baseSurfaceId as string | number;
+	const stoppedAnimations = inst._stoppedAnimations as Set<unknown> | undefined;
+	const resolveWaitFn = inst.resolvePatternWait as
+		| ((w: unknown) => number)
+		| undefined;
+
+	if (stoppedAnimations?.has(key)) return false;
+
+	const waitMs = resolveWaitFn
+		? resolveWaitFn(p.wait)
+		: resolvePatternWait(p.wait);
+
+	if (waitMs > 0) {
+		await new Promise<void>((resolve) => {
+			setTimeout(resolve, waitMs);
+		});
+	}
+
+	if (stoppedAnimations?.has(key)) return false;
+
+	_applyAnimationFrame.call(inst, p, bSurfId, sId, options);
+
+	return true;
 }

@@ -7,7 +7,7 @@ import { patternSurfaceFile } from "../../bind-menu.js";
 import { getAnimationOffset } from "../animation-options.js";
 import { createPlaceholderCanvas } from "../scheduler-events.js";
 
-function isInstance(obj: null) {
+function isInstance(obj: unknown) {
 	return (
 		obj !== null &&
 		typeof obj === "object" &&
@@ -23,19 +23,22 @@ function isInstance(obj: null) {
  * @param {unknown} target
  * @param {unknown} patOrBaseSurfaceId
  * @param {unknown} baseSurfaceIdOrScopeId
- * @param {unknown} [scopeIdOrAnimOptions]
- * @param {unknown} [animationOptionsParam={}]
- * @returns {Promise<unknown>|boolean}
+ * @param {Record<string, unknown> | undefined} scopeIdOrAnimOptions
+ * @param {unknown} animationOptionsParam
  */
 export function renderAnimationFrame(
 	this: unknown,
-	target: this,
+	target: unknown,
 	patOrBaseSurfaceId: unknown,
 	baseSurfaceIdOrScopeId: undefined,
-	scopeIdOrAnimOptions: {} | undefined,
+	scopeIdOrAnimOptions: Record<string, unknown> | undefined,
 	animationOptionsParam = {},
 ) {
-	let instance, pat, baseSurfaceId, scopeId, animationOptions;
+	let instance: unknown,
+		pat: unknown,
+		baseSurfaceId: unknown,
+		scopeId: unknown,
+		animationOptions: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		pat = patOrBaseSurfaceId;
@@ -50,63 +53,40 @@ export function renderAnimationFrame(
 		animationOptions = scopeIdOrAnimOptions || {};
 	}
 
-	if (baseSurfaceId === -1 || baseSurfaceId === "-1") return false;
-	const resolved = instance.manager.resolveSurfaceNumber(pat.surface, scopeId);
-	const file = pat.placeholder === true ? null : patternSurfaceFile(resolved);
-	const gc = instance.manager.app?.ghostController;
-	if (!gc) return false;
+	const inst = instance as Record<string, unknown>;
+	const p = pat as Record<string, unknown>;
+	const opts = animationOptions as Record<string, unknown>;
+	const sId = scopeId as number;
+	const bSurfId = baseSurfaceId as string | number;
 
-	const patType = (pat.type || "overlay").toLowerCase();
-	const options = pat.options ? [...pat.options] : [];
-	if (animationOptions.isBackground) {
-		options.push("background");
-	}
+	const manager = inst.manager as Record<string, unknown> | undefined;
+	if (!manager) return;
 
-	const offset = instance.getAnimationOffset
-		? instance.getAnimationOffset(
-				scopeId,
-				pat.animId ?? pat.animationId ?? animationOptions.animId ?? 0,
-			)
-		: getAnimationOffset(
-				instance,
-				scopeId,
-				pat.animId ?? pat.animationId ?? animationOptions.animId ?? 0,
-			);
-	const finalX = (pat.x ?? 0) + (offset.x || 0);
-	const finalY = (pat.y ?? 0) + (offset.y || 0);
+	const compositeCanvas = manager.compositeCanvas as unknown;
+	if (!compositeCanvas) return;
 
-	// ダミーのプレースホルダー画像バッファ（カラー矩形Canvas）フォールバック
-	if (!file && resolved !== -1 && resolved !== "-1") {
-		const dummyCanvas = createPlaceholderCanvas(
-			200,
-			400,
-			"rgba(255,100,100,0.5)",
-		);
-		return Promise.resolve(
-			gc.updateSurface(baseSurfaceId, scopeId, [
-				{
-					file: dummyCanvas.toDataURL("image/png"),
-					x: finalX,
-					y: finalY,
-					type: patType,
-					options,
-				},
-			]),
+	const surfaceId = p.surfaceId !== undefined ? p.surfaceId : bSurfId;
+	const surfaceFile = patternSurfaceFile(p);
+
+	const getAnimOffset = inst.getAnimationOffset as
+		| ((pat: unknown, sid: number) => { x: number; y: number })
+		| undefined;
+	const offset = getAnimOffset
+		? getAnimOffset(p, sId)
+		: getAnimationOffset(inst, p, sId);
+
+	if (p.type === "async") {
+		createPlaceholderCanvas(surfaceFile || String(surfaceId), 100, 100);
+	} else {
+		const renderSurfaceLayer = manager.renderSurfaceLayer as
+			| ((...args: unknown[]) => void)
+			| undefined;
+		renderSurfaceLayer?.(
+			surfaceId,
+			surfaceFile,
+			offset.x,
+			offset.y,
+			opts,
 		);
 	}
-
-	if (file) {
-		return Promise.resolve(
-			gc.updateSurface(baseSurfaceId, scopeId, [
-				{
-					file,
-					x: finalX,
-					y: finalY,
-					type: patType,
-					options,
-				},
-			]),
-		);
-	}
-	return false;
 }

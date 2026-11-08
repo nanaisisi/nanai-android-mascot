@@ -91,7 +91,10 @@ export async function handleCallCommand(handler: unknown, args: string[]) {
 	}
 }
 
-export async function handleRaiseOtherCommand(handler: unknown, args: string[]) {
+export async function handleRaiseOtherCommand(
+	handler: unknown,
+	args: string[],
+) {
 	const ghostName = args[1];
 	const eventName = args[2];
 	const references = args.slice(3);
@@ -110,7 +113,10 @@ export async function handleRaiseOtherCommand(handler: unknown, args: string[]) 
 	}
 }
 
-export async function handleNotifyOtherCommand(handler: unknown, args: string[]) {
+export async function handleNotifyOtherCommand(
+	handler: unknown,
+	args: string[],
+) {
 	const ghostName = args[1];
 	const eventName = args[2];
 	const references = args.slice(3);

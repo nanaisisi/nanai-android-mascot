@@ -4,7 +4,7 @@
  */
 
 export function statusCodeFromRust(
-	status: string | Record<string, any> | undefined,
+	status: string | Record<string, unknown> | undefined,
 ): number {
 	const codes: Record<string, number> = {
 		Ok: 200,
@@ -21,11 +21,11 @@ export function statusCodeFromRust(
 	return codes[status as string] ?? 0;
 }
 
-export function fromRustResponse(typed: Record<string, any> | null) {
+export function fromRustResponse(typed: Record<string, unknown> | null) {
 	if (!typed || typeof typed !== "object") return null;
 
 	const status = statusCodeFromRust(typed.status);
-	const headers: Record<string, any> = {};
+	const headers: Record<string, unknown> = {};
 	for (const [key, value] of Object.entries(typed)) {
 		if (value == null) continue;
 		if (Array.isArray(value)) {

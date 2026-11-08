@@ -16,7 +16,7 @@ export { _applyAnimationFrame } from "./playback-apply.js";
 export { renderAnimationFrame } from "./playback-render.js";
 export { _playOnePat, _playTimelineFrames } from "./playback-timeline.js";
 
-function isInstance(obj) {
+function isInstance(obj: null) {
 	return (
 		obj !== null &&
 		typeof obj === "object" &&
@@ -29,19 +29,20 @@ function isInstance(obj) {
 
 /**
  * SERIKO アニメーションパターンの全体実行（排他ロック、shared-index、タイムライン/単体再生、完了通知）
- * @param {any} target
- * @param {any} animOrBaseSurfaceId
- * @param {any} baseSurfaceIdOrScopeId
- * @param {any} scopeIdOrKey
- * @param {any} keyParam
+ * @param {unknown} target
+ * @param {unknown} animOrBaseSurfaceId
+ * @param {unknown} baseSurfaceIdOrScopeId
+ * @param {unknown} scopeIdOrKey
+ * @param {unknown} keyParam
  * @returns {Promise<void>}
  */
 export async function _playAnimationPatterns(
-	target,
-	animOrBaseSurfaceId,
-	baseSurfaceIdOrScopeId,
-	scopeIdOrKey,
-	keyParam,
+	this: unknown,
+	target: unknown,
+	animOrBaseSurfaceId: unknown,
+	baseSurfaceIdOrScopeId: undefined,
+	scopeIdOrKey: undefined,
+	keyParam: undefined,
 ) {
 	let instance, anim, baseSurfaceId, scopeId, key;
 	if (isInstance(target)) {
@@ -127,8 +128,8 @@ export async function _playAnimationPatterns(
 	let finalPatternIndex = 0;
 	if (timeline) {
 		const playFramesFn = instance._playTimelineFrames
-			? (...args) => instance._playTimelineFrames(...args)
-			: (...args) => _playTimelineFrames(instance, ...args);
+			? (...args: unknown) => instance._playTimelineFrames(...args)
+			: (...args: unknown) => _playTimelineFrames(instance, ...args);
 		await playFramesFn(timeline, anim, baseSurfaceId, scopeId, key, options);
 	} else {
 		for (let i = 0; i < patternsToPlay.length; i++) {
@@ -138,8 +139,8 @@ export async function _playAnimationPatterns(
 				instance._sharedIndices.set(sharedKey, finalPatternIndex);
 			}
 			const playOneFn = instance._playOnePat
-				? (...args) => instance._playOnePat(...args)
-				: (...args) => _playOnePat(instance, ...args);
+				? (...args: unknown) => instance._playOnePat(...args)
+				: (...args: unknown) => _playOnePat(instance, ...args);
 			const cont = await playOneFn(
 				pat,
 				anim,

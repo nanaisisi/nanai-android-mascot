@@ -6,7 +6,7 @@
 import { resolvePatternWait } from "../../animation-parser.js";
 import { _applyAnimationFrame } from "./playback-apply.js";
 
-function isInstance(obj) {
+function isInstance(obj: null) {
 	return (
 		obj !== null &&
 		typeof obj === "object" &&
@@ -19,22 +19,23 @@ function isInstance(obj) {
 
 /**
  * 構築済みタイムラインに沿って各フレームを再生
- * @param {any} target
- * @param {any} timelineOrAnim
- * @param {any} animOrBaseSurfaceId
- * @param {any} baseSurfaceIdOrScopeId
- * @param {any} scopeIdOrKey
- * @param {any} [keyOrOptions]
- * @param {any} [optionsParam={}]
+ * @param {unknown} target
+ * @param {unknown} timelineOrAnim
+ * @param {unknown} animOrBaseSurfaceId
+ * @param {unknown} baseSurfaceIdOrScopeId
+ * @param {unknown} scopeIdOrKey
+ * @param {unknown} [keyOrOptions]
+ * @param {unknown} [optionsParam={}]
  * @returns {Promise<void>}
  */
 export async function _playTimelineFrames(
-	target,
-	timelineOrAnim,
-	animOrBaseSurfaceId,
-	baseSurfaceIdOrScopeId,
-	scopeIdOrKey,
-	keyOrOptions,
+	this: unknown,
+	target: this,
+	timelineOrAnim: unknown,
+	animOrBaseSurfaceId: undefined,
+	baseSurfaceIdOrScopeId: undefined,
+	scopeIdOrKey: undefined,
+	keyOrOptions: {} | undefined,
 	optionsParam = {},
 ) {
 	let instance, timeline, anim, baseSurfaceId, scopeId, key, options;
@@ -64,7 +65,10 @@ export async function _playTimelineFrames(
 
 	const pending = anim.patterns
 		.slice()
-		.sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
+		.sort(
+			(a: { index: unknown }, b: { index: unknown }) =>
+				(a.index ?? 0) - (b.index ?? 0),
+		);
 	let prevAt = 0;
 	for (let i = 0; i < pending.length && i < timeline.frames.length; i++) {
 		const pat = pending[i];
@@ -75,8 +79,8 @@ export async function _playTimelineFrames(
 		prevAt = at;
 
 		const applyFn = instance._applyAnimationFrame
-			? (...args) => instance._applyAnimationFrame(...args)
-			: (...args) => _applyAnimationFrame(instance, ...args);
+			? (...args: unknown) => instance._applyAnimationFrame(...args)
+			: (...args: unknown) => _applyAnimationFrame(instance, ...args);
 
 		const cont = await applyFn(
 			pat,
@@ -93,24 +97,25 @@ export async function _playTimelineFrames(
 
 /**
  * 単一パターンの待機時間解決とフレーム適用
- * @param {any} target
- * @param {any} patOrAnim
- * @param {any} animOrBaseSurfaceId
- * @param {any} baseSurfaceIdOrScopeId
- * @param {any} scopeIdOrKey
- * @param {any} keyOrIsCurrent
- * @param {any} [isCurrentOrOptions]
- * @param {any} [optionsParam={}]
+ * @param {unknown} target
+ * @param {unknown} patOrAnim
+ * @param {unknown} animOrBaseSurfaceId
+ * @param {unknown} baseSurfaceIdOrScopeId
+ * @param {unknown} scopeIdOrKey
+ * @param {unknown} keyOrIsCurrent
+ * @param {unknown} [isCurrentOrOptions]
+ * @param {unknown} [optionsParam={}]
  * @returns {Promise<boolean>}
  */
 export async function _playOnePat(
-	target,
-	patOrAnim,
-	animOrBaseSurfaceId,
-	baseSurfaceIdOrScopeId,
-	scopeIdOrKey,
-	keyOrIsCurrent,
-	isCurrentOrOptions,
+	this: unknown,
+	target: this,
+	patOrAnim: unknown,
+	animOrBaseSurfaceId: undefined,
+	baseSurfaceIdOrScopeId: undefined,
+	scopeIdOrKey: undefined,
+	keyOrIsCurrent: undefined,
+	isCurrentOrOptions: {} | undefined,
 	optionsParam = {},
 ) {
 	let instance, pat, anim, baseSurfaceId, scopeId, key, isCurrent, options;
@@ -138,8 +143,8 @@ export async function _playOnePat(
 	if (waitMs > 0) await new Promise((r) => setTimeout(r, waitMs));
 	if (!isCurrent()) return false;
 	const applyFn = instance._applyAnimationFrame
-		? (...args) => instance._applyAnimationFrame(...args)
-		: (...args) => _applyAnimationFrame(instance, ...args);
+		? (...args: unknown) => instance._applyAnimationFrame(...args)
+		: (...args: unknown) => _applyAnimationFrame(instance, ...args);
 	return await applyFn(
 		pat,
 		anim,

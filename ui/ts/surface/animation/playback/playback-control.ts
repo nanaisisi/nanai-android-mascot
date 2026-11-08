@@ -7,7 +7,7 @@ import { parseInterval } from "../../animation-parser.js";
 import { findAnimation, isBlockedByExclusive } from "../animation-options.js";
 import { _playAnimationPatterns } from "./playback-frames.js";
 
-function isInstance(obj) {
+function isInstance(obj: null) {
 	return (
 		obj !== null &&
 		typeof obj === "object" &&
@@ -22,10 +22,11 @@ function isInstance(obj) {
  * アニメーションパターンの順次実行
  */
 export function playAnimationPatterns(
-	target,
-	animOrBaseSurfaceId,
-	baseSurfaceIdOrScopeId,
-	scopeIdParam,
+	this: unknown,
+	target: this,
+	animOrBaseSurfaceId: unknown,
+	baseSurfaceIdOrScopeId: undefined,
+	scopeIdParam: undefined,
 ) {
 	let instance, anim, baseSurfaceId, scopeId;
 	if (isInstance(target)) {
@@ -60,8 +61,8 @@ export function playAnimationPatterns(
 		return running;
 	}
 	const playFn = instance._playAnimationPatterns
-		? (...args) => instance._playAnimationPatterns(...args)
-		: (...args) => _playAnimationPatterns(instance, ...args);
+		? (...args: unknown) => instance._playAnimationPatterns(...args)
+		: (...args: unknown) => _playAnimationPatterns(instance, ...args);
 
 	const playing = playFn(anim, baseSurfaceId, scopeId, key).finally(() => {
 		instance._runningAnimations.delete(key);
@@ -72,8 +73,9 @@ export function playAnimationPatterns(
 }
 
 export async function playAnimationById(
-	target,
-	animIdOrNameOrScopeId,
+	this: unknown,
+	target: this | null,
+	animIdOrNameOrScopeId: number,
 	scopeIdOrWaitForComplete = 0,
 	waitForCompleteParam = false,
 ) {
@@ -97,8 +99,8 @@ export async function playAnimationById(
 	if (!anim) return;
 
 	const playFn = instance.playAnimationPatterns
-		? (...args) => instance.playAnimationPatterns(...args)
-		: (...args) => playAnimationPatterns(instance, ...args);
+		? (...args: unknown) => instance.playAnimationPatterns(...args)
+		: (...args: unknown) => playAnimationPatterns(instance, ...args);
 
 	const playPromise = playFn(anim, sid, scopeId);
 	if (waitForComplete) {
@@ -108,15 +110,16 @@ export async function playAnimationById(
 
 /**
  * アニメーション完了まで待機 (\__w[animation,ID])
- * @param {any} target
+ * @param {unknown} target
  * @param {number|string} [animIdOrNameOrScopeId]
  * @param {number} [scopeIdParam=0]
  * @param {number} [timeoutMs=30000]
  * @returns {Promise<void>}
  */
 export async function waitForAnimation(
-	target,
-	animIdOrNameOrScopeId,
+	this: unknown,
+	target: this | null,
+	animIdOrNameOrScopeId: number,
 	scopeIdParam = 0,
 	timeoutMs = 30000,
 ) {

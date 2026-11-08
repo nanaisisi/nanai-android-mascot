@@ -162,10 +162,10 @@ export function buildInstallRerouteArgs(
 
 /**
  * 例外オブジェクトやエラー文字列から UKADOC 準拠の「インストールの失敗理由」を抽出
- * @param {any} err
+ * @param {unknown} err
  * @returns {string} - "unsupported" | "extraction" | "unlha32 error" | "artificial" | "write error" | "invalid path"
  */
-export function parseErrorReason(err: any): string {
+export function parseErrorReason(err: unknown): string {
 	const msg = String(err?.message || err || "").toLowerCase();
 
 	if (
@@ -215,10 +215,10 @@ export const parseInstallErrorReason = parseErrorReason;
 /**
  * OnInstallFailure SHIORI 引数生成
  * [Ref0=失敗理由]
- * @param {any} errorOrReason
+ * @param {unknown} errorOrReason
  * @returns {[string]}
  */
-export function buildInstallFailureArgs(errorOrReason: any): [string] {
+export function buildInstallFailureArgs(errorOrReason: unknown): [string] {
 	const reason = parseErrorReason(errorOrReason);
 	return [reason];
 }

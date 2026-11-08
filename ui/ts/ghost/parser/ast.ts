@@ -9,19 +9,19 @@ export interface SakuraAstNode {
 	id?: string;
 	text?: string;
 	args?: string[];
-	token?: any;
+	token?: unknown;
 	children?: SakuraAstNode[];
 }
 
-export function tokensToAst(tokens: any[]): SakuraAstNode {
+export function tokensToAst(tokens: unknown[]): SakuraAstNode {
 	const rootChildren: SakuraAstNode[] = [];
 	let currentScope: number | null = null;
 	let scopeChildren: SakuraAstNode[] = [];
 
-	let currentAnchor: any = null;
+	let currentAnchor: unknown = null;
 	let anchorChildren: SakuraAstNode[] = [];
 
-	let currentChoiceScope: any = null;
+	let currentChoiceScope: unknown = null;
 	let choiceScopeChildren: SakuraAstNode[] = [];
 
 	const pushToCurrentContainer = (node: SakuraAstNode) => {
@@ -223,7 +223,7 @@ export function traverseAst(
 }
 
 export function getSakuraTokenLifetime(
-	token: any,
+	token: unknown,
 ): "Scope" | "Script" | "Permanent" {
 	if (!token) return "Script";
 	const type = token.type;
@@ -248,8 +248,8 @@ export function getSakuraTokenLifetime(
 	return "Script";
 }
 
-export function collectAstTokens(ast: SakuraAstNode): any[] {
-	const tokens: any[] = [];
+export function collectAstTokens(ast: SakuraAstNode): unknown[] {
+	const tokens: unknown[] = [];
 	traverseAst(ast, (node) => {
 		if (node.nodeType === "command" && node.token) {
 			tokens.push(node.token);
@@ -273,7 +273,7 @@ export function collectAstTokens(ast: SakuraAstNode): any[] {
 export function collectAstTokensByLifetime(
 	ast: SakuraAstNode,
 	lifetime: "Scope" | "Script" | "Permanent",
-): any[] {
+): unknown[] {
 	return collectAstTokens(ast).filter(
 		(token) => getSakuraTokenLifetime(token) === lifetime,
 	);

@@ -7,7 +7,7 @@ import { patternSurfaceFile } from "../../bind-menu.js";
 import { getAnimationOffset } from "../animation-options.js";
 import { createPlaceholderCanvas } from "../scheduler-events.js";
 
-function isInstance(obj) {
+function isInstance(obj: null) {
 	return (
 		obj !== null &&
 		typeof obj === "object" &&
@@ -20,18 +20,19 @@ function isInstance(obj) {
 
 /**
  * 単一アニメーションフレームのサーフィス描画
- * @param {any} target
- * @param {any} patOrBaseSurfaceId
- * @param {any} baseSurfaceIdOrScopeId
- * @param {any} [scopeIdOrAnimOptions]
- * @param {any} [animationOptionsParam={}]
- * @returns {Promise<any>|boolean}
+ * @param {unknown} target
+ * @param {unknown} patOrBaseSurfaceId
+ * @param {unknown} baseSurfaceIdOrScopeId
+ * @param {unknown} [scopeIdOrAnimOptions]
+ * @param {unknown} [animationOptionsParam={}]
+ * @returns {Promise<unknown>|boolean}
  */
 export function renderAnimationFrame(
-	target,
-	patOrBaseSurfaceId,
-	baseSurfaceIdOrScopeId,
-	scopeIdOrAnimOptions,
+	this: unknown,
+	target: this,
+	patOrBaseSurfaceId: unknown,
+	baseSurfaceIdOrScopeId: undefined,
+	scopeIdOrAnimOptions: {} | undefined,
 	animationOptionsParam = {},
 ) {
 	let instance, pat, baseSurfaceId, scopeId, animationOptions;

@@ -66,10 +66,10 @@ export {
 };
 
 export async function handleToken(
-	player: any,
-	app: any,
-	token: any,
-	context: any,
+	player: unknown,
+	app: unknown,
+	token: unknown,
+	context: unknown,
 ) {
 	switch (token.type) {
 		case "scope":

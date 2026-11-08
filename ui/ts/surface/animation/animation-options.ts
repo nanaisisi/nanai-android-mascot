@@ -5,7 +5,7 @@
 
 import { surfaceAnimationTimers } from "../surface-animation-timers.js";
 
-function isInstance(obj) {
+function isInstance(obj: number | null) {
 	return (
 		obj !== null &&
 		typeof obj === "object" &&
@@ -59,12 +59,17 @@ export function parseAnimationOptions(options = []) {
 
 /**
  * 指定アニメーションが現在排他ロックにより開始をブロックされているか
- * @param {any} target
+ * @param {unknown} target
  * @param {number} [scopeIdOrAnimId=0]
  * @param {number|string} [animIdParam]
  * @returns {boolean}
  */
-export function isBlockedByExclusive(target = 0, scopeIdOrAnimId, animIdParam) {
+export function isBlockedByExclusive(
+	this: unknown,
+	target = 0,
+	scopeIdOrAnimId: number,
+	animIdParam: unknown,
+) {
 	let instance, scopeId, animId;
 	if (isInstance(target)) {
 		instance = target;
@@ -87,12 +92,17 @@ export function isBlockedByExclusive(target = 0, scopeIdOrAnimId, animIdParam) {
 
 /**
  * アニメーション定義を検索（IDまたはname文字列による）
- * @param {any} target
+ * @param {unknown} target
  * @param {number|string} [animIdOrNameOrScopeId]
  * @param {number} [scopeIdParam=0]
  * @returns {object|null}
  */
-export function findAnimation(target, animIdOrNameOrScopeId, scopeIdParam = 0) {
+export function findAnimation(
+	this: unknown,
+	target: this,
+	animIdOrNameOrScopeId: number,
+	scopeIdParam = 0,
+) {
 	let instance, animIdOrName, scopeId;
 	if (isInstance(target)) {
 		instance = target;
@@ -112,7 +122,7 @@ export function findAnimation(target, animIdOrNameOrScopeId, scopeIdParam = 0) {
 	const targetStr = String(animIdOrName).trim().toLowerCase();
 	const targetNum = Number.parseInt(targetStr, 10);
 	return (
-		animList.find((a) => {
+		animList.find((a: { id: number; name: unknown }) => {
 			if (!Number.isNaN(targetNum) && a.id === targetNum) return true;
 			if (String(a.id).toLowerCase() === targetStr) return true;
 			if (a.name && String(a.name).trim().toLowerCase() === targetStr)
@@ -124,15 +134,16 @@ export function findAnimation(target, animIdOrNameOrScopeId, scopeIdParam = 0) {
 
 /**
  * 指定アニメーションが再生中かどうか判定
- * @param {any} target
+ * @param {unknown} target
  * @param {number} [scopeIdOrAnimId=0]
  * @param {number|string} [animIdOrNameParam]
  * @returns {boolean}
  */
 export function isAnimationRunning(
+	this: unknown,
 	target = 0,
-	scopeIdOrAnimId,
-	animIdOrNameParam,
+	scopeIdOrAnimId: number,
+	animIdOrNameParam: unknown,
 ) {
 	let instance, scopeId, animIdOrName;
 	if (isInstance(target)) {
@@ -161,11 +172,16 @@ export function isAnimationRunning(
 
 /**
  * 特定のアニメーションのみ停止 (\![anim,stop,ID] / \![anim,clear,ID])
- * @param {any} target
+ * @param {unknown} target
  * @param {number} [scopeIdOrAnimId=0]
  * @param {number|string} [animIdOrNameParam]
  */
-export function stopAnimation(target = 0, scopeIdOrAnimId, animIdOrNameParam) {
+export function stopAnimation(
+	this: unknown,
+	target = 0,
+	scopeIdOrAnimId: number,
+	animIdOrNameParam: undefined,
+) {
 	let instance, scopeId, animIdOrName;
 	if (isInstance(target)) {
 		instance = target;
@@ -192,16 +208,17 @@ export function stopAnimation(target = 0, scopeIdOrAnimId, animIdOrNameParam) {
 
 /**
  * アニメーションの動的オフセット設定 (\![anim,offset,ID,x,y])
- * @param {any} target
+ * @param {unknown} target
  * @param {number} [scopeIdOrAnimId=0]
  * @param {number|string} [animIdOrNameOrX]
  * @param {number} [xOrY=0]
  * @param {number} [yParam=0]
  */
 export function setAnimationOffset(
+	this: unknown,
 	target = 0,
-	scopeIdOrAnimId,
-	animIdOrNameOrX,
+	scopeIdOrAnimId: number,
+	animIdOrNameOrX: number,
 	xOrY = 0,
 	yParam = 0,
 ) {
@@ -227,15 +244,16 @@ export function setAnimationOffset(
 
 /**
  * アニメーションの動的オフセット取得
- * @param {any} target
+ * @param {unknown} target
  * @param {number} [scopeIdOrAnimId=0]
  * @param {number|string} [animIdOrNameParam]
  * @returns {{ x: number, y: number }}
  */
 export function getAnimationOffset(
+	this: unknown,
 	target = 0,
-	scopeIdOrAnimId,
-	animIdOrNameParam,
+	scopeIdOrAnimId: number,
+	animIdOrNameParam: unknown,
 ) {
 	let instance, scopeId, animIdOrName;
 	if (isInstance(target)) {
@@ -253,7 +271,12 @@ export function getAnimationOffset(
 	return instance._animationOffsets.get(`${scopeId}__${id}`) || { x: 0, y: 0 };
 }
 
-export function pauseAnimation(target = 0, scopeIdOrAnimId, animIdOrNameParam) {
+export function pauseAnimation(
+	this: unknown,
+	target = 0,
+	scopeIdOrAnimId: number,
+	animIdOrNameParam: unknown,
+) {
 	let instance, scopeId, animIdOrName;
 	if (isInstance(target)) {
 		instance = target;
@@ -271,9 +294,10 @@ export function pauseAnimation(target = 0, scopeIdOrAnimId, animIdOrNameParam) {
 }
 
 export function resumeAnimation(
+	this: unknown,
 	target = 0,
-	scopeIdOrAnimId,
-	animIdOrNameParam,
+	scopeIdOrAnimId: number,
+	animIdOrNameParam: unknown,
 ) {
 	let instance, scopeId, animIdOrName;
 	if (isInstance(target)) {
@@ -292,9 +316,10 @@ export function resumeAnimation(
 }
 
 export function isAnimationPaused(
+	this: unknown,
 	target = 0,
-	scopeIdOrAnimId,
-	animIdOrNameParam,
+	scopeIdOrAnimId: number,
+	animIdOrNameParam: unknown,
 ) {
 	let instance, scopeId, animIdOrName;
 	if (isInstance(target)) {
@@ -312,7 +337,11 @@ export function isAnimationPaused(
 	return surfaceAnimationTimers.isAnimationPaused.call(instance, scopeId, id);
 }
 
-export function clearPausedAnimations(target = 0, scopeIdParam = 0) {
+export function clearPausedAnimations(
+	this: unknown,
+	target = 0,
+	scopeIdParam = 0,
+) {
 	let instance, scopeId;
 	if (isInstance(target)) {
 		instance = target;
@@ -327,11 +356,15 @@ export function clearPausedAnimations(target = 0, scopeIdParam = 0) {
 
 /**
  * スコープ内で現在再生中のアクティブアニメーション数を取得
- * @param {any} target
+ * @param {unknown} target
  * @param {number} [scopeIdParam=0]
  * @returns {number}
  */
-export function getActiveAnimationCount(target = 0, scopeIdParam = 0) {
+export function getActiveAnimationCount(
+	this: unknown,
+	target = 0,
+	scopeIdParam = 0,
+) {
 	let instance, scopeId;
 	if (isInstance(target)) {
 		instance = target;
@@ -353,11 +386,15 @@ export function getActiveAnimationCount(target = 0, scopeIdParam = 0) {
 
 /**
  * スコープ内で現在再生中のアクティブアニメーション定義リストを取得
- * @param {any} target
+ * @param {unknown} target
  * @param {number} [scopeIdParam=0]
  * @returns {object[]}
  */
-export function getActiveAnimations(target = 0, scopeIdParam = 0) {
+export function getActiveAnimations(
+	this: unknown,
+	target = 0,
+	scopeIdParam = 0,
+) {
 	let instance, scopeId;
 	if (isInstance(target)) {
 		instance = target;
@@ -384,11 +421,15 @@ export function getActiveAnimations(target = 0, scopeIdParam = 0) {
 
 /**
  * スコープ内で現在再生中のアニメーションに紐づくアクティブな当たり判定領域リストを取得
- * @param {any} target
+ * @param {unknown} target
  * @param {number} [scopeIdParam=0]
  * @returns {import('../surface-parser.js').CollisionArea[]}
  */
-export function getActiveCollisions(target = 0, scopeIdParam = 0) {
+export function getActiveCollisions(
+	this: unknown,
+	target = 0,
+	scopeIdParam = 0,
+) {
 	let instance, scopeId;
 	if (isInstance(target)) {
 		instance = target;

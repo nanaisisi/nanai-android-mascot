@@ -65,11 +65,11 @@ function initCharacterWindow() {
 
 	if (!isTauriAvailable()) return;
 
-	let pollTimer: any = null;
+	let pollTimer: unknown = null;
 
 	void listen(
 		`update-subchar-image-${scopeId}`,
-		(/** @type {{ payload?: { src?: string } }} */ event: any) => {
+		(/** @type {{ payload?: { src?: string } }} */ event: unknown) => {
 			const src = event.payload?.src;
 			if (src && img) {
 				if (pollTimer) {
@@ -123,11 +123,11 @@ function initCharacterWindow() {
 	let startX = 0;
 	let startY = 0;
 	let origin: { x: number; y: number } | null = null;
-	let longPressTimer: any = null;
+	let longPressTimer: unknown = null;
 	let longPressTriggered = false;
 	const LONG_PRESS_DELAY = 600;
 
-	const onPointerDown = (e: any) => {
+	const onPointerDown = (e: unknown) => {
 		const button = e.button !== undefined ? e.button : 0;
 
 		// 1. 右クリック (button === 2): コンテキストメニュー表示
@@ -190,7 +190,7 @@ function initCharacterWindow() {
 		}, LONG_PRESS_DELAY);
 	};
 
-	const onPointerMove = (e: any) => {
+	const onPointerMove = (e: unknown) => {
 		if (!isInteracting) return;
 
 		const clientX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;

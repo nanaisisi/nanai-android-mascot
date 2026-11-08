@@ -11,7 +11,7 @@ import { createBalloonSyncManager } from "./sakura-play-sync.js";
 
 export { SakuraPlaybackController } from "./sakura-play/controller.js";
 
-export async function playScript(player: any, script: string) {
+export async function playScript(player: unknown, script: string) {
 	const finalScript = await translateScript(player, script);
 
 	const tokens = await player.parse(finalScript);
@@ -62,7 +62,7 @@ export async function playScript(player: any, script: string) {
 			: null);
 
 	const hasTextContent = tokens.some(
-		(t: any) =>
+		(t: unknown) =>
 			t.type === "char" || t.type === "choice" || t.type === "anchor_begin",
 	);
 
@@ -111,7 +111,7 @@ export async function playScript(player: any, script: string) {
 
 	player.playbackController?.resetBalloonWait?.();
 
-	const hasChoices = tokens.some((t: any) => t.type === "choice");
+	const hasChoices = tokens.some((t: unknown) => t.type === "choice");
 
 	if (hasChoices && player.choiceTimeout > 0) {
 		if (player.choiceTimeoutTimer) clearTimeout(player.choiceTimeoutTimer);

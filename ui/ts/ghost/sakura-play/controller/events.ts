@@ -3,7 +3,11 @@
  * @brief SakuraPlaybackController 向けイベントリスナー管理・発行ロジック
  */
 
-export function on(this: any, event: string, handler: Function): () => void {
+export function on(
+	this: unknown,
+	event: string,
+	handler: Function,
+): () => void {
 	if (!this.listeners.has(event)) {
 		this.listeners.set(event, new Set());
 	}
@@ -11,7 +15,7 @@ export function on(this: any, event: string, handler: Function): () => void {
 	return () => this.off(event, handler);
 }
 
-export function off(this: any, event: string, handler: Function) {
+export function off(this: unknown, event: string, handler: Function) {
 	const handlers = this.listeners.get(event);
 	if (handlers) {
 		handlers.delete(handler);
@@ -21,7 +25,7 @@ export function off(this: any, event: string, handler: Function) {
 	}
 }
 
-export function emit(this: any, event: string, ...args: any[]) {
+export function emit(this: unknown, event: string, ...args: unknown[]) {
 	const handlers = this.listeners.get(event);
 	if (handlers) {
 		for (const handler of Array.from(handlers)) {

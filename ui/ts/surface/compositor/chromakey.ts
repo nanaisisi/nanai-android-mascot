@@ -5,7 +5,7 @@ export function processChromaKey(
 	imageSrc: string,
 	pnaSrc: string | null = null,
 	cache: Map<string, string> | null = null,
-	options: any = {},
+	options: unknown = {},
 ): Promise<string> {
 	if (!imageSrc) return Promise.resolve(imageSrc);
 	if (cache?.has(imageSrc)) {

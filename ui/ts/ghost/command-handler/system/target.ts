@@ -5,12 +5,15 @@
 
 import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 
-export async function handleBiffCommand(handler: any, _args: string[]) {
+export async function handleBiffCommand(handler: unknown, _args: string[]) {
 	console.log("✉️ Biff mail check triggered");
 	await handler.app.networkActions?.checkEmail?.();
 }
 
-export async function handleExecuteSntpCommand(handler: any, _args: string[]) {
+export async function handleExecuteSntpCommand(
+	handler: unknown,
+	_args: string[],
+) {
 	console.log("⏱️ Execute SNTP time sync triggered");
 	const gc = handler.app.ghostController;
 	const nowIso = new Date().toISOString();
@@ -26,7 +29,7 @@ export async function handleExecuteSntpCommand(handler: any, _args: string[]) {
 	}
 }
 
-export async function handleHourTimeSignal(handler: any, hour?: number) {
+export async function handleHourTimeSignal(handler: unknown, hour?: number) {
 	const currentHour = hour ?? new Date().getHours();
 	if (handler.app.ghostController?.sendShioriEvent) {
 		await handler.app.ghostController.sendShioriEvent("OnHourTimeSignal", [
@@ -35,7 +38,7 @@ export async function handleHourTimeSignal(handler: any, hour?: number) {
 	}
 }
 
-export async function handleOpenSystemTarget(handler: any, args: string[]) {
+export async function handleOpenSystemTarget(handler: unknown, args: string[]) {
 	const target = (args[1] ?? "").toLowerCase();
 	const pathOrParam = args[2] ?? "";
 

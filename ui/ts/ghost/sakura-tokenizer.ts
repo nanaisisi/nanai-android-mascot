@@ -36,10 +36,10 @@ export function parseSakuraScript(script: string): SakuraScriptToken[] {
 		}
 
 		if (script[i] === "\\") {
-			const res: any = tokenizeTag(script, i, len);
+			const res: unknown = tokenizeTag(script, i, len);
 			if (res.tokens.length > 0) {
 				for (const t of res.tokens) {
-					const tok: any = t;
+					const tok: unknown = t;
 					if (tok.type === "raw_toggle" && tok.active) {
 						rawModeDelimiter = tok.delimiter || "_?";
 					}

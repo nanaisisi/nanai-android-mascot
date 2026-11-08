@@ -7,22 +7,22 @@ export interface GhostInfo {
 	name: string;
 	path?: string;
 	shells?: string[];
-	[key: string]: any;
+	[key: string]: unknown;
 }
 
 export class GhostController {
-	app: any;
+	app: unknown;
 	ghosts: GhostInfo[];
 	currentGhost: GhostInfo | null;
 	shells: string[];
 	currentShell: string;
 	currentSurfaces: Map<number, string>;
-	_surfaceSeq: any[] | undefined;
+	_surfaceSeq: unknown[] | undefined;
 	uptimeSeconds?: number;
-	_secondTimerId?: any;
+	_secondTimerId?: unknown;
 	_secondSending?: boolean;
 
-	constructor(app: any) {
+	constructor(app: unknown) {
 		this.app = app;
 		this.ghosts = [];
 		this.currentGhost = null;
@@ -65,7 +65,7 @@ export class GhostController {
 	async verifyGhostExists(ghostInfo: GhostInfo): Promise<boolean> {
 		if (!isTauriAvailable()) return false;
 		try {
-			const result: any = await invoke("scan_ghosts", {
+			const result: unknown = await invoke("scan_ghosts", {
 				ghostPath: ghostInfo.path || AppConfig.paths.defaultGhostDir,
 			});
 			return (
@@ -83,7 +83,7 @@ export class GhostController {
 			return this.ghosts;
 		}
 		try {
-			const result: any = await invoke("scan_ghosts", {
+			const result: unknown = await invoke("scan_ghosts", {
 				ghostPath: AppConfig.paths.defaultGhostDir,
 			});
 			if (result && Array.isArray(result.ghosts)) {
@@ -113,10 +113,10 @@ export class GhostController {
 		if (
 			prevGhostName &&
 			prevGhostName !== ghost.name &&
-			(this as any).sendShioriEvent
+			(this as unknown).sendShioriEvent
 		) {
 			try {
-				await (this as any).sendShioriEvent("OnGhostChanging", [
+				await (this as unknown).sendShioriEvent("OnGhostChanging", [
 					ghost.name,
 					"manual",
 					prevGhostName,
@@ -149,7 +149,7 @@ export class GhostController {
 
 		if (isTauriAvailable()) {
 			try {
-				const info: any = await invoke("get_ghost_info", {
+				const info: unknown = await invoke("get_ghost_info", {
 					ghostName: ghost.name,
 				});
 				if (info) {
@@ -170,12 +170,12 @@ export class GhostController {
 
 		// 【フェーズ 2: シェル表示 & SHIORI 初期化のパラレル実行 (Atomic Reveal)】
 		const loadId = {};
-		(this as any)._currentLoadToken = loadId;
-		const isCurrentLoad = () => (this as any)._currentLoadToken === loadId;
+		(this as unknown)._currentLoadToken = loadId;
+		const isCurrentLoad = () => (this as unknown)._currentLoadToken === loadId;
 
 		await Promise.all([
 			this.selectShell(this.currentShell),
-			(this as any).initializeGhostSHIORI(
+			(this as unknown).initializeGhostSHIORI(
 				ghost,
 				preloadSurfacesPromise,
 				isCurrentLoad,
@@ -212,22 +212,22 @@ export class GhostController {
 		this.currentShell = shellName;
 		if (this.currentGhost) {
 			try {
-				await (this as any).loadSurfaceAsset(
+				await (this as unknown).loadSurfaceAsset(
 					"load_surface_image",
 					this.currentGhost.path || AppConfig.paths.defaultGhostDir,
 					shellName,
 					0,
 				);
 			} catch (_e) {}
-			await (this as any).updateSurface(0, 0);
-			await (this as any).updateSurface(10, 1);
+			await (this as unknown).updateSurface(0, 0);
+			await (this as unknown).updateSurface(10, 1);
 			if (
 				prevShell &&
 				prevShell !== shellName &&
-				(this as any).sendShioriEvent
+				(this as unknown).sendShioriEvent
 			) {
 				try {
-					await (this as any).sendShioriEvent("OnShellChanged", [
+					await (this as unknown).sendShioriEvent("OnShellChanged", [
 						shellName,
 						prevShell,
 					]);

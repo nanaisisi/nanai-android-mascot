@@ -5,7 +5,7 @@
 
 import { playAnimationPatterns } from "./playback-control.js";
 
-function isInstance(obj) {
+function isInstance(obj: number | null) {
 	return (
 		obj !== null &&
 		typeof obj === "object" &&
@@ -16,7 +16,7 @@ function isInstance(obj) {
 	);
 }
 
-export function onTalkStart(target = 0, scopeIdParam = 0) {
+export function onTalkStart(this: unknown, target = 0, scopeIdParam = 0) {
 	let instance, scopeId;
 	if (isInstance(target)) {
 		instance = target;
@@ -33,7 +33,7 @@ export function onTalkStart(target = 0, scopeIdParam = 0) {
 	}
 }
 
-export function onTalkEnd(target = 0, scopeIdParam = 0) {
+export function onTalkEnd(this: unknown, target = 0, scopeIdParam = 0) {
 	let instance, scopeId;
 	if (isInstance(target)) {
 		instance = target;
@@ -51,7 +51,7 @@ export function onTalkEnd(target = 0, scopeIdParam = 0) {
 	instance._talkStarted[scopeId] = false;
 }
 
-export function onScriptEnd(target = 0, scopeIdParam = 0) {
+export function onScriptEnd(this: unknown, target = 0, scopeIdParam = 0) {
 	let instance, scopeId;
 	if (isInstance(target)) {
 		instance = target;
@@ -66,7 +66,7 @@ export function onScriptEnd(target = 0, scopeIdParam = 0) {
 	}
 }
 
-export function onCharSpoken(target = 0, scopeIdParam = 0) {
+export function onCharSpoken(this: unknown, target = 0, scopeIdParam = 0) {
 	let instance, scopeId;
 	if (isInstance(target)) {
 		instance = target;
@@ -97,8 +97,8 @@ export function onCharSpoken(target = 0, scopeIdParam = 0) {
 		const n = Math.max(param || 1, 1);
 		if (instance._spokenCount[scopeId] % n === 0) {
 			const playFn = instance.playAnimationPatterns
-				? (...args) => instance.playAnimationPatterns(...args)
-				: (...args) => playAnimationPatterns(instance, ...args);
+				? (...args: unknown) => instance.playAnimationPatterns(...args)
+				: (...args: unknown) => playAnimationPatterns(instance, ...args);
 			playFn(anim, sid, scopeId)?.catch?.(() => {});
 		}
 	}

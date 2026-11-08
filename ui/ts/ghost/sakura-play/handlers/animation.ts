@@ -4,19 +4,19 @@
  */
 
 export function handleSurface(
-	player: any,
-	app: any,
-	token: any,
-	_context: any,
+	player: unknown,
+	app: unknown,
+	token: unknown,
+	_context: unknown,
 ) {
 	app.ghostController.updateSurface(token.value, player.currentScope);
 }
 
 export async function handleAnimation(
-	player: any,
-	app: any,
-	token: any,
-	_context: any,
+	player: unknown,
+	app: unknown,
+	token: unknown,
+	_context: unknown,
 ) {
 	await app.surfaceManager?.playAnimationById(
 		token.animId,
@@ -26,10 +26,10 @@ export async function handleAnimation(
 }
 
 export async function handleWaitAnimation(
-	player: any,
-	app: any,
-	token: any,
-	_context: any,
+	player: unknown,
+	app: unknown,
+	token: unknown,
+	_context: unknown,
 ) {
 	await app.surfaceManager?.waitForAnimation(token.animId, player.currentScope);
 }

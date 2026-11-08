@@ -9,7 +9,7 @@ export class SyncObject {
 	waiters: Set<{
 		resolve: Function;
 		reject: Function;
-		timer: any;
+		timer: unknown;
 		resetOnWait: boolean;
 	}>;
 
@@ -58,7 +58,7 @@ export class SyncObject {
 			const waiter = {
 				resolve,
 				reject,
-				timer: null as any,
+				timer: null as unknown,
 				resetOnWait,
 			};
 

@@ -375,3 +375,96 @@ fn test_parse_install_manifest_empty() {
     let manifest = parse_install_manifest("");
     assert!(manifest.name.is_empty());
 }
+
+#[test]
+fn test_update_package_noupdate_filter_and_integrity() {
+    let content = "file,ghost/master/aya.dll,11223344556677889900aabbccddeeff,size=1000\r\n\
+                   file,ghost/master/dev.log,11223344556677889900aabbccddeeff\r\n\
+                   file,ghost/master/sub/debug.tmp,11223344556677889900aabbccddeeff\r\n";
+    let pkg = UpdatePackage::from_definition(content);
+    assert_eq!(pkg.entries.len(), 3);
+    assert!(pkg.validate_entries_integrity().is_ok());
+
+    let patterns = ["ghost/master/dev.log", "debug.tmp"];
+    let filtered = pkg.filter_noupdate(&patterns);
+    assert_eq!(filtered.len(), 1);
+    assert_eq!(filtered[0].path, "ghost/master/aya.dll");
+
+    // Invalid integrity cases
+    let bad_hash_pkg = UpdatePackage {
+        entries: vec![UpdateEntry {
+            path: "foo.txt".to_string(),
+            md5: "short_hash".to_string(),
+            size: None,
+            is_delete: false,
+            is_ignore: false,
+            is_readonly: false,
+            date: None,
+            flags: Vec::new(),
+        }],
+    };
+    assert!(bad_hash_pkg.validate_entries_integrity().is_err());
+
+    let non_hex_pkg = UpdatePackage {
+        entries: vec![UpdateEntry {
+            path: "foo.txt".to_string(),
+            md5: "11223344556677889900aabbccddeefz".to_string(),
+            size: None,
+            is_delete: false,
+            is_ignore: false,
+            is_readonly: false,
+            date: None,
+            flags: Vec::new(),
+        }],
+    };
+    assert!(non_hex_pkg.validate_entries_integrity().is_err());
+
+    let empty_path_pkg = UpdatePackage {
+        entries: vec![UpdateEntry {
+            path: "   ".to_string(),
+            md5: "".to_string(),
+            size: None,
+            is_delete: false,
+            is_ignore: false,
+            is_readonly: false,
+            date: None,
+            flags: Vec::new(),
+        }],
+    };
+    assert!(empty_path_pkg.validate_entries_integrity().is_err());
+
+    let null_byte_pkg = UpdatePackage {
+        entries: vec![UpdateEntry {
+            path: "foo\0bar.txt".to_string(),
+            md5: "".to_string(),
+            size: None,
+            is_delete: false,
+            is_ignore: false,
+            is_readonly: false,
+            date: None,
+            flags: Vec::new(),
+        }],
+    };
+    assert!(null_byte_pkg.validate_entries_integrity().is_err());
+}
+
+#[test]
+fn test_parse_developer_options() {
+    let content = "\
+# Developer options comment\r\n\
+// another comment\r\n\
+noupdate=ghost/master/dev.log\r\n\
+noupdate,ghost/master/temp.bin\r\n\
+noupdate: debug.dat\r\n\
+other_key=ignore_me\r\n\
+";
+    let noupdate_files = crate::update::parser::parse_developer_options(content);
+    assert_eq!(noupdate_files.len(), 3);
+    assert_eq!(noupdate_files[0], "ghost/master/dev.log");
+    assert_eq!(noupdate_files[1], "ghost/master/temp.bin");
+    assert_eq!(noupdate_files[2], "debug.dat");
+
+    let engine = StandardInstallerEngine;
+    let engine_files = engine.parse_developer_options(content);
+    assert_eq!(engine_files, noupdate_files);
+}

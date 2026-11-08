@@ -5,3 +5,4 @@ import "./e2e/ssp-dialogs.test.js";
 import "./e2e/cycle5-lifecycle.test.js";
 import "./e2e/cycle6-lifecycle.test.js";
 import "./e2e/cycle8-lifecycle.test.js";
+import "./e2e/cycle9-lifecycle.test.js";

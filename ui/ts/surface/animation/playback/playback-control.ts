@@ -46,7 +46,9 @@ export function playAnimationPatterns(
 
 	const inst = instance as Record<string, unknown>;
 	const an = anim as Record<string, unknown>;
-	const isBlockedFn = inst.isBlockedByExclusive as ((scope: unknown, id: unknown) => boolean) | undefined;
+	const isBlockedFn = inst.isBlockedByExclusive as
+		| ((scope: unknown, id: unknown) => boolean)
+		| undefined;
 	const isBlocked = isBlockedFn
 		? isBlockedFn(scopeId, an?.id)
 		: isBlockedByExclusive(inst, scopeId, an?.id);
@@ -56,7 +58,9 @@ export function playAnimationPatterns(
 	}
 
 	const key = `${scopeId}__${baseSurfaceId}__${an?.id ?? an?.interval ?? ""}`;
-	const runningAnimations = inst._runningAnimations as Map<string, Promise<unknown>> | undefined;
+	const runningAnimations = inst._runningAnimations as
+		| Map<string, Promise<unknown>>
+		| undefined;
 	const running = runningAnimations?.get(key);
 	const intervalStr = String(an.interval ?? "");
 	const { kinds } = parseInterval(intervalStr);
@@ -68,14 +72,18 @@ export function playAnimationPatterns(
 	) {
 		return running;
 	}
-	const customPlay = inst._playAnimationPatterns as ((...args: unknown[]) => Promise<unknown>) | undefined;
+	const customPlay = inst._playAnimationPatterns as
+		| ((...args: unknown[]) => Promise<unknown>)
+		| undefined;
 	const playFn = customPlay
 		? (...args: unknown[]) => customPlay(...args)
 		: (...args: unknown[]) => _playAnimationPatterns(inst, ...args);
 
 	const playing = playFn(anim, baseSurfaceId, scopeId, key).finally(() => {
 		runningAnimations?.delete(key);
-		const stoppedAnimations = inst._stoppedAnimations as Set<string> | undefined;
+		const stoppedAnimations = inst._stoppedAnimations as
+			| Set<string>
+			| undefined;
 		stoppedAnimations?.delete(key);
 	});
 	runningAnimations?.set(key, playing);
@@ -107,15 +115,23 @@ export async function playAnimationById(
 
 	const inst = instance as Record<string, unknown>;
 	const manager = inst.manager as Record<string, unknown> | undefined;
-	const currentSurfaceIdFor = manager?.currentSurfaceIdFor as ((sid: number) => unknown) | undefined;
-	const sid = String(currentSurfaceIdFor ? currentSurfaceIdFor(scopeId as number) : 0);
-	const findAnimationFn = inst.findAnimation as ((name: unknown, scope: unknown) => Record<string, unknown> | undefined) | undefined;
+	const currentSurfaceIdFor = manager?.currentSurfaceIdFor as
+		| ((sid: number) => unknown)
+		| undefined;
+	const sid = String(
+		currentSurfaceIdFor ? currentSurfaceIdFor(scopeId as number) : 0,
+	);
+	const findAnimationFn = inst.findAnimation as
+		| ((name: unknown, scope: unknown) => Record<string, unknown> | undefined)
+		| undefined;
 	const anim = findAnimationFn
 		? findAnimationFn(animIdOrName, scopeId)
 		: findAnimation(inst, animIdOrName, scopeId);
 	if (!anim) return;
 
-	const playPatterns = inst.playAnimationPatterns as ((...args: unknown[]) => Promise<unknown>) | undefined;
+	const playPatterns = inst.playAnimationPatterns as
+		| ((...args: unknown[]) => Promise<unknown>)
+		| undefined;
 	const playFn = playPatterns
 		? (...args: unknown[]) => playPatterns(...args)
 		: (...args: unknown[]) => playAnimationPatterns(inst, ...args);
@@ -154,15 +170,21 @@ export async function waitForAnimation(
 
 	const inst = instance as Record<string, unknown>;
 	const manager = inst.manager as Record<string, unknown> | undefined;
-	const currentSurfaceIdFor = manager?.currentSurfaceIdFor as ((sid: unknown) => unknown) | undefined;
-	const findAnimationFn = inst.findAnimation as ((name: unknown, scope: unknown) => Record<string, unknown> | undefined) | undefined;
+	const currentSurfaceIdFor = manager?.currentSurfaceIdFor as
+		| ((sid: unknown) => unknown)
+		| undefined;
+	const findAnimationFn = inst.findAnimation as
+		| ((name: unknown, scope: unknown) => Record<string, unknown> | undefined)
+		| undefined;
 	const anim = findAnimationFn
 		? findAnimationFn(animIdOrName, scopeId)
 		: findAnimation(inst, animIdOrName, scopeId);
 	const an = anim as Record<string, unknown> | undefined;
 	const id = an ? an.id : animIdOrName;
 	const key = `${scopeId}__${currentSurfaceIdFor ? currentSurfaceIdFor(scopeId) : 0}__${id}`;
-	const runningAnimations = inst._runningAnimations as Map<string, Promise<unknown>> | undefined;
+	const runningAnimations = inst._runningAnimations as
+		| Map<string, Promise<unknown>>
+		| undefined;
 	const running = runningAnimations?.get(key);
 	if (running) {
 		await Promise.race([

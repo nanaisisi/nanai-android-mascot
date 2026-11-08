@@ -81,12 +81,6 @@ export function renderAnimationFrame(
 		const renderSurfaceLayer = manager.renderSurfaceLayer as
 			| ((...args: unknown[]) => void)
 			| undefined;
-		renderSurfaceLayer?.(
-			surfaceId,
-			surfaceFile,
-			offset.x,
-			offset.y,
-			opts,
-		);
+		renderSurfaceLayer?.(surfaceId, surfaceFile, offset.x, offset.y, opts);
 	}
 }

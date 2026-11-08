@@ -38,28 +38,28 @@ export function _applyAnimationFrame(
 ) {
 	let instance: unknown,
 		pat: unknown,
-		anim: unknown,
+		_anim: unknown,
 		baseSurfaceId: unknown,
 		scopeId: unknown,
-		key: unknown,
+		_key: unknown,
 		isCurrent: unknown,
 		options: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		pat = patOrAnim;
-		anim = animOrBaseSurfaceId;
+		_anim = animOrBaseSurfaceId;
 		baseSurfaceId = baseSurfaceIdOrScopeId;
 		scopeId = scopeIdOrKey;
-		key = keyOrIsCurrent;
+		_key = keyOrIsCurrent;
 		isCurrent = isCurrentOrOptions;
 		options = optionsParam;
 	} else {
 		instance = this;
 		pat = target;
-		anim = patOrAnim;
+		_anim = patOrAnim;
 		baseSurfaceId = animOrBaseSurfaceId;
 		scopeId = baseSurfaceIdOrScopeId;
-		key = scopeIdOrKey;
+		_key = scopeIdOrKey;
 		isCurrent = keyOrIsCurrent;
 		options = isCurrentOrOptions || {};
 	}

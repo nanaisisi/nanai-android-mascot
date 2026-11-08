@@ -72,8 +72,9 @@ export async function _playTimelineFrames(
 		| Map<unknown, unknown>
 		| undefined;
 
-	for (const frame of (tl.frames as Array<Record<string, unknown>> | undefined) ||
-		[]) {
+	for (const frame of (tl.frames as
+		| Array<Record<string, unknown>>
+		| undefined) || []) {
 		if (stoppedAnimations?.has(key)) break;
 
 		const waitMs = resolveWaitFn
@@ -121,7 +122,7 @@ export async function _playOnePat(
 		baseSurfaceId: unknown,
 		scopeId: unknown,
 		key: unknown,
-		isCurrent: unknown,
+		_isCurrent: unknown,
 		options: unknown;
 	if (isInstance(target)) {
 		instance = target;
@@ -129,7 +130,7 @@ export async function _playOnePat(
 		baseSurfaceId = animOrBaseSurfaceId;
 		scopeId = baseSurfaceIdOrScopeId;
 		key = scopeIdOrKey;
-		isCurrent = keyOrIsCurrent;
+		_isCurrent = keyOrIsCurrent;
 		options = isCurrentOrOptions;
 	} else {
 		instance = this;
@@ -137,7 +138,7 @@ export async function _playOnePat(
 		baseSurfaceId = patOrAnim;
 		scopeId = animOrBaseSurfaceId;
 		key = baseSurfaceIdOrScopeId;
-		isCurrent = scopeIdOrKey;
+		_isCurrent = scopeIdOrKey;
 		options = keyOrIsCurrent || {};
 	}
 

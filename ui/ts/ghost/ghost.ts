@@ -101,7 +101,7 @@ export class GhostController {
 			return false;
 	}
 
-	async scanGhosts() {
+	async scanGhosts() 
 		if (!isTauriAvailable()) {
 			return this.ghosts;
 		}
@@ -121,15 +121,13 @@ export class GhostController {
 			console.error("ゴーストスキャン失敗:", e);
 		}
 		return this.ghosts;
-	}
 
-	async scanAndLoadFirstGhost() {
+	async scanAndLoadFirstGhost() 
 		if (this.ghosts.length > 0) {
 			await this.selectGhost(this.ghosts[0].name);
 		} else {
 			await this.selectGhost(AppConfig.paths.fallbackGhostName);
 		}
-	}
 
 	async selectGhost(ghostName: string) {
 		const prevGhostName = this.currentGhost?.name || "";

@@ -121,7 +121,7 @@ export function convertFileSrc(
 export async function listen(
 	event: string,
 
-	handler: (event: unknown) => void,
+	_handler: (event: unknown) => void,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: (event: any) => void,

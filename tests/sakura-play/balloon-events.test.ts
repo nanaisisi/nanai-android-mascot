@@ -33,12 +33,12 @@ test("choice click triggers OnChoiceSelectEx first, then falls back to OnChoiceS
 			onScriptEnd() ,,
 		ghostController:
 
-			sendShioriEvent: async (event: string, args: unknown[]) =>
+			sendShioriEvent: async (_event: string, _args: unknown[]) =>
 
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
-			sendShioriEvent: async (event: string, args: any[]) =>
+			sendShioriEvent: async (_event: string, _args: any[]) =>
 
-				if (event === "OnTranslate") return { script: null };
+				if (_event === "OnTranslate") return { script: null };
 				shioriEvents.push({ event, args });
 				// Return no content (empty/falsy) to simulate fallback
 				return null;,,;
@@ -107,12 +107,12 @@ test("choice click does not trigger OnChoiceSelect if OnChoiceSelectEx returns r
 			onScriptEnd() ,,
 		ghostController:
 
-			sendShioriEvent: async (event: string, args: unknown[]) =>
+			sendShioriEvent: async (_event: string, _args: unknown[]) =>
 
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
-			sendShioriEvent: async (event: string, args: any[]) =>
+			sendShioriEvent: async (_event: string, _args: any[]) =>
 
-				if (event === "OnTranslate") return { script: null };
+				if (_event === "OnTranslate") return { script: null };
 				shioriEvents.push({ event, args });
 				if (event === "OnChoiceSelectEx") {
 					return { script: "\\0了解しました。\\e" };
@@ -170,12 +170,12 @@ test("anchor click triggers OnAnchorSelectEx first, then falls back to OnAnchorS
 			onScriptEnd() ,,
 		ghostController:
 
-			sendShioriEvent: async (event: string, args: unknown[]) =>
+			sendShioriEvent: async (_event: string, _args: unknown[]) =>
 
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
-			sendShioriEvent: async (event: string, args: any[]) =>
+			sendShioriEvent: async (_event: string, _args: any[]) =>
 
-				if (event === "OnTranslate") return { script: null };
+				if (_event === "OnTranslate") return { script: null };
 				shioriEvents.push({ event, args });
 				return null;,,;
 

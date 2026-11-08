@@ -166,7 +166,7 @@ export const surfaceDressupMethods = {
 	},
 
 
-	activeBindAnimationIds(this: unknown, scopeId: number = 0): number[]
+	_activeBindAnimationIds(this: unknown, _scopeId: number = 0): number[]
 		if (!this.shellManifest) return [];
 		return bindGroupsForScope(this.shellManifest, scopeId)
 			.filter((group: unknown) =>

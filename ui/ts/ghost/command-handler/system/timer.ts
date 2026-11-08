@@ -176,9 +176,9 @@ export async function _handleTimerNotifyCommand(handler: any, args: string[]) {
 	}
 }
 
-export async function handleTimerRaiseOtherCommand(
+export async function _handleTimerRaiseOtherCommand(
 
-	handler: unknown,
+	_handler: unknown,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,

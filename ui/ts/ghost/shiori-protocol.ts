@@ -5,7 +5,7 @@
 
 export function statusCodeFromRust(
 
-	status: string | Record<string, unknown> | undefined,
+	_status: string | Record<string, unknown> | undefined,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	status: string | Record<string, any> | undefined,

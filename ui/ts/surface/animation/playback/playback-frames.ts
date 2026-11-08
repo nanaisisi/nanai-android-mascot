@@ -43,7 +43,6 @@ export async function _playAnimationPatterns(
 	scopeIdOrKey,
 	keyParam,
 ) {
-
 	let _instance: unknown,
 		_anim: unknown,
 		_baseSurfaceId: unknown,

@@ -66,7 +66,7 @@ export class SakuraScriptPlayer {
 
 		if (isTauriAvailable()) {
 
-			listen("balloon-choice-selected", (event: unknown) =>
+			listen("balloon-choice-selected", (_event: unknown) =>
 
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			listen("balloon-choice-selected", (event: any) => {
@@ -77,7 +77,7 @@ export class SakuraScriptPlayer {
 				}
 			});
 
-			listen("balloon-anchor-selected", (event: unknown) =>
+			listen("balloon-anchor-selected", (_event: unknown) =>
 
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			listen("balloon-anchor-selected", (event: any) => {
@@ -93,7 +93,7 @@ export class SakuraScriptPlayer {
 				this.skip();
 			});
 
-			listen("balloon-ready", (event: unknown) =>
+			listen("balloon-ready", (_event: unknown) =>
 
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			listen("balloon-ready", (event: any) => {

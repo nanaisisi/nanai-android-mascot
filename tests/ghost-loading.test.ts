@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 const deferred = () => {
-
 	const _resolve: unknown = null;
 
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix

@@ -37,7 +37,6 @@ export async function _playTimelineFrames(
 	keyOrOptions,
 	optionsParam = {},
 ) {
-
 	let _instance: unknown,
 		_timeline: unknown,
 		_anim: unknown,
@@ -124,7 +123,6 @@ export async function _playOnePat(
 	isCurrentOrOptions,
 	optionsParam = {},
 ) {
-
 	let _instance: unknown,
 		_pat: unknown,
 		_anim: unknown,

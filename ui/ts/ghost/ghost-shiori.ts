@@ -4,8 +4,8 @@ import { fromRustResponse } from "./shiori-protocol.js";
 export const ghostShioriMethods = {
 	async initializeGhostSHIORI(
 
-		ghost: unknown,
-		readinessGatePromise: Promise<unknown> | null = null,
+		_ghost: unknown,
+		_readinessGatePromise: Promise<unknown> | null = null,
 
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		ghost: any,
@@ -275,7 +275,7 @@ export const ghostShioriMethods = {
 	triggerRandomTalk(this: any)
 		this.sendShioriEvent("OnRandomTalk")
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
-			.then((res: any) =>
+			.then((_res: any) =>
 
 				if (res?.status === 200 && res?.value) {
 					this.app?.playSakuraScript?.(res.value);

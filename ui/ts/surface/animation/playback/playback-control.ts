@@ -27,7 +27,6 @@ export function playAnimationPatterns(
 	baseSurfaceIdOrScopeId,
 	scopeIdParam,
 ) {
-
 	let _instance: unknown,
 		_anim: unknown,
 		_baseSurfaceId: unknown,
@@ -85,7 +84,6 @@ export async function playAnimationById(
 	scopeIdOrWaitForComplete = 0,
 	waitForCompleteParam = false,
 ) {
-
 	let _instance: unknown,
 		_animIdOrName: unknown,
 		_scopeId: unknown,
@@ -136,7 +134,6 @@ export async function waitForAnimation(
 	scopeIdParam = 0,
 	timeoutMs = 30000,
 ) {
-
 	let _instance: unknown, _animIdOrName: unknown, _scopeId: unknown;
 
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix

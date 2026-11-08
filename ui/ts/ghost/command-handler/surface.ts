@@ -5,7 +5,7 @@
 
 export async function handleBindCommand(
 
-	handler: unknown,
+	_handler: unknown,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,

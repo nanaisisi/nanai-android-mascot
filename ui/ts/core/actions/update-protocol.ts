@@ -172,9 +172,9 @@ export function _parseErrorReason(err: any): string {
  * @param {boolean} [isOther=false] - 外部リソース更新時は true
  * @returns {(event: unknown) => void}
  */
-export function createUpdateProgressHandler(
+export function _createUpdateProgressHandler(
 
-	gc: unknown,
+	_gc: unknown,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	gc: any,

@@ -34,7 +34,6 @@ export function renderAnimationFrame(
 	scopeIdOrAnimOptions,
 	animationOptionsParam = {},
 ) {
-
 	let _instance: unknown,
 		_pat: unknown,
 		_baseSurfaceId: unknown,

@@ -32,8 +32,8 @@ export async function _handleSetPropertyCommand(handler: any, args: string[]) {
  */
 
 export async function _handleSetSerikoTalkCommand(
-	handler: unknown,
-	args: string[],
+	_handler: unknown,
+	_args: string[],
 ) {
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -52,9 +52,9 @@ export async function _handleSetSerikoTalkCommand(handler: any, args: string[]) 
 /**
  * 他ゴーストサーフィス変更通知トグル (\![set,othersurfacechange,true/false])
  */
-export async function handleSetOtherSurfaceChangeCommand(
+export async function _handleSetOtherSurfaceChangeCommand(
 
-	handler: unknown,
+	_handler: unknown,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
@@ -119,7 +119,7 @@ export async function _handleLeaveMode(handler: any, args: string[]) {
 }
 
 
-export async function _handleGetPropertyCommand(handler: unknown, key: string) {
+export async function _handleGetPropertyCommand(_handler: unknown, key: string) {
 	if (!key) return "";
 	if (handler?.app?.ghostController?.sendShioriEvent) {
 		try {
@@ -146,7 +146,7 @@ export async function _handleGetPropertyCommand(handler: any, key: string) {
 
 
 export async function _handleSetScalingCommand(
-	handler: unknown,
+	_handler: unknown,
 	_args: string[],
 ) {
 

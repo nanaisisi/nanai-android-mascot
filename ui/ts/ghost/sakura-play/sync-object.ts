@@ -7,7 +7,6 @@ export class SyncObject {
 	name: string;
 	signaled: boolean;
 	waiters: Set<{
-
 		resolve: (value: boolean | PromiseLike<boolean>) => void;
 		reject: (reason?: unknown) => void;
 		timer: unknown;
@@ -67,8 +66,6 @@ export class SyncObject {
 			const _waiter = {
 				resolve,
 				reject,
-
-				timer: null as unknown,
 
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				timer: null as any,

@@ -6,7 +6,7 @@
 import { invoke, isTauriAvailable } from "../../core/tauri-helper.js";
 
 
-export async function handleSetWallpaper(_handler: unknown, args: string[]) {
+export async function handleSetWallpaper(_handler: unknown, _args: string[]) {
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function _handleSetWallpaper(_handler: any, args: string[]) {
@@ -36,7 +36,7 @@ export async function _handleRestoreWallpaper(_handler: any, _args: string[]) {
 	console.log("🖼️ Wallpaper restorewallpaper executed");
 }
 
-export async function handleCancelNetworkService(
+export async function _handleCancelNetworkService(
 
 	_handler: unknown,
 
@@ -52,7 +52,7 @@ export async function handleCancelNetworkService(
 
 export async function _handleCloseNetworkService(
 	_handler: unknown,
-	args: string[],
+	_args: string[],
 ) {
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -388,9 +388,9 @@ export async function _handleUpdateByMyself(_handler: any) {
 	await handler.app.startNetworkUpdate?.();
 }
 
-export async function handleSoundEventNotify(
+export async function _handleSoundEventNotify(
 
-	handler: unknown,
+	_handler: unknown,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,

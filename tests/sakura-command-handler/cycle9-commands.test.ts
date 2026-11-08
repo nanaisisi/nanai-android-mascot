@@ -11,7 +11,6 @@ setupMockDom();
 
 describe("SakuraCommandHandler - Cycle 9 Extended Commands", () => {
 	it("handles timernotify and timernotifyother commands", async () => {
-
 		const _eventsSent: unknown[] = [];
 
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -82,7 +81,6 @@ describe("SakuraCommandHandler - Cycle 9 Extended Commands", () => {
 	});
 
 	it("handles plugin timer and event commands (timerraiseplugin, timernotifyplugin, raiseplugin, notifyplugin)", async () => {
-
 		const _eventsSent: unknown[] = [];
 
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -144,7 +142,6 @@ describe("SakuraCommandHandler - Cycle 9 Extended Commands", () => {
 	});
 
 	it("handles execute commands (execute:*, execute,emptyrecyclebin, filewatch, ping, nslookup, schedule-add)", async () => {
-
 		const _eventsSent: unknown[] = [];
 
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix

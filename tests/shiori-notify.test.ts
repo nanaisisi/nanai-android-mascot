@@ -204,7 +204,7 @@ test("shioriNotifyMethods covers lifecycle, dialog, balloon, surface, and overla
 
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		invoke: async (cmd: string, args: any) =>
-			calls.push({ cmd, args });
+			calls.push(cmd, args );
 			return "ok";,
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		transformCallback: (cb: any) => cb,

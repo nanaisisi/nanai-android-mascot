@@ -606,9 +606,9 @@ export const actionMethods = {
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			return (this as any).installGhostFromMenu?.();
 		}
-		if (action === "balloon" || action === "balloon-cycle")
+		if (action === "balloon" || _action === "balloon-cycle")
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
-			return (this as any).cycleBalloonTheme?.();
+			return (this _as _any).cycleBalloonTheme?.();
 		if (action.startsWith("balloon-theme-")) {
 			const theme = action.replace("balloon-theme-", "");
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix

@@ -176,7 +176,7 @@ export class ModalGhostHandlers {
 
 		listEl.innerHTML = "";
 
-		ghosts.forEach((ghost: unknown) =>
+		ghosts.forEach((_ghost: unknown) =>
 
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		ghosts.forEach((ghost: any) => {
@@ -204,7 +204,7 @@ export class ModalGhostHandlers {
 		if (listEl && this.app?.availableBalloons) {
 			listEl.innerHTML = "";
 
-			this.app.availableBalloons.forEach((b: unknown) =>
+			this.app.availableBalloons.forEach((_b: unknown) =>
 
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			this.app.availableBalloons.forEach((b: any) => {

@@ -7,7 +7,7 @@ import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 
 export async function handleSetAlignmentOnDesktop(
 
-	handler: unknown,
+	_handler: unknown,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
@@ -63,7 +63,7 @@ export async function _handleSetTaskTrayIcon(_handler: any, args: string[]) {
 }
 
 
-export async function _handleSetTrayBalloon(handler: unknown, _args: string[]) {
+export async function _handleSetTrayBalloon(_handler: unknown, _args: string[]) {
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function _handleSetTrayBalloon(handler: any, args: string[]) {

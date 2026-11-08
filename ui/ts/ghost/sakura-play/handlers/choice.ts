@@ -6,9 +6,9 @@
 
 export function handleChoice(
 	_player: unknown,
-	app: unknown,
-	token: unknown,
-	context: unknown,
+	_app: unknown,
+	_token: unknown,
+	_context: unknown,
 ) {
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -84,12 +84,12 @@ export function _handleChoice(player: any, app: any, token: any, context: any) {
 	}
 }
 
-export function handleAnchorBegin(
+export function _handleAnchorBegin(
 
 	_player: unknown,
-	app: unknown,
-	token: unknown,
-	context: unknown,
+	_app: unknown,
+	_token: unknown,
+	_context: unknown,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_player: any,

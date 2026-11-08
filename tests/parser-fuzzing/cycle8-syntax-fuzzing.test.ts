@@ -89,7 +89,7 @@ test("Parser Fuzzing Cycle 8: Mode transition commands and cross-ghost IPC anoma
 						eventsSent.push({ ev, args });,
 					// biome-ignore lint/suspicious/noExplicitAny: automated fix
 					sendRaiseOther: async (ghost: string, ev: string, refs: any[]) =>
-						eventsSent.push({ type: "raiseOther", ghost, ev, refs });,
+						eventsSent.push(type: "raiseOther", ghost, ev, refs );,
 					// biome-ignore lint/suspicious/noExplicitAny: automated fix
 					sendNotifyOther: async (ghost: string, ev: string, refs: any[]) =>
 

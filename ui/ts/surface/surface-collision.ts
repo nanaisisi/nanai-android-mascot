@@ -92,7 +92,7 @@ export const surfaceCollisionMethods = {
 		_clickX: number,
 		_clickY: number,
 
-		targetRect: unknown,
+		_targetRect: unknown,
 
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		targetRect: any,
@@ -161,7 +161,7 @@ export const surfaceCollisionMethods = {
 
 		let _candidates: unknown[] = [];
 		if (sortKind === "ascend" || sortKind === "id") {
-			_candidates = colList.slice().sort((a: unknown, b: unknown) => {
+			_candidates = colList.slice().sort((_a: unknown, _b: unknown) => {
 
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(this as any).collisionSort || "none",
@@ -179,7 +179,7 @@ export const surfaceCollisionMethods = {
 			});
 		} else if (sortKind === "descend") {
 
-			candidates = colList.slice().sort((a: unknown, b: unknown) =>
+			candidates = colList.slice().sort((_a: unknown, _b: unknown) =>
 
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			candidates = colList.slice().sort((a: any, b: any) => {

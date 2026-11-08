@@ -14,7 +14,7 @@ const scopeId = parseInt(urlParams.get("scope") || "0", 10);
 let appliedTheme: string | null = null;
 let applyingTheme: string | null = null;
 let _currentDpiScale = 1;
-const currentUserScale = 1;
+let currentUserScale = 1;
 let _isBalloonDontMove = false;
 
 export {
@@ -70,7 +70,7 @@ export function initBalloonWindow() {
 	if (!isTauriAvailable()) return;
 
 
-	void listen(`update-balloon-content-$scopeId`, (event: unknown) =>
+	void listen(`update-balloon-content-$scopeId`, (_event: unknown) =>
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	void listen(`update-balloon-content-$scopeId`, (event: any) => {
@@ -88,7 +88,7 @@ export function initBalloonWindow() {
 	});
 
 
-	void listen("balloon-theme-changed", (event: unknown) =>
+	void listen("balloon-theme-changed", (_event: unknown) =>
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	void listen("balloon-theme-changed", (event: any) => {
@@ -102,7 +102,7 @@ export function initBalloonWindow() {
 	});
 
 
-	void listen("balloon-scale-changed", (event: unknown) =>
+	void listen("balloon-scale-changed", (_event: unknown) =>
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	void listen("balloon-scale-changed", (event: any) => {

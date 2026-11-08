@@ -22,7 +22,6 @@ export interface SakuraScriptToken {
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	[key: string]: any;
-
 }
 
 export {

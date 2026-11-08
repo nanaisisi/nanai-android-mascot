@@ -16,12 +16,11 @@ export const menuCaptionRenderer = {
 		for (const def of MENU_CAPTION_DEFINITIONS) {
 			const _customVal = captions[def.resource] || captions[def.id];
 			const _el =
-
 				(rootEl as unknown).getElementById?.(def.id) ||
 				(rootEl as unknown).querySelector?.(`#${def.id}`);
 
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
-				(rootEl as any).getElementById?.(def.id) ||
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			(rootEl as any).getElementById?.(def.id) ||
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				(rootEl as any).querySelector?.(`#$def.id`);
 
@@ -37,12 +36,10 @@ export const menuCaptionRenderer = {
 	},
 
 	async fetchShioriCaptions(
-
-		ghostController: unknown,
+		_ghostController: unknown,
 
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		ghostController: any,
-
 	): Promise<Record<string, string>> {
 		if (!ghostController?.requestShioriResource) return {};
 		const captions: Record<string, string> = {};

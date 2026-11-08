@@ -7,10 +7,10 @@ import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 
 
 export function handleScope(
-	player: unknown,
-	app: unknown,
-	token: unknown,
-	context: unknown,
+	_player: unknown,
+	_app: unknown,
+	_token: unknown,
+	_context: unknown,
 ) {
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -67,12 +67,12 @@ export function _handleScope(player: any, app: any, token: any, context: any) {
 	}
 }
 
-export function handleBalloon(
+export function _handleBalloon(
 
-	player: unknown,
+	_player: unknown,
 	_app: unknown,
-	token: unknown,
-	context: unknown,
+	_token: unknown,
+	_context: unknown,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	player: any,
@@ -94,12 +94,12 @@ export function handleBalloon(
 	}
 }
 
-export function handleInlineBitmap(
+export function _handleInlineBitmap(
 
 	_player: unknown,
-	app: unknown,
-	token: unknown,
-	context: unknown,
+	_app: unknown,
+	_token: unknown,
+	_context: unknown,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_player: any,

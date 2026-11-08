@@ -158,7 +158,7 @@ test("E2E dialogue lifecycle Cycle 8: Mode switching state machine and cross-gho
 				args: any[],
 
 			) =>
-				events.push({ type: "notify_other", ghost, eventName, args });,
+				events.push(type: "notify_other", ghost, eventName, args );,
 		},
 	};
 

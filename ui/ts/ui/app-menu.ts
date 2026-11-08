@@ -92,7 +92,7 @@ export const menuMethods = {
 
 	syncMenuGhosts(scope: number = 0) {
 
-		const gc = (this as unknown).ghostController;
+		const _gc = (this as unknown).ghostController;
 
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const gc = (this as any).ghostController;
@@ -163,8 +163,6 @@ export const menuMethods = {
 					dressup,
 					recentGhosts,
 
-					captions: (this as unknown).cachedMenuCaptions || {},
-
 					// biome-ignore lint/suspicious/noExplicitAny: automated fix
 					captions: (this as any).cachedMenuCaptions || {},
 
@@ -207,13 +205,12 @@ export const menuMethods = {
 		}
 	},
 
-	hideMenu() {
+	hideMenu() 
 
 		if ((this as unknown).elements.menuContainer) {
 			(this as unknown).elements.menuContainer.style.display = "none";
 		}
-		(this as unknown).hideQuickActionsPanel();
-	},
+		(this as unknown).hideQuickActionsPanel();,
 
 	toggleQuickActionsPanel() {
 		if (!(this as unknown).elements.quickActionsPanel) return;
@@ -243,7 +240,7 @@ export const menuMethods = {
 			: "flex";
 	},
 
-	hideQuickActionsPanel() {
+	hideQuickActionsPanel() 
 
 		if ((this as unknown).elements.quickActionsPanel) {
 			(this as unknown).elements.quickActionsPanel.style.display = "none";
@@ -254,5 +251,4 @@ export const menuMethods = {
 			(this as any).elements.quickActionsPanel.style.display = "none";
 
 		}
-	},
-};
+	},;

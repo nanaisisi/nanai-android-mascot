@@ -100,7 +100,6 @@ test("invoke, listen, emit, moveCurrentWindowBy, getCurrentWindowPosition, and i
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	assert.equal((globalThis as any).__NANAI_IPC_QUEUE_STATS__, ipcQueueStats);
 
-
 	// 1. invoke when Tauri unavailable (throws error)
 	delete globalThis.__TAURI_INTERNALS__;
 	await assert.rejects(async () => {

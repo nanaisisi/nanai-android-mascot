@@ -81,7 +81,7 @@ export function _resetBalloonWait(this: any) {
 	});
 }
 
-export function calculateWait(
+export function _calculateWait(
 
 	this: unknown,
 

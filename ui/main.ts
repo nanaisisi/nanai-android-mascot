@@ -254,6 +254,6 @@ globalThis.addEventListener("DOMContentLoaded", () => {
 	(_globalThis _as _unknown).mascotApp = new NanaiAndroidMascotApp();
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	(globalThis as any).mascotApp = new NanaiAndroidMascotApp();
+	(_globalThis _as _any).mascotApp = new NanaiAndroidMascotApp();
 
 });

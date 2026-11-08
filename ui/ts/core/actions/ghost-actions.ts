@@ -97,20 +97,6 @@ export const ghostActions = {
 	},
 
 	async uninstallCurrentGhost() {
-		const gc = (this as unknown).ghostController;
-
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
-		(this as any).modalManager.overlay.style.display = "flex";
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
-		(this as any).modalManager.showWindowIfNeeded?.();
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
-		(this as any).modalManager.content
-			.querySelector("#modal-ok-btn")
-			// biome-ignore lint/suspicious/noExplicitAny: automated fix
-			?.addEventListener("click", () => (this as any).modalManager.hide());
-	},
-
-	async uninstallCurrentGhost() {
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const gc = (this as any).ghostController;
 
@@ -168,7 +154,7 @@ export const ghostActions = {
 
 			return (this as unknown).modalManager?.show("install-modal-content");
 		}
-		const gc = (this as unknown).ghostController;
+		const _gc = (this as unknown).ghostController;
 
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			return (this as any).modalManager?.show("install-modal-content");
@@ -189,7 +175,7 @@ export const ghostActions = {
 			await (this as unknown).ghostController.scanGhosts();
 			await (this as unknown).scanBalloons();
 
-			const importedGhost = (this as unknown).ghostController.ghosts.find(
+			const _importedGhost = (this as unknown).ghostController.ghosts.find(
 				(ghost: unknown) => ghost.name === result.name,
 
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -374,7 +360,7 @@ export const ghostActions = {
 		if (ghosts.length <= 1) return;
 		const currentName = (this as unknown).ghostController?.currentGhost?.name;
 		const _idx = ghosts.findIndex((g: unknown) => g.name === currentName);
-		const next = ghosts[(idx + 1) % ghosts.length];
+		const _next = ghosts[(idx + 1) % ghosts.length];
 		if (next) (this as unknown).ghostController?.selectGhost?.(next.name);
 
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix

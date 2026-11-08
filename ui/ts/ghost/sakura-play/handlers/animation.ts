@@ -4,10 +4,9 @@
  */
 
 export function handleSurface(
-
-	player: unknown,
-	app: unknown,
-	token: unknown,
+	_player: unknown,
+	_app: unknown,
+	_token: unknown,
 	_context: unknown,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -18,16 +17,14 @@ export function handleSurface(
 	token: any,
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_context: any,
-
 ) {
 	app.ghostController.updateSurface(token.value, player.currentScope);
 }
 
 export async function handleAnimation(
-
-	player: unknown,
-	app: unknown,
-	token: unknown,
+	_player: unknown,
+	_app: unknown,
+	_token: unknown,
 	_context: unknown,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -38,7 +35,6 @@ export async function handleAnimation(
 	token: any,
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_context: any,
-
 ) {
 	await app.surfaceManager?.playAnimationById(
 		token.animId,
@@ -48,10 +44,9 @@ export async function handleAnimation(
 }
 
 export async function handleWaitAnimation(
-
-	player: unknown,
-	app: unknown,
-	token: unknown,
+	_player: unknown,
+	_app: unknown,
+	_token: unknown,
 	_context: unknown,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -62,7 +57,6 @@ export async function handleWaitAnimation(
 	token: any,
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_context: any,
-
 ) {
 	await app.surfaceManager?.waitForAnimation(token.animId, player.currentScope);
 }

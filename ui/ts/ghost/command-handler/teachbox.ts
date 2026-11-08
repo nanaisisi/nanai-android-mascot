@@ -5,9 +5,9 @@
 
 export function openTeachBox(
 
-	handler: unknown,
-	params: string[] = [],
-	options: unknown = {},
+	_handler: unknown,
+	_params: string[] = [],
+	_options: unknown = {},
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,

@@ -3,12 +3,10 @@ import { isAndroidPlatform } from "../../ui/js/ui/touch/bridge/overlay.js";
 import { ANDROID_EVENTS, AndroidBridge } from "../../ui/js/ui/touch/index.js";
 
 describe("AndroidBridge - Platform & Overlay", () => {
-
-	let originalNavigator: unknown = null;
+	const _originalNavigator: unknown = null;
 
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let originalNavigator;
-
 
 	beforeEach(() => {
 		originalNavigator = globalThis.navigator;

@@ -5,7 +5,7 @@
 
 export function openInputBox(
 
-	handler: unknown,
+	_handler: unknown,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
@@ -108,10 +108,10 @@ export function openInputBox(
 
 	submitBtn.addEventListener("click", () => submit());
 
-	input.addEventListener("keydown", (e: unknown) =>
+	input.addEventListener("keydown", (_e: unknown) =>
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	input.addEventListener("keydown", (e: any) =>
+	input.addEventListener("keydown", (_e: any) =>
 
 		if (e.key === "Enter") {
 			submit();

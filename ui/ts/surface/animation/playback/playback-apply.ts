@@ -61,7 +61,6 @@ export async function _applyAnimationFrame(
 	isCurrentOrOptions,
 	optionsParam = {},
 ) {
-
 	let _instance: unknown,
 		_pat: unknown,
 		_anim: unknown,

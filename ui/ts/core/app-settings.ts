@@ -132,7 +132,6 @@ export const settingsMethods = {
 				.then(() =>
 					emit(`update-balloon-content-$scopeId`, {
 						html: (this as unknown).elements.balloonText?.innerHTML || text,
-						theme: (this as unknown).currentBalloonTheme || "default",
 
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				theme: (this as any).currentBalloonTheme,)
@@ -239,7 +238,7 @@ export const settingsMethods = {
 ,
 
 	startSecondTimer()
-		document.addEventListener("visibilitychange", () => {
+		document.addEventListener("visibilitychange", () => 
 			if (document.visibilityState === "visible") {
 
 				(this as unknown).ghostController.sendShioriEvent(
@@ -249,6 +248,5 @@ export const settingsMethods = {
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				(this as any).ghostController.sendShioriEvent("OnWindowStateRestore");
 
-			}
-		});,
+			});,
 };

@@ -46,7 +46,7 @@ export const mouseMethods = {
 
 		(this as unknown).ghostController
 			.sendShioriEvent("OnMouseDoubleClick", args)
-			.then((res: unknown) =>
+			.then((_res: unknown) =>
 				if (!res?.script) {
 					(this as unknown).ghostController.sendShioriEvent(
 						"OnMouseClick",
@@ -57,7 +57,7 @@ export const mouseMethods = {
 		(this as any).ghostController
 			.sendShioriEvent("OnMouseDoubleClick", args)
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
-			.then((res: any) =>
+			.then((_res: any) =>
 				if (!res?.script) {
 					// biome-ignore lint/suspicious/noExplicitAny: automated fix
 					(this as any).ghostController.sendShioriEvent("OnMouseClick", args);
@@ -77,7 +77,7 @@ export const mouseMethods = {
 			(this as unknown).sakuraPlayer?.isPlaying
 		)
 			return;
-		const col = (this as unknown).getCollisionInfo(
+		const _col = (this as unknown).getCollisionInfo(
 			clientX,
 			clientY,
 			rect,
@@ -133,13 +133,13 @@ export const mouseMethods = {
 			(this as unknown).sakuraPlayer?.isPlaying
 		)
 			return;
-		const col = (this as unknown).getCollisionInfo(
+		const _col = (this as unknown).getCollisionInfo(
 			clientX,
 			clientY,
 			rect,
 			scopeId,
 		);
-		const eventName = isWindow ? "OnMouseEnterAll" : "OnMouseEnter";
+		const _eventName = isWindow ? "OnMouseEnterAll" : "OnMouseEnter";
 		(this as unknown).ghostController.sendShioriEvent(eventName, [
 
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -182,13 +182,13 @@ export const mouseMethods = {
 			(this as unknown).sakuraPlayer?.isPlaying
 		)
 			return;
-		const col = (this as unknown).getCollisionInfo(
+		const _col = (this as unknown).getCollisionInfo(
 			clientX,
 			clientY,
 			rect,
 			scopeId,
 		);
-		const eventName = isWindow ? "OnMouseLeaveAll" : "OnMouseLeave";
+		const _eventName = isWindow ? "OnMouseLeaveAll" : "OnMouseLeave";
 		(this as unknown).ghostController.sendShioriEvent(eventName, [
 
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -233,13 +233,13 @@ export const mouseMethods = {
 			(this as unknown).sakuraPlayer?.isPlaying
 		)
 			return;
-		const col = (this as unknown).getCollisionInfo(
+		const _col = (this as unknown).getCollisionInfo(
 			clientX,
 			clientY,
 			rect,
 			scopeId,
 		);
-		const eventName = type === "up" ? "OnMouseUpEx" : "OnMouseDownEx";
+		const _eventName = type === "up" ? "OnMouseUpEx" : "OnMouseDownEx";
 		(this as unknown).ghostController.sendShioriEvent(eventName, [
 
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -284,13 +284,13 @@ export const mouseMethods = {
 			(this as unknown).sakuraPlayer?.isPlaying
 		)
 			return;
-		const col = (this as unknown).getCollisionInfo(
+		const _col = (this as unknown).getCollisionInfo(
 			clientX,
 			clientY,
 			rect,
 			scopeId,
 		);
-		const eventName = isDouble ? "OnMouseDoubleClickEx" : "OnMouseClickEx";
+		const _eventName = isDouble ? "OnMouseDoubleClickEx" : "OnMouseClickEx";
 		(this as unknown).ghostController.sendShioriEvent(eventName, [
 
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -336,13 +336,13 @@ export const mouseMethods = {
 			(this as unknown).sakuraPlayer?.isPlaying
 		)
 			return;
-		const col = (this as unknown).getCollisionInfo(
+		const _col = (this as unknown).getCollisionInfo(
 			clientX,
 			clientY,
 			rect,
 			scopeId,
 		);
-		const eventName = isEx ? "OnMouseMultipleClickEx" : "OnMouseMultipleClick";
+		const _eventName = isEx ? "OnMouseMultipleClickEx" : "OnMouseMultipleClick";
 		(this as unknown).ghostController.sendShioriEvent(eventName, [
 
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -384,7 +384,7 @@ export const mouseMethods = {
 			(this as unknown).sakuraPlayer?.isPlaying
 		)
 			return;
-		const coord = (x: number, y: number) => `$x\x01$y`;
+		const _coord = (_x: number, _y: number) => `$x\x01$y`;
 		(this as unknown).ghostController.sendShioriEvent("OnMouseGesture", [
 
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -393,7 +393,7 @@ export const mouseMethods = {
 			(this as any).sakuraPlayer?.isPlaying
 		)
 			return;
-		const coord = (x: number, y: number) => `$x\x01$y`;
+		const coord = (_x: number, _y: number) => `$x\x01$y`;
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this as any).ghostController.sendShioriEvent("OnMouseGesture", [
 
@@ -425,7 +425,7 @@ export const mouseMethods = {
 			(this as unknown).sakuraPlayer?.isPlaying
 		)
 			return;
-		const col = (this as unknown).getCollisionInfo(
+		const _col = (this as unknown).getCollisionInfo(
 			clientX,
 			clientY,
 			rect,
@@ -473,7 +473,7 @@ export const mouseMethods = {
 			(this as unknown).sakuraPlayer?.isPlaying
 		)
 			return;
-		const col = (this as unknown).getCollisionInfo(
+		const _col = (this as unknown).getCollisionInfo(
 			clientX,
 			clientY,
 			rect,
@@ -520,7 +520,7 @@ export const mouseMethods = {
 			(this as unknown).sakuraPlayer?.isPlaying
 		)
 			return;
-		const col = (this as unknown).getCollisionInfo(
+		const _col = (this as unknown).getCollisionInfo(
 			clientX,
 			clientY,
 			rect,
@@ -559,7 +559,7 @@ export const mouseMethods = {
 			(this as unknown).sakuraPlayer?.isPlaying
 		)
 			return;
-		const col = (this as unknown).getCollisionInfo(
+		const _col = (this as unknown).getCollisionInfo(
 			clientX,
 			clientY,
 			rect,
@@ -603,7 +603,7 @@ export const mouseMethods = {
 			(this as unknown).sakuraPlayer?.isPlaying
 		)
 			return;
-		const col = (this as unknown).getCollisionInfo(
+		const _col = (this as unknown).getCollisionInfo(
 			clientX,
 			clientY,
 			rect,
@@ -647,7 +647,7 @@ export const mouseMethods = {
 			(this as unknown).sakuraPlayer?.isPlaying
 		)
 			return;
-		const col = (this as unknown).getCollisionInfo(
+		const _col = (this as unknown).getCollisionInfo(
 			clientX,
 			clientY,
 			rect,

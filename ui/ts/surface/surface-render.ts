@@ -18,8 +18,8 @@ export const surfaceRenderMethods = {
 	async composeFrameOnBase(
 
 		this: unknown,
-		baseCanvas: HTMLCanvasElement,
-		frameLayers: unknown[],
+		_baseCanvas: HTMLCanvasElement,
+		_frameLayers: unknown[],
 
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		this: any,
@@ -81,7 +81,7 @@ export const surfaceRenderMethods = {
 		resolveImagePath: (file: string) => Promise<string | null>,
 		scopeId: number = 0,
 
-		frameLayers: unknown[] | null = null,
+		_frameLayers: unknown[] | null = null,
 
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		frameLayers: any[] | null = null,

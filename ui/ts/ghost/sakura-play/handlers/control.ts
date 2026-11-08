@@ -5,10 +5,10 @@
 
 export async function handlePause(
 
-	player: unknown,
+	_player: unknown,
 	_app: unknown,
-	token: unknown,
-	context: unknown,
+	_token: unknown,
+	_context: unknown,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	player: any,
@@ -50,10 +50,10 @@ export async function handlePause(
 
 export function handleQuickToggle(
 
-	player: unknown,
+	_player: unknown,
 	_app: unknown,
-	token: unknown,
-	context: unknown,
+	_token: unknown,
+	_context: unknown,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	player: any,
@@ -75,10 +75,10 @@ export function handleQuickToggle(
 
 export async function handleWait(
 
-	player: unknown,
+	_player: unknown,
 	_app: unknown,
-	token: unknown,
-	context: unknown,
+	_token: unknown,
+	_context: unknown,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	player: any,
@@ -107,7 +107,7 @@ export async function handleWait(
 
 export function handleTimeout(
 
-	player: unknown,
+	_player: unknown,
 	_app: unknown,
 	_token: unknown,
 	_context: unknown,
@@ -127,9 +127,9 @@ export function handleTimeout(
 
 export function handleChoiceTimeout(
 
-	player: unknown,
+	_player: unknown,
 	_app: unknown,
-	token: unknown,
+	_token: unknown,
 	_context: unknown,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -147,9 +147,9 @@ export function handleChoiceTimeout(
 
 export function handleBalloonTimeout(
 
-	player: unknown,
+	_player: unknown,
 	_app: unknown,
-	token: unknown,
+	_token: unknown,
 	_context: unknown,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -168,7 +168,7 @@ export function handleBalloonTimeout(
 export async function handleHalt(
 
 	_player: unknown,
-	app: unknown,
+	_app: unknown,
 	_token: unknown,
 	_context: unknown,
 
@@ -187,9 +187,9 @@ export async function handleHalt(
 
 export function handleSyncToggle(
 
-	player: unknown,
+	_player: unknown,
 	_app: unknown,
-	token: unknown,
+	_token: unknown,
 	_context: unknown,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -216,7 +216,7 @@ export async function handleCommand(
 
 	player: unknown,
 	_app: unknown,
-	token: unknown,
+	_token: unknown,
 	_context: unknown,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix

@@ -5,10 +5,10 @@
 
 export async function handleChar(
 
-	player: unknown,
-	app: unknown,
-	token: unknown,
-	context: unknown,
+	_player: unknown,
+	_app: unknown,
+	_token: unknown,
+	_context: unknown,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	player: any,
@@ -72,10 +72,10 @@ export async function handleChar(
 
 export function handleNewline(
 
-	player: unknown,
+	_player: unknown,
 	_app: unknown,
-	token: unknown,
-	context: unknown,
+	_token: unknown,
+	_context: unknown,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	player: any,
@@ -123,8 +123,8 @@ export function handleNewline(
 export function handleClear(
 	_player: unknown,
 	_app: unknown,
-	token: unknown,
-	context: unknown,
+	_token: unknown,
+	_context: unknown,
 ) {
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -186,12 +186,12 @@ export function _handleClear(player: any, app: any, token: any, context: any) {
 	scheduleDesktopBalloonSync(true);
 }
 
-export function handleOffset(
+export function _handleOffset(
 
 	_player: unknown,
 	_app: unknown,
-	token: unknown,
-	context: unknown,
+	_token: unknown,
+	_context: unknown,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_player: any,

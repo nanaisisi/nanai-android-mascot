@@ -62,7 +62,7 @@ self.addEventListener("message", async (e: MessageEvent) => {
 				(self as unknown).postMessage({
 
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
-				(self as any).postMessage({ type: "LOAD_RESULT", id, success: true });
+				(_self _as _any).postMessage({ type: "LOAD_RESULT", id, success: true });
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			} catch (err: any) {
 				isLoaded = false;

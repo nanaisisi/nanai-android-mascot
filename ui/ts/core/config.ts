@@ -58,7 +58,7 @@ export async function loadAppConfig(): Promise<void> {
 
 		const tauriInternals = (globalThis as unknown).__TAURI_INTERNALS__;
 		if (tauriInternals?.invoke) {
-			const config: unknown = await tauriInternals.invoke("get_app_config");
+			const _config: unknown = await tauriInternals.invoke("get_app_config");
 
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const tauriInternals = (globalThis as any).__TAURI_INTERNALS__;

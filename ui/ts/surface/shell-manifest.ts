@@ -134,7 +134,7 @@ export function collisionRecord(area: any) {
 }
 
 
-export function _collisionContains(_col: unknown, x: number, y: number): boolean {
+export function _collisionContains(_col: unknown, _x: number, _y: number): boolean {
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function _collisionContains(col: any, x: number, y: number): boolean {

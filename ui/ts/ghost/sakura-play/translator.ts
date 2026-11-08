@@ -1,6 +1,6 @@
 export async function translateScript(
 
-	player: unknown,
+	_player: unknown,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	player: any,

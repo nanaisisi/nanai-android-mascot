@@ -51,10 +51,7 @@ pub fn run() {
     #[cfg(debug_assertions)]
     {
         specta_builder
-            .export(
-                Typescript::default(),
-                "../ui/bindings.ts",
-            )
+            .export(Typescript::default(), "../ui/bindings.ts")
             .expect("Failed to export TypeScript bindings");
         if let Ok(content) = std::fs::read_to_string("../ui/bindings.ts") {
             let patched = content

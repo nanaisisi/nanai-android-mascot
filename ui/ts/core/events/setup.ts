@@ -192,11 +192,6 @@ export const setupMethods = {
 
 		const _quick: Record<string, () => void> = {
 
-			"qa-talk-btn": () => (this as unknown).onGhostClick(),
-			"qa-ghost-btn": () => (this as unknown).switchToNextGhost(),
-			"qa-balloon-btn": () => (this as unknown).handleMenuAction("balloon"),
-			"qa-minimize-btn": () => (this as unknown).handleMenuAction("minimize"),
-
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			"qa-talk-btn": () => (this as any).onGhostClick(),
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -237,7 +232,7 @@ export const setupMethods = {
 	setupGlobalListeners() {
 		document.addEventListener("click", () => {
 
-			(this as unknown).hideMenu();
+			(this _as _unknown).hideMenu();
 			(this as unknown).hideQuickActionsPanel();
 
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix

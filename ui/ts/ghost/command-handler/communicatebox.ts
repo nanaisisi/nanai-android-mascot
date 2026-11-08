@@ -4,7 +4,7 @@
  */
 
 
-export function openCommunicateBox(handler: unknown, _params: string[] = []) {
+export function openCommunicateBox(_handler: unknown, _params: string[] = []) {
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function _openCommunicateBox(handler: any, params: string[] = []) {

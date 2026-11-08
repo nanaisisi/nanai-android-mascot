@@ -73,11 +73,11 @@ test("Canvas Pixel Snapshot Cycle 7: SurfaceFrameBuffer add-glow, color-dodge-gl
 });
 
 test("Canvas Pixel Snapshot Cycle 7: processChromaKey options.paintTransparentRegionBlack", async () => {
-	const origDocument = globalThis.document;
-	const origImage = globalThis.Image;
+	const _origDocument = globalThis.document;
+	const _origImage = globalThis.Image;
 
 
-	let baseCanvas: unknown = null;
+	const baseCanvas: unknown = null;
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let baseCanvas: any = null;

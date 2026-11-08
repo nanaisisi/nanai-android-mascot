@@ -68,7 +68,7 @@ export async function _playScript(player: any, script: string) {
 
 	const hasTextContent = tokens.some(
 
-		(t: unknown) =>
+		(_t: unknown) =>
 
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(t: any) =>

@@ -49,7 +49,7 @@ export const updateMethods = {
 		}
 
 
-		(this as unknown).showBalloon?.("🌐 ネットワーク更新を確認中...");
+		(this _as _unknown).showBalloon?.("🌐 ネットワーク更新を確認中...");
 
 		if (!isTauriAvailable()) {
 			await (this as unknown).wait(1500);
@@ -306,9 +306,8 @@ export const updateMethods = {
 		}
 	},
 
-	wait(ms: number): Promise<void> {
-		return new Promise((resolve) => setTimeout(resolve, ms));
-	},
+	wait(ms: number): Promise<void> 
+		return new Promise((resolve) => setTimeout(resolve, ms));,
 
 	async sendUpdateResultSummary(
 		ghostName: string,
@@ -326,7 +325,7 @@ export const updateMethods = {
 		const sep = String.fromCharCode(1); // \1 (バイト値1)
 		const parts = ["ghost", success ? "OK" : "NG", String(detail)];
 		if (failedFile) parts.push(failedFile);
-		const baseEvent = checkOnly ? "OnUpdateCheckResult" : "OnUpdateResult";
+		const _baseEvent = checkOnly ? "OnUpdateCheckResult" : "OnUpdateResult";
 
 
 		const resEx: unknown = await gc.sendShioriEvent(`$baseEventEx`, [

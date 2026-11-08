@@ -281,7 +281,7 @@ export function collectAstTokens(_ast: SakuraAstNode): any[] {
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const tokens: any[] = [];
 
-	traverseAst(ast, (node) =>
+	traverseAst(ast, (_node) =>
 		if (node.nodeType === "command" && node.token) {
 			tokens.push(node.token);
 		} else if (node.nodeType === "choice") {

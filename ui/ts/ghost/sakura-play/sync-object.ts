@@ -64,9 +64,7 @@ export class SyncObject {
 	}
 
 	async wait(
-		optionsOrTimeout:
-			| number
-			| { timeout?: number; resetOnWait?: boolean } = 0,
+		optionsOrTimeout: number | { timeout?: number; resetOnWait?: boolean } = 0,
 		legacyResetOnWait: boolean = true,
 	): Promise<boolean> {
 		let timeoutMs = 0;
@@ -159,9 +157,7 @@ export class SyncObjectManager {
 
 	async wait(
 		name: string,
-		optionsOrTimeout:
-			| number
-			| { timeout?: number; resetOnWait?: boolean } = 0,
+		optionsOrTimeout: number | { timeout?: number; resetOnWait?: boolean } = 0,
 		resetOnWait: boolean = true,
 	): Promise<boolean> {
 		return await this.getOrCreate(name).wait(optionsOrTimeout, resetOnWait);

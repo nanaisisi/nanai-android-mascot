@@ -24,6 +24,7 @@ function isInstance(obj: unknown) {
  * @param {unknown} keyOrIsCurrent
  * @param {Record<string, unknown> | undefined} [isCurrentOrOptions]
  * @param {unknown} [optionsParam={}]
+ * @returns {boolean}
  */
 export function _applyAnimationFrame(
 	this: unknown,
@@ -35,15 +36,15 @@ export function _applyAnimationFrame(
 	keyOrIsCurrent: undefined,
 	isCurrentOrOptions: Record<string, unknown> | undefined,
 	optionsParam = {},
-) {
-	let instance: unknown,
-		pat: unknown,
-		_anim: unknown,
-		baseSurfaceId: unknown,
-		scopeId: unknown,
-		_key: unknown,
-		isCurrent: unknown,
-		options: unknown;
+): boolean {
+	let instance: any,
+		pat: any,
+		_anim: any,
+		baseSurfaceId: any,
+		scopeId: any,
+		_key: any,
+		isCurrent: any,
+		options: any;
 	if (isInstance(target)) {
 		instance = target;
 		pat = patOrAnim;
@@ -64,30 +65,27 @@ export function _applyAnimationFrame(
 		options = isCurrentOrOptions || {};
 	}
 
-	const inst = instance as Record<string, unknown>;
-	const p = pat as Record<string, unknown>;
+	const inst = instance || {};
+	const p = pat || {};
 	const sId = scopeId as number;
 	const bSurfId = baseSurfaceId as string | number;
 	const isCurr = isCurrent as (() => boolean) | undefined;
-	const opts = options as Record<string, unknown>;
+	const opts = options || {};
 
-	if (isCurr && !isCurr()) return;
+	if (isCurr && !isCurr()) return false;
 
-	const manager = inst.manager as Record<string, unknown> | undefined;
-	const renderAnimationFrameFn = inst.renderAnimationFrame as
-		| ((...args: unknown[]) => void)
-		| undefined;
+	const manager = inst.manager;
+	const renderAnimationFrameFn = inst.renderAnimationFrame;
 
 	if (renderAnimationFrameFn) {
 		renderAnimationFrameFn.call(inst, p, bSurfId, sId, opts);
 	} else if (manager) {
 		// デフォルト描画処理
 		const surfaceId = p.surfaceId !== undefined ? p.surfaceId : bSurfId;
-		const renderSurfaceLayer = manager.renderSurfaceLayer as
-			| ((...args: unknown[]) => void)
-			| undefined;
+		const renderSurfaceLayer = manager.renderSurfaceLayer;
 		if (renderSurfaceLayer) {
-			renderSurfaceLayer(surfaceId, p.file, p.x || 0, p.y || 0, opts);
+			renderSurfaceLayer.call(manager, surfaceId, p.file, p.x || 0, p.y || 0, opts);
 		}
 	}
+	return true;
 }

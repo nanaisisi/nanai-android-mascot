@@ -68,6 +68,9 @@ export async function loadAppConfig(): Promise<void> {
 			}
 		}
 	} catch (err) {
-		console.warn("Tauriバックエンドからの設定読み込みに失敗しました（フォールバック設定を使用）:", err);
+		console.warn(
+			"Tauriバックエンドからの設定読み込みに失敗しました（フォールバック設定を使用）:",
+			err,
+		);
 	}
 }

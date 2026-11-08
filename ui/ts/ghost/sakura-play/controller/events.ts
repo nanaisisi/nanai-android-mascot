@@ -6,31 +6,45 @@
 export function on(
 	this: unknown,
 	event: string,
-	handler: Function,
+	handler: (...args: unknown[]) => unknown,
 ): () => void {
-	if (!this.listeners.has(event)) {
-		this.listeners.set(event, new Set());
+	const self = this as {
+		listeners: Map<string, Set<(...args: unknown[]) => unknown>>;
+		off: (e: string, h: (...args: unknown[]) => unknown) => void;
+	};
+	if (!self.listeners.has(event)) {
+		self.listeners.set(event, new Set());
 	}
-	this.listeners.get(event).add(handler);
-	return () => this.off(event, handler);
+	self.listeners.get(event)?.add(handler);
+	return () => self.off(event, handler);
 }
 
-export function off(this: unknown, event: string, handler: Function) {
-	const handlers = this.listeners.get(event);
+export function off(
+	this: unknown,
+	event: string,
+	handler: (...args: unknown[]) => unknown,
+) {
+	const self = this as {
+		listeners: Map<string, Set<(...args: unknown[]) => unknown>>;
+	};
+	const handlers = self.listeners.get(event);
 	if (handlers) {
 		handlers.delete(handler);
 		if (handlers.size === 0) {
-			this.listeners.delete(event);
+			self.listeners.delete(event);
 		}
 	}
 }
 
 export function emit(this: unknown, event: string, ...args: unknown[]) {
-	const handlers = this.listeners.get(event);
+	const self = this as {
+		listeners: Map<string, Set<(...args: unknown[]) => unknown>>;
+	};
+	const handlers = self.listeners.get(event);
 	if (handlers) {
 		for (const handler of Array.from(handlers)) {
 			try {
-				(handler as Function)(...args);
+				handler(...args);
 			} catch (err) {
 				console.error(
 					`Error in SakuraPlaybackController event '${event}':`,

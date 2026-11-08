@@ -7,8 +7,8 @@ export class SyncObject {
 	name: string;
 	signaled: boolean;
 	waiters: Set<{
-		resolve: Function;
-		reject: Function;
+		resolve: (...args: unknown[]) => unknown;
+		reject: (...args: unknown[]) => unknown;
 		timer: unknown;
 		resetOnWait: boolean;
 	}>;
@@ -25,7 +25,7 @@ export class SyncObject {
 			const waitersList = Array.from(this.waiters);
 			for (const waiter of waitersList) {
 				if (waiter.timer) {
-					clearTimeout(waiter.timer);
+					clearTimeout(waiter.timer as number);
 				}
 				this.waiters.delete(waiter);
 				if (waiter.resetOnWait) {
@@ -42,53 +42,36 @@ export class SyncObject {
 		this.signaled = false;
 	}
 
-	wait(
-		options: { timeout?: number; resetOnWait?: boolean } = {},
+	async wait(
+		timeoutMs: number = 0,
+		resetOnWait: boolean = false,
 	): Promise<boolean> {
-		const { timeout = 0, resetOnWait = true } = options;
-
 		if (this.signaled) {
 			if (resetOnWait) {
 				this.signaled = false;
 			}
-			return Promise.resolve(true);
+			return true;
 		}
 
 		return new Promise((resolve, reject) => {
+			let timer: unknown = null;
 			const waiter = {
-				resolve,
-				reject,
-				timer: null as unknown,
+				resolve: resolve as (...args: unknown[]) => unknown,
+				reject: reject as (...args: unknown[]) => unknown,
+				timer,
 				resetOnWait,
 			};
 
-			if (timeout > 0) {
-				waiter.timer = setTimeout(() => {
+			if (timeoutMs > 0) {
+				timer = setTimeout(() => {
 					this.waiters.delete(waiter);
 					resolve(false);
-				}, timeout);
+				}, timeoutMs);
+				waiter.timer = timer;
 			}
 
 			this.waiters.add(waiter);
 		});
-	}
-
-	get waiterCount(): number {
-		return this.waiters.size;
-	}
-
-	isWaiting(): boolean {
-		return this.waiters.size > 0;
-	}
-
-	cancelAll(reason = "SyncObject cancelled") {
-		for (const waiter of this.waiters) {
-			if (waiter.timer) {
-				clearTimeout(waiter.timer);
-			}
-			waiter.reject(new Error(reason));
-		}
-		this.waiters.clear();
 	}
 }
 
@@ -100,62 +83,27 @@ export class SyncObjectManager {
 	}
 
 	getOrCreate(name: string): SyncObject {
-		const key = String(name || "")
-			.trim()
-			.toLowerCase();
-		let obj = this.objects.get(key);
+		let obj = this.objects.get(name);
 		if (!obj) {
-			obj = new SyncObject(key);
-			this.objects.set(key, obj);
+			obj = new SyncObject(name);
+			this.objects.set(name, obj);
 		}
 		return obj;
 	}
 
-	has(name: string): boolean {
-		const key = String(name || "")
-			.trim()
-			.toLowerCase();
-		return this.objects.has(key);
-	}
-
-	getNames(): string[] {
-		return Array.from(this.objects.keys());
-	}
-
 	set(name: string) {
-		const obj = this.getOrCreate(name);
-		obj.set();
+		this.getOrCreate(name).set();
 	}
 
 	reset(name: string) {
-		const key = String(name || "")
-			.trim()
-			.toLowerCase();
-		const obj = this.objects.get(key);
-		if (obj) {
-			obj.reset();
-		}
+		this.getOrCreate(name).reset();
 	}
 
 	async wait(
 		name: string,
-		options: { timeout?: number; resetOnWait?: boolean } = {},
+		timeoutMs: number = 0,
+		resetOnWait: boolean = false,
 	): Promise<boolean> {
-		const obj = this.getOrCreate(name);
-		return await obj.wait(options);
-	}
-
-	isSignaled(name: string): boolean {
-		const key = String(name || "")
-			.trim()
-			.toLowerCase();
-		return this.objects.get(key)?.signaled ?? false;
-	}
-
-	clear() {
-		for (const obj of this.objects.values()) {
-			obj.cancelAll();
-		}
-		this.objects.clear();
+		return await this.getOrCreate(name).wait(timeoutMs, resetOnWait);
 	}
 }

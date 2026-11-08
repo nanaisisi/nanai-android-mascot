@@ -89,21 +89,25 @@ export function processSingleTouchMove(recognizer, e) {
  */
 export function processMultiTouchMove(recognizer, e) {
 	recognizer._clearLongPressTimer();
+	if (!e?.touches || e.touches.length < 2) return;
 	const t1 = e.touches[0];
 	const t2 = e.touches[1];
 	const currentDist = getTouchDistance(t1, t2);
 	const currentAngle = getTouchAngle(t1, t2);
 	const center = getTouchCenter(t1, t2);
 
+	const initialDist = recognizer._initialPinchDist;
 	const rawScale =
-		recognizer._initialPinchDist > 0
-			? currentDist / recognizer._initialPinchDist
+		Number.isFinite(initialDist) && initialDist > 0
+			? currentDist / initialDist
 			: 1.0;
+	const safeRawScale = Number.isFinite(rawScale) ? rawScale : 1.0;
 	const scale = Math.min(
-		Math.max(rawScale, recognizer.options.minScale),
+		Math.max(safeRawScale, recognizer.options.minScale),
 		recognizer.options.maxScale,
 	);
-	const rotation = currentAngle - recognizer._initialAngle;
+	const rawRotation = currentAngle - recognizer._initialAngle;
+	const rotation = Number.isFinite(rawRotation) ? rawRotation : 0;
 
 	if (
 		Math.abs(currentDist - recognizer._initialPinchDist) >
@@ -117,16 +121,16 @@ export function processMultiTouchMove(recognizer, e) {
 
 	recognizer.emit(TOUCH_GESTURE_TYPES.PINCH, {
 		scale,
-		centerX: center.x,
-		centerY: center.y,
+		centerX: Number.isFinite(center.x) ? center.x : 0,
+		centerY: Number.isFinite(center.y) ? center.y : 0,
 		originalEvent: e,
 	});
 
 	if (Math.abs(rotation) > 5) {
 		recognizer.emit(TOUCH_GESTURE_TYPES.ROTATE, {
 			rotation,
-			centerX: center.x,
-			centerY: center.y,
+			centerX: Number.isFinite(center.x) ? center.x : 0,
+			centerY: Number.isFinite(center.y) ? center.y : 0,
 			originalEvent: e,
 		});
 	}

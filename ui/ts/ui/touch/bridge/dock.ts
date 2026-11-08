@@ -61,22 +61,26 @@ export class DockManager {
 		// ドッキング時のタップ/クリックによる復帰リスナー
 		const handleTapRestore = (e) => {
 			if (this.isDocked) {
-				if (typeof e.stopPropagation === "function") {
+				if (typeof e?.stopPropagation === "function") {
 					e.stopPropagation();
 				}
-				if (typeof e.preventDefault === "function") {
+				if (typeof e?.preventDefault === "function") {
 					e.preventDefault();
 				}
 				this.restore();
 			}
 		};
 
-		element.addEventListener("click", handleTapRestore);
-		element.addEventListener("touchend", handleTapRestore);
-		this._elementClickUnbind = () => {
-			element.removeEventListener("click", handleTapRestore);
-			element.removeEventListener("touchend", handleTapRestore);
-		};
+		if (typeof element.addEventListener === "function") {
+			element.addEventListener("click", handleTapRestore);
+			element.addEventListener("touchend", handleTapRestore);
+			this._elementClickUnbind = () => {
+				if (typeof element.removeEventListener === "function") {
+					element.removeEventListener("click", handleTapRestore);
+					element.removeEventListener("touchend", handleTapRestore);
+				}
+			};
+		}
 	}
 
 	/**
@@ -91,10 +95,12 @@ export class DockManager {
 		}
 		if (this._attachedElement) {
 			try {
-				this._attachedElement.classList.remove(
-					"is-docked-left",
-					"is-docked-right",
-				);
+				if (this._attachedElement.classList?.remove) {
+					this._attachedElement.classList.remove(
+						"is-docked-left",
+						"is-docked-right",
+					);
+				}
 			} catch (_) {}
 			this._attachedElement = null;
 		}
@@ -107,13 +113,18 @@ export class DockManager {
 	_syncElementClasses() {
 		if (!this._attachedElement) return;
 		try {
-			this._attachedElement.classList.remove(
-				"is-docked-left",
-				"is-docked-right",
-			);
-			if (this._dockState === "left") {
+			if (this._attachedElement.classList?.remove) {
+				this._attachedElement.classList.remove(
+					"is-docked-left",
+					"is-docked-right",
+				);
+			}
+			if (this._dockState === "left" && this._attachedElement.classList?.add) {
 				this._attachedElement.classList.add("is-docked-left");
-			} else if (this._dockState === "right") {
+			} else if (
+				this._dockState === "right" &&
+				this._attachedElement.classList?.add
+			) {
 				this._attachedElement.classList.add("is-docked-right");
 			}
 		} catch (_) {}

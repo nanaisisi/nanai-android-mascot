@@ -59,32 +59,55 @@ export function applyBaseFontProperties(root: any, props: Record<string, any>) {
 		root.style.setProperty("--balloon-text-decoration", decorations.join(" "));
 	}
 
-	if (
+	const isOutline =
 		props["font.outline"] === "1" ||
-		props["font.outline"]?.toLowerCase() === "true"
-	) {
+		props["font.outline"]?.toLowerCase() === "true";
+	if (isOutline) {
 		root.style.setProperty("--balloon-font-outline", "1");
+		// CSS text-stroke / text-shadow によるアウトライン表現
+		root.style.setProperty(
+			"--balloon-text-stroke",
+			"1px var(--balloon-font-shadow-color, #000000)",
+		);
 	}
 
 	const fontColor = rgbFromComponents(props, "font.color");
-	if (props["font.color"]) {
-		root.style.setProperty("--balloon-text-color", props["font.color"]);
-	} else if (fontColor) {
+	if (fontColor) {
 		root.style.setProperty("--balloon-text-color", fontColor);
+	} else if (props["font.color"]) {
+		root.style.setProperty("--balloon-text-color", props["font.color"]);
 	}
 
 	const fontShadowColor = rgbFromComponents(props, "font.shadowcolor");
 	if (fontShadowColor) {
 		root.style.setProperty("--balloon-font-shadow-color", fontShadowColor);
 	}
+
 	if (props["font.shadowstyle"]) {
+		const shadowStyle = String(props["font.shadowstyle"]).trim();
+		root.style.setProperty("--balloon-font-shadow-style", shadowStyle);
+		root.style.setProperty("--balloon-font-shadowstyle", shadowStyle);
+
+		// UKADOC/SSP 影スタイルに応じた CSS text-shadow トークンの導出
+		// "underline": 下部シャドウ, "outline": 全周シャドウ, "shadow": 右下シャドウ, "none": なし
+		const sCol = fontShadowColor || "rgba(0, 0, 0, 0.4)";
+		if (shadowStyle === "none" || shadowStyle === "0") {
+			root.style.setProperty("--balloon-text-shadow", "none");
+		} else if (shadowStyle === "outline") {
+			root.style.setProperty(
+				"--balloon-text-shadow",
+				`1px 1px 0 ${sCol}, -1px -1px 0 ${sCol}, 1px -1px 0 ${sCol}, -1px 1px 0 ${sCol}`,
+			);
+		} else if (shadowStyle === "underline") {
+			root.style.setProperty("--balloon-text-shadow", `0 1px 0 ${sCol}`);
+		} else {
+			// デフォルト/指定値: 右下1px
+			root.style.setProperty("--balloon-text-shadow", `1px 1px 1px ${sCol}`);
+		}
+	} else if (fontShadowColor) {
 		root.style.setProperty(
-			"--balloon-font-shadow-style",
-			props["font.shadowstyle"],
-		);
-		root.style.setProperty(
-			"--balloon-font-shadowstyle",
-			props["font.shadowstyle"],
+			"--balloon-text-shadow",
+			`1px 1px 1px ${fontShadowColor}`,
 		);
 	}
 }

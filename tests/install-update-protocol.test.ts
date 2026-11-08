@@ -104,3 +104,31 @@ describe("Slot-15 install-protocol - Cycle 8 Enhancements", () => {
 		expect(INSTALL_FAILURE_REASONS).toContain("invalid path");
 	});
 });
+
+describe("Slot-15 update-protocol - Cycle 9 Enhancements", () => {
+	it("normalizes update reasons according to UKADOC specification", async () => {
+		const { normalizeUpdateReason } = await import(
+			"../ui/ts/core/actions/update-protocol"
+		);
+		expect(normalizeUpdateReason("MANUAL")).toBe("manual");
+		expect(normalizeUpdateReason("Auto")).toBe("auto");
+		expect(normalizeUpdateReason("script ")).toBe("script");
+		expect(normalizeUpdateReason("unknown_mode")).toBe("manual");
+		expect(normalizeUpdateReason(null)).toBe("manual");
+		expect(normalizeUpdateReason(undefined)).toBe("manual");
+	});
+
+	it("identifies noupdate paths from developer_options patterns", async () => {
+		const { isNoUpdatePath } = await import(
+			"../ui/ts/core/actions/update-protocol"
+		);
+		const patterns = ["ghost/master/dev.log", "debug.tmp", "temp/test.txt"];
+
+		expect(isNoUpdatePath("ghost/master/dev.log", patterns)).toBe(true);
+		expect(isNoUpdatePath("ghost\\master\\dev.log", patterns)).toBe(true);
+		expect(isNoUpdatePath("sub/dir/debug.tmp", patterns)).toBe(true);
+		expect(isNoUpdatePath("ghost/master/aya.dll", patterns)).toBe(false);
+		expect(isNoUpdatePath("", patterns)).toBe(false);
+		expect(isNoUpdatePath("file.txt", [])).toBe(false);
+	});
+});

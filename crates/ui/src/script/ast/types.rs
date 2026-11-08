@@ -166,4 +166,104 @@ impl SakuraAstNode {
         }
         nodes
     }
+
+    /// AST 内のすべてのアニメーション呼出 (id, wait) を抽出する
+    pub fn find_animations(&self) -> Vec<(u32, bool)> {
+        let mut animations = Vec::new();
+        self.walk(&mut |node| {
+            if let SakuraAstNode::Command(SakuraCommand::Animation { id, wait }) = node {
+                animations.push((*id, *wait));
+            }
+        });
+        animations
+    }
+
+    /// 指定した述語条件を満たす SakuraCommand が AST 内に存在するか判定する（早期リターン・高速判定）
+    pub fn has_command(&self, predicate: &dyn Fn(&SakuraCommand) -> bool) -> bool {
+        match self {
+            SakuraAstNode::Command(cmd) => predicate(cmd),
+            SakuraAstNode::Scope { children, .. } | SakuraAstNode::Anchor { children, .. } => {
+                children.iter().any(|c| c.has_command(predicate))
+            }
+            SakuraAstNode::Root { children } => children.iter().any(|c| c.has_command(predicate)),
+            SakuraAstNode::Choice { id, text, args } => {
+                let cmd = SakuraCommand::Choice {
+                    label: text.clone(),
+                    id: id.clone(),
+                    args: args.clone(),
+                };
+                predicate(&cmd)
+            }
+        }
+    }
+
+    /// 指定したスコープ（\\0, \\1, \\p[N]）のノードのみを抽出した新しい AST ツリーを生成する
+    pub fn filter_by_scope(&self, target_scope: u8) -> SakuraAstNode {
+        match self {
+            SakuraAstNode::Root { children } => {
+                let mut filtered = Vec::new();
+                for child in children {
+                    if let SakuraAstNode::Scope { scope, children: s_children } = child {
+                        if *scope == target_scope {
+                            filtered.push(SakuraAstNode::Scope {
+                                scope: *scope,
+                                children: s_children.clone(),
+                            });
+                        }
+                    }
+                }
+                SakuraAstNode::Root { children: filtered }
+            }
+            SakuraAstNode::Scope { scope, .. } => {
+                if *scope == target_scope {
+                    self.clone()
+                } else {
+                    SakuraAstNode::Root { children: Vec::new() }
+                }
+            }
+            _ => SakuraAstNode::Root { children: Vec::new() },
+        }
+    }
+
+    /// ログ保存や早送り再生用にウェイト（\\w, \\_w）コマンドを除去した AST ツリーを再帰生成する
+    pub fn strip_waits(&self) -> SakuraAstNode {
+        match self {
+            SakuraAstNode::Command(SakuraCommand::Wait(_)) => SakuraAstNode::Root { children: Vec::new() },
+            SakuraAstNode::Command(_) | SakuraAstNode::Choice { .. } => self.clone(),
+            SakuraAstNode::Scope { scope, children } => {
+                let new_children: Vec<SakuraAstNode> = children
+                    .iter()
+                    .map(|c| c.strip_waits())
+                    .filter(|c| !matches!(c, SakuraAstNode::Root { children } if children.is_empty()))
+                    .collect();
+                SakuraAstNode::Scope {
+                    scope: *scope,
+                    children: new_children,
+                }
+            }
+            SakuraAstNode::Anchor { id, text, args, children } => {
+                let new_children: Vec<SakuraAstNode> = children
+                    .iter()
+                    .map(|c| c.strip_waits())
+                    .filter(|c| !matches!(c, SakuraAstNode::Root { children } if children.is_empty()))
+                    .collect();
+                SakuraAstNode::Anchor {
+                    id: id.clone(),
+                    text: text.clone(),
+                    args: args.clone(),
+                    children: new_children,
+                }
+            }
+            SakuraAstNode::Root { children } => {
+                let new_children: Vec<SakuraAstNode> = children
+                    .iter()
+                    .map(|c| c.strip_waits())
+                    .filter(|c| !matches!(c, SakuraAstNode::Root { children } if children.is_empty()))
+                    .collect();
+                SakuraAstNode::Root {
+                    children: new_children,
+                }
+            }
+        }
+    }
 }

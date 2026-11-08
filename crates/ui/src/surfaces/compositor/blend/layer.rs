@@ -281,7 +281,7 @@ impl SurfaceFrameBuffer {
                                 (db as i32 + sb as i32 - 2 * (db as i32 * sb as i32) / 255)
                                     .clamp(0, 255) as u8,
                             ),
-                            "subtract" => (
+                            "subtract" | "sub" => (
                                 (dr as i16 - sr as i16).max(0) as u8,
                                 (dg as i16 - sg as i16).max(0) as u8,
                                 (db as i16 - sb as i16).max(0) as u8,

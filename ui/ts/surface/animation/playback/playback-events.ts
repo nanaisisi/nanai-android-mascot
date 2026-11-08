@@ -85,18 +85,37 @@ export function onCharSpoken(this: unknown, target = 0, scopeIdParam = 0) {
 	}
 
 	if (!instance) return;
-	if (instance.isSerikoTalkEnabled && !instance.isSerikoTalkEnabled(scopeId)) {
-		return;
+	if (instance.isSerikoTalkEnabled) {
+		const enabled =
+			typeof instance.isSerikoTalkEnabled === "function"
+				? instance.isSerikoTalkEnabled(scopeId)
+				: Boolean(instance.isSerikoTalkEnabled);
+		if (!enabled) return;
 	}
 
 	instance._spokenCount = instance._spokenCount || {};
 	instance._spokenCount[scopeId] = (instance._spokenCount[scopeId] || 0) + 1;
 	const count = instance._spokenCount[scopeId];
 
+	if (instance.animationsForTrigger) {
+		const anims = instance.animationsForTrigger(scopeId, "talk");
+		for (const item of anims) {
+			const anim = item.anim || item;
+			const sid = item.sid || 0;
+			const playFn = instance.playAnimationPatterns || playAnimationPatterns;
+			playFn.call(instance, anim, sid, scopeId);
+		}
+		return;
+	}
+
 	if (instance.findAnimationsForEvent) {
 		const anims = instance.findAnimationsForEvent(scopeId, "talk");
 		for (const anim of anims) {
-			const sid = String(instance.manager?.currentSurfaceIdFor ? instance.manager.currentSurfaceIdFor(scopeId) : 0);
+			const sid = String(
+				instance.manager?.currentSurfaceIdFor
+					? instance.manager.currentSurfaceIdFor(scopeId)
+					: 0,
+			);
 			const playFn = instance.playAnimationPatterns || playAnimationPatterns;
 			playFn.call(instance, anim, sid, scopeId);
 		}
@@ -104,8 +123,11 @@ export function onCharSpoken(this: unknown, target = 0, scopeIdParam = 0) {
 	}
 
 	const manager = instance.manager;
-	const sid = String(manager?.currentSurfaceIdFor ? manager.currentSurfaceIdFor(scopeId) : 0);
-	const animList = manager?.animations?.[sid] || manager?.animations?.default || [];
+	const sid = String(
+		manager?.currentSurfaceIdFor ? manager.currentSurfaceIdFor(scopeId) : 0,
+	);
+	const animList =
+		manager?.animations?.[sid] || manager?.animations?.default || [];
 
 	for (const anim of animList) {
 		const interval = String(anim.interval || "").toLowerCase();

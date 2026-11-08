@@ -162,3 +162,28 @@ fn test_sstp_request_parser_more_edge_cases() {
         Some(&"arg_val".to_string())
     );
 }
+
+#[test]
+fn test_sstp_http_tunneling_headers_parsing() {
+    let raw = "SEND SSTP/1.4\r\n\
+        Sender: WebClient\r\n\
+        Content-Type: text/plain\r\n\
+        User-Agent: Mozilla/5.0 (Android)\r\n\
+        Host: 127.0.0.1:9801\r\n\
+        Script: \\0Hello from Web\\e\r\n\r\n";
+    let req = SstpRequest::parse(raw).unwrap();
+    assert_eq!(req.content_type, Some("text/plain".to_string()));
+    assert_eq!(req.user_agent, Some("Mozilla/5.0 (Android)".to_string()));
+    assert_eq!(req.host, Some("127.0.0.1:9801".to_string()));
+
+    let resp = SstpResponse::ok(Some("\\0Ack\\e".to_string()))
+        .with_content_type("text/plain")
+        .with_connection("close");
+    let built = resp.build();
+    assert!(built.contains("Content-Type: text/plain\r\n"));
+    assert!(built.contains("Connection: close\r\n"));
+
+    let parsed_resp = SstpResponse::parse(&built).unwrap();
+    assert_eq!(parsed_resp.content_type, Some("text/plain".to_string()));
+    assert_eq!(parsed_resp.connection_header, Some("close".to_string()));
+}

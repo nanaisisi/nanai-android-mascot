@@ -12,15 +12,18 @@ import {
 	notifyWait,
 } from "./controller/notifications.js";
 import {
+	cancelJob,
 	clearQueue,
 	dequeue,
 	destroy,
 	enqueue,
 	enqueuePriority,
+	filterQueue,
 	getCurrentJob,
 	getIsPaused,
 	getIsProcessing,
 	getIsQuickMode,
+	getJobById,
 	getQueue,
 	getQueueLength,
 	getQueueSnapshot,
@@ -28,6 +31,7 @@ import {
 	hasPendingJobs,
 	interrupt,
 	isEmpty,
+	type PlaybackJob,
 	pause,
 	peekNextJob,
 	processQueue,
@@ -46,10 +50,11 @@ import { SyncObjectManager } from "./sync-object.js";
 
 export class SakuraPlaybackController {
 	player: unknown;
-	queue: unknown[];
-	currentJob: unknown;
+	queue: PlaybackJob[];
+	currentJob: PlaybackJob | null;
 	isProcessing: boolean;
 	isPaused: boolean;
+	pauseTimestamp: number | null;
 	isQuickMode: boolean;
 	waitMultiplier: number;
 	charWaitMs: number | null;
@@ -58,14 +63,20 @@ export class SakuraPlaybackController {
 	syncObjects: SyncObjectManager;
 
 	constructor(options: unknown = {}) {
-		this.player = options.player || null;
-		if (this.player && !this.player.playbackController) {
-			this.player.playbackController = this;
+		const opts = options as { player?: unknown };
+		this.player = opts.player || null;
+		if (
+			this.player &&
+			!(this.player as { playbackController?: unknown }).playbackController
+		) {
+			(this.player as { playbackController?: unknown }).playbackController =
+				this;
 		}
 		this.queue = [];
 		this.currentJob = null;
 		this.isProcessing = false;
 		this.isPaused = false;
+		this.pauseTimestamp = null;
 		this.isQuickMode = false;
 		this.waitMultiplier = 1.0;
 		this.charWaitMs = null;
@@ -85,6 +96,9 @@ proto.enqueue = enqueue;
 proto.enqueuePriority = enqueuePriority;
 proto.interrupt = interrupt;
 proto.dequeue = dequeue;
+proto.getJobById = getJobById;
+proto.cancelJob = cancelJob;
+proto.filterQueue = filterQueue;
 proto.clearQueue = clearQueue;
 proto.stop = stop;
 proto.destroy = destroy;

@@ -94,6 +94,28 @@ export const UPDATE_EVENT_ORDER = Object.freeze([
 ]);
 
 /**
+ * ネットワーク更新進捗率計算ヘルパー (0除算防御および 0〜100% 整数丸め)
+ * @param {number} current - 完了ファイル数
+ * @param {number} total - 総更新ファイル数
+ * @returns {{ percent: number, isComplete: boolean }}
+ */
+export function calculateUpdateProgress(
+	current: number,
+	total: number,
+): { percent: number; isComplete: boolean } {
+	if (total <= 0 || !Number.isFinite(total)) {
+		return { percent: 100, isComplete: true };
+	}
+	const safeCurrent = Math.max(0, Number.isFinite(current) ? current : 0);
+	const clamped = Math.min(safeCurrent, total);
+	const percent = Math.floor((clamped / total) * 100);
+	return {
+		percent,
+		isComplete: clamped >= total,
+	};
+}
+
+/**
  * ネットワーク更新標準 SHIORI 引数生成ヘルパー (UKADOC準拠)
  * [Ref0, Ref1, Ref2, Ref3, Ref4] -> [ref0, ref1, "", "ghost", "manual"]
  * @param {string|number} [ref0]
@@ -109,6 +131,49 @@ export function buildUpdateArgs(
 	updateMode: string = "manual",
 ): [string, string, string, string, string] {
 	return [String(ref0), String(ref1), "", updateTarget, updateMode];
+}
+
+/**
+ * OnUpdateComplete SHIORI 引数生成 (UKADOC準拠)
+ * [Ref0=成功理由("none"|"changed"), Ref1=更新ファイル数/一覧, Ref2="", Ref3="ghost", Ref4="manual"]
+ * @param {string} [result="none"] - "none" | "changed"
+ * @param {string[]} [updatedFiles=[]] - 更新されたファイル相対パス一覧
+ * @param {string} [updateTarget="ghost"]
+ * @param {string} [updateMode="manual"]
+ * @returns {[string, string, string, string, string]}
+ */
+export function buildUpdateCompleteArgs(
+	result: string = "none",
+	updatedFiles: string[] = [],
+	updateTarget: string = "ghost",
+	updateMode: string = "manual",
+): [string, string, string, string, string] {
+	const normResult = UPDATE_RESULT_COMPLETE.includes(result?.toLowerCase())
+		? result.toLowerCase()
+		: "none";
+	const fileCountOrList = Array.isArray(updatedFiles)
+		? String(updatedFiles.length)
+		: "0";
+	return [normResult, fileCountOrList, "", updateTarget, updateMode];
+}
+
+/**
+ * OnUpdateFailure SHIORI 引数生成 (UKADOC準拠)
+ * [Ref0=失敗理由("timeout"|"404"|"md5 miss"|"fileio"|"artificial"|"readonly"), Ref1=失敗ファイルパス/詳細, Ref2="", Ref3="ghost", Ref4="manual"]
+ * @param {unknown} errorOrReason
+ * @param {string} [failedPath=""]
+ * @param {string} [updateTarget="ghost"]
+ * @param {string} [updateMode="manual"]
+ * @returns {[string, string, string, string, string]}
+ */
+export function buildUpdateFailureArgs(
+	errorOrReason: unknown,
+	failedPath: string = "",
+	updateTarget: string = "ghost",
+	updateMode: string = "manual",
+): [string, string, string, string, string] {
+	const reason = parseErrorReason(errorOrReason);
+	return [reason, String(failedPath ?? ""), "", updateTarget, updateMode];
 }
 
 /**

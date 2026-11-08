@@ -33,6 +33,13 @@ impl SurfacesTxt {
             self.kero_aliases.insert(alias, list);
         }
 
+        for (char_id, map) in other.char_aliases {
+            let cur_char = self.char_aliases.entry(char_id).or_default();
+            for (alias, list) in map {
+                cur_char.insert(alias, list);
+            }
+        }
+
         for (scope, cursor_list) in other.cursors {
             self.cursors.entry(scope).or_default().extend(cursor_list);
         }

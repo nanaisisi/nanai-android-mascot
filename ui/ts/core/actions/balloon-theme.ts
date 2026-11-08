@@ -25,6 +25,10 @@ export {
 	MIN_BALLOON_SCALE,
 	THEME_LABELS,
 } from "./balloon-theme-constants.js";
+export {
+	computeNineSliceLayout,
+	resetBalloonDescriptDom,
+} from "./balloon-theme-dom.js";
 
 /**
  * バルーンスキン・テーマ・9スライスおよびタイポグラフィ統合マネージャー
@@ -56,17 +60,50 @@ export class BalloonThemeManager {
 	 * 9スライス分割設定 (border-image) を有効矩形 (validrect) 等から算出 (キャッシュ対応)
 	 * @param {Record<string, string>} props
 	 * @param {string | null} [bgImageUrl]
-	 * @returns {{ source: string, slice: string, width: string, repeat: string, cssBorderImage: string } | null}
+	 * @param {number} [scopeId=0]
+	 * @returns {{ source: string, slice: string, width: string, repeat: string, cssBorderImage: string, scopeId?: number, cacheKey?: string } | null}
 	 */
-	computeNineSlice(props = {}, bgImageUrl = null) {
-		return computeNineSliceLayout(this._nineSliceCache, props, bgImageUrl);
+	computeNineSlice(props = {}, bgImageUrl = null, scopeId = 0) {
+		return computeNineSliceLayout(
+			this._nineSliceCache,
+			props,
+			bgImageUrl,
+			scopeId,
+		);
 	}
 
 	/**
-	 * 9スライスキャッシュの明示的クリア
+	 * 9スライスキャッシュの明示的クリア（オプションで特定scopeIdのみクリア可能）
+	 * @param {number} [targetScopeId]
 	 */
-	clearNineSliceCache() {
+	clearNineSliceCache(targetScopeId = null) {
+		if (targetScopeId !== null && typeof targetScopeId === "number") {
+			if (targetScopeId === 0) {
+				for (const key of Array.from(this._nineSliceCache.keys())) {
+					if (!key.startsWith("scope")) {
+						this._nineSliceCache.delete(key);
+					}
+				}
+			} else {
+				const prefix = `scope${targetScopeId}_`;
+				for (const key of Array.from(this._nineSliceCache.keys())) {
+					if (key.startsWith(prefix)) {
+						this._nineSliceCache.delete(key);
+					}
+				}
+			}
+			return;
+		}
 		this._nineSliceCache.clear();
+	}
+
+	/**
+	 * 9スライスキャッシュのエントリ取得
+	 * @param {string} key
+	 * @returns {{ source: string, slice: string, width: string, repeat: string, cssBorderImage: string } | undefined}
+	 */
+	getNineSliceCache(key) {
+		return this._nineSliceCache.get(key);
 	}
 
 	/**

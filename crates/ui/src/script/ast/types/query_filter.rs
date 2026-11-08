@@ -224,4 +224,68 @@ impl SakuraAstNode {
             }
         }
     }
+
+    /// AST 内の各 SakuraCommand に対して変換関数を適用し、新しい AST を生成する
+    pub fn map_commands(&self, transform: &impl Fn(&SakuraCommand) -> SakuraCommand) -> SakuraAstNode {
+        match self {
+            SakuraAstNode::Command(cmd) => SakuraAstNode::Command(transform(cmd)),
+            SakuraAstNode::Choice { .. } => self.clone(),
+            SakuraAstNode::Scope { scope, children } => SakuraAstNode::Scope {
+                scope: *scope,
+                children: children.iter().map(|c| c.map_commands(transform)).collect(),
+            },
+            SakuraAstNode::Anchor {
+                id,
+                text,
+                args,
+                children,
+            } => SakuraAstNode::Anchor {
+                id: id.clone(),
+                text: text.clone(),
+                args: args.clone(),
+                children: children.iter().map(|c| c.map_commands(transform)).collect(),
+            },
+            SakuraAstNode::Root { children } => SakuraAstNode::Root {
+                children: children.iter().map(|c| c.map_commands(transform)).collect(),
+            },
+        }
+    }
+
+    /// AST 内の表示用テキストを連結して抽出する（ログ保存・TTS読み上げ用）
+    pub fn extract_text(&self) -> String {
+        let mut buf = String::new();
+        self.walk(&mut |node| match node {
+            SakuraAstNode::Command(SakuraCommand::Text(t)) => {
+                buf.push_str(t);
+            }
+            SakuraAstNode::Choice { text, .. } => {
+                buf.push_str(text);
+            }
+            _ => {}
+        });
+        buf
+    }
+
+    /// AST ノードの総数を計算する
+    pub fn node_count(&self) -> usize {
+        let mut count = 0;
+        self.walk(&mut |_| count += 1);
+        count
+    }
+
+    /// AST ツリーの最大深さを計算する
+    pub fn depth(&self) -> usize {
+        match self {
+            SakuraAstNode::Command(_) | SakuraAstNode::Choice { .. } => 1,
+            SakuraAstNode::Scope { children, .. }
+            | SakuraAstNode::Anchor { children, .. }
+            | SakuraAstNode::Root { children } => {
+                if children.is_empty() {
+                    1
+                } else {
+                    1 + children.iter().map(|c| c.depth()).max().unwrap_or(0)
+                }
+            }
+        }
+    }
 }

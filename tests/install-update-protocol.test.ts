@@ -132,3 +132,109 @@ describe("Slot-15 update-protocol - Cycle 9 Enhancements", () => {
 		expect(isNoUpdatePath("file.txt", [])).toBe(false);
 	});
 });
+
+describe("Slot-15 update-protocol - Cycle 10 Enhancements", () => {
+	it("calculates update progress percentage and bounds correctly", async () => {
+		const { calculateUpdateProgress } = await import(
+			"../ui/ts/core/actions/update-protocol"
+		);
+
+		expect(calculateUpdateProgress(0, 10)).toEqual({
+			percent: 0,
+			isComplete: false,
+		});
+		expect(calculateUpdateProgress(5, 10)).toEqual({
+			percent: 50,
+			isComplete: false,
+		});
+		expect(calculateUpdateProgress(10, 10)).toEqual({
+			percent: 100,
+			isComplete: true,
+		});
+		expect(calculateUpdateProgress(15, 10)).toEqual({
+			percent: 100,
+			isComplete: true,
+		});
+		// Edge cases: total 0 or negative
+		expect(calculateUpdateProgress(0, 0)).toEqual({
+			percent: 100,
+			isComplete: true,
+		});
+		expect(calculateUpdateProgress(-1, 10)).toEqual({
+			percent: 0,
+			isComplete: false,
+		});
+	});
+
+	it("builds update complete arguments conforming to UKADOC specification", async () => {
+		const { buildUpdateCompleteArgs } = await import(
+			"../ui/ts/core/actions/update-protocol"
+		);
+
+		expect(
+			buildUpdateCompleteArgs("changed", ["file1.txt", "file2.txt"]),
+		).toEqual(["changed", "2", "", "ghost", "manual"]);
+		expect(buildUpdateCompleteArgs("none", [])).toEqual([
+			"none",
+			"0",
+			"",
+			"ghost",
+			"manual",
+		]);
+		expect(buildUpdateCompleteArgs("unknown_val", [], "shell", "auto")).toEqual(
+			["none", "0", "", "shell", "auto"],
+		);
+	});
+
+	it("builds update failure arguments conforming to UKADOC specification", async () => {
+		const { buildUpdateFailureArgs } = await import(
+			"../ui/ts/core/actions/update-protocol"
+		);
+
+		expect(
+			buildUpdateFailureArgs("404 Not Found", "ghost/master/aya.dll"),
+		).toEqual(["404", "ghost/master/aya.dll", "", "ghost", "manual"]);
+		expect(buildUpdateFailureArgs("Connection timeout", "readme.txt")).toEqual([
+			"timeout",
+			"readme.txt",
+			"",
+			"ghost",
+			"manual",
+		]);
+		expect(
+			buildUpdateFailureArgs("md5 miss", "ghost.dll", "balloon", "script"),
+		).toEqual(["md5 miss", "ghost.dll", "", "balloon", "script"]);
+	});
+
+	it("handles malformed items in buildInstallRefuseArgs and buildInstallMultiArgs", async () => {
+		const {
+			buildInstallRefuseArgs,
+			buildInstallMultiArgs,
+			isMultiResourceInstall,
+		} = await import("../ui/ts/core/actions/install-protocol");
+
+		expect(buildInstallRefuseArgs("", "TestGhost")).toEqual([
+			"refused",
+			"TestGhost",
+		]);
+		expect(buildInstallRefuseArgs("  ", "TestGhost")).toEqual([
+			"refused",
+			"TestGhost",
+		]);
+		expect(buildInstallRefuseArgs("accept failed", "TestGhost")).toEqual([
+			"accept failed",
+			"TestGhost",
+		]);
+
+		// Array with null or invalid items
+		const rawList = [
+			{ type: "ghost", name: "MainGhost" },
+			null as unknown as { type: string; name: string },
+			{ type: "shell", name: "AltShell" },
+		];
+		const multiResult = buildInstallMultiArgs(rawList);
+		expect(multiResult.isMulti).toBe(true);
+		expect(multiResult.count).toBe("2");
+		expect(isMultiResourceInstall(rawList)).toBe(true);
+	});
+});

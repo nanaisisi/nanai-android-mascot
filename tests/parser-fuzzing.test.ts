@@ -7,3 +7,4 @@ import "./parser-fuzzing/cycle5-syntax-fuzzing.test.js";
 import "./parser-fuzzing/cycle6-syntax-fuzzing.test.js";
 import "./parser-fuzzing/cycle8-syntax-fuzzing.test.js";
 import "./parser-fuzzing/cycle9-syntax-fuzzing.test.js";
+import "./parser-fuzzing/cycle10-syntax-fuzzing.test.js";

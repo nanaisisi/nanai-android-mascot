@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
 	checkBaseWareMutex,
+	filterActiveGhosts,
+	filterVisibleGhosts,
 	getFmoStatus,
 	updateFmoBalloonText,
 	updateFmoLifecycleState,
@@ -129,5 +131,60 @@ describe("FMO frontend actions & Mutex checks (Slot-01)", () => {
 		const res = await checkBaseWareMutex();
 		expect(mockInvoke).toHaveBeenCalledWith("check_base_ware_mutex", {});
 		expect(res).toEqual(mutexStatus);
+	});
+
+	it("filters active and visible ghosts correctly", () => {
+		const systemStatus = {
+			ghosts: {
+				g1: {
+					name: "ActiveGhost",
+					surface0: 0,
+					surface1: 10,
+					balloon0: "",
+					balloon1: "",
+					path: "/g1",
+					is_visible: true,
+					lifecycle_state: "active",
+				},
+				g2: {
+					name: "PausedGhost",
+					surface0: 0,
+					surface1: 10,
+					balloon0: "",
+					balloon1: "",
+					path: "/g2",
+					is_visible: false,
+					lifecycle_state: "paused",
+				},
+				g3: {
+					name: "StoppedGhost",
+					surface0: 0,
+					surface1: 10,
+					balloon0: "",
+					balloon1: "",
+					path: "/g3",
+					is_visible: false,
+					lifecycle_state: "stopped",
+				},
+				g4: {
+					name: "BackgroundGhost",
+					surface0: 0,
+					surface1: 10,
+					balloon0: "",
+					balloon1: "",
+					path: "/g4",
+					is_visible: false,
+					lifecycle_state: "background",
+				},
+			},
+			hwnd: 100,
+			craftman: "tester",
+		};
+
+		const active = filterActiveGhosts(systemStatus);
+		expect(Object.keys(active)).toEqual(["g1", "g4"]);
+
+		const visible = filterVisibleGhosts(systemStatus);
+		expect(Object.keys(visible)).toEqual(["g1"]);
 	});
 });

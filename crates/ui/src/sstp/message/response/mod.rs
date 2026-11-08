@@ -29,6 +29,9 @@ pub struct SstpResponse {
     /// 明示的な Connection ヘッダ出力指示 (例: Connection: close)
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub connection_header: Option<String>,
+    /// HTTP トンネリング互換 Content-Type ヘッダ (例: "text/plain")
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub content_type: Option<String>,
 }
 
 fn default_keep_alive_timeout() -> u32 {
@@ -49,6 +52,7 @@ impl SstpResponse {
             keep_alive: false,
             keep_alive_timeout: 5,
             connection_header: None,
+            content_type: None,
         }
     }
 
@@ -124,6 +128,18 @@ impl SstpResponse {
     /// Keep-Alive タイムアウト秒数を設定
     pub fn with_keep_alive_timeout(mut self, timeout: u32) -> Self {
         self.keep_alive_timeout = timeout;
+        self
+    }
+
+    /// Content-Type ヘッダを設定
+    pub fn with_content_type(mut self, content_type: impl Into<String>) -> Self {
+        self.content_type = Some(content_type.into());
+        self
+    }
+
+    /// 明示的な Connection ヘッダを設定
+    pub fn with_connection(mut self, connection: impl Into<String>) -> Self {
+        self.connection_header = Some(connection.into());
         self
     }
 }

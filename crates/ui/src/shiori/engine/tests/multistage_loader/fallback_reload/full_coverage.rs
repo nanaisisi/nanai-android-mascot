@@ -170,3 +170,40 @@ fn test_multistage_shiori_loader_full_coverage() {
     assert!(l6.reload().is_err());
     assert!(l6.request("GET SHIORI/3.0\r\n\r\n").is_err());
 }
+
+#[test]
+fn test_multistage_shiori_loader_with_translator_module_state() {
+    let dir = Path::new("/test/ghost/master");
+    let mut loader = MultiStageShioriLoader::new();
+
+    // Verify candidate priority with mock engine and simulate translator module state
+    let mut mock = MockShioriEngine::new();
+    mock.set_response("OnTranslate", "\\0\\s[0]こんにちは（変換済）\\e");
+    loader.add_candidate(ShioriEngineCandidate::Dynamic(PathBuf::from("yaya.dll")));
+    loader.add_candidate(ShioriEngineCandidate::Mock(Box::new(mock)));
+
+    assert_eq!(loader.candidate_count(), 2);
+    let load_res = loader.load_first_working(
+        dir,
+        |_| Err("dynamic load skipped for mock test".to_string()),
+        |_| Err("wasm runtime not used".to_string()),
+    );
+    assert!(load_res.is_ok());
+    assert!(loader.is_loaded());
+    assert_eq!(
+        loader.lifecycle_state(),
+        crate::shiori::ShioriLifecycleState::Active
+    );
+
+    // Verify request response cycle while active
+    let req = "GET SHIORI/3.0\r\nSender: SSP\r\nCharset: UTF-8\r\nID: OnTranslate\r\nReference0: \\0\\s[0]こんにちは\\e\r\n\r\n";
+    let resp = loader.request(req).expect("request handled");
+    assert!(resp.contains("SHIORI/3.0 200 OK"));
+
+    loader.unload().expect("unloaded cleanly");
+    assert!(!loader.is_loaded());
+    assert_eq!(
+        loader.lifecycle_state(),
+        crate::shiori::ShioriLifecycleState::Unloaded
+    );
+}

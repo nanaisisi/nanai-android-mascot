@@ -1,53 +1,11 @@
-use super::types::{BindGroup, BindOptionGroup, CharDefaults};
-use serde::{Deserialize, Serialize};
-use std::collections::{BTreeMap, HashMap};
+//! Descript 各種プロパティ取得クエリメソッドモジュール
 
-/// カンマ区切りの数値リスト（範囲対応 `0-9` 含む）をパースする
-pub(super) fn expand_ids(value: &str) -> Vec<u32> {
-    let mut out = Vec::new();
-    for part in value.split(',') {
-        let part = part.trim().trim_start_matches('[').trim_end_matches(']');
-        if let Some((start, end)) = part.split_once('-')
-            && let (Ok(s), Ok(e)) = (start.trim().parse::<u32>(), end.trim().parse::<u32>())
-            && s <= e
-        {
-            out.extend(s..=e);
-            continue;
-        }
-        if let Ok(n) = part.parse::<u32>() {
-            out.push(n);
-        }
-    }
-    out
-}
-
-/// `descript.txt` のパース結果を保持する構造体
-#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
-pub struct Descript {
-    pub properties: HashMap<String, String>,
-}
+use super::Descript;
+use super::helpers::expand_ids;
+use crate::descript::types::{BindGroup, BindOptionGroup, CharDefaults};
+use std::collections::BTreeMap;
 
 impl Descript {
-    /// テキスト内容から `descript.txt` をパース
-    pub fn parse(content: &str) -> Self {
-        let mut properties = HashMap::new();
-        for line in content.lines() {
-            let trimmed = line.trim();
-            if trimmed.is_empty() || trimmed.starts_with('#') || trimmed.starts_with("//") {
-                continue;
-            }
-            if let Some((k, v)) = trimmed.split_once(',') {
-                properties.insert(k.trim().to_lowercase(), v.trim().to_string());
-            }
-        }
-        Self { properties }
-    }
-
-    /// キーに対応する値を取得（大文字小文字無視）
-    pub fn get(&self, key: &str) -> Option<&String> {
-        self.properties.get(&key.to_lowercase())
-    }
-
     /// ゴースト/シェル名（`name` キー）
     pub fn name(&self) -> Option<&String> {
         self.get("name")
@@ -57,6 +15,7 @@ impl Descript {
     pub fn sakura_name(&self) -> Option<&String> {
         self.get("sakura.name")
     }
+
     /// 相方名（`kero.name`）
     pub fn kero_name(&self) -> Option<&String> {
         self.get("kero.name")

@@ -115,3 +115,4 @@ export function registerGhostCommandHandlers() {
 		handleQuickSection(handler, args);
 	});
 }
+

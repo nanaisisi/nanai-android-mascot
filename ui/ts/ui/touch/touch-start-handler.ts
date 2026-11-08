@@ -48,3 +48,4 @@ export function handleTouchStartEvent(recognizer: any, e: any) {
 		recognizer._twoFingerMoved = true;
 	}
 }
+

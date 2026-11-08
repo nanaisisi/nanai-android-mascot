@@ -61,3 +61,4 @@ export function handleMenuKeydown(e: KeyboardEvent, dispatcher: MenuDispatcher):
 		dispatcher.dispatchAction(action);
 	}
 }
+

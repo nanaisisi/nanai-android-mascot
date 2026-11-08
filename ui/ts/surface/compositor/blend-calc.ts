@@ -165,3 +165,4 @@ export function calculateBlendMode(
 	}
 	return [sr, sg, sb];
 }
+

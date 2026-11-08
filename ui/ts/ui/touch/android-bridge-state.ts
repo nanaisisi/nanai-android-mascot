@@ -36,3 +36,4 @@ export function getAndroidBridgeState(
 		hasAttachedElement: Boolean(dockManager.attachedElement),
 	};
 }
+

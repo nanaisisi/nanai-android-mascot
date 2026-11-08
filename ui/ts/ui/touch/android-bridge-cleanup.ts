@@ -19,3 +19,4 @@ export function destroyAndroidBridge(
 	backButtonManager.clear();
 	dockManager.destroy();
 }
+

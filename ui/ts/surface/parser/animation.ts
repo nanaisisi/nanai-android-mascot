@@ -2,14 +2,19 @@
  * surfaces.txt SERIKO アニメーションハンドラー
  */
 
+import {
+	handleAnimationCollision,
+	handleAnimationCollisionEx,
+} from "./animation-collision.js";
 import { splitProtectedCommas } from "./utils.js";
+
+export {
+	handleAnimationCollision,
+	handleAnimationCollisionEx,
+} from "./animation-collision.js";
 
 /**
  * animation*.interval 行のパースと登録
- * @param {string} trimmed
- * @param {string[]} currentSurfaces
- * @param {Record<string, import('../surface-parser.js').SurfaceAnimation[]>} animations
- * @param {Record<string, Record<number, import('../surface-parser.js').SurfaceAnimation>>} animationMaps
  */
 export function handleAnimationInterval(
 	trimmed: string,
@@ -38,194 +43,7 @@ export function handleAnimationInterval(
 }
 
 /**
- * animation*.collision 行のパースと登録
- * @param {string} trimmed
- * @param {string[]} currentSurfaces
- * @param {Record<string, import('../surface-parser.js').SurfaceAnimation[]>} animations
- * @param {Record<string, Record<number, import('../surface-parser.js').SurfaceAnimation>>} animationMaps
- */
-export function handleAnimationCollision(
-	trimmed: string,
-	currentSurfaces: unknown[],
-	animations: { [x: string]: unknown[] },
-	animationMaps: { [x: string]: unknown[] },
-) {
-	// SERIKO/2: animation[ID].collision[CID],x1,y1,x2,y2,name
-	// SERIKO/1: [ID]collision[CID],x1,y1,x2,y2,name
-	const match = trimmed.match(
-		/^(?:animation)?(\d+)\.?collision(\d*),\s*(.+)$/i,
-	);
-	if (!match) return;
-
-	const animId = Number.parseInt(match[1], 10);
-	const cid = match[2] ? Number.parseInt(match[2], 10) : undefined;
-	const parts = match[3].split(",");
-	if (parts.length < 5) return;
-
-	const x1 = Number.parseInt(parts[0], 10);
-	const y1 = Number.parseInt(parts[1], 10);
-	const x2 = Number.parseInt(parts[2], 10);
-	const y2 = Number.parseInt(parts[3], 10);
-	const name = parts[4].trim().toLowerCase();
-
-	const col = {
-		id: cid,
-		name,
-		shape: "rect",
-		x1,
-		y1,
-		x2,
-		y2,
-		minX: Math.min(x1, x2),
-		minY: Math.min(y1, y2),
-		maxX: Math.max(x1, x2),
-		maxY: Math.max(y1, y2),
-	};
-
-	currentSurfaces.forEach((s: string | number) => {
-		if (!animations[s]) animations[s] = [];
-		if (!animationMaps[s]) animationMaps[s] = {};
-		let anim = animationMaps[s][animId];
-		if (!anim) {
-			anim = {
-				id: animId,
-				interval: "sometimes",
-				patterns: [],
-				collisions: [],
-			};
-			animationMaps[s][animId] = anim;
-			animations[s].push(anim);
-		}
-		if (!anim.collisions) anim.collisions = [];
-		anim.collisions.push(col);
-	});
-}
-
-/**
- * animation*.collisionex 行のパースと登録
- * @param {string} trimmed
- * @param {string[]} currentSurfaces
- * @param {Record<string, import('../surface-parser.js').SurfaceAnimation[]>} animations
- * @param {Record<string, Record<number, import('../surface-parser.js').SurfaceAnimation>>} animationMaps
- */
-export function handleAnimationCollisionEx(
-	trimmed: string,
-	currentSurfaces: unknown[],
-	animations: { [x: string]: unknown[] },
-	animationMaps: { [x: string]: unknown[] },
-) {
-	// SERIKO/2: animation[ID].collisionex[CID],name,shape,coords...
-	// SERIKO/1: [ID]collisionex[CID],name,shape,coords...
-	const match = trimmed.match(
-		/^(?:animation)?(\d+)\.?collisionex(\d*),\s*(.+)$/i,
-	);
-	if (!match) return;
-
-	const animId = Number.parseInt(match[1], 10);
-	const cid = match[2] ? Number.parseInt(match[2], 10) : undefined;
-	const parts = match[3].split(",");
-	if (parts.length < 3) return;
-
-	const name = parts[0].trim().toLowerCase();
-	const shape = parts[1].trim().toLowerCase();
-	let col = null;
-
-	if (shape === "circle" || shape === "ellipse") {
-		const cx = Number.parseInt(parts[2], 10);
-		const cy = Number.parseInt(parts[3], 10);
-		const rx = Number.parseInt(parts[4], 10);
-		const ry = Number.parseInt(parts[5], 10) || rx;
-		col = {
-			id: cid,
-			name,
-			shape,
-			cx,
-			cy,
-			rx,
-			ry,
-			minX: cx - rx,
-			minY: cy - ry,
-			maxX: cx + rx,
-			maxY: cy + ry,
-		};
-	} else if (shape === "polygon" || parts.length > 6) {
-		const coords = parts
-			.slice(2)
-			.map((p: string) => Number.parseInt(p.trim(), 10))
-			.filter((n: unknown) => !Number.isNaN(n));
-		const vertices = [];
-		let minX = Infinity;
-		let maxX = -Infinity;
-		let minY = Infinity;
-		let maxY = -Infinity;
-		for (let i = 0; i + 1 < coords.length; i += 2) {
-			const vx = coords[i];
-			const vy = coords[i + 1];
-			vertices.push([vx, vy]);
-			if (vx < minX) minX = vx;
-			if (vx > maxX) maxX = vx;
-			if (vy < minY) minY = vy;
-			if (vy > maxY) maxY = vy;
-		}
-		if (vertices.length >= 3) {
-			col = {
-				id: cid,
-				name,
-				shape: "polygon",
-				vertices,
-				minX: Number.isFinite(minX) ? minX : 0,
-				minY: Number.isFinite(minY) ? minY : 0,
-				maxX: Number.isFinite(maxX) ? maxX : 0,
-				maxY: Number.isFinite(maxY) ? maxY : 0,
-			};
-		}
-	} else if (shape === "rect" || parts.length >= 6) {
-		const x1 = Number.parseInt(parts[2], 10);
-		const y1 = Number.parseInt(parts[3], 10);
-		const x2 = Number.parseInt(parts[4], 10);
-		const y2 = Number.parseInt(parts[5], 10);
-		col = {
-			id: cid,
-			name,
-			shape: "rect",
-			x1,
-			y1,
-			x2,
-			y2,
-			minX: Math.min(x1, x2),
-			minY: Math.min(y1, y2),
-			maxX: Math.max(x1, x2),
-			maxY: Math.max(y1, y2),
-		};
-	}
-
-	if (!col) return;
-
-	currentSurfaces.forEach((s: string | number) => {
-		if (!animations[s]) animations[s] = [];
-		if (!animationMaps[s]) animationMaps[s] = {};
-		let anim = animationMaps[s][animId];
-		if (!anim) {
-			anim = {
-				id: animId,
-				interval: "sometimes",
-				patterns: [],
-				collisions: [],
-			};
-			animationMaps[s][animId] = anim;
-			animations[s].push(anim);
-		}
-		if (!anim.collisions) anim.collisions = [];
-		anim.collisions.push(col);
-	});
-}
-
-/**
  * animation*.name 行のパースと登録
- * @param {string} trimmed
- * @param {string[]} currentSurfaces
- * @param {Record<string, import('../surface-parser.js').SurfaceAnimation[]>} animations
- * @param {Record<string, Record<number, import('../surface-parser.js').SurfaceAnimation>>} animationMaps
  */
 export function handleAnimationName(
 	trimmed: string,
@@ -254,10 +72,6 @@ export function handleAnimationName(
 
 /**
  * animation*.option 行のパースと登録
- * @param {string} trimmed
- * @param {string[]} currentSurfaces
- * @param {Record<string, import('../surface-parser.js').SurfaceAnimation[]>} animations
- * @param {Record<string, Record<number, import('../surface-parser.js').SurfaceAnimation>>} animationMaps
  */
 export function handleAnimationOption(
 	trimmed: string,
@@ -287,10 +101,6 @@ export function handleAnimationOption(
 
 /**
  * animation*.pattern 行のパースと登録
- * @param {string} trimmed
- * @param {string[]} currentSurfaces
- * @param {Record<string, import('../surface-parser.js').SurfaceAnimation[]>} animations
- * @param {Record<string, Record<number, import('../surface-parser.js').SurfaceAnimation>>} animationMaps
  */
 export function handleAnimationPattern(
 	trimmed: string,
@@ -331,8 +141,6 @@ export function handleAnimationPattern(
 
 		let targetParam = "";
 		if (isControlMethod) {
-			// パラメータが同一トークンにある場合: alternativestart,(1,2)
-			// または第2引数にある場合: start,1
 			if (legacy) {
 				targetParam = surface;
 			} else {
@@ -349,7 +157,7 @@ export function handleAnimationPattern(
 				animationMaps[s][animId] = anim;
 				animations[s].push(anim);
 			}
-			const patternEntry = {
+			const patternEntry: any = {
 				surface,
 				wait: Number.isNaN(wait) ? 0 : wait * (legacy ? 10 : 1),
 				type: typeLower,
@@ -367,16 +175,15 @@ export function handleAnimationPattern(
 
 /**
  * 全アニメーションのパターンインデックスソートと不要プロパティの除去
- * @param {Record<string, import('../surface-parser.js').SurfaceAnimation[]>} animations
  */
 export function finalizeAnimations(
 	animations: { [s: string]: unknown } | ArrayLike<unknown>,
 ) {
 	for (const animList of Object.values(animations)) {
-		for (const anim of animList) {
+		for (const anim of animList as any[]) {
 			anim.patterns = anim.patterns
 				.sort((a: { index: number }, b: { index: number }) => a.index - b.index)
-				.map(({ index, ...pattern }) => pattern);
+				.map(({ index, ...pattern }: any) => pattern);
 		}
 	}
 }

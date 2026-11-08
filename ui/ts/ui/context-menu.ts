@@ -1,11 +1,15 @@
 import {
 	invoke,
 	isTauriAvailable,
-	listen,
 	startDraggingWindow,
 } from "../core/tauri-helper.js";
+import { handleMenuKeydown, MENU_KEY_MAP } from "./context-menu-keyboard.js";
+import { setupContextMenuSync } from "./context-menu-sync.js";
 import { MenuDispatcher } from "./menu-dispatcher.js";
 import { MenuSubmenuRenderer } from "./menu-submenu-renderer.js";
+
+export { handleMenuKeydown, MENU_KEY_MAP } from "./context-menu-keyboard.js";
+export { setupContextMenuSync } from "./context-menu-sync.js";
 
 const dispatcher = new MenuDispatcher();
 const renderer = new MenuSubmenuRenderer(dispatcher);
@@ -16,132 +20,8 @@ document.addEventListener("mousedown", (event) => {
 	startDraggingWindow();
 });
 
-// 独立ウィンドウ環境での Tauri イベント受信 (ゴースト・シェル・バルーンテーマ同期・スコープ同期)
-if (isTauriAvailable()) {
-	listen("sync-menu-scope", (event) => {
-		const scope =
-			typeof event.payload === "number"
-				? event.payload
-				: parseInt(event.payload, 10);
-		if (!Number.isNaN(scope)) {
-			dispatcher.setScope(scope);
-			// 着せ替えサブメニューを新スコープのパーツ定義へ切替
-			renderer.renderDressupSubmenu(null, scope);
-			// 新しいスコープに合わせた最新状態の同期を要求
-			dispatcher.dispatchAction("request-sync");
-		}
-	});
-	listen("sync-ghosts", (event) => {
-		const data = event.payload;
-		if (data) {
-			if (
-				typeof data.scope === "number" &&
-				data.scope !== dispatcher.currentScope
-			) {
-				dispatcher.setScope(data.scope);
-			}
-			renderer.renderGhostSubmenu(data.ghosts || [], data.currentGhost);
-			renderer.renderCallGhostSubmenu(data.ghosts || []);
-			if (data.shells) {
-				renderer.renderShellSubmenu(data.shells, data.currentShell);
-			}
-			// 着せ替え (bindgroup) メニューをスコープに合わせて再描画
-			if (data.dressup) {
-				renderer.renderDressupSubmenu(
-					data.dressup,
-					data.scope ?? dispatcher.currentScope,
-				);
-			}
-			// 最近使ったもの (ゴースト実行履歴)
-			renderer.renderRecentSubmenu(data.recentGhosts || []);
-			// ゴースト/シェルの descript.txt 由来のメニュー配色を適用
-			const activeShell =
-				data.shells?.find(
-					(s: { name: unknown }) => s.name === data.currentShell,
-				) || data.shells?.[0];
-			renderer.applyShellTheme(activeShell);
-			if (data.captions) {
-				renderer.applyCaptions(data.captions);
-			}
-		}
-	});
-	listen("sync-menu-captions", (event) => {
-		if (event.payload) {
-			renderer.applyCaptions(event.payload);
-		}
-	});
-	listen("sync-theme", (event) => {
-		renderer.applyTheme(event.payload);
-		if (globalThis._lastBalloons) {
-			renderer.renderBalloonSubmenu(globalThis._lastBalloons, event.payload);
-		}
-	});
-	listen("sync-balloons", (event) => {
-		globalThis._lastBalloons = event.payload;
-		renderer.renderBalloonSubmenu(
-			event.payload,
-			document.documentElement.getAttribute("data-balloon-theme"),
-		);
-	});
-}
-
-// 親ウィンドウからの状態同期メッセージ受信 (iframeフォールバック時)
-globalThis.addEventListener("message", (event) => {
-	if (event.data?.type === "sync-scope") {
-		const scope =
-			typeof event.data.scope === "number"
-				? event.data.scope
-				: parseInt(event.data.scope, 10);
-		if (!Number.isNaN(scope)) {
-			dispatcher.setScope(scope);
-			renderer.renderDressupSubmenu(null, scope);
-		}
-	} else if (event.data?.type === "sync-ghosts") {
-		renderer.renderGhostSubmenu(
-			event.data.ghosts || [],
-			event.data.currentGhost,
-		);
-		// 着せ替え (bindgroup) メニューをスコープに合わせて再描画
-		if (event.data.dressup) {
-			renderer.renderDressupSubmenu(
-				event.data.dressup,
-				event.data.scope ?? dispatcher.currentScope,
-			);
-		}
-		// 最近使ったもの (ゴースト実行履歴)
-		renderer.renderRecentSubmenu(event.data.recentGhosts || []);
-	} else if (event.data?.type === "sync-shells") {
-		renderer.renderShellSubmenu(
-			event.data.shells || ["master"],
-			event.data.currentShell || "master",
-		);
-		const activeShell =
-			event.data.shells?.find(
-				(s: { name: unknown }) => s.name === event.data.currentShell,
-			) || event.data.shells?.[0];
-		if (activeShell) {
-			renderer.applyShellTheme(activeShell);
-		}
-		if (event.data.captions) {
-			renderer.applyCaptions(event.data.captions);
-		}
-	} else if (event.data?.type === "sync-menu-captions") {
-		if (event.data.captions) {
-			renderer.applyCaptions(event.data.captions);
-		}
-	} else if (event.data?.type === "sync-theme") {
-		renderer.applyTheme(event.data.theme);
-		if (globalThis._lastBalloons) {
-			renderer.renderBalloonSubmenu(globalThis._lastBalloons, event.data.theme);
-		}
-	} else if (event.data?.type === "sync-balloons") {
-		globalThis._lastBalloons = event.data.balloons;
-		renderer.renderBalloonSubmenu(
-			event.data.balloons,
-			document.documentElement.getAttribute("data-balloon-theme"),
-		);
-	}
-});
+// Tauri / iframe 同期リスナー初期化
+setupContextMenuSync(dispatcher, renderer);
 
 // 独立サブメニューウィンドウを開く補助関数 (デスクトップ環境用)
 function _triggerSubmenuWindow(menuType: string, buttonEl: Element) {
@@ -282,65 +162,7 @@ globalThis.addEventListener("DOMContentLoaded", () => {
 
 // ショートカットキー対応 (T, B, R, P, O, D, A, C, Ctrl+I, Ctrl+W, Escape)
 document.addEventListener("keydown", (e) => {
-	if (e.key === "Escape") {
-		dispatcher.dispatchAction("close-menu");
-		return;
-	}
-
-	if (e.ctrlKey || e.metaKey) {
-		if (e.key.toLowerCase() === "i") {
-			e.preventDefault();
-			dispatcher.dispatchAction("minimize");
-		} else if (e.key.toLowerCase() === "w") {
-			e.preventDefault();
-			dispatcher.dispatchAction("close");
-		} else if (e.key.toLowerCase() === "q") {
-			e.preventDefault();
-			dispatcher.dispatchAction("close-all");
-		} else if (e.key.toLowerCase() === "k") {
-			e.preventDefault();
-			dispatcher.dispatchAction("keep-temporary-ghost");
-		} else if (e.shiftKey && e.key.toLowerCase() === "f12") {
-			e.preventDefault();
-			dispatcher.dispatchAction("reset-shell-position");
-		} else if (e.shiftKey && e.key.toLowerCase() === "f10") {
-			e.preventDefault();
-			dispatcher.dispatchAction("reset-balloon-position");
-		} else if (
-			e.shiftKey &&
-			(e.key === "Delete" || e.key === "Del" || e.key.toLowerCase() === "del")
-		) {
-			e.preventDefault();
-			dispatcher.dispatchAction("close-balloon");
-		}
-		return;
-	}
-
-	// 単一アクセラレータキー (SSP標準キーバインド準拠)
-	const keyMap = {
-		r: "recommend", // おすすめ (Recommend)
-		t: "portal", // ポータルサイト (Portal)
-		u: "update", // ネットワーク更新 (Update)
-		d: "uninstall-ghost", // アンインストール (Delete)
-		h: "headline", // RSS/ヘッドライン (Headline)
-		p: "plugins", // プラグイン (Plugins)
-		m: "biff", // メールチェック (Mail)
-		f: "tools", // 機能 (Functions)
-		o: "settings", // 設定 (Options)
-		g: "ghost", // ゴースト切り替え (Ghost)
-		c: "dressup", // 着せ替え (Clothing)
-		b: "balloon", // バルーン (Balloon)
-		a: "help", // 情報 (About)
-		i: "minimize", // アイコン化 (Iconize)
-		w: "close", // 終了 (Window close)
-		x: "close-all", // 全て終了 (Exit all)
-	};
-
-	const action = keyMap[e.key.toLowerCase()];
-	if (action) {
-		e.preventDefault();
-		dispatcher.dispatchAction(action);
-	}
+	handleMenuKeydown(e, dispatcher);
 });
 
 async function adjustMenuWindowSize() {

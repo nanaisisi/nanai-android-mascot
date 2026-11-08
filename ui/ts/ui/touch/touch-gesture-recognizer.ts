@@ -15,11 +15,11 @@ import {
 	processMultiTouchMove,
 	processSingleTouchMove,
 } from "./touch-motion-handler.js";
+import { handleTouchStartEvent } from "./touch-start-handler.js";
 import {
 	clearLongPressTimer,
 	handleTapOrDoubleTapEnd,
 	handleTwoFingerTapEnd,
-	startLongPressTimer,
 } from "./touch-tap-handler.js";
 
 export {
@@ -84,22 +84,8 @@ export class TouchGestureRecognizer {
 		changedTouches?: unknown[];
 	}) => void;
 	_boundTouchCancel: () => void;
-	/**
-	 * @param {HTMLElement} element 対象DOM要素
-	 * @param {object} [options={}]
-	 * @param {number} [options.longPressDelay=600] 長押し認識時間(ms)
-	 * @param {number} [options.strokeThreshold=50] 撫で認識移動積算閾値(px)
-	 * @param {number} [options.slopThreshold=8] 誤タッチ防止用移動閾値(px)
-	 * @param {number} [options.doubleTapDelay=300] ダブルタップ認識最大間隔(ms)
-	 * @param {number} [options.doubleTapDistance=24] ダブルタップ判定許容半径(px)
-	 * @param {number} [options.minScale=0.2] 最小ピンチ倍率
-	 * @param {number} [options.maxScale=5.0] 最大ピンチ倍率
-	 * @param {number} [options.swipeMinDistance=40] スワイプ判定最小移動距離(px)
-	 * @param {number} [options.swipeMinVelocity=0.3] スワイプ判定最小速度(px/ms)
-	 * @param {number} [options.twoFingerTapDelay=300] 2本指タップ最大許容時間(ms)
-	 * @param {boolean} [options.throttleWithRaf=false] requestAnimationFrameによるMoveイベントの間引き
-	 */
-	constructor(element: unknown, options = {}) {
+
+	constructor(element: unknown, options: any = {}) {
 		this.element = element;
 		this.options = {
 			longPressDelay: options.longPressDelay ?? 600,
@@ -125,7 +111,7 @@ export class TouchGestureRecognizer {
 		// ジェスチャー状態
 		this._isPinching = false;
 		this._isDragging = false;
-		this._dockState = "none"; // "none" | "left" | "right"
+		this._dockState = "none";
 		this._initialPinchDist = 0;
 		this._initialAngle = 0;
 		this._lastPinchScale = 1.0;
@@ -163,43 +149,32 @@ export class TouchGestureRecognizer {
 		this._boundTouchEnd = this._handleTouchEnd.bind(this);
 		this._boundTouchCancel = this._handleTouchCancel.bind(this);
 
-		if (this.element && typeof this.element.addEventListener === "function") {
-			this.element.addEventListener("touchstart", this._boundTouchStart, {
+		if (this.element && typeof (this.element as any).addEventListener === "function") {
+			(this.element as any).addEventListener("touchstart", this._boundTouchStart, {
 				passive: false,
 			});
-			this.element.addEventListener("touchmove", this._boundTouchMove, {
+			(this.element as any).addEventListener("touchmove", this._boundTouchMove, {
 				passive: false,
 			});
-			this.element.addEventListener("touchend", this._boundTouchEnd, {
+			(this.element as any).addEventListener("touchend", this._boundTouchEnd, {
 				passive: false,
 			});
-			this.element.addEventListener("touchcancel", this._boundTouchCancel, {
+			(this.element as any).addEventListener("touchcancel", this._boundTouchCancel, {
 				passive: false,
 			});
 		}
 	}
 
-	/**
-	 * イベントリスナー登録
-	 * @param {string} type
-	 * @param {Function} handler
-	 * @returns {() => void} リスナー解除関数
-	 */
 	on(type: unknown, handler: unknown) {
 		if (!this._listeners.has(type)) {
 			this._listeners.set(type, new Set());
 		}
-		this._listeners.get(type).add(handler);
+		(this._listeners.get(type) as Set<any>).add(handler);
 		return () => this.off(type, handler);
 	}
 
-	/**
-	 * イベントリスナー解除
-	 * @param {string} type
-	 * @param {Function} handler
-	 */
 	off(type: unknown, handler: unknown) {
-		const set = this._listeners.get(type);
+		const set = this._listeners.get(type) as Set<any> | undefined;
 		if (set) {
 			set.delete(handler);
 			if (set.size === 0) {
@@ -208,15 +183,9 @@ export class TouchGestureRecognizer {
 		}
 	}
 
-	/**
-	 * ジェスチャーイベントの発火
-	 * @param {string} type
-	 * @param {object} detail
-	 * @returns {TouchGestureEvent}
-	 */
 	emit(type: unknown, detail = {}) {
-		const event = new TouchGestureEvent(type, detail);
-		const set = this._listeners.get(type);
+		const event = new TouchGestureEvent(type as string, detail);
+		const set = this._listeners.get(type) as Set<any> | undefined;
 		if (set) {
 			for (const handler of set) {
 				try {
@@ -232,27 +201,16 @@ export class TouchGestureRecognizer {
 		return event;
 	}
 
-	/**
-	 * 現在のドッキング・スナップ状態を取得 ("none" | "left" | "right")
-	 * @returns {"none" | "left" | "right"}
-	 */
 	getDockState() {
 		return this._dockState;
 	}
 
-	/**
-	 * ドッキング・スナップ状態を設定
-	 * @param {"none" | "left" | "right"} state
-	 */
 	setDockState(state: string) {
 		if (state === "left" || state === "right" || state === "none") {
 			this._dockState = state;
 		}
 	}
 
-	/**
-	 * インタラクションおよびトラッキング状態のリセット
-	 */
 	reset() {
 		this._clearLongPressTimer();
 		this._cancelRaf();
@@ -279,19 +237,16 @@ export class TouchGestureRecognizer {
 		}
 	}
 
-	/**
-	 * 破棄処理
-	 */
 	destroy() {
 		this.reset();
 		if (
 			this.element &&
-			typeof this.element.removeEventListener === "function"
+			typeof (this.element as any).removeEventListener === "function"
 		) {
-			this.element.removeEventListener("touchstart", this._boundTouchStart);
-			this.element.removeEventListener("touchmove", this._boundTouchMove);
-			this.element.removeEventListener("touchend", this._boundTouchEnd);
-			this.element.removeEventListener("touchcancel", this._boundTouchCancel);
+			(this.element as any).removeEventListener("touchstart", this._boundTouchStart);
+			(this.element as any).removeEventListener("touchmove", this._boundTouchMove);
+			(this.element as any).removeEventListener("touchend", this._boundTouchEnd);
+			(this.element as any).removeEventListener("touchcancel", this._boundTouchCancel);
 		}
 		this._listeners.clear();
 		this._activeTouches.clear();
@@ -302,47 +257,7 @@ export class TouchGestureRecognizer {
 	}
 
 	_handleTouchStart(e: unknown) {
-		const touches = e.touches;
-		this._clearLongPressTimer();
-
-		if (touches.length === 1) {
-			// シングルタッチの開始
-			const t = touches[0];
-			const now = Date.now();
-			this._startX = t.clientX;
-			this._startY = t.clientY;
-			this._startTime = now;
-			this._lastX = t.clientX;
-			this._lastY = t.clientY;
-			this._lastTime = now;
-			this._vx = 0;
-			this._vy = 0;
-			this._hasMoved = false;
-			this._isDragging = false;
-			this._accumulatedStroke = 0;
-			this._strokeTriggered = false;
-			this._longPressTriggered = false;
-			this._isPinching = false;
-
-			startLongPressTimer(this, e);
-		} else if (touches.length === 2) {
-			// 2本指タッチ（ピンチ/回転/2本指タップ）の開始
-			this._clearLongPressTimer();
-			this._isPinching = true;
-			this._isDragging = false;
-			const t1 = touches[0];
-			const t2 = touches[1];
-			this._initialPinchDist = getTouchDistance(t1, t2);
-			this._initialAngle = getTouchAngle(t1, t2);
-			this._lastPinchScale = 1.0;
-
-			this._twoFingerStartTime = Date.now();
-			this._twoFingerMoved = false;
-			this._twoFingerCenter = getTouchCenter(t1, t2);
-		} else if (touches.length > 2) {
-			this._clearLongPressTimer();
-			this._twoFingerMoved = true;
-		}
+		handleTouchStartEvent(this, e);
 	}
 
 	_handleTouchMove(e: unknown) {
@@ -351,7 +266,7 @@ export class TouchGestureRecognizer {
 			this.options.throttleWithRaf &&
 			typeof requestAnimationFrame === "function"
 		) {
-			this._pendingMoveEvent = e;
+			this._pendingMoveEvent = e as any;
 			if (this._rafId === null) {
 				this._rafId = requestAnimationFrame(() => {
 					this._rafId = null;
@@ -360,15 +275,15 @@ export class TouchGestureRecognizer {
 						this._pendingMoveEvent = null;
 						this._processTouchMove(ev);
 					}
-				});
+				}) as any;
 			}
 		} else {
-			this._processTouchMove(e);
+			this._processTouchMove(e as any);
 		}
 	}
 
 	_processTouchMove(e: { touches: unknown }) {
-		const touches = e.touches;
+		const touches = e.touches as any[];
 		if (touches.length === 1) {
 			processSingleTouchMove(this, e);
 		} else if (touches.length >= 2) {

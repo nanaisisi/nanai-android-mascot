@@ -9,6 +9,7 @@ pub struct GhostManifest {
     pub kero_name: Option<String>,
     pub num_characters: i32,
     pub shiori: Option<String>,
+    pub makoto: Option<String>,
     pub craftman: Option<String>,
     pub craftman_url: Option<String>,
     pub group: Option<String>,
@@ -79,6 +80,7 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
     let num_characters = max_char_id + 1;
 
     let shiori = meta_map.as_ref().and_then(|m| m.get("shiori").cloned());
+    let makoto = meta_map.as_ref().and_then(|m| m.get("makoto").cloned());
     let craftman = meta_map.as_ref().and_then(|m| {
         m.get("craftman")
             .cloned()
@@ -198,6 +200,7 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
         kero_name,
         num_characters,
         shiori,
+        makoto,
         craftman,
         craftman_url,
         group,
@@ -221,5 +224,64 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
         sstp_allow_unspecified_send,
         sstp_always_translate,
         install_accept,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs;
+
+    #[test]
+    fn test_parse_ghost_manifest_with_makoto() {
+        let unique_id = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let dir = std::env::temp_dir().join(format!("test_manifest_makoto_{}", unique_id));
+        let master_dir = dir.join("ghost").join("master");
+        fs::create_dir_all(&master_dir).expect("create master dir");
+
+        let descript_content = "\
+charset,UTF-8\r\n\
+name,テストゴースト\r\n\
+shiori,yaya.dll\r\n\
+makoto,makoto.dll\r\n\
+craftman,整備者\r\n\
+";
+        fs::write(master_dir.join("descript.txt"), descript_content).expect("write descript");
+
+        let manifest = parse_ghost_manifest(&dir, "test_ghost");
+        assert_eq!(manifest.display_name, "テストゴースト");
+        assert_eq!(manifest.shiori.as_deref(), Some("yaya.dll"));
+        assert_eq!(manifest.makoto.as_deref(), Some("makoto.dll"));
+        assert_eq!(manifest.craftman.as_deref(), Some("整備者"));
+
+        let _ = fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn test_parse_ghost_manifest_without_makoto() {
+        let unique_id = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let dir = std::env::temp_dir().join(format!("test_manifest_no_makoto_{}", unique_id));
+        let master_dir = dir.join("ghost").join("master");
+        fs::create_dir_all(&master_dir).expect("create master dir");
+
+        let descript_content = "\
+charset,UTF-8\r\n\
+name,シンプルゴースト\r\n\
+shiori,shiori.dll\r\n\
+";
+        fs::write(master_dir.join("descript.txt"), descript_content).expect("write descript");
+
+        let manifest = parse_ghost_manifest(&dir, "simple_ghost");
+        assert_eq!(manifest.display_name, "シンプルゴースト");
+        assert_eq!(manifest.shiori.as_deref(), Some("shiori.dll"));
+        assert_eq!(manifest.makoto, None);
+
+        let _ = fs::remove_dir_all(&dir);
     }
 }

@@ -28,6 +28,7 @@ pub async fn get_ghost_info(
         kero_name: manifest.kero_name,
         num_characters: manifest.num_characters,
         shiori: manifest.shiori,
+        makoto: manifest.makoto,
         craftman: manifest.craftman,
         craftman_url: manifest.craftman_url,
         shells,

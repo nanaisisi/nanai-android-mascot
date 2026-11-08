@@ -5,7 +5,7 @@
 
 import { playAnimationPatterns } from "./playback-control.js";
 
-function isInstance(obj: number | null) {
+function isInstance(obj: unknown) {
 	return (
 		obj !== null &&
 		typeof obj === "object" &&
@@ -17,7 +17,7 @@ function isInstance(obj: number | null) {
 }
 
 export function onTalkStart(this: unknown, target = 0, scopeIdParam = 0) {
-	let instance: unknown, scopeId: unknown;
+	let instance: any, scopeId: any;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
@@ -25,6 +25,10 @@ export function onTalkStart(this: unknown, target = 0, scopeIdParam = 0) {
 		instance = this;
 		scopeId = target ?? 0;
 	}
+
+	if (!instance) return;
+	instance._spokenCount = instance._spokenCount || {};
+	instance._talkStarted = instance._talkStarted || {};
 
 	instance._spokenCount[scopeId] = 0;
 	instance._talkStarted[scopeId] = true;
@@ -34,7 +38,7 @@ export function onTalkStart(this: unknown, target = 0, scopeIdParam = 0) {
 }
 
 export function onTalkEnd(this: unknown, target = 0, scopeIdParam = 0) {
-	let instance: unknown, scopeId: unknown;
+	let instance: any, scopeId: any;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
@@ -42,6 +46,9 @@ export function onTalkEnd(this: unknown, target = 0, scopeIdParam = 0) {
 		instance = this;
 		scopeId = target ?? 0;
 	}
+
+	if (!instance) return;
+	instance._talkStarted = instance._talkStarted || {};
 
 	if (instance._talkStarted[scopeId]) {
 		if (instance.triggerAnimations) {
@@ -52,7 +59,7 @@ export function onTalkEnd(this: unknown, target = 0, scopeIdParam = 0) {
 }
 
 export function onScriptEnd(this: unknown, target = 0, scopeIdParam = 0) {
-	let instance: unknown, scopeId: unknown;
+	let instance: any, scopeId: any;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
@@ -61,13 +68,14 @@ export function onScriptEnd(this: unknown, target = 0, scopeIdParam = 0) {
 		scopeId = target ?? 0;
 	}
 
+	if (!instance) return;
 	if (instance.triggerAnimations) {
 		instance.triggerAnimations(scopeId, "yen-e");
 	}
 }
 
 export function onCharSpoken(this: unknown, target = 0, scopeIdParam = 0) {
-	let instance: unknown, scopeId: unknown;
+	let instance: any, scopeId: any;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
@@ -76,24 +84,35 @@ export function onCharSpoken(this: unknown, target = 0, scopeIdParam = 0) {
 		scopeId = target ?? 0;
 	}
 
+	if (!instance) return;
 	if (instance.isSerikoTalkEnabled && !instance.isSerikoTalkEnabled(scopeId)) {
 		return;
 	}
 
+	instance._spokenCount = instance._spokenCount || {};
 	instance._spokenCount[scopeId] = (instance._spokenCount[scopeId] || 0) + 1;
 	const count = instance._spokenCount[scopeId];
 
-	const anims = instance.findAnimationsForEvent
-		? instance.findAnimationsForEvent(scopeId, "talk")
-		: [];
+	if (instance.findAnimationsForEvent) {
+		const anims = instance.findAnimationsForEvent(scopeId, "talk");
+		for (const anim of anims) {
+			const sid = String(instance.manager?.currentSurfaceIdFor ? instance.manager.currentSurfaceIdFor(scopeId) : 0);
+			playAnimationPatterns.call(instance, anim, sid, scopeId);
+		}
+		return;
+	}
 
-	for (const anim of anims) {
-		if (anim.option?.talkwait) {
-			const waitVal = parseInt(anim.option.talkwait, 10);
-			if (!Number.isNaN(waitVal) && count === waitVal) {
-				const sidNum = Number(scopeId);
-				const baseSurfaceId = instance.manager.currentSurfaceIdFor(sidNum);
-				playAnimationPatterns.call(instance, anim, baseSurfaceId, sidNum);
+	const manager = instance.manager;
+	const sid = String(manager?.currentSurfaceIdFor ? manager.currentSurfaceIdFor(scopeId) : 0);
+	const animList = manager?.animations?.[sid] || manager?.animations?.default || [];
+
+	for (const anim of animList) {
+		const interval = String(anim.interval || "").toLowerCase();
+		if (interval.includes("talk")) {
+			const parts = interval.split(",");
+			const n = parts[1] ? Number.parseInt(parts[1], 10) : 1;
+			if (!Number.isNaN(n) && n > 0 && count % n === 0) {
+				playAnimationPatterns.call(instance, anim, sid, scopeId);
 			}
 		}
 	}

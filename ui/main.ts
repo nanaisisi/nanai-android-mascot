@@ -46,8 +46,8 @@ export class NanaiAndroidMascotApp {
 	sakuraPlayer: SakuraScriptPlayer;
 	modalManager: ModalManager | null;
 	elements: Record<string, HTMLElement | null>;
-	availableBalloons?: any[];
-	availablePlugins?: any[];
+	availableBalloons?: unknown[];
+	availablePlugins?: unknown[];
 	balloonUserScale?: number;
 	balloonDpiScale?: number;
 	balloonDontMove?: boolean;
@@ -100,9 +100,9 @@ export class NanaiAndroidMascotApp {
 		this.initUIEnvironment();
 
 		this.modalManager = new ModalManager(this);
-		(this as any).loadSettings();
-		(this as any).setupEventListeners();
-		(this as any).applySettings();
+		(this as unknown).loadSettings();
+		(this as unknown).setupEventListeners();
+		(this as unknown).applySettings();
 
 		await Promise.all([this.scanBalloons(), this.scanPlugins()]);
 
@@ -112,19 +112,19 @@ export class NanaiAndroidMascotApp {
 			this.ghostController.selectGhost(AppConfig.paths.fallbackGhostName);
 		}
 
-		(this as any).startSecondTimer();
+		(this as unknown).startSecondTimer();
 		this.isInitialized = true;
 		console.log("✅ Nanai Android Mascot 初期化完了");
 	}
 
 	async scanBalloons() {
-		return (this as any).scanBalloons?.() || [];
+		return (this as unknown).scanBalloons?.() || [];
 	}
 
 	async scanPlugins() {
 		if (!isTauriAvailable()) return;
 		try {
-			const plugins: any = await invoke("scan_plugins");
+			const plugins: unknown = await invoke("scan_plugins");
 			if (plugins && plugins.length > 0) {
 				this.availablePlugins = plugins;
 				console.log("🔌 プラグインスキャン完了:", plugins.length);
@@ -168,7 +168,7 @@ export class NanaiAndroidMascotApp {
 		this._isExiting = true;
 
 		const exit = async () => {
-			(this.ghostController as any)?.stopSecondChangeTimer?.();
+			(this.ghostController as unknown)?.stopSecondChangeTimer?.();
 			if (isTauriAvailable()) {
 				try {
 					await invoke("unload_current_ghost");
@@ -187,10 +187,10 @@ export class NanaiAndroidMascotApp {
 		};
 
 		try {
-			(this as any).hideMenu();
+			(this as unknown).hideMenu();
 			this.modalManager?.hide();
 			try {
-				await (this.ghostController as any).sendShioriEvent("OnClose");
+				await (this.ghostController as unknown).sendShioriEvent("OnClose");
 			} catch (_e) {}
 			const exitDelay = this.sakuraPlayer?.isPlaying ? 1500 : 400;
 			setTimeout(exit, exitDelay);
@@ -210,5 +210,5 @@ Object.assign(
 );
 
 globalThis.addEventListener("DOMContentLoaded", () => {
-	(globalThis as any).mascotApp = new NanaiAndroidMascotApp();
+	(globalThis as unknown).mascotApp = new NanaiAndroidMascotApp();
 });

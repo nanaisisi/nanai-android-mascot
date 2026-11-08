@@ -12,7 +12,7 @@ describe("TouchGestureRecognizer - Swipe", () => {
 		addEventListener?: (event: unknown, fn: unknown) => void;
 		removeEventListener?: (event: unknown, fn: unknown) => void;
 	};
-	let recognizer;
+	let recognizer: TouchGestureRecognizer;
 
 	beforeEach(() => {
 		vi.useFakeTimers();

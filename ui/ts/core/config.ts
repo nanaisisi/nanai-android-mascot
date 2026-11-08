@@ -6,8 +6,8 @@ export const AppConfig: {
 	timing: Record<string, number>;
 	scale: Record<string, number>;
 	storageKeys: Record<string, string>;
-	shiori?: Record<string, any>;
-	state?: Record<string, any>;
+	shiori?: Record<string, unknown>;
+	state?: Record<string, unknown>;
 } = {
 	// パス関連
 	paths: {
@@ -54,9 +54,9 @@ export const AppConfig: {
  */
 export async function loadAppConfig(): Promise<void> {
 	try {
-		const tauriInternals = (globalThis as any).__TAURI_INTERNALS__;
+		const tauriInternals = (globalThis as unknown).__TAURI_INTERNALS__;
 		if (tauriInternals?.invoke) {
-			const config: any = await tauriInternals.invoke("get_app_config");
+			const config: unknown = await tauriInternals.invoke("get_app_config");
 
 			if (config) {
 				if (config.paths) Object.assign(AppConfig.paths, config.paths);

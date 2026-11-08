@@ -3,8 +3,8 @@ import { eventMethods } from "../ui/js/core/app-events.js";
 import { shioriNotifyMethods } from "../ui/js/ghost/shiori-notify.js";
 
 describe("SHIORI Extended Events & Notifications", () => {
-	let mockController: any;
-	let mockAppEvents: any;
+	let mockController: unknown;
+	let mockAppEvents: unknown;
 
 	beforeEach(() => {
 		mockController = {

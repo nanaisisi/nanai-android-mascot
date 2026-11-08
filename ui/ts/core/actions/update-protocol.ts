@@ -149,10 +149,10 @@ export const OTHER_PROGRESS_PHASE_EVENTS: Record<string, string> = {
 
 /**
  * 例外オブジェクトから UKADOC 準拠の失敗理由を抽出
- * @param {any} err
+ * @param {unknown} err
  * @returns {string}
  */
-export function parseErrorReason(err: any): string {
+export function parseErrorReason(err: unknown): string {
 	const msg = String(err);
 	if (msg.includes("404")) return "404";
 	if (msg.includes("timeout")) return "timeout";
@@ -162,20 +162,20 @@ export function parseErrorReason(err: any): string {
 
 /**
  * ファイル単位の進捗通知ハンドラ生成 (Rust execute_ghost_update の update-progress を受診)
- * @param {any} gc - GhostController
+ * @param {unknown} gc - GhostController
  * @param {(filePath: string) => void} [onFailedFile]
  * @param {boolean} [isOther=false] - 外部リソース更新時は true
- * @returns {(event: any) => void}
+ * @returns {(event: unknown) => void}
  */
 export function createUpdateProgressHandler(
-	gc: any,
+	gc: unknown,
 	onFailedFile?: (filePath: string) => void,
 	isOther: boolean = false,
 ) {
 	const eventMap = isOther
 		? OTHER_PROGRESS_PHASE_EVENTS
 		: PROGRESS_PHASE_EVENTS;
-	return (event: any) => {
+	return (event: unknown) => {
 		const { phase, path: filePath } = event.payload || {};
 		if (!filePath) return;
 		const evName = eventMap[phase];

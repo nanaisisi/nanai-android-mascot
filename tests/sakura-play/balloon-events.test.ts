@@ -314,10 +314,10 @@ test("balloon events: OnBalloonTimeout triggered via sendBalloonTimeoutNotify", 
 });
 
 test("\\t (timeCritical) suppresses balloonTimeout and click timeout auto-advance", async () => {
-	const notifyEvents: any[] = [];
+	const notifyEvents: unknown[] = [];
 	const sakuraText = createEl("div");
 
-	const app: any = {
+	const app: Record<string, unknown> = {
 		ghostId: "main",
 		elements: {
 			balloonText: sakuraText,

@@ -6,8 +6,8 @@ import {
 import { createMockElement } from "../helpers.js";
 
 describe("TouchGestureRecognizer - Pinch & Rotate", () => {
-	let element;
-	let recognizer;
+	let element: ReturnType<typeof createMockElement>;
+	let recognizer: TouchGestureRecognizer;
 
 	beforeEach(() => {
 		vi.useFakeTimers();

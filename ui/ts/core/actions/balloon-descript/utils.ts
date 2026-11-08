@@ -12,12 +12,12 @@ function clampChannel(val: number): number {
  * 1. props[`${base}.r`], props[`${base}.g`], props[`${base}.b`] の個別キー
  * 2. props[base] のカンマ区切り ("r,g,b" または "rgb(r,g,b)")
  * 3. 0〜255 の範囲クランプと数値検証
- * @param {Record<string, any>} props
+ * @param {Record<string, unknown>} props
  * @param {string} base
  * @returns {string | null}
  */
 export function rgbFromComponents(
-	props: Record<string, any>,
+	props: Record<string, unknown>,
 	base: string,
 ): string | null {
 	if (!props || !base) return null;

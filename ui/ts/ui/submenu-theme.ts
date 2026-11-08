@@ -28,10 +28,10 @@ function preloadImage(url: string | null): Promise<void> {
 	});
 }
 
-export function applyShellMenuTheme(activeShell: any) {
+export function applyShellMenuTheme(activeShell: unknown) {
 	const rootStyle = document.documentElement.style;
 	const theme = activeShell?.menu_theme;
-	const setOrRemove = (property: string, value: any) => {
+	const setOrRemove = (property: string, value: unknown) => {
 		if (value) rootStyle.setProperty(property, value);
 		else rootStyle.removeProperty(property);
 	};
@@ -74,8 +74,8 @@ export function applyShellMenuTheme(activeShell: any) {
 		const fullPath = shellPath
 			? `${shellPath}/${relStr.replace(/\\/g, "/")}`
 			: relStr;
-		return (globalThis as any).__TAURI__?.core?.convertFileSrc
-			? (globalThis as any).__TAURI__.core.convertFileSrc(fullPath)
+		return (globalThis as unknown).__TAURI__?.core?.convertFileSrc
+			? (globalThis as unknown).__TAURI__.core.convertFileSrc(fullPath)
 			: fullPath;
 	};
 

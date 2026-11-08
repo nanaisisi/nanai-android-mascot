@@ -40,7 +40,7 @@ export const ipcQueueStats = {
  */
 export async function invoke<T = unknown>(
 	cmd: string,
-	args: Record<string, any> = {},
+	args: Record<string, unknown> = {},
 ): Promise<T> {
 	if (!isTauriAvailable()) {
 		throw new Error(`Tauri is not available to invoke command: ${cmd}`);
@@ -105,7 +105,7 @@ export function convertFileSrc(
  */
 export async function listen(
 	event: string,
-	handler: (event: any) => void,
+	handler: (event: unknown) => void,
 ): Promise<() => void> {
 	if (!isTauriAvailable()) return () => {};
 	return await tauriListen(event, handler);
@@ -114,7 +114,7 @@ export async function listen(
 /**
  * イベント発火
  */
-export async function emit(event: string, payload?: any): Promise<void> {
+export async function emit(event: string, payload?: unknown): Promise<void> {
 	if (!isTauriAvailable()) return;
 	await tauriEmit(event, payload);
 }

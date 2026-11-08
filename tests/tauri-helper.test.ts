@@ -91,7 +91,11 @@ test("convertFileSrc covers empty path, Tauri available, protocol startsWith bra
 
 test("invoke, listen, emit, moveCurrentWindowBy, getCurrentWindowPosition, and ipcQueueStats coverage", async () => {
 	// Verify __NANAI_IPC_QUEUE_STATS__ attachment
-	assert.equal((globalThis as any).__NANAI_IPC_QUEUE_STATS__, ipcQueueStats);
+	assert.equal(
+		(globalThis as unknown as Record<string, unknown>)
+			.__NANAI_IPC_QUEUE_STATS__,
+		ipcQueueStats,
+	);
 
 	// 1. invoke when Tauri unavailable (throws error)
 	delete globalThis.__TAURI_INTERNALS__;

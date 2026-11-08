@@ -114,7 +114,11 @@ describe("SERIKO and Surface Change Event Coordination (Slot-08 Cycle 8)", () =>
 		);
 		expect(mockManager.playAnimationPatterns).not.toHaveBeenCalled();
 
-		(mockManager.isSerikoTalkEnabled as any).mockReturnValue(true);
+		(
+			mockManager.isSerikoTalkEnabled as unknown as {
+				mockReturnValue: (v: boolean) => void;
+			}
+		).mockReturnValue(true);
 		onCharSpoken(
 			mockManager as unknown as Parameters<typeof onCharSpoken>[0],
 			0,

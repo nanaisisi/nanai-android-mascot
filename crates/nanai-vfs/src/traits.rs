@@ -111,6 +111,43 @@ pub trait VirtualFileSystem: Send + Sync {
         let end = (start + length).min(data.len());
         Ok(data[start..end].to_vec())
     }
+
+    /// 指定ディレクトリ配下のファイルを階層深さ制限付きで再帰的に走査（相対パスのリストを返す）
+    /// `max_depth` が 0 の場合は直下のファイルのみ走査
+    fn walk_files_with_max_depth(&self, dir_path: &str, max_depth: usize) -> io::Result<Vec<String>> {
+        let all_files = self.walk_files(dir_path)?;
+        let prefix = dir_path.trim_matches('/').to_string();
+        let mut filtered: Vec<String> = all_files
+            .into_iter()
+            .filter(|f| {
+                let rel = if !prefix.is_empty() && f.starts_with(&prefix) {
+                    f.strip_prefix(&prefix).unwrap_or(f).trim_matches('/')
+                } else {
+                    f.as_str()
+                };
+                let depth = rel.chars().filter(|&c| c == '/').count();
+                depth <= max_depth
+            })
+            .collect();
+        filtered.sort();
+        Ok(filtered)
+    }
+
+    /// 大容量ファイル対応: 指定されたチャンクサイズ（バイト単位）でデータを分割して読み込む
+    fn read_chunks(&self, path: &str, chunk_size: usize) -> io::Result<Vec<Vec<u8>>> {
+        let data = self.read_binary(path)?;
+        if chunk_size == 0 {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidInput,
+                "chunk_size must be greater than 0",
+            ));
+        }
+        let mut chunks = Vec::new();
+        for chunk in data.chunks(chunk_size) {
+            chunks.push(chunk.to_vec());
+        }
+        Ok(chunks)
+    }
 }
 
 /// 単純なワイルドカードパターン（`*` と `?`）のマッチング関数

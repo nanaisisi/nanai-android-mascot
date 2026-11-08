@@ -27,7 +27,34 @@ pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
         }
     }
 
-    // 1-2. UTF-16LE BOM チェック (0xFF, 0xFE)
+    // 1-2. UTF-32LE BOM チェック (0xFF, 0xFE, 0x00, 0x00)
+    // 4バイトプレフィックスを2バイトUTF-16LEよりも優先して判定
+    if buffer.starts_with(&[0xFF, 0xFE, 0x00, 0x00]) {
+        let u32_bytes = &buffer[4..];
+        let mut chars = Vec::new();
+        let mut had_errors = false;
+        #[allow(clippy::chunks_exact_to_as_chunks)]
+        for chunk in u32_bytes.chunks_exact(4) {
+            let code = u32::from_le_bytes([chunk[0], chunk[1], chunk[2], chunk[3]]);
+            match char::from_u32(code) {
+                Some(c) => chars.push(c),
+                None => {
+                    chars.push('\u{FFFD}');
+                    had_errors = true;
+                }
+            }
+        }
+        if u32_bytes.len() % 4 != 0 {
+            had_errors = true;
+        }
+        return DecodeResult {
+            text: chars.into_iter().collect(),
+            encoding: "UTF-32LE",
+            had_errors,
+        };
+    }
+
+    // 1-3. UTF-16LE BOM チェック (0xFF, 0xFE)
     if buffer.starts_with(&[0xFF, 0xFE]) {
         let (cow, _, had_errors) = UTF_16LE.decode(&buffer[2..]);
         if !had_errors {
@@ -39,7 +66,33 @@ pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
         }
     }
 
-    // 1-3. UTF-16BE BOM チェック (0xFE, 0xFF)
+    // 1-4. UTF-32BE BOM チェック (0x00, 0x00, 0xFE, 0xFF)
+    if buffer.starts_with(&[0x00, 0x00, 0xFE, 0xFF]) {
+        let u32_bytes = &buffer[4..];
+        let mut chars = Vec::new();
+        let mut had_errors = false;
+        #[allow(clippy::chunks_exact_to_as_chunks)]
+        for chunk in u32_bytes.chunks_exact(4) {
+            let code = u32::from_be_bytes([chunk[0], chunk[1], chunk[2], chunk[3]]);
+            match char::from_u32(code) {
+                Some(c) => chars.push(c),
+                None => {
+                    chars.push('\u{FFFD}');
+                    had_errors = true;
+                }
+            }
+        }
+        if u32_bytes.len() % 4 != 0 {
+            had_errors = true;
+        }
+        return DecodeResult {
+            text: chars.into_iter().collect(),
+            encoding: "UTF-32BE",
+            had_errors,
+        };
+    }
+
+    // 1-5. UTF-16BE BOM チェック (0xFE, 0xFF)
     if buffer.starts_with(&[0xFE, 0xFF]) {
         let (cow, _, had_errors) = UTF_16BE.decode(&buffer[2..]);
         if !had_errors {

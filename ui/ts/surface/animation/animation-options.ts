@@ -9,12 +9,14 @@ import { surfaceAnimationTimers } from "../surface-animation-timers.js";
  * SERIKO アニメーションオプション文字列のパース (\![anim,option,ID,...])
  * @param {string|string[]|null} [optionParam=null]
  */
-export function parseAnimationOptions(optionParam: string | string[] | null = null) {
+export function parseAnimationOptions(
+	optionParam: string | string[] | null = null,
+) {
 	const optionsList = Array.isArray(optionParam)
 		? optionParam
 		: optionParam && typeof optionParam === "string"
-		? [optionParam]
-		: [];
+			? [optionParam]
+			: [];
 
 	const optionStr = optionsList.join(" ").toLowerCase();
 
@@ -122,7 +124,11 @@ export function findAnimation(
 
 	if (!instance?.manager) return null;
 	const currentSurfaceIdFor = instance.manager.currentSurfaceIdFor;
-	const sid = String(currentSurfaceIdFor ? currentSurfaceIdFor.call(instance.manager, scopeId) : 0);
+	const sid = String(
+		currentSurfaceIdFor
+			? currentSurfaceIdFor.call(instance.manager, scopeId)
+			: 0,
+	);
 	const animList =
 		instance.manager.animations?.[sid] ||
 		instance.manager.animations?.default ||

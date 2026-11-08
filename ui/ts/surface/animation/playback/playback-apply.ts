@@ -78,7 +78,10 @@ export function _applyAnimationFrame(
 
 	// 特殊制御パターンの処理
 	const surfaceId = p.surfaceId !== undefined ? p.surfaceId : bSurfId;
-	const surfaceNum = typeof surfaceId === "number" ? surfaceId : Number.parseInt(String(surfaceId), 10);
+	const surfaceNum =
+		typeof surfaceId === "number"
+			? surfaceId
+			: Number.parseInt(String(surfaceId), 10);
 
 	if (surfaceNum === -1) {
 		// surface -1: このアニメーションの再生を終了しベース表示に戻す
@@ -99,7 +102,9 @@ export function _applyAnimationFrame(
 
 	if (p.type === "start" || p.type === "stop") {
 		if (p.type === "start" && p.targetId != null) {
-			const anim = inst.findAnimation ? inst.findAnimation(p.targetId, sId) : null;
+			const anim = inst.findAnimation
+				? inst.findAnimation(p.targetId, sId)
+				: null;
 			if (anim) {
 				inst.playAnimationPatterns?.(anim, bSurfId, sId);
 			}
@@ -118,7 +123,12 @@ export function _applyAnimationFrame(
 		return true;
 	}
 
-	if (p.type === "scaling" || p.scaleX != null || p.scaleY != null || p.scale != null) {
+	if (
+		p.type === "scaling" ||
+		p.scaleX != null ||
+		p.scaleY != null ||
+		p.scale != null
+	) {
 		const scaleX = p.scaleX ?? p.scale ?? 100;
 		const scaleY = p.scaleY ?? p.scale ?? 100;
 		const setScale = inst.setScale || manager?.setScale;
@@ -142,7 +152,14 @@ export function _applyAnimationFrame(
 	} else if (manager) {
 		const renderSurfaceLayer = manager.renderSurfaceLayer;
 		if (renderSurfaceLayer) {
-			renderSurfaceLayer.call(manager, surfaceId, p.file, p.x || 0, p.y || 0, opts);
+			renderSurfaceLayer.call(
+				manager,
+				surfaceId,
+				p.file,
+				p.x || 0,
+				p.y || 0,
+				opts,
+			);
 		}
 	}
 	return true;

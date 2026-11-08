@@ -28,10 +28,7 @@ export function playAnimationPatterns(
 	baseSurfaceIdOrScopeId: any,
 	scopeIdParam: any,
 ) {
-	let instance: any,
-		anim: any,
-		baseSurfaceId: any,
-		scopeId: any;
+	let instance: any, anim: any, baseSurfaceId: any, scopeId: any;
 	if (isInstance(target)) {
 		instance = target;
 		anim = animOrBaseSurfaceId;
@@ -85,10 +82,7 @@ export async function playAnimationById(
 	scopeIdOrWaitForComplete: any = 0,
 	waitForCompleteParam = false,
 ) {
-	let instance: any,
-		animIdOrName: any,
-		scopeId: any,
-		waitForComplete: any;
+	let instance: any, animIdOrName: any, scopeId: any, waitForComplete: any;
 	if (isInstance(target)) {
 		instance = target;
 		animIdOrName = animIdOrNameOrScopeId;

@@ -74,8 +74,10 @@ export async function _playTimelineFrames(
 			typeof frameItem === "object" && frameItem !== null
 				? frameItem.pattern || frameItem
 				: anim?.patterns
-				? anim.patterns.find((p: any) => p.index === i) || anim.patterns[i] || frameItem
-				: frameItem;
+					? anim.patterns.find((p: any) => p.index === i) ||
+						anim.patterns[i] ||
+						frameItem
+					: frameItem;
 
 		const waitMs = resolveWaitFn
 			? resolveWaitFn(pat?.wait || frameItem?.wait)
@@ -90,7 +92,16 @@ export async function _playTimelineFrames(
 
 		if (stoppedAnimations?.has(key)) break;
 
-		const result = await applyFn.call(inst, pat, anim, bSurfId, sId, key, () => !stoppedAnimations?.has(key), options);
+		const result = await applyFn.call(
+			inst,
+			pat,
+			anim,
+			bSurfId,
+			sId,
+			key,
+			() => !stoppedAnimations?.has(key),
+			options,
+		);
 		if (result === false) break;
 	}
 }
@@ -159,7 +170,16 @@ export async function _playOnePat(
 
 	if (stoppedAnimations?.has(key)) return false;
 
-	const result = await applyFn.call(inst, p, anim, bSurfId, sId, key, isCurrent, options);
+	const result = await applyFn.call(
+		inst,
+		p,
+		anim,
+		bSurfId,
+		sId,
+		key,
+		isCurrent,
+		options,
+	);
 
 	return result !== false;
 }

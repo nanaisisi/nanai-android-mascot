@@ -118,10 +118,12 @@ export function _applyAnimationFrame(
 		return true;
 	}
 
-	if (p.type === "scaling" || p.scaleX != null || p.scaleY != null) {
+	if (p.type === "scaling" || p.scaleX != null || p.scaleY != null || p.scale != null) {
+		const scaleX = p.scaleX ?? p.scale ?? 100;
+		const scaleY = p.scaleY ?? p.scale ?? 100;
 		const setScale = inst.setScale || manager?.setScale;
 		if (setScale) {
-			setScale.call(inst, p.scaleX ?? 100, p.scaleY ?? 100, sId);
+			setScale.call(inst, scaleX, scaleY, sId);
 		}
 		return true;
 	}

@@ -1,36 +1,7 @@
-//! VFS 文字コード自動判定（Shift_JIS, EUC-JP, ISO-2022-JP, UTF-8/16）および相互変換処理モジュール
+//! バイト列からの文字コード自動判定・デコードモジュール
 
+use super::names::{DecodeResult, normalize_charset_name};
 use encoding_rs::{EUC_JP, ISO_2022_JP, SHIFT_JIS, UTF_16BE, UTF_16LE};
-
-/// デコード結果の詳細情報
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct DecodeResult {
-    /// デコードされた文字列
-    pub text: String,
-    /// 判定された文字コード名（"UTF-8", "UTF-8 (BOM)", "Shift_JIS", "EUC-JP", "ISO-2022-JP", "UTF-16LE", "UTF-16BE"）
-    pub encoding: &'static str,
-    /// 不正な文字シーケンスや置換文字が発生したか
-    pub had_errors: bool,
-}
-
-/// 文字コード名を標準的なキー表現に正規化（例: "cp932", "sjis", "windows-31j" -> "Shift_JIS"）
-pub fn normalize_charset_name(charset: &str) -> Option<&'static str> {
-    let clean = charset
-        .trim()
-        .trim_matches(|c| c == '"' || c == '\'')
-        .to_ascii_lowercase();
-    match clean.as_str() {
-        "shift_jis" | "shift-jis" | "sjis" | "cp932" | "windows-31j" | "ms932" | "x-sjis" => {
-            Some("Shift_JIS")
-        }
-        "euc-jp" | "euc_jp" | "ujis" | "x-euc-jp" => Some("EUC-JP"),
-        "iso-2022-jp" | "iso2022jp" | "jis" | "csiso2022jp" => Some("ISO-2022-JP"),
-        "utf-8" | "utf8" | "utf_8" => Some("UTF-8"),
-        "utf-16le" | "utf-16" | "utf16le" | "utf16" => Some("UTF-16LE"),
-        "utf-16be" | "utf16be" => Some("UTF-16BE"),
-        _ => None,
-    }
-}
 
 /// 詳細なデコード結果（エラー有無を含む）を返す拡張自動判定関数
 pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
@@ -228,51 +199,4 @@ pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
 pub fn detect_and_decode(buffer: &[u8]) -> (String, &'static str) {
     let res = detect_and_decode_ext(buffer);
     (res.text, res.encoding)
-}
-
-/// 文字列を指定された文字コード名にエンコード
-pub fn encode_to_charset(text: &str, charset: &str) -> Option<Vec<u8>> {
-    let normalized = normalize_charset_name(charset)?;
-    match normalized {
-        "Shift_JIS" => {
-            let (cow, _, had_errors) = SHIFT_JIS.encode(text);
-            if had_errors {
-                None
-            } else {
-                Some(cow.into_owned())
-            }
-        }
-        "EUC-JP" => {
-            let (cow, _, had_errors) = EUC_JP.encode(text);
-            if had_errors {
-                None
-            } else {
-                Some(cow.into_owned())
-            }
-        }
-        "ISO-2022-JP" => {
-            let (cow, _, had_errors) = ISO_2022_JP.encode(text);
-            if had_errors {
-                None
-            } else {
-                Some(cow.into_owned())
-            }
-        }
-        "UTF-8" => Some(text.as_bytes().to_vec()),
-        "UTF-16LE" => {
-            let mut out = Vec::new();
-            for u in text.encode_utf16() {
-                out.extend_from_slice(&u.to_le_bytes());
-            }
-            Some(out)
-        }
-        "UTF-16BE" => {
-            let mut out = Vec::new();
-            for u in text.encode_utf16() {
-                out.extend_from_slice(&u.to_be_bytes());
-            }
-            Some(out)
-        }
-        _ => None,
-    }
 }

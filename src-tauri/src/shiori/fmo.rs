@@ -94,11 +94,11 @@ pub fn check_named_mutex(name: &str) -> bool {
 
 static HELD_HANDLES: Mutex<Vec<usize>> = Mutex::new(Vec::new());
 
-/// ベースウェア動作宣言として "ssp" および "sakura" 名前つき Mutex を獲得・保持する
+/// ベースウェア動作宣言として "nsm" および "sakura" 名前つき Mutex を獲得・保持する
 pub fn acquire_base_ware_mutexes() {
     #[cfg(target_os = "windows")]
     {
-        if let Some(h) = win_mutex::acquire_mutex("ssp") {
+        if let Some(h) = win_mutex::acquire_mutex("nsm") {
             HELD_HANDLES.lock().unwrap().push(h as usize);
         }
         if let Some(h) = win_mutex::acquire_mutex("sakura") {
@@ -106,9 +106,9 @@ pub fn acquire_base_ware_mutexes() {
         }
     }
 
-    set_fallback_mutex("ssp", true);
+    set_fallback_mutex("nsm", true);
     set_fallback_mutex("sakura", true);
-    println!("🔒 BaseWare Named Mutexes ('ssp', 'sakura') successfully acquired and held.");
+    println!("🔒 BaseWare Named Mutexes ('nsm', 'sakura') successfully acquired and held.");
 }
 
 /// Set in-memory named mutex status for non-Windows or test environments
@@ -156,7 +156,9 @@ pub async fn get_fmo_status() -> Result<FmoStatus, String> {
 
     Ok(FmoStatus {
         active_ghosts: records,
-        base_ware_detected: if check_named_mutex("ssp") {
+        base_ware_detected: if check_named_mutex("nsm") {
+            "nsm".to_string()
+        } else if check_named_mutex("ssp") {
             "ssp".to_string()
         } else if check_named_mutex("sakura") {
             "sakura".to_string()
@@ -166,13 +168,15 @@ pub async fn get_fmo_status() -> Result<FmoStatus, String> {
     })
 }
 
-/// UKADOC / SSP mutex spec 準拠: "ssp" および "sakura" 名前つき Mutex 存在判定コマンド
+/// UKADOC / SSP / NSM mutex spec 準拠: "nsm", "ssp", "sakura" 名前つき Mutex 存在判定コマンド
 #[tauri::command]
 pub async fn check_base_ware_mutex() -> Result<HashMap<String, bool>, String> {
     let mut map = HashMap::new();
+    let is_nsm = check_named_mutex("nsm");
     let is_ssp = check_named_mutex("ssp");
     let is_sakura = check_named_mutex("sakura");
 
+    map.insert("nsm".to_string(), is_nsm);
     map.insert("ssp".to_string(), is_ssp);
     map.insert("sakura".to_string(), is_sakura);
     map.insert("NanaiFMO".to_string(), true);

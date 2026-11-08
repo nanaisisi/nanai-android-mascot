@@ -10,7 +10,9 @@ export function closeDialog(id, notifyCancel = true) {
 		for (const key of keys) {
 			const box = this.activeBoxes.get(key);
 			if (box) {
-				box.cleanup(true);
+				try {
+					box.cleanup(true);
+				} catch {}
 				this.activeBoxes.delete(key);
 				closedAny = true;
 			}
@@ -26,7 +28,9 @@ export function closeDialog(id, notifyCancel = true) {
 	let closed = false;
 	for (const [key, box] of Array.from(this.activeBoxes.entries())) {
 		if (box.id === id || key === `dialog:${id}` || key.endsWith(`:${id}`)) {
-			box.cleanup(true);
+			try {
+				box.cleanup(true);
+			} catch {}
 			this.activeBoxes.delete(key);
 			closed = true;
 		}
@@ -81,7 +85,9 @@ export function setChoiceTimeout(timeoutMs, onTimeout) {
 
 export function closeAll() {
 	for (const box of this.activeBoxes.values()) {
-		box.cleanup();
+		try {
+			box.cleanup();
+		} catch {}
 	}
 	this.activeBoxes.clear();
 	if (this.choiceTimeoutTimer) {

@@ -35,6 +35,7 @@ pub struct GhostInfo {
     pub kero_name: Option<String>,
     pub num_characters: i32,
     pub shiori: Option<String>,
+    pub makoto: Option<String>,
     pub craftman: Option<String>,
     pub craftman_url: Option<String>,
     pub shells: Vec<ShellInfo>,

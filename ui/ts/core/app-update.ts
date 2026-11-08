@@ -13,7 +13,12 @@ export const updateMethods = {
 		targetGhostName: string | null = null,
 		options: { checkOnly?: boolean } = {},
 	) {
+<<<<<<< HEAD
 		const gc = (this as unknown).ghostController;
+=======
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+		const gc = (this as any).ghostController;
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		const checkOnly = options?.checkOnly === true;
 		const ghostName =
 			targetGhostName || gc.currentGhost?.name || "とらふぃっく☆とれいん";
@@ -22,7 +27,12 @@ export const updateMethods = {
 
 		console.log(`🌐 ネットワーク更新プロセス開始: ${ghostName}`);
 
+<<<<<<< HEAD
 		const execRes: unknown = await gc.sendShioriEvent("OnUpdateProcessExec", [
+=======
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+		const execRes: any = await gc.sendShioriEvent("OnUpdateProcessExec", [
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 			"manual",
 		]);
 		if (execRes?.script?.trim()) {
@@ -39,6 +49,7 @@ export const updateMethods = {
 			);
 		}
 
+<<<<<<< HEAD
 		(this as unknown).showBalloon?.("🌐 ネットワーク更新を確認中...");
 
 		if (!isTauriAvailable()) {
@@ -48,6 +59,21 @@ export const updateMethods = {
 			);
 			await gc.sendShioriEvent("OnUpdateFailure", buildUpdateArgs("fileio"));
 			await (this as unknown).sendUpdateResultSummary(
+=======
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+		(this as any).showBalloon?.("🌐 ネットワーク更新を確認中...");
+
+		if (!isTauriAvailable()) {
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			await (this as any).wait(1500);
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			(this as any).showBalloon?.(
+				"⚠️ ブラウザ環境のためネットワーク更新はシミュレーションのみです",
+			);
+			await gc.sendShioriEvent("OnUpdateFailure", buildUpdateArgs("fileio"));
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			await (this as any).sendUpdateResultSummary(
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				ghostName,
 				false,
 				"fileio",
@@ -57,16 +83,30 @@ export const updateMethods = {
 		}
 
 		try {
+<<<<<<< HEAD
 			const checkResult: unknown = await invoke("check_ghost_update", {
+=======
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			const checkResult: any = await invoke("check_ghost_update", {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				ghostName,
 				ghostPath,
 			});
 			console.log("🔍 更新チェック結果:", checkResult);
 
+<<<<<<< HEAD
 			const fileNames = checkResult.update_files.map((f: unknown) => f.path);
 
 			if (checkOnly) {
 				(this as unknown).showBalloon?.(checkResult.message);
+=======
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			const fileNames = checkResult.update_files.map((f: any) => f.path);
+
+			if (checkOnly) {
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+				(this as any).showBalloon?.(checkResult.message);
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				await gc.sendShioriEvent(
 					"OnUpdateCheckComplete",
 					buildUpdateArgs(
@@ -74,7 +114,12 @@ export const updateMethods = {
 						fileNames.join(","),
 					),
 				);
+<<<<<<< HEAD
 				await (this as unknown).sendUpdateResultSummary(
+=======
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+				await (this as any).sendUpdateResultSummary(
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 					ghostName,
 					true,
 					checkResult.has_update ? checkResult.total_count : 0,
@@ -86,6 +131,7 @@ export const updateMethods = {
 
 			if (!checkResult.has_update || checkResult.update_files.length === 0) {
 				console.log("✨ 更新ファイルなし (none)");
+<<<<<<< HEAD
 				(this as unknown).showBalloon?.(
 					"✨ 最新の状態です。更新ファイルはありません。",
 				);
@@ -96,6 +142,15 @@ export const updateMethods = {
 					0,
 					null,
 				);
+=======
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+				(this as any).showBalloon?.(
+					"✨ 最新の状態です。更新ファイルはありません。",
+				);
+				await gc.sendShioriEvent("OnUpdateComplete", buildUpdateArgs("none"));
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+				await (this as any).sendUpdateResultSummary(ghostName, true, 0, null);
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				return;
 			}
 
@@ -106,7 +161,12 @@ export const updateMethods = {
 				buildUpdateArgs(totalMinusOne, fileListStr),
 			);
 
+<<<<<<< HEAD
 			(this as unknown).showBalloon?.(
+=======
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			(this as any).showBalloon?.(
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				`📥 更新ファイル ${checkResult.total_count} 件をダウンロード中...`,
 			);
 
@@ -122,7 +182,12 @@ export const updateMethods = {
 			}
 
 			try {
+<<<<<<< HEAD
 				const updateResult: unknown = await invoke("execute_ghost_update", {
+=======
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+				const updateResult: any = await invoke("execute_ghost_update", {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 					ghostName,
 					ghostPath,
 				});
@@ -145,7 +210,12 @@ export const updateMethods = {
 							ghostName,
 						]);
 					}
+<<<<<<< HEAD
 					await (this as unknown).sendUpdateResultSummary(
+=======
+					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+					await (this as any).sendUpdateResultSummary(
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 						ghostName,
 						true,
 						updateResult.updated_files.length,
@@ -160,10 +230,19 @@ export const updateMethods = {
 							updateResult.updated_files?.join(",") ?? "",
 						),
 					);
+<<<<<<< HEAD
 					(this as unknown).showBalloon?.(
 						`❌ ネットワーク更新失敗: ${failureReason}`,
 					);
 					await (this as unknown).sendUpdateResultSummary(
+=======
+					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+					(this as any).showBalloon?.(
+						`❌ ネットワーク更新失敗: ${failureReason}`,
+					);
+					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+					await (this as any).sendUpdateResultSummary(
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 						ghostName,
 						false,
 						failureReason,
@@ -188,8 +267,15 @@ export const updateMethods = {
 					"OnUpdateCheckFailure",
 					buildUpdateArgs(reason),
 				);
+<<<<<<< HEAD
 				(this as unknown).showBalloon?.(`❌ 更新チェック失敗: ${reason}`);
 				await (this as unknown).sendUpdateResultSummary(
+=======
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+				(this as any).showBalloon?.(`❌ 更新チェック失敗: ${reason}`);
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+				await (this as any).sendUpdateResultSummary(
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 					ghostName,
 					false,
 					reason,
@@ -200,13 +286,23 @@ export const updateMethods = {
 			}
 
 			await gc.sendShioriEvent("OnUpdateFailure", buildUpdateArgs(reason));
+<<<<<<< HEAD
 			await (this as unknown).sendUpdateResultSummary(
+=======
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			await (this as any).sendUpdateResultSummary(
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				ghostName,
 				false,
 				reason,
 				failedFile,
 			);
+<<<<<<< HEAD
 			(this as unknown).showBalloon?.(
+=======
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			(this as any).showBalloon?.(
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				`❌ 更新処理中にエラーが発生しました: ${err}`,
 			);
 		}
@@ -223,13 +319,23 @@ export const updateMethods = {
 		failedFile: string | null,
 		checkOnly: boolean = false,
 	) {
+<<<<<<< HEAD
 		const gc = (this as unknown).ghostController;
+=======
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+		const gc = (this as any).ghostController;
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		const sep = String.fromCharCode(1); // \1 (バイト値1)
 		const parts = ["ghost", success ? "OK" : "NG", String(detail)];
 		if (failedFile) parts.push(failedFile);
 		const baseEvent = checkOnly ? "OnUpdateCheckResult" : "OnUpdateResult";
 
+<<<<<<< HEAD
 		const resEx: unknown = await gc.sendShioriEvent(`${baseEvent}Ex`, [
+=======
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+		const resEx: any = await gc.sendShioriEvent(`${baseEvent}Ex`, [
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 			[ghostName, ...parts].join(sep),
 		]);
 		if (!resEx?.script?.trim()) {

@@ -11,7 +11,12 @@ import {
 } from "../../ui/js/ghost/command-handler/system/desktop.js";
 
 describe("system/desktop.js", () => {
+<<<<<<< HEAD
 	let originalTauri: unknown = null;
+=======
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
+	let originalTauri;
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 
 	beforeEach(() => {
 		originalTauri = globalThis.__TAURI__;

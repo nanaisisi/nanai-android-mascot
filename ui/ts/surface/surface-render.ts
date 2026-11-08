@@ -16,9 +16,17 @@ export const surfaceRenderMethods = {
 	...surfaceDressupMethods,
 
 	async composeFrameOnBase(
+<<<<<<< HEAD
 		this: unknown,
 		baseCanvas: HTMLCanvasElement,
 		frameLayers: unknown[],
+=======
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+		this: any,
+		baseCanvas: HTMLCanvasElement,
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+		frameLayers: any[],
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		resolveImagePath: (file: string) => Promise<string | null>,
 	): Promise<string | null> {
 		if (!baseCanvas || !frameLayers?.length) return null;
@@ -62,12 +70,22 @@ export const surfaceRenderMethods = {
 	},
 
 	async composeSurfaceElements(
+<<<<<<< HEAD
 		this: unknown,
+=======
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+		this: any,
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		surfaceId: number | string,
 		baseImgSrc: string,
 		resolveImagePath: (file: string) => Promise<string | null>,
 		scopeId: number = 0,
+<<<<<<< HEAD
 		frameLayers: unknown[] | null = null,
+=======
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+		frameLayers: any[] | null = null,
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	): Promise<string> {
 		const sid = String(surfaceId);
 		const isFrame = Array.isArray(frameLayers);
@@ -87,7 +105,12 @@ export const surfaceRenderMethods = {
 			const layers = this.planToRenderLayers(plan, scopeId);
 			if (layers) {
 				if (!isFrame) {
+<<<<<<< HEAD
 					const result: unknown = await composeSurfaceElements(
+=======
+					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+					const result: any = await composeSurfaceElements(
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 						layers.elements,
 						baseImgSrc,
 						resolveImagePath,
@@ -115,7 +138,12 @@ export const surfaceRenderMethods = {
 		const layers = frameLayers?.length
 			? [...bindLayers, ...frameLayers]
 			: bindLayers;
+<<<<<<< HEAD
 		const result: unknown = await composeSurfaceElements(
+=======
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+		const result: any = await composeSurfaceElements(
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 			elementList,
 			baseImgSrc,
 			resolveImagePath,
@@ -128,11 +156,16 @@ export const surfaceRenderMethods = {
 		return result?.src ?? baseImgSrc;
 	},
 
+<<<<<<< HEAD
 	processChromaKey(
 		this: unknown,
 		imageSrc: string,
 		pnaSrc: string | null = null,
 	) {
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	processChromaKey(this: any, imageSrc: string, pnaSrc: string | null = null) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		const useSelfAlpha =
 			this.shellManifest?.descript?.properties?.["seriko.use_self_alpha"] ===
 				"1" ||

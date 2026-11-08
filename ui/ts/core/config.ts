@@ -6,8 +6,15 @@ export const AppConfig: {
 	timing: Record<string, number>;
 	scale: Record<string, number>;
 	storageKeys: Record<string, string>;
+<<<<<<< HEAD
 	shiori?: Record<string, unknown>;
 	state?: Record<string, unknown>;
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	shiori?: Record<string, any>;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	state?: Record<string, any>;
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 } = {
 	// パス関連
 	paths: {
@@ -54,9 +61,17 @@ export const AppConfig: {
  */
 export async function loadAppConfig(): Promise<void> {
 	try {
+<<<<<<< HEAD
 		const tauriInternals = (globalThis as unknown).__TAURI_INTERNALS__;
 		if (tauriInternals?.invoke) {
 			const config: unknown = await tauriInternals.invoke("get_app_config");
+=======
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+		const tauriInternals = (globalThis as any).__TAURI_INTERNALS__;
+		if (tauriInternals?.invoke) {
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			const config: any = await tauriInternals.invoke("get_app_config");
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 
 			if (config) {
 				if (config.paths) Object.assign(AppConfig.paths, config.paths);

@@ -45,19 +45,37 @@ import {
 import { SyncObjectManager } from "./sync-object.js";
 
 export class SakuraPlaybackController {
+<<<<<<< HEAD
 	player: unknown;
 	queue: unknown[];
 	currentJob: unknown;
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	player: any;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	queue: any[];
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	currentJob: any;
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	isProcessing: boolean;
 	isPaused: boolean;
 	isQuickMode: boolean;
 	waitMultiplier: number;
 	charWaitMs: number | null;
 	nextJobId: number;
+<<<<<<< HEAD
 	listeners: Map<string, Set<(...args: unknown[]) => void>>;
 	syncObjects: SyncObjectManager;
 
 	constructor(options: unknown = {}) {
+=======
+	// biome-ignore lint/complexity/noBannedTypes: automated fix
+	listeners: Map<string, Set<Function>>;
+	syncObjects: SyncObjectManager;
+
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	constructor(options: any = {}) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		this.player = options.player || null;
 		if (this.player && !this.player.playbackController) {
 			this.player.playbackController = this;
@@ -75,7 +93,12 @@ export class SakuraPlaybackController {
 	}
 }
 
+<<<<<<< HEAD
 const proto: unknown = SakuraPlaybackController.prototype;
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+const proto: any = SakuraPlaybackController.prototype;
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 
 proto.on = on;
 proto.off = off;

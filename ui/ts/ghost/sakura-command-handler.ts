@@ -30,12 +30,26 @@ import {
 initDefaultCommandHandlers();
 
 export class SakuraCommandHandler {
+<<<<<<< HEAD
 	player: unknown;
 	app: unknown;
 	teachForm: unknown;
 	communicateForm: unknown;
 
 	constructor(player: unknown) {
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	player: any;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	app: any;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	teachForm: any;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	communicateForm: any;
+
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	constructor(player: any) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		this.player = player;
 		this.app = player.app;
 		this.teachForm = null;
@@ -59,7 +73,12 @@ export class SakuraCommandHandler {
 		openInputBox(this, params);
 	}
 
+<<<<<<< HEAD
 	openTeachBox(params: string[] = [], options: unknown = {}) {
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	openTeachBox(params: string[] = [], options: any = {}) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		openTeachBox(this, params, options);
 	}
 
@@ -87,7 +106,12 @@ export class SakuraCommandHandler {
 		await handleJumpCommand(this, target, args);
 	}
 
+<<<<<<< HEAD
 	expandEnv(script: string, options: unknown = {}) {
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	expandEnv(script: string, options: any = {}) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		return expandSakuraScriptEnv(script, {
 			username: this.player?.app?.ghostController?.username,
 			selfname: this.player?.app?.ghostController?.currentGhost?.name,

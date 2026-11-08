@@ -3,7 +3,12 @@
  * @brief \![open,communicatebox] および \![close,communicatebox] ハンドラ
  */
 
+<<<<<<< HEAD
 export function openCommunicateBox(handler: unknown, params: string[] = []) {
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export function openCommunicateBox(handler: any, params: string[] = []) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	closeCommunicateBox(handler, false);
 
 	let defaultText = "";
@@ -64,7 +69,12 @@ export function openCommunicateBox(handler: unknown, params: string[] = []) {
 	submitBtn.className = "balloon-choice-btn";
 	submitBtn.style.marginTop = "0";
 
+<<<<<<< HEAD
 	let timer: unknown = null;
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	let timer: any = null;
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	handler.communicateForm = form;
 
 	const cleanup = () => {
@@ -122,7 +132,12 @@ export function openCommunicateBox(handler: unknown, params: string[] = []) {
 }
 
 export function closeCommunicateBox(
+<<<<<<< HEAD
 	handler: unknown,
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	handler: any,
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	notifyCancel: boolean = false,
 ) {
 	if (handler.communicateForm) {

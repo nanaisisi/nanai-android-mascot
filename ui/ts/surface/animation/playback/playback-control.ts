@@ -27,10 +27,15 @@ export function playAnimationPatterns(
 	baseSurfaceIdOrScopeId,
 	scopeIdParam,
 ) {
+<<<<<<< HEAD
 	let instance: unknown,
 		anim: unknown,
 		baseSurfaceId: unknown,
 		scopeId: unknown;
+=======
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
+	let instance, anim, baseSurfaceId, scopeId;
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	if (isInstance(target)) {
 		instance = target;
 		anim = animOrBaseSurfaceId;
@@ -80,10 +85,15 @@ export async function playAnimationById(
 	scopeIdOrWaitForComplete = 0,
 	waitForCompleteParam = false,
 ) {
+<<<<<<< HEAD
 	let instance: unknown,
 		animIdOrName: unknown,
 		scopeId: unknown,
 		waitForComplete: unknown;
+=======
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
+	let instance, animIdOrName, scopeId, waitForComplete;
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	if (isInstance(target)) {
 		instance = target;
 		animIdOrName = animIdOrNameOrScopeId;
@@ -126,7 +136,12 @@ export async function waitForAnimation(
 	scopeIdParam = 0,
 	timeoutMs = 30000,
 ) {
+<<<<<<< HEAD
 	let instance: unknown, animIdOrName: unknown, scopeId: unknown;
+=======
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
+	let instance, animIdOrName, scopeId;
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	if (isInstance(target)) {
 		instance = target;
 		animIdOrName = animIdOrNameOrScopeId;

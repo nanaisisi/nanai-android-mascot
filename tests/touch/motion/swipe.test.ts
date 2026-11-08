@@ -6,8 +6,15 @@ import {
 import { createMockElement } from "../helpers.js";
 
 describe("TouchGestureRecognizer - Swipe", () => {
+<<<<<<< HEAD
 	let element: unknown = null;
 	let recognizer: unknown = null;
+=======
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
+	let element;
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
+	let recognizer;
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 
 	beforeEach(() => {
 		vi.useFakeTimers();

@@ -9,13 +9,19 @@ import { parseSakuraScriptAsync } from "./sakura-parser.js";
 import { playScript } from "./sakura-play.js";
 
 export class SakuraScriptPlayer {
+<<<<<<< HEAD
 	app: unknown;
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	app: any;
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	isPlaying: boolean;
 	skipRequested: boolean;
 	currentScope: number;
 	playbackId: number;
 	timeCritical: boolean;
 	choiceTimeout: number;
+<<<<<<< HEAD
 	choiceTimeoutTimer: unknown;
 	balloonTimeout: number;
 	balloonTimeoutTimer: unknown;
@@ -26,6 +32,24 @@ export class SakuraScriptPlayer {
 	_sleepResolvers?: Set<() => void>;
 
 	constructor(app: unknown) {
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	choiceTimeoutTimer: any;
+	balloonTimeout: number;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	balloonTimeoutTimer: any;
+	lastScript: string;
+	commandHandler: SakuraCommandHandler;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	_restoreTimer?: any;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	_pauseResolver?: any;
+	// biome-ignore lint/complexity/noBannedTypes: automated fix
+	_sleepResolvers?: Set<Function>;
+
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	constructor(app: any) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		this.app = app;
 		this.isPlaying = false;
 		this.skipRequested = false;
@@ -41,13 +65,23 @@ export class SakuraScriptPlayer {
 		this.commandHandler = new SakuraCommandHandler(this);
 
 		if (isTauriAvailable()) {
+<<<<<<< HEAD
 			listen("balloon-choice-selected", (event: unknown) => {
+=======
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			listen("balloon-choice-selected", (event: any) => {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				const { choiceId, choiceText } = event.payload || {};
 				if (choiceId) {
 					this.onChoiceSelected(choiceId, choiceText || "");
 				}
 			});
+<<<<<<< HEAD
 			listen("balloon-anchor-selected", (event: unknown) => {
+=======
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			listen("balloon-anchor-selected", (event: any) => {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				const { anchorId } = event.payload || {};
 				if (anchorId) {
 					this.app.ghostController.sendShioriEvent("OnAnchorSelect", [
@@ -58,7 +92,12 @@ export class SakuraScriptPlayer {
 			listen("balloon-clicked", () => {
 				this.skip();
 			});
+<<<<<<< HEAD
 			listen("balloon-ready", (event: unknown) => {
+=======
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			listen("balloon-ready", (event: any) => {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				const sid = event.payload?.scopeId ?? 0;
 				const html =
 					(sid === 1
@@ -100,7 +139,12 @@ export class SakuraScriptPlayer {
 			if (this.app?.ghostController?.sendBalloonBreakNotify) {
 				const script = this.lastScript || "";
 				const scopeId = this.currentScope || 0;
+<<<<<<< HEAD
 				const position = (this as unknown).currentProgressIndex || 0;
+=======
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+				const position = (this as any).currentProgressIndex || 0;
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				this.app.ghostController.sendBalloonBreakNotify(
 					script,
 					scopeId,
@@ -147,11 +191,19 @@ export class SakuraScriptPlayer {
 		} else {
 			// UKADOC: OnChoiceSelectEx is sent first (Reference0: text, Reference1: ID, Reference2..N: args)
 			try {
+<<<<<<< HEAD
 				const resEx: unknown =
 					await this.app.ghostController?.sendShioriEvent?.(
 						"OnChoiceSelectEx",
 						[choiceText, choiceId, ...allExtraArgs],
 					);
+=======
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+				const resEx: any = await this.app.ghostController?.sendShioriEvent?.(
+					"OnChoiceSelectEx",
+					[choiceText, choiceId, ...allExtraArgs],
+				);
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				if (resEx && (resEx.response || resEx.script)) {
 					return;
 				}
@@ -165,7 +217,12 @@ export class SakuraScriptPlayer {
 
 	sleep(ms: number) {
 		return new Promise<void>((resolve) => {
+<<<<<<< HEAD
 			let timer: unknown = null;
+=======
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			let timer: any = null;
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 			const onCancel = () => {
 				if (timer) clearTimeout(timer);
 				resolve();
@@ -209,7 +266,12 @@ export class SakuraScriptPlayer {
 
 	waitForClickOrTimeout(element: HTMLElement | null, timeoutMs = 15000) {
 		return new Promise<void>((resolve) => {
+<<<<<<< HEAD
 			let timer: unknown = null;
+=======
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			let timer: any = null;
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 			let resolved = false;
 
 			const done = () => {

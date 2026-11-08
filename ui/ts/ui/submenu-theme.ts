@@ -28,6 +28,7 @@ function preloadImage(url: string | null): Promise<void> {
 	});
 }
 
+<<<<<<< HEAD
 interface ShellThemeInfo {
 	background_color?: string;
 	foreground_color?: string;
@@ -66,6 +67,16 @@ export function applyShellMenuTheme(
 		} else {
 			rootStyle.removeProperty(property);
 		}
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export function applyShellMenuTheme(activeShell: any) {
+	const rootStyle = document.documentElement.style;
+	const theme = activeShell?.menu_theme;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	const setOrRemove = (property: string, value: any) => {
+		if (value) rootStyle.setProperty(property, value);
+		else rootStyle.removeProperty(property);
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	};
 
 	setOrRemove("--balloon-bg", theme?.background_color);
@@ -106,6 +117,7 @@ export function applyShellMenuTheme(
 		const fullPath = shellPath
 			? `${shellPath}/${relStr.replace(/\\/g, "/")}`
 			: relStr;
+<<<<<<< HEAD
 		const tauriCore = (
 			globalThis as unknown as {
 				__TAURI__?: {
@@ -115,6 +127,12 @@ export function applyShellMenuTheme(
 		).__TAURI__?.core;
 		return tauriCore?.convertFileSrc
 			? tauriCore.convertFileSrc(fullPath)
+=======
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+		return (globalThis as any).__TAURI__?.core?.convertFileSrc
+			? // biome-ignore lint/suspicious/noExplicitAny: automated fix
+				(globalThis as any).__TAURI__.core.convertFileSrc(fullPath)
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 			: fullPath;
 	};
 

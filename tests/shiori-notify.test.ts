@@ -184,18 +184,33 @@ test("shioriNotifyMethods covers sendShioriNotify and sendBootNotifyEvents", asy
 });
 
 test("shioriNotifyMethods covers lifecycle, dialog, balloon, surface, and overlap events", async () => {
+<<<<<<< HEAD
 	const calls: unknown[] = [];
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	const calls: any[] = [];
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const controller = {
 		...shioriNotifyMethods,
 		app: { ghostId: "main" },
 	};
 
 	globalThis.__TAURI_INTERNALS__ = {
+<<<<<<< HEAD
 		invoke: async (cmd: string, args: unknown) => {
 			calls.push({ cmd, args });
 			return "ok";
 		},
 		transformCallback: (cb: unknown) => cb,
+=======
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+		invoke: async (cmd: string, args: any) => {
+			calls.push({ cmd, args });
+			return "ok";
+		},
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+		transformCallback: (cb: any) => cb,
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	};
 	globalThis.window = globalThis;
 
@@ -322,5 +337,10 @@ test("shioriNotifyMethods covers lifecycle, dialog, balloon, surface, and overla
 	assert.equal(calls.at(-1).args.event, "OnOtherOffscreen");
 	assert.deepEqual(calls.at(-1).args.references, ["GhostB", "0,0,100,100"]);
 
+<<<<<<< HEAD
 	delete (globalThis as unknown).__TAURI_INTERNALS__;
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	delete (globalThis as any).__TAURI_INTERNALS__;
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 });

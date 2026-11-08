@@ -6,10 +6,21 @@ import { surfaceRenderMethods } from "./surface-render.js";
  * Nanai Android Mascot - surfaces.txt パーサー & 当たり判定（Collision）マネージャー
  */
 export class SurfaceManager {
+<<<<<<< HEAD
 	app: unknown;
 	collisions: Record<number | string, unknown[]>;
 	elements: Record<number | string, unknown[]>;
 	animations: Record<number | string, unknown[]>;
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	app: any;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	collisions: Record<number | string, any[]>;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	elements: Record<number | string, any[]>;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	animations: Record<number | string, any[]>;
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	baseWidth: number;
 	baseHeight: number;
 	currentSurfaceIds: Map<number, number | string>;
@@ -17,12 +28,24 @@ export class SurfaceManager {
 	dressupState: Map<string, boolean>;
 	aliases: Record<string, number[]> | null;
 	keroAliases: Record<string, number[]> | null;
+<<<<<<< HEAD
 	shellManifest: Record<string, unknown> | null;
 	planCache: Map<string, unknown>;
 	baseCanvasCache: Map<string, HTMLCanvasElement>;
 	animationManager: SurfaceAnimationManager;
 
 	constructor(app: unknown) {
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	shellManifest: Record<string, any> | null;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	planCache: Map<string, any>;
+	baseCanvasCache: Map<string, HTMLCanvasElement>;
+	animationManager: SurfaceAnimationManager;
+
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	constructor(app: any) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		this.app = app;
 		this.collisions = {};
 		this.elements = {};
@@ -71,7 +94,12 @@ export class SurfaceManager {
 	}
 
 	playAnimationPatterns(
+<<<<<<< HEAD
 		anim: unknown,
+=======
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+		anim: any,
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		baseSurfaceId: number | string,
 		scopeId: number,
 	) {

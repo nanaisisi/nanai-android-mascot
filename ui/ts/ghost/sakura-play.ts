@@ -11,7 +11,12 @@ import { createBalloonSyncManager } from "./sakura-play-sync.js";
 
 export { SakuraPlaybackController } from "./sakura-play/controller.js";
 
+<<<<<<< HEAD
 export async function playScript(player: unknown, script: string) {
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export async function playScript(player: any, script: string) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const finalScript = await translateScript(player, script);
 
 	const tokens = await player.parse(finalScript);
@@ -62,7 +67,12 @@ export async function playScript(player: unknown, script: string) {
 			: null);
 
 	const hasTextContent = tokens.some(
+<<<<<<< HEAD
 		(t: unknown) =>
+=======
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+		(t: any) =>
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 			t.type === "char" || t.type === "choice" || t.type === "anchor_begin",
 	);
 
@@ -111,7 +121,12 @@ export async function playScript(player: unknown, script: string) {
 
 	player.playbackController?.resetBalloonWait?.();
 
+<<<<<<< HEAD
 	const hasChoices = tokens.some((t: unknown) => t.type === "choice");
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	const hasChoices = tokens.some((t: any) => t.type === "choice");
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 
 	if (hasChoices && player.choiceTimeout > 0) {
 		if (player.choiceTimeoutTimer) clearTimeout(player.choiceTimeoutTimer);

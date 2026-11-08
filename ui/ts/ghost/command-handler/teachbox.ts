@@ -4,9 +4,17 @@
  */
 
 export function openTeachBox(
+<<<<<<< HEAD
 	handler: unknown,
 	params: string[] = [],
 	options: unknown = {},
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	handler: any,
+	params: string[] = [],
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	options: any = {},
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 ) {
 	const { notifyStart = true } = options;
 	handler.closeTeachBox();
@@ -98,7 +106,12 @@ export function openTeachBox(
 	setTimeout(() => input.focus(), 50);
 }
 
+<<<<<<< HEAD
 export function closeTeachBox(handler: unknown) {
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export function closeTeachBox(handler: any) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	if (handler.teachForm) {
 		handler.teachForm.remove();
 		handler.teachForm = null;

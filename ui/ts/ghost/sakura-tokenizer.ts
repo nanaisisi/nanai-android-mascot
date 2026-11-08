@@ -36,10 +36,19 @@ export function parseSakuraScript(script: string): SakuraScriptToken[] {
 		}
 
 		if (script[i] === "\\") {
+<<<<<<< HEAD
 			const res: unknown = tokenizeTag(script, i, len);
 			if (res.tokens.length > 0) {
 				for (const t of res.tokens) {
 					const tok: unknown = t;
+=======
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			const res: any = tokenizeTag(script, i, len);
+			if (res.tokens.length > 0) {
+				for (const t of res.tokens) {
+					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+					const tok: any = t;
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 					if (tok.type === "raw_toggle" && tok.active) {
 						rawModeDelimiter = tok.delimiter || "_?";
 					}

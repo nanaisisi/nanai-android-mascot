@@ -7,14 +7,24 @@ import { modalTemplates } from "./modal-templates.js";
  * Nanai Android Mascot - モーダル & UIダイアログ管理
  */
 export class ModalManager {
+<<<<<<< HEAD
 	app: unknown;
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	app: any;
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	overlay: HTMLElement | null;
 	content: HTMLElement | null;
 	closeBtn: HTMLElement | null;
 	ghostHandlers: ModalGhostHandlers;
 	settingsHandlers: ModalSettingsHandlers;
 
+<<<<<<< HEAD
 	constructor(app: unknown) {
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	constructor(app: any) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		this.app = app;
 		this.overlay = document.getElementById("modal-overlay");
 		this.content = document.getElementById("modal-content");
@@ -70,6 +80,7 @@ export class ModalManager {
 
 	setupListeners(contentId: string) {
 		if (contentId === "ghost-modal-content") {
+<<<<<<< HEAD
 			(this.ghostHandlers as unknown).setupGhostListeners?.();
 		} else if (contentId === "explorer-modal-content") {
 			(this.ghostHandlers as unknown).setupExplorerListeners?.();
@@ -83,6 +94,28 @@ export class ModalManager {
 			(this.settingsHandlers as unknown).setupPluginListeners?.();
 		} else if (contentId === "debug-modal-content") {
 			(this.settingsHandlers as unknown).setupDebugListeners?.();
+=======
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			(this.ghostHandlers as any).setupGhostListeners?.();
+		} else if (contentId === "explorer-modal-content") {
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			(this.ghostHandlers as any).setupExplorerListeners?.();
+		} else if (contentId === "install-modal-content") {
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			(this.ghostHandlers as any).setupInstallListeners?.();
+		} else if (contentId === "balloon-modal-content") {
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			(this.ghostHandlers as any).renderBalloonList?.();
+		} else if (contentId === "settings-modal-content") {
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			(this.settingsHandlers as any).setupSettingsListeners?.();
+		} else if (contentId === "plugins-modal-content") {
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			(this.settingsHandlers as any).setupPluginListeners?.();
+		} else if (contentId === "debug-modal-content") {
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			(this.settingsHandlers as any).setupDebugListeners?.();
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		}
 	}
 
@@ -105,10 +138,20 @@ export class ModalManager {
 	}
 
 	renderGhostList() {
+<<<<<<< HEAD
 		(this.ghostHandlers as unknown).renderGhostList?.();
 	}
 
 	renderBalloonList() {
 		(this.ghostHandlers as unknown).renderBalloonList?.();
+=======
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+		(this.ghostHandlers as any).renderGhostList?.();
+	}
+
+	renderBalloonList() {
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+		(this.ghostHandlers as any).renderBalloonList?.();
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	}
 }

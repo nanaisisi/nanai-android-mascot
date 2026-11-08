@@ -9,19 +9,38 @@ export interface SakuraAstNode {
 	id?: string;
 	text?: string;
 	args?: string[];
+<<<<<<< HEAD
 	token?: unknown;
 	children?: SakuraAstNode[];
 }
 
 export function tokensToAst(tokens: unknown[]): SakuraAstNode {
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	token?: any;
+	children?: SakuraAstNode[];
+}
+
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export function tokensToAst(tokens: any[]): SakuraAstNode {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const rootChildren: SakuraAstNode[] = [];
 	let currentScope: number | null = null;
 	let scopeChildren: SakuraAstNode[] = [];
 
+<<<<<<< HEAD
 	let currentAnchor: unknown = null;
 	let anchorChildren: SakuraAstNode[] = [];
 
 	let currentChoiceScope: unknown = null;
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	let currentAnchor: any = null;
+	let anchorChildren: SakuraAstNode[] = [];
+
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	let currentChoiceScope: any = null;
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	let choiceScopeChildren: SakuraAstNode[] = [];
 
 	const pushToCurrentContainer = (node: SakuraAstNode) => {
@@ -223,7 +242,12 @@ export function traverseAst(
 }
 
 export function getSakuraTokenLifetime(
+<<<<<<< HEAD
 	token: unknown,
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	token: any,
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 ): "Scope" | "Script" | "Permanent" {
 	if (!token) return "Script";
 	const type = token.type;
@@ -248,8 +272,15 @@ export function getSakuraTokenLifetime(
 	return "Script";
 }
 
+<<<<<<< HEAD
 export function collectAstTokens(ast: SakuraAstNode): unknown[] {
 	const tokens: unknown[] = [];
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export function collectAstTokens(ast: SakuraAstNode): any[] {
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	const tokens: any[] = [];
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	traverseAst(ast, (node) => {
 		if (node.nodeType === "command" && node.token) {
 			tokens.push(node.token);
@@ -273,7 +304,12 @@ export function collectAstTokens(ast: SakuraAstNode): unknown[] {
 export function collectAstTokensByLifetime(
 	ast: SakuraAstNode,
 	lifetime: "Scope" | "Script" | "Permanent",
+<<<<<<< HEAD
 ): unknown[] {
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+): any[] {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	return collectAstTokens(ast).filter(
 		(token) => getSakuraTokenLifetime(token) === lifetime,
 	);

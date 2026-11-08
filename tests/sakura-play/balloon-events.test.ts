@@ -8,10 +8,19 @@ const { SakuraScriptPlayer } = await import(
 );
 
 test("choice click triggers OnChoiceSelectEx first, then falls back to OnChoiceSelect if no script", async () => {
+<<<<<<< HEAD
 	const shioriEvents: unknown[] = [];
 	const sakuraText = createEl("div");
 
 	const app: unknown = {
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	const shioriEvents: any[] = [];
+	const sakuraText = createEl("div");
+
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	const app: any = {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		ghostId: "main",
 		elements: {
 			balloonText: sakuraText,
@@ -25,7 +34,12 @@ test("choice click triggers OnChoiceSelectEx first, then falls back to OnChoiceS
 			onScriptEnd() {},
 		},
 		ghostController: {
+<<<<<<< HEAD
 			sendShioriEvent: async (event: string, args: unknown[]) => {
+=======
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			sendShioriEvent: async (event: string, args: any[]) => {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				if (event === "OnTranslate") return { script: null };
 				shioriEvents.push({ event, args });
 				// Return no content (empty/falsy) to simulate fallback
@@ -73,10 +87,19 @@ test("choice click triggers OnChoiceSelectEx first, then falls back to OnChoiceS
 });
 
 test("choice click does not trigger OnChoiceSelect if OnChoiceSelectEx returns response script", async () => {
+<<<<<<< HEAD
 	const shioriEvents: unknown[] = [];
 	const sakuraText = createEl("div");
 
 	const app: unknown = {
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	const shioriEvents: any[] = [];
+	const sakuraText = createEl("div");
+
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	const app: any = {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		ghostId: "main",
 		elements: {
 			balloonText: sakuraText,
@@ -90,7 +113,12 @@ test("choice click does not trigger OnChoiceSelect if OnChoiceSelectEx returns r
 			onScriptEnd() {},
 		},
 		ghostController: {
+<<<<<<< HEAD
 			sendShioriEvent: async (event: string, args: unknown[]) => {
+=======
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			sendShioriEvent: async (event: string, args: any[]) => {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				if (event === "OnTranslate") return { script: null };
 				shioriEvents.push({ event, args });
 				if (event === "OnChoiceSelectEx") {
@@ -127,10 +155,19 @@ test("choice click does not trigger OnChoiceSelect if OnChoiceSelectEx returns r
 });
 
 test("anchor click triggers OnAnchorSelectEx first, then falls back to OnAnchorSelect", async () => {
+<<<<<<< HEAD
 	const shioriEvents: unknown[] = [];
 	const sakuraText = createEl("div");
 
 	const app: unknown = {
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	const shioriEvents: any[] = [];
+	const sakuraText = createEl("div");
+
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	const app: any = {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		ghostId: "main",
 		elements: {
 			balloonText: sakuraText,
@@ -144,7 +181,12 @@ test("anchor click triggers OnAnchorSelectEx first, then falls back to OnAnchorS
 			onScriptEnd() {},
 		},
 		ghostController: {
+<<<<<<< HEAD
 			sendShioriEvent: async (event: string, args: unknown[]) => {
+=======
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			sendShioriEvent: async (event: string, args: any[]) => {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				if (event === "OnTranslate") return { script: null };
 				shioriEvents.push({ event, args });
 				return null;
@@ -152,7 +194,12 @@ test("anchor click triggers OnAnchorSelectEx first, then falls back to OnAnchorS
 		},
 	};
 
+<<<<<<< HEAD
 	const player: unknown = {
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	const player: any = {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		playbackId: 60,
 		parse: async () => [
 			{ type: "scope", value: 0 },
@@ -193,10 +240,19 @@ test("anchor click triggers OnAnchorSelectEx first, then falls back to OnAnchorS
 });
 
 test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip", async () => {
+<<<<<<< HEAD
 	const notifyEvents: unknown[] = [];
 	const sakuraText = createEl("div");
 
 	const app: unknown = {
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	const notifyEvents: any[] = [];
+	const sakuraText = createEl("div");
+
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	const app: any = {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		ghostId: "main",
 		elements: {
 			balloonText: sakuraText,
@@ -245,7 +301,12 @@ test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip",
 	// 2. Test skip triggering OnBalloonBreak
 	player.isPlaying = true;
 	player.currentScope = 1;
+<<<<<<< HEAD
 	(player as unknown).currentProgressIndex = 5;
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	(player as any).currentProgressIndex = 5;
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	player.lastScript = "\\1テスト会話";
 	player.skip();
 
@@ -257,10 +318,19 @@ test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip",
 });
 
 test("balloon events: OnBalloonTimeout triggered via sendBalloonTimeoutNotify", async () => {
+<<<<<<< HEAD
 	const notifyEvents: unknown[] = [];
 	const sakuraText = createEl("div");
 
 	const app: unknown = {
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	const notifyEvents: any[] = [];
+	const sakuraText = createEl("div");
+
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	const app: any = {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		ghostId: "main",
 		elements: {
 			balloonText: sakuraText,
@@ -313,10 +383,19 @@ test("balloon events: OnBalloonTimeout triggered via sendBalloonTimeoutNotify", 
 });
 
 test("\\t (timeCritical) suppresses balloonTimeout and click timeout auto-advance", async () => {
+<<<<<<< HEAD
 	const notifyEvents: unknown[] = [];
 	const sakuraText = createEl("div");
 
 	const app: unknown = {
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	const notifyEvents: any[] = [];
+	const sakuraText = createEl("div");
+
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	const app: any = {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		ghostId: "main",
 		elements: {
 			balloonText: sakuraText,

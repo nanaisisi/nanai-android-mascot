@@ -5,11 +5,17 @@
 
 import { invoke, isTauriAvailable } from "../../core/tauri-helper.js";
 
+<<<<<<< HEAD
 export async function handleSetWallpaper(_handler: unknown, args: string[]) {
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export async function handleSetWallpaper(_handler: any, args: string[]) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const [filename, option] = args.slice(1);
 	console.log(`🖼️ Wallpaper set: ${filename} (option: ${option})`);
 }
 
+<<<<<<< HEAD
 export async function handleSaveWallpaper(_handler: unknown, _args: string[]) {
 	console.log("🖼️ Wallpaper savewallpaper executed");
 }
@@ -18,27 +24,51 @@ export async function handleRestoreWallpaper(
 	_handler: unknown,
 	_args: string[],
 ) {
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export async function handleSaveWallpaper(_handler: any, _args: string[]) {
+	console.log("🖼️ Wallpaper savewallpaper executed");
+}
+
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export async function handleRestoreWallpaper(_handler: any, _args: string[]) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	console.log("🖼️ Wallpaper restorewallpaper executed");
 }
 
 export async function handleCancelNetworkService(
+<<<<<<< HEAD
 	_handler: unknown,
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	_handler: any,
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	args: string[],
 ) {
 	const [service, target] = args.slice(1);
 	console.log(`🛑 Network service cancel: ${service} (${target})`);
 }
 
+<<<<<<< HEAD
 export async function handleCloseNetworkService(
 	_handler: unknown,
 	args: string[],
 ) {
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export async function handleCloseNetworkService(_handler: any, args: string[]) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const [service, target] = args.slice(1);
 	console.log(`🛑 Network service close: ${service} (${target})`);
 }
 
 export async function handleFileWatchCommand(
+<<<<<<< HEAD
 	_handler: unknown,
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	_handler: any,
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	args: string[],
 	isCancel: boolean = false,
 ) {
@@ -55,10 +85,15 @@ export async function handleFileWatchCommand(
 	}
 }
 
+<<<<<<< HEAD
 export async function handleEmptyRecycleBin(
 	_handler: unknown,
 	_args: string[],
 ) {
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export async function handleEmptyRecycleBin(_handler: any, _args: string[]) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	console.log("🗑️ Empty recycle bin requested");
 	if (isTauriAvailable()) {
 		try {
@@ -69,7 +104,12 @@ export async function handleEmptyRecycleBin(
 	}
 }
 
+<<<<<<< HEAD
 export async function handlePingCommand(handler: unknown, args: string[]) {
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export async function handlePingCommand(handler: any, args: string[]) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const host = args[1] ?? args[0] ?? "";
 	console.log(`📡 Ping requested: host=${host}`);
 	if (isTauriAvailable()) {
@@ -93,7 +133,12 @@ export async function handlePingCommand(handler: unknown, args: string[]) {
 	}
 }
 
+<<<<<<< HEAD
 export async function handleNslookupCommand(handler: unknown, args: string[]) {
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export async function handleNslookupCommand(handler: any, args: string[]) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const host = args[1] ?? args[0] ?? "";
 	console.log(`🔍 Nslookup requested: host=${host}`);
 	if (isTauriAvailable()) {
@@ -117,10 +162,15 @@ export async function handleNslookupCommand(handler: unknown, args: string[]) {
 	}
 }
 
+<<<<<<< HEAD
 export async function handleScheduleAddCommand(
 	handler: unknown,
 	args: string[],
 ) {
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export async function handleScheduleAddCommand(handler: any, args: string[]) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const rawArgs = args[0]?.toLowerCase().includes("schedule")
 		? args.slice(1)
 		: args;
@@ -148,7 +198,12 @@ export async function handleScheduleAddCommand(
 	}
 }
 
+<<<<<<< HEAD
 export async function handleExecuteCommand(handler: unknown, args: string[]) {
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export async function handleExecuteCommand(handler: any, args: string[]) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const subCmd = (args[1] ?? "").toLowerCase();
 	const restArgs = args.slice(1);
 
@@ -221,7 +276,12 @@ export async function handleExecuteCommand(handler: unknown, args: string[]) {
 	}
 }
 
+<<<<<<< HEAD
 export async function handleArchiveExec(handler: unknown, args: string[]) {
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export async function handleArchiveExec(handler: any, args: string[]) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const [action, filename, dest] = args.slice(1);
 	console.log(`📦 Archive action ${action}: file=${filename}, dest=${dest}`);
 	if (action === "createnar" && isTauriAvailable()) {
@@ -239,52 +299,102 @@ export async function handleArchiveExec(handler: unknown, args: string[]) {
 	}
 }
 
+<<<<<<< HEAD
 export async function handleDownloadExec(_handler: unknown, args: string[]) {
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export async function handleDownloadExec(_handler: any, args: string[]) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const [url, savePath] = args.slice(1);
 	console.log(`📥 Download requested: url=${url}, savePath=${savePath}`);
 }
 
+<<<<<<< HEAD
 export async function handleUploadExec(_handler: unknown, args: string[]) {
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export async function handleUploadExec(_handler: any, args: string[]) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const [url, filePath] = args.slice(1);
 	console.log(`📤 Upload requested: url=${url}, filePath=${filePath}`);
 }
 
+<<<<<<< HEAD
 export async function handleMailCheckExec(handler: unknown, args: string[]) {
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export async function handleMailCheckExec(handler: any, args: string[]) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const [account] = args.slice(1);
 	console.log(`✉️ Mail check requested for account: ${account}`);
 	await handler.app.networkActions?.checkEmail?.(account);
 }
 
+<<<<<<< HEAD
 export async function handleMailExec(_handler: unknown, args: string[]) {
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export async function handleMailExec(_handler: any, args: string[]) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const [action, target] = args.slice(1);
 	console.log(`✉️ Mail action ${action}: target=${target}`);
 }
 
+<<<<<<< HEAD
 export async function handleFileExec(_handler: unknown, args: string[]) {
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export async function handleFileExec(_handler: any, args: string[]) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const [action, path, dest] = args.slice(1);
 	console.log(`📁 File action ${action}: path=${path}, dest=${dest}`);
 }
 
+<<<<<<< HEAD
 export async function handleSetHttpTimeout(_handler: unknown, args: string[]) {
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export async function handleSetHttpTimeout(_handler: any, args: string[]) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const [timeout] = args.slice(1);
 	console.log(`⏱️ HTTP timeout set: ${timeout}s`);
 }
 
+<<<<<<< HEAD
 export async function handleSetProxy(_handler: unknown, args: string[]) {
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export async function handleSetProxy(_handler: any, args: string[]) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const [server, port] = args.slice(1);
 	console.log(`🌐 Proxy set: ${server}:${port}`);
 }
 
+<<<<<<< HEAD
 export async function handleUpdate(handler: unknown) {
 	await handler.app.startNetworkUpdate?.();
 }
 
 export async function handleUpdateByMyself(handler: unknown) {
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export async function handleUpdate(handler: any) {
+	await handler.app.startNetworkUpdate?.();
+}
+
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export async function handleUpdateByMyself(handler: any) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	await handler.app.startNetworkUpdate?.();
 }
 
 export async function handleSoundEventNotify(
+<<<<<<< HEAD
 	handler: unknown,
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	handler: any,
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	action: string,
 	params: string[] = [],
 ) {

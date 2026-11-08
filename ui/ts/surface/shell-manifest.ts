@@ -3,7 +3,12 @@
  */
 import { invoke } from "../core/tauri-helper.js";
 
+<<<<<<< HEAD
 export function enumToString(value: unknown): string {
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export function enumToString(value: any): string {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	if (value == null) return "";
 	if (typeof value === "string") return value.toLowerCase();
 	if (typeof value === "object") {
@@ -15,17 +20,32 @@ export function enumToString(value: unknown): string {
 	return String(value).toLowerCase();
 }
 
+<<<<<<< HEAD
 export function intervalToString(value: unknown): string {
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export function intervalToString(value: any): string {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const s = enumToString(value);
 	return s === "yene" ? "\\e" : s;
 }
 
+<<<<<<< HEAD
 export function methodToString(value: unknown): string {
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export function methodToString(value: any): string {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const s = enumToString(value);
 	return s.startsWith("blend,") ? s.replace("blend,", "blend-") : s;
 }
 
+<<<<<<< HEAD
 export function collisionRecord(area: unknown) {
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export function collisionRecord(area: any) {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const shape = area?.shape ?? {};
 	const id = area?.id != null ? Number(area.id) : undefined;
 	let kind = "rect";
@@ -46,7 +66,12 @@ export function collisionRecord(area: unknown) {
 	}
 
 	if (kind === "polygon") {
+<<<<<<< HEAD
 		const vertices = (coords?.vertices ?? []).map((p: unknown) =>
+=======
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+		const vertices = (coords?.vertices ?? []).map((p: any) =>
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 			Array.isArray(p) ? p : [p?.x ?? 0, p?.y ?? 0],
 		);
 		let minX = Infinity;
@@ -108,7 +133,12 @@ export function collisionRecord(area: unknown) {
 	};
 }
 
+<<<<<<< HEAD
 export function collisionContains(col: unknown, x: number, y: number): boolean {
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export function collisionContains(col: any, x: number, y: number): boolean {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	if (!col) return false;
 
 	if (
@@ -149,12 +179,27 @@ export function collisionContains(col: unknown, x: number, y: number): boolean {
 	);
 }
 
+<<<<<<< HEAD
 export function manifestToSurfaceData(manifest: unknown) {
 	const collisions: Record<string, unknown[]> = {};
 	const elements: Record<string, unknown[]> = {};
 	const animations: Record<string, unknown[]> = {};
 	const points: Record<string, unknown> = {};
 	const balloonOffsets: Record<string, unknown> = {};
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export function manifestToSurfaceData(manifest: any) {
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	const collisions: Record<string, any[]> = {};
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	const elements: Record<string, any[]> = {};
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	const animations: Record<string, any[]> = {};
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	const points: Record<string, any> = {};
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	const balloonOffsets: Record<string, any> = {};
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const aliases = manifest?.aliases ?? {};
 	const keroAliases = manifest?.kero_aliases ?? {};
 	const cursors = manifest?.cursors ?? {};
@@ -185,8 +230,15 @@ export function manifestToSurfaceData(manifest: unknown) {
 
 		elements[sid] = (def.elements ?? [])
 			.slice()
+<<<<<<< HEAD
 			.sort((a: unknown, b: unknown) => (a.id ?? 0) - (b.id ?? 0))
 			.map((e: unknown) => ({
+=======
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			.sort((a: any, b: any) => (a.id ?? 0) - (b.id ?? 0))
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			.map((e: any) => ({
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				id: e.id ?? 0,
 				type: methodToString(e.method) || "overlay",
 				file: e.file ?? "",
@@ -195,15 +247,29 @@ export function manifestToSurfaceData(manifest: unknown) {
 			}));
 
 		animations[sid] = Object.values(def.animations ?? {})
+<<<<<<< HEAD
 			.sort((a: unknown, b: unknown) => (a.id ?? 0) - (b.id ?? 0))
 			.map((anim: unknown) => ({
+=======
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			.sort((a: any, b: any) => (a.id ?? 0) - (b.id ?? 0))
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			.map((anim: any) => ({
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				id: anim.id ?? 0,
 				interval: intervalToString(anim.interval) || "never",
 				collisions: (anim.collisions ?? []).map(collisionRecord),
 				patterns: (anim.patterns ?? [])
 					.slice()
+<<<<<<< HEAD
 					.sort((a: unknown, b: unknown) => (a.index ?? 0) - (b.index ?? 0))
 					.map((p: unknown) => ({
+=======
+					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+					.sort((a: any, b: any) => (a.index ?? 0) - (b.index ?? 0))
+					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+					.map((p: any) => ({
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 						surface: String(p.surface ?? -1),
 						wait: p.wait ?? 100,
 						waitMax: p.wait_max ?? null,
@@ -245,7 +311,12 @@ export async function getShellManifest(ghostName: string, shellName: string) {
 
 export async function parseSurfacesTextWithRust(content: string) {
 	try {
+<<<<<<< HEAD
 		const rawMap: unknown = await invoke("parse_surfaces_text", { content });
+=======
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+		const rawMap: any = await invoke("parse_surfaces_text", { content });
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		if (!rawMap || typeof rawMap !== "object") return null;
 
 		const surfaces = Object.values(rawMap);

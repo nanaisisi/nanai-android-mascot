@@ -4,7 +4,12 @@
  */
 
 export function statusCodeFromRust(
+<<<<<<< HEAD
 	status: string | Record<string, unknown> | undefined,
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	status: string | Record<string, any> | undefined,
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 ): number {
 	const codes: Record<string, number> = {
 		Ok: 200,
@@ -21,6 +26,7 @@ export function statusCodeFromRust(
 	return codes[status as string] ?? 0;
 }
 
+<<<<<<< HEAD
 export function fromRustResponse(typed: Record<string, unknown> | null) {
 	if (!typed || typeof typed !== "object") return null;
 
@@ -28,6 +34,15 @@ export function fromRustResponse(typed: Record<string, unknown> | null) {
 		typed.status as string | Record<string, unknown> | undefined,
 	);
 	const headers: Record<string, unknown> = {};
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export function fromRustResponse(typed: Record<string, any> | null) {
+	if (!typed || typeof typed !== "object") return null;
+
+	const status = statusCodeFromRust(typed.status);
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	const headers: Record<string, any> = {};
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	for (const [key, value] of Object.entries(typed)) {
 		if (value == null) continue;
 		if (Array.isArray(value)) {

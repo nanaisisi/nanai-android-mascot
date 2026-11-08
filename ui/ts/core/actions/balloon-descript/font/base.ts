@@ -1,11 +1,17 @@
 import { rgbFromComponents } from "../utils.js";
 
+<<<<<<< HEAD
 export function applyBaseFontProperties(
 	root: unknown,
 	props: Record<string, unknown>,
 ) {
 	const el = root as HTMLElement;
 	if (props.id) el.style.setProperty("--balloon-id", String(props.id));
+=======
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export function applyBaseFontProperties(root: any, props: Record<string, any>) {
+	if (props.id) root.style.setProperty("--balloon-id", props.id);
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 
 	if (props["font.name"]) {
 		el.style.setProperty(

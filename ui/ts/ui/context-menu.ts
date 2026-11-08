@@ -221,8 +221,14 @@ function checkSubmenuFlip(wrapper) {
 }
 
 // ホバー時にも右/左展開を判定 & 独立サブメニューウィンドウ呼び出し
+<<<<<<< HEAD
 document.addEventListener("mouseover", (e: unknown) => {
 	const btn = e.target.closest(".menu-item.has-submenu");
+=======
+document.addEventListener("mouseover", (e: MouseEvent) => {
+	const target = e.target as HTMLElement | null;
+	const btn = target?.closest(".menu-item.has-submenu");
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	if (!btn) return;
 	const wrapper = btn.closest(".menu-item-wrapper") || btn.parentElement;
 	if (wrapper) {

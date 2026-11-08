@@ -56,12 +56,18 @@ test("Parser Fuzzing Cycle 8: SyncObject commands argument fuzzing and null-safe
 });
 
 test("Parser Fuzzing Cycle 8: Mode transition commands and cross-ghost IPC anomaly tolerance", async () => {
+<<<<<<< HEAD
 	const eventsSent: unknown[] = [];
+=======
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
+	const eventsSent: any[] = [];
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const dummyHandler = {
 		player: {
 			currentScope: 0,
 			app: {
 				ghostController: {
+<<<<<<< HEAD
 					sendShioriEvent: async (ev: string, args: unknown[]) => {
 						eventsSent.push({ ev, args });
 					},
@@ -77,6 +83,18 @@ test("Parser Fuzzing Cycle 8: Mode transition commands and cross-ghost IPC anoma
 						ev: string,
 						refs: unknown[],
 					) => {
+=======
+					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+					sendShioriEvent: async (ev: string, args: any[]) => {
+						eventsSent.push({ ev, args });
+					},
+					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+					sendRaiseOther: async (ghost: string, ev: string, refs: any[]) => {
+						eventsSent.push({ type: "raiseOther", ghost, ev, refs });
+					},
+					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+					sendNotifyOther: async (ghost: string, ev: string, refs: any[]) => {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 						eventsSent.push({ type: "notifyOther", ghost, ev, refs });
 					},
 				},

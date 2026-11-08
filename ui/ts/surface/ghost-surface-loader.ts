@@ -14,19 +14,38 @@ export const ghostSurfaceLoaderMethods = {
 		shellName: string,
 		surfaceId: number | string,
 	): Promise<string> {
+<<<<<<< HEAD
 		(this as unknown)._surfaceAssetCache ??= new Map();
 		const key = `${cmd}|${ghostPath}|${shellName}|${surfaceId}`;
 		let pending = (this as unknown)._surfaceAssetCache.get(key);
+=======
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+		(this as any)._surfaceAssetCache ??= new Map();
+		const key = `${cmd}|${ghostPath}|${shellName}|${surfaceId}`;
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+		let pending = (this as any)._surfaceAssetCache.get(key);
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		if (!pending) {
 			pending = invoke(cmd, {
 				ghostPath,
 				shellName,
 				surfaceId: String(surfaceId),
 			});
+<<<<<<< HEAD
 			(this as unknown)._surfaceAssetCache.set(key, pending);
 			if ((this as unknown)._surfaceAssetCache.size > 64) {
 				(this as unknown)._surfaceAssetCache.delete(
 					(this as unknown)._surfaceAssetCache.keys().next().value,
+=======
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			(this as any)._surfaceAssetCache.set(key, pending);
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
+			if ((this as any)._surfaceAssetCache.size > 64) {
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+				(this as any)._surfaceAssetCache.delete(
+					// biome-ignore lint/suspicious/noExplicitAny: automated fix
+					(this as any)._surfaceAssetCache.keys().next().value,
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				);
 			}
 		}
@@ -35,8 +54,17 @@ export const ghostSurfaceLoaderMethods = {
 
 	/** ゴースト・シェル切り替え時などに画像キャッシュを破棄 */
 	clearSurfaceAssetCache() {
+<<<<<<< HEAD
 		(this as unknown)._surfaceAssetCache?.clear();
 		(this as unknown).app?.surfaceManager?.chromaKeyCache?.clear();
 		(this as unknown).app?.surfaceManager?.baseCanvasCache?.clear();
+=======
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+		(this as any)._surfaceAssetCache?.clear();
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+		(this as any).app?.surfaceManager?.chromaKeyCache?.clear();
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
+		(this as any).app?.surfaceManager?.baseCanvasCache?.clear();
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	},
 };

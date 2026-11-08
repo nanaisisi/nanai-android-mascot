@@ -1,12 +1,11 @@
 /**
- * @file command_context.rs
- * @brief SSTP EXECUTE コマンド実行ハンドラー・ゴーストコンテキスト判定単体テスト
+ * @file execute_commands.rs
+ * @brief handle_execute_command による EXECUTE 各種コマンド実行単体テスト
  */
 
 use super::*;
 
-#[test]
-fn test_handle_execute_command() {
+fn create_test_context() -> SstpGhostContext {
     let mut properties = HashMap::new();
     properties.insert("ghostlist.count".to_string(), "2".to_string());
     properties.insert("currentghost.name".to_string(), "Nanai Ghost".to_string());
@@ -16,7 +15,7 @@ fn test_handle_execute_command() {
     client_cookies.insert("user_token".to_string(), "abc123xyz".to_string());
     cookies.insert("ClientApp".to_string(), client_cookies);
 
-    let ctx = SstpGhostContext {
+    SstpGhostContext {
         name: "Nanai Ghost".to_string(),
         sakura_name: "Nanai".to_string(),
         kero_name: "Kero".to_string(),
@@ -37,7 +36,12 @@ fn test_handle_execute_command() {
         sstp_config: SstpGhostConfig::default(),
         security_level: Some("local".to_string()),
         references: HashMap::new(),
-    };
+    }
+}
+
+#[test]
+fn test_execute_get_names_and_status_info() {
+    let ctx = create_test_context();
 
     let res_getname = handle_execute_command("GetName", &ctx);
     assert_eq!(res_getname.status, SstpStatusCode::Ok);
@@ -97,6 +101,38 @@ fn test_handle_execute_command() {
         Some("TTS Plugin".to_string())
     );
 
+    let res_version = handle_execute_command("GetVersion", &ctx);
+    assert_eq!(res_version.additional_data, Some("2.0.0".to_string()));
+
+    let res_shortversion = handle_execute_command("GetShortVersion", &ctx);
+    assert_eq!(res_shortversion.additional_data, Some("2.0".to_string()));
+
+    let res_status = handle_execute_command("GetStatus", &ctx);
+    assert_eq!(res_status.additional_data, Some("talking".to_string()));
+
+    let mut ctx_empty_status = ctx.clone();
+    ctx_empty_status.status.clear();
+    let res_empty_status = handle_execute_command("GetStatus", &ctx_empty_status);
+    assert!(res_empty_status.additional_data.is_none());
+
+    let res_quiet = handle_execute_command("quiet", &ctx);
+    assert_eq!(res_quiet.status, SstpStatusCode::Ok);
+
+    let res_restore = handle_execute_command("restore", &ctx);
+    assert_eq!(res_restore.status, SstpStatusCode::Ok);
+
+    let res_unknown = handle_execute_command("InvalidCommand", &ctx);
+    assert_eq!(res_unknown.status, SstpStatusCode::BadRequest);
+    assert_eq!(
+        res_unknown.error_description,
+        Some("unknown command".to_string())
+    );
+}
+
+#[test]
+fn test_execute_property_and_cookie_commands() {
+    let ctx = create_test_context();
+
     let res_prop = handle_execute_command("GetProperty[ghostlist.count]", &ctx);
     assert_eq!(res_prop.status, SstpStatusCode::Ok);
     assert_eq!(res_prop.additional_data, Some("2".to_string()));
@@ -141,33 +177,6 @@ fn test_handle_execute_command() {
     assert_eq!(res_cookie_other.status, SstpStatusCode::Ok);
     assert_eq!(res_cookie_other.additional_data, Some("".to_string()));
 
-    let res_version = handle_execute_command("GetVersion", &ctx);
-    assert_eq!(res_version.additional_data, Some("2.0.0".to_string()));
-
-    let res_shortversion = handle_execute_command("GetShortVersion", &ctx);
-    assert_eq!(res_shortversion.additional_data, Some("2.0".to_string()));
-
-    let res_status = handle_execute_command("GetStatus", &ctx);
-    assert_eq!(res_status.additional_data, Some("talking".to_string()));
-
-    let mut ctx_empty_status = ctx.clone();
-    ctx_empty_status.status.clear();
-    let res_empty_status = handle_execute_command("GetStatus", &ctx_empty_status);
-    assert!(res_empty_status.additional_data.is_none());
-
-    let res_quiet = handle_execute_command("quiet", &ctx);
-    assert_eq!(res_quiet.status, SstpStatusCode::Ok);
-
-    let res_restore = handle_execute_command("restore", &ctx);
-    assert_eq!(res_restore.status, SstpStatusCode::Ok);
-
-    let res_unknown = handle_execute_command("InvalidCommand", &ctx);
-    assert_eq!(res_unknown.status, SstpStatusCode::BadRequest);
-    assert_eq!(
-        res_unknown.error_description,
-        Some("unknown command".to_string())
-    );
-
     // Reference によるパラメータ解決
     let mut ctx_ref = ctx.clone();
     ctx_ref
@@ -179,6 +188,11 @@ fn test_handle_execute_command() {
         res_prop_ref.additional_data,
         Some("Nanai Ghost".to_string())
     );
+}
+
+#[test]
+fn test_execute_system_and_archive_commands() {
+    let ctx = create_test_context();
 
     assert_eq!(
         handle_execute_command("DumpSurface", &ctx).status,
@@ -208,8 +222,13 @@ fn test_handle_execute_command() {
         handle_execute_command("CompressArchive[]", &ctx).status,
         SstpStatusCode::BadRequest
     );
+}
 
-    // リモート呼び出し時の拒否判定
+#[test]
+fn test_execute_security_remote_refusal_and_fmo_sanitization() {
+    let ctx = create_test_context();
+
+    // リモート呼び出し時の拒否判定 (UKADOC [リモート不可] 規格準拠)
     let mut ctx_remote = ctx.clone();
     ctx_remote.security_level = Some("external".to_string());
     assert_eq!(
@@ -250,7 +269,7 @@ fn test_handle_execute_command() {
     );
 
     // GetFMO リモート時のパス情報除去 & ダミーHWND化
-    let mut ctx_fmo_remote = ctx.clone();
+    let mut ctx_fmo_remote = ctx;
     ctx_fmo_remote.security_level = Some("external".to_string());
     ctx_fmo_remote.fmo_text = "ssp_fmo_header_001.path\x01/secret/path\r\nssp_fmo_header_001.hwnd\x011234\r\nssp_fmo_header_001.name\x01Nanai\r\nssp_fmo_header_001.ghostpath\x01/secret/ghost\r\n".to_string();
     let res_fmo_remote = handle_execute_command("GetFMO", &ctx_fmo_remote);
@@ -260,48 +279,4 @@ fn test_handle_execute_command() {
     assert!(!fmo_out.contains(".ghostpath\x01"));
     assert!(fmo_out.contains("ssp_fmo_header_001.hwnd\x010"));
     assert!(fmo_out.contains("ssp_fmo_header_001.name\x01Nanai"));
-}
-
-#[test]
-fn test_sstp_ghost_config_from_descript_and_validation() {
-    let mut map = HashMap::new();
-    map.insert("sstp.allowcommunicate".to_string(), "0".to_string());
-    map.insert("sstp.allowunspecifiedsend".to_string(), "0".to_string());
-    map.insert("sstp.alwaystranslate".to_string(), "1".to_string());
-
-    let config = SstpGhostConfig::from_descript_map(&map);
-    assert!(!config.allow_communicate);
-    assert!(!config.allow_unspecified_send);
-    assert!(config.always_translate);
-
-    // COMMUNICATE リクエストは拒否される
-    let req_comm = SstpRequest::parse("COMMUNICATE SSTP/1.1\r\nSentence: test\r\n").unwrap();
-    let res = config.validate_request(&req_comm);
-    assert!(res.is_err());
-    let err_resp = res.unwrap_err();
-    assert_eq!(err_resp.status, SstpStatusCode::Refuse);
-    assert_eq!(
-        err_resp.error_description,
-        Some("COMMUNICATE disabled by ghost".to_string())
-    );
-
-    // 無指定 SEND リクエストは拒否される
-    let req_send_unspec = SstpRequest::parse("SEND SSTP/1.1\r\nScript: \\0Hi\\e\r\n").unwrap();
-    let res_unspec = config.validate_request(&req_send_unspec);
-    assert!(res_unspec.is_err());
-    assert_eq!(res_unspec.unwrap_err().status, SstpStatusCode::Refuse);
-
-    // ゴースト指定あり SEND リクエストは許可される
-    let req_send_spec =
-        SstpRequest::parse("SEND SSTP/1.1\r\nReceiverGhostName: Nanai\r\nScript: \\0Hi\\e\r\n")
-            .unwrap();
-    assert!(config.validate_request(&req_send_spec).is_ok());
-
-    // always_translate による notranslate オプション上書き
-    let req_notranslate =
-        SstpRequest::parse("SEND SSTP/1.1\r\nOption: notranslate\r\nScript: \\0Hi\\e\r\n").unwrap();
-    assert!(config.should_translate(&req_notranslate));
-
-    let default_config = SstpGhostConfig::default();
-    assert!(!default_config.should_translate(&req_notranslate));
 }

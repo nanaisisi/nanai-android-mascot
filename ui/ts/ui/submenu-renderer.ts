@@ -98,9 +98,6 @@ export function renderSubmenuContent({
 						dir_name: "nam_default_plus_overhead",
 						name: "NAMデフォルト+(頭上)",
 					},
-					{ dir_name: "pixel", name: "ピクセル" },
-					{ dir_name: "comic", name: "コミック" },
-					{ dir_name: "dark", name: "ダーク" },
 				]
 		).forEach((balloonItem: { dir_name: unknown; name: unknown }) => {
 			const dirName = balloonItem.dir_name || balloonItem.name;

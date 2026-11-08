@@ -1,17 +1,11 @@
 export const BALLOON_THEMES = [
 	"nam_default_plus",
 	"nam_default_plus_overhead",
-	"pixel",
-	"comic",
-	"dark",
 ];
 
 export const THEME_LABELS = {
 	nam_default_plus: "NAMデフォルト+",
 	nam_default_plus_overhead: "NAMデフォルト+(頭上)",
-	pixel: "ドット絵・ピクセル風（レトロゲーム）",
-	comic: "ポップコミック（太枠丸み）",
-	dark: "サイバーダーク（夜間・ハイコントラスト）",
 };
 
 export const BALLOON_SCALE_MAP = {

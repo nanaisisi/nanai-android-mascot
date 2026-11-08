@@ -45,9 +45,6 @@ export const menuBalloonDressupRenderer = {
 			const fallbackThemes = [
 				{ id: "nam_default_plus", label: "NAMデフォルト+" },
 				{ id: "nam_default_plus_overhead", label: "NAMデフォルト+(頭上)" },
-				{ id: "pixel", label: "ピクセル (Pixel)" },
-				{ id: "comic", label: "コミック (Comic)" },
-				{ id: "dark", label: "ダーク (Dark)" },
 			];
 			fallbackThemes.forEach((t) => {
 				const isCurrent = currentBalloonTheme === t.id;

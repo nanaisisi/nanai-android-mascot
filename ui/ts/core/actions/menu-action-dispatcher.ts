@@ -2,12 +2,7 @@ import { AppConfig } from "../config.js";
 import { invoke, isTauriAvailable } from "../tauri-helper.js";
 import { handleSystemMenuAction } from "./menu-action-system.js";
 
-const THEME_LABELS: Record<string, string> = {
-	ivory: "アイボリー（象牙色レトロ）",
-	pixel: "ドット絵・ピクセル風（レトロゲーム）",
-	comic: "ポップコミック（太枠丸み）",
-	dark: "サイバーダーク（夜間・ハイコントラスト）",
-};
+import { THEME_LABELS } from "./balloon-theme-constants.js";
 
 /** SHIORIイベントへ単純転送するアクション */
 const SHIORI_ACTIONS: Record<string, unknown> = {

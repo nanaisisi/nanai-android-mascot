@@ -9,6 +9,7 @@ pub struct GhostManifest {
     pub kero_name: Option<String>,
     pub num_characters: i32,
     pub shiori: Option<String>,
+    pub makoto: Option<String>,
     pub craftman: Option<String>,
     pub craftman_url: Option<String>,
     pub group: Option<String>,
@@ -33,6 +34,8 @@ pub struct GhostManifest {
     pub sstp_allow_unspecified_send: bool,
     pub sstp_always_translate: bool,
     pub install_accept: Option<String>,
+    // [makoto,ファイル名]: makoto.dll (外部トランスレータモジュール)
+    pub makoto: Option<String>,
 }
 
 pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
@@ -80,6 +83,7 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
     let num_characters = max_char_id + 1;
 
     let shiori = meta_map.as_ref().and_then(|m| m.get("shiori").cloned());
+    let makoto = meta_map.as_ref().and_then(|m| m.get("makoto").cloned());
     let craftman = meta_map.as_ref().and_then(|m| {
         m.get("craftman")
             .cloned()
@@ -195,6 +199,10 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
             .or_else(|| m.get("accept").cloned())
     });
 
+    // [makoto,ファイル名]: descript.txt の makoto キー
+    // [makoto,ファイル名]: トランスレータモジュール指定
+    let makoto = meta_map.as_ref().and_then(|m| m.get("makoto").cloned());
+
     GhostManifest {
         display_name,
         version,
@@ -202,6 +210,7 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
         kero_name,
         num_characters,
         shiori,
+        makoto,
         craftman,
         craftman_url,
         group,
@@ -226,5 +235,6 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
         sstp_allow_unspecified_send,
         sstp_always_translate,
         install_accept,
+        makoto,
     }
 }

@@ -255,3 +255,41 @@ fn test_ast_cycle9_advanced_inspection_and_filtering() {
     assert_eq!(clean_ast.find_animations().len(), 2);
     assert_eq!(clean_ast.calculate_text_length(), 14);
 }
+
+#[test]
+fn test_ast_cycle10_map_commands_extract_text_and_diagnostics() {
+    let commands = vec![
+        SakuraCommand::Target(0),
+        SakuraCommand::Surface(0),
+        SakuraCommand::Text("Hello, ".into()),
+        SakuraCommand::Anchor {
+            id: "world_link".into(),
+            text: "World".into(),
+            args: vec![],
+        },
+        SakuraCommand::Wait(500),
+        SakuraCommand::Choice {
+            label: "!".into(),
+            id: "excl".into(),
+            args: vec![],
+        },
+    ];
+    let ast = build_sakura_ast(&commands);
+
+    // 1. extract_text
+    let text = ast.extract_text();
+    assert_eq!(text, "Hello, World!");
+
+    // 2. node_count & depth
+    assert_eq!(ast.node_count(), 8); // Root(1) + Scope(1) + Surface(1) + Text(1) + Anchor(1) + AnchorText(1) + Wait(1) + Choice(1) = 8
+    assert_eq!(ast.depth(), 4); // Root(1) -> Scope(2) -> Anchor(3) -> Text(4)
+
+    // 3. map_commands (Replace all Wait commands with Wait(10))
+    let mapped_ast = ast.map_commands(&|cmd| match cmd {
+        SakuraCommand::Wait(_) => SakuraCommand::Wait(10),
+        other => other.clone(),
+    });
+    let collected = mapped_ast.collect_commands();
+    assert!(collected.iter().any(|c| matches!(c, SakuraCommand::Wait(10))));
+    assert!(!collected.iter().any(|c| matches!(c, SakuraCommand::Wait(500))));
+}

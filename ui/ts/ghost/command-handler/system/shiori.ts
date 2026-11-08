@@ -71,3 +71,46 @@ export async function handleReloadSurface(handler: unknown, _args: string[]) {
 		);
 	}
 }
+
+export async function handleLoadMakoto(handler: unknown, args: string[]) {
+	const moduleName = args[2] ?? args[1] ?? "";
+	console.log(`🧩 Execute load,makoto triggered: ${moduleName}`);
+	const gc = (
+		handler as { app?: { ghostController?: Record<string, unknown> } }
+	)?.app?.ghostController;
+	if (typeof gc?.loadMakoto === "function") {
+		await (gc.loadMakoto as (name: string) => Promise<unknown>)(moduleName);
+	}
+}
+
+export async function handleUnloadMakoto(handler: unknown, args: string[]) {
+	const moduleName = args[2] ?? args[1] ?? "";
+	console.log(`🧩 Execute unload,makoto triggered: ${moduleName}`);
+	const gc = (
+		handler as { app?: { ghostController?: Record<string, unknown> } }
+	)?.app?.ghostController;
+	if (typeof gc?.unloadMakoto === "function") {
+		await (gc.unloadMakoto as (name: string) => Promise<unknown>)(moduleName);
+	}
+}
+
+export async function handleReloadMakoto(handler: unknown, args: string[]) {
+	const moduleName = args[2] ?? args[1] ?? "";
+	console.log(`🧩 Execute reload,makoto triggered: ${moduleName}`);
+	const gc = (
+		handler as { app?: { ghostController?: Record<string, unknown> } }
+	)?.app?.ghostController;
+	if (typeof gc?.reloadMakoto === "function") {
+		await (gc.reloadMakoto as (name: string) => Promise<unknown>)(moduleName);
+	}
+}
+
+export async function handleReloadAigraph(handler: unknown, _args: string[]) {
+	console.log("📊 Execute reload,aigraph triggered");
+	const gc = (
+		handler as { app?: { ghostController?: Record<string, unknown> } }
+	)?.app?.ghostController;
+	if (typeof gc?.reloadAigraph === "function") {
+		await (gc.reloadAigraph as () => Promise<unknown>)();
+	}
+}

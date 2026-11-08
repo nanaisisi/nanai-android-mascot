@@ -9,6 +9,7 @@ import os
 import shutil
 import tempfile
 import unittest
+from unittest import mock
 
 from scripts.verify_spec_compliance import (
     ComplianceReport,
@@ -430,6 +431,58 @@ class TestVerifySpecCompliance(unittest.TestCase):
             summary_content = f.read()
         self.assertIn("ukadoc-spec/spec", summary_content)
         self.assertIn("1", summary_content)
+
+    def test_parallel_conflict_safeguards(self):
+        from scripts.verify_spec_compliance import (
+            is_parallel_branch,
+            validate_parallel_bulk_safety,
+            detect_git_conflicts,
+        )
+
+        # Mock args namespace
+        class MockArgs:
+            dry_run = False
+            update_summary_only = False
+            summary_only = False
+            target_category = None
+            allow_bulk_overwrite = False
+
+        # When running on a non-main branch, bulk overwrite without flags should be rejected
+        args = MockArgs()
+        with mock.patch('scripts.verify_spec_compliance.is_parallel_branch', return_value=True):
+            is_safe, msg = validate_parallel_bulk_safety(args)
+            self.assertFalse(is_safe)
+            self.assertIn("Safety Guard", msg)
+
+            # Safe with --dry-run
+            args.dry_run = True
+            is_safe, _ = validate_parallel_bulk_safety(args)
+            self.assertTrue(is_safe)
+            args.dry_run = False
+
+            # Safe with --update-summary-only
+            args.update_summary_only = True
+            is_safe, _ = validate_parallel_bulk_safety(args)
+            self.assertTrue(is_safe)
+            args.update_summary_only = False
+
+            # Safe with --target category
+            args.target_category = "ukadoc-spec/descript"
+            is_safe, _ = validate_parallel_bulk_safety(args)
+            self.assertTrue(is_safe)
+            args.target_category = None
+
+            # Safe with explicit --allow-bulk-overwrite
+            args.allow_bulk_overwrite = True
+            is_safe, _ = validate_parallel_bulk_safety(args)
+            self.assertTrue(is_safe)
+
+        # When on main branch, is_safe is True
+        with mock.patch('scripts.verify_spec_compliance.is_parallel_branch', return_value=False):
+            args.allow_bulk_overwrite = False
+            is_safe, msg = validate_parallel_bulk_safety(args)
+            self.assertTrue(is_safe)
+            self.assertIn("On main branch", msg)
 
 
 if __name__ == '__main__':

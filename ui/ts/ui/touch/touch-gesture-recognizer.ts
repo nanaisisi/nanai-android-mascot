@@ -221,6 +221,89 @@ export class TouchGestureRecognizer {
 		}
 	}
 
+	/**
+	 * ジェスチャー認識オプションを取得
+	 * @returns {object}
+	 */
+	getGestureOptions() {
+		return { ...this.options };
+	}
+
+	/**
+	 * ジェスチャー認識オプションを動的に設定
+	 * @param {object} options
+	 */
+	setGestureOptions(options: any = {}) {
+		if (options.longPressDelay !== undefined) {
+			const delay = Number(options.longPressDelay);
+			if (Number.isFinite(delay) && delay >= 0) {
+				this.options.longPressDelay = delay;
+			}
+		}
+		if (options.strokeThreshold !== undefined) {
+			const val = Number(options.strokeThreshold);
+			if (Number.isFinite(val) && val >= 0) {
+				this.options.strokeThreshold = val;
+			}
+		}
+		if (options.slopThreshold !== undefined) {
+			const val = Number(options.slopThreshold);
+			if (Number.isFinite(val) && val >= 0) {
+				this.options.slopThreshold = val;
+			}
+		}
+		if (options.doubleTapDelay !== undefined) {
+			const val = Number(options.doubleTapDelay);
+			if (Number.isFinite(val) && val >= 0) {
+				this.options.doubleTapDelay = val;
+			}
+		}
+		if (options.doubleTapDistance !== undefined) {
+			const val = Number(options.doubleTapDistance);
+			if (Number.isFinite(val) && val >= 0) {
+				this.options.doubleTapDistance = val;
+			}
+		}
+		if (options.swipeMinDistance !== undefined) {
+			const val = Number(options.swipeMinDistance);
+			if (Number.isFinite(val) && val >= 0) {
+				this.options.swipeMinDistance = val;
+			}
+		}
+		if (options.swipeMinVelocity !== undefined) {
+			const val = Number(options.swipeMinVelocity);
+			if (Number.isFinite(val) && val >= 0) {
+				this.options.swipeMinVelocity = val;
+			}
+		}
+		if (options.snapThreshold !== undefined) {
+			const val = Number(options.snapThreshold);
+			if (Number.isFinite(val) && val >= 0) {
+				this.options.snapThreshold = val;
+			}
+		}
+		if (options.screenWidth !== undefined) {
+			const val = Number(options.screenWidth);
+			if (Number.isFinite(val) && val > 0) {
+				this.options.screenWidth = val;
+			}
+		}
+		return this.getGestureOptions();
+	}
+
+	/**
+	 * タッチ・ジェスチャー操作がアクティブ（追尾中）かどうか
+	 * @returns {boolean}
+	 */
+	isGestureActive() {
+		return (
+			this._activeTouches.size > 0 ||
+			this._isDragging ||
+			this._isPinching ||
+			this._longPressTimer !== null
+		);
+	}
+
 	reset() {
 		this._clearLongPressTimer();
 		this._cancelRaf();

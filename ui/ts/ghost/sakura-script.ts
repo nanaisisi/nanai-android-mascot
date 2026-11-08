@@ -23,7 +23,7 @@ export class SakuraScriptPlayer {
 	commandHandler: SakuraCommandHandler;
 	_restoreTimer?: unknown;
 	_pauseResolver?: unknown;
-	_sleepResolvers?: Set<Function>;
+	_sleepResolvers?: Set<(...args: unknown[]) => unknown>;
 
 	constructor(app: unknown) {
 		this.app = app;

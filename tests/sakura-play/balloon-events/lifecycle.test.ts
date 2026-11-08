@@ -103,7 +103,7 @@ test("balloon events: OnBalloonTimeout triggered via sendBalloonTimeoutNotify", 
 	player.sleep = () => Promise.resolve();
 	player.waitForClickOrTimeout = () => Promise.resolve();
 	player.scheduleSurfaceRestore = () => {};
-	player.playbackController = { activeScopes: new Set([1]) };
+	player.playbackController = { activeScopes: new Set([1]) } as any;
 
 	await player.sendBalloonTimeoutNotify();
 
@@ -147,11 +147,12 @@ test("\\t (timeCritical) suppresses balloonTimeout and click timeout auto-advanc
 	player.waitForClickOrTimeout = async () => {
 		// Mock implementation that checks if timeCritical is respected
 		// Actual implementation checks this flag internally before setting setTimeout
-		if (player.timeCritical) {
+		if (player.playbackController.timeCritical) {
 			waitForClickTimeoutEnabled = false;
 		}
 	};
 	player.scheduleSurfaceRestore = () => {};
+	player.playbackController = { timeCritical: false } as any;
 
 	await playScript(player, "\\0\\tTime Critical Text\\e");
 

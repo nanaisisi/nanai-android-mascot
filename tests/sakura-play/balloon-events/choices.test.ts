@@ -50,9 +50,7 @@ test("choice click triggers OnChoiceSelectEx first, then falls back to OnChoiceS
 
 	await playScript(player, "\\0\\q[選択肢1,opt1,paramA,paramB]\\e");
 
-	const choiceBtn = sakuraText.children.find(
-		(c: any) => c.tagName === "BUTTON",
-	);
+	const choiceBtn = sakuraText.children.find((c: any) => c.tagName === "BUTTON");
 	assert.ok(choiceBtn);
 
 	// Simulate user click
@@ -118,9 +116,7 @@ test("choice click does not trigger OnChoiceSelect if OnChoiceSelectEx returns r
 
 	await playScript(player, "\\0\\q[選択肢2,opt2]\\e");
 
-	const choiceBtn = sakuraText.children.find(
-		(c: any) => c.tagName === "BUTTON",
-	);
+	const choiceBtn = sakuraText.children.find((c: any) => c.tagName === "BUTTON");
 	assert.ok(choiceBtn);
 
 	choiceBtn._listeners.click({ stopPropagation() {} });

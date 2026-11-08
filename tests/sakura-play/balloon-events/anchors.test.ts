@@ -67,8 +67,5 @@ test("anchor click triggers OnAnchorSelectEx first, then falls back to OnAnchorS
 
 	// 2. Fallback to OnAnchorSelect
 	assert.equal((shioriEvents[1] as any).event, "OnAnchorSelect");
-	assert.deepEqual((shioriEvents[1] as any).args, [
-		"web_link",
-		"https://example.com",
-	]);
+	assert.deepEqual((shioriEvents[1] as any).args, ["web_link", "https://example.com"]);
 });

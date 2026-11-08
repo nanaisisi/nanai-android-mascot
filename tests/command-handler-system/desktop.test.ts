@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 globalThis.window = globalThis;
 
@@ -12,15 +12,14 @@ import {
 
 describe("system/desktop.js", () => {
 <<<<<<< HEAD
-	let originalTauri: unknown = null;
+	const _originalTauri: unknown = null;
 =======
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let originalTauri;
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 
-	beforeEach(() => {
-		originalTauri = globalThis.__TAURI__;
-	});
+	beforeEach(() => 
+		originalTauri = globalThis.__TAURI__;);
 
 	afterEach(() => {
 		globalThis.__TAURI__ = originalTauri;

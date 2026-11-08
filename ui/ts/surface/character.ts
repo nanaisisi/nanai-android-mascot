@@ -56,7 +56,7 @@ function openCharacterMenu(screenX: number, screenY: number) {
 	});
 }
 
-function initCharacterWindow() {
+function _initCharacterWindow() {
 	const img = /** @type {HTMLImageElement | null} */ (
 		document.getElementById("subchar-img")
 	);
@@ -128,7 +128,7 @@ function initCharacterWindow() {
 	const LONG_PRESS_DELAY = 600;
 
 <<<<<<< HEAD
-	const onPointerDown = (e: unknown) => {
+	const _onPointerDown = (_e: unknown) => {
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: pointer event handler
 	const onPointerDown = (e: any) => {
@@ -196,7 +196,7 @@ function initCharacterWindow() {
 	};
 
 <<<<<<< HEAD
-	const onPointerMove = (e: unknown) => {
+	const _onPointerMove = (_e: unknown) => {
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: pointer event handler
 	const onPointerMove = (e: any) => {
@@ -278,7 +278,7 @@ function initCharacterWindow() {
 }
 
 if (document.readyState === "loading") {
-	document.addEventListener("DOMContentLoaded", initCharacterWindow);
+	document.addEventListener("DOMContentLoaded", _initCharacterWindow);
 } else {
-	initCharacterWindow();
+	_initCharacterWindow();
 }

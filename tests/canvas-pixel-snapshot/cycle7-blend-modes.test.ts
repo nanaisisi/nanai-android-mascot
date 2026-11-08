@@ -73,17 +73,17 @@ test("Canvas Pixel Snapshot Cycle 7: SurfaceFrameBuffer add-glow, color-dodge-gl
 });
 
 test("Canvas Pixel Snapshot Cycle 7: processChromaKey options.paintTransparentRegionBlack", async () => {
-	const origDocument = globalThis.document;
-	const origImage = globalThis.Image;
+	const _origDocument = globalThis.document;
+	const _origImage = globalThis.Image;
 
 <<<<<<< HEAD
-	let baseCanvas: unknown = null;
+	const baseCanvas: unknown = null;
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let baseCanvas: any = null;
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-	globalThis.document = {
-		createElement(tag: string) {
+	globalThis.document = 
+		createElement(tag: string) 
 			if (tag === "canvas") {
 				const c = createMockCanvas(2, 2);
 				if (!baseCanvas) {
@@ -91,10 +91,8 @@ test("Canvas Pixel Snapshot Cycle 7: processChromaKey options.paintTransparentRe
 				}
 				return c;
 			}
-			return {};
-		},
-<<<<<<< HEAD
-	} as unknown;
+			return {};,
+<<<<<<< HEADas unknown;
 =======
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	} as any;

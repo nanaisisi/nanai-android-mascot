@@ -48,7 +48,7 @@ export class SakuraScriptPlayer {
 	_sleepResolvers?: Set<Function>;
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	constructor(app: any) {
+	constructor(app: any) 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		this.app = app;
 		this.isPlaying = false;
@@ -66,7 +66,7 @@ export class SakuraScriptPlayer {
 
 		if (isTauriAvailable()) {
 <<<<<<< HEAD
-			listen("balloon-choice-selected", (event: unknown) => {
+			listen("balloon-choice-selected", (event: unknown) => 
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			listen("balloon-choice-selected", (event: any) => {
@@ -77,7 +77,7 @@ export class SakuraScriptPlayer {
 				}
 			});
 <<<<<<< HEAD
-			listen("balloon-anchor-selected", (event: unknown) => {
+			listen("balloon-anchor-selected", (event: unknown) => 
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			listen("balloon-anchor-selected", (event: any) => {
@@ -93,7 +93,7 @@ export class SakuraScriptPlayer {
 				this.skip();
 			});
 <<<<<<< HEAD
-			listen("balloon-ready", (event: unknown) => {
+			listen("balloon-ready", (event: unknown) => 
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			listen("balloon-ready", (event: any) => {
@@ -109,18 +109,14 @@ export class SakuraScriptPlayer {
 					theme: this.app.currentBalloonTheme || "default",
 				});
 			});
-		}
-	}
 
-	async parse(script: string) {
+	async parse(script: string) 
 		return await parseSakuraScriptAsync(script);
-	}
 
-	async play(script: string) {
+	async play(script: string) 
 		return await playScript(this, script);
-	}
 
-	scheduleSurfaceRestore(targetPlaybackId: number) {
+	scheduleSurfaceRestore(targetPlaybackId: number) 
 		if (this._restoreTimer) {
 			clearTimeout(this._restoreTimer);
 		}
@@ -131,19 +127,18 @@ export class SakuraScriptPlayer {
 				} catch (_e) {}
 			}
 		}, 8000);
-	}
 
-	skip() {
+	skip() 
 		if (this.isPlaying) {
 			this.skipRequested = true;
 			if (this.app?.ghostController?.sendBalloonBreakNotify) {
-				const script = this.lastScript || "";
-				const scopeId = this.currentScope || 0;
+				const _script = this.lastScript || "";
+				const _scopeId = this.currentScope || 0;
 <<<<<<< HEAD
-				const position = (this as unknown).currentProgressIndex || 0;
+				const _position = (this as unknown).currentProgressIndex || 0;
 =======
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
-				const position = (this as any).currentProgressIndex || 0;
+				const _position = (this as any).currentProgressIndex || 0;
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				this.app.ghostController.sendBalloonBreakNotify(
 					script,
@@ -157,9 +152,8 @@ export class SakuraScriptPlayer {
 				resolve();
 			}
 		}
-	}
 
-	async onChoiceTimeout() {
+	async onChoiceTimeout() 
 		if (this.choiceTimeoutTimer) {
 			clearTimeout(this.choiceTimeoutTimer);
 			this.choiceTimeoutTimer = null;
@@ -169,7 +163,6 @@ export class SakuraScriptPlayer {
 				this.lastScript || "",
 			]);
 		} catch (_e) {}
-	}
 
 	async onChoiceSelected(
 		choiceId: string,
@@ -192,7 +185,7 @@ export class SakuraScriptPlayer {
 			// UKADOC: OnChoiceSelectEx is sent first (Reference0: text, Reference1: ID, Reference2..N: args)
 			try {
 <<<<<<< HEAD
-				const resEx: unknown =
+				const _resEx: unknown =
 					await this.app.ghostController?.sendShioriEvent?.(
 						"OnChoiceSelectEx",
 						[choiceText, choiceId, ...allExtraArgs],
@@ -215,10 +208,10 @@ export class SakuraScriptPlayer {
 		}
 	}
 
-	sleep(ms: number) {
+	sleep(ms: number) 
 		return new Promise<void>((resolve) => {
 <<<<<<< HEAD
-			let timer: unknown = null;
+			const _timer: unknown = null;
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			let timer: any = null;
@@ -234,9 +227,8 @@ export class SakuraScriptPlayer {
 			if (!this._sleepResolvers) this._sleepResolvers = new Set();
 			this._sleepResolvers.add(onCancel);
 		});
-	}
 
-	destroy() {
+	destroy() 
 		this.isPlaying = false;
 		this.playbackId++;
 		if (this._restoreTimer) {
@@ -262,12 +254,11 @@ export class SakuraScriptPlayer {
 			}
 			this._sleepResolvers.clear();
 		}
-	}
 
-	waitForClickOrTimeout(element: HTMLElement | null, timeoutMs = 15000) {
+	waitForClickOrTimeout(element: HTMLElement | null, timeoutMs = 15000) 
 		return new Promise<void>((resolve) => {
 <<<<<<< HEAD
-			let timer: unknown = null;
+			const _timer: unknown = null;
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			let timer: any = null;
@@ -306,7 +297,5 @@ export class SakuraScriptPlayer {
 				timer = setTimeout(done, timeoutMs);
 			}
 		});
-	}
-}
 
 export { parseSakuraScript } from "./sakura-tokenizer.js";

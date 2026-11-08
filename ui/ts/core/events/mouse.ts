@@ -1,9 +1,9 @@
-import { invoke, isTauriAvailable } from "../tauri-helper.js";
+
 
 export const mouseMethods = {
 	onGhostClick(
-		clientX?: number,
-		clientY?: number,
+		_clientX?: number,
+		_clientY?: number,
 <<<<<<< HEAD
 		rect?: unknown,
 		scopeId: number = 0,
@@ -13,7 +13,7 @@ export const mouseMethods = {
 			(this as unknown).sakuraPlayer?.isPlaying
 		)
 			return;
-		const col = (this as unknown).getCollisionInfo(
+		const _col = (this as unknown).getCollisionInfo(
 			clientX,
 			clientY,
 			rect,
@@ -32,10 +32,10 @@ export const mouseMethods = {
 		)
 			return;
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
-		const col = (this as any).getCollisionInfo(clientX, clientY, rect, scopeId);
+		const _col = (this as any).getCollisionInfo(clientX, clientY, rect, scopeId);
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		console.log(
-			`🖱️ ゴーストタップ: スコープ=${scopeId}, 部位=${col.name || "なし"} (X:${col.canvasX}, Y:${col.canvasY})`,
+			`🖱️ ゴーストタップ: スコープ=$scopeId, 部位=$col.name || "なし"(_X:${col.canvasX}, _Y:${col.canvasY})`,
 		);
 		if (isTauriAvailable()) {
 			invoke("on_mouse_click").catch(() => {});
@@ -85,7 +85,7 @@ export const mouseMethods = {
 			scopeId,
 		);
 		console.log(
-			`🖐️ ゴースト撫で（Stroke）: スコープ=${scopeId}, 部位=${col.name || "なし"}`,
+			`🖐️ ゴースト撫で（Stroke）: スコープ=$scopeId, 部位=$col.name || "なし"`,
 		);
 		(this as unknown).ghostController.sendShioriEvent("OnMouseMove", [
 =======
@@ -103,7 +103,7 @@ export const mouseMethods = {
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const col = (this as any).getCollisionInfo(clientX, clientY, rect, scopeId);
 		console.log(
-			`🖐️ ゴースト撫で（Stroke）: スコープ=${scopeId}, 部位=${col.name || "なし"}`,
+			`🖐️ ゴースト撫で（Stroke）: スコープ=$scopeId, 部位=$col.name || "なし"`,
 		);
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this as any).ghostController.sendShioriEvent("OnMouseMove", [
@@ -385,7 +385,7 @@ export const mouseMethods = {
 			(this as unknown).sakuraPlayer?.isPlaying
 		)
 			return;
-		const coord = (x: number, y: number) => `${x}\x01${y}`;
+		const coord = (x: number, y: number) => `$x\x01$y`;
 		(this as unknown).ghostController.sendShioriEvent("OnMouseGesture", [
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -394,7 +394,7 @@ export const mouseMethods = {
 			(this as any).sakuraPlayer?.isPlaying
 		)
 			return;
-		const coord = (x: number, y: number) => `${x}\x01${y}`;
+		const coord = (x: number, y: number) => `$x\x01$y`;
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this as any).ghostController.sendShioriEvent("OnMouseGesture", [
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad

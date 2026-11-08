@@ -3,7 +3,7 @@ import { test } from "vitest";
 
 const deferred = () => {
 <<<<<<< HEAD
-	let resolve: unknown = null;
+	const _resolve: unknown = null;
 =======
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let resolve;
@@ -16,8 +16,8 @@ const deferred = () => {
 
 const calls = [];
 <<<<<<< HEAD
-let showGate: unknown = null;
-let hideGate: unknown = null;
+const _showGate: unknown = null;
+const _hideGate: unknown = null;
 =======
 // biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 let showGate;

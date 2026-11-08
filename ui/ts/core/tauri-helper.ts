@@ -46,12 +46,12 @@ export const ipcQueueStats = {
  * Tauri IPCコマンドの呼び出しラッパー
  */
 <<<<<<< HEAD
-export async function invoke<T = unknown>(
+export async function invoke<_T = unknown>(
 	cmd: string,
 	args: Record<string, unknown> = {},
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function invoke<T = any>(
+export async function invoke<_T = any>(
 	cmd: string,
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	args: Record<string, any> = {},
@@ -135,10 +135,10 @@ export async function listen(
  * イベント発火
  */
 <<<<<<< HEAD
-export async function emit(event: string, payload?: unknown): Promise<void> {
+export async function emit(_event: string, _payload?: unknown): Promise<void> {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function emit(event: string, payload?: any): Promise<void> {
+export async function _emit(event: string, payload?: any): Promise<void> {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	if (!isTauriAvailable()) return;
 	await tauriEmit(event, payload);
@@ -147,7 +147,7 @@ export async function emit(event: string, payload?: any): Promise<void> {
 /**
  * 現在のウィンドウのドラッグ移動を開始
  */
-export async function startDraggingWindow(): Promise<void> {
+export async function _startDraggingWindow(): Promise<void> {
 	if (!isTauriAvailable()) return;
 	try {
 		await getCurrentWindow().startDragging();
@@ -159,7 +159,7 @@ export async function startDraggingWindow(): Promise<void> {
 /**
  * 現在のウィンドウを指定量だけ移動する。
  */
-export async function moveCurrentWindowBy(
+export async function _moveCurrentWindowBy(
 	x: number,
 	y: number,
 	origin: { x: number; y: number },
@@ -174,7 +174,7 @@ export async function moveCurrentWindowBy(
 	}
 }
 
-export async function getCurrentWindowPosition(): Promise<{
+export async function _getCurrentWindowPosition(): Promise<{
 	x: number;
 	y: number;
 } | null> {

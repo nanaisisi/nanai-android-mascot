@@ -1,18 +1,17 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { isAndroidPlatform } from "../../ui/js/ui/touch/bridge/overlay.js";
 import { ANDROID_EVENTS, AndroidBridge } from "../../ui/js/ui/touch/index.js";
 
 describe("AndroidBridge - Platform & Overlay", () => {
 <<<<<<< HEAD
-	let originalNavigator: unknown = null;
+	const _originalNavigator: unknown = null;
 =======
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let originalNavigator;
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 
-	beforeEach(() => {
-		originalNavigator = globalThis.navigator;
-	});
+	beforeEach(() => 
+		originalNavigator = globalThis.navigator;);
 
 	afterEach(() => {
 		Object.defineProperty(globalThis, "navigator", {

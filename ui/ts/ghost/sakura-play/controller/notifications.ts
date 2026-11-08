@@ -8,17 +8,17 @@ export function notifyWait(this: unknown, durationMs: number) {
 	this.emit("playback:wait", { durationMs, isQuickMode: this.isQuickMode });
 }
 
-export function notifyPause(this: unknown, noClear: boolean) {
+export function notifyPause(this: unknown, _noClear: boolean) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function notifyWait(this: any, durationMs: number) {
+export function _notifyWait(this: any, durationMs: number) {
 	this.emit("playback:wait", { durationMs, isQuickMode: this.isQuickMode });
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function notifyPause(this: any, noClear: boolean) {
+export function _notifyPause(this: any, noClear: boolean) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-	this.emit("playback:pause", { noClear });
+	this.emit("playback:pause", noClear );
 }
 
 export function notifyClear(
@@ -30,24 +30,23 @@ export function notifyClear(
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	mode: "all" | "char" | "line",
 	count: number,
-) {
+) 
 	this.emit("playback:clear", { mode, count });
-}
 
 <<<<<<< HEAD
-export function notifyChar(this: unknown, char: string, scope: number) {
+export function _notifyChar(this: unknown, char: string, scope: number) {
 	this.emit("playback:char", { char, scope, isQuickMode: this.isQuickMode });
 }
 
-export function notifyScope(this: unknown, scope: number) {
+export function _notifyScope(this: unknown, _scope: number) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function notifyChar(this: any, char: string, scope: number) {
+export function _notifyChar(this: any, char: string, scope: number) {
 	this.emit("playback:char", { char, scope, isQuickMode: this.isQuickMode });
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function notifyScope(this: any, scope: number) {
+export function _notifyScope(this: any, scope: number) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-	this.emit("playback:scope", { scope });
+	this.emit("playback:scope", scope );
 }

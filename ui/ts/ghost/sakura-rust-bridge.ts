@@ -3,7 +3,7 @@ import type { SakuraScriptToken } from "./sakura-parser.js";
 
 <<<<<<< HEAD
 export function rustCommandsToTokens(
-	rustCommands: unknown[],
+	_rustCommands: unknown[],
 ): SakuraScriptToken[] {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -216,7 +216,7 @@ export function rustCommandsToTokens(rustCommands: any[]): SakuraScriptToken[] {
 	return tokens;
 }
 
-export async function parseSakuraScriptAsync(
+export async function _parseSakuraScriptAsync(
 	script: string,
 ): Promise<SakuraScriptToken[] | undefined> {
 	if (!script || typeof script !== "string") return [];
@@ -225,7 +225,7 @@ export async function parseSakuraScriptAsync(
 	}
 	try {
 <<<<<<< HEAD
-		const rustCommands: unknown = await invoke("parse_sakura_script", {
+		const _rustCommands: unknown = await invoke("parse_sakura_script", {
 			script,
 		});
 =======

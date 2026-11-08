@@ -51,12 +51,10 @@ export class MenuDispatcher {
 		if (globalThis.parent && (globalThis.parent as any) !== globalThis) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 			globalThis.parent.postMessage(
-				{
 					type: "menu-action",
 					action: action,
 					payload: finalPayload,
-					timestamp: Date.now(),
-				},
+					timestamp: Date.now(),,
 				"*",
 			);
 		}

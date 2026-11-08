@@ -40,7 +40,7 @@ export function parseSakuraScript(script: string): SakuraScriptToken[] {
 			const res: unknown = tokenizeTag(script, i, len);
 			if (res.tokens.length > 0) {
 				for (const t of res.tokens) {
-					const tok: unknown = t;
+					const _tok: unknown = t;
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const res: any = tokenizeTag(script, i, len);
@@ -59,10 +59,9 @@ export function parseSakuraScript(script: string): SakuraScriptToken[] {
 			if (res.haltParsing) {
 				break;
 			}
-		} else {
+		} else 
 			tokens.push({ type: "char", value: script[i] });
 			i++;
-		}
 	}
 
 	return tokens;

@@ -4,12 +4,12 @@
  */
 
 <<<<<<< HEAD
-export async function handleWindowState(state: string, handler?: unknown) {
+export async function handleWindowState(_state: string, _handler?: unknown) {
 	try {
-		const api = (globalThis as unknown).__TAURI__?.window;
+		const _api = (globalThis as unknown).__TAURI__?.window;
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleWindowState(state: string, handler?: any) {
+export async function _handleWindowState(state: string, handler?: any) {
 	try {
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const api = (globalThis as any).__TAURI__?.window;
@@ -43,14 +43,14 @@ export async function handleWindowState(state: string, handler?: any) {
 }
 
 <<<<<<< HEAD
-export async function setAlignmentToDesktop(handler: unknown, mode: string) {
+export async function _setAlignmentToDesktop(handler: unknown, mode: string) {
 	handler.app.alignmentToDesktop = mode;
 	if (mode === "free") return;
 	try {
-		const api = (globalThis as unknown).__TAURI__?.window;
+		const _api = (globalThis as unknown).__TAURI__?.window;
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function setAlignmentToDesktop(handler: any, mode: string) {
+export async function _setAlignmentToDesktop(handler: any, mode: string) {
 	handler.app.alignmentToDesktop = mode;
 	if (mode === "free") return;
 	try {

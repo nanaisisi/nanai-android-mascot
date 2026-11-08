@@ -10,17 +10,12 @@
  * - AppConfig / loadAppConfig (設定およびプロパティシステム)
  */
 import { DictationManager } from "./ts/core/actions/dictation.js";
-import { actionMethods } from "./ts/core/app-actions.js";
-import { eventMethods } from "./ts/core/app-events.js";
-import { settingsMethods } from "./ts/core/app-settings.js";
-import { updateMethods } from "./ts/core/app-update.js";
 import { AppConfig, loadAppConfig } from "./ts/core/config.js";
 import { invoke, isTauriAvailable } from "./ts/core/tauri-helper.js";
 import { GhostController } from "./ts/ghost/ghost.js";
 import { SakuraScriptPlayer } from "./ts/ghost/sakura-script.js";
 import { InteractionManager } from "./ts/surface/interaction.js";
 import { SurfaceManager } from "./ts/surface/surface.js";
-import { menuMethods } from "./ts/ui/app-menu.js";
 import { ModalManager } from "./ts/ui/modal.js";
 
 export interface AppSettings {
@@ -151,7 +146,7 @@ export class NanaiAndroidMascotApp {
 		if (!isTauriAvailable()) return;
 		try {
 <<<<<<< HEAD
-			const plugins: unknown = await invoke("scan_plugins");
+			const _plugins: unknown = await invoke("scan_plugins");
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const plugins: any = await invoke("scan_plugins");
@@ -256,7 +251,7 @@ Object.assign(
 
 globalThis.addEventListener("DOMContentLoaded", () => {
 <<<<<<< HEAD
-	(globalThis as unknown).mascotApp = new NanaiAndroidMascotApp();
+	(_globalThis _as _unknown).mascotApp = new NanaiAndroidMascotApp();
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	(globalThis as any).mascotApp = new NanaiAndroidMascotApp();

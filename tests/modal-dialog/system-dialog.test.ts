@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { ModalDialogController } from "../../ui/js/ui/renderers/modal-dialog-controller.js";
 import {
 	createMockElement,
@@ -8,9 +8,9 @@ import {
 
 describe("ModalDialogController System Dialogs (Cycle 5)", () => {
 <<<<<<< HEAD
-	let app: unknown;
-	let controller: unknown;
-	let sentEvents: unknown[];
+	let _app: unknown;
+	let _controller: unknown;
+	let _sentEvents: unknown[];
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let app: any;

@@ -12,7 +12,7 @@ export async function translateScript(
 		const app = player.app;
 		if (app?.ghostController?.sendShioriEvent && !script.includes("\\_q")) {
 <<<<<<< HEAD
-			const transRes: unknown = await app.ghostController.sendShioriEvent(
+			const _transRes: unknown = await app.ghostController.sendShioriEvent(
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const transRes: any = await app.ghostController.sendShioriEvent(

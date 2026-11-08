@@ -107,10 +107,10 @@ export function openTeachBox(
 }
 
 <<<<<<< HEAD
-export function closeTeachBox(handler: unknown) {
+export function closeTeachBox(_handler: unknown) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function closeTeachBox(handler: any) {
+export function _closeTeachBox(handler: any) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	if (handler.teachForm) {
 		handler.teachForm.remove();

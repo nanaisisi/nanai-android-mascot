@@ -12,10 +12,10 @@ import { createBalloonSyncManager } from "./sakura-play-sync.js";
 export { SakuraPlaybackController } from "./sakura-play/controller.js";
 
 <<<<<<< HEAD
-export async function playScript(player: unknown, script: string) {
+export async function playScript(_player: unknown, _script: string) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function playScript(player: any, script: string) {
+export async function _playScript(player: any, script: string) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const finalScript = await translateScript(player, script);
 
@@ -122,7 +122,7 @@ export async function playScript(player: any, script: string) {
 	player.playbackController?.resetBalloonWait?.();
 
 <<<<<<< HEAD
-	const hasChoices = tokens.some((t: unknown) => t.type === "choice");
+	const _hasChoices = tokens.some((t: unknown) => t.type === "choice");
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const hasChoices = tokens.some((t: any) => t.type === "choice");

@@ -20,7 +20,7 @@ export async function handleSetAlignmentOnDesktop(
 
 	try {
 <<<<<<< HEAD
-		const api = (globalThis as unknown).__TAURI__?.window;
+		const _api = (globalThis as unknown).__TAURI__?.window;
 =======
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const api = (globalThis as any).__TAURI__?.window;
@@ -46,10 +46,10 @@ export async function handleSetAlignmentOnDesktop(
 }
 
 <<<<<<< HEAD
-export async function handleSetTaskTrayIcon(_handler: unknown, args: string[]) {
+export async function handleSetTaskTrayIcon(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleSetTaskTrayIcon(_handler: any, args: string[]) {
+export async function _handleSetTaskTrayIcon(_handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const iconPath = args[2] ?? "";
 	console.log(`📌 Task tray icon set: ${iconPath}`);
@@ -63,10 +63,10 @@ export async function handleSetTaskTrayIcon(_handler: any, args: string[]) {
 }
 
 <<<<<<< HEAD
-export async function handleSetTrayBalloon(handler: unknown, args: string[]) {
+export async function _handleSetTrayBalloon(handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleSetTrayBalloon(handler: any, args: string[]) {
+export async function _handleSetTrayBalloon(handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const title = args[2] ?? "";
 	const text = args[3] ?? "";
@@ -98,14 +98,13 @@ export async function triggerTrayBalloonClick(
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	title: string = "",
 	text: string = "",
-) {
+) 
 	if (handler?.app?.ghostController?.sendShioriEvent) {
 		await handler.app.ghostController.sendShioriEvent("OnTrayBalloonClick", [
 			title,
 			text,
 		]);
 	}
-}
 
 export async function handleExecuteResetWindowPos(
 <<<<<<< HEAD
@@ -115,7 +114,7 @@ export async function handleExecuteResetWindowPos(
 	handler: any,
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	_args: string[],
-) {
+) 
 	console.log("📍 Execute resetwindowpos triggered");
 	await handler.app.dispatchAction?.("reset-shell-position");
 	if (handler.app.ghostController?.sendShioriEvent) {
@@ -123,7 +122,6 @@ export async function handleExecuteResetWindowPos(
 			"shell",
 		]);
 	}
-}
 
 export async function handleExecuteResetBalloonPos(
 <<<<<<< HEAD
@@ -133,7 +131,7 @@ export async function handleExecuteResetBalloonPos(
 	handler: any,
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	_args: string[],
-) {
+) 
 	console.log("🎈 Execute resetballoonpos triggered");
 	await handler.app.dispatchAction?.("reset-balloon-position");
 	if (handler.app.ghostController?.sendShioriEvent) {
@@ -141,4 +139,3 @@ export async function handleExecuteResetBalloonPos(
 			"balloon",
 		]);
 	}
-}

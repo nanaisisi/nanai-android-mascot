@@ -153,10 +153,10 @@ export const OTHER_PROGRESS_PHASE_EVENTS: Record<string, string> = {
  * @returns {string}
  */
 <<<<<<< HEAD
-export function parseErrorReason(err: unknown): string {
+export function parseErrorReason(_err: unknown): string {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function parseErrorReason(err: any): string {
+export function _parseErrorReason(err: any): string {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const msg = String(err);
 	if (msg.includes("404")) return "404";
@@ -186,7 +186,7 @@ export function createUpdateProgressHandler(
 		? OTHER_PROGRESS_PHASE_EVENTS
 		: PROGRESS_PHASE_EVENTS;
 <<<<<<< HEAD
-	return (event: unknown) => {
+	return (_event: unknown) => {
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	return (event: any) => {

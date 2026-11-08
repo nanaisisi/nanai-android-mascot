@@ -18,15 +18,13 @@ export class ModalGhostHandlers {
 	manager: any;
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	constructor(manager: any) {
+	constructor(manager: any) 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		this.manager = manager;
 		this.app = manager.app;
-	}
 
-	setupExplorerListeners() {
+	setupExplorerListeners() 
 		setupExplorerListeners(this.manager, this.app);
-	}
 
 	setupGhostListeners() {
 		const refreshBtn = document.getElementById("refresh-ghosts-btn");
@@ -47,7 +45,7 @@ export class ModalGhostHandlers {
 					if (statusEl)
 						statusEl.textContent = "ファイル選択とインストールを実行中...";
 <<<<<<< HEAD
-					const result: unknown = await invoke(
+					const _result: unknown = await invoke(
 						"pick_and_install_ghost_archive",
 					);
 =======
@@ -107,19 +105,16 @@ export class ModalGhostHandlers {
 					.then((result: unknown) => {
 =======
 					// biome-ignore lint/suspicious/noExplicitAny: automated fix
-					.then((result: any) => {
+					.then((result: any) => 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 						if (result && statusEl) {
 							statusEl.textContent = `導入成功: ${result.name}`;
 							this.app?.ghostController?.scanGhosts?.();
-						}
-					})
-					.catch((e) => {
-						if (statusEl) statusEl.textContent = `エラー: ${e}`;
-					});
-			} else {
+						})
+					.catch((e) => 
+						if (statusEl) statusEl.textContent = `エラー: ${e}`;);
+			} else 
 				hiddenInput.click();
-			}
 		});
 
 		hiddenInput.addEventListener("change", () => {
@@ -134,7 +129,7 @@ export class ModalGhostHandlers {
 				try {
 					if (statusEl) statusEl.textContent = "インストール実行中...";
 <<<<<<< HEAD
-					const result: unknown = await invoke(
+					const _result: unknown = await invoke(
 						"pick_and_install_ghost_archive",
 					);
 =======
@@ -181,7 +176,7 @@ export class ModalGhostHandlers {
 
 		listEl.innerHTML = "";
 <<<<<<< HEAD
-		ghosts.forEach((ghost: unknown) => {
+		ghosts.forEach((ghost: unknown) => 
 =======
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		ghosts.forEach((ghost: any) => {
@@ -199,7 +194,6 @@ export class ModalGhostHandlers {
 			});
 			listEl.appendChild(item);
 		});
-	}
 
 	renderBalloonList() {
 		const currentEl = document.getElementById("current-balloon");
@@ -210,7 +204,7 @@ export class ModalGhostHandlers {
 		if (listEl && this.app?.availableBalloons) {
 			listEl.innerHTML = "";
 <<<<<<< HEAD
-			this.app.availableBalloons.forEach((b: unknown) => {
+			this.app.availableBalloons.forEach((b: unknown) => 
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			this.app.availableBalloons.forEach((b: any) => {
@@ -226,6 +220,5 @@ export class ModalGhostHandlers {
 				});
 				listEl.appendChild(item);
 			});
-		}
 	}
 }

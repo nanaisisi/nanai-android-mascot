@@ -20,7 +20,7 @@ export const setupMethods = {
 	},
 
 	setupGhostInteractions() {
-		const bind = (el: HTMLElement | null, scopeId: number) => {
+		const _bind = (el: HTMLElement | null, scopeId: number) => {
 <<<<<<< HEAD
 			if (!el || !(this as unknown).interactionManager) return;
 			(this as unknown).interactionManager.setupDragging(
@@ -46,8 +46,8 @@ export const setupMethods = {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				{
 					onGhostMouseDown: (
-						x: number,
-						y: number,
+						_x: number,
+						_y: number,
 <<<<<<< HEAD
 						rect: unknown,
 						button: number,
@@ -137,9 +137,9 @@ export const setupMethods = {
 			"click",
 			(e: MouseEvent) => {
 				e.stopPropagation();
-				const rect = (this as unknown).elements.menuBtn.getBoundingClientRect();
-				const sX = (globalThis as unknown).screenX ?? 0;
-				const sY = (globalThis as unknown).screenY ?? 0;
+				const _rect = (this as unknown).elements.menuBtn.getBoundingClientRect();
+				const _sX = (globalThis as unknown).screenX ?? 0;
+				const _sY = (globalThis as unknown).screenY ?? 0;
 				(this as unknown).toggleMenu(
 =======
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -183,15 +183,14 @@ export const setupMethods = {
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this as any).elements?.quickBubble?.addEventListener(
 			"click",
-			(e: MouseEvent) => {
+			(e: MouseEvent) => 
 				e.stopPropagation();
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				(this as any).toggleQuickActionsPanel();
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-			},
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad,
 		);
 
-		const quick: Record<string, () => void> = {
+		const _quick: Record<string, () => void> = {
 <<<<<<< HEAD
 			"qa-talk-btn": () => (this as unknown).onGhostClick(),
 			"qa-ghost-btn": () => (this as unknown).switchToNextGhost(),
@@ -208,7 +207,7 @@ export const setupMethods = {
 			"qa-minimize-btn": () => (this as any).handleMenuAction("minimize"),
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		};
-		for (const [id, fn] of Object.entries(quick)) {
+		for (const [id, _fn] of Object.entries(quick)) {
 			document
 				.getElementById(id)
 				?.addEventListener("click", (e: MouseEvent) => {
@@ -292,15 +291,15 @@ export const setupMethods = {
 
 	async setupExternalMenuListeners() {
 <<<<<<< HEAD
-		const forward = (event: unknown) => {
+		const forward = (_event: unknown) => {
 =======
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
-		const forward = (event: any) => {
+		const _forward = (event: any) => {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 			const data = event.payload;
 			if (!data) return;
 			if (data.action === "request-sync") {
-				const reqScope = data.payload?.scope ?? 0;
+				const _reqScope = data.payload?.scope ?? 0;
 <<<<<<< HEAD
 				(this as unknown).syncMenuGhosts(reqScope);
 				return;
@@ -322,7 +321,7 @@ export const setupMethods = {
 		await listen("request-subchar-image", (event: unknown) => {
 			const scopeId = event.payload?.scopeId;
 			if (typeof scopeId === "number") {
-				const cachedSrc = (
+				const _cachedSrc = (
 					this as unknown
 				).ghostController?.currentSurfaces?.get(scopeId);
 =======
@@ -345,7 +344,7 @@ export const setupMethods = {
 			if (event.data?.type !== "menu-action") return;
 			const action = event.data.action;
 			if (action === "request-sync") {
-				const reqScope = event.data.payload?.scope ?? 0;
+				const _reqScope = event.data.payload?.scope ?? 0;
 <<<<<<< HEAD
 				(this as unknown).syncMenuGhosts(reqScope);
 				return;

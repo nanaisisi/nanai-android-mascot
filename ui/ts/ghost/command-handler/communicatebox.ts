@@ -4,10 +4,10 @@
  */
 
 <<<<<<< HEAD
-export function openCommunicateBox(handler: unknown, params: string[] = []) {
+export function openCommunicateBox(handler: unknown, _params: string[] = []) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function openCommunicateBox(handler: any, params: string[] = []) {
+export function _openCommunicateBox(handler: any, params: string[] = []) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	closeCommunicateBox(handler, false);
 
@@ -70,7 +70,7 @@ export function openCommunicateBox(handler: any, params: string[] = []) {
 	submitBtn.style.marginTop = "0";
 
 <<<<<<< HEAD
-	let timer: unknown = null;
+	const _timer: unknown = null;
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let timer: any = null;
@@ -139,7 +139,7 @@ export function closeCommunicateBox(
 	handler: any,
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	notifyCancel: boolean = false,
-) {
+) 
 	if (handler.communicateForm) {
 		handler.communicateForm.remove();
 		handler.communicateForm = null;
@@ -149,4 +149,3 @@ export function closeCommunicateBox(
 				?.catch(() => {});
 		}
 	}
-}

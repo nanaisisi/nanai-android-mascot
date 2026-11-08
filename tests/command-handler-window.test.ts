@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
 	handleWindowState,
 	setAlignmentToDesktop,
@@ -6,15 +6,14 @@ import {
 
 describe("Sakura command window handlers", () => {
 <<<<<<< HEAD
-	let originalTauri: unknown;
+	let _originalTauri: unknown;
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let originalTauri: any;
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 
-	beforeEach(() => {
-		originalTauri = globalThis.__TAURI__;
-	});
+	beforeEach(() => 
+		originalTauri = globalThis.__TAURI__;);
 
 	afterEach(() => {
 		globalThis.__TAURI__ = originalTauri;

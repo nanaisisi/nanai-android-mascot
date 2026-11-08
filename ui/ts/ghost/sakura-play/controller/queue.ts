@@ -4,10 +4,10 @@
  */
 
 <<<<<<< HEAD
-export function enqueue(this: unknown, script: string): Promise<unknown> {
+export function enqueue(this: unknown, _script: string): Promise<unknown> {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function enqueue(this: any, script: string): Promise<any> {
+export function _enqueue(this: any, script: string): Promise<any> {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	return new Promise((resolve, reject) => {
 		const job = {
@@ -23,13 +23,13 @@ export function enqueue(this: any, script: string): Promise<any> {
 }
 
 <<<<<<< HEAD
-export function enqueuePriority(
+export function _enqueuePriority(
 	this: unknown,
-	script: string,
+	_script: string,
 ): Promise<unknown> {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function enqueuePriority(this: any, script: string): Promise<any> {
+export function _enqueuePriority(this: any, script: string): Promise<any> {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	return new Promise((resolve, reject) => {
 		const job = {
@@ -50,10 +50,10 @@ export function enqueuePriority(this: any, script: string): Promise<any> {
 }
 
 <<<<<<< HEAD
-export function interrupt(this: unknown, script: string): Promise<unknown> {
+export function _interrupt(this: unknown, _script: string): Promise<unknown> {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function interrupt(this: any, script: string): Promise<any> {
+export function _interrupt(this: any, script: string): Promise<any> {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	if (this.player) {
 		this.player.skip();
@@ -62,10 +62,10 @@ export function interrupt(this: any, script: string): Promise<any> {
 }
 
 <<<<<<< HEAD
-export function dequeue(this: unknown) {
+export function _dequeue(this: unknown) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function dequeue(this: any) {
+export function _dequeue(this: any) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const job = this.queue.shift();
 	if (job) {
@@ -75,10 +75,10 @@ export function dequeue(this: any) {
 }
 
 <<<<<<< HEAD
-export function clearQueue(this: unknown) {
+export function _clearQueue(this: unknown) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function clearQueue(this: any) {
+export function _clearQueue(this: any) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const canceled = [...this.queue];
 	this.queue = [];
@@ -89,10 +89,10 @@ export function clearQueue(this: any) {
 }
 
 <<<<<<< HEAD
-export function stop(this: unknown) {
+export function _stop(this: unknown) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function stop(this: any) {
+export function _stop(this: any) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	this.clearQueue();
 	if (this.syncObjects) {
@@ -107,10 +107,10 @@ export function stop(this: any) {
 }
 
 <<<<<<< HEAD
-export function destroy(this: unknown) {
+export function _destroy(this: unknown) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function destroy(this: any) {
+export function _destroy(this: any) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	this.stop();
 	this.emit("playback:destroyed");
@@ -125,10 +125,10 @@ export function destroy(this: any) {
 }
 
 <<<<<<< HEAD
-export function pause(this: unknown) {
+export function _pause(this: unknown) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function pause(this: any) {
+export function _pause(this: any) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	if (!this.isPaused) {
 		this.isPaused = true;
@@ -137,10 +137,10 @@ export function pause(this: any) {
 }
 
 <<<<<<< HEAD
-export function resume(this: unknown) {
+export function _resume(this: unknown) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function resume(this: any) {
+export function _resume(this: any) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	if (this.isPaused) {
 		this.isPaused = false;
@@ -150,47 +150,47 @@ export function resume(this: any) {
 }
 
 <<<<<<< HEAD
-export function getQueue(this: unknown) {
+export function _getQueue(this: unknown) {
 	return [...this.queue];
 }
 
-export function getQueueSnapshot(this: unknown) {
+export function _getQueueSnapshot(this: unknown) {
 	return this.queue.map((job: unknown) => ({ id: job.id, script: job.script }));
 }
 
-export function getQueueLength(this: unknown): number {
+export function _getQueueLength(this: unknown): number {
 	return this.queue.length;
 }
 
-export function hasPendingJobs(this: unknown): boolean {
+export function _hasPendingJobs(this: unknown): boolean {
 	return this.isProcessing || this.queue.length > 0;
 }
 
-export function peekNextJob(this: unknown) {
+export function _peekNextJob(this: unknown) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function getQueue(this: any) {
+export function _getQueue(this: any) {
 	return [...this.queue];
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function getQueueSnapshot(this: any) {
+export function _getQueueSnapshot(this: any) {
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	return this.queue.map((job: any) => ({ id: job.id, script: job.script }));
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function getQueueLength(this: any): number {
+export function _getQueueLength(this: any): number {
 	return this.queue.length;
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function hasPendingJobs(this: any): boolean {
+export function _hasPendingJobs(this: any): boolean {
 	return this.isProcessing || this.queue.length > 0;
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function peekNextJob(this: any) {
+export function _peekNextJob(this: any) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	if (this.queue.length === 0) return null;
 	const job = this.queue[0];
@@ -198,55 +198,55 @@ export function peekNextJob(this: any) {
 }
 
 <<<<<<< HEAD
-export function getCurrentJob(this: unknown) {
+export function _getCurrentJob(this: unknown) {
 	return this.currentJob;
 }
 
-export function getIsPaused(this: unknown): boolean {
+export function _getIsPaused(this: unknown): boolean {
 	return this.isPaused;
 }
 
-export function getIsProcessing(this: unknown): boolean {
+export function _getIsProcessing(this: unknown): boolean {
 	return this.isProcessing;
 }
 
-export function getIsQuickMode(this: unknown): boolean {
+export function _getIsQuickMode(this: unknown): boolean {
 	return this.isQuickMode;
 }
 
-export function isEmpty(this: unknown): boolean {
+export function _isEmpty(this: unknown): boolean {
 	return this.queue.length === 0;
 }
 
-export function getStatus(this: unknown) {
+export function _getStatus(this: unknown) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function getCurrentJob(this: any) {
+export function _getCurrentJob(this: any) {
 	return this.currentJob;
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function getIsPaused(this: any): boolean {
+export function _getIsPaused(this: any): boolean {
 	return this.isPaused;
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function getIsProcessing(this: any): boolean {
+export function _getIsProcessing(this: any): boolean {
 	return this.isProcessing;
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function getIsQuickMode(this: any): boolean {
+export function _getIsQuickMode(this: any): boolean {
 	return this.isQuickMode;
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function isEmpty(this: any): boolean {
+export function _isEmpty(this: any): boolean {
 	return this.queue.length === 0;
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function getStatus(this: any) {
+export function _getStatus(this: any) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	return {
 		isProcessing: this.isProcessing,
@@ -260,10 +260,10 @@ export function getStatus(this: any) {
 }
 
 <<<<<<< HEAD
-export async function processQueue(this: unknown) {
+export async function _processQueue(this: unknown) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function processQueue(this: any) {
+export async function _processQueue(this: any) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	if (this.isProcessing || this.isPaused || this.queue.length === 0) {
 		return;

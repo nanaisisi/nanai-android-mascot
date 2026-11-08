@@ -20,10 +20,10 @@ export class ModalManager {
 	settingsHandlers: ModalSettingsHandlers;
 
 <<<<<<< HEAD
-	constructor(app: unknown) {
+	constructor(_app: unknown) {
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	constructor(app: any) {
+	constructor(app: any) 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		this.app = app;
 		this.overlay = document.getElementById("modal-overlay");
@@ -34,24 +34,21 @@ export class ModalManager {
 		this.settingsHandlers = new ModalSettingsHandlers(this);
 
 		this.init();
-	}
 
-	init() {
+	init() 
 		this.closeBtn?.addEventListener("click", () => this.hide());
 		this.overlay?.addEventListener("click", (e: MouseEvent) => {
 			if (e.target === this.overlay) {
 				this.hide();
 			}
 		});
-	}
 
-	showWindowIfNeeded() {
+	showWindowIfNeeded() 
 		if (isTauriAvailable()) {
 			invoke("show_modal_window").catch((e) =>
 				console.warn("show_modal_window failed:", e),
 			);
 		}
-	}
 
 	show(contentId: string) {
 		let html: string | undefined = (modalTemplates as Record<string, string>)[
@@ -69,16 +66,15 @@ export class ModalManager {
 		this.setupListeners(contentId);
 	}
 
-	hide() {
+	hide() 
 		if (this.overlay) {
 			this.overlay.style.display = "none";
 		}
 		if (isTauriAvailable()) {
 			invoke("hide_modal_window").catch(() => {});
 		}
-	}
 
-	setupListeners(contentId: string) {
+	setupListeners(contentId: string) 
 		if (contentId === "ghost-modal-content") {
 <<<<<<< HEAD
 			(this.ghostHandlers as unknown).setupGhostListeners?.();
@@ -117,9 +113,8 @@ export class ModalManager {
 			(this.settingsHandlers as any).setupDebugListeners?.();
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		}
-	}
 
-	showNotification(title: string, message: string, isError: boolean = false) {
+	showNotification(title: string, message: string, isError: boolean = false) 
 		if (!this.content || !this.overlay) return;
 		this.content.innerHTML = `
       <h2>${isError ? "⚠️ " : "ℹ️ "}${title}</h2>
@@ -135,23 +130,19 @@ export class ModalManager {
 		document
 			.getElementById("modal-ok-btn")
 			?.addEventListener("click", () => this.hide());
-	}
 
-	renderGhostList() {
+	renderGhostList() 
 <<<<<<< HEAD
 		(this.ghostHandlers as unknown).renderGhostList?.();
-	}
 
-	renderBalloonList() {
+	renderBalloonList() 
 		(this.ghostHandlers as unknown).renderBalloonList?.();
 =======
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this.ghostHandlers as any).renderGhostList?.();
-	}
 
-	renderBalloonList() {
+	renderBalloonList() 
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this.ghostHandlers as any).renderBalloonList?.();
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-	}
 }

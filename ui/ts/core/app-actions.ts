@@ -26,7 +26,7 @@ const THEME_LABELS: Record<string, string> = {
 
 /** SHIORIイベントへ単純転送するアクション */
 <<<<<<< HEAD
-const SHIORI_ACTIONS: Record<string, unknown> = {
+const _SHIORI_ACTIONS: Record<string, unknown> = {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 const SHIORI_ACTIONS: Record<string, any> = {
@@ -689,7 +689,7 @@ export const actionMethods = {
 			return (this as unknown).handleDressupToggle?.(payload);
 		}
 
-		const modalKey = action === "ghost-switch" ? "ghost" : action;
+		const _modalKey = action === "ghost-switch" ? "ghost" : action;
 		(this as unknown).modalManager?.show(`${modalKey}-modal-content`);
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix

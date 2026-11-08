@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
 	TOUCH_GESTURE_TYPES,
 	TouchGestureRecognizer,
@@ -7,8 +7,8 @@ import { createMockElement } from "../helpers.js";
 
 describe("TouchGestureRecognizer - Pinch & Rotate", () => {
 <<<<<<< HEAD
-	let element: unknown = null;
-	let recognizer: unknown = null;
+	const _element: unknown = null;
+	const _recognizer: unknown = null;
 =======
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let element;
@@ -16,15 +16,14 @@ describe("TouchGestureRecognizer - Pinch & Rotate", () => {
 	let recognizer;
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 
-	beforeEach(() => {
+	beforeEach(() => 
 		vi.useFakeTimers();
 		element = createMockElement();
 		recognizer = new TouchGestureRecognizer(element, {
 			longPressDelay: 300,
 			strokeThreshold: 40,
 			slopThreshold: 5,
-		});
-	});
+		}););
 
 	afterEach(() => {
 		recognizer.destroy();

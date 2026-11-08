@@ -30,10 +30,10 @@ export function statusCodeFromRust(
 export function fromRustResponse(typed: Record<string, unknown> | null) {
 	if (!typed || typeof typed !== "object") return null;
 
-	const status = statusCodeFromRust(
+	const _status = statusCodeFromRust(
 		typed.status as string | Record<string, unknown> | undefined,
 	);
-	const headers: Record<string, unknown> = {};
+	const _headers: Record<string, unknown> = {};
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function fromRustResponse(typed: Record<string, any> | null) {
@@ -264,7 +264,7 @@ export const SHIORI_EVENTS = {
 	PING_PROGRESS: "OnPingProgress",
 } as const;
 
-export const ShioriProtocol = {
+export const _ShioriProtocol = {
 	statusCodeFromRust,
 	fromRustResponse,
 	SHIORI_EVENTS,

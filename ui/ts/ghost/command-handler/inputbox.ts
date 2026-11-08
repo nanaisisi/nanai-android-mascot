@@ -77,7 +77,7 @@ export function openInputBox(
 	submitBtn.style.padding = "2px 8px";
 
 <<<<<<< HEAD
-	let timer: unknown = null;
+	const _timer: unknown = null;
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let timer: any = null;
@@ -108,17 +108,16 @@ export function openInputBox(
 
 	submitBtn.addEventListener("click", () => submit());
 <<<<<<< HEAD
-	input.addEventListener("keydown", (e: unknown) => {
+	input.addEventListener("keydown", (e: unknown) => 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	input.addEventListener("keydown", (e: any) => {
+	input.addEventListener("keydown", (e: any) => 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		if (e.key === "Enter") {
 			submit();
 		} else if (e.key === "Escape") {
 			cancel("escape");
-		}
-	});
+		});
 
 	form.appendChild(input);
 	form.appendChild(submitBtn);
@@ -130,22 +129,21 @@ export function openInputBox(
 			cancel("timeout");
 		}, timeoutMs);
 	}
-}
 
 <<<<<<< HEAD
-export function openPasswordInput(handler: unknown, params: string[]) {
+export function _openPasswordInput(handler: unknown, params: string[]) {
 	return openInputBox(handler, params, true);
 }
 
-export function openTextAreaBox(handler: unknown, params: string[]) {
+export function _openTextAreaBox(_handler: unknown, _params: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function openPasswordInput(handler: any, params: string[]) {
+export function _openPasswordInput(handler: any, params: string[]) {
 	return openInputBox(handler, params, true);
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function openTextAreaBox(handler: any, params: string[]) {
+export function _openTextAreaBox(handler: any, params: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	if (handler.app?.modalDialogController?.openTextAreaBox) {
 		return handler.app.modalDialogController.openTextAreaBox(
@@ -157,10 +155,10 @@ export function openTextAreaBox(handler: any, params: string[]) {
 }
 
 <<<<<<< HEAD
-export function openSliderInput(handler: unknown, params: string[]) {
+export function _openSliderInput(_handler: unknown, _params: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function openSliderInput(handler: any, params: string[]) {
+export function _openSliderInput(handler: any, params: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	if (handler.app?.modalDialogController?.openSliderInput) {
 		return handler.app.modalDialogController.openSliderInput(
@@ -172,10 +170,10 @@ export function openSliderInput(handler: any, params: string[]) {
 }
 
 <<<<<<< HEAD
-export function openIpInput(handler: unknown, params: string[]) {
+export function _openIpInput(_handler: unknown, _params: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function openIpInput(handler: any, params: string[]) {
+export function _openIpInput(handler: any, params: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	if (handler.app?.modalDialogController?.openIpInput) {
 		return handler.app.modalDialogController.openIpInput(
@@ -187,10 +185,10 @@ export function openIpInput(handler: any, params: string[]) {
 }
 
 <<<<<<< HEAD
-export function openDateInput(handler: unknown, params: string[]) {
+export function _openDateInput(_handler: unknown, _params: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function openDateInput(handler: any, params: string[]) {
+export function _openDateInput(handler: any, params: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	if (handler.app?.modalDialogController?.openDateInput) {
 		return handler.app.modalDialogController.openDateInput(
@@ -202,10 +200,10 @@ export function openDateInput(handler: any, params: string[]) {
 }
 
 <<<<<<< HEAD
-export function openTimeInput(handler: unknown, params: string[]) {
+export function _openTimeInput(_handler: unknown, _params: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function openTimeInput(handler: any, params: string[]) {
+export function _openTimeInput(handler: any, params: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	if (handler.app?.modalDialogController?.openTimeInput) {
 		return handler.app.modalDialogController.openTimeInput(
@@ -218,12 +216,12 @@ export function openTimeInput(handler: any, params: string[]) {
 
 <<<<<<< HEAD
 export function closeInputBox(
-	handler: unknown,
-	paramsOrNotify: unknown = false,
+	_handler: unknown,
+	_paramsOrNotify: unknown = false,
 ) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function closeInputBox(handler: any, paramsOrNotify: any = false) {
+export function _closeInputBox(handler: any, paramsOrNotify: any = false) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	let notifyCancel = false;
 	let id: string | undefined;
@@ -240,15 +238,15 @@ export function closeInputBox(handler: any, paramsOrNotify: any = false) {
 		);
 	}
 	const forms = document.querySelectorAll?.(".balloon-inputbox-form") || [];
-	for (const f of Array.from(forms)) {
+	for (const _f of Array.from(forms)) {
 <<<<<<< HEAD
 		(f as unknown).remove?.();
 	}
 }
 
-export function closeTextAreaBox(
-	handler: unknown,
-	paramsOrNotify: unknown = false,
+export function _closeTextAreaBox(
+	_handler: unknown,
+	_paramsOrNotify: unknown = false,
 ) {
 =======
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -257,7 +255,7 @@ export function closeTextAreaBox(
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function closeTextAreaBox(handler: any, paramsOrNotify: any = false) {
+export function _closeTextAreaBox(handler: any, paramsOrNotify: any = false) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	if (handler.app?.modalDialogController?.closeTextAreaBox) {
 		const id = Array.isArray(paramsOrNotify) ? paramsOrNotify[0] : undefined;
@@ -270,10 +268,10 @@ export function closeTextAreaBox(handler: any, paramsOrNotify: any = false) {
 }
 
 <<<<<<< HEAD
-export function closeDialog(handler: unknown, paramsOrNotify: unknown = false) {
+export function _closeDialog(_handler: unknown, _paramsOrNotify: unknown = false) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function closeDialog(handler: any, paramsOrNotify: any = false) {
+export function _closeDialog(handler: any, paramsOrNotify: any = false) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	if (handler.app?.modalDialogController?.closeDialog) {
 		const id = Array.isArray(paramsOrNotify) ? paramsOrNotify[0] : undefined;

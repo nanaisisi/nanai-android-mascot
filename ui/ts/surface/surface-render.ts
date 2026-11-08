@@ -106,7 +106,7 @@ export const surfaceRenderMethods = {
 			if (layers) {
 				if (!isFrame) {
 <<<<<<< HEAD
-					const result: unknown = await composeSurfaceElements(
+					const _result: unknown = await composeSurfaceElements(
 =======
 					// biome-ignore lint/suspicious/noExplicitAny: automated fix
 					const result: any = await composeSurfaceElements(
@@ -139,7 +139,7 @@ export const surfaceRenderMethods = {
 			? [...bindLayers, ...frameLayers]
 			: bindLayers;
 <<<<<<< HEAD
-		const result: unknown = await composeSurfaceElements(
+		const _result: unknown = await composeSurfaceElements(
 =======
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const result: any = await composeSurfaceElements(

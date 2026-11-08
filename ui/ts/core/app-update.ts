@@ -1,7 +1,6 @@
 import {
 	buildUpdateArgs,
 	createUpdateProgressHandler,
-	parseErrorReason,
 } from "./actions/update-protocol.js";
 import { invoke, isTauriAvailable, listen } from "./tauri-helper.js";
 
@@ -19,11 +18,11 @@ export const updateMethods = {
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const gc = (this as any).ghostController;
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-		const checkOnly = options?.checkOnly === true;
+		const _checkOnly = options?.checkOnly === true;
 		const ghostName =
 			targetGhostName || gc.currentGhost?.name || "とらふぃっく☆とれいん";
-		const ghostPath = gc.currentGhost?.path || "";
-		let failedFile: string | null = null;
+		const _ghostPath = gc.currentGhost?.path || "";
+		const _failedFile: string | null = null;
 
 		console.log(`🌐 ネットワーク更新プロセス開始: ${ghostName}`);
 
@@ -42,7 +41,7 @@ export const updateMethods = {
 			return;
 		}
 
-		if (!checkOnly) {
+		if (!_checkOnly) {
 			await gc.sendShioriEvent(
 				"OnUpdateBegin",
 				buildUpdateArgs(ghostName, ghostPath),
@@ -87,7 +86,7 @@ export const updateMethods = {
 			const checkResult: unknown = await invoke("check_ghost_update", {
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
-			const checkResult: any = await invoke("check_ghost_update", {
+			const _checkResult: any = await invoke("check_ghost_update", {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				ghostName,
 				ghostPath,
@@ -95,7 +94,7 @@ export const updateMethods = {
 			console.log("🔍 更新チェック結果:", checkResult);
 
 <<<<<<< HEAD
-			const fileNames = checkResult.update_files.map((f: unknown) => f.path);
+			const _fileNames = checkResult.update_files.map((f: unknown) => f.path);
 
 			if (checkOnly) {
 				(this as unknown).showBalloon?.(checkResult.message);
@@ -167,16 +166,16 @@ export const updateMethods = {
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(this as any).showBalloon?.(
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-				`📥 更新ファイル ${checkResult.total_count} 件をダウンロード中...`,
+				`📥 更新ファイル $checkResult.total_count件をダウンロード中...`,
 			);
 
 			const progressHandler = createUpdateProgressHandler(gc, (fp) => {
 				failedFile = fp;
 			});
 
-			let unlisten: (() => void) | null = null;
+			let _unlisten: (() => void) | null = null;
 			try {
-				unlisten = await listen("update-progress", progressHandler);
+				_unlisten = await listen("update-progress", progressHandler);
 			} catch (_) {
 				// 進捗リスナーの登録失敗時は無効化して続行
 			}
@@ -186,7 +185,7 @@ export const updateMethods = {
 				const updateResult: unknown = await invoke("execute_ghost_update", {
 =======
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
-				const updateResult: any = await invoke("execute_ghost_update", {
+				const _updateResult: any = await invoke("execute_ghost_update", {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 					ghostName,
 					ghostPath,
@@ -232,13 +231,13 @@ export const updateMethods = {
 					);
 <<<<<<< HEAD
 					(this as unknown).showBalloon?.(
-						`❌ ネットワーク更新失敗: ${failureReason}`,
+						`❌ ネットワーク更新失敗: $failureReason`,
 					);
 					await (this as unknown).sendUpdateResultSummary(
 =======
 					// biome-ignore lint/suspicious/noExplicitAny: automated fix
 					(this as any).showBalloon?.(
-						`❌ ネットワーク更新失敗: ${failureReason}`,
+						`❌ ネットワーク更新失敗: $failureReason`,
 					);
 					// biome-ignore lint/suspicious/noExplicitAny: automated fix
 					await (this as any).sendUpdateResultSummary(
@@ -268,11 +267,11 @@ export const updateMethods = {
 					buildUpdateArgs(reason),
 				);
 <<<<<<< HEAD
-				(this as unknown).showBalloon?.(`❌ 更新チェック失敗: ${reason}`);
+				(this as unknown).showBalloon?.(`❌ 更新チェック失敗: $reason`);
 				await (this as unknown).sendUpdateResultSummary(
 =======
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
-				(this as any).showBalloon?.(`❌ 更新チェック失敗: ${reason}`);
+				(this as any).showBalloon?.(`❌ 更新チェック失敗: $reason`);
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				await (this as any).sendUpdateResultSummary(
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
@@ -303,7 +302,7 @@ export const updateMethods = {
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(this as any).showBalloon?.(
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-				`❌ 更新処理中にエラーが発生しました: ${err}`,
+				`❌ 更新処理中にエラーが発生しました: $err`,
 			);
 		}
 	},
@@ -331,10 +330,10 @@ export const updateMethods = {
 		const baseEvent = checkOnly ? "OnUpdateCheckResult" : "OnUpdateResult";
 
 <<<<<<< HEAD
-		const resEx: unknown = await gc.sendShioriEvent(`${baseEvent}Ex`, [
+		const resEx: unknown = await gc.sendShioriEvent(`$baseEventEx`, [
 =======
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
-		const resEx: any = await gc.sendShioriEvent(`${baseEvent}Ex`, [
+		const resEx: any = await gc.sendShioriEvent(`$baseEventEx`, [
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 			[ghostName, ...parts].join(sep),
 		]);

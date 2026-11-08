@@ -64,7 +64,7 @@ export class SyncObject {
 		}
 
 		return new Promise((resolve, reject) => {
-			const waiter = {
+			const _waiter = {
 				resolve,
 				reject,
 <<<<<<< HEAD

@@ -73,14 +73,14 @@ export const surfaceDressupMethods = {
 		const sid = String(surfaceId ?? this.currentSurfaceIdFor(scopeId));
 		const animList = this.animations[sid] ?? [];
 <<<<<<< HEAD
-		const animById = new Map<string, Record<string, unknown>>(
+		const _animById = new Map<string, Record<string, unknown>>(
 			animList.map((a: unknown) => [
 				String((a as Record<string, unknown>).id),
 				a as Record<string, unknown>,
 			]),
 		);
 
-		const layers: unknown[] = [];
+		const _layers: unknown[] = [];
 =======
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const animById = new Map<string, any>(
@@ -96,7 +96,7 @@ export const surfaceDressupMethods = {
 		const insertedIds = new Set();
 		for (const animId of activeIds) {
 <<<<<<< HEAD
-			const anim: unknown = animById.get(String(animId));
+			const _anim: unknown = animById.get(String(animId));
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const anim: any = animById.get(String(animId));
@@ -114,10 +114,10 @@ export const surfaceDressupMethods = {
 
 		const visited = new Set();
 <<<<<<< HEAD
-		const expandAnim = (id: unknown) => {
+		const _expandAnim = (id: unknown) => {
 			if (visited.has(id)) return;
 			visited.add(id);
-			const anim: unknown = animById.get(String(id));
+			const _anim: unknown = animById.get(String(id));
 =======
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const expandAnim = (id: any) => {
@@ -166,7 +166,7 @@ export const surfaceDressupMethods = {
 	},
 
 <<<<<<< HEAD
-	activeBindAnimationIds(this: unknown, scopeId: number = 0): number[] {
+	activeBindAnimationIds(this: unknown, scopeId: number = 0): number[] 
 		if (!this.shellManifest) return [];
 		return bindGroupsForScope(this.shellManifest, scopeId)
 			.filter((group: unknown) =>
@@ -175,14 +175,13 @@ export const surfaceDressupMethods = {
 			.flatMap((group: unknown) =>
 				bindAnimationIds(group.number, group.add_ids),
 			)
-			.sort((a: number, b: number) => a - b);
-	},
+			.sort((a: number, b: number) => a - b);,
 
 	planCacheKey(
 		this: unknown,
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	activeBindAnimationIds(this: any, scopeId: number = 0): number[] {
+	activeBindAnimationIds(this: any, scopeId: number = 0): number[] 
 		if (!this.shellManifest) return [];
 		return (
 			bindGroupsForScope(this.shellManifest, scopeId)
@@ -195,8 +194,7 @@ export const surfaceDressupMethods = {
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				.flatMap((group: any) => bindAnimationIds(group.number, group.add_ids))
 				.sort((a: number, b: number) => a - b)
-		);
-	},
+		);,
 
 	planCacheKey(
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -204,9 +202,8 @@ export const surfaceDressupMethods = {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		surfaceId: number | string,
 		scopeId: number = 0,
-	): string {
-		return `${scopeId}__${surfaceId}__${this.activeBindAnimationIds(scopeId).join(",")}`;
-	},
+	): string 
+		return `${scopeId}__${surfaceId}__${this.activeBindAnimationIds(scopeId).join(",")}`;,
 
 	async getCompositionPlan(
 <<<<<<< HEAD
@@ -234,7 +231,7 @@ export const surfaceDressupMethods = {
 			const plan: unknown = await invoke("surface_composition_plan", {
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
-			const plan: any = await invoke("surface_composition_plan", {
+			const _plan: any = await invoke("surface_composition_plan", {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				ghostName,
 				shellName: gc?.currentShell || "master",
@@ -244,16 +241,15 @@ export const surfaceDressupMethods = {
 			if (!plan || !Array.isArray(plan.layers)) return null;
 			this.planCache.set(key, plan);
 			return plan;
-		} catch (_err) {
+		} catch (_err) 
 			return null;
-		}
 	},
 
 <<<<<<< HEAD
 	planToRenderLayers(this: unknown, plan: unknown, scopeId: number = 0) {
 		if (!plan?.layers?.length) return null;
-		const elements: unknown[] = [];
-		const bindLayers: unknown[] = [];
+		const _elements: unknown[] = [];
+		const _bindLayers: unknown[] = [];
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	planToRenderLayers(this: any, plan: any, scopeId: number = 0) {

@@ -4,10 +4,10 @@
  */
 
 <<<<<<< HEAD
-export async function handleRaiseCommand(handler: unknown, args: string[]) {
+export async function handleRaiseCommand(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleRaiseCommand(handler: any, args: string[]) {
+export async function _handleRaiseCommand(handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const eventName = args[1];
 	if (eventName) {
@@ -19,10 +19,10 @@ export async function handleRaiseCommand(handler: any, args: string[]) {
 }
 
 <<<<<<< HEAD
-export async function handleChangeCommand(handler: unknown, args: string[]) {
+export async function _handleChangeCommand(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleChangeCommand(handler: any, args: string[]) {
+export async function _handleChangeCommand(handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const target = (args[1] ?? "").toLowerCase();
 	const name = args[2] ?? "";
@@ -78,10 +78,10 @@ export async function handleChangeCommand(handler: any, args: string[]) {
 }
 
 <<<<<<< HEAD
-export async function handleVanishByMyself(handler: unknown, _args: string[]) {
+export async function _handleVanishByMyself(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleVanishByMyself(handler: any, _args: string[]) {
+export async function _handleVanishByMyself(handler: any, _args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	console.log("👻 Vanish by myself requested");
 	const gc = handler.app.ghostController;
@@ -100,10 +100,10 @@ export async function handleVanishByMyself(handler: any, _args: string[]) {
 }
 
 <<<<<<< HEAD
-export async function handleCallCommand(handler: unknown, args: string[]) {
+export async function _handleCallCommand(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleCallCommand(handler: any, args: string[]) {
+export async function _handleCallCommand(handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const [target, name] = args.slice(1);
 	if (target === "ghost" && name) {
@@ -112,13 +112,13 @@ export async function handleCallCommand(handler: any, args: string[]) {
 }
 
 <<<<<<< HEAD
-export async function handleRaiseOtherCommand(
-	handler: unknown,
-	args: string[],
+export async function _handleRaiseOtherCommand(
+	_handler: unknown,
+	_args: string[],
 ) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleRaiseOtherCommand(handler: any, args: string[]) {
+export async function _handleRaiseOtherCommand(handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const ghostName = args[1];
 	const eventName = args[2];
@@ -139,13 +139,13 @@ export async function handleRaiseOtherCommand(handler: any, args: string[]) {
 }
 
 <<<<<<< HEAD
-export async function handleNotifyOtherCommand(
-	handler: unknown,
-	args: string[],
+export async function _handleNotifyOtherCommand(
+	_handler: unknown,
+	_args: string[],
 ) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleNotifyOtherCommand(handler: any, args: string[]) {
+export async function _handleNotifyOtherCommand(handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const ghostName = args[1];
 	const eventName = args[2];
@@ -172,10 +172,10 @@ export async function handleNotifyOtherCommand(handler: any, args: string[]) {
 }
 
 <<<<<<< HEAD
-export async function handleEmbedCommand(handler: unknown, args: string[]) {
+export async function _handleEmbedCommand(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleEmbedCommand(handler: any, args: string[]) {
+export async function _handleEmbedCommand(handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const eventName = args[1];
 	if (!eventName) return;
@@ -183,7 +183,7 @@ export async function handleEmbedCommand(handler: any, args: string[]) {
 	const gc = handler.app.ghostController;
 	if (gc?.sendShioriEvent) {
 <<<<<<< HEAD
-		const res: unknown = await gc.sendShioriEvent(eventName, references);
+		const _res: unknown = await gc.sendShioriEvent(eventName, references);
 =======
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const res: any = await gc.sendShioriEvent(eventName, references);

@@ -4,43 +4,43 @@
  */
 
 <<<<<<< HEAD
-export async function handleSetChoiceTimeout(handler: unknown, args: string[]) {
+export async function handleSetChoiceTimeout(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleSetChoiceTimeout(handler: any, args: string[]) {
+export async function _handleSetChoiceTimeout(handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const timeout = Number.parseInt(args[2] ?? "", 10);
 	handler.player.choiceTimeout = Number.isFinite(timeout) ? timeout : 0;
 }
 
 <<<<<<< HEAD
-export async function handleSetBalloonTimeout(
-	handler: unknown,
-	args: string[],
+export async function _handleSetBalloonTimeout(
+	_handler: unknown,
+	_args: string[],
 ) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleSetBalloonTimeout(handler: any, args: string[]) {
+export async function _handleSetBalloonTimeout(handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const timeout = Number.parseInt(args[2] ?? "", 10);
 	handler.player.balloonTimeout = Number.isFinite(timeout) ? timeout : 0;
 }
 
 <<<<<<< HEAD
-export async function handleSetBalloonWait(handler: unknown, args: string[]) {
+export async function _handleSetBalloonWait(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleSetBalloonWait(handler: any, args: string[]) {
+export async function _handleSetBalloonWait(handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const param = args[2];
 	handler.player.playbackController?.setBalloonWait?.(param);
 }
 
 <<<<<<< HEAD
-export async function handleQuickSection(handler: unknown, args: string[]) {
+export async function _handleQuickSection(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleQuickSection(handler: any, args: string[]) {
+export async function _handleQuickSection(handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const val = String(args[1] ?? "").toLowerCase();
 	const enable = val === "1" || val === "true";
@@ -48,10 +48,10 @@ export async function handleQuickSection(handler: any, args: string[]) {
 }
 
 <<<<<<< HEAD
-export async function handleSetSyncObject(handler: unknown, args: string[]) {
+export async function _handleSetSyncObject(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleSetSyncObject(handler: any, args: string[]) {
+export async function _handleSetSyncObject(handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const name = args[2];
 	if (name) {
@@ -64,10 +64,10 @@ export async function handleSetSyncObject(handler: any, args: string[]) {
 }
 
 <<<<<<< HEAD
-export async function handleResetSyncObject(handler: unknown, args: string[]) {
+export async function _handleResetSyncObject(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleResetSyncObject(handler: any, args: string[]) {
+export async function _handleResetSyncObject(handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const name = args[2];
 	if (name) {
@@ -80,10 +80,10 @@ export async function handleResetSyncObject(handler: any, args: string[]) {
 }
 
 <<<<<<< HEAD
-export async function handleWaitSyncObject(handler: unknown, args: string[]) {
+export async function _handleWaitSyncObject(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleWaitSyncObject(handler: any, args: string[]) {
+export async function _handleWaitSyncObject(handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const name = args[2];
 	if (!name) return;

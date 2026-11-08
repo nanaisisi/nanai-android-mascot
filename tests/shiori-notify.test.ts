@@ -190,24 +190,22 @@ test("shioriNotifyMethods covers lifecycle, dialog, balloon, surface, and overla
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const calls: any[] = [];
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-	const controller = {
+	const _controller = {
 		...shioriNotifyMethods,
 		app: { ghostId: "main" },
 	};
 
 	globalThis.__TAURI_INTERNALS__ = {
 <<<<<<< HEAD
-		invoke: async (cmd: string, args: unknown) => {
+		invoke: async (cmd: string, args: unknown) => 
 			calls.push({ cmd, args });
-			return "ok";
-		},
+			return "ok";,
 		transformCallback: (cb: unknown) => cb,
 =======
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
-		invoke: async (cmd: string, args: any) => {
+		invoke: async (cmd: string, args: any) => 
 			calls.push({ cmd, args });
-			return "ok";
-		},
+			return "ok";,
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		transformCallback: (cb: any) => cb,
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad

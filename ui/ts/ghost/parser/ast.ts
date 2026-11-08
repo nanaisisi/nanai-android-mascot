@@ -14,7 +14,7 @@ export interface SakuraAstNode {
 	children?: SakuraAstNode[];
 }
 
-export function tokensToAst(tokens: unknown[]): SakuraAstNode {
+export function tokensToAst(_tokens: unknown[]): SakuraAstNode {
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	token?: any;
@@ -29,10 +29,10 @@ export function tokensToAst(tokens: any[]): SakuraAstNode {
 	let scopeChildren: SakuraAstNode[] = [];
 
 <<<<<<< HEAD
-	let currentAnchor: unknown = null;
-	let anchorChildren: SakuraAstNode[] = [];
+	const _currentAnchor: unknown = null;
+	const _anchorChildren: SakuraAstNode[] = [];
 
-	let currentChoiceScope: unknown = null;
+	const _currentChoiceScope: unknown = null;
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let currentAnchor: any = null;
@@ -274,14 +274,14 @@ export function getSakuraTokenLifetime(
 
 <<<<<<< HEAD
 export function collectAstTokens(ast: SakuraAstNode): unknown[] {
-	const tokens: unknown[] = [];
+	const _tokens: unknown[] = [];
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function collectAstTokens(ast: SakuraAstNode): any[] {
+export function collectAstTokens(_ast: SakuraAstNode): any[] {
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const tokens: any[] = [];
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-	traverseAst(ast, (node) => {
+	traverseAst(ast, (node) => 
 		if (node.nodeType === "command" && node.token) {
 			tokens.push(node.token);
 		} else if (node.nodeType === "choice") {
@@ -296,8 +296,7 @@ export function collectAstTokens(ast: SakuraAstNode): any[] {
 				type: "scope",
 				value: node.scope,
 			});
-		}
-	});
+		});
 	return tokens;
 }
 
@@ -305,17 +304,16 @@ export function collectAstTokensByLifetime(
 	ast: SakuraAstNode,
 	lifetime: "Scope" | "Script" | "Permanent",
 <<<<<<< HEAD
-): unknown[] {
+): unknown[] 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-): any[] {
+): any[] 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	return collectAstTokens(ast).filter(
 		(token) => getSakuraTokenLifetime(token) === lifetime,
 	);
-}
 
-export function collectChoices(
+export function _collectChoices(
 	ast: SakuraAstNode,
 ): Array<{ id: string; text: string; args: string[] }> {
 	const choices: Array<{ id: string; text: string; args: string[] }> = [];
@@ -331,7 +329,7 @@ export function collectChoices(
 	return choices;
 }
 
-export function collectSurfaces(ast: SakuraAstNode): number[] {
+export function _collectSurfaces(ast: SakuraAstNode): number[] {
 	const surfaces: number[] = [];
 	traverseAst(ast, (node) => {
 		if (node.nodeType === "command" && node.token?.type === "surface") {
@@ -341,7 +339,7 @@ export function collectSurfaces(ast: SakuraAstNode): number[] {
 	return surfaces;
 }
 
-export function collectAnchors(
+export function _collectAnchors(
 	ast: SakuraAstNode,
 ): Array<{ id: string; text: string; args: string[] }> {
 	const anchors: Array<{ id: string; text: string; args: string[] }> = [];
@@ -357,7 +355,7 @@ export function collectAnchors(
 	return anchors;
 }
 
-export function calculateAstTextLength(ast: SakuraAstNode): number {
+export function _calculateAstTextLength(ast: SakuraAstNode): number {
 	let length = 0;
 	traverseAst(ast, (node) => {
 		if (node.nodeType === "command" && node.token?.type === "char") {
@@ -373,7 +371,7 @@ export function calculateAstTextLength(ast: SakuraAstNode): number {
 	return length;
 }
 
-export function collectScopeNodes(
+export function _collectScopeNodes(
 	ast: SakuraAstNode,
 	targetScope: number,
 ): SakuraAstNode[] {
@@ -397,7 +395,7 @@ export function collectScopeNodes(
 /**
  * AST 内のすべてのアニメーション呼出 (id, wait) を抽出する
  */
-export function collectAnimations(
+export function _collectAnimations(
 	ast: SakuraAstNode,
 ): Array<{ id: number | string; wait: boolean }> {
 	const animations: Array<{ id: number | string; wait: boolean }> = [];
@@ -415,7 +413,7 @@ export function collectAnimations(
 /**
  * 指定したスコープ（\0, \1, \p[N]）配下のノードのみを抽出した新しい AST を生成する
  */
-export function filterAstByScope(
+export function _filterAstByScope(
 	ast: SakuraAstNode,
 	targetScope: number,
 ): SakuraAstNode {
@@ -448,7 +446,7 @@ export function filterAstByScope(
 /**
  * ログ保存や早送り再生用にウェイト（\w, \_w）トークンを除去した AST を再帰生成する
  */
-export function stripWaitsFromAst(ast: SakuraAstNode): SakuraAstNode {
+export function _stripWaitsFromAst(ast: SakuraAstNode): SakuraAstNode {
 	if (
 		ast.nodeType === "command" &&
 		(ast.token?.type === "wait" ||
@@ -466,7 +464,7 @@ export function stripWaitsFromAst(ast: SakuraAstNode): SakuraAstNode {
 	}
 
 	const newChildren = ast.children
-		.map((child) => stripWaitsFromAst(child))
+		.map((child) => _stripWaitsFromAst(child))
 		.filter(
 			(child) =>
 				!(

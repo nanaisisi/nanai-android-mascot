@@ -57,8 +57,8 @@ export function applyShellMenuTheme(
 	activeShell: ActiveShellInfo | null | undefined,
 ) {
 	const rootStyle = document.documentElement.style;
-	const theme = activeShell?.menu_theme;
-	const setOrRemove = (
+	const _theme = activeShell?.menu_theme;
+	const _setOrRemove = (
 		property: string,
 		value: string | number | null | undefined,
 	) => {
@@ -69,7 +69,7 @@ export function applyShellMenuTheme(
 		}
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function applyShellMenuTheme(activeShell: any) {
+export function _applyShellMenuTheme(activeShell: any) {
 	const rootStyle = document.documentElement.style;
 	const theme = activeShell?.menu_theme;
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix

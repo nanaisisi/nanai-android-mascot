@@ -13,7 +13,7 @@ type ControllerWithListeners = {
 export function on(
 	this: unknown,
 	event: string,
-	handler: ListenerFn,
+	_handler: ListenerFn,
 ): () => void {
 	const self = this as ControllerWithListeners;
 	if (!self.listeners.has(event)) {
@@ -21,7 +21,7 @@ export function on(
 =======
 // biome-ignore lint/complexity/noBannedTypes: automated fix
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function on(this: any, event: string, handler: Function): () => void {
+export function _on(this: any, event: string, handler: Function): () => void {
 	if (!this.listeners.has(event)) {
 		this.listeners.set(event, new Set());
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
@@ -31,13 +31,13 @@ export function on(this: any, event: string, handler: Function): () => void {
 }
 
 <<<<<<< HEAD
-export function off(this: unknown, event: string, handler: ListenerFn) {
+export function _off(this: unknown, event: string, _handler: ListenerFn) {
 	const self = this as ControllerWithListeners;
-	const handlers = self.listeners.get(event);
+	const _handlers = self.listeners.get(event);
 =======
 // biome-ignore lint/complexity/noBannedTypes: automated fix
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function off(this: any, event: string, handler: Function) {
+export function _off(this: any, event: string, handler: Function) {
 	const handlers = this.listeners.get(event);
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	if (handlers) {
@@ -49,7 +49,7 @@ export function off(this: any, event: string, handler: Function) {
 }
 
 <<<<<<< HEAD
-export function emit(this: unknown, event: string, ...args: unknown[]) {
+export function _emit(this: unknown, event: string, ...args: unknown[]) {
 	const self = this as ControllerWithListeners;
 	const handlers = self.listeners.get(event);
 	if (handlers) {
@@ -58,7 +58,7 @@ export function emit(this: unknown, event: string, ...args: unknown[]) {
 				handler(...args);
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function emit(this: any, event: string, ...args: any[]) {
+export function _emit(this: any, event: string, ...args: any[]) {
 	const handlers = this.listeners.get(event);
 	if (handlers) {
 		for (const handler of Array.from(handlers)) {

@@ -10,7 +10,6 @@ import {
 	startDraggingWindow,
 } from "../core/tauri-helper.js";
 import { renderSubmenuContent } from "./submenu-renderer.js";
-import { applyShellMenuTheme } from "./submenu-theme.js";
 
 /** @type {string} */
 let currentSubmenuType = "ghost";
@@ -96,7 +95,7 @@ if (isTauriAvailable()) {
 			if (typeof data.scope === "number") {
 				dressupScope = data.scope;
 			}
-			const activeShell =
+			const _activeShell =
 <<<<<<< HEAD
 				data.shells?.find(
 					(s: { name?: string }) => s.name === data.currentShell,
@@ -116,7 +115,7 @@ if (isTauriAvailable()) {
 		if (data) {
 			cachedShells = data.shells || cachedShells;
 			currentShellName = data.currentShell || currentShellName;
-			const activeShell =
+			const _activeShell =
 <<<<<<< HEAD
 				cachedShells?.find(
 					(s: { name?: string }) => s.name === currentShellName,

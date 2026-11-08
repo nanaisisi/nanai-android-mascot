@@ -5,14 +5,14 @@
 
 <<<<<<< HEAD
 export function handleChoice(
-	player: unknown,
+	_player: unknown,
 	app: unknown,
 	token: unknown,
 	context: unknown,
 ) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function handleChoice(player: any, app: any, token: any, context: any) {
+export function _handleChoice(player: any, app: any, token: any, context: any) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const { currentBalloonText, flushDesktopBalloon } = context;
 
@@ -21,12 +21,12 @@ export function handleChoice(player: any, app: any, token: any, context: any) {
 	choiceBtn.setAttribute("data-choice-id", token.id);
 	choiceBtn.textContent = token.text;
 <<<<<<< HEAD
-	let hoverTimer: unknown = null;
+	const _hoverTimer: unknown = null;
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let hoverTimer: any = null;
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-	choiceBtn.addEventListener("click", (e: MouseEvent) => {
+	choiceBtn.addEventListener("click", (e: MouseEvent) => 
 		e.stopPropagation();
 		if (hoverTimer) {
 			clearTimeout(hoverTimer);
@@ -49,8 +49,7 @@ export function handleChoice(player: any, app: any, token: any, context: any) {
 				token.text,
 				...(token.args || []),
 			]);
-		}
-	});
+		});
 	choiceBtn.addEventListener("mouseenter", () => {
 		app.ghostController?.sendShioriEvent("OnChoiceEnter", [
 			token.text,
@@ -109,7 +108,7 @@ export function handleAnchorBegin(
 	anchorSpan.dataset.anchorId = token.id;
 	anchorSpan.setAttribute("data-anchor-id", token.id);
 <<<<<<< HEAD
-	let hoverTimer: unknown = null;
+	const _hoverTimer: unknown = null;
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let hoverTimer: any = null;
@@ -125,7 +124,7 @@ export function handleAnchorBegin(
 		if (app.ghostController?.sendShioriEvent) {
 			// UKADOC: OnAnchorSelectEx is sent first (Reference0: text, Reference1: ID, Reference2..N: args)
 <<<<<<< HEAD
-			const resEx: unknown = await app.ghostController.sendShioriEvent(
+			const _resEx: unknown = await app.ghostController.sendShioriEvent(
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const resEx: any = await app.ghostController.sendShioriEvent(
@@ -186,6 +185,5 @@ export function handleAnchorEnd(
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	context: any,
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-) {
+) 
 	context.currentAnchor = null;
-}

@@ -66,7 +66,7 @@ export function parseAnimationOptions(options = []) {
  */
 export function isBlockedByExclusive(target = 0, scopeIdOrAnimId, animIdParam) {
 <<<<<<< HEAD
-	let instance: unknown, scopeId: unknown, animId: unknown;
+	let _instance: unknown, _scopeId: unknown, _animId: unknown;
 =======
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId, animId;
@@ -99,7 +99,7 @@ export function isBlockedByExclusive(target = 0, scopeIdOrAnimId, animIdParam) {
  */
 export function findAnimation(target, animIdOrNameOrScopeId, scopeIdParam = 0) {
 <<<<<<< HEAD
-	let instance: unknown, animIdOrName: unknown, scopeId: unknown;
+	let _instance: unknown, _animIdOrName: unknown, _scopeId: unknown;
 =======
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, animIdOrName, scopeId;
@@ -145,7 +145,7 @@ export function isAnimationRunning(
 	animIdOrNameParam,
 ) {
 <<<<<<< HEAD
-	let instance: unknown, scopeId: unknown, animIdOrName: unknown;
+	let _instance: unknown, _scopeId: unknown, _animIdOrName: unknown;
 =======
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId, animIdOrName;
@@ -182,7 +182,7 @@ export function isAnimationRunning(
  */
 export function stopAnimation(target = 0, scopeIdOrAnimId, animIdOrNameParam) {
 <<<<<<< HEAD
-	let instance: unknown, scopeId: unknown, animIdOrName: unknown;
+	let _instance: unknown, _scopeId: unknown, _animIdOrName: unknown;
 =======
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId, animIdOrName;
@@ -226,11 +226,11 @@ export function setAnimationOffset(
 	yParam = 0,
 ) {
 <<<<<<< HEAD
-	let instance: unknown,
-		scopeId: unknown,
-		animIdOrName: unknown,
-		x: unknown,
-		y: unknown;
+	let _instance: unknown,
+		_scopeId: unknown,
+		_animIdOrName: unknown,
+		_x: unknown,
+		_y: unknown;
 =======
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId, animIdOrName, x, y;
@@ -267,7 +267,7 @@ export function getAnimationOffset(
 	animIdOrNameParam,
 ) {
 <<<<<<< HEAD
-	let instance: unknown, scopeId: unknown, animIdOrName: unknown;
+	let _instance: unknown, _scopeId: unknown, _animIdOrName: unknown;
 =======
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId, animIdOrName;
@@ -289,7 +289,7 @@ export function getAnimationOffset(
 
 export function pauseAnimation(target = 0, scopeIdOrAnimId, animIdOrNameParam) {
 <<<<<<< HEAD
-	let instance: unknown, scopeId: unknown, animIdOrName: unknown;
+	let _instance: unknown, _scopeId: unknown, _animIdOrName: unknown;
 =======
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId, animIdOrName;
@@ -315,7 +315,7 @@ export function resumeAnimation(
 	animIdOrNameParam,
 ) {
 <<<<<<< HEAD
-	let instance: unknown, scopeId: unknown, animIdOrName: unknown;
+	let _instance: unknown, _scopeId: unknown, _animIdOrName: unknown;
 =======
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId, animIdOrName;
@@ -341,7 +341,7 @@ export function isAnimationPaused(
 	animIdOrNameParam,
 ) {
 <<<<<<< HEAD
-	let instance: unknown, scopeId: unknown, animIdOrName: unknown;
+	let _instance: unknown, _scopeId: unknown, _animIdOrName: unknown;
 =======
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId, animIdOrName;
@@ -363,7 +363,7 @@ export function isAnimationPaused(
 
 export function clearPausedAnimations(target = 0, scopeIdParam = 0) {
 <<<<<<< HEAD
-	let instance: unknown, scopeId: unknown;
+	let _instance: unknown, _scopeId: unknown;
 =======
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId;
@@ -387,7 +387,7 @@ export function clearPausedAnimations(target = 0, scopeIdParam = 0) {
  */
 export function getActiveAnimationCount(target = 0, scopeIdParam = 0) {
 <<<<<<< HEAD
-	let instance: unknown, scopeId: unknown;
+	let _instance: unknown, _scopeId: unknown;
 =======
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId;
@@ -418,7 +418,7 @@ export function getActiveAnimationCount(target = 0, scopeIdParam = 0) {
  */
 export function getActiveAnimations(target = 0, scopeIdParam = 0) {
 <<<<<<< HEAD
-	let instance: unknown, scopeId: unknown;
+	let _instance: unknown, _scopeId: unknown;
 =======
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId;
@@ -454,7 +454,7 @@ export function getActiveAnimations(target = 0, scopeIdParam = 0) {
  */
 export function getActiveCollisions(target = 0, scopeIdParam = 0) {
 <<<<<<< HEAD
-	let instance: unknown, scopeId: unknown;
+	let _instance: unknown, _scopeId: unknown;
 =======
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId;

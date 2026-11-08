@@ -14,7 +14,7 @@ export function handleScope(
 ) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function handleScope(player: any, app: any, token: any, context: any) {
+export function _handleScope(player: any, app: any, token: any, context: any) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const {
 		sakuraText,
@@ -117,7 +117,7 @@ export function handleInlineBitmap(
 	img.className = "balloon-inline-bitmap";
 	const themeName = app.currentBalloonTheme || "default";
 	const rawPath = token.path || "";
-	const fullPath =
+	const _fullPath =
 		rawPath.startsWith("data:") ||
 		rawPath.startsWith("http://") ||
 		rawPath.startsWith("https://")

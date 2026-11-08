@@ -21,7 +21,7 @@ import {
 	registerCommandHandler,
 } from "./command-handler/registry.js";
 import { clearAllScriptTimers } from "./command-handler/system.js";
-import { closeTeachBox, openTeachBox } from "./command-handler/teachbox.js";
+import { closeTeachBox, } from "./command-handler/teachbox.js";
 import {
 	handleWindowState,
 	setAlignmentToDesktop,
@@ -48,14 +48,13 @@ export class SakuraCommandHandler {
 	communicateForm: any;
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	constructor(player: any) {
+	constructor(player: any) 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		this.player = player;
 		this.app = player.app;
 		this.teachForm = null;
 		this.communicateForm = null;
 		initDefaultCommandHandlers();
-	}
 
 	async runCommand(args: string[]) {
 		const rawCmd = (args[0] ?? "").toLowerCase();
@@ -69,48 +68,40 @@ export class SakuraCommandHandler {
 		}
 	}
 
-	openInputBox(params: string[]) {
+	openInputBox(params: string[]) 
 		openInputBox(this, params);
-	}
 
 <<<<<<< HEAD
-	openTeachBox(params: string[] = [], options: unknown = {}) {
+	openTeachBox(params: string[] = [], options: unknown = ) 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	openTeachBox(params: string[] = [], options: any = {}) {
+	openTeachBox(params: string[] = [], options: any = ) 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		openTeachBox(this, params, options);
-	}
 
-	closeTeachBox() {
+	closeTeachBox() 
 		closeTeachBox(this);
-	}
 
-	openCommunicateBox(params: string[] = []) {
+	openCommunicateBox(params: string[] = []) 
 		openCommunicateBox(this, params);
-	}
 
-	closeCommunicateBox(notifyCancel: boolean = false) {
+	closeCommunicateBox(notifyCancel: boolean = false) 
 		closeCommunicateBox(this, notifyCancel);
-	}
 
-	async setAlignmentToDesktop(mode: string) {
+	async setAlignmentToDesktop(mode: string) 
 		await setAlignmentToDesktop(this, mode);
-	}
 
-	async handleWindowState(state: string) {
+	async handleWindowState(state: string) 
 		await handleWindowState(state);
-	}
 
-	async handleJump(target: string, args: string[] = []) {
+	async handleJump(target: string, args: string[] = []) 
 		await handleJumpCommand(this, target, args);
-	}
 
 <<<<<<< HEAD
-	expandEnv(script: string, options: unknown = {}) {
+	expandEnv(script: string, options: unknown = ) 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	expandEnv(script: string, options: any = {}) {
+	expandEnv(script: string, options: any = ) 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		return expandSakuraScriptEnv(script, {
 			username: this.player?.app?.ghostController?.username,
@@ -119,13 +110,10 @@ export class SakuraCommandHandler {
 			lastobjectname: this.player?.app?.ghostController?.lastObjectName,
 			...options,
 		});
-	}
 
-	resetLifetimeState() {
+	resetLifetimeState() 
 		resetScriptScopeState();
 		clearAllScriptTimers();
-	}
-}
 
 export {
 	CommandHandlerMap,

@@ -47,10 +47,9 @@ export const shioriNotifyMethods = {
 	async notifyOSInfo(this: unknown, osName = "Android", osVersion = "14") {
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async notifyOSInfo(this: any, osName = "Android", osVersion = "14") {
+	async notifyOSInfo(this: any, osName = "Android", osVersion = "14") 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-		return await this.sendShioriNotify("OnNotifyOSInfo", [osName, osVersion]);
-	},
+		return await this.sendShioriNotify("OnNotifyOSInfo", [osName, osVersion]);,
 
 	/**
 	 * 自身（ゴースト本体）情報通知 (OnNotifySelfInfo) を送信 (UKADOC 規格準拠)
@@ -65,13 +64,12 @@ export const shioriNotifyMethods = {
 		ghostName: string,
 		shellName = "master",
 		balloonName = "default",
-	) {
+	) 
 		return await this.sendShioriNotify("OnNotifySelfInfo", [
 			ghostName,
 			shellName,
 			balloonName,
-		]);
-	},
+		]);,
 
 	/**
 	 * バルーン構成情報通知 (OnNotifyBalloonInfo) を送信 (UKADOC 規格準拠)
@@ -85,39 +83,36 @@ export const shioriNotifyMethods = {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		balloonName = "default",
 		balloonPath = "",
-	) {
+	) 
 		return await this.sendShioriNotify("OnNotifyBalloonInfo", [
 			balloonName,
 			balloonPath,
-		]);
-	},
+		]);,
 
 	/**
 	 * シェル構成情報通知 (OnNotifyShellInfo) を送信 (UKADOC 規格準拠)
 	 */
 <<<<<<< HEAD
-	async notifyShellInfo(this: unknown, shellName = "master", shellPath = "") {
+	async notifyShellInfo(this: unknown, shellName = "master", shellPath = "") 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async notifyShellInfo(this: any, shellName = "master", shellPath = "") {
+	async notifyShellInfo(this: any, shellName = "master", shellPath = "") 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		return await this.sendShioriNotify("OnNotifyShellInfo", [
 			shellName,
 			shellPath,
-		]);
-	},
+		]);,
 
 	/**
 	 * 着せ替え構成情報通知 (OnNotifyDressupInfo) を送信 (UKADOC 規格準拠)
 	 */
 <<<<<<< HEAD
-	async notifyDressupInfo(this: unknown, dressupItems: string[] = []) {
+	async notifyDressupInfo(this: unknown, dressupItems: string[] = []) 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async notifyDressupInfo(this: any, dressupItems: string[] = []) {
+	async notifyDressupInfo(this: any, dressupItems: string[] = []) 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-		return await this.sendShioriNotify("OnNotifyDressupInfo", dressupItems);
-	},
+		return await this.sendShioriNotify("OnNotifyDressupInfo", dressupItems);,
 
 	/**
 	 * ユーザー設定情報通知 (OnNotifyUserInfo) を送信 (UKADOC 規格準拠)
@@ -132,43 +127,40 @@ export const shioriNotifyMethods = {
 		userName = "ユーザー",
 		userBirthday = "",
 		userGender = "",
-	) {
+	) 
 		return await this.sendShioriNotify("OnNotifyUserInfo", [
 			userName,
 			userBirthday,
 			userGender,
-		]);
-	},
+		]);,
 
 	/**
 	 * フォント設定情報通知 (OnNotifyFontInfo) を送信 (UKADOC 規格準拠)
 	 */
 <<<<<<< HEAD
-	async notifyFontInfo(this: unknown, fontName = "sans-serif", fontSize = 12) {
+	async notifyFontInfo(this: unknown, fontName = "sans-serif", fontSize = 12) 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async notifyFontInfo(this: any, fontName = "sans-serif", fontSize = 12) {
+	async notifyFontInfo(this: any, fontName = "sans-serif", fontSize = 12) 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		return await this.sendShioriNotify("OnNotifyFontInfo", [
 			fontName,
 			String(fontSize),
-		]);
-	},
+		]);,
 
 	/**
 	 * 祝日・休日情報通知 (OnNotifyHolidayInfo) を送信 (UKADOC 規格準拠)
 	 */
 <<<<<<< HEAD
-	async notifyHolidayInfo(this: unknown, holidayName = "", holidayDate = "") {
+	async notifyHolidayInfo(this: unknown, holidayName = "", holidayDate = "") 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async notifyHolidayInfo(this: any, holidayName = "", holidayDate = "") {
+	async notifyHolidayInfo(this: any, holidayName = "", holidayDate = "") 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		return await this.sendShioriNotify("OnNotifyHolidayInfo", [
 			holidayName,
 			holidayDate,
-		]);
-	},
+		]);,
 
 	/**
 	 * 国際化・地域設定通知 (OnNotifyInternationalInfo) を送信 (UKADOC 規格準拠)
@@ -182,12 +174,11 @@ export const shioriNotifyMethods = {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		locale = "ja-JP",
 		timezone = "Asia/Tokyo",
-	) {
+	) 
 		return await this.sendShioriNotify("OnNotifyInternationalInfo", [
 			locale,
 			timezone,
-		]);
-	},
+		]);,
 
 	/**
 	 * バッテリー・電源状態通知
@@ -252,9 +243,8 @@ export const shioriNotifyMethods = {
 			| "OnCacheRestore"
 			| string,
 		references: Array<string | number> = [],
-	) {
-		return await this.sendShioriNotify(event, references);
-	},
+	) 
+		return await this.sendShioriNotify(event, references);,
 
 	/**
 	 * 消滅・アンインストール通知 (UKADOC vanish)
@@ -275,9 +265,8 @@ export const shioriNotifyMethods = {
 			| "OnOtherGhostVanished"
 			| string,
 		references: Array<string | number> = [],
-	) {
-		return await this.sendShioriNotify(event, references);
-	},
+	) 
+		return await this.sendShioriNotify(event, references);,
 
 	/**
 	 * URL ドロップイベント通知 (UKADOC url-drop)
@@ -298,9 +287,8 @@ export const shioriNotifyMethods = {
 			| "OnXUkagakaLinkOpen"
 			| string,
 		references: Array<string | number> = [],
-	) {
-		return await this.sendShioriNotify(event, references);
-	},
+	) 
+		return await this.sendShioriNotify(event, references);,
 
 	/**
 	 * ファイルドロップイベント通知 (UKADOC file-drop)
@@ -331,9 +319,8 @@ export const shioriNotifyMethods = {
 			| "OnWallpaperChange"
 			| string,
 		references: Array<string | number> = [],
-	) {
-		return await this.sendShioriNotify(event, references);
-	},
+	) 
+		return await this.sendShioriNotify(event, references);,
 
 	/**
 	 * OS環境・ディスプレイ・テーマ・負荷状態通知 (UKADOC os-state)
@@ -366,9 +353,8 @@ export const shioriNotifyMethods = {
 			| "OnDesktopWallpaperChange"
 			| string,
 		references: Array<string | number> = [],
-	) {
-		return await this.sendShioriNotify(event, references);
-	},
+	) 
+		return await this.sendShioriNotify(event, references);,
 
 	/**
 	 * 重なり・画面外判定通知 (UKADOC overlap)
@@ -387,9 +373,8 @@ export const shioriNotifyMethods = {
 			| "OnOtherOverlap"
 			| string,
 		references: Array<string | number> = [],
-	) {
-		return await this.sendShioriNotify(event, references);
-	},
+	) 
+		return await this.sendShioriNotify(event, references);,
 
 	/**
 	 * サーフィス・バルーン状態通知 (UKADOC surface / balloon)
@@ -408,9 +393,8 @@ export const shioriNotifyMethods = {
 			| "OnBalloonBreak"
 			| string,
 		references: Array<string | number> = [],
-	) {
-		return await this.sendShioriNotify(event, references);
-	},
+	) 
+		return await this.sendShioriNotify(event, references);,
 
 	/**
 	 * 選択肢・アンカー拡張通知 (UKADOC choice)
@@ -424,9 +408,8 @@ export const shioriNotifyMethods = {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		event: "OnChoiceSelectEx" | "OnAnchorSelectEx" | string,
 		references: Array<string | number> = [],
-	) {
-		return await this.sendShioriNotify(event, references);
-	},
+	) 
+		return await this.sendShioriNotify(event, references);,
 
 	/**
 	 * 利用規約・ダイアログ通知 (UKADOC dialogbox)
@@ -440,9 +423,8 @@ export const shioriNotifyMethods = {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		event: "OnGhostTermsAccept" | "OnGhostTermsDecline" | string,
 		references: Array<string | number> = [],
-	) {
-		return await this.sendShioriNotify(event, references);
-	},
+	) 
+		return await this.sendShioriNotify(event, references);,
 
 	/**
 	 * イベント送信・通知失敗イベント (UKADOC event-send-failure)
@@ -461,9 +443,8 @@ export const shioriNotifyMethods = {
 			| "OnRaisePluginFailure"
 			| string,
 		references: Array<string | number> = [],
-	) {
-		return await this.sendShioriNotify(event, references);
-	},
+	) 
+		return await this.sendShioriNotify(event, references);,
 
 	/**
 	 * ゲームパッドイベント通知 (UKADOC gamepad)
@@ -483,9 +464,8 @@ export const shioriNotifyMethods = {
 			| "OnGamepadDisconnected"
 			| string,
 		references: Array<string | number> = [],
-	) {
-		return await this.sendShioriNotify(event, references);
-	},
+	) 
+		return await this.sendShioriNotify(event, references);,
 
 	/**
 	 * 矩形選択モードイベント通知 (UKADOC select-region-mode)
@@ -505,9 +485,8 @@ export const shioriNotifyMethods = {
 			| "OnSelectModeMouseUp"
 			| string,
 		references: Array<string | number> = [],
-	) {
-		return await this.sendShioriNotify(event, references);
-	},
+	) 
+		return await this.sendShioriNotify(event, references);,
 
 	/**
 	 * 音声認識・合成イベント通知 (UKADOC speech)
@@ -525,9 +504,8 @@ export const shioriNotifyMethods = {
 			| "OnVoiceRecognitionWord"
 			| string,
 		references: Array<string | number> = [],
-	) {
-		return await this.sendShioriNotify(event, references);
-	},
+	) 
+		return await this.sendShioriNotify(event, references);,
 
 	/**
 	 * その他の各種通知 (UKADOC other)
@@ -557,15 +535,14 @@ export const shioriNotifyMethods = {
 			| "OnVideoPlayEx"
 			| string,
 		references: Array<string | number> = [],
-	) {
-		return await this.sendShioriNotify(event, references);
-	},
+	) 
+		return await this.sendShioriNotify(event, references);,
 
 	/**
 	 * スクリーンセーバー状態通知
 	 */
 <<<<<<< HEAD
-	async notifyScreenSaver(this: unknown, isStarted: boolean) {
+	async notifyScreenSaver(this: unknown, isStarted: boolean) 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	async notifyScreenSaver(this: any, isStarted: boolean) {
@@ -625,9 +602,8 @@ export const shioriNotifyMethods = {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		event: string,
 		references: Array<string | number> = [],
-	) {
-		return await this.sendShioriNotify(event, references);
-	},
+	) 
+		return await this.sendShioriNotify(event, references);,
 
 	/**
 	 * RSS / ヘッドラインセンス通知
@@ -641,33 +617,30 @@ export const shioriNotifyMethods = {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		event: string,
 		references: Array<string | number> = [],
-	) {
-		return await this.sendShioriNotify(event, references);
-	},
+	) 
+		return await this.sendShioriNotify(event, references);,
 
 	/**
 	 * 外部アプリケーション起動通知 (OnApplicationBoot) を送信
 	 */
 <<<<<<< HEAD
-	async notifyApplicationBoot(this: unknown, appName: string, appPath = "") {
+	async notifyApplicationBoot(this: unknown, appName: string, appPath = "") 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async notifyApplicationBoot(this: any, appName: string, appPath = "") {
+	async notifyApplicationBoot(this: any, appName: string, appPath = "") 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-		return await this.sendShioriNotify("OnApplicationBoot", [appName, appPath]);
-	},
+		return await this.sendShioriNotify("OnApplicationBoot", [appName, appPath]);,
 
 	/**
 	 * 外部アプリケーション終了通知 (OnApplicationClose) を送信
 	 */
 <<<<<<< HEAD
-	async notifyApplicationClose(this: unknown, appName: string) {
+	async notifyApplicationClose(this: unknown, appName: string) 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async notifyApplicationClose(this: any, appName: string) {
+	async notifyApplicationClose(this: any, appName: string) 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-		return await this.sendShioriNotify("OnApplicationClose", [appName]);
-	},
+		return await this.sendShioriNotify("OnApplicationClose", [appName]);,
 
 	/**
 	 * 外部アプリケーション存在確認 (OnApplicationExist) を送信
@@ -677,7 +650,7 @@ export const shioriNotifyMethods = {
 		this: unknown,
 		appName: string,
 	): Promise<boolean> {
-		const res: unknown = await this.sendShioriNotify("OnApplicationExist", [
+		const _res: unknown = await this.sendShioriNotify("OnApplicationExist", [
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	async checkApplicationExist(this: any, appName: string): Promise<boolean> {
@@ -700,13 +673,12 @@ export const shioriNotifyMethods = {
 	) {
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async notifyApplicationFileOpen(this: any, appName: string, filePath = "") {
+	async notifyApplicationFileOpen(this: any, appName: string, filePath = "") 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		return await this.sendShioriNotify("OnApplicationFileOpen", [
 			appName,
 			filePath,
-		]);
-	},
+		]);,
 
 	/**
 	 * 外部アプリケーション操作完了通知 (OnApplicationOperationFinish) を送信
@@ -720,42 +692,39 @@ export const shioriNotifyMethods = {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		appName: string,
 		operationName = "",
-	) {
+	) 
 		return await this.sendShioriNotify("OnApplicationOperationFinish", [
 			appName,
 			operationName,
-		]);
-	},
+		]);,
 
 	/**
 	 * 外部アプリケーションバージョン通知 (OnApplicationVersion) を送信
 	 */
 <<<<<<< HEAD
-	async notifyApplicationVersion(this: unknown, appName: string, version = "") {
+	async notifyApplicationVersion(this: unknown, appName: string, version = "") 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async notifyApplicationVersion(this: any, appName: string, version = "") {
+	async notifyApplicationVersion(this: any, appName: string, version = "") 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		return await this.sendShioriNotify("OnApplicationVersion", [
 			appName,
 			version,
-		]);
-	},
+		]);,
 
 	/**
 	 * Webサイト更新通知 (OnWebsiteUpdateNotify) を送信
 	 */
 <<<<<<< HEAD
-	async notifyWebsiteUpdate(this: unknown, url: string, updateTime = "") {
+	async notifyWebsiteUpdate(this: unknown, url: string, updateTime = "") 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async notifyWebsiteUpdate(this: any, url: string, updateTime = "") {
+	async notifyWebsiteUpdate(this: any, url: string, updateTime = "") 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		return await this.sendShioriNotify("OnWebsiteUpdateNotify", [
 			url,
 			updateTime,
-		]);
-	},
+		]);,
 
 	/**
 	 * バルーン倍率変更通知 (OnBalloonScaling) を送信 (UKADOC準拠)
@@ -771,14 +740,13 @@ export const shioriNotifyMethods = {
 		beforeX: number | string,
 		afterY: number | string = afterX,
 		beforeY: number | string = beforeX,
-	) {
+	) 
 		return await this.sendShioriNotify("OnBalloonScaling", [
 			String(afterX),
 			String(beforeX),
 			String(afterY),
 			String(beforeY),
-		]);
-	},
+		]);,
 
 	/**
 	 * バルーン閉じる通知 (OnBalloonClose) を送信 (UKADOC準拠)
@@ -794,12 +762,11 @@ export const shioriNotifyMethods = {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		lastScript: string = "",
 		scopeId: number | string = 0,
-	) {
+	) 
 		return await this.sendShioriNotify("OnBalloonClose", [
 			lastScript,
 			String(scopeId),
-		]);
-	},
+		]);,
 
 	/**
 	 * バルーンタイムアウト通知 (OnBalloonTimeout) を送信 (UKADOC準拠)
@@ -816,12 +783,11 @@ export const shioriNotifyMethods = {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		lastScript: string = "",
 		scopeId: number | string = 0,
-	) {
+	) 
 		return await this.sendShioriNotify("OnBalloonTimeout", [
 			lastScript,
 			String(scopeId),
-		]);
-	},
+		]);,
 
 	/**
 	 * バルーン中断通知 (OnBalloonBreak) を送信 (UKADOC準拠)
@@ -859,21 +825,19 @@ export const shioriNotifyMethods = {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		eventName: string,
 		args: Array<string | number>,
-	) {
-		return await this.sendShioriNotify(eventName, args);
-	},
+	) 
+		return await this.sendShioriNotify(eventName, args);,
 
 	/**
 	 * ヘッドラインセンス開始通知 (OnHeadlinesenseBegin)
 	 */
 <<<<<<< HEAD
-	async sendHeadlineSenseBegin(this: unknown, siteName: string, url: string) {
+	async sendHeadlineSenseBegin(this: unknown, siteName: string, url: string) 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendHeadlineSenseBegin(this: any, siteName: string, url: string) {
+	async sendHeadlineSenseBegin(this: any, siteName: string, url: string) 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-		return await this.sendShioriNotify("OnHeadlinesenseBegin", [siteName, url]);
-	},
+		return await this.sendShioriNotify("OnHeadlinesenseBegin", [siteName, url]);,
 
 	/**
 	 * ヘッドライン発見通知 (OnHeadlinesense.OnFind)
@@ -889,50 +853,46 @@ export const shioriNotifyMethods = {
 		url: string,
 		phase: string,
 		content: string,
-	) {
+	) 
 		return await this.sendShioriNotify("OnHeadlinesense.OnFind", [
 			siteName,
 			url,
 			phase,
 			content,
-		]);
-	},
+		]);,
 
 	/**
 	 * ヘッドラインセンス完了通知 (OnHeadlinesenseComplete)
 	 */
 <<<<<<< HEAD
-	async sendHeadlineSenseComplete(this: unknown, reason = "no update") {
+	async sendHeadlineSenseComplete(this: unknown, reason = "no update") 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendHeadlineSenseComplete(this: any, reason = "no update") {
+	async sendHeadlineSenseComplete(this: any, reason = "no update") 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-		return await this.sendShioriNotify("OnHeadlinesenseComplete", [reason]);
-	},
+		return await this.sendShioriNotify("OnHeadlinesenseComplete", [reason]);,
 
 	/**
 	 * ヘッドラインセンス失敗通知 (OnHeadlinesenseFailure)
 	 */
 <<<<<<< HEAD
-	async sendHeadlineSenseFailure(this: unknown, reason: string) {
+	async sendHeadlineSenseFailure(this: unknown, reason: string) 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendHeadlineSenseFailure(this: any, reason: string) {
+	async sendHeadlineSenseFailure(this: any, reason: string) 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-		return await this.sendShioriNotify("OnHeadlinesenseFailure", [reason]);
-	},
+		return await this.sendShioriNotify("OnHeadlinesenseFailure", [reason]);,
 
 	/**
 	 * RSSセンス開始通知 (OnRSSBegin)
 	 */
 <<<<<<< HEAD
-	async sendRssBegin(this: unknown, siteName: string, url: string) {
+	async sendRssBegin(this: unknown, siteName: string, url: string) 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendRssBegin(this: any, siteName: string, url: string) {
+	async sendRssBegin(this: any, siteName: string, url: string) 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-		return await this.sendShioriNotify("OnRSSBegin", [siteName, url]);
-	},
+		return await this.sendShioriNotify("OnRSSBegin", [siteName, url]);,
 
 	/**
 	 * RSSセンス完了通知 (OnRSSComplete)
@@ -947,7 +907,7 @@ export const shioriNotifyMethods = {
 		siteNameOrStatus: string,
 		siteUrl = "",
 		entries: string[] = [],
-	) {
+	) 
 		if (siteNameOrStatus === "no update") {
 			return await this.sendShioriNotify("OnRSSComplete", ["no update"]);
 		}
@@ -955,26 +915,24 @@ export const shioriNotifyMethods = {
 			siteNameOrStatus,
 			siteUrl,
 			...entries,
-		]);
-	},
+		]);,
 
 	/**
 	 * RSSセンス失敗通知 (OnRSSFailure)
 	 */
 <<<<<<< HEAD
-	async sendRssFailure(this: unknown, reason: string) {
+	async sendRssFailure(this: unknown, reason: string) 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendRssFailure(this: any, reason: string) {
+	async sendRssFailure(this: any, reason: string) 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-		return await this.sendShioriNotify("OnRSSFailure", [reason]);
-	},
+		return await this.sendShioriNotify("OnRSSFailure", [reason]);,
 
 	/**
 	 * UKADOC capability Notify イベントを送信 (SHIORI 実行初期)
 	 */
 <<<<<<< HEAD
-	async sendCapabilityNotify(this: unknown) {
+	async sendCapabilityNotify(this: unknown) 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	async sendCapabilityNotify(this: any) {
@@ -1005,7 +963,7 @@ export const shioriNotifyMethods = {
 	 * 起動時通知一式を送信 (SHIORI ロード後 / OnBoot 後に呼ぶ)
 	 */
 <<<<<<< HEAD
-	async sendBootNotifyEvents(this: unknown) {
+	async sendBootNotifyEvents(this: unknown) 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	async sendBootNotifyEvents(this: any) {
@@ -1046,7 +1004,7 @@ export const shioriNotifyMethods = {
 			ghosts.map((g: unknown) => g.sakura_name || g.name),
 		);
 
-		const keroNames = ghosts
+		const _keroNames = ghosts
 			.map((g: unknown) => g.kero_name)
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -1223,7 +1181,7 @@ export const shioriNotifyMethods = {
 		newSurface: number | string,
 		oldSurface: number | string,
 		rect:
-			| { left: number; top: number; right: number; bottom: number }
+			| left: number; top: number; right: number; bottom: number 
 			| string = "0,0,0,0",
 	) {
 		const rectStr =
@@ -1254,9 +1212,8 @@ export const shioriNotifyMethods = {
 		id: string,
 		text: string,
 		args: string[] = [],
-	) {
-		return await this.sendShioriNotify("OnChoiceSelectEx", [text, id, ...args]);
-	},
+	) 
+		return await this.sendShioriNotify("OnChoiceSelectEx", [text, id, ...args]);,
 
 	/**
 	 * アンカー拡張通知 (OnAnchorSelectEx) を送信 (UKADOC 規格準拠)
@@ -1272,54 +1229,48 @@ export const shioriNotifyMethods = {
 		id: string,
 		text: string,
 		args: string[] = [],
-	) {
-		return await this.sendShioriNotify("OnAnchorSelectEx", [text, id, ...args]);
-	},
+	) 
+		return await this.sendShioriNotify("OnAnchorSelectEx", [text, id, ...args]);,
 
 	/**
 	 * 利用条件受諾通知 (OnGhostTermsAccept) を送信 (UKADOC 規格準拠)
 	 */
 <<<<<<< HEAD
-	async sendGhostTermsAcceptNotify(this: unknown, id: string = "") {
+	async sendGhostTermsAcceptNotify(this: unknown, id: string = "") 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendGhostTermsAcceptNotify(this: any, id: string = "") {
+	async sendGhostTermsAcceptNotify(this: any, id: string = "") 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-		return await this.sendShioriNotify("OnGhostTermsAccept", id ? [id] : []);
-	},
+		return await this.sendShioriNotify("OnGhostTermsAccept", id ? [id] : []);,
 
 	/**
 	 * 利用条件拒否通知 (OnGhostTermsDecline) を送信 (UKADOC 規格準拠)
 	 */
 <<<<<<< HEAD
-	async sendGhostTermsDeclineNotify(this: unknown, id: string = "") {
+	async sendGhostTermsDeclineNotify(this: unknown, id: string = "") 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendGhostTermsDeclineNotify(this: any, id: string = "") {
+	async sendGhostTermsDeclineNotify(this: any, id: string = "") 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-		return await this.sendShioriNotify("OnGhostTermsDecline", id ? [id] : []);
-	},
+		return await this.sendShioriNotify("OnGhostTermsDecline", id ? [id] : []);,
 
 	/**
 	 * ダイアログ関連 SHIORI イベント通知 (UKADOC dialogbox spec)
 	 */
 <<<<<<< HEAD
-	async sendGhostTermsAccept(this: unknown, ghostName: string) {
-		return await this.sendShioriNotify("OnGhostTermsAccept", [ghostName]);
-	},
+	async sendGhostTermsAccept(this: unknown, ghostName: string) 
+		return await this.sendShioriNotify("OnGhostTermsAccept", [ghostName]);,
 
-	async sendGhostTermsDecline(this: unknown, ghostName: string) {
+	async sendGhostTermsDecline(this: unknown, ghostName: string) 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendGhostTermsAccept(this: any, ghostName: string) {
-		return await this.sendShioriNotify("OnGhostTermsAccept", [ghostName]);
-	},
+	async sendGhostTermsAccept(this: any, ghostName: string) 
+		return await this.sendShioriNotify("OnGhostTermsAccept", [ghostName]);,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendGhostTermsDecline(this: any, ghostName: string) {
+	async sendGhostTermsDecline(this: any, ghostName: string) 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-		return await this.sendShioriNotify("OnGhostTermsDecline", [ghostName]);
-	},
+		return await this.sendShioriNotify("OnGhostTermsDecline", [ghostName]);,
 
 	/**
 	 * バルーン関連 SHIORI イベント通知 (UKADOC balloon spec)
@@ -1333,12 +1284,11 @@ export const shioriNotifyMethods = {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		scopeId: number | string = 0,
 		reason: string = "",
-	) {
+	) 
 		return await this.sendShioriNotify("OnBalloonClose", [
 			String(scopeId),
 			reason,
-		]);
-	},
+		]);,
 
 	async sendBalloonBreak(
 <<<<<<< HEAD
@@ -1349,12 +1299,11 @@ export const shioriNotifyMethods = {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		scopeId: number | string = 0,
 		reason: string = "",
-	) {
+	) 
 		return await this.sendShioriNotify("OnBalloonBreak", [
 			String(scopeId),
 			reason,
-		]);
-	},
+		]);,
 
 	/**
 	 * サーフィス関連 SHIORI イベント通知 (UKADOC surface spec)
@@ -1368,12 +1317,11 @@ export const shioriNotifyMethods = {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		scopeId: number | string = 0,
 		surfaceId: number | string = 0,
-	) {
+	) 
 		return await this.sendShioriNotify("OnSurfaceChange", [
 			String(scopeId),
 			String(surfaceId),
-		]);
-	},
+		]);,
 
 	async sendOtherSurfaceChange(
 <<<<<<< HEAD
@@ -1385,13 +1333,12 @@ export const shioriNotifyMethods = {
 		ghostName: string,
 		scopeId: number | string = 0,
 		surfaceId: number | string = 0,
-	) {
+	) 
 		return await this.sendShioriNotify("OnOtherSurfaceChange", [
 			ghostName,
 			String(scopeId),
 			String(surfaceId),
-		]);
-	},
+		]);,
 
 	/**
 	 * ゴースト切替・シェル切替・システムライフサイクル通知 (UKADOC boot-close-change spec)
@@ -1406,84 +1353,70 @@ export const shioriNotifyMethods = {
 		toGhost: string,
 		fromGhost: string = "",
 		reason: string = "manual",
-	) {
+	) 
 		return await this.sendShioriNotify("OnGhostChanging", [
 			toGhost,
 			reason,
 			fromGhost,
-		]);
-	},
+		]);,
 
 <<<<<<< HEAD
 	async sendGhostChanged(
 		this: unknown,
 		toGhost: string,
 		fromGhost: string = "",
-	) {
-		return await this.sendShioriNotify("OnGhostChanged", [toGhost, fromGhost]);
-	},
+	) 
+		return await this.sendShioriNotify("OnGhostChanged", [toGhost, fromGhost]);,
 
 	async sendShellChanged(
 		this: unknown,
 		toShell: string,
 		fromShell: string = "",
-	) {
-		return await this.sendShioriNotify("OnShellChanged", [toShell, fromShell]);
-	},
+	) 
+		return await this.sendShioriNotify("OnShellChanged", [toShell, fromShell]);,
 
-	async sendCloseAll(this: unknown, reason: string = "user") {
-		return await this.sendShioriNotify("OnCloseAll", [reason]);
-	},
+	async sendCloseAll(this: unknown, reason: string = "user") 
+		return await this.sendShioriNotify("OnCloseAll", [reason]);,
 
-	async sendGhostCalling(this: unknown, targetGhost: string) {
-		return await this.sendShioriNotify("OnGhostCalling", [targetGhost]);
-	},
+	async sendGhostCalling(this: unknown, targetGhost: string) 
+		return await this.sendShioriNotify("OnGhostCalling", [targetGhost]);,
 
-	async sendGhostCalled(this: unknown, callerGhost: string) {
-		return await this.sendShioriNotify("OnGhostCalled", [callerGhost]);
-	},
+	async sendGhostCalled(this: unknown, callerGhost: string) 
+		return await this.sendShioriNotify("OnGhostCalled", [callerGhost]);,
 
-	async sendGhostCallComplete(this: unknown, targetGhost: string) {
-		return await this.sendShioriNotify("OnGhostCallComplete", [targetGhost]);
-	},
+	async sendGhostCallComplete(this: unknown, targetGhost: string) 
+		return await this.sendShioriNotify("OnGhostCallComplete", [targetGhost]);,
 
-	async sendOtherGhostBooted(this: unknown, ghostName: string) {
+	async sendOtherGhostBooted(this: unknown, ghostName: string) 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendGhostChanged(this: any, toGhost: string, fromGhost: string = "") {
-		return await this.sendShioriNotify("OnGhostChanged", [toGhost, fromGhost]);
-	},
+	async sendGhostChanged(this: any, toGhost: string, fromGhost: string = "") 
+		return await this.sendShioriNotify("OnGhostChanged", [toGhost, fromGhost]);,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendShellChanged(this: any, toShell: string, fromShell: string = "") {
-		return await this.sendShioriNotify("OnShellChanged", [toShell, fromShell]);
-	},
+	async sendShellChanged(this: any, toShell: string, fromShell: string = "") 
+		return await this.sendShioriNotify("OnShellChanged", [toShell, fromShell]);,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendCloseAll(this: any, reason: string = "user") {
-		return await this.sendShioriNotify("OnCloseAll", [reason]);
-	},
+	async sendCloseAll(this: any, reason: string = "user") 
+		return await this.sendShioriNotify("OnCloseAll", [reason]);,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendGhostCalling(this: any, targetGhost: string) {
-		return await this.sendShioriNotify("OnGhostCalling", [targetGhost]);
-	},
+	async sendGhostCalling(this: any, targetGhost: string) 
+		return await this.sendShioriNotify("OnGhostCalling", [targetGhost]);,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendGhostCalled(this: any, callerGhost: string) {
-		return await this.sendShioriNotify("OnGhostCalled", [callerGhost]);
-	},
+	async sendGhostCalled(this: any, callerGhost: string) 
+		return await this.sendShioriNotify("OnGhostCalled", [callerGhost]);,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendGhostCallComplete(this: any, targetGhost: string) {
-		return await this.sendShioriNotify("OnGhostCallComplete", [targetGhost]);
-	},
+	async sendGhostCallComplete(this: any, targetGhost: string) 
+		return await this.sendShioriNotify("OnGhostCallComplete", [targetGhost]);,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendOtherGhostBooted(this: any, ghostName: string) {
+	async sendOtherGhostBooted(this: any, ghostName: string) 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-		return await this.sendShioriNotify("OnOtherGhostBooted", [ghostName]);
-	},
+		return await this.sendShioriNotify("OnOtherGhostBooted", [ghostName]);,
 
 	async sendOtherGhostChanged(
 <<<<<<< HEAD
@@ -1494,122 +1427,99 @@ export const shioriNotifyMethods = {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		ghostName: string,
 		toGhost: string = "",
-	) {
+	) 
 		return await this.sendShioriNotify("OnOtherGhostChanged", [
 			ghostName,
 			toGhost,
-		]);
-	},
+		]);,
 
 <<<<<<< HEAD
-	async sendOtherGhostClosed(this: unknown, ghostName: string) {
-		return await this.sendShioriNotify("OnOtherGhostClosed", [ghostName]);
-	},
+	async sendOtherGhostClosed(this: unknown, ghostName: string) 
+		return await this.sendShioriNotify("OnOtherGhostClosed", [ghostName]);,
 
-	async sendSysSuspend(this: unknown) {
-		return await this.sendShioriNotify("OnSysSuspend", []);
-	},
+	async sendSysSuspend(this: unknown) 
+		return await this.sendShioriNotify("OnSysSuspend", []);,
 
-	async sendSysResume(this: unknown) {
-		return await this.sendShioriNotify("OnSysResume", []);
-	},
+	async sendSysResume(this: unknown) 
+		return await this.sendShioriNotify("OnSysResume", []);,
 
-	async sendDestroy(this: unknown) {
-		return await this.sendShioriNotify("OnDestroy", []);
-	},
+	async sendDestroy(this: unknown) 
+		return await this.sendShioriNotify("OnDestroy", []);,
 
-	async sendInitialize(this: unknown) {
-		return await this.sendShioriNotify("OnInitialize", []);
-	},
+	async sendInitialize(this: unknown) 
+		return await this.sendShioriNotify("OnInitialize", []);,
 
-	async sendVirtualDesktopChanged(this: unknown, desktopId: string | number) {
+	async sendVirtualDesktopChanged(this: unknown, desktopId: string | number) 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendOtherGhostClosed(this: any, ghostName: string) {
-		return await this.sendShioriNotify("OnOtherGhostClosed", [ghostName]);
-	},
+	async sendOtherGhostClosed(this: any, ghostName: string) 
+		return await this.sendShioriNotify("OnOtherGhostClosed", [ghostName]);,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendSysSuspend(this: any) {
-		return await this.sendShioriNotify("OnSysSuspend", []);
-	},
+	async sendSysSuspend(this: any) 
+		return await this.sendShioriNotify("OnSysSuspend", []);,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendSysResume(this: any) {
-		return await this.sendShioriNotify("OnSysResume", []);
-	},
+	async sendSysResume(this: any) 
+		return await this.sendShioriNotify("OnSysResume", []);,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendDestroy(this: any) {
-		return await this.sendShioriNotify("OnDestroy", []);
-	},
+	async sendDestroy(this: any) 
+		return await this.sendShioriNotify("OnDestroy", []);,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendInitialize(this: any) {
-		return await this.sendShioriNotify("OnInitialize", []);
-	},
+	async sendInitialize(this: any) 
+		return await this.sendShioriNotify("OnInitialize", []);,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendVirtualDesktopChanged(this: any, desktopId: string | number) {
+	async sendVirtualDesktopChanged(this: any, desktopId: string | number) 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		return await this.sendShioriNotify("OnVirtualDesktopChanged", [
 			String(desktopId),
-		]);
-	},
+		]);,
 
 <<<<<<< HEAD
-	async sendFullScreenAppMinimize(this: unknown) {
-		return await this.sendShioriNotify("OnFullScreenAppMinimize", []);
-	},
+	async sendFullScreenAppMinimize(this: unknown) 
+		return await this.sendShioriNotify("OnFullScreenAppMinimize", []);,
 
-	async sendFullScreenAppRestore(this: unknown) {
-		return await this.sendShioriNotify("OnFullScreenAppRestore", []);
-	},
+	async sendFullScreenAppRestore(this: unknown) 
+		return await this.sendShioriNotify("OnFullScreenAppRestore", []);,
 
-	async sendBasewareUpdating(this: unknown) {
-		return await this.sendShioriNotify("OnBasewareUpdating", []);
-	},
+	async sendBasewareUpdating(this: unknown) 
+		return await this.sendShioriNotify("OnBasewareUpdating", []);,
 
-	async sendBasewareUpdated(this: unknown) {
-		return await this.sendShioriNotify("OnBasewareUpdated", []);
-	},
+	async sendBasewareUpdated(this: unknown) 
+		return await this.sendShioriNotify("OnBasewareUpdated", []);,
 
-	async sendCacheSuspend(this: unknown) {
-		return await this.sendShioriNotify("OnCacheSuspend", []);
-	},
+	async sendCacheSuspend(this: unknown) 
+		return await this.sendShioriNotify("OnCacheSuspend", []);,
 
-	async sendCacheRestore(this: unknown) {
+	async sendCacheRestore(this: unknown) 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendFullScreenAppMinimize(this: any) {
-		return await this.sendShioriNotify("OnFullScreenAppMinimize", []);
-	},
+	async sendFullScreenAppMinimize(this: any) 
+		return await this.sendShioriNotify("OnFullScreenAppMinimize", []);,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendFullScreenAppRestore(this: any) {
-		return await this.sendShioriNotify("OnFullScreenAppRestore", []);
-	},
+	async sendFullScreenAppRestore(this: any) 
+		return await this.sendShioriNotify("OnFullScreenAppRestore", []);,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendBasewareUpdating(this: any) {
-		return await this.sendShioriNotify("OnBasewareUpdating", []);
-	},
+	async sendBasewareUpdating(this: any) 
+		return await this.sendShioriNotify("OnBasewareUpdating", []);,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendBasewareUpdated(this: any) {
-		return await this.sendShioriNotify("OnBasewareUpdated", []);
-	},
+	async sendBasewareUpdated(this: any) 
+		return await this.sendShioriNotify("OnBasewareUpdated", []);,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendCacheSuspend(this: any) {
-		return await this.sendShioriNotify("OnCacheSuspend", []);
-	},
+	async sendCacheSuspend(this: any) 
+		return await this.sendShioriNotify("OnCacheSuspend", []);,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendCacheRestore(this: any) {
+	async sendCacheRestore(this: any) 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-		return await this.sendShioriNotify("OnCacheRestore", []);
-	},
+		return await this.sendShioriNotify("OnCacheRestore", []);,
 
 	/**
 	 * 重なり・画面外通知 (UKADOC overlap spec)
@@ -1624,48 +1534,42 @@ export const shioriNotifyMethods = {
 		scope0: number | string,
 		scope1: number | string,
 		rect: string = "",
-	) {
+	) 
 		return await this.sendShioriNotify("OnOverlap", [
 			String(scope0),
 			String(scope1),
 			rect,
-		]);
-	},
+		]);,
 
 <<<<<<< HEAD
 	async sendOffscreen(
 		this: unknown,
 		scope: number | string,
 		rect: string = "",
-	) {
-		return await this.sendShioriNotify("OnOffscreen", [String(scope), rect]);
-	},
+	) 
+		return await this.sendShioriNotify("OnOffscreen", [String(scope), rect]);,
 
-	async sendOtherOverlap(this: unknown, ghostName: string, rect: string = "") {
-		return await this.sendShioriNotify("OnOtherOverlap", [ghostName, rect]);
-	},
+	async sendOtherOverlap(this: unknown, ghostName: string, rect: string = "") 
+		return await this.sendShioriNotify("OnOtherOverlap", [ghostName, rect]);,
 
 	async sendOtherOffscreen(
 		this: unknown,
 		ghostName: string,
 		rect: string = "",
-	) {
+	) 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendOffscreen(this: any, scope: number | string, rect: string = "") {
-		return await this.sendShioriNotify("OnOffscreen", [String(scope), rect]);
-	},
+	async sendOffscreen(this: any, scope: number | string, rect: string = "") 
+		return await this.sendShioriNotify("OnOffscreen", [String(scope), rect]);,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendOtherOverlap(this: any, ghostName: string, rect: string = "") {
-		return await this.sendShioriNotify("OnOtherOverlap", [ghostName, rect]);
-	},
+	async sendOtherOverlap(this: any, ghostName: string, rect: string = "") 
+		return await this.sendShioriNotify("OnOtherOverlap", [ghostName, rect]);,
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	async sendOtherOffscreen(this: any, ghostName: string, rect: string = "") {
+	async sendOtherOffscreen(this: any, ghostName: string, rect: string = "") 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-		return await this.sendShioriNotify("OnOtherOffscreen", [ghostName, rect]);
-	},
+		return await this.sendShioriNotify("OnOtherOffscreen", [ghostName, rect]);,
 
 	/**
 	 * 外部通信イベント通知 (UKADOC other-communication spec)
@@ -1706,10 +1610,8 @@ export const shioriNotifyMethods = {
 			| "OnPingComplete"
 			| "OnPingProgress",
 		references: (string | number)[] = [],
-	) {
+	) 
 		return await this.sendShioriNotify(
 			event,
 			references.map((r) => String(r)),
-		);
-	},
-};
+		);,;

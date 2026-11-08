@@ -18,7 +18,7 @@ const { scriptLifetimeState } = await import(
 test("E2E dialogue lifecycle Cycle 8: SyncObject multi-ghost synchronization and script command integration", async () => {
 	const syncMgr = new SyncObjectManager();
 <<<<<<< HEAD
-	const events: unknown[] = [];
+	const _events: unknown[] = [];
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const events: any[] = [];
@@ -61,15 +61,13 @@ test("E2E dialogue lifecycle Cycle 8: SyncObject multi-ghost synchronization and
 			) => {
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
-			sendShioriEvent: async (eventName: string, args: any[]) => {
+			sendShioriEvent: async (eventName: string, args: any[]) => 
 				events.push({ type: "shiori_event", eventName, args });
-				return { status: 200, value: "" };
-			},
+				return { status: 200, value: "" };,
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
-			sendRaiseOther: async (ghost: string, eventName: string, args: any[]) => {
+			sendRaiseOther: async (ghost: string, eventName: string, args: any[]) => 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-				events.push({ type: "raise_other", ghost, eventName, args });
-			},
+				events.push(type: "raise_other", ghost, eventName, args );,
 		},
 	};
 
@@ -107,7 +105,7 @@ test("E2E dialogue lifecycle Cycle 8: SyncObject multi-ghost synchronization and
 
 test("E2E dialogue lifecycle Cycle 8: Mode switching state machine and cross-ghost IPC event flow", async () => {
 <<<<<<< HEAD
-	const events: unknown[] = [];
+	const _events: unknown[] = [];
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const events: any[] = [];
@@ -143,15 +141,13 @@ test("E2E dialogue lifecycle Cycle 8: Mode switching state machine and cross-gho
 			) => {
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
-			sendShioriEvent: async (eventName: string, args: any[]) => {
+			sendShioriEvent: async (eventName: string, args: any[]) => 
 				events.push({ type: "shiori_event", eventName, args });
-				return { status: 200, value: "" };
-			},
+				return { status: 200, value: "" };,
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
-			sendRaiseOther: async (ghost: string, eventName: string, args: any[]) => {
+			sendRaiseOther: async (ghost: string, eventName: string, args: any[]) => 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-				events.push({ type: "raise_other", ghost, eventName, args });
-			},
+				events.push(type: "raise_other", ghost, eventName, args );,
 			sendNotifyOther: async (
 				ghost: string,
 				eventName: string,
@@ -161,9 +157,8 @@ test("E2E dialogue lifecycle Cycle 8: Mode switching state machine and cross-gho
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				args: any[],
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-			) => {
-				events.push({ type: "notify_other", ghost, eventName, args });
-			},
+			) => 
+				events.push({ type: "notify_other", ghost, eventName, args });,
 		},
 	};
 

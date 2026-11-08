@@ -11,8 +11,8 @@ export const menuMethods = {
 	) {
 		if (isTauriAvailable()) {
 <<<<<<< HEAD
-			const sX = (globalThis as unknown).screenX ?? 0;
-			const sY = (globalThis as unknown).screenY ?? 0;
+			const _sX = (globalThis as unknown).screenX ?? 0;
+			const _sY = (globalThis as unknown).screenY ?? 0;
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const sX = (globalThis as any).screenX ?? 0;
@@ -71,7 +71,7 @@ export const menuMethods = {
 			return;
 		}
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
-		(this as any).toggleHtmlMenu(scope);
+		(this _as _any).toggleHtmlMenu(scope);
 	},
 
 	toggleHtmlMenu(scope: number = 0) {
@@ -138,7 +138,7 @@ export const menuMethods = {
 				emit("sync-balloons", (this as unknown).availableBalloons);
 =======
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
-				captions: (this as any).cachedMenuCaptions || {},
+				captions: (this as any).cachedMenuCaptions || ,
 			});
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			emit("sync-theme", (this as any).currentBalloonTheme);

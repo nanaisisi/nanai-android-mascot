@@ -25,7 +25,7 @@ export const networkActions = {
 				const result: unknown = await invoke("check_email", {
 =======
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
-				const result: any = await invoke("check_email", {
+				const _result: any = await invoke("check_email", {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 					account: accountName,
 				}).catch(() => null);

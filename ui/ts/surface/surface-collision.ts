@@ -27,7 +27,7 @@ export const surfaceCollisionMethods = {
 
 		// 1. Defined surface name lookup (`name,定義名`)
 <<<<<<< HEAD
-		const namesMap = (this as unknown).names;
+		const _namesMap = (this as unknown).names;
 =======
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const namesMap = (this as any).names;
@@ -89,8 +89,8 @@ export const surfaceCollisionMethods = {
 	},
 
 	detectCollision(
-		clickX: number,
-		clickY: number,
+		_clickX: number,
+		_clickY: number,
 <<<<<<< HEAD
 		targetRect: unknown,
 =======
@@ -114,10 +114,10 @@ export const surfaceCollisionMethods = {
 		const relY = (clickY - targetRect.top) / targetRect.height;
 
 <<<<<<< HEAD
-		const canvasX = Math.round(relX * (this as unknown).baseWidth);
-		const canvasY = Math.round(relY * (this as unknown).baseHeight);
+		const _canvasX = Math.round(relX * (this as unknown).baseWidth);
+		const _canvasY = Math.round(relY * (this as unknown).baseHeight);
 
-		const activeAnimationCols =
+		const _activeAnimationCols =
 			(this as unknown).animationManager?.getActiveCollisions?.(scopeId) || [];
 =======
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -159,9 +159,9 @@ export const surfaceCollisionMethods = {
 			(this as unknown).collisionSort || "none",
 		).toLowerCase();
 
-		let candidates: unknown[] = [];
+		let _candidates: unknown[] = [];
 		if (sortKind === "ascend" || sortKind === "id") {
-			candidates = colList.slice().sort((a: unknown, b: unknown) => {
+			_candidates = colList.slice().sort((a: unknown, b: unknown) => {
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(this as any).collisionSort || "none",
@@ -179,7 +179,7 @@ export const surfaceCollisionMethods = {
 			});
 		} else if (sortKind === "descend") {
 <<<<<<< HEAD
-			candidates = colList.slice().sort((a: unknown, b: unknown) => {
+			candidates = colList.slice().sort((a: unknown, b: unknown) => 
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			candidates = colList.slice().sort((a: any, b: any) => {
@@ -187,8 +187,7 @@ export const surfaceCollisionMethods = {
 				const idA = a.id != null ? a.id : -1;
 				const idB = b.id != null ? b.id : -1;
 				return idB - idA;
-			});
-		} else {
+			});else 
 			for (let i = colList.length - 1; i >= 0; i--) {
 				const col = colList[i];
 				if (collisionContains(col, canvasX, canvasY)) {
@@ -201,7 +200,6 @@ export const surfaceCollisionMethods = {
 				}
 			}
 			return { name: "", canvasX, canvasY };
-		}
 
 		for (let i = 0; i < candidates.length; i++) {
 			const col = candidates[i];

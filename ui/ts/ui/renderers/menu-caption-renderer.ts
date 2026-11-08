@@ -14,8 +14,8 @@ export const menuCaptionRenderer = {
 		if (!captions || typeof captions !== "object") return;
 
 		for (const def of MENU_CAPTION_DEFINITIONS) {
-			const customVal = captions[def.resource] || captions[def.id];
-			const el =
+			const _customVal = captions[def.resource] || captions[def.id];
+			const _el =
 <<<<<<< HEAD
 				(rootEl as unknown).getElementById?.(def.id) ||
 				(rootEl as unknown).querySelector?.(`#${def.id}`);
@@ -23,7 +23,7 @@ export const menuCaptionRenderer = {
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				(rootEl as any).getElementById?.(def.id) ||
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
-				(rootEl as any).querySelector?.(`#${def.id}`);
+				(rootEl as any).querySelector?.(`#$def.id`);
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 			if (!el) continue;
 

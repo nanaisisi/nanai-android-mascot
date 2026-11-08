@@ -234,14 +234,14 @@ export async function handleCommand(
 
 <<<<<<< HEAD
 export function handleEnd(
-	player: unknown,
-	app: unknown,
+	_player: unknown,
+	_app: unknown,
 	_token: unknown,
-	context: unknown,
+	_context: unknown,
 ) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function handleEnd(player: any, app: any, _token: any, context: any) {
+export function _handleEnd(_player: any, app: any, _token: any, context: any) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	app.surfaceManager?.onTalkEnd(player.currentScope);
 	app.surfaceManager?.onScriptEnd(0);

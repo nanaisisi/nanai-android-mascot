@@ -1,7 +1,7 @@
 <<<<<<< HEAD
-let shioriInstance: unknown = null;
-let isLoaded = false;
-let _memoryBuffer: unknown = null;
+const _shioriInstance: unknown = null;
+const _isLoaded = false;
+const _memoryBuffer: unknown = null;
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 let shioriInstance: any = null;
@@ -35,7 +35,7 @@ self.addEventListener("message", async (e: MessageEvent) => {
 					_memoryBuffer = instance.exports.memory;
 
 <<<<<<< HEAD
-					const loadFn: unknown =
+					const _loadFn: unknown =
 						(instance.exports.load as unknown) ||
 						(instance.exports.shiori_load as unknown);
 =======
@@ -53,12 +53,11 @@ self.addEventListener("message", async (e: MessageEvent) => {
 
 				isLoaded = true;
 <<<<<<< HEAD
-				(self as unknown).postMessage({
+				(self as unknown).postMessage(
 					type: "LOAD_RESULT",
 					id,
-					success: true,
-				});
-			} catch (err: unknown) {
+					success: true,);
+			} catch (_err: unknown) {
 				isLoaded = false;
 				(self as unknown).postMessage({
 =======
@@ -82,52 +81,45 @@ self.addEventListener("message", async (e: MessageEvent) => {
 			try {
 				if (!isLoaded || !shioriInstance) {
 <<<<<<< HEAD
-					(self as unknown).postMessage({
+					(self as unknown).postMessage(
 =======
 					// biome-ignore lint/suspicious/noExplicitAny: automated fix
-					(self as any).postMessage({
+					(self as any).postMessage(
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 						type: "REQUEST_RESULT",
 						id,
-						response: "SHIORI/3.0 204 No Content\r\nCharset: UTF-8\r\n\r\n",
-					});
+						response: "SHIORI/3.0 204 No Content\r\nCharset: UTF-8\r\n\r\n",);
 					return;
-				}
 
 				const requestText = payload?.request || "";
 <<<<<<< HEAD
-				const responseText = (self as unknown).executeWasmRequest(
+				const _responseText = (self as unknown).executeWasmRequest(
 =======
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
-				const responseText = (self as any).executeWasmRequest(
+				const _responseText = (self as any).executeWasmRequest(
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 					shioriInstance,
 					requestText,
 				);
 
 <<<<<<< HEAD
-				(self as unknown).postMessage({
+				(self as unknown).postMessage(
 =======
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+				(self as any).postMessage(
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+					type: "REQUEST_RESULT",
+					id,
+					response: responseText,);
+<<<<<<< HEADcatch (err: unknown) 
+				(self as unknown).postMessage({
+=======catch (err: any) 
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				(self as any).postMessage({
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 					type: "REQUEST_RESULT",
 					id,
-					response: responseText,
-				});
-<<<<<<< HEAD
-			} catch (err: unknown) {
-				(self as unknown).postMessage({
-=======
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
-			} catch (err: any) {
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
-				(self as any).postMessage({
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-					type: "REQUEST_RESULT",
-					id,
-					response: `SHIORI/3.0 500 Internal Server Error\r\nCharset: UTF-8\r\nX-Error: ${err.message}\r\n\r\n`,
-				});
+					response: `SHIORI/3.0 500 Internal Server Error\r\nCharset: UTF-8\r\nX-Error: ${err.message}\r\n\r\n`,);
 			}
 			break;
 
@@ -135,7 +127,7 @@ self.addEventListener("message", async (e: MessageEvent) => {
 			try {
 				if (shioriInstance) {
 <<<<<<< HEAD
-					const unloadFn: unknown =
+					const _unloadFn: unknown =
 						(shioriInstance.exports.unload as unknown) ||
 						(shioriInstance.exports.shiori_unload as unknown);
 =======
@@ -154,27 +146,26 @@ self.addEventListener("message", async (e: MessageEvent) => {
 			shioriInstance = null;
 			isLoaded = false;
 <<<<<<< HEAD
-			(self as unknown).postMessage({
+			(self as unknown).postMessage(
 				type: "UNLOAD_RESULT",
 				id,
-				success: true,
-			});
+				success: true,);
 			break;
 
 		default:
-			(self as unknown).postMessage({
+			(self as unknown).postMessage(
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
-			(self as any).postMessage({ type: "UNLOAD_RESULT", id, success: true });
+			(self as any).postMessage(type: "UNLOAD_RESULT", id, success: true );
 			break;
 
 		default:
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
-			(self as any).postMessage({
+			(self as any).postMessage(
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				type: "ERROR",
 				id,
-				error: `Unknown message type: ${type}`,
+				error: `Unknown message type: $type`,
 			});
 			break;
 	}

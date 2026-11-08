@@ -99,18 +99,16 @@ describe("SERIKO and Surface Change Event Coordination (Slot-08 Cycle 8)", () =>
 		const mockManager: unknown = {
 =======
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
-		const mockManager: any = {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-			manager: {},
+		const _mockManager: any = {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad,
 			animationsForTrigger: vi
 				.fn()
-				.mockReturnValue([
-					{ anim: { id: 1, patterns: [] }, sid: "0", param: 1 },
+				.mockReturnValue([id: 1, patterns: [] , sid: "0", param: 1 ,
 				]),
 			playAnimationPatterns: vi.fn(),
 			isSerikoTalkEnabled: vi.fn().mockReturnValue(false),
-			_spokenCount: {},
-			_talkStarted: {},
+			_spokenCount: ,
+			_talkStarted: ,
 		};
 
 		onCharSpoken(mockManager, 0);
@@ -122,22 +120,19 @@ describe("SERIKO and Surface Change Event Coordination (Slot-08 Cycle 8)", () =>
 	});
 
 	it("handles scaling draw method in _applyAnimationFrame", async () => {
-		const setScale = vi.fn();
-		const notifyFrameStep = vi.fn();
+		const _setScale = vi.fn();
+		const _notifyFrameStep = vi.fn();
 <<<<<<< HEAD
 		const instance: unknown = {
 =======
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
-		const instance: any = {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-			manager: {
-				app: { ghostController: {} },
+		const _instance: any = {
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad,
 				currentSurfaceIdFor: vi.fn().mockReturnValue(0),
-				animations: { "0": [{ id: 1 }] },
-				setScale,
-			},
+				animations: "0": [id: 1 ] ,
+				setScale,,
 			isAnimationPaused: vi.fn().mockReturnValue(false),
-			scheduler: { notifyFrameStep },
+			scheduler: _notifyFrameStep ,
 		};
 
 		const pat = { type: "scaling", x: 150, y: 150 };
@@ -163,7 +158,7 @@ describe("SERIKO and Surface Change Event Coordination (Slot-08 Cycle 8)", () =>
 
 	it("manages scaling and serikotalk state in SurfaceAnimationManager", () => {
 <<<<<<< HEAD
-		const sam = new SurfaceAnimationManager({} as unknown);
+		const _sam = new SurfaceAnimationManager({} as unknown);
 =======
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const sam = new SurfaceAnimationManager({} as any);

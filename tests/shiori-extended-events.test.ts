@@ -1,11 +1,11 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { eventMethods } from "../ui/js/core/app-events.js";
 import { shioriNotifyMethods } from "../ui/js/ghost/shiori-notify.js";
 
 describe("SHIORI Extended Events & Notifications", () => {
 <<<<<<< HEAD
-	let mockController: unknown;
-	let mockAppEvents: unknown;
+	let _mockController: unknown;
+	let _mockAppEvents: unknown;
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let mockController: any;
@@ -13,7 +13,7 @@ describe("SHIORI Extended Events & Notifications", () => {
 	let mockAppEvents: any;
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 
-	beforeEach(() => {
+	beforeEach(() => 
 		mockController = {
 			app: { ghostId: "test-ghost" },
 			currentGhost: {
@@ -43,8 +43,7 @@ describe("SHIORI Extended Events & Notifications", () => {
 					canvasY: 85,
 				}),
 			},
-		};
-	});
+		};);
 
 	describe("shiori-notify HEADLINE & RSS protocols", () => {
 		it("sends OnHeadlinesenseBegin with siteName and url", async () => {

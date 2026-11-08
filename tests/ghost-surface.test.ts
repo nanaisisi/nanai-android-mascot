@@ -84,7 +84,7 @@ test("a slower older surface update does not overwrite a newer one", async () =>
 	calls.length = 0;
 	const gc = makeController();
 <<<<<<< HEAD
-	let release: unknown = null;
+	const _release: unknown = null;
 =======
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let release;

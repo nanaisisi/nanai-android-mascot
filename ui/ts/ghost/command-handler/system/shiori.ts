@@ -5,12 +5,12 @@
 
 <<<<<<< HEAD
 export async function handleSetShioriDebugMode(
-	handler: unknown,
-	args: string[],
+	_handler: unknown,
+	_args: string[],
 ) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleSetShioriDebugMode(handler: any, args: string[]) {
+export async function _handleSetShioriDebugMode(handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const mode = (args[2] ?? "").toLowerCase() === "true";
 	if (handler.app.ghostController) {
@@ -19,10 +19,10 @@ export async function handleSetShioriDebugMode(handler: any, args: string[]) {
 }
 
 <<<<<<< HEAD
-export async function handleReloadShiori(handler: unknown, _args: string[]) {
+export async function _handleReloadShiori(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleReloadShiori(handler: any, _args: string[]) {
+export async function _handleReloadShiori(handler: any, _args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	console.log("🔄 Execute reload,shiori triggered");
 	if (handler.app.ghostController) {
@@ -34,10 +34,10 @@ export async function handleReloadShiori(handler: any, _args: string[]) {
 }
 
 <<<<<<< HEAD
-export async function handleReloadShell(handler: unknown, _args: string[]) {
+export async function _handleReloadShell(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleReloadShell(handler: any, _args: string[]) {
+export async function _handleReloadShell(handler: any, _args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	console.log("🔄 Execute reload,shell triggered");
 	const gc = handler.app.ghostController;
@@ -47,10 +47,10 @@ export async function handleReloadShell(handler: any, _args: string[]) {
 }
 
 <<<<<<< HEAD
-export async function handleReloadGhost(handler: unknown, _args: string[]) {
+export async function _handleReloadGhost(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleReloadGhost(handler: any, _args: string[]) {
+export async function _handleReloadGhost(handler: any, _args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	console.log("🔄 Execute reload,ghost triggered");
 	const gc = handler.app.ghostController;
@@ -61,10 +61,10 @@ export async function handleReloadGhost(handler: any, _args: string[]) {
 }
 
 <<<<<<< HEAD
-export async function handleReloadBalloon(handler: unknown, _args: string[]) {
+export async function _handleReloadBalloon(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleReloadBalloon(handler: any, _args: string[]) {
+export async function _handleReloadBalloon(handler: any, _args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	console.log("🔄 Execute reload,balloon triggered");
 	const balloonTheme =
@@ -75,10 +75,10 @@ export async function handleReloadBalloon(handler: any, _args: string[]) {
 }
 
 <<<<<<< HEAD
-export async function handleReloadDescript(handler: unknown, _args: string[]) {
+export async function _handleReloadDescript(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleReloadDescript(handler: any, _args: string[]) {
+export async function _handleReloadDescript(handler: any, _args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	console.log("🔄 Execute reload,descript triggered");
 	const gc = handler.app.ghostController;
@@ -92,10 +92,10 @@ export async function handleReloadDescript(handler: any, _args: string[]) {
 }
 
 <<<<<<< HEAD
-export async function handleReloadSurface(handler: unknown, _args: string[]) {
+export async function _handleReloadSurface(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleReloadSurface(handler: any, _args: string[]) {
+export async function _handleReloadSurface(handler: any, _args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	console.log("🔄 Execute reloadsurface triggered");
 	const gc = handler.app.ghostController;

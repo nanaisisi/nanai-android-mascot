@@ -6,10 +6,10 @@
 import { invoke, isTauriAvailable } from "../../core/tauri-helper.js";
 
 <<<<<<< HEAD
-export async function handlePluginEvent(_handler: unknown, args: string[]) {
+export async function handlePluginEvent(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handlePluginEvent(_handler: any, args: string[]) {
+export async function _handlePluginEvent(_handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const rawCmd = (args[0] ?? "").toLowerCase();
 	const isTimer = rawCmd.startsWith("timer");

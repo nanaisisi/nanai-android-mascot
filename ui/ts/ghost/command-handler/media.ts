@@ -9,29 +9,29 @@ import { invoke, isTauriAvailable } from "../../core/tauri-helper.js";
 export async function handleSetWallpaper(_handler: unknown, args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleSetWallpaper(_handler: any, args: string[]) {
+export async function _handleSetWallpaper(_handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const [filename, option] = args.slice(1);
 	console.log(`🖼️ Wallpaper set: ${filename} (option: ${option})`);
 }
 
 <<<<<<< HEAD
-export async function handleSaveWallpaper(_handler: unknown, _args: string[]) {
+export async function _handleSaveWallpaper(_handler: unknown, _args: string[]) {
 	console.log("🖼️ Wallpaper savewallpaper executed");
 }
 
-export async function handleRestoreWallpaper(
+export async function _handleRestoreWallpaper(
 	_handler: unknown,
 	_args: string[],
 ) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleSaveWallpaper(_handler: any, _args: string[]) {
+export async function _handleSaveWallpaper(_handler: any, _args: string[]) {
 	console.log("🖼️ Wallpaper savewallpaper executed");
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleRestoreWallpaper(_handler: any, _args: string[]) {
+export async function _handleRestoreWallpaper(_handler: any, _args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	console.log("🖼️ Wallpaper restorewallpaper executed");
 }
@@ -50,13 +50,13 @@ export async function handleCancelNetworkService(
 }
 
 <<<<<<< HEAD
-export async function handleCloseNetworkService(
+export async function _handleCloseNetworkService(
 	_handler: unknown,
 	args: string[],
 ) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleCloseNetworkService(_handler: any, args: string[]) {
+export async function _handleCloseNetworkService(_handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const [service, target] = args.slice(1);
 	console.log(`🛑 Network service close: ${service} (${target})`);
@@ -86,7 +86,7 @@ export async function handleFileWatchCommand(
 }
 
 <<<<<<< HEAD
-export async function handleEmptyRecycleBin(
+export async function _handleEmptyRecycleBin(
 	_handler: unknown,
 	_args: string[],
 ) {
@@ -105,7 +105,7 @@ export async function handleEmptyRecycleBin(_handler: any, _args: string[]) {
 }
 
 <<<<<<< HEAD
-export async function handlePingCommand(handler: unknown, args: string[]) {
+export async function _handlePingCommand(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handlePingCommand(handler: any, args: string[]) {
@@ -134,7 +134,7 @@ export async function handlePingCommand(handler: any, args: string[]) {
 }
 
 <<<<<<< HEAD
-export async function handleNslookupCommand(handler: unknown, args: string[]) {
+export async function _handleNslookupCommand(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleNslookupCommand(handler: any, args: string[]) {
@@ -163,9 +163,9 @@ export async function handleNslookupCommand(handler: any, args: string[]) {
 }
 
 <<<<<<< HEAD
-export async function handleScheduleAddCommand(
-	handler: unknown,
-	args: string[],
+export async function _handleScheduleAddCommand(
+	_handler: unknown,
+	_args: string[],
 ) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -199,10 +199,10 @@ export async function handleScheduleAddCommand(handler: any, args: string[]) {
 }
 
 <<<<<<< HEAD
-export async function handleExecuteCommand(handler: unknown, args: string[]) {
+export async function _handleExecuteCommand(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleExecuteCommand(handler: any, args: string[]) {
+export async function _handleExecuteCommand(handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const subCmd = (args[1] ?? "").toLowerCase();
 	const restArgs = args.slice(1);
@@ -277,10 +277,10 @@ export async function handleExecuteCommand(handler: any, args: string[]) {
 }
 
 <<<<<<< HEAD
-export async function handleArchiveExec(handler: unknown, args: string[]) {
+export async function handleArchiveExec(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleArchiveExec(handler: any, args: string[]) {
+export async function _handleArchiveExec(handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const [action, filename, dest] = args.slice(1);
 	console.log(`📦 Archive action ${action}: file=${filename}, dest=${dest}`);
@@ -300,30 +300,30 @@ export async function handleArchiveExec(handler: any, args: string[]) {
 }
 
 <<<<<<< HEAD
-export async function handleDownloadExec(_handler: unknown, args: string[]) {
+export async function _handleDownloadExec(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleDownloadExec(_handler: any, args: string[]) {
+export async function _handleDownloadExec(_handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const [url, savePath] = args.slice(1);
 	console.log(`📥 Download requested: url=${url}, savePath=${savePath}`);
 }
 
 <<<<<<< HEAD
-export async function handleUploadExec(_handler: unknown, args: string[]) {
+export async function _handleUploadExec(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleUploadExec(_handler: any, args: string[]) {
+export async function _handleUploadExec(_handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const [url, filePath] = args.slice(1);
 	console.log(`📤 Upload requested: url=${url}, filePath=${filePath}`);
 }
 
 <<<<<<< HEAD
-export async function handleMailCheckExec(handler: unknown, args: string[]) {
+export async function _handleMailCheckExec(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleMailCheckExec(handler: any, args: string[]) {
+export async function _handleMailCheckExec(handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const [account] = args.slice(1);
 	console.log(`✉️ Mail check requested for account: ${account}`);
@@ -331,59 +331,59 @@ export async function handleMailCheckExec(handler: any, args: string[]) {
 }
 
 <<<<<<< HEAD
-export async function handleMailExec(_handler: unknown, args: string[]) {
+export async function _handleMailExec(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleMailExec(_handler: any, args: string[]) {
+export async function _handleMailExec(_handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const [action, target] = args.slice(1);
 	console.log(`✉️ Mail action ${action}: target=${target}`);
 }
 
 <<<<<<< HEAD
-export async function handleFileExec(_handler: unknown, args: string[]) {
+export async function _handleFileExec(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleFileExec(_handler: any, args: string[]) {
+export async function _handleFileExec(_handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const [action, path, dest] = args.slice(1);
 	console.log(`📁 File action ${action}: path=${path}, dest=${dest}`);
 }
 
 <<<<<<< HEAD
-export async function handleSetHttpTimeout(_handler: unknown, args: string[]) {
+export async function _handleSetHttpTimeout(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleSetHttpTimeout(_handler: any, args: string[]) {
+export async function _handleSetHttpTimeout(_handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const [timeout] = args.slice(1);
 	console.log(`⏱️ HTTP timeout set: ${timeout}s`);
 }
 
 <<<<<<< HEAD
-export async function handleSetProxy(_handler: unknown, args: string[]) {
+export async function _handleSetProxy(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleSetProxy(_handler: any, args: string[]) {
+export async function _handleSetProxy(_handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const [server, port] = args.slice(1);
 	console.log(`🌐 Proxy set: ${server}:${port}`);
 }
 
 <<<<<<< HEAD
-export async function handleUpdate(handler: unknown) {
+export async function _handleUpdate(handler: unknown) {
 	await handler.app.startNetworkUpdate?.();
 }
 
-export async function handleUpdateByMyself(handler: unknown) {
+export async function _handleUpdateByMyself(handler: unknown) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleUpdate(handler: any) {
+export async function _handleUpdate(handler: any) {
 	await handler.app.startNetworkUpdate?.();
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleUpdateByMyself(handler: any) {
+export async function _handleUpdateByMyself(_handler: any) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	await handler.app.startNetworkUpdate?.();
 }

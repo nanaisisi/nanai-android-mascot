@@ -25,10 +25,10 @@ export function clearAllScriptTimers() {
 }
 
 <<<<<<< HEAD
-export async function handleNotifyCommand(handler: unknown, args: string[]) {
+export async function handleNotifyCommand(_handler: unknown, _args: string[]) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleNotifyCommand(handler: any, args: string[]) {
+export async function _handleNotifyCommand(handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const eventName = args[1];
 	if (!eventName) return;
@@ -50,13 +50,13 @@ export async function handleNotifyCommand(handler: any, args: string[]) {
 }
 
 <<<<<<< HEAD
-export async function handleTimerRaiseCommand(
-	handler: unknown,
-	args: string[],
+export async function _handleTimerRaiseCommand(
+	_handler: unknown,
+	_args: string[],
 ) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleTimerRaiseCommand(handler: any, args: string[]) {
+export async function _handleTimerRaiseCommand(handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const delayMs = Number.parseInt(args[1] ?? "0", 10);
 	const repeatFlag = Number.parseInt(args[2] ?? "1", 10);
@@ -111,13 +111,13 @@ export async function handleTimerRaiseCommand(handler: any, args: string[]) {
 }
 
 <<<<<<< HEAD
-export async function handleTimerNotifyCommand(
-	handler: unknown,
-	args: string[],
+export async function _handleTimerNotifyCommand(
+	_handler: unknown,
+	_args: string[],
 ) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleTimerNotifyCommand(handler: any, args: string[]) {
+export async function _handleTimerNotifyCommand(handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const delayMs = Number.parseInt(args[1] ?? "0", 10);
 	const repeatFlag = Number.parseInt(args[2] ?? "1", 10);
@@ -268,13 +268,13 @@ export async function handleTimerRaiseOtherCommand(
 }
 
 <<<<<<< HEAD
-export async function handleTimerPluginCommand(
-	handler: unknown,
-	args: string[],
+export async function _handleTimerPluginCommand(
+	_handler: unknown,
+	_args: string[],
 ) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleTimerPluginCommand(handler: any, args: string[]) {
+export async function _handleTimerPluginCommand(handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const delayMs = Number.parseInt(args[1] ?? "0", 10);
 	const repeatFlag = Number.parseInt(args[2] ?? "1", 10);
@@ -348,6 +348,6 @@ export async function handleTimerPluginCommand(handler: any, args: string[]) {
 	}
 }
 
-export function getActiveScriptTimersCount(): number {
+export function _getActiveScriptTimersCount(): number {
 	return activeScriptTimers.size;
 }

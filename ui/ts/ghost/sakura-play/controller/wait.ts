@@ -4,10 +4,10 @@
  */
 
 <<<<<<< HEAD
-export function setWaitMultiplier(this: unknown, ratio: number) {
+export function setWaitMultiplier(this: unknown, _ratio: number) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function setWaitMultiplier(this: any, ratio: number) {
+export function _setWaitMultiplier(this: any, ratio: number) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const valid = typeof ratio === "number" && !Number.isNaN(ratio) && ratio >= 0;
 	this.waitMultiplier = valid ? ratio : 1.0;
@@ -18,22 +18,22 @@ export function setWaitMultiplier(this: any, ratio: number) {
 }
 
 <<<<<<< HEAD
-export function getWaitMultiplier(this: unknown): number {
+export function _getWaitMultiplier(this: unknown): number {
 	return this.waitMultiplier;
 }
 
-export function setBalloonWait(
+export function _setBalloonWait(
 	this: unknown,
-	param: string | number | undefined,
+	_param: string | number | undefined,
 ) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function getWaitMultiplier(this: any): number {
+export function _getWaitMultiplier(this: any): number {
 	return this.waitMultiplier;
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function setBalloonWait(this: any, param: string | number | undefined) {
+export function _setBalloonWait(this: any, param: string | number | undefined) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	if (param === undefined || param === null || param === "" || param === "1") {
 		this.resetBalloonWait();
@@ -68,10 +68,10 @@ export function setBalloonWait(this: any, param: string | number | undefined) {
 }
 
 <<<<<<< HEAD
-export function resetBalloonWait(this: unknown) {
+export function _resetBalloonWait(this: unknown) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function resetBalloonWait(this: any) {
+export function _resetBalloonWait(this: any) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	this.waitMultiplier = 1.0;
 	this.charWaitMs = null;
@@ -100,10 +100,10 @@ export function calculateWait(
 }
 
 <<<<<<< HEAD
-export function setQuickMode(this: unknown, enable?: boolean) {
+export function _setQuickMode(this: unknown, _enable?: boolean) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function setQuickMode(this: any, enable?: boolean) {
+export function _setQuickMode(this: any, enable?: boolean) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const prev = this.isQuickMode;
 	this.isQuickMode = typeof enable === "boolean" ? enable : !this.isQuickMode;

@@ -121,14 +121,14 @@ export function handleNewline(
 
 <<<<<<< HEAD
 export function handleClear(
-	player: unknown,
-	app: unknown,
+	_player: unknown,
+	_app: unknown,
 	token: unknown,
 	context: unknown,
 ) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function handleClear(player: any, app: any, token: any, context: any) {
+export function _handleClear(player: any, app: any, token: any, context: any) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const { scheduleDesktopBalloonSync } = context;
 	const { currentBalloonText } = context;
@@ -167,7 +167,7 @@ export function handleClear(player: any, app: any, token: any, context: any) {
 		let removedLines = 0;
 		while (removedLines < count && currentBalloonText.lastChild) {
 <<<<<<< HEAD
-			const lastNode: unknown = currentBalloonText.lastChild;
+			const _lastNode: unknown = currentBalloonText.lastChild;
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const lastNode: any = currentBalloonText.lastChild;
@@ -223,17 +223,17 @@ export function handleOffset(
 }
 
 <<<<<<< HEAD
-export function handleFont(
-	player: unknown,
+export function _handleFont(
+	_player: unknown,
 	_app: unknown,
-	token: unknown,
+	_token: unknown,
 	_context: unknown,
 ) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function handleFont(player: any, _app: any, token: any, _context: any) {
+export function _handleFont(player: any, _app: any, token: any, _context: any) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-	player.currentFontStyles = player.currentFontStyles || {};
+	player.currentFontStyles = player.currentFontStyles || ;
 	if (token.tag === "default") {
 		player.currentFontStyles = {};
 	} else if (token.tag === "color") {

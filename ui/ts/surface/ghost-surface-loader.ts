@@ -16,8 +16,8 @@ export const ghostSurfaceLoaderMethods = {
 	): Promise<string> {
 <<<<<<< HEAD
 		(this as unknown)._surfaceAssetCache ??= new Map();
-		const key = `${cmd}|${ghostPath}|${shellName}|${surfaceId}`;
-		let pending = (this as unknown)._surfaceAssetCache.get(key);
+		const _key = `${cmd}|${ghostPath}|${shellName}|${surfaceId}`;
+		const _pending = (this as unknown)._surfaceAssetCache.get(key);
 =======
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this as any)._surfaceAssetCache ??= new Map();
@@ -53,7 +53,7 @@ export const ghostSurfaceLoaderMethods = {
 	},
 
 	/** ゴースト・シェル切り替え時などに画像キャッシュを破棄 */
-	clearSurfaceAssetCache() {
+	clearSurfaceAssetCache() 
 <<<<<<< HEAD
 		(this as unknown)._surfaceAssetCache?.clear();
 		(this as unknown).app?.surfaceManager?.chromaKeyCache?.clear();
@@ -65,6 +65,5 @@ export const ghostSurfaceLoaderMethods = {
 		(this as any).app?.surfaceManager?.chromaKeyCache?.clear();
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this as any).app?.surfaceManager?.baseCanvasCache?.clear();
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-	},
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad,
 };

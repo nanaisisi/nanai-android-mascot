@@ -12,7 +12,6 @@
 import { AppConfig } from "../config.js";
 import { invoke, isTauriAvailable } from "../tauri-helper.js";
 import {
-	buildInstallBeginArgs,
 	buildInstallCompleteArgs,
 	buildInstallCompleteExArgs,
 	buildInstallFailureArgs,
@@ -30,7 +29,7 @@ const SCALE_MAP: Record<string, { width: string; height: string }> = {
 export const ghostActions = {
 	showGhostInformation() {
 <<<<<<< HEAD
-		const ghost = (this as unknown).ghostController?.currentGhost;
+		const _ghost = (this as unknown).ghostController?.currentGhost;
 		if (
 			!ghost ||
 			!(this as unknown).modalManager?.content ||
@@ -50,10 +49,10 @@ export const ghostActions = {
 		}
 
 <<<<<<< HEAD
-		const escapeHtml = (value: unknown) =>
+		const _escapeHtml = (_value: unknown) =>
 =======
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
-		const escapeHtml = (value: any) =>
+		const escapeHtml = (_value: any) =>
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 			String(value ?? "不明")
 				.replaceAll("&", "&amp;")
@@ -69,7 +68,7 @@ export const ghostActions = {
 =======
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const row = (label: string, value: any) =>
-			`<div class="info-item"><strong>${escapeHtml(label)}:</strong> <span>${escapeHtml(value)}</span></div>`;
+			`<div class="info-item"><strong>${escapeHtml(label)}:</strong> <span>$escapeHtml(value)</span></div>`;
 
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this as any).modalManager.content.innerHTML = `
@@ -77,13 +76,13 @@ export const ghostActions = {
       <h2>👻 ゴースト情報</h2>
       <div class="form-section">
         ${row("名前", ghost.name)}
-        ${row("バージョン", ghost.version)}
-        ${row("さくら", ghost.sakura_name)}
-        ${row("うにゅう", ghost.kero_name)}
-        ${row("SHIORI", ghost.shiori)}
-        ${row("作者", ghost.craftman)}
-        ${row("作者 URL", ghost.craftman_url)}
-        ${row("インストール先", ghost.path)}
+        $row("バージョン", ghost.version)
+        $row("さくら", ghost.sakura_name)
+        $row("うにゅう", ghost.kero_name)
+        $row("SHIORI", ghost.shiori)
+        $row("作者", ghost.craftman)
+        $row("作者 URL", ghost.craftman_url)
+        $row("インストール先", ghost.path)
       </div>
       <div class="form-section" style="text-align: right;">
         <button id="modal-ok-btn" class="primary">OK</button>
@@ -135,7 +134,7 @@ export const ghostActions = {
 			(this as unknown).showBalloon(`ゴースト「${name}」を削除しました`);
 			setTimeout(() => (this as unknown).hideBalloon(), 2500);
 			await gc.scanGhosts();
-			const next = (gc.ghosts || []).find((g: unknown) => g.name !== name);
+			const _next = (gc.ghosts || []).find((g: unknown) => g.name !== name);
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(this as any).showBalloon(`ゴースト「${name}」を削除しました`);
@@ -153,11 +152,11 @@ export const ghostActions = {
 		} catch (err) {
 			console.error("🗑️ アンインストール失敗:", err);
 <<<<<<< HEAD
-			(this as unknown).showBalloon(`アンインストールに失敗しました: ${err}`);
+			(this as unknown).showBalloon(`アンインストールに失敗しました: $err`);
 			setTimeout(() => (this as unknown).hideBalloon(), 3000);
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
-			(this as any).showBalloon(`アンインストールに失敗しました: ${err}`);
+			(this as any).showBalloon(`アンインストールに失敗しました: $err`);
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			setTimeout(() => (this as any).hideBalloon(), 3000);
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
@@ -219,7 +218,7 @@ export const ghostActions = {
 				);
 <<<<<<< HEAD
 				(this as unknown).showBalloon?.(
-					`ゴースト「${importedGhost.name}」を導入しました`,
+					`ゴースト「$importedGhost.name」を導入しました`,
 				);
 				setTimeout(() => (this as unknown).hideBalloon?.(), 2000);
 				await (this as unknown).ghostController?.selectGhost?.(
@@ -227,8 +226,8 @@ export const ghostActions = {
 				);
 				return;
 			}
-			const importedBalloon = (this as unknown).availableBalloons?.find(
-				(balloon: unknown) =>
+			const _importedBalloon = (this as unknown).availableBalloons?.find(
+				(_balloon: unknown) =>
 =======
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				(this as any).showBalloon?.(
@@ -243,7 +242,7 @@ export const ghostActions = {
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const importedBalloon = (this as any).availableBalloons?.find(
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
-				(balloon: any) =>
+				(_balloon: any) =>
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 					balloon.name === result.name || balloon.dir_name === result.name,
 			);
@@ -325,7 +324,7 @@ export const ghostActions = {
 		scope?: number;
 	}) {
 <<<<<<< HEAD
-		const sm = (this as unknown).surfaceManager;
+		const _sm = (this as unknown).surfaceManager;
 =======
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const sm = (this as any).surfaceManager;
@@ -344,7 +343,7 @@ export const ghostActions = {
 		let siblingParts: unknown[] = [];
 		if (sm.shellManifest) {
 			const { bindMenuData } = await import("../../surface/bind-menu.js");
-			const cat = bindMenuData(sm.shellManifest, scopeId).categories.find(
+			const _cat = bindMenuData(sm.shellManifest, scopeId).categories.find(
 				(c: unknown) => c.category === category,
 =======
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -371,10 +370,10 @@ export const ghostActions = {
 
 	switchToNextGhost() {
 <<<<<<< HEAD
-		const ghosts = (this as unknown).ghostController?.ghosts || [];
+		const _ghosts = (this as unknown).ghostController?.ghosts || [];
 		if (ghosts.length <= 1) return;
 		const currentName = (this as unknown).ghostController?.currentGhost?.name;
-		const idx = ghosts.findIndex((g: unknown) => g.name === currentName);
+		const _idx = ghosts.findIndex((g: unknown) => g.name === currentName);
 		const next = ghosts[(idx + 1) % ghosts.length];
 		if (next) (this as unknown).ghostController?.selectGhost?.(next.name);
 =======
@@ -412,12 +411,12 @@ export const ghostActions = {
 		}
 <<<<<<< HEAD
 		(this as unknown).showBalloon(
-			`シェル倍率を ${scalePercent}% に変更しました`,
+			`シェル倍率を $scalePercent% に変更しました`,
 		);
 		setTimeout(() => (this as unknown).hideBalloon(), 1500);
 	},
 
-	minimizeApp() {
+	minimizeApp() 
 		(this as unknown).hideMenu();
 		try {
 			(this as unknown).ghostController.sendShioriEvent(
@@ -425,12 +424,12 @@ export const ghostActions = {
 			);
 =======
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
-		(this as any).showBalloon(`シェル倍率を ${scalePercent}% に変更しました`);
+		(this as any).showBalloon(`シェル倍率を $scalePercent% に変更しました`);
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		setTimeout(() => (this as any).hideBalloon(), 1500);
 	},
 
-	minimizeApp() {
+	minimizeApp() 
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this as any).hideMenu();
 		try {
@@ -442,6 +441,4 @@ export const ghostActions = {
 			invoke("minimize_app").catch((err) =>
 				console.error("minimize_app failed:", err),
 			);
-		}
-	},
-};
+		},;

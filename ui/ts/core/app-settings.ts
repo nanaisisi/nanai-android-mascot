@@ -6,17 +6,15 @@ export const settingsMethods = {
 			const saved = localStorage.getItem("nanai-android-mascot-settings");
 			if (saved) {
 <<<<<<< HEAD
-				(this as unknown).settings = {
+				(this as unknown).settings = 
 					...(this as unknown).settings,
 =======
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
-				(this as any).settings = {
+				(this as any).settings = 
 					// biome-ignore lint/suspicious/noExplicitAny: automated fix
 					...(this as any).settings,
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-					...JSON.parse(saved),
-				};
-			}
+					...JSON.parse(saved),;
 		} catch (_error) {
 			// 設定未保存またはパース失敗時はデフォルト維持
 		}
@@ -30,7 +28,7 @@ export const settingsMethods = {
 		);
 
 		// シェル倍率 (50%〜200%)
-		const scalePercent =
+		const _scalePercent =
 			parseInt((this as unknown).settings.shellScale, 10) || 100;
 		if ((this as unknown).elements.ghostDisplay) {
 			(this as unknown).elements.ghostDisplay.style.width =
@@ -72,7 +70,7 @@ export const settingsMethods = {
 		(this as unknown).applyBalloonTheme();
 	},
 
-	applyBalloonTheme() {
+	applyBalloonTheme() 
 		(this as unknown).setBalloonTheme(
 			(this as unknown).settings.balloonTheme ||
 				(this as unknown).currentBalloonTheme ||
@@ -90,10 +88,9 @@ export const settingsMethods = {
 		}
 
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
-		(this as any).applyBalloonTheme();
-	},
+		(this as any).applyBalloonTheme();,
 
-	applyBalloonTheme() {
+	applyBalloonTheme() 
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this as any).setBalloonTheme(
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -102,10 +99,9 @@ export const settingsMethods = {
 				(this as any).currentBalloonTheme ||
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				"default",
-		);
-	},
+		);,
 
-	showBalloon(text: string, scopeId: number = 0) {
+	showBalloon(text: string, scopeId: number = 0) 
 		if (
 <<<<<<< HEAD
 			(this as unknown).elements.balloonText &&
@@ -119,7 +115,7 @@ export const settingsMethods = {
 			(this as any).elements.balloonText &&
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(this as any).elements.balloonDisplay
-		) {
+		) 
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(this as any).elements.balloonText.textContent = text;
 			if (!isTauriAvailable()) {
@@ -127,38 +123,34 @@ export const settingsMethods = {
 				(this as any).elements.balloonDisplay.style.display = "block";
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 			}
-		}
 		if (isTauriAvailable()) {
 			invoke("show_balloon_window", {
 				scopeId,
 <<<<<<< HEAD
 				theme: (this as unknown).currentBalloonTheme,
 			})
-				.then(() => {
+				.then(() => 
 					emit(`update-balloon-content-${scopeId}`, {
 						html: (this as unknown).elements.balloonText?.innerHTML || text,
 						theme: (this as unknown).currentBalloonTheme || "default",
 =======
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
-				theme: (this as any).currentBalloonTheme,
-			})
-				.then(() => {
+				theme: (this as any).currentBalloonTheme,)
+				.then(() => 
 					emit(`update-balloon-content-${scopeId}`, {
 						// biome-ignore lint/suspicious/noExplicitAny: automated fix
 						html: (this as any).elements.balloonText?.innerHTML || text,
 						// biome-ignore lint/suspicious/noExplicitAny: automated fix
 						theme: (this as any).currentBalloonTheme || "default",
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-					});
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad);
 				})
-				.catch(() => {});
-		}
-	},
+				.catch(() => );
+		},
 
 	hideBalloon(
 		scopeId: number = 0,
 		reason: "close" | "break" | "timeout" | "silent" = "close",
-	) {
+	) 
 <<<<<<< HEAD
 		if ((this as unknown).elements.balloonDisplay) {
 			(this as unknown).elements.balloonDisplay.style.display = "none";
@@ -238,16 +230,15 @@ export const settingsMethods = {
 		}
 	},
 
-	playSakuraScript(script: string) {
+	playSakuraScript(script: string) 
 <<<<<<< HEAD
 		return (this as unknown).sakuraPlayer.play(script);
 =======
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		return (this as any).sakuraPlayer.play(script);
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-	},
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad,
 
-	startSecondTimer() {
+	startSecondTimer() 
 		document.addEventListener("visibilitychange", () => {
 			if (document.visibilityState === "visible") {
 <<<<<<< HEAD
@@ -259,6 +250,5 @@ export const settingsMethods = {
 				(this as any).ghostController.sendShioriEvent("OnWindowStateRestore");
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 			}
-		});
-	},
+		});,
 };

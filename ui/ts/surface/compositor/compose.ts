@@ -14,10 +14,9 @@ export function composeSurfaceElements(
 	baseImgSrc: string,
 	resolveImagePath: (file: string) => Promise<string | null>,
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	bindLayers: any[] = [],
-	{ returnCanvas = false } = {},
+	bindLayers: any[] = [],returnCanvas = false = ,
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-): Promise<any> {
+): Promise<any> 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	if ((!elementList || elementList.length === 0) && bindLayers.length === 0) {
 		return returnCanvas
@@ -80,4 +79,3 @@ export function composeSurfaceElements(
 		baseImg.onerror = () => resolve(baseImgSrc);
 		baseImg.src = baseImgSrc;
 	});
-}

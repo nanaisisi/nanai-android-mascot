@@ -5,12 +5,12 @@
 
 <<<<<<< HEAD
 export async function handleOpenDialogCommand(
-	handler: unknown,
-	args: string[],
+	_handler: unknown,
+	_args: string[],
 ) {
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export async function handleOpenDialogCommand(handler: any, args: string[]) {
+export async function _handleOpenDialogCommand(handler: any, args: string[]) {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	const dialogType = args[2] || "open";
 	const dialogParams = args.slice(3);

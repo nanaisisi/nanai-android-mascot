@@ -74,7 +74,7 @@ export class SakuraPlaybackController {
 	syncObjects: SyncObjectManager;
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	constructor(options: any = {}) {
+	constructor(options: any = {}) 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		this.player = options.player || null;
 		if (this.player && !this.player.playbackController) {
@@ -90,7 +90,6 @@ export class SakuraPlaybackController {
 		this.nextJobId = 1;
 		this.listeners = new Map();
 		this.syncObjects = new SyncObjectManager();
-	}
 }
 
 <<<<<<< HEAD

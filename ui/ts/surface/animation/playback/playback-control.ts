@@ -28,10 +28,10 @@ export function playAnimationPatterns(
 	scopeIdParam,
 ) {
 <<<<<<< HEAD
-	let instance: unknown,
-		anim: unknown,
-		baseSurfaceId: unknown,
-		scopeId: unknown;
+	let _instance: unknown,
+		_anim: unknown,
+		_baseSurfaceId: unknown,
+		_scopeId: unknown;
 =======
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, anim, baseSurfaceId, scopeId;
@@ -86,10 +86,10 @@ export async function playAnimationById(
 	waitForCompleteParam = false,
 ) {
 <<<<<<< HEAD
-	let instance: unknown,
-		animIdOrName: unknown,
-		scopeId: unknown,
-		waitForComplete: unknown;
+	let _instance: unknown,
+		_animIdOrName: unknown,
+		_scopeId: unknown,
+		_waitForComplete: unknown;
 =======
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, animIdOrName, scopeId, waitForComplete;
@@ -137,7 +137,7 @@ export async function waitForAnimation(
 	timeoutMs = 30000,
 ) {
 <<<<<<< HEAD
-	let instance: unknown, animIdOrName: unknown, scopeId: unknown;
+	let _instance: unknown, _animIdOrName: unknown, _scopeId: unknown;
 =======
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, animIdOrName, scopeId;

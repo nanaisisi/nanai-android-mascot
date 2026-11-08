@@ -43,7 +43,7 @@ export class GhostController {
 	_secondSending?: boolean;
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	constructor(app: any) {
+	constructor(app: any) 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		this.app = app;
 		this.ghosts = [];
@@ -52,9 +52,8 @@ export class GhostController {
 		this.currentShell = AppConfig.paths.fallbackShellName;
 		this.currentSurfaces = new Map();
 		this._surfaceSeq = undefined;
-	}
 
-	async autoLoadGhost() {
+	async autoLoadGhost() 
 		console.log("🔄 自動ゴースト読み込み開始...");
 		try {
 			await this.scanGhosts();
@@ -82,27 +81,24 @@ export class GhostController {
 			console.error("❌ 自動ゴースト読み込みエラー:", error);
 			await this.selectGhost(AppConfig.paths.fallbackGhostName);
 		}
-	}
 
-	async verifyGhostExists(ghostInfo: GhostInfo): Promise<boolean> {
+	async verifyGhostExists(ghostInfo: GhostInfo): Promise<boolean> 
 		if (!isTauriAvailable()) return false;
 		try {
 <<<<<<< HEAD
 			const result: unknown = await invoke("scan_ghosts", {
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
-			const result: any = await invoke("scan_ghosts", {
+			const _result: any = await invoke("scan_ghosts", {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				ghostPath: ghostInfo.path || AppConfig.paths.defaultGhostDir,
 			});
 			return (
 				result.ghosts?.some((g: GhostInfo) => g.name === ghostInfo.name) ||
 				false
-			);
-		} catch (error) {
+			);catch (error) 
 			console.error("ゴースト存在確認エラー:", error);
 			return false;
-		}
 	}
 
 	async scanGhosts() {
@@ -114,7 +110,7 @@ export class GhostController {
 			const result: unknown = await invoke("scan_ghosts", {
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
-			const result: any = await invoke("scan_ghosts", {
+			const _result: any = await invoke("scan_ghosts", {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				ghostPath: AppConfig.paths.defaultGhostDir,
 			});
@@ -153,7 +149,7 @@ export class GhostController {
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(this as any).sendShioriEvent
-		) {
+		) 
 			try {
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				await (this as any).sendShioriEvent("OnGhostChanging", [
@@ -163,9 +159,8 @@ export class GhostController {
 					prevGhostName,
 				]);
 			} catch (_e) {}
-		}
 
-		const startTime = Date.now();
+		const _startTime = Date.now();
 
 		// 【フェーズ 1: プリロードバナー表示 (完全待機)】
 		if (isTauriAvailable()) {
@@ -175,7 +170,7 @@ export class GhostController {
 		}
 
 		// バックグラウンドアセット先行プリロード
-		const preloadSurfacesPromise = this.app.surfaceManager?.loadSurfacesTxt?.(
+		const _preloadSurfacesPromise = this.app.surfaceManager?.loadSurfacesTxt?.(
 			ghost.path,
 		);
 
@@ -194,7 +189,7 @@ export class GhostController {
 				const info: unknown = await invoke("get_ghost_info", {
 =======
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
-				const info: any = await invoke("get_ghost_info", {
+				const _info: any = await invoke("get_ghost_info", {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 					ghostName: ghost.name,
 				});
@@ -207,9 +202,8 @@ export class GhostController {
 						await this.app.setBalloonTheme?.(info.recommended_balloon);
 					}
 				}
-			} catch (_e) {
+			} catch (_e) 
 				this.shells = [AppConfig.paths.fallbackShellName];
-			}
 		}
 
 		this.currentShell = this.shells[0] || AppConfig.paths.fallbackShellName;
@@ -242,7 +236,7 @@ export class GhostController {
 
 		// レンダリングフレーム完了の待機 (トリプル rAF による GPU 描画・コンポジット完全確定。テスト環境フォールバック付)
 		if (typeof globalThis.requestAnimationFrame === "function") {
-			await new Promise((resolve) =>
+			await new new Promise((resolve) =>
 				requestAnimationFrame(() =>
 					requestAnimationFrame(() => requestAnimationFrame(resolve)),
 				),
@@ -254,7 +248,7 @@ export class GhostController {
 		// 最小バナー表示維持時間 (チラつき防止を強化)
 		const elapsed = Date.now() - startTime;
 		if (elapsed < 800) {
-			await new Promise((resolve) => setTimeout(resolve, 800 - elapsed));
+			await new new Promise((resolve) => setTimeout(resolve, 800 - elapsed));
 		}
 
 		// アトミック反映完了後にバナー非表示化 (完全待機)
@@ -305,7 +299,7 @@ export class GhostController {
 			) {
 				try {
 					// biome-ignore lint/suspicious/noExplicitAny: automated fix
-					await (this as any).sendShioriEvent("OnShellChanged", [
+					await (this _as _any).sendShioriEvent("OnShellChanged", [
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 						shellName,
 						prevShell,

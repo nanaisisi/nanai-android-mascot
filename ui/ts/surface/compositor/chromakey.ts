@@ -13,7 +13,7 @@ export function processChromaKey(
 		return Promise.resolve(cache.get(imageSrc) ?? imageSrc);
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	options: any = {},
+	options: any = ,
 ): Promise<string> {
 	if (!imageSrc) return Promise.resolve(imageSrc);
 	if (cache?.has(imageSrc)) {

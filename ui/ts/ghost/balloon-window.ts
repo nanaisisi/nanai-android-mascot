@@ -3,7 +3,7 @@
  * @brief Nanai Android Mascot - 独立バルーンウィンドウ制御スクリプト
  */
 
-import { emit, isTauriAvailable, listen } from "../core/tauri-helper.js";
+import { isTauriAvailable, } from "../core/tauri-helper.js";
 import { setupWindowGestures } from "./balloon-window/gesture.js";
 import { setupInteractiveElements } from "./balloon-window/interactive.js";
 import { updateBalloonWindowScale } from "./balloon-window/scale.js";
@@ -13,8 +13,8 @@ const urlParams = new URLSearchParams(globalThis.location.search);
 const scopeId = parseInt(urlParams.get("scope") || "0", 10);
 let appliedTheme: string | null = null;
 let applyingTheme: string | null = null;
-let currentDpiScale = 1;
-let currentUserScale = 1;
+let _currentDpiScale = 1;
+const currentUserScale = 1;
 let _isBalloonDontMove = false;
 
 export {
@@ -33,20 +33,20 @@ export async function applyBalloonDescript(theme: string) {
 		const result: unknown = await applyThemeDescript({
 =======
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
-		const result: any = await applyThemeDescript({
+		const _result: any = await applyThemeDescript({
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 			theme,
 			scopeId,
 			currentUserScale,
 			onDpiScaleChange: (newDpiScale: number) => {
-				currentDpiScale = newDpiScale;
+				_currentDpiScale = newDpiScale;
 			},
 			onDontMoveChange: (dontMove: boolean) => {
 				_isBalloonDontMove = dontMove;
 			},
 		});
 		if (result) {
-			currentDpiScale = result.dpiScale;
+			_currentDpiScale = result.dpiScale;
 			_isBalloonDontMove = result.isBalloonDontMove;
 			appliedTheme = theme;
 		}
@@ -57,7 +57,7 @@ export async function applyBalloonDescript(theme: string) {
 }
 
 export function initBalloonWindow() {
-	const balloonBox = document.getElementById("balloon-box");
+	const _balloonBox = document.getElementById("balloon-box");
 	const _balloonText = document.getElementById("balloon-text");
 
 	const savedTheme =
@@ -70,10 +70,10 @@ export function initBalloonWindow() {
 	if (!isTauriAvailable()) return;
 
 <<<<<<< HEAD
-	void listen(`update-balloon-content-${scopeId}`, (event: unknown) => {
+	void listen(`update-balloon-content-$scopeId`, (event: unknown) => {
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	void listen(`update-balloon-content-${scopeId}`, (event: any) => {
+	void listen(`update-balloon-content-$scopeId`, (event: any) => {
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		const { html, theme } = event.payload || {};
 		if (theme) {

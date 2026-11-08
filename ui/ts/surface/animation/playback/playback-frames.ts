@@ -44,11 +44,11 @@ export async function _playAnimationPatterns(
 	keyParam,
 ) {
 <<<<<<< HEAD
-	let instance: unknown,
-		anim: unknown,
-		baseSurfaceId: unknown,
-		scopeId: unknown,
-		key: unknown;
+	let _instance: unknown,
+		_anim: unknown,
+		_baseSurfaceId: unknown,
+		_scopeId: unknown,
+		_key: unknown;
 =======
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, anim, baseSurfaceId, scopeId, key;

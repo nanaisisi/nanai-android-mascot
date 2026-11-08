@@ -77,9 +77,17 @@ export function parseBoxOptions(params) {
 		} else if (p.startsWith("--reference=")) {
 			references.push(p.replace("--reference=", ""));
 		} else if (p.startsWith("--option=")) {
-			const opt = p.replace("--option=", "").toLowerCase();
-			if (opt.includes("noclose")) noClose = true;
-			if (opt.includes("noclear")) noClear = true;
+			const rawOptions = p
+				.replace("--option=", "")
+				.toLowerCase()
+				.split(/[,|;]/);
+			for (const opt of rawOptions) {
+				const trimmed = opt.trim();
+				if (trimmed === "noclose" || trimmed.includes("noclose"))
+					noClose = true;
+				if (trimmed === "noclear" || trimmed.includes("noclear"))
+					noClear = true;
+			}
 		} else if (i === 1 && !p.startsWith("--")) {
 			timeoutMs = Number.parseInt(p, 10) || 0;
 		} else if (i === 2 && !p.startsWith("--")) {

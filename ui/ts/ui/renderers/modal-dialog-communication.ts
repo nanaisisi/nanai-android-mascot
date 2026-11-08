@@ -130,7 +130,9 @@ export function openTeachBox(params = [], options = {}) {
 export function closeTeachBox(notifyCancel = false) {
 	const existing = this.activeBoxes.get("teachbox");
 	if (existing) {
-		existing.cleanup();
+		try {
+			existing.cleanup();
+		} catch {}
 		this.activeBoxes.delete("teachbox");
 		if (notifyCancel) {
 			this.app.ghostController?.sendShioriEvent("OnTeachInputCancel", [
@@ -263,7 +265,9 @@ export function openCommunicateBox(params = [], scope) {
 export function closeCommunicateBox(notifyCancel = false) {
 	const existing = this.activeBoxes.get("communicatebox");
 	if (existing) {
-		existing.cleanup(true);
+		try {
+			existing.cleanup(true);
+		} catch {}
 		this.activeBoxes.delete("communicatebox");
 		if (notifyCancel) {
 			this.app.ghostController?.sendShioriEvent("OnCommunicateInputCancel", [

@@ -3,7 +3,10 @@ import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 
 const byId = (id) => document.getElementById(id);
 
-export async function updateGhostCharacter(thisObj: any, ghostName: string | null) {
+export async function updateGhostCharacter(
+	thisObj: any,
+	ghostName: string | null,
+) {
 	const sakuraPlaceholder =
 		byId("sakura-placeholder") ||
 		document.querySelector(".character-placeholder");
@@ -35,7 +38,8 @@ export async function updateGhostCharacter(thisObj: any, ghostName: string | nul
 export function updateCurrentGhostDisplay(thisObj: any) {
 	const el = byId("current-ghost");
 	if (el) {
-		el.textContent = thisObj.currentGhost ? thisObj.currentGhost.name : "未選択";
+		el.textContent = thisObj.currentGhost
+			? thisObj.currentGhost.name
+			: "未選択";
 	}
 }
-

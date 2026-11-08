@@ -21,7 +21,10 @@ export async function notifySurfaceChangeEvents(
 				await thisObj.notifySurfaceChange(scopeId, surf0, surf1, width, height);
 			}
 
-			if (thisObj.otherSurfaceChangeEnabled && thisObj.notifyOtherSurfaceChange) {
+			if (
+				thisObj.otherSurfaceChangeEnabled &&
+				thisObj.notifyOtherSurfaceChange
+			) {
 				const ghostName = thisObj.ghostManifest?.name || "master";
 				const sakuraName = thisObj.ghostManifest?.sakura?.name || ghostName;
 				const prevSurf = thisObj._prevSurfaceIds?.[scopeId] ?? surfaceId;
@@ -41,4 +44,3 @@ export async function notifySurfaceChangeEvents(
 		} catch (_err) {}
 	}
 }
-

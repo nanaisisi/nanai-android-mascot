@@ -20,19 +20,24 @@ export { blendBuffers } from "./composite-blend.js";
  * @description メモリ上のサーフィス画像ピクセルバッファおよび Canvas ラッパー (Slot-07 Contract 準拠)
  */
 export class SurfaceFrameBuffer {
-	width: unknown;
-	height: unknown;
+	width: number;
+	height: number;
 	data: Uint8ClampedArray<ArrayBuffer>;
-	_data32: null;
+	_data32: Uint32Array | null;
 	/**
 	 * @param {number} width
 	 * @param {number} height
 	 * @param {Uint8ClampedArray|Uint8Array|null} [data]
 	 */
-	constructor(width: unknown, height: unknown, data = null) {
+	constructor(
+		width: number,
+		height: number,
+		data: Uint8ClampedArray<ArrayBuffer> | null = null,
+	) {
 		this.width = width;
 		this.height = height;
-		this.data = data || new Uint8ClampedArray(width * height * 4);
+		this.data =
+			data || new Uint8ClampedArray((width as number) * (height as number) * 4);
 		/** @type {Uint32Array|null} */
 		this._data32 = null;
 	}
@@ -41,7 +46,7 @@ export class SurfaceFrameBuffer {
 	 * 32bit 整数ピクセル配列ビュー (ゼロコピー・高速演算用)
 	 * @returns {Uint32Array}
 	 */
-	get data32() {
+	get data32(): Uint32Array {
 		if (
 			!this._data32 ||
 			this._data32.buffer !== this.data.buffer ||
@@ -50,7 +55,7 @@ export class SurfaceFrameBuffer {
 			this._data32 = new Uint32Array(
 				this.data.buffer,
 				this.data.byteOffset,
-				(this.width * this.height) | 0,
+				((this.width as number) * (this.height as number)) | 0,
 			);
 		}
 		return this._data32;
@@ -162,6 +167,110 @@ export class SurfaceFrameBuffer {
 			const offset = row * width + startX;
 			d32.fill(0, offset, offset + rowWidth);
 		}
+	}
+
+	/**
+	 * バッファ全体を指定色 (r, g, b, a) で塗りつぶす
+	 * @param {number} r
+	 * @param {number} g
+	 * @param {number} b
+	 * @param {number} [a=255]
+	 */
+	fill(r: number, g: number, b: number, a = 255) {
+		const pixel =
+			(((a & 0xff) << 24) |
+				((b & 0xff) << 16) |
+				((g & 0xff) << 8) |
+				(r & 0xff)) >>>
+			0;
+		this.data32.fill(pixel);
+	}
+
+	/**
+	 * 指定した部分矩形領域を指定色 (r, g, b, a) で塗りつぶす
+	 * @param {number} x
+	 * @param {number} y
+	 * @param {number} w
+	 * @param {number} h
+	 * @param {number} r
+	 * @param {number} g
+	 * @param {number} b
+	 * @param {number} [a=255]
+	 */
+	fillRect(
+		x: number,
+		y: number,
+		w: number,
+		h: number,
+		r: number,
+		g: number,
+		b: number,
+		a = 255,
+	) {
+		if (w <= 0 || h <= 0) return;
+		const width = this.width as number;
+		const height = this.height as number;
+		const startX = Math.max(0, x | 0);
+		const startY = Math.max(0, y | 0);
+		const endX = Math.min(width, (x + w) | 0);
+		const endY = Math.min(height, (y + h) | 0);
+
+		if (startX >= endX || startY >= endY) return;
+
+		const pixel =
+			(((a & 0xff) << 24) |
+				((b & 0xff) << 16) |
+				((g & 0xff) << 8) |
+				(r & 0xff)) >>>
+			0;
+		const d32 = this.data32;
+		const rowWidth = endX - startX;
+
+		for (let row = startY; row < endY; row++) {
+			const offset = row * width + startX;
+			d32.fill(pixel, offset, offset + rowWidth);
+		}
+	}
+
+	/**
+	 * 指定した部分矩形領域を切り出して新しい SurfaceFrameBuffer を作成
+	 * @param {number} x
+	 * @param {number} y
+	 * @param {number} w
+	 * @param {number} h
+	 * @returns {SurfaceFrameBuffer|null}
+	 */
+	copyRect(
+		x: number,
+		y: number,
+		w: number,
+		h: number,
+	): SurfaceFrameBuffer | null {
+		const width = this.width as number;
+		const height = this.height as number;
+		if (w <= 0 || h <= 0 || x >= width || y >= height) {
+			return null;
+		}
+		const startX = Math.max(0, x | 0);
+		const startY = Math.max(0, y | 0);
+		const endX = Math.min(width, (x + w) | 0);
+		const endY = Math.min(height, (y + h) | 0);
+		const actualW = endX - startX;
+		const actualH = endY - startY;
+
+		if (actualW <= 0 || actualH <= 0) return null;
+
+		const sub = new SurfaceFrameBuffer(actualW, actualH);
+		const src32 = this.data32;
+		const dst32 = sub.data32;
+
+		for (let row = 0; row < actualH; row++) {
+			const srcOffset = (startY + row) * width + startX;
+			const dstOffset = row * actualW;
+			dst32.set(src32.subarray(srcOffset, srcOffset + actualW), dstOffset);
+		}
+
+		return sub;
 	}
 
 	/**

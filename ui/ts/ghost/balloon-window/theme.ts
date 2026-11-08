@@ -167,7 +167,9 @@ export async function applyBalloonDescript({
 		applyFontProperties(balloonBox || root, props, instanceContext);
 		applyAssetProperties(balloonBox || root, props, instanceContext);
 
-		const isBalloonDontMove = !!instanceContext.balloonDontMove;
+		const isBalloonDontMove =
+			props["balloon.dontmove"] === "1" ||
+			Boolean(instanceContext.balloonDontMove);
 		onDontMoveChange?.(isBalloonDontMove);
 
 		// 有効テキスト領域 (validrect) による余白調整

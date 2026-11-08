@@ -1,6 +1,9 @@
-mod coverage;
+mod active_animation;
+mod options_parsing;
 mod scheduler;
+mod scheduler_stepping;
 mod timeline;
+mod triggers_events;
 
 use super::*;
 use crate::surfaces::{AnimationPattern, DrawMethod, Interval, SurfacesTxt};

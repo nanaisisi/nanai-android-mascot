@@ -5,11 +5,17 @@
 
 export function closeDialog(id, notifyCancel = true) {
 	if (!id || id === "__SYSTEM_ALL_DIALOG__") {
-		for (const [key, box] of Array.from(this.activeBoxes.entries())) {
-			box.cleanup();
-			this.activeBoxes.delete(key);
+		const keys = Array.from(this.activeBoxes.keys());
+		let closedAny = false;
+		for (const key of keys) {
+			const box = this.activeBoxes.get(key);
+			if (box) {
+				box.cleanup(true);
+				this.activeBoxes.delete(key);
+				closedAny = true;
+			}
 		}
-		if (notifyCancel) {
+		if (notifyCancel && closedAny) {
 			this.app.ghostController?.sendShioriEvent("OnSystemDialogCancel", [
 				id || "__SYSTEM_ALL_DIALOG__",
 			]);
@@ -19,8 +25,8 @@ export function closeDialog(id, notifyCancel = true) {
 
 	let closed = false;
 	for (const [key, box] of Array.from(this.activeBoxes.entries())) {
-		if (box.id === id || key.endsWith(`:${id}`)) {
-			box.cleanup();
+		if (box.id === id || key === `dialog:${id}` || key.endsWith(`:${id}`)) {
+			box.cleanup(true);
 			this.activeBoxes.delete(key);
 			closed = true;
 		}

@@ -294,6 +294,7 @@ export class TouchGestureRecognizer {
 	}
 
 	_handleTouchMove(e) {
+		if (!e) return;
 		if (
 			this.options.throttleWithRaf &&
 			typeof requestAnimationFrame === "function"

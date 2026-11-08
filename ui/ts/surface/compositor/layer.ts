@@ -75,6 +75,44 @@ export function drawImageLayer(
 		ctx.globalCompositeOperation = "color";
 	} else if (method === "blend-luminosity" || method === "luminosity") {
 		ctx.globalCompositeOperation = "luminosity";
+	} else if (method === "blend-dither" || method === "dither") {
+		try {
+			const pWidth = img.naturalWidth || img.width;
+			const pHeight = img.naturalHeight || img.height;
+			if (pWidth > 0 && pHeight > 0 && typeof document !== "undefined") {
+				const tempCanvas = document.createElement("canvas");
+				tempCanvas.width = pWidth;
+				tempCanvas.height = pHeight;
+				const tempCtx = tempCanvas.getContext("2d", {
+					willReadFrequently: true,
+				});
+				if (tempCtx && typeof ctx.getImageData === "function") {
+					tempCtx.drawImage(img, 0, 0);
+					const overlayImgData = tempCtx.getImageData(0, 0, pWidth, pHeight);
+					const oData = overlayImgData.data;
+					const bayer = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+					for (let py = 0; py < pHeight; py++) {
+						const ty = y + py;
+						for (let px = 0; px < pWidth; px++) {
+							const tx = x + px;
+							const idx = (py * pWidth + px) * 4;
+							const sa = oData[idx + 3];
+							const bayerVal = bayer[((ty & 3) << 2) | (tx & 3)];
+							const threshold = (((bayerVal * 2 + 1) * 255) / 32) | 0;
+							if (sa > threshold) {
+								oData[idx + 3] = 255;
+							} else {
+								oData[idx + 3] = 0;
+							}
+						}
+					}
+					tempCtx.putImageData(overlayImgData, 0, 0);
+					ctx.drawImage(tempCanvas, x, y);
+					ctx.globalCompositeOperation = savedOp;
+					return;
+				}
+			}
+		} catch (_err) {}
 	} else if (method === "interpolate") {
 		try {
 			const pWidth = img.naturalWidth || img.width;

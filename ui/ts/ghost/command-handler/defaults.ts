@@ -32,11 +32,17 @@ import {
 	handleCancelNetworkService,
 	handleCloseNetworkService,
 	handleDownloadExec,
+	handleEmptyRecycleBin,
+	handleExecuteCommand,
 	handleFileExec,
+	handleFileWatchCommand,
 	handleMailCheckExec,
 	handleMailExec,
+	handleNslookupCommand,
+	handlePingCommand,
 	handleRestoreWallpaper,
 	handleSaveWallpaper,
+	handleScheduleAddCommand,
 	handleSetHttpTimeout,
 	handleSetProxy,
 	handleSetWallpaper,
@@ -81,6 +87,8 @@ import {
 	handleSetShioriDebugMode,
 	handleSetTaskTrayIcon,
 	handleSetTrayBalloon,
+	handleTimerNotifyCommand,
+	handleTimerPluginCommand,
 	handleTimerRaiseCommand,
 	handleTimerRaiseOtherCommand,
 } from "./system.js";
@@ -481,8 +489,60 @@ export function initDefaultCommandHandlers() {
 		await handleTimerRaiseCommand(handler, args);
 	});
 
+	registerCommandHandler("timernotify", async (handler, args) => {
+		await handleTimerNotifyCommand(handler, args);
+	});
+
 	registerCommandHandler("timerraiseother", async (handler, args) => {
 		await handleTimerRaiseOtherCommand(handler, args);
+	});
+
+	registerCommandHandler("timernotifyother", async (handler, args) => {
+		await handleTimerRaiseOtherCommand(handler, args);
+	});
+
+	registerCommandHandler("timerraiseplugin", async (handler, args) => {
+		await handleTimerPluginCommand(handler, args);
+	});
+
+	registerCommandHandler("timernotifyplugin", async (handler, args) => {
+		await handleTimerPluginCommand(handler, args);
+	});
+
+	registerCommandHandler("notifyplugin", async (handler, args) => {
+		await handlePluginEvent(handler, args);
+	});
+
+	registerCommandHandler("raiseplugin", async (handler, args) => {
+		await handlePluginEvent(handler, args);
+	});
+
+	registerCommandHandler("execute", async (handler, args) => {
+		await handleExecuteCommand(handler, args);
+	});
+
+	registerCommandHandler("execute:emptyrecyclebin", async (handler, args) => {
+		await handleEmptyRecycleBin(handler, args);
+	});
+
+	registerCommandHandler("execute:filewatch", async (handler, args) => {
+		await handleFileWatchCommand(handler, args, false);
+	});
+
+	registerCommandHandler("cancel:filewatch", async (handler, args) => {
+		await handleFileWatchCommand(handler, args, true);
+	});
+
+	registerCommandHandler("execute:ping", async (handler, args) => {
+		await handlePingCommand(handler, args.slice(1));
+	});
+
+	registerCommandHandler("execute:nslookup", async (handler, args) => {
+		await handleNslookupCommand(handler, args.slice(1));
+	});
+
+	registerCommandHandler("execute:schedule-add", async (handler, args) => {
+		await handleScheduleAddCommand(handler, args.slice(1));
 	});
 
 	registerCommandHandler("setshioridebugmode", async (handler, args) => {

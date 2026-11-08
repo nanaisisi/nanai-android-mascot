@@ -217,6 +217,52 @@ pub fn handle_execute_command(command_str: &str, ctx: &SstpGhostContext) -> Sstp
                 SstpResponse::ok(None)
             }
         }
+        "compact" | "cleansurface" => {
+            // メモリ圧縮およびサーフィスキャッシュ解放 (UKADOC/SSP EXECUTE 規格準拠)
+            if let Err(err_resp) = check_remote_prohibited() {
+                return *err_resp;
+            }
+            SstpResponse::ok(None)
+        }
+        "getghostpath" => {
+            if let Err(err_resp) = check_remote_prohibited() {
+                return *err_resp;
+            }
+            let ghost_target = args.first().map(|s| s.as_str()).unwrap_or(&ctx.name);
+            let path = ctx
+                .properties
+                .get(&format!("ghost.{}.path", ghost_target.to_lowercase()))
+                .or_else(|| ctx.properties.get("ghostpath"))
+                .cloned()
+                .unwrap_or_default();
+            SstpResponse::ok(None).with_additional_data(path)
+        }
+        "getshellpath" => {
+            if let Err(err_resp) = check_remote_prohibited() {
+                return *err_resp;
+            }
+            let shell_target = args.first().map(|s| s.as_str()).unwrap_or(&ctx.shell_name);
+            let path = ctx
+                .properties
+                .get(&format!("shell.{}.path", shell_target.to_lowercase()))
+                .or_else(|| ctx.properties.get("shellpath"))
+                .cloned()
+                .unwrap_or_default();
+            SstpResponse::ok(None).with_additional_data(path)
+        }
+        "getballoonpath" => {
+            if let Err(err_resp) = check_remote_prohibited() {
+                return *err_resp;
+            }
+            let balloon_target = args.first().map(|s| s.as_str()).unwrap_or(&ctx.balloon_name);
+            let path = ctx
+                .properties
+                .get(&format!("balloon.{}.path", balloon_target.to_lowercase()))
+                .or_else(|| ctx.properties.get("balloonpath"))
+                .cloned()
+                .unwrap_or_default();
+            SstpResponse::ok(None).with_additional_data(path)
+        }
         _ => SstpResponse::bad_request().with_error_description("unknown command"),
     }
 }

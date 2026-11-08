@@ -113,6 +113,9 @@ impl SurfacesTxt {
                     if other_def.name.is_some() {
                         cur.name = other_def.name;
                     }
+                    if other_def.icon_rect.is_some() {
+                        cur.icon_rect = other_def.icon_rect;
+                    }
                     if other_def.points.center_x.is_some() {
                         cur.points.center_x = other_def.points.center_x;
                     }

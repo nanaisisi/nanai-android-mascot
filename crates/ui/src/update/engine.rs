@@ -32,6 +32,11 @@ pub trait InstallerEngine {
             })
             .collect()
     }
+
+    /// developer_options.txt の内容をパースして noupdate ファイル一覧を取得
+    fn parse_developer_options(&self, content: &str) -> Vec<String> {
+        crate::update::parser::parse_developer_options(content)
+    }
 }
 
 /// 標準の InstallerEngine 実装

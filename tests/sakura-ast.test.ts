@@ -3,9 +3,12 @@ import { test } from "vitest";
 import {
 	calculateAstTextLength,
 	collectAnchors,
+	collectAnimations,
 	collectChoices,
 	collectScopeNodes,
 	collectSurfaces,
+	filterAstByScope,
+	stripWaitsFromAst,
 	tokensToAst,
 } from "../ui/ts/ghost/parser/ast.js";
 import { parseSakuraScript } from "../ui/ts/ghost/sakura-tokenizer.js";
@@ -120,4 +123,46 @@ test("collectAnchors, calculateAstTextLength, and collectScopeNodes operate accu
 		const directScopeNodes = collectScopeNodes(scopeNode, 0);
 		assert.equal(directScopeNodes.length, scopeNode.children?.length);
 	}
+});
+
+test("collectAnimations, filterAstByScope, and stripWaitsFromAst handle advanced tree traversal", () => {
+	const script =
+		"\\0\\s[0]\\w5Hello\\i[100,wait]\\_w[200]!\\1\\s[10]\\i[200]\\w9Kero\\e";
+	const tokens = parseSakuraScript(script);
+	const ast = tokensToAst(tokens);
+
+	// 1. collectAnimations
+	const anims = collectAnimations(ast);
+	assert.equal(anims.length, 2);
+	assert.equal(anims[0].id, 100);
+	assert.equal(anims[0].wait, true);
+	assert.equal(anims[1].id, 200);
+	assert.equal(anims[1].wait, false);
+
+	// 2. filterAstByScope
+	const scope0Ast = filterAstByScope(ast, 0);
+	assert.equal(scope0Ast.nodeType, "root");
+	assert.equal(scope0Ast.children?.length, 1);
+	assert.equal(scope0Ast.children?.[0].scope, 0);
+	assert.deepEqual(collectSurfaces(scope0Ast), [0]);
+
+	const scope1Ast = filterAstByScope(ast, 1);
+	assert.equal(scope1Ast.children?.length, 1);
+	assert.equal(scope1Ast.children?.[0].scope, 1);
+	assert.deepEqual(collectSurfaces(scope1Ast), [10]);
+
+	const scope2Ast = filterAstByScope(ast, 2);
+	assert.equal(scope2Ast.children?.length, 0);
+
+	// 3. stripWaitsFromAst
+	const cleanAst = stripWaitsFromAst(ast);
+	const allTokensAfter =
+		cleanAst.children?.flatMap((c) => c.children || []) || [];
+	const hasWait = allTokensAfter.some(
+		(n) =>
+			n.nodeType === "command" &&
+			(n.token?.type === "wait" || n.token?.type === "wait_anim"),
+	);
+	assert.equal(hasWait, false);
+	assert.equal(collectAnimations(cleanAst).length, 2);
 });

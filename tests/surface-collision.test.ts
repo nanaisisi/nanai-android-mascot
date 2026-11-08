@@ -12,6 +12,11 @@ test("surfaceCollisionMethods covers resolveSurfaceNumber and detectCollision", 
 			smile: [1, 2],
 			SMILE: [1, 2],
 		},
+		names: {
+			0: "DefaultFace",
+			1: "SakuraSmile",
+			10: "KeroNormal",
+		},
 		keroAliases: {
 			normal: [10],
 		},
@@ -41,6 +46,13 @@ test("surfaceCollisionMethods covers resolveSurfaceNumber and detectCollision", 
 
 	const resolvedKero = mockManager.resolveSurfaceNumber("normal", 1);
 	assert.equal(resolvedKero, "10");
+
+	// Defined name lookup (`name,定義名`)
+	const resolvedByName = mockManager.resolveSurfaceNumber("DefaultFace", 0);
+	assert.equal(resolvedByName, "0");
+
+	const resolvedByNameCase = mockManager.resolveSurfaceNumber("sakurasmile", 0);
+	assert.equal(resolvedByNameCase, "1");
 
 	// 2. detectCollision
 	const rect = { left: 0, top: 0, width: 200, height: 400 };

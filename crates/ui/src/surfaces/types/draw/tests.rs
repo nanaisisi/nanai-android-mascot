@@ -16,6 +16,19 @@ fn test_interval_parse_standard_variants() {
 }
 
 #[test]
+fn test_interval_parse_compound_variants() {
+    assert_eq!(Interval::parse("bind+sometimes"), Interval::Sometimes);
+    assert_eq!(Interval::parse("bind+rarely"), Interval::Rarely);
+    assert_eq!(Interval::parse("bind+always"), Interval::Always);
+    assert_eq!(Interval::parse("bind+random,4"), Interval::Random(4));
+    assert_eq!(
+        Interval::parse("bind+periodic,500"),
+        Interval::Periodic(500)
+    );
+    assert_eq!(Interval::parse("bind+talk"), Interval::Bind);
+}
+
+#[test]
 fn test_interval_parse_parametric_random_and_periodic() {
     assert_eq!(Interval::parse("random,3"), Interval::Random(3));
     assert_eq!(Interval::parse("random,0"), Interval::Random(0));

@@ -40,6 +40,39 @@ impl FmoRecord {
             modulestate: None,
         }
     }
+
+    pub fn with_surfaces(mut self, sakura: i32, kero: i32) -> Self {
+        self.sakura_surface = sakura;
+        self.kero_surface = kero;
+        self
+    }
+
+    pub fn with_hwnd(mut self, hwnd: u64, kerohwnd: Option<u64>) -> Self {
+        self.hwnd = hwnd;
+        self.kerohwnd = kerohwnd;
+        let mut list = Vec::new();
+        if hwnd != 0 {
+            list.push(hwnd);
+        }
+        if let Some(khwnd) = kerohwnd {
+            if khwnd != 0 && !list.contains(&khwnd) {
+                list.push(khwnd);
+            }
+        }
+        self.hwndlist = list;
+        self
+    }
+
+    pub fn with_paths(mut self, path: impl Into<String>, ghostpath: impl Into<String>) -> Self {
+        self.path = path.into();
+        self.ghostpath = ghostpath.into();
+        self
+    }
+
+    pub fn with_modulestate(mut self, modulestate: impl Into<String>) -> Self {
+        self.modulestate = Some(modulestate.into());
+        self
+    }
 }
 
 /// Slot-01 Contract: FmoEntry 構造体 (FMO共有メモリ同期エントリ)
@@ -91,6 +124,34 @@ impl FmoEntry {
             is_visible: true,
             lifecycle_state: "active".to_string(),
         }
+    }
+
+    pub fn with_surfaces(mut self, sakura: i32, kero: i32) -> Self {
+        self.sakura_surface = sakura;
+        self.kero_surface = kero;
+        self
+    }
+
+    pub fn with_balloons(mut self, balloon0: impl Into<String>, balloon1: impl Into<String>) -> Self {
+        self.balloon0 = balloon0.into();
+        self.balloon1 = balloon1.into();
+        self
+    }
+
+    pub fn with_hwnd(mut self, hwnd: u64, kerohwnd: Option<u64>) -> Self {
+        self.hwnd = hwnd;
+        self.kerohwnd = kerohwnd;
+        self
+    }
+
+    pub fn with_ghostpath(mut self, ghostpath: impl Into<String>) -> Self {
+        self.ghostpath = ghostpath.into();
+        self
+    }
+
+    pub fn with_modulestate(mut self, modulestate: impl Into<String>) -> Self {
+        self.modulestate = Some(modulestate.into());
+        self
     }
 
     /// モジュールステートをライフサイクル状態と統合して更新

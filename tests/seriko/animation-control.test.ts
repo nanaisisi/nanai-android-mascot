@@ -272,3 +272,30 @@ test("SurfaceAnimationManager active animation count, list, and dynamic collisio
 	);
 	assert.equal(hitAfter.name, "BaseBody");
 });
+
+test("SurfaceAnimationManager waitForAnimation resolves on finish or non-existent ID", async () => {
+	const { animation } = animationFixture();
+
+	// 未再生のものは即時解決される
+	await animation.waitForAnimation(999, 0);
+
+	const animDef = {
+		id: 88,
+		name: "wait_test",
+		patterns: [
+			{ surface: 801, wait: 30 },
+			{ surface: -1, wait: 0 },
+		],
+	};
+	animation.manager.animations = { 0: [animDef] };
+
+	const playPromise = animation.playAnimationPatterns(animDef, 0, 0);
+	let waited = false;
+	const waitPromise = animation.waitForAnimation(88, 0, 1000).then(() => {
+		waited = true;
+	});
+
+	await Promise.all([playPromise, waitPromise]);
+	assert.equal(waited, true);
+	assert.equal(animation.isAnimationRunning(0, 88), false);
+});

@@ -598,6 +598,23 @@ export const shioriNotifyMethods = {
 	},
 
 	/**
+	 * バルーンタイムアウト通知 (OnBalloonTimeout) を送信 (UKADOC準拠)
+	 * Reference0: 直前スクリプト, Reference1: スコープID
+	 * @param {string} [lastScript=""] タイムアウトした直前に表示されていたスクリプト
+	 * @param {number|string} [scopeId=0] バルーンのスコープID
+	 */
+	async sendBalloonTimeoutNotify(
+		this: any,
+		lastScript: string = "",
+		scopeId: number | string = 0,
+	) {
+		return await this.sendShioriNotify("OnBalloonTimeout", [
+			lastScript,
+			String(scopeId),
+		]);
+	},
+
+	/**
 	 * バルーン中断通知 (OnBalloonBreak) を送信 (UKADOC準拠)
 	 * @param {string} [script=""] 中断の操作が起きたスクリプト
 	 * @param {number|string} [scopeId=0] 中断の操作が起きたスコープ番号 (本体側0, 相方側1...)
@@ -1148,5 +1165,46 @@ export const shioriNotifyMethods = {
 
 	async sendOtherOffscreen(this: any, ghostName: string, rect: string = "") {
 		return await this.sendShioriNotify("OnOtherOffscreen", [ghostName, rect]);
+	},
+
+	/**
+	 * 外部通信イベント通知 (UKADOC other-communication spec)
+	 */
+	async notifyCommunicationEvent(
+		this: any,
+		event:
+			| "OnExecuteFileWatchChange"
+			| "OnExecuteFileWatchFailure"
+			| "OnExecuteHTTPComplete"
+			| "OnExecuteHTTPFailure"
+			| "OnExecuteHTTPProgress"
+			| "OnExecuteHTTPSSLInfo"
+			| "OnExecuteHTTPStreaming"
+			| "OnExecuteICalComplete"
+			| "OnExecuteICalFailure"
+			| "OnExecuteICalProgress"
+			| "OnExecuteICal_SSLInfo"
+			| "OnExecuteRSSComplete"
+			| "OnExecuteRSSFailure"
+			| "OnExecuteRSS_SSLInfo"
+			| "OnExecuteScheduleComplete"
+			| "OnExecuteScheduleFailure"
+			| "OnExecuteScheduleGetComplete"
+			| "OnExecuteWebSocketClose"
+			| "OnExecuteWebSocketFailure"
+			| "OnExecuteWebSocketOpen"
+			| "OnExecuteWebSocketReceive"
+			| "OnExecuteWebSocketReconnect"
+			| "OnExecuteWebSocket_SSLInfo"
+			| "OnNSLookupComplete"
+			| "OnNSLookupFailure"
+			| "OnPingComplete"
+			| "OnPingProgress",
+		references: (string | number)[] = [],
+	) {
+		return await this.sendShioriNotify(
+			event,
+			references.map((r) => String(r)),
+		);
 	},
 };

@@ -27,6 +27,7 @@ import {
 	getStatus,
 	hasPendingJobs,
 	interrupt,
+	isEmpty,
 	pause,
 	peekNextJob,
 	processQueue,
@@ -98,6 +99,7 @@ proto.getCurrentJob = getCurrentJob;
 proto.getIsPaused = getIsPaused;
 proto.getIsProcessing = getIsProcessing;
 proto.getIsQuickMode = getIsQuickMode;
+proto.isEmpty = isEmpty;
 proto.getStatus = getStatus;
 proto._processQueue = processQueue;
 

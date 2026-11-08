@@ -141,7 +141,9 @@ export class SurfaceAnimationManager {
 	}
 
 	getBaseScalingOffset(scopeId = 0) {
-		return this._baseScalingOffsets.get(scopeId) || { scaleX: 100, scaleY: 100 };
+		return (
+			this._baseScalingOffsets.get(scopeId) || { scaleX: 100, scaleY: 100 }
+		);
 	}
 
 	setSerikoTalkEnabled(scopeId = 0, enabled = true) {
@@ -304,8 +306,8 @@ export class SurfaceAnimationManager {
 		return playAnimationById(this, animIdOrName, scopeId, waitForComplete);
 	}
 
-	waitForAnimation(animIdOrName, scopeId = 0) {
-		return waitForAnimation(this, animIdOrName, scopeId);
+	waitForAnimation(animIdOrName, scopeId = 0, timeoutMs = 30000) {
+		return waitForAnimation(this, animIdOrName, scopeId, timeoutMs);
 	}
 
 	onTalkStart(scopeId = 0) {

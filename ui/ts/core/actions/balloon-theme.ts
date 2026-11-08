@@ -28,6 +28,10 @@ export const BALLOON_SCALE_MAP = {
 	"balloon-scale-200": "2",
 };
 
+/** 許容されるバルーン倍率の境界値 */
+export const MIN_BALLOON_SCALE = 0.1;
+export const MAX_BALLOON_SCALE = 5.0;
+
 /**
  * バルーンスキン・テーマ・9スライスおよびタイポグラフィ統合マネージャー
  */
@@ -105,6 +109,23 @@ export class BalloonThemeManager {
 	}
 
 	/**
+	 * 9スライスキャッシュのサイズ取得
+	 * @returns {number}
+	 */
+	get nineSliceCacheSize() {
+		return this._nineSliceCache.size;
+	}
+
+	/**
+	 * 9スライスキャッシュ内に特定キーが存在するか確認
+	 * @param {string} key
+	 * @returns {boolean}
+	 */
+	hasNineSliceCache(key) {
+		return this._nineSliceCache.has(key);
+	}
+
+	/**
 	 * バルーンテーマを順繰りに切り替え
 	 */
 	cycleTheme() {
@@ -141,14 +162,24 @@ export class BalloonThemeManager {
 		const prevScale = this.userScale || 1;
 		const prevPercent = Math.round(prevScale * 100);
 
-		let scale = 1;
+		let rawScale = 1;
 		if (typeof actionOrScale === "number") {
-			scale = actionOrScale;
+			rawScale = actionOrScale;
 		} else if (BALLOON_SCALE_MAP[actionOrScale]) {
-			scale = parseFloat(BALLOON_SCALE_MAP[actionOrScale]) || 1;
+			rawScale = parseFloat(BALLOON_SCALE_MAP[actionOrScale]) || 1;
 		} else {
-			scale = parseFloat(actionOrScale) || 1;
+			rawScale = parseFloat(actionOrScale) || 1;
 		}
+
+		if (Number.isNaN(rawScale) || !Number.isFinite(rawScale)) {
+			rawScale = 1;
+		}
+
+		// 境界値安全クランプ [0.1, 5.0]
+		const scale = Math.max(
+			MIN_BALLOON_SCALE,
+			Math.min(MAX_BALLOON_SCALE, rawScale),
+		);
 
 		this.userScale = scale;
 		if (this.app) {
@@ -158,15 +189,18 @@ export class BalloonThemeManager {
 		const finalScale = +(scale * dpiScale).toFixed(4);
 		const percent = Math.round(scale * 100);
 
-		const root = document.documentElement;
-		if (root) {
-			root.style.setProperty("--balloon-user-scale", String(scale));
+		if (typeof document !== "undefined") {
+			const root = document.documentElement;
+			if (root) {
+				root.style.setProperty("--balloon-user-scale", String(scale));
+			}
+			const balloonEl = document.querySelector(".balloon");
+			if (balloonEl?.style) {
+				balloonEl.style.transform = `scale(${finalScale})`;
+				balloonEl.style.transformOrigin = "bottom left";
+			}
 		}
-		const balloonEl = document.querySelector(".balloon");
-		if (balloonEl?.style) {
-			balloonEl.style.transform = `scale(${finalScale})`;
-			balloonEl.style.transformOrigin = "bottom left";
-		}
+
 		if (isTauriAvailable()) {
 			emit("balloon-scale-changed", {
 				userScale: scale,
@@ -215,17 +249,21 @@ export class BalloonThemeManager {
 			this.app.currentBalloonTheme = themeName;
 		}
 		try {
-			localStorage.setItem("nanai_balloon_theme", themeName);
+			if (typeof localStorage !== "undefined") {
+				localStorage.setItem("nanai_balloon_theme", themeName);
+			}
 		} catch (_) {
 			// localStorage unavailable
 		}
 
-		const root = document.documentElement;
-		if (root) {
-			root.setAttribute("data-balloon-theme", themeName);
-		}
-		if (document.body) {
-			document.body.className = `balloon-theme-${themeName}`;
+		if (typeof document !== "undefined") {
+			const root = document.documentElement;
+			if (root) {
+				root.setAttribute("data-balloon-theme", themeName);
+			}
+			if (document.body) {
+				document.body.className = `balloon-theme-${themeName}`;
+			}
 		}
 		this.app?.elements?.balloonDisplay?.setAttribute(
 			"data-balloon-theme",
@@ -291,36 +329,45 @@ export class BalloonThemeManager {
 	 */
 	resetDescript() {
 		this.clearNineSliceCache();
-		const root = document.documentElement;
 		this.dpiScale = 1;
 		if (this.app) {
 			this.app.balloonDpiScale = 1;
 		}
-		if (root) {
-			for (const key of [
-				"--balloon-dpi",
-				"--balloon-dpi-scale",
-				"--balloon-font-family",
-				"--balloon-font-size",
-				"--balloon-text-color",
-				"--balloon-highlight-bg",
-				"--balloon-highlight-text",
-				"--balloon-border-image-source",
-				"--balloon-border-image-slice",
-				"--balloon-border-image-width",
-				"--balloon-border-image-repeat",
-				"--balloon-writing-mode",
-			]) {
-				root.style.removeProperty(key);
+		if (typeof document !== "undefined") {
+			const root = document.documentElement;
+			if (root) {
+				for (const key of [
+					"--balloon-dpi",
+					"--balloon-dpi-scale",
+					"--balloon-font-family",
+					"--balloon-font-size",
+					"--balloon-text-color",
+					"--balloon-highlight-bg",
+					"--balloon-highlight-text",
+					"--balloon-border-image-source",
+					"--balloon-border-image-slice",
+					"--balloon-border-image-width",
+					"--balloon-border-image-repeat",
+					"--balloon-writing-mode",
+					"--balloon-valign",
+					"--balloon-halign",
+					"--balloon-text-stroke",
+					"--balloon-text-shadow",
+					"--balloon-font-shadow-style",
+					"--balloon-font-shadowstyle",
+				]) {
+					root.style.removeProperty(key);
+				}
 			}
-		}
-		const balloonEl = document.querySelector(".balloon");
-		if (balloonEl?.style) {
-			balloonEl.style.padding = "";
-			balloonEl.style.maxWidth = "";
-			balloonEl.style.borderImage = "";
-			const userScale = this.userScale || this.app?.balloonUserScale || 1;
-			balloonEl.style.transform = userScale !== 1 ? `scale(${userScale})` : "";
+			const balloonEl = document.querySelector(".balloon");
+			if (balloonEl?.style) {
+				balloonEl.style.padding = "";
+				balloonEl.style.maxWidth = "";
+				balloonEl.style.borderImage = "";
+				const userScale = this.userScale || this.app?.balloonUserScale || 1;
+				balloonEl.style.transform =
+					userScale !== 1 ? `scale(${userScale})` : "";
+			}
 		}
 		if (this.app?.elements?.balloonDisplay) {
 			this.app.elements.balloonDisplay.style.left = "";

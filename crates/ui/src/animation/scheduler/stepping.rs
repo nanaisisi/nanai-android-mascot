@@ -129,4 +129,15 @@ impl AnimationScheduler {
             })
             .unwrap_or_default()
     }
+
+    /// 指定アニメーションが現在アクティブ（再生中かつ未終了）か判定
+    pub fn is_animation_running(&self, scope_id: u32, anim_id: u32) -> bool {
+        self.active_animations
+            .get(&scope_id)
+            .map(|a| {
+                a.iter()
+                    .any(|x| x.animation_id == anim_id && !x.is_finished)
+            })
+            .unwrap_or(false)
+    }
 }

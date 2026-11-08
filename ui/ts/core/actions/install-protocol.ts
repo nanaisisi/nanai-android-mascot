@@ -118,10 +118,13 @@ export function buildInstallCompleteExArgs(
 export function buildInstallCompleteAllArgs(
 	installedList: Array<{ type: string; name: string }> = [],
 ): [string, string] {
-	const count = String(installedList.length);
+	const validList = Array.isArray(installedList)
+		? installedList.filter((item) => item && typeof item === "object")
+		: [];
+	const count = String(validList.length);
 	const sep = String.fromCharCode(1); // Byte1
-	const listStr = installedList
-		.map((item) => `${normalizeInstallType(item.type)}${sep}${item.name}`)
+	const listStr = validList
+		.map((item) => `${normalizeInstallType(item.type)}${sep}${item.name ?? ""}`)
 		.join("\n");
 	return [count, listStr];
 }
@@ -137,7 +140,11 @@ export function buildInstallRefuseArgs(
 	reason: string = "refused",
 	target: string = "",
 ): [string, string] {
-	return [String(reason ?? "refused"), String(target ?? "")];
+	const safeReason =
+		typeof reason === "string" && reason.trim().length > 0
+			? reason.trim()
+			: "refused";
+	return [safeReason, String(target ?? "")];
 }
 
 /**
@@ -231,7 +238,11 @@ export function buildInstallFailureArgs(errorOrReason: unknown): [string] {
 export function isMultiResourceInstall(
 	resources: Array<{ type: string; name: string }> = [],
 ): boolean {
-	return Array.isArray(resources) && resources.length > 1;
+	if (!Array.isArray(resources)) return false;
+	const validItems = resources.filter(
+		(r) => r && typeof r === "object" && typeof r.type === "string",
+	);
+	return validItems.length > 1;
 }
 
 /**
@@ -242,10 +253,13 @@ export function isMultiResourceInstall(
 export function buildInstallMultiArgs(
 	resources: Array<{ type: string; name: string }> = [],
 ): { count: string; listText: string; isMulti: boolean } {
-	const [count, listText] = buildInstallCompleteAllArgs(resources);
+	const safeList = Array.isArray(resources)
+		? resources.filter((r) => r && typeof r === "object")
+		: [];
+	const [count, listText] = buildInstallCompleteAllArgs(safeList);
 	return {
 		count,
 		listText,
-		isMulti: isMultiResourceInstall(resources),
+		isMulti: isMultiResourceInstall(safeList),
 	};
 }

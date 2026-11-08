@@ -216,8 +216,10 @@ export class SakuraScriptPlayer {
 				resolved = true;
 				this._pauseResolver = null;
 				if (timer) clearTimeout(timer);
-				element?.removeEventListener("click", onClick);
-				document.removeEventListener("keydown", onKey);
+				element?.removeEventListener?.("click", onClick);
+				if (typeof document !== "undefined" && document.removeEventListener) {
+					document.removeEventListener("keydown", onKey);
+				}
 				resolve();
 			};
 
@@ -233,9 +235,13 @@ export class SakuraScriptPlayer {
 				}
 			};
 
-			element?.addEventListener("click", onClick as EventListener);
-			document.addEventListener("keydown", onKey as EventListener);
-			timer = setTimeout(done, timeoutMs);
+			element?.addEventListener?.("click", onClick as EventListener);
+			if (typeof document !== "undefined" && document.addEventListener) {
+				document.addEventListener("keydown", onKey as EventListener);
+			}
+			if (!this.timeCritical && timeoutMs > 0) {
+				timer = setTimeout(done, timeoutMs);
+			}
 		});
 	}
 }

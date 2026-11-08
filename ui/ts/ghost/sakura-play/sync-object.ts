@@ -73,6 +73,14 @@ export class SyncObject {
 		});
 	}
 
+	get waiterCount(): number {
+		return this.waiters.size;
+	}
+
+	isWaiting(): boolean {
+		return this.waiters.size > 0;
+	}
+
 	cancelAll(reason = "SyncObject cancelled") {
 		for (const waiter of this.waiters) {
 			if (waiter.timer) {
@@ -101,6 +109,17 @@ export class SyncObjectManager {
 			this.objects.set(key, obj);
 		}
 		return obj;
+	}
+
+	has(name: string): boolean {
+		const key = String(name || "")
+			.trim()
+			.toLowerCase();
+		return this.objects.has(key);
+	}
+
+	getNames(): string[] {
+		return Array.from(this.objects.keys());
 	}
 
 	set(name: string) {

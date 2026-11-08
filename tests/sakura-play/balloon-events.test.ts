@@ -255,3 +255,124 @@ test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip",
 	assert.equal(breakEvent.scopeId, 1);
 	assert.equal(breakEvent.position, 5);
 });
+
+test("balloon events: OnBalloonTimeout triggered via sendBalloonTimeoutNotify", async () => {
+	const notifyEvents: any[] = [];
+	const sakuraText = createEl("div");
+
+	const app: any = {
+		ghostId: "main",
+		elements: {
+			balloonText: sakuraText,
+			balloonDisplay: createEl("div"),
+			keroBalloonText: createEl("div"),
+			keroBalloonDisplay: createEl("div"),
+		},
+		surfaceManager: {
+			onCharSpoken() {},
+			onTalkEnd() {},
+			onScriptEnd() {},
+		},
+		ghostController: {
+			sendBalloonTimeoutNotify: async (
+				lastScript: string,
+				scopeId: number | string,
+			) => {
+				notifyEvents.push({
+					event: "OnBalloonTimeout",
+					lastScript,
+					scopeId: String(scopeId),
+				});
+			},
+			sendBalloonCloseNotify: async (lastScript: string) => {
+				notifyEvents.push({ event: "OnBalloonClose", script: lastScript });
+			},
+		},
+	};
+
+	const player = new SakuraScriptPlayer(app);
+	player.balloonTimeout = 10;
+	player.parse = async () => [
+		{ type: "scope", value: 0 },
+		{ type: "char", value: "Timed message" },
+	];
+	player.sleep = () => Promise.resolve();
+	player.waitForClickOrTimeout = () => Promise.resolve();
+	player.scheduleSurfaceRestore = () => {};
+
+	await playScript(player, "\\0Timed message\\e");
+
+	// Wait for balloonTimeout timer to fire
+	await new Promise((r) => setTimeout(r, 30));
+
+	const timeoutEvent = notifyEvents.find((e) => e.event === "OnBalloonTimeout");
+	assert.ok(timeoutEvent);
+	assert.equal(timeoutEvent.lastScript, "\\0Timed message\\e");
+	assert.equal(timeoutEvent.scopeId, "0");
+	assert.ok(notifyEvents.some((e) => e.event === "OnBalloonClose"));
+});
+
+test("\\t (timeCritical) suppresses balloonTimeout and click timeout auto-advance", async () => {
+	const notifyEvents: any[] = [];
+	const sakuraText = createEl("div");
+
+	const app: any = {
+		ghostId: "main",
+		elements: {
+			balloonText: sakuraText,
+			balloonDisplay: createEl("div"),
+			keroBalloonText: createEl("div"),
+			keroBalloonDisplay: createEl("div"),
+		},
+		surfaceManager: {
+			onCharSpoken() {},
+			onTalkEnd() {},
+			onScriptEnd() {},
+		},
+		ghostController: {
+			sendBalloonTimeoutNotify: async (lastScript: string) => {
+				notifyEvents.push({ event: "OnBalloonTimeout", lastScript });
+			},
+		},
+	};
+
+	const player = new SakuraScriptPlayer(app);
+	player.balloonTimeout = 10;
+	player.parse = async () => [
+		{ type: "scope", value: 0 },
+		{ type: "char", value: "Critical message" },
+		{ type: "timeout" }, // \t
+	];
+	player.sleep = () => Promise.resolve();
+	const originalWaitForClick = player.waitForClickOrTimeout.bind(player);
+	player.waitForClickOrTimeout = () => Promise.resolve();
+	player.scheduleSurfaceRestore = () => {};
+
+	await playScript(player, "\\0Critical message\\t\\e");
+
+	assert.equal(player.timeCritical, true);
+
+	// Wait to confirm balloonTimeout does NOT fire
+	await new Promise((r) => setTimeout(r, 30));
+	assert.equal(
+		notifyEvents.some((e) => e.event === "OnBalloonTimeout"),
+		false,
+	);
+	assert.equal(player.balloonTimeoutTimer, null);
+
+	// Test actual waitForClickOrTimeout under timeCritical
+	let timeoutAdvancable = false;
+	const dummyEl = createEl("div");
+	const waitPromise = originalWaitForClick(dummyEl, 20).then(() => {
+		timeoutAdvancable = true;
+	});
+
+	await new Promise((r) => setTimeout(r, 40));
+	// Under timeCritical, timeoutMs does not auto-advance
+	assert.equal(timeoutAdvancable, false);
+
+	// Click manually resolves it
+	dummyEl._listeners.click({ stopPropagation() {} });
+	await waitPromise;
+	assert.equal(timeoutAdvancable, true);
+});

@@ -135,7 +135,9 @@ export class OverlayManager {
 	 * @returns {Promise<number>}
 	 */
 	async setOverlayTransparency(alpha) {
-		const clamped = Math.max(0.0, Math.min(1.0, Number(alpha) || 0));
+		const parsed = Number(alpha);
+		const safeAlpha = Number.isFinite(parsed) ? parsed : 1.0;
+		const clamped = Math.max(0.0, Math.min(1.0, safeAlpha));
 		if (isTauriAvailable()) {
 			try {
 				await this._invoke("set_overlay_transparency", { alpha: clamped });
@@ -193,7 +195,8 @@ export class OverlayManager {
 	 * @returns {Promise<number>}
 	 */
 	async trimMemory(level = 40) {
-		const numLevel = Number(level) || 40;
+		const parsed = Number(level);
+		const numLevel = Number.isFinite(parsed) && parsed >= 0 ? parsed : 40;
 		if (isTauriAvailable()) {
 			try {
 				await this._invoke("trim_memory_command", { level: numLevel });

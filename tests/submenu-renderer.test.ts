@@ -182,5 +182,44 @@ test("renderSubmenuContent covers all submenu types (ghost, shell, dressup, ball
 	});
 	assert.ok(children.length > 0);
 
+	// 6. type = "call-ghost" (with items and empty)
+	children.length = 0;
+	dispatched.length = 0;
+	renderSubmenuContent({
+		currentSubmenuType: "call-ghost",
+		cachedGhosts: ["Ghost1", { name: "Ghost2" }],
+		currentGhostName: "Ghost1",
+		cachedShells: [],
+		currentShellName: "",
+		cachedDressup: null,
+		dressupScope: 0,
+		cachedBalloons: [],
+		currentBalloonTheme: "",
+		cachedRecentGhosts: [],
+		dispatchSubmenuAction,
+	});
+	assert.equal(children.length, 2);
+	children[0].click();
+	assert.equal(dispatched[0].action, "call-ghost");
+	assert.equal(dispatched[0].payload, "Ghost1");
+
+	// Empty ghost list
+	children.length = 0;
+	renderSubmenuContent({
+		currentSubmenuType: "ghost",
+		cachedGhosts: [],
+		currentGhostName: "",
+		cachedShells: [],
+		currentShellName: "",
+		cachedDressup: null,
+		dressupScope: 0,
+		cachedBalloons: [],
+		currentBalloonTheme: "",
+		cachedRecentGhosts: [],
+		dispatchSubmenuAction,
+	});
+	assert.equal(children.length, 1);
+	assert.ok(children[0].className.includes("is-disabled"));
+
 	assert.ok(true);
 });

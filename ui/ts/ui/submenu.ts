@@ -79,6 +79,13 @@ if (isTauriAvailable()) {
 		if (event.payload?.type) {
 			currentSubmenuType = event.payload.type;
 			renderContent();
+			if (
+				(currentSubmenuType === "ghost" ||
+					currentSubmenuType === "call-ghost") &&
+				cachedGhosts.length === 0
+			) {
+				void emit("menu-action", { action: "request-sync" });
+			}
 		}
 	});
 
@@ -165,6 +172,7 @@ globalThis.addEventListener("DOMContentLoaded", () => {
 	}
 	renderContent();
 	if (isTauriAvailable()) {
+		void emit("menu-action", { action: "request-sync" });
 		invoke("notify_submenu_ready").catch(() => {});
 	}
 });

@@ -23,17 +23,28 @@ export function renderSubmenuContent({
 	if (!container) return;
 	container.innerHTML = "";
 
-	if (currentSubmenuType === "ghost") {
+	if (currentSubmenuType === "ghost" || currentSubmenuType === "call-ghost") {
+		const isCall = currentSubmenuType === "call-ghost";
+		if (!cachedGhosts || cachedGhosts.length === 0) {
+			const empty = document.createElement("div");
+			empty.className = "menu-item is-disabled";
+			empty.innerHTML = `<span>(ゴーストなし)</span>`;
+			container.appendChild(empty);
+			return;
+		}
 		cachedGhosts.forEach((ghostItem: { name: unknown }) => {
 			const ghostName =
 				typeof ghostItem === "string" ? ghostItem : ghostItem?.name || "";
-			const isCurrent = ghostName === currentGhostName;
+			const isCurrent = !isCall && ghostName === currentGhostName;
 			const btn = document.createElement("button");
 			btn.type = "button";
 			btn.className = `menu-item${isCurrent ? " is-current" : ""}`;
 			btn.innerHTML = `<span>${isCurrent ? "✓ " : ""}${ghostName}</span>`;
 			btn.addEventListener("click", () => {
-				dispatchSubmenuAction("switch-ghost", ghostName);
+				dispatchSubmenuAction(
+					isCall ? "call-ghost" : "switch-ghost",
+					ghostName,
+				);
 			});
 			container.appendChild(btn);
 		});

@@ -1,5 +1,43 @@
 use std::path::{Path, PathBuf};
 
+/// Windowsの予約デバイス名（CON, PRN, AUX, NUL, COM1-9, LPT1-9）に該当するか判定
+pub fn is_windows_reserved_name(name: &str) -> bool {
+    // 拡張子を除いたベース名を取得
+    let stem = match name.split('.').next() {
+        Some(s) => s.trim(),
+        None => return false,
+    };
+    if stem.is_empty() {
+        return false;
+    }
+    let lower = stem.to_ascii_lowercase();
+    matches!(
+        lower.as_str(),
+        "con"
+            | "prn"
+            | "aux"
+            | "nul"
+            | "com1"
+            | "com2"
+            | "com3"
+            | "com4"
+            | "com5"
+            | "com6"
+            | "com7"
+            | "com8"
+            | "com9"
+            | "lpt1"
+            | "lpt2"
+            | "lpt3"
+            | "lpt4"
+            | "lpt5"
+            | "lpt6"
+            | "lpt7"
+            | "lpt8"
+            | "lpt9"
+    )
+}
+
 /// パス文字列をスラッシュ区切りかつ冗長な `./` や `../` を整理した正規化形式へ変換
 pub fn normalize_vfs_path(path: &str) -> String {
     let mut parts = Vec::new();
@@ -23,8 +61,14 @@ pub fn is_safe_vfs_path(path: &str) -> bool {
         return false;
     }
 
-    // Windows ドライブレター (`C:`, `D:`) または絶対プレフィックス (`/`, `\`)
     let trimmed = path.trim();
+
+    // URI スキームプレフィックス (file://, http://, ftp:// 等)
+    if trimmed.contains("://") {
+        return false;
+    }
+
+    // Windows ドライブレター (`C:`, `D:`) または絶対プレフィックス (`/`, `\`)
     if trimmed.starts_with('/') || trimmed.starts_with('\\') {
         return false;
     }
@@ -35,18 +79,29 @@ pub fn is_safe_vfs_path(path: &str) -> bool {
         return false;
     }
 
-    // `..` によるルート外脱出の検証
+    // NTFS 代替データストリーム (`filename:stream`) や不正コロンの検査
+    // (ドライブレター以外でのコロンの存在を拒絶)
+    if trimmed.contains(':') {
+        return false;
+    }
+
+    // `..` によるルート外脱出の検証、および各セグメントの予約名検査
     let mut depth: isize = 0;
-    for part in path.split(['/', '\\']) {
-        if part.is_empty() || part == "." {
+    for part in trimmed.split(['/', '\\']) {
+        let part_trimmed = part.trim();
+        if part_trimmed.is_empty() || part_trimmed == "." {
             continue;
         }
-        if part == ".." {
+        if part_trimmed == ".." {
             depth -= 1;
             if depth < 0 {
                 return false;
             }
         } else {
+            // Windows予約デバイス名（CON, PRN, AUX, NUL等）の検査
+            if is_windows_reserved_name(part_trimmed) {
+                return false;
+            }
             depth += 1;
         }
     }

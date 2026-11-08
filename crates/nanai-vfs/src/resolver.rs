@@ -351,4 +351,31 @@ impl VirtualFileSystem for VfsResolver {
         matched.sort();
         Ok(matched)
     }
+
+    fn resolve_file_with_extensions(&self, path: &str, extensions: &[&str]) -> Option<String> {
+        self.resolve_with_extensions(path, extensions)
+            .and_then(|p| {
+                p.strip_prefix(&self.root_dir)
+                    .ok()
+                    .map(|rel| rel.to_string_lossy().to_string())
+            })
+    }
+
+    fn read_binary_range(&self, path: &str, offset: u64, length: usize) -> io::Result<Vec<u8>> {
+        let resolved = self.resolve(path).ok_or_else(|| {
+            io::Error::new(
+                io::ErrorKind::NotFound,
+                format!("File not found in VFS: {}", path),
+            )
+        })?;
+
+        use std::fs::File;
+        use std::io::{Read, Seek, SeekFrom};
+        let mut file = File::open(resolved)?;
+        file.seek(SeekFrom::Start(offset))?;
+        let mut buffer = vec![0u8; length];
+        let bytes_read = file.read(&mut buffer)?;
+        buffer.truncate(bytes_read);
+        Ok(buffer)
+    }
 }

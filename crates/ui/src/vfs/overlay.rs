@@ -194,4 +194,55 @@ impl VirtualFileSystem for OverlayVfs {
         merged.sort();
         Ok(merged)
     }
+
+    fn filter_by_extension(&self, ext: &str) -> io::Result<Vec<String>> {
+        let mut merged = Vec::new();
+        for layer in &self.layers {
+            if let Ok(matched) = layer.filter_by_extension(ext) {
+                for file in matched {
+                    if !merged.contains(&file) {
+                        merged.push(file);
+                    }
+                }
+            }
+        }
+        merged.sort();
+        Ok(merged)
+    }
+
+    fn glob_files(&self, pattern: &str) -> io::Result<Vec<String>> {
+        let mut merged = Vec::new();
+        for layer in &self.layers {
+            if let Ok(matched) = layer.glob_files(pattern) {
+                for file in matched {
+                    if !merged.contains(&file) {
+                        merged.push(file);
+                    }
+                }
+            }
+        }
+        merged.sort();
+        Ok(merged)
+    }
+
+    fn resolve_file_with_extensions(&self, path: &str, extensions: &[&str]) -> Option<String> {
+        for layer in &self.layers {
+            if let Some(resolved) = layer.resolve_file_with_extensions(path, extensions) {
+                return Some(resolved);
+            }
+        }
+        None
+    }
+
+    fn read_binary_range(&self, path: &str, offset: u64, length: usize) -> io::Result<Vec<u8>> {
+        for layer in &self.layers {
+            if layer.exists(path) {
+                return layer.read_binary_range(path, offset, length);
+            }
+        }
+        Err(io::Error::new(
+            io::ErrorKind::NotFound,
+            format!("File not found in any OverlayVfs layers: {}", path),
+        ))
+    }
 }

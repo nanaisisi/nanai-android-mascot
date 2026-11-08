@@ -13,6 +13,25 @@ pub struct DecodeResult {
     pub had_errors: bool,
 }
 
+/// 文字コード名を標準的なキー表現に正規化（例: "cp932", "sjis", "windows-31j" -> "Shift_JIS"）
+pub fn normalize_charset_name(charset: &str) -> Option<&'static str> {
+    let clean = charset
+        .trim()
+        .trim_matches(|c| c == '"' || c == '\'')
+        .to_ascii_lowercase();
+    match clean.as_str() {
+        "shift_jis" | "shift-jis" | "sjis" | "cp932" | "windows-31j" | "ms932" | "x-sjis" => {
+            Some("Shift_JIS")
+        }
+        "euc-jp" | "euc_jp" | "ujis" | "x-euc-jp" => Some("EUC-JP"),
+        "iso-2022-jp" | "iso2022jp" | "jis" | "csiso2022jp" => Some("ISO-2022-JP"),
+        "utf-8" | "utf8" | "utf_8" => Some("UTF-8"),
+        "utf-16le" | "utf-16" | "utf16le" | "utf16" => Some("UTF-16LE"),
+        "utf-16be" | "utf16be" => Some("UTF-16BE"),
+        _ => None,
+    }
+}
+
 /// 詳細なデコード結果（エラー有無を含む）を返す拡張自動判定関数
 pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
     // 1. BOM チェック
@@ -62,13 +81,20 @@ pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
         }
     }
 
-    // 2. ヘッダー宣言チェック (charset,Shift_JIS / charset=Shift_JIS / charset:Shift_JIS 等)
+    // 2. ヘッダー宣言チェック (charset,Shift_JIS / charset=Shift_JIS / charset:Shift_JIS / encoding=... 等)
     let check_len = buffer.len().min(1024);
     let slice = &buffer[..check_len];
     let lower_ascii: Vec<u8> = slice.iter().map(|b| b.to_ascii_lowercase()).collect();
 
     let mut found_charset_decl = None;
-    for sep in [b"charset,", b"charset=", b"charset:"] {
+    for sep in [
+        &b"charset,"[..],
+        &b"charset="[..],
+        &b"charset:"[..],
+        &b"charset\t"[..],
+        &b"encoding="[..],
+        &b"encoding:"[..],
+    ] {
         if let Some(pos) = lower_ascii.windows(sep.len()).position(|w| w == sep) {
             let remainder = &lower_ascii[pos + sep.len()..];
             let end = remainder
@@ -89,9 +115,11 @@ pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
         }
     }
 
-    if let Some(decl) = found_charset_decl {
-        match decl.as_str() {
-            "shift_jis" | "shift-jis" | "sjis" | "cp932" | "windows-31j" => {
+    if let Some(decl) = found_charset_decl
+        && let Some(normalized) = normalize_charset_name(&decl)
+    {
+        match normalized {
+            "Shift_JIS" => {
                 let (cow, _, had_errors) = SHIFT_JIS.decode(buffer);
                 return DecodeResult {
                     text: cow.into_owned(),
@@ -99,7 +127,7 @@ pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
                     had_errors,
                 };
             }
-            "euc-jp" | "euc_jp" | "ujis" | "x-euc-jp" => {
+            "EUC-JP" => {
                 let (cow, _, had_errors) = EUC_JP.decode(buffer);
                 return DecodeResult {
                     text: cow.into_owned(),
@@ -107,7 +135,7 @@ pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
                     had_errors,
                 };
             }
-            "iso-2022-jp" | "iso2022jp" | "jis" => {
+            "ISO-2022-JP" => {
                 let (cow, _, had_errors) = ISO_2022_JP.decode(buffer);
                 return DecodeResult {
                     text: cow.into_owned(),
@@ -115,11 +143,27 @@ pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
                     had_errors,
                 };
             }
-            "utf-8" | "utf8" => {
+            "UTF-8" => {
                 let (cow, _, had_errors) = encoding_rs::UTF_8.decode(buffer);
                 return DecodeResult {
                     text: cow.into_owned(),
                     encoding: "UTF-8",
+                    had_errors,
+                };
+            }
+            "UTF-16LE" => {
+                let (cow, _, had_errors) = UTF_16LE.decode(buffer);
+                return DecodeResult {
+                    text: cow.into_owned(),
+                    encoding: "UTF-16LE",
+                    had_errors,
+                };
+            }
+            "UTF-16BE" => {
+                let (cow, _, had_errors) = UTF_16BE.decode(buffer);
+                return DecodeResult {
+                    text: cow.into_owned(),
+                    encoding: "UTF-16BE",
                     had_errors,
                 };
             }
@@ -202,12 +246,9 @@ pub fn open_shift_jis_file(path: &str) -> Result<String, io::Error> {
 
 /// 文字列を指定された文字コード名（Shift_JIS, CP932, EUC-JP, ISO-2022-JP, UTF-8, UTF-16LE/BE等）にエンコード
 pub fn encode_to_charset(text: &str, charset: &str) -> Option<Vec<u8>> {
-    let clean = charset
-        .trim()
-        .trim_matches(|c| c == '"' || c == '\'')
-        .to_lowercase();
-    match clean.as_str() {
-        "shift_jis" | "shift-jis" | "sjis" | "cp932" | "windows-31j" => {
+    let normalized = normalize_charset_name(charset)?;
+    match normalized {
+        "Shift_JIS" => {
             let (cow, _, had_errors) = SHIFT_JIS.encode(text);
             if had_errors {
                 None
@@ -215,7 +256,7 @@ pub fn encode_to_charset(text: &str, charset: &str) -> Option<Vec<u8>> {
                 Some(cow.into_owned())
             }
         }
-        "euc-jp" | "euc_jp" | "ujis" | "x-euc-jp" => {
+        "EUC-JP" => {
             let (cow, _, had_errors) = EUC_JP.encode(text);
             if had_errors {
                 None
@@ -223,7 +264,7 @@ pub fn encode_to_charset(text: &str, charset: &str) -> Option<Vec<u8>> {
                 Some(cow.into_owned())
             }
         }
-        "iso-2022-jp" | "iso2022jp" | "jis" => {
+        "ISO-2022-JP" => {
             let (cow, _, had_errors) = ISO_2022_JP.encode(text);
             if had_errors {
                 None
@@ -231,15 +272,15 @@ pub fn encode_to_charset(text: &str, charset: &str) -> Option<Vec<u8>> {
                 Some(cow.into_owned())
             }
         }
-        "utf-8" | "utf8" => Some(text.as_bytes().to_vec()),
-        "utf-16le" | "utf-16" | "utf16le" => {
+        "UTF-8" => Some(text.as_bytes().to_vec()),
+        "UTF-16LE" => {
             let mut out = Vec::new();
             for u in text.encode_utf16() {
                 out.extend_from_slice(&u.to_le_bytes());
             }
             Some(out)
         }
-        "utf-16be" | "utf16be" => {
+        "UTF-16BE" => {
             let mut out = Vec::new();
             for u in text.encode_utf16() {
                 out.extend_from_slice(&u.to_be_bytes());
@@ -267,6 +308,15 @@ pub fn normalize_newlines(text: &str) -> String {
     result
 }
 
+/// LF (`\n`) 改行コードを指定された改行シーケンス（CRLF `\r\n` や CR `\r`）に復元
+pub fn denormalize_newlines(text: &str, newline_seq: &str) -> String {
+    let normalized = normalize_newlines(text);
+    if newline_seq == "\n" {
+        return normalized;
+    }
+    normalized.replace('\n', newline_seq)
+}
+
 /// ファイルパスの拡張子から標準的な MIME タイプを取得
 pub fn detect_mime_type(path: &str) -> &'static str {
     let lower = path.to_lowercase();
@@ -282,16 +332,34 @@ pub fn detect_mime_type(path: &str) -> &'static str {
         "image/gif"
     } else if lower.ends_with(".webp") {
         "image/webp"
+    } else if lower.ends_with(".svg") {
+        "image/svg+xml"
+    } else if lower.ends_with(".ico") {
+        "image/x-icon"
     } else if lower.ends_with(".txt") {
         "text/plain"
     } else if lower.ends_with(".json") {
         "application/json"
+    } else if lower.ends_with(".xml") {
+        "application/xml"
+    } else if lower.ends_with(".html") || lower.ends_with(".htm") {
+        "text/html"
+    } else if lower.ends_with(".ini") || lower.ends_with(".inf") {
+        "text/plain"
+    } else if lower.ends_with(".plist") {
+        "application/x-plist"
     } else if lower.ends_with(".wav") {
         "audio/wav"
     } else if lower.ends_with(".mp3") {
         "audio/mpeg"
     } else if lower.ends_with(".ogg") {
         "audio/ogg"
+    } else if lower.ends_with(".flac") {
+        "audio/flac"
+    } else if lower.ends_with(".opus") {
+        "audio/opus"
+    } else if lower.ends_with(".m4a") || lower.ends_with(".aac") {
+        "audio/aac"
     } else if lower.ends_with(".mid") || lower.ends_with(".midi") {
         "audio/midi"
     } else if lower.ends_with(".dll") || lower.ends_with(".so") {

@@ -123,4 +123,37 @@ animation10.collisionex2,AnimRect,rect,5,5,25,25
 		"9",
 		"10",
 	]);
+
+	// Cycle 9 surfaces.txt extensions: surface[0], scoped surface blocks, name, icon.rect, 7-part collision
+	const cycle9Txt = `
+surface[0]
+{
+name,DefaultFace
+icon.rect,10,20,50,40
+collision,5,0,0,100,100,LegacyBody
+}
+
+sakura.surface1
+{
+name,SakuraSmile
+collision,0,0,50,50,Head
+}
+
+kero.surface[10]
+{
+name,KeroNormal
+collision,10,10,60,60,KeroBody
+}
+`;
+	const cycle9Parsed = parseSurfacesTxt(cycle9Txt);
+	assert.equal(cycle9Parsed.names["0"], "DefaultFace");
+	assert.deepEqual(cycle9Parsed.iconRects["0"], [10, 20, 50, 40]);
+	assert.equal(cycle9Parsed.collisions["0"]?.[0]?.id, 5);
+	assert.equal(cycle9Parsed.collisions["0"]?.[0]?.name, "legacybody");
+
+	assert.equal(cycle9Parsed.names["1"], "SakuraSmile");
+	assert.equal(cycle9Parsed.collisions["1"]?.[0]?.name, "head");
+
+	assert.equal(cycle9Parsed.names["10"], "KeroNormal");
+	assert.equal(cycle9Parsed.collisions["10"]?.[0]?.name, "kerobody");
 });

@@ -138,6 +138,7 @@ root.prop,custom_value
 surface0
 {
 name,OverwrittenName
+icon.rect,10,20,70,80
 point.centerx,150
 point.centery,200
 point.baseposx,100

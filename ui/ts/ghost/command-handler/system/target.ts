@@ -64,6 +64,25 @@ export async function handleOpenSystemTarget(handler: unknown, args: string[]) {
 			break;
 		}
 
+		case "aigraph": {
+			console.log("📊 Open AI graph panel requested");
+			const h = handler as {
+				app?: {
+					ghostController?: Record<string, unknown>;
+					modalManager?: { show: (id: string) => void };
+					toggleMenu?: () => void;
+				};
+			};
+			if (typeof h?.app?.ghostController?.openAigraph === "function") {
+				await (h.app.ghostController.openAigraph as () => Promise<unknown>)();
+			} else if (h?.app?.modalManager) {
+				h.app.modalManager.show("aigraph-modal-content");
+			} else {
+				h?.app?.toggleMenu?.();
+			}
+			break;
+		}
+
 		case "browser": {
 			if (pathOrParam && /^https?:\/\//i.test(pathOrParam)) {
 				if (typeof globalThis !== "undefined" && globalThis.open) {

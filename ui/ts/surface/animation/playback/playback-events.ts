@@ -16,6 +16,23 @@ function isInstance(obj: unknown) {
 	);
 }
 
+function triggerAnimationsFallback(instance: any, scopeId: any, kind: string) {
+	const manager = instance.manager;
+	const sid = String(
+		manager?.currentSurfaceIdFor ? manager.currentSurfaceIdFor(scopeId) : 0,
+	);
+	const animList =
+		manager?.animations?.[sid] || manager?.animations?.default || [];
+
+	for (const anim of animList) {
+		const interval = String(anim.interval || "").toLowerCase();
+		if (interval.includes(kind)) {
+			const playFn = instance.playAnimationPatterns || playAnimationPatterns;
+			playFn.call(instance, anim, sid, scopeId);
+		}
+	}
+}
+
 export function onTalkStart(this: unknown, target = 0, scopeIdParam = 0) {
 	let instance: any, scopeId: any;
 	if (isInstance(target)) {
@@ -34,6 +51,8 @@ export function onTalkStart(this: unknown, target = 0, scopeIdParam = 0) {
 	instance._talkStarted[scopeId] = true;
 	if (instance.triggerAnimations) {
 		instance.triggerAnimations(scopeId, "starttalk");
+	} else if (instance.manager) {
+		triggerAnimationsFallback(instance, scopeId, "starttalk");
 	}
 }
 
@@ -53,6 +72,8 @@ export function onTalkEnd(this: unknown, target = 0, scopeIdParam = 0) {
 	if (instance._talkStarted[scopeId]) {
 		if (instance.triggerAnimations) {
 			instance.triggerAnimations(scopeId, "endtalk");
+		} else if (instance.manager) {
+			triggerAnimationsFallback(instance, scopeId, "endtalk");
 		}
 	}
 	instance._talkStarted[scopeId] = false;
@@ -71,6 +92,8 @@ export function onScriptEnd(this: unknown, target = 0, scopeIdParam = 0) {
 	if (!instance) return;
 	if (instance.triggerAnimations) {
 		instance.triggerAnimations(scopeId, "yen-e");
+	} else if (instance.manager) {
+		triggerAnimationsFallback(instance, scopeId, "yen-e");
 	}
 }
 
@@ -93,6 +116,11 @@ export function onCharSpoken(this: unknown, target = 0, scopeIdParam = 0) {
 		if (!enabled) return;
 	}
 
+	instance._talkStarted = instance._talkStarted || {};
+	if (!instance._talkStarted[scopeId]) {
+		onTalkStart.call(instance, target, scopeIdParam);
+	}
+
 	instance._spokenCount = instance._spokenCount || {};
 	instance._spokenCount[scopeId] = (instance._spokenCount[scopeId] || 0) + 1;
 	const count = instance._spokenCount[scopeId];
@@ -102,22 +130,14 @@ export function onCharSpoken(this: unknown, target = 0, scopeIdParam = 0) {
 		for (const item of anims) {
 			const anim = item.anim || item;
 			const sid = item.sid || 0;
-			const playFn = instance.playAnimationPatterns || playAnimationPatterns;
-			playFn.call(instance, anim, sid, scopeId);
-		}
-		return;
-	}
-
-	if (instance.findAnimationsForEvent) {
-		const anims = instance.findAnimationsForEvent(scopeId, "talk");
-		for (const anim of anims) {
-			const sid = String(
-				instance.manager?.currentSurfaceIdFor
-					? instance.manager.currentSurfaceIdFor(scopeId)
-					: 0,
-			);
-			const playFn = instance.playAnimationPatterns || playAnimationPatterns;
-			playFn.call(instance, anim, sid, scopeId);
+			const param = item.param != null ? Number.parseInt(String(item.param), 10) : 1;
+			const interval = String(anim.interval || "").toLowerCase();
+			const parts = interval.split(",");
+			const n = !Number.isNaN(param) && param > 0 ? param : parts[1] ? Number.parseInt(parts[1], 10) : 1;
+			if (!Number.isNaN(n) && n > 0 && count % n === 0) {
+				const playFn = instance.playAnimationPatterns || playAnimationPatterns;
+				playFn.call(instance, anim, sid, scopeId);
+			}
 		}
 		return;
 	}

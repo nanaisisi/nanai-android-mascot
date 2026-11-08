@@ -1,11 +1,53 @@
 /**
  * @file animation-options.js
- * @brief SERIKO アニメーションオプション解析、排他制御、オフセットおよび一時停止状態管理モジュール
+ * @brief SERIKO アニメーションオプション解析・排他制御・検索・操作ユーティリティ
  */
 
 import { surfaceAnimationTimers } from "../surface-animation-timers.js";
 
-function isInstance(obj: number | null) {
+/**
+ * SERIKO アニメーションオプション文字列のパース (\![anim,option,ID,...])
+ * @param {string|string[]|null} [optionParam=null]
+ */
+export function parseAnimationOptions(optionParam: string | string[] | null = null) {
+	const optionsList = Array.isArray(optionParam)
+		? optionParam
+		: optionParam && typeof optionParam === "string"
+		? [optionParam]
+		: [];
+
+	const optionStr = optionsList.join(" ").toLowerCase();
+
+	const isExclusive =
+		optionStr.includes("exclusive") || optionStr.includes("alternation");
+	let exclusiveGroup: string | null = null;
+	const matchGroup = optionStr.match(/exclusive[:=]([a-zA-Z0-9_+-]+)/i);
+	if (matchGroup) {
+		exclusiveGroup = matchGroup[1] ?? null;
+	} else if (isExclusive) {
+		exclusiveGroup = "default";
+	}
+
+	let exclusiveTargets: Set<number> | null = null;
+	const matchTargets = optionStr.match(/exclusive=([0-9+]+)/i);
+	if (matchTargets?.[1]) {
+		exclusiveTargets = new Set(
+			matchTargets[1].split("+").map((id) => Number.parseInt(id, 10)),
+		);
+	}
+
+	return {
+		isExclusive,
+		exclusiveGroup,
+		exclusiveTargets,
+		isAsync: optionStr.includes("async"),
+		isOverlay: optionStr.includes("overlay"),
+		isBackground: optionStr.includes("background"),
+		isSharedIndex: optionStr.includes("sharedindex"),
+	};
+}
+
+function isInstance(obj: unknown) {
 	return (
 		obj !== null &&
 		typeof obj === "object" &&
@@ -17,73 +59,35 @@ function isInstance(obj: number | null) {
 }
 
 /**
- * animation*.option 文字列配列を解析
- * @param {string[]|undefined} options
- * @returns {{ isExclusive: boolean, exclusiveTargets: Set<number>|null, isBackground: boolean, isSharedIndex: boolean }}
- */
-export function parseAnimationOptions(options = []) {
-	let isExclusive = false;
-	let exclusiveTargets = null;
-	let isBackground = false;
-	let isSharedIndex = false;
-
-	for (const raw of options) {
-		const str = String(raw).trim().toLowerCase();
-		for (const part of str.split("+")) {
-			const trimmed = part.trim();
-			if (trimmed.startsWith("exclusive")) {
-				isExclusive = true;
-				const match = trimmed.match(/\(([\d,\s]+)\)/);
-				if (match) {
-					const targets = new Set(
-						match[1]
-							.split(",")
-							.map((s) => Number.parseInt(s.trim(), 10))
-							.filter((n) => !Number.isNaN(n)),
-					);
-					if (targets.size > 0) exclusiveTargets = targets;
-				}
-			} else if (trimmed.startsWith("background")) {
-				isBackground = true;
-			} else if (
-				trimmed.startsWith("shared-index") ||
-				trimmed.startsWith("shared_index")
-			) {
-				isSharedIndex = true;
-			}
-		}
-	}
-
-	return { isExclusive, exclusiveTargets, isBackground, isSharedIndex };
-}
-
-/**
- * 指定アニメーションが現在排他ロックにより開始をブロックされているか
+ * 排他グループによるブロック判定
  * @param {unknown} target
+ * @param {number} [target=0]
  * @param {number} [scopeIdOrAnimId=0]
- * @param {number|string} [animIdParam]
+ * @param {unknown} [animIdParam]
  * @returns {boolean}
  */
 export function isBlockedByExclusive(
 	this: unknown,
-	target = 0,
-	scopeIdOrAnimId: number,
-	animIdParam: unknown,
+	target: any = 0,
+	scopeIdOrAnimId: any = 0,
+	animIdParam: any = undefined,
 ) {
-	let instance: unknown, scopeId: unknown, animId: unknown;
+	let instance: any, scopeId: any, animId: any;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
 		animId = animIdParam;
-	} else {
+	} else if (isInstance(this)) {
 		instance = this;
 		scopeId = target ?? 0;
 		animId = scopeIdOrAnimId;
+	} else {
+		return false;
 	}
 
-	const lock = instance._exclusiveLocks.get(scopeId);
+	const lock = instance._exclusiveLocks?.get(scopeId);
 	if (!lock) return false;
-	const targetId = Number.parseInt(animId, 10);
+	const targetId = Number.parseInt(String(animId), 10);
 	if (lock.targets) {
 		return lock.targets.has(targetId);
 	}
@@ -99,22 +103,26 @@ export function isBlockedByExclusive(
  */
 export function findAnimation(
 	this: unknown,
-	target: this,
-	animIdOrNameOrScopeId: number,
-	scopeIdParam = 0,
+	target: any = 0,
+	animIdOrNameOrScopeId: any = 0,
+	scopeIdParam: any = 0,
 ) {
-	let instance: unknown, animIdOrName: unknown, scopeId: unknown;
+	let instance: any, animIdOrName: any, scopeId: any;
 	if (isInstance(target)) {
 		instance = target;
 		animIdOrName = animIdOrNameOrScopeId;
 		scopeId = scopeIdParam ?? 0;
-	} else {
+	} else if (isInstance(this)) {
 		instance = this;
 		animIdOrName = target;
 		scopeId = animIdOrNameOrScopeId ?? 0;
+	} else {
+		return null;
 	}
 
-	const sid = String(instance.manager.currentSurfaceIdFor(scopeId));
+	if (!instance?.manager) return null;
+	const currentSurfaceIdFor = instance.manager.currentSurfaceIdFor;
+	const sid = String(currentSurfaceIdFor ? currentSurfaceIdFor.call(instance.manager, scopeId) : 0);
 	const animList =
 		instance.manager.animations?.[sid] ||
 		instance.manager.animations?.default ||
@@ -141,28 +149,31 @@ export function findAnimation(
  */
 export function isAnimationRunning(
 	this: unknown,
-	target = 0,
-	scopeIdOrAnimId: number,
-	animIdOrNameParam: unknown,
+	target: any = 0,
+	scopeIdOrAnimId: any = 0,
+	animIdOrNameParam: any = undefined,
 ) {
-	let instance: unknown, scopeId: unknown, animIdOrName: unknown;
+	let instance: any, scopeId: any, animIdOrName: any;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
 		animIdOrName = animIdOrNameParam;
-	} else {
+	} else if (isInstance(this)) {
 		instance = this;
 		scopeId = target ?? 0;
 		animIdOrName = scopeIdOrAnimId;
+	} else {
+		return false;
 	}
 
+	if (!instance._runningAnimations) return false;
 	const anim = findAnimation(instance, animIdOrName, scopeId);
 	const id = anim ? anim.id : animIdOrName;
 	const prefix = `${scopeId}__`;
 	for (const [key] of instance._runningAnimations.entries()) {
 		if (key.startsWith(prefix)) {
 			const parts = key.split("__");
-			if (parts[2] === String(id) && !instance._stoppedAnimations.has(key)) {
+			if (parts[2] === String(id) && !instance._stoppedAnimations?.has(key)) {
 				return true;
 			}
 		}
@@ -178,21 +189,24 @@ export function isAnimationRunning(
  */
 export function stopAnimation(
 	this: unknown,
-	target = 0,
-	scopeIdOrAnimId: number,
-	animIdOrNameParam: undefined,
+	target: any = 0,
+	scopeIdOrAnimId: any = 0,
+	animIdOrNameParam: any = undefined,
 ) {
-	let instance: unknown, scopeId: unknown, animIdOrName: unknown;
+	let instance: any, scopeId: any, animIdOrName: any;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
 		animIdOrName = animIdOrNameParam;
-	} else {
+	} else if (isInstance(this)) {
 		instance = this;
 		scopeId = target ?? 0;
 		animIdOrName = scopeIdOrAnimId;
+	} else {
+		return;
 	}
 
+	if (!instance._runningAnimations) return;
 	const anim = findAnimation(instance, animIdOrName, scopeId);
 	const id = anim ? anim.id : animIdOrName;
 	const prefix = `${scopeId}__`;
@@ -200,7 +214,7 @@ export function stopAnimation(
 		if (key.startsWith(prefix)) {
 			const parts = key.split("__");
 			if (parts[2] === String(id)) {
-				instance._stoppedAnimations.add(key);
+				instance._stoppedAnimations?.add(key);
 			}
 		}
 	}
@@ -216,34 +230,32 @@ export function stopAnimation(
  */
 export function setAnimationOffset(
 	this: unknown,
-	target = 0,
-	scopeIdOrAnimId: number,
-	animIdOrNameOrX: number,
+	target: any = 0,
+	scopeIdOrAnimId: any = 0,
+	animIdOrNameOrX: any = 0,
 	xOrY = 0,
 	yParam = 0,
 ) {
-	let instance: unknown,
-		scopeId: unknown,
-		animIdOrName: unknown,
-		x: unknown,
-		y: unknown;
+	let instance: any, scopeId: any, animIdOrName: any, x: any, y: any;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
 		animIdOrName = animIdOrNameOrX;
 		x = xOrY ?? 0;
 		y = yParam ?? 0;
-	} else {
+	} else if (isInstance(this)) {
 		instance = this;
 		scopeId = target ?? 0;
 		animIdOrName = scopeIdOrAnimId;
 		x = animIdOrNameOrX ?? 0;
 		y = xOrY ?? 0;
+	} else {
+		return;
 	}
 
 	const anim = findAnimation(instance, animIdOrName, scopeId);
 	const id = anim ? anim.id : animIdOrName;
-	instance._animationOffsets.set(`${scopeId}__${id}`, { x, y });
+	instance._animationOffsets?.set(`${scopeId}__${id}`, { x, y });
 }
 
 /**
@@ -255,41 +267,45 @@ export function setAnimationOffset(
  */
 export function getAnimationOffset(
 	this: unknown,
-	target = 0,
-	scopeIdOrAnimId: number,
-	animIdOrNameParam: unknown,
+	target: any = 0,
+	scopeIdOrAnimId: any = 0,
+	animIdOrNameParam: any = undefined,
 ) {
-	let instance: unknown, scopeId: unknown, animIdOrName: unknown;
+	let instance: any, scopeId: any, animIdOrName: any;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
 		animIdOrName = animIdOrNameParam;
-	} else {
+	} else if (isInstance(this)) {
 		instance = this;
 		scopeId = target ?? 0;
 		animIdOrName = scopeIdOrAnimId;
+	} else {
+		return { x: 0, y: 0 };
 	}
 
 	const anim = findAnimation(instance, animIdOrName, scopeId);
 	const id = anim ? anim.id : animIdOrName;
-	return instance._animationOffsets.get(`${scopeId}__${id}`) || { x: 0, y: 0 };
+	return instance._animationOffsets?.get(`${scopeId}__${id}`) || { x: 0, y: 0 };
 }
 
 export function pauseAnimation(
 	this: unknown,
-	target = 0,
-	scopeIdOrAnimId: number,
-	animIdOrNameParam: unknown,
+	target: any = 0,
+	scopeIdOrAnimId: any = 0,
+	animIdOrNameParam: any = undefined,
 ) {
-	let instance: unknown, scopeId: unknown, animIdOrName: unknown;
+	let instance: any, scopeId: any, animIdOrName: any;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
 		animIdOrName = animIdOrNameParam;
-	} else {
+	} else if (isInstance(this)) {
 		instance = this;
 		scopeId = target ?? 0;
 		animIdOrName = scopeIdOrAnimId;
+	} else {
+		return;
 	}
 
 	const anim = findAnimation(instance, animIdOrName, scopeId);
@@ -299,19 +315,21 @@ export function pauseAnimation(
 
 export function resumeAnimation(
 	this: unknown,
-	target = 0,
-	scopeIdOrAnimId: number,
-	animIdOrNameParam: unknown,
+	target: any = 0,
+	scopeIdOrAnimId: any = 0,
+	animIdOrNameParam: any = undefined,
 ) {
-	let instance: unknown, scopeId: unknown, animIdOrName: unknown;
+	let instance: any, scopeId: any, animIdOrName: any;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
 		animIdOrName = animIdOrNameParam;
-	} else {
+	} else if (isInstance(this)) {
 		instance = this;
 		scopeId = target ?? 0;
 		animIdOrName = scopeIdOrAnimId;
+	} else {
+		return;
 	}
 
 	const anim = findAnimation(instance, animIdOrName, scopeId);
@@ -321,19 +339,21 @@ export function resumeAnimation(
 
 export function isAnimationPaused(
 	this: unknown,
-	target = 0,
-	scopeIdOrAnimId: number,
-	animIdOrNameParam: unknown,
+	target: any = 0,
+	scopeIdOrAnimId: any = 0,
+	animIdOrNameParam: any = undefined,
 ) {
-	let instance: unknown, scopeId: unknown, animIdOrName: unknown;
+	let instance: any, scopeId: any, animIdOrName: any;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
 		animIdOrName = animIdOrNameParam;
-	} else {
+	} else if (isInstance(this)) {
 		instance = this;
 		scopeId = target ?? 0;
 		animIdOrName = scopeIdOrAnimId;
+	} else {
+		return false;
 	}
 
 	const anim = findAnimation(instance, animIdOrName, scopeId);
@@ -343,16 +363,18 @@ export function isAnimationPaused(
 
 export function clearPausedAnimations(
 	this: unknown,
-	target = 0,
-	scopeIdParam = 0,
+	target: any = 0,
+	scopeIdParam: any = 0,
 ) {
-	let instance: unknown, scopeId: unknown;
+	let instance: any, scopeId: any;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
-	} else {
+	} else if (isInstance(this)) {
 		instance = this;
 		scopeId = target ?? 0;
+	} else {
+		return;
 	}
 
 	surfaceAnimationTimers.clearPausedAnimations.call(instance, scopeId);
@@ -366,22 +388,25 @@ export function clearPausedAnimations(
  */
 export function getActiveAnimationCount(
 	this: unknown,
-	target = 0,
-	scopeIdParam = 0,
+	target: any = 0,
+	scopeIdParam: any = 0,
 ) {
-	let instance: unknown, scopeId: unknown;
+	let instance: any, scopeId: any;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
-	} else {
+	} else if (isInstance(this)) {
 		instance = this;
 		scopeId = target ?? 0;
+	} else {
+		return 0;
 	}
 
+	if (!instance._runningAnimations) return 0;
 	const prefix = `${scopeId}__`;
 	let count = 0;
 	for (const key of instance._runningAnimations.keys()) {
-		if (key.startsWith(prefix) && !instance._stoppedAnimations.has(key)) {
+		if (key.startsWith(prefix) && !instance._stoppedAnimations?.has(key)) {
 			count++;
 		}
 	}
@@ -396,22 +421,25 @@ export function getActiveAnimationCount(
  */
 export function getActiveAnimations(
 	this: unknown,
-	target = 0,
-	scopeIdParam = 0,
+	target: any = 0,
+	scopeIdParam: any = 0,
 ) {
-	let instance: unknown, scopeId: unknown;
+	let instance: any, scopeId: any;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
-	} else {
+	} else if (isInstance(this)) {
 		instance = this;
 		scopeId = target ?? 0;
+	} else {
+		return [];
 	}
 
+	if (!instance._runningAnimations) return [];
 	const prefix = `${scopeId}__`;
 	const activeList = [];
 	for (const key of instance._runningAnimations.keys()) {
-		if (key.startsWith(prefix) && !instance._stoppedAnimations.has(key)) {
+		if (key.startsWith(prefix) && !instance._stoppedAnimations?.has(key)) {
 			const parts = key.split("__");
 			const animId = parts[2];
 			const anim = findAnimation(instance, animId, scopeId);
@@ -431,16 +459,18 @@ export function getActiveAnimations(
  */
 export function getActiveCollisions(
 	this: unknown,
-	target = 0,
-	scopeIdParam = 0,
+	target: any = 0,
+	scopeIdParam: any = 0,
 ) {
-	let instance: unknown, scopeId: unknown;
+	let instance: any, scopeId: any;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
-	} else {
+	} else if (isInstance(this)) {
 		instance = this;
 		scopeId = target ?? 0;
+	} else {
+		return [];
 	}
 
 	const activeAnims = getActiveAnimations(instance, scopeId);

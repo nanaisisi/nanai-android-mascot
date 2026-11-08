@@ -6,6 +6,7 @@ pub mod queries;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
+#[cfg(test)]
 pub(crate) use helpers::expand_ids;
 
 /// `descript.txt` のパース結果を保持する構造体

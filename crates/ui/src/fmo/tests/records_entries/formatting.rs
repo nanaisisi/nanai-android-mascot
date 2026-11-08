@@ -32,3 +32,37 @@ fn test_format_fmo_text_local_and_remote() {
     assert!(text_remote.contains("ssp_fmo_header_001.hwndlist\x010\r\n"));
     assert!(text_remote.contains("ssp_fmo_header_001.name\x01Nanai\r\n"));
 }
+
+#[test]
+fn test_fmo_query_and_filtering_utilities() {
+    let mut rec1 = FmoRecord::new("001", "Nanai");
+    rec1.modulestate = Some("shiori:running,lifecycle:active".to_string());
+
+    let mut rec2 = FmoRecord::new("002", "Emily");
+    rec2.modulestate = Some("shiori:running,lifecycle:paused".to_string());
+
+    let mut rec3 = FmoRecord::new("003", "Sakura");
+    rec3.modulestate = Some("shiori:running,lifecycle:invisible".to_string());
+
+    let records = vec![rec1, rec2, rec3];
+
+    // has_ghost
+    assert!(has_ghost(&records, "nanai"));
+    assert!(has_ghost(&records, "EMILY"));
+    assert!(has_ghost(&records, "Sakura"));
+    assert!(!has_ghost(&records, "UnknownGhost"));
+
+    // filter_active_records
+    let active = filter_active_records(&records);
+    let active_names: Vec<_> = active.iter().map(|r| r.name.as_str()).collect();
+    assert_eq!(active_names, vec!["Nanai", "Sakura"]);
+
+    // filter_visible_records
+    let visible = filter_visible_records(&records);
+    let visible_names: Vec<_> = visible.iter().map(|r| r.name.as_str()).collect();
+    assert_eq!(visible_names, vec!["Nanai"]);
+
+    // extract_ghost_names
+    let names = extract_ghost_names(&records);
+    assert_eq!(names, vec!["Emily", "Nanai", "Sakura"]);
+}

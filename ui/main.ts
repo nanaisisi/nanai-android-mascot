@@ -10,7 +10,6 @@
  * - AppConfig / loadAppConfig (設定およびプロパティシステム)
  */
 import { DictationManager } from "./ts/core/actions/dictation.js";
-import { settingsMethods } from "./ts/core/app-settings.js";
 import { AppConfig, loadAppConfig } from "./ts/core/config.js";
 import { invoke, isTauriAvailable } from "./ts/core/tauri-helper.js";
 import { GhostController } from "./ts/ghost/ghost.js";

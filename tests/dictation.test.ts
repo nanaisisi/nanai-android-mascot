@@ -7,7 +7,11 @@ describe("DictationManager", () => {
 
 	let originalWindow: Window & typeof globalThis;
 
-	let originalSpeechSynthesisUtterance: { new(text?: string): SpeechSynthesisUtterance; new(text?: string): SpeechSynthesisUtterance; prototype: SpeechSynthesisUtterance; };
+	let originalSpeechSynthesisUtterance: {
+		new (text?: string): SpeechSynthesisUtterance;
+		new (text?: string): SpeechSynthesisUtterance;
+		prototype: SpeechSynthesisUtterance;
+	};
 
 	beforeEach(() => {
 		originalWindow = globalThis.window;

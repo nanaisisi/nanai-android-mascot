@@ -18,7 +18,10 @@ export function bindOptionKey(scopeId = 0) {
  * @param {number} [scopeId]
  * @returns {Array<{ number: number, category: string, part: string, thumbnail?: string|null, default: boolean, add_ids: number[] }>}
  */
-export function bindGroupsForScope(manifest: { sakura_bind_groups: any; kero_bind_groups: any; }, scopeId = 0) {
+export function bindGroupsForScope(
+	manifest: { sakura_bind_groups: any; kero_bind_groups: any },
+	scopeId = 0,
+) {
 	if (!manifest) return [];
 	const groups =
 		scopeId === 0 ? manifest.sakura_bind_groups : manifest.kero_bind_groups;
@@ -32,7 +35,10 @@ export function bindGroupsForScope(manifest: { sakura_bind_groups: any; kero_bin
  * @param {number} [scopeId]
  * @returns {{ category: string, options: string[] }|null}
  */
-export function bindOptionForScope(manifest: { descript: { properties: { [x: string]: any; }; }; }, scopeId = 0) {
+export function bindOptionForScope(
+	manifest: { descript: { properties: { [x: string]: any } } },
+	scopeId = 0,
+) {
 	const value = manifest?.descript?.properties?.[bindOptionKey(scopeId)];
 	if (!value) return null;
 	const parts = String(value)
@@ -117,7 +123,13 @@ export function dressupMenuPayload(manifest: any, surfaceManager = null) {
  * @param {Map<string, boolean>} dressupState
  * @returns {number} シードしたパーツ数
  */
-export function seedDressupDefaults(manifest: { sakura_bind_groups: any; kero_bind_groups: any; }, dressupState: { has: (arg0: string) => any; set: (arg0: string, arg1: boolean) => void; }) {
+export function seedDressupDefaults(
+	manifest: { sakura_bind_groups: any; kero_bind_groups: any },
+	dressupState: {
+		has: (arg0: string) => any;
+		set: (arg0: string, arg1: boolean) => void;
+	},
+) {
 	if (!manifest || !(dressupState instanceof Map)) return 0;
 	let seeded = 0;
 	for (const [scopeId, groups] of [

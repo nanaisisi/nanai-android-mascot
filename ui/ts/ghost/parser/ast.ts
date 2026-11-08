@@ -357,3 +357,90 @@ export function collectScopeNodes(
 	}
 	return nodes;
 }
+
+/**
+ * AST 内のすべてのアニメーション呼出 (id, wait) を抽出する
+ */
+export function collectAnimations(
+	ast: SakuraAstNode,
+): Array<{ id: number | string; wait: boolean }> {
+	const animations: Array<{ id: number | string; wait: boolean }> = [];
+	traverseAst(ast, (node) => {
+		if (node.nodeType === "command" && node.token?.type === "animation") {
+			animations.push({
+				id: node.token.animId ?? 0,
+				wait: node.token.wait === true,
+			});
+		}
+	});
+	return animations;
+}
+
+/**
+ * 指定したスコープ（\0, \1, \p[N]）配下のノードのみを抽出した新しい AST を生成する
+ */
+export function filterAstByScope(
+	ast: SakuraAstNode,
+	targetScope: number,
+): SakuraAstNode {
+	if (ast.nodeType === "root" && Array.isArray(ast.children)) {
+		const filteredChildren = ast.children
+			.filter(
+				(child) => child.nodeType === "scope" && child.scope === targetScope,
+			)
+			.map((child) => ({
+				...child,
+				children: child.children ? [...child.children] : [],
+			}));
+		return {
+			nodeType: "root",
+			children: filteredChildren,
+		};
+	}
+	if (ast.nodeType === "scope" && ast.scope === targetScope) {
+		return {
+			...ast,
+			children: ast.children ? [...ast.children] : [],
+		};
+	}
+	return {
+		nodeType: "root",
+		children: [],
+	};
+}
+
+/**
+ * ログ保存や早送り再生用にウェイト（\w, \_w）トークンを除去した AST を再帰生成する
+ */
+export function stripWaitsFromAst(ast: SakuraAstNode): SakuraAstNode {
+	if (
+		ast.nodeType === "command" &&
+		(ast.token?.type === "wait" ||
+			ast.token?.type === "wait_audio" ||
+			ast.token?.type === "wait_anim")
+	) {
+		return {
+			nodeType: "root",
+			children: [],
+		};
+	}
+
+	if (!ast.children || ast.children.length === 0) {
+		return { ...ast };
+	}
+
+	const newChildren = ast.children
+		.map((child) => stripWaitsFromAst(child))
+		.filter(
+			(child) =>
+				!(
+					child.nodeType === "root" &&
+					(!child.children || child.children.length === 0)
+				),
+		);
+
+	return {
+		...ast,
+		children: newChildren,
+	};
+}

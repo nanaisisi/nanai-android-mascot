@@ -403,14 +403,15 @@ export class AndroidBridge {
 	 * リソースの完全破棄 (リスナー解除・タイマーリセット)
 	 */
 	destroy() {
-		for (const cleanup of this._cleanupFns) {
+		const cleanups = this._cleanupFns;
+		this._cleanupFns = [];
+		for (const cleanup of cleanups) {
 			try {
-				cleanup();
+				cleanup?.();
 			} catch (err) {
 				console.error("Error running cleanup in AndroidBridge:", err);
 			}
 		}
-		this._cleanupFns = [];
 		this._emitter.clear();
 		this._backButtonManager.clear();
 		this._dockManager.destroy();

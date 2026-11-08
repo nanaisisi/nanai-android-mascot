@@ -302,3 +302,58 @@ fn test_ast_cycle8_find_anchors_text_length_and_scope_nodes() {
         assert!(nodes_from_scope_mismatch.is_empty());
     }
 }
+
+#[test]
+fn test_ast_cycle9_advanced_inspection_and_filtering() {
+    let commands = vec![
+        SakuraCommand::Target(0),
+        SakuraCommand::Surface(10),
+        SakuraCommand::Wait(500),
+        SakuraCommand::Animation {
+            id: 101,
+            wait: true,
+        },
+        SakuraCommand::Text("Hello 0".into()),
+        SakuraCommand::Target(1),
+        SakuraCommand::Surface(20),
+        SakuraCommand::Animation {
+            id: 202,
+            wait: false,
+        },
+        SakuraCommand::Wait(300),
+        SakuraCommand::Text("Hello 1".into()),
+    ];
+    let ast = build_sakura_ast(&commands);
+
+    // 1. find_animations
+    let anims = ast.find_animations();
+    assert_eq!(anims.len(), 2);
+    assert_eq!(anims[0], (101, true));
+    assert_eq!(anims[1], (202, false));
+
+    // 2. has_command
+    assert!(ast.has_command(&|cmd| matches!(cmd, SakuraCommand::Wait(_))));
+    assert!(ast.has_command(&|cmd| matches!(cmd, SakuraCommand::Surface(20))));
+    assert!(!ast.has_command(&|cmd| matches!(cmd, SakuraCommand::Halt)));
+
+    // 3. filter_by_scope
+    let scope0_ast = ast.filter_by_scope(0);
+    if let SakuraAstNode::Root { children } = &scope0_ast {
+        assert_eq!(children.len(), 1);
+        if let SakuraAstNode::Scope { scope, children } = &children[0] {
+            assert_eq!(*scope, 0);
+            assert_eq!(children.len(), 4);
+        } else {
+            panic!("Expected Scope node");
+        }
+    } else {
+        panic!("Expected Root node");
+    }
+    assert_eq!(scope0_ast.find_surfaces(), vec![10]);
+
+    // 4. strip_waits
+    let clean_ast = ast.strip_waits();
+    assert!(!clean_ast.has_command(&|cmd| matches!(cmd, SakuraCommand::Wait(_))));
+    assert_eq!(clean_ast.find_animations().len(), 2);
+    assert_eq!(clean_ast.calculate_text_length(), 14); // "Hello 0" (7) + "Hello 1" (7)
+}

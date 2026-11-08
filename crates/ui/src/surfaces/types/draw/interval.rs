@@ -52,6 +52,42 @@ impl Interval {
         } else {
             (lower.as_str(), None)
         };
+        // 複合指定（+ 区切り、例: "bind+sometimes", "bind+random,5" 等）のサポート
+        if head.contains('+') {
+            let parts: Vec<&str> = head
+                .split('+')
+                .map(|s| s.trim())
+                .filter(|s| !s.is_empty())
+                .collect();
+            // 優先順位: 周期/乱数系(random, periodic, sometimes, rarely, always) > イベント駆動系(bind, talk, etc.)
+            for part in &parts {
+                match *part {
+                    "random" => {
+                        return Self::Random(param.and_then(|p| p.parse().ok()).unwrap_or(10));
+                    }
+                    "periodic" => {
+                        return Self::Periodic(param.and_then(|p| p.parse().ok()).unwrap_or(1000));
+                    }
+                    "sometimes" => return Self::Sometimes,
+                    "rarely" => return Self::Rarely,
+                    "always" => return Self::Always,
+                    _ => {}
+                }
+            }
+            if let Some(first) = parts.first() {
+                match *first {
+                    "bind" => return Self::Bind,
+                    "talk" => return Self::Talk,
+                    "starttalk" => return Self::StartTalk,
+                    "endtalk" => return Self::EndTalk,
+                    "runonce" => return Self::RunOnce,
+                    "never" => return Self::Never,
+                    "\\e" | "/e" => return Self::YenE,
+                    other => return Self::Custom(other.to_string()),
+                }
+            }
+        }
+
         match head {
             "always" => Self::Always,
             "sometimes" => Self::Sometimes,

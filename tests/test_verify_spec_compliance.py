@@ -12,6 +12,7 @@ import unittest
 
 from scripts.verify_spec_compliance import (
     ComplianceReport,
+    detect_git_conflicts,
     load_codebase,
     process_audit_files,
     sanitize_snippet,
@@ -370,6 +371,65 @@ class TestVerifySpecCompliance(unittest.TestCase):
         # 4. Target filtering: if target category does not match, it is skipped
         updated_other = sync_category_readmes(docs_dir=self.docs_dir, dry_run=False, target_category='ukadoc-spec/descript')
         self.assertEqual(len(updated_other), 0)
+
+    def test_detect_git_conflicts(self):
+        # Empty docs directory has no conflicts
+        conflicts = detect_git_conflicts(docs_dir=self.docs_dir)
+        self.assertEqual(len(conflicts), 0)
+
+        # Create a clean file
+        clean_file = os.path.join(self.docs_dir, 'ukadoc-spec', 'spec', 'clean.md')
+        with open(clean_file, 'w', encoding='utf-8') as f:
+            f.write("# Clean File\n\nNo conflict here.\n")
+
+        conflicts = detect_git_conflicts(docs_dir=self.docs_dir)
+        self.assertEqual(len(conflicts), 0)
+
+        # Create a file with Git merge conflict markers
+        conflict_file = os.path.join(self.docs_dir, 'ukadoc-spec', 'spec', 'conflict.md')
+        with open(conflict_file, 'w', encoding='utf-8') as f:
+            f.write(
+                "# Header\n"
+                "<<<<<<< HEAD\n"
+                "Local branch version\n"
+                "=======\n"
+                "Incoming branch version\n"
+                ">>>>>>> branch-15\n"
+            )
+
+        conflicts = detect_git_conflicts(docs_dir=self.docs_dir)
+        self.assertEqual(len(conflicts), 3)
+        markers = [c["marker"] for c in conflicts]
+        self.assertTrue(any("<<<<<<<" in m for m in markers))
+        self.assertTrue(any("=======" in m for m in markers))
+        self.assertTrue(any(">>>>>>>" in m for m in markers))
+
+    def test_update_summary_only_mode(self):
+        # Create an audit file
+        cat_dir = os.path.join(self.docs_dir, 'ukadoc-spec', 'spec')
+        spec_file = os.path.join(cat_dir, 'sample.md')
+        with open(spec_file, 'w', encoding='utf-8') as f:
+            f.write("# Sample Spec\n\n- **対応状況**: ❌ 未実装\n- **検索語**: custom_fn\n")
+
+        summary_file = os.path.join(self.test_dir, 'SUMMARY.md')
+        codebase = [("crates/sample.rs", ["fn custom_fn() {}\n"])]
+
+        # Simulate update_summary_only: dry_run=True for process_audit_files, but update_summary is called
+        report = process_audit_files(codebase, docs_dir=self.docs_dir, dry_run=True)
+        self.assertEqual(report.totals["✅"], 1)
+
+        # Confirm the individual spec file was NOT modified (dry_run)
+        with open(spec_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+        self.assertIn("❌ 未実装", content)
+
+        # Update summary file
+        update_summary(report.category_stats, summary_path=summary_file)
+        self.assertTrue(os.path.exists(summary_file))
+        with open(summary_file, 'r', encoding='utf-8') as f:
+            summary_content = f.read()
+        self.assertIn("ukadoc-spec/spec", summary_content)
+        self.assertIn("1", summary_content)
 
 
 if __name__ == '__main__':

@@ -1149,4 +1149,45 @@ export const shioriNotifyMethods = {
 	async sendOtherOffscreen(this: any, ghostName: string, rect: string = "") {
 		return await this.sendShioriNotify("OnOtherOffscreen", [ghostName, rect]);
 	},
+
+	/**
+	 * 外部通信イベント通知 (UKADOC other-communication spec)
+	 */
+	async notifyCommunicationEvent(
+		this: any,
+		event:
+			| "OnExecuteFileWatchChange"
+			| "OnExecuteFileWatchFailure"
+			| "OnExecuteHTTPComplete"
+			| "OnExecuteHTTPFailure"
+			| "OnExecuteHTTPProgress"
+			| "OnExecuteHTTPSSLInfo"
+			| "OnExecuteHTTPStreaming"
+			| "OnExecuteICalComplete"
+			| "OnExecuteICalFailure"
+			| "OnExecuteICalProgress"
+			| "OnExecuteICal_SSLInfo"
+			| "OnExecuteRSSComplete"
+			| "OnExecuteRSSFailure"
+			| "OnExecuteRSS_SSLInfo"
+			| "OnExecuteScheduleComplete"
+			| "OnExecuteScheduleFailure"
+			| "OnExecuteScheduleGetComplete"
+			| "OnExecuteWebSocketClose"
+			| "OnExecuteWebSocketFailure"
+			| "OnExecuteWebSocketOpen"
+			| "OnExecuteWebSocketReceive"
+			| "OnExecuteWebSocketReconnect"
+			| "OnExecuteWebSocket_SSLInfo"
+			| "OnNSLookupComplete"
+			| "OnNSLookupFailure"
+			| "OnPingComplete"
+			| "OnPingProgress",
+		references: (string | number)[] = [],
+	) {
+		return await this.sendShioriNotify(
+			event,
+			references.map((r) => String(r)),
+		);
+	},
 };

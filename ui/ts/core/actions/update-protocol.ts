@@ -49,6 +49,37 @@ export const UPDATE_RESULT_FAILURE_REASONS = Object.freeze([
 ]);
 
 /**
+ * ネットワーク更新理由のバリデーション・正規化 (UKADOC「ネットワーク更新理由」準拠)
+ * @param {string} [reason="manual"] - "manual" | "auto" | "script"
+ * @returns {string}
+ */
+export function normalizeUpdateReason(
+	reason: string | null | undefined,
+): string {
+	if (!reason || typeof reason !== "string") return "manual";
+	const lower = reason.trim().toLowerCase();
+	if (UPDATE_REASONS.includes(lower)) {
+		return lower;
+	}
+	return "manual";
+}
+
+/**
+ * developer_options.txt の noupdate ディレクティブ除外判定
+ * @param {string} path - 検証対象のファイル相対パス
+ * @param {string[]} patterns - developer_options.txt から抽出した noupdate パターンリスト
+ * @returns {boolean} - 除外対象なら true
+ */
+export function isNoUpdatePath(path: string, patterns: string[] = []): boolean {
+	if (!path || !Array.isArray(patterns) || patterns.length === 0) return false;
+	const norm = path.replace(/\\/g, "/").toLowerCase();
+	return patterns.some((pattern) => {
+		const patNorm = pattern.replace(/\\/g, "/").toLowerCase();
+		return norm === patNorm || norm.endsWith(`/${patNorm.replace(/^\//, "")}`);
+	});
+}
+
+/**
  * UKADOC仕様: ネットワーク更新イベントの発生順序 (Update Event Order)
  * 標準ライフサイクル順序配列
  */

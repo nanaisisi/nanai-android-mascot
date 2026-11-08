@@ -8,10 +8,10 @@ const { SakuraScriptPlayer } = await import(
 );
 
 test("choice click triggers OnChoiceSelectEx first, then falls back to OnChoiceSelect if no script", async () => {
-	const shioriEvents: any[] = [];
+	const shioriEvents: unknown[] = [];
 	const sakuraText = createEl("div");
 
-	const app: any = {
+	const app: unknown = {
 		ghostId: "main",
 		elements: {
 			balloonText: sakuraText,
@@ -25,7 +25,7 @@ test("choice click triggers OnChoiceSelectEx first, then falls back to OnChoiceS
 			onScriptEnd() {},
 		},
 		ghostController: {
-			sendShioriEvent: async (event: string, args: any[]) => {
+			sendShioriEvent: async (event: string, args: unknown[]) => {
 				if (event === "OnTranslate") return { script: null };
 				shioriEvents.push({ event, args });
 				// Return no content (empty/falsy) to simulate fallback
@@ -73,10 +73,10 @@ test("choice click triggers OnChoiceSelectEx first, then falls back to OnChoiceS
 });
 
 test("choice click does not trigger OnChoiceSelect if OnChoiceSelectEx returns response script", async () => {
-	const shioriEvents: any[] = [];
+	const shioriEvents: unknown[] = [];
 	const sakuraText = createEl("div");
 
-	const app: any = {
+	const app: unknown = {
 		ghostId: "main",
 		elements: {
 			balloonText: sakuraText,
@@ -90,7 +90,7 @@ test("choice click does not trigger OnChoiceSelect if OnChoiceSelectEx returns r
 			onScriptEnd() {},
 		},
 		ghostController: {
-			sendShioriEvent: async (event: string, args: any[]) => {
+			sendShioriEvent: async (event: string, args: unknown[]) => {
 				if (event === "OnTranslate") return { script: null };
 				shioriEvents.push({ event, args });
 				if (event === "OnChoiceSelectEx") {
@@ -127,10 +127,10 @@ test("choice click does not trigger OnChoiceSelect if OnChoiceSelectEx returns r
 });
 
 test("anchor click triggers OnAnchorSelectEx first, then falls back to OnAnchorSelect", async () => {
-	const shioriEvents: any[] = [];
+	const shioriEvents: unknown[] = [];
 	const sakuraText = createEl("div");
 
-	const app: any = {
+	const app: unknown = {
 		ghostId: "main",
 		elements: {
 			balloonText: sakuraText,
@@ -144,7 +144,7 @@ test("anchor click triggers OnAnchorSelectEx first, then falls back to OnAnchorS
 			onScriptEnd() {},
 		},
 		ghostController: {
-			sendShioriEvent: async (event: string, args: any[]) => {
+			sendShioriEvent: async (event: string, args: unknown[]) => {
 				if (event === "OnTranslate") return { script: null };
 				shioriEvents.push({ event, args });
 				return null;
@@ -152,7 +152,7 @@ test("anchor click triggers OnAnchorSelectEx first, then falls back to OnAnchorS
 		},
 	};
 
-	const player: any = {
+	const player: unknown = {
 		playbackId: 60,
 		parse: async () => [
 			{ type: "scope", value: 0 },
@@ -193,10 +193,10 @@ test("anchor click triggers OnAnchorSelectEx first, then falls back to OnAnchorS
 });
 
 test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip", async () => {
-	const notifyEvents: any[] = [];
+	const notifyEvents: unknown[] = [];
 	const sakuraText = createEl("div");
 
-	const app: any = {
+	const app: unknown = {
 		ghostId: "main",
 		elements: {
 			balloonText: sakuraText,
@@ -245,7 +245,7 @@ test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip",
 	// 2. Test skip triggering OnBalloonBreak
 	player.isPlaying = true;
 	player.currentScope = 1;
-	(player as any).currentProgressIndex = 5;
+	(player as unknown).currentProgressIndex = 5;
 	player.lastScript = "\\1テスト会話";
 	player.skip();
 
@@ -257,10 +257,10 @@ test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip",
 });
 
 test("balloon events: OnBalloonTimeout triggered via sendBalloonTimeoutNotify", async () => {
-	const notifyEvents: any[] = [];
+	const notifyEvents: unknown[] = [];
 	const sakuraText = createEl("div");
 
-	const app: any = {
+	const app: unknown = {
 		ghostId: "main",
 		elements: {
 			balloonText: sakuraText,
@@ -313,10 +313,10 @@ test("balloon events: OnBalloonTimeout triggered via sendBalloonTimeoutNotify", 
 });
 
 test("\\t (timeCritical) suppresses balloonTimeout and click timeout auto-advance", async () => {
-	const notifyEvents: any[] = [];
+	const notifyEvents: unknown[] = [];
 	const sakuraText = createEl("div");
 
-	const app: any = {
+	const app: unknown = {
 		ghostId: "main",
 		elements: {
 			balloonText: sakuraText,

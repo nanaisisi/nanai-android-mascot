@@ -11,7 +11,7 @@ import { ANDROID_EVENTS, ANDROID_LIFECYCLE_STATES } from "./constants.js";
  * @param {object} context
  * @param {(state: string) => void} context.setLifecycleState ライフサイクル状態更新関数
  * @param {() => object|null} context.getGestureRecognizer 連携するGestureRecognizer取得関数
- * @param {(eventName: string, data: any) => void} context.dispatch イベントディスパッチ関数
+ * @param {(eventName: string, data: unknown) => void} context.dispatch イベントディスパッチ関数
  * @returns {Array<() => void>} クリーンアップ関数の配列
  */
 export function setupVisibilityListeners(context) {

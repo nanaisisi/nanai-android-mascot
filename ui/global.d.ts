@@ -1,6 +1,5 @@
 // Tauri's global bridge is injected at runtime and has no static package type.
-// biome-ignore lint/suspicious/noExplicitAny: the runtime bridge is untyped
-type TauriFunction = (...args: any[]) => any;
+type TauriFunction = (...args: unknown[]) => unknown;
 
 interface TauriApi {
 	event?: {

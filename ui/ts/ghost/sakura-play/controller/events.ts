@@ -3,30 +3,43 @@
  * @brief SakuraPlaybackController 向けイベントリスナー管理・発行ロジック
  */
 
-export function on(this: any, event: string, handler: Function): () => void {
-	if (!this.listeners.has(event)) {
-		this.listeners.set(event, new Set());
+type ListenerFn = (...args: unknown[]) => void;
+type ControllerWithListeners = {
+	listeners: Map<string, Set<ListenerFn>>;
+	off: (event: string, handler: ListenerFn) => void;
+};
+
+export function on(
+	this: unknown,
+	event: string,
+	handler: ListenerFn,
+): () => void {
+	const self = this as ControllerWithListeners;
+	if (!self.listeners.has(event)) {
+		self.listeners.set(event, new Set());
 	}
-	this.listeners.get(event).add(handler);
-	return () => this.off(event, handler);
+	self.listeners.get(event)?.add(handler);
+	return () => self.off(event, handler);
 }
 
-export function off(this: any, event: string, handler: Function) {
-	const handlers = this.listeners.get(event);
+export function off(this: unknown, event: string, handler: ListenerFn) {
+	const self = this as ControllerWithListeners;
+	const handlers = self.listeners.get(event);
 	if (handlers) {
 		handlers.delete(handler);
 		if (handlers.size === 0) {
-			this.listeners.delete(event);
+			self.listeners.delete(event);
 		}
 	}
 }
 
-export function emit(this: any, event: string, ...args: any[]) {
-	const handlers = this.listeners.get(event);
+export function emit(this: unknown, event: string, ...args: unknown[]) {
+	const self = this as ControllerWithListeners;
+	const handlers = self.listeners.get(event);
 	if (handlers) {
 		for (const handler of Array.from(handlers)) {
 			try {
-				(handler as Function)(...args);
+				handler(...args);
 			} catch (err) {
 				console.error(
 					`Error in SakuraPlaybackController event '${event}':`,

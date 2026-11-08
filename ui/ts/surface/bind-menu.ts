@@ -60,7 +60,7 @@ export function dressupKey(scopeId, category, part) {
  */
 export function bindMenuData(manifest, scopeId = 0, dressupState = null) {
 	const option = bindOptionForScope(manifest, scopeId);
-	/** @type {Map<string, { category: string, options: string[], parts: any[] }>} */
+	/** @type {Map<string, { category: string, options: string[], parts: unknown[] }>} */
 	const byCategory = new Map();
 
 	for (const group of bindGroupsForScope(manifest, scopeId)) {

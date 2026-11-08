@@ -3,7 +3,7 @@ import { isAndroidPlatform } from "../../ui/js/ui/touch/bridge/overlay.js";
 import { ANDROID_EVENTS, AndroidBridge } from "../../ui/js/ui/touch/index.js";
 
 describe("AndroidBridge - Platform & Overlay", () => {
-	let originalNavigator;
+	let originalNavigator: unknown = null;
 
 	beforeEach(() => {
 		originalNavigator = globalThis.navigator;

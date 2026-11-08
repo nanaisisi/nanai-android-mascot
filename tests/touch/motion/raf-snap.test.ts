@@ -6,8 +6,8 @@ import {
 import { createMockElement } from "../helpers.js";
 
 describe("TouchGestureRecognizer - RAF Throttle & Screen Snap", () => {
-	let element;
-	let recognizer;
+	let element: unknown = null;
+	let recognizer: unknown = null;
 
 	beforeEach(() => {
 		vi.useFakeTimers();

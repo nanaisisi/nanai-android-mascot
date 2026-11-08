@@ -13,7 +13,7 @@ import { methodToString } from "./shell-manifest.js";
 
 export const surfaceDressupMethods = {
 	async bindDressup(
-		this: any,
+		this: unknown,
 		category: string,
 		part: string = "",
 		statusVal: string = "",
@@ -55,23 +55,26 @@ export const surfaceDressupMethods = {
 	},
 
 	activeBindLayers(
-		this: any,
+		this: unknown,
 		scopeId: number = 0,
 		surfaceId: number | string | null = null,
 	) {
 		if (!this.shellManifest) return [];
 		const sid = String(surfaceId ?? this.currentSurfaceIdFor(scopeId));
 		const animList = this.animations[sid] ?? [];
-		const animById = new Map<string, any>(
-			animList.map((a: any) => [String(a.id), a]),
+		const animById = new Map<string, Record<string, unknown>>(
+			animList.map((a: unknown) => [
+				String((a as Record<string, unknown>).id),
+				a as Record<string, unknown>,
+			]),
 		);
 
-		const layers: any[] = [];
+		const layers: unknown[] = [];
 		const activeIds = new Set(this.activeBindAnimationIds(scopeId));
 
 		const insertedIds = new Set();
 		for (const animId of activeIds) {
-			const anim: any = animById.get(String(animId));
+			const anim: unknown = animById.get(String(animId));
 			for (const p of anim?.patterns ?? []) {
 				const typeLower = (p.type || "").toLowerCase();
 				if (typeLower === "insert") {
@@ -84,10 +87,10 @@ export const surfaceDressupMethods = {
 		}
 
 		const visited = new Set();
-		const expandAnim = (id: any) => {
+		const expandAnim = (id: unknown) => {
 			if (visited.has(id)) return;
 			visited.add(id);
-			const anim: any = animById.get(String(id));
+			const anim: unknown = animById.get(String(id));
 			if (!anim) return;
 			for (const pattern of anim.patterns ?? []) {
 				const typeLower = (pattern.type || "overlay").toLowerCase();
@@ -127,18 +130,20 @@ export const surfaceDressupMethods = {
 		return layers;
 	},
 
-	activeBindAnimationIds(this: any, scopeId: number = 0): number[] {
+	activeBindAnimationIds(this: unknown, scopeId: number = 0): number[] {
 		if (!this.shellManifest) return [];
 		return bindGroupsForScope(this.shellManifest, scopeId)
-			.filter((group: any) =>
+			.filter((group: unknown) =>
 				this.dressupState.get(dressupKey(scopeId, group.category, group.part)),
 			)
-			.flatMap((group: any) => bindAnimationIds(group.number, group.add_ids))
+			.flatMap((group: unknown) =>
+				bindAnimationIds(group.number, group.add_ids),
+			)
 			.sort((a: number, b: number) => a - b);
 	},
 
 	planCacheKey(
-		this: any,
+		this: unknown,
 		surfaceId: number | string,
 		scopeId: number = 0,
 	): string {
@@ -146,7 +151,7 @@ export const surfaceDressupMethods = {
 	},
 
 	async getCompositionPlan(
-		this: any,
+		this: unknown,
 		surfaceId: number | string,
 		scopeId: number = 0,
 	) {
@@ -162,7 +167,7 @@ export const surfaceDressupMethods = {
 			return this.planCache.get(key);
 		}
 		try {
-			const plan: any = await invoke("surface_composition_plan", {
+			const plan: unknown = await invoke("surface_composition_plan", {
 				ghostName,
 				shellName: gc?.currentShell || "master",
 				surfaceId: sid,
@@ -176,10 +181,10 @@ export const surfaceDressupMethods = {
 		}
 	},
 
-	planToRenderLayers(this: any, plan: any, scopeId: number = 0) {
+	planToRenderLayers(this: unknown, plan: unknown, scopeId: number = 0) {
 		if (!plan?.layers?.length) return null;
-		const elements: any[] = [];
-		const bindLayers: any[] = [];
+		const elements: unknown[] = [];
+		const bindLayers: unknown[] = [];
 		let hasElement = false;
 		for (const layer of plan.layers) {
 			const raw = layer.Element ?? layer.Pattern;

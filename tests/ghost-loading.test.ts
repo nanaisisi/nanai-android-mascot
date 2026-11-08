@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 const deferred = () => {
-	let resolve;
+	let resolve: unknown = null;
 	const promise = new Promise((r) => {
 		resolve = r;
 	});
@@ -10,8 +10,8 @@ const deferred = () => {
 };
 
 const calls = [];
-let showGate;
-let hideGate;
+let showGate: unknown = null;
+let hideGate: unknown = null;
 globalThis.window = globalThis;
 globalThis.__TAURI_INTERNALS__ = {
 	transformCallback: () => 0,

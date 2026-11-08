@@ -3,7 +3,7 @@
  * @brief SakuraPlaybackController 向け再生キュー操作およびループ処理ロジック
  */
 
-export function enqueue(this: any, script: string): Promise<any> {
+export function enqueue(this: unknown, script: string): Promise<unknown> {
 	return new Promise((resolve, reject) => {
 		const job = {
 			id: this.nextJobId++,
@@ -17,7 +17,10 @@ export function enqueue(this: any, script: string): Promise<any> {
 	});
 }
 
-export function enqueuePriority(this: any, script: string): Promise<any> {
+export function enqueuePriority(
+	this: unknown,
+	script: string,
+): Promise<unknown> {
 	return new Promise((resolve, reject) => {
 		const job = {
 			id: this.nextJobId++,
@@ -36,14 +39,14 @@ export function enqueuePriority(this: any, script: string): Promise<any> {
 	});
 }
 
-export function interrupt(this: any, script: string): Promise<any> {
+export function interrupt(this: unknown, script: string): Promise<unknown> {
 	if (this.player) {
 		this.player.skip();
 	}
 	return this.enqueuePriority(script);
 }
 
-export function dequeue(this: any) {
+export function dequeue(this: unknown) {
 	const job = this.queue.shift();
 	if (job) {
 		this.emit("queue:dequeued", { job, queueLength: this.queue.length });
@@ -51,7 +54,7 @@ export function dequeue(this: any) {
 	return job;
 }
 
-export function clearQueue(this: any) {
+export function clearQueue(this: unknown) {
 	const canceled = [...this.queue];
 	this.queue = [];
 	for (const job of canceled) {
@@ -60,7 +63,7 @@ export function clearQueue(this: any) {
 	this.emit("queue:cleared", { canceledCount: canceled.length });
 }
 
-export function stop(this: any) {
+export function stop(this: unknown) {
 	this.clearQueue();
 	if (this.syncObjects) {
 		this.syncObjects.clear();
@@ -73,7 +76,7 @@ export function stop(this: any) {
 	this.emit("playback:stopped");
 }
 
-export function destroy(this: any) {
+export function destroy(this: unknown) {
 	this.stop();
 	this.emit("playback:destroyed");
 	this.listeners.clear();
@@ -86,14 +89,14 @@ export function destroy(this: any) {
 	}
 }
 
-export function pause(this: any) {
+export function pause(this: unknown) {
 	if (!this.isPaused) {
 		this.isPaused = true;
 		this.emit("queue:paused");
 	}
 }
 
-export function resume(this: any) {
+export function resume(this: unknown) {
 	if (this.isPaused) {
 		this.isPaused = false;
 		this.emit("queue:resumed");
@@ -101,49 +104,49 @@ export function resume(this: any) {
 	}
 }
 
-export function getQueue(this: any) {
+export function getQueue(this: unknown) {
 	return [...this.queue];
 }
 
-export function getQueueSnapshot(this: any) {
-	return this.queue.map((job: any) => ({ id: job.id, script: job.script }));
+export function getQueueSnapshot(this: unknown) {
+	return this.queue.map((job: unknown) => ({ id: job.id, script: job.script }));
 }
 
-export function getQueueLength(this: any): number {
+export function getQueueLength(this: unknown): number {
 	return this.queue.length;
 }
 
-export function hasPendingJobs(this: any): boolean {
+export function hasPendingJobs(this: unknown): boolean {
 	return this.isProcessing || this.queue.length > 0;
 }
 
-export function peekNextJob(this: any) {
+export function peekNextJob(this: unknown) {
 	if (this.queue.length === 0) return null;
 	const job = this.queue[0];
 	return { id: job.id, script: job.script };
 }
 
-export function getCurrentJob(this: any) {
+export function getCurrentJob(this: unknown) {
 	return this.currentJob;
 }
 
-export function getIsPaused(this: any): boolean {
+export function getIsPaused(this: unknown): boolean {
 	return this.isPaused;
 }
 
-export function getIsProcessing(this: any): boolean {
+export function getIsProcessing(this: unknown): boolean {
 	return this.isProcessing;
 }
 
-export function getIsQuickMode(this: any): boolean {
+export function getIsQuickMode(this: unknown): boolean {
 	return this.isQuickMode;
 }
 
-export function isEmpty(this: any): boolean {
+export function isEmpty(this: unknown): boolean {
 	return this.queue.length === 0;
 }
 
-export function getStatus(this: any) {
+export function getStatus(this: unknown) {
 	return {
 		isProcessing: this.isProcessing,
 		isPaused: this.isPaused,
@@ -155,7 +158,7 @@ export function getStatus(this: any) {
 	};
 }
 
-export async function processQueue(this: any) {
+export async function processQueue(this: unknown) {
 	if (this.isProcessing || this.isPaused || this.queue.length === 0) {
 		return;
 	}

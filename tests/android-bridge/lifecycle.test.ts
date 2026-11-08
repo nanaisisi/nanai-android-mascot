@@ -6,8 +6,8 @@ import {
 } from "../../ui/js/ui/touch/index.js";
 
 describe("AndroidBridge - Lifecycle", () => {
-	let originalDocument;
-	let originalWindow;
+	let originalDocument: unknown = null;
+	let originalWindow: unknown = null;
 
 	beforeEach(() => {
 		originalDocument = globalThis.document;

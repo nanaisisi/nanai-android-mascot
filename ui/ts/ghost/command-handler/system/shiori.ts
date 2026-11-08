@@ -3,14 +3,17 @@
  * @brief SHIORI デバッグモード設定・再読み込みハンドラ
  */
 
-export async function handleSetShioriDebugMode(handler: any, args: string[]) {
+export async function handleSetShioriDebugMode(
+	handler: unknown,
+	args: string[],
+) {
 	const mode = (args[2] ?? "").toLowerCase() === "true";
 	if (handler.app.ghostController) {
 		handler.app.ghostController.shioriDebugMode = mode;
 	}
 }
 
-export async function handleReloadShiori(handler: any, _args: string[]) {
+export async function handleReloadShiori(handler: unknown, _args: string[]) {
 	console.log("🔄 Execute reload,shiori triggered");
 	if (handler.app.ghostController) {
 		const ghost = handler.app.ghostController.currentGhost;
@@ -20,7 +23,7 @@ export async function handleReloadShiori(handler: any, _args: string[]) {
 	}
 }
 
-export async function handleReloadShell(handler: any, _args: string[]) {
+export async function handleReloadShell(handler: unknown, _args: string[]) {
 	console.log("🔄 Execute reload,shell triggered");
 	const gc = handler.app.ghostController;
 	if (gc?.currentGhost && gc?.currentShell) {
@@ -28,7 +31,7 @@ export async function handleReloadShell(handler: any, _args: string[]) {
 	}
 }
 
-export async function handleReloadGhost(handler: any, _args: string[]) {
+export async function handleReloadGhost(handler: unknown, _args: string[]) {
 	console.log("🔄 Execute reload,ghost triggered");
 	const gc = handler.app.ghostController;
 	const currentName = gc?.currentGhost?.name;
@@ -37,7 +40,7 @@ export async function handleReloadGhost(handler: any, _args: string[]) {
 	}
 }
 
-export async function handleReloadBalloon(handler: any, _args: string[]) {
+export async function handleReloadBalloon(handler: unknown, _args: string[]) {
 	console.log("🔄 Execute reload,balloon triggered");
 	const balloonTheme =
 		handler.app.balloonTheme || handler.app.settings?.balloonTheme || "default";
@@ -46,7 +49,7 @@ export async function handleReloadBalloon(handler: any, _args: string[]) {
 	}
 }
 
-export async function handleReloadDescript(handler: any, _args: string[]) {
+export async function handleReloadDescript(handler: unknown, _args: string[]) {
 	console.log("🔄 Execute reload,descript triggered");
 	const gc = handler.app.ghostController;
 	const ghost = gc?.currentGhost;
@@ -58,7 +61,7 @@ export async function handleReloadDescript(handler: any, _args: string[]) {
 	}
 }
 
-export async function handleReloadSurface(handler: any, _args: string[]) {
+export async function handleReloadSurface(handler: unknown, _args: string[]) {
 	console.log("🔄 Execute reloadsurface triggered");
 	const gc = handler.app.ghostController;
 	if (gc?.currentGhost && gc?.currentShell) {

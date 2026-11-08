@@ -17,7 +17,7 @@ function clampChannel(val: number): number {
  * @returns {string | null}
  */
 export function rgbFromComponents(
-	props: Record<string, any>,
+	props: Record<string, unknown>,
 	base: string,
 ): string | null {
 	if (!props || !base) return null;

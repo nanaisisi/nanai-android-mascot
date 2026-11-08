@@ -6,10 +6,10 @@ import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 import { setupExplorerListeners } from "./modal-explorer.js";
 
 export class ModalGhostHandlers {
-	app: any;
-	manager: any;
+	app: unknown;
+	manager: unknown;
 
-	constructor(manager: any) {
+	constructor(manager: unknown) {
 		this.manager = manager;
 		this.app = manager.app;
 	}
@@ -36,7 +36,9 @@ export class ModalGhostHandlers {
 				try {
 					if (statusEl)
 						statusEl.textContent = "ファイル選択とインストールを実行中...";
-					const result: any = await invoke("pick_and_install_ghost_archive");
+					const result: unknown = await invoke(
+						"pick_and_install_ghost_archive",
+					);
 					if (result) {
 						if (statusEl) statusEl.textContent = `導入成功: ${result.name}`;
 						await this.app?.ghostController?.scanGhosts?.();
@@ -47,7 +49,7 @@ export class ModalGhostHandlers {
 				} catch (e) {
 					if (statusEl) statusEl.textContent = `エラー: ${e}`;
 				}
-			} else if (fileInput && fileInput.files && fileInput.files.length > 0) {
+			} else if (fileInput?.files && fileInput.files.length > 0) {
 				const file = fileInput.files[0];
 				if (statusEl) statusEl.textContent = `ファイル読込中: ${file.name}`;
 				setTimeout(() => {
@@ -86,7 +88,7 @@ export class ModalGhostHandlers {
 		selectBtn?.addEventListener("click", () => {
 			if (isTauriAvailable()) {
 				invoke("pick_and_install_ghost_archive")
-					.then((result: any) => {
+					.then((result: unknown) => {
 						if (result && statusEl) {
 							statusEl.textContent = `導入成功: ${result.name}`;
 							this.app?.ghostController?.scanGhosts?.();
@@ -111,7 +113,9 @@ export class ModalGhostHandlers {
 			if (isTauriAvailable()) {
 				try {
 					if (statusEl) statusEl.textContent = "インストール実行中...";
-					const result: any = await invoke("pick_and_install_ghost_archive");
+					const result: unknown = await invoke(
+						"pick_and_install_ghost_archive",
+					);
 					if (result && statusEl) {
 						statusEl.textContent = `導入成功: ${result.name}`;
 						await this.app?.ghostController?.scanGhosts?.();
@@ -151,7 +155,7 @@ export class ModalGhostHandlers {
 		}
 
 		listEl.innerHTML = "";
-		ghosts.forEach((ghost: any) => {
+		ghosts.forEach((ghost: unknown) => {
 			const item = document.createElement("div");
 			const isCurrent = gc?.currentGhost?.name === ghost.name;
 			item.className = `ghost-item${isCurrent ? " active" : ""}`;
@@ -175,7 +179,7 @@ export class ModalGhostHandlers {
 		}
 		if (listEl && this.app?.availableBalloons) {
 			listEl.innerHTML = "";
-			this.app.availableBalloons.forEach((b: any) => {
+			this.app.availableBalloons.forEach((b: unknown) => {
 				const item = document.createElement("div");
 				const isCurrent = this.app.currentBalloonTheme === b.dir_name;
 				item.className = `balloon-item${isCurrent ? " active" : ""}`;

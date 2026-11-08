@@ -132,7 +132,7 @@ export class BalloonThemeManager {
 		let themes = BALLOON_THEMES;
 		if (this.availableBalloons && this.availableBalloons.length > 0) {
 			themes = this.availableBalloons.map(
-				(/** @type {{ dir_name: any; }} */ b) => b.dir_name,
+				(/** @type {{ dir_name: unknown; }} */ b) => b.dir_name,
 			);
 		}
 		const idx = themes.indexOf(this.currentTheme);

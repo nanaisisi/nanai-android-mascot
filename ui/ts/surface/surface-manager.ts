@@ -6,10 +6,10 @@ import { surfaceRenderMethods } from "./surface-render.js";
  * Nanai Android Mascot - surfaces.txt パーサー & 当たり判定（Collision）マネージャー
  */
 export class SurfaceManager {
-	app: any;
-	collisions: Record<number | string, any[]>;
-	elements: Record<number | string, any[]>;
-	animations: Record<number | string, any[]>;
+	app: unknown;
+	collisions: Record<number | string, unknown[]>;
+	elements: Record<number | string, unknown[]>;
+	animations: Record<number | string, unknown[]>;
 	baseWidth: number;
 	baseHeight: number;
 	currentSurfaceIds: Map<number, number | string>;
@@ -17,12 +17,12 @@ export class SurfaceManager {
 	dressupState: Map<string, boolean>;
 	aliases: Record<string, number[]> | null;
 	keroAliases: Record<string, number[]> | null;
-	shellManifest: Record<string, any> | null;
-	planCache: Map<string, any>;
+	shellManifest: Record<string, unknown> | null;
+	planCache: Map<string, unknown>;
 	baseCanvasCache: Map<string, HTMLCanvasElement>;
 	animationManager: SurfaceAnimationManager;
 
-	constructor(app: any) {
+	constructor(app: unknown) {
 		this.app = app;
 		this.collisions = {};
 		this.elements = {};
@@ -71,7 +71,7 @@ export class SurfaceManager {
 	}
 
 	playAnimationPatterns(
-		anim: any,
+		anim: unknown,
 		baseSurfaceId: number | string,
 		scopeId: number,
 	) {

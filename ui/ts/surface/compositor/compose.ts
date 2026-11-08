@@ -1,12 +1,12 @@
 import { drawImageLayer, loadLayerImage } from "./layer.js";
 
 export function composeSurfaceElements(
-	elementList: any[],
+	elementList: unknown[],
 	baseImgSrc: string,
 	resolveImagePath: (file: string) => Promise<string | null>,
-	bindLayers: any[] = [],
+	bindLayers: unknown[] = [],
 	{ returnCanvas = false } = {},
-): Promise<any> {
+): Promise<unknown> {
 	if ((!elementList || elementList.length === 0) && bindLayers.length === 0) {
 		return returnCanvas
 			? (async () => {

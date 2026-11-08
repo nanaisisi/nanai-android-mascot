@@ -95,7 +95,7 @@ describe("SERIKO and Surface Change Event Coordination (Slot-08 Cycle 8)", () =>
 	});
 
 	it("suppresses lip-sync when seriko talk is disabled", () => {
-		const mockManager: any = {
+		const mockManager: unknown = {
 			manager: {},
 			animationsForTrigger: vi
 				.fn()
@@ -119,7 +119,7 @@ describe("SERIKO and Surface Change Event Coordination (Slot-08 Cycle 8)", () =>
 	it("handles scaling draw method in _applyAnimationFrame", async () => {
 		const setScale = vi.fn();
 		const notifyFrameStep = vi.fn();
-		const instance: any = {
+		const instance: unknown = {
 			manager: {
 				app: { ghostController: {} },
 				currentSurfaceIdFor: vi.fn().mockReturnValue(0),
@@ -152,7 +152,7 @@ describe("SERIKO and Surface Change Event Coordination (Slot-08 Cycle 8)", () =>
 	});
 
 	it("manages scaling and serikotalk state in SurfaceAnimationManager", () => {
-		const sam = new SurfaceAnimationManager({} as any);
+		const sam = new SurfaceAnimationManager({} as unknown);
 		expect(sam.isSerikoTalkEnabled(0)).toBe(true);
 		expect(sam.getBaseScalingOffset(0)).toEqual({ scaleX: 100, scaleY: 100 });
 

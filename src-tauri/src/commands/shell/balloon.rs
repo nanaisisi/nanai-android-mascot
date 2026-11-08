@@ -184,7 +184,10 @@ pub fn resolve_balloon_dir(name: &str, app_handle: &tauri::AppHandle) -> Result<
 /// [charset,文字コード], [type,種別], [craftman,作者名], [craftmanw,作者名], [craftmanurl,URL], [homeurl,URL]
 pub fn balloon_descript_map(dir: &std::path::Path) -> std::collections::BTreeMap<String, String> {
     let descript = dir.join("descript.txt");
-    let content = nanai_android_mascot_ui::open_text_file(&descript).unwrap_or_default();
+    let path_str = descript.to_string_lossy();
+    let clean_path = crate::common::paths::clean_verbatim_path(&path_str);
+    let content = nanai_android_mascot_ui::open_shift_jis_file(&clean_path)
+        .unwrap_or_else(|_| nanai_android_mascot_ui::open_text_file(std::path::Path::new(&clean_path)).unwrap_or_default());
     let parsed = nanai_android_mascot_ui::Descript::parse(&content);
     // [charset,文字コード], [type,種別], [craftman,作者名], [craftmanw,作者名], [craftmanurl,URL], [homeurl,URL]:
     parsed

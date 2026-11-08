@@ -11,7 +11,7 @@ import {
 } from "../../ui/js/ghost/command-handler/system/desktop.js";
 
 describe("system/desktop.js", () => {
-	let originalTauri;
+	let originalTauri: unknown = null;
 
 	beforeEach(() => {
 		originalTauri = globalThis.__TAURI__;

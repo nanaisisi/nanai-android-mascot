@@ -5,7 +5,7 @@
 
 import { invoke, isTauriAvailable } from "../../core/tauri-helper.js";
 
-export async function handlePluginEvent(_handler: any, args: string[]) {
+export async function handlePluginEvent(_handler: unknown, args: string[]) {
 	const rawCmd = (args[0] ?? "").toLowerCase();
 	const isTimer = rawCmd.startsWith("timer");
 	const pluginName = isTimer ? args[3] : args[1];

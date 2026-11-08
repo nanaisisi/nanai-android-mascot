@@ -76,7 +76,7 @@ test("Canvas Pixel Snapshot Cycle 7: processChromaKey options.paintTransparentRe
 	const origDocument = globalThis.document;
 	const origImage = globalThis.Image;
 
-	let baseCanvas: any = null;
+	let baseCanvas: unknown = null;
 	globalThis.document = {
 		createElement(tag: string) {
 			if (tag === "canvas") {
@@ -88,7 +88,7 @@ test("Canvas Pixel Snapshot Cycle 7: processChromaKey options.paintTransparentRe
 			}
 			return {};
 		},
-	} as any;
+	} as unknown;
 
 	let imageInstanceCount = 0;
 	globalThis.Image = class {
@@ -116,7 +116,7 @@ test("Canvas Pixel Snapshot Cycle 7: processChromaKey options.paintTransparentRe
 				this.onload?.();
 			}, 0);
 		}
-	} as any;
+	} as unknown;
 
 	try {
 		const dummySrc = "test-black.png";

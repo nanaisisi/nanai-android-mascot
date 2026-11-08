@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DictationManager } from "../ui/js/core/actions/dictation.js";
 
 describe("DictationManager", () => {
-	let originalWindow;
-	let originalSpeechSynthesisUtterance;
+	let originalWindow: unknown = null;
+	let originalSpeechSynthesisUtterance: unknown = null;
 
 	beforeEach(() => {
 		originalWindow = globalThis.window;

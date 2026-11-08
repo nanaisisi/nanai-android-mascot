@@ -5,7 +5,7 @@ import {
 } from "../ui/js/ghost/command-handler/window.js";
 
 describe("Sakura command window handlers", () => {
-	let originalTauri: any;
+	let originalTauri: unknown;
 
 	beforeEach(() => {
 		originalTauri = globalThis.__TAURI__;

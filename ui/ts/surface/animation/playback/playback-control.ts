@@ -27,7 +27,10 @@ export function playAnimationPatterns(
 	baseSurfaceIdOrScopeId,
 	scopeIdParam,
 ) {
-	let instance, anim, baseSurfaceId, scopeId;
+	let instance: unknown,
+		anim: unknown,
+		baseSurfaceId: unknown,
+		scopeId: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		anim = animOrBaseSurfaceId;
@@ -77,7 +80,10 @@ export async function playAnimationById(
 	scopeIdOrWaitForComplete = 0,
 	waitForCompleteParam = false,
 ) {
-	let instance, animIdOrName, scopeId, waitForComplete;
+	let instance: unknown,
+		animIdOrName: unknown,
+		scopeId: unknown,
+		waitForComplete: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		animIdOrName = animIdOrNameOrScopeId;
@@ -120,7 +126,7 @@ export async function waitForAnimation(
 	scopeIdParam = 0,
 	timeoutMs = 30000,
 ) {
-	let instance, animIdOrName, scopeId;
+	let instance: unknown, animIdOrName: unknown, scopeId: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		animIdOrName = animIdOrNameOrScopeId;

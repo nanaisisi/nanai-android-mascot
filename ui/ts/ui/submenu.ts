@@ -97,8 +97,9 @@ if (isTauriAvailable()) {
 				dressupScope = data.scope;
 			}
 			const activeShell =
-				data.shells?.find((s: any) => s.name === data.currentShell) ||
-				data.shells?.[0];
+				data.shells?.find(
+					(s: { name?: string }) => s.name === data.currentShell,
+				) || data.shells?.[0];
 			applyShellMenuTheme(activeShell);
 			renderContent();
 		}
@@ -110,8 +111,9 @@ if (isTauriAvailable()) {
 			cachedShells = data.shells || cachedShells;
 			currentShellName = data.currentShell || currentShellName;
 			const activeShell =
-				cachedShells?.find((s: any) => s.name === currentShellName) ||
-				cachedShells?.[0];
+				cachedShells?.find(
+					(s: { name?: string }) => s.name === currentShellName,
+				) || cachedShells?.[0];
 			applyShellMenuTheme(activeShell);
 			renderContent();
 		}

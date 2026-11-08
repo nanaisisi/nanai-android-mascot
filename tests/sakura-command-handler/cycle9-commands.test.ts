@@ -11,7 +11,7 @@ setupMockDom();
 
 describe("SakuraCommandHandler - Cycle 9 Extended Commands", () => {
 	it("handles timernotify and timernotifyother commands", async () => {
-		const eventsSent: any[] = [];
+		const eventsSent: unknown[] = [];
 		const mockApp = createMockApp(eventsSent);
 		mockApp.ghostController.sendShioriNotify = async (
 			ev: string,
@@ -77,7 +77,7 @@ describe("SakuraCommandHandler - Cycle 9 Extended Commands", () => {
 	});
 
 	it("handles plugin timer and event commands (timerraiseplugin, timernotifyplugin, raiseplugin, notifyplugin)", async () => {
-		const eventsSent: any[] = [];
+		const eventsSent: unknown[] = [];
 		const mockApp = createMockApp(eventsSent);
 		mockApp.ghostController.sendPluginEvent = async (
 			plugin: string,
@@ -134,7 +134,7 @@ describe("SakuraCommandHandler - Cycle 9 Extended Commands", () => {
 	});
 
 	it("handles execute commands (execute:*, execute,emptyrecyclebin, filewatch, ping, nslookup, schedule-add)", async () => {
-		const eventsSent: any[] = [];
+		const eventsSent: unknown[] = [];
 		const mockApp = createMockApp(eventsSent);
 		mockApp.ghostController.sendShioriEvent = async (
 			ev: string,

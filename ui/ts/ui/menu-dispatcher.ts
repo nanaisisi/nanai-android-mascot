@@ -21,7 +21,7 @@ export class MenuDispatcher {
 		}
 	}
 
-	async dispatchAction(action: string, payload: any = null) {
+	async dispatchAction(action: string, payload: unknown = null) {
 		if (!action) return;
 		console.log(
 			`Context Menu Action: ${action}`,
@@ -39,7 +39,7 @@ export class MenuDispatcher {
 			finalPayload = { scope: this.currentScope, ...finalPayload };
 		}
 
-		if (globalThis.parent && (globalThis.parent as any) !== globalThis) {
+		if (globalThis.parent && (globalThis.parent as unknown) !== globalThis) {
 			globalThis.parent.postMessage(
 				{
 					type: "menu-action",

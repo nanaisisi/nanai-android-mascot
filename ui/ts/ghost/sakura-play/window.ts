@@ -1,8 +1,8 @@
 import { emit, invoke, isTauriAvailable } from "../../core/tauri-helper.js";
 
 export async function initBalloonWindows(
-	app: any,
-	tokens: any[],
+	app: unknown,
+	_tokens: unknown[],
 	hasTextContent: boolean,
 	shownScopes: Set<number>,
 ) {

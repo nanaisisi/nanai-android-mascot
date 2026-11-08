@@ -61,7 +61,14 @@ export async function _applyAnimationFrame(
 	isCurrentOrOptions,
 	optionsParam = {},
 ) {
-	let instance, pat, anim, baseSurfaceId, scopeId, key, isCurrent, options;
+	let instance: unknown,
+		pat: unknown,
+		anim: unknown,
+		baseSurfaceId: unknown,
+		scopeId: unknown,
+		key: unknown,
+		isCurrent: unknown,
+		options: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		pat = patOrAnim;

@@ -16,8 +16,8 @@ export const menuCaptionRenderer = {
 		for (const def of MENU_CAPTION_DEFINITIONS) {
 			const customVal = captions[def.resource] || captions[def.id];
 			const el =
-				(rootEl as any).getElementById?.(def.id) ||
-				(rootEl as any).querySelector?.(`#${def.id}`);
+				(rootEl as unknown).getElementById?.(def.id) ||
+				(rootEl as unknown).querySelector?.(`#${def.id}`);
 			if (!el) continue;
 
 			if (customVal && typeof customVal === "string" && customVal.trim()) {
@@ -30,7 +30,7 @@ export const menuCaptionRenderer = {
 	},
 
 	async fetchShioriCaptions(
-		ghostController: any,
+		ghostController: unknown,
 	): Promise<Record<string, string>> {
 		if (!ghostController?.requestShioriResource) return {};
 		const captions: Record<string, string> = {};

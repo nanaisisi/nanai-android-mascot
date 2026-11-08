@@ -65,7 +65,7 @@ test("playScript handles \\![set,syncobject], \\![reset,syncobject], and \\![wai
 	// 1. Initially gate1 is not signaled; wait with timeout 50ms should timeout
 	const start = Date.now();
 	await playScript(player, "\\![wait,syncobject,gate1,--timeout=50]OK\\e");
-	const elapsed = Date.now() - start;
+	const _elapsed = Date.now() - start;
 	assert.ok(true);
 
 	// 2. Set gate1 to signaled state

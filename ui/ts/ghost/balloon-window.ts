@@ -15,7 +15,7 @@ let appliedTheme: string | null = null;
 let applyingTheme: string | null = null;
 let currentDpiScale = 1;
 let currentUserScale = 1;
-let isBalloonDontMove = false;
+let _isBalloonDontMove = false;
 
 export {
 	setupInteractiveElements,
@@ -29,7 +29,7 @@ export async function applyBalloonDescript(theme: string) {
 	if (applyingTheme === theme) return;
 	applyingTheme = theme;
 	try {
-		const result: any = await applyThemeDescript({
+		const result: unknown = await applyThemeDescript({
 			theme,
 			scopeId,
 			currentUserScale,
@@ -37,12 +37,12 @@ export async function applyBalloonDescript(theme: string) {
 				currentDpiScale = newDpiScale;
 			},
 			onDontMoveChange: (dontMove: boolean) => {
-				isBalloonDontMove = dontMove;
+				_isBalloonDontMove = dontMove;
 			},
 		});
 		if (result) {
 			currentDpiScale = result.dpiScale;
-			isBalloonDontMove = result.isBalloonDontMove;
+			_isBalloonDontMove = result.isBalloonDontMove;
 			appliedTheme = theme;
 		}
 	} catch (_e) {
@@ -64,7 +64,7 @@ export function initBalloonWindow() {
 
 	if (!isTauriAvailable()) return;
 
-	void listen(`update-balloon-content-${scopeId}`, (event: any) => {
+	void listen(`update-balloon-content-${scopeId}`, (event: unknown) => {
 		const { html, theme } = event.payload || {};
 		if (theme) {
 			document.documentElement.setAttribute("data-balloon-theme", theme);
@@ -77,7 +77,7 @@ export function initBalloonWindow() {
 		}
 	});
 
-	void listen("balloon-theme-changed", (event: any) => {
+	void listen("balloon-theme-changed", (event: unknown) => {
 		const theme = event.payload?.theme || event.payload;
 		if (theme) {
 			document.documentElement.setAttribute("data-balloon-theme", theme);
@@ -86,7 +86,7 @@ export function initBalloonWindow() {
 		}
 	});
 
-	void listen("balloon-scale-changed", (event: any) => {
+	void listen("balloon-scale-changed", (event: unknown) => {
 		const scale =
 			event.payload?.userScale ?? event.payload?.scale ?? event.payload;
 		if (typeof scale === "number" && !Number.isNaN(scale)) {

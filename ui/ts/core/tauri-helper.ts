@@ -18,7 +18,8 @@ import { getCurrentWindow, PhysicalPosition } from "@tauri-apps/api/window";
  */
 export function isTauriAvailable(): boolean {
 	return (
-		!!(globalThis as any).__TAURI__ || !!(globalThis as any).__TAURI_INTERNALS__
+		!!(globalThis as unknown).__TAURI__ ||
+		!!(globalThis as unknown).__TAURI_INTERNALS__
 	);
 }
 
@@ -39,9 +40,9 @@ export const ipcQueueStats = {
 /**
  * Tauri IPCコマンドの呼び出しラッパー
  */
-export async function invoke<T = any>(
+export async function invoke<T = unknown>(
 	cmd: string,
-	args: Record<string, any> = {},
+	args: Record<string, unknown> = {},
 ): Promise<T> {
 	if (!isTauriAvailable()) {
 		throw new Error(`Tauri is not available to invoke command: ${cmd}`);
@@ -106,7 +107,7 @@ export function convertFileSrc(
  */
 export async function listen(
 	event: string,
-	handler: (event: any) => void,
+	handler: (event: unknown) => void,
 ): Promise<() => void> {
 	if (!isTauriAvailable()) return () => {};
 	return await tauriListen(event, handler);
@@ -115,7 +116,7 @@ export async function listen(
 /**
  * イベント発火
  */
-export async function emit(event: string, payload?: any): Promise<void> {
+export async function emit(event: string, payload?: unknown): Promise<void> {
 	if (!isTauriAvailable()) return;
 	await tauriEmit(event, payload);
 }
@@ -164,4 +165,4 @@ export async function getCurrentWindowPosition(): Promise<{
 	}
 }
 
-(globalThis as any).__NANAI_IPC_QUEUE_STATS__ = ipcQueueStats;
+(globalThis as unknown).__NANAI_IPC_QUEUE_STATS__ = ipcQueueStats;

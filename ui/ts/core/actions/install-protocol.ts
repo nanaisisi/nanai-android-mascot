@@ -165,7 +165,7 @@ export function buildInstallRerouteArgs(
  * @param {any} err
  * @returns {string} - "unsupported" | "extraction" | "unlha32 error" | "artificial" | "write error" | "invalid path"
  */
-export function parseErrorReason(err: any): string {
+export function parseErrorReason(err: unknown): string {
 	const msg = String(err?.message || err || "").toLowerCase();
 
 	if (
@@ -218,7 +218,7 @@ export const parseInstallErrorReason = parseErrorReason;
  * @param {any} errorOrReason
  * @returns {[string]}
  */
-export function buildInstallFailureArgs(errorOrReason: any): [string] {
+export function buildInstallFailureArgs(errorOrReason: unknown): [string] {
 	const reason = parseErrorReason(errorOrReason);
 	return [reason];
 }

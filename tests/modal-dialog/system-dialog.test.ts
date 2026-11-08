@@ -7,9 +7,9 @@ import {
 } from "./helpers.js";
 
 describe("ModalDialogController System Dialogs (Cycle 5)", () => {
-	let app: any;
-	let controller: any;
-	let sentEvents: any[];
+	let app: unknown;
+	let controller: unknown;
+	let sentEvents: unknown[];
 
 	beforeEach(() => {
 		setupMockDom();

@@ -94,19 +94,19 @@ test("balloonThemeActions test", async () => {
 	balloonThemeActions.hideBalloon = () => {};
 
 	// 1. Calling when balloonThemeManager is null
-	delete (balloonThemeActions as any).balloonThemeManager;
+	delete (balloonThemeActions as unknown).balloonThemeManager;
 	balloonThemeActions.cycleBalloonTheme();
 
-	delete (balloonThemeActions as any).balloonThemeManager;
+	delete (balloonThemeActions as unknown).balloonThemeManager;
 	balloonThemeActions.applyBalloonScaleAction("balloon-scale-100");
 
-	delete (balloonThemeActions as any).balloonThemeManager;
+	delete (balloonThemeActions as unknown).balloonThemeManager;
 	await balloonThemeActions.setBalloonTheme("ivory");
 
-	delete (balloonThemeActions as any).balloonThemeManager;
+	delete (balloonThemeActions as unknown).balloonThemeManager;
 	await balloonThemeActions.scanBalloons();
 
-	delete (balloonThemeActions as any).balloonThemeManager;
+	delete (balloonThemeActions as unknown).balloonThemeManager;
 	balloonThemeActions.resetBalloonDescript();
 
 	// 2. Calling when balloonThemeManager is already instantiated

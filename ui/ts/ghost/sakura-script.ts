@@ -9,23 +9,23 @@ import { parseSakuraScriptAsync } from "./sakura-parser.js";
 import { playScript } from "./sakura-play.js";
 
 export class SakuraScriptPlayer {
-	app: any;
+	app: unknown;
 	isPlaying: boolean;
 	skipRequested: boolean;
 	currentScope: number;
 	playbackId: number;
 	timeCritical: boolean;
 	choiceTimeout: number;
-	choiceTimeoutTimer: any;
+	choiceTimeoutTimer: unknown;
 	balloonTimeout: number;
-	balloonTimeoutTimer: any;
+	balloonTimeoutTimer: unknown;
 	lastScript: string;
 	commandHandler: SakuraCommandHandler;
-	_restoreTimer?: any;
-	_pauseResolver?: any;
-	_sleepResolvers?: Set<Function>;
+	_restoreTimer?: unknown;
+	_pauseResolver?: unknown;
+	_sleepResolvers?: Set<() => void>;
 
-	constructor(app: any) {
+	constructor(app: unknown) {
 		this.app = app;
 		this.isPlaying = false;
 		this.skipRequested = false;
@@ -41,13 +41,13 @@ export class SakuraScriptPlayer {
 		this.commandHandler = new SakuraCommandHandler(this);
 
 		if (isTauriAvailable()) {
-			listen("balloon-choice-selected", (event: any) => {
+			listen("balloon-choice-selected", (event: unknown) => {
 				const { choiceId, choiceText } = event.payload || {};
 				if (choiceId) {
 					this.onChoiceSelected(choiceId, choiceText || "");
 				}
 			});
-			listen("balloon-anchor-selected", (event: any) => {
+			listen("balloon-anchor-selected", (event: unknown) => {
 				const { anchorId } = event.payload || {};
 				if (anchorId) {
 					this.app.ghostController.sendShioriEvent("OnAnchorSelect", [
@@ -58,7 +58,7 @@ export class SakuraScriptPlayer {
 			listen("balloon-clicked", () => {
 				this.skip();
 			});
-			listen("balloon-ready", (event: any) => {
+			listen("balloon-ready", (event: unknown) => {
 				const sid = event.payload?.scopeId ?? 0;
 				const html =
 					(sid === 1
@@ -100,7 +100,7 @@ export class SakuraScriptPlayer {
 			if (this.app?.ghostController?.sendBalloonBreakNotify) {
 				const script = this.lastScript || "";
 				const scopeId = this.currentScope || 0;
-				const position = (this as any).currentProgressIndex || 0;
+				const position = (this as unknown).currentProgressIndex || 0;
 				this.app.ghostController.sendBalloonBreakNotify(
 					script,
 					scopeId,
@@ -147,10 +147,11 @@ export class SakuraScriptPlayer {
 		} else {
 			// UKADOC: OnChoiceSelectEx is sent first (Reference0: text, Reference1: ID, Reference2..N: args)
 			try {
-				const resEx: any = await this.app.ghostController?.sendShioriEvent?.(
-					"OnChoiceSelectEx",
-					[choiceText, choiceId, ...allExtraArgs],
-				);
+				const resEx: unknown =
+					await this.app.ghostController?.sendShioriEvent?.(
+						"OnChoiceSelectEx",
+						[choiceText, choiceId, ...allExtraArgs],
+					);
 				if (resEx && (resEx.response || resEx.script)) {
 					return;
 				}
@@ -164,7 +165,7 @@ export class SakuraScriptPlayer {
 
 	sleep(ms: number) {
 		return new Promise<void>((resolve) => {
-			let timer: any = null;
+			let timer: unknown = null;
 			const onCancel = () => {
 				if (timer) clearTimeout(timer);
 				resolve();
@@ -208,7 +209,7 @@ export class SakuraScriptPlayer {
 
 	waitForClickOrTimeout(element: HTMLElement | null, timeoutMs = 15000) {
 		return new Promise<void>((resolve) => {
-			let timer: any = null;
+			let timer: unknown = null;
 			let resolved = false;
 
 			const done = () => {

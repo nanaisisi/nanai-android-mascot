@@ -17,7 +17,7 @@ const { scriptLifetimeState } = await import(
 
 test("E2E dialogue lifecycle Cycle 8: SyncObject multi-ghost synchronization and script command integration", async () => {
 	const syncMgr = new SyncObjectManager();
-	const events: any[] = [];
+	const events: unknown[] = [];
 	const sakuraDisplay = createMockElement("div");
 	const keroDisplay = createMockElement("div");
 	const sakuraText = createMockElement("div");
@@ -44,11 +44,15 @@ test("E2E dialogue lifecycle Cycle 8: SyncObject multi-ghost synchronization and
 			resolveSurfaceNumber: (id: number) => id,
 		},
 		ghostController: {
-			sendShioriEvent: async (eventName: string, args: any[]) => {
+			sendShioriEvent: async (eventName: string, args: unknown[]) => {
 				events.push({ type: "shiori_event", eventName, args });
 				return { status: 200, value: "" };
 			},
-			sendRaiseOther: async (ghost: string, eventName: string, args: any[]) => {
+			sendRaiseOther: async (
+				ghost: string,
+				eventName: string,
+				args: unknown[],
+			) => {
 				events.push({ type: "raise_other", ghost, eventName, args });
 			},
 		},
@@ -87,7 +91,7 @@ test("E2E dialogue lifecycle Cycle 8: SyncObject multi-ghost synchronization and
 });
 
 test("E2E dialogue lifecycle Cycle 8: Mode switching state machine and cross-ghost IPC event flow", async () => {
-	const events: any[] = [];
+	const events: unknown[] = [];
 	const sakuraDisplay = createMockElement("div");
 	const sakuraText = createMockElement("div");
 
@@ -107,17 +111,21 @@ test("E2E dialogue lifecycle Cycle 8: Mode switching state machine and cross-gho
 			resolveSurfaceNumber: (id: number) => id,
 		},
 		ghostController: {
-			sendShioriEvent: async (eventName: string, args: any[]) => {
+			sendShioriEvent: async (eventName: string, args: unknown[]) => {
 				events.push({ type: "shiori_event", eventName, args });
 				return { status: 200, value: "" };
 			},
-			sendRaiseOther: async (ghost: string, eventName: string, args: any[]) => {
+			sendRaiseOther: async (
+				ghost: string,
+				eventName: string,
+				args: unknown[],
+			) => {
 				events.push({ type: "raise_other", ghost, eventName, args });
 			},
 			sendNotifyOther: async (
 				ghost: string,
 				eventName: string,
-				args: any[],
+				args: unknown[],
 			) => {
 				events.push({ type: "notify_other", ghost, eventName, args });
 			},

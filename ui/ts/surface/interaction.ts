@@ -9,10 +9,10 @@ export { isPixelTransparent, setupGhostDragging, setupHoverAndWheel };
  * Nanai Android Mascot - ドラッグ & タッチインタラクション管理
  */
 export class InteractionManager {
-	app: any;
+	app: unknown;
 	balloonDragManager: BalloonDragManager;
 
-	constructor(app: any) {
+	constructor(app: unknown) {
 		this.app = app;
 		this.balloonDragManager = new BalloonDragManager(this);
 	}
@@ -43,9 +43,9 @@ export class InteractionManager {
 
 	setupDragging(
 		target: HTMLElement,
-		onGhostClick: any,
-		onGhostStroke: any,
-		options: any = {},
+		onGhostClick: unknown,
+		onGhostStroke: unknown,
+		options: unknown = {},
 	) {
 		if (!target) return;
 

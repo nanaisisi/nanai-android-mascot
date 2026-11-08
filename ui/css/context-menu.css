@@ -27,11 +27,11 @@ body {
 }
 
 body.subchar-mode .main-only {
-	display: none !important;
+	display: none;
 }
 
 body:not(.subchar-mode) .subchar-only {
-	display: none !important;
+	display: none;
 }
 
 .menu-container {

@@ -3,7 +3,7 @@ import { test } from "vitest";
 import { SurfaceAnimationManager } from "../ui/js/surface/surface-animation-manager.js";
 
 const deferred = () => {
-	let resolve;
+	let resolve: unknown = null;
 	const promise = new Promise((r) => {
 		resolve = r;
 	});

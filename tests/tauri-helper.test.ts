@@ -91,7 +91,10 @@ test("convertFileSrc covers empty path, Tauri available, protocol startsWith bra
 
 test("invoke, listen, emit, moveCurrentWindowBy, getCurrentWindowPosition, and ipcQueueStats coverage", async () => {
 	// Verify __NANAI_IPC_QUEUE_STATS__ attachment
-	assert.equal((globalThis as any).__NANAI_IPC_QUEUE_STATS__, ipcQueueStats);
+	assert.equal(
+		(globalThis as unknown).__NANAI_IPC_QUEUE_STATS__,
+		ipcQueueStats,
+	);
 
 	// 1. invoke when Tauri unavailable (throws error)
 	delete globalThis.__TAURI_INTERNALS__;
@@ -105,12 +108,12 @@ test("invoke, listen, emit, moveCurrentWindowBy, getCurrentWindowPosition, and i
 
 	// 3. Tauri available tests
 	let invokedCmd = "";
-	let invokedArgs = null;
+	let _invokedArgs = null;
 	globalThis.__TAURI_INTERNALS__ = {
 		metadata: { currentWindow: { label: "main" } },
 		invoke: async (cmd, args) => {
 			invokedCmd = cmd;
-			invokedArgs = args;
+			_invokedArgs = args;
 			if (cmd === "plugin:window|outer_position") {
 				return { x: 150, y: 250 };
 			}

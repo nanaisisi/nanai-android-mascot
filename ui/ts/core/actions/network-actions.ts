@@ -5,15 +5,15 @@ export const networkActions = {
 	 * メールチェック (UKADOC OnBIFF 準拠)
 	 */
 	async checkEmail(accountName: string = "default") {
-		const gc = (this as any).ghostController;
+		const gc = (this as unknown).ghostController;
 		console.log(`📬 メールチェック開始 (OnBIFF): account=${accountName}`);
-		(this as any).showBalloon?.("📬 メールを確認中...");
+		(this as unknown).showBalloon?.("📬 メールを確認中...");
 
 		try {
 			await gc.sendShioriEvent("OnBIFFBegin", [accountName]);
 
 			if (isTauriAvailable()) {
-				const result: any = await invoke("check_email", {
+				const result: unknown = await invoke("check_email", {
 					account: accountName,
 				}).catch(() => null);
 				if (result && typeof result === "object") {

@@ -1,6 +1,6 @@
-let shioriInstance: any = null;
+let shioriInstance: unknown = null;
 let isLoaded = false;
-let _memoryBuffer: any = null;
+let _memoryBuffer: unknown = null;
 
 self.addEventListener("message", async (e: MessageEvent) => {
 	const { type, id, payload } = e.data || {};
@@ -26,19 +26,23 @@ self.addEventListener("message", async (e: MessageEvent) => {
 					shioriInstance = instance;
 					_memoryBuffer = instance.exports.memory;
 
-					const loadFn: any =
-						(instance.exports.load as any) ||
-						(instance.exports.shiori_load as any);
+					const loadFn: unknown =
+						(instance.exports.load as unknown) ||
+						(instance.exports.shiori_load as unknown);
 					if (typeof loadFn === "function") {
 						loadFn(0, 0);
 					}
 				}
 
 				isLoaded = true;
-				(self as any).postMessage({ type: "LOAD_RESULT", id, success: true });
-			} catch (err: any) {
+				(self as unknown).postMessage({
+					type: "LOAD_RESULT",
+					id,
+					success: true,
+				});
+			} catch (err: unknown) {
 				isLoaded = false;
-				(self as any).postMessage({
+				(self as unknown).postMessage({
 					type: "LOAD_RESULT",
 					id,
 					success: false,
@@ -50,7 +54,7 @@ self.addEventListener("message", async (e: MessageEvent) => {
 		case "REQUEST":
 			try {
 				if (!isLoaded || !shioriInstance) {
-					(self as any).postMessage({
+					(self as unknown).postMessage({
 						type: "REQUEST_RESULT",
 						id,
 						response: "SHIORI/3.0 204 No Content\r\nCharset: UTF-8\r\n\r\n",
@@ -59,18 +63,18 @@ self.addEventListener("message", async (e: MessageEvent) => {
 				}
 
 				const requestText = payload?.request || "";
-				const responseText = (self as any).executeWasmRequest(
+				const responseText = (self as unknown).executeWasmRequest(
 					shioriInstance,
 					requestText,
 				);
 
-				(self as any).postMessage({
+				(self as unknown).postMessage({
 					type: "REQUEST_RESULT",
 					id,
 					response: responseText,
 				});
-			} catch (err: any) {
-				(self as any).postMessage({
+			} catch (err: unknown) {
+				(self as unknown).postMessage({
 					type: "REQUEST_RESULT",
 					id,
 					response: `SHIORI/3.0 500 Internal Server Error\r\nCharset: UTF-8\r\nX-Error: ${err.message}\r\n\r\n`,
@@ -81,9 +85,9 @@ self.addEventListener("message", async (e: MessageEvent) => {
 		case "UNLOAD":
 			try {
 				if (shioriInstance) {
-					const unloadFn: any =
-						(shioriInstance.exports.unload as any) ||
-						(shioriInstance.exports.shiori_unload as any);
+					const unloadFn: unknown =
+						(shioriInstance.exports.unload as unknown) ||
+						(shioriInstance.exports.shiori_unload as unknown);
 					if (typeof unloadFn === "function") {
 						unloadFn();
 					}
@@ -91,11 +95,15 @@ self.addEventListener("message", async (e: MessageEvent) => {
 			} catch (_e) {}
 			shioriInstance = null;
 			isLoaded = false;
-			(self as any).postMessage({ type: "UNLOAD_RESULT", id, success: true });
+			(self as unknown).postMessage({
+				type: "UNLOAD_RESULT",
+				id,
+				success: true,
+			});
 			break;
 
 		default:
-			(self as any).postMessage({
+			(self as unknown).postMessage({
 				type: "ERROR",
 				id,
 				error: `Unknown message type: ${type}`,

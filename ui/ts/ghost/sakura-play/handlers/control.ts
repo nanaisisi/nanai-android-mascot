@@ -4,10 +4,10 @@
  */
 
 export async function handlePause(
-	player: any,
-	_app: any,
-	token: any,
-	context: any,
+	player: unknown,
+	_app: unknown,
+	token: unknown,
+	context: unknown,
 ) {
 	const {
 		sakuraText,
@@ -38,10 +38,10 @@ export async function handlePause(
 }
 
 export function handleQuickToggle(
-	player: any,
-	_app: any,
-	token: any,
-	context: any,
+	player: unknown,
+	_app: unknown,
+	token: unknown,
+	context: unknown,
 ) {
 	if (typeof token.value === "boolean") {
 		context.isQuickMode = token.value;
@@ -52,10 +52,10 @@ export function handleQuickToggle(
 }
 
 export async function handleWait(
-	player: any,
-	_app: any,
-	token: any,
-	context: any,
+	player: unknown,
+	_app: unknown,
+	token: unknown,
+	context: unknown,
 ) {
 	player.playbackController?.notifyWait?.(token.value);
 	if (!player.skipRequested && !context.isQuickMode) {
@@ -73,46 +73,46 @@ export async function handleWait(
 }
 
 export function handleTimeout(
-	player: any,
-	_app: any,
-	_token: any,
-	_context: any,
+	player: unknown,
+	_app: unknown,
+	_token: unknown,
+	_context: unknown,
 ) {
 	player.timeCritical = true;
 }
 
 export function handleChoiceTimeout(
-	player: any,
-	_app: any,
-	token: any,
-	_context: any,
+	player: unknown,
+	_app: unknown,
+	token: unknown,
+	_context: unknown,
 ) {
 	player.choiceTimeout = token.timeout;
 }
 
 export function handleBalloonTimeout(
-	player: any,
-	_app: any,
-	token: any,
-	_context: any,
+	player: unknown,
+	_app: unknown,
+	token: unknown,
+	_context: unknown,
 ) {
 	player.balloonTimeout = token.timeout;
 }
 
 export async function handleHalt(
-	_player: any,
-	app: any,
-	_token: any,
-	_context: any,
+	_player: unknown,
+	app: unknown,
+	_token: unknown,
+	_context: unknown,
 ) {
 	await app.ghostController?.closeGhost?.();
 }
 
 export function handleSyncToggle(
-	player: any,
-	_app: any,
-	token: any,
-	_context: any,
+	player: unknown,
+	_app: unknown,
+	token: unknown,
+	_context: unknown,
 ) {
 	if (typeof token.value === "boolean") {
 		player.isSyncMode = token.value;
@@ -125,15 +125,20 @@ export function handleSyncToggle(
 }
 
 export async function handleCommand(
-	player: any,
-	_app: any,
-	token: any,
-	_context: any,
+	player: unknown,
+	_app: unknown,
+	token: unknown,
+	_context: unknown,
 ) {
 	await player.commandHandler.runCommand(token.args);
 }
 
-export function handleEnd(player: any, app: any, _token: any, context: any) {
+export function handleEnd(
+	player: unknown,
+	app: unknown,
+	_token: unknown,
+	context: unknown,
+) {
 	app.surfaceManager?.onTalkEnd(player.currentScope);
 	app.surfaceManager?.onScriptEnd(0);
 	app.surfaceManager?.onScriptEnd(1);

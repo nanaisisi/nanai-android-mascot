@@ -5,14 +5,14 @@
 
 export interface SakuraScriptToken {
 	type: string;
-	value?: any;
+	value?: unknown;
 	animId?: number | string;
 	wait?: boolean;
 	half?: boolean;
 	id?: string;
 	text?: string;
 	args?: string[];
-	[key: string]: any;
+	[key: string]: unknown;
 }
 
 export {

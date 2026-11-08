@@ -34,7 +34,7 @@ export const menuGhostShellRenderer = {
 
 	/**
 	 * @param {any[]} ghosts
-	 * @param {{ name: any; }} currentGhost
+	 * @param {{ name: unknown; }} currentGhost
 	 */
 	renderGhostSubmenu(ghosts, currentGhost) {
 		const container = document.getElementById("ghost-submenu");

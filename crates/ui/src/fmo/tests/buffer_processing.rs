@@ -12,14 +12,14 @@ fn test_generate_and_parse_fmo_buffer() {
             id: "00004468_000f0dea".to_string(),
             path: "D:\\ssp\\".to_string(),
             hwnd: 986602,
-            name: "ラーシェ".to_string(),
-            keroname: "ティセ".to_string(),
+            name: "SampleGhost".to_string(),
+            keroname: "SampleKero".to_string(),
             sakura_surface: 0,
             kero_surface: 10,
             ghostpath: "D:\\ssp\\ghost\\DE10_3001\\".to_string(),
             kerohwnd: Some(1052114),
             hwndlist: vec![986602, 1052114],
-            fullname: Some("ラーシェとティセ".to_string()),
+            fullname: Some("SampleGhost and SampleKero".to_string()),
             modulestate: Some("shiori:running".to_string()),
         },
         FmoRecord {
@@ -47,12 +47,12 @@ fn test_generate_and_parse_fmo_buffer() {
     assert_eq!(parsed.len(), 2);
 
     assert_eq!(parsed[0].id, "00004468_000f0dea");
-    assert_eq!(parsed[0].name, "ラーシェ");
-    assert_eq!(parsed[0].keroname, "ティセ");
+    assert_eq!(parsed[0].name, "SampleGhost");
+    assert_eq!(parsed[0].keroname, "SampleKero");
     assert_eq!(parsed[0].hwnd, 986602);
     assert_eq!(parsed[0].kerohwnd, Some(1052114));
     assert_eq!(parsed[0].hwndlist, vec![986602, 1052114]);
-    assert_eq!(parsed[0].fullname, Some("ラーシェとティセ".to_string()));
+    assert_eq!(parsed[0].fullname, Some("SampleGhost and SampleKero".to_string()));
     assert_eq!(parsed[0].modulestate, Some("shiori:running".to_string()));
 
     assert_eq!(parsed[1].id, "00004468_00120da6");

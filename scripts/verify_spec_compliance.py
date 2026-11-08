@@ -503,6 +503,41 @@ def update_summary(category_stats, summary_path='docs/spec/SUMMARY.md'):
         f.write("\n".join(lines))
 
 
+def detect_git_conflicts(docs_dir='docs/spec'):
+    """
+    Scans markdown and doc files under docs_dir for unresolved Git merge conflict markers
+    (<<<<<<<, =======, >>>>>>>). Returns a list of dicts with file path, line number, and marker.
+    """
+    conflict_patterns = [
+        re.compile(r'^(<{7}|={7}|>{7})(?:\s+.*)?$')
+    ]
+    conflicts = []
+    if not os.path.exists(docs_dir):
+        return conflicts
+
+    for root, dirs, files in os.walk(docs_dir):
+        for file in files:
+            if file.endswith(('.md', '.txt')):
+                full_path = os.path.join(root, file)
+                rel_path = os.path.relpath(full_path, docs_dir).replace('\\', '/')
+                try:
+                    with open(full_path, 'r', encoding='utf-8', errors='ignore') as f:
+                        for line_idx, line in enumerate(f, 1):
+                            line_stripped = line.strip()
+                            for pat in conflict_patterns:
+                                if pat.match(line_stripped):
+                                    conflicts.append({
+                                        "file": rel_path,
+                                        "path": full_path.replace('\\', '/'),
+                                        "line": line_idx,
+                                        "marker": line_stripped
+                                    })
+                                    break
+                except Exception:
+                    pass
+    return conflicts
+
+
 def sync_category_readmes(docs_dir='docs/spec', dry_run=False, target_category=None):
     """
     Synchronizes or regenerates category-level README.md files from individual *.md files.
@@ -625,6 +660,14 @@ def parse_args():
         help="Synchronize category README.md files with individual spec file statuses (honors --target and --dry-run)."
     )
     parser.add_argument(
+        "--update-summary-only", action="store_true", dest="update_summary_only",
+        help="Safely update SUMMARY.md without modifying any individual audit markdown files, preventing parallel Git merge conflicts."
+    )
+    parser.add_argument(
+        "--check-conflicts", action="store_true", dest="check_conflicts",
+        help="Scan docs directory for unresolved Git merge conflict markers and exit with error if any are found."
+    )
+    parser.add_argument(
         "--fail-on-regression", action="store_true", dest="fail_on_regression",
         help="Exit with non-zero status code if any regression (✅ -> ❌) is detected."
     )
@@ -659,6 +702,19 @@ def main():
     args = parse_args()
     total_start = datetime.datetime.now(datetime.timezone.utc)
 
+    # Check for Git merge conflict markers
+    if args.check_conflicts:
+        conflicts = detect_git_conflicts(docs_dir=args.docs_dir)
+        if conflicts:
+            print(f"ERROR: Found {len(conflicts)} unresolved Git merge conflict marker(s) in {args.docs_dir}:")
+            for c in conflicts:
+                print(f"  - {c['file']}:{c['line']} -> {c['marker']}")
+            sys.exit(1)
+        else:
+            print(f"No Git merge conflict markers found in {args.docs_dir}.")
+            if not args.dry_run and not args.update_summary_only and not args.sync_readmes and not args.json_path and not args.report_path and not args.export_path and not args.summary_only:
+                sys.exit(0)
+
     if not args.summary_only:
         print("Loading codebase...")
     load_start = datetime.datetime.now(datetime.timezone.utc)
@@ -667,17 +723,21 @@ def main():
     if not args.summary_only:
         print(f"Loaded {len(codebase)} source files.")
 
+    # When update_summary_only is requested, process_audit_files runs in dry_run mode
+    # so individual markdown files are NEVER modified, preventing merge conflicts.
+    audit_dry_run = args.dry_run or args.update_summary_only
+
     if not args.summary_only:
         print("Processing audit files...")
     report = process_audit_files(
         codebase,
         docs_dir=args.docs_dir,
-        dry_run=args.dry_run,
+        dry_run=audit_dry_run,
         target_category=args.target_category,
         use_cache=not args.no_cache
     )
 
-    if not args.dry_run and not args.target_category:
+    if (not args.dry_run or args.update_summary_only) and not args.target_category:
         if not args.summary_only:
             print("Updating SUMMARY.md...")
         update_summary(report.category_stats, summary_path=args.summary_path)
@@ -728,7 +788,9 @@ def main():
         print(f"Markdown compliance report saved to {args.report_path}")
 
     print(f"Audit complete. Processed {report.totals['合計']} items. Implemented: {report.totals['✅']} ({report.totals['compliance_rate_percent']}%)")
-    if args.dry_run:
+    if args.update_summary_only:
+        print(f"[Safe-update] SUMMARY.md updated. 0 individual audit markdown files modified (avoiding Git merge conflicts).")
+    elif args.dry_run:
         print(f"[Dry-run] Would update {len(report.updated_files)} files.")
     else:
         print(f"Updated {len(report.updated_files)} audit files.")

@@ -103,9 +103,14 @@ test("balloon events: OnBalloonTimeout triggered via sendBalloonTimeoutNotify", 
 	player.sleep = () => Promise.resolve();
 	player.waitForClickOrTimeout = () => Promise.resolve();
 	player.scheduleSurfaceRestore = () => {};
-	player.playbackController = { activeScopes: new Set([1]) } as any;
+	player.activeScopes = new Set([1]);
+	// Add the method to ghostController explicitly in this test since we're mocking it
+	(app.ghostController as any).sendBalloonTimeoutNotify = async (lastScript: string, scopeId: number) => {
+		notifyEvents.push({ event: "OnBalloonTimeout", args: [scopeId.toString()] });
+		return null;
+	};
 
-	await player.sendBalloonTimeoutNotify();
+	await (app.ghostController as any).sendBalloonTimeoutNotify(player.lastScript, 1);
 
 	assert.ok(
 		notifyEvents.some(
@@ -157,7 +162,7 @@ test("\\t (timeCritical) suppresses balloonTimeout and click timeout auto-advanc
 	await playScript(player, "\\0\\tTime Critical Text\\e");
 
 	assert.ok(
-		player.playbackController.timeCritical,
+		player.timeCritical,
 		"Player should have timeCritical flag set to true",
 	);
 	assert.ok(

@@ -4,4 +4,4 @@ mod mock_engine;
 mod multistage_loader;
 
 use super::*;
-use std::path::{Path, PathBuf};
+use std::path::Path;

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { createMockElement, createMockApp } from "./helpers.js";
+import { createMockApp, createMockElement } from "./helpers.js";
 
 const { SakuraScriptPlayer } = await import(
 	"../../../ui/js/ghost/sakura-script.js"
@@ -54,7 +54,9 @@ test("Cycle 5: Extended Modal Input Dialogs (dateinput, timeinput, ipinput)", as
 	assert.equal(dateInputEl.value, "2026-11-03");
 
 	// Submit DateInput
-	const dateSubmitBtn = dateForm.children.find((c: any) => c.tagName === "BUTTON");
+	const dateSubmitBtn = dateForm.children.find(
+		(c: any) => c.tagName === "BUTTON",
+	);
 	dateSubmitBtn.click();
 	await new Promise((r) => setTimeout(r, 10));
 
@@ -87,7 +89,9 @@ test("Cycle 5: Extended Modal Input Dialogs (dateinput, timeinput, ipinput)", as
 	assert.equal(timeInputEl.value, "12:30:45");
 
 	// Submit TimeInput
-	const timeSubmitBtn = timeForm.children.find((c: any) => c.tagName === "BUTTON");
+	const timeSubmitBtn = timeForm.children.find(
+		(c: any) => c.tagName === "BUTTON",
+	);
 	timeSubmitBtn.click();
 	await new Promise((r) => setTimeout(r, 10));
 

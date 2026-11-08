@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { setupBalloonDescriptMockEnvironment } from "./helpers.js";
-import { testRgbFromComponents } from "./all-properties/rgb-color.js";
-import { testNullCheck } from "./all-properties/null-check.js";
-import { mockProps } from "./all-properties/mock-props.js";
 import { testApplyBalloonDescript } from "./all-properties/descript-test.js";
+import { mockProps } from "./all-properties/mock-props.js";
+import { testNullCheck } from "./all-properties/null-check.js";
+import { testRgbFromComponents } from "./all-properties/rgb-color.js";
+import { setupBalloonDescriptMockEnvironment } from "./helpers.js";
 
 const { cssVars } = setupBalloonDescriptMockEnvironment();
 

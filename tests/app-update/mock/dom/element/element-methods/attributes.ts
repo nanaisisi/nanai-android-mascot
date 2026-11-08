@@ -23,10 +23,7 @@ export const elementAttributes = {
 	hasAttribute: (_qualifiedName: string): boolean => {
 		throw new Error("Function not implemented.");
 	},
-	hasAttributeNS: (
-		_namespace: string | null,
-		_localName: string,
-	): boolean => {
+	hasAttributeNS: (_namespace: string | null, _localName: string): boolean => {
 		throw new Error("Function not implemented.");
 	},
 	hasAttributes: (): boolean => {
@@ -35,10 +32,7 @@ export const elementAttributes = {
 	removeAttribute: (_qualifiedName: string): void => {
 		throw new Error("Function not implemented.");
 	},
-	removeAttributeNS: (
-		_namespace: string | null,
-		_localName: string,
-	): void => {
+	removeAttributeNS: (_namespace: string | null, _localName: string): void => {
 		throw new Error("Function not implemented.");
 	},
 	removeAttributeNode: (_attr: Attr): Attr => {

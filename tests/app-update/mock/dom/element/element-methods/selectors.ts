@@ -4,9 +4,7 @@ export const elementSelectors = {
 	): HTMLElementTagNameMap[K] | null => {
 		throw new Error("Function not implemented.");
 	},
-	getElementsByClassName: (
-		_classNames: string,
-	): HTMLCollectionOf<Element> => {
+	getElementsByClassName: (_classNames: string): HTMLCollectionOf<Element> => {
 		throw new Error("Function not implemented.");
 	},
 	getElementsByTagName: <K extends keyof HTMLElementTagNameMap>(

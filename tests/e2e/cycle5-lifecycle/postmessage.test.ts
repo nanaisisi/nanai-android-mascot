@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { createMockElement, createMockApp } from "./helpers.js";
+import { createMockApp, createMockElement } from "./helpers.js";
 
 const { SakuraScriptPlayer } = await import(
 	"../../../ui/js/ghost/sakura-script.js"

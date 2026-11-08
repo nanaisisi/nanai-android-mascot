@@ -38,3 +38,7 @@
 ## 2026-11-13 - [Fast Case-Insensitive Tooltip and Cursor Lookups]
 **Learning:** In `ui/ts/surface/surface-collision.ts`, `getTooltipForCollision` and `getCursorForCollision` used O(N) linear array and object traversals per collision check. By caching a lazily built case-folded `Map` in a module-scoped `WeakMap` keyed by the tooltip or cursor configuration objects (matching the pattern previously used for surface aliases), lookups were converted to O(1) operations, significantly optimizing the collision resolution hot path.
 **Action:** Always prefer `WeakMap<object, Map<string, V>>` for fast case-insensitive lookups on immutable configuration objects to turn repeated O(N) scans into O(1) lookups without causing memory leaks.
+
+## 2026-11-14 - [Slot-01 Cycle 9: SSTP Bidirectional Parsing & FMO Zero-Conflict Protocol]
+**Learning:** In high-concurrency parallel slot development (15 parallel tracks), touching markdown files in `docs/spec/` causes widespread merge conflicts across feature branches. Focusing solely on runtime robustness (e.g. `SstpResponse::parse` bidirectional roundtripping, Content-Length extraction, FMO record builders, and fluent record lookup) achieves specification conformance and extreme resilience without touching conflicting documentation files.
+**Action:** During iterative cycle expansions, confine code changes to owned subdirectories (`crates/ui/src/sstp`, `crates/ui/src/fmo`, `ui/ts/core/actions/sstp-fmo-actions.ts`) and document achievements in architecture logs and test suites.

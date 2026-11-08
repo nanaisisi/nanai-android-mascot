@@ -187,3 +187,25 @@ pub fn parse_fmo_buffer(buf: &[u8]) -> Result<Vec<FmoRecord>, String> {
 
     Ok(records)
 }
+
+/// 名前による FMO レコード検索 (大文字小文字無視)
+pub fn find_record_by_name<'a>(records: &'a [FmoRecord], name: &str) -> Option<&'a FmoRecord> {
+    records.iter().find(|r| {
+        r.name.eq_ignore_ascii_case(name)
+            || r.keroname.eq_ignore_ascii_case(name)
+            || r.fullname
+                .as_deref()
+                .map(|f| f.eq_ignore_ascii_case(name))
+                .unwrap_or(false)
+    })
+}
+
+/// HWND による FMO レコード検索
+pub fn find_record_by_hwnd(records: &[FmoRecord], hwnd: u64) -> Option<&FmoRecord> {
+    if hwnd == 0 {
+        return None;
+    }
+    records
+        .iter()
+        .find(|r| r.hwnd == hwnd || r.kerohwnd == Some(hwnd) || r.hwndlist.contains(&hwnd))
+}

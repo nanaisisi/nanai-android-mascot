@@ -201,3 +201,138 @@ export async function updateFmoLifecycleState(
 export async function checkBaseWareMutex(): Promise<Record<string, boolean>> {
 	return invoke<Record<string, boolean>>("check_base_ware_mutex");
 }
+
+/**
+ * Build raw SSTP 1.x request text from structured payload
+ * [SSTP/1.x], [req_res]
+ */
+export function buildRawSstpRequest(payload: SstpRequestPayload): string {
+	const method = (payload.method ?? "SEND").toUpperCase();
+	const version = payload.is_direct ? "SAORI/1.0" : "SSTP/1.4";
+	const lines: string[] = [`${method} ${version}`];
+
+	lines.push("Charset: UTF-8");
+	lines.push(`Sender: ${payload.sender || "Unknown"}`);
+
+	if (payload.script) {
+		lines.push(`Script: ${payload.script}`);
+	}
+	if (payload.event) {
+		lines.push(`Event: ${payload.event}`);
+	}
+	if (payload.sentence) {
+		lines.push(`Sentence: ${payload.sentence}`);
+	}
+	if (payload.command) {
+		lines.push(`Command: ${payload.command}`);
+	}
+	if (payload.receiver_ghost_name) {
+		lines.push(`ReceiverGhostName: ${payload.receiver_ghost_name}`);
+	}
+	if (payload.receiver_ghost_hwnd != null) {
+		lines.push(`ReceiverGhostHWnd: ${payload.receiver_ghost_hwnd}`);
+	}
+	if (payload.hwnd != null) {
+		lines.push(`HWnd: ${payload.hwnd}`);
+	}
+	if (payload.id) {
+		lines.push(`ID: ${payload.id}`);
+	}
+	if (payload.options && payload.options.length > 0) {
+		lines.push(`Option: ${payload.options.join(", ")}`);
+	}
+	if (payload.connection) {
+		lines.push(`Connection: ${payload.connection}`);
+	}
+	if (payload.surface) {
+		lines.push(`Surface: ${payload.surface}`);
+	}
+	if (payload.document) {
+		lines.push(`Document: ${payload.document}`);
+	}
+	if (payload.song) {
+		lines.push(`Song: ${payload.song}`);
+	}
+	if (payload.module) {
+		lines.push(`Module: ${payload.module}`);
+	}
+
+	if (payload.references) {
+		const sortedKeys = Object.keys(payload.references).sort();
+		for (const key of sortedKeys) {
+			lines.push(`${key}: ${payload.references[key]}`);
+		}
+	}
+
+	lines.push("\r\n");
+	return lines.join("\r\n");
+}
+
+/**
+ * Parse raw SSTP response text into structured payload
+ * [req_res], [keepalive]
+ */
+export function parseRawSstpResponse(raw: string): SstpResponsePayload {
+	const trimmed = raw.trim();
+	if (!trimmed) {
+		return {
+			status: "400 Bad Request",
+			value: "",
+			error_description: "Empty response",
+		};
+	}
+
+	const lines = raw.split(/\r?\n/);
+	const statusLine = lines[0]?.trim() ?? "";
+	const parts = statusLine.split(/\s+/);
+	const statusCode = parts[1] ?? "200";
+	const reasonPhrase = parts.slice(2).join(" ") || "OK";
+	const status = `${statusCode} ${reasonPhrase}`.trim();
+
+	let script: string | undefined;
+	let error_description: string | undefined;
+	let reference0: string | undefined;
+	let id: string | undefined;
+	let readingHeaders = true;
+	const bodyLines: string[] = [];
+
+	for (let i = 1; i < lines.length; i++) {
+		const line = lines[i];
+		if (readingHeaders) {
+			if (!line || line.trim() === "") {
+				readingHeaders = false;
+				continue;
+			}
+			const colonIdx = line.indexOf(":");
+			if (colonIdx !== -1) {
+				const key = line.slice(0, colonIdx).trim().toLowerCase();
+				const val = line.slice(colonIdx + 1).trim();
+
+				if (key === "script") {
+					script = val;
+				} else if (key === "errordescription") {
+					error_description = val;
+				} else if (key === "reference0") {
+					reference0 = val;
+				} else if (key === "id") {
+					id = val;
+				}
+			}
+		} else {
+			bodyLines.push(line);
+		}
+	}
+
+	const additional_data =
+		bodyLines.length > 0 ? bodyLines.join("\r\n").trim() : undefined;
+	const value = script ?? additional_data ?? "";
+
+	return {
+		status,
+		value,
+		id,
+		reference0,
+		additional_data,
+		error_description,
+	};
+}

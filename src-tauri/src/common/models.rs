@@ -65,6 +65,7 @@ pub struct GhostInfo {
     pub shiori_logo_align: Option<String>,
     pub shiori_logo_x: Option<i32>,
     pub shiori_logo_y: Option<i32>,
+    pub makoto: Option<String>,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]

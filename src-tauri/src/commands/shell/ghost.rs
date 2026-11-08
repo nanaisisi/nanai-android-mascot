@@ -51,6 +51,7 @@ pub async fn get_ghost_info(
         shiori_logo_align: manifest.shiori_logo_align,
         shiori_logo_x: manifest.shiori_logo_x,
         shiori_logo_y: manifest.shiori_logo_y,
+        makoto: manifest.makoto,
     })
 }
 

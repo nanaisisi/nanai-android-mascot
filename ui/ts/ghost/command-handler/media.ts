@@ -37,7 +37,9 @@ export async function handleFileWatchCommand(
 	isCancel: boolean = false,
 ) {
 	const path = args.slice(1).join(",") || args[0] || "";
-	console.log(`👁️ File watch ${isCancel ? "cancel" : "execute"}: path=${path}`);
+	console.log(
+		`👁️ File watch ${isCancel ? "cancel" : "execute"}: path=${path}`,
+	);
 	if (isTauriAvailable()) {
 		try {
 			await invoke(isCancel ? "cancel_file_watch" : "execute_file_watch", {
@@ -99,19 +101,17 @@ export async function handleNslookupCommand(handler: any, args: string[]) {
 		} catch (err) {
 			console.warn("Nslookup failed:", err);
 			if (handler?.app?.ghostController?.sendShioriEvent) {
-				await handler.app.ghostController.sendShioriEvent("OnNslookupFailure", [
-					host,
-					String(err),
-				]);
+				await handler.app.ghostController.sendShioriEvent(
+					"OnNslookupFailure",
+					[host, String(err)],
+				);
 			}
 		}
 	}
 }
 
 export async function handleScheduleAddCommand(handler: any, args: string[]) {
-	const rawArgs = args[0]?.toLowerCase().includes("schedule")
-		? args.slice(1)
-		: args;
+	const rawArgs = args[0]?.toLowerCase().includes("schedule") ? args.slice(1) : args;
 	const date = rawArgs[0] ?? "";
 	const time = rawArgs[1] ?? "";
 	const title = rawArgs[2] ?? "スケジュール";
@@ -185,7 +185,9 @@ export async function handleExecuteCommand(handler: any, args: string[]) {
 			await handleFileExec(handler, restArgs);
 			break;
 		case "sntp": {
-			const { handleExecuteSntpCommand } = await import("./system/target.js");
+			const { handleExecuteSntpCommand } = await import(
+				"./system/target.js"
+			);
 			await handleExecuteSntpCommand(handler, restArgs);
 			break;
 		}

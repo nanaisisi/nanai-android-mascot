@@ -47,7 +47,7 @@ export class ModalGhostHandlers {
 				} catch (e) {
 					if (statusEl) statusEl.textContent = `エラー: ${e}`;
 				}
-			} else if (fileInput?.files && fileInput.files.length > 0) {
+			} else if (fileInput && fileInput.files && fileInput.files.length > 0) {
 				const file = fileInput.files[0];
 				if (statusEl) statusEl.textContent = `ファイル読込中: ${file.name}`;
 				setTimeout(() => {

@@ -11,8 +11,15 @@ import {
 } from "../core/tauri-helper.js";
 import { applySurfaceImageToDom } from "./ghost-surface-dom.js";
 import { ghostSurfaceLoaderMethods } from "./ghost-surface-loader.js";
+import {
+	updateCurrentGhostDisplay,
+	updateGhostCharacter,
+} from "./ghost-surface-char.js";
+import { notifySurfaceChangeEvents } from "./ghost-surface-notify.js";
 
 export { applySurfaceImageToDom } from "./ghost-surface-dom.js";
+export { updateCurrentGhostDisplay, updateGhostCharacter } from "./ghost-surface-char.js";
+export { notifySurfaceChangeEvents } from "./ghost-surface-notify.js";
 
 const byId = (id) => document.getElementById(id);
 
@@ -159,10 +166,21 @@ export const ghostSurfaceMethods = {
 		);
 		const result = await applyImageSrc(imgUrl, fallbackSvgUrl, pnaUrl);
 
+		// サーフィス切り替え完了時、UKADOC OnSurfaceChange / OnOtherSurfaceChange を通知
+		await notifySurfaceChangeEvents(this, scopeId, surfaceId, img, isAnimationFrame);
+
 		if (this.currentGhost) {
 			this.currentGhost.currentSurface = surfaceId;
 		}
 
 		return result;
+	},
+
+	async updateGhostCharacter(ghostName) {
+		return updateGhostCharacter(this, ghostName);
+	},
+
+	updateCurrentGhostDisplay() {
+		return updateCurrentGhostDisplay(this);
 	},
 };

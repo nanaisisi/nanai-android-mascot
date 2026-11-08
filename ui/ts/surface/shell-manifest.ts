@@ -3,7 +3,7 @@
  */
 import { invoke } from "../core/tauri-helper.js";
 
-export function enumToString(value: any): string {
+export function enumToString(value: unknown): string {
 	if (value == null) return "";
 	if (typeof value === "string") return value.toLowerCase();
 	if (typeof value === "object") {
@@ -15,17 +15,17 @@ export function enumToString(value: any): string {
 	return String(value).toLowerCase();
 }
 
-export function intervalToString(value: any): string {
+export function intervalToString(value: unknown): string {
 	const s = enumToString(value);
 	return s === "yene" ? "\\e" : s;
 }
 
-export function methodToString(value: any): string {
+export function methodToString(value: unknown): string {
 	const s = enumToString(value);
 	return s.startsWith("blend,") ? s.replace("blend,", "blend-") : s;
 }
 
-export function collisionRecord(area: any) {
+export function collisionRecord(area: unknown) {
 	const shape = area?.shape ?? {};
 	const id = area?.id != null ? Number(area.id) : undefined;
 	let kind = "rect";
@@ -46,7 +46,7 @@ export function collisionRecord(area: any) {
 	}
 
 	if (kind === "polygon") {
-		const vertices = (coords?.vertices ?? []).map((p: any) =>
+		const vertices = (coords?.vertices ?? []).map((p: unknown) =>
 			Array.isArray(p) ? p : [p?.x ?? 0, p?.y ?? 0],
 		);
 		let minX = Infinity;
@@ -108,7 +108,7 @@ export function collisionRecord(area: any) {
 	};
 }
 
-export function collisionContains(col: any, x: number, y: number): boolean {
+export function collisionContains(col: unknown, x: number, y: number): boolean {
 	if (!col) return false;
 
 	if (
@@ -149,12 +149,12 @@ export function collisionContains(col: any, x: number, y: number): boolean {
 	);
 }
 
-export function manifestToSurfaceData(manifest: any) {
-	const collisions: Record<string, any[]> = {};
-	const elements: Record<string, any[]> = {};
-	const animations: Record<string, any[]> = {};
-	const points: Record<string, any> = {};
-	const balloonOffsets: Record<string, any> = {};
+export function manifestToSurfaceData(manifest: unknown) {
+	const collisions: Record<string, unknown[]> = {};
+	const elements: Record<string, unknown[]> = {};
+	const animations: Record<string, unknown[]> = {};
+	const points: Record<string, unknown> = {};
+	const balloonOffsets: Record<string, unknown> = {};
 	const aliases = manifest?.aliases ?? {};
 	const keroAliases = manifest?.kero_aliases ?? {};
 	const cursors = manifest?.cursors ?? {};
@@ -185,8 +185,8 @@ export function manifestToSurfaceData(manifest: any) {
 
 		elements[sid] = (def.elements ?? [])
 			.slice()
-			.sort((a: any, b: any) => (a.id ?? 0) - (b.id ?? 0))
-			.map((e: any) => ({
+			.sort((a: unknown, b: unknown) => (a.id ?? 0) - (b.id ?? 0))
+			.map((e: unknown) => ({
 				id: e.id ?? 0,
 				type: methodToString(e.method) || "overlay",
 				file: e.file ?? "",
@@ -195,15 +195,15 @@ export function manifestToSurfaceData(manifest: any) {
 			}));
 
 		animations[sid] = Object.values(def.animations ?? {})
-			.sort((a: any, b: any) => (a.id ?? 0) - (b.id ?? 0))
-			.map((anim: any) => ({
+			.sort((a: unknown, b: unknown) => (a.id ?? 0) - (b.id ?? 0))
+			.map((anim: unknown) => ({
 				id: anim.id ?? 0,
 				interval: intervalToString(anim.interval) || "never",
 				collisions: (anim.collisions ?? []).map(collisionRecord),
 				patterns: (anim.patterns ?? [])
 					.slice()
-					.sort((a: any, b: any) => (a.index ?? 0) - (b.index ?? 0))
-					.map((p: any) => ({
+					.sort((a: unknown, b: unknown) => (a.index ?? 0) - (b.index ?? 0))
+					.map((p: unknown) => ({
 						surface: String(p.surface ?? -1),
 						wait: p.wait ?? 100,
 						waitMax: p.wait_max ?? null,
@@ -245,7 +245,7 @@ export async function getShellManifest(ghostName: string, shellName: string) {
 
 export async function parseSurfacesTextWithRust(content: string) {
 	try {
-		const rawMap: any = await invoke("parse_surfaces_text", { content });
+		const rawMap: unknown = await invoke("parse_surfaces_text", { content });
 		if (!rawMap || typeof rawMap !== "object") return null;
 
 		const surfaces = Object.values(rawMap);

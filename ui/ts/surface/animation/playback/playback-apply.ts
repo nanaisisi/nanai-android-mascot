@@ -12,7 +12,7 @@ import { FrameStepEvent } from "../scheduler-events.js";
 import { playAnimationById } from "./playback-control.js";
 import { renderAnimationFrame } from "./playback-render.js";
 
-function isInstance(obj) {
+function isInstance(obj: null) {
 	return (
 		obj !== null &&
 		typeof obj === "object" &&
@@ -25,10 +25,10 @@ function isInstance(obj) {
 
 /**
  * 制御メソッドのターゲットID文字列をパース
- * @param {any} param
+ * @param {unknown} param
  * @returns {number[]}
  */
-function parseTargetIds(param) {
+function parseTargetIds(param: unknown) {
 	if (!param) return [];
 	const cleaned = String(param)
 		.replace(/^[([]|[)\]]$/g, "")
@@ -41,24 +41,25 @@ function parseTargetIds(param) {
 
 /**
  * SERIKO アニメーションフレーム適用（一時停止確認、特殊サーフィス、制御メソッド、描画呼出）
- * @param {any} target
- * @param {any} patOrAnim
- * @param {any} animOrBaseSurfaceId
- * @param {any} baseSurfaceIdOrScopeId
- * @param {any} scopeIdOrKey
- * @param {any} keyOrIsCurrent
- * @param {any} [isCurrentOrOptions]
- * @param {any} [optionsParam={}]
+ * @param {unknown} target
+ * @param {unknown} patOrAnim
+ * @param {unknown} animOrBaseSurfaceId
+ * @param {unknown} baseSurfaceIdOrScopeId
+ * @param {unknown} scopeIdOrKey
+ * @param {unknown} keyOrIsCurrent
+ * @param {unknown} [isCurrentOrOptions]
+ * @param {unknown} [optionsParam={}]
  * @returns {Promise<boolean>}
  */
 export async function _applyAnimationFrame(
-	target,
-	patOrAnim,
-	animOrBaseSurfaceId,
-	baseSurfaceIdOrScopeId,
-	scopeIdOrKey,
-	keyOrIsCurrent,
-	isCurrentOrOptions,
+	this: unknown,
+	target: unknown,
+	patOrAnim: unknown,
+	animOrBaseSurfaceId: undefined,
+	baseSurfaceIdOrScopeId: undefined,
+	scopeIdOrKey: undefined,
+	keyOrIsCurrent: undefined,
+	isCurrentOrOptions: {} | undefined,
 	optionsParam = {},
 ) {
 	let instance, pat, anim, baseSurfaceId, scopeId, key, isCurrent, options;
@@ -206,12 +207,12 @@ export async function _applyAnimationFrame(
 		const targetRaw = pat.targetParam || patSurface;
 		const targetIds = parseTargetIds(targetRaw);
 
-		const playById = (...args) =>
+		const playById = (...args: number[]) =>
 			instance.playAnimationById
 				? instance.playAnimationById(...args)
 				: playAnimationById(instance, ...args);
 
-		const stopAnim = (...args) =>
+		const stopAnim = (...args: number[]) =>
 			instance.stopAnimation
 				? instance.stopAnimation(...args)
 				: stopAnimation(instance, ...args);
@@ -247,8 +248,8 @@ export async function _applyAnimationFrame(
 	}
 
 	const renderFn = instance.renderAnimationFrame
-		? (...args) => instance.renderAnimationFrame(...args)
-		: (...args) => renderAnimationFrame(instance, ...args);
+		? (...args: unknown) => instance.renderAnimationFrame(...args)
+		: (...args: unknown) => renderAnimationFrame(instance, ...args);
 
 	const framePromise = renderFn(pat, baseSurfaceId, scopeId, options);
 	if (framePromise) {

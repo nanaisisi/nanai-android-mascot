@@ -10,52 +10,52 @@ export const menuMethods = {
 		scope: number = 0,
 	) {
 		if (isTauriAvailable()) {
-			const sX = (globalThis as any).screenX ?? 0;
-			const sY = (globalThis as any).screenY ?? 0;
+			const sX = (globalThis as unknown).screenX ?? 0;
+			const sY = (globalThis as unknown).screenY ?? 0;
 			const posX = screenX !== null ? screenX : sX + 200;
 			const posY = screenY !== null ? screenY : sY + 100;
 
 			invoke("show_menu_window", { x: posX, y: posY, scope })
-				.then(() => (this as any).syncMenuGhosts(scope))
+				.then(() => (this as unknown).syncMenuGhosts(scope))
 				.catch((err) => {
 					console.warn(
 						"show_menu_window failed, fallback to show_context_menu:",
 						err,
 					);
-					const gc = (this as any).ghostController;
+					const gc = (this as unknown).ghostController;
 					invoke("show_context_menu", {
-						ghosts: (gc.ghosts || []).map((g: any) => g.name),
+						ghosts: (gc.ghosts || []).map((g: unknown) => g.name),
 						currentGhost: gc.currentGhost?.name || null,
 						shells: gc.shells || ["master"],
 						currentShell: gc.currentShell || "master",
-					}).catch(() => (this as any).toggleHtmlMenu(scope));
+					}).catch(() => (this as unknown).toggleHtmlMenu(scope));
 				});
 			return;
 		}
-		(this as any).toggleHtmlMenu(scope);
+		(this as unknown).toggleHtmlMenu(scope);
 	},
 
 	toggleHtmlMenu(scope: number = 0) {
-		if (!(this as any).elements.menuContainer) return;
+		if (!(this as unknown).elements.menuContainer) return;
 		const isVisible =
-			(this as any).elements.menuContainer.style.display !== "none";
+			(this as unknown).elements.menuContainer.style.display !== "none";
 		const nextState = isVisible ? "none" : "block";
-		(this as any).elements.menuContainer.style.display = nextState;
+		(this as unknown).elements.menuContainer.style.display = nextState;
 		if (nextState === "block") {
-			(this as any).syncMenuGhosts(scope);
+			(this as unknown).syncMenuGhosts(scope);
 		}
 	},
 
 	syncMenuGhosts(scope: number = 0) {
-		const gc = (this as any).ghostController;
+		const gc = (this as unknown).ghostController;
 		const shellNames = gc.shells || ["master"];
 		const currentShellName = gc.currentShell || "master";
 		const ghosts = gc.ghosts || [{ name: AppConfig.paths.fallbackGhostName }];
 		const fullShells = gc.currentGhost?.shells || shellNames;
 
 		const dressup = dressupMenuPayload(
-			(this as any).surfaceManager?.shellManifest,
-			(this as any).surfaceManager,
+			(this as unknown).surfaceManager?.shellManifest,
+			(this as unknown).surfaceManager,
 		);
 
 		let recentGhosts: string[] = [];
@@ -74,11 +74,11 @@ export const menuMethods = {
 				scope,
 				dressup,
 				recentGhosts,
-				captions: (this as any).cachedMenuCaptions || {},
+				captions: (this as unknown).cachedMenuCaptions || {},
 			});
-			emit("sync-theme", (this as any).currentBalloonTheme);
-			if ((this as any).availableBalloons) {
-				emit("sync-balloons", (this as any).availableBalloons);
+			emit("sync-theme", (this as unknown).currentBalloonTheme);
+			if ((this as unknown).availableBalloons) {
+				emit("sync-balloons", (this as unknown).availableBalloons);
 			}
 		}
 
@@ -94,7 +94,7 @@ export const menuMethods = {
 					scope,
 					dressup,
 					recentGhosts,
-					captions: (this as any).cachedMenuCaptions || {},
+					captions: (this as unknown).cachedMenuCaptions || {},
 				},
 				"*",
 			);
@@ -107,12 +107,12 @@ export const menuMethods = {
 				"*",
 			);
 			win.postMessage(
-				{ type: "sync-theme", theme: (this as any).currentBalloonTheme },
+				{ type: "sync-theme", theme: (this as unknown).currentBalloonTheme },
 				"*",
 			);
-			if ((this as any).availableBalloons) {
+			if ((this as unknown).availableBalloons) {
 				win.postMessage(
-					{ type: "sync-balloons", balloons: (this as any).availableBalloons },
+					{ type: "sync-balloons", balloons: (this as unknown).availableBalloons },
 					"*",
 				);
 			}
@@ -120,24 +120,24 @@ export const menuMethods = {
 	},
 
 	hideMenu() {
-		if ((this as any).elements.menuContainer) {
-			(this as any).elements.menuContainer.style.display = "none";
+		if ((this as unknown).elements.menuContainer) {
+			(this as unknown).elements.menuContainer.style.display = "none";
 		}
-		(this as any).hideQuickActionsPanel();
+		(this as unknown).hideQuickActionsPanel();
 	},
 
 	toggleQuickActionsPanel() {
-		if (!(this as any).elements.quickActionsPanel) return;
+		if (!(this as unknown).elements.quickActionsPanel) return;
 		const isVisible =
-			(this as any).elements.quickActionsPanel.style.display !== "none";
-		(this as any).elements.quickActionsPanel.style.display = isVisible
+			(this as unknown).elements.quickActionsPanel.style.display !== "none";
+		(this as unknown).elements.quickActionsPanel.style.display = isVisible
 			? "none"
 			: "flex";
 	},
 
 	hideQuickActionsPanel() {
-		if ((this as any).elements.quickActionsPanel) {
-			(this as any).elements.quickActionsPanel.style.display = "none";
+		if ((this as unknown).elements.quickActionsPanel) {
+			(this as unknown).elements.quickActionsPanel.style.display = "none";
 		}
 	},
 };

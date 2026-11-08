@@ -5,13 +5,14 @@
 
 export function openTeachBox(params = [], options = {}) {
 	const { notifyStart = true, scope } = options;
-	this.closeTeachBox();
+	this.closeTeachBox(false);
 
 	if (notifyStart) {
 		this.app.ghostController?.sendShioriEvent("OnTeachStart")?.catch(() => {});
 	}
 
-	let defaultText = "";
+	const opts = this.parseBoxOptions(["Teach", ...params]);
+	let defaultText = opts.defaultText;
 	for (const p of params) {
 		if (typeof p === "string" && p.startsWith("--text=")) {
 			defaultText = p.replace("--text=", "");
@@ -67,11 +68,17 @@ export function openTeachBox(params = [], options = {}) {
 		this.app.ghostController?.sendTeachInput?.(val);
 	};
 
-	const cancel = async () => {
+	let timer = null;
+	const cancel = async (reason = "cancel") => {
+		if (timer) {
+			clearTimeout(timer);
+			timer = null;
+		}
 		cleanup();
 		await this.app.ghostController?.sendShioriEvent("OnTeachInputCancel", [
 			"",
-			"cancel",
+			reason,
+			...opts.references,
 		]);
 		this.app.ghostController?.clearTeachHistory?.();
 	};
@@ -100,19 +107,38 @@ export function openTeachBox(params = [], options = {}) {
 		dataListEl = dl;
 	});
 
+	if (opts.timeoutMs > 0) {
+		timer = setTimeout(() => {
+			cancel("timeout");
+		}, opts.timeoutMs);
+	}
+
 	this.activeBoxes.set("teachbox", {
 		type: "teachbox",
 		form,
-		cleanup,
+		cleanup: (_force = true) => {
+			if (timer) {
+				clearTimeout(timer);
+				timer = null;
+			}
+			cleanup();
+		},
 	});
 	return form;
 }
 
-export function closeTeachBox() {
+export function closeTeachBox(notifyCancel = false) {
 	const existing = this.activeBoxes.get("teachbox");
 	if (existing) {
 		existing.cleanup();
 		this.activeBoxes.delete("teachbox");
+		if (notifyCancel) {
+			this.app.ghostController?.sendShioriEvent("OnTeachInputCancel", [
+				"",
+				"close",
+			]);
+			this.app.ghostController?.clearTeachHistory?.();
+		}
 	}
 }
 
@@ -184,11 +210,15 @@ export function openCommunicateBox(params = [], scope) {
 		]);
 	};
 
-	const cancel = async () => {
+	const cancel = async (reason = "cancel") => {
+		if (timer) {
+			clearTimeout(timer);
+			timer = null;
+		}
 		cleanup(true);
 		await this.app.ghostController?.sendShioriEvent(
 			"OnCommunicateInputCancel",
-			["", "cancel"],
+			["", reason, ...opts.references],
 		);
 	};
 
@@ -218,7 +248,7 @@ export function openCommunicateBox(params = [], scope) {
 
 	if (opts.timeoutMs > 0) {
 		timer = setTimeout(() => {
-			cancel();
+			cancel("timeout");
 		}, opts.timeoutMs);
 	}
 
@@ -233,12 +263,12 @@ export function openCommunicateBox(params = [], scope) {
 export function closeCommunicateBox(notifyCancel = false) {
 	const existing = this.activeBoxes.get("communicatebox");
 	if (existing) {
-		existing.cleanup();
+		existing.cleanup(true);
 		this.activeBoxes.delete("communicatebox");
 		if (notifyCancel) {
 			this.app.ghostController?.sendShioriEvent("OnCommunicateInputCancel", [
 				"",
-				"cancel",
+				"close",
 			]);
 		}
 	}

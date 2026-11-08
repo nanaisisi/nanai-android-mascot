@@ -1,20 +1,18 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DictationManager } from "../ui/js/core/actions/dictation.js";
 
 describe("DictationManager", () => {
-
 	const _originalWindow: unknown = null;
 	const _originalSpeechSynthesisUtterance: unknown = null;
 
+	let originalWindow: Window & typeof globalThis;
 
-	let originalWindow;
+	let originalSpeechSynthesisUtterance: { new(text?: string): SpeechSynthesisUtterance; new(text?: string): SpeechSynthesisUtterance; prototype: SpeechSynthesisUtterance; };
 
-	let originalSpeechSynthesisUtterance;
-
-
-	beforeEach(() =>
+	beforeEach(() => {
 		originalWindow = globalThis.window;
-		originalSpeechSynthesisUtterance = globalThis.SpeechSynthesisUtterance;);
+		originalSpeechSynthesisUtterance = globalThis.SpeechSynthesisUtterance;
+	});
 
 	afterEach(() => {
 		globalThis.window = originalWindow;
@@ -39,6 +37,12 @@ describe("DictationManager", () => {
 
 	it("initializes speech recognition and handles events", () => {
 		class MockSpeechRecognition {
+			lang: string;
+			interimResults: boolean;
+			maxAlternatives: number;
+			onresult: null;
+			onerror: null;
+			onend: null;
 			constructor() {
 				this.lang = "";
 				this.interimResults = true;
@@ -52,7 +56,11 @@ describe("DictationManager", () => {
 		}
 
 		class MockSpeechSynthesisUtterance {
-			constructor(text) {
+			text: any;
+			lang: string;
+			rate: number;
+			pitch: number;
+			constructor(text: any) {
 				this.text = text;
 				this.lang = "";
 				this.rate = 0;
@@ -65,6 +73,45 @@ describe("DictationManager", () => {
 			SpeechRecognition: MockSpeechRecognition,
 			speechSynthesis: {
 				speak: mockSpeak,
+				onvoiceschanged: null,
+				paused: false,
+				pending: false,
+				speaking: false,
+				cancel: (): void => {
+					throw new Error("Function not implemented.");
+				},
+				getVoices: (): SpeechSynthesisVoice[] => {
+					throw new Error("Function not implemented.");
+				},
+				pause: (): void => {
+					throw new Error("Function not implemented.");
+				},
+				resume: (): void => {
+					throw new Error("Function not implemented.");
+				},
+				addEventListener: <K extends keyof SpeechSynthesisEventMap>(
+					_type: K,
+					_listener: (
+						this: SpeechSynthesis,
+						ev: SpeechSynthesisEventMap[K],
+					) => any,
+					_options?: boolean | AddEventListenerOptions,
+				): void => {
+					throw new Error("Function not implemented.");
+				},
+				removeEventListener: <K extends keyof SpeechSynthesisEventMap>(
+					_type: K,
+					_listener: (
+						this: SpeechSynthesis,
+						ev: SpeechSynthesisEventMap[K],
+					) => any,
+					_options?: boolean | EventListenerOptions,
+				): void => {
+					throw new Error("Function not implemented.");
+				},
+				dispatchEvent: (_event: Event): boolean => {
+					throw new Error("Function not implemented.");
+				},
 			},
 		};
 		globalThis.SpeechSynthesisUtterance = MockSpeechSynthesisUtterance;
@@ -166,7 +213,50 @@ describe("DictationManager", () => {
 
 		globalThis.window = {
 			webkitSpeechRecognition: MockWebkitSpeechRecognition,
-			speechSynthesis: {},
+			speechSynthesis: {
+				onvoiceschanged: null,
+				paused: false,
+				pending: false,
+				speaking: false,
+				cancel: (): void => {
+					throw new Error("Function not implemented.");
+				},
+				getVoices: (): SpeechSynthesisVoice[] => {
+					throw new Error("Function not implemented.");
+				},
+				pause: (): void => {
+					throw new Error("Function not implemented.");
+				},
+				resume: (): void => {
+					throw new Error("Function not implemented.");
+				},
+				speak: (_utterance: SpeechSynthesisUtterance): void => {
+					throw new Error("Function not implemented.");
+				},
+				addEventListener: <K extends keyof SpeechSynthesisEventMap>(
+					_type: K,
+					_listener: (
+						this: SpeechSynthesis,
+						ev: SpeechSynthesisEventMap[K],
+					) => any,
+					_options?: boolean | AddEventListenerOptions,
+				): void => {
+					throw new Error("Function not implemented.");
+				},
+				removeEventListener: <K extends keyof SpeechSynthesisEventMap>(
+					_type: K,
+					_listener: (
+						this: SpeechSynthesis,
+						ev: SpeechSynthesisEventMap[K],
+					) => any,
+					_options?: boolean | EventListenerOptions,
+				): void => {
+					throw new Error("Function not implemented.");
+				},
+				dispatchEvent: (_event: Event): boolean => {
+					throw new Error("Function not implemented.");
+				},
+			},
 		};
 
 		const manager = new DictationManager(null);
@@ -175,6 +265,7 @@ describe("DictationManager", () => {
 
 	it("handles onresult when app or ghostController or sendShioriEvent is missing", () => {
 		class MockSpeechRecognition {
+			onresult: null;
 			constructor() {
 				this.onresult = null;
 			}
@@ -183,7 +274,50 @@ describe("DictationManager", () => {
 		}
 		globalThis.window = {
 			SpeechRecognition: MockSpeechRecognition,
-			speechSynthesis: {},
+			speechSynthesis: {
+				onvoiceschanged: null,
+				paused: false,
+				pending: false,
+				speaking: false,
+				cancel: (): void => {
+					throw new Error("Function not implemented.");
+				},
+				getVoices: (): SpeechSynthesisVoice[] => {
+					throw new Error("Function not implemented.");
+				},
+				pause: (): void => {
+					throw new Error("Function not implemented.");
+				},
+				resume: (): void => {
+					throw new Error("Function not implemented.");
+				},
+				speak: (_utterance: SpeechSynthesisUtterance): void => {
+					throw new Error("Function not implemented.");
+				},
+				addEventListener: <K extends keyof SpeechSynthesisEventMap>(
+					_type: K,
+					_listener: (
+						this: SpeechSynthesis,
+						ev: SpeechSynthesisEventMap[K],
+					) => any,
+					_options?: boolean | AddEventListenerOptions,
+				): void => {
+					throw new Error("Function not implemented.");
+				},
+				removeEventListener: <K extends keyof SpeechSynthesisEventMap>(
+					_type: K,
+					_listener: (
+						this: SpeechSynthesis,
+						ev: SpeechSynthesisEventMap[K],
+					) => any,
+					_options?: boolean | EventListenerOptions,
+				): void => {
+					throw new Error("Function not implemented.");
+				},
+				dispatchEvent: (_event: Event): boolean => {
+					throw new Error("Function not implemented.");
+				},
+			},
 		};
 
 		const manager1 = new DictationManager(null);

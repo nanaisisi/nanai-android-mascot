@@ -233,7 +233,7 @@ test("actionMethods covers all spread helper functions directly", async () => {
 	for (const key of Object.keys(actionMethods)) {
 		const _fn = (actionMethods as unknown)[key];
 
-		const fn = (actionMethods as any)[key];
+		const fn = actionMethods[key];
 
 		if (typeof fn === "function") {
 			try {

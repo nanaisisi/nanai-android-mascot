@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * @file ghost-surface.js
  * @brief サーフィスおよびキャラクター表示メソッド (GhostController mixin)

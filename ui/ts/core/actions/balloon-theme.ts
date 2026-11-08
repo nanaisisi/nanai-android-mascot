@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * @file balloon-theme.js
  * @brief バルーンスキンテーマ切替およびスキャン・リセット処理 (BalloonThemeManager)
@@ -36,6 +35,12 @@ export const MAX_BALLOON_SCALE = 5.0;
  * バルーンスキン・テーマ・9スライスおよびタイポグラフィ統合マネージャー
  */
 export class BalloonThemeManager {
+	app: any;
+	currentTheme: any;
+	userScale: any;
+	dpiScale: any;
+	availableBalloons: any;
+	_nineSliceCache: Map<any, any>;
 	/**
 	 * @param {any} [app]
 	 */

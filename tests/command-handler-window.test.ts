@@ -9,7 +9,7 @@ describe("Sakura command window handlers", () => {
 	let _originalTauri: unknown;
 
 
-	let originalTauri: any;
+	let originalTauri;
 
 
 	beforeEach(() =>
@@ -163,6 +163,7 @@ describe("Sakura command window handlers", () => {
 
 		it("calculates correct positions for bottom, top, left, and right modes", async () => {
 			class MockPhysicalPosition {
+				y;
 				constructor(x, y) {
 					this.x = x;
 					this.y = y;

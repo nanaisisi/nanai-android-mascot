@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-const calls = [];
-let loadDelay = async () => {};
+const calls: never[] = [];
+let loadDelay = async (_args: { surfaceId: any }) => {};
 globalThis.window = globalThis;
 globalThis.document = {
 	getElementById: () => null,
@@ -10,7 +10,7 @@ globalThis.document = {
 };
 globalThis.__TAURI_INTERNALS__ = {
 	transformCallback: () => 0,
-	invoke: async (cmd, args) => {
+	invoke: async (cmd: string, args: { surfaceId: any }) => {
 		calls.push({ cmd, args });
 		if (cmd === "load_surface_image") {
 			await loadDelay(args);
@@ -27,19 +27,25 @@ const { ghostSurfaceMethods } = await import(
 
 function makeController() {
 	const gc = Object.create(ghostSurfaceMethods);
-	const chromaCalls = [];
+	const chromaCalls: { src: any; pna: any }[] = [];
 	gc.currentGhost = { name: "g", path: "ghost/g" };
 	gc.currentShell = "master";
 	gc.currentSurfaces = new Map();
 	gc.app = {
 		surfaceManager: {
-			resolveSurfaceNumber: (id) => id,
+			resolveSurfaceNumber: (id: any) => id,
 			setSurfaceId() {},
-			processChromaKey: async (src, pna) => {
+			processChromaKey: async (src: any, pna: any) => {
 				chromaCalls.push({ src, pna });
 				return src;
 			},
-			composeSurfaceElements: async (_id, src, resolve, _scope, layers) => {
+			composeSurfaceElements: async (
+				_id: any,
+				src: any,
+				resolve: (arg0: any) => any,
+				_scope: any,
+				layers: any,
+			) => {
 				for (const layer of layers || []) {
 					await resolve(layer.file);
 				}
@@ -51,7 +57,7 @@ function makeController() {
 	return gc;
 }
 
-const count = (cmd) => calls.filter((c) => c.cmd === cmd).length;
+const count = (cmd: string) => calls.filter((c) => c.cmd === cmd).length;
 const emitted = () =>
 	calls
 		.filter((c) => c.cmd === "plugin:event|emit")
@@ -77,7 +83,11 @@ test("animation frame layer also runs chroma-key processing", async () => {
 	calls.length = 0;
 	const gc = makeController();
 	await gc.updateSurface(0, 0, [{ file: "surface1.png", x: 0, y: 0 }]);
-	assert.ok(gc._chromaCalls.some((c) => c.src === "data:image/png;base64,1"));
+	assert.ok(
+		gc._chromaCalls.some(
+			(c: { src: string }) => c.src === "data:image/png;base64,1",
+		),
+	);
 });
 
 test("a slower older surface update does not overwrite a newer one", async () => {
@@ -91,7 +101,7 @@ test("a slower older surface update does not overwrite a newer one", async () =>
 	const gate = new Promise((r) => {
 		release = r;
 	});
-	loadDelay = async (args) => {
+	loadDelay = async (args: { surfaceId: string }) => {
 		if (args.surfaceId === "5") await gate;
 	};
 	const older = gc.updateSurface(5, 0);

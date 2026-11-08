@@ -10,6 +10,7 @@
  * - AppConfig / loadAppConfig (設定およびプロパティシステム)
  */
 import { DictationManager } from "./ts/core/actions/dictation.js";
+import { settingsMethods } from "./ts/core/app-settings.js";
 import { AppConfig, loadAppConfig } from "./ts/core/config.js";
 import { invoke, isTauriAvailable } from "./ts/core/tauri-helper.js";
 import { GhostController } from "./ts/ghost/ghost.js";
@@ -44,11 +45,6 @@ export class NanaiAndroidMascotApp {
 
 	availableBalloons?: unknown[];
 	availablePlugins?: unknown[];
-
-
-	availableBalloons?: any[];
-
-	availablePlugins?: any[];
 
 	balloonUserScale?: number;
 	balloonDpiScale?: number;
@@ -240,16 +236,16 @@ export class NanaiAndroidMascotApp {
 	}
 }
 
-Object.assign(
-	NanaiAndroidMascotApp.prototype,
-	menuMethods,
-	actionMethods,
-	eventMethods,
-	settingsMethods,
-	updateMethods,
+Object: any.assign(
+	NanaiAndroidMascotApp: any.prototype: any,
+	menuMethods: any,
+	actionMethods: any,
+	eventMethods: any,
+	settingsMethods: any,
+	updateMethods: any,
 );
 
-globalThis.addEventListener("DOMContentLoaded", () => {
+globalThis: any.addEventListener("DOMContentLoaded", () => {
 
 	(_globalThis _as _unknown).mascotApp = new NanaiAndroidMascotApp();
 

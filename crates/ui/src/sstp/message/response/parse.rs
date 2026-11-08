@@ -35,6 +35,7 @@ impl SstpResponse {
         let mut keep_alive = false;
         let mut keep_alive_timeout = 5u32;
         let mut connection_header = None;
+        let mut content_type = None;
         let mut content_length: Option<usize> = None;
 
         // ヘッダ読み込み
@@ -55,6 +56,8 @@ impl SstpResponse {
 
                     if key_lower == "charset" {
                         charset = val;
+                    } else if key_lower == "content-type" {
+                        content_type = Some(val);
                     } else if key_lower == "script" {
                         script = Some(val);
                     } else if key_lower == "errordescription" {
@@ -122,6 +125,7 @@ impl SstpResponse {
             keep_alive,
             keep_alive_timeout,
             connection_header,
+            content_type,
         })
     }
 }

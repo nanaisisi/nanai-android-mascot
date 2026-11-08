@@ -7,6 +7,7 @@ import type { SakuraAstNode } from "./ast-types.js";
 
 export type { SakuraAstNode } from "./ast-types.js";
 export { traverseAst } from "./ast-types.js";
+export type { AstDiagnostics } from "./ast-utils.js";
 export {
 	calculateAstTextLength,
 	collectAnchors,
@@ -16,8 +17,11 @@ export {
 	collectChoices,
 	collectScopeNodes,
 	collectSurfaces,
+	extractAstText,
 	filterAstByScope,
+	getAstDiagnostics,
 	getSakuraTokenLifetime,
+	mapAstCommands,
 	stripWaitsFromAst,
 } from "./ast-utils.js";
 

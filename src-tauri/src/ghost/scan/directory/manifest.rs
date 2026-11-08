@@ -20,6 +20,7 @@ pub struct GhostManifest {
     pub sakura_balloon_defaultsurface: Option<i32>,
     pub kero_balloon_defaultsurface: Option<i32>,
     pub char_balloon_defaultsurfaces: std::collections::BTreeMap<i32, i32>,
+    pub makoto: Option<String>,
     pub shiori_version: Option<String>,
     pub shiori_cache: Option<String>,
     pub shiori_encoding: Option<String>,
@@ -33,6 +34,8 @@ pub struct GhostManifest {
     pub sstp_allow_unspecified_send: bool,
     pub sstp_always_translate: bool,
     pub install_accept: Option<String>,
+    // [makoto,ファイル名]: makoto.dll (外部トランスレータモジュール)
+    pub makoto: Option<String>,
 }
 
 pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
@@ -126,6 +129,9 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
             .and_then(|v| v.trim().parse::<i32>().ok())
     });
 
+    // [makoto,ファイル名]: トランスレータDLL指定
+    let makoto = meta_map.as_ref().and_then(|m| m.get("makoto").cloned());
+
     // [char*.balloon.defaultsurface,数値]: 任意キャラID規定バルーンサーフィス (例: char0.balloon.defaultsurface, char1.balloon.defaultsurface, char2.balloon.defaultsurface)
     let mut char_balloon_defaultsurfaces = std::collections::BTreeMap::new();
     if let Some(ref m) = meta_map {
@@ -193,6 +199,10 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
             .or_else(|| m.get("accept").cloned())
     });
 
+    // [makoto,ファイル名]: descript.txt の makoto キー
+    // [makoto,ファイル名]: トランスレータモジュール指定
+    let makoto = meta_map.as_ref().and_then(|m| m.get("makoto").cloned());
+
     GhostManifest {
         display_name,
         version,
@@ -200,6 +210,7 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
         kero_name,
         num_characters,
         shiori,
+        makoto,
         craftman,
         craftman_url,
         group,
@@ -210,6 +221,7 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
         sakura_balloon_defaultsurface,
         kero_balloon_defaultsurface,
         char_balloon_defaultsurfaces,
+        makoto,
         shiori_version,
         shiori_cache,
         shiori_encoding,
@@ -223,5 +235,6 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
         sstp_allow_unspecified_send,
         sstp_always_translate,
         install_accept,
+        makoto,
     }
 }

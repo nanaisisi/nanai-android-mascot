@@ -43,9 +43,20 @@ export const surfaceCollisionMethods = {
 			}
 		}
 
-		// 2. Alias lookup (`surface.alias` / `kero.surface.alias`)
-		const map =
-			scopeId === 1 ? (this as unknown).keroAliases : (this as unknown).aliases;
+		// 2. Alias lookup (`surface.alias` / `kero.surface.alias` / `char<N>.surface.alias`)
+		let map: Record<string, number[]> | undefined;
+		if (scopeId === 0) {
+			map = (this as unknown).aliases;
+		} else if (scopeId === 1) {
+			map =
+				(this as unknown).keroAliases ??
+				(this as unknown).charAliases?.[1] ??
+				(this as unknown).aliases;
+		} else {
+			map =
+				(this as unknown).charAliases?.[scopeId] ?? (this as unknown).aliases;
+		}
+
 		let list = Array.isArray(map?.[rawName]) ? map[rawName] : null;
 		if (!list && map) {
 			let lowerMap = aliasCaseCache.get(map);
@@ -62,6 +73,33 @@ export const surfaceCollisionMethods = {
 			}
 			list = lowerMap.get(lowerTarget) ?? null;
 		}
+
+		// Fallback to default aliases if not found in custom scope and scope is non-zero
+		if ((!list || list.length === 0) && scopeId !== 0) {
+			const fallbackMap = (this as unknown).aliases;
+			if (fallbackMap && fallbackMap !== map) {
+				list = Array.isArray(fallbackMap[rawName])
+					? fallbackMap[rawName]
+					: null;
+				if (!list) {
+					let lowerFallback = aliasCaseCache.get(fallbackMap);
+					if (!lowerFallback) {
+						lowerFallback = new Map();
+						for (const key in fallbackMap) {
+							const val = fallbackMap[key];
+							if (Array.isArray(val)) {
+								const lowerKey = key.toLowerCase();
+								if (!lowerFallback.has(lowerKey))
+									lowerFallback.set(lowerKey, val);
+							}
+						}
+						aliasCaseCache.set(fallbackMap, lowerFallback);
+					}
+					list = lowerFallback.get(lowerTarget) ?? null;
+				}
+			}
+		}
+
 		if (!list || list.length === 0) {
 			return surfaceId as unknown;
 		}

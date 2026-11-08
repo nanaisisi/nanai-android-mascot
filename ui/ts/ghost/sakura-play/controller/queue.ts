@@ -3,17 +3,31 @@
  * @brief SakuraPlaybackController 向け再生キュー操作およびループ処理ロジック
  */
 
+export interface PlaybackJob {
+	id: number;
+	script: string;
+	resolve: (value: unknown) => void;
+	reject: (reason?: unknown) => void;
+	priority?: boolean;
+}
+
 export function enqueue(this: unknown, script: string): Promise<unknown> {
 	return new Promise((resolve, reject) => {
-		const job = {
-			id: this.nextJobId++,
+		const self = this as {
+			nextJobId: number;
+			queue: PlaybackJob[];
+			emit: (event: string, payload?: unknown) => void;
+			_processQueue: () => void;
+		};
+		const job: PlaybackJob = {
+			id: self.nextJobId++,
 			script,
 			resolve,
 			reject,
 		};
-		this.queue.push(job);
-		this.emit("queue:enqueued", { job, queueLength: this.queue.length });
-		this._processQueue();
+		self.queue.push(job);
+		self.emit("queue:enqueued", { job, queueLength: self.queue.length });
+		self._processQueue();
 	});
 }
 
@@ -22,169 +36,342 @@ export function enqueuePriority(
 	script: string,
 ): Promise<unknown> {
 	return new Promise((resolve, reject) => {
-		const job = {
-			id: this.nextJobId++,
+		const self = this as {
+			nextJobId: number;
+			queue: PlaybackJob[];
+			emit: (event: string, payload?: unknown) => void;
+			_processQueue: () => void;
+		};
+		const job: PlaybackJob = {
+			id: self.nextJobId++,
 			script,
 			resolve,
 			reject,
 			priority: true,
 		};
-		this.queue.unshift(job);
-		this.emit("queue:enqueued", {
+		self.queue.unshift(job);
+		self.emit("queue:enqueued", {
 			job,
 			priority: true,
-			queueLength: this.queue.length,
+			queueLength: self.queue.length,
 		});
-		this._processQueue();
+		self._processQueue();
 	});
 }
 
 export function interrupt(this: unknown, script: string): Promise<unknown> {
-	if (this.player) {
-		this.player.skip();
+	const self = this as {
+		player?: { skip: () => void };
+		enqueuePriority: (s: string) => Promise<unknown>;
+	};
+	if (self.player) {
+		self.player.skip();
 	}
-	return this.enqueuePriority(script);
+	return self.enqueuePriority(script);
 }
 
 export function dequeue(this: unknown) {
-	const job = this.queue.shift();
+	const self = this as {
+		queue: PlaybackJob[];
+		emit: (event: string, payload?: unknown) => void;
+	};
+	const job = self.queue.shift();
 	if (job) {
-		this.emit("queue:dequeued", { job, queueLength: this.queue.length });
+		self.emit("queue:dequeued", { job, queueLength: self.queue.length });
 	}
 	return job;
 }
 
+export function getJobById(this: unknown, id: number): PlaybackJob | null {
+	const self = this as {
+		currentJob: PlaybackJob | null;
+		queue: PlaybackJob[];
+	};
+	if (self.currentJob && self.currentJob.id === id) {
+		return self.currentJob;
+	}
+	return self.queue.find((j) => j.id === id) || null;
+}
+
+export function cancelJob(
+	this: unknown,
+	id: number,
+	reason: string = "Job cancelled",
+): boolean {
+	const self = this as {
+		currentJob: PlaybackJob | null;
+		queue: PlaybackJob[];
+		emit: (event: string, payload?: unknown) => void;
+		player?: { skip: () => void };
+	};
+	// もし現在再生中のジョブであればプレイヤーをスキップ
+	if (self.currentJob && self.currentJob.id === id) {
+		const job = self.currentJob;
+		if (self.player) {
+			self.player.skip();
+		}
+		self.emit("queue:job-cancelled", { id, job, reason, wasCurrent: true });
+		return true;
+	}
+
+	const index = self.queue.findIndex((j) => j.id === id);
+	if (index !== -1) {
+		const [job] = self.queue.splice(index, 1);
+		job.reject(new Error(reason));
+		self.emit("queue:job-cancelled", {
+			id,
+			job,
+			reason,
+			queueLength: self.queue.length,
+		});
+		return true;
+	}
+	return false;
+}
+
+export function filterQueue(
+	this: unknown,
+	predicate: (job: PlaybackJob) => boolean,
+	cancelReason: string = "Filtered out of queue",
+): number {
+	const self = this as {
+		queue: PlaybackJob[];
+		emit: (event: string, payload?: unknown) => void;
+	};
+	const remaining: PlaybackJob[] = [];
+	const removed: PlaybackJob[] = [];
+
+	for (const job of self.queue) {
+		if (predicate(job)) {
+			remaining.push(job);
+		} else {
+			removed.push(job);
+		}
+	}
+
+	self.queue = remaining;
+	for (const job of removed) {
+		job.reject(new Error(cancelReason));
+	}
+	if (removed.length > 0) {
+		self.emit("queue:filtered", {
+			removedCount: removed.length,
+			queueLength: self.queue.length,
+		});
+	}
+	return removed.length;
+}
+
 export function clearQueue(this: unknown) {
-	const canceled = [...this.queue];
-	this.queue = [];
+	const self = this as {
+		queue: PlaybackJob[];
+		emit: (event: string, payload?: unknown) => void;
+	};
+	const canceled = [...self.queue];
+	self.queue = [];
 	for (const job of canceled) {
 		job.reject(new Error("Playback queue cleared"));
 	}
-	this.emit("queue:cleared", { canceledCount: canceled.length });
+	self.emit("queue:cleared", { canceledCount: canceled.length });
 }
 
 export function stop(this: unknown) {
-	this.clearQueue();
-	if (this.syncObjects) {
-		this.syncObjects.clear();
+	const self = this as {
+		clearQueue: () => void;
+		syncObjects?: { clear: () => void };
+		player?: { skip: () => void };
+		currentJob: unknown;
+		isProcessing: boolean;
+		emit: (event: string) => void;
+	};
+	self.clearQueue();
+	if (self.syncObjects) {
+		self.syncObjects.clear();
 	}
-	if (this.player) {
-		this.player.skip();
+	if (self.player) {
+		self.player.skip();
 	}
-	this.currentJob = null;
-	this.isProcessing = false;
-	this.emit("playback:stopped");
+	self.currentJob = null;
+	self.isProcessing = false;
+	self.emit("playback:stopped");
 }
 
 export function destroy(this: unknown) {
-	this.stop();
-	this.emit("playback:destroyed");
-	this.listeners.clear();
-	this.isPaused = true;
-	if (this.syncObjects) {
-		this.syncObjects.clear();
+	const self = this as {
+		stop: () => void;
+		emit: (event: string) => void;
+		listeners: Map<string, unknown>;
+		isPaused: boolean;
+		syncObjects?: { clear: () => void };
+		player?: { destroy?: () => void };
+	};
+	self.stop();
+	self.emit("playback:destroyed");
+	self.listeners.clear();
+	self.isPaused = true;
+	if (self.syncObjects) {
+		self.syncObjects.clear();
 	}
-	if (this.player?.destroy) {
-		this.player.destroy();
+	if (self.player?.destroy) {
+		self.player.destroy();
 	}
 }
 
 export function pause(this: unknown) {
-	if (!this.isPaused) {
-		this.isPaused = true;
-		this.emit("queue:paused");
+	const self = this as {
+		isPaused: boolean;
+		pauseTimestamp?: number | null;
+		emit: (event: string, payload?: unknown) => void;
+	};
+	if (!self.isPaused) {
+		self.isPaused = true;
+		self.pauseTimestamp = Date.now();
+		self.emit("queue:paused", { pauseTimestamp: self.pauseTimestamp });
 	}
 }
 
 export function resume(this: unknown) {
-	if (this.isPaused) {
-		this.isPaused = false;
-		this.emit("queue:resumed");
-		this._processQueue();
+	const self = this as {
+		isPaused: boolean;
+		pauseTimestamp?: number | null;
+		emit: (event: string, payload?: unknown) => void;
+		_processQueue: () => void;
+	};
+	if (self.isPaused) {
+		const durationMs = self.pauseTimestamp
+			? Math.max(0, Date.now() - self.pauseTimestamp)
+			: 0;
+		self.isPaused = false;
+		self.pauseTimestamp = null;
+		self.emit("queue:resumed", { pausedDurationMs: durationMs });
+		self._processQueue();
 	}
 }
 
 export function getQueue(this: unknown) {
-	return [...this.queue];
+	const self = this as { queue: PlaybackJob[] };
+	return [...self.queue];
 }
 
 export function getQueueSnapshot(this: unknown) {
-	return this.queue.map((job: unknown) => ({ id: job.id, script: job.script }));
+	const self = this as { queue: PlaybackJob[] };
+	return self.queue.map((job) => ({ id: job.id, script: job.script }));
 }
 
 export function getQueueLength(this: unknown): number {
-	return this.queue.length;
+	const self = this as { queue: PlaybackJob[] };
+	return self.queue.length;
 }
 
 export function hasPendingJobs(this: unknown): boolean {
-	return this.isProcessing || this.queue.length > 0;
+	const self = this as { isProcessing: boolean; queue: PlaybackJob[] };
+	return self.isProcessing || self.queue.length > 0;
 }
 
 export function peekNextJob(this: unknown) {
-	if (this.queue.length === 0) return null;
-	const job = this.queue[0];
+	const self = this as { queue: PlaybackJob[] };
+	if (self.queue.length === 0) return null;
+	const job = self.queue[0];
 	return { id: job.id, script: job.script };
 }
 
 export function getCurrentJob(this: unknown) {
-	return this.currentJob;
+	const self = this as { currentJob: PlaybackJob | null };
+	return self.currentJob;
 }
 
 export function getIsPaused(this: unknown): boolean {
-	return this.isPaused;
+	const self = this as { isPaused: boolean };
+	return self.isPaused;
 }
 
 export function getIsProcessing(this: unknown): boolean {
-	return this.isProcessing;
+	const self = this as { isProcessing: boolean };
+	return self.isProcessing;
 }
 
 export function getIsQuickMode(this: unknown): boolean {
-	return this.isQuickMode;
+	const self = this as { isQuickMode: boolean };
+	return self.isQuickMode;
 }
 
 export function isEmpty(this: unknown): boolean {
-	return this.queue.length === 0;
+	const self = this as { queue: PlaybackJob[] };
+	return self.queue.length === 0;
 }
 
 export function getStatus(this: unknown) {
+	const self = this as {
+		isProcessing: boolean;
+		isPaused: boolean;
+		isQuickMode: boolean;
+		queue: PlaybackJob[];
+		currentJob: PlaybackJob | null;
+		waitMultiplier: number;
+		charWaitMs: number | null;
+		pauseTimestamp?: number | null;
+		syncObjects?: { getAllInfo: () => unknown[] };
+	};
+	const pausedDurationMs =
+		self.isPaused && self.pauseTimestamp
+			? Math.max(0, Date.now() - self.pauseTimestamp)
+			: 0;
+
 	return {
-		isProcessing: this.isProcessing,
-		isPaused: this.isPaused,
-		isQuickMode: this.isQuickMode,
-		queueLength: this.queue.length,
-		currentJobId: this.currentJob ? this.currentJob.id : null,
-		waitMultiplier: this.waitMultiplier,
-		charWaitMs: this.charWaitMs,
+		isProcessing: self.isProcessing,
+		isPaused: self.isPaused,
+		isQuickMode: self.isQuickMode,
+		queueLength: self.queue.length,
+		currentJobId: self.currentJob ? self.currentJob.id : null,
+		waitMultiplier: self.waitMultiplier,
+		charWaitMs: self.charWaitMs,
+		pausedDurationMs,
+		syncObjects: self.syncObjects ? self.syncObjects.getAllInfo() : [],
 	};
 }
 
 export async function processQueue(this: unknown) {
-	if (this.isProcessing || this.isPaused || this.queue.length === 0) {
+	const self = this as {
+		isProcessing: boolean;
+		isPaused: boolean;
+		queue: PlaybackJob[];
+		currentJob: PlaybackJob | null;
+		dequeue: () => PlaybackJob | undefined;
+		emit: (event: string, payload?: unknown) => void;
+		player?: { play: (s: string) => Promise<unknown> };
+		_processQueue: () => void;
+	};
+
+	if (self.isProcessing || self.isPaused || self.queue.length === 0) {
 		return;
 	}
 
-	this.isProcessing = true;
-	const job = this.dequeue();
-	this.currentJob = job;
+	self.isProcessing = true;
+	const job = self.dequeue();
+	if (!job) {
+		self.isProcessing = false;
+		return;
+	}
+	self.currentJob = job;
 
 	try {
-		this.emit("playback:started", { job });
+		self.emit("playback:started", { job });
 		let result = null;
-		if (this.player) {
-			result = await this.player.play(job.script);
+		if (self.player) {
+			result = await self.player.play(job.script);
 		}
-		this.emit("playback:completed", { job, result });
+		self.emit("playback:completed", { job, result });
 		job.resolve(result);
 	} catch (err) {
-		this.emit("playback:error", { job, error: err });
+		self.emit("playback:error", { job, error: err });
 		job.reject(err);
 	} finally {
-		this.currentJob = null;
-		this.isProcessing = false;
-		if (this.queue.length > 0) {
-			queueMicrotask(() => this._processQueue());
+		self.currentJob = null;
+		self.isProcessing = false;
+		if (self.queue.length > 0) {
+			queueMicrotask(() => self._processQueue());
 		} else {
-			this.emit("queue:empty");
+			self.emit("queue:empty");
 		}
 	}
 }

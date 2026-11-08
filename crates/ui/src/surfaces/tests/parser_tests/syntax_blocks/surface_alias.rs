@@ -207,6 +207,61 @@ surface.alias
 }
 
 #[test]
+fn test_parse_multi_character_alias_blocks_and_resolution() {
+    let sample = r"surface0
+{
+element0,base,s0.png,0,0
+}
+surface10
+{
+element0,base,s10.png,0,0
+}
+surface20
+{
+element0,base,s20.png,0,0
+}
+
+char0.surface.alias
+{
+main,[0]
+}
+
+char1.surface.alias
+{
+kero_main,[10]
+}
+
+char2.surface.alias
+{
+sub_main,[20]
+shared_mode,[20,21]
+}
+
+surface.alias
+{
+fallback_alias,[0,10,20]
+}
+";
+    let txt = SurfacesTxt::parse(sample);
+
+    assert_eq!(txt.alias_numbers_for_scope(0, "main").unwrap(), &[0u32][..]);
+    assert_eq!(txt.alias_numbers_for_scope(1, "kero_main").unwrap(), &[10u32][..]);
+    assert_eq!(txt.alias_numbers_for_scope(2, "sub_main").unwrap(), &[20u32][..]);
+    assert_eq!(txt.alias_numbers_for_scope(2, "fallback_alias").unwrap(), &[0u32, 10, 20][..]);
+
+    assert!(txt.resolve_alias_for_scope(0, "main").is_some());
+    assert!(txt.resolve_alias_for_scope(1, "kero_main").is_some());
+    assert!(txt.resolve_alias_for_scope(2, "sub_main").is_some());
+    assert!(txt.resolve_alias_for_scope(2, "nonexistent").is_none());
+
+    let all_ids = txt.all_surface_ids();
+    assert!(all_ids.contains(&0));
+    assert!(all_ids.contains(&10));
+    assert!(all_ids.contains(&20));
+    assert!(all_ids.contains(&21));
+}
+
+#[test]
 fn test_pattern_bare_and_blend() {
     let sample = r"surface5
 {

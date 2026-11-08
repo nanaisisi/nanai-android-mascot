@@ -35,6 +35,7 @@ pub struct GhostInfo {
     pub kero_name: Option<String>,
     pub num_characters: i32,
     pub shiori: Option<String>,
+    pub makoto: Option<String>,
     pub craftman: Option<String>,
     pub craftman_url: Option<String>,
     pub shells: Vec<ShellInfo>,
@@ -65,6 +66,7 @@ pub struct GhostInfo {
     pub shiori_logo_align: Option<String>,
     pub shiori_logo_x: Option<i32>,
     pub shiori_logo_y: Option<i32>,
+    pub makoto: Option<String>,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]

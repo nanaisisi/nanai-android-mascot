@@ -47,6 +47,15 @@ pub struct SstpRequest {
     /// DirectSSTP フラグ
     #[serde(default)]
     pub is_direct: bool,
+    /// HTTP トンネリング / 互換ヘッダ: Content-Type (例: "text/plain", "application/x-sstp")
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub content_type: Option<String>,
+    /// HTTP トンネリング / 互換ヘッダ: User-Agent
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub user_agent: Option<String>,
+    /// HTTP トンネリング / 互換ヘッダ: Host (例: "127.0.0.1:9801")
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub host: Option<String>,
 }
 
 impl SstpRequest {

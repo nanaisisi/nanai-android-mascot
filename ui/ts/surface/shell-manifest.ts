@@ -157,6 +157,7 @@ export function manifestToSurfaceData(manifest: unknown) {
 	const balloonOffsets: Record<string, unknown> = {};
 	const aliases = manifest?.aliases ?? {};
 	const keroAliases = manifest?.kero_aliases ?? {};
+	const charAliases = manifest?.char_aliases ?? {};
 	const cursors = manifest?.cursors ?? {};
 	const tooltips = manifest?.tooltips ?? {};
 	const collisionSort = enumToString(manifest?.collision_sort) || "none";
@@ -222,6 +223,7 @@ export function manifestToSurfaceData(manifest: unknown) {
 		balloonOffsets,
 		aliases,
 		keroAliases,
+		charAliases,
 		collisionSort,
 		animationSort,
 		cursors,

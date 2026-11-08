@@ -18,6 +18,7 @@ export const ANDROID_EVENTS = {
 	TRIM_MEMORY: "nam:android:trim-memory",
 	BACK_BUTTON: "nam:android:back-button",
 	DOCK_CHANGED: "nam:android:dock-changed",
+	DOCK_OPTIONS_CHANGED: "nam:android:dock-options-changed",
 };
 
 /**

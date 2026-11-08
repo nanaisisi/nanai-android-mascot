@@ -82,6 +82,7 @@ pub async fn scan_ghost_directory(
                             kero_name: manifest.kero_name,
                             num_characters: manifest.num_characters,
                             shiori: manifest.shiori,
+                            makoto: manifest.makoto,
                             craftman: manifest.craftman,
                             craftman_url: manifest.craftman_url,
                             shells,
@@ -105,6 +106,7 @@ pub async fn scan_ghost_directory(
                             shiori_logo_align: manifest.shiori_logo_align,
                             shiori_logo_x: manifest.shiori_logo_x,
                             shiori_logo_y: manifest.shiori_logo_y,
+                            makoto: manifest.makoto,
                         });
                     }
                 }
@@ -132,6 +134,7 @@ pub async fn scan_ghost_directory(
                 kero_name: None,
                 num_characters: 1,
                 shiori: None,
+                makoto: None,
                 craftman: None,
                 craftman_url: None,
                 shells,
@@ -155,6 +158,7 @@ pub async fn scan_ghost_directory(
                 shiori_logo_align: None,
                 shiori_logo_x: None,
                 shiori_logo_y: None,
+                makoto: None,
             });
         }
     }

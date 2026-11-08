@@ -245,4 +245,16 @@ impl VirtualFileSystem for OverlayVfs {
             format!("File not found in any OverlayVfs layers: {}", path),
         ))
     }
+
+    fn read_chunks(&self, path: &str, chunk_size: usize) -> io::Result<Vec<Vec<u8>>> {
+        for layer in &self.layers {
+            if layer.exists(path) {
+                return layer.read_chunks(path, chunk_size);
+            }
+        }
+        Err(io::Error::new(
+            io::ErrorKind::NotFound,
+            format!("File not found in any OverlayVfs layers: {}", path),
+        ))
+    }
 }

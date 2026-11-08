@@ -37,10 +37,7 @@ export interface TouchRecognizerTarget {
  * @param {TouchRecognizerTarget} recognizer
  * @param {unknown} e
  */
-export function startLongPressTimer(
-	recognizer: TouchRecognizerTarget,
-	e: unknown,
-) {
+export function startLongPressTimer(recognizer: TouchRecognizerTarget, e: unknown) {
 	clearLongPressTimer(recognizer);
 	recognizer._longPressTimer = setTimeout(() => {
 		if (

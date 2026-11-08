@@ -38,3 +38,7 @@
 ## 2026-11-13 - [Fast Case-Insensitive Tooltip and Cursor Lookups]
 **Learning:** In `ui/ts/surface/surface-collision.ts`, `getTooltipForCollision` and `getCursorForCollision` used O(N) linear array and object traversals per collision check. By caching a lazily built case-folded `Map` in a module-scoped `WeakMap` keyed by the tooltip or cursor configuration objects (matching the pattern previously used for surface aliases), lookups were converted to O(1) operations, significantly optimizing the collision resolution hot path.
 **Action:** Always prefer `WeakMap<object, Map<string, V>>` for fast case-insensitive lookups on immutable configuration objects to turn repeated O(N) scans into O(1) lookups without causing memory leaks.
+
+## 2026-11-14 - [Slot-04 Cycle 9: AST Traversal Predicates & Subtree Scope Isolation]
+**Learning:** In SakuraScript AST structures, full tree traversals and intermediate vector allocations during routine token inspections (such as checking for wait commands or extracting animations) created unnecessary memory churn. Providing an allocation-free short-circuiting predicate walker (`has_command`) and isolated subtree filters (`filter_by_scope`, `strip_waits`) dramatically speeds up playback inspection pipelines and fast-forward log sanitization in both Rust and TypeScript.
+**Action:** When implementing AST utility methods, provide predicate short-circuiting traversal functions to avoid full-tree traversal when only existence checks are needed, and isolate subtrees by scope for multi-character rendering.

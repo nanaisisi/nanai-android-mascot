@@ -130,10 +130,16 @@ export function onCharSpoken(this: unknown, target = 0, scopeIdParam = 0) {
 		for (const item of anims) {
 			const anim = item.anim || item;
 			const sid = item.sid || 0;
-			const param = item.param != null ? Number.parseInt(String(item.param), 10) : 1;
+			const param =
+				item.param != null ? Number.parseInt(String(item.param), 10) : 1;
 			const interval = String(anim.interval || "").toLowerCase();
 			const parts = interval.split(",");
-			const n = !Number.isNaN(param) && param > 0 ? param : parts[1] ? Number.parseInt(parts[1], 10) : 1;
+			const n =
+				!Number.isNaN(param) && param > 0
+					? param
+					: parts[1]
+						? Number.parseInt(parts[1], 10)
+						: 1;
 			if (!Number.isNaN(n) && n > 0 && count % n === 0) {
 				const playFn = instance.playAnimationPatterns || playAnimationPatterns;
 				playFn.call(instance, anim, sid, scopeId);

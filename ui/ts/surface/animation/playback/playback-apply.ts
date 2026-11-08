@@ -20,7 +20,7 @@ function isInstance(obj: unknown) {
 /**
  * SERIKO アニメーションフレーム適用（サーフィス・透過・レイヤー描画）
  */
-export function _applyAnimationFrame(
+export async function _applyAnimationFrame(
 	this: unknown,
 	target: unknown,
 	patOrAnim: unknown,
@@ -30,7 +30,7 @@ export function _applyAnimationFrame(
 	keyOrIsCurrent?: unknown,
 	isCurrentOrOptions?: unknown,
 	optionsParam: unknown = {},
-): boolean {
+): Promise<boolean> {
 	let instance: any,
 		pat: any,
 		anim: any,
@@ -51,14 +51,14 @@ export function _applyAnimationFrame(
 			typeof isCurrentOrOptions === "function"
 				? isCurrentOrOptions
 				: typeof keyOrIsCurrent === "function"
-				? keyOrIsCurrent
-				: undefined;
+					? keyOrIsCurrent
+					: undefined;
 		options =
 			typeof optionsParam === "object" && optionsParam !== null
 				? optionsParam
 				: typeof isCurrentOrOptions === "object"
-				? isCurrentOrOptions
-				: {};
+					? isCurrentOrOptions
+					: {};
 	} else {
 		instance = this;
 		pat = target;
@@ -70,8 +70,8 @@ export function _applyAnimationFrame(
 			typeof keyOrIsCurrent === "function"
 				? keyOrIsCurrent
 				: typeof isCurrentOrOptions === "function"
-				? isCurrentOrOptions
-				: undefined;
+					? isCurrentOrOptions
+					: undefined;
 		options =
 			typeof isCurrentOrOptions === "object" && isCurrentOrOptions !== null
 				? isCurrentOrOptions
@@ -90,8 +90,16 @@ export function _applyAnimationFrame(
 	const manager = inst.manager;
 
 	// 特殊制御パターンの処理
-	const surfaceId = p.surfaceId !== undefined ? p.surfaceId : (p.surface !== undefined ? p.surface : bSurfId);
-	const surfaceNum = typeof surfaceId === "number" ? surfaceId : Number.parseInt(String(surfaceId), 10);
+	const surfaceId =
+		p.surfaceId !== undefined
+			? p.surfaceId
+			: p.surface !== undefined
+				? p.surface
+				: bSurfId;
+	const surfaceNum =
+		typeof surfaceId === "number"
+			? surfaceId
+			: Number.parseInt(String(surfaceId), 10);
 
 	if (surfaceNum === -1 || p.surface === -1 || p.surfaceId === -1) {
 		// surface -1: このアニメーションの再生を終了しベース表示に戻す
@@ -112,7 +120,9 @@ export function _applyAnimationFrame(
 
 	if (p.type === "start" || p.type === "stop") {
 		if (p.type === "start" && p.targetId != null) {
-			const targetAnim = inst.findAnimation ? inst.findAnimation(p.targetId, sId) : null;
+			const targetAnim = inst.findAnimation
+				? inst.findAnimation(p.targetId, sId)
+				: null;
 			if (targetAnim) {
 				inst.playAnimationPatterns?.(targetAnim, bSurfId, sId);
 			}
@@ -131,7 +141,12 @@ export function _applyAnimationFrame(
 		return true;
 	}
 
-	if (p.type === "scaling" || p.scaleX != null || p.scaleY != null || p.scale != null) {
+	if (
+		p.type === "scaling" ||
+		p.scaleX != null ||
+		p.scaleY != null ||
+		p.scale != null
+	) {
 		const scaleX = p.scaleX ?? p.scale ?? (p.x !== undefined ? p.x : 100);
 		const scaleY = p.scaleY ?? p.scale ?? (p.y !== undefined ? p.y : 100);
 		const setScale = inst.setScale || manager?.setScale;
@@ -155,7 +170,12 @@ export function _applyAnimationFrame(
 		return true;
 	}
 
-	if (p.type === "move" || p.moveX != null || p.moveY != null || p.offsetX != null) {
+	if (
+		p.type === "move" ||
+		p.moveX != null ||
+		p.moveY != null ||
+		p.offsetX != null
+	) {
 		const moveX = p.moveX ?? p.offsetX ?? p.x ?? 0;
 		const moveY = p.moveY ?? p.offsetY ?? p.y ?? 0;
 		if (inst._baseMoveOffsets) {
@@ -195,7 +215,9 @@ export function _applyAnimationFrame(
 	const gc = manager?.app?.ghostController;
 
 	if (gc?.updateSurface) {
-		gc.updateSurface(surfaceId, sId, [{ file: surfaceFile, x: layerX, y: layerY }]);
+		await gc.updateSurface(surfaceId, sId, [
+			{ file: surfaceFile, x: layerX, y: layerY },
+		]);
 	}
 
 	const renderAnimationFrameFn = inst.renderAnimationFrame;

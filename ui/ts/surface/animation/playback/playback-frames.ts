@@ -44,11 +44,7 @@ export async function _playAnimationPatterns(
 	scopeIdOrKey: undefined,
 	keyParam: undefined,
 ) {
-	let instance: any,
-		anim: any,
-		baseSurfaceId: any,
-		scopeId: any,
-		key: any;
+	let instance: any, anim: any, baseSurfaceId: any, scopeId: any, key: any;
 	if (isInstance(target)) {
 		instance = target;
 		anim = animOrBaseSurfaceId;
@@ -63,7 +59,7 @@ export async function _playAnimationPatterns(
 		key = scopeIdOrKey;
 	}
 
-	if (!anim || !anim.patterns?.length) return;
+	if (!anim?.patterns?.length) return;
 	const gc = instance?.manager?.app?.ghostController;
 	const isCurrent = () =>
 		!instance?._stoppedAnimations?.has(key) &&

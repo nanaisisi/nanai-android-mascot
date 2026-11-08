@@ -8,6 +8,7 @@ export function computeNineSliceLayout(
 	cache: Map<string, any>,
 	props = {},
 	bgImageUrl = null,
+	scopeId = 0,
 ) {
 	const vl = parseInt(props["validrect.left"], 10);
 	const vt = parseInt(props["validrect.top"], 10);
@@ -21,7 +22,11 @@ export function computeNineSliceLayout(
 
 	const repeat = props["border.repeat"] || "repeat";
 	const source = bgImageUrl || props["balloon.image"] || "";
-	const cacheKey = `${t}_${r}_${b}_${l}_${repeat}_${source}`;
+	// scopeId > 0 の場合はスコープ別プレフィックス、scopeId === 0 の場合は既存互換キー
+	const cacheKey =
+		scopeId > 0
+			? `scope${scopeId}_${t}_${r}_${b}_${l}_${repeat}_${source}`
+			: `${t}_${r}_${b}_${l}_${repeat}_${source}`;
 
 	if (cache.has(cacheKey)) {
 		return cache.get(cacheKey);
@@ -40,6 +45,8 @@ export function computeNineSliceLayout(
 		width,
 		repeat,
 		cssBorderImage,
+		scopeId,
+		cacheKey,
 	};
 	cache.set(cacheKey, result);
 	return result;

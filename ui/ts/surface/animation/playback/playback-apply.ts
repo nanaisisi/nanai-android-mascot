@@ -1,18 +1,9 @@
 /**
  * @file playback-apply.js
- * @brief SERIKO アニメーションフレーム適用・制御処理モジュール
+ * @brief SERIKO アニメーションフレーム適用・反映処理モジュール
  */
 
-import {
-	getAnimationOffset,
-	isAnimationPaused,
-	stopAnimation,
-} from "../animation-options.js";
-import { FrameStepEvent } from "../scheduler-events.js";
-import { playAnimationById } from "./playback-control.js";
-import { renderAnimationFrame } from "./playback-render.js";
-
-function isInstance(obj: null) {
+function isInstance(obj: unknown) {
 	return (
 		obj !== null &&
 		typeof obj === "object" &&
@@ -24,45 +15,35 @@ function isInstance(obj: null) {
 }
 
 /**
- * 制御メソッドのターゲットID文字列をパース
- * @param {unknown} param
- * @returns {number[]}
- */
-function parseTargetIds(param: unknown) {
-	if (!param) return [];
-	const cleaned = String(param)
-		.replace(/^[([]|[)\]]$/g, "")
-		.trim();
-	return cleaned
-		.split(/[,.+ ]+/)
-		.map((s) => Number.parseInt(s.trim(), 10))
-		.filter((n) => !Number.isNaN(n));
-}
-
-/**
- * SERIKO アニメーションフレーム適用（一時停止確認、特殊サーフィス、制御メソッド、描画呼出）
+ * SERIKO アニメーションフレーム適用（サーフィス・透過・レイヤー描画）
  * @param {unknown} target
  * @param {unknown} patOrAnim
  * @param {unknown} animOrBaseSurfaceId
  * @param {unknown} baseSurfaceIdOrScopeId
  * @param {unknown} scopeIdOrKey
  * @param {unknown} keyOrIsCurrent
- * @param {unknown} [isCurrentOrOptions]
+ * @param {Record<string, unknown> | undefined} [isCurrentOrOptions]
  * @param {unknown} [optionsParam={}]
- * @returns {Promise<boolean>}
  */
-export async function _applyAnimationFrame(
+export function _applyAnimationFrame(
 	this: unknown,
 	target: unknown,
 	patOrAnim: unknown,
-	animOrBaseSurfaceId: undefined,
+	animOrBaseSurfaceId: unknown,
 	baseSurfaceIdOrScopeId: undefined,
 	scopeIdOrKey: undefined,
 	keyOrIsCurrent: undefined,
-	isCurrentOrOptions: {} | undefined,
+	isCurrentOrOptions: Record<string, unknown> | undefined,
 	optionsParam = {},
 ) {
-	let instance, pat, anim, baseSurfaceId, scopeId, key, isCurrent, options;
+	let instance: unknown,
+		pat: unknown,
+		anim: unknown,
+		baseSurfaceId: unknown,
+		scopeId: unknown,
+		key: unknown,
+		isCurrent: unknown,
+		options: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		pat = patOrAnim;
@@ -83,198 +64,30 @@ export async function _applyAnimationFrame(
 		options = isCurrentOrOptions || {};
 	}
 
-	const gc = instance.manager.app?.ghostController;
-	if (!gc) return false;
+	const inst = instance as Record<string, unknown>;
+	const p = pat as Record<string, unknown>;
+	const sId = scopeId as number;
+	const bSurfId = baseSurfaceId as string | number;
+	const isCurr = isCurrent as (() => boolean) | undefined;
+	const opts = options as Record<string, unknown>;
 
-	const checkPaused = () =>
-		instance.isAnimationPaused
-			? instance.isAnimationPaused(scopeId, anim.id)
-			: isAnimationPaused(instance, scopeId, anim.id);
+	if (isCurr && !isCurr()) return;
 
-	if (anim?.id != null && checkPaused()) {
-		while (checkPaused()) {
-			if (!isCurrent()) return false;
-			await new Promise((r) => setTimeout(r, 120));
+	const manager = inst.manager as Record<string, unknown> | undefined;
+	const renderAnimationFrameFn = inst.renderAnimationFrame as
+		| ((...args: unknown[]) => void)
+		| undefined;
+
+	if (renderAnimationFrameFn) {
+		renderAnimationFrameFn.call(inst, p, bSurfId, sId, opts);
+	} else if (manager) {
+		// デフォルト描画処理
+		const surfaceId = p.surfaceId !== undefined ? p.surfaceId : bSurfId;
+		const renderSurfaceLayer = manager.renderSurfaceLayer as
+			| ((...args: unknown[]) => void)
+			| undefined;
+		if (renderSurfaceLayer) {
+			renderSurfaceLayer(surfaceId, p.file, p.x || 0, p.y || 0, opts);
 		}
-		if (!isCurrent()) return false;
 	}
-
-	const patSurface = String(pat.surface).trim();
-	if (patSurface === "-1") return false;
-	if (patSurface === "-2") {
-		for (const otherKey of instance._runningAnimations.keys()) {
-			if (otherKey !== key && otherKey.startsWith(`${scopeId}__`)) {
-				instance._stoppedAnimations.add(otherKey);
-			}
-		}
-		return true;
-	}
-
-	const patType = (pat.type || "overlay").toLowerCase();
-
-	if (patType === "move") {
-		// UKADOC: move メソッド - ベースレイヤの表示位置を指定座標分ずらす (瞬間移動)
-		// サーフェスIDは無視され、(pat.x, pat.y) をベースオフセットとして適用
-		const moveX = pat.x ?? 0;
-		const moveY = pat.y ?? 0;
-		if (instance.manager?.setBaseMoveOffset) {
-			instance.manager.setBaseMoveOffset(scopeId, moveX, moveY);
-		} else if (instance._baseMoveOffsets) {
-			instance._baseMoveOffsets.set(scopeId, { x: moveX, y: moveY });
-		}
-		// 画面上のコンテナやプレースホルダーのトランスフォーム/マージンに反映
-		if (gc?.setScopeMoveOffset) {
-			gc.setScopeMoveOffset(scopeId, moveX, moveY);
-		} else if (typeof document !== "undefined") {
-			const selector =
-				scopeId === 0
-					? "ghost-display"
-					: scopeId === 1
-						? "kero-display"
-						: `char-display-${scopeId}`;
-			const el = document.getElementById(selector);
-			if (el) {
-				el.style.transform = `translate(${moveX}px, ${moveY}px)`;
-			}
-		}
-
-		instance.scheduler?.notifyFrameStep(
-			new FrameStepEvent({
-				scopeId,
-				baseSurfaceId,
-				animationId: anim?.id ?? 0,
-				pattern: pat,
-				elapsedMs: Date.now(),
-				isFinished: false,
-				isBackground: options.isBackground,
-				offsetX: moveX,
-				offsetY: moveY,
-			}),
-		);
-		return true;
-	}
-
-	if (patType === "scaling") {
-		// UKADOC: scaling メソッド - キャラクターウインドウを指定した倍率(%)で拡大縮小表示
-		// pat.x: 横倍率(%), pat.y: 縦倍率(%)
-		const scaleX = pat.x ?? 100;
-		const scaleY = pat.y ?? scaleX;
-		if (instance.manager?.setScale) {
-			instance.manager.setScale(scaleX, scaleY, scopeId);
-		} else if (instance._baseScalingOffsets) {
-			instance._baseScalingOffsets.set(scopeId, { scaleX, scaleY });
-		}
-		if (gc?.setScopeScale) {
-			gc.setScopeScale(scopeId, scaleX, scaleY);
-		} else if (typeof document !== "undefined") {
-			const selector =
-				scopeId === 0
-					? "ghost-display"
-					: scopeId === 1
-						? "kero-display"
-						: `char-display-${scopeId}`;
-			const el = document.getElementById(selector);
-			if (el) {
-				el.style.transform = `scale(${scaleX / 100}, ${scaleY / 100})`;
-			}
-		}
-
-		instance.scheduler?.notifyFrameStep(
-			new FrameStepEvent({
-				scopeId,
-				baseSurfaceId,
-				animationId: anim?.id ?? 0,
-				pattern: pat,
-				elapsedMs: Date.now(),
-				isFinished: false,
-				isBackground: options.isBackground,
-				offsetX: scaleX,
-				offsetY: scaleY,
-			}),
-		);
-		return true;
-	}
-
-	// start, stop, alternativestart, alternativestop, parallelstart, parallelstop 制御メソッド
-	if (
-		patType.startsWith("start") ||
-		patType.startsWith("stop") ||
-		patType.startsWith("alternativestart") ||
-		patType.startsWith("alternativestop") ||
-		patType.startsWith("parallelstart") ||
-		patType.startsWith("parallelstop")
-	) {
-		const targetRaw = pat.targetParam || patSurface;
-		const targetIds = parseTargetIds(targetRaw);
-
-		const playById = (...args: number[]) =>
-			instance.playAnimationById
-				? instance.playAnimationById(...args)
-				: playAnimationById(instance, ...args);
-
-		const stopAnim = (...args: number[]) =>
-			instance.stopAnimation
-				? instance.stopAnimation(...args)
-				: stopAnimation(instance, ...args);
-
-		if (patType.startsWith("alternativestart")) {
-			if (targetIds.length > 0) {
-				const picked = targetIds[Math.floor(Math.random() * targetIds.length)];
-				playById(picked, scopeId).catch(() => {});
-			}
-		} else if (patType.startsWith("alternativestop")) {
-			if (targetIds.length > 0) {
-				const picked = targetIds[Math.floor(Math.random() * targetIds.length)];
-				stopAnim(scopeId, picked);
-			}
-		} else if (patType.startsWith("parallelstart")) {
-			for (const id of targetIds) {
-				playById(id, scopeId).catch(() => {});
-			}
-		} else if (patType.startsWith("parallelstop")) {
-			for (const id of targetIds) {
-				stopAnim(scopeId, id);
-			}
-		} else if (patType.startsWith("start")) {
-			if (targetIds.length > 0) {
-				playById(targetIds[0], scopeId).catch(() => {});
-			}
-		} else if (patType.startsWith("stop")) {
-			if (targetIds.length > 0) {
-				stopAnim(scopeId, targetIds[0]);
-			}
-		}
-		return true;
-	}
-
-	const renderFn = instance.renderAnimationFrame
-		? (...args: unknown) => instance.renderAnimationFrame(...args)
-		: (...args: unknown) => renderAnimationFrame(instance, ...args);
-
-	const framePromise = renderFn(pat, baseSurfaceId, scopeId, options);
-	if (framePromise) {
-		await framePromise;
-	} else if (patSurface && patSurface !== "-1" && patSurface !== "-2") {
-		// 通常のサーフィス更新またはプレースホルダー描画
-		await gc.updateSurface(patSurface, scopeId, null);
-	}
-
-	const currentOffset = instance.getAnimationOffset
-		? instance.getAnimationOffset(scopeId, anim?.id ?? 0)
-		: getAnimationOffset(instance, scopeId, anim?.id ?? 0);
-
-	instance.scheduler?.notifyFrameStep(
-		new FrameStepEvent({
-			scopeId,
-			baseSurfaceId,
-			animationId: anim?.id ?? 0,
-			pattern: pat,
-			elapsedMs: Date.now(),
-			isFinished: false,
-			isBackground: options.isBackground,
-			offsetX: currentOffset.x,
-			offsetY: currentOffset.y,
-		}),
-	);
-	return true;
 }

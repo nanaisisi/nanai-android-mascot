@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
 	ANDROID_EVENTS,
 	ANDROID_LIFECYCLE_STATES,
@@ -7,8 +7,8 @@ import {
 
 describe("AndroidBridge - Lifecycle", () => {
 <<<<<<< HEAD
-	const _originalDocument: unknown = null;
-	const _originalWindow: unknown = null;
+	let originalDocument: unknown = null;
+	let originalWindow: unknown = null;
 =======
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let originalDocument;
@@ -16,9 +16,10 @@ describe("AndroidBridge - Lifecycle", () => {
 	let originalWindow;
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 
-	beforeEach(() => 
+	beforeEach(() => {
 		originalDocument = globalThis.document;
-		originalWindow = globalThis.window;);
+		originalWindow = globalThis.window;
+	});
 
 	afterEach(() => {
 		Object.defineProperty(globalThis, "document", {

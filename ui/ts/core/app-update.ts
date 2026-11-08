@@ -248,7 +248,7 @@ export const updateMethods = {
 						failedFile,
 					);
 				}
-			} finally {
+			} finally 
 				if (typeof unlisten === "function") {
 					try {
 						await unlisten();
@@ -256,7 +256,6 @@ export const updateMethods = {
 						// イベントリスナーの解除エラーは安全に無視
 					}
 				}
-			}
 		} catch (err) {
 			console.error("ネットワーク更新エラー:", err);
 			const reason = parseErrorReason(err);

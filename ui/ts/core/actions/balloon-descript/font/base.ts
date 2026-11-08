@@ -9,7 +9,7 @@ export function applyBaseFontProperties(
 	if (props.id) el.style.setProperty("--balloon-id", String(props.id));
 =======
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function _applyBaseFontProperties(root: any, props: Record<string, any>) {
+export function applyBaseFontProperties(root: any, props: Record<string, any>) {
 	if (props.id) root.style.setProperty("--balloon-id", props.id);
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 

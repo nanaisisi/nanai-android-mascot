@@ -35,7 +35,7 @@ export const mouseMethods = {
 		const _col = (this as any).getCollisionInfo(clientX, clientY, rect, scopeId);
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		console.log(
-			`🖱️ ゴーストタップ: スコープ=$scopeId, 部位=$col.name || "なし"(_X:${col.canvasX}, _Y:${col.canvasY})`,
+			`🖱️ ゴーストタップ: スコープ=$scopeId, 部位=$col.name || "なし"(_X:$col.canvasX, _Y:$col.canvasY)`,
 		);
 		if (isTauriAvailable()) {
 			invoke("on_mouse_click").catch(() => {});
@@ -46,7 +46,7 @@ export const mouseMethods = {
 <<<<<<< HEAD
 		(this as unknown).ghostController
 			.sendShioriEvent("OnMouseDoubleClick", args)
-			.then((res: unknown) => {
+			.then((res: unknown) => 
 				if (!res?.script) {
 					(this as unknown).ghostController.sendShioriEvent(
 						"OnMouseClick",
@@ -57,13 +57,12 @@ export const mouseMethods = {
 		(this as any).ghostController
 			.sendShioriEvent("OnMouseDoubleClick", args)
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
-			.then((res: any) => {
+			.then((res: any) => 
 				if (!res?.script) {
 					// biome-ignore lint/suspicious/noExplicitAny: automated fix
 					(this as any).ghostController.sendShioriEvent("OnMouseClick", args);
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-				}
-			});
+				});
 	},
 
 	onGhostStroke(
@@ -690,7 +689,7 @@ export const mouseMethods = {
 		rect?: any,
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 		scopeId: number = 0,
-	) {
+	) 
 		if (
 			clientX !== undefined &&
 			clientY !== undefined &&
@@ -702,7 +701,7 @@ export const mouseMethods = {
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(this as any).surfaceManager
-		) {
+		) 
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			return (this as any).surfaceManager.detectCollision(
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
@@ -712,18 +711,15 @@ export const mouseMethods = {
 				null,
 				scopeId,
 			);
-		}
 		return { name: "", canvasX: 0, canvasY: 0 };
 	},
 
 <<<<<<< HEAD
-	detectPart(clientX?: number, clientY?: number, rect?: unknown) {
+	detectPart(clientX?: number, clientY?: number, rect?: unknown) 
 		return (this as unknown).getCollisionInfo(clientX, clientY, rect).name;
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	detectPart(clientX?: number, clientY?: number, rect?: any) {
+	detectPart(clientX?: number, clientY?: number, rect?: any) 
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		return (this as any).getCollisionInfo(clientX, clientY, rect).name;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-	},
-};
+>>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad,;

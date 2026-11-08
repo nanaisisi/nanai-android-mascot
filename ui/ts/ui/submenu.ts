@@ -95,16 +95,10 @@ if (isTauriAvailable()) {
 			if (typeof data.scope === "number") {
 				dressupScope = data.scope;
 			}
-			const _activeShell =
-<<<<<<< HEAD
+			const activeShell =
 				data.shells?.find(
 					(s: { name?: string }) => s.name === data.currentShell,
 				) || data.shells?.[0];
-=======
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
-				data.shells?.find((s: any) => s.name === data.currentShell) ||
-				data.shells?.[0];
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 			applyShellMenuTheme(activeShell);
 			renderContent();
 		}
@@ -115,16 +109,10 @@ if (isTauriAvailable()) {
 		if (data) {
 			cachedShells = data.shells || cachedShells;
 			currentShellName = data.currentShell || currentShellName;
-			const _activeShell =
-<<<<<<< HEAD
+			const activeShell =
 				cachedShells?.find(
 					(s: { name?: string }) => s.name === currentShellName,
 				) || cachedShells?.[0];
-=======
-				// biome-ignore lint/suspicious/noExplicitAny: automated fix
-				cachedShells?.find((s: any) => s.name === currentShellName) ||
-				cachedShells?.[0];
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 			applyShellMenuTheme(activeShell);
 			renderContent();
 		}

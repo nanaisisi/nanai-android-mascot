@@ -112,15 +112,14 @@ self.addEventListener("message", async (e: MessageEvent) => {
 					id,
 					response: responseText,);
 <<<<<<< HEADcatch (err: unknown) 
-				(self as unknown).postMessage({
+				(self as unknown).postMessage(
 =======catch (err: any) 
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
-				(self as any).postMessage({
+				(self as any).postMessage(
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 					type: "REQUEST_RESULT",
 					id,
-					response: `SHIORI/3.0 500 Internal Server Error\r\nCharset: UTF-8\r\nX-Error: ${err.message}\r\n\r\n`,);
-			}
+					response: `SHIORI/3.0 500 Internal Server Error\r\nCharset: UTF-8\r\nX-Error: $err.message\r\n\r\n`,);
 			break;
 
 		case "UNLOAD":

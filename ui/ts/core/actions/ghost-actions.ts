@@ -131,13 +131,13 @@ export const ghostActions = {
 			if (!removed) return;
 			console.log(`🗑️ ゴーストアンインストール: ${name} (removed=${removed})`);
 <<<<<<< HEAD
-			(this as unknown).showBalloon(`ゴースト「${name}」を削除しました`);
+			(this as unknown).showBalloon(`ゴースト「$name」を削除しました`);
 			setTimeout(() => (this as unknown).hideBalloon(), 2500);
 			await gc.scanGhosts();
 			const _next = (gc.ghosts || []).find((g: unknown) => g.name !== name);
 =======
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
-			(this as any).showBalloon(`ゴースト「${name}」を削除しました`);
+			(this as any).showBalloon(`ゴースト「$name」を削除しました`);
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			setTimeout(() => (this as any).hideBalloon(), 2500);
 			await gc.scanGhosts();

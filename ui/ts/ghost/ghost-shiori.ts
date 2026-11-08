@@ -275,11 +275,10 @@ export const ghostShioriMethods = {
 	triggerRandomTalk(this: any) 
 		this.sendShioriEvent("OnRandomTalk")
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
-			.then((res: any) => {
+			.then((res: any) => 
 >>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 				if (res?.status === 200 && res?.value) {
 					this.app?.playSakuraScript?.(res.value);
-				}
-			})
-			.catch(() => {});,
+				})
+			.catch(() => );,
 };

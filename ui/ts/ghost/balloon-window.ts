@@ -70,7 +70,7 @@ export function initBalloonWindow() {
 	if (!isTauriAvailable()) return;
 
 <<<<<<< HEAD
-	void listen(`update-balloon-content-$scopeId`, (event: unknown) => {
+	void listen(`update-balloon-content-$scopeId`, (event: unknown) => 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	void listen(`update-balloon-content-$scopeId`, (event: any) => {
@@ -88,7 +88,7 @@ export function initBalloonWindow() {
 	});
 
 <<<<<<< HEAD
-	void listen("balloon-theme-changed", (event: unknown) => {
+	void listen("balloon-theme-changed", (event: unknown) => 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	void listen("balloon-theme-changed", (event: any) => {
@@ -102,7 +102,7 @@ export function initBalloonWindow() {
 	});
 
 <<<<<<< HEAD
-	void listen("balloon-scale-changed", (event: unknown) => {
+	void listen("balloon-scale-changed", (event: unknown) => 
 =======
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	void listen("balloon-scale-changed", (event: any) => {
@@ -118,7 +118,6 @@ export function initBalloonWindow() {
 	});
 
 	void emit("balloon-ready", { scopeId });
-}
 
 if (typeof document !== "undefined") {
 	if (document.readyState === "loading") {

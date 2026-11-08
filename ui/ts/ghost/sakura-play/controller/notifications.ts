@@ -31,7 +31,7 @@ export function notifyClear(
 	mode: "all" | "char" | "line",
 	count: number,
 ) 
-	this.emit("playback:clear", { mode, count });
+	this.emit("playback:clear", mode, count );
 
 <<<<<<< HEAD
 export function _notifyChar(this: unknown, char: string, scope: number) {

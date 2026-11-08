@@ -28,7 +28,6 @@ function preloadImage(url: string | null): Promise<void> {
 	});
 }
 
-<<<<<<< HEAD
 interface ShellThemeInfo {
 	background_color?: string;
 	foreground_color?: string;
@@ -57,8 +56,8 @@ export function applyShellMenuTheme(
 	activeShell: ActiveShellInfo | null | undefined,
 ) {
 	const rootStyle = document.documentElement.style;
-	const _theme = activeShell?.menu_theme;
-	const _setOrRemove = (
+	const theme = activeShell?.menu_theme;
+	const setOrRemove = (
 		property: string,
 		value: string | number | null | undefined,
 	) => {
@@ -67,16 +66,6 @@ export function applyShellMenuTheme(
 		} else {
 			rootStyle.removeProperty(property);
 		}
-=======
-// biome-ignore lint/suspicious/noExplicitAny: automated fix
-export function _applyShellMenuTheme(activeShell: any) {
-	const rootStyle = document.documentElement.style;
-	const theme = activeShell?.menu_theme;
-	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	const setOrRemove = (property: string, value: any) => {
-		if (value) rootStyle.setProperty(property, value);
-		else rootStyle.removeProperty(property);
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 	};
 
 	setOrRemove("--balloon-bg", theme?.background_color);
@@ -117,7 +106,6 @@ export function _applyShellMenuTheme(activeShell: any) {
 		const fullPath = shellPath
 			? `${shellPath}/${relStr.replace(/\\/g, "/")}`
 			: relStr;
-<<<<<<< HEAD
 		const tauriCore = (
 			globalThis as unknown as {
 				__TAURI__?: {
@@ -127,12 +115,6 @@ export function _applyShellMenuTheme(activeShell: any) {
 		).__TAURI__?.core;
 		return tauriCore?.convertFileSrc
 			? tauriCore.convertFileSrc(fullPath)
-=======
-		// biome-ignore lint/suspicious/noExplicitAny: automated fix
-		return (globalThis as any).__TAURI__?.core?.convertFileSrc
-			? // biome-ignore lint/suspicious/noExplicitAny: automated fix
-				(globalThis as any).__TAURI__.core.convertFileSrc(fullPath)
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 			: fullPath;
 	};
 

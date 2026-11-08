@@ -60,7 +60,7 @@ export function parseSakuraScript(script: string): SakuraScriptToken[] {
 				break;
 			}
 		} else 
-			tokens.push({ type: "char", value: script[i] });
+			tokens.push(type: "char", value: script[i] );
 			i++;
 	}
 

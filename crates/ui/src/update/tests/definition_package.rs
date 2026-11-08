@@ -219,3 +219,64 @@ fn test_update_package_noupdate_filter_and_integrity() {
     };
     assert!(null_byte_pkg.validate_entries_integrity().is_err());
 }
+
+#[test]
+fn test_update_package_progress_summary_and_plan() {
+    let content = "file,ghost/master/aya.dll,11223344556677889900aabbccddeeff,size=1000\r\n\
+                   file,ghost/master/readme.txt,22334455667788990011aabbccddeeff,size=200\r\n\
+                   file,ghost/master/old.log,33445566778899001122aabbccddeeff,delete\r\n\
+                   file,ghost/master/custom.ini,44556677889900112233aabbccddeeff,ignore\r\n";
+    let pkg = UpdatePackage::from_definition(content);
+
+    // Progress summary
+    let sum0 = pkg.progress_summary(0);
+    assert_eq!(sum0.total_entries, 4);
+    assert_eq!(sum0.active_downloads, 2);
+    assert_eq!(sum0.completed_entries, 0);
+    assert_eq!(sum0.deletions, 1);
+    assert_eq!(sum0.total_bytes, 1200);
+    assert!(!sum0.is_finished);
+
+    let sum1 = pkg.progress_summary(1);
+    assert_eq!(sum1.completed_entries, 1);
+    assert!(!sum1.is_finished);
+
+    let sum2 = pkg.progress_summary(2);
+    assert_eq!(sum2.completed_entries, 2);
+    assert!(sum2.is_finished);
+
+    let sum_over = pkg.progress_summary(10);
+    assert_eq!(sum_over.completed_entries, 2);
+    assert!(sum_over.is_finished);
+
+    // Update plan
+    let mut local_checksums = std::collections::HashMap::new();
+    // aya.dll: checksum matches -> unchanged
+    local_checksums.insert(
+        "ghost/master/aya.dll".to_string(),
+        "11223344556677889900aabbccddeeff".to_string(),
+    );
+    // readme.txt: checksum mismatch -> modification
+    local_checksums.insert(
+        "ghost/master/readme.txt".to_string(),
+        "00000000000000000000000000000000".to_string(),
+    );
+    // new_file.txt is not in local_checksums -> addition (if it were in update definition)
+
+    let plan = pkg.plan_update(&local_checksums);
+    assert_eq!(plan.modifications.len(), 1);
+    assert_eq!(plan.modifications[0].path, "ghost/master/readme.txt");
+    assert_eq!(plan.deletions.len(), 1);
+    assert_eq!(plan.deletions[0].path, "ghost/master/old.log");
+    assert_eq!(plan.unchanged.len(), 2); // aya.dll (md5 match) + custom.ini (is_ignore)
+    assert!(plan.additions.is_empty());
+    assert_eq!(plan.total_changes(), 2);
+    assert!(plan.has_changes());
+
+    // Test InstallManifest normalized_install_type
+    let manifest = InstallManifest {
+        install_type: "  GHOST  ".to_string(),
+        ..Default::default()
+    };
+    assert_eq!(manifest.normalized_install_type(), "ghost");
+}

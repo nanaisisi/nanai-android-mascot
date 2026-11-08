@@ -36,6 +36,36 @@ impl UpdateEntry {
     }
 }
 
+/// ネットワーク更新進捗サマリー (Slot-15 Contract)
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Eq)]
+pub struct UpdateProgressSummary {
+    pub total_entries: usize,
+    pub active_downloads: usize,
+    pub completed_entries: usize,
+    pub deletions: usize,
+    pub total_bytes: u64,
+    pub is_finished: bool,
+}
+
+/// ネットワーク更新計画 (差分分類結果)
+#[derive(Debug, Clone, Default, serde::Serialize, PartialEq, Eq)]
+pub struct UpdatePlan<'a> {
+    pub additions: Vec<&'a UpdateEntry>,
+    pub modifications: Vec<&'a UpdateEntry>,
+    pub deletions: Vec<&'a UpdateEntry>,
+    pub unchanged: Vec<&'a UpdateEntry>,
+}
+
+impl<'a> UpdatePlan<'a> {
+    pub fn total_changes(&self) -> usize {
+        self.additions.len() + self.modifications.len() + self.deletions.len()
+    }
+
+    pub fn has_changes(&self) -> bool {
+        self.total_changes() > 0
+    }
+}
+
 /// ネットワーク更新パッケージ定義 (Slot-15 Contract)
 #[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, PartialEq, Eq)]
 pub struct UpdatePackage {
@@ -95,6 +125,59 @@ impl UpdatePackage {
                 }
             })
             .collect()
+    }
+
+    /// 更新進行状況サマリーを計算
+    pub fn progress_summary(&self, completed_count: usize) -> UpdateProgressSummary {
+        let active = self.active_downloads();
+        let total_active = active.len();
+        let deletions = self.deletions().len();
+        let total_bytes = self.total_download_size();
+        let is_finished = completed_count >= total_active;
+
+        UpdateProgressSummary {
+            total_entries: self.entries.len(),
+            active_downloads: total_active,
+            completed_entries: completed_count.min(total_active),
+            deletions,
+            total_bytes,
+            is_finished,
+        }
+    }
+
+    /// ローカル既存ファイル情報に基づき更新計画（新規・上書き・削除・変更なし）を作成
+    pub fn plan_update<'a>(
+        &'a self,
+        local_checksums: &std::collections::HashMap<String, String>,
+    ) -> UpdatePlan<'a> {
+        let mut plan = UpdatePlan::default();
+
+        for entry in &self.entries {
+            if entry.is_delete {
+                plan.deletions.push(entry);
+                continue;
+            }
+            if entry.is_ignore {
+                plan.unchanged.push(entry);
+                continue;
+            }
+
+            let norm = entry.path.replace('\\', "/");
+            match local_checksums.get(&norm) {
+                None => {
+                    plan.additions.push(entry);
+                }
+                Some(local_md5) => {
+                    if local_md5.eq_ignore_ascii_case(&entry.md5) {
+                        plan.unchanged.push(entry);
+                    } else {
+                        plan.modifications.push(entry);
+                    }
+                }
+            }
+        }
+
+        plan
     }
 
     /// developer_options.txt の noupdate パターンに合致するファイルを除外したエントリ一覧を取得
@@ -171,6 +254,11 @@ pub struct InstallManifest {
 }
 
 impl InstallManifest {
+    /// インストール対象種別の正規化 ("ghost", "shell", "balloon" など小文字化)
+    pub fn normalized_install_type(&self) -> String {
+        self.install_type.trim().to_lowercase()
+    }
+
     /// ターゲットディレクトリ名を取得（未指定時は name をフォールバック）
     pub fn effective_directory(&self) -> &str {
         self.directory.as_deref().unwrap_or(&self.name)

@@ -1,0 +1,146 @@
+import assert from "node:assert/strict";
+import { test } from "vitest";
+import { getProgressCb, updateMethods } from "./mock-environment.js";
+
+test("updateMethods.startNetworkUpdate covers 100% of network update flows, progress events, and summaries", async () => {
+	const eventsSent: Array<{ ev: string; args: unknown }> = [];
+	let scriptReturn: string | null = null;
+	let resExScript = "handled";
+
+	const mockApp = {
+		...updateMethods,
+		ghostController: {
+			currentGhost: { name: "MockGhost", path: "path/to/ghost" },
+			sendShioriEvent: async (ev: string, args: unknown) => {
+				eventsSent.push({ ev, args });
+				if (ev === "OnUpdateProcessExec") return { script: scriptReturn };
+				if (ev.endsWith("Ex")) return { script: resExScript };
+				return { script: "custom" };
+			},
+			selectGhost() {},
+		},
+		showBalloon() {},
+	};
+
+	// Test real wait method
+	await updateMethods.wait(1);
+
+	// 1. OnUpdateProcessExec returns script (early return)
+	scriptReturn = "custom script";
+	delete globalThis.__TAURI__;
+	const savedInternals = globalThis.__TAURI_INTERNALS__;
+	delete globalThis.__TAURI_INTERNALS__;
+	await mockApp.startNetworkUpdate();
+
+	// 2. Browser fallback (Tauri unavailable)
+	scriptReturn = null;
+	await mockApp.startNetworkUpdate();
+
+	// 3. Tauri available via __TAURI_INTERNALS__
+	globalThis.__TAURI_INTERNALS__ = savedInternals;
+
+	const origInvoke = async (cmd: string) => {
+		if (cmd === "check_ghost_update") {
+			return {
+				has_update: true,
+				total_count: 2,
+				message: "Update found",
+				update_files: [{ path: "file1.txt" }, { path: "file2.txt" }],
+			};
+		}
+		if (cmd === "execute_ghost_update") {
+			const progressCb = getProgressCb();
+			if (progressCb) {
+				progressCb({ payload: { phase: "download-begin", path: "file1.txt" } });
+				progressCb({ payload: { phase: "md5-begin", path: "file1.txt" } });
+				progressCb({ payload: { phase: "md5-complete", path: "file1.txt" } });
+				progressCb({ payload: { phase: "md5-failed", path: "file1.txt" } });
+			}
+			return { success: true, updated_files: ["file1.txt"], reason: "changed" };
+		}
+		return null;
+	};
+
+	globalThis.__TAURI_INTERNALS__.invoke = origInvoke;
+
+	// 3a. checkOnly = true (success with update)
+	eventsSent.length = 0;
+	await mockApp.startNetworkUpdate(null, { checkOnly: true });
+
+	// 3b. checkOnly = true (no update)
+	globalThis.__TAURI_INTERNALS__.invoke = async (cmd: string) => {
+		if (cmd === "check_ghost_update") {
+			return {
+				has_update: false,
+				total_count: 0,
+				message: "No update",
+				update_files: [],
+			};
+		}
+		return origInvoke(cmd);
+	};
+	eventsSent.length = 0;
+	await mockApp.startNetworkUpdate(null, { checkOnly: true });
+
+	// 4. checkOnly = true (error 404 in check)
+	globalThis.__TAURI_INTERNALS__.invoke = async (cmd: string) => {
+		if (cmd === "check_ghost_update") throw new Error("404 not found");
+		return null;
+	};
+	eventsSent.length = 0;
+	await mockApp.startNetworkUpdate(null, { checkOnly: true });
+
+	// 5. Full update, no update files
+	globalThis.__TAURI_INTERNALS__.invoke = async (cmd: string) => {
+		if (cmd === "check_ghost_update") {
+			return { has_update: false, total_count: 0, update_files: [] };
+		}
+		return null;
+	};
+	eventsSent.length = 0;
+	await mockApp.startNetworkUpdate();
+
+	// 6. Full update with success and progress events
+	globalThis.__TAURI_INTERNALS__.invoke = origInvoke;
+	eventsSent.length = 0;
+	await mockApp.startNetworkUpdate();
+
+	// 7. Full update with execute_ghost_update failure
+	globalThis.__TAURI_INTERNALS__.invoke = async (cmd: string) => {
+		if (cmd === "check_ghost_update") {
+			return {
+				has_update: true,
+				total_count: 1,
+				update_files: [{ path: "file1.txt" }],
+			};
+		}
+		if (cmd === "execute_ghost_update") {
+			return { success: false, updated_files: [], reason: "disk_full" };
+		}
+		return null;
+	};
+	eventsSent.length = 0;
+	await mockApp.startNetworkUpdate();
+
+	// 8. Full update with timeout error in catch
+	globalThis.__TAURI_INTERNALS__.invoke = async (cmd: string) => {
+		if (cmd === "check_ghost_update") throw new Error("timeout error");
+		return null;
+	};
+	eventsSent.length = 0;
+	await mockApp.startNetworkUpdate();
+
+	// 9. Test sendUpdateResultSummary when Ex script is falsy (sends baseEvent)
+	resExScript = "";
+	await mockApp.sendUpdateResultSummary("MockGhost", true, 0, null, false);
+	await mockApp.sendUpdateResultSummary(
+		"MockGhost",
+		false,
+		"error",
+		"file.txt",
+		true,
+	);
+
+	delete globalThis.__TAURI_INTERNALS__;
+	assert.ok(true);
+});

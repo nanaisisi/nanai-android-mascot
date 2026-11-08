@@ -70,9 +70,15 @@ body {
 .balloon-text {
 	color: var(--balloon-text-color, #111111);
 	font-size: var(--balloon-font-size, 0.85rem);
+	font-family: var(--balloon-font-family, inherit);
+	font-weight: var(--balloon-font-weight, normal);
+	font-style: var(--balloon-font-style, normal);
 	line-height: 1.5;
 	margin: 0;
 	text-align: left;
+	text-decoration: var(--balloon-text-decoration, none);
+	-webkit-text-stroke: var(--balloon-text-stroke, none);
+	text-shadow: var(--balloon-text-shadow, none);
 	writing-mode: inherit;
 	-webkit-writing-mode: inherit;
 }
@@ -131,15 +137,18 @@ body {
 		var(--balloon-anchor-color, var(--balloon-highlight-bg, #0078d7))
 	);
 	text-decoration: var(
-		--balloon-anchor-notselect-style,
-		var(--balloon-anchor-style, underline)
+		--balloon-anchor-notselect-text-decoration,
+		var(
+			--balloon-anchor-text-decoration,
+			var(--balloon-anchor-notselect-style, var(--balloon-anchor-style, underline))
+		)
 	);
 	text-shadow: var(
 		--balloon-anchor-notselect-shadow-color,
 		var(--balloon-anchor-shadow-color, none)
 	);
 	background: var(--balloon-anchor-notselect-brush-color, transparent);
-	outline-color: var(--balloon-anchor-notselect-pen-color, transparent);
+	outline: 1px solid var(--balloon-anchor-notselect-pen-color, transparent);
 	cursor: pointer;
 	mix-blend-mode: var(--balloon-anchor-blendmethod, normal);
 }

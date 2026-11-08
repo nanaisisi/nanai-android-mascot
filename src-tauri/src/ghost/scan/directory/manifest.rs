@@ -33,6 +33,7 @@ pub struct GhostManifest {
     pub sstp_allow_unspecified_send: bool,
     pub sstp_always_translate: bool,
     pub install_accept: Option<String>,
+    // [makoto,ファイル名]: makoto.dll (外部トランスレータモジュール)
     pub makoto: Option<String>,
 }
 
@@ -194,6 +195,7 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
             .or_else(|| m.get("accept").cloned())
     });
 
+    // [makoto,ファイル名]: descript.txt の makoto キー
     // [makoto,ファイル名]: トランスレータモジュール指定
     let makoto = meta_map.as_ref().and_then(|m| m.get("makoto").cloned());
 

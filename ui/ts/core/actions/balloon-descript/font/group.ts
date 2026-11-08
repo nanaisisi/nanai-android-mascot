@@ -84,7 +84,24 @@ export function applyGroupProperties(
 	// [anchor.style / cursor.style / *.style]:
 	const styleVal = props[`${prefix}.style`];
 	if (styleVal) {
-		root.style.setProperty(`${cssPrefix}-style`, styleVal);
+		const cleanStyle = String(styleVal).trim().toLowerCase();
+		root.style.setProperty(`${cssPrefix}-style`, cleanStyle);
+
+		// UKADOC/SSP スタイルに応じた CSS デコレーショントークン導出
+		// "underline": 下線, "none": なし, "square"/"box": 囲み枠, "fill": 背景塗り
+		if (cleanStyle === "none" || cleanStyle === "0") {
+			root.style.setProperty(`${cssPrefix}-text-decoration`, "none");
+			root.style.setProperty(`${cssPrefix}-box-style`, "none");
+		} else if (cleanStyle === "underline") {
+			root.style.setProperty(`${cssPrefix}-text-decoration`, "underline");
+			root.style.setProperty(`${cssPrefix}-box-style`, "none");
+		} else if (cleanStyle === "square" || cleanStyle === "box") {
+			root.style.setProperty(`${cssPrefix}-text-decoration`, "none");
+			root.style.setProperty(`${cssPrefix}-box-style`, "solid");
+		} else if (cleanStyle === "fill") {
+			root.style.setProperty(`${cssPrefix}-text-decoration`, "none");
+			root.style.setProperty(`${cssPrefix}-box-style`, "fill");
+		}
 	}
 
 	// [anchor.blendmethod / cursor.blendmethod / *.blendmethod]:

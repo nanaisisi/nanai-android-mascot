@@ -3,12 +3,8 @@
  * @description Helper functions for AndroidBridge lifecycle and state management
  */
 
-import {
-	ANDROID_LIFECYCLE_STATES,
-	isAndroidPlatform,
-	isNativeAndroidPlatform,
-} from "./bridge/index.js";
 import type { DockManager } from "./bridge/dock-manager.js";
+import { ANDROID_LIFECYCLE_STATES, isAndroidPlatform } from "./bridge/index.js";
 import type { OverlayManager } from "./bridge/overlay-manager.js";
 
 export function checkIsThrottled(lifecycleState: string): boolean {
@@ -36,4 +32,3 @@ export function getAndroidBridgeState(
 		hasAttachedElement: Boolean(dockManager.attachedElement),
 	};
 }
-

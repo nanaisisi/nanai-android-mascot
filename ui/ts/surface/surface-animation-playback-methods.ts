@@ -103,13 +103,7 @@ export const surfaceAnimationPlaybackMethods = {
 		scopeId: unknown,
 		anim: unknown,
 	) {
-		return _applyAnimationFrame.call(
-			this,
-			entry,
-			baseSurfaceId,
-			scopeId,
-			anim,
-		);
+		return _applyAnimationFrame.call(this, entry, baseSurfaceId, scopeId, anim);
 	},
 
 	_playOnePat(

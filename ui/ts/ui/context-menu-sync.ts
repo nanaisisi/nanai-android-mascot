@@ -1,8 +1,4 @@
-import {
-	invoke,
-	isTauriAvailable,
-	listen,
-} from "../core/tauri-helper.js";
+import { isTauriAvailable, listen } from "../core/tauri-helper.js";
 import type { MenuDispatcher } from "./menu-dispatcher.js";
 import type { MenuSubmenuRenderer } from "./menu-submenu-renderer.js";
 
@@ -117,7 +113,10 @@ export function setupContextMenuSync(
 		} else if (event.data?.type === "sync-theme") {
 			renderer.applyTheme(event.data.theme);
 			if (globalThis._lastBalloons) {
-				renderer.renderBalloonSubmenu(globalThis._lastBalloons, event.data.theme);
+				renderer.renderBalloonSubmenu(
+					globalThis._lastBalloons,
+					event.data.theme,
+				);
 			}
 		} else if (event.data?.type === "sync-balloons") {
 			globalThis._lastBalloons = event.data.balloons;
@@ -128,4 +127,3 @@ export function setupContextMenuSync(
 		}
 	});
 }
-

@@ -3,8 +3,8 @@
  * @brief スクリプトタイマー管理・Notify/TimerRaise コマンドハンドラ (サブモジュールの再エクスポート)
  */
 
-export { handleTimerPluginCommand } from "./timer/plugin.js";
 export { handleTimerRaiseOtherCommand } from "./timer/other.js";
+export { handleTimerPluginCommand } from "./timer/plugin.js";
 export {
 	handleNotifyCommand,
 	handleTimerNotifyCommand,

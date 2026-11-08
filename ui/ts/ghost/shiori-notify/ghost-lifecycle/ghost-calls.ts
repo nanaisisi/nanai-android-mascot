@@ -4,7 +4,6 @@
  */
 
 export const shioriNotifyGhostCalls = {
-
 	async sendGhostCalling(this: unknown, targetGhost: string) {
 		return await this.sendShioriNotify("OnGhostCalling", [targetGhost]);
 	},

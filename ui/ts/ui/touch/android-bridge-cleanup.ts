@@ -1,6 +1,6 @@
 import type { BackButtonManager } from "./bridge/back-button.js";
-import type { BridgeEventEmitter } from "./bridge/events.js";
 import type { DockManager } from "./bridge/dock-manager.js";
+import type { BridgeEventEmitter } from "./bridge/events.js";
 
 export function destroyAndroidBridge(
 	cleanups: Array<() => void>,
@@ -19,4 +19,3 @@ export function destroyAndroidBridge(
 	backButtonManager.clear();
 	dockManager.destroy();
 }
-

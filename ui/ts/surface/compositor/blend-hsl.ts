@@ -1,12 +1,18 @@
 // 4x4 Bayer Dither Matrix (values 0..15)
-export const BAYER_MATRIX_4X4 = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+export const BAYER_MATRIX_4X4 = [
+	0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5,
+];
 
 // W3C Compositing & Blending Level 1 HSL helpers
 export function lum(r: number, g: number, b: number): number {
 	return 0.3 * r + 0.59 * g + 0.11 * b;
 }
 
-export function clipColor(r: number, g: number, b: number): [number, number, number] {
+export function clipColor(
+	r: number,
+	g: number,
+	b: number,
+): [number, number, number] {
 	const l = lum(r, g, b);
 	const n = Math.min(r, g, b);
 	const x = Math.max(r, g, b);
@@ -165,4 +171,3 @@ export function blendLuminosity(
 		Math.max(0, Math.min(255, Math.round(b * 255))),
 	];
 }
-

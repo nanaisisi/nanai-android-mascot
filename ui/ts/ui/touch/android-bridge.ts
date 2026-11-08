@@ -4,6 +4,11 @@
  * Contract: AndroidBridge, イベント命名規約 nam:android:*
  */
 
+import { destroyAndroidBridge } from "./android-bridge-cleanup.js";
+import {
+	checkIsThrottled,
+	getAndroidBridgeState,
+} from "./android-bridge-state.js";
 import {
 	ANDROID_EVENTS,
 	ANDROID_LIFECYCLE_STATES,
@@ -15,11 +20,6 @@ import {
 	OverlayManager,
 	setupVisibilityListeners,
 } from "./bridge/index.js";
-import { destroyAndroidBridge } from "./android-bridge-cleanup.js";
-import {
-	checkIsThrottled,
-	getAndroidBridgeState,
-} from "./android-bridge-state.js";
 
 export {
 	ANDROID_EVENTS,

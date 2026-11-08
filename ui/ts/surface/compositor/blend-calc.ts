@@ -12,7 +12,11 @@ export function calculateBlendMode(
 	db: number,
 ): [number, number, number] {
 	if (baseMode === "multiply") {
-		return [((sr * dr) / 255) | 0, ((sg * dg) / 255) | 0, ((sb * db) / 255) | 0];
+		return [
+			((sr * dr) / 255) | 0,
+			((sg * dg) / 255) | 0,
+			((sb * db) / 255) | 0,
+		];
 	}
 	if (baseMode === "screen") {
 		return [
@@ -60,11 +64,7 @@ export function calculateBlendMode(
 		];
 	}
 	if (baseMode === "subtract") {
-		return [
-			Math.max(0, dr - sr),
-			Math.max(0, dg - sg),
-			Math.max(0, db - sb),
-		];
+		return [Math.max(0, dr - sr), Math.max(0, dg - sg), Math.max(0, db - sb)];
 	}
 	if (baseMode === "divide") {
 		return [
@@ -99,11 +99,7 @@ export function calculateBlendMode(
 		baseMode === "colordodgeglow"
 	) {
 		const dodgeCalc = (d: number, s: number) =>
-			d === 0
-				? 0
-				: s >= 255
-					? 255
-					: Math.min(255, ((d * 255) / (255 - s)) | 0);
+			d === 0 ? 0 : s >= 255 ? 255 : Math.min(255, ((d * 255) / (255 - s)) | 0);
 		return [dodgeCalc(dr, sr), dodgeCalc(dg, sg), dodgeCalc(db, sb)];
 	}
 	if (baseMode === "color-burn" || baseMode === "colorburn") {
@@ -165,4 +161,3 @@ export function calculateBlendMode(
 	}
 	return [sr, sg, sb];
 }
-

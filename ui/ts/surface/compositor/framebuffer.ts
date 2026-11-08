@@ -1,5 +1,5 @@
-import { blendBuffers } from "./composite-blend.js";
 import { composeSurfaceElements } from "./compose.js";
+import { blendBuffers } from "./composite-blend.js";
 
 export {
 	BAYER_MATRIX_4X4,

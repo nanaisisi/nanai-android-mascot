@@ -116,4 +116,3 @@ export function registerMediaCommandHandlers() {
 		await handleScheduleAddCommand(handler, args.slice(1));
 	});
 }
-

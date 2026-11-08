@@ -1,3 +1,4 @@
+import { calculateBlendMode } from "./blend-calc.js";
 import {
 	BAYER_MATRIX_4X4,
 	blendColor,
@@ -5,7 +6,6 @@ import {
 	blendLuminosity,
 	blendSaturation,
 } from "./blend-hsl.js";
-import { calculateBlendMode } from "./blend-calc.js";
 
 /**
  * Perform composite blending between source buffer and destination buffer.

@@ -188,10 +188,7 @@ export function handleMenuActionImpl(
 		return context.closeApp?.();
 	if (action === "close-menu") return;
 	if (action === "minimize") return context.minimizeApp?.();
-	if (
-		(action === "switch-to-ghost" || action === "switch-ghost") &&
-		payload
-	) {
+	if ((action === "switch-to-ghost" || action === "switch-ghost") && payload) {
 		const ghostName =
 			typeof payload === "string"
 				? payload
@@ -212,10 +209,7 @@ export function handleMenuActionImpl(
 				: (payload as any).name || (payload as any).ghostName;
 		if (ghostName) return gc.selectGhost(ghostName);
 	}
-	if (
-		(action === "switch-to-shell" || action === "switch-shell") &&
-		payload
-	) {
+	if ((action === "switch-to-shell" || action === "switch-shell") && payload) {
 		const shellName =
 			typeof payload === "string"
 				? payload

@@ -3,20 +3,6 @@ export function getSurfaceAnimationManagerExports() {
 }
 
 export {
-	_applyAnimationFrame,
-	_playAnimationPatterns,
-	_playOnePat,
-	_playTimelineFrames,
-	onCharSpoken,
-	onScriptEnd,
-	onTalkEnd,
-	onTalkStart,
-	playAnimationById,
-	playAnimationPatterns,
-	renderAnimationFrame,
-	waitForAnimation,
-} from "./animation/animation-playback.js";
-export {
 	clearPausedAnimations,
 	findAnimation,
 	getActiveAnimationCount,
@@ -32,6 +18,20 @@ export {
 	setAnimationOffset,
 	stopAnimation,
 } from "./animation/animation-options.js";
+export {
+	_applyAnimationFrame,
+	_playAnimationPatterns,
+	_playOnePat,
+	_playTimelineFrames,
+	onCharSpoken,
+	onScriptEnd,
+	onTalkEnd,
+	onTalkStart,
+	playAnimationById,
+	playAnimationPatterns,
+	renderAnimationFrame,
+	waitForAnimation,
+} from "./animation/animation-playback.js";
 export {
 	AnimationScheduler,
 	createPlaceholderCanvas,

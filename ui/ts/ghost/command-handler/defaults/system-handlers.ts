@@ -249,4 +249,3 @@ export function registerSystemCommandHandlers() {
 		setAlignmentToDesktop(handler, args[1]);
 	});
 }
-

@@ -4,7 +4,6 @@
  */
 
 export const shioriNotifyEnvironment = {
-
 	/**
 	 * OS情報通知 (OnNotifyOSInfo) を送信 (UKADOC 規格準拠)
 	 */

@@ -4,7 +4,6 @@
  */
 
 export const shioriNotifyTerms = {
-
 	/**
 	 * 利用規約・ダイアログ通知 (UKADOC dialogbox)
 	 */

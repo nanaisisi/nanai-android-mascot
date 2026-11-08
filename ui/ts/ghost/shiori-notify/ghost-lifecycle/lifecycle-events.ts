@@ -4,7 +4,6 @@
  */
 
 export const shioriNotifyLifecycleEvents = {
-
 	/**
 	 * ゴースト・シェル切替およびライフサイクル通知 (UKADOC boot-close-change)
 	 */

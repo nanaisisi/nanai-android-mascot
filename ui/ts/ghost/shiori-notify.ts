@@ -7,12 +7,12 @@
  * baseware が無視する規約のため、応答は保持せず fire-and-forget で送る。
  */
 
+import { shioriNotifyApplicationHeadline } from "./shiori-notify/application-headline.js";
+import { shioriNotifyBalloonSurface } from "./shiori-notify/balloon-surface.js";
 import { shioriNotifyCore } from "./shiori-notify/core.js";
 import { shioriNotifyEnvironment } from "./shiori-notify/environment.js";
 import { shioriNotifyGhostLifecycle } from "./shiori-notify/ghost-lifecycle.js";
 import { shioriNotifyInputEvents } from "./shiori-notify/input-events.js";
-import { shioriNotifyBalloonSurface } from "./shiori-notify/balloon-surface.js";
-import { shioriNotifyApplicationHeadline } from "./shiori-notify/application-headline.js";
 import { shioriNotifySystem } from "./shiori-notify/system.js";
 
 export const shioriNotifyMethods = {

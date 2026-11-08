@@ -77,7 +77,10 @@ export function collectChoices(
 export function collectSurfaces(ast: SakuraAstNode): number[] {
 	const surfaces: number[] = [];
 	traverseAst(ast, (node) => {
-		if (node.nodeType === "command" && (node.token as any)?.type === "surface") {
+		if (
+			node.nodeType === "command" &&
+			(node.token as any)?.type === "surface"
+		) {
 			surfaces.push((node.token as any).value);
 		}
 	});
@@ -145,7 +148,10 @@ export function collectAnimations(
 ): Array<{ id: number | string; wait: boolean }> {
 	const animations: Array<{ id: number | string; wait: boolean }> = [];
 	traverseAst(ast, (node) => {
-		if (node.nodeType === "command" && (node.token as any)?.type === "animation") {
+		if (
+			node.nodeType === "command" &&
+			(node.token as any)?.type === "animation"
+		) {
 			animations.push({
 				id: (node.token as any).animId ?? 0,
 				wait: (node.token as any).wait === true,
@@ -223,4 +229,3 @@ export function stripWaitsFromAst(ast: SakuraAstNode): SakuraAstNode {
 		children: newChildren,
 	};
 }
-

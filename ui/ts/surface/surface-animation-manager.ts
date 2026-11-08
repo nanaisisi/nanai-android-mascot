@@ -237,4 +237,7 @@ export class SurfaceAnimationManager {
 }
 
 // Inherit playback methods on prototype as well for prototype lookup
-Object.assign(SurfaceAnimationManager.prototype, surfaceAnimationPlaybackMethods);
+Object.assign(
+	SurfaceAnimationManager.prototype,
+	surfaceAnimationPlaybackMethods,
+);

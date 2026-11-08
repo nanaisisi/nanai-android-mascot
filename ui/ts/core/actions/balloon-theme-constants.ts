@@ -47,4 +47,3 @@ export const BALLOON_CSS_VARS = [
 	"--balloon-font-shadow-style",
 	"--balloon-font-shadowstyle",
 ];
-

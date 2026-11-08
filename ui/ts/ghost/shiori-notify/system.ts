@@ -4,7 +4,6 @@
  */
 
 export const shioriNotifySystem = {
-
 	async sendSysSuspend(this: unknown) {
 		return await this.sendShioriNotify("OnSysSuspend", []);
 	},

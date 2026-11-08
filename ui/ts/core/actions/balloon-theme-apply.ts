@@ -6,7 +6,10 @@ import {
 	MIN_BALLOON_SCALE,
 } from "./balloon-theme-constants.js";
 
-export function applyBalloonScale(manager: any, actionOrScale: string | number) {
+export function applyBalloonScale(
+	manager: any,
+	actionOrScale: string | number,
+) {
 	const prevScale = manager.userScale || 1;
 	const prevPercent = Math.round(prevScale * 100);
 
@@ -84,7 +87,10 @@ export function applyBalloonScale(manager: any, actionOrScale: string | number) 
 	return { scale, finalScale, percent };
 }
 
-export async function setBalloonThemeImpl(manager: any, themeName: string | undefined) {
+export async function setBalloonThemeImpl(
+	manager: any,
+	themeName: string | undefined,
+) {
 	if (!themeName || themeName === manager.currentTheme) {
 		return;
 	}

@@ -1,4 +1,4 @@
-import { isTauriAvailable, invoke } from "../tauri-helper.js";
+import { invoke, isTauriAvailable } from "../tauri-helper.js";
 import {
 	buildInstallBeginArgs,
 	buildInstallCompleteArgs,
@@ -29,19 +29,23 @@ export async function installGhostFromMenuImpl(context: any) {
 		if (importedGhost) {
 			await gc?.sendShioriEvent?.(
 				"OnInstallCompleteEx",
-				buildInstallCompleteExArgs("ghost", (result as any).name, (result as any).path || ""),
+				buildInstallCompleteExArgs(
+					"ghost",
+					(result as any).name,
+					(result as any).path || "",
+				),
 			);
 			await gc?.sendShioriEvent?.(
 				"OnInstallComplete",
-				buildInstallCompleteArgs("ghost", (result as any).name, (result as any).path || ""),
+				buildInstallCompleteArgs(
+					"ghost",
+					(result as any).name,
+					(result as any).path || "",
+				),
 			);
-			context.showBalloon?.(
-				`ゴースト「${importedGhost.name}」を導入しました`,
-			);
+			context.showBalloon?.(`ゴースト「${importedGhost.name}」を導入しました`);
 			setTimeout(() => context.hideBalloon?.(), 2000);
-			await context.ghostController?.selectGhost?.(
-				importedGhost.name,
-			);
+			await context.ghostController?.selectGhost?.(importedGhost.name);
 			return;
 		}
 		const importedBalloon = context.availableBalloons?.find(
@@ -63,9 +67,7 @@ export async function installGhostFromMenuImpl(context: any) {
 				buildInstallCompleteArgs("balloon", importedBalloon.name),
 			);
 			await context.setBalloonTheme(importedBalloon.dir_name);
-			context.showBalloon(
-				`バルーン「${importedBalloon.name}」を導入しました`,
-			);
+			context.showBalloon(`バルーン「${importedBalloon.name}」を導入しました`);
 			setTimeout(() => context.hideBalloon(), 2000);
 			return;
 		}

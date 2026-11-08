@@ -9,8 +9,8 @@ export type { SakuraAstNode } from "./ast-types.js";
 export { traverseAst } from "./ast-types.js";
 export {
 	calculateAstTextLength,
-	collectAnimations,
 	collectAnchors,
+	collectAnimations,
 	collectAstTokens,
 	collectAstTokensByLifetime,
 	collectChoices,

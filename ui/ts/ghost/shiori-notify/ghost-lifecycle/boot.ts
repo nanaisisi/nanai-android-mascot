@@ -6,7 +6,6 @@
 import { isTauriAvailable } from "../../../core/tauri-helper.js";
 
 export const shioriNotifyBoot = {
-
 	/**
 	 * UKADOC capability Notify イベントを送信 (SHIORI 実行初期)
 	 */

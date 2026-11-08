@@ -4,7 +4,6 @@
  */
 
 export const shioriNotifyApplicationHeadline = {
-
 	/**
 	 * RSS / ヘッドラインセンス通知
 	 */

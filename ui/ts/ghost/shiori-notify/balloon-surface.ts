@@ -4,7 +4,6 @@
  */
 
 export const shioriNotifyBalloonSurface = {
-
 	/**
 	 * サーフィス・バルーン状態通知 (UKADOC surface / balloon)
 	 */

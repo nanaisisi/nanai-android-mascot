@@ -2,10 +2,6 @@
  * surfaces.txt SERIKO アニメーションハンドラー
  */
 
-import {
-	handleAnimationCollision,
-	handleAnimationCollisionEx,
-} from "./animation-collision.js";
 import { splitProtectedCommas } from "./utils.js";
 
 export {

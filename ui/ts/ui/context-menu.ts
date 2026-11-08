@@ -3,7 +3,7 @@ import {
 	isTauriAvailable,
 	startDraggingWindow,
 } from "../core/tauri-helper.js";
-import { handleMenuKeydown, MENU_KEY_MAP } from "./context-menu-keyboard.js";
+import { handleMenuKeydown } from "./context-menu-keyboard.js";
 import { setupContextMenuSync } from "./context-menu-sync.js";
 import { MenuDispatcher } from "./menu-dispatcher.js";
 import { MenuSubmenuRenderer } from "./menu-submenu-renderer.js";

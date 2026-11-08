@@ -8,29 +8,23 @@ import {
 	applyBalloonScale,
 	setBalloonThemeImpl,
 } from "./balloon-theme-apply.js";
-import {
-	BALLOON_SCALE_MAP,
-	BALLOON_THEMES,
-	MAX_BALLOON_SCALE,
-	MIN_BALLOON_SCALE,
-	THEME_LABELS,
-} from "./balloon-theme-constants.js";
+import { BALLOON_THEMES, THEME_LABELS } from "./balloon-theme-constants.js";
 import {
 	computeNineSliceLayout,
 	resetBalloonDescriptDom,
 } from "./balloon-theme-dom.js";
 
 export {
+	applyBalloonScale,
+	setBalloonThemeImpl,
+} from "./balloon-theme-apply.js";
+export {
 	BALLOON_SCALE_MAP,
 	BALLOON_THEMES,
 	MAX_BALLOON_SCALE,
 	MIN_BALLOON_SCALE,
 	THEME_LABELS,
 } from "./balloon-theme-constants.js";
-export {
-	applyBalloonScale,
-	setBalloonThemeImpl,
-} from "./balloon-theme-apply.js";
 
 /**
  * バルーンスキン・テーマ・9スライスおよびタイポグラフィ統合マネージャー

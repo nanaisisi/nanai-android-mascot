@@ -1,5 +1,9 @@
 // @ts-nocheck
-import { convertFileSrc, emit, isTauriAvailable } from "../core/tauri-helper.js";
+import {
+	convertFileSrc,
+	emit,
+	isTauriAvailable,
+} from "../core/tauri-helper.js";
 
 export async function applySurfaceImageToDom(
 	controller: any,
@@ -17,8 +21,16 @@ export async function applySurfaceImageToDom(
 		placeholder: any;
 	},
 ) {
-	const { scopeId, surfaceId, ghostPath, shell, extraLayers, isStale, img, placeholder } =
-		context;
+	const {
+		scopeId,
+		surfaceId,
+		ghostPath,
+		shell,
+		extraLayers,
+		isStale,
+		img,
+		placeholder,
+	} = context;
 
 	let transparentSrc = src;
 	if (src && controller.app?.surfaceManager?.processChromaKey) {
@@ -32,7 +44,10 @@ export async function applySurfaceImageToDom(
 		}
 	}
 
-	if (transparentSrc && controller.app?.surfaceManager?.composeSurfaceElements) {
+	if (
+		transparentSrc &&
+		controller.app?.surfaceManager?.composeSurfaceElements
+	) {
 		try {
 			const resolveLayerImage = async (fileName: string) => {
 				const resolveId =
@@ -42,23 +57,15 @@ export async function applySurfaceImageToDom(
 				let layerPnaSrc = null;
 
 				if (isTauriAvailable()) {
-					layerSrc = await controller.loadSurfaceAsset(
-						"load_surface_image",
-						ghostPath,
-						shell,
-						resolveId,
-					).catch(() => null);
+					layerSrc = await controller
+						.loadSurfaceAsset("load_surface_image", ghostPath, shell, resolveId)
+						.catch(() => null);
 					if (!layerSrc) return null;
-					layerPnaSrc = await controller.loadSurfaceAsset(
-						"load_surface_pna",
-						ghostPath,
-						shell,
-						resolveId,
-					).catch(() => null);
+					layerPnaSrc = await controller
+						.loadSurfaceAsset("load_surface_pna", ghostPath, shell, resolveId)
+						.catch(() => null);
 				} else {
-					layerSrc = convertFileSrc(
-						`${ghostPath}/shell/${shell}/${fileName}`,
-					);
+					layerSrc = convertFileSrc(`${ghostPath}/shell/${shell}/${fileName}`);
 					layerPnaSrc = convertFileSrc(
 						`${ghostPath}/shell/${shell}/${pnaFileName}`,
 					);
@@ -77,13 +84,14 @@ export async function applySurfaceImageToDom(
 				}
 			};
 
-			transparentSrc = await controller.app.surfaceManager.composeSurfaceElements(
-				surfaceId,
-				transparentSrc,
-				resolveLayerImage,
-				scopeId,
-				extraLayers,
-			);
+			transparentSrc =
+				await controller.app.surfaceManager.composeSurfaceElements(
+					surfaceId,
+					transparentSrc,
+					resolveLayerImage,
+					scopeId,
+					extraLayers,
+				);
 		} catch (_e) {}
 	}
 

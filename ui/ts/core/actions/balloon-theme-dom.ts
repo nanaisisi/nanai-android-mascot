@@ -70,4 +70,3 @@ export function resetBalloonDescriptDom(userScale: number, app: any) {
 		app.elements.balloonDisplay.style.top = "";
 	}
 }
-

@@ -6,11 +6,6 @@
 
 import { TouchGestureEvent } from "./touch-gesture-event.js";
 import {
-	getTouchAngle,
-	getTouchCenter,
-	getTouchDistance,
-} from "./touch-helpers.js";
-import {
 	handleDragEndAndSnap,
 	processMultiTouchMove,
 	processSingleTouchMove,
@@ -149,19 +144,34 @@ export class TouchGestureRecognizer {
 		this._boundTouchEnd = this._handleTouchEnd.bind(this);
 		this._boundTouchCancel = this._handleTouchCancel.bind(this);
 
-		if (this.element && typeof (this.element as any).addEventListener === "function") {
-			(this.element as any).addEventListener("touchstart", this._boundTouchStart, {
-				passive: false,
-			});
-			(this.element as any).addEventListener("touchmove", this._boundTouchMove, {
-				passive: false,
-			});
+		if (
+			this.element &&
+			typeof (this.element as any).addEventListener === "function"
+		) {
+			(this.element as any).addEventListener(
+				"touchstart",
+				this._boundTouchStart,
+				{
+					passive: false,
+				},
+			);
+			(this.element as any).addEventListener(
+				"touchmove",
+				this._boundTouchMove,
+				{
+					passive: false,
+				},
+			);
 			(this.element as any).addEventListener("touchend", this._boundTouchEnd, {
 				passive: false,
 			});
-			(this.element as any).addEventListener("touchcancel", this._boundTouchCancel, {
-				passive: false,
-			});
+			(this.element as any).addEventListener(
+				"touchcancel",
+				this._boundTouchCancel,
+				{
+					passive: false,
+				},
+			);
 		}
 	}
 
@@ -243,10 +253,22 @@ export class TouchGestureRecognizer {
 			this.element &&
 			typeof (this.element as any).removeEventListener === "function"
 		) {
-			(this.element as any).removeEventListener("touchstart", this._boundTouchStart);
-			(this.element as any).removeEventListener("touchmove", this._boundTouchMove);
-			(this.element as any).removeEventListener("touchend", this._boundTouchEnd);
-			(this.element as any).removeEventListener("touchcancel", this._boundTouchCancel);
+			(this.element as any).removeEventListener(
+				"touchstart",
+				this._boundTouchStart,
+			);
+			(this.element as any).removeEventListener(
+				"touchmove",
+				this._boundTouchMove,
+			);
+			(this.element as any).removeEventListener(
+				"touchend",
+				this._boundTouchEnd,
+			);
+			(this.element as any).removeEventListener(
+				"touchcancel",
+				this._boundTouchCancel,
+			);
 		}
 		this._listeners.clear();
 		this._activeTouches.clear();

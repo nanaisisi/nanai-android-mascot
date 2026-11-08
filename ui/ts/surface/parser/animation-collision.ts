@@ -170,4 +170,3 @@ export function handleAnimationCollisionEx(
 		anim.collisions.push(col);
 	});
 }
-

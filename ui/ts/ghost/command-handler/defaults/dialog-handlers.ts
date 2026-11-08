@@ -91,4 +91,3 @@ export function registerDialogCommandHandlers() {
 		await handleOpenDialogCommand(handler, args);
 	});
 }
-

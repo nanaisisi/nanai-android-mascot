@@ -20,7 +20,10 @@ export const MENU_KEY_MAP: Record<string, string> = {
 	x: "close-all", // 全て終了 (Exit all)
 };
 
-export function handleMenuKeydown(e: KeyboardEvent, dispatcher: MenuDispatcher): void {
+export function handleMenuKeydown(
+	e: KeyboardEvent,
+	dispatcher: MenuDispatcher,
+): void {
 	if (e.key === "Escape") {
 		dispatcher.dispatchAction("close-menu");
 		return;
@@ -61,4 +64,3 @@ export function handleMenuKeydown(e: KeyboardEvent, dispatcher: MenuDispatcher):
 		dispatcher.dispatchAction(action);
 	}
 }
-

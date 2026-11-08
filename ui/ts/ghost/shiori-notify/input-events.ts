@@ -4,7 +4,6 @@
  */
 
 export const shioriNotifyInputEvents = {
-
 	/**
 	 * URL ドロップイベント通知 (UKADOC url-drop)
 	 */

@@ -128,4 +128,3 @@ export function handleSystemMenuAction(context: any, action: string): boolean {
 	}
 	return false;
 }
-

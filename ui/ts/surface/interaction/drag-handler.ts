@@ -156,7 +156,10 @@ export function setupGhostDragging(
 		lastX = clientX;
 		lastY = clientY;
 
-		if (!dragInternalState.hasMoved && Math.hypot(deltaX, deltaY) > DRAG_MIN_MOVE) {
+		if (
+			!dragInternalState.hasMoved &&
+			Math.hypot(deltaX, deltaY) > DRAG_MIN_MOVE
+		) {
 			dragInternalState.hasMoved = true;
 			longPress.cancel();
 		}

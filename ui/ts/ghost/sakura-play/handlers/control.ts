@@ -4,9 +4,13 @@
  */
 
 export async function handlePause(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	player: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_app: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	token: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	context: any,
 ) {
 	const {
@@ -38,9 +42,13 @@ export async function handlePause(
 }
 
 export function handleQuickToggle(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	player: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_app: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	token: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	context: any,
 ) {
 	if (typeof token.value === "boolean") {
@@ -52,9 +60,13 @@ export function handleQuickToggle(
 }
 
 export async function handleWait(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	player: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_app: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	token: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	context: any,
 ) {
 	player.playbackController?.notifyWait?.(token.value);
@@ -73,45 +85,65 @@ export async function handleWait(
 }
 
 export function handleTimeout(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	player: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_app: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_token: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_context: any,
 ) {
 	player.timeCritical = true;
 }
 
 export function handleChoiceTimeout(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	player: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_app: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	token: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_context: any,
 ) {
 	player.choiceTimeout = token.timeout;
 }
 
 export function handleBalloonTimeout(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	player: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_app: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	token: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_context: any,
 ) {
 	player.balloonTimeout = token.timeout;
 }
 
 export async function handleHalt(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_player: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	app: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_token: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_context: any,
 ) {
 	await app.ghostController?.closeGhost?.();
 }
 
 export function handleSyncToggle(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	player: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_app: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	token: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_context: any,
 ) {
 	if (typeof token.value === "boolean") {
@@ -125,14 +157,19 @@ export function handleSyncToggle(
 }
 
 export async function handleCommand(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	player: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_app: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	token: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_context: any,
 ) {
 	await player.commandHandler.runCommand(token.args);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function handleEnd(player: any, app: any, _token: any, context: any) {
 	app.surfaceManager?.onTalkEnd(player.currentScope);
 	app.surfaceManager?.onScriptEnd(0);

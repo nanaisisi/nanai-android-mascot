@@ -95,6 +95,7 @@ describe("SERIKO and Surface Change Event Coordination (Slot-08 Cycle 8)", () =>
 	});
 
 	it("suppresses lip-sync when seriko talk is disabled", () => {
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const mockManager: any = {
 			manager: {},
 			animationsForTrigger: vi
@@ -119,6 +120,7 @@ describe("SERIKO and Surface Change Event Coordination (Slot-08 Cycle 8)", () =>
 	it("handles scaling draw method in _applyAnimationFrame", async () => {
 		const setScale = vi.fn();
 		const notifyFrameStep = vi.fn();
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const instance: any = {
 			manager: {
 				app: { ghostController: {} },
@@ -152,6 +154,7 @@ describe("SERIKO and Surface Change Event Coordination (Slot-08 Cycle 8)", () =>
 	});
 
 	it("manages scaling and serikotalk state in SurfaceAnimationManager", () => {
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const sam = new SurfaceAnimationManager({} as any);
 		expect(sam.isSerikoTalkEnabled(0)).toBe(true);
 		expect(sam.getBaseScalingOffset(0)).toEqual({ scaleX: 100, scaleY: 100 });

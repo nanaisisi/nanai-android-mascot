@@ -6,7 +6,9 @@ import {
 import { createMockElement } from "../helpers.js";
 
 describe("TouchGestureRecognizer - Pinch & Rotate", () => {
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let element;
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let recognizer;
 
 	beforeEach(() => {

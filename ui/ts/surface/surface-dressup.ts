@@ -13,6 +13,7 @@ import { methodToString } from "./shell-manifest.js";
 
 export const surfaceDressupMethods = {
 	async bindDressup(
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		this: any,
 		category: string,
 		part: string = "",
@@ -55,6 +56,7 @@ export const surfaceDressupMethods = {
 	},
 
 	activeBindLayers(
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		this: any,
 		scopeId: number = 0,
 		surfaceId: number | string | null = null,
@@ -62,15 +64,19 @@ export const surfaceDressupMethods = {
 		if (!this.shellManifest) return [];
 		const sid = String(surfaceId ?? this.currentSurfaceIdFor(scopeId));
 		const animList = this.animations[sid] ?? [];
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const animById = new Map<string, any>(
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			animList.map((a: any) => [String(a.id), a]),
 		);
 
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const layers: any[] = [];
 		const activeIds = new Set(this.activeBindAnimationIds(scopeId));
 
 		const insertedIds = new Set();
 		for (const animId of activeIds) {
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const anim: any = animById.get(String(animId));
 			for (const p of anim?.patterns ?? []) {
 				const typeLower = (p.type || "").toLowerCase();
@@ -84,9 +90,11 @@ export const surfaceDressupMethods = {
 		}
 
 		const visited = new Set();
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const expandAnim = (id: any) => {
 			if (visited.has(id)) return;
 			visited.add(id);
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const anim: any = animById.get(String(id));
 			if (!anim) return;
 			for (const pattern of anim.patterns ?? []) {
@@ -127,17 +135,25 @@ export const surfaceDressupMethods = {
 		return layers;
 	},
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	activeBindAnimationIds(this: any, scopeId: number = 0): number[] {
 		if (!this.shellManifest) return [];
-		return bindGroupsForScope(this.shellManifest, scopeId)
-			.filter((group: any) =>
-				this.dressupState.get(dressupKey(scopeId, group.category, group.part)),
-			)
-			.flatMap((group: any) => bindAnimationIds(group.number, group.add_ids))
-			.sort((a: number, b: number) => a - b);
+		return (
+			bindGroupsForScope(this.shellManifest, scopeId)
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+				.filter((group: any) =>
+					this.dressupState.get(
+						dressupKey(scopeId, group.category, group.part),
+					),
+				)
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
+				.flatMap((group: any) => bindAnimationIds(group.number, group.add_ids))
+				.sort((a: number, b: number) => a - b)
+		);
 	},
 
 	planCacheKey(
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		this: any,
 		surfaceId: number | string,
 		scopeId: number = 0,
@@ -146,6 +162,7 @@ export const surfaceDressupMethods = {
 	},
 
 	async getCompositionPlan(
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		this: any,
 		surfaceId: number | string,
 		scopeId: number = 0,
@@ -162,6 +179,7 @@ export const surfaceDressupMethods = {
 			return this.planCache.get(key);
 		}
 		try {
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const plan: any = await invoke("surface_composition_plan", {
 				ghostName,
 				shellName: gc?.currentShell || "master",
@@ -176,9 +194,12 @@ export const surfaceDressupMethods = {
 		}
 	},
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	planToRenderLayers(this: any, plan: any, scopeId: number = 0) {
 		if (!plan?.layers?.length) return null;
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const elements: any[] = [];
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const bindLayers: any[] = [];
 		let hasElement = false;
 		for (const layer of plan.layers) {

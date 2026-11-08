@@ -13,6 +13,7 @@ export const updateMethods = {
 		targetGhostName: string | null = null,
 		options: { checkOnly?: boolean } = {},
 	) {
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const gc = (this as any).ghostController;
 		const checkOnly = options?.checkOnly === true;
 		const ghostName =
@@ -22,6 +23,7 @@ export const updateMethods = {
 
 		console.log(`🌐 ネットワーク更新プロセス開始: ${ghostName}`);
 
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const execRes: any = await gc.sendShioriEvent("OnUpdateProcessExec", [
 			"manual",
 		]);
@@ -39,14 +41,18 @@ export const updateMethods = {
 			);
 		}
 
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this as any).showBalloon?.("🌐 ネットワーク更新を確認中...");
 
 		if (!isTauriAvailable()) {
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			await (this as any).wait(1500);
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(this as any).showBalloon?.(
 				"⚠️ ブラウザ環境のためネットワーク更新はシミュレーションのみです",
 			);
 			await gc.sendShioriEvent("OnUpdateFailure", buildUpdateArgs("fileio"));
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			await (this as any).sendUpdateResultSummary(
 				ghostName,
 				false,
@@ -57,15 +63,18 @@ export const updateMethods = {
 		}
 
 		try {
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const checkResult: any = await invoke("check_ghost_update", {
 				ghostName,
 				ghostPath,
 			});
 			console.log("🔍 更新チェック結果:", checkResult);
 
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const fileNames = checkResult.update_files.map((f: any) => f.path);
 
 			if (checkOnly) {
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				(this as any).showBalloon?.(checkResult.message);
 				await gc.sendShioriEvent(
 					"OnUpdateCheckComplete",
@@ -74,6 +83,7 @@ export const updateMethods = {
 						fileNames.join(","),
 					),
 				);
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				await (this as any).sendUpdateResultSummary(
 					ghostName,
 					true,
@@ -86,10 +96,12 @@ export const updateMethods = {
 
 			if (!checkResult.has_update || checkResult.update_files.length === 0) {
 				console.log("✨ 更新ファイルなし (none)");
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				(this as any).showBalloon?.(
 					"✨ 最新の状態です。更新ファイルはありません。",
 				);
 				await gc.sendShioriEvent("OnUpdateComplete", buildUpdateArgs("none"));
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				await (this as any).sendUpdateResultSummary(ghostName, true, 0, null);
 				return;
 			}
@@ -101,6 +113,7 @@ export const updateMethods = {
 				buildUpdateArgs(totalMinusOne, fileListStr),
 			);
 
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(this as any).showBalloon?.(
 				`📥 更新ファイル ${checkResult.total_count} 件をダウンロード中...`,
 			);
@@ -117,6 +130,7 @@ export const updateMethods = {
 			}
 
 			try {
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				const updateResult: any = await invoke("execute_ghost_update", {
 					ghostName,
 					ghostPath,
@@ -140,6 +154,7 @@ export const updateMethods = {
 							ghostName,
 						]);
 					}
+					// biome-ignore lint/suspicious/noExplicitAny: automated fix
 					await (this as any).sendUpdateResultSummary(
 						ghostName,
 						true,
@@ -155,9 +170,11 @@ export const updateMethods = {
 							updateResult.updated_files?.join(",") ?? "",
 						),
 					);
+					// biome-ignore lint/suspicious/noExplicitAny: automated fix
 					(this as any).showBalloon?.(
 						`❌ ネットワーク更新失敗: ${failureReason}`,
 					);
+					// biome-ignore lint/suspicious/noExplicitAny: automated fix
 					await (this as any).sendUpdateResultSummary(
 						ghostName,
 						false,
@@ -183,7 +200,9 @@ export const updateMethods = {
 					"OnUpdateCheckFailure",
 					buildUpdateArgs(reason),
 				);
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				(this as any).showBalloon?.(`❌ 更新チェック失敗: ${reason}`);
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				await (this as any).sendUpdateResultSummary(
 					ghostName,
 					false,
@@ -195,12 +214,14 @@ export const updateMethods = {
 			}
 
 			await gc.sendShioriEvent("OnUpdateFailure", buildUpdateArgs(reason));
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			await (this as any).sendUpdateResultSummary(
 				ghostName,
 				false,
 				reason,
 				failedFile,
 			);
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(this as any).showBalloon?.(
 				`❌ 更新処理中にエラーが発生しました: ${err}`,
 			);
@@ -218,12 +239,14 @@ export const updateMethods = {
 		failedFile: string | null,
 		checkOnly: boolean = false,
 	) {
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const gc = (this as any).ghostController;
 		const sep = String.fromCharCode(1); // \1 (バイト値1)
 		const parts = ["ghost", success ? "OK" : "NG", String(detail)];
 		if (failedFile) parts.push(failedFile);
 		const baseEvent = checkOnly ? "OnUpdateCheckResult" : "OnUpdateResult";
 
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const resEx: any = await gc.sendShioriEvent(`${baseEvent}Ex`, [
 			[ghostName, ...parts].join(sep),
 		]);

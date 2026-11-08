@@ -3,6 +3,7 @@
  * @brief SakuraPlaybackController 向けウェイト・倍率・即時表示制御ロジック
  */
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function setWaitMultiplier(this: any, ratio: number) {
 	const valid = typeof ratio === "number" && !Number.isNaN(ratio) && ratio >= 0;
 	this.waitMultiplier = valid ? ratio : 1.0;
@@ -12,10 +13,12 @@ export function setWaitMultiplier(this: any, ratio: number) {
 	});
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function getWaitMultiplier(this: any): number {
 	return this.waitMultiplier;
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function setBalloonWait(this: any, param: string | number | undefined) {
 	if (param === undefined || param === null || param === "" || param === "1") {
 		this.resetBalloonWait();
@@ -49,6 +52,7 @@ export function setBalloonWait(this: any, param: string | number | undefined) {
 	});
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function resetBalloonWait(this: any) {
 	this.waitMultiplier = 1.0;
 	this.charWaitMs = null;
@@ -59,6 +63,7 @@ export function resetBalloonWait(this: any) {
 }
 
 export function calculateWait(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	this: any,
 	baseMs: number,
 	isCharWait: boolean = false,
@@ -71,6 +76,7 @@ export function calculateWait(
 	return Math.round(ms * this.waitMultiplier);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function setQuickMode(this: any, enable?: boolean) {
 	const prev = this.isQuickMode;
 	this.isQuickMode = typeof enable === "boolean" ? enable : !this.isQuickMode;

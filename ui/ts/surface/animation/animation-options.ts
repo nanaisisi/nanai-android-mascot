@@ -65,6 +65,7 @@ export function parseAnimationOptions(options = []) {
  * @returns {boolean}
  */
 export function isBlockedByExclusive(target = 0, scopeIdOrAnimId, animIdParam) {
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId, animId;
 	if (isInstance(target)) {
 		instance = target;
@@ -93,6 +94,7 @@ export function isBlockedByExclusive(target = 0, scopeIdOrAnimId, animIdParam) {
  * @returns {object|null}
  */
 export function findAnimation(target, animIdOrNameOrScopeId, scopeIdParam = 0) {
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, animIdOrName, scopeId;
 	if (isInstance(target)) {
 		instance = target;
@@ -134,6 +136,7 @@ export function isAnimationRunning(
 	scopeIdOrAnimId,
 	animIdOrNameParam,
 ) {
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId, animIdOrName;
 	if (isInstance(target)) {
 		instance = target;
@@ -166,6 +169,7 @@ export function isAnimationRunning(
  * @param {number|string} [animIdOrNameParam]
  */
 export function stopAnimation(target = 0, scopeIdOrAnimId, animIdOrNameParam) {
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId, animIdOrName;
 	if (isInstance(target)) {
 		instance = target;
@@ -205,6 +209,7 @@ export function setAnimationOffset(
 	xOrY = 0,
 	yParam = 0,
 ) {
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId, animIdOrName, x, y;
 	if (isInstance(target)) {
 		instance = target;
@@ -237,6 +242,7 @@ export function getAnimationOffset(
 	scopeIdOrAnimId,
 	animIdOrNameParam,
 ) {
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId, animIdOrName;
 	if (isInstance(target)) {
 		instance = target;
@@ -254,6 +260,7 @@ export function getAnimationOffset(
 }
 
 export function pauseAnimation(target = 0, scopeIdOrAnimId, animIdOrNameParam) {
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId, animIdOrName;
 	if (isInstance(target)) {
 		instance = target;
@@ -275,6 +282,7 @@ export function resumeAnimation(
 	scopeIdOrAnimId,
 	animIdOrNameParam,
 ) {
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId, animIdOrName;
 	if (isInstance(target)) {
 		instance = target;
@@ -296,6 +304,7 @@ export function isAnimationPaused(
 	scopeIdOrAnimId,
 	animIdOrNameParam,
 ) {
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId, animIdOrName;
 	if (isInstance(target)) {
 		instance = target;
@@ -313,6 +322,7 @@ export function isAnimationPaused(
 }
 
 export function clearPausedAnimations(target = 0, scopeIdParam = 0) {
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId;
 	if (isInstance(target)) {
 		instance = target;
@@ -332,6 +342,7 @@ export function clearPausedAnimations(target = 0, scopeIdParam = 0) {
  * @returns {number}
  */
 export function getActiveAnimationCount(target = 0, scopeIdParam = 0) {
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId;
 	if (isInstance(target)) {
 		instance = target;
@@ -358,6 +369,7 @@ export function getActiveAnimationCount(target = 0, scopeIdParam = 0) {
  * @returns {object[]}
  */
 export function getActiveAnimations(target = 0, scopeIdParam = 0) {
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId;
 	if (isInstance(target)) {
 		instance = target;
@@ -389,6 +401,7 @@ export function getActiveAnimations(target = 0, scopeIdParam = 0) {
  * @returns {import('../surface-parser.js').CollisionArea[]}
  */
 export function getActiveCollisions(target = 0, scopeIdParam = 0) {
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId;
 	if (isInstance(target)) {
 		instance = target;

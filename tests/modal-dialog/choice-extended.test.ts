@@ -7,8 +7,11 @@ import {
 } from "./helpers.js";
 
 describe("ModalDialogController Choice & Extended Events (Slot-11 Cycle 8)", () => {
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let app: any;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let controller: any;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let sentEvents: any[];
 
 	beforeEach(() => {

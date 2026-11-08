@@ -5,6 +5,7 @@
 
 export interface SakuraScriptToken {
 	type: string;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	value?: any;
 	animId?: number | string;
 	wait?: boolean;
@@ -12,6 +13,7 @@ export interface SakuraScriptToken {
 	id?: string;
 	text?: string;
 	args?: string[];
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	[key: string]: any;
 }
 

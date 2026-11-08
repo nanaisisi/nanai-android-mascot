@@ -28,9 +28,11 @@ function preloadImage(url: string | null): Promise<void> {
 	});
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function applyShellMenuTheme(activeShell: any) {
 	const rootStyle = document.documentElement.style;
 	const theme = activeShell?.menu_theme;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const setOrRemove = (property: string, value: any) => {
 		if (value) rootStyle.setProperty(property, value);
 		else rootStyle.removeProperty(property);
@@ -74,8 +76,10 @@ export function applyShellMenuTheme(activeShell: any) {
 		const fullPath = shellPath
 			? `${shellPath}/${relStr.replace(/\\/g, "/")}`
 			: relStr;
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		return (globalThis as any).__TAURI__?.core?.convertFileSrc
-			? (globalThis as any).__TAURI__.core.convertFileSrc(fullPath)
+			? // biome-ignore lint/suspicious/noExplicitAny: automated fix
+				(globalThis as any).__TAURI__.core.convertFileSrc(fullPath)
 			: fullPath;
 	};
 

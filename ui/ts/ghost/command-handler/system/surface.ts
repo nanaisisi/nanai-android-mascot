@@ -6,6 +6,7 @@
 import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 import { scriptLifetimeState } from "../env.js";
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleSetPropertyCommand(handler: any, args: string[]) {
 	const key = args[2] ?? "";
 	const val = args[3] ?? "";
@@ -22,6 +23,7 @@ export async function handleSetPropertyCommand(handler: any, args: string[]) {
 /**
  * SERIKO口パク有効化トグル (\![set,serikotalk,true/false])
  */
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleSetSerikoTalkCommand(handler: any, args: string[]) {
 	const valStr = String(args[2] ?? "true")
 		.trim()
@@ -37,6 +39,7 @@ export async function handleSetSerikoTalkCommand(handler: any, args: string[]) {
  * 他ゴーストサーフィス変更通知トグル (\![set,othersurfacechange,true/false])
  */
 export async function handleSetOtherSurfaceChangeCommand(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
 	args: string[],
 ) {
@@ -49,6 +52,7 @@ export async function handleSetOtherSurfaceChangeCommand(
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleEnterMode(handler: any, args: string[]) {
 	const mode = (args[1] ?? "").toLowerCase();
 	if (mode) {
@@ -68,6 +72,7 @@ export async function handleEnterMode(handler: any, args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleLeaveMode(handler: any, args: string[]) {
 	const mode = (args[1] ?? "").toLowerCase();
 	if (mode) {
@@ -87,10 +92,12 @@ export async function handleLeaveMode(handler: any, args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleGetPropertyCommand(handler: any, key: string) {
 	if (!key) return "";
 	if (handler?.app?.ghostController?.sendShioriEvent) {
 		try {
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const res: any = await handler.app.ghostController.sendShioriEvent(
 				"property.get",
 				[key],
@@ -103,6 +110,7 @@ export async function handleGetPropertyCommand(handler: any, key: string) {
 	return scriptLifetimeState.getVariable(key) ?? "";
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleSetScalingCommand(handler: any, args: string[]) {
 	const scaleXStr = args[2] ?? "100";
 	const scaleYStr = args[3] ?? scaleXStr;
@@ -139,6 +147,7 @@ export async function handleSetScalingCommand(handler: any, args: string[]) {
 }
 
 export async function handleKeyPressEvent(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
 	key: string,
 	modifiers: string = "",
@@ -151,6 +160,7 @@ export async function handleKeyPressEvent(
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleSetAlphaCommand(handler: any, args: string[]) {
 	const alphaVal = Number.parseInt(args[2] ?? "100", 10);
 	const scope = handler.player?.currentScope ?? 0;
@@ -160,6 +170,7 @@ export async function handleSetAlphaCommand(handler: any, args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleSetPositionCommand(handler: any, args: string[]) {
 	const x = Number.parseInt(args[2] ?? "0", 10);
 	const y = Number.parseInt(args[3] ?? "0", 10);
@@ -172,6 +183,7 @@ export async function handleSetPositionCommand(handler: any, args: string[]) {
 	if (Number.isFinite(x) && Number.isFinite(y)) {
 		handler.app.surfaceManager?.setPosition?.(x, y, scope);
 		try {
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const api = (globalThis as any).__TAURI__?.window;
 			if (api) {
 				const win = api.getCurrentWindow();

@@ -94,18 +94,23 @@ test("balloonThemeActions test", async () => {
 	balloonThemeActions.hideBalloon = () => {};
 
 	// 1. Calling when balloonThemeManager is null
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	delete (balloonThemeActions as any).balloonThemeManager;
 	balloonThemeActions.cycleBalloonTheme();
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	delete (balloonThemeActions as any).balloonThemeManager;
 	balloonThemeActions.applyBalloonScaleAction("balloon-scale-100");
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	delete (balloonThemeActions as any).balloonThemeManager;
 	await balloonThemeActions.setBalloonTheme("ivory");
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	delete (balloonThemeActions as any).balloonThemeManager;
 	await balloonThemeActions.scanBalloons();
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	delete (balloonThemeActions as any).balloonThemeManager;
 	balloonThemeActions.resetBalloonDescript();
 

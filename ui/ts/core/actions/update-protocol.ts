@@ -152,6 +152,7 @@ export const OTHER_PROGRESS_PHASE_EVENTS: Record<string, string> = {
  * @param {any} err
  * @returns {string}
  */
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function parseErrorReason(err: any): string {
 	const msg = String(err);
 	if (msg.includes("404")) return "404";
@@ -168,6 +169,7 @@ export function parseErrorReason(err: any): string {
  * @returns {(event: any) => void}
  */
 export function createUpdateProgressHandler(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	gc: any,
 	onFailedFile?: (filePath: string) => void,
 	isOther: boolean = false,
@@ -175,6 +177,7 @@ export function createUpdateProgressHandler(
 	const eventMap = isOther
 		? OTHER_PROGRESS_PHASE_EVENTS
 		: PROGRESS_PHASE_EVENTS;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	return (event: any) => {
 		const { phase, path: filePath } = event.payload || {};
 		if (!filePath) return;

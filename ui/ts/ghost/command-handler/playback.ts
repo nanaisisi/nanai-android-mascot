@@ -3,27 +3,32 @@
  * @brief 再生・タイムアウト・ウェイト制御コマンド
  */
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleSetChoiceTimeout(handler: any, args: string[]) {
 	const timeout = Number.parseInt(args[2] ?? "", 10);
 	handler.player.choiceTimeout = Number.isFinite(timeout) ? timeout : 0;
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleSetBalloonTimeout(handler: any, args: string[]) {
 	const timeout = Number.parseInt(args[2] ?? "", 10);
 	handler.player.balloonTimeout = Number.isFinite(timeout) ? timeout : 0;
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleSetBalloonWait(handler: any, args: string[]) {
 	const param = args[2];
 	handler.player.playbackController?.setBalloonWait?.(param);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleQuickSection(handler: any, args: string[]) {
 	const val = String(args[1] ?? "").toLowerCase();
 	const enable = val === "1" || val === "true";
 	handler.player.playbackController?.setQuickMode?.(enable);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleSetSyncObject(handler: any, args: string[]) {
 	const name = args[2];
 	if (name) {
@@ -35,6 +40,7 @@ export async function handleSetSyncObject(handler: any, args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleResetSyncObject(handler: any, args: string[]) {
 	const name = args[2];
 	if (name) {
@@ -46,6 +52,7 @@ export async function handleResetSyncObject(handler: any, args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleWaitSyncObject(handler: any, args: string[]) {
 	const name = args[2];
 	if (!name) return;

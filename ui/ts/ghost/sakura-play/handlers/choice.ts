@@ -3,6 +3,7 @@
  * @brief さくらスクリプト再生時の選択肢(\q)およびアンカー(\_a)要素生成・イベントハンドラ
  */
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function handleChoice(player: any, app: any, token: any, context: any) {
 	const { currentBalloonText, flushDesktopBalloon } = context;
 
@@ -10,6 +11,7 @@ export function handleChoice(player: any, app: any, token: any, context: any) {
 	choiceBtn.className = "balloon-choice-btn";
 	choiceBtn.setAttribute("data-choice-id", token.id);
 	choiceBtn.textContent = token.text;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let hoverTimer: any = null;
 	choiceBtn.addEventListener("click", (e: MouseEvent) => {
 		e.stopPropagation();
@@ -71,9 +73,13 @@ export function handleChoice(player: any, app: any, token: any, context: any) {
 }
 
 export function handleAnchorBegin(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_player: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	app: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	token: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	context: any,
 ) {
 	const { currentBalloonText, scheduleDesktopBalloonSync } = context;
@@ -82,6 +88,7 @@ export function handleAnchorBegin(
 	anchorSpan.className = "balloon-anchor";
 	anchorSpan.dataset.anchorId = token.id;
 	anchorSpan.setAttribute("data-anchor-id", token.id);
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let hoverTimer: any = null;
 	anchorSpan.addEventListener("click", async (e: MouseEvent) => {
 		e.stopPropagation();
@@ -93,6 +100,7 @@ export function handleAnchorBegin(
 		const args = token.args || [];
 		if (app.ghostController?.sendShioriEvent) {
 			// UKADOC: OnAnchorSelectEx is sent first (Reference0: text, Reference1: ID, Reference2..N: args)
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const resEx: any = await app.ghostController.sendShioriEvent(
 				"OnAnchorSelectEx",
 				[anchorText, token.id, ...args],
@@ -135,9 +143,13 @@ export function handleAnchorBegin(
 }
 
 export function handleAnchorEnd(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_player: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_app: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_token: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	context: any,
 ) {
 	context.currentAnchor = null;

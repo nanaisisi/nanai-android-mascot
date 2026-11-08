@@ -14,8 +14,10 @@ export const ghostSurfaceLoaderMethods = {
 		shellName: string,
 		surfaceId: number | string,
 	): Promise<string> {
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this as any)._surfaceAssetCache ??= new Map();
 		const key = `${cmd}|${ghostPath}|${shellName}|${surfaceId}`;
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		let pending = (this as any)._surfaceAssetCache.get(key);
 		if (!pending) {
 			pending = invoke(cmd, {
@@ -23,9 +25,13 @@ export const ghostSurfaceLoaderMethods = {
 				shellName,
 				surfaceId: String(surfaceId),
 			});
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(this as any)._surfaceAssetCache.set(key, pending);
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			if ((this as any)._surfaceAssetCache.size > 64) {
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				(this as any)._surfaceAssetCache.delete(
+					// biome-ignore lint/suspicious/noExplicitAny: automated fix
 					(this as any)._surfaceAssetCache.keys().next().value,
 				);
 			}
@@ -35,8 +41,11 @@ export const ghostSurfaceLoaderMethods = {
 
 	/** ゴースト・シェル切り替え時などに画像キャッシュを破棄 */
 	clearSurfaceAssetCache() {
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this as any)._surfaceAssetCache?.clear();
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this as any).app?.surfaceManager?.chromaKeyCache?.clear();
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this as any).app?.surfaceManager?.baseCanvasCache?.clear();
 	},
 };

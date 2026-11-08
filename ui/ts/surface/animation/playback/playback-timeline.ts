@@ -37,6 +37,7 @@ export async function _playTimelineFrames(
 	keyOrOptions,
 	optionsParam = {},
 ) {
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, timeline, anim, baseSurfaceId, scopeId, key, options;
 	if (isInstance(target)) {
 		instance = target;
@@ -113,6 +114,7 @@ export async function _playOnePat(
 	isCurrentOrOptions,
 	optionsParam = {},
 ) {
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, pat, anim, baseSurfaceId, scopeId, key, isCurrent, options;
 	if (isInstance(target)) {
 		instance = target;

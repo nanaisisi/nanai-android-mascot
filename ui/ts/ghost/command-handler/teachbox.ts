@@ -4,8 +4,10 @@
  */
 
 export function openTeachBox(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
 	params: string[] = [],
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	options: any = {},
 ) {
 	const { notifyStart = true } = options;
@@ -98,6 +100,7 @@ export function openTeachBox(
 	setTimeout(() => input.focus(), 50);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function closeTeachBox(handler: any) {
 	if (handler.teachForm) {
 		handler.teachForm.remove();

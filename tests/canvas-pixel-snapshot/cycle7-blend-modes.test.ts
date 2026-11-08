@@ -76,6 +76,7 @@ test("Canvas Pixel Snapshot Cycle 7: processChromaKey options.paintTransparentRe
 	const origDocument = globalThis.document;
 	const origImage = globalThis.Image;
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let baseCanvas: any = null;
 	globalThis.document = {
 		createElement(tag: string) {
@@ -88,6 +89,7 @@ test("Canvas Pixel Snapshot Cycle 7: processChromaKey options.paintTransparentRe
 			}
 			return {};
 		},
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	} as any;
 
 	let imageInstanceCount = 0;
@@ -116,6 +118,7 @@ test("Canvas Pixel Snapshot Cycle 7: processChromaKey options.paintTransparentRe
 				this.onload?.();
 			}, 0);
 		}
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	} as any;
 
 	try {

@@ -4,9 +4,13 @@
  */
 
 export async function handleChar(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	player: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	app: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	token: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	context: any,
 ) {
 	const { sakuraText, keroText, scheduleDesktopBalloonSync } = context;
@@ -60,9 +64,13 @@ export async function handleChar(
 }
 
 export function handleNewline(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	player: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_app: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	token: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	context: any,
 ) {
 	const { sakuraText, keroText, scheduleDesktopBalloonSync } = context;
@@ -97,6 +105,7 @@ export function handleNewline(
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function handleClear(player: any, app: any, token: any, context: any) {
 	const { scheduleDesktopBalloonSync } = context;
 	const { currentBalloonText } = context;
@@ -134,6 +143,7 @@ export function handleClear(player: any, app: any, token: any, context: any) {
 		const count = Math.max(1, token.count || 1);
 		let removedLines = 0;
 		while (removedLines < count && currentBalloonText.lastChild) {
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const lastNode: any = currentBalloonText.lastChild;
 			const isBr =
 				lastNode.nodeName === "BR" ||
@@ -150,9 +160,13 @@ export function handleClear(player: any, app: any, token: any, context: any) {
 }
 
 export function handleOffset(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_player: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_app: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	token: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	context: any,
 ) {
 	const { scheduleDesktopBalloonSync, currentBalloonText } = context;
@@ -174,6 +188,7 @@ export function handleOffset(
 	scheduleDesktopBalloonSync(false);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function handleFont(player: any, _app: any, token: any, _context: any) {
 	player.currentFontStyles = player.currentFontStyles || {};
 	if (token.tag === "default") {

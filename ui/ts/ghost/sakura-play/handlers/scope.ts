@@ -5,6 +5,7 @@
 
 import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function handleScope(player: any, app: any, token: any, context: any) {
 	const {
 		sakuraText,
@@ -58,9 +59,13 @@ export function handleScope(player: any, app: any, token: any, context: any) {
 }
 
 export function handleBalloon(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	player: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_app: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	token: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	context: any,
 ) {
 	const { sakuraDisplay, keroDisplay } = context;
@@ -74,9 +79,13 @@ export function handleBalloon(
 }
 
 export function handleInlineBitmap(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_player: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	app: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	token: any,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	context: any,
 ) {
 	const { currentBalloonText, scheduleDesktopBalloonSync } = context;
@@ -91,8 +100,10 @@ export function handleInlineBitmap(
 		rawPath.startsWith("https://")
 			? rawPath
 			: `assets/balloon/${themeName}/${rawPath}`;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	img.src = (globalThis as any).__TAURI__?.core?.convertFileSrc
-		? (globalThis as any).__TAURI__.core.convertFileSrc(fullPath)
+		? // biome-ignore lint/suspicious/noExplicitAny: automated fix
+			(globalThis as any).__TAURI__.core.convertFileSrc(fullPath)
 		: fullPath;
 	img.style.display = "inline-block";
 	img.style.verticalAlign = "middle";

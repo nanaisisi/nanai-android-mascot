@@ -97,6 +97,7 @@ if (isTauriAvailable()) {
 				dressupScope = data.scope;
 			}
 			const activeShell =
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				data.shells?.find((s: any) => s.name === data.currentShell) ||
 				data.shells?.[0];
 			applyShellMenuTheme(activeShell);
@@ -110,6 +111,7 @@ if (isTauriAvailable()) {
 			cachedShells = data.shells || cachedShells;
 			currentShellName = data.currentShell || currentShellName;
 			const activeShell =
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				cachedShells?.find((s: any) => s.name === currentShellName) ||
 				cachedShells?.[0];
 			applyShellMenuTheme(activeShell);

@@ -8,9 +8,11 @@ const { SakuraScriptPlayer } = await import(
 );
 
 test("choice click triggers OnChoiceSelectEx first, then falls back to OnChoiceSelect if no script", async () => {
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const shioriEvents: any[] = [];
 	const sakuraText = createEl("div");
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const app: any = {
 		ghostId: "main",
 		elements: {
@@ -25,6 +27,7 @@ test("choice click triggers OnChoiceSelectEx first, then falls back to OnChoiceS
 			onScriptEnd() {},
 		},
 		ghostController: {
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			sendShioriEvent: async (event: string, args: any[]) => {
 				if (event === "OnTranslate") return { script: null };
 				shioriEvents.push({ event, args });
@@ -73,9 +76,11 @@ test("choice click triggers OnChoiceSelectEx first, then falls back to OnChoiceS
 });
 
 test("choice click does not trigger OnChoiceSelect if OnChoiceSelectEx returns response script", async () => {
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const shioriEvents: any[] = [];
 	const sakuraText = createEl("div");
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const app: any = {
 		ghostId: "main",
 		elements: {
@@ -90,6 +95,7 @@ test("choice click does not trigger OnChoiceSelect if OnChoiceSelectEx returns r
 			onScriptEnd() {},
 		},
 		ghostController: {
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			sendShioriEvent: async (event: string, args: any[]) => {
 				if (event === "OnTranslate") return { script: null };
 				shioriEvents.push({ event, args });
@@ -127,9 +133,11 @@ test("choice click does not trigger OnChoiceSelect if OnChoiceSelectEx returns r
 });
 
 test("anchor click triggers OnAnchorSelectEx first, then falls back to OnAnchorSelect", async () => {
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const shioriEvents: any[] = [];
 	const sakuraText = createEl("div");
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const app: any = {
 		ghostId: "main",
 		elements: {
@@ -144,6 +152,7 @@ test("anchor click triggers OnAnchorSelectEx first, then falls back to OnAnchorS
 			onScriptEnd() {},
 		},
 		ghostController: {
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			sendShioriEvent: async (event: string, args: any[]) => {
 				if (event === "OnTranslate") return { script: null };
 				shioriEvents.push({ event, args });
@@ -152,6 +161,7 @@ test("anchor click triggers OnAnchorSelectEx first, then falls back to OnAnchorS
 		},
 	};
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const player: any = {
 		playbackId: 60,
 		parse: async () => [
@@ -193,9 +203,11 @@ test("anchor click triggers OnAnchorSelectEx first, then falls back to OnAnchorS
 });
 
 test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip", async () => {
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const notifyEvents: any[] = [];
 	const sakuraText = createEl("div");
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const app: any = {
 		ghostId: "main",
 		elements: {
@@ -245,6 +257,7 @@ test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip",
 	// 2. Test skip triggering OnBalloonBreak
 	player.isPlaying = true;
 	player.currentScope = 1;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	(player as any).currentProgressIndex = 5;
 	player.lastScript = "\\1テスト会話";
 	player.skip();
@@ -257,9 +270,11 @@ test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip",
 });
 
 test("balloon events: OnBalloonTimeout triggered via sendBalloonTimeoutNotify", async () => {
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const notifyEvents: any[] = [];
 	const sakuraText = createEl("div");
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const app: any = {
 		ghostId: "main",
 		elements: {
@@ -313,9 +328,11 @@ test("balloon events: OnBalloonTimeout triggered via sendBalloonTimeoutNotify", 
 });
 
 test("\\t (timeCritical) suppresses balloonTimeout and click timeout auto-advance", async () => {
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const notifyEvents: any[] = [];
 	const sakuraText = createEl("div");
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const app: any = {
 		ghostId: "main",
 		elements: {

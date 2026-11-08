@@ -7,21 +7,26 @@ export interface GhostInfo {
 	name: string;
 	path?: string;
 	shells?: string[];
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	[key: string]: any;
 }
 
 export class GhostController {
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	app: any;
 	ghosts: GhostInfo[];
 	currentGhost: GhostInfo | null;
 	shells: string[];
 	currentShell: string;
 	currentSurfaces: Map<number, string>;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_surfaceSeq: any[] | undefined;
 	uptimeSeconds?: number;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_secondTimerId?: any;
 	_secondSending?: boolean;
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	constructor(app: any) {
 		this.app = app;
 		this.ghosts = [];
@@ -65,6 +70,7 @@ export class GhostController {
 	async verifyGhostExists(ghostInfo: GhostInfo): Promise<boolean> {
 		if (!isTauriAvailable()) return false;
 		try {
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const result: any = await invoke("scan_ghosts", {
 				ghostPath: ghostInfo.path || AppConfig.paths.defaultGhostDir,
 			});
@@ -83,6 +89,7 @@ export class GhostController {
 			return this.ghosts;
 		}
 		try {
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const result: any = await invoke("scan_ghosts", {
 				ghostPath: AppConfig.paths.defaultGhostDir,
 			});
@@ -113,9 +120,11 @@ export class GhostController {
 		if (
 			prevGhostName &&
 			prevGhostName !== ghost.name &&
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(this as any).sendShioriEvent
 		) {
 			try {
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				await (this as any).sendShioriEvent("OnGhostChanging", [
 					ghost.name,
 					"manual",
@@ -149,6 +158,7 @@ export class GhostController {
 
 		if (isTauriAvailable()) {
 			try {
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				const info: any = await invoke("get_ghost_info", {
 					ghostName: ghost.name,
 				});
@@ -170,11 +180,14 @@ export class GhostController {
 
 		// 【フェーズ 2: シェル表示 & SHIORI 初期化のパラレル実行 (Atomic Reveal)】
 		const loadId = {};
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this as any)._currentLoadToken = loadId;
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const isCurrentLoad = () => (this as any)._currentLoadToken === loadId;
 
 		await Promise.all([
 			this.selectShell(this.currentShell),
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(this as any).initializeGhostSHIORI(
 				ghost,
 				preloadSurfacesPromise,
@@ -212,6 +225,7 @@ export class GhostController {
 		this.currentShell = shellName;
 		if (this.currentGhost) {
 			try {
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				await (this as any).loadSurfaceAsset(
 					"load_surface_image",
 					this.currentGhost.path || AppConfig.paths.defaultGhostDir,
@@ -219,14 +233,18 @@ export class GhostController {
 					0,
 				);
 			} catch (_e) {}
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			await (this as any).updateSurface(0, 0);
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			await (this as any).updateSurface(10, 1);
 			if (
 				prevShell &&
 				prevShell !== shellName &&
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				(this as any).sendShioriEvent
 			) {
 				try {
+					// biome-ignore lint/suspicious/noExplicitAny: automated fix
 					await (this as any).sendShioriEvent("OnShellChanged", [
 						shellName,
 						prevShell,

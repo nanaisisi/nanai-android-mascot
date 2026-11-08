@@ -5,20 +5,24 @@
 
 import { invoke, isTauriAvailable } from "../../core/tauri-helper.js";
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleSetWallpaper(_handler: any, args: string[]) {
 	const [filename, option] = args.slice(1);
 	console.log(`🖼️ Wallpaper set: ${filename} (option: ${option})`);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleSaveWallpaper(_handler: any, _args: string[]) {
 	console.log("🖼️ Wallpaper savewallpaper executed");
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleRestoreWallpaper(_handler: any, _args: string[]) {
 	console.log("🖼️ Wallpaper restorewallpaper executed");
 }
 
 export async function handleCancelNetworkService(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_handler: any,
 	args: string[],
 ) {
@@ -26,20 +30,20 @@ export async function handleCancelNetworkService(
 	console.log(`🛑 Network service cancel: ${service} (${target})`);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleCloseNetworkService(_handler: any, args: string[]) {
 	const [service, target] = args.slice(1);
 	console.log(`🛑 Network service close: ${service} (${target})`);
 }
 
 export async function handleFileWatchCommand(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_handler: any,
 	args: string[],
 	isCancel: boolean = false,
 ) {
 	const path = args.slice(1).join(",") || args[0] || "";
-	console.log(
-		`👁️ File watch ${isCancel ? "cancel" : "execute"}: path=${path}`,
-	);
+	console.log(`👁️ File watch ${isCancel ? "cancel" : "execute"}: path=${path}`);
 	if (isTauriAvailable()) {
 		try {
 			await invoke(isCancel ? "cancel_file_watch" : "execute_file_watch", {
@@ -51,6 +55,7 @@ export async function handleFileWatchCommand(
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleEmptyRecycleBin(_handler: any, _args: string[]) {
 	console.log("🗑️ Empty recycle bin requested");
 	if (isTauriAvailable()) {
@@ -62,6 +67,7 @@ export async function handleEmptyRecycleBin(_handler: any, _args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handlePingCommand(handler: any, args: string[]) {
 	const host = args[1] ?? args[0] ?? "";
 	console.log(`📡 Ping requested: host=${host}`);
@@ -86,6 +92,7 @@ export async function handlePingCommand(handler: any, args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleNslookupCommand(handler: any, args: string[]) {
 	const host = args[1] ?? args[0] ?? "";
 	console.log(`🔍 Nslookup requested: host=${host}`);
@@ -101,17 +108,20 @@ export async function handleNslookupCommand(handler: any, args: string[]) {
 		} catch (err) {
 			console.warn("Nslookup failed:", err);
 			if (handler?.app?.ghostController?.sendShioriEvent) {
-				await handler.app.ghostController.sendShioriEvent(
-					"OnNslookupFailure",
-					[host, String(err)],
-				);
+				await handler.app.ghostController.sendShioriEvent("OnNslookupFailure", [
+					host,
+					String(err),
+				]);
 			}
 		}
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleScheduleAddCommand(handler: any, args: string[]) {
-	const rawArgs = args[0]?.toLowerCase().includes("schedule") ? args.slice(1) : args;
+	const rawArgs = args[0]?.toLowerCase().includes("schedule")
+		? args.slice(1)
+		: args;
 	const date = rawArgs[0] ?? "";
 	const time = rawArgs[1] ?? "";
 	const title = rawArgs[2] ?? "スケジュール";
@@ -136,6 +146,7 @@ export async function handleScheduleAddCommand(handler: any, args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleExecuteCommand(handler: any, args: string[]) {
 	const subCmd = (args[1] ?? "").toLowerCase();
 	const restArgs = args.slice(1);
@@ -185,9 +196,7 @@ export async function handleExecuteCommand(handler: any, args: string[]) {
 			await handleFileExec(handler, restArgs);
 			break;
 		case "sntp": {
-			const { handleExecuteSntpCommand } = await import(
-				"./system/target.js"
-			);
+			const { handleExecuteSntpCommand } = await import("./system/target.js");
 			await handleExecuteSntpCommand(handler, restArgs);
 			break;
 		}
@@ -211,6 +220,7 @@ export async function handleExecuteCommand(handler: any, args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleArchiveExec(handler: any, args: string[]) {
 	const [action, filename, dest] = args.slice(1);
 	console.log(`📦 Archive action ${action}: file=${filename}, dest=${dest}`);
@@ -229,51 +239,61 @@ export async function handleArchiveExec(handler: any, args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleDownloadExec(_handler: any, args: string[]) {
 	const [url, savePath] = args.slice(1);
 	console.log(`📥 Download requested: url=${url}, savePath=${savePath}`);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleUploadExec(_handler: any, args: string[]) {
 	const [url, filePath] = args.slice(1);
 	console.log(`📤 Upload requested: url=${url}, filePath=${filePath}`);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleMailCheckExec(handler: any, args: string[]) {
 	const [account] = args.slice(1);
 	console.log(`✉️ Mail check requested for account: ${account}`);
 	await handler.app.networkActions?.checkEmail?.(account);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleMailExec(_handler: any, args: string[]) {
 	const [action, target] = args.slice(1);
 	console.log(`✉️ Mail action ${action}: target=${target}`);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleFileExec(_handler: any, args: string[]) {
 	const [action, path, dest] = args.slice(1);
 	console.log(`📁 File action ${action}: path=${path}, dest=${dest}`);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleSetHttpTimeout(_handler: any, args: string[]) {
 	const [timeout] = args.slice(1);
 	console.log(`⏱️ HTTP timeout set: ${timeout}s`);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleSetProxy(_handler: any, args: string[]) {
 	const [server, port] = args.slice(1);
 	console.log(`🌐 Proxy set: ${server}:${port}`);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleUpdate(handler: any) {
 	await handler.app.startNetworkUpdate?.();
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleUpdateByMyself(handler: any) {
 	await handler.app.startNetworkUpdate?.();
 }
 
 export async function handleSoundEventNotify(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
 	action: string,
 	params: string[] = [],

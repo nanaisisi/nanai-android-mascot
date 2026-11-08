@@ -3,8 +3,10 @@
  * @brief ウィンドウ状態およびデスクトップ整列コマンドハンドラ
  */
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleWindowState(state: string, handler?: any) {
 	try {
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const api = (globalThis as any).__TAURI__?.window;
 		if (!api) return;
 		const win = api.getCurrentWindow();
@@ -34,10 +36,12 @@ export async function handleWindowState(state: string, handler?: any) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function setAlignmentToDesktop(handler: any, mode: string) {
 	handler.app.alignmentToDesktop = mode;
 	if (mode === "free") return;
 	try {
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const api = (globalThis as any).__TAURI__?.window;
 		if (!api) return;
 		const win = api.getCurrentWindow();

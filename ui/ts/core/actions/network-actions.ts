@@ -5,14 +5,17 @@ export const networkActions = {
 	 * メールチェック (UKADOC OnBIFF 準拠)
 	 */
 	async checkEmail(accountName: string = "default") {
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const gc = (this as any).ghostController;
 		console.log(`📬 メールチェック開始 (OnBIFF): account=${accountName}`);
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this as any).showBalloon?.("📬 メールを確認中...");
 
 		try {
 			await gc.sendShioriEvent("OnBIFFBegin", [accountName]);
 
 			if (isTauriAvailable()) {
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				const result: any = await invoke("check_email", {
 					account: accountName,
 				}).catch(() => null);

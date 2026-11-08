@@ -3,6 +3,7 @@ import { test } from "vitest";
 import { SurfaceAnimationManager } from "../ui/js/surface/surface-animation-manager.js";
 
 const deferred = () => {
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let resolve;
 	const promise = new Promise((r) => {
 		resolve = r;

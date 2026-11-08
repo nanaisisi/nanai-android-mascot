@@ -65,11 +65,11 @@ function initCharacterWindow() {
 
 	if (!isTauriAvailable()) return;
 
-	let pollTimer: any = null;
+	let pollTimer: ReturnType<typeof setInterval> | null = null;
 
 	void listen(
 		`update-subchar-image-${scopeId}`,
-		(/** @type {{ payload?: { src?: string } }} */ event: any) => {
+		(event: { payload?: { src?: string } }) => {
 			const src = event.payload?.src;
 			if (src && img) {
 				if (pollTimer) {
@@ -123,10 +123,11 @@ function initCharacterWindow() {
 	let startX = 0;
 	let startY = 0;
 	let origin: { x: number; y: number } | null = null;
-	let longPressTimer: any = null;
+	let longPressTimer: ReturnType<typeof setTimeout> | null = null;
 	let longPressTriggered = false;
 	const LONG_PRESS_DELAY = 600;
 
+	// biome-ignore lint/suspicious/noExplicitAny: pointer event handler
 	const onPointerDown = (e: any) => {
 		const button = e.button !== undefined ? e.button : 0;
 
@@ -190,6 +191,7 @@ function initCharacterWindow() {
 		}, LONG_PRESS_DELAY);
 	};
 
+	// biome-ignore lint/suspicious/noExplicitAny: pointer event handler
 	const onPointerMove = (e: any) => {
 		if (!isInteracting) return;
 

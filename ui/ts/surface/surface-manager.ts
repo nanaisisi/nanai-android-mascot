@@ -6,9 +6,13 @@ import { surfaceRenderMethods } from "./surface-render.js";
  * Nanai Android Mascot - surfaces.txt パーサー & 当たり判定（Collision）マネージャー
  */
 export class SurfaceManager {
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	app: any;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	collisions: Record<number | string, any[]>;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	elements: Record<number | string, any[]>;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	animations: Record<number | string, any[]>;
 	baseWidth: number;
 	baseHeight: number;
@@ -17,11 +21,14 @@ export class SurfaceManager {
 	dressupState: Map<string, boolean>;
 	aliases: Record<string, number[]> | null;
 	keroAliases: Record<string, number[]> | null;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	shellManifest: Record<string, any> | null;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	planCache: Map<string, any>;
 	baseCanvasCache: Map<string, HTMLCanvasElement>;
 	animationManager: SurfaceAnimationManager;
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	constructor(app: any) {
 		this.app = app;
 		this.collisions = {};
@@ -71,6 +78,7 @@ export class SurfaceManager {
 	}
 
 	playAnimationPatterns(
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		anim: any,
 		baseSurfaceId: number | string,
 		scopeId: number,

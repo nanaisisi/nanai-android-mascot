@@ -34,6 +34,7 @@ export function renderAnimationFrame(
 	scopeIdOrAnimOptions,
 	animationOptionsParam = {},
 ) {
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, pat, baseSurfaceId, scopeId, animationOptions;
 	if (isInstance(target)) {
 		instance = target;

@@ -1,5 +1,6 @@
 import { rgbFromComponents } from "../utils.js";
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function applyBaseFontProperties(root: any, props: Record<string, any>) {
 	if (props.id) root.style.setProperty("--balloon-id", props.id);
 

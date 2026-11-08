@@ -165,6 +165,7 @@ export function buildInstallRerouteArgs(
  * @param {any} err
  * @returns {string} - "unsupported" | "extraction" | "unlha32 error" | "artificial" | "write error" | "invalid path"
  */
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function parseErrorReason(err: any): string {
 	const msg = String(err?.message || err || "").toLowerCase();
 
@@ -218,6 +219,7 @@ export const parseInstallErrorReason = parseErrorReason;
  * @param {any} errorOrReason
  * @returns {[string]}
  */
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function buildInstallFailureArgs(errorOrReason: any): [string] {
 	const reason = parseErrorReason(errorOrReason);
 	return [reason];

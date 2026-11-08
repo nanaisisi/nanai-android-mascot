@@ -1,11 +1,14 @@
 import { drawImageLayer, loadLayerImage } from "./layer.js";
 
 export function composeSurfaceElements(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	elementList: any[],
 	baseImgSrc: string,
 	resolveImagePath: (file: string) => Promise<string | null>,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	bindLayers: any[] = [],
 	{ returnCanvas = false } = {},
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 ): Promise<any> {
 	if ((!elementList || elementList.length === 0) && bindLayers.length === 0) {
 		return returnCanvas

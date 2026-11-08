@@ -3,6 +3,7 @@
  * @brief \![open,communicatebox] および \![close,communicatebox] ハンドラ
  */
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function openCommunicateBox(handler: any, params: string[] = []) {
 	closeCommunicateBox(handler, false);
 
@@ -64,6 +65,7 @@ export function openCommunicateBox(handler: any, params: string[] = []) {
 	submitBtn.className = "balloon-choice-btn";
 	submitBtn.style.marginTop = "0";
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let timer: any = null;
 	handler.communicateForm = form;
 
@@ -122,6 +124,7 @@ export function openCommunicateBox(handler: any, params: string[] = []) {
 }
 
 export function closeCommunicateBox(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
 	notifyCancel: boolean = false,
 ) {

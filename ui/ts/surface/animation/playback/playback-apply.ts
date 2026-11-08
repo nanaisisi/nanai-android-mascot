@@ -61,6 +61,7 @@ export async function _applyAnimationFrame(
 	isCurrentOrOptions,
 	optionsParam = {},
 ) {
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, pat, anim, baseSurfaceId, scopeId, key, isCurrent, options;
 	if (isInstance(target)) {
 		instance = target;

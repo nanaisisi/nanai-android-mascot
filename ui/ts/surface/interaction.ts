@@ -9,9 +9,11 @@ export { isPixelTransparent, setupGhostDragging, setupHoverAndWheel };
  * Nanai Android Mascot - ドラッグ & タッチインタラクション管理
  */
 export class InteractionManager {
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	app: any;
 	balloonDragManager: BalloonDragManager;
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	constructor(app: any) {
 		this.app = app;
 		this.balloonDragManager = new BalloonDragManager(this);
@@ -43,8 +45,11 @@ export class InteractionManager {
 
 	setupDragging(
 		target: HTMLElement,
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		onGhostClick: any,
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		onGhostStroke: any,
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		options: any = {},
 	) {
 		if (!target) return;

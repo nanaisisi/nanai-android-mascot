@@ -11,6 +11,7 @@ import {
 } from "../../ui/js/ghost/command-handler/system/desktop.js";
 
 describe("system/desktop.js", () => {
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let originalTauri;
 
 	beforeEach(() => {

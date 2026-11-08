@@ -30,11 +30,16 @@ import {
 initDefaultCommandHandlers();
 
 export class SakuraCommandHandler {
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	player: any;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	app: any;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	teachForm: any;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	communicateForm: any;
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	constructor(player: any) {
 		this.player = player;
 		this.app = player.app;
@@ -59,6 +64,7 @@ export class SakuraCommandHandler {
 		openInputBox(this, params);
 	}
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	openTeachBox(params: string[] = [], options: any = {}) {
 		openTeachBox(this, params, options);
 	}
@@ -87,6 +93,7 @@ export class SakuraCommandHandler {
 		await handleJumpCommand(this, target, args);
 	}
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	expandEnv(script: string, options: any = {}) {
 		return expandSakuraScriptEnv(script, {
 			username: this.player?.app?.ghostController?.username,

@@ -4,6 +4,7 @@
  */
 
 export async function handleBindCommand(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
 	args: string[],
 	raiseEvent: boolean = true,
@@ -18,6 +19,7 @@ export async function handleBindCommand(
 	);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleAnimCommand(handler: any, args: string[]) {
 	const [verbRaw, idVal, arg3, arg4] = args.slice(1);
 	const targetStr = String(idVal ?? "").trim();
@@ -42,6 +44,7 @@ export async function handleAnimCommand(handler: any, args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 async function handleAnimAddCommand(handler: any, subArgs: string[]) {
 	if (!subArgs.length) return;
 	const method = String(subArgs[0] ?? "").toLowerCase();

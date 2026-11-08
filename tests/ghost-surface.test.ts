@@ -83,6 +83,7 @@ test("animation frame layer also runs chroma-key processing", async () => {
 test("a slower older surface update does not overwrite a newer one", async () => {
 	calls.length = 0;
 	const gc = makeController();
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let release;
 	const gate = new Promise((r) => {
 		release = r;

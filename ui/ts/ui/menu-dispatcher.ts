@@ -21,6 +21,7 @@ export class MenuDispatcher {
 		}
 	}
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	async dispatchAction(action: string, payload: any = null) {
 		if (!action) return;
 		console.log(
@@ -39,6 +40,7 @@ export class MenuDispatcher {
 			finalPayload = { scope: this.currentScope, ...finalPayload };
 		}
 
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		if (globalThis.parent && (globalThis.parent as any) !== globalThis) {
 			globalThis.parent.postMessage(
 				{

@@ -6,7 +6,9 @@ export const AppConfig: {
 	timing: Record<string, number>;
 	scale: Record<string, number>;
 	storageKeys: Record<string, string>;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	shiori?: Record<string, any>;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	state?: Record<string, any>;
 } = {
 	// パス関連
@@ -54,8 +56,10 @@ export const AppConfig: {
  */
 export async function loadAppConfig(): Promise<void> {
 	try {
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const tauriInternals = (globalThis as any).__TAURI_INTERNALS__;
 		if (tauriInternals?.invoke) {
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const config: any = await tauriInternals.invoke("get_app_config");
 
 			if (config) {

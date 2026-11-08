@@ -4,6 +4,7 @@
  */
 
 export function openInputBox(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
 	params: string[],
 	isPassword: boolean = false,
@@ -71,6 +72,7 @@ export function openInputBox(
 	submitBtn.textContent = "OK";
 	submitBtn.style.padding = "2px 8px";
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let timer: any = null;
 
 	const cancel = (reason: string = "cancel") => {
@@ -97,6 +99,7 @@ export function openInputBox(
 	};
 
 	submitBtn.addEventListener("click", () => submit());
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	input.addEventListener("keydown", (e: any) => {
 		if (e.key === "Enter") {
 			submit();
@@ -117,10 +120,12 @@ export function openInputBox(
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function openPasswordInput(handler: any, params: string[]) {
 	return openInputBox(handler, params, true);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function openTextAreaBox(handler: any, params: string[]) {
 	if (handler.app?.modalDialogController?.openTextAreaBox) {
 		return handler.app.modalDialogController.openTextAreaBox(
@@ -131,6 +136,7 @@ export function openTextAreaBox(handler: any, params: string[]) {
 	return openInputBox(handler, params);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function openSliderInput(handler: any, params: string[]) {
 	if (handler.app?.modalDialogController?.openSliderInput) {
 		return handler.app.modalDialogController.openSliderInput(
@@ -141,6 +147,7 @@ export function openSliderInput(handler: any, params: string[]) {
 	return openInputBox(handler, params);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function openIpInput(handler: any, params: string[]) {
 	if (handler.app?.modalDialogController?.openIpInput) {
 		return handler.app.modalDialogController.openIpInput(
@@ -151,6 +158,7 @@ export function openIpInput(handler: any, params: string[]) {
 	return openInputBox(handler, params);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function openDateInput(handler: any, params: string[]) {
 	if (handler.app?.modalDialogController?.openDateInput) {
 		return handler.app.modalDialogController.openDateInput(
@@ -161,6 +169,7 @@ export function openDateInput(handler: any, params: string[]) {
 	return openInputBox(handler, params);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function openTimeInput(handler: any, params: string[]) {
 	if (handler.app?.modalDialogController?.openTimeInput) {
 		return handler.app.modalDialogController.openTimeInput(
@@ -171,6 +180,7 @@ export function openTimeInput(handler: any, params: string[]) {
 	return openInputBox(handler, params);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function closeInputBox(handler: any, paramsOrNotify: any = false) {
 	let notifyCancel = false;
 	let id: string | undefined;
@@ -188,10 +198,12 @@ export function closeInputBox(handler: any, paramsOrNotify: any = false) {
 	}
 	const forms = document.querySelectorAll?.(".balloon-inputbox-form") || [];
 	for (const f of Array.from(forms)) {
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(f as any).remove?.();
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function closeTextAreaBox(handler: any, paramsOrNotify: any = false) {
 	if (handler.app?.modalDialogController?.closeTextAreaBox) {
 		const id = Array.isArray(paramsOrNotify) ? paramsOrNotify[0] : undefined;
@@ -203,6 +215,7 @@ export function closeTextAreaBox(handler: any, paramsOrNotify: any = false) {
 	closeInputBox(handler, paramsOrNotify);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function closeDialog(handler: any, paramsOrNotify: any = false) {
 	if (handler.app?.modalDialogController?.closeDialog) {
 		const id = Array.isArray(paramsOrNotify) ? paramsOrNotify[0] : undefined;

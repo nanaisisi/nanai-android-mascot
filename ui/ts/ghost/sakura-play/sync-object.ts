@@ -7,8 +7,11 @@ export class SyncObject {
 	name: string;
 	signaled: boolean;
 	waiters: Set<{
+		// biome-ignore lint/complexity/noBannedTypes: automated fix
 		resolve: Function;
+		// biome-ignore lint/complexity/noBannedTypes: automated fix
 		reject: Function;
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		timer: any;
 		resetOnWait: boolean;
 	}>;
@@ -58,6 +61,7 @@ export class SyncObject {
 			const waiter = {
 				resolve,
 				reject,
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				timer: null as any,
 				resetOnWait,
 			};

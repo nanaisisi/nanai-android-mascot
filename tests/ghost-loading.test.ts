@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 const deferred = () => {
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let resolve;
 	const promise = new Promise((r) => {
 		resolve = r;
@@ -10,7 +11,9 @@ const deferred = () => {
 };
 
 const calls = [];
+// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 let showGate;
+// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 let hideGate;
 globalThis.window = globalThis;
 globalThis.__TAURI_INTERNALS__ = {

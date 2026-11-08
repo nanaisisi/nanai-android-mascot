@@ -3,6 +3,7 @@ import { isAndroidPlatform } from "../../ui/js/ui/touch/bridge/overlay.js";
 import { ANDROID_EVENTS, AndroidBridge } from "../../ui/js/ui/touch/index.js";
 
 describe("AndroidBridge - Platform & Overlay", () => {
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let originalNavigator;
 
 	beforeEach(() => {

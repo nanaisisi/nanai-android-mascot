@@ -9,18 +9,22 @@ export interface SakuraAstNode {
 	id?: string;
 	text?: string;
 	args?: string[];
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	token?: any;
 	children?: SakuraAstNode[];
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function tokensToAst(tokens: any[]): SakuraAstNode {
 	const rootChildren: SakuraAstNode[] = [];
 	let currentScope: number | null = null;
 	let scopeChildren: SakuraAstNode[] = [];
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let currentAnchor: any = null;
 	let anchorChildren: SakuraAstNode[] = [];
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let currentChoiceScope: any = null;
 	let choiceScopeChildren: SakuraAstNode[] = [];
 
@@ -223,6 +227,7 @@ export function traverseAst(
 }
 
 export function getSakuraTokenLifetime(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	token: any,
 ): "Scope" | "Script" | "Permanent" {
 	if (!token) return "Script";
@@ -248,7 +253,9 @@ export function getSakuraTokenLifetime(
 	return "Script";
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function collectAstTokens(ast: SakuraAstNode): any[] {
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const tokens: any[] = [];
 	traverseAst(ast, (node) => {
 		if (node.nodeType === "command" && node.token) {
@@ -273,6 +280,7 @@ export function collectAstTokens(ast: SakuraAstNode): any[] {
 export function collectAstTokensByLifetime(
 	ast: SakuraAstNode,
 	lifetime: "Scope" | "Script" | "Permanent",
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 ): any[] {
 	return collectAstTokens(ast).filter(
 		(token) => getSakuraTokenLifetime(token) === lifetime,

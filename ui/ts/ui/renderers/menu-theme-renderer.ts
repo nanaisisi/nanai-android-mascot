@@ -50,6 +50,7 @@ export const menuThemeRenderer = {
 	/**
 	 * @param {{ menu_theme?: any; path?: string; }} activeShell
 	 */
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	applyShellTheme(activeShell: any) {
 		const rootStyle = document.documentElement.style;
 		if (activeShell?.menu_theme) {
@@ -120,8 +121,10 @@ export const menuThemeRenderer = {
 				const full = shellPath
 					? `${shellPath.replace(/\\/g, "/")}/${relPath.replace(/\\/g, "/")}`
 					: relPath;
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				return (globalThis as any).__TAURI__?.core?.convertFileSrc
-					? (globalThis as any).__TAURI__.core.convertFileSrc(full)
+					? // biome-ignore lint/suspicious/noExplicitAny: automated fix
+						(globalThis as any).__TAURI__.core.convertFileSrc(full)
 					: full;
 			};
 
@@ -184,9 +187,7 @@ export const menuThemeRenderer = {
 
 			if (sideUrl) {
 				rootStyle.setProperty("--menu-sidebar-image", `url("${sideUrl}")`);
-				const sideAlign = String(
-					mt.sidebar_alignment || "top",
-				).toLowerCase();
+				const sideAlign = String(mt.sidebar_alignment || "top").toLowerCase();
 				rootStyle.setProperty(
 					"--menu-sidebar-position",
 					sideAlign.includes("bottom") ? "left bottom" : "left top",

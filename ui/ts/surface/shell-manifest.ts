@@ -3,6 +3,7 @@
  */
 import { invoke } from "../core/tauri-helper.js";
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function enumToString(value: any): string {
 	if (value == null) return "";
 	if (typeof value === "string") return value.toLowerCase();
@@ -15,16 +16,19 @@ export function enumToString(value: any): string {
 	return String(value).toLowerCase();
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function intervalToString(value: any): string {
 	const s = enumToString(value);
 	return s === "yene" ? "\\e" : s;
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function methodToString(value: any): string {
 	const s = enumToString(value);
 	return s.startsWith("blend,") ? s.replace("blend,", "blend-") : s;
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function collisionRecord(area: any) {
 	const shape = area?.shape ?? {};
 	const id = area?.id != null ? Number(area.id) : undefined;
@@ -46,6 +50,7 @@ export function collisionRecord(area: any) {
 	}
 
 	if (kind === "polygon") {
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const vertices = (coords?.vertices ?? []).map((p: any) =>
 			Array.isArray(p) ? p : [p?.x ?? 0, p?.y ?? 0],
 		);
@@ -108,6 +113,7 @@ export function collisionRecord(area: any) {
 	};
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function collisionContains(col: any, x: number, y: number): boolean {
 	if (!col) return false;
 
@@ -149,11 +155,17 @@ export function collisionContains(col: any, x: number, y: number): boolean {
 	);
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function manifestToSurfaceData(manifest: any) {
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const collisions: Record<string, any[]> = {};
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const elements: Record<string, any[]> = {};
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const animations: Record<string, any[]> = {};
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const points: Record<string, any> = {};
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const balloonOffsets: Record<string, any> = {};
 	const aliases = manifest?.aliases ?? {};
 	const keroAliases = manifest?.kero_aliases ?? {};
@@ -185,7 +197,9 @@ export function manifestToSurfaceData(manifest: any) {
 
 		elements[sid] = (def.elements ?? [])
 			.slice()
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			.sort((a: any, b: any) => (a.id ?? 0) - (b.id ?? 0))
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			.map((e: any) => ({
 				id: e.id ?? 0,
 				type: methodToString(e.method) || "overlay",
@@ -195,14 +209,18 @@ export function manifestToSurfaceData(manifest: any) {
 			}));
 
 		animations[sid] = Object.values(def.animations ?? {})
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			.sort((a: any, b: any) => (a.id ?? 0) - (b.id ?? 0))
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			.map((anim: any) => ({
 				id: anim.id ?? 0,
 				interval: intervalToString(anim.interval) || "never",
 				collisions: (anim.collisions ?? []).map(collisionRecord),
 				patterns: (anim.patterns ?? [])
 					.slice()
+					// biome-ignore lint/suspicious/noExplicitAny: automated fix
 					.sort((a: any, b: any) => (a.index ?? 0) - (b.index ?? 0))
+					// biome-ignore lint/suspicious/noExplicitAny: automated fix
 					.map((p: any) => ({
 						surface: String(p.surface ?? -1),
 						wait: p.wait ?? 100,
@@ -245,6 +263,7 @@ export async function getShellManifest(ghostName: string, shellName: string) {
 
 export async function parseSurfacesTextWithRust(content: string) {
 	try {
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const rawMap: any = await invoke("parse_surfaces_text", { content });
 		if (!rawMap || typeof rawMap !== "object") return null;
 

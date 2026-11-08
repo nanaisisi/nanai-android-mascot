@@ -3,6 +3,7 @@
  * @brief SHIORI デバッグモード設定・再読み込みハンドラ
  */
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleSetShioriDebugMode(handler: any, args: string[]) {
 	const mode = (args[2] ?? "").toLowerCase() === "true";
 	if (handler.app.ghostController) {
@@ -10,6 +11,7 @@ export async function handleSetShioriDebugMode(handler: any, args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleReloadShiori(handler: any, _args: string[]) {
 	console.log("🔄 Execute reload,shiori triggered");
 	if (handler.app.ghostController) {
@@ -20,6 +22,7 @@ export async function handleReloadShiori(handler: any, _args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleReloadShell(handler: any, _args: string[]) {
 	console.log("🔄 Execute reload,shell triggered");
 	const gc = handler.app.ghostController;
@@ -28,6 +31,7 @@ export async function handleReloadShell(handler: any, _args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleReloadGhost(handler: any, _args: string[]) {
 	console.log("🔄 Execute reload,ghost triggered");
 	const gc = handler.app.ghostController;
@@ -37,6 +41,7 @@ export async function handleReloadGhost(handler: any, _args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleReloadBalloon(handler: any, _args: string[]) {
 	console.log("🔄 Execute reload,balloon triggered");
 	const balloonTheme =
@@ -46,6 +51,7 @@ export async function handleReloadBalloon(handler: any, _args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleReloadDescript(handler: any, _args: string[]) {
 	console.log("🔄 Execute reload,descript triggered");
 	const gc = handler.app.ghostController;
@@ -58,6 +64,7 @@ export async function handleReloadDescript(handler: any, _args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleReloadSurface(handler: any, _args: string[]) {
 	console.log("🔄 Execute reloadsurface triggered");
 	const gc = handler.app.ghostController;

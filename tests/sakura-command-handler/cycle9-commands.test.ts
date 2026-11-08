@@ -11,6 +11,7 @@ setupMockDom();
 
 describe("SakuraCommandHandler - Cycle 9 Extended Commands", () => {
 	it("handles timernotify and timernotifyother commands", async () => {
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const eventsSent: any[] = [];
 		const mockApp = createMockApp(eventsSent);
 		mockApp.ghostController.sendShioriNotify = async (
@@ -77,6 +78,7 @@ describe("SakuraCommandHandler - Cycle 9 Extended Commands", () => {
 	});
 
 	it("handles plugin timer and event commands (timerraiseplugin, timernotifyplugin, raiseplugin, notifyplugin)", async () => {
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const eventsSent: any[] = [];
 		const mockApp = createMockApp(eventsSent);
 		mockApp.ghostController.sendPluginEvent = async (
@@ -134,6 +136,7 @@ describe("SakuraCommandHandler - Cycle 9 Extended Commands", () => {
 	});
 
 	it("handles execute commands (execute:*, execute,emptyrecyclebin, filewatch, ping, nslookup, schedule-add)", async () => {
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const eventsSent: any[] = [];
 		const mockApp = createMockApp(eventsSent);
 		mockApp.ghostController.sendShioriEvent = async (

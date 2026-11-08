@@ -18,6 +18,7 @@ import { getCurrentWindow, PhysicalPosition } from "@tauri-apps/api/window";
  */
 export function isTauriAvailable(): boolean {
 	return (
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		!!(globalThis as any).__TAURI__ || !!(globalThis as any).__TAURI_INTERNALS__
 	);
 }
@@ -39,8 +40,10 @@ export const ipcQueueStats = {
 /**
  * Tauri IPCコマンドの呼び出しラッパー
  */
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function invoke<T = any>(
 	cmd: string,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	args: Record<string, any> = {},
 ): Promise<T> {
 	if (!isTauriAvailable()) {
@@ -106,6 +109,7 @@ export function convertFileSrc(
  */
 export async function listen(
 	event: string,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: (event: any) => void,
 ): Promise<() => void> {
 	if (!isTauriAvailable()) return () => {};
@@ -115,6 +119,7 @@ export async function listen(
 /**
  * イベント発火
  */
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function emit(event: string, payload?: any): Promise<void> {
 	if (!isTauriAvailable()) return;
 	await tauriEmit(event, payload);
@@ -164,4 +169,5 @@ export async function getCurrentWindowPosition(): Promise<{
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 (globalThis as any).__NANAI_IPC_QUEUE_STATS__ = ipcQueueStats;

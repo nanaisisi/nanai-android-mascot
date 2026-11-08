@@ -4,6 +4,7 @@
  */
 
 export async function handleJumpCommand(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
 	target: string,
 	args: string[] = [],

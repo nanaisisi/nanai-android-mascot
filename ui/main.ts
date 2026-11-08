@@ -46,7 +46,9 @@ export class NanaiAndroidMascotApp {
 	sakuraPlayer: SakuraScriptPlayer;
 	modalManager: ModalManager | null;
 	elements: Record<string, HTMLElement | null>;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	availableBalloons?: any[];
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	availablePlugins?: any[];
 	balloonUserScale?: number;
 	balloonDpiScale?: number;
@@ -100,8 +102,11 @@ export class NanaiAndroidMascotApp {
 		this.initUIEnvironment();
 
 		this.modalManager = new ModalManager(this);
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this as any).loadSettings();
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this as any).setupEventListeners();
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this as any).applySettings();
 
 		await Promise.all([this.scanBalloons(), this.scanPlugins()]);
@@ -112,18 +117,21 @@ export class NanaiAndroidMascotApp {
 			this.ghostController.selectGhost(AppConfig.paths.fallbackGhostName);
 		}
 
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this as any).startSecondTimer();
 		this.isInitialized = true;
 		console.log("✅ Nanai Android Mascot 初期化完了");
 	}
 
 	async scanBalloons() {
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		return (this as any).scanBalloons?.() || [];
 	}
 
 	async scanPlugins() {
 		if (!isTauriAvailable()) return;
 		try {
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const plugins: any = await invoke("scan_plugins");
 			if (plugins && plugins.length > 0) {
 				this.availablePlugins = plugins;
@@ -168,6 +176,7 @@ export class NanaiAndroidMascotApp {
 		this._isExiting = true;
 
 		const exit = async () => {
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(this.ghostController as any)?.stopSecondChangeTimer?.();
 			if (isTauriAvailable()) {
 				try {
@@ -187,9 +196,11 @@ export class NanaiAndroidMascotApp {
 		};
 
 		try {
+			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(this as any).hideMenu();
 			this.modalManager?.hide();
 			try {
+				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				await (this.ghostController as any).sendShioriEvent("OnClose");
 			} catch (_e) {}
 			const exitDelay = this.sakuraPlayer?.isPlaying ? 1500 : 400;
@@ -210,5 +221,6 @@ Object.assign(
 );
 
 globalThis.addEventListener("DOMContentLoaded", () => {
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	(globalThis as any).mascotApp = new NanaiAndroidMascotApp();
 });

@@ -3,6 +3,7 @@
  * @brief ゴースト操作・イベント送信コマンド (\![raise,...], \![change,ghost,...], \![call,ghost,...])
  */
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleRaiseCommand(handler: any, args: string[]) {
 	const eventName = args[1];
 	if (eventName) {
@@ -13,6 +14,7 @@ export async function handleRaiseCommand(handler: any, args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleChangeCommand(handler: any, args: string[]) {
 	const target = (args[1] ?? "").toLowerCase();
 	const name = args[2] ?? "";
@@ -67,6 +69,7 @@ export async function handleChangeCommand(handler: any, args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleVanishByMyself(handler: any, _args: string[]) {
 	console.log("👻 Vanish by myself requested");
 	const gc = handler.app.ghostController;
@@ -84,6 +87,7 @@ export async function handleVanishByMyself(handler: any, _args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleCallCommand(handler: any, args: string[]) {
 	const [target, name] = args.slice(1);
 	if (target === "ghost" && name) {
@@ -91,6 +95,7 @@ export async function handleCallCommand(handler: any, args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleRaiseOtherCommand(handler: any, args: string[]) {
 	const ghostName = args[1];
 	const eventName = args[2];
@@ -110,6 +115,7 @@ export async function handleRaiseOtherCommand(handler: any, args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleNotifyOtherCommand(handler: any, args: string[]) {
 	const ghostName = args[1];
 	const eventName = args[2];
@@ -135,12 +141,14 @@ export async function handleNotifyOtherCommand(handler: any, args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleEmbedCommand(handler: any, args: string[]) {
 	const eventName = args[1];
 	if (!eventName) return;
 	const references = args.slice(2);
 	const gc = handler.app.ghostController;
 	if (gc?.sendShioriEvent) {
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const res: any = await gc.sendShioriEvent(eventName, references);
 		const embeddedScript = res?.response?.value;
 		if (embeddedScript && handler.player?.playScript) {

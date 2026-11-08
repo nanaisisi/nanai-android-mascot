@@ -6,7 +6,9 @@ import {
 } from "../../ui/js/ui/touch/index.js";
 
 describe("AndroidBridge - Lifecycle", () => {
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let originalDocument;
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let originalWindow;
 
 	beforeEach(() => {

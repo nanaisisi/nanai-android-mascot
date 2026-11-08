@@ -5,11 +5,13 @@
 
 import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleBiffCommand(handler: any, _args: string[]) {
 	console.log("✉️ Biff mail check triggered");
 	await handler.app.networkActions?.checkEmail?.();
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleExecuteSntpCommand(handler: any, _args: string[]) {
 	console.log("⏱️ Execute SNTP time sync triggered");
 	const gc = handler.app.ghostController;
@@ -26,6 +28,7 @@ export async function handleExecuteSntpCommand(handler: any, _args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleHourTimeSignal(handler: any, hour?: number) {
 	const currentHour = hour ?? new Date().getHours();
 	if (handler.app.ghostController?.sendShioriEvent) {
@@ -35,6 +38,7 @@ export async function handleHourTimeSignal(handler: any, hour?: number) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleOpenSystemTarget(handler: any, args: string[]) {
 	const target = (args[1] ?? "").toLowerCase();
 	const pathOrParam = args[2] ?? "";

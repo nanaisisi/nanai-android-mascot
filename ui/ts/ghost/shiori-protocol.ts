@@ -4,6 +4,7 @@
  */
 
 export function statusCodeFromRust(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	status: string | Record<string, any> | undefined,
 ): number {
 	const codes: Record<string, number> = {
@@ -21,10 +22,12 @@ export function statusCodeFromRust(
 	return codes[status as string] ?? 0;
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function fromRustResponse(typed: Record<string, any> | null) {
 	if (!typed || typeof typed !== "object") return null;
 
 	const status = statusCodeFromRust(typed.status);
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const headers: Record<string, any> = {};
 	for (const [key, value] of Object.entries(typed)) {
 		if (value == null) continue;

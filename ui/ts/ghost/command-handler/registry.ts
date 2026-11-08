@@ -4,6 +4,7 @@
  */
 
 export type CommandHandlerFn = (
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
 	args: string[],
 ) => Promise<void> | void;

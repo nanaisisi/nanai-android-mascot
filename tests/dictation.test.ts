@@ -2,7 +2,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DictationManager } from "../ui/js/core/actions/dictation.js";
 
 describe("DictationManager", () => {
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let originalWindow;
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let originalSpeechSynthesisUtterance;
 
 	beforeEach(() => {

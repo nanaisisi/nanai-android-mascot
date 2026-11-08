@@ -15,7 +15,7 @@ let appliedTheme: string | null = null;
 let applyingTheme: string | null = null;
 let currentDpiScale = 1;
 let currentUserScale = 1;
-let isBalloonDontMove = false;
+let _isBalloonDontMove = false;
 
 export {
 	setupInteractiveElements,
@@ -29,6 +29,7 @@ export async function applyBalloonDescript(theme: string) {
 	if (applyingTheme === theme) return;
 	applyingTheme = theme;
 	try {
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const result: any = await applyThemeDescript({
 			theme,
 			scopeId,
@@ -37,12 +38,12 @@ export async function applyBalloonDescript(theme: string) {
 				currentDpiScale = newDpiScale;
 			},
 			onDontMoveChange: (dontMove: boolean) => {
-				isBalloonDontMove = dontMove;
+				_isBalloonDontMove = dontMove;
 			},
 		});
 		if (result) {
 			currentDpiScale = result.dpiScale;
-			isBalloonDontMove = result.isBalloonDontMove;
+			_isBalloonDontMove = result.isBalloonDontMove;
 			appliedTheme = theme;
 		}
 	} catch (_e) {
@@ -64,6 +65,7 @@ export function initBalloonWindow() {
 
 	if (!isTauriAvailable()) return;
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	void listen(`update-balloon-content-${scopeId}`, (event: any) => {
 		const { html, theme } = event.payload || {};
 		if (theme) {
@@ -77,6 +79,7 @@ export function initBalloonWindow() {
 		}
 	});
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	void listen("balloon-theme-changed", (event: any) => {
 		const theme = event.payload?.theme || event.payload;
 		if (theme) {
@@ -86,6 +89,7 @@ export function initBalloonWindow() {
 		}
 	});
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	void listen("balloon-scale-changed", (event: any) => {
 		const scale =
 			event.payload?.userScale ?? event.payload?.scale ?? event.payload;

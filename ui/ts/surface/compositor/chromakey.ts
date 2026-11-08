@@ -5,10 +5,12 @@ export function processChromaKey(
 	imageSrc: string,
 	pnaSrc: string | null = null,
 	cache: Map<string, string> | null = null,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	options: any = {},
 ): Promise<string> {
 	if (!imageSrc) return Promise.resolve(imageSrc);
 	if (cache?.has(imageSrc)) {
+		// biome-ignore lint/style/noNonNullAssertion: automated fix
 		return Promise.resolve(cache.get(imageSrc)!);
 	}
 	const useSelfAlpha = Boolean(options?.useSelfAlpha);
@@ -18,6 +20,7 @@ export function processChromaKey(
 	);
 	const cacheKey = `${imageSrc}__pna__${pnaSrc || "none"}__selfalpha__${useSelfAlpha}__black__${paintTransparentRegionBlack}`;
 	if (cache?.has(cacheKey)) {
+		// biome-ignore lint/style/noNonNullAssertion: automated fix
 		return Promise.resolve(cache.get(cacheKey)!);
 	}
 

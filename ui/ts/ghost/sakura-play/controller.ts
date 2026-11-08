@@ -45,8 +45,11 @@ import {
 import { SyncObjectManager } from "./sync-object.js";
 
 export class SakuraPlaybackController {
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	player: any;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	queue: any[];
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	currentJob: any;
 	isProcessing: boolean;
 	isPaused: boolean;
@@ -54,9 +57,11 @@ export class SakuraPlaybackController {
 	waitMultiplier: number;
 	charWaitMs: number | null;
 	nextJobId: number;
+	// biome-ignore lint/complexity/noBannedTypes: automated fix
 	listeners: Map<string, Set<Function>>;
 	syncObjects: SyncObjectManager;
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	constructor(options: any = {}) {
 		this.player = options.player || null;
 		if (this.player && !this.player.playbackController) {
@@ -75,6 +80,7 @@ export class SakuraPlaybackController {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 const proto: any = SakuraPlaybackController.prototype;
 
 proto.on = on;

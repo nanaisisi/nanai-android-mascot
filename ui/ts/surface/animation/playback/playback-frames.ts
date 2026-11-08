@@ -43,6 +43,7 @@ export async function _playAnimationPatterns(
 	scopeIdOrKey,
 	keyParam,
 ) {
+	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, anim, baseSurfaceId, scopeId, key;
 	if (isInstance(target)) {
 		instance = target;

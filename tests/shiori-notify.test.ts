@@ -184,6 +184,7 @@ test("shioriNotifyMethods covers sendShioriNotify and sendBootNotifyEvents", asy
 });
 
 test("shioriNotifyMethods covers lifecycle, dialog, balloon, surface, and overlap events", async () => {
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const calls: any[] = [];
 	const controller = {
 		...shioriNotifyMethods,
@@ -191,10 +192,12 @@ test("shioriNotifyMethods covers lifecycle, dialog, balloon, surface, and overla
 	};
 
 	globalThis.__TAURI_INTERNALS__ = {
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		invoke: async (cmd: string, args: any) => {
 			calls.push({ cmd, args });
 			return "ok";
 		},
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		transformCallback: (cb: any) => cb,
 	};
 	globalThis.window = globalThis;
@@ -322,5 +325,6 @@ test("shioriNotifyMethods covers lifecycle, dialog, balloon, surface, and overla
 	assert.equal(calls.at(-1).args.event, "OnOtherOffscreen");
 	assert.deepEqual(calls.at(-1).args.references, ["GhostB", "0,0,100,100"]);
 
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	delete (globalThis as any).__TAURI_INTERNALS__;
 });

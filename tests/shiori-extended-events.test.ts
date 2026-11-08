@@ -3,7 +3,9 @@ import { eventMethods } from "../ui/js/core/app-events.js";
 import { shioriNotifyMethods } from "../ui/js/ghost/shiori-notify.js";
 
 describe("SHIORI Extended Events & Notifications", () => {
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let mockController: any;
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let mockAppEvents: any;
 
 	beforeEach(() => {

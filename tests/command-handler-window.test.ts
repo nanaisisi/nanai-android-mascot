@@ -5,6 +5,7 @@ import {
 } from "../ui/js/ghost/command-handler/window.js";
 
 describe("Sakura command window handlers", () => {
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let originalTauri: any;
 
 	beforeEach(() => {

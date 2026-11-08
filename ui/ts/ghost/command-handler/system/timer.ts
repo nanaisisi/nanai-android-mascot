@@ -5,6 +5,7 @@
 
 const activeScriptTimers = new Map<
 	string,
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	{ id: any; type: "interval" | "timeout" }
 >();
 
@@ -19,6 +20,7 @@ export function clearAllScriptTimers() {
 	activeScriptTimers.clear();
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleNotifyCommand(handler: any, args: string[]) {
 	const eventName = args[1];
 	if (!eventName) return;
@@ -34,6 +36,7 @@ export async function handleNotifyCommand(handler: any, args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleTimerRaiseCommand(handler: any, args: string[]) {
 	const delayMs = Number.parseInt(args[1] ?? "0", 10);
 	const repeatFlag = Number.parseInt(args[2] ?? "1", 10);
@@ -44,6 +47,7 @@ export async function handleTimerRaiseCommand(handler: any, args: string[]) {
 
 	const timerKey = `raise:${eventName}`;
 	if (activeScriptTimers.has(timerKey)) {
+		// biome-ignore lint/style/noNonNullAssertion: automated fix
 		const existing = activeScriptTimers.get(timerKey)!;
 		if (existing.type === "interval") {
 			clearInterval(existing.id);
@@ -80,6 +84,7 @@ export async function handleTimerRaiseCommand(handler: any, args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleTimerNotifyCommand(handler: any, args: string[]) {
 	const delayMs = Number.parseInt(args[1] ?? "0", 10);
 	const repeatFlag = Number.parseInt(args[2] ?? "1", 10);
@@ -90,6 +95,7 @@ export async function handleTimerNotifyCommand(handler: any, args: string[]) {
 
 	const timerKey = `notify:${eventName}`;
 	if (activeScriptTimers.has(timerKey)) {
+		// biome-ignore lint/style/noNonNullAssertion: automated fix
 		const existing = activeScriptTimers.get(timerKey)!;
 		if (existing.type === "interval") {
 			clearInterval(existing.id);
@@ -134,6 +140,7 @@ export async function handleTimerNotifyCommand(handler: any, args: string[]) {
 }
 
 export async function handleTimerRaiseOtherCommand(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
 	args: string[],
 ) {
@@ -148,6 +155,7 @@ export async function handleTimerRaiseOtherCommand(
 	const timerKey = `other:${isNotify ? "notify" : "raise"}:${ghostName}:${eventName}`;
 
 	if (activeScriptTimers.has(timerKey)) {
+		// biome-ignore lint/style/noNonNullAssertion: automated fix
 		const existing = activeScriptTimers.get(timerKey)!;
 		if (existing.type === "interval") {
 			clearInterval(existing.id);
@@ -200,10 +208,8 @@ export async function handleTimerRaiseOtherCommand(
 	}
 }
 
-export async function handleTimerPluginCommand(
-	handler: any,
-	args: string[],
-) {
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
+export async function handleTimerPluginCommand(handler: any, args: string[]) {
 	const delayMs = Number.parseInt(args[1] ?? "0", 10);
 	const repeatFlag = Number.parseInt(args[2] ?? "1", 10);
 	const pluginId = args[3];
@@ -216,6 +222,7 @@ export async function handleTimerPluginCommand(
 	const timerKey = `plugin:${isNotify ? "notify" : "raise"}:${pluginId}:${eventName}`;
 
 	if (activeScriptTimers.has(timerKey)) {
+		// biome-ignore lint/style/noNonNullAssertion: automated fix
 		const existing = activeScriptTimers.get(timerKey)!;
 		if (existing.type === "interval") {
 			clearInterval(existing.id);
@@ -233,7 +240,9 @@ export async function handleTimerPluginCommand(
 			if (gc?.sendPluginEvent) {
 				await gc.sendPluginEvent(pluginId, eventName, references, isNotify);
 			} else {
-				const { invoke, isTauriAvailable } = await import("../../../core/tauri-helper.js");
+				const { invoke, isTauriAvailable } = await import(
+					"../../../core/tauri-helper.js"
+				);
 				if (isTauriAvailable()) {
 					await invoke("execute_plugin_event", {
 						request: {

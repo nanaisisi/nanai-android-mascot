@@ -6,6 +6,7 @@
 import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 
 export async function handleSetAlignmentOnDesktop(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
 	args: string[],
 ) {
@@ -14,6 +15,7 @@ export async function handleSetAlignmentOnDesktop(
 	if (mode === "free") return;
 
 	try {
+		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const api = (globalThis as any).__TAURI__?.window;
 		if (!api) return;
 		const win = api.getCurrentWindow();
@@ -35,6 +37,7 @@ export async function handleSetAlignmentOnDesktop(
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleSetTaskTrayIcon(_handler: any, args: string[]) {
 	const iconPath = args[2] ?? "";
 	console.log(`📌 Task tray icon set: ${iconPath}`);
@@ -47,6 +50,7 @@ export async function handleSetTaskTrayIcon(_handler: any, args: string[]) {
 	}
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function handleSetTrayBalloon(handler: any, args: string[]) {
 	const title = args[2] ?? "";
 	const text = args[3] ?? "";
@@ -70,6 +74,7 @@ export async function handleSetTrayBalloon(handler: any, args: string[]) {
 }
 
 export async function triggerTrayBalloonClick(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
 	title: string = "",
 	text: string = "",
@@ -83,6 +88,7 @@ export async function triggerTrayBalloonClick(
 }
 
 export async function handleExecuteResetWindowPos(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
 	_args: string[],
 ) {
@@ -96,6 +102,7 @@ export async function handleExecuteResetWindowPos(
 }
 
 export async function handleExecuteResetBalloonPos(
+	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
 	_args: string[],
 ) {

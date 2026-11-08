@@ -305,6 +305,23 @@ describe("SHIORI Extended Events & Notifications", () => {
 				"OnAITalk",
 				[],
 			);
+
+			await notifyObj.notifyCommunicationEvent("OnExecuteHTTPComplete", [
+				"200",
+				"https://example.com/api",
+			]);
+			expect(mockController.sendShioriNotify).toHaveBeenCalledWith(
+				"OnExecuteHTTPComplete",
+				["200", "https://example.com/api"],
+			);
+
+			await notifyObj.notifyCommunicationEvent("OnExecuteWebSocketOpen", [
+				"wss://example.com/socket",
+			]);
+			expect(mockController.sendShioriNotify).toHaveBeenCalledWith(
+				"OnExecuteWebSocketOpen",
+				["wss://example.com/socket"],
+			);
 		});
 	});
 

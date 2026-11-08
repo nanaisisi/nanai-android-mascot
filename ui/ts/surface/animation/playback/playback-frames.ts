@@ -125,17 +125,17 @@ export async function _playAnimationPatterns(
 		);
 	}
 
-	const timeline = buildAnimationTimeline(anim.patterns);
+	const timeline = await buildAnimationTimeline(anim.patterns);
 
 	try {
-		if (timeline.isTimeline) {
+		if (timeline?.frames?.length) {
 			await _playTimelineFrames.call(
 				instance,
 				timeline,
+				anim,
 				baseSurfaceId,
 				scopeId,
 				key,
-				isCurrent,
 				{ startIndex, options },
 			);
 		} else {

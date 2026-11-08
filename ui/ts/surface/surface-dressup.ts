@@ -156,7 +156,11 @@ export const surfaceDressupMethods = {
 		const sid = Number(surfaceId);
 		if (!Number.isFinite(sid) || sid < 0) return null;
 		const gc = this.app?.ghostController;
-		const ghostName = gc?.currentGhost?.name;
+		const ghostPath = gc?.currentGhost?.path;
+		const ghostName =
+			(ghostPath
+				? String(ghostPath).split(/[\\/]/).filter(Boolean).pop()
+				: null) || gc?.currentGhost?.name;
 		if (!ghostName) return null;
 
 		const key = this.planCacheKey(sid, scopeId);
@@ -184,10 +188,19 @@ export const surfaceDressupMethods = {
 		const bindLayers: unknown[] = [];
 		let hasElement = false;
 		for (const layer of plan.layers) {
-			const raw = layer.Element ?? layer.Pattern;
+			const isElement =
+				Boolean(layer.Element) ||
+				String(layer.kind || "").toLowerCase() === "element";
+			const isPattern =
+				Boolean(layer.Pattern) ||
+				String(layer.kind || "").toLowerCase() === "pattern";
+			const raw =
+				layer.Element ??
+				layer.Pattern ??
+				(isElement || isPattern ? layer : null);
 			if (!raw) continue;
 			const type = methodToString(raw.method) || "overlay";
-			if (layer.Element) {
+			if (isElement) {
 				hasElement = true;
 				if (raw.file) {
 					elements.push({

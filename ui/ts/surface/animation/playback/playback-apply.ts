@@ -204,19 +204,23 @@ export async function _applyAnimationFrame(
 		? inst.getAnimationOffset(sId, animName)
 		: getAnimationOffset(inst, sId, animName);
 
-	const layerX = (p.x || 0) + (offset?.x || 0);
-	const layerY = (p.y || 0) + (offset?.y || 0);
+	const layerX = (p.x ?? p.offsetx ?? 0) + (offset?.x || 0);
+	const layerY = (p.y ?? p.offsety ?? 0) + (offset?.y || 0);
+	const resolvedSurfaceId = manager?.resolveSurfaceNumber
+		? manager.resolveSurfaceNumber(surfaceId, sId)
+		: surfaceId;
 	const surfaceFile =
 		p.file ||
 		(p.placeholder || opts.placeholder
 			? `data:image/png;base64,placeholder`
-			: String(surfaceId));
+			: `surface${resolvedSurfaceId}.png`);
+	const patType = (p.type || p.method || "overlay").toLowerCase();
 
 	const gc = manager?.app?.ghostController;
 
 	if (gc?.updateSurface) {
-		await gc.updateSurface(surfaceId, sId, [
-			{ file: surfaceFile, x: layerX, y: layerY },
+		await gc.updateSurface(bSurfId ?? surfaceId, sId, [
+			{ file: surfaceFile, x: layerX, y: layerY, type: patType },
 		]);
 	}
 

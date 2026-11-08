@@ -82,18 +82,20 @@ export const surfaceAnimationPlaybackMethods = {
 
 	_playTimelineFrames(
 		timeline: unknown,
+		anim: unknown,
 		baseSurfaceId: unknown,
 		scopeId: unknown,
 		key: unknown,
-		anim: unknown,
+		options?: unknown,
 	) {
 		return _playTimelineFrames.call(
 			this,
 			timeline,
+			anim,
 			baseSurfaceId,
 			scopeId,
 			key,
-			anim,
+			options,
 		);
 	},
 

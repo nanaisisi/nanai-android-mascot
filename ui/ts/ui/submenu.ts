@@ -2,6 +2,8 @@
  * @file submenu.js
  * @brief 独立サブメニューウィンドウ制御のメインエントリポイント
  */
+
+import { AppConfig } from "../core/config.js";
 import {
 	emit,
 	invoke,
@@ -9,7 +11,6 @@ import {
 	listen,
 	startDraggingWindow,
 } from "../core/tauri-helper.js";
-import { AppConfig } from "../core/config.js";
 import { renderSubmenuContent } from "./submenu-renderer.js";
 import { applyShellMenuTheme } from "./submenu-theme.js";
 

@@ -66,6 +66,7 @@ export async function _playTimelineFrames(
 
 	if (!tl.frames?.length) return;
 
+	let prevAt = 0;
 	for (let i = 0; i < tl.frames.length; i++) {
 		if (stoppedAnimations?.has(key)) break;
 
@@ -79,9 +80,15 @@ export async function _playTimelineFrames(
 						frameItem
 					: frameItem;
 
-		const waitMs = resolveWaitFn
-			? resolveWaitFn(pat?.wait || frameItem?.wait)
-			: resolvePatternWait(pat?.wait || frameItem?.wait);
+		let waitMs = 0;
+		if (typeof frameItem === "number") {
+			waitMs = Math.max(frameItem - prevAt, 0);
+			prevAt = frameItem;
+		} else {
+			waitMs = resolveWaitFn
+				? resolveWaitFn(pat?.wait || frameItem?.wait)
+				: resolvePatternWait(pat?.wait || frameItem?.wait);
+		}
 
 		if (waitMs > 0) {
 			await new Promise<void>((resolve) => {

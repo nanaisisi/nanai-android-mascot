@@ -50,6 +50,9 @@ export async function applySurfaceImageToDom(
 	) {
 		try {
 			const resolveLayerImage = async (fileName: string) => {
+				if (fileName.startsWith("data:")) {
+					return fileName;
+				}
 				const resolveId =
 					fileName.replace(/\.[^/.]+$/, "").replace(/^surface/i, "") || "0";
 				const pnaFileName = fileName.replace(/\.[^/.]+$/, ".pna");
@@ -75,10 +78,29 @@ export async function applySurfaceImageToDom(
 					return layerSrc;
 				}
 				try {
-					return await controller.app.surfaceManager.processChromaKey(
-						layerSrc,
-						layerPnaSrc,
-					);
+					let chromaProcessed =
+						await controller.app.surfaceManager.processChromaKey(
+							layerSrc,
+							layerPnaSrc,
+						);
+					const layerElements =
+						controller.app.surfaceManager.elements?.[String(resolveId)];
+					if (
+						Array.isArray(layerElements) &&
+						layerElements.length > 0 &&
+						String(resolveId) !== String(surfaceId) &&
+						controller.app.surfaceManager.composeSurfaceElements
+					) {
+						chromaProcessed =
+							await controller.app.surfaceManager.composeSurfaceElements(
+								resolveId,
+								chromaProcessed,
+								resolveLayerImage,
+								scopeId,
+								null,
+							);
+					}
+					return chromaProcessed;
 				} catch (_e) {
 					return layerSrc;
 				}

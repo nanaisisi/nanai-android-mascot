@@ -118,7 +118,11 @@ export class NanaiAndroidMascotApp {
 	}
 
 	async scanBalloons() {
-		return (this as unknown).scanBalloons?.() || [];
+		return (
+			(
+				actionMethods as Record<string, () => Promise<unknown[]>>
+			).scanBalloons?.call(this) || []
+		);
 	}
 
 	async scanPlugins() {

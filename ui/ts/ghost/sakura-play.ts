@@ -122,7 +122,7 @@ export async function playScript(player: any, script: string) {
 		}, player.choiceTimeout);
 	}
 
-	if (!hasChoices && player.balloonTimeout > 0) {
+	if (!hasChoices && !player.timeCritical && player.balloonTimeout > 0) {
 		if (player.balloonTimeoutTimer) clearTimeout(player.balloonTimeoutTimer);
 		player.balloonTimeoutTimer = setTimeout(async () => {
 			if (player.playbackId === currentId && !player.isPlaying) {
@@ -131,10 +131,17 @@ export async function playScript(player: any, script: string) {
 					if (keroDisplay) keroDisplay.style.display = "none";
 					app.hideBalloon?.(0, "timeout");
 					app.hideBalloon?.(1, "timeout");
-					await app.ghostController?.sendShioriEvent?.("OnBalloonTimeout", [
-						player.lastScript || "",
-						"0",
-					]);
+					if (app.ghostController?.sendBalloonTimeoutNotify) {
+						await app.ghostController.sendBalloonTimeoutNotify(
+							player.lastScript || "",
+							"0",
+						);
+					} else {
+						await app.ghostController?.sendShioriEvent?.("OnBalloonTimeout", [
+							player.lastScript || "",
+							"0",
+						]);
+					}
 					if (app.ghostController?.sendBalloonCloseNotify) {
 						await app.ghostController.sendBalloonCloseNotify(
 							player.lastScript || "",
@@ -143,7 +150,7 @@ export async function playScript(player: any, script: string) {
 				} catch (_e) {}
 			}
 		}, player.balloonTimeout);
-	} else if (!hasChoices && isTauriAvailable()) {
+	} else if (!hasChoices && !player.timeCritical && isTauriAvailable()) {
 		setTimeout(() => {
 			if (player.playbackId === currentId && !player.isPlaying) {
 				app.hideBalloon?.(0);

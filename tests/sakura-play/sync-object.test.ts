@@ -86,3 +86,47 @@ test("SyncObjectManager: getOrCreate, set, reset, isSignaled, clear", async () =
 	mgr.clear();
 	await assert.rejects(pWait, /SyncObject cancelled/);
 });
+
+test("SyncObject: waiterCount and isWaiting telemetry", async () => {
+	const sync = new SyncObject("telemetry");
+	assert.equal(sync.waiterCount, 0);
+	assert.equal(sync.isWaiting(), false);
+
+	const p1 = sync.wait();
+	assert.equal(sync.waiterCount, 1);
+	assert.equal(sync.isWaiting(), true);
+
+	const p2 = sync.wait();
+	assert.equal(sync.waiterCount, 2);
+	assert.equal(sync.isWaiting(), true);
+
+	sync.set();
+	await p1;
+	// After first waiter resolves and resets signal, second waiter remains
+	assert.equal(sync.waiterCount, 1);
+	assert.equal(sync.isWaiting(), true);
+
+	sync.set();
+	await p2;
+	assert.equal(sync.waiterCount, 0);
+	assert.equal(sync.isWaiting(), false);
+});
+
+test("SyncObjectManager: has and getNames inspection", () => {
+	const mgr = new SyncObjectManager();
+	assert.equal(mgr.has("alpha"), false);
+	assert.deepEqual(mgr.getNames(), []);
+
+	mgr.getOrCreate("Alpha");
+	assert.equal(mgr.has("alpha"), true);
+	assert.equal(mgr.has("ALPHA"), true);
+	assert.deepEqual(mgr.getNames(), ["alpha"]);
+
+	mgr.set("Beta");
+	assert.equal(mgr.has("beta"), true);
+	assert.deepEqual(mgr.getNames().sort(), ["alpha", "beta"]);
+
+	mgr.clear();
+	assert.deepEqual(mgr.getNames(), []);
+	assert.equal(mgr.has("alpha"), false);
+});

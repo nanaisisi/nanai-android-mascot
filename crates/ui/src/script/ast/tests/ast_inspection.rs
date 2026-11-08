@@ -1,109 +1,9 @@
-use super::super::command::{SakuraCommand, SakuraScriptLifetime};
-use super::builder::build_sakura_ast;
-use super::types::{SakuraAstNode, SakuraToken};
+/**
+ * @file ast_inspection.rs
+ * @brief SakuraAstNode の walk 走査、コマンド収集、ライフサイクル分類、アンカー/サーフィス検索、スコープフィルタ単体テスト
+ */
 
-#[test]
-fn test_build_sakura_ast_scope_grouping() {
-    let commands = vec![
-        SakuraCommand::Target(0),
-        SakuraCommand::Surface(0),
-        SakuraCommand::Text("Hello".into()),
-        SakuraCommand::Target(1),
-        SakuraCommand::Surface(10),
-        SakuraCommand::Text("Hi".into()),
-    ];
-    let ast = build_sakura_ast(&commands);
-    if let SakuraAstNode::Root { children } = ast {
-        assert_eq!(children.len(), 2);
-        if let SakuraAstNode::Scope {
-            scope,
-            children: s0,
-        } = &children[0]
-        {
-            assert_eq!(*scope, 0);
-            assert_eq!(s0.len(), 2);
-        } else {
-            panic!("Expected Scope node");
-        }
-        if let SakuraAstNode::Scope {
-            scope,
-            children: s1,
-        } = &children[1]
-        {
-            assert_eq!(*scope, 1);
-            assert_eq!(s1.len(), 2);
-        } else {
-            panic!("Expected Scope node");
-        }
-    } else {
-        panic!("Expected Root node");
-    }
-}
-
-#[test]
-fn test_build_sakura_ast_choice_node() {
-    let commands = vec![
-        SakuraCommand::Target(0),
-        SakuraCommand::Choice {
-            label: "Select Me".into(),
-            id: "OnChoice1".into(),
-            args: vec!["arg1".into()],
-        },
-    ];
-    let ast = build_sakura_ast(&commands);
-    if let SakuraAstNode::Root { children } = ast {
-        assert_eq!(children.len(), 1);
-        if let SakuraAstNode::Scope {
-            scope,
-            children: s0,
-        } = &children[0]
-        {
-            assert_eq!(*scope, 0);
-            assert_eq!(s0.len(), 1);
-            assert_eq!(
-                s0[0],
-                SakuraAstNode::Choice {
-                    id: "OnChoice1".into(),
-                    text: "Select Me".into(),
-                    args: vec!["arg1".into()],
-                }
-            );
-        } else {
-            panic!("Expected Scope node");
-        }
-    } else {
-        panic!("Expected Root node");
-    }
-}
-
-#[test]
-fn test_sakura_token_constructors() {
-    let tok1 = SakuraToken::new(SakuraCommand::Clear);
-    assert_eq!(tok1.command, SakuraCommand::Clear);
-    assert_eq!(tok1.raw, None);
-
-    let tok2 = SakuraToken::with_raw(SakuraCommand::Clear, "\\c");
-    assert_eq!(tok2.command, SakuraCommand::Clear);
-    assert_eq!(tok2.raw, Some("\\c".to_string()));
-}
-
-#[test]
-fn test_build_sakura_ast_root_level_anchor_and_commands() {
-    let commands = vec![
-        SakuraCommand::Anchor {
-            id: "anchor1".into(),
-            text: "click".into(),
-            args: vec![],
-        },
-        SakuraCommand::Text("Plain text at root".into()),
-    ];
-    let ast = build_sakura_ast(&commands);
-    if let SakuraAstNode::Root { children } = ast {
-        assert_eq!(children.len(), 2);
-    } else {
-        panic!("Expected Root node");
-    }
-}
+use super::*;
 
 #[test]
 fn test_ast_walk_and_collect_commands() {
@@ -281,7 +181,6 @@ fn test_ast_cycle8_find_anchors_text_length_and_scope_nodes() {
     assert_eq!(anchors[0], ("a1".to_string(), "World".to_string()));
 
     // 2. calculate_text_length
-    // "Hello " (6) + "World" (5 from Anchor child text) + "Option 1" (8) + "Kero" (4) = 23
     let length = ast.calculate_text_length();
     assert_eq!(length, 23);
 
@@ -355,5 +254,5 @@ fn test_ast_cycle9_advanced_inspection_and_filtering() {
     let clean_ast = ast.strip_waits();
     assert!(!clean_ast.has_command(&|cmd| matches!(cmd, SakuraCommand::Wait(_))));
     assert_eq!(clean_ast.find_animations().len(), 2);
-    assert_eq!(clean_ast.calculate_text_length(), 14); // "Hello 0" (7) + "Hello 1" (7)
+    assert_eq!(clean_ast.calculate_text_length(), 14);
 }

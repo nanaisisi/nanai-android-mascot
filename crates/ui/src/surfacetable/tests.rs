@@ -44,9 +44,17 @@ group,__disabled
     // 可視登録からは __disabled が除外される
     let visible = table.visible_entries();
     assert_eq!(visible.len(), 5);
+    assert_eq!(table.all_entries().len(), 8);
     assert_eq!(table.name_of(0), Some("デフォルト"));
     assert_eq!(table.name_of(19), None);
+    assert_eq!(table.name_of_all(19), Some("__parts"));
     assert_eq!(table.name_of(999), None);
+
+    // surface_id_of の双方向検索
+    assert_eq!(table.surface_id_of("デフォルト"), Some(0));
+    assert_eq!(table.surface_id_of("じとー"), Some(1));
+    assert_eq!(table.surface_id_of("__parts"), Some(19));
+    assert_eq!(table.surface_id_of("存在しない"), None);
 }
 
 #[test]

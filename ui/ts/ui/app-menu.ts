@@ -112,7 +112,10 @@ export const menuMethods = {
 			);
 			if ((this as unknown).availableBalloons) {
 				win.postMessage(
-					{ type: "sync-balloons", balloons: (this as unknown).availableBalloons },
+					{
+						type: "sync-balloons",
+						balloons: (this as unknown).availableBalloons,
+					},
 					"*",
 				);
 			}

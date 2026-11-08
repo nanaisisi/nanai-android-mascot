@@ -7,14 +7,14 @@ import { modalTemplates } from "./modal-templates.js";
  * Nanai Android Mascot - モーダル & UIダイアログ管理
  */
 export class ModalManager {
-	app: any;
+	app: unknown;
 	overlay: HTMLElement | null;
 	content: HTMLElement | null;
 	closeBtn: HTMLElement | null;
 	ghostHandlers: ModalGhostHandlers;
 	settingsHandlers: ModalSettingsHandlers;
 
-	constructor(app: any) {
+	constructor(app: unknown) {
 		this.app = app;
 		this.overlay = document.getElementById("modal-overlay");
 		this.content = document.getElementById("modal-content");
@@ -70,19 +70,19 @@ export class ModalManager {
 
 	setupListeners(contentId: string) {
 		if (contentId === "ghost-modal-content") {
-			(this.ghostHandlers as any).setupGhostListeners?.();
+			(this.ghostHandlers as unknown).setupGhostListeners?.();
 		} else if (contentId === "explorer-modal-content") {
-			(this.ghostHandlers as any).setupExplorerListeners?.();
+			(this.ghostHandlers as unknown).setupExplorerListeners?.();
 		} else if (contentId === "install-modal-content") {
-			(this.ghostHandlers as any).setupInstallListeners?.();
+			(this.ghostHandlers as unknown).setupInstallListeners?.();
 		} else if (contentId === "balloon-modal-content") {
-			(this.ghostHandlers as any).renderBalloonList?.();
+			(this.ghostHandlers as unknown).renderBalloonList?.();
 		} else if (contentId === "settings-modal-content") {
-			(this.settingsHandlers as any).setupSettingsListeners?.();
+			(this.settingsHandlers as unknown).setupSettingsListeners?.();
 		} else if (contentId === "plugins-modal-content") {
-			(this.settingsHandlers as any).setupPluginListeners?.();
+			(this.settingsHandlers as unknown).setupPluginListeners?.();
 		} else if (contentId === "debug-modal-content") {
-			(this.settingsHandlers as any).setupDebugListeners?.();
+			(this.settingsHandlers as unknown).setupDebugListeners?.();
 		}
 	}
 
@@ -105,10 +105,10 @@ export class ModalManager {
 	}
 
 	renderGhostList() {
-		(this.ghostHandlers as any).renderGhostList?.();
+		(this.ghostHandlers as unknown).renderGhostList?.();
 	}
 
 	renderBalloonList() {
-		(this.ghostHandlers as any).renderBalloonList?.();
+		(this.ghostHandlers as unknown).renderBalloonList?.();
 	}
 }

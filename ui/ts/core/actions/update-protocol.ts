@@ -152,12 +152,12 @@ export const OTHER_PROGRESS_PHASE_EVENTS: Record<string, string> = {
  * @param {any} err
  * @returns {string}
  */
-<<<<<<< HEAD
+
 export function parseErrorReason(_err: unknown): string {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function _parseErrorReason(err: any): string {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	const msg = String(err);
 	if (msg.includes("404")) return "404";
 	if (msg.includes("timeout")) return "timeout";
@@ -173,24 +173,24 @@ export function _parseErrorReason(err: any): string {
  * @returns {(event: unknown) => void}
  */
 export function createUpdateProgressHandler(
-<<<<<<< HEAD
+
 	gc: unknown,
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	gc: any,
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	onFailedFile?: (filePath: string) => void,
 	isOther: boolean = false,
 ) {
 	const eventMap = isOther
 		? OTHER_PROGRESS_PHASE_EVENTS
 		: PROGRESS_PHASE_EVENTS;
-<<<<<<< HEAD
+
 	return (_event: unknown) => {
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	return (event: any) => {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		const { phase, path: filePath } = event.payload || {};
 		if (!filePath) return;
 		const evName = eventMap[phase];

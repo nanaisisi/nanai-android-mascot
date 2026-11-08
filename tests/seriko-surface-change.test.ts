@@ -95,12 +95,12 @@ describe("SERIKO and Surface Change Event Coordination (Slot-08 Cycle 8)", () =>
 	});
 
 	it("suppresses lip-sync when seriko talk is disabled", () => {
-<<<<<<< HEAD
+
 		const mockManager: unknown = {
-=======
+
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const _mockManager: any = {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad,
+,
 			animationsForTrigger: vi
 				.fn()
 				.mockReturnValue([id: 1, patterns: [] , sid: "0", param: 1 ,
@@ -122,12 +122,12 @@ describe("SERIKO and Surface Change Event Coordination (Slot-08 Cycle 8)", () =>
 	it("handles scaling draw method in _applyAnimationFrame", async () => {
 		const _setScale = vi.fn();
 		const _notifyFrameStep = vi.fn();
-<<<<<<< HEAD
+
 		const instance: unknown = {
-=======
+
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const _instance: any = {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad,
+,
 				currentSurfaceIdFor: vi.fn().mockReturnValue(0),
 				animations: "0": [id: 1 ] ,
 				setScale,,
@@ -157,12 +157,12 @@ describe("SERIKO and Surface Change Event Coordination (Slot-08 Cycle 8)", () =>
 	});
 
 	it("manages scaling and serikotalk state in SurfaceAnimationManager", () => {
-<<<<<<< HEAD
+
 		const _sam = new SurfaceAnimationManager({} as unknown);
-=======
+
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const sam = new SurfaceAnimationManager({} as any);
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		expect(sam.isSerikoTalkEnabled(0)).toBe(true);
 		expect(sam.getBaseScalingOffset(0)).toEqual({ scaleX: 100, scaleY: 100 });
 

@@ -4,12 +4,12 @@
  */
 
 export async function handleBindCommand(
-<<<<<<< HEAD
+
 	handler: unknown,
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	args: string[],
 	raiseEvent: boolean = true,
 ) {
@@ -23,12 +23,12 @@ export async function handleBindCommand(
 	);
 }
 
-<<<<<<< HEAD
+
 export async function handleAnimCommand(_handler: unknown, _args: string[]) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function _handleAnimCommand(handler: any, args: string[]) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	const [verbRaw, idVal, arg3, arg4] = args.slice(1);
 	const targetStr = String(idVal ?? "").trim();
 	const animIdNum = Number.parseInt(targetStr, 10);
@@ -52,12 +52,12 @@ export async function _handleAnimCommand(handler: any, args: string[]) {
 	}
 }
 
-<<<<<<< HEAD
+
 async function handleAnimAddCommand(_handler: unknown, _subArgs: string[]) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 async function _handleAnimAddCommand(handler: any, subArgs: string[]) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (!subArgs.length) return;
 	const method = String(subArgs[0] ?? "").toLowerCase();
 	const sm = handler.app.surfaceManager;

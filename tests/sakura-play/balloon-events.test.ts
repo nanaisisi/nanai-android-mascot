@@ -8,36 +8,36 @@ const { SakuraScriptPlayer } = await import(
 );
 
 test("choice click triggers OnChoiceSelectEx first, then falls back to OnChoiceSelect if no script", async () => {
-<<<<<<< HEAD
+
 	const _shioriEvents: unknown[] = [];
 	const _sakuraText = createEl("div");
 
 	const _app: unknown = {
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const shioriEvents: any[] = [];
 	const sakuraText = createEl("div");
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const app: any = {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		ghostId: "main",
-		elements: 
+		elements:
 			balloonText: sakuraText,
 			balloonDisplay: createEl("div"),
 			keroBalloonText: createEl("div"),
 			keroBalloonDisplay: createEl("div"),,
-		surfaceManager: 
+		surfaceManager:
 			onCharSpoken() ,
 			onTalkEnd() ,
 			onScriptEnd() ,,
-		ghostController: 
-<<<<<<< HEAD
-			sendShioriEvent: async (event: string, args: unknown[]) => 
-=======
+		ghostController:
+
+			sendShioriEvent: async (event: string, args: unknown[]) =>
+
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
-			sendShioriEvent: async (event: string, args: any[]) => 
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+			sendShioriEvent: async (event: string, args: any[]) =>
+
 				if (event === "OnTranslate") return { script: null };
 				shioriEvents.push({ event, args });
 				// Return no content (empty/falsy) to simulate fallback
@@ -82,36 +82,36 @@ test("choice click triggers OnChoiceSelectEx first, then falls back to OnChoiceS
 });
 
 test("choice click does not trigger OnChoiceSelect if OnChoiceSelectEx returns response script", async () => {
-<<<<<<< HEAD
+
 	const _shioriEvents: unknown[] = [];
 	const _sakuraText = createEl("div");
 
 	const _app: unknown = {
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const shioriEvents: any[] = [];
 	const sakuraText = createEl("div");
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const app: any = {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		ghostId: "main",
-		elements: 
+		elements:
 			balloonText: sakuraText,
 			balloonDisplay: createEl("div"),
 			keroBalloonText: createEl("div"),
 			keroBalloonDisplay: createEl("div"),,
-		surfaceManager: 
+		surfaceManager:
 			onCharSpoken() ,
 			onTalkEnd() ,
 			onScriptEnd() ,,
-		ghostController: 
-<<<<<<< HEAD
-			sendShioriEvent: async (event: string, args: unknown[]) => 
-=======
+		ghostController:
+
+			sendShioriEvent: async (event: string, args: unknown[]) =>
+
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
-			sendShioriEvent: async (event: string, args: any[]) => 
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+			sendShioriEvent: async (event: string, args: any[]) =>
+
 				if (event === "OnTranslate") return { script: null };
 				shioriEvents.push({ event, args });
 				if (event === "OnChoiceSelectEx") {
@@ -145,46 +145,46 @@ test("choice click does not trigger OnChoiceSelect if OnChoiceSelectEx returns r
 });
 
 test("anchor click triggers OnAnchorSelectEx first, then falls back to OnAnchorSelect", async () => {
-<<<<<<< HEAD
+
 	const shioriEvents: unknown[] = [];
 	const _sakuraText = createEl("div");
 
 	const _app: unknown = {
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const shioriEvents: any[] = [];
 	const _sakuraText = createEl("div");
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const _app: any = {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		ghostId: "main",
-		elements: 
+		elements:
 			balloonText: _sakuraText,
 			balloonDisplay: createEl("div"),
 			keroBalloonText: createEl("div"),
 			keroBalloonDisplay: createEl("div"),,
-		surfaceManager: 
+		surfaceManager:
 			onCharSpoken() ,
 			onTalkEnd() ,
 			onScriptEnd() ,,
-		ghostController: 
-<<<<<<< HEAD
-			sendShioriEvent: async (event: string, args: unknown[]) => 
-=======
+		ghostController:
+
+			sendShioriEvent: async (event: string, args: unknown[]) =>
+
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
-			sendShioriEvent: async (event: string, args: any[]) => 
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+			sendShioriEvent: async (event: string, args: any[]) =>
+
 				if (event === "OnTranslate") return { script: null };
 				shioriEvents.push({ event, args });
 				return null;,,;
 
-<<<<<<< HEAD
+
 	const _player: unknown = {
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const _player: any = {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		playbackId: 60,
 		parse: async () => [type: "scope", value: 0 ,type: "anchor_begin", id: "web_link", args: ["https://example.com"] ,type: "char", value: "公式サイト" ,type: "anchor_end" ,
 		],
@@ -221,30 +221,30 @@ test("anchor click triggers OnAnchorSelectEx first, then falls back to OnAnchorS
 });
 
 test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip", async () => {
-<<<<<<< HEAD
+
 	const _notifyEvents: unknown[] = [];
 	const _sakuraText = createEl("div");
 
 	const _app: unknown = {
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const notifyEvents: any[] = [];
 	const _sakuraText = createEl("div");
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const _app: any = {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		ghostId: "main",
-		elements: 
+		elements:
 			balloonText: _sakuraText,
 			balloonDisplay: createEl("div"),
 			keroBalloonText: createEl("div"),
 			keroBalloonDisplay: createEl("div"),,
-		surfaceManager: 
+		surfaceManager:
 			onCharSpoken() ,
 			onTalkEnd() ,
 			onScriptEnd() ,,
-		ghostController: 
+		ghostController:
 			sendBalloonCloseNotify: async (lastScript: string) => {
 				notifyEvents.push({ event: "OnBalloonClose", script: lastScript });
 			},
@@ -252,7 +252,7 @@ test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip",
 				script: string,
 				scopeId: number,
 				position: number,
-			) => 
+			) =>
 				notifyEvents.push({
 					event: "OnBalloonBreak",
 					script,
@@ -278,12 +278,12 @@ test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip",
 	// 2. Test skip triggering OnBalloonBreak
 	player.isPlaying = true;
 	player.currentScope = 1;
-<<<<<<< HEAD
+
 	(player as unknown).currentProgressIndex = 5;
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	(player as any).currentProgressIndex = 5;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	player.lastScript = "\\1テスト会話";
 	player.skip();
 
@@ -295,30 +295,30 @@ test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip",
 });
 
 test("balloon events: OnBalloonTimeout triggered via sendBalloonTimeoutNotify", async () => {
-<<<<<<< HEAD
+
 	const _notifyEvents: unknown[] = [];
 	const _sakuraText = createEl("div");
 
 	const _app: unknown = {
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const notifyEvents: any[] = [];
 	const _sakuraText = createEl("div");
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const _app: any = {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		ghostId: "main",
-		elements: 
+		elements:
 			balloonText: _sakuraText,
 			balloonDisplay: createEl("div"),
 			keroBalloonText: createEl("div"),
 			keroBalloonDisplay: createEl("div"),,
-		surfaceManager: 
+		surfaceManager:
 			onCharSpoken() ,
 			onTalkEnd() ,
 			onScriptEnd() ,,
-		ghostController: 
+		ghostController:
 			sendBalloonTimeoutNotify: async (
 				lastScript: string,
 				scopeId: number | string,
@@ -329,7 +329,7 @@ test("balloon events: OnBalloonTimeout triggered via sendBalloonTimeoutNotify", 
 					scopeId: String(scopeId),
 				});
 			},
-			sendBalloonCloseNotify: async (lastScript: string) => 
+			sendBalloonCloseNotify: async (lastScript: string) =>
 				notifyEvents.push({ event: "OnBalloonClose", script: lastScript });,,
 	};
 
@@ -356,30 +356,30 @@ test("balloon events: OnBalloonTimeout triggered via sendBalloonTimeoutNotify", 
 });
 
 test("\\t (timeCritical) suppresses balloonTimeout and click timeout auto-advance", async () => {
-<<<<<<< HEAD
+
 	const notifyEvents: unknown[] = [];
 	const sakuraText = createEl("div");
 
 	const app: unknown = {
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const notifyEvents: any[] = [];
 	const _sakuraText = createEl("div");
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	const _app: any = {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		ghostId: "main",
-		elements: 
+		elements:
 			balloonText: _sakuraText,
 			balloonDisplay: createEl("div"),
 			keroBalloonText: createEl("div"),
 			keroBalloonDisplay: createEl("div"),,
-		surfaceManager: 
+		surfaceManager:
 			onCharSpoken() ,
 			onTalkEnd() ,
 			onScriptEnd() ,,
-		ghostController: 
+		ghostController:
 			sendBalloonTimeoutNotify: async (lastScript: string) => {
 				notifyEvents.push({ event: "OnBalloonTimeout", lastScript });
 			},,

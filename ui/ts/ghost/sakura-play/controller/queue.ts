@@ -3,12 +3,12 @@
  * @brief SakuraPlaybackController 向け再生キュー操作およびループ処理ロジック
  */
 
-<<<<<<< HEAD
+
 export function enqueue(this: unknown, _script: string): Promise<unknown> {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function _enqueue(this: any, script: string): Promise<any> {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	return new Promise((resolve, reject) => {
 		const job = {
 			id: this.nextJobId++,
@@ -22,15 +22,15 @@ export function _enqueue(this: any, script: string): Promise<any> {
 	});
 }
 
-<<<<<<< HEAD
+
 export function _enqueuePriority(
 	this: unknown,
 	_script: string,
 ): Promise<unknown> {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function _enqueuePriority(this: any, script: string): Promise<any> {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	return new Promise((resolve, reject) => {
 		const job = {
 			id: this.nextJobId++,
@@ -49,24 +49,24 @@ export function _enqueuePriority(this: any, script: string): Promise<any> {
 	});
 }
 
-<<<<<<< HEAD
+
 export function _interrupt(this: unknown, _script: string): Promise<unknown> {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function _interrupt(this: any, script: string): Promise<any> {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (this.player) {
 		this.player.skip();
 	}
 	return this.enqueuePriority(script);
 }
 
-<<<<<<< HEAD
+
 export function _dequeue(this: unknown) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function _dequeue(this: any) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	const job = this.queue.shift();
 	if (job) {
 		this.emit("queue:dequeued", { job, queueLength: this.queue.length });
@@ -74,12 +74,12 @@ export function _dequeue(this: any) {
 	return job;
 }
 
-<<<<<<< HEAD
+
 export function _clearQueue(this: unknown) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function _clearQueue(this: any) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	const canceled = [...this.queue];
 	this.queue = [];
 	for (const job of canceled) {
@@ -88,12 +88,12 @@ export function _clearQueue(this: any) {
 	this.emit("queue:cleared", { canceledCount: canceled.length });
 }
 
-<<<<<<< HEAD
+
 export function _stop(this: unknown) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function _stop(this: any) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	this.clearQueue();
 	if (this.syncObjects) {
 		this.syncObjects.clear();
@@ -106,12 +106,12 @@ export function _stop(this: any) {
 	this.emit("playback:stopped");
 }
 
-<<<<<<< HEAD
+
 export function _destroy(this: unknown) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function _destroy(this: any) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	this.stop();
 	this.emit("playback:destroyed");
 	this.listeners.clear();
@@ -124,24 +124,24 @@ export function _destroy(this: any) {
 	}
 }
 
-<<<<<<< HEAD
+
 export function _pause(this: unknown) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function _pause(this: any) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (!this.isPaused) {
 		this.isPaused = true;
 		this.emit("queue:paused");
 	}
 }
 
-<<<<<<< HEAD
+
 export function _resume(this: unknown) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function _resume(this: any) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (this.isPaused) {
 		this.isPaused = false;
 		this.emit("queue:resumed");
@@ -149,7 +149,7 @@ export function _resume(this: any) {
 	}
 }
 
-<<<<<<< HEAD
+
 export function _getQueue(this: unknown) {
 	return [...this.queue];
 }
@@ -167,7 +167,7 @@ export function _hasPendingJobs(this: unknown): boolean {
 }
 
 export function _peekNextJob(this: unknown) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function _getQueue(this: any) {
 	return [...this.queue];
@@ -191,13 +191,13 @@ export function _hasPendingJobs(this: any): boolean {
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function _peekNextJob(this: any) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (this.queue.length === 0) return null;
 	const job = this.queue[0];
 	return { id: job.id, script: job.script };
 }
 
-<<<<<<< HEAD
+
 export function _getCurrentJob(this: unknown) {
 	return this.currentJob;
 }
@@ -219,7 +219,7 @@ export function _isEmpty(this: unknown): boolean {
 }
 
 export function _getStatus(this: unknown) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function _getCurrentJob(this: any) {
 	return this.currentJob;
@@ -247,7 +247,7 @@ export function _isEmpty(this: any): boolean {
 
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function _getStatus(this: any) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	return {
 		isProcessing: this.isProcessing,
 		isPaused: this.isPaused,
@@ -259,12 +259,12 @@ export function _getStatus(this: any) {
 	};
 }
 
-<<<<<<< HEAD
+
 export async function _processQueue(this: unknown) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function _processQueue(this: any) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (this.isProcessing || this.isPaused || this.queue.length === 0) {
 		return;
 	}

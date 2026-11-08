@@ -3,17 +3,17 @@
  * @brief ウィンドウ状態およびデスクトップ整列コマンドハンドラ
  */
 
-<<<<<<< HEAD
+
 export async function handleWindowState(_state: string, _handler?: unknown) {
 	try {
 		const _api = (globalThis as unknown).__TAURI__?.window;
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function _handleWindowState(state: string, handler?: any) {
 	try {
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const api = (globalThis as any).__TAURI__?.window;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		if (!api) return;
 		const win = api.getCurrentWindow();
 		const lower = state.toLowerCase();
@@ -42,13 +42,13 @@ export async function _handleWindowState(state: string, handler?: any) {
 	}
 }
 
-<<<<<<< HEAD
+
 export async function _setAlignmentToDesktop(handler: unknown, mode: string) {
 	handler.app.alignmentToDesktop = mode;
 	if (mode === "free") return;
 	try {
 		const _api = (globalThis as unknown).__TAURI__?.window;
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function _setAlignmentToDesktop(handler: any, mode: string) {
 	handler.app.alignmentToDesktop = mode;
@@ -56,7 +56,7 @@ export async function _setAlignmentToDesktop(handler: any, mode: string) {
 	try {
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const api = (globalThis as any).__TAURI__?.window;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		if (!api) return;
 		const win = api.getCurrentWindow();
 		const monitor = await api.currentMonitor();

@@ -34,16 +34,16 @@ export function renderAnimationFrame(
 	scopeIdOrAnimOptions,
 	animationOptionsParam = {},
 ) {
-<<<<<<< HEAD
+
 	let _instance: unknown,
 		_pat: unknown,
 		_baseSurfaceId: unknown,
 		_scopeId: unknown,
 		_animationOptions: unknown;
-=======
+
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, pat, baseSurfaceId, scopeId, animationOptions;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (isInstance(target)) {
 		instance = target;
 		pat = patOrBaseSurfaceId;

@@ -127,12 +127,12 @@ function _initCharacterWindow() {
 	let longPressTriggered = false;
 	const LONG_PRESS_DELAY = 600;
 
-<<<<<<< HEAD
+
 	const _onPointerDown = (_e: unknown) => {
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: pointer event handler
 	const onPointerDown = (e: any) => {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		const button = e.button !== undefined ? e.button : 0;
 
 		// 1. 右クリック (button === 2): コンテキストメニュー表示
@@ -195,12 +195,12 @@ function _initCharacterWindow() {
 		}, LONG_PRESS_DELAY);
 	};
 
-<<<<<<< HEAD
+
 	const _onPointerMove = (_e: unknown) => {
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: pointer event handler
 	const onPointerMove = (e: any) => {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		if (!isInteracting) return;
 
 		const clientX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;

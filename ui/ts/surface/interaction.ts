@@ -9,55 +9,55 @@ export { isPixelTransparent, setupGhostDragging, setupHoverAndWheel };
  * Nanai Android Mascot - ドラッグ & タッチインタラクション管理
  */
 export class InteractionManager {
-<<<<<<< HEAD
+
 	app: unknown;
 	balloonDragManager: BalloonDragManager;
 
 	constructor(app: unknown) {
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	app: any;
 	balloonDragManager: BalloonDragManager;
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	constructor(app: any) 
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+	constructor(app: any)
+
 		this.app = app;
 		this.balloonDragManager = new BalloonDragManager(this);
 
-	get balloonOffsetX(): number 
+	get balloonOffsetX(): number
 		return this.balloonDragManager.balloonOffsetX;
 
-	set balloonOffsetX(val: number) 
+	set balloonOffsetX(val: number)
 		this.balloonDragManager.balloonOffsetX = val;
 
-	get balloonOffsetY(): number 
+	get balloonOffsetY(): number
 		return this.balloonDragManager.balloonOffsetY;
 
-	set balloonOffsetY(val: number) 
+	set balloonOffsetY(val: number)
 		this.balloonDragManager.balloonOffsetY = val;
 
 	isPixelTransparent(
 		img: HTMLElement,
 		clientX: number,
 		clientY: number,
-	): boolean 
+	): boolean
 		return isPixelTransparent(img, clientX, clientY);
 
 	setupDragging(
 		target: HTMLElement,
-<<<<<<< HEAD
+
 		onGhostClick: unknown,
 		onGhostStroke: unknown,
 		options: unknown = {},
-=======
+
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		onGhostClick: any,
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		onGhostStroke: any,
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		options: any = {},
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	) {
 		if (!target) return;
 
@@ -90,6 +90,6 @@ export class InteractionManager {
 		this.setupBalloonDragging(target);
 	}
 
-	setupBalloonDragging(ghostTarget: HTMLElement) 
+	setupBalloonDragging(ghostTarget: HTMLElement)
 		this.balloonDragManager.setupBalloonDragging(ghostTarget);
 }

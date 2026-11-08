@@ -6,12 +6,12 @@
 import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 
 export async function handleSetAlignmentOnDesktop(
-<<<<<<< HEAD
+
 	handler: unknown,
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	args: string[],
 ) {
 	const mode = (args[2] ?? "").toLowerCase();
@@ -19,12 +19,12 @@ export async function handleSetAlignmentOnDesktop(
 	if (mode === "free") return;
 
 	try {
-<<<<<<< HEAD
+
 		const _api = (globalThis as unknown).__TAURI__?.window;
-=======
+
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const api = (globalThis as any).__TAURI__?.window;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		if (!api) return;
 		const win = api.getCurrentWindow();
 		const monitor = await api.currentMonitor();
@@ -45,12 +45,12 @@ export async function handleSetAlignmentOnDesktop(
 	}
 }
 
-<<<<<<< HEAD
+
 export async function handleSetTaskTrayIcon(_handler: unknown, _args: string[]) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function _handleSetTaskTrayIcon(_handler: any, args: string[]) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	const iconPath = args[2] ?? "";
 	console.log(`📌 Task tray icon set: ${iconPath}`);
 	if (isTauriAvailable()) {
@@ -62,12 +62,12 @@ export async function _handleSetTaskTrayIcon(_handler: any, args: string[]) {
 	}
 }
 
-<<<<<<< HEAD
+
 export async function _handleSetTrayBalloon(handler: unknown, _args: string[]) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function _handleSetTrayBalloon(handler: any, args: string[]) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	const title = args[2] ?? "";
 	const text = args[3] ?? "";
 	const iconOrTimeout = args[4];
@@ -90,15 +90,15 @@ export async function _handleSetTrayBalloon(handler: any, args: string[]) {
 }
 
 export async function triggerTrayBalloonClick(
-<<<<<<< HEAD
+
 	handler: unknown,
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	title: string = "",
 	text: string = "",
-) 
+)
 	if (handler?.app?.ghostController?.sendShioriEvent) {
 		await handler.app.ghostController.sendShioriEvent("OnTrayBalloonClick", [
 			title,
@@ -107,14 +107,14 @@ export async function triggerTrayBalloonClick(
 	}
 
 export async function handleExecuteResetWindowPos(
-<<<<<<< HEAD
+
 	handler: unknown,
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	_args: string[],
-) 
+)
 	console.log("📍 Execute resetwindowpos triggered");
 	await handler.app.dispatchAction?.("reset-shell-position");
 	if (handler.app.ghostController?.sendShioriEvent) {
@@ -124,14 +124,14 @@ export async function handleExecuteResetWindowPos(
 	}
 
 export async function handleExecuteResetBalloonPos(
-<<<<<<< HEAD
+
 	handler: unknown,
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	_args: string[],
-) 
+)
 	console.log("🎈 Execute resetballoonpos triggered");
 	await handler.app.dispatchAction?.("reset-balloon-position");
 	if (handler.app.ghostController?.sendShioriEvent) {

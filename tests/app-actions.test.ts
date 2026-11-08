@@ -231,12 +231,12 @@ test("actionMethods covers all spread helper functions directly", async () => {
 
 	// Directly call every method on actionMethods
 	for (const key of Object.keys(actionMethods)) {
-<<<<<<< HEAD
+
 		const fn = (actionMethods as unknown)[key];
-=======
+
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const fn = (actionMethods as any)[key];
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		if (typeof fn === "function") {
 			try {
 				await fn.call(mockApp, "test", {});

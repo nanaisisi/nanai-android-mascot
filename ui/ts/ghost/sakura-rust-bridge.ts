@@ -1,14 +1,14 @@
 import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 import type { SakuraScriptToken } from "./sakura-parser.js";
 
-<<<<<<< HEAD
+
 export function rustCommandsToTokens(
 	_rustCommands: unknown[],
 ): SakuraScriptToken[] {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function rustCommandsToTokens(rustCommands: any[]): SakuraScriptToken[] {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	const tokens: SakuraScriptToken[] = [];
 	for (const cmd of rustCommands) {
 		switch (cmd.type) {
@@ -224,14 +224,14 @@ export async function _parseSakuraScriptAsync(
 		return undefined;
 	}
 	try {
-<<<<<<< HEAD
+
 		const _rustCommands: unknown = await invoke("parse_sakura_script", {
 			script,
 		});
-=======
+
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const rustCommands: any = await invoke("parse_sakura_script", { script });
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		if (Array.isArray(rustCommands)) {
 			return rustCommandsToTokens(rustCommands);
 		}

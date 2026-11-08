@@ -37,7 +37,7 @@ export async function _playTimelineFrames(
 	keyOrOptions,
 	optionsParam = {},
 ) {
-<<<<<<< HEAD
+
 	let _instance: unknown,
 		_timeline: unknown,
 		_anim: unknown,
@@ -45,10 +45,10 @@ export async function _playTimelineFrames(
 		_scopeId: unknown,
 		_key: unknown,
 		_options: unknown;
-=======
+
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, timeline, anim, baseSurfaceId, scopeId, key, options;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (isInstance(target)) {
 		instance = target;
 		timeline = timelineOrAnim;
@@ -124,7 +124,7 @@ export async function _playOnePat(
 	isCurrentOrOptions,
 	optionsParam = {},
 ) {
-<<<<<<< HEAD
+
 	let _instance: unknown,
 		_pat: unknown,
 		_anim: unknown,
@@ -133,10 +133,10 @@ export async function _playOnePat(
 		_key: unknown,
 		_isCurrent: unknown,
 		_options: unknown;
-=======
+
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, pat, anim, baseSurfaceId, scopeId, key, isCurrent, options;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (isInstance(target)) {
 		instance = target;
 		pat = patOrAnim;

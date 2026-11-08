@@ -10,31 +10,31 @@ export const menuMethods = {
 		scope: number = 0,
 	) {
 		if (isTauriAvailable()) {
-<<<<<<< HEAD
+
 			const _sX = (globalThis as unknown).screenX ?? 0;
 			const _sY = (globalThis as unknown).screenY ?? 0;
-=======
+
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const sX = (globalThis as any).screenX ?? 0;
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const sY = (globalThis as any).screenY ?? 0;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 			const posX = screenX !== null ? screenX : sX + 200;
 			const posY = screenY !== null ? screenY : sY + 100;
 
 			invoke("show_menu_window", { x: posX, y: posY, scope })
-<<<<<<< HEAD
+
 				.then(() => (this as unknown).syncMenuGhosts(scope))
-=======
+
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				.then(() => (this as any).syncMenuGhosts(scope))
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 				.catch((err) => {
 					console.warn(
 						"show_menu_window failed, fallback to show_context_menu:",
 						err,
 					);
-<<<<<<< HEAD
+
 					const gc = (this as unknown).ghostController;
 					invoke("show_context_menu", {
 						ghosts: (gc.ghosts || []).map((g: unknown) => g.name),
@@ -56,7 +56,7 @@ export const menuMethods = {
 		(this as unknown).elements.menuContainer.style.display = nextState;
 		if (nextState === "block") {
 			(this as unknown).syncMenuGhosts(scope);
-=======
+
 					// biome-ignore lint/suspicious/noExplicitAny: automated fix
 					const gc = (this as any).ghostController;
 					invoke("show_context_menu", {
@@ -86,32 +86,32 @@ export const menuMethods = {
 		if (nextState === "block") {
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(this as any).syncMenuGhosts(scope);
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		}
 	},
 
 	syncMenuGhosts(scope: number = 0) {
-<<<<<<< HEAD
+
 		const gc = (this as unknown).ghostController;
-=======
+
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const gc = (this as any).ghostController;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		const shellNames = gc.shells || ["master"];
 		const currentShellName = gc.currentShell || "master";
 		const ghosts = gc.ghosts || [{ name: AppConfig.paths.fallbackGhostName }];
 		const fullShells = gc.currentGhost?.shells || shellNames;
 
 		const dressup = dressupMenuPayload(
-<<<<<<< HEAD
+
 			(this as unknown).surfaceManager?.shellManifest,
 			(this as unknown).surfaceManager,
-=======
+
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(this as any).surfaceManager?.shellManifest,
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(this as any).surfaceManager,
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		);
 
 		let recentGhosts: string[] = [];
@@ -130,13 +130,13 @@ export const menuMethods = {
 				scope,
 				dressup,
 				recentGhosts,
-<<<<<<< HEAD
+
 				captions: (this as unknown).cachedMenuCaptions || {},
 			});
 			emit("sync-theme", (this as unknown).currentBalloonTheme);
 			if ((this as unknown).availableBalloons) {
 				emit("sync-balloons", (this as unknown).availableBalloons);
-=======
+
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				captions: (this as any).cachedMenuCaptions || ,
 			});
@@ -146,7 +146,7 @@ export const menuMethods = {
 			if ((this as any).availableBalloons) {
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				emit("sync-balloons", (this as any).availableBalloons);
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 			}
 		}
 
@@ -162,12 +162,12 @@ export const menuMethods = {
 					scope,
 					dressup,
 					recentGhosts,
-<<<<<<< HEAD
+
 					captions: (this as unknown).cachedMenuCaptions || {},
-=======
+
 					// biome-ignore lint/suspicious/noExplicitAny: automated fix
 					captions: (this as any).cachedMenuCaptions || {},
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 				},
 				"*",
 			);
@@ -180,7 +180,7 @@ export const menuMethods = {
 				"*",
 			);
 			win.postMessage(
-<<<<<<< HEAD
+
 				{ type: "sync-theme", theme: (this as unknown).currentBalloonTheme },
 				"*",
 			);
@@ -190,7 +190,7 @@ export const menuMethods = {
 						type: "sync-balloons",
 						balloons: (this as unknown).availableBalloons,
 					},
-=======
+
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				{ type: "sync-theme", theme: (this as any).currentBalloonTheme },
 				"*",
@@ -200,7 +200,7 @@ export const menuMethods = {
 				win.postMessage(
 					// biome-ignore lint/suspicious/noExplicitAny: automated fix
 					{ type: "sync-balloons", balloons: (this as any).availableBalloons },
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 					"*",
 				);
 			}
@@ -208,7 +208,7 @@ export const menuMethods = {
 	},
 
 	hideMenu() {
-<<<<<<< HEAD
+
 		if ((this as unknown).elements.menuContainer) {
 			(this as unknown).elements.menuContainer.style.display = "none";
 		}
@@ -220,7 +220,7 @@ export const menuMethods = {
 		const isVisible =
 			(this as unknown).elements.quickActionsPanel.style.display !== "none";
 		(this as unknown).elements.quickActionsPanel.style.display = isVisible
-=======
+
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		if ((this as any).elements.menuContainer) {
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -238,21 +238,21 @@ export const menuMethods = {
 			(this as any).elements.quickActionsPanel.style.display !== "none";
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this as any).elements.quickActionsPanel.style.display = isVisible
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 			? "none"
 			: "flex";
 	},
 
 	hideQuickActionsPanel() {
-<<<<<<< HEAD
+
 		if ((this as unknown).elements.quickActionsPanel) {
 			(this as unknown).elements.quickActionsPanel.style.display = "none";
-=======
+
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		if ((this as any).elements.quickActionsPanel) {
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(this as any).elements.quickActionsPanel.style.display = "none";
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		}
 	},
 };

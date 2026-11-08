@@ -3,30 +3,30 @@
  * @brief さくらスクリプト再生時の選択肢(\q)およびアンカー(\_a)要素生成・イベントハンドラ
  */
 
-<<<<<<< HEAD
+
 export function handleChoice(
 	_player: unknown,
 	app: unknown,
 	token: unknown,
 	context: unknown,
 ) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function _handleChoice(player: any, app: any, token: any, context: any) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	const { currentBalloonText, flushDesktopBalloon } = context;
 
 	const choiceBtn = document.createElement("button");
 	choiceBtn.className = "balloon-choice-btn";
 	choiceBtn.setAttribute("data-choice-id", token.id);
 	choiceBtn.textContent = token.text;
-<<<<<<< HEAD
+
 	const _hoverTimer: unknown = null;
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let hoverTimer: any = null;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-	choiceBtn.addEventListener("click", (e: MouseEvent) => 
+
+	choiceBtn.addEventListener("click", (e: MouseEvent) =>
 		e.stopPropagation();
 		if (hoverTimer) {
 			clearTimeout(hoverTimer);
@@ -85,12 +85,12 @@ export function _handleChoice(player: any, app: any, token: any, context: any) {
 }
 
 export function handleAnchorBegin(
-<<<<<<< HEAD
+
 	_player: unknown,
 	app: unknown,
 	token: unknown,
 	context: unknown,
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_player: any,
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -99,7 +99,7 @@ export function handleAnchorBegin(
 	token: any,
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	context: any,
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 ) {
 	const { currentBalloonText, scheduleDesktopBalloonSync } = context;
 
@@ -107,12 +107,12 @@ export function handleAnchorBegin(
 	anchorSpan.className = "balloon-anchor";
 	anchorSpan.dataset.anchorId = token.id;
 	anchorSpan.setAttribute("data-anchor-id", token.id);
-<<<<<<< HEAD
+
 	const _hoverTimer: unknown = null;
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let hoverTimer: any = null;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	anchorSpan.addEventListener("click", async (e: MouseEvent) => {
 		e.stopPropagation();
 		if (hoverTimer) {
@@ -123,12 +123,12 @@ export function handleAnchorBegin(
 		const args = token.args || [];
 		if (app.ghostController?.sendShioriEvent) {
 			// UKADOC: OnAnchorSelectEx is sent first (Reference0: text, Reference1: ID, Reference2..N: args)
-<<<<<<< HEAD
+
 			const _resEx: unknown = await app.ghostController.sendShioriEvent(
-=======
+
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const resEx: any = await app.ghostController.sendShioriEvent(
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 				"OnAnchorSelectEx",
 				[anchorText, token.id, ...args],
 			);
@@ -170,12 +170,12 @@ export function handleAnchorBegin(
 }
 
 export function handleAnchorEnd(
-<<<<<<< HEAD
+
 	_player: unknown,
 	_app: unknown,
 	_token: unknown,
 	context: unknown,
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_player: any,
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -184,6 +184,6 @@ export function handleAnchorEnd(
 	_token: any,
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	context: any,
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
-) 
+
+)
 	context.currentAnchor = null;

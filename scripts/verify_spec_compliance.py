@@ -506,7 +506,7 @@ def update_summary(category_stats, summary_path='docs/spec/SUMMARY.md'):
 def detect_git_conflicts(docs_dir='docs/spec'):
     """
     Scans markdown and doc files under docs_dir for unresolved Git merge conflict markers
-    (<<<<<<<, =======, >>>>>>>). Returns a list of dicts with file path, line number, and marker.
+    (<<<<<<<, , >>>>>>>). Returns a list of dicts with file path, line number, and marker.
     """
     conflict_patterns = [
         re.compile(r'^(<{7}|={7}|>{7})(?:\s+.*)?$')

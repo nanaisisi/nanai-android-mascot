@@ -30,14 +30,14 @@ import {
 initDefaultCommandHandlers();
 
 export class SakuraCommandHandler {
-<<<<<<< HEAD
+
 	player: unknown;
 	app: unknown;
 	teachForm: unknown;
 	communicateForm: unknown;
 
 	constructor(player: unknown) {
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	player: any;
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -48,8 +48,8 @@ export class SakuraCommandHandler {
 	communicateForm: any;
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	constructor(player: any) 
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+	constructor(player: any)
+
 		this.player = player;
 		this.app = player.app;
 		this.teachForm = null;
@@ -68,41 +68,41 @@ export class SakuraCommandHandler {
 		}
 	}
 
-	openInputBox(params: string[]) 
+	openInputBox(params: string[])
 		openInputBox(this, params);
 
-<<<<<<< HEAD
-	openTeachBox(params: string[] = [], options: unknown = ) 
-=======
+
+	openTeachBox(params: string[] = [], options: unknown = )
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	openTeachBox(params: string[] = [], options: any = ) 
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+	openTeachBox(params: string[] = [], options: any = )
+
 		openTeachBox(this, params, options);
 
-	closeTeachBox() 
+	closeTeachBox()
 		closeTeachBox(this);
 
-	openCommunicateBox(params: string[] = []) 
+	openCommunicateBox(params: string[] = [])
 		openCommunicateBox(this, params);
 
-	closeCommunicateBox(notifyCancel: boolean = false) 
+	closeCommunicateBox(notifyCancel: boolean = false)
 		closeCommunicateBox(this, notifyCancel);
 
-	async setAlignmentToDesktop(mode: string) 
+	async setAlignmentToDesktop(mode: string)
 		await setAlignmentToDesktop(this, mode);
 
-	async handleWindowState(state: string) 
+	async handleWindowState(state: string)
 		await handleWindowState(state);
 
-	async handleJump(target: string, args: string[] = []) 
+	async handleJump(target: string, args: string[] = [])
 		await handleJumpCommand(this, target, args);
 
-<<<<<<< HEAD
-	expandEnv(script: string, options: unknown = ) 
-=======
+
+	expandEnv(script: string, options: unknown = )
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	expandEnv(script: string, options: any = ) 
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+	expandEnv(script: string, options: any = )
+
 		return expandSakuraScriptEnv(script, {
 			username: this.player?.app?.ghostController?.username,
 			selfname: this.player?.app?.ghostController?.currentGhost?.name,
@@ -111,7 +111,7 @@ export class SakuraCommandHandler {
 			...options,
 		});
 
-	resetLifetimeState() 
+	resetLifetimeState()
 		resetScriptScopeState();
 		clearAllScriptTimers();
 

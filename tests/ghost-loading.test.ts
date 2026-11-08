@@ -2,12 +2,12 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 const deferred = () => {
-<<<<<<< HEAD
+
 	const _resolve: unknown = null;
-=======
+
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let resolve;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	const promise = new Promise((r) => {
 		resolve = r;
 	});
@@ -15,15 +15,15 @@ const deferred = () => {
 };
 
 const calls = [];
-<<<<<<< HEAD
+
 const _showGate: unknown = null;
 const _hideGate: unknown = null;
-=======
+
 // biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 let showGate;
 // biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 let hideGate;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 globalThis.window = globalThis;
 globalThis.__TAURI_INTERNALS__ = {
 	transformCallback: () => 0,

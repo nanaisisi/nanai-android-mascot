@@ -18,13 +18,13 @@ import { getCurrentWindow, PhysicalPosition } from "@tauri-apps/api/window";
  */
 export function isTauriAvailable(): boolean {
 	return (
-<<<<<<< HEAD
+
 		!!(globalThis as unknown).__TAURI__ ||
 		!!(globalThis as unknown).__TAURI_INTERNALS__
-=======
+
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		!!(globalThis as any).__TAURI__ || !!(globalThis as any).__TAURI_INTERNALS__
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	);
 }
 
@@ -45,17 +45,17 @@ export const ipcQueueStats = {
 /**
  * Tauri IPCコマンドの呼び出しラッパー
  */
-<<<<<<< HEAD
+
 export async function invoke<_T = unknown>(
 	cmd: string,
 	args: Record<string, unknown> = {},
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function invoke<_T = any>(
 	cmd: string,
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	args: Record<string, any> = {},
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 ): Promise<T> {
 	if (!isTauriAvailable()) {
 		throw new Error(`Tauri is not available to invoke command: ${cmd}`);
@@ -120,12 +120,12 @@ export function convertFileSrc(
  */
 export async function listen(
 	event: string,
-<<<<<<< HEAD
+
 	handler: (event: unknown) => void,
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: (event: any) => void,
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 ): Promise<() => void> {
 	if (!isTauriAvailable()) return () => {};
 	return await tauriListen(event, handler);
@@ -134,12 +134,12 @@ export async function listen(
 /**
  * イベント発火
  */
-<<<<<<< HEAD
+
 export async function emit(_event: string, _payload?: unknown): Promise<void> {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function _emit(event: string, payload?: any): Promise<void> {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (!isTauriAvailable()) return;
 	await tauriEmit(event, payload);
 }
@@ -188,9 +188,8 @@ export async function _getCurrentWindowPosition(): Promise<{
 	}
 }
 
-<<<<<<< HEAD
+
 (globalThis as unknown).__NANAI_IPC_QUEUE_STATS__ = ipcQueueStats;
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 (globalThis as any).__NANAI_IPC_QUEUE_STATS__ = ipcQueueStats;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad

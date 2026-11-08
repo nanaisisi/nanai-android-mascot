@@ -50,12 +50,12 @@ export const menuThemeRenderer = {
 	/**
 	 * @param {{ menu_theme?: unknown; path?: string; }} activeShell
 	 */
-<<<<<<< HEAD
+
 	applyShellTheme(activeShell: unknown) {
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	applyShellTheme(activeShell: any) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		const rootStyle = document.documentElement.style;
 		if (activeShell?.menu_theme) {
 			const mt = activeShell.menu_theme;
@@ -125,15 +125,15 @@ export const menuThemeRenderer = {
 				const full = shellPath
 					? `${shellPath.replace(/\\/g, "/")}/${relPath.replace(/\\/g, "/")}`
 					: relPath;
-<<<<<<< HEAD
+
 				return (globalThis as unknown).__TAURI__?.core?.convertFileSrc
 					? (globalThis as unknown).__TAURI__.core.convertFileSrc(full)
-=======
+
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				return (globalThis as any).__TAURI__?.core?.convertFileSrc
 					? // biome-ignore lint/suspicious/noExplicitAny: automated fix
 						(globalThis as any).__TAURI__.core.convertFileSrc(full)
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 					: full;
 			};
 

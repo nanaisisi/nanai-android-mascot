@@ -6,15 +6,15 @@
 import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 import { scriptLifetimeState } from "../env.js";
 
-<<<<<<< HEAD
+
 export async function handleSetPropertyCommand(
 	_handler: unknown,
 	_args: string[],
 ) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function _handleSetPropertyCommand(handler: any, args: string[]) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	const key = args[2] ?? "";
 	const val = args[3] ?? "";
 	if (key) {
@@ -30,15 +30,15 @@ export async function _handleSetPropertyCommand(handler: any, args: string[]) {
 /**
  * SERIKO口パク有効化トグル (\![set,serikotalk,true/false])
  */
-<<<<<<< HEAD
+
 export async function _handleSetSerikoTalkCommand(
 	handler: unknown,
 	args: string[],
 ) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function _handleSetSerikoTalkCommand(handler: any, args: string[]) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	const valStr = String(args[2] ?? "true")
 		.trim()
 		.toLowerCase();
@@ -53,12 +53,12 @@ export async function _handleSetSerikoTalkCommand(handler: any, args: string[]) 
  * 他ゴーストサーフィス変更通知トグル (\![set,othersurfacechange,true/false])
  */
 export async function handleSetOtherSurfaceChangeCommand(
-<<<<<<< HEAD
+
 	handler: unknown,
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	args: string[],
 ) {
 	const valStr = String(args[2] ?? "false")
@@ -70,12 +70,12 @@ export async function handleSetOtherSurfaceChangeCommand(
 	}
 }
 
-<<<<<<< HEAD
+
 export async function _handleEnterMode(_handler: unknown, _args: string[]) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function _handleEnterMode(handler: any, args: string[]) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	const mode = (args[1] ?? "").toLowerCase();
 	if (mode) {
 		scriptLifetimeState.setMode(mode, true);
@@ -94,12 +94,12 @@ export async function _handleEnterMode(handler: any, args: string[]) {
 	}
 }
 
-<<<<<<< HEAD
+
 export async function _handleLeaveMode(_handler: unknown, _args: string[]) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function _handleLeaveMode(handler: any, args: string[]) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	const mode = (args[1] ?? "").toLowerCase();
 	if (mode) {
 		scriptLifetimeState.setMode(mode, false);
@@ -118,13 +118,13 @@ export async function _handleLeaveMode(handler: any, args: string[]) {
 	}
 }
 
-<<<<<<< HEAD
+
 export async function _handleGetPropertyCommand(handler: unknown, key: string) {
 	if (!key) return "";
 	if (handler?.app?.ghostController?.sendShioriEvent) {
 		try {
 			const _res: unknown = await handler.app.ghostController.sendShioriEvent(
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function _handleGetPropertyCommand(handler: any, key: string) {
 	if (!key) return "";
@@ -132,7 +132,7 @@ export async function _handleGetPropertyCommand(handler: any, key: string) {
 		try {
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const res: any = await handler.app.ghostController.sendShioriEvent(
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 				"property.get",
 				[key],
 			);
@@ -144,15 +144,15 @@ export async function _handleGetPropertyCommand(handler: any, key: string) {
 	return scriptLifetimeState.getVariable(key) ?? "";
 }
 
-<<<<<<< HEAD
+
 export async function _handleSetScalingCommand(
 	handler: unknown,
 	_args: string[],
 ) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function _handleSetScalingCommand(handler: any, args: string[]) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	const scaleXStr = args[2] ?? "100";
 	const scaleYStr = args[3] ?? scaleXStr;
 	const scaleX = Number.parseFloat(scaleXStr);
@@ -188,15 +188,15 @@ export async function _handleSetScalingCommand(handler: any, args: string[]) {
 }
 
 export async function handleKeyPressEvent(
-<<<<<<< HEAD
+
 	handler: unknown,
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	key: string,
 	modifiers: string = "",
-) 
+)
 	if (handler?.app?.ghostController?.sendShioriEvent && key) {
 		await handler.app.ghostController.sendShioriEvent("OnKeyPress", [
 			key,
@@ -204,12 +204,12 @@ export async function handleKeyPressEvent(
 		]);
 	}
 
-<<<<<<< HEAD
+
 export async function _handleSetAlphaCommand(_handler: unknown, _args: string[]) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function _handleSetAlphaCommand(handler: any, args: string[]) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	const alphaVal = Number.parseInt(args[2] ?? "100", 10);
 	const scope = handler.player?.currentScope ?? 0;
 	if (Number.isFinite(alphaVal)) {
@@ -218,15 +218,15 @@ export async function _handleSetAlphaCommand(handler: any, args: string[]) {
 	}
 }
 
-<<<<<<< HEAD
+
 export async function _handleSetPositionCommand(
 	_handler: unknown,
 	_args: string[],
 ) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function _handleSetPositionCommand(handler: any, args: string[]) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	const x = Number.parseInt(args[2] ?? "0", 10);
 	const y = Number.parseInt(args[3] ?? "0", 10);
 	const scopeStr = args[4];
@@ -238,12 +238,12 @@ export async function _handleSetPositionCommand(handler: any, args: string[]) {
 	if (Number.isFinite(x) && Number.isFinite(y)) {
 		handler.app.surfaceManager?.setPosition?.(x, y, scope);
 		try {
-<<<<<<< HEAD
+
 			const _api = (globalThis as unknown).__TAURI__?.window;
-=======
+
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const api = (globalThis as any).__TAURI__?.window;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 			if (api) {
 				const win = api.getCurrentWindow();
 				await win.setPosition(new api.PhysicalPosition(x, y));

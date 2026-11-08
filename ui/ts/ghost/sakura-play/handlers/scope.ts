@@ -5,17 +5,17 @@
 
 import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 
-<<<<<<< HEAD
+
 export function handleScope(
 	player: unknown,
 	app: unknown,
 	token: unknown,
 	context: unknown,
 ) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function _handleScope(player: any, app: any, token: any, context: any) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	const {
 		sakuraText,
 		keroText,
@@ -68,12 +68,12 @@ export function _handleScope(player: any, app: any, token: any, context: any) {
 }
 
 export function handleBalloon(
-<<<<<<< HEAD
+
 	player: unknown,
 	_app: unknown,
 	token: unknown,
 	context: unknown,
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	player: any,
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -82,7 +82,7 @@ export function handleBalloon(
 	token: any,
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	context: any,
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 ) {
 	const { sakuraDisplay, keroDisplay } = context;
 	const balloonDisplay =
@@ -95,12 +95,12 @@ export function handleBalloon(
 }
 
 export function handleInlineBitmap(
-<<<<<<< HEAD
+
 	_player: unknown,
 	app: unknown,
 	token: unknown,
 	context: unknown,
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_player: any,
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -109,7 +109,7 @@ export function handleInlineBitmap(
 	token: any,
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	context: any,
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 ) {
 	const { currentBalloonText, scheduleDesktopBalloonSync } = context;
 
@@ -123,15 +123,15 @@ export function handleInlineBitmap(
 		rawPath.startsWith("https://")
 			? rawPath
 			: `assets/balloon/${themeName}/${rawPath}`;
-<<<<<<< HEAD
+
 	img.src = (globalThis as unknown).__TAURI__?.core?.convertFileSrc
 		? (globalThis as unknown).__TAURI__.core.convertFileSrc(fullPath)
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	img.src = (globalThis as any).__TAURI__?.core?.convertFileSrc
 		? // biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(globalThis as any).__TAURI__.core.convertFileSrc(fullPath)
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		: fullPath;
 	img.style.display = "inline-block";
 	img.style.verticalAlign = "middle";

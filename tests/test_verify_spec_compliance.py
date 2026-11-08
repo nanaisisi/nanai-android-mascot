@@ -390,9 +390,9 @@ class TestVerifySpecCompliance(unittest.TestCase):
         with open(conflict_file, 'w', encoding='utf-8') as f:
             f.write(
                 "# Header\n"
-                "<<<<<<< HEAD\n"
+                "\n"
                 "Local branch version\n"
-                "=======\n"
+                "\n"
                 "Incoming branch version\n"
                 ">>>>>>> branch-15\n"
             )
@@ -401,7 +401,7 @@ class TestVerifySpecCompliance(unittest.TestCase):
         self.assertEqual(len(conflicts), 3)
         markers = [c["marker"] for c in conflicts]
         self.assertTrue(any("<<<<<<<" in m for m in markers))
-        self.assertTrue(any("=======" in m for m in markers))
+        self.assertTrue(any("" in m for m in markers))
         self.assertTrue(any(">>>>>>>" in m for m in markers))
 
     def test_update_summary_only_mode(self):

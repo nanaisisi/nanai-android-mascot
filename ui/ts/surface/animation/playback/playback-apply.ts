@@ -61,7 +61,7 @@ export async function _applyAnimationFrame(
 	isCurrentOrOptions,
 	optionsParam = {},
 ) {
-<<<<<<< HEAD
+
 	let _instance: unknown,
 		_pat: unknown,
 		_anim: unknown,
@@ -70,10 +70,10 @@ export async function _applyAnimationFrame(
 		_key: unknown,
 		_isCurrent: unknown,
 		_options: unknown;
-=======
+
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, pat, anim, baseSurfaceId, scopeId, key, isCurrent, options;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (isInstance(target)) {
 		instance = target;
 		pat = patOrAnim;

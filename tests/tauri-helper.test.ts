@@ -91,15 +91,15 @@ test("convertFileSrc covers empty path, Tauri available, protocol startsWith bra
 
 test("invoke, listen, emit, moveCurrentWindowBy, getCurrentWindowPosition, and ipcQueueStats coverage", async () => {
 	// Verify __NANAI_IPC_QUEUE_STATS__ attachment
-<<<<<<< HEAD
+
 	assert.equal(
 		(globalThis as unknown).__NANAI_IPC_QUEUE_STATS__,
 		ipcQueueStats,
 	);
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	assert.equal((globalThis as any).__NANAI_IPC_QUEUE_STATS__, ipcQueueStats);
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 
 	// 1. invoke when Tauri unavailable (throws error)
 	delete globalThis.__TAURI_INTERNALS__;

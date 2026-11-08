@@ -4,12 +4,12 @@
  */
 
 export async function handleChar(
-<<<<<<< HEAD
+
 	player: unknown,
 	app: unknown,
 	token: unknown,
 	context: unknown,
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	player: any,
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -18,7 +18,7 @@ export async function handleChar(
 	token: any,
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	context: any,
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 ) {
 	const { sakuraText, keroText, scheduleDesktopBalloonSync } = context;
 	const { currentBalloonText, currentAnchor, isQuickMode } = context;
@@ -71,12 +71,12 @@ export async function handleChar(
 }
 
 export function handleNewline(
-<<<<<<< HEAD
+
 	player: unknown,
 	_app: unknown,
 	token: unknown,
 	context: unknown,
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	player: any,
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -85,7 +85,7 @@ export function handleNewline(
 	token: any,
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	context: any,
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 ) {
 	const { sakuraText, keroText, scheduleDesktopBalloonSync } = context;
 	const { currentBalloonText } = context;
@@ -119,17 +119,17 @@ export function handleNewline(
 	}
 }
 
-<<<<<<< HEAD
+
 export function handleClear(
 	_player: unknown,
 	_app: unknown,
 	token: unknown,
 	context: unknown,
 ) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function _handleClear(player: any, app: any, token: any, context: any) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	const { scheduleDesktopBalloonSync } = context;
 	const { currentBalloonText } = context;
 
@@ -166,12 +166,12 @@ export function _handleClear(player: any, app: any, token: any, context: any) {
 		const count = Math.max(1, token.count || 1);
 		let removedLines = 0;
 		while (removedLines < count && currentBalloonText.lastChild) {
-<<<<<<< HEAD
+
 			const _lastNode: unknown = currentBalloonText.lastChild;
-=======
+
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const lastNode: any = currentBalloonText.lastChild;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 			const isBr =
 				lastNode.nodeName === "BR" ||
 				(lastNode.nodeName === "SPAN" && lastNode.style?.display === "block");
@@ -187,12 +187,12 @@ export function _handleClear(player: any, app: any, token: any, context: any) {
 }
 
 export function handleOffset(
-<<<<<<< HEAD
+
 	_player: unknown,
 	_app: unknown,
 	token: unknown,
 	context: unknown,
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	_player: any,
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -201,7 +201,7 @@ export function handleOffset(
 	token: any,
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	context: any,
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 ) {
 	const { scheduleDesktopBalloonSync, currentBalloonText } = context;
 
@@ -222,17 +222,17 @@ export function handleOffset(
 	scheduleDesktopBalloonSync(false);
 }
 
-<<<<<<< HEAD
+
 export function _handleFont(
 	_player: unknown,
 	_app: unknown,
 	_token: unknown,
 	_context: unknown,
 ) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export function _handleFont(player: any, _app: any, token: any, _context: any) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	player.currentFontStyles = player.currentFontStyles || ;
 	if (token.tag === "default") {
 		player.currentFontStyles = {};

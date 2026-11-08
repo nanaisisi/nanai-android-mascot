@@ -4,12 +4,12 @@
  */
 
 export async function handleJumpCommand(
-<<<<<<< HEAD
+
 	handler: unknown,
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	target: string,
 	args: string[] = [],
 ) {

@@ -6,15 +6,15 @@ import {
 } from "../../ui/js/ui/touch/index.js";
 
 describe("AndroidBridge - Lifecycle", () => {
-<<<<<<< HEAD
+
 	let originalDocument: unknown = null;
 	let originalWindow: unknown = null;
-=======
+
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let originalDocument;
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let originalWindow;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 
 	beforeEach(() => {
 		originalDocument = globalThis.document;

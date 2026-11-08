@@ -6,17 +6,17 @@ import {
 import { createMockElement } from "../helpers.js";
 
 describe("TouchGestureRecognizer - Pinch & Rotate", () => {
-<<<<<<< HEAD
+
 	const _element: unknown = null;
 	const _recognizer: unknown = null;
-=======
+
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let element;
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let recognizer;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 
-	beforeEach(() => 
+
+	beforeEach(() =>
 		vi.useFakeTimers();
 		element = createMockElement();
 		recognizer = new TouchGestureRecognizer(element, {

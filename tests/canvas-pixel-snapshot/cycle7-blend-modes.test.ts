@@ -76,12 +76,12 @@ test("Canvas Pixel Snapshot Cycle 7: processChromaKey options.paintTransparentRe
 	const origDocument = globalThis.document;
 	const origImage = globalThis.Image;
 
-<<<<<<< HEAD
+
 	let baseCanvas: unknown = null;
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let baseCanvas: any = null;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	globalThis.document = {
 		createElement(tag: string) {
 			if (tag === "canvas") {
@@ -93,12 +93,12 @@ test("Canvas Pixel Snapshot Cycle 7: processChromaKey options.paintTransparentRe
 			}
 			return {};
 		},
-<<<<<<< HEAD
+
 	} as unknown;
-=======
+
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	} as any;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 
 	let imageInstanceCount = 0;
 	globalThis.Image = class {
@@ -126,12 +126,12 @@ test("Canvas Pixel Snapshot Cycle 7: processChromaKey options.paintTransparentRe
 				this.onload?.();
 			}, 0);
 		}
-<<<<<<< HEAD
+
 	} as unknown;
-=======
+
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	} as any;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 
 	try {
 		const dummySrc = "test-black.png";

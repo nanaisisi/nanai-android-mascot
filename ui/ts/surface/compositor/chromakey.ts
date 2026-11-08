@@ -5,13 +5,13 @@ export function processChromaKey(
 	imageSrc: string,
 	pnaSrc: string | null = null,
 	cache: Map<string, string> | null = null,
-<<<<<<< HEAD
+
 	options: Record<string, unknown> = {},
 ): Promise<string> {
 	if (!imageSrc) return Promise.resolve(imageSrc);
 	if (cache?.has(imageSrc)) {
 		return Promise.resolve(cache.get(imageSrc) ?? imageSrc);
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	options: any = ,
 ): Promise<string> {
@@ -19,7 +19,7 @@ export function processChromaKey(
 	if (cache?.has(imageSrc)) {
 		// biome-ignore lint/style/noNonNullAssertion: automated fix
 		return Promise.resolve(cache.get(imageSrc)!);
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	}
 	const useSelfAlpha = Boolean(options?.useSelfAlpha);
 	const paintTransparentRegionBlack = Boolean(
@@ -28,12 +28,12 @@ export function processChromaKey(
 	);
 	const cacheKey = `${imageSrc}__pna__${pnaSrc || "none"}__selfalpha__${useSelfAlpha}__black__${paintTransparentRegionBlack}`;
 	if (cache?.has(cacheKey)) {
-<<<<<<< HEAD
+
 		return Promise.resolve(cache.get(cacheKey) ?? imageSrc);
-=======
+
 		// biome-ignore lint/style/noNonNullAssertion: automated fix
 		return Promise.resolve(cache.get(cacheKey)!);
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	}
 
 	return new Promise((resolve) => {

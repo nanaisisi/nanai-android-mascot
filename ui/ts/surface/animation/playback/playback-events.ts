@@ -17,12 +17,12 @@ function isInstance(obj) {
 }
 
 export function onTalkStart(target = 0, scopeIdParam = 0) {
-<<<<<<< HEAD
+
 	let _instance: unknown, _scopeId: unknown;
-=======
+
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
@@ -39,12 +39,12 @@ export function onTalkStart(target = 0, scopeIdParam = 0) {
 }
 
 export function onTalkEnd(target = 0, scopeIdParam = 0) {
-<<<<<<< HEAD
+
 	let _instance: unknown, _scopeId: unknown;
-=======
+
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
@@ -62,12 +62,12 @@ export function onTalkEnd(target = 0, scopeIdParam = 0) {
 }
 
 export function onScriptEnd(target = 0, scopeIdParam = 0) {
-<<<<<<< HEAD
+
 	let _instance: unknown, _scopeId: unknown;
-=======
+
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
@@ -82,12 +82,12 @@ export function onScriptEnd(target = 0, scopeIdParam = 0) {
 }
 
 export function onCharSpoken(target = 0, scopeIdParam = 0) {
-<<<<<<< HEAD
+
 	let _instance: unknown, _scopeId: unknown;
-=======
+
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;

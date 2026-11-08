@@ -5,25 +5,25 @@
 
 import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 
-<<<<<<< HEAD
+
 export async function handleBiffCommand(_handler: unknown, _args: string[]) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function _handleBiffCommand(handler: any, _args: string[]) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	console.log("✉️ Biff mail check triggered");
 	await handler.app.networkActions?.checkEmail?.();
 }
 
-<<<<<<< HEAD
+
 export async function _handleExecuteSntpCommand(
 	_handler: unknown,
 	_args: string[],
 ) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function _handleExecuteSntpCommand(handler: any, _args: string[]) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	console.log("⏱️ Execute SNTP time sync triggered");
 	const gc = handler.app.ghostController;
 	const nowIso = new Date().toISOString();
@@ -39,12 +39,12 @@ export async function _handleExecuteSntpCommand(handler: any, _args: string[]) {
 	}
 }
 
-<<<<<<< HEAD
+
 export async function _handleHourTimeSignal(_handler: unknown, _hour?: number) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function _handleHourTimeSignal(handler: any, hour?: number) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	const currentHour = hour ?? new Date().getHours();
 	if (handler.app.ghostController?.sendShioriEvent) {
 		await handler.app.ghostController.sendShioriEvent("OnHourTimeSignal", [
@@ -53,12 +53,12 @@ export async function _handleHourTimeSignal(handler: any, hour?: number) {
 	}
 }
 
-<<<<<<< HEAD
+
 export async function _handleOpenSystemTarget(_handler: unknown, _args: string[]) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function _handleOpenSystemTarget(handler: any, args: string[]) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	const target = (args[1] ?? "").toLowerCase();
 	const pathOrParam = args[2] ?? "";
 

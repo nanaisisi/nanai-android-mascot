@@ -7,24 +7,24 @@ import { modalTemplates } from "./modal-templates.js";
  * Nanai Android Mascot - モーダル & UIダイアログ管理
  */
 export class ModalManager {
-<<<<<<< HEAD
+
 	app: unknown;
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	app: any;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	overlay: HTMLElement | null;
 	content: HTMLElement | null;
 	closeBtn: HTMLElement | null;
 	ghostHandlers: ModalGhostHandlers;
 	settingsHandlers: ModalSettingsHandlers;
 
-<<<<<<< HEAD
+
 	constructor(_app: unknown) {
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	constructor(app: any) 
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+	constructor(app: any)
+
 		this.app = app;
 		this.overlay = document.getElementById("modal-overlay");
 		this.content = document.getElementById("modal-content");
@@ -35,7 +35,7 @@ export class ModalManager {
 
 		this.init();
 
-	init() 
+	init()
 		this.closeBtn?.addEventListener("click", () => this.hide());
 		this.overlay?.addEventListener("click", (e: MouseEvent) => {
 			if (e.target === this.overlay) {
@@ -43,7 +43,7 @@ export class ModalManager {
 			}
 		});
 
-	showWindowIfNeeded() 
+	showWindowIfNeeded()
 		if (isTauriAvailable()) {
 			invoke("show_modal_window").catch((e) =>
 				console.warn("show_modal_window failed:", e),
@@ -66,7 +66,7 @@ export class ModalManager {
 		this.setupListeners(contentId);
 	}
 
-	hide() 
+	hide()
 		if (this.overlay) {
 			this.overlay.style.display = "none";
 		}
@@ -74,9 +74,9 @@ export class ModalManager {
 			invoke("hide_modal_window").catch(() => {});
 		}
 
-	setupListeners(contentId: string) 
+	setupListeners(contentId: string)
 		if (contentId === "ghost-modal-content") {
-<<<<<<< HEAD
+
 			(this.ghostHandlers as unknown).setupGhostListeners?.();
 		} else if (contentId === "explorer-modal-content") {
 			(this.ghostHandlers as unknown).setupExplorerListeners?.();
@@ -90,7 +90,7 @@ export class ModalManager {
 			(this.settingsHandlers as unknown).setupPluginListeners?.();
 		} else if (contentId === "debug-modal-content") {
 			(this.settingsHandlers as unknown).setupDebugListeners?.();
-=======
+
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(this.ghostHandlers as any).setupGhostListeners?.();
 		} else if (contentId === "explorer-modal-content") {
@@ -111,10 +111,10 @@ export class ModalManager {
 		} else if (contentId === "debug-modal-content") {
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(this.settingsHandlers as any).setupDebugListeners?.();
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		}
 
-	showNotification(title: string, message: string, isError: boolean = false) 
+	showNotification(title: string, message: string, isError: boolean = false)
 		if (!this.content || !this.overlay) return;
 		this.content.innerHTML = `
       <h2>${isError ? "⚠️ " : "ℹ️ "}${title}</h2>
@@ -131,18 +131,18 @@ export class ModalManager {
 			.getElementById("modal-ok-btn")
 			?.addEventListener("click", () => this.hide());
 
-	renderGhostList() 
-<<<<<<< HEAD
+	renderGhostList()
+
 		(this.ghostHandlers as unknown).renderGhostList?.();
 
-	renderBalloonList() 
+	renderBalloonList()
 		(this.ghostHandlers as unknown).renderBalloonList?.();
-=======
+
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this.ghostHandlers as any).renderGhostList?.();
 
-	renderBalloonList() 
+	renderBalloonList()
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this.ghostHandlers as any).renderBalloonList?.();
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 }

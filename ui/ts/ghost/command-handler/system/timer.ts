@@ -5,12 +5,12 @@
 
 const activeScriptTimers = new Map<
 	string,
-<<<<<<< HEAD
+
 	{ id: unknown; type: "interval" | "timeout" }
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	{ id: any; type: "interval" | "timeout" }
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 >();
 
 export function clearAllScriptTimers() {
@@ -24,12 +24,12 @@ export function clearAllScriptTimers() {
 	activeScriptTimers.clear();
 }
 
-<<<<<<< HEAD
+
 export async function handleNotifyCommand(_handler: unknown, _args: string[]) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function _handleNotifyCommand(handler: any, args: string[]) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	const eventName = args[1];
 	if (!eventName) return;
 	const references = args.slice(2);
@@ -49,15 +49,15 @@ export async function _handleNotifyCommand(handler: any, args: string[]) {
 	}
 }
 
-<<<<<<< HEAD
+
 export async function _handleTimerRaiseCommand(
 	_handler: unknown,
 	_args: string[],
 ) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function _handleTimerRaiseCommand(handler: any, args: string[]) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	const delayMs = Number.parseInt(args[1] ?? "0", 10);
 	const repeatFlag = Number.parseInt(args[2] ?? "1", 10);
 	const eventName = args[3];
@@ -66,14 +66,14 @@ export async function _handleTimerRaiseCommand(handler: any, args: string[]) {
 	if (!eventName) return;
 
 	const timerKey = `raise:${eventName}`;
-<<<<<<< HEAD
+
 	const existing = activeScriptTimers.get(timerKey);
 	if (existing) {
-=======
+
 	if (activeScriptTimers.has(timerKey)) {
 		// biome-ignore lint/style/noNonNullAssertion: automated fix
 		const existing = activeScriptTimers.get(timerKey)!;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		if (existing.type === "interval") {
 			clearInterval(existing.id as NodeJS.Timeout);
 		} else {
@@ -110,15 +110,15 @@ export async function _handleTimerRaiseCommand(handler: any, args: string[]) {
 	}
 }
 
-<<<<<<< HEAD
+
 export async function _handleTimerNotifyCommand(
 	_handler: unknown,
 	_args: string[],
 ) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function _handleTimerNotifyCommand(handler: any, args: string[]) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	const delayMs = Number.parseInt(args[1] ?? "0", 10);
 	const repeatFlag = Number.parseInt(args[2] ?? "1", 10);
 	const eventName = args[3];
@@ -127,14 +127,14 @@ export async function _handleTimerNotifyCommand(handler: any, args: string[]) {
 	if (!eventName) return;
 
 	const timerKey = `notify:${eventName}`;
-<<<<<<< HEAD
+
 	const existing = activeScriptTimers.get(timerKey);
 	if (existing) {
-=======
+
 	if (activeScriptTimers.has(timerKey)) {
 		// biome-ignore lint/style/noNonNullAssertion: automated fix
 		const existing = activeScriptTimers.get(timerKey)!;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		if (existing.type === "interval") {
 			clearInterval(existing.id as NodeJS.Timeout);
 		} else {
@@ -177,12 +177,12 @@ export async function _handleTimerNotifyCommand(handler: any, args: string[]) {
 }
 
 export async function handleTimerRaiseOtherCommand(
-<<<<<<< HEAD
+
 	handler: unknown,
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	handler: any,
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	args: string[],
 ) {
 	const delayMs = Number.parseInt(args[1] ?? "0", 10);
@@ -195,14 +195,14 @@ export async function handleTimerRaiseOtherCommand(
 	const isNotify = (args[0] ?? "").toLowerCase().includes("notify");
 	const timerKey = `other:${isNotify ? "notify" : "raise"}:${ghostName}:${eventName}`;
 
-<<<<<<< HEAD
+
 	const existing = activeScriptTimers.get(timerKey);
 	if (existing) {
-=======
+
 	if (activeScriptTimers.has(timerKey)) {
 		// biome-ignore lint/style/noNonNullAssertion: automated fix
 		const existing = activeScriptTimers.get(timerKey)!;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		if (existing.type === "interval") {
 			clearInterval(existing.id as NodeJS.Timeout);
 		} else {
@@ -267,15 +267,15 @@ export async function handleTimerRaiseOtherCommand(
 	}
 }
 
-<<<<<<< HEAD
+
 export async function _handleTimerPluginCommand(
 	_handler: unknown,
 	_args: string[],
 ) {
-=======
+
 // biome-ignore lint/suspicious/noExplicitAny: automated fix
 export async function _handleTimerPluginCommand(handler: any, args: string[]) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	const delayMs = Number.parseInt(args[1] ?? "0", 10);
 	const repeatFlag = Number.parseInt(args[2] ?? "1", 10);
 	const pluginId = args[3];
@@ -287,14 +287,14 @@ export async function _handleTimerPluginCommand(handler: any, args: string[]) {
 	const isNotify = rawCmd.includes("notify");
 	const timerKey = `plugin:${isNotify ? "notify" : "raise"}:${pluginId}:${eventName}`;
 
-<<<<<<< HEAD
+
 	const existing = activeScriptTimers.get(timerKey);
 	if (existing) {
-=======
+
 	if (activeScriptTimers.has(timerKey)) {
 		// biome-ignore lint/style/noNonNullAssertion: automated fix
 		const existing = activeScriptTimers.get(timerKey)!;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		if (existing.type === "interval") {
 			clearInterval(existing.id as NodeJS.Timeout);
 		} else {

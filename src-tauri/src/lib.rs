@@ -29,7 +29,7 @@ pub use common::paths::{clean_verbatim_path, normalize_path, resolve_ghost_direc
 
 use common::*;
 
-// ========================================
+// =====
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {

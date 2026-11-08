@@ -7,18 +7,18 @@ import {
 } from "./helpers.js";
 
 describe("ModalDialogController System Dialogs (Cycle 5)", () => {
-<<<<<<< HEAD
+
 	let _app: unknown;
 	let _controller: unknown;
 	let _sentEvents: unknown[];
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let app: any;
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let controller: any;
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let sentEvents: any[];
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 
 	beforeEach(() => {
 		setupMockDom();

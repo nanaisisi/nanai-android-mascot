@@ -41,15 +41,15 @@ export class NanaiAndroidMascotApp {
 	sakuraPlayer: SakuraScriptPlayer;
 	modalManager: ModalManager | null;
 	elements: Record<string, HTMLElement | null>;
-<<<<<<< HEAD
+
 	availableBalloons?: unknown[];
 	availablePlugins?: unknown[];
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	availableBalloons?: any[];
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	availablePlugins?: any[];
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	balloonUserScale?: number;
 	balloonDpiScale?: number;
 	balloonDontMove?: boolean;
@@ -102,18 +102,18 @@ export class NanaiAndroidMascotApp {
 		this.initUIEnvironment();
 
 		this.modalManager = new ModalManager(this);
-<<<<<<< HEAD
+
 		(this as unknown).loadSettings();
 		(this as unknown).setupEventListeners();
 		(this as unknown).applySettings();
-=======
+
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this as any).loadSettings();
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this as any).setupEventListeners();
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this as any).applySettings();
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 
 		await Promise.all([this.scanBalloons(), this.scanPlugins()]);
 
@@ -123,34 +123,34 @@ export class NanaiAndroidMascotApp {
 			this.ghostController.selectGhost(AppConfig.paths.fallbackGhostName);
 		}
 
-<<<<<<< HEAD
+
 		(this as unknown).startSecondTimer();
-=======
+
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		(this as any).startSecondTimer();
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		this.isInitialized = true;
 		console.log("✅ Nanai Android Mascot 初期化完了");
 	}
 
 	async scanBalloons() {
-<<<<<<< HEAD
+
 		return (this as unknown).scanBalloons?.() || [];
-=======
+
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		return (this as any).scanBalloons?.() || [];
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	}
 
 	async scanPlugins() {
 		if (!isTauriAvailable()) return;
 		try {
-<<<<<<< HEAD
+
 			const _plugins: unknown = await invoke("scan_plugins");
-=======
+
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			const plugins: any = await invoke("scan_plugins");
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 			if (plugins && plugins.length > 0) {
 				this.availablePlugins = plugins;
 				console.log("🔌 プラグインスキャン完了:", plugins.length);
@@ -194,12 +194,12 @@ export class NanaiAndroidMascotApp {
 		this._isExiting = true;
 
 		const exit = async () => {
-<<<<<<< HEAD
+
 			(this.ghostController as unknown)?.stopSecondChangeTimer?.();
-=======
+
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(this.ghostController as any)?.stopSecondChangeTimer?.();
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 			if (isTauriAvailable()) {
 				try {
 					await invoke("unload_current_ghost");
@@ -218,19 +218,19 @@ export class NanaiAndroidMascotApp {
 		};
 
 		try {
-<<<<<<< HEAD
+
 			(this as unknown).hideMenu();
 			this.modalManager?.hide();
 			try {
 				await (this.ghostController as unknown).sendShioriEvent("OnClose");
-=======
+
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			(this as any).hideMenu();
 			this.modalManager?.hide();
 			try {
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				await (this.ghostController as any).sendShioriEvent("OnClose");
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 			} catch (_e) {}
 			const exitDelay = this.sakuraPlayer?.isPlaying ? 1500 : 400;
 			setTimeout(exit, exitDelay);
@@ -250,10 +250,10 @@ Object.assign(
 );
 
 globalThis.addEventListener("DOMContentLoaded", () => {
-<<<<<<< HEAD
+
 	(_globalThis _as _unknown).mascotApp = new NanaiAndroidMascotApp();
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	(globalThis as any).mascotApp = new NanaiAndroidMascotApp();
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 });

@@ -5,14 +5,14 @@ import {
 } from "../ui/js/ghost/command-handler/window.js";
 
 describe("Sakura command window handlers", () => {
-<<<<<<< HEAD
+
 	let _originalTauri: unknown;
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	let originalTauri: any;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
 
-	beforeEach(() => 
+
+	beforeEach(() =>
 		originalTauri = globalThis.__TAURI__;);
 
 	afterEach(() => {

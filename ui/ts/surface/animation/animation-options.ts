@@ -65,12 +65,12 @@ export function parseAnimationOptions(options = []) {
  * @returns {boolean}
  */
 export function isBlockedByExclusive(target = 0, scopeIdOrAnimId, animIdParam) {
-<<<<<<< HEAD
+
 	let _instance: unknown, _scopeId: unknown, _animId: unknown;
-=======
+
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId, animId;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
@@ -98,12 +98,12 @@ export function isBlockedByExclusive(target = 0, scopeIdOrAnimId, animIdParam) {
  * @returns {object|null}
  */
 export function findAnimation(target, animIdOrNameOrScopeId, scopeIdParam = 0) {
-<<<<<<< HEAD
+
 	let _instance: unknown, _animIdOrName: unknown, _scopeId: unknown;
-=======
+
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, animIdOrName, scopeId;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (isInstance(target)) {
 		instance = target;
 		animIdOrName = animIdOrNameOrScopeId;
@@ -144,12 +144,12 @@ export function isAnimationRunning(
 	scopeIdOrAnimId,
 	animIdOrNameParam,
 ) {
-<<<<<<< HEAD
+
 	let _instance: unknown, _scopeId: unknown, _animIdOrName: unknown;
-=======
+
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId, animIdOrName;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
@@ -181,12 +181,12 @@ export function isAnimationRunning(
  * @param {number|string} [animIdOrNameParam]
  */
 export function stopAnimation(target = 0, scopeIdOrAnimId, animIdOrNameParam) {
-<<<<<<< HEAD
+
 	let _instance: unknown, _scopeId: unknown, _animIdOrName: unknown;
-=======
+
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId, animIdOrName;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
@@ -225,16 +225,16 @@ export function setAnimationOffset(
 	xOrY = 0,
 	yParam = 0,
 ) {
-<<<<<<< HEAD
+
 	let _instance: unknown,
 		_scopeId: unknown,
 		_animIdOrName: unknown,
 		_x: unknown,
 		_y: unknown;
-=======
+
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId, animIdOrName, x, y;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
@@ -266,12 +266,12 @@ export function getAnimationOffset(
 	scopeIdOrAnimId,
 	animIdOrNameParam,
 ) {
-<<<<<<< HEAD
+
 	let _instance: unknown, _scopeId: unknown, _animIdOrName: unknown;
-=======
+
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId, animIdOrName;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
@@ -288,12 +288,12 @@ export function getAnimationOffset(
 }
 
 export function pauseAnimation(target = 0, scopeIdOrAnimId, animIdOrNameParam) {
-<<<<<<< HEAD
+
 	let _instance: unknown, _scopeId: unknown, _animIdOrName: unknown;
-=======
+
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId, animIdOrName;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
@@ -314,12 +314,12 @@ export function resumeAnimation(
 	scopeIdOrAnimId,
 	animIdOrNameParam,
 ) {
-<<<<<<< HEAD
+
 	let _instance: unknown, _scopeId: unknown, _animIdOrName: unknown;
-=======
+
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId, animIdOrName;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
@@ -340,12 +340,12 @@ export function isAnimationPaused(
 	scopeIdOrAnimId,
 	animIdOrNameParam,
 ) {
-<<<<<<< HEAD
+
 	let _instance: unknown, _scopeId: unknown, _animIdOrName: unknown;
-=======
+
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId, animIdOrName;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
@@ -362,12 +362,12 @@ export function isAnimationPaused(
 }
 
 export function clearPausedAnimations(target = 0, scopeIdParam = 0) {
-<<<<<<< HEAD
+
 	let _instance: unknown, _scopeId: unknown;
-=======
+
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
@@ -386,12 +386,12 @@ export function clearPausedAnimations(target = 0, scopeIdParam = 0) {
  * @returns {number}
  */
 export function getActiveAnimationCount(target = 0, scopeIdParam = 0) {
-<<<<<<< HEAD
+
 	let _instance: unknown, _scopeId: unknown;
-=======
+
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
@@ -417,12 +417,12 @@ export function getActiveAnimationCount(target = 0, scopeIdParam = 0) {
  * @returns {object[]}
  */
 export function getActiveAnimations(target = 0, scopeIdParam = 0) {
-<<<<<<< HEAD
+
 	let _instance: unknown, _scopeId: unknown;
-=======
+
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
@@ -453,12 +453,12 @@ export function getActiveAnimations(target = 0, scopeIdParam = 0) {
  * @returns {import('../surface-parser.js').CollisionArea[]}
  */
 export function getActiveCollisions(target = 0, scopeIdParam = 0) {
-<<<<<<< HEAD
+
 	let _instance: unknown, _scopeId: unknown;
-=======
+
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let instance, scopeId;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;

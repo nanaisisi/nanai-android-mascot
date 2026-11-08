@@ -6,24 +6,24 @@ import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 import { setupExplorerListeners } from "./modal-explorer.js";
 
 export class ModalGhostHandlers {
-<<<<<<< HEAD
+
 	app: unknown;
 	manager: unknown;
 
 	constructor(manager: unknown) {
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	app: any;
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	manager: any;
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	constructor(manager: any) 
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+	constructor(manager: any)
+
 		this.manager = manager;
 		this.app = manager.app;
 
-	setupExplorerListeners() 
+	setupExplorerListeners()
 		setupExplorerListeners(this.manager, this.app);
 
 	setupGhostListeners() {
@@ -44,14 +44,14 @@ export class ModalGhostHandlers {
 				try {
 					if (statusEl)
 						statusEl.textContent = "ファイル選択とインストールを実行中...";
-<<<<<<< HEAD
+
 					const _result: unknown = await invoke(
 						"pick_and_install_ghost_archive",
 					);
-=======
+
 					// biome-ignore lint/suspicious/noExplicitAny: automated fix
 					const result: any = await invoke("pick_and_install_ghost_archive");
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 					if (result) {
 						if (statusEl) statusEl.textContent = `導入成功: ${result.name}`;
 						await this.app?.ghostController?.scanGhosts?.();
@@ -101,19 +101,19 @@ export class ModalGhostHandlers {
 		selectBtn?.addEventListener("click", () => {
 			if (isTauriAvailable()) {
 				invoke("pick_and_install_ghost_archive")
-<<<<<<< HEAD
+
 					.then((result: unknown) => {
-=======
+
 					// biome-ignore lint/suspicious/noExplicitAny: automated fix
-					.then((result: any) => 
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+					.then((result: any) =>
+
 						if (result && statusEl) {
 							statusEl.textContent = `導入成功: ${result.name}`;
 							this.app?.ghostController?.scanGhosts?.();
 						})
-					.catch((e) => 
+					.catch((e) =>
 						if (statusEl) statusEl.textContent = `エラー: ${e}`;);
-			} else 
+			} else
 				hiddenInput.click();
 		});
 
@@ -128,14 +128,14 @@ export class ModalGhostHandlers {
 			if (isTauriAvailable()) {
 				try {
 					if (statusEl) statusEl.textContent = "インストール実行中...";
-<<<<<<< HEAD
+
 					const _result: unknown = await invoke(
 						"pick_and_install_ghost_archive",
 					);
-=======
+
 					// biome-ignore lint/suspicious/noExplicitAny: automated fix
 					const result: any = await invoke("pick_and_install_ghost_archive");
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 					if (result && statusEl) {
 						statusEl.textContent = `導入成功: ${result.name}`;
 						await this.app?.ghostController?.scanGhosts?.();
@@ -175,12 +175,12 @@ export class ModalGhostHandlers {
 		}
 
 		listEl.innerHTML = "";
-<<<<<<< HEAD
-		ghosts.forEach((ghost: unknown) => 
-=======
+
+		ghosts.forEach((ghost: unknown) =>
+
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		ghosts.forEach((ghost: any) => {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 			const item = document.createElement("div");
 			const isCurrent = gc?.currentGhost?.name === ghost.name;
 			item.className = `ghost-item${isCurrent ? " active" : ""}`;
@@ -203,12 +203,12 @@ export class ModalGhostHandlers {
 		}
 		if (listEl && this.app?.availableBalloons) {
 			listEl.innerHTML = "";
-<<<<<<< HEAD
-			this.app.availableBalloons.forEach((b: unknown) => 
-=======
+
+			this.app.availableBalloons.forEach((b: unknown) =>
+
 			// biome-ignore lint/suspicious/noExplicitAny: automated fix
 			this.app.availableBalloons.forEach((b: any) => {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 				const item = document.createElement("div");
 				const isCurrent = this.app.currentBalloonTheme === b.dir_name;
 				item.className = `balloon-item${isCurrent ? " active" : ""}`;

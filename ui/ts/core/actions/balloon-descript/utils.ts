@@ -17,12 +17,12 @@ function clampChannel(val: number): number {
  * @returns {string | null}
  */
 export function rgbFromComponents(
-<<<<<<< HEAD
+
 	props: Record<string, unknown>,
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	props: Record<string, any>,
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	base: string,
 ): string | null {
 	if (!props || !base) return null;

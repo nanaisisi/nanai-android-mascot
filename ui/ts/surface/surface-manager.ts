@@ -4,12 +4,12 @@ import { SurfaceAnimationManager } from "./surface-animation-manager.js";
  * Nanai Android Mascot - surfaces.txt パーサー & 当たり判定（Collision）マネージャー
  */
 export class SurfaceManager {
-<<<<<<< HEAD
+
 	app: unknown;
 	collisions: Record<number | string, unknown[]>;
 	elements: Record<number | string, unknown[]>;
 	animations: Record<number | string, unknown[]>;
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	app: any;
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -18,7 +18,7 @@ export class SurfaceManager {
 	elements: Record<number | string, any[]>;
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	animations: Record<number | string, any[]>;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	baseWidth: number;
 	baseHeight: number;
 	currentSurfaceIds: Map<number, number | string>;
@@ -26,14 +26,14 @@ export class SurfaceManager {
 	dressupState: Map<string, boolean>;
 	aliases: Record<string, number[]> | null;
 	keroAliases: Record<string, number[]> | null;
-<<<<<<< HEAD
+
 	shellManifest: Record<string, unknown> | null;
 	planCache: Map<string, unknown>;
 	baseCanvasCache: Map<string, HTMLCanvasElement>;
 	animationManager: SurfaceAnimationManager;
 
 	constructor(app: unknown) {
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	shellManifest: Record<string, any> | null;
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -42,8 +42,8 @@ export class SurfaceManager {
 	animationManager: SurfaceAnimationManager;
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
-	constructor(app: any) 
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+	constructor(app: any)
+
 		this.app = app;
 		this.collisions = {};
 		this.elements = {};
@@ -64,36 +64,36 @@ export class SurfaceManager {
 
 		this.animationManager = new SurfaceAnimationManager(this);
 
-	get activeAnimationTimers() 
+	get activeAnimationTimers()
 		return this.animationManager.activeAnimationTimers;
 
-	get currentSurfaceId() 
+	get currentSurfaceId()
 		return this.currentSurfaceIds.get(0) ?? 0;
 
-	currentSurfaceIdFor(scopeId: number = 0): number | string 
+	currentSurfaceIdFor(scopeId: number = 0): number | string
 		return this.currentSurfaceIds.get(scopeId) ?? (scopeId === 1 ? 10 : 0);
 
-	setSurfaceId(surfaceId: number | string, scopeId: number = 0) 
+	setSurfaceId(surfaceId: number | string, scopeId: number = 0)
 		this.currentSurfaceIds.set(scopeId, surfaceId);
 		this.animationManager.stopAnimations(scopeId);
 		this.animationManager.startAnimations(surfaceId, scopeId);
 
-	stopAnimations(scopeId: number = 0) 
+	stopAnimations(scopeId: number = 0)
 		this.animationManager.stopAnimations(scopeId);
 
-	startAnimations(surfaceId: number | string, scopeId: number = 0) 
+	startAnimations(surfaceId: number | string, scopeId: number = 0)
 		this.animationManager.startAnimations(surfaceId, scopeId);
 
 	playAnimationPatterns(
-<<<<<<< HEAD
+
 		anim: unknown,
-=======
+
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		anim: any,
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		baseSurfaceId: number | string,
 		scopeId: number,
-	) 
+	)
 		return this.animationManager.playAnimationPatterns(
 			anim,
 			baseSurfaceId,
@@ -104,20 +104,20 @@ export class SurfaceManager {
 		animId: number | string,
 		scopeId: number = 0,
 		waitForComplete: boolean = false,
-	) 
+	)
 		return this.animationManager.playAnimationById(
 			animId,
 			scopeId,
 			waitForComplete,
 		);
 
-	pauseAnimationById(animId: number | string, scopeId: number = 0) 
+	pauseAnimationById(animId: number | string, scopeId: number = 0)
 		this.animationManager.pauseAnimation(scopeId, animId);
 
-	resumeAnimationById(animId: number | string, scopeId: number = 0) 
+	resumeAnimationById(animId: number | string, scopeId: number = 0)
 		this.animationManager.resumeAnimation(scopeId, animId);
 
-	stopAnimationById(animId: number | string, scopeId: number = 0) 
+	stopAnimationById(animId: number | string, scopeId: number = 0)
 		this.animationManager.stopAnimation(scopeId, animId);
 
 	setAnimationOffset(
@@ -125,25 +125,25 @@ export class SurfaceManager {
 		x: number = 0,
 		y: number = 0,
 		scopeId: number = 0,
-	) 
+	)
 		this.animationManager.setAnimationOffset(scopeId, animId, x, y);
 
-	setBaseMoveOffset(scopeId: number = 0, x: number = 0, y: number = 0) 
+	setBaseMoveOffset(scopeId: number = 0, x: number = 0, y: number = 0)
 		this.animationManager.setBaseMoveOffset(scopeId, x, y);
 
-	getBaseMoveOffset(scopeId: number = 0) 
+	getBaseMoveOffset(scopeId: number = 0)
 		return this.animationManager.getBaseMoveOffset(scopeId);
 
-	waitForAnimation(animId: number | string, scopeId: number = 0) 
+	waitForAnimation(animId: number | string, scopeId: number = 0)
 		return this.animationManager.waitForAnimation(animId, scopeId);
 
-	onTalkEnd(scopeId: number = 0) 
+	onTalkEnd(scopeId: number = 0)
 		this.animationManager.onTalkEnd(scopeId);
 
-	onScriptEnd(scopeId: number = 0) 
+	onScriptEnd(scopeId: number = 0)
 		this.animationManager.onScriptEnd(scopeId);
 
-	onCharSpoken(scopeId: number = 0) 
+	onCharSpoken(scopeId: number = 0)
 		this.animationManager.onCharSpoken(scopeId);
 }
 

@@ -66,12 +66,12 @@ export {
 };
 
 export async function handleToken(
-<<<<<<< HEAD
+
 	player: unknown,
 	app: unknown,
 	token: unknown,
 	context: unknown,
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	player: any,
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
@@ -80,7 +80,7 @@ export async function handleToken(
 	token: any,
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	context: any,
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 ) {
 	switch (token.type) {
 		case "scope":

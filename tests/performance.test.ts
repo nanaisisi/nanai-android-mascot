@@ -3,12 +3,12 @@ import { test } from "vitest";
 import { SurfaceAnimationManager } from "../ui/js/surface/surface-animation-manager.js";
 
 const deferred = () => {
-<<<<<<< HEAD
+
 	const _resolve: unknown = null;
-=======
+
 	// biome-ignore lint/suspicious/noImplicitAnyLet: automated fix
 	let resolve;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	const promise = new Promise((r) => {
 		resolve = r;
 	});

@@ -21,12 +21,12 @@ export class MenuDispatcher {
 		}
 	}
 
-<<<<<<< HEAD
+
 	async dispatchAction(action: string, payload: unknown = null) {
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	async dispatchAction(action: string, payload: any = null) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		if (!action) return;
 		console.log(
 			`Context Menu Action: ${action}`,
@@ -44,12 +44,12 @@ export class MenuDispatcher {
 			finalPayload = { scope: this.currentScope, ...finalPayload };
 		}
 
-<<<<<<< HEAD
+
 		if (globalThis.parent && (globalThis.parent as unknown) !== globalThis) {
-=======
+
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		if (globalThis.parent && (globalThis.parent as any) !== globalThis) {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 			globalThis.parent.postMessage(
 					type: "menu-action",
 					action: action,

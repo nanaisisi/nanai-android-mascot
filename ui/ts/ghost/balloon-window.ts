@@ -29,12 +29,12 @@ export async function applyBalloonDescript(theme: string) {
 	if (applyingTheme === theme) return;
 	applyingTheme = theme;
 	try {
-<<<<<<< HEAD
+
 		const result: unknown = await applyThemeDescript({
-=======
+
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		const _result: any = await applyThemeDescript({
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 			theme,
 			scopeId,
 			currentUserScale,
@@ -69,12 +69,12 @@ export function initBalloonWindow() {
 
 	if (!isTauriAvailable()) return;
 
-<<<<<<< HEAD
-	void listen(`update-balloon-content-$scopeId`, (event: unknown) => 
-=======
+
+	void listen(`update-balloon-content-$scopeId`, (event: unknown) =>
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	void listen(`update-balloon-content-$scopeId`, (event: any) => {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		const { html, theme } = event.payload || {};
 		if (theme) {
 			document.documentElement.setAttribute("data-balloon-theme", theme);
@@ -87,12 +87,12 @@ export function initBalloonWindow() {
 		}
 	});
 
-<<<<<<< HEAD
-	void listen("balloon-theme-changed", (event: unknown) => 
-=======
+
+	void listen("balloon-theme-changed", (event: unknown) =>
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	void listen("balloon-theme-changed", (event: any) => {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		const theme = event.payload?.theme || event.payload;
 		if (theme) {
 			document.documentElement.setAttribute("data-balloon-theme", theme);
@@ -101,12 +101,12 @@ export function initBalloonWindow() {
 		}
 	});
 
-<<<<<<< HEAD
-	void listen("balloon-scale-changed", (event: unknown) => 
-=======
+
+	void listen("balloon-scale-changed", (event: unknown) =>
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	void listen("balloon-scale-changed", (event: any) => {
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		const scale =
 			event.payload?.userScale ?? event.payload?.scale ?? event.payload;
 		if (typeof scale === "number" && !Number.isNaN(scale)) {

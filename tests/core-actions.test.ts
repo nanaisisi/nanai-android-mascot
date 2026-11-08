@@ -94,7 +94,7 @@ test("balloonThemeActions test", async () => {
 	balloonThemeActions.hideBalloon = () => {};
 
 	// 1. Calling when balloonThemeManager is null
-<<<<<<< HEAD
+
 	delete (balloonThemeActions as unknown).balloonThemeManager;
 	balloonThemeActions.cycleBalloonTheme();
 
@@ -108,7 +108,7 @@ test("balloonThemeActions test", async () => {
 	await balloonThemeActions.scanBalloons();
 
 	delete (balloonThemeActions as unknown).balloonThemeManager;
-=======
+
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	delete (balloonThemeActions as any).balloonThemeManager;
 	balloonThemeActions.cycleBalloonTheme();
@@ -127,7 +127,7 @@ test("balloonThemeActions test", async () => {
 
 	// biome-ignore lint/suspicious/noExplicitAny: automated fix
 	delete (balloonThemeActions as any).balloonThemeManager;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 	balloonThemeActions.resetBalloonDescript();
 
 	// 2. Calling when balloonThemeManager is already instantiated

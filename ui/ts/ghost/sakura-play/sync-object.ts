@@ -7,18 +7,18 @@ export class SyncObject {
 	name: string;
 	signaled: boolean;
 	waiters: Set<{
-<<<<<<< HEAD
+
 		resolve: (value: boolean | PromiseLike<boolean>) => void;
 		reject: (reason?: unknown) => void;
 		timer: unknown;
-=======
+
 		// biome-ignore lint/complexity/noBannedTypes: automated fix
 		resolve: Function;
 		// biome-ignore lint/complexity/noBannedTypes: automated fix
 		reject: Function;
 		// biome-ignore lint/suspicious/noExplicitAny: automated fix
 		timer: any;
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 		resetOnWait: boolean;
 	}>;
 
@@ -67,12 +67,12 @@ export class SyncObject {
 			const _waiter = {
 				resolve,
 				reject,
-<<<<<<< HEAD
+
 				timer: null as unknown,
-=======
+
 				// biome-ignore lint/suspicious/noExplicitAny: automated fix
 				timer: null as any,
->>>>>>> 9f506b10bbfe35f95183db82ba6758cd062aa2ad
+
 				resetOnWait,
 			};
 

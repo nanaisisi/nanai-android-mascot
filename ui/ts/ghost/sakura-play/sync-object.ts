@@ -7,8 +7,8 @@ export class SyncObject {
 	name: string;
 	signaled: boolean;
 	waiters: Set<{
-		resolve: (...args: unknown[]) => unknown;
-		reject: (...args: unknown[]) => unknown;
+		resolve: (value: boolean) => void;
+		reject: (reason?: unknown) => void;
 		timer: unknown;
 		resetOnWait: boolean;
 	}>;
@@ -17,6 +17,14 @@ export class SyncObject {
 		this.name = name;
 		this.signaled = false;
 		this.waiters = new Set();
+	}
+
+	get waiterCount(): number {
+		return this.waiters.size;
+	}
+
+	isWaiting(): boolean {
+		return this.waiters.size > 0;
 	}
 
 	set() {
@@ -28,12 +36,14 @@ export class SyncObject {
 					clearTimeout(waiter.timer as number);
 				}
 				this.waiters.delete(waiter);
-				if (waiter.resetOnWait) {
+				const shouldReset = waiter.resetOnWait;
+				if (shouldReset) {
 					this.signaled = false;
-					waiter.resolve(true);
-					break;
 				}
 				waiter.resolve(true);
+				if (shouldReset) {
+					break;
+				}
 			}
 		}
 	}
@@ -42,10 +52,36 @@ export class SyncObject {
 		this.signaled = false;
 	}
 
+	cancelAll(reason: string = "SyncObject cancelled") {
+		const waitersList = Array.from(this.waiters);
+		this.waiters.clear();
+		for (const waiter of waitersList) {
+			if (waiter.timer) {
+				clearTimeout(waiter.timer as number);
+			}
+			waiter.reject(new Error(reason));
+		}
+	}
+
 	async wait(
-		timeoutMs: number = 0,
-		resetOnWait: boolean = false,
+		optionsOrTimeout:
+			| number
+			| { timeout?: number; resetOnWait?: boolean } = 0,
+		legacyResetOnWait: boolean = true,
 	): Promise<boolean> {
+		let timeoutMs = 0;
+		let resetOnWait = true;
+
+		if (typeof optionsOrTimeout === "number") {
+			timeoutMs = optionsOrTimeout;
+			resetOnWait = legacyResetOnWait;
+		} else if (optionsOrTimeout && typeof optionsOrTimeout === "object") {
+			timeoutMs = optionsOrTimeout.timeout ?? 0;
+			if (optionsOrTimeout.resetOnWait !== undefined) {
+				resetOnWait = optionsOrTimeout.resetOnWait;
+			}
+		}
+
 		if (this.signaled) {
 			if (resetOnWait) {
 				this.signaled = false;
@@ -56,8 +92,8 @@ export class SyncObject {
 		return new Promise((resolve, reject) => {
 			let timer: unknown = null;
 			const waiter = {
-				resolve: resolve as (...args: unknown[]) => unknown,
-				reject: reject as (...args: unknown[]) => unknown,
+				resolve,
+				reject,
 				timer,
 				resetOnWait,
 			};
@@ -83,12 +119,26 @@ export class SyncObjectManager {
 	}
 
 	getOrCreate(name: string): SyncObject {
-		let obj = this.objects.get(name);
+		const key = name.toLowerCase();
+		let obj = this.objects.get(key);
 		if (!obj) {
-			obj = new SyncObject(name);
-			this.objects.set(name, obj);
+			obj = new SyncObject(key);
+			this.objects.set(key, obj);
 		}
 		return obj;
+	}
+
+	has(name: string): boolean {
+		return this.objects.has(name.toLowerCase());
+	}
+
+	getNames(): string[] {
+		return Array.from(this.objects.values()).map((o) => o.name);
+	}
+
+	isSignaled(name: string): boolean {
+		const obj = this.objects.get(name.toLowerCase());
+		return Boolean(obj?.signaled);
 	}
 
 	set(name: string) {
@@ -96,14 +146,24 @@ export class SyncObjectManager {
 	}
 
 	reset(name: string) {
-		this.getOrCreate(name).reset();
+		const obj = this.objects.get(name.toLowerCase());
+		if (obj) obj.reset();
+	}
+
+	clear(reason: string = "SyncObject cancelled") {
+		for (const obj of this.objects.values()) {
+			obj.cancelAll(reason);
+		}
+		this.objects.clear();
 	}
 
 	async wait(
 		name: string,
-		timeoutMs: number = 0,
-		resetOnWait: boolean = false,
+		optionsOrTimeout:
+			| number
+			| { timeout?: number; resetOnWait?: boolean } = 0,
+		resetOnWait: boolean = true,
 	): Promise<boolean> {
-		return await this.getOrCreate(name).wait(timeoutMs, resetOnWait);
+		return await this.getOrCreate(name).wait(optionsOrTimeout, resetOnWait);
 	}
 }

@@ -156,4 +156,26 @@ collision,10,10,60,60,KeroBody
 
 	assert.equal(cycle9Parsed.names["10"], "KeroNormal");
 	assert.equal(cycle9Parsed.collisions["10"]?.[0]?.name, "kerobody");
+
+	// Cycle 10 multi-character alias blocks parsing: surface.alias, kero.surface.alias, char2.surface.alias
+	const cycle10Txt = `
+surface.alias
+{
+common_smile,[0,1]
+}
+
+kero.surface.alias
+{
+kero_smile,[10]
+}
+
+char2.surface.alias
+{
+sub_smile,[20,21]
+}
+`;
+	const cycle10Parsed = parseSurfacesTxt(cycle10Txt);
+	assert.deepEqual(cycle10Parsed.aliases.common_smile, [0, 1]);
+	assert.deepEqual(cycle10Parsed.keroAliases.kero_smile, [10]);
+	assert.deepEqual(cycle10Parsed.charAliases[2]?.sub_smile, [20, 21]);
 });

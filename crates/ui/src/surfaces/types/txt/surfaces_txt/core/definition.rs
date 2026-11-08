@@ -24,6 +24,9 @@ pub struct SurfacesTxt {
     /// `kero.surface.alias` / `char1.surface.alias` ブロックのエイリアス名 → 番号列
     #[serde(default)]
     pub kero_aliases: BTreeMap<String, Vec<u32>>,
+    /// `char<N>.surface.alias` ブロック定義（キャラクタID -> (エイリアス名 -> 番号列)）
+    #[serde(default)]
+    pub char_aliases: BTreeMap<u32, BTreeMap<String, Vec<u32>>>,
     /// `*.cursor` ブロック定義（スコープ名 -> カーソル定義列）
     #[serde(default)]
     pub cursors: BTreeMap<String, Vec<CursorDefinition>>,
@@ -59,6 +62,11 @@ impl SurfacesTxt {
         }
         for list in self.kero_aliases.values() {
             set.extend(list.iter().copied());
+        }
+        for map in self.char_aliases.values() {
+            for list in map.values() {
+                set.extend(list.iter().copied());
+            }
         }
         set.into_iter().collect()
     }

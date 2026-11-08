@@ -54,6 +54,19 @@ test("surfaceCollisionMethods covers resolveSurfaceNumber and detectCollision", 
 	const resolvedByNameCase = mockManager.resolveSurfaceNumber("sakurasmile", 0);
 	assert.equal(resolvedByNameCase, "1");
 
+	// Multi-scope character aliases (charAliases for scope >= 2)
+	mockManager.charAliases = {
+		2: {
+			subchar_smile: [20],
+		},
+	};
+	const resolvedSubchar = mockManager.resolveSurfaceNumber("subchar_smile", 2);
+	assert.equal(resolvedSubchar, "20");
+
+	// Fallback to common aliases for scope >= 2
+	const resolvedFallback = mockManager.resolveSurfaceNumber("smile", 2);
+	assert.ok(["1", "2"].includes(String(resolvedFallback)));
+
 	// 2. detectCollision
 	const rect = { left: 0, top: 0, width: 200, height: 400 };
 	// clickX = 50 (relX = 0.25 -> canvasX = 50), clickY = 50 (relY = 0.125 -> canvasY = 50)

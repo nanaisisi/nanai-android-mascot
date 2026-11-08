@@ -25,6 +25,7 @@ function isInstance(obj: unknown) {
  * @param {unknown} baseSurfaceIdOrScopeId
  * @param {Record<string, unknown> | undefined} scopeIdOrAnimOptions
  * @param {unknown} animationOptionsParam
+ * @returns {boolean}
  */
 export function renderAnimationFrame(
 	this: unknown,
@@ -33,12 +34,12 @@ export function renderAnimationFrame(
 	baseSurfaceIdOrScopeId: undefined,
 	scopeIdOrAnimOptions: Record<string, unknown> | undefined,
 	animationOptionsParam = {},
-) {
-	let instance: unknown,
-		pat: unknown,
-		baseSurfaceId: unknown,
-		scopeId: unknown,
-		animationOptions: unknown;
+): boolean {
+	let instance: any,
+		pat: any,
+		baseSurfaceId: any,
+		scopeId: any,
+		animationOptions: any;
 	if (isInstance(target)) {
 		instance = target;
 		pat = patOrBaseSurfaceId;
@@ -53,34 +54,53 @@ export function renderAnimationFrame(
 		animationOptions = scopeIdOrAnimOptions || {};
 	}
 
-	const inst = instance as Record<string, unknown>;
-	const p = pat as Record<string, unknown>;
-	const opts = animationOptions as Record<string, unknown>;
+	const inst = instance || {};
+	const p = pat || {};
+	const opts = animationOptions || {};
 	const sId = scopeId as number;
 	const bSurfId = baseSurfaceId as string | number;
 
-	const manager = inst.manager as Record<string, unknown> | undefined;
-	if (!manager) return;
+	if (bSurfId === -1 || Number(bSurfId) === -1) {
+		return false;
+	}
 
-	const compositeCanvas = manager.compositeCanvas as unknown;
-	if (!compositeCanvas) return;
+	const manager = inst.manager;
+	if (!manager) return false;
 
-	const surfaceId = p.surfaceId !== undefined ? p.surfaceId : bSurfId;
+	const compositeCanvas = manager.compositeCanvas;
+	if (!compositeCanvas) return false;
+
+	const surfaceId =
+		p.surfaceId !== undefined
+			? p.surfaceId
+			: p.surface !== undefined
+				? p.surface
+				: bSurfId;
+	if (surfaceId === -1 || Number(surfaceId) === -1) {
+		return false;
+	}
+
 	const surfaceFile = patternSurfaceFile(p);
 
-	const getAnimOffset = inst.getAnimationOffset as
-		| ((pat: unknown, sid: number) => { x: number; y: number })
-		| undefined;
+	const getAnimOffset = inst.getAnimationOffset;
 	const offset = getAnimOffset
-		? getAnimOffset(p, sId)
+		? getAnimOffset.call(inst, p, sId)
 		: getAnimationOffset(inst, p, sId);
 
 	if (p.type === "async") {
 		createPlaceholderCanvas(surfaceFile || String(surfaceId), 100, 100);
 	} else {
-		const renderSurfaceLayer = manager.renderSurfaceLayer as
-			| ((...args: unknown[]) => void)
-			| undefined;
-		renderSurfaceLayer?.(surfaceId, surfaceFile, offset.x, offset.y, opts);
+		const renderSurfaceLayer = manager.renderSurfaceLayer;
+		if (renderSurfaceLayer) {
+			renderSurfaceLayer.call(
+				manager,
+				surfaceId,
+				surfaceFile,
+				(p.x || 0) + (offset?.x || 0),
+				(p.y || 0) + (offset?.y || 0),
+				opts,
+			);
+		}
 	}
+	return true;
 }

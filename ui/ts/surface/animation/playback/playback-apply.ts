@@ -18,26 +18,17 @@ function isInstance(obj: unknown) {
 
 /**
  * SERIKO アニメーションフレーム適用（サーフィス・透過・レイヤー描画）
- * @param {unknown} target
- * @param {unknown} patOrAnim
- * @param {unknown} animOrBaseSurfaceId
- * @param {unknown} baseSurfaceIdOrScopeId
- * @param {unknown} scopeIdOrKey
- * @param {unknown} keyOrIsCurrent
- * @param {Record<string, unknown> | undefined} [isCurrentOrOptions]
- * @param {unknown} [optionsParam={}]
- * @returns {boolean}
  */
 export function _applyAnimationFrame(
 	this: unknown,
 	target: unknown,
 	patOrAnim: unknown,
-	animOrBaseSurfaceId: unknown,
-	baseSurfaceIdOrScopeId: undefined,
-	scopeIdOrKey: undefined,
-	keyOrIsCurrent: undefined,
-	isCurrentOrOptions: Record<string, unknown> | undefined,
-	optionsParam = {},
+	animOrBaseSurfaceId?: unknown,
+	baseSurfaceIdOrScopeId?: unknown,
+	scopeIdOrKey?: unknown,
+	keyOrIsCurrent?: unknown,
+	isCurrentOrOptions?: unknown,
+	optionsParam: unknown = {},
 ): boolean {
 	let instance: any,
 		pat: any,
@@ -47,6 +38,7 @@ export function _applyAnimationFrame(
 		_key: any,
 		isCurrent: any,
 		options: any;
+
 	if (isInstance(target)) {
 		instance = target;
 		pat = patOrAnim;
@@ -54,8 +46,18 @@ export function _applyAnimationFrame(
 		baseSurfaceId = baseSurfaceIdOrScopeId;
 		scopeId = scopeIdOrKey;
 		_key = keyOrIsCurrent;
-		isCurrent = isCurrentOrOptions;
-		options = optionsParam;
+		isCurrent =
+			typeof isCurrentOrOptions === "function"
+				? isCurrentOrOptions
+				: typeof keyOrIsCurrent === "function"
+					? keyOrIsCurrent
+					: undefined;
+		options =
+			typeof optionsParam === "object" && optionsParam !== null
+				? optionsParam
+				: typeof isCurrentOrOptions === "object"
+					? isCurrentOrOptions
+					: {};
 	} else {
 		instance = this;
 		pat = target;
@@ -63,8 +65,16 @@ export function _applyAnimationFrame(
 		baseSurfaceId = animOrBaseSurfaceId;
 		scopeId = baseSurfaceIdOrScopeId;
 		_key = scopeIdOrKey;
-		isCurrent = keyOrIsCurrent;
-		options = isCurrentOrOptions || {};
+		isCurrent =
+			typeof keyOrIsCurrent === "function"
+				? keyOrIsCurrent
+				: typeof isCurrentOrOptions === "function"
+					? isCurrentOrOptions
+					: undefined;
+		options =
+			typeof isCurrentOrOptions === "object" && isCurrentOrOptions !== null
+				? isCurrentOrOptions
+				: {};
 	}
 
 	const inst = instance || {};
@@ -79,8 +89,16 @@ export function _applyAnimationFrame(
 	const manager = inst.manager;
 
 	// 特殊制御パターンの処理
-	const surfaceId = p.surfaceId !== undefined ? p.surfaceId : (p.surface !== undefined ? p.surface : bSurfId);
-	const surfaceNum = typeof surfaceId === "number" ? surfaceId : Number.parseInt(String(surfaceId), 10);
+	const surfaceId =
+		p.surfaceId !== undefined
+			? p.surfaceId
+			: p.surface !== undefined
+				? p.surface
+				: bSurfId;
+	const surfaceNum =
+		typeof surfaceId === "number"
+			? surfaceId
+			: Number.parseInt(String(surfaceId), 10);
 
 	if (surfaceNum === -1 || p.surface === -1 || p.surfaceId === -1) {
 		// surface -1: このアニメーションの再生を終了しベース表示に戻す
@@ -101,7 +119,9 @@ export function _applyAnimationFrame(
 
 	if (p.type === "start" || p.type === "stop") {
 		if (p.type === "start" && p.targetId != null) {
-			const anim = inst.findAnimation ? inst.findAnimation(p.targetId, sId) : null;
+			const anim = inst.findAnimation
+				? inst.findAnimation(p.targetId, sId)
+				: null;
 			if (anim) {
 				inst.playAnimationPatterns?.(anim, bSurfId, sId);
 			}
@@ -120,7 +140,12 @@ export function _applyAnimationFrame(
 		return true;
 	}
 
-	if (p.type === "scaling" || p.scaleX != null || p.scaleY != null || p.scale != null) {
+	if (
+		p.type === "scaling" ||
+		p.scaleX != null ||
+		p.scaleY != null ||
+		p.scale != null
+	) {
 		const scaleX = p.scaleX ?? p.scale ?? (p.x !== undefined ? p.x : 100);
 		const scaleY = p.scaleY ?? p.scale ?? (p.y !== undefined ? p.y : 100);
 		const setScale = inst.setScale || manager?.setScale;
@@ -158,7 +183,14 @@ export function _applyAnimationFrame(
 	} else if (manager) {
 		const renderSurfaceLayer = manager.renderSurfaceLayer;
 		if (renderSurfaceLayer) {
-			renderSurfaceLayer.call(manager, surfaceId, p.file, p.x || 0, p.y || 0, opts);
+			renderSurfaceLayer.call(
+				manager,
+				surfaceId,
+				p.file,
+				p.x || 0,
+				p.y || 0,
+				opts,
+			);
 		}
 	}
 	return true;

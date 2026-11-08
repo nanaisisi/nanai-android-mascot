@@ -32,7 +32,7 @@ export async function _playTimelineFrames(
 ) {
 	let instance: any,
 		timeline: any,
-		anim: any,
+		_anim: any,
 		baseSurfaceId: any,
 		scopeId: any,
 		key: any,
@@ -40,7 +40,7 @@ export async function _playTimelineFrames(
 	if (isInstance(target)) {
 		instance = target;
 		timeline = timelineOrAnim;
-		anim = animOrBaseSurfaceId;
+		_anim = animOrBaseSurfaceId;
 		baseSurfaceId = baseSurfaceIdOrScopeId;
 		scopeId = scopeIdOrKey;
 		key = keyOrOptions;
@@ -48,7 +48,7 @@ export async function _playTimelineFrames(
 	} else {
 		instance = this;
 		timeline = target;
-		anim = timelineOrAnim;
+		_anim = timelineOrAnim;
 		baseSurfaceId = animOrBaseSurfaceId;
 		scopeId = baseSurfaceIdOrScopeId;
 		key = scopeIdOrKey;
@@ -73,9 +73,9 @@ export async function _playTimelineFrames(
 		const pat =
 			typeof frameItem === "object" && frameItem !== null
 				? frameItem.pattern || frameItem
-				: anim?.patterns
-					? anim.patterns.find((p: any) => p.index === i) ||
-						anim.patterns[i] ||
+				: _anim?.patterns
+					? _anim.patterns.find((p: any) => p.index === i) ||
+						_anim.patterns[i] ||
 						frameItem
 					: frameItem;
 
@@ -95,7 +95,7 @@ export async function _playTimelineFrames(
 		const result = await applyFn.call(
 			inst,
 			pat,
-			anim,
+			_anim,
 			bSurfId,
 			sId,
 			key,
@@ -122,7 +122,7 @@ export async function _playOnePat(
 ) {
 	let instance: any,
 		pat: any,
-		anim: any,
+		_anim: any,
 		baseSurfaceId: any,
 		scopeId: any,
 		key: any,
@@ -131,20 +131,30 @@ export async function _playOnePat(
 	if (isInstance(target)) {
 		instance = target;
 		pat = patOrAnim;
-		anim = animOrBaseSurfaceId;
+		_anim = animOrBaseSurfaceId;
 		baseSurfaceId = baseSurfaceIdOrScopeId;
 		scopeId = scopeIdOrKey;
 		key = keyOrIsCurrent;
-		isCurrent = isCurrentOrOptions;
+		isCurrent =
+			typeof isCurrentOrOptions === "function"
+				? isCurrentOrOptions
+				: typeof keyOrIsCurrent === "function"
+					? keyOrIsCurrent
+					: undefined;
 		options = optionsParam || {};
 	} else {
 		instance = this;
 		pat = target;
-		anim = patOrAnim;
+		_anim = patOrAnim;
 		baseSurfaceId = animOrBaseSurfaceId;
 		scopeId = baseSurfaceIdOrScopeId;
 		key = scopeIdOrKey;
-		isCurrent = keyOrIsCurrent;
+		isCurrent =
+			typeof keyOrIsCurrent === "function"
+				? keyOrIsCurrent
+				: typeof isCurrentOrOptions === "function"
+					? isCurrentOrOptions
+					: undefined;
 		options = isCurrentOrOptions || {};
 	}
 
@@ -156,6 +166,7 @@ export async function _playOnePat(
 	const resolveWaitFn = inst.resolvePatternWait;
 	const applyFn = inst._applyAnimationFrame || _applyAnimationFrame;
 
+	if (typeof isCurrent === "function" && !isCurrent()) return false;
 	if (stoppedAnimations?.has(key)) return false;
 
 	const waitMs = resolveWaitFn
@@ -168,12 +179,13 @@ export async function _playOnePat(
 		});
 	}
 
+	if (typeof isCurrent === "function" && !isCurrent()) return false;
 	if (stoppedAnimations?.has(key)) return false;
 
 	const result = await applyFn.call(
 		inst,
 		p,
-		anim,
+		_anim,
 		bSurfId,
 		sId,
 		key,

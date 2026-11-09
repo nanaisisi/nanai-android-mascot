@@ -3,6 +3,10 @@
  */
 import { invoke } from "../core/tauri-helper.js";
 
+const sortedElementsCache = new WeakMap<unknown[], unknown[]>();
+const sortedAnimationsCache = new WeakMap<unknown[], unknown[]>();
+const sortedPatternsCache = new WeakMap<unknown[], unknown[]>();
+
 export function enumToString(value: unknown): string {
 	if (value == null) return "";
 	if (typeof value === "string") return value.toLowerCase();
@@ -184,35 +188,108 @@ export function manifestToSurfaceData(manifest: unknown) {
 			balloonOffsets[sid] = { ...def.balloon_offsets };
 		}
 
-		elements[sid] = (def.elements ?? [])
-			.slice()
-			.sort((a: unknown, b: unknown) => (a.id ?? 0) - (b.id ?? 0))
-			.map((e: unknown) => ({
+		const rawElements = def.elements ?? [];
+		let sortedElements = sortedElementsCache.get(rawElements);
+		if (!sortedElements && rawElements.length > 0) {
+			sortedElements = rawElements
+				.slice()
+				.sort(
+					(a: unknown, b: unknown) =>
+						((a as { id?: number }).id ?? 0) - ((b as { id?: number }).id ?? 0),
+				);
+			sortedElementsCache.set(rawElements, sortedElements);
+		} else if (!sortedElements) {
+			sortedElements = [];
+		}
+
+		elements[sid] = sortedElements.map(
+			(
+				e:
+					| {
+							id?: number;
+							method?: unknown;
+							file?: string;
+							x?: number;
+							y?: number;
+					  }
+					| unknown,
+			) => ({
 				id: e.id ?? 0,
 				type: methodToString(e.method) || "overlay",
 				file: e.file ?? "",
 				x: e.x ?? 0,
 				y: e.y ?? 0,
-			}));
+			}),
+		);
 
-		animations[sid] = Object.values(def.animations ?? {})
-			.sort((a: unknown, b: unknown) => (a.id ?? 0) - (b.id ?? 0))
-			.map((anim: unknown) => ({
+		const rawAnimations = Object.values(def.animations ?? {});
+		let sortedAnimations = sortedAnimationsCache.get(rawAnimations);
+		if (!sortedAnimations && rawAnimations.length > 0) {
+			sortedAnimations = rawAnimations
+				.slice()
+				.sort(
+					(a: unknown, b: unknown) =>
+						((a as { id?: number }).id ?? 0) - ((b as { id?: number }).id ?? 0),
+				);
+			sortedAnimationsCache.set(rawAnimations, sortedAnimations);
+		} else if (!sortedAnimations) {
+			sortedAnimations = [];
+		}
+
+		animations[sid] = sortedAnimations.map(
+			(
+				anim:
+					| {
+							id?: number;
+							interval?: unknown;
+							collisions?: unknown[];
+							patterns?: unknown[];
+					  }
+					| unknown,
+			) => ({
 				id: anim.id ?? 0,
 				interval: intervalToString(anim.interval) || "never",
 				collisions: (anim.collisions ?? []).map(collisionRecord),
-				patterns: (anim.patterns ?? [])
-					.slice()
-					.sort((a: unknown, b: unknown) => (a.index ?? 0) - (b.index ?? 0))
-					.map((p: unknown) => ({
-						surface: String(p.surface ?? -1),
-						wait: p.wait ?? 100,
-						waitMax: p.wait_max ?? null,
-						type: methodToString(p.method) || "overlay",
-						x: p.x ?? 0,
-						y: p.y ?? 0,
-					})),
-			}));
+				patterns: (() => {
+					const animTyped = anim as { patterns?: unknown[] };
+					const rawPatterns = animTyped.patterns ?? [];
+					let sortedPatterns = sortedPatternsCache.get(rawPatterns);
+					if (!sortedPatterns && rawPatterns.length > 0) {
+						sortedPatterns = rawPatterns
+							.slice()
+							.sort(
+								(a: unknown, b: unknown) =>
+									((a as { index?: number }).index ?? 0) -
+									((b as { index?: number }).index ?? 0),
+							);
+						sortedPatternsCache.set(rawPatterns, sortedPatterns);
+					} else if (!sortedPatterns) {
+						sortedPatterns = [];
+					}
+					return sortedPatterns.map(
+						(
+							p:
+								| {
+										surface?: unknown;
+										wait?: number;
+										wait_max?: number;
+										method?: unknown;
+										x?: number;
+										y?: number;
+								  }
+								| unknown,
+						) => ({
+							surface: String(p.surface ?? -1),
+							wait: p.wait ?? 100,
+							waitMax: p.wait_max ?? null,
+							type: methodToString(p.method) || "overlay",
+							x: p.x ?? 0,
+							y: p.y ?? 0,
+						}),
+					);
+				})(),
+			}),
+		);
 	}
 
 	return {

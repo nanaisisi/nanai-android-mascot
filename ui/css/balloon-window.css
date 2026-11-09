@@ -140,7 +140,10 @@ body {
 		--balloon-anchor-notselect-text-decoration,
 		var(
 			--balloon-anchor-text-decoration,
-			var(--balloon-anchor-notselect-style, var(--balloon-anchor-style, underline))
+			var(
+				--balloon-anchor-notselect-style,
+				var(--balloon-anchor-style, underline)
+			)
 		)
 	);
 	text-shadow: var(

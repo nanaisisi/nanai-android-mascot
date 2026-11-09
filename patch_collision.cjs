@@ -1,6 +1,6 @@
-const fs = require('fs');
-const file = 'ui/ts/surface/surface-collision.ts';
-let code = fs.readFileSync(file, 'utf8');
+const fs = require("node:fs");
+const file = "ui/ts/surface/surface-collision.ts";
+let code = fs.readFileSync(file, "utf8");
 
 const importStatement = `import { collisionContains } from "./shell-manifest.js";`;
 
@@ -11,7 +11,7 @@ const sortedDescendCache = new WeakMap<unknown[], unknown[]>();`;
 
 code = code.replace(importStatement, newImportsAndVariables);
 
-const searchBlock1 = `		if (sortKind === "ascend" || sortKind === "id") {
+const _searchBlock1 = `		if (sortKind === "ascend" || sortKind === "id") {
 			candidates = colList.slice().sort((a: unknown, b: unknown) => {
 				const idA = a.id != null ? a.id : Number.MAX_SAFE_INTEGER;
 				const idB = b.id != null ? b.id : Number.MAX_SAFE_INTEGER;
@@ -31,14 +31,13 @@ const replaceBlock1 = `		if (sortKind === "ascend" || sortKind === "id") {
 			}
 		}`;
 
-
 // Use Regex to be robust
 code = code.replace(
-    /if \(sortKind === "ascend" \|\| sortKind === "id"\) \{\s*candidates = colList\.slice\(\)\.sort\(\(a: unknown, b: unknown\) => \{\s*const idA = [^\n]+\n\s*const idB = [^\n]+\n\s*return idA - idB;\s*\}\);\s*\}/,
-    replaceBlock1
+	/if \(sortKind === "ascend" \|\| sortKind === "id"\) \{\s*candidates = colList\.slice\(\)\.sort\(\(a: unknown, b: unknown\) => \{\s*const idA = [^\n]+\n\s*const idB = [^\n]+\n\s*return idA - idB;\s*\}\);\s*\}/,
+	replaceBlock1,
 );
 
-const searchBlock2 = `else if (sortKind === "descend") {
+const _searchBlock2 = `else if (sortKind === "descend") {
 			candidates = colList.slice().sort((a: unknown, b: unknown) => {
 				const idA = (a as { id?: number }).id ?? -1;
 				const idB = (b as { id?: number }).id ?? -1;
@@ -59,8 +58,8 @@ const replaceBlock2 = `else if (sortKind === "descend") {
 		}`;
 
 code = code.replace(
-    /else if \(sortKind === "descend"\) \{\s*candidates = colList\.slice\(\)\.sort\(\(a: unknown, b: unknown\) => \{\s*const idA = [^\n]+\n\s*const idB = [^\n]+\n\s*return idB - idA;\s*\}\);\s*\}/,
-    replaceBlock2
+	/else if \(sortKind === "descend"\) \{\s*candidates = colList\.slice\(\)\.sort\(\(a: unknown, b: unknown\) => \{\s*const idA = [^\n]+\n\s*const idB = [^\n]+\n\s*return idB - idA;\s*\}\);\s*\}/,
+	replaceBlock2,
 );
 
-fs.writeFileSync(file, code, 'utf8');
+fs.writeFileSync(file, code, "utf8");

@@ -78,5 +78,6 @@
 **Action:** Always provide functional mapping (`map_commands`) and non-destructive extractors on tree data structures, and keep spec audits clean (0 regressions) without touching docs files.
 
 ## 2024-05-18 - [Memoization pattern for `.slice().sort()` array sorting]
+
 **Learning:** Found a performance bottleneck where `.slice().sort()` is being re-executed on every animation frame for sorting animations, patterns, elements, and collision shapes inside `shell-manifest.ts` and `surface-collision.ts`. Because these inputs (manifest array definitions) are usually strictly read-only after being created by the Tauri Rust backend, slicing and sorting on every access wastes substantial memory/GC cycles and CPU time.
 **Action:** Use `WeakMap<unknown[], unknown[]>` module-scoped caches where the original array is used as a weak key to map directly to the sorted array. Since `slice().sort()` guarantees that the items remain references to the underlying objects, caching the fully sorted array completely bypasses O(N log N) processing on the hot execution path.

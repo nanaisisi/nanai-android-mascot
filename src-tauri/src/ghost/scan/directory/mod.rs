@@ -106,7 +106,6 @@ pub async fn scan_ghost_directory(
                             shiori_logo_align: manifest.shiori_logo_align,
                             shiori_logo_x: manifest.shiori_logo_x,
                             shiori_logo_y: manifest.shiori_logo_y,
-                            makoto: manifest.makoto,
                         });
                     }
                 }
@@ -158,7 +157,6 @@ pub async fn scan_ghost_directory(
                 shiori_logo_align: None,
                 shiori_logo_x: None,
                 shiori_logo_y: None,
-                makoto: None,
             });
         }
     }

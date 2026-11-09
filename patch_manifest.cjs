@@ -1,6 +1,6 @@
-const fs = require('fs');
-const file = 'ui/ts/surface/shell-manifest.ts';
-let code = fs.readFileSync(file, 'utf8');
+const fs = require("node:fs");
+const file = "ui/ts/surface/shell-manifest.ts";
+let code = fs.readFileSync(file, "utf8");
 
 const importStatement = `import { invoke } from "../core/tauri-helper.js";`;
 const newImportsAndVariables = `import { invoke } from "../core/tauri-helper.js";
@@ -11,10 +11,9 @@ const sortedPatternsCache = new WeakMap<unknown[], unknown[]>();`;
 
 code = code.replace(importStatement, newImportsAndVariables);
 
-
 code = code.replace(
-/elements\[sid\] = \(def\.elements \?\? \[\]\)[\s\S]*?\.map\(\(e: unknown\) => \(\{/,
-`const rawElements = def.elements ?? [];
+	/elements\[sid\] = \(def\.elements \?\? \[\]\)[\s\S]*?\.map\(\(e: unknown\) => \(\{/,
+	`const rawElements = def.elements ?? [];
 		let sortedElements = sortedElementsCache.get(rawElements);
 		if (!sortedElements && rawElements.length > 0) {
 			sortedElements = rawElements.slice().sort((a: unknown, b: unknown) => ((a as { id?: number }).id ?? 0) - ((b as { id?: number }).id ?? 0));
@@ -23,12 +22,12 @@ code = code.replace(
             sortedElements = [];
         }
 
-		elements[sid] = sortedElements.map((e: { id?: number; method?: unknown; file?: string; x?: number; y?: number } | unknown) => ({`
+		elements[sid] = sortedElements.map((e: { id?: number; method?: unknown; file?: string; x?: number; y?: number } | unknown) => ({`,
 );
 
 code = code.replace(
-/animations\[sid\] = Object\.values\(def\.animations \?\? \{\}\)[\s\S]*?\.map\(\(anim: unknown\) => \(\{/,
-`const rawAnimations = Object.values(def.animations ?? {});
+	/animations\[sid\] = Object\.values\(def\.animations \?\? \{\}\)[\s\S]*?\.map\(\(anim: unknown\) => \(\{/,
+	`const rawAnimations = Object.values(def.animations ?? {});
 		let sortedAnimations = sortedAnimationsCache.get(rawAnimations);
 		if (!sortedAnimations && rawAnimations.length > 0) {
 			sortedAnimations = rawAnimations.slice().sort((a: unknown, b: unknown) => ((a as { id?: number }).id ?? 0) - ((b as { id?: number }).id ?? 0));
@@ -37,12 +36,12 @@ code = code.replace(
 			sortedAnimations = [];
 		}
 
-		animations[sid] = sortedAnimations.map((anim: { id?: number; interval?: unknown; collisions?: unknown[]; patterns?: unknown[] } | unknown) => ({`
+		animations[sid] = sortedAnimations.map((anim: { id?: number; interval?: unknown; collisions?: unknown[]; patterns?: unknown[] } | unknown) => ({`,
 );
 
 code = code.replace(
-/patterns: \(anim\.patterns \?\? \[\]\)[\s\S]*?\.map\(\(p: unknown\) => \(\{/,
-`patterns: (() => {
+	/patterns: \(anim\.patterns \?\? \[\]\)[\s\S]*?\.map\(\(p: unknown\) => \(\{/,
+	`patterns: (() => {
 					const animTyped = anim as { patterns?: unknown[] };
 					const rawPatterns = animTyped.patterns ?? [];
 					let sortedPatterns = sortedPatternsCache.get(rawPatterns);
@@ -52,15 +51,15 @@ code = code.replace(
 					} else if (!sortedPatterns) {
 						sortedPatterns = [];
 					}
-					return sortedPatterns.map((p: { surface?: unknown; wait?: number; wait_max?: number; method?: unknown; x?: number; y?: number } | unknown) => ({`
+					return sortedPatterns.map((p: { surface?: unknown; wait?: number; wait_max?: number; method?: unknown; x?: number; y?: number } | unknown) => ({`,
 );
 
 code = code.replace(
-`					})),
+	`					})),
 			}));`,
-`					}));
+	`					}));
 				})(),
-			}));`
+			}));`,
 );
 
-fs.writeFileSync(file, code, 'utf8');
+fs.writeFileSync(file, code, "utf8");

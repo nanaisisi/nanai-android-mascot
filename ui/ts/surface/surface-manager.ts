@@ -138,6 +138,26 @@ export class SurfaceManager {
 	onCharSpoken(scopeId: number = 0) {
 		this.animationManager.onCharSpoken(scopeId);
 	}
+
+	isBindAnimationActive(
+		scopeId: number = 0,
+		animId: number | string | null = null,
+		_surfaceId: number | string | null = null,
+	): boolean {
+		const targetId = Number(animId);
+		if (Number.isNaN(targetId)) return false;
+		const ids: number[] =
+			typeof (
+				this as unknown as { activeBindAnimationIds?: (s: number) => number[] }
+			).activeBindAnimationIds === "function"
+				? ((
+						this as unknown as {
+							activeBindAnimationIds: (s: number) => number[];
+						}
+					).activeBindAnimationIds(scopeId) ?? [])
+				: [];
+		return ids.includes(targetId);
+	}
 }
 
 Object.assign(SurfaceManager.prototype, surfaceLoadMethods);

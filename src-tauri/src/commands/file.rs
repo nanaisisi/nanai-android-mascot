@@ -46,6 +46,8 @@ pub fn load_surface_image(
     let base_ghost_path =
         resolve_asset_path(&clean_gp, &app_handle).unwrap_or_else(|_| PathBuf::from(&clean_gp));
 
+    println!("🖼️ [Rust File] load_surface_image: ghost_path={}, shell={}, surface={}, base_path={:?}", ghost_path, shell_name, surface_id, base_ghost_path);
+
     let shell_dir = base_ghost_path.join("shell").join(&shell_name);
     let master_dir = base_ghost_path.join("shell").join("master");
 
@@ -85,11 +87,12 @@ pub fn load_surface_image(
         candidates.push(master_dir.join("surface10.svg"));
     }
 
-    for candidate in candidates {
-        if let Some(target) = find_file_case_insensitive(&candidate)
+    for candidate in &candidates {
+        if let Some(target) = find_file_case_insensitive(candidate)
             && target.is_file()
             && let Ok(bytes) = fs::read(&target)
         {
+            println!("✅ [Rust File] load_surface_image 発見・ロード成功: path={:?}, size={}", target, bytes.len());
             let ext = target
                 .extension()
                 .and_then(|e| e.to_str())
@@ -107,6 +110,7 @@ pub fn load_surface_image(
         }
     }
 
+    println!("❌ [Rust File] load_surface_image 見つかりませんでした (surface_id={}, shell={}). 試行した候補パス: {:?}", surface_id, shell_name, candidates);
     Err(format!(
         "Surface image not found for surface_id: {surface_id} in shell: {shell_name}"
     ))

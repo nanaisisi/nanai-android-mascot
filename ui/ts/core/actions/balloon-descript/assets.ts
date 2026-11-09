@@ -63,25 +63,27 @@ export function applyAssetProperties(
 		}
 	};
 	// [arrow.filename,ファイル名]: UKADOC 準拠ベース名展開 (拡張子なし -> arrow0.png / arrow1.png)
-	const arrowBase = props["arrow.filename"] || "arrow";
-	const arrowBaseName = arrowBase.replace(/\.png$/i, "");
-	const themeName = instance.currentBalloonTheme || "default";
-	const resolveArrowUrl = (file: string) => {
-		const fullPath = `assets/balloon/${themeName}/${file}`;
-		const url = globalThis.__TAURI__?.core?.convertFileSrc
-			? globalThis.__TAURI__.core.convertFileSrc(fullPath)
-			: fullPath;
-		preloadBalloonAsset(url);
-		return url;
-	};
-	root.style.setProperty(
-		"--balloon-arrow0-image",
-		`url("${resolveArrowUrl(`${arrowBaseName}0.png`)}")`,
-	);
-	root.style.setProperty(
-		"--balloon-arrow1-image",
-		`url("${resolveArrowUrl(`${arrowBaseName}1.png`)}")`,
-	);
+	if (props["arrow.filename"]) {
+		const arrowBase = props["arrow.filename"];
+		const arrowBaseName = arrowBase.replace(/\.png$/i, "");
+		const themeName = instance.currentBalloonTheme || "default";
+		const resolveArrowUrl = (file: string) => {
+			const fullPath = `assets/balloon/${themeName}/${file}`;
+			const url = globalThis.__TAURI__?.core?.convertFileSrc
+				? globalThis.__TAURI__.core.convertFileSrc(fullPath)
+				: fullPath;
+			preloadBalloonAsset(url);
+			return url;
+		};
+		root.style.setProperty(
+			"--balloon-arrow0-image",
+			`url("${resolveArrowUrl(`${arrowBaseName}0.png`)}")`,
+		);
+		root.style.setProperty(
+			"--balloon-arrow1-image",
+			`url("${resolveArrowUrl(`${arrowBaseName}1.png`)}")`,
+		);
+	}
 	setBalloonImage("arrow.filename", "--balloon-arrow-image");
 	// [clickwaitmarker.filename,ファイル名]:
 	setBalloonImage("clickwaitmarker.filename", "--balloon-clickwait-image");

@@ -63,45 +63,45 @@ function initCharacterWindow() {
 	/** @type {HTMLElement | null} */
 	const root = document.getElementById("subchar-root");
 
-	if (!isTauriAvailable()) return;
-
 	let pollTimer: unknown = null;
 
-	void listen(
-		`update-subchar-image-${scopeId}`,
-		(/** @type {{ payload?: { src?: string } }} */ event: unknown) => {
-			const src = event.payload?.src;
-			if (src && img) {
-				if (pollTimer) {
-					clearInterval(pollTimer);
-					pollTimer = null;
-				}
-				img.onload = () => {
+	if (isTauriAvailable()) {
+		void listen(
+			`update-subchar-image-${scopeId}`,
+			(/** @type {{ payload?: { src?: string } }} */ event: unknown) => {
+				const src = event.payload?.src;
+				if (src && img) {
+					if (pollTimer) {
+						clearInterval(pollTimer);
+						pollTimer = null;
+					}
+					img.onload = () => {
+						img.style.visibility = "visible";
+						img.style.display = "block";
+						if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+							void invoke("show_subchar_window", {
+								scopeId,
+								width: img.naturalWidth,
+								height: img.naturalHeight,
+							}).catch(() => {});
+						}
+					};
+					img.src = src;
 					img.style.visibility = "visible";
 					img.style.display = "block";
-					if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+					if (img.complete && img.naturalWidth > 0) {
 						void invoke("show_subchar_window", {
 							scopeId,
 							width: img.naturalWidth,
 							height: img.naturalHeight,
 						}).catch(() => {});
 					}
-				};
-				img.src = src;
-				img.style.visibility = "visible";
-				img.style.display = "block";
-				if (img.complete && img.naturalWidth > 0) {
-					void invoke("show_subchar_window", {
-						scopeId,
-						width: img.naturalWidth,
-						height: img.naturalHeight,
-					}).catch(() => {});
+				} else if (img) {
+					img.style.display = "none";
 				}
-			} else if (img) {
-				img.style.display = "none";
-			}
-		},
-	);
+			},
+		);
+	}
 
 	pollTimer = setInterval(() => {
 		if (
@@ -114,9 +114,13 @@ function initCharacterWindow() {
 			pollTimer = null;
 			return;
 		}
-		void emit("request-subchar-image", { scopeId });
+		if (isTauriAvailable()) {
+			void emit("request-subchar-image", { scopeId });
+		}
 	}, 100);
-	void emit("request-subchar-image", { scopeId });
+	if (isTauriAvailable()) {
+		void emit("request-subchar-image", { scopeId });
+	}
 
 	let isInteracting = false;
 	let hasMoved = false;

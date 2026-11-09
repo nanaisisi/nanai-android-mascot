@@ -27,7 +27,9 @@ export function processChromaKey(
 
 	return new Promise((resolve) => {
 		const img = new Image();
-		img.crossOrigin = "anonymous";
+		if (imageSrc.startsWith("http://") || imageSrc.startsWith("https://")) {
+			img.crossOrigin = "anonymous";
+		}
 		img.onload = () => {
 			const onBaseLoaded = (pnaImg: HTMLImageElement | null = null) => {
 				try {
@@ -221,7 +223,9 @@ export function processChromaKey(
 
 			if (pnaSrc) {
 				const pnaImg = new Image();
-				pnaImg.crossOrigin = "anonymous";
+				if (pnaSrc.startsWith("http://") || pnaSrc.startsWith("https://")) {
+					pnaImg.crossOrigin = "anonymous";
+				}
 				pnaImg.onload = () => onBaseLoaded(pnaImg);
 				pnaImg.onerror = () => onBaseLoaded(null);
 				pnaImg.src = pnaSrc;

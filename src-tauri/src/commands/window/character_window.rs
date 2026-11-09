@@ -9,6 +9,7 @@ pub async fn show_character_window(
     width: Option<f64>,
     height: Option<f64>,
 ) -> Result<(), String> {
+    println!("🪟 [Rust Window] show_character_window 呼び出し: scope={}, width={:?}, height={:?}", scope_id, width, height);
     #[cfg(desktop)]
     {
         use tauri::Manager;
@@ -18,9 +19,11 @@ pub async fn show_character_window(
 
         let mut is_new = false;
         let sub_win = if let Some(win) = app_handle.get_webview_window(&label) {
+            println!("🪟 [Rust Window] 既存の character ウィンドウを取得: label={}", label);
             win
         } else {
             is_new = true;
+            println!("🪟 [Rust Window] 新規 character ウィンドウを構築: label={}", label);
             let title = if scope_id == 0 {
                 "Nanai Android Mascot - Main Character".to_string()
             } else {
@@ -42,7 +45,10 @@ pub async fn show_character_window(
             .resizable(false)
             .visible(false)
             .build()
-            .map_err(|e| e.to_string())?
+            .map_err(|e| {
+                println!("❌ [Rust Window] character ウィンドウ構築エラー: {}", e);
+                e.to_string()
+            })?
         };
 
         let is_visible = sub_win.is_visible().unwrap_or(false);
@@ -102,6 +108,7 @@ pub async fn show_character_window(
 
         let _ = sub_win.unminimize();
         let _ = sub_win.show();
+        println!("🪟 [Rust Window] character ウィンドウを表示完了: label={}", label);
     }
     Ok(())
 }
@@ -180,4 +187,25 @@ pub async fn hide_subchar_window(
     scope_id: i32,
 ) -> Result<(), String> {
     hide_character_window(app_handle, scope_id).await
+}
+
+#[tauri::command]
+pub async fn set_surface_image(
+    state: tauri::State<'_, crate::common::state::AppState>,
+    scope_id: i32,
+    image_src: String,
+) -> Result<(), String> {
+    state.surface_images.lock().insert(scope_id, image_src);
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn get_surface_image(
+    state: tauri::State<'_, crate::common::state::AppState>,
+    scope_id: i32,
+) -> Result<String, String> {
+    let images = state.surface_images.lock();
+    images.get(&scope_id)
+        .cloned()
+        .ok_or_else(|| format!("Surface image not found for scope {}", scope_id))
 }

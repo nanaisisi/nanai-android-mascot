@@ -79,6 +79,24 @@ fn test_animation_scheduler_talk_and_bind() {
     scheduler.on_script_end(0, &[yene_anim]);
     let events = scheduler.step(0);
     assert!(events.iter().any(|e| e.animation_id == 9));
+
+    // on_bind_changed: 有効化で即座に開始
+    let bind_anim_dynamic = SerikoAnimation {
+        id: 5,
+        interval: Some(Interval::Bind),
+        name: None,
+        patterns: vec![super::pattern(0, 50, 0)],
+        collisions: vec![],
+        options: vec![],
+    };
+    scheduler.on_bind_changed(0, 5, true, &[bind_anim_dynamic.clone()]);
+    assert!(scheduler.is_bind_active(0, 5));
+    assert!(scheduler.is_animation_running(0, 5));
+
+    // on_bind_changed: 無効化で即座に停止
+    scheduler.on_bind_changed(0, 5, false, &[bind_anim_dynamic]);
+    assert!(!scheduler.is_bind_active(0, 5));
+    assert!(!scheduler.is_animation_running(0, 5));
 }
 
 #[test]

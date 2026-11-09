@@ -169,4 +169,36 @@ impl AnimationScheduler {
             }
         }
     }
+    /// 着せ替えパーツの装着状態変化トリガー
+    ///
+    /// 着せ替えパーツが有効化された場合、該当IDの `Interval::Bind` または
+    /// `bind` を含むアニメーションを即座に開始します。
+    /// 無効化された場合は該当IDのアニメーションを即座に停止します。
+    pub fn on_bind_changed(
+        &mut self,
+        scope_id: u32,
+        bind_id: u32,
+        active: bool,
+        animations: &[SerikoAnimation],
+    ) {
+        self.set_bind_active(scope_id, bind_id, active);
+        if active {
+            let base_surface = self.current_surface(scope_id);
+            for anim in animations {
+                if anim.id == bind_id {
+                    match anim.interval {
+                        Some(Interval::Bind) => {
+                            self.start_animation(scope_id, base_surface, anim);
+                        }
+                        Some(Interval::Always) | Some(Interval::RunOnce) => {
+                            self.start_animation(scope_id, base_surface, anim);
+                        }
+                        _ => {}
+                    }
+                }
+            }
+        } else {
+            self.stop_animation(scope_id, bind_id);
+        }
+    }
 }

@@ -139,6 +139,19 @@ export const surfaceDressupMethods = {
 			.sort((a: number, b: number) => a - b);
 	},
 
+	isBindAnimationActive(
+		this: { activeBindAnimationIds?: (scope: number) => number[] },
+		scopeId: number = 0,
+		animId: number | string | null = null,
+		_surfaceId: number | string | null = null,
+	): boolean {
+		if (animId == null) return false;
+		const targetId = Number(animId);
+		if (Number.isNaN(targetId)) return false;
+		const activeIds = this.activeBindAnimationIds?.(scopeId) ?? [];
+		return activeIds.includes(targetId);
+	},
+
 	planCacheKey(
 		this: unknown,
 		surfaceId: number | string,

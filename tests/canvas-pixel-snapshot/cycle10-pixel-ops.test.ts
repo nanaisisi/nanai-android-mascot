@@ -74,6 +74,7 @@ test("Canvas Pixel Snapshot Cycle 10: SurfaceFrameBuffer copyRect and sub-buffer
 	sub.destroy();
 	dst.destroy();
 	clipped.destroy();
+});
 import { describe, expect, it } from "vitest";
 import { SurfaceFrameBuffer } from "../../ui/ts/surface/compositor/framebuffer.js";
 

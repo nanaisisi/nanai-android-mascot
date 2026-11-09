@@ -4,6 +4,9 @@
  */
 import { collisionContains } from "./shell-manifest.js";
 
+const sortedAscendCache = new WeakMap<unknown[], unknown[]>();
+const sortedDescendCache = new WeakMap<unknown[], unknown[]>();
+
 const aliasCaseCache = new WeakMap<object, Map<string, number[]>>();
 const nameCaseCache = new WeakMap<object, Map<string, string>>();
 const tooltipCaseCache = new WeakMap<object, Map<string, string>>();
@@ -152,17 +155,25 @@ export const surfaceCollisionMethods = {
 
 		let candidates: unknown[] = [];
 		if (sortKind === "ascend" || sortKind === "id") {
-			candidates = colList.slice().sort((a: unknown, b: unknown) => {
-				const idA = a.id != null ? a.id : Number.MAX_SAFE_INTEGER;
-				const idB = b.id != null ? b.id : Number.MAX_SAFE_INTEGER;
-				return idA - idB;
-			});
+			candidates = sortedAscendCache.get(colList) || [];
+			if (candidates.length === 0 && colList.length > 0) {
+				candidates = colList.slice().sort((a: unknown, b: unknown) => {
+					const idA = (a as { id?: number }).id ?? Number.MAX_SAFE_INTEGER;
+					const idB = (b as { id?: number }).id ?? Number.MAX_SAFE_INTEGER;
+					return idA - idB;
+				});
+				sortedAscendCache.set(colList, candidates);
+			}
 		} else if (sortKind === "descend") {
-			candidates = colList.slice().sort((a: unknown, b: unknown) => {
-				const idA = a.id != null ? a.id : -1;
-				const idB = b.id != null ? b.id : -1;
-				return idB - idA;
-			});
+			candidates = sortedDescendCache.get(colList) || [];
+			if (candidates.length === 0 && colList.length > 0) {
+				candidates = colList.slice().sort((a: unknown, b: unknown) => {
+					const idA = (a as { id?: number }).id ?? -1;
+					const idB = (b as { id?: number }).id ?? -1;
+					return idB - idA;
+				});
+				sortedDescendCache.set(colList, candidates);
+			}
 		} else {
 			for (let i = colList.length - 1; i >= 0; i--) {
 				const col = colList[i];

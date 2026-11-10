@@ -172,10 +172,15 @@ function initCharacterWindow() {
 		startX = clientX;
 		startY = clientY;
 
-		// Tauri ネイティブウィンドウドラッグ起動
+		// Tauri ウィンドウドラッグ (CSS app-region: drag 併用)
+		let coordInterval: unknown = null;
 		if (isTauriAvailable()) {
-			void startDraggingWindow();
-			const updatePopup = async () => {
+			coordInterval = setInterval(async () => {
+				if (!isInteracting) {
+					clearInterval(coordInterval as number);
+					coordInterval = null;
+					return;
+				}
 				if (!coordPopupEl) coordPopupEl = document.getElementById("coord-popup");
 				if (coordPopupEl) {
 					const pos = await getCurrentWindowPosition();
@@ -187,28 +192,7 @@ function initCharacterWindow() {
 				if (isTauriAvailable()) {
 					void invoke("sync_character_balloon", { scopeId });
 				}
-			};
-			void updatePopup();
-			const winTarget =
-				typeof window !== "undefined" &&
-				typeof window.addEventListener === "function"
-					? window
-					: typeof document !== "undefined"
-						? document
-						: globalThis;
-			const onMove = () => {
-				if (isInteracting) void updatePopup();
-			};
-			const onUp = () => {
-				if (typeof winTarget.removeEventListener === "function") {
-					winTarget.removeEventListener("mousemove", onMove);
-					winTarget.removeEventListener("mouseup", onUp);
-				}
-			};
-			if (typeof winTarget.addEventListener === "function") {
-				winTarget.addEventListener("mousemove", onMove);
-				winTarget.addEventListener("mouseup", onUp);
-			}
+			}, 50);
 		}
 
 		void getCurrentWindowPosition().then((position) => {

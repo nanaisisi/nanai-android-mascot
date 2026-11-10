@@ -4,15 +4,77 @@ import { THEME_LABELS } from "./balloon-theme-constants.js";
 import { handleSystemMenuAction } from "./menu-action-system.js";
 
 /** SHIORIイベントへ単純転送するアクション */
-const SHIORI_ACTIONS: Record<string, unknown> = {
+const SHIORI_ACTIONS: Record<string, [string, string[]?]> = {
 	recommend: ["OnChoiceSelect", ["recommendlink"]],
 	portal: ["OnChoiceSelect", ["portal"]],
 	update: ["OnUpdate"],
 	headline: ["OnHeadline"],
 };
 
+export interface MenuActionContext {
+	ghostController: {
+		currentGhost?: { name?: string; isTemporary?: boolean };
+		sendShioriEvent: (event: string, args?: unknown[]) => Promise<unknown>;
+		selectGhost: (name: string) => Promise<unknown>;
+		selectShell: (name: string) => Promise<unknown>;
+		scanGhosts: () => Promise<unknown>;
+	};
+	onGhostClick?: (
+		arg0?: unknown,
+		arg1?: unknown,
+		arg2?: unknown,
+		scopeId?: number,
+	) => unknown;
+	startNetworkUpdate?: (
+		target?: string | null,
+		options?: { checkOnly?: boolean },
+	) => unknown;
+	showGhostInformation?: () => unknown;
+	handleMenuAction?: (action: string) => unknown;
+	showBalloon?: (message: string) => unknown;
+	hideBalloon?: () => unknown;
+	elements?: {
+		ghostDisplay?: HTMLElement | null;
+		[key: string]: HTMLElement | null | undefined;
+	};
+	interactionManager?: {
+		balloonOffsetX: number;
+		balloonOffsetY: number;
+		[key: string]: unknown;
+	};
+	checkEmail?: () => unknown;
+	syncMenuGhosts?: () => unknown;
+	uninstallCurrentGhost?: () => unknown;
+	installGhostFromMenu?: () => unknown;
+	cycleBalloonTheme?: () => unknown;
+	setBalloonTheme?: (theme: string) => unknown;
+	availableBalloons?: Array<{
+		name?: string;
+		dir_name?: string;
+		[key: string]: unknown;
+	}>;
+	applyShellScaleAction?: (action: string) => unknown;
+	applyBalloonScaleAction?: (action: string) => unknown;
+	closeApp?: () => unknown;
+	minimizeApp?: () => unknown;
+	callGhost?: (name: string) => unknown;
+	handleDressupToggle?: (payload: unknown) => unknown;
+	modalManager?: {
+		show: (contentId: string) => unknown;
+	};
+	[key: string]: unknown;
+}
+
+interface NamedPayload {
+	name?: string;
+	ghostName?: string;
+	shellName?: string;
+	scope?: number;
+	[key: string]: unknown;
+}
+
 export function handleMenuActionImpl(
-	context: any,
+	context: MenuActionContext,
 	action: string,
 	payload: unknown = null,
 ) {
@@ -22,7 +84,7 @@ export function handleMenuActionImpl(
 	if (action === "talk") {
 		const scopeId =
 			payload && typeof payload === "object" && "scope" in payload
-				? (payload as any).scope
+				? ((payload as NamedPayload).scope ?? 0)
 				: 0;
 		return context.onGhostClick?.(undefined, undefined, undefined, scopeId);
 	}
@@ -30,7 +92,7 @@ export function handleMenuActionImpl(
 	if (action === "hide-character" || action === "close-character") {
 		const scopeId =
 			payload && typeof payload === "object" && "scope" in payload
-				? (payload as any).scope
+				? ((payload as NamedPayload).scope ?? 1)
 				: 1;
 		if (isTauriAvailable()) {
 			void invoke("hide_subchar_window", { scopeId }).catch(() => {});
@@ -130,7 +192,8 @@ export function handleMenuActionImpl(
 	}
 
 	if (SHIORI_ACTIONS[action]) {
-		gc.sendShioriEvent(...(SHIORI_ACTIONS[action] as any[]));
+		const [eventName, eventArgs] = SHIORI_ACTIONS[action];
+		gc.sendShioriEvent(eventName, eventArgs);
 		return;
 	}
 
@@ -164,10 +227,8 @@ export function handleMenuActionImpl(
 		context.setBalloonTheme?.(theme);
 		let label = THEME_LABELS[theme] || theme;
 		if (context.availableBalloons) {
-			const bInfo = context.availableBalloons.find(
-				(b: unknown) => (b as any).dir_name === theme,
-			);
-			if (bInfo) label = (bInfo as any).name;
+			const bInfo = context.availableBalloons.find((b) => b.dir_name === theme);
+			if (bInfo) label = bInfo.name || label;
 		}
 		context.showBalloon?.(`バルーンスキンを「${label}」に変更しました`);
 		setTimeout(() => context.hideBalloon?.(), 2000);
@@ -186,28 +247,28 @@ export function handleMenuActionImpl(
 		const ghostName =
 			typeof payload === "string"
 				? payload
-				: (payload as any).name || (payload as any).ghostName;
+				: (payload as NamedPayload).name || (payload as NamedPayload).ghostName;
 		if (ghostName) return gc.selectGhost(ghostName);
 	}
 	if (action === "call-ghost" && payload) {
 		const ghostName =
 			typeof payload === "string"
 				? payload
-				: (payload as any).name || (payload as any).ghostName;
+				: (payload as NamedPayload).name || (payload as NamedPayload).ghostName;
 		if (ghostName) return context.callGhost?.(ghostName);
 	}
 	if (action === "recent-ghost" && payload) {
 		const ghostName =
 			typeof payload === "string"
 				? payload
-				: (payload as any).name || (payload as any).ghostName;
+				: (payload as NamedPayload).name || (payload as NamedPayload).ghostName;
 		if (ghostName) return gc.selectGhost(ghostName);
 	}
 	if ((action === "switch-to-shell" || action === "switch-shell") && payload) {
 		const shellName =
 			typeof payload === "string"
 				? payload
-				: (payload as any).name || (payload as any).shellName;
+				: (payload as NamedPayload).name || (payload as NamedPayload).shellName;
 		if (shellName) return gc.selectShell(shellName);
 	}
 	if (action === "dressup-toggle" && payload) {

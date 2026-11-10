@@ -1,5 +1,17 @@
+export interface ModalDialogContext {
+	activeBoxes: Map<string, unknown>;
+	app?: {
+		ghostController?: {
+			sendShioriEvent?: (event: string, args?: string[]) => Promise<unknown>;
+			[key: string]: unknown;
+		};
+		[key: string]: unknown;
+	};
+	[key: string]: unknown;
+}
+
 export function createColorDialogForm(
-	context: any,
+	context: ModalDialogContext,
 	title: string,
 	initialColor: string,
 	eventId: string,
@@ -70,7 +82,7 @@ export function createColorDialogForm(
 }
 
 export function createTermsDialogForm(
-	context: any,
+	context: ModalDialogContext,
 	title: string,
 	id: string,
 	eventId: string,

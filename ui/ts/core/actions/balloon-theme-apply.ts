@@ -6,8 +6,40 @@ import {
 	MIN_BALLOON_SCALE,
 } from "./balloon-theme-constants.js";
 
+export interface BalloonThemeManagerInterface {
+	userScale: number;
+	dpiScale?: number;
+	currentTheme?: string;
+	app?: {
+		balloonUserScale?: number;
+		balloonDpiScale?: number;
+		currentBalloonTheme?: string;
+		ghostController?: {
+			sendBalloonScalingNotify?: (
+				afterX: number,
+				beforeX: number,
+				afterY: number,
+				beforeY: number,
+			) => Promise<unknown>;
+			sendShioriEvent?: (event: string, args?: string[]) => Promise<unknown>;
+			[key: string]: unknown;
+		};
+		showBalloon?: (message: string) => unknown;
+		hideBalloon?: () => unknown;
+		elements?: {
+			balloonDisplay?: HTMLElement | null;
+			[key: string]: HTMLElement | null | undefined;
+		};
+		applyBalloonDescript?: (props: unknown) => unknown;
+		[key: string]: unknown;
+	};
+	clearNineSliceCache: () => void;
+	resetDescript: () => void;
+	[key: string]: unknown;
+}
+
 export function applyBalloonScale(
-	manager: any,
+	manager: BalloonThemeManagerInterface,
 	actionOrScale: string | number,
 ) {
 	const prevScale = manager.userScale || 1;
@@ -45,7 +77,7 @@ export function applyBalloonScale(
 		if (root) {
 			root.style.setProperty("--balloon-user-scale", String(scale));
 		}
-		const balloonEl = document.querySelector(".balloon");
+		const balloonEl = document.querySelector(".balloon") as HTMLElement | null;
 		if (balloonEl?.style) {
 			balloonEl.style.transform = `scale(${finalScale})`;
 			balloonEl.style.transformOrigin = "bottom left";
@@ -88,7 +120,7 @@ export function applyBalloonScale(
 }
 
 export async function setBalloonThemeImpl(
-	manager: any,
+	manager: BalloonThemeManagerInterface,
 	themeName: string | undefined,
 ) {
 	if (!themeName || themeName === manager.currentTheme) {

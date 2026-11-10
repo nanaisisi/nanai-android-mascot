@@ -144,9 +144,21 @@ export function applyShellMenuTheme(activeShell: unknown) {
 			"--menu-sidebar-position",
 			sideAlign.includes("top") ? "left top" : "left bottom",
 		);
+		const cachedImg = imageCache.get(sideUrl);
+		if (cachedImg && cachedImg.naturalWidth > 0) {
+			rootStyle.setProperty("--menu-sidebar-width", `${cachedImg.naturalWidth}px`);
+		} else {
+			void preloadImage(sideUrl).then(() => {
+				const loadedImg = imageCache.get(sideUrl);
+				if (loadedImg && loadedImg.naturalWidth > 0) {
+					rootStyle.setProperty("--menu-sidebar-width", `${loadedImg.naturalWidth}px`);
+				}
+			});
+		}
 	} else {
 		rootStyle.removeProperty("--menu-sidebar-image");
 		rootStyle.removeProperty("--menu-sidebar-position");
+		rootStyle.removeProperty("--menu-sidebar-width");
 	}
 	document.body.classList.toggle("has-sidebar", Boolean(sideUrl));
 }

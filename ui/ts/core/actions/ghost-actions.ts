@@ -161,8 +161,12 @@ export const ghostActions = {
 	},
 
 	applyShellScaleAction(action: string) {
-		const conf = SCALE_MAP[action] || SCALE_MAP["scale-100"];
 		const scalePercent = parseInt(action.replace("scale-", ""), 10) || 100;
+		const baseW = 200;
+		const baseH = 400;
+		const w = Math.round((baseW * scalePercent) / 100);
+		const h = Math.round((baseH * scalePercent) / 100);
+		const conf = SCALE_MAP[action] || { width: `${w}px`, height: `${h}px` };
 		if ((this as unknown).elements.ghostDisplay) {
 			(this as unknown).elements.ghostDisplay.style.width = conf.width;
 			(this as unknown).elements.ghostDisplay.style.height = conf.height;

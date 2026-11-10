@@ -18,6 +18,7 @@ export const MENU_KEY_MAP: Record<string, string> = {
 	i: "minimize", // アイコン化 (Iconize)
 	w: "close", // 終了 (Window close)
 	x: "close-all", // 全て終了 (Exit all)
+	z: "call-ghost", // 他のゴーストを呼ぶ (Call ghost)
 };
 
 export function handleMenuKeydown(

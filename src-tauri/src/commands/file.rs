@@ -110,18 +110,29 @@ pub fn load_surface_image(
         }
     }
 
-    let fallback_candidates = vec![
-        shell_dir.join("surface0000.png"),
-        shell_dir.join("surface0.png"),
-        master_dir.join("surface0000.png"),
-        master_dir.join("surface0.png"),
-    ];
+    let fallback_candidates = if surface_id_num >= 10 && surface_id_num < 20 {
+        vec![
+            shell_dir.join("surface0010.png"),
+            shell_dir.join("surface10.png"),
+            master_dir.join("surface0010.png"),
+            master_dir.join("surface10.png"),
+            shell_dir.join("surface0000.png"),
+            shell_dir.join("surface0.png"),
+        ]
+    } else {
+        vec![
+            shell_dir.join("surface0000.png"),
+            shell_dir.join("surface0.png"),
+            master_dir.join("surface0000.png"),
+            master_dir.join("surface0.png"),
+        ]
+    };
     for candidate in &fallback_candidates {
         if let Some(target) = find_file_case_insensitive(candidate)
             && target.is_file()
             && let Ok(bytes) = fs::read(&target)
         {
-            println!("🔄 [Rust File] load_surface_image: surface{} 個別ファイル未検出のためベース surface0 をフォールバック利用します", surface_id);
+            println!("🔄 [Rust File] load_surface_image: surface{} 個別ファイル未検出のため適切なスコープフォールバックを利用します: {:?}", surface_id, target);
             use base64::Engine;
             let b64 = base64::engine::general_purpose::STANDARD.encode(&bytes);
             return Ok(format!("data:image/png;base64,{b64}"));

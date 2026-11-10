@@ -41,4 +41,14 @@ body[class*="overhead"] {
 	background-color: var(--balloon-bg, #f4f8fc);
 	background-image: var(--balloon-pattern, none);
 	color: var(--balloon-text-color, #111111);
+	-webkit-app-region: drag;
+	app-region: drag;
+}
+
+.balloon button,
+.balloon a,
+.balloon .balloon-choice-btn,
+.balloon .balloon-anchor {
+	-webkit-app-region: no-drag;
+	app-region: no-drag;
 }

@@ -14,6 +14,13 @@ import {
 import { renderSubmenuContent } from "./submenu-renderer.js";
 import { applyShellMenuTheme } from "./submenu-theme.js";
 
+/**
+ * [Design Invariant / 設計仕様]
+ * サブメニューウィンドウは固定ポップアップとして表示されるため、
+ * キャラクターやバルーンウィンドウとは異なり、ドラッグ移動不可（非ドラッグ）仕様です。
+ * 誤ってウィンドウドラッグ機能（startDraggingWindow）を追加しないよう注意してください。
+ */
+
 /** @type {string} */
 let currentSubmenuType = "ghost";
 /** @type {string[]} */
@@ -34,12 +41,6 @@ let cachedBalloons: never[] = [];
 let currentBalloonTheme: null = null;
 /** @type {string[]} */
 let cachedRecentGhosts: never[] = [];
-
-document.addEventListener("mousedown", (event) => {
-	if (event.button !== 0 || !isTauriAvailable()) return;
-	if (event.target.closest(".menu-item")) return;
-	startDraggingWindow();
-});
 
 /**
  * サブメニューのアクションをイベントとして送信

@@ -166,10 +166,6 @@ function initCharacterWindow() {
 		const screenX = e.screenX ?? clientX;
 		const screenY = e.screenY ?? clientY;
 
-		if (img && isTransparentPixel(img, clientX, clientY)) {
-			return;
-		}
-
 		isInteracting = true;
 		hasMoved = false;
 		longPressTriggered = false;
@@ -179,6 +175,40 @@ function initCharacterWindow() {
 		// Tauri ネイティブウィンドウドラッグ起動
 		if (isTauriAvailable()) {
 			void startDraggingWindow();
+			const updatePopup = async () => {
+				if (!coordPopupEl) coordPopupEl = document.getElementById("coord-popup");
+				if (coordPopupEl) {
+					const pos = await getCurrentWindowPosition();
+					if (pos) {
+						coordPopupEl.textContent = `X: ${pos.x}, Y: ${pos.y}`;
+						coordPopupEl.style.display = "block";
+					}
+				}
+				if (isTauriAvailable()) {
+					void invoke("sync_character_balloon", { scopeId });
+				}
+			};
+			void updatePopup();
+			const winTarget =
+				typeof window !== "undefined" &&
+				typeof window.addEventListener === "function"
+					? window
+					: typeof document !== "undefined"
+						? document
+						: globalThis;
+			const onMove = () => {
+				if (isInteracting) void updatePopup();
+			};
+			const onUp = () => {
+				if (typeof winTarget.removeEventListener === "function") {
+					winTarget.removeEventListener("mousemove", onMove);
+					winTarget.removeEventListener("mouseup", onUp);
+				}
+			};
+			if (typeof winTarget.addEventListener === "function") {
+				winTarget.addEventListener("mousemove", onMove);
+				winTarget.addEventListener("mouseup", onUp);
+			}
 		}
 
 		void getCurrentWindowPosition().then((position) => {
@@ -193,6 +223,22 @@ function initCharacterWindow() {
 			}
 		}, LONG_PRESS_DELAY);
 	};
+
+	let coordPopupEl: HTMLElement | null = null;
+	function showCoordPopup(x: number, y: number) {
+		if (!coordPopupEl) {
+			coordPopupEl = document.getElementById("coord-popup");
+		}
+		if (coordPopupEl) {
+			coordPopupEl.textContent = `X: ${x}, Y: ${y}`;
+			coordPopupEl.style.display = "block";
+		}
+	}
+	function hideCoordPopup() {
+		if (coordPopupEl) {
+			coordPopupEl.style.display = "none";
+		}
+	}
 
 	const onPointerMove = (e: unknown) => {
 		if (!isInteracting) return;
@@ -218,12 +264,16 @@ function initCharacterWindow() {
 			if (isTauriAvailable()) {
 				void invoke("sync_character_balloon", { scopeId });
 			}
+			void getCurrentWindowPosition().then((pos) => {
+				if (pos) showCoordPopup(pos.x, pos.y);
+			});
 		}
 	};
 
 	const onPointerUp = () => {
 		if (!isInteracting) return;
 		isInteracting = false;
+		hideCoordPopup();
 
 		if (longPressTimer) {
 			clearTimeout(longPressTimer);

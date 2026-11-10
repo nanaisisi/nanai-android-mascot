@@ -298,3 +298,18 @@ test("context-menu event handlers, sync listeners, mouse events and keyboard sho
 
 	assert.ok(true);
 });
+
+test("context menu enforces non-draggable invariant specification", () => {
+	let dragCalled = false;
+	const origInvoke = globalThis.__TAURI_INTERNALS__.invoke;
+	globalThis.__TAURI_INTERNALS__.invoke = async (cmd) => {
+		if (cmd.includes("drag")) {
+			dragCalled = true;
+		}
+		return origInvoke(cmd, {});
+	};
+
+	// Simulating mousedown on document/menu background should NOT trigger dragging
+	documentListeners.mousedown?.({ button: 0, target: { closest: () => null } });
+	assert.equal(dragCalled, false, "Menu windows must remain non-draggable per design specification");
+});

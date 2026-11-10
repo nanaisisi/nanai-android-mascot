@@ -2,7 +2,12 @@
  * バルーンウィンドウのマウスドラッグおよびモバイルタッチ・ピンチズームジェスチャー管理モジュール
  */
 
-import { emit, invoke, startDraggingWindow } from "../../core/tauri-helper.js";
+import {
+	emit,
+	invoke,
+	startDraggingWindow,
+	getCurrentWindowPosition,
+} from "../../core/tauri-helper.js";
 import { updateBalloonWindowScale } from "./scale.js";
 
 /**
@@ -27,20 +32,63 @@ export function setupWindowGestures(
 ) {
 	if (!balloonBox) return;
 
+	let coordPopupEl: HTMLElement | null = null;
+	async function updateCoordPopup() {
+		if (!coordPopupEl) {
+			coordPopupEl = document.getElementById("coord-popup");
+		}
+		if (coordPopupEl) {
+			try {
+				const pos = await getCurrentWindowPosition();
+				if (pos) {
+					coordPopupEl.textContent = `X: ${pos.x}, Y: ${pos.y}`;
+					coordPopupEl.style.display = "block";
+				}
+			} catch (_e) {}
+		}
+	}
+	function hideCoordPopup() {
+		if (coordPopupEl) {
+			coordPopupEl.style.display = "none";
+		}
+	}
+
 	// バルーン本体のクリックでスキップまたは改ページ通知
 	balloonBox.addEventListener("click", () => {
 		void emit("balloon-clicked", { scopeId });
 	});
 
 	// ドラッグ移動 (Tauri v2 startDragging)
+	let isDragging = false;
 	balloonBox.addEventListener("mousedown", (e: { button: number }) => {
 		if (e.button === 0 && !getIsBalloonDontMove()) {
+			isDragging = true;
 			void startDraggingWindow();
+			void updateCoordPopup();
+			const onMove = () => {
+				if (isDragging) void updateCoordPopup();
+			};
+			const winTarget =
+				typeof window !== "undefined" &&
+				typeof window.addEventListener === "function"
+					? window
+					: typeof document !== "undefined"
+						? document
+						: globalThis;
+			const onUp = () => {
+				isDragging = false;
+				hideCoordPopup();
+				winTarget.removeEventListener("mousemove", onMove);
+				winTarget.removeEventListener("mouseup", onUp);
+			};
+			winTarget.addEventListener("mousemove", onMove);
+			winTarget.addEventListener("mouseup", onUp);
 		}
 	});
 
 	balloonBox.addEventListener("mouseup", () => {
 		if (!getIsBalloonDontMove()) {
+			hideCoordPopup();
 			void invoke("save_balloon_offset_from_position", { scopeId });
 		}
 	});

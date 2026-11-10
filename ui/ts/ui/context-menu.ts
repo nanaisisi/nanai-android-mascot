@@ -14,11 +14,12 @@ export { setupContextMenuSync } from "./context-menu-sync.js";
 const dispatcher = new MenuDispatcher();
 const renderer = new MenuSubmenuRenderer(dispatcher);
 
-document.addEventListener("mousedown", (event) => {
-	if (event.button !== 0 || !isTauriAvailable()) return;
-	if (event.target.closest(".menu-item, .submenu-container")) return;
-	startDraggingWindow();
-});
+/**
+ * [Design Invariant / 設計仕様]
+ * コンテキストメニューウィンドウは固定ポップアップとして表示されるため、
+ * キャラクターやバルーンウィンドウとは異なり、ドラッグ移動不可（非ドラッグ）仕様です。
+ * 誤ってウィンドウドラッグ機能（startDraggingWindow）を追加しないよう注意してください。
+ */
 
 // Tauri / iframe 同期リスナー初期化
 setupContextMenuSync(dispatcher, renderer);

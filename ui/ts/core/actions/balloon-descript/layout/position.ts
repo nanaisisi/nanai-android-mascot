@@ -3,17 +3,19 @@
  * @brief バルーン原点・数字表示座標・SSTPメッセージ座標・ウィンドウ初期位置設定反映 (UKADOC準拠)
  */
 
-export function applyPositionProperties(root, props, instance) {
+export function applyPositionProperties(
+	root: HTMLElement,
+	props: object,
+	instance: { windowPositionLimit?: boolean } = {},
+) {
 	// [origin.x,座標], [origin.y,座標]:
 	const ox = parseInt(props["origin.x"], 10);
 	const oy = parseInt(props["origin.y"], 10);
-	if (!Number.isNaN(ox) || !Number.isNaN(oy)) {
-		if (instance.elements?.balloonDisplay) {
-			if (!Number.isNaN(ox))
-				instance.elements.balloonDisplay.style.left = `calc(50% + ${ox}px)`;
-			if (!Number.isNaN(oy))
-				instance.elements.balloonDisplay.style.top = `calc(2rem + ${oy}px)`;
-		}
+	if (!Number.isNaN(ox)) {
+		root.style.setProperty("--balloon-origin-x", `${ox}px`);
+	}
+	if (!Number.isNaN(oy)) {
+		root.style.setProperty("--balloon-origin-y", `${oy}px`);
 	}
 
 	// [number.x,座標], [number.y,座標], [number.xr,座標], [number.yb,座標]:
@@ -55,5 +57,7 @@ export function applyPositionProperties(root, props, instance) {
 	const winLimit =
 		props["windowposition.limit"] === "1" ||
 		props["windowposition.limit"]?.toLowerCase() === "true";
-	instance.windowPositionLimit = winLimit;
+	if (instance) {
+		instance.windowPositionLimit = winLimit;
+	}
 }

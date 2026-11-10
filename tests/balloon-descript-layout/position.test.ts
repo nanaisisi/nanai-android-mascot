@@ -41,14 +41,8 @@ describe("balloon-descript-layout position submodule", () => {
 			instance,
 		);
 
-		assert.equal(
-			instance.elements?.balloonDisplay?.style.left,
-			"calc(50% + 15px)",
-		);
-		assert.equal(
-			instance.elements?.balloonDisplay?.style.top,
-			"calc(2rem + -25px)",
-		);
+		assert.equal(root.vars["--balloon-origin-x"], "15px");
+		assert.equal(root.vars["--balloon-origin-y"], "-25px");
 		assert.equal(root.vars["--balloon-number-x"], "8px");
 		assert.equal(root.vars["--balloon-number-y"], "16px");
 		assert.equal(root.vars["--balloon-number-xr"], "-8px");

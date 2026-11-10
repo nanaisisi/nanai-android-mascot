@@ -1,15 +1,34 @@
 // @ts-nocheck
 import { BALLOON_CSS_VARS } from "./balloon-theme-constants.js";
 
+export interface NineSliceLayoutResult {
+	source: string;
+	slice: string;
+	width: string;
+	repeat: string;
+	cssBorderImage: string;
+	scopeId: number;
+	cacheKey: string;
+}
+
+export interface BalloonAppInterface {
+	balloonUserScale?: number;
+	elements?: {
+		balloonDisplay?: HTMLElement | null;
+		[key: string]: HTMLElement | null | undefined;
+	};
+	[key: string]: unknown;
+}
+
 /**
  * 9スライス分割設定 (border-image) を有効矩形 (validrect) 等から算出 (キャッシュ対応)
  */
 export function computeNineSliceLayout(
-	cache: Map<string, any>,
-	props = {},
-	bgImageUrl = null,
-	scopeId = 0,
-) {
+	cache: Map<string, NineSliceLayoutResult>,
+	props: Record<string, string> = {},
+	bgImageUrl: string | null = null,
+	scopeId: number = 0,
+): NineSliceLayoutResult {
 	const vl = parseInt(props["validrect.left"], 10);
 	const vt = parseInt(props["validrect.top"], 10);
 	const vr = parseInt(props["validrect.right"], 10);
@@ -29,7 +48,7 @@ export function computeNineSliceLayout(
 			: `${t}_${r}_${b}_${l}_${repeat}_${source}`;
 
 	if (cache.has(cacheKey)) {
-		return cache.get(cacheKey);
+		return cache.get(cacheKey) as NineSliceLayoutResult;
 	}
 
 	const slice = `${t} ${r} ${b} ${l} fill`;
@@ -39,7 +58,7 @@ export function computeNineSliceLayout(
 		? `url("${source}") ${t} ${r} ${b} ${l} fill / ${width} ${repeat}`
 		: "";
 
-	const result = {
+	const result: NineSliceLayoutResult = {
 		source,
 		slice,
 		width,
@@ -55,7 +74,10 @@ export function computeNineSliceLayout(
 /**
  * DOM上のバルーン descript スタイルを初期化
  */
-export function resetBalloonDescriptDom(userScale: number, app: any) {
+export function resetBalloonDescriptDom(
+	userScale: number,
+	app?: BalloonAppInterface,
+) {
 	if (typeof document !== "undefined") {
 		const root = document.documentElement;
 		if (root) {
@@ -63,7 +85,7 @@ export function resetBalloonDescriptDom(userScale: number, app: any) {
 				root.style.removeProperty(key);
 			}
 		}
-		const balloonEl = document.querySelector(".balloon");
+		const balloonEl = document.querySelector(".balloon") as HTMLElement | null;
 		if (balloonEl?.style) {
 			balloonEl.style.padding = "";
 			balloonEl.style.maxWidth = "";

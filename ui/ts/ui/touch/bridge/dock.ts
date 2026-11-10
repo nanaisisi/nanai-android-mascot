@@ -6,28 +6,41 @@
 
 import { ANDROID_EVENTS } from "./constants.js";
 
+export interface DockManagerOptions {
+	dispatchFn?: (eventName: string, data: unknown) => void;
+	gestureRecognizer?: unknown;
+	element?: unknown;
+	dockMargin?: number;
+	autoRestoreOnTap?: boolean;
+}
+
+export interface GestureRecognizerInterface {
+	on?: (
+		eventName: string,
+		callback: (event: { dockState: string }) => void,
+	) => () => void;
+	setDockState?: (state: string) => void;
+	destroy?: () => void;
+	[key: string]: unknown;
+}
+
 /**
  * ゴースト画面端ドッキング状態およびジェスチャー認識器との連携を管理するクラス
  */
 export class DockManager {
 	_dispatch: (eventName: string, data: unknown) => void;
 	_dockState: string;
-	_gestureRecognizer: any;
+	_gestureRecognizer: GestureRecognizerInterface | null;
 	_gestureUnbind: (() => void) | null;
-	_attachedElement: any;
+	_attachedElement: HTMLElement | null;
 	_elementClickUnbind: (() => void) | null;
 	_dockMargin: number;
 	_autoRestoreOnTap: boolean;
 
 	/**
-	 * @param {object} [options={}]
-	 * @param {Function} [options.dispatchFn] イベントディスパッチ用コールバック
-	 * @param {TouchGestureRecognizer} [options.gestureRecognizer] 連携するジェスチャー認識器
-	 * @param {HTMLElement} [options.element] 連動する要素
-	 * @param {number} [options.dockMargin=0] ドッキング余白 (px)
-	 * @param {boolean} [options.autoRestoreOnTap=true] ドッキング時のタップによる自動復帰
+	 * @param {DockManagerOptions} [options={}]
 	 */
-	constructor(options: any = {}) {
+	constructor(options: DockManagerOptions = {}) {
 		this._dispatch =
 			typeof options.dispatchFn === "function" ? options.dispatchFn : () => {};
 		this._dockState = "none"; // "none" | "left" | "right"
@@ -61,12 +74,10 @@ export class DockManager {
 
 	/**
 	 * ドッキング設定を動的に更新
-	 * @param {object} [options={}]
-	 * @param {number} [options.dockMargin]
-	 * @param {boolean} [options.autoRestoreOnTap]
+	 * @param {Partial<DockManagerOptions>} [options={}]
 	 * @returns {{ dockMargin: number, autoRestoreOnTap: boolean }}
 	 */
-	setDockOptions(options: any = {}) {
+	setDockOptions(options: Partial<DockManagerOptions> = {}) {
 		let changed = false;
 		if (options.dockMargin !== undefined) {
 			const margin = Number(options.dockMargin);
@@ -97,7 +108,7 @@ export class DockManager {
 	 * 連動中のDOM要素を取得
 	 * @returns {HTMLElement|null}
 	 */
-	get attachedElement() {
+	get attachedElement(): HTMLElement | null {
 		return this._attachedElement;
 	}
 
@@ -114,7 +125,7 @@ export class DockManager {
 		this.detachElement();
 
 		if (!element) return;
-		this._attachedElement = element;
+		this._attachedElement = element as HTMLElement;
 
 		// 現在のドッキング状態を反映
 		this._syncElementClasses();
@@ -137,13 +148,14 @@ export class DockManager {
 			}
 		};
 
-		if (typeof element.addEventListener === "function") {
-			element.addEventListener("click", handleTapRestore);
-			element.addEventListener("touchend", handleTapRestore);
+		const el = this._attachedElement;
+		if (typeof el.addEventListener === "function") {
+			el.addEventListener("click", handleTapRestore);
+			el.addEventListener("touchend", handleTapRestore);
 			this._elementClickUnbind = () => {
-				if (typeof element.removeEventListener === "function") {
-					element.removeEventListener("click", handleTapRestore);
-					element.removeEventListener("touchend", handleTapRestore);
+				if (typeof el.removeEventListener === "function") {
+					el.removeEventListener("click", handleTapRestore);
+					el.removeEventListener("touchend", handleTapRestore);
 				}
 			};
 		}
@@ -256,15 +268,15 @@ export class DockManager {
 
 	/**
 	 * 連携中のジェスチャー認識器を取得
-	 * @returns {TouchGestureRecognizer|null}
+	 * @returns {GestureRecognizerInterface|null}
 	 */
-	get gestureRecognizer() {
+	get gestureRecognizer(): GestureRecognizerInterface | null {
 		return this._gestureRecognizer;
 	}
 
 	/**
 	 * 連携するジェスチャー認識器を設定
-	 * @param {TouchGestureRecognizer|null} recognizer
+	 * @param {unknown} recognizer
 	 * @returns {(() => void)|null} 登録解除関数
 	 */
 	setGestureRecognizer(recognizer: unknown) {
@@ -275,14 +287,15 @@ export class DockManager {
 			this._gestureUnbind = null;
 		}
 
-		this._gestureRecognizer = recognizer;
+		this._gestureRecognizer =
+			(recognizer as GestureRecognizerInterface) ?? null;
 		if (
 			this._gestureRecognizer &&
 			typeof this._gestureRecognizer.on === "function"
 		) {
 			this._gestureUnbind = this._gestureRecognizer.on(
 				"nam:touch:snap",
-				(event: { dockState: unknown }) => {
+				(event: { dockState: string }) => {
 					if (event?.dockState) {
 						this.setDockMode(event.dockState);
 					}

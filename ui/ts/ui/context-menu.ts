@@ -42,7 +42,7 @@ function _triggerSubmenuWindow(menuType: string, buttonEl: Element) {
 			x: posX,
 			y: posY,
 			width: 220,
-			height: 320,
+			height: 300,
 		}).catch((e) => {
 			console.error("Failed to show submenu window:", e);
 			const wrapper = buttonEl.closest(".menu-item-wrapper");

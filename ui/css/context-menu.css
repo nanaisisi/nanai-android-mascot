@@ -1,8 +1,17 @@
 /* =
    Nanai Android Mascot - 標準メニュー専用スタイル
-   (バルーンデザインシステム連動オーナードローメニュー)
+   (独立メニューデザインシステム)
    = */
-@import "balloon-theme.css";
+
+:root {
+	--menu-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Meiryo", sans-serif;
+	--menu-font-size: 0.7rem;
+	--menu-text-color: #111111;
+	--menu-bg: #f4f8fc;
+	--menu-highlight-bg: #0078d7;
+	--menu-highlight-text: #ffffff;
+	--menu-separator-color: #b0c4de;
+}
 
 * {
 	margin: 0;
@@ -11,18 +20,19 @@
 }
 
 body {
-	font-family: var(--balloon-font-family, sans-serif);
+	font-family: var(--menu-font-family, sans-serif);
 	background: transparent;
-	color: var(--balloon-text-color, #111111);
+	color: var(--menu-text-color, #111111);
 	user-select: none;
 	-webkit-user-select: none;
-	overflow: hidden;
+	overflow-y: auto;
+	max-height: 500px;
 	padding: 0;
+	margin: 0;
 	display: flex;
 	flex-direction: row;
-	align-items: flex-start;
-	height: auto;
-	min-height: auto;
+	align-items: stretch;
+	gap: 0;
 	width: max-content;
 }
 
@@ -39,10 +49,12 @@ body:not(.subchar-mode) .subchar-only {
 	width: auto;
 	min-width: 150px;
 	max-width: 300px;
-	align-self: flex-start;
+	flex-grow: 1;
+	flex-shrink: 0;
+	align-self: stretch;
 	height: auto;
 	min-height: auto;
-	overflow-y: hidden;
+	overflow-y: visible;
 	overflow-x: visible;
 	background: transparent;
 	background-image: var(--menu-bg-image, var(--balloon-pattern));
@@ -59,8 +71,8 @@ body:not(.subchar-mode) .subchar-only {
 
 .menu-sidebar {
 	display: none;
-	width: var(--menu-sidebar-width, 24px);
-	min-width: 24px;
+	width: 0;
+	min-width: 0;
 	align-self: stretch;
 	background: transparent;
 	background-image: var(--menu-sidebar-image, none);
@@ -68,10 +80,14 @@ body:not(.subchar-mode) .subchar-only {
 	background-position: var(--menu-sidebar-position, left top);
 	background-size: auto 100%;
 	flex-shrink: 0;
+	z-index: 10;
+	position: relative;
 }
 
 body.has-sidebar .menu-sidebar {
 	display: block;
+	width: var(--menu-sidebar-width, 24px);
+	min-width: var(--menu-sidebar-min-width, 24px);
 }
 
 body.subchar-mode .menu-sidebar {
@@ -102,24 +118,36 @@ body.subchar-mode .menu-sidebar {
 	text-align: left;
 	cursor: pointer;
 	font-family: inherit;
-	font-size: var(--balloon-font-size, 0.7rem);
-	color: var(--balloon-text-color, #111111);
+	font-size: var(--menu-font-size, 0.7rem);
+	color: var(--menu-text-color, #111111);
 	display: flex;
-	justify-content: space-between;
 	align-items: center;
 	transition:
 		background-color 0.15s ease,
 		color 0.15s ease;
 }
 
+.menu-item-indicator {
+	width: 1.2rem;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	flex-shrink: 0;
+}
+
+.menu-item-label {
+	flex-grow: 1;
+	text-align: left;
+}
+
 .menu-item:hover,
 .menu-item:focus {
-	background-color: var(--balloon-highlight-bg, #0078d7);
+	background-color: var(--menu-highlight-bg, #0078d7);
 	background-image: var(--menu-fg-image, none);
 	background-repeat: var(--menu-fg-repeat, no-repeat);
 	background-position: var(--menu-fg-position, left top);
 	background-size: cover;
-	color: var(--balloon-highlight-text, #ffffff);
+	color: var(--menu-highlight-text, #ffffff);
 	outline: none;
 }
 
@@ -132,13 +160,13 @@ body.subchar-mode .menu-sidebar {
 }
 
 .menu-item:hover.has-submenu::after {
-	color: var(--balloon-highlight-text);
+	color: var(--menu-highlight-text, #ffffff);
 }
 
 .menu-separator {
 	height: 1px;
 	border: none;
-	background-color: var(--balloon-separator-color, #808080);
+	background-color: var(--menu-separator-color, #b0c4de);
 	margin: 1px 2px;
 }
 

@@ -11,7 +11,7 @@ body {
 
 .submenu-window-container {
 	width: 100%;
-	max-height: calc(100vh - 0.5rem);
+	max-height: 300px;
 	overflow-y: auto;
 	background-color: var(--balloon-bg, #ffffff);
 	background-image: var(--menu-bg-image, var(--balloon-pattern, none));

@@ -28,7 +28,7 @@ export function renderSubmenuContent({
 		if (!cachedGhosts || cachedGhosts.length === 0) {
 			const empty = document.createElement("div");
 			empty.className = "menu-item is-disabled";
-			empty.innerHTML = `<span>(ゴーストなし)</span>`;
+			empty.innerHTML = `<span class="menu-item-indicator"></span><span class="menu-item-label">(ゴーストなし)</span>`;
 			container.appendChild(empty);
 			return;
 		}
@@ -39,7 +39,7 @@ export function renderSubmenuContent({
 			const btn = document.createElement("button");
 			btn.type = "button";
 			btn.className = `menu-item${isCurrent ? " is-current" : ""}`;
-			btn.innerHTML = `<span>${isCurrent ? "✓ " : ""}${ghostName}</span>`;
+			btn.innerHTML = `<span class="menu-item-indicator">${isCurrent ? "✓" : ""}</span><span class="menu-item-label">${ghostName}</span>`;
 			btn.addEventListener("click", () => {
 				dispatchSubmenuAction(
 					isCall ? "call-ghost" : "switch-ghost",
@@ -59,10 +59,11 @@ export function renderSubmenuContent({
 					typeof shellItem === "object" && shellItem?.display_name
 						? shellItem.display_name
 						: shellName;
+				const isCurrent = shellName === currentShellName;
 				const btn = document.createElement("button");
 				btn.type = "button";
-				btn.className = `menu-item${shellName === currentShellName ? " is-current" : ""}`;
-				btn.innerHTML = `<span>${shellName === currentShellName ? "✓ " : ""}${displayName}</span>`;
+				btn.className = `menu-item${isCurrent ? " is-current" : ""}`;
+				btn.innerHTML = `<span class="menu-item-indicator">${isCurrent ? "✓" : ""}</span><span class="menu-item-label">${displayName}</span>`;
 				btn.addEventListener("click", () => {
 					dispatchSubmenuAction("switch-shell", shellName);
 				});
@@ -76,20 +77,20 @@ export function renderSubmenuContent({
 		if (categories.length === 0) {
 			const empty = document.createElement("div");
 			empty.className = "menu-item is-disabled";
-			empty.innerHTML = `<span>(着せ替えパーツなし)</span>`;
+			empty.innerHTML = `<span class="menu-item-indicator"></span><span class="menu-item-label">(着せ替えパーツなし)</span>`;
 			container.appendChild(empty);
 		}
 		for (const cat of categories) {
 			const label = document.createElement("div");
 			label.className = "menu-item is-disabled";
-			label.innerHTML = `<span>${cat.category}</span>`;
+			label.innerHTML = `<span class="menu-item-indicator"></span><span class="menu-item-label"><b>${cat.category}</b></span>`;
 			container.appendChild(label);
 
 			for (const part of cat.parts) {
 				const btn = document.createElement("button");
 				btn.type = "button";
 				btn.className = `menu-item${part.on ? " is-current" : ""}`;
-				btn.innerHTML = `<span>${part.on ? "✓ " : "　"}${part.part}</span>`;
+				btn.innerHTML = `<span class="menu-item-indicator">${part.on ? "✓" : ""}</span><span class="menu-item-label">${part.part}</span>`;
 				btn.addEventListener("click", () => {
 					dispatchSubmenuAction("dressup-toggle", {
 						category: cat.category,
@@ -117,7 +118,7 @@ export function renderSubmenuContent({
 			const btn = document.createElement("button");
 			btn.type = "button";
 			btn.className = `menu-item${isCurrent ? " is-current" : ""}`;
-			btn.innerHTML = `<span>${isCurrent ? "✓ " : ""}${displayName}</span>`;
+			btn.innerHTML = `<span class="menu-item-indicator">${isCurrent ? "✓" : ""}</span><span class="menu-item-label">${displayName}</span>`;
 			btn.addEventListener("click", () => {
 				dispatchSubmenuAction(`balloon-theme-${dirName}`);
 			});
@@ -127,7 +128,7 @@ export function renderSubmenuContent({
 		if (!cachedRecentGhosts || cachedRecentGhosts.length === 0) {
 			const empty = document.createElement("div");
 			empty.className = "menu-item is-disabled";
-			empty.innerHTML = `<span>(最近使った履歴なし)</span>`;
+			empty.innerHTML = `<span class="menu-item-indicator"></span><span class="menu-item-label">(最近使った履歴なし)</span>`;
 			container.appendChild(empty);
 			return;
 		}
@@ -155,7 +156,7 @@ export function renderSubmenuContent({
 				if (hasSub) {
 					btn.setAttribute("aria-haspopup", "true");
 				}
-				btn.innerHTML = `<span>${ghostName}</span>`;
+				btn.innerHTML = `<span class="menu-item-indicator"></span><span class="menu-item-label">${ghostName}</span>`;
 				btn.addEventListener("click", () => {
 					const action =
 						typeof item === "object" && item?.action
@@ -225,7 +226,7 @@ export function renderSubmenuContent({
 			const btn = document.createElement("button");
 			btn.type = "button";
 			btn.className = "menu-item";
-			btn.innerHTML = `<span>${item.label}</span>${item.shortcut ? `<span style="opacity:0.6; font-size:0.75rem; margin-left:8px;">${item.shortcut}</span>` : ""}`;
+			btn.innerHTML = `<span class="menu-item-indicator"></span><span class="menu-item-label">${item.label}</span>${item.shortcut ? `<span style="opacity:0.6; font-size:0.75rem; margin-left:8px;">${item.shortcut}</span>` : ""}`;
 			btn.addEventListener("click", () => {
 				dispatchSubmenuAction(item.action);
 			});
@@ -249,21 +250,11 @@ export function renderSubmenuContent({
 		otherBtn.type = "button";
 		otherBtn.className = "menu-item";
 		otherBtn.id = "shell-scale-other-btn";
-		otherBtn.innerHTML = `<span>　その他の倍率(<u>O</u>)...</span>`;
+		otherBtn.innerHTML = `<span class="menu-item-indicator"></span><span class="menu-item-label">その他の倍率(<u>O</u>)...</span>`;
 		otherBtn.addEventListener("click", () => {
 			dispatchSubmenuAction("shell-scale-other");
 		});
 		container.appendChild(otherBtn);
-
-		const configBtn = document.createElement("button");
-		configBtn.type = "button";
-		configBtn.className = "menu-item";
-		configBtn.id = "shell-scale-config-btn";
-		configBtn.innerHTML = `<span>　詳細設定(ゴーストごとの設定) (<u>D</u>)...</span>`;
-		configBtn.addEventListener("click", () => {
-			dispatchSubmenuAction("config-ghost");
-		});
-		container.appendChild(configBtn);
 
 		const separator = document.createElement("hr");
 		separator.className = "menu-separator";
@@ -279,8 +270,7 @@ export function renderSubmenuContent({
 			btn.type = "button";
 			btn.className = `menu-item${isCurrent ? " is-current" : ""}`;
 			const label = pct === 100 ? "100%" : `${pct}%`;
-			const prefix = isCurrent ? "・" : "　";
-			btn.innerHTML = `<span>${prefix}${label}</span>`;
+			btn.innerHTML = `<span class="menu-item-indicator">${isCurrent ? "・" : ""}</span><span class="menu-item-label">${label}</span>`;
 			btn.addEventListener("click", () => {
 				dispatchSubmenuAction(`scale-${pct}`);
 			});
@@ -299,7 +289,7 @@ export function renderSubmenuContent({
 		otherBtn.type = "button";
 		otherBtn.className = "menu-item";
 		otherBtn.id = "balloon-scale-other-btn";
-		otherBtn.innerHTML = `<span>　その他の倍率(<u>O</u>)...</span>`;
+		otherBtn.innerHTML = `<span class="menu-item-indicator"></span><span class="menu-item-label">その他の倍率(<u>O</u>)...</span>`;
 		otherBtn.addEventListener("click", () => {
 			dispatchSubmenuAction("balloon-scale-other");
 		});
@@ -316,8 +306,7 @@ export function renderSubmenuContent({
 			btn.type = "button";
 			btn.className = `menu-item${isCurrent ? " is-current" : ""}`;
 			const label = `${pct}%`;
-			const prefix = isCurrent ? "・" : "　";
-			btn.innerHTML = `<span>${prefix}${label}</span>`;
+			btn.innerHTML = `<span class="menu-item-indicator">${isCurrent ? "・" : ""}</span><span class="menu-item-label">${label}</span>`;
 			btn.addEventListener("click", () => {
 				dispatchSubmenuAction(`balloon-scale-${pct}`);
 			});

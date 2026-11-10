@@ -143,6 +143,21 @@ pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
     {
         match normalized {
             "Shift_JIS" => {
+                if let Ok(utf8_str) = std::str::from_utf8(buffer) {
+                    let (cow, _, had_errors) = SHIFT_JIS.decode(buffer);
+                    if had_errors || cow.contains('\u{FFFD}') {
+                        return DecodeResult {
+                            text: utf8_str.to_string(),
+                            encoding: "UTF-8",
+                            had_errors: false,
+                        };
+                    }
+                    return DecodeResult {
+                        text: cow.into_owned(),
+                        encoding: "Shift_JIS",
+                        had_errors,
+                    };
+                }
                 let (cow, _, had_errors) = SHIFT_JIS.decode(buffer);
                 return DecodeResult {
                     text: cow.into_owned(),

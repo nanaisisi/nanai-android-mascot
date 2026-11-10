@@ -154,7 +154,11 @@ export class GhostController {
 				});
 				if (info) {
 					if (Array.isArray(info.shells) && info.shells.length > 0) {
-						this.shells = info.shells;
+						this.shells = info.shells.map((s: unknown) =>
+							typeof s === "object" && s !== null && "name" in s
+								? (s as { name: string }).name
+								: String(s),
+						);
 					}
 					// 一旦、読み込んだゴーストのバルーンを使用する形にする
 					if (info.recommended_balloon) {

@@ -22,4 +22,21 @@ if (globalThis.__TAURI__) {
 			if (data?.version && verEl) verEl.textContent = `v${data.version}`;
 		});
 	}
+
+	const startDraggingFn =
+		globalThis.__TAURI__.window?.getCurrentWindow?.()?.startDragging;
+	if (typeof startDraggingFn === "function") {
+		document.body.addEventListener("mousedown", (e) => {
+			if (e.button === 0) {
+				void startDraggingFn();
+			}
+		});
+		document.body.addEventListener(
+			"touchstart",
+			() => {
+				void startDraggingFn();
+			},
+			{ passive: true },
+		);
+	}
 }

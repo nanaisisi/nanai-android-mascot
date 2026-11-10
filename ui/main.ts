@@ -15,6 +15,7 @@ import { eventMethods } from "./ts/core/app-events.js";
 import { settingsMethods } from "./ts/core/app-settings.js";
 import { updateMethods } from "./ts/core/app-update.js";
 import { AppConfig, loadAppConfig } from "./ts/core/config.js";
+import { InternalWindowManager } from "./ts/core/internal-window-manager.js";
 import { invoke, isTauriAvailable } from "./ts/core/tauri-helper.js";
 import { GhostController } from "./ts/ghost/ghost.js";
 import { SakuraScriptPlayer } from "./ts/ghost/sakura-script.js";
@@ -77,6 +78,7 @@ export class NanaiAndroidMascotApp {
 		this.interactionManager = new InteractionManager(this);
 		this.surfaceManager = new SurfaceManager(this);
 		this.sakuraPlayer = new SakuraScriptPlayer(this);
+		this.internalWindowManager = new InternalWindowManager();
 		this.modalManager = null;
 
 		this.elements = {};

@@ -107,7 +107,10 @@ export const surfaceRenderMethods = {
 			}
 		} catch (_err) {}
 
-		const elementList = this.elements[sid] || this.elements.default || [];
+		const elementList =
+			this.elements[sid] ||
+			(scopeId === 0 ? this.elements.default : []) ||
+			[];
 		const bindLayers =
 			!isFrame && (scopeId === 0 || scopeId === 1)
 				? this.activeBindLayers(scopeId, sid)

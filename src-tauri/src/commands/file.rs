@@ -110,7 +110,7 @@ pub fn load_surface_image(
         }
     }
 
-    println!("❌ [Rust File] load_surface_image 見つかりませんでした (surface_id={}, shell={}). 試行した候補パス: {:?}", surface_id, shell_name, candidates);
+    println!("⚠️ [Rust File] load_surface_image: 指定されたサーフィス画像が見つかりません (surface_id={}, shell={}). フォールバックを使用します。", surface_id, shell_name);
     Err(format!(
         "Surface image not found for surface_id: {surface_id} in shell: {shell_name}"
     ))

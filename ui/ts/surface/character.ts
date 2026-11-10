@@ -211,8 +211,10 @@ function initCharacterWindow() {
 			}
 		}
 
-		if (hasMoved && origin) {
-			void moveCurrentWindowBy(deltaX, deltaY, origin);
+		if (hasMoved) {
+			if (!isTauriAvailable() && origin) {
+				void moveCurrentWindowBy(deltaX, deltaY, origin);
+			}
 			if (isTauriAvailable()) {
 				void invoke("sync_character_balloon", { scopeId });
 			}

@@ -48,6 +48,17 @@ let cachedRecentGhosts: never[] = [];
  * @param {any} [payload]
  */
 async function dispatchSubmenuAction(action: unknown, payload = null) {
+	if (globalThis.parent && (globalThis.parent as unknown) !== globalThis) {
+		globalThis.parent.postMessage(
+			{
+				type: "menu-action",
+				action: action,
+				payload: payload,
+				timestamp: Date.now(),
+			},
+			"*",
+		);
+	}
 	if (isTauriAvailable()) {
 		try {
 			await emit("menu-action", { action, payload });

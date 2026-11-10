@@ -89,4 +89,29 @@ export const settingsTemplates = {
       <button type="button" id="add-plugin-btn" class="primary">新しいプラグインを追加...</button>
     </div>
   `,
+
+	"scale-other-modal-content": `
+    <h2 id="scale-other-title">倍率設定</h2>
+    <div class="form-section">
+      <span class="form-label" id="scale-other-label">倍率:</span>
+      <p style="font-size: 12px; margin: 4px 0;">Default = 100%</p>
+    </div>
+    <div class="form-section">
+      <label for="scale-x-input">X =</label>
+      <input type="number" id="scale-x-input" value="100" min="10" max="1000" style="width: 80px; padding: 4px;" /> %
+    </div>
+    <div class="form-section">
+      <label for="scale-y-input">Y =</label>
+      <input type="number" id="scale-y-input" value="100" min="10" max="1000" style="width: 80px; padding: 4px;" /> %
+    </div>
+    <div class="form-section">
+      <label>
+        <input type="checkbox" id="scale-xy-lock" checked /> X=Y
+      </label>
+    </div>
+    <div class="form-section" style="text-align: right; margin-top: 16px;">
+      <button type="button" id="scale-other-ok-btn" class="primary" style="margin-right: 8px;">OK</button>
+      <button type="button" id="scale-other-cancel-btn">キャンセル</button>
+    </div>
+  `,
 };

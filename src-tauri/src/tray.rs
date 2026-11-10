@@ -82,9 +82,18 @@ pub fn update_tray_for_ghost(
         let tooltip_text = format!("Nanai Mascot - {}", ghost_name);
         let _ = tray.set_tooltip(Some(&tooltip_text));
 
+        let descript_path = ghost_master_dir.join("descript.txt");
+        let descript_map = crate::ghost::scan::read_descript_file(&descript_path);
+        let custom_icon_path = descript_map
+            .as_ref()
+            .and_then(|m| m.get("icon"))
+            .map(|val| ghost_master_dir.join(val));
+
         let tray_ico = ghost_master_dir.join("tray.ico");
         let tray_png = ghost_master_dir.join("tray.png");
-        let tray_path = if tray_ico.exists() {
+        let tray_path = if let Some(ref p) = custom_icon_path {
+            if p.exists() { Some(p.clone()) } else { None }
+        } else if tray_ico.exists() {
             Some(tray_ico)
         } else if tray_png.exists() {
             Some(tray_png)
@@ -101,7 +110,7 @@ pub fn update_tray_for_ghost(
                 let icon = Image::new_owned(rgba.into_raw(), width, height);
                 let _ = tray.set_icon(Some(icon));
                 log_tray(&format!(
-                    "🟢 トレイアイコン & ツールチップ更新: ghost={}, icon={:?}",
+                    "🟢 トレイアイコン & ツールチップ更新 (icon.md 準拠): ghost={}, icon={:?}",
                     ghost_name, icon_path
                 ));
             }

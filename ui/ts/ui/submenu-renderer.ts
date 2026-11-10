@@ -233,7 +233,9 @@ export function renderSubmenuContent({
 		});
 	} else if (
 		currentSubmenuType === "shell-scale-root" ||
-		currentSubmenuType === "shell-scale"
+		currentSubmenuType === "shell-scale" ||
+		currentSubmenuType === "ghost-scale-root" ||
+		currentSubmenuType === "ghost-scale"
 	) {
 		let currentScale = 100;
 		try {
@@ -252,6 +254,16 @@ export function renderSubmenuContent({
 			dispatchSubmenuAction("shell-scale-other");
 		});
 		container.appendChild(otherBtn);
+
+		const configBtn = document.createElement("button");
+		configBtn.type = "button";
+		configBtn.className = "menu-item";
+		configBtn.id = "shell-scale-config-btn";
+		configBtn.innerHTML = `<span>　詳細設定(ゴーストごとの設定) (<u>D</u>)...</span>`;
+		configBtn.addEventListener("click", () => {
+			dispatchSubmenuAction("config-ghost");
+		});
+		container.appendChild(configBtn);
 
 		const separator = document.createElement("hr");
 		separator.className = "menu-separator";
@@ -275,12 +287,37 @@ export function renderSubmenuContent({
 			container.appendChild(btn);
 		});
 	} else if (currentSubmenuType === "balloon-scale") {
+		let currentBalloonScale = 100;
+		try {
+			const saved = localStorage.getItem("nanai_balloon_scale") || localStorage.getItem("balloonScale");
+			if (saved) {
+				currentBalloonScale = parseInt(saved, 10) || 100;
+			}
+		} catch (_e) {}
+
+		const otherBtn = document.createElement("button");
+		otherBtn.type = "button";
+		otherBtn.className = "menu-item";
+		otherBtn.id = "balloon-scale-other-btn";
+		otherBtn.innerHTML = `<span>　その他の倍率(<u>O</u>)...</span>`;
+		otherBtn.addEventListener("click", () => {
+			dispatchSubmenuAction("balloon-scale-other");
+		});
+		container.appendChild(otherBtn);
+
+		const separator = document.createElement("hr");
+		separator.className = "menu-separator";
+		container.appendChild(separator);
+
 		const balloonScales = [200, 150, 125, 100, 75, 50];
 		balloonScales.forEach((pct) => {
+			const isCurrent = pct === currentBalloonScale;
 			const btn = document.createElement("button");
 			btn.type = "button";
-			btn.className = `menu-item${pct === 100 ? " is-current" : ""}`;
-			btn.innerHTML = `<span>${pct === 100 ? "✓ " : ""}${pct}%${pct === 100 ? " (標準)" : ""}</span>`;
+			btn.className = `menu-item${isCurrent ? " is-current" : ""}`;
+			const label = `${pct}%`;
+			const prefix = isCurrent ? "・" : "　";
+			btn.innerHTML = `<span>${prefix}${label}</span>`;
 			btn.addEventListener("click", () => {
 				dispatchSubmenuAction(`balloon-scale-${pct}`);
 			});

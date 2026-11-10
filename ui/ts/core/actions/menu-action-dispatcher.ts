@@ -238,6 +238,49 @@ export function handleMenuActionImpl(
 		return context.applyShellScaleAction?.(action);
 	if (action.startsWith("balloon-scale-"))
 		return context.applyBalloonScaleAction?.(action);
+	if (action === "shell-scale-other" || action === "balloon-scale-other") {
+		const typeLabel = action.startsWith("balloon-") ? "バルーン倍率" : "シェル倍率";
+		context.modalManager?.show("scale-other-modal-content");
+		setTimeout(() => {
+			const titleEl = document.getElementById("scale-other-title");
+			if (titleEl) titleEl.textContent = typeLabel;
+			const labelEl = document.getElementById("scale-other-label");
+			if (labelEl) labelEl.textContent = `${typeLabel}:`;
+			const okBtn = document.getElementById("scale-other-ok-btn");
+			const cancelBtn = document.getElementById("scale-other-cancel-btn");
+			const xInput = document.getElementById("scale-x-input") as HTMLInputElement;
+			const yInput = document.getElementById("scale-y-input") as HTMLInputElement;
+			const xyLock = document.getElementById("scale-xy-lock") as HTMLInputElement;
+
+			okBtn?.addEventListener("click", () => {
+				const val = xInput?.value || "100";
+				if (action.startsWith("balloon-")) {
+					context.applyBalloonScaleAction?.(`balloon-scale-${val}`);
+				} else {
+					context.applyShellScaleAction?.(`scale-${val}`);
+				}
+				context.modalManager?.hide();
+			}, { once: true });
+
+			cancelBtn?.addEventListener("click", () => {
+				context.modalManager?.hide();
+			}, { once: true });
+
+			if (xInput && yInput && xyLock) {
+				xInput.addEventListener("input", () => {
+					if (xyLock.checked) {
+						yInput.value = xInput.value;
+					}
+				});
+				yInput.addEventListener("input", () => {
+					if (xyLock.checked) {
+						xInput.value = yInput.value;
+					}
+				});
+			}
+		}, 50);
+		return;
+	}
 	if (action === "close" || action === "exit") return context.closeApp?.();
 	if (action === "close-all" || action === "exit-all")
 		return context.closeApp?.();

@@ -41,11 +41,27 @@ function isTransparentPixel(
 	return ctx.getImageData(0, 0, 1, 1).data[3] === 0;
 }
 
-function openCharacterMenu(screenX: number, screenY: number) {
-	const sX = globalThis.screenX ?? 0;
-	const sY = globalThis.screenY ?? 0;
-	const posX = screenX !== null && screenX !== undefined ? screenX : sX + 100;
-	const posY = screenY !== null && screenY !== undefined ? screenY : sY + 100;
+function openCharacterMenu(
+	screenX: number,
+	screenY: number,
+	clientX?: number,
+	clientY?: number,
+) {
+	const winX = globalThis.screenX ?? 0;
+	const winY = globalThis.screenY ?? 0;
+
+	let posX = screenX !== null && screenX !== undefined ? screenX : winX + 100;
+	let posY = screenY !== null && screenY !== undefined ? screenY : winY + 100;
+
+	if (
+		clientX !== undefined &&
+		clientY !== undefined &&
+		clientX > 0 &&
+		posX < winX + clientX
+	) {
+		posX = winX + clientX;
+		posY = winY + clientY;
+	}
 
 	void invoke("show_menu_window", {
 		x: posX,
@@ -129,6 +145,7 @@ function initCharacterWindow() {
 	let origin: { x: number; y: number } | null = null;
 	let longPressTimer: unknown = null;
 	let longPressTriggered = false;
+	let coordInterval: unknown = null;
 	const LONG_PRESS_DELAY = 600;
 
 	const onPointerDown = (e: unknown) => {
@@ -140,7 +157,7 @@ function initCharacterWindow() {
 			const clientX = e.clientX ?? 0;
 			const clientY = e.clientY ?? 0;
 			if (img && !isTransparentPixel(img, clientX, clientY)) {
-				openCharacterMenu(e.screenX ?? clientX, e.screenY ?? clientY);
+				openCharacterMenu(e.screenX ?? clientX, e.screenY ?? clientY, clientX, clientY);
 			}
 			return;
 		}
@@ -172,9 +189,10 @@ function initCharacterWindow() {
 		startX = clientX;
 		startY = clientY;
 
-		// Tauri ウィンドウドラッグ (CSS app-region: drag 併用)
-		let coordInterval: unknown = null;
+		// Tauri ウィンドウドラッグ起動
 		if (isTauriAvailable()) {
+			void startDraggingWindow();
+			if (coordInterval) clearInterval(coordInterval as number);
 			coordInterval = setInterval(async () => {
 				if (!isInteracting) {
 					clearInterval(coordInterval as number);
@@ -203,7 +221,7 @@ function initCharacterWindow() {
 		longPressTimer = setTimeout(() => {
 			if (isInteracting && !hasMoved) {
 				longPressTriggered = true;
-				openCharacterMenu(screenX, screenY);
+				openCharacterMenu(screenX, screenY, startX, startY);
 			}
 		}, LONG_PRESS_DELAY);
 	};
@@ -258,6 +276,10 @@ function initCharacterWindow() {
 		if (!isInteracting) return;
 		isInteracting = false;
 		hideCoordPopup();
+		if (coordInterval) {
+			clearInterval(coordInterval as number);
+			coordInterval = null;
+		}
 
 		if (longPressTimer) {
 			clearTimeout(longPressTimer);
@@ -285,12 +307,23 @@ function initCharacterWindow() {
 		}
 	};
 
+	const onContextMenu = (e: MouseEvent) => {
+		e.preventDefault?.();
+		const clientX = e.clientX ?? 0;
+		const clientY = e.clientY ?? 0;
+		openCharacterMenu(e.screenX ?? clientX, e.screenY ?? clientY, clientX, clientY);
+	};
+
 	if (typeof img?.addEventListener === "function") {
 		img.addEventListener("mousedown", onPointerDown);
 		img.addEventListener("wheel", onWheel, { passive: false });
+		img.addEventListener("contextmenu", onContextMenu);
 	}
 	root?.addEventListener("mousedown", onPointerDown);
 	root?.addEventListener("wheel", onWheel, { passive: false });
+	root?.addEventListener("contextmenu", onContextMenu);
+	document.addEventListener("contextmenu", onContextMenu);
+	globalThis.addEventListener("contextmenu", onContextMenu);
 	globalThis.addEventListener("mousemove", onPointerMove);
 	globalThis.addEventListener("mouseup", onPointerUp);
 
@@ -300,11 +333,6 @@ function initCharacterWindow() {
 	root?.addEventListener("touchstart", onPointerDown, { passive: true });
 	globalThis.addEventListener("touchmove", onPointerMove, { passive: true });
 	globalThis.addEventListener("touchend", onPointerUp);
-
-	globalThis.addEventListener("contextmenu", (e) => {
-		e.preventDefault();
-		openCharacterMenu(e.screenX, e.screenY);
-	});
 }
 
 if (document.readyState === "loading") {

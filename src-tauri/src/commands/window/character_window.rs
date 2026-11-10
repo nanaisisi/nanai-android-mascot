@@ -44,6 +44,7 @@ pub async fn show_character_window(
             .skip_taskbar(false)
             .resizable(false)
             .visible(false)
+            .initialization_script("window.addEventListener('contextmenu', function(e) { e.preventDefault(); });")
             .build()
             .map_err(|e| {
                 println!("❌ [Rust Window] character ウィンドウ構築エラー: {}", e);

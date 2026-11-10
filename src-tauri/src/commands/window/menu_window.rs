@@ -41,21 +41,33 @@ pub async fn show_menu_window(
             target_y = target_y.max(screen_pos.y as f64).min(max_y);
         }
 
-        if let Some(menu_win) = app_handle.get_webview_window("menu_window") {
+        let window_result = if let Some(menu_win) = app_handle.get_webview_window("menu_window") {
             let _ = menu_win.set_decorations(false);
             let _ = menu_win.set_shadow(false);
-            let _ = menu_win.set_size(tauri::Size::Logical(tauri::LogicalSize {
+            let size_res = menu_win.set_size(tauri::Size::Logical(tauri::LogicalSize {
                 width: win_width,
                 height: win_height,
             }));
-            let _ = menu_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
+            let pos_res = menu_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
                 x: target_x,
                 y: target_y,
             }));
-            let _ = menu_win.show();
-            let _ = menu_win.set_focus();
-            let _ = menu_win.emit("sync-menu-scope", menu_scope);
+            let _ = menu_win.unminimize();
+            let show_res = menu_win.show();
+            let focus_res = menu_win.set_focus();
+            let emit_res = menu_win.emit("sync-menu-scope", menu_scope);
+
+            if size_res.is_err() || pos_res.is_err() || show_res.is_err() {
+                let _ = menu_win.destroy();
+                Err("Window stale".to_string())
+            } else {
+                Ok(())
+            }
         } else {
+            Err("Window not found".to_string())
+        };
+
+        if window_result.is_err() {
             let menu_win = tauri::WebviewWindowBuilder::new(
                 &app_handle,
                 "menu_window",
@@ -70,6 +82,7 @@ pub async fn show_menu_window(
             .skip_taskbar(true)
             .resizable(false)
             .position(target_x, target_y)
+            .initialization_script("window.addEventListener('contextmenu', function(e) { e.preventDefault(); });")
             .build()
             .map_err(|e| e.to_string())?;
 

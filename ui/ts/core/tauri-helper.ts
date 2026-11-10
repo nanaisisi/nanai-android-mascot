@@ -147,7 +147,9 @@ export async function emit(event: string, payload?: unknown): Promise<void> {
 export async function startDraggingWindow(): Promise<void> {
 	if (!isTauriAvailable()) return;
 	try {
-		await getCurrentWindow().startDragging();
+		getCurrentWindow().startDragging().catch((err) => {
+			console.warn("startDraggingWindow failed:", err);
+		});
 	} catch (err) {
 		console.warn("startDraggingWindow failed:", err);
 	}

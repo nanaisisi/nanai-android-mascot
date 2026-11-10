@@ -231,5 +231,60 @@ export function renderSubmenuContent({
 			});
 			container.appendChild(btn);
 		});
+	} else if (
+		currentSubmenuType === "shell-scale-root" ||
+		currentSubmenuType === "shell-scale"
+	) {
+		let currentScale = 100;
+		try {
+			const saved = localStorage.getItem("nanai_shell_scale") || localStorage.getItem("shellScale");
+			if (saved) {
+				currentScale = parseInt(saved, 10) || 100;
+			}
+		} catch (_e) {}
+
+		const otherBtn = document.createElement("button");
+		otherBtn.type = "button";
+		otherBtn.className = "menu-item";
+		otherBtn.id = "shell-scale-other-btn";
+		otherBtn.innerHTML = `<span>　その他の倍率(<u>O</u>)...</span>`;
+		otherBtn.addEventListener("click", () => {
+			dispatchSubmenuAction("shell-scale-other");
+		});
+		container.appendChild(otherBtn);
+
+		const separator = document.createElement("hr");
+		separator.className = "menu-separator";
+		container.appendChild(separator);
+
+		const scaleLevels = [
+			300, 275, 250, 225, 200, 175, 166, 150, 133, 125, 100, 80, 75, 66, 50,
+			33, 25, 20,
+		];
+		scaleLevels.forEach((pct) => {
+			const isCurrent = pct === currentScale;
+			const btn = document.createElement("button");
+			btn.type = "button";
+			btn.className = `menu-item${isCurrent ? " is-current" : ""}`;
+			const label = pct === 100 ? "100%" : `${pct}%`;
+			const prefix = isCurrent ? "・" : "　";
+			btn.innerHTML = `<span>${prefix}${label}</span>`;
+			btn.addEventListener("click", () => {
+				dispatchSubmenuAction(`scale-${pct}`);
+			});
+			container.appendChild(btn);
+		});
+	} else if (currentSubmenuType === "balloon-scale") {
+		const balloonScales = [200, 150, 125, 100, 75, 50];
+		balloonScales.forEach((pct) => {
+			const btn = document.createElement("button");
+			btn.type = "button";
+			btn.className = `menu-item${pct === 100 ? " is-current" : ""}`;
+			btn.innerHTML = `<span>${pct === 100 ? "✓ " : ""}${pct}%${pct === 100 ? " (標準)" : ""}</span>`;
+			btn.addEventListener("click", () => {
+				dispatchSubmenuAction(`balloon-scale-${pct}`);
+			});
+			container.appendChild(btn);
+		});
 	}
 }

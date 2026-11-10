@@ -43,6 +43,8 @@ pub async fn show_character_window(
             .always_on_top(true)
             .skip_taskbar(false)
             .resizable(false)
+            .maximizable(false)
+            .minimizable(false)
             .visible(false)
             .initialization_script("window.addEventListener('contextmenu', function(e) { e.preventDefault(); });")
             .build()

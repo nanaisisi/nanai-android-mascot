@@ -93,6 +93,8 @@ pub async fn show_menu_window(
             .always_on_top(true)
             .skip_taskbar(true)
             .resizable(false)
+            .maximizable(false)
+            .minimizable(false)
             .position(target_x, target_y)
             .initialization_script("window.addEventListener('contextmenu', function(e) { e.preventDefault(); });")
             .build()

@@ -81,8 +81,8 @@ pub fn run() {
 
                 // バルーン・メニュー等の補助ウィンドウを先行キャッシュ（起動時のもたつき解消）
                 let app_handle_preload = app.handle().clone();
-                tauri::async_runtime::spawn(async move {
-                    let _ = commands::window::preload_auxiliary_windows(app_handle_preload).await;
+                let _ = tauri::async_runtime::block_on(async move {
+                    commands::window::preload_auxiliary_windows(app_handle_preload).await
                 });
             }
             #[cfg(target_os = "android")]

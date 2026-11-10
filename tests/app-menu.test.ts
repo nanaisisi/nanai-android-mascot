@@ -80,22 +80,14 @@ test("menuMethods covers toggleMenu, toggleHtmlMenu, syncMenuGhosts, hideMenu, a
 	assert.equal(syncCalled, true);
 	mockApp.syncMenuGhosts = originalSync;
 
-	// 7. toggleMenu with Tauri show_menu_window fail falling back to show_context_menu
-	globalThis.__TAURI_INTERNALS__.invoke = async (cmd) => {
-		if (cmd === "show_menu_window") throw new Error("fail");
-		if (cmd === "show_context_menu") return;
-	};
-	mockApp.toggleMenu(10, 20, 0);
-	await new Promise((r) => setTimeout(r, 10));
-
-	// 7b. show_context_menu also fails, falling back to toggleHtmlMenu
+	// 7. toggleMenu with Tauri show_menu_window fail falling back to toggleHtmlMenu
 	let htmlMenuToggled = false;
 	const originalToggleHtml = mockApp.toggleHtmlMenu;
 	mockApp.toggleHtmlMenu = () => {
 		htmlMenuToggled = true;
 	};
 	globalThis.__TAURI_INTERNALS__.invoke = async (cmd) => {
-		throw new Error(`fail ${cmd}`);
+		if (cmd === "show_menu_window") throw new Error("fail");
 	};
 	mockApp.toggleMenu(10, 20, 0);
 	await new Promise((r) => setTimeout(r, 10));

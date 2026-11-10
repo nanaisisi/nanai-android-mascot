@@ -25,44 +25,56 @@ pub async fn show_menu_window(
         let mut target_y = y;
 
         // モニター境界を取得して画面内に収める
-        if let Ok(Some(monitor)) = app_handle.primary_monitor() {
-            let screen_size = monitor.size();
-            let screen_pos = monitor.position();
-            let max_x = (screen_pos.x + screen_size.width as i32) as f64 - win_width;
-            let screen_bottom = (screen_pos.y + screen_size.height as i32) as f64;
-            let max_y = screen_bottom - win_height;
+        let monitor_opt = if let Ok(monitors) = app_handle.available_monitors() {
+            monitors
+                .into_iter()
+                .find(|m| {
+                    let pos = m.position();
+                    let size = m.size();
+                    let scale = m.scale_factor();
+                    let w = size.width as f64 / scale;
+                    let h = size.height as f64 / scale;
+                    let mx = pos.x as f64 / scale;
+                    let my = pos.y as f64 / scale;
+                    target_x >= mx && target_x <= mx + w && target_y >= my && target_y <= my + h
+                })
+                .or_else(|| app_handle.primary_monitor().ok().flatten())
+        } else {
+            app_handle.primary_monitor().ok().flatten()
+        };
 
-            if target_x > max_x {
-                target_x = max_x.max(screen_pos.x as f64);
-            }
-            if target_y > max_y {
-                target_y = y - win_height;
-            }
-            target_y = target_y.max(screen_pos.y as f64).min(max_y);
+        if let Some(monitor) = monitor_opt {
+            let size = monitor.size();
+            let pos = monitor.position();
+            let scale = monitor.scale_factor();
+            let screen_w = size.width as f64 / scale;
+            let screen_h = size.height as f64 / scale;
+            let screen_x = pos.x as f64 / scale;
+            let screen_y = pos.y as f64 / scale;
+
+            let max_x = screen_x + screen_w - win_width;
+            let max_y = screen_y + screen_h - win_height;
+
+            target_x = target_x.max(screen_x).min(max_x);
+            target_y = target_y.max(screen_y).min(max_y);
         }
 
         let window_result = if let Some(menu_win) = app_handle.get_webview_window("menu_window") {
             let _ = menu_win.set_decorations(false);
             let _ = menu_win.set_shadow(false);
-            let size_res = menu_win.set_size(tauri::Size::Logical(tauri::LogicalSize {
+            let _ = menu_win.set_size(tauri::Size::Logical(tauri::LogicalSize {
                 width: win_width,
                 height: win_height,
             }));
-            let pos_res = menu_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
+            let _ = menu_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
                 x: target_x,
                 y: target_y,
             }));
             let _ = menu_win.unminimize();
-            let show_res = menu_win.show();
-            let focus_res = menu_win.set_focus();
-            let emit_res = menu_win.emit("sync-menu-scope", menu_scope);
-
-            if size_res.is_err() || pos_res.is_err() || show_res.is_err() {
-                let _ = menu_win.destroy();
-                Err("Window stale".to_string())
-            } else {
-                Ok(())
-            }
+            let _ = menu_win.show();
+            let _ = menu_win.set_focus();
+            let _ = menu_win.emit("sync-menu-scope", menu_scope);
+            Ok(())
         } else {
             Err("Window not found".to_string())
         };

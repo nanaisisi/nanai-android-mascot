@@ -47,21 +47,30 @@ function openCharacterMenu(
 	clientX?: number,
 	clientY?: number,
 ) {
-	const winX = globalThis.screenX ?? 0;
-	const winY = globalThis.screenY ?? 0;
+	const winX = window.screenX ?? globalThis.screenX ?? 0;
+	const winY = window.screenY ?? globalThis.screenY ?? 0;
 
-	let posX = screenX !== null && screenX !== undefined ? screenX : winX + 100;
-	let posY = screenY !== null && screenY !== undefined ? screenY : winY + 100;
+	let posX =
+		screenX !== null && screenX !== undefined && screenX > 0
+			? screenX
+			: winX + (clientX ?? 100);
+	let posY =
+		screenY !== null && screenY !== undefined && screenY > 0
+			? screenY
+			: winY + (clientY ?? 100);
 
 	if (
 		clientX !== undefined &&
-		clientY !== undefined &&
 		clientX > 0 &&
-		posX < winX + clientX
+		winX > 0 &&
+		posX < winX
 	) {
 		posX = winX + clientX;
 		posY = winY + clientY;
 	}
+
+	if (isNaN(posX)) posX = winX + 100;
+	if (isNaN(posY)) posY = winY + 100;
 
 	void invoke("show_menu_window", {
 		x: posX,

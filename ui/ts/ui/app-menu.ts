@@ -19,16 +19,10 @@ export const menuMethods = {
 				.then(() => (this as unknown).syncMenuGhosts(scope))
 				.catch((err) => {
 					console.warn(
-						"show_menu_window failed, fallback to show_context_menu:",
+						"show_menu_window failed, fallback to toggleHtmlMenu:",
 						err,
 					);
-					const gc = (this as unknown).ghostController;
-					invoke("show_context_menu", {
-						ghosts: (gc.ghosts || []).map((g: unknown) => g.name),
-						currentGhost: gc.currentGhost?.name || null,
-						shells: gc.shells || ["master"],
-						currentShell: gc.currentShell || "master",
-					}).catch(() => (this as unknown).toggleHtmlMenu(scope));
+					(this as unknown).toggleHtmlMenu(scope);
 				});
 			return;
 		}

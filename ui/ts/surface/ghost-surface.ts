@@ -149,16 +149,24 @@ export const ghostSurfaceMethods = {
 
 			return await Promise.all([load(surfaceId), loadPna(surfaceId)])
 				.then(([dataUrl, pnaUrl]) => {
-					console.log(`✨ [Surface] Tauri サーフィスアセットロード成功: scope=${scopeId}, surface=${surfaceId}, hasData=${Boolean(dataUrl)}`);
+					console.log(
+						`✨ [Surface] Tauri サーフィスアセットロード成功: scope=${scopeId}, surface=${surfaceId}, hasData=${Boolean(dataUrl)}`,
+					);
 					return applyImageSrc(dataUrl, null, pnaUrl);
 				})
 				.catch(async (err) => {
-					console.warn(`⚠️ [Surface] load_surface_image 失敗 (scope=${scopeId}, surface=${surfaceId})、フォールバック(${fallbackSurface})へ移行:`, err);
+					console.warn(
+						`⚠️ [Surface] load_surface_image 失敗 (scope=${scopeId}, surface=${surfaceId})、フォールバック(${fallbackSurface})へ移行:`,
+						err,
+					);
 					try {
 						const fallbackUrl = await load(fallbackSurface);
 						return await applyImageSrc(fallbackUrl);
 					} catch (_err) {
-						console.error(`❌ [Surface] サーフィスフォールバックも失敗 (scope=${scopeId}, fallback=${fallbackSurface}):`, _err);
+						console.error(
+							`❌ [Surface] サーフィスフォールバックも失敗 (scope=${scopeId}, fallback=${fallbackSurface}):`,
+							_err,
+						);
 						if (img) img.style.display = "none";
 						if (!isMain && slot) slot.style.display = "none";
 						return null;
@@ -169,7 +177,9 @@ export const ghostSurfaceMethods = {
 		const imgUrl = convertFileSrc(
 			`${ghostPath}/shell/${shell}/surface${surfaceId}.png`,
 		);
-		console.log(`🌐 [Surface] Web非Tauri環境 サーフィスURL生成: scope=${scopeId}, url=${imgUrl}`);
+		console.log(
+			`🌐 [Surface] Web非Tauri環境 サーフィスURL生成: scope=${scopeId}, url=${imgUrl}`,
+		);
 		const pnaUrl = convertFileSrc(
 			`${ghostPath}/shell/${shell}/surface${surfaceId}.pna`,
 		);

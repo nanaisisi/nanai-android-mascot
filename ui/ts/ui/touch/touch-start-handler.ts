@@ -5,7 +5,35 @@ import {
 } from "./touch-helpers.js";
 import { startLongPressTimer } from "./touch-tap-handler.js";
 
-export function handleTouchStartEvent(recognizer: any, e: any) {
+export interface TouchStateRecognizer {
+	_clearLongPressTimer: () => void;
+	_startX: number;
+	_startY: number;
+	_startTime: number;
+	_lastX: number;
+	_lastY: number;
+	_lastTime: number;
+	_vx: number;
+	_vy: number;
+	_hasMoved: boolean;
+	_isDragging: boolean;
+	_accumulatedStroke: number;
+	_strokeTriggered: boolean;
+	_longPressTriggered: boolean;
+	_isPinching: boolean;
+	_initialPinchDist: number;
+	_initialAngle: number;
+	_lastPinchScale: number;
+	_twoFingerStartTime: number;
+	_twoFingerMoved: boolean;
+	_twoFingerCenter: { x: number; y: number };
+	[key: string]: unknown;
+}
+
+export function handleTouchStartEvent(
+	recognizer: TouchStateRecognizer,
+	e: TouchEvent,
+) {
 	const touches = e.touches;
 	recognizer._clearLongPressTimer();
 

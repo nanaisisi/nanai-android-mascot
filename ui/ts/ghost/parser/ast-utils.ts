@@ -1,11 +1,12 @@
-import type { SakuraAstNode } from "./ast-types.js";
+import type { SakuraAstNode, SakuraToken } from "./ast-types.js";
 import { traverseAst } from "./ast-types.js";
 
 export function getSakuraTokenLifetime(
-	token: any,
+	token: SakuraToken | unknown,
 ): "Scope" | "Script" | "Permanent" {
-	if (!token) return "Script";
-	const type = token.type;
+	if (!token || typeof token !== "object") return "Script";
+	const tok = token as SakuraToken;
+	const type = tok.type;
 
 	if (type === "font") {
 		return "Scope";
@@ -15,11 +16,11 @@ export function getSakuraTokenLifetime(
 		type === "surface" ||
 		type === "bind" ||
 		(type === "command" &&
-			(token.command === "bind" ||
-				token.command === "windowstate" ||
-				token.command === "setwallpaper" ||
-				token.command === "setproxy" ||
-				token.command === "sethttptimeout"))
+			(tok.command === "bind" ||
+				tok.command === "windowstate" ||
+				tok.command === "setwallpaper" ||
+				tok.command === "setproxy" ||
+				tok.command === "sethttptimeout"))
 	) {
 		return "Permanent";
 	}
@@ -79,9 +80,10 @@ export function collectSurfaces(ast: SakuraAstNode): number[] {
 	traverseAst(ast, (node) => {
 		if (
 			node.nodeType === "command" &&
-			(node.token as any)?.type === "surface"
+			node.token &&
+			(node.token as SakuraToken).type === "surface"
 		) {
-			surfaces.push((node.token as any).value);
+			surfaces.push(Number((node.token as SakuraToken).value));
 		}
 	});
 	return surfaces;
@@ -106,7 +108,11 @@ export function collectAnchors(
 export function calculateAstTextLength(ast: SakuraAstNode): number {
 	let length = 0;
 	traverseAst(ast, (node) => {
-		if (node.nodeType === "command" && (node.token as any)?.type === "char") {
+		if (
+			node.nodeType === "command" &&
+			node.token &&
+			(node.token as SakuraToken).type === "char"
+		) {
 			length += 1;
 		} else if (
 			node.nodeType === "choice" &&
@@ -150,11 +156,13 @@ export function collectAnimations(
 	traverseAst(ast, (node) => {
 		if (
 			node.nodeType === "command" &&
-			(node.token as any)?.type === "animation"
+			node.token &&
+			(node.token as SakuraToken).type === "animation"
 		) {
+			const tok = node.token as SakuraToken;
 			animations.push({
-				id: (node.token as any).animId ?? 0,
-				wait: (node.token as any).wait === true,
+				id: (tok.animId as number | string) ?? 0,
+				wait: tok.wait === true,
 			});
 		}
 	});
@@ -198,16 +206,14 @@ export function filterAstByScope(
  * ログ保存や早送り再生用にウェイト（\w, \_w）トークンを除去した AST を再帰生成する
  */
 export function stripWaitsFromAst(ast: SakuraAstNode): SakuraAstNode {
-	if (
-		ast.nodeType === "command" &&
-		((ast.token as any)?.type === "wait" ||
-			(ast.token as any)?.type === "wait_audio" ||
-			(ast.token as any)?.type === "wait_anim")
-	) {
-		return {
-			nodeType: "root",
-			children: [],
-		};
+	if (ast.nodeType === "command" && ast.token) {
+		const type = (ast.token as SakuraToken).type;
+		if (type === "wait" || type === "wait_audio" || type === "wait_anim") {
+			return {
+				nodeType: "root",
+				children: [],
+			};
+		}
 	}
 
 	if (!ast.children || ast.children.length === 0) {
@@ -235,7 +241,7 @@ export function stripWaitsFromAst(ast: SakuraAstNode): SakuraAstNode {
  */
 export function mapAstCommands(
 	ast: SakuraAstNode,
-	transform: (token: any) => any,
+	transform: (token: SakuraToken | unknown) => SakuraToken | unknown,
 ): SakuraAstNode {
 	if (ast.nodeType === "command") {
 		return {
@@ -260,8 +266,12 @@ export function mapAstCommands(
 export function extractAstText(ast: SakuraAstNode): string {
 	let text = "";
 	traverseAst(ast, (node) => {
-		if (node.nodeType === "command" && (node.token as any)?.type === "char") {
-			text += (node.token as any).value ?? "";
+		if (
+			node.nodeType === "command" &&
+			node.token &&
+			(node.token as SakuraToken).type === "char"
+		) {
+			text += String((node.token as SakuraToken).value ?? "");
 		} else if (
 			node.nodeType === "choice" &&
 			(!node.children || node.children.length === 0) &&

@@ -5,8 +5,36 @@ import {
 	isTauriAvailable,
 } from "../core/tauri-helper.js";
 
+export interface SurfaceManagerInterface {
+	processChromaKey?: (src: string, pnaSrc: string | null) => Promise<string>;
+	composeSurfaceElements?: (
+		surfaceId: number | string,
+		transparentSrc: string,
+		resolveLayerImage: (fileName: string) => Promise<string | null>,
+		scopeId: number,
+		extraLayers: unknown,
+	) => Promise<string>;
+	elements?: Record<string, unknown[]>;
+	[key: string]: unknown;
+}
+
+export interface GhostSurfaceControllerInterface {
+	app?: {
+		surfaceManager?: SurfaceManagerInterface;
+		[key: string]: unknown;
+	};
+	loadSurfaceAsset: (
+		cmd: string,
+		ghostPath: string,
+		shell: string,
+		resolveId: string | number,
+	) => Promise<string>;
+	currentSurfaces?: Map<number, string>;
+	[key: string]: unknown;
+}
+
 export async function applySurfaceImageToDom(
-	controller: any,
+	controller: GhostSurfaceControllerInterface,
 	src: string,
 	fallbackSrc: string | null,
 	pnaSrc: string | null,
@@ -15,10 +43,10 @@ export async function applySurfaceImageToDom(
 		surfaceId: number | string;
 		ghostPath: string;
 		shell: string;
-		extraLayers: any;
+		extraLayers: unknown;
 		isStale: () => boolean;
-		img: any;
-		placeholder: any;
+		img: HTMLImageElement | null;
+		placeholder: HTMLElement | null;
 	},
 ) {
 	const {

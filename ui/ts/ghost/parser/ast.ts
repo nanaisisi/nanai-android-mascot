@@ -3,9 +3,19 @@
  * @brief さくらスクリプト AST (Abstract Syntax Tree) 構築モジュール
  */
 
-import type { SakuraAstNode } from "./ast-types.js";
+import type {
+	SakuraAnchorScope,
+	SakuraAstNode,
+	SakuraChoiceScope,
+	SakuraToken,
+} from "./ast-types.js";
 
-export type { SakuraAstNode } from "./ast-types.js";
+export type {
+	SakuraAnchorScope,
+	SakuraAstNode,
+	SakuraChoiceScope,
+	SakuraToken,
+} from "./ast-types.js";
 export { traverseAst } from "./ast-types.js";
 export type { AstDiagnostics } from "./ast-utils.js";
 export {
@@ -30,10 +40,10 @@ export function tokensToAst(tokens: unknown[]): SakuraAstNode {
 	let currentScope: number | null = null;
 	let scopeChildren: SakuraAstNode[] = [];
 
-	let currentAnchor: any = null;
+	let currentAnchor: SakuraAnchorScope | null = null;
 	let anchorChildren: SakuraAstNode[] = [];
 
-	let currentChoiceScope: any = null;
+	let currentChoiceScope: SakuraChoiceScope | null = null;
 	let choiceScopeChildren: SakuraAstNode[] = [];
 
 	const pushToCurrentContainer = (node: SakuraAstNode) => {
@@ -48,15 +58,19 @@ export function tokensToAst(tokens: unknown[]): SakuraAstNode {
 		}
 	};
 
-	for (const token of tokens as any[]) {
+	for (const rawToken of tokens) {
+		const token = (rawToken ?? {}) as SakuraToken;
 		if (token.type === "scope") {
 			if (currentChoiceScope) {
 				const choiceNode: SakuraAstNode = {
 					nodeType: "choice",
 					id: currentChoiceScope.id,
 					text: choiceScopeChildren
-						.filter((n) => (n.token as any)?.type === "char")
-						.map((n) => (n.token as any).value)
+						.filter(
+							(n) =>
+								Boolean(n.token) && (n.token as SakuraToken).type === "char",
+						)
+						.map((n) => String((n.token as SakuraToken).value ?? ""))
 						.join(""),
 					args: currentChoiceScope.args || [],
 					children: choiceScopeChildren,
@@ -107,8 +121,11 @@ export function tokensToAst(tokens: unknown[]): SakuraAstNode {
 					nodeType: "choice",
 					id: currentChoiceScope.id,
 					text: choiceScopeChildren
-						.filter((n) => (n.token as any)?.type === "char")
-						.map((n) => (n.token as any).value)
+						.filter(
+							(n) =>
+								Boolean(n.token) && (n.token as SakuraToken).type === "char",
+						)
+						.map((n) => String((n.token as SakuraToken).value ?? ""))
 						.join(""),
 					args: currentChoiceScope.args || [],
 					children: choiceScopeChildren,
@@ -135,8 +152,11 @@ export function tokensToAst(tokens: unknown[]): SakuraAstNode {
 				const derivedText =
 					currentAnchor.text ||
 					anchorChildren
-						.filter((n) => (n.token as any)?.type === "char")
-						.map((n) => (n.token as any).value)
+						.filter(
+							(n) =>
+								Boolean(n.token) && (n.token as SakuraToken).type === "char",
+						)
+						.map((n) => String((n.token as SakuraToken).value ?? ""))
 						.join("");
 				const anchorNode: SakuraAstNode = {
 					nodeType: "anchor",
@@ -173,8 +193,10 @@ export function tokensToAst(tokens: unknown[]): SakuraAstNode {
 			nodeType: "choice",
 			id: currentChoiceScope.id,
 			text: choiceScopeChildren
-				.filter((n) => (n.token as any)?.type === "char")
-				.map((n) => (n.token as any).value)
+				.filter(
+					(n) => Boolean(n.token) && (n.token as SakuraToken).type === "char",
+				)
+				.map((n) => String((n.token as SakuraToken).value ?? ""))
 				.join(""),
 			args: currentChoiceScope.args || [],
 			children: choiceScopeChildren,
@@ -191,8 +213,10 @@ export function tokensToAst(tokens: unknown[]): SakuraAstNode {
 		const derivedText =
 			currentAnchor.text ||
 			anchorChildren
-				.filter((n) => (n.token as any)?.type === "char")
-				.map((n) => (n.token as any).value)
+				.filter(
+					(n) => Boolean(n.token) && (n.token as SakuraToken).type === "char",
+				)
+				.map((n) => String((n.token as SakuraToken).value ?? ""))
 				.join("");
 		const anchorNode: SakuraAstNode = {
 			nodeType: "anchor",

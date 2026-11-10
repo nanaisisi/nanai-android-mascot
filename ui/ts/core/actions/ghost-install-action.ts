@@ -6,7 +6,47 @@ import {
 	buildInstallFailureArgs,
 } from "./install-protocol.js";
 
-export async function installGhostFromMenuImpl(context: any) {
+export interface GhostArchiveInstallResult {
+	name?: string;
+	path?: string;
+	[key: string]: unknown;
+}
+
+export interface GhostItem {
+	name: string;
+	path?: string;
+	[key: string]: unknown;
+}
+
+export interface BalloonItem {
+	name: string;
+	dir_name: string;
+	[key: string]: unknown;
+}
+
+export interface GhostInstallContext {
+	ghostController: {
+		ghosts: GhostItem[];
+		scanGhosts: () => Promise<unknown>;
+		selectGhost?: (name: string) => Promise<unknown>;
+		sendShioriEvent?: (event: string, args?: unknown[]) => Promise<unknown>;
+	};
+	availableBalloons?: BalloonItem[];
+	scanBalloons: () => Promise<unknown>;
+	setBalloonTheme: (theme: string) => Promise<unknown> | unknown;
+	showBalloon?: (message: string) => unknown;
+	hideBalloon?: () => unknown;
+	modalManager?: {
+		show: (contentId: string) => unknown;
+		showNotification: (
+			title: string,
+			message: string,
+			isError?: boolean,
+		) => unknown;
+	};
+}
+
+export async function installGhostFromMenuImpl(context: GhostInstallContext) {
 	if (!isTauriAvailable()) {
 		return context.modalManager?.show("install-modal-content");
 	}
@@ -17,31 +57,29 @@ export async function installGhostFromMenuImpl(context: any) {
 			buildInstallBeginArgs("install"),
 		);
 
-		const result: unknown = await invoke("pick_and_install_ghost_archive");
+		const result =
+			(await invoke<GhostArchiveInstallResult>(
+				"pick_and_install_ghost_archive",
+			)) ?? null;
 		if (!result) return;
 
 		await context.ghostController.scanGhosts();
 		await context.scanBalloons();
 
+		const resultName = result.name || "";
+		const resultPath = result.path || "";
+
 		const importedGhost = context.ghostController.ghosts.find(
-			(ghost: unknown) => (ghost as any).name === (result as any).name,
+			(ghost) => ghost.name === resultName,
 		);
 		if (importedGhost) {
 			await gc?.sendShioriEvent?.(
 				"OnInstallCompleteEx",
-				buildInstallCompleteExArgs(
-					"ghost",
-					(result as any).name,
-					(result as any).path || "",
-				),
+				buildInstallCompleteExArgs("ghost", resultName, resultPath),
 			);
 			await gc?.sendShioriEvent?.(
 				"OnInstallComplete",
-				buildInstallCompleteArgs(
-					"ghost",
-					(result as any).name,
-					(result as any).path || "",
-				),
+				buildInstallCompleteArgs("ghost", resultName, resultPath),
 			);
 			context.showBalloon?.(`ゴースト「${importedGhost.name}」を導入しました`);
 			setTimeout(() => context.hideBalloon?.(), 2000);
@@ -49,9 +87,8 @@ export async function installGhostFromMenuImpl(context: any) {
 			return;
 		}
 		const importedBalloon = context.availableBalloons?.find(
-			(balloon: unknown) =>
-				(balloon as any).name === (result as any).name ||
-				(balloon as any).dir_name === (result as any).name,
+			(balloon) =>
+				balloon.name === resultName || balloon.dir_name === resultName,
 		);
 		if (importedBalloon) {
 			await gc?.sendShioriEvent?.(
@@ -67,14 +104,16 @@ export async function installGhostFromMenuImpl(context: any) {
 				buildInstallCompleteArgs("balloon", importedBalloon.name),
 			);
 			await context.setBalloonTheme(importedBalloon.dir_name);
-			context.showBalloon(`バルーン「${importedBalloon.name}」を導入しました`);
-			setTimeout(() => context.hideBalloon(), 2000);
+			context.showBalloon?.(
+				`バルーン「${importedBalloon.name}」を導入しました`,
+			);
+			setTimeout(() => context.hideBalloon?.(), 2000);
 			return;
 		}
 
 		await gc?.sendShioriEvent?.(
 			"OnInstallComplete",
-			buildInstallCompleteArgs("package", (result as any).name),
+			buildInstallCompleteArgs("package", resultName),
 		);
 	} catch (error) {
 		console.error("メニューからのゴースト取り込みに失敗しました:", error);

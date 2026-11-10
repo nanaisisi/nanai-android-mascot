@@ -80,7 +80,7 @@ export function applyBalloonScale(
 		const balloonEl = document.querySelector(".balloon") as HTMLElement | null;
 		if (balloonEl?.style) {
 			balloonEl.style.transform = `scale(${finalScale})`;
-			balloonEl.style.transformOrigin = "bottom left";
+			balloonEl.style.transformOrigin = "top left";
 		}
 	}
 

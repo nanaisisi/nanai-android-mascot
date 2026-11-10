@@ -19,6 +19,6 @@ export function applyDpiAndScaleProperties(root, props, instance) {
 	if (balloonScaleEl) {
 		balloonScaleEl.style.transform =
 			finalScale !== 1 ? `scale(${finalScale})` : "";
-		balloonScaleEl.style.transformOrigin = "bottom left";
+		balloonScaleEl.style.transformOrigin = "top left";
 	}
 }

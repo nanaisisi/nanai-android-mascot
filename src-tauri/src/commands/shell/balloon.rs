@@ -143,7 +143,32 @@ pub fn load_balloon_image(
     app_handle: tauri::AppHandle,
 ) -> Result<Option<String>, String> {
     let dir = resolve_balloon_dir(&name, &app_handle)?;
-    let Some(path) = nanai_android_mascot_ui::resolve_vfs_path(&dir, &file) else {
+
+    let found_path = nanai_android_mascot_ui::resolve_vfs_path(&dir, &file).or_else(|| {
+        let stem = std::path::Path::new(&file)
+            .file_stem()
+            .and_then(|s| s.to_str())?;
+
+        let extensions = ["png", "bmp", "jpg", "jpeg", "pna", "gif"];
+        for ext in &extensions {
+            let alt_file = format!("{}.{}", stem, ext);
+            if let Some(p) = nanai_android_mascot_ui::resolve_vfs_path(&dir, &alt_file) {
+                return Some(p);
+            }
+        }
+
+        if let Some(stripped_stem) = stem.strip_suffix('0') {
+            for ext in &extensions {
+                let alt_file = format!("{}.{}", stripped_stem, ext);
+                if let Some(p) = nanai_android_mascot_ui::resolve_vfs_path(&dir, &alt_file) {
+                    return Some(p);
+                }
+            }
+        }
+        None
+    });
+
+    let Some(path) = found_path else {
         return Ok(None);
     };
     let Ok(bytes) = std::fs::read(&path) else {
@@ -158,6 +183,7 @@ pub fn load_balloon_image(
         Some(ref e) if e == "bmp" => "image/bmp",
         Some(ref e) if e == "jpg" || e == "jpeg" => "image/jpeg",
         Some(ref e) if e == "svg" => "image/svg+xml",
+        Some(ref e) if e == "gif" => "image/gif",
         _ => "application/octet-stream",
     };
     Ok(Some(format!(

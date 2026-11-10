@@ -172,23 +172,6 @@ export async function applyBalloonDescript({
 			Boolean(instanceContext.balloonDontMove);
 		onDontMoveChange?.(isBalloonDontMove);
 
-		// 有効テキスト領域 (validrect) による余白調整
-		const vl = parseInt(props["validrect.left"], 10);
-		const vt = parseInt(props["validrect.top"], 10);
-		const vr = parseInt(props["validrect.right"], 10);
-		const vb = parseInt(props["validrect.bottom"], 10);
-		if (
-			!Number.isNaN(vl) &&
-			!Number.isNaN(vt) &&
-			!Number.isNaN(vr) &&
-			!Number.isNaN(vb)
-		) {
-			balloonBox?.style.setProperty(
-				"padding",
-				`${Math.max(4, Math.abs(vt))}px ${Math.max(4, Math.abs(vr))}px ${Math.max(4, Math.abs(vb))}px ${Math.max(4, Math.abs(vl))}px`,
-			);
-		}
-
 		// 折り返し幅 (wordwrappoint.x は原点右基準の負オフセット指定)
 		const ww = parseInt(props["wordwrappoint.x"], 10);
 		if (!Number.isNaN(ww)) {
@@ -204,22 +187,25 @@ export async function applyBalloonDescript({
 		}
 
 		if (bgImage) {
+			const vt = parseInt(props["validrect.top"], 10);
+			const vr = parseInt(props["validrect.right"], 10);
+			const vb = parseInt(props["validrect.bottom"], 10);
+			const vl = parseInt(props["validrect.left"], 10);
+
 			const t = Number.isNaN(vt) ? 16 : Math.max(8, Math.abs(vt));
 			const r = Number.isNaN(vr) ? 16 : Math.max(8, Math.abs(vr));
 			const b = Number.isNaN(vb) ? 16 : Math.max(8, Math.abs(vb));
 			const l = Number.isNaN(vl) ? 16 : Math.max(8, Math.abs(vl));
-			const balloonEl = balloonBox || document.querySelector(".balloon");
-			if (balloonEl?.style) {
-				balloonEl.style.borderImageSource = `url("${bgImage}")`;
-				balloonEl.style.borderImageSlice = `${t} ${r} ${b} ${l} fill`;
-				balloonEl.style.borderImageWidth = `${t}px ${r}px ${b}px ${l}px`;
-				balloonEl.style.borderImageRepeat = "repeat";
-				balloonEl.style.backgroundColor = "transparent";
 
-				const dims = await getImageDimensions(bgImage);
-				if (dims.height > 0) {
-					balloonEl.style.minHeight = `${dims.height}px`;
-				}
+			root.style.setProperty("--balloon-border-image-source", `url("${bgImage}")`);
+			root.style.setProperty("--balloon-border-image-slice", `${t} ${r} ${b} ${l} fill`);
+			root.style.setProperty("--balloon-border-image-width", `${t}px ${r}px ${b}px ${l}px`);
+			root.style.setProperty("--balloon-border-image-repeat", props["border.repeat"] || "repeat");
+			root.style.setProperty("--balloon-padding", `${t}px ${r}px ${b}px ${l}px`);
+
+			const dims = await getImageDimensions(bgImage);
+			if (dims.height > 0) {
+				root.style.setProperty("--balloon-min-height", `${dims.height}px`);
 			}
 		}
 

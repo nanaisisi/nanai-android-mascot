@@ -89,7 +89,7 @@ pub async fn show_character_window(
                 target_y = (screen_h - win_height - 60.0).max(40.0);
             }
 
-            // スコープ0が既に存在する場合はそれを基準に横に並べる
+            // スコープ0が既に存在する場合はそれを基準に横に並べる (スコープNに応じたオフセット)
             if scope_id > 0
                 && let Some(char0_win) = app_handle.get_webview_window("subchar_window_0")
                 && let Ok(pos) = char0_win.outer_position()
@@ -99,7 +99,7 @@ pub async fn show_character_window(
                     .unwrap_or(None)
                     .map(|m| m.scale_factor())
                     .unwrap_or(1.0);
-                target_x = (pos.x as f64 / scale) - 220.0;
+                target_x = (pos.x as f64 / scale) - (220.0 * scope_id as f64);
                 target_y = pos.y as f64 / scale;
             }
 

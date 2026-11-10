@@ -41,7 +41,7 @@ export const settingsMethods = {
 			(this as unknown).elements.balloonDisplay.style.transform =
 				`translateX(-50%) scale(${balloonPercent / 100})`;
 			(this as unknown).elements.balloonDisplay.style.transformOrigin =
-				"bottom center";
+				"top left";
 		}
 
 		(this as unknown).applyBalloonTheme();

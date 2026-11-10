@@ -1,3 +1,5 @@
+import { invoke } from "../../tauri-helper.js";
+
 /**
  * @file assets.js
  * @brief バルーン画像・矢印・マーカー・カーソル・アルファ・推奨ゴースト設定反映 (UKADOC準拠)
@@ -19,24 +21,26 @@ export function applyAssetProperties(
 		onlineMarkerInterval?: unknown;
 	},
 ) {
+	const p = (props as Record<string, string>) || {};
+
 	// [descript.txt（Balloonの）]: props
 	// [readme,ファイル名]: props["readme"]
-	if (props.readme) root.style.setProperty("--balloon-readme", props.readme);
+	if (p.readme) root.style.setProperty("--balloon-readme", p.readme);
 
 	// [readme.charset,文字コード]: props["readme.charset"]
-	if (props["readme.charset"])
-		root.style.setProperty("--balloon-readme-charset", props["readme.charset"]);
+	if (p["readme.charset"])
+		root.style.setProperty("--balloon-readme-charset", p["readme.charset"]);
 
 	// [推奨の意味], [recommended.ghost,ゴースト名], [recommended.ghost.path,パス]:
-	if (props["recommended.ghost"])
+	if (p["recommended.ghost"])
 		root.style.setProperty(
 			"--balloon-recommended-ghost",
-			props["recommended.ghost"],
+			p["recommended.ghost"],
 		);
-	if (props["recommended.ghost.path"])
+	if (p["recommended.ghost.path"])
 		root.style.setProperty(
 			"--balloon-recommended-ghost-path",
-			props["recommended.ghost.path"],
+			p["recommended.ghost.path"],
 		);
 
 	const preloadBalloonAsset = (url: string | null) => {
@@ -51,38 +55,54 @@ export function applyAssetProperties(
 	};
 
 	const setBalloonImage = (propName: string, cssVarName: string) => {
-		const filename = props[propName];
+		const filename = p[propName];
 		if (filename) {
-			const themeName = instance.currentBalloonTheme || "default";
+			const themeName = (instance?.currentBalloonTheme as string) || "default";
 			const fullPath = `assets/balloon/${themeName}/${filename}`;
 			const url = globalThis.__TAURI__?.core?.convertFileSrc
 				? globalThis.__TAURI__.core.convertFileSrc(fullPath)
 				: fullPath;
 			preloadBalloonAsset(url);
 			root.style.setProperty(cssVarName, `url("${url}")`);
+
+			if (globalThis.__TAURI__ && typeof invoke === "function") {
+				void invoke("load_balloon_image", { name: themeName, file: filename })
+					.then((dataUrl) => {
+						if (dataUrl) {
+							preloadBalloonAsset(dataUrl as string);
+							root.style.setProperty(cssVarName, `url("${dataUrl}")`);
+						}
+					})
+					.catch(() => {});
+			}
 		}
 	};
 	// [arrow.filename,ファイル名]: UKADOC 準拠ベース名展開 (拡張子なし -> arrow0.png / arrow1.png)
-	if (props["arrow.filename"]) {
-		const arrowBase = props["arrow.filename"];
-		const arrowBaseName = arrowBase.replace(/\.png$/i, "");
-		const themeName = instance.currentBalloonTheme || "default";
-		const resolveArrowUrl = (file: string) => {
+	if (p["arrow.filename"]) {
+		const arrowBase = p["arrow.filename"];
+		const arrowBaseName = arrowBase.replace(/\.(png|bmp|jpg|jpeg)$/i, "");
+		const themeName = (instance?.currentBalloonTheme as string) || "default";
+		const resolveAndSetArrow = (file: string, cssVar: string) => {
 			const fullPath = `assets/balloon/${themeName}/${file}`;
 			const url = globalThis.__TAURI__?.core?.convertFileSrc
 				? globalThis.__TAURI__.core.convertFileSrc(fullPath)
 				: fullPath;
 			preloadBalloonAsset(url);
-			return url;
+			root.style.setProperty(cssVar, `url("${url}")`);
+
+			if (globalThis.__TAURI__ && typeof invoke === "function") {
+				void invoke("load_balloon_image", { name: themeName, file })
+					.then((dataUrl) => {
+						if (dataUrl) {
+							preloadBalloonAsset(dataUrl as string);
+							root.style.setProperty(cssVar, `url("${dataUrl}")`);
+						}
+					})
+					.catch(() => {});
+			}
 		};
-		root.style.setProperty(
-			"--balloon-arrow0-image",
-			`url("${resolveArrowUrl(`${arrowBaseName}0.png`)}")`,
-		);
-		root.style.setProperty(
-			"--balloon-arrow1-image",
-			`url("${resolveArrowUrl(`${arrowBaseName}1.png`)}")`,
-		);
+		resolveAndSetArrow(`${arrowBaseName}0.png`, "--balloon-arrow0-image");
+		resolveAndSetArrow(`${arrowBaseName}1.png`, "--balloon-arrow1-image");
 	}
 	setBalloonImage("arrow.filename", "--balloon-arrow-image");
 	// [clickwaitmarker.filename,ファイル名]:
@@ -95,14 +115,21 @@ export function applyAssetProperties(
 	setBalloonImage("sstpmarker.filename", "--balloon-sstpmarker-image");
 
 	const setMouseCursor = (propName: string, varName: string) => {
-		const filename = props[propName];
+		const filename = p[propName];
 		if (filename) {
-			const themeName = instance.currentBalloonTheme || "default";
-			const fullPath = `assets/balloon/${themeName}/${filename}`;
-			const url = globalThis.__TAURI__?.core?.convertFileSrc
-				? globalThis.__TAURI__.core.convertFileSrc(fullPath)
-				: fullPath;
-			root.style.setProperty(varName, `url("${url}"), auto`);
+			const themeName = (instance?.currentBalloonTheme as string) || "default";
+			if (globalThis.__TAURI__) {
+				void invoke("load_balloon_image", { name: themeName, file: filename })
+					.then((dataUrl) => {
+						if (dataUrl) {
+							root.style.setProperty(varName, `url("${dataUrl}"), auto`);
+						}
+					})
+					.catch(() => {});
+			} else {
+				const fullPath = `assets/balloon/${themeName}/${filename}`;
+				root.style.setProperty(varName, `url("${fullPath}"), auto`);
+			}
 		}
 	};
 	// [cursor,ファイル名 / mousecursor,ファイル名]:

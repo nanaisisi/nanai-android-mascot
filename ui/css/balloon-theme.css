@@ -20,7 +20,7 @@
 /* 頭上表示系スキンアライメント共通ルール */
 [data-balloon-theme$="_overhead"],
 body[class*="overhead"] {
-	transform-origin: bottom center;
+	transform-origin: top left;
 }
 
 .balloon,

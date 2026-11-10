@@ -45,7 +45,7 @@ describe("balloon-descript-layout scale submodule", () => {
 			assert.equal(root.vars["--balloon-dpi"], "192");
 			assert.equal(root.vars["--balloon-dpi-scale"], "0.5");
 			assert.equal(transform, "scale(0.75)");
-			assert.equal(transformOrigin, "bottom left");
+			assert.equal(transformOrigin, "top left");
 
 			// Fallback default DPI (96) and scale 1.0 (empty transform)
 			const rootDefault = createMockRoot();

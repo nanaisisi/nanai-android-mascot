@@ -97,10 +97,15 @@ globalThis.Image = class {
 	decode() {
 		return Promise.resolve();
 	}
-	constructor() {
+	_src = "";
+	set src(v: string) {
+		this._src = v;
 		setTimeout(() => {
 			this.onload?.();
 		}, 0);
+	}
+	get src() {
+		return this._src;
 	}
 } as any;
 

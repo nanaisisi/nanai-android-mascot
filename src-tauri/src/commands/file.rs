@@ -110,7 +110,25 @@ pub fn load_surface_image(
         }
     }
 
-    println!("⚠️ [Rust File] load_surface_image: 指定されたサーフィス画像が見つかりません (surface_id={}, shell={}). フォールバックを使用します。", surface_id, shell_name);
+    let fallback_candidates = vec![
+        shell_dir.join("surface0000.png"),
+        shell_dir.join("surface0.png"),
+        master_dir.join("surface0000.png"),
+        master_dir.join("surface0.png"),
+    ];
+    for candidate in &fallback_candidates {
+        if let Some(target) = find_file_case_insensitive(candidate)
+            && target.is_file()
+            && let Ok(bytes) = fs::read(&target)
+        {
+            println!("🔄 [Rust File] load_surface_image: surface{} 個別ファイル未検出のためベース surface0 をフォールバック利用します", surface_id);
+            use base64::Engine;
+            let b64 = base64::engine::general_purpose::STANDARD.encode(&bytes);
+            return Ok(format!("data:image/png;base64,{b64}"));
+        }
+    }
+
+    println!("⚠️ [Rust File] load_surface_image: 指定されたサーフィス画像が見つかりません (surface_id={}, shell={}).", surface_id, shell_name);
     Err(format!(
         "Surface image not found for surface_id: {surface_id} in shell: {shell_name}"
     ))

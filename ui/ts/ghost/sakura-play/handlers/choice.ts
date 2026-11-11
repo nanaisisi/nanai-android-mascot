@@ -1,3 +1,4 @@
+// biome-ignore-all lint/suspicious/noExplicitAny: legacy handler parameters
 /**
  * @file choice.ts
  * @brief さくらスクリプト再生時の選択肢(\q)およびアンカー(\_a)要素生成・イベントハンドラ
@@ -144,10 +145,10 @@ export function handleAnchorEnd(
 }
 
 export function handleChoiceScopeBegin(
-	player: unknown,
-	app: unknown,
-	token: unknown,
-	context: unknown,
+	player: any,
+	app: any,
+	token: any,
+	context: any,
 ) {
 	const {
 		currentBalloonText,
@@ -160,7 +161,7 @@ export function handleChoiceScopeBegin(
 	inlineChoiceSpan.setAttribute("data-choice-id", token.id);
 	inlineChoiceSpan.style.cursor = "pointer";
 
-	let hoverTimer: unknown = null;
+	let hoverTimer: any = null;
 	inlineChoiceSpan.addEventListener("click", (e: MouseEvent) => {
 		e.stopPropagation();
 		if (hoverTimer) {
@@ -228,10 +229,10 @@ export function handleChoiceScopeBegin(
 }
 
 export function handleChoiceScopeEnd(
-	_player: unknown,
-	_app: unknown,
-	_token: unknown,
-	context: unknown,
+	_player: any,
+	_app: any,
+	_token: any,
+	context: any,
 ) {
 	if (context.currentAnchor === context.currentChoiceScope) {
 		context.currentAnchor = null;

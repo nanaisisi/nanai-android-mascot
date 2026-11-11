@@ -1,3 +1,4 @@
+// biome-ignore-all lint/suspicious/noExplicitAny: legacy handler parameters
 /**
  * @file surface.ts
  * @brief サーフェスプロパティ・拡大縮小・透明度・位置設定コマンドハンドラ
@@ -92,9 +93,11 @@ export async function handleLeaveMode(handler: any, args: string[]) {
  * [bang-get-property.md], [property.get.md]
  */
 export async function handleGetPropertyCommand(
-	handler: unknown,
+	handler: any,
 	keyOrArgs: string | string[],
 ) {
+	const h = handler;
+
 	// 1. 配列指定時の \![get,property,eventName,...propKeys] 形式
 	if (Array.isArray(keyOrArgs)) {
 		const rawArgs =
@@ -109,21 +112,20 @@ export async function handleGetPropertyCommand(
 		for (const prop of propKeys) {
 			const trimmedProp = prop.trim();
 			let val = "";
-			if (handler?.app?.ghostController?.evaluateProperty) {
+			if (h?.app?.ghostController?.evaluateProperty) {
 				try {
 					val = String(
-						(await handler.app.ghostController.evaluateProperty(trimmedProp)) ??
-							"",
+						(await h.app.ghostController.evaluateProperty(trimmedProp)) ?? "",
 					);
 				} catch {
 					val = "";
 				}
-			} else if (handler?.app?.ghostController?.sendShioriEvent) {
+			} else if (h?.app?.ghostController?.sendShioriEvent) {
 				try {
-					const res: unknown =
-						await handler.app.ghostController.sendShioriEvent("property.get", [
-							trimmedProp,
-						]);
+					const res: unknown = await h.app.ghostController.sendShioriEvent(
+						"property.get",
+						[trimmedProp],
+					);
 					val =
 						(res as { response?: { value?: string } })?.response?.value ?? "";
 				} catch {
@@ -136,8 +138,8 @@ export async function handleGetPropertyCommand(
 			values.push(val);
 		}
 
-		if (handler?.app?.ghostController?.sendShioriEvent) {
-			await handler.app.ghostController.sendShioriEvent(eventName, values);
+		if (h?.app?.ghostController?.sendShioriEvent) {
+			await h.app.ghostController.sendShioriEvent(eventName, values);
 		}
 		return;
 	}
@@ -145,17 +147,17 @@ export async function handleGetPropertyCommand(
 	// 2. 単一プロパティ名取得時のフォールバック
 	const key = keyOrArgs;
 	if (!key) return "";
-	if (handler?.app?.ghostController?.evaluateProperty) {
+	if (h?.app?.ghostController?.evaluateProperty) {
 		try {
-			const res = await handler.app.ghostController.evaluateProperty(key);
+			const res = await h.app.ghostController.evaluateProperty(key);
 			if (res !== undefined && res !== null) return String(res);
 		} catch {
 			// fall through
 		}
 	}
-	if (handler?.app?.ghostController?.sendShioriEvent) {
+	if (h?.app?.ghostController?.sendShioriEvent) {
 		try {
-			const res: any = await handler.app.ghostController.sendShioriEvent(
+			const res: unknown = await h.app.ghostController.sendShioriEvent(
 				"property.get",
 				[key],
 			);
@@ -164,7 +166,11 @@ export async function handleGetPropertyCommand(
 			return "";
 		}
 	}
-	return scriptLifetimeState.getVariable(key) ?? "";
+	return (
+		scriptLifetimeState.getVariable(
+			typeof key === "string" ? key : String(key),
+		) ?? ""
+	);
 }
 
 export async function handleSetScalingCommand(handler: any, args: string[]) {

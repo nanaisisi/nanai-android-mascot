@@ -1,3 +1,4 @@
+// biome-ignore-all lint/suspicious/noExplicitAny: legacy handler parameters
 /**
  * @file control.ts
  * @brief さくらスクリプト再生時のポーズ(\x)、ウェイト(\w)、モード切替、タイムアウト、終了処理ハンドラ
@@ -171,8 +172,12 @@ export function handleNoAutoWrap(
 	_token: unknown,
 	_context: unknown,
 ) {
-	player.noAutoWrap = true;
-	player.playbackController?.emit?.("playback:no-autowrap", { enabled: true });
+	const p = player as {
+		noAutoWrap?: boolean;
+		playbackController?: { emit?: (event: string, detail?: unknown) => void };
+	};
+	p.noAutoWrap = true;
+	p.playbackController?.emit?.("playback:no-autowrap", { enabled: true });
 }
 
 export function handleRawToggle(
@@ -181,14 +186,21 @@ export function handleRawToggle(
 	token: unknown,
 	context: unknown,
 ) {
-	if (typeof token.value === "boolean") {
-		context.isRawMode = token.value;
+	const p = player as {
+		isRawMode?: boolean;
+		playbackController?: { emit?: (event: string, detail?: unknown) => void };
+	};
+	const t = token as { value?: unknown };
+	const c = context as { isRawMode?: boolean };
+
+	if (typeof t.value === "boolean") {
+		c.isRawMode = t.value;
 	} else {
-		context.isRawMode = !context.isRawMode;
+		c.isRawMode = !c.isRawMode;
 	}
-	player.isRawMode = context.isRawMode;
-	player.playbackController?.emit?.("playback:raw-toggle", {
-		enabled: context.isRawMode,
+	p.isRawMode = c.isRawMode;
+	p.playbackController?.emit?.("playback:raw-toggle", {
+		enabled: c.isRawMode,
 	});
 }
 
@@ -198,5 +210,8 @@ export function handleAutoPause(
 	_token: unknown,
 	_context: unknown,
 ) {
-	player.playbackController?.emit?.("playback:auto-pause");
+	const p = player as {
+		playbackController?: { emit?: (event: string) => void };
+	};
+	p.playbackController?.emit?.("playback:auto-pause");
 }

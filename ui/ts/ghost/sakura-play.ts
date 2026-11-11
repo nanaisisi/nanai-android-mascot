@@ -61,13 +61,15 @@ export async function playScript(player: any, script: string) {
 			? document.getElementById("kero-balloon-display")
 			: null);
 
-	const hasTextContent = tokens.some(
-		(t: unknown) =>
-			t.type === "char" ||
-			t.type === "choice" ||
-			t.type === "choice_scope_begin" ||
-			t.type === "anchor_begin",
-	);
+	const hasTextContent = tokens.some((t: unknown) => {
+		const tok = t as { type?: string };
+		return (
+			tok.type === "char" ||
+			tok.type === "choice" ||
+			tok.type === "choice_scope_begin" ||
+			tok.type === "anchor_begin"
+		);
+	});
 
 	const shownScopes = new Set<number>();
 	await initBalloonWindows(app, tokens, hasTextContent, shownScopes);
@@ -130,9 +132,10 @@ export async function playScript(player: any, script: string) {
 
 	player.playbackController?.resetBalloonWait?.();
 
-	const hasChoices = tokens.some(
-		(t: unknown) => t.type === "choice" || t.type === "choice_scope_begin",
-	);
+	const hasChoices = tokens.some((t: unknown) => {
+		const tok = t as { type?: string };
+		return tok.type === "choice" || tok.type === "choice_scope_begin";
+	});
 
 	if (hasChoices && player.choiceTimeout > 0) {
 		if (player.choiceTimeoutTimer) clearTimeout(player.choiceTimeoutTimer);

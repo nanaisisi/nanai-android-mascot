@@ -4,7 +4,8 @@
  */
 
 const emittedEvents: { event: unknown; payload: unknown }[] = [];
-const listenHandlers: Record<string, (arg: any) => Promise<void> | void> = {};
+const listenHandlers: Record<string, (arg: unknown) => Promise<void> | void> =
+	{};
 const elements: Record<string, unknown> = {};
 
 const createMockStyle = () => {
@@ -40,10 +41,10 @@ const getEl = (id: string) => {
 								a === "data-choice-id" ? "choice_id_1" : null,
 							textContent: "Choice1",
 							addEventListener(_t: unknown, cb: unknown) {
-								(this as any)._cb = cb;
+								(this as unknown)._cb = cb;
 							},
 							click() {
-								(this as any)._cb?.({ stopPropagation() {} });
+								(this as unknown)._cb?.({ stopPropagation() {} });
 							},
 						},
 					];
@@ -55,10 +56,10 @@ const getEl = (id: string) => {
 								a === "data-anchor-id" ? "anchor_id_1" : null,
 							textContent: "Anchor1",
 							addEventListener(_t: unknown, cb: unknown) {
-								(this as any)._cb = cb;
+								(this as unknown)._cb = cb;
 							},
 							click() {
-								(this as any)._cb?.({ stopPropagation() {} });
+								(this as unknown)._cb?.({ stopPropagation() {} });
 							},
 						},
 					];
@@ -85,9 +86,12 @@ const getEl = (id: string) => {
 
 const docListeners: Record<string, () => void> = {};
 
-globalThis.window = globalThis as any;
-globalThis.location = { search: "?scope=0&theme=ivory" } as any;
-globalThis.localStorage = { getItem: () => "ivory", setItem: () => {} } as any;
+globalThis.window = globalThis as unknown;
+globalThis.location = { search: "?scope=0&theme=ivory" } as unknown;
+globalThis.localStorage = {
+	getItem: () => "ivory",
+	setItem: () => {},
+} as unknown;
 globalThis.Image = class {
 	width = 100;
 	height = 100;
@@ -107,7 +111,7 @@ globalThis.Image = class {
 	get src() {
 		return this._src;
 	}
-} as any;
+} as unknown;
 
 let callbackIdCounter = 1;
 const tauriObject = {};
@@ -115,7 +119,7 @@ const tauriInternals = {
 	metadata: {
 		currentWindow: { label: "balloon_window_0", startDragging: async () => {} },
 	},
-	invoke: async (cmd: any, args: any) => {
+	invoke: async (cmd: unknown, args: unknown) => {
 		const cmdStr = String(typeof cmd === "object" ? JSON.stringify(cmd) : cmd);
 		const argsStr = String(
 			typeof args === "object" ? JSON.stringify(args) : args,
@@ -168,7 +172,7 @@ const tauriInternals = {
 	},
 	plugins: {
 		event: {
-			listen: async (event: string, cb: (payload: any) => void) => {
+			listen: async (event: string, cb: (payload: unknown) => void) => {
 				listenHandlers[event] = cb;
 				return () => {};
 			},
@@ -179,10 +183,10 @@ const tauriInternals = {
 	},
 };
 
-globalThis.__TAURI__ = tauriObject as any;
-globalThis.__TAURI_INTERNALS__ = tauriInternals as any;
-(globalThis.window as any).__TAURI__ = tauriObject;
-(globalThis.window as any).__TAURI_INTERNALS__ = tauriInternals;
+globalThis.__TAURI__ = tauriObject as unknown;
+globalThis.__TAURI_INTERNALS__ = tauriInternals as unknown;
+(globalThis.window as unknown).__TAURI__ = tauriObject;
+(globalThis.window as unknown).__TAURI_INTERNALS__ = tauriInternals;
 
 const docAttrs: Record<string, string> = {};
 globalThis.document = {
@@ -224,7 +228,7 @@ globalThis.document = {
 		}
 		return { style: createMockStyle() };
 	},
-} as any;
+} as unknown;
 
 export function setupBalloonMockEnvironment() {
 	emittedEvents.length = 0;
@@ -238,10 +242,10 @@ export function setupBalloonMockEnvironment() {
 		delete docListeners[key];
 	}
 
-	globalThis.__TAURI__ = tauriObject as any;
-	globalThis.__TAURI_INTERNALS__ = tauriInternals as any;
-	(globalThis.window as any).__TAURI__ = tauriObject;
-	(globalThis.window as any).__TAURI_INTERNALS__ = tauriInternals;
+	globalThis.__TAURI__ = tauriObject as unknown;
+	globalThis.__TAURI_INTERNALS__ = tauriInternals as unknown;
+	(globalThis.window as unknown).__TAURI__ = tauriObject;
+	(globalThis.window as unknown).__TAURI_INTERNALS__ = tauriInternals;
 
 	return {
 		emittedEvents,

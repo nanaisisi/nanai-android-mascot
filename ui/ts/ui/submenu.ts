@@ -34,7 +34,7 @@ let currentShellName: null = null;
 let cachedDressup: null = null;
 /** @type {number} */
 let dressupScope = 0;
-/** @type {any[]} */
+/** @type {unknown[]} */
 let cachedBalloons: never[] = [];
 /** @type {string|null} */
 let currentBalloonTheme: null = null;

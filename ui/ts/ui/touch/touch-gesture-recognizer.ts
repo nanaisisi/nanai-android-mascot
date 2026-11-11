@@ -393,7 +393,7 @@ export class TouchGestureRecognizer {
 	}
 
 	_processTouchMove(e: { touches: unknown }) {
-		const touches = e.touches as any[];
+		const touches = e.touches as unknown[];
 		if (touches.length === 1) {
 			processSingleTouchMove(this, e);
 		} else if (touches.length >= 2) {

@@ -19,16 +19,18 @@ import { getCurrentWindow, PhysicalPosition } from "@tauri-apps/api/window";
 export function isTauriAvailable(): boolean {
 	const g = globalThis as unknown as Record<string, unknown>;
 	const win =
-		typeof window !== "undefined" ? window : (g.window as Record<string, unknown>);
+		typeof window !== "undefined"
+			? window
+			: (g.window as Record<string, unknown>);
 	return (
 		!!g.__TAURI__ ||
 		!!g.__TAURI_INTERNALS__ ||
 		!!g.__TAURI_IPC__ ||
 		!!(
 			win?.location &&
-			((win.location as any).protocol?.startsWith("tauri") ||
-				(win.location as any).hostname === "tauri.localhost" ||
-				(win.location as any).hostname === "tauri.app")
+			((win.location as unknown).protocol?.startsWith("tauri") ||
+				(win.location as unknown).hostname === "tauri.localhost" ||
+				(win.location as unknown).hostname === "tauri.app")
 		)
 	);
 }

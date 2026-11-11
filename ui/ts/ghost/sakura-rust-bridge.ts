@@ -8,7 +8,7 @@ export interface RustCommand {
 }
 
 export function rustCommandsToTokens(
-	rustCommands: RustCommand[] | any[],
+	rustCommands: RustCommand[] | unknown[],
 ): SakuraScriptToken[] {
 	const tokens: SakuraScriptToken[] = [];
 	for (const cmd of rustCommands) {

@@ -4,7 +4,7 @@
  */
 export const menuBalloonDressupRenderer = {
 	/**
-	 * @param {any[]} balloons
+	 * @param {unknown[]} balloons
 	 * @param {string | null} currentBalloonTheme
 	 */
 	renderBalloonSubmenu(balloons, currentBalloonTheme) {

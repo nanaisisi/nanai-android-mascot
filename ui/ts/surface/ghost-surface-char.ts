@@ -4,7 +4,7 @@ import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 const byId = (id) => document.getElementById(id);
 
 export async function updateGhostCharacter(
-	thisObj: any,
+	thisObj: unknown,
 	ghostName: string | null,
 ) {
 	const sakuraPlaceholder =
@@ -35,7 +35,7 @@ export async function updateGhostCharacter(
 	await Promise.all(promises);
 }
 
-export function updateCurrentGhostDisplay(thisObj: any) {
+export function updateCurrentGhostDisplay(thisObj: unknown) {
 	const el = byId("current-ghost");
 	if (el) {
 		el.textContent = thisObj.currentGhost

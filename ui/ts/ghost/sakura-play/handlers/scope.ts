@@ -5,7 +5,7 @@
 
 import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 
-export function handleScope(player: any, app: any, token: any, context: any) {
+export function handleScope(player: unknown, app: unknown, token: unknown, context: unknown) {
 	const {
 		sakuraText,
 		keroText,
@@ -58,10 +58,10 @@ export function handleScope(player: any, app: any, token: any, context: any) {
 }
 
 export function handleBalloon(
-	player: any,
-	_app: any,
-	token: any,
-	context: any,
+	player: unknown,
+	_app: unknown,
+	token: unknown,
+	context: unknown,
 ) {
 	const { sakuraDisplay, keroDisplay } = context;
 	const balloonDisplay =
@@ -74,10 +74,10 @@ export function handleBalloon(
 }
 
 export function handleInlineBitmap(
-	_player: any,
-	app: any,
-	token: any,
-	context: any,
+	_player: unknown,
+	app: unknown,
+	token: unknown,
+	context: unknown,
 ) {
 	const { currentBalloonText, scheduleDesktopBalloonSync } = context;
 

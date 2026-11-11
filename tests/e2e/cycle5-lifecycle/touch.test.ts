@@ -13,7 +13,7 @@ const { AndroidBridge, ANDROID_EVENTS, TouchGestureRecognizer } = await import(
 );
 
 test("Cycle 5: Touch Snap Gesture & Mobile Dock Coordination E2E", async () => {
-	const events: any[] = [];
+	const events: unknown[] = [];
 	const runningAnimations = new Set<number>();
 	const sakuraDisplay = createMockElement("div");
 	const keroDisplay = createMockElement("div");
@@ -33,19 +33,19 @@ test("Cycle 5: Touch Snap Gesture & Mobile Dock Coordination E2E", async () => {
 	player.parse = async (script: string) => parseSakuraScript(script);
 	player.sleep = () => Promise.resolve();
 
-	const listeners: Record<string, ((e: any) => void)[]> = {};
+	const listeners: Record<string, ((e: unknown) => void)[]> = {};
 	const touchContainer = {
 		...createMockElement("div"),
 		listeners,
-		addEventListener(type: string, fn: (e: any) => void) {
+		addEventListener(type: string, fn: (e: unknown) => void) {
 			if (!listeners[type]) listeners[type] = [];
 			listeners[type].push(fn);
 		},
-		removeEventListener(type: string, fn: (e: any) => void) {
+		removeEventListener(type: string, fn: (e: unknown) => void) {
 			if (!listeners[type]) return;
 			listeners[type] = listeners[type].filter((f) => f !== fn);
 		},
-		dispatchEvent(event: any, type?: string) {
+		dispatchEvent(event: unknown, type?: string) {
 			const eventType = type || event.type;
 			const fns = listeners[eventType] || [];
 			for (const fn of fns) fn(event);
@@ -59,7 +59,7 @@ test("Cycle 5: Touch Snap Gesture & Mobile Dock Coordination E2E", async () => {
 	const bridge = new AndroidBridge({ gestureRecognizer: recognizer });
 
 	let dockReported = null;
-	bridge.on(ANDROID_EVENTS.DOCK_CHANGED, ({ dockState }: any) => {
+	bridge.on(ANDROID_EVENTS.DOCK_CHANGED, ({ dockState }: unknown) => {
 		dockReported = dockState;
 	});
 

@@ -4,24 +4,24 @@
  */
 
 export const shioriNotifyGhostCalls = {
-	async sendGhostCalling(this: any, targetGhost: string) {
+	async sendGhostCalling(this: unknown, targetGhost: string) {
 		return await this.sendShioriNotify("OnGhostCalling", [targetGhost]);
 	},
 
-	async sendGhostCalled(this: any, callerGhost: string) {
+	async sendGhostCalled(this: unknown, callerGhost: string) {
 		return await this.sendShioriNotify("OnGhostCalled", [callerGhost]);
 	},
 
-	async sendGhostCallComplete(this: any, targetGhost: string) {
+	async sendGhostCallComplete(this: unknown, targetGhost: string) {
 		return await this.sendShioriNotify("OnGhostCallComplete", [targetGhost]);
 	},
 
-	async sendOtherGhostBooted(this: any, ghostName: string) {
+	async sendOtherGhostBooted(this: unknown, ghostName: string) {
 		return await this.sendShioriNotify("OnOtherGhostBooted", [ghostName]);
 	},
 
 	async sendOtherGhostChanged(
-		this: any,
+		this: unknown,
 		ghostName: string,
 		toGhost: string = "",
 	) {
@@ -31,7 +31,7 @@ export const shioriNotifyGhostCalls = {
 		]);
 	},
 
-	async sendOtherGhostClosed(this: any, ghostName: string) {
+	async sendOtherGhostClosed(this: unknown, ghostName: string) {
 		return await this.sendShioriNotify("OnOtherGhostClosed", [ghostName]);
 	},
 };

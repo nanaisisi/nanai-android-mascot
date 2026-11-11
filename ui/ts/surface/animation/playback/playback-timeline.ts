@@ -22,21 +22,21 @@ function isInstance(obj: unknown) {
  */
 export async function _playTimelineFrames(
 	this: unknown,
-	target: any,
-	timelineOrAnim: any,
-	animOrBaseSurfaceId?: any,
-	baseSurfaceIdOrScopeId?: any,
-	scopeIdOrKey?: any,
-	keyOrOptions?: any,
-	optionsParam?: any,
+	target: unknown,
+	timelineOrAnim: unknown,
+	animOrBaseSurfaceId?: unknown,
+	baseSurfaceIdOrScopeId?: unknown,
+	scopeIdOrKey?: unknown,
+	keyOrOptions?: unknown,
+	optionsParam?: unknown,
 ) {
-	let instance: any,
-		timeline: any,
-		_anim: any,
-		baseSurfaceId: any,
-		scopeId: any,
-		key: any,
-		options: any;
+	let instance: unknown,
+		timeline: unknown,
+		_anim: unknown,
+		baseSurfaceId: unknown,
+		scopeId: unknown,
+		key: unknown,
+		options: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		timeline = timelineOrAnim;
@@ -75,7 +75,7 @@ export async function _playTimelineFrames(
 			typeof frameItem === "object" && frameItem !== null
 				? frameItem.pattern || frameItem
 				: _anim?.patterns
-					? _anim.patterns.find((p: any) => p.index === i) ||
+					? _anim.patterns.find((p: unknown) => p.index === i) ||
 						_anim.patterns[i] ||
 						frameItem
 					: frameItem;
@@ -118,23 +118,23 @@ export async function _playTimelineFrames(
  */
 export async function _playOnePat(
 	this: unknown,
-	target: any,
-	patOrAnim: any,
-	animOrBaseSurfaceId?: any,
-	baseSurfaceIdOrScopeId?: any,
-	scopeIdOrKey?: any,
-	keyOrIsCurrent?: any,
-	isCurrentOrOptions?: any,
-	optionsParam?: any,
+	target: unknown,
+	patOrAnim: unknown,
+	animOrBaseSurfaceId?: unknown,
+	baseSurfaceIdOrScopeId?: unknown,
+	scopeIdOrKey?: unknown,
+	keyOrIsCurrent?: unknown,
+	isCurrentOrOptions?: unknown,
+	optionsParam?: unknown,
 ) {
-	let instance: any,
-		pat: any,
-		_anim: any,
-		baseSurfaceId: any,
-		scopeId: any,
-		key: any,
-		isCurrent: any,
-		options: any;
+	let instance: unknown,
+		pat: unknown,
+		_anim: unknown,
+		baseSurfaceId: unknown,
+		scopeId: unknown,
+		key: unknown,
+		isCurrent: unknown,
+		options: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		pat = patOrAnim;

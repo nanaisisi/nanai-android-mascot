@@ -34,7 +34,7 @@ export const ghostSurfaceLoaderMethods = {
 	},
 
 	/** ゴースト・シェル切り替え時などに画像キャッシュを破棄 */
-	clearSurfaceAssetCache(this: any) {
+	clearSurfaceAssetCache(this: unknown) {
 		this._surfaceAssetCache?.clear();
 		this.app?.surfaceManager?.chromaKeyCache?.clear();
 		this.app?.surfaceManager?.baseCanvasCache?.clear();

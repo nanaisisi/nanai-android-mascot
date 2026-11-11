@@ -7,7 +7,7 @@
 import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 import { scriptLifetimeState } from "../env.js";
 
-export async function handleSetPropertyCommand(handler: any, args: string[]) {
+export async function handleSetPropertyCommand(handler: unknown, args: string[]) {
 	const key = args[2] ?? "";
 	const val = args[3] ?? "";
 	if (key) {
@@ -23,7 +23,7 @@ export async function handleSetPropertyCommand(handler: any, args: string[]) {
 /**
  * SERIKO口パク有効化トグル (\![set,serikotalk,true/false])
  */
-export async function handleSetSerikoTalkCommand(handler: any, args: string[]) {
+export async function handleSetSerikoTalkCommand(handler: unknown, args: string[]) {
 	const valStr = String(args[2] ?? "true")
 		.trim()
 		.toLowerCase();
@@ -38,7 +38,7 @@ export async function handleSetSerikoTalkCommand(handler: any, args: string[]) {
  * 他ゴーストサーフィス変更通知トグル (\![set,othersurfacechange,true/false])
  */
 export async function handleSetOtherSurfaceChangeCommand(
-	handler: any,
+	handler: unknown,
 	args: string[],
 ) {
 	const valStr = String(args[2] ?? "false")
@@ -50,7 +50,7 @@ export async function handleSetOtherSurfaceChangeCommand(
 	}
 }
 
-export async function handleEnterMode(handler: any, args: string[]) {
+export async function handleEnterMode(handler: unknown, args: string[]) {
 	const mode = (args[1] ?? "").toLowerCase();
 	if (mode) {
 		scriptLifetimeState.setMode(mode, true);
@@ -69,7 +69,7 @@ export async function handleEnterMode(handler: any, args: string[]) {
 	}
 }
 
-export async function handleLeaveMode(handler: any, args: string[]) {
+export async function handleLeaveMode(handler: unknown, args: string[]) {
 	const mode = (args[1] ?? "").toLowerCase();
 	if (mode) {
 		scriptLifetimeState.setMode(mode, false);
@@ -93,7 +93,7 @@ export async function handleLeaveMode(handler: any, args: string[]) {
  * [bang-get-property.md], [property.get.md]
  */
 export async function handleGetPropertyCommand(
-	handler: any,
+	handler: unknown,
 	keyOrArgs: string | string[],
 ) {
 	const h = handler;
@@ -173,7 +173,7 @@ export async function handleGetPropertyCommand(
 	);
 }
 
-export async function handleSetScalingCommand(handler: any, args: string[]) {
+export async function handleSetScalingCommand(handler: unknown, args: string[]) {
 	const scaleXStr = args[2] ?? "100";
 	const scaleYStr = args[3] ?? scaleXStr;
 	const scaleX = Number.parseFloat(scaleXStr);
@@ -209,7 +209,7 @@ export async function handleSetScalingCommand(handler: any, args: string[]) {
 }
 
 export async function handleKeyPressEvent(
-	handler: any,
+	handler: unknown,
 	key: string,
 	modifiers: string = "",
 ) {
@@ -221,7 +221,7 @@ export async function handleKeyPressEvent(
 	}
 }
 
-export async function handleSetAlphaCommand(handler: any, args: string[]) {
+export async function handleSetAlphaCommand(handler: unknown, args: string[]) {
 	const alphaVal = Number.parseInt(args[2] ?? "100", 10);
 	const scope = handler.player?.currentScope ?? 0;
 	if (Number.isFinite(alphaVal)) {
@@ -230,7 +230,7 @@ export async function handleSetAlphaCommand(handler: any, args: string[]) {
 	}
 }
 
-export async function handleSetPositionCommand(handler: any, args: string[]) {
+export async function handleSetPositionCommand(handler: unknown, args: string[]) {
 	const x = Number.parseInt(args[2] ?? "0", 10);
 	const y = Number.parseInt(args[3] ?? "0", 10);
 	const scopeStr = args[4];

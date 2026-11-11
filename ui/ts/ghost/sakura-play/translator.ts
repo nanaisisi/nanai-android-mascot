@@ -4,7 +4,7 @@
  */
 
 export async function translateScript(
-	player: any,
+	player: unknown,
 	script: string,
 ): Promise<string> {
 	let finalScript = script;

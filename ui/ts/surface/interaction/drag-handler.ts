@@ -48,8 +48,8 @@ export function setupGhostDragging(
 	target: HTMLElement,
 	onGhostClick: unknown,
 	onGhostStroke: unknown,
-	options: any = {},
-	context: any = {},
+	options: unknown = {},
+	context: unknown = {},
 ) {
 	if (!target) {
 		return {
@@ -95,7 +95,7 @@ export function setupGhostDragging(
 
 	const checkTransparency = context.isPixelTransparent || isPixelTransparent;
 
-	const onPointerDown = (e: any) => {
+	const onPointerDown = (e: unknown) => {
 		if (e.button !== undefined && e.button !== 0) return;
 
 		if (e.cancelable) {
@@ -144,7 +144,7 @@ export function setupGhostDragging(
 		);
 	};
 
-	const onPointerMove = (e: any) => {
+	const onPointerMove = (e: unknown) => {
 		if (!dragInternalState.isInteracting) return;
 
 		const clientX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
@@ -212,7 +212,7 @@ export function setupGhostDragging(
 		}
 	};
 
-	const onPointerUp = (e: any) => {
+	const onPointerUp = (e: unknown) => {
 		rafPending = false;
 		handleGhostPointerUp(
 			e,

@@ -1,12 +1,12 @@
 export { createMockElement } from "../helpers.js";
 
 export function createMockApp(
-	events: any[],
+	events: unknown[],
 	runningAnimations: Set<number>,
-	sakuraDisplay: any,
-	keroDisplay: any,
-	sakuraText: any,
-	keroText: any,
+	sakuraDisplay: unknown,
+	keroDisplay: unknown,
+	sakuraText: unknown,
+	keroText: unknown,
 ) {
 	return {
 		ghostId: "e2e_cycle5_ghost",

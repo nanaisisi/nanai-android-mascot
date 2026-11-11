@@ -2,7 +2,7 @@ import { isTauriAvailable } from "../../../core/tauri-helper.js";
 import { applyDockingSnap, restoreFromDocking } from "./docking.js";
 
 export function handleGhostPointerUp(
-	e: any,
+	e: unknown,
 	state: {
 		isInteracting: boolean;
 		isDragging: boolean;
@@ -11,13 +11,13 @@ export function handleGhostPointerUp(
 		hasMoved: boolean;
 	},
 	target: HTMLElement,
-	longPress: any,
-	strokeTracker: any,
-	nativeDrag: any,
-	options: any,
-	onGhostClick: any,
-	onGhostDragEnd: any,
-	onGhostMouseUp: any,
+	longPress: unknown,
+	strokeTracker: unknown,
+	nativeDrag: unknown,
+	options: unknown,
+	onGhostClick: unknown,
+	onGhostDragEnd: unknown,
+	onGhostMouseUp: unknown,
 ) {
 	if (!state.isInteracting) return false;
 	const wasDragging = state.isDragging;

@@ -4,49 +4,49 @@
  */
 
 export const shioriNotifySystem = {
-	async sendSysSuspend(this: any) {
+	async sendSysSuspend(this: unknown) {
 		return await this.sendShioriNotify("OnSysSuspend", []);
 	},
 
-	async sendSysResume(this: any) {
+	async sendSysResume(this: unknown) {
 		return await this.sendShioriNotify("OnSysResume", []);
 	},
 
-	async sendDestroy(this: any) {
+	async sendDestroy(this: unknown) {
 		return await this.sendShioriNotify("OnDestroy", []);
 	},
 
-	async sendInitialize(this: any) {
+	async sendInitialize(this: unknown) {
 		return await this.sendShioriNotify("OnInitialize", []);
 	},
 
-	async sendVirtualDesktopChanged(this: any, desktopId: string | number) {
+	async sendVirtualDesktopChanged(this: unknown, desktopId: string | number) {
 		return await this.sendShioriNotify("OnVirtualDesktopChanged", [
 			String(desktopId),
 		]);
 	},
 
-	async sendFullScreenAppMinimize(this: any) {
+	async sendFullScreenAppMinimize(this: unknown) {
 		return await this.sendShioriNotify("OnFullScreenAppMinimize", []);
 	},
 
-	async sendFullScreenAppRestore(this: any) {
+	async sendFullScreenAppRestore(this: unknown) {
 		return await this.sendShioriNotify("OnFullScreenAppRestore", []);
 	},
 
-	async sendBasewareUpdating(this: any) {
+	async sendBasewareUpdating(this: unknown) {
 		return await this.sendShioriNotify("OnBasewareUpdating", []);
 	},
 
-	async sendBasewareUpdated(this: any) {
+	async sendBasewareUpdated(this: unknown) {
 		return await this.sendShioriNotify("OnBasewareUpdated", []);
 	},
 
-	async sendCacheSuspend(this: any) {
+	async sendCacheSuspend(this: unknown) {
 		return await this.sendShioriNotify("OnCacheSuspend", []);
 	},
 
-	async sendCacheRestore(this: any) {
+	async sendCacheRestore(this: unknown) {
 		return await this.sendShioriNotify("OnCacheRestore", []);
 	},
 };

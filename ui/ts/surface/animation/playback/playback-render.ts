@@ -35,11 +35,11 @@ export function renderAnimationFrame(
 	scopeIdOrAnimOptions: Record<string, unknown> | undefined,
 	animationOptionsParam = {},
 ): boolean {
-	let instance: any,
-		pat: any,
-		baseSurfaceId: any,
-		scopeId: any,
-		animationOptions: any;
+	let instance: unknown,
+		pat: unknown,
+		baseSurfaceId: unknown,
+		scopeId: unknown,
+		animationOptions: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		pat = patOrBaseSurfaceId;

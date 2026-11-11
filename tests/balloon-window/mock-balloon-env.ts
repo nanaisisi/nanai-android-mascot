@@ -4,7 +4,7 @@
  */
 
 const emittedEvents: { event: unknown; payload: unknown }[] = [];
-const listenHandlers: Record<string, (arg: any) => Promise<void> | void> = {};
+const listenHandlers: Record<string, (arg: unknown) => Promise<void> | void> = {};
 const elements: Record<string, any> = {};
 
 const createMockStyle = () => {
@@ -115,7 +115,7 @@ const tauriInternals = {
 	metadata: {
 		currentWindow: { label: "balloon_window_0", startDragging: async () => {} },
 	},
-	invoke: async (cmd: any, args: any) => {
+	invoke: async (cmd: unknown, args: unknown) => {
 		const cmdStr = String(typeof cmd === "object" ? JSON.stringify(cmd) : cmd);
 		const argsStr = String(
 			typeof args === "object" ? JSON.stringify(args) : args,
@@ -168,7 +168,7 @@ const tauriInternals = {
 	},
 	plugins: {
 		event: {
-			listen: async (event: string, cb: (payload: any) => void) => {
+			listen: async (event: string, cb: (payload: unknown) => void) => {
 				listenHandlers[event] = cb;
 				return () => {};
 			},

@@ -1,6 +1,6 @@
 import { invoke, isTauriAvailable } from "../tauri-helper.js";
 
-export function handleSystemMenuAction(context: any, action: string): boolean {
+export function handleSystemMenuAction(context: unknown, action: string): boolean {
 	if (
 		action === "tools" ||
 		action === "utility-root" ||

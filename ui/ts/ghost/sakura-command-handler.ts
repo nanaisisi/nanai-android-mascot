@@ -30,13 +30,13 @@ import {
 initDefaultCommandHandlers();
 
 export class SakuraCommandHandler {
-	player: any;
-	app: any;
-	teachForm: any;
-	communicateForm: any;
-	[key: string]: any;
+	player: unknown;
+	app: unknown;
+	teachForm: unknown;
+	communicateForm: unknown;
+	[key: string]: unknown;
 
-	constructor(player: any) {
+	constructor(player: unknown) {
 		this.player = player;
 		this.app = player.app;
 		this.teachForm = null;
@@ -88,7 +88,7 @@ export class SakuraCommandHandler {
 		await handleJumpCommand(this, target, args);
 	}
 
-	expandEnv(script: string, options: any = {}) {
+	expandEnv(script: string, options: unknown = {}) {
 		return expandSakuraScriptEnv(script, {
 			username: this.player?.app?.ghostController?.username,
 			selfname: this.player?.app?.ghostController?.currentGhost?.name,

@@ -189,7 +189,7 @@ export class AndroidBridge {
 		return this._dockManager.getDockOptions();
 	}
 
-	setDockOptions(options: any) {
+	setDockOptions(options: unknown) {
 		return this._dockManager.setDockOptions(options);
 	}
 

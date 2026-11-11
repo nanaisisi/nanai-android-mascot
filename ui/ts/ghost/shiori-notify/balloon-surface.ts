@@ -8,7 +8,7 @@ export const shioriNotifyBalloonSurface = {
 	 * サーフィス・バルーン状態通知 (UKADOC surface / balloon)
 	 */
 	async notifySurfaceBalloonEvent(
-		this: any,
+		this: unknown,
 		event:
 			| "OnSurfaceChange"
 			| "OnOtherSurfaceChange"
@@ -24,7 +24,7 @@ export const shioriNotifyBalloonSurface = {
 	 * 選択肢・アンカー拡張通知 (UKADOC choice)
 	 */
 	async notifyChoiceAnchorEx(
-		this: any,
+		this: unknown,
 		event: "OnChoiceSelectEx" | "OnAnchorSelectEx" | string,
 		references: Array<string | number> = [],
 	) {
@@ -35,7 +35,7 @@ export const shioriNotifyBalloonSurface = {
 	 * バルーン倍率変更通知 (OnBalloonScaling) を送信 (UKADOC準拠)
 	 */
 	async sendBalloonScalingNotify(
-		this: any,
+		this: unknown,
 		afterX: number | string,
 		beforeX: number | string,
 		afterY: number | string = afterX,
@@ -55,7 +55,7 @@ export const shioriNotifyBalloonSurface = {
 	 * @param {number|string} [scopeId=0] バルーンのスコープID
 	 */
 	async sendBalloonCloseNotify(
-		this: any,
+		this: unknown,
 		lastScript: string = "",
 		scopeId: number | string = 0,
 	) {
@@ -72,7 +72,7 @@ export const shioriNotifyBalloonSurface = {
 	 * @param {number|string} [scopeId=0] バルーンのスコープID
 	 */
 	async sendBalloonTimeoutNotify(
-		this: any,
+		this: unknown,
 		lastScript: string = "",
 		scopeId: number | string = 0,
 	) {
@@ -89,7 +89,7 @@ export const shioriNotifyBalloonSurface = {
 	 * @param {number|string} [charPosition] 中断位置 (スクリプト先頭からの文字数)
 	 */
 	async sendBalloonBreakNotify(
-		this: any,
+		this: unknown,
 		script: string = "",
 		scopeId: number | string = 0,
 		charPosition?: number | string,
@@ -110,7 +110,7 @@ export const shioriNotifyBalloonSurface = {
 	 * @param {number} [height=0] サーフィス高さ
 	 */
 	async notifySurfaceChange(
-		this: any,
+		this: unknown,
 		scopeId: number,
 		surface0: number | string = 0,
 		surface1: number | string = 10,
@@ -135,7 +135,7 @@ export const shioriNotifyBalloonSurface = {
 	 * @param {{ left: number, top: number, right: number, bottom: number }|string} [rect="0,0,0,0"]
 	 */
 	async notifyOtherSurfaceChange(
-		this: any,
+		this: unknown,
 		ghostName: string,
 		sakuraName: string,
 		scopeId: number,
@@ -164,7 +164,7 @@ export const shioriNotifyBalloonSurface = {
 	 * Reference0: ラベル(text), Reference1: ID, Reference2..: 拡張引数
 	 */
 	async sendChoiceSelectExNotify(
-		this: any,
+		this: unknown,
 		id: string,
 		text: string,
 		args: string[] = [],
@@ -177,7 +177,7 @@ export const shioriNotifyBalloonSurface = {
 	 * Reference0: テキスト, Reference1: ID, Reference2..: 拡張引数
 	 */
 	async sendAnchorSelectExNotify(
-		this: any,
+		this: unknown,
 		id: string,
 		text: string,
 		args: string[] = [],
@@ -189,7 +189,7 @@ export const shioriNotifyBalloonSurface = {
 	 * バルーン関連 SHIORI イベント通知 (UKADOC balloon spec)
 	 */
 	async sendBalloonClose(
-		this: any,
+		this: unknown,
 		scopeId: number | string = 0,
 		reason: string = "",
 	) {
@@ -200,7 +200,7 @@ export const shioriNotifyBalloonSurface = {
 	},
 
 	async sendBalloonBreak(
-		this: any,
+		this: unknown,
 		scopeId: number | string = 0,
 		reason: string = "",
 	) {
@@ -214,7 +214,7 @@ export const shioriNotifyBalloonSurface = {
 	 * サーフィス関連 SHIORI イベント通知 (UKADOC surface spec)
 	 */
 	async sendSurfaceChange(
-		this: any,
+		this: unknown,
 		scopeId: number | string = 0,
 		surfaceId: number | string = 0,
 	) {
@@ -225,7 +225,7 @@ export const shioriNotifyBalloonSurface = {
 	},
 
 	async sendOtherSurfaceChange(
-		this: any,
+		this: unknown,
 		ghostName: string,
 		scopeId: number | string = 0,
 		surfaceId: number | string = 0,

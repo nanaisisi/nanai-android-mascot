@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 
 export function testApplyBalloonDescript(
-	balloonDescriptActions: any,
-	mockProps: any,
-	cssVars: any,
+	balloonDescriptActions: unknown,
+	mockProps: unknown,
+	cssVars: unknown,
 ) {
 	const mockInstance = {
 		currentBalloonTheme: "ivory",

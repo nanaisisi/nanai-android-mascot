@@ -3,7 +3,7 @@
  * @brief ウィンドウ状態およびデスクトップ整列コマンドハンドラ
  */
 
-export async function handleWindowState(state: string, handler?: any) {
+export async function handleWindowState(state: string, handler?: unknown) {
 	try {
 		const api = (globalThis as any).__TAURI__?.window;
 		if (!api) return;
@@ -34,7 +34,7 @@ export async function handleWindowState(state: string, handler?: any) {
 	}
 }
 
-export async function setAlignmentToDesktop(handler: any, mode: string) {
+export async function setAlignmentToDesktop(handler: unknown, mode: string) {
 	handler.app.alignmentToDesktop = mode;
 	if (mode === "free") return;
 	try {

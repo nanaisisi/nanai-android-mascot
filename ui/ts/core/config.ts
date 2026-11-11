@@ -58,7 +58,7 @@ export async function loadAppConfig(): Promise<void> {
 		const tauriInternals = (globalThis as Record<string, any>)
 			.__TAURI_INTERNALS__;
 		if (tauriInternals?.invoke) {
-			const config: any = await tauriInternals.invoke("get_app_config");
+			const config: unknown = await tauriInternals.invoke("get_app_config");
 
 			if (config) {
 				if (config.paths) Object.assign(AppConfig.paths, config.paths);

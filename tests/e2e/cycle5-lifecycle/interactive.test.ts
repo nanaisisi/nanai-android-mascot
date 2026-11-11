@@ -10,7 +10,7 @@ const { parseSakuraScript } = await import(
 );
 
 test("Cycle 5: Interactive Choice & Anchor Hover Debounce E2E", async () => {
-	const events: any[] = [];
+	const events: unknown[] = [];
 	const runningAnimations = new Set<number>();
 	const sakuraDisplay = createMockElement("div");
 	const keroDisplay = createMockElement("div");
@@ -35,7 +35,7 @@ test("Cycle 5: Interactive Choice & Anchor Hover Debounce E2E", async () => {
 		"\\0Hover test:\\q[Button 1,id_btn1]\\_a[anchor_link]Anchor 1\\_a\\e";
 	await player.play(choiceScript);
 
-	const choiceBtn = sakuraText.childNodes.find((c: any) =>
+	const choiceBtn = sakuraText.childNodes.find((c: unknown) =>
 		c.className?.includes("balloon-choice-btn"),
 	);
 	assert.ok(choiceBtn, "Choice button must exist in balloon");
@@ -72,7 +72,7 @@ test("Cycle 5: Interactive Choice & Anchor Hover Debounce E2E", async () => {
 
 	// Anchor hover test
 	events.length = 0;
-	const anchorLink = sakuraText.childNodes.find((c: any) =>
+	const anchorLink = sakuraText.childNodes.find((c: unknown) =>
 		c.className?.includes("balloon-anchor"),
 	);
 	assert.ok(anchorLink, "Anchor link must exist in balloon");

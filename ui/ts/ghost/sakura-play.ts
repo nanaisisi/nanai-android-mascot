@@ -11,7 +11,7 @@ import { createBalloonSyncManager } from "./sakura-play-sync.js";
 
 export { SakuraPlaybackController } from "./sakura-play/controller.js";
 
-export async function playScript(player: any, script: string) {
+export async function playScript(player: unknown, script: string) {
 	const finalScript = await translateScript(player, script);
 
 	const tokens = await player.parse(finalScript);

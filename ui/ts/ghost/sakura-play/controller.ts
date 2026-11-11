@@ -52,7 +52,7 @@ import {
 import { SyncObjectManager } from "./sync-object.js";
 
 export class SakuraPlaybackController {
-	player: any;
+	player: unknown;
 	queue: PlaybackJob[];
 	currentJob: PlaybackJob | null;
 	isProcessing: boolean;
@@ -91,7 +91,7 @@ export class SakuraPlaybackController {
 	}
 }
 
-const proto: any = SakuraPlaybackController.prototype;
+const proto: unknown = SakuraPlaybackController.prototype;
 
 proto.on = on;
 proto.off = off;

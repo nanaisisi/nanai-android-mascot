@@ -153,7 +153,7 @@ export function handleAnimationPattern(
 				animationMaps[s][animId] = anim;
 				animations[s].push(anim);
 			}
-			const patternEntry: any = {
+			const patternEntry: unknown = {
 				surface,
 				wait: Number.isNaN(wait) ? 0 : wait * (legacy ? 10 : 1),
 				type: typeLower,
@@ -179,7 +179,7 @@ export function finalizeAnimations(
 		for (const anim of animList as any[]) {
 			anim.patterns = anim.patterns
 				.sort((a: { index: number }, b: { index: number }) => a.index - b.index)
-				.map(({ index, ...pattern }: any) => pattern);
+				.map(({ index, ...pattern }: unknown) => pattern);
 		}
 	}
 }

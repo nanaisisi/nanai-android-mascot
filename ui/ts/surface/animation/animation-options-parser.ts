@@ -2,7 +2,7 @@
  * SERIKO アニメーションオプション文字列のパース (\![anim,option,ID,...])
  * @param {string|string[]|Record<string, any>|null} [optionParam=null]
  */
-export function parseAnimationOptions(optionParam: any = null) {
+export function parseAnimationOptions(optionParam: unknown = null) {
 	if (
 		optionParam &&
 		typeof optionParam === "object" &&
@@ -65,11 +65,11 @@ export function isInstance(obj: unknown) {
  */
 export function isBlockedByExclusive(
 	this: unknown,
-	target: any = 0,
-	scopeIdOrAnimId: any = 0,
-	animIdParam: any = undefined,
+	target: unknown = 0,
+	scopeIdOrAnimId: unknown = 0,
+	animIdParam: unknown = undefined,
 ) {
-	let instance: any, scopeId: any, animId: any;
+	let instance: unknown, scopeId: unknown, animId: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
@@ -96,11 +96,11 @@ export function isBlockedByExclusive(
  */
 export function findAnimation(
 	this: unknown,
-	target: any = 0,
-	animIdOrNameOrScopeId: any = 0,
-	scopeIdParam: any = 0,
+	target: unknown = 0,
+	animIdOrNameOrScopeId: unknown = 0,
+	scopeIdParam: unknown = 0,
 ) {
-	let instance: any, animIdOrName: any, scopeId: any;
+	let instance: unknown, animIdOrName: unknown, scopeId: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		animIdOrName = animIdOrNameOrScopeId;

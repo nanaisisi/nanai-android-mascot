@@ -16,7 +16,7 @@ function isInstance(obj: unknown) {
 	);
 }
 
-function triggerAnimationsFallback(instance: any, scopeId: any, kind: string) {
+function triggerAnimationsFallback(instance: unknown, scopeId: unknown, kind: string) {
 	const manager = instance.manager;
 	const sid = String(
 		manager?.currentSurfaceIdFor ? manager.currentSurfaceIdFor(scopeId) : 0,
@@ -34,7 +34,7 @@ function triggerAnimationsFallback(instance: any, scopeId: any, kind: string) {
 }
 
 export function onTalkStart(this: unknown, target = 0, scopeIdParam = 0) {
-	let instance: any, scopeId: any;
+	let instance: unknown, scopeId: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
@@ -57,7 +57,7 @@ export function onTalkStart(this: unknown, target = 0, scopeIdParam = 0) {
 }
 
 export function onTalkEnd(this: unknown, target = 0, scopeIdParam = 0) {
-	let instance: any, scopeId: any;
+	let instance: unknown, scopeId: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
@@ -80,7 +80,7 @@ export function onTalkEnd(this: unknown, target = 0, scopeIdParam = 0) {
 }
 
 export function onScriptEnd(this: unknown, target = 0, scopeIdParam = 0) {
-	let instance: any, scopeId: any;
+	let instance: unknown, scopeId: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
@@ -98,7 +98,7 @@ export function onScriptEnd(this: unknown, target = 0, scopeIdParam = 0) {
 }
 
 export function onCharSpoken(this: unknown, target = 0, scopeIdParam = 0) {
-	let instance: any, scopeId: any;
+	let instance: unknown, scopeId: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;

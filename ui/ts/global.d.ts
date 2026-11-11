@@ -1,5 +1,5 @@
 // Tauri's global bridge is injected at runtime and has no static package type.
-type TauriFunction = (...args: any[]) => any;
+type TauriFunction = (...args: unknown[]) => any;
 
 interface TauriApi {
 	event?: {
@@ -15,5 +15,5 @@ interface TauriApi {
 }
 
 declare var __TAURI__: TauriApi | undefined;
-declare var __TAURI_INTERNALS__: any | undefined;
-declare var __TAURI_IPC__: any | undefined;
+declare var __TAURI_INTERNALS__: unknown | undefined;
+declare var __TAURI_IPC__: unknown | undefined;

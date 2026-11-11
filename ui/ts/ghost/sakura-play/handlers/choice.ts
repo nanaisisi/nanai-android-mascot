@@ -4,14 +4,14 @@
  * @brief さくらスクリプト再生時の選択肢(\q)およびアンカー(\_a)要素生成・イベントハンドラ
  */
 
-export function handleChoice(player: any, app: any, token: any, context: any) {
+export function handleChoice(player: unknown, app: unknown, token: unknown, context: unknown) {
 	const { currentBalloonText, flushDesktopBalloon } = context;
 
 	const choiceBtn = document.createElement("button");
 	choiceBtn.className = "balloon-choice-btn";
 	choiceBtn.setAttribute("data-choice-id", token.id);
 	choiceBtn.textContent = token.text;
-	let hoverTimer: any = null;
+	let hoverTimer: unknown = null;
 	choiceBtn.addEventListener("click", (e: MouseEvent) => {
 		e.stopPropagation();
 		if (hoverTimer) {
@@ -72,10 +72,10 @@ export function handleChoice(player: any, app: any, token: any, context: any) {
 }
 
 export function handleAnchorBegin(
-	_player: any,
-	app: any,
-	token: any,
-	context: any,
+	_player: unknown,
+	app: unknown,
+	token: unknown,
+	context: unknown,
 ) {
 	const { currentBalloonText, scheduleDesktopBalloonSync } = context;
 
@@ -83,7 +83,7 @@ export function handleAnchorBegin(
 	anchorSpan.className = "balloon-anchor";
 	anchorSpan.dataset.anchorId = token.id;
 	anchorSpan.setAttribute("data-anchor-id", token.id);
-	let hoverTimer: any = null;
+	let hoverTimer: unknown = null;
 	anchorSpan.addEventListener("click", async (e: MouseEvent) => {
 		e.stopPropagation();
 		if (hoverTimer) {
@@ -94,7 +94,7 @@ export function handleAnchorBegin(
 		const args = token.args || [];
 		if (app.ghostController?.sendShioriEvent) {
 			// UKADOC: OnAnchorSelectEx is sent first (Reference0: text, Reference1: ID, Reference2..N: args)
-			const resEx: any = await app.ghostController.sendShioriEvent(
+			const resEx: unknown = await app.ghostController.sendShioriEvent(
 				"OnAnchorSelectEx",
 				[anchorText, token.id, ...args],
 			);
@@ -136,19 +136,19 @@ export function handleAnchorBegin(
 }
 
 export function handleAnchorEnd(
-	_player: any,
-	_app: any,
-	_token: any,
-	context: any,
+	_player: unknown,
+	_app: unknown,
+	_token: unknown,
+	context: unknown,
 ) {
 	context.currentAnchor = null;
 }
 
 export function handleChoiceScopeBegin(
-	player: any,
-	app: any,
-	token: any,
-	context: any,
+	player: unknown,
+	app: unknown,
+	token: unknown,
+	context: unknown,
 ) {
 	const {
 		currentBalloonText,
@@ -161,7 +161,7 @@ export function handleChoiceScopeBegin(
 	inlineChoiceSpan.setAttribute("data-choice-id", token.id);
 	inlineChoiceSpan.style.cursor = "pointer";
 
-	let hoverTimer: any = null;
+	let hoverTimer: unknown = null;
 	inlineChoiceSpan.addEventListener("click", (e: MouseEvent) => {
 		e.stopPropagation();
 		if (hoverTimer) {
@@ -229,10 +229,10 @@ export function handleChoiceScopeBegin(
 }
 
 export function handleChoiceScopeEnd(
-	_player: any,
-	_app: any,
-	_token: any,
-	context: any,
+	_player: unknown,
+	_app: unknown,
+	_token: unknown,
+	context: unknown,
 ) {
 	if (context.currentAnchor === context.currentChoiceScope) {
 		context.currentAnchor = null;

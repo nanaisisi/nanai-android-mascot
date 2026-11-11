@@ -13,7 +13,7 @@ const { ModalDialogController } = await import(
 );
 
 test("Cycle 5: Extended Modal Input Dialogs (dateinput, timeinput, ipinput)", async () => {
-	const events: any[] = [];
+	const events: unknown[] = [];
 	const runningAnimations = new Set<number>();
 	const sakuraDisplay = createMockElement("div");
 	const keroDisplay = createMockElement("div");
@@ -46,16 +46,16 @@ test("Cycle 5: Extended Modal Input Dialogs (dateinput, timeinput, ipinput)", as
 		modalController.activeBoxes.has("inputbox:DateID"),
 		"dateinput should be registered in ModalDialogController",
 	);
-	const dateForm = sakuraText.childNodes.find((c: any) =>
+	const dateForm = sakuraText.childNodes.find((c: unknown) =>
 		c.className?.includes("balloon-inputbox-form"),
 	);
 	assert.ok(dateForm, "DateInput form element must be appended");
-	const dateInputEl = dateForm.children.find((c: any) => c.tagName === "INPUT");
+	const dateInputEl = dateForm.children.find((c: unknown) => c.tagName === "INPUT");
 	assert.equal(dateInputEl.value, "2026-11-03");
 
 	// Submit DateInput
 	const dateSubmitBtn = dateForm.children.find(
-		(c: any) => c.tagName === "BUTTON",
+		(c: unknown) => c.tagName === "BUTTON",
 	);
 	dateSubmitBtn.click();
 	await new Promise((r) => setTimeout(r, 10));
@@ -82,15 +82,15 @@ test("Cycle 5: Extended Modal Input Dialogs (dateinput, timeinput, ipinput)", as
 		modalController.activeBoxes.has("inputbox:TimeID"),
 		"timeinput should be registered in ModalDialogController",
 	);
-	const timeForm = sakuraText.childNodes.find((c: any) =>
+	const timeForm = sakuraText.childNodes.find((c: unknown) =>
 		c.className?.includes("balloon-inputbox-form"),
 	);
-	const timeInputEl = timeForm.children.find((c: any) => c.tagName === "INPUT");
+	const timeInputEl = timeForm.children.find((c: unknown) => c.tagName === "INPUT");
 	assert.equal(timeInputEl.value, "12:30:45");
 
 	// Submit TimeInput
 	const timeSubmitBtn = timeForm.children.find(
-		(c: any) => c.tagName === "BUTTON",
+		(c: unknown) => c.tagName === "BUTTON",
 	);
 	timeSubmitBtn.click();
 	await new Promise((r) => setTimeout(r, 10));
@@ -117,10 +117,10 @@ test("Cycle 5: Extended Modal Input Dialogs (dateinput, timeinput, ipinput)", as
 		modalController.activeBoxes.has("inputbox:IpID"),
 		"ipinput should be registered in ModalDialogController",
 	);
-	const ipForm = sakuraText.childNodes.find((c: any) =>
+	const ipForm = sakuraText.childNodes.find((c: unknown) =>
 		c.className?.includes("balloon-inputbox-form"),
 	);
-	const ipInputEls = ipForm.children.filter((c: any) => c.tagName === "INPUT");
+	const ipInputEls = ipForm.children.filter((c: unknown) => c.tagName === "INPUT");
 	assert.equal(ipInputEls.length, 4);
 	assert.equal(ipInputEls[0].value, "192");
 	assert.equal(ipInputEls[3].value, "1");

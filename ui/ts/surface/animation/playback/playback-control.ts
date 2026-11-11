@@ -23,12 +23,12 @@ function isInstance(obj: unknown) {
  */
 export function playAnimationPatterns(
 	this: unknown,
-	target: any,
-	animOrBaseSurfaceId: any,
-	baseSurfaceIdOrScopeId: any,
-	scopeIdParam: any,
+	target: unknown,
+	animOrBaseSurfaceId: unknown,
+	baseSurfaceIdOrScopeId: unknown,
+	scopeIdParam: unknown,
 ) {
-	let instance: any, anim: any, baseSurfaceId: any, scopeId: any;
+	let instance: unknown, anim: unknown, baseSurfaceId: unknown, scopeId: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		anim = animOrBaseSurfaceId;
@@ -77,12 +77,12 @@ export function playAnimationPatterns(
 
 export async function playAnimationById(
 	this: unknown,
-	target: any,
-	animIdOrNameOrScopeId: any,
-	scopeIdOrWaitForComplete: any = 0,
+	target: unknown,
+	animIdOrNameOrScopeId: unknown,
+	scopeIdOrWaitForComplete: unknown = 0,
 	waitForCompleteParam = false,
 ) {
-	let instance: any, animIdOrName: any, scopeId: any, waitForComplete: any;
+	let instance: unknown, animIdOrName: unknown, scopeId: unknown, waitForComplete: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		animIdOrName = animIdOrNameOrScopeId;
@@ -127,12 +127,12 @@ export async function playAnimationById(
  */
 export async function waitForAnimation(
 	this: unknown,
-	target: any,
-	animIdOrNameOrScopeId: any,
+	target: unknown,
+	animIdOrNameOrScopeId: unknown,
 	scopeIdParam = 0,
 	timeoutMs = 30000,
 ) {
-	let instance: any, animIdOrName: any, scopeId: any;
+	let instance: unknown, animIdOrName: unknown, scopeId: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		animIdOrName = animIdOrNameOrScopeId;

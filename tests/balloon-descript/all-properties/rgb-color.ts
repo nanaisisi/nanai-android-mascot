@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 
-export function testRgbFromComponents(balloonDescriptActions: any) {
+export function testRgbFromComponents(balloonDescriptActions: unknown) {
 	const rgb = balloonDescriptActions.rgbFromComponents(
 		{ "font.color.r": "255", "font.color.g": "128", "font.color.b": "0" },
 		"font.color",

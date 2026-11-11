@@ -5,34 +5,34 @@
 
 import { invoke, isTauriAvailable } from "../../core/tauri-helper.js";
 
-export async function handleSetWallpaper(_handler: any, args: string[]) {
+export async function handleSetWallpaper(_handler: unknown, args: string[]) {
 	const [filename, option] = args.slice(1);
 	console.log(`🖼️ Wallpaper set: ${filename} (option: ${option})`);
 }
 
-export async function handleSaveWallpaper(_handler: any, _args: string[]) {
+export async function handleSaveWallpaper(_handler: unknown, _args: string[]) {
 	console.log("🖼️ Wallpaper savewallpaper executed");
 }
 
-export async function handleRestoreWallpaper(_handler: any, _args: string[]) {
+export async function handleRestoreWallpaper(_handler: unknown, _args: string[]) {
 	console.log("🖼️ Wallpaper restorewallpaper executed");
 }
 
 export async function handleCancelNetworkService(
-	_handler: any,
+	_handler: unknown,
 	args: string[],
 ) {
 	const [service, target] = args.slice(1);
 	console.log(`🛑 Network service cancel: ${service} (${target})`);
 }
 
-export async function handleCloseNetworkService(_handler: any, args: string[]) {
+export async function handleCloseNetworkService(_handler: unknown, args: string[]) {
 	const [service, target] = args.slice(1);
 	console.log(`🛑 Network service close: ${service} (${target})`);
 }
 
 export async function handleFileWatchCommand(
-	_handler: any,
+	_handler: unknown,
 	args: string[],
 	isCancel: boolean = false,
 ) {
@@ -49,7 +49,7 @@ export async function handleFileWatchCommand(
 	}
 }
 
-export async function handleEmptyRecycleBin(_handler: any, _args: string[]) {
+export async function handleEmptyRecycleBin(_handler: unknown, _args: string[]) {
 	console.log("🗑️ Empty recycle bin requested");
 	if (isTauriAvailable()) {
 		try {
@@ -60,7 +60,7 @@ export async function handleEmptyRecycleBin(_handler: any, _args: string[]) {
 	}
 }
 
-export async function handlePingCommand(handler: any, args: string[]) {
+export async function handlePingCommand(handler: unknown, args: string[]) {
 	const host = args[1] ?? args[0] ?? "";
 	console.log(`📡 Ping requested: host=${host}`);
 	if (isTauriAvailable()) {
@@ -84,7 +84,7 @@ export async function handlePingCommand(handler: any, args: string[]) {
 	}
 }
 
-export async function handleNslookupCommand(handler: any, args: string[]) {
+export async function handleNslookupCommand(handler: unknown, args: string[]) {
 	const host = args[1] ?? args[0] ?? "";
 	console.log(`🔍 Nslookup requested: host=${host}`);
 	if (isTauriAvailable()) {
@@ -108,7 +108,7 @@ export async function handleNslookupCommand(handler: any, args: string[]) {
 	}
 }
 
-export async function handleScheduleAddCommand(handler: any, args: string[]) {
+export async function handleScheduleAddCommand(handler: unknown, args: string[]) {
 	const rawArgs = args[0]?.toLowerCase().includes("schedule")
 		? args.slice(1)
 		: args;
@@ -136,7 +136,7 @@ export async function handleScheduleAddCommand(handler: any, args: string[]) {
 	}
 }
 
-export async function handleExecuteCommand(handler: any, args: string[]) {
+export async function handleExecuteCommand(handler: unknown, args: string[]) {
 	const subCmd = (args[1] ?? "").toLowerCase();
 	const restArgs = args.slice(1);
 
@@ -209,7 +209,7 @@ export async function handleExecuteCommand(handler: any, args: string[]) {
 	}
 }
 
-export async function handleArchiveExec(handler: any, args: string[]) {
+export async function handleArchiveExec(handler: unknown, args: string[]) {
 	const [action, filename, dest] = args.slice(1);
 	console.log(`📦 Archive action ${action}: file=${filename}, dest=${dest}`);
 	if (action === "createnar" && isTauriAvailable()) {
@@ -227,52 +227,52 @@ export async function handleArchiveExec(handler: any, args: string[]) {
 	}
 }
 
-export async function handleDownloadExec(_handler: any, args: string[]) {
+export async function handleDownloadExec(_handler: unknown, args: string[]) {
 	const [url, savePath] = args.slice(1);
 	console.log(`📥 Download requested: url=${url}, savePath=${savePath}`);
 }
 
-export async function handleUploadExec(_handler: any, args: string[]) {
+export async function handleUploadExec(_handler: unknown, args: string[]) {
 	const [url, filePath] = args.slice(1);
 	console.log(`📤 Upload requested: url=${url}, filePath=${filePath}`);
 }
 
-export async function handleMailCheckExec(handler: any, args: string[]) {
+export async function handleMailCheckExec(handler: unknown, args: string[]) {
 	const [account] = args.slice(1);
 	console.log(`✉️ Mail check requested for account: ${account}`);
 	await handler.app.networkActions?.checkEmail?.(account);
 }
 
-export async function handleMailExec(_handler: any, args: string[]) {
+export async function handleMailExec(_handler: unknown, args: string[]) {
 	const [action, target] = args.slice(1);
 	console.log(`✉️ Mail action ${action}: target=${target}`);
 }
 
-export async function handleFileExec(_handler: any, args: string[]) {
+export async function handleFileExec(_handler: unknown, args: string[]) {
 	const [action, path, dest] = args.slice(1);
 	console.log(`📁 File action ${action}: path=${path}, dest=${dest}`);
 }
 
-export async function handleSetHttpTimeout(_handler: any, args: string[]) {
+export async function handleSetHttpTimeout(_handler: unknown, args: string[]) {
 	const [timeout] = args.slice(1);
 	console.log(`⏱️ HTTP timeout set: ${timeout}s`);
 }
 
-export async function handleSetProxy(_handler: any, args: string[]) {
+export async function handleSetProxy(_handler: unknown, args: string[]) {
 	const [server, port] = args.slice(1);
 	console.log(`🌐 Proxy set: ${server}:${port}`);
 }
 
-export async function handleUpdate(handler: any) {
+export async function handleUpdate(handler: unknown) {
 	await handler.app.startNetworkUpdate?.();
 }
 
-export async function handleUpdateByMyself(handler: any) {
+export async function handleUpdateByMyself(handler: unknown) {
 	await handler.app.startNetworkUpdate?.();
 }
 
 export async function handleSoundEventNotify(
-	handler: any,
+	handler: unknown,
 	action: string,
 	params: string[] = [],
 ) {

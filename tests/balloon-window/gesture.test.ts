@@ -12,10 +12,10 @@ test("setupWindowGestures handles click, drag, double-tap zoom, and pinch gestur
 	const { emittedEvents } = setupBalloonMockEnvironment();
 
 	let userScaleState = 1.0;
-	const mockGestureBox: any = {
+	const mockGestureBox: unknown = {
 		style: { transform: "", transformOrigin: "" },
-		listeners: {} as Record<string, (e?: any) => void>,
-		addEventListener(ev: string, cb: (e?: any) => void) {
+		listeners: {} as Record<string, (e?: unknown) => void>,
+		addEventListener(ev: string, cb: (e?: unknown) => void) {
 			this.listeners[ev] = cb;
 		},
 	};
@@ -45,7 +45,7 @@ test("setupWindowGestures handles click, drag, double-tap zoom, and pinch gestur
 	assert.strictEqual(userScaleState, 1.25);
 
 	const requestScaleEvent = emittedEvents.find(
-		(e: any) =>
+		(e: unknown) =>
 			e.event === "request-balloon-scale-change" &&
 			e.payload?.userScale === 1.25,
 	);
@@ -67,7 +67,7 @@ test("setupWindowGestures handles click, drag, double-tap zoom, and pinch gestur
 	mockGestureBox.listeners.touchend({ touches: [] });
 
 	const pinchRequestEvent = emittedEvents.find(
-		(e: any) =>
+		(e: unknown) =>
 			e.event === "request-balloon-scale-change" && e.payload?.userScale > 1.25,
 	);
 	assert.ok(pinchRequestEvent);

@@ -50,7 +50,7 @@ test("anchor click triggers OnAnchorSelectEx first, then falls back to OnAnchorS
 	);
 
 	const anchorSpan = sakuraText.children.find(
-		(c: any) => c.className === "balloon-anchor",
+		(c: unknown) => c.className === "balloon-anchor",
 	);
 	assert.ok(anchorSpan);
 

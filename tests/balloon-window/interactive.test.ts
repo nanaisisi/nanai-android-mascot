@@ -16,20 +16,20 @@ test("setupInteractiveElements binds click events to choices and anchors", async
 
 	setupInteractiveElements(null as any, 0);
 
-	const choiceBtn: any = {
+	const choiceBtn: unknown = {
 		getAttribute: (a: string) =>
 			a === "data-choice-id" ? "choice_id_1" : null,
 		textContent: "Choice Text",
-		addEventListener(_t: string, cb: (e: any) => void) {
+		addEventListener(_t: string, cb: (e: unknown) => void) {
 			this._cb = cb;
 		},
 	};
 
-	const anchorLink: any = {
+	const anchorLink: unknown = {
 		getAttribute: (a: string) =>
 			a === "data-anchor-id" ? "anchor_id_1" : null,
 		textContent: "Anchor Text",
-		addEventListener(_t: string, cb: (e: any) => void) {
+		addEventListener(_t: string, cb: (e: unknown) => void) {
 			this._cb = cb;
 		},
 	};
@@ -50,14 +50,14 @@ test("setupInteractiveElements binds click events to choices and anchors", async
 	await new Promise((r) => setTimeout(r, 10));
 
 	const choiceEvent = emittedEvents.find(
-		(e: any) =>
+		(e: unknown) =>
 			e.event === "balloon-choice-selected" &&
 			e.payload?.choiceId === "choice_id_1",
 	);
 	assert.ok(choiceEvent);
 
 	const anchorEvent = emittedEvents.find(
-		(e: any) =>
+		(e: unknown) =>
 			e.event === "balloon-anchor-selected" &&
 			e.payload?.anchorId === "anchor_id_1",
 	);

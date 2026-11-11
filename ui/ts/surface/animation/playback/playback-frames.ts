@@ -44,7 +44,7 @@ export async function _playAnimationPatterns(
 	scopeIdOrKey: undefined,
 	keyParam: undefined,
 ) {
-	let instance: any, anim: any, baseSurfaceId: any, scopeId: any, key: any;
+	let instance: unknown, anim: unknown, baseSurfaceId: unknown, scopeId: unknown, key: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		anim = animOrBaseSurfaceId;

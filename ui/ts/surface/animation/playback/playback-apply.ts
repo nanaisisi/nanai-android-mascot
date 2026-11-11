@@ -31,14 +31,14 @@ export async function _applyAnimationFrame(
 	isCurrentOrOptions?: unknown,
 	optionsParam: unknown = {},
 ): Promise<boolean> {
-	let instance: any,
-		pat: any,
-		anim: any,
-		baseSurfaceId: any,
-		scopeId: any,
-		_key: any,
-		isCurrent: any,
-		options: any;
+	let instance: unknown,
+		pat: unknown,
+		anim: unknown,
+		baseSurfaceId: unknown,
+		scopeId: unknown,
+		_key: unknown,
+		isCurrent: unknown,
+		options: unknown;
 
 	if (isInstance(target)) {
 		instance = target;

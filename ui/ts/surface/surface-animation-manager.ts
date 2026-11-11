@@ -98,7 +98,7 @@ export class SurfaceAnimationManager {
 	_serikoTalkEnabled: Map<unknown, unknown>;
 	scheduler: AnimationScheduler;
 
-	constructor(manager: any) {
+	constructor(manager: unknown) {
 		this.manager = manager;
 		this.activeAnimationTimers = {};
 		this._spokenCount = {};

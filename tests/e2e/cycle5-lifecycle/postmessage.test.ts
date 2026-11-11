@@ -10,7 +10,7 @@ const { parseSakuraScript } = await import(
 );
 
 test("Cycle 5: PostMessage (\\m[umsg,wparam,lparam]) Tokenization and Playback", async () => {
-	const events: any[] = [];
+	const events: unknown[] = [];
 	const runningAnimations = new Set<number>();
 	const sakuraDisplay = createMockElement("div");
 	const keroDisplay = createMockElement("div");
@@ -32,7 +32,7 @@ test("Cycle 5: PostMessage (\\m[umsg,wparam,lparam]) Tokenization and Playback",
 
 	const postMsgScript = "\\0\\m[1024,10,20]PostMessage executed\\e";
 	const tokens = await player.parse(postMsgScript);
-	const postMsgToken = tokens.find((t: any) => t.type === "post_message");
+	const postMsgToken = tokens.find((t: unknown) => t.type === "post_message");
 	assert.ok(postMsgToken, "Token type post_message should be parsed");
 	assert.equal(postMsgToken.umsg, "1024");
 	assert.equal(postMsgToken.wparam, "10");

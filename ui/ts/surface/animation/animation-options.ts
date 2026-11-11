@@ -18,11 +18,11 @@ export {
  */
 export function isAnimationRunning(
 	this: unknown,
-	target: any = 0,
-	scopeIdOrAnimId: any = 0,
-	animIdOrNameParam: any = undefined,
+	target: unknown = 0,
+	scopeIdOrAnimId: unknown = 0,
+	animIdOrNameParam: unknown = undefined,
 ) {
-	let instance: any, scopeId: any, animIdOrName: any;
+	let instance: unknown, scopeId: unknown, animIdOrName: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
@@ -55,11 +55,11 @@ export function isAnimationRunning(
  */
 export function stopAnimation(
 	this: unknown,
-	target: any = 0,
-	scopeIdOrAnimId: any = 0,
-	animIdOrNameParam: any = undefined,
+	target: unknown = 0,
+	scopeIdOrAnimId: unknown = 0,
+	animIdOrNameParam: unknown = undefined,
 ) {
-	let instance: any, scopeId: any, animIdOrName: any;
+	let instance: unknown, scopeId: unknown, animIdOrName: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
@@ -91,13 +91,13 @@ export function stopAnimation(
  */
 export function setAnimationOffset(
 	this: unknown,
-	target: any = 0,
-	scopeIdOrAnimId: any = 0,
-	animIdOrNameOrX: any = 0,
+	target: unknown = 0,
+	scopeIdOrAnimId: unknown = 0,
+	animIdOrNameOrX: unknown = 0,
 	xOrY = 0,
 	yParam = 0,
 ) {
-	let instance: any, scopeId: any, animIdOrName: any, x: any, y: any;
+	let instance: unknown, scopeId: unknown, animIdOrName: unknown, x: unknown, y: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
@@ -124,11 +124,11 @@ export function setAnimationOffset(
  */
 export function getAnimationOffset(
 	this: unknown,
-	target: any = 0,
-	scopeIdOrAnimId: any = 0,
-	animIdOrNameParam: any = undefined,
+	target: unknown = 0,
+	scopeIdOrAnimId: unknown = 0,
+	animIdOrNameParam: unknown = undefined,
 ) {
-	let instance: any, scopeId: any, animIdOrName: any;
+	let instance: unknown, scopeId: unknown, animIdOrName: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
@@ -148,11 +148,11 @@ export function getAnimationOffset(
 
 export function pauseAnimation(
 	this: unknown,
-	target: any = 0,
-	scopeIdOrAnimId: any = 0,
-	animIdOrNameParam: any = undefined,
+	target: unknown = 0,
+	scopeIdOrAnimId: unknown = 0,
+	animIdOrNameParam: unknown = undefined,
 ) {
-	let instance: any, scopeId: any, animIdOrName: any;
+	let instance: unknown, scopeId: unknown, animIdOrName: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
@@ -172,11 +172,11 @@ export function pauseAnimation(
 
 export function resumeAnimation(
 	this: unknown,
-	target: any = 0,
-	scopeIdOrAnimId: any = 0,
-	animIdOrNameParam: any = undefined,
+	target: unknown = 0,
+	scopeIdOrAnimId: unknown = 0,
+	animIdOrNameParam: unknown = undefined,
 ) {
-	let instance: any, scopeId: any, animIdOrName: any;
+	let instance: unknown, scopeId: unknown, animIdOrName: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
@@ -196,11 +196,11 @@ export function resumeAnimation(
 
 export function isAnimationPaused(
 	this: unknown,
-	target: any = 0,
-	scopeIdOrAnimId: any = 0,
-	animIdOrNameParam: any = undefined,
+	target: unknown = 0,
+	scopeIdOrAnimId: unknown = 0,
+	animIdOrNameParam: unknown = undefined,
 ) {
-	let instance: any, scopeId: any, animIdOrName: any;
+	let instance: unknown, scopeId: unknown, animIdOrName: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
@@ -220,10 +220,10 @@ export function isAnimationPaused(
 
 export function clearPausedAnimations(
 	this: unknown,
-	target: any = 0,
-	scopeIdParam: any = 0,
+	target: unknown = 0,
+	scopeIdParam: unknown = 0,
 ) {
-	let instance: any, scopeId: any;
+	let instance: unknown, scopeId: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
@@ -242,10 +242,10 @@ export function clearPausedAnimations(
  */
 export function getActiveAnimationCount(
 	this: unknown,
-	target: any = 0,
-	scopeIdParam: any = 0,
+	target: unknown = 0,
+	scopeIdParam: unknown = 0,
 ) {
-	let instance: any, scopeId: any;
+	let instance: unknown, scopeId: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
@@ -272,10 +272,10 @@ export function getActiveAnimationCount(
  */
 export function getActiveAnimations(
 	this: unknown,
-	target: any = 0,
-	scopeIdParam: any = 0,
+	target: unknown = 0,
+	scopeIdParam: unknown = 0,
 ) {
-	let instance: any, scopeId: any;
+	let instance: unknown, scopeId: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
@@ -307,10 +307,10 @@ export function getActiveAnimations(
  */
 export function getActiveCollisions(
 	this: unknown,
-	target: any = 0,
-	scopeIdParam: any = 0,
+	target: unknown = 0,
+	scopeIdParam: unknown = 0,
 ) {
-	let instance: any, scopeId: any;
+	let instance: unknown, scopeId: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;

@@ -11,7 +11,7 @@ export interface GhostInfo {
 }
 
 export class GhostController {
-	app: any;
+	app: unknown;
 	ghosts: GhostInfo[];
 	currentGhost: GhostInfo | null;
 	shells: string[];
@@ -19,13 +19,13 @@ export class GhostController {
 	currentSurfaces: Map<number, string>;
 	_surfaceSeq: unknown[] | undefined;
 	uptimeSeconds?: number;
-	_secondTimerId?: any;
+	_secondTimerId?: unknown;
 	_secondSending?: boolean;
 	_previousGhostName?: string;
-	_currentLoadToken?: any;
-	[key: string]: any;
+	_currentLoadToken?: unknown;
+	[key: string]: unknown;
 
-	constructor(app: any) {
+	constructor(app: unknown) {
 		this.app = app;
 		this.ghosts = [];
 		this.currentGhost = null;
@@ -68,7 +68,7 @@ export class GhostController {
 	async verifyGhostExists(ghostInfo: GhostInfo): Promise<boolean> {
 		if (!isTauriAvailable()) return false;
 		try {
-			const result: any = await invoke("scan_ghosts", {
+			const result: unknown = await invoke("scan_ghosts", {
 				ghostPath: ghostInfo.path || AppConfig.paths.defaultGhostDir,
 			});
 			return (
@@ -86,7 +86,7 @@ export class GhostController {
 			return this.ghosts;
 		}
 		try {
-			const result: any = await invoke("scan_ghosts", {
+			const result: unknown = await invoke("scan_ghosts", {
 				ghostPath: AppConfig.paths.defaultGhostDir,
 			});
 			if (result && Array.isArray(result.ghosts)) {
@@ -152,7 +152,7 @@ export class GhostController {
 
 		if (isTauriAvailable()) {
 			try {
-				const info: any = await invoke("get_ghost_info", {
+				const info: unknown = await invoke("get_ghost_info", {
 					ghostName: ghost.name,
 				});
 				if (info) {

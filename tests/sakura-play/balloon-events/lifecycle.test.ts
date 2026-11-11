@@ -64,7 +64,7 @@ test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip",
 	await playScript(player, "\\0テスト中\\c");
 	assert.ok(
 		notifyEvents.some(
-			(e: any) => e.event === "OnBalloonClose" && e.args[1] === "0",
+			(e: unknown) => e.event === "OnBalloonClose" && e.args[1] === "0",
 		),
 		"OnBalloonClose missing",
 	);
@@ -86,7 +86,7 @@ test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip",
 	await playScript(playerSkip, "\\0スキップ");
 	assert.ok(
 		notifyEvents.some(
-			(e: any) => e.event === "OnBalloonBreak" && e.args[1] === "0",
+			(e: unknown) => e.event === "OnBalloonBreak" && e.args[1] === "0",
 		),
 		"OnBalloonBreak missing",
 	);
@@ -141,7 +141,7 @@ test("balloon events: OnBalloonTimeout triggered via sendBalloonTimeoutNotify", 
 
 	assert.ok(
 		notifyEvents.some(
-			(e: any) => e.event === "OnBalloonTimeout" && e.args[1] === "1",
+			(e: unknown) => e.event === "OnBalloonTimeout" && e.args[1] === "1",
 		),
 		"OnBalloonTimeout should be fired with active scope",
 	);

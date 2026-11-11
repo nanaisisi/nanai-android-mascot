@@ -6,7 +6,7 @@
 import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 
 export async function handleSetAlignmentOnDesktop(
-	handler: any,
+	handler: unknown,
 	args: string[],
 ) {
 	const mode = (args[2] ?? "").toLowerCase();
@@ -35,7 +35,7 @@ export async function handleSetAlignmentOnDesktop(
 	}
 }
 
-export async function handleSetTaskTrayIcon(_handler: any, args: string[]) {
+export async function handleSetTaskTrayIcon(_handler: unknown, args: string[]) {
 	const iconPath = args[2] ?? "";
 	console.log(`📌 Task tray icon set: ${iconPath}`);
 	if (isTauriAvailable()) {
@@ -47,7 +47,7 @@ export async function handleSetTaskTrayIcon(_handler: any, args: string[]) {
 	}
 }
 
-export async function handleSetTrayBalloon(handler: any, args: string[]) {
+export async function handleSetTrayBalloon(handler: unknown, args: string[]) {
 	const title = args[2] ?? "";
 	const text = args[3] ?? "";
 	const iconOrTimeout = args[4];
@@ -70,7 +70,7 @@ export async function handleSetTrayBalloon(handler: any, args: string[]) {
 }
 
 export async function triggerTrayBalloonClick(
-	handler: any,
+	handler: unknown,
 	title: string = "",
 	text: string = "",
 ) {
@@ -83,7 +83,7 @@ export async function triggerTrayBalloonClick(
 }
 
 export async function handleExecuteResetWindowPos(
-	handler: any,
+	handler: unknown,
 	_args: string[],
 ) {
 	console.log("📍 Execute resetwindowpos triggered");
@@ -96,7 +96,7 @@ export async function handleExecuteResetWindowPos(
 }
 
 export async function handleExecuteResetBalloonPos(
-	handler: any,
+	handler: unknown,
 	_args: string[],
 ) {
 	console.log("🎈 Execute resetballoonpos triggered");

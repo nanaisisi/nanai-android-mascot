@@ -1,9 +1,9 @@
 // @ts-nocheck
 export async function notifySurfaceChangeEvents(
-	thisObj: any,
+	thisObj: unknown,
 	scopeId: number,
 	surfaceId: number | string,
-	img: any,
+	img: unknown,
 	isAnimationFrame: boolean,
 ) {
 	if (!isAnimationFrame && surfaceId !== -1 && surfaceId !== "-1") {

@@ -3,8 +3,8 @@ import type { SakuraScriptToken } from "./sakura-parser.js";
 
 export interface RustCommand {
 	type: string;
-	payload?: any;
-	[key: string]: any;
+	payload?: unknown;
+	[key: string]: unknown;
 }
 
 export function rustCommandsToTokens(

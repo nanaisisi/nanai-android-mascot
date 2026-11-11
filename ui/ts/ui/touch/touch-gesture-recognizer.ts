@@ -81,7 +81,7 @@ export class TouchGestureRecognizer {
 	}) => void;
 	_boundTouchCancel: () => void;
 
-	constructor(element: unknown, options: any = {}) {
+	constructor(element: unknown, options: unknown = {}) {
 		this.element = element;
 		this.options = {
 			longPressDelay: options.longPressDelay ?? 600,
@@ -234,7 +234,7 @@ export class TouchGestureRecognizer {
 	 * ジェスチャー認識オプションを動的に設定
 	 * @param {object} options
 	 */
-	setGestureOptions(options: any = {}) {
+	setGestureOptions(options: unknown = {}) {
 		if (options.longPressDelay !== undefined) {
 			const delay = Number(options.longPressDelay);
 			if (Number.isFinite(delay) && delay >= 0) {

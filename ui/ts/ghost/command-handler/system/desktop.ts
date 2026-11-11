@@ -6,7 +6,7 @@
 import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 
 export async function handleSetAlignmentOnDesktop(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const mode = (args[2] ?? "").toLowerCase();
@@ -36,7 +36,7 @@ export async function handleSetAlignmentOnDesktop(
 }
 
 export async function handleSetTaskTrayIcon(
-	_handler: import("../../ghost.js").SakuraCommandHandler,
+	_handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const iconPath = args[2] ?? "";
@@ -51,7 +51,7 @@ export async function handleSetTaskTrayIcon(
 }
 
 export async function handleSetTrayBalloon(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const title = args[2] ?? "";
@@ -76,7 +76,7 @@ export async function handleSetTrayBalloon(
 }
 
 export async function triggerTrayBalloonClick(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	title: string = "",
 	text: string = "",
 ) {
@@ -89,7 +89,7 @@ export async function triggerTrayBalloonClick(
 }
 
 export async function handleExecuteResetWindowPos(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	_args: string[],
 ) {
 	console.log("📍 Execute resetwindowpos triggered");
@@ -102,7 +102,7 @@ export async function handleExecuteResetWindowPos(
 }
 
 export async function handleExecuteResetBalloonPos(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	_args: string[],
 ) {
 	console.log("🎈 Execute resetballoonpos triggered");

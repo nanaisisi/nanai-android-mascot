@@ -4,7 +4,7 @@
  */
 
 export async function handleSetShioriDebugMode(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const mode = (args[2] ?? "").toLowerCase() === "true";
@@ -14,7 +14,7 @@ export async function handleSetShioriDebugMode(
 }
 
 export async function handleReloadShiori(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	_args: string[],
 ) {
 	console.log("🔄 Execute reload,shiori triggered");
@@ -27,7 +27,7 @@ export async function handleReloadShiori(
 }
 
 export async function handleReloadShell(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	_args: string[],
 ) {
 	console.log("🔄 Execute reload,shell triggered");
@@ -38,7 +38,7 @@ export async function handleReloadShell(
 }
 
 export async function handleReloadGhost(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	_args: string[],
 ) {
 	console.log("🔄 Execute reload,ghost triggered");
@@ -50,7 +50,7 @@ export async function handleReloadGhost(
 }
 
 export async function handleReloadBalloon(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	_args: string[],
 ) {
 	console.log("🔄 Execute reload,balloon triggered");
@@ -62,7 +62,7 @@ export async function handleReloadBalloon(
 }
 
 export async function handleReloadDescript(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	_args: string[],
 ) {
 	console.log("🔄 Execute reload,descript triggered");
@@ -77,7 +77,7 @@ export async function handleReloadDescript(
 }
 
 export async function handleReloadSurface(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	_args: string[],
 ) {
 	console.log("🔄 Execute reloadsurface triggered");
@@ -91,7 +91,7 @@ export async function handleReloadSurface(
 }
 
 export async function handleLoadMakoto(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const moduleName = args[2] ?? args[1] ?? "";
@@ -105,7 +105,7 @@ export async function handleLoadMakoto(
 }
 
 export async function handleUnloadMakoto(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const moduleName = args[2] ?? args[1] ?? "";
@@ -119,7 +119,7 @@ export async function handleUnloadMakoto(
 }
 
 export async function handleReloadMakoto(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const moduleName = args[2] ?? args[1] ?? "";
@@ -133,7 +133,7 @@ export async function handleReloadMakoto(
 }
 
 export async function handleReloadAigraph(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	_args: string[],
 ) {
 	console.log("📊 Execute reload,aigraph triggered");

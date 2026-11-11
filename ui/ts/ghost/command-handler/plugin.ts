@@ -6,7 +6,7 @@
 import { invoke, isTauriAvailable } from "../../core/tauri-helper.js";
 
 export async function handlePluginEvent(
-	_handler: import("../../ghost.js").SakuraCommandHandler,
+	_handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const rawCmd = (args[0] ?? "").toLowerCase();

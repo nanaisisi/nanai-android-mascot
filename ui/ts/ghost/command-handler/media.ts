@@ -6,7 +6,7 @@
 import { invoke, isTauriAvailable } from "../../core/tauri-helper.js";
 
 export async function handleSetWallpaper(
-	_handler: import("../../ghost.js").SakuraCommandHandler,
+	_handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const [filename, option] = args.slice(1);
@@ -14,21 +14,21 @@ export async function handleSetWallpaper(
 }
 
 export async function handleSaveWallpaper(
-	_handler: import("../../ghost.js").SakuraCommandHandler,
+	_handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	_args: string[],
 ) {
 	console.log("🖼️ Wallpaper savewallpaper executed");
 }
 
 export async function handleRestoreWallpaper(
-	_handler: import("../../ghost.js").SakuraCommandHandler,
+	_handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	_args: string[],
 ) {
 	console.log("🖼️ Wallpaper restorewallpaper executed");
 }
 
 export async function handleCancelNetworkService(
-	_handler: import("../../ghost.js").SakuraCommandHandler,
+	_handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const [service, target] = args.slice(1);
@@ -36,7 +36,7 @@ export async function handleCancelNetworkService(
 }
 
 export async function handleCloseNetworkService(
-	_handler: import("../../ghost.js").SakuraCommandHandler,
+	_handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const [service, target] = args.slice(1);
@@ -44,7 +44,7 @@ export async function handleCloseNetworkService(
 }
 
 export async function handleFileWatchCommand(
-	_handler: import("../../ghost.js").SakuraCommandHandler,
+	_handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 	isCancel: boolean = false,
 ) {
@@ -62,7 +62,7 @@ export async function handleFileWatchCommand(
 }
 
 export async function handleEmptyRecycleBin(
-	_handler: import("../../ghost.js").SakuraCommandHandler,
+	_handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	_args: string[],
 ) {
 	console.log("🗑️ Empty recycle bin requested");
@@ -76,7 +76,7 @@ export async function handleEmptyRecycleBin(
 }
 
 export async function handlePingCommand(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const host = args[1] ?? args[0] ?? "";
@@ -103,7 +103,7 @@ export async function handlePingCommand(
 }
 
 export async function handleNslookupCommand(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const host = args[1] ?? args[0] ?? "";
@@ -130,7 +130,7 @@ export async function handleNslookupCommand(
 }
 
 export async function handleScheduleAddCommand(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const rawArgs = args[0]?.toLowerCase().includes("schedule")
@@ -161,7 +161,7 @@ export async function handleScheduleAddCommand(
 }
 
 export async function handleExecuteCommand(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const subCmd = (args[1] ?? "").toLowerCase();
@@ -237,7 +237,7 @@ export async function handleExecuteCommand(
 }
 
 export async function handleArchiveExec(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const [action, filename, dest] = args.slice(1);
@@ -258,7 +258,7 @@ export async function handleArchiveExec(
 }
 
 export async function handleDownloadExec(
-	_handler: import("../../ghost.js").SakuraCommandHandler,
+	_handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const [url, savePath] = args.slice(1);
@@ -266,7 +266,7 @@ export async function handleDownloadExec(
 }
 
 export async function handleUploadExec(
-	_handler: import("../../ghost.js").SakuraCommandHandler,
+	_handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const [url, filePath] = args.slice(1);
@@ -274,7 +274,7 @@ export async function handleUploadExec(
 }
 
 export async function handleMailCheckExec(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const [account] = args.slice(1);
@@ -283,7 +283,7 @@ export async function handleMailCheckExec(
 }
 
 export async function handleMailExec(
-	_handler: import("../../ghost.js").SakuraCommandHandler,
+	_handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const [action, target] = args.slice(1);
@@ -291,7 +291,7 @@ export async function handleMailExec(
 }
 
 export async function handleFileExec(
-	_handler: import("../../ghost.js").SakuraCommandHandler,
+	_handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const [action, path, dest] = args.slice(1);
@@ -299,7 +299,7 @@ export async function handleFileExec(
 }
 
 export async function handleSetHttpTimeout(
-	_handler: import("../../ghost.js").SakuraCommandHandler,
+	_handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const [timeout] = args.slice(1);
@@ -307,7 +307,7 @@ export async function handleSetHttpTimeout(
 }
 
 export async function handleSetProxy(
-	_handler: import("../../ghost.js").SakuraCommandHandler,
+	_handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const [server, port] = args.slice(1);
@@ -315,19 +315,19 @@ export async function handleSetProxy(
 }
 
 export async function handleUpdate(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 ) {
 	await handler.app.startNetworkUpdate?.();
 }
 
 export async function handleUpdateByMyself(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 ) {
 	await handler.app.startNetworkUpdate?.();
 }
 
 export async function handleSoundEventNotify(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	action: string,
 	params: string[] = [],
 ) {

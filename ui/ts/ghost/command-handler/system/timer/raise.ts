@@ -6,7 +6,7 @@
 import { cancelScriptTimer, scheduleScriptTimer } from "./registry.js";
 
 export async function handleNotifyCommand(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const eventName = args[1];
@@ -33,7 +33,7 @@ export async function handleNotifyCommand(
 }
 
 export async function handleTimerRaiseCommand(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const delayMs = Number.parseInt(args[1] ?? "0", 10);
@@ -70,7 +70,7 @@ export async function handleTimerRaiseCommand(
 }
 
 export async function handleTimerNotifyCommand(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const delayMs = Number.parseInt(args[1] ?? "0", 10);

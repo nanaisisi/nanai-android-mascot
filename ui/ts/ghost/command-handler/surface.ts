@@ -4,7 +4,7 @@
  */
 
 export async function handleBindCommand(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 	raiseEvent: boolean = true,
 ) {
@@ -19,7 +19,7 @@ export async function handleBindCommand(
 }
 
 export async function handleAnimCommand(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const [verbRaw, idVal, arg3, arg4] = args.slice(1);
@@ -46,7 +46,7 @@ export async function handleAnimCommand(
 }
 
 async function handleAnimAddCommand(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	subArgs: string[],
 ) {
 	if (!subArgs.length) return;

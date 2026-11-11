@@ -4,7 +4,7 @@
  */
 
 export async function handleSetChoiceTimeout(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const timeout = Number.parseInt(args[2] ?? "", 10);
@@ -12,7 +12,7 @@ export async function handleSetChoiceTimeout(
 }
 
 export async function handleSetBalloonTimeout(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const timeout = Number.parseInt(args[2] ?? "", 10);
@@ -20,7 +20,7 @@ export async function handleSetBalloonTimeout(
 }
 
 export async function handleSetBalloonWait(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const param = args[2];
@@ -28,7 +28,7 @@ export async function handleSetBalloonWait(
 }
 
 export async function handleQuickSection(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const val = String(args[1] ?? "").toLowerCase();
@@ -37,7 +37,7 @@ export async function handleQuickSection(
 }
 
 export async function handleSetSyncObject(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const name = args[2];
@@ -51,7 +51,7 @@ export async function handleSetSyncObject(
 }
 
 export async function handleResetSyncObject(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const name = args[2];
@@ -65,7 +65,7 @@ export async function handleResetSyncObject(
 }
 
 export async function handleWaitSyncObject(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const name = args[2];

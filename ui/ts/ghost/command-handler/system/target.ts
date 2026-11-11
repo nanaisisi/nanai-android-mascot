@@ -6,7 +6,7 @@
 import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 
 export async function handleBiffCommand(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	_args: string[],
 ) {
 	console.log("✉️ Biff mail check triggered");
@@ -14,7 +14,7 @@ export async function handleBiffCommand(
 }
 
 export async function handleExecuteSntpCommand(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	_args: string[],
 ) {
 	console.log("⏱️ Execute SNTP time sync triggered");
@@ -33,7 +33,7 @@ export async function handleExecuteSntpCommand(
 }
 
 export async function handleHourTimeSignal(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	hour?: number,
 ) {
 	const currentHour = hour ?? new Date().getHours();
@@ -45,7 +45,7 @@ export async function handleHourTimeSignal(
 }
 
 export async function handleOpenSystemTarget(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const target = (args[1] ?? "").toLowerCase();

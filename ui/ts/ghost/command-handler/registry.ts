@@ -4,7 +4,7 @@
  */
 
 export type CommandHandlerFn = (
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) => Promise<void> | void;
 

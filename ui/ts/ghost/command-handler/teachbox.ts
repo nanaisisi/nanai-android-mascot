@@ -4,7 +4,7 @@
  */
 
 export function openTeachBox(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	params: string[] = [],
 	options: unknown = {},
 ) {
@@ -99,7 +99,7 @@ export function openTeachBox(
 }
 
 export function closeTeachBox(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 ) {
 	if (handler.teachForm) {
 		handler.teachForm.remove();

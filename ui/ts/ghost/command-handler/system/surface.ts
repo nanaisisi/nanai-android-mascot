@@ -8,7 +8,7 @@ import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 import { scriptLifetimeState } from "../env.js";
 
 export async function handleSetPropertyCommand(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const key = args[2] ?? "";
@@ -27,7 +27,7 @@ export async function handleSetPropertyCommand(
  * SERIKO口パク有効化トグル (\![set,serikotalk,true/false])
  */
 export async function handleSetSerikoTalkCommand(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const valStr = String(args[2] ?? "true")
@@ -44,7 +44,7 @@ export async function handleSetSerikoTalkCommand(
  * 他ゴーストサーフィス変更通知トグル (\![set,othersurfacechange,true/false])
  */
 export async function handleSetOtherSurfaceChangeCommand(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const valStr = String(args[2] ?? "false")
@@ -57,7 +57,7 @@ export async function handleSetOtherSurfaceChangeCommand(
 }
 
 export async function handleEnterMode(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const mode = (args[1] ?? "").toLowerCase();
@@ -79,7 +79,7 @@ export async function handleEnterMode(
 }
 
 export async function handleLeaveMode(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const mode = (args[1] ?? "").toLowerCase();
@@ -105,7 +105,7 @@ export async function handleLeaveMode(
  * [bang-get-property.md], [property.get.md]
  */
 export async function handleGetPropertyCommand(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	keyOrArgs: string | string[],
 ) {
 	const h = handler;
@@ -186,7 +186,7 @@ export async function handleGetPropertyCommand(
 }
 
 export async function handleSetScalingCommand(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const scaleXStr = args[2] ?? "100";
@@ -224,7 +224,7 @@ export async function handleSetScalingCommand(
 }
 
 export async function handleKeyPressEvent(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	key: string,
 	modifiers: string = "",
 ) {
@@ -237,7 +237,7 @@ export async function handleKeyPressEvent(
 }
 
 export async function handleSetAlphaCommand(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const alphaVal = Number.parseInt(args[2] ?? "100", 10);
@@ -249,7 +249,7 @@ export async function handleSetAlphaCommand(
 }
 
 export async function handleSetPositionCommand(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const x = Number.parseInt(args[2] ?? "0", 10);

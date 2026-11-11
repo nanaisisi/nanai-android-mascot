@@ -4,7 +4,7 @@
  */
 
 export async function handleRaiseCommand(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const eventName = args[1];
@@ -17,7 +17,7 @@ export async function handleRaiseCommand(
 }
 
 export async function handleChangeCommand(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const target = (args[1] ?? "").toLowerCase();
@@ -74,7 +74,7 @@ export async function handleChangeCommand(
 }
 
 export async function handleVanishByMyself(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	_args: string[],
 ) {
 	console.log("👻 Vanish by myself requested");
@@ -94,7 +94,7 @@ export async function handleVanishByMyself(
 }
 
 export async function handleCallCommand(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const [target, name] = args.slice(1);
@@ -104,7 +104,7 @@ export async function handleCallCommand(
 }
 
 export async function handleRaiseOtherCommand(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const ghostName = args[1];
@@ -126,7 +126,7 @@ export async function handleRaiseOtherCommand(
 }
 
 export async function handleNotifyOtherCommand(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const ghostName = args[1];
@@ -154,7 +154,7 @@ export async function handleNotifyOtherCommand(
 }
 
 export async function handleEmbedCommand(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const eventName = args[1];

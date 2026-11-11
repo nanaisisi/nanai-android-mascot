@@ -4,7 +4,7 @@
  */
 
 export async function handleOpenDialogCommand(
-	handler: import("../../ghost.js").SakuraCommandHandler,
+	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const dialogType = args[2] || "open";

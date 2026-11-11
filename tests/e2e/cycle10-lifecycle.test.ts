@@ -177,3 +177,52 @@ test("E2E dialogue lifecycle Cycle 10: SakuraPlaybackController pause, priority 
 
 	await Promise.all([p1, p2]);
 });
+
+test("E2E dialogue lifecycle Cycle 10: Parallel async SSTP request and concurrent queue ordering resilience", async () => {
+	// 複数リクエストが非同期並行に発行された際のフォーマットおよび解析の一貫性を検証
+	const requests = Array.from({ length: 10 }, (_, i) => ({
+		method: "SEND" as const,
+		charset: "UTF-8",
+		sender: `ParallelSender_${i}`,
+		script: `\\0\\s[${i}]Concurrent script payload ${i}\\e`,
+		options: ["notranslate"],
+		references: {
+			Reference0: `val_${i}`,
+		},
+	}));
+
+	const built = await Promise.all(
+		requests.map(async (req) => {
+			return {
+				req,
+				raw: buildRawSstpRequest(req),
+			};
+		}),
+	);
+
+	for (const { req, raw } of built) {
+		assert.ok(raw.includes(`Sender: ${req.sender}\r\n`));
+		assert.ok(raw.includes(`Script: ${req.script}\r\n`));
+		assert.ok(raw.includes(`Reference0: ${req.references.Reference0}\r\n`));
+	}
+
+	// 並行レスポンス解析の検証
+	const parsePromises = requests.map(async (_req, idx) => {
+		const rawResponse = [
+			"SSTP/1.4 200 OK",
+			"Charset: UTF-8",
+			`Script: \\0\\s[0]Echo ${idx}\\e`,
+			`Reference0: ack_${idx}`,
+			"",
+		].join("\r\n");
+		return parseRawSstpResponse(rawResponse);
+	});
+
+	const parsedResults = await Promise.all(parsePromises);
+	assert.equal(parsedResults.length, 10);
+	parsedResults.forEach((res, idx) => {
+		assert.equal(res.status, "200 OK");
+		assert.equal(res.reference0, `ack_${idx}`);
+		assert.equal(res.value, `\\0\\s[0]Echo ${idx}\\e`);
+	});
+});

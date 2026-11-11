@@ -35,7 +35,7 @@ function createMockDomElement() {
 				set.delete(handler);
 			}
 		},
-		dispatchEvent: (evt: { type: unknown; }) => {
+		dispatchEvent: (evt: { type: unknown }) => {
 			const set = listeners.get(evt.type);
 			if (set) {
 				for (const handler of Array.from(set)) {

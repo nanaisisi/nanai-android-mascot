@@ -36,7 +36,7 @@ test("update-protocol covers buildUpdateArgs, buildUpdateOtherArgs, parseErrorRe
 	assert.equal(parseErrorReason("other error"), "fileio");
 
 	// 3. createUpdateProgressHandler
-	const eventsSent: { ev: unknown; args: unknown; }[] | { ev: unknown; }[] = [];
+	const eventsSent: { ev: unknown; args: unknown }[] | { ev: unknown }[] = [];
 	let failedFile = null;
 
 	const mockGc = {

@@ -21,7 +21,7 @@ describe("UI Renderers and Touch Bridge Coverage Boost", () => {
 			addEventListener: (t: string | number, cb: unknown) => {
 				textareaMock[t] = cb;
 			},
-			dispatchEvent: (ev: { type: string | number; }) => {
+			dispatchEvent: (ev: { type: string | number }) => {
 				if (textareaMock[ev.type]) textareaMock[ev.type](ev);
 			},
 			scrollIntoView: () => {},

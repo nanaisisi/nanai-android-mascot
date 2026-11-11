@@ -24,7 +24,9 @@ export function statusCodeFromRust(
 export function fromRustResponse(typed: Record<string, unknown> | null) {
 	if (!typed || typeof typed !== "object") return null;
 
-	const status = statusCodeFromRust(typed.status);
+	const status = statusCodeFromRust(
+		typed.status as string | Record<string, unknown> | undefined,
+	);
 	const headers: Record<string, unknown> = {};
 	for (const [key, value] of Object.entries(typed)) {
 		if (value == null) continue;

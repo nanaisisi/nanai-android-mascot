@@ -20,7 +20,11 @@ export const shioriNotifyApplicationHeadline = {
 	/**
 	 * 外部アプリケーション起動通知 (OnApplicationBoot) を送信
 	 */
-	async notifyApplicationBoot(this: LifecycleContext, appName: string, appPath = "") {
+	async notifyApplicationBoot(
+		this: LifecycleContext,
+		appName: string,
+		appPath = "",
+	) {
 		return await this.sendShioriNotify("OnApplicationBoot", [appName, appPath]);
 	},
 
@@ -75,7 +79,11 @@ export const shioriNotifyApplicationHeadline = {
 	/**
 	 * 外部アプリケーションバージョン通知 (OnApplicationVersion) を送信
 	 */
-	async notifyApplicationVersion(this: LifecycleContext, appName: string, version = "") {
+	async notifyApplicationVersion(
+		this: LifecycleContext,
+		appName: string,
+		version = "",
+	) {
 		return await this.sendShioriNotify("OnApplicationVersion", [
 			appName,
 			version,
@@ -85,7 +93,11 @@ export const shioriNotifyApplicationHeadline = {
 	/**
 	 * Webサイト更新通知 (OnWebsiteUpdateNotify) を送信
 	 */
-	async notifyWebsiteUpdate(this: LifecycleContext, url: string, updateTime = "") {
+	async notifyWebsiteUpdate(
+		this: LifecycleContext,
+		url: string,
+		updateTime = "",
+	) {
 		return await this.sendShioriNotify("OnWebsiteUpdateNotify", [
 			url,
 			updateTime,
@@ -95,7 +107,11 @@ export const shioriNotifyApplicationHeadline = {
 	/**
 	 * ヘッドラインセンス開始通知 (OnHeadlinesenseBegin)
 	 */
-	async sendHeadlineSenseBegin(this: LifecycleContext, siteName: string, url: string) {
+	async sendHeadlineSenseBegin(
+		this: LifecycleContext,
+		siteName: string,
+		url: string,
+	) {
 		return await this.sendShioriNotify("OnHeadlinesenseBegin", [siteName, url]);
 	},
 
@@ -120,7 +136,10 @@ export const shioriNotifyApplicationHeadline = {
 	/**
 	 * ヘッドラインセンス完了通知 (OnHeadlinesenseComplete)
 	 */
-	async sendHeadlineSenseComplete(this: LifecycleContext, reason = "no update") {
+	async sendHeadlineSenseComplete(
+		this: LifecycleContext,
+		reason = "no update",
+	) {
 		return await this.sendShioriNotify("OnHeadlinesenseComplete", [reason]);
 	},
 

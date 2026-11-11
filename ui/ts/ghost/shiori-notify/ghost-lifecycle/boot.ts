@@ -74,7 +74,8 @@ export const shioriNotifyBoot = {
 
 		await this.sendCapabilityNotify();
 
-		const ghosts = this.ghosts && this.ghosts.length > 0 ? this.ghosts : [ghost];
+		const ghosts =
+			this.ghosts && this.ghosts.length > 0 ? this.ghosts : [ghost];
 
 		await this.sendShioriNotify(
 			"installedghostname",
@@ -82,13 +83,19 @@ export const shioriNotifyBoot = {
 		);
 		await this.sendShioriNotify(
 			"installedsakuraname",
-			ghosts.map((g: { name?: string; sakura_name?: string }) => g.sakura_name || g.name || ""),
+			ghosts.map(
+				(g: { name?: string; sakura_name?: string }) =>
+					g.sakura_name || g.name || "",
+			),
 		);
 		// 後方互換性フォールバック（旧コードからの呼出用）
 		// Legacy alias for backward compatibility
 		await this.sendShioriNotify(
 			"installsakuraname",
-			ghosts.map((g: { name?: string; sakura_name?: string }) => g.sakura_name || g.name || ""),
+			ghosts.map(
+				(g: { name?: string; sakura_name?: string }) =>
+					g.sakura_name || g.name || "",
+			),
 		);
 
 		const keroNames = ghosts
@@ -173,7 +180,9 @@ export const shioriNotifyBoot = {
 			);
 		}
 
-		const otherGhosts = ghosts.filter((g: { name?: string }) => g.name !== ghost.name);
+		const otherGhosts = ghosts.filter(
+			(g: { name?: string }) => g.name !== ghost.name,
+		);
 		if (otherGhosts.length > 0) {
 			await this.sendShioriNotify(
 				"otherghostname",

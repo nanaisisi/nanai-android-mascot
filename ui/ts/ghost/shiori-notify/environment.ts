@@ -9,7 +9,11 @@ export const shioriNotifyEnvironment = {
 	/**
 	 * OS情報通知 (OnNotifyOSInfo) を送信 (UKADOC 規格準拠)
 	 */
-	async notifyOSInfo(this: LifecycleContext, osName = "Android", osVersion = "14") {
+	async notifyOSInfo(
+		this: LifecycleContext,
+		osName = "Android",
+		osVersion = "14",
+	) {
 		return await this.sendShioriNotify("OnNotifyOSInfo", [osName, osVersion]);
 	},
 
@@ -46,7 +50,11 @@ export const shioriNotifyEnvironment = {
 	/**
 	 * シェル構成情報通知 (OnNotifyShellInfo) を送信 (UKADOC 規格準拠)
 	 */
-	async notifyShellInfo(this: LifecycleContext, shellName = "master", shellPath = "") {
+	async notifyShellInfo(
+		this: LifecycleContext,
+		shellName = "master",
+		shellPath = "",
+	) {
 		return await this.sendShioriNotify("OnNotifyShellInfo", [
 			shellName,
 			shellPath,
@@ -79,7 +87,11 @@ export const shioriNotifyEnvironment = {
 	/**
 	 * フォント設定情報通知 (OnNotifyFontInfo) を送信 (UKADOC 規格準拠)
 	 */
-	async notifyFontInfo(this: LifecycleContext, fontName = "sans-serif", fontSize = 12) {
+	async notifyFontInfo(
+		this: LifecycleContext,
+		fontName = "sans-serif",
+		fontSize = 12,
+	) {
 		return await this.sendShioriNotify("OnNotifyFontInfo", [
 			fontName,
 			String(fontSize),
@@ -89,7 +101,11 @@ export const shioriNotifyEnvironment = {
 	/**
 	 * 祝日・休日情報通知 (OnNotifyHolidayInfo) を送信 (UKADOC 規格準拠)
 	 */
-	async notifyHolidayInfo(this: LifecycleContext, holidayName = "", holidayDate = "") {
+	async notifyHolidayInfo(
+		this: LifecycleContext,
+		holidayName = "",
+		holidayDate = "",
+	) {
 		return await this.sendShioriNotify("OnNotifyHolidayInfo", [
 			holidayName,
 			holidayDate,

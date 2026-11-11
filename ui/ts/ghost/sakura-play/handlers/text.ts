@@ -139,7 +139,9 @@ export function handleClear(
 		const count = Math.max(1, token.count || 1);
 		let removed = 0;
 		while (removed < count && currentBalloonText?.lastChild) {
-			const lastNode = currentBalloonText.lastChild as CharacterData | ChildNode;
+			const lastNode = currentBalloonText.lastChild as
+				| CharacterData
+				| ChildNode;
 			if (lastNode.nodeType === Node.TEXT_NODE) {
 				const text = lastNode.nodeValue || "";
 				if (text.length <= count - removed) {
@@ -222,11 +224,9 @@ export function handleFont(
 		if (param) styles.color = param;
 		else delete styles.color;
 	} else if (tag === "bold") {
-		styles.fontWeight =
-			param === "0" || param === "false" ? "normal" : "bold";
+		styles.fontWeight = param === "0" || param === "false" ? "normal" : "bold";
 	} else if (tag === "italic") {
-		styles.fontStyle =
-			param === "0" || param === "false" ? "normal" : "italic";
+		styles.fontStyle = param === "0" || param === "false" ? "normal" : "italic";
 	} else if (tag === "strike") {
 		styles.textDecoration =
 			param === "0" || param === "false" ? "none" : "line-through";
@@ -236,9 +236,7 @@ export function handleFont(
 	} else if (tag === "height") {
 		if (param) {
 			const size =
-				param.endsWith("px") ||
-				param.endsWith("pt") ||
-				param.endsWith("em")
+				param.endsWith("px") || param.endsWith("pt") || param.endsWith("em")
 					? param
 					: `${param}px`;
 			styles.fontSize = size;

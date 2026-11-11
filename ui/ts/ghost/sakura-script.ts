@@ -20,7 +20,7 @@ export class SakuraScriptPlayer {
 	balloonTimeout: number;
 	balloonTimeoutTimer: unknown;
 	lastScript: string;
-	currentFontStyles: Record<string, string>;
+	currentFontStyles!: Record<string, string>;
 	commandHandler: SakuraCommandHandler;
 	playbackController?:
 		| import("./sakura-play/controller.js").SakuraPlaybackController
@@ -30,24 +30,13 @@ export class SakuraScriptPlayer {
 	syncScopes?: number[] | null;
 	isRawMode?: boolean;
 	noAutoWrap?: boolean;
-	declare onChoiceSelected: (
-		choiceId: string,
-		choiceText: string,
-		extraArgs?: string[],
-		choiceArgs?: string[],
-	) => Promise<unknown>;
-	declare onChoiceTimeout: () => Promise<unknown>;
-	declare waitForClickOrTimeout: (
-		display?: HTMLElement | null,
-	) => Promise<unknown>;
-	declare sleep: (ms: number) => Promise<unknown>;
 	_restoreTimer?: unknown;
 	_pauseResolver?: unknown;
 	_sleepResolvers?: Set<(...args: unknown[]) => unknown>;
 	[key: string]: unknown;
 
 	constructor(app: unknown) {
-		this.app = app;
+		this.app = app as import("../../main.js").NanaiAndroidMascotApp;
 		this.isPlaying = false;
 		this.skipRequested = false;
 		this.currentScope = 0;
@@ -63,13 +52,17 @@ export class SakuraScriptPlayer {
 
 		if (isTauriAvailable()) {
 			listen("balloon-choice-selected", (event: unknown) => {
-				const { choiceId, choiceText } = event.payload || {};
+				const ev = event as {
+					payload?: { choiceId?: string; choiceText?: string };
+				};
+				const { choiceId, choiceText } = ev.payload || {};
 				if (choiceId) {
 					this.onChoiceSelected(choiceId, choiceText || "");
 				}
 			});
 			listen("balloon-anchor-selected", (event: unknown) => {
-				const { anchorId } = event.payload || {};
+				const ev = event as { payload?: { anchorId?: string } };
+				const { anchorId } = ev.payload || {};
 				if (anchorId) {
 					this.app.ghostController.sendShioriEvent("OnAnchorSelect", [
 						anchorId,
@@ -80,7 +73,8 @@ export class SakuraScriptPlayer {
 				this.skip();
 			});
 			listen("balloon-ready", (event: unknown) => {
-				const sid = event.payload?.scopeId ?? 0;
+				const ev = event as { payload?: { scopeId?: number } };
+				const sid = ev.payload?.scopeId ?? 0;
 				const html =
 					(sid === 1
 						? this.app.elements.keroBalloonText
@@ -104,7 +98,7 @@ export class SakuraScriptPlayer {
 
 	scheduleSurfaceRestore(targetPlaybackId: number) {
 		if (this._restoreTimer) {
-			clearTimeout(this._restoreTimer);
+			clearTimeout(this._restoreTimer as ReturnType<typeof setTimeout>);
 		}
 		this._restoreTimer = setTimeout(async () => {
 			if (this.playbackId === targetPlaybackId && !this.isPlaying) {
@@ -112,7 +106,7 @@ export class SakuraScriptPlayer {
 					await this.app.ghostController.sendShioriEvent("OnSurfaceRestore");
 				} catch (_e) {}
 			}
-		}, 8000);
+		}, Number(8000));
 	}
 
 	skip() {
@@ -168,11 +162,10 @@ export class SakuraScriptPlayer {
 		} else {
 			// UKADOC: OnChoiceSelectEx is sent first (Reference0: text, Reference1: ID, Reference2..N: args)
 			try {
-				const resEx: unknown =
-					await this.app.ghostController?.sendShioriEvent?.(
-						"OnChoiceSelectEx",
-						[choiceText, choiceId, ...allExtraArgs],
-					);
+				const resEx = (await this.app.ghostController?.sendShioriEvent?.(
+					"OnChoiceSelectEx",
+					[choiceText, choiceId, ...allExtraArgs],
+				)) as { response?: unknown; script?: unknown } | null;
 				if (resEx && (resEx.response || resEx.script)) {
 					return;
 				}
@@ -186,7 +179,7 @@ export class SakuraScriptPlayer {
 
 	sleep(ms: number) {
 		return new Promise<void>((resolve) => {
-			let timer: unknown = null;
+			let timer: ReturnType<typeof setTimeout> | null = null;
 			const onCancel = () => {
 				if (timer) clearTimeout(timer);
 				resolve();
@@ -194,7 +187,7 @@ export class SakuraScriptPlayer {
 			timer = setTimeout(() => {
 				this._sleepResolvers?.delete(onCancel);
 				resolve();
-			}, ms);
+			}, Number(ms));
 			if (!this._sleepResolvers) this._sleepResolvers = new Set();
 			this._sleepResolvers.add(onCancel);
 		});
@@ -202,9 +195,9 @@ export class SakuraScriptPlayer {
 
 	destroy() {
 		this.isPlaying = false;
-		this.playbackId++;
+		this.playbackId = Number(this.playbackId || 0) + 1;
 		if (this._restoreTimer) {
-			clearTimeout(this._restoreTimer);
+			clearTimeout(this._restoreTimer as ReturnType<typeof setTimeout>);
 			this._restoreTimer = null;
 		}
 		if (this.choiceTimeoutTimer) {
@@ -212,7 +205,7 @@ export class SakuraScriptPlayer {
 			this.choiceTimeoutTimer = null;
 		}
 		if (this.balloonTimeoutTimer) {
-			clearTimeout(this.balloonTimeoutTimer);
+			clearTimeout(this.balloonTimeoutTimer as ReturnType<typeof setTimeout>);
 			this.balloonTimeoutTimer = null;
 		}
 		if (typeof this._pauseResolver === "function") {
@@ -230,7 +223,7 @@ export class SakuraScriptPlayer {
 
 	waitForClickOrTimeout(element: HTMLElement | null, timeoutMs = 15000) {
 		return new Promise<void>((resolve) => {
-			let timer: unknown = null;
+			let timer: ReturnType<typeof setTimeout> | null = null;
 			let resolved = false;
 
 			const done = () => {
@@ -262,7 +255,7 @@ export class SakuraScriptPlayer {
 				document.addEventListener("keydown", onKey as EventListener);
 			}
 			if (!this.timeCritical && timeoutMs > 0) {
-				timer = setTimeout(done, timeoutMs);
+				timer = setTimeout(done, Number(timeoutMs));
 			}
 		});
 	}

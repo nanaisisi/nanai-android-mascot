@@ -24,7 +24,10 @@ export interface SakuraPlayContext {
 	hasTextContent?: boolean;
 	shownScopes?: Set<number>;
 	flushDesktopBalloon?: () => void;
-	scheduleDesktopBalloonSync?: (force?: boolean, scopeId?: number) => void;
+	scheduleDesktopBalloonSync?: (
+		force?: boolean,
+		scopeId?: number | null,
+	) => void;
 	[key: string]: unknown;
 }
 
@@ -110,7 +113,7 @@ export function handleChoice(
 			} else if (app.ghostController?.sendShioriEvent) {
 				app.ghostController.sendShioriEvent("OnChoiceTimeout", []);
 			}
-		}, player.choiceTimeout);
+		}, Number(player.choiceTimeout));
 	}
 }
 
@@ -277,7 +280,7 @@ export function handleChoiceScopeBegin(
 			} else if (app.ghostController?.sendShioriEvent) {
 				app.ghostController.sendShioriEvent("OnChoiceTimeout", []);
 			}
-		}, player.choiceTimeout);
+		}, Number(player.choiceTimeout));
 	}
 }
 

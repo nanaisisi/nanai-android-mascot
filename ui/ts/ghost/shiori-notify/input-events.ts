@@ -195,7 +195,11 @@ export const shioriNotifyInputEvents = {
 		return await this.sendShioriNotify("OnOffscreen", [String(scope), rect]);
 	},
 
-	async sendOtherOverlap(this: LifecycleContext, ghostName: string, rect: string = "") {
+	async sendOtherOverlap(
+		this: LifecycleContext,
+		ghostName: string,
+		rect: string = "",
+	) {
 		return await this.sendShioriNotify("OnOtherOverlap", [ghostName, rect]);
 	},
 

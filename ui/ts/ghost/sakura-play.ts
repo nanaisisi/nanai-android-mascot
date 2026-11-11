@@ -3,11 +3,15 @@
  * @brief トークン列をバルーンにアニメーション再生するさくらスクリプトプレイヤー本体
  */
 
+import type { NanaiAndroidMascotApp } from "../../main.js";
 import { isTauriAvailable } from "../core/tauri-helper.js";
+import type { SakuraAstNode } from "./parser/ast-types.js";
+import type { SakuraPlaybackController } from "./sakura-play/controller.js";
 import { handleToken } from "./sakura-play/handlers.js";
 import { translateScript } from "./sakura-play/translator.js";
 import { initBalloonWindows } from "./sakura-play/window.js";
 import { createBalloonSyncManager } from "./sakura-play-sync.js";
+import type { SakuraScriptPlayer } from "./sakura-script.js";
 
 export { SakuraPlaybackController } from "./sakura-play/controller.js";
 
@@ -20,11 +24,11 @@ export interface SakuraPlayer {
 	currentScope: number;
 	isSyncMode: boolean;
 	lastScript: string;
-	choiceTimeoutTimer: unknown;
-	balloonTimeoutTimer: unknown;
-	app: unknown;
+	choiceTimeoutTimer: ReturnType<typeof setTimeout> | null;
+	balloonTimeoutTimer: ReturnType<typeof setTimeout> | null;
+	app: NanaiAndroidMascotApp;
 	scheduleSurfaceRestore: (id: number) => void;
-	playbackController?: unknown;
+	playbackController?: SakuraPlaybackController | null;
 	choiceTimeout?: number;
 	balloonTimeout?: number;
 	onChoiceSelected?: (...args: unknown[]) => void;
@@ -33,11 +37,11 @@ export interface SakuraPlayer {
 	[key: string]: unknown;
 }
 
-export async function playScript(player: SakuraPlayer, script: string) {
+export async function playScript(player: SakuraScriptPlayer, script: string) {
 	const finalScript = await translateScript(player, script);
 
-	const tokens = await player.parse(finalScript);
-	player.playbackId++;
+	const tokens = (await player.parse(finalScript)) || [];
+	player.playbackId = Number(player.playbackId || 0) + 1;
 	const currentId = player.playbackId;
 	player.isPlaying = true;
 	player.skipRequested = false;
@@ -128,7 +132,7 @@ export async function playScript(player: SakuraPlayer, script: string) {
 		if (context.ended) break;
 
 		player.currentProgressIndex = j;
-		await handleToken(player, app, tokens[j], context);
+		await handleToken(player, app, tokens[j] as SakuraAstNode, context);
 	}
 
 	context.flushDesktopBalloon();
@@ -159,16 +163,18 @@ export async function playScript(player: SakuraPlayer, script: string) {
 		return tok.type === "choice" || tok.type === "choice_scope_begin";
 	});
 
-	if (hasChoices && player.choiceTimeout > 0) {
+	const choiceTimeout = Number(player.choiceTimeout ?? 0);
+	if (hasChoices && choiceTimeout > 0) {
 		if (player.choiceTimeoutTimer) clearTimeout(player.choiceTimeoutTimer);
 		player.choiceTimeoutTimer = setTimeout(() => {
 			if (player.playbackId === currentId) {
 				player.onChoiceTimeout?.();
 			}
-		}, player.choiceTimeout);
+		}, choiceTimeout);
 	}
 
-	if (!hasChoices && !player.timeCritical && player.balloonTimeout > 0) {
+	const balloonTimeout = Number(player.balloonTimeout ?? 0);
+	if (!hasChoices && !player.timeCritical && balloonTimeout > 0) {
 		if (player.balloonTimeoutTimer) clearTimeout(player.balloonTimeoutTimer);
 		player.balloonTimeoutTimer = setTimeout(async () => {
 			if (player.playbackId === currentId && !player.isPlaying) {
@@ -195,7 +201,7 @@ export async function playScript(player: SakuraPlayer, script: string) {
 					}
 				} catch (_e) {}
 			}
-		}, player.balloonTimeout);
+		}, balloonTimeout);
 	} else if (!hasChoices && !player.timeCritical && isTauriAvailable()) {
 		setTimeout(() => {
 			if (player.playbackId === currentId && !player.isPlaying) {

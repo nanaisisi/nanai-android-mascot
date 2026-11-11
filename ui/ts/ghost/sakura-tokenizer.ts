@@ -36,14 +36,22 @@ export function parseSakuraScript(script: string): SakuraScriptToken[] {
 		}
 
 		if (script[i] === "\\") {
-			const res: unknown = tokenizeTag(script, i, len);
+			const res = tokenizeTag(script, i, len) as {
+				tokens: SakuraScriptToken[];
+				nextIdx: number;
+				haltParsing?: boolean;
+			};
 			if (res.tokens.length > 0) {
 				for (const t of res.tokens) {
-					const tok: unknown = t;
+					const tok = t as {
+						type?: string;
+						active?: boolean;
+						delimiter?: string;
+					};
 					if (tok.type === "raw_toggle" && tok.active) {
 						rawModeDelimiter = tok.delimiter || "_?";
 					}
-					tokens.push(tok as SakuraScriptToken);
+					tokens.push(t);
 				}
 			}
 			i = res.nextIdx;

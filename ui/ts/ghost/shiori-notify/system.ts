@@ -22,7 +22,10 @@ export const shioriNotifySystem = {
 		return await this.sendShioriNotify("OnInitialize", []);
 	},
 
-	async sendVirtualDesktopChanged(this: LifecycleContext, desktopId: string | number) {
+	async sendVirtualDesktopChanged(
+		this: LifecycleContext,
+		desktopId: string | number,
+	) {
 		return await this.sendShioriNotify("OnVirtualDesktopChanged", [
 			String(desktopId),
 		]);

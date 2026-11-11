@@ -1,10 +1,33 @@
+/**
+ * @file ghost-shiori.ts
+ * @brief GhostController 向け SHIORI 初期化・イベント送受信・タイマー管理ロジック
+ */
+
 import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 import { fromRustResponse } from "./shiori-protocol.js";
 
+export interface GhostShioriContext {
+	sendShioriEvent: (event: string, refs?: unknown[]) => Promise<unknown>;
+	startSecondChangeTimer: () => void;
+	stopSecondChangeTimer: () => void;
+	_previousGhostName?: string;
+	uptimeSeconds?: number;
+	_secondTimerId?: ReturnType<typeof setInterval> | null;
+	_secondSending?: boolean;
+	currentGhost?: { name?: string; path?: string };
+	app?: {
+		playSakuraScript?: (script: string) => void;
+		availablePlugins?: Array<{ name?: string }>;
+		sakuraPlayer?: { isPlaying?: boolean };
+		[key: string]: unknown;
+	};
+	[key: string]: unknown;
+}
+
 export const ghostShioriMethods = {
 	async initializeGhostSHIORI(
-		this: unknown,
-		ghost: unknown,
+		this: GhostShioriContext,
+		ghost: { name?: string; path?: string },
 		readinessGatePromise: Promise<unknown> | null = null,
 		isCurrentLoad: () => boolean = () => true,
 	) {
@@ -27,17 +50,24 @@ export const ghostShioriMethods = {
 			if (!isCurrentLoad()) return;
 
 			try {
+				type ShioriResponse = {
+					status?: number;
+					value?: string;
+					headers?: { value?: string };
+				} | null;
 				const prevGhost = this._previousGhostName || "";
-				let bootRes: unknown = null;
+				let bootRes: ShioriResponse = null;
 				if (prevGhost && prevGhost !== ghost?.name) {
-					bootRes = await this.sendShioriEvent("OnGhostChanged", [
+					const res = await this.sendShioriEvent("OnGhostChanged", [
 						ghost?.name,
 						"manual",
 						prevGhost,
 					]);
+					bootRes = res as ShioriResponse;
 				}
 				if (!bootRes || bootRes.status === 204 || !bootRes.value) {
-					bootRes = await this.sendShioriEvent("OnBoot");
+					const res = await this.sendShioriEvent("OnBoot");
+					bootRes = res as ShioriResponse;
 				}
 				this._previousGhostName = ghost?.name;
 				const scriptText = bootRes?.value || bootRes?.headers?.value;
@@ -66,7 +96,7 @@ export const ghostShioriMethods = {
 		}
 	},
 
-	startSecondChangeTimer(this: unknown) {
+	startSecondChangeTimer(this: GhostShioriContext) {
 		this.stopSecondChangeTimer();
 		this.uptimeSeconds = 0;
 
@@ -79,9 +109,9 @@ export const ghostShioriMethods = {
 			const cantTalk = isSpeaking;
 
 			try {
-				if (this.uptimeSeconds % 60 === 0) {
+				if ((this.uptimeSeconds || 0) % 60 === 0) {
 					await this.sendShioriEvent("OnMinuteChange", [
-						Math.floor(this.uptimeSeconds / 60),
+						Math.floor((this.uptimeSeconds || 0) / 60),
 						0,
 						0,
 						isMinimized,
@@ -102,7 +132,7 @@ export const ghostShioriMethods = {
 		}, 1000);
 	},
 
-	stopSecondChangeTimer(this: unknown) {
+	stopSecondChangeTimer(this: GhostShioriContext) {
 		if (this._secondTimerId) {
 			clearInterval(this._secondTimerId);
 			this._secondTimerId = null;
@@ -111,7 +141,7 @@ export const ghostShioriMethods = {
 	},
 
 	async sendShioriEvent(
-		this: unknown,
+		this: GhostShioriContext,
 		eventId: string,
 		references: unknown[] = [],
 	) {
@@ -145,25 +175,38 @@ export const ghostShioriMethods = {
 		}
 	},
 
-	async sendTeachInput(this: unknown, input: string) {
-		const res: unknown = await this.sendShioriEvent("OnTeach", [input]);
+	async sendTeachInput(this: GhostShioriContext, input: string) {
+		const resObj = await this.sendShioriEvent("OnTeach", [input]);
+		const res = resObj as {
+			status?: number;
+			value?: string;
+			headers?: { value?: string };
+		} | null;
 		if (res?.status === 200 && res?.value) {
 			this.app?.playSakuraScript?.(res.value);
 		} else if (res?.status === 311 || res?.status === 312) {
-			const adviceRes: unknown = await this.sendShioriEvent("OnAdvice", [
+			const adviceResObj = await this.sendShioriEvent("OnAdvice", [
 				input,
-				res.value || "",
+				res?.value || "",
 			]);
+			const adviceRes = adviceResObj as {
+				status?: number;
+				value?: string;
+			} | null;
 			if (adviceRes?.status === 200 && adviceRes?.value) {
 				this.app?.playSakuraScript?.(adviceRes.value);
 			}
 		}
-		return res;
+		return resObj;
 	},
 
-	triggerRandomTalk(this: unknown) {
+	triggerRandomTalk(this: GhostShioriContext) {
 		this.sendShioriEvent("OnRandomTalk")
-			.then((res: unknown) => {
+			.then((resObj: unknown) => {
+				const res = resObj as {
+					status?: number;
+					value?: string;
+				} | null;
 				if (res?.status === 200 && res?.value) {
 					this.app?.playSakuraScript?.(res.value);
 				}

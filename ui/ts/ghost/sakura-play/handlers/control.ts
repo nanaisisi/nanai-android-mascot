@@ -41,7 +41,7 @@ export async function handlePause(
 		const activeDisplay =
 			player.currentScope === 1 ? keroDisplay : sakuraDisplay;
 		if (player.waitForClickOrTimeout) {
-			await player.waitForClickOrTimeout(activeDisplay);
+			await player.waitForClickOrTimeout(activeDisplay || null);
 		} else if (player.sleep) {
 			await player.sleep(100);
 		}
@@ -166,7 +166,9 @@ export async function handleCommand(
 	token: SakuraAstNode,
 	_context: unknown,
 ) {
-	const ch = player.commandHandler as { runCommand: (args?: string[]) => Promise<unknown> };
+	const ch = player.commandHandler as {
+		runCommand: (args?: string[]) => Promise<unknown>;
+	};
 	await ch?.runCommand?.(token.args);
 }
 

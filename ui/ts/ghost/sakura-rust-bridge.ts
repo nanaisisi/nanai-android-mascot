@@ -1,17 +1,48 @@
+/**
+ * @file sakura-rust-bridge.ts
+ * @brief Rust(Kawari/Satoriya/Yaya) からのコマンド列をさくらスクリプトトークンに変換するブリッジ
+ */
+
 import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 import type { SakuraScriptToken } from "./sakura-parser.js";
 
 export interface RustCommand {
 	type: string;
-	payload?: unknown;
+	payload?: {
+		label?: string;
+		id?: string;
+		text?: string;
+		arg?: string;
+		half?: boolean;
+		event?: string;
+		references?: string[];
+		category?: string;
+		part?: string;
+		status?: unknown;
+		path?: string;
+		mode?: string;
+		x?: unknown;
+		y?: unknown;
+		tag?: string;
+		param?: string;
+		args?: string[];
+		umsg?: unknown;
+		wparam?: unknown;
+		lparam?: unknown;
+		plugin?: string;
+		key?: string;
+		value?: unknown;
+		[key: string]: unknown;
+	};
 	[key: string]: unknown;
 }
 
 export function rustCommandsToTokens(
-	rustCommands: RustCommand[] | unknown[],
+	rustCommands: RustCommand[],
 ): SakuraScriptToken[] {
 	const tokens: SakuraScriptToken[] = [];
-	for (const cmd of rustCommands) {
+	for (const item of rustCommands) {
+		const cmd = item as RustCommand;
 		switch (cmd.type) {
 			case "Target":
 				tokens.push({ type: "scope", value: cmd.payload ?? 0 });
@@ -98,8 +129,8 @@ export function rustCommandsToTokens(
 					type: "inline_bitmap",
 					path: cmd.payload?.path ?? "",
 					mode: cmd.payload?.mode ?? "inline",
-					x: cmd.payload?.x,
-					y: cmd.payload?.y,
+					x: cmd.payload?.x as number | undefined,
+					y: cmd.payload?.y as number | undefined,
 				});
 				break;
 			case "Timeout":
@@ -114,8 +145,8 @@ export function rustCommandsToTokens(
 			case "Animation":
 				tokens.push({
 					type: "animation",
-					animId: cmd.payload?.id,
-					wait: cmd.payload?.wait,
+					animId: cmd.payload?.id as number | string | undefined,
+					wait: cmd.payload?.wait as boolean | undefined,
 				});
 				break;
 			case "Sync":
@@ -136,7 +167,7 @@ export function rustCommandsToTokens(
 				});
 				break;
 			case "Command":
-				tokens.push({ type: "command", args: cmd.payload?.args });
+				tokens.push({ type: "command", args: cmd.payload?.args as string[] | undefined });
 				break;
 			case "PostMessage":
 				tokens.push({
@@ -159,7 +190,7 @@ export function rustCommandsToTokens(
 				tokens.push({
 					type: "command",
 					command: "jump",
-					args: [cmd.payload ?? ""],
+					args: [String(cmd.payload ?? "")],
 				});
 				break;
 			case "Plus":
@@ -199,14 +230,14 @@ export function rustCommandsToTokens(
 				tokens.push({
 					type: "command",
 					command: "setballoon",
-					args: [cmd.payload?.key ?? "", cmd.payload?.value ?? ""],
+					args: [cmd.payload?.key ?? "", String(cmd.payload?.value ?? "")],
 				});
 				break;
 			case "ScheduleAdd":
 				tokens.push({ type: "command", command: "schedule-add", args: [] });
 				break;
 			case "Text":
-				for (const ch of cmd.payload ?? "") {
+				for (const ch of String(cmd.payload ?? "")) {
 					tokens.push({ type: "char", value: ch });
 				}
 				break;
@@ -219,21 +250,20 @@ export function rustCommandsToTokens(
 
 export async function parseSakuraScriptAsync(
 	script: string,
-): Promise<SakuraScriptToken[] | undefined> {
-	if (!script || typeof script !== "string") return [];
+): Promise<SakuraScriptToken[]> {
 	if (!isTauriAvailable()) {
-		return undefined;
+		return [];
 	}
 	try {
-		const rustCommands: unknown = await invoke("parse_sakura_script", {
-			script,
-		});
-		if (Array.isArray(rustCommands)) {
-			return rustCommandsToTokens(rustCommands);
+		const res = (await invoke("parse_sakura_script", { script })) as
+			| RustCommand[]
+			| null;
+		if (res && Array.isArray(res)) {
+			return rustCommandsToTokens(res);
 		}
-	} catch (err) {
-		console.warn("⚠️ Rust parse_sakura_script 失敗:", err);
-		return undefined;
+		return [];
+	} catch (e) {
+		console.warn("Rust Sakura parser fallback to JS:", e);
+		return [];
 	}
-	return undefined;
 }

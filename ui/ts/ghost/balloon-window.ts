@@ -9,7 +9,7 @@ import { setupInteractiveElements } from "./balloon-window/interactive.js";
 import { updateBalloonWindowScale } from "./balloon-window/scale.js";
 import { applyBalloonDescript as applyThemeDescript } from "./balloon-window/theme.js";
 
-const urlParams = new URLSearchParams(globalThis.location.search);
+const urlParams = new URLSearchParams(globalThis.location?.search || "");
 const scopeId = parseInt(urlParams.get("scope") || "0", 10);
 let appliedTheme: string | null = null;
 let applyingTheme: string | null = null;
@@ -29,7 +29,7 @@ export async function applyBalloonDescript(theme: string) {
 	if (applyingTheme === theme) return;
 	applyingTheme = theme;
 	try {
-		const result: unknown = await applyThemeDescript({
+		const result = (await applyThemeDescript({
 			theme,
 			scopeId,
 			currentUserScale,
@@ -39,10 +39,10 @@ export async function applyBalloonDescript(theme: string) {
 			onDontMoveChange: (dontMove: boolean) => {
 				_isBalloonDontMove = dontMove;
 			},
-		});
+		})) as { dpiScale?: number; isBalloonDontMove?: boolean } | null;
 		if (result) {
-			currentDpiScale = result.dpiScale;
-			_isBalloonDontMove = result.isBalloonDontMove;
+			currentDpiScale = result.dpiScale ?? currentDpiScale;
+			_isBalloonDontMove = result.isBalloonDontMove ?? _isBalloonDontMove;
 			appliedTheme = theme;
 		}
 	} catch (_e) {
@@ -65,7 +65,8 @@ export function initBalloonWindow() {
 	if (!isTauriAvailable()) return;
 
 	void listen(`update-balloon-content-${scopeId}`, (event: unknown) => {
-		const { html, theme } = event.payload || {};
+		const ev = event as { payload?: { html?: string; theme?: string } };
+		const { html, theme } = ev.payload || {};
 		if (theme) {
 			document.documentElement.setAttribute("data-balloon-theme", theme);
 			void applyBalloonDescript(theme);
@@ -81,8 +82,13 @@ export function initBalloonWindow() {
 	});
 
 	void listen("balloon-theme-changed", (event: unknown) => {
-		const theme = event.payload?.theme || event.payload;
-		if (theme) {
+		const ev = event as { payload?: { theme?: string } | string };
+		const payload = ev.payload;
+		const theme =
+			typeof payload === "object" && payload !== null
+				? (payload as { theme?: string }).theme
+				: payload;
+		if (typeof theme === "string" && theme) {
 			document.documentElement.setAttribute("data-balloon-theme", theme);
 			localStorage.setItem("nanai_balloon_theme", theme);
 			void applyBalloonDescript(theme);
@@ -90,8 +96,15 @@ export function initBalloonWindow() {
 	});
 
 	void listen("balloon-scale-changed", (event: unknown) => {
+		const ev = event as {
+			payload?: { userScale?: number; scale?: number } | number;
+		};
+		const payload = ev.payload;
 		const scale =
-			event.payload?.userScale ?? event.payload?.scale ?? event.payload;
+			typeof payload === "object" && payload !== null
+				? ((payload as { userScale?: number; scale?: number }).userScale ??
+					(payload as { userScale?: number; scale?: number }).scale)
+				: payload;
 		if (typeof scale === "number" && !Number.isNaN(scale)) {
 			currentUserScale = scale;
 			if (balloonBox) {

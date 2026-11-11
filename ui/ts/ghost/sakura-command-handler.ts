@@ -63,7 +63,7 @@ export class SakuraCommandHandler {
 	}
 
 	openTeachBox(params: string[] = [], options: unknown = {}) {
-		openTeachBox(this, params, options);
+		openTeachBox(this, params, options as { notifyStart?: boolean });
 	}
 
 	closeTeachBox() {

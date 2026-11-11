@@ -89,14 +89,14 @@ export const ghostActions = {
 					).hideBalloon(),
 				2500,
 			);
-			await gc.scanGhosts();
+			await gc.scanGhosts?.();
 			const next = (gc.ghosts || []).find(
 				(g: { name?: string }) => g.name !== name,
 			);
-			if (next) {
-				await gc.selectGhost(next.name);
+			if (next?.name) {
+				await gc.selectGhost?.(next.name);
 			} else {
-				await gc.selectGhost(AppConfig.paths.fallbackGhostName);
+				await gc.selectGhost?.(AppConfig.paths.fallbackGhostName);
 			}
 		} catch (err) {
 			console.error("🗑️ アンインストール失敗:", err);

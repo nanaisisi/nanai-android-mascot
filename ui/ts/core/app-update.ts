@@ -133,7 +133,7 @@ export const updateMethods = {
 
 				if (updateResult.success) {
 					console.log("🔄 更新成功。ゴーストとSHIORIを再読み込みします...");
-					gc.selectGhost(ghostName);
+					await gc.selectGhost?.(ghostName);
 
 					const updatedFilesStr = (updateResult.updated_files || []).join(",");
 					await gc.sendShioriEvent(

@@ -42,6 +42,9 @@ export class GhostController {
 	declare closeGhost?: () => Promise<unknown>;
 	declare selectShell?: (shellName: string) => Promise<unknown>;
 	declare selectGhost?: (ghostName: string) => Promise<unknown>;
+	declare setScopeMoveOffset?: (scope: number, x: number, y: number) => void;
+	declare sendTeachInput?: (input: string) => Promise<unknown>;
+	declare clearTeachHistory?: () => void;
 	declare initializeGhostSHIORI: (
 		ghost: GhostInfo,
 		preload?: unknown,

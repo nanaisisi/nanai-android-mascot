@@ -45,7 +45,9 @@ pub fn extract_shell_menu_theme(
         .or_else(|| merged.get("menu.background"))
         .or_else(|| merged.get("menu_background"))
         .and_then(|rel| load_menu_bitmap_data_url(rel, path, ghost_master_dir, ghost_dir))
-        .or_else(|| load_menu_bitmap_data_url("menu_background.png", path, ghost_master_dir, ghost_dir));
+        .or_else(|| {
+            load_menu_bitmap_data_url("menu_background.png", path, ghost_master_dir, ghost_dir)
+        });
     let fg_bmp = merged
         .get("menu.foreground.bitmap.filename")
         .or_else(|| merged.get("menu.foreground.bitmap"))
@@ -53,23 +55,30 @@ pub fn extract_shell_menu_theme(
         .or_else(|| merged.get("menu.cursor"))
         .or_else(|| merged.get("menu_foreground"))
         .and_then(|rel| load_menu_bitmap_data_url(rel, path, ghost_master_dir, ghost_dir))
-        .or_else(|| load_menu_bitmap_data_url("menu_foreground.png", path, ghost_master_dir, ghost_dir));
+        .or_else(|| {
+            load_menu_bitmap_data_url("menu_foreground.png", path, ghost_master_dir, ghost_dir)
+        });
     let side_bmp = merged
         .get("menu.sidebar.bitmap.filename")
         .or_else(|| merged.get("menu.sidebar.bitmap"))
         .or_else(|| merged.get("menu.sidebar"))
         .or_else(|| merged.get("menu_sidebar"))
         .and_then(|rel| load_menu_bitmap_data_url(rel, path, ghost_master_dir, ghost_dir))
-        .or_else(|| load_menu_bitmap_data_url("menu_sidebar.png", path, ghost_master_dir, ghost_dir));
+        .or_else(|| {
+            load_menu_bitmap_data_url("menu_sidebar.png", path, ghost_master_dir, ghost_dir)
+        });
 
-    let bg_align = merged.get("menu.background.alignment")
+    let bg_align = merged
+        .get("menu.background.alignment")
         .or_else(|| merged.get("menu.background.align"))
         .or_else(|| merged.get("menu.bg.align"))
         .cloned();
-    let fg_align = merged.get("menu.foreground.alignment")
+    let fg_align = merged
+        .get("menu.foreground.alignment")
         .or_else(|| merged.get("menu.foreground.align"))
         .cloned();
-    let side_align = merged.get("menu.sidebar.alignment")
+    let side_align = merged
+        .get("menu.sidebar.alignment")
         .or_else(|| merged.get("menu.sidebar.align"))
         .cloned();
 

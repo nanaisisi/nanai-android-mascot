@@ -119,10 +119,11 @@ pub async fn scan_ghost_directory(
 
     while let Some(res) = join_set.join_next().await {
         if let Ok(Some(ghost_info)) = res
-            && !scanned_names.contains(&ghost_info.name) {
-                scanned_names.insert(ghost_info.name.clone());
-                ghosts.push(ghost_info);
-            }
+            && !scanned_names.contains(&ghost_info.name)
+        {
+            scanned_names.insert(ghost_info.name.clone());
+            ghosts.push(ghost_info);
+        }
     }
 
     // 名前順で決定論的にソート

@@ -60,7 +60,7 @@ async function handleAnimAddCommand(
 		const y = Number.parseInt(String(subArgs[2] ?? "0"), 10) || 0;
 		sm?.setBaseMoveOffset?.(scope, x, y);
 		if (gc?.setScopeMoveOffset) {
-			gc.setScopeMoveOffset(scope, x, y);
+			gc.setScopeMoveOffset?.(scope, x, y);
 		} else if (typeof document !== "undefined") {
 			const selector =
 				scope === 0

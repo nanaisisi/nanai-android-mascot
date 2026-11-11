@@ -30,7 +30,8 @@ impl ShioriGuestState {
         }
 
         if request.contains("ID: version") {
-            return "SHIORI/3.0 200 OK\r\nCharset: UTF-8\r\nValue: Nanai Wasm SHIORI 1.0.0\r\n\r\n".to_string();
+            return "SHIORI/3.0 200 OK\r\nCharset: UTF-8\r\nValue: Nanai Wasm SHIORI 1.0.0\r\n\r\n"
+                .to_string();
         }
 
         if request.contains("ID: name") {
@@ -267,9 +268,10 @@ impl ShioriVmHost {
                 let dir_ptr = 0i32;
 
                 if let Some(mem) = &self.memory
-                    && !bytes.is_empty() {
-                        let _ = mem.write(&mut *store, 0, bytes);
-                    }
+                    && !bytes.is_empty()
+                {
+                    let _ = mem.write(&mut *store, 0, bytes);
+                }
 
                 let ret = func
                     .call(&mut *store, (dir_ptr, dir_len))

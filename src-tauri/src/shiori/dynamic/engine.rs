@@ -5,10 +5,10 @@ use std::path::{Path, PathBuf};
 
 #[cfg(all(not(windows), not(target_os = "android")))]
 use super::host::Hglobal;
-#[cfg(all(windows, not(target_os = "android")))]
-use super::host::{GMEM_FIXED, GlobalAlloc, GlobalFree, is_x86_dll};
 #[cfg(not(target_os = "android"))]
 use super::host::{DllDirectoryGuard, HostProc, ShioriLoadFn, ShioriRequestFn, ShioriUnloadFn};
+#[cfg(all(windows, not(target_os = "android")))]
+use super::host::{GMEM_FIXED, GlobalAlloc, GlobalFree, is_x86_dll};
 #[cfg(not(target_os = "android"))]
 use libloading::Library;
 
@@ -134,7 +134,10 @@ impl ShioriDynamicEngine {
         let len = encoded_bytes.len() as i64;
 
         if let Some(host) = &self.host {
-            let (code, _) = host.lock().map_err(|e| e.to_string())?.call(1, &encoded_bytes)?;
+            let (code, _) = host
+                .lock()
+                .map_err(|e| e.to_string())?
+                .call(1, &encoded_bytes)?;
             if code == 1 {
                 self.is_loaded = true;
                 Ok(())
@@ -148,7 +151,11 @@ impl ShioriDynamicEngine {
                 if hmem.is_null() {
                     return Err("GlobalAlloc failed".to_string());
                 }
-                std::ptr::copy_nonoverlapping(encoded_bytes.as_ptr(), hmem as *mut u8, encoded_bytes.len());
+                std::ptr::copy_nonoverlapping(
+                    encoded_bytes.as_ptr(),
+                    hmem as *mut u8,
+                    encoded_bytes.len(),
+                );
                 *(hmem as *mut u8).add(encoded_bytes.len()) = 0;
                 let res = (fn_load)(hmem, len);
                 GlobalFree(hmem);

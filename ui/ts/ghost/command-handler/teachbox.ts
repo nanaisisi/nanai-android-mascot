@@ -6,7 +6,7 @@
 export function openTeachBox(
 	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	params: string[] = [],
-	options: unknown = {},
+	options: { notifyStart?: boolean } = {},
 ) {
 	const { notifyStart = true } = options;
 	handler.closeTeachBox();

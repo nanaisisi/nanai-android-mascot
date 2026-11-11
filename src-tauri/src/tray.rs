@@ -4,7 +4,7 @@ use std::io::Write;
 use std::path::Path;
 use tauri::Manager;
 use tauri::image::Image;
-use tauri::tray::{TrayIcon, TrayIconBuilder, TrayIconEvent, MouseButton, MouseButtonState};
+use tauri::tray::{MouseButton, MouseButtonState, TrayIcon, TrayIconBuilder, TrayIconEvent};
 
 fn log_tray(msg: &str) {
     std::println!("{}", msg);

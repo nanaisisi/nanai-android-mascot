@@ -3,9 +3,32 @@
  * @brief ウィンドウ状態およびデスクトップ整列コマンドハンドラ
  */
 
-export async function handleWindowState(state: string, handler?: unknown) {
+export async function handleWindowState(
+	state: string,
+	handler?: import("../sakura-command-handler.js").SakuraCommandHandler | null,
+) {
 	try {
-		const api = (globalThis as unknown).__TAURI__?.window;
+		const g = globalThis as unknown as {
+			__TAURI__?: {
+				window?: {
+					getCurrentWindow: () => {
+						setAlwaysOnTop: (flag: boolean) => Promise<void>;
+						minimize: () => Promise<void>;
+						unminimize?: () => Promise<void>;
+						show?: () => Promise<void>;
+						outerSize: () => Promise<{ width: number; height: number }>;
+						outerPosition: () => Promise<{ x: number; y: number }>;
+						setPosition: (pos: unknown) => Promise<void>;
+					};
+					currentMonitor: () => Promise<{
+						position: { x: number; y: number };
+						size: { width: number; height: number };
+					} | null>;
+					PhysicalPosition: new (x: number, y: number) => unknown;
+				};
+			};
+		};
+		const api = g.__TAURI__?.window;
 		if (!api) return;
 		const win = api.getCurrentWindow();
 		const lower = state.toLowerCase();
@@ -41,7 +64,23 @@ export async function setAlignmentToDesktop(
 	handler.app.alignmentToDesktop = mode;
 	if (mode === "free") return;
 	try {
-		const api = (globalThis as unknown).__TAURI__?.window;
+		const g = globalThis as unknown as {
+			__TAURI__?: {
+				window?: {
+					getCurrentWindow: () => {
+						outerSize: () => Promise<{ width: number; height: number }>;
+						outerPosition: () => Promise<{ x: number; y: number }>;
+						setPosition: (pos: unknown) => Promise<void>;
+					};
+					currentMonitor: () => Promise<{
+						position: { x: number; y: number };
+						size: { width: number; height: number };
+					} | null>;
+					PhysicalPosition: new (x: number, y: number) => unknown;
+				};
+			};
+		};
+		const api = g.__TAURI__?.window;
 		if (!api) return;
 		const win = api.getCurrentWindow();
 		const monitor = await api.currentMonitor();

@@ -92,9 +92,16 @@ pub async fn execute_saori(request: SaoriRequest) -> Result<SaoriResponse, Strin
         let path = Path::new(&request.dll_path);
         // ローカル DLL ファイルが存在する場合、サイドルート設定と共にネイティブロードを試行
         #[cfg(not(target_os = "android"))]
-        if path.is_file() && path.extension().and_then(|e| e.to_str()).map(|s| s.eq_ignore_ascii_case("dll") || s.eq_ignore_ascii_case("so")).unwrap_or(false) {
+        if path.is_file()
+            && path
+                .extension()
+                .and_then(|e| e.to_str())
+                .map(|s| s.eq_ignore_ascii_case("dll") || s.eq_ignore_ascii_case("so"))
+                .unwrap_or(false)
+        {
             let _guard = crate::shiori::dynamic::host::DllDirectoryGuard::enter(path);
-            if let Ok(mut engine) = crate::shiori::dynamic::ShioriDynamicEngine::load_library(path) {
+            if let Ok(mut engine) = crate::shiori::dynamic::ShioriDynamicEngine::load_library(path)
+            {
                 let parent = path.parent().unwrap_or(path);
                 if engine.load_engine(parent).is_ok() {
                     let mut req_text = String::from("EXECUTE SAORI/1.0\r\nCharset: UTF-8\r\n");

@@ -5,11 +5,41 @@
 
 import { isTauriAvailable } from "../../../core/tauri-helper.js";
 
+export interface BootContext {
+	sendShioriNotify: (event: string, refs?: unknown[]) => Promise<unknown>;
+	sendCapabilityNotify: () => Promise<unknown>;
+	currentGhost?: {
+		name?: string;
+		path?: string;
+		sakura_name?: string;
+		kero_name?: string;
+	};
+	ghosts?: Array<{
+		name?: string;
+		path?: string;
+		sakura_name?: string;
+		kero_name?: string;
+	}>;
+	shells?: string[];
+	balloons?: string[];
+	balloonPaths?: string[];
+	plugins?: string[];
+	pluginPaths?: string[];
+	headlines?: string[];
+	headlinePaths?: string[];
+	calendarPlugins?: string[];
+	calendarPluginPaths?: string[];
+	calendarSkins?: string[];
+	calendarSkinPaths?: string[];
+	app?: { debugMode?: boolean };
+	[key: string]: unknown;
+}
+
 export const shioriNotifyBoot = {
 	/**
 	 * UKADOC capability Notify イベントを送信 (SHIORI 実行初期)
 	 */
-	async sendCapabilityNotify(this: unknown) {
+	async sendCapabilityNotify(this: BootContext) {
 		if (!isTauriAvailable()) return null;
 		const capabilities = [
 			"request.sender",
@@ -35,7 +65,7 @@ export const shioriNotifyBoot = {
 	/**
 	 * 起動時通知一式を送信 (SHIORI ロード後 / OnBoot 後に呼ぶ)
 	 */
-	async sendBootNotifyEvents(this: unknown) {
+	async sendBootNotifyEvents(this: BootContext) {
 		if (!isTauriAvailable()) return;
 		const ghost = this.currentGhost;
 		if (!ghost) return;
@@ -44,47 +74,47 @@ export const shioriNotifyBoot = {
 
 		await this.sendCapabilityNotify();
 
-		const ghosts = this.ghosts?.length > 0 ? this.ghosts : [ghost];
+		const ghosts = this.ghosts && this.ghosts.length > 0 ? this.ghosts : [ghost];
 
 		await this.sendShioriNotify(
 			"installedghostname",
-			ghosts.map((g: unknown) => g.name),
+			ghosts.map((g: { name?: string }) => g.name || ""),
 		);
 		await this.sendShioriNotify(
 			"installedsakuraname",
-			ghosts.map((g: unknown) => g.sakura_name || g.name),
+			ghosts.map((g: { name?: string; sakura_name?: string }) => g.sakura_name || g.name || ""),
 		);
 		// 後方互換性フォールバック（旧コードからの呼出用）
 		// Legacy alias for backward compatibility
 		await this.sendShioriNotify(
 			"installsakuraname",
-			ghosts.map((g: unknown) => g.sakura_name || g.name),
+			ghosts.map((g: { name?: string; sakura_name?: string }) => g.sakura_name || g.name || ""),
 		);
 
 		const keroNames = ghosts
-			.map((g: unknown) => g.kero_name)
+			.map((g: { kero_name?: string }) => g.kero_name || "")
 			.filter((n: string) => Boolean(n?.trim()));
 		if (keroNames.length > 0) {
 			await this.sendShioriNotify("installedkeroname", keroNames);
 		}
 
-		if (this.shells?.length > 0) {
+		if (this.shells && this.shells.length > 0) {
 			await this.sendShioriNotify("installedshellname", this.shells);
 		}
 
 		const ghostPaths = ghosts
-			.map((g: unknown) => g.path)
+			.map((g: { path?: string }) => g.path || "")
 			.filter((p: string) => Boolean(p));
 		if (ghostPaths.length > 0) {
 			await this.sendShioriNotify("ghostpathlist", ghostPaths);
 		}
 
 		const balloonNames =
-			this.balloons?.length > 0 ? this.balloons : ["default"];
+			this.balloons && this.balloons.length > 0 ? this.balloons : ["default"];
 		await this.sendShioriNotify("installedballoonname", balloonNames);
 
 		const balloonPaths =
-			this.balloonPaths?.length > 0
+			this.balloonPaths && this.balloonPaths.length > 0
 				? this.balloonPaths
 				: ["assets/balloon/default"];
 		await this.sendShioriNotify("balloonpathlist", balloonPaths);
@@ -103,7 +133,7 @@ export const shioriNotifyBoot = {
 
 		await this.sendShioriNotify("hwnd", [1001, 1002]);
 
-		if (this.plugins?.length > 0) {
+		if (this.plugins && this.plugins.length > 0) {
 			await this.sendShioriNotify("installedplugin", this.plugins);
 			await this.sendShioriNotify(
 				"pluginpathlist",
@@ -111,7 +141,7 @@ export const shioriNotifyBoot = {
 			);
 		}
 
-		if (this.headlines?.length > 0) {
+		if (this.headlines && this.headlines.length > 0) {
 			await this.sendShioriNotify("installedheadlinename", this.headlines);
 			await this.sendShioriNotify(
 				"headlinepathlist",
@@ -120,7 +150,7 @@ export const shioriNotifyBoot = {
 			);
 		}
 
-		if (this.calendarPlugins?.length > 0) {
+		if (this.calendarPlugins && this.calendarPlugins.length > 0) {
 			await this.sendShioriNotify(
 				"installedcalendarpluginname",
 				this.calendarPlugins,
@@ -131,7 +161,7 @@ export const shioriNotifyBoot = {
 					this.calendarPlugins.map((c: string) => `calendar/plugins/${c}`),
 			);
 		}
-		if (this.calendarSkins?.length > 0) {
+		if (this.calendarSkins && this.calendarSkins.length > 0) {
 			await this.sendShioriNotify(
 				"installedcalendarskinname",
 				this.calendarSkins,
@@ -143,14 +173,14 @@ export const shioriNotifyBoot = {
 			);
 		}
 
-		const otherGhosts = ghosts.filter((g: unknown) => g.name !== ghost.name);
+		const otherGhosts = ghosts.filter((g: { name?: string }) => g.name !== ghost.name);
 		if (otherGhosts.length > 0) {
 			await this.sendShioriNotify(
 				"otherghostname",
-				otherGhosts.map((g: unknown) => g.name),
+				otherGhosts.map((g: { name?: string }) => g.name || ""),
 			);
 		}
-		await this.sendShioriNotify("ownerghostname", [ghost.name]);
+		await this.sendShioriNotify("ownerghostname", [ghost.name || ""]);
 
 		await this.sendShioriNotify("configuredbiffname", ["default"]);
 

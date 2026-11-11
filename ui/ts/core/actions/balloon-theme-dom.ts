@@ -85,13 +85,29 @@ export function resetBalloonDescriptDom(
 				root.style.removeProperty(key);
 			}
 		}
-		const balloonEl = document.querySelector(".balloon") as HTMLElement | null;
-		if (balloonEl?.style) {
-			balloonEl.style.padding = "";
-			balloonEl.style.maxWidth = "";
-			balloonEl.style.borderImage = "";
-			const scale = userScale || app?.balloonUserScale || 1;
-			balloonEl.style.transform = scale !== 1 ? `scale(${scale})` : "";
+		if (typeof document.querySelectorAll === "function") {
+			const balloonEls = document.querySelectorAll(".balloon");
+			balloonEls.forEach((el) => {
+				const bEl = el as HTMLElement;
+				if (bEl?.style) {
+					bEl.style.padding = "";
+					bEl.style.maxWidth = "";
+					bEl.style.maxHeight = "";
+					bEl.style.borderImage = "";
+					const scale = userScale || app?.balloonUserScale || 1;
+					bEl.style.transform = scale !== 1 ? `scale(${scale})` : "";
+				}
+			});
+		} else if (typeof document.querySelector === "function") {
+			const bEl = document.querySelector(".balloon") as HTMLElement | null;
+			if (bEl?.style) {
+				bEl.style.padding = "";
+				bEl.style.maxWidth = "";
+				bEl.style.maxHeight = "";
+				bEl.style.borderImage = "";
+				const scale = userScale || app?.balloonUserScale || 1;
+				bEl.style.transform = scale !== 1 ? `scale(${scale})` : "";
+			}
 		}
 	}
 	if (app?.elements?.balloonDisplay) {

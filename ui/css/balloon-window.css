@@ -50,6 +50,26 @@ body {
 	-webkit-writing-mode: var(--balloon-writing-mode, horizontal-tb);
 	contain: layout paint;
 	will-change: contents;
+	scrollbar-width: thin;
+	scrollbar-color: var(--balloon-border-color, rgba(0, 0, 0, 0.25)) transparent;
+}
+
+.balloon::-webkit-scrollbar {
+	width: 6px;
+	height: 6px;
+}
+
+.balloon::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.balloon::-webkit-scrollbar-thumb {
+	background-color: var(--balloon-border-color, rgba(0, 0, 0, 0.25));
+	border-radius: 3px;
+}
+
+.balloon::-webkit-scrollbar-thumb:hover {
+	background-color: var(--balloon-highlight-bg, rgba(0, 120, 215, 0.5));
 }
 
 .balloon[style*="border-image-source"] {
@@ -209,6 +229,17 @@ body {
 	background-size: contain;
 	vertical-align: middle;
 	margin-left: 4px;
+	animation: clickwait-blink 1s steps(2, start) infinite;
+}
+
+@keyframes clickwait-blink {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.2;
+	}
 }
 
 /* バルーンマーカー (marker.filename) */

@@ -3,11 +3,13 @@
  * @brief OS・シェル・ユーザー等の環境情報通知
  */
 
+import type { LifecycleContext } from "./ghost-lifecycle/lifecycle-events.js";
+
 export const shioriNotifyEnvironment = {
 	/**
 	 * OS情報通知 (OnNotifyOSInfo) を送信 (UKADOC 規格準拠)
 	 */
-	async notifyOSInfo(this: unknown, osName = "Android", osVersion = "14") {
+	async notifyOSInfo(this: LifecycleContext, osName = "Android", osVersion = "14") {
 		return await this.sendShioriNotify("OnNotifyOSInfo", [osName, osVersion]);
 	},
 
@@ -15,7 +17,7 @@ export const shioriNotifyEnvironment = {
 	 * 自身（ゴースト本体）情報通知 (OnNotifySelfInfo) を送信 (UKADOC 規格準拠)
 	 */
 	async notifySelfInfo(
-		this: unknown,
+		this: LifecycleContext,
 		ghostName: string,
 		shellName = "master",
 		balloonName = "default",
@@ -31,7 +33,7 @@ export const shioriNotifyEnvironment = {
 	 * バルーン構成情報通知 (OnNotifyBalloonInfo) を送信 (UKADOC 規格準拠)
 	 */
 	async notifyBalloonInfo(
-		this: unknown,
+		this: LifecycleContext,
 		balloonName = "default",
 		balloonPath = "",
 	) {
@@ -44,7 +46,7 @@ export const shioriNotifyEnvironment = {
 	/**
 	 * シェル構成情報通知 (OnNotifyShellInfo) を送信 (UKADOC 規格準拠)
 	 */
-	async notifyShellInfo(this: unknown, shellName = "master", shellPath = "") {
+	async notifyShellInfo(this: LifecycleContext, shellName = "master", shellPath = "") {
 		return await this.sendShioriNotify("OnNotifyShellInfo", [
 			shellName,
 			shellPath,
@@ -54,7 +56,7 @@ export const shioriNotifyEnvironment = {
 	/**
 	 * 着せ替え構成情報通知 (OnNotifyDressupInfo) を送信 (UKADOC 規格準拠)
 	 */
-	async notifyDressupInfo(this: unknown, dressupItems: string[] = []) {
+	async notifyDressupInfo(this: LifecycleContext, dressupItems: string[] = []) {
 		return await this.sendShioriNotify("OnNotifyDressupInfo", dressupItems);
 	},
 
@@ -62,7 +64,7 @@ export const shioriNotifyEnvironment = {
 	 * ユーザー設定情報通知 (OnNotifyUserInfo) を送信 (UKADOC 規格準拠)
 	 */
 	async notifyUserInfo(
-		this: unknown,
+		this: LifecycleContext,
 		userName = "ユーザー",
 		userBirthday = "",
 		userGender = "",
@@ -77,7 +79,7 @@ export const shioriNotifyEnvironment = {
 	/**
 	 * フォント設定情報通知 (OnNotifyFontInfo) を送信 (UKADOC 規格準拠)
 	 */
-	async notifyFontInfo(this: unknown, fontName = "sans-serif", fontSize = 12) {
+	async notifyFontInfo(this: LifecycleContext, fontName = "sans-serif", fontSize = 12) {
 		return await this.sendShioriNotify("OnNotifyFontInfo", [
 			fontName,
 			String(fontSize),
@@ -87,7 +89,7 @@ export const shioriNotifyEnvironment = {
 	/**
 	 * 祝日・休日情報通知 (OnNotifyHolidayInfo) を送信 (UKADOC 規格準拠)
 	 */
-	async notifyHolidayInfo(this: unknown, holidayName = "", holidayDate = "") {
+	async notifyHolidayInfo(this: LifecycleContext, holidayName = "", holidayDate = "") {
 		return await this.sendShioriNotify("OnNotifyHolidayInfo", [
 			holidayName,
 			holidayDate,
@@ -98,7 +100,7 @@ export const shioriNotifyEnvironment = {
 	 * 国際化・地域設定通知 (OnNotifyInternationalInfo) を送信 (UKADOC 規格準拠)
 	 */
 	async notifyInternationalInfo(
-		this: unknown,
+		this: LifecycleContext,
 		locale = "ja-JP",
 		timezone = "Asia/Tokyo",
 	) {
@@ -112,7 +114,7 @@ export const shioriNotifyEnvironment = {
 	 * バッテリー・電源状態通知
 	 */
 	async notifyBatteryState(
-		this: unknown,
+		this: LifecycleContext,
 		type:
 			| "notify"
 			| "critical"
@@ -137,7 +139,7 @@ export const shioriNotifyEnvironment = {
 	 * OS環境・ディスプレイ・テーマ・負荷状態通知 (UKADOC os-state)
 	 */
 	async notifyOsEnvironment(
-		this: unknown,
+		this: LifecycleContext,
 		event:
 			| "OnDisplayChange"
 			| "OnDisplayChangeEx"
@@ -166,7 +168,7 @@ export const shioriNotifyEnvironment = {
 	/**
 	 * スクリーンセーバー状態通知
 	 */
-	async notifyScreenSaver(this: unknown, isStarted: boolean) {
+	async notifyScreenSaver(this: LifecycleContext, isStarted: boolean) {
 		const event = isStarted ? "OnScreenSaverStart" : "OnScreenSaverEnd";
 		return await this.sendShioriNotify(event, []);
 	},
@@ -175,7 +177,7 @@ export const shioriNotifyEnvironment = {
 	 * デバイス着脱通知
 	 */
 	async notifyDeviceChange(
-		this: unknown,
+		this: LifecycleContext,
 		action: "arrival" | "remove",
 		deviceName = "",
 	) {
@@ -187,7 +189,7 @@ export const shioriNotifyEnvironment = {
 	 * セッション状態通知
 	 */
 	async notifySessionState(
-		this: unknown,
+		this: LifecycleContext,
 		sessionState: "lock" | "unlock" | "disconnect" | "reconnect",
 	) {
 		const eventMap: Record<string, string> = {
@@ -204,7 +206,7 @@ export const shioriNotifyEnvironment = {
 	 * モード・負荷・ネットワーク通知
 	 */
 	async notifySystemStatus(
-		this: unknown,
+		this: LifecycleContext,
 		event: string,
 		references: Array<string | number> = [],
 	) {

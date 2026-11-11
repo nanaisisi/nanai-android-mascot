@@ -5,15 +5,19 @@
 
 import { invoke, isTauriAvailable } from "../../core/tauri-helper.js";
 
+export interface CoreContext {
+	app?: { ghostId?: string; [key: string]: unknown };
+	[key: string]: unknown;
+}
+
 export const shioriNotifyCore = {
 	/**
 	 * NOTIFY コマンドで SHIORI イベントを送信
-	 * @this {unknown}
 	 * @param {string} event イベントID (例: "installedghostname")
 	 * @param {Array<string|number>} references Reference0..N
 	 */
 	async sendShioriNotify(
-		this: unknown,
+		this: CoreContext,
 		event: string,
 		references: Array<string | number>,
 	) {

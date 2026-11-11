@@ -3,50 +3,52 @@
  * @brief システム状態(サスペンド・ベースウェア更新・キャッシュ等)通知
  */
 
+import type { LifecycleContext } from "./ghost-lifecycle/lifecycle-events.js";
+
 export const shioriNotifySystem = {
-	async sendSysSuspend(this: unknown) {
+	async sendSysSuspend(this: LifecycleContext) {
 		return await this.sendShioriNotify("OnSysSuspend", []);
 	},
 
-	async sendSysResume(this: unknown) {
+	async sendSysResume(this: LifecycleContext) {
 		return await this.sendShioriNotify("OnSysResume", []);
 	},
 
-	async sendDestroy(this: unknown) {
+	async sendDestroy(this: LifecycleContext) {
 		return await this.sendShioriNotify("OnDestroy", []);
 	},
 
-	async sendInitialize(this: unknown) {
+	async sendInitialize(this: LifecycleContext) {
 		return await this.sendShioriNotify("OnInitialize", []);
 	},
 
-	async sendVirtualDesktopChanged(this: unknown, desktopId: string | number) {
+	async sendVirtualDesktopChanged(this: LifecycleContext, desktopId: string | number) {
 		return await this.sendShioriNotify("OnVirtualDesktopChanged", [
 			String(desktopId),
 		]);
 	},
 
-	async sendFullScreenAppMinimize(this: unknown) {
+	async sendFullScreenAppMinimize(this: LifecycleContext) {
 		return await this.sendShioriNotify("OnFullScreenAppMinimize", []);
 	},
 
-	async sendFullScreenAppRestore(this: unknown) {
+	async sendFullScreenAppRestore(this: LifecycleContext) {
 		return await this.sendShioriNotify("OnFullScreenAppRestore", []);
 	},
 
-	async sendBasewareUpdating(this: unknown) {
+	async sendBasewareUpdating(this: LifecycleContext) {
 		return await this.sendShioriNotify("OnBasewareUpdating", []);
 	},
 
-	async sendBasewareUpdated(this: unknown) {
+	async sendBasewareUpdated(this: LifecycleContext) {
 		return await this.sendShioriNotify("OnBasewareUpdated", []);
 	},
 
-	async sendCacheSuspend(this: unknown) {
+	async sendCacheSuspend(this: LifecycleContext) {
 		return await this.sendShioriNotify("OnCacheSuspend", []);
 	},
 
-	async sendCacheRestore(this: unknown) {
+	async sendCacheRestore(this: LifecycleContext) {
 		return await this.sendShioriNotify("OnCacheRestore", []);
 	},
 };

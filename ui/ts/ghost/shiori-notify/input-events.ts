@@ -3,12 +3,14 @@
  * @brief マウス・ドロップ・ゲームパッド・重なり等の入力/操作イベント通知
  */
 
+import type { LifecycleContext } from "./ghost-lifecycle/lifecycle-events.js";
+
 export const shioriNotifyInputEvents = {
 	/**
 	 * URL ドロップイベント通知 (UKADOC url-drop)
 	 */
 	async notifyUrlDropEvent(
-		this: unknown,
+		this: LifecycleContext,
 		event:
 			| "OnURLDropped"
 			| "OnURLDropping"
@@ -26,7 +28,7 @@ export const shioriNotifyInputEvents = {
 	 * ファイルドロップイベント通知 (UKADOC file-drop)
 	 */
 	async notifyFileDropEvent(
-		this: unknown,
+		this: LifecycleContext,
 		event:
 			| "OnFileDrop"
 			| "OnFileDrop2"
@@ -54,7 +56,7 @@ export const shioriNotifyInputEvents = {
 	 * 重なり・画面外判定通知 (UKADOC overlap)
 	 */
 	async notifyOverlapEvent(
-		this: unknown,
+		this: LifecycleContext,
 		event:
 			| "OnOffscreen"
 			| "OnOtherOffscreen"
@@ -70,7 +72,7 @@ export const shioriNotifyInputEvents = {
 	 * イベント送信・通知失敗イベント (UKADOC event-send-failure)
 	 */
 	async notifyEventSendFailure(
-		this: unknown,
+		this: LifecycleContext,
 		event:
 			| "OnNotifyOtherFailure"
 			| "OnNotifyPluginFailure"
@@ -86,7 +88,7 @@ export const shioriNotifyInputEvents = {
 	 * ゲームパッドイベント通知 (UKADOC gamepad)
 	 */
 	async notifyGamepadEvent(
-		this: unknown,
+		this: LifecycleContext,
 		event:
 			| "OnGamepadAxisMove"
 			| "OnGamepadButtonDown"
@@ -103,7 +105,7 @@ export const shioriNotifyInputEvents = {
 	 * 矩形選択モードイベント通知 (UKADOC select-region-mode)
 	 */
 	async notifySelectRegionModeEvent(
-		this: unknown,
+		this: LifecycleContext,
 		event:
 			| "OnSelectModeBegin"
 			| "OnSelectModeCancel"
@@ -120,7 +122,7 @@ export const shioriNotifyInputEvents = {
 	 * 音声認識・合成イベント通知 (UKADOC speech)
 	 */
 	async notifySpeechEvent(
-		this: unknown,
+		this: LifecycleContext,
 		event:
 			| "OnSpeechSynthesisStatus"
 			| "OnVoiceRecognitionStatus"
@@ -135,7 +137,7 @@ export const shioriNotifyInputEvents = {
 	 * その他の各種通知 (UKADOC other)
 	 */
 	async notifyOtherEvent(
-		this: unknown,
+		this: LifecycleContext,
 		event:
 			| "OnAITalk"
 			| "OnCompressArchiveComplete"
@@ -162,7 +164,7 @@ export const shioriNotifyInputEvents = {
 	 * マウス拡張イベント送信
 	 */
 	async notifyMouseEvent(
-		this: unknown,
+		this: LifecycleContext,
 		eventName: string,
 		args: Array<string | number>,
 	) {
@@ -173,7 +175,7 @@ export const shioriNotifyInputEvents = {
 	 * 重なり・画面外通知 (UKADOC overlap spec)
 	 */
 	async sendOverlap(
-		this: unknown,
+		this: LifecycleContext,
 		scope0: number | string,
 		scope1: number | string,
 		rect: string = "",
@@ -186,19 +188,19 @@ export const shioriNotifyInputEvents = {
 	},
 
 	async sendOffscreen(
-		this: unknown,
+		this: LifecycleContext,
 		scope: number | string,
 		rect: string = "",
 	) {
 		return await this.sendShioriNotify("OnOffscreen", [String(scope), rect]);
 	},
 
-	async sendOtherOverlap(this: unknown, ghostName: string, rect: string = "") {
+	async sendOtherOverlap(this: LifecycleContext, ghostName: string, rect: string = "") {
 		return await this.sendShioriNotify("OnOtherOverlap", [ghostName, rect]);
 	},
 
 	async sendOtherOffscreen(
-		this: unknown,
+		this: LifecycleContext,
 		ghostName: string,
 		rect: string = "",
 	) {
@@ -209,7 +211,7 @@ export const shioriNotifyInputEvents = {
 	 * 外部通信イベント通知 (UKADOC other-communication spec)
 	 */
 	async notifyCommunicationEvent(
-		this: unknown,
+		this: LifecycleContext,
 		event:
 			| "OnExecuteFileWatchChange"
 			| "OnExecuteFileWatchFailure"

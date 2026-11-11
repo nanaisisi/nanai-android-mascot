@@ -3,12 +3,14 @@
  * @brief バルーン/サーフィス/選択肢関連の通知
  */
 
+import type { LifecycleContext } from "./ghost-lifecycle/lifecycle-events.js";
+
 export const shioriNotifyBalloonSurface = {
 	/**
 	 * サーフィス・バルーン状態通知 (UKADOC surface / balloon)
 	 */
 	async notifySurfaceBalloonEvent(
-		this: unknown,
+		this: LifecycleContext,
 		event:
 			| "OnSurfaceChange"
 			| "OnOtherSurfaceChange"
@@ -24,7 +26,7 @@ export const shioriNotifyBalloonSurface = {
 	 * 選択肢・アンカー拡張通知 (UKADOC choice)
 	 */
 	async notifyChoiceAnchorEx(
-		this: unknown,
+		this: LifecycleContext,
 		event: "OnChoiceSelectEx" | "OnAnchorSelectEx" | string,
 		references: Array<string | number> = [],
 	) {
@@ -35,7 +37,7 @@ export const shioriNotifyBalloonSurface = {
 	 * バルーン倍率変更通知 (OnBalloonScaling) を送信 (UKADOC準拠)
 	 */
 	async sendBalloonScalingNotify(
-		this: unknown,
+		this: LifecycleContext,
 		afterX: number | string,
 		beforeX: number | string,
 		afterY: number | string = afterX,
@@ -55,7 +57,7 @@ export const shioriNotifyBalloonSurface = {
 	 * @param {number|string} [scopeId=0] バルーンのスコープID
 	 */
 	async sendBalloonCloseNotify(
-		this: unknown,
+		this: LifecycleContext,
 		lastScript: string = "",
 		scopeId: number | string = 0,
 	) {
@@ -72,7 +74,7 @@ export const shioriNotifyBalloonSurface = {
 	 * @param {number|string} [scopeId=0] バルーンのスコープID
 	 */
 	async sendBalloonTimeoutNotify(
-		this: unknown,
+		this: LifecycleContext,
 		lastScript: string = "",
 		scopeId: number | string = 0,
 	) {
@@ -89,7 +91,7 @@ export const shioriNotifyBalloonSurface = {
 	 * @param {number|string} [charPosition] 中断位置 (スクリプト先頭からの文字数)
 	 */
 	async sendBalloonBreakNotify(
-		this: unknown,
+		this: LifecycleContext,
 		script: string = "",
 		scopeId: number | string = 0,
 		charPosition?: number | string,
@@ -110,7 +112,7 @@ export const shioriNotifyBalloonSurface = {
 	 * @param {number} [height=0] サーフィス高さ
 	 */
 	async notifySurfaceChange(
-		this: unknown,
+		this: LifecycleContext,
 		scopeId: number,
 		surface0: number | string = 0,
 		surface1: number | string = 10,
@@ -135,7 +137,7 @@ export const shioriNotifyBalloonSurface = {
 	 * @param {{ left: number, top: number, right: number, bottom: number }|string} [rect="0,0,0,0"]
 	 */
 	async notifyOtherSurfaceChange(
-		this: unknown,
+		this: LifecycleContext,
 		ghostName: string,
 		sakuraName: string,
 		scopeId: number,
@@ -164,7 +166,7 @@ export const shioriNotifyBalloonSurface = {
 	 * Reference0: ラベル(text), Reference1: ID, Reference2..: 拡張引数
 	 */
 	async sendChoiceSelectExNotify(
-		this: unknown,
+		this: LifecycleContext,
 		id: string,
 		text: string,
 		args: string[] = [],
@@ -177,7 +179,7 @@ export const shioriNotifyBalloonSurface = {
 	 * Reference0: テキスト, Reference1: ID, Reference2..: 拡張引数
 	 */
 	async sendAnchorSelectExNotify(
-		this: unknown,
+		this: LifecycleContext,
 		id: string,
 		text: string,
 		args: string[] = [],
@@ -189,7 +191,7 @@ export const shioriNotifyBalloonSurface = {
 	 * バルーン関連 SHIORI イベント通知 (UKADOC balloon spec)
 	 */
 	async sendBalloonClose(
-		this: unknown,
+		this: LifecycleContext,
 		scopeId: number | string = 0,
 		reason: string = "",
 	) {
@@ -200,7 +202,7 @@ export const shioriNotifyBalloonSurface = {
 	},
 
 	async sendBalloonBreak(
-		this: unknown,
+		this: LifecycleContext,
 		scopeId: number | string = 0,
 		reason: string = "",
 	) {
@@ -214,7 +216,7 @@ export const shioriNotifyBalloonSurface = {
 	 * サーフィス関連 SHIORI イベント通知 (UKADOC surface spec)
 	 */
 	async sendSurfaceChange(
-		this: unknown,
+		this: LifecycleContext,
 		scopeId: number | string = 0,
 		surfaceId: number | string = 0,
 	) {
@@ -225,7 +227,7 @@ export const shioriNotifyBalloonSurface = {
 	},
 
 	async sendOtherSurfaceChange(
-		this: unknown,
+		this: LifecycleContext,
 		ghostName: string,
 		scopeId: number | string = 0,
 		surfaceId: number | string = 0,

@@ -28,14 +28,31 @@ class ScriptLifetimeState {
 	}
 
 	setVariable(name, value) {
-		this.customVariables.set(name, String(value));
+		if (name === null || name === undefined) return;
+		this.customVariables.set(String(name), String(value ?? ""));
 	}
 
 	getVariable(name) {
-		return this.customVariables.get(name);
+		if (name === null || name === undefined) return undefined;
+		return this.customVariables.get(String(name));
+	}
+
+	hasVariable(name) {
+		if (name === null || name === undefined) return false;
+		return this.customVariables.has(String(name));
+	}
+
+	deleteVariable(name) {
+		if (name === null || name === undefined) return false;
+		return this.customVariables.delete(String(name));
+	}
+
+	getAllVariables() {
+		return Object.fromEntries(this.customVariables.entries());
 	}
 
 	setMode(mode, active = true) {
+		if (!mode) return;
 		const key = String(mode).toLowerCase();
 		if (active) {
 			this.activeModes.add(key);
@@ -45,7 +62,12 @@ class ScriptLifetimeState {
 	}
 
 	hasMode(mode) {
+		if (!mode) return false;
 		return this.activeModes.has(String(mode).toLowerCase());
+	}
+
+	getModes() {
+		return Array.from(this.activeModes);
 	}
 
 	clearModes() {

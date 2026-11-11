@@ -35,7 +35,13 @@ export async function handleChangeCommand(
 		} else if (shouldRaiseEvent && gc?.sendShioriEvent) {
 			await gc.sendShioriEvent("OnGhostChanging", [name, "manual", fromGhost]);
 		}
-		await gc?.switchGhost?.(name);
+		const selectFn =
+			gc?.selectGhost ||
+			(gc as { switchGhost?: (name: string) => Promise<unknown> })
+				?.switchGhost;
+		if (selectFn) {
+			await selectFn.call(gc, name);
+		}
 		if (shouldRaiseEvent && gc?.sendGhostChanged) {
 			await gc.sendGhostChanged(name, fromGhost);
 		} else if (shouldRaiseEvent && gc?.sendShioriEvent) {
@@ -112,8 +118,12 @@ export async function handleRaiseOtherCommand(
 	const references = args.slice(3);
 	if (!ghostName || !eventName) return;
 
-	const gc =
-		handler.app?.ghostController ?? handler.player?.app?.ghostController;
+	const playerApp = (
+		handler.player as unknown as {
+			app?: { ghostController?: import("../ghost.js").GhostController };
+		}
+	)?.app;
+	const gc = handler.app?.ghostController ?? playerApp?.ghostController;
 	if (gc?.sendRaiseOther) {
 		await gc.sendRaiseOther(ghostName, eventName, references);
 	} else if (gc?.sendShioriEvent) {
@@ -134,8 +144,12 @@ export async function handleNotifyOtherCommand(
 	const references = args.slice(3);
 	if (!ghostName || !eventName) return;
 
-	const gc =
-		handler.app?.ghostController ?? handler.player?.app?.ghostController;
+	const playerApp = (
+		handler.player as unknown as {
+			app?: { ghostController?: import("../ghost.js").GhostController };
+		}
+	)?.app;
+	const gc = handler.app?.ghostController ?? playerApp?.ghostController;
 	if (gc?.sendNotifyOther) {
 		await gc.sendNotifyOther(ghostName, eventName, references);
 	} else if (gc?.sendShioriNotify) {
@@ -163,9 +177,13 @@ export async function handleEmbedCommand(
 	const gc = handler.app.ghostController;
 	if (gc?.sendShioriEvent) {
 		const res: unknown = await gc.sendShioriEvent(eventName, references);
-		const embeddedScript = res?.response?.value;
-		if (embeddedScript && handler.player?.playScript) {
-			await handler.player.playScript(embeddedScript);
+		const embeddedScript = (res as { response?: { value?: string } })?.response
+			?.value;
+		const player = handler.player as
+			| { playScript?: (script: string) => Promise<unknown> }
+			| undefined;
+		if (embeddedScript && player?.playScript) {
+			await player.playScript(embeddedScript);
 		}
 	}
 }

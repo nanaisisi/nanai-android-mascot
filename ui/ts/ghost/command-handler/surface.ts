@@ -9,12 +9,12 @@ export async function handleBindCommand(
 	raiseEvent: boolean = true,
 ) {
 	const [category, part, statusVal] = args.slice(1);
-	await handler.app.surfaceManager?.bindDressup?.(
+	handler.app.surfaceManager?.bindDressup?.(
 		category,
 		part,
 		statusVal,
 		handler.player.currentScope,
-		raiseEvent,
+		raiseEvent
 	);
 }
 

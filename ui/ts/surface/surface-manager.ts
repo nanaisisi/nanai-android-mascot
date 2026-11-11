@@ -15,7 +15,7 @@ export class SurfaceManager {
 	setPosition(x: number, y: number, scope: number) {
 		throw new Error("Method not implemented.");
 	}
-	bindDressup(_category: string, _part: unknown, _arg2: string, _scopeId: number) {
+	bindDressup(_category: string, _part: unknown, _arg2: string, _scopeId: number, raiseEvent: boolean) {
 		throw new Error("Method not implemented.");
 	}
 	detectCollision(

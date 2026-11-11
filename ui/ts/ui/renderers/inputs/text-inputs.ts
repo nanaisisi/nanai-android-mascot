@@ -142,7 +142,7 @@ export function openPasswordInput(params, scope) {
 	return this.openInputBox(params, scope, true);
 }
 
-export function closeInputBox(id) {
+export function closeInputBox(id, _currentScope: number, _notifyCancel: boolean) {
 	if (!id || id === "__SYSTEM_ALL_INPUT__") {
 		for (const [key, box] of Array.from(this.activeBoxes.entries())) {
 			if (
@@ -302,7 +302,7 @@ export function openTextAreaBox(params, scope) {
 	return form;
 }
 
-export function closeTextAreaBox(id) {
+export function closeTextAreaBox(id, _currentScope: number) {
 	if (!id || id === "__SYSTEM_ALL_INPUT__") {
 		for (const [key, box] of Array.from(this.activeBoxes.entries())) {
 			if (

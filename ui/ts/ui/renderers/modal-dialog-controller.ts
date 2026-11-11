@@ -1,9 +1,8 @@
 /**
- * @file modal-dialog-controller.js
+ * @file modal-dialog-controller.ts
  * @brief さくらスクリプトおよびUIからの各種ダイアログ（inputbox, passwordinput, textareabox, sliderinput, teachbox, communicatebox, 選択肢リスト）を統括管理するコントローラー
  */
 
-import { app } from "@tauri-apps/api";
 import {
 	closeAll,
 	closeDialog,
@@ -32,42 +31,41 @@ import {
 import { openSystemDialog } from "./modal-dialog-system.js";
 
 export class ModalDialogController {
-	app: unknown;
-	player: null;
-	activeBoxes: Map<unknown, unknown>;
-	choiceTimeoutTimer: null;
+	app: any;
+	player: any;
+	activeBoxes: Map<string, any>;
+	choiceTimeoutTimer: ReturnType<typeof setTimeout> | null;
 	autocompleteCounter: number;
-	attachAutocomplete!: (inputEl: unknown, boxType: unknown, id?: string, parentForm?: null) => Promise<HTMLDataListElement | null>;
-	parseBoxOptions!: (params: unknown) => { id: unknown; timeoutMs: number; defaultText: string; placeholder: string; limit: number; noClose: boolean; noClear: boolean; references: string[]; };
-	openInputBox!: (params: unknown, scope: unknown, isPassword?: boolean) => HTMLDivElement | null;
-	openPasswordInput!: (params: unknown, scope: unknown) => unknown;
-	closeInputBox!: (id: unknown) => void;
-	openTextAreaBox!: (params: unknown, scope: unknown) => HTMLDivElement | null;
-	closeTextAreaBox!: (id: unknown) => void;
-	openSliderInput!: (params: unknown, scope: unknown) => HTMLDivElement | null;
-	openDateInput!: (params: unknown, scope: unknown) => HTMLDivElement | null;
-	openTimeInput!: (params: unknown, scope: unknown) => HTMLDivElement | null;
-	openIpInput!: (params: unknown, scope: unknown) => HTMLDivElement | null;
-	openTeachBox!: (params?: never[], options?: {}) => HTMLDivElement | null;
-	closeTeachBox!: (notifyCancel?: boolean) => void;
-	openCommunicateBox!: (params: never[] | undefined, scope: unknown) => HTMLDivElement | null;
-	closeCommunicateBox!: (notifyCancel?: boolean) => void;
-	closeDialog!: (id: unknown, notifyCancel?: boolean) => void;
-	createChoiceButton: (({ id, text, onSelect }: { id: unknown; text: unknown; onSelect: unknown; }) => HTMLButtonElement) | undefined;
-	setChoiceTimeout: ((timeoutMs: unknown, onTimeout: unknown) => void) | undefined;
-	closeAll!: () => void;
-	openSystemDialog(dialogType: string, dialogParams: string[], currentScope: number) {
-		throw new Error("Method not implemented.");
-	}
+
+	declare attachAutocomplete: typeof attachAutocomplete;
+	declare parseBoxOptions: typeof parseBoxOptions;
+	declare openInputBox: typeof openInputBox;
+	declare openPasswordInput: typeof openPasswordInput;
+	declare closeInputBox: typeof closeInputBox;
+	declare openTextAreaBox: typeof openTextAreaBox;
+	declare closeTextAreaBox: typeof closeTextAreaBox;
+	declare openSliderInput: typeof openSliderInput;
+	declare openDateInput: typeof openDateInput;
+	declare openTimeInput: typeof openTimeInput;
+	declare openIpInput: typeof openIpInput;
+	declare openTeachBox: typeof openTeachBox;
+	declare closeTeachBox: typeof closeTeachBox;
+	declare openCommunicateBox: typeof openCommunicateBox;
+	declare closeCommunicateBox: typeof closeCommunicateBox;
+	declare closeDialog: typeof closeDialog;
+	declare createChoiceButton: typeof createChoiceButton;
+	declare setChoiceTimeout: typeof setChoiceTimeout;
+	declare closeAll: typeof closeAll;
+	declare openSystemDialog: typeof openSystemDialog;
+
 	/**
-	 * @param {object} options
-	 * @param {object} options.app アプリケーションインスタンス
-	 * @param {object} [options.player] さくらスクリプトプレイヤー
+	 * @param {object|any} options - アプリケーションインスタンス、または { app, player } オブジェクト
 	 */
-	constructor({ app: unknown, player = null }) {
-		this.app = app;
-		this.player = player;
-		/** @type {Map<string, { id?: string, type?: string, form: HTMLElement, cleanup: (force?: boolean) => void }>} */
+	constructor(options: any = {}) {
+		const isDirectApp =
+			options && typeof options === "object" && "elements" in options;
+		this.app = isDirectApp ? options : (options?.app ?? null);
+		this.player = options?.player ?? null;
 		this.activeBoxes = new Map();
 		this.choiceTimeoutTimer = null;
 		this.autocompleteCounter = 0;

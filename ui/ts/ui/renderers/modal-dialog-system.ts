@@ -21,7 +21,12 @@ export {
  * @param {number} [scope]
  * @returns {Promise<any>}
  */
-export async function openSystemDialog(dialogType, params = [], scope) {
+export async function openSystemDialog(
+	this: any,
+	dialogType: string,
+	params: string[] = [],
+	scope?: number,
+) {
 	const type = (dialogType || "open").toLowerCase();
 	let id = "";
 	let title = "";

@@ -1,7 +1,7 @@
-export const BALLOON_THEMES = ["nam_default_plus", "nam_default_plus_overhead"];
+export const BALLOON_THEMES = ["nsm", "nam_default_plus_overhead"];
 
 export const THEME_LABELS = {
-	nam_default_plus: "NAMデフォルト+",
+	nsm: "NAMデフォルト+",
 	nam_default_plus_overhead: "NAMデフォルト+(頭上)",
 };
 

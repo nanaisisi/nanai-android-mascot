@@ -4,7 +4,7 @@ name,NAMデフォルト+
 
 craftmanw,Nanai Android Mascot Project
 
-// SSP仕様準拠: 白地・青枠・標準横表示バルーン
+// SSP仕様準拠 (nsm): 白地・青枠・標準横表示バルーン
 use_self_alpha,1
 origin.x,12
 origin.y,28

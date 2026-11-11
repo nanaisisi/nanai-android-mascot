@@ -165,7 +165,7 @@ export async function setBalloonThemeImpl(
 				x: -40,
 				y: -210,
 			}).catch(() => {});
-		} else if (themeName === "nam_default_plus") {
+		} else if (themeName === "nsm") {
 			void invoke("reset_balloon_positions").catch(() => {});
 		}
 	}

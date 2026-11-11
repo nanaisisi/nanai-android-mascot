@@ -145,9 +145,9 @@ export async function applyBalloonDescript({
 			scopeId,
 		}).catch(() => null);
 		if (!props || typeof props !== "object") {
-			if (theme !== "default" && theme !== "nam_default_plus") {
+			if (theme !== "default" && theme !== "nsm") {
 				return await applyBalloonDescript({
-					theme: "nam_default_plus",
+					theme: "nsm",
 					scopeId,
 					currentUserScale,
 					onDpiScaleChange,
@@ -195,8 +195,8 @@ export async function applyBalloonDescript({
 		}
 
 		let bgImage = await loadBalloonSkinImages(theme, scopeId);
-		if (!bgImage && theme !== "default" && theme !== "nam_default_plus") {
-			bgImage = await loadBalloonSkinImages("nam_default_plus", scopeId);
+		if (!bgImage && theme !== "default" && theme !== "nsm") {
+			bgImage = await loadBalloonSkinImages("nsm", scopeId);
 		}
 
 		if (bgImage) {
@@ -230,9 +230,9 @@ export async function applyBalloonDescript({
 			isBalloonDontMove,
 		};
 	} catch (_e) {
-		if (theme !== "default" && theme !== "nam_default_plus") {
+		if (theme !== "default" && theme !== "nsm") {
 			return await applyBalloonDescript({
-				theme: "nam_default_plus",
+				theme: "nsm",
 				scopeId,
 				currentUserScale,
 				onDpiScaleChange,

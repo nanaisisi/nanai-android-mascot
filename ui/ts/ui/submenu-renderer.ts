@@ -105,7 +105,7 @@ export function renderSubmenuContent({
 		(cachedBalloons.length > 0
 			? cachedBalloons
 			: [
-					{ dir_name: "nam_default_plus", name: "NAMデフォルト+" },
+					{ dir_name: "nsm", name: "NAMデフォルト+" },
 					{
 						dir_name: "nam_default_plus_overhead",
 						name: "NAMデフォルト+(頭上)",

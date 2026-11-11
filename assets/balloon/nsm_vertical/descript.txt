@@ -4,12 +4,11 @@ name,NAMデフォルト+(頭上)
 
 craftmanw,Nanai Android Mascot Project
 
-// SSP仕様準拠: 白地・青枠・頭上表示バルーン
+// SSP仕様準拠 (nsm_vertical): 頭上表示バルーン
+alignment,top
 use_self_alpha,1
 origin.x,12
 origin.y,28
-
-alignment,top
 
 wordwrappoint.x,-40
 wordwrappoint.y,0

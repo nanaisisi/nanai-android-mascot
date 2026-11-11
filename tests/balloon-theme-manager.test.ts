@@ -150,7 +150,7 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 	it("cycles balloon themes correctly with default and custom lists", () => {
 		let shownMessage = "";
 		const mockApp = {
-			currentBalloonTheme: "nam_default_plus",
+			currentBalloonTheme: "nsm",
 			showBalloon(msg) {
 				shownMessage = msg;
 			},
@@ -237,7 +237,7 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 	it("delegates balloonThemeActions to BalloonThemeManager preserving backward compatibility", async () => {
 		const app = {
 			...balloonThemeActions,
-			currentBalloonTheme: "nam_default_plus",
+			currentBalloonTheme: "nsm",
 			balloonUserScale: 1,
 			balloonDpiScale: 1,
 			availableBalloons: [],

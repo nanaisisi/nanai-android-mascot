@@ -43,7 +43,7 @@ export const menuBalloonDressupRenderer = {
 			});
 		} else {
 			const fallbackThemes = [
-				{ id: "nam_default_plus", label: "NAMデフォルト+" },
+				{ id: "nsm", label: "NAMデフォルト+" },
 				{ id: "nam_default_plus_overhead", label: "NAMデフォルト+(頭上)" },
 			];
 			fallbackThemes.forEach((t) => {

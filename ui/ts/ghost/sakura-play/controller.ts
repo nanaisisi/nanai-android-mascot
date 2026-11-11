@@ -17,8 +17,10 @@ import {
 	dequeue,
 	destroy,
 	enqueue,
+	enqueueMany,
 	enqueuePriority,
 	filterQueue,
+	findJobs,
 	getCurrentJob,
 	getIsPaused,
 	getIsProcessing,
@@ -36,6 +38,7 @@ import {
 	peekNextJob,
 	processQueue,
 	resume,
+	retryJob,
 	stop,
 } from "./controller/queue.js";
 import {
@@ -59,6 +62,7 @@ export class SakuraPlaybackController {
 	waitMultiplier: number;
 	charWaitMs: number | null;
 	nextJobId: number;
+	processedCount: number;
 	listeners: Map<string, Set<(...args: unknown[]) => unknown>>;
 	syncObjects: SyncObjectManager;
 
@@ -81,6 +85,7 @@ export class SakuraPlaybackController {
 		this.waitMultiplier = 1.0;
 		this.charWaitMs = null;
 		this.nextJobId = 1;
+		this.processedCount = 0;
 		this.listeners = new Map();
 		this.syncObjects = new SyncObjectManager();
 	}
@@ -93,10 +98,13 @@ proto.off = off;
 proto.emit = emit;
 
 proto.enqueue = enqueue;
+proto.enqueueMany = enqueueMany;
 proto.enqueuePriority = enqueuePriority;
 proto.interrupt = interrupt;
 proto.dequeue = dequeue;
 proto.getJobById = getJobById;
+proto.findJobs = findJobs;
+proto.retryJob = retryJob;
 proto.cancelJob = cancelJob;
 proto.filterQueue = filterQueue;
 proto.clearQueue = clearQueue;

@@ -30,12 +30,27 @@ export function tokenizeDisplayTag(script: string, i: number, _len: number) {
 		if (script[i + 2] === "[") {
 			const parsed = readBracketContent(script, i + 2);
 			if (parsed) {
-				const val = parsed.content.trim();
+				const raw = parsed.content.trim();
+				if (raw === "0" || raw === "false") {
+					return {
+						tokens: [{ type: "sync_toggle", value: false, scopes: [] }],
+						nextIdx: parsed.nextIdx,
+					};
+				}
+				const parts = splitBracketArgs(raw);
+				const numericScopes: number[] = [];
+				for (const p of parts) {
+					const num = Number.parseInt(p, 10);
+					if (!Number.isNaN(num) && num >= 0) {
+						numericScopes.push(num);
+					}
+				}
 				return {
 					tokens: [
 						{
 							type: "sync_toggle",
-							value: val !== "0" && val !== "false",
+							value: true,
+							scopes: numericScopes.length > 0 ? numericScopes : undefined,
 						},
 					],
 					nextIdx: parsed.nextIdx,

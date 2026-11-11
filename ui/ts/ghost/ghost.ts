@@ -33,8 +33,8 @@ export class GhostController {
 	declare callGhost?: (name: string) => Promise<unknown>;
 	declare initializeGhostSHIORI: (
 		ghost: GhostInfo,
-		preload: unknown,
-		isCurrent: () => boolean,
+		preload?: unknown,
+		isCurrent?: unknown,
 	) => Promise<unknown>;
 	declare loadSurfaceAsset: (
 		cmd: string,

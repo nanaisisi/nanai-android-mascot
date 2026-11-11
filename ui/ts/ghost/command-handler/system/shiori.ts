@@ -45,7 +45,12 @@ export async function handleReloadGhost(
 	const gc = handler.app.ghostController;
 	const currentName = gc?.currentGhost?.name;
 	if (gc && currentName) {
-		await gc.switchGhost?.(currentName);
+		const selectFn =
+			gc.selectGhost ||
+			(gc as { switchGhost?: (name: string) => Promise<unknown> }).switchGhost;
+		if (selectFn) {
+			await selectFn.call(gc, currentName);
+		}
 	}
 }
 
@@ -71,8 +76,11 @@ export async function handleReloadDescript(
 	if (ghost) {
 		await gc.initializeGhostSHIORI?.(ghost);
 	}
-	if (handler.app.balloonThemeManager?.resetDescript) {
-		handler.app.balloonThemeManager.resetDescript();
+	const btm = handler.app.balloonThemeManager as
+		| { resetDescript?: () => void }
+		| undefined;
+	if (btm?.resetDescript) {
+		btm.resetDescript();
 	}
 }
 

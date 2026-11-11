@@ -41,6 +41,8 @@ export class NanaiAndroidMascotApp {
 	alignmentToDesktop: string | undefined;
 	balloonTheme: string | undefined;
 	balloonThemeManager: unknown;
+	surfaceAnimationManager: unknown;
+	networkActions: unknown;
 	dispatchAction(_arg0: string) {
 		throw new Error("Method not implemented.");
 	}

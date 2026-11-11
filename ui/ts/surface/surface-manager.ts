@@ -6,6 +6,15 @@ import { surfaceRenderMethods } from "./surface-render.js";
  * Nanai Android Mascot - surfaces.txt パーサー & 当たり判定（Collision）マネージャー
  */
 export class SurfaceManager {
+	setScale(scaleX: number, scaleY: number, scope: number) {
+		throw new Error("Method not implemented.");
+	}
+	setAlpha(clampedAlpha: number, scope: number) {
+		throw new Error("Method not implemented.");
+	}
+	setPosition(x: number, y: number, scope: number) {
+		throw new Error("Method not implemented.");
+	}
 	bindDressup(_category: string, _part: unknown, _arg2: string, _scopeId: number) {
 		throw new Error("Method not implemented.");
 	}

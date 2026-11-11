@@ -59,11 +59,7 @@ impl SurfacesTxt {
     }
 
     /// 指定スコープ（キャラクタID）のエイリアス名から最初の有効なサーフィス定義を解決する
-    pub fn resolve_alias_for_scope(
-        &self,
-        scope_id: u32,
-        name: &str,
-    ) -> Option<&SurfaceDefinition> {
+    pub fn resolve_alias_for_scope(&self, scope_id: u32, name: &str) -> Option<&SurfaceDefinition> {
         let list = self.alias_numbers_for_scope(scope_id, name)?;
         list.iter().find_map(|n| self.surfaces.get(n))
     }

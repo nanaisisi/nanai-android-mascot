@@ -9,7 +9,10 @@ pub async fn show_character_window(
     width: Option<f64>,
     height: Option<f64>,
 ) -> Result<(), String> {
-    println!("🪟 [Rust Window] show_character_window 呼び出し: scope={}, width={:?}, height={:?}", scope_id, width, height);
+    println!(
+        "🪟 [Rust Window] show_character_window 呼び出し: scope={}, width={:?}, height={:?}",
+        scope_id, width, height
+    );
     #[cfg(desktop)]
     {
         use tauri::Manager;
@@ -19,11 +22,17 @@ pub async fn show_character_window(
 
         let mut is_new = false;
         let sub_win = if let Some(win) = app_handle.get_webview_window(&label) {
-            println!("🪟 [Rust Window] 既存の character ウィンドウを取得: label={}", label);
+            println!(
+                "🪟 [Rust Window] 既存の character ウィンドウを取得: label={}",
+                label
+            );
             win
         } else {
             is_new = true;
-            println!("🪟 [Rust Window] 新規 character ウィンドウを構築: label={}", label);
+            println!(
+                "🪟 [Rust Window] 新規 character ウィンドウを構築: label={}",
+                label
+            );
             let title = if scope_id == 0 {
                 "Nanai Android Mascot - Main Character".to_string()
             } else {
@@ -46,7 +55,9 @@ pub async fn show_character_window(
             .maximizable(false)
             .minimizable(false)
             .visible(false)
-            .initialization_script("window.addEventListener('contextmenu', function(e) { e.preventDefault(); });")
+            .initialization_script(
+                "window.addEventListener('contextmenu', function(e) { e.preventDefault(); });",
+            )
             .build()
             .map_err(|e| {
                 println!("❌ [Rust Window] character ウィンドウ構築エラー: {}", e);
@@ -116,7 +127,10 @@ pub async fn show_character_window(
 
         let _ = sub_win.unminimize();
         let _ = sub_win.show();
-        println!("🪟 [Rust Window] character ウィンドウを表示完了: label={}", label);
+        println!(
+            "🪟 [Rust Window] character ウィンドウを表示完了: label={}",
+            label
+        );
     }
     Ok(())
 }
@@ -213,7 +227,8 @@ pub async fn get_surface_image(
     scope_id: i32,
 ) -> Result<String, String> {
     let images = state.surface_images.lock();
-    images.get(&scope_id)
+    images
+        .get(&scope_id)
         .cloned()
         .ok_or_else(|| format!("Surface image not found for scope {}", scope_id))
 }

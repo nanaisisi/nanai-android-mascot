@@ -114,7 +114,11 @@ pub(crate) fn parse_block_opener(line: &str) -> Option<BlockKind> {
         l if l.starts_with("char") => {
             if let Some((id_str, _)) = l["char".len()..].split_once(".surface") {
                 if let Ok(cid) = id_str.trim().parse::<u32>() {
-                    (l[("char".len() + id_str.len() + 1)..].as_ref(), cid == 1, Some(cid))
+                    (
+                        l[("char".len() + id_str.len() + 1)..].as_ref(),
+                        cid == 1,
+                        Some(cid),
+                    )
                 } else {
                     (l, false, None)
                 }

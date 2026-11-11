@@ -142,12 +142,9 @@ body.subchar-mode .menu-sidebar {
 
 .menu-item:hover,
 .menu-item:focus {
-	background-color: var(--menu-highlight-bg, #0078d7);
-	background-image: var(--menu-fg-image, none);
-	background-repeat: var(--menu-fg-repeat, no-repeat);
-	background-position: var(--menu-fg-position, left top);
-	background-size: cover;
-	color: var(--menu-highlight-text, #ffffff);
+	background-color: #000000;
+	background-image: none;
+	color: #ffffff;
 	outline: none;
 }
 

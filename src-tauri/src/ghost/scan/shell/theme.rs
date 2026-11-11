@@ -29,8 +29,8 @@ pub fn extract_shell_menu_theme(
     };
 
     let font_col = parse_color("font.color");
-    let bg_color = parse_color("menu.background.color");
-    let fg_color = parse_color("menu.foreground.color");
+    let bg_color = parse_color("menu.background.color").or_else(|| parse_color("menu.background"));
+    let fg_color = parse_color("menu.foreground.color").or_else(|| parse_color("menu.foreground"));
     let bg_font_col = parse_color("menu.background.font.color").or_else(|| font_col.clone());
     let fg_font_col = parse_color("menu.foreground.font.color");
     let dis_font_col = parse_color("menu.disable.font.color");
@@ -41,17 +41,37 @@ pub fn extract_shell_menu_theme(
 
     let bg_bmp = merged
         .get("menu.background.bitmap.filename")
-        .and_then(|rel| load_menu_bitmap_data_url(rel, path, ghost_master_dir, ghost_dir));
+        .or_else(|| merged.get("menu.background.bitmap"))
+        .or_else(|| merged.get("menu.background"))
+        .or_else(|| merged.get("menu_background"))
+        .and_then(|rel| load_menu_bitmap_data_url(rel, path, ghost_master_dir, ghost_dir))
+        .or_else(|| load_menu_bitmap_data_url("menu_background.png", path, ghost_master_dir, ghost_dir));
     let fg_bmp = merged
         .get("menu.foreground.bitmap.filename")
-        .and_then(|rel| load_menu_bitmap_data_url(rel, path, ghost_master_dir, ghost_dir));
+        .or_else(|| merged.get("menu.foreground.bitmap"))
+        .or_else(|| merged.get("menu.foreground"))
+        .or_else(|| merged.get("menu.cursor"))
+        .or_else(|| merged.get("menu_foreground"))
+        .and_then(|rel| load_menu_bitmap_data_url(rel, path, ghost_master_dir, ghost_dir))
+        .or_else(|| load_menu_bitmap_data_url("menu_foreground.png", path, ghost_master_dir, ghost_dir));
     let side_bmp = merged
         .get("menu.sidebar.bitmap.filename")
-        .and_then(|rel| load_menu_bitmap_data_url(rel, path, ghost_master_dir, ghost_dir));
+        .or_else(|| merged.get("menu.sidebar.bitmap"))
+        .or_else(|| merged.get("menu.sidebar"))
+        .or_else(|| merged.get("menu_sidebar"))
+        .and_then(|rel| load_menu_bitmap_data_url(rel, path, ghost_master_dir, ghost_dir))
+        .or_else(|| load_menu_bitmap_data_url("menu_sidebar.png", path, ghost_master_dir, ghost_dir));
 
-    let bg_align = merged.get("menu.background.alignment").cloned();
-    let fg_align = merged.get("menu.foreground.alignment").cloned();
-    let side_align = merged.get("menu.sidebar.alignment").cloned();
+    let bg_align = merged.get("menu.background.alignment")
+        .or_else(|| merged.get("menu.background.align"))
+        .or_else(|| merged.get("menu.bg.align"))
+        .cloned();
+    let fg_align = merged.get("menu.foreground.alignment")
+        .or_else(|| merged.get("menu.foreground.align"))
+        .cloned();
+    let side_align = merged.get("menu.sidebar.alignment")
+        .or_else(|| merged.get("menu.sidebar.align"))
+        .cloned();
 
     if bg_color.is_some()
         || fg_color.is_some()

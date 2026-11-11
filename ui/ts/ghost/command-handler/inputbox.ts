@@ -71,7 +71,7 @@ export function openInputBox(
 	submitBtn.textContent = "OK";
 	submitBtn.style.padding = "2px 8px";
 
-	let timer: unknown = null;
+	let timer: ReturnType<typeof setTimeout> | null = null;
 
 	const cancel = (reason: string = "cancel") => {
 		if (timer) clearTimeout(timer);
@@ -97,7 +97,7 @@ export function openInputBox(
 	};
 
 	submitBtn.addEventListener("click", () => submit());
-	input.addEventListener("keydown", (e: unknown) => {
+	input.addEventListener("keydown", (e: KeyboardEvent) => {
 		if (e.key === "Enter") {
 			submit();
 		} else if (e.key === "Escape") {
@@ -209,7 +209,7 @@ export function closeInputBox(
 	}
 	const forms = document.querySelectorAll?.(".balloon-inputbox-form") || [];
 	for (const f of Array.from(forms)) {
-		(f as unknown).remove?.();
+		(f as Element).remove?.();
 	}
 }
 
@@ -235,7 +235,7 @@ export function closeDialog(
 		const id = Array.isArray(paramsOrNotify) ? paramsOrNotify[0] : undefined;
 		return handler.app.modalDialogController.closeDialog(
 			id,
-			handler.player?.currentScope,
+			Boolean(paramsOrNotify),
 		);
 	}
 	closeInputBox(handler, paramsOrNotify);

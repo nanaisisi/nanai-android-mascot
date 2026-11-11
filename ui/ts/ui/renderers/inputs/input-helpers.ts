@@ -3,9 +3,9 @@
  * @brief inputbox autocomplete および parseBoxOptions ヘルパー処理
  */
 
-export async function attachAutocomplete(
-	inputEl,
-	boxType,
+export async function attachAutocomplete(this: unknown, 
+	inputEl: { setAttribute: (arg0: string, arg1: string) => void; parentElement: { appendChild: (arg0: HTMLDataListElement) => void; }; },
+	boxType: string,
 	id = "",
 	parentForm = null,
 ) {
@@ -52,7 +52,7 @@ export async function attachAutocomplete(
 	}
 }
 
-export function parseBoxOptions(params) {
+export function parseBoxOptions(params: string | unknown[]) {
 	const id = params[0] || "UserInput";
 	let timeoutMs = 0;
 	let defaultText = "";

@@ -39,14 +39,17 @@ export interface AppSettings {
 
 export class NanaiAndroidMascotApp {
 	syncObjectManager: unknown;
-	startNetworkUpdate() {
+	startNetworkUpdate(
+		_targetGhostName?: string | null,
+		_options?: { checkOnly?: boolean },
+	): Promise<unknown> {
 		throw new Error("Method not implemented.");
 	}
 	alignmentToDesktop: string | undefined;
 	balloonTheme: string | undefined;
 	balloonThemeManager?: { resetDescript?: () => void } | null;
 	surfaceAnimationManager?: { setSerikoTalkEnabled?: (scope: number, enabled: boolean) => void } | null;
-	networkActions?: { checkEmail?: () => Promise<unknown> } | null;
+	networkActions?: { checkEmail?: (accountName?: string) => Promise<unknown> } | null;
 	modalDialogController?: import("./ts/ui/renderers/modal-dialog-controller.js").ModalDialogController | null;
 	dispatchAction(_arg0: string) {
 		throw new Error("Method not implemented.");

@@ -6,27 +6,28 @@ import { surfaceRenderMethods } from "./surface-render.js";
  * Nanai Android Mascot - surfaces.txt パーサー & 当たり判定（Collision）マネージャー
  */
 export class SurfaceManager {
-	setScale(scaleX: number, scaleY: number, scope: number) {
-		throw new Error("Method not implemented.");
-	}
-	setAlpha(clampedAlpha: number, scope: number) {
-		throw new Error("Method not implemented.");
-	}
-	setPosition(x: number, y: number, scope: number) {
-		throw new Error("Method not implemented.");
-	}
-	bindDressup(_category: string, _part: unknown, _arg2: string, _scopeId: number, raiseEvent: boolean) {
-		throw new Error("Method not implemented.");
-	}
-	detectCollision(
-		_clientX: number,
-		_clientY: number,
-		_rect: {},
-		_arg3: null,
-		_scopeId: number,
-	) {
-		throw new Error("Method not implemented.");
-	}
+	declare resolveSurfaceNumber: (
+		surfaceId: number | string,
+		scopeId?: number,
+	) => number;
+	declare setScale: (scaleX: number, scaleY: number, scope: number) => void;
+	declare setAlpha: (clampedAlpha: number, scope: number) => void;
+	declare setPosition: (x: number, y: number, scope: number) => void;
+	declare bindDressup: (
+		category: string,
+		part: unknown,
+		stateStr: string,
+		scopeId: number,
+		raiseEvent?: boolean,
+	) => unknown;
+	declare detectCollision: (
+		clientX: number,
+		clientY: number,
+		rect: unknown,
+		arg3: null,
+		scopeId: number,
+	) => { name: string; canvasX: number; canvasY: number };
+
 	// mixin (surfaceLoadMethods) で注入されるメソッドの型宣言
 	declare loadSurfacesTxt: (
 		ghostPath: string,

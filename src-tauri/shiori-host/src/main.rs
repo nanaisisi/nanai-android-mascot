@@ -31,6 +31,12 @@ mod tests {
         1
     }
 
+    #[allow(dead_code)]
+    unsafe extern "C" fn loadu(h: H, _len: i32) -> i32 {
+        GlobalFree(h);
+        1
+    }
+
     unsafe extern "C" fn unload() -> i32 {
         1
     }
@@ -246,5 +252,12 @@ pub unsafe extern "C" fn request(h: *mut c_void, len: *mut i32) -> *mut c_void {
             load_and_run(dll_path.to_str().unwrap(), &mut cursor_in, &mut out_ok),
             Ok(())
         );
+    }
+
+    #[test]
+    fn test_set_and_reset_dll_directory() {
+        let p = std::path::Path::new("ghost/master");
+        assert!(set_dll_directory(p));
+        reset_dll_directory();
     }
 }

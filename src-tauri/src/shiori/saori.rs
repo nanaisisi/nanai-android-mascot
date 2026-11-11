@@ -4,6 +4,7 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use std::path::Path;
 
 /// SAORI 1.0 リクエスト
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -88,26 +89,59 @@ pub async fn execute_saori(request: SaoriRequest) -> Result<SaoriResponse, Strin
     }
 
     if value.is_none() {
-        let lower_path = request.dll_path.to_lowercase();
-        value = Some(if lower_path.contains("calc") {
-            if let Some(expr) = request.args.first() {
-                format!("Result: {}", expr.len() * 2)
-            } else {
-                "0".to_string()
+        let path = Path::new(&request.dll_path);
+        // ローカル DLL ファイルが存在する場合、サイドルート設定と共にネイティブロードを試行
+        #[cfg(not(target_os = "android"))]
+        if path.is_file() && path.extension().and_then(|e| e.to_str()).map(|s| s.eq_ignore_ascii_case("dll") || s.eq_ignore_ascii_case("so")).unwrap_or(false) {
+            let _guard = crate::shiori::dynamic::host::DllDirectoryGuard::enter(path);
+            if let Ok(mut engine) = crate::shiori::dynamic::ShioriDynamicEngine::load_library(path) {
+                let parent = path.parent().unwrap_or(path);
+                if engine.load_engine(parent).is_ok() {
+                    let mut req_text = String::from("EXECUTE SAORI/1.0\r\nCharset: UTF-8\r\n");
+                    for (i, arg) in request.args.iter().enumerate() {
+                        req_text.push_str(&format!("Argument{}: {}\r\n", i, arg));
+                    }
+                    req_text.push_str("\r\n");
+
+                    if let Ok(resp) = engine.request(&req_text) {
+                        let lines: Vec<&str> = resp.lines().collect();
+                        for line in lines {
+                            if let Some(val) = line.strip_prefix("Result: ") {
+                                value = Some(val.to_string());
+                                break;
+                            } else if let Some(val) = line.strip_prefix("Value: ") {
+                                value = Some(val.to_string());
+                                break;
+                            }
+                        }
+                    }
+                    let _ = engine.unload_engine();
+                }
             }
-        } else if lower_path.contains("date") || lower_path.contains("time") {
-            let now = std::time::SystemTime::now();
-            let timestamp = now
-                .duration_since(std::time::UNIX_EPOCH)
-                .unwrap_or_default()
-                .as_secs();
-            timestamp.to_string()
-        } else {
-            format!(
-                "Nanai SAORI Stub: executed successfully with {} args",
-                request.args.len()
-            )
-        });
+        }
+
+        if value.is_none() {
+            let lower_path = request.dll_path.to_lowercase();
+            value = Some(if lower_path.contains("calc") {
+                if let Some(expr) = request.args.first() {
+                    format!("Result: {}", expr.len() * 2)
+                } else {
+                    "0".to_string()
+                }
+            } else if lower_path.contains("date") || lower_path.contains("time") {
+                let now = std::time::SystemTime::now();
+                let timestamp = now
+                    .duration_since(std::time::UNIX_EPOCH)
+                    .unwrap_or_default()
+                    .as_secs();
+                timestamp.to_string()
+            } else {
+                format!(
+                    "Nanai SAORI Stub: executed successfully with {} args",
+                    request.args.len()
+                )
+            });
+        }
     }
 
     let mut headers = HashMap::new();
@@ -133,5 +167,16 @@ mod tests {
         let res = execute_saori(req).await.unwrap();
         assert_eq!(res.status, "200 OK");
         assert!(!res.value.is_empty());
+    }
+
+    #[tokio::test]
+    async fn test_execute_saori_calc_fallback() {
+        let req = SaoriRequest {
+            dll_path: "saori/calc.dll".to_string(),
+            args: vec!["1+1".to_string()],
+        };
+        let res = execute_saori(req).await.unwrap();
+        assert_eq!(res.status, "200 OK");
+        assert_eq!(res.value, "Result: 6");
     }
 }

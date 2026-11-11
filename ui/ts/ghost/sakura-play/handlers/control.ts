@@ -17,6 +17,15 @@ export async function handlePause(
 		scheduleDesktopBalloonSync,
 	} = context;
 
+	let markerEl: HTMLElement | null = null;
+	if (context.currentBalloonText && typeof document !== "undefined") {
+		markerEl = document.createElement("span");
+		markerEl.className = "clickwait-marker";
+		markerEl.setAttribute("aria-hidden", "true");
+		context.currentBalloonText.appendChild(markerEl);
+		scheduleDesktopBalloonSync(false);
+	}
+
 	flushDesktopBalloon();
 	player.playbackController?.notifyPause?.(Boolean(token.noClear));
 	if (!player.skipRequested && !context.isQuickMode) {
@@ -28,6 +37,11 @@ export async function handlePause(
 			await player.sleep(100);
 		}
 	}
+
+	if (markerEl?.parentNode) {
+		markerEl.parentNode.removeChild(markerEl);
+	}
+
 	if (!token.noClear) {
 		context.currentBalloonText.innerHTML = "";
 		player.currentScope = 0;

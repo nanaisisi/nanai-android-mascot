@@ -151,12 +151,22 @@ body.subchar-mode .menu-sidebar {
 	outline: none;
 }
 
-/* SSP標準: サブメニューありは右向き矢印 ▶ */
-.menu-item.has-submenu::after {
-	content: "▶";
+/* 全てのメニュー項目ボタンにサブメニュー矢印用のスペース（gutter）を確保し、サブメニューありの場合のみ ▶ を表示 */
+.menu-item::after {
+	content: "";
+	width: 0.8rem;
 	font-size: 0.5rem;
 	opacity: 0.7;
-	margin-left: 0.5rem;
+	margin-left: auto;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	flex-shrink: 0;
+	order: 1;
+}
+
+.menu-item.has-submenu::after {
+	content: "▶";
 }
 
 .menu-item:hover.has-submenu::after {
@@ -171,7 +181,8 @@ body.subchar-mode .menu-sidebar {
 }
 
 .shortcut-key {
-	margin-left: 1rem;
+	order: 2;
+	margin-left: 0.5rem;
 	opacity: 0.7;
 	font-size: 0.9em;
 }

@@ -138,6 +138,7 @@ export class MenuRenderer {
 	 * @param {boolean} [item.isCurrent=false] 現在選択中フラグ
 	 * @param {boolean} [item.disabled=false] 無効化フラグ
 	 * @param {string} [item.shortcut] ショートカットキー表示
+	 * @param {boolean} [item.hasSubmenu=false] サブメニュー有無フラグ
 	 * @returns {HTMLButtonElement|HTMLDivElement}
 	 */
 	createMenuItem({
@@ -146,6 +147,7 @@ export class MenuRenderer {
 		isCurrent = false,
 		disabled = false,
 		shortcut = "",
+		hasSubmenu = false,
 	}) {
 		if (disabled) {
 			const div = document.createElement("div");
@@ -156,7 +158,10 @@ export class MenuRenderer {
 
 		const btn = document.createElement("button");
 		btn.type = "button";
-		btn.className = `menu-item${isCurrent ? " is-current" : ""}`;
+		btn.className = `menu-item${isCurrent ? " is-current" : ""}${hasSubmenu ? " has-submenu" : ""}`;
+		if (hasSubmenu) {
+			btn.setAttribute("aria-haspopup", "true");
+		}
 		if (action) {
 			btn.setAttribute("data-action", action);
 		}

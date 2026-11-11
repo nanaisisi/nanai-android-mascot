@@ -15,7 +15,7 @@ pub async fn minimize_app(app_handle: tauri::AppHandle) -> Result<(), String> {
     #[cfg(desktop)]
     {
         for (_, window) in app_handle.webview_windows() {
-            let _ = window.minimize();
+            let _ = window.hide();
         }
     }
     #[cfg(not(desktop))]

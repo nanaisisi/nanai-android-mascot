@@ -59,53 +59,35 @@ pub async fn show_menu_window(
             target_y = target_y.max(screen_y).min(max_y);
         }
 
-        let window_result = if let Some(menu_win) = app_handle.get_webview_window("menu_window") {
-            let _ = menu_win.set_decorations(false);
-            let _ = menu_win.set_shadow(false);
-            let _ = menu_win.set_size(tauri::Size::Logical(tauri::LogicalSize {
-                width: win_width,
-                height: win_height,
-            }));
-            let _ = menu_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
-                x: target_x,
-                y: target_y,
-            }));
-            let _ = menu_win.unminimize();
-            let _ = menu_win.show();
-            let _ = menu_win.set_focus();
-            let _ = menu_win.emit("sync-menu-scope", menu_scope);
-            Ok(())
-        } else {
-            Err("Window not found".to_string())
-        };
-
-        if window_result.is_err() {
-            let menu_win = tauri::WebviewWindowBuilder::new(
-                &app_handle,
-                "menu_window",
-                tauri::WebviewUrl::App(format!("menu-iframe.html?scope={}", menu_scope).into()),
-            )
-            .title("Nanai Menu")
-            .inner_size(win_width, win_height)
-            .transparent(true)
-            .decorations(false)
-            .shadow(false)
-            .always_on_top(true)
-            .skip_taskbar(true)
-            .resizable(false)
-            .maximizable(false)
-            .minimizable(false)
-            .position(target_x, target_y)
-            .initialization_script(
-                "window.addEventListener('contextmenu', function(e) { e.preventDefault(); });",
-            )
-            .build()
-            .map_err(|e| e.to_string())?;
-
-            let _ = menu_win.show();
-            let _ = menu_win.set_focus();
-            let _ = menu_win.emit("sync-menu-scope", menu_scope);
+        if let Some(menu_win) = app_handle.get_webview_window("menu_window") {
+            let _ = menu_win.close();
         }
+
+        let menu_win = tauri::WebviewWindowBuilder::new(
+            &app_handle,
+            "menu_window",
+            tauri::WebviewUrl::App(format!("menu-iframe.html?scope={}", menu_scope).into()),
+        )
+        .title("Nanai Menu")
+        .inner_size(win_width, win_height)
+        .transparent(true)
+        .decorations(false)
+        .shadow(false)
+        .always_on_top(true)
+        .skip_taskbar(true)
+        .resizable(false)
+        .maximizable(false)
+        .minimizable(false)
+        .position(target_x, target_y)
+        .initialization_script(
+            "window.addEventListener('contextmenu', function(e) { e.preventDefault(); });",
+        )
+        .build()
+        .map_err(|e| e.to_string())?;
+
+        let _ = menu_win.show();
+        let _ = menu_win.set_focus();
+        let _ = menu_win.emit("sync-menu-scope", menu_scope);
     }
     Ok(())
 }

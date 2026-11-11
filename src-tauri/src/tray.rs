@@ -4,7 +4,7 @@ use std::io::Write;
 use std::path::Path;
 use tauri::Manager;
 use tauri::image::Image;
-use tauri::tray::{TrayIcon, TrayIconBuilder, TrayIconEvent};
+use tauri::tray::{TrayIcon, TrayIconBuilder, TrayIconEvent, MouseButton, MouseButtonState};
 
 fn log_tray(msg: &str) {
     std::println!("{}", msg);
@@ -35,38 +35,50 @@ pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error
         .on_tray_icon_event(move |tray, event| {
             match event {
                 TrayIconEvent::DoubleClick { .. } => {
-                    log_tray("🖱️⚙️ システムトレイアイコンがダブルクリックされました -> ディスプレイを復元 (Restore) & タスクバーアプリ状態保持");
+                    log_tray("🖱️⚙️ システムトレイアイコンがダブルクリックされました -> ディスプレイを復元 (Restore)");
                     let app_handle = tray.app_handle().clone();
                     let state = app_handle.state::<AppState>();
                     *state.is_minimized.lock() = false;
                     tauri::async_runtime::spawn(async move {
+                        let _ = crate::commands::window::hide_menu_window(app_handle.clone()).await;
                         let _ = crate::commands::window::show_character_window(app_handle.clone(), 0, None, None, None, None).await;
                         let _ = crate::commands::window::show_character_window(app_handle.clone(), 1, None, None, None, None).await;
                     });
                 }
-                TrayIconEvent::Click { rect, .. } => {
-                    log_tray("🖱️ システムトレイアイコンがクリックされました -> メニュー表示");
-                    let app_handle = tray.app_handle().clone();
-                    let r = rect;
-                    tauri::async_runtime::spawn(async move {
-                        let px = match r.position {
-                            tauri::Position::Physical(p) => p.x as f64,
-                            tauri::Position::Logical(l) => l.x,
-                        };
-                        let py = match r.position {
-                            tauri::Position::Physical(p) => p.y as f64,
-                            tauri::Position::Logical(l) => l.y,
-                        };
-                        let ph = match r.size {
-                            tauri::Size::Physical(s) => s.height as f64,
-                            tauri::Size::Logical(s) => s.height,
-                        };
-                        // システムトレイアイコンの左下を起点とする (Left: px, Bottom: py + ph)
-                        let x = px;
-                        let y = py + ph;
-                        let _ =
-                            crate::commands::window::show_menu_window(app_handle, x, y, Some(0)).await;
-                    });
+                TrayIconEvent::Click { button, button_state, rect, .. } => {
+                    if button_state == MouseButtonState::Up {
+                        match button {
+                            MouseButton::Right => {
+                                log_tray("🖱️ システムトレイアイコンが右クリックされました -> カスタムメニュー表示 (show_menu_window)");
+                                let app_handle = tray.app_handle().clone();
+                                let r = rect;
+                                tauri::async_runtime::spawn(async move {
+                                    let px = match r.position {
+                                        tauri::Position::Physical(p) => p.x as f64,
+                                        tauri::Position::Logical(l) => l.x,
+                                    };
+                                    let py = match r.position {
+                                        tauri::Position::Physical(p) => p.y as f64,
+                                        tauri::Position::Logical(l) => l.y,
+                                    };
+                                    let ph = match r.size {
+                                        tauri::Size::Physical(s) => s.height as f64,
+                                        tauri::Size::Logical(s) => s.height,
+                                    };
+                                    // システムトレイアイコンの左下を起点とする (Left: px, Bottom: py + ph)
+                                    let x = px;
+                                    let y = py + ph;
+                                    let _ =
+                                        crate::commands::window::show_menu_window(app_handle, x, y, Some(0)).await;
+                                });
+                            }
+                            MouseButton::Left => {
+                                // 左クリック1回は無効
+                                log_tray("🖱️ システムトレイアイコンの左クリックは無効化されています");
+                            }
+                            _ => {}
+                        }
+                    }
                 }
                 _ => {}
             }

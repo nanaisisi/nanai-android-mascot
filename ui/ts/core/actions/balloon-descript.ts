@@ -18,8 +18,20 @@ export const balloonDescriptActions = {
 		if (!props) return;
 		const root = document.documentElement;
 
-		applyLayoutProperties(root, props, this as unknown);
-		applyFontProperties(root, props, this as unknown);
-		applyAssetProperties(root, props, this as unknown);
+		applyLayoutProperties(
+			root,
+			props,
+			this as Parameters<typeof applyLayoutProperties>[2],
+		);
+		applyFontProperties(
+			root,
+			props,
+			this as Parameters<typeof applyFontProperties>[2],
+		);
+		applyAssetProperties(
+			root,
+			props,
+			this as Parameters<typeof applyAssetProperties>[2],
+		);
 	},
 };

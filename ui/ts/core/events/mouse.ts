@@ -8,14 +8,14 @@ export const mouseMethods = {
 		scopeId: number = 0,
 	) {
 		if (
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.timeCritical &&
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.isPlaying
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.timeCritical &&
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.isPlaying
 		)
 			return;
 		const col = (
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).getCollisionInfo(clientX, clientY, rect, scopeId);
 		console.log(
 			`🖱️ ゴーストタップ: スコープ=${scopeId}, 部位=${col.name || "なし"} (X:${col.canvasX}, Y:${col.canvasY})`,
@@ -26,22 +26,24 @@ export const mouseMethods = {
 
 		const args = [col.canvasX, col.canvasY, 0, scopeId, col.name || "", 0];
 
-		(this as import("../../../main.js").NanaiAndroidMascotApp).ghostController
+		(
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
+		).ghostController
 			.sendShioriEvent("OnMouseDoubleClick", args)
 			.then((res: unknown) => {
 				if (res?.status === 200 && res?.value) {
 					(
-						this as import("../../../main.js").NanaiAndroidMascotApp
+						this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 					).playSakuraScript?.(res.value);
 				} else {
 					(
-						this as import("../../../main.js").NanaiAndroidMascotApp
+						this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 					).ghostController
 						.sendShioriEvent("OnMouseClick", args)
 						.then((clickRes: unknown) => {
 							if (clickRes?.status === 200 && clickRes?.value) {
 								(
-									this as import("../../../main.js").NanaiAndroidMascotApp
+									this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 								).playSakuraScript?.(clickRes.value);
 							}
 						});
@@ -56,20 +58,20 @@ export const mouseMethods = {
 		scopeId: number = 0,
 	) {
 		if (
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.timeCritical &&
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.isPlaying
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.timeCritical &&
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.isPlaying
 		)
 			return;
 		const col = (
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).getCollisionInfo(clientX, clientY, rect, scopeId);
 		console.log(
 			`🖐️ ゴースト撫で（Stroke）: スコープ=${scopeId}, 部位=${col.name || "なし"}`,
 		);
 		(
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).ghostController.sendShioriEvent("OnMouseMove", [
 			col.canvasX,
 			col.canvasY,
@@ -87,18 +89,18 @@ export const mouseMethods = {
 		isWindow: boolean = false,
 	) {
 		if (
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.timeCritical &&
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.isPlaying
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.timeCritical &&
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.isPlaying
 		)
 			return;
 		const col = (
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).getCollisionInfo(clientX, clientY, rect, scopeId);
 		const eventName = isWindow ? "OnMouseEnterAll" : "OnMouseEnter";
 		(
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).ghostController.sendShioriEvent(eventName, [
 			col.canvasX,
 			col.canvasY,
@@ -118,18 +120,18 @@ export const mouseMethods = {
 		isWindow: boolean = false,
 	) {
 		if (
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.timeCritical &&
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.isPlaying
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.timeCritical &&
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.isPlaying
 		)
 			return;
 		const col = (
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).getCollisionInfo(clientX, clientY, rect, scopeId);
 		const eventName = isWindow ? "OnMouseLeaveAll" : "OnMouseLeave";
 		(
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).ghostController.sendShioriEvent(eventName, [
 			col.canvasX,
 			col.canvasY,
@@ -151,18 +153,18 @@ export const mouseMethods = {
 		scopeId: number = 0,
 	) {
 		if (
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.timeCritical &&
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.isPlaying
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.timeCritical &&
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.isPlaying
 		)
 			return;
 		const col = (
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).getCollisionInfo(clientX, clientY, rect, scopeId);
 		const eventName = type === "up" ? "OnMouseUpEx" : "OnMouseDownEx";
 		(
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).ghostController.sendShioriEvent(eventName, [
 			col.canvasX,
 			col.canvasY,
@@ -184,18 +186,18 @@ export const mouseMethods = {
 		isDouble: boolean = false,
 	) {
 		if (
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.timeCritical &&
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.isPlaying
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.timeCritical &&
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.isPlaying
 		)
 			return;
 		const col = (
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).getCollisionInfo(clientX, clientY, rect, scopeId);
 		const eventName = isDouble ? "OnMouseDoubleClickEx" : "OnMouseClickEx";
 		(
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).ghostController.sendShioriEvent(eventName, [
 			col.canvasX,
 			col.canvasY,
@@ -218,18 +220,18 @@ export const mouseMethods = {
 		isEx: boolean = false,
 	) {
 		if (
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.timeCritical &&
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.isPlaying
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.timeCritical &&
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.isPlaying
 		)
 			return;
 		const col = (
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).getCollisionInfo(clientX, clientY, rect, scopeId);
 		const eventName = isEx ? "OnMouseMultipleClickEx" : "OnMouseMultipleClick";
 		(
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).ghostController.sendShioriEvent(eventName, [
 			col.canvasX,
 			col.canvasY,
@@ -253,15 +255,15 @@ export const mouseMethods = {
 		scopeId: number = 0,
 	) {
 		if (
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.timeCritical &&
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.isPlaying
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.timeCritical &&
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.isPlaying
 		)
 			return;
 		const coord = (x: number, y: number) => `${x}\x01${y}`;
 		(
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).ghostController.sendShioriEvent("OnMouseGesture", [
 			scopeId,
 			coord(endX, endY),
@@ -281,17 +283,17 @@ export const mouseMethods = {
 		scopeId: number = 0,
 	) {
 		if (
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.timeCritical &&
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.isPlaying
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.timeCritical &&
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.isPlaying
 		)
 			return;
 		const col = (
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).getCollisionInfo(clientX, clientY, rect, scopeId);
 		(
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).ghostController.sendShioriEvent("OnMouseDown", [
 			col.canvasX,
 			col.canvasY,
@@ -312,17 +314,17 @@ export const mouseMethods = {
 		scopeId: number = 0,
 	) {
 		if (
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.timeCritical &&
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.isPlaying
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.timeCritical &&
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.isPlaying
 		)
 			return;
 		const col = (
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).getCollisionInfo(clientX, clientY, rect, scopeId);
 		(
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).ghostController.sendShioriEvent("OnMouseUp", [
 			col.canvasX,
 			col.canvasY,
@@ -342,17 +344,17 @@ export const mouseMethods = {
 		scopeId: number = 0,
 	) {
 		if (
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.timeCritical &&
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.isPlaying
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.timeCritical &&
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.isPlaying
 		)
 			return;
 		const col = (
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).getCollisionInfo(clientX, clientY, rect, scopeId);
 		(
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).ghostController.sendShioriEvent("OnMouseWheel", [
 			col.canvasX,
 			col.canvasY,
@@ -369,17 +371,17 @@ export const mouseMethods = {
 		scopeId: number = 0,
 	) {
 		if (
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.timeCritical &&
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.isPlaying
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.timeCritical &&
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.isPlaying
 		)
 			return;
 		const col = (
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).getCollisionInfo(clientX, clientY, rect, scopeId);
 		(
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).ghostController.sendShioriEvent("OnMouseDragStart", [
 			col.canvasX,
 			col.canvasY,
@@ -396,17 +398,17 @@ export const mouseMethods = {
 		scopeId: number = 0,
 	) {
 		if (
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.timeCritical &&
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.isPlaying
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.timeCritical &&
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.isPlaying
 		)
 			return;
 		const col = (
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).getCollisionInfo(clientX, clientY, rect, scopeId);
 		(
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).ghostController.sendShioriEvent("OnMouseDragEnd", [
 			col.canvasX,
 			col.canvasY,
@@ -423,17 +425,17 @@ export const mouseMethods = {
 		scopeId: number = 0,
 	) {
 		if (
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.timeCritical &&
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-				?.isPlaying
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.timeCritical &&
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.sakuraPlayer?.isPlaying
 		)
 			return;
 		const col = (
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).getCollisionInfo(clientX, clientY, rect, scopeId);
 		(
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).ghostController.sendShioriEvent("OnMouseHover", [
 			col.canvasX,
 			col.canvasY,
@@ -453,10 +455,11 @@ export const mouseMethods = {
 			clientX !== undefined &&
 			clientY !== undefined &&
 			rect &&
-			(this as import("../../../main.js").NanaiAndroidMascotApp).surfaceManager
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.surfaceManager
 		) {
 			return (
-				this as import("../../../main.js").NanaiAndroidMascotApp
+				this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 			).surfaceManager.detectCollision(clientX, clientY, rect, null, scopeId);
 		}
 		return { name: "", canvasX: 0, canvasY: 0 };
@@ -464,7 +467,7 @@ export const mouseMethods = {
 
 	detectPart(clientX?: number, clientY?: number, rect?: unknown) {
 		return (
-			this as import("../../../main.js").NanaiAndroidMascotApp
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).getCollisionInfo(clientX, clientY, rect).name;
 	},
 };

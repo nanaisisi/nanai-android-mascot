@@ -173,7 +173,9 @@ export function buildInstallRerouteArgs(
  * @returns {string} - "unsupported" | "extraction" | "unlha32 error" | "artificial" | "write error" | "invalid path"
  */
 export function parseErrorReason(err: unknown): string {
-	const msg = String((err as unknown)?.message || err || "").toLowerCase();
+	const msg = String(
+		(err as { message?: string })?.message || err || "",
+	).toLowerCase();
 
 	if (
 		msg.includes("unsupported") ||

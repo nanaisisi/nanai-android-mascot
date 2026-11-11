@@ -83,6 +83,32 @@ export {
 };
 
 export class SurfaceAnimationManager {
+	playAnimationPatterns(
+		_anim: unknown,
+		_baseSurfaceId: string | number,
+		_scopeId: number,
+	) {
+		throw new Error("Method not implemented.");
+	}
+	playAnimationById(
+		_animId: string | number,
+		_scopeId: number,
+		_waitForComplete: boolean,
+	) {
+		throw new Error("Method not implemented.");
+	}
+	waitForAnimation(_animId: string | number, _scopeId: number) {
+		throw new Error("Method not implemented.");
+	}
+	onTalkEnd(_scopeId: number) {
+		throw new Error("Method not implemented.");
+	}
+	onScriptEnd(_scopeId: number) {
+		throw new Error("Method not implemented.");
+	}
+	onCharSpoken(_scopeId: number) {
+		throw new Error("Method not implemented.");
+	}
 	activeAnimationTimers: unknown;
 	manager: unknown;
 	_spokenCount: unknown;

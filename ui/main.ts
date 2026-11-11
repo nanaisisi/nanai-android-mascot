@@ -35,6 +35,88 @@ export interface AppSettings {
 }
 
 export class NanaiAndroidMascotApp {
+	getCollisionInfo(
+		_clientX: number | undefined,
+		_clientY: number | undefined,
+		_rect: unknown,
+		_scopeId: number,
+	) {
+		throw new Error("Method not implemented.");
+	}
+	playSakuraScript(_value: unknown) {
+		throw new Error("Method not implemented.");
+	}
+	setupGhostInteractions() {
+		throw new Error("Method not implemented.");
+	}
+	setupUiButtons() {
+		throw new Error("Method not implemented.");
+	}
+	setupGlobalListeners() {
+		throw new Error("Method not implemented.");
+	}
+	setupExternalMenuListeners() {
+		throw new Error("Method not implemented.");
+	}
+	onGhostClick(_x?: number, _y?: number, _rect?: unknown, _scopeId?: number) {
+		throw new Error("Method not implemented.");
+	}
+	onGhostStroke(_x?: number, _y?: number, _rect?: unknown, _scopeId?: number) {
+		throw new Error("Method not implemented.");
+	}
+	onGhostMouseDown(
+		_x?: number,
+		_y?: number,
+		_rect?: unknown,
+		_button?: number,
+		_device?: string,
+		_scopeId?: number,
+	) {
+		throw new Error("Method not implemented.");
+	}
+	onGhostMouseUp(
+		_x?: number,
+		_y?: number,
+		_rect?: unknown,
+		_button?: number,
+		_device?: string,
+		_scopeId?: number,
+	) {
+		throw new Error("Method not implemented.");
+	}
+	onGhostWheel(
+		_x?: number,
+		_y?: number,
+		_rect?: unknown,
+		_delta?: number,
+		_scopeId?: number,
+	) {
+		throw new Error("Method not implemented.");
+	}
+	onGhostDragStart(_x?: number, _y?: number, _rect?: unknown, _scopeId?: number) {
+		throw new Error("Method not implemented.");
+	}
+	onGhostDragEnd(_x?: number, _y?: number, _rect?: unknown, _scopeId?: number) {
+		throw new Error("Method not implemented.");
+	}
+	onGhostHover(_x?: number, _y?: number, _rect?: unknown, _scopeId?: number) {
+		throw new Error("Method not implemented.");
+	}
+	toggleQuickActionsPanel() {
+		throw new Error("Method not implemented.");
+	}
+	switchToNextGhost(): void {
+		throw new Error("Method not implemented.");
+	}
+	handleMenuAction(_action: string, _payload?: unknown): void {
+		throw new Error("Method not implemented.");
+	}
+	hideQuickActionsPanel() {
+		throw new Error("Method not implemented.");
+	}
+	syncMenuGhosts(_reqScope?: unknown) {
+		throw new Error("Method not implemented.");
+	}
 	// mixin (Object.assign) で後から注入されるメソッドの型宣言
 	declare loadSettings: () => void;
 	declare setupEventListeners: () => void;
@@ -43,7 +125,7 @@ export class NanaiAndroidMascotApp {
 	declare hideMenu: () => void;
 	declare showBalloon: (message: string) => void;
 	declare hideBalloon: (scopeId?: number, type?: string) => void;
-	declare toggleMenu: () => void;
+	declare toggleMenu: (screenX?: number | null, screenY?: number | null, scope?: number) => void;
 	declare setBalloonTheme: (theme: string) => Promise<void>;
 	declare recordRecentGhost: (ghostName: string) => void;
 
@@ -187,7 +269,7 @@ export class NanaiAndroidMascotApp {
 		this._isExiting = true;
 
 		const exit = async () => {
-			this.ghostController.stopSecondChangeTimer?.();
+			this.ghostController?.stopSecondChangeTimer?.();
 			if (isTauriAvailable()) {
 				try {
 					await invoke("unload_current_ghost");

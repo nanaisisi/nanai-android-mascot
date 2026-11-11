@@ -232,20 +232,24 @@ export function parseErrorReason(err: unknown): string {
  * @param {boolean} [isOther=false] - 外部リソース更新時は true
  * @returns {(event: unknown) => void}
  */
+export interface UpdateGhostController {
+	sendShioriEvent?: (event: string, args?: unknown[]) => Promise<unknown>;
+}
+
 export function createUpdateProgressHandler(
-	gc: unknown,
+	gc: UpdateGhostController | null | undefined,
 	onFailedFile?: (filePath: string) => void,
 	isOther: boolean = false,
 ) {
 	const eventMap = isOther
 		? OTHER_PROGRESS_PHASE_EVENTS
 		: PROGRESS_PHASE_EVENTS;
-	return (event: unknown) => {
-		const { phase, path: filePath } = event.payload || {};
+	return (event: { payload?: { phase?: string; path?: string } }) => {
+		const { phase, path: filePath } = event?.payload || {};
 		if (!filePath) return;
-		const evName = eventMap[phase];
-		if (evName && gc) {
-			gc.sendShioriEvent(evName, buildUpdateArgs(filePath)).catch?.(() => {});
+		const evName = phase ? eventMap[phase] : undefined;
+		if (evName && gc?.sendShioriEvent) {
+			void gc.sendShioriEvent(evName, buildUpdateArgs(filePath)).catch(() => {});
 		}
 		if ((phase === "md5-failed" || phase === "fileio-failed") && onFailedFile) {
 			onFailedFile(filePath);

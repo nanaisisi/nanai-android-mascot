@@ -5,10 +5,21 @@
  */
 import { emit } from "../tauri-helper.js";
 
+interface SpeechRecognitionInstance {
+	lang: string;
+	interimResults: boolean;
+	maxAlternatives: number;
+	onresult: ((event: { results: { transcript: string }[][] }) => void) | null;
+	onerror: ((event: { error: unknown }) => void) | null;
+	onend: (() => void) | null;
+	start(): void;
+	stop(): void;
+}
+
 export class DictationManager {
 	app: import("../../../main.js").NanaiAndroidMascotApp;
 	synth: SpeechSynthesis | null;
-	recognition: unknown;
+	recognition: SpeechRecognitionInstance | null;
 	isListening: boolean;
 	constructor(app: import("../../../main.js").NanaiAndroidMascotApp) {
 		this.app = app;
@@ -20,19 +31,20 @@ export class DictationManager {
 
 	initSpeechRecognition() {
 		if (typeof window === "undefined") return;
+		const win = window as unknown as {
+			SpeechRecognition?: new () => SpeechRecognitionInstance;
+			webkitSpeechRecognition?: new () => SpeechRecognitionInstance;
+		};
 		const SpeechRecognition =
-			(window as unknown).SpeechRecognition ||
-			(window as unknown).webkitSpeechRecognition;
+			win.SpeechRecognition || win.webkitSpeechRecognition;
 		if (SpeechRecognition) {
-			this.recognition = new SpeechRecognition();
-			this.recognition.lang = "ja-JP";
-			this.recognition.interimResults = false;
-			this.recognition.maxAlternatives = 1;
+			const rec = new SpeechRecognition();
+			rec.lang = "ja-JP";
+			rec.interimResults = false;
+			rec.maxAlternatives = 1;
 
-			this.recognition.onresult = (event: {
-				results: { transcript: unknown }[][];
-			}) => {
-				const text = event.results[0][0].transcript;
+			rec.onresult = (event: { results: { transcript: string }[][] }) => {
+				const text = String(event.results[0]?.[0]?.transcript ?? "");
 				console.log("🎤 [Dictation] Speech recognized:", text);
 				if (this.app?.ghostController?.sendShioriEvent) {
 					this.app.ghostController.sendShioriEvent("OnUserInput", [text]);
@@ -40,14 +52,15 @@ export class DictationManager {
 				emit("dictation-result", { text });
 			};
 
-			this.recognition.onerror = (event: { error: unknown }) => {
+			rec.onerror = (event: { error: unknown }) => {
 				console.warn("⚠️ [Dictation] Speech recognition error:", event.error);
 			};
 
-			this.recognition.onend = () => {
+			rec.onend = () => {
 				this.isListening = false;
 				emit("dictation-ended", {});
 			};
+			this.recognition = rec;
 		}
 	}
 

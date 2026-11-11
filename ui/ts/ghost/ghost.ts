@@ -12,10 +12,7 @@ export interface GhostInfo {
 
 export class GhostController {
 	// mixin (Object.assign) で後から注入されるメソッド・プロパティの型宣言
-	declare sendShioriEvent: (
-		event: string,
-		args?: string[],
-	) => Promise<unknown>;
+	declare sendShioriEvent: (event: string, args?: string[]) => Promise<unknown>;
 	declare sendBalloonTimeoutNotify?: (
 		script: string,
 		scope: string,
@@ -28,6 +25,22 @@ export class GhostController {
 	) => Promise<unknown>;
 	declare stopSecondChangeTimer?: () => void;
 	declare callGhost?: (name: string) => Promise<unknown>;
+	declare initializeGhostSHIORI: (
+		ghost: GhostInfo,
+		preload: unknown,
+		isCurrent: () => boolean,
+	) => Promise<unknown>;
+	declare loadSurfaceAsset: (
+		cmd: string,
+		ghostPath: string,
+		shell: string,
+		id: number | string,
+	) => Promise<string>;
+	declare updateSurface: (
+		surfaceId: number | string,
+		scopeId?: number,
+		extraLayers?: unknown[] | null,
+	) => Promise<unknown>;
 	declare username?: string;
 	declare lastGhostName?: string;
 	declare lastObjectName?: string;
@@ -89,7 +102,7 @@ export class GhostController {
 	async verifyGhostExists(ghostInfo: GhostInfo): Promise<boolean> {
 		if (!isTauriAvailable()) return false;
 		try {
-			const result: unknown = await invoke("scan_ghosts", {
+			const result = await invoke<{ ghosts?: GhostInfo[] }>("scan_ghosts", {
 				ghostPath: ghostInfo.path || AppConfig.paths.defaultGhostDir,
 			});
 			return (
@@ -107,7 +120,7 @@ export class GhostController {
 			return this.ghosts;
 		}
 		try {
-			const result: unknown = await invoke("scan_ghosts", {
+			const result = await invoke<{ ghosts?: GhostInfo[] }>("scan_ghosts", {
 				ghostPath: AppConfig.paths.defaultGhostDir,
 			});
 			if (result && Array.isArray(result.ghosts)) {
@@ -134,15 +147,9 @@ export class GhostController {
 			path: `${AppConfig.paths.defaultGhostDir}/${ghostName}`,
 		};
 
-		if (
-			prevGhostName &&
-			prevGhostName !== ghost.name &&
-			(this as import("../../../main.js").NanaiAndroidMascotApp).sendShioriEvent
-		) {
+		if (prevGhostName && prevGhostName !== ghost.name && this.sendShioriEvent) {
 			try {
-				await (
-					this as import("../../../main.js").NanaiAndroidMascotApp
-				).sendShioriEvent("OnGhostChanging", [
+				await this.sendShioriEvent("OnGhostChanging", [
 					ghost.name,
 					"manual",
 					prevGhostName,
@@ -161,7 +168,7 @@ export class GhostController {
 
 		// バックグラウンドアセット先行プリロード
 		const preloadSurfacesPromise = this.app.surfaceManager?.loadSurfacesTxt?.(
-			ghost.path,
+			ghost.path ?? "",
 		);
 
 		try {
@@ -175,7 +182,10 @@ export class GhostController {
 
 		if (isTauriAvailable()) {
 			try {
-				const info: unknown = await invoke("get_ghost_info", {
+				const info = await invoke<{
+					shells?: unknown[];
+					recommended_balloon?: string;
+				}>("get_ghost_info", {
 					ghostName: ghost.name,
 				});
 				if (info) {
@@ -200,20 +210,14 @@ export class GhostController {
 
 		// 【フェーズ 2: シェル表示 & SHIORI 初期化のパラレル実行 (Atomic Reveal)】
 		const loadId = {};
-		(
-			this as import("../../../main.js").NanaiAndroidMascotApp
-		)._currentLoadToken = loadId;
-		const isCurrentLoad = () =>
-			(this as import("../../../main.js").NanaiAndroidMascotApp)
-				._currentLoadToken === loadId;
+		this._currentLoadToken = loadId;
+		const isCurrentLoad = () => this._currentLoadToken === loadId;
 
 		await Promise.all([
 			Promise.resolve(preloadSurfacesPromise)
 				.catch(() => {})
 				.then(() => this.selectShell(this.currentShell)),
-			(
-				this as import("../../../main.js").NanaiAndroidMascotApp
-			).initializeGhostSHIORI(ghost, preloadSurfacesPromise, isCurrentLoad),
+			this.initializeGhostSHIORI(ghost, preloadSurfacesPromise, isCurrentLoad),
 		]);
 
 		// レンダリングフレーム完了の待機 (トリプル rAF による GPU 描画・コンポジット完全確定。テスト環境フォールバック付)
@@ -246,31 +250,18 @@ export class GhostController {
 		this.currentShell = shellName;
 		if (this.currentGhost) {
 			try {
-				await (
-					this as import("../../../main.js").NanaiAndroidMascotApp
-				).loadSurfaceAsset(
+				await this.loadSurfaceAsset(
 					"load_surface_image",
 					this.currentGhost.path || AppConfig.paths.defaultGhostDir,
 					shellName,
 					0,
 				);
 			} catch (_e) {}
-			await (
-				this as import("../../../main.js").NanaiAndroidMascotApp
-			).updateSurface(0, 0);
-			await (
-				this as import("../../../main.js").NanaiAndroidMascotApp
-			).updateSurface(10, 1);
-			if (
-				prevShell &&
-				prevShell !== shellName &&
-				(this as import("../../../main.js").NanaiAndroidMascotApp)
-					.sendShioriEvent
-			) {
+			await this.updateSurface(0, 0);
+			await this.updateSurface(10, 1);
+			if (prevShell && prevShell !== shellName && this.sendShioriEvent) {
 				try {
-					await (
-						this as import("../../../main.js").NanaiAndroidMascotApp
-					).sendShioriEvent("OnShellChanged", [shellName, prevShell]);
+					await this.sendShioriEvent("OnShellChanged", [shellName, prevShell]);
 				} catch (_e) {}
 			}
 		}

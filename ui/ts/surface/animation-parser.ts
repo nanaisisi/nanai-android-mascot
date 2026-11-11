@@ -9,6 +9,13 @@
  */
 import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 
+export interface PatternItem {
+	index?: number;
+	wait?: unknown;
+	waitMax?: unknown;
+	[key: string]: unknown;
+}
+
 /**
  * pattern 列から Rust（`crates/ui::animation`）で実行スケジュールを計算する
  *
@@ -18,22 +25,21 @@ import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
  * @param {Array<{index?: number, wait?: number|string, waitMax?: number|string|null}>} patterns - アニメーションパターン列
  * @returns {Promise<{ frames: number[], totalMs: number }|null>} タイムラインフレーム情報または null
  */
-export async function buildAnimationTimeline(patterns: unknown[]) {
+export async function buildAnimationTimeline(patterns: PatternItem[]) {
 	if (!patterns?.length || !isTauriAvailable()) return null;
 	try {
-		const timeline = await invoke("animation_timeline", {
-			patterns: patterns.map(
-				(
-					pat: { index: unknown; wait: unknown; waitMax: null | undefined },
-					index: unknown,
-				) => ({
-					index: pat.index ?? index,
-					waitMs: resolvePatternWait(pat.wait, pat.waitMax),
-				}),
-			),
+		const timeline = await invoke<{
+			frames?: Array<{ atMs?: number; at_ms?: number }>;
+			totalMs?: number;
+			total_ms?: number;
+		}>("animation_timeline", {
+			patterns: patterns.map((pat, index) => ({
+				index: pat.index ?? index,
+				waitMs: resolvePatternWait(pat.wait, pat.waitMax),
+			})),
 		});
 		const frames = (timeline?.frames ?? []).map(
-			(f: { atMs: unknown; at_ms: unknown }) => f.atMs ?? f.at_ms ?? 0,
+			(f) => f.atMs ?? f.at_ms ?? 0,
 		);
 		return {
 			frames,
@@ -52,8 +58,8 @@ export async function buildAnimationTimeline(patterns: unknown[]) {
  * @param {number|string|null|undefined} [waitMax] - 上限（Rust パースの `wait_max`）
  * @returns {number} 解決されたウェイト値（ミリ秒）
  */
-export function resolvePatternWait(wait: unknown, waitMax = null) {
-	const toNumber = (value: null) => {
+export function resolvePatternWait(wait: unknown, waitMax: unknown = null) {
+	const toNumber = (value: unknown) => {
 		const match = String(value ?? "")
 			.trim()
 			.match(/^(\d+)(?:-(\d+))?$/);

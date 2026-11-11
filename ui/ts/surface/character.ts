@@ -14,6 +14,17 @@ import {
 const urlParams = new URLSearchParams(globalThis.location.search);
 const scopeId = parseInt(urlParams.get("scope") || "0", 10);
 
+interface InteractionEvent {
+	button?: number;
+	clientX?: number;
+	clientY?: number;
+	screenX?: number;
+	screenY?: number;
+	cancelable?: boolean;
+	preventDefault?: () => void;
+	touches?: Array<{ clientX: number; clientY: number }>;
+}
+
 function isTransparentPixel(
 	img: HTMLImageElement,
 	clientX: number,
@@ -50,18 +61,21 @@ function openCharacterMenu(
 	const winX = window.screenX ?? globalThis.screenX ?? 0;
 	const winY = window.screenY ?? globalThis.screenY ?? 0;
 
+	const safeClientX = clientX ?? 100;
+	const safeClientY = clientY ?? 100;
+
 	let posX =
 		screenX !== null && screenX !== undefined && screenX > 0
 			? screenX
-			: winX + (clientX ?? 100);
+			: winX + safeClientX;
 	let posY =
 		screenY !== null && screenY !== undefined && screenY > 0
 			? screenY
-			: winY + (clientY ?? 100);
+			: winY + safeClientY;
 
 	if (clientX !== undefined && clientX > 0 && winX > 0 && posX < winX) {
 		posX = winX + clientX;
-		posY = winY + clientY;
+		posY = winY + safeClientY;
 	}
 
 	if (Number.isNaN(posX)) posX = winX + 100;
@@ -77,10 +91,7 @@ function openCharacterMenu(
 }
 
 function initCharacterWindow() {
-	const img = /** @type {HTMLImageElement | null} */ (
-		document.getElementById("subchar-img")
-	);
-	/** @type {HTMLElement | null} */
+	const img = document.getElementById("subchar-img") as HTMLImageElement | null;
 	const root = document.getElementById("subchar-root");
 
 	let pollTimer: unknown = null;
@@ -90,7 +101,7 @@ function initCharacterWindow() {
 	if (isTauriAvailable()) {
 		void listen(
 			`update-subchar-image-${scopeId}`,
-			(/** @type {{ payload?: { src?: string } }} */ event: unknown) => {
+			(event: unknown) => {
 				const src = (event as { payload?: { src?: string } })?.payload?.src;
 				if (src && img) {
 					if (pollTimer) {
@@ -189,7 +200,7 @@ function initCharacterWindow() {
 			img.complete &&
 			img.naturalWidth > 0
 		) {
-			clearInterval(pollTimer);
+			clearInterval(pollTimer as number);
 			pollTimer = null;
 			return;
 		}
@@ -211,12 +222,12 @@ function initCharacterWindow() {
 	let coordInterval: unknown = null;
 	const LONG_PRESS_DELAY = 600;
 
-	const onPointerDown = (e: unknown) => {
+	const onPointerDown = (e: InteractionEvent) => {
 		const button = e.button !== undefined ? e.button : 0;
 
 		// 1. 右クリック (button === 2): コンテキストメニュー表示
 		if (button === 2) {
-			if (e.cancelable) e.preventDefault();
+			if (e.cancelable && e.preventDefault) e.preventDefault();
 			const clientX = e.clientX ?? 0;
 			const clientY = e.clientY ?? 0;
 			if (img && !isTransparentPixel(img, clientX, clientY)) {
@@ -232,7 +243,7 @@ function initCharacterWindow() {
 
 		// 2. ホイールクリック / ミドルクリック (button === 1): デベロッパーパネル/クイック機能の起動
 		if (button === 1) {
-			if (e.cancelable) e.preventDefault();
+			if (e.cancelable && e.preventDefault) e.preventDefault();
 			const clientX = e.clientX ?? 0;
 			const clientY = e.clientY ?? 0;
 			if (img && !isTransparentPixel(img, clientX, clientY)) {
@@ -286,7 +297,7 @@ function initCharacterWindow() {
 			if (isInteracting && position) origin = position;
 		});
 
-		if (longPressTimer) clearTimeout(longPressTimer);
+		if (longPressTimer) clearTimeout(longPressTimer as number);
 		longPressTimer = setTimeout(() => {
 			if (isInteracting && !hasMoved) {
 				longPressTriggered = true;
@@ -311,7 +322,7 @@ function initCharacterWindow() {
 		}
 	}
 
-	const onPointerMove = (e: unknown) => {
+	const onPointerMove = (e: InteractionEvent) => {
 		if (!isInteracting) return;
 
 		const clientX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
@@ -323,7 +334,7 @@ function initCharacterWindow() {
 		if (!hasMoved && Math.hypot(deltaX, deltaY) > 5) {
 			hasMoved = true;
 			if (longPressTimer) {
-				clearTimeout(longPressTimer);
+				clearTimeout(longPressTimer as number);
 				longPressTimer = null;
 			}
 		}
@@ -351,7 +362,7 @@ function initCharacterWindow() {
 		}
 
 		if (longPressTimer) {
-			clearTimeout(longPressTimer);
+			clearTimeout(longPressTimer as number);
 			longPressTimer = null;
 		}
 
@@ -389,24 +400,24 @@ function initCharacterWindow() {
 	};
 
 	if (typeof img?.addEventListener === "function") {
-		img.addEventListener("mousedown", onPointerDown);
-		img.addEventListener("wheel", onWheel, { passive: false });
-		img.addEventListener("contextmenu", onContextMenu);
+		img.addEventListener("mousedown", onPointerDown as EventListener);
+		img.addEventListener("wheel", onWheel as EventListener, { passive: false });
+		img.addEventListener("contextmenu", onContextMenu as EventListener);
 	}
-	root?.addEventListener("mousedown", onPointerDown);
-	root?.addEventListener("wheel", onWheel, { passive: false });
-	root?.addEventListener("contextmenu", onContextMenu);
-	document.addEventListener("contextmenu", onContextMenu);
-	globalThis.addEventListener("contextmenu", onContextMenu);
-	globalThis.addEventListener("mousemove", onPointerMove);
-	globalThis.addEventListener("mouseup", onPointerUp);
+	root?.addEventListener("mousedown", onPointerDown as EventListener);
+	root?.addEventListener("wheel", onWheel as EventListener, { passive: false });
+	root?.addEventListener("contextmenu", onContextMenu as EventListener);
+	document.addEventListener("contextmenu", onContextMenu as EventListener);
+	globalThis.addEventListener("contextmenu", onContextMenu as EventListener);
+	globalThis.addEventListener("mousemove", onPointerMove as EventListener);
+	globalThis.addEventListener("mouseup", onPointerUp as EventListener);
 
 	if (typeof img?.addEventListener === "function") {
-		img.addEventListener("touchstart", onPointerDown, { passive: true });
+		img.addEventListener("touchstart", onPointerDown as EventListener, { passive: true });
 	}
-	root?.addEventListener("touchstart", onPointerDown, { passive: true });
-	globalThis.addEventListener("touchmove", onPointerMove, { passive: true });
-	globalThis.addEventListener("touchend", onPointerUp);
+	root?.addEventListener("touchstart", onPointerDown as EventListener, { passive: true });
+	globalThis.addEventListener("touchmove", onPointerMove as EventListener, { passive: true });
+	globalThis.addEventListener("touchend", onPointerUp as EventListener);
 }
 
 if (document.readyState === "loading") {

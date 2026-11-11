@@ -17,7 +17,12 @@ export function applyDpiAndScaleProperties(
 	root.style.setProperty("--balloon-dpi", String(balloonDpi));
 	root.style.setProperty("--balloon-dpi-scale", String(dpiScale));
 
-	const userScale = instance.balloonUserScale || 1;
+	const rawUserScale =
+		typeof instance.balloonUserScale === "number"
+			? instance.balloonUserScale
+			: Number(instance.balloonUserScale);
+	const userScale =
+		Number.isFinite(rawUserScale) && rawUserScale > 0 ? rawUserScale : 1;
 	const finalScale = +(userScale * dpiScale).toFixed(4);
 	const balloonScaleEl = document.querySelector(
 		".balloon",

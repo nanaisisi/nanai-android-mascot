@@ -5,21 +5,28 @@ export const networkActions = {
 	 * メールチェック (UKADOC OnBIFF 準拠)
 	 */
 	async checkEmail(accountName: string = "default") {
-		const gc = (this as import("../../../main.js").NanaiAndroidMascotApp)
-			.ghostController;
+		const gc = (
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
+		).ghostController;
 		console.log(`📬 メールチェック開始 (OnBIFF): account=${accountName}`);
-		(this as import("../../../main.js").NanaiAndroidMascotApp).showBalloon?.(
-			"📬 メールを確認中...",
-		);
+		(
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
+		).showBalloon?.("📬 メールを確認中...");
 
 		try {
 			await gc.sendShioriEvent("OnBIFFBegin", [accountName]);
 
 			if (isTauriAvailable()) {
-				const result: unknown = await invoke("check_email", {
+				const result = (await invoke("check_email", {
 					account: accountName,
-				}).catch(() => null);
-				if (result && typeof result === "object") {
+				}).catch(() => null)) as {
+					count?: number;
+					size?: number;
+					unread?: number;
+					headers?: string[];
+				} | null;
+
+				if (result) {
 					const count = Number(result.count || 0);
 					const size = Number(result.size || 0);
 					const unread = Number(result.unread || 0);

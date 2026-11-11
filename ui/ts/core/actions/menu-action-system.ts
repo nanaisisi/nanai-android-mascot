@@ -1,7 +1,19 @@
 import { invoke, isTauriAvailable } from "../tauri-helper.js";
 
+export interface SystemMenuActionContext {
+	modalManager?: {
+		show?: (contentId: string) => unknown;
+	};
+	showBalloon?: (message: string) => unknown;
+	hideBalloon?: () => unknown;
+	ghostController?: {
+		scanGhosts?: () => Promise<unknown>;
+		selectGhost?: (name: string) => Promise<unknown>;
+	};
+}
+
 export function handleSystemMenuAction(
-	context: unknown,
+	context: SystemMenuActionContext,
 	action: string,
 ): boolean {
 	if (
@@ -10,27 +22,27 @@ export function handleSystemMenuAction(
 		action === "utility" ||
 		action === "explorer"
 	) {
-		context.modalManager?.show("explorer-modal-content");
+		context.modalManager?.show?.("explorer-modal-content");
 		return true;
 	}
 	if (action === "config" || action === "settings") {
-		context.modalManager?.show("settings-modal-content");
+		context.modalManager?.show?.("settings-modal-content");
 		return true;
 	}
 	if (action === "inquire" || action === "help") {
-		context.modalManager?.show("help-modal-content");
+		context.modalManager?.show?.("help-modal-content");
 		return true;
 	}
 	if (action === "calendar" || action === "schedule") {
-		context.modalManager?.show("calendar-modal-content");
+		context.modalManager?.show?.("calendar-modal-content");
 		return true;
 	}
 	if (action === "backlog") {
-		context.modalManager?.show("backlog-modal-content");
+		context.modalManager?.show?.("backlog-modal-content");
 		return true;
 	}
 	if (action === "pictureviewer" || action === "archiveviewer") {
-		context.modalManager?.show("explorer-modal-content");
+		context.modalManager?.show?.("explorer-modal-content");
 		return true;
 	}
 	if (action === "friends") {
@@ -93,19 +105,20 @@ export function handleSystemMenuAction(
 			invoke("pick_and_install_ghost_archive")
 				.then((result: unknown) => {
 					if (result) {
-						context.showBalloon?.(
-							`ゴースト「${(result as unknown).name}」を導入しました`,
-						);
+						const ghostName = (result as { name?: string })?.name || "";
+						context.showBalloon?.(`ゴースト「${ghostName}」を導入しました`);
 						setTimeout(() => context.hideBalloon?.(), 2000);
 						context.ghostController?.scanGhosts?.();
-						context.ghostController?.selectGhost?.((result as unknown).name);
+						if (ghostName) {
+							context.ghostController?.selectGhost?.(ghostName);
+						}
 					}
 				})
 				.catch((e) => {
 					console.error("Failed to pick and install archive:", e);
 				});
 		} else {
-			context.modalManager?.show("install-modal-content");
+			context.modalManager?.show?.("install-modal-content");
 		}
 		return true;
 	}

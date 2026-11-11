@@ -10,7 +10,15 @@ export async function handleBiffCommand(
 	_args: string[],
 ) {
 	console.log("✉️ Biff mail check triggered");
-	await handler.app.networkActions?.checkEmail?.();
+	const net = handler.app as {
+		checkEmail?: () => Promise<unknown>;
+		networkActions?: { checkEmail?: () => Promise<unknown> };
+	};
+	if (typeof net.checkEmail === "function") {
+		await net.checkEmail();
+	} else if (typeof net.networkActions?.checkEmail === "function") {
+		await net.networkActions.checkEmail();
+	}
 }
 
 export async function handleExecuteSntpCommand(

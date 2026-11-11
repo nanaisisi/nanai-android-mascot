@@ -35,8 +35,11 @@ export async function handleSetSerikoTalkCommand(
 		.toLowerCase();
 	const enabled = valStr !== "false" && valStr !== "0";
 	const scope = handler.player?.currentScope ?? 0;
-	if (handler.app?.surfaceAnimationManager?.setSerikoTalkEnabled) {
-		handler.app.surfaceAnimationManager.setSerikoTalkEnabled(scope, enabled);
+	const sam = handler.app?.surfaceAnimationManager as
+		| { setSerikoTalkEnabled?: (scope: number, enabled: boolean) => void }
+		| undefined;
+	if (sam?.setSerikoTalkEnabled) {
+		sam.setSerikoTalkEnabled(scope, enabled);
 	}
 }
 
@@ -66,8 +69,12 @@ export async function handleEnterMode(
 		if (handler.player) {
 			handler.player[`is_${mode}`] = true;
 		}
-		const gc =
-			handler.app?.ghostController ?? handler.player?.app?.ghostController;
+		const playerApp = (
+			handler.player as unknown as {
+				app?: { ghostController?: import("../../ghost.js").GhostController };
+			}
+		)?.app;
+		const gc = handler.app?.ghostController ?? playerApp?.ghostController;
 		if (gc?.sendShioriEvent) {
 			await gc.sendShioriEvent("OnModeChange", [
 				mode,
@@ -88,8 +95,12 @@ export async function handleLeaveMode(
 		if (handler.player) {
 			handler.player[`is_${mode}`] = false;
 		}
-		const gc =
-			handler.app?.ghostController ?? handler.player?.app?.ghostController;
+		const playerApp = (
+			handler.player as unknown as {
+				app?: { ghostController?: import("../../ghost.js").GhostController };
+			}
+		)?.app;
+		const gc = handler.app?.ghostController ?? playerApp?.ghostController;
 		if (gc?.sendShioriEvent) {
 			await gc.sendShioriEvent("OnModeChange", [
 				mode,
@@ -263,7 +274,17 @@ export async function handleSetPositionCommand(
 	if (Number.isFinite(x) && Number.isFinite(y)) {
 		handler.app.surfaceManager?.setPosition?.(x, y, scope);
 		try {
-			const api = (globalThis as unknown).__TAURI__?.window;
+			const g = globalThis as unknown as {
+				__TAURI__?: {
+					window?: {
+						getCurrentWindow: () => {
+							setPosition: (pos: unknown) => Promise<void>;
+						};
+						PhysicalPosition: new (x: number, y: number) => unknown;
+					};
+				};
+			};
+			const api = g.__TAURI__?.window;
 			if (api) {
 				const win = api.getCurrentWindow();
 				await win.setPosition(new api.PhysicalPosition(x, y));

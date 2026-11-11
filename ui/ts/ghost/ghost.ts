@@ -31,6 +31,7 @@ export class GhostController {
 	) => Promise<unknown>;
 	declare stopSecondChangeTimer?: () => void;
 	declare callGhost?: (name: string) => Promise<unknown>;
+	declare evaluateProperty?: (prop: string) => Promise<unknown>;
 	declare initializeGhostSHIORI: (
 		ghost: GhostInfo,
 		preload?: unknown,

@@ -311,5 +311,9 @@ test("context menu enforces non-draggable invariant specification", () => {
 
 	// Simulating mousedown on document/menu background should NOT trigger dragging
 	documentListeners.mousedown?.({ button: 0, target: { closest: () => null } });
-	assert.equal(dragCalled, false, "Menu windows must remain non-draggable per design specification");
+	assert.equal(
+		dragCalled,
+		false,
+		"Menu windows must remain non-draggable per design specification",
+	);
 });

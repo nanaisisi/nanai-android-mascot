@@ -240,7 +240,9 @@ export function renderSubmenuContent({
 	) {
 		let currentScale = 100;
 		try {
-			const saved = localStorage.getItem("nanai_shell_scale") || localStorage.getItem("shellScale");
+			const saved =
+				localStorage.getItem("nanai_shell_scale") ||
+				localStorage.getItem("shellScale");
 			if (saved) {
 				currentScale = parseInt(saved, 10) || 100;
 			}
@@ -261,8 +263,8 @@ export function renderSubmenuContent({
 		container.appendChild(separator);
 
 		const scaleLevels = [
-			300, 275, 250, 225, 200, 175, 166, 150, 133, 125, 100, 80, 75, 66, 50,
-			33, 25, 20,
+			300, 275, 250, 225, 200, 175, 166, 150, 133, 125, 100, 80, 75, 66, 50, 33,
+			25, 20,
 		];
 		scaleLevels.forEach((pct) => {
 			const isCurrent = pct === currentScale;
@@ -279,7 +281,9 @@ export function renderSubmenuContent({
 	} else if (currentSubmenuType === "balloon-scale") {
 		let currentBalloonScale = 100;
 		try {
-			const saved = localStorage.getItem("nanai_balloon_scale") || localStorage.getItem("balloonScale");
+			const saved =
+				localStorage.getItem("nanai_balloon_scale") ||
+				localStorage.getItem("balloonScale");
 			if (saved) {
 				currentBalloonScale = parseInt(saved, 10) || 100;
 			}

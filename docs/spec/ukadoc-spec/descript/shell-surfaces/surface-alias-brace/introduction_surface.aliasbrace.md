@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `crates/ui/src/manifest.rs:39` `/// `surface.alias` / `sakura.surface.alias` ブロックの エイリアス名 → サーフィス番号列`
-- `crates/ui/src/manifest.rs:41` `/// `kero.surface.alias` / `char1.surface.alias` ブロックの エイリアス名 → 番号列`
+- `crates/ui/src/manifest.rs:39` `/// `surface.alias`/`sakura.surface.alias` ブロックの エイリアス名 → サーフィス番号列`
+- `crates/ui/src/manifest.rs:41` `/// `kero.surface.alias`/`char1.surface.alias` ブロックの エイリアス名 → 番号列`
 - `crates/ui/src/shell/core.rs:71` `/// `surface.alias` ブロック（エイリアス名）からサーフィス定義を解決する`
 - `crates/ui/src/surfaces/parser/tests.rs:10` `surface.alias {\r\nmain,0,1\r\n,empty_alias\r\nno_comma_alias\r\n}\r\n\`
 - `crates/ui/src/surfaces/parser/tests.rs:11` `kero.surface.alias {\r\nkmain,10\r\n}\r\n\`

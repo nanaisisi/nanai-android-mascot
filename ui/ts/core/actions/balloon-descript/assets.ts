@@ -84,11 +84,20 @@ export function applyAssetProperties(
 		);
 	}
 
-	const currentGhostName = (instance as Record<string, unknown>)?.currentGhostName as string | undefined;
-	const currentGhostPath = (instance as Record<string, unknown>)?.currentGhostPath as string | undefined;
-	const checkResult = verifyRecommendedGhost(p, currentGhostName, currentGhostPath);
+	const currentGhostName = (instance as Record<string, unknown>)
+		?.currentGhostName as string | undefined;
+	const currentGhostPath = (instance as Record<string, unknown>)
+		?.currentGhostPath as string | undefined;
+	const checkResult = verifyRecommendedGhost(
+		p,
+		currentGhostName,
+		currentGhostPath,
+	);
 	if (!checkResult.isRecommended && checkResult.warning) {
-		root.style.setProperty("--balloon-recommended-warning", checkResult.warning);
+		root.style.setProperty(
+			"--balloon-recommended-warning",
+			checkResult.warning,
+		);
 	} else if (typeof root.style.removeProperty === "function") {
 		root.style.removeProperty("--balloon-recommended-warning");
 	} else {
@@ -130,7 +139,10 @@ export function applyAssetProperties(
 		}
 	};
 	// [arrow.filename,ファイル名]: UKADOC 準拠ベース名展開 (拡張子なし -> arrow0=上 / arrow1=下)
-	const scopeId = (instance as Record<string, unknown>)?.scopeId ?? (instance as Record<string, unknown>)?.currentScopeId ?? 0;
+	const scopeId =
+		(instance as Record<string, unknown>)?.scopeId ??
+		(instance as Record<string, unknown>)?.currentScopeId ??
+		0;
 	const defaultArrowBase = p["arrow.filename"]
 		? p["arrow.filename"]
 		: scopeId === 1

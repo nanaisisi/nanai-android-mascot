@@ -5,18 +5,15 @@
 
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import {
-	applyAssetProperties,
-	verifyRecommendedGhost,
-} from "../ui/ts/core/actions/balloon-descript/assets.js";
-import { applyValidRectProperties } from "../ui/ts/core/actions/balloon-descript/layout/rect.js";
+import { verifyRecommendedGhost } from "../ui/ts/core/actions/balloon-descript/assets.js";
 import { applyPositionProperties } from "../ui/ts/core/actions/balloon-descript/layout/position.ts";
+import { applyValidRectProperties } from "../ui/ts/core/actions/balloon-descript/layout/rect.js";
 import { applyLayoutProperties } from "../ui/ts/core/actions/balloon-descript/layout.js";
-import { tokenizeDisplayTag } from "../ui/ts/ghost/parser/tag-tokenizer.js";
-import { tokenizeScopeSurfaceTag } from "../ui/ts/ghost/parser/tag/scope-surface.js";
-import { loadBalloonSkinImages, applyBalloonDescript } from "../ui/ts/ghost/balloon-window/theme.js";
-import { surfaceCollisionMethods } from "../ui/ts/surface/surface-collision.js";
 import { mouseMethods } from "../ui/ts/core/events/mouse.js";
+import { loadBalloonSkinImages } from "../ui/ts/ghost/balloon-window/theme.js";
+import { tokenizeScopeSurfaceTag } from "../ui/ts/ghost/parser/tag/scope-surface.js";
+import { tokenizeDisplayTag } from "../ui/ts/ghost/parser/tag-tokenizer.js";
+import { surfaceCollisionMethods } from "../ui/ts/surface/surface-collision.js";
 import { setupBalloonMockEnvironment } from "./balloon-window/mock-balloon-env.js";
 
 describe("全面実装確認スイート (Implementation Verification Suite)", () => {
@@ -106,10 +103,18 @@ describe("全面実装確認スイート (Implementation Verification Suite)", (
 				"recommended.ghost.path": "ghost/emily",
 			};
 
-			const okRes = verifyRecommendedGhost(props, "Emily", "C:/app/ghost/emily");
+			const okRes = verifyRecommendedGhost(
+				props,
+				"Emily",
+				"C:/app/ghost/emily",
+			);
 			assert.equal(okRes.isRecommended, true);
 
-			const ngRes = verifyRecommendedGhost(props, "Sakura", "C:/app/ghost/sakura");
+			const ngRes = verifyRecommendedGhost(
+				props,
+				"Sakura",
+				"C:/app/ghost/sakura",
+			);
 			assert.equal(ngRes.isRecommended, false);
 			assert.ok(ngRes.warning);
 		});
@@ -176,8 +181,14 @@ describe("全面実装確認スイート (Implementation Verification Suite)", (
 			applyLayoutProperties(mockRoot, descriptProps, {});
 
 			// 規格に沿った出力検証
-			assert.equal(mockStyleMap.get("--balloon-padding"), "16px 16px 24px 16px");
-			assert.equal(mockStyleMap.get("--balloon-border-image-slice"), "16 16 24 16 fill");
+			assert.equal(
+				mockStyleMap.get("--balloon-padding"),
+				"16px 16px 24px 16px",
+			);
+			assert.equal(
+				mockStyleMap.get("--balloon-border-image-slice"),
+				"16 16 24 16 fill",
+			);
 			assert.equal(mockStyleMap.get("--balloon-origin-x"), "12px");
 			assert.equal(mockStyleMap.get("--balloon-origin-y"), "28px");
 		});
@@ -197,7 +208,13 @@ describe("全面実装確認スイート (Implementation Verification Suite)", (
 			};
 
 			const mockSurfaceManager = {
-				detectCollision: (x: number, y: number, _rect: unknown, _surfaceId: unknown, _scopeId: number) => {
+				detectCollision: (
+					x: number,
+					y: number,
+					_rect: unknown,
+					_surfaceId: unknown,
+					_scopeId: number,
+				) => {
 					return { name: "Head", canvasX: x, canvasY: y };
 				},
 			};
@@ -217,7 +234,7 @@ describe("全面実装確認スイート (Implementation Verification Suite)", (
 			assert.ok(["OnMouseDoubleClick", "OnMouseClick"].includes(sentEventName));
 			assert.equal(sentArgs[0], 100); // canvasX
 			assert.equal(sentArgs[1], 150); // canvasY
-			assert.equal(sentArgs[3], 0);   // scopeId
+			assert.equal(sentArgs[3], 0); // scopeId
 			assert.equal(sentArgs[4], "Head"); // collision region name
 
 			// 2. Mouse Wheel Event
@@ -226,7 +243,7 @@ describe("全面実装確認スイート (Implementation Verification Suite)", (
 			assert.equal(sentArgs[0], 100);
 			assert.equal(sentArgs[1], 150);
 			assert.equal(sentArgs[2], -120); // delta
-			assert.equal(sentArgs[3], 1);    // scope 1 (Kero)
+			assert.equal(sentArgs[3], 1); // scope 1 (Kero)
 			assert.equal(sentArgs[4], "Head");
 		});
 	});

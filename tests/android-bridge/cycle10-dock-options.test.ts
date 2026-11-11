@@ -61,7 +61,11 @@ describe("Slot-12 Cycle 10 Dock Options & Gesture Configuration", () => {
 		expect(dock.isDocked).toBe(true);
 
 		// Simulate tap/click
-		const listeners = (el as any).listeners;
+		const listeners = (
+			el as unknown as {
+				listeners: Record<string, ((...args: unknown[]) => void)[]>;
+			}
+		).listeners;
 		const clickHandler = listeners?.click?.[0];
 		expect(typeof clickHandler).toBe("function");
 

@@ -51,9 +51,7 @@ export const surfaceCollisionMethods = {
 		if (scopeId === 0) {
 			map = (this as unknown).aliases;
 		} else if (scopeId === 1) {
-			map =
-				(this as unknown).keroAliases ??
-				(this as unknown).charAliases?.[1];
+			map = (this as unknown).keroAliases ?? (this as unknown).charAliases?.[1];
 		} else {
 			map = (this as unknown).charAliases?.[scopeId];
 		}

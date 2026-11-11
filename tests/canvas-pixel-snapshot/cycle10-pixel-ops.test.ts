@@ -77,7 +77,6 @@ test("Canvas Pixel Snapshot Cycle 10: SurfaceFrameBuffer copyRect and sub-buffer
 });
 
 import { describe, expect, it } from "vitest";
-import { SurfaceFrameBuffer } from "../../ui/ts/surface/compositor/framebuffer.js";
 
 describe("Cycle 10 Pixel Ops: HSL Edge Cases, Zero Alpha, and Dither Extremes", () => {
 	it("should handle achromatic (zero saturation) base and layer in HSL blend modes", () => {

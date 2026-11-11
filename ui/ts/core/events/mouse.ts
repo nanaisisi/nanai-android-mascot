@@ -33,14 +33,13 @@ export const mouseMethods = {
 				if (res?.status === 200 && res?.value) {
 					(this as unknown).playSakuraScript?.(res.value);
 				} else {
-					(this as unknown).ghostController.sendShioriEvent(
-						"OnMouseClick",
-						args,
-					).then((clickRes: unknown) => {
-						if (clickRes?.status === 200 && clickRes?.value) {
-							(this as unknown).playSakuraScript?.(clickRes.value);
-						}
-					});
+					(this as unknown).ghostController
+						.sendShioriEvent("OnMouseClick", args)
+						.then((clickRes: unknown) => {
+							if (clickRes?.status === 200 && clickRes?.value) {
+								(this as unknown).playSakuraScript?.(clickRes.value);
+							}
+						});
 				}
 			});
 	},

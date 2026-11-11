@@ -7,30 +7,47 @@ export const commands = {
 	/**  デバッグ用のテストコマンド */
 	testCommand: () => typedError<string, string>(__TAURI_INVOKE("test_command")),
 	/**  マウスクリックイベントを送信（簡易版） */
-	onMouseClick: () => typedError<string, string>(__TAURI_INVOKE("on_mouse_click")),
+	onMouseClick: () =>
+		typedError<string, string>(__TAURI_INVOKE("on_mouse_click")),
 	/**  秒数変化イベントを送信（簡易版） */
-	onSecondChange: () => typedError<string, string>(__TAURI_INVOKE("on_second_change")),
+	onSecondChange: () =>
+		typedError<string, string>(__TAURI_INVOKE("on_second_change")),
 	/**  SHIORIの状態を取得 */
-	getShioriStatus: () => typedError<boolean, string>(__TAURI_INVOKE("get_shiori_status")),
+	getShioriStatus: () =>
+		typedError<boolean, string>(__TAURI_INVOKE("get_shiori_status")),
 	/**  Androidオーバーレイ権限リクエスト・案内コマンド */
-	requestOverlayPermission: () => typedError<string, string>(__TAURI_INVOKE("request_overlay_permission")),
+	requestOverlayPermission: () =>
+		typedError<string, string>(__TAURI_INVOKE("request_overlay_permission")),
 	/**  Androidフォアグラウンドサービス通知チャネル設定コマンド */
-	setupForegroundService: (enabled: boolean) => typedError<string, string>(__TAURI_INVOKE("setup_foreground_service", { enabled })),
+	setupForegroundService: (enabled: boolean) =>
+		typedError<string, string>(
+			__TAURI_INVOKE("setup_foreground_service", { enabled }),
+		),
 	/**  Androidオーバーレイ透明度設定コマンド (0.0 〜 1.0) */
-	setOverlayTransparency: (alpha: number | null) => typedError<number | null, string>(__TAURI_INVOKE("set_overlay_transparency", { alpha })),
+	setOverlayTransparency: (alpha: number | null) =>
+		typedError<number | null, string>(
+			__TAURI_INVOKE("set_overlay_transparency", { alpha }),
+		),
 	/**  Androidクリックスルー（背面タッチ透過）切り替えコマンド */
-	setClickThrough: (enabled: boolean) => typedError<boolean, string>(__TAURI_INVOKE("set_click_through", { enabled })),
+	setClickThrough: (enabled: boolean) =>
+		typedError<boolean, string>(
+			__TAURI_INVOKE("set_click_through", { enabled }),
+		),
 	/**  Android低メモリ通知 (onTrimMemory) 処理コマンド */
-	trimMemoryCommand: (level: number) => typedError<number, string>(__TAURI_INVOKE("trim_memory_command", { level })),
+	trimMemoryCommand: (level: number) =>
+		typedError<number, string>(
+			__TAURI_INVOKE("trim_memory_command", { level }),
+		),
 };
 
 /* Tauri Specta runtime */
-async function typedError<T, E>(result: Promise<T>): Promise<{ status: "ok"; data: T } | { status: "error"; error: E }> {
-    try {
-        return { status: "ok", data: await result };
-    } catch (e) {
-        if (e instanceof Error) throw e;
-        return { status: "error", error: e as E };
-    }
+async function typedError<T, E>(
+	result: Promise<T>,
+): Promise<{ status: "ok"; data: T } | { status: "error"; error: E }> {
+	try {
+		return { status: "ok", data: await result };
+	} catch (e) {
+		if (e instanceof Error) throw e;
+		return { status: "error", error: e as E };
+	}
 }
-

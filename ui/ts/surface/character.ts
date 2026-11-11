@@ -59,18 +59,13 @@ function openCharacterMenu(
 			? screenY
 			: winY + (clientY ?? 100);
 
-	if (
-		clientX !== undefined &&
-		clientX > 0 &&
-		winX > 0 &&
-		posX < winX
-	) {
+	if (clientX !== undefined && clientX > 0 && winX > 0 && posX < winX) {
 		posX = winX + clientX;
 		posY = winY + clientY;
 	}
 
-	if (isNaN(posX)) posX = winX + 100;
-	if (isNaN(posY)) posY = winY + 100;
+	if (Number.isNaN(posX)) posX = winX + 100;
+	if (Number.isNaN(posY)) posY = winY + 100;
 
 	void invoke("show_menu_window", {
 		x: posX,
@@ -225,7 +220,12 @@ function initCharacterWindow() {
 			const clientX = e.clientX ?? 0;
 			const clientY = e.clientY ?? 0;
 			if (img && !isTransparentPixel(img, clientX, clientY)) {
-				openCharacterMenu(e.screenX ?? clientX, e.screenY ?? clientY, clientX, clientY);
+				openCharacterMenu(
+					e.screenX ?? clientX,
+					e.screenY ?? clientY,
+					clientX,
+					clientY,
+				);
 			}
 			return;
 		}
@@ -267,7 +267,8 @@ function initCharacterWindow() {
 					coordInterval = null;
 					return;
 				}
-				if (!coordPopupEl) coordPopupEl = document.getElementById("coord-popup");
+				if (!coordPopupEl)
+					coordPopupEl = document.getElementById("coord-popup");
 				if (coordPopupEl) {
 					const pos = await getCurrentWindowPosition();
 					if (pos) {
@@ -379,7 +380,12 @@ function initCharacterWindow() {
 		e.preventDefault?.();
 		const clientX = e.clientX ?? 0;
 		const clientY = e.clientY ?? 0;
-		openCharacterMenu(e.screenX ?? clientX, e.screenY ?? clientY, clientX, clientY);
+		openCharacterMenu(
+			e.screenX ?? clientX,
+			e.screenY ?? clientY,
+			clientX,
+			clientY,
+		);
 	};
 
 	if (typeof img?.addEventListener === "function") {

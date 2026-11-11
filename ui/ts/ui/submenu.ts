@@ -9,7 +9,6 @@ import {
 	invoke,
 	isTauriAvailable,
 	listen,
-	startDraggingWindow,
 } from "../core/tauri-helper.js";
 import { renderSubmenuContent } from "./submenu-renderer.js";
 import { applyShellMenuTheme } from "./submenu-theme.js";

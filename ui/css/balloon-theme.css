@@ -4,9 +4,6 @@
    === */
 
 :root {
-
-
-
 	/* 9スライス・ボーダー画像トークン */
 	--balloon-border-image-source: none;
 	--balloon-border-image-slice: 16 16 16 16 fill;

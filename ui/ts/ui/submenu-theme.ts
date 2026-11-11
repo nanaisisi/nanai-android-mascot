@@ -146,12 +146,18 @@ export function applyShellMenuTheme(activeShell: unknown) {
 		);
 		const cachedImg = imageCache.get(sideUrl);
 		if (cachedImg && cachedImg.naturalWidth > 0) {
-			rootStyle.setProperty("--menu-sidebar-width", `${cachedImg.naturalWidth}px`);
+			rootStyle.setProperty(
+				"--menu-sidebar-width",
+				`${cachedImg.naturalWidth}px`,
+			);
 		} else {
 			void preloadImage(sideUrl).then(() => {
 				const loadedImg = imageCache.get(sideUrl);
 				if (loadedImg && loadedImg.naturalWidth > 0) {
-					rootStyle.setProperty("--menu-sidebar-width", `${loadedImg.naturalWidth}px`);
+					rootStyle.setProperty(
+						"--menu-sidebar-width",
+						`${loadedImg.naturalWidth}px`,
+					);
 				}
 			});
 		}

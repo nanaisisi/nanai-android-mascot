@@ -14,4 +14,4 @@
 - `crates/ui/src/manifest.rs:43` `/// `surfacetable.txt` パース結果（任意）`
 - `crates/ui/src/shell/core.rs:18` `/// `surfacetable.txt`（任意・サーフィスグループ一覧）`
 - `crates/ui/src/shell/core.rs:53` `let surface_table = resolve_vfs_path(directory, "surfacetable.txt")`
-- `crates/ui/src/shell/mod.rs:3` `//! シェルディレクトリから `descript.txt` / `surfaces.txt` / `surfacetable.txt``
+- `crates/ui/src/shell/mod.rs:3` `//! シェルディレクトリから `descript.txt`/`surfaces.txt`/`surfacetable.txt``

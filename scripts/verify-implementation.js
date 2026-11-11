@@ -20,7 +20,7 @@ console.log("1️⃣ [Cargo Check] Rust バックエンド & FFI コンパイル
 try {
 	execSync("cargo check", { stdio: "inherit", cwd: projectRoot });
 	console.log("✅ Cargo Check: エラーなしでビルド成功!\n");
-} catch (err) {
+} catch (_err) {
 	console.error("❌ Cargo Check: コンパイルエラーが発生しました。");
 	hasError = true;
 }
@@ -30,7 +30,7 @@ console.log("2️⃣ [Vitest] フロントエンド・各種単体テスト検�
 try {
 	execSync("npx vitest run", { stdio: "inherit", cwd: projectRoot });
 	console.log("✅ Vitest: 全テスト通過!\n");
-} catch (err) {
+} catch (_err) {
 	console.error("❌ Vitest: テスト失敗が発生しました。");
 	hasError = true;
 }
@@ -64,6 +64,8 @@ if (hasError) {
 	console.error("❌ 実装確認: いくつかの検証項目で失敗が発生しました。");
 	process.exit(1);
 } else {
-	console.log("✨ 実装確認完了: すべてのコンパイル・テスト・モジュールが正常です！");
+	console.log(
+		"✨ 実装確認完了: すべてのコンパイル・テスト・モジュールが正常です！",
+	);
 	process.exit(0);
 }

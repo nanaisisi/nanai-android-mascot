@@ -4,9 +4,9 @@
 
 import {
 	emit,
+	getCurrentWindowPosition,
 	invoke,
 	startDraggingWindow,
-	getCurrentWindowPosition,
 } from "../../core/tauri-helper.js";
 import { updateBalloonWindowScale } from "./scale.js";
 

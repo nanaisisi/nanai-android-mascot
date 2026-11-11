@@ -10,7 +10,7 @@ OnFirstBoot SHIORIイベント送信処理を実装 (ui/js/ghost/shiori-notify.j
 
 ## 実装箇所
 
-- `crates/ui/src/shiori/protocol/request/types.rs:24` `/// 互換可能な基本イベント名（SSP拡張。`OnFirstBoot` → `OnBoot` など）`
+- `crates/ui/src/shiori/protocol/request/types.rs:24` `/// 互換可能な基本イベント名（SSP拡張。`OnFirstBoot`→`OnBoot` など）`
 - `crates/ui/src/shiori/tests/request_tests.rs:13` `id: "OnFirstBoot".into(),`
 - `crates/ui/src/shiori/tests/request_tests.rs:26` `assert!(text.contains("ID: OnFirstBoot\r\n"));`
 - `crates/ui/src/shiori/tests/request_tests.rs:31` `let id_pos = text.find("ID: OnFirstBoot").unwrap();`

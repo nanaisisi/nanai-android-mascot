@@ -1,3 +1,4 @@
+// biome-ignore-all lint/suspicious/noExplicitAny: dynamic gesture interop
 /**
  * @file touch-gesture-recognizer.js
  * @description Slot-12 タッチジェスチャー認識エンジン (Pinch, Drag, Stroke, LongPress, Tap)

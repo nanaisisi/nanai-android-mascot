@@ -1,8 +1,4 @@
-import {
-	invoke,
-	isTauriAvailable,
-	startDraggingWindow,
-} from "../core/tauri-helper.js";
+import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 import { handleMenuKeydown } from "./context-menu-keyboard.js";
 import { setupContextMenuSync } from "./context-menu-sync.js";
 import { MenuDispatcher } from "./menu-dispatcher.js";

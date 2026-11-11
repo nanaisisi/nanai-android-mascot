@@ -4,7 +4,8 @@
    = */
 
 :root {
-	--menu-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Meiryo", sans-serif;
+	--menu-font-family:
+		-apple-system, BlinkMacSystemFont, "Segoe UI", "Meiryo", sans-serif;
 	--menu-font-size: 0.7rem;
 	--menu-text-color: #111111;
 	--menu-bg: #f4f8fc;

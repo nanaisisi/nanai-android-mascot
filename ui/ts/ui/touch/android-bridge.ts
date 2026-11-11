@@ -47,7 +47,7 @@ export class AndroidBridge {
 	_dockManager: DockManager;
 	_overlayManager: OverlayManager;
 
-	constructor(options: any = {}) {
+	constructor(options: Record<string, unknown> = {}) {
 		this._cleanupFns = [];
 		this._lifecycleState = ANDROID_LIFECYCLE_STATES.ACTIVE;
 

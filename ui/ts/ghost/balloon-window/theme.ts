@@ -18,7 +18,11 @@ const getImageDimensions = (
 			return;
 		}
 		const img = new Image();
-		img.onload = () => resolve({ width: img.naturalWidth || img.width || 0, height: img.naturalHeight || img.height || 0 });
+		img.onload = () =>
+			resolve({
+				width: img.naturalWidth || img.width || 0,
+				height: img.naturalHeight || img.height || 0,
+			});
 		img.onerror = () => resolve({ width: 0, height: 0 });
 		img.src = url;
 	});
@@ -210,11 +214,26 @@ export async function applyBalloonDescript({
 			const b = Number.isNaN(vb) ? 16 : Math.max(8, Math.abs(vb));
 			const l = Number.isNaN(vl) ? 16 : Math.max(8, Math.abs(vl));
 
-			root.style.setProperty("--balloon-border-image-source", `url("${bgImage}")`);
-			root.style.setProperty("--balloon-border-image-slice", `${t} ${r} ${b} ${l} fill`);
-			root.style.setProperty("--balloon-border-image-width", `${t}px ${r}px ${b}px ${l}px`);
-			root.style.setProperty("--balloon-border-image-repeat", props["border.repeat"] || "repeat");
-			root.style.setProperty("--balloon-padding", `${t}px ${r}px ${b}px ${l}px`);
+			root.style.setProperty(
+				"--balloon-border-image-source",
+				`url("${bgImage}")`,
+			);
+			root.style.setProperty(
+				"--balloon-border-image-slice",
+				`${t} ${r} ${b} ${l} fill`,
+			);
+			root.style.setProperty(
+				"--balloon-border-image-width",
+				`${t}px ${r}px ${b}px ${l}px`,
+			);
+			root.style.setProperty(
+				"--balloon-border-image-repeat",
+				props["border.repeat"] || "repeat",
+			);
+			root.style.setProperty(
+				"--balloon-padding",
+				`${t}px ${r}px ${b}px ${l}px`,
+			);
 
 			const dims = await getImageDimensions(bgImage);
 			if (dims.width > 0) {

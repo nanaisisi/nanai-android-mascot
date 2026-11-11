@@ -29,7 +29,10 @@ export function applyValidRectProperties(root: HTMLElement, props: object) {
 		if (balloonEl) {
 			balloonEl.style.padding = `${padTop} ${padRight} ${padBottom} ${padLeft}`;
 		}
-		root.style.setProperty("--balloon-padding", `${padTop} ${padRight} ${padBottom} ${padLeft}`);
+		root.style.setProperty(
+			"--balloon-padding",
+			`${padTop} ${padRight} ${padBottom} ${padLeft}`,
+		);
 		root.style.setProperty(
 			"--balloon-border-image-slice",
 			`${sliceTop} ${sliceRight} ${sliceBottom} ${sliceLeft} fill`,
@@ -48,7 +51,9 @@ export function applyValidRectProperties(root: HTMLElement, props: object) {
 	if (props["wordwrappoint.x"]) {
 		const ww = parseInt(props["wordwrappoint.x"], 10);
 		if (!Number.isNaN(ww) && ww > 50) {
-			const balloonEl = document.querySelector(".balloon") as HTMLElement | null;
+			const balloonEl = document.querySelector(
+				".balloon",
+			) as HTMLElement | null;
 			if (balloonEl) {
 				balloonEl.style.maxWidth = `${ww}px`;
 			}

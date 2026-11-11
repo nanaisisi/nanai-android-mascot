@@ -14,4 +14,4 @@
 - `src-tauri/src/ghost/scan/directory/manifest.rs:63` `let kero_name = meta_map.as_ref().and_then(|m| m.get("kero.name").cloned());`
 - `src-tauri/src/ghost/scan/directory/manifest.rs:67` `.is_some_and(|m| m.contains_key("kero.name") || m.contains_key("char1.name"));`
 - `crates/ui/src/descript/tests.rs:55` `kero.name,Kero\n\`
-- `crates/ui/src/descript/parser/queries.rs:14` `/// キャラクター本体名（`kero.name` または `sakura.name`）`
+- `crates/ui/src/descript/parser/queries.rs:14` `/// キャラクター本体名（`kero.name`または`sakura.name`）`

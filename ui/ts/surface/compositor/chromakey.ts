@@ -186,9 +186,9 @@ export function processChromaKey(
 							const b = (pixel >> 16) & 0xff;
 
 							const isGreen =
-											(r <= 80 && g >= 150 && b <= 80) ||
-											(g > r + 25 && g > b + 25 && g >= 130) ||
-											(g > (r + b) * 1.15 && g >= 140);
+								(r <= 80 && g >= 150 && b <= 80) ||
+								(g > r + 25 && g > b + 25 && g >= 130) ||
+								(g > (r + b) * 1.15 && g >= 140);
 							const isMatchCorner = isCornerTarget && pixel === corner32;
 
 							if (isGreen || isMatchCorner) {
@@ -207,9 +207,9 @@ export function processChromaKey(
 							const b = (pixel >> 8) & 0xff;
 
 							const isGreen =
-											(r <= 80 && g >= 150 && b <= 80) ||
-											(g > r + 25 && g > b + 25 && g >= 130) ||
-											(g > (r + b) * 1.15 && g >= 140);
+								(r <= 80 && g >= 150 && b <= 80) ||
+								(g > r + 25 && g > b + 25 && g >= 130) ||
+								(g > (r + b) * 1.15 && g >= 140);
 							const isMatchCorner = isCornerTarget && pixel === corner32;
 
 							if (isGreen || isMatchCorner) {

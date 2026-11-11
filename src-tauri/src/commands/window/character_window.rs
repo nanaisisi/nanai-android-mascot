@@ -58,17 +58,22 @@ pub async fn show_character_window(
 
         let _ = sub_win.set_decorations(false);
         let _ = sub_win.set_shadow(false);
-        let _ = sub_win.set_size(tauri::Size::Physical(tauri::PhysicalSize {
-            width: win_width.round() as u32,
-            height: win_height.round() as u32,
-        }));
+
+        // 既存ウィンドウが存在し、明示的なサイズ指定がない場合はサイズを維持してリロード時のチラつき・縮小を防ぐ
+        let should_resize = width.is_some() || height.is_some() || is_new;
+        if should_resize {
+            let _ = sub_win.set_size(tauri::Size::Physical(tauri::PhysicalSize {
+                width: win_width.round() as u32,
+                height: win_height.round() as u32,
+            }));
+        }
 
         if let (Some(px), Some(py)) = (x, y) {
             let _ = sub_win.set_position(tauri::Position::Physical(tauri::PhysicalPosition {
                 x: px as i32,
                 y: py as i32,
             }));
-        } else if is_new || !is_visible || (win_width <= 150.0 && win_height <= 150.0) {
+        } else if is_new || !is_visible || (should_resize && win_width <= 150.0 && win_height <= 150.0) {
             // モニター情報を取得して画面右下 (デスクトップの床) に標準配置
             let mut target_x = 200.0;
             let mut target_y = 200.0;

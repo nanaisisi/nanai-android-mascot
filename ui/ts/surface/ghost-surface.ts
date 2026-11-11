@@ -112,7 +112,11 @@ export const ghostSurfaceMethods = {
 		if (isTauriAvailable()) {
 			if (slot) slot.style.display = "none";
 			if (container) container.style.display = "none";
-			if (!isAnimationFrame) {
+			// 既存のウィンドウが開いていない初回等の初期化時のみshow_subchar_windowを先行要求
+			// 通常のサーフィス変更や再読み込み時は、画像デコード後に実サイズと共にshow_subchar_windowが呼ばれるため、
+			// ここでサイズなしのshow_subchar_windowを呼ぶことによる一瞬のデフォルトサイズ縮小・チラつきを防ぐ
+			const isExistingSurface = Boolean(this.currentSurfaces?.has(scopeId));
+			if (!isAnimationFrame && !isExistingSurface) {
 				await invoke("show_subchar_window", { scopeId }).catch(() => {});
 			}
 		} else {

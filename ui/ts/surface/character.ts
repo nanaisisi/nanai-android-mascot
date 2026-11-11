@@ -90,36 +90,95 @@ function initCharacterWindow() {
 
 	let pollTimer: unknown = null;
 
+	let currentImageToken = 0;
+
 	if (isTauriAvailable()) {
 		void listen(
 			`update-subchar-image-${scopeId}`,
 			(/** @type {{ payload?: { src?: string } }} */ event: unknown) => {
-				const src = event.payload?.src;
+				const src = (event as { payload?: { src?: string } })?.payload?.src;
 				if (src && img) {
 					if (pollTimer) {
-						clearInterval(pollTimer);
+						clearInterval(pollTimer as number);
 						pollTimer = null;
 					}
-					img.onload = () => {
+
+					const token = ++currentImageToken;
+
+					// メモリ内で事前デコードしてから反映するアトミックスワップ（画面縮小・チラつき防止）
+					const applyDecodedImage = (
+						targetImg:
+							| HTMLImageElement
+							| ImageBitmap
+							| { naturalWidth: number; naturalHeight: number },
+					) => {
+						if (token !== currentImageToken) return;
+						const width =
+							(targetImg as HTMLImageElement).naturalWidth ||
+							(targetImg as { width?: number }).width ||
+							0;
+						const height =
+							(targetImg as HTMLImageElement).naturalHeight ||
+							(targetImg as { height?: number }).height ||
+							0;
+
+						img.src = src;
 						img.style.visibility = "visible";
 						img.style.display = "block";
-						if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+
+						if (width > 0 && height > 0) {
+							void invoke("show_subchar_window", {
+								scopeId,
+								width,
+								height,
+							}).catch(() => {});
+						}
+					};
+
+					if (typeof Image !== "undefined") {
+						const preloader = new Image();
+						preloader.onload = () => {
+							if (typeof preloader.decode === "function") {
+								preloader
+									.decode()
+									.then(() => applyDecodedImage(preloader))
+									.catch(() => applyDecodedImage(preloader));
+							} else {
+								applyDecodedImage(preloader);
+							}
+						};
+						preloader.onerror = () => {
+							if (token !== currentImageToken) return;
+							img.src = src;
+							img.style.visibility = "visible";
+							img.style.display = "block";
+						};
+						preloader.src = src;
+						if (preloader.complete && preloader.naturalWidth > 0) {
+							applyDecodedImage(preloader);
+						}
+					} else {
+						img.onload = () => {
+							img.style.visibility = "visible";
+							img.style.display = "block";
+							if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+								void invoke("show_subchar_window", {
+									scopeId,
+									width: img.naturalWidth,
+									height: img.naturalHeight,
+								}).catch(() => {});
+							}
+						};
+						img.src = src;
+						img.style.visibility = "visible";
+						img.style.display = "block";
+						if (img.complete && img.naturalWidth > 0) {
 							void invoke("show_subchar_window", {
 								scopeId,
 								width: img.naturalWidth,
 								height: img.naturalHeight,
 							}).catch(() => {});
 						}
-					};
-					img.src = src;
-					img.style.visibility = "visible";
-					img.style.display = "block";
-					if (img.complete && img.naturalWidth > 0) {
-						void invoke("show_subchar_window", {
-							scopeId,
-							width: img.naturalWidth,
-							height: img.naturalHeight,
-						}).catch(() => {});
 					}
 				} else if (img) {
 					img.style.display = "none";

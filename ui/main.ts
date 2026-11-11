@@ -42,11 +42,11 @@ export class NanaiAndroidMascotApp {
 		throw new Error("Method not implemented.");
 	}
 	sendUpdateResultSummary(
-		_ghostName: string,
-		_arg1: boolean,
-		_arg2: string,
-		_arg3: null,
-		_p0: boolean,
+		_ghostName?: string,
+		_success?: boolean,
+		_detail?: number | string,
+		_failedFile?: string | null,
+		_checkOnly?: boolean,
 	) {
 		throw new Error("Method not implemented.");
 	}

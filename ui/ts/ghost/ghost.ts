@@ -20,7 +20,10 @@ export class GhostController {
 		script: string,
 		scope?: string | number,
 	) => Promise<unknown>;
-	declare sendBalloonCloseNotify?: (script: string, scopeId?: number | string) => Promise<unknown>;
+	declare sendBalloonCloseNotify?: (
+		script: string,
+		scopeId?: number | string,
+	) => Promise<unknown>;
 	declare sendBalloonBreakNotify?: (
 		script?: string,
 		scopeId?: number | string,

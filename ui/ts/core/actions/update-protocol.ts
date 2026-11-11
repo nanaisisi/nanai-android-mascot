@@ -244,8 +244,10 @@ export function createUpdateProgressHandler(
 	const eventMap = isOther
 		? OTHER_PROGRESS_PHASE_EVENTS
 		: PROGRESS_PHASE_EVENTS;
-	return (event: { payload?: { phase?: string; path?: string } }) => {
-		const { phase, path: filePath } = event?.payload || {};
+	return (event: unknown) => {
+		const payload = (event as { payload?: { phase?: string; path?: string } })
+			?.payload;
+		const { phase, path: filePath } = payload || {};
 		if (!filePath) return;
 		const evName = phase ? eventMap[phase] : undefined;
 		if (evName && gc?.sendShioriEvent) {

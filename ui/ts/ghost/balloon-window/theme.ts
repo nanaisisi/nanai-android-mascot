@@ -137,6 +137,12 @@ export async function applyBalloonDescript({
 	currentUserScale,
 	onDpiScaleChange,
 	onDontMoveChange,
+}: {
+	theme: string;
+	scopeId: number;
+	currentUserScale?: number;
+	onDpiScaleChange?: (scale: number) => void;
+	onDontMoveChange?: (dontMove: boolean) => void;
 }) {
 	if (!isTauriAvailable()) return null;
 

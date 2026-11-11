@@ -6,6 +6,9 @@ import { surfaceRenderMethods } from "./surface-render.js";
  * Nanai Android Mascot - surfaces.txt パーサー & 当たり判定（Collision）マネージャー
  */
 export class SurfaceManager {
+	bindDressup(_category: string, _part: unknown, _arg2: string, _scopeId: number) {
+		throw new Error("Method not implemented.");
+	}
 	detectCollision(
 		_clientX: number,
 		_clientY: number,

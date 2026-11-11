@@ -5,6 +5,19 @@ import {
 } from "./actions/update-protocol.js";
 import { invoke, isTauriAvailable, listen } from "./tauri-helper.js";
 
+interface GhostUpdateCheckResult {
+	has_update: boolean;
+	total_count: number;
+	update_files: Array<{ path: string; [key: string]: unknown }>;
+	message: string;
+}
+
+interface GhostUpdateExecutionResult {
+	success: boolean;
+	updated_files: string[];
+	reason?: string;
+}
+
 /**
  * ネットワーク更新制御モジュール
  */
@@ -13,9 +26,9 @@ export const updateMethods = {
 		targetGhostName: string | null = null,
 		options: { checkOnly?: boolean } = {},
 	) {
-		const gc = (
-			this as unknown as import("../../main.js").NanaiAndroidMascotApp
-		).ghostController;
+		const app =
+			this as unknown as import("../../main.js").NanaiAndroidMascotApp;
+		const gc = app.ghostController;
 		const checkOnly = options?.checkOnly === true;
 		const ghostName =
 			targetGhostName || gc.currentGhost?.name || "とらふぃっく☆とれいん";
@@ -24,9 +37,9 @@ export const updateMethods = {
 
 		console.log(`🌐 ネットワーク更新プロセス開始: ${ghostName}`);
 
-		const execRes: unknown = await gc.sendShioriEvent("OnUpdateProcessExec", [
+		const execRes = (await gc.sendShioriEvent("OnUpdateProcessExec", [
 			"manual",
-		]);
+		])) as { script?: string } | undefined;
 		if (execRes?.script?.trim()) {
 			console.log(
 				"OnUpdateProcessExec でスクリプトが返されたため標準処理を委譲",
@@ -41,39 +54,29 @@ export const updateMethods = {
 			);
 		}
 
-		(
-			this as unknown as import("../../main.js").NanaiAndroidMascotApp
-		).showBalloon?.("🌐 ネットワーク更新を確認中...");
+		app.showBalloon?.("🌐 ネットワーク更新を確認中...");
 
 		if (!isTauriAvailable()) {
-			(this as unknown as import("../../main.js").NanaiAndroidMascotApp).wait(
-				1500,
-			);
-			(
-				this as unknown as import("../../main.js").NanaiAndroidMascotApp
-			).showBalloon?.(
+			app.wait(1500);
+			app.showBalloon?.(
 				"⚠️ ブラウザ環境のためネットワーク更新はシミュレーションのみです",
 			);
 			await gc.sendShioriEvent("OnUpdateFailure", buildUpdateArgs("fileio"));
-			(
-				this as unknown as import("../../main.js").NanaiAndroidMascotApp
-			).sendUpdateResultSummary(ghostName, false, "fileio", null);
+			app.sendUpdateResultSummary(ghostName, false, "fileio", null);
 			return;
 		}
 
 		try {
-			const checkResult: unknown = await invoke("check_ghost_update", {
+			const checkResult = (await invoke("check_ghost_update", {
 				ghostName,
 				ghostPath,
-			});
+			})) as GhostUpdateCheckResult;
 			console.log("🔍 更新チェック結果:", checkResult);
 
-			const fileNames = checkResult.update_files.map((f: unknown) => f.path);
+			const fileNames = (checkResult.update_files || []).map((f) => f.path);
 
 			if (checkOnly) {
-				(
-					this as unknown as import("../../main.js").NanaiAndroidMascotApp
-				).showBalloon?.(checkResult.message);
+				app.showBalloon?.(checkResult.message);
 				await gc.sendShioriEvent(
 					"OnUpdateCheckComplete",
 					buildUpdateArgs(
@@ -81,9 +84,7 @@ export const updateMethods = {
 						fileNames.join(","),
 					),
 				);
-				(
-					this as unknown as import("../../main.js").NanaiAndroidMascotApp
-				).sendUpdateResultSummary(
+				app.sendUpdateResultSummary(
 					ghostName,
 					true,
 					checkResult.has_update ? checkResult.total_count : 0,
@@ -95,13 +96,9 @@ export const updateMethods = {
 
 			if (!checkResult.has_update || checkResult.update_files.length === 0) {
 				console.log("✨ 更新ファイルなし (none)");
-				(
-					this as unknown as import("../../main.js").NanaiAndroidMascotApp
-				).showBalloon?.("✨ 最新の状態です。更新ファイルはありません。");
+				app.showBalloon?.("✨ 最新の状態です。更新ファイルはありません。");
 				await gc.sendShioriEvent("OnUpdateComplete", buildUpdateArgs("none"));
-				(
-					this as unknown as import("../../main.js").NanaiAndroidMascotApp
-				).sendUpdateResultSummary(ghostName, true, 0, null);
+				app.sendUpdateResultSummary(ghostName, true, 0, null);
 				return;
 			}
 
@@ -112,9 +109,7 @@ export const updateMethods = {
 				buildUpdateArgs(totalMinusOne, fileListStr),
 			);
 
-			(
-				this as unknown as import("../../main.js").NanaiAndroidMascotApp
-			).showBalloon?.(
+			app.showBalloon?.(
 				`📥 更新ファイル ${checkResult.total_count} 件をダウンロード中...`,
 			);
 
@@ -130,17 +125,17 @@ export const updateMethods = {
 			}
 
 			try {
-				const updateResult: unknown = await invoke("execute_ghost_update", {
+				const updateResult = (await invoke("execute_ghost_update", {
 					ghostName,
 					ghostPath,
-				});
+				})) as GhostUpdateExecutionResult;
 				console.log("🚀 更新実行結果:", updateResult);
 
 				if (updateResult.success) {
 					console.log("🔄 更新成功。ゴーストとSHIORIを再読み込みします...");
 					gc.selectGhost(ghostName);
 
-					const updatedFilesStr = updateResult.updated_files.join(",");
+					const updatedFilesStr = (updateResult.updated_files || []).join(",");
 					await gc.sendShioriEvent(
 						"OnUpdateComplete",
 						buildUpdateArgs(updateResult.reason || "changed", updatedFilesStr),
@@ -153,9 +148,7 @@ export const updateMethods = {
 							ghostName,
 						]);
 					}
-					(
-						this as unknown as import("../../main.js").NanaiAndroidMascotApp
-					).sendUpdateResultSummary(
+					app.sendUpdateResultSummary(
 						ghostName,
 						true,
 						updateResult.updated_files.length,
@@ -170,12 +163,8 @@ export const updateMethods = {
 							updateResult.updated_files?.join(",") ?? "",
 						),
 					);
-					(
-						this as unknown as import("../../main.js").NanaiAndroidMascotApp
-					).showBalloon?.(`❌ ネットワーク更新失敗: ${failureReason}`);
-					(
-						this as unknown as import("../../main.js").NanaiAndroidMascotApp
-					).sendUpdateResultSummary(
+					app.showBalloon?.(`❌ ネットワーク更新失敗: ${failureReason}`);
+					app.sendUpdateResultSummary(
 						ghostName,
 						false,
 						failureReason,
@@ -200,22 +189,14 @@ export const updateMethods = {
 					"OnUpdateCheckFailure",
 					buildUpdateArgs(reason),
 				);
-				(
-					this as unknown as import("../../main.js").NanaiAndroidMascotApp
-				).showBalloon?.(`❌ 更新チェック失敗: ${reason}`);
-				(
-					this as unknown as import("../../main.js").NanaiAndroidMascotApp
-				).sendUpdateResultSummary(ghostName, false, reason, null, true);
+				app.showBalloon?.(`❌ 更新チェック失敗: ${reason}`);
+				app.sendUpdateResultSummary(ghostName, false, reason, null, true);
 				return;
 			}
 
 			await gc.sendShioriEvent("OnUpdateFailure", buildUpdateArgs(reason));
-			(
-				this as unknown as import("../../main.js").NanaiAndroidMascotApp
-			).sendUpdateResultSummary(ghostName, false, reason, failedFile);
-			(
-				this as unknown as import("../../main.js").NanaiAndroidMascotApp
-			).showBalloon?.(`❌ 更新処理中にエラーが発生しました: ${err}`);
+			app.sendUpdateResultSummary(ghostName, false, reason, failedFile);
+			app.showBalloon?.(`❌ 更新処理中にエラーが発生しました: ${err}`);
 		}
 	},
 
@@ -230,17 +211,17 @@ export const updateMethods = {
 		failedFile: string | null,
 		checkOnly: boolean = false,
 	) {
-		const gc = (
-			this as unknown as import("../../main.js").NanaiAndroidMascotApp
-		).ghostController;
+		const app =
+			this as unknown as import("../../main.js").NanaiAndroidMascotApp;
+		const gc = app.ghostController;
 		const sep = String.fromCharCode(1); // \1 (バイト値1)
 		const parts = ["ghost", success ? "OK" : "NG", String(detail)];
 		if (failedFile) parts.push(failedFile);
 		const baseEvent = checkOnly ? "OnUpdateCheckResult" : "OnUpdateResult";
 
-		const resEx: unknown = await gc.sendShioriEvent(`${baseEvent}Ex`, [
+		const resEx = (await gc.sendShioriEvent(`${baseEvent}Ex`, [
 			[ghostName, ...parts].join(sep),
-		]);
+		])) as { script?: string } | undefined;
 		if (!resEx?.script?.trim()) {
 			await gc.sendShioriEvent(baseEvent, [parts.join(sep)]);
 		}

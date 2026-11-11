@@ -69,12 +69,12 @@ export class SurfaceFrameBuffer {
 	static fromImageData(imageData: {
 		width: unknown;
 		height: unknown;
-		data: null | undefined;
+		data: unknown;
 	}) {
 		return new SurfaceFrameBuffer(
-			imageData.width,
-			imageData.height,
-			imageData.data,
+			Number(imageData.width),
+			Number(imageData.height),
+			imageData.data as unknown as Uint8ClampedArray<ArrayBuffer>,
 		);
 	}
 
@@ -86,14 +86,21 @@ export class SurfaceFrameBuffer {
 	static fromCanvas(canvas: {
 		getContext: (
 			arg0: string,
-			arg1: { willReadFrequently: boolean },
+			arg1?: { willReadFrequently: boolean },
 		) => unknown;
 		width: unknown;
 		height: unknown;
 	}) {
-		const ctx = canvas.getContext("2d", { willReadFrequently: true });
+		const ctx = canvas.getContext("2d", { willReadFrequently: true }) as
+			| CanvasRenderingContext2D
+			| null;
 		if (!ctx) return null;
-		const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+		const imgData = ctx.getImageData(
+			0,
+			0,
+			Number(canvas.width),
+			Number(canvas.height),
+		);
 		return SurfaceFrameBuffer.fromImageData(imgData);
 	}
 

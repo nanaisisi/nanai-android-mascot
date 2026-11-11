@@ -1,3 +1,8 @@
+/**
+ * @file compose.ts
+ * @brief サーフィス画像レイヤー合成処理
+ */
+
 import { drawImageLayer, loadLayerImage } from "./layer.js";
 
 export function composeSurfaceElements(
@@ -42,7 +47,16 @@ export function composeSurfaceElements(
 
 				ctx.drawImage(baseImg, 0, 0);
 
-				const allElements = [...(elementList || []), ...(bindLayers || [])];
+				const allElements = [
+					...(elementList || []),
+					...(bindLayers || []),
+				] as Array<{
+					file?: string;
+					x?: number;
+					y?: number;
+					type?: string;
+					[key: string]: unknown;
+				}>;
 				const loadPromises = allElements.map((el) =>
 					el.file
 						? loadLayerImage(el.file, resolveImagePath)
@@ -56,7 +70,13 @@ export function composeSurfaceElements(
 					const img = loadedImages[i];
 					if (!img || !element.file) continue;
 
-					drawImageLayer(ctx, img, element.x, element.y, element.type);
+					drawImageLayer(
+						ctx,
+						img,
+						element.x || 0,
+						element.y || 0,
+						element.type || "overlay",
+					);
 				}
 
 				const dataUrl = canvas.toDataURL("image/png");

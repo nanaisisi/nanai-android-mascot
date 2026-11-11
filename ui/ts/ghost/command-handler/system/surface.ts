@@ -93,15 +93,79 @@ export async function handleLeaveMode(handler: unknown, args: string[]) {
 	}
 }
 
-export async function handleGetPropertyCommand(handler: unknown, key: string) {
+/**
+ * プロパティ値取得および \![get,property,イベント名,プロパティ名1,プロパティ名2,...] コマンド
+ * [bang-get-property.md], [property.get.md]
+ */
+export async function handleGetPropertyCommand(
+	handler: unknown,
+	keyOrArgs: string | string[],
+) {
+	// 1. 配列指定時の \![get,property,eventName,...propKeys] 形式
+	if (Array.isArray(keyOrArgs)) {
+		const rawArgs =
+			keyOrArgs[0]?.toLowerCase() === "get" ? keyOrArgs.slice(1) : keyOrArgs;
+		const eventName = rawArgs[1] ?? "";
+		const propKeys = rawArgs.slice(2);
+		if (!eventName || propKeys.length === 0) {
+			return;
+		}
+
+		const values: string[] = [];
+		for (const prop of propKeys) {
+			const trimmedProp = prop.trim();
+			let val = "";
+			if (handler?.app?.ghostController?.evaluateProperty) {
+				try {
+					val = String(
+						(await handler.app.ghostController.evaluateProperty(trimmedProp)) ??
+							"",
+					);
+				} catch {
+					val = "";
+				}
+			} else if (handler?.app?.ghostController?.sendShioriEvent) {
+				try {
+					const res: unknown =
+						await handler.app.ghostController.sendShioriEvent("property.get", [
+							trimmedProp,
+						]);
+					val =
+						(res as { response?: { value?: string } })?.response?.value ?? "";
+				} catch {
+					val = "";
+				}
+			}
+			if (!val) {
+				val = scriptLifetimeState.getVariable(trimmedProp) ?? "";
+			}
+			values.push(val);
+		}
+
+		if (handler?.app?.ghostController?.sendShioriEvent) {
+			await handler.app.ghostController.sendShioriEvent(eventName, values);
+		}
+		return;
+	}
+
+	// 2. 単一プロパティ名取得時のフォールバック
+	const key = keyOrArgs;
 	if (!key) return "";
+	if (handler?.app?.ghostController?.evaluateProperty) {
+		try {
+			const res = await handler.app.ghostController.evaluateProperty(key);
+			if (res !== undefined && res !== null) return String(res);
+		} catch {
+			// fall through
+		}
+	}
 	if (handler?.app?.ghostController?.sendShioriEvent) {
 		try {
 			const res: unknown = await handler.app.ghostController.sendShioriEvent(
 				"property.get",
 				[key],
 			);
-			return res?.response?.value ?? "";
+			return (res as { response?: { value?: string } })?.response?.value ?? "";
 		} catch {
 			return "";
 		}

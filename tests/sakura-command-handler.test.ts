@@ -6,3 +6,4 @@ import "./sakura-command-handler/env-variables.test.js";
 import "./sakura-command-handler/cycle6-commands.test.js";
 import "./sakura-command-handler/cycle9-commands.test.js";
 import "./sakura-command-handler/cycle10-commands.test.js";
+import "./sakura-command-handler/cycle11-commands.test.js";

@@ -6,6 +6,7 @@ import {
 	handleExecuteResetBalloonPos,
 	handleExecuteResetWindowPos,
 	handleExecuteSntpCommand,
+	handleGetPropertyCommand,
 	handleLeaveMode,
 	handleLoadMakoto,
 	handleNotifyCommand,
@@ -100,6 +101,13 @@ export function registerSystemCommandHandlers() {
 	});
 	registerCommandHandler("set:property", async (handler, args) => {
 		handleSetPropertyCommand(handler, args);
+	});
+
+	registerCommandHandler("getproperty", async (handler, args) => {
+		await handleGetPropertyCommand(handler, args);
+	});
+	registerCommandHandler("get:property", async (handler, args) => {
+		await handleGetPropertyCommand(handler, args);
 	});
 
 	registerCommandHandler("setserikotalk", async (handler, args) => {

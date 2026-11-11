@@ -10,15 +10,18 @@ import {
 } from "../../core/tauri-helper.js";
 import { updateBalloonWindowScale } from "./scale.js";
 
+export interface WindowGestureOptions {
+	scopeId: number;
+	getIsBalloonDontMove: () => boolean;
+	getUserScale: () => number;
+	getDpiScale: () => number;
+	onUserScaleChange: (newScale: number) => void;
+}
+
 /**
  * バルーンウィンドウのマウス・タッチジェスチャーを設定
  * @param {HTMLElement | null} balloonBox
- * @param {object} options
- * @param {number} options.scopeId
- * @param {() => boolean} options.getIsBalloonDontMove
- * @param {() => number} options.getUserScale
- * @param {() => number} options.getDpiScale
- * @param {(newScale: number) => void} options.onUserScaleChange
+ * @param {WindowGestureOptions} options
  */
 export function setupWindowGestures(
 	balloonBox: HTMLElement | null,
@@ -28,7 +31,7 @@ export function setupWindowGestures(
 		getUserScale,
 		getDpiScale,
 		onUserScaleChange,
-	}: unknown,
+	}: WindowGestureOptions,
 ) {
 	if (!balloonBox) return;
 
@@ -60,7 +63,7 @@ export function setupWindowGestures(
 
 	// ドラッグ移動 (Tauri v2 startDragging)
 	let isDragging = false;
-	balloonBox.addEventListener("mousedown", (e: { button: number }) => {
+	balloonBox.addEventListener("mousedown", (e: MouseEvent) => {
 		if (e.button === 0 && !getIsBalloonDontMove()) {
 			isDragging = true;
 			void startDraggingWindow();
@@ -101,7 +104,7 @@ export function setupWindowGestures(
 
 	balloonBox.addEventListener(
 		"touchstart",
-		(e: { touches: string | unknown[] }) => {
+		(e: TouchEvent) => {
 			if (e.touches.length === 1) {
 				const now = Date.now();
 				// ダブルタップでバルーン倍率切替 (100% <-> 125%)
@@ -140,7 +143,7 @@ export function setupWindowGestures(
 
 	balloonBox.addEventListener(
 		"touchmove",
-		(e: { touches: string | unknown[] }) => {
+		(e: TouchEvent) => {
 			if (e.touches.length === 2 && touchStartDistance > 0) {
 				const dx = e.touches[0].clientX - e.touches[1].clientX;
 				const dy = e.touches[0].clientY - e.touches[1].clientY;
@@ -162,7 +165,7 @@ export function setupWindowGestures(
 
 	balloonBox.addEventListener(
 		"touchend",
-		(e: { touches: string | unknown[] }) => {
+		(e: TouchEvent) => {
 			if (e.touches.length === 0) {
 				if (touchStartDistance > 0) {
 					const finalScale = getUserScale();

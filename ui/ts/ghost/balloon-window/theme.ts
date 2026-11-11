@@ -150,11 +150,11 @@ export async function applyBalloonDescript({
 		document.documentElement.setAttribute("data-balloon-theme", theme);
 		document.body.className = `balloon-theme-${theme}`;
 
-		const props = await invoke("balloon_manifest", {
+		const rawProps = await invoke("balloon_manifest", {
 			name: theme,
 			scopeId,
 		}).catch(() => null);
-		if (!props || typeof props !== "object") {
+		if (!rawProps || typeof rawProps !== "object") {
 			if (theme !== "default" && theme !== "nsm") {
 				return await applyBalloonDescript({
 					theme: "nsm",
@@ -166,16 +166,17 @@ export async function applyBalloonDescript({
 			}
 			return null;
 		}
+		const props = rawProps as Record<string, string>;
 		const balloonBox = document.getElementById("balloon-box");
 		const root = document.documentElement;
 
 		// 推奨 DPI (dpi,推奨DPI / 既定値: 96, SSP 2.7.21準拠)
-		const parsedDpi = parseInt(props.dpi, 10);
+		const parsedDpi = parseInt(props.dpi || props.推奨DPI || "96", 10);
 		const balloonDpi =
 			!Number.isNaN(parsedDpi) && parsedDpi > 0 ? parsedDpi : 96;
 		const nextDpiScale = +(96 / balloonDpi).toFixed(4);
 		root.style.setProperty("--balloon-dpi", String(balloonDpi));
-		updateBalloonWindowScale(balloonBox, currentUserScale, nextDpiScale);
+		updateBalloonWindowScale(balloonBox, currentUserScale || 1, nextDpiScale);
 		onDpiScaleChange?.(nextDpiScale);
 
 		const instanceContext = {
@@ -192,7 +193,7 @@ export async function applyBalloonDescript({
 
 		const isBalloonDontMove =
 			props["balloon.dontmove"] === "1" ||
-			Boolean(instanceContext.balloonDontMove);
+			Boolean((instanceContext as { balloonDontMove?: boolean }).balloonDontMove);
 		onDontMoveChange?.(isBalloonDontMove);
 
 		// 折り返し幅 (wordwrappoint.x は原点右基準の負オフセット指定)

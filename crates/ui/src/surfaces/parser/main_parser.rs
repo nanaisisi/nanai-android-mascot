@@ -1,9 +1,8 @@
 //! `surfaces.txt` メインパーサー関数
 
 use super::helpers::{
-    BlockKind, handle_alias_line, handle_char_alias_line, handle_cursor_line,
-    handle_descript_line, handle_root_line, handle_surface_line, handle_tooltip_line,
-    parse_block_opener, prepare_block,
+    BlockKind, handle_alias_line, handle_char_alias_line, handle_cursor_line, handle_descript_line,
+    handle_root_line, handle_surface_line, handle_tooltip_line, parse_block_opener, prepare_block,
 };
 use crate::surfaces::types::SurfacesTxt;
 

@@ -290,6 +290,14 @@ fn test_ast_cycle10_map_commands_extract_text_and_diagnostics() {
         other => other.clone(),
     });
     let collected = mapped_ast.collect_commands();
-    assert!(collected.iter().any(|c| matches!(c, SakuraCommand::Wait(10))));
-    assert!(!collected.iter().any(|c| matches!(c, SakuraCommand::Wait(500))));
+    assert!(
+        collected
+            .iter()
+            .any(|c| matches!(c, SakuraCommand::Wait(10)))
+    );
+    assert!(
+        !collected
+            .iter()
+            .any(|c| matches!(c, SakuraCommand::Wait(500)))
+    );
 }

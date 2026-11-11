@@ -46,7 +46,10 @@ pub fn load_surface_image(
     let base_ghost_path =
         resolve_asset_path(&clean_gp, &app_handle).unwrap_or_else(|_| PathBuf::from(&clean_gp));
 
-    println!("🖼️ [Rust File] load_surface_image: ghost_path={}, shell={}, surface={}, base_path={:?}", ghost_path, shell_name, surface_id, base_ghost_path);
+    println!(
+        "🖼️ [Rust File] load_surface_image: ghost_path={}, shell={}, surface={}, base_path={:?}",
+        ghost_path, shell_name, surface_id, base_ghost_path
+    );
 
     let shell_dir = base_ghost_path.join("shell").join(&shell_name);
     let master_dir = base_ghost_path.join("shell").join("master");
@@ -92,7 +95,11 @@ pub fn load_surface_image(
             && target.is_file()
             && let Ok(bytes) = fs::read(&target)
         {
-            println!("✅ [Rust File] load_surface_image 発見・ロード成功: path={:?}, size={}", target, bytes.len());
+            println!(
+                "✅ [Rust File] load_surface_image 発見・ロード成功: path={:?}, size={}",
+                target,
+                bytes.len()
+            );
             let ext = target
                 .extension()
                 .and_then(|e| e.to_str())
@@ -132,14 +139,20 @@ pub fn load_surface_image(
             && target.is_file()
             && let Ok(bytes) = fs::read(&target)
         {
-            println!("🔄 [Rust File] load_surface_image: surface{} 個別ファイル未検出のため適切なスコープフォールバックを利用します: {:?}", surface_id, target);
+            println!(
+                "🔄 [Rust File] load_surface_image: surface{} 個別ファイル未検出のため適切なスコープフォールバックを利用します: {:?}",
+                surface_id, target
+            );
             use base64::Engine;
             let b64 = base64::engine::general_purpose::STANDARD.encode(&bytes);
             return Ok(format!("data:image/png;base64,{b64}"));
         }
     }
 
-    println!("⚠️ [Rust File] load_surface_image: 指定されたサーフィス画像が見つかりません (surface_id={}, shell={}).", surface_id, shell_name);
+    println!(
+        "⚠️ [Rust File] load_surface_image: 指定されたサーフィス画像が見つかりません (surface_id={}, shell={}).",
+        surface_id, shell_name
+    );
     Err(format!(
         "Surface image not found for surface_id: {surface_id} in shell: {shell_name}"
     ))

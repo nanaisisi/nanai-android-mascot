@@ -96,7 +96,9 @@ pub async fn show_menu_window(
             .maximizable(false)
             .minimizable(false)
             .position(target_x, target_y)
-            .initialization_script("window.addEventListener('contextmenu', function(e) { e.preventDefault(); });")
+            .initialization_script(
+                "window.addEventListener('contextmenu', function(e) { e.preventDefault(); });",
+            )
             .build()
             .map_err(|e| e.to_string())?;
 

@@ -93,7 +93,9 @@ pub async fn preload_auxiliary_windows(app_handle: tauri::AppHandle) -> Result<(
                 .maximizable(false)
                 .minimizable(false)
                 .visible(false)
-                .initialization_script("window.addEventListener('contextmenu', function(e) { e.preventDefault(); });")
+                .initialization_script(
+                    "window.addEventListener('contextmenu', function(e) { e.preventDefault(); });",
+                )
                 .build();
             }
         }

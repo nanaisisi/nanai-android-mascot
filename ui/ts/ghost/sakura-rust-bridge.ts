@@ -250,9 +250,9 @@ export function rustCommandsToTokens(
 
 export async function parseSakuraScriptAsync(
 	script: string,
-): Promise<SakuraScriptToken[]> {
+): Promise<SakuraScriptToken[] | undefined> {
 	if (!isTauriAvailable()) {
-		return [];
+		return undefined;
 	}
 	try {
 		const res = (await invoke("parse_sakura_script", { script })) as
@@ -264,6 +264,6 @@ export async function parseSakuraScriptAsync(
 		return [];
 	} catch (e) {
 		console.warn("Rust Sakura parser fallback to JS:", e);
-		return [];
+		return undefined;
 	}
 }

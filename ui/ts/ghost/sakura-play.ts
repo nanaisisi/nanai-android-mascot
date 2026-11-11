@@ -50,11 +50,11 @@ export async function playScript(player: SakuraScriptPlayer, script: string) {
 	player.isSyncMode = false;
 	player.lastScript = script;
 	if (player.choiceTimeoutTimer) {
-		clearTimeout(player.choiceTimeoutTimer);
+		clearTimeout(player.choiceTimeoutTimer as ReturnType<typeof setTimeout>);
 		player.choiceTimeoutTimer = null;
 	}
 	if (player.balloonTimeoutTimer) {
-		clearTimeout(player.balloonTimeoutTimer);
+		clearTimeout(player.balloonTimeoutTimer as ReturnType<typeof setTimeout>);
 		player.balloonTimeoutTimer = null;
 	}
 
@@ -165,43 +165,55 @@ export async function playScript(player: SakuraScriptPlayer, script: string) {
 
 	const choiceTimeout = Number(player.choiceTimeout ?? 0);
 	if (hasChoices && choiceTimeout > 0) {
-		if (player.choiceTimeoutTimer) clearTimeout(player.choiceTimeoutTimer);
-		player.choiceTimeoutTimer = setTimeout(() => {
-			if (player.playbackId === currentId) {
-				player.onChoiceTimeout?.();
-			}
-		}, choiceTimeout);
+		if (player.choiceTimeoutTimer) {
+			clearTimeout(player.choiceTimeoutTimer as ReturnType<typeof setTimeout>);
+		}
+		player.choiceTimeoutTimer = setTimeout(
+			() => {
+				if (player.playbackId === currentId) {
+					player.onChoiceTimeout?.();
+				}
+			},
+			Number(choiceTimeout),
+		);
 	}
 
 	const balloonTimeout = Number(player.balloonTimeout ?? 0);
 	if (!hasChoices && !player.timeCritical && balloonTimeout > 0) {
-		if (player.balloonTimeoutTimer) clearTimeout(player.balloonTimeoutTimer);
-		player.balloonTimeoutTimer = setTimeout(async () => {
-			if (player.playbackId === currentId && !player.isPlaying) {
-				try {
-					if (sakuraDisplay) sakuraDisplay.style.display = "none";
-					if (keroDisplay) keroDisplay.style.display = "none";
-					app.hideBalloon?.(0, "timeout");
-					app.hideBalloon?.(1, "timeout");
-					if (app.ghostController?.sendBalloonTimeoutNotify) {
-						await app.ghostController.sendBalloonTimeoutNotify(
-							player.lastScript || "",
-							"0",
-						);
-					} else {
-						await app.ghostController?.sendShioriEvent?.("OnBalloonTimeout", [
-							player.lastScript || "",
-							"0",
-						]);
-					}
-					if (app.ghostController?.sendBalloonCloseNotify) {
-						await app.ghostController.sendBalloonCloseNotify(
-							player.lastScript || "",
-						);
-					}
-				} catch (_e) {}
-			}
-		}, balloonTimeout);
+		if (player.balloonTimeoutTimer) {
+			clearTimeout(
+				player.balloonTimeoutTimer as ReturnType<typeof setTimeout>,
+			);
+		}
+		player.balloonTimeoutTimer = setTimeout(
+			async () => {
+				if (player.playbackId === currentId && !player.isPlaying) {
+					try {
+						if (sakuraDisplay) sakuraDisplay.style.display = "none";
+						if (keroDisplay) keroDisplay.style.display = "none";
+						app.hideBalloon?.(0, "timeout");
+						app.hideBalloon?.(1, "timeout");
+						if (app.ghostController?.sendBalloonTimeoutNotify) {
+							await app.ghostController.sendBalloonTimeoutNotify(
+								player.lastScript || "",
+								"0",
+							);
+						} else {
+							await app.ghostController?.sendShioriEvent?.(
+								"OnBalloonTimeout",
+								[player.lastScript || "", "0"],
+							);
+						}
+						if (app.ghostController?.sendBalloonCloseNotify) {
+							await app.ghostController.sendBalloonCloseNotify(
+								player.lastScript || "",
+							);
+						}
+					} catch (_e) {}
+				}
+			},
+			Number(balloonTimeout),
+		);
 	} else if (!hasChoices && !player.timeCritical && isTauriAvailable()) {
 		setTimeout(() => {
 			if (player.playbackId === currentId && !player.isPlaying) {

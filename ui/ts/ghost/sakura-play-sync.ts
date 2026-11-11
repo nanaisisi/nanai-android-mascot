@@ -1,17 +1,22 @@
-// @ts-nocheck
 /**
- * @file sakura-play-sync.js
+ * @file sakura-play-sync.ts
  * @brief さくらスクリプト再生時の独立バルーンウィンドウ同期ヘルパー
  */
-import { emit, isTauriAvailable } from "../core/tauri-helper.js";
 
-// @ts-nocheck
-/**
- * デスクトップ環境（Tauri）における独立バルーンウィンドウへのコンテンツ同期を管理します。
- * 同一ターン内の連続更新をまとめつつ、遅延なく同期イベントを発火します。
- */
-export function createBalloonSyncManager(player, app, sakuraText, keroText) {
-	const syncPendingScopes = new Set();
+import type { NanaiAndroidMascotApp } from "../../main.js";
+import { emit, isTauriAvailable } from "../core/tauri-helper.js";
+import type { SakuraPlaybackController } from "./sakura-play/controller.js";
+import type { SakuraScriptPlayer } from "./sakura-script.js";
+
+type PlayTarget = SakuraScriptPlayer | SakuraPlaybackController;
+
+export function createBalloonSyncManager(
+	player: PlayTarget,
+	app: NanaiAndroidMascotApp,
+	sakuraText: HTMLElement | null | undefined,
+	keroText: HTMLElement | null | undefined,
+) {
+	const syncPendingScopes = new Set<number>();
 	let syncQueued = false;
 
 	const flushDesktopBalloon = () => {
@@ -28,8 +33,8 @@ export function createBalloonSyncManager(player, app, sakuraText, keroText) {
 	};
 
 	const scheduleDesktopBalloonSync = (
-		immediate = false,
-		targetScope = null,
+		immediate: boolean = false,
+		targetScope?: number | null,
 	) => {
 		if (!isTauriAvailable()) return;
 		const sc = targetScope ?? player.currentScope;

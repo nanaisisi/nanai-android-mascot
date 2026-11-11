@@ -8,7 +8,7 @@ export const shioriNotifyTerms = {
 	 * 利用規約・ダイアログ通知 (UKADOC dialogbox)
 	 */
 	async notifyTermsDialogEvent(
-		this: unknown,
+		this: any,
 		event: "OnGhostTermsAccept" | "OnGhostTermsDecline" | string,
 		references: Array<string | number> = [],
 	) {
@@ -18,25 +18,25 @@ export const shioriNotifyTerms = {
 	/**
 	 * 利用条件受諾通知 (OnGhostTermsAccept) を送信 (UKADOC 規格準拠)
 	 */
-	async sendGhostTermsAcceptNotify(this: unknown, id: string = "") {
+	async sendGhostTermsAcceptNotify(this: any, id: string = "") {
 		return await this.sendShioriNotify("OnGhostTermsAccept", id ? [id] : []);
 	},
 
 	/**
 	 * 利用条件拒否通知 (OnGhostTermsDecline) を送信 (UKADOC 規格準拠)
 	 */
-	async sendGhostTermsDeclineNotify(this: unknown, id: string = "") {
+	async sendGhostTermsDeclineNotify(this: any, id: string = "") {
 		return await this.sendShioriNotify("OnGhostTermsDecline", id ? [id] : []);
 	},
 
 	/**
 	 * ダイアログ関連 SHIORI イベント通知 (UKADOC dialogbox spec)
 	 */
-	async sendGhostTermsAccept(this: unknown, ghostName: string) {
+	async sendGhostTermsAccept(this: any, ghostName: string) {
 		return await this.sendShioriNotify("OnGhostTermsAccept", [ghostName]);
 	},
 
-	async sendGhostTermsDecline(this: unknown, ghostName: string) {
+	async sendGhostTermsDecline(this: any, ghostName: string) {
 		return await this.sendShioriNotify("OnGhostTermsDecline", [ghostName]);
 	},
 };

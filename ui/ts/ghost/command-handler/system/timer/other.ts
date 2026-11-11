@@ -6,7 +6,7 @@
 import { cancelScriptTimer, scheduleScriptTimer } from "./registry.js";
 
 export async function handleTimerRaiseOtherCommand(
-	handler: unknown,
+	handler: any,
 	args: string[],
 ) {
 	const delayMs = Number.parseInt(args[1] ?? "0", 10);

@@ -9,7 +9,7 @@ export const shioriNotifyBoot = {
 	/**
 	 * UKADOC capability Notify イベントを送信 (SHIORI 実行初期)
 	 */
-	async sendCapabilityNotify(this: unknown) {
+	async sendCapabilityNotify(this: any) {
 		if (!isTauriAvailable()) return null;
 		const capabilities = [
 			"request.sender",
@@ -35,7 +35,7 @@ export const shioriNotifyBoot = {
 	/**
 	 * 起動時通知一式を送信 (SHIORI ロード後 / OnBoot 後に呼ぶ)
 	 */
-	async sendBootNotifyEvents(this: unknown) {
+	async sendBootNotifyEvents(this: any) {
 		if (!isTauriAvailable()) return;
 		const ghost = this.currentGhost;
 		if (!ghost) return;
@@ -48,21 +48,21 @@ export const shioriNotifyBoot = {
 
 		await this.sendShioriNotify(
 			"installedghostname",
-			ghosts.map((g: unknown) => g.name),
+			ghosts.map((g: any) => g.name),
 		);
 		await this.sendShioriNotify(
 			"installedsakuraname",
-			ghosts.map((g: unknown) => g.sakura_name || g.name),
+			ghosts.map((g: any) => g.sakura_name || g.name),
 		);
 		// 後方互換性フォールバック（旧コードからの呼出用）
 		// Legacy alias for backward compatibility
 		await this.sendShioriNotify(
 			"installsakuraname",
-			ghosts.map((g: unknown) => g.sakura_name || g.name),
+			ghosts.map((g: any) => g.sakura_name || g.name),
 		);
 
 		const keroNames = ghosts
-			.map((g: unknown) => g.kero_name)
+			.map((g: any) => g.kero_name)
 			.filter((n: string) => Boolean(n?.trim()));
 		if (keroNames.length > 0) {
 			await this.sendShioriNotify("installedkeroname", keroNames);
@@ -73,7 +73,7 @@ export const shioriNotifyBoot = {
 		}
 
 		const ghostPaths = ghosts
-			.map((g: unknown) => g.path)
+			.map((g: any) => g.path)
 			.filter((p: string) => Boolean(p));
 		if (ghostPaths.length > 0) {
 			await this.sendShioriNotify("ghostpathlist", ghostPaths);
@@ -143,11 +143,11 @@ export const shioriNotifyBoot = {
 			);
 		}
 
-		const otherGhosts = ghosts.filter((g: unknown) => g.name !== ghost.name);
+		const otherGhosts = ghosts.filter((g: any) => g.name !== ghost.name);
 		if (otherGhosts.length > 0) {
 			await this.sendShioriNotify(
 				"otherghostname",
-				otherGhosts.map((g: unknown) => g.name),
+				otherGhosts.map((g: any) => g.name),
 			);
 		}
 		await this.sendShioriNotify("ownerghostname", [ghost.name]);

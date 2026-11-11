@@ -17,20 +17,18 @@ import { getCurrentWindow, PhysicalPosition } from "@tauri-apps/api/window";
  * Tauri環境で動作しているかどうかを判定
  */
 export function isTauriAvailable(): boolean {
-	const g = globalThis as unknown as Record<string, unknown>;
+	const g = globalThis as unknown as Record<string, any>;
 	const win =
-		typeof window !== "undefined"
-			? window
-			: (g.window as Record<string, unknown>);
+		typeof window !== "undefined" ? window : (g.window as Record<string, any>);
 	return (
 		!!g.__TAURI__ ||
 		!!g.__TAURI_INTERNALS__ ||
 		!!g.__TAURI_IPC__ ||
 		!!(
 			win?.location &&
-			(win.location.protocol?.startsWith("tauri") ||
-				win.location.hostname === "tauri.localhost" ||
-				win.location.hostname === "tauri.app")
+			((win.location as any).protocol?.startsWith("tauri") ||
+				(win.location as any).hostname === "tauri.localhost" ||
+				(win.location as any).hostname === "tauri.app")
 		)
 	);
 }
@@ -147,9 +145,11 @@ export async function emit(event: string, payload?: unknown): Promise<void> {
 export async function startDraggingWindow(): Promise<void> {
 	if (!isTauriAvailable()) return;
 	try {
-		getCurrentWindow().startDragging().catch((err) => {
-			console.warn("startDraggingWindow failed:", err);
-		});
+		getCurrentWindow()
+			.startDragging()
+			.catch((err) => {
+				console.warn("startDraggingWindow failed:", err);
+			});
 	} catch (err) {
 		console.warn("startDraggingWindow failed:", err);
 	}

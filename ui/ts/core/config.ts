@@ -55,10 +55,10 @@ export const AppConfig: AppConfigSpec = {
  */
 export async function loadAppConfig(): Promise<void> {
 	try {
-		const tauriInternals = (globalThis as Record<string, unknown>)
+		const tauriInternals = (globalThis as Record<string, any>)
 			.__TAURI_INTERNALS__;
 		if (tauriInternals?.invoke) {
-			const config: unknown = await tauriInternals.invoke("get_app_config");
+			const config: any = await tauriInternals.invoke("get_app_config");
 
 			if (config) {
 				if (config.paths) Object.assign(AppConfig.paths, config.paths);

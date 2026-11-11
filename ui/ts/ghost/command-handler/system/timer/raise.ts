@@ -5,7 +5,7 @@
 
 import { cancelScriptTimer, scheduleScriptTimer } from "./registry.js";
 
-export async function handleNotifyCommand(handler: unknown, args: string[]) {
+export async function handleNotifyCommand(handler: any, args: string[]) {
 	const eventName = args[1];
 	if (!eventName) return;
 	const references = args.slice(2);
@@ -29,10 +29,7 @@ export async function handleNotifyCommand(handler: unknown, args: string[]) {
 	}
 }
 
-export async function handleTimerRaiseCommand(
-	handler: unknown,
-	args: string[],
-) {
+export async function handleTimerRaiseCommand(handler: any, args: string[]) {
 	const delayMs = Number.parseInt(args[1] ?? "0", 10);
 	const repeatFlag = Number.parseInt(args[2] ?? "1", 10);
 	const eventName = args[3];
@@ -66,10 +63,7 @@ export async function handleTimerRaiseCommand(
 	scheduleScriptTimer(timerKey, delayMs, repeatFlag, fireEvent);
 }
 
-export async function handleTimerNotifyCommand(
-	handler: unknown,
-	args: string[],
-) {
+export async function handleTimerNotifyCommand(handler: any, args: string[]) {
 	const delayMs = Number.parseInt(args[1] ?? "0", 10);
 	const repeatFlag = Number.parseInt(args[2] ?? "1", 10);
 	const eventName = args[3];

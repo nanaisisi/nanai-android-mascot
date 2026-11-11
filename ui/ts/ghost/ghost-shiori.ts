@@ -3,15 +3,16 @@ import { fromRustResponse } from "./shiori-protocol.js";
 
 export const ghostShioriMethods = {
 	async initializeGhostSHIORI(
-		ghost: unknown,
+		this: any,
+		ghost: any,
 		readinessGatePromise: Promise<unknown> | null = null,
 		isCurrentLoad: () => boolean = () => true,
 	) {
 		if (!isTauriAvailable()) return;
 		try {
 			await invoke("load_ghost", {
-				ghostName: ghost.name,
-				ghostPath: ghost.path,
+				ghostName: ghost?.name,
+				ghostPath: ghost?.path,
 			});
 			if (!isCurrentLoad()) return;
 
@@ -26,37 +27,37 @@ export const ghostShioriMethods = {
 			if (!isCurrentLoad()) return;
 
 			try {
-				const prevGhost = (this as unknown)._previousGhostName || "";
-				let bootRes: unknown = null;
-				if (prevGhost && prevGhost !== ghost.name) {
-					bootRes = await (this as unknown).sendShioriEvent("OnGhostChanged", [
-						ghost.name,
+				const prevGhost = this._previousGhostName || "";
+				let bootRes: any = null;
+				if (prevGhost && prevGhost !== ghost?.name) {
+					bootRes = await this.sendShioriEvent("OnGhostChanged", [
+						ghost?.name,
 						"manual",
 						prevGhost,
 					]);
 				}
 				if (!bootRes || bootRes.status === 204 || !bootRes.value) {
-					bootRes = await (this as unknown).sendShioriEvent("OnBoot");
+					bootRes = await this.sendShioriEvent("OnBoot");
 				}
-				(this as unknown)._previousGhostName = ghost.name;
+				this._previousGhostName = ghost?.name;
 				const scriptText = bootRes?.value || bootRes?.headers?.value;
 				if (bootRes?.status === 200 && scriptText) {
-					(this as unknown).app?.playSakuraScript?.(scriptText);
+					this.app?.playSakuraScript?.(scriptText);
 				}
-				if ((this as unknown).app?.availablePlugins && isTauriAvailable()) {
-					for (const plugin of (this as unknown).app.availablePlugins) {
+				if (this.app?.availablePlugins && isTauriAvailable()) {
+					for (const plugin of this.app.availablePlugins) {
 						invoke("execute_plugin_event", {
 							request: {
 								pluginName: plugin.name,
 								eventId: "OnGhostBoot",
-								references: [ghost.name],
+								references: [ghost?.name],
 							},
 						}).catch(() => {});
 					}
 				}
 			} catch (_error) {}
 
-			(this as unknown).startSecondChangeTimer();
+			this.startSecondChangeTimer();
 		} catch (error) {
 			console.error("❌ SHIORI初期化エラー:", error);
 			if (isCurrentLoad()) {
@@ -65,30 +66,30 @@ export const ghostShioriMethods = {
 		}
 	},
 
-	startSecondChangeTimer() {
-		(this as unknown).stopSecondChangeTimer();
-		(this as unknown).uptimeSeconds = 0;
+	startSecondChangeTimer(this: any) {
+		this.stopSecondChangeTimer();
+		this.uptimeSeconds = 0;
 
-		(this as unknown)._secondTimerId = setInterval(async () => {
-			if ((this as unknown)._secondSending) return;
-			(this as unknown)._secondSending = true;
-			(this as unknown).uptimeSeconds++;
-			const isSpeaking = (this as unknown).app.sakuraPlayer?.isPlaying ? 1 : 0;
+		this._secondTimerId = setInterval(async () => {
+			if (this._secondSending) return;
+			this._secondSending = true;
+			this.uptimeSeconds = (this.uptimeSeconds || 0) + 1;
+			const isSpeaking = this.app?.sakuraPlayer?.isPlaying ? 1 : 0;
 			const isMinimized = 0;
 			const cantTalk = isSpeaking;
 
 			try {
-				if ((this as unknown).uptimeSeconds % 60 === 0) {
-					await (this as unknown).sendShioriEvent("OnMinuteChange", [
-						Math.floor((this as unknown).uptimeSeconds / 60),
+				if (this.uptimeSeconds % 60 === 0) {
+					await this.sendShioriEvent("OnMinuteChange", [
+						Math.floor(this.uptimeSeconds / 60),
 						0,
 						0,
 						isMinimized,
 						cantTalk,
 					]);
 				}
-				await (this as unknown).sendShioriEvent("OnSecondChange", [
-					(this as unknown).uptimeSeconds,
+				await this.sendShioriEvent("OnSecondChange", [
+					this.uptimeSeconds,
 					0,
 					0,
 					isMinimized,
@@ -96,26 +97,30 @@ export const ghostShioriMethods = {
 				]);
 			} catch (_e) {
 			} finally {
-				(this as unknown)._secondSending = false;
+				this._secondSending = false;
 			}
 		}, 1000);
 	},
 
-	stopSecondChangeTimer() {
-		if ((this as unknown)._secondTimerId) {
-			clearInterval((this as unknown)._secondTimerId);
-			(this as unknown)._secondTimerId = null;
+	stopSecondChangeTimer(this: any) {
+		if (this._secondTimerId) {
+			clearInterval(this._secondTimerId);
+			this._secondTimerId = null;
 		}
-		(this as unknown)._secondSending = false;
+		this._secondSending = false;
 	},
 
-	async sendShioriEvent(eventId: string, references: unknown[] = []) {
+	async sendShioriEvent(
+		this: any,
+		eventId: string,
+		references: unknown[] = [],
+	) {
 		if (!isTauriAvailable()) {
 			return undefined;
 		}
 		try {
-			const ghostName = (this as unknown).currentGhost?.name || "";
-			let rawRes: unknown = null;
+			const ghostName = this.currentGhost?.name || "";
+			let rawRes: any = null;
 			try {
 				rawRes = await invoke("send_shiori_event_typed", {
 					event: eventId,
@@ -133,19 +138,19 @@ export const ghostShioriMethods = {
 					},
 				});
 			}
-			return fromRustResponse(rawRes);
+			return fromRustResponse(rawRes as Record<string, unknown>);
 		} catch (err) {
 			console.warn(`⚠️ SHIORIイベント送信失敗 (${eventId}):`, err);
 			return undefined;
 		}
 	},
 
-	async sendTeachInput(this: unknown, input: string) {
-		const res: unknown = await this.sendShioriEvent("OnTeach", [input]);
+	async sendTeachInput(this: any, input: string) {
+		const res: any = await this.sendShioriEvent("OnTeach", [input]);
 		if (res?.status === 200 && res?.value) {
 			this.app?.playSakuraScript?.(res.value);
 		} else if (res?.status === 311 || res?.status === 312) {
-			const adviceRes: unknown = await this.sendShioriEvent("OnAdvice", [
+			const adviceRes: any = await this.sendShioriEvent("OnAdvice", [
 				input,
 				res.value || "",
 			]);
@@ -156,9 +161,9 @@ export const ghostShioriMethods = {
 		return res;
 	},
 
-	triggerRandomTalk(this: unknown) {
+	triggerRandomTalk(this: any) {
 		this.sendShioriEvent("OnRandomTalk")
-			.then((res: unknown) => {
+			.then((res: any) => {
 				if (res?.status === 200 && res?.value) {
 					this.app?.playSakuraScript?.(res.value);
 				}

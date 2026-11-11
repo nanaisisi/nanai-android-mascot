@@ -4,7 +4,7 @@ name,NAMデフォルト+(頭上)
 
 craftmanw,Nanai Android Mascot Project
 
-// SSP仕様準拠 (nsm_vertical): 頭上表示バルーン
+// 本家SSP標準バルーン仕様 (SSPデフォルト+): 頭上表示バルーン
 alignment,top
 use_self_alpha,1
 origin.x,12

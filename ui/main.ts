@@ -38,10 +38,10 @@ export interface AppSettings {
 }
 
 export class NanaiAndroidMascotApp {
-	alignmentToDesktop: string;
+	alignmentToDesktop: string | undefined;
 	balloonTheme: string | undefined;
-	balloonThemeManager: any;
-	dispatchAction(arg0: string) {
+	balloonThemeManager: unknown;
+	dispatchAction(_arg0: string) {
 		throw new Error("Method not implemented.");
 	}
 	wait(_arg0: number) {

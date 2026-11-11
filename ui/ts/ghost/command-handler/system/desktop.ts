@@ -14,7 +14,23 @@ export async function handleSetAlignmentOnDesktop(
 	if (mode === "free") return;
 
 	try {
-		const api = (globalThis as unknown).__TAURI__?.window;
+		const g = globalThis as unknown as {
+			__TAURI__?: {
+				window?: {
+					getCurrentWindow: () => {
+						outerSize: () => Promise<{ width: number; height: number }>;
+						outerPosition: () => Promise<{ x: number; y: number }>;
+						setPosition: (pos: unknown) => Promise<void>;
+					};
+					currentMonitor: () => Promise<{
+						position: { x: number; y: number };
+						size: { width: number; height: number };
+					} | null>;
+					PhysicalPosition: new (x: number, y: number) => unknown;
+				};
+			};
+		};
+		const api = g.__TAURI__?.window;
 		if (!api) return;
 		const win = api.getCurrentWindow();
 		const monitor = await api.currentMonitor();

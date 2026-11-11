@@ -1,20 +1,20 @@
 import { emit, invoke, isTauriAvailable } from "../../core/tauri-helper.js";
 
 export async function initBalloonWindows(
-	app: unknown,
+	app: import("../../../main.js").NanaiAndroidMascotApp,
 	_tokens: unknown[],
 	hasTextContent: boolean,
 	shownScopes: Set<number>,
 ) {
 	if (!hasTextContent) return;
-	const sakuraText = app.elements.balloonText;
-	const keroText = app.elements.keroBalloonText;
-	const sakuraDisplay = app.elements.balloonDisplay;
+	const sakuraText = app.elements?.balloonText;
+	const keroText = app.elements?.keroBalloonText;
+	const sakuraDisplay = app.elements?.balloonDisplay;
 
-	sakuraText.innerHTML = "";
+	if (sakuraText) sakuraText.innerHTML = "";
 	if (keroText) keroText.innerHTML = "";
 	if (!isTauriAvailable()) {
-		sakuraDisplay.style.display = "block";
+		if (sakuraDisplay) sakuraDisplay.style.display = "block";
 	}
 	if (isTauriAvailable()) {
 		shownScopes.add(0);
@@ -24,7 +24,7 @@ export async function initBalloonWindows(
 		})
 			.then(() => {
 				emit("update-balloon-content-0", {
-					html: sakuraText.innerHTML || "",
+					html: sakuraText?.innerHTML || "",
 					theme: app.currentBalloonTheme || "default",
 				});
 			})

@@ -129,7 +129,8 @@ export class SakuraPlaybackController {
 	}
 }
 
-const proto: any = SakuraPlaybackController.prototype;
+const proto: Record<string, unknown> =
+	SakuraPlaybackController.prototype as unknown as Record<string, unknown>;
 
 proto.on = on;
 proto.off = off;

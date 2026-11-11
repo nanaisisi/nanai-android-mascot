@@ -76,10 +76,12 @@ export {
 };
 
 export async function handleToken(
-	player: any,
-	app: any,
-	token: any,
-	context: any,
+	player:
+		| import("../sakura-script.js").SakuraScriptPlayer
+		| import("./controller.js").SakuraPlaybackController,
+	app: import("../../../main.js").NanaiAndroidMascotApp,
+	token: import("../parser/ast-types.js").SakuraAstNode,
+	context: import("./handlers/choice.js").SakuraPlayContext,
 ) {
 	switch (token?.type) {
 		case "scope":

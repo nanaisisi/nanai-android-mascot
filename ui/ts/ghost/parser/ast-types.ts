@@ -21,6 +21,7 @@ export interface SakuraAnchorScope {
 
 export interface SakuraAstNode {
 	nodeType: "root" | "scope" | "anchor" | "choice" | "command";
+	type?: string;
 	scope?: number;
 	id?: string;
 	text?: string;
@@ -30,11 +31,15 @@ export interface SakuraAstNode {
 	wait?: boolean;
 	path?: string;
 	mode?: string;
-	x?: number;
-	y?: number;
+	x?: number | string;
+	y?: number | string;
 	timeout?: number;
-	noClear?: boolean | ((noClear: unknown) => unknown);
-	scopes?: number[] | ((scopes: unknown) => unknown);
+	count?: number;
+	tag?: string;
+	param?: string;
+	half?: boolean;
+	noClear?: boolean;
+	scopes?: number[];
 	token?: SakuraToken | unknown;
 	children?: SakuraAstNode[];
 	[key: string]: unknown;

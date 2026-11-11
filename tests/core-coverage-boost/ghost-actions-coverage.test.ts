@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { beforeEach, describe, it } from "vitest";
-import { ghostActions } from "../../ui/js/core/actions/ghost-actions.js";
+import { ghostActions } from "../../ui/ts/core/actions/ghost-actions.js";
 
 describe("core-coverage-boost: ghost-actions edge cases", () => {
 	beforeEach(() => {

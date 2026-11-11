@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import * as commandHandlerBarrel from "../../ui/js/ghost/command-handler/index.js";
-import * as commandHandlerSystemFacade from "../../ui/js/ghost/command-handler/system.js";
-import * as sakuraParserFacade from "../../ui/js/ghost/sakura-parser.js";
+import * as commandHandlerBarrel from "../../ui/ts/ghost/command-handler/index.js";
+import * as commandHandlerSystemFacade from "../../ui/ts/ghost/command-handler/system.js";
+import * as sakuraParserFacade from "../../ui/ts/ghost/sakura-parser.js";
 
 describe("Ghost Barrel and Facade Re-exports Coverage", () => {
 	it("ui/js/ghost/sakura-parser.js re-exports expected symbols", () => {

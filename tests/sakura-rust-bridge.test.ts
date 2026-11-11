@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 const { rustCommandsToTokens, parseSakuraScriptAsync } = await import(
-	"../ui/js/ghost/sakura-rust-bridge.js"
+	"../ui/ts/ghost/sakura-rust-bridge.js"
 );
 
 test("rustCommandsToTokens converts all Rust commands to SakuraScriptToken list", () => {

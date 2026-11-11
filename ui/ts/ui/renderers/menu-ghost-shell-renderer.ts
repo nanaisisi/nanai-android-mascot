@@ -5,15 +5,15 @@
 export const menuGhostShellRenderer = {
 	/**
 	 * @param {unknown[]} shells
-	 * @param {any} currentShell
+	 * @param {unknown} currentShell
 	 */
-	renderShellSubmenu(shells, currentShell) {
+	renderShellSubmenu(shells: unknown[], currentShell: unknown) {
 		const container = document.getElementById("shell-submenu");
 		if (!container) return;
 
 		container.innerHTML = "";
 
-		shells.forEach((shellItem) => {
+		shells.forEach((shellItem: { name: unknown; display_name: unknown }) => {
 			const shellName =
 				typeof shellItem === "string" ? shellItem : shellItem?.name || "master";
 			const displayName =
@@ -36,13 +36,13 @@ export const menuGhostShellRenderer = {
 	 * @param {unknown[]} ghosts
 	 * @param {{ name: unknown; }} currentGhost
 	 */
-	renderGhostSubmenu(ghosts, currentGhost) {
+	renderGhostSubmenu(ghosts: unknown[], currentGhost: { name: unknown }) {
 		const container = document.getElementById("ghost-submenu");
 		if (!container) return;
 
 		container.innerHTML = "";
 
-		ghosts.forEach((ghost) => {
+		ghosts.forEach((ghost: { name: string | undefined }) => {
 			const isCurrent = currentGhost && currentGhost.name === ghost.name;
 			const btn = document.createElement("button");
 			btn.className = `menu-item ${isCurrent ? "is-current" : ""}`;
@@ -58,13 +58,13 @@ export const menuGhostShellRenderer = {
 	/**
 	 * @param {unknown[]} ghosts
 	 */
-	renderCallGhostSubmenu(ghosts) {
+	renderCallGhostSubmenu(ghosts: unknown[]) {
 		const container = document.getElementById("call-ghost-submenu");
 		if (!container) return;
 
 		container.innerHTML = "";
 
-		ghosts.forEach((ghost) => {
+		ghosts.forEach((ghost: { name: string | undefined }) => {
 			const btn = document.createElement("button");
 			btn.className = "menu-item";
 			btn.dataset.ghostName = ghost.name;

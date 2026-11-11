@@ -2,10 +2,10 @@ import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 
 const { parseSakuraScript } = await import(
-	"../../ui/js/ghost/sakura-tokenizer.js"
+	"../../ui/ts/ghost/sakura-tokenizer.js"
 );
 const { tokensToAst, collectChoices, collectSurfaces } = await import(
-	"../../ui/js/ghost/parser/ast.js"
+	"../../ui/ts/ghost/parser/ast.js"
 );
 
 describe("Slot-04 Cycle 6 syntax and AST extensions", () => {

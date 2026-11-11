@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { AppConfig, loadAppConfig } from "../ui/js/core/config.js";
+import { AppConfig, loadAppConfig } from "../ui/ts/core/config.js";
 
 test("loadAppConfig covers success with full properties, null config, and error catch handling", async () => {
 	// 1. Success with full config

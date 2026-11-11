@@ -5,7 +5,7 @@ import { setupBalloonDescriptMockEnvironment } from "./helpers.js";
 const { cssVars } = setupBalloonDescriptMockEnvironment();
 
 const { balloonDescriptActions } = await import(
-	"../../ui/js/core/actions/balloon-descript.js"
+	"../../ui/ts/core/actions/balloon-descript.js"
 );
 
 test("applyBaseFontProperties covers default font size and component-based color/shadowcolor fallbacks", () => {

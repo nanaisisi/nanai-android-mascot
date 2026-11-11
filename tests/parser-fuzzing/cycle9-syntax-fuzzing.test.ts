@@ -2,16 +2,16 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 const { parseSakuraScript } = await import(
-	"../../ui/js/ghost/sakura-tokenizer.js"
+	"../../ui/ts/ghost/sakura-tokenizer.js"
 );
 const { expandSakuraScriptEnv } = await import(
-	"../../ui/js/ghost/command-handler/env.js"
+	"../../ui/ts/ghost/command-handler/env.js"
 );
 const { handleWindowState } = await import(
-	"../../ui/js/ghost/command-handler/window.js"
+	"../../ui/ts/ghost/command-handler/window.js"
 );
 const { handleOpenDialogCommand } = await import(
-	"../../ui/js/ghost/command-handler/dialog.js"
+	"../../ui/ts/ghost/command-handler/dialog.js"
 );
 
 test("Parser Fuzzing Cycle 9: Window state change commands fuzzing and exception tolerance", async () => {

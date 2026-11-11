@@ -104,7 +104,7 @@ globalThis.__TAURI_INTERNALS__.invoke = async (cmd, args) => {
 };
 
 // Import submenu to initialize listeners
-await import("../ui/js/ui/submenu.js");
+await import("../ui/ts/ui/submenu.js");
 
 test("submenu event handlers, Tauri sync listeners, and DOMContentLoaded init", async () => {
 	// 1. Test document mousedown

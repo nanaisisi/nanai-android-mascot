@@ -3,13 +3,13 @@ import { test } from "vitest";
 import { createMockApp, createMockElement } from "./helpers.js";
 
 const { SakuraScriptPlayer } = await import(
-	"../../../ui/js/ghost/sakura-script.js"
+	"../../../ui/ts/ghost/sakura-script.js"
 );
 const { parseSakuraScript } = await import(
-	"../../../ui/js/ghost/sakura-tokenizer.js"
+	"../../../ui/ts/ghost/sakura-tokenizer.js"
 );
 const { AndroidBridge, ANDROID_EVENTS, TouchGestureRecognizer } = await import(
-	"../../../ui/js/ui/touch/index.js"
+	"../../../ui/ts/ui/touch/index.js"
 );
 
 test("Cycle 5: Touch Snap Gesture & Mobile Dock Coordination E2E", async () => {

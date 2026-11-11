@@ -33,7 +33,7 @@ globalThis.document = {
 };
 
 const { renderSubmenuContent } = await import(
-	"../ui/js/ui/submenu-renderer.js"
+	"../ui/ts/ui/submenu-renderer.js"
 );
 
 test("renderSubmenuContent covers all submenu types (ghost, shell, dressup, balloon, recent)", () => {

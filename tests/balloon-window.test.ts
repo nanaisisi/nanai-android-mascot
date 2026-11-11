@@ -14,18 +14,18 @@ test("balloon-window covers interactive elements, theme/manifest loading, and Ta
 		updateBalloonWindowScale,
 		setupInteractiveElements,
 		setupWindowGestures,
-	} = await import("../ui/js/ghost/balloon-window.js");
+	} = await import("../ui/ts/ghost/balloon-window.js");
 	const { updateBalloonWindowScale: updateScaleDirect } = await import(
-		"../ui/js/ghost/balloon-window/scale.js"
+		"../ui/ts/ghost/balloon-window/scale.js"
 	);
 	const { setupInteractiveElements: setupInteractiveDirect } = await import(
-		"../ui/js/ghost/balloon-window/interactive.js"
+		"../ui/ts/ghost/balloon-window/interactive.js"
 	);
 	const { loadBalloonSkinImages, applyBalloonDescript } = await import(
-		"../ui/js/ghost/balloon-window/theme.js"
+		"../ui/ts/ghost/balloon-window/theme.js"
 	);
 	const { setupWindowGestures: setupGesturesDirect } = await import(
-		"../ui/js/ghost/balloon-window/gesture.js"
+		"../ui/ts/ghost/balloon-window/gesture.js"
 	);
 
 	// Trigger DOMContentLoaded listener

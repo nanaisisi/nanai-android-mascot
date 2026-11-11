@@ -106,7 +106,7 @@ describe("surface/character.js", () => {
 		};
 
 		// Import character.js
-		await import("../ui/js/surface/character.js");
+		await import("../ui/ts/surface/character.js");
 
 		// 1. Check initial emit request-subchar-image
 		const requestEmit = emittedEvents.find(

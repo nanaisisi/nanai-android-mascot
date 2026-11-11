@@ -10,7 +10,7 @@ import {
 	tokenizeTag,
 	tokenizeTextFormatTag,
 	tokenizeWaitTag,
-} from "../ui/js/ghost/parser/tag-tokenizer.js";
+} from "../ui/ts/ghost/parser/tag-tokenizer.js";
 
 test("tokenizeEscapeTag handles escaped backslash and percent", () => {
 	const script1 = "\\\\hello";

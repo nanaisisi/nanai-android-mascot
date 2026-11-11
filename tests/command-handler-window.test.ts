@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
 	handleWindowState,
 	setAlignmentToDesktop,
-} from "../ui/js/ghost/command-handler/window.js";
+} from "../ui/ts/ghost/command-handler/window.js";
 
 describe("Sakura command window handlers", () => {
 	let originalTauri: unknown;

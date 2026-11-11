@@ -46,7 +46,7 @@ globalThis.addEventListener = (type, cb) => {
 	globalListeners[type] = cb;
 };
 
-const { BalloonDragManager } = await import("../ui/js/surface/balloon-drag.js");
+const { BalloonDragManager } = await import("../ui/ts/surface/balloon-drag.js");
 
 test("BalloonDragManager covers restore, follow, dragging, and persistence", () => {
 	savedStorage = JSON.stringify({ x: 50, y: -100 });

@@ -30,9 +30,9 @@ globalThis.document = {
 	body: { classList: { add() {}, remove() {} } },
 };
 
-const { MenuDispatcher } = await import("../ui/js/ui/menu-dispatcher.js");
+const { MenuDispatcher } = await import("../ui/ts/ui/menu-dispatcher.js");
 const { MenuSubmenuRenderer } = await import(
-	"../ui/js/ui/menu-submenu-renderer.js"
+	"../ui/ts/ui/menu-submenu-renderer.js"
 );
 
 test("MenuSubmenuRenderer covers all rendering methods and theme applications", () => {

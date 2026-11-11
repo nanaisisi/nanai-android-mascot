@@ -74,7 +74,7 @@ export async function openSystemDialog(
 
 	const eventId = id || type;
 
-	const sendSuccess = async (resultValue) => {
+	const sendSuccess = async (resultValue: string) => {
 		if (id?.startsWith("On")) {
 			await this.app?.ghostController?.sendShioriEvent(id, [
 				type,

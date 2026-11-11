@@ -52,7 +52,7 @@ globalThis.__TAURI_INTERNALS__ = {
 	},
 };
 
-const { eventMethods } = await import("../ui/js/core/app-events.js");
+const { eventMethods } = await import("../ui/ts/core/app-events.js");
 
 test("eventMethods covers 100% of event listeners, buttons, external menus, and ghost click/stroke", async () => {
 	const listeners = {};

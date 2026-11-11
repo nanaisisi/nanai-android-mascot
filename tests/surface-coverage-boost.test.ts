@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import { ghostSurfaceMethods } from "../ui/js/surface/ghost-surface.js";
-import { SurfaceManager } from "../ui/js/surface/surface-manager.js";
+import { ghostSurfaceMethods } from "../ui/ts/surface/ghost-surface.js";
+import { SurfaceManager } from "../ui/ts/surface/surface-manager.js";
 
 describe("Surface Subsystem Coverage", () => {
 	it("SurfaceManager delegates all animation methods to animationManager", async () => {

@@ -16,7 +16,7 @@ globalThis.localStorage = {
 	setItem: () => {},
 };
 
-const { ghostActions } = await import("../ui/js/core/actions/ghost-actions.js");
+const { ghostActions } = await import("../ui/ts/core/actions/ghost-actions.js");
 
 test("ghostActions coverage for all methods", async () => {
 	const mockOkBtn = {

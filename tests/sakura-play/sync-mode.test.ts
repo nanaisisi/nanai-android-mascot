@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import { createEl } from "./helpers.js";
 
-const { playScript } = await import("../../ui/js/ghost/sakura-play.js");
+const { playScript } = await import("../../ui/ts/ghost/sakura-play.js");
 
 test("playScript handles synchronized mode (\\_s) to mirror output across sakura and kero balloons", async () => {
 	const sakuraText = createEl("div");

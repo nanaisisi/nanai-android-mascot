@@ -8,7 +8,7 @@ globalThis.document = {
 };
 
 const { balloonDescriptActions } = await import(
-	"../ui/js/core/actions/balloon-descript.js"
+	"../ui/ts/core/actions/balloon-descript.js"
 );
 
 test("balloonDescriptActions rgbFromComponents and applyBalloonDescript", () => {

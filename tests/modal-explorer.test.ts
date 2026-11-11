@@ -20,7 +20,7 @@ globalThis.document = {
 };
 
 const { setupExplorerListeners } = await import(
-	"../ui/js/ui/modal-explorer.js"
+	"../ui/ts/ui/modal-explorer.js"
 );
 
 test("setupExplorerListeners covers load, render, filtering, sorting, and user actions", async () => {

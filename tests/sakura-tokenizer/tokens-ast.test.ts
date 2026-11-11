@@ -2,9 +2,9 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 const { parseSakuraScript } = await import(
-	"../../ui/js/ghost/sakura-tokenizer.js"
+	"../../ui/ts/ghost/sakura-tokenizer.js"
 );
-const { tokensToAst } = await import("../../ui/js/ghost/parser/ast.js");
+const { tokensToAst } = await import("../../ui/ts/ghost/parser/ast.js");
 
 test("tokensToAst transforms tokens into structured AST including Choice", () => {
 	const script = "\\0\\s[0]Text\\q[Option 1,id1]\\1\\_a[anchor1]AnchorText\\_a";

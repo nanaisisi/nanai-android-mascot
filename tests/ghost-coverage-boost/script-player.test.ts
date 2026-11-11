@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it, vi } from "vitest";
 
-import { SakuraScriptPlayer } from "../../ui/js/ghost/sakura-script.js";
+import { SakuraScriptPlayer } from "../../ui/ts/ghost/sakura-script.js";
 
 describe("SakuraScriptPlayer lifecycle & edge cases", () => {
 	it("exercises destroy(), sleep cancellation, scheduleSurfaceRestore error handling, and keydown variants in waitForClickOrTimeout", async () => {

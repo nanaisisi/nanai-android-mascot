@@ -6,7 +6,7 @@ import {
 	clearAllScriptTimers,
 	handleNotifyCommand,
 	handleTimerRaiseCommand,
-} from "../../ui/js/ghost/command-handler/system/timer.js";
+} from "../../ui/ts/ghost/command-handler/system/timer.js";
 
 describe("system/timer.js", () => {
 	beforeEach(() => {

@@ -3,7 +3,12 @@
  * @brief inputbox, passwordinput, textareabox の表示・制御処理
  */
 
-export function openInputBox(params, scope, isPassword = false) {
+export function openInputBox(
+	this: unknown,
+	params: unknown,
+	scope: unknown,
+	isPassword = false,
+) {
 	const opts = this.parseBoxOptions(params);
 	this.closeInputBox(opts.id);
 	const balloon = this.getBalloonContainer(scope);
@@ -42,9 +47,9 @@ export function openInputBox(params, scope, isPassword = false) {
 	submitBtn.className = "balloon-choice-btn";
 	submitBtn.style.marginTop = "0";
 
-	let timer = null;
+	let timer: number | null | undefined = null;
 	const boxKey = `inputbox:${opts.id}`;
-	let dataListEl = null;
+	let dataListEl: { remove: () => void } | null = null;
 
 	const cleanup = (force = false) => {
 		if (timer) {
@@ -116,9 +121,11 @@ export function openInputBox(params, scope, isPassword = false) {
 	setTimeout(() => input.focus?.(), 50);
 
 	if (!isPassword) {
-		this.attachAutocomplete(input, "inputbox", opts.id, form).then((dl) => {
-			dataListEl = dl;
-		});
+		this.attachAutocomplete(input, "inputbox", opts.id, form).then(
+			(dl: unknown) => {
+				dataListEl = dl;
+			},
+		);
 	}
 
 	if (opts.timeoutMs > 0) {
@@ -138,7 +145,11 @@ export function openInputBox(params, scope, isPassword = false) {
 	return form;
 }
 
-export function openPasswordInput(params, scope) {
+export function openPasswordInput(
+	this: unknown,
+	params: unknown,
+	scope: unknown,
+) {
 	return this.openInputBox(params, scope, true);
 }
 
@@ -181,7 +192,11 @@ export function closeInputBox(
 	}
 }
 
-export function openTextAreaBox(params, scope) {
+export function openTextAreaBox(
+	this: unknown,
+	params: unknown,
+	scope: unknown,
+) {
 	const opts = this.parseBoxOptions(params);
 	this.closeTextAreaBox(opts.id);
 	const balloon = this.getBalloonContainer(scope);
@@ -221,7 +236,7 @@ export function openTextAreaBox(params, scope) {
 	submitBtn.style.alignSelf = "flex-end";
 	submitBtn.style.marginTop = "0";
 
-	let timer = null;
+	let timer: number | null | undefined = null;
 	const boxKey = `textareabox:${opts.id}`;
 
 	const cleanup = (force = false) => {

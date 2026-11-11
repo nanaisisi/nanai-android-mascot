@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import { BalloonThemeManager } from "../ui/js/core/actions/balloon-theme.js";
-import { ghostActions } from "../ui/js/core/actions/ghost-actions.js";
+import { BalloonThemeManager } from "../ui/ts/core/actions/balloon-theme.js";
+import { ghostActions } from "../ui/ts/core/actions/ghost-actions.js";
 
 describe("Ghost Actions and Balloon Theme Coverage Boost", () => {
 	it("ghostActions covers uninstallCurrentGhost, installGhostFromMenu, and scale commands", async () => {

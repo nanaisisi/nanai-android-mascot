@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import { applyValidRectProperties as directValidRect } from "../../ui/js/core/actions/balloon-descript/layout/rect.js";
+import { applyValidRectProperties as directValidRect } from "../../ui/ts/core/actions/balloon-descript/layout/rect.js";
 import { createMockRoot } from "./helpers.js";
 
 describe("balloon-descript-layout rect submodule", () => {

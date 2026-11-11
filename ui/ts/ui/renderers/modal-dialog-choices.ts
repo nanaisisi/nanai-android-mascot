@@ -3,10 +3,10 @@
  * @brief 選択肢ボタン、タイムアウト処理、および一般ダイアログ閉鎖メソッド
  */
 
-export function closeDialog(id, notifyCancel = true) {
+export function closeDialog(this: unknown, id: string, notifyCancel = true) {
 	if (!id || id === "__SYSTEM_ALL_DIALOG__") {
 		const keys = Array.from(this.activeBoxes.keys());
-		let closedAny = false;
+		let closedunknown = false;
 		for (const key of keys) {
 			const box = this.activeBoxes.get(key);
 			if (box) {
@@ -14,10 +14,10 @@ export function closeDialog(id, notifyCancel = true) {
 					box.cleanup(true);
 				} catch {}
 				this.activeBoxes.delete(key);
-				closedAny = true;
+				closedunknown = true;
 			}
 		}
-		if (notifyCancel && closedAny) {
+		if (notifyCancel && closedunknown) {
 			this.app.ghostController?.sendShioriEvent("OnSystemDialogCancel", [
 				id || "__SYSTEM_ALL_DIALOG__",
 			]);
@@ -66,7 +66,11 @@ export function createChoiceButton({ id, text, onSelect }) {
 	return btn;
 }
 
-export function setChoiceTimeout(timeoutMs, onTimeout) {
+export function setChoiceTimeout(
+	this: unknown,
+	timeoutMs: number | undefined,
+	onTimeout: () => void,
+) {
 	if (this.choiceTimeoutTimer) {
 		clearTimeout(this.choiceTimeoutTimer);
 		this.choiceTimeoutTimer = null;
@@ -83,7 +87,7 @@ export function setChoiceTimeout(timeoutMs, onTimeout) {
 	}
 }
 
-export function closeAll() {
+export function closeAll(this: unknown) {
 	for (const box of this.activeBoxes.values()) {
 		try {
 			box.cleanup();

@@ -8,7 +8,7 @@ const {
 	buildInstallCompleteAllArgs,
 	buildInstallRefuseArgs,
 	buildInstallRerouteArgs,
-} = await import("../../ui/js/core/actions/install-protocol.js");
+} = await import("../../ui/ts/core/actions/install-protocol.js");
 
 describe("install-protocol - argument builders", () => {
 	test("buildInstallBeginArgs generates valid Reference0", () => {

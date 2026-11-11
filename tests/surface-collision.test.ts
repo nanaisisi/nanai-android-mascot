@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 const { surfaceCollisionMethods } = await import(
-	"../ui/js/surface/surface-collision.js"
+	"../ui/ts/surface/surface-collision.js"
 );
 
 test("surfaceCollisionMethods covers resolveSurfaceNumber and detectCollision", async () => {

@@ -2,10 +2,10 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 const { SurfaceFrameBuffer } = await import(
-	"../../ui/js/surface/compositor/framebuffer.js"
+	"../../ui/ts/surface/compositor/framebuffer.js"
 );
 const { surfaceDressupMethods } = await import(
-	"../../ui/js/surface/surface-dressup.js"
+	"../../ui/ts/surface/surface-dressup.js"
 );
 
 test("Canvas Pixel Snapshot Cycle 6: SurfaceFrameBuffer extended blend modes (subtract, divide, overlay, softlight)", () => {

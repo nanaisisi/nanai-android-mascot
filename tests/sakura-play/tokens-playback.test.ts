@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import { createEl, events } from "./helpers.js";
 
-const { playScript } = await import("../../ui/js/ghost/sakura-play.js");
+const { playScript } = await import("../../ui/ts/ghost/sakura-play.js");
 
 test("playScript covers all tokens (scope, char, newline, clear, pause, anchor, quick, wait, surface, animation, choice, balloon, timeout, halt, offset, font)", async () => {
 	events.length = 0;

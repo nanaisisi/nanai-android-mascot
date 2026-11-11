@@ -37,7 +37,7 @@ globalThis.document = {
 	}),
 };
 
-const { ModalManager } = await import("../ui/js/ui/modal.js");
+const { ModalManager } = await import("../ui/ts/ui/modal.js");
 
 test("ModalManager covers 100% of init, show for all contents, hide, notifications, and Tauri modal windows", async () => {
 	const mockApp = {

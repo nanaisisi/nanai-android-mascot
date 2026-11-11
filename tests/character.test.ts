@@ -78,7 +78,7 @@ globalThis.__TAURI_INTERNALS__ = {
 	},
 };
 
-await import("../ui/js/surface/character.js");
+await import("../ui/ts/surface/character.js");
 
 test("character window covers subchar image updates, pointer interactions, dragging, long press, and contextmenu", async () => {
 	vi.useFakeTimers();

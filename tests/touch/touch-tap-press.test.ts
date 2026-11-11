@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
 	TOUCH_GESTURE_TYPES,
 	TouchGestureRecognizer,
-} from "../../ui/js/ui/touch/index.js";
+} from "../../ui/ts/ui/touch/index.js";
 import { createMockElement } from "./helpers.js";
 
 describe("TouchGestureRecognizer - Tap & Press", () => {

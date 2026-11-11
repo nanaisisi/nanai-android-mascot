@@ -4,7 +4,7 @@ import {
 	expandSakuraScriptEnv,
 	resetScriptScopeState,
 	scriptLifetimeState,
-} from "../../ui/js/ghost/sakura-command-handler.js";
+} from "../../ui/ts/ghost/sakura-command-handler.js";
 import { setupMockDom } from "./helpers.js";
 
 setupMockDom();

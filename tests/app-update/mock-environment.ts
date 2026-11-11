@@ -5,7 +5,7 @@ import {
 	setProgressCb,
 } from "./mock/tauri-listeners.js";
 
-const { updateMethods } = await import("../../ui/js/core/app-update.js");
+const { updateMethods } = await import("../../ui/ts/core/app-update.js");
 
 export {
 	createPersistentListenersProxy,

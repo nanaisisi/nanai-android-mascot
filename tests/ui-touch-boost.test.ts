@@ -1,16 +1,16 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 
-import { ModalDialogController } from "../ui/js/ui/renderers/modal-dialog-controller.js";
-import { DockManager } from "../ui/js/ui/touch/bridge/dock.js";
-import { OverlayManager } from "../ui/js/ui/touch/bridge/overlay.js";
+import { ModalDialogController } from "../ui/ts/ui/renderers/modal-dialog-controller.js";
+import { DockManager } from "../ui/ts/ui/touch/bridge/dock.js";
+import { OverlayManager } from "../ui/ts/ui/touch/bridge/overlay.js";
 
 describe("UI Renderers and Touch Bridge Coverage Boost", () => {
 	it("text-inputs.js covers Escape key, close without target, and textarea submit", async () => {
-		const forms = [];
+		const forms: unknown[] = [];
 		const balloon = {
-			appendChild: (child) => forms.push(child),
-			removeChild: (child) => {
+			appendChild: (child: unknown) => forms.push(child),
+			removeChild: (child: unknown) => {
 				const idx = forms.indexOf(child);
 				if (idx >= 0) forms.splice(idx, 1);
 			},
@@ -18,10 +18,10 @@ describe("UI Renderers and Touch Bridge Coverage Boost", () => {
 
 		const textareaMock = {
 			value: "test",
-			addEventListener: (t, cb) => {
+			addEventListener: (t: string | number, cb: unknown) => {
 				textareaMock[t] = cb;
 			},
-			dispatchEvent: (ev) => {
+			dispatchEvent: (ev: { type: string | number; }) => {
 				if (textareaMock[ev.type]) textareaMock[ev.type](ev);
 			},
 			scrollIntoView: () => {},

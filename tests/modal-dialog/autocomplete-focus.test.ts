@@ -5,7 +5,7 @@ import { resetCreatedElements, setupMockDom } from "./helpers.js";
 setupMockDom();
 
 const { ModalDialogController } = await import(
-	"../../ui/js/ui/renderers/modal-dialog-controller.js"
+	"../../ui/ts/ui/renderers/modal-dialog-controller.js"
 );
 
 test("ModalDialogController Cycle 3: inputbox.autocomplete, datalist creation, and mobile focus", async () => {

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 const { BalloonThemeManager } = await import(
-	"../../ui/js/core/actions/balloon-theme.js"
+	"../../ui/ts/core/actions/balloon-theme.js"
 );
 
 test("BalloonThemeManager computeNineSlice snapshot calculation and CSS border properties", () => {

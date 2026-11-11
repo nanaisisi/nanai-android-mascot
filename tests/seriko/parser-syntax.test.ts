@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { parseSurfacesTxt } from "../../ui/js/surface/surface-parser.js";
+import { parseSurfacesTxt } from "../../ui/ts/surface/surface-parser.js";
 
 test("SERIKO/1 pattern uses the legacy 10 ms unit", () => {
 	const { animations } = parseSurfacesTxt(

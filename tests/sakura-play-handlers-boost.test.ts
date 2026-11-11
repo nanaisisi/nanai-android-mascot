@@ -9,18 +9,18 @@ import {
 	handleAnchorBegin,
 	handleAnchorEnd,
 	handleChoice,
-} from "../ui/js/ghost/sakura-play/handlers/choice.js";
+} from "../ui/ts/ghost/sakura-play/handlers/choice.js";
 import {
 	handleInlineBitmap,
 	handleScope,
-} from "../ui/js/ghost/sakura-play/handlers/scope.js";
+} from "../ui/ts/ghost/sakura-play/handlers/scope.js";
 import {
 	handleChar,
 	handleClear,
 	handleFont,
 	handleNewline,
 	handleOffset,
-} from "../ui/js/ghost/sakura-play/handlers/text.js";
+} from "../ui/ts/ghost/sakura-play/handlers/text.js";
 
 describe("SakuraPlay Handlers Direct Coverage", () => {
 	it("handlers/text.js covers font styles, backspace, and line removal directly", async () => {

@@ -5,7 +5,7 @@ import {
 	getTouchDistance,
 	TOUCH_GESTURE_TYPES,
 	TouchGestureEvent,
-} from "../../ui/js/ui/touch/index.js";
+} from "../../ui/ts/ui/touch/index.js";
 
 describe("TouchGestureEvent & Helpers", () => {
 	it("initializes TouchGestureEvent with defaults and custom properties", () => {

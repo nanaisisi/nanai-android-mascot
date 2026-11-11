@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import { eventMethods } from "../../ui/js/core/app-events.js";
+import { eventMethods } from "../../ui/ts/core/app-events.js";
 
 describe("core-coverage-boost: app-events edge cases", () => {
 	it("dispatches mouse down, up, wheel, drag start/end, and hover events with UKADOC coordinates", () => {

@@ -33,7 +33,7 @@ globalThis.document = {
 };
 
 const { surfaceRenderMethods } = await import(
-	"../ui/js/surface/surface-render.js"
+	"../ui/ts/surface/surface-render.js"
 );
 
 test("surfaceRenderMethods covers composeFrameOnBase, composeSurfaceElements, and processChromaKey", async () => {

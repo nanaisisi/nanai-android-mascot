@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { shioriNotifyMethods } from "../../ui/js/ghost/shiori-notify.js";
+import { shioriNotifyMethods } from "../../ui/ts/ghost/shiori-notify.js";
 import {
 	createMockShioriController,
 	type MockShioriController,

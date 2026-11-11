@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { DictationManager } from "../ui/js/core/actions/dictation.js";
+import { DictationManager } from "../ui/ts/core/actions/dictation.js";
 
 describe("DictationManager", () => {
 	let originalWindow: unknown;

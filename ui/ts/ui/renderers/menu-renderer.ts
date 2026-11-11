@@ -9,6 +9,9 @@ import { menuGhostShellRenderer } from "./menu-ghost-shell-renderer.js";
 import { menuThemeRenderer } from "./menu-theme-renderer.js";
 
 export class MenuRenderer {
+	dispatcher: unknown;
+	app: null;
+	dressupData: null;
 	/**
 	 * @param {object} options
 	 * @param {import('../menu-dispatcher.js').MenuDispatcher} options.dispatcher メニューディスパッチャー
@@ -17,7 +20,7 @@ export class MenuRenderer {
 	constructor({ dispatcher, app = null }) {
 		this.dispatcher = dispatcher;
 		this.app = app;
-		/** @type {any} */
+		/** @type {unknown} */
 		this.dressupData = null;
 	}
 
@@ -45,7 +48,7 @@ export class MenuRenderer {
 	 * @param {Array<string|object>} shells
 	 * @param {string} currentShell
 	 */
-	renderShellSubmenu(shells, currentShell) {
+	renderShellSubmenu(shells: unknown, currentShell: unknown) {
 		menuGhostShellRenderer.renderShellSubmenu.call(this, shells, currentShell);
 	}
 
@@ -54,7 +57,7 @@ export class MenuRenderer {
 	 * @param {Array<object>} balloons
 	 * @param {string} currentBalloonTheme
 	 */
-	renderBalloonSubmenu(balloons, currentBalloonTheme) {
+	renderBalloonSubmenu(balloons: unknown, currentBalloonTheme: unknown) {
 		menuBalloonDressupRenderer.renderBalloonSubmenu.call(
 			this,
 			balloons,
@@ -67,7 +70,7 @@ export class MenuRenderer {
 	 * @param {Array<string|object>} ghosts
 	 * @param {string|object} currentGhost
 	 */
-	renderGhostSubmenu(ghosts, currentGhost) {
+	renderGhostSubmenu(ghosts: unknown, currentGhost: unknown) {
 		menuGhostShellRenderer.renderGhostSubmenu.call(this, ghosts, currentGhost);
 	}
 
@@ -75,7 +78,7 @@ export class MenuRenderer {
 	 * 他のゴーストを呼ぶサブメニューの描画
 	 * @param {Array<string|object>} ghosts
 	 */
-	renderCallGhostSubmenu(ghosts) {
+	renderCallGhostSubmenu(ghosts: unknown) {
 		menuGhostShellRenderer.renderCallGhostSubmenu.call(this, ghosts);
 	}
 
@@ -84,7 +87,7 @@ export class MenuRenderer {
 	 * @param {object} dressup
 	 * @param {number} [scope=0]
 	 */
-	renderDressupSubmenu(dressup, scope = 0) {
+	renderDressupSubmenu(dressup: unknown, scope = 0) {
 		menuBalloonDressupRenderer.renderDressupSubmenu.call(this, dressup, scope);
 	}
 
@@ -100,7 +103,7 @@ export class MenuRenderer {
 	 * メニューテーマ（ダーク/ライト等）の適用
 	 * @param {string|null} theme
 	 */
-	applyTheme(theme) {
+	applyTheme(theme: string) {
 		menuThemeRenderer.applyTheme(theme);
 	}
 
@@ -108,7 +111,7 @@ export class MenuRenderer {
 	 * シェル定義によるメニュースキン・背景テーマの適用
 	 * @param {object|null} activeShell
 	 */
-	applyShellTheme(activeShell) {
+	applyShellTheme(activeShell: unknown) {
 		menuThemeRenderer.applyShellTheme(activeShell);
 	}
 
@@ -117,7 +120,10 @@ export class MenuRenderer {
 	 * @param {Record<string, string>} captions
 	 * @param {HTMLElement|Document} [rootEl=document]
 	 */
-	applyCaptions(captions, rootEl = document) {
+	applyCaptions(
+		captions: Record<string, string> | undefined,
+		rootEl = document,
+	) {
 		menuCaptionRenderer.applyCaptions(captions, rootEl);
 	}
 
@@ -126,7 +132,7 @@ export class MenuRenderer {
 	 * @param {object} ghostController
 	 * @returns {Promise<Record<string, string>>}
 	 */
-	async fetchCaptions(ghostController) {
+	async fetchCaptions(ghostController: unknown) {
 		return await menuCaptionRenderer.fetchShioriCaptions(ghostController);
 	}
 

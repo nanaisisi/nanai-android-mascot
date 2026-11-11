@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 const { surfaceDressupMethods } = await import(
-	"../ui/js/surface/surface-dressup.js"
+	"../ui/ts/surface/surface-dressup.js"
 );
 
 test("surfaceDressupMethods covers bindDressup, activeBindLayers, plans, and cache", async () => {

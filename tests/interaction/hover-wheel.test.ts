@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, test, vi } from "vitest";
-import { setupHoverAndWheel as directSetupHoverAndWheel } from "../../ui/js/surface/interaction/hover-wheel.js";
-import { setupHoverAndWheel } from "../../ui/js/surface/interaction.js";
+import { setupHoverAndWheel as directSetupHoverAndWheel } from "../../ui/ts/surface/interaction/hover-wheel.js";
+import { setupHoverAndWheel } from "../../ui/ts/surface/interaction.js";
 import { setupInteractionDomGlobals } from "./helpers.js";
 
 setupInteractionDomGlobals();

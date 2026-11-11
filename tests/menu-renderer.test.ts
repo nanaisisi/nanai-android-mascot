@@ -68,7 +68,7 @@ globalThis.document = {
 	},
 };
 
-const { MenuRenderer } = await import("../ui/js/ui/renderers/menu-renderer.js");
+const { MenuRenderer } = await import("../ui/ts/ui/renderers/menu-renderer.js");
 
 test("MenuRenderer covers initialization, delegation, and dynamic item creation", () => {
 	const dispatched = [];
@@ -186,7 +186,7 @@ test("MenuRenderer covers initialization, delegation, and dynamic item creation"
 
 test("MENU_CAPTION_DEFINITIONS contains 92 standard UKADOC captions and resolves correctly", async () => {
 	const { MENU_CAPTION_DEFINITIONS, menuCaptionRenderer } = await import(
-		"../ui/js/ui/renderers/menu-caption-renderer.js"
+		"../ui/ts/ui/renderers/menu-caption-renderer.js"
 	);
 	assert.equal(MENU_CAPTION_DEFINITIONS.length, 92);
 

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { ANDROID_EVENTS, AndroidBridge } from "../../ui/js/ui/touch/index.js";
+import { ANDROID_EVENTS, AndroidBridge } from "../../ui/ts/ui/touch/index.js";
 
 describe("AndroidBridge - Back Button", () => {
 	it("manages back button handler stack in LIFO order", async () => {

@@ -10,7 +10,7 @@ import { setupSurfaceCompositorMockEnv } from "./helpers.js";
 setupSurfaceCompositorMockEnv();
 
 const { SurfaceFrameBuffer, compositeElements } = await import(
-	"../../ui/js/surface/surface-compositor.js"
+	"../../ui/ts/surface/surface-compositor.js"
 );
 
 test("surface-compositor covers SurfaceFrameBuffer and Contract functions", async () => {

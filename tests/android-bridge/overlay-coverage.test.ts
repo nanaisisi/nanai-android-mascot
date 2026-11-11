@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { OverlayManager } from "../../ui/js/ui/touch/bridge/overlay.js";
+import { OverlayManager } from "../../ui/ts/ui/touch/bridge/overlay.js";
 
 describe("OverlayManager - Comprehensive Edge Cases & Branches", () => {
 	it("exercises Tauri invoke error handling across all methods", async () => {

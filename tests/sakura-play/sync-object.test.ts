@@ -3,7 +3,7 @@ import { test } from "vitest";
 import {
 	SyncObject,
 	SyncObjectManager,
-} from "../../ui/js/ghost/sakura-play/sync-object.js";
+} from "../../ui/ts/ghost/sakura-play/sync-object.js";
 
 test("SyncObject: basic set, reset, and wait", async () => {
 	const sync = new SyncObject("event1");

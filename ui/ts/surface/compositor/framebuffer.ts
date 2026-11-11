@@ -91,9 +91,9 @@ export class SurfaceFrameBuffer {
 		width: unknown;
 		height: unknown;
 	}) {
-		const ctx = canvas.getContext("2d", { willReadFrequently: true }) as
-			| CanvasRenderingContext2D
-			| null;
+		const ctx = canvas.getContext("2d", {
+			willReadFrequently: true,
+		}) as CanvasRenderingContext2D | null;
 		if (!ctx) return null;
 		const imgData = ctx.getImageData(
 			0,

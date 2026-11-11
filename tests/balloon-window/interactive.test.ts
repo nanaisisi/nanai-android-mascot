@@ -11,7 +11,7 @@ test("setupInteractiveElements binds click events to choices and anchors", async
 	const { emittedEvents } = setupBalloonMockEnvironment();
 
 	const { setupInteractiveElements } = await import(
-		"../../ui/js/ghost/balloon-window/interactive.js"
+		"../../ui/ts/ghost/balloon-window/interactive.js"
 	);
 
 	setupInteractiveElements(null as unknown, 0);

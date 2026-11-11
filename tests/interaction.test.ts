@@ -33,7 +33,7 @@ Object.defineProperty(globalThis, "navigator", {
 	configurable: true,
 });
 
-const { InteractionManager } = await import("../ui/js/surface/interaction.js");
+const { InteractionManager } = await import("../ui/ts/surface/interaction.js");
 
 test("InteractionManager covers dragging, stroke, longpress, docking, and native window move", async () => {
 	vi.useFakeTimers();

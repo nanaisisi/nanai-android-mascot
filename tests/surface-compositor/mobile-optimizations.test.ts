@@ -10,7 +10,7 @@ import { setupSurfaceCompositorMockEnv } from "./helpers.js";
 setupSurfaceCompositorMockEnv();
 
 const { SurfaceFrameBuffer } = await import(
-	"../../ui/js/surface/surface-compositor.js"
+	"../../ui/ts/surface/surface-compositor.js"
 );
 
 test("surface-compositor covers Cycle 3 mobile optimizations: data32, clearRect, compositeBuffer, destroy", () => {

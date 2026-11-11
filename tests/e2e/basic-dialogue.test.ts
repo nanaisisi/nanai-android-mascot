@@ -3,10 +3,10 @@ import { test, vi } from "vitest";
 import { createMockElement } from "./helpers.js";
 
 const { SakuraScriptPlayer } = await import(
-	"../../ui/js/ghost/sakura-script.js"
+	"../../ui/ts/ghost/sakura-script.js"
 );
 const { parseSakuraScript } = await import(
-	"../../ui/js/ghost/sakura-tokenizer.js"
+	"../../ui/ts/ghost/sakura-tokenizer.js"
 );
 
 test("E2E dialogue lifecycle: boot -> speech -> choice select -> surface change -> script end", async () => {

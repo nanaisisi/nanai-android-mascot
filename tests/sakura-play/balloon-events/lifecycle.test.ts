@@ -2,9 +2,9 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import { createEl } from "../helpers.js";
 
-const { playScript } = await import("../../../ui/js/ghost/sakura-play.js");
+const { playScript } = await import("../../../ui/ts/ghost/sakura-play.js");
 const { SakuraScriptPlayer } = await import(
-	"../../../ui/js/ghost/sakura-script.js"
+	"../../../ui/ts/ghost/sakura-script.js"
 );
 
 test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip", async () => {

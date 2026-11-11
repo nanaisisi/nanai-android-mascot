@@ -2,16 +2,16 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 const { parseSurfacesTxt } = await import(
-	"../../ui/js/surface/surface-parser.js"
+	"../../ui/ts/surface/surface-parser.js"
 );
 const { parseSakuraScript } = await import(
-	"../../ui/js/ghost/sakura-tokenizer.js"
+	"../../ui/ts/ghost/sakura-tokenizer.js"
 );
 const { handleTimerNotifyCommand, handleTimerPluginCommand } = await import(
-	"../../ui/js/ghost/command-handler/system/timer.js"
+	"../../ui/ts/ghost/command-handler/system/timer.js"
 );
 const { handleFileWatchCommand, handleExecuteCommand } = await import(
-	"../../ui/js/ghost/command-handler/media.js"
+	"../../ui/ts/ghost/command-handler/media.js"
 );
 
 test("Parser Fuzzing Cycle 10: surfaces.txt compound intervals, bracketed surface IDs, and 7-part collision fuzzing", () => {

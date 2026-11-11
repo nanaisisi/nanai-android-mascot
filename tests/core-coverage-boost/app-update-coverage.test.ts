@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import { updateMethods } from "../../ui/js/core/app-update.js";
+import { updateMethods } from "../../ui/ts/core/app-update.js";
 
 describe("core-coverage-boost: app-update edge cases", () => {
 	it("startNetworkUpdate executes checkOnly mode with updates found", async () => {

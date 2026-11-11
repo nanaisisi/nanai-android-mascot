@@ -3,12 +3,12 @@ import { test } from "vitest";
 import { createMockCanvas } from "./helpers.js";
 
 const { composeSurfaceElements } = await import(
-	"../../ui/js/surface/compositor/compose.js"
+	"../../ui/ts/surface/compositor/compose.js"
 );
 
 test("SurfaceFrameBuffer Cycle 4: dynamic offset composition, interpolate alpha blend, and boundary tolerance", async () => {
 	const { SurfaceFrameBuffer } = await import(
-		"../../ui/js/surface/compositor/framebuffer.js"
+		"../../ui/ts/surface/compositor/framebuffer.js"
 	);
 
 	// Create a 16x16 destination buffer initialized to solid black (alpha 255)
@@ -99,7 +99,7 @@ test("SurfaceFrameBuffer Cycle 4: dynamic offset composition, interpolate alpha 
 
 test("SurfaceFrameBuffer 32-bit pixel operations, clone, and high-frequency multi-layer composite snapshot", async () => {
 	const { SurfaceFrameBuffer } = await import(
-		"../../ui/js/surface/compositor/framebuffer.js"
+		"../../ui/ts/surface/compositor/framebuffer.js"
 	);
 
 	// 1. Pixel buffer manipulation & boundary checks

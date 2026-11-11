@@ -7,12 +7,12 @@ globalThis.document = {
 	getElementById: () => ({ style: {}, textContent: "" }),
 };
 
-import { GhostController } from "../ui/js/ghost/ghost.js";
-import { parseSakuraScript } from "../ui/js/ghost/sakura-parser.js";
+import { GhostController } from "../ui/ts/ghost/ghost.js";
+import { parseSakuraScript } from "../ui/ts/ghost/sakura-parser.js";
 import {
 	fromRustResponse,
 	statusCodeFromRust,
-} from "../ui/js/ghost/shiori-protocol.js";
+} from "../ui/ts/ghost/shiori-protocol.js";
 
 test("sakura-parser test", () => {
 	const ast = parseSakuraScript("\\0Hello\\1World\\e");

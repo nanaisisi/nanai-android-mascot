@@ -121,7 +121,7 @@ globalThis.__TAURI_INTERNALS__ = {
 };
 
 // Import context-menu to initialize listeners
-await import("../ui/js/ui/context-menu.js");
+await import("../ui/ts/ui/context-menu.js");
 
 test("context-menu event handlers, sync listeners, mouse events and keyboard shortcuts", async () => {
 	// 1. Test document mousedown

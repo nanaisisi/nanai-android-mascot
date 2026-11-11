@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 const { SakuraPlaybackController } = await import(
-	"../ui/js/ghost/sakura-play.js"
+	"../ui/ts/ghost/sakura-play.js"
 );
 
 test("SakuraPlaybackController queue lifecycle, enqueue, dequeue, clearQueue and stop", async () => {

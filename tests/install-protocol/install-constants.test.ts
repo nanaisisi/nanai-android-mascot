@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { describe, test } from "vitest";
 
 const { INSTALL_IDENTIFIERS, INSTALL_FAILURE_REASONS, normalizeInstallType } =
-	await import("../../ui/js/core/actions/install-protocol.js");
+	await import("../../ui/ts/core/actions/install-protocol.js");
 
 describe("install-protocol - constants & normalization", () => {
 	test("UKADOC install constants are defined and frozen", () => {

@@ -7,7 +7,7 @@ const {
 	parseErrorReason,
 	createUpdateProgressHandler,
 	PROGRESS_PHASE_EVENTS,
-} = await import("../ui/js/core/actions/update-protocol.js");
+} = await import("../ui/ts/core/actions/update-protocol.js");
 
 test("update-protocol covers buildUpdateArgs, buildUpdateOtherArgs, parseErrorReason, and progressHandler", () => {
 	// 1. buildUpdateArgs
@@ -36,11 +36,11 @@ test("update-protocol covers buildUpdateArgs, buildUpdateOtherArgs, parseErrorRe
 	assert.equal(parseErrorReason("other error"), "fileio");
 
 	// 3. createUpdateProgressHandler
-	const eventsSent = [];
+	const eventsSent: { ev: unknown; args: unknown; }[] | { ev: unknown; }[] = [];
 	let failedFile = null;
 
 	const mockGc = {
-		sendShioriEvent: async (ev, args) => {
+		sendShioriEvent: async (ev: unknown, args: unknown) => {
 			eventsSent.push({ ev, args });
 		},
 	};

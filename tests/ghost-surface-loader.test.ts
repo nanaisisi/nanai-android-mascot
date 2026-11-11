@@ -12,7 +12,7 @@ globalThis.__TAURI_INTERNALS__ = {
 };
 
 const { ghostSurfaceLoaderMethods } = await import(
-	"../ui/js/surface/ghost-surface-loader.js"
+	"../ui/ts/surface/ghost-surface-loader.js"
 );
 
 function createMockGhostController() {

@@ -11,7 +11,7 @@ test("loadBalloonSkinImages and applyBalloonDescript load and apply theme descri
 	setupBalloonMockEnvironment();
 
 	const { applyBalloonDescript, loadBalloonSkinImages } = await import(
-		"../../ui/js/ghost/balloon-window/theme.js"
+		"../../ui/ts/ghost/balloon-window/theme.js"
 	);
 
 	const bgImg = await loadBalloonSkinImages("ivory", 0);

@@ -12,12 +12,12 @@ import {
 	resumeAnimation,
 	setAnimationOffset,
 	stopAnimation,
-} from "../../ui/js/surface/animation/animation-options.js";
+} from "../../ui/ts/surface/animation/animation-options.js";
 import {
 	AnimationScheduler,
 	createPlaceholderCanvas,
 	FrameStepEvent,
-} from "../../ui/js/surface/animation/scheduler-events.js";
+} from "../../ui/ts/surface/animation/scheduler-events.js";
 
 describe("SERIKO Animation Options & Scheduler Coverage", () => {
 	it("animation-options covers this-binding, exclusive targets, offsets, and pause/resume", () => {

@@ -15,10 +15,10 @@ globalThis.document = {
 	},
 };
 
-import { docTemplates } from "../ui/js/ui/templates/doc-templates.js";
-import { ghostTemplates } from "../ui/js/ui/templates/ghost-templates.js";
-import { settingsTemplates } from "../ui/js/ui/templates/settings-templates.js";
-import { systemTemplates } from "../ui/js/ui/templates/system-templates.js";
+import { docTemplates } from "../ui/ts/ui/templates/doc-templates.js";
+import { ghostTemplates } from "../ui/ts/ui/templates/ghost-templates.js";
+import { settingsTemplates } from "../ui/ts/ui/templates/settings-templates.js";
+import { systemTemplates } from "../ui/ts/ui/templates/system-templates.js";
 
 test("ui templates test", () => {
 	assert.ok(docTemplates);

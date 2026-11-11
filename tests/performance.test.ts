@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { SurfaceAnimationManager } from "../ui/js/surface/surface-animation-manager.js";
+import { SurfaceAnimationManager } from "../ui/ts/surface/surface-animation-manager.js";
 
 const deferred = () => {
 	let resolve: ((value?: unknown) => void) | undefined;

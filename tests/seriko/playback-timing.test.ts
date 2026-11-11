@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { createPlaceholderCanvas } from "../../ui/js/surface/surface-animation-manager.js";
+import { createPlaceholderCanvas } from "../../ui/ts/surface/surface-animation-manager.js";
 import { animationFixture } from "./helpers.js";
 
 test("pattern wait elapses before its frame is drawn", async () => {

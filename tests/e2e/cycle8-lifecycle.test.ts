@@ -3,16 +3,16 @@ import { test } from "vitest";
 import { createMockElement } from "./helpers.js";
 
 const { SakuraScriptPlayer } = await import(
-	"../../ui/js/ghost/sakura-script.js"
+	"../../ui/ts/ghost/sakura-script.js"
 );
 const { parseSakuraScript } = await import(
-	"../../ui/js/ghost/sakura-tokenizer.js"
+	"../../ui/ts/ghost/sakura-tokenizer.js"
 );
 const { SyncObjectManager } = await import(
-	"../../ui/js/ghost/sakura-play/sync-object.js"
+	"../../ui/ts/ghost/sakura-play/sync-object.js"
 );
 const { scriptLifetimeState } = await import(
-	"../../ui/js/ghost/command-handler/env.js"
+	"../../ui/ts/ghost/command-handler/env.js"
 );
 
 test("E2E dialogue lifecycle Cycle 8: SyncObject multi-ghost synchronization and script command integration", async () => {

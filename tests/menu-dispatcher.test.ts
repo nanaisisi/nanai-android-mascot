@@ -18,7 +18,7 @@ const classList = {
 globalThis.document = { body: { classList } };
 globalThis.parent = globalThis;
 
-const { MenuDispatcher } = await import("../ui/js/ui/menu-dispatcher.js");
+const { MenuDispatcher } = await import("../ui/ts/ui/menu-dispatcher.js");
 
 test("MenuDispatcher covers constructor, setScope, and dispatchAction", async () => {
 	const dispatcher = new MenuDispatcher();

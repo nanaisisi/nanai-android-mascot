@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-const { modalTemplates } = await import("../ui/js/ui/modal-templates.js");
+const { modalTemplates } = await import("../ui/ts/ui/modal-templates.js");
 
 test("modalTemplates exports aggregated HTML templates", () => {
 	assert.ok(modalTemplates);

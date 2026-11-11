@@ -5,7 +5,7 @@ import {
 	OverlayManager,
 	TouchGestureEvent,
 	TouchGestureRecognizer,
-} from "../../ui/js/ui/touch/index.js";
+} from "../../ui/ts/ui/touch/index.js";
 import { createMockElement } from "../touch/helpers.js";
 
 describe("Slot-12 Cycle 6 Extensions & Complete Branch Coverage", () => {

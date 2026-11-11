@@ -3,13 +3,13 @@ import { describe, it } from "vitest";
 import {
 	playAnimationById,
 	waitForAnimation,
-} from "../../ui/js/surface/animation/playback/playback-control.js";
+} from "../../ui/ts/surface/animation/playback/playback-control.js";
 import {
 	onCharSpoken,
 	onScriptEnd,
 	onTalkEnd,
 	onTalkStart,
-} from "../../ui/js/surface/animation/playback/playback-events.js";
+} from "../../ui/ts/surface/animation/playback/playback-events.js";
 
 describe("SERIKO Playback Control & Events Coverage", () => {
 	it("playback-control covers stopAnimation, offsets, running status, and waitForAnimation", async () => {

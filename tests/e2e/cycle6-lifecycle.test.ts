@@ -3,16 +3,16 @@ import { test } from "vitest";
 import { createMockElement } from "./helpers.js";
 
 const { SakuraScriptPlayer } = await import(
-	"../../ui/js/ghost/sakura-script.js"
+	"../../ui/ts/ghost/sakura-script.js"
 );
 const { parseSakuraScript } = await import(
-	"../../ui/js/ghost/sakura-tokenizer.js"
+	"../../ui/ts/ghost/sakura-tokenizer.js"
 );
 const { ModalDialogController } = await import(
-	"../../ui/js/ui/renderers/modal-dialog-controller.js"
+	"../../ui/ts/ui/renderers/modal-dialog-controller.js"
 );
 const { menuCaptionRenderer, MENU_CAPTION_DEFINITIONS } = await import(
-	"../../ui/js/ui/renderers/menu-caption-renderer.js"
+	"../../ui/ts/ui/renderers/menu-caption-renderer.js"
 );
 
 test("E2E dialogue lifecycle Cycle 6: system dialogs, SERIKO move displacement, raw text mode, and ownerdraw captions", async () => {

@@ -1,17 +1,17 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-import { actionMethods } from "../ui/js/core/app-actions.js";
-import { eventMethods } from "../ui/js/core/app-events.js";
-import { settingsMethods } from "../ui/js/core/app-settings.js";
-import { updateMethods } from "../ui/js/core/app-update.js";
-import { AppConfig, loadAppConfig } from "../ui/js/core/config.js";
+import { actionMethods } from "../ui/ts/core/app-actions.js";
+import { eventMethods } from "../ui/ts/core/app-events.js";
+import { settingsMethods } from "../ui/ts/core/app-settings.js";
+import { updateMethods } from "../ui/ts/core/app-update.js";
+import { AppConfig, loadAppConfig } from "../ui/ts/core/config.js";
 import {
 	emit,
 	invoke,
 	isTauriAvailable,
 	listen,
-} from "../ui/js/core/tauri-helper.js";
+} from "../ui/ts/core/tauri-helper.js";
 
 test("AppConfig test", async () => {
 	assert.ok(AppConfig.paths.defaultGhostDir);
@@ -135,7 +135,7 @@ import {
 	getCurrentWindowPosition,
 	moveCurrentWindowBy,
 	startDraggingWindow,
-} from "../ui/js/core/tauri-helper.js";
+} from "../ui/ts/core/tauri-helper.js";
 
 test("tauri-helper advanced coverage test", async () => {
 	delete globalThis.__TAURI__;

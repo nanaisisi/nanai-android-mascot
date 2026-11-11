@@ -38,9 +38,28 @@ export interface AppSettings {
 }
 
 export class NanaiAndroidMascotApp {
+	toggleHtmlMenu(_scope: number) {
+		throw new Error("Method not implemented.");
+	}
+	cachedMenuCaptions!: {};
+	currentSurfaceIdFor(_scopeId: number): unknown {
+		throw new Error("Method not implemented.");
+	}
 	syncObjectManager?:
 		| import("./ts/ghost/sakura-play/sync-object.js").SyncObjectManager
 		| null;
+	_surfaceAssetCache!: Map<unknown, unknown>;
+	names: unknown;
+	aliases: Record<string, number[]> | undefined;
+	keroAliases: unknown;
+	charAliases: unknown;
+	baseWidth!: number;
+	baseHeight!: number;
+	animationManager: unknown;
+	collisions: unknown;
+	collisionSort!: string;
+	cursors: unknown;
+	tooltips: unknown;
 	startNetworkUpdate(
 		_targetGhostName?: string | null,
 		_options?: { checkOnly?: boolean },

@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import { applyAlignmentProperties as directAlignment } from "../../ui/js/core/actions/balloon-descript/layout/alignment.js";
-import { applyCommunicateBoxProperties as directCommunicateBox } from "../../ui/js/core/actions/balloon-descript/layout/communicate-box.js";
-import { applyPositionProperties as directPosition } from "../../ui/js/core/actions/balloon-descript/layout/position.js";
-import { applyValidRectProperties as directValidRect } from "../../ui/js/core/actions/balloon-descript/layout/rect.js";
-import { applyDpiAndScaleProperties as directScale } from "../../ui/js/core/actions/balloon-descript/layout/scale.js";
+import { applyAlignmentProperties as directAlignment } from "../../ui/ts/core/actions/balloon-descript/layout/alignment.js";
+import { applyCommunicateBoxProperties as directCommunicateBox } from "../../ui/ts/core/actions/balloon-descript/layout/communicate-box.js";
+import { applyPositionProperties as directPosition } from "../../ui/ts/core/actions/balloon-descript/layout/position.js";
+import { applyValidRectProperties as directValidRect } from "../../ui/ts/core/actions/balloon-descript/layout/rect.js";
+import { applyDpiAndScaleProperties as directScale } from "../../ui/ts/core/actions/balloon-descript/layout/scale.js";
 import {
 	applyAlignmentProperties,
 	applyCommunicateBoxProperties,
@@ -12,7 +12,7 @@ import {
 	applyLayoutProperties,
 	applyPositionProperties,
 	applyValidRectProperties,
-} from "../../ui/js/core/actions/balloon-descript/layout.js";
+} from "../../ui/ts/core/actions/balloon-descript/layout.js";
 import { createMockRoot } from "./helpers.js";
 
 describe("balloon-descript-layout layout facade submodule", () => {

@@ -15,7 +15,7 @@ globalThis.document = {
 };
 
 const { ModalGhostHandlers } = await import(
-	"../ui/js/ui/modal-ghost-handlers.js"
+	"../ui/ts/ui/modal-ghost-handlers.js"
 );
 
 test("ModalGhostHandlers covers constructor and setupExplorerListeners", () => {

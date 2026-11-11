@@ -16,7 +16,7 @@ import {
 	LONG_PRESS_DELAY,
 	restoreFromDocking,
 	STROKE_THRESHOLD,
-} from "../../ui/js/surface/interaction/drag-handler.js";
+} from "../../ui/ts/surface/interaction/drag-handler.js";
 import { setupInteractionDomGlobals } from "./helpers.js";
 
 setupInteractionDomGlobals();

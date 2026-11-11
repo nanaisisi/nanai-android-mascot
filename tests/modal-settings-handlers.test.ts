@@ -60,7 +60,7 @@ globalThis.document = {
 };
 
 const { ModalSettingsHandlers } = await import(
-	"../ui/js/ui/modal-settings-handlers.js"
+	"../ui/ts/ui/modal-settings-handlers.js"
 );
 
 test("ModalSettingsHandlers covers settings, plugins, and debug listeners", async () => {

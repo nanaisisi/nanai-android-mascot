@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 const { expandSurfaceRange, parseSurfacesTxt } = await import(
-	"../ui/js/surface/surface-parser.js"
+	"../ui/ts/surface/surface-parser.js"
 );
 
 test("surface-parser covers expandSurfaceRange and parseSurfacesTxt", () => {

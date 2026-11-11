@@ -3,7 +3,7 @@ import {
 	ANDROID_EVENTS,
 	ANDROID_LIFECYCLE_STATES,
 	AndroidBridge,
-} from "../../ui/js/ui/touch/index.js";
+} from "../../ui/ts/ui/touch/index.js";
 
 describe("AndroidBridge - Lifecycle", () => {
 	let originalDocument: unknown;
@@ -31,7 +31,7 @@ describe("AndroidBridge - Lifecycle", () => {
 		const listeners = {};
 		const mockDoc = {
 			hidden: false,
-			addEventListener: (event, handler) => {
+			addEventListener: (event: string | number, handler: unknown) => {
 				listeners[event] = handler;
 			},
 		};
@@ -64,7 +64,7 @@ describe("AndroidBridge - Lifecycle", () => {
 		const listeners = {};
 		const mockDoc = {
 			hidden: false,
-			addEventListener: (event, handler) => {
+			addEventListener: (event: string | number, handler: unknown) => {
 				listeners[event] = handler;
 			},
 		};
@@ -110,18 +110,18 @@ describe("AndroidBridge - Lifecycle", () => {
 
 		const mockDoc = {
 			hidden: false,
-			addEventListener: (event, handler) => {
+			addEventListener: (event: string | number, handler: unknown) => {
 				docListeners[event] = handler;
 			},
-			removeEventListener: (event) => {
+			removeEventListener: (event: string | number) => {
 				delete docListeners[event];
 			},
 		};
 		const mockWin = {
-			addEventListener: (event, handler) => {
+			addEventListener: (event: string | number, handler: unknown) => {
 				winListeners[event] = handler;
 			},
-			removeEventListener: (event) => {
+			removeEventListener: (event: string | number) => {
 				delete winListeners[event];
 			},
 		};

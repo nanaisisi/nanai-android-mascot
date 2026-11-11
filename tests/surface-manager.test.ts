@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-const { SurfaceManager } = await import("../ui/js/surface/surface-manager.js");
+const { SurfaceManager } = await import("../ui/ts/surface/surface-manager.js");
 
 test("SurfaceManager initialization, surface ID getters/setters, and animation delegation", () => {
 	const mockApp = {};

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, test } from "vitest";
-import { setupGhostDragging as directSetupGhostDragging } from "../../ui/js/surface/interaction/drag-handler.js";
-import { setupGhostDragging } from "../../ui/js/surface/interaction.js";
+import { setupGhostDragging as directSetupGhostDragging } from "../../ui/ts/surface/interaction/drag-handler.js";
+import { setupGhostDragging } from "../../ui/ts/surface/interaction.js";
 import { setupInteractionDomGlobals } from "./helpers.js";
 
 setupInteractionDomGlobals();

@@ -8,7 +8,7 @@ import {
 	handleSetAlignmentOnDesktop,
 	handleSetTaskTrayIcon,
 	handleSetTrayBalloon,
-} from "../../ui/js/ghost/command-handler/system/desktop.js";
+} from "../../ui/ts/ghost/command-handler/system/desktop.js";
 
 describe("system/desktop.js", () => {
 	let originalTauri: unknown;

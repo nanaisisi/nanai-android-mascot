@@ -29,7 +29,7 @@ globalThis.__TAURI_INTERNALS__ = {
 };
 
 const { SakuraScriptPlayer, parseSakuraScript } = await import(
-	"../ui/js/ghost/sakura-script.js"
+	"../ui/ts/ghost/sakura-script.js"
 );
 
 test("SakuraScriptPlayer covers all methods, Tauri listeners, and restore timer", async () => {

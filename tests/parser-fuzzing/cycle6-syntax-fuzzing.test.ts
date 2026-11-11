@@ -2,13 +2,13 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 const { parseSakuraScript } = await import(
-	"../../ui/js/ghost/sakura-tokenizer.js"
+	"../../ui/ts/ghost/sakura-tokenizer.js"
 );
 const { handleAnimCommand } = await import(
-	"../../ui/js/ghost/command-handler/surface.js"
+	"../../ui/ts/ghost/command-handler/surface.js"
 );
 const { handleOpenDialogCommand } = await import(
-	"../../ui/js/ghost/command-handler/dialog.js"
+	"../../ui/ts/ghost/command-handler/dialog.js"
 );
 
 test("Parser Fuzzing Cycle 6: SakuraScript raw mode toggle (\\_?, \\_!) and unclosed edge cases", () => {

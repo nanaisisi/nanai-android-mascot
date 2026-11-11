@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import { handleJumpCommand } from "../ui/js/ghost/command-handler/jump.js";
+import { handleJumpCommand } from "../ui/ts/ghost/command-handler/jump.js";
 import {
 	getCommandHandler,
 	normalizeCommandKey,
 	registerCommandHandler,
 	unregisterCommandHandler,
-} from "../ui/js/ghost/command-handler/registry.js";
-import { SakuraCommandHandler } from "../ui/js/ghost/sakura-command-handler.js";
+} from "../ui/ts/ghost/command-handler/registry.js";
+import { SakuraCommandHandler } from "../ui/ts/ghost/sakura-command-handler.js";
 
 describe("CommandHandlerMap & Registry", () => {
 	it("normalizes command keys properly", () => {

@@ -78,13 +78,13 @@ globalThis.document = {
 };
 
 const { menuBalloonDressupRenderer } = await import(
-	"../ui/js/ui/renderers/menu-balloon-dressup-renderer.js"
+	"../ui/ts/ui/renderers/menu-balloon-dressup-renderer.js"
 );
 const { menuGhostShellRenderer } = await import(
-	"../ui/js/ui/renderers/menu-ghost-shell-renderer.js"
+	"../ui/ts/ui/renderers/menu-ghost-shell-renderer.js"
 );
 const { menuThemeRenderer } = await import(
-	"../ui/js/ui/renderers/menu-theme-renderer.js"
+	"../ui/ts/ui/renderers/menu-theme-renderer.js"
 );
 
 test("menu renderers cover 100% of balloon, dressup, recent, shell, ghost, and theme rendering", () => {

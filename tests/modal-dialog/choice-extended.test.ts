@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { ModalDialogController } from "../../ui/js/ui/renderers/modal-dialog-controller.js";
+import { ModalDialogController } from "../../ui/ts/ui/renderers/modal-dialog-controller.js";
 import {
 	createMockElement,
 	resetCreatedElements,

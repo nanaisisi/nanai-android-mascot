@@ -3,10 +3,10 @@ import { test, vi } from "vitest";
 import { createMockElement } from "./helpers.js";
 
 const { SakuraScriptPlayer } = await import(
-	"../../ui/js/ghost/sakura-script.js"
+	"../../ui/ts/ghost/sakura-script.js"
 );
 const { parseSakuraScript } = await import(
-	"../../ui/js/ghost/sakura-tokenizer.js"
+	"../../ui/ts/ghost/sakura-tokenizer.js"
 );
 
 test("E2E dialogue lifecycle Cycle 3: mobile lifecycle (AndroidBridge pause/resume), gesture resets, and extended dialogs", async () => {
@@ -17,9 +17,9 @@ test("E2E dialogue lifecycle Cycle 3: mobile lifecycle (AndroidBridge pause/resu
 		ANDROID_EVENTS,
 		ANDROID_LIFECYCLE_STATES,
 		TouchGestureRecognizer,
-	} = await import("../../ui/js/ui/touch/index.js");
+	} = await import("../../ui/ts/ui/touch/index.js");
 	const { ModalDialogController } = await import(
-		"../../ui/js/ui/renderers/modal-dialog-controller.js"
+		"../../ui/ts/ui/renderers/modal-dialog-controller.js"
 	);
 
 	const events = [];

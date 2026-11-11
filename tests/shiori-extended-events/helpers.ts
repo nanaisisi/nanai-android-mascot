@@ -1,5 +1,5 @@
 import { vi } from "vitest";
-import { eventMethods } from "../../ui/js/core/app-events.js";
+import { eventMethods } from "../../ui/ts/core/app-events.js";
 
 export interface MockShioriController {
 	app: { ghostId: string };

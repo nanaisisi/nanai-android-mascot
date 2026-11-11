@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 
-import { SakuraCommandHandler } from "../../ui/js/ghost/sakura-command-handler.js";
+import { SakuraCommandHandler } from "../../ui/ts/ghost/sakura-command-handler.js";
 
 describe("SakuraCommandHandler methods & lifecycle", () => {
 	it("exercises openInputBox, teachBox, communicateBox, alignment, windowState, and jump", async () => {

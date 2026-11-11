@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { SurfaceAnimationManager } from "../../ui/js/surface/surface-animation-manager.js";
+import { SurfaceAnimationManager } from "../../ui/ts/surface/surface-animation-manager.js";
 import { animationFixture } from "./helpers.js";
 
 test("SERIKO option exclusive stops other animations and blocks new ones", async () => {
@@ -241,7 +241,7 @@ test("SurfaceAnimationManager active animation count, list, and dynamic collisio
 	// 当たり判定テスト (SurfaceManager.detectCollision 連携)
 	// targetRect: (0, 0, 200, 200) -> clickX=50, clickY=50 -> canvasX=50, canvasY=50
 	const { surfaceCollisionMethods } = await import(
-		"../../ui/js/surface/surface-collision.js"
+		"../../ui/ts/surface/surface-collision.js"
 	);
 	const hitResult = surfaceCollisionMethods.detectCollision.call(
 		animation.manager,

@@ -24,8 +24,9 @@ export const surfaceCollisionMethods = {
 		const lowerTarget = rawName.toLowerCase();
 
 		// 1. Defined surface name lookup (`name,定義名`)
-		const namesMap = (this as import("../../../main.js").NanaiAndroidMascotApp)
-			.names;
+		const namesMap = (
+			this as unknown as import("../../main.js").NanaiAndroidMascotApp
+		).names;
 		if (namesMap) {
 			let lowerNames = nameCaseCache.get(namesMap);
 			if (!lowerNames) {
@@ -50,15 +51,16 @@ export const surfaceCollisionMethods = {
 		// 2. Alias lookup (`surface.alias` / `kero.surface.alias` / `char<N>.surface.alias`)
 		let map: Record<string, number[]> | undefined;
 		if (scopeId === 0) {
-			map = (this as import("../../../main.js").NanaiAndroidMascotApp).aliases;
+			map = (this as unknown as import("../../main.js").NanaiAndroidMascotApp)
+				.aliases;
 		} else if (scopeId === 1) {
 			map =
-				(this as import("../../../main.js").NanaiAndroidMascotApp)
+				(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
 					.keroAliases ??
-				(this as import("../../../main.js").NanaiAndroidMascotApp)
+				(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
 					.charAliases?.[1];
 		} else {
-			map = (this as import("../../../main.js").NanaiAndroidMascotApp)
+			map = (this as unknown as import("../../main.js").NanaiAndroidMascotApp)
 				.charAliases?.[scopeId];
 		}
 
@@ -97,7 +99,7 @@ export const surfaceCollisionMethods = {
 				? String(surfaceId)
 				: String(
 						(
-							this as import("../../../main.js").NanaiAndroidMascotApp
+							this as unknown as import("../../main.js").NanaiAndroidMascotApp
 						).currentSurfaceIdFor(scopeId),
 					);
 
@@ -106,16 +108,18 @@ export const surfaceCollisionMethods = {
 
 		const canvasX = Math.round(
 			relX *
-				(this as import("../../../main.js").NanaiAndroidMascotApp).baseWidth,
+				(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
+					.baseWidth,
 		);
 		const canvasY = Math.round(
 			relY *
-				(this as import("../../../main.js").NanaiAndroidMascotApp).baseHeight,
+				(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
+					.baseHeight,
 		);
 
 		const activeAnimationCols =
 			(
-				this as import("../../../main.js").NanaiAndroidMascotApp
+				this as unknown as import("../../main.js").NanaiAndroidMascotApp
 			).animationManager?.getActiveCollisions?.(scopeId) || [];
 		for (let i = activeAnimationCols.length - 1; i >= 0; i--) {
 			const col = activeAnimationCols[i];
@@ -130,18 +134,17 @@ export const surfaceCollisionMethods = {
 		}
 
 		const colList =
-			(this as import("../../../main.js").NanaiAndroidMascotApp).collisions[
-				sid
-			] ||
-			(this as import("../../../main.js").NanaiAndroidMascotApp).collisions
-				.default ||
+			(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
+				.collisions[sid] ||
+			(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
+				.collisions.default ||
 			[];
 		if (colList.length === 0) {
 			return { name: "", canvasX, canvasY };
 		}
 
 		const sortKind = String(
-			(this as import("../../../main.js").NanaiAndroidMascotApp)
+			(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
 				.collisionSort || "none",
 		).toLowerCase();
 
@@ -206,7 +209,8 @@ export const surfaceCollisionMethods = {
 		collisionName: string,
 	): string | null {
 		if (
-			!(this as import("../../../main.js").NanaiAndroidMascotApp).cursors ||
+			!(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
+				.cursors ||
 			!collisionName
 		)
 			return null;
@@ -222,10 +226,10 @@ export const surfaceCollisionMethods = {
 		const cacheKey = `${evLower}\0${colLower}`;
 
 		const lists = [
-			(this as import("../../../main.js").NanaiAndroidMascotApp).cursors[
-				scopeKey
-			],
-			(this as import("../../../main.js").NanaiAndroidMascotApp).cursors["*"],
+			(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
+				.cursors[scopeKey],
+			(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
+				.cursors["*"],
 		].filter(Boolean);
 
 		for (const list of lists) {
@@ -256,7 +260,8 @@ export const surfaceCollisionMethods = {
 		collisionName: string,
 	): string | null {
 		if (
-			!(this as import("../../../main.js").NanaiAndroidMascotApp).tooltips ||
+			!(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
+				.tooltips ||
 			!collisionName
 		)
 			return null;
@@ -270,10 +275,10 @@ export const surfaceCollisionMethods = {
 		const colLower = String(collisionName).toLowerCase();
 
 		const maps = [
-			(this as import("../../../main.js").NanaiAndroidMascotApp).tooltips[
-				scopeKey
-			],
-			(this as import("../../../main.js").NanaiAndroidMascotApp).tooltips["*"],
+			(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
+				.tooltips[scopeKey],
+			(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
+				.tooltips["*"],
 		].filter(Boolean);
 
 		for (const map of maps) {

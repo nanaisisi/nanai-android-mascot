@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { describe, test } from "vitest";
 
 const { parseInstallErrorReason, buildInstallFailureArgs } = await import(
-	"../../ui/js/core/actions/install-protocol.js"
+	"../../ui/ts/core/actions/install-protocol.js"
 );
 
 describe("install-protocol - error parsing & failure args", () => {

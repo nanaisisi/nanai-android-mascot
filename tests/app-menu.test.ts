@@ -15,7 +15,7 @@ globalThis.localStorage = {
 	setItem: () => {},
 };
 
-const { menuMethods } = await import("../ui/js/ui/app-menu.js");
+const { menuMethods } = await import("../ui/ts/ui/app-menu.js");
 
 test("menuMethods covers toggleMenu, toggleHtmlMenu, syncMenuGhosts, hideMenu, and quick actions", async () => {
 	const mockApp = {

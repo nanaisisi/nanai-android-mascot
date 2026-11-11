@@ -5,7 +5,7 @@ globalThis.window = globalThis;
 const documentListeners = {};
 const elements = {};
 
-const getEl = (idOrClass) => {
+const getEl = (idOrClass: string) => {
 	const key = idOrClass.replace("#", "").replace(".", "");
 	if (!elements[key]) {
 		const classes = new Set();
@@ -13,13 +13,13 @@ const getEl = (idOrClass) => {
 			textContent: "",
 			classes,
 			classList: {
-				add(c) {
+				add(c: unknown) {
 					classes.add(c);
 				},
-				remove(c) {
+				remove(c: unknown) {
 					classes.delete(c);
 				},
-				contains(c) {
+				contains(c: unknown) {
 					return classes.has(c);
 				},
 			},
@@ -33,16 +33,16 @@ globalThis.document = {
 	getElementById(id) {
 		return getEl(id);
 	},
-	querySelector(sel) {
+	querySelector(sel: string) {
 		return getEl(sel);
 	},
-	addEventListener(type, cb) {
+	addEventListener(type: string, cb: EventListener) {
 		documentListeners[type] = cb;
 	},
 };
 
 const { toggleMenu, openModal, closeModal } = await import(
-	"../ui/js/ui/test-menu.js"
+	"../ui/ts/ui/test-menu.js"
 );
 
 test("test-menu covers toggleMenu, openModal, closeModal, and document listeners", () => {

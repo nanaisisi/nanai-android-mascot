@@ -4,7 +4,7 @@ import { test } from "vitest";
 globalThis.window = globalThis;
 
 const { networkActions } = await import(
-	"../ui/js/core/actions/network-actions.js"
+	"../ui/ts/core/actions/network-actions.js"
 );
 
 test("networkActions.checkEmail covers all branches (Tauri & non-Tauri)", async () => {

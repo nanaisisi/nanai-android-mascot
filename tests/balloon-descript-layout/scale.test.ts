@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import { applyDpiAndScaleProperties as directScale } from "../../ui/js/core/actions/balloon-descript/layout/scale.js";
-import { applyDpiAndScaleProperties } from "../../ui/js/core/actions/balloon-descript/layout.js";
+import { applyDpiAndScaleProperties as directScale } from "../../ui/ts/core/actions/balloon-descript/layout/scale.js";
+import { applyDpiAndScaleProperties } from "../../ui/ts/core/actions/balloon-descript/layout.js";
 import { createMockRoot } from "./helpers.js";
 
 describe("balloon-descript-layout scale submodule", () => {

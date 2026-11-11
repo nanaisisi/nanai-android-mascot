@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import { applyCommunicateBoxProperties as directCommunicateBox } from "../../ui/js/core/actions/balloon-descript/layout/communicate-box.js";
+import { applyCommunicateBoxProperties as directCommunicateBox } from "../../ui/ts/core/actions/balloon-descript/layout/communicate-box.js";
 
 describe("balloon-descript-layout communicate-box submodule", () => {
 	it("communicate-box module updates communicate box styles", () => {

@@ -22,7 +22,7 @@ globalThis.__TAURI__ = {
 };
 
 // Import loading-banner
-await import("../ui/js/ui/loading-banner.js");
+await import("../ui/ts/ui/loading-banner.js");
 
 test("loading-banner covers URL param initialization and Tauri event updates", async () => {
 	assert.equal(elements["banner-ghost-name"].textContent, "MockGhost");

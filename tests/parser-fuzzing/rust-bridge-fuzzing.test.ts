@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 const { rustCommandsToTokens } = await import(
-	"../../ui/js/ghost/sakura-rust-bridge.js"
+	"../../ui/ts/ghost/sakura-rust-bridge.js"
 );
 
 test("rustCommandsToTokens fuzzing and defensive mapping", () => {

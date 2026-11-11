@@ -4,9 +4,9 @@ import {
 	pauseAnimation,
 	resumeAnimation,
 	setAnimationOffset,
-} from "../../ui/js/surface/animation/animation-options.js";
-import { _applyAnimationFrame } from "../../ui/js/surface/animation/playback/playback-apply.js";
-import { renderAnimationFrame } from "../../ui/js/surface/animation/playback/playback-render.js";
+} from "../../ui/ts/surface/animation/animation-options.js";
+import { _applyAnimationFrame } from "../../ui/ts/surface/animation/playback/playback-apply.js";
+import { renderAnimationFrame } from "../../ui/ts/surface/animation/playback/playback-render.js";
 
 describe("SERIKO Playback Apply Coverage", () => {
 	it("_applyAnimationFrame covers control patterns, sound, offsets, and rendering", async () => {

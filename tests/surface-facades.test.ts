@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 
-import * as animationPlayback from "../ui/js/surface/animation/animation-playback.js";
-import * as surfaceFacade from "../ui/js/surface/surface.js";
-import * as surfaceCompositor from "../ui/js/surface/surface-compositor.js";
-import * as surfaceParser from "../ui/js/surface/surface-parser.js";
+import * as animationPlayback from "../ui/ts/surface/animation/animation-playback.js";
+import * as surfaceFacade from "../ui/ts/surface/surface.js";
+import * as surfaceCompositor from "../ui/ts/surface/surface-compositor.js";
+import * as surfaceParser from "../ui/ts/surface/surface-parser.js";
 
 describe("surface facade exports and integration", () => {
 	it("ui/js/surface/surface.js exports core surface APIs", () => {

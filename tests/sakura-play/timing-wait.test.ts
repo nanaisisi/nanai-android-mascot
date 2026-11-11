@@ -3,7 +3,7 @@ import { test } from "vitest";
 import { createEl } from "./helpers.js";
 
 const { playScript, SakuraPlaybackController } = await import(
-	"../../ui/js/ghost/sakura-play.js"
+	"../../ui/ts/ghost/sakura-play.js"
 );
 
 test("playScript applies punctuation delay and waitMultiplier via playbackController", async () => {

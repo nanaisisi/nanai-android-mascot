@@ -2,9 +2,9 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 const { parseSakuraScript } = await import(
-	"../../ui/js/ghost/sakura-tokenizer.js"
+	"../../ui/ts/ghost/sakura-tokenizer.js"
 );
-const { tokensToAst } = await import("../../ui/js/ghost/parser/ast.js");
+const { tokensToAst } = await import("../../ui/ts/ghost/parser/ast.js");
 
 test("AST traversal functions and lifetime filtering", async () => {
 	const {
@@ -12,7 +12,7 @@ test("AST traversal functions and lifetime filtering", async () => {
 		collectAstTokens,
 		collectAstTokensByLifetime,
 		getSakuraTokenLifetime,
-	} = await import("../../ui/js/ghost/parser/ast.js");
+	} = await import("../../ui/ts/ghost/parser/ast.js");
 
 	assert.equal(getSakuraTokenLifetime({ type: "font" }), "Scope");
 	assert.equal(getSakuraTokenLifetime({ type: "surface" }), "Permanent");

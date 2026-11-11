@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 globalThis.window = globalThis;
 
-import { scriptLifetimeState } from "../../ui/js/ghost/command-handler/env.js";
+import { scriptLifetimeState } from "../../ui/ts/ghost/command-handler/env.js";
 import {
 	handleGetPropertyCommand,
 	handleKeyPressEvent,
@@ -10,7 +10,7 @@ import {
 	handleSetPositionCommand,
 	handleSetPropertyCommand,
 	handleSetScalingCommand,
-} from "../../ui/js/ghost/command-handler/system/surface.js";
+} from "../../ui/ts/ghost/command-handler/system/surface.js";
 
 describe("system/surface.js", () => {
 	it("handleSetPropertyCommand sets property in scriptLifetimeState", async () => {

@@ -6,8 +6,8 @@ globalThis.window = globalThis;
 import {
 	BalloonThemeManager,
 	balloonThemeActions,
-} from "../ui/js/core/actions/balloon-theme.js";
-import * as tauriHelper from "../ui/js/core/tauri-helper.js";
+} from "../ui/ts/core/actions/balloon-theme.js";
+import * as tauriHelper from "../ui/ts/core/tauri-helper.js";
 
 describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 	let cssVars = {};

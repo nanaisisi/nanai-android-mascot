@@ -6,7 +6,7 @@ import {
 	BridgeEventEmitter,
 	DockManager,
 	OverlayManager,
-} from "../../ui/js/ui/touch/index.js";
+} from "../../ui/ts/ui/touch/index.js";
 
 describe("AndroidBridge - Dock & Submodules", () => {
 	it("manages dockMode and coordinates with gestureRecognizer snap events", () => {

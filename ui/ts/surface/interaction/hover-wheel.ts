@@ -39,7 +39,7 @@ export function setupHoverAndWheel(
 			onGhostWheel(clientX, clientY, rect, delta);
 		}
 	};
-	target.addEventListener("wheel", onWheel as EventListener, {
+	target.addEventListener("wheel", onWheel as unknown as EventListener, {
 		passive: true,
 	});
 
@@ -63,14 +63,21 @@ export function setupHoverAndWheel(
 		}
 	};
 
-	target.addEventListener("mousemove", onMouseMove as EventListener, {
-		passive: true,
-	});
+	target.addEventListener(
+		"mousemove",
+		onMouseMove as unknown as EventListener,
+		{
+			passive: true,
+		},
+	);
 	target.addEventListener("mouseleave", onMouseLeave);
 
 	return () => {
-		target.removeEventListener("wheel", onWheel as EventListener);
-		target.removeEventListener("mousemove", onMouseMove as EventListener);
+		target.removeEventListener("wheel", onWheel as unknown as EventListener);
+		target.removeEventListener(
+			"mousemove",
+			onMouseMove as unknown as EventListener,
+		);
 		target.removeEventListener("mouseleave", onMouseLeave);
 		if (hoverTimer) {
 			clearTimeout(hoverTimer);

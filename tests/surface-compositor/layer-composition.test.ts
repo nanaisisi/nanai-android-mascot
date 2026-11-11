@@ -10,7 +10,7 @@ import { setupSurfaceCompositorMockEnv } from "./helpers.js";
 setupSurfaceCompositorMockEnv();
 
 const { processChromaKey, drawImageLayer, drawLayer, composeSurfaceElements } =
-	await import("../../ui/js/surface/surface-compositor.js");
+	await import("../../ui/ts/surface/surface-compositor.js");
 
 test("surface-compositor covers processChromaKey, drawLayer, and composeSurfaceElements", async () => {
 	// 1. processChromaKey empty source

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { isAndroidPlatform } from "../../ui/js/ui/touch/bridge/overlay.js";
-import { ANDROID_EVENTS, AndroidBridge } from "../../ui/js/ui/touch/index.js";
+import { isAndroidPlatform } from "../../ui/ts/ui/touch/bridge/overlay.js";
+import { ANDROID_EVENTS, AndroidBridge } from "../../ui/ts/ui/touch/index.js";
 
 describe("AndroidBridge - Platform & Overlay", () => {
 	let originalNavigator: unknown;

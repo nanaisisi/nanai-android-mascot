@@ -2,15 +2,15 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 const { parseSakuraScript } = await import(
-	"../../ui/js/ghost/sakura-tokenizer.js"
+	"../../ui/ts/ghost/sakura-tokenizer.js"
 );
 const { handleSetSyncObject, handleResetSyncObject, handleWaitSyncObject } =
-	await import("../../ui/js/ghost/command-handler/playback.js");
+	await import("../../ui/ts/ghost/command-handler/playback.js");
 const { handleEnterMode, handleLeaveMode } = await import(
-	"../../ui/js/ghost/command-handler/system/surface.js"
+	"../../ui/ts/ghost/command-handler/system/surface.js"
 );
 const { handleRaiseOtherCommand, handleNotifyOtherCommand } = await import(
-	"../../ui/js/ghost/command-handler/ghost.js"
+	"../../ui/ts/ghost/command-handler/ghost.js"
 );
 
 test("Parser Fuzzing Cycle 8: SyncObject commands argument fuzzing and null-safety", async () => {

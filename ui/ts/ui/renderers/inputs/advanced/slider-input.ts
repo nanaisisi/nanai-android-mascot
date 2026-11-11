@@ -3,7 +3,11 @@
  * @brief sliderinput の表示・制御処理
  */
 
-export function openSliderInput(params: string | unknown[], scope: unknown) {
+export function openSliderInput(
+	this: unknown,
+	params: string | unknown[],
+	scope: unknown,
+) {
 	const id = params[0] || "SliderInput";
 	let timeoutMs = 0;
 	let currentVal = 0;

@@ -1,4 +1,4 @@
-import { SurfaceAnimationManager } from "../../ui/js/surface/surface-animation-manager.js";
+import { SurfaceAnimationManager } from "../../ui/ts/surface/surface-animation-manager.js";
 
 /**
  * アニメーション再生フレーム追跡用フィクスチャ

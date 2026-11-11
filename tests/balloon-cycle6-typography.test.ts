@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import { applyAssetProperties } from "../ui/js/core/actions/balloon-descript/assets.js";
-import { BalloonThemeManager } from "../ui/js/core/actions/balloon-theme.js";
-import { MENU_CAPTION_DEFINITIONS } from "../ui/js/ui/renderers/menu-caption-renderer.js";
+import { applyAssetProperties } from "../ui/ts/core/actions/balloon-descript/assets.js";
+import { BalloonThemeManager } from "../ui/ts/core/actions/balloon-theme.js";
+import { MENU_CAPTION_DEFINITIONS } from "../ui/ts/ui/renderers/menu-caption-renderer.js";
 
 describe("Balloon Skin & Typography Cycle 6 Features (Slot-10)", () => {
 	it("sets writing mode property correctly for vertical: 1 and resets properly", () => {

@@ -3,7 +3,7 @@ import { describe, it } from "vitest";
 import {
 	_playOnePat,
 	_playTimelineFrames,
-} from "../../ui/js/surface/animation/playback/playback-timeline.js";
+} from "../../ui/ts/surface/animation/playback/playback-timeline.js";
 
 describe("SERIKO Playback Timeline Coverage", () => {
 	it("_playTimelineFrames supports direct calling and this-binding with early returns and completions", async () => {

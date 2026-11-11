@@ -11,7 +11,7 @@ const {
 	seedDressupDefaults,
 	bindAnimationIds,
 	patternSurfaceFile,
-} = await import("../ui/js/surface/bind-menu.js");
+} = await import("../ui/ts/surface/bind-menu.js");
 
 test("bind-menu functions cover options, grouping, payload, seeding, and surface formatting", () => {
 	// 1. bindOptionKey

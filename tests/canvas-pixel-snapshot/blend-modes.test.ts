@@ -2,9 +2,9 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import { createMockCanvas } from "./helpers.js";
 
-const { drawLayer } = await import("../../ui/js/surface/compositor/layer.js");
+const { drawLayer } = await import("../../ui/ts/surface/compositor/layer.js");
 const { composeSurfaceElements } = await import(
-	"../../ui/js/surface/compositor/compose.js"
+	"../../ui/ts/surface/compositor/compose.js"
 );
 
 test("drawLayer and composeSurfaceElements blend modes & composite operations", async () => {
@@ -90,7 +90,7 @@ test("drawLayer and composeSurfaceElements blend modes & composite operations", 
 
 test("SurfaceFrameBuffer.compositeBuffer extended blend modes pixel calculations", async () => {
 	const { SurfaceFrameBuffer } = await import(
-		"../../ui/js/surface/compositor/framebuffer.js"
+		"../../ui/ts/surface/compositor/framebuffer.js"
 	);
 
 	const base = new SurfaceFrameBuffer(2, 2);

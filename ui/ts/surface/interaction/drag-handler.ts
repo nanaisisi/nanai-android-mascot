@@ -60,7 +60,11 @@ type PointerEventEx = Event & {
 	button?: number;
 	clientX?: number;
 	clientY?: number;
-	touches?: Array<{ clientX?: number; clientY?: number; [key: string]: unknown }>;
+	touches?: Array<{
+		clientX?: number;
+		clientY?: number;
+		[key: string]: unknown;
+	}>;
 	type?: string;
 	[key: string]: unknown;
 };
@@ -107,7 +111,7 @@ export function setupGhostDragging(
 		},
 	});
 
-	const strokeTracker = (createStrokeTracker({
+	const strokeTracker = createStrokeTracker({
 		threshold: STROKE_THRESHOLD,
 		onStroke: (clientX: unknown, clientY: unknown) => {
 			if (onGhostStroke) {
@@ -115,7 +119,7 @@ export function setupGhostDragging(
 				(onGhostStroke as unknown)(clientX, clientY, rect);
 			}
 		},
-	})) as {
+	}) as {
 		reset: () => void;
 		addDistance: (dist: number, x: number, y: number) => void;
 		isTriggered: () => boolean;

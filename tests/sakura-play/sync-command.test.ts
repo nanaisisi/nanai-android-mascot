@@ -3,7 +3,7 @@ import { test } from "vitest";
 import { createEl } from "./helpers.js";
 
 const { playScript, SakuraPlaybackController } = await import(
-	"../../ui/js/ghost/sakura-play.js"
+	"../../ui/ts/ghost/sakura-play.js"
 );
 
 test("playScript handles \\![set,syncobject], \\![reset,syncobject], and \\![wait,syncobject]", async () => {
@@ -57,7 +57,7 @@ test("playScript handles \\![set,syncobject], \\![reset,syncobject], and \\![wai
 	};
 
 	const { SakuraCommandHandler } = await import(
-		"../../ui/js/ghost/sakura-command-handler.js"
+		"../../ui/ts/ghost/sakura-command-handler.js"
 	);
 	player.commandHandler = new SakuraCommandHandler(player);
 	const controller = new SakuraPlaybackController({ player });

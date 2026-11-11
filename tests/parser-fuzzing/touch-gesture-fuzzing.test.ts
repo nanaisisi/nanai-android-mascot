@@ -8,7 +8,7 @@ const {
 	getTouchDistance,
 	getTouchAngle,
 	getTouchCenter,
-} = await import("../../ui/js/ui/touch/index.js");
+} = await import("../../ui/ts/ui/touch/index.js");
 
 test("TouchGestureRecognizer and mobile gesture event stream fuzzing", () => {
 	// 1. Math helper fuzzing with NaN, null, and extreme boundaries

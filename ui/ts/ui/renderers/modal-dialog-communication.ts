@@ -3,7 +3,7 @@
  * @brief teachbox および communicatebox の管理
  */
 
-export function openTeachBox(params = [], options = {}) {
+export function openTeachBox(this: unknown, params = [], options = {}) {
 	const { notifyStart = true, scope } = options;
 	this.closeTeachBox(false);
 
@@ -52,7 +52,7 @@ export function openTeachBox(params = [], options = {}) {
 	submitBtn.className = "balloon-choice-btn";
 	submitBtn.style.marginTop = "0";
 
-	let dataListEl = null;
+	let dataListEl: { remove: () => void } | null = null;
 	const cleanup = () => {
 		if (dataListEl) {
 			dataListEl.remove?.();
@@ -68,7 +68,7 @@ export function openTeachBox(params = [], options = {}) {
 		this.app.ghostController?.sendTeachInput?.(val);
 	};
 
-	let timer = null;
+	let timer: number | null | undefined = null;
 	const cancel = async (reason = "cancel") => {
 		if (timer) {
 			clearTimeout(timer);
@@ -103,7 +103,7 @@ export function openTeachBox(params = [], options = {}) {
 	balloon.appendChild(form);
 	setTimeout(() => input.focus?.(), 50);
 
-	this.attachAutocomplete(input, "teachbox", "", form).then((dl) => {
+	this.attachAutocomplete(input, "teachbox", "", form).then((dl: unknown) => {
 		dataListEl = dl;
 	});
 
@@ -127,7 +127,7 @@ export function openTeachBox(params = [], options = {}) {
 	return form;
 }
 
-export function closeTeachBox(notifyCancel = false) {
+export function closeTeachBox(this: unknown, notifyCancel = false) {
 	const existing = this.activeBoxes.get("teachbox");
 	if (existing) {
 		try {
@@ -144,7 +144,7 @@ export function closeTeachBox(notifyCancel = false) {
 	}
 }
 
-export function openCommunicateBox(params = [], scope) {
+export function openCommunicateBox(this: unknown, params = [], scope: unknown) {
 	this.closeCommunicateBox(false);
 	const opts = this.parseBoxOptions(["Communicate", ...params]);
 	const balloon = this.getBalloonContainer(scope);
@@ -183,8 +183,8 @@ export function openCommunicateBox(params = [], scope) {
 	submitBtn.className = "balloon-choice-btn";
 	submitBtn.style.marginTop = "0";
 
-	let timer = null;
-	let dataListEl = null;
+	let timer: number | null | undefined = null;
+	let dataListEl: { remove: () => void } | null = null;
 	const cleanup = (force = false) => {
 		if (timer) {
 			clearTimeout(timer);
@@ -244,9 +244,11 @@ export function openCommunicateBox(params = [], scope) {
 	balloon.appendChild(form);
 	setTimeout(() => input.focus?.(), 50);
 
-	this.attachAutocomplete(input, "communicatebox", "", form).then((dl) => {
-		dataListEl = dl;
-	});
+	this.attachAutocomplete(input, "communicatebox", "", form).then(
+		(dl: unknown) => {
+			dataListEl = dl;
+		},
+	);
 
 	if (opts.timeoutMs > 0) {
 		timer = setTimeout(() => {
@@ -262,7 +264,7 @@ export function openCommunicateBox(params = [], scope) {
 	return form;
 }
 
-export function closeCommunicateBox(notifyCancel = false) {
+export function closeCommunicateBox(this: unknown, notifyCancel = false) {
 	const existing = this.activeBoxes.get("communicatebox");
 	if (existing) {
 		try {

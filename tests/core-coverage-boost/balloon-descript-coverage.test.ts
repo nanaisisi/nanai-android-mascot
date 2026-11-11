@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import { applyAssetProperties } from "../../ui/js/core/actions/balloon-descript/assets.js";
-import { applyBaseFontProperties } from "../../ui/js/core/actions/balloon-descript/font/base.js";
-import { applySpecialFontProperties } from "../../ui/js/core/actions/balloon-descript/font/special.js";
+import { applyAssetProperties } from "../../ui/ts/core/actions/balloon-descript/assets.js";
+import { applyBaseFontProperties } from "../../ui/ts/core/actions/balloon-descript/font/base.js";
+import { applySpecialFontProperties } from "../../ui/ts/core/actions/balloon-descript/font/special.js";
 
 describe("core-coverage-boost: balloon-descript edge cases (font & assets)", () => {
 	it("applyBaseFontProperties handles font.size pt-to-px, styles, decorations, outline, and shadow", () => {

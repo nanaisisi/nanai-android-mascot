@@ -6,7 +6,7 @@ import {
 	ipcQueueStats,
 	moveCurrentWindowBy,
 	startDraggingWindow,
-} from "../../ui/js/core/tauri-helper.js";
+} from "../../ui/ts/core/tauri-helper.js";
 
 describe("core-coverage-boost: tauri-helper edge cases", () => {
 	beforeEach(() => {

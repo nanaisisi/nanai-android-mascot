@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import { createEl } from "../helpers.js";
 
-const { playScript } = await import("../../../ui/js/ghost/sakura-play.js");
+const { playScript } = await import("../../../ui/ts/ghost/sakura-play.js");
 
 test("anchor click triggers OnAnchorSelectEx first, then falls back to OnAnchorSelect", async () => {
 	const shioriEvents: unknown[] = [];

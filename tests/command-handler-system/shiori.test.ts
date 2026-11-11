@@ -5,7 +5,7 @@ globalThis.window = globalThis;
 import {
 	handleReloadShiori,
 	handleSetShioriDebugMode,
-} from "../../ui/js/ghost/command-handler/system/shiori.js";
+} from "../../ui/ts/ghost/command-handler/system/shiori.js";
 
 describe("system/shiori.js", () => {
 	it("handleSetShioriDebugMode updates ghostController", async () => {

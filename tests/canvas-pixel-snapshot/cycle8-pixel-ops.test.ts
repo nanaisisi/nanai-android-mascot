@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 const { SurfaceFrameBuffer } = await import(
-	"../../ui/js/surface/compositor/framebuffer.js"
+	"../../ui/ts/surface/compositor/framebuffer.js"
 );
 
 test("Canvas Pixel Snapshot Cycle 8: SurfaceFrameBuffer extreme alpha & clipping edge cases", () => {

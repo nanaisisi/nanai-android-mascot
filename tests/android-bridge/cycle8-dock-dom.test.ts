@@ -7,14 +7,14 @@ function createMockDomElement() {
 
 	return {
 		classList: {
-			add: (...classes) => {
+			add: (...classes: unknown) => {
 				for (const cls of classes) classListSet.add(cls);
 			},
-			remove: (...classes) => {
+			remove: (...classes: unknown) => {
 				for (const cls of classes) classListSet.delete(cls);
 			},
-			contains: (cls) => classListSet.has(cls),
-			toggle: (cls) => {
+			contains: (cls: unknown) => classListSet.has(cls),
+			toggle: (cls: unknown) => {
 				if (classListSet.has(cls)) {
 					classListSet.delete(cls);
 					return false;
@@ -23,19 +23,19 @@ function createMockDomElement() {
 				return true;
 			},
 		},
-		addEventListener: (event, handler) => {
+		addEventListener: (event: unknown, handler: unknown) => {
 			if (!listeners.has(event)) {
 				listeners.set(event, new Set());
 			}
 			listeners.get(event).add(handler);
 		},
-		removeEventListener: (event, handler) => {
+		removeEventListener: (event: unknown, handler: unknown) => {
 			const set = listeners.get(event);
 			if (set) {
 				set.delete(handler);
 			}
 		},
-		dispatchEvent: (evt) => {
+		dispatchEvent: (evt: { type: unknown; }) => {
 			const set = listeners.get(evt.type);
 			if (set) {
 				for (const handler of Array.from(set)) {

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-const { surfaceLoadMethods } = await import("../ui/js/surface/surface-load.js");
+const { surfaceLoadMethods } = await import("../ui/ts/surface/surface-load.js");
 
 test("surfaceLoadMethods covers loadSurfacesTxt, applyShellManifest, parseSurfacesTxt, and expandSurfaceRange", async () => {
 	const mockManager = {

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import { applyPositionProperties as directPosition } from "../../ui/js/core/actions/balloon-descript/layout/position.js";
+import { applyPositionProperties as directPosition } from "../../ui/ts/core/actions/balloon-descript/layout/position.js";
 import { createMockRoot } from "./helpers.js";
 
 describe("balloon-descript-layout position submodule", () => {

@@ -10,7 +10,7 @@ const {
 	manifestToSurfaceData,
 	getShellManifest,
 	parseSurfacesTextWithRust,
-} = await import("../ui/js/surface/shell-manifest.js");
+} = await import("../ui/ts/surface/shell-manifest.js");
 
 test("shell-manifest functions cover enums, collision records, and containment", async () => {
 	// 1. enumToString

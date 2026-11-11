@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, test } from "vitest";
-import { isPixelTransparent as directIsPixelTransparent } from "../../ui/js/surface/interaction/transparency.js";
-import { isPixelTransparent } from "../../ui/js/surface/interaction.js";
+import { isPixelTransparent as directIsPixelTransparent } from "../../ui/ts/surface/interaction/transparency.js";
+import { isPixelTransparent } from "../../ui/ts/surface/interaction.js";
 import { setupInteractionDomGlobals } from "./helpers.js";
 
 setupInteractionDomGlobals();

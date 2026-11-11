@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import * as advancedInputsFacade from "../../ui/js/ui/renderers/inputs/advanced-inputs.js";
-import * as modalDialogInputsFacade from "../../ui/js/ui/renderers/modal-dialog-inputs.js";
+import * as advancedInputsFacade from "../../ui/ts/ui/renderers/inputs/advanced-inputs.js";
+import * as modalDialogInputsFacade from "../../ui/ts/ui/renderers/modal-dialog-inputs.js";
 
 describe("Modal Dialog Barrel and Facade Re-exports Coverage", () => {
 	it("ui/js/ui/renderers/modal-dialog-inputs.js re-exports expected symbols", () => {

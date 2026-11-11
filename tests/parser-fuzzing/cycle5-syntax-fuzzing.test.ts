@@ -2,13 +2,13 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 const { parseSakuraScript } = await import(
-	"../../ui/js/ghost/sakura-tokenizer.js"
+	"../../ui/ts/ghost/sakura-tokenizer.js"
 );
 const { parseSurfacesTxt } = await import(
-	"../../ui/js/surface/surface-parser.js"
+	"../../ui/ts/surface/surface-parser.js"
 );
 const { surfaceCollisionMethods } = await import(
-	"../../ui/js/surface/surface-collision.js"
+	"../../ui/ts/surface/surface-collision.js"
 );
 
 test("Parser Fuzzing Cycle 5: SakuraScript \\m[...] PostMessage fuzzing and malformed parameters", () => {

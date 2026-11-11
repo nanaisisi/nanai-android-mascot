@@ -3,7 +3,7 @@
  * @description Helper functions and mock environments for SHIORI notify tests.
  */
 
-import { shioriNotifyMethods } from "../../ui/js/ghost/shiori-notify.js";
+import { shioriNotifyMethods } from "../../ui/ts/ghost/shiori-notify.js";
 
 export interface MockIpcCall {
 	cmd: string;

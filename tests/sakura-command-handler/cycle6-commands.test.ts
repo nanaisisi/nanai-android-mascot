@@ -3,7 +3,7 @@ import { describe, it } from "vitest";
 import {
 	SakuraCommandHandler,
 	scriptLifetimeState,
-} from "../../ui/js/ghost/sakura-command-handler.js";
+} from "../../ui/ts/ghost/sakura-command-handler.js";
 import { createMockApp, setupMockDom } from "./helpers.js";
 
 setupMockDom();

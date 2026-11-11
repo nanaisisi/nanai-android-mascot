@@ -3,7 +3,7 @@ import { test } from "vitest";
 import { createMockCanvas } from "./helpers.js";
 
 const { processChromaKey } = await import(
-	"../../ui/js/surface/compositor/chromakey.js"
+	"../../ui/ts/surface/compositor/chromakey.js"
 );
 
 test("Canvas ChromaKey pixel manipulation & PNA alpha mask comparison", async () => {

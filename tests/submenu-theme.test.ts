@@ -28,7 +28,7 @@ globalThis.document = {
 	},
 };
 
-const { applyShellMenuTheme } = await import("../ui/js/ui/submenu-theme.js");
+const { applyShellMenuTheme } = await import("../ui/ts/ui/submenu-theme.js");
 
 test("applyShellMenuTheme covers theme colors, bitmaps, and alignments", () => {
 	// 1. Theme colors and bitmaps

@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 
-import { handleOpenDialogCommand } from "../../ui/js/ghost/command-handler/dialog.js";
+import { handleOpenDialogCommand } from "../../ui/ts/ghost/command-handler/dialog.js";
 import {
 	handleAnimCommand,
 	handleBindCommand,
-} from "../../ui/js/ghost/command-handler/surface.js";
+} from "../../ui/ts/ghost/command-handler/surface.js";
 
 describe("command-handler/dialog.js & surface.js", () => {
 	it("handleOpenDialogCommand invokes modalDialogController.openSystemDialog with dialogType and parameters", async () => {

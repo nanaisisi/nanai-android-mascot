@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import { applyAlignmentProperties as directAlignment } from "../../ui/js/core/actions/balloon-descript/layout/alignment.js";
+import { applyAlignmentProperties as directAlignment } from "../../ui/ts/core/actions/balloon-descript/layout/alignment.js";
 import { createMockRoot } from "./helpers.js";
 
 describe("balloon-descript-layout alignment submodule", () => {

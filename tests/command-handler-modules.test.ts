@@ -3,7 +3,7 @@ import {
 	handleCallCommand,
 	handleChangeCommand,
 	handleRaiseCommand,
-} from "../ui/js/ghost/command-handler/ghost.js";
+} from "../ui/ts/ghost/command-handler/ghost.js";
 import {
 	handleArchiveExec,
 	handleCancelNetworkService,
@@ -20,18 +20,18 @@ import {
 	handleUpdate,
 	handleUpdateByMyself,
 	handleUploadExec,
-} from "../ui/js/ghost/command-handler/media.js";
+} from "../ui/ts/ghost/command-handler/media.js";
 import {
 	handleQuickSection,
 	handleSetBalloonTimeout,
 	handleSetBalloonWait,
 	handleSetChoiceTimeout,
-} from "../ui/js/ghost/command-handler/playback.js";
-import { handlePluginEvent } from "../ui/js/ghost/command-handler/plugin.js";
+} from "../ui/ts/ghost/command-handler/playback.js";
+import { handlePluginEvent } from "../ui/ts/ghost/command-handler/plugin.js";
 import {
 	handleAnimCommand,
 	handleBindCommand,
-} from "../ui/js/ghost/command-handler/surface.js";
+} from "../ui/ts/ghost/command-handler/surface.js";
 
 describe("command-handler/surface.js", () => {
 	it("handles bind and bind-noevent commands", async () => {
@@ -227,7 +227,7 @@ describe("command-handler/media.js", () => {
 			},
 		};
 		const { handleSoundEventNotify } = await import(
-			"../ui/js/ghost/command-handler/media.js"
+			"../ui/ts/ghost/command-handler/media.js"
 		);
 		await handleSoundEventNotify(soundHandler, "stop", ["sound1"]);
 		await handleSoundEventNotify(soundHandler, "loop", ["sound2"]);

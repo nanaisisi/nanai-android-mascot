@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-import { balloonActions } from "../ui/js/core/actions/balloon-actions.js";
-import { balloonDescriptActions } from "../ui/js/core/actions/balloon-descript.js";
-import { balloonThemeActions } from "../ui/js/core/actions/balloon-theme.js";
-import { ghostActions } from "../ui/js/core/actions/ghost-actions.js";
-import { networkActions } from "../ui/js/core/actions/network-actions.js";
+import { balloonActions } from "../ui/ts/core/actions/balloon-actions.js";
+import { balloonDescriptActions } from "../ui/ts/core/actions/balloon-descript.js";
+import { balloonThemeActions } from "../ui/ts/core/actions/balloon-theme.js";
+import { ghostActions } from "../ui/ts/core/actions/ghost-actions.js";
+import { networkActions } from "../ui/ts/core/actions/network-actions.js";
 
 test("balloonActions test", () => {
 	assert.ok(balloonActions.applyBalloonDescript);

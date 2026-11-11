@@ -3,13 +3,13 @@ import { test } from "vitest";
 import { createMockElement } from "./helpers.js";
 
 const { ModalDialogController } = await import(
-	"../../ui/js/ui/renderers/modal-dialog-controller.js"
+	"../../ui/ts/ui/renderers/modal-dialog-controller.js"
 );
 const { buildRawSstpRequest, parseRawSstpResponse } = await import(
-	"../../ui/js/core/actions/sstp-fmo-actions.js"
+	"../../ui/ts/core/actions/sstp-fmo-actions.js"
 );
 const { SakuraPlaybackController } = await import(
-	"../../ui/js/ghost/sakura-play/controller.js"
+	"../../ui/ts/ghost/sakura-play/controller.js"
 );
 
 test("E2E dialogue lifecycle Cycle 10: SSTP request construction and response parsing roundtrip in flow", async () => {

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import { actionMethods } from "../../ui/js/core/app-actions.js";
+import { actionMethods } from "../../ui/ts/core/app-actions.js";
 
 describe("core-coverage-boost: app-actions edge cases", () => {
 	it("handles action: talk with payload object scope", () => {

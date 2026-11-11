@@ -3,13 +3,13 @@ import { test } from "vitest";
 import { createMockElement } from "./helpers.js";
 
 const { SakuraScriptPlayer } = await import(
-	"../../ui/js/ghost/sakura-script.js"
+	"../../ui/ts/ghost/sakura-script.js"
 );
 const { parseSakuraScript } = await import(
-	"../../ui/js/ghost/sakura-tokenizer.js"
+	"../../ui/ts/ghost/sakura-tokenizer.js"
 );
 const { ModalDialogController } = await import(
-	"../../ui/js/ui/renderers/modal-dialog-controller.js"
+	"../../ui/ts/ui/renderers/modal-dialog-controller.js"
 );
 
 test("E2E dialogue lifecycle Cycle 9: Extended lifecycle events, ghost/shell switching, and multi-scope dialogue flow", async () => {

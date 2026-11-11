@@ -25,7 +25,7 @@ globalThis.__TAURI_INTERNALS__ = {
 globalThis.localStorage = { setItem() {}, getItem: () => null };
 globalThis.document = { getElementById: () => null, querySelector: () => null };
 
-const { GhostController } = await import("../ui/js/ghost/ghost.js");
+const { GhostController } = await import("../ui/ts/ghost/ghost.js");
 
 function setup() {
 	calls.length = 0;

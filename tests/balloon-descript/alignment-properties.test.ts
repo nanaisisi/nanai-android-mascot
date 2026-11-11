@@ -5,7 +5,7 @@ import { setupBalloonDescriptMockEnvironment } from "./helpers.js";
 const { cssVars } = setupBalloonDescriptMockEnvironment();
 
 const { balloonDescriptActions } = await import(
-	"../../ui/js/core/actions/balloon-descript.js"
+	"../../ui/ts/core/actions/balloon-descript.js"
 );
 
 test("applyAlignmentProperties covers edge cases (empty/missing offsets, invalid numbers, kero/balloon fallback keys, and dontmove/syncscale variations)", () => {

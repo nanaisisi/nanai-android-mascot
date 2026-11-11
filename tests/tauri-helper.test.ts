@@ -13,7 +13,7 @@ import {
 	listen,
 	moveCurrentWindowBy,
 	startDraggingWindow,
-} from "../ui/js/core/tauri-helper.js";
+} from "../ui/ts/core/tauri-helper.js";
 
 test("convertFileSrc covers empty path, Tauri available, protocol startsWith branches, and fallback normalization", async () => {
 	// 1. Empty path
@@ -23,7 +23,7 @@ test("convertFileSrc covers empty path, Tauri available, protocol startsWith bra
 	// 2. Tauri available
 	globalThis.__TAURI_INTERNALS__ = {
 		metadata: { currentWindow: { label: "main" } },
-		convertFileSrc: (p, proto) => `${proto}://custom/${p}`,
+		convertFileSrc: (p: unknown, proto: unknown) => `${proto}://custom/${p}`,
 	};
 	assert.equal(
 		convertFileSrc("image.png", "asset"),
@@ -64,12 +64,12 @@ test("convertFileSrc covers empty path, Tauri available, protocol startsWith bra
 	let dragCalled = false;
 	globalThis.__TAURI_INTERNALS__ = {
 		metadata: { currentWindow: { label: "main" } },
-		invoke: async (cmd) => {
+		invoke: async (cmd: string) => {
 			if (cmd === "plugin:window|start_dragging") {
 				dragCalled = true;
 			}
 		},
-		transformCallback: (cb) => cb,
+		transformCallback: (cb: unknown) => cb,
 	};
 	assert.equal(isTauriAvailable(), true);
 	await startDraggingWindow();
@@ -81,7 +81,7 @@ test("convertFileSrc covers empty path, Tauri available, protocol startsWith bra
 		invoke: async () => {
 			throw new Error("drag error");
 		},
-		transformCallback: (cb) => cb,
+		transformCallback: (cb: unknown) => cb,
 	};
 	await startDraggingWindow();
 
@@ -112,7 +112,7 @@ test("invoke, listen, emit, moveCurrentWindowBy, getCurrentWindowPosition, and i
 	let _invokedArgs = null;
 	globalThis.__TAURI_INTERNALS__ = {
 		metadata: { currentWindow: { label: "main" } },
-		invoke: async (cmd, args) => {
+		invoke: async (cmd: string, args: unknown) => {
 			invokedCmd = cmd;
 			_invokedArgs = args;
 			if (cmd === "plugin:window|outer_position") {
@@ -123,7 +123,7 @@ test("invoke, listen, emit, moveCurrentWindowBy, getCurrentWindowPosition, and i
 			}
 			return "cmd_ok";
 		},
-		transformCallback: (cb) => cb,
+		transformCallback: (cb: unknown) => cb,
 		plugins: {
 			event: {
 				listeners: {},

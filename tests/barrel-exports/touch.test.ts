@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import * as touchBridgeIndexFacade from "../../ui/js/ui/touch/bridge/index.js";
-import * as touchIndexFacade from "../../ui/js/ui/touch/index.js";
+import * as touchBridgeIndexFacade from "../../ui/ts/ui/touch/bridge/index.js";
+import * as touchIndexFacade from "../../ui/ts/ui/touch/index.js";
 
 describe("Touch and Bridge Barrel and Facade Re-exports Coverage", () => {
 	it("ui/js/ui/touch/index.js re-exports expected symbols", () => {

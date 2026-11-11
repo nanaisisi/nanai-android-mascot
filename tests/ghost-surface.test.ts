@@ -22,7 +22,7 @@ globalThis.__TAURI_INTERNALS__ = {
 };
 
 const { ghostSurfaceMethods } = await import(
-	"../ui/js/surface/ghost-surface.js"
+	"../ui/ts/surface/ghost-surface.js"
 );
 
 function makeController() {

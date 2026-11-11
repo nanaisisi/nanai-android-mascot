@@ -4,9 +4,9 @@ import { test } from "vitest";
 import {
 	parseInterval,
 	resolvePatternWait,
-} from "../ui/js/surface/animation-parser.js";
-import { BalloonDragManager } from "../ui/js/surface/balloon-drag.js";
-import { bindMenuData } from "../ui/js/surface/bind-menu.js";
+} from "../ui/ts/surface/animation-parser.js";
+import { BalloonDragManager } from "../ui/ts/surface/balloon-drag.js";
+import { bindMenuData } from "../ui/ts/surface/bind-menu.js";
 
 test("surface animation-parser & bind-menu test", () => {
 	const wait = resolvePatternWait("10-20");

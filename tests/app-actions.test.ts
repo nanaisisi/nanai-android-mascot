@@ -13,7 +13,7 @@ globalThis.document = {
 	querySelectorAll: () => [],
 };
 
-const { actionMethods } = await import("../ui/js/core/app-actions.js");
+const { actionMethods } = await import("../ui/ts/core/app-actions.js");
 
 test("actionMethods.handleMenuAction covers all branches including Tauri folder open, balloon labels, and close-all", async () => {
 	const mockApp = {

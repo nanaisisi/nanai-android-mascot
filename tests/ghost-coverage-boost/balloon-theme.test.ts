@@ -4,7 +4,7 @@ import { describe, it } from "vitest";
 describe("balloon-window and balloon-window/theme edge cases", () => {
 	it("exercises balloon-window and balloon-window/theme edge branches", async () => {
 		const { loadBalloonSkinImages, applyBalloonDescript } = await import(
-			"../../ui/js/ghost/balloon-window/theme.js"
+			"../../ui/ts/ghost/balloon-window/theme.js"
 		);
 
 		// 1. loadBalloonSkinImages for scope >= 2 with fallback to balloons0.png/pna

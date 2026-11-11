@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test, vi } from "vitest";
 
-const { ghostShioriMethods } = await import("../ui/js/ghost/ghost-shiori.js");
+const { ghostShioriMethods } = await import("../ui/ts/ghost/ghost-shiori.js");
 
 test("ghostShioriMethods covers SHIORI initialization, timers, events, and teach inputs", async () => {
 	vi.useFakeTimers();

@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import * as animationPlaybackFacade from "../../ui/js/surface/animation/animation-playback.js";
-import * as surfaceFacade from "../../ui/js/surface/surface.js";
-import * as surfaceCompositorFacade from "../../ui/js/surface/surface-compositor.js";
+import * as animationPlaybackFacade from "../../ui/ts/surface/animation/animation-playback.js";
+import * as surfaceFacade from "../../ui/ts/surface/surface.js";
+import * as surfaceCompositorFacade from "../../ui/ts/surface/surface-compositor.js";
 
 describe("Surface Barrel and Facade Re-exports Coverage", () => {
 	it("ui/js/surface/surface.js re-exports expected symbols", () => {

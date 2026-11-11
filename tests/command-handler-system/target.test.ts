@@ -7,7 +7,7 @@ import {
 	handleExecuteSntpCommand,
 	handleHourTimeSignal,
 	handleOpenSystemTarget,
-} from "../../ui/js/ghost/command-handler/system/target.js";
+} from "../../ui/ts/ghost/command-handler/system/target.js";
 
 describe("system/target.js", () => {
 	it("handleBiffCommand triggers email check", async () => {

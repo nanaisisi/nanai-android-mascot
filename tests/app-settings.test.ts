@@ -21,7 +21,7 @@ globalThis.localStorage = {
 	setItem: () => {},
 };
 
-const { settingsMethods } = await import("../ui/js/core/app-settings.js");
+const { settingsMethods } = await import("../ui/ts/core/app-settings.js");
 
 test("settingsMethods coverage for loadSettings, applySettings, showBalloon, hideBalloon, and timers", async () => {
 	const mockApp = {

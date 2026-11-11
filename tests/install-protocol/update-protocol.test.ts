@@ -13,7 +13,7 @@ const {
 	OTHER_PROGRESS_PHASE_EVENTS,
 	parseErrorReason,
 	createUpdateProgressHandler,
-} = await import("../../ui/js/core/actions/update-protocol.js");
+} = await import("../../ui/ts/core/actions/update-protocol.js");
 
 describe("install-protocol - update-protocol legacy coverage", () => {
 	test("UKADOC update constants are defined and frozen", () => {

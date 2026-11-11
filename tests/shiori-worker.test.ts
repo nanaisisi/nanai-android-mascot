@@ -33,7 +33,7 @@ globalThis.WebAssembly = {
 };
 
 // Import shiori-worker to register listener
-await import("../ui/js/ghost/shiori-worker.js");
+await import("../ui/ts/ghost/shiori-worker.js");
 
 test("shiori-worker message handler covers LOAD, REQUEST, UNLOAD, and default actions", async () => {
 	const listener = globalThis.self._listener;

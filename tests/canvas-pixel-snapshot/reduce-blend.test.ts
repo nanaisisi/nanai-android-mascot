@@ -3,13 +3,13 @@ import { test } from "vitest";
 import { createMockCanvas } from "./helpers.js";
 
 const { SurfaceFrameBuffer } = await import(
-	"../../ui/js/surface/compositor/framebuffer.js"
+	"../../ui/ts/surface/compositor/framebuffer.js"
 );
 const { drawImageLayer } = await import(
-	"../../ui/js/surface/compositor/layer.js"
+	"../../ui/ts/surface/compositor/layer.js"
 );
 const { processChromaKey } = await import(
-	"../../ui/js/surface/compositor/chromakey.js"
+	"../../ui/ts/surface/compositor/chromakey.js"
 );
 
 test("Canvas Pixel Snapshot Cycle 5: DrawMethod::Reduce alpha multiplication math", () => {

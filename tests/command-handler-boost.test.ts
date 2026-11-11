@@ -1,19 +1,19 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 
-import { handlePluginEvent } from "../ui/js/ghost/command-handler/plugin.js";
+import { handlePluginEvent } from "../ui/ts/ghost/command-handler/plugin.js";
 import {
 	handleExecuteResetBalloonPos,
 	handleExecuteResetWindowPos,
 	handleSetAlignmentOnDesktop,
 	handleSetTaskTrayIcon,
 	handleSetTrayBalloon,
-} from "../ui/js/ghost/command-handler/system/desktop.js";
+} from "../ui/ts/ghost/command-handler/system/desktop.js";
 import {
 	handleBiffCommand,
 	handleExecuteSntpCommand,
 	handleOpenSystemTarget,
-} from "../ui/js/ghost/command-handler/system/target.js";
+} from "../ui/ts/ghost/command-handler/system/target.js";
 
 describe("Command Handler Plugins & Desktop Coverage", () => {
 	it("plugin.js covers plugin command and timer plugin command with Tauri invoke", async () => {

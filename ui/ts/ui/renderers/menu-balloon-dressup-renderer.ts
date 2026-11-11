@@ -7,7 +7,7 @@ export const menuBalloonDressupRenderer = {
 	 * @param {unknown[]} balloons
 	 * @param {string | null} currentBalloonTheme
 	 */
-	renderBalloonSubmenu(balloons, currentBalloonTheme) {
+	renderBalloonSubmenu(balloons: unknown[], currentBalloonTheme: string) {
 		const container = document.getElementById("balloon-submenu");
 		if (!container) return;
 
@@ -26,7 +26,7 @@ export const menuBalloonDressupRenderer = {
 		}
 
 		if (balloons && balloons.length > 0) {
-			balloons.forEach((balloon) => {
+			balloons.forEach((balloon: { dir_name: unknown; name: unknown }) => {
 				const isCurrent = currentBalloonTheme === balloon.dir_name;
 				const btn = document.createElement("button");
 				btn.className = `menu-item ${isCurrent ? "is-current" : ""}`;
@@ -68,7 +68,7 @@ export const menuBalloonDressupRenderer = {
 	 * @param {{ sakura: object, kero: object }} dressup
 	 * @param {number} [scope]
 	 */
-	renderDressupSubmenu(dressup, scope = 0) {
+	renderDressupSubmenu(dressup: unknown, scope = 0) {
 		const container = document.getElementById("dressup-submenu");
 		if (!container) return;
 

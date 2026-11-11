@@ -3,10 +3,10 @@ import { test, vi } from "vitest";
 import { createMockElement } from "./helpers.js";
 
 const { SakuraScriptPlayer } = await import(
-	"../../ui/js/ghost/sakura-script.js"
+	"../../ui/ts/ghost/sakura-script.js"
 );
 const { parseSakuraScript } = await import(
-	"../../ui/js/ghost/sakura-tokenizer.js"
+	"../../ui/ts/ghost/sakura-tokenizer.js"
 );
 
 test("E2E dialogue lifecycle Cycle 4: named animations, wait_animation, anim commands, and autocomplete", async () => {
@@ -82,7 +82,7 @@ test("E2E dialogue lifecycle Cycle 4: named animations, wait_animation, anim com
 	};
 
 	const { ModalDialogController } = await import(
-		"../../ui/js/ui/renderers/modal-dialog-controller.js"
+		"../../ui/ts/ui/renderers/modal-dialog-controller.js"
 	);
 	const modalController = new ModalDialogController({ app: mockApp });
 	mockApp.modalDialogController = modalController;

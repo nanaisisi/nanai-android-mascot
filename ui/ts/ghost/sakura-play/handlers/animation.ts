@@ -1,38 +1,39 @@
+// biome-ignore-all lint/suspicious/noExplicitAny: legacy handler parameters
 /**
  * @file animation.ts
  * @brief さくらスクリプト再生時のサーフィス変更(\s)、SERIKOアニメーション再生・待機ハンドラ
  */
 
-import type { SakuraAstNode } from "../../parser/ast-types.js";
-import type { SakuraPlaybackController } from "../controller.js";
-
 export function handleSurface(
-	player: SakuraPlaybackController | unknown,
+	player: any,
 	app: import("../../../../main.js").NanaiAndroidMascotApp,
-	token: SakuraAstNode | unknown,
-	_context?: unknown,
+	token: any,
+	_context?: any,
 ) {
 	app.ghostController.updateSurface(token.value, player.currentScope);
 }
 
 export async function handleAnimation(
-	player: SakuraPlaybackController | unknown,
+	player: any,
 	app: import("../../../../main.js").NanaiAndroidMascotApp,
-	token: SakuraAstNode | unknown,
-	_context?: unknown,
+	token: any,
+	_context?: any,
 ) {
-	app.surfaceManager?.playAnimationById(
+	await app.surfaceManager?.playAnimationById(
 		token.animId,
 		player.currentScope,
-		token.wait
+		token.wait,
 	);
 }
 
 export async function handleWaitAnimation(
-	player: SakuraPlaybackController | unknown,
+	player: any,
 	app: import("../../../../main.js").NanaiAndroidMascotApp,
-	token: SakuraAstNode | unknown,
-	_context?: unknown,
+	token: any,
+	_context?: any,
 ) {
-	app.surfaceManager?.waitForAnimation(token.animId, player.currentScope);
+	await app.surfaceManager?.waitForAnimation(
+		token.animId,
+		player.currentScope,
+	);
 }

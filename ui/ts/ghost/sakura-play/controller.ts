@@ -52,6 +52,9 @@ import {
 import { SyncObjectManager } from "./sync-object.js";
 
 export class SakuraPlaybackController {
+	onChoiceTimeout() {
+		throw new Error("Method not implemented.");
+	}
 	player: unknown;
 	queue: PlaybackJob[];
 	currentJob: PlaybackJob | null;
@@ -69,6 +72,9 @@ export class SakuraPlaybackController {
 	declare setBalloonWait?: (param: unknown) => void;
 	declare resetBalloonWait?: () => void;
 	declare setQuickMode?: (enable: boolean) => void;
+	choiceTimeoutTimer: any;
+	onChoiceSelected: any;
+	choiceTimeout: number;
 
 	constructor(options: unknown = {}) {
 		const opts = options as { player?: unknown };

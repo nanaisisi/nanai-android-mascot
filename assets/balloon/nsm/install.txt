@@ -1,0 +1,5 @@
+charset,UTF-8
+type,balloon
+name,NAMデフォルト+
+directory,nsm_default
+refresh,1

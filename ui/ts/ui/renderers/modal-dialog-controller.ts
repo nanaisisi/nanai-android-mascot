@@ -3,6 +3,7 @@
  * @brief さくらスクリプトおよびUIからの各種ダイアログ（inputbox, passwordinput, textareabox, sliderinput, teachbox, communicatebox, 選択肢リスト）を統括管理するコントローラー
  */
 
+import { app } from "@tauri-apps/api";
 import {
 	closeAll,
 	closeDialog,
@@ -31,12 +32,39 @@ import {
 import { openSystemDialog } from "./modal-dialog-system.js";
 
 export class ModalDialogController {
+	app: unknown;
+	player: null;
+	activeBoxes: Map<unknown, unknown>;
+	choiceTimeoutTimer: null;
+	autocompleteCounter: number;
+	attachAutocomplete!: (inputEl: unknown, boxType: unknown, id?: string, parentForm?: null) => Promise<HTMLDataListElement | null>;
+	parseBoxOptions!: (params: unknown) => { id: unknown; timeoutMs: number; defaultText: string; placeholder: string; limit: number; noClose: boolean; noClear: boolean; references: string[]; };
+	openInputBox!: (params: unknown, scope: unknown, isPassword?: boolean) => HTMLDivElement | null;
+	openPasswordInput!: (params: unknown, scope: unknown) => unknown;
+	closeInputBox!: (id: unknown) => void;
+	openTextAreaBox!: (params: unknown, scope: unknown) => HTMLDivElement | null;
+	closeTextAreaBox!: (id: unknown) => void;
+	openSliderInput!: (params: unknown, scope: unknown) => HTMLDivElement | null;
+	openDateInput!: (params: unknown, scope: unknown) => HTMLDivElement | null;
+	openTimeInput!: (params: unknown, scope: unknown) => HTMLDivElement | null;
+	openIpInput!: (params: unknown, scope: unknown) => HTMLDivElement | null;
+	openTeachBox!: (params?: never[], options?: {}) => HTMLDivElement | null;
+	closeTeachBox!: (notifyCancel?: boolean) => void;
+	openCommunicateBox!: (params: never[] | undefined, scope: unknown) => HTMLDivElement | null;
+	closeCommunicateBox!: (notifyCancel?: boolean) => void;
+	closeDialog!: (id: unknown, notifyCancel?: boolean) => void;
+	createChoiceButton: (({ id, text, onSelect }: { id: unknown; text: unknown; onSelect: unknown; }) => HTMLButtonElement) | undefined;
+	setChoiceTimeout: ((timeoutMs: unknown, onTimeout: unknown) => void) | undefined;
+	closeAll!: () => void;
+	openSystemDialog(dialogType: string, dialogParams: string[], currentScope: number) {
+		throw new Error("Method not implemented.");
+	}
 	/**
 	 * @param {object} options
 	 * @param {object} options.app アプリケーションインスタンス
 	 * @param {object} [options.player] さくらスクリプトプレイヤー
 	 */
-	constructor({ app, player = null }) {
+	constructor({ app: unknown, player = null }) {
 		this.app = app;
 		this.player = player;
 		/** @type {Map<string, { id?: string, type?: string, form: HTMLElement, cleanup: (force?: boolean) => void }>} */

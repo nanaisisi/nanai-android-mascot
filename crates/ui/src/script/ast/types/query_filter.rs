@@ -226,7 +226,10 @@ impl SakuraAstNode {
     }
 
     /// AST 内の各 SakuraCommand に対して変換関数を適用し、新しい AST を生成する
-    pub fn map_commands(&self, transform: &impl Fn(&SakuraCommand) -> SakuraCommand) -> SakuraAstNode {
+    pub fn map_commands(
+        &self,
+        transform: &impl Fn(&SakuraCommand) -> SakuraCommand,
+    ) -> SakuraAstNode {
         match self {
             SakuraAstNode::Command(cmd) => SakuraAstNode::Command(transform(cmd)),
             SakuraAstNode::Choice { .. } => self.clone(),

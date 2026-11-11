@@ -12,15 +12,20 @@ import {
 	handleAnchorBegin,
 	handleAnchorEnd,
 	handleChoice,
+	handleChoiceScopeBegin,
+	handleChoiceScopeEnd,
 } from "./handlers/choice.js";
 import {
+	handleAutoPause,
 	handleBalloonTimeout,
 	handleChoiceTimeout,
 	handleCommand,
 	handleEnd,
 	handleHalt,
+	handleNoAutoWrap,
 	handlePause,
 	handleQuickToggle,
+	handleRawToggle,
 	handleSyncToggle,
 	handleTimeout,
 	handleWait,
@@ -42,10 +47,13 @@ export {
 	handleAnchorBegin,
 	handleAnchorEnd,
 	handleAnimation,
+	handleAutoPause,
 	handleBalloon,
 	handleBalloonTimeout,
 	handleChar,
 	handleChoice,
+	handleChoiceScopeBegin,
+	handleChoiceScopeEnd,
 	handleChoiceTimeout,
 	handleClear,
 	handleCommand,
@@ -54,9 +62,11 @@ export {
 	handleHalt,
 	handleInlineBitmap,
 	handleNewline,
+	handleNoAutoWrap,
 	handleOffset,
 	handlePause,
 	handleQuickToggle,
+	handleRawToggle,
 	handleScope,
 	handleSurface,
 	handleSyncToggle,
@@ -122,6 +132,26 @@ export async function handleToken(
 
 		case "choice":
 			handleChoice(player, app, token, context);
+			break;
+
+		case "choice_scope_begin":
+			handleChoiceScopeBegin(player, app, token, context);
+			break;
+
+		case "choice_scope_end":
+			handleChoiceScopeEnd(player, app, token, context);
+			break;
+
+		case "no_autowrap":
+			handleNoAutoWrap(player, app, token, context);
+			break;
+
+		case "raw_toggle":
+			handleRawToggle(player, app, token, context);
+			break;
+
+		case "auto_pause":
+			handleAutoPause(player, app, token, context);
 			break;
 
 		case "balloon":

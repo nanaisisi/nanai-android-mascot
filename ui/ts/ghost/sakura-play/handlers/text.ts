@@ -24,20 +24,24 @@ export async function handleChar(
 	}
 
 	if (player.isSyncMode) {
-		const mirrorTarget =
-			currentBalloonText === sakuraText ? keroText : sakuraText;
-		if (mirrorTarget) {
-			const mirrorSpan = document.createElement("span");
-			mirrorSpan.textContent = token.value;
-			if (player.currentFontStyles) {
-				Object.assign(mirrorSpan.style, player.currentFontStyles);
+		const targetScopes: number[] =
+			Array.isArray(player.syncScopes) && player.syncScopes.length > 0
+				? player.syncScopes
+				: [0, 1];
+
+		for (const sc of targetScopes) {
+			const targetEl = sc === 1 ? keroText : sc === 0 ? sakuraText : null;
+			if (targetEl && targetEl !== currentBalloonText) {
+				const mirrorSpan = document.createElement("span");
+				mirrorSpan.textContent = token.value;
+				if (player.currentFontStyles) {
+					Object.assign(mirrorSpan.style, player.currentFontStyles);
+				}
+				targetEl.appendChild(mirrorSpan);
 			}
-			mirrorTarget.appendChild(mirrorSpan);
+			scheduleDesktopBalloonSync(false, sc);
+			app.surfaceManager?.onCharSpoken(sc);
 		}
-		scheduleDesktopBalloonSync(false, 0);
-		scheduleDesktopBalloonSync(false, 1);
-		app.surfaceManager?.onCharSpoken(0);
-		app.surfaceManager?.onCharSpoken(1);
 	} else {
 		scheduleDesktopBalloonSync(false);
 		app.surfaceManager?.onCharSpoken(player.currentScope);
@@ -78,20 +82,25 @@ export function handleNewline(
 	}
 
 	if (player.isSyncMode) {
-		const mirrorTarget =
-			currentBalloonText === sakuraText ? keroText : sakuraText;
-		if (mirrorTarget) {
-			if (token.half) {
-				const mirrorHalfBr = document.createElement("span");
-				mirrorHalfBr.style.display = "block";
-				mirrorHalfBr.style.height = "0.4em";
-				mirrorTarget.appendChild(mirrorHalfBr);
-			} else {
-				mirrorTarget.appendChild(document.createElement("br"));
+		const targetScopes: number[] =
+			Array.isArray(player.syncScopes) && player.syncScopes.length > 0
+				? player.syncScopes
+				: [0, 1];
+
+		for (const sc of targetScopes) {
+			const targetEl = sc === 1 ? keroText : sc === 0 ? sakuraText : null;
+			if (targetEl && targetEl !== currentBalloonText) {
+				if (token.half) {
+					const mirrorHalfBr = document.createElement("span");
+					mirrorHalfBr.style.display = "block";
+					mirrorHalfBr.style.height = "0.4em";
+					targetEl.appendChild(mirrorHalfBr);
+				} else {
+					targetEl.appendChild(document.createElement("br"));
+				}
 			}
+			scheduleDesktopBalloonSync(false, sc);
 		}
-		scheduleDesktopBalloonSync(false, 0);
-		scheduleDesktopBalloonSync(false, 1);
 	} else {
 		scheduleDesktopBalloonSync(false);
 	}

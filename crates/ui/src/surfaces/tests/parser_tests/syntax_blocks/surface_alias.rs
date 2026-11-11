@@ -245,9 +245,18 @@ fallback_alias,[0,10,20]
     let txt = SurfacesTxt::parse(sample);
 
     assert_eq!(txt.alias_numbers_for_scope(0, "main").unwrap(), &[0u32][..]);
-    assert_eq!(txt.alias_numbers_for_scope(1, "kero_main").unwrap(), &[10u32][..]);
-    assert_eq!(txt.alias_numbers_for_scope(2, "sub_main").unwrap(), &[20u32][..]);
-    assert_eq!(txt.alias_numbers_for_scope(2, "fallback_alias").unwrap(), &[0u32, 10, 20][..]);
+    assert_eq!(
+        txt.alias_numbers_for_scope(1, "kero_main").unwrap(),
+        &[10u32][..]
+    );
+    assert_eq!(
+        txt.alias_numbers_for_scope(2, "sub_main").unwrap(),
+        &[20u32][..]
+    );
+    assert_eq!(
+        txt.alias_numbers_for_scope(2, "fallback_alias").unwrap(),
+        &[0u32, 10, 20][..]
+    );
 
     assert!(txt.resolve_alias_for_scope(0, "main").is_some());
     assert!(txt.resolve_alias_for_scope(1, "kero_main").is_some());

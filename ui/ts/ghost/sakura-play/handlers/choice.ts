@@ -142,3 +142,99 @@ export function handleAnchorEnd(
 ) {
 	context.currentAnchor = null;
 }
+
+export function handleChoiceScopeBegin(
+	player: unknown,
+	app: unknown,
+	token: unknown,
+	context: unknown,
+) {
+	const {
+		currentBalloonText,
+		flushDesktopBalloon,
+		scheduleDesktopBalloonSync,
+	} = context;
+
+	const inlineChoiceSpan = document.createElement("span");
+	inlineChoiceSpan.className = "balloon-choice-inline balloon-choice-btn";
+	inlineChoiceSpan.setAttribute("data-choice-id", token.id);
+	inlineChoiceSpan.style.cursor = "pointer";
+
+	let hoverTimer: unknown = null;
+	inlineChoiceSpan.addEventListener("click", (e: MouseEvent) => {
+		e.stopPropagation();
+		if (hoverTimer) {
+			clearTimeout(hoverTimer);
+			hoverTimer = null;
+		}
+		if (player.choiceTimeoutTimer) {
+			clearTimeout(player.choiceTimeoutTimer);
+			player.choiceTimeoutTimer = null;
+		}
+		const choiceText = inlineChoiceSpan.textContent || token.id;
+		if (player.onChoiceSelected) {
+			player.onChoiceSelected(token.id, choiceText, token.args || []);
+		} else {
+			app.ghostController?.sendShioriEvent?.("OnChoiceSelectEx", [
+				choiceText,
+				token.id,
+				...(token.args || []),
+			]);
+			app.ghostController?.sendShioriEvent?.("OnChoiceSelect", [
+				token.id,
+				choiceText,
+				...(token.args || []),
+			]);
+		}
+	});
+
+	inlineChoiceSpan.addEventListener("mouseenter", () => {
+		const choiceText = inlineChoiceSpan.textContent || token.id;
+		app.ghostController?.sendShioriEvent("OnChoiceEnter", [
+			choiceText,
+			token.id,
+			...(token.args || []),
+		]);
+		if (hoverTimer) clearTimeout(hoverTimer);
+		hoverTimer = setTimeout(() => {
+			app.ghostController?.sendShioriEvent("OnChoiceHover", [
+				choiceText,
+				token.id,
+				...(token.args || []),
+			]);
+			hoverTimer = null;
+		}, 500);
+	});
+
+	inlineChoiceSpan.addEventListener("mouseleave", () => {
+		if (hoverTimer) {
+			clearTimeout(hoverTimer);
+			hoverTimer = null;
+		}
+		app.ghostController?.sendShioriEvent("OnChoiceEnter", []);
+	});
+
+	currentBalloonText.appendChild(inlineChoiceSpan);
+	context.currentAnchor = inlineChoiceSpan;
+	context.currentChoiceScope = inlineChoiceSpan;
+	flushDesktopBalloon();
+	scheduleDesktopBalloonSync(false);
+
+	if (player.choiceTimeout > 0 && !player.choiceTimeoutTimer) {
+		player.choiceTimeoutTimer = setTimeout(() => {
+			player.onChoiceTimeout();
+		}, player.choiceTimeout);
+	}
+}
+
+export function handleChoiceScopeEnd(
+	_player: unknown,
+	_app: unknown,
+	_token: unknown,
+	context: unknown,
+) {
+	if (context.currentAnchor === context.currentChoiceScope) {
+		context.currentAnchor = null;
+	}
+	context.currentChoiceScope = null;
+}

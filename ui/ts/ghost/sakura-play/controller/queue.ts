@@ -31,6 +31,17 @@ export function enqueue(this: unknown, script: string): Promise<unknown> {
 	});
 }
 
+export function enqueueMany(
+	this: unknown,
+	scripts: string[],
+): Promise<unknown[]> {
+	if (!Array.isArray(scripts) || scripts.length === 0) {
+		return Promise.resolve([]);
+	}
+	const self = this as { enqueue: (s: string) => Promise<unknown> };
+	return Promise.all(scripts.map((s) => self.enqueue(s)));
+}
+
 export function enqueuePriority(
 	this: unknown,
 	script: string,
@@ -91,6 +102,36 @@ export function getJobById(this: unknown, id: number): PlaybackJob | null {
 		return self.currentJob;
 	}
 	return self.queue.find((j) => j.id === id) || null;
+}
+
+export function findJobs(
+	this: unknown,
+	predicate: (job: PlaybackJob) => boolean,
+): PlaybackJob[] {
+	const self = this as {
+		currentJob: PlaybackJob | null;
+		queue: PlaybackJob[];
+	};
+	const matches: PlaybackJob[] = [];
+	if (self.currentJob && predicate(self.currentJob)) {
+		matches.push(self.currentJob);
+	}
+	for (const job of self.queue) {
+		if (predicate(job)) {
+			matches.push(job);
+		}
+	}
+	return matches;
+}
+
+export function retryJob(this: unknown, id: number): Promise<unknown> | null {
+	const self = this as {
+		getJobById: (id: number) => PlaybackJob | null;
+		enqueuePriority: (s: string) => Promise<unknown>;
+	};
+	const job = self.getJobById(id);
+	if (!job) return null;
+	return self.enqueuePriority(job.script);
 }
 
 export function cancelJob(
@@ -310,6 +351,7 @@ export function getStatus(this: unknown) {
 		waitMultiplier: number;
 		charWaitMs: number | null;
 		pauseTimestamp?: number | null;
+		processedCount: number;
 		syncObjects?: { getAllInfo: () => unknown[] };
 	};
 	const pausedDurationMs =
@@ -326,6 +368,7 @@ export function getStatus(this: unknown) {
 		waitMultiplier: self.waitMultiplier,
 		charWaitMs: self.charWaitMs,
 		pausedDurationMs,
+		processedCount: self.processedCount || 0,
 		syncObjects: self.syncObjects ? self.syncObjects.getAllInfo() : [],
 	};
 }
@@ -360,6 +403,8 @@ export async function processQueue(this: unknown) {
 		if (self.player) {
 			result = await self.player.play(job.script);
 		}
+		const countObj = self as { processedCount?: number };
+		countObj.processedCount = (countObj.processedCount || 0) + 1;
 		self.emit("playback:completed", { job, result });
 		job.resolve(result);
 	} catch (err) {

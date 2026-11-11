@@ -74,6 +74,9 @@ export function initBalloonWindow() {
 		if (targetText && html !== undefined) {
 			targetText.innerHTML = html;
 			setupInteractiveElements(targetText, scopeId);
+			if (balloonBox) {
+				balloonBox.scrollTop = balloonBox.scrollHeight;
+			}
 		}
 	});
 

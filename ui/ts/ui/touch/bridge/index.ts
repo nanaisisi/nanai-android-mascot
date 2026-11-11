@@ -16,3 +16,8 @@ export {
 	isNativeAndroidPlatform,
 	OverlayManager,
 } from "./overlay.js";
+export {
+	applyPlatformUiClasses,
+	detectPlatformMode,
+	type PlatformMode,
+} from "./platform.js";

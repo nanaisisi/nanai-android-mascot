@@ -62,8 +62,11 @@ export async function playScript(player: any, script: string) {
 			: null);
 
 	const hasTextContent = tokens.some(
-		(t: any) =>
-			t.type === "char" || t.type === "choice" || t.type === "anchor_begin",
+		(t: unknown) =>
+			t.type === "char" ||
+			t.type === "choice" ||
+			t.type === "choice_scope_begin" ||
+			t.type === "anchor_begin",
 	);
 
 	const shownScopes = new Set<number>();
@@ -71,8 +74,10 @@ export async function playScript(player: any, script: string) {
 
 	const currentBalloonText = sakuraText;
 	const isQuickMode = false;
+	const isRawMode = false;
 	const ended = false;
 	const currentAnchor = null;
+	const currentChoiceScope = null;
 
 	const { flushDesktopBalloon, scheduleDesktopBalloonSync } =
 		createBalloonSyncManager(player, app, sakuraText, keroText);
@@ -88,8 +93,10 @@ export async function playScript(player: any, script: string) {
 		scheduleDesktopBalloonSync,
 		currentBalloonText,
 		isQuickMode,
+		isRawMode,
 		ended,
 		currentAnchor,
+		currentChoiceScope,
 	};
 
 	for (let j = 0; j < tokens.length; j++) {
@@ -123,7 +130,9 @@ export async function playScript(player: any, script: string) {
 
 	player.playbackController?.resetBalloonWait?.();
 
-	const hasChoices = tokens.some((t: any) => t.type === "choice");
+	const hasChoices = tokens.some(
+		(t: unknown) => t.type === "choice" || t.type === "choice_scope_begin",
+	);
 
 	if (hasChoices && player.choiceTimeout > 0) {
 		if (player.choiceTimeoutTimer) clearTimeout(player.choiceTimeoutTimer);

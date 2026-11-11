@@ -12,22 +12,28 @@ import {
 import {
 	ANDROID_EVENTS,
 	ANDROID_LIFECYCLE_STATES,
+	applyPlatformUiClasses,
 	BackButtonManager,
 	BridgeEventEmitter,
 	DockManager,
+	detectPlatformMode,
 	isAndroidPlatform,
 	isNativeAndroidPlatform,
 	OverlayManager,
+	type PlatformMode,
 	setupVisibilityListeners,
 } from "./bridge/index.js";
 
 export {
 	ANDROID_EVENTS,
 	ANDROID_LIFECYCLE_STATES,
+	applyPlatformUiClasses,
 	BackButtonManager,
 	BridgeEventEmitter,
 	DockManager,
+	detectPlatformMode,
 	OverlayManager,
+	type PlatformMode,
 };
 
 /**
@@ -73,6 +79,10 @@ export class AndroidBridge {
 				this._dispatch(eventName, data);
 			},
 		});
+
+		if (options.syncUiClasses !== false) {
+			this.applyPlatformUi(options.targetElement);
+		}
 
 		// ブラウザ/WebViewの可視性変更およびライフサイクル監視
 		const visibilityCleanups = setupVisibilityListeners({
@@ -205,6 +215,21 @@ export class AndroidBridge {
 
 	isNativeAndroid() {
 		return isNativeAndroidPlatform();
+	}
+
+	getPlatformMode(): PlatformMode {
+		return detectPlatformMode();
+	}
+
+	applyPlatformUi(targetElement?: unknown): PlatformMode {
+		const mode = applyPlatformUiClasses(targetElement);
+		this._dispatch(ANDROID_EVENTS.PLATFORM_MODE_DETECTED, {
+			platformMode: mode,
+			isAndroid: mode.startsWith("android"),
+			isNative: mode.endsWith("-native"),
+			timestamp: Date.now(),
+		});
+		return mode;
 	}
 
 	async requestOverlayPermission() {

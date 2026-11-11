@@ -17,6 +17,15 @@ export async function handlePause(
 		scheduleDesktopBalloonSync,
 	} = context;
 
+	let markerEl: HTMLElement | null = null;
+	if (context.currentBalloonText && typeof document !== "undefined") {
+		markerEl = document.createElement("span");
+		markerEl.className = "clickwait-marker";
+		markerEl.setAttribute("aria-hidden", "true");
+		context.currentBalloonText.appendChild(markerEl);
+		scheduleDesktopBalloonSync(false);
+	}
+
 	flushDesktopBalloon();
 	player.playbackController?.notifyPause?.(Boolean(token.noClear));
 	if (!player.skipRequested && !context.isQuickMode) {
@@ -28,6 +37,11 @@ export async function handlePause(
 			await player.sleep(100);
 		}
 	}
+
+	if (markerEl?.parentNode) {
+		markerEl.parentNode.removeChild(markerEl);
+	}
+
 	if (!token.noClear) {
 		context.currentBalloonText.innerHTML = "";
 		player.currentScope = 0;
@@ -122,8 +136,16 @@ export function handleSyncToggle(
 	} else {
 		player.isSyncMode = !player.isSyncMode;
 	}
+	if (Array.isArray(token.scopes) && token.scopes.length > 0) {
+		player.syncScopes = [...token.scopes];
+	} else if (!player.isSyncMode) {
+		player.syncScopes = null;
+	} else {
+		player.syncScopes = null;
+	}
 	player.playbackController?.emit?.("playback:sync-mode", {
 		enabled: player.isSyncMode,
+		scopes: player.syncScopes,
 	});
 }
 
@@ -141,4 +163,40 @@ export function handleEnd(player: any, app: any, _token: any, context: any) {
 	app.surfaceManager?.onScriptEnd(0);
 	app.surfaceManager?.onScriptEnd(1);
 	context.ended = true;
+}
+
+export function handleNoAutoWrap(
+	player: unknown,
+	_app: unknown,
+	_token: unknown,
+	_context: unknown,
+) {
+	player.noAutoWrap = true;
+	player.playbackController?.emit?.("playback:no-autowrap", { enabled: true });
+}
+
+export function handleRawToggle(
+	player: unknown,
+	_app: unknown,
+	token: unknown,
+	context: unknown,
+) {
+	if (typeof token.value === "boolean") {
+		context.isRawMode = token.value;
+	} else {
+		context.isRawMode = !context.isRawMode;
+	}
+	player.isRawMode = context.isRawMode;
+	player.playbackController?.emit?.("playback:raw-toggle", {
+		enabled: context.isRawMode,
+	});
+}
+
+export function handleAutoPause(
+	player: unknown,
+	_app: unknown,
+	_token: unknown,
+	_context: unknown,
+) {
+	player.playbackController?.emit?.("playback:auto-pause");
 }

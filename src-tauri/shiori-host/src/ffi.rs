@@ -10,6 +10,7 @@ pub type RequestFn = unsafe extern "C" fn(H, *mut i32) -> H;
 extern "system" {
     pub fn GlobalAlloc(flags: u32, bytes: usize) -> H;
     pub fn GlobalFree(h: H) -> H;
+    pub fn SetDllDirectoryW(lpPathName: *const u16) -> i32;
 }
 
 #[cfg(not(windows))]
@@ -17,6 +18,29 @@ extern "C" {
     fn malloc(size: usize) -> *mut c_void;
     fn free(ptr: *mut c_void);
 }
+
+#[cfg(windows)]
+pub fn set_dll_directory(dir_path: &std::path::Path) -> bool {
+    use std::os::windows::ffi::OsStrExt;
+    let mut wide: Vec<u16> = dir_path.as_os_str().encode_wide().collect();
+    wide.push(0);
+    unsafe { SetDllDirectoryW(wide.as_ptr()) != 0 }
+}
+
+#[cfg(windows)]
+pub fn reset_dll_directory() {
+    unsafe {
+        SetDllDirectoryW(std::ptr::null());
+    }
+}
+
+#[cfg(not(windows))]
+pub fn set_dll_directory(_dir_path: &std::path::Path) -> bool {
+    true
+}
+
+#[cfg(not(windows))]
+pub fn reset_dll_directory() {}
 
 #[cfg(not(windows))]
 #[allow(non_snake_case)]

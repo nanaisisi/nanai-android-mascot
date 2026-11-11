@@ -99,7 +99,10 @@ export function processChromaKey(
 										const r = pixel & 0xff;
 										const g = (pixel >> 8) & 0xff;
 										const b = (pixel >> 16) & 0xff;
-										const isGreen = r <= 35 && g >= 220 && b <= 35;
+										const isGreen =
+											(r <= 80 && g >= 150 && b <= 80) ||
+											(g > r + 25 && g > b + 25 && g >= 130) ||
+											(g > (r + b) * 1.15 && g >= 140);
 										if ((isCornerTarget && rgb === cornerRgb) || isGreen) {
 											// RGBを黒(0,0,0)にしてアルファは保持
 											data32[i] = (alpha << 24) >>> 0;
@@ -116,7 +119,10 @@ export function processChromaKey(
 										const r = (pixel >> 24) & 0xff;
 										const g = (pixel >> 16) & 0xff;
 										const b = (pixel >> 8) & 0xff;
-										const isGreen = r <= 35 && g >= 220 && b <= 35;
+										const isGreen =
+											(r <= 80 && g >= 150 && b <= 80) ||
+											(g > r + 25 && g > b + 25 && g >= 130) ||
+											(g > (r + b) * 1.15 && g >= 140);
 										if ((isCornerTarget && rgb === cornerRgb) || isGreen) {
 											data32[i] = alpha;
 										}
@@ -179,7 +185,10 @@ export function processChromaKey(
 							const g = (pixel >> 8) & 0xff;
 							const b = (pixel >> 16) & 0xff;
 
-							const isGreen = r <= 35 && g >= 220 && b <= 35;
+							const isGreen =
+											(r <= 80 && g >= 150 && b <= 80) ||
+											(g > r + 25 && g > b + 25 && g >= 130) ||
+											(g > (r + b) * 1.15 && g >= 140);
 							const isMatchCorner = isCornerTarget && pixel === corner32;
 
 							if (isGreen || isMatchCorner) {
@@ -197,7 +206,10 @@ export function processChromaKey(
 							const g = (pixel >> 16) & 0xff;
 							const b = (pixel >> 8) & 0xff;
 
-							const isGreen = r <= 35 && g >= 220 && b <= 35;
+							const isGreen =
+											(r <= 80 && g >= 150 && b <= 80) ||
+											(g > r + 25 && g > b + 25 && g >= 130) ||
+											(g > (r + b) * 1.15 && g >= 140);
 							const isMatchCorner = isCornerTarget && pixel === corner32;
 
 							if (isGreen || isMatchCorner) {

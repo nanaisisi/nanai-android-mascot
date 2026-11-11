@@ -98,11 +98,10 @@ pub async fn check_ghost_update(
 
     let mut indexed_diff = Vec::new();
     while let Some(res) = join_set.join_next().await {
-        if let Ok((index, entry, needs_update)) = res {
-            if needs_update {
+        if let Ok((index, entry, needs_update)) = res
+            && needs_update {
                 indexed_diff.push((index, entry));
             }
-        }
     }
 
     // updates2.dau 元の出現順を保持

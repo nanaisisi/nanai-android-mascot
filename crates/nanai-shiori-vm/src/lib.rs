@@ -266,11 +266,10 @@ impl ShioriVmHost {
                 let dir_len = bytes.len() as i32;
                 let dir_ptr = 0i32;
 
-                if let Some(mem) = &self.memory {
-                    if !bytes.is_empty() {
+                if let Some(mem) = &self.memory
+                    && !bytes.is_empty() {
                         let _ = mem.write(&mut *store, 0, bytes);
                     }
-                }
 
                 let ret = func
                     .call(&mut *store, (dir_ptr, dir_len))

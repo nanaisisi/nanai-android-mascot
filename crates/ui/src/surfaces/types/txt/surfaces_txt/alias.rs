@@ -27,11 +27,10 @@ impl SurfacesTxt {
         if scope_id == 0 {
             return self.alias_numbers(name);
         }
-        if scope_id == 1 {
-            if let Some(list) = self.kero_alias_numbers(name) {
+        if scope_id == 1
+            && let Some(list) = self.kero_alias_numbers(name) {
                 return Some(list);
             }
-        }
         if let Some(map) = self.char_aliases.get(&scope_id) {
             for (key, list) in map {
                 if key.eq_ignore_ascii_case(name) {

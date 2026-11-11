@@ -61,8 +61,8 @@ pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error
                         }
                     });
                 }
-                TrayIconEvent::Click { button, button_state, rect, .. } => {
-                    if button_state == MouseButtonState::Up {
+                TrayIconEvent::Click { button, button_state:  MouseButtonState::Up, rect, .. }
+                    => {
                         match button {
                             MouseButton::Right => {
                                 log_tray("🖱️ システムトレイアイコンが右クリックされました -> カスタムメニュー表示 (show_menu_window)");
@@ -95,7 +95,6 @@ pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error
                             _ => {}
                         }
                     }
-                }
                 _ => {}
             }
         })

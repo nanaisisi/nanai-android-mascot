@@ -117,7 +117,7 @@ pub fn load_surface_image(
         }
     }
 
-    let fallback_candidates = if surface_id_num >= 10 && surface_id_num < 20 {
+    let fallback_candidates = if (10..20).contains(&surface_id_num) {
         vec![
             shell_dir.join("surface0010.png"),
             shell_dir.join("surface10.png"),

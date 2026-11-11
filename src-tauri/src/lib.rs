@@ -81,10 +81,10 @@ pub fn run() {
 
                 // バルーン・メニュー等の補助ウィンドウを先行キャッシュ（起動時のもたつき解消）およびキャラクターウィンドウの自動表示
                 let app_handle_preload = app.handle().clone();
-                let _ = tauri::async_runtime::block_on(async move {
-                    commands::window::preload_auxiliary_windows(app_handle_preload.clone()).await;
+                tauri::async_runtime::block_on(async move {
+                    let _ = commands::window::preload_auxiliary_windows(app_handle_preload.clone()).await;
                     let _ = commands::window::show_character_window(app_handle_preload.clone(), 0, None, None, None, None).await;
-                    let _ = commands::window::show_character_window(app_handle.clone(), 1, None, None, None, None).await;
+                    let _ = commands::window::show_character_window(app_handle_preload.clone(), 1, None, None, None, None).await;
                 });
             }
             #[cfg(target_os = "android")]

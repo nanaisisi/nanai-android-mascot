@@ -32,13 +32,37 @@ export class GhostController {
 	declare stopSecondChangeTimer?: () => void;
 	declare callGhost?: (name: string) => Promise<unknown>;
 	declare evaluateProperty?: (prop: string) => Promise<unknown>;
-	declare sendGhostChanging?: (targetGhost: string, fromGhost: string, mode?: string) => Promise<unknown>;
-	declare sendGhostChanged?: (targetGhost: string, fromGhost: string) => Promise<unknown>;
-	declare sendShellChanging?: (targetShell: string, fromShell: string) => Promise<unknown>;
-	declare sendShellChanged?: (targetShell: string, fromShell: string) => Promise<unknown>;
-	declare sendRaiseOther?: (ghost: string, event: string, refs: string[]) => Promise<unknown>;
-	declare sendNotifyOther?: (ghost: string, event: string, refs: string[]) => Promise<unknown>;
-	declare sendShioriNotify?: (event: string, refs?: unknown[]) => Promise<unknown>;
+	declare sendGhostChanging?: (
+		targetGhost: string,
+		fromGhost: string,
+		mode?: string,
+	) => Promise<unknown>;
+	declare sendGhostChanged?: (
+		targetGhost: string,
+		fromGhost: string,
+	) => Promise<unknown>;
+	declare sendShellChanging?: (
+		targetShell: string,
+		fromShell: string,
+	) => Promise<unknown>;
+	declare sendShellChanged?: (
+		targetShell: string,
+		fromShell: string,
+	) => Promise<unknown>;
+	declare sendRaiseOther?: (
+		ghost: string,
+		event: string,
+		refs: string[],
+	) => Promise<unknown>;
+	declare sendNotifyOther?: (
+		ghost: string,
+		event: string,
+		refs: string[],
+	) => Promise<unknown>;
+	declare sendShioriNotify?: (
+		event: string,
+		refs?: unknown[],
+	) => Promise<unknown>;
 	declare closeGhost?: () => Promise<unknown>;
 	declare selectShell?: (shellName: string) => Promise<unknown>;
 	declare selectGhost?: (ghostName: string) => Promise<unknown>;

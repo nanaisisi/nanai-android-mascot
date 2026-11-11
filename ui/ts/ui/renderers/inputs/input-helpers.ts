@@ -3,8 +3,12 @@
  * @brief inputbox autocomplete および parseBoxOptions ヘルパー処理
  */
 
-export async function attachAutocomplete(this: unknown, 
-	inputEl: { setAttribute: (arg0: string, arg1: string) => void; parentElement: { appendChild: (arg0: HTMLDataListElement) => void; }; },
+export async function attachAutocomplete(
+	this: unknown,
+	inputEl: {
+		setAttribute: (arg0: string, arg1: string) => void;
+		parentElement: { appendChild: (arg0: HTMLDataListElement) => void };
+	},
 	boxType: string,
 	id = "",
 	parentForm = null,

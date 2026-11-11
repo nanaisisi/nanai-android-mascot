@@ -37,8 +37,7 @@ export async function handleChangeCommand(
 		}
 		const selectFn =
 			gc?.selectGhost ||
-			(gc as { switchGhost?: (name: string) => Promise<unknown> })
-				?.switchGhost;
+			(gc as { switchGhost?: (name: string) => Promise<unknown> })?.switchGhost;
 		if (selectFn) {
 			await selectFn.call(gc, name);
 		}

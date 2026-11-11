@@ -19,10 +19,10 @@ export {
  * @param {string} dialogType - "open" | "save" | "folder" | "color"
  * @param {string[]} params - オプション引数群
  * @param {number} [scope]
- * @returns {Promise<any>}
+ * @returns {Promise<unknown>}
  */
 export async function openSystemDialog(
-	this: any,
+	this: unknown,
 	dialogType: string,
 	params: string[] = [],
 	scope?: number,

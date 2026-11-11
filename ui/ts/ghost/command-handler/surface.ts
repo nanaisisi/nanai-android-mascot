@@ -14,7 +14,7 @@ export async function handleBindCommand(
 		part,
 		statusVal,
 		handler.player.currentScope,
-		raiseEvent
+		raiseEvent,
 	);
 }
 

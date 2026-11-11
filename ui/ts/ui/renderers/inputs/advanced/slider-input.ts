@@ -3,14 +3,14 @@
  * @brief sliderinput の表示・制御処理
  */
 
-export function openSliderInput(params, scope) {
+export function openSliderInput(params: string | unknown[], scope: unknown) {
 	const id = params[0] || "SliderInput";
 	let timeoutMs = 0;
 	let currentVal = 0;
 	let minVal = 0;
 	let maxVal = 100;
 	let noClose = false;
-	const references = [];
+	const references: string[] = [];
 
 	for (let i = 1; i < params.length; i++) {
 		const p = params[i] ?? "";
@@ -71,7 +71,7 @@ export function openSliderInput(params, scope) {
 	submitBtn.className = "balloon-choice-btn";
 	submitBtn.style.marginTop = "0";
 
-	let timer = null;
+	let timer: number | null | undefined = null;
 	const boxKey = `inputbox:${id}`;
 
 	const cleanup = (force = false) => {

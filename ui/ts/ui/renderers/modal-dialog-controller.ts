@@ -31,9 +31,9 @@ import {
 import { openSystemDialog } from "./modal-dialog-system.js";
 
 export class ModalDialogController {
-	app: any;
-	player: any;
-	activeBoxes: Map<string, any>;
+	app: unknown;
+	player: unknown;
+	activeBoxes: Map<string, unknown>;
 	choiceTimeoutTimer: ReturnType<typeof setTimeout> | null;
 	autocompleteCounter: number;
 
@@ -59,9 +59,9 @@ export class ModalDialogController {
 	declare openSystemDialog: typeof openSystemDialog;
 
 	/**
-	 * @param {object|any} options - アプリケーションインスタンス、または { app, player } オブジェクト
+	 * @param {object|unknown} options - アプリケーションインスタンス、または { app, player } オブジェクト
 	 */
-	constructor(options: any = {}) {
+	constructor(options: unknown = {}) {
 		const isDirectApp =
 			options && typeof options === "object" && "elements" in options;
 		this.app = isDirectApp ? options : (options?.app ?? null);

@@ -193,7 +193,9 @@ export async function applyBalloonDescript({
 
 		const isBalloonDontMove =
 			props["balloon.dontmove"] === "1" ||
-			Boolean((instanceContext as { balloonDontMove?: boolean }).balloonDontMove);
+			Boolean(
+				(instanceContext as { balloonDontMove?: boolean }).balloonDontMove,
+			);
 		onDontMoveChange?.(isBalloonDontMove);
 
 		// 折り返し幅 (wordwrappoint.x は原点右基準の負オフセット指定)

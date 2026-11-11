@@ -38,7 +38,9 @@ export interface AppSettings {
 }
 
 export class NanaiAndroidMascotApp {
-	syncObjectManager?: import("./ts/ghost/sakura-play/sync-object.js").SyncObjectManager | null;
+	syncObjectManager?:
+		| import("./ts/ghost/sakura-play/sync-object.js").SyncObjectManager
+		| null;
 	startNetworkUpdate(
 		_targetGhostName?: string | null,
 		_options?: { checkOnly?: boolean },
@@ -48,9 +50,15 @@ export class NanaiAndroidMascotApp {
 	alignmentToDesktop: string | undefined;
 	balloonTheme: string | undefined;
 	balloonThemeManager?: { resetDescript?: () => void } | null;
-	surfaceAnimationManager?: { setSerikoTalkEnabled?: (scope: number, enabled: boolean) => void } | null;
-	networkActions?: { checkEmail?: (accountName?: string) => Promise<unknown> } | null;
-	modalDialogController?: import("./ts/ui/renderers/modal-dialog-controller.js").ModalDialogController | null;
+	surfaceAnimationManager?: {
+		setSerikoTalkEnabled?: (scope: number, enabled: boolean) => void;
+	} | null;
+	networkActions?: {
+		checkEmail?: (accountName?: string) => Promise<unknown>;
+	} | null;
+	modalDialogController?:
+		| import("./ts/ui/renderers/modal-dialog-controller.js").ModalDialogController
+		| null;
 	dispatchAction(_arg0: string) {
 		throw new Error("Method not implemented.");
 	}

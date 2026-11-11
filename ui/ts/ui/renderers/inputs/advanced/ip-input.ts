@@ -3,12 +3,16 @@
  * @brief ipinput の表示・制御処理
  */
 
-export function openIpInput(params, scope) {
+export function openIpInput(
+	this: unknown,
+	params: string | unknown[],
+	scope: unknown,
+) {
 	const id = params[0] || "IpInput";
 	let timeoutMs = 0;
 	const ipParts = ["", "", "", ""];
 	let noClose = false;
-	const references = [];
+	const references: string[] = [];
 
 	for (let i = 1; i < params.length; i++) {
 		const p = params[i] ?? "";
@@ -43,7 +47,7 @@ export function openIpInput(params, scope) {
 	form.style.alignItems = "center";
 	form.style.gap = "0.15rem";
 
-	const inputs = [];
+	const inputs: { focus: () => unknown }[] | HTMLInputElement[] = [];
 	for (let i = 0; i < 4; i++) {
 		const field = document.createElement("input");
 		field.type = "number";
@@ -91,7 +95,7 @@ export function openIpInput(params, scope) {
 	submitBtn.className = "balloon-choice-btn";
 	submitBtn.style.marginTop = "0";
 
-	let timer = null;
+	let timer: number | null | undefined = null;
 	const boxKey = `inputbox:${id}`;
 
 	const cleanup = (force = false) => {

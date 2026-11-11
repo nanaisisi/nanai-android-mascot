@@ -21,7 +21,9 @@ export class SakuraScriptPlayer {
 	balloonTimeoutTimer: unknown;
 	lastScript: string;
 	commandHandler: SakuraCommandHandler;
-	playbackController?: import("./sakura-play/controller.js").SakuraPlaybackController | null;
+	playbackController?:
+		| import("./sakura-play/controller.js").SakuraPlaybackController
+		| null;
 	currentProgressIndex?: number;
 	_restoreTimer?: unknown;
 	_pauseResolver?: unknown;

@@ -204,4 +204,14 @@ mod tests {
         let res = read_reply_stream(&mut cursor);
         assert!(res.is_err());
     }
+
+    #[test]
+    fn test_dll_directory_guard_lifecycle() {
+        use super::DllDirectoryGuard;
+        use std::path::Path;
+
+        let guard = DllDirectoryGuard::enter(Path::new("dummy/ghost/master/shiori.dll"));
+        assert!(guard.is_active());
+        drop(guard);
+    }
 }

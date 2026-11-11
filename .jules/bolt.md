@@ -86,3 +86,8 @@
 
 **Learning:** Found a performance bottleneck where `.slice().sort()` is being re-executed on every animation frame for sorting animations, patterns, elements, and collision shapes inside `shell-manifest.ts` and `surface-collision.ts`. Because these inputs (manifest array definitions) are usually strictly read-only after being created by the Tauri Rust backend, slicing and sorting on every access wastes substantial memory/GC cycles and CPU time.
 **Action:** Use `WeakMap<unknown[], unknown[]>` module-scoped caches where the original array is used as a weak key to map directly to the sorted array. Since `slice().sort()` guarantees that the items remain references to the underlying objects, caching the fully sorted array completely bypasses O(N log N) processing on the hot execution path.
+
+## 2024-05-18 - [activeBindAnimationIds Redundant Array Construction and Sorting]
+
+**Learning:** `activeBindAnimationIds` within `surface-dressup.ts` reconstructed and sorted its resulting bind array every time it was called. Given it is invoked during rendering loops or state assertions, re-executing `flatMap(...).sort(...)` frequently adds overhead.
+**Action:** Introduced an object-level caching mechanism tied to `dressupStateVersion`, a counter within `SurfaceManager` that increments on mutations to `dressupState`, thus allowing `activeBindAnimationIds` to bypass rebuilding the list when state remains unchanged.

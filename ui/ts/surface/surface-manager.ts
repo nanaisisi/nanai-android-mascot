@@ -15,6 +15,7 @@ export class SurfaceManager {
 	currentSurfaceIds: Map<number, number | string>;
 	chromaKeyCache: Map<string, string>;
 	dressupState: Map<string, boolean>;
+	dressupStateVersion: number;
 	aliases: Record<string, number[]> | null;
 	keroAliases: Record<string, number[]> | null;
 	shellManifest: Record<string, unknown> | null;
@@ -34,7 +35,25 @@ export class SurfaceManager {
 			[1, 10],
 		]);
 		this.chromaKeyCache = new Map();
+		this.dressupStateVersion = 0;
 		this.dressupState = new Map();
+
+		const originalSet = this.dressupState.set.bind(this.dressupState);
+		this.dressupState.set = (key: string, value: boolean) => {
+			this.dressupStateVersion++;
+			return originalSet(key, value);
+		};
+		const originalDelete = this.dressupState.delete.bind(this.dressupState);
+		this.dressupState.delete = (key: string) => {
+			this.dressupStateVersion++;
+			return originalDelete(key);
+		};
+		const originalClear = this.dressupState.clear.bind(this.dressupState);
+		this.dressupState.clear = () => {
+			this.dressupStateVersion++;
+			originalClear();
+		};
+
 		this.aliases = null;
 		this.keroAliases = null;
 		this.shellManifest = null;

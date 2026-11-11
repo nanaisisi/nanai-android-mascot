@@ -3,7 +3,10 @@
  * @brief ゴースト操作・イベント送信コマンド (\![raise,...], \![change,ghost,...], \![call,ghost,...])
  */
 
-export async function handleRaiseCommand(handler: unknown, args: string[]) {
+export async function handleRaiseCommand(
+	handler: import("../../ghost.js").SakuraCommandHandler,
+	args: string[],
+) {
 	const eventName = args[1];
 	if (eventName) {
 		await handler.app.ghostController?.sendShioriEvent?.(
@@ -13,7 +16,10 @@ export async function handleRaiseCommand(handler: unknown, args: string[]) {
 	}
 }
 
-export async function handleChangeCommand(handler: unknown, args: string[]) {
+export async function handleChangeCommand(
+	handler: import("../../ghost.js").SakuraCommandHandler,
+	args: string[],
+) {
 	const target = (args[1] ?? "").toLowerCase();
 	const name = args[2] ?? "";
 	const options = args.slice(3);
@@ -67,7 +73,10 @@ export async function handleChangeCommand(handler: unknown, args: string[]) {
 	}
 }
 
-export async function handleVanishByMyself(handler: unknown, _args: string[]) {
+export async function handleVanishByMyself(
+	handler: import("../../ghost.js").SakuraCommandHandler,
+	_args: string[],
+) {
 	console.log("👻 Vanish by myself requested");
 	const gc = handler.app.ghostController;
 	if (gc?.sendShioriEvent) {
@@ -84,7 +93,10 @@ export async function handleVanishByMyself(handler: unknown, _args: string[]) {
 	}
 }
 
-export async function handleCallCommand(handler: unknown, args: string[]) {
+export async function handleCallCommand(
+	handler: import("../../ghost.js").SakuraCommandHandler,
+	args: string[],
+) {
 	const [target, name] = args.slice(1);
 	if (target === "ghost" && name) {
 		await handler.app.ghostController?.callGhost?.(name);
@@ -92,7 +104,7 @@ export async function handleCallCommand(handler: unknown, args: string[]) {
 }
 
 export async function handleRaiseOtherCommand(
-	handler: unknown,
+	handler: import("../../ghost.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const ghostName = args[1];
@@ -114,7 +126,7 @@ export async function handleRaiseOtherCommand(
 }
 
 export async function handleNotifyOtherCommand(
-	handler: unknown,
+	handler: import("../../ghost.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const ghostName = args[1];
@@ -141,7 +153,10 @@ export async function handleNotifyOtherCommand(
 	}
 }
 
-export async function handleEmbedCommand(handler: unknown, args: string[]) {
+export async function handleEmbedCommand(
+	handler: import("../../ghost.js").SakuraCommandHandler,
+	args: string[],
+) {
 	const eventName = args[1];
 	if (!eventName) return;
 	const references = args.slice(2);

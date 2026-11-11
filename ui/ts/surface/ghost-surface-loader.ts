@@ -14,19 +14,34 @@ export const ghostSurfaceLoaderMethods = {
 		shellName: string,
 		surfaceId: number | string,
 	): Promise<string> {
-		(this as unknown)._surfaceAssetCache ??= new Map();
+		(
+			this as import("../../../main.js").NanaiAndroidMascotApp
+		)._surfaceAssetCache ??= new Map();
 		const key = `${cmd}|${ghostPath}|${shellName}|${surfaceId}`;
-		let pending = (this as unknown)._surfaceAssetCache.get(key);
+		let pending = (
+			this as import("../../../main.js").NanaiAndroidMascotApp
+		)._surfaceAssetCache.get(key);
 		if (!pending) {
 			pending = invoke(cmd, {
 				ghostPath,
 				shellName,
 				surfaceId: String(surfaceId),
 			});
-			(this as unknown)._surfaceAssetCache.set(key, pending);
-			if ((this as unknown)._surfaceAssetCache.size > 64) {
-				(this as unknown)._surfaceAssetCache.delete(
-					(this as unknown)._surfaceAssetCache.keys().next().value,
+			(
+				this as import("../../../main.js").NanaiAndroidMascotApp
+			)._surfaceAssetCache.set(key, pending);
+			if (
+				(this as import("../../../main.js").NanaiAndroidMascotApp)
+					._surfaceAssetCache.size > 64
+			) {
+				(
+					this as import("../../../main.js").NanaiAndroidMascotApp
+				)._surfaceAssetCache.delete(
+					(
+						this as import("../../../main.js").NanaiAndroidMascotApp
+					)._surfaceAssetCache
+						.keys()
+						.next().value,
 				);
 			}
 		}

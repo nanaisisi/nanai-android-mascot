@@ -19,11 +19,14 @@ const SCALE_MAP: Record<string, { width: string; height: string }> = {
 
 export const ghostActions = {
 	showGhostInformation() {
-		const ghost = (this as unknown).ghostController?.currentGhost;
+		const ghost = (this as import("../../../main.js").NanaiAndroidMascotApp)
+			.ghostController?.currentGhost;
 		if (
 			!ghost ||
-			!(this as unknown).modalManager?.content ||
-			!(this as unknown).modalManager?.overlay
+			!(this as import("../../../main.js").NanaiAndroidMascotApp).modalManager
+				?.content ||
+			!(this as import("../../../main.js").NanaiAndroidMascotApp).modalManager
+				?.overlay
 		) {
 			return;
 		}
@@ -74,7 +77,8 @@ export const ghostActions = {
 	},
 
 	async uninstallCurrentGhost() {
-		const gc = (this as unknown).ghostController;
+		const gc = (this as import("../../../main.js").NanaiAndroidMascotApp)
+			.ghostController;
 		const name = gc.currentGhost?.name;
 		if (!name) return;
 		if (!isTauriAvailable()) {
@@ -91,7 +95,9 @@ export const ghostActions = {
 			const removed = await invoke("uninstall_ghost", { ghostName: name });
 			if (!removed) return;
 			console.log(`🗑️ ゴーストアンインストール: ${name} (removed=${removed})`);
-			(this as unknown).showBalloon(`ゴースト「${name}」を削除しました`);
+			(this as import("../../../main.js").NanaiAndroidMascotApp).showBalloon(
+				`ゴースト「${name}」を削除しました`,
+			);
 			setTimeout(
 				() =>
 					(
@@ -108,7 +114,9 @@ export const ghostActions = {
 			}
 		} catch (err) {
 			console.error("🗑️ アンインストール失敗:", err);
-			(this as unknown).showBalloon(`アンインストールに失敗しました: ${err}`);
+			(this as import("../../../main.js").NanaiAndroidMascotApp).showBalloon(
+				`アンインストールに失敗しました: ${err}`,
+			);
 			setTimeout(
 				() =>
 					(
@@ -147,7 +155,8 @@ export const ghostActions = {
 		part: string;
 		scope?: number;
 	}) {
-		const sm = (this as unknown).surfaceManager;
+		const sm = (this as import("../../../main.js").NanaiAndroidMascotApp)
+			.surfaceManager;
 		if (!sm || !payload?.category) return;
 		const scopeId = Number.isFinite(payload.scope)
 			? (payload.scope as number)
@@ -178,7 +187,9 @@ export const ghostActions = {
 	},
 
 	switchToNextGhost() {
-		const ghosts = (this as unknown).ghostController?.ghosts || [];
+		const ghosts =
+			(this as import("../../../main.js").NanaiAndroidMascotApp).ghostController
+				?.ghosts || [];
 		if (ghosts.length <= 1) return;
 		const currentName = (
 			this as import("../../../main.js").NanaiAndroidMascotApp
@@ -198,7 +209,10 @@ export const ghostActions = {
 		const w = Math.round((baseW * scalePercent) / 100);
 		const h = Math.round((baseH * scalePercent) / 100);
 		const conf = SCALE_MAP[action] || { width: `${w}px`, height: `${h}px` };
-		if ((this as unknown).elements.ghostDisplay) {
+		if (
+			(this as import("../../../main.js").NanaiAndroidMascotApp).elements
+				.ghostDisplay
+		) {
 			(
 				this as import("../../../main.js").NanaiAndroidMascotApp
 			).elements.ghostDisplay.style.width = conf.width;
@@ -209,7 +223,7 @@ export const ghostActions = {
 		if (isTauriAvailable()) {
 			invoke("set_character_scale", { scalePercent }).catch(() => {});
 		}
-		(this as unknown).showBalloon(
+		(this as import("../../../main.js").NanaiAndroidMascotApp).showBalloon(
 			`シェル倍率を ${scalePercent}% に変更しました`,
 		);
 		setTimeout(
@@ -222,7 +236,7 @@ export const ghostActions = {
 	},
 
 	minimizeApp() {
-		(this as unknown).hideMenu();
+		(this as import("../../../main.js").NanaiAndroidMascotApp).hideMenu();
 		try {
 			(
 				this as import("../../../main.js").NanaiAndroidMascotApp

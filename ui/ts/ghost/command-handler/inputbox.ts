@@ -4,7 +4,7 @@
  */
 
 export function openInputBox(
-	handler: unknown,
+	handler: import("../../ghost.js").SakuraCommandHandler,
 	params: string[],
 	isPassword: boolean = false,
 ) {
@@ -117,11 +117,17 @@ export function openInputBox(
 	}
 }
 
-export function openPasswordInput(handler: unknown, params: string[]) {
+export function openPasswordInput(
+	handler: import("../../ghost.js").SakuraCommandHandler,
+	params: string[],
+) {
 	return openInputBox(handler, params, true);
 }
 
-export function openTextAreaBox(handler: unknown, params: string[]) {
+export function openTextAreaBox(
+	handler: import("../../ghost.js").SakuraCommandHandler,
+	params: string[],
+) {
 	if (handler.app?.modalDialogController?.openTextAreaBox) {
 		return handler.app.modalDialogController.openTextAreaBox(
 			params,
@@ -131,7 +137,10 @@ export function openTextAreaBox(handler: unknown, params: string[]) {
 	return openInputBox(handler, params);
 }
 
-export function openSliderInput(handler: unknown, params: string[]) {
+export function openSliderInput(
+	handler: import("../../ghost.js").SakuraCommandHandler,
+	params: string[],
+) {
 	if (handler.app?.modalDialogController?.openSliderInput) {
 		return handler.app.modalDialogController.openSliderInput(
 			params,
@@ -141,7 +150,10 @@ export function openSliderInput(handler: unknown, params: string[]) {
 	return openInputBox(handler, params);
 }
 
-export function openIpInput(handler: unknown, params: string[]) {
+export function openIpInput(
+	handler: import("../../ghost.js").SakuraCommandHandler,
+	params: string[],
+) {
 	if (handler.app?.modalDialogController?.openIpInput) {
 		return handler.app.modalDialogController.openIpInput(
 			params,
@@ -151,7 +163,10 @@ export function openIpInput(handler: unknown, params: string[]) {
 	return openInputBox(handler, params);
 }
 
-export function openDateInput(handler: unknown, params: string[]) {
+export function openDateInput(
+	handler: import("../../ghost.js").SakuraCommandHandler,
+	params: string[],
+) {
 	if (handler.app?.modalDialogController?.openDateInput) {
 		return handler.app.modalDialogController.openDateInput(
 			params,
@@ -161,7 +176,10 @@ export function openDateInput(handler: unknown, params: string[]) {
 	return openInputBox(handler, params);
 }
 
-export function openTimeInput(handler: unknown, params: string[]) {
+export function openTimeInput(
+	handler: import("../../ghost.js").SakuraCommandHandler,
+	params: string[],
+) {
 	if (handler.app?.modalDialogController?.openTimeInput) {
 		return handler.app.modalDialogController.openTimeInput(
 			params,
@@ -172,7 +190,7 @@ export function openTimeInput(handler: unknown, params: string[]) {
 }
 
 export function closeInputBox(
-	handler: unknown,
+	handler: import("../../ghost.js").SakuraCommandHandler,
 	paramsOrNotify: unknown = false,
 ) {
 	let notifyCancel = false;
@@ -196,7 +214,7 @@ export function closeInputBox(
 }
 
 export function closeTextAreaBox(
-	handler: unknown,
+	handler: import("../../ghost.js").SakuraCommandHandler,
 	paramsOrNotify: unknown = false,
 ) {
 	if (handler.app?.modalDialogController?.closeTextAreaBox) {
@@ -209,7 +227,10 @@ export function closeTextAreaBox(
 	closeInputBox(handler, paramsOrNotify);
 }
 
-export function closeDialog(handler: unknown, paramsOrNotify: unknown = false) {
+export function closeDialog(
+	handler: import("../../ghost.js").SakuraCommandHandler,
+	paramsOrNotify: unknown = false,
+) {
 	if (handler.app?.modalDialogController?.closeDialog) {
 		const id = Array.isArray(paramsOrNotify) ? paramsOrNotify[0] : undefined;
 		return handler.app.modalDialogController.closeDialog(

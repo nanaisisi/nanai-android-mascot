@@ -6,10 +6,10 @@
 import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 
 export function handleScope(
-	player: unknown,
-	app: unknown,
-	token: unknown,
-	context: unknown,
+	player: import("../controller.js").SakuraPlayController,
+	app: import("../../../main.js").NanaiAndroidMascotApp,
+	token: import("../../parser/ast.js").ASTNode,
+	context: import("../sync-object.js").SakuraPlayContext,
 ) {
 	const {
 		sakuraText,
@@ -63,10 +63,10 @@ export function handleScope(
 }
 
 export function handleBalloon(
-	player: unknown,
-	_app: unknown,
-	token: unknown,
-	context: unknown,
+	player: import("../controller.js").SakuraPlayController,
+	_app: import("../../../main.js").NanaiAndroidMascotApp,
+	token: import("../../parser/ast.js").ASTNode,
+	context: import("../sync-object.js").SakuraPlayContext,
 ) {
 	const { sakuraDisplay, keroDisplay } = context;
 	const balloonDisplay =
@@ -79,10 +79,10 @@ export function handleBalloon(
 }
 
 export function handleInlineBitmap(
-	_player: unknown,
-	app: unknown,
-	token: unknown,
-	context: unknown,
+	_player: import("../controller.js").SakuraPlayController,
+	app: import("../../../main.js").NanaiAndroidMascotApp,
+	token: import("../../parser/ast.js").ASTNode,
+	context: import("../sync-object.js").SakuraPlayContext,
 ) {
 	const { currentBalloonText, scheduleDesktopBalloonSync } = context;
 

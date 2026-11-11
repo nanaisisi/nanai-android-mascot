@@ -34,22 +34,19 @@ export interface AppSettings {
 	autoSwitchBalloonWithGhost: boolean;
 }
 
-export interface NanaiAndroidMascotApp {
-	internalWindowManager: InternalWindowManager;
-	loadSettings(): void;
-	setupEventListeners(): void;
-	applySettings(): void;
-	startSecondTimer(): void;
-	hideMenu(): void;
-	showBalloon(message: string): void;
-	hideBalloon(scopeId?: number, type?: string): void;
-	toggleMenu(): void;
-	scanBalloons(): Promise<unknown[]>;
-	setBalloonTheme(theme: string): Promise<void>;
-	recordRecentGhost(ghostName: string): void;
-}
-
 export class NanaiAndroidMascotApp {
+	// mixin (Object.assign) で後から注入されるメソッドの型宣言
+	declare loadSettings: () => void;
+	declare setupEventListeners: () => void;
+	declare applySettings: () => void;
+	declare startSecondTimer: () => void;
+	declare hideMenu: () => void;
+	declare showBalloon: (message: string) => void;
+	declare hideBalloon: (scopeId?: number, type?: string) => void;
+	declare toggleMenu: () => void;
+	declare setBalloonTheme: (theme: string) => Promise<void>;
+	declare recordRecentGhost: (ghostName: string) => void;
+
 	isInitialized: boolean;
 	currentBalloonTheme: string;
 	settings: AppSettings;
@@ -231,6 +228,10 @@ Object.assign(
 	updateMethods,
 );
 
+declare global {
+	var mascotApp: NanaiAndroidMascotApp | undefined;
+}
+
 globalThis.addEventListener("DOMContentLoaded", () => {
-	(globalThis as unknown).mascotApp = new NanaiAndroidMascotApp();
+	globalThis.mascotApp = new NanaiAndroidMascotApp();
 });

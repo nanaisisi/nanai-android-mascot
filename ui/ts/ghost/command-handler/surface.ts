@@ -4,7 +4,7 @@
  */
 
 export async function handleBindCommand(
-	handler: unknown,
+	handler: import("../../ghost.js").SakuraCommandHandler,
 	args: string[],
 	raiseEvent: boolean = true,
 ) {
@@ -18,7 +18,10 @@ export async function handleBindCommand(
 	);
 }
 
-export async function handleAnimCommand(handler: unknown, args: string[]) {
+export async function handleAnimCommand(
+	handler: import("../../ghost.js").SakuraCommandHandler,
+	args: string[],
+) {
 	const [verbRaw, idVal, arg3, arg4] = args.slice(1);
 	const targetStr = String(idVal ?? "").trim();
 	const animIdNum = Number.parseInt(targetStr, 10);
@@ -42,7 +45,10 @@ export async function handleAnimCommand(handler: unknown, args: string[]) {
 	}
 }
 
-async function handleAnimAddCommand(handler: unknown, subArgs: string[]) {
+async function handleAnimAddCommand(
+	handler: import("../../ghost.js").SakuraCommandHandler,
+	subArgs: string[],
+) {
 	if (!subArgs.length) return;
 	const method = String(subArgs[0] ?? "").toLowerCase();
 	const sm = handler.app.surfaceManager;

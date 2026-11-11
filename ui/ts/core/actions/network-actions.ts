@@ -5,9 +5,12 @@ export const networkActions = {
 	 * メールチェック (UKADOC OnBIFF 準拠)
 	 */
 	async checkEmail(accountName: string = "default") {
-		const gc = (this as unknown).ghostController;
+		const gc = (this as import("../../../main.js").NanaiAndroidMascotApp)
+			.ghostController;
 		console.log(`📬 メールチェック開始 (OnBIFF): account=${accountName}`);
-		(this as unknown).showBalloon?.("📬 メールを確認中...");
+		(this as import("../../../main.js").NanaiAndroidMascotApp).showBalloon?.(
+			"📬 メールを確認中...",
+		);
 
 		try {
 			await gc.sendShioriEvent("OnBIFFBegin", [accountName]);

@@ -5,10 +5,10 @@
  */
 
 export function handleChoice(
-	player: unknown,
-	app: unknown,
-	token: unknown,
-	context: unknown,
+	player: import("../controller.js").SakuraPlayController,
+	app: import("../../../main.js").NanaiAndroidMascotApp,
+	token: import("../../parser/ast.js").ASTNode,
+	context: import("../sync-object.js").SakuraPlayContext,
 ) {
 	const { currentBalloonText, flushDesktopBalloon } = context;
 
@@ -77,10 +77,10 @@ export function handleChoice(
 }
 
 export function handleAnchorBegin(
-	_player: unknown,
-	app: unknown,
-	token: unknown,
-	context: unknown,
+	_player: import("../controller.js").SakuraPlayController,
+	app: import("../../../main.js").NanaiAndroidMascotApp,
+	token: import("../../parser/ast.js").ASTNode,
+	context: import("../sync-object.js").SakuraPlayContext,
 ) {
 	const { currentBalloonText, scheduleDesktopBalloonSync } = context;
 
@@ -141,19 +141,19 @@ export function handleAnchorBegin(
 }
 
 export function handleAnchorEnd(
-	_player: unknown,
-	_app: unknown,
-	_token: unknown,
-	context: unknown,
+	_player: import("../controller.js").SakuraPlayController,
+	_app: import("../../../main.js").NanaiAndroidMascotApp,
+	_token: import("../../parser/ast.js").ASTNode,
+	context: import("../sync-object.js").SakuraPlayContext,
 ) {
 	context.currentAnchor = null;
 }
 
 export function handleChoiceScopeBegin(
-	player: unknown,
-	app: unknown,
-	token: unknown,
-	context: unknown,
+	player: import("../controller.js").SakuraPlayController,
+	app: import("../../../main.js").NanaiAndroidMascotApp,
+	token: import("../../parser/ast.js").ASTNode,
+	context: import("../sync-object.js").SakuraPlayContext,
 ) {
 	const {
 		currentBalloonText,
@@ -234,10 +234,10 @@ export function handleChoiceScopeBegin(
 }
 
 export function handleChoiceScopeEnd(
-	_player: unknown,
-	_app: unknown,
-	_token: unknown,
-	context: unknown,
+	_player: import("../controller.js").SakuraPlayController,
+	_app: import("../../../main.js").NanaiAndroidMascotApp,
+	_token: import("../../parser/ast.js").ASTNode,
+	context: import("../sync-object.js").SakuraPlayContext,
 ) {
 	if (context.currentAnchor === context.currentChoiceScope) {
 		context.currentAnchor = null;

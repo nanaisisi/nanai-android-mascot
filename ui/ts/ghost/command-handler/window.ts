@@ -34,7 +34,10 @@ export async function handleWindowState(state: string, handler?: unknown) {
 	}
 }
 
-export async function setAlignmentToDesktop(handler: unknown, mode: string) {
+export async function setAlignmentToDesktop(
+	handler: import("../../ghost.js").SakuraCommandHandler,
+	mode: string,
+) {
 	handler.app.alignmentToDesktop = mode;
 	if (mode === "free") return;
 	try {

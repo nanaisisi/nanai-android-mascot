@@ -5,24 +5,30 @@
 
 import { invoke, isTauriAvailable } from "../../core/tauri-helper.js";
 
-export async function handleSetWallpaper(_handler: unknown, args: string[]) {
+export async function handleSetWallpaper(
+	_handler: import("../../ghost.js").SakuraCommandHandler,
+	args: string[],
+) {
 	const [filename, option] = args.slice(1);
 	console.log(`🖼️ Wallpaper set: ${filename} (option: ${option})`);
 }
 
-export async function handleSaveWallpaper(_handler: unknown, _args: string[]) {
+export async function handleSaveWallpaper(
+	_handler: import("../../ghost.js").SakuraCommandHandler,
+	_args: string[],
+) {
 	console.log("🖼️ Wallpaper savewallpaper executed");
 }
 
 export async function handleRestoreWallpaper(
-	_handler: unknown,
+	_handler: import("../../ghost.js").SakuraCommandHandler,
 	_args: string[],
 ) {
 	console.log("🖼️ Wallpaper restorewallpaper executed");
 }
 
 export async function handleCancelNetworkService(
-	_handler: unknown,
+	_handler: import("../../ghost.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const [service, target] = args.slice(1);
@@ -30,7 +36,7 @@ export async function handleCancelNetworkService(
 }
 
 export async function handleCloseNetworkService(
-	_handler: unknown,
+	_handler: import("../../ghost.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const [service, target] = args.slice(1);
@@ -38,7 +44,7 @@ export async function handleCloseNetworkService(
 }
 
 export async function handleFileWatchCommand(
-	_handler: unknown,
+	_handler: import("../../ghost.js").SakuraCommandHandler,
 	args: string[],
 	isCancel: boolean = false,
 ) {
@@ -56,7 +62,7 @@ export async function handleFileWatchCommand(
 }
 
 export async function handleEmptyRecycleBin(
-	_handler: unknown,
+	_handler: import("../../ghost.js").SakuraCommandHandler,
 	_args: string[],
 ) {
 	console.log("🗑️ Empty recycle bin requested");
@@ -69,7 +75,10 @@ export async function handleEmptyRecycleBin(
 	}
 }
 
-export async function handlePingCommand(handler: unknown, args: string[]) {
+export async function handlePingCommand(
+	handler: import("../../ghost.js").SakuraCommandHandler,
+	args: string[],
+) {
 	const host = args[1] ?? args[0] ?? "";
 	console.log(`📡 Ping requested: host=${host}`);
 	if (isTauriAvailable()) {
@@ -93,7 +102,10 @@ export async function handlePingCommand(handler: unknown, args: string[]) {
 	}
 }
 
-export async function handleNslookupCommand(handler: unknown, args: string[]) {
+export async function handleNslookupCommand(
+	handler: import("../../ghost.js").SakuraCommandHandler,
+	args: string[],
+) {
 	const host = args[1] ?? args[0] ?? "";
 	console.log(`🔍 Nslookup requested: host=${host}`);
 	if (isTauriAvailable()) {
@@ -118,7 +130,7 @@ export async function handleNslookupCommand(handler: unknown, args: string[]) {
 }
 
 export async function handleScheduleAddCommand(
-	handler: unknown,
+	handler: import("../../ghost.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const rawArgs = args[0]?.toLowerCase().includes("schedule")
@@ -148,7 +160,10 @@ export async function handleScheduleAddCommand(
 	}
 }
 
-export async function handleExecuteCommand(handler: unknown, args: string[]) {
+export async function handleExecuteCommand(
+	handler: import("../../ghost.js").SakuraCommandHandler,
+	args: string[],
+) {
 	const subCmd = (args[1] ?? "").toLowerCase();
 	const restArgs = args.slice(1);
 
@@ -221,7 +236,10 @@ export async function handleExecuteCommand(handler: unknown, args: string[]) {
 	}
 }
 
-export async function handleArchiveExec(handler: unknown, args: string[]) {
+export async function handleArchiveExec(
+	handler: import("../../ghost.js").SakuraCommandHandler,
+	args: string[],
+) {
 	const [action, filename, dest] = args.slice(1);
 	console.log(`📦 Archive action ${action}: file=${filename}, dest=${dest}`);
 	if (action === "createnar" && isTauriAvailable()) {
@@ -239,52 +257,77 @@ export async function handleArchiveExec(handler: unknown, args: string[]) {
 	}
 }
 
-export async function handleDownloadExec(_handler: unknown, args: string[]) {
+export async function handleDownloadExec(
+	_handler: import("../../ghost.js").SakuraCommandHandler,
+	args: string[],
+) {
 	const [url, savePath] = args.slice(1);
 	console.log(`📥 Download requested: url=${url}, savePath=${savePath}`);
 }
 
-export async function handleUploadExec(_handler: unknown, args: string[]) {
+export async function handleUploadExec(
+	_handler: import("../../ghost.js").SakuraCommandHandler,
+	args: string[],
+) {
 	const [url, filePath] = args.slice(1);
 	console.log(`📤 Upload requested: url=${url}, filePath=${filePath}`);
 }
 
-export async function handleMailCheckExec(handler: unknown, args: string[]) {
+export async function handleMailCheckExec(
+	handler: import("../../ghost.js").SakuraCommandHandler,
+	args: string[],
+) {
 	const [account] = args.slice(1);
 	console.log(`✉️ Mail check requested for account: ${account}`);
 	await handler.app.networkActions?.checkEmail?.(account);
 }
 
-export async function handleMailExec(_handler: unknown, args: string[]) {
+export async function handleMailExec(
+	_handler: import("../../ghost.js").SakuraCommandHandler,
+	args: string[],
+) {
 	const [action, target] = args.slice(1);
 	console.log(`✉️ Mail action ${action}: target=${target}`);
 }
 
-export async function handleFileExec(_handler: unknown, args: string[]) {
+export async function handleFileExec(
+	_handler: import("../../ghost.js").SakuraCommandHandler,
+	args: string[],
+) {
 	const [action, path, dest] = args.slice(1);
 	console.log(`📁 File action ${action}: path=${path}, dest=${dest}`);
 }
 
-export async function handleSetHttpTimeout(_handler: unknown, args: string[]) {
+export async function handleSetHttpTimeout(
+	_handler: import("../../ghost.js").SakuraCommandHandler,
+	args: string[],
+) {
 	const [timeout] = args.slice(1);
 	console.log(`⏱️ HTTP timeout set: ${timeout}s`);
 }
 
-export async function handleSetProxy(_handler: unknown, args: string[]) {
+export async function handleSetProxy(
+	_handler: import("../../ghost.js").SakuraCommandHandler,
+	args: string[],
+) {
 	const [server, port] = args.slice(1);
 	console.log(`🌐 Proxy set: ${server}:${port}`);
 }
 
-export async function handleUpdate(handler: unknown) {
+export async function handleUpdate(
+	handler: import("../../ghost.js").SakuraCommandHandler,
+) {
 	await handler.app.startNetworkUpdate?.();
 }
 
-export async function handleUpdateByMyself(handler: unknown) {
+export async function handleUpdateByMyself(
+	handler: import("../../ghost.js").SakuraCommandHandler,
+) {
 	await handler.app.startNetworkUpdate?.();
 }
 
 export async function handleSoundEventNotify(
-	handler: unknown,
+	handler: import("../../ghost.js").SakuraCommandHandler,
 	action: string,
 	params: string[] = [],
 ) {

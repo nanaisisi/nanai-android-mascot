@@ -10,23 +10,28 @@ export interface GhostInfo {
 	[key: string]: unknown;
 }
 
-export interface GhostController {
-	sendShioriEvent(event: string, args?: string[]): Promise<unknown>;
-	sendBalloonTimeoutNotify?(script: string, scope: string): Promise<unknown>;
-	sendBalloonCloseNotify?(script: string): Promise<unknown>;
-	sendBalloonBreakNotify?(
+export class GhostController {
+	// mixin (Object.assign) で後から注入されるメソッド・プロパティの型宣言
+	declare sendShioriEvent: (
+		event: string,
+		args?: string[],
+	) => Promise<unknown>;
+	declare sendBalloonTimeoutNotify?: (
+		script: string,
+		scope: string,
+	) => Promise<unknown>;
+	declare sendBalloonCloseNotify?: (script: string) => Promise<unknown>;
+	declare sendBalloonBreakNotify?: (
 		script: string,
 		scope: number,
 		idx: number,
-	): Promise<unknown>;
-	stopSecondChangeTimer?(): void;
-	callGhost?(name: string): Promise<unknown>;
-	username?: string;
-	lastGhostName?: string;
-	lastObjectName?: string;
-}
+	) => Promise<unknown>;
+	declare stopSecondChangeTimer?: () => void;
+	declare callGhost?: (name: string) => Promise<unknown>;
+	declare username?: string;
+	declare lastGhostName?: string;
+	declare lastObjectName?: string;
 
-export class GhostController {
 	app: import("../../main.js").NanaiAndroidMascotApp;
 	ghosts: GhostInfo[];
 	currentGhost: GhostInfo | null;
@@ -132,10 +137,12 @@ export class GhostController {
 		if (
 			prevGhostName &&
 			prevGhostName !== ghost.name &&
-			(this as unknown).sendShioriEvent
+			(this as import("../../../main.js").NanaiAndroidMascotApp).sendShioriEvent
 		) {
 			try {
-				await (this as unknown).sendShioriEvent("OnGhostChanging", [
+				await (
+					this as import("../../../main.js").NanaiAndroidMascotApp
+				).sendShioriEvent("OnGhostChanging", [
 					ghost.name,
 					"manual",
 					prevGhostName,
@@ -193,18 +200,20 @@ export class GhostController {
 
 		// 【フェーズ 2: シェル表示 & SHIORI 初期化のパラレル実行 (Atomic Reveal)】
 		const loadId = {};
-		(this as unknown)._currentLoadToken = loadId;
-		const isCurrentLoad = () => (this as unknown)._currentLoadToken === loadId;
+		(
+			this as import("../../../main.js").NanaiAndroidMascotApp
+		)._currentLoadToken = loadId;
+		const isCurrentLoad = () =>
+			(this as import("../../../main.js").NanaiAndroidMascotApp)
+				._currentLoadToken === loadId;
 
 		await Promise.all([
 			Promise.resolve(preloadSurfacesPromise)
 				.catch(() => {})
 				.then(() => this.selectShell(this.currentShell)),
-			(this as unknown).initializeGhostSHIORI(
-				ghost,
-				preloadSurfacesPromise,
-				isCurrentLoad,
-			),
+			(
+				this as import("../../../main.js").NanaiAndroidMascotApp
+			).initializeGhostSHIORI(ghost, preloadSurfacesPromise, isCurrentLoad),
 		]);
 
 		// レンダリングフレーム完了の待機 (トリプル rAF による GPU 描画・コンポジット完全確定。テスト環境フォールバック付)
@@ -237,25 +246,31 @@ export class GhostController {
 		this.currentShell = shellName;
 		if (this.currentGhost) {
 			try {
-				await (this as unknown).loadSurfaceAsset(
+				await (
+					this as import("../../../main.js").NanaiAndroidMascotApp
+				).loadSurfaceAsset(
 					"load_surface_image",
 					this.currentGhost.path || AppConfig.paths.defaultGhostDir,
 					shellName,
 					0,
 				);
 			} catch (_e) {}
-			await (this as unknown).updateSurface(0, 0);
-			await (this as unknown).updateSurface(10, 1);
+			await (
+				this as import("../../../main.js").NanaiAndroidMascotApp
+			).updateSurface(0, 0);
+			await (
+				this as import("../../../main.js").NanaiAndroidMascotApp
+			).updateSurface(10, 1);
 			if (
 				prevShell &&
 				prevShell !== shellName &&
-				(this as unknown).sendShioriEvent
+				(this as import("../../../main.js").NanaiAndroidMascotApp)
+					.sendShioriEvent
 			) {
 				try {
-					await (this as unknown).sendShioriEvent("OnShellChanged", [
-						shellName,
-						prevShell,
-					]);
+					await (
+						this as import("../../../main.js").NanaiAndroidMascotApp
+					).sendShioriEvent("OnShellChanged", [shellName, prevShell]);
 				} catch (_e) {}
 			}
 		}

@@ -4,7 +4,7 @@
  */
 
 export async function handleJumpCommand(
-	handler: unknown,
+	handler: import("../../ghost.js").SakuraCommandHandler,
 	target: string,
 	args: string[] = [],
 ) {

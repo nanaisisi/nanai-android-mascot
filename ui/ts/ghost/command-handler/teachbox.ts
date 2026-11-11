@@ -4,7 +4,7 @@
  */
 
 export function openTeachBox(
-	handler: unknown,
+	handler: import("../../ghost.js").SakuraCommandHandler,
 	params: string[] = [],
 	options: unknown = {},
 ) {
@@ -98,7 +98,9 @@ export function openTeachBox(
 	setTimeout(() => input.focus(), 50);
 }
 
-export function closeTeachBox(handler: unknown) {
+export function closeTeachBox(
+	handler: import("../../ghost.js").SakuraCommandHandler,
+) {
 	if (handler.teachForm) {
 		handler.teachForm.remove();
 		handler.teachForm = null;

@@ -6,7 +6,7 @@
 import { cancelScriptTimer, scheduleScriptTimer } from "./registry.js";
 
 export async function handleTimerPluginCommand(
-	handler: unknown,
+	handler: import("../../ghost.js").SakuraCommandHandler,
 	args: string[],
 ) {
 	const delayMs = Number.parseInt(args[1] ?? "0", 10);

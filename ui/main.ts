@@ -38,7 +38,7 @@ export interface AppSettings {
 }
 
 export class NanaiAndroidMascotApp {
-	syncObjectManager: unknown;
+	syncObjectManager?: import("./ts/ghost/sakura-play/sync-object.js").SyncObjectManager | null;
 	startNetworkUpdate(
 		_targetGhostName?: string | null,
 		_options?: { checkOnly?: boolean },

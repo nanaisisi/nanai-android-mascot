@@ -66,6 +66,10 @@ export class SakuraPlaybackController {
 	listeners: Map<string, Set<(...args: unknown[]) => unknown>>;
 	syncObjects: SyncObjectManager;
 
+	declare setBalloonWait?: (param: unknown) => void;
+	declare resetBalloonWait?: () => void;
+	declare setQuickMode?: (enable: boolean) => void;
+
 	constructor(options: unknown = {}) {
 		const opts = options as { player?: unknown };
 		this.player = opts.player || null;

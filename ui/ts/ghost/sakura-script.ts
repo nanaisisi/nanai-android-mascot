@@ -9,7 +9,7 @@ import { parseSakuraScriptAsync } from "./sakura-parser.js";
 import { playScript } from "./sakura-play.js";
 
 export class SakuraScriptPlayer {
-	app: unknown;
+	app: import("../../main.js").NanaiAndroidMascotApp;
 	isPlaying: boolean;
 	skipRequested: boolean;
 	currentScope: number;
@@ -21,6 +21,7 @@ export class SakuraScriptPlayer {
 	balloonTimeoutTimer: unknown;
 	lastScript: string;
 	commandHandler: SakuraCommandHandler;
+	playbackController?: import("./sakura-play/controller.js").SakuraPlaybackController | null;
 	currentProgressIndex?: number;
 	_restoreTimer?: unknown;
 	_pauseResolver?: unknown;

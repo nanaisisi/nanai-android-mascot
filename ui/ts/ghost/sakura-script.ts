@@ -16,10 +16,11 @@ export class SakuraScriptPlayer {
 	playbackId: number;
 	timeCritical: boolean;
 	choiceTimeout: number;
-	choiceTimeoutTimer: unknown;
+	choiceTimeoutTimer: ReturnType<typeof setTimeout> | null;
 	balloonTimeout: number;
 	balloonTimeoutTimer: unknown;
 	lastScript: string;
+	currentFontStyles: Record<string, string>;
 	commandHandler: SakuraCommandHandler;
 	playbackController?:
 		| import("./sakura-play/controller.js").SakuraPlaybackController

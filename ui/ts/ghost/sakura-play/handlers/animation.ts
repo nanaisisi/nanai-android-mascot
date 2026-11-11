@@ -5,10 +5,13 @@
 
 import type { NanaiAndroidMascotApp } from "../../../../main.js";
 import type { SakuraAstNode } from "../../parser/ast-types.js";
+import type { SakuraScriptPlayer } from "../../sakura-script.js";
 import type { SakuraPlaybackController } from "../controller.js";
 
+type PlayTarget = SakuraScriptPlayer | SakuraPlaybackController;
+
 export function handleSurface(
-	player: SakuraPlaybackController,
+	player: PlayTarget,
 	app: NanaiAndroidMascotApp,
 	token: SakuraAstNode,
 	_context?: unknown,
@@ -22,7 +25,7 @@ export function handleSurface(
 }
 
 export async function handleAnimation(
-	player: SakuraPlaybackController,
+	player: PlayTarget,
 	app: NanaiAndroidMascotApp,
 	token: SakuraAstNode,
 	_context?: unknown,
@@ -37,7 +40,7 @@ export async function handleAnimation(
 }
 
 export async function handleWaitAnimation(
-	player: SakuraPlaybackController,
+	player: PlayTarget,
 	app: NanaiAndroidMascotApp,
 	token: SakuraAstNode,
 	_context?: unknown,

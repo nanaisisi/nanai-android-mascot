@@ -5,11 +5,14 @@
 
 import type { NanaiAndroidMascotApp } from "../../../../main.js";
 import type { SakuraAstNode } from "../../parser/ast-types.js";
+import type { SakuraScriptPlayer } from "../../sakura-script.js";
 import type { SakuraPlaybackController } from "../controller.js";
 import type { SakuraPlayContext } from "./choice.js";
 
+type PlayTarget = SakuraScriptPlayer | SakuraPlaybackController;
+
 export async function handleChar(
-	player: SakuraPlaybackController,
+	player: PlayTarget,
 	app: NanaiAndroidMascotApp,
 	token: SakuraAstNode,
 	context: SakuraPlayContext,
@@ -52,13 +55,14 @@ export async function handleChar(
 		app.surfaceManager?.onCharSpoken(player.currentScope);
 	}
 
-	player.playbackController?.notifyChar?.((token.value as string) || "", player.currentScope);
+	const pc = (player.playbackController || player) as SakuraPlaybackController;
+	pc.notifyChar?.((token.value as string) || "", player.currentScope);
 
 	if (!player.skipRequested && !isQuickMode) {
 		const isPunctuation = /[、。！？,!?]/.test((token.value as string) || "");
 		const baseWait = isPunctuation ? 140 : 40;
-		const waitMs = player.playbackController?.calculateWait
-			? player.playbackController.calculateWait(baseWait, true)
+		const waitMs = pc.calculateWait
+			? pc.calculateWait(baseWait, true)
 			: baseWait;
 		if (waitMs > 0) {
 			await (player.sleep
@@ -69,7 +73,7 @@ export async function handleChar(
 }
 
 export function handleNewline(
-	player: SakuraPlaybackController,
+	player: PlayTarget,
 	_app: NanaiAndroidMascotApp,
 	token: SakuraAstNode,
 	context: SakuraPlayContext,
@@ -112,7 +116,7 @@ export function handleNewline(
 }
 
 export function handleClear(
-	player: SakuraPlaybackController,
+	player: PlayTarget,
 	app: NanaiAndroidMascotApp,
 	token: SakuraAstNode,
 	context: SakuraPlayContext,
@@ -120,7 +124,8 @@ export function handleClear(
 	const { scheduleDesktopBalloonSync } = context;
 	const { currentBalloonText } = context;
 
-	player.playbackController?.notifyClear?.(
+	const pc = (player.playbackController || player) as SakuraPlaybackController;
+	pc.notifyClear?.(
 		(token.mode as "all" | "char" | "line") || "all",
 		token.count || 1,
 	);
@@ -169,7 +174,7 @@ export function handleClear(
 }
 
 export function handleOffset(
-	_player: SakuraPlaybackController,
+	_player: PlayTarget,
 	_app: NanaiAndroidMascotApp,
 	token: SakuraAstNode,
 	context: SakuraPlayContext,
@@ -199,31 +204,34 @@ export function handleOffset(
 }
 
 export function handleFont(
-	player: SakuraPlaybackController,
+	player: PlayTarget,
 	_app: NanaiAndroidMascotApp,
 	token: SakuraAstNode,
 	_context: SakuraPlayContext,
 ) {
-	player.currentFontStyles = player.currentFontStyles || {};
+	if (!player.currentFontStyles) {
+		player.currentFontStyles = {};
+	}
+	const styles = player.currentFontStyles;
 	const tag = token.tag as string;
 	const param = token.param as string;
 
 	if (tag === "default") {
 		player.currentFontStyles = {};
 	} else if (tag === "color") {
-		if (param) player.currentFontStyles.color = param;
-		else delete player.currentFontStyles.color;
+		if (param) styles.color = param;
+		else delete styles.color;
 	} else if (tag === "bold") {
-		player.currentFontStyles.fontWeight =
+		styles.fontWeight =
 			param === "0" || param === "false" ? "normal" : "bold";
 	} else if (tag === "italic") {
-		player.currentFontStyles.fontStyle =
+		styles.fontStyle =
 			param === "0" || param === "false" ? "normal" : "italic";
 	} else if (tag === "strike") {
-		player.currentFontStyles.textDecoration =
+		styles.textDecoration =
 			param === "0" || param === "false" ? "none" : "line-through";
 	} else if (tag === "underline") {
-		player.currentFontStyles.textDecoration =
+		styles.textDecoration =
 			param === "0" || param === "false" ? "none" : "underline";
 	} else if (tag === "height") {
 		if (param) {
@@ -233,16 +241,16 @@ export function handleFont(
 				param.endsWith("em")
 					? param
 					: `${param}px`;
-			player.currentFontStyles.fontSize = size;
+			styles.fontSize = size;
 		}
 	} else if (tag === "shadow") {
 		if (param === "0" || param === "none") {
-			delete player.currentFontStyles.textShadow;
+			delete styles.textShadow;
 		} else {
 			const col = param || "rgba(0,0,0,0.5)";
-			player.currentFontStyles.textShadow = `1px 1px 2px ${col}`;
+			styles.textShadow = `1px 1px 2px ${col}`;
 		}
 	} else if (tag === "name" && param) {
-		player.currentFontStyles.fontFamily = param;
+		styles.fontFamily = param;
 	}
 }

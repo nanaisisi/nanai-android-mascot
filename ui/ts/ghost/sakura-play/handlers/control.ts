@@ -6,10 +6,13 @@
 import type { NanaiAndroidMascotApp } from "../../../../main.js";
 import type { SakuraAstNode } from "../../parser/ast-types.js";
 import type { SakuraScriptPlayer } from "../../sakura-script.js";
+import type { SakuraPlaybackController } from "../controller.js";
 import type { SakuraPlayContext } from "./choice.js";
 
+type PlayTarget = SakuraScriptPlayer | SakuraPlaybackController;
+
 export async function handlePause(
-	player: SakuraScriptPlayer,
+	player: PlayTarget,
 	_app: NanaiAndroidMascotApp,
 	token: SakuraAstNode,
 	context: SakuraPlayContext,
@@ -32,7 +35,8 @@ export async function handlePause(
 	}
 
 	flushDesktopBalloon?.();
-	player.playbackController?.notifyPause?.(Boolean(token.noClear));
+	const pc = (player.playbackController || player) as SakuraPlaybackController;
+	pc.notifyPause?.(Boolean(token.noClear));
 	if (!player.skipRequested && !context.isQuickMode) {
 		const activeDisplay =
 			player.currentScope === 1 ? keroDisplay : sakuraDisplay;
@@ -57,7 +61,7 @@ export async function handlePause(
 }
 
 export function handleQuickToggle(
-	player: SakuraScriptPlayer,
+	player: PlayTarget,
 	_app: NanaiAndroidMascotApp,
 	token: SakuraAstNode,
 	context: SakuraPlayContext,
@@ -67,19 +71,21 @@ export function handleQuickToggle(
 	} else {
 		context.isQuickMode = !context.isQuickMode;
 	}
-	player.playbackController?.setQuickMode?.(Boolean(context.isQuickMode));
+	const pc = (player.playbackController || player) as SakuraPlaybackController;
+	pc.setQuickMode?.(Boolean(context.isQuickMode));
 }
 
 export async function handleWait(
-	player: SakuraScriptPlayer,
+	player: PlayTarget,
 	_app: NanaiAndroidMascotApp,
 	token: SakuraAstNode,
 	context: SakuraPlayContext,
 ) {
-	player.playbackController?.notifyWait?.(token.value as number);
+	const pc = (player.playbackController || player) as SakuraPlaybackController;
+	pc.notifyWait?.(token.value as number);
 	if (!player.skipRequested && !context.isQuickMode) {
-		const waitMs = player.playbackController?.calculateWait
-			? player.playbackController.calculateWait(token.value as number)
+		const waitMs = pc.calculateWait
+			? pc.calculateWait(token.value as number)
 			: (token.value as number);
 		if (waitMs > 0) {
 			if (player.sleep) {
@@ -92,19 +98,18 @@ export async function handleWait(
 }
 
 export function handleTimeout(
-	player: SakuraScriptPlayer,
+	player: PlayTarget,
 	_app: NanaiAndroidMascotApp,
 	_token: SakuraAstNode,
 	_context: unknown,
 ) {
-	if (player.playbackController) {
-		player.playbackController.timeCritical = true;
-	}
+	const pc = (player.playbackController || player) as SakuraPlaybackController;
+	pc.timeCritical = true;
 	player.timeCritical = true;
 }
 
 export function handleChoiceTimeout(
-	player: SakuraScriptPlayer,
+	player: PlayTarget,
 	_app: NanaiAndroidMascotApp,
 	token: SakuraAstNode,
 	_context: unknown,
@@ -113,7 +118,7 @@ export function handleChoiceTimeout(
 }
 
 export function handleBalloonTimeout(
-	player: SakuraScriptPlayer,
+	player: PlayTarget,
 	_app: NanaiAndroidMascotApp,
 	token: SakuraAstNode,
 	_context: unknown,
@@ -122,7 +127,7 @@ export function handleBalloonTimeout(
 }
 
 export async function handleHalt(
-	_player: SakuraScriptPlayer,
+	_player: PlayTarget,
 	app: NanaiAndroidMascotApp,
 	_token: SakuraAstNode,
 	_context: unknown,
@@ -131,7 +136,7 @@ export async function handleHalt(
 }
 
 export function handleSyncToggle(
-	player: SakuraScriptPlayer,
+	player: PlayTarget,
 	_app: NanaiAndroidMascotApp,
 	token: SakuraAstNode,
 	_context: unknown,
@@ -148,14 +153,15 @@ export function handleSyncToggle(
 	} else {
 		player.syncScopes = null;
 	}
-	player.playbackController?.emit?.("playback:sync-mode", {
+	const pc = (player.playbackController || player) as SakuraPlaybackController;
+	pc.emit?.("playback:sync-mode", {
 		enabled: player.isSyncMode,
 		scopes: player.syncScopes,
 	});
 }
 
 export async function handleCommand(
-	player: SakuraScriptPlayer,
+	player: PlayTarget,
 	_app: NanaiAndroidMascotApp,
 	token: SakuraAstNode,
 	_context: unknown,
@@ -165,7 +171,7 @@ export async function handleCommand(
 }
 
 export function handleEnd(
-	player: SakuraScriptPlayer,
+	player: PlayTarget,
 	app: NanaiAndroidMascotApp,
 	_token: SakuraAstNode,
 	context: SakuraPlayContext,
@@ -177,17 +183,18 @@ export function handleEnd(
 }
 
 export function handleNoAutoWrap(
-	player: SakuraScriptPlayer,
+	player: PlayTarget,
 	_app: NanaiAndroidMascotApp,
 	_token: SakuraAstNode,
 	_context: unknown,
 ) {
 	player.noAutoWrap = true;
-	player.playbackController?.emit?.("playback:no-autowrap", { enabled: true });
+	const pc = (player.playbackController || player) as SakuraPlaybackController;
+	pc.emit?.("playback:no-autowrap", { enabled: true });
 }
 
 export function handleRawToggle(
-	player: SakuraScriptPlayer,
+	player: PlayTarget,
 	_app: NanaiAndroidMascotApp,
 	token: SakuraAstNode,
 	context: SakuraPlayContext,
@@ -198,16 +205,18 @@ export function handleRawToggle(
 		context.isRawMode = !context.isRawMode;
 	}
 	player.isRawMode = context.isRawMode;
-	player.playbackController?.emit?.("playback:raw-toggle", {
+	const pc = (player.playbackController || player) as SakuraPlaybackController;
+	pc.emit?.("playback:raw-toggle", {
 		enabled: context.isRawMode,
 	});
 }
 
 export function handleAutoPause(
-	player: SakuraScriptPlayer,
+	player: PlayTarget,
 	_app: NanaiAndroidMascotApp,
 	_token: SakuraAstNode,
 	_context: unknown,
 ) {
-	player.playbackController?.emit?.("playback:auto-pause");
+	const pc = (player.playbackController || player) as SakuraPlaybackController;
+	pc.emit?.("playback:auto-pause");
 }

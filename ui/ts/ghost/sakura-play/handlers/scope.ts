@@ -6,11 +6,14 @@
 import type { NanaiAndroidMascotApp } from "../../../../main.js";
 import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 import type { SakuraAstNode } from "../../parser/ast-types.js";
+import type { SakuraScriptPlayer } from "../../sakura-script.js";
 import type { SakuraPlaybackController } from "../controller.js";
 import type { SakuraPlayContext } from "./choice.js";
 
+type PlayTarget = SakuraScriptPlayer | SakuraPlaybackController;
+
 export function handleScope(
-	player: SakuraPlaybackController,
+	player: PlayTarget,
 	app: NanaiAndroidMascotApp,
 	token: SakuraAstNode,
 	context: SakuraPlayContext,
@@ -26,7 +29,8 @@ export function handleScope(
 
 	const rawScope = (token.value as number) ?? 0;
 	player.currentScope = rawScope;
-	player.playbackController?.notifyScope?.(player.currentScope);
+	const pc = (player.playbackController || player) as SakuraPlaybackController;
+	pc.notifyScope?.(player.currentScope);
 
 	if (player.currentScope === 0) {
 		app.surfaceManager?.onTalkEnd(1);
@@ -69,7 +73,7 @@ export function handleScope(
 }
 
 export function handleBalloon(
-	player: SakuraPlaybackController,
+	player: PlayTarget,
 	_app: NanaiAndroidMascotApp,
 	token: SakuraAstNode,
 	context: SakuraPlayContext,
@@ -85,7 +89,7 @@ export function handleBalloon(
 }
 
 export function handleInlineBitmap(
-	_player: SakuraPlaybackController,
+	_player: PlayTarget,
 	app: NanaiAndroidMascotApp,
 	token: SakuraAstNode,
 	context: SakuraPlayContext,

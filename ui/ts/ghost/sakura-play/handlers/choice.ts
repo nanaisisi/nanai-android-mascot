@@ -5,7 +5,10 @@
 
 import type { NanaiAndroidMascotApp } from "../../../../main.js";
 import type { SakuraAstNode } from "../../parser/ast-types.js";
+import type { SakuraScriptPlayer } from "../../sakura-script.js";
 import type { SakuraPlaybackController } from "../controller.js";
+
+type PlayTarget = SakuraScriptPlayer | SakuraPlaybackController;
 
 export interface SakuraPlayContext {
 	currentBalloonText?: HTMLElement | null;
@@ -26,7 +29,7 @@ export interface SakuraPlayContext {
 }
 
 export function handleChoice(
-	player: SakuraPlaybackController,
+	player: PlayTarget,
 	app: NanaiAndroidMascotApp,
 	token: SakuraAstNode,
 	context: SakuraPlayContext,
@@ -112,7 +115,7 @@ export function handleChoice(
 }
 
 export function handleAnchorBegin(
-	_player: SakuraPlaybackController,
+	_player: PlayTarget,
 	app: NanaiAndroidMascotApp,
 	token: SakuraAstNode,
 	context: SakuraPlayContext,
@@ -176,7 +179,7 @@ export function handleAnchorBegin(
 }
 
 export function handleAnchorEnd(
-	_player: SakuraPlaybackController,
+	_player: PlayTarget,
 	_app: NanaiAndroidMascotApp,
 	_token: SakuraAstNode,
 	context: SakuraPlayContext,
@@ -185,7 +188,7 @@ export function handleAnchorEnd(
 }
 
 export function handleChoiceScopeBegin(
-	player: SakuraPlaybackController,
+	player: PlayTarget,
 	app: NanaiAndroidMascotApp,
 	token: SakuraAstNode,
 	context: SakuraPlayContext,
@@ -279,7 +282,7 @@ export function handleChoiceScopeBegin(
 }
 
 export function handleChoiceScopeEnd(
-	_player: SakuraPlaybackController,
+	_player: PlayTarget,
 	_app: NanaiAndroidMascotApp,
 	_token: SakuraAstNode,
 	context: SakuraPlayContext,

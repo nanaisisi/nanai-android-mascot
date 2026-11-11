@@ -3,25 +3,30 @@
  * @brief ゴースト間呼び出し・他ゴースト状態通知
  */
 
+export interface GhostCallsContext {
+	sendShioriNotify: (event: string, refs?: unknown[]) => Promise<unknown>;
+	[key: string]: unknown;
+}
+
 export const shioriNotifyGhostCalls = {
-	async sendGhostCalling(this: unknown, targetGhost: string) {
+	async sendGhostCalling(this: GhostCallsContext, targetGhost: string) {
 		return await this.sendShioriNotify("OnGhostCalling", [targetGhost]);
 	},
 
-	async sendGhostCalled(this: unknown, callerGhost: string) {
+	async sendGhostCalled(this: GhostCallsContext, callerGhost: string) {
 		return await this.sendShioriNotify("OnGhostCalled", [callerGhost]);
 	},
 
-	async sendGhostCallComplete(this: unknown, targetGhost: string) {
+	async sendGhostCallComplete(this: GhostCallsContext, targetGhost: string) {
 		return await this.sendShioriNotify("OnGhostCallComplete", [targetGhost]);
 	},
 
-	async sendOtherGhostBooted(this: unknown, ghostName: string) {
+	async sendOtherGhostBooted(this: GhostCallsContext, ghostName: string) {
 		return await this.sendShioriNotify("OnOtherGhostBooted", [ghostName]);
 	},
 
 	async sendOtherGhostChanged(
-		this: unknown,
+		this: GhostCallsContext,
 		ghostName: string,
 		toGhost: string = "",
 	) {
@@ -31,7 +36,7 @@ export const shioriNotifyGhostCalls = {
 		]);
 	},
 
-	async sendOtherGhostClosed(this: unknown, ghostName: string) {
+	async sendOtherGhostClosed(this: GhostCallsContext, ghostName: string) {
 		return await this.sendShioriNotify("OnOtherGhostClosed", [ghostName]);
 	},
 };

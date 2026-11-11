@@ -39,9 +39,8 @@ pub async fn scan_ghost_directory(
         paths_to_scan.push(ghost_path.clone());
     }
 
-    let mut ghosts = Vec::new();
-    let mut scanned_names = std::collections::HashSet::new();
-
+    // ディレクトリ走査対象のゴーストフォルダ候補を収集
+    let mut candidate_dirs = Vec::new();
     for scan_dir in paths_to_scan {
         if let Ok(entries) = std::fs::read_dir(&scan_dir) {
             for entry in entries.flatten() {
@@ -49,69 +48,86 @@ pub async fn scan_ghost_directory(
                 if path.is_dir() {
                     let dir_name = entry.file_name().to_string_lossy().to_string();
                     if !dir_name.starts_with('.') {
-                        if should_skip_directory(&path) {
-                            println!("🚫 Skipping ghost directory with ignore file: {:?}", path);
-                            continue;
-                        }
-
-                        parse_developer_options(&path);
-
-                        let manifest = parse_ghost_manifest(&path, &dir_name);
-
-                        if scanned_names.contains(&manifest.display_name) {
-                            continue;
-                        }
-                        scanned_names.insert(manifest.display_name.clone());
-
-                        let (install_date, update_date) = compute_ghost_dates(&path);
-                        let dau_path = path.join("updates2.dau");
-
-                        let update_result = if dau_path.exists() {
-                            Some("OK(0)".to_string())
-                        } else {
-                            Some("-".to_string())
-                        };
-
-                        let shells = scan_shells_from_ghost(&path);
-
-                        ghosts.push(GhostInfo {
-                            name: manifest.display_name,
-                            version: manifest.version,
-                            path: path.to_string_lossy().to_string(),
-                            sakura_name: manifest.sakura_name,
-                            kero_name: manifest.kero_name,
-                            num_characters: manifest.num_characters,
-                            shiori: manifest.shiori,
-                            makoto: manifest.makoto,
-                            craftman: manifest.craftman,
-                            craftman_url: manifest.craftman_url,
-                            shells,
-                            group: manifest.group,
-                            install_date,
-                            update_date,
-                            update_result,
-                            recommended_balloon: manifest.recommended_balloon,
-                            recommended_balloon_path: manifest.recommended_balloon_path,
-                            default_balloon_path: manifest.default_balloon_path,
-                            balloon_defaultsurface: manifest.balloon_defaultsurface,
-                            sakura_balloon_defaultsurface: manifest.sakura_balloon_defaultsurface,
-                            kero_balloon_defaultsurface: manifest.kero_balloon_defaultsurface,
-                            char_balloon_defaultsurfaces: manifest.char_balloon_defaultsurfaces,
-                            shiori_version: manifest.shiori_version,
-                            shiori_cache: manifest.shiori_cache,
-                            shiori_encoding: manifest.shiori_encoding,
-                            shiori_forceencoding: manifest.shiori_forceencoding,
-                            shiori_escape_unknown: manifest.shiori_escape_unknown,
-                            shiori_logo_file: manifest.shiori_logo_file,
-                            shiori_logo_align: manifest.shiori_logo_align,
-                            shiori_logo_x: manifest.shiori_logo_x,
-                            shiori_logo_y: manifest.shiori_logo_y,
-                        });
+                        candidate_dirs.push((path, dir_name));
                     }
                 }
             }
         }
     }
+
+    // 各ゴーストディレクトリの解析を tokio::task::JoinSet により非同期並列実行
+    let mut join_set = tokio::task::JoinSet::new();
+    for (path, dir_name) in candidate_dirs {
+        join_set.spawn_blocking(move || {
+            if should_skip_directory(&path) {
+                println!("🚫 Skipping ghost directory with ignore file: {:?}", path);
+                return None;
+            }
+
+            parse_developer_options(&path);
+
+            let manifest = parse_ghost_manifest(&path, &dir_name);
+            let (install_date, update_date) = compute_ghost_dates(&path);
+            let dau_path = path.join("updates2.dau");
+
+            let update_result = if dau_path.exists() {
+                Some("OK(0)".to_string())
+            } else {
+                Some("-".to_string())
+            };
+
+            let shells = scan_shells_from_ghost(&path);
+
+            Some(GhostInfo {
+                name: manifest.display_name,
+                version: manifest.version,
+                path: path.to_string_lossy().to_string(),
+                sakura_name: manifest.sakura_name,
+                kero_name: manifest.kero_name,
+                num_characters: manifest.num_characters,
+                shiori: manifest.shiori,
+                makoto: manifest.makoto,
+                craftman: manifest.craftman,
+                craftman_url: manifest.craftman_url,
+                shells,
+                group: manifest.group,
+                install_date,
+                update_date,
+                update_result,
+                recommended_balloon: manifest.recommended_balloon,
+                recommended_balloon_path: manifest.recommended_balloon_path,
+                default_balloon_path: manifest.default_balloon_path,
+                balloon_defaultsurface: manifest.balloon_defaultsurface,
+                sakura_balloon_defaultsurface: manifest.sakura_balloon_defaultsurface,
+                kero_balloon_defaultsurface: manifest.kero_balloon_defaultsurface,
+                char_balloon_defaultsurfaces: manifest.char_balloon_defaultsurfaces,
+                shiori_version: manifest.shiori_version,
+                shiori_cache: manifest.shiori_cache,
+                shiori_encoding: manifest.shiori_encoding,
+                shiori_forceencoding: manifest.shiori_forceencoding,
+                shiori_escape_unknown: manifest.shiori_escape_unknown,
+                shiori_logo_file: manifest.shiori_logo_file,
+                shiori_logo_align: manifest.shiori_logo_align,
+                shiori_logo_x: manifest.shiori_logo_x,
+                shiori_logo_y: manifest.shiori_logo_y,
+            })
+        });
+    }
+
+    let mut ghosts = Vec::new();
+    let mut scanned_names = std::collections::HashSet::new();
+
+    while let Some(res) = join_set.join_next().await {
+        if let Ok(Some(ghost_info)) = res {
+            if !scanned_names.contains(&ghost_info.name) {
+                scanned_names.insert(ghost_info.name.clone());
+                ghosts.push(ghost_info);
+            }
+        }
+    }
+
+    // 名前順で決定論的にソート
+    ghosts.sort_by(|a, b| a.name.cmp(&b.name));
 
     if ghosts.is_empty() {
         let mock_nanai_path = ghost_path.join("mock_nanai");
@@ -170,4 +186,67 @@ pub async fn scan_ghost_directory(
     println!("📊 Scan completed: {} ghosts found", result.ghosts.len());
 
     Ok(result)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs;
+
+    #[tokio::test]
+    async fn test_parallel_scan_multiple_ghosts() {
+        let unique_id = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let base_dir = std::env::temp_dir().join(format!("test_parallel_scan_{}", unique_id));
+        fs::create_dir_all(&base_dir).expect("create base temp dir");
+
+        // 3つのゴーストディレクトリを作成
+        for name in &["ghost_alpha", "ghost_beta", "ghost_gamma"] {
+            let ghost_dir = base_dir.join(name);
+            let master_dir = ghost_dir.join("ghost").join("master");
+            fs::create_dir_all(&master_dir).expect("create ghost master dir");
+
+            let desc = format!("charset,UTF-8\r\nname,{}\r\nversion,1.0.0\r\n", name);
+            fs::write(master_dir.join("descript.txt"), desc).expect("write descript");
+        }
+
+        // candidate_dirs を収集
+        let mut candidate_dirs = Vec::new();
+        if let Ok(entries) = std::fs::read_dir(&base_dir) {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                if path.is_dir() {
+                    let dir_name = entry.file_name().to_string_lossy().to_string();
+                    if !dir_name.starts_with('.') {
+                        candidate_dirs.push((path, dir_name));
+                    }
+                }
+            }
+        }
+
+        let mut join_set = tokio::task::JoinSet::new();
+        for (path, dir_name) in candidate_dirs {
+            join_set.spawn_blocking(move || {
+                let manifest = parse_ghost_manifest(&path, &dir_name);
+                manifest.display_name
+            });
+        }
+
+        let mut scanned_names = Vec::new();
+        while let Some(res) = join_set.join_next().await {
+            if let Ok(name) = res {
+                scanned_names.push(name);
+            }
+        }
+
+        scanned_names.sort();
+        assert_eq!(
+            scanned_names,
+            vec!["ghost_alpha", "ghost_beta", "ghost_gamma"]
+        );
+
+        let _ = fs::remove_dir_all(&base_dir);
+    }
 }

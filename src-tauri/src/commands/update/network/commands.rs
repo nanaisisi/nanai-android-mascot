@@ -68,29 +68,46 @@ pub async fn check_ghost_update(
     })?;
 
     let entries = parse_update_definition(&content);
-    let mut diff_files = Vec::new();
-
-    for entry in entries {
+    for entry in &entries {
         validate_update_path(&entry.path)?;
-        let local_file_path = ghost_dir.join(&entry.path);
-        let mut needs_update = false;
+    }
 
-        if !local_file_path.exists() {
-            needs_update = true;
-        } else if !entry.md5.is_empty() {
-            if let Some(local_md5) = calculate_file_md5(&local_file_path) {
-                if local_md5 != entry.md5 {
+    // 候補ファイルの存在確認およびMD5ハッシュ計算を tokio::task::JoinSet により非同期並列実行
+    let mut join_set = tokio::task::JoinSet::new();
+    for (index, entry) in entries.into_iter().enumerate() {
+        let ghost_dir = ghost_dir.clone();
+        join_set.spawn_blocking(move || {
+            let local_file_path = ghost_dir.join(&entry.path);
+            let mut needs_update = false;
+
+            if !local_file_path.exists() {
+                needs_update = true;
+            } else if !entry.md5.is_empty() {
+                if let Some(local_md5) = calculate_file_md5(&local_file_path) {
+                    if local_md5 != entry.md5 {
+                        needs_update = true;
+                    }
+                } else {
                     needs_update = true;
                 }
-            } else {
-                needs_update = true;
+            }
+
+            (index, entry, needs_update)
+        });
+    }
+
+    let mut indexed_diff = Vec::new();
+    while let Some(res) = join_set.join_next().await {
+        if let Ok((index, entry, needs_update)) = res {
+            if needs_update {
+                indexed_diff.push((index, entry));
             }
         }
-
-        if needs_update {
-            diff_files.push(entry);
-        }
     }
+
+    // updates2.dau 元の出現順を保持
+    indexed_diff.sort_by_key(|(idx, _)| *idx);
+    let diff_files: Vec<_> = indexed_diff.into_iter().map(|(_, entry)| entry).collect();
 
     let has_update = !diff_files.is_empty();
     let total_count = diff_files.len();

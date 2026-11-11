@@ -11,8 +11,12 @@ import {
 } from "../ui/ts/core/actions/balloon-descript/assets.js";
 import { applyValidRectProperties } from "../ui/ts/core/actions/balloon-descript/layout/rect.js";
 import { applyPositionProperties } from "../ui/ts/core/actions/balloon-descript/layout/position.ts";
+import { applyLayoutProperties } from "../ui/ts/core/actions/balloon-descript/layout.js";
+import { tokenizeDisplayTag } from "../ui/ts/ghost/parser/tag-tokenizer.js";
+import { tokenizeScopeSurfaceTag } from "../ui/ts/ghost/parser/tag/scope-surface.js";
 import { loadBalloonSkinImages, applyBalloonDescript } from "../ui/ts/ghost/balloon-window/theme.js";
 import { surfaceCollisionMethods } from "../ui/ts/surface/surface-collision.js";
+import { mouseMethods } from "../ui/ts/core/events/mouse.js";
 import { setupBalloonMockEnvironment } from "./balloon-window/mock-balloon-env.js";
 
 describe("全面実装確認スイート (Implementation Verification Suite)", () => {
@@ -134,6 +138,96 @@ describe("全面実装確認スイート (Implementation Verification Suite)", (
 				2,
 			);
 			assert.equal(fallbackScope2, "default"); // スコープ0の0番へ汚染されないことを検証
+		});
+	});
+
+	describe("6. 入力 ➔ パイプライン ➔ 出力 全経路成立検証 (Input -> Pipeline -> Output Chain)", () => {
+		it("SakuraScript (入力) ➔ タグ解析 (パイプライン) ➔ トークン出力 (出力) の全経路が規格通り成立すること", () => {
+			// 1. Input (SakuraScript string)
+			const scopeToken = tokenizeScopeSurfaceTag("p[2]", 0, 4);
+			const surfaceToken = tokenizeScopeSurfaceTag("s[20]", 0, 5);
+			const balloonToken = tokenizeDisplayTag("\\b[0]", 1, 5);
+
+			// 2. Output Assertions
+			assert.deepEqual(scopeToken?.tokens, [{ type: "scope", value: 2 }]);
+			assert.deepEqual(surfaceToken?.tokens, [{ type: "surface", value: 20 }]);
+			assert.deepEqual(balloonToken?.tokens, [{ type: "balloon", value: 0 }]);
+		});
+
+		it("descript.txt (入力) ➔ レイアウトパーサー (パイプライン) ➔ CSS変数/DOM (出力) の全経路が成立すること", () => {
+			const mockStyleMap = new Map<string, string>();
+			const mockRoot = {
+				style: {
+					setProperty: (k: string, v: string) => mockStyleMap.set(k, v),
+					removeProperty: (k: string) => mockStyleMap.delete(k),
+				},
+			} as unknown as HTMLElement;
+
+			const descriptProps = {
+				"validrect.left": "16",
+				"validrect.top": "16",
+				"validrect.right": "16",
+				"validrect.bottom": "24",
+				"origin.x": "12",
+				"origin.y": "28",
+				"wordwrappoint.x": "-40",
+			};
+
+			applyLayoutProperties(mockRoot, descriptProps, {});
+
+			// 規格に沿った出力検証
+			assert.equal(mockStyleMap.get("--balloon-padding"), "16px 16px 24px 16px");
+			assert.equal(mockStyleMap.get("--balloon-border-image-slice"), "16 16 24 16 fill");
+			assert.equal(mockStyleMap.get("--balloon-origin-x"), "12px");
+			assert.equal(mockStyleMap.get("--balloon-origin-y"), "28px");
+		});
+	});
+
+	describe("7. マウスイベント (OnMouse*) ➔ 判定 ➔ SHIORI通知の全経路検証", () => {
+		it("マウス位置/クリック (入力) ➔ 当たり判定 (パイプライン) ➔ SHIORI通知 (出力) の全経路が規格通り成立すること", async () => {
+			let sentEventName = "";
+			let sentArgs: unknown[] = [];
+
+			const mockController = {
+				sendShioriEvent: async (eventName: string, args: unknown[]) => {
+					sentEventName = eventName;
+					sentArgs = args;
+					return { status: 200, value: "\\0hello\\e" };
+				},
+			};
+
+			const mockSurfaceManager = {
+				detectCollision: (x: number, y: number, _rect: unknown, _surfaceId: unknown, _scopeId: number) => {
+					return { name: "Head", canvasX: x, canvasY: y };
+				},
+			};
+
+			const mockApp = {
+				ghostController: mockController,
+				surfaceManager: mockSurfaceManager,
+				...mouseMethods,
+			};
+
+			// 1. Mouse Click Event (Input -> Pipeline -> Output)
+			mockApp.onGhostClick(100, 150, {}, 0);
+
+			// Yield event loop for promise resolution
+			await new Promise((r) => setTimeout(r, 0));
+
+			assert.ok(["OnMouseDoubleClick", "OnMouseClick"].includes(sentEventName));
+			assert.equal(sentArgs[0], 100); // canvasX
+			assert.equal(sentArgs[1], 150); // canvasY
+			assert.equal(sentArgs[3], 0);   // scopeId
+			assert.equal(sentArgs[4], "Head"); // collision region name
+
+			// 2. Mouse Wheel Event
+			mockApp.onGhostWheel(100, 150, {}, -120, 1);
+			assert.equal(sentEventName, "OnMouseWheel");
+			assert.equal(sentArgs[0], 100);
+			assert.equal(sentArgs[1], 150);
+			assert.equal(sentArgs[2], -120); // delta
+			assert.equal(sentArgs[3], 1);    // scope 1 (Kero)
+			assert.equal(sentArgs[4], "Head");
 		});
 	});
 });

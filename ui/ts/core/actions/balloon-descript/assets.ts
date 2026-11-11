@@ -129,35 +129,48 @@ export function applyAssetProperties(
 			}
 		}
 	};
-	// [arrow.filename,ファイル名]: UKADOC 準拠ベース名展開 (拡張子なし -> arrow0.png / arrow1.png)
+	// [arrow.filename,ファイル名]: UKADOC 準拠ベース名展開 (拡張子なし -> arrow0=上 / arrow1=下)
+	const scopeId = (instance as Record<string, unknown>)?.scopeId ?? (instance as Record<string, unknown>)?.currentScopeId ?? 0;
+	const defaultArrowBase = p["arrow.filename"]
+		? p["arrow.filename"]
+		: scopeId === 1
+			? "arrowk"
+			: scopeId >= 2
+				? `arrowp${scopeId}`
+				: "arrows";
+
+	const arrowBaseName = defaultArrowBase.replace(/\.(png|bmp|jpg|jpeg)$/i, "");
+	const themeName = (instance?.currentBalloonTheme as string) || "default";
+
+	const resolveAndSetArrow = (file: string, cssVar: string) => {
+		const fullPath = `assets/balloon/${themeName}/${file}`;
+		const url = globalThis.__TAURI__?.core?.convertFileSrc
+			? globalThis.__TAURI__.core.convertFileSrc(fullPath)
+			: fullPath;
+		preloadBalloonAsset(url);
+		root.style.setProperty(cssVar, `url("${url}")`);
+
+		if (globalThis.__TAURI__ && typeof invoke === "function") {
+			void invoke("load_balloon_image", { name: themeName, file })
+				.then((dataUrl) => {
+					if (dataUrl) {
+						preloadBalloonAsset(dataUrl as string);
+						root.style.setProperty(cssVar, `url("${dataUrl}")`);
+						root.style.setProperty("--balloon-arrow-display", "block");
+					}
+				})
+				.catch(() => {});
+		}
+	};
+
 	if (p["arrow.filename"]) {
 		root.style.setProperty("--balloon-arrow-display", "block");
-		const arrowBase = p["arrow.filename"];
-		const arrowBaseName = arrowBase.replace(/\.(png|bmp|jpg|jpeg)$/i, "");
-		const themeName = (instance?.currentBalloonTheme as string) || "default";
-		const resolveAndSetArrow = (file: string, cssVar: string) => {
-			const fullPath = `assets/balloon/${themeName}/${file}`;
-			const url = globalThis.__TAURI__?.core?.convertFileSrc
-				? globalThis.__TAURI__.core.convertFileSrc(fullPath)
-				: fullPath;
-			preloadBalloonAsset(url);
-			root.style.setProperty(cssVar, `url("${url}")`);
-
-			if (globalThis.__TAURI__ && typeof invoke === "function") {
-				void invoke("load_balloon_image", { name: themeName, file })
-					.then((dataUrl) => {
-						if (dataUrl) {
-							preloadBalloonAsset(dataUrl as string);
-							root.style.setProperty(cssVar, `url("${dataUrl}")`);
-						}
-					})
-					.catch(() => {});
-			}
-		};
 		resolveAndSetArrow(`${arrowBaseName}0.png`, "--balloon-arrow0-image");
 		resolveAndSetArrow(`${arrowBaseName}1.png`, "--balloon-arrow1-image");
 	} else {
-		root.style.setProperty("--balloon-arrow-display", "none");
+		resolveAndSetArrow(`${arrowBaseName}0.png`, "--balloon-arrow0-image");
+		resolveAndSetArrow(`${arrowBaseName}1.png`, "--balloon-arrow1-image");
+	}
 	}
 	setBalloonImage("arrow.filename", "--balloon-arrow-image");
 	// [clickwaitmarker.filename,ファイル名]:

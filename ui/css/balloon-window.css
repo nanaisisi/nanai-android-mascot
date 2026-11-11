@@ -208,18 +208,33 @@ body {
 	position: relative;
 }
 
-.balloon::after {
-	content: "";
+/* スクロール矢印 (arrow.filename: arrow0=上, arrow1=下) */
+.balloon-scroll-arrow-up {
 	display: var(--balloon-arrow-display, none);
 	position: absolute;
-	bottom: var(--balloon-arrow-bottom, -16px);
-	left: var(--balloon-arrow-left, 24px);
-	width: var(--balloon-arrow-width, 32px);
-	height: var(--balloon-arrow-height, 16px);
-	background-image: var(--balloon-arrow-image, none);
+	top: var(--balloon-arrow0-y, 6px);
+	right: var(--balloon-arrow0-x, 8px);
+	width: var(--balloon-arrow0-width, 16px);
+	height: var(--balloon-arrow0-height, 16px);
+	background-image: var(--balloon-arrow0-image, none);
 	background-repeat: no-repeat;
 	background-size: contain;
-	pointer-events: none;
+	cursor: pointer;
+	z-index: 100;
+}
+
+.balloon-scroll-arrow-down {
+	display: var(--balloon-arrow-display, none);
+	position: absolute;
+	bottom: var(--balloon-arrow1-y, 6px);
+	right: var(--balloon-arrow1-x, 8px);
+	width: var(--balloon-arrow1-width, 16px);
+	height: var(--balloon-arrow1-height, 16px);
+	background-image: var(--balloon-arrow1-image, none);
+	background-repeat: no-repeat;
+	background-size: contain;
+	cursor: pointer;
+	z-index: 100;
 }
 
 /* クリック待ちマーカー (clickwaitmarker.filename) */

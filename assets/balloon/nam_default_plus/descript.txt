@@ -28,4 +28,4 @@ cursor.color.font.b,255
 validrect.left,16
 validrect.top,16
 validrect.right,16
-validrect.bottom,16
+validrect.bottom,24

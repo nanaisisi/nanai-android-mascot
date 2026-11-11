@@ -148,6 +148,48 @@ pub(crate) fn read_reply_stream(reader: &mut impl std::io::Read) -> Result<(i32,
     Ok((status, buf))
 }
 
+/// DLL 読み込み時にカレントディレクトリ / DLL 検索パスを一時的に変更・復元する RAII ガード
+pub(crate) struct DllDirectoryGuard {
+    #[cfg(windows)]
+    prev_dir: Option<PathBuf>,
+}
+
+impl DllDirectoryGuard {
+    pub(crate) fn enter(dll_path: &Path) -> Self {
+        #[cfg(windows)]
+        {
+            let prev_dir = std::env::current_dir().ok();
+            if let Some(parent) = dll_path.parent() {
+                let _ = std::env::set_current_dir(parent);
+            }
+
+            Self { prev_dir }
+        }
+
+        #[cfg(not(windows))]
+        {
+            let _ = dll_path;
+            Self {}
+        }
+    }
+
+    #[allow(dead_code)]
+    pub(crate) fn is_active(&self) -> bool {
+        true
+    }
+}
+
+impl Drop for DllDirectoryGuard {
+    fn drop(&mut self) {
+        #[cfg(windows)]
+        {
+            if let Some(prev) = &self.prev_dir {
+                let _ = std::env::set_current_dir(prev);
+            }
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::read_reply_stream;

@@ -24,15 +24,18 @@ body {
 }
 
 .balloon {
-	background-color: var(--balloon-bg, #f9f9f9);
+	background-color: var(--balloon-bg, transparent);
 	background-image: var(--balloon-pattern, none);
-	border-radius: var(--balloon-border-radius, 6px);
+	border-radius: var(--balloon-border-radius, 0);
+	border-style: solid;
+	border-color: transparent;
+	border-width: var(--balloon-border-image-width, 0);
 	border-image-source: var(--balloon-border-image-source, none);
 	border-image-slice: var(--balloon-border-image-slice, 16 16 16 16 fill);
 	border-image-width: var(--balloon-border-image-width, 16px);
 	border-image-repeat: var(--balloon-border-image-repeat, repeat);
-	box-shadow: var(--balloon-box-shadow, 2px 2px 8px rgba(0, 0, 0, 0.35));
-	padding: var(--balloon-padding, 10px 14px);
+	box-shadow: var(--balloon-box-shadow, none);
+	padding: var(--balloon-padding, 4px 6px);
 	box-sizing: border-box;
 	width: var(--balloon-width, 280px);
 	min-width: var(--balloon-min-width, 150px);
@@ -207,7 +210,7 @@ body {
 
 .balloon::after {
 	content: "";
-	display: var(--balloon-arrow-display, block);
+	display: var(--balloon-arrow-display, none);
 	position: absolute;
 	bottom: var(--balloon-arrow-bottom, -16px);
 	left: var(--balloon-arrow-left, 24px);

@@ -79,6 +79,7 @@ export function applyAssetProperties(
 	};
 	// [arrow.filename,ファイル名]: UKADOC 準拠ベース名展開 (拡張子なし -> arrow0.png / arrow1.png)
 	if (p["arrow.filename"]) {
+		root.style.setProperty("--balloon-arrow-display", "block");
 		const arrowBase = p["arrow.filename"];
 		const arrowBaseName = arrowBase.replace(/\.(png|bmp|jpg|jpeg)$/i, "");
 		const themeName = (instance?.currentBalloonTheme as string) || "default";
@@ -103,6 +104,8 @@ export function applyAssetProperties(
 		};
 		resolveAndSetArrow(`${arrowBaseName}0.png`, "--balloon-arrow0-image");
 		resolveAndSetArrow(`${arrowBaseName}1.png`, "--balloon-arrow1-image");
+	} else {
+		root.style.setProperty("--balloon-arrow-display", "none");
 	}
 	setBalloonImage("arrow.filename", "--balloon-arrow-image");
 	// [clickwaitmarker.filename,ファイル名]:

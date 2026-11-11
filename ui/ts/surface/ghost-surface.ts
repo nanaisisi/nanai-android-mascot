@@ -75,7 +75,7 @@ export const ghostSurfaceMethods = {
 				placeholder: byId(`char-placeholder-${sId}`),
 				container: byId(`char-display-${sId}`),
 				slot: byId(`char-slot-${sId}`),
-				fallbackSurface: 0,
+				fallbackSurface: sId * 10,
 				isMain: false,
 			};
 		};

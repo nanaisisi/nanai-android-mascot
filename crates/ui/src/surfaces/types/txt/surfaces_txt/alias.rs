@@ -39,10 +39,6 @@ impl SurfacesTxt {
                 }
             }
         }
-        if scope_id != 0 {
-            // スコープ固有エイリアスがない場合は共通エイリアスにフォールバック
-            return self.alias_numbers(name);
-        }
         None
     }
 

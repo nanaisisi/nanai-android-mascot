@@ -73,9 +73,9 @@ pub async fn show_character_window(
         // 既存ウィンドウが存在し、明示的なサイズ指定がない場合はサイズを維持してリロード時のチラつき・縮小を防ぐ
         let should_resize = width.is_some() || height.is_some() || is_new;
         if should_resize {
-            let _ = sub_win.set_size(tauri::Size::Physical(tauri::PhysicalSize {
-                width: win_width.round() as u32,
-                height: win_height.round() as u32,
+            let _ = sub_win.set_size(tauri::Size::Logical(tauri::LogicalSize {
+                width: win_width,
+                height: win_height,
             }));
         }
 

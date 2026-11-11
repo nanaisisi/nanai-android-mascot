@@ -13,13 +13,13 @@ const getImageDimensions = (
 	url: string,
 ): Promise<{ width: number; height: number }> => {
 	return new Promise((resolve) => {
-		if (typeof Image === "undefined") {
-			resolve({ width: 280, height: 100 });
+		if (!url || typeof Image === "undefined") {
+			resolve({ width: 0, height: 0 });
 			return;
 		}
 		const img = new Image();
-		img.onload = () => resolve({ width: img.width, height: img.height });
-		img.onerror = () => resolve({ width: 280, height: 100 });
+		img.onload = () => resolve({ width: img.naturalWidth || img.width || 0, height: img.naturalHeight || img.height || 0 });
+		img.onerror = () => resolve({ width: 0, height: 0 });
 		img.src = url;
 	});
 };
@@ -31,42 +31,51 @@ const getImageDimensions = (
  * @param {number} scopeId
  * @returns {Promise<string | null>}
  */
-export async function loadBalloonSkinImages(theme: string, scopeId: number) {
-	const imageFile =
-		scopeId === 0
-			? "balloons0.png"
-			: scopeId === 1
-				? "balloonk0.png"
-				: `balloonp${scopeId}.png`;
-	const pnaFile =
-		scopeId === 0
-			? "balloons0.pna"
-			: scopeId === 1
-				? "balloonk0.pna"
-				: `balloonp${scopeId}.pna`;
-
-	let bgImageRaw = await invoke("load_balloon_image", {
-		name: theme,
-		file: imageFile,
-	}).catch(() => null);
-
-	if (!bgImageRaw && scopeId >= 2) {
-		bgImageRaw = await invoke("load_balloon_image", {
-			name: theme,
-			file: "balloons0.png",
-		}).catch(() => null);
+export async function loadBalloonSkinImages(
+	theme: string,
+	scopeId: number,
+	side: "left" | "right" | "auto" = "auto",
+) {
+	let candidates: string[] = [];
+	if (scopeId === 0) {
+		candidates =
+			side === "right"
+				? ["balloons1.png", "balloons0.png", "balloons.png"]
+				: ["balloons0.png", "balloons1.png", "balloons.png"];
+	} else if (scopeId === 1) {
+		candidates =
+			side === "left"
+				? ["balloonk1.png", "balloonk3.png", "balloonk0.png", "balloonk.png"]
+				: ["balloonk0.png", "balloonk1.png", "balloonk3.png", "balloonk.png"];
+	} else {
+		candidates = [
+			`balloonp${scopeId}.png`,
+			`balloonp${scopeId}_0.png`,
+			"balloons0.png",
+		];
 	}
 
-	let pnaImage = await invoke("load_balloon_image", {
-		name: theme,
-		file: pnaFile,
-	}).catch(() => null);
+	let bgImageRaw: string | null = null;
+	let usedFile: string | null = null;
 
-	if (!pnaImage && scopeId >= 2) {
-		pnaImage = await invoke("load_balloon_image", {
+	for (const file of candidates) {
+		bgImageRaw = (await invoke("load_balloon_image", {
 			name: theme,
-			file: "balloons0.pna",
-		}).catch(() => null);
+			file,
+		}).catch(() => null)) as string | null;
+		if (bgImageRaw) {
+			usedFile = file;
+			break;
+		}
+	}
+
+	let pnaImage: string | null = null;
+	if (usedFile) {
+		const pnaFile = usedFile.replace(/\.(png|bmp|jpg|jpeg)$/i, ".pna");
+		pnaImage = (await invoke("load_balloon_image", {
+			name: theme,
+			file: pnaFile,
+		}).catch(() => null)) as string | null;
 	}
 
 	const bgImage = bgImageRaw
@@ -204,6 +213,9 @@ export async function applyBalloonDescript({
 			root.style.setProperty("--balloon-padding", `${t}px ${r}px ${b}px ${l}px`);
 
 			const dims = await getImageDimensions(bgImage);
+			if (dims.width > 0) {
+				root.style.setProperty("--balloon-width", `${dims.width}px`);
+			}
 			if (dims.height > 0) {
 				root.style.setProperty("--balloon-min-height", `${dims.height}px`);
 			}

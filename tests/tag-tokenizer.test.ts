@@ -209,7 +209,7 @@ test("tokenizeDisplayTag handles coordinate offset, sync toggle, and balloon sel
 	]);
 
 	const resSync1 = tokenizeDisplayTag("\\_s[1]", 1, 6);
-	assert.deepEqual(resSync1?.tokens, [{ type: "sync_toggle", value: true }]);
+	assert.deepEqual(resSync1?.tokens, [{ type: "sync_toggle", value: true, scopes: [1] }]);
 
 	// \b[0], \b2
 	const resBalloonBracket = tokenizeDisplayTag("\\b[0]", 1, 5);

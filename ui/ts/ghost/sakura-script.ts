@@ -25,6 +25,21 @@ export class SakuraScriptPlayer {
 		| import("./sakura-play/controller.js").SakuraPlaybackController
 		| null;
 	currentProgressIndex?: number;
+	isSyncMode?: boolean;
+	syncScopes?: number[] | null;
+	isRawMode?: boolean;
+	noAutoWrap?: boolean;
+	declare onChoiceSelected: (
+		choiceId: string,
+		choiceText: string,
+		extraArgs?: string[],
+		choiceArgs?: string[],
+	) => Promise<unknown>;
+	declare onChoiceTimeout: () => Promise<unknown>;
+	declare waitForClickOrTimeout: (
+		display?: HTMLElement | null,
+	) => Promise<unknown>;
+	declare sleep: (ms: number) => Promise<unknown>;
 	_restoreTimer?: unknown;
 	_pauseResolver?: unknown;
 	_sleepResolvers?: Set<(...args: unknown[]) => unknown>;

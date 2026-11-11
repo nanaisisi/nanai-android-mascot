@@ -52,20 +52,18 @@ import {
 import { SyncObjectManager } from "./sync-object.js";
 
 export class SakuraPlaybackController {
-	playbackController: unknown;
-	skipRequested: unknown;
+	playbackController?: SakuraPlaybackController | null;
+	skipRequested?: boolean;
 	currentScope: number;
-	waitForClickOrTimeout: unknown;
-	sleep: unknown;
-	currentFontStyles: {};
+	waitForClickOrTimeout?: (display?: HTMLElement | null) => Promise<unknown>;
+	sleep?: (ms: number) => Promise<unknown>;
+	currentFontStyles: Record<string, string>;
 	timeCritical: boolean;
-	balloonTimeout: unknown;
-	isSyncMode: unknown;
-	syncScopes: unknown[];
+	balloonTimeout: number;
+	isSyncMode: boolean;
+	syncScopes: number[] | null;
 	commandHandler: unknown;
-	onChoiceTimeout() {
-		throw new Error("Method not implemented.");
-	}
+	declare onChoiceTimeout?: () => void;
 	player: unknown;
 	queue: PlaybackJob[];
 	currentJob: PlaybackJob | null;
@@ -83,9 +81,20 @@ export class SakuraPlaybackController {
 	declare setBalloonWait?: (param: unknown) => void;
 	declare resetBalloonWait?: () => void;
 	declare setQuickMode?: (enable: boolean) => void;
-	choiceTimeoutTimer: unknown;
-	onChoiceSelected: unknown;
-	choiceTimeout!: number;
+	declare calculateWait?: (baseMs: number, isCharWait?: boolean) => number;
+	declare emit?: (event: string, payload?: unknown) => void;
+	declare notifyWait?: (durationMs: number) => void;
+	declare notifyPause?: (noClear: boolean) => void;
+	declare notifyClear?: (mode: "all" | "char" | "line", count: number) => void;
+	declare notifyChar?: (char: string, scope: number) => void;
+	declare notifyScope?: (scope: number) => void;
+
+	choiceTimeoutTimer: ReturnType<typeof setTimeout> | null;
+	declare onChoiceSelected?: (id: string, text: string, args: string[]) => void;
+	choiceTimeout: number;
+	noAutoWrap?: boolean;
+	isRawMode?: boolean;
+	lastScript?: string;
 
 	constructor(options: unknown = {}) {
 		const opts = options as { player?: unknown };
@@ -97,6 +106,14 @@ export class SakuraPlaybackController {
 			(this.player as { playbackController?: unknown }).playbackController =
 				this;
 		}
+		this.currentScope = 0;
+		this.currentFontStyles = {};
+		this.timeCritical = false;
+		this.balloonTimeout = 0;
+		this.choiceTimeout = 0;
+		this.choiceTimeoutTimer = null;
+		this.isSyncMode = false;
+		this.syncScopes = null;
 		this.queue = [];
 		this.currentJob = null;
 		this.isProcessing = false;

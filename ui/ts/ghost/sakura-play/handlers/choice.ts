@@ -7,11 +7,29 @@ import type { NanaiAndroidMascotApp } from "../../../../main.js";
 import type { SakuraAstNode } from "../../parser/ast-types.js";
 import type { SakuraPlaybackController } from "../controller.js";
 
+export interface SakuraPlayContext {
+	currentBalloonText?: HTMLElement | null;
+	currentAnchor?: HTMLElement | null;
+	currentChoiceScope?: HTMLElement | null;
+	sakuraText?: HTMLElement | null;
+	keroText?: HTMLElement | null;
+	sakuraDisplay?: HTMLElement | null;
+	keroDisplay?: HTMLElement | null;
+	isQuickMode?: boolean;
+	isRawMode?: boolean;
+	ended?: boolean;
+	hasTextContent?: boolean;
+	shownScopes?: Set<number>;
+	flushDesktopBalloon?: () => void;
+	scheduleDesktopBalloonSync?: (force?: boolean, scopeId?: number) => void;
+	[key: string]: unknown;
+}
+
 export function handleChoice(
-	player: SakuraPlaybackController | Record<string, any>,
+	player: SakuraPlaybackController,
 	app: NanaiAndroidMascotApp,
 	token: SakuraAstNode,
-	context: Record<string, any>,
+	context: SakuraPlayContext,
 ) {
 	const { currentBalloonText, flushDesktopBalloon } = context;
 
@@ -27,7 +45,7 @@ export function handleChoice(
 			hoverTimer = null;
 		}
 		if (player.choiceTimeoutTimer) {
-			clearTimeout(player.choiceTimeoutTimer as any);
+			clearTimeout(player.choiceTimeoutTimer);
 			player.choiceTimeoutTimer = null;
 		}
 		if (player.onChoiceSelected) {
@@ -36,17 +54,23 @@ export function handleChoice(
 				token.text || "",
 				token.args || [],
 			);
-		} else {
-			app.ghostController?.sendShioriEvent?.("OnChoiceSelectEx", [
-				token.text || "",
-				token.id || "",
-				...(token.args || []),
-			]);
-			app.ghostController?.sendShioriEvent?.("OnChoiceSelect", [
-				token.id || "",
-				token.text || "",
-				...(token.args || []),
-			]);
+		} else if (app.ghostController?.sendShioriEvent) {
+			app.ghostController
+				.sendShioriEvent("OnChoiceSelectEx", [
+					token.text || "",
+					token.id || "",
+					...(token.args || []),
+				])
+				.then((resEx: unknown) => {
+					const res = resEx as { response?: unknown; script?: unknown } | null;
+					if (!res || (!res.response && !res.script)) {
+						app.ghostController?.sendShioriEvent("OnChoiceSelect", [
+							token.id || "",
+							token.text || "",
+						]);
+					}
+				})
+				.catch(() => {});
 		}
 	});
 	choiceBtn.addEventListener("mouseenter", () => {
@@ -78,16 +102,20 @@ export function handleChoice(
 
 	if (player.choiceTimeout > 0 && !player.choiceTimeoutTimer) {
 		player.choiceTimeoutTimer = setTimeout(() => {
-			player.onChoiceTimeout();
+			if (typeof player.onChoiceTimeout === "function") {
+				player.onChoiceTimeout();
+			} else if (app.ghostController?.sendShioriEvent) {
+				app.ghostController.sendShioriEvent("OnChoiceTimeout", []);
+			}
 		}, player.choiceTimeout);
 	}
 }
 
 export function handleAnchorBegin(
-	_player: SakuraPlaybackController | Record<string, any>,
+	_player: SakuraPlaybackController,
 	app: NanaiAndroidMascotApp,
 	token: SakuraAstNode,
-	context: Record<string, any>,
+	context: SakuraPlayContext,
 ) {
 	const { currentBalloonText, scheduleDesktopBalloonSync } = context;
 
@@ -148,19 +176,19 @@ export function handleAnchorBegin(
 }
 
 export function handleAnchorEnd(
-	_player: SakuraPlaybackController | Record<string, any>,
+	_player: SakuraPlaybackController,
 	_app: NanaiAndroidMascotApp,
 	_token: SakuraAstNode,
-	context: Record<string, any>,
+	context: SakuraPlayContext,
 ) {
 	context.currentAnchor = null;
 }
 
 export function handleChoiceScopeBegin(
-	player: SakuraPlaybackController | Record<string, any>,
+	player: SakuraPlaybackController,
 	app: NanaiAndroidMascotApp,
 	token: SakuraAstNode,
-	context: Record<string, any>,
+	context: SakuraPlayContext,
 ) {
 	const {
 		currentBalloonText,
@@ -181,23 +209,29 @@ export function handleChoiceScopeBegin(
 			hoverTimer = null;
 		}
 		if (player.choiceTimeoutTimer) {
-			clearTimeout(player.choiceTimeoutTimer as any);
+			clearTimeout(player.choiceTimeoutTimer);
 			player.choiceTimeoutTimer = null;
 		}
 		const choiceText = inlineChoiceSpan.textContent || token.id || "";
 		if (player.onChoiceSelected) {
 			player.onChoiceSelected(token.id || "", choiceText, token.args || []);
-		} else {
-			app.ghostController?.sendShioriEvent?.("OnChoiceSelectEx", [
-				choiceText,
-				token.id || "",
-				...(token.args || []),
-			]);
-			app.ghostController?.sendShioriEvent?.("OnChoiceSelect", [
-				token.id || "",
-				choiceText,
-				...(token.args || []),
-			]);
+		} else if (app.ghostController?.sendShioriEvent) {
+			app.ghostController
+				.sendShioriEvent("OnChoiceSelectEx", [
+					choiceText,
+					token.id || "",
+					...(token.args || []),
+				])
+				.then((resEx: unknown) => {
+					const res = resEx as { response?: unknown; script?: unknown } | null;
+					if (!res || (!res.response && !res.script)) {
+						app.ghostController?.sendShioriEvent("OnChoiceSelect", [
+							token.id || "",
+							choiceText,
+						]);
+					}
+				})
+				.catch(() => {});
 		}
 	});
 
@@ -235,16 +269,20 @@ export function handleChoiceScopeBegin(
 
 	if (player.choiceTimeout > 0 && !player.choiceTimeoutTimer) {
 		player.choiceTimeoutTimer = setTimeout(() => {
-			player.onChoiceTimeout();
+			if (typeof player.onChoiceTimeout === "function") {
+				player.onChoiceTimeout();
+			} else if (app.ghostController?.sendShioriEvent) {
+				app.ghostController.sendShioriEvent("OnChoiceTimeout", []);
+			}
 		}, player.choiceTimeout);
 	}
 }
 
 export function handleChoiceScopeEnd(
-	_player: SakuraPlaybackController | Record<string, any>,
+	_player: SakuraPlaybackController,
 	_app: NanaiAndroidMascotApp,
 	_token: SakuraAstNode,
-	context: Record<string, any>,
+	context: SakuraPlayContext,
 ) {
 	if (context.currentAnchor === context.currentChoiceScope) {
 		context.currentAnchor = null;

@@ -1,14 +1,18 @@
-// biome-ignore-all lint/suspicious/noExplicitunknown: legacy handler parameters
 /**
  * @file control.ts
  * @brief さくらスクリプト再生時のポーズ(\x)、ウェイト(\w)、モード切替、タイムアウト、終了処理ハンドラ
  */
 
+import type { NanaiAndroidMascotApp } from "../../../../main.js";
+import type { SakuraAstNode } from "../../parser/ast-types.js";
+import type { SakuraScriptPlayer } from "../../sakura-script.js";
+import type { SakuraPlayContext } from "./choice.js";
+
 export async function handlePause(
-	player: import("../controller.js").SakuraPlaybackController,
-	_app: import("../../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast-types.js").SakuraAstNode,
-	context: unknown,
+	player: SakuraScriptPlayer,
+	_app: NanaiAndroidMascotApp,
+	token: SakuraAstNode,
+	context: SakuraPlayContext,
 ) {
 	const {
 		sakuraText,
@@ -24,10 +28,10 @@ export async function handlePause(
 		markerEl.className = "clickwait-marker";
 		markerEl.setAttribute("aria-hidden", "true");
 		context.currentBalloonText.appendChild(markerEl);
-		scheduleDesktopBalloonSync(false);
+		scheduleDesktopBalloonSync?.(false);
 	}
 
-	flushDesktopBalloon();
+	flushDesktopBalloon?.();
 	player.playbackController?.notifyPause?.(Boolean(token.noClear));
 	if (!player.skipRequested && !context.isQuickMode) {
 		const activeDisplay =
@@ -43,40 +47,40 @@ export async function handlePause(
 		markerEl.parentNode.removeChild(markerEl);
 	}
 
-	if (!token.noClear) {
+	if (!token.noClear && context.currentBalloonText) {
 		context.currentBalloonText.innerHTML = "";
 		player.currentScope = 0;
 		context.currentBalloonText = sakuraText;
 		player.currentFontStyles = {};
-		scheduleDesktopBalloonSync(true);
+		scheduleDesktopBalloonSync?.(true);
 	}
 }
 
 export function handleQuickToggle(
-	player: import("../controller.js").SakuraPlaybackController,
-	_app: import("../../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast-types.js").SakuraAstNode,
-	context: unknown,
+	player: SakuraScriptPlayer,
+	_app: NanaiAndroidMascotApp,
+	token: SakuraAstNode,
+	context: SakuraPlayContext,
 ) {
 	if (typeof token.value === "boolean") {
 		context.isQuickMode = token.value;
 	} else {
 		context.isQuickMode = !context.isQuickMode;
 	}
-	player.playbackController?.setQuickMode?.(context.isQuickMode);
+	player.playbackController?.setQuickMode?.(Boolean(context.isQuickMode));
 }
 
 export async function handleWait(
-	player: import("../controller.js").SakuraPlaybackController,
-	_app: import("../../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast-types.js").SakuraAstNode,
-	context: unknown,
+	player: SakuraScriptPlayer,
+	_app: NanaiAndroidMascotApp,
+	token: SakuraAstNode,
+	context: SakuraPlayContext,
 ) {
-	player.playbackController?.notifyWait?.(token.value);
+	player.playbackController?.notifyWait?.(token.value as number);
 	if (!player.skipRequested && !context.isQuickMode) {
 		const waitMs = player.playbackController?.calculateWait
-			? player.playbackController.calculateWait(token.value)
-			: token.value;
+			? player.playbackController.calculateWait(token.value as number)
+			: (token.value as number);
 		if (waitMs > 0) {
 			if (player.sleep) {
 				await player.sleep(waitMs);
@@ -88,9 +92,9 @@ export async function handleWait(
 }
 
 export function handleTimeout(
-	player: import("../controller.js").SakuraPlaybackController,
-	_app: import("../../../../main.js").NanaiAndroidMascotApp,
-	_token: import("../../parser/ast-types.js").SakuraAstNode,
+	player: SakuraScriptPlayer,
+	_app: NanaiAndroidMascotApp,
+	_token: SakuraAstNode,
 	_context: unknown,
 ) {
 	if (player.playbackController) {
@@ -100,36 +104,36 @@ export function handleTimeout(
 }
 
 export function handleChoiceTimeout(
-	player: import("../controller.js").SakuraPlaybackController,
-	_app: import("../../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast-types.js").SakuraAstNode,
+	player: SakuraScriptPlayer,
+	_app: NanaiAndroidMascotApp,
+	token: SakuraAstNode,
 	_context: unknown,
 ) {
-	player.choiceTimeout = token.timeout;
+	player.choiceTimeout = token.timeout || 0;
 }
 
 export function handleBalloonTimeout(
-	player: import("../controller.js").SakuraPlaybackController,
-	_app: import("../../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast-types.js").SakuraAstNode,
+	player: SakuraScriptPlayer,
+	_app: NanaiAndroidMascotApp,
+	token: SakuraAstNode,
 	_context: unknown,
 ) {
-	player.balloonTimeout = token.timeout;
+	player.balloonTimeout = token.timeout || 0;
 }
 
 export async function handleHalt(
-	_player: import("../controller.js").SakuraPlaybackController,
-	app: import("../../../../main.js").NanaiAndroidMascotApp,
-	_token: import("../../parser/ast-types.js").SakuraAstNode,
+	_player: SakuraScriptPlayer,
+	app: NanaiAndroidMascotApp,
+	_token: SakuraAstNode,
 	_context: unknown,
 ) {
 	await app.ghostController?.closeGhost?.();
 }
 
 export function handleSyncToggle(
-	player: import("../controller.js").SakuraPlaybackController,
-	_app: import("../../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast-types.js").SakuraAstNode,
+	player: SakuraScriptPlayer,
+	_app: NanaiAndroidMascotApp,
+	token: SakuraAstNode,
 	_context: unknown,
 ) {
 	if (typeof token.value === "boolean") {
@@ -138,7 +142,7 @@ export function handleSyncToggle(
 		player.isSyncMode = !player.isSyncMode;
 	}
 	if (Array.isArray(token.scopes) && token.scopes.length > 0) {
-		player.syncScopes = [...token.scopes];
+		player.syncScopes = [...(token.scopes as number[])];
 	} else if (!player.isSyncMode) {
 		player.syncScopes = null;
 	} else {
@@ -151,19 +155,20 @@ export function handleSyncToggle(
 }
 
 export async function handleCommand(
-	player: import("../controller.js").SakuraPlaybackController,
-	_app: import("../../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast-types.js").SakuraAstNode,
+	player: SakuraScriptPlayer,
+	_app: NanaiAndroidMascotApp,
+	token: SakuraAstNode,
 	_context: unknown,
 ) {
-	await player.commandHandler.runCommand(token.args);
+	const ch = player.commandHandler as { runCommand: (args?: string[]) => Promise<unknown> };
+	await ch?.runCommand?.(token.args);
 }
 
 export function handleEnd(
-	player: import("../controller.js").SakuraPlaybackController,
-	app: import("../../../../main.js").NanaiAndroidMascotApp,
-	_token: import("../../parser/ast-types.js").SakuraAstNode,
-	context: unknown,
+	player: SakuraScriptPlayer,
+	app: NanaiAndroidMascotApp,
+	_token: SakuraAstNode,
+	context: SakuraPlayContext,
 ) {
 	app.surfaceManager?.onTalkEnd(player.currentScope);
 	app.surfaceManager?.onScriptEnd(0);
@@ -172,51 +177,37 @@ export function handleEnd(
 }
 
 export function handleNoAutoWrap(
-	player: import("../controller.js").SakuraPlaybackController,
-	_app: import("../../../../main.js").NanaiAndroidMascotApp,
-	_token: import("../../parser/ast-types.js").SakuraAstNode,
+	player: SakuraScriptPlayer,
+	_app: NanaiAndroidMascotApp,
+	_token: SakuraAstNode,
 	_context: unknown,
 ) {
-	const p = player as {
-		noAutoWrap?: boolean;
-		playbackController?: { emit?: (event: string, detail?: unknown) => void };
-	};
-	p.noAutoWrap = true;
-	p.playbackController?.emit?.("playback:no-autowrap", { enabled: true });
+	player.noAutoWrap = true;
+	player.playbackController?.emit?.("playback:no-autowrap", { enabled: true });
 }
 
 export function handleRawToggle(
-	player: import("../controller.js").SakuraPlaybackController,
-	_app: import("../../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast-types.js").SakuraAstNode,
-	context: unknown,
+	player: SakuraScriptPlayer,
+	_app: NanaiAndroidMascotApp,
+	token: SakuraAstNode,
+	context: SakuraPlayContext,
 ) {
-	const p = player as {
-		isRawMode?: boolean;
-		playbackController?: { emit?: (event: string, detail?: unknown) => void };
-	};
-	const t = token as { value?: unknown };
-	const c = context as { isRawMode?: boolean };
-
-	if (typeof t.value === "boolean") {
-		c.isRawMode = t.value;
+	if (typeof token.value === "boolean") {
+		context.isRawMode = token.value;
 	} else {
-		c.isRawMode = !c.isRawMode;
+		context.isRawMode = !context.isRawMode;
 	}
-	p.isRawMode = c.isRawMode;
-	p.playbackController?.emit?.("playback:raw-toggle", {
-		enabled: c.isRawMode,
+	player.isRawMode = context.isRawMode;
+	player.playbackController?.emit?.("playback:raw-toggle", {
+		enabled: context.isRawMode,
 	});
 }
 
 export function handleAutoPause(
-	player: import("../controller.js").SakuraPlaybackController,
-	_app: import("../../../../main.js").NanaiAndroidMascotApp,
-	_token: import("../../parser/ast-types.js").SakuraAstNode,
+	player: SakuraScriptPlayer,
+	_app: NanaiAndroidMascotApp,
+	_token: SakuraAstNode,
 	_context: unknown,
 ) {
-	const p = player as {
-		playbackController?: { emit?: (event: string) => void };
-	};
-	p.playbackController?.emit?.("playback:auto-pause");
+	player.playbackController?.emit?.("playback:auto-pause");
 }

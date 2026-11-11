@@ -3,24 +3,29 @@
  * @brief さくらスクリプト再生時のテキスト出力、改行、文字消去、文字装飾、相対位置ハンドラ
  */
 
+import type { NanaiAndroidMascotApp } from "../../../../main.js";
+import type { SakuraAstNode } from "../../parser/ast-types.js";
+import type { SakuraPlaybackController } from "../controller.js";
+import type { SakuraPlayContext } from "./choice.js";
+
 export async function handleChar(
-	player: import("../controller.js").SakuraPlaybackController,
-	app: import("../../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast-types.js").SakuraAstNode,
-	context: any,
+	player: SakuraPlaybackController,
+	app: NanaiAndroidMascotApp,
+	token: SakuraAstNode,
+	context: SakuraPlayContext,
 ) {
 	const { sakuraText, keroText, scheduleDesktopBalloonSync } = context;
 	const { currentBalloonText, currentAnchor, isQuickMode } = context;
 
 	const span = document.createElement("span");
-	span.textContent = token.value;
+	span.textContent = (token.value as string) || "";
 	if (player.currentFontStyles) {
 		Object.assign(span.style, player.currentFontStyles);
 	}
 	if (currentAnchor) {
 		currentAnchor.appendChild(span);
 	} else {
-		currentBalloonText.appendChild(span);
+		currentBalloonText?.appendChild(span);
 	}
 
 	if (player.isSyncMode) {
@@ -33,24 +38,24 @@ export async function handleChar(
 			const targetEl = sc === 1 ? keroText : sc === 0 ? sakuraText : null;
 			if (targetEl && targetEl !== currentBalloonText) {
 				const mirrorSpan = document.createElement("span");
-				mirrorSpan.textContent = token.value;
+				mirrorSpan.textContent = (token.value as string) || "";
 				if (player.currentFontStyles) {
 					Object.assign(mirrorSpan.style, player.currentFontStyles);
 				}
 				targetEl.appendChild(mirrorSpan);
 			}
-			scheduleDesktopBalloonSync(false, sc);
+			scheduleDesktopBalloonSync?.(false, sc);
 			app.surfaceManager?.onCharSpoken(sc);
 		}
 	} else {
-		scheduleDesktopBalloonSync(false);
+		scheduleDesktopBalloonSync?.(false);
 		app.surfaceManager?.onCharSpoken(player.currentScope);
 	}
 
-	player.playbackController?.notifyChar?.(token.value, player.currentScope);
+	player.playbackController?.notifyChar?.((token.value as string) || "", player.currentScope);
 
 	if (!player.skipRequested && !isQuickMode) {
-		const isPunctuation = /[、。！？,!?]/.test(token.value);
+		const isPunctuation = /[、。！？,!?]/.test((token.value as string) || "");
 		const baseWait = isPunctuation ? 140 : 40;
 		const waitMs = player.playbackController?.calculateWait
 			? player.playbackController.calculateWait(baseWait, true)
@@ -64,10 +69,10 @@ export async function handleChar(
 }
 
 export function handleNewline(
-	player: import("../controller.js").SakuraPlaybackController,
-	_app: import("../../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast-types.js").SakuraAstNode,
-	context: any,
+	player: SakuraPlaybackController,
+	_app: NanaiAndroidMascotApp,
+	token: SakuraAstNode,
+	context: SakuraPlayContext,
 ) {
 	const { sakuraText, keroText, scheduleDesktopBalloonSync } = context;
 	const { currentBalloonText } = context;
@@ -76,9 +81,9 @@ export function handleNewline(
 		const halfBr = document.createElement("span");
 		halfBr.style.display = "block";
 		halfBr.style.height = "0.4em";
-		currentBalloonText.appendChild(halfBr);
+		currentBalloonText?.appendChild(halfBr);
 	} else {
-		currentBalloonText.appendChild(document.createElement("br"));
+		currentBalloonText?.appendChild(document.createElement("br"));
 	}
 
 	if (player.isSyncMode) {
@@ -99,24 +104,24 @@ export function handleNewline(
 					targetEl.appendChild(document.createElement("br"));
 				}
 			}
-			scheduleDesktopBalloonSync(false, sc);
+			scheduleDesktopBalloonSync?.(false, sc);
 		}
 	} else {
-		scheduleDesktopBalloonSync(false);
+		scheduleDesktopBalloonSync?.(false);
 	}
 }
 
 export function handleClear(
-	player: import("../controller.js").SakuraPlaybackController,
-	app: import("../../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast-types.js").SakuraAstNode,
-	context: any,
+	player: SakuraPlaybackController,
+	app: NanaiAndroidMascotApp,
+	token: SakuraAstNode,
+	context: SakuraPlayContext,
 ) {
 	const { scheduleDesktopBalloonSync } = context;
 	const { currentBalloonText } = context;
 
 	player.playbackController?.notifyClear?.(
-		token.mode || "all",
+		(token.mode as "all" | "char" | "line") || "all",
 		token.count || 1,
 	);
 	if (
@@ -128,8 +133,8 @@ export function handleClear(
 	if (token.mode === "char") {
 		const count = Math.max(1, token.count || 1);
 		let removed = 0;
-		while (removed < count && currentBalloonText.lastChild) {
-			const lastNode = currentBalloonText.lastChild;
+		while (removed < count && currentBalloonText?.lastChild) {
+			const lastNode = currentBalloonText.lastChild as CharacterData | ChildNode;
 			if (lastNode.nodeType === Node.TEXT_NODE) {
 				const text = lastNode.nodeValue || "";
 				if (text.length <= count - removed) {
@@ -147,8 +152,8 @@ export function handleClear(
 	} else if (token.mode === "line") {
 		const count = Math.max(1, token.count || 1);
 		let removedLines = 0;
-		while (removedLines < count && currentBalloonText.lastChild) {
-			const lastNode: unknown = currentBalloonText.lastChild;
+		while (removedLines < count && currentBalloonText?.lastChild) {
+			const lastNode = currentBalloonText.lastChild as HTMLElement;
 			const isBr =
 				lastNode.nodeName === "BR" ||
 				(lastNode.nodeName === "SPAN" && lastNode.style?.display === "block");
@@ -157,79 +162,87 @@ export function handleClear(
 				removedLines++;
 			}
 		}
-	} else {
+	} else if (currentBalloonText) {
 		currentBalloonText.innerHTML = "";
 	}
-	scheduleDesktopBalloonSync(true);
+	scheduleDesktopBalloonSync?.(true);
 }
 
 export function handleOffset(
-	_player: import("../controller.js").SakuraPlaybackController,
-	_app: import("../../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast-types.js").SakuraAstNode,
-	context: any,
+	_player: SakuraPlaybackController,
+	_app: NanaiAndroidMascotApp,
+	token: SakuraAstNode,
+	context: SakuraPlayContext,
 ) {
 	const { scheduleDesktopBalloonSync, currentBalloonText } = context;
 
 	const spacer = document.createElement("span");
 	spacer.style.display = "inline-block";
-	if (token.x.startsWith("@")) {
-		spacer.style.marginLeft = `${token.x.slice(1)}px`;
-	} else {
+	const xStr = String(token.x ?? "");
+	const yStr = String(token.y ?? "");
+
+	if (xStr.startsWith("@")) {
+		spacer.style.marginLeft = `${xStr.slice(1)}px`;
+	} else if (token.x !== undefined) {
 		spacer.style.position = "relative";
 		spacer.style.left = `${token.x}px`;
 	}
-	if (token.y.startsWith("@")) {
-		spacer.style.marginTop = `${token.y.slice(1)}px`;
-	} else {
+
+	if (yStr.startsWith("@")) {
+		spacer.style.marginTop = `${yStr.slice(1)}px`;
+	} else if (token.y !== undefined) {
 		spacer.style.top = `${token.y}px`;
 	}
-	currentBalloonText.appendChild(spacer);
-	scheduleDesktopBalloonSync(false);
+
+	currentBalloonText?.appendChild(spacer);
+	scheduleDesktopBalloonSync?.(false);
 }
 
 export function handleFont(
-	player: import("../controller.js").SakuraPlaybackController,
-	_app: import("../../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast-types.js").SakuraAstNode,
-	_context: any,
+	player: SakuraPlaybackController,
+	_app: NanaiAndroidMascotApp,
+	token: SakuraAstNode,
+	_context: SakuraPlayContext,
 ) {
 	player.currentFontStyles = player.currentFontStyles || {};
-	if (token.tag === "default") {
+	const tag = token.tag as string;
+	const param = token.param as string;
+
+	if (tag === "default") {
 		player.currentFontStyles = {};
-	} else if (token.tag === "color") {
-		if (token.param) player.currentFontStyles.color = token.param;
+	} else if (tag === "color") {
+		if (param) player.currentFontStyles.color = param;
 		else delete player.currentFontStyles.color;
-	} else if (token.tag === "bold") {
+	} else if (tag === "bold") {
 		player.currentFontStyles.fontWeight =
-			token.param === "0" || token.param === "false" ? "normal" : "bold";
-	} else if (token.tag === "italic") {
+			param === "0" || param === "false" ? "normal" : "bold";
+	} else if (tag === "italic") {
 		player.currentFontStyles.fontStyle =
-			token.param === "0" || token.param === "false" ? "normal" : "italic";
-	} else if (token.tag === "strike") {
+			param === "0" || param === "false" ? "normal" : "italic";
+	} else if (tag === "strike") {
 		player.currentFontStyles.textDecoration =
-			token.param === "0" || token.param === "false" ? "none" : "line-through";
-	} else if (token.tag === "underline") {
+			param === "0" || param === "false" ? "none" : "line-through";
+	} else if (tag === "underline") {
 		player.currentFontStyles.textDecoration =
-			token.param === "0" || token.param === "false" ? "none" : "underline";
-	} else if (token.tag === "height") {
-		if (token.param) {
+			param === "0" || param === "false" ? "none" : "underline";
+	} else if (tag === "height") {
+		if (param) {
 			const size =
-				token.param.endsWith("px") ||
-				token.param.endsWith("pt") ||
-				token.param.endsWith("em")
-					? token.param
-					: `${token.param}px`;
+				param.endsWith("px") ||
+				param.endsWith("pt") ||
+				param.endsWith("em")
+					? param
+					: `${param}px`;
 			player.currentFontStyles.fontSize = size;
 		}
-	} else if (token.tag === "shadow") {
-		if (token.param === "0" || token.param === "none") {
+	} else if (tag === "shadow") {
+		if (param === "0" || param === "none") {
 			delete player.currentFontStyles.textShadow;
 		} else {
-			const col = token.param || "rgba(0,0,0,0.5)";
+			const col = param || "rgba(0,0,0,0.5)";
 			player.currentFontStyles.textShadow = `1px 1px 2px ${col}`;
 		}
-	} else if (token.tag === "name" && token.param) {
-		player.currentFontStyles.fontFamily = token.param;
+	} else if (tag === "name" && param) {
+		player.currentFontStyles.fontFamily = param;
 	}
 }

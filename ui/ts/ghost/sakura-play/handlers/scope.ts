@@ -3,13 +3,17 @@
  * @brief さくらスクリプト再生時のスコープ切替、バルーン表示・非表示、インライン画像出力ハンドラ
  */
 
+import type { NanaiAndroidMascotApp } from "../../../../main.js";
 import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
+import type { SakuraAstNode } from "../../parser/ast-types.js";
+import type { SakuraPlaybackController } from "../controller.js";
+import type { SakuraPlayContext } from "./choice.js";
 
 export function handleScope(
-	player: import("../controller.js").SakuraPlaybackController,
-	app: import("../../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast-types.js").SakuraAstNode,
-	context: unknown,
+	player: SakuraPlaybackController,
+	app: NanaiAndroidMascotApp,
+	token: SakuraAstNode,
+	context: SakuraPlayContext,
 ) {
 	const {
 		sakuraText,
@@ -20,23 +24,25 @@ export function handleScope(
 		shownScopes,
 	} = context;
 
-	const rawScope = token.value ?? 0;
+	const rawScope = (token.value as number) ?? 0;
 	player.currentScope = rawScope;
 	player.playbackController?.notifyScope?.(player.currentScope);
 
 	if (player.currentScope === 0) {
 		app.surfaceManager?.onTalkEnd(1);
 		if (!isTauriAvailable()) {
-			if (app.elements.sakuraSlot) {
+			if (app.elements?.sakuraSlot) {
 				app.elements.sakuraSlot.style.display = "flex";
 			}
-			sakuraDisplay.style.display = "block";
+			if (sakuraDisplay) {
+				sakuraDisplay.style.display = "block";
+			}
 		}
 		context.currentBalloonText = sakuraText;
 	} else if (player.currentScope === 1) {
 		app.surfaceManager?.onTalkEnd(0);
 		if (!isTauriAvailable()) {
-			if (app.elements.keroSlot) {
+			if (app.elements?.keroSlot) {
 				app.elements.keroSlot.style.display = "flex";
 			}
 			if (keroDisplay && keroText) {
@@ -52,9 +58,9 @@ export function handleScope(
 	if (
 		isTauriAvailable() &&
 		hasTextContent &&
-		!shownScopes.has(player.currentScope)
+		!shownScopes?.has(player.currentScope)
 	) {
-		shownScopes.add(player.currentScope);
+		shownScopes?.add(player.currentScope);
 		invoke("show_balloon_window", {
 			scopeId: player.currentScope,
 			theme: app.currentBalloonTheme,
@@ -63,10 +69,10 @@ export function handleScope(
 }
 
 export function handleBalloon(
-	player: import("../controller.js").SakuraPlaybackController,
-	_app: import("../../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast-types.js").SakuraAstNode,
-	context: unknown,
+	player: SakuraPlaybackController,
+	_app: NanaiAndroidMascotApp,
+	token: SakuraAstNode,
+	context: SakuraPlayContext,
 ) {
 	const { sakuraDisplay, keroDisplay } = context;
 	const balloonDisplay =
@@ -79,10 +85,10 @@ export function handleBalloon(
 }
 
 export function handleInlineBitmap(
-	_player: import("../controller.js").SakuraPlaybackController,
-	app: import("../../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast-types.js").SakuraAstNode,
-	context: unknown,
+	_player: SakuraPlaybackController,
+	app: NanaiAndroidMascotApp,
+	token: SakuraAstNode,
+	context: SakuraPlayContext,
 ) {
 	const { currentBalloonText, scheduleDesktopBalloonSync } = context;
 
@@ -96,20 +102,28 @@ export function handleInlineBitmap(
 		rawPath.startsWith("https://")
 			? rawPath
 			: `assets/balloon/${themeName}/${rawPath}`;
-	img.src = (globalThis as unknown).__TAURI__?.core?.convertFileSrc
-		? (globalThis as unknown).__TAURI__.core.convertFileSrc(fullPath)
+
+	const g = globalThis as unknown as {
+		__TAURI__?: {
+			core?: {
+				convertFileSrc: (path: string) => string;
+			};
+		};
+	};
+	img.src = g.__TAURI__?.core?.convertFileSrc
+		? g.__TAURI__.core.convertFileSrc(fullPath)
 		: fullPath;
 	img.style.display = "inline-block";
 	img.style.verticalAlign = "middle";
 	img.style.maxHeight = "1.2em";
 	img.style.width = "auto";
 	if (token.mode === "inline" || !token.mode) {
-		currentBalloonText.appendChild(img);
+		currentBalloonText?.appendChild(img);
 	} else {
 		if (token.x !== undefined) img.style.left = `${token.x}px`;
 		if (token.y !== undefined) img.style.top = `${token.y}px`;
 		img.style.position = "absolute";
-		currentBalloonText.appendChild(img);
+		currentBalloonText?.appendChild(img);
 	}
-	scheduleDesktopBalloonSync(false);
+	scheduleDesktopBalloonSync?.(false);
 }

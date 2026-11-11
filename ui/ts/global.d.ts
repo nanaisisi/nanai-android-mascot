@@ -8,6 +8,7 @@ interface TauriApi {
 	};
 	core?: {
 		invoke?: TauriFunction;
+		convertFileSrc?: (url: string) => string;
 	};
 	listen?: TauriFunction;
 	emit?: TauriFunction;

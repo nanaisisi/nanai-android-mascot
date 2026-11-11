@@ -10,8 +10,24 @@ export interface GhostInfo {
 	[key: string]: unknown;
 }
 
+export interface GhostController {
+	sendShioriEvent(event: string, args?: string[]): Promise<unknown>;
+	sendBalloonTimeoutNotify?(script: string, scope: string): Promise<unknown>;
+	sendBalloonCloseNotify?(script: string): Promise<unknown>;
+	sendBalloonBreakNotify?(
+		script: string,
+		scope: number,
+		idx: number,
+	): Promise<unknown>;
+	stopSecondChangeTimer?(): void;
+	callGhost?(name: string): Promise<unknown>;
+	username?: string;
+	lastGhostName?: string;
+	lastObjectName?: string;
+}
+
 export class GhostController {
-	app: unknown;
+	app: import("../../main.js").NanaiAndroidMascotApp;
 	ghosts: GhostInfo[];
 	currentGhost: GhostInfo | null;
 	shells: string[];
@@ -25,7 +41,7 @@ export class GhostController {
 	_currentLoadToken?: unknown;
 	[key: string]: unknown;
 
-	constructor(app: unknown) {
+	constructor(app: import("../../main.js").NanaiAndroidMascotApp) {
 		this.app = app;
 		this.ghosts = [];
 		this.currentGhost = null;

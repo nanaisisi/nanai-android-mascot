@@ -6,11 +6,11 @@
 import { emit } from "../tauri-helper.js";
 
 export class DictationManager {
-	app: unknown;
+	app: import("../../../main.js").NanaiAndroidMascotApp;
 	synth: SpeechSynthesis | null;
-	recognition: null;
+	recognition: unknown;
 	isListening: boolean;
-	constructor(app: this) {
+	constructor(app: import("../../../main.js").NanaiAndroidMascotApp) {
 		this.app = app;
 		this.synth = typeof window !== "undefined" ? window.speechSynthesis : null;
 		this.recognition = null;
@@ -21,7 +21,8 @@ export class DictationManager {
 	initSpeechRecognition() {
 		if (typeof window === "undefined") return;
 		const SpeechRecognition =
-			window.SpeechRecognition || window.webkitSpeechRecognition;
+			(window as unknown).SpeechRecognition ||
+			(window as unknown).webkitSpeechRecognition;
 		if (SpeechRecognition) {
 			this.recognition = new SpeechRecognition();
 			this.recognition.lang = "ja-JP";

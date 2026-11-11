@@ -7,11 +7,11 @@ import { applyGroupProperties } from "./font/group.js";
 import { applySpecialFontProperties } from "./font/special.js";
 
 export function applyFontProperties(
-	root: unknown,
-	props: object,
+	root: HTMLElement,
+	props: Record<string, string>,
 	_instance: {
 		rgbFromComponents?: (
-			props: Record<string, unknown>,
+			props: Record<string, string>,
 			base: string,
 		) => string | null;
 		applyBalloonDescript?: (props?: unknown) => void;

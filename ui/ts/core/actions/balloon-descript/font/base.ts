@@ -1,8 +1,8 @@
 import { rgbFromComponents } from "../utils.js";
 
 export function applyBaseFontProperties(
-	root: unknown,
-	props: Record<string, unknown>,
+	root: HTMLElement,
+	props: Record<string, string>,
 ) {
 	if (props.id) root.style.setProperty("--balloon-id", props.id);
 

@@ -4,14 +4,14 @@
  */
 
 export function applyAlignmentProperties(
-	root: { style: { setProperty: (arg0: string, arg1: string) => void } },
-	props: { [x: string]: unknown },
+	root: HTMLElement,
+	props: Record<string, string>,
 	instance: {
-		scopeId: unknown;
-		currentScopeId: unknown;
-		balloonDontMove: boolean;
-		balloonSyncScale: boolean;
-		balloonAlignment: string;
+		scopeId?: number;
+		currentScopeId?: number;
+		balloonDontMove?: boolean;
+		balloonSyncScale?: boolean;
+		balloonAlignment?: string;
 	},
 ) {
 	const scopeId = instance?.scopeId ?? instance?.currentScopeId ?? 0;

@@ -4,7 +4,7 @@
  */
 import { rgbFromComponents } from "../utils.js";
 
-export function applyCommunicateBoxProperties(props: Record<string, unknown>) {
+export function applyCommunicateBoxProperties(props: Record<string, string>) {
 	// [communicatebox.width,サイズ], [communicatebox.height,サイズ], [communicatebox.x,座標], [communicatebox.y,座標]:
 	// [communicatebox.font.name,フォント名], [communicatebox.font.color.r/g/b,数値], [communicatebox.background.color.r/g/b,数値], [communicatebox.placeholder.color.r/g/b,数値]:
 	const cbWidth = props["communicatebox.width"];
@@ -12,7 +12,7 @@ export function applyCommunicateBoxProperties(props: Record<string, unknown>) {
 	const cbX = props["communicatebox.x"];
 	const cbY = props["communicatebox.y"];
 	const cbFontName = props["communicatebox.font.name"];
-	const cbFontHeight = parseInt(props["communicatebox.font.height"], 10);
+	const cbFontHeight = parseInt(props["communicatebox.font.height"] || "", 10);
 	const cbFontColor =
 		rgbFromComponents(props, "communicatebox.font.color") ||
 		props["communicatebox.font.color"] ||
@@ -43,7 +43,9 @@ export function applyCommunicateBoxProperties(props: Record<string, unknown>) {
 		cbBgColor ||
 		cbPlaceholder
 	) {
-		const cbEl = document.querySelector(".communicate-box");
+		const cbEl = document.querySelector(
+			".communicate-box",
+		) as HTMLElement | null;
 		if (cbEl) {
 			if (cbWidth) cbEl.style.width = `${cbWidth}px`;
 			if (cbHeight) cbEl.style.height = `${cbHeight}px`;

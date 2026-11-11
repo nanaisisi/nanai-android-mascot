@@ -14,12 +14,12 @@ export const balloonDescriptActions = {
 	/**
 	 * @param {Record<string, string>} props
 	 */
-	applyBalloonDescript(props = {}) {
+	applyBalloonDescript(props: Record<string, string> = {}) {
 		if (!props) return;
 		const root = document.documentElement;
 
-		applyLayoutProperties(root, props, this);
-		applyFontProperties(root, props, this);
-		applyAssetProperties(root, props, this);
+		applyLayoutProperties(root, props, this as unknown);
+		applyFontProperties(root, props, this as unknown);
+		applyAssetProperties(root, props, this as unknown);
 	},
 };

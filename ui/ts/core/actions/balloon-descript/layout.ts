@@ -19,10 +19,10 @@ export {
 
 export function applyLayoutProperties(
 	root: HTMLElement,
-	props: object,
+	props: Record<string, string>,
 	instance: {
 		rgbFromComponents?: (
-			props: Record<string, unknown>,
+			props: Record<string, string>,
 			base: string,
 		) => string | null;
 		applyBalloonDescript?: (props?: unknown) => void;
@@ -30,11 +30,12 @@ export function applyLayoutProperties(
 		balloonUserScale?: unknown;
 		currentBalloonTheme?: unknown;
 		elements?: { balloonDisplay: HTMLElement | null };
-		scopeId?: unknown;
-		currentScopeId?: unknown;
+		scopeId?: number;
+		currentScopeId?: number;
 		balloonDontMove?: boolean;
 		balloonSyncScale?: boolean;
 		balloonAlignment?: string;
+		windowPositionLimit?: boolean;
 	},
 ) {
 	applyDpiAndScaleProperties(root, props, instance);

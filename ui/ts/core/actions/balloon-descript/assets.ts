@@ -46,10 +46,10 @@ export function verifyRecommendedGhost(
 
 export function applyAssetProperties(
 	root: HTMLElement,
-	props: object,
+	props: Record<string, string>,
 	instance: {
 		rgbFromComponents?: (
-			props: Record<string, unknown>,
+			props: Record<string, string>,
 			base: string,
 		) => string | null;
 		applyBalloonDescript?: (props?: unknown) => void;
@@ -60,7 +60,7 @@ export function applyAssetProperties(
 		onlineMarkerInterval?: unknown;
 	},
 ) {
-	const p = (props as Record<string, string>) || {};
+	const p = props;
 
 	// [descript.txt（Balloonの）]: props
 	// [readme,ファイル名]: props["readme"]
@@ -139,9 +139,9 @@ export function applyAssetProperties(
 		}
 	};
 	// [arrow.filename,ファイル名]: UKADOC 準拠ベース名展開 (拡張子なし -> arrow0=上 / arrow1=下)
-	const scopeId =
-		(instance as Record<string, unknown>)?.scopeId ??
-		(instance as Record<string, unknown>)?.currentScopeId ??
+	const scopeId: number =
+		((instance as Record<string, unknown>)?.scopeId as number) ??
+		((instance as Record<string, unknown>)?.currentScopeId as number) ??
 		0;
 	const defaultArrowBase = p["arrow.filename"]
 		? p["arrow.filename"]

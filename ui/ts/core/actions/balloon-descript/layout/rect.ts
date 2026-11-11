@@ -3,7 +3,10 @@
  * @brief バルーンの有効領域 (validrect)、9スライス、改行/最大表示領域 (wordwrappoint) 設定反映 (UKADOC準拠)
  */
 
-export function applyValidRectProperties(root: HTMLElement, props: object) {
+export function applyValidRectProperties(
+	root: HTMLElement,
+	props: Record<string, string>,
+) {
 	// [validrect.left,座標], [validrect.top,座標], [validrect.right,座標], [validrect.bottom,座標]:
 	const vl = parseInt(props["validrect.left"], 10);
 	const vt = parseInt(props["validrect.top"], 10);

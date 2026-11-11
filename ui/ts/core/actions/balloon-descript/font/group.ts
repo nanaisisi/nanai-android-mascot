@@ -45,8 +45,8 @@ import { rgbFromComponents } from "../utils.js";
  * [cursor.notselect.brush.color.r,数値], [cursor.notselect.brush.color.g,数値], [cursor.notselect.brush.color.b,数値]
  */
 export function applyGroupProperties(
-	root: unknown,
-	props: object,
+	root: HTMLElement,
+	props: Record<string, string>,
 	prefix: string,
 	cssPrefix: string,
 ) {

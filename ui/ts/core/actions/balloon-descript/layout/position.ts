@@ -5,7 +5,7 @@
 
 export function applyPositionProperties(
 	root: HTMLElement,
-	props: object,
+	props: Record<string, string>,
 	instance: { windowPositionLimit?: boolean } = {},
 ) {
 	// [origin.x,座標], [origin.y,座標]:

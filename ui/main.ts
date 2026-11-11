@@ -34,6 +34,21 @@ export interface AppSettings {
 	autoSwitchBalloonWithGhost: boolean;
 }
 
+export interface NanaiAndroidMascotApp {
+	internalWindowManager: InternalWindowManager;
+	loadSettings(): void;
+	setupEventListeners(): void;
+	applySettings(): void;
+	startSecondTimer(): void;
+	hideMenu(): void;
+	showBalloon(message: string): void;
+	hideBalloon(scopeId?: number, type?: string): void;
+	toggleMenu(): void;
+	scanBalloons(): Promise<unknown[]>;
+	setBalloonTheme(theme: string): Promise<void>;
+	recordRecentGhost(ghostName: string): void;
+}
+
 export class NanaiAndroidMascotApp {
 	isInitialized: boolean;
 	currentBalloonTheme: string;
@@ -54,6 +69,7 @@ export class NanaiAndroidMascotApp {
 	balloonDontMove?: boolean;
 	balloonSyncScale?: boolean;
 	balloonAlignment?: string;
+	internalWindowManager: InternalWindowManager;
 	_isExiting?: boolean;
 
 	constructor() {
@@ -102,9 +118,9 @@ export class NanaiAndroidMascotApp {
 		this.initUIEnvironment();
 
 		this.modalManager = new ModalManager(this);
-		(this as unknown).loadSettings();
-		(this as unknown).setupEventListeners();
-		(this as unknown).applySettings();
+		this.loadSettings();
+		this.setupEventListeners();
+		this.applySettings();
 
 		await Promise.all([this.scanBalloons(), this.scanPlugins()]);
 
@@ -114,7 +130,7 @@ export class NanaiAndroidMascotApp {
 			this.ghostController.selectGhost(AppConfig.paths.fallbackGhostName);
 		}
 
-		(this as unknown).startSecondTimer();
+		this.startSecondTimer();
 		this.isInitialized = true;
 		console.log("✅ Nanai Android Mascot 初期化完了");
 	}
@@ -122,7 +138,7 @@ export class NanaiAndroidMascotApp {
 	async scanBalloons() {
 		return (
 			(
-				actionMethods as Record<string, () => Promise<unknown[]>>
+				actionMethods as unknown as Record<string, () => Promise<unknown[]>>
 			).scanBalloons?.call(this) || []
 		);
 	}
@@ -130,8 +146,8 @@ export class NanaiAndroidMascotApp {
 	async scanPlugins() {
 		if (!isTauriAvailable()) return;
 		try {
-			const plugins: unknown = await invoke("scan_plugins");
-			if (plugins && plugins.length > 0) {
+			const plugins = await invoke("scan_plugins");
+			if (Array.isArray(plugins) && plugins.length > 0) {
 				this.availablePlugins = plugins;
 				console.log("🔌 プラグインスキャン完了:", plugins.length);
 			}
@@ -174,7 +190,7 @@ export class NanaiAndroidMascotApp {
 		this._isExiting = true;
 
 		const exit = async () => {
-			(this.ghostController as unknown)?.stopSecondChangeTimer?.();
+			this.ghostController.stopSecondChangeTimer?.();
 			if (isTauriAvailable()) {
 				try {
 					await invoke("unload_current_ghost");
@@ -193,10 +209,10 @@ export class NanaiAndroidMascotApp {
 		};
 
 		try {
-			(this as unknown).hideMenu();
+			this.hideMenu();
 			this.modalManager?.hide();
 			try {
-				await (this.ghostController as unknown).sendShioriEvent("OnClose");
+				await this.ghostController.sendShioriEvent("OnClose");
 			} catch (_e) {}
 			const exitDelay = this.sakuraPlayer?.isPlaying ? 1500 : 400;
 			setTimeout(exit, exitDelay);

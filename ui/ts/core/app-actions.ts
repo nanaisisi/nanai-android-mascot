@@ -22,6 +22,10 @@ export const actionMethods = {
 	...networkActions,
 
 	handleMenuAction(action: string, payload: unknown = null) {
-		return handleMenuActionImpl(this, action, payload);
+		return handleMenuActionImpl(
+			this as unknown as import("./actions/menu-action-dispatcher.js").MenuActionContext,
+			action,
+			payload,
+		);
 	},
 };

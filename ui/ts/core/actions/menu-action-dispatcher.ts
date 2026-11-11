@@ -12,12 +12,12 @@ const SHIORI_ACTIONS: Record<string, [string, string[]?]> = {
 };
 
 export interface MenuActionContext {
-	ghostController: {
+	ghostController?: {
 		currentGhost?: { name?: string; isTemporary?: boolean };
-		sendShioriEvent: (event: string, args?: unknown[]) => Promise<unknown>;
-		selectGhost: (name: string) => Promise<unknown>;
-		selectShell: (name: string) => Promise<unknown>;
-		scanGhosts: () => Promise<unknown>;
+		sendShioriEvent?: (event: string, args?: unknown[]) => Promise<unknown>;
+		selectGhost?: (name: string) => Promise<unknown>;
+		selectShell?: (name: string) => Promise<unknown>;
+		scanGhosts?: () => Promise<unknown>;
 	};
 	onGhostClick?: (
 		arg0?: unknown,
@@ -114,7 +114,7 @@ export function handleMenuActionImpl(
 	}
 
 	if (action === "headlines" || action === "headline") {
-		gc.sendShioriEvent("OnHeadline");
+		gc?.sendShioriEvent?.("OnHeadline");
 		return;
 	}
 
@@ -128,8 +128,8 @@ export function handleMenuActionImpl(
 
 	if (action === "reload-ghost") {
 		const currentName =
-			gc.currentGhost?.name || AppConfig.paths.fallbackGhostName;
-		return gc.selectGhost(currentName).then(() => {
+			gc?.currentGhost?.name || AppConfig.paths.fallbackGhostName;
+		return gc?.selectGhost?.(currentName)?.then(() => {
 			context.showBalloon?.("🔄 ゴーストを再読み込みしました");
 			setTimeout(() => context.hideBalloon?.(), 2000);
 		});
@@ -175,12 +175,12 @@ export function handleMenuActionImpl(
 		return context.hideBalloon?.();
 	}
 	if (action === "keep-temporary-ghost") {
-		if (gc.currentGhost?.isTemporary) {
+		if (gc?.currentGhost?.isTemporary) {
 			gc.currentGhost.isTemporary = false;
 			context.showBalloon?.(
 				"📌 一時起動ゴーストを通常起動状態として保持しました",
 			);
-			gc.sendShioriEvent("OnBoot");
+			gc.sendShioriEvent?.("OnBoot");
 		} else {
 			context.showBalloon?.("⚠️ 一時起動中のゴーストではありません");
 		}
@@ -194,12 +194,12 @@ export function handleMenuActionImpl(
 
 	if (SHIORI_ACTIONS[action]) {
 		const [eventName, eventArgs] = SHIORI_ACTIONS[action];
-		gc.sendShioriEvent(eventName, eventArgs);
+		gc?.sendShioriEvent?.(eventName, eventArgs);
 		return;
 	}
 
 	if (action === "scan") {
-		return gc.scanGhosts().then(() => {
+		return gc?.scanGhosts?.()?.then(() => {
 			context.syncMenuGhosts?.();
 			context.showBalloon?.("🔄 ゴーストフォルダを再スキャンしました");
 			setTimeout(() => context.hideBalloon?.(), 2000);
@@ -308,7 +308,7 @@ export function handleMenuActionImpl(
 			typeof payload === "string"
 				? payload
 				: (payload as NamedPayload).name || (payload as NamedPayload).ghostName;
-		if (ghostName) return gc.selectGhost(ghostName);
+		if (ghostName) return gc?.selectGhost?.(ghostName);
 	}
 	if (action === "call-ghost" && payload) {
 		const ghostName =
@@ -322,14 +322,14 @@ export function handleMenuActionImpl(
 			typeof payload === "string"
 				? payload
 				: (payload as NamedPayload).name || (payload as NamedPayload).ghostName;
-		if (ghostName) return gc.selectGhost(ghostName);
+		if (ghostName) return gc?.selectGhost?.(ghostName);
 	}
 	if ((action === "switch-to-shell" || action === "switch-shell") && payload) {
 		const shellName =
 			typeof payload === "string"
 				? payload
 				: (payload as NamedPayload).name || (payload as NamedPayload).shellName;
-		if (shellName) return gc.selectShell(shellName);
+		if (shellName) return gc?.selectShell?.(shellName);
 	}
 	if (action === "dressup-toggle" && payload) {
 		return context.handleDressupToggle?.(payload);

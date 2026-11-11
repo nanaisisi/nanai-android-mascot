@@ -206,7 +206,9 @@ export const setupMethods = {
 
 	async setupExternalMenuListeners() {
 		const forward = (event: unknown) => {
-			const data = (event as { payload?: { action?: string; payload?: { scope?: number } } })?.payload;
+			const data = (
+				event as { payload?: { action?: string; payload?: { scope?: number } } }
+			)?.payload;
 			if (!data) return;
 			if (data.action === "request-sync") {
 				const reqScope = data.payload?.scope ?? 0;
@@ -225,7 +227,8 @@ export const setupMethods = {
 		await listen("native-menu-action", forward);
 
 		await listen("request-subchar-image", (event: unknown) => {
-			const scopeId = (event as { payload?: { scopeId?: number } })?.payload?.scopeId;
+			const scopeId = (event as { payload?: { scopeId?: number } })?.payload
+				?.scopeId;
 			if (typeof scopeId === "number") {
 				const cachedSrc = (
 					this as unknown as import("../../../main.js").NanaiAndroidMascotApp

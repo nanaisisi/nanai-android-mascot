@@ -31,20 +31,25 @@ export const mouseMethods = {
 		).ghostController
 			.sendShioriEvent("OnMouseDoubleClick", args)
 			.then((res: unknown) => {
-				if (res?.status === 200 && res?.value) {
+				const r = res as { status?: number; value?: unknown } | null;
+				if (r?.status === 200 && r?.value) {
 					(
 						this as unknown as import("../../../main.js").NanaiAndroidMascotApp
-					).playSakuraScript?.(res.value);
+					).playSakuraScript?.(r.value);
 				} else {
 					(
 						this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 					).ghostController
 						.sendShioriEvent("OnMouseClick", args)
 						.then((clickRes: unknown) => {
-							if (clickRes?.status === 200 && clickRes?.value) {
+							const cr = clickRes as {
+								status?: number;
+								value?: unknown;
+							} | null;
+							if (cr?.status === 200 && cr?.value) {
 								(
 									this as unknown as import("../../../main.js").NanaiAndroidMascotApp
-								).playSakuraScript?.(clickRes.value);
+								).playSakuraScript?.(cr.value);
 							}
 						});
 				}

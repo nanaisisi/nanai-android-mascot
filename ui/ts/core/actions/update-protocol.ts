@@ -249,7 +249,9 @@ export function createUpdateProgressHandler(
 		if (!filePath) return;
 		const evName = phase ? eventMap[phase] : undefined;
 		if (evName && gc?.sendShioriEvent) {
-			void gc.sendShioriEvent(evName, buildUpdateArgs(filePath)).catch(() => {});
+			void gc
+				.sendShioriEvent(evName, buildUpdateArgs(filePath))
+				.catch(() => {});
 		}
 		if ((phase === "md5-failed" || phase === "fileio-failed") && onFailedFile) {
 			onFailedFile(filePath);

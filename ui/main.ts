@@ -25,6 +25,9 @@ import { menuMethods } from "./ts/ui/app-menu.js";
 import { ModalManager } from "./ts/ui/modal.js";
 
 export interface AppSettings {
+	shellScale?: string;
+	balloonScale?: string;
+	balloonTheme?: string;
 	autoLoadGhost: boolean;
 	enableNotifications: boolean;
 	darkMode: boolean;
@@ -35,12 +38,27 @@ export interface AppSettings {
 }
 
 export class NanaiAndroidMascotApp {
-	getCollisionInfo(
-		_clientX: number | undefined,
-		_clientY: number | undefined,
-		_rect: unknown,
-		_scopeId: number,
+	wait(_arg0: number) {
+		throw new Error("Method not implemented.");
+	}
+	sendUpdateResultSummary(
+		_ghostName: string,
+		_arg1: boolean,
+		_arg2: string,
+		_arg3: null,
+		_p0: boolean,
 	) {
+		throw new Error("Method not implemented.");
+	}
+	applyBalloonTheme() {
+		throw new Error("Method not implemented.");
+	}
+	getCollisionInfo(
+		_clientX?: number,
+		_clientY?: number,
+		_rect?: unknown,
+		_scopeId?: number,
+	): { name: string; canvasX: number; canvasY: number } {
 		throw new Error("Method not implemented.");
 	}
 	playSakuraScript(_value: unknown) {
@@ -93,7 +111,12 @@ export class NanaiAndroidMascotApp {
 	) {
 		throw new Error("Method not implemented.");
 	}
-	onGhostDragStart(_x?: number, _y?: number, _rect?: unknown, _scopeId?: number) {
+	onGhostDragStart(
+		_x?: number,
+		_y?: number,
+		_rect?: unknown,
+		_scopeId?: number,
+	) {
 		throw new Error("Method not implemented.");
 	}
 	onGhostDragEnd(_x?: number, _y?: number, _rect?: unknown, _scopeId?: number) {
@@ -125,7 +148,11 @@ export class NanaiAndroidMascotApp {
 	declare hideMenu: () => void;
 	declare showBalloon: (message: string) => void;
 	declare hideBalloon: (scopeId?: number, type?: string) => void;
-	declare toggleMenu: (screenX?: number | null, screenY?: number | null, scope?: number) => void;
+	declare toggleMenu: (
+		screenX?: number | null,
+		screenY?: number | null,
+		scope?: number,
+	) => void;
 	declare setBalloonTheme: (theme: string) => Promise<void>;
 	declare recordRecentGhost: (ghostName: string) => void;
 

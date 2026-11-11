@@ -5,9 +5,9 @@ export const settingsMethods = {
 		try {
 			const saved = localStorage.getItem("nanai-android-mascot-settings");
 			if (saved) {
-				(this as import("../../../main.js").NanaiAndroidMascotApp).settings = {
-					...(this as import("../../../main.js").NanaiAndroidMascotApp)
-						.settings,
+				const app = this as unknown as import("../../main.js").NanaiAndroidMascotApp;
+				app.settings = {
+					...app.settings,
 					...JSON.parse(saved),
 				};
 			}
@@ -17,30 +17,23 @@ export const settingsMethods = {
 	},
 
 	applySettings() {
+		const app = this as unknown as import("../../main.js").NanaiAndroidMascotApp;
 		document.body.classList.toggle(
 			"dark-mode",
-			!!(this as import("../../../main.js").NanaiAndroidMascotApp).settings
-				.darkMode,
+			!!app.settings?.darkMode,
 		);
 
 		// シェル倍率 (50%〜200%)
 		const scalePercent =
 			parseInt(
-				(this as import("../../../main.js").NanaiAndroidMascotApp).settings
-					.shellScale,
+				app.settings?.shellScale || "100",
 				10,
 			) || 100;
-		if (
-			(this as import("../../../main.js").NanaiAndroidMascotApp).elements
-				.ghostDisplay
-		) {
-			(
-				this as import("../../../main.js").NanaiAndroidMascotApp
-			).elements.ghostDisplay.style.width =
+		const ghostDisplay = app.elements?.ghostDisplay;
+		if (ghostDisplay) {
+			ghostDisplay.style.width =
 				`${Math.round((200 * scalePercent) / 100)}px`;
-			(
-				this as import("../../../main.js").NanaiAndroidMascotApp
-			).elements.ghostDisplay.style.height =
+			ghostDisplay.style.height =
 				`${Math.round((400 * scalePercent) / 100)}px`;
 		}
 		if (isTauriAvailable()) {
@@ -50,68 +43,47 @@ export const settingsMethods = {
 		// バルーン倍率
 		const balloonPercent =
 			parseInt(
-				(this as import("../../../main.js").NanaiAndroidMascotApp).settings
-					.balloonScale,
+				app.settings?.balloonScale || "100",
 				10,
 			) || 100;
-		if (
-			(this as import("../../../main.js").NanaiAndroidMascotApp).elements
-				.balloonDisplay
-		) {
-			(
-				this as import("../../../main.js").NanaiAndroidMascotApp
-			).elements.balloonDisplay.style.transform =
+		const balloonDisplay = app.elements?.balloonDisplay;
+		if (balloonDisplay) {
+			balloonDisplay.style.transform =
 				`translateX(-50%) scale(${balloonPercent / 100})`;
-			(
-				this as import("../../../main.js").NanaiAndroidMascotApp
-			).elements.balloonDisplay.style.transformOrigin = "top left";
+			balloonDisplay.style.transformOrigin = "top left";
 		}
 
-		(
-			this as import("../../../main.js").NanaiAndroidMascotApp
-		).applyBalloonTheme();
+		app.applyBalloonTheme?.();
 	},
 
 	applyBalloonTheme() {
-		(this as import("../../../main.js").NanaiAndroidMascotApp).setBalloonTheme(
-			(this as import("../../../main.js").NanaiAndroidMascotApp).settings
-				.balloonTheme ||
-				(this as import("../../../main.js").NanaiAndroidMascotApp)
-					.currentBalloonTheme ||
+		const app = this as unknown as import("../../main.js").NanaiAndroidMascotApp;
+		app.setBalloonTheme?.(
+			app.settings?.balloonTheme ||
+				app.currentBalloonTheme ||
 				"default",
 		);
 	},
 
 	showBalloon(text: string, scopeId: number = 0) {
-		if (
-			(this as import("../../../main.js").NanaiAndroidMascotApp).elements
-				.balloonText &&
-			(this as import("../../../main.js").NanaiAndroidMascotApp).elements
-				.balloonDisplay
-		) {
-			(
-				this as import("../../../main.js").NanaiAndroidMascotApp
-			).elements.balloonText.textContent = text;
+		const app = this as unknown as import("../../main.js").NanaiAndroidMascotApp;
+		const balloonText = app.elements?.balloonText;
+		const balloonDisplay = app.elements?.balloonDisplay;
+		if (balloonText && balloonDisplay) {
+			balloonText.textContent = text;
 			if (!isTauriAvailable()) {
-				(
-					this as import("../../../main.js").NanaiAndroidMascotApp
-				).elements.balloonDisplay.style.display = "block";
+				balloonDisplay.style.display = "block";
 			}
 		}
 		if (isTauriAvailable()) {
 			invoke("show_balloon_window", {
 				scopeId,
-				theme: (this as import("../../../main.js").NanaiAndroidMascotApp)
-					.currentBalloonTheme,
+				theme: app.currentBalloonTheme,
 			})
 				.then(() => {
 					emit(`update-balloon-content-${scopeId}`, {
-						html:
-							(this as import("../../../main.js").NanaiAndroidMascotApp)
-								.elements.balloonText?.innerHTML || text,
-						theme:
-							(this as import("../../../main.js").NanaiAndroidMascotApp)
-								.currentBalloonTheme || "default",
+						html: app.elements?.balloonText?.innerHTML || text,
+						theme: app.currentBalloonTheme || "default",
 					});
 				})
 				.catch(() => {});
@@ -122,57 +94,32 @@ export const settingsMethods = {
 		scopeId: number = 0,
 		reason: "close" | "break" | "timeout" | "silent" = "close",
 	) {
-		if (
-			(this as import("../../../main.js").NanaiAndroidMascotApp).elements
-				.balloonDisplay
-		) {
-			(
-				this as import("../../../main.js").NanaiAndroidMascotApp
-			).elements.balloonDisplay.style.display = "none";
+		const app = this as unknown as import("../../main.js").NanaiAndroidMascotApp;
+		const balloonDisplay = app.elements?.balloonDisplay;
+		if (balloonDisplay) {
+			balloonDisplay.style.display = "none";
 		}
 		if (isTauriAvailable()) {
 			invoke("hide_balloon_window", { scopeId }).catch(() => {});
 		}
 		if (reason === "close") {
-			const lastScript =
-				(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-					?.lastScript || "";
-			if (
-				(this as import("../../../main.js").NanaiAndroidMascotApp)
-					.ghostController?.sendBalloonCloseNotify
-			) {
-				void (
-					this as import("../../../main.js").NanaiAndroidMascotApp
-				).ghostController.sendBalloonCloseNotify(lastScript, scopeId);
-			} else if (
-				(this as import("../../../main.js").NanaiAndroidMascotApp)
-					.ghostController?.sendShioriEvent
-			) {
-				void (
-					this as import("../../../main.js").NanaiAndroidMascotApp
-				).ghostController.sendShioriEvent("OnBalloonClose", [
+			const lastScript = app.sakuraPlayer?.lastScript || "";
+			const gc = app.ghostController;
+			if (gc?.sendBalloonCloseNotify) {
+				void gc.sendBalloonCloseNotify(lastScript, scopeId);
+			} else if (gc?.sendShioriEvent) {
+				void gc.sendShioriEvent("OnBalloonClose", [
 					lastScript,
 					String(scopeId),
 				]);
 			}
 		} else if (reason === "break") {
-			const lastScript =
-				(this as import("../../../main.js").NanaiAndroidMascotApp).sakuraPlayer
-					?.lastScript || "";
-			if (
-				(this as import("../../../main.js").NanaiAndroidMascotApp)
-					.ghostController?.sendBalloonBreakNotify
-			) {
-				void (
-					this as import("../../../main.js").NanaiAndroidMascotApp
-				).ghostController.sendBalloonBreakNotify(lastScript, scopeId);
-			} else if (
-				(this as import("../../../main.js").NanaiAndroidMascotApp)
-					.ghostController?.sendShioriEvent
-			) {
-				void (
-					this as import("../../../main.js").NanaiAndroidMascotApp
-				).ghostController.sendShioriEvent("OnBalloonBreak", [
+			const lastScript = app.sakuraPlayer?.lastScript || "";
+			const gc = app.ghostController;
+			if (gc?.sendBalloonBreakNotify) {
+				void gc.sendBalloonBreakNotify(lastScript, scopeId);
+			} else if (gc?.sendShioriEvent) {
+				void gc.sendShioriEvent("OnBalloonBreak", [
 					lastScript,
 					String(scopeId),
 				]);
@@ -181,17 +128,15 @@ export const settingsMethods = {
 	},
 
 	playSakuraScript(script: string) {
-		return (
-			this as import("../../../main.js").NanaiAndroidMascotApp
-		).sakuraPlayer.play(script);
+		const app = this as unknown as import("../../main.js").NanaiAndroidMascotApp;
+		return app.sakuraPlayer?.play(script);
 	},
 
 	startSecondTimer() {
 		document.addEventListener("visibilitychange", () => {
 			if (document.visibilityState === "visible") {
-				(
-					this as import("../../../main.js").NanaiAndroidMascotApp
-				).ghostController.sendShioriEvent("OnWindowStateRestore");
+				const app = this as unknown as import("../../main.js").NanaiAndroidMascotApp;
+				void app.ghostController?.sendShioriEvent?.("OnWindowStateRestore");
 			}
 		});
 	},

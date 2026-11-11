@@ -12,16 +12,19 @@ export interface GhostInfo {
 
 export class GhostController {
 	// mixin (Object.assign) で後から注入されるメソッド・プロパティの型宣言
-	declare sendShioriEvent: (event: string, args?: string[]) => Promise<unknown>;
+	declare sendShioriEvent: (
+		event: string,
+		args?: unknown[],
+	) => Promise<unknown>;
 	declare sendBalloonTimeoutNotify?: (
 		script: string,
-		scope: string,
+		scope?: string | number,
 	) => Promise<unknown>;
-	declare sendBalloonCloseNotify?: (script: string) => Promise<unknown>;
+	declare sendBalloonCloseNotify?: (script: string, scopeId?: number | string) => Promise<unknown>;
 	declare sendBalloonBreakNotify?: (
-		script: string,
-		scope: number,
-		idx: number,
+		script?: string,
+		scopeId?: number | string,
+		charPosition?: number | string,
 	) => Promise<unknown>;
 	declare stopSecondChangeTimer?: () => void;
 	declare callGhost?: (name: string) => Promise<unknown>;

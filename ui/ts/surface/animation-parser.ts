@@ -38,9 +38,7 @@ export async function buildAnimationTimeline(patterns: PatternItem[]) {
 				waitMs: resolvePatternWait(pat.wait, pat.waitMax),
 			})),
 		});
-		const frames = (timeline?.frames ?? []).map(
-			(f) => f.atMs ?? f.at_ms ?? 0,
-		);
+		const frames = (timeline?.frames ?? []).map((f) => f.atMs ?? f.at_ms ?? 0);
 		return {
 			frames,
 			totalMs: timeline?.totalMs ?? timeline?.total_ms ?? 0,

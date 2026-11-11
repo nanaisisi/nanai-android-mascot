@@ -3,6 +3,8 @@
  * @brief SERIKO アニメーションオプション文字列パースおよびインスタンス・排他判定ユーティリティ
  */
 
+import type { FrameStepEvent } from "./scheduler-events.js";
+
 export function parseAnimationOptions(optionParam: unknown = null) {
 	if (
 		optionParam &&
@@ -54,20 +56,55 @@ export interface AnimationInstance {
 	manager?: {
 		compositeCanvas?: unknown;
 		renderSurfaceLayer?: (...args: unknown[]) => unknown;
+		resolveSurfaceNumber?: (surfaceId: unknown, scopeId: unknown) => number;
 		currentSurfaceIdFor?: (scopeId: unknown) => number | string;
 		animations?: Record<
 			string,
-			Array<{ id: number; name?: unknown; [key: string]: unknown }>
+			Array<{
+				id: number;
+				name?: unknown;
+				interval?: unknown;
+				[key: string]: unknown;
+			}>
 		>;
+		app?: { ghostController?: unknown; [key: string]: unknown };
+		scheduler?: {
+			notifyFrameStep?: (event: FrameStepEvent) => void;
+			[key: string]: unknown;
+		};
 		[key: string]: unknown;
 	};
 	_runningAnimations?: unknown;
 	_stoppedAnimations?: Set<string>;
+	_spokenCount?: Record<number, number>;
+	_talkStarted?: Record<number, boolean>;
+	isSerikoTalkEnabled?: boolean | ((scopeId: unknown) => boolean);
+	triggerAnimations?: (...args: unknown[]) => unknown;
+	animationsForTrigger?: (...args: unknown[]) => Array<{
+		anim?: unknown;
+		sid?: unknown;
+		param?: unknown;
+		[key: string]: unknown;
+	}>;
 	resolvePatternWait?: (wait: unknown) => number;
 	activeAnimationTimers?: Map<unknown, unknown>;
 	_applyAnimationFrame?: (...args: unknown[]) => unknown;
 	_animationOffsets?: Map<string, { x: unknown; y: unknown }>;
 	getAnimationOffset?: (...args: unknown[]) => unknown;
+	parseAnimationOptions?: (...args: unknown[]) => unknown;
+	findAnimation?: (...args: unknown[]) => unknown;
+	playAnimationPatterns?: (...args: unknown[]) => unknown;
+	stopAnimation?: (...args: unknown[]) => unknown;
+	setScale?: (...args: unknown[]) => unknown;
+	renderAnimationFrame?: (...args: unknown[]) => unknown;
+	isBlockedByExclusive?: (...args: unknown[]) => unknown;
+	_playAnimationPatterns?: (...args: unknown[]) => unknown;
+	scheduler?: {
+		notifyFrameStep?: (event: FrameStepEvent) => void;
+		[key: string]: unknown;
+	};
+	_baseMoveOffsets?: Map<number, { x: number; y: number }>;
+	_sharedIndices?: Map<unknown, unknown>;
 	_exclusiveLocks?: Map<unknown, { targets?: Set<number>; animId?: unknown }>;
 	[key: string]: unknown;
 }
@@ -94,7 +131,7 @@ export function isBlockedByExclusive(
 ) {
 	let instance: AnimationInstance | null = null;
 	let scopeId: unknown = 0;
-	let animId: unknown ;
+	let animId: unknown;
 
 	if (isInstance(target)) {
 		instance = target;

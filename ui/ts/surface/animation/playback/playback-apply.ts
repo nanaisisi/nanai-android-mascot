@@ -1,21 +1,14 @@
 /**
- * @file playback-apply.js
+ * @file playback-apply.ts
  * @brief SERIKO アニメーションフレーム適用・反映処理モジュール
  */
 
 import { getAnimationOffset } from "../animation-options.js";
+import {
+	type AnimationInstance,
+	isInstance,
+} from "../animation-options-parser.js";
 import { FrameStepEvent } from "../scheduler-events.js";
-
-function isInstance(obj: unknown) {
-	return (
-		obj !== null &&
-		typeof obj === "object" &&
-		("manager" in obj ||
-			"_runningAnimations" in obj ||
-			"_exclusiveLocks" in obj ||
-			"activeAnimationTimers" in obj)
-	);
-}
 
 /**
  * SERIKO アニメーションフレーム適用（サーフィス・透過・レイヤー描画）
@@ -23,7 +16,7 @@ function isInstance(obj: unknown) {
 export async function _applyAnimationFrame(
 	this: unknown,
 	target: unknown,
-	patOrAnim: unknown,
+	patOrBaseSurfaceId: unknown,
 	animOrBaseSurfaceId?: unknown,
 	baseSurfaceIdOrScopeId?: unknown,
 	scopeIdOrKey?: unknown,
@@ -31,46 +24,46 @@ export async function _applyAnimationFrame(
 	isCurrentOrOptions?: unknown,
 	optionsParam: unknown = {},
 ): Promise<boolean> {
-	let instance: unknown,
-		pat: unknown,
-		anim: unknown,
-		baseSurfaceId: unknown,
-		scopeId: unknown,
-		_key: unknown,
-		isCurrent: unknown,
-		options: unknown;
+	let instance: AnimationInstance | null = null;
+	let pat: unknown = null;
+	let anim: unknown = null;
+	let baseSurfaceId: unknown = 0;
+	let scopeId: unknown = 0;
+	let _key: unknown = "";
+	let isCurrent: (() => boolean) | undefined;
+	let options: unknown = {};
 
 	if (isInstance(target)) {
 		instance = target;
-		pat = patOrAnim;
+		pat = patOrBaseSurfaceId;
 		anim = animOrBaseSurfaceId;
 		baseSurfaceId = baseSurfaceIdOrScopeId;
 		scopeId = scopeIdOrKey;
 		_key = keyOrIsCurrent;
 		isCurrent =
 			typeof isCurrentOrOptions === "function"
-				? isCurrentOrOptions
+				? (isCurrentOrOptions as () => boolean)
 				: typeof keyOrIsCurrent === "function"
-					? keyOrIsCurrent
+					? (keyOrIsCurrent as () => boolean)
 					: undefined;
 		options =
 			typeof optionsParam === "object" && optionsParam !== null
 				? optionsParam
-				: typeof isCurrentOrOptions === "object"
+				: typeof isCurrentOrOptions === "object" && isCurrentOrOptions !== null
 					? isCurrentOrOptions
 					: {};
 	} else {
-		instance = this;
+		instance = this as AnimationInstance;
 		pat = target;
-		anim = patOrAnim;
+		anim = patOrBaseSurfaceId;
 		baseSurfaceId = animOrBaseSurfaceId;
 		scopeId = baseSurfaceIdOrScopeId;
 		_key = scopeIdOrKey;
 		isCurrent =
 			typeof keyOrIsCurrent === "function"
-				? keyOrIsCurrent
+				? (keyOrIsCurrent as () => boolean)
 				: typeof isCurrentOrOptions === "function"
-					? isCurrentOrOptions
+					? (isCurrentOrOptions as () => boolean)
 					: undefined;
 		options =
 			typeof isCurrentOrOptions === "object" && isCurrentOrOptions !== null
@@ -79,10 +72,32 @@ export async function _applyAnimationFrame(
 	}
 
 	const inst = instance || {};
-	const p = pat || {};
+	const p = (pat || {}) as {
+		surfaceId?: number | string;
+		surface?: number | string;
+		type?: string;
+		targetId?: unknown;
+		animationId?: unknown;
+		soundFile?: string;
+		file?: string;
+		scaleX?: number;
+		scaleY?: number;
+		scale?: number;
+		x?: number;
+		y?: number;
+		offsetx?: number;
+		offsety?: number;
+		method?: string;
+		[key: string]: unknown;
+	};
+	const a = (anim || {}) as {
+		id?: number;
+		name?: string;
+		[key: string]: unknown;
+	};
 	const sId = (scopeId ?? 0) as number;
 	const bSurfId = baseSurfaceId as string | number;
-	const isCurr = isCurrent as (() => boolean) | undefined;
+	const isCurr = isCurrent;
 	const opts = options || {};
 
 	if (isCurr && !isCurr()) return false;
@@ -108,8 +123,9 @@ export async function _applyAnimationFrame(
 
 	if (surfaceNum === -2 || p.surface === -2 || p.surfaceId === -2) {
 		// surface -2: 同一スコープの他の再生中アニメーションを停止
-		if (inst._runningAnimations) {
-			for (const key of inst._runningAnimations.keys()) {
+		const running = inst._runningAnimations as Map<string, unknown> | undefined;
+		if (running) {
+			for (const key of running.keys()) {
 				if (key.startsWith(`${sId}__`)) {
 					inst._stoppedAnimations?.add(key);
 				}
@@ -121,7 +137,10 @@ export async function _applyAnimationFrame(
 	if (p.type === "start" || p.type === "stop") {
 		if (p.type === "start" && p.targetId != null) {
 			const targetAnim = inst.findAnimation
-				? inst.findAnimation(p.targetId, sId)
+				? (inst.findAnimation as (...args: unknown[]) => unknown)(
+						p.targetId,
+						sId,
+					)
 				: null;
 			if (targetAnim) {
 				inst.playAnimationPatterns?.(targetAnim, bSurfId, sId);
@@ -135,7 +154,14 @@ export async function _applyAnimationFrame(
 	if (p.type === "sound" || p.soundFile) {
 		const soundPath = p.soundFile || p.file;
 		if (soundPath) {
-			const gc = manager?.app?.ghostController;
+			const gc = (
+				manager?.app as {
+					ghostController?: {
+						playSound?: (path: string) => void;
+						[key: string]: unknown;
+					};
+				}
+			)?.ghostController;
 			gc?.playSound?.(soundPath);
 		}
 		return true;
@@ -147,20 +173,30 @@ export async function _applyAnimationFrame(
 		p.scaleY != null ||
 		p.scale != null
 	) {
-		const scaleX = p.scaleX ?? p.scale ?? (p.x !== undefined ? p.x : 100);
-		const scaleY = p.scaleY ?? p.scale ?? (p.y !== undefined ? p.y : 100);
+		const scaleX = Number(
+			p.scaleX ?? p.scale ?? (p.x !== undefined ? p.x : 100),
+		);
+		const scaleY = Number(
+			p.scaleY ?? p.scale ?? (p.y !== undefined ? p.y : 100),
+		);
 		const setScale = inst.setScale || manager?.setScale;
 		if (setScale) {
-			setScale.call(inst, scaleX, scaleY, sId);
+			(setScale as (...args: unknown[]) => unknown).call(
+				inst,
+				scaleX,
+				scaleY,
+				sId,
+			);
 		}
 		const scheduler = inst.scheduler || manager?.scheduler;
 		if (scheduler?.notifyFrameStep) {
 			scheduler.notifyFrameStep(
 				new FrameStepEvent({
-					animationId: p.animationId || anim?.id || 0,
+					animationId: p.animationId || a?.id || 0,
 					scopeId: sId,
 					baseSurfaceId: bSurfId,
 					pattern: p,
+					elapsedMs: 0,
 					offsetX: scaleX,
 					offsetY: scaleY,
 					isFinished: true,
@@ -176,8 +212,8 @@ export async function _applyAnimationFrame(
 		p.moveY != null ||
 		p.offsetX != null
 	) {
-		const moveX = p.moveX ?? p.offsetX ?? p.x ?? 0;
-		const moveY = p.moveY ?? p.offsetY ?? p.y ?? 0;
+		const moveX = Number(p.moveX ?? p.offsetX ?? p.x ?? 0);
+		const moveY = Number(p.moveY ?? p.offsetY ?? p.y ?? 0);
 		if (inst._baseMoveOffsets) {
 			inst._baseMoveOffsets.set(sId, { x: moveX, y: moveY });
 		}
@@ -185,10 +221,11 @@ export async function _applyAnimationFrame(
 		if (scheduler?.notifyFrameStep) {
 			scheduler.notifyFrameStep(
 				new FrameStepEvent({
-					animationId: p.animationId || anim?.id || 0,
+					animationId: p.animationId || a?.id || 0,
 					scopeId: sId,
 					baseSurfaceId: bSurfId,
 					pattern: p,
+					elapsedMs: 0,
 					offsetX: moveX,
 					offsetY: moveY,
 					isFinished: true,
@@ -198,25 +235,44 @@ export async function _applyAnimationFrame(
 		return true;
 	}
 
-	const animId = p.animationId || anim?.id || 0;
-	const animName = anim?.name || p.name || animId;
-	const offset = inst.getAnimationOffset
-		? inst.getAnimationOffset(sId, animName)
-		: getAnimationOffset(inst, sId, animName);
+	const animId = p.animationId || a?.id || 0;
+	const animName = a?.name || p.name || animId;
+	const getAnimOffset = inst.getAnimationOffset;
+	const offset = getAnimOffset
+		? ((getAnimOffset as (...args: unknown[]) => unknown).call(
+				inst,
+				sId,
+				animName,
+			) as { x?: number; y?: number } | undefined)
+		: (getAnimationOffset(inst, sId, animName) as
+				| { x?: number; y?: number }
+				| undefined);
 
-	const layerX = (p.x ?? p.offsetx ?? 0) + (offset?.x || 0);
-	const layerY = (p.y ?? p.offsety ?? 0) + (offset?.y || 0);
+	const layerX = Number(p.x ?? p.offsetx ?? 0) + Number(offset?.x || 0);
+	const layerY = Number(p.y ?? p.offsety ?? 0) + Number(offset?.y || 0);
 	const resolvedSurfaceId = manager?.resolveSurfaceNumber
 		? manager.resolveSurfaceNumber(surfaceId, sId)
 		: surfaceId;
 	const surfaceFile =
 		p.file ||
-		(p.placeholder || opts.placeholder
+		((p.placeholder as unknown) ||
+		(opts as { placeholder?: unknown })?.placeholder
 			? `data:image/png;base64,placeholder`
 			: `surface${resolvedSurfaceId}.png`);
-	const patType = (p.type || p.method || "overlay").toLowerCase();
+	const patType = String(p.type || p.method || "overlay").toLowerCase();
 
-	const gc = manager?.app?.ghostController;
+	const gc = (
+		manager?.app as {
+			ghostController?: {
+				updateSurface?: (
+					bSurfId: string | number,
+					sId: number,
+					layers: Array<{ file: string; x: number; y: number; type: string }>,
+				) => Promise<unknown>;
+				[key: string]: unknown;
+			};
+		}
+	)?.ghostController;
 
 	if (gc?.updateSurface) {
 		await gc.updateSurface(bSurfId ?? surfaceId, sId, [
@@ -227,7 +283,13 @@ export async function _applyAnimationFrame(
 	const renderAnimationFrameFn = inst.renderAnimationFrame;
 
 	if (renderAnimationFrameFn) {
-		renderAnimationFrameFn.call(inst, p, bSurfId, sId, opts);
+		(renderAnimationFrameFn as (...args: unknown[]) => unknown).call(
+			inst,
+			p,
+			bSurfId,
+			sId,
+			opts,
+		);
 	} else if (manager?.renderSurfaceLayer) {
 		manager.renderSurfaceLayer(surfaceId, surfaceFile, layerX, layerY, opts);
 	}

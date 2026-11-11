@@ -1,21 +1,21 @@
 /**
- * @file playback-control.js
+ * @file playback-control.ts
  * @brief SERIKO アニメーション再生制御・ID指定再生・待機モジュール
  */
 
 import { parseInterval } from "../../animation-parser.js";
-import { findAnimation, isBlockedByExclusive } from "../animation-options.js";
+import {
+	type AnimationInstance,
+	findAnimation,
+	isBlockedByExclusive,
+	isInstance,
+} from "../animation-options.js";
 import { _playAnimationPatterns } from "./playback-frames.js";
 
-function isInstance(obj: unknown) {
-	return (
-		obj !== null &&
-		typeof obj === "object" &&
-		("manager" in obj ||
-			"_runningAnimations" in obj ||
-			"_exclusiveLocks" in obj ||
-			"activeAnimationTimers" in obj)
-	);
+interface AnimationDefinition {
+	id?: number;
+	interval?: number | string;
+	[key: string]: unknown;
 }
 
 /**
@@ -27,19 +27,20 @@ export function playAnimationPatterns(
 	animOrBaseSurfaceId: unknown,
 	baseSurfaceIdOrScopeId: unknown,
 	scopeIdParam: unknown,
-) {
-	let instance: unknown,
-		anim: unknown,
-		baseSurfaceId: unknown,
-		scopeId: unknown;
+): Promise<unknown> {
+	let instance: AnimationInstance | null = null;
+	let anim: AnimationDefinition | null = null;
+	let baseSurfaceId: unknown = 0;
+	let scopeId: unknown = 0;
+
 	if (isInstance(target)) {
 		instance = target;
-		anim = animOrBaseSurfaceId;
+		anim = animOrBaseSurfaceId as AnimationDefinition;
 		baseSurfaceId = baseSurfaceIdOrScopeId;
 		scopeId = scopeIdParam;
 	} else {
-		instance = this;
-		anim = target;
+		instance = this as AnimationInstance;
+		anim = target as AnimationDefinition;
 		baseSurfaceId = animOrBaseSurfaceId;
 		scopeId = baseSurfaceIdOrScopeId;
 	}
@@ -47,15 +48,23 @@ export function playAnimationPatterns(
 	if (!instance) return Promise.resolve();
 
 	const isBlocked = instance.isBlockedByExclusive
-		? instance.isBlockedByExclusive(scopeId, anim?.id)
+		? (instance.isBlockedByExclusive as (...args: unknown[]) => boolean)(
+				scopeId,
+				anim?.id,
+			)
 		: isBlockedByExclusive(instance, scopeId, anim?.id);
 
 	if (anim?.id != null && isBlocked) {
 		return Promise.resolve();
 	}
 
+	const runningAnims = instance._runningAnimations as
+		| Map<string, Promise<unknown>>
+		| undefined;
+	const stoppedAnims = instance._stoppedAnimations as Set<string> | undefined;
+
 	const key = `${scopeId}__${baseSurfaceId}__${anim?.id ?? anim?.interval ?? ""}`;
-	const running = instance._runningAnimations?.get(key);
+	const running = runningAnims?.get(key);
 	const intervalStr = String(anim?.interval ?? "");
 	const { kinds } = parseInterval(intervalStr);
 	if (
@@ -67,14 +76,18 @@ export function playAnimationPatterns(
 		return running;
 	}
 	const playFn = instance._playAnimationPatterns
-		? instance._playAnimationPatterns.bind(instance)
-		: _playAnimationPatterns.bind(instance);
+		? (instance._playAnimationPatterns as (
+				...args: unknown[]
+			) => Promise<unknown>)
+		: _playAnimationPatterns;
 
-	const playing = playFn(anim, baseSurfaceId, scopeId, key).finally(() => {
-		instance._runningAnimations?.delete(key);
-		instance._stoppedAnimations?.delete(key);
-	});
-	instance._runningAnimations?.set(key, playing);
+	const playing = playFn(instance, anim, baseSurfaceId, scopeId, key).finally(
+		() => {
+			runningAnims?.delete(key);
+			stoppedAnims?.delete(key);
+		},
+	);
+	runningAnims?.set(key, playing);
 	return playing;
 }
 
@@ -85,20 +98,21 @@ export async function playAnimationById(
 	scopeIdOrWaitForComplete: unknown = 0,
 	waitForCompleteParam = false,
 ) {
-	let instance: unknown,
-		animIdOrName: unknown,
-		scopeId: unknown,
-		waitForComplete: unknown;
+	let instance: AnimationInstance | null = null;
+	let animIdOrName: unknown = 0;
+	let scopeId: unknown = 0;
+	let waitForComplete = false;
+
 	if (isInstance(target)) {
 		instance = target;
 		animIdOrName = animIdOrNameOrScopeId;
 		scopeId = scopeIdOrWaitForComplete ?? 0;
-		waitForComplete = waitForCompleteParam;
+		waitForComplete = Boolean(waitForCompleteParam);
 	} else {
-		instance = this;
+		instance = this as AnimationInstance;
 		animIdOrName = target;
 		scopeId = animIdOrNameOrScopeId ?? 0;
-		waitForComplete = scopeIdOrWaitForComplete ?? false;
+		waitForComplete = Boolean(scopeIdOrWaitForComplete);
 	}
 
 	if (!instance) return;
@@ -109,15 +123,21 @@ export async function playAnimationById(
 			: 0,
 	);
 	const anim = instance.findAnimation
-		? instance.findAnimation(animIdOrName, scopeId)
+		? (
+				instance.findAnimation as (
+					...args: unknown[]
+				) => AnimationDefinition | null
+			)(animIdOrName, scopeId)
 		: findAnimation(instance, animIdOrName, scopeId);
 	if (!anim) return;
 
 	const playFn = instance.playAnimationPatterns
-		? instance.playAnimationPatterns.bind(instance)
-		: playAnimationPatterns.bind(instance);
+		? (instance.playAnimationPatterns as (
+				...args: unknown[]
+			) => Promise<unknown>)
+		: playAnimationPatterns;
 
-	const playPromise = playFn(anim, sid, scopeId);
+	const playPromise = playFn(instance, anim, sid, scopeId);
 	if (waitForComplete) {
 		await playPromise;
 	}
@@ -138,13 +158,16 @@ export async function waitForAnimation(
 	scopeIdParam = 0,
 	timeoutMs = 30000,
 ) {
-	let instance: unknown, animIdOrName: unknown, scopeId: unknown;
+	let instance: AnimationInstance | null = null;
+	let animIdOrName: unknown = 0;
+	let scopeId: unknown = 0;
+
 	if (isInstance(target)) {
 		instance = target;
 		animIdOrName = animIdOrNameOrScopeId;
 		scopeId = scopeIdParam ?? 0;
 	} else {
-		instance = this;
+		instance = this as AnimationInstance;
 		animIdOrName = target;
 		scopeId = animIdOrNameOrScopeId ?? 0;
 	}
@@ -152,18 +175,25 @@ export async function waitForAnimation(
 	if (!instance) return;
 
 	const anim = instance.findAnimation
-		? instance.findAnimation(animIdOrName, scopeId)
+		? (
+				instance.findAnimation as (
+					...args: unknown[]
+				) => AnimationDefinition | null
+			)(animIdOrName, scopeId)
 		: findAnimation(instance, animIdOrName, scopeId);
 	const id = anim ? anim.id : animIdOrName;
 	const currentSurfaceId = instance.manager?.currentSurfaceIdFor
 		? instance.manager.currentSurfaceIdFor(scopeId)
 		: 0;
 	const key = `${scopeId}__${currentSurfaceId}__${id}`;
-	const running = instance._runningAnimations?.get(key);
+	const runningAnims = instance._runningAnimations as
+		| Map<string, Promise<unknown>>
+		| undefined;
+	const running = runningAnims?.get(key);
 	if (running) {
 		await Promise.race([
 			running,
-			new Promise((resolve) => setTimeout(resolve, timeoutMs)),
+			new Promise((resolve) => setTimeout(resolve, Number(timeoutMs))),
 		]);
 	}
 }

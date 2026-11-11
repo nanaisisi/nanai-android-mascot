@@ -1,31 +1,18 @@
 /**
- * @file playback-render.js
+ * @file playback-render.ts
  * @brief SERIKO アニメーションフレーム描画処理モジュール
  */
 
 import { patternSurfaceFile } from "../../bind-menu.js";
 import { getAnimationOffset } from "../animation-options.js";
+import {
+	type AnimationInstance,
+	isInstance,
+} from "../animation-options-parser.js";
 import { createPlaceholderCanvas } from "../scheduler-events.js";
-
-function isInstance(obj: unknown) {
-	return (
-		obj !== null &&
-		typeof obj === "object" &&
-		("manager" in obj ||
-			"_runningAnimations" in obj ||
-			"_exclusiveLocks" in obj ||
-			"activeAnimationTimers" in obj)
-	);
-}
 
 /**
  * 単一アニメーションフレームのサーフィス描画
- * @param {unknown} target
- * @param {unknown} patOrBaseSurfaceId
- * @param {unknown} baseSurfaceIdOrScopeId
- * @param {Record<string, unknown> | undefined} scopeIdOrAnimOptions
- * @param {unknown} animationOptionsParam
- * @returns {boolean}
  */
 export function renderAnimationFrame(
 	this: unknown,
@@ -35,11 +22,12 @@ export function renderAnimationFrame(
 	scopeIdOrAnimOptions: Record<string, unknown> | undefined,
 	animationOptionsParam = {},
 ): boolean {
-	let instance: unknown,
-		pat: unknown,
-		baseSurfaceId: unknown,
-		scopeId: unknown,
-		animationOptions: unknown;
+	let instance: AnimationInstance | null = null;
+	let pat: unknown = null;
+	let baseSurfaceId: unknown = 0;
+	let scopeId: unknown = 0;
+	let animationOptions: unknown = {};
+
 	if (isInstance(target)) {
 		instance = target;
 		pat = patOrBaseSurfaceId;
@@ -47,7 +35,7 @@ export function renderAnimationFrame(
 		scopeId = scopeIdOrAnimOptions;
 		animationOptions = animationOptionsParam;
 	} else {
-		instance = this;
+		instance = this as AnimationInstance;
 		pat = target;
 		baseSurfaceId = patOrBaseSurfaceId;
 		scopeId = baseSurfaceIdOrScopeId;
@@ -55,9 +43,16 @@ export function renderAnimationFrame(
 	}
 
 	const inst = instance || {};
-	const p = pat || {};
+	const p = (pat || {}) as {
+		surfaceId?: number | string;
+		surface?: number | string;
+		type?: string;
+		x?: number;
+		y?: number;
+		[key: string]: unknown;
+	};
 	const opts = animationOptions || {};
-	const sId = scopeId as number;
+	const sId = (scopeId ?? 0) as number;
 	const bSurfId = baseSurfaceId as string | number;
 
 	if (bSurfId === -1 || Number(bSurfId) === -1) {
@@ -84,20 +79,24 @@ export function renderAnimationFrame(
 
 	const getAnimOffset = inst.getAnimationOffset;
 	const offset = getAnimOffset
-		? getAnimOffset.call(inst, p, sId)
-		: getAnimationOffset(inst, p, sId);
+		? ((getAnimOffset as (...args: unknown[]) => unknown).call(inst, p, sId) as
+				| { x?: number; y?: number }
+				| undefined)
+		: (getAnimationOffset(inst, p, sId) as
+				| { x?: number; y?: number }
+				| undefined);
 
 	if (p.type === "async") {
-		createPlaceholderCanvas(surfaceFile || String(surfaceId), 100, 100);
+		createPlaceholderCanvas(100, 100, String(surfaceFile || surfaceId));
 	} else {
 		const renderSurfaceLayer = manager.renderSurfaceLayer;
 		if (renderSurfaceLayer) {
-			renderSurfaceLayer.call(
+			(renderSurfaceLayer as (...args: unknown[]) => unknown).call(
 				manager,
 				surfaceId,
 				surfaceFile,
-				(p.x || 0) + (offset?.x || 0),
-				(p.y || 0) + (offset?.y || 0),
+				Number(p.x || 0) + Number(offset?.x || 0),
+				Number(p.y || 0) + Number(offset?.y || 0),
 				opts,
 			);
 		}

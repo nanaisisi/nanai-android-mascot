@@ -11,6 +11,7 @@ import {
 } from "./animation-options-parser.js";
 
 export {
+	AnimationInstance,
 	findAnimation,
 	isBlockedByExclusive,
 	isInstance,

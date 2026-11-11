@@ -13,6 +13,8 @@ export interface FrameStepEventParams {
 	isBackground?: boolean;
 	offsetX?: number;
 	offsetY?: number;
+	patternIndex?: number;
+	[key: string]: unknown;
 }
 
 /**

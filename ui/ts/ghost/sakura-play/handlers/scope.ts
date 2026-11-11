@@ -9,7 +9,7 @@ export function handleScope(
 	player: import("../controller.js").SakuraPlaybackController,
 	app: import("../../../../main.js").NanaiAndroidMascotApp,
 	token: import("../../parser/ast-types.js").SakuraAstNode,
-	context: any,
+	context: unknown,
 ) {
 	const {
 		sakuraText,
@@ -66,7 +66,7 @@ export function handleBalloon(
 	player: import("../controller.js").SakuraPlaybackController,
 	_app: import("../../../../main.js").NanaiAndroidMascotApp,
 	token: import("../../parser/ast-types.js").SakuraAstNode,
-	context: any,
+	context: unknown,
 ) {
 	const { sakuraDisplay, keroDisplay } = context;
 	const balloonDisplay =
@@ -82,7 +82,7 @@ export function handleInlineBitmap(
 	_player: import("../controller.js").SakuraPlaybackController,
 	app: import("../../../../main.js").NanaiAndroidMascotApp,
 	token: import("../../parser/ast-types.js").SakuraAstNode,
-	context: any,
+	context: unknown,
 ) {
 	const { currentBalloonText, scheduleDesktopBalloonSync } = context;
 

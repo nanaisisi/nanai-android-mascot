@@ -1,39 +1,51 @@
-// biome-ignore-all lint/suspicious/noExplicitAny: legacy handler parameters
 /**
  * @file animation.ts
  * @brief さくらスクリプト再生時のサーフィス変更(\s)、SERIKOアニメーション再生・待機ハンドラ
  */
 
+import type { NanaiAndroidMascotApp } from "../../../../main.js";
+import type { SakuraAstNode } from "../../parser/ast-types.js";
+import type { SakuraPlaybackController } from "../controller.js";
+
 export function handleSurface(
-	player: any,
-	app: import("../../../../main.js").NanaiAndroidMascotApp,
-	token: any,
-	_context?: any,
+	player: SakuraPlaybackController,
+	app: NanaiAndroidMascotApp,
+	token: SakuraAstNode,
+	_context?: unknown,
 ) {
-	app.ghostController.updateSurface(token.value, player.currentScope);
+	if (token.value !== undefined && token.value !== null) {
+		app.ghostController.updateSurface(
+			token.value as number | string,
+			player.currentScope,
+		);
+	}
 }
 
 export async function handleAnimation(
-	player: any,
-	app: import("../../../../main.js").NanaiAndroidMascotApp,
-	token: any,
-	_context?: any,
+	player: SakuraPlaybackController,
+	app: NanaiAndroidMascotApp,
+	token: SakuraAstNode,
+	_context?: unknown,
 ) {
-	await app.surfaceManager?.playAnimationById(
-		token.animId,
-		player.currentScope,
-		token.wait,
-	);
+	if (token.animId !== undefined) {
+		await app.surfaceManager?.playAnimationById(
+			token.animId,
+			player.currentScope,
+			Boolean(token.wait),
+		);
+	}
 }
 
 export async function handleWaitAnimation(
-	player: any,
-	app: import("../../../../main.js").NanaiAndroidMascotApp,
-	token: any,
-	_context?: any,
+	player: SakuraPlaybackController,
+	app: NanaiAndroidMascotApp,
+	token: SakuraAstNode,
+	_context?: unknown,
 ) {
-	await app.surfaceManager?.waitForAnimation(
-		token.animId,
-		player.currentScope,
-	);
+	if (token.animId !== undefined) {
+		await app.surfaceManager?.waitForAnimation(
+			token.animId,
+			player.currentScope,
+		);
+	}
 }

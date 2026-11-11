@@ -25,8 +25,19 @@ export interface SakuraAstNode {
 	id?: string;
 	text?: string;
 	args?: string[];
+	value?: number | string | unknown;
+	animId?: number | string;
+	wait?: boolean;
+	path?: string;
+	mode?: string;
+	x?: number;
+	y?: number;
+	timeout?: number;
+	noClear?: boolean | ((noClear: unknown) => unknown);
+	scopes?: number[] | ((scopes: unknown) => unknown);
 	token?: SakuraToken | unknown;
 	children?: SakuraAstNode[];
+	[key: string]: unknown;
 }
 
 export function traverseAst(

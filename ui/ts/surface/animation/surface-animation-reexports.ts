@@ -1,7 +1,17 @@
+/**
+ * @file surface-animation-reexports.ts
+ * @brief SERIKO animation exports re-mapping
+ */
+
 export function getSurfaceAnimationManagerExports() {
 	return {};
 }
 
+export {
+	buildAnimationTimeline,
+	parseInterval,
+	resolvePatternWait,
+} from "../animation-parser.js";
 export {
 	clearPausedAnimations,
 	findAnimation,
@@ -17,7 +27,7 @@ export {
 	resumeAnimation,
 	setAnimationOffset,
 	stopAnimation,
-} from "./animation/animation-options.js";
+} from "./animation-options.js";
 export {
 	_applyAnimationFrame,
 	_playAnimationPatterns,
@@ -31,14 +41,9 @@ export {
 	playAnimationPatterns,
 	renderAnimationFrame,
 	waitForAnimation,
-} from "./animation/animation-playback.js";
+} from "./animation-playback.js";
 export {
 	AnimationScheduler,
 	createPlaceholderCanvas,
 	FrameStepEvent,
-} from "./animation/scheduler-events.js";
-export {
-	buildAnimationTimeline,
-	parseInterval,
-	resolvePatternWait,
-} from "./animation-parser.js";
+} from "./scheduler-events.js";

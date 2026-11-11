@@ -1,7 +1,19 @@
 /**
- * @file scheduler-events.js
+ * @file scheduler-events.ts
  * @brief SERIKO アニメーションスケジューラおよびステップイベント
  */
+
+export interface FrameStepEventParams {
+	scopeId: unknown;
+	baseSurfaceId: unknown;
+	animationId: unknown;
+	pattern: unknown;
+	elapsedMs: unknown;
+	isFinished: unknown;
+	isBackground?: boolean;
+	offsetX?: number;
+	offsetY?: number;
+}
 
 /**
  * SERIKO フレーム更新ステップイベント (Slot-08 外部インターフェース規約)
@@ -16,18 +28,7 @@ export class FrameStepEvent {
 	isBackground: boolean;
 	offsetX: number;
 	offsetY: number;
-	/**
-	 * @param {object} params
-	 * @param {number} params.scopeId
-	 * @param {number|string} params.baseSurfaceId
-	 * @param {number|string} params.animationId
-	 * @param {object} params.pattern
-	 * @param {number} params.elapsedMs
-	 * @param {boolean} params.isFinished
-	 * @param {boolean} [params.isBackground=false]
-	 * @param {number} [params.offsetX=0]
-	 * @param {number} [params.offsetY=0]
-	 */
+
 	constructor({
 		scopeId,
 		baseSurfaceId,
@@ -38,7 +39,7 @@ export class FrameStepEvent {
 		isBackground = false,
 		offsetX = 0,
 		offsetY = 0,
-	}) {
+	}: FrameStepEventParams) {
 		this.scopeId = scopeId;
 		this.baseSurfaceId = baseSurfaceId;
 		this.animationId = animationId;
@@ -56,22 +57,19 @@ export class FrameStepEvent {
  */
 export class AnimationScheduler {
 	animationManager: unknown;
-	listeners: Set<unknown>;
-	/**
-	 * @param {import('../surface-animation-manager.js').SurfaceAnimationManager} animationManager
-	 */
-	constructor(animationManager: this) {
+	listeners: Set<(event: FrameStepEvent) => void>;
+
+	constructor(animationManager: unknown) {
 		this.animationManager = animationManager;
-		/** @type {Set<(event: FrameStepEvent) => void>} */
 		this.listeners = new Set();
 	}
 
-	onFrameStep(listener: unknown) {
+	onFrameStep(listener: (event: FrameStepEvent) => void) {
 		this.listeners.add(listener);
 		return () => this.listeners.delete(listener);
 	}
 
-	notifyFrameStep(event: unknown) {
+	notifyFrameStep(event: FrameStepEvent) {
 		for (const listener of this.listeners) {
 			try {
 				listener(event);

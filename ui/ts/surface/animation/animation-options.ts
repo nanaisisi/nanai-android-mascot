@@ -1,10 +1,14 @@
 /**
- * @file animation-options.js
+ * @file animation-options.ts
  * @brief SERIKO アニメーションオプション解析・排他制御・検索・操作ユーティリティ
  */
 
 import { surfaceAnimationTimers } from "../surface-animation-timers.js";
-import { findAnimation, isInstance } from "./animation-options-parser.js";
+import {
+	type AnimationInstance,
+	findAnimation,
+	isInstance,
+} from "./animation-options-parser.js";
 
 export {
 	findAnimation,
@@ -22,7 +26,10 @@ export function isAnimationRunning(
 	scopeIdOrAnimId: unknown = 0,
 	animIdOrNameParam: unknown = undefined,
 ) {
-	let instance: unknown, scopeId: unknown, animIdOrName: unknown;
+	let instance: AnimationInstance | null = null;
+	let scopeId: unknown = 0;
+	let animIdOrName: unknown = 0;
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
@@ -35,14 +42,19 @@ export function isAnimationRunning(
 		return false;
 	}
 
-	if (!instance._runningAnimations) return false;
+	const runningAnims = instance._runningAnimations as
+		| Map<string, unknown>
+		| undefined;
+	if (!runningAnims) return false;
+	const stoppedAnims = instance._stoppedAnimations as Set<string> | undefined;
+
 	const anim = findAnimation(instance, animIdOrName, scopeId);
 	const id = anim ? anim.id : animIdOrName;
 	const prefix = `${scopeId}__`;
-	for (const [key] of instance._runningAnimations.entries()) {
+	for (const [key] of runningAnims.entries()) {
 		if (key.startsWith(prefix)) {
 			const parts = key.split("__");
-			if (parts[2] === String(id) && !instance._stoppedAnimations?.has(key)) {
+			if (parts[2] === String(id) && !stoppedAnims?.has(key)) {
 				return true;
 			}
 		}
@@ -59,7 +71,10 @@ export function stopAnimation(
 	scopeIdOrAnimId: unknown = 0,
 	animIdOrNameParam: unknown = undefined,
 ) {
-	let instance: unknown, scopeId: unknown, animIdOrName: unknown;
+	let instance: AnimationInstance | null = null;
+	let scopeId: unknown = 0;
+	let animIdOrName: unknown = 0;
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
@@ -72,15 +87,20 @@ export function stopAnimation(
 		return;
 	}
 
-	if (!instance._runningAnimations) return;
+	const runningAnims = instance._runningAnimations as
+		| Map<string, unknown>
+		| undefined;
+	if (!runningAnims) return;
+	const stoppedAnims = instance._stoppedAnimations as Set<string> | undefined;
+
 	const anim = findAnimation(instance, animIdOrName, scopeId);
 	const id = anim ? anim.id : animIdOrName;
 	const prefix = `${scopeId}__`;
-	for (const key of instance._runningAnimations.keys()) {
+	for (const key of runningAnims.keys()) {
 		if (key.startsWith(prefix)) {
 			const parts = key.split("__");
 			if (parts[2] === String(id)) {
-				instance._stoppedAnimations?.add(key);
+				stoppedAnims?.add(key);
 			}
 		}
 	}
@@ -97,11 +117,12 @@ export function setAnimationOffset(
 	xOrY = 0,
 	yParam = 0,
 ) {
-	let instance: unknown,
-		scopeId: unknown,
-		animIdOrName: unknown,
-		x: unknown,
-		y: unknown;
+	let instance: AnimationInstance | null = null;
+	let scopeId: unknown = 0;
+	let animIdOrName: unknown = 0;
+	let x: unknown = 0;
+	let y: unknown = 0;
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
@@ -118,9 +139,12 @@ export function setAnimationOffset(
 		return;
 	}
 
+	const offsets = instance._animationOffsets as
+		| Map<string, { x: unknown; y: unknown }>
+		| undefined;
 	const anim = findAnimation(instance, animIdOrName, scopeId);
 	const id = anim ? anim.id : animIdOrName;
-	instance._animationOffsets?.set(`${scopeId}__${id}`, { x, y });
+	offsets?.set(`${scopeId}__${id}`, { x, y });
 }
 
 /**
@@ -132,7 +156,10 @@ export function getAnimationOffset(
 	scopeIdOrAnimId: unknown = 0,
 	animIdOrNameParam: unknown = undefined,
 ) {
-	let instance: unknown, scopeId: unknown, animIdOrName: unknown;
+	let instance: AnimationInstance | null = null;
+	let scopeId: unknown = 0;
+	let animIdOrName: unknown = 0;
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
@@ -145,9 +172,12 @@ export function getAnimationOffset(
 		return { x: 0, y: 0 };
 	}
 
+	const offsets = instance._animationOffsets as
+		| Map<string, { x: unknown; y: unknown }>
+		| undefined;
 	const anim = findAnimation(instance, animIdOrName, scopeId);
 	const id = anim ? anim.id : animIdOrName;
-	return instance._animationOffsets?.get(`${scopeId}__${id}`) || { x: 0, y: 0 };
+	return offsets?.get(`${scopeId}__${id}`) || { x: 0, y: 0 };
 }
 
 export function pauseAnimation(
@@ -156,7 +186,10 @@ export function pauseAnimation(
 	scopeIdOrAnimId: unknown = 0,
 	animIdOrNameParam: unknown = undefined,
 ) {
-	let instance: unknown, scopeId: unknown, animIdOrName: unknown;
+	let instance: AnimationInstance | null = null;
+	let scopeId: unknown = 0;
+	let animIdOrName: unknown = 0;
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
@@ -171,7 +204,11 @@ export function pauseAnimation(
 
 	const anim = findAnimation(instance, animIdOrName, scopeId);
 	const id = anim ? anim.id : animIdOrName;
-	surfaceAnimationTimers.pauseAnimation.call(instance, scopeId, id);
+	surfaceAnimationTimers.pauseAnimation.call(
+		instance as unknown as Record<string, unknown>,
+		Number(scopeId),
+		Number(id),
+	);
 }
 
 export function resumeAnimation(
@@ -180,7 +217,10 @@ export function resumeAnimation(
 	scopeIdOrAnimId: unknown = 0,
 	animIdOrNameParam: unknown = undefined,
 ) {
-	let instance: unknown, scopeId: unknown, animIdOrName: unknown;
+	let instance: AnimationInstance | null = null;
+	let scopeId: unknown = 0;
+	let animIdOrName: unknown = 0;
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
@@ -195,7 +235,11 @@ export function resumeAnimation(
 
 	const anim = findAnimation(instance, animIdOrName, scopeId);
 	const id = anim ? anim.id : animIdOrName;
-	surfaceAnimationTimers.resumeAnimation.call(instance, scopeId, id);
+	surfaceAnimationTimers.resumeAnimation.call(
+		instance as unknown as Record<string, unknown>,
+		Number(scopeId),
+		Number(id),
+	);
 }
 
 export function isAnimationPaused(
@@ -204,7 +248,10 @@ export function isAnimationPaused(
 	scopeIdOrAnimId: unknown = 0,
 	animIdOrNameParam: unknown = undefined,
 ) {
-	let instance: unknown, scopeId: unknown, animIdOrName: unknown;
+	let instance: AnimationInstance | null = null;
+	let scopeId: unknown = 0;
+	let animIdOrName: unknown = 0;
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
@@ -219,7 +266,11 @@ export function isAnimationPaused(
 
 	const anim = findAnimation(instance, animIdOrName, scopeId);
 	const id = anim ? anim.id : animIdOrName;
-	return surfaceAnimationTimers.isAnimationPaused.call(instance, scopeId, id);
+	return surfaceAnimationTimers.isAnimationPaused.call(
+		instance as unknown as Record<string, unknown>,
+		Number(scopeId),
+		Number(id),
+	);
 }
 
 export function clearPausedAnimations(
@@ -227,7 +278,9 @@ export function clearPausedAnimations(
 	target: unknown = 0,
 	scopeIdParam: unknown = 0,
 ) {
-	let instance: unknown, scopeId: unknown;
+	let instance: AnimationInstance | null = null;
+	let scopeId: unknown = 0;
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
@@ -238,7 +291,10 @@ export function clearPausedAnimations(
 		return;
 	}
 
-	surfaceAnimationTimers.clearPausedAnimations.call(instance, scopeId);
+	surfaceAnimationTimers.clearPausedAnimations.call(
+		instance as unknown as Record<string, unknown>,
+		Number(scopeId),
+	);
 }
 
 /**
@@ -249,7 +305,9 @@ export function getActiveAnimationCount(
 	target: unknown = 0,
 	scopeIdParam: unknown = 0,
 ) {
-	let instance: unknown, scopeId: unknown;
+	let instance: AnimationInstance | null = null;
+	let scopeId: unknown = 0;
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
@@ -260,11 +318,16 @@ export function getActiveAnimationCount(
 		return 0;
 	}
 
-	if (!instance._runningAnimations) return 0;
+	const runningAnims = instance._runningAnimations as
+		| Map<string, unknown>
+		| undefined;
+	if (!runningAnims) return 0;
+	const stoppedAnims = instance._stoppedAnimations as Set<string> | undefined;
+
 	const prefix = `${scopeId}__`;
 	let count = 0;
-	for (const key of instance._runningAnimations.keys()) {
-		if (key.startsWith(prefix) && !instance._stoppedAnimations?.has(key)) {
+	for (const key of runningAnims.keys()) {
+		if (key.startsWith(prefix) && !stoppedAnims?.has(key)) {
 			count++;
 		}
 	}
@@ -279,7 +342,9 @@ export function getActiveAnimations(
 	target: unknown = 0,
 	scopeIdParam: unknown = 0,
 ) {
-	let instance: unknown, scopeId: unknown;
+	let instance: AnimationInstance | null = null;
+	let scopeId: unknown = 0;
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;
@@ -290,11 +355,16 @@ export function getActiveAnimations(
 		return [];
 	}
 
-	if (!instance._runningAnimations) return [];
+	const runningAnims = instance._runningAnimations as
+		| Map<string, unknown>
+		| undefined;
+	if (!runningAnims) return [];
+	const stoppedAnims = instance._stoppedAnimations as Set<string> | undefined;
+
 	const prefix = `${scopeId}__`;
 	const activeList = [];
-	for (const key of instance._runningAnimations.keys()) {
-		if (key.startsWith(prefix) && !instance._stoppedAnimations?.has(key)) {
+	for (const key of runningAnims.keys()) {
+		if (key.startsWith(prefix) && !stoppedAnims?.has(key)) {
 			const parts = key.split("__");
 			const animId = parts[2];
 			const anim = findAnimation(instance, animId, scopeId);
@@ -314,7 +384,9 @@ export function getActiveCollisions(
 	target: unknown = 0,
 	scopeIdParam: unknown = 0,
 ) {
-	let instance: unknown, scopeId: unknown;
+	let instance: AnimationInstance | null = null;
+	let scopeId: unknown = 0;
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdParam ?? 0;

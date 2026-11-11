@@ -167,7 +167,10 @@ export function rustCommandsToTokens(
 				});
 				break;
 			case "Command":
-				tokens.push({ type: "command", args: cmd.payload?.args as string[] | undefined });
+				tokens.push({
+					type: "command",
+					args: cmd.payload?.args as string[] | undefined,
+				});
 				break;
 			case "PostMessage":
 				tokens.push({

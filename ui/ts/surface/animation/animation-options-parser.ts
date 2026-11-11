@@ -1,7 +1,8 @@
 /**
- * SERIKO アニメーションオプション文字列のパース (\![anim,option,ID,...])
- * @param {string|string[]|Record<string, unknown>|null} [optionParam=null]
+ * @file animation-options-parser.ts
+ * @brief SERIKO アニメーションオプション文字列パースおよびインスタンス・排他判定ユーティリティ
  */
+
 export function parseAnimationOptions(optionParam: unknown = null) {
 	if (
 		optionParam &&
@@ -49,7 +50,29 @@ export function parseAnimationOptions(optionParam: unknown = null) {
 	};
 }
 
-export function isInstance(obj: unknown) {
+export interface AnimationInstance {
+	manager?: {
+		compositeCanvas?: unknown;
+		renderSurfaceLayer?: (...args: unknown[]) => unknown;
+		currentSurfaceIdFor?: (scopeId: unknown) => number | string;
+		animations?: Record<
+			string,
+			Array<{ id: number; name?: unknown; [key: string]: unknown }>
+		>;
+		[key: string]: unknown;
+	};
+	_runningAnimations?: unknown;
+	_stoppedAnimations?: Set<string>;
+	resolvePatternWait?: (wait: unknown) => number;
+	activeAnimationTimers?: Map<unknown, unknown>;
+	_applyAnimationFrame?: (...args: unknown[]) => unknown;
+	_animationOffsets?: Map<string, { x: unknown; y: unknown }>;
+	getAnimationOffset?: (...args: unknown[]) => unknown;
+	_exclusiveLocks?: Map<unknown, { targets?: Set<number>; animId?: unknown }>;
+	[key: string]: unknown;
+}
+
+export function isInstance(obj: unknown): obj is AnimationInstance {
 	return (
 		obj !== null &&
 		typeof obj === "object" &&
@@ -69,7 +92,10 @@ export function isBlockedByExclusive(
 	scopeIdOrAnimId: unknown = 0,
 	animIdParam: unknown = undefined,
 ) {
-	let instance: unknown, scopeId: unknown, animId: unknown;
+	let instance: AnimationInstance | null = null;
+	let scopeId: unknown = 0;
+	let animId: unknown ;
+
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;
@@ -100,7 +126,10 @@ export function findAnimation(
 	animIdOrNameOrScopeId: unknown = 0,
 	scopeIdParam: unknown = 0,
 ) {
-	let instance: unknown, animIdOrName: unknown, scopeId: unknown;
+	let instance: AnimationInstance | null = null;
+	let animIdOrName: unknown = 0;
+	let scopeId: unknown = 0;
+
 	if (isInstance(target)) {
 		instance = target;
 		animIdOrName = animIdOrNameOrScopeId;
@@ -127,7 +156,7 @@ export function findAnimation(
 	const targetStr = String(animIdOrName).trim().toLowerCase();
 	const targetNum = Number.parseInt(targetStr, 10);
 	return (
-		animList.find((a: { id: number; name: unknown }) => {
+		animList.find((a) => {
 			if (!Number.isNaN(targetNum) && a.id === targetNum) return true;
 			if (String(a.id).toLowerCase() === targetStr) return true;
 			if (a.name && String(a.name).trim().toLowerCase() === targetStr)

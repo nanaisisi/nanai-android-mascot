@@ -33,6 +33,22 @@ export const surfaceDressupMethods = {
 		}
 
 		this.dressupState.set(key, newStatus);
+
+		// Invalidate cache for the scope
+		if (
+			(
+				this as unknown as {
+					_activeBindAnimationIdsCache?: Map<number, number[]>;
+				}
+			)._activeBindAnimationIdsCache
+		) {
+			(
+				this as unknown as {
+					_activeBindAnimationIdsCache: Map<number, number[]>;
+				}
+			)._activeBindAnimationIdsCache.delete(scopeId);
+		}
+
 		console.log(
 			`👗 着せ替え更新: scope=${scopeId}, category=${category}, part=${part}, state=${newStatus}`,
 		);
@@ -128,15 +144,51 @@ export const surfaceDressupMethods = {
 	},
 
 	activeBindAnimationIds(this: unknown, scopeId: number = 0): number[] {
-		if (!this.shellManifest) return [];
-		return bindGroupsForScope(this.shellManifest, scopeId)
-			.filter((group: unknown) =>
-				this.dressupState.get(dressupKey(scopeId, group.category, group.part)),
-			)
-			.flatMap((group: unknown) =>
-				bindAnimationIds(group.number, group.add_ids),
-			)
+		interface SurfaceDressupContext {
+			shellManifest: unknown;
+			dressupState: Map<string, boolean>;
+			dressupStateVersion: number;
+			_activeBindAnimationIdsCache?: Map<
+				number,
+				{ version: number; ids: number[] }
+			>;
+		}
+
+		const self = this as unknown as SurfaceDressupContext;
+		if (!self.shellManifest) return [];
+
+		if (!self._activeBindAnimationIdsCache) {
+			self._activeBindAnimationIdsCache = new Map<
+				number,
+				{ version: number; ids: number[] }
+			>();
+		}
+
+		const cache = self._activeBindAnimationIdsCache;
+		const cached = cache.get(scopeId);
+		if (cached && cached.version === self.dressupStateVersion) {
+			return cached.ids;
+		}
+
+		type BindGroup = {
+			category: string;
+			part: string;
+			number: number;
+			add_ids: number[];
+		};
+		const ids = bindGroupsForScope(self.shellManifest, scopeId)
+			.filter((group: unknown) => {
+				const g = group as BindGroup;
+				return self.dressupState.get(dressupKey(scopeId, g.category, g.part));
+			})
+			.flatMap((group: unknown) => {
+				const g = group as BindGroup;
+				return bindAnimationIds(g.number, g.add_ids);
+			})
 			.sort((a: number, b: number) => a - b);
+
+		cache.set(scopeId, { version: self.dressupStateVersion, ids });
+		return ids;
 	},
 
 	isBindAnimationActive(

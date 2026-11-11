@@ -19,6 +19,7 @@ export const ANDROID_EVENTS = {
 	BACK_BUTTON: "nam:android:back-button",
 	DOCK_CHANGED: "nam:android:dock-changed",
 	DOCK_OPTIONS_CHANGED: "nam:android:dock-options-changed",
+	PLATFORM_MODE_DETECTED: "nam:android:platform-mode-detected",
 };
 
 /**

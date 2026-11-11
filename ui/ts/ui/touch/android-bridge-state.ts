@@ -4,8 +4,13 @@
  */
 
 import type { DockManager } from "./bridge/dock-manager.js";
-import { ANDROID_LIFECYCLE_STATES, isAndroidPlatform } from "./bridge/index.js";
-import type { OverlayManager } from "./bridge/overlay-manager.js";
+import {
+	ANDROID_LIFECYCLE_STATES,
+	detectPlatformMode,
+	isAndroidPlatform,
+	isNativeAndroidPlatform,
+} from "./bridge/index.js";
+import type { OverlayManager } from "./bridge/overlay.js";
 
 export function checkIsThrottled(lifecycleState: string): boolean {
 	return (
@@ -21,6 +26,8 @@ export function getAndroidBridgeState(
 ) {
 	return {
 		isAndroid: isAndroidPlatform(),
+		isNativeAndroid: isNativeAndroidPlatform(),
+		platformMode: detectPlatformMode(),
 		isOverlayEnabled: overlayManager.isOverlayEnabled,
 		isForegroundServiceActive: overlayManager.isForegroundServiceActive,
 		lifecycleState,

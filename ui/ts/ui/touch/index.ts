@@ -8,10 +8,13 @@ export {
 	ANDROID_EVENTS,
 	ANDROID_LIFECYCLE_STATES,
 	AndroidBridge,
+	applyPlatformUiClasses,
 	BackButtonManager,
 	BridgeEventEmitter,
 	DockManager,
+	detectPlatformMode,
 	OverlayManager,
+	type PlatformMode,
 } from "./android-bridge.js";
 export {
 	TOUCH_GESTURE_TYPES,

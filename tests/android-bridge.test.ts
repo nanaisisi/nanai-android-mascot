@@ -12,3 +12,4 @@ import "./android-bridge/cycle6-extensions.test.js";
 import "./android-bridge/cycle8-dock-dom.test.js";
 import "./android-bridge/cycle9-resilience.test.js";
 import "./android-bridge/cycle10-dock-options.test.js";
+import "./android-bridge/cycle11-platform-ui.test.js";

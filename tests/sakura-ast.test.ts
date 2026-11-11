@@ -190,20 +190,33 @@ test("mapAstCommands, extractAstText, and getAstDiagnostics provide Cycle 10 tra
 	assert.equal(diag.anchorCount, 1);
 
 	// 3. mapAstCommands (Double all wait times)
-	const mappedAst = mapAstCommands(ast, (token: any) => {
+	const mappedAst = mapAstCommands(ast, (tok) => {
+		const token = tok as { type?: string; value?: number };
 		if (token?.type === "wait") {
 			return { ...token, value: (token.value || 0) * 2 };
 		}
 		return token;
 	});
 
-	const allMappedTokens: any[] = [];
-	const extractCommands = (node: any) => {
+	const allMappedTokens: Array<{ type?: string; value?: number }> = [];
+	const extractCommands = (node: {
+		nodeType?: string;
+		token?: unknown;
+		children?: unknown[];
+	}) => {
 		if (node.nodeType === "command" && node.token) {
-			allMappedTokens.push(node.token);
+			allMappedTokens.push(node.token as { type?: string; value?: number });
 		}
-		if (node.children) {
-			node.children.forEach(extractCommands);
+		if (Array.isArray(node.children)) {
+			for (const child of node.children) {
+				extractCommands(
+					child as {
+						nodeType?: string;
+						token?: unknown;
+						children?: unknown[];
+					},
+				);
+			}
 		}
 	};
 	extractCommands(mappedAst);

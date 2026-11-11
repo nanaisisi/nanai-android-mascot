@@ -35,14 +35,30 @@ pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error
         .on_tray_icon_event(move |tray, event| {
             match event {
                 TrayIconEvent::DoubleClick { .. } => {
-                    log_tray("🖱️⚙️ システムトレイアイコンがダブルクリックされました -> ディスプレイを復元 (Restore)");
                     let app_handle = tray.app_handle().clone();
                     let state = app_handle.state::<AppState>();
-                    *state.is_minimized.lock() = false;
+                    let mut is_min = state.is_minimized.lock();
+                    let next_min = !*is_min;
+                    *is_min = next_min;
+                    drop(is_min);
+
+                    log_tray(&format!("🖱️⚙️ システムトレイアイコンがダブルクリックされました -> トグル切替 (next_min={})", next_min));
                     tauri::async_runtime::spawn(async move {
                         let _ = crate::commands::window::hide_menu_window(app_handle.clone()).await;
-                        let _ = crate::commands::window::show_character_window(app_handle.clone(), 0, None, None, None, None).await;
-                        let _ = crate::commands::window::show_character_window(app_handle.clone(), 1, None, None, None, None).await;
+                        let _ = crate::commands::window::hide_submenu_window(app_handle.clone()).await;
+                        if next_min {
+                            log_tray("📉 トレイダブルクリック: 非表示化（アイコン化）を実行");
+                            if let Some(win0) = app_handle.get_webview_window("subchar_window_0") {
+                                let _ = win0.hide();
+                            }
+                            if let Some(win1) = app_handle.get_webview_window("subchar_window_1") {
+                                let _ = win1.hide();
+                            }
+                        } else {
+                            log_tray("📈 トレイダブルクリック: ディスプレイを復元 (Restore)");
+                            let _ = crate::commands::window::show_character_window(app_handle.clone(), 0, None, None, None, None).await;
+                            let _ = crate::commands::window::show_character_window(app_handle.clone(), 1, None, None, None, None).await;
+                        }
                     });
                 }
                 TrayIconEvent::Click { button, button_state, rect, .. } => {

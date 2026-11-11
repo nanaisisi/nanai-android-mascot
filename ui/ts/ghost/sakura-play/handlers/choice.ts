@@ -5,10 +5,10 @@
  */
 
 export function handleChoice(
-	player: import("../controller.js").SakuraPlayController,
-	app: import("../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast.js").ASTNode,
-	context: import("../sync-object.js").SakuraPlayContext,
+	player: import("../controller.js").SakuraPlaybackController,
+	app: import("../../../../main.js").NanaiAndroidMascotApp,
+	token: import("../../parser/ast-types.js").SakuraAstNode,
+	context: any,
 ) {
 	const { currentBalloonText, flushDesktopBalloon } = context;
 
@@ -77,10 +77,10 @@ export function handleChoice(
 }
 
 export function handleAnchorBegin(
-	_player: import("../controller.js").SakuraPlayController,
-	app: import("../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast.js").ASTNode,
-	context: import("../sync-object.js").SakuraPlayContext,
+	_player: import("../controller.js").SakuraPlaybackController,
+	app: import("../../../../main.js").NanaiAndroidMascotApp,
+	token: import("../../parser/ast-types.js").SakuraAstNode,
+	context: any,
 ) {
 	const { currentBalloonText, scheduleDesktopBalloonSync } = context;
 
@@ -141,19 +141,19 @@ export function handleAnchorBegin(
 }
 
 export function handleAnchorEnd(
-	_player: import("../controller.js").SakuraPlayController,
-	_app: import("../../../main.js").NanaiAndroidMascotApp,
-	_token: import("../../parser/ast.js").ASTNode,
-	context: import("../sync-object.js").SakuraPlayContext,
+	_player: import("../controller.js").SakuraPlaybackController,
+	_app: import("../../../../main.js").NanaiAndroidMascotApp,
+	_token: import("../../parser/ast-types.js").SakuraAstNode,
+	context: any,
 ) {
 	context.currentAnchor = null;
 }
 
 export function handleChoiceScopeBegin(
-	player: import("../controller.js").SakuraPlayController,
-	app: import("../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast.js").ASTNode,
-	context: import("../sync-object.js").SakuraPlayContext,
+	player: import("../controller.js").SakuraPlaybackController,
+	app: import("../../../../main.js").NanaiAndroidMascotApp,
+	token: import("../../parser/ast-types.js").SakuraAstNode,
+	context: any,
 ) {
 	const {
 		currentBalloonText,
@@ -234,10 +234,10 @@ export function handleChoiceScopeBegin(
 }
 
 export function handleChoiceScopeEnd(
-	_player: import("../controller.js").SakuraPlayController,
-	_app: import("../../../main.js").NanaiAndroidMascotApp,
-	_token: import("../../parser/ast.js").ASTNode,
-	context: import("../sync-object.js").SakuraPlayContext,
+	_player: import("../controller.js").SakuraPlaybackController,
+	_app: import("../../../../main.js").NanaiAndroidMascotApp,
+	_token: import("../../parser/ast-types.js").SakuraAstNode,
+	context: any,
 ) {
 	if (context.currentAnchor === context.currentChoiceScope) {
 		context.currentAnchor = null;

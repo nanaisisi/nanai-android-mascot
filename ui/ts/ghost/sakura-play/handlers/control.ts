@@ -5,10 +5,10 @@
  */
 
 export async function handlePause(
-	player: import("../controller.js").SakuraPlayController,
-	_app: import("../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast.js").ASTNode,
-	context: import("../sync-object.js").SakuraPlayContext,
+	player: import("../controller.js").SakuraPlaybackController,
+	_app: import("../../../../main.js").NanaiAndroidMascotApp,
+	token: import("../../parser/ast-types.js").SakuraAstNode,
+	context: any,
 ) {
 	const {
 		sakuraText,
@@ -53,10 +53,10 @@ export async function handlePause(
 }
 
 export function handleQuickToggle(
-	player: import("../controller.js").SakuraPlayController,
-	_app: import("../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast.js").ASTNode,
-	context: import("../sync-object.js").SakuraPlayContext,
+	player: import("../controller.js").SakuraPlaybackController,
+	_app: import("../../../../main.js").NanaiAndroidMascotApp,
+	token: import("../../parser/ast-types.js").SakuraAstNode,
+	context: any,
 ) {
 	if (typeof token.value === "boolean") {
 		context.isQuickMode = token.value;
@@ -67,10 +67,10 @@ export function handleQuickToggle(
 }
 
 export async function handleWait(
-	player: import("../controller.js").SakuraPlayController,
-	_app: import("../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast.js").ASTNode,
-	context: import("../sync-object.js").SakuraPlayContext,
+	player: import("../controller.js").SakuraPlaybackController,
+	_app: import("../../../../main.js").NanaiAndroidMascotApp,
+	token: import("../../parser/ast-types.js").SakuraAstNode,
+	context: any,
 ) {
 	player.playbackController?.notifyWait?.(token.value);
 	if (!player.skipRequested && !context.isQuickMode) {
@@ -88,10 +88,10 @@ export async function handleWait(
 }
 
 export function handleTimeout(
-	player: import("../controller.js").SakuraPlayController,
-	_app: import("../../../main.js").NanaiAndroidMascotApp,
-	_token: import("../../parser/ast.js").ASTNode,
-	_context: import("../sync-object.js").SakuraPlayContext,
+	player: import("../controller.js").SakuraPlaybackController,
+	_app: import("../../../../main.js").NanaiAndroidMascotApp,
+	_token: import("../../parser/ast-types.js").SakuraAstNode,
+	_context: any,
 ) {
 	if (player.playbackController) {
 		player.playbackController.timeCritical = true;
@@ -100,37 +100,37 @@ export function handleTimeout(
 }
 
 export function handleChoiceTimeout(
-	player: import("../controller.js").SakuraPlayController,
-	_app: import("../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast.js").ASTNode,
-	_context: import("../sync-object.js").SakuraPlayContext,
+	player: import("../controller.js").SakuraPlaybackController,
+	_app: import("../../../../main.js").NanaiAndroidMascotApp,
+	token: import("../../parser/ast-types.js").SakuraAstNode,
+	_context: any,
 ) {
 	player.choiceTimeout = token.timeout;
 }
 
 export function handleBalloonTimeout(
-	player: import("../controller.js").SakuraPlayController,
-	_app: import("../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast.js").ASTNode,
-	_context: import("../sync-object.js").SakuraPlayContext,
+	player: import("../controller.js").SakuraPlaybackController,
+	_app: import("../../../../main.js").NanaiAndroidMascotApp,
+	token: import("../../parser/ast-types.js").SakuraAstNode,
+	_context: any,
 ) {
 	player.balloonTimeout = token.timeout;
 }
 
 export async function handleHalt(
-	_player: import("../controller.js").SakuraPlayController,
-	app: import("../../../main.js").NanaiAndroidMascotApp,
-	_token: import("../../parser/ast.js").ASTNode,
-	_context: import("../sync-object.js").SakuraPlayContext,
+	_player: import("../controller.js").SakuraPlaybackController,
+	app: import("../../../../main.js").NanaiAndroidMascotApp,
+	_token: import("../../parser/ast-types.js").SakuraAstNode,
+	_context: any,
 ) {
 	await app.ghostController?.closeGhost?.();
 }
 
 export function handleSyncToggle(
-	player: import("../controller.js").SakuraPlayController,
-	_app: import("../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast.js").ASTNode,
-	_context: import("../sync-object.js").SakuraPlayContext,
+	player: import("../controller.js").SakuraPlaybackController,
+	_app: import("../../../../main.js").NanaiAndroidMascotApp,
+	token: import("../../parser/ast-types.js").SakuraAstNode,
+	_context: any,
 ) {
 	if (typeof token.value === "boolean") {
 		player.isSyncMode = token.value;
@@ -151,19 +151,19 @@ export function handleSyncToggle(
 }
 
 export async function handleCommand(
-	player: import("../controller.js").SakuraPlayController,
-	_app: import("../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast.js").ASTNode,
-	_context: import("../sync-object.js").SakuraPlayContext,
+	player: import("../controller.js").SakuraPlaybackController,
+	_app: import("../../../../main.js").NanaiAndroidMascotApp,
+	token: import("../../parser/ast-types.js").SakuraAstNode,
+	_context: any,
 ) {
 	await player.commandHandler.runCommand(token.args);
 }
 
 export function handleEnd(
-	player: import("../controller.js").SakuraPlayController,
-	app: import("../../../main.js").NanaiAndroidMascotApp,
-	_token: import("../../parser/ast.js").ASTNode,
-	context: import("../sync-object.js").SakuraPlayContext,
+	player: import("../controller.js").SakuraPlaybackController,
+	app: import("../../../../main.js").NanaiAndroidMascotApp,
+	_token: import("../../parser/ast-types.js").SakuraAstNode,
+	context: any,
 ) {
 	app.surfaceManager?.onTalkEnd(player.currentScope);
 	app.surfaceManager?.onScriptEnd(0);
@@ -172,10 +172,10 @@ export function handleEnd(
 }
 
 export function handleNoAutoWrap(
-	player: import("../controller.js").SakuraPlayController,
-	_app: import("../../../main.js").NanaiAndroidMascotApp,
-	_token: import("../../parser/ast.js").ASTNode,
-	_context: import("../sync-object.js").SakuraPlayContext,
+	player: import("../controller.js").SakuraPlaybackController,
+	_app: import("../../../../main.js").NanaiAndroidMascotApp,
+	_token: import("../../parser/ast-types.js").SakuraAstNode,
+	_context: any,
 ) {
 	const p = player as {
 		noAutoWrap?: boolean;
@@ -186,10 +186,10 @@ export function handleNoAutoWrap(
 }
 
 export function handleRawToggle(
-	player: import("../controller.js").SakuraPlayController,
-	_app: import("../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast.js").ASTNode,
-	context: import("../sync-object.js").SakuraPlayContext,
+	player: import("../controller.js").SakuraPlaybackController,
+	_app: import("../../../../main.js").NanaiAndroidMascotApp,
+	token: import("../../parser/ast-types.js").SakuraAstNode,
+	context: any,
 ) {
 	const p = player as {
 		isRawMode?: boolean;
@@ -210,10 +210,10 @@ export function handleRawToggle(
 }
 
 export function handleAutoPause(
-	player: import("../controller.js").SakuraPlayController,
-	_app: import("../../../main.js").NanaiAndroidMascotApp,
-	_token: import("../../parser/ast.js").ASTNode,
-	_context: import("../sync-object.js").SakuraPlayContext,
+	player: import("../controller.js").SakuraPlaybackController,
+	_app: import("../../../../main.js").NanaiAndroidMascotApp,
+	_token: import("../../parser/ast-types.js").SakuraAstNode,
+	_context: any,
 ) {
 	const p = player as {
 		playbackController?: { emit?: (event: string) => void };

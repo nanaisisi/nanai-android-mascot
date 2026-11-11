@@ -6,10 +6,10 @@
 import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 
 export function handleScope(
-	player: import("../controller.js").SakuraPlayController,
-	app: import("../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast.js").ASTNode,
-	context: import("../sync-object.js").SakuraPlayContext,
+	player: import("../controller.js").SakuraPlaybackController,
+	app: import("../../../../main.js").NanaiAndroidMascotApp,
+	token: import("../../parser/ast-types.js").SakuraAstNode,
+	context: any,
 ) {
 	const {
 		sakuraText,
@@ -63,10 +63,10 @@ export function handleScope(
 }
 
 export function handleBalloon(
-	player: import("../controller.js").SakuraPlayController,
-	_app: import("../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast.js").ASTNode,
-	context: import("../sync-object.js").SakuraPlayContext,
+	player: import("../controller.js").SakuraPlaybackController,
+	_app: import("../../../../main.js").NanaiAndroidMascotApp,
+	token: import("../../parser/ast-types.js").SakuraAstNode,
+	context: any,
 ) {
 	const { sakuraDisplay, keroDisplay } = context;
 	const balloonDisplay =
@@ -79,10 +79,10 @@ export function handleBalloon(
 }
 
 export function handleInlineBitmap(
-	_player: import("../controller.js").SakuraPlayController,
-	app: import("../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast.js").ASTNode,
-	context: import("../sync-object.js").SakuraPlayContext,
+	_player: import("../controller.js").SakuraPlaybackController,
+	app: import("../../../../main.js").NanaiAndroidMascotApp,
+	token: import("../../parser/ast-types.js").SakuraAstNode,
+	context: any,
 ) {
 	const { currentBalloonText, scheduleDesktopBalloonSync } = context;
 

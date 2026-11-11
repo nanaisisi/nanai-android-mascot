@@ -4,10 +4,10 @@
  */
 
 export async function handleChar(
-	player: import("../controller.js").SakuraPlayController,
-	app: import("../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast.js").ASTNode,
-	context: import("../sync-object.js").SakuraPlayContext,
+	player: import("../controller.js").SakuraPlaybackController,
+	app: import("../../../../main.js").NanaiAndroidMascotApp,
+	token: import("../../parser/ast-types.js").SakuraAstNode,
+	context: any,
 ) {
 	const { sakuraText, keroText, scheduleDesktopBalloonSync } = context;
 	const { currentBalloonText, currentAnchor, isQuickMode } = context;
@@ -64,10 +64,10 @@ export async function handleChar(
 }
 
 export function handleNewline(
-	player: import("../controller.js").SakuraPlayController,
-	_app: import("../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast.js").ASTNode,
-	context: import("../sync-object.js").SakuraPlayContext,
+	player: import("../controller.js").SakuraPlaybackController,
+	_app: import("../../../../main.js").NanaiAndroidMascotApp,
+	token: import("../../parser/ast-types.js").SakuraAstNode,
+	context: any,
 ) {
 	const { sakuraText, keroText, scheduleDesktopBalloonSync } = context;
 	const { currentBalloonText } = context;
@@ -107,10 +107,10 @@ export function handleNewline(
 }
 
 export function handleClear(
-	player: import("../controller.js").SakuraPlayController,
-	app: import("../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast.js").ASTNode,
-	context: import("../sync-object.js").SakuraPlayContext,
+	player: import("../controller.js").SakuraPlaybackController,
+	app: import("../../../../main.js").NanaiAndroidMascotApp,
+	token: import("../../parser/ast-types.js").SakuraAstNode,
+	context: any,
 ) {
 	const { scheduleDesktopBalloonSync } = context;
 	const { currentBalloonText } = context;
@@ -164,10 +164,10 @@ export function handleClear(
 }
 
 export function handleOffset(
-	_player: import("../controller.js").SakuraPlayController,
-	_app: import("../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast.js").ASTNode,
-	context: import("../sync-object.js").SakuraPlayContext,
+	_player: import("../controller.js").SakuraPlaybackController,
+	_app: import("../../../../main.js").NanaiAndroidMascotApp,
+	token: import("../../parser/ast-types.js").SakuraAstNode,
+	context: any,
 ) {
 	const { scheduleDesktopBalloonSync, currentBalloonText } = context;
 
@@ -189,10 +189,10 @@ export function handleOffset(
 }
 
 export function handleFont(
-	player: import("../controller.js").SakuraPlayController,
-	_app: import("../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast.js").ASTNode,
-	_context: import("../sync-object.js").SakuraPlayContext,
+	player: import("../controller.js").SakuraPlaybackController,
+	_app: import("../../../../main.js").NanaiAndroidMascotApp,
+	token: import("../../parser/ast-types.js").SakuraAstNode,
+	_context: any,
 ) {
 	player.currentFontStyles = player.currentFontStyles || {};
 	if (token.tag === "default") {

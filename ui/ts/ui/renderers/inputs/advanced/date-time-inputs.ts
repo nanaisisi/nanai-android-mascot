@@ -3,14 +3,18 @@
  * @brief dateinput, timeinput の表示・制御処理
  */
 
-export function openDateInput(params, scope) {
+export function openDateInput(
+	this: unknown,
+	params: string | unknown[],
+	scope: unknown,
+) {
 	const id = params[0] || "DateInput";
 	let timeoutMs = 0;
 	let year = "";
 	let month = "";
 	let day = "";
 	let noClose = false;
-	const references = [];
+	const references: string[] = [];
 
 	for (let i = 1; i < params.length; i++) {
 		const p = params[i] ?? "";
@@ -75,7 +79,7 @@ export function openDateInput(params, scope) {
 	submitBtn.className = "balloon-choice-btn";
 	submitBtn.style.marginTop = "0";
 
-	let timer = null;
+	let timer: number | null | undefined = null;
 	const boxKey = `inputbox:${id}`;
 
 	const cleanup = (force = false) => {
@@ -168,14 +172,18 @@ export function openDateInput(params, scope) {
 	return form;
 }
 
-export function openTimeInput(params, scope) {
+export function openTimeInput(
+	this: unknown,
+	params: string | unknown[],
+	scope: unknown,
+) {
 	const id = params[0] || "TimeInput";
 	let timeoutMs = 0;
 	let hour = "";
 	let min = "";
 	let sec = "";
 	let noClose = false;
-	const references = [];
+	const references: string[] = [];
 
 	for (let i = 1; i < params.length; i++) {
 		const p = params[i] ?? "";
@@ -241,7 +249,7 @@ export function openTimeInput(params, scope) {
 	submitBtn.className = "balloon-choice-btn";
 	submitBtn.style.marginTop = "0";
 
-	let timer = null;
+	let timer: number | null | undefined = null;
 	const boxKey = `inputbox:${id}`;
 
 	const cleanup = (force = false) => {

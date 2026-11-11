@@ -3,33 +3,36 @@
  * @brief さくらスクリプト再生時のサーフィス変更(\s)、SERIKOアニメーション再生・待機ハンドラ
  */
 
+import type { SakuraAstNode } from "../../parser/ast-types.js";
+import type { SakuraPlaybackController } from "../controller.js";
+
 export function handleSurface(
-	player: import("../controller.js").SakuraPlayController,
-	app: import("../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast.js").ASTNode,
-	_context: import("../sync-object.js").SakuraPlayContext,
+	player: SakuraPlaybackController | unknown,
+	app: import("../../../../main.js").NanaiAndroidMascotApp,
+	token: SakuraAstNode | unknown,
+	_context?: unknown,
 ) {
 	app.ghostController.updateSurface(token.value, player.currentScope);
 }
 
 export async function handleAnimation(
-	player: import("../controller.js").SakuraPlayController,
-	app: import("../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast.js").ASTNode,
-	_context: import("../sync-object.js").SakuraPlayContext,
+	player: SakuraPlaybackController | unknown,
+	app: import("../../../../main.js").NanaiAndroidMascotApp,
+	token: SakuraAstNode | unknown,
+	_context?: unknown,
 ) {
-	await app.surfaceManager?.playAnimationById(
+	app.surfaceManager?.playAnimationById(
 		token.animId,
 		player.currentScope,
-		token.wait,
+		token.wait
 	);
 }
 
 export async function handleWaitAnimation(
-	player: import("../controller.js").SakuraPlayController,
-	app: import("../../../main.js").NanaiAndroidMascotApp,
-	token: import("../../parser/ast.js").ASTNode,
-	_context: import("../sync-object.js").SakuraPlayContext,
+	player: SakuraPlaybackController | unknown,
+	app: import("../../../../main.js").NanaiAndroidMascotApp,
+	token: SakuraAstNode | unknown,
+	_context?: unknown,
 ) {
-	await app.surfaceManager?.waitForAnimation(token.animId, player.currentScope);
+	app.surfaceManager?.waitForAnimation(token.animId, player.currentScope);
 }

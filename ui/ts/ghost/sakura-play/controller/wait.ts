@@ -3,7 +3,15 @@
  * @brief SakuraPlaybackController 向けウェイト・倍率・即時表示制御ロジック
  */
 
-export function setWaitMultiplier(this: unknown, ratio: number) {
+export interface WaitControllerContext {
+	waitMultiplier: number;
+	charWaitMs: number | null;
+	isQuickMode: boolean;
+	resetBalloonWait: () => void;
+	emit: (event: string, payload?: unknown) => void;
+}
+
+export function setWaitMultiplier(this: WaitControllerContext, ratio: number) {
 	const valid = typeof ratio === "number" && !Number.isNaN(ratio) && ratio >= 0;
 	this.waitMultiplier = valid ? ratio : 1.0;
 	this.charWaitMs = null;
@@ -12,12 +20,12 @@ export function setWaitMultiplier(this: unknown, ratio: number) {
 	});
 }
 
-export function getWaitMultiplier(this: unknown): number {
+export function getWaitMultiplier(this: WaitControllerContext): number {
 	return this.waitMultiplier;
 }
 
 export function setBalloonWait(
-	this: unknown,
+	this: WaitControllerContext,
 	param: string | number | undefined,
 ) {
 	if (param === undefined || param === null || param === "" || param === "1") {
@@ -52,7 +60,7 @@ export function setBalloonWait(
 	});
 }
 
-export function resetBalloonWait(this: unknown) {
+export function resetBalloonWait(this: WaitControllerContext) {
 	this.waitMultiplier = 1.0;
 	this.charWaitMs = null;
 	this.emit("playback:balloon-wait", {
@@ -62,7 +70,7 @@ export function resetBalloonWait(this: unknown) {
 }
 
 export function calculateWait(
-	this: unknown,
+	this: WaitControllerContext,
 	baseMs: number,
 	isCharWait: boolean = false,
 ): number {
@@ -74,7 +82,7 @@ export function calculateWait(
 	return Math.round(ms * this.waitMultiplier);
 }
 
-export function setQuickMode(this: unknown, enable?: boolean) {
+export function setQuickMode(this: WaitControllerContext, enable?: boolean) {
 	const prev = this.isQuickMode;
 	this.isQuickMode = typeof enable === "boolean" ? enable : !this.isQuickMode;
 	this.emit("playback:quick-mode", { enabled: this.isQuickMode, prev });

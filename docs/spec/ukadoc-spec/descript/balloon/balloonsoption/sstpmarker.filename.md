@@ -2,7 +2,7 @@
 
 - **規格**: [sstpmarker.filename.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/balloonsoption/sstpmarker.filename.md)
 - **検索語**: sstpmarker.filename
-- **対応状況**: ✅ 対応済
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,6 +10,7 @@
 
 ## 実装箇所
 
-- `ui/css/balloon-window.css:127` `/* SSTPマーカー (sstpmarker.filename) */`
-- `ui/js/core/actions/balloon-descript/assets.js:63` `// [sstpmarker.filename,ファイル名]:`
-- `ui/js/core/actions/balloon-descript/assets.js:64` `setBalloonImage("sstpmarker.filename", "--balloon-sstpmarker-image");`
+- `ui/css/balloon-window.css:260` `/* SSTPマーカー (sstpmarker.filename) */`
+- `ui/ts/core/actions/balloon-descript/assets.ts:169` `// [sstpmarker.filename,ファイル名]:`
+- `ui/ts/core/actions/balloon-descript/assets.ts:170` `setBalloonImage("sstpmarker.filename", "--balloon-sstpmarker-image");`
+- `tests/core-coverage-boost/balloon-descript-coverage.test.ts:122` `"sstpmarker.filename": "sstp.png",`

@@ -2,7 +2,7 @@
 
 - **規格**: [charset.md](https://ukatech.shillest.net/ukadoc-spec/descript/plugin/descript-txt/) (ukadoc-spec/descript/plugin/descript-txt/charset.md)
 - **検索語**: charset
-- **対応状況**: ✅ 対応済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/ext.rs:47` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [secondchangeinterva`
 - `src-tauri/src/commands/ext.rs:49` `let _readme_cs = map.get("readme.charset");`
 - `src-tauri/src/commands/ext.rs:50` `let _cs = map.get("charset");`
-- `src-tauri/src/commands/ext.rs:116` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [alwaysdisplay,数値], `
 - `src-tauri/src/commands/ext.rs:118` `let _readme_cs = map.get("readme.charset");`
+- `src-tauri/src/commands/ext.rs:119` `let _cs = map.get("charset");`
+- `src-tauri/src/commands/install/utils.rs:22` `if lower.contains("charset,shift_jis") || lower.contains("charset,sjis") {`

@@ -2,7 +2,7 @@
 
 - **規格**: [request.md](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/request/) (ukadoc-spec/spec/shiori3/request.md)
 - **検索語**: ID:
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -18,6 +18,6 @@ Rust 通信層として `crates/ui/src/shiori.rs`（SHIORI/3.0 リクエスト/�
 
 - `src-tauri/src/commands/shiori/protocol.rs:60` `let noisy = request.contains("ID: OnSecondChange");`
 - `src-tauri/src/sstp/mod.rs:46` `let raw = "SEND SSTP/1.4\r\nSender: TestApp\r\nID: unique_id_01\r\nOption: nobre`
-- `crates/ui/src/shiori/protocol/request/builder.rs:38` `out.push_str(&format!("BaseID: {}\r\n", base));`
-- `crates/ui/src/shiori/protocol/request/builder.rs:40` `out.push_str(&format!("ID: {}\r\n", self.id));`
-- `crates/ui/src/shiori/protocol/request/tests.rs:23` `let raw = "GET SHIORI/3.0\r\nCharset: UTF-8\r\nSender: TestGhost\r\nID: OnBoot\r`
+- `crates/nanai-shiori-vm/src/lib.rs:32` `if request.contains("ID: version") {`
+- `crates/nanai-shiori-vm/src/lib.rs:36` `if request.contains("ID: name") {`
+- `crates/nanai-shiori-vm/src/lib.rs:40` `if request.contains("ID: OnBoot") {`

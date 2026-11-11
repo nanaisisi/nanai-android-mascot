@@ -2,7 +2,7 @@
 
 - **規格**: [OnBIFF2Complete.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/biff/OnBIFF2Complete/) (ukadoc-spec/list/shiori-event/biff/OnBIFF2Complete.md)
 - **検索語**: OnBIFF2Complete
-- **対応状況**: ✅ 対応済
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -11,4 +11,6 @@
 ## 実装箇所
 
 - `src-tauri/src/shiori/ffi/builder.rs:154` `.event("OnBIFF2Complete")`
-- `ui/js/core/actions/network-actions.js:26` `await gc.sendShioriEvent("OnBIFF2Complete", [`
+- `ui/ts/core/actions/network-actions.ts:24` `await gc.sendShioriEvent("OnBIFF2Complete", [`
+- `tests/network-actions.test.ts:45` `// 3. Tauri environment with headers result (OnBIFF2Complete)`
+- `tests/network-actions.test.ts:61` `assert.ok(eventsSent.some((e) => e.ev === "OnBIFF2Complete"));`

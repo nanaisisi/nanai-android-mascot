@@ -2,7 +2,7 @@
 
 - **規格**: [OnScheduleRead.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/calendar/OnScheduleRead/) (ukadoc-spec/list/shiori-event/calendar/OnScheduleRead.md)
 - **検索語**: OnScheduleRead
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,4 +11,3 @@ OnScheduleRead カレンダー/スケジュールSHIORIイベント送信処理�
 ## 実装箇所
 
 - `src-tauri/src/commands/calendar.rs:6` `//! - OnScheduleRead, OnSchedulesenseBegin, OnSchedulesenseComplete`
-- `ui/js/ghost/shiori-notify.js:21` `* - OnSchedule5MinutesToGo, OnSchedulepostBegin, OnSchedulepostComplete, OnSched`

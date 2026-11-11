@@ -1,7 +1,7 @@
 # 設定：メール
 
 - **規格**: [config/pop.md](https://ukatech.shillest.net/ukadoc-ssp/config/pop/) (ukadoc-ssp/config/pop.md)
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -9,8 +9,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/window/menu_native.rs:96` `window.popup_menu(&menu).map_err(|e| e.to_string())?;`
 - `src-tauri/src/common/paths.rs:154` `components.pop();`
-- `src-tauri/src/shiori/property.rs:39` `"sakura.popupmenu.applybindtoself" | "sakura.popupmenu.type" | "sakura.popupmenu`
-- `src-tauri/src/shiori/property.rs:42` `"kero.popupmenu.applybindtoself" | "kero.popupmenu.type" | "kero.popupmenu.visib`
-- `src-tauri/src/shiori/property.rs:45` `"char.popupmenu.applybindtoself" | "char.popupmenu.type" | "char.popupmenu.visib`
+- `crates/nanai-vfs/src/path.rs:49` `parts.pop();`
+- `crates/nanai-vfs/src/path.rs:143` `current.pop();`
+- `crates/nanai-vfs/src/resolver/path_resolution.rs:80` `current.pop();`
+- `crates/ui/src/vfs/path.rs:49` `parts.pop();`

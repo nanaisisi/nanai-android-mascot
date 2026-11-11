@@ -2,9 +2,9 @@
 
 - **規格**: [blend-luminosity-fast.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-luminosity-fast/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-luminosity-fast.md)
 - **検索語**: blend-luminosity-fast
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 
 ## 実装箇所
 
-- `ui/js/surface/surface-load.js:95` `// [blend-luminosity-fast]`
+- `tests/canvas-pixel-snapshot/cycle9-blend-modes.test.ts:105` `bFast.compositeBuffer(layer, 0, 0, "blend-luminosity-fast");`

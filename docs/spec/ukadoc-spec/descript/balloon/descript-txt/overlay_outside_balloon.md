@@ -2,7 +2,7 @@
 
 - **規格**: [overlay_outside_balloon.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/overlay_outside_balloon.md)
 - **検索語**: overlay_outside_balloon
-- **対応状況**: ✅ 対応済
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,6 +10,7 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/assets.js:165` `// [overlay_outside_balloon,0/1]:`
-- `ui/js/core/actions/balloon-descript/assets.js:167` `props.overlay_outside_balloon === "1" ||`
-- `ui/js/core/actions/balloon-descript/assets.js:168` `props.overlay_outside_balloon?.toLowerCase() === "true";`
+- `ui/ts/core/actions/balloon-descript/assets.ts:282` `props.overlay_outside_balloon === "1" ||`
+- `ui/ts/core/actions/balloon-descript/assets.ts:283` `props.overlay_outside_balloon?.toLowerCase() === "true";`
+- `tests/balloon-descript/all-properties/mock-props.ts:97` `overlay_outside_balloon: "1",`
+- `tests/core-coverage-boost/balloon-descript-coverage.test.ts:134` `overlay_outside_balloon: "1",`

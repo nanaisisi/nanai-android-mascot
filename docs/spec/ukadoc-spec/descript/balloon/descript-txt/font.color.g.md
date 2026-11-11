@@ -2,7 +2,7 @@
 
 - **規格**: [font.color.g.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/font.color.g.md)
 - **検索語**: font.color.g
-- **対応状況**: ✅ 対応済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/layout.js:39` `props["communicatebox.font.color.g"] ||`
-- `ui/js/core/actions/balloon-descript/font/base.js:72` `props["font.color.g"] ||`
-- `ui/js/core/actions/balloon-descript/font/group.js:7` `props[`${prefix}.font.color.g`] ||`
-- `ui/js/core/actions/balloon-descript/font/special.js:29` `props["number.font.color.g"] ||`
-- `ui/js/core/actions/balloon-descript/font/special.js:49` `props["sstpmessage.font.color.g"] ||`
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs:81` `"menu.background.font.color.g" => "0",`
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs:84` `"menu.foreground.font.color.g" => "255",`
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs:87` `"menu.disable.font.color.g" => "128",`
+- `ui/ts/core/actions/balloon-descript/font/group.ts:12` `* [anchor.font.color.r,数値], [anchor.font.color.g,数値], [anchor.font.color.b,数値]`
+- `ui/ts/core/actions/balloon-descript/font/group.ts:19` `* [anchor.visited.font.color.r,数値], [anchor.visited.font.color.g,数値], [anchor.vi`

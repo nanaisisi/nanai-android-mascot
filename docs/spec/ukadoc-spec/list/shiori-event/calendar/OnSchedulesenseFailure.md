@@ -2,7 +2,7 @@
 
 - **規格**: [OnSchedulesenseFailure.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/calendar/OnSchedulesenseFailure/) (ukadoc-spec/list/shiori-event/calendar/OnSchedulesenseFailure.md)
 - **検索語**: OnSchedulesenseFailure
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,4 +11,3 @@ OnSchedulesenseFailure カレンダー/スケジュールSHIORIイベント送�
 ## 実装箇所
 
 - `src-tauri/src/commands/calendar.rs:7` `//! - OnSchedulesenseFailure, OnScheduleTodayNotify`
-- `ui/js/ghost/shiori-notify.js:22` `* - OnSchedulesenseBegin, OnSchedulesenseComplete, OnSchedulesenseFailure, OnSch`

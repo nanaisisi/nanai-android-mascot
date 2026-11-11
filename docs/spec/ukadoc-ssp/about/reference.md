@@ -1,7 +1,7 @@
 # 用語説明
 
 - **規格**: [about/reference.md](https://ukatech.shillest.net/ukadoc-ssp/about/reference/) (ukadoc-ssp/about/reference.md)
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -9,8 +9,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/sstp.rs:17` `pub references: HashMap<String, String>,`
-- `src-tauri/src/sstp.rs:26` `pub reference0: Option<String>,`
-- `src-tauri/src/sstp.rs:52` `let mut references = HashMap::new();`
-- `src-tauri/src/sstp.rs:72` `references.insert(key.to_string(), val);`
-- `src-tauri/src/sstp.rs:87` `references,`
+- `src-tauri/src/shiori/ffi/builder.rs:47` `pub fn reference(mut self, index: usize, value: &str) -> Self {`
+- `src-tauri/src/shiori/ffi/builder.rs:92` `.reference(0, &x.to_string())`
+- `src-tauri/src/shiori/ffi/builder.rs:93` `.reference(1, &y.to_string())`
+- `src-tauri/src/shiori/ffi/builder.rs:94` `.reference(2, button)`
+- `src-tauri/src/shiori/ffi/builder.rs:137` `.reference(0, &count.to_string())`

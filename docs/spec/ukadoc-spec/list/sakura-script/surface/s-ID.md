@@ -2,7 +2,7 @@
 
 - **規格**: [s-ID.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/surface/s-ID/) (ukadoc-spec/list/sakura-script/surface/s-ID.md)
 - **検索語**: Surface
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/file.rs:59` `shell_dir.join(format!("Surface{surface_id}.png")),`
-- `src-tauri/src/commands/file.rs:60` `shell_dir.join(format!("Surface{surface_id_num:04}.png")),`
-- `src-tauri/src/commands/file.rs:109` `"Surface image not found for surface_id: {surface_id} in shell: {shell_name}"`
-- `src-tauri/src/commands/file.rs:134` `shell_dir.join(format!("Surface{surface_id}.pna")),`
-- `src-tauri/src/commands/shell/animation.rs:1` `use nanai_android_mascot_ui::{SakuraCommand, SurfaceManifest};`
+- `src-tauri/src/commands/file.rs:66` `shell_dir.join(format!("Surface{surface_id}.png")),`
+- `src-tauri/src/commands/file.rs:67` `shell_dir.join(format!("Surface{surface_id_num:04}.png")),`
+- `src-tauri/src/commands/file.rs:157` `"Surface image not found for surface_id: {surface_id} in shell: {shell_name}"`
+- `src-tauri/src/commands/file.rs:182` `shell_dir.join(format!("Surface{surface_id}.pna")),`
+- `src-tauri/src/commands/window/character_window.rs:233` `.ok_or_else(|| format!("Surface image not found for scope {}", scope_id))`

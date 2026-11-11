@@ -2,7 +2,7 @@
 
 - **規格**: [bang-set-property.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/property-system-operation/bang-set-property/) (ukadoc-spec/list/sakura-script/property-system-operation/bang-set-property.md)
 - **検索語**: evaluate_property_query
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:12` `pub fn evaluate_property_query(query: &str) -> String {`
-- `src-tauri/src/shiori/property.rs:64` `Ok(evaluate_property_query(&query))`
-- `src-tauri/src/shiori/property.rs:73` `assert_eq!(evaluate_property_query("ghostlist.count"), "1");`
-- `src-tauri/src/shiori/property.rs:75` `evaluate_property_query("baseware.name"),`
-- `src-tauri/src/shiori/property.rs:78` `assert_eq!(evaluate_property_query("currentghost.name"), "Mock Ghost");`
+- `src-tauri/src/shiori/property/mod.rs:10` `pub use evaluator::evaluate_property_query;`
+- `src-tauri/src/shiori/property/mod.rs:20` `Ok(evaluate_property_query(&query))`
+- `src-tauri/src/shiori/property/tests.rs:5` `use super::evaluator::evaluate_property_query;`
+- `src-tauri/src/shiori/property/tests.rs:9` `assert_eq!(evaluate_property_query("ghostlist.count"), "1");`
+- `src-tauri/src/shiori/property/tests.rs:11` `evaluate_property_query("baseware.name"),`

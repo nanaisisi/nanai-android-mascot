@@ -2,7 +2,7 @@
 
 - **規格**: [switchcompatiblemodebutton.caption.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ownerdraw-item-name/switchcompatiblemodebutton.caption/) (ukadoc-spec/list/shiori-resource/ownerdraw-item-name/switchcompatiblemodebutton.caption.md)
 - **検索語**: switchcompatiblemodebutton.caption
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,5 +11,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:119` `| "switchcompatiblemodebutton.caption"`
-- `ui/js/ui/renderers/menu-caption-renderer.js:403` `resource: "switchcompatiblemodebutton.caption",`
+- `ui/ts/ui/renderers/menu-caption-switches.ts:39` `resource: "switchcompatiblemodebutton.caption",`

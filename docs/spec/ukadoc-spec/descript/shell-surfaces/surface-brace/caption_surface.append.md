@@ -2,10 +2,16 @@
 
 - **規格**: [caption_surface.append.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/caption_surface.append/) (ukadoc-spec/descript/shell-surfaces/surface-brace/caption_surface.append.md)
 - **検索語**: surface
-- **対応状況**: ✅ 対応済 (surface-load.js)\n\n## 突合結果\n\nui/js/surface/surface-load.js の loadSurfacesTxt において surfaces.txt ファイル・エイリアス・アニメーション・衝突判定定義をパース・解決する実装が行われている。\n\n## 実装箇所
+- **対応状況**: ⚠️ 一部対応
 
-- `src-tauri/src/fmo.rs:11` `pub surface0: u32,`
-- `src-tauri/src/fmo.rs:12` `pub surface1: u32,`
-- `src-tauri/src/fmo.rs:39` `surface0: 0,`
-- `src-tauri/src/fmo.rs:40` `surface1: 10,`
-- `src-tauri/src/lib.rs:99` `commands::shell::parse_surfaces_text,`
+## 突合結果
+
+ui/js/surface/surface-load.js の loadSurfacesTxt において surfaces.txt ファイル・エイリアス・アニメーション・衝突判定定義をパース・解決する実装が行われている。
+
+## 実装箇所
+
+- `src-tauri/src/commands/file.rs:50` `"🖼️ [Rust File] load_surface_image: ghost_path={}, shell={}, surface={}, base_pa`
+- `src-tauri/src/commands/file.rs:59` `shell_dir.join(format!("surface{surface_id}.png")),`
+- `src-tauri/src/commands/file.rs:60` `shell_dir.join(format!("surface{surface_id_num:04}.png")),`
+- `src-tauri/src/commands/file.rs:61` `shell_dir.join(format!("surface{surface_id_num:02}.png")),`
+- `src-tauri/src/commands/file.rs:62` `shell_dir.join(format!("surface{surface_id}.bmp")),`

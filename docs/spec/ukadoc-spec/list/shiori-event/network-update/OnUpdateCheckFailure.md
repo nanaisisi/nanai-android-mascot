@@ -2,7 +2,7 @@
 
 - **規格**: [OnUpdateCheckFailure.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/network-update/OnUpdateCheckFailure/) (ukadoc-spec/list/shiori-event/network-update/OnUpdateCheckFailure/)
 - **検索語**: OnUpdateCheckFailure
-- **対応状況**: ✅ 実装済(SHIORIへ送信)
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,6 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/app-update.js:16` `*    - チェックのみ実行時: OnUpdateCheckComplete / OnUpdateCheckFailure`
-- `ui/js/core/app-update.js:201` `// チェックのみ実行: OnUpdateCheckFailure (Ref0: 失敗理由)`
-- `ui/js/core/app-update.js:203` `"OnUpdateCheckFailure",`
+- `ui/ts/core/app-update.ts:188` `"OnUpdateCheckFailure",`
+- `ui/ts/core/actions/update-protocol.ts:10` `* - OnUpdateCheckComplete / OnUpdateCheckFailure / OnUpdateCheckResult / OnUpdat`
+- `tests/core-coverage-boost/app-update-coverage.test.ts:97` `const failureEvt = sentEvents.find((e) => e.evt === "OnUpdateCheckFailure");`

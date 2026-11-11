@@ -2,7 +2,7 @@
 
 - **規格**: [char-star-.recommendsites.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ghost/char-star-.recommendsites/) (ukadoc-spec/list/shiori-resource/ghost/char-star-.recommendsites.md)
 - **検索語**: char.recommendsites
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,4 +10,4 @@ char.recommendsites SHIORIリソース・プロパティ評価処理を実装 (s
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:46` `"char.recommendbuttoncaption" | "char.recommendsites" => "".to_string(),`
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs:51` `"char.recommendbuttoncaption" | "char.recommendsites" => "",`

@@ -2,7 +2,7 @@
 
 - **規格**: [bang-wait-syncobject.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/wait/bang-wait-syncobject/) (ukadoc-spec/list/sakura-script/wait/bang-wait-syncobject.md)
 - **検索語**: Command
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,7 +11,7 @@
 ## 実装箇所
 
 - `src-tauri/build.rs:24` `let status = std::process::Command::new(std::env::var("CARGO").unwrap_or("cargo"`
-- `src-tauri/tauri.conf.json:7` `"beforeDevCommand": "npm run dev",`
-- `src-tauri/tauri.conf.json:8` `"beforeBuildCommand": "npm run build",`
-- `src-tauri/tauri.test.conf.json:7` `"beforeDevCommand": "dx serve --port 1421",`
-- `src-tauri/tauri.test.conf.json:9` `"beforeBuildCommand": "dx build --release",`
+- `src-tauri/shiori-host/src/main.rs:228` `let status = std::process::Command::new("rustc")`
+- `src-tauri/src/shiori/dynamic/host.rs:64` `use std::process::{Command, Stdio};`
+- `src-tauri/src/shiori/dynamic/host.rs:68` `let mut child = Command::new(exe)`
+- `crates/ui/src/script/command.rs:169` `Command {`

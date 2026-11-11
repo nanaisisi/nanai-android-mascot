@@ -2,7 +2,7 @@
 
 - **規格**: [OnSecondChange.md](https://ukatech.shillest.net/ukadoc-spec/list/plugin-event/plugin-event/OnSecondChange/) (ukadoc-spec/list/plugin-event/plugin-event/OnSecondChange.md)
 - **検索語**: OnSecondChange
-- **対応状況**: ✅ 実装済(SHIORIへ送信)
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -12,6 +12,6 @@
 
 - `src-tauri/src/commands/shiori/protocol.rs:58` `// 既定は info（失敗のみ出力）、trace で全リクエスト/レスポンス、毎秒の OnSecondChange は NANAI_LOG=trace のとき`
 - `src-tauri/src/commands/shiori/protocol.rs:60` `let noisy = request.contains("ID: OnSecondChange");`
-- `src-tauri/src/commands/shiori/protocol.rs:143` `if event != "OnSecondChange"`
+- `src-tauri/src/commands/shiori/protocol.rs:156` `if event != "OnSecondChange"`
 - `src-tauri/src/shiori/ffi/builder.rs:101` `.event("OnSecondChange")`
-- `ui/js/ghost/ghost-shiori.js:54` `// 自律タイマー (OnSecondChange) 開始`
+- `crates/nanai-shiori-vm/src/lib.rs:48` `if request.contains("ID: OnSecondChange") {`

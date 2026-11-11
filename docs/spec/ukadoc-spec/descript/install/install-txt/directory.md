@@ -2,7 +2,7 @@
 
 - **規格**: [directory.md](https://ukatech.shillest.net/ukadoc-spec/descript/install/install-txt/) (ukadoc-spec/descript/install/install-txt/directory.md)
 - **検索語**: directory
-- **対応状況**: ✅ 対応済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/lib.rs:96` `commands::file::open_ghost_directory,`
-- `src-tauri/src/lib.rs:107` `ghost::scan::directory::scan_ghost_directory,`
-- `src-tauri/src/commands/file.rs:187` `pub fn open_ghost_directory(app_handle: tauri::AppHandle<tauri::Wry>) -> Result<`
-- `src-tauri/src/commands/file.rs:192` `.map_err(|e| format!("Failed to open directory: {}", e))`
-- `src-tauri/src/commands/install/mod.rs:97` `archive::create_nar_from_directory(src, dst)`
+- `src-tauri/src/lib.rs:126` `ghost::scan::directory::scan_ghost_directory,`
+- `src-tauri/src/commands/file.rs:240` `.map_err(|e| format!("Failed to open directory: {}", e))`
+- `src-tauri/src/commands/install/utils.rs:97` `.map_err(|e| format!("Failed to inspect balloon directory: {e}"))?`
+- `src-tauri/src/commands/install/archive/packaging.rs:25` `"Source path '{}' is not a directory",`
+- `src-tauri/src/commands/install/archive/packaging.rs:32` `.map_err(|e| format!("Failed to create output directory for nar: {e}"))?;`

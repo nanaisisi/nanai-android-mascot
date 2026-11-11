@@ -1,7 +1,7 @@
 # fmo-mutex : Mutex
 
 - **規格**: [mutex.md](https://ukatech.shillest.net/ukadoc-spec/spec/fmo-mutex/mutex/) (ukadoc-spec/spec/fmo-mutex/mutex.md)
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -9,8 +9,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/lib.rs:162` `shiori::fmo::check_base_ware_mutex,`
-- `src-tauri/src/lib.rs:174` `shiori::fmo::acquire_base_ware_mutexes();`
-- `src-tauri/src/shiori/fmo.rs:1` `//! FMO (File Mapping Object) & Mutex implementation (UKADOC / SSP fmo-mutex spe`
-- `src-tauri/src/shiori/fmo.rs:28` `mod win_mutex {`
-- `src-tauri/src/shiori/fmo.rs:45` `pub fn check_mutex_exists(name: &str) -> bool {`
+- `tests/sakura-play/sync-object.test.ts:29` `const sync = new SyncObject("mutex");`

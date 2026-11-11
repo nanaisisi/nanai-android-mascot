@@ -2,7 +2,7 @@
 
 - **規格**: [kero.recommendbuttoncaption.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ghost/kero.recommendbuttoncaption/) (ukadoc-spec/list/shiori-resource/ghost/kero.recommendbuttoncaption.md)
 - **検索語**: kero.recommendbuttoncaption
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,4 +10,4 @@ kero.recommendbuttoncaption SHIORIリソース・プロパティ評価処理を�
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:43` `"kero.recommendbuttoncaption" | "kero.recommendsites" => "".to_string(),`
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs:48` `"kero.recommendbuttoncaption" | "kero.recommendsites" => "",`

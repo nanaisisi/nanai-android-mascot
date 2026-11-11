@@ -2,7 +2,7 @@
 
 - **規格**: [pct-mh.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/environment-variable/pct-mh/) (ukadoc-spec/list/sakura-script/environment-variable/pct-mh.md)
 - **検索語**: %mh
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,4 +11,5 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/env.rs:48` `result = result.replace("%mh", "0");`
+- `crates/ui/src/script/env.rs:51` `result = result.replace("%mh", "0");`
+- `ui/ts/ghost/command-handler/env.ts:223` `"%mh": "0",`

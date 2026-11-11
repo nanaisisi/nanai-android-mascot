@@ -2,7 +2,7 @@
 
 - **規格**: [request.md](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/request/) (ukadoc-spec/spec/shiori3/request.md)
 - **検索語**: BaseID
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -16,6 +16,7 @@ Rust 通信層として `crates/ui/src/shiori.rs`（SHIORI/3.0 リクエスト/�
 
 ## 実装箇所
 
-- `crates/ui/src/shiori/mod.rs:5` `//! SecurityOrigin / Status / BaseID / X-SSTP-PassThru- / ValueNotify /`
 - `crates/ui/src/shiori/protocol/request/builder.rs:38` `out.push_str(&format!("BaseID: {}\r\n", base));`
 - `crates/ui/src/shiori/protocol/request/tests.rs:205` `assert!(built.contains("BaseID: OnBootBase"));`
+- `crates/ui/src/shiori/tests/protocol_extended_tests.rs:33` `assert!(wire.contains("BaseID: base_event_1\r\n"));`
+- `crates/ui/src/shiori/tests/request_tests.rs:25` `assert!(text.contains("BaseID: OnBoot\r\n"));`

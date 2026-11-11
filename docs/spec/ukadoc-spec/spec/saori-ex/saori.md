@@ -2,7 +2,7 @@
 
 - **規格**: [saori.md](https://ukatech.shillest.net/ukadoc-spec/spec/saori-ex/saori/)
 - **検索語**: SAORI
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/saori.rs:1` `//! SAORI (System Architecture Of Request Integration) 1.0 & SAORI-Ex protocol s`
-- `src-tauri/src/shiori/saori.rs:2` `//! UKADOC 規格準拠: 外部 DLL / スクリプト実行および内蔵 SAORI-Ex 拡張インターフェース`
-- `src-tauri/src/shiori/saori.rs:3` `//! [SAORI over DirectSSTP], [internal.md], [internal_crypto], [internal_time], `
-- `src-tauri/src/shiori/saori.rs:8` `/// SAORI 1.0 リクエスト`
-- `src-tauri/src/shiori/saori.rs:15` `/// SAORI 1.0 レスポンス`
+- `src-tauri/src/shiori/saori.rs:79` `"🔌 EXECUTE SAORI/1.0: dll={:?}, args={:?}",`
+- `src-tauri/src/shiori/saori.rs:100` `let mut req_text = String::from("EXECUTE SAORI/1.0\r\nCharset: UTF-8\r\n");`
+- `src-tauri/src/shiori/saori.rs:140` `"Nanai SAORI Stub: executed successfully with {} args",`
+- `src-tauri/src/shiori/saori.rs:148` `headers.insert("Sender".to_string(), "Nanai-SAORI-Host".to_string());`
+- `crates/ui/src/sstp/message/request/core.rs:110` `self.module.is_some() || self.version.to_uppercase().contains("SAORI")`

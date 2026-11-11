@@ -2,7 +2,7 @@
 
 - **規格**: [shiori.forceencoding.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/shiori.forceencoding.md)
 - **検索語**: shiori.forceencoding
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory/manifest.rs:87` `.and_then(|m| m.get("shiori.forceencoding").cloned());`
+- `src-tauri/src/ghost/scan/directory/manifest.rs:154` `.and_then(|m| m.get("shiori.forceencoding").cloned());`

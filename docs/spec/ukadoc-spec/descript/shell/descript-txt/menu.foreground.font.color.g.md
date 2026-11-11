@@ -2,9 +2,9 @@
 
 - **規格**: [menu.foreground.font.color.g.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell/descript-txt/menu.foreground.font.color.g/) (ukadoc-spec/descript/shell/descript-txt/menu.foreground.font.color.g.md)
 - **検索語**: menu.foreground.font.color.g
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:115` `"menu.foreground.font.color.g" => "255".to_string(),`
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs:84` `"menu.foreground.font.color.g" => "255",`

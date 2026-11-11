@@ -2,7 +2,7 @@
 
 - **規格**: [OnApplicationOperationFinish.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event-ex/app-common/OnApplicationOperationFinish/) (ukadoc-spec/list/shiori-event-ex/app-common/OnApplicationOperationFinish.md)
 - **検索語**: notifyApplicationOperationFinish
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:110` `async notifyApplicationOperationFinish(appName, operationName = "") {`
+- `ui/ts/ghost/shiori-notify/application-headline.ts:55` `async notifyApplicationOperationFinish(`

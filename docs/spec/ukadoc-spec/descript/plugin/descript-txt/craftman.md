@@ -2,7 +2,7 @@
 
 - **規格**: [craftman.md](https://ukatech.shillest.net/ukadoc-spec/descript/plugin/descript-txt/) (ukadoc-spec/descript/plugin/descript-txt/craftman.md)
 - **検索語**: craftman
-- **対応状況**: ✅ 対応済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/fmo.rs:22` `pub craftman: String,`
-- `src-tauri/src/fmo.rs:50` `craftman: "Nanai Project".to_string(),`
-- `src-tauri/src/commands/ext.rs:36` `// [craftman,作者名], [craftmanw,作者名], [craftmanurl,URL], [homeurl,URL]:`
-- `src-tauri/src/commands/ext.rs:37` `let craftman = map`
-- `src-tauri/src/commands/ext.rs:38` `.get("craftman")`
+- `src-tauri/src/fmo.rs:42` `pub craftman: String,`
+- `src-tauri/src/fmo.rs:80` `craftman: "Nanai Project".to_string(),`
+- `src-tauri/src/fmo.rs:127` `craftman: "Nanai Project".to_string(),`
+- `src-tauri/src/fmo.rs:174` `craftman: "Nanai Project".to_string(),`
+- `src-tauri/src/fmo.rs:219` `craftman: "Nanai Project".to_string(),`

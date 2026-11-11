@@ -2,7 +2,7 @@
 
 - **規格**: [OnArchiveViewerOpen.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/file-drop/OnArchiveViewerOpen/) (ukadoc-spec/list/shiori-event/file-drop/OnArchiveViewerOpen.md)
 - **検索語**: OnArchiveViewerOpen
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,5 +10,5 @@ OnArchiveViewerOpen ファイルドロップ/外部連携SHIORIイベント通�
 
 ## 実装箇所
 
-- `ui/ts/ghost/shiori-notify.ts:247` `| "OnArchiveViewerOpen"`
 - `ui/ts/ghost/shiori-protocol.ts:105` `ARCHIVE_VIEWER_OPEN: "OnArchiveViewerOpen",`
+- `ui/ts/ghost/shiori-notify/input-events.ts:37` `| "OnArchiveViewerOpen"`

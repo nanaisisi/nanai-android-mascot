@@ -2,7 +2,7 @@
 
 - **規格**: [kero.name.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell/descript-txt/kero.name/) (ukadoc-spec/descript/shell/descript-txt/kero.name.md)
 - **検索語**: kero.name
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,8 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive/postprocess.rs:53` `let kero_name = meta_map.as_ref().and_then(|m| m.get("kero.name").cloned());`
-- `src-tauri/src/ghost/scan/directory/manifest.rs:43` `let kero_name = meta_map.as_ref().and_then(|m| m.get("kero.name").cloned());`
-- `crates/ui/src/lib.rs:49` `let sample = "charset,Shift_JIS\r\nname,SampleGhost\r\nsakura.name,Nanai\r\nkero`
-- `crates/ui/src/descript/parser.rs:56` `/// キャラクター本体名（`kero.name`または`sakura.name`）`
-- `crates/ui/src/descript/parser.rs:60` `/// 相方名（`kero.name`）`
+- `src-tauri/src/commands/install/archive/postprocess.rs:101` `let kero_name = meta_map.as_ref().and_then(|m| m.get("kero.name").cloned());`
+- `src-tauri/src/ghost/scan/directory/manifest.rs:63` `let kero_name = meta_map.as_ref().and_then(|m| m.get("kero.name").cloned());`
+- `src-tauri/src/ghost/scan/directory/manifest.rs:67` `.is_some_and(|m| m.contains_key("kero.name") || m.contains_key("char1.name"));`
+- `crates/ui/src/descript/tests.rs:55` `kero.name,Kero\n\`
+- `crates/ui/src/descript/parser/queries.rs:14` `/// キャラクター本体名（`kero.name` または `sakura.name`）`

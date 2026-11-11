@@ -1,7 +1,7 @@
 # カレンダー：スケジュール編集
 
 - **規格**: [functions/calendar/schedule.md](https://ukatech.shillest.net/ukadoc-ssp/functions/calendar/schedule/) (ukadoc-ssp/functions/calendar/schedule.md)
-- **対応状況**: ✅ 対応済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -9,8 +9,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/lib.rs:166` `commands::calendar::get_schedules,`
-- `src-tauri/src/lib.rs:167` `commands::calendar::add_schedule,`
-- `src-tauri/src/lib.rs:168` `commands::calendar::delete_schedule,`
-- `src-tauri/src/commands/calendar.rs:2` `//! [calendar/index.md], [calendar/schedule.md], [calendar/menu.md], [\![open,ca`
-- `src-tauri/src/commands/calendar.rs:4` `//! - caption_schedulesensetiming, caption_scheduletype`
+- `crates/ui/src/script/command.rs:100` `}, // \![execute,schedule-add,...]`
+- `crates/ui/src/script/parser/tests.rs:29` `\\![execute,schedule-add,2026-10-31,12:00,Meeting,Notes]\`
+- `crates/ui/src/script/parser/brackets/handlers/raiselike/execution.rs:4` `if parts.get(1).is_some_and(|p| p == "schedule-add") {`
+- `crates/ui/src/script/parser/brackets/handlers/raiselike/execution.rs:134` `&["execute".to_string(), "schedule-add".to_string()],`
+- `crates/ui/src/script/parser/brackets/handlers/raiselike/execution.rs:140` `"schedule-add".to_string(),`

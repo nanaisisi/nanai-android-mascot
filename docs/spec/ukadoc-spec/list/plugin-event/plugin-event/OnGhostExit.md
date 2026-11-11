@@ -2,7 +2,7 @@
 
 - **規格**: [OnGhostExit.md](https://ukatech.shillest.net/ukadoc-spec/list/plugin-event/plugin-event/OnGhostExit/) (ukadoc-spec/list/plugin-event/plugin-event/OnGhostExit.md)
 - **検索語**: OnGhostExit
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 

@@ -2,7 +2,7 @@
 
 - **規格**: [recommended.ghost.path.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/recommended-ghost/recommended.ghost.path.md)
 - **検索語**: recommended.ghost.path
-- **対応状況**: ✅ 対応済
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,6 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/assets.js:15` `// [推奨の意味], [recommended.ghost,ゴースト名], [recommended.ghost.path,パス]:`
-- `ui/js/core/actions/balloon-descript/assets.js:21` `if (props["recommended.ghost.path"])`
-- `ui/js/core/actions/balloon-descript/assets.js:24` `props["recommended.ghost.path"],`
+- `ui/ts/core/actions/balloon-descript/assets.ts:9` `* [推奨の意味] [recommended.ghost,ゴースト名] [recommended.ghost.path,パス] の検証関数 (UKADOC準拠)`
+- `ui/ts/core/actions/balloon-descript/assets.ts:17` `const recPath = props["recommended.ghost.path"];`
+- `ui/ts/core/actions/balloon-descript/assets.ts:73` `// [推奨の意味], [recommended.ghost,ゴースト名], [recommended.ghost.path,パス]:`
+- `ui/ts/core/actions/balloon-descript/assets.ts:80` `if (p["recommended.ghost.path"]) {`
+- `ui/ts/core/actions/balloon-descript/assets.ts:83` `p["recommended.ghost.path"],`

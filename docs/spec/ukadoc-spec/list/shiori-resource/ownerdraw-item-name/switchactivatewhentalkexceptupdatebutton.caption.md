@@ -2,7 +2,7 @@
 
 - **規格**: [switchactivatewhentalkexceptupdatebutton.caption.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ownerdraw-item-name/switchactivatewhentalkexceptupdatebutton.caption/) (ukadoc-spec/list/shiori-resource/ownerdraw-item-name/switchactivatewhentalkexceptupdatebutton.caption.md)
 - **検索語**: switchactivatewhentalkexceptupdatebutton.caption
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,5 +11,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:115` `| "switchactivatewhentalkexceptupdatebutton.caption"`
-- `ui/js/ui/renderers/menu-caption-renderer.js:379` `resource: "switchactivatewhentalkexceptupdatebutton.caption",`
+- `ui/ts/ui/renderers/menu-caption-switches.ts:15` `resource: "switchactivatewhentalkexceptupdatebutton.caption",`

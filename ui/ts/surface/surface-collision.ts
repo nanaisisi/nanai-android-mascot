@@ -75,32 +75,6 @@ export const surfaceCollisionMethods = {
 			list = lowerMap.get(lowerTarget) ?? null;
 		}
 
-		// Fallback to default aliases if not found in custom scope and scope is non-zero
-		if ((!list || list.length === 0) && scopeId !== 0) {
-			const fallbackMap = (this as unknown).aliases;
-			if (fallbackMap && fallbackMap !== map) {
-				list = Array.isArray(fallbackMap[rawName])
-					? fallbackMap[rawName]
-					: null;
-				if (!list) {
-					let lowerFallback = aliasCaseCache.get(fallbackMap);
-					if (!lowerFallback) {
-						lowerFallback = new Map();
-						for (const key in fallbackMap) {
-							const val = fallbackMap[key];
-							if (Array.isArray(val)) {
-								const lowerKey = key.toLowerCase();
-								if (!lowerFallback.has(lowerKey))
-									lowerFallback.set(lowerKey, val);
-							}
-						}
-						aliasCaseCache.set(fallbackMap, lowerFallback);
-					}
-					list = lowerFallback.get(lowerTarget) ?? null;
-				}
-			}
-		}
-
 		if (!list || list.length === 0) {
 			return surfaceId as unknown;
 		}

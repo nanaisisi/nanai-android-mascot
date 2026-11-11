@@ -2,7 +2,7 @@
 
 - **規格**: [request.md](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/request/) (ukadoc-spec/spec/shiori3/request.md)
 - **検索語**: SecurityOrigin
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -16,8 +16,8 @@ Rust 通信層として `crates/ui/src/shiori.rs`（SHIORI/3.0 リクエスト/�
 
 ## 実装箇所
 
-- `crates/ui/src/shiori/mod.rs:5` `//! SecurityOrigin / Status / BaseID / X-SSTP-PassThru- / ValueNotify /`
-- `crates/ui/src/shiori/protocol/request/types.rs:18` `/// `SecurityOrigin: null`（情報なし）とヘッダ省略を区別するため `Some(None)` で表現`
 - `crates/ui/src/shiori/protocol/request/builder.rs:27` `"SecurityOrigin: {}\r\n",`
-- `crates/ui/src/shiori/protocol/request/tests.rs:99` `let text_null = "GET SHIORI/3.0\r\nID: OnTest\r\nSecurityOrigin: null\r\n\r\n";`
-- `crates/ui/src/shiori/protocol/request/tests.rs:109` `let text_url = "GET SHIORI/3.0\r\nID: OnTest\r\nSecurityOrigin: https://example.`
+- `crates/ui/src/shiori/protocol/request/tests.rs:203` `assert!(built.contains("SecurityOrigin: localhost"));`
+- `crates/ui/src/shiori/protocol/request/tests.rs:209` `assert!(req.build().contains("SecurityOrigin: null"));`
+- `crates/ui/src/shiori/tests/protocol_extended_tests.rs:31` `assert!(wire.contains("SecurityOrigin: file://dummy\r\n"));`
+- `crates/ui/src/shiori/tests/request_tests.rs:23` `assert!(text.contains("SecurityOrigin: null\r\n"));`

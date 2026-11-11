@@ -2,7 +2,7 @@
 
 - **規格**: [headlinesenserootbutton.caption.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ownerdraw-item-name/headlinesenserootbutton.caption/) (ukadoc-spec/list/shiori-resource/ownerdraw-item-name/headlinesenserootbutton.caption.md)
 - **検索語**: headlinesenserootbutton.caption
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-- `ui/js/ui/renderers/menu-caption-renderer.js:72` `resource: "headlinesenserootbutton.caption",`
+- `ui/ts/ui/renderers/menu-caption-general-part2.ts:34` `resource: "headlinesenserootbutton.caption",`

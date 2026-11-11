@@ -1,7 +1,7 @@
 # sstp : keep-alive
 
 - **規格**: [keepalive.md](https://ukatech.shillest.net/ukadoc-spec/spec/sstp/keepalive/) (ukadoc-spec/spec/sstp/keepalive.md)
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -9,5 +9,4 @@ SSTP 未対応。
 
 ## 実装箇所
 
-- `src-tauri/src/sstp.rs:2` `//! [SSTP/1.x], [method_send], [method_execute], [method_give], [method_communic`
-- `src-tauri/src/sstp.rs:69` `"keepalive" => keep_alive = Some(val.to_lowercase() == "true" || val == "1"),`
+- `crates/ui/src/sstp/message/request/parser.rs:117` `} else if key_lower == "keepalive" {`

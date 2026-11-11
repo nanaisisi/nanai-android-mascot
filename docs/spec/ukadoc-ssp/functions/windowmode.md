@@ -1,7 +1,7 @@
 # ウインドウモード
 
 - **規格**: [functions/windowmode.md](https://ukatech.shillest.net/ukadoc-ssp/functions/windowmode/) (ukadoc-ssp/functions/windowmode.md)
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -9,4 +9,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:24` `"baseware.windowmode" => "normal".to_string(),`
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs:24` `"baseware.windowmode" => "normal",`

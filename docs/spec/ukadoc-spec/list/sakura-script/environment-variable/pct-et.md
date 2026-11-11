@@ -2,7 +2,7 @@
 
 - **規格**: [pct-et.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/environment-variable/pct-et/) (ukadoc-spec/list/sakura-script/environment-variable/pct-et.md)
 - **検索語**: %et
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,4 +11,5 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/env.rs:39` `result = result.replace("%et", "0");`
+- `crates/ui/src/script/env.rs:42` `result = result.replace("%et", "0");`
+- `ui/ts/ghost/command-handler/env.ts:216` `"%et": "0",`

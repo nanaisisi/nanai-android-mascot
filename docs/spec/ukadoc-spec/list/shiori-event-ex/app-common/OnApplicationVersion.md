@@ -2,7 +2,7 @@
 
 - **規格**: [OnApplicationVersion.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event-ex/app-common/OnApplicationVersion/) (ukadoc-spec/list/shiori-event-ex/app-common/OnApplicationVersion.md)
 - **検索語**: notifyApplicationVersion
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:123` `async notifyApplicationVersion(appName, version = "") {`
+- `ui/ts/ghost/shiori-notify/application-headline.ts:69` `async notifyApplicationVersion(this: any, appName: string, version = "") {`

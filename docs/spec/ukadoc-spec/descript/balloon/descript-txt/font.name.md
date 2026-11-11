@@ -2,7 +2,7 @@
 
 - **規格**: [font.name.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/font.name.md)
 - **検索語**: font.name
-- **対応状況**: ✅ 対応済
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/layout.js:28` `// [communicatebox.font.name,フォント名], [communicatebox.font.color.r/g/b,数値], [comm`
-- `ui/js/core/actions/balloon-descript/layout.js:33` `const cbFontName = props["communicatebox.font.name"];`
-- `ui/js/core/actions/balloon-descript/font/base.js:6` `if (props["font.name"]) {`
-- `ui/js/core/actions/balloon-descript/font/base.js:9` ``"${props["font.name"]}", Meiryo, sans-serif`,`
-- `ui/js/core/actions/balloon-descript/font/special.js:15` `const numFontName = props["number.font.name"];`
+- `src-tauri/src/ghost/scan/shell/theme.rs:39` `let font_name = merged.get("menu.font.name").cloned();`
+- `src-tauri/src/shiori/property/tests.rs:125` `assert_eq!(evaluate_property_query("menu.font.name"), "sans-serif");`
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs:75` `"menu.font.name" => "sans-serif",`
+- `ui/ts/core/actions/balloon-descript/font/base.ts:9` `if (props["font.name"]) {`
+- `ui/ts/core/actions/balloon-descript/font/base.ts:12` ``"${props["font.name"]}", Meiryo, sans-serif`,`

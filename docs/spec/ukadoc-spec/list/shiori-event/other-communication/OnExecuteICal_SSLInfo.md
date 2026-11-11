@@ -2,7 +2,7 @@
 
 - **規格**: [OnExecuteICal_SSLInfo.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/other-communication/OnExecuteICal_SSLInfo/) (ukadoc-spec/list/shiori-event/other-communication/OnExecuteICal_SSLInfo.md)
 - **検索語**: OnExecuteICal_SSLInfo
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,5 +11,5 @@
 
 ## 実装箇所
 
-- `ui/ts/ghost/shiori-notify.ts:1186` `| "OnExecuteICal_SSLInfo"`
 - `ui/ts/ghost/shiori-protocol.ts:231` `EXECUTE_ICAL_SSL_INFO: "OnExecuteICal_SSLInfo",`
+- `ui/ts/ghost/shiori-notify/input-events.ts:216` `| "OnExecuteICal_SSLInfo"`

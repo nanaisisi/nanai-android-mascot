@@ -2,7 +2,7 @@
 
 - **規格**: [char-star-.defaulty.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell/descript-txt/char-star-.defaulty/) (ukadoc-spec/descript/shell/descript-txt/char-star-.defaulty.md)
 - **検索語**: char
-- **対応状況**: ✅ 実装済 (Rust `crates/ui/src/descript.rs` Descript 解析 / `crates/ui/src/shell.rs` Shell::load)
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/lib.rs:134` `commands::window::show_subchar_window,`
-- `src-tauri/src/lib.rs:135` `commands::window::hide_subchar_window,`
-- `src-tauri/src/lib.rs:136` `commands::window::set_character_scale,`
-- `src-tauri/src/lib.rs:141` `commands::window::sync_character_balloon,`
-- `src-tauri/src/commands/ext.rs:47` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [secondchangeinterva`
+- `src-tauri/src/commands/shiori/lifecycle/spawn.rs:91` `(b as char).to_string()`
+- `src-tauri/src/ghost/scan/directory/manifest.rs:71` `if let Some(rest) = k.strip_prefix("char")`
+- `src-tauri/src/ghost/scan/directory/manifest.rs:133` `if let Some(rest) = k.strip_prefix("char")`
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs:49` `"char.defaultleft" | "char.defaulttop" | "char.defaultx" | "char.defaulty" => "0`
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs:50` `"char.popupmenu.applybindtoself" | "char.popupmenu.type" | "char.popupmenu.visib`

@@ -2,7 +2,7 @@
 
 - **規格**: [switchactivatewhentalkbutton.caption.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ownerdraw-item-name/switchactivatewhentalkbutton.caption/) (ukadoc-spec/list/shiori-resource/ownerdraw-item-name/switchactivatewhentalkbutton.caption.md)
 - **検索語**: switchactivatewhentalkbutton.caption
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,5 +11,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:114` `| "switchactivatewhentalkbutton.caption"`
-- `ui/js/ui/renderers/menu-caption-renderer.js:373` `resource: "switchactivatewhentalkbutton.caption",`
+- `ui/ts/ui/renderers/menu-caption-switches.ts:9` `resource: "switchactivatewhentalkbutton.caption",`

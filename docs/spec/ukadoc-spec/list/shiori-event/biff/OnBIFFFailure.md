@@ -2,7 +2,7 @@
 
 - **規格**: [OnBIFFFailure.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/biff/OnBIFFFailure/) (ukadoc-spec/list/shiori-event/biff/OnBIFFFailure.md)
 - **検索語**: OnBIFFFailure
-- **対応状況**: ✅ 対応済
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -11,4 +11,5 @@
 ## 実装箇所
 
 - `src-tauri/src/shiori/ffi/builder.rs:170` `.event("OnBIFFFailure")`
-- `ui/js/core/actions/network-actions.js:49` `await gc.sendShioriEvent("OnBIFFFailure", ["connect", accountName]);`
+- `ui/ts/core/actions/network-actions.ts:47` `await gc.sendShioriEvent("OnBIFFFailure", ["connect", accountName]);`
+- `tests/network-actions.test.ts:77` `assert.ok(eventsSent.some((e) => e.ev === "OnBIFFFailure"));`

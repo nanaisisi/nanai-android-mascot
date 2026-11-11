@@ -1,7 +1,7 @@
 # sstp : Direct SSTP
 
 - **規格**: [direct.md](https://ukatech.shillest.net/ukadoc-spec/spec/sstp/direct/) (ukadoc-spec/spec/sstp/direct.md)
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -9,8 +9,8 @@ SSTP 受信機能なし。
 
 ## 実装箇所
 
-- `src-tauri/src/lib.rs:96` `commands::file::open_ghost_directory,`
-- `src-tauri/src/lib.rs:107` `ghost::scan::directory::scan_ghost_directory,`
-- `src-tauri/src/commands/file.rs:187` `pub fn open_ghost_directory(app_handle: tauri::AppHandle<tauri::Wry>) -> Result<`
-- `src-tauri/src/commands/file.rs:192` `.map_err(|e| format!("Failed to open directory: {}", e))`
-- `src-tauri/src/commands/install/mod.rs:97` `archive::create_nar_from_directory(src, dst)`
+- `src-tauri/src/ghost/scan/shell/bitmap.rs:24` `let direct = base.join(&normalized);`
+- `src-tauri/src/ghost/scan/shell/bitmap.rs:25` `let resolved = if direct.is_file() {`
+- `src-tauri/src/ghost/scan/shell/bitmap.rs:26` `Some(direct)`
+- `crates/nanai-vfs/src/resolver/path_resolution.rs:23` `if let Some(direct) = self.resolve(relative_path)`
+- `crates/nanai-vfs/src/resolver/path_resolution.rs:24` `&& direct.is_file()`

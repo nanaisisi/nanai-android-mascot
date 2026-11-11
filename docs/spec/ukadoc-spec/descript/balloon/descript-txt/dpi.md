@@ -2,7 +2,7 @@
 
 - **規格**: [dpi.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/dpi.md)
 - **検索語**: dpi
-- **対応状況**: ✅ 対応済（独自ハイブリッドスケーリング実装）
+- **対応状況**: ✅ 実装済
 - **カテゴリ**: `descript.txt`（Balloon）
 - **書式**: `dpi,推奨DPI`
 - **既定値**: `96`（Windows標準 100% スケーリング相当）
@@ -81,8 +81,8 @@ $$\text{finalScale} = \text{userScale} \times \text{dpiScale}$$
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-theme.js:53` `const dpiScale = this.balloonDpiScale || 1;`
-- `ui/js/core/actions/balloon-theme.js:54` `const finalScale = +(userScale * dpiScale).toFixed(4);`
-- `ui/js/core/actions/balloon-theme.js:66` `emit("balloon-scale-changed", { userScale, dpiScale, finalScale });`
-- `ui/js/core/actions/balloon-theme.js:119` `"--balloon-dpi",`
-- `ui/js/core/actions/balloon-theme.js:120` `"--balloon-dpi-scale",`
+- `ui/ts/core/actions/balloon-theme-constants.ts:22` `"--balloon-dpi",`
+- `ui/ts/core/actions/balloon-theme-constants.ts:23` `"--balloon-dpi-scale",`
+- `ui/ts/core/actions/balloon-descript/layout/scale.ts:9` `const parsedDpi = parseInt(props.dpi, 10);`
+- `ui/ts/core/actions/balloon-descript/layout/scale.ts:13` `root.style.setProperty("--balloon-dpi", String(balloonDpi));`
+- `ui/ts/core/actions/balloon-descript/layout/scale.ts:14` `root.style.setProperty("--balloon-dpi-scale", String(dpiScale));`

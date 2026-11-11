@@ -2,7 +2,7 @@
 
 - **規格**: [balloons-s-txt-balloonk-s-txt.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/balloonsoption/balloons-s-txt-balloonk-s-txt.md)
 - **検索語**: balloons
-- **対応状況**: ✅ 対応済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/lib.rs:101` `commands::shell::scan_balloons,`
-- `src-tauri/src/commands/shell/balloon.rs:15` `pub fn scan_balloons(app_handle: tauri::AppHandle) -> Result<Vec<BalloonInfo>, S`
 - `src-tauri/src/commands/shell/balloon.rs:16` `let mut balloons = Vec::new();`
-- `src-tauri/src/commands/shell/balloon.rs:62` `balloons.push(BalloonInfo {`
-- `src-tauri/src/commands/shell/balloon.rs:76` `for b in balloons {`
+- `src-tauri/src/commands/shell/balloon.rs:63` `balloons.push(BalloonInfo {`
+- `src-tauri/src/commands/shell/balloon.rs:77` `for b in balloons {`
+- `src-tauri/src/commands/shell/balloon.rs:112` `let prefix = if sid == 1 { "balloonk" } else { "balloons" };`
+- `ui/ts/core/actions/balloon-theme.ts:177` `const balloons = await invoke("scan_balloons");`

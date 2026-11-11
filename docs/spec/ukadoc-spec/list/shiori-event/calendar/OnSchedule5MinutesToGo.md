@@ -2,7 +2,7 @@
 
 - **規格**: [OnSchedule5MinutesToGo.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/calendar/OnSchedule5MinutesToGo/) (ukadoc-spec/list/shiori-event/calendar/OnSchedule5MinutesToGo.md)
 - **検索語**: OnSchedule5MinutesToGo
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,4 +11,3 @@ OnSchedule5MinutesToGo カレンダー/スケジュールSHIORIイベント送�
 ## 実装箇所
 
 - `src-tauri/src/commands/calendar.rs:5` `//! - OnSchedule5MinutesToGo, OnSchedulepostBegin, OnSchedulepostComplete`
-- `ui/js/ghost/shiori-notify.js:21` `* - OnSchedule5MinutesToGo, OnSchedulepostBegin, OnSchedulepostComplete, OnSched`

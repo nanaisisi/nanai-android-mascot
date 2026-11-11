@@ -2,7 +2,7 @@
 
 - **規格**: [pct-wronghour.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/environment-variable/pct-wronghour/) (ukadoc-spec/list/sakura-script/environment-variable/pct-wronghour.md)
 - **検索語**: wronghour
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,4 +11,6 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/env.rs:41` `result = result.replace("%wronghour", "0");`
+- `crates/ui/src/script/env.rs:44` `result = result.replace("%wronghour", "0");`
+- `ui/ts/ghost/command-handler/env.ts:218` `"%wronghour": "0",`
+- `ui/ts/ghost/command-handler/env.ts:233` `/%(lastobjectname|lastghostname|screenheight|screenwidth|wronghour|selfname2|sel`

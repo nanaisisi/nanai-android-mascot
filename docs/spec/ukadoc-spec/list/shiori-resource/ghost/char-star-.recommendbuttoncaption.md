@@ -2,7 +2,7 @@
 
 - **規格**: [char-star-.recommendbuttoncaption.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ghost/char-star-.recommendbuttoncaption/) (ukadoc-spec/list/shiori-resource/ghost/char-star-.recommendbuttoncaption.md)
 - **検索語**: char.recommendbuttoncaption
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,4 +10,4 @@ char.recommendbuttoncaption SHIORIリソース・プロパティ評価処理を�
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:46` `"char.recommendbuttoncaption" | "char.recommendsites" => "".to_string(),`
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs:51` `"char.recommendbuttoncaption" | "char.recommendsites" => "",`

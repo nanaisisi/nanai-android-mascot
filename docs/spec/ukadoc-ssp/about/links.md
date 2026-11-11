@@ -1,7 +1,7 @@
 # リンク集
 
 - **規格**: [about/links.md](https://ukatech.shillest.net/ukadoc-ssp/about/links/) (ukadoc-ssp/about/links.md)
-- **対応状況**: ✅ 実装済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/update/generation.rs:32` `let walker = WalkDir::new(&dir).follow_links(false).sort_by_file_name();`
+実装コード内に「links」は検出されませんでした。

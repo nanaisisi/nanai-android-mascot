@@ -2,7 +2,7 @@
 
 - **規格**: [animation-star-.name.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/animation-star-.name/) (ukadoc-spec/descript/shell-surfaces/surface-brace/animation-star-.name.md)
 - **検索語**: animation
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,8 @@ surface-parser.js / surface-animation-manager.js に該当の解析・処理は�
 
 ## 実装箇所
 
-- `src-tauri/src/lib.rs:100` `commands::shell::animation_timeline,`
-- `src-tauri/src/commands/shell/animation.rs:45` `pub fn animation_timeline(patterns: Vec<TimelinePattern>) -> Result<AnimationTim`
 - `src-tauri/src/commands/shell/mod.rs:7` `pub mod animation;`
-- `src-tauri/src/commands/shell/mod.rs:12` `pub use animation::*;`
+- `src-tauri/src/commands/shell/mod.rs:13` `pub use animation::*;`
 - `crates/ui/src/lib.rs:1` `pub mod animation;`
+- `crates/ui/src/lib.rs:22` `pub use animation::{`
+- `crates/ui/src/animation/tests/active_animation.rs:6` `use crate::animation::scheduler::ActiveAnimation;`

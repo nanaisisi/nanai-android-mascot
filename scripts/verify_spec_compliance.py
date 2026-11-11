@@ -19,8 +19,30 @@ import sys
 GENERIC_KEYWORDS = {
     "number", "bytes", "format", "add", "convert", "sign", "encrypt", "decrypt",
     "digest", "compare", "protect", "loop", "path", "playing", "position", "pause",
-    "name", "duration", "error", "preload", "version", "meta."
+    "name", "duration", "error", "preload", "version", "meta.", "type", "id", "file",
+    "title", "text", "value", "width", "height", "x", "y", "status", "index", "key",
+    "data", "mode", "scope", "time", "open", "close", "save", "load", "clear", "reset",
+    "set", "get", "item", "list", "count", "string", "bool", "boolean", "int", "integer",
+    "float", "array", "map", "object", "null", "none", "true", "false", "default", "initial",
+    "final", "temp", "line", "row", "col", "column", "size", "len", "length"
 }
+
+
+def is_valid_code_match(term, line_str, path_str):
+    stripped = line_str.strip()
+    if stripped.startswith("//") or stripped.startswith("/*") or stripped.startswith("*") or stripped.startswith("//!") or stripped.startswith("///") or stripped.startswith("#"):
+        if not (term.startswith("\\") or term.startswith("On") or "." in term):
+            return False
+
+    if path_str.endswith(".json") and term.lower() in GENERIC_KEYWORDS:
+        return False
+
+    if re.match(r'^[A-Za-z0-9_.]+$', term) and term.lower() not in GENERIC_KEYWORDS:
+        pattern = r'\b' + re.escape(term) + r'\b'
+        if not re.search(pattern, line_str):
+            return False
+
+    return True
 
 
 def sanitize_snippet(text):
@@ -33,15 +55,16 @@ def sanitize_snippet(text):
 
 def load_codebase(base_dir="."):
     codebase = []
-    # Strict production app code directories (excluding cpp and test directories)
+    # App production code and test codebases
     search_dirs = [
         os.path.join(base_dir, 'src-tauri'),
         os.path.join(base_dir, 'crates'),
-        os.path.join(base_dir, 'ui')
+        os.path.join(base_dir, 'ui'),
+        os.path.join(base_dir, 'tests')
     ]
     ignore_dirs = {
         'target', 'build', '.gradle', '.cxx', 'node_modules', 'dist', 'gen',
-        'coverage', 'docs', 'tests', 'test', '.git', '.jules'
+        'coverage', 'docs', '.git', '.jules'
     }
     for root_dir in search_dirs:
         if not os.path.exists(root_dir):
@@ -128,8 +151,8 @@ def search_keyword(keyword, codebase, cache=None, stats=None):
             wildcard_regex = build_wildcard_regex(term)
 
             for path, lines, full_text in file_records:
-                # Avoid matching an audit file or test file against itself
-                if 'docs/' in path or 'tests/' in path:
+                # Avoid matching an audit file against itself
+                if 'docs/' in path:
                     continue
 
                 if wildcard_regex is not None:
@@ -137,7 +160,7 @@ def search_keyword(keyword, codebase, cache=None, stats=None):
                     if not wildcard_regex.search(full_text):
                         continue
                     for idx, line in enumerate(lines, 1):
-                        if wildcard_regex.search(line):
+                        if wildcard_regex.search(line) and is_valid_code_match(term, line, path):
                             cleaned_line = sanitize_snippet(line.strip())
                             term_matches.append((path, idx, cleaned_line))
                             if len(term_matches) >= 10:
@@ -147,9 +170,11 @@ def search_keyword(keyword, codebase, cache=None, stats=None):
                     if term not in full_text:
                         continue
                     for idx, line in enumerate(lines, 1):
-                        if term in line:
+                        if term in line and is_valid_code_match(term, line, path):
                             cleaned_line = sanitize_snippet(line.strip())
                             term_matches.append((path, idx, cleaned_line))
+                            if len(term_matches) >= 10:
+                                break
                             if len(term_matches) >= 10:
                                 break
                 if len(term_matches) >= 10:
@@ -389,15 +414,25 @@ def process_audit_files(codebase, docs_dir='docs/spec', dry_run=False, target_ca
             or '/manual/' in filepath or '/memo/' in filepath or is_japanese_prose
         )
 
+        prod_matches = [m for m in matches if not m[0].startswith("tests/")]
+        test_matches = [m for m in matches if m[0].startswith("tests/")]
+
         new_status = curr_status
         if is_guide_or_note:
             # Conceptual guides / documentation pages
             pass
+        elif keyword.lower() in GENERIC_KEYWORDS:
+            # Generic non-domain terms are not used for status advancement
+            pass
         else:
-            if not matches and keyword not in GENERIC_KEYWORDS:
+            if not matches:
                 new_status = "❌ 未実装"
-            elif matches and (curr_status.startswith("❌") or curr_status.startswith("⚠️")):
+            elif prod_matches and test_matches:
                 new_status = "✅ 実装済"
+            elif prod_matches or test_matches:
+                new_status = "⚠️ 一部対応"
+            else:
+                new_status = "❌ 未実装"
 
             if matches and keyword not in GENERIC_KEYWORDS:
                 impl_lines = []

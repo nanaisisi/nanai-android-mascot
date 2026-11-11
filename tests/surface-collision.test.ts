@@ -63,9 +63,9 @@ test("surfaceCollisionMethods covers resolveSurfaceNumber and detectCollision", 
 	const resolvedSubchar = mockManager.resolveSurfaceNumber("subchar_smile", 2);
 	assert.equal(resolvedSubchar, "20");
 
-	// Fallback to common aliases for scope >= 2
+	// Scope >= 2 aliases do not leak to Scope 0's aliases if undefined
 	const resolvedFallback = mockManager.resolveSurfaceNumber("smile", 2);
-	assert.ok(["1", "2"].includes(String(resolvedFallback)));
+	assert.equal(resolvedFallback, "smile");
 
 	// 2. detectCollision
 	const rect = { left: 0, top: 0, width: 200, height: 400 };

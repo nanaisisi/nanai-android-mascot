@@ -2,7 +2,7 @@
 
 - **規格**: [OnUpdate.OnDownloadBegin.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/network-update/OnUpdate.OnDownloadBegin/) (ukadoc-spec/list/shiori-event/network-update/OnUpdate.OnDownloadBegin/)
 - **検索語**: OnUpdate.OnDownloadBegin
-- **対応状況**: ✅ 実装済(SHIORIへ送信)
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,6 +10,8 @@ Rust 側の 1ファイルごとのダウンロード開始通知 (`update-progre
 
 ## 実装箇所
 
-- `src-tauri/src/commands/update/network.rs:52` `/// (フロント側で OnUpdate.OnDownloadBegin / OnUpdate.OnMD5Compare* として SHIORI に中継する)`
-- `ui/js/core/app-update.js:18` `*    - OnUpdate.OnDownloadBegin`
-- `ui/js/core/actions/update-protocol.js:19` `"download-begin": "OnUpdate.OnDownloadBegin",`
+- `src-tauri/src/commands/update/network/helpers.rs:51` `/// (フロント側で OnUpdate.OnDownloadBegin / OnUpdate.OnMD5Compare* として SHIORI に中継する)`
+- `crates/nanai-core/src/update_protocol.rs:28` `"OnUpdate.OnDownloadBegin",`
+- `ui/ts/core/actions/update-protocol.ts:7` `* - OnUpdate.OnDownloadBegin / OnUpdate.OnMD5CompareBegin / OnUpdate.OnMD5Compar`
+- `ui/ts/core/actions/update-protocol.ts:90` `"OnUpdate.OnDownloadBegin",`
+- `ui/ts/core/actions/update-protocol.ts:199` `"download-begin": "OnUpdate.OnDownloadBegin",`

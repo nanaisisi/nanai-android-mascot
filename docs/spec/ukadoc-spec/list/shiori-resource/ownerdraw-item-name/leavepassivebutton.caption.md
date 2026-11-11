@@ -2,7 +2,7 @@
 
 - **規格**: [leavepassivebutton.caption.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ownerdraw-item-name/leavepassivebutton.caption/) (ukadoc-spec/list/shiori-resource/ownerdraw-item-name/leavepassivebutton.caption.md)
 - **検索語**: leavepassivebutton.caption
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,5 +11,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:101` `| "leavepassivebutton.caption"`
-- `ui/js/ui/renderers/menu-caption-renderer.js:241` `resource: "leavepassivebutton.caption",`
+- `ui/ts/ui/renderers/menu-caption-general-part2.ts:64` `resource: "leavepassivebutton.caption",`

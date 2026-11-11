@@ -2,7 +2,7 @@
 
 - **規格**: [icon.minimize.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/icon.minimize.md)
 - **検索語**: icon.minimize
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 

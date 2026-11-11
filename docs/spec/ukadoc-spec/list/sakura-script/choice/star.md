@@ -2,7 +2,7 @@
 
 - **規格**: [star.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/choice/star/) (ukadoc-spec/list/sakura-script/choice/star.md)
 - **検索語**: \*
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/command.rs:36` `Star, // \*`
-- `crates/ui/src/script/parser/mod.rs:101` `Some('*') => callback(SakuraCommand::Star),  // \*`
-- `ui/js/surface/surface-load.js:8` `// [mousedown\*,当たり判定ID,ファイル名]`
-- `ui/js/surface/surface-load.js:9` `// [mousehover\*,当たり判定ID,ファイル名]`
-- `ui/js/surface/surface-load.js:10` `// [mouserightdown\*,当たり判定ID,ファイル名]`
+- `crates/ui/src/script/command.rs:43` `Star,         // \*`
+- `crates/ui/src/script/env.rs:59` `// %* (%\*) 環境変数展開 [pct-star.md]`
+- `crates/ui/src/script/parser/executor.rs:113` `Some('*') => callback(SakuraCommand::Star), // \*`
+- `crates/ui/src/script/parser/tests.rs:66` `\\*\\![change,ghost,sakura]\\![call,ghost,kero]\`
+- `ui/ts/surface/parser/scope-blocks.ts:19` `/^(sakura|kero|char\d+|\*)?\.?cursor\s*\{?$/i,`

@@ -1,7 +1,7 @@
 # その他の機能
 
 - **規格**: [functions/other.md](https://ukatech.shillest.net/ukadoc-ssp/functions/other/) (ukadoc-ssp/functions/other.md)
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,6 +11,6 @@
 
 - `src-tauri/src/commands/config.rs:52` `(_, other) => {`
 - `src-tauri/src/commands/config.rs:53` `base_map.insert(k, other);`
-- `src-tauri/src/commands/ext.rs:47` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [secondchangeinterva`
-- `src-tauri/src/commands/ext.rs:52` `let _other_talk = map.get("otherghosttalk");`
-- `src-tauri/src/shiori/property.rs:31` `"other_homeurl_override" | "other_homeurl" => "https://example.com/ghost/".to_st`
+- `crates/nanai-core/src/update_protocol.rs:241` `assert!(!is_no_update_path("other.txt", &patterns));`
+- `crates/nanai-vfs/src/resolver/vfs_trait.rs:33` `Err(io::Error::other(format!(`
+- `crates/ui/src/script/ast/tests/ast_inspection.rs:290` `other => other.clone(),`

@@ -2,7 +2,7 @@
 
 - **規格**: [_s.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/wait/_s/) (ukadoc-spec/list/sakura-script/wait/_s.md)
 - **検索語**: Sync
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/dynamic/mod.rs:25` `unsafe impl Sync for ShioriDynamicEngine {}`
-- `crates/ui/src/lib.rs:122` `assert_eq!(commands[4], SakuraCommand::Sync(true));`
-- `crates/ui/src/lib.rs:160` `assert_eq!(cmds_ps[2], SakuraCommand::Sync(true));`
-- `crates/ui/src/lib.rs:162` `assert_eq!(cmds_ps[4], SakuraCommand::Sync(false));`
-- `crates/ui/src/script/command.rs:70` `Sync(bool),   // \_s (複数キャラ同期発話トグル)`
+- `src-tauri/src/shiori/dynamic/engine.rs:32` `unsafe impl Sync for ShioriDynamicEngine {}`
+- `crates/nanai-vfs/src/traits.rs:7` `pub trait VirtualFileSystem: Send + Sync {`
+- `crates/ui/src/script/command.rs:84` `Sync(bool), // \_s (複数キャラ同期発話トグル)`
+- `crates/ui/src/script/command.rs:194` `| SakuraCommand::Sync(_)`
+- `crates/ui/src/script/command.rs:237` `SakuraCommand::Sync(true).lifetime(),`

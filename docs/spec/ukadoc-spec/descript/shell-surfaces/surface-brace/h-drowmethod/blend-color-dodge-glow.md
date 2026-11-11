@@ -2,10 +2,9 @@
 
 - **規格**: [blend-color-dodge-glow.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-color-dodge-glow/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-color-dodge-glow.md)
 - **検索語**: blend-color-dodge-glow
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 
 ## 実装箇所
 
-- `ui/js/surface/surface-load.js:65` `// [blend-color-dodge-glow-fast]`
-- `ui/js/surface/surface-load.js:66` `// [blend-color-dodge-glow]`
+- `tests/canvas-pixel-snapshot/cycle7-blend-modes.test.ts:59` `dstDodge.compositeBuffer(srcDodge, 0, 0, "blend-color-dodge-glow-fast");`

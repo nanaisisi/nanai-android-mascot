@@ -2,7 +2,7 @@
 
 - **規格**: [default.balloon.path.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/recommended-balloon/) (ukadoc-spec/descript/ghost/recommended-balloon/default.balloon.path.md)
 - **検索語**: default.balloon.path
-- **対応状況**: ✅ 対応済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,7 +10,6 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive/postprocess.rs:71` `.and_then(|m| m.get("default.balloon.path").cloned());`
-- `src-tauri/src/common/models.rs:48` `/// [default.balloon.path,パス]:`
-- `src-tauri/src/ghost/scan/directory/manifest.rs:71` `.and_then(|m| m.get("default.balloon.path").cloned());`
-- `ui/js/ghost/ghost.js:188` `// [balloon,バルーン名], [recommended.balloon,バルーン名], [標準と推奨の使い分け], [recommended.ball`
+- `src-tauri/src/commands/install/archive/postprocess.rs:119` `.and_then(|m| m.get("default.balloon.path").cloned());`
+- `src-tauri/src/common/models.rs:50` `/// [default.balloon.path,パス]:`
+- `src-tauri/src/ghost/scan/directory/manifest.rs:109` `.and_then(|m| m.get("default.balloon.path").cloned());`

@@ -2,7 +2,7 @@
 
 - **規格**: [collision-star.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/collision-star/) (ukadoc-spec/descript/shell-surfaces/surface-brace/collision-star.md)
 - **検索語**: collision
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,8 @@ surface-parser.js が解析し、判定・再生に利用している。
 
 ## 実装箇所
 
-- `crates/ui/src/lib.rs:224` `fn test_collisionex_circle_and_ellipse() {`
-- `crates/ui/src/lib.rs:227` `collisionex0,face,circle,100,100,50`
-- `crates/ui/src/lib.rs:228` `collisionex1,halo,ellipse,100,100,60,30`
-- `crates/ui/src/manifest.rs:22` `/// element / animation / collision / point 定義`
-- `crates/ui/src/manifest.rs:102` `"charset,Shift_JIS\nsurface0\n{\nelement0,base,surface0.png,0,0\ncollisionex0,he`
+- `crates/ui/src/surfaces/parser/handlers/animation.rs:3` `use super::collision::{parse_collision_area, parse_collisionex_area};`
+- `crates/ui/src/surfaces/parser/handlers/animation.rs:33` `} else if let Some(collision_part) = field_lower.strip_prefix("collision") {`
+- `crates/ui/src/surfaces/parser/handlers/mod.rs:4` `pub mod collision;`
+- `crates/ui/src/surfaces/parser/handlers/mod.rs:10` `pub(crate) use collision::{apply_collision, apply_collisionex};`
+- `crates/ui/src/surfaces/parser/handlers/mod.rs:73` `apply_collision(&mut txt, &[0], "collision", "1,0,0,50,50,Head");`

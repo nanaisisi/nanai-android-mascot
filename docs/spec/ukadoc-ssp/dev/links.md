@@ -1,7 +1,7 @@
 # 開発者向けヘルプ：開発リンク集
 
 - **規格**: [dev/links.md](https://ukatech.shillest.net/ukadoc-ssp/dev/links/) (ukadoc-ssp/dev/links.md)
-- **対応状況**: ✅ 実装済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,4 +10,4 @@ UKADOC / さくらスクリプト仕様へのリンク集
 
 ## 実装箇所
 
-- `src-tauri/src/commands/update/generation.rs:32` `let walker = WalkDir::new(&dir).follow_links(false).sort_by_file_name();`
+実装コード内に「links」は検出されませんでした。

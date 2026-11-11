@@ -2,7 +2,7 @@
 
 - **規格**: [vanishbutton.caption.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ownerdraw-item-name/vanishbutton.caption/) (ukadoc-spec/list/shiori-resource/ownerdraw-item-name/vanishbutton.caption.md)
 - **検索語**: vanishbutton.caption
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:37` `* - updatebutton.caption, quitbutton.caption, closebutton.caption, configuration`
+- `ui/ts/ui/renderers/menu-caption-general-part2.ts:238` `resource: "vanishbutton.caption",`

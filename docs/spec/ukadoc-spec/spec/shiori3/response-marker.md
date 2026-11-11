@@ -2,7 +2,7 @@
 
 - **規格**: [response.md](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/response/) (ukadoc-spec/spec/shiori3/response.md)
 - **検索語**: marker
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -16,8 +16,8 @@ Rust 通信層として `crates/ui/src/shiori.rs`（SHIORI/3.0 リクエスト/�
 
 ## 実装箇所
 
-- `crates/ui/src/script/parser/brackets/handlers/raiselike/settings.rs:75` `"autoscroll" | "balloonalign" | "balloonmarker" | "balloonnum" | "balloonwait"`
-- `crates/ui/src/script/parser/brackets/handlers/raiselike/settings.rs:107` `pub(crate) fn handle_marker(callback: &mut dyn FnMut(SakuraCommand)) {`
-- `crates/ui/src/script/parser/brackets/handlers/raiselike/settings.rs:156` `handle_marker(&mut cb);`
-- `crates/ui/src/script/parser/brackets/handlers/raiselike/mod.rs:42` `settings::handle_marker(callback);`
-- `crates/ui/src/shiori/protocol/response/build.rs:34` `if let Some(marker) = &self.marker {`
+- `crates/nanai-vfs/src/mock/mutations.rs:44` `let marker = format!("{}/.keep", norm);`
+- `crates/nanai-vfs/src/mock/mutations.rs:45` `if !self.exists(&marker) {`
+- `crates/nanai-vfs/src/mock/mutations.rs:46` `self.add_file(marker, Vec::new());`
+- `crates/ui/src/shiori/engine/state.rs:34` `"response.marker".to_string(),`
+- `crates/ui/src/shiori/engine/tests/mock_engine.rs:52` `assert!(refs.iter().any(|r| r == "response.marker"));`

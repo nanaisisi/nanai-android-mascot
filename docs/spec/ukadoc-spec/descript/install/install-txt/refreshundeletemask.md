@@ -2,7 +2,7 @@
 
 - **規格**: [refreshundeletemask.md](https://ukatech.shillest.net/ukadoc-spec/descript/install/install-txt/) (ukadoc-spec/descript/install/install-txt/refreshundeletemask.md)
 - **検索語**: refreshundeletemask
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive/inspection.rs:29` `/// 無印 → 0 → 1 → 2... の順に連続探索し、欠番が出た時点で打ち切る (refresh / refreshundeletemask 拡張対応)`
-- `src-tauri/src/commands/install/archive/inspection.rs:45` `// 1. 無印 (例: balloon.directory, balloon.refresh, balloon.refreshundeletemask)`
-- `src-tauri/src/commands/install/archive/inspection.rs:54` `.get(&format!("{r_type}.refreshundeletemask"))`
-- `src-tauri/src/commands/install/archive/inspection.rs:83` `.get(&format!("{r_type}{idx}.refreshundeletemask"))`
-- `src-tauri/src/commands/install/archive/inspection.rs:178` `if let Some(val) = map.get("refreshundeletemask") {`
+- `src-tauri/src/commands/install/archive/inspection/tests.rs:12` `"balloon.refreshundeletemask".to_string(),`
+- `src-tauri/src/commands/install/archive/inspection/tests.rs:68` `"refreshundeletemask".to_string(),`
+- `src-tauri/src/commands/install/archive/inspection/tests.rs:82` `.get("refreshundeletemask")`
+- `src-tauri/src/commands/install/archive/inspection/analyzer/resource_resolver.rs:30` `.get(&format!("{r_type}.refreshundeletemask"))`
+- `src-tauri/src/commands/install/archive/inspection/analyzer/resource_resolver.rs:59` `.get(&format!("{r_type}{idx}.refreshundeletemask"))`

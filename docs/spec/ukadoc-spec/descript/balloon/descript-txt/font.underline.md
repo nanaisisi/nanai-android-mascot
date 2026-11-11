@@ -2,7 +2,7 @@
 
 - **規格**: [font.underline.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/font.underline.md)
 - **検索語**: font.underline
-- **対応状況**: ✅ 対応済
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,5 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font/base.js:46` `props["font.underline"] === "1" ||`
-- `ui/js/core/actions/balloon-descript/font/base.js:47` `props["font.underline"]?.toLowerCase() === "true"`
+- `ui/ts/core/actions/balloon-descript/font/base.ts:49` `props["font.underline"] === "1" ||`
+- `ui/ts/core/actions/balloon-descript/font/base.ts:50` `props["font.underline"]?.toLowerCase() === "true"`
+- `tests/core-actions.test.ts:37` `"font.underline": "0",`
+- `tests/frontend-coverage-boost.test.ts:24` `"font.underline": "1",`
+- `tests/balloon-descript/all-properties/mock-props.ts:27` `"font.underline": "1",`

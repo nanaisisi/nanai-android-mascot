@@ -2,7 +2,7 @@
 
 - **規格**: [dressuprootbutton.caption.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ownerdraw-item-name/dressuprootbutton.caption/) (ukadoc-spec/list/shiori-resource/ownerdraw-item-name/dressuprootbutton.caption.md)
 - **検索語**: dressuprootbutton.caption
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-- `ui/js/ui/renderers/menu-caption-renderer.js:102` `resource: "dressuprootbutton.caption",`
+- `ui/ts/ui/renderers/menu-caption-general.ts:157` `resource: "dressuprootbutton.caption",`

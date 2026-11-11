@@ -2,7 +2,7 @@
 
 - **規格**: [communicatebox.placeholder.color.g.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/)
 - **検索語**: communicatebox.placeholder.color.g
-- **対応状況**: ✅ 対応済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/layout.js:51` `props["communicatebox.placeholder.color.g"] ||`
+- `ui/ts/core/actions/balloon-descript/layout/communicate-box.ts:32` `props["communicatebox.placeholder.color.g"] ||`

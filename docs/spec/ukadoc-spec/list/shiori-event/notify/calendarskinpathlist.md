@@ -2,7 +2,7 @@
 
 - **規格**: [calendarskinpathlist.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/notify/calendarskinpathlist/) (ukadoc-spec/list/shiori-event/notify/calendarskinpathlist.md)
 - **検索語**: calendarskinpathlist
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,5 +11,4 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:16` `* - installedcalendarpluginname / calendarpluginpathlist / installedcalendarskin`
-- `ui/js/ghost/shiori-notify.js:646` `"calendarskinpathlist",`
+- `ui/ts/ghost/shiori-notify/ghost-lifecycle/boot.ts:140` `"calendarskinpathlist",`

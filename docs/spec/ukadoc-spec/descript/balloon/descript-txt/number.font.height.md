@@ -2,7 +2,7 @@
 
 - **規格**: [number.font.height.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/)
 - **検索語**: number.font.height
-- **対応状況**: ✅ 対応済
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font/special.js:22` `const numFontHeight = parseInt(props["number.font.height"], 10);`
+- `ui/ts/core/actions/balloon-descript/font/special.ts:22` `const numFontHeight = parseInt(props["number.font.height"], 10);`
+- `tests/balloon-descript/all-properties/mock-props.ts:76` `"number.font.height": "12",`
+- `tests/core-coverage-boost/balloon-descript-coverage.test.ts:69` `"number.font.height": "24",`

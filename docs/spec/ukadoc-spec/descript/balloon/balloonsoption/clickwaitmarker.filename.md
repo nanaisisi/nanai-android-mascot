@@ -2,7 +2,7 @@
 
 - **規格**: [clickwaitmarker.filename.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/balloonsoption/clickwaitmarker.filename.md)
 - **検索語**: clickwaitmarker.filename
-- **対応状況**: ✅ 対応済
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,7 +10,8 @@
 
 ## 実装箇所
 
-- `ui/css/balloon-window.css:84` `/* バルーンオプション画像 (arrow.filename, clickwaitmarker.filename 等) */`
-- `ui/css/balloon-window.css:103` `/* クリック待ちマーカー (clickwaitmarker.filename) */`
-- `ui/js/core/actions/balloon-descript/assets.js:57` `// [clickwaitmarker.filename,ファイル名]:`
-- `ui/js/core/actions/balloon-descript/assets.js:58` `setBalloonImage("clickwaitmarker.filename", "--balloon-clickwait-image");`
+- `ui/css/balloon-window.css:206` `/* バルーンオプション画像 (arrow.filename, clickwaitmarker.filename 等) */`
+- `ui/css/balloon-window.css:225` `/* クリック待ちマーカー (clickwaitmarker.filename) */`
+- `ui/ts/core/actions/balloon-descript/assets.ts:163` `// [clickwaitmarker.filename,ファイル名]:`
+- `ui/ts/core/actions/balloon-descript/assets.ts:164` `setBalloonImage("clickwaitmarker.filename", "--balloon-clickwait-image");`
+- `tests/balloon-descript/all-properties/mock-props.ts:87` `"clickwaitmarker.filename": "marker.png",`

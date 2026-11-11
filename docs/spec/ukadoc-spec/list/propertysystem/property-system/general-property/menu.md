@@ -2,7 +2,7 @@
 
 - **規格**: [menu.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/general-property/menu/)
 - **検索語**: menu
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -13,5 +13,5 @@
 - `src-tauri/src/events.rs:4` `pub fn handle_menu_event(app_handle: &tauri::AppHandle, event: tauri::menu::Menu`
 - `src-tauri/src/events.rs:8` `"native-menu-action",`
 - `src-tauri/src/events.rs:16` `"native-menu-action",`
-- `src-tauri/src/events.rs:22` `} else if id == "open" || id == "open_menu" {`
-- `src-tauri/src/events.rs:35` `let _ = crate::commands::window::show_menu_window(app_h, x, y, Some(0)).await;`
+- `src-tauri/src/events.rs:41` `"native-menu-action",`
+- `src-tauri/src/commands/config.rs:7` `use tauri::menu::{MenuBuilder, SubmenuBuilder};`

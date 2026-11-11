@@ -2,7 +2,7 @@
 
 - **規格**: [OnUpdateCheckResultEx.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/network-update/OnUpdateCheckResultEx/) (ukadoc-spec/list/shiori-event/network-update/OnUpdateCheckResultEx/)
 - **検索語**: OnUpdateCheckResultEx
-- **対応状況**: ✅ 実装済(SHIORIへ送信)
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/core/app-update.js:229` `* OnUpdateResultEx (または OnUpdateCheckResultEx) を送信し、`
+- `ui/ts/core/actions/update-protocol.ts:10` `* - OnUpdateCheckComplete / OnUpdateCheckFailure / OnUpdateCheckResult / OnUpdat`

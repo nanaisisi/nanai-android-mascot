@@ -2,7 +2,7 @@
 
 - **規格**: [updatefmobutton.caption.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ownerdraw-item-name/updatefmobutton.caption/) (ukadoc-spec/list/shiori-resource/ownerdraw-item-name/updatefmobutton.caption.md)
 - **検索語**: updatefmobutton.caption
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,6 +11,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:71` `| "updatefmobutton.caption"`
-- `src-tauri/src/shiori/property.rs:109` `evaluate_property_query("updatefmobutton.caption"),`
-- `ui/js/ghost/shiori-notify.js:40` `* - callsstpsendboxbutton.caption, updatefmobutton.caption, switchlocalsstpbutto`
+- `src-tauri/src/shiori/property/tests.rs:111` `assert_eq!(evaluate_property_query("updatefmobutton.caption"), "1");`
+- `ui/ts/ui/renderers/menu-caption-general-part2.ts:220` `resource: "updatefmobutton.caption",`

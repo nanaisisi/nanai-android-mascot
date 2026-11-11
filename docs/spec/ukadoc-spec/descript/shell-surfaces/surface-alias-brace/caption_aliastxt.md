@@ -2,7 +2,7 @@
 
 - **規格**: [caption_aliastxt.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-alias-brace/caption_aliastxt/) (ukadoc-spec/descript/shell-surfaces/surface-alias-brace/caption_aliastxt.md)
 - **検索語**: alias.txt
-- **対応状況**: ✅ 対応済 (surface-load.js)
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/surface/surface-load.js:28` `// [alias.txt]`
+- `ui/ts/surface/surface-load-ukadoc.ts:23` `// [alias.txt]`

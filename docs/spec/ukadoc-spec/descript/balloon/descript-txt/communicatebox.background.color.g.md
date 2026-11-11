@@ -2,7 +2,7 @@
 
 - **規格**: [communicatebox.background.color.g.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/communicatebox.background.color.g.md)
 - **検索語**: communicatebox.background.color.g
-- **対応状況**: ✅ 対応済
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/layout.js:45` `props["communicatebox.background.color.g"] ||`
+- `ui/ts/core/actions/balloon-descript/layout/communicate-box.ts:26` `props["communicatebox.background.color.g"] ||`
+- `tests/balloon-descript-layout/communicate-box.test.ts:59` `"communicatebox.background.color.g": "255",`

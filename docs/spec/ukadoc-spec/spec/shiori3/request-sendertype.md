@@ -2,7 +2,7 @@
 
 - **規格**: [request.md](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/request/) (ukadoc-spec/spec/shiori3/request.md)
 - **検索語**: SenderType
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -16,8 +16,7 @@ Rust 通信層として `crates/ui/src/shiori.rs`（SHIORI/3.0 リクエスト/�
 
 ## 実装箇所
 
-- `crates/ui/src/lib.rs:33` `MultiStageShioriLoader, SecurityLevel, SenderTypeTag, ShioriEngine, ShioriEngine`
-- `crates/ui/src/shiori/mod.rs:4` `//! の構築・解析を行う。SSP 拡張ヘッダ（SenderType / SecurityLevel /`
-- `crates/ui/src/shiori/mod.rs:22` `ErrorLevel, GhostStatusToken, SecurityLevel, SenderTypeTag, ShioriMethod, Status`
-- `crates/ui/src/shiori/protocol/request/types.rs:15` `pub sender_type: Vec<SenderTypeTag>,`
 - `crates/ui/src/shiori/protocol/request/builder.rs:20` `out.push_str(&format!("SenderType: {}\r\n", tokens));`
+- `crates/ui/src/shiori/protocol/request/tests.rs:201` `assert!(built.contains("SenderType: internal"));`
+- `crates/ui/src/shiori/tests/protocol_extended_tests.rs:29` `assert!(wire.contains("SenderType: internal,communicate\r\n"));`
+- `crates/ui/src/shiori/tests/request_tests.rs:21` `assert!(text.contains("SenderType: internal,raise\r\n"));`

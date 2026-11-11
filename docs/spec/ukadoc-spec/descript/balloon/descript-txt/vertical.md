@@ -2,7 +2,7 @@
 
 - **規格**: [vertical.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/vertical.md)
 - **検索語**: vertical
-- **対応状況**: ✅ 対応済
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/css/balloon-window.css:58` `vertical-align: middle;`
+- `src-tauri/src/shiori/property/tests.rs:91` `evaluate_property_query("currentghost.balloon.scope(0).vertical"),`
+- `src-tauri/src/shiori/property/evaluator/dynamic_rules.rs:54` `"vertical" => "0".to_string(),`
 - `ui/css/balloon-window.css:111` `vertical-align: middle;`
-- `ui/css/balloon-window.css:123` `vertical-align: middle;`
-- `ui/css/balloon-window.css:135` `vertical-align: middle;`
-- `ui/css/mascot.css:301` `vertical-align: middle;`
+- `ui/css/balloon-window.css:233` `vertical-align: middle;`
+- `ui/css/balloon-window.css:256` `vertical-align: middle;`

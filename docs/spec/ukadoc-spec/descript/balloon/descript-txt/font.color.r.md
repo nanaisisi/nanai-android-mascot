@@ -2,7 +2,7 @@
 
 - **規格**: [font.color.r.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/font.color.r.md)
 - **検索語**: font.color.r
-- **対応状況**: ✅ 対応済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `crates/ui/src/descript/parser.rs:86` `/// バルーンフォント色 (`font.color.r,g,b`または`font.color`)`
-- `ui/js/core/actions/balloon-descript/layout.js:28` `// [communicatebox.font.name,フォント名], [communicatebox.font.color.r/g/b,数値], [comm`
-- `ui/js/core/actions/balloon-descript/layout.js:38` `props["communicatebox.font.color.r"] ||`
-- `ui/js/core/actions/balloon-descript/font/base.js:71` `props["font.color.r"] ||`
-- `ui/js/core/actions/balloon-descript/font/group.js:6` `props[`${prefix}.font.color.r`] ||`
+- `src-tauri/src/shiori/property/tests.rs:130` `assert_eq!(evaluate_property_query("menu.background.font.color.r"), "0");`
+- `src-tauri/src/shiori/property/tests.rs:132` `evaluate_property_query("menu.foreground.font.color.r"),`
+- `src-tauri/src/shiori/property/tests.rs:135` `assert_eq!(evaluate_property_query("menu.disable.font.color.r"), "128");`
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs:80` `"menu.background.font.color.r" => "0",`
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs:83` `"menu.foreground.font.color.r" => "255",`

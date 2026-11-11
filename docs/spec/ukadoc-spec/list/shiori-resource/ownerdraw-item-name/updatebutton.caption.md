@@ -2,7 +2,7 @@
 
 - **規格**: [updatebutton.caption.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ownerdraw-item-name/updatebutton.caption/) (ukadoc-spec/list/shiori-resource/ownerdraw-item-name/updatebutton.caption.md)
 - **検索語**: updatebutton.caption
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,5 +11,4 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/ghost-shiori.js:178` `* @param {string} resourceId リソース名 (例: "menu.background.bitmap.filename", "updat`
-- `ui/js/ghost/shiori-notify.js:37` `* - updatebutton.caption, quitbutton.caption, closebutton.caption, configuration`
+- `ui/ts/ui/renderers/menu-caption-general-part2.ts:214` `resource: "updatebutton.caption",`

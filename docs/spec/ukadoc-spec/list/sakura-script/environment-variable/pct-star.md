@@ -2,7 +2,7 @@
 
 - **規格**: [pct-star.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/environment-variable/pct-star/) (ukadoc-spec/list/sakura-script/environment-variable/pct-star.md)
 - **検索語**: %\*
-- **対応状況**: ✅ 実装済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/env.rs:59` `// %* (%\*) 環境変数展開 [pct-star.md]`
+実装コード内に「%\*」は検出されませんでした。

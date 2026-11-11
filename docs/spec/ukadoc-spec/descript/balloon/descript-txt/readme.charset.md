@@ -2,7 +2,7 @@
 
 - **規格**: [readme.charset.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/readme.charset.md)
 - **検索語**: readme.charset
-- **対応状況**: ✅ 対応済
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -14,4 +14,4 @@
 - `src-tauri/src/commands/ext.rs:49` `let _readme_cs = map.get("readme.charset");`
 - `src-tauri/src/commands/ext.rs:116` `// [readme,ファイル名], [readme.charset,文字コード], [charset,文字コード], [alwaysdisplay,数値], `
 - `src-tauri/src/commands/ext.rs:118` `let _readme_cs = map.get("readme.charset");`
-- `ui/js/core/actions/balloon-descript/assets.js:11` `// [readme.charset,文字コード]: props["readme.charset"]`
+- `ui/ts/core/actions/balloon-descript/assets.ts:69` `// [readme.charset,文字コード]: props["readme.charset"]`

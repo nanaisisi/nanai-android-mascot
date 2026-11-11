@@ -2,7 +2,7 @@
 
 - **規格**: [response.md](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/response/) (ukadoc-spec/spec/shiori3/response.md)
 - **検索語**: security_level
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -16,8 +16,8 @@ Rust 通信層として `crates/ui/src/shiori.rs`（SHIORI/3.0 リクエスト/�
 
 ## 実装箇所
 
-- `src-tauri/src/sstp/types.rs:13` `pub security_level: Option<String>,`
-- `src-tauri/src/sstp/parser.rs:20` `security_level: core_req.security_level,`
-- `src-tauri/src/sstp/parser.rs:47` `security_level: core_req.security_level,`
 - `src-tauri/src/sstp/mod.rs:112` `security_level: Some("local".to_string()),`
-- `crates/ui/src/sstp/message/request/core.rs:20` `pub security_level: Option<String>,`
+- `src-tauri/src/sstp/parser.rs:20` `security_level: core_req.security_level,`
+- `src-tauri/src/sstp/parser.rs:48` `security_level: core_req.security_level,`
+- `src-tauri/src/sstp/parser.rs:96` `security_level: core_req.security_level.clone(),`
+- `src-tauri/src/sstp/types.rs:13` `pub security_level: Option<String>,`

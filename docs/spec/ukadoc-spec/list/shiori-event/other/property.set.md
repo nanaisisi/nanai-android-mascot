@@ -2,7 +2,7 @@
 
 - **規格**: [property.set.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/other/property.set/) (ukadoc-spec/list/shiori-event/other/property.set.md)
 - **検索語**: property.set
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,5 +11,4 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/command-handler/system/surface.js:20` `// UKADOC property.set / property.get SHIORI連携`
-- `ui/js/ghost/command-handler/system/surface.js:23` `.sendShioriEvent("property.set", [key, val])`
+- `ui/ts/ghost/command-handler/system/surface.ts:16` `.sendShioriEvent("property.set", [key, val])`

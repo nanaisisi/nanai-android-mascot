@@ -2,7 +2,7 @@
 
 - **規格**: [sakura.recommendbuttoncaption.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ghost/sakura.recommendbuttoncaption/) (ukadoc-spec/list/shiori-resource/ghost/sakura.recommendbuttoncaption.md)
 - **検索語**: sakura.recommendbuttoncaption
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,4 +10,4 @@ sakura.recommendbuttoncaption SHIORIリソース・プロパティ評価処理�
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:40` `"sakura.portalbuttoncaption" | "sakura.portalsites" | "sakura.recommendbuttoncap`
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs:44` `| "sakura.recommendbuttoncaption"`

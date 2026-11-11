@@ -2,13 +2,13 @@
 
 - **規格**: [overlay.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/overlay/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/overlay.md)
 - **検索語**: overlay
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 
 ## 実装箇所
 
-- `src-tauri/src/lib.rs:40` `commands::window::request_overlay_permission,`
-- `src-tauri/src/lib.rs:122` `commands::window::request_overlay_permission,`
-- `src-tauri/src/commands/window/android.rs:4` `pub async fn request_overlay_permission() -> Result<String, String> {`
-- `src-tauri/src/commands/window/android.rs:34` `pub async fn set_overlay_transparency(alpha: f64) -> Result<f64, String> {`
-- `src-tauri/src/commands/window/android.rs:71` `let perm = request_overlay_permission().await.unwrap();`
+- `src-tauri/src/commands/shell/manifest.rs:117` `DrawMethod::Overlay => "overlay".to_string(),`
+- `src-tauri/src/common/vfs.rs:55` `let mut overlay = OverlayVfs::new();`
+- `src-tauri/src/common/vfs.rs:56` `overlay.push_base(Arc::new(mock.clone()));`
+- `src-tauri/src/common/vfs.rs:57` `assert_eq!(overlay.layer_count(), 1);`
+- `src-tauri/src/common/vfs.rs:58` `assert!(overlay.is_file("shell/master/surface0000.png"));`

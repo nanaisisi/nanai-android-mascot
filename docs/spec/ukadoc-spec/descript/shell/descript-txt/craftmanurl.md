@@ -2,7 +2,7 @@
 
 - **規格**: [craftmanurl.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell/descript-txt/craftmanurl/) (ukadoc-spec/descript/shell/descript-txt/craftmanurl.md)
 - **検索語**: craftmanurl
-- **対応状況**: ✅ 実装済 (Rust `crates/ui/src/descript.rs` Descript 解析 / `crates/ui/src/shell.rs` Shell::load)
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,8 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 
 ## 実装箇所
 
-- `src-tauri/src/commands/ext.rs:36` `// [craftman,作者名], [craftmanw,作者名], [craftmanurl,URL], [homeurl,URL]:`
 - `src-tauri/src/commands/ext.rs:42` `.get("craftmanurl")`
-- `src-tauri/src/commands/ext.rs:101` `// [craftman,作者名], [craftmanw,作者名], [craftmanurl,URL], [homeurl,URL]:`
 - `src-tauri/src/commands/ext.rs:107` `.get("craftmanurl")`
-- `src-tauri/src/commands/install/archive/postprocess.rs:58` `.and_then(|m| m.get("craftmanurl").cloned());`
+- `src-tauri/src/commands/install/archive/postprocess.rs:106` `.and_then(|m| m.get("craftmanurl").cloned());`
+- `src-tauri/src/ghost/scan/directory/manifest.rs:90` `m.get("craftmanurl")`
+- `src-tauri/src/shiori/property/evaluator/dynamic_rules.rs:9` `"craftmanurl" => "https://example.com/shiori".to_string(),`

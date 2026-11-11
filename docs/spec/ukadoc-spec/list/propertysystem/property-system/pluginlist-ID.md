@@ -2,7 +2,7 @@
 
 - **規格**: [pluginlist-ID.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/pluginlist-ID/) (ukadoc-spec/list/propertysystem/property-system/pluginlist-ID.md)
 - **検索語**: pluginlist
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:20` `"pluginlist.count" => "0".to_string(),`
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs:20` `"pluginlist.count" => "0",`

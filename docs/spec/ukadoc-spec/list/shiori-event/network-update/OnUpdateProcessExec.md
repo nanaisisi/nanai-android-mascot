@@ -2,7 +2,7 @@
 
 - **規格**: [OnUpdateProcessExec.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/network-update/OnUpdateProcessExec/) (ukadoc-spec/list/shiori-event/network-update/OnUpdateProcessExec.md)
 - **検索語**: OnUpdateProcessExec
-- **対応状況**: ✅ 実装済(SHIORIへ送信)
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,7 +10,8 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 
 ## 実装箇所
 
-- `ui/js/core/app-update.js:11` `* 1. OnUpdateProcessExec (スクリプト返答があればカスタマイズ)`
-- `ui/js/core/app-update.js:43` `// 1. OnUpdateProcessExec 送信`
-- `ui/js/core/app-update.js:44` `const execRes = await gc.sendShioriEvent("OnUpdateProcessExec", ["manual"]);`
-- `ui/js/core/app-update.js:47` `"OnUpdateProcessExec でスクリプトが返されたため標準処理を委譲",`
+- `crates/nanai-core/src/update_protocol.rs:25` `"OnUpdateProcessExec",`
+- `ui/ts/core/app-update.ts:25` `const execRes: unknown = await gc.sendShioriEvent("OnUpdateProcessExec", [`
+- `ui/ts/core/app-update.ts:30` `"OnUpdateProcessExec でスクリプトが返されたため標準処理を委譲",`
+- `ui/ts/core/actions/update-protocol.ts:11` `* - OnUpdateProcessExec / OnUpdateResult / OnUpdateResultEx / OnUpdateResultExpl`
+- `ui/ts/core/actions/update-protocol.ts:87` `"OnUpdateProcessExec",`

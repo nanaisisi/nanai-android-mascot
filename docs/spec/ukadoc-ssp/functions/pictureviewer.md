@@ -1,7 +1,7 @@
 # ピクチャビューワ
 
 - **規格**: [functions/pictureviewer.md](https://ukatech.shillest.net/ukadoc-ssp/functions/pictureviewer/) (ukadoc-ssp/functions/pictureviewer.md)
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `ui/ts/core/app-actions.ts:127` `if (action === "pictureviewer" || action === "archiveviewer") {`
-- `ui/ts/ui/submenu-renderer.ts:164` `{ action: "pictureviewer", label: "画像ビューワ", shortcut: "" },`
+- `ui/ts/core/actions/menu-action-system.ts:29` `if (action === "pictureviewer" || action === "archiveviewer") {`
+- `ui/ts/ui/submenu-renderer.ts:183` `{ action: "pictureviewer", label: "画像ビューワ", shortcut: "" },`

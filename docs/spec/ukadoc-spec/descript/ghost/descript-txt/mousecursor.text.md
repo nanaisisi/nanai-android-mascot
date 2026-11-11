@@ -2,7 +2,7 @@
 
 - **規格**: [mousecursor.text.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/mousecursor.text/) (ukadoc-spec/descript/ghost/descript-txt/mousecursor.text.md)
 - **検索語**: mousecursor.text
-- **対応状況**: ✅ 対応済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,5 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/assets.js:81` `// [mousecursor.text,ファイル名]:`
-- `ui/js/core/actions/balloon-descript/assets.js:82` `setMouseCursor("mousecursor.text", "--balloon-cursor-text");`
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs:15` `"currentghost.balloon.mousecursor.text" => "text.cur",`
+- `ui/ts/core/actions/balloon-descript/assets.ts:196` `// [mousecursor.text,ファイル名]:`
+- `ui/ts/core/actions/balloon-descript/assets.ts:197` `setMouseCursor("mousecursor.text", "--balloon-cursor-text");`

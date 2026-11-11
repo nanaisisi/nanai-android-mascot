@@ -2,7 +2,7 @@
 
 - **規格**: [OnApplicationExist.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event-ex/app-common/OnApplicationExist/) (ukadoc-spec/list/shiori-event-ex/app-common/OnApplicationExist.md)
 - **検索語**: checkApplicationExist
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -13,4 +13,4 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:86` `async checkApplicationExist(appName) {`
+- `ui/ts/ghost/shiori-notify/application-headline.ts:35` `async checkApplicationExist(this: any, appName: string): Promise<boolean> {`

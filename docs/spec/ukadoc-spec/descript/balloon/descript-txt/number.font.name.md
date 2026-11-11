@@ -2,7 +2,7 @@
 
 - **規格**: [number.font.name.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/)
 - **検索語**: number.font.name
-- **対応状況**: ✅ 対応済
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font/special.js:15` `const numFontName = props["number.font.name"];`
+- `ui/ts/core/actions/balloon-descript/font/special.ts:15` `const numFontName = props["number.font.name"];`
+- `tests/balloon-descript/all-properties/mock-props.ts:75` `"number.font.name": "Arial",`
+- `tests/core-coverage-boost/balloon-descript-coverage.test.ts:68` `"number.font.name": "Impact",`

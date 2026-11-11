@@ -2,7 +2,7 @@
 
 - **規格**: [sstpmessage.font.color.b.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/sstpmessage.font.color.b.md)
 - **検索語**: sstpmessage.font.color.b
-- **対応状況**: ✅ 対応済
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font/special.js:50` `props["sstpmessage.font.color.b"]`
+- `ui/ts/core/actions/balloon-descript/font/special.ts:50` `props["sstpmessage.font.color.b"]`
+- `tests/core-coverage-boost/balloon-descript-coverage.test.ts:77` `"sstpmessage.font.color.b": "70",`
+- `tests/sstp-fmo/balloon-styling.test.ts:15` `"sstpmessage.font.color.b": "50",`

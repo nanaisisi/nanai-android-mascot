@@ -2,7 +2,7 @@
 
 - **規格**: [number.font.color.b.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/)
 - **検索語**: number.font.color.b
-- **対応状況**: ✅ 対応済
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,4 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font/special.js:30` `props["number.font.color.b"]`
+- `ui/ts/core/actions/balloon-descript/font/special.ts:30` `props["number.font.color.b"]`
+- `tests/balloon-descript/all-properties/mock-props.ts:79` `"number.font.color.b": "10",`
+- `tests/core-coverage-boost/balloon-descript-coverage.test.ts:72` `"number.font.color.b": "200",`

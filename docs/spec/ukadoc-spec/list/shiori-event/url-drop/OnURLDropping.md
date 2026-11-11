@@ -2,7 +2,7 @@
 
 - **規格**: [OnURLDropping.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/url-drop/OnURLDropping/) (ukadoc-spec/list/shiori-event/url-drop/OnURLDropping.md)
 - **検索語**: OnURLDropping
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,5 +11,5 @@
 
 ## 実装箇所
 
-- `ui/ts/ghost/shiori-notify.ts:224` `| "OnURLDropping"`
 - `ui/ts/ghost/shiori-protocol.ts:92` `URL_DROPPING: "OnURLDropping",`
+- `ui/ts/ghost/shiori-notify/input-events.ts:14` `| "OnURLDropping"`

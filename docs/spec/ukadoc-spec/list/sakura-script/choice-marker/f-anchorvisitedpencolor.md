@@ -2,7 +2,7 @@
 
 - **規格**: [f-anchorvisitedpencolor.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/choice-marker/f-anchorvisitedpencolor/) (ukadoc-spec/list/sakura-script/choice-marker/f-anchorvisitedpencolor.md)
 - **検索語**: \f
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -12,6 +12,6 @@
 
 - `src-tauri/src/common/paths.rs:180` `clean_verbatim_path(r"\\?\C:\path\to\file"),`
 - `src-tauri/src/common/paths.rs:181` `r"C:\path\to\file"`
-- `crates/ui/src/lib.rs:114` `let script = r"\b[0]\b[-1]\t\-\_s\_l[10,20]\f[color,red]\f[bold]";`
-- `crates/ui/src/script/command.rs:78` `}, // \f[tag,param], \f[tag]`
-- `crates/ui/src/script/parser/mod.rs:63` `// \f[tag,param] または \f[tag] (\f[name], \f[height], \f[color], \f[bold], \f[ital`
+- `crates/ui/src/script/command.rs:92` `}, // \f[tag,param], \f[tag]`
+- `crates/ui/src/script/parser/executor.rs:66` `// \f[tag,param] または \f[tag]`
+- `crates/ui/src/script/parser/tests.rs:16` `let script = "\\0\\h\\1\\u\\p[2]\\px\\s[10]\\sx\\w5\\wx\\x\\_w[10]\\b[1]\\bx\\f[`

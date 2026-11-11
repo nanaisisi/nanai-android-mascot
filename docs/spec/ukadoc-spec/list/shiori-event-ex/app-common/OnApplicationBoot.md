@@ -2,7 +2,7 @@
 
 - **規格**: [OnApplicationBoot.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event-ex/app-common/OnApplicationBoot/) (ukadoc-spec/list/shiori-event-ex/app-common/OnApplicationBoot.md)
 - **検索語**: notifyApplicationBoot
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:67` `async notifyApplicationBoot(appName, appPath = "") {`
+- `ui/ts/ghost/shiori-notify/application-headline.ts:21` `async notifyApplicationBoot(this: any, appName: string, appPath = "") {`

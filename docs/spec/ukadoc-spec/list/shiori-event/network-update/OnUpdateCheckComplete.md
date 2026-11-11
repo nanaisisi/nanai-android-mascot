@@ -2,7 +2,7 @@
 
 - **規格**: [OnUpdateCheckComplete.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/network-update/OnUpdateCheckComplete/) (ukadoc-spec/list/shiori-event/network-update/OnUpdateCheckComplete/)
 - **検索語**: OnUpdateCheckComplete
-- **対応状況**: ✅ 実装済(SHIORIへ送信)
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,6 +10,6 @@
 
 ## 実装箇所
 
-- `ui/js/core/app-update.js:16` `*    - チェックのみ実行時: OnUpdateCheckComplete / OnUpdateCheckFailure`
-- `ui/js/core/app-update.js:83` `// チェックのみ実行: OnUpdateCheckComplete (Ref0: 総数 または "none")`
-- `ui/js/core/app-update.js:86` `"OnUpdateCheckComplete",`
+- `ui/ts/core/app-update.ts:71` `"OnUpdateCheckComplete",`
+- `ui/ts/core/actions/update-protocol.ts:10` `* - OnUpdateCheckComplete / OnUpdateCheckFailure / OnUpdateCheckResult / OnUpdat`
+- `tests/core-coverage-boost/app-update-coverage.test.ts:55` `const checkComp = sentEvents.find((e) => e.evt === "OnUpdateCheckComplete");`

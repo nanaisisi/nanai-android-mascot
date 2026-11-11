@@ -2,7 +2,7 @@
 
 - **規格**: [balloon.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/recommended-balloon/balloon/) (ukadoc-spec/descript/ghost/recommended-balloon/balloon.md)
 - **検索語**: balloon
-- **対応状況**: ✅ 対応済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/fmo.rs:13` `pub balloon0: String,`
-- `src-tauri/src/fmo.rs:14` `pub balloon1: String,`
-- `src-tauri/src/fmo.rs:41` `balloon0: "".to_string(),`
-- `src-tauri/src/fmo.rs:42` `balloon1: "".to_string(),`
-- `src-tauri/src/lib.rs:101` `commands::shell::scan_balloons,`
+- `src-tauri/src/commands/install/utils.rs:97` `.map_err(|e| format!("Failed to inspect balloon directory: {e}"))?`
+- `src-tauri/src/commands/install/utils.rs:102` `let wrapper = if target_dir.join("balloon").is_dir() {`
+- `src-tauri/src/commands/install/utils.rs:103` `Some(target_dir.join("balloon"))`
+- `src-tauri/src/commands/install/utils.rs:115` `.map_err(|e| format!("Failed to inspect balloon wrapper: {e}"))?`
+- `src-tauri/src/commands/install/utils.rs:123` `.ok_or_else(|| "Invalid balloon archive entry".to_string())?,`

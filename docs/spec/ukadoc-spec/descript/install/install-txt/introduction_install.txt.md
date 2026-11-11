@@ -2,7 +2,7 @@
 
 - **規格**: [introduction_install.txt.md](https://ukatech.shillest.net/ukadoc-spec/descript/install/install-txt/) (ukadoc-spec/descript/install/install-txt/introduction_install.txt.md)
 - **検索語**: install.txt
-- **対応状況**: ✅ 対応済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -14,8 +14,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive/inspection.rs:29` `if lower == "install.txt" || lower.ends_with("/install.txt") {`
-- `src-tauri/src/commands/install/archive/inspection.rs:117` `"install.txt type={label} ({kind}): サポートされていないアーカイブ種別です"`
-- `src-tauri/src/commands/install/archive/packaging.rs:112` `fs::write(source_dir.join("install.txt"), "type,ghost\nname,TestGhost\n").unwrap`
-- `src-tauri/src/commands/install/archive/packaging.rs:126` `assert!(zip.by_name("install.txt").is_ok());`
-- `src-tauri/src/commands/install/archive/postprocess.rs:34` `target_dir.join("install.txt"),`
+- `src-tauri/src/commands/install/archive/packaging.rs:132` `source_dir.join("install.txt"),`
+- `src-tauri/src/commands/install/archive/packaging.rs:153` `assert!(zip.by_name("install.txt").is_ok());`
+- `src-tauri/src/commands/install/archive/postprocess.rs:82` `target_dir.join("install.txt"),`
+- `src-tauri/src/commands/install/archive/inspection/analyzer/resource_resolver.rs:4` `/// install.txt の規約に従い、同梱リソース (balloon, headline, plugin, shell, calendar.skin, `
+- `src-tauri/src/commands/install/archive/inspection/analyzer/zip_inspector.rs:22` `if lower == "install.txt" || lower.ends_with("/install.txt") {`

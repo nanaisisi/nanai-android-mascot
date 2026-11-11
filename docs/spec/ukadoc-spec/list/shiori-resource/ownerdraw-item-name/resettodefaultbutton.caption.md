@@ -2,7 +2,7 @@
 
 - **規格**: [resettodefaultbutton.caption.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ownerdraw-item-name/resettodefaultbutton.caption/) (ukadoc-spec/list/shiori-resource/ownerdraw-item-name/resettodefaultbutton.caption.md)
 - **検索語**: resettodefaultbutton.caption
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-- `ui/js/ui/renderers/menu-caption-renderer.js:132` `resource: "resettodefaultbutton.caption",`
+- `ui/ts/ui/renderers/menu-caption-general-part2.ts:160` `resource: "resettodefaultbutton.caption",`

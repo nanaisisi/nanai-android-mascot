@@ -2,7 +2,7 @@
 
 - **規格**: [OnMenuExec.md](https://ukatech.shillest.net/ukadoc-spec/list/plugin-event/plugin-event/OnMenuExec/) (ukadoc-spec/list/plugin-event/plugin-event/OnMenuExec.md)
 - **検索語**: OnMenuExec
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 

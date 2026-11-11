@@ -2,7 +2,7 @@
 
 - **規格**: [introduction_descriptbrace.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/descript-brace/introduction_descriptbrace/) (ukadoc-spec/descript/shell-surfaces/descript-brace/introduction_descriptbrace.md)
 - **検索語**: descript
-- **対応状況**: ✅ 対応済 (surface-load.js)
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/capabilities/default.json:4` `"description": "Capability for the main window",`
-- `src-tauri/src/commands/ext.rs:4` `use crate::ghost::scan::read_descript_file;`
-- `src-tauri/src/commands/ext.rs:30` `// [descript.txt（Pluginの）]: プラグイン descript.txt 読込`
+- `src-tauri/src/tray.rs:85` `let descript_path = ghost_master_dir.join("descript.txt");`
 - `src-tauri/src/commands/ext.rs:31` `let desc_path = path.join("descript.txt");`
-- `src-tauri/src/commands/ext.rs:32` `if let Some(map) = read_descript_file(&desc_path) {`
+- `src-tauri/src/commands/ext.rs:96` `let desc_path = path.join("descript.txt");`
+- `src-tauri/src/commands/install/archive/packaging.rs:141` `ghost_dir.join("descript.txt"),`
+- `src-tauri/src/commands/install/archive/packaging.rs:155` `assert!(zip.by_name("ghost/master/descript.txt").is_ok());`

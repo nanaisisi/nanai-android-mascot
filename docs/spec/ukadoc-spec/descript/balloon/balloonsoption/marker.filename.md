@@ -2,7 +2,7 @@
 
 - **規格**: [marker.filename.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/balloonsoption/marker.filename.md)
 - **検索語**: marker.filename
-- **対応状況**: ✅ 対応済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,6 @@
 
 ## 実装箇所
 
-- `ui/css/balloon-window.css:84` `/* バルーンオプション画像 (arrow.filename, clickwaitmarker.filename 等) */`
-- `ui/css/balloon-window.css:103` `/* クリック待ちマーカー (clickwaitmarker.filename) */`
-- `ui/css/balloon-window.css:115` `/* バルーンマーカー (marker.filename) */`
-- `ui/css/balloon-window.css:127` `/* SSTPマーカー (sstpmarker.filename) */`
-- `ui/js/core/actions/balloon-descript/assets.js:57` `// [clickwaitmarker.filename,ファイル名]:`
+- `ui/css/balloon-window.css:248` `/* バルーンマーカー (marker.filename) */`
+- `ui/ts/core/actions/balloon-descript/assets.ts:165` `// [marker.filename,ファイル名]:`
+- `ui/ts/core/actions/balloon-descript/assets.ts:166` `setBalloonImage("marker.filename", "--balloon-marker-image");`

@@ -2,7 +2,7 @@
 
 - **規格**: [OnUpdateResult.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/network-update/OnUpdateResult/) (ukadoc-spec/list/shiori-event/network-update/OnUpdateResult/)
 - **検索語**: OnUpdateResult
-- **対応状況**: ✅ 実装済(SHIORIへ送信)
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/ffi/builder.rs:182` `.event("OnUpdateResultExplorer")`
-- `ui/js/core/app-update.js:23` `* 6. 全更新終了後: OnUpdateResultEx -> (スクリプト未返答なら) OnUpdateResult`
-- `ui/js/core/app-update.js:155` `// OnUpdateResultExplorer 送信 (UKADOC準拠: 更新詳細・差分リスト通知)`
-- `ui/js/core/app-update.js:157` `await gc.sendShioriEvent("OnUpdateResultExplorer", [`
-- `ui/js/core/app-update.js:229` `* OnUpdateResultEx (または OnUpdateCheckResultEx) を送信し、`
+- `ui/ts/core/app-update.ts:230` `const baseEvent = checkOnly ? "OnUpdateCheckResult" : "OnUpdateResult";`
+- `ui/ts/core/actions/update-protocol.ts:11` `* - OnUpdateProcessExec / OnUpdateResult / OnUpdateResultEx / OnUpdateResultExpl`

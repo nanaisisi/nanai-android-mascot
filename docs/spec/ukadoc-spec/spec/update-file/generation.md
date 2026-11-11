@@ -1,7 +1,7 @@
 # update-file : 生成処理
 
 - **規格**: [generation.md](https://ukatech.shillest.net/ukadoc-spec/spec/update-file/generation/) (ukadoc-spec/spec/update-file/generation.md)
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -9,8 +9,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/update/generation.rs:1` `//! Update definition generation implementation (updates2.dau / updates.txt)`
-- `src-tauri/src/commands/update/generation.rs:2` `//! spec/update-file/generation.md 準拠`
-- `src-tauri/src/commands/update/mod.rs:3` `pub mod generation;`
-- `src-tauri/src/commands/update/mod.rs:8` `pub use generation::*;`
-- `ui/js/ghost/ghost.js:164` `const generation = this._ghostLoadGeneration;`
+- `src-tauri/src/commands/update/mod.rs:2` `pub mod generation;`
+- `src-tauri/src/commands/update/mod.rs:7` `pub use generation::*;`

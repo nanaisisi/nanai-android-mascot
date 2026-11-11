@@ -1,7 +1,7 @@
 # fmo-mutex : FMO (File Mapping Object)
 
 - **規格**: [fmo.md](https://ukatech.shillest.net/ukadoc-spec/spec/fmo-mutex/fmo/) (ukadoc-spec/spec/fmo-mutex/fmo.md)
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -9,8 +9,8 @@ FMO システム状態（`FmoSystemStatus`, `FmoGhostStatus`）および `get_fm
 
 ## 実装箇所
 
-- `src-tauri/src/fmo.rs:27` `pub async fn get_fmo_status(state: tauri::State<'_, AppState>) -> Result<String,`
-- `src-tauri/src/fmo.rs:47` `let fmo = FmoSystemStatus {`
-- `src-tauri/src/fmo.rs:53` `serde_json::to_string(&fmo).map_err(|e| e.to_string())`
-- `src-tauri/src/lib.rs:20` `mod fmo;`
-- `src-tauri/src/lib.rs:161` `fmo::get_fmo_status,`
+- `src-tauri/src/fmo.rs:6` `pub use nanai_android_mascot_ui::fmo::FmoEntry;`
+- `src-tauri/src/fmo.rs:77` `let fmo = FmoSystemStatus {`
+- `src-tauri/src/fmo.rs:83` `serde_json::to_string(&fmo).map_err(|e| e.to_string())`
+- `src-tauri/src/fmo.rs:124` `let fmo = FmoSystemStatus {`
+- `src-tauri/src/fmo.rs:130` `serde_json::to_string(&fmo).map_err(|e| e.to_string())`

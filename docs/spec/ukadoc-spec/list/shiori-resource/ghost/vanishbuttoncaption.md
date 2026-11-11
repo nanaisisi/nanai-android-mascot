@@ -2,7 +2,7 @@
 
 - **規格**: [vanishbuttoncaption.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ghost/vanishbuttoncaption/) (ukadoc-spec/list/shiori-resource/ghost/vanishbuttoncaption.md)
 - **検索語**: vanishbuttoncaption
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,4 +10,4 @@ vanishbuttoncaption SHIORIリソース・プロパティ評価処理を実装 (s
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:68` `| "vanishbuttoncaption" => "1".to_string(),`
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs:54` `"readmebuttoncaption" | "updatebuttoncaption" | "vanishbuttoncaption" => "1",`

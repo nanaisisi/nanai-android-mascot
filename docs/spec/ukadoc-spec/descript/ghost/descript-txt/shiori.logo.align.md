@@ -2,7 +2,7 @@
 
 - **規格**: [shiori.logo.align.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/shiori.logo.align.md)
 - **検索語**: shiori.logo.align
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory/manifest.rs:94` `.and_then(|m| m.get("shiori.logo.align").cloned());`
+- `src-tauri/src/ghost/scan/directory/manifest.rs:163` `.and_then(|m| m.get("shiori.logo.align").cloned());`

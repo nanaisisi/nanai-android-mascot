@@ -2,7 +2,7 @@
 
 - **規格**: [icon.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/icon.md)
 - **検索語**: icon
-- **対応状況**: ✅ 対応済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/tauri.conf.json:36` `"icon": [`
-- `src-tauri/tauri.conf.json:37` `"icons/32x32.png",`
-- `src-tauri/tauri.conf.json:38` `"icons/128x128.png",`
-- `src-tauri/tauri.conf.json:39` `"icons/128x128@2x.png",`
-- `src-tauri/tauri.conf.json:40` `"icons/icon.icns",`
+- `src-tauri/tauri.conf.json:37` `"icon": [`
+- `src-tauri/tauri.conf.json:41` `"icons/icon.icns",`
+- `src-tauri/tauri.conf.json:42` `"icons/icon.ico"`
+- `src-tauri/tauri.test.conf.json:36` `"icon": [`
+- `src-tauri/tauri.test.conf.json:40` `"icons/icon.icns",`

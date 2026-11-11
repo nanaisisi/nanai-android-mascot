@@ -2,7 +2,7 @@
 
 - **規格**: [shiori.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/shiori.md)
 - **検索語**: shiori
-- **対応状況**: ✅ 対応済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/build.rs:5` `build_shiori_host32();`
-- `src-tauri/build.rs:11` `build_yaya_shiori_stub();`
-- `src-tauri/build.rs:14` `/// Windows 64bit ターゲット時のみ、32bit DLL 用ヘルパー shiori-host32.exe をビルドする`
-- `src-tauri/build.rs:15` `fn build_shiori_host32() {`
 - `src-tauri/build.rs:16` `println!("cargo:rerun-if-changed=shiori-host/src");`
+- `src-tauri/build.rs:17` `println!("cargo:rerun-if-changed=shiori-host/Cargo.toml");`
+- `src-tauri/build.rs:31` `"shiori-host/Cargo.toml",`
+- `src-tauri/build.rs:43` `"cargo:warning=shiori-host32 のビルドに失敗: `rustup target add i686-pc-windows-msvc` を`
+- `src-tauri/build.rs:107` `let yaya_dir = Path::new("../cpp/yaya-shiori");`

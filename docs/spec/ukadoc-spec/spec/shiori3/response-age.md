@@ -2,7 +2,7 @@
 
 - **規格**: [response.md](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/response/) (ukadoc-spec/spec/shiori3/response.md)
 - **検索語**: age
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -16,8 +16,8 @@ Rust 通信層として `crates/ui/src/shiori.rs`（SHIORI/3.0 リクエスト/�
 
 ## 実装箇所
 
-- `src-tauri/build_old.rs:69` `"messages.cpp",`
-- `src-tauri/src/events.rs:1` `use tauri::{Emitter, Manager};`
-- `src-tauri/src/tray.rs:1` `use tauri::image::Image;`
-- `src-tauri/src/tray.rs:9` `.unwrap_or_else(|| Image::new_owned(vec![0, 0, 0, 0], 1, 1));`
-- `src-tauri/src/lib.rs:79` `.manage(AppState::new());`
+- `crates/ui/src/shiori/engine/state.rs:37` `"response.age".to_string(),`
+- `crates/ui/src/shiori/protocol/response/build.rs:56` `if let Some(age) = self.age {`
+- `crates/ui/src/shiori/protocol/response/build.rs:57` `out.push_str(&format!("Age: {}\r\n", age));`
+- `crates/ui/src/shiori/protocol/response/build.rs:87` `res.age = Some(1);`
+- `crates/ui/src/shiori/protocol/response/mod.rs:46` `pub age: Option<u32>,`

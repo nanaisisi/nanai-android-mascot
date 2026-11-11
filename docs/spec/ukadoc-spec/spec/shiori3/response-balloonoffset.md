@@ -2,7 +2,7 @@
 
 - **規格**: [response.md](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/response/) (ukadoc-spec/spec/shiori3/response.md)
 - **検索語**: balloon_offset
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -16,8 +16,8 @@ Rust 通信層として `crates/ui/src/shiori.rs`（SHIORI/3.0 リクエスト/�
 
 ## 実装箇所
 
-- `src-tauri/src/lib.rs:141` `commands::window::set_balloon_offset,`
-- `src-tauri/src/lib.rs:143` `commands::window::save_balloon_offset_from_position,`
-- `src-tauri/src/commands/window/balloon_window/position.rs:2` `pub async fn set_balloon_offset(`
-- `src-tauri/src/commands/window/balloon_window/position.rs:9` `state.balloon_offsets.lock().insert(scope_id, (x, y));`
-- `src-tauri/src/commands/window/balloon_window/position.rs:31` `.balloon_offsets`
+- `crates/ui/src/shiori/protocol/response/build.rs:47` `if let Some((x, y)) = self.balloon_offset {`
+- `crates/ui/src/shiori/protocol/response/build.rs:84` `res.balloon_offset = Some((10, 20));`
+- `crates/ui/src/shiori/protocol/response/mod.rs:37` `pub balloon_offset: Option<(i32, i32)>,`
+- `crates/ui/src/shiori/protocol/response/parse/core.rs:67` `res.balloon_offset = value.split_once(',').and_then(|(x, y)| {`
+- `crates/ui/src/shiori/protocol/response/parse/tests.rs:80` `assert_eq!(res.balloon_offset, Some((12, -4)));`

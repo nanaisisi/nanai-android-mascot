@@ -2,7 +2,7 @@
 
 - **規格**: [menu.foreground.bitmap.filename.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell/descript-txt/menu.foreground.bitmap.filename/) (ukadoc-spec/descript/shell/descript-txt/menu.foreground.bitmap.filename.md)
 - **検索語**: menu.foreground.bitmap.filename
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,5 +10,4 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/shell/theme.rs:47` `.get("menu.foreground.bitmap.filename")`
-- `ui/js/ghost/shiori-notify.js:32` `* - menu.background.bitmap.filename, menu.foreground.bitmap.filename, menu.sideb`
+- `src-tauri/src/ghost/scan/shell/theme.rs:46` `.get("menu.foreground.bitmap.filename")`

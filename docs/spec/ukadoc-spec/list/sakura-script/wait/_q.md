@@ -2,7 +2,7 @@
 
 - **規格**: [_q.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/wait/_q/) (ukadoc-spec/list/sakura-script/wait/_q.md)
 - **検索語**: Quick
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `crates/ui/src/lib.rs:86` `assert_eq!(commands[1], SakuraCommand::Quick(true));`
-- `crates/ui/src/lib.rs:148` `assert_eq!(cmds_q[0], SakuraCommand::Quick(true));`
-- `crates/ui/src/lib.rs:150` `assert_eq!(cmds_q[2], SakuraCommand::Quick(false));`
-- `crates/ui/src/lib.rs:152` `assert_eq!(cmds_q[4], SakuraCommand::Quick(true));`
 - `crates/ui/src/script/command.rs:11` `Quick(bool),  // \_q (高速表示トグル)`
+- `crates/ui/src/script/command.rs:193` `SakuraCommand::Quick(_)`
+- `crates/ui/src/script/command.rs:233` `SakuraCommand::Quick(true).lifetime(),`
+- `crates/ui/src/script/parser/brackets/mod.rs:129` `assert_eq!(cmds, vec![SakuraCommand::Quick(false)]);`
+- `crates/ui/src/script/parser/brackets/handlers/raiselike/mod.rs:43` `callback(SakuraCommand::Quick(enabled));`

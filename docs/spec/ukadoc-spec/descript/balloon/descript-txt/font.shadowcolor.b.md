@@ -2,7 +2,7 @@
 
 - **規格**: [font.shadowcolor.b.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/font.shadowcolor.b.md)
 - **検索語**: font.shadowcolor.b
-- **対応状況**: ✅ 対応済
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,5 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/font/base.js:86` `props["font.shadowcolor.b"]`
-- `ui/js/core/actions/balloon-descript/font/group.js:17` `props[`${prefix}.font.shadowcolor.b`]`
+- `ui/ts/core/actions/balloon-descript/font/group.ts:13` `* [anchor.font.shadowcolor.r,数値], [anchor.font.shadowcolor.g,数値], [anchor.font.s`
+- `ui/ts/core/actions/balloon-descript/font/group.ts:20` `* [anchor.visited.font.shadowcolor.r,数値], [anchor.visited.font.shadowcolor.g,数値]`
+- `ui/ts/core/actions/balloon-descript/font/group.ts:27` `* [anchor.notselect.font.shadowcolor.r,数値], [anchor.notselect.font.shadowcolor.g`
+- `ui/ts/core/actions/balloon-descript/font/group.ts:35` `* [cursor.font.shadowcolor.r,数値], [cursor.font.shadowcolor.g,数値], [cursor.font.s`
+- `ui/ts/core/actions/balloon-descript/font/group.ts:42` `* [cursor.notselect.font.shadowcolor.r,数値], [cursor.notselect.font.shadowcolor.g`

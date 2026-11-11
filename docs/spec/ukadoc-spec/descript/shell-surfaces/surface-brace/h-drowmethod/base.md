@@ -2,13 +2,13 @@
 
 - **規格**: [base.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/base/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/base.md)
 - **検索語**: base
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 
 ## 実装箇所
 
-- `src-tauri/src/lib.rs:163` `shiori::fmo::check_base_ware_mutex,`
-- `src-tauri/src/lib.rs:175` `shiori::fmo::acquire_base_ware_mutexes();`
-- `src-tauri/src/commands/file.rs:44` `let base_ghost_path =`
-- `src-tauri/src/commands/file.rs:47` `let shell_dir = base_ghost_path.join("shell").join(&shell_name);`
-- `src-tauri/src/commands/file.rs:48` `let master_dir = base_ghost_path.join("shell").join("master");`
+- `src-tauri/src/commands/file.rs:236` `let base = resolve_asset_path("assets/ghost", &app_handle)`
+- `src-tauri/src/commands/file.rs:239` `tauri_plugin_opener::reveal_item_in_dir(base)`
+- `src-tauri/src/commands/install/archive/inspection/analyzer/zip_inspector.rs:157` `if let Some(base) = base_path {`
+- `src-tauri/src/commands/install/archive/inspection/analyzer/zip_inspector.rs:158` `let dest = base.join(&dest_name);`
+- `src-tauri/src/commands/shell/balloon.rs:196` `for base in [`

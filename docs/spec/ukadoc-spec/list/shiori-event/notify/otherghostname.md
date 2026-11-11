@@ -2,7 +2,7 @@
 
 - **規格**: [otherghostname.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/notify/otherghostname/) (ukadoc-spec/list/shiori-event/notify/otherghostname.md)
 - **検索語**: otherghostname
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,6 +10,4 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:17` `* - otherghostname / ownerghostname / configuredbiffname / enable_debug / enable`
-- `ui/js/ghost/shiori-notify.js:652` `// 他ゴースト・オーナー情報 (otherghostname / ownerghostname)`
-- `ui/js/ghost/shiori-notify.js:656` `"otherghostname",`
+- `ui/ts/ghost/shiori-notify/ghost-lifecycle/boot.ts:149` `"otherghostname",`

@@ -2,7 +2,7 @@
 
 - **規格**: [shiori.version.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/shiori.version.md)
 - **検索語**: shiori.version
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory/manifest.rs:82` `let shiori_version = meta_map.as_ref().and_then(|m| m.get("shiori.version").clon`
+- `src-tauri/src/ghost/scan/directory/manifest.rs:145` `.and_then(|m| m.get("shiori.version").cloned());`
+- `src-tauri/src/shiori/property/tests.rs:16` `assert_eq!(evaluate_property_query("shiori.version"), "3.0");`

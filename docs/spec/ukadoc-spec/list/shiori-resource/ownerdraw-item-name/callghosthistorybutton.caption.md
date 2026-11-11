@@ -2,7 +2,7 @@
 
 - **規格**: [callghosthistorybutton.caption.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ownerdraw-item-name/callghosthistorybutton.caption/) (ukadoc-spec/list/shiori-resource/ownerdraw-item-name/callghosthistorybutton.caption.md)
 - **検索語**: callghosthistorybutton.caption
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,5 +11,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:87` `| "callghosthistorybutton.caption"`
-- `ui/js/ui/renderers/menu-caption-renderer.js:79` `resource: "callghosthistorybutton.caption",`
+- `ui/ts/ui/renderers/menu-caption-general.ts:79` `resource: "callghosthistorybutton.caption",`

@@ -2,7 +2,7 @@
 
 - **規格**: [balloonlist.count.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/balloonlist.count/) (ukadoc-spec/list/propertysystem/property-system/balloonlist.count.md)
 - **検索語**: balloonlist.count
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:18` `"balloonlist.count" => "1".to_string(),`
+- `src-tauri/src/shiori/property/tests.rs:60` `assert_eq!(evaluate_property_query("balloonlist.count"), "1");`
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs:8` `"balloonlist.count" => "1",`

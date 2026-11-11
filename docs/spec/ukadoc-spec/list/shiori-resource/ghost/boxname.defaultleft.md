@@ -2,7 +2,7 @@
 
 - **規格**: [boxname.defaultleft.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ghost/boxname.defaultleft/) (ukadoc-spec/list/shiori-resource/ghost/boxname.defaultleft.md)
 - **検索語**: boxname.defaultleft
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,4 +10,4 @@ boxname.defaultleft SHIORIリソース・プロパティ評価処理を実装 (s
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:47` `"boxname.defaultleft" | "inputbox.defaultleft" => "0".to_string(),`
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs:52` `"boxname.defaultleft" | "inputbox.defaultleft" => "0",`

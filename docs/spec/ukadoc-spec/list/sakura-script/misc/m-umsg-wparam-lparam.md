@@ -2,7 +2,7 @@
 
 - **規格**: [m-umsg-wparam-lparam.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/misc/m-umsg-wparam-lparam/) (ukadoc-spec/list/sakura-script/misc/m-umsg-wparam-lparam.md)
 - **検索語**: \m
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,6 +10,8 @@
 
 ## 実装箇所
 
-- `crates/ui/src/update.rs:76` `let content = "ghost\\master\\descript.txt\x011A2B3C4D5E6F7890ABCDEF1234567890\x`
-- `crates/ui/src/update.rs:77` `ghost\\master\\shiori.dll\x01FEDCBA09876543210987654321ABCDEF\r\n";`
-- `crates/ui/src/update.rs:94` `file,ghost\\master\\readme.txt,ABCDEF1234567890ABCDEF1234567890\r\n";`
+- `src-tauri/src/common/vfs.rs:71` `sanitize_vfs_path("shell\\master/surface0000.png"),`
+- `crates/nanai-core/src/update_protocol.rs:239` `assert!(is_no_update_path("ghost\\master\\noupdate.txt", &patterns));`
+- `crates/ui/src/script/command.rs:28` `}, // \m[umsg,wparam,lparam] (m-umsg-wparam-lparam.md)`
+- `crates/ui/src/script/parser/executor.rs:98` `// \m[umsg,wparam,lparam] (m-umsg-wparam-lparam.md)`
+- `crates/ui/src/tests/sakura_script.rs:189` `let script = r"\0\m[1024,10,20]本文";`

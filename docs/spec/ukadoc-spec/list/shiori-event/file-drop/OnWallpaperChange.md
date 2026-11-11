@@ -2,7 +2,7 @@
 
 - **規格**: [OnWallpaperChange.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/file-drop/OnWallpaperChange/) (ukadoc-spec/list/shiori-event/file-drop/OnWallpaperChange.md)
 - **検索語**: OnWallpaperChange
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,5 +10,5 @@ OnWallpaperChange ファイルドロップ/外部連携SHIORIイベント通知�
 
 ## 実装箇所
 
-- `ui/ts/ghost/shiori-notify.ts:256` `| "OnWallpaperChange"`
 - `ui/ts/ghost/shiori-protocol.ts:114` `WALLPAPER_CHANGE: "OnWallpaperChange",`
+- `ui/ts/ghost/shiori-notify/input-events.ts:46` `| "OnWallpaperChange"`

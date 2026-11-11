@@ -2,7 +2,7 @@
 
 - **規格**: [request.md](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/request/) (ukadoc-spec/spec/shiori3/request.md)
 - **検索語**: X-SSTP-PassThru
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -16,8 +16,8 @@ Rust 通信層として `crates/ui/src/shiori.rs`（SHIORI/3.0 リクエスト/�
 
 ## 実装箇所
 
-- `crates/ui/src/shiori/mod.rs:5` `//! SecurityOrigin / Status / BaseID / X-SSTP-PassThru- / ValueNotify /`
+- `crates/ui/src/shiori/protocol/request/builder.rs:45` `out.push_str(&format!("X-SSTP-PassThru-{}: {}\r\n", suffix, value));`
+- `crates/ui/src/shiori/protocol/request/parser.rs:67` `} else if let Some(rest) = key.strip_prefix("X-SSTP-PassThru-") {`
+- `crates/ui/src/shiori/protocol/request/tests.rs:161` `let text = "GET SHIORI/3.0\r\nID: OnEvent\r\nX-SSTP-PassThru-CustomParam: test_v`
+- `crates/ui/src/shiori/protocol/request/tests.rs:206` `assert!(built.contains("X-SSTP-PassThru-CustomKey: CustomVal"));`
 - `crates/ui/src/shiori/protocol/response/build.rs:63` `out.push_str(&format!("X-SSTP-PassThru-{}: {}\r\n", suffix, value));`
-- `crates/ui/src/shiori/protocol/response/build.rs:104` `assert!(built.contains("X-SSTP-PassThru-PassKey: PassVal"));`
-- `crates/ui/src/shiori/protocol/response/mod.rs:50` `/// `X-SSTP-PassThru-(後続)` → 値（複数指定可能）`
-- `crates/ui/src/shiori/protocol/response/mod.rs:82` `let key = key.strip_prefix("X-SSTP-PassThru-")?;`

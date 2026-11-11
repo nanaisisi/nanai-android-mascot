@@ -2,7 +2,7 @@
 
 - **規格**: [homeurl.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/homeurl.md)
 - **検索語**: homeurl
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,8 @@ ghost/scan.rs 等で descript の値を読込している。表示・動作へ�
 
 ## 実装箇所
 
-- `src-tauri/src/commands/ext.rs:36` `// [craftman,作者名], [craftmanw,作者名], [craftmanurl,URL], [homeurl,URL]:`
 - `src-tauri/src/commands/ext.rs:44` `.or_else(|| map.get("homeurl").cloned());`
-- `src-tauri/src/commands/ext.rs:101` `// [craftman,作者名], [craftmanw,作者名], [craftmanurl,URL], [homeurl,URL]:`
 - `src-tauri/src/commands/ext.rs:109` `.or_else(|| map.get("homeurl").cloned());`
-- `src-tauri/src/commands/shell/balloon.rs:185` `/// [charset,文字コード], [type,種別], [craftman,作者名], [craftmanw,作者名], [craftmanurl,UR`
+- `src-tauri/src/commands/update/dau.rs:10` `pub homeurl: String,`
+- `src-tauri/src/commands/update/dau.rs:44` `if let Some(url) = desc.homeurl() {`
+- `src-tauri/src/commands/update/dau.rs:57` `if let Some(url) = desc.homeurl() {`

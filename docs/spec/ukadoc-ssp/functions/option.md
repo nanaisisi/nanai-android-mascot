@@ -1,7 +1,7 @@
 # 起動オプション一覧
 
 - **規格**: [functions/option.md](https://ukatech.shillest.net/ukadoc-ssp/functions/option/) (ukadoc-ssp/functions/option.md)
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -9,8 +9,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive/packaging.rs:41` `let options = SimpleFileOptions::default()`
-- `src-tauri/src/commands/install/archive/packaging.rs:69` `zip_writer.add_directory(&dir_name, options)`
-- `src-tauri/src/commands/install/archive/packaging.rs:76` `zip_writer.start_file(&name_str, options)`
-- `src-tauri/src/commands/shell/animation.rs:59` `options: vec![],`
-- `src-tauri/src/commands/update/generation.rs:18` `let dev_opt_path = dir.join("developer_options.txt");`
+- `src-tauri/src/ghost/scan/directory/filter.rs:21` `println!("🛠️ Developer option entry: {}", trimmed);`
+- `crates/ui/src/descript/tests.rs:23` `let option = desc.bindoption_group("sakura").unwrap();`
+- `crates/ui/src/descript/tests.rs:24` `assert_eq!(option.category, "服");`
+- `crates/ui/src/descript/tests.rs:25` `assert_eq!(option.options, vec!["multiple".to_string()]);`
+- `crates/ui/src/script/command.rs:124` `option: String,`

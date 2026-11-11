@@ -1,7 +1,7 @@
 # 音声認識
 
 - **規格**: [functions/speech-recognition.md](https://ukatech.shillest.net/ukadoc-ssp/functions/speech-recognition/) (ukadoc-ssp/functions/speech-recognition.md)
-- **対応状況**: ✅ 対応済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -9,4 +9,5 @@ Web Speech API (`SpeechRecognition` / `webkitSpeechRecognition`) を用いた音
 
 ## 実装箇所
 
-- `ui/js/core/actions/dictation.js:4` `* [config/dictation.md], [functions/speech-recognition.md], [functions/speech-sy`
+- `ui/ts/core/actions/menu-action-system.ts:58` `if (action === "speech-recognition") {`
+- `ui/ts/ui/submenu-renderer.ts:187` `{ action: "speech-recognition", label: "音声認識", shortcut: "" },`

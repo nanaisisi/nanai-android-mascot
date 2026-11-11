@@ -2,7 +2,7 @@
 
 - **規格**: [menu.sidebar.bitmap.filename.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ownerdraw-image/menu.sidebar.bitmap.filename/) (ukadoc-spec/list/shiori-resource/ownerdraw-image/menu.sidebar.bitmap.filename.md)
 - **検索語**: menu.sidebar.bitmap.filename
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,5 +10,4 @@ ghost/scan.rs で descript.txt から読込 (表示への反映は未確認)。
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/shell/theme.rs:50` `.get("menu.sidebar.bitmap.filename")`
-- `ui/js/ghost/shiori-notify.js:32` `* - menu.background.bitmap.filename, menu.foreground.bitmap.filename, menu.sideb`
+- `src-tauri/src/ghost/scan/shell/theme.rs:49` `.get("menu.sidebar.bitmap.filename")`

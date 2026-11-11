@@ -2,7 +2,7 @@
 
 - **規格**: [OnUpdateResultExplorer.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/network-update/OnUpdateResultExplorer/) (ukadoc-spec/list/shiori-event/network-update/OnUpdateResultExplorer.md)
 - **検索語**: OnUpdateResultExplorer
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,5 +11,5 @@
 ## 実装箇所
 
 - `src-tauri/src/shiori/ffi/builder.rs:182` `.event("OnUpdateResultExplorer")`
-- `ui/js/core/app-update.js:155` `// OnUpdateResultExplorer 送信 (UKADOC準拠: 更新詳細・差分リスト通知)`
-- `ui/js/core/app-update.js:157` `await gc.sendShioriEvent("OnUpdateResultExplorer", [`
+- `ui/ts/core/app-update.ts:141` `await gc.sendShioriEvent("OnUpdateResultExplorer", [`
+- `ui/ts/core/actions/update-protocol.ts:11` `* - OnUpdateProcessExec / OnUpdateResult / OnUpdateResultEx / OnUpdateResultExpl`

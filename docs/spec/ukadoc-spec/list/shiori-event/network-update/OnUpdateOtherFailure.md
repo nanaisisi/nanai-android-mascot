@@ -2,7 +2,7 @@
 
 - **規格**: [OnUpdateOtherFailure.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/network-update/OnUpdateOtherFailure/) (ukadoc-spec/list/shiori-event/network-update/OnUpdateOtherFailure.md)
 - **検索語**: OnUpdateOtherFailure
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,5 +11,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/update-protocol.js:8` `* - OnUpdateOtherBegin / OnUpdateOtherReady / OnUpdateOtherComplete / OnUpdateOt`
-- `ui/js/core/actions/update-protocol.js:65` `"fileio-failed": "OnUpdateOtherFailure",`
+- `ui/ts/core/actions/update-protocol.ts:8` `* - OnUpdateOtherBegin / OnUpdateOtherReady / OnUpdateOtherComplete / OnUpdateOt`
+- `ui/ts/core/actions/update-protocol.ts:212` `"fileio-failed": "OnUpdateOtherFailure",`

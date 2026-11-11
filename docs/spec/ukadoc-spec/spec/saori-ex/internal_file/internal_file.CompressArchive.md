@@ -2,7 +2,7 @@
 
 - **規格**: [internal_file.CompressArchive.md](https://ukatech.shillest.net/ukadoc-spec/spec/saori-ex/internal_file/internal_file.CompressArchive/) (ukadoc-spec/spec/saori-ex/internal_file/internal_file.CompressArchive.md)
 - **検索語**: CompressArchive
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,7 +11,6 @@
 
 ## 実装箇所
 
-- `ui/ts/ghost/shiori-notify.ts:419` `| "OnCompressArchiveComplete"`
-- `ui/ts/ghost/shiori-notify.ts:420` `| "OnCompressArchiveFailure"`
-- `ui/ts/ghost/shiori-protocol.ts:180` `COMPRESS_ARCHIVE_COMPLETE: "OnCompressArchiveComplete",`
-- `ui/ts/ghost/shiori-protocol.ts:181` `COMPRESS_ARCHIVE_FAILURE: "OnCompressArchiveFailure",`
+- `crates/ui/src/sstp/tests/execution/command_context/execute_commands/security_fmo.rs:43` `handle_execute_command("CompressArchive[/a,/b]", &ctx_remote).status,`
+- `crates/ui/src/sstp/tests/execution/command_context/execute_commands/system_archive.rs:28` `handle_execute_command("CompressArchive[/path/out.zip,/path/in]", &ctx).status,`
+- `crates/ui/src/sstp/tests/execution/command_context/execute_commands/system_archive.rs:36` `handle_execute_command("CompressArchive[]", &ctx).status,`

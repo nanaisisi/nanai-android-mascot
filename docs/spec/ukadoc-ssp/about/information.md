@@ -1,7 +1,7 @@
 # 情報
 
 - **規格**: [about/information.md](https://ukatech.shillest.net/ukadoc-ssp/about/information/) (ukadoc-ssp/about/information.md)
-- **対応状況**: ❌ 未実装
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -9,4 +9,5 @@
 
 ## 実装箇所
 
-実装コード内に「information」は検出されませんでした。
+- `tests/shiori-notify/os-environment.test.ts:28` `it("notifies OS, self, and balloon information", async () => {`
+- `tests/shiori-notify/os-environment.test.ts:49` `it("notifies shell, dressup, user, font, and holiday information", async () => {`

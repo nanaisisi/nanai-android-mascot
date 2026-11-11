@@ -2,7 +2,7 @@
 
 - **規格**: [request.md](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/request/) (ukadoc-spec/spec/shiori3/request.md)
 - **検索語**: SHIORI/3.0
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -16,8 +16,8 @@ Rust 通信層として `crates/ui/src/shiori.rs`（SHIORI/3.0 リクエスト/�
 
 ## 実装箇所
 
+- `src-tauri/shiori-host/src/main.rs:46` `let resp = b"SHIORI/3.0 200 OK\r\n\r\n";`
+- `src-tauri/shiori-host/src/main.rs:218` `let resp = b"SHIORI/3.0 200 OK\r\n\r\n";`
 - `src-tauri/src/commands/shiori/protocol.rs:48` `/// SHIORIにリクエストを送信（SHIORI/3.0 プロトコル準拠）`
-- `src-tauri/src/shiori/wasm.rs:12` `/// WebAssembly 形式の SHIORI/3.0 実行エンジン`
-- `src-tauri/src/shiori/wasm.rs:93` `return Ok("SHIORI/3.0 204 No Content\r\nCharset: UTF-8\r\n\r\n".to_string());`
-- `src-tauri/src/shiori/wasm.rs:96` `Ok("SHIORI/3.0 200 OK\r\nCharset: UTF-8\r\nValue: \\0\\s[0]WASM SHIORI 応答です。\\e\`
-- `src-tauri/src/shiori/wasm.rs:172` `let res = engine.request("GET SHIORI/3.0\r\n\r\n").unwrap();`
+- `src-tauri/src/shiori/cpp.rs:5` `* FFI経由でSHIORI/3.0プロトコルを実装する`
+- `src-tauri/src/shiori/cpp.rs:20` `// SHIORI/3.0標準関数（YAYA C++実装）`

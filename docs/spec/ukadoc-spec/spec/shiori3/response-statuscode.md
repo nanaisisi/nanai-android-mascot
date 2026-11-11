@@ -2,7 +2,7 @@
 
 - **規格**: [response.md](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/response/) (ukadoc-spec/spec/shiori3/response.md)
 - **検索語**: StatusCode
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -16,8 +16,8 @@ Rust 通信層として `crates/ui/src/shiori.rs`（SHIORI/3.0 リクエスト/�
 
 ## 実装箇所
 
-- `crates/ui/src/lib.rs:34` `ShioriLifecycleState, ShioriMethod, ShioriRequest, ShioriResponse, StatusCode,`
-- `crates/ui/src/lib.rs:37` `pub use sstp::{IfGhostEntry, SstpMessage, SstpMethod, SstpRequest, SstpResponse,`
-- `crates/ui/src/sstp/types.rs:44` `pub enum SstpStatusCode {`
-- `crates/ui/src/sstp/types.rs:61` `impl SstpStatusCode {`
-- `crates/ui/src/sstp/mod.rs:14` `pub use types::{SstpMethod, SstpStatusCode};`
+- `crates/ui/src/lib.rs:40` `ShioriLifecycleState, ShioriMethod, ShioriRequest, ShioriResponse, StatusCode,`
+- `crates/ui/src/shiori/mod.rs:22` `ErrorLevel, GhostStatusToken, SecurityLevel, SenderTypeTag, ShioriMethod, Status`
+- `crates/ui/src/shiori/protocol/response/build.rs:77` `res.status = StatusCode::Other(999);`
+- `crates/ui/src/shiori/protocol/response/mod.rs:14` `pub status: StatusCode,`
+- `crates/ui/src/shiori/protocol/response/mod.rs:59` `status: StatusCode::NoContent,`

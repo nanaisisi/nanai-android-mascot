@@ -2,7 +2,7 @@
 
 - **規格**: [onlinemarker.filename.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/balloonsoption/onlinemarker.filename.md)
 - **検索語**: onlinemarker.filename
-- **対応状況**: ✅ 対応済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/assets.js:61` `// [onlinemarker.filename,ファイル名]:`
-- `ui/js/core/actions/balloon-descript/assets.js:62` `setBalloonImage("onlinemarker.filename", "--balloon-online-image");`
+- `ui/ts/core/actions/balloon-descript/assets.ts:167` `// [onlinemarker.filename,ファイル名]:`
+- `ui/ts/core/actions/balloon-descript/assets.ts:168` `setBalloonImage("onlinemarker.filename", "--balloon-online-image");`

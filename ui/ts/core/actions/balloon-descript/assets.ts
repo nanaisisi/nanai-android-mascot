@@ -5,6 +5,45 @@ import { invoke } from "../../tauri-helper.js";
  * @brief バルーン画像・矢印・マーカー・カーソル・アルファ・推奨ゴースト設定反映 (UKADOC準拠)
  * // [descript.txt（Balloonの）]: Balloon descript.txt アセット・画像属性バインディング
  */
+/**
+ * [推奨の意味] [recommended.ghost,ゴースト名] [recommended.ghost.path,パス] の検証関数 (UKADOC準拠)
+ */
+export function verifyRecommendedGhost(
+	props: Record<string, string>,
+	currentGhostName?: string,
+	currentGhostPath?: string,
+): { isRecommended: boolean; warning?: string } {
+	const recGhost = props["recommended.ghost"];
+	const recPath = props["recommended.ghost.path"];
+
+	if (!recGhost && !recPath) {
+		return { isRecommended: true };
+	}
+
+	let matchesGhost = true;
+	let matchesPath = true;
+
+	if (recGhost && currentGhostName) {
+		matchesGhost = currentGhostName.toLowerCase() === recGhost.toLowerCase();
+	}
+
+	if (recPath && currentGhostPath) {
+		const normRec = recPath.replace(/\\/g, "/").toLowerCase();
+		const normCur = currentGhostPath.replace(/\\/g, "/").toLowerCase();
+		matchesPath = normCur.endsWith(normRec);
+	}
+
+	const isRecommended = matchesGhost && matchesPath;
+	if (!isRecommended) {
+		const target = recGhost || recPath || "";
+		const warning = `⚠️ [Balloon Warning] このバルーンスキンは専用/推奨ゴースト「${target}」向けに特化して作られています。現在のゴースト「${currentGhostName || "不明"}」で使用すると表示が狂う場合があります。`;
+		console.warn(warning);
+		return { isRecommended: false, warning };
+	}
+
+	return { isRecommended: true };
+}
+
 export function applyAssetProperties(
 	root: HTMLElement,
 	props: object,
@@ -32,16 +71,29 @@ export function applyAssetProperties(
 		root.style.setProperty("--balloon-readme-charset", p["readme.charset"]);
 
 	// [推奨の意味], [recommended.ghost,ゴースト名], [recommended.ghost.path,パス]:
-	if (p["recommended.ghost"])
+	if (p["recommended.ghost"]) {
 		root.style.setProperty(
 			"--balloon-recommended-ghost",
 			p["recommended.ghost"],
 		);
-	if (p["recommended.ghost.path"])
+	}
+	if (p["recommended.ghost.path"]) {
 		root.style.setProperty(
 			"--balloon-recommended-ghost-path",
 			p["recommended.ghost.path"],
 		);
+	}
+
+	const currentGhostName = (instance as Record<string, unknown>)?.currentGhostName as string | undefined;
+	const currentGhostPath = (instance as Record<string, unknown>)?.currentGhostPath as string | undefined;
+	const checkResult = verifyRecommendedGhost(p, currentGhostName, currentGhostPath);
+	if (!checkResult.isRecommended && checkResult.warning) {
+		root.style.setProperty("--balloon-recommended-warning", checkResult.warning);
+	} else if (typeof root.style.removeProperty === "function") {
+		root.style.removeProperty("--balloon-recommended-warning");
+	} else {
+		root.style.setProperty("--balloon-recommended-warning", "");
+	}
 
 	const preloadBalloonAsset = (url: string | null) => {
 		if (!url || typeof Image === "undefined") return;

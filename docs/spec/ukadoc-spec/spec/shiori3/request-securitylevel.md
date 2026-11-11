@@ -2,7 +2,7 @@
 
 - **規格**: [request.md](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/request/) (ukadoc-spec/spec/shiori3/request.md)
 - **検索語**: SecurityLevel
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -16,8 +16,8 @@ Rust 通信層として `crates/ui/src/shiori.rs`（SHIORI/3.0 リクエスト/�
 
 ## 実装箇所
 
-- `crates/ui/src/lib.rs:33` `MultiStageShioriLoader, SecurityLevel, SenderTypeTag, ShioriEngine, ShioriEngine`
-- `crates/ui/src/sstp/message/request/parser.rs:143` `// DirectSSTP または Owned SSTP (ID指定) の場合 SecurityLevel は Local`
-- `crates/ui/src/shiori/mod.rs:4` `//! の構築・解析を行う。SSP 拡張ヘッダ（SenderType / SecurityLevel /`
+- `crates/ui/src/lib.rs:39` `MultiStageShioriLoader, SecurityLevel, SenderTypeTag, ShioriEngine, ShioriEngine`
 - `crates/ui/src/shiori/mod.rs:22` `ErrorLevel, GhostStatusToken, SecurityLevel, SenderTypeTag, ShioriMethod, Status`
-- `crates/ui/src/shiori/protocol/response/build.rs:32` `out.push_str(&format!("SecurityLevel: {}\r\n", level.as_str()));`
+- `crates/ui/src/shiori/protocol/request/builder.rs:23` `out.push_str(&format!("SecurityLevel: {}\r\n", level.as_str()));`
+- `crates/ui/src/shiori/protocol/request/parser.rs:42` `"securitylevel" => req.security_level = SecurityLevel::parse(&value),`
+- `crates/ui/src/shiori/protocol/request/tests.rs:143` `assert_eq!(req.security_level, Some(SecurityLevel::Local));`

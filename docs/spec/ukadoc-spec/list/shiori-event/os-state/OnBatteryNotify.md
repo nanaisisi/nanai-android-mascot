@@ -2,7 +2,7 @@
 
 - **規格**: [OnBatteryNotify.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/os-state/OnBatteryNotify/) (ukadoc-spec/list/shiori-event/os-state/OnBatteryNotify.md)
 - **検索語**: OnBatteryNotify
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,7 +11,5 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:21` `* - OnBatteryNotify, OnBatteryCritical, OnBatteryLow, OnBatteryChargingStart, On`
-- `ui/js/ghost/shiori-notify.js:209` `* バッテリー・電源状態通知 (OnBatteryNotify, OnBatteryCritical, OnBatteryLow, OnBatteryCharg`
-- `ui/js/ghost/shiori-notify.js:217` `notify: "OnBatteryNotify",`
-- `ui/js/ghost/shiori-notify.js:223` `const event = eventMap[type] || "OnBatteryNotify";`
+- `ui/ts/ghost/shiori-notify/environment.ts:126` `notify: "OnBatteryNotify",`
+- `ui/ts/ghost/shiori-notify/environment.ts:132` `const event = eventMap[type] || "OnBatteryNotify";`

@@ -2,7 +2,7 @@
 
 - **規格**: [sakura.bindgroup-star-.name.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell/descript-txt/sakura.bindgroup-star-.name/) (ukadoc-spec/descript/shell/descript-txt/sakura.bindgroup-star-.name.md)
 - **検索語**: sakura.bindgroup
-- **対応状況**: ✅ 実装済 (Rust `crates/ui/src/descript.rs` Descript 解析 / `crates/ui/src/shell.rs` Shell::load)
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,8 +10,4 @@
 
 ## 実装箇所
 
-- `crates/ui/src/descript/tests.rs:8` `sakura.bindgroup100.name,服,和服,thumb.png\r\n\`
-- `crates/ui/src/descript/tests.rs:9` `sakura.bindgroup100.default,1\r\n\`
-- `crates/ui/src/descript/tests.rs:10` `sakura.bindgroup100.addid,101,102\r\n\`
-- `crates/ui/src/descript/tests.rs:94` `sakura.bindgroup0.name,Invalid,Zero\n\`
-- `crates/ui/src/descript/tests.rs:95` `sakura.bindgroupABC.name,Invalid,Alpha\n\`
+実装コード内に「sakura.bindgroup」は検出されませんでした。

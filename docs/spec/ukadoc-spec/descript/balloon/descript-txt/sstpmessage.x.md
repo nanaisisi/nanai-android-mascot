@@ -2,7 +2,7 @@
 
 - **規格**: [sstpmessage.x.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/sstpmessage.x.md)
 - **検索語**: sstpmessage.x
-- **対応状況**: ✅ 対応済
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/assets.js:136` `// [sstpmessage.x,座標], [sstpmessage.y,座標]:`
-- `ui/js/core/actions/balloon-descript/assets.js:137` `const sstpMsgX = parseInt(props["sstpmessage.x"], 10);`
-- `ui/js/core/actions/balloon-descript/layout.js:149` `// [sstpmessage.x,座標], [sstpmessage.y,座標], [sstpmessage.xr,座標], [sstpmessage.yb,`
-- `ui/js/core/actions/balloon-descript/layout.js:150` `const sstpX = parseInt(props["sstpmessage.x"], 10);`
-- `ui/js/core/actions/balloon-descript/layout.js:152` `const sstpXR = parseInt(props["sstpmessage.xr"], 10);`
+- `ui/ts/core/actions/balloon-descript/assets.ts:251` `// [sstpmessage.x,座標], [sstpmessage.y,座標]:`
+- `ui/ts/core/actions/balloon-descript/assets.ts:252` `const sstpMsgX = parseInt(props["sstpmessage.x"], 10);`
+- `ui/ts/core/actions/balloon-descript/layout/position.ts:35` `// [sstpmessage.x,座標], [sstpmessage.y,座標], [sstpmessage.xr,座標], [sstpmessage.yb,`
+- `ui/ts/core/actions/balloon-descript/layout/position.ts:36` `const sstpX = parseInt(props["sstpmessage.x"], 10);`
+- `tests/balloon-descript/all-properties/mock-props.ts:82` `"sstpmessage.x": "30",`

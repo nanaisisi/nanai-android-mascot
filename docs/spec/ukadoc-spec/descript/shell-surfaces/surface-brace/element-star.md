@@ -2,7 +2,7 @@
 
 - **規格**: [element-star.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/element-star/) (ukadoc-spec/descript/shell-surfaces/surface-brace/element-star.md)
 - **検索語**: element
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,8 @@ surface-parser.js が解析 (パターン種別など) するが、描画への�
 
 ## 実装箇所
 
-- `src-tauri/src/commands/shell/manifest.rs:68` `kind: "element",`
-- `src-tauri/src/commands/shell/manifest.rs:90` `"element".hash(&mut hasher);`
-- `crates/ui/src/manifest.rs:5` `//! element 合成・SERIKO 再生・当たり判定・着せ替え描画を行う。`
-- `crates/ui/src/manifest.rs:22` `/// element / animation / collision / point 定義`
-- `crates/ui/src/manifest.rs:102` `"charset,Shift_JIS\nsurface0\n{\nelement0,base,surface0.png,0,0\ncollisionex0,he`
+- `src-tauri/src/commands/shell/manifest.rs:69` `kind: "element",`
+- `src-tauri/src/commands/shell/manifest.rs:91` `"element".hash(&mut hasher);`
+- `crates/ui/src/manifest.rs:136` `manifest.surfaces[0].definition.element(0).unwrap().file,`
+- `crates/ui/src/shell/tests.rs:22` `assert!(def0.element(0).is_some());`
+- `crates/ui/src/surfaces/compositor/mod.rs:7` `pub mod element;`

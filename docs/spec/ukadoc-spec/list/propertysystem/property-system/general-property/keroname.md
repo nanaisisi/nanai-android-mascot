@@ -2,7 +2,7 @@
 
 - **規格**: [keroname.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/general-property/keroname/)
 - **検索語**: keroname
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/fmo.rs:14` `pub keroname: String,`
-- `src-tauri/src/shiori/fmo.rs:122` `content.push_str(&format!("{}.keroname\x01{}\r\n", prefix, rec.keroname));`
-- `src-tauri/src/shiori/fmo.rs:156` `keroname: "Kero".to_string(),`
-- `crates/ui/src/script/env.rs:8` `keroname: &str,`
-- `crates/ui/src/script/env.rs:31` `result = result.replace("%keroname", keroname);`
+- `src-tauri/src/fmo.rs:14` `pub keroname: String,`
+- `src-tauri/src/fmo.rs:55` `entry.keroname = "Kero".to_string();`
+- `src-tauri/src/fmo.rs:64` `keroname: entry.keroname,`
+- `src-tauri/src/fmo.rs:100` `entry.keroname = "Kero".to_string();`
+- `src-tauri/src/fmo.rs:111` `keroname: entry.keroname,`

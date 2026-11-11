@@ -2,7 +2,7 @@
 
 - **規格**: [response.md](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/response/) (ukadoc-spec/spec/shiori3/response.md)
 - **検索語**: marker_send
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -20,4 +20,4 @@ Rust 通信層として `crates/ui/src/shiori.rs`（SHIORI/3.0 リクエスト/�
 - `crates/ui/src/shiori/protocol/response/build.rs:88` `res.marker_send = Some("SendMarker".into());`
 - `crates/ui/src/shiori/protocol/response/mod.rs:49` `pub marker_send: Option<String>,`
 - `crates/ui/src/shiori/protocol/response/parse/core.rs:73` `"markersend" => res.marker_send = Some(value.to_string()),`
-- `crates/ui/src/shiori/protocol/response/parse/tests.rs:82` `assert_eq!(res.marker_send.as_deref(), Some("mark2"));`
+- `crates/ui/src/shiori/protocol/response/parse/tests.rs:79` `assert_eq!(res.marker_send.as_deref(), Some("mark2"));`

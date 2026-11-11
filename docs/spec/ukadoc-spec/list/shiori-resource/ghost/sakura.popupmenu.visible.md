@@ -2,7 +2,7 @@
 
 - **規格**: [sakura.popupmenu.visible.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/ghost/sakura.popupmenu.visible/) (ukadoc-spec/list/shiori-resource/ghost/sakura.popupmenu.visible.md)
 - **検索語**: sakura.popupmenu.visible
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,4 +10,4 @@ sakura.popupmenu.visible SHIORIリソース・プロパティ評価処理を実�
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:39` `"sakura.popupmenu.applybindtoself" | "sakura.popupmenu.type" | "sakura.popupmenu`
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs:41` `| "sakura.popupmenu.visible" => "1",`

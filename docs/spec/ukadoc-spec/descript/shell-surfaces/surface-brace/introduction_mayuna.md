@@ -2,7 +2,7 @@
 
 - **規格**: [introduction_mayuna.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/introduction_mayuna/) (ukadoc-spec/descript/shell-surfaces/surface-brace/introduction_mayuna.md)
 - **検索語**: MAYUNA
-- **対応状況**: ✅ 実装済
+- **対応状況**: ❌ 未実装
   - 描画反映の接続設計は [ghost/composition-plan-integration-spec.md](../../../ghost/composition-plan-integration-spec.md) 参照
 
 ## 突合結果
@@ -11,5 +11,4 @@
 
 ## 実装箇所
 
-- `crates/ui/src/surfaces/types/composition.rs:1` `//! 合成計画 (MAYUNA) の型`
-- `crates/ui/src/surfaces/types/txt.rs:42` `/// 合成計画（MAYUNA / 着せ替え表示のレイヤー列）を立てる`
+実装コード内に「MAYUNA」は検出されませんでした。

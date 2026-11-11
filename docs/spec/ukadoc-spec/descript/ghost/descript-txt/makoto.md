@@ -2,7 +2,7 @@
 
 - **規格**: [makoto.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/makoto.md)
 - **検索語**: makoto
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,5 +10,8 @@
 
 ## 実装箇所
 
-- `crates/ui/src/fmo/tests.rs:32` `modulestate: Some("shiori:running,makoto-ghost:running".to_string()),`
-- `crates/ui/src/fmo/tests.rs:59` `Some("shiori:running,makoto-ghost:running".to_string())`
+- `src-tauri/src/commands/shell/ghost.rs:31` `makoto: manifest.makoto,`
+- `src-tauri/src/common/models.rs:38` `pub makoto: Option<String>,`
+- `src-tauri/src/ghost/scan/directory/manifest.rs:12` `pub makoto: Option<String>,`
+- `src-tauri/src/ghost/scan/directory/manifest.rs:83` `let makoto = meta_map.as_ref().and_then(|m| m.get("makoto").cloned());`
+- `src-tauri/src/ghost/scan/directory/manifest.rs:203` `makoto,`

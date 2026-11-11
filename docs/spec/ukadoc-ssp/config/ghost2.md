@@ -1,7 +1,7 @@
 # 設定：ゴースト(2)
 
 - **規格**: [config/ghost2.md](https://ukatech.shillest.net/ukadoc-ssp/config/ghost2/) (ukadoc-ssp/config/ghost2.md)
-- **対応状況**: ❌ 未実装
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -9,4 +9,4 @@
 
 ## 実装箇所
 
-実装コード内に「ghost2」は検出されませんでした。
+- `tests/shiori-notify/helpers.ts:61` `path: "/assets/ghost/ghost2",`

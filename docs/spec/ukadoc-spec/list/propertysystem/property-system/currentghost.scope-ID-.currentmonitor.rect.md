@@ -2,7 +2,7 @@
 
 - **規格**: [currentghost.scope-ID-.currentmonitor.rect.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/currentghost.scope-ID-.currentmonitor.rect/) (ukadoc-spec/list/propertysystem/property-system/currentghost.scope-ID-.currentmonitor.rect.md)
 - **検索語**: currentghost.scope
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:51` `if q.starts_with("currentghost.scope(") {`
+- `src-tauri/src/shiori/property/evaluator/dynamic_rules.rs:35` `if q.starts_with("currentghost.scope(") {`

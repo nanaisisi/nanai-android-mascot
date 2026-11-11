@@ -2,7 +2,7 @@
 
 - **規格**: [OnUpdateReady.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/network-update/OnUpdateReady/) (ukadoc-spec/list/shiori-event/network-update/OnUpdateReady.md)
 - **検索語**: OnUpdateReady
-- **対応状況**: ✅ 実装済(SHIORIへ送信)
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,6 +10,7 @@ UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装
 
 ## 実装箇所
 
-- `ui/js/core/app-update.js:15` `*    - 更新あり: OnUpdateReady (Reference0: ファイル総数-1, Reference1: ファイル名リスト)`
-- `ui/js/core/app-update.js:111` `// 4. OnUpdateReady`
-- `ui/js/core/app-update.js:115` `"OnUpdateReady",`
+- `crates/nanai-core/src/update_protocol.rs:27` `"OnUpdateReady",`
+- `ui/ts/core/app-update.ts:105` `"OnUpdateReady",`
+- `ui/ts/core/actions/update-protocol.ts:6` `* - OnUpdateBegin / OnUpdateReady / OnUpdateComplete / OnUpdateFailure`
+- `ui/ts/core/actions/update-protocol.ts:89` `"OnUpdateReady",`

@@ -2,7 +2,7 @@
 
 - **規格**: [request.md](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/request/) (ukadoc-spec/spec/shiori3/request.md)
 - **検索語**: Sender
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -16,8 +16,8 @@ Rust 通信層として `crates/ui/src/shiori.rs`（SHIORI/3.0 リクエスト/�
 
 ## 実装箇所
 
-- `src-tauri/src/commands/shiori/protocol.rs:94` `/// `ShioriRequest` モデル（GET / Sender / Charset / ID / Reference0..N）に一本化。`
-- `src-tauri/src/sstp/handler.rs:54` `"📨 [SSTP/1.1] Method: {}, Sender: {}",`
-- `src-tauri/src/sstp/mod.rs:34` `let raw = "SEND SSTP/1.1\r\nSender: TestApp\r\nScript: \\0Hi\\e\r\nReference0: R`
-- `src-tauri/src/sstp/mod.rs:46` `let raw = "SEND SSTP/1.4\r\nSender: TestApp\r\nID: unique_id_01\r\nOption: nobre`
-- `src-tauri/src/sstp/mod.rs:58` `let raw_exec = "EXECUTE SSTP/1.1\r\nSender: Client\r\nCommand: GetName\r\n";`
+- `src-tauri/src/shiori/saori.rs:148` `headers.insert("Sender".to_string(), "Nanai-SAORI-Host".to_string());`
+- `src-tauri/src/sstp/handler/request_processor.rs:25` `"📨 [SSTP/1.1] Method: {}, Sender: {}",`
+- `crates/ui/src/shiori/engine/tests/wasm_engine.rs:60` `assert!(res.contains("Sender: WasmShiori"));`
+- `crates/ui/src/shiori/protocol/request/builder.rs:12` `out.push_str(&format!("Sender: {}\r\n", self.sender));`
+- `crates/ui/src/shiori/protocol/response/build.rs:23` `out.push_str(&format!("Sender: {}\r\n", sender));`

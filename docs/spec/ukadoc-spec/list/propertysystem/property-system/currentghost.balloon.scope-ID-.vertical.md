@@ -2,7 +2,7 @@
 
 - **規格**: [currentghost.balloon.scope-ID-.vertical.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/currentghost.balloon.scope-ID-.vertical/) (ukadoc-spec/list/propertysystem/property-system/currentghost.balloon.scope-ID-.vertical.md)
 - **検索語**: currentghost.balloon.scope
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,8 +11,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:140` `if let Some(scope_prop) = q.strip_prefix("currentghost.balloon.scope(") {`
-- `src-tauri/src/shiori/property.rs:141` `// currentghost.balloon.scope(ID).* evaluation`
-- `src-tauri/src/shiori/property.rs:247` `evaluate_property_query("currentghost.balloon.scope(0).rect"),`
-- `src-tauri/src/shiori/property.rs:251` `evaluate_property_query("currentghost.balloon.scope(0).validwidth"),`
-- `src-tauri/src/shiori/property.rs:255` `evaluate_property_query("currentghost.balloon.scope(0).validheight"),`
+- `src-tauri/src/shiori/property/tests.rs:75` `evaluate_property_query("currentghost.balloon.scope(0).rect"),`
+- `src-tauri/src/shiori/property/tests.rs:79` `evaluate_property_query("currentghost.balloon.scope(0).validwidth"),`
+- `src-tauri/src/shiori/property/tests.rs:83` `evaluate_property_query("currentghost.balloon.scope(0).validheight"),`
+- `src-tauri/src/shiori/property/tests.rs:87` `evaluate_property_query("currentghost.balloon.scope(0).scaling"),`
+- `src-tauri/src/shiori/property/tests.rs:91` `evaluate_property_query("currentghost.balloon.scope(0).vertical"),`

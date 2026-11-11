@@ -2,9 +2,9 @@
 
 - **規格**: [blend-color-fast.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-color-fast/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/blend-color-fast.md)
 - **検索語**: blend-color-fast
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 
 ## 実装箇所
 
-- `ui/js/surface/surface-load.js:68` `// [blend-color-fast]`
+- `tests/canvas-pixel-snapshot/cycle9-blend-modes.test.ts:77` `bFast.compositeBuffer(layer, 0, 0, "blend-color-fast");`

@@ -2,7 +2,7 @@
 
 - **規格**: [bang-bind-noevent.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/surface/bang-bind-noevent/) (ukadoc-spec/list/sakura-script/surface/bang-bind-noevent.md)
 - **検索語**: Bind
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,8 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/shell/manifest.rs:120` `DrawMethod::Add | DrawMethod::Bind => "add".to_string(),`
-- `src-tauri/src/shiori/ffi/interface.rs:2` `//! SHIORI FFI Bindings (Interface)`
-- `src-tauri/src/shiori/ffi/mod.rs:1` `//! SHIORI FFI Bindings`
-- `crates/ui/src/lib.rs:15` `pub use descript::{BindGroup, BindOptionGroup, CharDefaults, Descript};`
-- `crates/ui/src/lib.rs:104` `SakuraCommand::Bind {`
+- `src-tauri/src/commands/shell/manifest.rs:121` `DrawMethod::Add | DrawMethod::Bind => "add".to_string(),`
+- `crates/ui/src/animation/timeline.rs:103` `| Interval::Bind`
+- `crates/ui/src/animation/scheduler/triggers.rs:80` `Interval::Bind => {`
+- `crates/ui/src/animation/scheduler/triggers.rs:190` `Some(Interval::Bind) => {`
+- `crates/ui/src/animation/tests/active_animation.rs:180` `Interval::Bind,`

@@ -2,7 +2,7 @@
 
 - **規格**: [pct-mz.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/environment-variable/pct-mz/) (ukadoc-spec/list/sakura-script/environment-variable/pct-mz.md)
 - **検索語**: %mz
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,4 +11,5 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/env.rs:53` `result = result.replace("%mz", "0");`
+- `crates/ui/src/script/env.rs:56` `result = result.replace("%mz", "0");`
+- `ui/ts/ghost/command-handler/env.ts:228` `"%mz": "0",`

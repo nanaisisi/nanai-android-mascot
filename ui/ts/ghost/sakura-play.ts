@@ -11,7 +11,29 @@ import { createBalloonSyncManager } from "./sakura-play-sync.js";
 
 export { SakuraPlaybackController } from "./sakura-play/controller.js";
 
-export async function playScript(player: unknown, script: string) {
+export interface SakuraPlayer {
+	parse: (script: string) => Promise<any[]>;
+	playbackId: number;
+	isPlaying: boolean;
+	skipRequested: boolean;
+	timeCritical: boolean;
+	currentScope: number;
+	isSyncMode: boolean;
+	lastScript: string;
+	choiceTimeoutTimer: any;
+	balloonTimeoutTimer: any;
+	app: any;
+	scheduleSurfaceRestore: (id: number) => void;
+	playbackController?: any;
+	choiceTimeout?: number;
+	balloonTimeout?: number;
+	onChoiceSelected?: (...args: any[]) => void;
+	onChoiceTimeout?: () => void;
+	currentProgressIndex?: number;
+	[key: string]: any;
+}
+
+export async function playScript(player: SakuraPlayer, script: string) {
 	const finalScript = await translateScript(player, script);
 
 	const tokens = await player.parse(finalScript);

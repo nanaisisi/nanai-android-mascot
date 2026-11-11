@@ -21,16 +21,17 @@ export function isTauriAvailable(): boolean {
 	const win =
 		typeof window !== "undefined"
 			? window
-			: (g.window as Record<string, unknown>);
+			: (g.window as Window & { location?: Location });
+	const loc = win?.location;
 	return (
 		!!g.__TAURI__ ||
 		!!g.__TAURI_INTERNALS__ ||
 		!!g.__TAURI_IPC__ ||
 		!!(
-			win?.location &&
-			((win.location as unknown).protocol?.startsWith("tauri") ||
-				(win.location as unknown).hostname === "tauri.localhost" ||
-				(win.location as unknown).hostname === "tauri.app")
+			loc &&
+			(loc.protocol?.startsWith("tauri") ||
+				loc.hostname === "tauri.localhost" ||
+				loc.hostname === "tauri.app")
 		)
 	);
 }

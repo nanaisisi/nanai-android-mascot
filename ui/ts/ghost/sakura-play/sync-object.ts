@@ -35,6 +35,10 @@ export class SyncObject {
 		return this.waiters.size > 0;
 	}
 
+	hasWaiters(): boolean {
+		return this.waiters.size > 0;
+	}
+
 	/**
 	 * シグナルをセットし、待機中キューの先頭（または resetOnWait: false の場合は連続）を解放する
 	 */
@@ -200,6 +204,26 @@ export class SyncObjectManager {
 	reset(name: string) {
 		const obj = this.objects.get(name.toLowerCase());
 		if (obj) obj.reset();
+	}
+
+	resetAll() {
+		for (const obj of this.objects.values()) {
+			obj.reset();
+		}
+	}
+
+	remove(name: string, reason: string = "SyncObject removed"): boolean {
+		const key = name.toLowerCase();
+		const obj = this.objects.get(key);
+		if (obj) {
+			obj.cancelAll(reason);
+			return this.objects.delete(key);
+		}
+		return false;
+	}
+
+	size(): number {
+		return this.objects.size;
 	}
 
 	clear(reason: string = "SyncObject cancelled") {

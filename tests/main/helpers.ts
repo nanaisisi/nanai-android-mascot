@@ -76,7 +76,7 @@ export const createTauriInternals = (
 export function clearTauriGlobals() {
 	delete (globalThis as Record<string, unknown>).__TAURI__;
 	delete (globalThis as Record<string, unknown>).__TAURI_INTERNALS__;
-	const win = (globalThis as { window?: Record<string, unknown> }).window;
+	const win = (globalThis as unknown as { window?: Record<string, unknown> }).window;
 	if (win) {
 		delete win.__TAURI__;
 		delete win.__TAURI_INTERNALS__;

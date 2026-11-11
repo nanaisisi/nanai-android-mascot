@@ -15,6 +15,11 @@ test("drawLayer and composeSurfaceElements blend modes & composite operations", 
 	const ctx = testCanvas.getContext("2d");
 
 	globalThis.Image = class {
+		naturalWidth: number;
+		naturalHeight: number;
+		width: number;
+		height: number;
+		_mockData: Uint8ClampedArray<ArrayBuffer>;
 		constructor() {
 			this.naturalWidth = 5;
 			this.naturalHeight = 5;
@@ -24,6 +29,9 @@ test("drawLayer and composeSurfaceElements blend modes & composite operations", 
 			setTimeout(() => {
 				this.onload?.();
 			}, 0);
+		}
+		onload() {
+			throw new Error("Method not implemented.");
 		}
 	};
 

@@ -8,7 +8,7 @@ export const shioriNotifyInputEvents = {
 	 * URL ドロップイベント通知 (UKADOC url-drop)
 	 */
 	async notifyUrlDropEvent(
-		this: unknown,
+		this: any,
 		event:
 			| "OnURLDropped"
 			| "OnURLDropping"
@@ -26,7 +26,7 @@ export const shioriNotifyInputEvents = {
 	 * ファイルドロップイベント通知 (UKADOC file-drop)
 	 */
 	async notifyFileDropEvent(
-		this: unknown,
+		this: any,
 		event:
 			| "OnFileDrop"
 			| "OnFileDrop2"
@@ -54,7 +54,7 @@ export const shioriNotifyInputEvents = {
 	 * 重なり・画面外判定通知 (UKADOC overlap)
 	 */
 	async notifyOverlapEvent(
-		this: unknown,
+		this: any,
 		event:
 			| "OnOffscreen"
 			| "OnOtherOffscreen"
@@ -70,7 +70,7 @@ export const shioriNotifyInputEvents = {
 	 * イベント送信・通知失敗イベント (UKADOC event-send-failure)
 	 */
 	async notifyEventSendFailure(
-		this: unknown,
+		this: any,
 		event:
 			| "OnNotifyOtherFailure"
 			| "OnNotifyPluginFailure"
@@ -86,7 +86,7 @@ export const shioriNotifyInputEvents = {
 	 * ゲームパッドイベント通知 (UKADOC gamepad)
 	 */
 	async notifyGamepadEvent(
-		this: unknown,
+		this: any,
 		event:
 			| "OnGamepadAxisMove"
 			| "OnGamepadButtonDown"
@@ -103,7 +103,7 @@ export const shioriNotifyInputEvents = {
 	 * 矩形選択モードイベント通知 (UKADOC select-region-mode)
 	 */
 	async notifySelectRegionModeEvent(
-		this: unknown,
+		this: any,
 		event:
 			| "OnSelectModeBegin"
 			| "OnSelectModeCancel"
@@ -120,7 +120,7 @@ export const shioriNotifyInputEvents = {
 	 * 音声認識・合成イベント通知 (UKADOC speech)
 	 */
 	async notifySpeechEvent(
-		this: unknown,
+		this: any,
 		event:
 			| "OnSpeechSynthesisStatus"
 			| "OnVoiceRecognitionStatus"
@@ -135,7 +135,7 @@ export const shioriNotifyInputEvents = {
 	 * その他の各種通知 (UKADOC other)
 	 */
 	async notifyOtherEvent(
-		this: unknown,
+		this: any,
 		event:
 			| "OnAITalk"
 			| "OnCompressArchiveComplete"
@@ -162,7 +162,7 @@ export const shioriNotifyInputEvents = {
 	 * マウス拡張イベント送信
 	 */
 	async notifyMouseEvent(
-		this: unknown,
+		this: any,
 		eventName: string,
 		args: Array<string | number>,
 	) {
@@ -173,7 +173,7 @@ export const shioriNotifyInputEvents = {
 	 * 重なり・画面外通知 (UKADOC overlap spec)
 	 */
 	async sendOverlap(
-		this: unknown,
+		this: any,
 		scope0: number | string,
 		scope1: number | string,
 		rect: string = "",
@@ -185,23 +185,15 @@ export const shioriNotifyInputEvents = {
 		]);
 	},
 
-	async sendOffscreen(
-		this: unknown,
-		scope: number | string,
-		rect: string = "",
-	) {
+	async sendOffscreen(this: any, scope: number | string, rect: string = "") {
 		return await this.sendShioriNotify("OnOffscreen", [String(scope), rect]);
 	},
 
-	async sendOtherOverlap(this: unknown, ghostName: string, rect: string = "") {
+	async sendOtherOverlap(this: any, ghostName: string, rect: string = "") {
 		return await this.sendShioriNotify("OnOtherOverlap", [ghostName, rect]);
 	},
 
-	async sendOtherOffscreen(
-		this: unknown,
-		ghostName: string,
-		rect: string = "",
-	) {
+	async sendOtherOffscreen(this: any, ghostName: string, rect: string = "") {
 		return await this.sendShioriNotify("OnOtherOffscreen", [ghostName, rect]);
 	},
 
@@ -209,7 +201,7 @@ export const shioriNotifyInputEvents = {
 	 * 外部通信イベント通知 (UKADOC other-communication spec)
 	 */
 	async notifyCommunicationEvent(
-		this: unknown,
+		this: any,
 		event:
 			| "OnExecuteFileWatchChange"
 			| "OnExecuteFileWatchFailure"

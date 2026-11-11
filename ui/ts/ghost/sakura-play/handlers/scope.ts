@@ -5,12 +5,7 @@
 
 import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 
-export function handleScope(
-	player: unknown,
-	app: unknown,
-	token: unknown,
-	context: unknown,
-) {
+export function handleScope(player: any, app: any, token: any, context: any) {
 	const {
 		sakuraText,
 		keroText,
@@ -63,10 +58,10 @@ export function handleScope(
 }
 
 export function handleBalloon(
-	player: unknown,
-	_app: unknown,
-	token: unknown,
-	context: unknown,
+	player: any,
+	_app: any,
+	token: any,
+	context: any,
 ) {
 	const { sakuraDisplay, keroDisplay } = context;
 	const balloonDisplay =
@@ -79,10 +74,10 @@ export function handleBalloon(
 }
 
 export function handleInlineBitmap(
-	_player: unknown,
-	app: unknown,
-	token: unknown,
-	context: unknown,
+	_player: any,
+	app: any,
+	token: any,
+	context: any,
 ) {
 	const { currentBalloonText, scheduleDesktopBalloonSync } = context;
 
@@ -96,8 +91,8 @@ export function handleInlineBitmap(
 		rawPath.startsWith("https://")
 			? rawPath
 			: `assets/balloon/${themeName}/${rawPath}`;
-	img.src = (globalThis as unknown).__TAURI__?.core?.convertFileSrc
-		? (globalThis as unknown).__TAURI__.core.convertFileSrc(fullPath)
+	img.src = (globalThis as any).__TAURI__?.core?.convertFileSrc
+		? (globalThis as any).__TAURI__.core.convertFileSrc(fullPath)
 		: fullPath;
 	img.style.display = "inline-block";
 	img.style.verticalAlign = "middle";

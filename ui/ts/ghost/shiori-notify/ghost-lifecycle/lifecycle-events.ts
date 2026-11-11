@@ -8,7 +8,7 @@ export const shioriNotifyLifecycleEvents = {
 	 * ゴースト・シェル切替およびライフサイクル通知 (UKADOC boot-close-change)
 	 */
 	async notifyGhostLifecycle(
-		this: unknown,
+		this: any,
 		event:
 			| "OnGhostChanging"
 			| "OnGhostChanged"
@@ -40,7 +40,7 @@ export const shioriNotifyLifecycleEvents = {
 	 * 消滅・アンインストール通知 (UKADOC vanish)
 	 */
 	async notifyVanishEvent(
-		this: unknown,
+		this: any,
 		event:
 			| "OnVanished"
 			| "OnVanishSelecting"
@@ -58,7 +58,7 @@ export const shioriNotifyLifecycleEvents = {
 	 * ゴースト切替・シェル切替・システムライフサイクル通知 (UKADOC boot-close-change spec)
 	 */
 	async sendGhostChanging(
-		this: unknown,
+		this: any,
 		toGhost: string,
 		fromGhost: string = "",
 		reason: string = "manual",
@@ -70,23 +70,15 @@ export const shioriNotifyLifecycleEvents = {
 		]);
 	},
 
-	async sendGhostChanged(
-		this: unknown,
-		toGhost: string,
-		fromGhost: string = "",
-	) {
+	async sendGhostChanged(this: any, toGhost: string, fromGhost: string = "") {
 		return await this.sendShioriNotify("OnGhostChanged", [toGhost, fromGhost]);
 	},
 
-	async sendShellChanged(
-		this: unknown,
-		toShell: string,
-		fromShell: string = "",
-	) {
+	async sendShellChanged(this: any, toShell: string, fromShell: string = "") {
 		return await this.sendShioriNotify("OnShellChanged", [toShell, fromShell]);
 	},
 
-	async sendCloseAll(this: unknown, reason: string = "user") {
+	async sendCloseAll(this: any, reason: string = "user") {
 		return await this.sendShioriNotify("OnCloseAll", [reason]);
 	},
 };

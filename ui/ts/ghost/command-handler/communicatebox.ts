@@ -3,7 +3,7 @@
  * @brief \![open,communicatebox] および \![close,communicatebox] ハンドラ
  */
 
-export function openCommunicateBox(handler: unknown, params: string[] = []) {
+export function openCommunicateBox(handler: any, params: string[] = []) {
 	closeCommunicateBox(handler, false);
 
 	let defaultText = "";
@@ -64,7 +64,7 @@ export function openCommunicateBox(handler: unknown, params: string[] = []) {
 	submitBtn.className = "balloon-choice-btn";
 	submitBtn.style.marginTop = "0";
 
-	let timer: unknown = null;
+	let timer: any = null;
 	handler.communicateForm = form;
 
 	const cleanup = () => {
@@ -122,7 +122,7 @@ export function openCommunicateBox(handler: unknown, params: string[] = []) {
 }
 
 export function closeCommunicateBox(
-	handler: unknown,
+	handler: any,
 	notifyCancel: boolean = false,
 ) {
 	if (handler.communicateForm) {

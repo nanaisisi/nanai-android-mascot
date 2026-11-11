@@ -14,19 +14,19 @@ export const ghostSurfaceLoaderMethods = {
 		shellName: string,
 		surfaceId: number | string,
 	): Promise<string> {
-		(this as unknown)._surfaceAssetCache ??= new Map();
+		(this as any)._surfaceAssetCache ??= new Map();
 		const key = `${cmd}|${ghostPath}|${shellName}|${surfaceId}`;
-		let pending = (this as unknown)._surfaceAssetCache.get(key);
+		let pending = (this as any)._surfaceAssetCache.get(key);
 		if (!pending) {
 			pending = invoke(cmd, {
 				ghostPath,
 				shellName,
 				surfaceId: String(surfaceId),
 			});
-			(this as unknown)._surfaceAssetCache.set(key, pending);
-			if ((this as unknown)._surfaceAssetCache.size > 64) {
-				(this as unknown)._surfaceAssetCache.delete(
-					(this as unknown)._surfaceAssetCache.keys().next().value,
+			(this as any)._surfaceAssetCache.set(key, pending);
+			if ((this as any)._surfaceAssetCache.size > 64) {
+				(this as any)._surfaceAssetCache.delete(
+					(this as any)._surfaceAssetCache.keys().next().value,
 				);
 			}
 		}
@@ -34,9 +34,9 @@ export const ghostSurfaceLoaderMethods = {
 	},
 
 	/** ゴースト・シェル切り替え時などに画像キャッシュを破棄 */
-	clearSurfaceAssetCache() {
-		(this as unknown)._surfaceAssetCache?.clear();
-		(this as unknown).app?.surfaceManager?.chromaKeyCache?.clear();
-		(this as unknown).app?.surfaceManager?.baseCanvasCache?.clear();
+	clearSurfaceAssetCache(this: any) {
+		this._surfaceAssetCache?.clear();
+		this.app?.surfaceManager?.chromaKeyCache?.clear();
+		this.app?.surfaceManager?.baseCanvasCache?.clear();
 	},
 };

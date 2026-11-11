@@ -7,7 +7,7 @@ export const shioriNotifyEnvironment = {
 	/**
 	 * OS情報通知 (OnNotifyOSInfo) を送信 (UKADOC 規格準拠)
 	 */
-	async notifyOSInfo(this: unknown, osName = "Android", osVersion = "14") {
+	async notifyOSInfo(this: any, osName = "Android", osVersion = "14") {
 		return await this.sendShioriNotify("OnNotifyOSInfo", [osName, osVersion]);
 	},
 
@@ -15,7 +15,7 @@ export const shioriNotifyEnvironment = {
 	 * 自身（ゴースト本体）情報通知 (OnNotifySelfInfo) を送信 (UKADOC 規格準拠)
 	 */
 	async notifySelfInfo(
-		this: unknown,
+		this: any,
 		ghostName: string,
 		shellName = "master",
 		balloonName = "default",
@@ -31,7 +31,7 @@ export const shioriNotifyEnvironment = {
 	 * バルーン構成情報通知 (OnNotifyBalloonInfo) を送信 (UKADOC 規格準拠)
 	 */
 	async notifyBalloonInfo(
-		this: unknown,
+		this: any,
 		balloonName = "default",
 		balloonPath = "",
 	) {
@@ -44,7 +44,7 @@ export const shioriNotifyEnvironment = {
 	/**
 	 * シェル構成情報通知 (OnNotifyShellInfo) を送信 (UKADOC 規格準拠)
 	 */
-	async notifyShellInfo(this: unknown, shellName = "master", shellPath = "") {
+	async notifyShellInfo(this: any, shellName = "master", shellPath = "") {
 		return await this.sendShioriNotify("OnNotifyShellInfo", [
 			shellName,
 			shellPath,
@@ -54,7 +54,7 @@ export const shioriNotifyEnvironment = {
 	/**
 	 * 着せ替え構成情報通知 (OnNotifyDressupInfo) を送信 (UKADOC 規格準拠)
 	 */
-	async notifyDressupInfo(this: unknown, dressupItems: string[] = []) {
+	async notifyDressupInfo(this: any, dressupItems: string[] = []) {
 		return await this.sendShioriNotify("OnNotifyDressupInfo", dressupItems);
 	},
 
@@ -62,7 +62,7 @@ export const shioriNotifyEnvironment = {
 	 * ユーザー設定情報通知 (OnNotifyUserInfo) を送信 (UKADOC 規格準拠)
 	 */
 	async notifyUserInfo(
-		this: unknown,
+		this: any,
 		userName = "ユーザー",
 		userBirthday = "",
 		userGender = "",
@@ -77,7 +77,7 @@ export const shioriNotifyEnvironment = {
 	/**
 	 * フォント設定情報通知 (OnNotifyFontInfo) を送信 (UKADOC 規格準拠)
 	 */
-	async notifyFontInfo(this: unknown, fontName = "sans-serif", fontSize = 12) {
+	async notifyFontInfo(this: any, fontName = "sans-serif", fontSize = 12) {
 		return await this.sendShioriNotify("OnNotifyFontInfo", [
 			fontName,
 			String(fontSize),
@@ -87,7 +87,7 @@ export const shioriNotifyEnvironment = {
 	/**
 	 * 祝日・休日情報通知 (OnNotifyHolidayInfo) を送信 (UKADOC 規格準拠)
 	 */
-	async notifyHolidayInfo(this: unknown, holidayName = "", holidayDate = "") {
+	async notifyHolidayInfo(this: any, holidayName = "", holidayDate = "") {
 		return await this.sendShioriNotify("OnNotifyHolidayInfo", [
 			holidayName,
 			holidayDate,
@@ -98,7 +98,7 @@ export const shioriNotifyEnvironment = {
 	 * 国際化・地域設定通知 (OnNotifyInternationalInfo) を送信 (UKADOC 規格準拠)
 	 */
 	async notifyInternationalInfo(
-		this: unknown,
+		this: any,
 		locale = "ja-JP",
 		timezone = "Asia/Tokyo",
 	) {
@@ -112,7 +112,7 @@ export const shioriNotifyEnvironment = {
 	 * バッテリー・電源状態通知
 	 */
 	async notifyBatteryState(
-		this: unknown,
+		this: any,
 		type:
 			| "notify"
 			| "critical"
@@ -137,7 +137,7 @@ export const shioriNotifyEnvironment = {
 	 * OS環境・ディスプレイ・テーマ・負荷状態通知 (UKADOC os-state)
 	 */
 	async notifyOsEnvironment(
-		this: unknown,
+		this: any,
 		event:
 			| "OnDisplayChange"
 			| "OnDisplayChangeEx"
@@ -166,7 +166,7 @@ export const shioriNotifyEnvironment = {
 	/**
 	 * スクリーンセーバー状態通知
 	 */
-	async notifyScreenSaver(this: unknown, isStarted: boolean) {
+	async notifyScreenSaver(this: any, isStarted: boolean) {
 		const event = isStarted ? "OnScreenSaverStart" : "OnScreenSaverEnd";
 		return await this.sendShioriNotify(event, []);
 	},
@@ -175,7 +175,7 @@ export const shioriNotifyEnvironment = {
 	 * デバイス着脱通知
 	 */
 	async notifyDeviceChange(
-		this: unknown,
+		this: any,
 		action: "arrival" | "remove",
 		deviceName = "",
 	) {
@@ -187,7 +187,7 @@ export const shioriNotifyEnvironment = {
 	 * セッション状態通知
 	 */
 	async notifySessionState(
-		this: unknown,
+		this: any,
 		sessionState: "lock" | "unlock" | "disconnect" | "reconnect",
 	) {
 		const eventMap: Record<string, string> = {
@@ -204,7 +204,7 @@ export const shioriNotifyEnvironment = {
 	 * モード・負荷・ネットワーク通知
 	 */
 	async notifySystemStatus(
-		this: unknown,
+		this: any,
 		event: string,
 		references: Array<string | number> = [],
 	) {

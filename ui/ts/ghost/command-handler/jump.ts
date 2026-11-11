@@ -4,7 +4,7 @@
  */
 
 export async function handleJumpCommand(
-	handler: unknown,
+	handler: any,
 	target: string,
 	args: string[] = [],
 ) {

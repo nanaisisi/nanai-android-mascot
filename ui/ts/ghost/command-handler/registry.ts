@@ -4,7 +4,7 @@
  */
 
 export type CommandHandlerFn = (
-	handler: unknown,
+	handler: any,
 	args: string[],
 ) => Promise<void> | void;
 

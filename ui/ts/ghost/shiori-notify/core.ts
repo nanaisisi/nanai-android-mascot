@@ -13,7 +13,7 @@ export const shioriNotifyCore = {
 	 * @param {Array<string|number>} references Reference0..N
 	 */
 	async sendShioriNotify(
-		this: unknown,
+		this: any,
 		event: string,
 		references: Array<string | number>,
 	) {

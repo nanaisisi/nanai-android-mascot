@@ -3,9 +3,9 @@
  * @brief ウィンドウ状態およびデスクトップ整列コマンドハンドラ
  */
 
-export async function handleWindowState(state: string, handler?: unknown) {
+export async function handleWindowState(state: string, handler?: any) {
 	try {
-		const api = (globalThis as unknown).__TAURI__?.window;
+		const api = (globalThis as any).__TAURI__?.window;
 		if (!api) return;
 		const win = api.getCurrentWindow();
 		const lower = state.toLowerCase();
@@ -34,11 +34,11 @@ export async function handleWindowState(state: string, handler?: unknown) {
 	}
 }
 
-export async function setAlignmentToDesktop(handler: unknown, mode: string) {
+export async function setAlignmentToDesktop(handler: any, mode: string) {
 	handler.app.alignmentToDesktop = mode;
 	if (mode === "free") return;
 	try {
-		const api = (globalThis as unknown).__TAURI__?.window;
+		const api = (globalThis as any).__TAURI__?.window;
 		if (!api) return;
 		const win = api.getCurrentWindow();
 		const monitor = await api.currentMonitor();

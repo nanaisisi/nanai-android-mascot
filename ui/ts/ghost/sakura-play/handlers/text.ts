@@ -4,10 +4,10 @@
  */
 
 export async function handleChar(
-	player: unknown,
-	app: unknown,
-	token: unknown,
-	context: unknown,
+	player: any,
+	app: any,
+	token: any,
+	context: any,
 ) {
 	const { sakuraText, keroText, scheduleDesktopBalloonSync } = context;
 	const { currentBalloonText, currentAnchor, isQuickMode } = context;
@@ -60,10 +60,10 @@ export async function handleChar(
 }
 
 export function handleNewline(
-	player: unknown,
-	_app: unknown,
-	token: unknown,
-	context: unknown,
+	player: any,
+	_app: any,
+	token: any,
+	context: any,
 ) {
 	const { sakuraText, keroText, scheduleDesktopBalloonSync } = context;
 	const { currentBalloonText } = context;
@@ -97,12 +97,7 @@ export function handleNewline(
 	}
 }
 
-export function handleClear(
-	player: unknown,
-	app: unknown,
-	token: unknown,
-	context: unknown,
-) {
+export function handleClear(player: any, app: any, token: any, context: any) {
 	const { scheduleDesktopBalloonSync } = context;
 	const { currentBalloonText } = context;
 
@@ -139,7 +134,7 @@ export function handleClear(
 		const count = Math.max(1, token.count || 1);
 		let removedLines = 0;
 		while (removedLines < count && currentBalloonText.lastChild) {
-			const lastNode: unknown = currentBalloonText.lastChild;
+			const lastNode: any = currentBalloonText.lastChild;
 			const isBr =
 				lastNode.nodeName === "BR" ||
 				(lastNode.nodeName === "SPAN" && lastNode.style?.display === "block");
@@ -155,10 +150,10 @@ export function handleClear(
 }
 
 export function handleOffset(
-	_player: unknown,
-	_app: unknown,
-	token: unknown,
-	context: unknown,
+	_player: any,
+	_app: any,
+	token: any,
+	context: any,
 ) {
 	const { scheduleDesktopBalloonSync, currentBalloonText } = context;
 
@@ -179,12 +174,7 @@ export function handleOffset(
 	scheduleDesktopBalloonSync(false);
 }
 
-export function handleFont(
-	player: unknown,
-	_app: unknown,
-	token: unknown,
-	_context: unknown,
-) {
+export function handleFont(player: any, _app: any, token: any, _context: any) {
 	player.currentFontStyles = player.currentFontStyles || {};
 	if (token.tag === "default") {
 		player.currentFontStyles = {};

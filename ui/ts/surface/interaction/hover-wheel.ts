@@ -1,23 +1,29 @@
 /**
- * マウスホイール (OnMouseWheel) およびホバー (OnMouseHover) イベントの設定
- *
- * @param {HTMLElement} target
- * @param {object} options
- * @param {(clientX: number, clientY: number, rect: DOMRect, delta: number) => void} [options.onGhostWheel]
- * @param {(clientX: number, clientY: number, rect: DOMRect) => void} [options.onGhostHover]
- * @param {() => boolean} [isInteractingOrDragging]
- * @param {number} [hoverDelay=300]
- * @returns {() => void} クリーンアップ関数
+ * @file hover-wheel.ts
+ * @brief マウスホイール (OnMouseWheel) およびホバー (OnMouseHover) イベントの設定
  */
+
+interface HoverWheelOptions {
+	onGhostWheel?: (
+		clientX: number,
+		clientY: number,
+		rect: DOMRect,
+		delta: number,
+	) => void;
+	onGhostHover?: (clientX: number, clientY: number, rect: DOMRect) => void;
+	[key: string]: unknown;
+}
+
 export function setupHoverAndWheel(
 	target: HTMLElement,
-	options = {},
+	options: HoverWheelOptions = {},
 	isInteractingOrDragging = () => false,
 	hoverDelay = 300,
 ) {
 	if (!target) return () => {};
 
 	const { onGhostWheel, onGhostHover } = options;
+	const delayMs = Number(hoverDelay || 300);
 
 	// マウスホイール (OnMouseWheel)
 	const onWheel = (e: {
@@ -29,14 +35,16 @@ export function setupHoverAndWheel(
 			const clientX = e.clientX ?? 0;
 			const clientY = e.clientY ?? 0;
 			const rect = target.getBoundingClientRect();
-			const delta = Math.round(e.deltaY ?? 0);
+			const delta = Math.round(Number(e.deltaY ?? 0));
 			onGhostWheel(clientX, clientY, rect, delta);
 		}
 	};
-	target.addEventListener("wheel", onWheel, { passive: true });
+	target.addEventListener("wheel", onWheel as EventListener, {
+		passive: true,
+	});
 
 	// マウスホバー (OnMouseHover)
-	let hoverTimer: string | number | NodeJS.Timeout | null | undefined = null;
+	let hoverTimer: ReturnType<typeof setTimeout> | null = null;
 	const onMouseMove = (e: { clientX: number; clientY: number }) => {
 		if (isInteractingOrDragging() || !onGhostHover) return;
 		const clientX = e.clientX ?? 0;
@@ -45,7 +53,7 @@ export function setupHoverAndWheel(
 		hoverTimer = setTimeout(() => {
 			const rect = target.getBoundingClientRect();
 			onGhostHover(clientX, clientY, rect);
-		}, hoverDelay);
+		}, delayMs);
 	};
 
 	const onMouseLeave = () => {
@@ -55,12 +63,14 @@ export function setupHoverAndWheel(
 		}
 	};
 
-	target.addEventListener("mousemove", onMouseMove, { passive: true });
+	target.addEventListener("mousemove", onMouseMove as EventListener, {
+		passive: true,
+	});
 	target.addEventListener("mouseleave", onMouseLeave);
 
 	return () => {
-		target.removeEventListener("wheel", onWheel);
-		target.removeEventListener("mousemove", onMouseMove);
+		target.removeEventListener("wheel", onWheel as EventListener);
+		target.removeEventListener("mousemove", onMouseMove as EventListener);
 		target.removeEventListener("mouseleave", onMouseLeave);
 		if (hoverTimer) {
 			clearTimeout(hoverTimer);

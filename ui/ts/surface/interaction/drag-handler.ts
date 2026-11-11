@@ -41,6 +41,30 @@ export {
 	STROKE_THRESHOLD,
 };
 
+interface DragOptions {
+	onGhostMouseDown?: (...args: unknown[]) => unknown;
+	onGhostMouseUp?: (...args: unknown[]) => unknown;
+	onGhostDragStart?: (...args: unknown[]) => unknown;
+	onGhostDragEnd?: (...args: unknown[]) => unknown;
+	[key: string]: unknown;
+}
+
+interface DragContext {
+	toggleMenu?: () => void;
+	isPixelTransparent?: (img: Element, x: number, y: number) => boolean;
+	updateFollowPosition?: (x: number, y: number) => void;
+	[key: string]: unknown;
+}
+
+type PointerEventEx = Event & {
+	button?: number;
+	clientX?: number;
+	clientY?: number;
+	touches?: Array<{ clientX?: number; clientY?: number; [key: string]: unknown }>;
+	type?: string;
+	[key: string]: unknown;
+};
+
 /**
  * ゴースト本体のドラッグ移動、スナップ退避、および部位撫で（Stroke）判定のセットアップ
  */
@@ -48,8 +72,8 @@ export function setupGhostDragging(
 	target: HTMLElement,
 	onGhostClick: unknown,
 	onGhostStroke: unknown,
-	options: unknown = {},
-	context: unknown = {},
+	options: DragOptions = {},
+	context: DragContext = {},
 ) {
 	if (!target) {
 		return {
@@ -83,7 +107,7 @@ export function setupGhostDragging(
 		},
 	});
 
-	const strokeTracker = createStrokeTracker({
+	const strokeTracker = (createStrokeTracker({
 		threshold: STROKE_THRESHOLD,
 		onStroke: (clientX: unknown, clientY: unknown) => {
 			if (onGhostStroke) {
@@ -91,11 +115,23 @@ export function setupGhostDragging(
 				(onGhostStroke as unknown)(clientX, clientY, rect);
 			}
 		},
-	});
+	})) as {
+		reset: () => void;
+		addDistance: (dist: number, x: number, y: number) => void;
+		isTriggered: () => boolean;
+		[key: string]: unknown;
+	};
 
-	const checkTransparency = context.isPixelTransparent || isPixelTransparent;
+	const checkTransparency =
+		context.isPixelTransparent ||
+		(isPixelTransparent as unknown as (
+			img: Element,
+			x: number,
+			y: number,
+		) => boolean);
 
-	const onPointerDown = (e: unknown) => {
+	const onPointerDown = (evt: Event) => {
+		const e = evt as PointerEventEx;
 		if (e.button !== undefined && e.button !== 0) return;
 
 		if (e.cancelable) {
@@ -109,15 +145,15 @@ export function setupGhostDragging(
 		strokeTracker.reset();
 		longPress.reset();
 
-		const clientX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
-		const clientY = e.clientY ?? e.touches?.[0]?.clientY ?? 0;
+		const clientX = Number(e.clientX ?? e.touches?.[0]?.clientX ?? 0);
+		const clientY = Number(e.clientY ?? e.touches?.[0]?.clientY ?? 0);
 
 		const img = target.querySelector("img");
 		if (img && checkTransparency(img, clientX, clientY)) {
 			return;
 		}
 
-		if (nativeDrag.canStartNativeDrag(e.type)) {
+		if (nativeDrag.canStartNativeDrag(e.type || "")) {
 			nativeDrag.startNativeDrag(() => dragInternalState.isInteracting);
 		}
 
@@ -144,11 +180,12 @@ export function setupGhostDragging(
 		);
 	};
 
-	const onPointerMove = (e: unknown) => {
+	const onPointerMove = (evt: Event) => {
+		const e = evt as PointerEventEx;
 		if (!dragInternalState.isInteracting) return;
 
-		const clientX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
-		const clientY = e.clientY ?? e.touches?.[0]?.clientY ?? 0;
+		const clientX = Number(e.clientX ?? e.touches?.[0]?.clientX ?? 0);
+		const clientY = Number(e.clientY ?? e.touches?.[0]?.clientY ?? 0);
 
 		const deltaX = clientX - dragInternalState.startX;
 		const deltaY = clientY - dragInternalState.startY;
@@ -212,7 +249,7 @@ export function setupGhostDragging(
 		}
 	};
 
-	const onPointerUp = (e: unknown) => {
+	const onPointerUp = (e: Event) => {
 		rafPending = false;
 		handleGhostPointerUp(
 			e,
@@ -228,23 +265,27 @@ export function setupGhostDragging(
 		);
 	};
 
-	target.addEventListener("mousedown", onPointerDown);
-	globalThis.addEventListener("mousemove", onPointerMove);
-	globalThis.addEventListener("mouseup", onPointerUp);
+	target.addEventListener("mousedown", onPointerDown as EventListener);
+	globalThis.addEventListener("mousemove", onPointerMove as EventListener);
+	globalThis.addEventListener("mouseup", onPointerUp as EventListener);
 
-	target.addEventListener("touchstart", onPointerDown, { passive: true });
-	globalThis.addEventListener("touchmove", onPointerMove, { passive: true });
-	globalThis.addEventListener("touchend", onPointerUp);
+	target.addEventListener("touchstart", onPointerDown as EventListener, {
+		passive: true,
+	});
+	globalThis.addEventListener("touchmove", onPointerMove as EventListener, {
+		passive: true,
+	});
+	globalThis.addEventListener("touchend", onPointerUp as EventListener);
 
 	const cleanup = () => {
 		longPress.cleanup();
-		target.removeEventListener("mousedown", onPointerDown);
-		globalThis.removeEventListener("mousemove", onPointerMove);
-		globalThis.removeEventListener("mouseup", onPointerUp);
+		target.removeEventListener("mousedown", onPointerDown as EventListener);
+		globalThis.removeEventListener("mousemove", onPointerMove as EventListener);
+		globalThis.removeEventListener("mouseup", onPointerUp as EventListener);
 
-		target.removeEventListener("touchstart", onPointerDown);
-		globalThis.removeEventListener("touchmove", onPointerMove);
-		globalThis.removeEventListener("touchend", onPointerUp);
+		target.removeEventListener("touchstart", onPointerDown as EventListener);
+		globalThis.removeEventListener("touchmove", onPointerMove as EventListener);
+		globalThis.removeEventListener("touchend", onPointerUp as EventListener);
 	};
 
 	return {

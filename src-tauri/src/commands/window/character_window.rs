@@ -125,6 +125,7 @@ pub async fn show_character_window(
             }));
         }
 
+        let _ = sub_win.set_skip_taskbar(false);
         let _ = sub_win.unminimize();
         let _ = sub_win.show();
         println!(

@@ -10,6 +10,8 @@ pub async fn test_command() -> Result<String, String> {
 /// アプリケーション最小化コマンド
 #[tauri::command]
 pub async fn minimize_app(app_handle: tauri::AppHandle) -> Result<(), String> {
+    let state = app_handle.state::<crate::common::state::AppState>();
+    *state.is_minimized.lock() = true;
     #[cfg(desktop)]
     {
         for (_, window) in app_handle.webview_windows() {

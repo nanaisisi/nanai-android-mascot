@@ -33,31 +33,42 @@ pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error
         .tooltip("Nanai Android Mascot")
         .show_menu_on_left_click(false)
         .on_tray_icon_event(move |tray, event| {
-            if let TrayIconEvent::Click { rect, .. } | TrayIconEvent::DoubleClick { rect, .. } =
-                event
-            {
-                log_tray("🖱️ システムトレイアイコンがクリックされました");
-                let app_handle = tray.app_handle().clone();
-                let r = rect;
-                tauri::async_runtime::spawn(async move {
-                    let px = match r.position {
-                        tauri::Position::Physical(p) => p.x as f64,
-                        tauri::Position::Logical(l) => l.x,
-                    };
-                    let py = match r.position {
-                        tauri::Position::Physical(p) => p.y as f64,
-                        tauri::Position::Logical(l) => l.y,
-                    };
-                    let ph = match r.size {
-                        tauri::Size::Physical(s) => s.height as f64,
-                        tauri::Size::Logical(s) => s.height,
-                    };
-                    // システムトレイアイコンの左下を起点とする (Left: px, Bottom: py + ph)
-                    let x = px;
-                    let y = py + ph;
-                    let _ =
-                        crate::commands::window::show_menu_window(app_handle, x, y, Some(0)).await;
-                });
+            match event {
+                TrayIconEvent::DoubleClick { .. } => {
+                    log_tray("🖱️⚙️ システムトレイアイコンがダブルクリックされました -> ディスプレイを復元 (Restore) & タスクバーアプリ状態保持");
+                    let app_handle = tray.app_handle().clone();
+                    let state = app_handle.state::<AppState>();
+                    *state.is_minimized.lock() = false;
+                    tauri::async_runtime::spawn(async move {
+                        let _ = crate::commands::window::show_character_window(app_handle.clone(), 0, None, None, None, None).await;
+                        let _ = crate::commands::window::show_character_window(app_handle.clone(), 1, None, None, None, None).await;
+                    });
+                }
+                TrayIconEvent::Click { rect, .. } => {
+                    log_tray("🖱️ システムトレイアイコンがクリックされました -> メニュー表示");
+                    let app_handle = tray.app_handle().clone();
+                    let r = rect;
+                    tauri::async_runtime::spawn(async move {
+                        let px = match r.position {
+                            tauri::Position::Physical(p) => p.x as f64,
+                            tauri::Position::Logical(l) => l.x,
+                        };
+                        let py = match r.position {
+                            tauri::Position::Physical(p) => p.y as f64,
+                            tauri::Position::Logical(l) => l.y,
+                        };
+                        let ph = match r.size {
+                            tauri::Size::Physical(s) => s.height as f64,
+                            tauri::Size::Logical(s) => s.height,
+                        };
+                        // システムトレイアイコンの左下を起点とする (Left: px, Bottom: py + ph)
+                        let x = px;
+                        let y = py + ph;
+                        let _ =
+                            crate::commands::window::show_menu_window(app_handle, x, y, Some(0)).await;
+                    });
+                }
+                _ => {}
             }
         })
         .build(app);

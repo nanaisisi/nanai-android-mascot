@@ -12,6 +12,7 @@ pub struct AppState {
     pub balloon_offsets: Mutex<std::collections::HashMap<i32, (i32, i32)>>,
     pub surface_images: Mutex<std::collections::HashMap<i32, String>>,
     pub tray_icon: Mutex<Option<tauri::tray::TrayIcon<tauri::Wry>>>,
+    pub is_minimized: Mutex<bool>,
 }
 
 impl AppState {
@@ -27,6 +28,7 @@ impl AppState {
             balloon_offsets: Mutex::new(std::collections::HashMap::new()),
             surface_images: Mutex::new(std::collections::HashMap::new()),
             tray_icon: Mutex::new(None),
+            is_minimized: Mutex::new(false),
         }
     }
 }

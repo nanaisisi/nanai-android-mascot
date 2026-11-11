@@ -55,10 +55,7 @@
 	user-select: none;
 	touch-action: none;
 	pointer-events: auto; /* マスコット本体はタッチ・クリックを受け付ける */
-	transition:
-		opacity 0.3s ease,
-		width 0.3s ease,
-		height 0.3s ease;
+	transition: opacity 0.3s ease;
 }
 
 .ghost-display.is-dragging {

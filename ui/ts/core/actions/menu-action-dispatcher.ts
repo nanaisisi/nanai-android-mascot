@@ -61,6 +61,7 @@ export interface MenuActionContext {
 	handleDressupToggle?: (payload: unknown) => unknown;
 	modalManager?: {
 		show: (contentId: string) => unknown;
+		hide: () => unknown;
 	};
 	[key: string]: unknown;
 }
@@ -225,7 +226,7 @@ export function handleMenuActionImpl(
 	if (action.startsWith("balloon-theme-")) {
 		const theme = action.replace("balloon-theme-", "");
 		context.setBalloonTheme?.(theme);
-		let label = THEME_LABELS[theme] || theme;
+		let label = (THEME_LABELS as Record<string, string>)[theme] || theme;
 		if (context.availableBalloons) {
 			const bInfo = context.availableBalloons.find((b) => b.dir_name === theme);
 			if (bInfo) label = bInfo.name || label;

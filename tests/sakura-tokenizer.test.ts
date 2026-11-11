@@ -10,3 +10,5 @@ import "./sakura-tokenizer/post-message.test.js";
 import "./sakura-tokenizer/ast-traversal.test.js";
 import "./sakura-tokenizer/raw-mode.test.js";
 import "./sakura-tokenizer/rust-bridge.test.js";
+import "./sakura-tokenizer/tag-edge-cases.test.js";
+import "./sakura-tokenizer/ast-advanced.test.js";

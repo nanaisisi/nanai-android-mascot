@@ -6,9 +6,11 @@
 
 ## 重要参考情報
 
+
+
 > [!NOTE]
 > **Android環境の既存の伺か互換ベースウェア**:  
-> Android デバイス上で既存の伺か互換ベースウェアをお探しの方は、**[UKA-droid - 「伺か」互換マスコットアプリ](https://play.google.com/store/apps/details?id=com.hiro.ukadroid)** も合わせてご参照ください。
+> Android デバイス上で既存の伺か互換ベースウェアをお探しの方は、**[pono-droid](https://github.com/ukagaka-irono/pono-droid)**, **[UKA-droid - 「伺か」互換マスコットアプリ](https://play.google.com/store/apps/details?id=com.hiro.ukadroid)** も合わせてご参照ください。
 
 ---
 

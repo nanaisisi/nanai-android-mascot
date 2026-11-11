@@ -5,7 +5,10 @@
 
 import { cancelScriptTimer, scheduleScriptTimer } from "./registry.js";
 
-export async function handleTimerPluginCommand(handler: unknown, args: string[]) {
+export async function handleTimerPluginCommand(
+	handler: unknown,
+	args: string[],
+) {
 	const delayMs = Number.parseInt(args[1] ?? "0", 10);
 	const repeatFlag = Number.parseInt(args[2] ?? "1", 10);
 	const pluginId = args[3];

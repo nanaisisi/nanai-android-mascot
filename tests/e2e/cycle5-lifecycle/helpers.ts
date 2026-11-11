@@ -55,6 +55,6 @@ export function createMockApp(
 				return { status: 200, value: "" };
 			},
 		},
-		modalDialogController: null as any,
+		modalDialogController: null as unknown,
 	};
 }

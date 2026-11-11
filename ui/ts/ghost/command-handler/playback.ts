@@ -8,7 +8,10 @@ export async function handleSetChoiceTimeout(handler: unknown, args: string[]) {
 	handler.player.choiceTimeout = Number.isFinite(timeout) ? timeout : 0;
 }
 
-export async function handleSetBalloonTimeout(handler: unknown, args: string[]) {
+export async function handleSetBalloonTimeout(
+	handler: unknown,
+	args: string[],
+) {
 	const timeout = Number.parseInt(args[2] ?? "", 10);
 	handler.player.balloonTimeout = Number.isFinite(timeout) ? timeout : 0;
 }

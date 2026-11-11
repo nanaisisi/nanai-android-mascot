@@ -88,7 +88,7 @@ export function setupGhostDragging(
 		onStroke: (clientX: unknown, clientY: unknown) => {
 			if (onGhostStroke) {
 				const rect = target.getBoundingClientRect();
-				(onGhostStroke as any)(clientX, clientY, rect);
+				(onGhostStroke as unknown)(clientX, clientY, rect);
 			}
 		},
 	});

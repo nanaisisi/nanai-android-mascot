@@ -16,7 +16,11 @@ function isInstance(obj: unknown) {
 	);
 }
 
-function triggerAnimationsFallback(instance: unknown, scopeId: unknown, kind: string) {
+function triggerAnimationsFallback(
+	instance: unknown,
+	scopeId: unknown,
+	kind: string,
+) {
 	const manager = instance.manager;
 	const sid = String(
 		manager?.currentSurfaceIdFor ? manager.currentSurfaceIdFor(scopeId) : 0,

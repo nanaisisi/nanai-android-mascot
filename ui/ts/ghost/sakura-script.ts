@@ -24,7 +24,7 @@ export class SakuraScriptPlayer {
 	currentProgressIndex?: number;
 	_restoreTimer?: unknown;
 	_pauseResolver?: unknown;
-	_sleepResolvers?: Set<(...args: unknown[]) => any>;
+	_sleepResolvers?: Set<(...args: unknown[]) => unknown>;
 	[key: string]: unknown;
 
 	constructor(app: unknown) {
@@ -149,10 +149,11 @@ export class SakuraScriptPlayer {
 		} else {
 			// UKADOC: OnChoiceSelectEx is sent first (Reference0: text, Reference1: ID, Reference2..N: args)
 			try {
-				const resEx: unknown = await this.app.ghostController?.sendShioriEvent?.(
-					"OnChoiceSelectEx",
-					[choiceText, choiceId, ...allExtraArgs],
-				);
+				const resEx: unknown =
+					await this.app.ghostController?.sendShioriEvent?.(
+						"OnChoiceSelectEx",
+						[choiceText, choiceId, ...allExtraArgs],
+					);
 				if (resEx && (resEx.response || resEx.script)) {
 					return;
 				}

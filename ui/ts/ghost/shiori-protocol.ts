@@ -21,7 +21,7 @@ export function statusCodeFromRust(
 	return codes[status as string] ?? 0;
 }
 
-export function fromRustResponse(typed: Record<string, any> | null) {
+export function fromRustResponse(typed: Record<string, unknown> | null) {
 	if (!typed || typeof typed !== "object") return null;
 
 	const status = statusCodeFromRust(typed.status);

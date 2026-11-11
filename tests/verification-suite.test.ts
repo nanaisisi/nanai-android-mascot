@@ -86,7 +86,7 @@ describe("全面実装確認スイート (Implementation Verification Suite)", (
 				"origin.y": "28",
 			};
 
-			applyPositionProperties(mockRoot, props, instance as any);
+			applyPositionProperties(mockRoot, props, instance as unknown);
 
 			assert.equal(vars["--balloon-origin-x"], "12px");
 			assert.equal(vars["--balloon-origin-y"], "28px");

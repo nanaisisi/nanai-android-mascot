@@ -73,5 +73,5 @@ test("setupWindowGestures handles click, drag, double-tap zoom, and pinch gestur
 	assert.ok(pinchRequestEvent);
 
 	// Null safety
-	setupWindowGestures(null as any, {});
+	setupWindowGestures(null as unknown, {});
 });

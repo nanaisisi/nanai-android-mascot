@@ -106,7 +106,12 @@ export function handleNewline(
 	}
 }
 
-export function handleClear(player: unknown, app: unknown, token: unknown, context: unknown) {
+export function handleClear(
+	player: unknown,
+	app: unknown,
+	token: unknown,
+	context: unknown,
+) {
 	const { scheduleDesktopBalloonSync } = context;
 	const { currentBalloonText } = context;
 
@@ -183,7 +188,12 @@ export function handleOffset(
 	scheduleDesktopBalloonSync(false);
 }
 
-export function handleFont(player: unknown, _app: unknown, token: unknown, _context: unknown) {
+export function handleFont(
+	player: unknown,
+	_app: unknown,
+	token: unknown,
+	_context: unknown,
+) {
 	player.currentFontStyles = player.currentFontStyles || {};
 	if (token.tag === "default") {
 		player.currentFontStyles = {};

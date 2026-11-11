@@ -10,7 +10,10 @@ export async function handleBiffCommand(handler: unknown, _args: string[]) {
 	await handler.app.networkActions?.checkEmail?.();
 }
 
-export async function handleExecuteSntpCommand(handler: unknown, _args: string[]) {
+export async function handleExecuteSntpCommand(
+	handler: unknown,
+	_args: string[],
+) {
 	console.log("⏱️ Execute SNTP time sync triggered");
 	const gc = handler.app.ghostController;
 	const nowIso = new Date().toISOString();

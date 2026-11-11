@@ -70,11 +70,19 @@ export const shioriNotifyLifecycleEvents = {
 		]);
 	},
 
-	async sendGhostChanged(this: unknown, toGhost: string, fromGhost: string = "") {
+	async sendGhostChanged(
+		this: unknown,
+		toGhost: string,
+		fromGhost: string = "",
+	) {
 		return await this.sendShioriNotify("OnGhostChanged", [toGhost, fromGhost]);
 	},
 
-	async sendShellChanged(this: unknown, toShell: string, fromShell: string = "") {
+	async sendShellChanged(
+		this: unknown,
+		toShell: string,
+		fromShell: string = "",
+	) {
 		return await this.sendShioriNotify("OnShellChanged", [toShell, fromShell]);
 	},
 

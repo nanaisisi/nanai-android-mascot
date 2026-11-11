@@ -32,7 +32,10 @@ export const shioriNotifyApplicationHeadline = {
 	/**
 	 * 外部アプリケーション存在確認 (OnApplicationExist) を送信
 	 */
-	async checkApplicationExist(this: unknown, appName: string): Promise<boolean> {
+	async checkApplicationExist(
+		this: unknown,
+		appName: string,
+	): Promise<boolean> {
 		const res: unknown = await this.sendShioriNotify("OnApplicationExist", [
 			appName,
 		]);
@@ -42,7 +45,11 @@ export const shioriNotifyApplicationHeadline = {
 	/**
 	 * 外部アプリケーションファイルオープン通知 (OnApplicationFileOpen) を送信
 	 */
-	async notifyApplicationFileOpen(this: unknown, appName: string, filePath = "") {
+	async notifyApplicationFileOpen(
+		this: unknown,
+		appName: string,
+		filePath = "",
+	) {
 		return await this.sendShioriNotify("OnApplicationFileOpen", [
 			appName,
 			filePath,

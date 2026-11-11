@@ -16,7 +16,10 @@ export function getWaitMultiplier(this: unknown): number {
 	return this.waitMultiplier;
 }
 
-export function setBalloonWait(this: unknown, param: string | number | undefined) {
+export function setBalloonWait(
+	this: unknown,
+	param: string | number | undefined,
+) {
 	if (param === undefined || param === null || param === "" || param === "1") {
 		this.resetBalloonWait();
 		return;

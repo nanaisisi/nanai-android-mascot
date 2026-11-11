@@ -1,5 +1,5 @@
 // Tauri's global bridge is injected at runtime and has no static package type.
-type TauriFunction = (...args: unknown[]) => any;
+type TauriFunction = (...args: unknown[]) => unknown;
 
 interface TauriApi {
 	event?: {

@@ -52,7 +52,7 @@ test("Cycle 5: Touch Snap Gesture & Mobile Dock Coordination E2E", async () => {
 		},
 	};
 
-	const recognizer = new TouchGestureRecognizer(touchContainer as any, {
+	const recognizer = new TouchGestureRecognizer(touchContainer as unknown, {
 		screenWidth: 360,
 		snapThreshold: 50,
 	});

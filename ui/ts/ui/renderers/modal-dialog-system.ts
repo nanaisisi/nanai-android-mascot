@@ -194,7 +194,7 @@ export async function openSystemDialog(dialogType, params = [], scope) {
 			const file = fileInput.files?.[0];
 			fileInput.remove();
 			if (file) {
-				const filePath = (file as any).path || file.name;
+				const filePath = (file as unknown).path || file.name;
 				await sendSuccess(filePath);
 			} else {
 				await sendCancel();

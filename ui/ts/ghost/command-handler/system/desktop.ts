@@ -14,7 +14,7 @@ export async function handleSetAlignmentOnDesktop(
 	if (mode === "free") return;
 
 	try {
-		const api = (globalThis as any).__TAURI__?.window;
+		const api = (globalThis as unknown).__TAURI__?.window;
 		if (!api) return;
 		const win = api.getCurrentWindow();
 		const monitor = await api.currentMonitor();

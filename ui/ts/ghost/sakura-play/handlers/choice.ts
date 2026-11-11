@@ -4,7 +4,12 @@
  * @brief さくらスクリプト再生時の選択肢(\q)およびアンカー(\_a)要素生成・イベントハンドラ
  */
 
-export function handleChoice(player: unknown, app: unknown, token: unknown, context: unknown) {
+export function handleChoice(
+	player: unknown,
+	app: unknown,
+	token: unknown,
+	context: unknown,
+) {
 	const { currentBalloonText, flushDesktopBalloon } = context;
 
 	const choiceBtn = document.createElement("button");

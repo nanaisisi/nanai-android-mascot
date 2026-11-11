@@ -42,14 +42,14 @@ test("balloon events: OnBalloonClose on clear (\\c) and OnBalloonBreak on skip",
 	player.waitForClickOrTimeout = () => Promise.resolve();
 	player.scheduleSurfaceRestore = () => {};
 
-	(app.ghostController as any).sendBalloonCloseNotify = async (
+	(app.ghostController as unknown).sendBalloonCloseNotify = async (
 		lastScript: string,
 	) => {
 		notifyEvents.push({ event: "OnBalloonClose", args: [lastScript, "0"] });
 		return null;
 	};
 
-	(app.ghostController as any).sendBalloonBreakNotify = async (
+	(app.ghostController as unknown).sendBalloonBreakNotify = async (
 		script: string,
 		scopeId: number,
 	) => {
@@ -121,9 +121,9 @@ test("balloon events: OnBalloonTimeout triggered via sendBalloonTimeoutNotify", 
 	player.sleep = () => Promise.resolve();
 	player.waitForClickOrTimeout = () => Promise.resolve();
 	player.scheduleSurfaceRestore = () => {};
-	player.playbackController = { activeScopes: new Set([1]) } as any;
+	player.playbackController = { activeScopes: new Set([1]) } as unknown;
 	// Add the method to ghostController explicitly in this test since we're mocking it
-	(app.ghostController as any).sendBalloonTimeoutNotify = async (
+	(app.ghostController as unknown).sendBalloonTimeoutNotify = async (
 		lastScript: string,
 		scopeId: number,
 	) => {
@@ -134,7 +134,7 @@ test("balloon events: OnBalloonTimeout triggered via sendBalloonTimeoutNotify", 
 		return null;
 	};
 
-	await (app.ghostController as any).sendBalloonTimeoutNotify(
+	await (app.ghostController as unknown).sendBalloonTimeoutNotify(
 		player.lastScript,
 		1,
 	);
@@ -184,7 +184,7 @@ test("\\t (timeCritical) suppresses balloonTimeout and click timeout auto-advanc
 		}
 	};
 	player.scheduleSurfaceRestore = () => {};
-	player.playbackController = { timeCritical: false } as any;
+	player.playbackController = { timeCritical: false } as unknown;
 
 	await playScript(player, "\\0\\tTime Critical Text\\e");
 	// playScript only waits for a click when running under Tauri; invoke explicitly

@@ -15,7 +15,7 @@ export function bindOptionKey(scopeId = 0) {
 
 /**
  * `bindgroup` 一覧をスコープで取得（scope 0 = さくら / それ以外 = うにゅ）
- * @param {Record<string, any>|null|undefined} manifest - Rust ShellManifest
+ * @param {Record<string, unknown>|null|undefined} manifest - Rust ShellManifest
  * @param {number} [scopeId]
  * @returns {Array<{ number: number, category: string, part: string, thumbnail?: string|null, default: boolean, add_ids: number[] }>}
  */
@@ -29,7 +29,7 @@ export function bindGroupsForScope(manifest, scopeId = 0) {
 /**
  * `[target].bindoption.group,[カテゴリ名],[mustselect|multiple...]` の解析
  * 例: "服,multiple" → { category: "服", options: ["multiple"] }
- * @param {Record<string, any>|null|undefined} manifest
+ * @param {Record<string, unknown>|null|undefined} manifest
  * @param {number} [scopeId]
  * @returns {{ category: string, options: string[] }|null}
  */
@@ -51,7 +51,7 @@ export function dressupKey(scopeId, category, part) {
 
 /**
  * 着せ替えメニューデータ（bindgroup をカテゴリ順にグルーピング）
- * @param {Record<string, any>|null|undefined} manifest
+ * @param {Record<string, unknown>|null|undefined} manifest
  * @param {number} [scopeId]
  * @param {Map<string, boolean>|null} [dressupState] - 現在の装着状態
  * @returns {{
@@ -93,7 +93,7 @@ export function bindMenuData(manifest, scopeId = 0, dressupState = null) {
 
 /**
  * メニュー同期用ペイロード（さくら / うにゅ 両スコープ分）
- * @param {Record<string, any>|null|undefined} manifest
+ * @param {Record<string, unknown>|null|undefined} manifest
  * @param {{ dressupState?: Map<string, boolean> }|null} [surfaceManager]
  * @returns {{ sakura: ReturnType<typeof bindMenuData>, kero: ReturnType<typeof bindMenuData> }|null}
  */
@@ -114,7 +114,7 @@ export function dressupMenuPayload(manifest, surfaceManager = null) {
 /**
  * `bindgroup[N].default,1`（初期装着）を dressupState にシードする。
  * 既存キー（セッションローカルの状態）は書き換えない。
- * @param {Record<string, any>|null|undefined} manifest
+ * @param {Record<string, unknown>|null|undefined} manifest
  * @param {Map<string, boolean>} dressupState
  * @returns {number} シードしたパーツ数
  */

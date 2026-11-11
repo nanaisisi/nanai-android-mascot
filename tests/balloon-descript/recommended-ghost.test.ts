@@ -80,7 +80,7 @@ describe("recommended.ghost and recommended.ghost.path UKADOC verification", () 
 			currentGhostName: "Emily",
 			currentGhostPath: "/app/ghost/emily",
 		};
-		applyAssetProperties(mockRoot, props, matchingInstance as any);
+		applyAssetProperties(mockRoot, props, matchingInstance as unknown);
 
 		assert.equal(vars["--balloon-recommended-ghost"], "Emily");
 		assert.equal(vars["--balloon-recommended-ghost-path"], "ghost/emily");
@@ -91,7 +91,7 @@ describe("recommended.ghost and recommended.ghost.path UKADOC verification", () 
 			currentGhostName: "Sakura",
 			currentGhostPath: "/app/ghost/sakura",
 		};
-		applyAssetProperties(mockRoot, props, mismatchInstance as any);
+		applyAssetProperties(mockRoot, props, mismatchInstance as unknown);
 
 		assert.ok(vars["--balloon-recommended-warning"]);
 		assert.ok(vars["--balloon-recommended-warning"].includes("Emily"));

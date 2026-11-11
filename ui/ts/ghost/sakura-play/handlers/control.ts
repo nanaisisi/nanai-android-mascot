@@ -159,7 +159,12 @@ export async function handleCommand(
 	await player.commandHandler.runCommand(token.args);
 }
 
-export function handleEnd(player: unknown, app: unknown, _token: unknown, context: unknown) {
+export function handleEnd(
+	player: unknown,
+	app: unknown,
+	_token: unknown,
+	context: unknown,
+) {
 	app.surfaceManager?.onTalkEnd(player.currentScope);
 	app.surfaceManager?.onScriptEnd(0);
 	app.surfaceManager?.onScriptEnd(1);

@@ -176,7 +176,7 @@ export function finalizeAnimations(
 	animations: { [s: string]: unknown } | ArrayLike<unknown>,
 ) {
 	for (const animList of Object.values(animations)) {
-		for (const anim of animList as any[]) {
+		for (const anim of animList as unknown[]) {
 			anim.patterns = anim.patterns
 				.sort((a: { index: number }, b: { index: number }) => a.index - b.index)
 				.map(({ index, ...pattern }: unknown) => pattern);

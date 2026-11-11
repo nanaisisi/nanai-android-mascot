@@ -45,7 +45,7 @@ test("anchor click triggers OnAnchorSelectEx first, then falls back to OnAnchorS
 	};
 
 	await playScript(
-		player as any,
+		player as unknown,
 		"\\0\\_a[web_link,https://example.com]公式サイト\\_a\\e",
 	);
 
@@ -58,16 +58,16 @@ test("anchor click triggers OnAnchorSelectEx first, then falls back to OnAnchorS
 
 	assert.equal(shioriEvents.length, 2);
 	// 1. OnAnchorSelectEx
-	assert.equal((shioriEvents[0] as any).event, "OnAnchorSelectEx");
-	assert.deepEqual((shioriEvents[0] as any).args, [
+	assert.equal((shioriEvents[0] as unknown).event, "OnAnchorSelectEx");
+	assert.deepEqual((shioriEvents[0] as unknown).args, [
 		"公式サイト",
 		"web_link",
 		"https://example.com",
 	]);
 
 	// 2. Fallback to OnAnchorSelect
-	assert.equal((shioriEvents[1] as any).event, "OnAnchorSelect");
-	assert.deepEqual((shioriEvents[1] as any).args, [
+	assert.equal((shioriEvents[1] as unknown).event, "OnAnchorSelect");
+	assert.deepEqual((shioriEvents[1] as unknown).args, [
 		"web_link",
 		"https://example.com",
 	]);

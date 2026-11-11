@@ -3,7 +3,10 @@
  * @brief SHIORI デバッグモード設定・再読み込みハンドラ
  */
 
-export async function handleSetShioriDebugMode(handler: unknown, args: string[]) {
+export async function handleSetShioriDebugMode(
+	handler: unknown,
+	args: string[],
+) {
 	const mode = (args[2] ?? "").toLowerCase() === "true";
 	if (handler.app.ghostController) {
 		handler.app.ghostController.shioriDebugMode = mode;

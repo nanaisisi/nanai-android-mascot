@@ -43,12 +43,12 @@ test("SurfaceManager initialization, surface ID getters/setters, and animation d
 	};
 	assert.equal(manager.isBindAnimationActive(0, 10), false);
 	manager.dressupState.set("0__clothes__ribbon", true);
-	(manager as any)._activeBindAnimationIdsCache = undefined;
+	(manager as unknown)._activeBindAnimationIdsCache = undefined;
 	assert.equal(manager.isBindAnimationActive(0, 10), true);
 	assert.equal(manager.isBindAnimationActive(0, 11), true);
 	assert.equal(manager.isBindAnimationActive(0, 99), false);
 	manager.dressupState.set("0__clothes__ribbon", false);
-	(manager as any)._activeBindAnimationIdsCache = undefined;
+	(manager as unknown)._activeBindAnimationIdsCache = undefined;
 	assert.equal(manager.isBindAnimationActive(0, 10), false);
 
 	assert.ok(true);

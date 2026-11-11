@@ -17,9 +17,9 @@ import { getCurrentWindow, PhysicalPosition } from "@tauri-apps/api/window";
  * Tauri環境で動作しているかどうかを判定
  */
 export function isTauriAvailable(): boolean {
-	const g = globalThis as unknown as Record<string, any>;
+	const g = globalThis as unknown as Record<string, unknown>;
 	const win =
-		typeof window !== "undefined" ? window : (g.window as Record<string, any>);
+		typeof window !== "undefined" ? window : (g.window as Record<string, unknown>);
 	return (
 		!!g.__TAURI__ ||
 		!!g.__TAURI_INTERNALS__ ||

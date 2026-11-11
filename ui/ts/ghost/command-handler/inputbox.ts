@@ -171,7 +171,10 @@ export function openTimeInput(handler: unknown, params: string[]) {
 	return openInputBox(handler, params);
 }
 
-export function closeInputBox(handler: unknown, paramsOrNotify: unknown = false) {
+export function closeInputBox(
+	handler: unknown,
+	paramsOrNotify: unknown = false,
+) {
 	let notifyCancel = false;
 	let id: string | undefined;
 	if (Array.isArray(paramsOrNotify)) {
@@ -188,7 +191,7 @@ export function closeInputBox(handler: unknown, paramsOrNotify: unknown = false)
 	}
 	const forms = document.querySelectorAll?.(".balloon-inputbox-form") || [];
 	for (const f of Array.from(forms)) {
-		(f as any).remove?.();
+		(f as unknown).remove?.();
 	}
 }
 

@@ -14,7 +14,10 @@ export async function handleSaveWallpaper(_handler: unknown, _args: string[]) {
 	console.log("🖼️ Wallpaper savewallpaper executed");
 }
 
-export async function handleRestoreWallpaper(_handler: unknown, _args: string[]) {
+export async function handleRestoreWallpaper(
+	_handler: unknown,
+	_args: string[],
+) {
 	console.log("🖼️ Wallpaper restorewallpaper executed");
 }
 
@@ -26,7 +29,10 @@ export async function handleCancelNetworkService(
 	console.log(`🛑 Network service cancel: ${service} (${target})`);
 }
 
-export async function handleCloseNetworkService(_handler: unknown, args: string[]) {
+export async function handleCloseNetworkService(
+	_handler: unknown,
+	args: string[],
+) {
 	const [service, target] = args.slice(1);
 	console.log(`🛑 Network service close: ${service} (${target})`);
 }
@@ -49,7 +55,10 @@ export async function handleFileWatchCommand(
 	}
 }
 
-export async function handleEmptyRecycleBin(_handler: unknown, _args: string[]) {
+export async function handleEmptyRecycleBin(
+	_handler: unknown,
+	_args: string[],
+) {
 	console.log("🗑️ Empty recycle bin requested");
 	if (isTauriAvailable()) {
 		try {
@@ -108,7 +117,10 @@ export async function handleNslookupCommand(handler: unknown, args: string[]) {
 	}
 }
 
-export async function handleScheduleAddCommand(handler: unknown, args: string[]) {
+export async function handleScheduleAddCommand(
+	handler: unknown,
+	args: string[],
+) {
 	const rawArgs = args[0]?.toLowerCase().includes("schedule")
 		? args.slice(1)
 		: args;

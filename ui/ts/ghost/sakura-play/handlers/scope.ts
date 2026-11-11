@@ -5,7 +5,12 @@
 
 import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
 
-export function handleScope(player: unknown, app: unknown, token: unknown, context: unknown) {
+export function handleScope(
+	player: unknown,
+	app: unknown,
+	token: unknown,
+	context: unknown,
+) {
 	const {
 		sakuraText,
 		keroText,
@@ -91,8 +96,8 @@ export function handleInlineBitmap(
 		rawPath.startsWith("https://")
 			? rawPath
 			: `assets/balloon/${themeName}/${rawPath}`;
-	img.src = (globalThis as any).__TAURI__?.core?.convertFileSrc
-		? (globalThis as any).__TAURI__.core.convertFileSrc(fullPath)
+	img.src = (globalThis as unknown).__TAURI__?.core?.convertFileSrc
+		? (globalThis as unknown).__TAURI__.core.convertFileSrc(fullPath)
 		: fullPath;
 	img.style.display = "inline-block";
 	img.style.verticalAlign = "middle";

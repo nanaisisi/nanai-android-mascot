@@ -29,7 +29,10 @@ export async function handleNotifyCommand(handler: unknown, args: string[]) {
 	}
 }
 
-export async function handleTimerRaiseCommand(handler: unknown, args: string[]) {
+export async function handleTimerRaiseCommand(
+	handler: unknown,
+	args: string[],
+) {
 	const delayMs = Number.parseInt(args[1] ?? "0", 10);
 	const repeatFlag = Number.parseInt(args[2] ?? "1", 10);
 	const eventName = args[3];
@@ -63,7 +66,10 @@ export async function handleTimerRaiseCommand(handler: unknown, args: string[]) 
 	scheduleScriptTimer(timerKey, delayMs, repeatFlag, fireEvent);
 }
 
-export async function handleTimerNotifyCommand(handler: unknown, args: string[]) {
+export async function handleTimerNotifyCommand(
+	handler: unknown,
+	args: string[],
+) {
 	const delayMs = Number.parseInt(args[1] ?? "0", 10);
 	const repeatFlag = Number.parseInt(args[2] ?? "1", 10);
 	const eventName = args[3];

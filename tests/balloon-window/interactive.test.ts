@@ -14,7 +14,7 @@ test("setupInteractiveElements binds click events to choices and anchors", async
 		"../../ui/js/ghost/balloon-window/interactive.js"
 	);
 
-	setupInteractiveElements(null as any, 0);
+	setupInteractiveElements(null as unknown, 0);
 
 	const choiceBtn: unknown = {
 		getAttribute: (a: string) =>
@@ -42,7 +42,7 @@ test("setupInteractiveElements binds click events to choices and anchors", async
 		},
 	};
 
-	setupInteractiveElements(mockTextEl as any, 0);
+	setupInteractiveElements(mockTextEl as unknown, 0);
 
 	choiceBtn._cb?.({ stopPropagation() {} });
 	anchorLink._cb?.({ stopPropagation() {} });

@@ -61,8 +61,8 @@ test("choice click triggers OnChoiceSelectEx first, then falls back to OnChoiceS
 
 	assert.equal(shioriEvents.length, 2);
 	// 1. OnChoiceSelectEx with Reference0: text, Reference1: ID, Reference2..N: args
-	assert.equal((shioriEvents[0] as any).event, "OnChoiceSelectEx");
-	assert.deepEqual((shioriEvents[0] as any).args, [
+	assert.equal((shioriEvents[0] as unknown).event, "OnChoiceSelectEx");
+	assert.deepEqual((shioriEvents[0] as unknown).args, [
 		"選択肢1",
 		"opt1",
 		"paramA",
@@ -70,8 +70,8 @@ test("choice click triggers OnChoiceSelectEx first, then falls back to OnChoiceS
 	]);
 
 	// 2. Fallback to OnChoiceSelect
-	assert.equal((shioriEvents[1] as any).event, "OnChoiceSelect");
-	assert.deepEqual((shioriEvents[1] as any).args, ["opt1", "選択肢1"]);
+	assert.equal((shioriEvents[1] as unknown).event, "OnChoiceSelect");
+	assert.deepEqual((shioriEvents[1] as unknown).args, ["opt1", "選択肢1"]);
 });
 
 test("choice click does not trigger OnChoiceSelect if OnChoiceSelectEx returns response script", async () => {
@@ -127,5 +127,5 @@ test("choice click does not trigger OnChoiceSelect if OnChoiceSelectEx returns r
 	await new Promise((r) => setTimeout(r, 20));
 
 	assert.equal(shioriEvents.length, 1);
-	assert.equal((shioriEvents[0] as any).event, "OnChoiceSelectEx");
+	assert.equal((shioriEvents[0] as unknown).event, "OnChoiceSelectEx");
 });

@@ -97,7 +97,11 @@ export function setAnimationOffset(
 	xOrY = 0,
 	yParam = 0,
 ) {
-	let instance: unknown, scopeId: unknown, animIdOrName: unknown, x: unknown, y: unknown;
+	let instance: unknown,
+		scopeId: unknown,
+		animIdOrName: unknown,
+		x: unknown,
+		y: unknown;
 	if (isInstance(target)) {
 		instance = target;
 		scopeId = scopeIdOrAnimId ?? 0;

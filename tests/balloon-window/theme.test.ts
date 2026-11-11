@@ -41,8 +41,8 @@ test("loadBalloonSkinImages and applyBalloonDescript load and apply theme descri
 	assert.strictEqual(callbackDontMove, true);
 
 	// Non-Tauri fallback return
-	delete (globalThis as any).__TAURI__;
-	delete (globalThis as any).__TAURI_INTERNALS__;
+	delete (globalThis as unknown).__TAURI__;
+	delete (globalThis as unknown).__TAURI_INTERNALS__;
 	const nonTauriRes = await applyBalloonDescript({
 		theme: "ivory",
 		scopeId: 0,

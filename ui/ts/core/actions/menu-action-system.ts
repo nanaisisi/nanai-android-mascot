@@ -1,6 +1,9 @@
 import { invoke, isTauriAvailable } from "../tauri-helper.js";
 
-export function handleSystemMenuAction(context: unknown, action: string): boolean {
+export function handleSystemMenuAction(
+	context: unknown,
+	action: string,
+): boolean {
 	if (
 		action === "tools" ||
 		action === "utility-root" ||
@@ -91,11 +94,11 @@ export function handleSystemMenuAction(context: unknown, action: string): boolea
 				.then((result: unknown) => {
 					if (result) {
 						context.showBalloon?.(
-							`ゴースト「${(result as any).name}」を導入しました`,
+							`ゴースト「${(result as unknown).name}」を導入しました`,
 						);
 						setTimeout(() => context.hideBalloon?.(), 2000);
 						context.ghostController?.scanGhosts?.();
-						context.ghostController?.selectGhost?.((result as any).name);
+						context.ghostController?.selectGhost?.((result as unknown).name);
 					}
 				})
 				.catch((e) => {

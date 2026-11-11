@@ -185,7 +185,11 @@ export const shioriNotifyInputEvents = {
 		]);
 	},
 
-	async sendOffscreen(this: unknown, scope: number | string, rect: string = "") {
+	async sendOffscreen(
+		this: unknown,
+		scope: number | string,
+		rect: string = "",
+	) {
 		return await this.sendShioriNotify("OnOffscreen", [String(scope), rect]);
 	},
 
@@ -193,7 +197,11 @@ export const shioriNotifyInputEvents = {
 		return await this.sendShioriNotify("OnOtherOverlap", [ghostName, rect]);
 	},
 
-	async sendOtherOffscreen(this: unknown, ghostName: string, rect: string = "") {
+	async sendOtherOffscreen(
+		this: unknown,
+		ghostName: string,
+		rect: string = "",
+	) {
 		return await this.sendShioriNotify("OnOtherOffscreen", [ghostName, rect]);
 	},
 

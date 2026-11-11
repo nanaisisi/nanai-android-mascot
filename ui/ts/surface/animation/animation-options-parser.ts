@@ -1,6 +1,6 @@
 /**
  * SERIKO アニメーションオプション文字列のパース (\![anim,option,ID,...])
- * @param {string|string[]|Record<string, any>|null} [optionParam=null]
+ * @param {string|string[]|Record<string, unknown>|null} [optionParam=null]
  */
 export function parseAnimationOptions(optionParam: unknown = null) {
 	if (

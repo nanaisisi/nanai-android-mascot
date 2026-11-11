@@ -94,7 +94,7 @@ export class SakuraCommandHandler {
 			selfname: this.player?.app?.ghostController?.currentGhost?.name,
 			lastghostname: this.player?.app?.ghostController?.lastGhostName,
 			lastobjectname: this.player?.app?.ghostController?.lastObjectName,
-			...(options as Record<string, any>),
+			...(options as Record<string, unknown>),
 		});
 	}
 

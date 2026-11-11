@@ -147,26 +147,30 @@ export class TouchGestureRecognizer {
 
 		if (
 			this.element &&
-			typeof (this.element as any).addEventListener === "function"
+			typeof (this.element as unknown).addEventListener === "function"
 		) {
-			(this.element as any).addEventListener(
+			(this.element as unknown).addEventListener(
 				"touchstart",
 				this._boundTouchStart,
 				{
 					passive: false,
 				},
 			);
-			(this.element as any).addEventListener(
+			(this.element as unknown).addEventListener(
 				"touchmove",
 				this._boundTouchMove,
 				{
 					passive: false,
 				},
 			);
-			(this.element as any).addEventListener("touchend", this._boundTouchEnd, {
-				passive: false,
-			});
-			(this.element as any).addEventListener(
+			(this.element as unknown).addEventListener(
+				"touchend",
+				this._boundTouchEnd,
+				{
+					passive: false,
+				},
+			);
+			(this.element as unknown).addEventListener(
 				"touchcancel",
 				this._boundTouchCancel,
 				{
@@ -335,21 +339,21 @@ export class TouchGestureRecognizer {
 		this.reset();
 		if (
 			this.element &&
-			typeof (this.element as any).removeEventListener === "function"
+			typeof (this.element as unknown).removeEventListener === "function"
 		) {
-			(this.element as any).removeEventListener(
+			(this.element as unknown).removeEventListener(
 				"touchstart",
 				this._boundTouchStart,
 			);
-			(this.element as any).removeEventListener(
+			(this.element as unknown).removeEventListener(
 				"touchmove",
 				this._boundTouchMove,
 			);
-			(this.element as any).removeEventListener(
+			(this.element as unknown).removeEventListener(
 				"touchend",
 				this._boundTouchEnd,
 			);
-			(this.element as any).removeEventListener(
+			(this.element as unknown).removeEventListener(
 				"touchcancel",
 				this._boundTouchCancel,
 			);
@@ -372,7 +376,7 @@ export class TouchGestureRecognizer {
 			this.options.throttleWithRaf &&
 			typeof requestAnimationFrame === "function"
 		) {
-			this._pendingMoveEvent = e as any;
+			this._pendingMoveEvent = e as unknown;
 			if (this._rafId === null) {
 				this._rafId = requestAnimationFrame(() => {
 					this._rafId = null;
@@ -381,10 +385,10 @@ export class TouchGestureRecognizer {
 						this._pendingMoveEvent = null;
 						this._processTouchMove(ev);
 					}
-				}) as any;
+				}) as unknown;
 			}
 		} else {
-			this._processTouchMove(e as any);
+			this._processTouchMove(e as unknown);
 		}
 	}
 

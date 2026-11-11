@@ -10,7 +10,7 @@ describe("balloon-window and balloon-window/theme edge cases", () => {
 		// 1. loadBalloonSkinImages for scope >= 2 with fallback to balloons0.png/pna
 		globalThis.__TAURI_INTERNALS__ = {
 			metadata: { currentWindow: { label: "balloon_window_2" } },
-			invoke: async (cmd, args) => {
+			invoke: async (cmd: string, args: { file: string }) => {
 				if (cmd === "load_balloon_image") {
 					if (args.file.startsWith("balloonp2")) {
 						// Simulate missing scope 2 file
@@ -30,7 +30,7 @@ describe("balloon-window and balloon-window/theme edge cases", () => {
 				}
 				return null;
 			},
-			transformCallback: (cb) => cb,
+			transformCallback: (cb: any) => cb,
 		};
 
 		const bgScope2 = await loadBalloonSkinImages("theme_custom", 2);

@@ -10,7 +10,7 @@ describe("SakuraScriptPlayer lifecycle & edge cases", () => {
 		const eventsSent = [];
 		const mockApp = {
 			ghostController: {
-				sendShioriEvent: async (ev, args) => {
+				sendShioriEvent: async (ev: string, args: any) => {
 					if (ev === "OnSurfaceRestoreThrow") {
 						throw new Error("Restore error");
 					}
@@ -82,7 +82,7 @@ describe("SakuraScriptPlayer lifecycle & edge cases", () => {
 		// 4. waitForClickOrTimeout keydown Space, Escape and timeout
 		const docListeners = {};
 		globalThis.document = {
-			addEventListener: (t, cb) => {
+			addEventListener: (t: string | number, cb: any) => {
 				docListeners[t] = cb;
 			},
 			removeEventListener: () => {},

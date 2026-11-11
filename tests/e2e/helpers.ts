@@ -1,4 +1,6 @@
 export interface MockElement {
+	className: any;
+	value(value: any, arg1: string): unknown;
 	tagName: string;
 	_textContent: string;
 	textContent: string;
@@ -24,79 +26,59 @@ export interface MockElement {
 	blur(): void;
 }
 
-export function createMockElement(tag: string = "div"): MockElement {
-	const children: MockElement[] = [];
+export function createMockElement(_tag: string = "div"): MockElement {
+	const _children: MockElement[] = [];
 	return {
-		tagName: String(tag || "").toUpperCase(),
+		className: undefined,
+		value: (_value: any, _arg1: string): unknown => {
+			throw new Error("Function not implemented.");
+		},
+		tagName: "",
 		_textContent: "",
-		get textContent() {
-			if (this.children.length === 0) return this._textContent;
-			return this.children
-				.map((c) =>
-					typeof c === "string" ? c : (c.textContent ?? c.innerHTML ?? ""),
-				)
-				.join("");
-		},
-		set textContent(val: string) {
-			this._textContent = val;
-			this.children.length = 0;
-			this._innerHTML = val;
-		},
+		textContent: "",
 		_innerHTML: "",
-		get innerHTML() {
-			if (this.children.length === 0) return this._innerHTML;
-			return this.children
-				.map((c) =>
-					typeof c === "string" ? c : (c.innerHTML ?? c.textContent ?? ""),
-				)
-				.join("");
+		innerHTML: "",
+		style: undefined,
+		dataset: undefined,
+		children: [],
+		childNodes: [],
+		lastChild: null,
+		appendChild: (_node: MockElement): void => {
+			throw new Error("Function not implemented.");
 		},
-		set innerHTML(val: string) {
-			this._innerHTML = val;
-			this._textContent = val;
-			this.children.length = 0;
+		removeChild: (_node: MockElement): void => {
+			throw new Error("Function not implemented.");
 		},
-		style: {},
-		dataset: {},
-		children,
-		childNodes: children,
-		get lastChild() {
-			return children[children.length - 1] || null;
+		remove: (): void => {
+			throw new Error("Function not implemented.");
 		},
-		appendChild(node: MockElement) {
-			node.parentNode = this;
-			children.push(node);
+		setAttribute: (_name: string, _val: unknown): void => {
+			throw new Error("Function not implemented.");
 		},
-		removeChild(node: MockElement) {
-			const idx = children.indexOf(node);
-			if (idx !== -1) {
-				children.splice(idx, 1);
-			}
+		addEventListener: (_type: string, _cb: (event?: unknown) => void): void => {
+			throw new Error("Function not implemented.");
 		},
-		remove() {
-			if (this.parentNode) {
-				this.parentNode.removeChild(this);
-			}
+		removeEventListener: (
+			_type: string,
+			_cb: (event?: unknown) => void,
+		): void => {
+			throw new Error("Function not implemented.");
 		},
-		setAttribute(name: string, val: unknown) {
-			(this as Record<string, unknown>)[name] = val;
+		click: (): void => {
+			throw new Error("Function not implemented.");
 		},
-		addEventListener(type: string, cb: (event?: unknown) => void) {
-			this._listeners = this._listeners || {};
-			this._listeners[type] = cb;
+		mouseenter: (): void => {
+			throw new Error("Function not implemented.");
 		},
-		removeEventListener(_type: string, _cb: (event?: unknown) => void) {},
-		click() {
-			this._listeners?.click?.({ stopPropagation() {} });
+		mouseleave: (): void => {
+			throw new Error("Function not implemented.");
 		},
-		mouseenter() {
-			this._listeners?.mouseenter?.();
+		focus: (): void => {
+			throw new Error("Function not implemented.");
 		},
-		mouseleave() {
-			this._listeners?.mouseleave?.();
+		blur: (): void => {
+			throw new Error("Function not implemented.");
 		},
-		focus() {},
-		blur() {},
 	};
 }
 

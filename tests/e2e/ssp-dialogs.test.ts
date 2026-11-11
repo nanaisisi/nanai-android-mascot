@@ -12,7 +12,13 @@ const { parseSakuraScript } = await import(
 test("E2E dialogue lifecycle: SSP dialogs (inputbox, teachbox, communicatebox) and \\x[noclear] flow", async () => {
 	vi.useFakeTimers();
 
-	const events = [];
+	const events: {
+		type: string;
+		scope?: any;
+		eventName?: any;
+		args?: any;
+		val?: any;
+	}[] = [];
 	const sakuraDisplay = createMockElement("div");
 	const keroDisplay = createMockElement("div");
 	const sakuraText = createMockElement("div");
@@ -31,16 +37,16 @@ test("E2E dialogue lifecycle: SSP dialogs (inputbox, teachbox, communicatebox) a
 		surfaceManager: {
 			onCharSpoken() {},
 			onTalkEnd() {},
-			onScriptEnd(scope) {
+			onScriptEnd(scope: any) {
 				events.push({ type: "script_end", scope });
 			},
 		},
 		ghostController: {
 			updateSurface() {},
-			sendShioriEvent: async (eventName, args) => {
+			sendShioriEvent: async (eventName: any, args: any) => {
 				events.push({ type: "shiori_event", eventName, args });
 			},
-			sendTeachInput: async (val) => {
+			sendTeachInput: async (val: any) => {
 				events.push({ type: "teach_input", val });
 			},
 		},

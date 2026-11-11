@@ -7,7 +7,7 @@ describe("sakura-play timeouts", () => {
 	it("exercises playScript choiceTimeout and balloonTimeout timers and OnBalloonTimeout notification", async () => {
 		vi.useFakeTimers();
 
-		const eventsSent = [];
+		const eventsSent: { ev: any; args: any }[] = [];
 		const mockApp = {
 			elements: {
 				balloonDisplay: { style: { display: "block" } },
@@ -16,7 +16,7 @@ describe("sakura-play timeouts", () => {
 				keroBalloonText: { innerHTML: "", appendChild() {} },
 			},
 			ghostController: {
-				sendShioriEvent: async (ev, args) => {
+				sendShioriEvent: async (ev: any, args: any) => {
 					eventsSent.push({ ev, args });
 				},
 			},

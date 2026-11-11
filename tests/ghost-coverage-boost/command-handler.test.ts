@@ -14,7 +14,7 @@ describe("SakuraCommandHandler methods & lifecycle", () => {
 				focus: () => {},
 			}),
 		};
-		const modalCalls = [];
+		const modalCalls: { method: string; opts?: any; cancel?: any }[] = [];
 		const mockPlayer = {
 			currentScope: 0,
 			app: {
@@ -23,12 +23,14 @@ describe("SakuraCommandHandler methods & lifecycle", () => {
 					keroBalloonText: { appendChild: () => {}, innerHTML: "" },
 				},
 				modalDialogController: {
-					openInputBox: (opts) => modalCalls.push({ method: "inputbox", opts }),
-					openTeachBox: (opts) => modalCalls.push({ method: "teachbox", opts }),
-					openCommunicateBox: (opts) =>
+					openInputBox: (opts: any) =>
+						modalCalls.push({ method: "inputbox", opts }),
+					openTeachBox: (opts: any) =>
+						modalCalls.push({ method: "teachbox", opts }),
+					openCommunicateBox: (opts: any) =>
 						modalCalls.push({ method: "communicatebox", opts }),
 					closeTeachBox: () => modalCalls.push({ method: "closeTeachBox" }),
-					closeCommunicateBox: (cancel) =>
+					closeCommunicateBox: (cancel: any) =>
 						modalCalls.push({ method: "closeCommunicateBox", cancel }),
 				},
 				ghostController: {

@@ -14,7 +14,7 @@ describe("command-handler/dialog.js & surface.js", () => {
 			player: { currentScope: 1 },
 			app: {
 				modalDialogController: {
-					openSystemDialog: async (type, params, scope) => {
+					openSystemDialog: async (type: any, params: any, scope: any) => {
 						openedDialog = { type, params, scope };
 						return "selected-path";
 					},
@@ -56,18 +56,18 @@ describe("command-handler/dialog.js & surface.js", () => {
 	});
 
 	it("handleAnimCommand handles pause, resume, stop, clear, and offset", async () => {
-		const animActions = [];
+		const animActions: unknown = [];
 		const mockSurfaceManager = {
-			pauseAnimationById: (id, scope) => {
+			pauseAnimationById: (id: any, scope: any) => {
 				animActions.push({ action: "pause", id, scope });
 			},
-			resumeAnimationById: (id, scope) => {
+			resumeAnimationById: (id: any, scope: any) => {
 				animActions.push({ action: "resume", id, scope });
 			},
-			stopAnimationById: (id, scope) => {
+			stopAnimationById: (id: any, scope: any) => {
 				animActions.push({ action: "stop", id, scope });
 			},
-			setAnimationOffset: (id, x, y, scope) => {
+			setAnimationOffset: (id: any, x: any, y: any, scope: any) => {
 				animActions.push({ action: "offset", id, x, y, scope });
 			},
 		};
@@ -99,23 +99,25 @@ describe("command-handler/dialog.js & surface.js", () => {
 	});
 
 	it("handleAnimCommand handles 'add' subcommands: move, base, overlay, overlayfast", async () => {
-		const baseMoveOffsets = [];
-		const ghostOffsets = [];
-		const surfaceUpdates = [];
+		const baseMoveOffsets: unknown = [];
+		const ghostOffsets: unknown = [];
+		const surfaceUpdates:
+			| { layers: unknown }[]
+			| { base: any; scope: any; layers: any }[] = [];
 
 		const mockSurfaceManager = {
-			setBaseMoveOffset: (scope, x, y) => {
+			setBaseMoveOffset: (scope: any, x: any, y: any) => {
 				baseMoveOffsets.push({ scope, x, y });
 			},
-			currentSurfaceIdFor: (scope) => (scope === 1 ? 11 : 1),
-			resolveSurfaceNumber: (num, _scope) => `0${num}`,
+			currentSurfaceIdFor: (scope: number) => (scope === 1 ? 11 : 1),
+			resolveSurfaceNumber: (num: any, _scope: any) => `0${num}`,
 		};
 
 		const mockGhostController = {
-			setScopeMoveOffset: (scope, x, y) => {
+			setScopeMoveOffset: (scope: any, x: any, y: any) => {
 				ghostOffsets.push({ scope, x, y });
 			},
-			updateSurface: async (base, scope, layers) => {
+			updateSurface: async (base: any, scope: any, layers: any) => {
 				surfaceUpdates.push({ base, scope, layers });
 			},
 		};
@@ -184,12 +186,18 @@ describe("command-handler/dialog.js & surface.js", () => {
 	});
 
 	it("handleBindCommand calls surfaceManager.bindDressup", async () => {
-		const dressupCalls = [];
+		const dressupCalls: unknown = [];
 		const handler = {
 			player: { currentScope: 0 },
 			app: {
 				surfaceManager: {
-					bindDressup: async (cat, part, status, scope, raise) => {
+					bindDressup: async (
+						cat: any,
+						part: any,
+						status: any,
+						scope: any,
+						raise: any,
+					) => {
 						dressupCalls.push({ cat, part, status, scope, raise });
 					},
 				},

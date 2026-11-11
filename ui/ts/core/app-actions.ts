@@ -14,6 +14,7 @@ import { handleMenuActionImpl } from "./actions/menu-action-dispatcher.js";
 import { networkActions } from "./actions/network-actions.js";
 
 export * from "./actions/sstp-fmo-actions.js";
+export * from "./async-parallel.js";
 
 export const actionMethods = {
 	...balloonActions,

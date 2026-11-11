@@ -1,0 +1,8 @@
+// [balloons2s.txt]: さくら頭上表示バルーン定義 (UKADOC準拠)
+alignment,top
+origin.x,12
+origin.y,28
+validrect.left,16
+validrect.top,16
+validrect.right,16
+validrect.bottom,24

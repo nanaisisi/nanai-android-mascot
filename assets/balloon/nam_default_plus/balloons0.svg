@@ -1,11 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="280" height="130" viewBox="0 0 280 130">
-  <title>Balloon Sakura</title>
+<svg xmlns="http://www.w3.org/2000/svg" width="280" height="120" viewBox="0 0 280 120">
+  <title>Balloon Sakura - Tail Right</title>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#ffffff"/>
       <stop offset="100%" stop-color="#f0f5fc"/>
     </linearGradient>
   </defs>
-  <!-- Main Bubble Body + Tail -->
-  <path d="M 12 0.5 H 268 A 11.5 11.5 0 0 1 279.5 12 V 107.5 A 11.5 11.5 0 0 1 268 119.5 H 52 L 32 129.5 L 42 119.5 H 12 A 11.5 11.5 0 0 1 0.5 107.5 V 12 A 11.5 11.5 0 0 1 12 0.5 Z" fill="url(#bg)" stroke="#2b579a" stroke-width="1" stroke-linejoin="round"/>
+  <rect width="280" height="120" fill="#00ff00"/>
+  <path d="M 12 0.5 H 258 A 11.5 11.5 0 0 1 269.5 12 V 45 L 279.5 55 L 269.5 65 V 107.5 A 11.5 11.5 0 0 1 258 119.5 H 12 A 11.5 11.5 0 0 1 0.5 107.5 V 12 A 11.5 11.5 0 0 1 12 0.5 Z" fill="url(#bg)" stroke="#2b579a" stroke-width="1" stroke-linejoin="round"/>
 </svg>

@@ -277,18 +277,6 @@
 	border: 1px solid rgba(100, 149, 237, 0.3);
 }
 
-.balloon::before {
-	content: "";
-	position: absolute;
-	bottom: -0.625rem;
-	left: 1.875rem;
-	width: 0;
-	height: 0;
-	border-left: 0.625rem solid transparent;
-	border-right: 0.625rem solid transparent;
-	border-top: 0.625rem solid var(--balloon-tail-color);
-}
-
 .balloon-text {
 	color: var(--balloon-text-color);
 	font-family: inherit;

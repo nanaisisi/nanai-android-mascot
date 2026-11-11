@@ -171,7 +171,6 @@ export function applyAssetProperties(
 		resolveAndSetArrow(`${arrowBaseName}0.png`, "--balloon-arrow0-image");
 		resolveAndSetArrow(`${arrowBaseName}1.png`, "--balloon-arrow1-image");
 	}
-	}
 	setBalloonImage("arrow.filename", "--balloon-arrow-image");
 	// [clickwaitmarker.filename,ファイル名]:
 	setBalloonImage("clickwaitmarker.filename", "--balloon-clickwait-image");

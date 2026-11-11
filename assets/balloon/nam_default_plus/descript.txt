@@ -5,6 +5,7 @@ name,NAMデフォルト+
 craftmanw,Nanai Android Mascot Project
 
 // SSP仕様準拠: 白地・青枠・標準横表示バルーン
+use_self_alpha,1
 origin.x,12
 origin.y,28
 
@@ -28,4 +29,4 @@ cursor.color.font.b,255
 validrect.left,16
 validrect.top,16
 validrect.right,16
-validrect.bottom,24
+validrect.bottom,16

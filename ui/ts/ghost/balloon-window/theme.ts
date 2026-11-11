@@ -34,19 +34,23 @@ const getImageDimensions = (
 export async function loadBalloonSkinImages(
 	theme: string,
 	scopeId: number,
-	side: "left" | "right" | "auto" = "auto",
+	side: "left" | "right" | "top" | "auto" = "auto",
 ) {
 	let candidates: string[] = [];
 	if (scopeId === 0) {
 		candidates =
-			side === "right"
-				? ["balloons1.png", "balloons0.png", "balloons.png"]
-				: ["balloons0.png", "balloons1.png", "balloons.png"];
+			side === "top"
+				? ["balloons2.png", "balloons0.png", "balloons.png"]
+				: side === "right"
+					? ["balloons1.png", "balloons0.png", "balloons.png"]
+					: ["balloons0.png", "balloons1.png", "balloons.png"];
 	} else if (scopeId === 1) {
 		candidates =
-			side === "left"
-				? ["balloonk1.png", "balloonk3.png", "balloonk0.png", "balloonk.png"]
-				: ["balloonk0.png", "balloonk1.png", "balloonk3.png", "balloonk.png"];
+			side === "top"
+				? ["balloonk2.png", "balloonk0.png", "balloonk.png"]
+				: side === "left"
+					? ["balloonk1.png", "balloonk3.png", "balloonk0.png", "balloonk.png"]
+					: ["balloonk0.png", "balloonk1.png", "balloonk3.png", "balloonk.png"];
 	} else {
 		candidates = [
 			`balloonp${scopeId}.png`,

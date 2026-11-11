@@ -44,7 +44,7 @@ export const menuBalloonDressupRenderer = {
 		} else {
 			const fallbackThemes = [
 				{ id: "nsm", label: "NAMデフォルト+" },
-				{ id: "nam_default_plus_overhead", label: "NAMデフォルト+(頭上)" },
+				{ id: "nsm_vertical", label: "NAMデフォルト+(頭上)" },
 			];
 			fallbackThemes.forEach((t) => {
 				const isCurrent = currentBalloonTheme === t.id;

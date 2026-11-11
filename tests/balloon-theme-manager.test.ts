@@ -159,9 +159,9 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 		const mgr = new BalloonThemeManager(mockApp);
 
 		const next1 = mgr.cycleTheme();
-		assert.equal(next1, "nam_default_plus_overhead");
-		assert.equal(mgr.currentTheme, "nam_default_plus_overhead");
-		assert.equal(mockApp.currentBalloonTheme, "nam_default_plus_overhead");
+		assert.equal(next1, "nsm_vertical");
+		assert.equal(mgr.currentTheme, "nsm_vertical");
+		assert.equal(mockApp.currentBalloonTheme, "nsm_vertical");
 		assert.ok(shownMessage.includes("NAMデフォルト+(頭上)"));
 
 		// Custom list
@@ -246,7 +246,7 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 		};
 
 		app.cycleBalloonTheme();
-		assert.equal(app.currentBalloonTheme, "nam_default_plus_overhead");
+		assert.equal(app.currentBalloonTheme, "nsm_vertical");
 		assert.ok(app.balloonThemeManager instanceof BalloonThemeManager);
 
 		app.applyBalloonScaleAction("balloon-scale-125");

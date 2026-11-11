@@ -107,7 +107,7 @@ export function renderSubmenuContent({
 			: [
 					{ dir_name: "nsm", name: "NAMデフォルト+" },
 					{
-						dir_name: "nam_default_plus_overhead",
+						dir_name: "nsm_vertical",
 						name: "NAMデフォルト+(頭上)",
 					},
 				]

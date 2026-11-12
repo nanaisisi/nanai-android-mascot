@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { wasmBridge } from "../wasm-bridge.js";
 import { BALLOON_CSS_VARS } from "./balloon-theme-constants.js";
 
 export interface NineSliceLayoutResult {
@@ -69,6 +70,29 @@ export function computeNineSliceLayout(
 	};
 	cache.set(cacheKey, result);
 	return result;
+}
+
+/**
+ * WASM 駆動によるバルーンテキスト折り返し・レイアウト最適化計算
+ */
+export function computeWasmBalloonTextLayout(
+	text: string,
+	maxWidth = 200,
+	fontSize = 14,
+	lineHeight = 18,
+	paddingX = 12,
+) {
+	if (wasmBridge.isReady()) {
+		const result = wasmBridge.computeBalloonTextLayout(
+			text,
+			maxWidth,
+			fontSize,
+			lineHeight,
+			paddingX,
+		);
+		if (result) return result;
+	}
+	return null;
 }
 
 /**

@@ -66,7 +66,18 @@ pub async fn show_menu_window(
         }
 
         if let Some(menu_win) = app_handle.get_webview_window("menu_window") {
-            let _ = menu_win.close();
+            let _ = menu_win.set_size(tauri::Size::Logical(tauri::LogicalSize {
+                width: win_width,
+                height: win_height,
+            }));
+            let _ = menu_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
+                x: target_x,
+                y: target_y,
+            }));
+            let _ = menu_win.show();
+            let _ = menu_win.set_focus();
+            let _ = menu_win.emit("sync-menu-scope", menu_scope);
+            return Ok(());
         }
 
         let menu_win = tauri::WebviewWindowBuilder::new(

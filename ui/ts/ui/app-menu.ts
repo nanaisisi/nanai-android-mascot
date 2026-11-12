@@ -71,11 +71,13 @@ export const menuMethods = {
 			string,
 			string
 		>;
-		const shellPath =
-			sm?.shellPath ||
-			(gc.currentGhost?.path
-				? `${gc.currentGhost.path}/shell/${currentShellName}`
-				: "");
+		let shellPath = sm?.shellPath || "";
+		if (!shellPath && gc.currentGhost?.path) {
+			shellPath = `${gc.currentGhost.path}/shell/${currentShellName}`;
+		}
+		if (!shellPath && sm?.shellManifest?.directory) {
+			shellPath = sm.shellManifest.directory;
+		}
 
 		// descript 内のメニュースキン設定を自動抽出して構造化
 		const menuThemeFromManifest = {

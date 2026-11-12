@@ -119,7 +119,10 @@ export const menuThemeRenderer = {
 						? `${cleanShell}${cleanRel}`
 						: `${cleanShell}/${cleanRel}`;
 				}
-				return convertFileSrc(full);
+				if (full.includes(":/") || full.startsWith("/")) {
+					return convertFileSrc(full);
+				}
+				return full;
 			};
 
 			const applyAlignment = (alignRaw: string, prefix: string) => {

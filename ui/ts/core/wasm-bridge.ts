@@ -13,10 +13,14 @@ import {
 } from "./wasm/wasm-protocol.js";
 import { parseSakuraScriptWasm } from "./wasm/wasm-sakura.js";
 import {
+	advanceAnimationFrameWasm,
 	computeSurfaceCompositionPlanWasm,
 	findHitCollisionNameWasm,
 } from "./wasm/wasm-surface.js";
 import type {
+	AnimationDefinition,
+	AnimationPattern,
+	AnimationState,
 	BalloonLayoutResult,
 	DescriptManifest,
 	SakuraToken,
@@ -25,6 +29,9 @@ import type {
 } from "./wasm/wasm-types.js";
 
 export type {
+	AnimationDefinition,
+	AnimationPattern,
+	AnimationState,
 	BalloonLayoutResult,
 	DescriptManifest,
 	SakuraToken,
@@ -96,6 +103,14 @@ class WasmBridgeFacade {
 		activeBinds: number[] = [],
 	): SurfaceCompositionPlan | null {
 		return computeSurfaceCompositionPlanWasm(surfaceId, elements, activeBinds);
+	}
+
+	public advanceAnimationFrame(
+		def: unknown,
+		state: unknown,
+		deltaMs: number,
+	): [unknown, unknown] | null {
+		return advanceAnimationFrameWasm(def, state, deltaMs);
 	}
 }
 

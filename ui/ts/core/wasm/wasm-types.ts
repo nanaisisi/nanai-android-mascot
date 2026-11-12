@@ -57,6 +57,27 @@ export interface DescriptManifest {
 	properties: Record<string, string>;
 }
 
+export interface AnimationPattern {
+	surface_id: number;
+	wait_ms: number;
+	method: string;
+	x: number;
+	y: number;
+}
+
+export interface AnimationDefinition {
+	id: number;
+	interval: string;
+	patterns: AnimationPattern[];
+}
+
+export interface AnimationState {
+	animation_id: number;
+	current_pattern_index: number;
+	elapsed_ms: number;
+	is_running: boolean;
+}
+
 export interface NanaiCoreWasmExports {
 	memory: WebAssembly.Memory;
 	wasm_alloc: (size: number) => number;
@@ -87,5 +108,12 @@ export interface NanaiCoreWasmExports {
 		elementsLen: number,
 		bindsPtr: number,
 		bindsLen: number,
+	) => bigint;
+	wasm_advance_animation_frame_json?: (
+		defPtr: number,
+		defLen: number,
+		statePtr: number,
+		stateLen: number,
+		deltaMs: number,
 	) => bigint;
 }

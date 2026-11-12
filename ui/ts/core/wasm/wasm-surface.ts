@@ -88,3 +88,46 @@ export function computeSurfaceCompositionPlanWasm(
 		return null;
 	}
 }
+
+export function advanceAnimationFrameWasm(
+	def: unknown,
+	state: unknown,
+	deltaMs: number,
+): [unknown, unknown] | null {
+	if (!wasmMemory.isReady()) return null;
+
+	const exports = wasmMemory.getExports();
+	if (!exports?.wasm_advance_animation_frame_json) return null;
+
+	try {
+		const { ptr: defPtr, len: defLen } = wasmMemory.encodeString(
+			JSON.stringify(def),
+		);
+		const { ptr: statePtr, len: stateLen } = wasmMemory.encodeString(
+			JSON.stringify(state),
+		);
+
+		const packed = exports.wasm_advance_animation_frame_json(
+			defPtr,
+			defLen,
+			statePtr,
+			stateLen,
+			deltaMs,
+		);
+
+		wasmMemory.free(defPtr, defLen);
+		wasmMemory.free(statePtr, stateLen);
+
+		if (packed === 0n) return null;
+
+		const jsonPtr = Number(packed >> 32n);
+		const jsonLen = Number(packed & 0xffffffffn);
+		const jsonStr = wasmMemory.decodeString(jsonPtr, jsonLen);
+		wasmMemory.free(jsonPtr, jsonLen);
+
+		return JSON.parse(jsonStr);
+	} catch (err) {
+		console.warn("⚠️ [WASM Surface] advanceAnimationFrame エラー:", err);
+		return null;
+	}
+}

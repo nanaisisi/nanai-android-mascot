@@ -56,8 +56,8 @@ export class MenuDispatcher {
 		if (isTauriAvailable()) {
 			try {
 				await emit("menu-action", { action, payload: finalPayload });
-			} catch (error) {
-				console.error("メニューアクションの送信に失敗しました:", error);
+			} catch (_error) {
+				// ウィンドウ非表示タイミング等で参照が解除された場合は安全に無視
 			}
 
 			if (

@@ -11,13 +11,13 @@ export default defineConfig({
 	// prevent vite from obscuring rust errors
 	clearScreen: false,
 	server: {
-		// TauriのdevUrlとポートを合わせる
+		// TauriのdevUrlとポートを合わせる (Windowsの除外ポート帯域を避けるため1420を使用)
 		// make sure this port matches the devUrl port in tauri.conf.json file
-		port: 5173,
+		port: 1420,
 		// Tauri expects a fixed port, fail if that port is not available
 		strictPort: true,
-		// if the host Tauri is expecting is set, use it
-		host: host || false,
+		// Windows等の環境で EACCES ポートアクセス拒否を防ぐため 127.0.0.1 (IPv4) を明示指定
+		host: host || "127.0.0.1",
 		hmr: host
 			? {
 					protocol: "ws",

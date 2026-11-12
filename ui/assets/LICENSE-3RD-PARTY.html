@@ -103,10 +103,10 @@
     
         <h2>ライセンス一覧 (Overview):</h2>
         <ul class="licenses-overview">
-            <li><a href="#MIT">MIT License</a> (583)</li>
+            <li><a href="#MIT">MIT License</a> (574)</li>
             <li><a href="#Unicode-3.0">Unicode License v3</a> (19)</li>
+            <li><a href="#Apache-2.0">Apache License 2.0</a> (11)</li>
             <li><a href="#BSD-3-Clause">BSD 3-Clause &quot;New&quot; or &quot;Revised&quot; License</a> (11)</li>
-            <li><a href="#Apache-2.0">Apache License 2.0</a> (10)</li>
             <li><a href="#ISC">ISC License</a> (6)</li>
             <li><a href="#BSD-2-Clause">BSD 2-Clause &quot;Simplified&quot; License</a> (5)</li>
             <li><a href="#MPL-2.0">Mozilla Public License 2.0</a> (5)</li>
@@ -1186,6 +1186,7 @@ Software.
                 <p><strong>利用しているパッケージ (Used by):</strong></p>
                 <ul class="license-used-by">
                     <li><a href="https://github.com/aws/aws-lc-rs" target="_blank" rel="noopener">aws-lc-sys v0.47.0</a></li>
+                    <li><a href="https://codeberg.org/cesarb/constant_time_eq" target="_blank" rel="noopener">constant_time_eq v0.6.1</a></li>
                     <li><a href="https://gitlab.com/kornelski/dunce" target="_blank" rel="noopener">dunce v1.0.5</a></li>
                     <li><a href="https://github.com/Actyx/sync_wrapper" target="_blank" rel="noopener">sync_wrapper v1.0.2</a></li>
                 </ul>
@@ -5071,6 +5072,39 @@ DEALINGS IN THE SOFTWARE.
                 <h3 id="MIT">MIT License</h3>
                 <p><strong>利用しているパッケージ (Used by):</strong></p>
                 <ul class="license-used-by">
+                    <li><a href="https://github.com/RustCrypto/utils" target="_blank" rel="noopener">zeroize_derive v1.5.0</a></li>
+                </ul>
+                <pre class="license-text">Copyright (c) 2019-2026 The RustCrypto Project Developers
+
+Permission is hereby granted, free of charge, to any
+person obtaining a copy of this software and associated
+documentation files (the &quot;Software&quot;), to deal in the
+Software without restriction, including without
+limitation the rights to use, copy, modify, merge,
+publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software
+is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice
+shall be included in all copies or substantial portions
+of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF
+ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
+IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
+</pre>
+            </li>
+            <li class="license">
+                <h3 id="MIT">MIT License</h3>
+                <p><strong>利用しているパッケージ (Used by):</strong></p>
+                <ul class="license-used-by">
                     <li><a href="https://github.com/strawlab/iana-time-zone" target="_blank" rel="noopener">iana-time-zone-haiku v0.1.2</a></li>
                     <li><a href="https://github.com/strawlab/iana-time-zone" target="_blank" rel="noopener">iana-time-zone v0.1.65</a></li>
                 </ul>
@@ -7443,7 +7477,7 @@ SOFTWARE.
                     <li><a href="https://github.com/specta-rs/specta" target="_blank" rel="noopener">specta v2.0.0-rc.25</a></li>
                     <li><a href="https://github.com/tauri-apps/plugins-workspace" target="_blank" rel="noopener">tauri-plugin-dialog v2.8.4</a></li>
                     <li><a href="https://github.com/tauri-apps/plugins-workspace" target="_blank" rel="noopener">tauri-plugin-fs v2.7.1</a></li>
-                    <li><a href="https://github.com/tauri-apps/plugins-workspace" target="_blank" rel="noopener">tauri-plugin-opener v2.7.2</a></li>
+                    <li><a href="https://github.com/tauri-apps/plugins-workspace" target="_blank" rel="noopener">tauri-plugin-opener v2.7.3</a></li>
                     <li><a href="https://github.com/tauri-apps/tauri" target="_blank" rel="noopener">tauri-plugin v2.7.2</a></li>
                     <li><a href="https://github.com/specta-rs/tauri-specta" target="_blank" rel="noopener">tauri-specta-macros v2.0.0-rc.25</a></li>
                     <li><a href="https://github.com/specta-rs/tauri-specta" target="_blank" rel="noopener">tauri-specta v2.0.0-rc.25</a></li>
@@ -7468,28 +7502,18 @@ SOFTWARE.
                     <li><a href="https://github.com/microsoft/windows-rs" target="_blank" rel="noopener">windows-result v0.4.1</a></li>
                     <li><a href="https://github.com/microsoft/windows-rs" target="_blank" rel="noopener">windows-strings v0.5.1</a></li>
                     <li><a href="https://github.com/microsoft/windows-rs" target="_blank" rel="noopener">windows-sys v0.45.0</a></li>
-                    <li><a href="https://github.com/microsoft/windows-rs" target="_blank" rel="noopener">windows-sys v0.59.0</a></li>
                     <li><a href="https://github.com/microsoft/windows-rs" target="_blank" rel="noopener">windows-sys v0.61.2</a></li>
                     <li><a href="https://github.com/microsoft/windows-rs" target="_blank" rel="noopener">windows-targets v0.42.2</a></li>
-                    <li><a href="https://github.com/microsoft/windows-rs" target="_blank" rel="noopener">windows-targets v0.52.6</a></li>
                     <li><a href="https://github.com/microsoft/windows-rs" target="_blank" rel="noopener">windows-threading v0.2.1</a></li>
                     <li><a href="https://github.com/microsoft/windows-rs" target="_blank" rel="noopener">windows-version v0.1.7</a></li>
                     <li><a href="https://github.com/microsoft/windows-rs" target="_blank" rel="noopener">windows v0.62.2</a></li>
                     <li><a href="https://github.com/microsoft/windows-rs" target="_blank" rel="noopener">windows_aarch64_gnullvm v0.42.2</a></li>
-                    <li><a href="https://github.com/microsoft/windows-rs" target="_blank" rel="noopener">windows_aarch64_gnullvm v0.52.6</a></li>
                     <li><a href="https://github.com/microsoft/windows-rs" target="_blank" rel="noopener">windows_aarch64_msvc v0.42.2</a></li>
-                    <li><a href="https://github.com/microsoft/windows-rs" target="_blank" rel="noopener">windows_aarch64_msvc v0.52.6</a></li>
                     <li><a href="https://github.com/microsoft/windows-rs" target="_blank" rel="noopener">windows_i686_gnu v0.42.2</a></li>
-                    <li><a href="https://github.com/microsoft/windows-rs" target="_blank" rel="noopener">windows_i686_gnu v0.52.6</a></li>
-                    <li><a href="https://github.com/microsoft/windows-rs" target="_blank" rel="noopener">windows_i686_gnullvm v0.52.6</a></li>
                     <li><a href="https://github.com/microsoft/windows-rs" target="_blank" rel="noopener">windows_i686_msvc v0.42.2</a></li>
-                    <li><a href="https://github.com/microsoft/windows-rs" target="_blank" rel="noopener">windows_i686_msvc v0.52.6</a></li>
                     <li><a href="https://github.com/microsoft/windows-rs" target="_blank" rel="noopener">windows_x86_64_gnu v0.42.2</a></li>
-                    <li><a href="https://github.com/microsoft/windows-rs" target="_blank" rel="noopener">windows_x86_64_gnu v0.52.6</a></li>
                     <li><a href="https://github.com/microsoft/windows-rs" target="_blank" rel="noopener">windows_x86_64_gnullvm v0.42.2</a></li>
-                    <li><a href="https://github.com/microsoft/windows-rs" target="_blank" rel="noopener">windows_x86_64_gnullvm v0.52.6</a></li>
                     <li><a href="https://github.com/microsoft/windows-rs" target="_blank" rel="noopener">windows_x86_64_msvc v0.42.2</a></li>
-                    <li><a href="https://github.com/microsoft/windows-rs" target="_blank" rel="noopener">windows_x86_64_msvc v0.52.6</a></li>
                     <li><a href="https://crates.io/crates/zune-inflate" target="_blank" rel="noopener">zune-inflate v0.2.54</a></li>
                 </ul>
                 <pre class="license-text">MIT License
@@ -8162,7 +8186,7 @@ SOFTWARE.</pre>
                 <p><strong>利用しているパッケージ (Used by):</strong></p>
                 <ul class="license-used-by">
                     <li><a href="https://github.com/tokio-rs/tracing" target="_blank" rel="noopener">tracing-core v0.1.36</a></li>
-                    <li><a href="https://github.com/zip-rs/zip2" target="_blank" rel="noopener">zip v9.4.1</a></li>
+                    <li><a href="https://github.com/zip-rs/zip2" target="_blank" rel="noopener">zip v9.5.1</a></li>
                 </ul>
                 <pre class="license-text">The MIT License (MIT)
 

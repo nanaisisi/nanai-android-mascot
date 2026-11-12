@@ -1,35 +1,30 @@
-# 各論4：Bevy-ECS にインスパイアされたデータ指向エンジン（Arekaモデル）
+# 各論3：ECS (データ指向) の適用評価と Web/WASM における適用限界
 
-## 1. 概要と背景
+## 1. Areka モデル (bevy_ecs) の参考要素と適用イメージ
 
-Areka（`ekicyou/areka`）等で採用されている ECS (Entity Component System) アーキテクチャを参考に、当プロジェクトのゴーストランタイムおよび再生エンジンを `bevy_ecs` ベースへ移行する設計です。
-これにより、クリーンで疎結合、かつ**データ指向 (Data-Oriented Design)** の高性能なエンジンが実現し、将来の機能拡張に対する改変性が飛躍的に向上します。
+Areka（`ekicyou/areka`）等で採用されている ECS (Entity Component System) アーキテクチャは、ゴースト・バルーン・サーフィスといったマスコットの構成要素をデータ（Components）と処理（Systems）に明確に分離する優れた設計モデルです。
 
-## 2. 伺か (Nanai Android Mascot) における ECS ドメインマッピング
+- **エンティティ (Entities)**: Ghost (Sakura / Kero / サブキャラ), Balloon, SurfaceElement
+- **コンポーネント (Components)**: `ScopeId`, `Position`, `SurfaceState`, `AnimationPlayer`, `CollisionBox`
+- **システム (Systems)**: `script_playback_system`, `animation_evaluation_system`, `surface_composition_system`
 
-### エンティティ (Entities)
+---
 
-- **Ghost (ゴースト)**: アクティブなゴーストのインスタンス（例: Sakura, Kero, その他サブキャラクター）。
-- **Balloon (バルーン)**: 特定のスコープに紐付く、アクティブなダイアログバルーン。
-- **SurfaceElement (サーフィス要素)**: ゴーストの視覚表現を構成する、個々のパーツやレイヤー。
+## 2. Web / DOM / WASM 環境における現実的評価と限界
 
-### コンポーネント (Components)
+### ① エンティティ数の少なさとオーバースペック（Overkill）
+- ゲームエンジンのように数千・数万個のオブジェクトを同時に動かす場合、`bevy_ecs` のような本格的 ECS は大きな効果を発揮します。
+- 一方、伺かマスコットシステムは**エンティティ数が同時に数個〜数十個程度**と極めて少なく、フル機能の ECS フレームワークを Web/WASM 上で動作させることは**アーキテクチャとして過剰（Overkill）**であり、かえってコードの複雑化やバイナリサイズの増大を招くリスクがあります。
 
-- `ScopeId`: スコープを識別するID（0=Sakura, 1=Kero など）。
-- `Position`: 画面やキャンバス上の座標 (`x`, `y`)。
-- `SurfaceState`: 現在のサーフィスID、着せ替えのバインディング状態、クロマキープロパティ。
-- `AnimationPlayer`: 再生中のアニメーションID、フレームタイマー、再生状態。
-- `ScriptState`: 現在のAST命令ポインタ、ウェイトタイマー、クイックモードのフラグ、フォントスタイルスタック。
-- `CollisionBox`: サーフィスのパーツにマッピングされた、マウスクリック/タッチの当たり判定領域。
+### ② Web / DOM 描画モデルとのミスマッチ
+- Web フロントエンド環境（DOM / CSS / Canvas）は、本質的にツリー構造およびイベント駆動（Event-Driven）の更新モデルで動作します。
+- 毎フレーム全エンティティを走査する ECS のゲームループ（Tick loop）よりも、さくらスクリプトのトークン消費やユーザー操作に応答する**「イベント駆動型状態機械 (Event-Driven State Machine)」**の方が Web 側の描画サイクルと自然にフィットします。
 
-### システム (Systems)
+---
 
-- `script_playback_system`: ASTトークンの実行を進め、テキストのタイピング、ポーズ処理、イベントディスパッチを行う。
-- `animation_evaluation_system`: SERIKOアニメーションのフレームを評価し、サーフィスの合成状態を更新する。
-- `surface_composition_system`: アクティブレイヤーと着せ替え状態に基づいて、ピクセルバッファ（`SurfaceFrameBuffer`）のブレンディング（合成）を行う。
-- `touch_interaction_system`: 当たり判定領域（Collision Box）に対するマウス/タッチのヒットを検出し、SHIORIイベント（`OnTouch` 等）を発火させる。
+## 3. 結論および採用方針
 
-## 3. WASM 環境におけるメリット
-
-- **並列データ処理とキャシュ効率**: `bevy_ecs` のコンポーネントストレージはメモリ上で連続的に配置されるため、WASM内でのループ処理やピクセル計算時のCPUキャッシュヒット率が劇的に向上します。
-- **明確な状態分離**: 状態（データ）がロジックから完全に分離されるため、クロスプラットフォーム環境（Tauri / Android）におけるステートのシリアライズ、状態の永続化、およびスナップショットデバッグが簡略化されます。
+- **フル ECS（bevy_ecs）の採用は見送り**:
+  - Web/WASM レイヤーにおいて `bevy_ecs` などのフレームワークをそのまま組み込むことはせず、Web 環境に最適な軽量アーキテクチャを維持します。
+- **データ分離の設計思想のみを継承**:
+  - `bevy_ecs` の「状態（Data）とロジック（System）の分離」という設計思想（データ指向設計）のみを参考にし、WASM 内では**軽量なイベント駆動型状態機械**として実装します。

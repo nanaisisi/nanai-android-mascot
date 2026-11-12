@@ -6,10 +6,12 @@ html,
 body {
 	margin: 0;
 	padding: 0;
-	width: 100%;
-	height: 100%;
+	width: auto;
+	min-width: 100%;
+	height: auto;
+	min-height: 100%;
 	background: transparent;
-	overflow: hidden;
+	overflow: visible;
 	user-select: none;
 	-webkit-user-select: none;
 }
@@ -17,10 +19,13 @@ body {
 .balloon-window-container {
 	padding: 8px;
 	box-sizing: border-box;
-	width: 100%;
-	height: 100%;
+	width: max-content;
+	min-width: 100%;
+	height: auto;
+	min-height: 100%;
 	display: flex;
 	align-items: flex-start;
+	overflow: visible;
 }
 
 .balloon {
@@ -40,13 +45,16 @@ body {
 	box-shadow: var(--balloon-box-shadow, none);
 	padding: var(--balloon-padding, 12px 16px 16px 16px);
 	box-sizing: border-box;
-	width: var(--balloon-width, 280px);
-	min-width: var(--balloon-min-width, 150px);
+	flex: 0 0 auto;
+	width: fit-content;
+	min-width: var(--balloon-min-width, var(--balloon-width, 280px));
 	max-width: var(--balloon-max-width, none);
 	min-height: var(--balloon-min-height, 70px);
 	max-height: var(--balloon-max-height, none);
-	overflow-y: auto;
+	overflow-y: hidden;
 	overflow-x: hidden;
+	overflow-wrap: anywhere;
+	word-break: break-word;
 	font-family: var(--balloon-font-family, sans-serif);
 	color: var(--balloon-text-color, #111111);
 	word-break: break-word;
@@ -94,6 +102,7 @@ body {
 }
 
 .balloon-text {
+	max-width: var(--balloon-max-width, 600px);
 	color: var(--balloon-text-color, #111111);
 	font-size: var(--balloon-font-size, 0.85rem);
 	font-family: var(--balloon-font-family, inherit);
@@ -109,12 +118,19 @@ body {
 	-webkit-writing-mode: inherit;
 }
 
+.balloon img,
+.balloon-text img {
+	max-width: 100%;
+	height: auto;
+}
+
 .balloon-choice-btn {
 	display: inline-block;
 	vertical-align: middle;
 	margin: 0.25em;
 	padding: 0.35em 0.65em;
 	min-height: 28px;
+	white-space: normal;
 	touch-action: manipulation;
 	-webkit-tap-highlight-color: transparent;
 	font-size: 1em;

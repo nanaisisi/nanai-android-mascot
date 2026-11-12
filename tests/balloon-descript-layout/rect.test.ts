@@ -19,6 +19,12 @@ describe("balloon-descript-layout rect submodule", () => {
 							set padding(v: string) {
 								padding = v;
 							},
+						},
+					};
+				}
+				if (sel === ".balloon-text") {
+					return {
+						style: {
 							set maxWidth(v: string) {
 								maxWidth = v;
 							},

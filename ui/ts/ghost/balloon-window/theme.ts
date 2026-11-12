@@ -201,7 +201,8 @@ export async function applyBalloonDescript({
 		// 折り返し幅 (wordwrappoint.x は原点右基準の負オフセット指定)
 		const ww = parseInt(props["wordwrappoint.x"], 10);
 		if (!Number.isNaN(ww)) {
-			balloonBox?.style.setProperty(
+			const textEl = document.getElementById("balloon-text");
+			textEl?.style.setProperty(
 				"max-width",
 				`calc(100% + ${Math.abs(ww)}px)`,
 			);
@@ -246,7 +247,7 @@ export async function applyBalloonDescript({
 
 			const dims = await getImageDimensions(bgImage);
 			if (dims.width > 0) {
-				root.style.setProperty("--balloon-width", `${dims.width}px`);
+				root.style.setProperty("--balloon-min-width", `${dims.width}px`);
 			}
 			if (dims.height > 0) {
 				root.style.setProperty("--balloon-min-height", `${dims.height}px`);

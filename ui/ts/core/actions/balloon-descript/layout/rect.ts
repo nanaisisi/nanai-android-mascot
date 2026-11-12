@@ -54,11 +54,11 @@ export function applyValidRectProperties(
 	if (props["wordwrappoint.x"]) {
 		const ww = parseInt(props["wordwrappoint.x"], 10);
 		if (!Number.isNaN(ww) && ww > 50) {
-			const balloonEl = document.querySelector(
-				".balloon",
+			const textEl = document.querySelector(
+				".balloon-text",
 			) as HTMLElement | null;
-			if (balloonEl) {
-				balloonEl.style.maxWidth = `${ww}px`;
+			if (textEl) {
+				textEl.style.maxWidth = `${ww}px`;
 			}
 			root.style.setProperty("--balloon-max-width", `${ww}px`);
 		}
@@ -66,9 +66,9 @@ export function applyValidRectProperties(
 
 	const wwY = parseInt(props["wordwrappoint.y"], 10);
 	if (!Number.isNaN(wwY) && wwY > 20) {
-		const balloonEl = document.querySelector(".balloon") as HTMLElement | null;
-		if (balloonEl) {
-			balloonEl.style.maxHeight = `${wwY}px`;
+		const textEl = document.querySelector(".balloon-text") as HTMLElement | null;
+		if (textEl) {
+			textEl.style.maxHeight = `${wwY}px`;
 		}
 		root.style.setProperty("--balloon-max-height", `${wwY}px`);
 	}

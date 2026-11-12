@@ -107,7 +107,7 @@ body.has-sidebar .menu-sidebar {
 
 body.subchar-mode .menu-sidebar {
 	overflow: hidden;
-	background-position: left top;
+	background-position: left bottom;
 	background-size: 100% auto;
 }
 

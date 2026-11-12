@@ -222,19 +222,9 @@ function initCharacterWindow() {
 	const onPointerDown = (e: InteractionEvent) => {
 		const button = e.button !== undefined ? e.button : 0;
 
-		// 1. 右クリック (button === 2): コンテキストメニュー表示
+		// 1. 右クリック (button === 2): contextmenu イベント側で一括処理するため、ここでは防止のみ行い二重発火を完全に防ぐ
 		if (button === 2) {
 			if (e.cancelable && e.preventDefault) e.preventDefault();
-			const clientX = e.clientX ?? 0;
-			const clientY = e.clientY ?? 0;
-			if (img && !isTransparentPixel(img, clientX, clientY)) {
-				openCharacterMenu(
-					e.screenX ?? clientX,
-					e.screenY ?? clientY,
-					clientX,
-					clientY,
-				);
-			}
 			return;
 		}
 

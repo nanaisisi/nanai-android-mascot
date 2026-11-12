@@ -107,8 +107,10 @@ export function convertFileSrc(
 	protocol: string = "asset",
 ): string {
 	if (!filePath) return "";
-	if (isTauriAvailable()) {
-		return tauriConvertFileSrc(filePath, protocol);
+	if (isTauriAvailable() && typeof tauriConvertFileSrc === "function") {
+		try {
+			return tauriConvertFileSrc(filePath, protocol);
+		} catch (_e) {}
 	}
 	if (
 		filePath.startsWith("http://") ||

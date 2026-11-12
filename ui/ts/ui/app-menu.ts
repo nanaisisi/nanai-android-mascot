@@ -58,20 +58,56 @@ export const menuMethods = {
 	},
 
 	syncMenuGhosts(scope: number = 0) {
-		const gc = (
-			this as unknown as import("../../main.js").NanaiAndroidMascotApp
-		).ghostController;
+		const app =
+			this as unknown as import("../../main.js").NanaiAndroidMascotApp;
+		const gc = app.ghostController;
+		const sm = app.surfaceManager;
 		const shellNames = gc.shells || ["master"];
 		const currentShellName = gc.currentShell || "master";
 		const ghosts = gc.ghosts || [{ name: AppConfig.paths.fallbackGhostName }];
-		const fullShells = gc.currentGhost?.shells || shellNames;
+		const rawShells = gc.currentGhost?.shells || shellNames;
 
-		const dressup = dressupMenuPayload(
-			(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
-				.surfaceManager?.shellManifest,
-			(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
-				.surfaceManager,
+		const manifestDescript = (sm?.shellManifest?.descript || {}) as Record<
+			string,
+			string
+		>;
+		let shellPath = sm?.shellPath || "";
+		if (!shellPath && gc.currentGhost?.path) {
+			shellPath = `${gc.currentGhost.path}/shell/${currentShellName}`;
+		}
+		if (!shellPath && sm?.shellManifest?.directory) {
+			shellPath = sm.shellManifest.directory;
+		}
+
+		// descript 内のメニュースキン設定を自動抽出して構造化
+		const menuThemeFromManifest = {
+			background_bitmap:
+				manifestDescript["menu.background.bitmap"] ||
+				manifestDescript["menu.bg.bitmap"] ||
+				"menu_background.png",
+			sidebar_bitmap:
+				manifestDescript["menu.sidebar.bitmap"] || "menu_sidebar.png",
+			foreground_bitmap: manifestDescript["menu.foreground.bitmap"] || "",
+			background_color: manifestDescript["menu.background.color"] || "",
+			foreground_color: manifestDescript["menu.foreground.color"] || "",
+			background_alignment:
+				manifestDescript["menu.background.alignment"] || "top,left",
+			sidebar_alignment:
+				manifestDescript["menu.sidebar.alignment"] || "top,left",
+		};
+
+		const fullShells = (Array.isArray(rawShells) ? rawShells : [rawShells]).map(
+			(s) => {
+				if (typeof s === "object" && s !== null) return s;
+				return {
+					name: String(s),
+					path: shellPath,
+					menu_theme: menuThemeFromManifest,
+				};
+			},
 		);
+
+		const dressup = dressupMenuPayload(sm?.shellManifest, sm);
 
 		let recentGhosts: string[] = [];
 		try {
@@ -89,9 +125,7 @@ export const menuMethods = {
 				scope,
 				dressup,
 				recentGhosts,
-				captions:
-					(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
-						.cachedMenuCaptions || {},
+				captions: app.cachedMenuCaptions || {},
 			});
 			emit(
 				"sync-theme",
@@ -163,6 +197,9 @@ export const menuMethods = {
 	},
 
 	hideMenu() {
+		if (isTauriAvailable()) {
+			void invoke("hide_menu_window").catch(() => {});
+		}
 		if (
 			(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
 				.elements.menuContainer

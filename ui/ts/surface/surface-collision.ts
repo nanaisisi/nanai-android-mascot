@@ -1,7 +1,4 @@
-/**
- * @file surface-collision.ts
- * @brief サーフィスエイリアス解決およびマウス・タッチ当たり判定モジュール
- */
+import { wasmBridge } from "../core/wasm-bridge.js";
 import { collisionContains } from "./shell-manifest.js";
 
 const sortedAscendCache = new WeakMap<unknown[], unknown[]>();
@@ -141,6 +138,26 @@ export const surfaceCollisionMethods = {
 			[];
 		if (colList.length === 0) {
 			return { name: "", canvasX, canvasY };
+		}
+
+		// WASM 高速当たり判定エンジンの優先実行
+		if (wasmBridge.isReady()) {
+			const wasmHitName = wasmBridge.findHitCollisionName(
+				colList,
+				canvasX,
+				canvasY,
+			);
+			if (wasmHitName) {
+				const hitCol = colList.find(
+					(c: { name?: string }) => c.name === wasmHitName,
+				);
+				return {
+					name: wasmHitName,
+					id: hitCol?.id,
+					canvasX,
+					canvasY,
+				};
+			}
 		}
 
 		const sortKind = String(

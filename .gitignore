@@ -35,6 +35,8 @@ config.local.toml
 *.sw?
 *.lock
 target_tauri
+/target_wasm/
+/target_shiori_host/
 /local/
 
 # Ghost & Balloon Assets separation
@@ -50,6 +52,10 @@ assets/balloon/*
 # User & temporary import data
 userData/
 imported_ghosts/
+
+# WASM compiled artifacts & generated binaries
+public/wasm/*.wasm
+*.wasm
 
 package-lock.json
 

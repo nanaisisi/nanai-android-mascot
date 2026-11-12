@@ -1,9 +1,25 @@
 //! Nanai Core - Pure Rust logic (parsers for sakura script, descript, fmo, manifest, update/install protocols)
 
+pub mod balloon_layout;
+pub mod descript_parser;
 pub mod install_protocol;
+pub mod sakura_player;
+pub mod sakura_script;
+pub mod seriko_animation;
+pub mod sstp_fmo;
+pub mod surface_collision;
+pub mod surface_compositor;
 pub mod update_protocol;
 
+pub use balloon_layout::*;
+pub use descript_parser::*;
 pub use install_protocol::*;
+pub use sakura_player::*;
+pub use sakura_script::*;
+pub use seriko_animation::*;
+pub use sstp_fmo::*;
+pub use surface_collision::*;
+pub use surface_compositor::*;
 pub use update_protocol::*;
 
 /// WASM C-ABI: メモリ動的確保関数 (バッファ渡し用)
@@ -27,4 +43,51 @@ pub extern "C" fn wasm_free(ptr: *mut u8, size: usize) {
             drop(Vec::from_raw_parts(ptr, 0, size));
         }
     }
+}
+
+/// さくらスクリプトをパースして JSON 文字列バッファポインタ情報を返却 (WASM C-ABI)
+/// 上位32ビット: ptr, 下位32ビット: len
+#[unsafe(no_mangle)]
+pub extern "C" fn wasm_parse_sakura_script_json(ptr: *const u8, len: usize) -> u64 {
+    if ptr.is_null() || len == 0 {
+        return 0;
+    }
+    let slice = unsafe { std::slice::from_raw_parts(ptr, len) };
+    if let Ok(script) = std::str::from_utf8(slice) {
+        let tokens = parse_sakura_script(script);
+        if let Ok(json) = serde_json::to_string(&tokens) {
+            let json_bytes = json.into_bytes();
+            let json_len = json_bytes.len();
+            let json_ptr = wasm_alloc(json_len);
+            unsafe {
+                std::ptr::copy_nonoverlapping(json_bytes.as_ptr(), json_ptr, json_len);
+            }
+            return ((json_ptr as u64) << 32) | (json_len as u64);
+        }
+    }
+    0
+}
+
+/// SSTPリクエストをパースして JSON 文字列バッファポインタ情報を返却 (WASM C-ABI)
+/// 上位32ビット: ptr, 下位32ビット: len
+#[unsafe(no_mangle)]
+pub extern "C" fn wasm_parse_sstp_request_json(ptr: *const u8, len: usize) -> u64 {
+    if ptr.is_null() || len == 0 {
+        return 0;
+    }
+    let slice = unsafe { std::slice::from_raw_parts(ptr, len) };
+    if let Ok(raw_sstp) = std::str::from_utf8(slice) {
+        if let Some(req) = parse_sstp_request(raw_sstp) {
+            if let Ok(json) = serde_json::to_string(&req) {
+                let json_bytes = json.into_bytes();
+                let json_len = json_bytes.len();
+                let json_ptr = wasm_alloc(json_len);
+                unsafe {
+                    std::ptr::copy_nonoverlapping(json_bytes.as_ptr(), json_ptr, json_len);
+                }
+                return ((json_ptr as u64) << 32) | (json_len as u64);
+            }
+        }
+    }
+    0
 }

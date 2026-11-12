@@ -162,18 +162,33 @@ document.addEventListener("keydown", (e) => {
 	handleMenuKeydown(e, dispatcher);
 });
 
+// メニューからフォーカスが外れた（blur）際、自然にメニューウィンドウを閉じる
+globalThis.addEventListener("blur", () => {
+	void dispatcher.dispatchAction("close-menu");
+});
+
 async function adjustMenuWindowSize() {
 	if (!isTauriAvailable()) return;
 	try {
 		const { getCurrentWindow } = await import("@tauri-apps/api/window");
 		const win = getCurrentWindow();
+		const container = document.querySelector(".menu-container");
+		const containerHeight = container
+			? container.getBoundingClientRect().height
+			: 0;
 		const bodyHeight =
-			document.body.scrollHeight || document.documentElement.scrollHeight;
+			containerHeight ||
+			document.body.scrollHeight ||
+			document.documentElement.scrollHeight;
 		if (bodyHeight > 50) {
+			const targetHeight = Math.min(
+				650,
+				Math.max(140, Math.ceil(bodyHeight + 20)),
+			);
 			await win.setSize({
 				type: "Logical",
 				width: 260,
-				height: Math.min(720, Math.max(150, bodyHeight + 12)),
+				height: targetHeight,
 				toJSON: (): { width: number; height: number } => {
 					throw new Error("Function not implemented.");
 				},

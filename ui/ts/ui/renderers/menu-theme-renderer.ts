@@ -1,34 +1,13 @@
-/**
- * @file menu-theme-renderer.ts
- * @brief コンテキストメニューのテーマ（BalloonTheme および Shell Menu Theme）適用・アセット事前ロード処理
- */
+import { assetCache } from "../../core/asset-cache.js";
+import { convertFileSrc } from "../../core/tauri-helper.js";
 
-const imageCache = new Map<string, HTMLImageElement>();
+let lastValidShellTheme: unknown = null;
 
 /**
  * 画像アセットをメモリ・GPUへ事前デコード読み込み (初回メニュー表示時のチラつき・ロード不全防止)
  */
-function preloadImage(url: string | null): Promise<void> {
-	if (!url) return Promise.resolve();
-	if (imageCache.has(url)) return Promise.resolve();
-	if (typeof Image === "undefined") return Promise.resolve();
-
-	return new Promise((resolve) => {
-		const img = new Image();
-		img.onload = () => {
-			if (img.decode) {
-				img
-					.decode()
-					.then(() => resolve())
-					.catch(() => resolve());
-			} else {
-				resolve();
-			}
-		};
-		img.onerror = () => resolve();
-		img.src = url;
-		imageCache.set(url, img);
-	});
+function preloadImage(url: string | null): Promise<HTMLImageElement | null> {
+	return assetCache.preload(url, "menu");
 }
 
 export const menuThemeRenderer = {
@@ -52,6 +31,21 @@ export const menuThemeRenderer = {
 	 */
 	applyShellTheme(activeShell: unknown) {
 		const rootStyle = document.documentElement.style;
+		if (
+			activeShell &&
+			typeof activeShell === "object" &&
+			(activeShell as { menu_theme?: unknown }).menu_theme
+		) {
+			lastValidShellTheme = activeShell;
+		} else if (
+			(!activeShell ||
+				(typeof activeShell === "object" &&
+					!(activeShell as { menu_theme?: unknown }).menu_theme)) &&
+			lastValidShellTheme
+		) {
+			activeShell = lastValidShellTheme;
+		}
+
 		if (activeShell?.menu_theme) {
 			const mt = activeShell.menu_theme;
 			if (mt.background_color)
@@ -117,12 +111,18 @@ export const menuThemeRenderer = {
 				) {
 					return relPath;
 				}
-				const full = shellPath
-					? `${shellPath.replace(/\\/g, "/")}/${relPath.replace(/\\/g, "/")}`
-					: relPath;
-				return (globalThis as unknown).__TAURI__?.core?.convertFileSrc
-					? (globalThis as unknown).__TAURI__.core.convertFileSrc(full)
-					: full;
+				const cleanRel = relPath.replace(/\\/g, "/");
+				let full = cleanRel;
+				if (shellPath) {
+					const cleanShell = shellPath.replace(/\\/g, "/");
+					full = cleanShell.endsWith("/")
+						? `${cleanShell}${cleanRel}`
+						: `${cleanShell}/${cleanRel}`;
+				}
+				if (full.includes(":/") || full.startsWith("/")) {
+					return convertFileSrc(full);
+				}
+				return full;
 			};
 
 			const applyAlignment = (alignRaw: string, prefix: string) => {
@@ -157,62 +157,61 @@ export const menuThemeRenderer = {
 			const fgUrl = resolveImg(mt.foreground_bitmap);
 			const sideUrl = resolveImg(mt.sidebar_bitmap);
 
-			// 初回表示の画像読み込み遅延・非表示防止用プリロード
+			const applyStyles = () => {
+				if (bgUrl) {
+					rootStyle.setProperty("--menu-bg-image", `url("${bgUrl}")`);
+					applyAlignment(mt.background_alignment, "menu-bg");
+				} else {
+					rootStyle.removeProperty("--menu-bg-image");
+					rootStyle.removeProperty("--menu-bg-position");
+					rootStyle.removeProperty("--menu-bg-repeat");
+				}
+
+				if (fgUrl) {
+					rootStyle.setProperty("--menu-fg-image", `url("${fgUrl}")`);
+					applyAlignment(mt.foreground_alignment, "menu-fg");
+				} else {
+					rootStyle.removeProperty("--menu-fg-image");
+					rootStyle.removeProperty("--menu-fg-position");
+					rootStyle.removeProperty("--menu-fg-repeat");
+				}
+
+				if (sideUrl) {
+					rootStyle.setProperty("--menu-sidebar-image", `url("${sideUrl}")`);
+					const sideAlign = String(mt.sidebar_alignment || "top").toLowerCase();
+					rootStyle.setProperty(
+						"--menu-sidebar-position",
+						sideAlign.includes("bottom") ? "left bottom" : "left top",
+					);
+					document.body.classList.add("has-sidebar");
+					const cachedImg = assetCache.get(sideUrl, "menu");
+					if (cachedImg && cachedImg.naturalWidth > 0) {
+						rootStyle.setProperty(
+							"--menu-sidebar-width",
+							`${cachedImg.naturalWidth}px`,
+						);
+					} else {
+						rootStyle.setProperty("--menu-sidebar-width", "28px");
+					}
+				} else {
+					rootStyle.removeProperty("--menu-sidebar-image");
+					rootStyle.removeProperty("--menu-sidebar-position");
+					rootStyle.removeProperty("--menu-sidebar-width");
+					document.body.classList.remove("has-sidebar");
+				}
+			};
+
+			// 即時適用
+			applyStyles();
+
+			// 事前ロード完了時に幅の再計算と確定適用
 			void Promise.all([
 				preloadImage(bgUrl),
 				preloadImage(fgUrl),
 				preloadImage(sideUrl),
-			]);
-
-			if (bgUrl) {
-				rootStyle.setProperty("--menu-bg-image", `url("${bgUrl}")`);
-				applyAlignment(mt.background_alignment, "menu-bg");
-			} else {
-				rootStyle.removeProperty("--menu-bg-image");
-				rootStyle.removeProperty("--menu-bg-position");
-				rootStyle.removeProperty("--menu-bg-repeat");
-			}
-
-			if (fgUrl) {
-				rootStyle.setProperty("--menu-fg-image", `url("${fgUrl}")`);
-				applyAlignment(mt.foreground_alignment, "menu-fg");
-			} else {
-				rootStyle.removeProperty("--menu-fg-image");
-				rootStyle.removeProperty("--menu-fg-position");
-				rootStyle.removeProperty("--menu-fg-repeat");
-			}
-
-			if (sideUrl) {
-				rootStyle.setProperty("--menu-sidebar-image", `url("${sideUrl}")`);
-				const sideAlign = String(mt.sidebar_alignment || "top").toLowerCase();
-				rootStyle.setProperty(
-					"--menu-sidebar-position",
-					sideAlign.includes("bottom") ? "left bottom" : "left top",
-				);
-				document.body.classList.add("has-sidebar");
-				const cachedImg = imageCache.get(sideUrl);
-				if (cachedImg && cachedImg.naturalWidth > 0) {
-					rootStyle.setProperty(
-						"--menu-sidebar-width",
-						`${cachedImg.naturalWidth}px`,
-					);
-				} else {
-					void preloadImage(sideUrl).then(() => {
-						const loadedImg = imageCache.get(sideUrl);
-						if (loadedImg && loadedImg.naturalWidth > 0) {
-							rootStyle.setProperty(
-								"--menu-sidebar-width",
-								`${loadedImg.naturalWidth}px`,
-							);
-						}
-					});
-				}
-			} else {
-				rootStyle.removeProperty("--menu-sidebar-image");
-				rootStyle.removeProperty("--menu-sidebar-position");
-				rootStyle.removeProperty("--menu-sidebar-width");
-				document.body.classList.remove("has-sidebar");
-			}
+			]).then(() => {
+				applyStyles();
+			});
 		} else {
 			rootStyle.removeProperty("--balloon-bg");
 			rootStyle.removeProperty("--balloon-highlight-bg");

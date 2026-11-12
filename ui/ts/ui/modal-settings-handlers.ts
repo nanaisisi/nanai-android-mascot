@@ -18,15 +18,15 @@ export class ModalSettingsHandlers {
 			autoLoad: document.getElementById(
 				"auto-load-ghost",
 			) as HTMLInputElement | null,
-			darkMode: document.getElementById(
-				"dark-mode",
-			) as HTMLInputElement | null,
-			shellScale: document.getElementById(
-				"shell-scale",
-			) as HTMLSelectElement | HTMLInputElement | null,
-			balloonScale: document.getElementById(
-				"balloon-scale",
-			) as HTMLSelectElement | HTMLInputElement | null,
+			darkMode: document.getElementById("dark-mode") as HTMLInputElement | null,
+			shellScale: document.getElementById("shell-scale") as
+				| HTMLSelectElement
+				| HTMLInputElement
+				| null,
+			balloonScale: document.getElementById("balloon-scale") as
+				| HTMLSelectElement
+				| HTMLInputElement
+				| null,
 			saveBtn: document.getElementById("save-settings-btn"),
 			resetBtn: document.getElementById("reset-settings-btn"),
 		};

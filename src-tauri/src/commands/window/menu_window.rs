@@ -17,9 +17,9 @@ pub async fn show_menu_window(
     {
         use tauri::Manager;
         let menu_scope = scope.unwrap_or(0);
-        // メインメニュー (260x560) / サブキャラクターメニュー (260x200)
+        // メインメニュー (260x460) / サブキャラクターメニュー (260x220)
         let win_width = 260.0;
-        let win_height = if menu_scope > 0 { 200.0 } else { 560.0 };
+        let win_height = if menu_scope > 0 { 220.0 } else { 460.0 };
 
         let mut target_x = x;
         let mut target_y = y;
@@ -52,15 +52,32 @@ pub async fn show_menu_window(
             let screen_x = pos.x as f64 / scale;
             let screen_y = pos.y as f64 / scale;
 
+            // タスクバー・画面下端の安全領域 (底部余白60px) を考慮し、下端を超える場合は上方向へ裏返し展開
+            let safe_bottom = screen_y + screen_h - 60.0;
+            if target_y + win_height > safe_bottom {
+                target_y = (target_y - win_height).max(screen_y + 10.0);
+            }
+
             let max_x = screen_x + screen_w - win_width;
-            let max_y = screen_y + screen_h - win_height;
+            let max_y = (screen_y + screen_h - win_height - 40.0).max(screen_y);
 
             target_x = target_x.max(screen_x).min(max_x);
             target_y = target_y.max(screen_y).min(max_y);
         }
 
         if let Some(menu_win) = app_handle.get_webview_window("menu_window") {
-            let _ = menu_win.close();
+            let _ = menu_win.set_size(tauri::Size::Logical(tauri::LogicalSize {
+                width: win_width,
+                height: win_height,
+            }));
+            let _ = menu_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
+                x: target_x,
+                y: target_y,
+            }));
+            let _ = menu_win.show();
+            let _ = menu_win.set_focus();
+            let _ = menu_win.emit("sync-menu-scope", menu_scope);
+            return Ok(());
         }
 
         let menu_win = tauri::WebviewWindowBuilder::new(

@@ -3,11 +3,19 @@
  * @brief デスクトップ環境の機能管理と状態更新モジュール
  */
 
-async function getTauriWindow() {
+interface DesktopTauriWindow {
+	setOpacity(opacity: number): Promise<void>;
+	setAlwaysOnTop(always: boolean): Promise<void>;
+	startDragging(): Promise<void>;
+	center(): Promise<void>;
+	[key: string]: unknown;
+}
+
+async function getTauriWindow(): Promise<DesktopTauriWindow | null> {
 	if (globalThis.__TAURI__ || globalThis.__TAURI_INTERNALS__) {
 		try {
 			const { getCurrentWindow } = await import("@tauri-apps/api/window");
-			return getCurrentWindow();
+			return getCurrentWindow() as unknown as DesktopTauriWindow;
 		} catch (_err) {}
 	}
 	return null;
@@ -51,7 +59,7 @@ export function toggleTransparency(): void {
 	featureStates.transparency = !featureStates.transparency;
 	console.log(`透過表示: ${featureStates.transparency}`);
 	updateStatusDisplay();
-	adjustOpacity(featureStates.transparency ? 90 : 100);
+	void adjustOpacity(featureStates.transparency ? 90 : 100);
 }
 
 export async function adjustOpacity(value?: string | number): Promise<void> {
@@ -188,7 +196,7 @@ export function configureMultiMonitor(): void {
 export function setPerformanceMode(): void {
 	const perfElem = document.getElementById(
 		"performance-mode",
-	) as HTMLInputElement | null;
+	) as HTMLSelectElement | null;
 	const mode = perfElem?.value ?? "";
 	console.log(`パフォーマンスモード: ${mode}`);
 	const statusElem = document.getElementById("performance-status");

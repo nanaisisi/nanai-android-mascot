@@ -5,7 +5,7 @@ import { updateMethods } from "./ts/core/app-update.js";
 import { AppConfig } from "./ts/core/config.js";
 import { invoke, isTauriAvailable } from "./ts/core/tauri-helper.js";
 import { GhostController } from "./ts/ghost/ghost.js";
-import type { SakuraPlayer } from "./ts/ghost/sakura-play.js";
+import { type SakuraPlayer } from "./ts/ghost/sakura-play.js";
 import { SurfaceManager } from "./ts/surface/surface-manager.js";
 import { menuMethods } from "./ts/ui/app-menu.js";
 import { ModalManager } from "./ts/ui/modal.js";
@@ -36,7 +36,7 @@ export class NanaiAndroidMascotApp {
 		this.initElements();
 		this.ghostController = new GhostController(this);
 		this.surfaceManager = new SurfaceManager(this);
-		this.modalManager = new ModalManager();
+		this.modalManager = new ModalManager(this);
 
 		this.sakuraPlayer = {
 			app: this as unknown as NanaiAndroidMascotApp,
@@ -62,8 +62,7 @@ export class NanaiAndroidMascotApp {
 		const urlParams = new URLSearchParams(search);
 		this.ghostId = urlParams.get("ghost_id") || "main";
 		this.initialGhostName =
-			urlParams.get("ghost_name") ||
-			(search ? AppConfig.paths.fallbackGhostName : null);
+			urlParams.get("ghost_name") || (search ? AppConfig.paths.fallbackGhostName : null);
 
 		(this as unknown as { setupEvents?: () => void }).setupEvents?.();
 		(
@@ -72,10 +71,10 @@ export class NanaiAndroidMascotApp {
 
 		if (document.readyState === "loading") {
 			document.addEventListener("DOMContentLoaded", () => {
-				void this.boot();
+				void (this as unknown as { boot?: () => void }).boot?.();
 			});
 		} else {
-			void this.boot();
+			void (this as unknown as { boot?: () => void }).boot?.();
 		}
 	}
 

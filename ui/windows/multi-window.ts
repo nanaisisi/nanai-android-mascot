@@ -34,7 +34,7 @@ async function toggleLabeledWindow(
 		} else {
 			await window.hide();
 		}
-		updateWindowStatus(stateKey, nextState);
+		updateWindowStatus(stateKey as string, nextState);
 	} catch (error) {
 		console.error(`ウィンドウ操作に失敗しました: ${windowLabel}`, error);
 	}

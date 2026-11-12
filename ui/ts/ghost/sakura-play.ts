@@ -17,6 +17,7 @@ export { SakuraPlaybackController } from "./sakura-play/controller.js";
 
 export interface SakuraPlayer {
 	parse: (script: string) => Promise<unknown[]>;
+	play?: (script: string) => Promise<unknown>;
 	playbackId: number;
 	isPlaying: boolean;
 	skipRequested: boolean;

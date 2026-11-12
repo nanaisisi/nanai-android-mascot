@@ -3,19 +3,42 @@ import { ModalGhostHandlers } from "./modal-ghost-handlers.js";
 import { ModalSettingsHandlers } from "./modal-settings-handlers.js";
 import { modalTemplates } from "./modal-templates.js";
 
+export interface AppModalTarget {
+	ghostController?: {
+		currentGhost?: { name?: string } | null;
+		ghosts?: Array<{ name?: string; craftman?: string }> | null;
+		scanGhosts?: () => Promise<unknown>;
+		selectGhost?: (name: string) => Promise<unknown>;
+		sendShioriEvent?: (event: string, args?: unknown[]) => Promise<unknown>;
+	} | null;
+	currentBalloonTheme?: string | null;
+	availableBalloons?: Array<{ name?: string; dir_name?: string }> | null;
+	settings?: {
+		autoLoadGhost?: boolean;
+		darkMode?: boolean;
+		shellScale?: string;
+		balloonScale?: string;
+		[key: string]: unknown;
+	} | null;
+	setBalloonTheme?: (theme: string) => void;
+	applySettings?: () => void;
+	showBalloon?: (text: string) => void;
+	hideBalloon?: () => void;
+}
+
 /**
  * Nanai Android Mascot - モーダル & UIダイアログ管理
  */
 export class ModalManager {
-	app: unknown;
+	app: AppModalTarget | null;
 	overlay: HTMLElement | null;
 	content: HTMLElement | null;
 	closeBtn: HTMLElement | null;
 	ghostHandlers: ModalGhostHandlers;
 	settingsHandlers: ModalSettingsHandlers;
 
-	constructor(app: unknown) {
-		this.app = app;
+	constructor(app?: AppModalTarget | null) {
+		this.app = app ?? null;
 		this.overlay = document.getElementById("modal-overlay");
 		this.content = document.getElementById("modal-content");
 		this.closeBtn = document.getElementById("modal-close");
@@ -70,23 +93,23 @@ export class ModalManager {
 
 	setupListeners(contentId: string) {
 		if (contentId === "ghost-modal-content") {
-			(this.ghostHandlers as unknown).setupGhostListeners?.();
+			this.ghostHandlers.setupGhostListeners();
 		} else if (contentId === "explorer-modal-content") {
-			(this.ghostHandlers as unknown).setupExplorerListeners?.();
+			this.ghostHandlers.setupExplorerListeners();
 		} else if (contentId === "install-modal-content") {
-			(this.ghostHandlers as unknown).setupInstallListeners?.();
+			this.ghostHandlers.setupInstallListeners();
 		} else if (contentId === "balloon-modal-content") {
-			(this.ghostHandlers as unknown).renderBalloonList?.();
+			this.ghostHandlers.renderBalloonList();
 		} else if (contentId === "settings-modal-content") {
-			(this.settingsHandlers as unknown).setupSettingsListeners?.();
+			this.settingsHandlers.setupSettingsListeners();
 		} else if (contentId === "plugins-modal-content") {
-			(this.settingsHandlers as unknown).setupPluginListeners?.();
+			this.settingsHandlers.setupPluginListeners();
 		} else if (contentId === "debug-modal-content") {
-			(this.settingsHandlers as unknown).setupDebugListeners?.();
+			this.settingsHandlers.setupDebugListeners();
 		}
 	}
 
-	showNotification(title: string, message: string, isError: boolean = false) {
+	showNotification(title: string, message: string, isError = false) {
 		if (!this.content || !this.overlay) return;
 		this.content.innerHTML = `
       <h2>${isError ? "⚠️ " : "ℹ️ "}${title}</h2>
@@ -105,10 +128,10 @@ export class ModalManager {
 	}
 
 	renderGhostList() {
-		(this.ghostHandlers as unknown).renderGhostList?.();
+		this.ghostHandlers.renderGhostList();
 	}
 
 	renderBalloonList() {
-		(this.ghostHandlers as unknown).renderBalloonList?.();
+		this.ghostHandlers.renderBalloonList();
 	}
 }

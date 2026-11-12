@@ -1,35 +1,50 @@
 import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
+import type { AppModalTarget, ModalManager } from "./modal.js";
 
 /**
  * 設定・プラグイン・デバッグ用のモーダルハンドラ
  */
 export class ModalSettingsHandlers {
-	manager: unknown;
-	app: unknown;
-	/**
-	 * @param {import('./modal.js').ModalManager} manager
-	 */
-	constructor(manager: this) {
+	manager: ModalManager;
+	app: AppModalTarget | null;
+
+	constructor(manager: ModalManager) {
 		this.manager = manager;
 		this.app = manager.app;
 	}
 
 	setupSettingsListeners() {
 		const form = {
-			autoLoad: document.getElementById("auto-load-ghost"),
-			darkMode: document.getElementById("dark-mode"),
-			shellScale: document.getElementById("shell-scale"),
-			balloonScale: document.getElementById("balloon-scale"),
+			autoLoad: document.getElementById(
+				"auto-load-ghost",
+			) as HTMLInputElement | null,
+			darkMode: document.getElementById(
+				"dark-mode",
+			) as HTMLInputElement | null,
+			shellScale: document.getElementById(
+				"shell-scale",
+			) as HTMLSelectElement | HTMLInputElement | null,
+			balloonScale: document.getElementById(
+				"balloon-scale",
+			) as HTMLSelectElement | HTMLInputElement | null,
 			saveBtn: document.getElementById("save-settings-btn"),
 			resetBtn: document.getElementById("reset-settings-btn"),
 		};
 
-		if (form.autoLoad) form.autoLoad.checked = this.app.settings.autoLoadGhost;
-		if (form.darkMode) form.darkMode.checked = this.app.settings.darkMode;
-		if (form.shellScale)
-			form.shellScale.value = this.app.settings.shellScale || "100";
-		if (form.balloonScale)
-			form.balloonScale.value = this.app.settings.balloonScale || "100";
+		if (form.autoLoad && this.app) {
+			form.autoLoad.checked = Boolean(this.app.settings?.autoLoadGhost);
+		}
+		if (form.darkMode && this.app) {
+			form.darkMode.checked = Boolean(this.app.settings?.darkMode);
+		}
+		if (form.shellScale && this.app) {
+			form.shellScale.value =
+				(this.app.settings?.shellScale as string) || "100";
+		}
+		if (form.balloonScale && this.app) {
+			form.balloonScale.value =
+				(this.app.settings?.balloonScale as string) || "100";
+		}
 
 		const overlayBtn = document.getElementById("open-overlay-settings-btn");
 		overlayBtn?.addEventListener("click", async () => {
@@ -51,48 +66,56 @@ export class ModalSettingsHandlers {
 		});
 
 		form.saveBtn?.addEventListener("click", () => {
-			this.app.settings.autoLoadGhost = form.autoLoad?.checked ?? true;
-			this.app.settings.darkMode = form.darkMode?.checked ?? false;
-			this.app.settings.shellScale = form.shellScale?.value ?? "100";
-			this.app.settings.balloonScale = form.balloonScale?.value ?? "100";
+			if (this.app) {
+				this.app.settings = {
+					...this.app.settings,
+					autoLoadGhost: form.autoLoad?.checked ?? true,
+					darkMode: form.darkMode?.checked ?? false,
+					shellScale: form.shellScale?.value ?? "100",
+					balloonScale: form.balloonScale?.value ?? "100",
+				};
 
-			localStorage.setItem(
-				"nanai-android-mascot-settings",
-				JSON.stringify(this.app.settings),
-			);
-			this.app.applySettings();
-			this.app.showBalloon("設定を保存しました。");
-			setTimeout(() => this.app.hideBalloon(), 2000);
+				localStorage.setItem(
+					"nanai-android-mascot-settings",
+					JSON.stringify(this.app.settings),
+				);
+				this.app.applySettings?.();
+				this.app.showBalloon?.("設定を保存しました。");
+				setTimeout(() => this.app?.hideBalloon?.(), 2000);
+			}
 			this.manager.hide();
 		});
 
 		form.resetBtn?.addEventListener("click", () => {
 			if (confirm("設定を初期値に戻しますか？")) {
 				localStorage.removeItem("nanai-android-mascot-settings");
-				this.app.settings = {
-					autoLoadGhost: true,
-					enableNotifications: true,
-					darkMode: false,
-					alwaysOnTop: true,
-					shellScale: "100",
-					balloonScale: "100",
-					debugLevel: "info",
-				};
-				this.app.applySettings();
+				if (this.app) {
+					this.app.settings = {
+						autoLoadGhost: true,
+						enableNotifications: true,
+						darkMode: false,
+						alwaysOnTop: true,
+						shellScale: "100",
+						balloonScale: "100",
+						debugLevel: "info",
+					};
+					this.app.applySettings?.();
+				}
 				if (form.autoLoad) form.autoLoad.checked = true;
 				if (form.darkMode) form.darkMode.checked = false;
 				if (form.shellScale) form.shellScale.value = "100";
 				if (form.balloonScale) form.balloonScale.value = "100";
-				this.app.showBalloon("設定を初期化しました。");
-				setTimeout(() => this.app.hideBalloon(), 2000);
+				this.app?.showBalloon?.("設定を初期化しました。");
+				setTimeout(() => this.app?.hideBalloon?.(), 2000);
 			}
 		});
 
 		const helpBtn = document.getElementById("config-help-btn");
 		helpBtn?.addEventListener("click", () => {
-			this.app.ghostController?.sendShioriEvent("OnConfigurationDialogHelp", [
-				"settings",
-			]);
+			this.app?.ghostController?.sendShioriEvent?.(
+				"OnConfigurationDialogHelp",
+				["settings"],
+			);
 		});
 	}
 
@@ -110,10 +133,10 @@ export class ModalSettingsHandlers {
 			item.addEventListener("click", () => {
 				const isActive = item.classList.toggle("active");
 				const title = item.querySelector("strong")?.textContent || "プラグイン";
-				this.app.showBalloon(
+				this.app?.showBalloon?.(
 					`${title} を${isActive ? "有効化" : "無効化"}しました。`,
 				);
-				setTimeout(() => this.app.hideBalloon(), 1500);
+				setTimeout(() => this.app?.hideBalloon?.(), 1500);
 			});
 		});
 	}

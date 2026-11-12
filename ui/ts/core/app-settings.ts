@@ -7,9 +7,10 @@ export const settingsMethods = {
 			if (saved) {
 				const app =
 					this as unknown as import("../../main.js").NanaiAndroidMascotApp;
+				const parsed = JSON.parse(saved) as Record<string, unknown>;
 				app.settings = {
 					...app.settings,
-					...JSON.parse(saved),
+					...parsed,
 				};
 			}
 		} catch (_error) {
@@ -23,7 +24,9 @@ export const settingsMethods = {
 		document.body.classList.toggle("dark-mode", !!app.settings?.darkMode);
 
 		// シェル倍率 (50%〜200%)
-		const scalePercent = parseInt(app.settings?.shellScale || "100", 10) || 100;
+		const shellScaleVal =
+			(app.settings?.shellScale as string | number) ?? "100";
+		const scalePercent = parseInt(String(shellScaleVal), 10) || 100;
 		const ghostDisplay = app.elements?.ghostDisplay;
 		if (ghostDisplay) {
 			ghostDisplay.style.width = `${Math.round((200 * scalePercent) / 100)}px`;
@@ -34,8 +37,9 @@ export const settingsMethods = {
 		}
 
 		// バルーン倍率
-		const balloonPercent =
-			parseInt(app.settings?.balloonScale || "100", 10) || 100;
+		const balloonScaleVal =
+			(app.settings?.balloonScale as string | number) ?? "100";
+		const balloonPercent = parseInt(String(balloonScaleVal), 10) || 100;
 		const balloonDisplay = app.elements?.balloonDisplay;
 		if (balloonDisplay) {
 			balloonDisplay.style.transform = `translateX(-50%) scale(${balloonPercent / 100})`;
@@ -49,7 +53,9 @@ export const settingsMethods = {
 		const app =
 			this as unknown as import("../../main.js").NanaiAndroidMascotApp;
 		app.setBalloonTheme?.(
-			app.settings?.balloonTheme || app.currentBalloonTheme || "default",
+			(app.settings?.balloonTheme as string) ||
+				app.currentBalloonTheme ||
+				"default",
 		);
 	},
 
@@ -120,7 +126,7 @@ export const settingsMethods = {
 	playSakuraScript(script: string) {
 		const app =
 			this as unknown as import("../../main.js").NanaiAndroidMascotApp;
-		return app.sakuraPlayer?.play(script);
+		return app.sakuraPlayer?.play?.(script);
 	},
 
 	startSecondTimer() {

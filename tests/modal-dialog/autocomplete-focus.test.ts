@@ -12,7 +12,7 @@ test("ModalDialogController Cycle 3: inputbox.autocomplete, datalist creation, a
 	vi.useFakeTimers();
 	resetCreatedElements();
 
-	const events: { ev: any; args: any; }[] = [];
+	const events: { ev: any; args: any }[] = [];
 	const mockApp = {
 		ghostController: {
 			sendShioriEvent: async (ev: string, args: any[]) => {
@@ -64,11 +64,15 @@ test("ModalDialogController Cycle 3: inputbox.autocomplete, datalist creation, a
 	);
 
 	const form = mockApp.elements.balloonText.child;
-	const inputEl = form.children.find((c: { tagName: string; }) => c.tagName === "INPUT");
+	const inputEl = form.children.find(
+		(c: { tagName: string }) => c.tagName === "INPUT",
+	);
 	const listId = inputEl.getAttribute("list");
 	assert.ok(listId?.startsWith("dl-inputbox-"));
 
-	const dataListEl = form.children.find((c: { tagName: string; }) => c.tagName === "DATALIST");
+	const dataListEl = form.children.find(
+		(c: { tagName: string }) => c.tagName === "DATALIST",
+	);
 	assert.ok(dataListEl);
 	assert.equal(dataListEl.children.length, 3);
 	assert.equal(dataListEl.children[0].value, "apple");
@@ -99,10 +103,14 @@ test("ModalDialogController Cycle 3: inputbox.autocomplete, datalist creation, a
 	);
 
 	const teachForm = mockApp.elements.balloonText.child;
-	const teachInput = teachForm.children.find((c: { tagName: string; }) => c.tagName === "INPUT");
+	const teachInput = teachForm.children.find(
+		(c: { tagName: string }) => c.tagName === "INPUT",
+	);
 	assert.ok(teachInput.getAttribute("list")?.startsWith("dl-teachbox-"));
 
-	const teachDl = teachForm.children.find((c: { tagName: string; }) => c.tagName === "DATALIST");
+	const teachDl = teachForm.children.find(
+		(c: { tagName: string }) => c.tagName === "DATALIST",
+	);
 	assert.ok(teachDl);
 	assert.equal(teachDl.children.length, 2);
 	assert.equal(teachDl.children[0].value, "wordA");
@@ -122,7 +130,9 @@ test("ModalDialogController Cycle 3: inputbox.autocomplete, datalist creation, a
 	);
 
 	const commForm = mockApp.elements.balloonText.child;
-	const commInput = commForm.children.find((c: { tagName: string; }) => c.tagName === "INPUT");
+	const commInput = commForm.children.find(
+		(c: { tagName: string }) => c.tagName === "INPUT",
+	);
 	assert.ok(commInput.getAttribute("list")?.startsWith("dl-communicatebox-"));
 
 	controller.closeCommunicateBox();

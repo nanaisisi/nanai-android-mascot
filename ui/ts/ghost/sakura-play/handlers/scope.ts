@@ -36,9 +36,11 @@ export function handleScope(
 		app.surfaceManager?.onTalkEnd(1);
 		if (!isTauriAvailable()) {
 			if (app.elements?.sakuraSlot) {
+				if (!app.elements.sakuraSlot.style) app.elements.sakuraSlot.style = {};
 				app.elements.sakuraSlot.style.display = "flex";
 			}
 			if (sakuraDisplay) {
+				if (!sakuraDisplay.style) sakuraDisplay.style = {};
 				sakuraDisplay.style.display = "block";
 			}
 		}
@@ -47,9 +49,11 @@ export function handleScope(
 		app.surfaceManager?.onTalkEnd(0);
 		if (!isTauriAvailable()) {
 			if (app.elements?.keroSlot) {
+				if (!app.elements.keroSlot.style) app.elements.keroSlot.style = {};
 				app.elements.keroSlot.style.display = "flex";
 			}
 			if (keroDisplay && keroText) {
+				if (!keroDisplay.style) keroDisplay.style = {};
 				keroDisplay.style.display = "block";
 			}
 		}
@@ -82,9 +86,15 @@ export function handleBalloon(
 	const balloonDisplay =
 		player.currentScope === 1 ? keroDisplay : sakuraDisplay;
 	if (token.value === -1) {
-		if (balloonDisplay) balloonDisplay.style.display = "none";
+		if (balloonDisplay) {
+			if (!balloonDisplay.style) balloonDisplay.style = {};
+			balloonDisplay.style.display = "none";
+		}
 	} else {
-		if (balloonDisplay) balloonDisplay.style.display = "block";
+		if (balloonDisplay) {
+			if (!balloonDisplay.style) balloonDisplay.style = {};
+			balloonDisplay.style.display = "block";
+		}
 	}
 }
 
@@ -117,6 +127,7 @@ export function handleInlineBitmap(
 	img.src = g.__TAURI__?.core?.convertFileSrc
 		? g.__TAURI__.core.convertFileSrc(fullPath)
 		: fullPath;
+	if (!img.style) img.style = {};
 	img.style.display = "inline-block";
 	img.style.verticalAlign = "middle";
 	img.style.maxHeight = "1.2em";
@@ -124,6 +135,7 @@ export function handleInlineBitmap(
 	if (token.mode === "inline" || !token.mode) {
 		currentBalloonText?.appendChild(img);
 	} else {
+		if (!img.style) img.style = {};
 		if (token.x !== undefined) img.style.left = `${token.x}px`;
 		if (token.y !== undefined) img.style.top = `${token.y}px`;
 		img.style.position = "absolute";

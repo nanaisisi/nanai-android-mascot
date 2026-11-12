@@ -9,12 +9,17 @@ export async function initBalloonWindows(
 	if (!hasTextContent) return;
 	const sakuraText = app.elements?.balloonText;
 	const keroText = app.elements?.keroBalloonText;
-	const sakuraDisplay = app.elements?.balloonDisplay;
+	const sakuraDisplay = app.elements?.balloonDisplay as
+		| { style?: Record<string, string>; [key: string]: unknown }
+		| undefined;
 
 	if (sakuraText) sakuraText.innerHTML = "";
 	if (keroText) keroText.innerHTML = "";
 	if (!isTauriAvailable()) {
-		if (sakuraDisplay) sakuraDisplay.style.display = "block";
+		if (sakuraDisplay) {
+			if (!sakuraDisplay.style) sakuraDisplay.style = {};
+			sakuraDisplay.style.display = "block";
+		}
 	}
 	if (isTauriAvailable()) {
 		shownScopes.add(0);

@@ -7,7 +7,11 @@ export function createMockCanvas(width: number, height: number) {
 		globalCompositeOperation: "source-over",
 		width,
 		height,
-		drawImage(img: { _mockData: any; naturalHeight: number; naturalWidth: number; }, dx = 0, dy = 0) {
+		drawImage(
+			img: { _mockData: any; naturalHeight: number; naturalWidth: number },
+			dx = 0,
+			dy = 0,
+		) {
 			if (img?._mockData) {
 				const srcData = img._mockData;
 				const src32 = new Uint32Array(srcData.buffer);
@@ -38,7 +42,7 @@ export function createMockCanvas(width: number, height: number) {
 				height: sh,
 			};
 		},
-		putImageData(imgData: { data: ArrayLike<number>; }, _dx: any, _dy: any) {
+		putImageData(imgData: { data: ArrayLike<number> }, _dx: any, _dy: any) {
 			pixelBuffer.set(imgData.data);
 		},
 	};
@@ -46,7 +50,7 @@ export function createMockCanvas(width: number, height: number) {
 	return {
 		width,
 		height,
-		getContext: (p0?: string) => context,
+		getContext: (_p0?: string) => context,
 		toDataURL: (type: any) => `data:${type};base64,mockCanvasData`,
 		_pixelBuffer: pixelBuffer,
 		_data32: data32,

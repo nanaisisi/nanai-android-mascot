@@ -1,6 +1,6 @@
 export interface MockElement {
 	className: any;
-	value(value: any, arg1: string): unknown;
+	value?: string;
 	tagName: string;
 	_textContent: string;
 	textContent: string;
@@ -26,60 +26,86 @@ export interface MockElement {
 	blur(): void;
 }
 
-export function createMockElement(_tag: string = "div"): MockElement {
-	const _children: MockElement[] = [];
-	return {
+export function createMockElement(tag: string = "div"): MockElement {
+	const children: MockElement[] = [];
+	const listeners: Record<string, (event?: unknown) => void> = {};
+	const element = {
 		className: undefined,
-		value: (_value: any, _arg1: string): unknown => {
-			throw new Error("Function not implemented.");
-		},
-		tagName: "",
+		value: undefined,
+		tagName: tag.toUpperCase(),
 		_textContent: "",
-		textContent: "",
+		get textContent() {
+			return this._textContent;
+		},
+		set textContent(val: string) {
+			this._textContent = val;
+		},
 		_innerHTML: "",
-		innerHTML: "",
-		style: undefined,
-		dataset: undefined,
-		children: [],
-		childNodes: [],
-		lastChild: null,
-		appendChild: (_node: MockElement): void => {
-			throw new Error("Function not implemented.");
+		get innerHTML() {
+			return this._innerHTML;
 		},
-		removeChild: (_node: MockElement): void => {
-			throw new Error("Function not implemented.");
+		set innerHTML(val: string) {
+			this._innerHTML = val;
 		},
-		remove: (): void => {
-			throw new Error("Function not implemented.");
+		style: {} as Record<string, string>,
+		dataset: {} as Record<string, string>,
+		children: children,
+		childNodes: children,
+		get lastChild() {
+			return children.length > 0 ? children[children.length - 1] : null;
 		},
-		setAttribute: (_name: string, _val: unknown): void => {
-			throw new Error("Function not implemented.");
+		get firstChild() {
+			return children.length > 0 ? children[0] : null;
 		},
-		addEventListener: (_type: string, _cb: (event?: unknown) => void): void => {
-			throw new Error("Function not implemented.");
+		parentNode: undefined as MockElement | undefined,
+		_listeners: listeners,
+		appendChild: function (node: MockElement): void {
+			children.push(node);
+			node.parentNode = this as MockElement;
+		},
+		removeChild: (node: MockElement): void => {
+			const index = children.indexOf(node);
+			if (index > -1) {
+				children.splice(index, 1);
+				node.parentNode = undefined;
+			}
+		},
+		remove: function (): void {
+			if (this.parentNode) {
+				this.parentNode.removeChild(this as MockElement);
+			}
+		},
+		setAttribute: (_name: string, _val: unknown): void => {},
+		addEventListener: (type: string, cb: (event?: unknown) => void): void => {
+			listeners[type] = cb;
 		},
 		removeEventListener: (
-			_type: string,
-			_cb: (event?: unknown) => void,
+			type: string,
+			cb: (event?: unknown) => void,
 		): void => {
-			throw new Error("Function not implemented.");
+			if (listeners[type] === cb) {
+				delete listeners[type];
+			}
 		},
 		click: (): void => {
-			throw new Error("Function not implemented.");
+			if (listeners.click) listeners.click({ stopPropagation: () => {} });
 		},
 		mouseenter: (): void => {
-			throw new Error("Function not implemented.");
+			if (listeners.mouseenter)
+				listeners.mouseenter({ stopPropagation: () => {} });
 		},
 		mouseleave: (): void => {
-			throw new Error("Function not implemented.");
+			if (listeners.mouseleave)
+				listeners.mouseleave({ stopPropagation: () => {} });
 		},
 		focus: (): void => {
-			throw new Error("Function not implemented.");
+			if (listeners.focus) listeners.focus({ stopPropagation: () => {} });
 		},
 		blur: (): void => {
-			throw new Error("Function not implemented.");
+			if (listeners.blur) listeners.blur({ stopPropagation: () => {} });
 		},
 	};
+	return element as unknown as MockElement;
 }
 
 export function setupMockDOM() {
@@ -88,6 +114,9 @@ export function setupMockDOM() {
 		createElement: createMockElement,
 		addEventListener(_type: string, _cb: (event?: unknown) => void) {},
 		removeEventListener(_type: string, _cb: (event?: unknown) => void) {},
+		body: createMockElement("body"),
+		getElementById: () => createMockElement("div"),
+		querySelector: () => createMockElement("div"),
 	};
 }
 

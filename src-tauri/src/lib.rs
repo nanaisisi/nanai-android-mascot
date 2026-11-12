@@ -179,6 +179,7 @@ pub fn run() {
             commands::window::set_surface_image,
             commands::window::get_surface_image,
             commands::window::show_balloon_window,
+            commands::window::resize_balloon_window,
             commands::window::set_balloon_offset,
             commands::window::reset_balloon_positions,
             commands::window::sync_balloon_position,

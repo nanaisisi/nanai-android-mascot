@@ -98,8 +98,9 @@ export function testApplyBalloonDescript(
 	assert.equal(mockInstance.balloonAlignment, "left,bottom");
 
 	// 9-slice tokens validation
-	assert.equal(cssVars["--balloon-border-image-slice"], "12 14 16 10 fill");
-	assert.equal(cssVars["--balloon-border-image-width"], "12px 14px 16px 10px");
+	assert.equal(cssVars["--balloon-padding"], "12px 14px 16px 10px");
+	assert.equal(cssVars["--balloon-border-image-slice"], "16 16 16 16 fill");
+	assert.equal(cssVars["--balloon-border-image-width"], "16px 16px 16px 16px");
 	assert.equal(cssVars["--balloon-border-image-repeat"], "repeat");
 
 	delete (globalThis as unknown as { __TAURI__?: unknown }).__TAURI__;

@@ -139,6 +139,28 @@ pub async fn show_balloon_window(
     Ok(())
 }
 
+/// バルーンウィンドウのサイズを画像実寸法に合せてリサイズするコマンド
+#[tauri::command]
+pub async fn resize_balloon_window(
+    app_handle: tauri::AppHandle,
+    scope_id: i32,
+    width: f64,
+    height: f64,
+) -> Result<(), String> {
+    #[cfg(desktop)]
+    {
+        use tauri::Manager;
+        let label = format!("balloon_window_{}", scope_id);
+        if let Some(balloon_win) = app_handle.get_webview_window(&label) {
+            let _ = balloon_win.set_size(tauri::Size::Logical(tauri::LogicalSize {
+                width,
+                height,
+            }));
+        }
+    }
+    Ok(())
+}
+
 /// 独立バルーン（スコープ N）ウィンドウ非表示コマンド (\b[-1])
 #[tauri::command]
 #[allow(unused_variables)]

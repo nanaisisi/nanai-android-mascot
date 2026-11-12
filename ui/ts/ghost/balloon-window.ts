@@ -116,42 +116,7 @@ export function initBalloonWindow() {
 	void emit("balloon-ready", { scopeId });
 }
 
-async function adjustBalloonWindowSize() {
-	if (!isTauriAvailable()) return;
-	try {
-		const { getCurrentWindow } = await import("@tauri-apps/api/window");
-		const win = getCurrentWindow();
-		const balloonBox = document.getElementById("balloon-box") || document.querySelector(".balloon");
-		if (!balloonBox) return;
-
-		const rect = balloonBox.getBoundingClientRect();
-		const contentWidth = rect.width || balloonBox.scrollWidth || 280;
-		const contentHeight = rect.height || balloonBox.scrollHeight || 100;
-
-		const targetWidth = Math.max(150, Math.min(800, Math.ceil(contentWidth + 12)));
-		const targetHeight = Math.max(70, Math.min(800, Math.ceil(contentHeight + 12)));
-
-		await win.setSize({
-			type: "Logical",
-			width: targetWidth,
-			height: targetHeight,
-			toJSON: (): { width: number; height: number } => ({ width: targetWidth, height: targetHeight }),
-			__TAURI_TO_IPC_KEY__: (): { width: number; height: number } => ({ width: targetWidth, height: targetHeight }),
-		});
-	} catch (_e) {
-		// Non-Tauri environment
-	}
-}
-
 if (typeof document !== "undefined") {
-	if (isTauriAvailable() && typeof ResizeObserver !== "undefined") {
-		const observer = new ResizeObserver(() => {
-			void adjustBalloonWindowSize();
-		});
-		const balloonEl = document.getElementById("balloon-box") || document.body;
-		observer.observe(balloonEl);
-	}
-
 	if (document.readyState === "loading") {
 		document.addEventListener("DOMContentLoaded", () => {
 			initBalloonWindow();

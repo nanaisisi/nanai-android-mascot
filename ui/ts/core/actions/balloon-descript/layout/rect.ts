@@ -18,10 +18,15 @@ export function applyValidRectProperties(
 		!Number.isNaN(vr) &&
 		!Number.isNaN(vb)
 	) {
-		const sliceTop = Math.max(4, Math.abs(vt));
-		const sliceRight = Math.max(4, Math.abs(vr));
-		const sliceBottom = Math.max(4, Math.abs(vb));
-		const sliceLeft = Math.max(4, Math.abs(vl));
+		const parseVal = (val: number) => {
+			if (Number.isNaN(val)) return 16;
+			return Math.max(4, Math.abs(val));
+		};
+
+		const sliceTop = parseVal(vt);
+		const sliceRight = parseVal(vr);
+		const sliceBottom = parseVal(vb);
+		const sliceLeft = parseVal(vl);
 
 		const padTop = `${sliceTop}px`;
 		const padRight = `${sliceRight}px`;
@@ -44,11 +49,12 @@ export function applyValidRectProperties(
 			"--balloon-border-image-width",
 			`${sliceTop}px ${sliceRight}px ${sliceBottom}px ${sliceLeft}px`,
 		);
-		root.style.setProperty(
-			"--balloon-border-image-repeat",
-			props["border.repeat"] || "repeat",
-		);
 	}
+
+	root.style.setProperty(
+		"--balloon-border-image-repeat",
+		props["border.repeat"] || "repeat",
+	);
 
 	// [wordwrappoint.x,座標], [wordwrappoint.y,座標]:
 	if (props["wordwrappoint.x"]) {

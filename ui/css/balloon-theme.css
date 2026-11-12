@@ -22,7 +22,7 @@ body[class*="overhead"] {
 
 .balloon,
 .kero-balloon .balloon {
-	background-color: var(--balloon-bg, #f4f8fc);
+	background-color: var(--balloon-bg, transparent);
 	background-image: var(--balloon-pattern, none);
 	color: var(--balloon-text-color, #111111);
 }

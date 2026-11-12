@@ -214,27 +214,43 @@ export async function applyBalloonDescript({
 		}
 
 		if (bgImage) {
+			const dims = await getImageDimensions(bgImage);
+
 			const vt = parseInt(props["validrect.top"], 10);
 			const vr = parseInt(props["validrect.right"], 10);
 			const vb = parseInt(props["validrect.bottom"], 10);
 			const vl = parseInt(props["validrect.left"], 10);
 
-			const t = Number.isNaN(vt) ? 16 : Math.max(8, Math.abs(vt));
-			const r = Number.isNaN(vr) ? 16 : Math.max(8, Math.abs(vr));
-			const b = Number.isNaN(vb) ? 16 : Math.max(8, Math.abs(vb));
-			const l = Number.isNaN(vl) ? 16 : Math.max(8, Math.abs(vl));
+			const parseVal = (val: number) => {
+				if (Number.isNaN(val)) return 16;
+				return Math.max(4, Math.abs(val));
+			};
 
+			const padTop = parseVal(vt);
+			const padRight = parseVal(vr);
+			const padBottom = parseVal(vb);
+			const padLeft = parseVal(vl);
+
+			const sliceTop = parseVal(vt);
+			const sliceRight = parseVal(vr);
+			const sliceBottom = parseVal(vb);
+			const sliceLeft = parseVal(vl);
+
+			root.style.setProperty(
+				"--balloon-bg-image",
+				`url("${bgImage}")`,
+			);
 			root.style.setProperty(
 				"--balloon-border-image-source",
 				`url("${bgImage}")`,
 			);
 			root.style.setProperty(
 				"--balloon-border-image-slice",
-				`${t} ${r} ${b} ${l} fill`,
+				`${sliceTop} ${sliceRight} ${sliceBottom} ${sliceLeft} fill`,
 			);
 			root.style.setProperty(
 				"--balloon-border-image-width",
-				`${t}px ${r}px ${b}px ${l}px`,
+				`${sliceTop}px ${sliceRight}px ${sliceBottom}px ${sliceLeft}px`,
 			);
 			root.style.setProperty(
 				"--balloon-border-image-repeat",
@@ -242,15 +258,21 @@ export async function applyBalloonDescript({
 			);
 			root.style.setProperty(
 				"--balloon-padding",
-				`${t}px ${r}px ${b}px ${l}px`,
+				`${padTop}px ${padRight}px ${padBottom}px ${padLeft}px`,
 			);
 
-			const dims = await getImageDimensions(bgImage);
 			if (dims.width > 0) {
-				root.style.setProperty("--balloon-min-width", `${dims.width}px`);
+				root.style.setProperty("--balloon-width", `${dims.width}px`);
 			}
 			if (dims.height > 0) {
 				root.style.setProperty("--balloon-min-height", `${dims.height}px`);
+			}
+			if (dims.width > 0 && dims.height > 0) {
+				void invoke("resize_balloon_window", {
+					scopeId,
+					width: dims.width + 4,
+					height: dims.height + 4,
+				}).catch(() => {});
 			}
 		}
 

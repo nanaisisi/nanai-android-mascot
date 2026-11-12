@@ -3,13 +3,17 @@
  * @brief マルチウィンドウ管理センターモジュール
  */
 
-import { getAllWindows, type Window } from "@tauri-apps/api/window";
 import { invoke, isTauriAvailable } from "../ts/core/tauri-helper.js";
 
-async function findWindow(label: string): Promise<Window | null> {
+async function findWindow(label: string) {
 	if (!globalThis.__TAURI__ && !globalThis.__TAURI_INTERNALS__) return null;
-	const windows = await getAllWindows();
-	return windows.find((window) => window.label === label) ?? null;
+	try {
+		const { getAllWindows } = await import("@tauri-apps/api/window");
+		const windows = await getAllWindows();
+		return windows.find((window) => window.label === label) ?? null;
+	} catch (_err) {
+		return null;
+	}
 }
 
 async function toggleLabeledWindow(
@@ -232,6 +236,12 @@ g.updateOpacity = updateOpacity;
 g.toggleAutoMinimize = toggleAutoMinimize;
 g.toggleSystemTray = toggleSystemTray;
 
-document.addEventListener("DOMContentLoaded", () => {
+function init(): void {
 	console.log("ウィンドウ管理センターを初期化しました");
-});
+}
+
+if (document.readyState === "loading") {
+	document.addEventListener("DOMContentLoaded", init);
+} else {
+	init();
+}

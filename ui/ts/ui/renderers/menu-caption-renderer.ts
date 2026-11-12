@@ -16,14 +16,29 @@ export const menuCaptionRenderer = {
 		for (const def of MENU_CAPTION_DEFINITIONS) {
 			const customVal = captions[def.resource] || captions[def.id];
 			const el =
-				(rootEl as unknown).getElementById?.(def.id) ||
-				(rootEl as unknown).querySelector?.(`#${def.id}`);
+				(rootEl as unknown as { getElementById?: (id: string) => Element | null }).getElementById?.(def.id) ||
+				rootEl.querySelector?.(`#${def.id}`);
 			if (!el) continue;
 
 			if (customVal && typeof customVal === "string" && customVal.trim()) {
-				const textSpan = el.querySelector?.("span:not(.shortcut-key)") || el;
+				const parts = customVal.trim().split("\t");
+				const textSpan =
+					el.querySelector?.("span:not(.shortcut-key)") || el;
 				if (textSpan) {
-					textSpan.textContent = customVal.trim();
+					textSpan.textContent = parts[0] || "";
+				}
+				if (parts[1]) {
+					let shortcutSpan = el.querySelector?.(
+						".shortcut-key",
+					) as HTMLElement | null;
+					if (!shortcutSpan && typeof el.appendChild === "function") {
+						shortcutSpan = document.createElement("span");
+						shortcutSpan.className = "shortcut-key";
+						el.appendChild(shortcutSpan);
+					}
+					if (shortcutSpan) {
+						shortcutSpan.textContent = parts[1];
+					}
 				}
 			}
 		}
@@ -32,14 +47,17 @@ export const menuCaptionRenderer = {
 	async fetchShioriCaptions(
 		ghostController: unknown,
 	): Promise<Record<string, string>> {
-		if (!ghostController?.requestShioriResource) return {};
+		if (
+			!(ghostController as { requestShioriResource?: (res: string, defaultVal: string) => Promise<string> })?.requestShioriResource
+		) {
+			return {};
+		}
 		const captions: Record<string, string> = {};
 		for (const def of MENU_CAPTION_DEFINITIONS) {
 			try {
-				const res = await ghostController.requestShioriResource(
-					def.resource,
-					"",
-				);
+				const res = await (
+					ghostController as { requestShioriResource: (res: string, defaultVal: string) => Promise<string> }
+				).requestShioriResource(def.resource, "");
 				if (res && res !== "1" && res !== "0") {
 					captions[def.resource] = res;
 				}

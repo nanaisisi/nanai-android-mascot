@@ -4,10 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nanai Android Mascot Context Menu</title>
+    <link rel="stylesheet" href="css/base.css"/>
     <link rel="stylesheet" href="css/context-menu.css" />
     <script type="module" src="ts/ui/context-menu.ts"></script>
   </head>
   <body>
+    <!-- h1エラー対応-->
+    <h1 class="visually-hidden">メニュー</h1>
     <div class="menu-sidebar" id="menu-sidebar" aria-hidden="true"></div>
     <div class="menu-container" role="menu" aria-label="標準メニュー">
       <!-- == -->
@@ -121,12 +124,12 @@
 
       <!-- 共通: 終了 (Scope 0 & Scope >= 1) -->
       <button type="button" class="menu-item" id="close-btn" role="menuitem">
-        <span>終了(W)Ctrl+W</span>
+        <span>終了(<u>W</u>)</span><span class="shortcut-key">Ctrl+W</span>
       </button>
 
       <!-- 共通: 全て終了 (Scope 0 & Scope >= 1) -->
       <button type="button" class="menu-item" id="close-all-btn" role="menuitem">
-        <span>全て終了(X)Ctrl+Q</span>
+        <span>全て終了(<u>X</u>)</span><span class="shortcut-key">Ctrl+Q</span>
       </button>
     </div>
   </body>

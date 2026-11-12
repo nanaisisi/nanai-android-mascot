@@ -3,9 +3,15 @@
  * @brief デスクトップ環境の機能管理と状態更新モジュール
  */
 
-import { getCurrentWindow } from "@tauri-apps/api/window";
-
-const currentWindow = getCurrentWindow();
+async function getTauriWindow() {
+	if (globalThis.__TAURI__ || globalThis.__TAURI_INTERNALS__) {
+		try {
+			const { getCurrentWindow } = await import("@tauri-apps/api/window");
+			return getCurrentWindow();
+		} catch (_err) {}
+	}
+	return null;
+}
 
 interface DesktopFeatureStates {
 	transparency: boolean;
@@ -54,7 +60,8 @@ export async function adjustOpacity(value?: string | number): Promise<void> {
 	if (!Number.isFinite(opacity) || opacity < 30 || opacity > 100) return;
 	console.log(`透過度を${opacity}%に設定`);
 	try {
-		await currentWindow.setOpacity(opacity / 100);
+		const win = await getTauriWindow();
+		await win?.setOpacity(opacity / 100);
 	} catch (error) {
 		console.error("ウィンドウ透過度の変更に失敗しました:", error);
 	}
@@ -66,7 +73,8 @@ export async function toggleAlwaysOnTop(): Promise<void> {
 	console.log(`常に最前面: ${featureStates.alwaysOnTop}`);
 	updateStatusDisplay();
 	try {
-		await currentWindow.setAlwaysOnTop(featureStates.alwaysOnTop);
+		const win = await getTauriWindow();
+		await win?.setAlwaysOnTop(featureStates.alwaysOnTop);
 	} catch (error) {
 		console.error("最前面表示の変更に失敗しました:", error);
 	}
@@ -79,14 +87,16 @@ export function configureTopmost(): void {
 }
 
 // ドラッグ移動
-export function enableDragMode(): void {
-	currentWindow.startDragging().catch((error) => {
+export async function enableDragMode(): Promise<void> {
+	const win = await getTauriWindow();
+	win?.startDragging().catch((error) => {
 		console.error("ウィンドウのドラッグ開始に失敗しました:", error);
 	});
 }
 
-export function resetPosition(): void {
-	currentWindow.center().catch((error) => {
+export async function resetPosition(): Promise<void> {
+	const win = await getTauriWindow();
+	win?.center().catch((error) => {
 		console.error("ウィンドウ位置のリセットに失敗しました:", error);
 	});
 }
@@ -178,7 +188,7 @@ export function configureMultiMonitor(): void {
 export function setPerformanceMode(): void {
 	const perfElem = document.getElementById(
 		"performance-mode",
-	) as HTMLSelectElement | null;
+	) as HTMLInputElement | null;
 	const mode = perfElem?.value ?? "";
 	console.log(`パフォーマンスモード: ${mode}`);
 	const statusElem = document.getElementById("performance-status");
@@ -232,8 +242,14 @@ g.setPerformanceMode = setPerformanceMode;
 g.updateInterval = updateInterval;
 g.updateMemoryLimit = updateMemoryLimit;
 
-// 初期化
-document.addEventListener("DOMContentLoaded", () => {
+// 初期化（DOMContentLoaded 状態に応じた分岐処理）
+function init(): void {
 	console.log("デスクトップ機能管理画面を初期化しました");
 	updateStatusDisplay();
-});
+}
+
+if (document.readyState === "loading") {
+	document.addEventListener("DOMContentLoaded", init);
+} else {
+	init();
+}

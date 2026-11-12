@@ -50,7 +50,20 @@ export default defineConfig({
 				submenu: resolve(import.meta.dirname, "ui/submenu-iframe.html"),
 				character: resolve(import.meta.dirname, "ui/character.html"),
 				balloon: resolve(import.meta.dirname, "ui/balloon.html"),
+				loadingBanner: resolve(import.meta.dirname, "ui/loading-banner.html"),
 				testMenu: resolve(import.meta.dirname, "ui/test-menu.html"),
+				desktopFeatures: resolve(
+					import.meta.dirname,
+					"ui/windows/desktop-features.html",
+				),
+				multiWindow: resolve(
+					import.meta.dirname,
+					"ui/windows/multi-window.html",
+				),
+				splashscreen: resolve(
+					import.meta.dirname,
+					"ui/windows/splashscreen.html",
+				),
 			},
 		},
 	},

@@ -26,6 +26,9 @@ body {
 .balloon {
 	background-color: var(--balloon-bg, transparent);
 	background-image: var(--balloon-pattern, none);
+	background-repeat: var(--balloon-bg-repeat, no-repeat);
+	background-size: var(--balloon-bg-size, 100% 100%);
+	background-position: var(--balloon-bg-position, center);
 	border-radius: var(--balloon-border-radius, 0);
 	border-style: solid;
 	border-color: transparent;
@@ -35,7 +38,7 @@ body {
 	border-image-width: var(--balloon-border-image-width, 16px);
 	border-image-repeat: var(--balloon-border-image-repeat, repeat);
 	box-shadow: var(--balloon-box-shadow, none);
-	padding: var(--balloon-padding, 4px 6px);
+	padding: var(--balloon-padding, 12px 16px 16px 16px);
 	box-sizing: border-box;
 	width: var(--balloon-width, 280px);
 	min-width: var(--balloon-min-width, 150px);

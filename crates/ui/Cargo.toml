@@ -10,8 +10,8 @@ path = "src/lib.rs"
 
 [dependencies]
 serde = { workspace = true }
-rust-i18n = "4.2.4"
-sys-locale = "0.3.2"
+rust-i18n = { workspace = true }
+sys-locale = { workspace = true }
 encoding_rs = { workspace = true }
 wasmi = { workspace = true }
 nanai-core = { workspace = true }

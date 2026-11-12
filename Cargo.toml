@@ -5,24 +5,53 @@ members = [
     "crates/nanai-core",
     "crates/nanai-surface",
     "crates/nanai-shiori-vm",
-    "crates/nanai-vfs"
+    "crates/nanai-vfs",
 ]
 resolver = "2"
 
 [workspace.dependencies]
 # Tauri & Plugins
-tauri = { version = "2.12.5" }
-tauri-build = { version = "2" }
-tauri-plugin-opener = "2.7.2"
+tauri = "2.12.5"
+tauri-build = "2.7.4"
+tauri-plugin-opener = "2.7.3"
 tauri-plugin-dialog = "2.8.4"
+tauri-specta = "=2.0.0-rc.25"
+specta-typescript = "=0.0.12"
+specta = "=2.0.0-rc.25"
 
-# External Common
+# External Common & Serialization
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.154"
+toml = "1.2.1"
 encoding_rs = "0.8.44"
-wasmi = "2.0.0"
+base64 = "0.23.1"
+urlencoding = "2.1.3"
+md-5 = "0.11.0"
 
-# Internal Crates
+# Runtime, Async & System
+tokio = { version = "1.54.1", features = ["full"] }
+reqwest = { version = "0.13.5", features = ["blocking", "json"] }
+wasmi = "2.0.0"
+chrono = "0.4.45"
+parking_lot = "0.13.0"
+thiserror = "2.0.21"
+anyhow = "1.0.104"
+libc = "0.2.191"
+walkdir = "2.5.0"
+zip = { version = "9.5.1", default-features = false, features = ["deflate"] }
+image = "0.25.10"
+cc = "1.11.1"
+libloading = "0.9.0"
+rust-i18n = "4.2.4"
+sys-locale = "0.3.2"
+windows-sys = { version = "0.61.2", features = [
+    "Win32_UI_Shell",
+    "Win32_System_Com",
+    "Win32_UI_WindowsAndMessaging",
+    "Win32_Foundation",
+] }
+
+# Internal Workspace Crates
 nanai-core = { path = "crates/nanai-core" }
 nanai-surface = { path = "crates/nanai-surface" }
 nanai-shiori-vm = { path = "crates/nanai-shiori-vm" }

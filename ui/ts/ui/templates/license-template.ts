@@ -19,7 +19,7 @@ export const licenseModalContent = `
             <strong>UKADOC project / Ukagaka Tech Team (ukatech)</strong>:
             <a href="https://github.com/ukatech/ukadoc-spec" target="_blank" rel="noopener noreferrer">ukadoc-spec</a> /
             <a href="https://github.com/ukatech/ukadoc-ssp" target="_blank" rel="noopener noreferrer">ukadoc-ssp</a><br>
-            <small>ライセンス: CC BY 4.0 | 著作権: © 2013- Ukagaka Tech Team / UKADOC Project contributors</small>
+            <small>ライセンス: CC BY 4.0 | 著作権: &copy; 2013- Ukagaka Tech Team / UKADOC Project contributors</small>
           </li>
           <li>
             <strong>YAYA 公式マニュアル</strong>:
@@ -40,13 +40,9 @@ export const licenseModalContent = `
       </section>
 
       <section class="license-block">
-        <h3>3. バンドル・内包ライブラリおよびリソース</h3>
-        <p>本ソフトウェアに内包、または依存する主要なサードパーティ製ライブラリ等のライセンスは以下の通りです。</p>
-        <ul>
-          <li><strong>Tauri</strong>: MIT License or Apache-2.0</li>
-          <li><strong>DOMPurify</strong>: Apache-2.0 or MPL-2.0</li>
-          <li><strong>encoding-rs</strong>: Apache-2.0 or MIT License</li>
-        </ul>
+        <h3>3. バンドル・内包ライブラリおよびサードパーティライセンス</h3>
+        <p>本ソフトウェアに内包・依存する全オープンソースライブラリのライセンス詳細:</p>
+        <p><a href="assets/LICENSE-3RD-PARTY.html" target="_blank" rel="noopener noreferrer">📄 全サードパーティライセンス詳細一覧 (Full Third Party Licenses) を表示</a></p>
       </section>
     </div>
   `;

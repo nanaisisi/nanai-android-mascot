@@ -1,6 +1,6 @@
 /**
  * @file verify-implementation.ts
- * @brief 実装確認スクリプト - Rustビルド、全Vitest単体テスト、UKADOC仕様準拠状況を一括検証
+ * @brief 実装確認スクリプト - Rustビルド、全Vitest単体テスト、UKADOC仕様準拠状況、サードパーティライセンスの自動更新を一括検証
  */
 
 import { execSync } from "node:child_process";
@@ -59,7 +59,21 @@ for (const relPath of checkFiles) {
 	}
 }
 
-console.log("\n==================================================");
+// 4. サードパーティライセンス情報の自動更新・検証
+console.log("\n4️⃣ [Licenses] サードパーティライセンス情報の更新...");
+try {
+	execSync("cargo about generate about.hbs -o THIRD-PARTY-NOTICES.md", { stdio: "inherit", cwd: projectRoot });
+	const uiAssetsDir = path.join(projectRoot, "ui/assets");
+	if (!fs.existsSync(uiAssetsDir)) {
+		fs.mkdirSync(uiAssetsDir, { recursive: true });
+	}
+	execSync("cargo about generate about.hbs -o ui/assets/LICENSE-3RD-PARTY.html", { stdio: "inherit", cwd: projectRoot });
+	console.log("✅ Licenses: サードパーティライセンス通知ファイルの自動更新に成功!\n");
+} catch (_err) {
+	console.warn("⚠️ Cargo About: ライセンスファイルの更新をスキップしました (cargo-about 未インストール等)。\n");
+}
+
+console.log("==================================================");
 if (hasError) {
 	console.error("❌ 実装確認: いくつかの検証項目で失敗が発生しました。");
 	process.exit(1);

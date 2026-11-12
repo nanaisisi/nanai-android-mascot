@@ -2,6 +2,15 @@ import { emit, invoke, isTauriAvailable, listen } from "../tauri-helper.js";
 
 export const setupMethods = {
 	async setupEventListeners() {
+		if (
+			(this as unknown as { _eventListenersSet?: boolean })._eventListenersSet
+		) {
+			return;
+		}
+		(
+			this as unknown as { _eventListenersSet?: boolean }
+		)._eventListenersSet = true;
+
 		(
 			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).setupGhostInteractions();

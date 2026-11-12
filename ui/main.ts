@@ -65,17 +65,12 @@ export class NanaiAndroidMascotApp {
 			urlParams.get("ghost_name") ||
 			(search ? AppConfig.paths.fallbackGhostName : null);
 
-		(this as unknown as { setupEvents?: () => void }).setupEvents?.();
-		(
-			this as unknown as { setupExternalMenuListeners?: () => void }
-		).setupExternalMenuListeners?.();
-
 		if (document.readyState === "loading") {
 			document.addEventListener("DOMContentLoaded", () => {
-				void (this as unknown as { boot?: () => void }).boot?.();
+				void this.boot();
 			});
 		} else {
-			void (this as unknown as { boot?: () => void }).boot?.();
+			void this.boot();
 		}
 	}
 
@@ -116,11 +111,37 @@ export class NanaiAndroidMascotApp {
 	}
 
 	async boot() {
+		if (this._isBooted) return;
+		this._isBooted = true;
 		this.isInitialized = true;
+		this.initUIEnvironment();
+
+		if (
+			typeof (
+				this as unknown as { setupEventListeners?: () => Promise<void> }
+			).setupEventListeners === "function"
+		) {
+			try {
+				await (
+					this as unknown as { setupEventListeners: () => Promise<void> }
+				).setupEventListeners();
+			} catch (err) {
+				console.error("イベントリスナーセットアップ失敗:", err);
+			}
+		}
+
 		if (isTauriAvailable()) {
 			try {
 				await invoke("load_settings");
 			} catch (_e) {}
+		}
+
+		if (this.settings?.autoLoadGhost !== false && this.ghostController) {
+			try {
+				await this.ghostController.autoLoadGhost();
+			} catch (err) {
+				console.error("自動ゴースト読み込み失敗:", err);
+			}
 		}
 	}
 
@@ -161,6 +182,9 @@ export class NanaiAndroidMascotApp {
 			this.ghostController?.stopSecondChangeTimer?.();
 			if (isTauriAvailable()) {
 				try {
+					await invoke("hide_menu_window");
+				} catch (_e) {}
+				try {
 					await invoke("unload_current_ghost");
 				} catch (_e) {}
 				try {
@@ -179,18 +203,23 @@ export class NanaiAndroidMascotApp {
 			globalThis.window.close();
 		};
 
+		// 確実なシャットダウンのための安全バックアップタイマー
+		const forceExitTimer = setTimeout(exit, 2000);
+
 		try {
 			(this as unknown as { hideMenu?: () => void }).hideMenu?.();
 			this.modalManager?.hide?.();
 			try {
 				await Promise.race([
 					this.ghostController?.sendShioriEvent?.("OnClose"),
-					new Promise((resolve) => setTimeout(resolve, 1500)),
+					new Promise((resolve) => setTimeout(resolve, 1000)),
 				]);
 			} catch (_e) {}
-			const exitDelay = this.sakuraPlayer?.isPlaying ? 1500 : 400;
+			clearTimeout(forceExitTimer);
+			const exitDelay = this.sakuraPlayer?.isPlaying ? 1000 : 200;
 			setTimeout(exit, exitDelay);
 		} catch (_err) {
+			clearTimeout(forceExitTimer);
 			exit();
 		}
 	}

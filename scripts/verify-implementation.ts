@@ -1,5 +1,5 @@
 /**
- * @file verify-implementation.js
+ * @file verify-implementation.ts
  * @brief 実装確認スクリプト - Rustビルド、全Vitest単体テスト、UKADOC仕様準拠状況を一括検証
  */
 
@@ -37,7 +37,7 @@ try {
 
 // 3. 主要UKADOC実装ファイルの存在および設定チェック
 console.log("3️⃣ [UKADOC / Modules] 主要モジュール実装確認...");
-const checkFiles = [
+const checkFiles: string[] = [
 	"src-tauri/src/commands/shell/balloon.rs",
 	"src-tauri/src/commands/window/character_window.rs",
 	"src-tauri/src/shiori/dynamic/host.rs",

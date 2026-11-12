@@ -33,7 +33,7 @@ export default defineConfig({
 		coverage: {
 			provider: "v8",
 			reporter: ["text", "json", "html"],
-			include: ["ui/ts/**/*.ts", "ui/js/**/*.js", "ui/windows/*.js"],
+			include: ["ui/ts/**/*.ts", "ui/js/**/*.js", "ui/windows/*.ts"],
 		},
 	},
 });

@@ -7,7 +7,7 @@
 		"typecheck": "tsc --noEmit -p tsconfig.json",
 		"test": "vitest run",
 		"test:ui": "vitest",
-		"verify": "node scripts/verify-implementation.js",
+		"verify": "node --experimental-strip-types scripts/verify-implementation.ts",
 		"tauri": "tauri"
 	},
 	"devDependencies": {

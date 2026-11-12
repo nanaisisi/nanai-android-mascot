@@ -8,4 +8,4 @@ license = "MIT OR Apache-2.0"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-wasmi = "2.0.0"
+wasmi = { workspace = true }

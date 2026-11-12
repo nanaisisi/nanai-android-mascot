@@ -9,18 +9,18 @@ name = "nanai_android_mascot_ui"
 path = "src/lib.rs"
 
 [dependencies]
-serde = { version = "1.0.229", features = ["derive"] }
+serde = { workspace = true }
 rust-i18n = "4.2.4"
 sys-locale = "0.3.2"
-encoding_rs = "0.8.44"
-wasmi = "2.0.0"
-nanai-core = { path = "../nanai-core" }
-nanai-surface = { path = "../nanai-surface" }
-nanai-shiori-vm = { path = "../nanai-shiori-vm" }
-nanai-vfs = { path = "../nanai-vfs" }
+encoding_rs = { workspace = true }
+wasmi = { workspace = true }
+nanai-core = { workspace = true }
+nanai-surface = { workspace = true }
+nanai-shiori-vm = { workspace = true }
+nanai-vfs = { workspace = true }
 
 [dev-dependencies]
-serde_json = "1.0.154"
+serde_json = { workspace = true }
 
 
 [[bin]]

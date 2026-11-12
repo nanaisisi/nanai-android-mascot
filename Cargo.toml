@@ -9,6 +9,26 @@ members = [
 ]
 resolver = "2"
 
+[workspace.dependencies]
+# Tauri & Plugins
+tauri = { version = "2.12.5" }
+tauri-build = { version = "2" }
+tauri-plugin-opener = "2.7.2"
+tauri-plugin-dialog = "2.8.4"
+
+# External Common
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+encoding_rs = "0.8.44"
+wasmi = "2.0.0"
+
+# Internal Crates
+nanai-core = { path = "crates/nanai-core" }
+nanai-surface = { path = "crates/nanai-surface" }
+nanai-shiori-vm = { path = "crates/nanai-shiori-vm" }
+nanai-vfs = { path = "crates/nanai-vfs" }
+nanai-android-mascot-ui = { path = "crates/ui" }
+
 [profile.dev]
 # デバッグ情報が正しく生成されるようにする
 debug = true

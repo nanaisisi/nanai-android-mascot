@@ -16,16 +16,16 @@ name = "nanai_android_mascot_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
-tauri-build = { version = "2", features = [] }
+tauri-build = { workspace = true, features = [] }
 cc = "1.11.1"
 
 [dependencies]
-tauri = { version = "2.12.5", features = ["tray-icon", "devtools", "specta"] }
-tauri-plugin-opener = "2.7.2"
-serde = { version = "1.0.229", features = ["derive"] }
-serde_json = "1.0.154"
-encoding_rs = { version = "0.8.44", features = ["simd-accel", "std"] }
-nanai_android_mascot_ui = { package = "nanai-android-mascot-ui", path = "../crates/ui" }
+tauri = { workspace = true, features = ["tray-icon", "devtools", "specta"] }
+tauri-plugin-opener = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+encoding_rs = { workspace = true, features = ["simd-accel", "std"] }
+nanai-android-mascot-ui = { workspace = true }
 # SHIORI連携用 - C++統合
 libc = "0.2.191"
 walkdir = "2.5.0"
@@ -41,8 +41,8 @@ tokio = { version = "1.54.1", features = ["full"] }
 parking_lot = "0.13.0"
 thiserror = "2.0.21"
 anyhow = "1.0.104"
-tauri-plugin-dialog = "2.8.4"
-wasmi = "2.0.0"
+tauri-plugin-dialog = { workspace = true }
+wasmi = { workspace = true }
 image = "0.25.10"
 
 [target.'cfg(not(target_os = "android"))'.dependencies]

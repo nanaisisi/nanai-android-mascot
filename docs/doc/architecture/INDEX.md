@@ -21,8 +21,10 @@
   - Bevy-ECS にインスパイアされたデータ指向エンジン（Arekaモデル）。
 - **[rust-boundary-responsibilities.md](./rust-boundary-responsibilities.md)**：各論4
   - Web側 (TS) ⇔ WASM (Rust) ⇔ アプリ側 (Native Rust) の3層境界と明確な役割分担。
-- **[rust-wasm-tradeoffs.md](./rust-wasm-tradeoffs.md)**：各論5
+- **[rust-wasm-tradeoffs.md](./rust-wasm-tradeoffs.md)**：各論5/6
   - WASM 採用における課題・制約（`shrink` 不在）と Native Rust オフロード比較。
+- **[rust-paradigms-design.md](./rust-paradigms-design.md)**：各論7
+  - 関数型 (FP) とオブジェクト指向 (OOP) の活用と関与設計（層ごとのパラダイム適正）。
 
 ---
 

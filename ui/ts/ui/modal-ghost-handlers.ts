@@ -53,7 +53,8 @@ export class ModalGhostHandlers {
 						"pick_and_install_ghost_archive",
 					);
 					if (result) {
-						if (statusEl) statusEl.textContent = `導入成功: ${result.name ?? ""}`;
+						if (statusEl)
+							statusEl.textContent = `導入成功: ${result.name ?? ""}`;
 						await this.app?.ghostController?.scanGhosts?.();
 						this.renderGhostList();
 					} else {

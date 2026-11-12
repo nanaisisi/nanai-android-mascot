@@ -85,7 +85,7 @@ pub async fn show_menu_window(
             "menu_window",
             tauri::WebviewUrl::App(format!("menu-iframe.html?scope={}", menu_scope).into()),
         )
-        .title("Nanai Menu")
+        .title("Nanai Android Mascot Context Menu")
         .inner_size(win_width, win_height)
         .transparent(true)
         .decorations(false)
@@ -179,7 +179,7 @@ pub async fn show_submenu_window(
                 "submenu_window",
                 tauri::WebviewUrl::App("submenu-iframe.html".into()),
             )
-            .title("Nanai Submenu")
+            .title("Nanai Android Mascot Submenu")
             .inner_size(win_width, win_height)
             .transparent(true)
             .decorations(false)

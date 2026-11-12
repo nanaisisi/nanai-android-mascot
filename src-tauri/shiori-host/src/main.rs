@@ -1,3 +1,5 @@
+#![windows_subsystem = "windows"]
+
 //! 32bit SHIORI ホスト
 //!
 //! 使い方: shiori-host32.exe <dll_path>

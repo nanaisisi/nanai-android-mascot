@@ -65,12 +65,19 @@ impl HostProc {
         let exe = Self::find_exe().ok_or(
             "shiori-host32.exe が見つかりません。`cargo build --release --target i686-pc-windows-msvc --manifest-path src-tauri/shiori-host/Cargo.toml` を実行してください",
         )?;
-        let mut child = Command::new(exe)
-            .arg(dll_path)
+        let mut cmd = Command::new(exe);
+        cmd.arg(dll_path)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
-            .stderr(Stdio::inherit())
-            .spawn()
+            .stderr(Stdio::null());
+
+        #[cfg(windows)]
+        {
+            use std::os::windows::process::CommandExt;
+            cmd.creation_flags(0x08000000); // CREATE_NO_WINDOW
+        }
+
+        let mut child = cmd.spawn()
             .map_err(|e| format!("host spawn failed: {e}"))?;
         let stdin = child.stdin.take().ok_or("no stdin")?;
         let stdout = child.stdout.take().ok_or("no stdout")?;

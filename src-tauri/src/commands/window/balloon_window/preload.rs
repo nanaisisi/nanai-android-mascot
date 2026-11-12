@@ -43,7 +43,7 @@ pub async fn preload_auxiliary_windows(app_handle: tauri::AppHandle) -> Result<(
                 "menu_window",
                 tauri::WebviewUrl::App("menu-iframe.html?scope=0".into()),
             )
-            .title("Nanai Menu")
+            .title("Nanai Android Mascot Context Menu")
             .inner_size(260.0, 720.0)
             .transparent(true)
             .decorations(false)
@@ -62,7 +62,7 @@ pub async fn preload_auxiliary_windows(app_handle: tauri::AppHandle) -> Result<(
                 "submenu_window",
                 tauri::WebviewUrl::App("submenu-iframe.html".into()),
             )
-            .title("Nanai Submenu")
+            .title("Nanai Android Mascot Submenu")
             .inner_size(220.0, 320.0)
             .transparent(true)
             .decorations(false)

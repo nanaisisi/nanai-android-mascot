@@ -63,7 +63,7 @@ pub async fn show_loading_banner_window(
                 "loading_banner_window",
                 tauri::WebviewUrl::App(url.into()),
             )
-            .title("Loading Banner")
+            .title("Nanai Android Mascot Loading Banner")
             .inner_size(win_width, win_height)
             .transparent(true)
             .decorations(false)

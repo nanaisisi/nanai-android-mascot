@@ -1,6 +1,7 @@
 # 各論1：API活用と拡張性・改変性の統合設計 (API Integration & Modifiability)
 
 ## 1. API 設計と改変性（Extensibility）の一体性
+
 Web標準 API (`web-sys` / `js-sys`) および Tauri IPC 境界における API 設計は、システムの**改変性 (Modifiability)** や **プラグイン拡張性** に直結しています。API を適切に抽象化し境界を整理することが、そのまま保守性とカスタマイズ性の向上につながります。
 
 ---
@@ -8,6 +9,7 @@ Web標準 API (`web-sys` / `js-sys`) および Tauri IPC 境界における API 
 ## 2. Web標準 API と IPC の統合活用
 
 ### ① Web標準 API との直接結合
+
 - **`web-sys` / `js-sys` の型安全な活用**:
   - Rust (WASM) から直接、ブラウザや Tauri WebView が提供する Canvas 2D 描画コンテキスト、`requestAnimationFrame`、`AudioContext`、`fetch`、DOM操作などを型安全かつ直接呼び出し可能。
 - **シームレスな IPC ブリッジ**:
@@ -18,11 +20,13 @@ Web標準 API (`web-sys` / `js-sys`) および Tauri IPC 境界における API 
 ## 3. 改変性・拡張性を高めるアーキテクチャ設計
 
 ### ① ドメインロジックのクレート化（モジュール分離）
+
 - **高カプセル化とテスト容易性**:
   - さくらスクリプトパーサー、SERIKO アニメーション評価、ピクセルバッファ合成などのコアロジックを Rust の独立クレート（`nanai-core` 等）として分離。
   - Web/WASM バインディングから独立した純粋なドメインモデルとすることで、`cargo test` による単体テストや将来のロジック改変が極めて安全に行えます。
 
 ### ② プラグイン / SHIORI 拡張アーキテクチャ
+
 - **安全なサンドボックス拡張**:
   - 将来的な外部シェルやカスタム SHIORI ロジックの導入において、WASM バイナリとして安全に動的ロード・実行できる拡張ポイントを形成。
 - **Rust エコシステムの活用**:

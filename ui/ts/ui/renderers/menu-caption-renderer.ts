@@ -16,14 +16,16 @@ export const menuCaptionRenderer = {
 		for (const def of MENU_CAPTION_DEFINITIONS) {
 			const customVal = captions[def.resource] || captions[def.id];
 			const el =
-				(rootEl as unknown as { getElementById?: (id: string) => Element | null }).getElementById?.(def.id) ||
-				rootEl.querySelector?.(`#${def.id}`);
+				(
+					rootEl as unknown as {
+						getElementById?: (id: string) => Element | null;
+					}
+				).getElementById?.(def.id) || rootEl.querySelector?.(`#${def.id}`);
 			if (!el) continue;
 
 			if (customVal && typeof customVal === "string" && customVal.trim()) {
 				const parts = customVal.trim().split("\t");
-				const textSpan =
-					el.querySelector?.("span:not(.shortcut-key)") || el;
+				const textSpan = el.querySelector?.("span:not(.shortcut-key)") || el;
 				if (textSpan) {
 					textSpan.textContent = parts[0] || "";
 				}
@@ -48,7 +50,14 @@ export const menuCaptionRenderer = {
 		ghostController: unknown,
 	): Promise<Record<string, string>> {
 		if (
-			!(ghostController as { requestShioriResource?: (res: string, defaultVal: string) => Promise<string> })?.requestShioriResource
+			!(
+				ghostController as {
+					requestShioriResource?: (
+						res: string,
+						defaultVal: string,
+					) => Promise<string>;
+				}
+			)?.requestShioriResource
 		) {
 			return {};
 		}
@@ -56,7 +65,12 @@ export const menuCaptionRenderer = {
 		for (const def of MENU_CAPTION_DEFINITIONS) {
 			try {
 				const res = await (
-					ghostController as { requestShioriResource: (res: string, defaultVal: string) => Promise<string> }
+					ghostController as {
+						requestShioriResource: (
+							res: string,
+							defaultVal: string,
+						) => Promise<string>;
+					}
 				).requestShioriResource(def.resource, "");
 				if (res && res !== "1" && res !== "0") {
 					captions[def.resource] = res;

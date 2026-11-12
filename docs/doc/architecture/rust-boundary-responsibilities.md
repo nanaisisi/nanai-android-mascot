@@ -29,6 +29,7 @@ graph TD
 Web フロントエンド（WebView）内での TypeScript と WASM (Rust) の関係性です。
 
 ### 2.1 役割分担
+
 - **TypeScript (JS)**:
   - **純粋なビューおよびイベント配給層 (View & Event Dispatcher)**:
     - DOM 要素の動的生成、CSS クラスやスタイルの適用、レイアウト管理。
@@ -40,6 +41,7 @@ Web フロントエンド（WebView）内での TypeScript と WASM (Rust) の�
     - サーフィスフレームバッファ（`SurfaceFrameBuffer`）に対する 32bit ピクセル操作・ブレンディング演算。
 
 ### 2.2 データ共有と通信方式
+
 - **ゼロコピー共有メモリ (Zero-Copy Shared Memory)**:
   - 大容量の画像ピクセルデータ（RGBA）などは、コピーを行わずに `WebAssembly.Memory` を通じて TS 側の `Uint32Array` / `Uint8ClampedArray` からポインタ参照でダイレクトに操作・レンダリング。
 - **バインディング技術 (`wasm-bindgen` / `web-sys`)**:
@@ -53,6 +55,7 @@ Web フロントエンド（WebView）内での TypeScript と WASM (Rust) の�
 WebAssembly 空間内で動作する Rust と、OS 上のネイティブプロセスとして動作する Tauri / Host Rust の関係性です。
 
 ### 3.1 役割分担
+
 - **Host App (Native Rust)**:
   - **OS / 特権・プラットフォーム供給層 (Platform & System Host)**:
     - マルチウィンドウの生成・配置・透過制御（Tauri/tao/wry）。
@@ -64,6 +67,7 @@ WebAssembly 空間内で動作する Rust と、OS 上のネイティブプロ�
     - Host から提供されたアセットバイナリや SHIORI レスポンス文字列を受け取り、ゴーストの状態機械や演出ロジックを非同期に駆動。
 
 ### 3.2 通信・型共有メカニズム
+
 - **型とデータモデルの 100% 共有 (`nanai-core` 共通クレート)**:
   - SHIORI リクエスト/レスポンス構造体、Surface 属性、アニメーション定義などの型を `nanai-core` などの共通クレートを通じて Rust 同士で完全に一元定義。
 - **非同期 IPC ブリッジ (Tauri IPC / Specta)**:

@@ -7,6 +7,7 @@
 ## 1. WASM 採用時の主な課題・リスク
 
 ### 1.1 メモリ解放（デアロケーション）の厄介さ
+
 - **`memory.shrink` の不在**:
   - WASM のリニアメモリ（`WebAssembly.Memory`）は拡張（`grow`）できますが、**縮小（`shrink`）できません**。
   - Rust 側で `drop()` を呼んでも、それは WASM ヒープ内（`dlmalloc` 等）で再利用可能になるだけであり、ブラウザ/OSに確保された `ArrayBuffer` は**ピーク時のサイズのまま占有**されます。
@@ -16,6 +17,7 @@
   - WASM 内でメモリが拡張されると、JS 側で参照していた既存の `ArrayBuffer` が即座に無効化（Detached）されるため、毎回ビューを再生成する慎重な実装が必要です。
 
 ### 1.2 ブラウザ / WebView 環境依存の多さ
+
 - **シングルスレッド制約と WebWorker ハンドリング**:
   - ブラウザ/WebView 標準の WASM は基本的にメインスレッド（シングルスレッド）で動作します。マルチスレッド化（`SharedArrayBuffer` / `Atomics`）を導入するには、COOP/COEP ヘッダー設定やブラウザ互換性のハードルが高くなります。
 - **`web-sys` バインディングのオーバーヘッド**:
@@ -27,13 +29,13 @@
 
 もし WASM のメモリ管理やブラウザ依存が過度なボトルネックとなる場合、**重いロジックを Native Rust (Tauri ホスト側) に直接寄せる** という設計判断も非常に有効です。
 
-| 評価項目 | パターンA: WASM ハイブリッド (WebView内) | パターンB: Native Rust 直接実行 (Tauri Host側) |
-| :--- | :--- | :--- |
-| **メモリ解放** | 縮小不可。WebWorker 解体 (`terminate`) が必要 | **標準の Rust `drop()` で OS に即時返却可能** |
-| **スレッド・並列処理** | WebWorker や SharedArrayBuffer の制約あり | **`tokio` / `rayon` / マルチスレッドが制限なしで使用可能** |
-| **ブラウザ依存度** | 高い (`web-sys`, `wasm-bindgen`) | **低い (Tauri IPC 境界のみ)** |
-| **Web互換性 (ブラウザ単体動態)** | 完全な Web アプリとして単体動作可能 | Desktop / Android アプリ専用（要Tauri環境） |
-| **描画・バッファ転送** | `WebAssembly.Memory` の `Uint32Array` 直読み | Tauri IPC / カスタムプロトコル / Native Canvas 転送 |
+| 評価項目                         | パターンA: WASM ハイブリッド (WebView内)      | パターンB: Native Rust 直接実行 (Tauri Host側)             |
+| :------------------------------- | :-------------------------------------------- | :--------------------------------------------------------- |
+| **メモリ解放**                   | 縮小不可。WebWorker 解体 (`terminate`) が必要 | **標準の Rust `drop()` で OS に即時返却可能**              |
+| **スレッド・並列処理**           | WebWorker や SharedArrayBuffer の制約あり     | **`tokio` / `rayon` / マルチスレッドが制限なしで使用可能** |
+| **ブラウザ依存度**               | 高い (`web-sys`, `wasm-bindgen`)              | **低い (Tauri IPC 境界のみ)**                              |
+| **Web互換性 (ブラウザ単体動態)** | 完全な Web アプリとして単体動作可能           | Desktop / Android アプリ専用（要Tauri環境）                |
+| **描画・バッファ転送**           | `WebAssembly.Memory` の `Uint32Array` 直読み  | Tauri IPC / カスタムプロトコル / Native Canvas 転送        |
 
 ---
 

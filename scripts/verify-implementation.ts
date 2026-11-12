@@ -62,15 +62,25 @@ for (const relPath of checkFiles) {
 // 4. サードパーティライセンス情報の自動更新・検証
 console.log("\n4️⃣ [Licenses] サードパーティライセンス情報の更新...");
 try {
-	execSync("cargo about generate about.hbs -o THIRD-PARTY-NOTICES.md", { stdio: "inherit", cwd: projectRoot });
+	execSync("cargo about generate about.hbs -o THIRD-PARTY-NOTICES.md", {
+		stdio: "inherit",
+		cwd: projectRoot,
+	});
 	const uiAssetsDir = path.join(projectRoot, "ui/assets");
 	if (!fs.existsSync(uiAssetsDir)) {
 		fs.mkdirSync(uiAssetsDir, { recursive: true });
 	}
-	execSync("cargo about generate about.hbs -o ui/assets/LICENSE-3RD-PARTY.html", { stdio: "inherit", cwd: projectRoot });
-	console.log("✅ Licenses: サードパーティライセンス通知ファイルの自動更新に成功!\n");
+	execSync(
+		"cargo about generate about.hbs -o ui/assets/LICENSE-3RD-PARTY.html",
+		{ stdio: "inherit", cwd: projectRoot },
+	);
+	console.log(
+		"✅ Licenses: サードパーティライセンス通知ファイルの自動更新に成功!\n",
+	);
 } catch (_err) {
-	console.warn("⚠️ Cargo About: ライセンスファイルの更新をスキップしました (cargo-about 未インストール等)。\n");
+	console.warn(
+		"⚠️ Cargo About: ライセンスファイルの更新をスキップしました (cargo-about 未インストール等)。\n",
+	);
 }
 
 console.log("==================================================");

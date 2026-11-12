@@ -6,17 +6,9 @@
 		"strict": true,
 		"skipLibCheck": true,
 		"noEmit": true,
-		"allowJs": true
+		"allowJs": true,
+		"types": ["node", "vitest/globals"]
 	},
-	"include": [
-		"ui/ts/main.ts",
-		"ui/ts/bindings.ts",
-		"ui/ts/global.d.ts",
-		"ui/ts/ghost/ghost.ts",
-		"ui/ts/ghost/ghost-shiori.ts",
-		"ui/ts/ghost/sakura-script.ts",
-		"ui/ts/ghost/sakura-play.ts",
-		"ui/ts/ghost/shiori-notify.ts"
-	],
+	"include": ["ui/**/*.ts", "tests/**/*.ts"],
 	"exclude": ["node_modules", "target", "src-tauri"]
 }

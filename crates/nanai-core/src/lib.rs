@@ -5,6 +5,7 @@ pub mod install_protocol;
 pub mod sakura_player;
 pub mod sakura_script;
 pub mod sstp_fmo;
+pub mod surface_collision;
 pub mod update_protocol;
 
 pub use balloon_layout::*;
@@ -12,6 +13,7 @@ pub use install_protocol::*;
 pub use sakura_player::*;
 pub use sakura_script::*;
 pub use sstp_fmo::*;
+pub use surface_collision::*;
 pub use update_protocol::*;
 
 /// WASM C-ABI: メモリ動的確保関数 (バッファ渡し用)

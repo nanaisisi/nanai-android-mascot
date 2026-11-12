@@ -62,6 +62,12 @@ interface NanaiCoreWasmExports {
 		lineHeight: number,
 		paddingX: number,
 	) => bigint;
+	wasm_find_hit_collision_name_json?: (
+		ptr: number,
+		len: number,
+		x: number,
+		y: number,
+	) => bigint;
 }
 
 class WasmBridgeManager {
@@ -194,6 +200,42 @@ class WasmBridgeManager {
 			return JSON.parse(jsonStr) as BalloonLayoutResult;
 		} catch (err) {
 			console.warn("⚠️ [WASM Bridge] computeBalloonTextLayout エラー:", err);
+			return null;
+		}
+	}
+
+	/**
+	 * サーフィス上の指定座標 (x, y) がヒットした衝突領域名 (Hit-test) を WASM で判定
+	 */
+	public findHitCollisionName(
+		collisions: unknown[],
+		x: number,
+		y: number,
+	): string | null {
+		if (!this.isReady() || !this.exports!.wasm_find_hit_collision_name_json)
+			return null;
+
+		try {
+			const jsonStr = JSON.stringify(collisions);
+			const { ptr, len } = this.encodeString(jsonStr);
+			const packed = this.exports!.wasm_find_hit_collision_name_json(
+				ptr,
+				len,
+				x,
+				y,
+			);
+			this.exports!.wasm_free(ptr, len);
+
+			if (packed === 0n) return null;
+
+			const namePtr = Number(packed >> 32n);
+			const nameLen = Number(packed & 0xffffffffn);
+			const hitName = this.decodeString(namePtr, nameLen);
+			this.exports!.wasm_free(namePtr, nameLen);
+
+			return hitName || null;
+		} catch (err) {
+			console.warn("⚠️ [WASM Bridge] findHitCollisionName エラー:", err);
 			return null;
 		}
 	}

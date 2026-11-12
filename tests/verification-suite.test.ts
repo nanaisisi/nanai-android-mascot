@@ -61,8 +61,8 @@ describe("全面実装確認スイート (Implementation Verification Suite)", (
 
 			applyValidRectProperties(mockRoot, props);
 
-			assert.equal(vars["--balloon-border-image-slice"], "16 16 16 16 fill");
-			assert.equal(vars["--balloon-border-image-width"], "16px 16px 16px 16px");
+			assert.equal(vars["--balloon-border-image-slice"], "40 10 15 10 fill");
+			assert.equal(vars["--balloon-border-image-width"], "40px 10px 15px 10px");
 			assert.equal(vars["--balloon-padding"], "40px 10px 15px 10px");
 		});
 	});
@@ -187,7 +187,7 @@ describe("全面実装確認スイート (Implementation Verification Suite)", (
 			);
 			assert.equal(
 				mockStyleMap.get("--balloon-border-image-slice"),
-				"16 16 16 16 fill",
+				"16 16 24 16 fill",
 			);
 			assert.equal(mockStyleMap.get("--balloon-origin-x"), "12px");
 			assert.equal(mockStyleMap.get("--balloon-origin-y"), "28px");

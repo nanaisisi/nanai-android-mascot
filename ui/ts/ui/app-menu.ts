@@ -163,6 +163,9 @@ export const menuMethods = {
 	},
 
 	hideMenu() {
+		if (isTauriAvailable()) {
+			void invoke("hide_menu_window").catch(() => {});
+		}
 		if (
 			(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
 				.elements.menuContainer

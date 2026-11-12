@@ -1,6 +1,7 @@
 import { convertFileSrc } from "../../core/tauri-helper.js";
 
 const imageCache = new Map<string, HTMLImageElement>();
+let lastValidShellTheme: unknown = null;
 
 /**
  * 画像アセットをメモリ・GPUへ事前デコード読み込み (初回メニュー表示時のチラつき・ロード不全防止)
@@ -49,6 +50,21 @@ export const menuThemeRenderer = {
 	 */
 	applyShellTheme(activeShell: unknown) {
 		const rootStyle = document.documentElement.style;
+		if (
+			activeShell &&
+			typeof activeShell === "object" &&
+			(activeShell as { menu_theme?: unknown }).menu_theme
+		) {
+			lastValidShellTheme = activeShell;
+		} else if (
+			(!activeShell ||
+				(typeof activeShell === "object" &&
+					!(activeShell as { menu_theme?: unknown }).menu_theme)) &&
+			lastValidShellTheme
+		) {
+			activeShell = lastValidShellTheme;
+		}
+
 		if (activeShell?.menu_theme) {
 			const mt = activeShell.menu_theme;
 			if (mt.background_color)
@@ -152,13 +168,6 @@ export const menuThemeRenderer = {
 			const fgUrl = resolveImg(mt.foreground_bitmap);
 			const sideUrl = resolveImg(mt.sidebar_bitmap);
 
-			// 初回表示の画像読み込み遅延・非表示防止用プリロード
-			void Promise.all([
-				preloadImage(bgUrl),
-				preloadImage(fgUrl),
-				preloadImage(sideUrl),
-			]);
-
 			if (bgUrl) {
 				rootStyle.setProperty("--menu-bg-image", `url("${bgUrl}")`);
 				applyAlignment(mt.background_alignment, "menu-bg");
@@ -192,6 +201,7 @@ export const menuThemeRenderer = {
 						`${cachedImg.naturalWidth}px`,
 					);
 				} else {
+					rootStyle.setProperty("--menu-sidebar-width", "28px");
 					void preloadImage(sideUrl).then(() => {
 						const loadedImg = imageCache.get(sideUrl);
 						if (loadedImg && loadedImg.naturalWidth > 0) {
@@ -208,6 +218,13 @@ export const menuThemeRenderer = {
 				rootStyle.removeProperty("--menu-sidebar-width");
 				document.body.classList.remove("has-sidebar");
 			}
+
+			// 並行して画像メモリデコードを促進
+			void Promise.all([
+				preloadImage(bgUrl),
+				preloadImage(fgUrl),
+				preloadImage(sideUrl),
+			]);
 		} else {
 			rootStyle.removeProperty("--balloon-bg");
 			rootStyle.removeProperty("--balloon-highlight-bg");

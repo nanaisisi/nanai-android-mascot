@@ -17,9 +17,9 @@ pub async fn show_menu_window(
     {
         use tauri::Manager;
         let menu_scope = scope.unwrap_or(0);
-        // メインメニュー (260x380) / サブキャラクターメニュー (260x180)
+        // メインメニュー (260x460) / サブキャラクターメニュー (260x220)
         let win_width = 260.0;
-        let win_height = if menu_scope > 0 { 180.0 } else { 380.0 };
+        let win_height = if menu_scope > 0 { 220.0 } else { 460.0 };
 
         let mut target_x = x;
         let mut target_y = y;
@@ -52,14 +52,27 @@ pub async fn show_menu_window(
             let screen_x = pos.x as f64 / scale;
             let screen_y = pos.y as f64 / scale;
 
+            // タスクバー・画面下端の安全領域 (底部余白60px) を考慮し、下端を超える場合は上方向へ裏返し展開
+            let safe_bottom = screen_y + screen_h - 60.0;
+            if target_y + win_height > safe_bottom {
+                target_y = (target_y - win_height).max(screen_y + 10.0);
+            }
+
             let max_x = screen_x + screen_w - win_width;
-            let max_y = screen_y + screen_h - win_height;
+            let max_y = (screen_y + screen_h - win_height - 40.0).max(screen_y);
 
             target_x = target_x.max(screen_x).min(max_x);
             target_y = target_y.max(screen_y).min(max_y);
         }
 
         if let Some(menu_win) = app_handle.get_webview_window("menu_window") {
+            if menu_win.is_visible().unwrap_or(false) {
+                let _ = menu_win.hide();
+                if let Some(sub_win) = app_handle.get_webview_window("submenu_window") {
+                    let _ = sub_win.hide();
+                }
+                return Ok(());
+            }
             let _ = menu_win.close();
         }
 

@@ -84,11 +84,8 @@ pub async fn show_character_window(
                 x: px as i32,
                 y: py as i32,
             }));
-        } else if is_new
-            || !is_visible
-            || (should_resize && win_width <= 150.0 && win_height <= 150.0)
-        {
-            // モニター情報を取得して画面右下 (デスクトップの床) に標準配置
+        } else if is_new || !is_visible {
+            // モニター情報を取得して初回のみ画面右下 (デスクトップの床) に標準配置
             let mut target_x = 200.0;
             let mut target_y = 200.0;
 

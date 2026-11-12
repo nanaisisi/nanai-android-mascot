@@ -152,8 +152,9 @@ export async function applySurfaceImageToDom(
 	}
 
 	if (isTauriAvailable()) {
-		emit(`update-subchar-image-${scopeId}`, { src: transparentSrc });
-		return transparentSrc;
+		try {
+			emit(`update-subchar-image-${scopeId}`, { src: transparentSrc });
+		} catch (_e) {}
 	}
 
 	if (img) {

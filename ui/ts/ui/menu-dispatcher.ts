@@ -40,25 +40,45 @@ export class MenuDispatcher {
 		}
 
 		if (globalThis.parent && (globalThis.parent as unknown) !== globalThis) {
-			globalThis.parent.postMessage(
-				{
-					type: "menu-action",
-					action: action,
-					payload: finalPayload,
-					timestamp: Date.now(),
-				},
-				"*",
-			);
+			try {
+				globalThis.parent.postMessage(
+					{
+						type: "menu-action",
+						action: action,
+						payload: finalPayload,
+						timestamp: Date.now(),
+					},
+					"*",
+				);
+			} catch (_e) {}
 		}
 
 		if (isTauriAvailable()) {
 			try {
 				await emit("menu-action", { action, payload: finalPayload });
-				if (action !== "request-sync") {
-					await invoke("hide_menu_window");
-				}
 			} catch (error) {
 				console.error("メニューアクションの送信に失敗しました:", error);
+			}
+
+			if (
+				action === "close" ||
+				action === "exit" ||
+				action === "close-all" ||
+				action === "exit-all"
+			) {
+				try {
+					await invoke("exit_app");
+				} catch (_e) {
+					try {
+						await invoke("close_ghost", { ghostId: "main" });
+					} catch (_err) {}
+				}
+			}
+
+			if (action !== "request-sync") {
+				try {
+					await invoke("hide_menu_window");
+				} catch (_e) {}
 			}
 		}
 	}

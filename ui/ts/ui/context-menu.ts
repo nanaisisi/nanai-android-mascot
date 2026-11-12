@@ -167,13 +167,20 @@ async function adjustMenuWindowSize() {
 	try {
 		const { getCurrentWindow } = await import("@tauri-apps/api/window");
 		const win = getCurrentWindow();
+		const container = document.querySelector(".menu-container");
+		const containerHeight = container
+			? container.getBoundingClientRect().height
+			: 0;
 		const bodyHeight =
-			document.body.scrollHeight || document.documentElement.scrollHeight;
+			containerHeight ||
+			document.body.scrollHeight ||
+			document.documentElement.scrollHeight;
 		if (bodyHeight > 50) {
+			const targetHeight = Math.min(600, Math.max(140, Math.ceil(bodyHeight + 4)));
 			await win.setSize({
 				type: "Logical",
 				width: 260,
-				height: Math.min(720, Math.max(150, bodyHeight + 12)),
+				height: targetHeight,
 				toJSON: (): { width: number; height: number } => {
 					throw new Error("Function not implemented.");
 				},

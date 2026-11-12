@@ -38,8 +38,7 @@ body {
 	color: var(--menu-text-color, #111111);
 	user-select: none;
 	-webkit-user-select: none;
-	overflow-y: auto;
-	max-height: 500px;
+	overflow: hidden;
 	padding: 0;
 	margin: 0;
 	display: flex;
@@ -47,6 +46,7 @@ body {
 	align-items: stretch;
 	gap: 0;
 	width: max-content;
+	height: max-content;
 }
 
 body.subchar-mode .main-only {
@@ -91,7 +91,7 @@ body:not(.subchar-mode) .subchar-only {
 	background-image: var(--menu-sidebar-image, none);
 	background-repeat: no-repeat;
 	background-position: var(--menu-sidebar-position, left top);
-	background-size: 100% 100%;
+	background-size: contain;
 	flex-shrink: 0;
 	z-index: 10;
 	position: relative;
@@ -99,8 +99,8 @@ body:not(.subchar-mode) .subchar-only {
 
 body.has-sidebar .menu-sidebar {
 	display: block;
-	width: var(--menu-sidebar-width, 24px);
-	min-width: var(--menu-sidebar-min-width, 24px);
+	width: var(--menu-sidebar-width, 28px);
+	min-width: var(--menu-sidebar-min-width, 28px);
 }
 
 body.subchar-mode .menu-sidebar {

@@ -1,7 +1,4 @@
-/**
- * @file menu-theme-renderer.ts
- * @brief コンテキストメニューのテーマ（BalloonTheme および Shell Menu Theme）適用・アセット事前ロード処理
- */
+import { convertFileSrc } from "../../core/tauri-helper.js";
 
 const imageCache = new Map<string, HTMLImageElement>();
 
@@ -120,9 +117,7 @@ export const menuThemeRenderer = {
 				const full = shellPath
 					? `${shellPath.replace(/\\/g, "/")}/${relPath.replace(/\\/g, "/")}`
 					: relPath;
-				return (globalThis as unknown).__TAURI__?.core?.convertFileSrc
-					? (globalThis as unknown).__TAURI__.core.convertFileSrc(full)
-					: full;
+				return convertFileSrc(full);
 			};
 
 			const applyAlignment = (alignRaw: string, prefix: string) => {

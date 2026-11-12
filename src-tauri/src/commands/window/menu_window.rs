@@ -17,9 +17,9 @@ pub async fn show_menu_window(
     {
         use tauri::Manager;
         let menu_scope = scope.unwrap_or(0);
-        // メインメニュー (260x560) / サブキャラクターメニュー (260x200)
+        // メインメニュー (260x380) / サブキャラクターメニュー (260x180)
         let win_width = 260.0;
-        let win_height = if menu_scope > 0 { 200.0 } else { 560.0 };
+        let win_height = if menu_scope > 0 { 180.0 } else { 380.0 };
 
         let mut target_x = x;
         let mut target_y = y;

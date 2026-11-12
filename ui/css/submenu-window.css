@@ -30,6 +30,7 @@ body {
 
 .submenu-window-container .menu-item {
 	cursor: pointer;
+	border-radius: 0;
 }
 
 .submenu-window-container .menu-item:hover,
@@ -41,6 +42,7 @@ body {
 	background-size: cover;
 	color: var(--balloon-highlight-text, #ffffff);
 	outline: none;
+	border-radius: 0;
 }
 
 .submenu-window-container .menu-separator {

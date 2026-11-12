@@ -130,6 +130,7 @@ body.subchar-mode .menu-sidebar {
 	-webkit-tap-highlight-color: transparent;
 	background: none;
 	border: none;
+	border-radius: 0;
 	text-align: left;
 	cursor: pointer;
 	font-family: inherit;
@@ -168,10 +169,14 @@ body.subchar-mode .menu-sidebar {
 
 .menu-item:hover,
 .menu-item:focus {
-	background-color: #000000;
-	background-image: none;
-	color: #ffffff;
+	background-color: var(--balloon-highlight-bg, #0078d7);
+	background-image: var(--menu-fg-image, none);
+	background-repeat: var(--menu-fg-repeat, no-repeat);
+	background-position: var(--menu-fg-position, left top);
+	background-size: cover;
+	color: var(--balloon-highlight-text, #ffffff);
 	outline: none;
+	border-radius: 0;
 }
 
 /* 全てのメニュー項目ボタンにサブメニュー矢印用のスペース（gutter）を確保し、サブメニューありの場合のみ ▶ を表示 */

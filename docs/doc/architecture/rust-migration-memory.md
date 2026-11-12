@@ -1,6 +1,7 @@
 # 各論2：WASMにおけるメモリ管理とゼロコピー（Zero-Copy）戦略
 
 ## 1. 効率的なデータ共有
+
 - **メモリビューの共有**:
   - 画像ピクセルデータ（RGBA）やサーフィスフレームバッファは、WASM のメモリ空間（`WebAssembly.Memory`）を TypeScript 側から `Uint32Array` / `Uint8ClampedArray` のビューとして直接共有。
   - JSとWASM間でのデータコピーコストをゼロ（ゼロコピー）に抑制。

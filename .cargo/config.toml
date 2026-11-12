@@ -20,6 +20,9 @@ codegen-backend = "cranelift"
 [profile.dev.package."*"]
 codegen-backend = "llvm"
 
+[profile.dev.package.nanai-core]
+codegen-backend = "llvm"
+
 #windows
 
 #rustup component add llvm-tools-preview --toolchain nightly

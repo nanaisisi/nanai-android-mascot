@@ -14,6 +14,7 @@ import { actionMethods } from "./ts/core/app-actions.js";
 import { eventMethods } from "./ts/core/app-events.js";
 import { settingsMethods } from "./ts/core/app-settings.js";
 import { updateMethods } from "./ts/core/app-update.js";
+import { wasmBridge } from "./ts/core/wasm-bridge.js";
 import { AppConfig, loadAppConfig } from "./ts/core/config.js";
 import { InternalWindowManager } from "./ts/core/internal-window-manager.js";
 import { invoke, isTauriAvailable } from "./ts/core/tauri-helper.js";
@@ -204,6 +205,9 @@ export class NanaiAndroidMascotApp {
 		this.isInitialized = true;
 
 		console.log("=== Nanai Android Mascot 初期化開始 ===");
+
+		// WASM コアエンジンの事前ロード & 接続初期化
+		void wasmBridge.init("wasm/nanai_core.wasm");
 
 		try {
 			await loadAppConfig();

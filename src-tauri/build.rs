@@ -1,6 +1,9 @@
 use std::path::Path;
 
 fn main() {
+    // WASM コアエンジンの全自動ビルド & public/wasm への配備
+    build_nanai_core_wasm();
+
     // 32bit SHIORI ホスト (tauri_build が bundle resources を検証する前に用意する)
     build_shiori_host32();
 
@@ -9,6 +12,54 @@ fn main() {
 
     // YAYA C++統合スタブのビルド
     build_yaya_shiori_stub();
+}
+
+/// WASM コアエンジン nanai_core.wasm を自動ビルドし public/wasm/ ディレクトリへ配置する
+fn build_nanai_core_wasm() {
+    println!("cargo:rerun-if-changed=../crates/nanai-core/src");
+    println!("cargo:rerun-if-changed=../crates/nanai-core/Cargo.toml");
+
+    let cargo_bin = std::env::var("CARGO").unwrap_or_else(|_| "cargo".into());
+    let manifest_path = "../crates/nanai-core/Cargo.toml";
+
+    if !Path::new(manifest_path).exists() {
+        return;
+    }
+
+    // デッドロック(ファイルロック待ち)回避のため独立した target-dir を使用
+    let status = std::process::Command::new(cargo_bin)
+        .args([
+            "build",
+            "--target",
+            "wasm32-unknown-unknown",
+            "--target-dir",
+            "../target_wasm",
+            "--manifest-path",
+            manifest_path,
+        ])
+        .env_remove("CARGO_ENCODED_RUSTFLAGS")
+        .env_remove("RUSTFLAGS")
+        .env_remove("CARGO_BUILD_TARGET")
+        .env_remove("TARGET")
+        .status();
+
+    if let Ok(s) = status {
+        if s.success() {
+            let wasm_src = Path::new("../target_wasm/wasm32-unknown-unknown/debug/nanai_core.wasm");
+            let wasm_dst = Path::new("../public/wasm/nanai_core.wasm");
+
+            if let Some(parent) = wasm_dst.parent() {
+                let _ = std::fs::create_dir_all(parent);
+            }
+
+            if wasm_src.exists() {
+                let _ = std::fs::copy(wasm_src, wasm_dst);
+                println!("cargo:warning=✨ nanai_core.wasm の自動ビルド & public/wasm/ への配置に成功しました");
+            }
+        } else {
+            println!("cargo:warning=⚠️ nanai_core.wasm の自動ビルドに失敗しました");
+        }
+    }
 }
 
 /// Windows 64bit ターゲット時のみ、32bit DLL 用ヘルパー shiori-host32.exe をビルドする
@@ -21,12 +72,15 @@ fn build_shiori_host32() {
         return;
     }
 
+    // デッドロック(ファイルロック待ち)回避のため独立した target-dir を使用
     let status = std::process::Command::new(std::env::var("CARGO").unwrap_or("cargo".into()))
         .args([
             "build",
             "--release",
             "--target",
             "i686-pc-windows-msvc",
+            "--target-dir",
+            "../target_shiori_host",
             "--manifest-path",
             "shiori-host/Cargo.toml",
         ])

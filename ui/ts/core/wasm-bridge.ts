@@ -18,9 +18,6 @@ import {
 	findHitCollisionNameWasm,
 } from "./wasm/wasm-surface.js";
 import type {
-	AnimationDefinition,
-	AnimationPattern,
-	AnimationState,
 	BalloonLayoutResult,
 	DescriptManifest,
 	SakuraToken,

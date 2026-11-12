@@ -29,8 +29,34 @@ body {
 }
 
 .submenu-window-container .menu-item {
-	cursor: pointer;
+	width: 100%;
+	padding: 0.04rem 0.3rem;
+	min-height: 14px;
+	touch-action: manipulation;
+	-webkit-tap-highlight-color: transparent;
+	background: none;
+	border: none;
 	border-radius: 0;
+	text-align: left;
+	cursor: pointer;
+	font-family: inherit;
+	font-size: var(--menu-font-size, 0.7rem);
+	color: var(--balloon-text-color, #111111);
+	display: flex;
+	align-items: center;
+}
+
+.submenu-window-container .menu-item-indicator {
+	width: 1.2rem;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	flex-shrink: 0;
+}
+
+.submenu-window-container .menu-item-label {
+	flex-grow: 1;
+	text-align: left;
 }
 
 .submenu-window-container .menu-item:hover,
@@ -46,7 +72,10 @@ body {
 }
 
 .submenu-window-container .menu-separator {
+	height: 1px;
+	border: none;
 	background-color: var(--balloon-separator-color, #999999);
+	margin: 1px 2px;
 }
 
 .submenu-window-container::-webkit-scrollbar {

@@ -202,10 +202,7 @@ export async function applyBalloonDescript({
 		const ww = parseInt(props["wordwrappoint.x"], 10);
 		if (!Number.isNaN(ww)) {
 			const textEl = document.getElementById("balloon-text");
-			textEl?.style.setProperty(
-				"max-width",
-				`calc(100% + ${Math.abs(ww)}px)`,
-			);
+			textEl?.style.setProperty("max-width", `calc(100% + ${Math.abs(ww)}px)`);
 		}
 
 		let bgImage = await loadBalloonSkinImages(theme, scopeId);
@@ -236,10 +233,7 @@ export async function applyBalloonDescript({
 			const sliceBottom = parseVal(vb);
 			const sliceLeft = parseVal(vl);
 
-			root.style.setProperty(
-				"--balloon-bg-image",
-				`url("${bgImage}")`,
-			);
+			root.style.setProperty("--balloon-bg-image", `url("${bgImage}")`);
 			root.style.setProperty(
 				"--balloon-border-image-source",
 				`url("${bgImage}")`,

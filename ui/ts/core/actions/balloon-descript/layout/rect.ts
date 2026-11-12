@@ -72,7 +72,9 @@ export function applyValidRectProperties(
 
 	const wwY = parseInt(props["wordwrappoint.y"], 10);
 	if (!Number.isNaN(wwY) && wwY > 20) {
-		const textEl = document.querySelector(".balloon-text") as HTMLElement | null;
+		const textEl = document.querySelector(
+			".balloon-text",
+		) as HTMLElement | null;
 		if (textEl) {
 			textEl.style.maxHeight = `${wwY}px`;
 		}

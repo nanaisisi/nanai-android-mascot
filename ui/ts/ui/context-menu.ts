@@ -20,8 +20,13 @@ const renderer = new MenuSubmenuRenderer(dispatcher);
 // Tauri / iframe 同期リスナー初期化
 setupContextMenuSync(dispatcher, renderer);
 
+let lastTriggeredMenuType: string | null = null;
+
 // 独立サブメニューウィンドウを開く補助関数 (デスクトップ環境用)
 function _triggerSubmenuWindow(menuType: string, buttonEl: Element) {
+	if (lastTriggeredMenuType === menuType) return;
+	lastTriggeredMenuType = menuType;
+
 	const now = Date.now();
 	const last = _triggerSubmenuWindow.lastRequest;
 	if (last?.type === menuType && now - last.time < 180) return;
@@ -101,7 +106,7 @@ function checkSubmenuFlip(wrapper: Element) {
 
 // ホバー時にも右/左展開を判定 & 独立サブメニューウィンドウ呼び出し
 document.addEventListener("mouseover", (e: unknown) => {
-	const btn = e.target.closest(".menu-item.has-submenu");
+	const btn = (e.target as Element)?.closest?.(".menu-item.has-submenu");
 	if (!btn) return;
 	const wrapper = btn.closest(".menu-item-wrapper") || btn.parentElement;
 	if (wrapper) {
@@ -164,6 +169,7 @@ document.addEventListener("keydown", (e) => {
 
 // メニューからフォーカスが外れた（blur）際、自然にメニューウィンドウを閉じる
 globalThis.addEventListener("blur", () => {
+	if (lastTriggeredMenuType !== null) return;
 	void dispatcher.dispatchAction("close-menu");
 });
 

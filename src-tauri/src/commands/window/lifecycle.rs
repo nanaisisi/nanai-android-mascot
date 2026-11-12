@@ -1,4 +1,5 @@
 use tauri::Manager;
+use nanai_android_mascot_ui::ShioriEngine;
 
 /// デバッグ用のテストコマンド
 #[tauri::command]
@@ -23,9 +24,29 @@ pub async fn minimize_app(app_handle: tauri::AppHandle) -> Result<(), String> {
     Ok(())
 }
 
+/// アプリケーション終了時の一括クリーンアップ
+pub fn shutdown_application(app_handle: &tauri::AppHandle) {
+    let state = app_handle.state::<crate::common::state::AppState>();
+    if let Some(mut engine) = state.shiori_engine.lock().take() {
+        let _ = engine.unload();
+    }
+    let mut engines = state.ghost_engines.lock();
+    for (_, mut engine) in engines.drain() {
+        let _ = engine.unload();
+    }
+
+    #[cfg(windows)]
+    {
+        let _ = std::process::Command::new("taskkill")
+            .args(["/f", "/im", "shiori-host32.exe"])
+            .output();
+    }
+}
+
 /// アプリケーション終了コマンド
 #[tauri::command]
 pub async fn exit_app(app_handle: tauri::AppHandle) -> Result<(), String> {
+    shutdown_application(&app_handle);
     app_handle.exit(0);
     Ok(())
 }

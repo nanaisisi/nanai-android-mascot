@@ -13,6 +13,8 @@ export interface MockElement {
 	lastChild: MockElement | null;
 	firstChild: MockElement | null;
 	parentNode?: MockElement;
+	nodeType?: number;
+	nodeValue?: string | null;
 	_listeners?: Record<string, (event?: unknown) => void>;
 	appendChild(node: MockElement): void;
 	removeChild(node: MockElement): void;
@@ -34,19 +36,30 @@ export function createMockElement(tag: string = "div"): MockElement {
 		className: undefined,
 		value: undefined,
 		tagName: tag.toUpperCase(),
+		nodeType: 1, // ELEMENT_NODE
+		nodeValue: null,
 		_textContent: "",
 		get textContent() {
+			if (children.length > 0) {
+				return children.map((c) => c.textContent).join("");
+			}
 			return this._textContent;
 		},
 		set textContent(val: string) {
+			children.length = 0;
 			this._textContent = val;
 		},
 		_innerHTML: "",
 		get innerHTML() {
+			if (children.length > 0) {
+				return children.map((c) => c.innerHTML || c.textContent).join("");
+			}
 			return this._innerHTML;
 		},
 		set innerHTML(val: string) {
+			children.length = 0;
 			this._innerHTML = val;
+			this._textContent = val;
 		},
 		style: {} as Record<string, string>,
 		dataset: {} as Record<string, string>,
@@ -76,7 +89,7 @@ export function createMockElement(tag: string = "div"): MockElement {
 				this.parentNode.removeChild(this as MockElement);
 			}
 		},
-		setAttribute: function (name: string, val: unknown): void {},
+		setAttribute: function (_name: string, _val: unknown): void {},
 		addEventListener: function (
 			type: string,
 			cb: (event?: unknown) => void,
@@ -121,6 +134,10 @@ export function setupMockDOM() {
 		body: createMockElement("body"),
 		getElementById: () => createMockElement("div"),
 		querySelector: () => createMockElement("div"),
+	};
+	(globalThis as Record<string, unknown>).Node = {
+		TEXT_NODE: 3,
+		ELEMENT_NODE: 1,
 	};
 }
 

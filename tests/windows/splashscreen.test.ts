@@ -14,7 +14,7 @@ test("splashscreen.js 100% coverage", async () => {
 		version: "2.0",
 	};
 
-	await import("../../ui/windows/splashscreen.js");
+	await import("../../ui/windows/splashscreen.ts");
 
 	await vi.advanceTimersByTimeAsync(4500);
 	assert.equal(

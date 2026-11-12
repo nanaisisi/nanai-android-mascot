@@ -10,7 +10,7 @@ import { createWindowsMockEnvironment } from "./helpers.js";
 test("desktop-features.js 100% coverage", async () => {
 	const env = createWindowsMockEnvironment();
 
-	const desktopFeatures = await import("../../ui/windows/desktop-features.js");
+	const desktopFeatures = await import("../../ui/windows/desktop-features.ts");
 
 	// Trigger DOMContentLoaded listeners (lines 208-209)
 	for (const cb of env.domLoadedListeners) cb();

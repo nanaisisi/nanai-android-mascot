@@ -11,7 +11,7 @@ test("multi-window.js 100% coverage", async () => {
 	vi.useFakeTimers();
 	const env = createWindowsMockEnvironment();
 
-	const multiWindow = await import("../../ui/windows/multi-window.js");
+	const multiWindow = await import("../../ui/windows/multi-window.ts");
 
 	// Update window status with and without DOM elements
 	multiWindow.updateWindowStatus("ghost", true);

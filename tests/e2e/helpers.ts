@@ -77,7 +77,7 @@ export function createMockElement(tag: string = "div"): MockElement {
 			children.push(node);
 			node.parentNode = this as MockElement;
 		},
-		removeChild: function (node: MockElement): void {
+		removeChild: (node: MockElement): void => {
 			const index = children.indexOf(node);
 			if (index > -1) {
 				children.splice(index, 1);
@@ -89,37 +89,34 @@ export function createMockElement(tag: string = "div"): MockElement {
 				this.parentNode.removeChild(this as MockElement);
 			}
 		},
-		setAttribute: function (_name: string, _val: unknown): void {},
-		addEventListener: function (
-			type: string,
-			cb: (event?: unknown) => void,
-		): void {
+		setAttribute: (_name: string, _val: unknown): void => {},
+		addEventListener: (type: string, cb: (event?: unknown) => void): void => {
 			listeners[type] = cb;
 		},
-		removeEventListener: function (
+		removeEventListener: (
 			type: string,
 			cb: (event?: unknown) => void,
-		): void {
+		): void => {
 			if (listeners[type] === cb) {
 				delete listeners[type];
 			}
 		},
-		click: function (): void {
-			if (listeners["click"]) listeners["click"]({ stopPropagation: () => {} });
+		click: (): void => {
+			if (listeners.click) listeners.click({ stopPropagation: () => {} });
 		},
-		mouseenter: function (): void {
-			if (listeners["mouseenter"])
-				listeners["mouseenter"]({ stopPropagation: () => {} });
+		mouseenter: (): void => {
+			if (listeners.mouseenter)
+				listeners.mouseenter({ stopPropagation: () => {} });
 		},
-		mouseleave: function (): void {
-			if (listeners["mouseleave"])
-				listeners["mouseleave"]({ stopPropagation: () => {} });
+		mouseleave: (): void => {
+			if (listeners.mouseleave)
+				listeners.mouseleave({ stopPropagation: () => {} });
 		},
-		focus: function (): void {
-			if (listeners["focus"]) listeners["focus"]({ stopPropagation: () => {} });
+		focus: (): void => {
+			if (listeners.focus) listeners.focus({ stopPropagation: () => {} });
 		},
-		blur: function (): void {
-			if (listeners["blur"]) listeners["blur"]({ stopPropagation: () => {} });
+		blur: (): void => {
+			if (listeners.blur) listeners.blur({ stopPropagation: () => {} });
 		},
 	};
 	return element as unknown as MockElement;

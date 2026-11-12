@@ -66,13 +66,6 @@ pub async fn show_menu_window(
         }
 
         if let Some(menu_win) = app_handle.get_webview_window("menu_window") {
-            if menu_win.is_visible().unwrap_or(false) {
-                let _ = menu_win.hide();
-                if let Some(sub_win) = app_handle.get_webview_window("submenu_window") {
-                    let _ = sub_win.hide();
-                }
-                return Ok(());
-            }
             let _ = menu_win.close();
         }
 

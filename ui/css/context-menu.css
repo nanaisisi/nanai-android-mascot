@@ -70,7 +70,7 @@ body:not(.subchar-mode) .subchar-only {
 	overflow-y: visible;
 	overflow-x: visible;
 	background: transparent;
-	background-image: var(--menu-bg-image, var(--balloon-pattern));
+	background-image: var(--menu-bg-image, var(--balloon-pattern, none));
 	background-repeat: var(--menu-bg-repeat, repeat);
 	background-position: var(--menu-bg-position, left top);
 	background-size: auto;
@@ -107,8 +107,8 @@ body.has-sidebar .menu-sidebar {
 
 body.subchar-mode .menu-sidebar {
 	overflow: hidden;
-	background-position: left bottom;
-	background-size: auto;
+	background-position: left top;
+	background-size: 100% auto;
 }
 
 .menu-container::-webkit-scrollbar,

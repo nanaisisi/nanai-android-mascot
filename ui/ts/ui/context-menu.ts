@@ -162,6 +162,11 @@ document.addEventListener("keydown", (e) => {
 	handleMenuKeydown(e, dispatcher);
 });
 
+// メニューからフォーカスが外れた（blur）際、自然にメニューウィンドウを閉じる
+globalThis.addEventListener("blur", () => {
+	void dispatcher.dispatchAction("close-menu");
+});
+
 async function adjustMenuWindowSize() {
 	if (!isTauriAvailable()) return;
 	try {

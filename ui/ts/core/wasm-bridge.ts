@@ -1,173 +1,71 @@
 /**
  * @file wasm-bridge.ts
- * @brief Rust WASM コアモジュール (`nanai-core`) と TypeScript フロントエンドの透過的接続ブリッジ
+ * @brief WASM モジュールバインディングの統合ファサード (モジュール構成: ui/ts/core/wasm/)
  */
 
-import { parseInstallErrorReason as parseInstallErrorReasonFallback } from "./actions/install-protocol.js";
+import { computeBalloonTextLayoutWasm } from "./wasm/wasm-layout.js";
+import { wasmMemory } from "./wasm/wasm-memory.js";
 import {
-	calculateUpdateProgress as calculateUpdateProgressFallback,
-	normalizeUpdateReason as normalizeUpdateReasonFallback,
-} from "./actions/update-protocol.js";
+	calculateUpdateProgressWasm,
+	parseDescriptTextWasm,
+	parseInstallErrorReasonWasm,
+	parseSstpRequestWasm,
+} from "./wasm/wasm-protocol.js";
+import { parseSakuraScriptWasm } from "./wasm/wasm-sakura.js";
+import {
+	computeSurfaceCompositionPlanWasm,
+	findHitCollisionNameWasm,
+} from "./wasm/wasm-surface.js";
+import type {
+	BalloonLayoutResult,
+	DescriptManifest,
+	SakuraToken,
+	SstpRequest,
+	SurfaceCompositionPlan,
+} from "./wasm/wasm-types.js";
 
-export interface SakuraToken {
-	type:
-		| "Text"
-		| "Scope"
-		| "Surface"
-		| "Balloon"
-		| "Animation"
-		| "Newline"
-		| "Clear"
-		| "Wait"
-		| "Choice"
-		| "Anchor"
-		| "Font"
-		| "Halt";
-	value?: unknown;
-}
+export type {
+	BalloonLayoutResult,
+	DescriptManifest,
+	SakuraToken,
+	SstpRequest,
+	SurfaceCompositionPlan,
+	SurfaceElement,
+	TextLayoutLine,
+} from "./wasm/wasm-types.js";
 
-export interface SstpRequest {
-	command: string;
-	version: string;
-	headers: Record<string, string>;
-}
-
-export interface TextLayoutLine {
-	line_number: number;
-	text: string;
-	width_px: number;
-}
-
-export interface BalloonLayoutResult {
-	lines: TextLayoutLine[];
-	total_height_px: number;
-	max_width_px: number;
-	line_count: number;
-}
-
-interface NanaiCoreWasmExports {
-	memory: WebAssembly.Memory;
-	wasm_alloc: (size: number) => number;
-	wasm_free: (ptr: number, size: number) => void;
-	wasm_calculate_update_progress: (current: bigint, total: bigint) => number;
-	wasm_normalize_update_reason: (ptr: number, len: number) => number;
-	wasm_parse_install_error_reason: (ptr: number, len: number) => number;
-	wasm_parse_sakura_script_json: (ptr: number, len: number) => bigint;
-	wasm_parse_sstp_request_json: (ptr: number, len: number) => bigint;
-	wasm_compute_balloon_text_layout_json?: (
-		ptr: number,
-		len: number,
-		maxWidth: number,
-		fontSize: number,
-		lineHeight: number,
-		paddingX: number,
-	) => bigint;
-	wasm_find_hit_collision_name_json?: (
-		ptr: number,
-		len: number,
-		x: number,
-		y: number,
-	) => bigint;
-}
-
-class WasmBridgeManager {
-	private exports: NanaiCoreWasmExports | null = null;
-	private initialized = false;
-	private initPromise: Promise<boolean> | null = null;
-
-	/**
-	 * WASM モジュールの非同期初期化
-	 */
+class WasmBridgeFacade {
 	public async init(bufferOrUrl?: ArrayBuffer | string): Promise<boolean> {
-		if (this.initialized) return true;
-		if (this.initPromise) return this.initPromise;
-
-		this.initPromise = (async () => {
-			try {
-				let wasmBuffer: ArrayBuffer | null = null;
-				if (bufferOrUrl instanceof ArrayBuffer) {
-					wasmBuffer = bufferOrUrl;
-				} else if (typeof bufferOrUrl === "string") {
-					const res = await fetch(bufferOrUrl);
-					wasmBuffer = await res.arrayBuffer();
-				}
-
-				if (wasmBuffer) {
-					const { instance } = await WebAssembly.instantiate(wasmBuffer);
-					this.exports = instance.exports as unknown as NanaiCoreWasmExports;
-					this.initialized = true;
-					console.log("✨ [WASM Bridge] nanai-core WASM 接続完了");
-					return true;
-				}
-			} catch (err) {
-				console.warn(
-					"⚠️ [WASM Bridge] WASM モジュール初期化失敗 (フォールバック駆動):",
-					err,
-				);
-			}
-			return false;
-		})();
-
-		return this.initPromise;
+		return wasmMemory.init(bufferOrUrl);
 	}
 
 	public isReady(): boolean {
-		return this.initialized && this.exports !== null;
+		return wasmMemory.isReady();
 	}
 
-	/**
-	 * さくらスクリプト文字列を WASM で高速パース
-	 */
 	public parseSakuraScript(script: string): SakuraToken[] | null {
-		if (!this.isReady()) return null;
-
-		try {
-			const { ptr, len } = this.encodeString(script);
-			const packed = this.exports!.wasm_parse_sakura_script_json(ptr, len);
-			this.exports!.wasm_free(ptr, len);
-
-			if (packed === 0n) return null;
-
-			const jsonPtr = Number(packed >> 32n);
-			const jsonLen = Number(packed & 0xffffffffn);
-			const jsonStr = this.decodeString(jsonPtr, jsonLen);
-			this.exports!.wasm_free(jsonPtr, jsonLen);
-
-			return JSON.parse(jsonStr) as SakuraToken[];
-		} catch (err) {
-			console.warn("⚠️ [WASM Bridge] parseSakuraScript エラー:", err);
-			return null;
-		}
+		return parseSakuraScriptWasm(script);
 	}
 
-	/**
-	 * SSTP リクエスト文字列を WASM でパース
-	 */
 	public parseSstpRequest(rawSstp: string): SstpRequest | null {
-		if (!this.isReady()) return null;
-
-		try {
-			const { ptr, len } = this.encodeString(rawSstp);
-			const packed = this.exports!.wasm_parse_sstp_request_json(ptr, len);
-			this.exports!.wasm_free(ptr, len);
-
-			if (packed === 0n) return null;
-
-			const jsonPtr = Number(packed >> 32n);
-			const jsonLen = Number(packed & 0xffffffffn);
-			const jsonStr = this.decodeString(jsonPtr, jsonLen);
-			this.exports!.wasm_free(jsonPtr, jsonLen);
-
-			return JSON.parse(jsonStr) as SstpRequest;
-		} catch (err) {
-			console.warn("⚠️ [WASM Bridge] parseSstpRequest エラー:", err);
-			return null;
-		}
+		return parseSstpRequestWasm(rawSstp);
 	}
 
-	/**
-	 * バルーンテキストの自動折り返し・レイアウト計算を WASM で実行
-	 */
+	public parseDescriptText(content: string): DescriptManifest | null {
+		return parseDescriptTextWasm(content);
+	}
+
+	public calculateUpdateProgress(
+		current: number,
+		total: number,
+	): { percent: number; isComplete: boolean } {
+		return calculateUpdateProgressWasm(current, total);
+	}
+
+	public parseInstallErrorReason(errMessage: string): string {
+		return parseInstallErrorReasonWasm(errMessage);
+	}
+
 	public computeBalloonTextLayout(
 		text: string,
 		maxWidth: number,
@@ -175,144 +73,30 @@ class WasmBridgeManager {
 		lineHeight: number,
 		paddingX: number,
 	): BalloonLayoutResult | null {
-		if (!this.isReady() || !this.exports!.wasm_compute_balloon_text_layout_json)
-			return null;
-
-		try {
-			const { ptr, len } = this.encodeString(text);
-			const packed = this.exports!.wasm_compute_balloon_text_layout_json(
-				ptr,
-				len,
-				maxWidth,
-				fontSize,
-				lineHeight,
-				paddingX,
-			);
-			this.exports!.wasm_free(ptr, len);
-
-			if (packed === 0n) return null;
-
-			const jsonPtr = Number(packed >> 32n);
-			const jsonLen = Number(packed & 0xffffffffn);
-			const jsonStr = this.decodeString(jsonPtr, jsonLen);
-			this.exports!.wasm_free(jsonPtr, jsonLen);
-
-			return JSON.parse(jsonStr) as BalloonLayoutResult;
-		} catch (err) {
-			console.warn("⚠️ [WASM Bridge] computeBalloonTextLayout エラー:", err);
-			return null;
-		}
+		return computeBalloonTextLayoutWasm(
+			text,
+			maxWidth,
+			fontSize,
+			lineHeight,
+			paddingX,
+		);
 	}
 
-	/**
-	 * サーフィス上の指定座標 (x, y) がヒットした衝突領域名 (Hit-test) を WASM で判定
-	 */
 	public findHitCollisionName(
 		collisions: unknown[],
 		x: number,
 		y: number,
 	): string | null {
-		if (!this.isReady() || !this.exports!.wasm_find_hit_collision_name_json)
-			return null;
-
-		try {
-			const jsonStr = JSON.stringify(collisions);
-			const { ptr, len } = this.encodeString(jsonStr);
-			const packed = this.exports!.wasm_find_hit_collision_name_json(
-				ptr,
-				len,
-				x,
-				y,
-			);
-			this.exports!.wasm_free(ptr, len);
-
-			if (packed === 0n) return null;
-
-			const namePtr = Number(packed >> 32n);
-			const nameLen = Number(packed & 0xffffffffn);
-			const hitName = this.decodeString(namePtr, nameLen);
-			this.exports!.wasm_free(namePtr, nameLen);
-
-			return hitName || null;
-		} catch (err) {
-			console.warn("⚠️ [WASM Bridge] findHitCollisionName エラー:", err);
-			return null;
-		}
+		return findHitCollisionNameWasm(collisions, x, y);
 	}
 
-	/**
-	 * アップデート進捗を WASM で高速計算
-	 */
-	public calculateUpdateProgress(
-		current: number,
-		total: number,
-	): { percent: number; isComplete: boolean } {
-		if (this.isReady()) {
-			try {
-				const packed = this.exports!.wasm_calculate_update_progress(
-					BigInt(current),
-					BigInt(total),
-				);
-				const percent = packed & 0xffff;
-				const isComplete = Boolean((packed >> 16) & 0xffff);
-				return { percent, isComplete };
-			} catch (_err) {
-				// Fallback on error
-			}
-		}
-		return calculateUpdateProgressFallback(current, total);
-	}
-
-	/**
-	 * インストールエラー理由を WASM で高速解決
-	 */
-	public parseInstallErrorReason(errMessage: string): string {
-		if (this.isReady()) {
-			try {
-				const { ptr, len } = this.encodeString(errMessage);
-				const idx = this.exports!.wasm_parse_install_error_reason(ptr, len);
-				this.exports!.wasm_free(ptr, len);
-
-				const reasons = [
-					"extraction",
-					"unsupported",
-					"artificial",
-					"invalid path",
-					"unlha32 error",
-					"write error",
-				];
-				return reasons[idx] || "extraction";
-			} catch (_err) {
-				// Fallback on error
-			}
-		}
-		return parseInstallErrorReasonFallback(errMessage);
-	}
-
-	/**
-	 * UTF-8 文字列を WASM メモリへ転送
-	 */
-	private encodeString(str: string): { ptr: number; len: number } {
-		const encoder = new TextEncoder();
-		const bytes = encoder.encode(str);
-		const ptr = this.exports!.wasm_alloc(bytes.length);
-		const memView = new Uint8Array(
-			this.exports!.memory.buffer,
-			ptr,
-			bytes.length,
-		);
-		memView.set(bytes);
-		return { ptr, len: bytes.length };
-	}
-
-	/**
-	 * WASM メモリ上の UTF-8 バッファを文字列へ復元
-	 */
-	private decodeString(ptr: number, len: number): string {
-		const decoder = new TextDecoder();
-		const memView = new Uint8Array(this.exports!.memory.buffer, ptr, len);
-		return decoder.decode(memView);
+	public computeSurfaceCompositionPlan(
+		surfaceId: number,
+		elements: unknown[],
+		activeBinds: number[] = [],
+	): SurfaceCompositionPlan | null {
+		return computeSurfaceCompositionPlanWasm(surfaceId, elements, activeBinds);
 	}
 }
 
-export const wasmBridge = new WasmBridgeManager();
+export const wasmBridge = new WasmBridgeFacade();

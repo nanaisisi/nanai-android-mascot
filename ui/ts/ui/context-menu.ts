@@ -181,7 +181,10 @@ async function adjustMenuWindowSize() {
 			document.body.scrollHeight ||
 			document.documentElement.scrollHeight;
 		if (bodyHeight > 50) {
-			const targetHeight = Math.min(650, Math.max(140, Math.ceil(bodyHeight + 20)));
+			const targetHeight = Math.min(
+				650,
+				Math.max(140, Math.ceil(bodyHeight + 20)),
+			);
 			await win.setSize({
 				type: "Logical",
 				width: 260,

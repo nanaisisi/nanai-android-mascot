@@ -7,9 +7,8 @@ export const setupMethods = {
 		) {
 			return;
 		}
-		(
-			this as unknown as { _eventListenersSet?: boolean }
-		)._eventListenersSet = true;
+		(this as unknown as { _eventListenersSet?: boolean })._eventListenersSet =
+			true;
 
 		(
 			this as unknown as import("../../../main.js").NanaiAndroidMascotApp

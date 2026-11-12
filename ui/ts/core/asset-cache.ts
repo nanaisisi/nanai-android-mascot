@@ -31,7 +31,7 @@ class AssetCacheManager {
 
 		const targetMap = this.getCategoryMap(category);
 		if (targetMap.has(url)) {
-			return targetMap.get(url)!.image;
+			return targetMap.get(url)?.image;
 		}
 
 		if (typeof Image === "undefined") return null;
@@ -82,10 +82,7 @@ class AssetCacheManager {
 	/**
 	 * キャッシュされているか確認
 	 */
-	public has(
-		url: string,
-		category: "character" | "balloon" | "menu",
-	): boolean {
+	public has(url: string, category: "character" | "balloon" | "menu"): boolean {
 		return this.getCategoryMap(category).has(url);
 	}
 

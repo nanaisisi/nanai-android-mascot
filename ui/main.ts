@@ -14,10 +14,10 @@ import { actionMethods } from "./ts/core/app-actions.js";
 import { eventMethods } from "./ts/core/app-events.js";
 import { settingsMethods } from "./ts/core/app-settings.js";
 import { updateMethods } from "./ts/core/app-update.js";
-import { wasmBridge } from "./ts/core/wasm-bridge.js";
 import { AppConfig, loadAppConfig } from "./ts/core/config.js";
 import { InternalWindowManager } from "./ts/core/internal-window-manager.js";
 import { invoke, isTauriAvailable } from "./ts/core/tauri-helper.js";
+import { wasmBridge } from "./ts/core/wasm-bridge.js";
 import { GhostController } from "./ts/ghost/ghost.js";
 import { SakuraScriptPlayer } from "./ts/ghost/sakura-script.js";
 import { InteractionManager } from "./ts/surface/interaction.js";
@@ -372,6 +372,7 @@ declare global {
 if (typeof window !== "undefined") {
 	(window as unknown as { app: NanaiAndroidMascotApp }).app =
 		new NanaiAndroidMascotApp();
-	(globalThis as unknown as { mascotApp: NanaiAndroidMascotApp }).mascotApp =
-		(window as unknown as { app: NanaiAndroidMascotApp }).app;
+	(globalThis as unknown as { mascotApp: NanaiAndroidMascotApp }).mascotApp = (
+		window as unknown as { app: NanaiAndroidMascotApp }
+	).app;
 }

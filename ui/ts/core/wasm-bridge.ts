@@ -32,6 +32,19 @@ export interface SstpRequest {
 	headers: Record<string, string>;
 }
 
+export interface TextLayoutLine {
+	line_number: number;
+	text: string;
+	width_px: number;
+}
+
+export interface BalloonLayoutResult {
+	lines: TextLayoutLine[];
+	total_height_px: number;
+	max_width_px: number;
+	line_count: number;
+}
+
 interface NanaiCoreWasmExports {
 	memory: WebAssembly.Memory;
 	wasm_alloc: (size: number) => number;
@@ -41,6 +54,14 @@ interface NanaiCoreWasmExports {
 	wasm_parse_install_error_reason: (ptr: number, len: number) => number;
 	wasm_parse_sakura_script_json: (ptr: number, len: number) => bigint;
 	wasm_parse_sstp_request_json: (ptr: number, len: number) => bigint;
+	wasm_compute_balloon_text_layout_json?: (
+		ptr: number,
+		len: number,
+		maxWidth: number,
+		fontSize: number,
+		lineHeight: number,
+		paddingX: number,
+	) => bigint;
 }
 
 class WasmBridgeManager {
@@ -134,6 +155,45 @@ class WasmBridgeManager {
 			return JSON.parse(jsonStr) as SstpRequest;
 		} catch (err) {
 			console.warn("⚠️ [WASM Bridge] parseSstpRequest エラー:", err);
+			return null;
+		}
+	}
+
+	/**
+	 * バルーンテキストの自動折り返し・レイアウト計算を WASM で実行
+	 */
+	public computeBalloonTextLayout(
+		text: string,
+		maxWidth: number,
+		fontSize: number,
+		lineHeight: number,
+		paddingX: number,
+	): BalloonLayoutResult | null {
+		if (!this.isReady() || !this.exports!.wasm_compute_balloon_text_layout_json)
+			return null;
+
+		try {
+			const { ptr, len } = this.encodeString(text);
+			const packed = this.exports!.wasm_compute_balloon_text_layout_json(
+				ptr,
+				len,
+				maxWidth,
+				fontSize,
+				lineHeight,
+				paddingX,
+			);
+			this.exports!.wasm_free(ptr, len);
+
+			if (packed === 0n) return null;
+
+			const jsonPtr = Number(packed >> 32n);
+			const jsonLen = Number(packed & 0xffffffffn);
+			const jsonStr = this.decodeString(jsonPtr, jsonLen);
+			this.exports!.wasm_free(jsonPtr, jsonLen);
+
+			return JSON.parse(jsonStr) as BalloonLayoutResult;
+		} catch (err) {
+			console.warn("⚠️ [WASM Bridge] computeBalloonTextLayout エラー:", err);
 			return null;
 		}
 	}

@@ -1,11 +1,13 @@
 //! Nanai Core - Pure Rust logic (parsers for sakura script, descript, fmo, manifest, update/install protocols)
 
+pub mod balloon_layout;
 pub mod install_protocol;
 pub mod sakura_player;
 pub mod sakura_script;
 pub mod sstp_fmo;
 pub mod update_protocol;
 
+pub use balloon_layout::*;
 pub use install_protocol::*;
 pub use sakura_player::*;
 pub use sakura_script::*;

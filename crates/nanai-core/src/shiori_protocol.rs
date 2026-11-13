@@ -213,6 +213,30 @@ pub fn build_on_schedule_5minutes_to_go_request(title: &str) -> String {
     build_shiori_request_extended("GET", "OnSchedule5MinutesToGo", &refs, None)
 }
 
+/// OnGhostBoot プラグインイベントリクエスト構築 (ukadoc-spec/list/plugin-event/plugin-event/OnGhostBoot.md)
+pub fn build_on_ghost_boot_event_request(ghost_name: &str) -> String {
+    let refs = vec![ghost_name.to_string()];
+    build_shiori_request_extended("GET", "OnGhostBoot", &refs, None)
+}
+
+/// OnGhostExit プラグインイベントリクエスト構築 (ukadoc-spec/list/plugin-event/plugin-event/OnGhostExit.md)
+pub fn build_on_ghost_exit_event_request(ghost_name: &str) -> String {
+    let refs = vec![ghost_name.to_string()];
+    build_shiori_request_extended("GET", "OnGhostExit", &refs, None)
+}
+
+/// OnMenuExec プラグインイベントリクエスト構築 (ukadoc-spec/list/plugin-event/plugin-event/OnMenuExec.md)
+pub fn build_on_menu_exec_event_request(menu_name: &str) -> String {
+    let refs = vec![menu_name.to_string()];
+    build_shiori_request_extended("GET", "OnMenuExec", &refs, None)
+}
+
+/// OnHeadlinesenseBegin イベントリクエスト構築 (ukadoc-spec/list/shiori-event/headline-rss/OnHeadlinesenseBegin.md)
+pub fn build_on_headlinesense_begin_request(headline_name: &str) -> String {
+    let refs = vec![headline_name.to_string()];
+    build_shiori_request_extended("GET", "OnHeadlinesenseBegin", &refs, None)
+}
+
 #[wasm_bindgen]
 pub fn wasm_build_shiori_request(method: &str, headers_js: JsValue) -> Result<String, JsValue> {
     let headers: BTreeMap<String, String> = if headers_js.is_null() || headers_js.is_undefined() {
@@ -334,5 +358,18 @@ mod tests {
         let schedule_5min = build_on_schedule_5minutes_to_go_request("Dentist");
         assert!(schedule_5min.contains("ID: OnSchedule5MinutesToGo"));
         assert!(schedule_5min.contains("Reference0: Dentist"));
+
+        let plugin_boot = build_on_ghost_boot_event_request("Emily");
+        assert!(plugin_boot.contains("ID: OnGhostBoot"));
+        assert!(plugin_boot.contains("Reference0: Emily"));
+
+        let plugin_exit = build_on_ghost_exit_event_request("Emily");
+        assert!(plugin_exit.contains("ID: OnGhostExit"));
+
+        let menu_exec = build_on_menu_exec_event_request("Main Menu");
+        assert!(menu_exec.contains("ID: OnMenuExec"));
+
+        let headline_begin = build_on_headlinesense_begin_request("RSS Feed");
+        assert!(headline_begin.contains("ID: OnHeadlinesenseBegin"));
     }
 }

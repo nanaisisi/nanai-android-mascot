@@ -240,6 +240,54 @@ pub fn wasm_parse_sakura_script(script: &str) -> Result<JsValue, JsValue> {
     Ok(serde_wasm_bindgen::to_value(&tokens)?)
 }
 
+/// 実行時環境変数コンテキスト (UKADOC仕様: さくらスクリプト 環境変数)
+#[derive(Debug, Clone, Serialize, Deserialize, Tsify)]
+pub struct SakuraEnvContext {
+    pub username: String,
+    pub selfname: String,
+    pub keroname: String,
+    pub year: u32,
+    pub month: u32,
+    pub day: u32,
+    pub hour: u32,
+    pub minute: u32,
+    pub second: u32,
+}
+
+impl Default for SakuraEnvContext {
+    fn default() -> Self {
+        Self {
+            username: "User".to_string(),
+            selfname: "Sakura".to_string(),
+            keroname: "Kero".to_string(),
+            year: 2026,
+            month: 10,
+            day: 24,
+            hour: 12,
+            minute: 0,
+            second: 0,
+        }
+    }
+}
+
+/// さくらスクリプト内の環境変数 (%username, %selfname, %keroname 等) を展開
+pub fn expand_sakura_environment_variables(script: &str, ctx: &SakuraEnvContext) -> String {
+    let mut result = script.to_string();
+    result = result.replace("%username", &ctx.username);
+    result = result.replace("%user", &ctx.username);
+    result = result.replace("%selfname", &ctx.selfname);
+    result = result.replace("%selfname[0]", &ctx.selfname);
+    result = result.replace("%keroname", &ctx.keroname);
+    result = result.replace("%selfname[1]", &ctx.keroname);
+    result = result.replace("%year", &ctx.year.to_string());
+    result = result.replace("%month", &ctx.month.to_string());
+    result = result.replace("%day", &ctx.day.to_string());
+    result = result.replace("%hour", &ctx.hour.to_string());
+    result = result.replace("%minute", &ctx.minute.to_string());
+    result = result.replace("%second", &ctx.second.to_string());
+    result
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -280,5 +328,21 @@ mod tests {
         );
         assert_eq!(tokens[2], SakuraToken::Balloon(0));
         assert_eq!(tokens[3], SakuraToken::Animation(10));
+    }
+
+    #[test]
+    fn test_expand_sakura_environment_variables() {
+        let ctx = SakuraEnvContext {
+            username: "Master".to_string(),
+            selfname: "Emily".to_string(),
+            keroname: "Kero".to_string(),
+            ..Default::default()
+        };
+        let script = "こんにちは %username さん。私は %selfname です。相方は %keroname です。";
+        let expanded = expand_sakura_environment_variables(script, &ctx);
+        assert_eq!(
+            expanded,
+            "こんにちは Master さん。私は Emily です。相方は Kero です。"
+        );
     }
 }

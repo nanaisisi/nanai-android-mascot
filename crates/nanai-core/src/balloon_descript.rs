@@ -78,6 +78,66 @@ pub fn wasm_validate_balloon_descript(
     Ok(serde_wasm_bindgen::to_value(&res)?)
 }
 
+/// バルーンオプションファイル (`balloons*s.txt` / `balloonk*s.txt`) 構造化マニフェスト (UKADOC 準拠)
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
+pub struct BalloonOptionsManifest {
+    pub properties: BTreeMap<String, String>,
+}
+
+impl BalloonOptionsManifest {
+    pub fn get(&self, key: &str) -> Option<&str> {
+        self.properties.get(&key.to_lowercase()).map(|s| s.as_str())
+    }
+
+    /// 吹き出しの矢印（しっぽ）画像ファイル名 (`arrow.filename`)
+    pub fn arrow_filename(&self) -> Option<&str> {
+        self.get("arrow.filename")
+    }
+
+    /// クリック待ちマーカー画像ファイル名 (`marker.filename`)
+    pub fn marker_filename(&self) -> Option<&str> {
+        self.get("marker.filename")
+    }
+
+    /// クリック待ち(常時/ウェイト完了)マーカー画像ファイル名 (`clickwaitmarker.filename`)
+    pub fn click_wait_marker_filename(&self) -> Option<&str> {
+        self.get("clickwaitmarker.filename")
+    }
+
+    /// オンライン通信中マーカー画像ファイル名 (`onlinemarker.filename`)
+    pub fn online_marker_filename(&self) -> Option<&str> {
+        self.get("onlinemarker.filename")
+    }
+
+    /// SSTP受信マーカー画像ファイル名 (`sstpmarker.filename`)
+    pub fn sstp_marker_filename(&self) -> Option<&str> {
+        self.get("sstpmarker.filename")
+    }
+}
+
+/// balloons*s.txt / balloonk*s.txt テキストのパース
+pub fn parse_balloon_options_text(content: &str) -> BalloonOptionsManifest {
+    let mut properties = BTreeMap::new();
+    for line in content.lines() {
+        let line = line.trim();
+        if line.is_empty() || line.starts_with('#') || line.starts_with("//") {
+            continue;
+        }
+        if let Some((key, val)) = line.split_once(',').or_else(|| line.split_once('=')) {
+            let k = key.trim().to_lowercase();
+            let v = val.trim().to_string();
+            properties.insert(k, v);
+        }
+    }
+    BalloonOptionsManifest { properties }
+}
+
+#[wasm_bindgen]
+pub fn wasm_parse_balloon_options(content: &str) -> Result<JsValue, JsValue> {
+    let manifest = parse_balloon_options_text(content);
+    Ok(serde_wasm_bindgen::to_value(&manifest)?)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -94,5 +154,17 @@ mod tests {
         let res_mismatch = validate_balloon_descript(&props, "Sakura", "ghost/sakura");
         assert!(!res_mismatch.is_recommended);
         assert!(res_mismatch.warning_message.is_some());
+    }
+
+    #[test]
+    fn test_parse_balloon_options() {
+        let content = "arrow.filename,arrow.png\nmarker.filename=marker.png\nclickwaitmarker.filename,cw.png\nonlinemarker.filename=online.png\nsstpmarker.filename,sstp.png\n";
+        let opts = parse_balloon_options_text(content);
+
+        assert_eq!(opts.arrow_filename(), Some("arrow.png"));
+        assert_eq!(opts.marker_filename(), Some("marker.png"));
+        assert_eq!(opts.click_wait_marker_filename(), Some("cw.png"));
+        assert_eq!(opts.online_marker_filename(), Some("online.png"));
+        assert_eq!(opts.sstp_marker_filename(), Some("sstp.png"));
     }
 }

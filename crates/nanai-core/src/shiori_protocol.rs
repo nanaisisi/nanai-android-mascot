@@ -343,6 +343,44 @@ pub fn build_on_text_area_input_cancel_request(input_id: &str) -> String {
     build_shiori_request_extended("GET", "OnTextAreaInputCancel", &refs, None)
 }
 
+/// OnInitialize イベントリクエスト構築 (ukadoc-spec/list/shiori-event/boot-close-change/OnInitialize.md)
+pub fn build_on_initialize_request() -> String {
+    build_shiori_request_extended("GET", "OnInitialize", &[], None)
+}
+
+/// OnDestroy イベントリクエスト構築 (ukadoc-spec/list/shiori-event/boot-close-change/OnDestroy.md)
+pub fn build_on_destroy_request() -> String {
+    build_shiori_request_extended("GET", "OnDestroy", &[], None)
+}
+
+/// OnSysSuspend イベントリクエスト構築 (ukadoc-spec/list/shiori-event/boot-close-change/OnSysSuspend.md)
+pub fn build_on_sys_suspend_request() -> String {
+    build_shiori_request_extended("GET", "OnSysSuspend", &[], None)
+}
+
+/// OnSysResume イベントリクエスト構築 (ukadoc-spec/list/shiori-event/boot-close-change/OnSysResume.md)
+pub fn build_on_sys_resume_request() -> String {
+    build_shiori_request_extended("GET", "OnSysResume", &[], None)
+}
+
+/// OnWindowStateMinimize イベントリクエスト構築 (ukadoc-spec/list/shiori-event/boot-close-change/OnWindowStateMinimize.md)
+pub fn build_on_window_state_minimize_request(scope_id: i32) -> String {
+    let refs = vec![scope_id.to_string()];
+    build_shiori_request_extended("GET", "OnWindowStateMinimize", &refs, None)
+}
+
+/// OnWindowStateRestore イベントリクエスト構築 (ukadoc-spec/list/shiori-event/boot-close-change/OnWindowStateRestore.md)
+pub fn build_on_window_state_restore_request(scope_id: i32) -> String {
+    let refs = vec![scope_id.to_string()];
+    build_shiori_request_extended("GET", "OnWindowStateRestore", &refs, None)
+}
+
+/// OnSystemDialogCancel イベントリクエスト構築 (ukadoc-spec/list/shiori-event/dialogbox/OnSystemDialogCancel.md)
+pub fn build_on_system_dialog_cancel_request(dialog_type: &str) -> String {
+    let refs = vec![dialog_type.to_string()];
+    build_shiori_request_extended("GET", "OnSystemDialogCancel", &refs, None)
+}
+
 #[wasm_bindgen]
 pub fn wasm_build_shiori_request(method: &str, headers_js: JsValue) -> Result<String, JsValue> {
     let headers: BTreeMap<String, String> = if headers_js.is_null() || headers_js.is_undefined() {
@@ -549,5 +587,28 @@ mod tests {
         let textarea_cancel = build_on_text_area_input_cancel_request("memo_area");
         assert!(textarea_cancel.contains("ID: OnTextAreaInputCancel"));
         assert!(textarea_cancel.contains("Reference0: memo_area"));
+
+        let init_req = build_on_initialize_request();
+        assert!(init_req.contains("ID: OnInitialize"));
+
+        let destroy_req = build_on_destroy_request();
+        assert!(destroy_req.contains("ID: OnDestroy"));
+
+        let sys_suspend = build_on_sys_suspend_request();
+        assert!(sys_suspend.contains("ID: OnSysSuspend"));
+
+        let sys_resume = build_on_sys_resume_request();
+        assert!(sys_resume.contains("ID: OnSysResume"));
+
+        let win_min = build_on_window_state_minimize_request(0);
+        assert!(win_min.contains("ID: OnWindowStateMinimize"));
+        assert!(win_min.contains("Reference0: 0"));
+
+        let win_restore = build_on_window_state_restore_request(1);
+        assert!(win_restore.contains("ID: OnWindowStateRestore"));
+
+        let sys_dlg_cancel = build_on_system_dialog_cancel_request("file");
+        assert!(sys_dlg_cancel.contains("ID: OnSystemDialogCancel"));
+        assert!(sys_dlg_cancel.contains("Reference0: file"));
     }
 }

@@ -2,8 +2,10 @@
 //! UKADOC (SSP仕様) 準拠のトークナイザー / AST 生成モジュール
 
 use serde::{Deserialize, Serialize};
+use tsify::Tsify;
+use wasm_bindgen::prelude::*;
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 #[serde(tag = "type", content = "value")]
 pub enum SakuraToken {
     /// テキスト文字列
@@ -222,22 +224,10 @@ fn parse_bracket_arg<I: Iterator<Item = char>>(
     }
 }
 
-// WASM C-ABI Export
-/// # Safety
-/// `ptr` must be a valid pointer to bytes of length `len`.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn wasm_parse_sakura_script(ptr: *const u8, len: usize) -> *mut SakuraToken {
-    if ptr.is_null() || len == 0 {
-        return std::ptr::null_mut();
-    }
-    let slice = unsafe { std::slice::from_raw_parts(ptr, len) };
-    if let Ok(script) = std::str::from_utf8(slice) {
-        let tokens = parse_sakura_script(script);
-        let boxed = Box::new(tokens);
-        Box::into_raw(boxed) as *mut SakuraToken
-    } else {
-        std::ptr::null_mut()
-    }
+#[wasm_bindgen]
+pub fn wasm_parse_sakura_script(script: &str) -> Result<JsValue, JsValue> {
+    let tokens = parse_sakura_script(script);
+    Ok(serde_wasm_bindgen::to_value(&tokens)?)
 }
 
 #[cfg(test)]

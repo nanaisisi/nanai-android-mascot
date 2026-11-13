@@ -1,8 +1,10 @@
 //! サーフィス当たり判定 (Hit-Test) & 衝突計算エンジン (UKADOC / SSP 準拠)
 
 use serde::{Deserialize, Serialize};
+use tsify::Tsify;
+use wasm_bindgen::prelude::*;
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 #[serde(tag = "shape", rename_all = "lowercase")]
 pub enum CollisionShape {
     Rect { x1: i32, y1: i32, x2: i32, y2: i32 },
@@ -11,7 +13,7 @@ pub enum CollisionShape {
     Polygon { vertices: Vec<(i32, i32)> },
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 pub struct CollisionArea {
     pub id: i32,
     pub name: String,
@@ -78,33 +80,15 @@ pub fn find_hit_collision_name(collisions: &[CollisionArea], x: i32, y: i32) -> 
     None
 }
 
-// WASM C-ABI Export
-/// # Safety
-/// `ptr` must be a valid pointer to bytes of length `len`.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn wasm_find_hit_collision_name_json(
-    ptr: *const u8,
-    len: usize,
+#[wasm_bindgen]
+pub fn wasm_find_hit_collision_name(
+    collisions_js: JsValue,
     x: i32,
     y: i32,
-) -> u64 {
-    if ptr.is_null() || len == 0 {
-        return 0;
-    }
-    let slice = unsafe { std::slice::from_raw_parts(ptr, len) };
-    if let Ok(json_str) = std::str::from_utf8(slice)
-        && let Ok(collisions) = serde_json::from_str::<Vec<CollisionArea>>(json_str)
-        && let Some(hit_name) = find_hit_collision_name(&collisions, x, y)
-    {
-        let json_bytes = hit_name.into_bytes();
-        let json_len = json_bytes.len();
-        let json_ptr = crate::wasm_alloc(json_len);
-        unsafe {
-            std::ptr::copy_nonoverlapping(json_bytes.as_ptr(), json_ptr, json_len);
-        }
-        return ((json_ptr as u64) << 32) | (json_len as u64);
-    }
-    0
+) -> Result<JsValue, JsValue> {
+    let collisions: Vec<CollisionArea> = serde_wasm_bindgen::from_value(collisions_js)?;
+    let hit_name = find_hit_collision_name(&collisions, x, y);
+    Ok(serde_wasm_bindgen::to_value(&hit_name)?)
 }
 
 #[cfg(test)]

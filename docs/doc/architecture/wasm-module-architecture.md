@@ -43,3 +43,13 @@ ui/ts/core/
 
 2. **堅牢なフォールバック機能**:
    - WASM バイナリの未準備時や fetch エラー時でも、各モジュールが自動的に TypeScript 純正の代替ロジックへ透過切り替えするため、アプリがクラッシュしません。
+
+3. **安全なメモリ・ライフサイクル管理 (FinalizationRegistry の活用と手動 `free()` の両立)**:
+   - Rust/WASM (C-ABI) で割り当てられたインスタンスポインタ (`wasm_alloc`、`wasm_create_player` 等) は JavaScript 側からのガベージコレクション (GC) 監視が必要です。
+   - ステートマシンなどライフサイクルが長いオブジェクト（例：`SakuraPlayerEngine`）は、ES6 の `FinalizationRegistry` を用いて、JavaScript 側でオブジェクトが破棄されたタイミングで自動的に WASM の `freeSakuraPlayerWasm(ptr)` が呼び出されるよう監視・実装します。
+   - 関数スコープ内で完結する処理（文字列エンコード / デコード用バッファ）は `wasmMemory.free()` を手動かつ `try/finally` を用いて確実に開放し、メモリリークを防止します。
+   - 参考: [WebAssemblyにおける文字列の受け渡しとメモリ管理の最適化](https://zenn.dev/semiexp/articles/151184c6c5564c)
+
+4. **型安全性の担保と自動型生成 (`tsify`)**:
+   - Rust 側で定義された構造体や Enum (例: `SakuraToken`, `SstpRequest`) を TypeScript 側で安全かつ正確に扱うため、`tsify` (または `tsify-next`) クレートの活用を標準とします。
+   - `serde` と連携して Rust の型定義から TypeScript のインターフェース定義 (`wasm-types.ts` など) を自動生成することで、シリアライズ/デシリアライズ時の JSON の型の不一致やヒューマンエラーをビルドレベルで完全に排除します。

@@ -184,29 +184,17 @@ pub fn build_install_multi_args(resources: &[(String, String)]) -> MultiInstallR
 // WASM C-ABI Functions (No runtime dependency, directly callable from JS / WASM)
 // -----------------------------------------------------------------------------
 
-/// WASM C-ABI: インストール失敗理由のインデックス取得
-/// 0: extraction, 1: unsupported, 2: artificial, 3: invalid path, 4: unlha32 error, 5: write error
-///
-/// # Safety
-/// `ptr` が非NULLかつ `len` が0でない場合、`ptr` は少なくとも `len` バイトの有効なメモリを指している必要があります。
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn wasm_parse_install_error_reason(ptr: *const u8, len: usize) -> u32 {
-    if ptr.is_null() || len == 0 {
-        return 0; // extraction
-    }
-    // SAFETY: 呼び出し元が有効なバッファポインタと長さを提供することを前提とする。
-    let slice = unsafe { std::slice::from_raw_parts(ptr, len) };
-    if let Ok(s) = std::str::from_utf8(slice) {
-        match parse_install_error_reason(s) {
-            "unsupported" => 1,
-            "artificial" => 2,
-            "invalid path" => 3,
-            "unlha32 error" => 4,
-            "write error" => 5,
-            _ => 0, // extraction
-        }
-    } else {
-        0
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+pub fn wasm_parse_install_error_reason(err_message: &str) -> u32 {
+    match parse_install_error_reason(err_message) {
+        "unsupported" => 1,
+        "artificial" => 2,
+        "invalid path" => 3,
+        "unlha32 error" => 4,
+        "write error" => 5,
+        _ => 0, // extraction
     }
 }
 
@@ -330,21 +318,14 @@ mod tests {
 
     #[test]
     fn test_wasm_install_abi() {
-        let s_slip = b"zip-slip detected";
         assert_eq!(
-            unsafe { wasm_parse_install_error_reason(s_slip.as_ptr(), s_slip.len()) },
+            wasm_parse_install_error_reason("zip-slip detected"),
             3 // invalid path
         );
 
-        let s_cancel = b"cancel by user";
         assert_eq!(
-            unsafe { wasm_parse_install_error_reason(s_cancel.as_ptr(), s_cancel.len()) },
+            wasm_parse_install_error_reason("cancel by user"),
             2 // artificial
-        );
-
-        assert_eq!(
-            unsafe { wasm_parse_install_error_reason(std::ptr::null(), 0) },
-            0
         );
     }
 }

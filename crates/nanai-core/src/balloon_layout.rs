@@ -1,15 +1,17 @@
 //! バルーンテキスト自動折り返し & レイアウトメトリクス演算エンジン (UKADOC / SSP 準拠)
 
 use serde::{Deserialize, Serialize};
+use tsify::Tsify;
+use wasm_bindgen::prelude::*;
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 pub struct TextLayoutLine {
     pub line_number: u32,
     pub text: String,
     pub width_px: f32,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 pub struct BalloonLayoutResult {
     pub lines: Vec<TextLayoutLine>,
     pub total_height_px: f32,
@@ -86,35 +88,16 @@ pub fn compute_balloon_text_layout(
     }
 }
 
-// WASM C-ABI Export
-/// # Safety
-/// `ptr` must be a valid pointer to bytes of length `len`.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn wasm_compute_balloon_text_layout_json(
-    ptr: *const u8,
-    len: usize,
+#[wasm_bindgen]
+pub fn wasm_compute_balloon_text_layout(
+    text: &str,
     max_width: f32,
     font_size: f32,
     line_height: f32,
     padding_x: f32,
-) -> u64 {
-    if ptr.is_null() || len == 0 {
-        return 0;
-    }
-    let slice = unsafe { std::slice::from_raw_parts(ptr, len) };
-    if let Ok(text) = std::str::from_utf8(slice) {
-        let res = compute_balloon_text_layout(text, max_width, font_size, line_height, padding_x);
-        if let Ok(json) = serde_json::to_string(&res) {
-            let json_bytes = json.into_bytes();
-            let json_len = json_bytes.len();
-            let json_ptr = crate::wasm_alloc(json_len);
-            unsafe {
-                std::ptr::copy_nonoverlapping(json_bytes.as_ptr(), json_ptr, json_len);
-            }
-            return ((json_ptr as u64) << 32) | (json_len as u64);
-        }
-    }
-    0
+) -> Result<JsValue, JsValue> {
+    let res = compute_balloon_text_layout(text, max_width, font_size, line_height, padding_x);
+    Ok(serde_wasm_bindgen::to_value(&res)?)
 }
 
 #[cfg(test)]

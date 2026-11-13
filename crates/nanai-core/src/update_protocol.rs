@@ -187,66 +187,29 @@ pub fn parse_error_reason(err: &str) -> &'static str {
 // -----------------------------------------------------------------------------
 
 /// WASM C-ABI: 進捗率計算
-/// 返り値: (percent & 0xFFFF) | ((is_complete as u32) << 16)
-#[unsafe(no_mangle)]
-pub extern "C" fn wasm_calculate_update_progress(current: i64, total: i64) -> u32 {
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+pub fn wasm_calculate_update_progress(current: i64, total: i64) -> u32 {
     let res = calculate_update_progress(current, total);
     let complete_flag = if res.is_complete { 1u32 } else { 0u32 };
     (res.percent & 0xFFFF) | (complete_flag << 16)
 }
 
-/// WASM C-ABI: 更新理由正規化 (0: manual, 1: auto, 2: script)
-///
-/// # Safety
-/// `ptr` が非NULLかつ `len` が0でない場合、`ptr` は少なくとも `len` バイトの有効なメモリを指している必要があります。
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn wasm_normalize_update_reason(ptr: *const u8, len: usize) -> u32 {
-    if ptr.is_null() || len == 0 {
-        return 0; // manual
-    }
-    // SAFETY: 呼び出し元が有効なバッファポインタと長さを提供することを前提とする。
-    let slice = unsafe { std::slice::from_raw_parts(ptr, len) };
-    if let Ok(s) = std::str::from_utf8(slice) {
-        match normalize_update_reason(Some(s)) {
-            "manual" => 0,
-            "auto" => 1,
-            "script" => 2,
-            _ => 0,
-        }
-    } else {
-        0
+#[wasm_bindgen]
+pub fn wasm_normalize_update_reason(reason: Option<String>) -> u32 {
+    let r_str = reason.as_deref();
+    match normalize_update_reason(r_str) {
+        "manual" => 0,
+        "auto" => 1,
+        "script" => 2,
+        _ => 0,
     }
 }
 
-/// WASM C-ABI: noupdate パス判定
-/// # Safety
-/// `path_ptr` and `patterns_ptr` must be valid pointer buffers.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn wasm_is_no_update_path(
-    path_ptr: *const u8,
-    path_len: usize,
-    patterns_ptr: *const u8,
-    patterns_len: usize,
-) -> bool {
-    if path_ptr.is_null() || path_len == 0 {
-        return false;
-    }
-    let path_slice = unsafe { std::slice::from_raw_parts(path_ptr, path_len) };
-    let Ok(path) = std::str::from_utf8(path_slice) else {
-        return false;
-    };
-
-    let patterns = if !patterns_ptr.is_null() && patterns_len > 0 {
-        let pat_slice = unsafe { std::slice::from_raw_parts(patterns_ptr, patterns_len) };
-        if let Ok(pat_str) = std::str::from_utf8(pat_slice) {
-            pat_str.split('\n').collect::<Vec<_>>()
-        } else {
-            vec![]
-        }
-    } else {
-        vec![]
-    };
-
+#[wasm_bindgen]
+pub fn wasm_is_no_update_path(path: &str, patterns_str: &str) -> bool {
+    let patterns = patterns_str.split('\n').collect::<Vec<_>>();
     is_no_update_path(path, &patterns)
 }
 
@@ -346,27 +309,9 @@ mod tests {
         assert_eq!(packed_done & 0xFFFF, 100);
         assert_eq!((packed_done >> 16) & 0xFFFF, 1);
 
-        let s_auto = b"auto";
-        assert_eq!(
-            unsafe { wasm_normalize_update_reason(s_auto.as_ptr(), s_auto.len()) },
-            1
-        );
-
-        let s_script = b"script";
-        assert_eq!(
-            unsafe { wasm_normalize_update_reason(s_script.as_ptr(), s_script.len()) },
-            2
-        );
-
-        let s_man = b"manual";
-        assert_eq!(
-            unsafe { wasm_normalize_update_reason(s_man.as_ptr(), s_man.len()) },
-            0
-        );
-
-        assert_eq!(
-            unsafe { wasm_normalize_update_reason(std::ptr::null(), 0) },
-            0
-        );
+        assert_eq!(wasm_normalize_update_reason(Some("auto".to_string())), 1);
+        assert_eq!(wasm_normalize_update_reason(Some("script".to_string())), 2);
+        assert_eq!(wasm_normalize_update_reason(Some("manual".to_string())), 0);
+        assert_eq!(wasm_normalize_update_reason(None), 0);
     }
 }

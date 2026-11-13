@@ -1,8 +1,10 @@
 //! SERIKO アニメーション制御 & コマ送りタイミング計算エンジン (UKADOC / SSP 準拠)
 
 use serde::{Deserialize, Serialize};
+use tsify::Tsify;
+use wasm_bindgen::prelude::*;
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 pub struct AnimationPattern {
     pub surface_id: i32,
     pub wait_ms: u32,
@@ -11,14 +13,14 @@ pub struct AnimationPattern {
     pub y: i32,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 pub struct AnimationDefinition {
     pub id: u32,
     pub interval: String, // sometimes, rarely, always, runagain, bind, never
     pub patterns: Vec<AnimationPattern>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 pub struct AnimationState {
     pub animation_id: u32,
     pub current_pattern_index: usize,
@@ -57,44 +59,18 @@ pub fn advance_animation_frame(
     Some(current_pattern.clone())
 }
 
-// WASM C-ABI Export
-/// # Safety
-/// `def_ptr` and `state_ptr` must be valid pointers to bytes of length `def_len` and `state_len` respectively.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn wasm_advance_animation_frame_json(
-    def_ptr: *const u8,
-    def_len: usize,
-    state_ptr: *const u8,
-    state_len: usize,
+#[wasm_bindgen]
+pub fn wasm_advance_animation_frame(
+    def_js: JsValue,
+    state_js: JsValue,
     delta_ms: u32,
-) -> u64 {
-    if def_ptr.is_null() || def_len == 0 || state_ptr.is_null() || state_len == 0 {
-        return 0;
-    }
+) -> Result<JsValue, JsValue> {
+    let def: AnimationDefinition = serde_wasm_bindgen::from_value(def_js)?;
+    let mut state: AnimationState = serde_wasm_bindgen::from_value(state_js)?;
 
-    let def_slice = unsafe { std::slice::from_raw_parts(def_ptr, def_len) };
-    let state_slice = unsafe { std::slice::from_raw_parts(state_ptr, state_len) };
-
-    if let (Ok(def_str), Ok(state_str)) = (
-        std::str::from_utf8(def_slice),
-        std::str::from_utf8(state_slice),
-    ) && let (Ok(def), Ok(mut state)) = (
-        serde_json::from_str::<AnimationDefinition>(def_str),
-        serde_json::from_str::<AnimationState>(state_str),
-    ) {
-        let opt_pat = advance_animation_frame(&def, &mut state, delta_ms);
-        let payload = (opt_pat, state);
-        if let Ok(res_json) = serde_json::to_string(&payload) {
-            let bytes = res_json.into_bytes();
-            let len = bytes.len();
-            let ptr = crate::wasm_alloc(len);
-            unsafe {
-                std::ptr::copy_nonoverlapping(bytes.as_ptr(), ptr, len);
-            }
-            return ((ptr as u64) << 32) | (len as u64);
-        }
-    }
-    0
+    let opt_pat = advance_animation_frame(&def, &mut state, delta_ms);
+    let payload = (opt_pat, state);
+    Ok(serde_wasm_bindgen::to_value(&payload)?)
 }
 
 #[cfg(test)]

@@ -2,8 +2,10 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
+use tsify::Tsify;
+use wasm_bindgen::prelude::*;
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 pub struct DescriptManifest {
     pub properties: BTreeMap<String, String>,
 }
@@ -39,28 +41,10 @@ pub fn parse_descript_text(content: &str) -> DescriptManifest {
     DescriptManifest { properties }
 }
 
-// WASM C-ABI Export
-/// # Safety
-/// `ptr` must be a valid pointer to bytes of length `len`.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn wasm_parse_descript_json(ptr: *const u8, len: usize) -> u64 {
-    if ptr.is_null() || len == 0 {
-        return 0;
-    }
-    let slice = unsafe { std::slice::from_raw_parts(ptr, len) };
-    if let Ok(content) = std::str::from_utf8(slice) {
-        let manifest = parse_descript_text(content);
-        if let Ok(json) = serde_json::to_string(&manifest) {
-            let bytes = json.into_bytes();
-            let len = bytes.len();
-            let ptr = crate::wasm_alloc(len);
-            unsafe {
-                std::ptr::copy_nonoverlapping(bytes.as_ptr(), ptr, len);
-            }
-            return ((ptr as u64) << 32) | (len as u64);
-        }
-    }
-    0
+#[wasm_bindgen]
+pub fn wasm_parse_descript(content: &str) -> Result<JsValue, JsValue> {
+    let manifest = parse_descript_text(content);
+    Ok(serde_wasm_bindgen::to_value(&manifest)?)
 }
 
 #[cfg(test)]

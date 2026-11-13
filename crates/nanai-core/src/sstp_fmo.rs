@@ -2,8 +2,10 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
+use tsify::Tsify;
+use wasm_bindgen::prelude::*;
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 pub struct SstpRequest {
     pub command: String, // NOTIFY, EXECUTE, SEND, GIVE
     pub version: String, // SSTP/1.4, SSTP/1.1 等
@@ -41,7 +43,7 @@ pub fn parse_sstp_request(raw_request: &str) -> Option<SstpRequest> {
     })
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 pub struct FmoEntry {
     pub name: String,
     pub ghost_name: String,
@@ -83,6 +85,21 @@ pub fn parse_fmo_string(raw_fmo: &str) -> BTreeMap<String, FmoEntry> {
     }
 
     entries
+}
+
+#[wasm_bindgen]
+pub fn wasm_parse_sstp_request(raw_request: &str) -> Result<JsValue, JsValue> {
+    if let Some(req) = parse_sstp_request(raw_request) {
+        Ok(serde_wasm_bindgen::to_value(&req)?)
+    } else {
+        Ok(JsValue::NULL)
+    }
+}
+
+#[wasm_bindgen]
+pub fn wasm_parse_fmo_string(raw_fmo: &str) -> Result<JsValue, JsValue> {
+    let entries = parse_fmo_string(raw_fmo);
+    Ok(serde_wasm_bindgen::to_value(&entries)?)
 }
 
 #[cfg(test)]

@@ -3,9 +3,10 @@
 
 use crate::sakura_script::{SakuraToken, parse_sakura_script};
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeMap;
+use tsify::Tsify;
+use wasm_bindgen::prelude::*;
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 #[serde(tag = "action", content = "data")]
 pub enum StepOutput {
     /// テキストの追加 (\0 こんにちは)
@@ -40,33 +41,43 @@ pub enum StepOutput {
     None,
 }
 
+#[wasm_bindgen]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SakuraPlayerEngine {
     tokens: Vec<SakuraToken>,
     current_index: usize,
     current_scope: u32,
-    surfaces: BTreeMap<u32, i32>,
-    balloons: BTreeMap<u32, i32>,
-    display_texts: BTreeMap<u32, String>,
+    surfaces: std::collections::BTreeMap<u32, i32>,
+    balloons: std::collections::BTreeMap<u32, i32>,
+    display_texts: std::collections::BTreeMap<u32, String>,
     is_halted: bool,
 }
 
+#[wasm_bindgen]
 impl SakuraPlayerEngine {
+    #[wasm_bindgen(constructor)]
     pub fn new(script: &str) -> Self {
         let tokens = parse_sakura_script(script);
         Self {
             tokens,
             current_index: 0,
             current_scope: 0,
-            surfaces: BTreeMap::new(),
-            balloons: BTreeMap::new(),
-            display_texts: BTreeMap::new(),
+            surfaces: std::collections::BTreeMap::new(),
+            balloons: std::collections::BTreeMap::new(),
+            display_texts: std::collections::BTreeMap::new(),
             is_halted: false,
         }
     }
 
     /// スクリプトを 1 ステップ進行し、発生した変更出力を返却
-    pub fn step(&mut self) -> StepOutput {
+    pub fn step(&mut self) -> Result<JsValue, JsValue> {
+        let output = self.step_internal();
+        Ok(serde_wasm_bindgen::to_value(&output)?)
+    }
+}
+
+impl SakuraPlayerEngine {
+    pub fn step_internal(&mut self) -> StepOutput {
         if this_is_halted(self) {
             return StepOutput::Halt;
         }
@@ -135,7 +146,7 @@ impl SakuraPlayerEngine {
                 id,
                 text,
             },
-            SakuraToken::Font { .. } => self.step(), // フォント変更時は次のステップへ
+            SakuraToken::Font { .. } => self.step_internal(), // フォント変更時は次のステップへ
             SakuraToken::Halt => {
                 self.is_halted = true;
                 StepOutput::Halt
@@ -167,56 +178,6 @@ fn this_is_halted(engine: &SakuraPlayerEngine) -> bool {
     engine.is_halted
 }
 
-// WASM C-ABI Functions
-/// # Safety
-/// `ptr` must be a valid pointer to bytes of length `len`.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn wasm_create_player(ptr: *const u8, len: usize) -> *mut SakuraPlayerEngine {
-    if ptr.is_null() || len == 0 {
-        return std::ptr::null_mut();
-    }
-    let slice = unsafe { std::slice::from_raw_parts(ptr, len) };
-    if let Ok(script) = std::str::from_utf8(slice) {
-        let engine = SakuraPlayerEngine::new(script);
-        Box::into_raw(Box::new(engine))
-    } else {
-        std::ptr::null_mut()
-    }
-}
-
-/// # Safety
-/// `engine_ptr` must be a valid pointer obtained from `wasm_create_player`.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn wasm_player_step(engine_ptr: *mut SakuraPlayerEngine) -> u64 {
-    if engine_ptr.is_null() {
-        return 0;
-    }
-    let engine = unsafe { &mut *engine_ptr };
-    let output = engine.step();
-    if let Ok(json) = serde_json::to_string(&output) {
-        let bytes = json.into_bytes();
-        let len = bytes.len();
-        let ptr = crate::wasm_alloc(len);
-        unsafe {
-            std::ptr::copy_nonoverlapping(bytes.as_ptr(), ptr, len);
-        }
-        ((ptr as u64) << 32) | (len as u64)
-    } else {
-        0
-    }
-}
-
-/// # Safety
-/// `engine_ptr` must be a valid pointer obtained from `wasm_create_player` and not yet freed.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn wasm_free_player(engine_ptr: *mut SakuraPlayerEngine) {
-    if !engine_ptr.is_null() {
-        unsafe {
-            drop(Box::from_raw(engine_ptr));
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -226,44 +187,44 @@ mod tests {
         let script = "\\0\\s[0]Hello\\n\\1\\s[10]World\\e";
         let mut engine = SakuraPlayerEngine::new(script);
 
-        assert_eq!(engine.step(), StepOutput::ScopeChange { scope: 0 });
+        assert_eq!(engine.step_internal(), StepOutput::ScopeChange { scope: 0 });
         assert_eq!(
-            engine.step(),
+            engine.step_internal(),
             StepOutput::SurfaceChange {
                 scope: 0,
                 surface_id: 0
             }
         );
         assert_eq!(
-            engine.step(),
+            engine.step_internal(),
             StepOutput::TextAppend {
                 scope: 0,
                 text: "Hello".to_string()
             }
         );
         assert_eq!(
-            engine.step(),
+            engine.step_internal(),
             StepOutput::TextAppend {
                 scope: 0,
                 text: "\n".to_string()
             }
         );
-        assert_eq!(engine.step(), StepOutput::ScopeChange { scope: 1 });
+        assert_eq!(engine.step_internal(), StepOutput::ScopeChange { scope: 1 });
         assert_eq!(
-            engine.step(),
+            engine.step_internal(),
             StepOutput::SurfaceChange {
                 scope: 1,
                 surface_id: 10
             }
         );
         assert_eq!(
-            engine.step(),
+            engine.step_internal(),
             StepOutput::TextAppend {
                 scope: 1,
                 text: "World".to_string()
             }
         );
-        assert_eq!(engine.step(), StepOutput::Halt);
+        assert_eq!(engine.step_internal(), StepOutput::Halt);
         assert!(engine.is_halted());
     }
 }

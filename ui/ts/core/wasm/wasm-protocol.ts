@@ -1,6 +1,6 @@
 /**
  * @file wasm-protocol.ts
- * @brief SSTP/FMO/descript/プロトコルバインディング
+ * @brief SSTP/FMO/descript/プロトコルバインディング (wasm-pack 統合)
  */
 
 import { parseInstallErrorReason as parseInstallErrorReasonFallback } from "../actions/install-protocol.js";
@@ -9,24 +9,11 @@ import { wasmMemory } from "./wasm-memory.js";
 import type { DescriptManifest, SstpRequest } from "./wasm-types.js";
 
 export function parseSstpRequestWasm(rawSstp: string): SstpRequest | null {
-	if (!wasmMemory.isReady()) return null;
-
-	const exports = wasmMemory.getExports();
-	if (!exports?.wasm_parse_sstp_request_json) return null;
+	const core = wasmMemory.getWasmCore();
+	if (!core?.wasm_parse_sstp_request) return null;
 
 	try {
-		const { ptr, len } = wasmMemory.encodeString(rawSstp);
-		const packed = exports.wasm_parse_sstp_request_json(ptr, len);
-		wasmMemory.free(ptr, len);
-
-		if (packed === 0n) return null;
-
-		const jsonPtr = Number(packed >> 32n);
-		const jsonLen = Number(packed & 0xffffffffn);
-		const jsonStr = wasmMemory.decodeString(jsonPtr, jsonLen);
-		wasmMemory.free(jsonPtr, jsonLen);
-
-		return JSON.parse(jsonStr) as SstpRequest;
+		return core.wasm_parse_sstp_request(rawSstp) as SstpRequest | null;
 	} catch (err) {
 		console.warn("⚠️ [WASM Protocol] parseSstpRequest エラー:", err);
 		return null;
@@ -36,24 +23,11 @@ export function parseSstpRequestWasm(rawSstp: string): SstpRequest | null {
 export function parseDescriptTextWasm(
 	content: string,
 ): DescriptManifest | null {
-	if (!wasmMemory.isReady()) return null;
-
-	const exports = wasmMemory.getExports();
-	if (!exports?.wasm_parse_descript_json) return null;
+	const core = wasmMemory.getWasmCore();
+	if (!core?.wasm_parse_descript) return null;
 
 	try {
-		const { ptr, len } = wasmMemory.encodeString(content);
-		const packed = exports.wasm_parse_descript_json(ptr, len);
-		wasmMemory.free(ptr, len);
-
-		if (packed === 0n) return null;
-
-		const jsonPtr = Number(packed >> 32n);
-		const jsonLen = Number(packed & 0xffffffffn);
-		const jsonStr = wasmMemory.decodeString(jsonPtr, jsonLen);
-		wasmMemory.free(jsonPtr, jsonLen);
-
-		return JSON.parse(jsonStr) as DescriptManifest;
+		return core.wasm_parse_descript(content) as DescriptManifest | null;
 	} catch (err) {
 		console.warn("⚠️ [WASM Protocol] parseDescriptText エラー:", err);
 		return null;
@@ -64,71 +38,52 @@ export function calculateUpdateProgressWasm(
 	current: number,
 	total: number,
 ): { percent: number; isComplete: boolean } {
-	if (wasmMemory.isReady()) {
-		const exports = wasmMemory.getExports();
-		if (exports?.wasm_calculate_update_progress) {
-			try {
-				const packed = exports.wasm_calculate_update_progress(
-					BigInt(current),
-					BigInt(total),
-				);
-				const percent = packed & 0xffff;
-				const isComplete = Boolean((packed >> 16) & 0xffff);
-				return { percent, isComplete };
-			} catch (_err) {
-				// Fallback on error
-			}
+	const core = wasmMemory.getWasmCore();
+	if (core?.wasm_calculate_update_progress) {
+		try {
+			const packed = core.wasm_calculate_update_progress(
+				BigInt(current),
+				BigInt(total),
+			);
+			const percent = Number(packed & 0xffffn);
+			const isComplete = Boolean((packed >> 16n) & 0xffffn);
+			return { percent, isComplete };
+		} catch (_err) {
+			// Fallback on error
 		}
 	}
 	return calculateUpdateProgressFallback(current, total);
 }
 
 export function parseInstallErrorReasonWasm(errMessage: string): string {
-	if (wasmMemory.isReady()) {
-		const exports = wasmMemory.getExports();
-		if (exports?.wasm_parse_install_error_reason) {
-			try {
-				const { ptr, len } = wasmMemory.encodeString(errMessage);
-				const idx = exports.wasm_parse_install_error_reason(ptr, len);
-				wasmMemory.free(ptr, len);
-
-				const reasons = [
-					"extraction",
-					"unsupported",
-					"artificial",
-					"invalid path",
-					"unlha32 error",
-					"write error",
-				];
-				return reasons[idx] || "extraction";
-			} catch (_err) {
-				// Fallback on error
-			}
+	const core = wasmMemory.getWasmCore();
+	if (core?.wasm_parse_install_error_reason) {
+		try {
+			const idx = core.wasm_parse_install_error_reason(errMessage);
+			const reasons = [
+				"extraction",
+				"unsupported",
+				"artificial",
+				"invalid path",
+				"unlha32 error",
+				"write error",
+			];
+			return reasons[Number(idx)] || "extraction";
+		} catch (_err) {
+			// Fallback on error
 		}
 	}
 	return parseInstallErrorReasonFallback(errMessage);
 }
 
 export function isNoUpdatePathWasm(path: string, patterns: string[]): boolean {
-	if (wasmMemory.isReady()) {
-		const exports = wasmMemory.getExports();
-		if (exports?.wasm_is_no_update_path) {
-			try {
-				const { ptr: pathPtr, len: pathLen } = wasmMemory.encodeString(path);
-				const patStr = patterns.join("\n");
-				const { ptr: patPtr, len: patLen } = wasmMemory.encodeString(patStr);
-				const res = exports.wasm_is_no_update_path(
-					pathPtr,
-					pathLen,
-					patPtr,
-					patLen,
-				);
-				wasmMemory.free(pathPtr, pathLen);
-				wasmMemory.free(patPtr, patLen);
-				return Boolean(res);
-			} catch (_err) {
-				// Fallback on error
-			}
+	const core = wasmMemory.getWasmCore();
+	if (core?.wasm_is_no_update_path) {
+		try {
+			const patStr = patterns.join("\n");
+			return Boolean(core.wasm_is_no_update_path(path, patStr));
+		} catch (_err) {
+			// Fallback on error
 		}
 	}
 	return false;

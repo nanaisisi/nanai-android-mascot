@@ -1,8 +1,10 @@
 //! サーフィス合成 & レイヤーカスケード計算エンジン (UKADOC / SSP 準拠)
 
 use serde::{Deserialize, Serialize};
+use tsify::Tsify;
+use wasm_bindgen::prelude::*;
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 pub struct SurfaceElement {
     pub id: u32,
     pub file: String,
@@ -11,7 +13,7 @@ pub struct SurfaceElement {
     pub y: i32,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 pub struct SurfaceCompositionPlan {
     pub surface_id: u32,
     pub base_file: String,
@@ -49,43 +51,21 @@ pub fn compute_surface_composition_plan(
     }
 }
 
-// WASM C-ABI Export
-/// # Safety
-/// `elements_ptr` must be a valid pointer to bytes of length `elements_len`, and `binds_ptr` must be a valid pointer of length `binds_len` if non-null.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn wasm_compute_surface_composition_plan_json(
+#[wasm_bindgen]
+pub fn wasm_compute_surface_composition_plan(
     surface_id: u32,
-    elements_ptr: *const u8,
-    elements_len: usize,
-    binds_ptr: *const u32,
-    binds_len: usize,
-) -> u64 {
-    if elements_ptr.is_null() || elements_len == 0 {
-        return 0;
-    }
-
-    let elem_slice = unsafe { std::slice::from_raw_parts(elements_ptr, elements_len) };
-    let binds = if !binds_ptr.is_null() && binds_len > 0 {
-        unsafe { std::slice::from_raw_parts(binds_ptr, binds_len) }
+    elements_js: JsValue,
+    binds_js: JsValue,
+) -> Result<JsValue, JsValue> {
+    let elements: Vec<SurfaceElement> = serde_wasm_bindgen::from_value(elements_js)?;
+    let binds: Vec<u32> = if binds_js.is_null() || binds_js.is_undefined() {
+        vec![]
     } else {
-        &[]
+        serde_wasm_bindgen::from_value(binds_js)?
     };
 
-    if let Ok(json_str) = std::str::from_utf8(elem_slice)
-        && let Ok(elements) = serde_json::from_str::<Vec<SurfaceElement>>(json_str)
-    {
-        let plan = compute_surface_composition_plan(surface_id, &elements, binds);
-        if let Ok(res_json) = serde_json::to_string(&plan) {
-            let bytes = res_json.into_bytes();
-            let len = bytes.len();
-            let ptr = crate::wasm_alloc(len);
-            unsafe {
-                std::ptr::copy_nonoverlapping(bytes.as_ptr(), ptr, len);
-            }
-            return ((ptr as u64) << 32) | (len as u64);
-        }
-    }
-    0
+    let plan = compute_surface_composition_plan(surface_id, &elements, &binds);
+    Ok(serde_wasm_bindgen::to_value(&plan)?)
 }
 
 #[cfg(test)]

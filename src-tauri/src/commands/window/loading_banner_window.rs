@@ -2,18 +2,20 @@
 use tauri::Emitter;
 
 #[tauri::command]
-#[allow(unused_variables)]
 pub async fn show_loading_banner_window(
-    app_handle: tauri::AppHandle,
-    ghost_name: Option<String>,
-    ghost_version: Option<String>,
+    _app_handle: tauri::AppHandle,
+    _ghost_name: Option<String>,
+    _ghost_version: Option<String>,
 ) -> Result<(), String> {
-    println!(
-        "⏳ show_loading_banner_window called: ghost={:?}, version={:?}",
-        ghost_name, ghost_version
-    );
     #[cfg(desktop)]
     {
+        let app_handle = _app_handle;
+        let ghost_name = _ghost_name;
+        let ghost_version = _ghost_version;
+        println!(
+            "⏳ show_loading_banner_window called: ghost={:?}, version={:?}",
+            ghost_name, ghost_version
+        );
         use tauri::Manager;
         // バナーサイズ: 横幅300px, 縦幅90px (約3:2のプロポーション)
         let win_width = 300.0;

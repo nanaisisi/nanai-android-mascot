@@ -4,16 +4,20 @@ use tauri::menu::{MenuBuilder, SubmenuBuilder};
 
 /// OSネイティブのコンテキストメニュー表示コマンド (SSP / ukadoc 仕様準拠のメニュー再編)
 #[tauri::command]
-#[allow(unused_variables)]
 pub async fn show_context_menu(
-    app_handle: tauri::AppHandle,
-    ghosts: Vec<String>,
-    current_ghost: Option<String>,
-    shells: Vec<String>,
-    current_shell: Option<String>,
+    _app_handle: tauri::AppHandle,
+    _ghosts: Vec<String>,
+    _current_ghost: Option<String>,
+    _shells: Vec<String>,
+    _current_shell: Option<String>,
 ) -> Result<(), String> {
     #[cfg(desktop)]
     {
+        let app_handle = _app_handle;
+        let ghosts = _ghosts;
+        let current_ghost = _current_ghost;
+        let shells = _shells;
+        let current_shell = _current_shell;
         let window = app_handle
             .get_webview_window("main")
             .ok_or("main window not found")?;

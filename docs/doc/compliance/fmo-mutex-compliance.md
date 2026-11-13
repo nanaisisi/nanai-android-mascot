@@ -17,7 +17,7 @@
 FMO (File Mapping Object) と Mutex は、Windows 上で起動中のベースウェアやゴーストの情報を共有メモリ上に公開し、ゴースト間の二重起動防止や SSTP 送信先検出を行うための規格です。
 
 - **メモリ表現・シリアライズ**:
-  - 64KB Little-Endian サイズヘッダ、`\x01` キー値区切り、CRLF 区切り、NULL終端構造を完全実装 (`crates/ui/src/fmo/buffer.rs`)。
+  - 64KB Little-Endian サイズヘッダ、`\x01` キー値区切り、CRLF 区切り、NULL終端構造を完全実装 (`crates/nanai-core/src/sstp_fmo.rs`, `src-tauri/src/shiori/fmo.rs`)。
   - `format_fmo_text` による UKADOC 準拠テキスト出力と、リモート要求時の機密パス秘匿および HWND ダミー化。
   - `balloon0`, `balloon1`, `sakura_surface`, `kero_surface`, `modulestate`, `is_visible`, `lifecycle_state` の双方向同期。
 - **Windows 環境**:

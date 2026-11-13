@@ -15,17 +15,17 @@ Nanai Android Mascot プロジェクトにおける開発ドキュメント、�
 
 ### 2. ソースコード直接検証の原則 (Source Code Line Traceability)
 
-- `✅ 対応済` と表記するためには、実際のソースコードファイル (`../../../src-tauri` または `ui/js/`) 内の関数名・変数名・キーバインド処理の該当行番号を個別ファイルに明記しなければならない。
+- `✅ 対応済` と表記するためには、実際のソースコードファイル (`../../../src-tauri`、`crates/nanai-core`、または `ui/ts/`) 内の関数名・変数名・キーバインド処理の該当行番号を個別ファイルに明記しなければならない。
 - 例:
 
   ```markdown
   ## 実装箇所
-  - `ui/js/core/actions/balloon-descript/font.js` `props["font.outline"] === "1"`
+  - `ui/ts/core/actions/balloon-descript/font.ts` `props["font.outline"] === "1"`
   ```
 
 ### 3. ソースコードコメントへの仕様名直接記載義務 (Mandatory Code Comment Annotation)
 
-- `index.md` 等で対応済 (`✅ 対応済`) とするすべての仕様項目は、対応するソースコード (`../../../src-tauri` または `ui/js/`) 内のコメントに、仕様項目の正式タイトル（例: `// [charset,文字コード]: props["charset"]`, `// [id,ID名]: props["id"]`, `// [font.name,フォント名]: props["font.name"]`）を **1 回以上直接明記しなければならない**。
+- `index.md` 等で対応済 (`✅ 対応済`) とするすべての仕様項目は、対応するソースコード (`../../../src-tauri`、`crates/nanai-core`、または `ui/ts/`) 内のコメントに、仕様項目の正式タイトル（例: `// [charset,文字コード]: props["charset"]`, `// [id,ID名]: props["id"]`, `// [font.name,フォント名]: props["font.name"]`）を **1 回以上直接明記しなければならない**。
 - 動的プロパティ生成（テンプレートリテラル等）を行う処理であっても、仕様インデックスとの相互検索性を担保するため、該当箇所に具体的な仕様タイトルのコメント記述を必須とする。
 
 ### 4. 自動テスト通過の必須義務 (Automated Test Validation)
@@ -37,8 +37,8 @@ Nanai Android Mascot プロジェクトにおける開発ドキュメント、�
 ## 運用・維持手順 (Operational Workflow)
 
 1. **仕様追加・修正時**:
-   1. ソースコード (`../../../src-tauri` または `ui/js/`) を実装・修正し、仕様項目の正式タイトル（例: `// [font.name,フォント名]: ...`）をコードコメントに 1 回以上付記する。
-   2. 対応する Vitest 単体テスト (`tests/*.test.js`) を作成・更新し、`npx vitest run` を実行して全件 PASS を確認する。
+   1. ソースコード (`../../../src-tauri`、`crates/nanai-core`、または `ui/ts/`) を実装・修正し、仕様項目の正式タイトル（例: `// [font.name,フォント名]: ...`）をコードコメントに 1 回以上付記する。
+   2. 対応する Vitest 単体テスト (`tests/balloon-descript.test.ts` 等の `tests/*.test.ts`) を作成・更新し、`npx vitest run` を実行して全件 PASS を確認する。
    3. 対応する個別の仕様ファイル (`docs/spec/ukadoc-spec/.../*.md`) の「対応状況」「突合結果」「実装箇所」を更新する。
    4. インデックスファイル (`index.md` / `SUMMARY.md`) の該当行を個別ファイルおよびソースコードコメントと一致するように更新する。
 

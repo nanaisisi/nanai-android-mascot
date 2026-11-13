@@ -34,11 +34,11 @@ Nanai Android Mascot では、この仕様をモダンな Tauri v2 + Web フロ�
 
 ### 3.1 Rust バックエンドによるプロパティ抽出
 
-- `src-tauri/src/ghost/scan/shell.rs` において、シェルの `descript.txt` を Shift_JIS / UTF-8 両対応でパースし、各種 `menu.*.bitmap` およびカラープロパティを抽出して `ShellMenuTheme` 構造体としてフロントエンドへ同期。
+- `src-tauri/src/ghost/scan/shell/mod.rs` および `src-tauri/src/ghost/scan/shell/theme.rs` において、シェルの `descript.txt` を Shift_JIS / UTF-8 両対応でパースし、各種 `menu.*.bitmap` およびカラープロパティを抽出して `ShellMenuTheme` 構造体としてフロントエンドへ同期。
 
 ### 3.2 セキュアなローカルアセットURL変換
 
-- `../../../ui/js/ui/submenu.js` の `applyShellMenuTheme()` 内において、シェルの絶対パスと相対ビットマップファイル名から Tauri の `convertFileSrc` を用いたブラウザセーフなローカルアセットURLを生成し、動的にスタイルへ適用。
+- `../../../ui/ts/ui/submenu.ts` および `../../../ui/ts/ui/submenu-theme.ts` の `applyShellMenuTheme()` 内において、シェルの絶対パスと相対ビットマップファイル名から Tauri の `convertFileSrc` を用いたブラウザセーフなローカルアセットURLを生成し、動的にスタイルへ適用。
 
 ### 3.3 サイドバー & タイリングレイアウト
 

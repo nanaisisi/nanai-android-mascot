@@ -11,4 +11,4 @@
 
 ## 対応範囲の共通事項
 
-- シェルの `descript.txt` に定義されたメニュー配色、フォントサイズ、背景・前景・サイドバー画像（Data URL base64 変換）をサブメニュー UI (`ui/js/ui/submenu.js`) に動的適用。
+- シェルの `descript.txt` に定義されたメニュー配色、フォントサイズ、背景・前景・サイドバー画像（Data URL base64 変換）をサブメニュー UI (`ui/ts/ui/submenu.ts`) に動的適用。

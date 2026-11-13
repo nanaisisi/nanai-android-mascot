@@ -12,8 +12,8 @@ Nanai Android Mascot における「ファイルシステム（仮想パス・�
 - **対応度**: **90%**
 - **主要実装ファイル**:
   - `../../../src-tauri/src/lib.rs`: `encoding_rs` によるエンコード変換、大文字小文字吸収 VFS
-  - `docs/spec/ghost-import-and-asset-separation-spec.md`: アセット分離仕様
-  - `docs/spec/encoding-and-vfs-spec.md`: VFS詳細仕様
+  - `docs/doc/nas-spec/ghost/ghost-import-and-asset-separation-spec/index.md`: アセット分離仕様
+  - `docs/doc/nas-spec/platform/encoding-and-vfs-spec/index.md`: VFS詳細仕様
 
 ---
 

@@ -4,13 +4,13 @@
 
 | 項目                              | 検索語        |          対応状況           |
 | :-------------------------------- | :------------ | :-------------------------: |
-| [system:arrow](system-arrow.md)   | system:arrow  | ✅ 対応済 (surface-load.js) |
-| [system:cross](system-cross.md)   | system:cross  | ✅ 対応済 (surface-load.js) |
-| [system:finger](system-finger.md) | system:finger | ✅ 対応済 (surface-load.js) |
-| [system:grip](system-grip.md)     | system:grip   | ✅ 対応済 (surface-load.js) |
-| [system:hand](system-hand.md)     | system:hand   | ✅ 対応済 (surface-load.js) |
-| [system:help](system-help.md)     | system:help   | ✅ 対応済 (surface-load.js) |
-| [system:move](system-move.md)     | system:move   | ✅ 対応済 (surface-load.js) |
-| [system:no](system-no.md)         | system:no     | ✅ 対応済 (surface-load.js) |
-| [system:text](system-text.md)     | system:text   | ✅ 対応済 (surface-load.js) |
-| [system:wait](system-wait.md)     | system:wait   | ✅ 対応済 (surface-load.js) |
+| [system:arrow](system-arrow.md) | system:arrow | ✅ 実装済 (surface-load.ts) |
+| [system:cross](system-cross.md) | system:cross | ✅ 実装済 (surface-load.ts) |
+| [system:finger](system-finger.md) | system:finger | ✅ 実装済 (surface-load.ts) |
+| [system:grip](system-grip.md) | system:grip | ✅ 実装済 (surface-load.ts) |
+| [system:hand](system-hand.md) | system:hand | ✅ 実装済 (surface-load.ts) |
+| [system:help](system-help.md) | system:help | ✅ 実装済 (surface-load.ts) |
+| [system:move](system-move.md) | system:move | ✅ 実装済 (surface-load.ts) |
+| [system:no](system-no.md) | system:no | ✅ 実装済 (surface-load.ts) |
+| [system:text](system-text.md) | system:text | ✅ 実装済 (surface-load.ts) |
+| [system:wait](system-wait.md) | system:wait | ✅ 実装済 (surface-load.ts) |

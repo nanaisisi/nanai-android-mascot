@@ -4,5 +4,5 @@
 
 | 項目                                             | 検索語     |        対応状況        |
 | :----------------------------------------------- | :--------- | :--------------------: |
-| [delete.txt（概要）](introduction_delete.txt.md) | delete.txt | ✅ 対応済 (archive.rs) |
-| [相対パス指定](entry.md)                         | 相対パス   | ✅ 対応済 (archive.rs) |
+| [delete.txt（概要）](introduction_delete.txt.md) | delete.txt | ⚠️ 一部対応 (archive.rs) |
+| [相対パス指定](entry.md) | 相対パス | ✅ 対応済 (archive.rs) |

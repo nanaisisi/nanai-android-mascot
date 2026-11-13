@@ -4,14 +4,17 @@
 
 | 項目                                                       | 検索語         |      対応状況      |
 | :--------------------------------------------------------- | :------------- | :----------------: |
-| [charset,文字コード](charset.md)                           | charset        | ✅ 対応済 (ext.rs) |
-| [craftman,作者名](craftman.md)                             | craftman       | ✅ 対応済 (ext.rs) |
-| [craftmanurl,URL](craftmanurl.md)                          | craftmanurl    | ✅ 対応済 (ext.rs) |
-| [craftmanw,作者名](craftmanw.md)                           | craftmanw      | ✅ 対応済 (ext.rs) |
-| [homeurl,URL](homeurl.md)                                  | homeurl        | ✅ 対応済 (ext.rs) |
-| [id,ID名](id.md)                                           | id             | ✅ 対応済 (ext.rs) |
-| [descript.txt（Headlineの）](introduction_descript.txt.md) | descript.txt   | ✅ 対応済 (ext.rs) |
-| [name,ヘッドライン名](name.md)                             | name           | ✅ 対応済 (ext.rs) |
-| [readme,ファイル名](readme.md)                             | readme         | ✅ 対応済 (ext.rs) |
-| [readme.charset,文字コード](readme.charset.md)             | readme.charset | ✅ 対応済 (ext.rs) |
-| [type,種別](type.md)                                       | type           | ✅ 対応済 (ext.rs) |
+| [charset,文字コード](charset.md) | charset | ✅ 実装済 (ext.rs) |
+| [craftman,作者名](craftman.md) | craftman | ✅ 実装済 (ext.rs) |
+| [craftmanurl,URL](craftmanurl.md) | craftmanurl | ⚠️ 一部対応 (ext.rs) |
+| [craftmanw,作者名](craftmanw.md) | craftmanw | ⚠️ 一部対応 (ext.rs) |
+| [homeurl,URL](homeurl.md) | homeurl | ⚠️ 一部対応 (ext.rs) |
+| [id,ID名](id.md) | id | ✅ 対応済 (ext.rs) |
+| [descript.txt（Headlineの）](introduction_descript.txt.md) | descript.txt | ✅ 実装済 (ext.rs) |
+| [name,ヘッドライン名](name.md) | name | ✅ 対応済 (ext.rs) |
+| [readme,ファイル名](readme.md) | readme | ✅ 実装済 (ext.rs) |
+| [readme.charset,文字コード](readme.charset.md) | readme.charset | ✅ 実装済 (ext.rs) |
+| [alwaysdisplay,数値](alwaysdisplay.md) | alwaysdisplay | ⚠️ 一部対応 (ext.rs) |
+| [dllname,ファイル名](dllname.md) | dllname | ⚠️ 一部対応 (ext.rs) |
+| [openurl,URL](openurl.md) | openurl | ⚠️ 一部対応 (ext.rs) |
+| [url,URL](url.md) | url | ✅ 実装済 (ext.rs) |

@@ -4,6 +4,6 @@
 
 | 項目                                                                  | 検索語                 |         対応状況         |
 | :-------------------------------------------------------------------- | :--------------------- | :----------------------: |
-| [developer_options.txt（概要）](introduction_developeroptions.txt.md) | developer_options.txt  | ✅ 対応済 (directory.rs) |
-| [自動的に除外される対象](caption_ignore.md)                           | 自動的に除外される対象 | ✅ 対応済 (directory.rs) |
-| [相対パスおよびオプション定義](entry.md)                              | 相対パス               | ✅ 対応済 (directory.rs) |
+| [developer_options.txt（概要）](introduction_developeroptions.txt.md) | developer_options.txt | ⚠️ 一部対応 (directory.rs) |
+| [自動的に除外される対象](caption_ignore.md) | 自動的に除外される対象 | ❌ 未実装 |
+| [相対パスおよびオプション定義](entry.md) | 相対パス | ❌ 未実装 |

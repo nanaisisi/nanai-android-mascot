@@ -17,6 +17,8 @@ from scripts.verify_spec_compliance import (
     ComplianceReport,
     classify_layer,
     detect_git_conflicts,
+    is_category_table_index,
+    is_spec_item_readme,
     load_codebase,
     main as cli_main,
     process_audit_files,
@@ -25,6 +27,7 @@ from scripts.verify_spec_compliance import (
     select_representative_matches,
     sync_category_readmes,
     update_summary,
+    verify_comparison_lists,
 )
 
 
@@ -639,6 +642,203 @@ class TestVerifySpecCompliance(unittest.TestCase):
         self.assertIn("Core/Backend Only : 2 items", cli_output)
         self.assertIn("UI Connected      : 4 items", cli_output)
         self.assertIn("Full Pipeline     : 2 items", cli_output)
+
+    def test_lowercase_readme_spec_protection_and_index_classification(self):
+        descript_txt_dir = os.path.join(self.docs_dir, 'ukadoc-spec', 'descript', 'balloon', 'descript-txt')
+        os.makedirs(descript_txt_dir, exist_ok=True)
+
+        # Lowercase readme.md is a spec item for `readme,ファイル名`
+        readme_spec = os.path.join(descript_txt_dir, 'readme.md')
+        original_readme_content = (
+            "# readme,ファイル名\n\n"
+            "- **検索語**: readme\n"
+            "- **対応状況**: ✅ 実装済\n"
+        )
+        with open(readme_spec, 'w', encoding='utf-8') as f:
+            f.write(original_readme_content)
+
+        # Sibling spec file
+        charset_spec = os.path.join(descript_txt_dir, 'charset.md')
+        with open(charset_spec, 'w', encoding='utf-8') as f:
+            f.write("# charset,文字コード\n\n- **検索語**: charset_prop\n- **対応状況**: ✅ 実装済\n")
+
+        # Category table index.md (has table, no `- **対応状況**:`)
+        index_table = os.path.join(descript_txt_dir, 'index.md')
+        with open(index_table, 'w', encoding='utf-8') as f:
+            f.write(
+                "# Descript-txt Index\n\n"
+                "| 項目 | 検索語 | 対応状況 |\n"
+                "| :--- | :----- | :------: |\n"
+                "| [readme,ファイル名](readme.md) | readme | ✅ 実装済 |\n"
+                "| [charset,文字コード](charset.md) | charset_prop | ✅ 実装済 |\n"
+            )
+
+        self.assertTrue(is_spec_item_readme(readme_spec))
+        self.assertTrue(is_category_table_index(index_table))
+
+        # sync_category_readmes MUST NOT overwrite lowercase readme.md on Windows!
+        updated = sync_category_readmes(docs_dir=self.docs_dir, dry_run=False)
+        self.assertEqual(len(updated), 0)
+        with open(readme_spec, 'r', encoding='utf-8') as f:
+            self.assertEqual(f.read(), original_readme_content)
+
+        # process_audit_files counts readme.md and charset.md (2 items), excluding category table index.md
+        codebase = [
+            ("crates/core.rs", ["charset_prop();\n", "readme();\n"]),
+            ("tests/spec.test.ts", ["charset_prop();\n", "readme();\n"]),
+        ]
+        report = process_audit_files(codebase, docs_dir=self.docs_dir, dry_run=True, base_dir=self.test_dir)
+        self.assertEqual(report.totals["合計"], 2)
+        self.assertEqual(report.totals["✅"], 2)
+
+    def test_parent_category_readme_sync(self):
+        parent_dir = os.path.join(self.docs_dir, 'ukadoc-spec', 'list', 'shiori-event')
+        child_dir = os.path.join(parent_dir, 'boot-close-change')
+        os.makedirs(child_dir, exist_ok=True)
+
+        # Child spec item and README
+        with open(os.path.join(child_dir, 'OnBoot.md'), 'w', encoding='utf-8') as f:
+            f.write("# OnBoot\n\n- **検索語**: OnBoot\n- **対応状況**: ✅ 実装済\n")
+        with open(os.path.join(child_dir, 'README.md'), 'w', encoding='utf-8') as f:
+            f.write(
+                "# boot-close-change 項目別突合\n\n"
+                "| 項目 | 検索語 | 対応状況 |\n"
+                "| :--- | :----- | :------: |\n"
+                "| [OnBoot](OnBoot.md) | OnBoot | ✅ 実装済 |\n"
+            )
+
+        # Corrupted parent README.md
+        parent_readme = os.path.join(parent_dir, 'README.md')
+        with open(parent_readme, 'w', encoding='utf-8') as f:
+            f.write(
+                "# shiori-event 項目別突合\n\n"
+                "| 項目 | 検索語 | 対応状況 |\n"
+                "| :--- | :----- | :------: |\n"
+                "| [こ](の.md) | ー | ペ |\n"
+                "| [❌](.md) | 出 | 検 |\n"
+            )
+
+        updated = sync_category_readmes(docs_dir=self.docs_dir, dry_run=False)
+        self.assertIn(parent_readme.replace('\\', '/'), updated)
+
+        with open(parent_readme, 'r', encoding='utf-8') as f:
+            fixed_content = f.read()
+        self.assertNotIn("[こ](の.md)", fixed_content)
+        self.assertNotIn("[❌](.md)", fixed_content)
+        self.assertIn("[boot-close-change](boot-close-change/README.md)", fixed_content)
+
+        # Running sync again should report 0 updates
+        updated_again = sync_category_readmes(docs_dir=self.docs_dir, dry_run=False)
+        self.assertEqual(len(updated_again), 0)
+
+    def test_verify_comparison_lists_and_check_lists_cli(self):
+        compliance_dir = os.path.join(self.test_dir, 'docs', 'doc', 'compliance')
+        os.makedirs(compliance_dir, exist_ok=True)
+
+        # Create existing implementation file in base_dir
+        impl_file = os.path.join(self.test_dir, 'crates', 'sample.rs')
+        with open(impl_file, 'w', encoding='utf-8') as f:
+            f.write("pub fn sample_item() {}\n")
+
+        # Master comparison files
+        with open(os.path.join(self.docs_dir, 'SUMMARY.md'), 'w', encoding='utf-8') as f:
+            f.write("# Summary\n\n| 規格 | 合計 |\n| :--- | ---: |\n| ukadoc-spec/spec | 2 |\n")
+        with open(os.path.join(self.docs_dir, 'ukadoc-and-ssp-master-comparison.md'), 'w', encoding='utf-8') as f:
+            f.write(
+                "# Master Comparison\n\n"
+                "| 分類 | 実装 |\n"
+                "| :--- | :--- |\n"
+                "| Core | `crates/sample.rs:1` |\n"
+            )
+
+        # Leaf specs in ukadoc-spec/spec
+        spec_dir = os.path.join(self.docs_dir, 'ukadoc-spec', 'spec')
+        with open(os.path.join(spec_dir, 'listed.md'), 'w', encoding='utf-8') as f:
+            f.write("# Listed\n\n- **対応状況**: ✅ 実装済\n- **検索語**: sample_item\n")
+        with open(os.path.join(spec_dir, 'unlisted.md'), 'w', encoding='utf-8') as f:
+            f.write("# Unlisted\n\n- **対応状況**: ❌ 未実装\n- **検索語**: missing_fn\n")
+
+        # Category README with a corrupted row and a broken .md link, missing unlisted.md
+        cat_readme = os.path.join(spec_dir, 'README.md')
+        with open(cat_readme, 'w', encoding='utf-8') as f:
+            f.write(
+                "# spec 項目別突合\n\n"
+                "| 項目 | 検索語 | 対応状況 |\n"
+                "| :--- | :----- | :------: |\n"
+                "| [Listed](listed.md) | sample_item | ✅ 実装済 |\n"
+                "| [こ](の.md) | ー | ペ |\n"
+                "| [GhostLink](non_existent.md) | ghost | ❌ 未実装 |\n"
+            )
+
+        # Compliance doc with one valid impl path and one missing impl path
+        comp_file = os.path.join(compliance_dir, 'sample-compliance.md')
+        with open(comp_file, 'w', encoding='utf-8') as f:
+            f.write(
+                "# Sample Compliance\n\n"
+                "- `crates/sample.rs`\n"
+                "- `ui/js/obsolete_missing.js`\n"
+                "- `tests/*.test.ts`\n"
+            )
+
+        audit = verify_comparison_lists(
+            docs_dir=self.docs_dir,
+            compliance_dir=compliance_dir,
+            base_dir=self.test_dir
+        )
+        self.assertEqual(audit["master_files_checked"], 2)
+        self.assertEqual(audit["category_list_files_checked"], 1)
+        self.assertEqual(audit["compliance_files_checked"], 1)
+        self.assertEqual(audit["total_list_files_checked"], 4)
+        self.assertEqual(audit["corrupted_rows_count"], 1)
+        self.assertEqual(audit["broken_links_count"], 2)  # の.md and non_existent.md
+        self.assertEqual(audit["unlisted_leaf_specs_count"], 1)
+        self.assertTrue(any("unlisted.md" in p for p in audit["unlisted_leaf_specs"]))
+        self.assertEqual(audit["referenced_impl_paths_checked"], 3)  # crates/sample.rs (x2) + ui/js/obsolete_missing.js (wildcard skipped)
+        self.assertEqual(audit["missing_impl_paths_count"], 1)
+        self.assertEqual(audit["missing_impl_paths"][0]["path"], "ui/js/obsolete_missing.js")
+
+        # Fix the category README and compliance doc and verify 0 errors
+        with open(cat_readme, 'w', encoding='utf-8') as f:
+            f.write(
+                "# spec 項目別突合\n\n"
+                "| 項目 | 検索語 | 対応状況 |\n"
+                "| :--- | :----- | :------: |\n"
+                "| [Listed](listed.md) | sample_item | ✅ 実装済 |\n"
+                "| [Unlisted](unlisted.md) | missing_fn | ❌ 未実装 |\n"
+            )
+        with open(comp_file, 'w', encoding='utf-8') as f:
+            f.write("# Sample Compliance\n\n- `crates/sample.rs`\n")
+
+        clean_audit = verify_comparison_lists(
+            docs_dir=self.docs_dir,
+            compliance_dir=compliance_dir,
+            base_dir=self.test_dir
+        )
+        self.assertEqual(clean_audit["corrupted_rows_count"], 0)
+        self.assertEqual(clean_audit["broken_links_count"], 0)
+        self.assertEqual(clean_audit["unlisted_leaf_specs_count"], 0)
+        self.assertEqual(clean_audit["missing_impl_paths_count"], 0)
+
+        # CLI --check-lists prints Comparison Lists Audit Summary
+        codebase = [("crates/sample.rs", ["pub fn sample_item() {}\n"])]
+        stdout_buf = io.StringIO()
+        with mock.patch.object(
+            sys, 'argv',
+            [
+                'verify_spec_compliance.py', '--dry-run', '--check-lists',
+                '--docs-dir', self.docs_dir,
+                '--compliance-dir', compliance_dir,
+                '--base-dir', self.test_dir
+            ]
+        ):
+            with mock.patch('scripts.verify_spec_compliance.load_codebase', return_value=codebase):
+                with mock.patch('sys.stdout', stdout_buf):
+                    cli_main()
+        cli_output = stdout_buf.getvalue()
+        self.assertIn("Comparison Lists Audit Summary", cli_output)
+        self.assertIn("Corrupted Table Rows   : 0", cli_output)
+        self.assertIn("Broken .md Links       : 0", cli_output)
+        self.assertIn("Missing: 0", cli_output)
 
 
 if __name__ == '__main__':

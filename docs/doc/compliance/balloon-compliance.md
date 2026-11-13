@@ -14,9 +14,9 @@ Nanai Android Mascot における「バルーン（吹き出し）スキン規�
 - **対応度**: **85%**
 - **主要実装ファイル**:
   - `../../../ui/css/balloon-theme.css`: バルーン配置、スキンCSSカスタムプロパティ（emily4, ivory, pixel, comic, dark）
-  - `../../../ui/js/core/app-actions.js`: `descript.txt`（フォント名/色/サイズ/選択肢色/有効矩形/折り返し/原点）の動的バインド、バルーンテーマ・倍率変更
-  - `../../../ui/js/ghost/sakura-play.js`: `\0` / `\1` スコープ別バルーンへの送出制御、文字送り
-  - `src-tauri/src/commands/install.rs`: バルーン NAR アーカイブ（`type,balloon`）の解凍・自動導入
+  - `../../../ui/ts/core/app-actions.ts`: `descript.txt`（フォント名/色/サイズ/選択肢色/有効矩形/折り返し/原点）の動的バインド、バルーンテーマ・倍率変更
+  - `../../../ui/ts/ghost/sakura-play.ts`: `\0` / `\1` スコープ別バルーンへの送出制御、文字送り
+  - `../../../src-tauri/src/commands/install/mod.rs`: バルーン NAR アーカイブ（`type,balloon`）の解凍・自動導入
 
 ---
 

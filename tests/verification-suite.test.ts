@@ -4,6 +4,8 @@
  */
 
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
 import { describe, it } from "vitest";
 import { verifyRecommendedGhost } from "../ui/ts/core/actions/balloon-descript/assets.js";
 import { applyPositionProperties } from "../ui/ts/core/actions/balloon-descript/layout/position.ts";
@@ -379,6 +381,222 @@ describe("全面実装確認スイート (Implementation Verification Suite)", (
 					delete g.__TAURI_INTERNALS__;
 				}
 			}
+		});
+	});
+
+	describe("10. 実装対照ファイル・各リスト管理検証 (Implementation Comparison Lists Verification)", () => {
+		const projectRoot = process.cwd();
+
+		function walkMarkdownFiles(
+			relDir: string,
+			predicate: (relPath: string, entryName: string) => boolean,
+		): string[] {
+			const rootAbs = path.join(projectRoot, relDir);
+			if (!fs.existsSync(rootAbs)) {
+				return [];
+			}
+			const results: string[] = [];
+			const visit = (dirAbs: string) => {
+				const entries = fs.readdirSync(dirAbs, { withFileTypes: true });
+				for (const entry of entries) {
+					const fullAbs = path.join(dirAbs, entry.name);
+					if (entry.isDirectory()) {
+						visit(fullAbs);
+					} else if (
+						entry.isFile() &&
+						entry.name.toLowerCase().endsWith(".md")
+					) {
+						const rel = path.relative(projectRoot, fullAbs).replace(/\\/g, "/");
+						if (predicate(rel, entry.name)) {
+							results.push(rel);
+						}
+					}
+				}
+			};
+			visit(rootAbs);
+			return results.sort();
+		}
+
+		it("docs/spec/**/README.md および descript/**/index.md の全カテゴリ一覧リストに破損行がなくリンク先が存在すること", () => {
+			// 5件の小文字 readme.md 仕様項目ファイルがカテゴリ一覧で上書きされていないことを保証
+			const lowercaseReadmes = walkMarkdownFiles(
+				"docs/spec/ukadoc-spec/descript",
+				(_rel, name) => name === "readme.md",
+			);
+			assert.equal(
+				lowercaseReadmes.length,
+				5,
+				`Expected 5 lowercase readme.md spec item files, found ${lowercaseReadmes.length}`,
+			);
+			for (const rel of lowercaseReadmes) {
+				const content = fs.readFileSync(path.join(projectRoot, rel), "utf-8");
+				assert.ok(
+					content.includes("- **対応状況**:"),
+					`Lowercase spec file ${rel} must retain '- **対応状況**:' field`,
+				);
+			}
+
+			const specReadmes = walkMarkdownFiles(
+				"docs/spec",
+				(_rel, name) => name === "README.md",
+			);
+			const descriptIndexes = walkMarkdownFiles(
+				"docs/spec/ukadoc-spec/descript",
+				(rel, name) => {
+					if (name !== "index.md") return false;
+					const content = fs.readFileSync(path.join(projectRoot, rel), "utf-8");
+					return !content.includes("- **対応状況**:");
+				},
+			);
+
+			const categoryListFiles = [...specReadmes, ...descriptIndexes];
+			assert.ok(
+				categoryListFiles.length > 100,
+				`Expected >100 category list files, found ${categoryListFiles.length}`,
+			);
+
+			const corruptedFiles: string[] = [];
+			const brokenLinks: string[] = [];
+
+			for (const relCat of categoryListFiles) {
+				const absCat = path.join(projectRoot, relCat);
+				const content = fs.readFileSync(absCat, "utf-8");
+				const tableLines = content
+					.split(/\r?\n/)
+					.map((l) => l.trim())
+					.filter((l) => l.startsWith("|") && l.endsWith("|"));
+
+				if (tableLines.length < 3) {
+					corruptedFiles.push(`${relCat} (missing valid markdown table)`);
+				}
+				if (
+					content.includes("[こ](の.md)") ||
+					content.includes("[❌](.md)") ||
+					/\[\]\(\.md\)/.test(content)
+				) {
+					corruptedFiles.push(`${relCat} (corrupted table rows)`);
+				}
+
+				const dirAbs = path.dirname(absCat);
+				for (const line of tableLines) {
+					for (const match of line.matchAll(
+						/\[([^\]]*)\]\(([^)]+\.md(?:#[^)]*)?)\)/g,
+					)) {
+						const rawTarget = match[2].split("#")[0].trim();
+						if (
+							!rawTarget ||
+							rawTarget.startsWith("http://") ||
+							rawTarget.startsWith("https://")
+						) {
+							continue;
+						}
+						const resolvedAbs = path.resolve(dirAbs, rawTarget);
+						if (!fs.existsSync(resolvedAbs)) {
+							brokenLinks.push(`${relCat} -> ${rawTarget}`);
+						}
+					}
+				}
+			}
+
+			assert.deepEqual(
+				corruptedFiles,
+				[],
+				`Corrupted category list files found:\n${corruptedFiles.join("\n")}`,
+			);
+			assert.deepEqual(
+				brokenLinks,
+				[],
+				`Broken relative .md links in category tables:\n${brokenLinks.join("\n")}`,
+			);
+		});
+
+		it("主要対照ドキュメント (SUMMARY.md, ukadoc-and-ssp-master-comparison.md, compliance/**/*.md, ssp-spec/**/実装*.md) が存在し参照実装パスが実在すること", () => {
+			const fixedDocs = [
+				"docs/spec/SUMMARY.md",
+				"docs/spec/ukadoc-and-ssp-master-comparison.md",
+				"docs/doc/developer/strict-code-verification-system.md",
+			];
+			const complianceDocs = walkMarkdownFiles(
+				"docs/doc/compliance",
+				() => true,
+			);
+			const sspImplDocs = walkMarkdownFiles("docs/doc/ssp-spec", (_rel, name) =>
+				name.includes("実装"),
+			);
+			const specReadmes = walkMarkdownFiles(
+				"docs/spec",
+				(_rel, name) => name === "README.md",
+			);
+			const descriptIndexes = walkMarkdownFiles(
+				"docs/spec/ukadoc-spec/descript",
+				(rel, name) => {
+					if (name !== "index.md") return false;
+					const content = fs.readFileSync(path.join(projectRoot, rel), "utf-8");
+					return !content.includes("- **対応状況**:");
+				},
+			);
+
+			assert.ok(
+				complianceDocs.length >= 40,
+				`Expected >=40 compliance docs, found ${complianceDocs.length}`,
+			);
+			assert.ok(
+				sspImplDocs.length >= 5,
+				`Expected >=5 ssp-spec implementation docs, found ${sspImplDocs.length}`,
+			);
+
+			for (const relDoc of [...fixedDocs, ...complianceDocs, ...sspImplDocs]) {
+				const absDoc = path.join(projectRoot, relDoc);
+				assert.ok(
+					fs.existsSync(absDoc),
+					`Comparison doc must exist: ${relDoc}`,
+				);
+				const content = fs.readFileSync(absDoc, "utf-8");
+				assert.ok(
+					content.trim().length > 0,
+					`Comparison doc must not be empty: ${relDoc}`,
+				);
+			}
+
+			const implRefSourceDocs = [
+				"docs/spec/ukadoc-and-ssp-master-comparison.md",
+				"docs/doc/developer/strict-code-verification-system.md",
+				...specReadmes,
+				...descriptIndexes,
+				...complianceDocs,
+				...sspImplDocs,
+			];
+			const implPathRegex =
+				/(?:(?:\.\.\/)+)?((?:src-tauri|crates|ui|tests)\/[A-Za-z0-9_.*/-]+)/g;
+			const missingPaths: string[] = [];
+			let verifiedCount = 0;
+
+			for (const relDoc of implRefSourceDocs) {
+				const content = fs.readFileSync(
+					path.join(projectRoot, relDoc),
+					"utf-8",
+				);
+				for (const match of content.matchAll(implPathRegex)) {
+					const rawPath = match[1].replace(/[.,;:)\]`]+$/, "");
+					if (!rawPath || rawPath.includes("*")) continue;
+					const resolvedImpl = path.join(projectRoot, rawPath);
+					if (fs.existsSync(resolvedImpl)) {
+						verifiedCount++;
+					} else {
+						missingPaths.push(`${relDoc} -> ${rawPath}`);
+					}
+				}
+			}
+
+			assert.ok(
+				verifiedCount > 50,
+				`Expected >50 verified implementation path references, found ${verifiedCount}`,
+			);
+			assert.deepEqual(
+				missingPaths,
+				[],
+				`Missing implementation paths referenced in comparison docs:\n${missingPaths.join("\n")}`,
+			);
 		});
 	});
 });

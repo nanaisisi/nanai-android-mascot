@@ -13,9 +13,9 @@ Nanai Android Mascot における「SSP 互換右クリックメニュー（オ�
 - **対応度**: **90%**
 - **主要実装ファイル**:
   - `../../../ui/menu-iframe.html`: 伺か標準階層メニュー独立UI（iframe隔離）
-  - `ui/css/menu.css`: レトロ＋モダン融合のメニュー装飾
-  - `../../../ui/js/ui/submenu.js`: 独立サブメニュー制御
-  - `../../../ui/js/core/app-actions.js`: シェル・バルーン倍率変倍およびアクション処理
+  - `ui/css/context-menu.css`, `ui/css/submenu-window.css`: レトロ＋モダン融合のメニュー装飾
+  - `../../../ui/ts/ui/submenu.ts`: 独立サブメニュー制御
+  - `../../../ui/ts/core/app-actions.ts`: シェル・バルーン倍率変倍およびアクション処理
 
 ---
 

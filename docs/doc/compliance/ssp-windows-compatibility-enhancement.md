@@ -4,11 +4,11 @@
 > **プロジェクト基準**: nanai-android-mascot における Windows デスクトップ環境での SSP 同等操作感・互換性実現
 > **作成日**: 2026-10-28
 > **関連仕様**:
-> - [SSP統合互換リファレンス](../reference/ssp-compatibility-reference.md)
+> - [SSP統合互換リファレンス](../ssp-spec/implicit-specs/ssp-compatibility-reference/index.md)
 > - [SSPヘルプページ突合表](ssp-help-page-compliance.md)
-> - [互換実装計画](../reference/compatibility-implementation-plan.md)
-> - [規格対応度マトリクス](../reference/specification-compliance-matrix.md)
-> - [ゴースト互換性ギャップ分析](../ghost/ghost-compatibility-gap-and-roadmap.md)
+> - [互換実装計画](../nas-spec/compatibility-implementation-plan/index.md)
+> - [規格対応度マトリクス](../../spec/ukadoc-and-ssp-master-comparison.md)
+> - [ゴースト互換性ギャップ分析](../nas-spec/ghost/ghost-compatibility-gap-and-roadmap/index.md)
 
 ---
 
@@ -109,7 +109,7 @@ Windows デスクトップ環境において、**SSP (現代の事実上の標�
 ```mermaid
 graph TB
     subgraph Windows_Native["Windows ネイティブ実行パス"]
-        ShioriRouter["SHIORI Router<br/>プラットフォーム判定"]
+        ShioriRouter["SHIORI Router / プラットフォーム判定"]
         Host32["shiori-host32.exe (IPC Bridge)"]
         YayaDLL["yaya.dll (32bit)"]
         SatoriDLL["satori.dll (32bit)"]
@@ -134,9 +134,9 @@ graph TB
 ```
 
 **実装状況**:
-- `shiori-host32` IPC ブリッジ: ✅ 実装済み (`crates/shiori-host32/`)
+- `shiori-host32` IPC ブリッジ: ✅ 実装済み (`src-tauri/shiori-host/`)
 - `yaya.dll` / `satori.dll` ロード: ✅ 動作確認済み
-- WASMビルド (YAYA/里々): 🚧 進行中 (`crates/shiori-wasm/`)
+- WASMビルド (YAYA/里々): 🚧 進行中 (`crates/nanai-shiori-vm/`)
 - **課題**: 32bit DLL 呼び出し時のメモリ管理、例外安全性、辞書セーブ競合回避
 
 ---

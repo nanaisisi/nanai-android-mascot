@@ -14,8 +14,8 @@
 > **役割**: **リポジトリ公開仕様**（各開発者の環境差分を吸収するプロトコル・インターフェース定義）  
 > **関連仕様書**:
 >
-> - [ghost-import-and-asset-separation-spec.md](../ghost/ghost-import-and-asset-separation-spec.md)
-> - [ssp-compatibility-reference.md](ssp-compatibility-reference.md)
-> - [shiori-integration.md](../shiori-script/shiori-integration.md)
+> - [ghost-import-and-asset-separation-spec](../../../nas-spec/ghost/ghost-import-and-asset-separation-spec/index.md)
+> - [ssp-compatibility-reference](../../implicit-specs/ssp-compatibility-reference/index.md)
+> - [shiori-integration](../../../nas-spec/shiori-script/shiori-integration/index.md)
 
 ---

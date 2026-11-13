@@ -29,7 +29,7 @@ flowchart TD
 
 ### 1.1 標準ディレクトリ構成・アセット分離仕様マッピング
 
-SSP 標準の配置構造との互換性を確保しつつ、Git リポジトリ汚染を防ぐアセット分離仕様です（詳細は [ghost-import-and-asset-separation-spec.md](../ghost/ghost-import-and-asset-separation-spec.md) 参照）。
+SSP 標準の配置構造との互換性を確保しつつ、Git リポジトリ汚染を防ぐアセット分離仕様です（詳細は [ghost-import-and-asset-separation-spec](../../../nas-spec/ghost/ghost-import-and-asset-separation-spec/index.md) 参照）。
 
 |       ディレクトリ        | SSP 標準の役割                        | Nanai 実装仕様                                       | Git 管理ポリシー                               |
 | :-----------------------: | :------------------------------------ | :--------------------------------------------------- | :--------------------------------------------- |

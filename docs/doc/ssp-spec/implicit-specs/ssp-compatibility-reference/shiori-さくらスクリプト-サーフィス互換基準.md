@@ -2,9 +2,9 @@
 
 | 規格             | 参照公式仕様 (ukadoc-spec)                                                                        | Nanai 実装仕様書                                                                        | 互換目標                                                          |
 | :--------------- | :------------------------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------- | :---------------------------------------------------------------- |
-| **SHIORI/3.0**   | [spec/shiori3 (UKADOC)](https://ssp.shillest.net/ukadoc/manual/spec_shiori3.html)                 | [shiori-integration.md](../shiori-script/shiori-integration.md)                         | 100% (Event & Response ヘッダ完全準拠)                            |
-| **SakuraScript** | [list/sakura-script (UKADOC)](https://ssp.shillest.net/ukadoc/manual/spec_sakura_script.html)     | [sakura-script-and-balloon-spec.md](../shiori-script/sakura-script-and-balloon-spec.md) | `\0`, `\1`, `\s`, `\w`, `\q`, `\n`, `\c`, `\e` 等主要タグ完全対応 |
-| **surfaces.txt** | [descript/shell-surfaces (UKADOC)](https://ssp.shillest.net/ukadoc/manual/descript_surfaces.html) | [surfaces-and-collision-spec.md](../ghost/surfaces-and-collision-spec.md)               | Canvas 2D レイヤー合成、アニメーション、Collision 判定            |
-| **descript.txt** | [descript/ghost (UKADOC)](https://ssp.shillest.net/ukadoc/manual/descript_ghost.html)             | [encoding-and-vfs-spec.md](../platform/encoding-and-vfs-spec.md)                        | Shift_JIS/UTF-8 自動判別、定義パース                              |
+| **SHIORI/3.0**   | [spec/shiori3 (UKADOC)](https://ssp.shillest.net/ukadoc/manual/spec_shiori3.html)                 | [shiori-integration](../../../nas-spec/shiori-script/shiori-integration/index.md)                         | 100% (Event & Response ヘッダ完全準拠)                            |
+| **SakuraScript** | [list/sakura-script (UKADOC)](https://ssp.shillest.net/ukadoc/manual/spec_sakura_script.html)     | [sakura-script-and-balloon-spec](../../../nas-spec/shiori-script/sakura-script-and-balloon-spec/index.md) | `\0`, `\1`, `\s`, `\w`, `\q`, `\n`, `\c`, `\e` 等主要タグ完全対応 |
+| **surfaces.txt** | [descript/shell-surfaces (UKADOC)](https://ssp.shillest.net/ukadoc/manual/descript_surfaces.html) | [surfaces-and-collision-spec](../../../nas-spec/ghost/surfaces-and-collision-spec/index.md)               | Canvas 2D レイヤー合成、アニメーション、Collision 判定            |
+| **descript.txt** | [descript/ghost (UKADOC)](https://ssp.shillest.net/ukadoc/manual/descript_ghost.html)             | [encoding-and-vfs-spec](../../../nas-spec/platform/encoding-and-vfs-spec/index.md)                        | Shift_JIS/UTF-8 自動判別、定義パース                              |
 
 ---

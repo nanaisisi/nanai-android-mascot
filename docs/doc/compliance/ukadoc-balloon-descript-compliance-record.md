@@ -84,10 +84,10 @@ UKADOC (SSP仕様) 準拠のバルーン `descript.txt` プロパティ群のフ
 
 ## 6. ソースコードコメント参照規定 (Code Comment Annotation Rule)
 
-[厳密コード検証システム規定 (Strict Code Verification Protocol)](../developer/strict-code-verification-system.md) に基づき、[index.md](../../spec/ukadoc-spec/descript/balloon/descript-txt/index.md) の全 163 仕様項目タイトルは、ソースコード ([balloon.rs](../../../src-tauri/src/commands/shell/balloon.rs), [font.js](../../../ui/js/core/actions/balloon-descript/font.js), [layout.js](../../../ui/js/core/actions/balloon-descript/layout.js), [assets.js](../../../ui/js/core/actions/balloon-descript/assets.js), [balloon-window.js](../../../ui/js/ghost/balloon-window.js)) 内に **「`// [項目名,タイトル]: ...`」** 形式のコードコメントとして 1 回以上明確にアノテーションされている。
+[厳密コード検証システム規定 (Strict Code Verification Protocol)](../developer/strict-code-verification-system.md) に基づき、[index.md](../../spec/ukadoc-spec/descript/balloon/descript-txt/index.md) の全 163 仕様項目タイトルは、ソースコード ([balloon.rs](../../../src-tauri/src/commands/shell/balloon.rs), [font.ts](../../../ui/ts/core/actions/balloon-descript/font.ts), [layout.ts](../../../ui/ts/core/actions/balloon-descript/layout.ts), [assets.ts](../../../ui/ts/core/actions/balloon-descript/assets.ts), [balloon-window.ts](../../../ui/ts/ghost/balloon-window.ts)) 内に **「`// [項目名,タイトル]: ...`」** 形式のコードコメントとして 1 回以上明確にアノテーションされている。
 
 ---
 
 ## 🧪 単体テスト検証
 
-すべてのプロパティ設定と CSS 変数バインディングは、[tests/balloon-descript.test.js](../../../tests/balloon-descript.test.js) および [tests/balloon-window.test.js](../../../tests/balloon-window.test.js) により全件検証され、PASS（成功）している。
+すべてのプロパティ設定と CSS 変数バインディングは、[tests/balloon-descript.test.ts](../../../tests/balloon-descript.test.ts) および [tests/balloon-window.test.ts](../../../tests/balloon-window.test.ts) により全件検証され、PASS（成功）している。

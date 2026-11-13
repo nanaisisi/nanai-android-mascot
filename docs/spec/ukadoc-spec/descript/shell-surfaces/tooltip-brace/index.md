@@ -4,5 +4,5 @@
 
 | 項目                                                | 検索語              |          対応状況           |
 | :-------------------------------------------------- | :------------------ | :-------------------------: |
-| [当たり判定名,表示内容](entry.md)                   | 当たり判定名        | ✅ 対応済 (surface-load.js) |
-| [tooltipブレス記述例](introduction_tooltipbrace.md) | tooltipブレス記述例 | ✅ 対応済 (surface-load.js) |
+| [当たり判定名,表示内容](entry.md) | 当たり判定名 | ✅ 対応済 (surface-load.ts) |
+| [tooltipブレス記述例](introduction_tooltipbrace.md) | tooltipブレス記述例 | ✅ 実装済 (surface-load.ts) |

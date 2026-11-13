@@ -4,16 +4,16 @@
 
 | 項目                                                            | 検索語                     |          対応状況           |
 | :-------------------------------------------------------------- | :------------------------- | :-------------------------: |
-| [always](always.md)                                             | always                     | ✅ 対応済 (surface-load.js) |
-| [bind](bind.md)                                                 | bind                       | ✅ 対応済 (surface-load.js) |
-| [endtalk](endtalk.md)                                           | endtalk                    | ✅ 対応済 (surface-load.js) |
-| [アニメーションインターバル](introduction_animationinterval.md) | アニメーションインターバル | ✅ 対応済 (surface-load.js) |
-| [never](never.md)                                               | never                      | ✅ 対応済 (surface-load.js) |
-| [periodic,数値](periodic.md)                                    | periodic                   | ✅ 対応済 (surface-load.js) |
-| [random,数値](random.md)                                        | random                     | ✅ 対応済 (surface-load.js) |
-| [rarely](rarely.md)                                             | rarely                     | ✅ 対応済 (surface-load.js) |
-| [runonce](runonce.md)                                           | runonce                    | ✅ 対応済 (surface-load.js) |
-| [sometimes](sometimes.md)                                       | sometimes                  | ✅ 対応済 (surface-load.js) |
-| [starttalk](starttalk.md)                                       | starttalk                  | ✅ 対応済 (surface-load.js) |
-| [talk,数値](talk.md)                                            | talk                       | ✅ 対応済 (surface-load.js) |
-| [yen-e](yen-e.md)                                               | yen-e                      | ✅ 対応済 (surface-load.js) |
+| [always](always.md) | always | ✅ 実装済 (surface-load.ts) |
+| [bind](bind.md) | bind | ✅ 実装済 (surface-load.ts) |
+| [endtalk](endtalk.md) | endtalk | ✅ 実装済 (surface-load.ts) |
+| [アニメーションインターバル](introduction_animationinterval.md) | アニメーションインターバル | ❌ 未実装 |
+| [never](never.md) | never | ✅ 実装済 (surface-load.ts) |
+| [periodic,数値](periodic.md) | periodic | ✅ 実装済 (surface-load.ts) |
+| [random,数値](random.md) | random | ✅ 実装済 (surface-load.ts) |
+| [rarely](rarely.md) | rarely | ✅ 実装済 (surface-load.ts) |
+| [runonce](runonce.md) | runonce | ✅ 実装済 (surface-load.ts) |
+| [sometimes](sometimes.md) | sometimes | ✅ 実装済 (surface-load.ts) |
+| [starttalk](starttalk.md) | starttalk | ✅ 実装済 (surface-load.ts) |
+| [talk,数値](talk.md) | talk | ✅ 実装済 (surface-load.ts) |
+| [yen-e](yen-e.md) | yen-e | ✅ 実装済 (surface-load.ts) |

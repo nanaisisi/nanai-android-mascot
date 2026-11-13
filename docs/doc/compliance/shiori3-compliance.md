@@ -19,7 +19,7 @@
 
 SHIORI/3.0 は、ベースウェア（Nanai Android Mascot）とゴーストの思考AI・頭脳（SHIORI モジュール）の間で交わされる基本通信規格です。
 
-- **実装モジュール**: `src/js/shiori-protocol.js`, `src/js/shiori-worker.js`
+- **実装モジュール**: `crates/nanai-core/src/shiori_protocol.rs`, `ui/ts/ghost/shiori-protocol.ts`, `ui/ts/ghost/shiori-worker.ts`
 - **アーキテクチャ**:
   - Web Worker によるサンドボックス非同期実行（UIメインスレッドのブロック防止）。
   - 標準 JS SHIORI / Mock SHIORI 連携完備。

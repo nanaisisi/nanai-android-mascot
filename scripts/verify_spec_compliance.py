@@ -274,13 +274,14 @@ def search_keyword(keyword, codebase, cache=None, stats=None):
 class ComplianceReport:
     """Represents a compliance audit report with serialization support and regression tracking."""
 
-    def __init__(self, category_stats, updated_files=None, total_files=0, regressions=None, generated_at=None, perf_stats=None, layer_summary=None):
+    def __init__(self, category_stats, updated_files=None, total_files=0, regressions=None, generated_at=None, perf_stats=None, layer_summary=None, list_audit=None):
         self.category_stats = category_stats
         self.updated_files = updated_files or []
         self.total_files = total_files
         self.regressions = regressions or []
         self.perf_stats = perf_stats or {}
         self.layer_summary = layer_summary
+        self.list_audit = list_audit
         self.generated_at = generated_at or datetime.datetime.now(datetime.timezone.utc).isoformat()
 
         tot_ok = sum(st["✅"] for st in category_stats.values())
@@ -334,6 +335,8 @@ class ComplianceReport:
             data["perf_stats"] = self.perf_stats
         if self.layer_summary:
             data["layer_summary"] = self.layer_summary
+        if self.list_audit:
+            data["list_audit"] = self.list_audit
         return data
 
     def to_json(self, indent=2):
@@ -391,6 +394,23 @@ class ComplianceReport:
             for layer in KNOWN_LAYERS:
                 lines.append(f"| Layer: `{layer}` | {by_layer.get(layer, 0):d} |")
 
+        if self.list_audit:
+            lines.extend([
+                "",
+                "## 実装対照リスト監査集計 (Comparison Lists Audit Summary)",
+                "",
+                "| 監査指標 | 件数 |",
+                "| :--- | ---: |",
+                f"| 検査対象リストファイル総数 (`total_list_files_checked`) | {self.list_audit.get('total_list_files_checked', 0):d} |",
+                f"| カテゴリ一覧ファイル数 (`category_list_files_checked`) | {self.list_audit.get('category_list_files_checked', 0):d} |",
+                f"| 適合仕様一覧ファイル数 (`compliance_files_checked`) | {self.list_audit.get('compliance_files_checked', 0):d} |",
+                f"| 破損テーブル行数 (`corrupted_rows_count`) | {self.list_audit.get('corrupted_rows_count', 0):d} |",
+                f"| リンク切れ `.md` 参照数 (`broken_links_count`) | {self.list_audit.get('broken_links_count', 0):d} |",
+                f"| リスト未掲載リーフ仕様数 (`unlisted_leaf_specs_count`) | {self.list_audit.get('unlisted_leaf_specs_count', 0):d} |",
+                f"| 検証済実装コードパス数 (`referenced_impl_paths_checked`) | {self.list_audit.get('referenced_impl_paths_checked', 0):d} |",
+                f"| 欠落実装コードパス数 (`missing_impl_paths_count`) | {self.list_audit.get('missing_impl_paths_count', 0):d} |",
+            ])
+
         if self.regressions:
             lines.extend([
                 "",
@@ -414,7 +434,87 @@ class ComplianceReport:
         return "\n".join(lines)
 
 
-def process_audit_files(codebase, docs_dir='docs/spec', dry_run=False, target_category=None, use_cache=True):
+def get_actual_filename(filepath: str) -> str:
+    """Returns the exact-case filename stored on disk (handling Windows case-insensitivity)."""
+    dirname = os.path.dirname(filepath) or "."
+    basename = os.path.basename(filepath)
+    if os.path.isdir(dirname):
+        try:
+            for entry in os.listdir(dirname):
+                if entry.lower() == basename.lower():
+                    return entry
+        except Exception:
+            pass
+    return basename
+
+
+def is_spec_item_readme(filepath: str, content: str = None) -> bool:
+    """Checks whether a readme.md / README.md path is a spec item file (e.g. `readme,ファイル名`) rather than a category README."""
+    basename = os.path.basename(filepath)
+    if basename.lower() != "readme.md":
+        return False
+    actual_name = get_actual_filename(filepath)
+    if content is None:
+        if not os.path.isfile(filepath):
+            return False
+        try:
+            with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+                content = f.read()
+        except Exception:
+            return False
+    if r"\n" in content:
+        content = content.replace(r"\n", "\n")
+    has_status = bool(re.search(r"-\s*\*\*対応状況\*\*:\s*([^\r\n]+)", content))
+    has_readme_kw = bool(re.search(r"-\s*\*\*検索語\*\*:\s*readme\b", content, re.IGNORECASE))
+    if has_readme_kw:
+        return True
+    if actual_name == "readme.md" and has_status:
+        return True
+    return False
+
+
+def is_category_table_index(filepath: str, content: str = None) -> bool:
+    """Checks whether an index.md file is a category table index (has markdown table and no `- **対応状況**:` field)."""
+    actual_name = get_actual_filename(filepath)
+    if actual_name != "index.md":
+        return False
+    if content is None:
+        if not os.path.isfile(filepath):
+            return False
+        try:
+            with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+                content = f.read()
+        except Exception:
+            return False
+    if r"\n" in content:
+        content = content.replace(r"\n", "\n")
+    has_status = bool(re.search(r"-\s*\*\*対応状況\*\*:\s*([^\r\n]+)", content))
+    has_table = "|" in content
+    return has_table and not has_status
+
+
+def is_spec_audit_file(filepath: str) -> bool:
+    """Determines whether a markdown file is an individual spec item audit file."""
+    actual_name = get_actual_filename(filepath)
+    if actual_name in ("SUMMARY.md", "INDEX.md", "COVERAGE.md", "ukadoc-and-ssp-master-comparison.md"):
+        return False
+    if actual_name.lower() == "readme.md":
+        return is_spec_item_readme(filepath)
+    if actual_name == "index.md":
+        if is_category_table_index(filepath):
+            return False
+        try:
+            with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+                content = f.read()
+            if r"\n" in content:
+                content = content.replace(r"\n", "\n")
+            return bool(re.search(r"-\s*\*\*対応状況\*\*:\s*([^\r\n]+)", content))
+        except Exception:
+            return False
+    return True
+
+
+def process_audit_files(codebase, docs_dir='docs/spec', dry_run=False, target_category=None, use_cache=True, compliance_dir=None, base_dir='.'):
     start_time = datetime.datetime.now(datetime.timezone.utc)
     patterns = [
         os.path.join(docs_dir, 'ukadoc-spec/**/*.md'),
@@ -428,7 +528,7 @@ def process_audit_files(codebase, docs_dir='docs/spec', dry_run=False, target_ca
 
     audit_files = [
         f.replace('\\', '/') for f in audit_files
-        if not f.endswith('README.md') and not f.endswith('SUMMARY.md') and not f.endswith('INDEX.md')
+        if is_spec_audit_file(f)
     ]
 
     updated_files = []
@@ -597,13 +697,28 @@ def process_audit_files(codebase, docs_dir='docs/spec', dry_run=False, target_ca
     end_time = datetime.datetime.now(datetime.timezone.utc)
     perf_stats["elapsed_seconds"] = round((end_time - start_time).total_seconds(), 3)
 
+    if compliance_dir is None:
+        if docs_dir.replace('\\', '/').rstrip('/') == 'docs/spec':
+            resolved_compliance_dir = 'docs/doc/compliance'
+        else:
+            resolved_compliance_dir = os.path.join(os.path.dirname(docs_dir.rstrip('/\\')), 'doc', 'compliance')
+    else:
+        resolved_compliance_dir = compliance_dir
+
+    list_audit = verify_comparison_lists(
+        docs_dir=docs_dir,
+        compliance_dir=resolved_compliance_dir,
+        base_dir=base_dir
+    )
+
     report = ComplianceReport(
         category_stats=category_stats,
         updated_files=updated_files,
         total_files=len(audit_files),
         regressions=regressions,
         perf_stats=perf_stats,
-        layer_summary=layer_summary
+        layer_summary=layer_summary,
+        list_audit=list_audit
     )
 
     return report
@@ -732,17 +847,48 @@ def validate_parallel_bulk_safety(args):
     return True, "On main branch."
 
 
+CORRUPTED_ROW_RE = re.compile(
+    r'\[\s*こ\s*\]\(\s*の\.md\s*\)|\[\s*❌\s*\]\(\s*\.md\s*\)|\]\(\s*\.md\s*\)'
+)
+SINGLE_CHAR_MD_LINK_RE = re.compile(
+    r'\[\s*([A-Za-z\u3040-\u30ff\u4e00-\u9faf])\s*\]\(\s*([A-Za-z\u3040-\u30ff\u4e00-\u9faf]\.md)\s*\)'
+)
+MD_LINK_RE = re.compile(r'\[([^\]]*)\]\(([^)]+)\)')
+IMPL_PATH_RE = re.compile(
+    r'(?:`|\(|\[|^|\s)(?:\.\./)*((?:src-tauri|crates|ui|tests)/[A-Za-z0-9_./\-*]+(?::\d+(?:-\d+)?)?)'
+)
+
+
+def has_corrupted_table_rows(content: str, dir_path: str = None) -> bool:
+    """Checks if markdown table content contains corrupted vertical-slice rows."""
+    for line in content.splitlines():
+        if '|' not in line:
+            continue
+        if CORRUPTED_ROW_RE.search(line):
+            return True
+        for m in SINGLE_CHAR_MD_LINK_RE.finditer(line):
+            target = m.group(2)
+            if dir_path is None or not os.path.exists(os.path.join(dir_path, target)):
+                return True
+    return False
+
+
 def sync_category_readmes(docs_dir='docs/spec', dry_run=False, target_category=None):
     """
-    Synchronizes or regenerates category-level README.md files from individual *.md files.
-    Only updates when content differs to avoid unnecessary file writes and merge conflicts.
+    Synchronizes or regenerates category-level README.md files from individual *.md files
+    (or child directories for parent category READMEs).
+    Protects lowercase `readme.md` spec files and directories using `index.md` as category tables.
     """
     norm_docs_dir = docs_dir.replace('\\', '/').rstrip('/') + '/'
     candidate_dirs = set()
 
     for root, dirs, files in os.walk(docs_dir):
-        has_spec_md = any(f.endswith('.md') and f not in ('README.md', 'SUMMARY.md', 'INDEX.md') for f in files)
-        if has_spec_md:
+        has_spec_md = any(
+            f.endswith('.md') and is_spec_audit_file(os.path.join(root, f))
+            for f in files
+        )
+        has_parent_readme = ('README.md' in files and bool(dirs))
+        if has_spec_md or has_parent_readme:
             candidate_dirs.add(root)
 
     updated_readmes = []
@@ -764,49 +910,136 @@ def sync_category_readmes(docs_dir='docs/spec', dry_run=False, target_category=N
             if not matches_target:
                 continue
 
+        dir_entries = os.listdir(cdir) if os.path.isdir(cdir) else []
+
+        # 1. Never overwrite lowercase `readme.md` spec item files!
+        if 'readme.md' in dir_entries or is_spec_item_readme(os.path.join(cdir, 'README.md')):
+            continue
+
+        # 2. If directory uses `index.md` as its category table index and has no uppercase README.md, skip creating README.md
+        if 'index.md' in dir_entries and is_category_table_index(os.path.join(cdir, 'index.md')) and 'README.md' not in dir_entries:
+            continue
+
         category_name = rel_path
         md_files = [
-            f for f in glob.glob(os.path.join(cdir, '*.md'))
-            if not f.endswith('README.md') and not f.endswith('SUMMARY.md') and not f.endswith('INDEX.md')
+            os.path.join(cdir, f) for f in dir_entries
+            if f.endswith('.md') and is_spec_audit_file(os.path.join(cdir, f))
         ]
-        if not md_files:
-            continue
         md_files.sort(key=lambda x: os.path.basename(x).lower())
 
-        lines = [
-            f'# {category_name} 項目別突合',
-            '',
-            '実装コードの文字列検索による一次調査です。',
-            '',
-            '| 項目 | 検索語 | 対応状況 |',
-            '| :--- | :----- | :------: |'
-        ]
+        child_dirs = []
+        for entry in sorted(dir_entries):
+            sub_path = os.path.join(cdir, entry)
+            if os.path.isdir(sub_path):
+                sub_entries = os.listdir(sub_path)
+                has_child_content = any(sf.endswith('.md') for sf in sub_entries)
+                if has_child_content:
+                    child_dirs.append(entry)
 
-        for mf in md_files:
-            basename = os.path.basename(mf)
-            name_no_ext = os.path.splitext(basename)[0]
-            with open(mf, 'r', encoding='utf-8') as f:
-                content = f.read()
-
-            title_m = re.search(r'^#\s*([^\r\n]+)', content)
-            item_title = title_m.group(1).strip() if title_m else name_no_ext
-
-            kw_m = re.search(r'-\s*\*\*検索語\*\*:\s*([^\r\n]+)', content)
-            keyword = kw_m.group(1).strip() if kw_m else name_no_ext
-
-            st_m = re.search(r'-\s*\*\*対応状況\*\*:\s*([^\r\n]+)', content)
-            status = st_m.group(1).strip() if st_m else '❓ 未確認'
-
-            lines.append(f'| [{item_title}]({basename}) | {keyword} | {status} |')
-
-        lines.append('')
-        new_content = '\n'.join(lines)
         readme_path = os.path.join(cdir, 'README.md')
-
         existing_content = None
-        if os.path.exists(readme_path):
+        if 'README.md' in dir_entries and os.path.isfile(readme_path):
             with open(readme_path, 'r', encoding='utf-8') as f:
                 existing_content = f.read()
+
+        # 3. Parent directory with child subdirectories
+        if child_dirs and (not md_files or (existing_content and has_corrupted_table_rows(existing_content, cdir))):
+            # If existing README already cleanly links to child directories and has no corrupted rows, preserve it
+            if (
+                existing_content
+                and not has_corrupted_table_rows(existing_content, cdir)
+                and all(f'{sub}/' in existing_content for sub in child_dirs)
+                and all(os.path.basename(mf) in existing_content for mf in md_files)
+            ):
+                continue
+
+            lines = [
+                f'# {category_name} 項目別突合',
+                '',
+                '各サブカテゴリおよび仕様項目の突合一覧です。',
+                '',
+                '| 項目 / サブカテゴリ | 検索語 / 項目数 | 対応状況 |',
+                '| :--- | :----- | :------: |'
+            ]
+            for sub in child_dirs:
+                sub_path = os.path.join(cdir, sub)
+                sub_entries = os.listdir(sub_path)
+                target_doc = 'README.md' if 'README.md' in sub_entries else ('index.md' if 'index.md' in sub_entries else 'README.md')
+                sub_specs = [
+                    os.path.join(sub_path, sf) for sf in sub_entries
+                    if sf.endswith('.md') and is_spec_audit_file(os.path.join(sub_path, sf))
+                ]
+                ok_c = part_c = ng_c = 0
+                for sf in sub_specs:
+                    with open(sf, 'r', encoding='utf-8') as f:
+                        sc = f.read()
+                    st_m = re.search(r'-\s*\*\*対応状況\*\*:\s*([^\r\n]+)', sc)
+                    st_val = st_m.group(1).strip() if st_m else ''
+                    if '✅' in st_val:
+                        ok_c += 1
+                    elif '⚠️' in st_val:
+                        part_c += 1
+                    else:
+                        ng_c += 1
+                total_c = len(sub_specs)
+                status_str = f'✅ {ok_c} / ⚠️ {part_c} / ❌ {ng_c}' if total_c > 0 else '✅ 対応済'
+                lines.append(f'| [{sub}]({sub}/{target_doc}) | {total_c}件 | {status_str} |')
+
+            for mf in md_files:
+                basename = os.path.basename(mf)
+                name_no_ext = os.path.splitext(basename)[0]
+                with open(mf, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                title_m = re.search(r'^#\s*([^\r\n]+)', content)
+                item_title = title_m.group(1).strip() if title_m else name_no_ext
+                kw_m = re.search(r'-\s*\*\*検索語\*\*:\s*([^\r\n]+)', content)
+                keyword = kw_m.group(1).strip() if kw_m else name_no_ext
+                st_m = re.search(r'-\s*\*\*対応状況\*\*:\s*([^\r\n]+)', content)
+                status = st_m.group(1).strip() if st_m else '❓ 未確認'
+                lines.append(f'| [{item_title}]({basename}) | {keyword} | {status} |')
+
+            lines.append('')
+            new_content = '\n'.join(lines)
+        else:
+            if not md_files:
+                continue
+            # Preserve existing parent README that already links to both child_dirs and md_files cleanly
+            if (
+                child_dirs
+                and existing_content
+                and not has_corrupted_table_rows(existing_content, cdir)
+                and any(f'{sub}/' in existing_content for sub in child_dirs)
+            ):
+                continue
+
+            lines = [
+                f'# {category_name} 項目別突合',
+                '',
+                '実装コードの文字列検索による一次調査です。',
+                '',
+                '| 項目 | 検索語 | 対応状況 |',
+                '| :--- | :----- | :------: |'
+            ]
+
+            for mf in md_files:
+                basename = os.path.basename(mf)
+                name_no_ext = os.path.splitext(basename)[0]
+                with open(mf, 'r', encoding='utf-8') as f:
+                    content = f.read()
+
+                title_m = re.search(r'^#\s*([^\r\n]+)', content)
+                item_title = title_m.group(1).strip() if title_m else name_no_ext
+
+                kw_m = re.search(r'-\s*\*\*検索語\*\*:\s*([^\r\n]+)', content)
+                keyword = kw_m.group(1).strip() if kw_m else name_no_ext
+
+                st_m = re.search(r'-\s*\*\*対応状況\*\*:\s*([^\r\n]+)', content)
+                status = st_m.group(1).strip() if st_m else '❓ 未確認'
+
+                lines.append(f'| [{item_title}]({basename}) | {keyword} | {status} |')
+
+            lines.append('')
+            new_content = '\n'.join(lines)
 
         if existing_content != new_content:
             if not dry_run:
@@ -815,6 +1048,184 @@ def sync_category_readmes(docs_dir='docs/spec', dry_run=False, target_category=N
             updated_readmes.append(readme_path.replace('\\', '/'))
 
     return updated_readmes
+
+
+def verify_comparison_lists(docs_dir='docs/spec', compliance_dir='docs/doc/compliance', base_dir='.'):
+    """
+    Scans and validates the lists/tables in implementation comparison files:
+      a) docs/spec/SUMMARY.md and docs/spec/ukadoc-and-ssp-master-comparison.md
+      b) Category README.md files and category table index.md files under docs/spec/
+      c) Compliance comparison list files under docs/doc/compliance/**/*.md
+    Checks:
+      1) Corrupted table detection & broken relative .md links in category tables
+      2) Leaf spec item coverage in category README.md / index.md / COVERAGE.md
+      3) Referenced implementation path validation under base_dir
+    """
+    master_files = []
+    for mname in ('SUMMARY.md', 'ukadoc-and-ssp-master-comparison.md'):
+        mpath = os.path.join(docs_dir, mname)
+        if os.path.isfile(mpath):
+            master_files.append(mpath)
+
+    category_list_files = []
+    if os.path.isdir(docs_dir):
+        for root, dirs, files in os.walk(docs_dir):
+            if 'README.md' in files:
+                rpath = os.path.join(root, 'README.md')
+                if not is_spec_item_readme(rpath):
+                    category_list_files.append(rpath)
+            if 'index.md' in files:
+                ipath = os.path.join(root, 'index.md')
+                if is_category_table_index(ipath):
+                    category_list_files.append(ipath)
+
+    compliance_files = []
+    if compliance_dir and os.path.isdir(compliance_dir):
+        for root, dirs, files in os.walk(compliance_dir):
+            for f in sorted(files):
+                if f.endswith('.md'):
+                    compliance_files.append(os.path.join(root, f))
+
+    corrupted_rows = []
+    broken_links = []
+    unlisted_leaf_specs = []
+    missing_impl_paths = []
+    referenced_impl_paths_checked = 0
+
+    def to_rel(p):
+        try:
+            return os.path.relpath(p, base_dir).replace('\\', '/')
+        except Exception:
+            return p.replace('\\', '/')
+
+    # 1. Corrupted table detection & broken relative .md links in category list files
+    for lfile in sorted(category_list_files):
+        rel_lfile = to_rel(lfile)
+        ldir = os.path.dirname(lfile)
+        try:
+            with open(lfile, 'r', encoding='utf-8', errors='ignore') as f:
+                content = f.read()
+        except Exception:
+            continue
+
+        table_lines = [ln for ln in content.splitlines() if '|' in ln]
+        if not table_lines:
+            corrupted_rows.append({
+                "file": rel_lfile,
+                "line": 1,
+                "row": "<missing markdown table>"
+            })
+            continue
+
+        for line_no, line in enumerate(content.splitlines(), 1):
+            if '|' not in line:
+                continue
+            row_is_corrupted = False
+            if CORRUPTED_ROW_RE.search(line):
+                row_is_corrupted = True
+            else:
+                for sm in SINGLE_CHAR_MD_LINK_RE.finditer(line):
+                    starget = sm.group(2)
+                    if not os.path.exists(os.path.join(ldir, starget)):
+                        row_is_corrupted = True
+                        break
+            if row_is_corrupted:
+                corrupted_rows.append({
+                    "file": rel_lfile,
+                    "line": line_no,
+                    "row": line.strip()
+                })
+
+            for m in MD_LINK_RE.finditer(line):
+                raw_target = m.group(2).split('#')[0].strip()
+                if not raw_target or raw_target.startswith(('http://', 'https://', 'mailto:')):
+                    continue
+                if raw_target.endswith('.md'):
+                    resolved = os.path.normpath(os.path.join(ldir, raw_target))
+                    if not os.path.exists(resolved):
+                        broken_links.append({
+                            "file": rel_lfile,
+                            "line": line_no,
+                            "target": raw_target
+                        })
+
+    # 2. Leaf spec item coverage in category directories
+    if os.path.isdir(docs_dir):
+        for root, dirs, files in os.walk(docs_dir):
+            dir_list_files = []
+            if 'README.md' in files and not is_spec_item_readme(os.path.join(root, 'README.md')):
+                dir_list_files.append(os.path.join(root, 'README.md'))
+            if 'COVERAGE.md' in files:
+                dir_list_files.append(os.path.join(root, 'COVERAGE.md'))
+            if 'index.md' in files and is_category_table_index(os.path.join(root, 'index.md')):
+                dir_list_files.append(os.path.join(root, 'index.md'))
+
+            if not dir_list_files:
+                continue
+
+            combined_text = ""
+            for dlf in dir_list_files:
+                try:
+                    with open(dlf, 'r', encoding='utf-8', errors='ignore') as f:
+                        combined_text += f.read() + "\n"
+                except Exception:
+                    pass
+
+            child_dirs = [d for d in dirs if os.path.isdir(os.path.join(root, d))]
+            is_subcategory_index = bool(
+                child_dirs and any(f"{d}/" in combined_text for d in child_dirs)
+            )
+
+            for f in sorted(files):
+                if not f.endswith('.md'):
+                    continue
+                full_f = os.path.join(root, f)
+                if not is_spec_audit_file(full_f):
+                    continue
+                if f in combined_text:
+                    continue
+                if is_subcategory_index and f.startswith(('introduction_', 'caption_', 'note-')):
+                    continue
+                unlisted_leaf_specs.append(to_rel(full_f))
+
+    # 3. Referenced implementation path validation
+    all_list_files = master_files + sorted(category_list_files) + sorted(compliance_files)
+    for lfile in all_list_files:
+        rel_lfile = to_rel(lfile)
+        try:
+            with open(lfile, 'r', encoding='utf-8', errors='ignore') as f:
+                content = f.read()
+        except Exception:
+            continue
+
+        for m in IMPL_PATH_RE.finditer(content):
+            raw_path = m.group(1)
+            clean_path = re.sub(r':\d+(?:-\d+)?$', '', raw_path).rstrip('.,;:)]`\'"')
+            if not clean_path or '*' in clean_path or '{' in clean_path or '<' in clean_path:
+                continue
+            referenced_impl_paths_checked += 1
+            resolved_impl = os.path.join(base_dir, clean_path)
+            if not os.path.exists(resolved_impl):
+                missing_impl_paths.append({
+                    "file": rel_lfile,
+                    "path": clean_path
+                })
+
+    return {
+        "master_files_checked": len(master_files),
+        "category_list_files_checked": len(category_list_files),
+        "compliance_files_checked": len(compliance_files),
+        "total_list_files_checked": len(all_list_files),
+        "corrupted_rows_count": len(corrupted_rows),
+        "corrupted_rows": corrupted_rows,
+        "broken_links_count": len(broken_links),
+        "broken_links": broken_links,
+        "unlisted_leaf_specs_count": len(unlisted_leaf_specs),
+        "unlisted_leaf_specs": unlisted_leaf_specs,
+        "referenced_impl_paths_checked": referenced_impl_paths_checked,
+        "missing_impl_paths_count": len(missing_impl_paths),
+        "missing_impl_paths": missing_impl_paths,
+    }
 
 
 def parse_args():
@@ -848,6 +1259,14 @@ def parse_args():
     parser.add_argument(
         "--docs-dir", dest="docs_dir", type=str, default="docs/spec",
         help="Path to spec docs directory (defaults to docs/spec)."
+    )
+    parser.add_argument(
+        "--compliance-dir", dest="compliance_dir", type=str, default=None,
+        help="Path to compliance comparison docs directory (defaults to docs/doc/compliance)."
+    )
+    parser.add_argument(
+        "--base-dir", dest="base_dir", type=str, default=".",
+        help="Base repository root directory for implementation path checks (defaults to '.')."
     )
     parser.add_argument(
         "--sync-readmes", action="store_true", dest="sync_readmes",
@@ -897,6 +1316,10 @@ def parse_args():
         "--check-layers", action="store_true", dest="check_layers",
         help="Print layer and UI reachability summary to stdout."
     )
+    parser.add_argument(
+        "--check-lists", action="store_true", dest="check_lists",
+        help="Verify implementation comparison file lists, category tables, and referenced code paths."
+    )
     return parser.parse_args()
 
 
@@ -926,7 +1349,7 @@ def main():
     if not args.summary_only:
         print("Loading codebase...")
     load_start = datetime.datetime.now(datetime.timezone.utc)
-    codebase = load_codebase()
+    codebase = load_codebase(base_dir=args.base_dir)
     load_end = datetime.datetime.now(datetime.timezone.utc)
     if not args.summary_only:
         print(f"Loaded {len(codebase)} source files.")
@@ -942,7 +1365,9 @@ def main():
         docs_dir=args.docs_dir,
         dry_run=audit_dry_run,
         target_category=args.target_category,
-        use_cache=not args.no_cache
+        use_cache=not args.no_cache,
+        compliance_dir=args.compliance_dir,
+        base_dir=args.base_dir
     )
 
     if (not args.dry_run or args.update_summary_only) and not args.target_category:
@@ -1014,6 +1439,33 @@ def main():
             + ", ".join(f"{layer}={by_layer.get(layer, 0)}" for layer in KNOWN_LAYERS)
         )
         print("----------------------------------\n")
+
+    if (args.check_lists or args.check_layers) and report.list_audit:
+        la = report.list_audit
+        print("\n--- Comparison Lists Audit Summary ---")
+        print(
+            f"List Files Checked     : {la.get('total_list_files_checked', 0)} "
+            f"(Master: {la.get('master_files_checked', 0)}, "
+            f"Category: {la.get('category_list_files_checked', 0)}, "
+            f"Compliance: {la.get('compliance_files_checked', 0)})"
+        )
+        print(f"Corrupted Table Rows   : {la.get('corrupted_rows_count', 0)}")
+        print(f"Broken .md Links       : {la.get('broken_links_count', 0)}")
+        print(f"Unlisted Leaf Specs    : {la.get('unlisted_leaf_specs_count', 0)}")
+        print(
+            f"Impl Paths Verified    : {la.get('referenced_impl_paths_checked', 0)} "
+            f"(Missing: {la.get('missing_impl_paths_count', 0)})"
+        )
+        if args.check_lists:
+            for cr in la.get("corrupted_rows", []):
+                print(f"  [Corrupted Row] {cr['file']}:{cr['line']} -> {cr['row']}")
+            for bl in la.get("broken_links", []):
+                print(f"  [Broken Link] {bl['file']}:{bl['line']} -> {bl['target']}")
+            for ul in la.get("unlisted_leaf_specs", []):
+                print(f"  [Unlisted Leaf] {ul}")
+            for mp in la.get("missing_impl_paths", []):
+                print(f"  [Missing Impl Path] {mp['file']} -> {mp['path']}")
+        print("--------------------------------------\n")
 
     total_end = datetime.datetime.now(datetime.timezone.utc)
     if args.benchmark:

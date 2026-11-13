@@ -12,8 +12,8 @@ Nanai Android Mascot における「Windows」および「Android」プラット
 - **対応度**: **80%**
 - **主要実装ファイル**:
   - `../../../src-tauri/tauri.conf.json`: ウィンドウ透過・リサイズ・セキュリティ権限
-  - `ui/js/interaction.js`: マウス/タッチハイブリッド操作制御
-  - `docs/spec/ukadoc-ssp/functions/window-snap.md`: ウィンドウ・スナップおよび位置リセット仕様
+  - `ui/ts/surface/interaction.ts`: マウス/タッチハイブリッド操作制御
+  - `docs/doc/ssp-spec/external-specs/window-snap/index.md`: ウィンドウ・スナップおよび位置リセット仕様
 
 ---
 

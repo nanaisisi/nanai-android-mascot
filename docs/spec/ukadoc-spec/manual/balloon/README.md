@@ -16,7 +16,12 @@
 | [balloonc*.png / .pna](balloonc.md)                                    | ✅ 実装済 |
 | [online*.png](online-png.md)                                           | ✅ 実装済 |
 | [arrow*.png](arrow-png.md)                                             | ✅ 実装済 |
+| [arrows*.png / arrowk*.png / arrowp*def*.png](arrows-png.md)           | ✅ 実装済 |
+| [clickwait.png / clickwaits*.png](clickwait-ssp.md)                    | ✅ 実装済 |
+| [marker.png / markers.png](marker-ssp.md)                              | ✅ 実装済 |
+| [SSP ボタン画像 (`ok_down.png` 等)](ssp-buttons.md)                    | ✅ 実装済 |
 | [sstp.png](sstp-png.md)                                                | ✅ 実装済 |
+| [sstp_new.png / sstp_newk.png](sstp-new.md)                            | ✅ 実装済 |
 | [thumbnail.png](thumbnail-png.md)                                      | ✅ 実装済 |
 | [SSP 専用画像](ssp-assets.md)                                          | ✅ 実装済 |
 | [バルーン FMO 連携](balloon-fmo.md)                                    | ✅ 実装済 |

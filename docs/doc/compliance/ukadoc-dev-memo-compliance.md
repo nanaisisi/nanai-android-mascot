@@ -12,11 +12,11 @@
 
 | 規格ファイル (`ukadoc-spec/dev`)  | 対象領域・機能                                       |   対応状況    | Nanai における実装・対応方針                                                            |
 | :-------------------------------- | :--------------------------------------------------- | :-----------: | :-------------------------------------------------------------------------------------- |
-| **`bind.md`**                     | 着せ替え定義 (`bindgroup`, `bindoption`)             | **✅ 対応済** | `surfaces.txt` パーサおよび `surface-dressup.js` による着せ替えレイヤー合成。           |
+| **`bind.md`**                     | 着せ替え定義 (`bindgroup`, `bindoption`)             | **✅ 対応済** | `surfaces.txt` パーサおよび `ui/ts/surface/surface-dressup.ts` による着せ替えレイヤー合成。 |
 | **`nar.md`**                      | NAR アーカイブ構造・パッケージング                   | **✅ 対応済** | `.nar` 抽出・ZIP 展開処理 (`../../../src-tauri/src/commands/install` および VFS 解決)。 |
-| **`ownerdraw.md`**                | オーナードローメニュー仕様                           | **✅ 対応済** | メニューテーマ、背景・サイドバービットマップ適用 (`submenu.js`, `menu-renderers.js`)。  |
+| **`ownerdraw.md`**                | オーナードローメニュー仕様                           | **✅ 対応済** | メニューテーマ、背景・サイドバービットマップ適用 (`ui/ts/ui/submenu.ts`, `ui/ts/ui/renderers/menu-renderer.ts`)。 |
 | **`shell.md` / `shell-error.md`** | シェル構造、サーフィス定義、アニメーション           | **✅ 対応済** | `surfaces.txt` パーサ、Seriko アニメーションエンジン、パレット・カラーブレンド合成。    |
-| **`update.md`**                   | ネットワーク更新仕様 (`updates.txt`, `updates2.dau`) | **✅ 対応済** | 更新定義パーサ (`src-tauri/src/update/`) およびネットワーク更新進行管理。               |
+| **`update.md`**                   | ネットワーク更新仕様 (`updates.txt`, `updates2.dau`) | **✅ 対応済** | 更新定義パーサ (`src-tauri/src/commands/update/`、`crates/nanai-core/src/update_protocol.rs`) およびネットワーク更新進行管理。 |
 
 ---
 

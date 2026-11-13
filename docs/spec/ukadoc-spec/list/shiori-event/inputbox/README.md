@@ -1,16 +1,16 @@
-# shiori-event/inputbox 項目別突合
+# ukadoc-spec/list/shiori-event/inputbox 項目別突合
 
 実装コードの文字列検索による一次調査です。
 
-| 項目                                                    | 検索語                   |        対応状況         |
-| :------------------------------------------------------ | :----------------------- | :---------------------: |
-| [inputbox.autocomplete](inputbox.autocomplete.md)       | inputbox.autocomplete    |       ❌ 検出なし       |
-| [OnCommunicate](OnCommunicate.md)                       | OnCommunicate            |       ❌ 検出なし       |
-| [OnCommunicateInputCancel](OnCommunicateInputCancel.md) | OnCommunicateInputCancel |       ❌ 検出なし       |
-| [OnTeach](OnTeach.md)                                   | OnTeach                  |       ❌ 検出なし       |
-| [OnTeachInputCancel](OnTeachInputCancel.md)             | OnTeachInputCancel       |       ❌ 検出なし       |
-| [OnTeachStart](OnTeachStart.md)                         | OnTeachStart             |       ❌ 検出なし       |
-| [OnTextAreaInput](OnTextAreaInput.md)                   | OnTextAreaInput          |       ❌ 検出なし       |
-| [OnTextAreaInputCancel](OnTextAreaInputCancel.md)       | OnTextAreaInputCancel    |       ❌ 検出なし       |
-| [OnUserInput](OnUserInput.md)                           | OnUserInput              | ✅ 実装済(SHIORIへ送信) |
-| [OnUserInputCancel](OnUserInputCancel.md)               | OnUserInputCancel        | ✅ 実装済(SHIORIへ送信) |
+| 項目 | 検索語 | 対応状況 |
+| :--- | :----- | :------: |
+| [inputbox.autocomplete](inputbox.autocomplete.md) | inputbox.autocomplete | ✅ 実装済 |
+| [OnCommunicate](OnCommunicate.md) | OnCommunicate | ✅ 実装済 |
+| [OnCommunicateInputCancel](OnCommunicateInputCancel.md) | OnCommunicateInputCancel | ✅ 実装済 |
+| [OnTeach](OnTeach.md) | OnTeach | ✅ 実装済 |
+| [OnTeachInputCancel](OnTeachInputCancel.md) | OnTeachInputCancel | ✅ 実装済 |
+| [OnTeachStart](OnTeachStart.md) | OnTeachStart | ✅ 実装済 |
+| [OnTextAreaInput](OnTextAreaInput.md) | OnTextAreaInput | ✅ 実装済 |
+| [OnTextAreaInputCancel](OnTextAreaInputCancel.md) | OnTextAreaInputCancel | ✅ 実装済 |
+| [OnUserInput](OnUserInput.md) | OnUserInput | ✅ 実装済 |
+| [OnUserInputCancel](OnUserInputCancel.md) | OnUserInputCancel | ✅ 実装済 |

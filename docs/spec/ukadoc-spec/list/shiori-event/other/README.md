@@ -1,35 +1,35 @@
-# shiori-event/other 項目別突合
+# ukadoc-spec/list/shiori-event/other 項目別突合
 
 実装コードの文字列検索による一次調査です。
 
-| 項目                                                          | 検索語                     |  対応状況   |
-| :------------------------------------------------------------ | :------------------------- | :---------: |
-| [アーカイブ操作エラーコード](caption_archive_error_codes.md)  | アーカイブ操作エラーコード | ❌ 検出なし |
-| [OnMusicPlayExの拡張情報リスト](caption_musicplayex_codes.md) | OnMusicPlayEx              | ❌ 検出なし |
-| [OnAITalk](OnAITalk.md)                                       | OnAITalk                   | ❌ 検出なし |
-| [OnBalloonScaling](OnBalloonScaling.md)                       | OnBalloonScaling           | ❌ 検出なし |
-| [OnCompressArchiveComplete](OnCompressArchiveComplete.md)     | OnCompressArchiveComplete  | ❌ 検出なし |
-| [OnCompressArchiveFailure](OnCompressArchiveFailure.md)       | OnCompressArchiveFailure   | ❌ 検出なし |
-| [OnEmbryoExist](OnEmbryoExist.md)                             | OnEmbryoExist              | ❌ 検出なし |
-| [OnExtractArchiveComplete](OnExtractArchiveComplete.md)       | OnExtractArchiveComplete   | ❌ 検出なし |
-| [OnExtractArchiveFailure](OnExtractArchiveFailure.md)         | OnExtractArchiveFailure    | ❌ 検出なし |
-| [OnInternalSaoriComplete](OnInternalSaoriComplete.md)         | OnInternalSaoriComplete    | ❌ 検出なし |
-| [OnInternalSaoriFailure](OnInternalSaoriFailure.md)           | OnInternalSaoriFailure     | ❌ 検出なし |
-| [OnKeyPress](OnKeyPress.md)                                   | OnKeyPress                 | ❌ 検出なし |
-| [OnLanguageChange](OnLanguageChange.md)                       | OnLanguageChange           | ❌ 検出なし |
-| [OnMusicPlay](OnMusicPlay.md)                                 | OnMusicPlay                | ❌ 検出なし |
-| [OnMusicPlayEx](OnMusicPlayEx.md)                             | OnMusicPlayEx              | ❌ 検出なし |
-| [OnNekodorifExist](OnNekodorifExist.md)                       | OnNekodorifExist           | ❌ 検出なし |
-| [OnOtherGhostTalk](OnOtherGhostTalk.md)                       | OnOtherGhostTalk           | ❌ 検出なし |
-| [OnRecommendsiteChoice](OnRecommendsiteChoice.md)             | OnRecommendsiteChoice      | ❌ 検出なし |
-| [OnResetWindowPos](OnResetWindowPos.md)                       | OnResetWindowPos           | ❌ 検出なし |
-| [OnShellScaling](OnShellScaling.md)                           | OnShellScaling             | ❌ 検出なし |
-| [OnSoundError](OnSoundError.md)                               | OnSoundError               | ❌ 検出なし |
-| [OnSoundLoop](OnSoundLoop.md)                                 | OnSoundLoop                | ❌ 検出なし |
-| [OnSoundSpectrum](OnSoundSpectrum.md)                         | OnSoundSpectrum            | ❌ 検出なし |
-| [OnSoundStop](OnSoundStop.md)                                 | OnSoundStop                | ❌ 検出なし |
-| [OnTextDrop](OnTextDrop.md)                                   | OnTextDrop                 | ❌ 検出なし |
-| [OnTranslate](OnTranslate.md)                                 | OnTranslate                | ❌ 検出なし |
-| [OnVideoPlayEx](OnVideoPlayEx.md)                             | OnVideoPlayEx              | ❌ 検出なし |
-| [property.get](property.get.md)                               | property.get               | ❌ 検出なし |
-| [property.set](property.set.md)                               | property.set               | ❌ 検出なし |
+| 項目 | 検索語 | 対応状況 |
+| :--- | :----- | :------: |
+| [アーカイブ操作エラーコード](caption_archive_error_codes.md) | アーカイブ操作エラーコード | ❌ 未実装 |
+| [OnMusicPlayExの拡張情報リスト](caption_musicplayex_codes.md) | OnMusicPlayEx | ✅ 実装済 |
+| [OnAITalk](OnAITalk.md) | OnAITalk | ✅ 実装済 |
+| [OnBalloonScaling](OnBalloonScaling.md) | OnBalloonScaling | ✅ 実装済 |
+| [OnCompressArchiveComplete](OnCompressArchiveComplete.md) | OnCompressArchiveComplete | ⚠️ 一部対応 |
+| [OnCompressArchiveFailure](OnCompressArchiveFailure.md) | OnCompressArchiveFailure | ⚠️ 一部対応 |
+| [OnEmbryoExist](OnEmbryoExist.md) | OnEmbryoExist | ⚠️ 一部対応 |
+| [OnExtractArchiveComplete](OnExtractArchiveComplete.md) | OnExtractArchiveComplete | ⚠️ 一部対応 |
+| [OnExtractArchiveFailure](OnExtractArchiveFailure.md) | OnExtractArchiveFailure | ⚠️ 一部対応 |
+| [OnInternalSaoriComplete](OnInternalSaoriComplete.md) | OnInternalSaoriComplete | ⚠️ 一部対応 |
+| [OnInternalSaoriFailure](OnInternalSaoriFailure.md) | OnInternalSaoriFailure | ⚠️ 一部対応 |
+| [OnKeyPress](OnKeyPress.md) | OnKeyPress | ✅ 実装済 |
+| [OnLanguageChange](OnLanguageChange.md) | OnLanguageChange | ⚠️ 一部対応 |
+| [OnMusicPlay](OnMusicPlay.md) | OnMusicPlay | ⚠️ 一部対応 |
+| [OnMusicPlayEx](OnMusicPlayEx.md) | OnMusicPlayEx | ✅ 実装済 |
+| [OnNekodorifExist](OnNekodorifExist.md) | OnNekodorifExist | ⚠️ 一部対応 |
+| [OnOtherGhostTalk](OnOtherGhostTalk.md) | OnOtherGhostTalk | ⚠️ 一部対応 |
+| [OnRecommendsiteChoice](OnRecommendsiteChoice.md) | OnRecommendsiteChoice | ⚠️ 一部対応 |
+| [OnResetWindowPos](OnResetWindowPos.md) | OnResetWindowPos | ✅ 実装済 |
+| [OnShellScaling](OnShellScaling.md) | OnShellScaling | ⚠️ 一部対応 |
+| [OnSoundError](OnSoundError.md) | OnSoundError | ✅ 実装済 |
+| [OnSoundLoop](OnSoundLoop.md) | OnSoundLoop | ✅ 実装済 |
+| [OnSoundSpectrum](OnSoundSpectrum.md) | OnSoundSpectrum | ⚠️ 一部対応 |
+| [OnSoundStop](OnSoundStop.md) | OnSoundStop | ✅ 実装済 |
+| [OnTextDrop](OnTextDrop.md) | OnTextDrop | ⚠️ 一部対応 |
+| [OnTranslate](OnTranslate.md) | OnTranslate | ✅ 実装済 |
+| [OnVideoPlayEx](OnVideoPlayEx.md) | OnVideoPlayEx | ⚠️ 一部対応 |
+| [property.get](property.get.md) | property.get | ✅ 実装済 |
+| [property.set](property.set.md) | property.set | ⚠️ 一部対応 |

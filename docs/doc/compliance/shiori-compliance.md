@@ -16,11 +16,11 @@ Nanai Android Mascot における「SHIORI プロトコル」およびイベン�
 - **プロトコル規格**: SHIORI/3.0（および SHIORI/2.x エミュレーション）
 - **対応度**: **95%**
 - **主要実装ファイル**:
-  - `crates/ui/src/shiori.rs`: SHIORI 3.0 リクエスト/レスポンス Rust 統一パーサー・モデル
-  - `src-tauri/src/shiori/ffi.rs`: ネイティブ SHIORI DLL 連携およびリクエストビルダー (`on_biff_*` / `on_update_*`)
+  - `crates/nanai-core/src/shiori_protocol.rs`: SHIORI 3.0 リクエスト/レスポンス Rust 統一パーサー・モデル
+  - `src-tauri/src/shiori/ffi/mod.rs`: ネイティブ SHIORI DLL 連携およびリクエストビルダー (`on_biff_*` / `on_update_*`)
   - `../../../src-tauri/src/shiori/dynamic/mod.rs`: ケースインセンシティブ VFS 探索、SHIORI 2.x 自動フォールバック・アダプター
-  - `src-tauri/src/commands/shiori/lifecycle.rs`: `VitreumRisum` (里々/satori.dll) 等の柔軟なゴーストロード処理
-  - `../../../ui/js/ghost/ghost.js`: イベントパイプライン・キューイング制御
+  - `src-tauri/src/commands/shiori/lifecycle/mod.rs`: `VitreumRisum` (里々/satori.dll) 等の柔軟なゴーストロード処理
+  - `../../../ui/ts/ghost/ghost.ts`: イベントパイプライン・キューイング制御
 
 ---
 

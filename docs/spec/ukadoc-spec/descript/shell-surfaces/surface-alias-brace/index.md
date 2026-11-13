@@ -4,6 +4,6 @@
 
 | 項目                                                                     | 検索語                             |          対応状況           |
 | :----------------------------------------------------------------------- | :--------------------------------- | :-------------------------: |
-| [alias.txt](caption_aliastxt.md)                                         | alias.txt                          | ✅ 対応済 (surface-load.js) |
-| [introduction_surface.aliasbrace.md](introduction_surface.aliasbrace.md) | introduction_surface.aliasbrace.md | ✅ 対応済 (surface-load.js) |
-| [star.md](star.md)                                                       | star.md                            | ✅ 対応済 (surface-load.js) |
+| [alias.txt](caption_aliastxt.md) | alias.txt | ⚠️ 一部対応 (surface-load.ts) |
+| [introduction_surface.aliasbrace.md](introduction_surface.aliasbrace.md) | introduction_surface.aliasbrace.md | ✅ 実装済 (surface-load.ts) |
+| [star.md](star.md) | star.md | ✅ 実装済 (surface-load.ts) |

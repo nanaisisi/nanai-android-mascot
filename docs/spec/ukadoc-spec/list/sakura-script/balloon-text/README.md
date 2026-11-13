@@ -1,48 +1,48 @@
-# sakura-script/balloon-text 項目別突合
+# ukadoc-spec/list/sakura-script/balloon-text 項目別突合
 
 実装コードの文字列検索による一次調査です。
 
-| 項目                                                                                                      | 検索語 | 対応状況  |
-| :-------------------------------------------------------------------------------------------------------- | :----- | :-------: |
-| [\__v[オプション]](__v.md)                                                                                | \__v   | ✅ 実装済 |
-| [\_!](_-bang.md)                                                                                          | \_!    | ✅ 実装済 |
-| [\_?](_-q.md)                                                                                             | \_?    | ✅ 実装済 |
-| [\_b[ファイルパス,inline]](_b-inline.md)                                                                  | \_b    | ✅ 実装済 |
-| [\_b\[ファイルパス,inline,[オプション](note-1.md#_bファイルパスについて),オプション...\]](_b-inline-2.md) | \_b    | ✅ 実装済 |
-| [\_b[ファイルパス,inline,opaque]](_b-inline-opaque.md)                                                    | \_b    | ✅ 実装済 |
-| [\_b[ファイルパス,x,y]](_b-x-y.md)                                                                        | \_b    | ✅ 実装済 |
-| [\_b\[ファイルパス,x,y,[オプション](note-1.md#_bファイルパスについて),オプション...\]](_b-x-y-2.md)       | \_b    | ✅ 実装済 |
-| [\_b[ファイルパス,x,y,opaque]](_b-x-y-opaque.md)                                                          | \_b    | ✅ 実装済 |
-| [\_l[x,y]](_l-x-y.md)                                                                                     | \_l    | ✅ 実装済 |
-| [\_n](_n.md)                                                                                              | \_n    | ✅ 実装済 |
-| [\b[ID番号]](b-ID.md)                                                                                     | \b     | ✅ 実装済 |
-| [\![enter,nouserbreakmode]](bang-enter-nouserbreakmode.md)                                                | \!     | ✅ 実装済 |
-| [\![enter,onlinemode]](bang-enter-onlinemode.md)                                                          | \!     | ✅ 実装済 |
-| [\![execute,resetballoonpos]](bang-execute-resetballoonpos.md)                                            | \!     | ✅ 実装済 |
-| [\![leave,nouserbreakmode]](bang-leave-nouserbreakmode.md)                                                | \!     | ✅ 実装済 |
-| [\![leave,onlinemode]](bang-leave-onlinemode.md)                                                          | \!     | ✅ 実装済 |
-| [\![lock,balloonmove]](bang-lock-balloonmove.md)                                                          | \!     | ✅ 実装済 |
-| [\![lock,balloonrepaint]](bang-lock-balloonrepaint.md)                                                    | \!     | ✅ 実装済 |
-| [\![set,autoscroll,disable]](bang-set-autoscroll-disable.md)                                              | \!     | ✅ 実装済 |
-| [\![set,autoscroll,enable]](bang-set-autoscroll-enable.md)                                                | \!     | ✅ 実装済 |
-| [\![set,balloonalign,ID]](bang-set-balloonalign-ID.md)                                                    | \!     | ✅ 実装済 |
-| [\![set,balloonmarker,マーカー表示文字列]](bang-set-balloonmarker.md)                                     | \!     | ✅ 実装済 |
-| [\![set,balloonnum,ファイル名,現在の数,最大数]](bang-set-balloonnum.md)                                   | \!     | ✅ 実装済 |
-| [\![set,balloonoffset,x,y]](bang-set-balloonoffset-x-y.md)                                                | \!     | ✅ 実装済 |
-| [\![set,balloontimeout,時間]](bang-set-balloontimeout.md)                                                 | \!     | ✅ 実装済 |
-| [\![set,balloonwait,倍率]](bang-set-balloonwait.md)                                                       | \!     | ✅ 実装済 |
-| [\![set,serikotalk,true/false]](bang-set-serikotalk-true-false.md)                                        | \!     | ✅ 実装済 |
-| [\![*]](bang-star.md)                                                                                     | \!     | ✅ 実装済 |
-| [\![unlock,balloonmove]](bang-unlock-balloonmove.md)                                                      | \!     | ✅ 実装済 |
-| [\![unlock,balloonrepaint]](bang-unlock-balloonrepaint.md)                                                | \!     | ✅ 実装済 |
-| [\bID番号](bID.md)                                                                                        | \bID   | ✅ 実装済 |
-| [\c](c.md)                                                                                                | \c     | ✅ 実装済 |
-| [\C](C-2.md)                                                                                              | \C     | ✅ 実装済 |
-| [\c[char,数値]](c-char.md)                                                                                | \c     | ✅ 実装済 |
-| [\c[char,数値,開始位置]](c-char-2.md)                                                                     | \c     | ✅ 実装済 |
-| [\c[line,数値]](c-line.md)                                                                                | \c     | ✅ 実装済 |
-| [\c[line,数値,開始位置]](c-line-2.md)                                                                     | \c     | ✅ 実装済 |
-| [\n](n.md)                                                                                                | \n     | ✅ 実装済 |
-| [\n[パーセント]](n-2.md)                                                                                  | \n     | ✅ 実装済 |
-| [\n[half]](n-half.md)                                                                                     | \n     | ✅ 実装済 |
-| [補足](note-1.md)                                                                                         | 補足   | ✅ 実装済 |
+| 項目 | 検索語 | 対応状況 |
+| :--- | :----- | :------: |
+| [\_!](_-bang.md) | \_! | ✅ 実装済 |
+| [\_?](_-q.md) | \_? | ✅ 実装済 |
+| [\__v[オプション]](__v.md) | \__v | ⚠️ 一部対応 |
+| [\_b[ファイルパス,inline,オプション...]](_b-inline-2.md) | \_b | ✅ 実装済 |
+| [\_b[ファイルパス,inline,opaque]](_b-inline-opaque.md) | \_b | ✅ 実装済 |
+| [\_b[ファイルパス,inline]](_b-inline.md) | \_b | ✅ 実装済 |
+| [\_b[ファイルパス,x,y,オプション...]](_b-x-y-2.md) | \_b | ✅ 実装済 |
+| [\_b[ファイルパス,x,y,opaque]](_b-x-y-opaque.md) | \_b | ✅ 実装済 |
+| [\_b[ファイルパス,x,y]](_b-x-y.md) | \_b | ✅ 実装済 |
+| [\_l[x,y]](_l-x-y.md) | \_l | ✅ 実装済 |
+| [\_n](_n.md) | \_n | ✅ 実装済 |
+| [\b[ID番号]](b-ID.md) | \b | ✅ 実装済 |
+| [\![enter,nouserbreakmode]](bang-enter-nouserbreakmode.md) | \! | ✅ 実装済 |
+| [\![enter,onlinemode]](bang-enter-onlinemode.md) | \! | ✅ 実装済 |
+| [\![execute,resetballoonpos]](bang-execute-resetballoonpos.md) | \! | ✅ 実装済 |
+| [\![leave,nouserbreakmode]](bang-leave-nouserbreakmode.md) | \! | ✅ 実装済 |
+| [\![leave,onlinemode]](bang-leave-onlinemode.md) | \! | ✅ 実装済 |
+| [\![lock,balloonmove]](bang-lock-balloonmove.md) | \! | ✅ 実装済 |
+| [\![lock,balloonrepaint]](bang-lock-balloonrepaint.md) | \! | ✅ 実装済 |
+| [\![set,autoscroll,disable]](bang-set-autoscroll-disable.md) | \! | ✅ 実装済 |
+| [\![set,autoscroll,enable]](bang-set-autoscroll-enable.md) | \! | ✅ 実装済 |
+| [\![set,balloonalign,ID]](bang-set-balloonalign-ID.md) | \! | ✅ 実装済 |
+| [\![set,balloonmarker,マーカー表示文字列]](bang-set-balloonmarker.md) | \! | ✅ 実装済 |
+| [\![set,balloonnum,ファイル名,現在の数,最大数]](bang-set-balloonnum.md) | \! | ✅ 実装済 |
+| [\![set,balloonoffset,x,y]](bang-set-balloonoffset-x-y.md) | \! | ✅ 実装済 |
+| [\![set,balloontimeout,時間]](bang-set-balloontimeout.md) | \! | ✅ 実装済 |
+| [\![set,balloonwait,倍率]](bang-set-balloonwait.md) | \! | ✅ 実装済 |
+| [\![set,serikotalk,true/false]](bang-set-serikotalk-true-false.md) | \! | ✅ 実装済 |
+| [\![*]](bang-star.md) | \! | ✅ 実装済 |
+| [\![unlock,balloonmove]](bang-unlock-balloonmove.md) | \! | ✅ 実装済 |
+| [\![unlock,balloonrepaint]](bang-unlock-balloonrepaint.md) | \! | ✅ 実装済 |
+| [\bID番号](bID.md) | \b | ✅ 実装済 |
+| [\C](C-2.md) | \C | ⚠️ 一部対応 |
+| [\c[char,数値,開始位置]](c-char-2.md) | \c | ✅ 実装済 |
+| [\c[char,数値]](c-char.md) | \c | ✅ 実装済 |
+| [\c[line,数値,開始位置]](c-line-2.md) | \c | ✅ 実装済 |
+| [\c[line,数値]](c-line.md) | \c | ✅ 実装済 |
+| [\c](c.md) | \c | ✅ 実装済 |
+| [\n[パーセント]](n-2.md) | \n | ✅ 実装済 |
+| [\n[half]](n-half.md) | \n | ✅ 実装済 |
+| [\n](n.md) | \n | ✅ 実装済 |
+| [補足](note-1.md) | 補足 | ✅ 実装済 |

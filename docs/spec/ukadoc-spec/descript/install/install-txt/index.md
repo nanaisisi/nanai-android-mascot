@@ -4,17 +4,17 @@
 
 | 項目                                                                              | 検索語               |        対応状況        |
 | :-------------------------------------------------------------------------------- | :------------------- | :--------------------: |
-| [install.txt（概要）](introduction_install.txt.md)                                | install.txt          | ✅ 対応済 (archive.rs) |
-| [同時インストール](introduction_install_multi.md)                                 | 同時インストール     | ✅ 対応済 (archive.rs) |
-| [accept,本体側名](accept.md)                                                      | accept               | ✅ 対応済 (archive.rs) |
-| [bootghost,ディレクトリ名](bootghost.md)                                          | bootghost            | ✅ 対応済 (archive.rs) |
-| [charset,文字コード](charset.md)                                                  | charset              | ✅ 対応済 (archive.rs) |
-| [directory,ディレクトリ名](directory.md)                                          | directory            | ✅ 対応済 (archive.rs) |
-| [name,オブジェクト名](name.md)                                                    | name                 | ✅ 対応済 (archive.rs) |
-| [refresh,数値](refresh.md)                                                        | refresh              | ✅ 対応済 (archive.rs) |
-| [refreshundeletemask,ファイル名1:ファイル名2...](refreshundeletemask.md)          | refreshundeletemask  | ✅ 対応済 (archive.rs) |
-| [\*.directory,ディレクトリ名](star-.directory.md)                                 | .directory           | ✅ 対応済 (archive.rs) |
-| [\*.refresh,数値](star-.refresh.md)                                               | .refresh             | ✅ 対応済 (archive.rs) |
-| [\*.refreshundeletemask,ファイル名1:ファイル名2...](star-.refreshundeletemask.md) | .refreshundeletemask | ✅ 対応済 (archive.rs) |
-| [\*.source.directory,ディレクトリ名](star-.source.directory.md)                   | .source.directory    | ✅ 対応済 (archive.rs) |
-| [type,種別](type.md)                                                              | type                 | ✅ 対応済 (archive.rs) |
+| [install.txt（概要）](introduction_install.txt.md) | install.txt | ✅ 実装済 (archive.rs) |
+| [同時インストール](introduction_install_multi.md) | 同時インストール | ❌ 未実装 |
+| [accept,本体側名](accept.md) | accept | ✅ 実装済 (archive.rs) |
+| [bootghost,ディレクトリ名](bootghost.md) | bootghost | ⚠️ 一部対応 (archive.rs) |
+| [charset,文字コード](charset.md) | charset | ✅ 実装済 (archive.rs) |
+| [directory,ディレクトリ名](directory.md) | directory | ✅ 実装済 (archive.rs) |
+| [name,オブジェクト名](name.md) | name | ✅ 対応済 (archive.rs) |
+| [refresh,数値](refresh.md) | refresh | ✅ 実装済 (archive.rs) |
+| [refreshundeletemask,ファイル名1:ファイル名2...](refreshundeletemask.md) | refreshundeletemask | ⚠️ 一部対応 (archive.rs) |
+| [\*.directory,ディレクトリ名](star-.directory.md) | .directory | ⚠️ 一部対応 (archive.rs) |
+| [\*.refresh,数値](star-.refresh.md) | .refresh | ⚠️ 一部対応 (archive.rs) |
+| [\*.refreshundeletemask,ファイル名1:ファイル名2...](star-.refreshundeletemask.md) | .refreshundeletemask | ⚠️ 一部対応 (archive.rs) |
+| [\*.source.directory,ディレクトリ名](star-.source.directory.md) | .source.directory | ⚠️ 一部対応 (archive.rs) |
+| [type,種別](type.md) | type | ✅ 対応済 (archive.rs) |

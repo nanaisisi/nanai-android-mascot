@@ -1,6 +1,6 @@
 # SSP互換性リファレンス
 
-- **規格**: [ssp-compatibility-reference.md](ssp-compatibility-reference.md)
+- **規格**: [ssp-compatibility-reference](index.md)
 - **検索語**: acquire_base_ware_mutexes
 - **対応状況**: ✅ 実装済
 

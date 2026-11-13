@@ -4,4 +4,4 @@
 
 | 項目                             | 検索語  |          対応状況           |
 | :------------------------------- | :------ | :-------------------------: |
-| [charset,文字コード](charset.md) | charset | ✅ 対応済 (surface-load.js) |
+| [charset,文字コード](charset.md) | charset | ✅ 実装済 (surface-load.ts) |

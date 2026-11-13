@@ -321,6 +321,28 @@ pub fn build_on_text_area_input_request(input_id: &str, text_value: &str) -> Str
     build_shiori_request_extended("GET", "OnTextAreaInput", &refs, None)
 }
 
+/// OnUserInputCancel イベントリクエスト構築 (ukadoc-spec/list/shiori-event/inputbox/OnUserInputCancel.md)
+pub fn build_on_user_input_cancel_request(input_id: &str) -> String {
+    let refs = vec![input_id.to_string()];
+    build_shiori_request_extended("GET", "OnUserInputCancel", &refs, None)
+}
+
+/// OnTeachInputCancel イベントリクエスト構築 (ukadoc-spec/list/shiori-event/inputbox/OnTeachInputCancel.md)
+pub fn build_on_teach_input_cancel_request() -> String {
+    build_shiori_request_extended("GET", "OnTeachInputCancel", &[], None)
+}
+
+/// OnCommunicateInputCancel イベントリクエスト構築 (ukadoc-spec/list/shiori-event/inputbox/OnCommunicateInputCancel.md)
+pub fn build_on_communicate_input_cancel_request() -> String {
+    build_shiori_request_extended("GET", "OnCommunicateInputCancel", &[], None)
+}
+
+/// OnTextAreaInputCancel イベントリクエスト構築 (ukadoc-spec/list/shiori-event/inputbox/OnTextAreaInputCancel.md)
+pub fn build_on_text_area_input_cancel_request(input_id: &str) -> String {
+    let refs = vec![input_id.to_string()];
+    build_shiori_request_extended("GET", "OnTextAreaInputCancel", &refs, None)
+}
+
 #[wasm_bindgen]
 pub fn wasm_build_shiori_request(method: &str, headers_js: JsValue) -> Result<String, JsValue> {
     let headers: BTreeMap<String, String> = if headers_js.is_null() || headers_js.is_undefined() {
@@ -513,5 +535,19 @@ mod tests {
         assert!(textarea_req.contains("ID: OnTextAreaInput"));
         assert!(textarea_req.contains("Reference0: memo_area"));
         assert!(textarea_req.contains("Reference1: Hello world"));
+
+        let input_cancel = build_on_user_input_cancel_request("input_name");
+        assert!(input_cancel.contains("ID: OnUserInputCancel"));
+        assert!(input_cancel.contains("Reference0: input_name"));
+
+        let teach_cancel = build_on_teach_input_cancel_request();
+        assert!(teach_cancel.contains("ID: OnTeachInputCancel"));
+
+        let comm_cancel = build_on_communicate_input_cancel_request();
+        assert!(comm_cancel.contains("ID: OnCommunicateInputCancel"));
+
+        let textarea_cancel = build_on_text_area_input_cancel_request("memo_area");
+        assert!(textarea_cancel.contains("ID: OnTextAreaInputCancel"));
+        assert!(textarea_cancel.contains("Reference0: memo_area"));
     }
 }

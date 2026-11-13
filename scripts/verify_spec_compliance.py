@@ -27,6 +27,74 @@ GENERIC_KEYWORDS = {
     "final", "temp", "line", "row", "col", "column", "size", "len", "length"
 }
 
+LAYER_ORDER = ("core", "backend", "ui_logic", "ui_view", "tests", "other")
+KNOWN_LAYERS = ("core", "backend", "ui_logic", "ui_view", "tests")
+MAX_MATCHES_PER_LAYER = 5
+MAX_IMPL_LOCATIONS = 6
+
+
+def classify_layer(path_str: str) -> str:
+    """Classifies a repository-relative file path into an architectural layer."""
+    norm = path_str.replace("\\", "/")
+    if norm.startswith("./"):
+        norm = norm[2:]
+    if norm.startswith("crates/"):
+        return "core"
+    if norm.startswith("src-tauri/"):
+        return "backend"
+    if norm.startswith("ui/"):
+        if norm.startswith(("ui/ts/ui/", "ui/windows/", "ui/css/")):
+            return "ui_view"
+        subpath = norm[len("ui/"):]
+        if "/" not in subpath and subpath.endswith((".html", ".css")):
+            return "ui_view"
+        return "ui_logic"
+    if norm.startswith("tests/"):
+        return "tests"
+    return "other"
+
+
+def init_layer_summary():
+    """Creates an initialized layer reachability summary dictionary."""
+    return {
+        "core_only": 0,
+        "ui_connected": 0,
+        "full_pipeline": 0,
+        "by_layer": {layer: 0 for layer in KNOWN_LAYERS},
+    }
+
+
+def select_representative_matches(matches, max_lines=MAX_IMPL_LOCATIONS):
+    """Selects up to `max_lines` representative matches, at least one per matched layer."""
+    if not matches or max_lines <= 0:
+        return []
+    by_layer = {}
+    for match in matches:
+        layer = classify_layer(match[0])
+        by_layer.setdefault(layer, []).append(match)
+
+    ordered_layers = [layer for layer in LAYER_ORDER if layer in by_layer]
+    for layer in by_layer:
+        if layer not in ordered_layers:
+            ordered_layers.append(layer)
+
+    selected = []
+    indices = {layer: 0 for layer in ordered_layers}
+    while len(selected) < max_lines:
+        progressed = False
+        for layer in ordered_layers:
+            idx = indices[layer]
+            layer_matches = by_layer[layer]
+            if idx < len(layer_matches):
+                selected.append(layer_matches[idx])
+                indices[layer] = idx + 1
+                progressed = True
+                if len(selected) >= max_lines:
+                    break
+        if not progressed:
+            break
+    return selected
+
 
 def is_valid_code_match(term, line_str, path_str):
     stripped = line_str.strip()
@@ -118,6 +186,9 @@ def build_wildcard_regex(term):
 def search_keyword(keyword, codebase, cache=None, stats=None):
     """Searches for occurrences of keyword terms in the codebase.
 
+    Collects up to MAX_MATCHES_PER_LAYER matches per architectural layer
+    (core, backend, ui_logic, ui_view, tests, other) so matches in early
+    directories never starve later layers.
     Supports wildcard patterns (e.g. `*.refresh`, `char*.name`),
     optional caching (cache dict), and performance stats tracking.
     """
@@ -137,6 +208,7 @@ def search_keyword(keyword, codebase, cache=None, stats=None):
 
     results = []
     seen = set()
+    result_layer_counts = {}
 
     for term in terms:
         if cache is not None and term in cache:
@@ -148,11 +220,16 @@ def search_keyword(keyword, codebase, cache=None, stats=None):
                 stats["cache_misses"] += 1
                 stats["unique_terms"] += 1
             term_matches = []
+            term_layer_counts = {}
             wildcard_regex = build_wildcard_regex(term)
 
             for path, lines, full_text in file_records:
                 # Avoid matching an audit file against itself
                 if 'docs/' in path:
+                    continue
+
+                layer = classify_layer(path)
+                if term_layer_counts.get(layer, 0) >= MAX_MATCHES_PER_LAYER:
                     continue
 
                 if wildcard_regex is not None:
@@ -163,7 +240,8 @@ def search_keyword(keyword, codebase, cache=None, stats=None):
                         if wildcard_regex.search(line) and is_valid_code_match(term, line, path):
                             cleaned_line = sanitize_snippet(line.strip())
                             term_matches.append((path, idx, cleaned_line))
-                            if len(term_matches) >= 10:
+                            term_layer_counts[layer] = term_layer_counts.get(layer, 0) + 1
+                            if term_layer_counts[layer] >= MAX_MATCHES_PER_LAYER:
                                 break
                 else:
                     # Fast pre-check: skip line-by-line scan if term is not in file at all
@@ -173,24 +251,22 @@ def search_keyword(keyword, codebase, cache=None, stats=None):
                         if term in line and is_valid_code_match(term, line, path):
                             cleaned_line = sanitize_snippet(line.strip())
                             term_matches.append((path, idx, cleaned_line))
-                            if len(term_matches) >= 10:
+                            term_layer_counts[layer] = term_layer_counts.get(layer, 0) + 1
+                            if term_layer_counts[layer] >= MAX_MATCHES_PER_LAYER:
                                 break
-                            if len(term_matches) >= 10:
-                                break
-                if len(term_matches) >= 10:
-                    break
             if cache is not None:
                 cache[term] = term_matches
 
         for path, idx, cleaned_line in term_matches:
             loc = (path, idx)
-            if loc not in seen:
-                seen.add(loc)
-                results.append((path, idx, cleaned_line))
-                if len(results) >= 10:
-                    break
-        if len(results) >= 10:
-            break
+            if loc in seen:
+                continue
+            layer = classify_layer(path)
+            if result_layer_counts.get(layer, 0) >= MAX_MATCHES_PER_LAYER:
+                continue
+            seen.add(loc)
+            results.append((path, idx, cleaned_line))
+            result_layer_counts[layer] = result_layer_counts.get(layer, 0) + 1
 
     return results
 
@@ -198,12 +274,13 @@ def search_keyword(keyword, codebase, cache=None, stats=None):
 class ComplianceReport:
     """Represents a compliance audit report with serialization support and regression tracking."""
 
-    def __init__(self, category_stats, updated_files=None, total_files=0, regressions=None, generated_at=None, perf_stats=None):
+    def __init__(self, category_stats, updated_files=None, total_files=0, regressions=None, generated_at=None, perf_stats=None, layer_summary=None):
         self.category_stats = category_stats
         self.updated_files = updated_files or []
         self.total_files = total_files
         self.regressions = regressions or []
         self.perf_stats = perf_stats or {}
+        self.layer_summary = layer_summary
         self.generated_at = generated_at or datetime.datetime.now(datetime.timezone.utc).isoformat()
 
         tot_ok = sum(st["✅"] for st in category_stats.values())
@@ -255,6 +332,8 @@ class ComplianceReport:
         }
         if self.perf_stats:
             data["perf_stats"] = self.perf_stats
+        if self.layer_summary:
+            data["layer_summary"] = self.layer_summary
         return data
 
     def to_json(self, indent=2):
@@ -296,6 +375,21 @@ class ComplianceReport:
         lines.append(
             f"| **合計** | {tot['✅']:9d} | {tot['⚠️']:11d} | {tot['❌']:9d} | {tot['❓']:9d} | {tot['compliance_rate_percent']:5.1f}% | {tot['合計']:4d} |"
         )
+
+        if self.layer_summary:
+            by_layer = self.layer_summary.get("by_layer", {})
+            lines.extend([
+                "",
+                "## レイヤー到達度集計 (Layer Reachability Summary)",
+                "",
+                "| 到達指標 / レイヤー | 件数 |",
+                "| :--- | ---: |",
+                f"| Core/Backend のみ (`core_only`) | {self.layer_summary.get('core_only', 0):d} |",
+                f"| UI 到達済 (`ui_connected`) | {self.layer_summary.get('ui_connected', 0):d} |",
+                f"| フルパイプライン (`full_pipeline`) | {self.layer_summary.get('full_pipeline', 0):d} |",
+            ])
+            for layer in KNOWN_LAYERS:
+                lines.append(f"| Layer: `{layer}` | {by_layer.get(layer, 0):d} |")
 
         if self.regressions:
             lines.extend([
@@ -340,6 +434,7 @@ def process_audit_files(codebase, docs_dir='docs/spec', dry_run=False, target_ca
     updated_files = []
     regressions = []
     category_stats = {}
+    layer_summary = init_layer_summary()
 
     # Pre-index codebase lines and full_text for fast pre-checks
     prepped_codebase = []
@@ -408,14 +503,29 @@ def process_audit_files(codebase, docs_dir='docs/spec', dry_run=False, target_ca
 
         matches = search_keyword(keyword, prepped_codebase, cache=term_cache, stats=perf_stats)
 
+        item_layers = {classify_layer(m[0]) for m in matches}
+        for layer in KNOWN_LAYERS:
+            if layer in item_layers:
+                layer_summary["by_layer"][layer] += 1
+        has_core_or_backend = bool(item_layers & {"core", "backend"})
+        has_ui_logic = "ui_logic" in item_layers
+        has_ui_view = "ui_view" in item_layers
+        has_tests = "tests" in item_layers
+        if has_core_or_backend and not (has_ui_logic or has_ui_view or has_tests):
+            layer_summary["core_only"] += 1
+        if has_ui_logic or has_ui_view:
+            layer_summary["ui_connected"] += 1
+        if bool(item_layers & {"core", "backend", "ui_logic"}) and bool(item_layers & {"ui_view", "ui_logic"}) and has_tests:
+            layer_summary["full_pipeline"] += 1
+
         is_japanese_prose = bool(re.search(r'[\u3040-\u30ff\u4e00-\u9faf]', keyword))
         is_guide_or_note = (
             'note-' in filepath or 'notes_' in filepath or 'environmentvariable' in filepath
             or '/manual/' in filepath or '/memo/' in filepath or is_japanese_prose
         )
 
-        prod_matches = [m for m in matches if not m[0].startswith("tests/")]
-        test_matches = [m for m in matches if m[0].startswith("tests/")]
+        prod_matches = [m for m in matches if classify_layer(m[0]) != "tests"]
+        test_matches = [m for m in matches if classify_layer(m[0]) == "tests"]
 
         new_status = curr_status
         if is_guide_or_note:
@@ -436,7 +546,7 @@ def process_audit_files(codebase, docs_dir='docs/spec', dry_run=False, target_ca
 
             if matches and keyword not in GENERIC_KEYWORDS:
                 impl_lines = []
-                for path, line_no, text in matches[:5]:
+                for path, line_no, text in select_representative_matches(matches, max_lines=MAX_IMPL_LOCATIONS):
                     snippet = text[:80]
                     impl_lines.append(f"- `{path}:{line_no}` `{snippet}`")
 
@@ -492,7 +602,8 @@ def process_audit_files(codebase, docs_dir='docs/spec', dry_run=False, target_ca
         updated_files=updated_files,
         total_files=len(audit_files),
         regressions=regressions,
-        perf_stats=perf_stats
+        perf_stats=perf_stats,
+        layer_summary=layer_summary
     )
 
     return report
@@ -782,6 +893,10 @@ def parse_args():
         "--no-cache", action="store_true", dest="no_cache",
         help="Disable search term caching across audit files."
     )
+    parser.add_argument(
+        "--check-layers", action="store_true", dest="check_layers",
+        help="Print layer and UI reachability summary to stdout."
+    )
     return parser.parse_args()
 
 
@@ -887,6 +1002,18 @@ def main():
         print(f"[Dry-run] Would update {len(report.updated_files)} files.")
     else:
         print(f"Updated {len(report.updated_files)} audit files.")
+
+    if args.check_layers and report.layer_summary:
+        by_layer = report.layer_summary.get("by_layer", {})
+        print("\n--- Layer Reachability Summary ---")
+        print(f"Core/Backend Only : {report.layer_summary.get('core_only', 0)} items")
+        print(f"UI Connected      : {report.layer_summary.get('ui_connected', 0)} items")
+        print(f"Full Pipeline     : {report.layer_summary.get('full_pipeline', 0)} items")
+        print(
+            "By Layer          : "
+            + ", ".join(f"{layer}={by_layer.get(layer, 0)}" for layer in KNOWN_LAYERS)
+        )
+        print("----------------------------------\n")
 
     total_end = datetime.datetime.now(datetime.timezone.utc)
     if args.benchmark:

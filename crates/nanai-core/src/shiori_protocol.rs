@@ -148,6 +148,29 @@ pub fn build_on_dressup_changed_request(
     build_shiori_request_extended("GET", "OnDressupChanged", &refs, None)
 }
 
+/// OnGhostChanging イベントリクエスト構築 (ukadoc-spec/list/shiori-event/boot-close-change/OnGhostChanging.md)
+pub fn build_on_ghost_changing_request(target_ghost: &str) -> String {
+    let refs = vec![target_ghost.to_string()];
+    build_shiori_request_extended("GET", "OnGhostChanging", &refs, None)
+}
+
+/// OnGhostChanged イベントリクエスト構築 (ukadoc-spec/list/shiori-event/boot-close-change/OnGhostChanged.md)
+pub fn build_on_ghost_changed_request(target_ghost: &str) -> String {
+    let refs = vec![target_ghost.to_string()];
+    build_shiori_request_extended("GET", "OnGhostChanged", &refs, None)
+}
+
+/// OnBalloonChange イベントリクエスト構築 (ukadoc-spec/list/shiori-event/balloon/OnBalloonChange.md)
+pub fn build_on_balloon_change_request(balloon_name: &str) -> String {
+    let refs = vec![balloon_name.to_string()];
+    build_shiori_request_extended("GET", "OnBalloonChange", &refs, None)
+}
+
+/// OnBIFFBegin イベントリクエスト構築 (ukadoc-spec/list/shiori-event/biff/OnBIFFBegin.md)
+pub fn build_on_biff_request() -> String {
+    build_shiori_request_extended("GET", "OnBIFFBegin", &[], None)
+}
+
 #[wasm_bindgen]
 pub fn wasm_build_shiori_request(method: &str, headers_js: JsValue) -> Result<String, JsValue> {
     let headers: BTreeMap<String, String> = if headers_js.is_null() || headers_js.is_undefined() {
@@ -227,5 +250,20 @@ mod tests {
         let choice_req = build_on_choice_select_request("choice_01");
         assert!(choice_req.contains("ID: OnChoiceSelect"));
         assert!(choice_req.contains("Reference0: choice_01"));
+
+        let changing_req = build_on_ghost_changing_request("NextGhost");
+        assert!(changing_req.contains("ID: OnGhostChanging"));
+        assert!(changing_req.contains("Reference0: NextGhost"));
+
+        let changed_req = build_on_ghost_changed_request("NextGhost");
+        assert!(changed_req.contains("ID: OnGhostChanged"));
+        assert!(changed_req.contains("Reference0: NextGhost"));
+
+        let balloon_req = build_on_balloon_change_request("ModernBalloon");
+        assert!(balloon_req.contains("ID: OnBalloonChange"));
+        assert!(balloon_req.contains("Reference0: ModernBalloon"));
+
+        let biff_req = build_on_biff_request();
+        assert!(biff_req.contains("ID: OnBIFFBegin"));
     }
 }

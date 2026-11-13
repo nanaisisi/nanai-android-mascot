@@ -26,7 +26,7 @@ pub fn build_shiori_request(method: &str, headers: BTreeMap<String, String>) -> 
 pub fn build_shiori_notify(event_name: &str, references: &[String]) -> String {
     let mut headers = BTreeMap::new();
     headers.insert("Sender".to_string(), "Nanai".to_string());
-    headers.insert("Event".to_string(), event_name.to_string());
+    headers.insert("ID".to_string(), event_name.to_string());
     for (i, r) in references.iter().enumerate() {
         headers.insert(format!("Reference{}", i), r.clone());
     }
@@ -71,7 +71,7 @@ mod tests {
         let refs = vec!["arg0".to_string(), "arg1".to_string()];
         let notify = build_shiori_notify("OnTestEvent", &refs);
         assert!(notify.contains("NOTIFY SHIORI/3.0"));
-        assert!(notify.contains("Event: OnTestEvent"));
+        assert!(notify.contains("ID: OnTestEvent"));
         assert!(notify.contains("Reference0: arg0"));
         assert!(notify.contains("Reference1: arg1"));
     }

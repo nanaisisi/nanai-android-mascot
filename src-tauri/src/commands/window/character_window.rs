@@ -1,20 +1,25 @@
 /// キャラクター（スコープ N）ウィンドウ表示コマンド (0=メイン, 1=サブ/うにゅ, 2以降=追加キャラ)
 #[tauri::command]
-#[allow(unused_variables)]
 pub async fn show_character_window(
-    app_handle: tauri::AppHandle,
-    scope_id: i32,
-    x: Option<f64>,
-    y: Option<f64>,
-    width: Option<f64>,
-    height: Option<f64>,
+    _app_handle: tauri::AppHandle,
+    _scope_id: i32,
+    _x: Option<f64>,
+    _y: Option<f64>,
+    _width: Option<f64>,
+    _height: Option<f64>,
 ) -> Result<(), String> {
-    println!(
-        "🪟 [Rust Window] show_character_window 呼び出し: scope={}, width={:?}, height={:?}",
-        scope_id, width, height
-    );
     #[cfg(desktop)]
     {
+        let app_handle = _app_handle;
+        let scope_id = _scope_id;
+        let x = _x;
+        let y = _y;
+        let width = _width;
+        let height = _height;
+        println!(
+            "🪟 [Rust Window] show_character_window 呼び出し: scope={}, width={:?}, height={:?}",
+            scope_id, width, height
+        );
         use tauri::Manager;
         let win_width = width.unwrap_or(200.0).max(100.0);
         let win_height = height.unwrap_or(360.0).max(100.0);
@@ -138,13 +143,14 @@ pub async fn show_character_window(
 
 /// キャラクター（スコープ N）ウィンドウ非表示コマンド (\s[-1])
 #[tauri::command]
-#[allow(unused_variables)]
 pub async fn hide_character_window(
-    app_handle: tauri::AppHandle,
-    scope_id: i32,
+    _app_handle: tauri::AppHandle,
+    _scope_id: i32,
 ) -> Result<(), String> {
     #[cfg(desktop)]
     {
+        let app_handle = _app_handle;
+        let scope_id = _scope_id;
         use tauri::Manager;
         let label = format!("subchar_window_{}", scope_id);
         if let Some(sub_win) = app_handle.get_webview_window(&label) {
@@ -156,15 +162,20 @@ pub async fn hide_character_window(
 
 /// 互換用: サブキャラクターウィンドウ表示コマンド
 #[tauri::command]
-#[allow(unused_variables)]
 pub async fn show_subchar_window(
-    app_handle: tauri::AppHandle,
-    scope_id: i32,
-    x: Option<f64>,
-    y: Option<f64>,
-    width: Option<f64>,
-    height: Option<f64>,
+    _app_handle: tauri::AppHandle,
+    _scope_id: i32,
+    _x: Option<f64>,
+    _y: Option<f64>,
+    _width: Option<f64>,
+    _height: Option<f64>,
 ) -> Result<(), String> {
+    let app_handle = _app_handle;
+    let scope_id = _scope_id;
+    let x = _x;
+    let y = _y;
+    let width = _width;
+    let height = _height;
     show_character_window(app_handle, scope_id, x, y, width, height).await
 }
 
@@ -179,13 +190,14 @@ pub async fn sync_character_balloon(
 
 /// キャラクター（スコープ N）ウィンドウのサイズ変更コマンド（シェル倍率変更用）
 #[tauri::command]
-#[allow(unused_variables)]
 pub async fn set_character_scale(
-    app_handle: tauri::AppHandle,
-    scale_percent: u32,
+    _app_handle: tauri::AppHandle,
+    _scale_percent: u32,
 ) -> Result<(), String> {
     #[cfg(desktop)]
     {
+        let app_handle = _app_handle;
+        let scale_percent = _scale_percent;
         use tauri::Manager;
         let factor = (scale_percent as f64) / 100.0;
         let win_width = (200.0 * factor).round().max(80.0);
@@ -204,11 +216,12 @@ pub async fn set_character_scale(
 
 /// 互換用: サブキャラクターウィンドウ非表示コマンド
 #[tauri::command]
-#[allow(unused_variables)]
 pub async fn hide_subchar_window(
-    app_handle: tauri::AppHandle,
-    scope_id: i32,
+    _app_handle: tauri::AppHandle,
+    _scope_id: i32,
 ) -> Result<(), String> {
+    let app_handle = _app_handle;
+    let scope_id = _scope_id;
     hide_character_window(app_handle, scope_id).await
 }
 

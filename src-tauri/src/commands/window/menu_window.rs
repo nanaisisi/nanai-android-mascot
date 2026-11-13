@@ -2,19 +2,22 @@ use tauri::Emitter;
 
 /// バルーンスキン連動の独立ポップアップメニューウィンドウ表示コマンド (ウィンドウ枠外にはみ出して表示可能)
 #[tauri::command]
-#[allow(unused_variables)]
 pub async fn show_menu_window(
-    app_handle: tauri::AppHandle,
-    x: f64,
-    y: f64,
-    scope: Option<i32>,
+    _app_handle: tauri::AppHandle,
+    _x: f64,
+    _y: f64,
+    _scope: Option<i32>,
 ) -> Result<(), String> {
-    println!(
-        "👉 show_menu_window called: x={}, y={}, scope={:?}",
-        x, y, scope
-    );
     #[cfg(desktop)]
     {
+        let app_handle = _app_handle;
+        let x = _x;
+        let y = _y;
+        let scope = _scope;
+        println!(
+            "👉 show_menu_window called: x={}, y={}, scope={:?}",
+            x, y, scope
+        );
         use tauri::Manager;
         let menu_scope = scope.unwrap_or(0);
         // メインメニュー (260x460) / サブキャラクターメニュー (260x220)
@@ -111,10 +114,10 @@ pub async fn show_menu_window(
 
 /// メニューウィンドウ非表示コマンド
 #[tauri::command]
-#[allow(unused_variables)]
-pub async fn hide_menu_window(app_handle: tauri::AppHandle) -> Result<(), String> {
+pub async fn hide_menu_window(_app_handle: tauri::AppHandle) -> Result<(), String> {
     #[cfg(desktop)]
     {
+        let app_handle = _app_handle;
         use tauri::Manager;
         if let Some(menu_win) = app_handle.get_webview_window("menu_window") {
             let _ = menu_win.hide();
@@ -128,17 +131,22 @@ pub async fn hide_menu_window(app_handle: tauri::AppHandle) -> Result<(), String
 
 /// 独立サブメニューウィンドウ表示コマンド
 #[tauri::command]
-#[allow(unused_variables)]
 pub async fn show_submenu_window(
-    app_handle: tauri::AppHandle,
-    menu_type: String,
-    x: f64,
-    y: f64,
-    width: Option<f64>,
-    height: Option<f64>,
+    _app_handle: tauri::AppHandle,
+    _menu_type: String,
+    _x: f64,
+    _y: f64,
+    _width: Option<f64>,
+    _height: Option<f64>,
 ) -> Result<(), String> {
     #[cfg(desktop)]
     {
+        let app_handle = _app_handle;
+        let menu_type = _menu_type;
+        let x = _x;
+        let y = _y;
+        let width = _width;
+        let height = _height;
         use tauri::Manager;
         let win_width = width.unwrap_or(220.0);
         let win_height = height.unwrap_or(320.0);
@@ -202,10 +210,10 @@ pub async fn show_submenu_window(
 
 /// サブメニューウィンドウ非表示コマンド
 #[tauri::command]
-#[allow(unused_variables)]
-pub async fn hide_submenu_window(app_handle: tauri::AppHandle) -> Result<(), String> {
+pub async fn hide_submenu_window(_app_handle: tauri::AppHandle) -> Result<(), String> {
     #[cfg(desktop)]
     {
+        let app_handle = _app_handle;
         use tauri::Manager;
         if let Some(sub_win) = app_handle.get_webview_window("submenu_window") {
             let _ = sub_win.hide();

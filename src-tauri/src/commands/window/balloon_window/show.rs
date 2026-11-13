@@ -15,19 +15,25 @@ impl Drop for BalloonLockGuard {
 
 /// 独立バルーン（スコープ N）ウィンドウ表示コマンド
 #[tauri::command]
-#[allow(unused_variables)]
 pub async fn show_balloon_window(
-    app_handle: tauri::AppHandle,
-    scope_id: i32,
-    theme: Option<String>,
-    x: Option<f64>,
-    y: Option<f64>,
-    width: Option<f64>,
-    height: Option<f64>,
+    _app_handle: tauri::AppHandle,
+    _scope_id: i32,
+    _theme: Option<String>,
+    _x: Option<f64>,
+    _y: Option<f64>,
+    _width: Option<f64>,
+    _height: Option<f64>,
 ) -> Result<(), String> {
-    println!("💬 show_balloon_window called: scope_id={}", scope_id);
     #[cfg(desktop)]
     {
+        let app_handle = _app_handle;
+        let scope_id = _scope_id;
+        let theme = _theme;
+        let x = _x;
+        let y = _y;
+        let width = _width;
+        let height = _height;
+        println!("💬 show_balloon_window called: scope_id={}", scope_id);
         use tauri::Manager;
         let label = format!("balloon_window_{}", scope_id);
 
@@ -163,13 +169,14 @@ pub async fn resize_balloon_window(
 
 /// 独立バルーン（スコープ N）ウィンドウ非表示コマンド (\b[-1])
 #[tauri::command]
-#[allow(unused_variables)]
 pub async fn hide_balloon_window(
-    app_handle: tauri::AppHandle,
-    scope_id: i32,
+    _app_handle: tauri::AppHandle,
+    _scope_id: i32,
 ) -> Result<(), String> {
     #[cfg(desktop)]
     {
+        let app_handle = _app_handle;
+        let scope_id = _scope_id;
         use tauri::Manager;
         let label = format!("balloon_window_{}", scope_id);
         if let Some(balloon_win) = app_handle.get_webview_window(&label) {

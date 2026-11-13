@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use tsify::Tsify;
 use wasm_bindgen::prelude::*;
+use crate::shiori_protocol::build_shiori_request_extended;
 
 /// UKADOC仕様: ネットワーク更新対象の種別 (Update Target Types)
 pub const UPDATE_TARGET_TYPES: &[&str] = &["ghost", "shell", "balloon", "plugin", "headline"];
@@ -279,9 +280,59 @@ pub fn wasm_parse_developer_options_txt(content: &str) -> Result<JsValue, JsValu
     Ok(serde_wasm_bindgen::to_value(&manifest)?)
 }
 
+/// OnUpdateBegin イベントリクエスト構築 (ukadoc-spec/list/shiori-event/network-update/OnUpdateBegin.md)
+pub fn build_on_update_begin_request(update_target: Option<&str>, update_mode: Option<&str>) -> String {
+    let args = build_update_args("", "", update_target, update_mode);
+    let refs = args.to_vec();
+    build_shiori_request_extended("GET", "OnUpdateBegin", &refs, None)
+}
+
+/// OnUpdateReady イベントリクエスト構築 (ukadoc-spec/list/shiori-event/network-update/OnUpdateReady.md)
+pub fn build_on_update_ready_request(file_count: usize, update_target: Option<&str>, update_mode: Option<&str>) -> String {
+    let args = build_update_args(&file_count.to_string(), "", update_target, update_mode);
+    let refs = args.to_vec();
+    build_shiori_request_extended("GET", "OnUpdateReady", &refs, None)
+}
+
+/// OnUpdateComplete イベントリクエスト構築 (ukadoc-spec/list/shiori-event/network-update/OnUpdateComplete.md)
+pub fn build_on_update_complete_request(result: Option<&str>, updated_files_count: usize, update_target: Option<&str>, update_mode: Option<&str>) -> String {
+    let args = build_update_complete_args(result, updated_files_count, update_target, update_mode);
+    let refs = args.to_vec();
+    build_shiori_request_extended("GET", "OnUpdateComplete", &refs, None)
+}
+
+/// OnUpdateFailure イベントリクエスト構築 (ukadoc-spec/list/shiori-event/network-update/OnUpdateFailure.md)
+pub fn build_on_update_failure_request(err: &str, file_name: Option<&str>, update_target: Option<&str>, update_mode: Option<&str>) -> String {
+    let args = build_update_failure_args(err, file_name, update_target, update_mode);
+    let refs = args.to_vec();
+    build_shiori_request_extended("GET", "OnUpdateFailure", &refs, None)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_network_update_event_builders() {
+        let begin_req = build_on_update_begin_request(Some("ghost"), Some("manual"));
+        assert!(begin_req.contains("ID: OnUpdateBegin"));
+        assert!(begin_req.contains("Reference3: ghost"));
+        assert!(begin_req.contains("Reference4: manual"));
+
+        let ready_req = build_on_update_ready_request(3, Some("shell"), Some("auto"));
+        assert!(ready_req.contains("ID: OnUpdateReady"));
+        assert!(ready_req.contains("Reference0: 3"));
+
+        let comp_req = build_on_update_complete_request(Some("changed"), 2, Some("ghost"), Some("manual"));
+        assert!(comp_req.contains("ID: OnUpdateComplete"));
+        assert!(comp_req.contains("Reference0: changed"));
+        assert!(comp_req.contains("Reference1: 2"));
+
+        let fail_req = build_on_update_failure_request("404 Not Found", Some("surfaces.png"), Some("ghost"), Some("manual"));
+        assert!(fail_req.contains("ID: OnUpdateFailure"));
+        assert!(fail_req.contains("Reference0: 404"));
+        assert!(fail_req.contains("Reference1: surfaces.png"));
+    }
 
     #[test]
     fn test_parse_delete_and_developer_options() {

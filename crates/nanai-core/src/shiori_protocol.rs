@@ -381,6 +381,30 @@ pub fn build_on_system_dialog_cancel_request(dialog_type: &str) -> String {
     build_shiori_request_extended("GET", "OnSystemDialogCancel", &refs, None)
 }
 
+/// OnMouseGesture イベントリクエスト構築 (ukadoc-spec/list/shiori-event/mouse/OnMouseGesture.md)
+pub fn build_on_mouse_gesture_request(gesture: &str, scope_id: i32) -> String {
+    let refs = vec![gesture.to_string(), scope_id.to_string()];
+    build_shiori_request_extended("GET", "OnMouseGesture", &refs, None)
+}
+
+/// OnMouseWheel イベントリクエスト構築 (ukadoc-spec/list/shiori-event/mouse/OnMouseWheel.md)
+pub fn build_on_mouse_wheel_request(x: i32, y: i32, wheel_delta: i32, collision: &str, scope_id: i32) -> String {
+    let refs = vec![x.to_string(), y.to_string(), wheel_delta.to_string(), collision.to_string(), scope_id.to_string()];
+    build_shiori_request_extended("GET", "OnMouseWheel", &refs, None)
+}
+
+/// OnMouseDragStart イベントリクエスト構築 (ukadoc-spec/list/shiori-event/mouse/OnMouseDragStart.md)
+pub fn build_on_mouse_drag_start_request(x: i32, y: i32, scope_id: i32) -> String {
+    let refs = vec![x.to_string(), y.to_string(), scope_id.to_string()];
+    build_shiori_request_extended("GET", "OnMouseDragStart", &refs, None)
+}
+
+/// OnMouseDragEnd イベントリクエスト構築 (ukadoc-spec/list/shiori-event/mouse/OnMouseDragEnd.md)
+pub fn build_on_mouse_drag_end_request(x: i32, y: i32, scope_id: i32) -> String {
+    let refs = vec![x.to_string(), y.to_string(), scope_id.to_string()];
+    build_shiori_request_extended("GET", "OnMouseDragEnd", &refs, None)
+}
+
 #[wasm_bindgen]
 pub fn wasm_build_shiori_request(method: &str, headers_js: JsValue) -> Result<String, JsValue> {
     let headers: BTreeMap<String, String> = if headers_js.is_null() || headers_js.is_undefined() {
@@ -610,5 +634,20 @@ mod tests {
         let sys_dlg_cancel = build_on_system_dialog_cancel_request("file");
         assert!(sys_dlg_cancel.contains("ID: OnSystemDialogCancel"));
         assert!(sys_dlg_cancel.contains("Reference0: file"));
+
+        let gesture_req = build_on_mouse_gesture_request("circle_cw", 0);
+        assert!(gesture_req.contains("ID: OnMouseGesture"));
+        assert!(gesture_req.contains("Reference0: circle_cw"));
+
+        let wheel_req = build_on_mouse_wheel_request(100, 100, 120, "head", 0);
+        assert!(wheel_req.contains("ID: OnMouseWheel"));
+        assert!(wheel_req.contains("Reference2: 120"));
+        assert!(wheel_req.contains("Reference3: head"));
+
+        let drag_start = build_on_mouse_drag_start_request(10, 20, 0);
+        assert!(drag_start.contains("ID: OnMouseDragStart"));
+
+        let drag_end = build_on_mouse_drag_end_request(50, 50, 0);
+        assert!(drag_end.contains("ID: OnMouseDragEnd"));
     }
 }

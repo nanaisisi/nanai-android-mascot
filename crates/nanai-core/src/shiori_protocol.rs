@@ -195,6 +195,24 @@ pub fn build_on_wallpaper_change_request(wallpaper_path: &str) -> String {
     build_shiori_request_extended("GET", "OnWallpaperChange", &refs, None)
 }
 
+/// OnScheduleRead イベントリクエスト構築 (ukadoc-spec/list/shiori-event/calendar/OnScheduleRead.md)
+pub fn build_on_schedule_read_request(date_str: &str, title: &str) -> String {
+    let refs = vec![date_str.to_string(), title.to_string()];
+    build_shiori_request_extended("GET", "OnScheduleRead", &refs, None)
+}
+
+/// OnScheduleTodayNotify イベントリクエスト構築 (ukadoc-spec/list/shiori-event/calendar/OnScheduleTodayNotify.md)
+pub fn build_on_schedule_today_notify_request(title: &str) -> String {
+    let refs = vec![title.to_string()];
+    build_shiori_request_extended("GET", "OnScheduleTodayNotify", &refs, None)
+}
+
+/// OnSchedule5MinutesToGo イベントリクエスト構築 (ukadoc-spec/list/shiori-event/calendar/OnSchedule5MinutesToGo.md)
+pub fn build_on_schedule_5minutes_to_go_request(title: &str) -> String {
+    let refs = vec![title.to_string()];
+    build_shiori_request_extended("GET", "OnSchedule5MinutesToGo", &refs, None)
+}
+
 #[wasm_bindgen]
 pub fn wasm_build_shiori_request(method: &str, headers_js: JsValue) -> Result<String, JsValue> {
     let headers: BTreeMap<String, String> = if headers_js.is_null() || headers_js.is_undefined() {
@@ -303,5 +321,18 @@ mod tests {
 
         let wall_req = build_on_wallpaper_change_request("wallpaper.png");
         assert!(wall_req.contains("ID: OnWallpaperChange"));
+
+        let schedule_read = build_on_schedule_read_request("2026/10/24", "Meeting");
+        assert!(schedule_read.contains("ID: OnScheduleRead"));
+        assert!(schedule_read.contains("Reference0: 2026/10/24"));
+        assert!(schedule_read.contains("Reference1: Meeting"));
+
+        let schedule_today = build_on_schedule_today_notify_request("Deadline");
+        assert!(schedule_today.contains("ID: OnScheduleTodayNotify"));
+        assert!(schedule_today.contains("Reference0: Deadline"));
+
+        let schedule_5min = build_on_schedule_5minutes_to_go_request("Dentist");
+        assert!(schedule_5min.contains("ID: OnSchedule5MinutesToGo"));
+        assert!(schedule_5min.contains("Reference0: Dentist"));
     }
 }

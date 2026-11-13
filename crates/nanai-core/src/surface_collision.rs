@@ -15,7 +15,8 @@ pub enum CollisionShape {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 pub struct CollisionArea {
-    pub id: i32,
+    #[serde(default)]
+    pub id: Option<i32>,
     pub name: String,
     pub shape: CollisionShape,
 }
@@ -98,7 +99,7 @@ mod tests {
     #[test]
     fn test_rect_collision() {
         let area = CollisionArea {
-            id: 0,
+            id: Some(0),
             name: "Head".to_string(),
             shape: CollisionShape::Rect {
                 x1: 10,
@@ -116,7 +117,7 @@ mod tests {
     #[test]
     fn test_circle_collision() {
         let area = CollisionArea {
-            id: 1,
+            id: Some(1),
             name: "Bust".to_string(),
             shape: CollisionShape::Circle {
                 cx: 100,
@@ -134,7 +135,7 @@ mod tests {
     fn test_find_hit_collision_name() {
         let collisions = vec![
             CollisionArea {
-                id: 0,
+                id: Some(0),
                 name: "Head".to_string(),
                 shape: CollisionShape::Rect {
                     x1: 0,
@@ -144,7 +145,7 @@ mod tests {
                 },
             },
             CollisionArea {
-                id: 1,
+                id: Some(1),
                 name: "Bust".to_string(),
                 shape: CollisionShape::Rect {
                     x1: 0,

@@ -9,6 +9,7 @@ pub mod seriko_animation;
 pub mod sstp_fmo;
 pub mod surface_collision;
 pub mod surface_compositor;
+pub mod surfaces_parser;
 pub mod update_protocol;
 
 pub use balloon_layout::*;
@@ -20,6 +21,7 @@ pub use seriko_animation::*;
 pub use sstp_fmo::*;
 pub use surface_collision::*;
 pub use surface_compositor::*;
+pub use surfaces_parser::*;
 pub use update_protocol::*;
 
 /// WASM C-ABI: メモリ動的確保関数 (バッファ渡し用)

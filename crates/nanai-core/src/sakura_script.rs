@@ -30,6 +30,10 @@ pub enum SakuraToken {
     Anchor { id: String, text: String },
     /// フォント設定 (\f[bold,true], \f[height,12] 等)
     Font { name: String, value: String },
+    /// 同期モード (\_s)
+    Sync(bool),
+    /// クイックモード (\_q)
+    Quick(bool),
     /// スクリプト終了 (\e)
     Halt,
 }
@@ -153,6 +157,12 @@ pub fn parse_sakura_script(script: &str) -> Vec<SakuraToken> {
                                 {
                                     tokens.push(SakuraToken::Wait(ms));
                                 }
+                            } else if tag_ch == 's' {
+                                chars.next();
+                                tokens.push(SakuraToken::Sync(true));
+                            } else if tag_ch == 'q' {
+                                chars.next();
+                                tokens.push(SakuraToken::Quick(true));
                             } else if tag_ch == 'a' {
                                 chars.next(); // consume 'a'
                                 if let Some(arg) = parse_bracket_arg(&mut chars) {

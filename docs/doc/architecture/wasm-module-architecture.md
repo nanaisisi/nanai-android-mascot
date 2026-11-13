@@ -44,10 +44,13 @@ ui/ts/core/
 2. **堅牢なフォールバック機能**:
    - WASM バイナリの未準備時や fetch エラー時でも、各モジュールが自動的に TypeScript 純正の代替ロジックへ透過切り替えするため、アプリがクラッシュしません。
 
-3. **安全なメモリ・ライフサイクル管理 (FinalizationRegistry の活用と手動 `free()` の両立)**:
-   - Rust/WASM (C-ABI) で割り当てられたインスタンスポインタ (`wasm_alloc`、`wasm_create_player` 等) は JavaScript 側からのガベージコレクション (GC) 監視が必要です。
-   - ステートマシンなどライフサイクルが長いオブジェクト（例：`SakuraPlayerEngine`）は、ES6 の `FinalizationRegistry` を用いて、JavaScript 側でオブジェクトが破棄されたタイミングで自動的に WASM の `freeSakuraPlayerWasm(ptr)` が呼び出されるよう監視・実装します。
-   - 関数スコープ内で完結する処理（文字列エンコード / デコード用バッファ）は `wasmMemory.free()` を手動かつ `try/finally` を用いて確実に開放し、メモリリークを防止します。
+3. **安全なメモリ・ライフサイクル管理 (`FinalizationRegistry` を基軸とした自動・手動解放の統合)**:
+   - Rust/WASM (`wasm-bindgen` / C-ABI) で割り当てられたヒープオブジェクトやインスタンス（例: `SakuraPlayerEngine` などのステートマシン）は、JavaScript 側の GC と連動してメモリ領域を返還する必要があります。
+   - **`FinalizationRegistry` による自動クリーンアップ**:
+     - JavaScript の JS ラッパーオブジェクトが GC によって回収された際、WASM ヒープ上のメモリ（Rust 側のインスタンス）が確実に解放されるよう `FinalizationRegistry` を標準の解放メカニズムとして採用します。
+     - これにより、JavaScript 側で明示的な `.free()` 呼び出しを忘れた場合でも、メモリリークを発生させずに自動的に `wasm_free` / `.free()` が実行される安全網（Safety Net）を構築します。
+   - **決定論的な手動 `.free()` の併用**:
+     - ループ内や高頻度な更新処理など、即座にメモリを返還したい短寿命なオブジェクト/バッファ領域については、`try / finally` ブロックによる明示的な `.free()` 呼び出しを優先し、GC のタイミングに依存しない決定論的なメモリ解放を行います。
    - 参考: [WebAssemblyにおける文字列の受け渡しとメモリ管理の最適化](https://zenn.dev/semiexp/articles/151184c6c5564c)
 
 4. **型安全性の担保と自動型生成 (`tsify`)**:

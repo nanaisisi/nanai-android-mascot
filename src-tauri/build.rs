@@ -72,7 +72,7 @@ fn build_yaya_shiori_stub() {
         if let Ok(output) = sysroot_output {
             let sysroot = String::from_utf8_lossy(&output.stdout).trim().to_string();
             if !sysroot.is_empty() {
-                build.flag(&format!("-isysroot{}", sysroot));
+                build.flag(format!("-isysroot{}", sysroot));
             }
         }
     } else if target.contains("linux") {

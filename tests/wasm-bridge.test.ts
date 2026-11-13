@@ -23,9 +23,9 @@ describe("wasmBridge transparent connection and fallback unit tests", () => {
 		const tokens = wasmBridge.parseSakuraScript("\\0\\s[0]Hello\\e");
 		expect(tokens).toBeNull();
 
-		expect(createSakuraPlayerWasm("\\0Hello\\e")).toBe(0);
-		expect(stepSakuraPlayerWasm(0)).toBeNull();
-		expect(() => freeSakuraPlayerWasm(0)).not.toThrow();
+		expect(createSakuraPlayerWasm("\\0Hello\\e")).toBeNull();
+		expect(stepSakuraPlayerWasm(null)).toBeNull();
+		expect(() => freeSakuraPlayerWasm(null)).not.toThrow();
 	});
 
 	it("calculates progress correctly at edge boundaries via fallback", () => {

@@ -146,7 +146,9 @@ impl SakuraPlayerEngine {
                 id,
                 text,
             },
-            SakuraToken::Font { .. } => self.step_internal(), // フォント変更時は次のステップへ
+            SakuraToken::Font { .. } | SakuraToken::Sync(_) | SakuraToken::Quick(_) => {
+                self.step_internal()
+            }
             SakuraToken::Halt => {
                 self.is_halted = true;
                 StepOutput::Halt

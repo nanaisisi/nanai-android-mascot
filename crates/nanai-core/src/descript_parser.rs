@@ -112,6 +112,54 @@ impl DescriptManifest {
         self.get("menu.background.bitmap.filename")
             .or_else(|| self.get("menu.background.bitmap"))
     }
+
+    /// バルーンフォント名 (`font.name`)
+    pub fn font_name(&self) -> Option<&str> {
+        self.get("font.name")
+    }
+
+    /// バルーンフォントサイズ (`font.height`)
+    pub fn font_height(&self) -> Option<i32> {
+        self.get("font.height").and_then(|v| v.parse::<i32>().ok())
+    }
+
+    /// バルーンフォントカラー (RGB) (`font.color.r`, `font.color.g`, `font.color.b`)
+    pub fn font_color_rgb(&self) -> Option<(u8, u8, u8)> {
+        let r = self.get("font.color.r").and_then(|v| v.parse::<u8>().ok());
+        let g = self.get("font.color.g").and_then(|v| v.parse::<u8>().ok());
+        let b = self.get("font.color.b").and_then(|v| v.parse::<u8>().ok());
+        match (r, g, b) {
+            (Some(vr), Some(vg), Some(vb)) => Some((vr, vg, vb)),
+            _ => None,
+        }
+    }
+
+    /// バルーン有効領域矩形 (`validrect.left`, `validrect.top`, `validrect.right`, `validrect.bottom`)
+    pub fn valid_rect(&self) -> Option<(i32, i32, i32, i32)> {
+        let l = self.get("validrect.left").and_then(|v| v.parse::<i32>().ok()).unwrap_or(0);
+        let t = self.get("validrect.top").and_then(|v| v.parse::<i32>().ok()).unwrap_or(0);
+        let r = self.get("validrect.right").and_then(|v| v.parse::<i32>().ok());
+        let b = self.get("validrect.bottom").and_then(|v| v.parse::<i32>().ok());
+        match (r, b) {
+            (Some(vr), Some(vb)) => Some((l, t, vr, vb)),
+            _ => None,
+        }
+    }
+
+    /// バルーン原点座標 (`origin.x`, `origin.y`)
+    pub fn origin_pos(&self) -> Option<(i32, i32)> {
+        let x = self.get("origin.x").and_then(|v| v.parse::<i32>().ok());
+        let y = self.get("origin.y").and_then(|v| v.parse::<i32>().ok());
+        match (x, y) {
+            (Some(px), Some(py)) => Some((px, py)),
+            _ => None,
+        }
+    }
+
+    /// バルーン折り返し幅 (`wordwrappoint.x`)
+    pub fn word_wrap_point(&self) -> Option<i32> {
+        self.get("wordwrappoint.x").and_then(|v| v.parse::<i32>().ok())
+    }
 }
 
 /// descript.txt テキスト文字列を構造化辞書へパース
@@ -202,5 +250,18 @@ mod tests {
         assert_eq!(manifest.sakura_default_pos(), Some((100, 200)));
         assert_eq!(manifest.kero_default_pos(), Some((300, 400)));
         assert_eq!(manifest.menu_background_bitmap(), Some("bg.png"));
+    }
+
+    #[test]
+    fn test_parse_descript_balloon_detailed_properties() {
+        let content = "font.name,Meiryo\nfont.height,14\nfont.color.r,255\nfont.color.g,128\nfont.color.b,64\nvalidrect.left,10\nvalidrect.top,20\nvalidrect.right,200\nvalidrect.bottom,150\norigin.x,5\norigin.y,10\nwordwrappoint.x,180\n";
+        let manifest = parse_descript_text(content);
+
+        assert_eq!(manifest.font_name(), Some("Meiryo"));
+        assert_eq!(manifest.font_height(), Some(14));
+        assert_eq!(manifest.font_color_rgb(), Some((255, 128, 64)));
+        assert_eq!(manifest.valid_rect(), Some((10, 20, 200, 150)));
+        assert_eq!(manifest.origin_pos(), Some((5, 10)));
+        assert_eq!(manifest.word_wrap_point(), Some(180));
     }
 }

@@ -77,6 +77,77 @@ pub fn build_shiori_notify(event_name: &str, references: &[String]) -> String {
     build_shiori_request_extended("NOTIFY", event_name, references, None)
 }
 
+/// UKADOC公式仕様 (ukadoc-spec/list/shiori-event) に準拠した標準SHIORIイベントリクエストビルダー群
+
+/// OnBoot / OnFirstBoot イベントリクエスト構築
+pub fn build_on_boot_request(is_first_boot: bool, kero_name: &str, ghost_dir: &str) -> String {
+    let event_id = if is_first_boot { "OnFirstBoot" } else { "OnBoot" };
+    let base_id = if is_first_boot { Some("OnBoot".to_string()) } else { None };
+    let refs = vec![
+        if is_first_boot { "1".to_string() } else { "0".to_string() },
+        kero_name.to_string(),
+        ghost_dir.to_string(),
+    ];
+    let params = ShioriExtendedParams {
+        base_id,
+        ..Default::default()
+    };
+    build_shiori_request_extended("GET", event_id, &refs, Some(params))
+}
+
+/// OnClose イベントリクエスト構築
+pub fn build_on_close_request(reason: u32) -> String {
+    let refs = vec![reason.to_string()];
+    build_shiori_request_extended("GET", "OnClose", &refs, None)
+}
+
+/// OnMouseClick イベントリクエスト構築
+pub fn build_on_mouse_click_request(
+    x: i32,
+    y: i32,
+    scope_id: i32,
+    collision_name: &str,
+    button: i32,
+) -> String {
+    let refs = vec![
+        x.to_string(),
+        y.to_string(),
+        "0".to_string(),
+        scope_id.to_string(),
+        collision_name.to_string(),
+        button.to_string(),
+    ];
+    build_shiori_request_extended("GET", "OnMouseClick", &refs, None)
+}
+
+/// OnChoiceSelect イベントリクエスト構築
+pub fn build_on_choice_select_request(choice_id: &str) -> String {
+    let refs = vec![choice_id.to_string()];
+    build_shiori_request_extended("GET", "OnChoiceSelect", &refs, None)
+}
+
+/// OnShellChanged イベントリクエスト構築
+pub fn build_on_shell_changed_request(shell_name: &str) -> String {
+    let refs = vec![shell_name.to_string()];
+    build_shiori_request_extended("GET", "OnShellChanged", &refs, None)
+}
+
+/// OnDressupChanged イベントリクエスト構築
+pub fn build_on_dressup_changed_request(
+    scope_id: i32,
+    category: &str,
+    part: &str,
+    enabled: bool,
+) -> String {
+    let refs = vec![
+        scope_id.to_string(),
+        category.to_string(),
+        part.to_string(),
+        if enabled { "1".to_string() } else { "0".to_string() },
+    ];
+    build_shiori_request_extended("GET", "OnDressupChanged", &refs, None)
+}
+
 #[wasm_bindgen]
 pub fn wasm_build_shiori_request(method: &str, headers_js: JsValue) -> Result<String, JsValue> {
     let headers: BTreeMap<String, String> = if headers_js.is_null() || headers_js.is_undefined() {
@@ -140,5 +211,21 @@ mod tests {
         assert!(req.contains("ID: OnFirstBoot"));
         assert!(req.contains("BaseID: OnBoot"));
         assert!(req.contains("Reference0: 1"));
+    }
+
+    #[test]
+    fn test_official_shiori_event_builders() {
+        let boot_req = build_on_boot_request(true, "Kero", "EmilyDir");
+        assert!(boot_req.contains("ID: OnFirstBoot"));
+        assert!(boot_req.contains("BaseID: OnBoot"));
+        assert!(boot_req.contains("Reference0: 1"));
+
+        let click_req = build_on_mouse_click_request(50, 60, 0, "head", 0);
+        assert!(click_req.contains("ID: OnMouseClick"));
+        assert!(click_req.contains("Reference4: head"));
+
+        let choice_req = build_on_choice_select_request("choice_01");
+        assert!(choice_req.contains("ID: OnChoiceSelect"));
+        assert!(choice_req.contains("Reference0: choice_01"));
     }
 }

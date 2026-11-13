@@ -28,8 +28,8 @@ pub enum SakuraToken {
     Choice { title: String, id: String },
     /// アンカー (\_a[id]title\_a)
     Anchor { id: String, text: String },
-    /// フォント設定 (\f[bold,true], \f[height,12] 等)
-    Font { name: String, value: String },
+    /// フォント設定 (\f[bold,true], \f[color,r,g,b], \f[height,12] 等 - UKADOC仕様準拠)
+    Font { property: String, args: Vec<String> },
     /// 同期モード (\_s)
     Sync(bool),
     /// クイックモード (\_q)
@@ -141,10 +141,15 @@ pub fn parse_sakura_script(script: &str) -> Vec<SakuraToken> {
                     'f' => {
                         chars.next();
                         if let Some(arg) = parse_bracket_arg(&mut chars) {
-                            let parts: Vec<&str> = arg.split(',').collect();
-                            let name = parts.first().copied().unwrap_or("").to_string();
-                            let value = parts.get(1).copied().unwrap_or("").to_string();
-                            tokens.push(SakuraToken::Font { name, value });
+                            let parts: Vec<String> = arg.split(',').map(|s| s.trim().to_string()).collect();
+                            let property = parts.first().cloned().unwrap_or_default();
+                            let args = parts.into_iter().skip(1).collect();
+                            tokens.push(SakuraToken::Font { property, args });
+                        } else {
+                            tokens.push(SakuraToken::Font {
+                                property: "default".to_string(),
+                                args: vec![],
+                            });
                         }
                     }
                     '_' => {
@@ -343,6 +348,28 @@ mod tests {
         assert_eq!(
             expanded,
             "こんにちは Master さん。私は Emily です。相方は Kero です。"
+        );
+    }
+
+    #[test]
+    fn test_parse_sakura_script_font_multi_args() {
+        let script = "\\f[color,255,128,0]赤文字\\f[default]";
+        let tokens = parse_sakura_script(script);
+
+        assert_eq!(
+            tokens[0],
+            SakuraToken::Font {
+                property: "color".to_string(),
+                args: vec!["255".to_string(), "128".to_string(), "0".to_string()]
+            }
+        );
+        assert_eq!(tokens[1], SakuraToken::Text("赤文字".to_string()));
+        assert_eq!(
+            tokens[2],
+            SakuraToken::Font {
+                property: "default".to_string(),
+                args: vec![]
+            }
         );
     }
 }

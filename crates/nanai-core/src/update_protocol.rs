@@ -1,6 +1,11 @@
 //! UKADOC (SSP仕様) 準拠 ネットワーク更新プロトコルのメッセージ・イベント引数構築モジュール
 //! TypeScript版 `ui/ts/core/actions/update-protocol.ts` から移植されたRust/WASMコア実装。
 
+use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
+use tsify::Tsify;
+use wasm_bindgen::prelude::*;
+
 /// UKADOC仕様: ネットワーク更新対象の種別 (Update Target Types)
 pub const UPDATE_TARGET_TYPES: &[&str] = &["ghost", "shell", "balloon", "plugin", "headline"];
 
@@ -187,8 +192,6 @@ pub fn parse_error_reason(err: &str) -> &'static str {
 // -----------------------------------------------------------------------------
 
 /// WASM C-ABI: 進捗率計算
-use wasm_bindgen::prelude::*;
-
 #[wasm_bindgen]
 pub fn wasm_calculate_update_progress(current: i64, total: i64) -> u32 {
     let res = calculate_update_progress(current, total);
@@ -213,9 +216,84 @@ pub fn wasm_is_no_update_path(path: &str, patterns_str: &str) -> bool {
     is_no_update_path(path, &patterns)
 }
 
+/// delete.txt のパース結果（削除対象ファイルパターン一覧）
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
+pub struct DeleteTxtManifest {
+    pub patterns: Vec<String>,
+}
+
+/// delete.txt テキストをパース (UKADOC仕様)
+pub fn parse_delete_txt(content: &str) -> DeleteTxtManifest {
+    let mut patterns = Vec::new();
+    for line in content.lines() {
+        let line = line.trim();
+        if line.is_empty() || line.starts_with('#') || line.starts_with("//") {
+            continue;
+        }
+        patterns.push(line.to_string());
+    }
+    DeleteTxtManifest { patterns }
+}
+
+#[wasm_bindgen]
+pub fn wasm_parse_delete_txt(content: &str) -> Result<JsValue, JsValue> {
+    let manifest = parse_delete_txt(content);
+    Ok(serde_wasm_bindgen::to_value(&manifest)?)
+}
+
+/// developer_options.txt のパース結果（開発者オプション・除外設定）
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
+pub struct DeveloperOptionsManifest {
+    pub noupdate_patterns: Vec<String>,
+    pub properties: BTreeMap<String, String>,
+}
+
+/// developer_options.txt テキストをパース (UKADOC仕様)
+pub fn parse_developer_options_txt(content: &str) -> DeveloperOptionsManifest {
+    let mut noupdate_patterns = Vec::new();
+    let mut properties = BTreeMap::new();
+
+    for line in content.lines() {
+        let line = line.trim();
+        if line.is_empty() || line.starts_with('#') || line.starts_with("//") {
+            continue;
+        }
+        if let Some(path) = line.strip_prefix("noupdate:").or_else(|| line.strip_prefix("noupdate=")) {
+            noupdate_patterns.push(path.trim().to_string());
+        } else if let Some((key, val)) = line.split_once(':').or_else(|| line.split_once('=')) {
+            properties.insert(key.trim().to_lowercase(), val.trim().to_string());
+        } else {
+            noupdate_patterns.push(line.to_string());
+        }
+    }
+
+    DeveloperOptionsManifest {
+        noupdate_patterns,
+        properties,
+    }
+}
+
+#[wasm_bindgen]
+pub fn wasm_parse_developer_options_txt(content: &str) -> Result<JsValue, JsValue> {
+    let manifest = parse_developer_options_txt(content);
+    Ok(serde_wasm_bindgen::to_value(&manifest)?)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_parse_delete_and_developer_options() {
+        let delete_content = "# comment\ntemp/*.tmp\nold_file.dat\n";
+        let del_manifest = parse_delete_txt(delete_content);
+        assert_eq!(del_manifest.patterns, vec!["temp/*.tmp".to_string(), "old_file.dat".to_string()]);
+
+        let dev_content = "noupdate: assets/private\ndebug=true\n";
+        let dev_manifest = parse_developer_options_txt(dev_content);
+        assert_eq!(dev_manifest.noupdate_patterns, vec!["assets/private".to_string()]);
+        assert_eq!(dev_manifest.properties.get("debug"), Some(&"true".to_string()));
+    }
 
     #[test]
     fn test_normalize_update_reason() {

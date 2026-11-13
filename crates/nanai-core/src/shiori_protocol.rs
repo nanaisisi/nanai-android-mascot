@@ -126,6 +126,41 @@ pub fn build_on_choice_select_request(choice_id: &str) -> String {
     build_shiori_request_extended("GET", "OnChoiceSelect", &refs, None)
 }
 
+/// OnChoiceTimeout イベントリクエスト構築 (ukadoc-spec/list/shiori-event/choice/OnChoiceTimeout.md)
+pub fn build_on_choice_timeout_request() -> String {
+    build_shiori_request_extended("GET", "OnChoiceTimeout", &[], None)
+}
+
+/// OnAnchorSelectEx イベントリクエスト構築 (ukadoc-spec/list/shiori-event/choice/OnAnchorSelectEx.md)
+pub fn build_on_anchor_select_ex_request(anchor_id: &str, text: &str) -> String {
+    let refs = vec![anchor_id.to_string(), text.to_string()];
+    build_shiori_request_extended("GET", "OnAnchorSelectEx", &refs, None)
+}
+
+/// OnChoiceEnter イベントリクエスト構築 (ukadoc-spec/list/shiori-event/choice/OnChoiceEnter.md)
+pub fn build_on_choice_enter_request(choice_id: &str, text: &str) -> String {
+    let refs = vec![choice_id.to_string(), text.to_string()];
+    build_shiori_request_extended("GET", "OnChoiceEnter", &refs, None)
+}
+
+/// OnChoiceHover イベントリクエスト構築 (ukadoc-spec/list/shiori-event/choice/OnChoiceHover.md)
+pub fn build_on_choice_hover_request(choice_id: &str, text: &str) -> String {
+    let refs = vec![choice_id.to_string(), text.to_string()];
+    build_shiori_request_extended("GET", "OnChoiceHover", &refs, None)
+}
+
+/// OnAnchorEnter イベントリクエスト構築 (ukadoc-spec/list/shiori-event/choice/OnAnchorEnter.md)
+pub fn build_on_anchor_enter_request(anchor_id: &str, text: &str) -> String {
+    let refs = vec![anchor_id.to_string(), text.to_string()];
+    build_shiori_request_extended("GET", "OnAnchorEnter", &refs, None)
+}
+
+/// OnAnchorHover イベントリクエスト構築 (ukadoc-spec/list/shiori-event/choice/OnAnchorHover.md)
+pub fn build_on_anchor_hover_request(anchor_id: &str, text: &str) -> String {
+    let refs = vec![anchor_id.to_string(), text.to_string()];
+    build_shiori_request_extended("GET", "OnAnchorHover", &refs, None)
+}
+
 /// OnShellChanged イベントリクエスト構築
 pub fn build_on_shell_changed_request(shell_name: &str) -> String {
     let refs = vec![shell_name.to_string()];
@@ -169,6 +204,24 @@ pub fn build_on_balloon_change_request(balloon_name: &str) -> String {
 /// OnBIFFBegin イベントリクエスト構築 (ukadoc-spec/list/shiori-event/biff/OnBIFFBegin.md)
 pub fn build_on_biff_request() -> String {
     build_shiori_request_extended("GET", "OnBIFFBegin", &[], None)
+}
+
+/// OnBIFFComplete イベントリクエスト構築 (ukadoc-spec/list/shiori-event/biff/OnBIFFComplete.md)
+pub fn build_on_biff_complete_request(mail_count: usize, total_size: u64) -> String {
+    let refs = vec![mail_count.to_string(), total_size.to_string()];
+    build_shiori_request_extended("GET", "OnBIFFComplete", &refs, None)
+}
+
+/// OnBIFFFailure イベントリクエスト構築 (ukadoc-spec/list/shiori-event/biff/OnBIFFFailure.md)
+pub fn build_on_biff_failure_request(reason: &str) -> String {
+    let refs = vec![reason.to_string()];
+    build_shiori_request_extended("GET", "OnBIFFFailure", &refs, None)
+}
+
+/// OnBIFF2Complete イベントリクエスト構築 (ukadoc-spec/list/shiori-event/biff/OnBIFF2Complete.md)
+pub fn build_on_biff2_complete_request(mail_count: usize, unread_count: usize) -> String {
+    let refs = vec![mail_count.to_string(), unread_count.to_string()];
+    build_shiori_request_extended("GET", "OnBIFF2Complete", &refs, None)
 }
 
 /// OnFileDrop イベントリクエスト構築 (ukadoc-spec/list/shiori-event/file-drop/OnFileDrop.md)
@@ -485,6 +538,26 @@ mod tests {
         assert!(choice_req.contains("ID: OnChoiceSelect"));
         assert!(choice_req.contains("Reference0: choice_01"));
 
+        let choice_timeout = build_on_choice_timeout_request();
+        assert!(choice_timeout.contains("ID: OnChoiceTimeout"));
+
+        let anchor_ex = build_on_anchor_select_ex_request("anchor_1", "Text");
+        assert!(anchor_ex.contains("ID: OnAnchorSelectEx"));
+        assert!(anchor_ex.contains("Reference0: anchor_1"));
+        assert!(anchor_ex.contains("Reference1: Text"));
+
+        let choice_enter = build_on_choice_enter_request("c1", "Choice 1");
+        assert!(choice_enter.contains("ID: OnChoiceEnter"));
+
+        let choice_hover = build_on_choice_hover_request("c1", "Choice 1");
+        assert!(choice_hover.contains("ID: OnChoiceHover"));
+
+        let anchor_enter = build_on_anchor_enter_request("a1", "Anchor 1");
+        assert!(anchor_enter.contains("ID: OnAnchorEnter"));
+
+        let anchor_hover = build_on_anchor_hover_request("a1", "Anchor 1");
+        assert!(anchor_hover.contains("ID: OnAnchorHover"));
+
         let changing_req = build_on_ghost_changing_request("NextGhost");
         assert!(changing_req.contains("ID: OnGhostChanging"));
         assert!(changing_req.contains("Reference0: NextGhost"));
@@ -499,6 +572,20 @@ mod tests {
 
         let biff_req = build_on_biff_request();
         assert!(biff_req.contains("ID: OnBIFFBegin"));
+
+        let biff_comp = build_on_biff_complete_request(5, 10240);
+        assert!(biff_comp.contains("ID: OnBIFFComplete"));
+        assert!(biff_comp.contains("Reference0: 5"));
+        assert!(biff_comp.contains("Reference1: 10240"));
+
+        let biff_fail = build_on_biff_failure_request("timeout");
+        assert!(biff_fail.contains("ID: OnBIFFFailure"));
+        assert!(biff_fail.contains("Reference0: timeout"));
+
+        let biff2_comp = build_on_biff2_complete_request(10, 2);
+        assert!(biff2_comp.contains("ID: OnBIFF2Complete"));
+        assert!(biff2_comp.contains("Reference0: 10"));
+        assert!(biff2_comp.contains("Reference1: 2"));
 
         let drop_req = build_on_file_drop_request("/path/to/nar.nar");
         assert!(drop_req.contains("ID: OnFileDrop"));

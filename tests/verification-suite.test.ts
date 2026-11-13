@@ -14,6 +14,12 @@ import { loadBalloonSkinImages } from "../ui/ts/ghost/balloon-window/theme.js";
 import { tokenizeScopeSurfaceTag } from "../ui/ts/ghost/parser/tag/scope-surface.js";
 import { tokenizeDisplayTag } from "../ui/ts/ghost/parser/tag-tokenizer.js";
 import { surfaceCollisionMethods } from "../ui/ts/surface/surface-collision.js";
+import { ModalManager } from "../ui/ts/ui/modal.js";
+import {
+	escapeHtml,
+	renderComplianceReportHtml,
+	runAllUiComplianceProbes,
+} from "../ui/ts/ui/spec-compliance-runner.js";
 import { setupBalloonMockEnvironment } from "./balloon-window/mock-balloon-env.js";
 
 describe("全面実装確認スイート (Implementation Verification Suite)", () => {
@@ -247,4 +253,333 @@ describe("全面実装確認スイート (Implementation Verification Suite)", (
 			assert.equal(sentArgs[4], "Head");
 		});
 	});
+
+	describe("8. 全使用部〜UI半自動確認ランナー (runAllUiComplianceProbes) の一括検証", () => {
+		it("全UI仕様適合プローブを実行し 100% 合格とチェックリストHTMLを返すこと", async () => {
+			const report = await runAllUiComplianceProbes();
+
+			assert.ok(report.total >= 6);
+			assert.equal(report.failed, 0);
+			assert.equal(report.passRate, 100);
+			assert.equal(report.passed, report.total);
+
+			for (const probe of report.results) {
+				assert.equal(
+					probe.passed,
+					true,
+					`Probe ${probe.id} failed: ${probe.actualSummary}`,
+				);
+			}
+
+			const html = renderComplianceReportHtml(report);
+			assert.ok(html.includes("100%"));
+			for (const probe of report.results) {
+				assert.ok(
+					html.includes(escapeHtml(probe.usagePath)),
+					`Rendered report missing usagePath for ${probe.id}`,
+				);
+				assert.ok(
+					html.includes(
+						`class="manual-verify-check" data-probe-id="${escapeHtml(probe.id)}"`,
+					),
+					`Rendered report missing manual-verify-check for ${probe.id}`,
+				);
+			}
+		});
+	});
+
+	describe("9. テストモーダル (ModalManager: test-modal-content) からのUI半自動検証操作の成立検証", () => {
+		it("test-modal-content を開き #run-spec-compliance-btn クリックで #test-results に検証レポートが描画されること", async () => {
+			const g = globalThis as unknown as Record<string, unknown>;
+			const hadDocument = "document" in g;
+			const origDocument = g.document;
+			const hadWindow = "window" in g;
+			const origWindow = g.window;
+			const hadTauri = "__TAURI__" in g;
+			const origTauri = g.__TAURI__;
+			const hadTauriInternals = "__TAURI_INTERNALS__" in g;
+			const origTauriInternals = g.__TAURI_INTERNALS__;
+
+			const { doc, pendingPromises } = createMountedModalDom();
+			g.window = g;
+			g.document = doc;
+			delete g.__TAURI__;
+			delete g.__TAURI_INTERNALS__;
+
+			try {
+				const modal = new ModalManager();
+				modal.show("test-modal-content");
+
+				const overlay = doc.getElementById("modal-overlay");
+				assert.equal(overlay?.style.display, "flex");
+
+				const runBtn = doc.getElementById("run-spec-compliance-btn");
+				assert.ok(
+					runBtn,
+					"#run-spec-compliance-btn must exist after showing test-modal-content",
+				);
+
+				const resultsEl = doc.getElementById("test-results");
+				assert.ok(
+					resultsEl,
+					"#test-results must exist after showing test-modal-content",
+				);
+
+				runBtn.click();
+
+				const deadline = Date.now() + 2000;
+				while (
+					pendingPromises.length > 0 ||
+					(!resultsEl.innerHTML.includes("manual-verify-check") &&
+						Date.now() < deadline)
+				) {
+					if (pendingPromises.length > 0) {
+						const batch = pendingPromises.splice(0, pendingPromises.length);
+						await Promise.all(batch);
+					} else {
+						await new Promise((r) => setTimeout(r, 10));
+					}
+				}
+
+				assert.ok(resultsEl.innerHTML.includes("compliance-report"));
+				assert.ok(resultsEl.innerHTML.includes("manual-verify-check"));
+				assert.ok(resultsEl.innerHTML.includes("100%"));
+				assert.ok(!resultsEl.innerHTML.includes("❌ FAIL"));
+
+				const checks = resultsEl.querySelectorAll(".manual-verify-check");
+				assert.ok(checks.length >= 6);
+				const firstCheck = checks[0] as unknown as {
+					checked?: boolean;
+					trigger?: (type: string) => void;
+				};
+				firstCheck.checked = true;
+				firstCheck.trigger?.("change");
+
+				const progressEl = doc.getElementById("manual-verify-progress");
+				assert.ok(progressEl?.textContent?.includes(`1 / ${checks.length}`));
+			} finally {
+				if (hadDocument) {
+					g.document = origDocument;
+				} else {
+					delete g.document;
+				}
+				if (hadWindow) {
+					g.window = origWindow;
+				} else {
+					delete g.window;
+				}
+				if (hadTauri) {
+					g.__TAURI__ = origTauri;
+				} else {
+					delete g.__TAURI__;
+				}
+				if (hadTauriInternals) {
+					g.__TAURI_INTERNALS__ = origTauriInternals;
+				} else {
+					delete g.__TAURI_INTERNALS__;
+				}
+			}
+		});
+	});
 });
+
+interface MockDomStyle extends Record<string, unknown> {
+	setProperty: (name: string, value: string) => void;
+	getPropertyValue: (name: string) => string;
+	removeProperty: (name: string) => string;
+}
+
+interface MockDomElement {
+	tagName: string;
+	id: string;
+	className: string;
+	type: string;
+	value: string;
+	checked: boolean;
+	textContent: string;
+	innerHTML: string;
+	style: MockDomStyle;
+	children: MockDomElement[];
+	parentNode: MockDomElement | null;
+	appendChild: (child: MockDomElement) => MockDomElement;
+	remove: () => void;
+	addEventListener: (
+		type: string,
+		cb: (ev: {
+			target: MockDomElement;
+			stopPropagation: () => void;
+			preventDefault: () => void;
+		}) => unknown,
+	) => void;
+	click: () => void;
+	trigger: (type: string) => void;
+	querySelector: (selector: string) => MockDomElement | null;
+	querySelectorAll: (selector: string) => MockDomElement[];
+}
+
+function createMockDomStyle(): MockDomStyle {
+	const store = new Map<string, string>();
+	return new Proxy(
+		{
+			setProperty(name: string, value: string) {
+				store.set(name, String(value));
+			},
+			getPropertyValue(name: string) {
+				return store.get(name) ?? "";
+			},
+			removeProperty(name: string) {
+				const prev = store.get(name) ?? "";
+				store.delete(name);
+				return prev;
+			},
+		} as MockDomStyle,
+		{
+			get(target, prop: string) {
+				if (prop in target) {
+					return target[prop];
+				}
+				return store.get(prop) ?? "";
+			},
+			set(target, prop: string, value: unknown) {
+				if (prop in target) {
+					target[prop] = value;
+				} else {
+					store.set(prop, String(value ?? ""));
+				}
+				return true;
+			},
+		},
+	);
+}
+
+function createMountedModalDom(): {
+	doc: Document;
+	pendingPromises: Promise<unknown>[];
+} {
+	const elementsById = new Map<string, MockDomElement>();
+	const pendingPromises: Promise<unknown>[] = [];
+
+	const createNode = (tagName: string, id = ""): MockDomElement => {
+		const listeners = new Map<
+			string,
+			Array<
+				(ev: {
+					target: MockDomElement;
+					stopPropagation: () => void;
+					preventDefault: () => void;
+				}) => unknown
+			>
+		>();
+		let rawInnerHtml = "";
+		let parsedChecks: MockDomElement[] = [];
+
+		const node: MockDomElement = {
+			tagName: tagName.toUpperCase(),
+			id,
+			className: "",
+			type: "",
+			value: "",
+			checked: false,
+			textContent: "",
+			get innerHTML() {
+				return rawInnerHtml;
+			},
+			set innerHTML(html: string) {
+				rawInnerHtml = String(html);
+				parsedChecks = [];
+				for (const match of rawInnerHtml.matchAll(/\bid=["']([^"']+)["']/g)) {
+					const foundId = match[1];
+					if (foundId && !elementsById.has(foundId)) {
+						elementsById.set(foundId, createNode("div", foundId));
+					}
+				}
+				for (const _match of rawInnerHtml.matchAll(
+					/<input[^>]*class=["'][^"']*manual-verify-check[^"']*["'][^>]*>/g,
+				)) {
+					const cb = createNode("input");
+					cb.type = "checkbox";
+					cb.className = "manual-verify-check";
+					parsedChecks.push(cb);
+				}
+			},
+			style: createMockDomStyle(),
+			children: [],
+			parentNode: null,
+			appendChild(child: MockDomElement) {
+				child.parentNode = node;
+				node.children.push(child);
+				return child;
+			},
+			remove() {
+				if (!node.parentNode) return;
+				const idx = node.parentNode.children.indexOf(node);
+				if (idx >= 0) {
+					node.parentNode.children.splice(idx, 1);
+				}
+				node.parentNode = null;
+			},
+			addEventListener(type, cb) {
+				const list = listeners.get(type) ?? [];
+				list.push(cb);
+				listeners.set(type, list);
+			},
+			trigger(type: string) {
+				const list = listeners.get(type) ?? [];
+				const ev = {
+					target: node,
+					stopPropagation() {},
+					preventDefault() {},
+				};
+				for (const cb of list) {
+					const result = cb(ev);
+					if (
+						result &&
+						typeof (result as Promise<unknown>).then === "function"
+					) {
+						pendingPromises.push(result as Promise<unknown>);
+					}
+				}
+			},
+			click() {
+				node.trigger("click");
+			},
+			querySelector() {
+				return null;
+			},
+			querySelectorAll(selector: string) {
+				if (selector === ".manual-verify-check") {
+					return parsedChecks;
+				}
+				return [];
+			},
+		};
+
+		return node;
+	};
+
+	for (const baseId of ["modal-overlay", "modal-content", "modal-close"]) {
+		elementsById.set(baseId, createNode("div", baseId));
+	}
+
+	const doc = {
+		getElementById(id: string) {
+			return elementsById.get(id) ?? null;
+		},
+		querySelector() {
+			return null;
+		},
+		querySelectorAll(selector: string) {
+			if (selector === ".manual-verify-check") {
+				return (
+					elementsById.get("test-results")?.querySelectorAll(selector) ?? []
+				);
+			}
+			return [];
+		},
+		createElement(tagName: string) {
+			return createNode(tagName);
+		},
+	} as unknown as Document;
+
+	return { doc, pendingPromises };
+}

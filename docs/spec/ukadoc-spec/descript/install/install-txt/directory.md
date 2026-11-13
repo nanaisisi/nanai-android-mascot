@@ -2,7 +2,7 @@
 
 - **規格**: [directory.md](https://ukatech.shillest.net/ukadoc-spec/descript/install/install-txt/) (ukadoc-spec/descript/install/install-txt/directory.md)
 - **検索語**: directory
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@
 
 ## 実装箇所
 
-- `src-tauri/src/lib.rs:126` `ghost::scan::directory::scan_ghost_directory,`
-- `src-tauri/src/commands/file.rs:240` `.map_err(|e| format!("Failed to open directory: {}", e))`
-- `src-tauri/src/commands/install/utils.rs:97` `.map_err(|e| format!("Failed to inspect balloon directory: {e}"))?`
-- `src-tauri/src/commands/install/archive/packaging.rs:25` `"Source path '{}' is not a directory",`
-- `src-tauri/src/commands/install/archive/packaging.rs:32` `.map_err(|e| format!("Failed to create output directory for nar: {e}"))?;`
+- `crates/nanai-vfs/src/resolver/io_operations.rs:71` `format!("Not a directory: {}", relative_dir),`
+- `src-tauri/src/lib.rs:145` `ghost::scan::directory::scan_ghost_directory,`
+- `ui/assets/LICENSE-3RD-PARTY.html:9622` `file in a relevant directory) where a recipient would be likely to look`
+- `ui/ts/ui/app-menu.ts:78` `if (!shellPath && sm?.shellManifest?.directory) {`
+- `tests/app-actions.test.ts:86` `handle("open-ghost-directory");`
+- `crates/nanai-vfs/src/resolver/vfs_trait.rs:34` `"Path is a directory, not a file: {}",`

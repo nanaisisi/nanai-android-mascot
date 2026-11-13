@@ -2,7 +2,7 @@
 
 - **規格**: [response.md](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/response/) (ukadoc-spec/spec/shiori3/response.md)
 - **検索語**: error_description
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -16,8 +16,9 @@ Rust 通信層として `crates/ui/src/shiori.rs`（SHIORI/3.0 リクエスト/�
 
 ## 実装箇所
 
+- `crates/ui/src/shiori/protocol/response/build.rs:43` `if !self.error_description.is_empty() {`
 - `src-tauri/src/sstp/types.rs:49` `pub error_description: Option<String>,`
+- `ui/ts/core/actions/sstp-fmo-actions.ts:42` `error_description?: string;`
+- `tests/sstp-fmo/raw-protocol.test.ts:67` `expect(parsedError.error_description).toBe("Command not allowed");`
+- `crates/ui/src/shiori/protocol/response/build.rs:44` `let desc = self.error_description.join("\u{1}");`
 - `src-tauri/src/sstp/handler/request_processor.rs:37` `error_description: Some("COMMUNICATE disabled by ghost".to_string()),`
-- `src-tauri/src/sstp/handler/request_processor.rs:51` `error_description: Some("receiver ghost not found".to_string()),`
-- `src-tauri/src/sstp/handler/request_processor.rs:64` `error_description: Some("receiver ghost hwnd not found".to_string()),`
-- `src-tauri/src/sstp/handler/request_processor.rs:80` `error_description: Some("Unspecified SEND disabled by ghost".to_string()),`

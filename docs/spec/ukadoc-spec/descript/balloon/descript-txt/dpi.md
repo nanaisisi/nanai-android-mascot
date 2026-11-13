@@ -2,7 +2,7 @@
 
 - **規格**: [dpi.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/dpi.md)
 - **検索語**: dpi
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 - **カテゴリ**: `descript.txt`（Balloon）
 - **書式**: `dpi,推奨DPI`
 - **既定値**: `96`（Windows標準 100% スケーリング相当）
@@ -82,7 +82,8 @@ $$\text{finalScale} = \text{userScale} \times \text{dpiScale}$$
 ## 実装箇所
 
 - `ui/assets/LICENSE-3RD-PARTY.html:1272` `<li><a href="https://github.com/rust-windowing/winit" target="_blank" rel="noope`
+- `tests/balloon-window.test.ts:143` `onDpiScaleChange: (dpi: number) => {`
 - `ui/assets/LICENSE-3RD-PARTY.html:7424` `<li><a href="https://github.com/rust-windowing/winit" target="_blank" rel="noope`
+- `tests/balloon-window.test.ts:144` `callbackDpi = dpi;`
 - `ui/ts/core/actions/balloon-theme-constants.ts:22` `"--balloon-dpi",`
-- `ui/ts/core/actions/balloon-theme-constants.ts:23` `"--balloon-dpi-scale",`
-- `ui/ts/core/actions/balloon-descript/layout/scale.ts:13` `const parsedDpi = parseInt(props.dpi, 10);`
+- `tests/core-actions.test.ts:32` `dpi: "96",`

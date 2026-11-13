@@ -2,7 +2,7 @@
 
 - **規格**: [bang-quicksection-true.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/wait/bang-quicksection-true/) (ukadoc-spec/list/sakura-script/wait/bang-quicksection-true.md)
 - **検索語**: Quick
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/command.rs:11` `Quick(bool),  // \_q (高速表示トグル)`
-- `crates/ui/src/script/command.rs:193` `SakuraCommand::Quick(_)`
-- `crates/ui/src/script/command.rs:233` `SakuraCommand::Quick(true).lifetime(),`
-- `crates/ui/src/script/parser/brackets/mod.rs:129` `assert_eq!(cmds, vec![SakuraCommand::Quick(false)]);`
-- `crates/ui/src/script/parser/brackets/handlers/raiselike/mod.rs:43` `callback(SakuraCommand::Quick(enabled));`
+- `crates/nanai-core/src/sakura_player.rs:149` `SakuraToken::Font { .. } | SakuraToken::Sync(_) | SakuraToken::Quick(_) => {`
+- `ui/ts/ghost/sakura-rust-bridge.ts:59` `case "Quick":`
+- `tests/sakura-rust-bridge.test.ts:14` `{ type: "Quick", payload: true },`
+- `crates/nanai-core/src/sakura_script.rs:36` `Quick(bool),`
+- `crates/nanai-core/src/sakura_script.rs:170` `tokens.push(SakuraToken::Quick(true));`
+- `crates/nanai-core/ui/ts/core/wasm/pkg/nanai_core.d.ts:101` `export type SakuraToken = { type: "Text"; value: string } | { type: "Scope"; val`

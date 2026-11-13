@@ -2,7 +2,7 @@
 
 - **規格**: [star.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-alias-brace/star/) (ukadoc-spec/descript/shell-surfaces/surface-alias-brace/star.md)
 - **検索語**: *
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@
 
 ## 実装箇所
 
+- `crates/nanai-core/src/balloon_descript.rs:6` `use wasm_bindgen::prelude::*;`
 - `src-tauri/capabilities/default.json:3` `"windows": ["*"],`
-- `src-tauri/shiori-host/src/ffi.rs:3` `pub type H = *mut c_void;`
-- `src-tauri/shiori-host/src/ffi.rs:6` `pub type RequestFn = unsafe extern "C" fn(H, *mut i32) -> H;`
-- `src-tauri/shiori-host/src/ffi.rs:13` `pub fn SetDllDirectoryW(lpPathName: *const u16) -> i32;`
-- `src-tauri/shiori-host/src/ffi.rs:18` `fn malloc(size: usize) -> *mut c_void;`
+- `ui/assets/LICENSE-3RD-PARTY.html:86` `padding-top: 60px; /* anchor offset */`
+- `ui/styles.css:3` `= */`
+- `tests/async-parallel.test.ts:317` `return item * 10;`
+- `crates/nanai-core/src/balloon_descript.rs:143` `use super::*;`

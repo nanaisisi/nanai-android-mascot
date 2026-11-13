@@ -4,20 +4,25 @@ tests/test_verify_spec_compliance.py
 Unit tests for scripts/verify_spec_compliance.py (Slot-13: UKADOC specification compliance audit engine).
 """
 
+import io
 import json
 import os
 import shutil
+import sys
 import tempfile
 import unittest
 from unittest import mock
 
 from scripts.verify_spec_compliance import (
     ComplianceReport,
+    classify_layer,
     detect_git_conflicts,
     load_codebase,
+    main as cli_main,
     process_audit_files,
     sanitize_snippet,
     search_keyword,
+    select_representative_matches,
     sync_category_readmes,
     update_summary,
 )
@@ -69,7 +74,7 @@ class TestVerifySpecCompliance(unittest.TestCase):
     def test_search_keyword_wildcard(self):
         codebase = [
             ("src/install.rs", ["let key = \"balloon.refresh\";\n", "let dir = \"balloon.directory\";\n"]),
-            ("src/script.rs", ["// %* (\\%\\*) placeholder\n"]),
+            ("src/script.rs", ["let esc = r\"%\\* %*\";\n", "let non_wildcard = \"%abc\";\n"]),
         ]
         # Wildcard term: *.refresh
         results_refresh = search_keyword("*.refresh", codebase)
@@ -87,7 +92,7 @@ class TestVerifySpecCompliance(unittest.TestCase):
         results_nomatch = search_keyword("*.unknown_prefix", codebase)
         self.assertEqual(len(results_nomatch), 0)
 
-        # Escaped wildcard: %\* is treated as literal
+        # Escaped wildcard: %\* is treated as literal (must not match %abc)
         results_escaped = search_keyword(r"%\*", codebase)
         self.assertEqual(len(results_escaped), 1)
         self.assertIn("%*", results_escaped[0][2])
@@ -187,8 +192,17 @@ class TestVerifySpecCompliance(unittest.TestCase):
         self.assertEqual(report.totals["❌"], 1)
         self.assertEqual(len(report.updated_files), 0)
 
-        # 2. With matching codebase in dry-run
-        codebase = [("crates/sample.rs", ["fn custom_spec_function() {}\n"])]
+        # 1b. With prod-only match in dry-run (partial implementation)
+        prod_only_codebase = [("crates/sample.rs", ["fn custom_spec_function() {}\n"])]
+        report_partial = process_audit_files(prod_only_codebase, docs_dir=self.docs_dir, dry_run=True)
+        self.assertEqual(report_partial.totals["合計"], 1)
+        self.assertEqual(report_partial.totals["⚠️"], 1)
+
+        # 2. With matching prod + test codebase in dry-run
+        codebase = [
+            ("crates/sample.rs", ["fn custom_spec_function() {}\n"]),
+            ("tests/sample.test.ts", ["custom_spec_function();\n"]),
+        ]
         report = process_audit_files(codebase, docs_dir=self.docs_dir, dry_run=True)
         self.assertEqual(report.totals["合計"], 1)
         self.assertEqual(report.totals["✅"], 1)
@@ -228,7 +242,10 @@ class TestVerifySpecCompliance(unittest.TestCase):
         with open(spec_file, 'w', encoding='utf-8') as f:
             f.write(raw_escaped_content)
 
-        codebase = [("crates/sample.rs", ["fn escaped_func() {}\n"])]
+        codebase = [
+            ("crates/sample.rs", ["fn escaped_func() {}\n"]),
+            ("tests/sample.test.ts", ["escaped_func();\n"]),
+        ]
         report = process_audit_files(codebase, docs_dir=self.docs_dir, dry_run=False)
         self.assertEqual(report.totals["✅"], 1)
         self.assertEqual(len(report.updated_files), 1)
@@ -266,7 +283,10 @@ class TestVerifySpecCompliance(unittest.TestCase):
             with open(path, 'w', encoding='utf-8') as f:
                 f.write("# Spec\n\n- **対応状況**: ❌ 未実装\n- **検索語**: shared_target\n")
 
-        codebase = [("crates/sample.rs", ["fn shared_target() {}\n"])]
+        codebase = [
+            ("crates/sample.rs", ["fn shared_target() {}\n"]),
+            ("tests/sample.test.ts", ["shared_target();\n"]),
+        ]
         # When use_cache=True, second file should hit cache
         report = process_audit_files(codebase, docs_dir=self.docs_dir, dry_run=True, use_cache=True)
         self.assertEqual(report.totals["✅"], 2)
@@ -413,7 +433,10 @@ class TestVerifySpecCompliance(unittest.TestCase):
             f.write("# Sample Spec\n\n- **対応状況**: ❌ 未実装\n- **検索語**: custom_fn\n")
 
         summary_file = os.path.join(self.test_dir, 'SUMMARY.md')
-        codebase = [("crates/sample.rs", ["fn custom_fn() {}\n"])]
+        codebase = [
+            ("crates/sample.rs", ["fn custom_fn() {}\n"]),
+            ("tests/sample.test.ts", ["custom_fn();\n"]),
+        ]
 
         # Simulate update_summary_only: dry_run=True for process_audit_files, but update_summary is called
         report = process_audit_files(codebase, docs_dir=self.docs_dir, dry_run=True)
@@ -483,6 +506,139 @@ class TestVerifySpecCompliance(unittest.TestCase):
             is_safe, msg = validate_parallel_bulk_safety(args)
             self.assertTrue(is_safe)
             self.assertIn("On main branch", msg)
+
+    def test_classify_layer(self):
+        self.assertEqual(classify_layer("crates/nanai-core/src/lib.rs"), "core")
+        self.assertEqual(classify_layer("src-tauri/src/main.rs"), "backend")
+        self.assertEqual(classify_layer("ui/ts/ui/modal.ts"), "ui_view")
+        self.assertEqual(classify_layer("ui/windows/multi-window.html"), "ui_view")
+        self.assertEqual(classify_layer("ui/css/balloon-window.css"), "ui_view")
+        self.assertEqual(classify_layer("ui/index.html"), "ui_view")
+        self.assertEqual(classify_layer("ui/styles.css"), "ui_view")
+        self.assertEqual(classify_layer("ui/test-menu.html"), "ui_view")
+        self.assertEqual(classify_layer("ui/ts/core/app-actions.ts"), "ui_logic")
+        self.assertEqual(classify_layer("ui/ts/ghost/shiori-notify.ts"), "ui_logic")
+        self.assertEqual(classify_layer("ui/ts/surface/character.ts"), "ui_logic")
+        self.assertEqual(classify_layer("ui/main.ts"), "ui_logic")
+        self.assertEqual(classify_layer("ui/bindings.ts"), "ui_logic")
+        self.assertEqual(classify_layer("tests/modal.test.ts"), "tests")
+        self.assertEqual(classify_layer("src/main.rs"), "other")
+        self.assertEqual(classify_layer(r"crates\nanai-core\src\balloon.rs"), "core")
+        self.assertEqual(classify_layer("./ui/test-menu.html"), "ui_view")
+
+    def test_search_keyword_balanced_multilayer_and_representative_locations(self):
+        crates_lines = [f"let v{i} = \"font.name\";\n" for i in range(12)]
+        backend_lines = [f"let b{i} = \"font.name\";\n" for i in range(7)]
+        ui_logic_lines = [f"const u{i} = props[\"font.name\"];\n" for i in range(6)]
+        ui_view_lines = ["/* font.name view style */\n", ".balloon { /* font.name */ }\n"]
+        test_lines = [f"expect(\"font.name\").toBeTruthy(); // {i}\n" for i in range(6)]
+
+        codebase = [
+            ("crates/nanai-core/src/descript_parser.rs", crates_lines),
+            ("src-tauri/src/theme.rs", backend_lines),
+            ("ui/ts/core/actions/balloon-descript/font/base.ts", ui_logic_lines),
+            ("ui/css/balloon-window.css", ui_view_lines),
+            ("tests/core-actions.test.ts", test_lines),
+        ]
+
+        matches = search_keyword("font.name", codebase)
+        layers = [classify_layer(m[0]) for m in matches]
+        self.assertEqual(layers.count("core"), 5)
+        self.assertEqual(layers.count("backend"), 5)
+        self.assertEqual(layers.count("ui_logic"), 5)
+        self.assertEqual(layers.count("ui_view"), 2)
+        self.assertEqual(layers.count("tests"), 5)
+        self.assertEqual(len(matches), 22)
+
+        # Multi-term keyword should not starve ui/tests even if first term fills core+backend
+        multi_codebase = [
+            ("crates/a.rs", [f"fn first_kw_{i}() {{ first_kw(); }}\n" for i in range(6)]),
+            ("src-tauri/b.rs", [f"fn first_kw_b_{i}() {{ first_kw(); }}\n" for i in range(6)]),
+            ("ui/ts/core/c.ts", ["second_kw();\n"]),
+            ("tests/d.test.ts", ["second_kw();\n"]),
+        ]
+        multi_matches = search_keyword("first_kw, second_kw", multi_codebase)
+        multi_layers = {classify_layer(m[0]) for m in multi_matches}
+        self.assertEqual(multi_layers, {"core", "backend", "ui_logic", "tests"})
+
+        # Representative selection ensures >= 1 match per matched layer, up to 6 lines
+        reps = select_representative_matches(matches, max_lines=6)
+        self.assertEqual(len(reps), 6)
+        rep_layers = {classify_layer(m[0]) for m in reps}
+        self.assertEqual(rep_layers, {"core", "backend", "ui_logic", "ui_view", "tests"})
+
+        # process_audit_files writes multi-layer locations and marks as implemented
+        spec_file = os.path.join(self.docs_dir, 'ukadoc-spec', 'descript', 'font.name.md')
+        with open(spec_file, 'w', encoding='utf-8') as f:
+            f.write("# font.name\n\n- **対応状況**: ⚠️ 一部対応\n- **検索語**: font.name\n\n## 実装箇所\n\nold\n")
+
+        report = process_audit_files(codebase, docs_dir=self.docs_dir, dry_run=False)
+        self.assertEqual(report.totals["✅"], 1)
+        with open(spec_file, 'r', encoding='utf-8') as f:
+            updated = f.read()
+        self.assertIn("✅ 実装済", updated)
+        self.assertIn("crates/nanai-core/src/descript_parser.rs:", updated)
+        self.assertIn("src-tauri/src/theme.rs:", updated)
+        self.assertIn("ui/ts/core/actions/balloon-descript/font/base.ts:", updated)
+        self.assertIn("ui/css/balloon-window.css:", updated)
+        self.assertIn("tests/core-actions.test.ts:", updated)
+
+    def test_layer_summary_and_check_layers_cli(self):
+        specs = {
+            "core_only.md": "kw_core_only",
+            "backend_only.md": "kw_backend_only",
+            "core_and_tests.md": "kw_core_tests",
+            "ui_connected_only.md": "kw_ui_only",
+            "full_pipe_view.md": "kw_full_view",
+            "full_pipe_logic.md": "kw_full_logic",
+            "view_and_tests.md": "kw_view_tests",
+        }
+        for filename, kw in specs.items():
+            path = os.path.join(self.docs_dir, 'ukadoc-spec', 'spec', filename)
+            with open(path, 'w', encoding='utf-8') as f:
+                f.write(f"# {filename}\n\n- **対応状況**: ❌ 未実装\n- **検索語**: {kw}\n")
+
+        codebase = [
+            ("crates/core.rs", ["kw_core_only();\n", "kw_core_tests();\n", "kw_full_view();\n"]),
+            ("src-tauri/back.rs", ["kw_backend_only();\n"]),
+            ("ui/ts/core/logic.ts", ["kw_ui_only();\n", "kw_full_logic();\n"]),
+            ("ui/ts/ui/view.ts", ["kw_full_view();\n", "kw_view_tests();\n"]),
+            ("tests/spec.test.ts", ["kw_core_tests();\n", "kw_full_view();\n", "kw_full_logic();\n", "kw_view_tests();\n"]),
+        ]
+
+        report = process_audit_files(codebase, docs_dir=self.docs_dir, dry_run=True)
+        ls = report.layer_summary
+        self.assertIsNotNone(ls)
+        self.assertEqual(ls["core_only"], 2)  # core_only, backend_only
+        self.assertEqual(ls["ui_connected"], 4)  # ui_only, full_view, full_logic, view_tests
+        self.assertEqual(ls["full_pipeline"], 2)  # full_view (core+ui_view+tests), full_logic (ui_logic+tests)
+        self.assertEqual(ls["by_layer"], {
+            "core": 3,
+            "backend": 1,
+            "ui_logic": 2,
+            "ui_view": 2,
+            "tests": 4,
+        })
+
+        report_dict = report.to_dict()
+        self.assertIn("layer_summary", report_dict)
+        self.assertEqual(report_dict["layer_summary"]["full_pipeline"], 2)
+
+        report_md = report.to_markdown()
+        self.assertIn("## レイヤー到達度集計 (Layer Reachability Summary)", report_md)
+        self.assertNotIn("<br>", report_md)
+
+        # CLI --check-layers prints layer summary to stdout
+        stdout_buf = io.StringIO()
+        with mock.patch.object(sys, 'argv', ['verify_spec_compliance.py', '--dry-run', '--check-layers', '--docs-dir', self.docs_dir]):
+            with mock.patch('scripts.verify_spec_compliance.load_codebase', return_value=codebase):
+                with mock.patch('sys.stdout', stdout_buf):
+                    cli_main()
+        cli_output = stdout_buf.getvalue()
+        self.assertIn("Layer Reachability Summary", cli_output)
+        self.assertIn("Core/Backend Only : 2 items", cli_output)
+        self.assertIn("UI Connected      : 4 items", cli_output)
+        self.assertIn("Full Pipeline     : 2 items", cli_output)
 
 
 if __name__ == '__main__':

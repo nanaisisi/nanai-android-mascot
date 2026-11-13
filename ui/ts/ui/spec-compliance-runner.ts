@@ -3,9 +3,9 @@ import {
 	verifyRecommendedGhost,
 } from "../core/actions/balloon-descript/assets.js";
 import { applyFontProperties } from "../core/actions/balloon-descript/font.js";
-import { applyLayoutProperties } from "../core/actions/balloon-descript/layout.js";
 import { applyPositionProperties } from "../core/actions/balloon-descript/layout/position.js";
 import { applyValidRectProperties } from "../core/actions/balloon-descript/layout/rect.js";
+import { applyLayoutProperties } from "../core/actions/balloon-descript/layout.js";
 import { mouseMethods } from "../core/events/mouse.js";
 import { tokenizeScopeSurfaceTag } from "../ghost/parser/tag/scope-surface.js";
 import { tokenizeDisplayTag } from "../ghost/parser/tag-tokenizer.js";
@@ -176,7 +176,9 @@ function withSafeQueryDocument<T>(fn: () => T): T {
 		}
 	}
 
-	const balloonEl = origDocument.querySelector(".balloon") as HTMLElement | null;
+	const balloonEl = origDocument.querySelector(
+		".balloon",
+	) as HTMLElement | null;
 	const textEl = origDocument.querySelector(
 		".balloon-text",
 	) as HTMLElement | null;
@@ -231,7 +233,8 @@ function isCapableDomDocument(doc: Document | undefined): boolean {
 		child.click();
 		const mounted = parent.children.length === 1;
 		child.remove();
-		return fired && mounted && parent.children.length === 0;
+		const removed = Number(parent.children.length) === 0;
+		return fired && mounted && removed;
 	} catch {
 		return false;
 	}
@@ -386,7 +389,8 @@ function runBalloonLayoutProbe(
 function runBalloonFontAssetsProbe(
 	rootElement?: HTMLElement,
 ): UiComplianceProbeResult {
-	const specName = "font.name / font.height / arrow.filename / recommended.ghost";
+	const specName =
+		"font.name / font.height / arrow.filename / recommended.ghost";
 	const usagePath =
 		"descript.txt ➔ applyFontProperties / applyAssetProperties / verifyRecommendedGhost ➔ CSS Vars (--balloon-font-family, --balloon-font-size, --balloon-arrow-image, --balloon-recommended-ghost)";
 	const manualCheckHint =
@@ -476,9 +480,15 @@ function runSakuraScriptTokensProbe(): UiComplianceProbeResult {
 		const surfaceRes = tokenizeScopeSurfaceTag("\\s[20]", 1, 6);
 		const balloonRes = tokenizeDisplayTag("\\b[0]", 1, 5);
 
-		const scopeTok = scopeRes?.tokens?.[0];
-		const surfaceTok = surfaceRes?.tokens?.[0];
-		const balloonTok = balloonRes?.tokens?.[0];
+		const scopeTok = scopeRes?.tokens?.[0] as
+			| { type?: string; value?: unknown }
+			| undefined;
+		const surfaceTok = surfaceRes?.tokens?.[0] as
+			| { type?: string; value?: unknown }
+			| undefined;
+		const balloonTok = balloonRes?.tokens?.[0] as
+			| { type?: string; value?: unknown }
+			| undefined;
 
 		const passed =
 			scopeTok?.type === "scope" &&
@@ -582,7 +592,8 @@ function runSurfaceScopeCollisionProbe(): UiComplianceProbeResult {
 }
 
 async function runMouseShioriEventProbe(): Promise<UiComplianceProbeResult> {
-	const specName = "OnMouseClick / OnMouseDoubleClick / OnMouseWheel (Reference0..4)";
+	const specName =
+		"OnMouseClick / OnMouseDoubleClick / OnMouseWheel (Reference0..4)";
 	const usagePath =
 		"Mouse Input ➔ mouseMethods.onGhostClick / onGhostWheel ➔ detectCollision ➔ SHIORI (OnMouseClick / OnMouseWheel)";
 	const manualCheckHint =
@@ -648,10 +659,19 @@ async function runMouseShioriEventProbe(): Promise<UiComplianceProbeResult> {
 
 		const rect = { left: 0, top: 0, width: 300, height: 400 };
 		mouseMethods.onGhostClick.call(mockApp, 100, 150, rect, 0);
-		await Promise.race([
-			clickFlowDone,
-			new Promise<void>((resolve) => setTimeout(resolve, 50)),
-		]);
+		let fallbackTimer: ReturnType<typeof setTimeout> | undefined;
+		try {
+			await Promise.race([
+				clickFlowDone,
+				new Promise<void>((resolve) => {
+					fallbackTimer = setTimeout(resolve, 50);
+				}),
+			]);
+		} finally {
+			if (fallbackTimer !== undefined) {
+				clearTimeout(fallbackTimer);
+			}
+		}
 
 		mouseMethods.onGhostWheel.call(mockApp, 100, 150, rect, -120, 1);
 

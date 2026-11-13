@@ -2,7 +2,7 @@
 
 - **規格**: [font.name.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/font.name.md)
 - **検索語**: font.name
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/shell/theme.rs:39` `let font_name = merged.get("menu.font.name").cloned();`
-- `src-tauri/src/shiori/property/tests.rs:125` `assert_eq!(evaluate_property_query("menu.font.name"), "sans-serif");`
-- `src-tauri/src/shiori/property/evaluator/static_rules.rs:75` `"menu.font.name" => "sans-serif",`
 - `crates/nanai-core/src/descript_parser.rs:116` `/// バルーンフォント名 (`font.name`)`
+- `src-tauri/src/ghost/scan/shell/theme.rs:39` `let font_name = merged.get("menu.font.name").cloned();`
+- `ui/ts/core/actions/balloon-descript/font/base.ts:9` `if (props["font.name"]) {`
+- `ui/ts/ui/spec-compliance-runner.ts:393` `"font.name / font.height / arrow.filename / recommended.ghost";`
+- `tests/core-actions.test.ts:33` `"font.name": "Arial",`
 - `crates/nanai-core/src/descript_parser.rs:118` `self.get("font.name")`

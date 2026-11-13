@@ -2,7 +2,7 @@
 
 - **規格**: [icon.rect.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/icon.rect/) (ukadoc-spec/descript/shell-surfaces/surface-brace/icon.rect.md)
 - **検索語**: icon.rect
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -11,8 +11,9 @@
 
 ## 実装箇所
 
-- `crates/ui/src/surfaces/parser/helpers/lines.rs:147` `} else if key_lower == "icon.rect" {`
-- `crates/ui/src/surfaces/tests/collision_tests.rs:141` `icon.rect,10,20,70,80`
-- `crates/ui/src/surfaces/tests/collision_tests.rs:221` `icon.rect,10,20,60,40`
-- `crates/ui/src/surfaces/tests/collision_tests.rs:237` `// icon.rect: width = 50, height = 20 -> max side is 50.`
-- `crates/ui/src/surfaces/tests/collision_tests.rs:243` `// s1 has no icon.rect, but has a "head" collision [20, 10, 60, 70]`
+- `crates/nanai-surface/src/parser/helpers/lines.rs:147` `} else if key_lower == "icon.rect" {`
+- `ui/ts/surface/parser/index.ts:152` `// icon.rect,x1,y1,x2,y2`
+- `tests/parser-fuzzing/cycle10-syntax-fuzzing.test.ts:31` `icon.rect,10,20,30,40`
+- `crates/nanai-surface/src/types/surface/definition.rs:22` `/// 顔サムネイル切り出し矩形（`icon.rect,始点X,始点Y,終点X,終点Y`）`
+- `tests/parser-fuzzing/cycle10-syntax-fuzzing.test.ts:39` `icon.rect,5,5,25,25`
+- `crates/nanai-surface/src/types/surface/definition.rs:31` `/// 明示指定（`icon.rect`）があればそれを長辺基準で正方形に整形して採用する。`

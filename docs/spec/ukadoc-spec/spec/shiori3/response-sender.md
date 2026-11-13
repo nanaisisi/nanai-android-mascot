@@ -2,7 +2,7 @@
 
 - **規格**: [response.md](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/response/) (ukadoc-spec/spec/shiori3/response.md)
 - **検索語**: sender
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -16,8 +16,9 @@ Rust 通信層として `crates/ui/src/shiori.rs`（SHIORI/3.0 リクエスト/�
 
 ## 実装箇所
 
+- `crates/nanai-core/src/shiori_protocol.rs:29` `pub sender: Option<String>,`
 - `src-tauri/src/commands/shiori/protocol.rs:103` `req.sender = "NanaiMascot".to_string();`
+- `ui/ts/core/actions/sstp-fmo-actions.ts:11` `sender: string;`
+- `tests/e2e/cycle10-lifecycle.test.ts:19` `sender: "NanaiE2ECycle10",`
+- `crates/nanai-core/src/shiori_protocol.rs:52` `p.sender.unwrap_or_else(|| "Nanai".to_string()),`
 - `src-tauri/src/commands/shiori/protocol.rs:121` `req.sender = "NanaiMascot".to_string();`
-- `src-tauri/src/commands/shiori/protocol.rs:134` `req.sender = "NanaiMascot".to_string();`
-- `src-tauri/src/commands/shiori/protocol.rs:150` `req.sender = "NanaiMascot".to_string();`
-- `src-tauri/src/commands/shiori/protocol.rs:193` `req.sender = "NanaiMascot".to_string();`

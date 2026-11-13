@@ -2,7 +2,7 @@
 
 - **規格**: [introduction_descriptbrace.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/descript-brace/introduction_descriptbrace/) (ukadoc-spec/descript/shell-surfaces/descript-brace/introduction_descriptbrace.md)
 - **検索語**: descript
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@
 
 ## 実装箇所
 
-- `src-tauri/src/tray.rs:85` `let descript_path = ghost_master_dir.join("descript.txt");`
-- `src-tauri/src/commands/ext.rs:31` `let desc_path = path.join("descript.txt");`
-- `src-tauri/src/commands/ext.rs:96` `let desc_path = path.join("descript.txt");`
-- `src-tauri/src/commands/install/archive/packaging.rs:141` `ghost_dir.join("descript.txt"),`
-- `src-tauri/src/commands/install/archive/packaging.rs:155` `assert!(zip.by_name("ghost/master/descript.txt").is_ok());`
+- `crates/nanai-surface/src/parser/tests.rs:8` `descript {\r\nversion,1\r\nmaxwidth,300\r\nanimation.sort,ascend\r\ncollision.so`
+- `src-tauri/src/tray.rs:123` `let descript_path = ghost_master_dir.join("descript.txt");`
+- `ui/ts/core/config.ts:22` `descriptTxt: "descript.txt",`
+- `ui/ts/ui/app-menu.ts:70` `const manifestDescript = (sm?.shellManifest?.descript || {}) as Record<`
+- `tests/balloon-cycle10-typography.test.ts:3` `import { applyGroupProperties } from "../ui/ts/core/actions/balloon-descript/fon`
+- `crates/nanai-surface/src/parser/helpers/blocks.rs:172` `if raw.strip_prefix("descript").is_some() {`

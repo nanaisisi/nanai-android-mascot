@@ -2,7 +2,7 @@
 
 - **規格**: [introduction_surfaces.txt.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/introduction_surfaces.txt/) (ukadoc-spec/descript/shell-surfaces/introduction_surfaces.txt.md)
 - **検索語**: surfaces.txt
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@
 
 ## 実装箇所
 
+- `crates/nanai-core/src/surfaces_parser.rs:1` `//! `surfaces.txt` (UKADOC / SSP 仕様準拠) 高速パーサーモジュール`
 - `src-tauri/src/commands/shell/mod.rs:3` `//! ukadoc-spec のシェル定義（descript.txt / surfaces.txt / surfacetable.txt）`
-- `crates/ui/src/app.rs:51` `extract_filename("assets/ghost/mock_nanai/surfaces.txt"),`
-- `crates/ui/src/app.rs:52` `"surfaces.txt"`
-- `crates/ui/src/app.rs:54` `assert_eq!(extract_filename("surfaces.txt"), "surfaces.txt");`
-- `crates/ui/src/manifest.rs:20` `/// `surfaces.txt`の`name,` / surfacetable の表示名（無ければ None）`
+- `ui/ts/core/config.ts:21` `surfacesTxt: "surfaces.txt",`
+- `ui/ts/ui/spec-compliance-runner.ts:527` `"surfaces.txt ➔ surfaceCollisionMethods.resolveSurfaceNumber ➔ Scope-Isolated Su`
+- `tests/parser-fuzzing/cycle10-syntax-fuzzing.test.ts:17` `test("Parser Fuzzing Cycle 10: surfaces.txt compound intervals, bracketed surfac`
+- `crates/nanai-core/src/surfaces_parser.rs:63` `/// `surfaces.txt` のテキスト文字列を高速に構造化パース`

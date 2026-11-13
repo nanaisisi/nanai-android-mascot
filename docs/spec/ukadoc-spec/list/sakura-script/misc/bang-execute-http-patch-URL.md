@@ -2,7 +2,7 @@
 
 - **規格**: [bang-execute-http-patch-URL.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/misc/bang-execute-http-patch-URL/) (ukadoc-spec/list/sakura-script/misc/bang-execute-http-patch-URL.md)
 - **検索語**: Command
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@
 
 ## 実装箇所
 
-- `src-tauri/build.rs:24` `let status = std::process::Command::new(std::env::var("CARGO").unwrap_or("cargo"`
-- `src-tauri/shiori-host/src/main.rs:228` `let status = std::process::Command::new("rustc")`
-- `src-tauri/src/shiori/dynamic/host.rs:64` `use std::process::{Command, Stdio};`
-- `src-tauri/src/shiori/dynamic/host.rs:68` `let mut child = Command::new(exe)`
 - `crates/ui/src/script/command.rs:169` `Command {`
+- `src-tauri/build.rs:25` `let status = std::process::Command::new(std::env::var("CARGO").unwrap_or("cargo"`
+- `ui/ts/core/actions/sstp-fmo-actions.ts:232` `lines.push(`Command: ${payload.command}`);`
+- `tests/command-handler-boost.test.ts:18` `describe("Command Handler Plugins & Desktop Coverage", () => {`
+- `crates/ui/src/script/ast/builder.rs:26` `children: vec![SakuraAstNode::Command(SakuraCommand::Text(text.clone()))],`
+- `src-tauri/build.rs:69` `let sysroot_output = std::process::Command::new("xcrun")`

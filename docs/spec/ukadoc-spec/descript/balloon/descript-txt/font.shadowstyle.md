@@ -2,7 +2,7 @@
 
 - **規格**: [font.shadowstyle.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/font.shadowstyle.md)
 - **検索語**: font.shadowstyle
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -11,7 +11,8 @@
 ## 実装箇所
 
 - `ui/ts/core/actions/balloon-descript/font/base.ts:89` `if (props["font.shadowstyle"]) {`
+- `tests/balloon-cycle9-robustness.test.ts:50` `it("maps outline font.shadowstyle to CSS text-shadow outline rules", () => {`
 - `ui/ts/core/actions/balloon-descript/font/base.ts:90` `const shadowStyle = String(props["font.shadowstyle"]).trim();`
+- `tests/balloon-cycle9-robustness.test.ts:62` `"font.shadowstyle": "outline",`
 - `ui/ts/core/actions/balloon-descript/font/group.ts:6` `*  anchor.font.shadowstyle, anchor.pen.color.r/g/b, anchor.brush.color.r/g/b,`
-- `ui/ts/core/actions/balloon-descript/font/group.ts:14` `* [anchor.font.shadowstyle,影の形状]`
-- `ui/ts/core/actions/balloon-descript/font/group.ts:21` `* [anchor.visited.font.shadowstyle,影の形状]`
+- `tests/balloon-cycle9-robustness.test.ts:81` `it("maps underline font.shadowstyle to CSS bottom shadow rules", () => {`

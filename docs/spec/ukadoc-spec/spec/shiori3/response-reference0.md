@@ -2,7 +2,7 @@
 
 - **規格**: [response.md](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/response/) (ukadoc-spec/spec/shiori3/response.md)
 - **検索語**: reference0
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -16,8 +16,9 @@ Rust 通信層として `crates/ui/src/shiori.rs`（SHIORI/3.0 リクエスト/�
 
 ## 実装箇所
 
+- `crates/ui/src/shiori/protocol/response/build.rs:50` `if let Some(r0) = &self.reference0 {`
 - `src-tauri/src/sstp/types.rs:45` `pub reference0: Option<String>,`
+- `ui/ts/core/actions/sstp-fmo-actions.ts:40` `reference0?: string;`
+- `tests/e2e/cycle10-lifecycle.test.ts:52` `assert.equal(parsed.reference0, "Success");`
+- `crates/ui/src/shiori/protocol/response/build.rs:85` `res.reference0 = Some("Ref0Val".into());`
 - `src-tauri/src/sstp/handler/request_processor.rs:35` `reference0: None,`
-- `src-tauri/src/sstp/handler/request_processor.rs:49` `reference0: None,`
-- `src-tauri/src/sstp/handler/request_processor.rs:62` `reference0: None,`
-- `src-tauri/src/sstp/handler/request_processor.rs:78` `reference0: None,`

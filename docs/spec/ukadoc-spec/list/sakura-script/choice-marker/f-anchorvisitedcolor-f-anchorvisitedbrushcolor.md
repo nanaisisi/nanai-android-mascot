@@ -2,7 +2,7 @@
 
 - **規格**: [f-anchorvisitedcolor-f-anchorvisitedbrushcolor.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/choice-marker/f-anchorvisitedcolor-f-anchorvisitedbrushcolor/) (ukadoc-spec/list/sakura-script/choice-marker/f-anchorvisitedcolor-f-anchorvisitedbrushcolor.md)
 - **検索語**: \f
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@
 
 ## 実装箇所
 
+- `crates/nanai-core/src/sakura_script.rs:31` `/// フォント設定 (\f[bold,true], \f[color,r,g,b], \f[height,12] 等 - UKADOC仕様準拠)`
 - `src-tauri/src/common/paths.rs:180` `clean_verbatim_path(r"\\?\C:\path\to\file"),`
+- `ui/ts/ghost/parser/tag/text-format.ts:3` `* @brief 改行・クリア・ポーズ・描画速度・フォントタグのトークナイズ処理 (\n, \c, \x, \_q, \f)`
+- `tests/tag-tokenizer.test.ts:155` `// \f[bold,1], \f[default]`
+- `crates/nanai-core/src/sakura_script.rs:356` `let script = "\\f[color,255,128,0]赤文字\\f[default]";`
 - `src-tauri/src/common/paths.rs:181` `r"C:\path\to\file"`
-- `crates/ui/src/script/command.rs:92` `}, // \f[tag,param], \f[tag]`
-- `crates/ui/src/script/parser/executor.rs:66` `// \f[tag,param] または \f[tag]`
-- `crates/ui/src/script/parser/tests.rs:16` `let script = "\\0\\h\\1\\u\\p[2]\\px\\s[10]\\sx\\w5\\wx\\x\\_w[10]\\b[1]\\bx\\f[`

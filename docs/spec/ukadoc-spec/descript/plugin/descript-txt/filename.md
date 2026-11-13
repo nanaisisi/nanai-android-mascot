@@ -2,7 +2,7 @@
 
 - **規格**: [filename.md](https://ukatech.shillest.net/ukadoc-spec/descript/plugin/descript-txt/) (ukadoc-spec/descript/plugin/descript-txt/filename.md)
 - **検索語**: filename
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@
 
 ## 実装箇所
 
+- `crates/nanai-core/src/balloon_descript.rs:94` `self.get("arrow.filename")`
 - `src-tauri/src/ghost/scan/shell/theme.rs:43` `.get("menu.background.bitmap.filename")`
-- `src-tauri/src/ghost/scan/shell/theme.rs:46` `.get("menu.foreground.bitmap.filename")`
-- `src-tauri/src/ghost/scan/shell/theme.rs:49` `.get("menu.sidebar.bitmap.filename")`
-- `crates/ui/src/script/command.rs:123` `filename: String,`
-- `crates/ui/src/script/command.rs:138` `filename: String,`
+- `ui/ts/core/actions/balloon-descript/assets.ts:119` `const filename = p[propName];`
+- `ui/ts/ui/spec-compliance-runner.ts:393` `"font.name / font.height / arrow.filename / recommended.ghost";`
+- `tests/core-actions.test.ts:46` `"arrow.filename": "",`
+- `crates/nanai-core/src/balloon_descript.rs:99` `self.get("marker.filename")`

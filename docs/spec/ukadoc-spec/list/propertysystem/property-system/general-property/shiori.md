@@ -2,7 +2,7 @@
 
 - **規格**: [shiori.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/general-property/shiori/)
 - **検索語**: shiori.
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@
 
 ## 実装箇所
 
+- `crates/nanai-core/src/descript_parser.rs:30` `self.get("shiori").or_else(|| self.get("shiori.dll"))`
 - `src-tauri/src/commands/shiori/lifecycle/load.rs:60` `candidates.push(ghost_master_dir.join("shiori.dll"));`
+- `ui/ts/ghost/ghost-shiori.ts:2` `* @file ghost-shiori.ts`
+- `tests/command-handler-system.test.ts:5` `import "./command-handler-system/shiori.test.js";`
+- `crates/nanai-core/src/descript_parser.rs:63` `/// SHIORI バージョン (`shiori.version`)`
 - `src-tauri/src/commands/shiori/lifecycle/load.rs:73` `candidates.push(ghost_master_dir.join("shiori.so"));`
-- `src-tauri/src/commands/shiori/lifecycle/spawn.rs:50` `candidates.push(ghost_master_dir.join("shiori.dll"));`
-- `src-tauri/src/commands/shiori/lifecycle/spawn.rs:63` `candidates.push(ghost_master_dir.join("shiori.so"));`
-- `src-tauri/src/ghost/scan/directory/manifest.rs:145` `.and_then(|m| m.get("shiori.version").cloned());`

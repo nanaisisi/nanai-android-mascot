@@ -2,7 +2,7 @@
 
 - **規格**: [bang-bind-noevent.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/surface/bang-bind-noevent/) (ukadoc-spec/list/sakura-script/surface/bang-bind-noevent.md)
 - **検索語**: Bind
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@
 
 ## 実装箇所
 
+- `crates/nanai-surface/src/types/draw/interval.rs:32` `Bind,`
 - `src-tauri/src/commands/shell/manifest.rs:121` `DrawMethod::Add | DrawMethod::Bind => "add".to_string(),`
-- `crates/ui/src/animation/timeline.rs:103` `| Interval::Bind`
-- `crates/ui/src/animation/scheduler/triggers.rs:80` `Interval::Bind => {`
-- `crates/ui/src/animation/scheduler/triggers.rs:190` `Some(Interval::Bind) => {`
-- `crates/ui/src/animation/tests/active_animation.rs:180` `Interval::Bind,`
+- `ui/ts/ghost/sakura-rust-bridge.ts:113` `case "Bind":`
+- `tests/sakura-rust-bridge.test.ts:24` `type: "Bind",`
+- `crates/nanai-surface/src/types/draw/interval.rs:79` `"bind" => return Self::Bind,`
+- `tests/sakura-rust-bridge.test.ts:28` `type: "Bind",`

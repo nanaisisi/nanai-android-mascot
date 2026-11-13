@@ -2,7 +2,7 @@
 
 - **規格**: [mouseup-star.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/cursor-brace/mouseup-star/) (ukadoc-spec/descript/shell-surfaces/cursor-brace/mouseup-star.md)
 - **検索語**: mouseup
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@ ui/js/surface/surface-load.js の loadSurfacesTxt において surfaces.txt フ�
 
 ## 実装箇所
 
-- `crates/ui/src/surfaces/parser/helpers/lines.rs:86` `let event = if raw_event.starts_with("mouseup") {`
-- `crates/ui/src/surfaces/parser/helpers/lines.rs:87` `"mouseup"`
-- `crates/ui/src/surfaces/tests/parser_tests/syntax_blocks/points_ui.rs:84` `assert_eq!(txt.get_cursor("0", "mouseup", "Head"), Some("system:hand"));`
-- `crates/ui/src/tests/surfaces.rs:31` `mouseup,Head,system:hand`
-- `crates/ui/src/tests/surfaces.rs:42` `txt.get_cursor("sakura", "mouseup", "Head"),`
+- `crates/nanai-surface/src/parser/helpers/lines.rs:86` `let event = if raw_event.starts_with("mouseup") {`
+- `ui/ts/core/internal-window-manager.ts:294` `globalThis.removeEventListener("mouseup", onUp);`
+- `tests/balloon-drag.test.ts:98` `globalListeners.mouseup?.();`
+- `crates/nanai-surface/src/parser/helpers/lines.rs:87` `"mouseup"`
+- `ui/ts/core/internal-window-manager.ts:302` `globalThis.addEventListener("mouseup", onUp);`
+- `tests/balloon-window.test.ts:40` `balloonBox.mouseup();`

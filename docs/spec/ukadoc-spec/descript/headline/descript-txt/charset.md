@@ -2,7 +2,7 @@
 
 - **規格**: [charset.md](https://ukatech.shillest.net/ukadoc-spec/descript/headline/descript-txt/) (ukadoc-spec/descript/headline/descript-txt/charset.md)
 - **検索語**: charset
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@
 
 ## 実装箇所
 
+- `crates/nanai-core/src/descript_parser.rs:44` `pub fn charset(&self) -> Option<&str> {`
 - `src-tauri/src/commands/ext.rs:49` `let _readme_cs = map.get("readme.charset");`
-- `src-tauri/src/commands/ext.rs:50` `let _cs = map.get("charset");`
-- `src-tauri/src/commands/ext.rs:118` `let _readme_cs = map.get("readme.charset");`
-- `src-tauri/src/commands/ext.rs:119` `let _cs = map.get("charset");`
-- `src-tauri/src/commands/install/utils.rs:22` `if lower.contains("charset,shift_jis") || lower.contains("charset,sjis") {`
+- `ui/assets/LICENSE-3RD-PARTY.html:4` `<meta charset="UTF-8">`
+- `ui/balloon.html:4` `<meta charset="UTF-8" />`
+- `tests/core-coverage-boost/balloon-descript-coverage.test.ts:111` `"readme.charset": "UTF-8",`
+- `crates/nanai-core/src/descript_parser.rs:45` `self.get("charset")`

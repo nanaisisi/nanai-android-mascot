@@ -2,7 +2,7 @@
 
 - **規格**: [introduction_install.txt.md](https://ukatech.shillest.net/ukadoc-spec/descript/install/install-txt/) (ukadoc-spec/descript/install/install-txt/introduction_install.txt.md)
 - **検索語**: install.txt
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -14,8 +14,9 @@
 
 ## 実装箇所
 
+- `crates/ui/src/tests/vfs_files.rs:11` `"/../../assets/ghost/mock_nanai/install.txt"`
 - `src-tauri/src/commands/install/archive/packaging.rs:132` `source_dir.join("install.txt"),`
+- `ui/ts/ui/templates/ghost-templates.ts:97` `<li><strong>install.txt 自動解析:</strong> ゴースト名・ディレクトリ設定を自動認識</li>`
+- `tests/install-protocol/install-error.test.ts:11` `parseInstallErrorReason("invalid type: install.txt type=unknown"),`
+- `crates/ui/src/update/engine.rs:7` `/// アーカイブ内の install.txt をパースして InstallManifest を生成`
 - `src-tauri/src/commands/install/archive/packaging.rs:153` `assert!(zip.by_name("install.txt").is_ok());`
-- `src-tauri/src/commands/install/archive/postprocess.rs:82` `target_dir.join("install.txt"),`
-- `src-tauri/src/commands/install/archive/inspection/analyzer/resource_resolver.rs:4` `/// install.txt の規約に従い、同梱リソース (balloon, headline, plugin, shell, calendar.skin, `
-- `src-tauri/src/commands/install/archive/inspection/analyzer/zip_inspector.rs:22` `if lower == "install.txt" || lower.ends_with("/install.txt") {`

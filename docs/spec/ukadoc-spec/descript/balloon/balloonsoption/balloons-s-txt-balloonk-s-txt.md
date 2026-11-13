@@ -2,7 +2,7 @@
 
 - **規格**: [balloons-s-txt-balloonk-s-txt.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/balloonsoption/balloons-s-txt-balloonk-s-txt.md)
 - **検索語**: balloons
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@
 
 ## 実装箇所
 
+- `crates/nanai-core/src/sakura_player.rs:51` `balloons: std::collections::BTreeMap<u32, i32>,`
 - `src-tauri/src/commands/shell/balloon.rs:16` `let mut balloons = Vec::new();`
-- `src-tauri/src/commands/shell/balloon.rs:63` `balloons.push(BalloonInfo {`
-- `src-tauri/src/commands/shell/balloon.rs:77` `for b in balloons {`
-- `src-tauri/src/commands/shell/balloon.rs:112` `let prefix = if sid == 1 { "balloonk" } else { "balloons" };`
 - `ui/ts/core/actions/balloon-theme.ts:177` `const balloons = await invoke("scan_balloons");`
+- `ui/ts/ui/app-menu.ts:140` `"sync-balloons",`
+- `tests/context-menu.test.ts:146` `await tauriListeners["sync-balloons"]?.({ payload: [{ name: "default" }] });`
+- `crates/nanai-core/src/sakura_player.rs:66` `balloons: std::collections::BTreeMap::new(),`

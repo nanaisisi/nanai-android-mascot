@@ -2,7 +2,7 @@
 
 - **規格**: [response.md](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/response/) (ukadoc-spec/spec/shiori3/response.md)
 - **検索語**: references
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -16,8 +16,9 @@ Rust 通信層として `crates/ui/src/shiori.rs`（SHIORI/3.0 リクエスト/�
 
 ## 実装箇所
 
+- `crates/nanai-core/src/shiori_protocol.rs:40` `references: &[String],`
 - `src-tauri/src/commands/ext.rs:145` `pub references: Vec<String>,`
-- `src-tauri/src/commands/shiori/protocol.rs:99` `references: Option<Vec<String>>,`
-- `src-tauri/src/commands/shiori/protocol.rs:102` `let mut req = ShioriRequest::get(&event, &references.unwrap_or_default());`
-- `src-tauri/src/commands/shiori/protocol.rs:117` `references: Option<Vec<String>>,`
-- `src-tauri/src/commands/shiori/protocol.rs:120` `let mut req = ShioriRequest::notify(&event, &references.unwrap_or_default());`
+- `ui/assets/LICENSE-3RD-PARTY.html:9603` `any references to the name of the license steward (except to note that`
+- `ui/ts/ui/renderers/modal-dialog-communication.ts:81` `...opts.references,`
+- `tests/balloon-events.test.ts:8` `const sentEvents: Array<{ event: string; references: string[] }> = [];`
+- `crates/nanai-core/src/shiori_protocol.rs:68` `for (i, r) in references.iter().enumerate() {`

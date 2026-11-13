@@ -4,18 +4,18 @@
 
 | 規格 (ukadoc-spec / ukadoc-ssp 層 + 1階層) | ✅ 実装済 | ⚠️ 一部対応 | ❌ 未実装 | ❓ 未確認 | 合計 |
 | :--- | --------: | ----------: | --------: | --------: | ---: |
-| ukadoc-spec/descript                 |       232 |         260 |        71 |         0 |  563 |
-| ukadoc-spec/dev                      |         1 |           5 |         1 |         0 |    7 |
-| ukadoc-spec/list                     |       338 |         646 |       275 |         1 | 1260 |
+| ukadoc-spec/descript                 |       349 |         143 |        71 |         0 |  563 |
+| ukadoc-spec/dev                      |         5 |           1 |         1 |         0 |    7 |
+| ukadoc-spec/list                     |       575 |         410 |       274 |         1 | 1260 |
 | ukadoc-spec/manual                   |        35 |           0 |        31 |         0 |   66 |
 | ukadoc-spec/memo                     |         2 |           0 |         1 |         0 |    3 |
-| ukadoc-spec/spec                     |        21 |          39 |        55 |         0 |  115 |
-| ukadoc-ssp/about                     |         1 |           2 |         2 |         0 |    5 |
-| ukadoc-ssp/config                    |         4 |           6 |         7 |         0 |   17 |
+| ukadoc-spec/spec                     |        36 |          24 |        55 |         0 |  115 |
+| ukadoc-ssp/about                     |         3 |           0 |         2 |         0 |    5 |
+| ukadoc-ssp/config                    |         6 |           4 |         7 |         0 |   17 |
 | ukadoc-ssp/dev                       |         1 |           0 |         4 |         0 |    5 |
-| ukadoc-ssp/functions                 |         4 |          11 |         2 |         0 |   17 |
-| ukadoc-ssp/howto                     |         2 |           3 |         2 |         0 |    7 |
-| **合計** |       641 |         972 |       451 |         1 | 2065 |
+| ukadoc-ssp/functions                 |        10 |           5 |         2 |         0 |   17 |
+| ukadoc-ssp/howto                     |         5 |           0 |         2 |         0 |    7 |
+| **合計** |      1027 |         587 |       450 |         1 | 2065 |
 
 ## 注意
 

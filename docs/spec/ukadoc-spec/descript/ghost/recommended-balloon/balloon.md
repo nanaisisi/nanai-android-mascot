@@ -2,7 +2,7 @@
 
 - **規格**: [balloon.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/recommended-balloon/balloon/) (ukadoc-spec/descript/ghost/recommended-balloon/balloon.md)
 - **検索語**: balloon
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@
 
 ## 実装箇所
 
+- `crates/nanai-core/src/install_protocol.rs:8` `"balloon",`
 - `src-tauri/src/commands/install/utils.rs:97` `.map_err(|e| format!("Failed to inspect balloon directory: {e}"))?`
-- `src-tauri/src/commands/install/utils.rs:102` `let wrapper = if target_dir.join("balloon").is_dir() {`
-- `src-tauri/src/commands/install/utils.rs:103` `Some(target_dir.join("balloon"))`
-- `src-tauri/src/commands/install/utils.rs:115` `.map_err(|e| format!("Failed to inspect balloon wrapper: {e}"))?`
-- `src-tauri/src/commands/install/utils.rs:123` `.ok_or_else(|| "Invalid balloon archive entry".to_string())?,`
+- `ui/main.ts:294` `balloonDisplay: "balloon-display",`
+- `ui/balloon.html:8` `<link rel="stylesheet" href="css/balloon-theme.css" />`
+- `tests/app-actions.test.ts:18` `test("actionMethods.handleMenuAction covers all branches including Tauri folder `
+- `crates/nanai-core/src/install_protocol.rs:209` `assert_eq!(normalize_install_type(Some(" Balloon ")), "balloon");`

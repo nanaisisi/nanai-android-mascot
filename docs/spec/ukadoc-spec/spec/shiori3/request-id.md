@@ -2,7 +2,7 @@
 
 - **規格**: [request.md](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/request/) (ukadoc-spec/spec/shiori3/request.md)
 - **検索語**: ID:
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -16,8 +16,9 @@ Rust 通信層として `crates/ui/src/shiori.rs`（SHIORI/3.0 リクエスト/�
 
 ## 実装箇所
 
+- `crates/nanai-core/src/shiori_protocol.rs:384` `assert!(notify.contains("ID: OnTestEvent"));`
 - `src-tauri/src/commands/shiori/protocol.rs:60` `let noisy = request.contains("ID: OnSecondChange");`
+- `ui/ts/core/actions/sstp-fmo-actions.ts:244` `lines.push(`ID: ${payload.id}`);`
+- `tests/shiori-worker.test.ts:67` `payload: { request: "GET SHIORI/3.0\r\nID: OnBoot\r\n\r\n" },`
+- `crates/nanai-core/src/shiori_protocol.rs:406` `assert!(req.contains("ID: OnFirstBoot"));`
 - `src-tauri/src/sstp/mod.rs:46` `let raw = "SEND SSTP/1.4\r\nSender: TestApp\r\nID: unique_id_01\r\nOption: nobre`
-- `crates/nanai-shiori-vm/src/lib.rs:32` `if request.contains("ID: version") {`
-- `crates/nanai-shiori-vm/src/lib.rs:36` `if request.contains("ID: name") {`
-- `crates/nanai-shiori-vm/src/lib.rs:40` `if request.contains("ID: OnBoot") {`

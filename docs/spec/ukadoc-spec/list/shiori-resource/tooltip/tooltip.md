@@ -2,7 +2,7 @@
 
 - **規格**: [tooltip.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/tooltip/tooltip/) (ukadoc-spec/list/shiori-resource/tooltip/tooltip.md)
 - **検索語**: tooltip
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@
 
 ## 実装箇所
 
-- `src-tauri/src/tray.rs:33` `.tooltip("Nanai Android Mascot")`
-- `src-tauri/src/shiori/property/evaluator/static_rules.rs:32` `"balloon_tooltip" | "tooltip" => "",`
 - `crates/ui/src/surfaces/tests/parser_tests/syntax_blocks/surface_alias.rs:85` `Head,Head tooltip`
+- `src-tauri/src/tray.rs:33` `.tooltip("Nanai Android Mascot")`
+- `ui/ts/surface/surface-collision.ts:311` `const tooltip = lowerMap.get(colLower);`
+- `ui/windows/tauri-desktop.conf.json:169` `"tooltip": "Nanai Android Mascot Desktop"`
+- `tests/touch/motion/snap.test.ts:77` `it("formats SSP snap tooltip text correctly for Monitor and Character", () => {`
 - `crates/ui/src/surfaces/tests/parser_tests/syntax_blocks/surface_alias.rs:90` `assert_eq!(parsed_char.tooltips["char2"]["Head"], "Head tooltip");`
-- `ui/ts/surface/surface-collision.ts:257` `const tooltip = lowerMap.get(colLower);`

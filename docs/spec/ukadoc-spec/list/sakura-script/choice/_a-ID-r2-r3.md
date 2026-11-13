@@ -2,7 +2,7 @@
 
 - **規格**: [_a-ID-r2-r3.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/choice/_a-ID-r2-r3/) (ukadoc-spec/list/sakura-script/choice/_a-ID-r2-r3.md)
 - **検索語**: \_a
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/command.rs:42` `}, // \_a[id,r2,...]text\_a`
-- `crates/ui/src/script/ast/types/node.rs:17` `/// アンカー（\\_a[...]...\\_a）ブロック`
-- `crates/ui/src/script/parser/executor.rs:56` `// \_w / \_q / \_a / \_s / \_l / \_! / \_\_v / \_\_q`
-- `crates/ui/src/script/parser/tests.rs:82` `\\_a[id1,anchor text]\\_a\`
-- `crates/ui/src/script/parser/brackets/mod.rs:148` `let mut chars = "a[anchor1]text\\_a".chars().peekable();`
+- `crates/nanai-core/src/sakura_player.rs:30` `/// アンカー (\_a[id]title\_a)`
+- `ui/ts/ghost/balloon-window/interactive.ts:8` `* 選択肢ボタン (\q) およびアンカーリンク (\_a) のクリックイベントを設定`
+- `ui/css/mascot.css:329` `/* バルーン内のアンカーリンク (\_a) */`
+- `tests/sakura-ast.test.ts:20` `const script = "\\0\\s[0]Hello!\\_a[id1,arg1]Link\\_a\\1\\s[10]Kero!\\e";`
+- `crates/nanai-core/src/sakura_script.rs:29` `/// アンカー (\_a[id]title\_a)`
+- `ui/ts/ghost/balloon-window/interactive.ts:32` `// アンカーリンク (\_a)`

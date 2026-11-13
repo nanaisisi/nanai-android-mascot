@@ -2,7 +2,7 @@
 
 - **規格**: [font.color.r.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/font.color.r.md)
 - **検索語**: font.color.r
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@
 
 ## 実装箇所
 
+- `crates/nanai-core/src/descript_parser.rs:126` `/// バルーンフォントカラー (RGB) (`font.color.r`, `font.color.g`, `font.color.b`)`
 - `src-tauri/src/shiori/property/tests.rs:130` `assert_eq!(evaluate_property_query("menu.background.font.color.r"), "0");`
-- `src-tauri/src/shiori/property/tests.rs:132` `evaluate_property_query("menu.foreground.font.color.r"),`
-- `src-tauri/src/shiori/property/tests.rs:135` `assert_eq!(evaluate_property_query("menu.disable.font.color.r"), "128");`
-- `src-tauri/src/shiori/property/evaluator/static_rules.rs:80` `"menu.background.font.color.r" => "0",`
-- `src-tauri/src/shiori/property/evaluator/static_rules.rs:83` `"menu.foreground.font.color.r" => "255",`
+- `ui/ts/core/actions/balloon-descript/font/group.ts:5` `* UKADOC仕様 (anchor.style, anchor.blendmethod, anchor.font.color.r/g/b, anchor.fo`
+- `ui/ts/ui/spec-compliance-runner.ts:404` `"font.color.r": "32",`
+- `tests/balloon-cycle9-robustness.test.ts:16` `"font.color.r": "300",`
+- `crates/nanai-core/src/descript_parser.rs:128` `let r = self.get("font.color.r").and_then(|v| v.parse::<u8>().ok());`

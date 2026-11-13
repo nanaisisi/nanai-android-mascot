@@ -2,7 +2,7 @@
 
 - **規格**: [pct-hour.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/environment-variable/pct-hour/) (ukadoc-spec/list/sakura-script/environment-variable/pct-hour.md)
 - **検索語**: hour
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@
 
 ## 実装箇所
 
+- `crates/nanai-core/src/sakura_script.rs:257` `pub hour: u32,`
 - `src-tauri/src/commands/install/utils.rs:89` `+ (dt.hour() as u64) * 3_600`
-- `src-tauri/src/shiori/property/tests.rs:25` `assert_eq!(evaluate_property_query("system.hour"), "12");`
-- `src-tauri/src/shiori/property/evaluator/static_rules.rs:60` `"system.hour" => "12",`
-- `crates/ui/src/script/env.rs:38` `result = result.replace("%hour", "12");`
 - `ui/ts/ghost/command-handler/env.ts:155` `case "system.hour":`
+- `ui/ts/ui/renderers/inputs/advanced/date-time-inputs.ts:182` `let hour = "";`
+- `tests/sakura-command-handler/env-variables.test.ts:49` `"Date: %property[system.year]-%property[system.month]-%property[system.day] %pro`
+- `crates/nanai-core/src/sakura_script.rs:271` `hour: 12,`

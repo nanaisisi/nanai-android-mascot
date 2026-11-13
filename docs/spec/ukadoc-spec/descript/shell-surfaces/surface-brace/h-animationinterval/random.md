@@ -2,13 +2,14 @@
 
 - **規格**: [random.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/random/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/random.md)
 - **検索語**: random
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 
 ## 実装箇所
 
-- `crates/ui/src/animation/tests/active_animation.rs:10` `assert_eq!(Interval::parse("random,0").fire_per_second(), Some(1.0));`
-- `crates/ui/src/animation/tests/active_animation.rs:145` `assert_eq!(Interval::parse("random,abc"), Interval::Random(10));`
-- `crates/ui/src/animation/tests/active_animation.rs:166` `let random = Interval::Random(5);`
-- `crates/ui/src/animation/tests/active_animation.rs:167` `assert!(!random.should_fire(100, 0.99));`
-- `crates/ui/src/animation/tests/timeline.rs:50` `assert_eq!(Interval::parse("random,5").fire_per_second(), Some(0.2));`
+- `crates/nanai-surface/src/types/draw/interval.rs:65` `"random" => {`
+- `ui/assets/LICENSE-3RD-PARTY.html:4705` `<li><a href="https://github.com/rust-random/getrandom" target="_blank" rel="noop`
+- `tests/shell-manifest.test.ts:19` `assert.equal(enumToString({ Random: 3 }), "random,3");`
+- `crates/nanai-surface/src/types/draw/interval.rs:102` `"random" => Self::Random(param.and_then(|p| p.parse().ok()).unwrap_or(10)),`
+- `ui/assets/LICENSE-3RD-PARTY.html:4707` `<pre class="license-text">Copyright (c) 2018-2025 The rust-random Project Develo`
+- `tests/parser-fuzzing/cycle10-syntax-fuzzing.test.ts:23` `0pattern1,bind+random,5,10,0,0`

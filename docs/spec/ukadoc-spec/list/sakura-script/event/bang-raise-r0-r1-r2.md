@@ -2,7 +2,7 @@
 
 - **規格**: [bang-raise-r0-r1-r2.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/event/bang-raise-r0-r1-r2/) (ukadoc-spec/list/sakura-script/event/bang-raise-r0-r1-r2.md)
 - **検索語**: \!
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@ ui/js/ghost/sakura-parser.js / sakura-command-handler.js で処理: \![raise,Eve
 
 ## 実装箇所
 
-- `src-tauri/src/commands/calendar.rs:2` `//! [calendar/index.md], [calendar/schedule.md], [calendar/menu.md], [\![open,ca`
-- `src-tauri/src/commands/shiori/lifecycle/load.rs:130` `/// ゴーストの SHIORI を再読み込み (`\![reload,shiori]` 対応)`
 - `crates/ui/src/animation/scheduler/events.rs:24` `/// X方向動的オフセット (\![anim,offset,ID,x,y])`
+- `src-tauri/src/commands/calendar.rs:2` `//! [calendar/index.md], [calendar/schedule.md], [calendar/menu.md], [\![open,ca`
+- `ui/ts/core/actions/update-protocol.ts:28` `* 定義: manual (手動), auto (定期/タイマー自動), script (さくらスクリプト \![update] による実行)`
+- `ui/ts/ui/spec-compliance-runner.ts:712` `const specName = "\\![open,dialog,color] / terms UIフォーム & コールバック";`
+- `tests/install-update-protocol.test.ts:67` `"\\![reload,plugin]",`
 - `crates/ui/src/animation/scheduler/events.rs:27` `/// Y方向動的オフセット (\![anim,offset,ID,x,y])`
-- `crates/ui/src/animation/scheduler/state.rs:125` `/// 指定アニメーションを単独で停止 (\![anim,stop,ID] / \![anim,clear,ID])`

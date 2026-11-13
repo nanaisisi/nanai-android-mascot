@@ -2,7 +2,7 @@
 
 - **規格**: [refresh.md](https://ukatech.shillest.net/ukadoc-spec/descript/install/install-txt/) (ukadoc-spec/descript/install/install-txt/refresh.md)
 - **検索語**: refresh
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@
 
 ## 実装箇所
 
+- `crates/ui/src/update/engine.rs:21` `if !manifest.refresh {`
 - `src-tauri/src/commands/install/archive/mod.rs:36` `if inspection.refresh {`
+- `ui/ts/ui/modal-explorer.ts:101` `?.querySelector("#explorer-refresh-btn")`
+- `tests/modal-explorer.test.ts:114` `const refreshBtn = getEl("explorer-refresh-btn");`
+- `crates/ui/src/update/types.rs:233` `pub refresh: bool,`
 - `src-tauri/src/commands/install/archive/mod.rs:38` `"🧹 Performing refresh cleanup on target_dir: {:?} (masks: {:?})",`
-- `src-tauri/src/commands/install/archive/mod.rs:46` `if res_target.refresh && res_target.destination_dir.exists() {`
-- `src-tauri/src/commands/install/archive/mod.rs:48` `"🧹 Performing refresh cleanup on bundled resource dir: {:?} (masks: {:?})",`
-- `src-tauri/src/commands/install/archive/inspection/tests.rs:10` `map.insert("balloon.refresh".to_string(), "1".to_string());`

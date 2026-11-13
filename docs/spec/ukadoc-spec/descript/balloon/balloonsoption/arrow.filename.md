@@ -2,7 +2,7 @@
 
 - **規格**: [arrow.filename.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/balloonsoption/arrow.filename.md)
 - **検索語**: arrow.filename
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -11,7 +11,8 @@
 ## 実装箇所
 
 - `crates/nanai-core/src/balloon_descript.rs:92` `/// 吹き出しの矢印（しっぽ）画像ファイル名 (`arrow.filename`)`
-- `crates/nanai-core/src/balloon_descript.rs:94` `self.get("arrow.filename")`
-- `crates/nanai-core/src/balloon_descript.rs:161` `let content = "arrow.filename,arrow.png\nmarker.filename=marker.png\nclickwaitma`
+- `ui/ts/core/actions/balloon-descript/assets.ts:141` `// [arrow.filename,ファイル名]: UKADOC 準拠ベース名展開 (拡張子なし -> arrow0=上 / arrow1=下)`
 - `ui/css/balloon-window.css:216` `/* バルーンオプション画像 (arrow.filename, clickwaitmarker.filename 等) */`
-- `ui/css/balloon-window.css:221` `/* スクロール矢印 (arrow.filename: arrow0=上, arrow1=下) */`
+- `tests/core-actions.test.ts:46` `"arrow.filename": "",`
+- `crates/nanai-core/src/balloon_descript.rs:94` `self.get("arrow.filename")`
+- `ui/ts/core/actions/balloon-descript/assets.ts:146` `const defaultArrowBase = p["arrow.filename"]`

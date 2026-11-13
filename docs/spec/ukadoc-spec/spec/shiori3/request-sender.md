@@ -2,7 +2,7 @@
 
 - **規格**: [request.md](https://ukatech.shillest.net/ukadoc-spec/spec/shiori3/request/) (ukadoc-spec/spec/shiori3/request.md)
 - **検索語**: Sender
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -16,8 +16,9 @@ Rust 通信層として `crates/ui/src/shiori.rs`（SHIORI/3.0 リクエスト/�
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/saori.rs:148` `headers.insert("Sender".to_string(), "Nanai-SAORI-Host".to_string());`
+- `crates/nanai-core/src/shiori_protocol.rs:51` `"Sender".to_string(),`
+- `src-tauri/src/shiori/saori.rs:155` `headers.insert("Sender".to_string(), "Nanai-SAORI-Host".to_string());`
+- `ui/ts/core/actions/sstp-fmo-actions.ts:220` `lines.push(`Sender: ${payload.sender || "Unknown"}`);`
+- `tests/e2e/cycle10-lifecycle.test.ts:30` `assert.ok(rawRequest.includes("Sender: NanaiE2ECycle10\r\n"));`
+- `crates/nanai-core/src/shiori_protocol.rs:402` `assert!(req.contains("Sender: SSP"));`
 - `src-tauri/src/sstp/handler/request_processor.rs:25` `"📨 [SSTP/1.1] Method: {}, Sender: {}",`
-- `crates/ui/src/shiori/engine/tests/wasm_engine.rs:60` `assert!(res.contains("Sender: WasmShiori"));`
-- `crates/ui/src/shiori/protocol/request/builder.rs:12` `out.push_str(&format!("Sender: {}\r\n", self.sender));`
-- `crates/ui/src/shiori/protocol/response/build.rs:23` `out.push_str(&format!("Sender: {}\r\n", sender));`

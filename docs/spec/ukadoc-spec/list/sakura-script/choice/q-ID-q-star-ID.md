@@ -2,7 +2,7 @@
 
 - **規格**: [q-ID-q-star-ID.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/choice/q-ID-q-star-ID/) (ukadoc-spec/list/sakura-script/choice/q-ID-q-star-ID.md)
 - **検索語**: \q
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@
 
 ## 実装箇所
 
+- `crates/nanai-core/src/sakura_player.rs:24` `/// 選択肢 (\q[title,id])`
 - `src-tauri/src/shiori/headline.rs:115` `script.push_str(&format!("\\q[{},{}]\n", item.title, item.url));`
-- `crates/ui/src/script/command.rs:37` `}, // \q[label,id,r2,...]`
-- `crates/ui/src/script/ast/types/node.rs:24` `/// 選択肢（\\q[label,id,...]）ノード`
-- `crates/ui/src/script/parser/executor.rs:108` `// \q[テキスト,ID] / \q[temp,テキスト,ID]`
-- `crates/ui/src/script/parser/tests.rs:16` `let script = "\\0\\h\\1\\u\\p[2]\\px\\s[10]\\sx\\w5\\wx\\x\\_w[10]\\b[1]\\bx\\f[`
+- `ui/ts/ghost/balloon-window/interactive.ts:8` `* 選択肢ボタン (\q) およびアンカーリンク (\_a) のクリックイベントを設定`
+- `tests/sakura-ast.test.ts:89` `"\\0\\s[0]Hello \\_a[anchor1,r1]Documentation\\_a\\q[Click Here,choice1]\\1\\s[1`
+- `crates/nanai-core/src/sakura_script.rs:27` `/// 選択肢 (\q[title,id])`
+- `ui/ts/ghost/balloon-window/interactive.ts:18` `// 選択肢ボタン (\q)`

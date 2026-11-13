@@ -2,7 +2,7 @@
 
 - **規格**: [s-ID.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/surface/s-ID/) (ukadoc-spec/list/sakura-script/surface/s-ID.md)
 - **検索語**: Surface
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@
 
 ## 実装箇所
 
+- `crates/nanai-core/src/sakura_player.rs:106` `SakuraToken::Surface(s_id) => {`
 - `src-tauri/src/commands/file.rs:66` `shell_dir.join(format!("Surface{surface_id}.png")),`
-- `src-tauri/src/commands/file.rs:67` `shell_dir.join(format!("Surface{surface_id_num:04}.png")),`
-- `src-tauri/src/commands/file.rs:157` `"Surface image not found for surface_id: {surface_id} in shell: {shell_name}"`
-- `src-tauri/src/commands/file.rs:182` `shell_dir.join(format!("Surface{surface_id}.pna")),`
-- `src-tauri/src/commands/window/character_window.rs:233` `.ok_or_else(|| format!("Surface image not found for scope {}", scope_id))`
+- `ui/ts/core/actions/sstp-fmo-actions.ts:253` `lines.push(`Surface: ${payload.surface}`);`
+- `ui/ts/ui/spec-compliance-runner.ts:527` `"surfaces.txt ➔ surfaceCollisionMethods.resolveSurfaceNumber ➔ Scope-Isolated Su`
+- `tests/sakura-rust-bridge.test.ts:11` `{ type: "Surface", payload: 10 },`
+- `crates/nanai-core/src/sakura_script.rs:16` `Surface(i32),`

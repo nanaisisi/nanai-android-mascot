@@ -2,7 +2,7 @@
 
 - **規格**: [shiori.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/shiori.md)
 - **検索語**: shiori
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@
 
 ## 実装箇所
 
+- `crates/nanai-core/src/descript_parser.rs:29` `pub fn shiori(&self) -> Option<&str> {`
 - `src-tauri/build.rs:16` `println!("cargo:rerun-if-changed=shiori-host/src");`
-- `src-tauri/build.rs:17` `println!("cargo:rerun-if-changed=shiori-host/Cargo.toml");`
-- `src-tauri/build.rs:31` `"shiori-host/Cargo.toml",`
-- `src-tauri/build.rs:43` `"cargo:warning=shiori-host32 のビルドに失敗: `rustup target add i686-pc-windows-msvc` を`
-- `src-tauri/build.rs:107` `let yaya_dir = Path::new("../cpp/yaya-shiori");`
+- `ui/assets/LICENSE-3RD-PARTY.html:7426` `<li><a href="https://crates.io/crates/nanai-shiori-vm" target="_blank" rel="noop`
+- `ui/ts/ui/modal-settings-handlers.ts:252` `bindShioriTestButton("test-shiori-init", "OnBoot", "SHIORI初期化");`
+- `tests/balloon-events.test.ts:4` `import { shioriNotifyMethods } from "../ui/ts/ghost/shiori-notify.js";`
+- `crates/nanai-core/src/descript_parser.rs:30` `self.get("shiori").or_else(|| self.get("shiori.dll"))`

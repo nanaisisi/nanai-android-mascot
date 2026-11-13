@@ -2,7 +2,7 @@
 
 - **規格**: [OnBoot.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/boot-close-change/OnBoot/) (ukadoc-spec/list/shiori-event/boot-close-change/OnBoot.md)
 - **検索語**: OnBoot
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@ OnBoot SHIORIイベント送信処理を実装 (ui/js/ghost/shiori-notify.js -> 
 
 ## 実装箇所
 
+- `crates/nanai-core/src/shiori_protocol.rs:82` `/// OnBoot / OnFirstBoot イベントリクエスト構築`
 - `src-tauri/src/shiori/ffi/builder.rs:77` `.event("OnBoot")`
-- `src-tauri/src/shiori/ffi/builder.rs:210` `assert!(req.contains("OnBoot"));`
-- `crates/nanai-shiori-vm/src/lib.rs:40` `if request.contains("ID: OnBoot") {`
-- `crates/nanai-shiori-vm/src/lib.rs:378` `let res_boot = state.handle_request("GET SHIORI/3.0\r\nID: OnBoot\r\n\r\n");`
-- `crates/nanai-shiori-vm/src/lib.rs:379` `assert!(res_boot.contains("OnBoot") || res_boot.contains("起動しました"));`
+- `ui/main.ts:9` `* - OnBoot, OnClose, OnWindowStateMinimize, OnWindowStateRestore`
+- `ui/ts/ui/modal-settings-handlers.ts:252` `bindShioriTestButton("test-shiori-init", "OnBoot", "SHIORI初期化");`
+- `tests/ghost-loading.test.ts:54` `assert.equal(calls.includes("OnBoot"), false);`
+- `crates/nanai-core/src/shiori_protocol.rs:84` `let event_id = if is_first_boot { "OnFirstBoot" } else { "OnBoot" };`

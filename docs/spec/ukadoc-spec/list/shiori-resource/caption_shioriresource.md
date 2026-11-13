@@ -2,7 +2,7 @@
 
 - **規格**: [caption_shioriresource.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-resource/caption_shioriresource/)
 - **検索語**: SHIORI
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@
 
 ## 実装箇所
 
-- `src-tauri/build.rs:43` `"cargo:warning=shiori-host32 のビルドに失敗: `rustup target add i686-pc-windows-msvc` を`
-- `src-tauri/shiori-host/src/main.rs:46` `let resp = b"SHIORI/3.0 200 OK\r\n\r\n";`
-- `src-tauri/shiori-host/src/main.rs:218` `let resp = b"SHIORI/3.0 200 OK\r\n\r\n";`
-- `src-tauri/src/commands/shiori/protocol.rs:44` `Err("No active SHIORI engine loaded".to_string())`
-- `src-tauri/src/commands/shiori/protocol.rs:63` `"📤 [Rust] SHIORI request (ghost: {}):\n{}",`
+- `crates/nanai-core/src/shiori_protocol.rs:11` `pub version: String, // SHIORI/3.0`
+- `src-tauri/build.rs:46` `"cargo:warning=shiori-host32 のビルドに失敗: `rustup target add i686-pc-windows-msvc` を`
+- `ui/ts/core/actions/ghost-actions.ts:46` `${row("SHIORI", ghost.shiori)}`
+- `ui/ts/ui/spec-compliance-runner.ts:598` `"Mouse Input ➔ mouseMethods.onGhostClick / onGhostWheel ➔ detectCollision ➔ SHIO`
+- `tests/balloon-events.test.ts:6` `describe("Balloon SHIORI Events and Property Integration (Slot-10)", () => {`
+- `crates/nanai-core/src/shiori_protocol.rs:17` `let mut resp = format!("{} SHIORI/3.0\r\n", method.to_uppercase());`

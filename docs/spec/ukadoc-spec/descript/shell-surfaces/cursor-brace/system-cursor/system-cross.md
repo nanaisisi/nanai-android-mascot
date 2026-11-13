@@ -2,7 +2,7 @@
 
 - **規格**: [system-cross.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/cursor-brace/system-cursor/system-cross/) (ukadoc-spec/descript/shell-surfaces/cursor-brace/system-cursor/system-cross.md)
 - **検索語**: system
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@ ui/js/surface/surface-load.js の loadSurfacesTxt において surfaces.txt フ�
 
 ## 実装箇所
 
+- `crates/ui/src/surfaces/tests/parser_tests/syntax_blocks/points_ui.rs:58` `mouseup0,Head,system:hand`
 - `src-tauri/shiori-host/src/ffi.rs:10` `extern "system" {`
-- `src-tauri/shiori-host/src/main.rs:189` `extern "system" {`
-- `src-tauri/src/shiori/fmo.rs:38` `unsafe extern "system" {`
-- `src-tauri/src/shiori/dynamic/host.rs:19` `unsafe extern "system" {`
-- `src-tauri/src/shiori/property/tests.rs:22` `assert_eq!(evaluate_property_query("system.year"), "2026");`
+- `ui/assets/LICENSE-3RD-PARTY.html:23` `font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, A`
+- `ui/css/base.css:26` `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;`
+- `tests/command-handler-boost.test.ts:11` `} from "../ui/ts/ghost/command-handler/system/desktop.js";`
+- `crates/ui/src/surfaces/tests/parser_tests/syntax_blocks/points_ui.rs:59` `mousedown0,Head,system:finger`

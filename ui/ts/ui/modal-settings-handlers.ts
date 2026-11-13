@@ -227,28 +227,26 @@ export class ModalSettingsHandlers {
 			eventName: string,
 			label: string,
 		) => {
-			document
-				.getElementById(buttonId)
-				?.addEventListener("click", async () => {
-					const sendShiori = this.app?.ghostController?.sendShioriEvent;
-					if (!sendShiori) {
-						if (resultsEl) {
-							resultsEl.innerHTML = `<div class="info">ℹ️ ${escapeHtml(label)} (${escapeHtml(eventName)}): SHIORIコントローラ未接続（プレビューモード）</div>`;
-						}
-						return;
+			document.getElementById(buttonId)?.addEventListener("click", async () => {
+				const sendShiori = this.app?.ghostController?.sendShioriEvent;
+				if (!sendShiori) {
+					if (resultsEl) {
+						resultsEl.innerHTML = `<div class="info">ℹ️ ${escapeHtml(label)} (${escapeHtml(eventName)}): SHIORIコントローラ未接続（プレビューモード）</div>`;
 					}
-					try {
-						const res = await sendShiori(eventName, []);
-						if (resultsEl) {
-							resultsEl.innerHTML = `<div class="info">✅ ${escapeHtml(label)} (${escapeHtml(eventName)}) 応答: <code>${escapeHtml(JSON.stringify(res ?? null))}</code></div>`;
-						}
-					} catch (err) {
-						const msg = err instanceof Error ? err.message : String(err);
-						if (resultsEl) {
-							resultsEl.innerHTML = `<div class="error">❌ ${escapeHtml(label)} エラー: ${escapeHtml(msg)}</div>`;
-						}
+					return;
+				}
+				try {
+					const res = await sendShiori(eventName, []);
+					if (resultsEl) {
+						resultsEl.innerHTML = `<div class="info">✅ ${escapeHtml(label)} (${escapeHtml(eventName)}) 応答: <code>${escapeHtml(JSON.stringify(res ?? null))}</code></div>`;
 					}
-				});
+				} catch (err) {
+					const msg = err instanceof Error ? err.message : String(err);
+					if (resultsEl) {
+						resultsEl.innerHTML = `<div class="error">❌ ${escapeHtml(label)} エラー: ${escapeHtml(msg)}</div>`;
+					}
+				}
+			});
 		};
 
 		bindShioriTestButton("test-shiori-init", "OnBoot", "SHIORI初期化");
@@ -287,7 +285,11 @@ export class ModalSettingsHandlers {
 				const normalized: string[] = [];
 				for (const seg of segments) {
 					if (!seg || seg === ".") continue;
-					if (seg === ".." && normalized.length > 0 && normalized.at(-1) !== "..") {
+					if (
+						seg === ".." &&
+						normalized.length > 0 &&
+						normalized.at(-1) !== ".."
+					) {
 						normalized.pop();
 					} else {
 						normalized.push(seg);

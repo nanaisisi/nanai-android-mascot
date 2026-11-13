@@ -2,7 +2,7 @@
 
 - **規格**: [pct-property.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/environment-variable/pct-property/) (ukadoc-spec/list/sakura-script/environment-variable/pct-property.md)
 - **検索語**: property
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,8 +10,9 @@
 
 ## 実装箇所
 
-- `src-tauri/src/lib.rs:186` `shiori::property::get_system_property,`
-- `src-tauri/src/shiori/mod.rs:6` `pub mod property;`
-- `src-tauri/src/shiori/property/tests.rs:141` `"(unknown property: unknown.prop)"`
-- `src-tauri/src/shiori/property/evaluator/dynamic_rules.rs:11` `_ => format!("(unknown shiori property: {})", shiori_var),`
-- `src-tauri/src/shiori/property/evaluator/dynamic_rules.rs:68` `format!("(unknown property: {})", raw_query)`
+- `crates/nanai-core/src/sakura_script.rs:32` `Font { property: String, args: Vec<String> },`
+- `src-tauri/src/lib.rs:206` `shiori::property::get_system_property,`
+- `ui/assets/LICENSE-3RD-PARTY.html:9352` `(a) under intellectual property rights (other than patent or trademark)`
+- `ui/ts/ui/submenu-theme.ts:34` `const setOrRemove = (property: string, value: unknown) => {`
+- `tests/balloon-cycle6-typography.test.ts:8` `it("sets writing mode property correctly for vertical: 1 and resets properly", (`
+- `crates/nanai-core/src/sakura_script.rs:145` `let property = parts.first().cloned().unwrap_or_default();`

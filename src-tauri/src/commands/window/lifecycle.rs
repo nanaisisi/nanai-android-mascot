@@ -37,8 +37,11 @@ pub fn shutdown_application(app_handle: &tauri::AppHandle) {
 
     #[cfg(windows)]
     {
+        use std::os::windows::process::CommandExt;
+        const CREATE_NO_WINDOW: u32 = 0x08000000;
         let _ = std::process::Command::new("taskkill")
             .args(["/f", "/im", "shiori-host32.exe"])
+            .creation_flags(CREATE_NO_WINDOW)
             .output();
     }
 }

@@ -50,8 +50,10 @@ pub fn compute_surface_composition_plan(
 }
 
 // WASM C-ABI Export
+/// # Safety
+/// `elements_ptr` must be a valid pointer to bytes of length `elements_len`, and `binds_ptr` must be a valid pointer of length `binds_len` if non-null.
 #[unsafe(no_mangle)]
-pub extern "C" fn wasm_compute_surface_composition_plan_json(
+pub unsafe extern "C" fn wasm_compute_surface_composition_plan_json(
 	surface_id: u32,
 	elements_ptr: *const u8,
 	elements_len: usize,
@@ -69,8 +71,8 @@ pub extern "C" fn wasm_compute_surface_composition_plan_json(
 		&[]
 	};
 
-	if let Ok(json_str) = std::str::from_utf8(elem_slice) {
-		if let Ok(elements) = serde_json::from_str::<Vec<SurfaceElement>>(json_str) {
+	if let Ok(json_str) = std::str::from_utf8(elem_slice)
+		&& let Ok(elements) = serde_json::from_str::<Vec<SurfaceElement>>(json_str) {
 			let plan = compute_surface_composition_plan(surface_id, &elements, binds);
 			if let Ok(res_json) = serde_json::to_string(&plan) {
 				let bytes = res_json.into_bytes();
@@ -82,7 +84,6 @@ pub extern "C" fn wasm_compute_surface_composition_plan_json(
 				return ((ptr as u64) << 32) | (len as u64);
 			}
 		}
-	}
 	0
 }
 

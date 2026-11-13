@@ -190,8 +190,7 @@ pub fn build_install_multi_args(resources: &[(String, String)]) -> MultiInstallR
 /// # Safety
 /// `ptr` が非NULLかつ `len` が0でない場合、`ptr` は少なくとも `len` バイトの有効なメモリを指している必要があります。
 #[unsafe(no_mangle)]
-#[allow(clippy::not_unsafe_ptr_arg_deref)]
-pub extern "C" fn wasm_parse_install_error_reason(ptr: *const u8, len: usize) -> u32 {
+pub unsafe extern "C" fn wasm_parse_install_error_reason(ptr: *const u8, len: usize) -> u32 {
     if ptr.is_null() || len == 0 {
         return 0; // extraction
     }
@@ -333,16 +332,16 @@ mod tests {
     fn test_wasm_install_abi() {
         let s_slip = b"zip-slip detected";
         assert_eq!(
-            wasm_parse_install_error_reason(s_slip.as_ptr(), s_slip.len()),
+            unsafe { wasm_parse_install_error_reason(s_slip.as_ptr(), s_slip.len()) },
             3 // invalid path
         );
 
         let s_cancel = b"cancel by user";
         assert_eq!(
-            wasm_parse_install_error_reason(s_cancel.as_ptr(), s_cancel.len()),
+            unsafe { wasm_parse_install_error_reason(s_cancel.as_ptr(), s_cancel.len()) },
             2 // artificial
         );
 
-        assert_eq!(wasm_parse_install_error_reason(std::ptr::null(), 0), 0);
+        assert_eq!(unsafe { wasm_parse_install_error_reason(std::ptr::null(), 0) }, 0);
     }
 }

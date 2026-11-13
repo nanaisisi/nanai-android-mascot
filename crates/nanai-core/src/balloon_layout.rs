@@ -87,8 +87,10 @@ pub fn compute_balloon_text_layout(
 }
 
 // WASM C-ABI Export
+/// # Safety
+/// `ptr` must be a valid pointer to bytes of length `len`.
 #[unsafe(no_mangle)]
-pub extern "C" fn wasm_compute_balloon_text_layout_json(
+pub unsafe extern "C" fn wasm_compute_balloon_text_layout_json(
 	ptr: *const u8,
 	len: usize,
 	max_width: f32,

@@ -85,6 +85,12 @@ export interface NanaiCoreWasmExports {
 	wasm_calculate_update_progress: (current: bigint, total: bigint) => number;
 	wasm_normalize_update_reason: (ptr: number, len: number) => number;
 	wasm_parse_install_error_reason: (ptr: number, len: number) => number;
+	wasm_is_no_update_path?: (
+		pathPtr: number,
+		pathLen: number,
+		patternsPtr: number,
+		patternsLen: number,
+	) => number;
 	wasm_parse_sakura_script_json: (ptr: number, len: number) => bigint;
 	wasm_parse_sstp_request_json: (ptr: number, len: number) => bigint;
 	wasm_parse_descript_json?: (ptr: number, len: number) => bigint;

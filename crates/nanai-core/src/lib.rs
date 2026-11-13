@@ -36,8 +36,7 @@ pub extern "C" fn wasm_alloc(size: usize) -> *mut u8 {
 /// # Safety
 /// `ptr` は過去に `wasm_alloc` で確保されたポインタである必要があります。
 #[unsafe(no_mangle)]
-#[allow(clippy::not_unsafe_ptr_arg_deref)]
-pub extern "C" fn wasm_free(ptr: *mut u8, size: usize) {
+pub unsafe extern "C" fn wasm_free(ptr: *mut u8, size: usize) {
     if !ptr.is_null() && size > 0 {
         unsafe {
             drop(Vec::from_raw_parts(ptr, 0, size));
@@ -47,8 +46,10 @@ pub extern "C" fn wasm_free(ptr: *mut u8, size: usize) {
 
 /// さくらスクリプトをパースして JSON 文字列バッファポインタ情報を返却 (WASM C-ABI)
 /// 上位32ビット: ptr, 下位32ビット: len
+/// # Safety
+/// `ptr` must be a valid pointer to bytes of length `len`.
 #[unsafe(no_mangle)]
-pub extern "C" fn wasm_parse_sakura_script_json(ptr: *const u8, len: usize) -> u64 {
+pub unsafe extern "C" fn wasm_parse_sakura_script_json(ptr: *const u8, len: usize) -> u64 {
     if ptr.is_null() || len == 0 {
         return 0;
     }
@@ -70,15 +71,17 @@ pub extern "C" fn wasm_parse_sakura_script_json(ptr: *const u8, len: usize) -> u
 
 /// SSTPリクエストをパースして JSON 文字列バッファポインタ情報を返却 (WASM C-ABI)
 /// 上位32ビット: ptr, 下位32ビット: len
+/// # Safety
+/// `ptr` must be a valid pointer to bytes of length `len`.
 #[unsafe(no_mangle)]
-pub extern "C" fn wasm_parse_sstp_request_json(ptr: *const u8, len: usize) -> u64 {
+pub unsafe extern "C" fn wasm_parse_sstp_request_json(ptr: *const u8, len: usize) -> u64 {
     if ptr.is_null() || len == 0 {
         return 0;
     }
     let slice = unsafe { std::slice::from_raw_parts(ptr, len) };
-    if let Ok(raw_sstp) = std::str::from_utf8(slice) {
-        if let Some(req) = parse_sstp_request(raw_sstp) {
-            if let Ok(json) = serde_json::to_string(&req) {
+    if let Ok(raw_sstp) = std::str::from_utf8(slice)
+        && let Some(req) = parse_sstp_request(raw_sstp)
+            && let Ok(json) = serde_json::to_string(&req) {
                 let json_bytes = json.into_bytes();
                 let json_len = json_bytes.len();
                 let json_ptr = wasm_alloc(json_len);
@@ -87,7 +90,5 @@ pub extern "C" fn wasm_parse_sstp_request_json(ptr: *const u8, len: usize) -> u6
                 }
                 return ((json_ptr as u64) << 32) | (json_len as u64);
             }
-        }
-    }
     0
 }

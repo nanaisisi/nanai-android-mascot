@@ -77,12 +77,11 @@ pub fn parse_sakura_script(script: &str) -> Vec<SakuraToken> {
 							if let Ok(id) = arg.parse::<i32>() {
 								tokens.push(SakuraToken::Surface(id));
 							}
-						} else if let Some(&digit) = chars.peek() {
-							if digit.is_ascii_digit() {
+						} else if let Some(&digit) = chars.peek()
+							&& digit.is_ascii_digit() {
 								chars.next();
 								tokens.push(SakuraToken::Surface((digit as u8 - b'0') as i32));
 							}
-						}
 					}
 					'b' => {
 						chars.next();
@@ -90,38 +89,34 @@ pub fn parse_sakura_script(script: &str) -> Vec<SakuraToken> {
 							if let Ok(id) = arg.parse::<i32>() {
 								tokens.push(SakuraToken::Balloon(id));
 							}
-						} else if let Some(&digit) = chars.peek() {
-							if digit.is_ascii_digit() {
+						} else if let Some(&digit) = chars.peek()
+							&& digit.is_ascii_digit() {
 								chars.next();
 								tokens.push(SakuraToken::Balloon((digit as u8 - b'0') as i32));
 							}
-						}
 					}
 					'i' => {
 						chars.next();
-						if let Some(arg) = parse_bracket_arg(&mut chars) {
-							if let Ok(id) = arg.parse::<i32>() {
+						if let Some(arg) = parse_bracket_arg(&mut chars)
+							&& let Ok(id) = arg.parse::<i32>() {
 								tokens.push(SakuraToken::Animation(id));
 							}
-						}
 					}
 					'w' => {
 						chars.next();
-						if let Some(&digit) = chars.peek() {
-							if digit.is_ascii_digit() {
+						if let Some(&digit) = chars.peek()
+							&& digit.is_ascii_digit() {
 								chars.next();
 								let wait_ms = ((digit as u8 - b'0') as u32) * 50;
 								tokens.push(SakuraToken::Wait(wait_ms));
 							}
-						}
 					}
 					'p' => {
 						chars.next();
-						if let Some(arg) = parse_bracket_arg(&mut chars) {
-							if let Ok(scope) = arg.parse::<u32>() {
+						if let Some(arg) = parse_bracket_arg(&mut chars)
+							&& let Ok(scope) = arg.parse::<u32>() {
 								tokens.push(SakuraToken::Scope(scope));
 							}
-						}
 					}
 					'q' => {
 						chars.next();
@@ -146,11 +141,10 @@ pub fn parse_sakura_script(script: &str) -> Vec<SakuraToken> {
 						if let Some(&tag_ch) = chars.peek() {
 							if tag_ch == 'w' {
 								chars.next();
-								if let Some(arg) = parse_bracket_arg(&mut chars) {
-									if let Ok(ms) = arg.parse::<u32>() {
+								if let Some(arg) = parse_bracket_arg(&mut chars)
+									&& let Ok(ms) = arg.parse::<u32>() {
 										tokens.push(SakuraToken::Wait(ms));
 									}
-								}
 							} else if tag_ch == 'a' {
 								chars.next(); // consume 'a'
 								if let Some(arg) = parse_bracket_arg(&mut chars) {
@@ -223,8 +217,10 @@ fn parse_bracket_arg<I: Iterator<Item = char>>(
 }
 
 // WASM C-ABI Export
+/// # Safety
+/// `ptr` must be a valid pointer to bytes of length `len`.
 #[unsafe(no_mangle)]
-pub extern "C" fn wasm_parse_sakura_script(
+pub unsafe extern "C" fn wasm_parse_sakura_script(
 	ptr: *const u8,
 	len: usize,
 ) -> *mut SakuraToken {

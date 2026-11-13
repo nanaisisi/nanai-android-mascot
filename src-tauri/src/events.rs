@@ -35,7 +35,7 @@ pub fn handle_menu_event(app_handle: &tauri::AppHandle, event: tauri::menu::Menu
             let _ = crate::commands::window::show_menu_window(app_h, x, y, Some(0)).await;
         });
     } else if id == "close" || id == "exit" {
-        crate::commands::window::lifecycle::shutdown_application(&app_handle);
+        crate::commands::window::lifecycle::shutdown_application(app_handle);
         app_handle.exit(0);
     } else {
         let _ = app_handle.emit(

@@ -5,13 +5,14 @@ use super::MultiStageShioriLoader;
 use super::types::{CandidateKind, LoadAttempt, ShioriEngineCandidate};
 use std::path::Path;
 
+type EngineLoader = dyn FnMut(&Path) -> Result<Box<dyn ShioriEngine>, String>;
+
 impl MultiStageShioriLoader {
-    #[allow(clippy::type_complexity)]
     pub(crate) fn load_first_working_inner(
         &mut self,
         dir_path: &Path,
-        dynamic_loader: &mut dyn FnMut(&Path) -> Result<Box<dyn ShioriEngine>, String>,
-        wasm_loader: &mut dyn FnMut(&Path) -> Result<Box<dyn ShioriEngine>, String>,
+        dynamic_loader: &mut EngineLoader,
+        wasm_loader: &mut EngineLoader,
     ) -> Result<(), String> {
         self.unload()?;
         self.last_dir_path = Some(dir_path.to_path_buf());

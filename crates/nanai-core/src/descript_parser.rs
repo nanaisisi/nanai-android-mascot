@@ -40,8 +40,10 @@ pub fn parse_descript_text(content: &str) -> DescriptManifest {
 }
 
 // WASM C-ABI Export
+/// # Safety
+/// `ptr` must be a valid pointer to bytes of length `len`.
 #[unsafe(no_mangle)]
-pub extern "C" fn wasm_parse_descript_json(ptr: *const u8, len: usize) -> u64 {
+pub unsafe extern "C" fn wasm_parse_descript_json(ptr: *const u8, len: usize) -> u64 {
 	if ptr.is_null() || len == 0 {
 		return 0;
 	}

@@ -95,8 +95,10 @@ pub fn find_hit_collision_name(collisions: &[CollisionArea], x: i32, y: i32) -> 
 }
 
 // WASM C-ABI Export
+/// # Safety
+/// `ptr` must be a valid pointer to bytes of length `len`.
 #[unsafe(no_mangle)]
-pub extern "C" fn wasm_find_hit_collision_name_json(
+pub unsafe extern "C" fn wasm_find_hit_collision_name_json(
 	ptr: *const u8,
 	len: usize,
 	x: i32,
@@ -106,9 +108,9 @@ pub extern "C" fn wasm_find_hit_collision_name_json(
 		return 0;
 	}
 	let slice = unsafe { std::slice::from_raw_parts(ptr, len) };
-	if let Ok(json_str) = std::str::from_utf8(slice) {
-		if let Ok(collisions) = serde_json::from_str::<Vec<CollisionArea>>(json_str) {
-			if let Some(hit_name) = find_hit_collision_name(&collisions, x, y) {
+	if let Ok(json_str) = std::str::from_utf8(slice)
+		&& let Ok(collisions) = serde_json::from_str::<Vec<CollisionArea>>(json_str)
+			&& let Some(hit_name) = find_hit_collision_name(&collisions, x, y) {
 				let json_bytes = hit_name.into_bytes();
 				let json_len = json_bytes.len();
 				let json_ptr = crate::wasm_alloc(json_len);
@@ -117,8 +119,6 @@ pub extern "C" fn wasm_find_hit_collision_name_json(
 				}
 				return ((json_ptr as u64) << 32) | (json_len as u64);
 			}
-		}
-	}
 	0
 }
 

@@ -108,3 +108,28 @@ export function parseInstallErrorReasonWasm(errMessage: string): string {
 	}
 	return parseInstallErrorReasonFallback(errMessage);
 }
+
+export function isNoUpdatePathWasm(path: string, patterns: string[]): boolean {
+	if (wasmMemory.isReady()) {
+		const exports = wasmMemory.getExports();
+		if (exports?.wasm_is_no_update_path) {
+			try {
+				const { ptr: pathPtr, len: pathLen } = wasmMemory.encodeString(path);
+				const patStr = patterns.join("\n");
+				const { ptr: patPtr, len: patLen } = wasmMemory.encodeString(patStr);
+				const res = exports.wasm_is_no_update_path(
+					pathPtr,
+					pathLen,
+					patPtr,
+					patLen,
+				);
+				wasmMemory.free(pathPtr, pathLen);
+				wasmMemory.free(patPtr, patLen);
+				return Boolean(res);
+			} catch (_err) {
+				// Fallback on error
+			}
+		}
+	}
+	return false;
+}

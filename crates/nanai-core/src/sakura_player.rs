@@ -170,8 +170,10 @@ fn this_is_halted(engine: &SakuraPlayerEngine) -> bool {
 }
 
 // WASM C-ABI Functions
+/// # Safety
+/// `ptr` must be a valid pointer to bytes of length `len`.
 #[unsafe(no_mangle)]
-pub extern "C" fn wasm_create_player(ptr: *const u8, len: usize) -> *mut SakuraPlayerEngine {
+pub unsafe extern "C" fn wasm_create_player(ptr: *const u8, len: usize) -> *mut SakuraPlayerEngine {
 	if ptr.is_null() || len == 0 {
 		return std::ptr::null_mut();
 	}
@@ -184,8 +186,10 @@ pub extern "C" fn wasm_create_player(ptr: *const u8, len: usize) -> *mut SakuraP
 	}
 }
 
+/// # Safety
+/// `engine_ptr` must be a valid pointer obtained from `wasm_create_player`.
 #[unsafe(no_mangle)]
-pub extern "C" fn wasm_player_step(engine_ptr: *mut SakuraPlayerEngine) -> u64 {
+pub unsafe extern "C" fn wasm_player_step(engine_ptr: *mut SakuraPlayerEngine) -> u64 {
 	if engine_ptr.is_null() {
 		return 0;
 	}
@@ -204,8 +208,10 @@ pub extern "C" fn wasm_player_step(engine_ptr: *mut SakuraPlayerEngine) -> u64 {
 	}
 }
 
+/// # Safety
+/// `engine_ptr` must be a valid pointer obtained from `wasm_create_player` and not yet freed.
 #[unsafe(no_mangle)]
-pub extern "C" fn wasm_free_player(engine_ptr: *mut SakuraPlayerEngine) {
+pub unsafe extern "C" fn wasm_free_player(engine_ptr: *mut SakuraPlayerEngine) {
 	if !engine_ptr.is_null() {
 		unsafe {
 			drop(Box::from_raw(engine_ptr));

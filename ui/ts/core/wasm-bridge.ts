@@ -7,6 +7,7 @@ import { computeBalloonTextLayoutWasm } from "./wasm/wasm-layout.js";
 import { wasmMemory } from "./wasm/wasm-memory.js";
 import {
 	calculateUpdateProgressWasm,
+	isNoUpdatePathWasm,
 	parseDescriptTextWasm,
 	parseInstallErrorReasonWasm,
 	parseSstpRequestWasm,
@@ -68,6 +69,10 @@ class WasmBridgeFacade {
 
 	public parseInstallErrorReason(errMessage: string): string {
 		return parseInstallErrorReasonWasm(errMessage);
+	}
+
+	public isNoUpdatePath(path: string, patterns: string[]): boolean {
+		return isNoUpdatePathWasm(path, patterns);
 	}
 
 	public computeBalloonTextLayout(

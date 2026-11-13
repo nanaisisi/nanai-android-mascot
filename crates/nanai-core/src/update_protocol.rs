@@ -200,8 +200,7 @@ pub extern "C" fn wasm_calculate_update_progress(current: i64, total: i64) -> u3
 /// # Safety
 /// `ptr` が非NULLかつ `len` が0でない場合、`ptr` は少なくとも `len` バイトの有効なメモリを指している必要があります。
 #[unsafe(no_mangle)]
-#[allow(clippy::not_unsafe_ptr_arg_deref)]
-pub extern "C" fn wasm_normalize_update_reason(ptr: *const u8, len: usize) -> u32 {
+pub unsafe extern "C" fn wasm_normalize_update_reason(ptr: *const u8, len: usize) -> u32 {
     if ptr.is_null() || len == 0 {
         return 0; // manual
     }
@@ -217,6 +216,38 @@ pub extern "C" fn wasm_normalize_update_reason(ptr: *const u8, len: usize) -> u3
     } else {
         0
     }
+}
+
+/// WASM C-ABI: noupdate パス判定
+/// # Safety
+/// `path_ptr` and `patterns_ptr` must be valid pointer buffers.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn wasm_is_no_update_path(
+    path_ptr: *const u8,
+    path_len: usize,
+    patterns_ptr: *const u8,
+    patterns_len: usize,
+) -> bool {
+    if path_ptr.is_null() || path_len == 0 {
+        return false;
+    }
+    let path_slice = unsafe { std::slice::from_raw_parts(path_ptr, path_len) };
+    let Ok(path) = std::str::from_utf8(path_slice) else {
+        return false;
+    };
+
+    let patterns = if !patterns_ptr.is_null() && patterns_len > 0 {
+        let pat_slice = unsafe { std::slice::from_raw_parts(patterns_ptr, patterns_len) };
+        if let Ok(pat_str) = std::str::from_utf8(pat_slice) {
+            pat_str.split('\n').collect::<Vec<_>>()
+        } else {
+            vec![]
+        }
+    } else {
+        vec![]
+    };
+
+    is_no_update_path(path, &patterns)
 }
 
 #[cfg(test)]
@@ -317,19 +348,19 @@ mod tests {
 
         let s_auto = b"auto";
         assert_eq!(
-            wasm_normalize_update_reason(s_auto.as_ptr(), s_auto.len()),
+            unsafe { wasm_normalize_update_reason(s_auto.as_ptr(), s_auto.len()) },
             1
         );
 
         let s_script = b"script";
         assert_eq!(
-            wasm_normalize_update_reason(s_script.as_ptr(), s_script.len()),
+            unsafe { wasm_normalize_update_reason(s_script.as_ptr(), s_script.len()) },
             2
         );
 
         let s_man = b"manual";
-        assert_eq!(wasm_normalize_update_reason(s_man.as_ptr(), s_man.len()), 0);
+        assert_eq!(unsafe { wasm_normalize_update_reason(s_man.as_ptr(), s_man.len()) }, 0);
 
-        assert_eq!(wasm_normalize_update_reason(std::ptr::null(), 0), 0);
+        assert_eq!(unsafe { wasm_normalize_update_reason(std::ptr::null(), 0) }, 0);
     }
 }

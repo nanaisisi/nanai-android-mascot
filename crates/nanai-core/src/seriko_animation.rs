@@ -58,8 +58,10 @@ pub fn advance_animation_frame(
 }
 
 // WASM C-ABI Export
+/// # Safety
+/// `def_ptr` and `state_ptr` must be valid pointers to bytes of length `def_len` and `state_len` respectively.
 #[unsafe(no_mangle)]
-pub extern "C" fn wasm_advance_animation_frame_json(
+pub unsafe extern "C" fn wasm_advance_animation_frame_json(
 	def_ptr: *const u8,
 	def_len: usize,
 	state_ptr: *const u8,
@@ -76,8 +78,8 @@ pub extern "C" fn wasm_advance_animation_frame_json(
 	if let (Ok(def_str), Ok(state_str)) = (
 		std::str::from_utf8(def_slice),
 		std::str::from_utf8(state_slice),
-	) {
-		if let (Ok(def), Ok(mut state)) = (
+	)
+		&& let (Ok(def), Ok(mut state)) = (
 			serde_json::from_str::<AnimationDefinition>(def_str),
 			serde_json::from_str::<AnimationState>(state_str),
 		) {
@@ -93,7 +95,6 @@ pub extern "C" fn wasm_advance_animation_frame_json(
 				return ((ptr as u64) << 32) | (len as u64);
 			}
 		}
-	}
 	0
 }
 

@@ -116,4 +116,7 @@ export interface NanaiCoreWasmExports {
 		stateLen: number,
 		deltaMs: number,
 	) => bigint;
+	wasm_create_player?: (ptr: number, len: number) => number;
+	wasm_player_step?: (enginePtr: number) => bigint;
+	wasm_free_player?: (enginePtr: number) => void;
 }

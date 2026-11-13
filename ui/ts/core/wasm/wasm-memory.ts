@@ -67,6 +67,7 @@ export class WasmMemoryManager {
 
 	public decodeString(ptr: number, len: number): string {
 		if (!this.exports) throw new Error("WASM exports not initialized");
+		// 常に最新の ArrayBuffer を取得（メモリ拡張対策）
 		const decoder = new TextDecoder();
 		const memView = new Uint8Array(this.exports.memory.buffer, ptr, len);
 		return decoder.decode(memView);
@@ -78,7 +79,7 @@ export class WasmMemoryManager {
 	}
 
 	public free(ptr: number, size: number): void {
-		if (!this.exports) return;
+		if (!this.exports || ptr === 0) return;
 		this.exports.wasm_free(ptr, size);
 	}
 }

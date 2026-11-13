@@ -23,6 +23,22 @@ export function parseSstpRequestWasm(rawSstp: string): SstpRequest | null {
 	}
 }
 
+export function buildSstpResponseWasm(
+	status: number,
+	script: string,
+	headers: Record<string, string> = {},
+): string | null {
+	const core = wasmMemory.getWasmCore();
+	if (!core?.wasm_build_sstp_response) return null;
+
+	try {
+		return core.wasm_build_sstp_response(status, script, headers) as string;
+	} catch (err) {
+		console.warn("⚠️ [WASM Protocol] buildSstpResponse エラー:", err);
+		return null;
+	}
+}
+
 export function parseDescriptTextWasm(
 	content: string,
 ): DescriptManifest | null {

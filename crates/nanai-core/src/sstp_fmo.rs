@@ -12,6 +12,14 @@ pub struct SstpRequest {
     pub headers: BTreeMap<String, String>,
 }
 
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
+pub struct SstpResponse {
+    pub status: u16,
+    pub version: String,
+    pub headers: BTreeMap<String, String>,
+    pub script: String,
+}
+
 /// SSTP プロトコル文字列をパース
 pub fn parse_sstp_request(raw_request: &str) -> Option<SstpRequest> {
     let mut lines = raw_request.lines();
@@ -41,6 +49,25 @@ pub fn parse_sstp_request(raw_request: &str) -> Option<SstpRequest> {
         version,
         headers,
     })
+}
+
+/// SSTP レスポンス文字列を構築
+pub fn build_sstp_response(status: u16, script: &str, headers: BTreeMap<String, String>) -> String {
+    let status_text = match status {
+        200 => "OK",
+        400 => "Bad Request",
+        404 => "Not Found",
+        _ => "OK",
+    };
+    let mut resp = format!("SSTP/1.1 {} {}\r\n", status, status_text);
+    for (k, v) in &headers {
+        resp.push_str(&format!("{}: {}\r\n", k, v));
+    }
+    if !script.is_empty() {
+        resp.push_str(&format!("Script: {}\r\n", script));
+    }
+    resp.push_str("\r\n");
+    resp
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
@@ -97,6 +124,16 @@ pub fn wasm_parse_sstp_request(raw_request: &str) -> Result<JsValue, JsValue> {
 }
 
 #[wasm_bindgen]
+pub fn wasm_build_sstp_response(status: u16, script: &str, headers_js: JsValue) -> Result<String, JsValue> {
+    let headers: BTreeMap<String, String> = if headers_js.is_null() || headers_js.is_undefined() {
+        BTreeMap::new()
+    } else {
+        serde_wasm_bindgen::from_value(headers_js)?
+    };
+    Ok(build_sstp_response(status, script, headers))
+}
+
+#[wasm_bindgen]
 pub fn wasm_parse_fmo_string(raw_fmo: &str) -> Result<JsValue, JsValue> {
     let entries = parse_fmo_string(raw_fmo);
     Ok(serde_wasm_bindgen::to_value(&entries)?)
@@ -116,6 +153,16 @@ mod tests {
         assert_eq!(req.version, "SSTP/1.1");
         assert_eq!(req.headers.get("Sender").unwrap(), "TestSender");
         assert_eq!(req.headers.get("Event").unwrap(), "OnTest");
+    }
+
+    #[test]
+    fn test_build_sstp_response() {
+        let mut headers = BTreeMap::new();
+        headers.insert("Sender".to_string(), "Nanai".to_string());
+        let res = build_sstp_response(200, "\\0Hello\\e", headers);
+        assert!(res.contains("SSTP/1.1 200 OK"));
+        assert!(res.contains("Sender: Nanai"));
+        assert!(res.contains("Script: \\0Hello\\e"));
     }
 
     #[test]

@@ -1,4 +1,4 @@
-use super::analyzer::*;
+use crate::commands::install::archive::inspection::resolve_bundled_resources_config;
 use std::collections::HashMap;
 
 #[test]

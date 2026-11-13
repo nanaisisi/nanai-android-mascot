@@ -77,8 +77,7 @@ impl HostProc {
             cmd.creation_flags(0x08000000); // CREATE_NO_WINDOW
         }
 
-        let mut child = cmd.spawn()
-            .map_err(|e| format!("host spawn failed: {e}"))?;
+        let mut child = cmd.spawn().map_err(|e| format!("host spawn failed: {e}"))?;
         let stdin = child.stdin.take().ok_or("no stdin")?;
         let stdout = child.stdout.take().ok_or("no stdout")?;
         let mut h = HostProc {

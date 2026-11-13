@@ -359,8 +359,14 @@ mod tests {
         );
 
         let s_man = b"manual";
-        assert_eq!(unsafe { wasm_normalize_update_reason(s_man.as_ptr(), s_man.len()) }, 0);
+        assert_eq!(
+            unsafe { wasm_normalize_update_reason(s_man.as_ptr(), s_man.len()) },
+            0
+        );
 
-        assert_eq!(unsafe { wasm_normalize_update_reason(std::ptr::null(), 0) }, 0);
+        assert_eq!(
+            unsafe { wasm_normalize_update_reason(std::ptr::null(), 0) },
+            0
+        );
     }
 }

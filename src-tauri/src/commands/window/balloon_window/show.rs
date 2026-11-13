@@ -158,10 +158,8 @@ pub async fn resize_balloon_window(
         use tauri::Manager;
         let label = format!("balloon_window_{}", scope_id);
         if let Some(balloon_win) = app_handle.get_webview_window(&label) {
-            let _ = balloon_win.set_size(tauri::Size::Logical(tauri::LogicalSize {
-                width,
-                height,
-            }));
+            let _ =
+                balloon_win.set_size(tauri::Size::Logical(tauri::LogicalSize { width, height }));
         }
     }
     Ok(())

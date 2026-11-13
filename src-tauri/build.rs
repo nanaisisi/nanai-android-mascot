@@ -54,7 +54,9 @@ fn build_nanai_core_wasm() {
 
             if wasm_src.exists() {
                 let _ = std::fs::copy(wasm_src, wasm_dst);
-                println!("cargo:warning=✨ nanai_core.wasm の自動ビルド & public/wasm/ への配置に成功しました");
+                println!(
+                    "cargo:warning=✨ nanai_core.wasm の自動ビルド & public/wasm/ への配置に成功しました"
+                );
             }
         } else {
             println!("cargo:warning=⚠️ nanai_core.wasm の自動ビルドに失敗しました");

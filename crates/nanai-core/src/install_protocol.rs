@@ -342,6 +342,9 @@ mod tests {
             2 // artificial
         );
 
-        assert_eq!(unsafe { wasm_parse_install_error_reason(std::ptr::null(), 0) }, 0);
+        assert_eq!(
+            unsafe { wasm_parse_install_error_reason(std::ptr::null(), 0) },
+            0
+        );
     }
 }

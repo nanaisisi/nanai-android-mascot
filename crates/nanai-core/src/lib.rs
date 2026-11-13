@@ -81,14 +81,15 @@ pub unsafe extern "C" fn wasm_parse_sstp_request_json(ptr: *const u8, len: usize
     let slice = unsafe { std::slice::from_raw_parts(ptr, len) };
     if let Ok(raw_sstp) = std::str::from_utf8(slice)
         && let Some(req) = parse_sstp_request(raw_sstp)
-            && let Ok(json) = serde_json::to_string(&req) {
-                let json_bytes = json.into_bytes();
-                let json_len = json_bytes.len();
-                let json_ptr = wasm_alloc(json_len);
-                unsafe {
-                    std::ptr::copy_nonoverlapping(json_bytes.as_ptr(), json_ptr, json_len);
-                }
-                return ((json_ptr as u64) << 32) | (json_len as u64);
-            }
+        && let Ok(json) = serde_json::to_string(&req)
+    {
+        let json_bytes = json.into_bytes();
+        let json_len = json_bytes.len();
+        let json_ptr = wasm_alloc(json_len);
+        unsafe {
+            std::ptr::copy_nonoverlapping(json_bytes.as_ptr(), json_ptr, json_len);
+        }
+        return ((json_ptr as u64) << 32) | (json_len as u64);
+    }
     0
 }

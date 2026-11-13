@@ -20,10 +20,10 @@
 
 - 🤖 **AI 駆動開発** - GitHub Copilot / Antigravity との緊密な協調による設計・実装
 - 📱 **クロスプラットフォーム** - Android OS向け互換ベースウェアとして、Windows デスクトップ検証（Windows First）から段階的に Android 環境へ適応
-- 🔧 **Tauri v2 + Rust + Web 技術** - 軽量・省メモリ・高速起動と、Web 標準（HTML5/Canvas/CSS/Modern JS）による高い拡張性を両立
+- 🔧 **Tauri v2 + Rust + TypeScript / WASM** - 軽量・省メモリ・高速起動と、TypeScript / Vite / HTML5 Canvas / CSS3 および Rust WASM（`wasm-pack`）による高い拡張性を両立
 - 🛡️ **SHIORI 多層フォールバック & バージョン共存**:
-  - **同梱版（ベースライン）**: Git サブモジュール（`src/cpp/satoriya-shiori`, `src/cpp/yaya-shiori` 等）の C++ ソースを Cargo `cc` / NDK で直接コンパイルし、安定・最高速のネイティブ実行を提供。
-  - **非同梱・外部導入版（WASM）**: ユーザーが後から追加するサードパーティ製ゴーストの Win32 DLL 代替として WebAssembly (`.wasm`) を採用。Android の `dlopen()` 制約やアーキテクチャ差分（ARM/x86）を単一バイナリで安全に吸収。
+  - **同梱版（ベースライン）**: Git サブモジュール（`cpp/satoriya-shiori`, `cpp/yaya-shiori`, `cpp/kawari`）の C++ 連携（Cargo `cc` 静的リンク / NDK）に加え、Windows 64bit 環境では 32bit SHIORI DLL 用ホスト `shiori-host32` を提供。
+  - **非同梱・外部導入版（WASM）**: サードパーティ製ゴーストの Win32 DLL 代替として `wasmi` ランタイム上の WebAssembly (`.wasm`) を採用。Android の `dlopen()` 制約やアーキテクチャ差分（ARM/x86）を単一バイナリで安全に吸収。
   - **マルチバージョン共存**: 最新機能への即時追従や、特定旧バージョン（バグ互換等）に依存した歴史的ゴーストも WASM サンドボックスのインスタンス分離により競合なく安全に実行可能。
 - 👻 **SSP風ゴースト情報**: メニューの「情報」から、現在のゴーストの名前・バージョン・作者・SHIORI・キャラクター名・インストール先を確認できます。処理中バナーにも対象ゴーストの `descript.txt` に記載された `version` を表示します。
 
@@ -31,8 +31,8 @@
 
 ## 🛠️ 技術構成
 
-- **バックエンド**: Rust 2024, Tauri v2, `encoding_rs`, C++ (NDK/cc 経由での SHIORI 静的リンク)
-- **フロントエンド / 実行層**: Vanilla HTML5, Canvas 2D, Modern JavaScript, CSS3, WebAssembly (WASM Worker)
+- **バックエンド / ワークスペース**: Rust 2024, Tauri v2 (`src-tauri`), ドメイン分割クレート群 (`crates/nanai-core`, `nanai-surface`, `nanai-shiori-vm`, `nanai-vfs`, `ui`), `wasmi`, `encoding_rs`, C++ (`cpp/` 配下 SHIORI 静的リンク & Windows 32bit SHIORI ホスト `shiori-host32`)
+- **フロントエンド / WASM コア**: TypeScript, Vite, HTML5 Canvas 2D, CSS3, `wasm-pack` (`wasm-bindgen` / `tsify`) による `nanai-core` WASM バインディング (`ui/ts/core/wasm/pkg`)
 - **ゴーストデータ**: 公式モックキャラクター `mock_nanai` 同梱（`assets/ghost/mock_nanai`）
 
 ---
@@ -41,27 +41,28 @@
 
 ### 開発環境のセットアップ
 
-- [Rust](https://www.rust-lang.org/) (最新 stable)
+- [Rust](https://www.rust-lang.org/) (最新 stable) / ターゲット: `wasm32-unknown-unknown`（Windows 32bit SHIORI DLL 対応時は `i686-pc-windows-msvc` も追加）
+- [wasm-pack](https://rustwasm.github.io/wasm-pack/)
 - [Node.js](https://nodejs.org/) (LTS 版)
 - [VS Code](https://code.visualstudio.com/) または [Antigravity IDE](https://antigravity.google/)
 - 推奨拡張機能: `rust-analyzer`, `Tauri`
 
 ### ビルド & 実行 (Windows)
 
-cargo runから実行ファイルに引数を渡すために、`--` が2個必要。
+初回のみ `npm install` を実行してください。`cargo tauri dev` / `cargo tauri build` は `npm run build:wasm`（`wasm-pack build crates/nanai-core --target web --out-dir ui/ts/core/wasm/pkg --dev`）と Vite ビルドを自動実行します。`cargo run` から実行ファイルに引数を渡すために、`--` が2個必要です。
 
 ```bash
-# アプリのログを警告・エラーだけに制限
+# アプリのログを警告・エラーだけに制限 / 完全に抑制
 cargo tauri dev -- -- --log-level=warn
-
-# アプリのログを完全に抑制
 cargo tauri dev -- -- --quiet
 
-# 開発モード起動
+# 開発モード起動 / リリースビルド
 cargo tauri dev
-
-# リリースビルド
 cargo tauri build
+
+# WASM 単体ビルド / フロントエンドテスト
+npm run build:wasm
+npm test
 
 # カバレッジテスト
 with-env { RUSTC_WRAPPER: "", CARGO_UNSTABLE_CODEGEN_BACKEND: "true", CARGO_PROFILE_DEV_CODEGEN_BACKEND: "llvm" } { cargo llvm-cov --summary-only }
@@ -104,6 +105,7 @@ cargo tauri android run
 - **[ユーザーガイド](docs/doc/user/user-guide.md)**
 - **[インストール手順](docs/doc/user/installation.md)**
 - **[システムアーキテクチャ](docs/doc/developer/architecture.md)**
+- **[WASM モジュール設計](docs/doc/architecture/wasm-module-architecture.md)**
 - **[開発アプローチ](docs/doc/process/development-approach.md)**
 - **[技術仕様書一覧](docs/spec/)**
 

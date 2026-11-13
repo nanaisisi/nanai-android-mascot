@@ -14,6 +14,36 @@ impl DescriptManifest {
     pub fn get(&self, key: &str) -> Option<&str> {
         self.properties.get(&key.to_lowercase()).map(|s| s.as_str())
     }
+
+    /// ゴースト / シェル / バルーン等の名称 (`name`)
+    pub fn name(&self) -> Option<&str> {
+        self.get("name")
+    }
+
+    /// リソース種別 (`type`)
+    pub fn resource_type(&self) -> Option<&str> {
+        self.get("type")
+    }
+
+    /// SHIORI モジュール名 (`shiori`)
+    pub fn shiori(&self) -> Option<&str> {
+        self.get("shiori").or_else(|| self.get("shiori.dll"))
+    }
+
+    /// 作者名 (`craftman` または `author`)
+    pub fn craftman(&self) -> Option<&str> {
+        self.get("craftman").or_else(|| self.get("author"))
+    }
+
+    /// ホームページURL (`homeurl`)
+    pub fn home_url(&self) -> Option<&str> {
+        self.get("homeurl")
+    }
+
+    /// 文字コード設定 (`charset`)
+    pub fn charset(&self) -> Option<&str> {
+        self.get("charset")
+    }
 }
 
 /// descript.txt テキスト文字列を構造化辞書へパース
@@ -53,13 +83,21 @@ mod tests {
 
     #[test]
     fn test_parse_descript_text_basic() {
-        let content = "type,ghost\nname,Emily\ncraftman,Nanai\n# comment\nshiori,yaya.dll\n";
+        let content = "type,ghost\nname,Emily\ncraftman,Nanai\nhomeurl,https://example.com\ncharset,Shift_JIS\n# comment\nshiori,yaya.dll\n";
         let manifest = parse_descript_text(content);
 
         assert_eq!(manifest.get("type"), Some("ghost"));
         assert_eq!(manifest.get("name"), Some("Emily"));
         assert_eq!(manifest.get("craftman"), Some("Nanai"));
         assert_eq!(manifest.get("shiori"), Some("yaya.dll"));
+
+        // Helper methods compliance
+        assert_eq!(manifest.resource_type(), Some("ghost"));
+        assert_eq!(manifest.name(), Some("Emily"));
+        assert_eq!(manifest.craftman(), Some("Nanai"));
+        assert_eq!(manifest.shiori(), Some("yaya.dll"));
+        assert_eq!(manifest.home_url(), Some("https://example.com"));
+        assert_eq!(manifest.charset(), Some("Shift_JIS"));
     }
 
     #[test]

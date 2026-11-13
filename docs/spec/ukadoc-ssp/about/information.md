@@ -1,7 +1,7 @@
 # 情報
 
 - **規格**: [about/information.md](https://ukatech.shillest.net/ukadoc-ssp/about/information/) (ukadoc-ssp/about/information.md)
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -9,5 +9,8 @@
 
 ## 実装箇所
 
-- `tests/shiori-notify/os-environment.test.ts:28` `it("notifies OS, self, and balloon information", async () => {`
-- `tests/shiori-notify/os-environment.test.ts:49` `it("notifies shell, dressup, user, font, and holiday information", async () => {`
+- `ui/assets/LICENSE-3RD-PARTY.html:308` `replaced with your own identifying information. (Don&#x27;t include`
+- `ui/assets/LICENSE-3RD-PARTY.html:535` `replaced with your own identifying information. (Don&#x27;t include`
+- `ui/assets/LICENSE-3RD-PARTY.html:745` `replaced with your own identifying information. (Don&#x27;t include`
+- `ui/assets/LICENSE-3RD-PARTY.html:954` `replaced with your own identifying information. (Don&#x27;t include`
+- `ui/assets/LICENSE-3RD-PARTY.html:1163` `replaced with your own identifying information. (Don&#x27;t include`

@@ -8,7 +8,6 @@ pub mod mock;
 pub mod native;
 pub mod state;
 pub mod trait_def;
-pub mod wasm;
 
 #[cfg(test)]
 mod tests;
@@ -18,4 +17,3 @@ pub use mock::MockShioriEngine;
 pub use native::NativeShioriEngine;
 pub use state::{ShioriLifecycleState, build_standard_capability_references};
 pub use trait_def::ShioriEngine;
-pub use wasm::WasmShioriEngine;

@@ -53,10 +53,10 @@ pub async fn exit_app(app_handle: tauri::AppHandle) -> Result<(), String> {
 
 /// メインウィンドウをモーダル表示用に前面表示するコマンド
 #[tauri::command]
-#[allow(unused_variables)]
-pub async fn show_modal_window(app_handle: tauri::AppHandle) -> Result<(), String> {
+pub async fn show_modal_window(_app_handle: tauri::AppHandle) -> Result<(), String> {
     #[cfg(desktop)]
     {
+        let app_handle = _app_handle;
         if let Some(win) = app_handle.get_webview_window("main") {
             let _ = win.set_size(tauri::Size::Logical(tauri::LogicalSize {
                 width: 640.0,
@@ -73,10 +73,10 @@ pub async fn show_modal_window(app_handle: tauri::AppHandle) -> Result<(), Strin
 
 /// メインウィンドウ（モーダル表示用）を非表示にするコマンド
 #[tauri::command]
-#[allow(unused_variables)]
-pub async fn hide_modal_window(app_handle: tauri::AppHandle) -> Result<(), String> {
+pub async fn hide_modal_window(_app_handle: tauri::AppHandle) -> Result<(), String> {
     #[cfg(desktop)]
     {
+        let app_handle = _app_handle;
         if let Some(win) = app_handle.get_webview_window("main") {
             let _ = win.hide();
         }

@@ -1,10 +1,10 @@
 /// バルーン・メニュー等の補助ウィンドウを事前に非表示状態で生成（キャッシュ）する
 #[tauri::command]
-#[allow(unused_variables)]
-pub async fn preload_auxiliary_windows(app_handle: tauri::AppHandle) -> Result<(), String> {
+pub async fn preload_auxiliary_windows(_app_handle: tauri::AppHandle) -> Result<(), String> {
     #[cfg(desktop)]
     {
         use tauri::Manager;
+        let app_handle = _app_handle;
         let max_scopes =
             if let Some(state) = app_handle.try_state::<crate::common::state::AppState>() {
                 let n = *state.num_characters.lock();

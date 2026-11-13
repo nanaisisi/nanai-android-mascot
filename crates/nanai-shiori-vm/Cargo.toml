@@ -7,5 +7,11 @@ license = "MIT OR Apache-2.0"
 [lib]
 crate-type = ["cdylib", "rlib"]
 
-[dependencies]
-wasmi = { workspace = true }
+[features]
+default = []
+wasmi-runner = ["dep:wasmi"]
+static-shiori = ["static-satori", "static-yaya", "static-kawari"]
+static-satori = []
+static-yaya = []
+static-kawari = []
+win-dll = []

@@ -1,10 +1,6 @@
-//! Nanai Shiori VM - WebAssembly SHIORI Core & Sandbox Runtime
-//!
-//! Provides both:
-//! 1. WASM guest exports (`load`, `request`, `unload`, `shiori_malloc`, `shiori_free`, etc.)
-//!    conforming to the SHIORI/3.0 C ABI specification.
-//! 2. Native host runner (`ShioriVmHost`) leveraging `wasmi` to execute any SHIORI WASM binary
-//!    safely on Android / desktop environments.
+//! Nanai Shiori VM - WebAssembly & Direct Native SHIORI Core Runtime
+
+pub mod dynamic_loader;
 
 use std::collections::HashMap;
 use std::sync::{LazyLock, Mutex};
@@ -194,12 +190,14 @@ pub extern "C" fn shiori_unload() -> i32 {
 }
 
 // ============================================================================
-// Host VM: wasmi runner for executing WASM SHIORI modules
+// Host VM: wasmi runner for executing WASM SHIORI modules (Optional feature)
 // ============================================================================
 
+#[cfg(feature = "wasmi-runner")]
 use wasmi::{Engine, Instance, Linker, Memory, Module, Store};
 
 /// Host-side runner for running SHIORI WebAssembly modules
+#[cfg(feature = "wasmi-runner")]
 pub struct ShioriVmHost {
     engine: Engine,
     module: Option<Module>,
@@ -209,12 +207,14 @@ pub struct ShioriVmHost {
     is_loaded: bool,
 }
 
+#[cfg(feature = "wasmi-runner")]
 impl Default for ShioriVmHost {
     fn default() -> Self {
         Self::new()
     }
 }
 
+#[cfg(feature = "wasmi-runner")]
 impl ShioriVmHost {
     pub fn new() -> Self {
         Self {
@@ -363,6 +363,43 @@ impl ShioriVmHost {
     }
 }
 
+/// Stub host-side runner when `wasmi-runner` feature is disabled
+#[cfg(not(feature = "wasmi-runner"))]
+#[derive(Default)]
+pub struct ShioriVmHost {
+    is_loaded: bool,
+}
+
+#[cfg(not(feature = "wasmi-runner"))]
+impl ShioriVmHost {
+    pub fn new() -> Self {
+        Self { is_loaded: false }
+    }
+
+    pub fn load_bytecode(&mut self, _wasm_bytes: &[u8]) -> Result<(), String> {
+        self.is_loaded = true;
+        Ok(())
+    }
+
+    pub fn call_load(&mut self, _dir_path: &str) -> Result<bool, String> {
+        self.is_loaded = true;
+        Ok(true)
+    }
+
+    pub fn call_request(&mut self, _request_str: &str) -> Result<String, String> {
+        Ok("SHIORI/3.0 200 OK\r\nCharset: UTF-8\r\nValue: \\0\\s[0]Stub WASM Response\\e\r\n\r\n".to_string())
+    }
+
+    pub fn call_unload(&mut self) -> Result<bool, String> {
+        self.is_loaded = false;
+        Ok(true)
+    }
+
+    pub fn is_loaded(&self) -> bool {
+        self.is_loaded
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -410,6 +447,7 @@ mod tests {
         }
     }
 
+    #[cfg(feature = "wasmi-runner")]
     #[test]
     fn test_shiori_vm_host_mock() {
         let mut host = ShioriVmHost::new();

@@ -13,7 +13,6 @@ serde = { workspace = true }
 rust-i18n = { workspace = true }
 sys-locale = { workspace = true }
 encoding_rs = { workspace = true }
-wasmi = { workspace = true }
 nanai-core = { workspace = true }
 nanai-surface = { workspace = true }
 nanai-shiori-vm = { workspace = true }

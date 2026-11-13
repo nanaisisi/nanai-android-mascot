@@ -14,8 +14,8 @@ pub mod protocol;
 pub mod types;
 
 pub use engine::{
-    CandidateKind, LoadAttempt, MockShioriEngine, MultiStageShioriLoader, ShioriEngine,
-    ShioriEngineCandidate, ShioriLifecycleState, build_standard_capability_references,
+    CandidateKind, LoadAttempt, MockShioriEngine, MultiStageShioriLoader, NativeShioriEngine,
+    ShioriEngine, ShioriEngineCandidate, ShioriLifecycleState, build_standard_capability_references,
 };
 pub use protocol::{ShioriRequest, ShioriResponse};
 pub use types::{

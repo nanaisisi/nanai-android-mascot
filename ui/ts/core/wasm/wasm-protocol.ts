@@ -1,6 +1,6 @@
 /**
  * @file wasm-protocol.ts
- * @brief SSTP/FMO/descript/プロトコルバインディング (wasm-pack 統合)
+ * @brief SSTP/FMO/SHIORI/descript/プロトコルバインディング (wasm-pack 統合)
  */
 
 import { parseInstallErrorReason as parseInstallErrorReasonFallback } from "../actions/install-protocol.js";
@@ -35,6 +35,36 @@ export function buildSstpResponseWasm(
 		return core.wasm_build_sstp_response(status, script, headers) as string;
 	} catch (err) {
 		console.warn("⚠️ [WASM Protocol] buildSstpResponse エラー:", err);
+		return null;
+	}
+}
+
+export function buildShioriRequestWasm(
+	method: string,
+	headers: Record<string, string> = {},
+): string | null {
+	const core = wasmMemory.getWasmCore();
+	if (!core?.wasm_build_shiori_request) return null;
+
+	try {
+		return core.wasm_build_shiori_request(method, headers) as string;
+	} catch (err) {
+		console.warn("⚠️ [WASM Protocol] buildShioriRequest エラー:", err);
+		return null;
+	}
+}
+
+export function buildShioriNotifyWasm(
+	eventName: string,
+	references: string[] = [],
+): string | null {
+	const core = wasmMemory.getWasmCore();
+	if (!core?.wasm_build_shiori_notify) return null;
+
+	try {
+		return core.wasm_build_shiori_notify(eventName, references) as string;
+	} catch (err) {
+		console.warn("⚠️ [WASM Protocol] buildShioriNotify エラー:", err);
 		return null;
 	}
 }

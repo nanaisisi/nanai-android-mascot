@@ -141,7 +141,8 @@ pub fn parse_sakura_script(script: &str) -> Vec<SakuraToken> {
                     'f' => {
                         chars.next();
                         if let Some(arg) = parse_bracket_arg(&mut chars) {
-                            let parts: Vec<String> = arg.split(',').map(|s| s.trim().to_string()).collect();
+                            let parts: Vec<String> =
+                                arg.split(',').map(|s| s.trim().to_string()).collect();
                             let property = parts.first().cloned().unwrap_or_default();
                             let args = parts.into_iter().skip(1).collect();
                             tokens.push(SakuraToken::Font { property, args });

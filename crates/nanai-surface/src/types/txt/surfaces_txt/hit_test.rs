@@ -47,9 +47,7 @@ mod tests {
 
     #[test]
     fn test_hit_test_with_binds_comprehensive() {
-        use crate::types::{
-            CollisionArea, CollisionShape, SerikoAnimation, SurfaceDefinition,
-        };
+        use crate::types::{CollisionArea, CollisionShape, SerikoAnimation, SurfaceDefinition};
 
         let mut txt = SurfacesTxt::default();
         let mut def = SurfaceDefinition::default();

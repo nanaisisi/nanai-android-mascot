@@ -41,7 +41,8 @@ fn parse_surface_header(trimmed: &str) -> Option<Vec<String>> {
         let p = part.trim();
         if p.contains('-')
             && let Some((start_s, end_s)) = p.split_once('-')
-            && let (Ok(start), Ok(end)) = (start_s.trim().parse::<u32>(), end_s.trim().parse::<u32>())
+            && let (Ok(start), Ok(end)) =
+                (start_s.trim().parse::<u32>(), end_s.trim().parse::<u32>())
         {
             for i in start..=end {
                 result.push(i.to_string());
@@ -98,7 +99,9 @@ pub fn parse_surfaces_txt(text: &str) -> ParsedSurfacesManifest {
         if trimmed.to_ascii_lowercase().starts_with("element") {
             let parts: Vec<&str> = trimmed.split(',').map(|s| s.trim()).collect();
             if parts.len() >= 5
-                && let Ok(id) = parts[0].trim_start_matches(|c: char| !c.is_ascii_digit()).parse::<u32>()
+                && let Ok(id) = parts[0]
+                    .trim_start_matches(|c: char| !c.is_ascii_digit())
+                    .parse::<u32>()
             {
                 let method = parts[1].to_ascii_lowercase();
                 let file = parts[2].to_string();
@@ -124,7 +127,10 @@ pub fn parse_surfaces_txt(text: &str) -> ParsedSurfacesManifest {
         if trimmed.to_ascii_lowercase().starts_with("collisionex") {
             let parts: Vec<&str> = trimmed.split(',').map(|s| s.trim()).collect();
             if parts.len() >= 3 {
-                let id = parts[0].trim_start_matches(|c: char| !c.is_ascii_digit()).parse::<i32>().unwrap_or(0);
+                let id = parts[0]
+                    .trim_start_matches(|c: char| !c.is_ascii_digit())
+                    .parse::<i32>()
+                    .unwrap_or(0);
                 let name = parts[1].to_ascii_lowercase();
                 let shape_type = parts[2].to_ascii_lowercase();
 
@@ -165,7 +171,9 @@ pub fn parse_surfaces_txt(text: &str) -> ParsedSurfacesManifest {
                         let mut vertices = Vec::new();
                         let mut i = 3;
                         while i + 1 < parts.len() {
-                            if let (Ok(vx), Ok(vy)) = (parts[i].parse::<i32>(), parts[i + 1].parse::<i32>()) {
+                            if let (Ok(vx), Ok(vy)) =
+                                (parts[i].parse::<i32>(), parts[i + 1].parse::<i32>())
+                            {
                                 vertices.push((vx, vy));
                             }
                             i += 2;
@@ -198,7 +206,10 @@ pub fn parse_surfaces_txt(text: &str) -> ParsedSurfacesManifest {
         if trimmed.to_ascii_lowercase().starts_with("collision") {
             let parts: Vec<&str> = trimmed.split(',').map(|s| s.trim()).collect();
             if parts.len() >= 6 {
-                let id = parts[0].trim_start_matches(|c: char| !c.is_ascii_digit()).parse::<i32>().unwrap_or(0);
+                let id = parts[0]
+                    .trim_start_matches(|c: char| !c.is_ascii_digit())
+                    .parse::<i32>()
+                    .unwrap_or(0);
                 let x1 = parts[1].parse::<i32>().unwrap_or(0);
                 let y1 = parts[2].parse::<i32>().unwrap_or(0);
                 let x2 = parts[3].parse::<i32>().unwrap_or(0);

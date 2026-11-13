@@ -89,8 +89,12 @@ impl DescriptManifest {
 
     /// Sakura側のデフォルト座標 (`sakura.defaultx`, `sakura.defaulty`)
     pub fn sakura_default_pos(&self) -> Option<(i32, i32)> {
-        let x = self.get("sakura.defaultx").and_then(|v| v.parse::<i32>().ok());
-        let y = self.get("sakura.defaulty").and_then(|v| v.parse::<i32>().ok());
+        let x = self
+            .get("sakura.defaultx")
+            .and_then(|v| v.parse::<i32>().ok());
+        let y = self
+            .get("sakura.defaulty")
+            .and_then(|v| v.parse::<i32>().ok());
         match (x, y) {
             (Some(px), Some(py)) => Some((px, py)),
             _ => None,
@@ -99,8 +103,12 @@ impl DescriptManifest {
 
     /// Kero側のデフォルト座標 (`kero.defaultx`, `kero.defaulty`)
     pub fn kero_default_pos(&self) -> Option<(i32, i32)> {
-        let x = self.get("kero.defaultx").and_then(|v| v.parse::<i32>().ok());
-        let y = self.get("kero.defaulty").and_then(|v| v.parse::<i32>().ok());
+        let x = self
+            .get("kero.defaultx")
+            .and_then(|v| v.parse::<i32>().ok());
+        let y = self
+            .get("kero.defaulty")
+            .and_then(|v| v.parse::<i32>().ok());
         match (x, y) {
             (Some(px), Some(py)) => Some((px, py)),
             _ => None,
@@ -136,10 +144,20 @@ impl DescriptManifest {
 
     /// バルーン有効領域矩形 (`validrect.left`, `validrect.top`, `validrect.right`, `validrect.bottom`)
     pub fn valid_rect(&self) -> Option<(i32, i32, i32, i32)> {
-        let l = self.get("validrect.left").and_then(|v| v.parse::<i32>().ok()).unwrap_or(0);
-        let t = self.get("validrect.top").and_then(|v| v.parse::<i32>().ok()).unwrap_or(0);
-        let r = self.get("validrect.right").and_then(|v| v.parse::<i32>().ok());
-        let b = self.get("validrect.bottom").and_then(|v| v.parse::<i32>().ok());
+        let l = self
+            .get("validrect.left")
+            .and_then(|v| v.parse::<i32>().ok())
+            .unwrap_or(0);
+        let t = self
+            .get("validrect.top")
+            .and_then(|v| v.parse::<i32>().ok())
+            .unwrap_or(0);
+        let r = self
+            .get("validrect.right")
+            .and_then(|v| v.parse::<i32>().ok());
+        let b = self
+            .get("validrect.bottom")
+            .and_then(|v| v.parse::<i32>().ok());
         match (r, b) {
             (Some(vr), Some(vb)) => Some((l, t, vr, vb)),
             _ => None,
@@ -158,7 +176,8 @@ impl DescriptManifest {
 
     /// バルーン折り返し幅 (`wordwrappoint.x`)
     pub fn word_wrap_point(&self) -> Option<i32> {
-        self.get("wordwrappoint.x").and_then(|v| v.parse::<i32>().ok())
+        self.get("wordwrappoint.x")
+            .and_then(|v| v.parse::<i32>().ok())
     }
 
     /// 作者URL (`craftmanurl`)
@@ -280,7 +299,11 @@ mod tests {
         assert_eq!(manifest.readme(), Some("readme.txt"));
         assert_eq!(
             manifest.accept_list(),
-            vec!["GhostA".to_string(), "GhostB".to_string(), "GhostC".to_string()]
+            vec![
+                "GhostA".to_string(),
+                "GhostB".to_string(),
+                "GhostC".to_string()
+            ]
         );
         assert_eq!(manifest.craftman_url(), Some("https://example.com/author"));
         assert_eq!(manifest.craftman_w(), Some("AuthorEn"));

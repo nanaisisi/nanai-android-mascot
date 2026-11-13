@@ -17,12 +17,14 @@ pub fn validate_balloon_descript(
     current_ghost_name: &str,
     current_ghost_path: &str,
 ) -> BalloonDescriptValidationResult {
-    let get_prop = |key: &str| -> Option<&String> {
-        properties.get(&key.to_lowercase())
-    };
+    let get_prop = |key: &str| -> Option<&String> { properties.get(&key.to_lowercase()) };
 
-    let rec_name = get_prop("recommended.ghost").map(|s| s.trim()).filter(|s| !s.is_empty());
-    let rec_path = get_prop("recommended.ghost.path").map(|s| s.trim()).filter(|s| !s.is_empty());
+    let rec_name = get_prop("recommended.ghost")
+        .map(|s| s.trim())
+        .filter(|s| !s.is_empty());
+    let rec_path = get_prop("recommended.ghost.path")
+        .map(|s| s.trim())
+        .filter(|s| !s.is_empty());
 
     if rec_name.is_none() && rec_path.is_none() {
         return BalloonDescriptValidationResult {
@@ -35,13 +37,15 @@ pub fn validate_balloon_descript(
     let mut warning = None;
 
     if let Some(expected_name) = rec_name
-        && !current_ghost_name.is_empty() && !expected_name.eq_ignore_ascii_case(current_ghost_name) {
-            is_recommended = false;
-            warning = Some(format!(
-                "このバルーンスキンは専用/推奨ゴースト「{}」向けに特化して作られています。現在のゴースト「{}」で使用すると表示が狂う場合があります。",
-                expected_name, current_ghost_name
-            ));
-        }
+        && !current_ghost_name.is_empty()
+        && !expected_name.eq_ignore_ascii_case(current_ghost_name)
+    {
+        is_recommended = false;
+        warning = Some(format!(
+            "このバルーンスキンは専用/推奨ゴースト「{}」向けに特化して作られています。現在のゴースト「{}」で使用すると表示が狂う場合があります。",
+            expected_name, current_ghost_name
+        ));
+    }
 
     if let Some(expected_path) = rec_path {
         let norm_expected = expected_path.replace('\\', "/").to_ascii_lowercase();

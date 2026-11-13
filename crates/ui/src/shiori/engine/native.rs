@@ -1,9 +1,9 @@
 //! Platform Native / Statically Linked SHIORI Engine Implementation
 
-use std::path::Path;
-use nanai_shiori_vm::dynamic_loader::NativeShioriEngine as VmNativeEngine;
 use super::state::ShioriLifecycleState;
 use super::trait_def::ShioriEngine;
+use nanai_shiori_vm::dynamic_loader::NativeShioriEngine as VmNativeEngine;
+use std::path::Path;
 
 /// Platform-Native SHIORI 3.0 Engine wrapper (Direct Native/Static Linking)
 pub struct NativeShioriEngine {

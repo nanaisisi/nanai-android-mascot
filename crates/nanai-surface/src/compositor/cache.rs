@@ -56,9 +56,10 @@ impl SurfaceLruCache {
     fn evict_if_needed(&mut self) {
         while self.current_bytes > self.max_bytes && !self.order.is_empty() {
             if let Some(oldest_key) = self.order.pop_front()
-                && let Some(removed) = self.map.remove(&oldest_key) {
-                    self.current_bytes = self.current_bytes.saturating_sub(removed.data.len());
-                }
+                && let Some(removed) = self.map.remove(&oldest_key)
+            {
+                self.current_bytes = self.current_bytes.saturating_sub(removed.data.len());
+            }
         }
     }
 

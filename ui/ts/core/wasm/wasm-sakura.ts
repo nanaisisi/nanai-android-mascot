@@ -30,7 +30,11 @@ export function createSakuraPlayerWasm(script: string): unknown | null {
 }
 
 export function stepSakuraPlayerWasm(player: unknown): unknown | null {
-	if (!player || typeof (player as { step?: () => unknown }).step !== "function") return null;
+	if (
+		!player ||
+		typeof (player as { step?: () => unknown }).step !== "function"
+	)
+		return null;
 	try {
 		return (player as { step: () => unknown }).step();
 	} catch (err) {
@@ -40,7 +44,8 @@ export function stepSakuraPlayerWasm(player: unknown): unknown | null {
 }
 
 export function freeSakuraPlayerWasm(player: unknown): void {
-	if (!player || typeof (player as { free?: () => void }).free !== "function") return;
+	if (!player || typeof (player as { free?: () => void }).free !== "function")
+		return;
 	try {
 		(player as { free: () => void }).free();
 	} catch (err) {

@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { wasmBridge } from "../ui/ts/core/wasm-bridge";
 import {
 	createSakuraPlayerWasm,
 	freeSakuraPlayerWasm,
 	stepSakuraPlayerWasm,
 } from "../ui/ts/core/wasm/wasm-sakura";
+import { wasmBridge } from "../ui/ts/core/wasm-bridge";
 
 describe("wasmBridge transparent connection and fallback unit tests", () => {
 	it("handles fallback gracefully before WASM instantiation", () => {

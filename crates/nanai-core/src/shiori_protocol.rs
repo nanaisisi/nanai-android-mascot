@@ -7,7 +7,7 @@ use wasm_bindgen::prelude::*;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 pub struct ShioriRequest {
-    pub method: String, // GET または NOTIFY
+    pub method: String,  // GET または NOTIFY
     pub version: String, // SHIORI/3.0
     pub headers: BTreeMap<String, String>,
 }
@@ -78,13 +78,24 @@ pub fn build_shiori_notify(event_name: &str, references: &[String]) -> String {
 }
 
 /// UKADOC公式仕様 (ukadoc-spec/list/shiori-event) に準拠した標準SHIORIイベントリクエストビルダー群
-
 /// OnBoot / OnFirstBoot イベントリクエスト構築
 pub fn build_on_boot_request(is_first_boot: bool, kero_name: &str, ghost_dir: &str) -> String {
-    let event_id = if is_first_boot { "OnFirstBoot" } else { "OnBoot" };
-    let base_id = if is_first_boot { Some("OnBoot".to_string()) } else { None };
+    let event_id = if is_first_boot {
+        "OnFirstBoot"
+    } else {
+        "OnBoot"
+    };
+    let base_id = if is_first_boot {
+        Some("OnBoot".to_string())
+    } else {
+        None
+    };
     let refs = vec![
-        if is_first_boot { "1".to_string() } else { "0".to_string() },
+        if is_first_boot {
+            "1".to_string()
+        } else {
+            "0".to_string()
+        },
         kero_name.to_string(),
         ghost_dir.to_string(),
     ];
@@ -178,7 +189,11 @@ pub fn build_on_dressup_changed_request(
         scope_id.to_string(),
         category.to_string(),
         part.to_string(),
-        if enabled { "1".to_string() } else { "0".to_string() },
+        if enabled {
+            "1".to_string()
+        } else {
+            "0".to_string()
+        },
     ];
     build_shiori_request_extended("GET", "OnDressupChanged", &refs, None)
 }
@@ -346,7 +361,11 @@ pub fn build_on_gamepad_button_up_request(pad_index: i32, button_id: i32) -> Str
 
 /// OnGamepadAxisMove イベントリクエスト構築 (ukadoc-spec/list/shiori-event/gamepad/OnGamepadAxisMove.md)
 pub fn build_on_gamepad_axis_move_request(pad_index: i32, axis_id: i32, value: f64) -> String {
-    let refs = vec![pad_index.to_string(), axis_id.to_string(), value.to_string()];
+    let refs = vec![
+        pad_index.to_string(),
+        axis_id.to_string(),
+        value.to_string(),
+    ];
     build_shiori_request_extended("GET", "OnGamepadAxisMove", &refs, None)
 }
 
@@ -441,8 +460,20 @@ pub fn build_on_mouse_gesture_request(gesture: &str, scope_id: i32) -> String {
 }
 
 /// OnMouseWheel イベントリクエスト構築 (ukadoc-spec/list/shiori-event/mouse/OnMouseWheel.md)
-pub fn build_on_mouse_wheel_request(x: i32, y: i32, wheel_delta: i32, collision: &str, scope_id: i32) -> String {
-    let refs = vec![x.to_string(), y.to_string(), wheel_delta.to_string(), collision.to_string(), scope_id.to_string()];
+pub fn build_on_mouse_wheel_request(
+    x: i32,
+    y: i32,
+    wheel_delta: i32,
+    collision: &str,
+    scope_id: i32,
+) -> String {
+    let refs = vec![
+        x.to_string(),
+        y.to_string(),
+        wheel_delta.to_string(),
+        collision.to_string(),
+        scope_id.to_string(),
+    ];
     build_shiori_request_extended("GET", "OnMouseWheel", &refs, None)
 }
 
@@ -460,7 +491,14 @@ pub fn build_on_mouse_drag_end_request(x: i32, y: i32, scope_id: i32) -> String 
 
 /// OnBatteryNotify イベントリクエスト構築 (ukadoc-spec/list/shiori-event/os-state/OnBatteryNotify.md)
 pub fn build_on_battery_notify_request(level: u8, ac_online: bool) -> String {
-    let refs = vec![level.to_string(), if ac_online { "1".to_string() } else { "0".to_string() }];
+    let refs = vec![
+        level.to_string(),
+        if ac_online {
+            "1".to_string()
+        } else {
+            "0".to_string()
+        },
+    ];
     build_shiori_request_extended("GET", "OnBatteryNotify", &refs, None)
 }
 
@@ -472,7 +510,11 @@ pub fn build_on_display_change_request(width: i32, height: i32, bpp: i32) -> Str
 
 /// OnDarkTheme イベントリクエスト構築 (ukadoc-spec/list/shiori-event/os-state/OnDarkTheme.md)
 pub fn build_on_dark_theme_request(enabled: bool) -> String {
-    let refs = vec![if enabled { "1".to_string() } else { "0".to_string() }];
+    let refs = vec![if enabled {
+        "1".to_string()
+    } else {
+        "0".to_string()
+    }];
     build_shiori_request_extended("GET", "OnDarkTheme", &refs, None)
 }
 
@@ -503,7 +545,10 @@ pub fn wasm_build_shiori_request(method: &str, headers_js: JsValue) -> Result<St
 }
 
 #[wasm_bindgen]
-pub fn wasm_build_shiori_notify(event_name: &str, references_js: JsValue) -> Result<String, JsValue> {
+pub fn wasm_build_shiori_notify(
+    event_name: &str,
+    references_js: JsValue,
+) -> Result<String, JsValue> {
     let references: Vec<String> = if references_js.is_null() || references_js.is_undefined() {
         vec![]
     } else {

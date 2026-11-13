@@ -72,7 +72,10 @@ pub fn build_sstp_response(status: u16, script: &str, headers: BTreeMap<String, 
 
 /// SSTP NOTIFY リクエスト文字列構築 (ukadoc-spec/spec/sstp/method_notify.md)
 pub fn build_sstp_notify_request(sender: &str, event_name: &str, references: &[String]) -> String {
-    let mut resp = format!("NOTIFY SSTP/1.1\r\nSender: {}\r\nEvent: {}\r\n", sender, event_name);
+    let mut resp = format!(
+        "NOTIFY SSTP/1.1\r\nSender: {}\r\nEvent: {}\r\n",
+        sender, event_name
+    );
     for (i, r) in references.iter().enumerate() {
         resp.push_str(&format!("Reference{}: {}\r\n", i, r));
     }
@@ -82,17 +85,26 @@ pub fn build_sstp_notify_request(sender: &str, event_name: &str, references: &[S
 
 /// SSTP SEND リクエスト文字列構築 (ukadoc-spec/spec/sstp/method_send.md)
 pub fn build_sstp_send_request(sender: &str, script: &str) -> String {
-    format!("SEND SSTP/1.1\r\nSender: {}\r\nScript: {}\r\n\r\n", sender, script)
+    format!(
+        "SEND SSTP/1.1\r\nSender: {}\r\nScript: {}\r\n\r\n",
+        sender, script
+    )
 }
 
 /// SSTP EXECUTE リクエスト文字列構築 (ukadoc-spec/spec/sstp/method_execute.md)
 pub fn build_sstp_execute_request(sender: &str, command: &str) -> String {
-    format!("EXECUTE SSTP/1.1\r\nSender: {}\r\nCommand: {}\r\n\r\n", sender, command)
+    format!(
+        "EXECUTE SSTP/1.1\r\nSender: {}\r\nCommand: {}\r\n\r\n",
+        sender, command
+    )
 }
 
 /// SAORI/1.0 リクエスト構築 (UKADOC / SAORI 仕様準拠)
 pub fn build_saori_request(module_path: &str, arguments: &[String]) -> String {
-    let mut resp = format!("EXECUTE SAORI/1.0\r\nModule: {}\r\nCharset: UTF-8\r\n", module_path);
+    let mut resp = format!(
+        "EXECUTE SAORI/1.0\r\nModule: {}\r\nCharset: UTF-8\r\n",
+        module_path
+    );
     for (i, arg) in arguments.iter().enumerate() {
         resp.push_str(&format!("Argument{}: {}\r\n", i, arg));
     }
@@ -135,14 +147,14 @@ pub fn parse_saori_response(raw: &str) -> Option<SaoriResponse> {
                 "charset" => charset = v,
                 "result" => result = Some(v),
                 _ => {
-                    if let Some(rest) = k.strip_prefix("value") {
-                        if let Ok(idx) = rest.parse::<usize>() {
-                            let n = idx;
-                            if values.len() <= n {
-                                values.resize(n + 1, String::new());
-                            }
-                            values[n] = v;
+                    if let Some(rest) = k.strip_prefix("value")
+                        && let Ok(idx) = rest.parse::<usize>()
+                    {
+                        let n = idx;
+                        if values.len() <= n {
+                            values.resize(n + 1, String::new());
                         }
+                        values[n] = v;
                     }
                 }
             }
@@ -230,7 +242,11 @@ pub fn wasm_parse_sstp_request(raw_request: &str) -> Result<JsValue, JsValue> {
 }
 
 #[wasm_bindgen]
-pub fn wasm_build_sstp_response(status: u16, script: &str, headers_js: JsValue) -> Result<String, JsValue> {
+pub fn wasm_build_sstp_response(
+    status: u16,
+    script: &str,
+    headers_js: JsValue,
+) -> Result<String, JsValue> {
     let headers: BTreeMap<String, String> = if headers_js.is_null() || headers_js.is_undefined() {
         BTreeMap::new()
     } else {
@@ -282,7 +298,7 @@ mod tests {
 
     #[test]
     fn test_build_sstp_requests() {
-        let notify = build_sstp_notify_request("TestApp", "OnCustomEvent", &[ "arg0".to_string() ]);
+        let notify = build_sstp_notify_request("TestApp", "OnCustomEvent", &["arg0".to_string()]);
         assert!(notify.contains("NOTIFY SSTP/1.1"));
         assert!(notify.contains("Event: OnCustomEvent"));
         assert!(notify.contains("Reference0: arg0"));
@@ -298,12 +314,13 @@ mod tests {
 
     #[test]
     fn test_saori_protocol() {
-        let req = build_saori_request("saori.dll", &[ "param1".to_string() ]);
+        let req = build_saori_request("saori.dll", &["param1".to_string()]);
         assert!(req.contains("EXECUTE SAORI/1.0"));
         assert!(req.contains("Module: saori.dll"));
         assert!(req.contains("Argument0: param1"));
 
-        let raw_res = "SAORI/1.0 200 OK\r\nCharset: UTF-8\r\nResult: success\r\nValue0: val0\r\n\r\n";
+        let raw_res =
+            "SAORI/1.0 200 OK\r\nCharset: UTF-8\r\nResult: success\r\nValue0: val0\r\n\r\n";
         let res = parse_saori_response(raw_res).unwrap();
         assert_eq!(res.status, 200);
         assert_eq!(res.result.as_deref(), Some("success"));

@@ -64,10 +64,9 @@ export function advanceAnimationFrameWasm(
 	if (!core?.wasm_advance_animation_frame) return null;
 
 	try {
-		return core.wasm_advance_animation_frame(def, state, deltaMs) as [
-			unknown,
-			unknown,
-		] | null;
+		return core.wasm_advance_animation_frame(def, state, deltaMs) as
+			| [unknown, unknown]
+			| null;
 	} catch (err) {
 		console.warn("⚠️ [WASM Surface] advanceAnimationFrame エラー:", err);
 		return null;

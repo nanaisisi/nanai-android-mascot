@@ -458,6 +458,40 @@ pub fn build_on_mouse_drag_end_request(x: i32, y: i32, scope_id: i32) -> String 
     build_shiori_request_extended("GET", "OnMouseDragEnd", &refs, None)
 }
 
+/// OnBatteryNotify イベントリクエスト構築 (ukadoc-spec/list/shiori-event/os-state/OnBatteryNotify.md)
+pub fn build_on_battery_notify_request(level: u8, ac_online: bool) -> String {
+    let refs = vec![level.to_string(), if ac_online { "1".to_string() } else { "0".to_string() }];
+    build_shiori_request_extended("GET", "OnBatteryNotify", &refs, None)
+}
+
+/// OnDisplayChange イベントリクエスト構築 (ukadoc-spec/list/shiori-event/os-state/OnDisplayChange.md)
+pub fn build_on_display_change_request(width: i32, height: i32, bpp: i32) -> String {
+    let refs = vec![width.to_string(), height.to_string(), bpp.to_string()];
+    build_shiori_request_extended("GET", "OnDisplayChange", &refs, None)
+}
+
+/// OnDarkTheme イベントリクエスト構築 (ukadoc-spec/list/shiori-event/os-state/OnDarkTheme.md)
+pub fn build_on_dark_theme_request(enabled: bool) -> String {
+    let refs = vec![if enabled { "1".to_string() } else { "0".to_string() }];
+    build_shiori_request_extended("GET", "OnDarkTheme", &refs, None)
+}
+
+/// OnRecycleBinStatusUpdate イベントリクエスト構築 (ukadoc-spec/list/shiori-event/os-state/OnRecycleBinStatusUpdate.md)
+pub fn build_on_recycle_bin_status_update_request(count: u32, bytes: u64) -> String {
+    let refs = vec![count.to_string(), bytes.to_string()];
+    build_shiori_request_extended("GET", "OnRecycleBinStatusUpdate", &refs, None)
+}
+
+/// OnScreenSaverStart イベントリクエスト構築 (ukadoc-spec/list/shiori-event/os-state/OnScreenSaverStart.md)
+pub fn build_on_screen_saver_start_request() -> String {
+    build_shiori_request_extended("GET", "OnScreenSaverStart", &[], None)
+}
+
+/// OnScreenSaverEnd イベントリクエスト構築 (ukadoc-spec/list/shiori-event/os-state/OnScreenSaverEnd.md)
+pub fn build_on_screen_saver_end_request() -> String {
+    build_shiori_request_extended("GET", "OnScreenSaverEnd", &[], None)
+}
+
 #[wasm_bindgen]
 pub fn wasm_build_shiori_request(method: &str, headers_js: JsValue) -> Result<String, JsValue> {
     let headers: BTreeMap<String, String> = if headers_js.is_null() || headers_js.is_undefined() {
@@ -736,5 +770,29 @@ mod tests {
 
         let drag_end = build_on_mouse_drag_end_request(50, 50, 0);
         assert!(drag_end.contains("ID: OnMouseDragEnd"));
+
+        let battery_req = build_on_battery_notify_request(85, true);
+        assert!(battery_req.contains("ID: OnBatteryNotify"));
+        assert!(battery_req.contains("Reference0: 85"));
+        assert!(battery_req.contains("Reference1: 1"));
+
+        let disp_req = build_on_display_change_request(1920, 1080, 32);
+        assert!(disp_req.contains("ID: OnDisplayChange"));
+        assert!(disp_req.contains("Reference0: 1920"));
+        assert!(disp_req.contains("Reference1: 1080"));
+
+        let dark_req = build_on_dark_theme_request(true);
+        assert!(dark_req.contains("ID: OnDarkTheme"));
+        assert!(dark_req.contains("Reference0: 1"));
+
+        let recycle_req = build_on_recycle_bin_status_update_request(12, 1048576);
+        assert!(recycle_req.contains("ID: OnRecycleBinStatusUpdate"));
+        assert!(recycle_req.contains("Reference0: 12"));
+
+        let saver_start = build_on_screen_saver_start_request();
+        assert!(saver_start.contains("ID: OnScreenSaverStart"));
+
+        let saver_end = build_on_screen_saver_end_request();
+        assert!(saver_end.contains("ID: OnScreenSaverEnd"));
     }
 }

@@ -257,6 +257,8 @@ pub struct SakuraEnvContext {
     pub hour: u32,
     pub minute: u32,
     pub second: u32,
+    pub system_os: String,
+    pub system_version: String,
 }
 
 impl Default for SakuraEnvContext {
@@ -271,25 +273,29 @@ impl Default for SakuraEnvContext {
             hour: 12,
             minute: 0,
             second: 0,
+            system_os: "Android".to_string(),
+            system_version: "1.0.0".to_string(),
         }
     }
 }
 
-/// さくらスクリプト内の環境変数 (%username, %selfname, %keroname 等) を展開
+/// さくらスクリプト内の環境変数 (%username, %selfname, %keroname, %system.os 等) を展開
 pub fn expand_sakura_environment_variables(script: &str, ctx: &SakuraEnvContext) -> String {
     let mut result = script.to_string();
     result = result.replace("%username", &ctx.username);
     result = result.replace("%user", &ctx.username);
-    result = result.replace("%selfname", &ctx.selfname);
     result = result.replace("%selfname[0]", &ctx.selfname);
-    result = result.replace("%keroname", &ctx.keroname);
     result = result.replace("%selfname[1]", &ctx.keroname);
+    result = result.replace("%selfname", &ctx.selfname);
+    result = result.replace("%keroname", &ctx.keroname);
     result = result.replace("%year", &ctx.year.to_string());
     result = result.replace("%month", &ctx.month.to_string());
     result = result.replace("%day", &ctx.day.to_string());
     result = result.replace("%hour", &ctx.hour.to_string());
     result = result.replace("%minute", &ctx.minute.to_string());
     result = result.replace("%second", &ctx.second.to_string());
+    result = result.replace("%system.os", &ctx.system_os);
+    result = result.replace("%system.version", &ctx.system_version);
     result
 }
 
@@ -341,13 +347,15 @@ mod tests {
             username: "Master".to_string(),
             selfname: "Emily".to_string(),
             keroname: "Kero".to_string(),
+            system_os: "Android".to_string(),
+            system_version: "1.0.0".to_string(),
             ..Default::default()
         };
-        let script = "こんにちは %username さん。私は %selfname です。相方は %keroname です。";
+        let script = "こんにちは %username さん。私は %selfname です。OSは %system.os (%system.version) です。";
         let expanded = expand_sakura_environment_variables(script, &ctx);
         assert_eq!(
             expanded,
-            "こんにちは Master さん。私は Emily です。相方は Kero です。"
+            "こんにちは Master さん。私は Emily です。OSは Android (1.0.0) です。"
         );
     }
 

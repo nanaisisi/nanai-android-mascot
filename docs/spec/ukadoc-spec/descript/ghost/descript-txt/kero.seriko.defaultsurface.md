@@ -2,7 +2,7 @@
 
 - **規格**: [kero.seriko.defaultsurface.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/kero.seriko.defaultsurface.md)
 - **検索語**: kero.seriko.defaultsurface
-- **対応状況**: ❌ 未実装
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-実装コード内に「kero.seriko.defaultsurface」は検出されませんでした。
+- `crates/nanai-core/src/descript_parser.rs:186` `/// Kero側デフォルトサーフィスID (`kero.seriko.defaultsurface`)`
+- `crates/nanai-core/src/descript_parser.rs:188` `self.get("kero.seriko.defaultsurface")`

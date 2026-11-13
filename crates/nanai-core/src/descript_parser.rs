@@ -160,6 +160,48 @@ impl DescriptManifest {
     pub fn word_wrap_point(&self) -> Option<i32> {
         self.get("wordwrappoint.x").and_then(|v| v.parse::<i32>().ok())
     }
+
+    /// 作者URL (`craftmanurl`)
+    pub fn craftman_url(&self) -> Option<&str> {
+        self.get("craftmanurl")
+    }
+
+    /// 作者英語名 (`craftmanw`)
+    pub fn craftman_w(&self) -> Option<&str> {
+        self.get("craftmanw")
+    }
+
+    /// GitHubリポジトリ (`githubrepo`)
+    pub fn github_repo(&self) -> Option<&str> {
+        self.get("githubrepo")
+    }
+
+    /// Sakura側デフォルトサーフィスID (`sakura.seriko.defaultsurface`)
+    pub fn sakura_default_surface(&self) -> Option<i32> {
+        self.get("sakura.seriko.defaultsurface")
+            .or_else(|| self.get("sakura.defaultsurface"))
+            .and_then(|v| v.parse::<i32>().ok())
+    }
+
+    /// Kero側デフォルトサーフィスID (`kero.seriko.defaultsurface`)
+    pub fn kero_default_surface(&self) -> Option<i32> {
+        self.get("kero.seriko.defaultsurface")
+            .or_else(|| self.get("kero.defaultsurface"))
+            .and_then(|v| v.parse::<i32>().ok())
+    }
+
+    /// デスクトップ位置揃え設定 (`seriko.alignmenttodesktop`)
+    pub fn alignment_to_desktop(&self) -> Option<&str> {
+        self.get("seriko.alignmenttodesktop")
+            .or_else(|| self.get("sakura.seriko.alignmenttodesktop"))
+    }
+
+    /// SSTP COMMUNICATE 許可判定 (`sstp.allowcommunicate`)
+    pub fn is_sstp_communicate_allowed(&self) -> bool {
+        self.get("sstp.allowcommunicate")
+            .map(|v| v != "0" && v != "false")
+            .unwrap_or(true)
+    }
 }
 
 /// descript.txt テキスト文字列を構造化辞書へパース
@@ -227,7 +269,7 @@ mod tests {
 
     #[test]
     fn test_parse_descript_ukadoc_official_properties() {
-        let content = "title,Emily Ghost\nsakura.name,Sakura\nkero.name,Kero\nshiori.version,3.0\nicon,icon.ico\nreadme,readme.txt\ninstall.accept,GhostA, GhostB ,GhostC\n";
+        let content = "title,Emily Ghost\nsakura.name,Sakura\nkero.name,Kero\nshiori.version,3.0\nicon,icon.ico\nreadme,readme.txt\ninstall.accept,GhostA, GhostB ,GhostC\ncraftmanurl,https://example.com/author\ncraftmanw,AuthorEn\ngithubrepo,user/repo\nsakura.seriko.defaultsurface,0\nkero.seriko.defaultsurface,10\nseriko.alignmenttodesktop,bottom\nsstp.allowcommunicate,1\n";
         let manifest = parse_descript_text(content);
 
         assert_eq!(manifest.title(), Some("Emily Ghost"));
@@ -240,6 +282,13 @@ mod tests {
             manifest.accept_list(),
             vec!["GhostA".to_string(), "GhostB".to_string(), "GhostC".to_string()]
         );
+        assert_eq!(manifest.craftman_url(), Some("https://example.com/author"));
+        assert_eq!(manifest.craftman_w(), Some("AuthorEn"));
+        assert_eq!(manifest.github_repo(), Some("user/repo"));
+        assert_eq!(manifest.sakura_default_surface(), Some(0));
+        assert_eq!(manifest.kero_default_surface(), Some(10));
+        assert_eq!(manifest.alignment_to_desktop(), Some("bottom"));
+        assert!(manifest.is_sstp_communicate_allowed());
     }
 
     #[test]

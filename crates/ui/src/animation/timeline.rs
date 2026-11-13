@@ -1,6 +1,6 @@
 //! SERIKO アニメーション実行器（ukadoc-spec / descript / shell-surfaces 準拠）
 
-use crate::surfaces::{AnimationPattern, Interval};
+use crate::surfaces::AnimationPattern;
 use serde::{Deserialize, Serialize};
 
 /// 時刻 `at_ms` に適用される1フレーム
@@ -67,59 +67,5 @@ impl Timeline {
     /// 指定時刻に表示すべきフレーム（`at_ms <= elapsed` の最後のもの）
     pub fn frame_at(&self, elapsed_ms: u32) -> Option<&ScheduledFrame> {
         self.frames.iter().rev().find(|f| f.at_ms <= elapsed_ms)
-    }
-}
-
-impl Interval {
-    /// 乱数周期系（sometimes / rarely / random,N）の1秒あたり発火確率
-    pub fn fire_per_second(&self) -> Option<f64> {
-        match self {
-            Interval::Sometimes => Some(1.0 / 10.0),
-            Interval::Rarely => Some(1.0 / 30.0),
-            Interval::Random(n) => {
-                if *n == 0 {
-                    Some(1.0)
-                } else {
-                    Some(1.0 / f64::from(*n))
-                }
-            }
-            _ => None,
-        }
-    }
-
-    /// `periodic,N`（一定周期ミリ秒）の周期
-    pub fn periodic_ms(&self) -> Option<u32> {
-        match self {
-            Interval::Periodic(n) => Some(*n),
-            _ => None,
-        }
-    }
-
-    /// イベント駆動（自動発火しない）種別か
-    pub fn is_event_driven(&self) -> bool {
-        matches!(
-            self,
-            Interval::Never
-                | Interval::Bind
-                | Interval::Talk
-                | Interval::StartTalk
-                | Interval::EndTalk
-                | Interval::YenE
-        )
-    }
-
-    /// 指定時刻 `elapsed_ms` まで待機した時点での発火判定
-    pub fn should_fire(&self, elapsed_ms: u64, rng01: f64) -> bool {
-        if self.is_event_driven() {
-            return false;
-        }
-        if let Some(period) = self.periodic_ms() {
-            return period > 0 && elapsed_ms >= u64::from(period);
-        }
-        if let Some(sec) = self.fire_per_second() {
-            let p = sec * (elapsed_ms as f64 / 1000.0);
-            return rng01 < p.clamp(0.0, 1.0);
-        }
-        true
     }
 }

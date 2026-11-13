@@ -1,5 +1,13 @@
-//! Nanai Surface - Image composition, PNA, chromakey, and pixel processing
+//! Nanai Surface - `surfaces.txt` parser, SERIKO surface types, and 32-bit RGBA compositor
 
-pub mod framebuffer;
+pub mod compositor;
+pub mod parser;
+pub mod types;
 
-pub use framebuffer::*;
+pub use compositor::{SurfaceFrameBuffer, composite_elements};
+pub use parser::{expand_range, parse_surfaces_txt};
+pub use types::{
+    AnimationPattern, BalloonOffset, CollisionArea, CollisionShape, CompositionLayer,
+    CompositionPlan, CursorDefinition, DrawMethod, ElementDef, HitTestResult, Interval, Points,
+    SerikoAnimation, SortKind, SurfaceDefinition, SurfacesTxt,
+};

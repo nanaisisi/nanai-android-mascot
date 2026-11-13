@@ -4,7 +4,10 @@
  */
 
 import { parseInstallErrorReason as parseInstallErrorReasonFallback } from "../actions/install-protocol.js";
-import { calculateUpdateProgress as calculateUpdateProgressFallback } from "../actions/update-protocol.js";
+import {
+	calculateUpdateProgress as calculateUpdateProgressFallback,
+	isNoUpdatePath as isNoUpdatePathFallback,
+} from "../actions/update-protocol.js";
 import { wasmMemory } from "./wasm-memory.js";
 import type { DescriptManifest, SstpRequest } from "./wasm-types.js";
 
@@ -86,5 +89,5 @@ export function isNoUpdatePathWasm(path: string, patterns: string[]): boolean {
 			// Fallback on error
 		}
 	}
-	return false;
+	return isNoUpdatePathFallback(path, patterns);
 }

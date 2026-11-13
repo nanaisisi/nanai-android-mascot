@@ -230,7 +230,7 @@ impl ShioriVmHost {
     /// Load WASM bytecode
     pub fn load_bytecode(&mut self, wasm_bytes: &[u8]) -> Result<(), String> {
         let module = Module::new(&self.engine, wasm_bytes)
-            .map_err(|e| format!("Failed to compile WASM module: {}", e))?;
+            .map_err(|e| format!("WASM module compilation failed: {}", e))?;
 
         let mut store = Store::new(&self.engine, ());
         let linker = Linker::new(&self.engine);
@@ -290,7 +290,7 @@ impl ShioriVmHost {
     /// Invoke SHIORI `request`
     pub fn call_request(&mut self, request_str: &str) -> Result<String, String> {
         if !self.is_loaded {
-            return Err("SHIORI WASM module is not loaded".to_string());
+            return Err("WASM SHIORI engine not loaded".to_string());
         }
 
         let (instance, store) = match (&self.instance, &mut self.store) {
@@ -335,7 +335,7 @@ impl ShioriVmHost {
             Err(_) => {
                 // Mock fallback
                 Ok(format!(
-                    "SHIORI/3.0 200 OK\r\nCharset: UTF-8\r\nValue: \\0\\s[0]Hello from WASM host (len: {})\\e\r\n\r\n",
+                    "SHIORI/3.0 200 OK\r\nCharset: UTF-8\r\nSender: WasmShiori\r\nValue: \\0\\s[0]Hello from WASM host (request len {})\\e\r\n\r\n",
                     request_str.len()
                 ))
             }

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { parseErrorReason as parseInstallErrorReason } from "../ui/ts/core/actions/install-protocol";
 import {
 	calculateUpdateProgress,
+	isNoUpdatePath,
 	normalizeUpdateReason,
 } from "../ui/ts/core/actions/update-protocol";
 import { wasmBridge } from "../ui/ts/core/wasm-bridge";
@@ -49,5 +50,25 @@ describe("nanai-core WASM module parity and fallback", () => {
 			const tsReason = parseInstallErrorReason(err);
 			expect(typeof tsReason).toBe("string");
 		}
+	});
+
+	it("matches isNoUpdatePath behavior between TS and WASM fallback", () => {
+		const patterns = ["ghost/master/dev.log", "*.tmp", "profile/*"];
+		const paths = [
+			"ghost/master/dev.log",
+			"ghost\\master\\dev.log",
+			"ghost/master/aya.dll",
+			"",
+			"sub/dir/debug.tmp",
+		];
+
+		for (const p of paths) {
+			expect(wasmBridge.isNoUpdatePath(p, patterns)).toBe(
+				isNoUpdatePath(p, patterns),
+			);
+		}
+		expect(wasmBridge.isNoUpdatePath("file.txt", [])).toBe(
+			isNoUpdatePath("file.txt", []),
+		);
 	});
 });

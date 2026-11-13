@@ -143,6 +143,21 @@ pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
     {
         match normalized {
             "Shift_JIS" => {
+                if let Ok(utf8_str) = std::str::from_utf8(buffer) {
+                    let (cow, _, had_errors) = SHIFT_JIS.decode(buffer);
+                    if had_errors || cow.contains('\u{FFFD}') {
+                        return DecodeResult {
+                            text: utf8_str.to_string(),
+                            encoding: "UTF-8",
+                            had_errors: false,
+                        };
+                    }
+                    return DecodeResult {
+                        text: cow.into_owned(),
+                        encoding: "Shift_JIS",
+                        had_errors,
+                    };
+                }
                 let (cow, _, had_errors) = SHIFT_JIS.decode(buffer);
                 return DecodeResult {
                     text: cow.into_owned(),
@@ -195,11 +210,10 @@ pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
     }
 
     // 2-2. ISO-2022-JP (JISエスケープシーケンス) チェック
-    if buffer.windows(3).any(|w| {
-        w == [0x1B, 0x24, 0x42]
-            || w == [0x1B, 0x24, 0x40]
-            || w == [0x1B, 0x28, 0x4A]
-    }) {
+    if buffer
+        .windows(3)
+        .any(|w| w == [0x1B, 0x24, 0x42] || w == [0x1B, 0x24, 0x40] || w == [0x1B, 0x28, 0x4A])
+    {
         let (cow, _, had_errors) = ISO_2022_JP.decode(buffer);
         if !had_errors {
             return DecodeResult {

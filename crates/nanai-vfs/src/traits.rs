@@ -114,7 +114,11 @@ pub trait VirtualFileSystem: Send + Sync {
 
     /// 指定ディレクトリ配下のファイルを階層深さ制限付きで再帰的に走査（相対パスのリストを返す）
     /// `max_depth` が 0 の場合は直下のファイルのみ走査
-    fn walk_files_with_max_depth(&self, dir_path: &str, max_depth: usize) -> io::Result<Vec<String>> {
+    fn walk_files_with_max_depth(
+        &self,
+        dir_path: &str,
+        max_depth: usize,
+    ) -> io::Result<Vec<String>> {
         let all_files = self.walk_files(dir_path)?;
         let prefix = dir_path.trim_matches('/').to_string();
         let mut filtered: Vec<String> = all_files

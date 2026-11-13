@@ -86,6 +86,32 @@ impl DescriptManifest {
             Vec::new()
         }
     }
+
+    /// Sakura側のデフォルト座標 (`sakura.defaultx`, `sakura.defaulty`)
+    pub fn sakura_default_pos(&self) -> Option<(i32, i32)> {
+        let x = self.get("sakura.defaultx").and_then(|v| v.parse::<i32>().ok());
+        let y = self.get("sakura.defaulty").and_then(|v| v.parse::<i32>().ok());
+        match (x, y) {
+            (Some(px), Some(py)) => Some((px, py)),
+            _ => None,
+        }
+    }
+
+    /// Kero側のデフォルト座標 (`kero.defaultx`, `kero.defaulty`)
+    pub fn kero_default_pos(&self) -> Option<(i32, i32)> {
+        let x = self.get("kero.defaultx").and_then(|v| v.parse::<i32>().ok());
+        let y = self.get("kero.defaulty").and_then(|v| v.parse::<i32>().ok());
+        match (x, y) {
+            (Some(px), Some(py)) => Some((px, py)),
+            _ => None,
+        }
+    }
+
+    /// メニュー背景画像ファイル名 (`menu.background.bitmap.filename` または `menu.background.bitmap`)
+    pub fn menu_background_bitmap(&self) -> Option<&str> {
+        self.get("menu.background.bitmap.filename")
+            .or_else(|| self.get("menu.background.bitmap"))
+    }
 }
 
 /// descript.txt テキスト文字列を構造化辞書へパース
@@ -166,5 +192,15 @@ mod tests {
             manifest.accept_list(),
             vec!["GhostA".to_string(), "GhostB".to_string(), "GhostC".to_string()]
         );
+    }
+
+    #[test]
+    fn test_parse_descript_shell_and_coordinates() {
+        let content = "sakura.defaultx,100\nsakura.defaulty,200\nkero.defaultx,300\nkero.defaulty,400\nmenu.background.bitmap.filename,bg.png\n";
+        let manifest = parse_descript_text(content);
+
+        assert_eq!(manifest.sakura_default_pos(), Some((100, 200)));
+        assert_eq!(manifest.kero_default_pos(), Some((300, 400)));
+        assert_eq!(manifest.menu_background_bitmap(), Some("bg.png"));
     }
 }

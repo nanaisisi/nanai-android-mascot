@@ -34,15 +34,14 @@ pub fn validate_balloon_descript(
     let mut is_recommended = true;
     let mut warning = None;
 
-    if let Some(expected_name) = rec_name {
-        if !current_ghost_name.is_empty() && !expected_name.eq_ignore_ascii_case(current_ghost_name) {
+    if let Some(expected_name) = rec_name
+        && !current_ghost_name.is_empty() && !expected_name.eq_ignore_ascii_case(current_ghost_name) {
             is_recommended = false;
             warning = Some(format!(
                 "このバルーンスキンは専用/推奨ゴースト「{}」向けに特化して作られています。現在のゴースト「{}」で使用すると表示が狂う場合があります。",
                 expected_name, current_ghost_name
             ));
         }
-    }
 
     if let Some(expected_path) = rec_path {
         let norm_expected = expected_path.replace('\\', "/").to_ascii_lowercase();

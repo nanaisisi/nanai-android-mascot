@@ -42,7 +42,6 @@ parking_lot = { workspace = true }
 thiserror = { workspace = true }
 anyhow = { workspace = true }
 tauri-plugin-dialog = { workspace = true }
-wasmi = { workspace = true }
 image = { workspace = true }
 
 [target.'cfg(not(target_os = "android"))'.dependencies]

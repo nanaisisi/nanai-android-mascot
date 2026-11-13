@@ -21,18 +21,17 @@
 - 🤖 **AI 駆動開発** - GitHub Copilot / Antigravity との緊密な協調による設計・実装
 - 📱 **クロスプラットフォーム** - Android OS向け互換ベースウェアとして、Windows デスクトップ検証（Windows First）から段階的に Android 環境へ適応
 - 🔧 **Tauri v2 + Rust + TypeScript / WASM** - 軽量・省メモリ・高速起動と、TypeScript / Vite / HTML5 Canvas / CSS3 および Rust WASM（`wasm-pack`）による高い拡張性を両立
-- 🛡️ **SHIORI 多層フォールバック & バージョン共存**:
-  - **同梱版（ベースライン）**: Git サブモジュール（`cpp/satoriya-shiori`, `cpp/yaya-shiori`, `cpp/kawari`）の C++ 連携（Cargo `cc` 静的リンク / NDK）に加え、Windows 64bit 環境では 32bit SHIORI DLL 用ホスト `shiori-host32` を提供。
-  - **非同梱・外部導入版（WASM）**: サードパーティ製ゴーストの Win32 DLL 代替として `wasmi` ランタイム上の WebAssembly (`.wasm`) を採用。Android の `dlopen()` 制約やアーキテクチャ差分（ARM/x86）を単一バイナリで安全に吸収。
-  - **マルチバージョン共存**: 最新機能への即時追従や、特定旧バージョン（バグ互換等）に依存した歴史的ゴーストも WASM サンドボックスのインスタンス分離により競合なく安全に実行可能。
+- 🛡️ **SHIORI 実行環境 & 動的モジュール戦略**:
+  - **同梱版（標準方針: 静的同梱 Static Linking）**: 定番 SHIORI（`cpp/satoriya-shiori`, `cpp/yaya-shiori`, `cpp/kawari`）の C++ ソースを Cargo `cc` / NDK で直接バイナリへ静的リンク（`dlopen()` 不要で確実・LTO により最速）。Windows 環境では既存 DLL 互換検証用の動的ロード（`libloading` / 32bit ホスト `shiori-host32`）も提供。
+  - **配信ルート別の動的拡張 & WebView (V8) WASM**: Google Play 版の **Dynamic Feature Modules (DFM)** オンデマンド配信や、GitHub / 野良 APK 版の外部 `.so` サイドローディングに対応。また Rust 側の重い `wasmi` インタープリタ依存を通常ビルドから削除・オプショナル化し、WASM 実行は WebView (Chromium V8) の JIT 付き標準 `WebAssembly.instantiate` に一本化することでバイナリ軽量化と省メモリ化（800MB メモリ膨張対策・二重保持/二重ランタイム排除）を実現。
 - 👻 **SSP風ゴースト情報**: メニューの「情報」から、現在のゴーストの名前・バージョン・作者・SHIORI・キャラクター名・インストール先を確認できます。処理中バナーにも対象ゴーストの `descript.txt` に記載された `version` を表示します。
 
 ---
 
 ## 🛠️ 技術構成
 
-- **バックエンド / ワークスペース**: Rust 2024, Tauri v2 (`src-tauri`), ドメイン分割クレート群 (`crates/nanai-core`, `nanai-surface`, `nanai-shiori-vm`, `nanai-vfs`, `ui`), `wasmi`, `encoding_rs`, C++ (`cpp/` 配下 SHIORI 静的リンク & Windows 32bit SHIORI ホスト `shiori-host32`)
-- **フロントエンド / WASM コア**: TypeScript, Vite, HTML5 Canvas 2D, CSS3, `wasm-pack` (`wasm-bindgen` / `tsify`) による `nanai-core` WASM バインディング (`ui/ts/core/wasm/pkg`)
+- **バックエンド / ワークスペース**: Rust 2024, Tauri v2 (`src-tauri`), ドメイン分割クレート群 (`crates/nanai-core`, `nanai-surface`, `nanai-shiori-vm`, `nanai-vfs`, `ui`), `encoding_rs`, C++ (`cpp/` 配下 SHIORI 静的リンク & Windows 32bit/64bit DLL ローダー `shiori-host32`) ※`wasmi` は通常ビルドから削除・オプショナル化方針
+- **フロントエンド / WebView (V8) & WASM コア**: TypeScript, Vite, HTML5 Canvas 2D, CSS3, WebView (V8) 標準 `WebAssembly.instantiate`, `wasm-pack` (`wasm-bindgen` / `tsify`) による `nanai-core` WASM バインディング (`ui/ts/core/wasm/pkg`)
 - **ゴーストデータ**: 公式モックキャラクター `mock_nanai` 同梱（`assets/ghost/mock_nanai`）
 
 ---
@@ -106,6 +105,7 @@ cargo tauri android run
 - **[インストール手順](docs/doc/user/installation.md)**
 - **[システムアーキテクチャ](docs/doc/developer/architecture.md)**
 - **[WASM モジュール設計](docs/doc/architecture/wasm-module-architecture.md)**
+- **[SHIORI 実行環境・動的モジュール配信方針](docs/doc/architecture/shiori-runtime-and-dynamic-module-policy.md)**
 - **[開発アプローチ](docs/doc/process/development-approach.md)**
 - **[技術仕様書一覧](docs/spec/)**
 

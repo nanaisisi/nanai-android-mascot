@@ -31,7 +31,6 @@ md-5 = "0.11.0"
 # Runtime, Async & System
 tokio = { version = "1.54.1", features = ["full"] }
 reqwest = { version = "0.13.5", features = ["blocking", "json"] }
-wasmi = "2.0.0"
 chrono = "0.4.45"
 parking_lot = "0.13.0"
 thiserror = "2.0.21"

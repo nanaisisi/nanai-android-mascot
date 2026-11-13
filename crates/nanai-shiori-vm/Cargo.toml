@@ -9,7 +9,6 @@ crate-type = ["cdylib", "rlib"]
 
 [features]
 default = []
-wasmi-runner = ["dep:wasmi"]
 static-shiori = ["static-satori", "static-yaya", "static-kawari"]
 static-satori = []
 static-yaya = []

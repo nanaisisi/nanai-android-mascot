@@ -237,6 +237,66 @@ pub fn build_on_headlinesense_begin_request(headline_name: &str) -> String {
     build_shiori_request_extended("GET", "OnHeadlinesenseBegin", &refs, None)
 }
 
+/// OnGhostInfoUpdate プラグインイベントリクエスト構築 (ukadoc-spec/list/plugin-event/plugin-event/OnGhostInfoUpdate.md)
+pub fn build_on_ghost_info_update_request(ghost_name: &str) -> String {
+    let refs = vec![ghost_name.to_string()];
+    build_shiori_request_extended("GET", "OnGhostInfoUpdate", &refs, None)
+}
+
+/// OnOtherGhostTalk プラグインイベントリクエスト構築 (ukadoc-spec/list/plugin-event/plugin-event/OnOtherGhostTalk.md)
+pub fn build_on_other_ghost_talk_request(talker: &str, listener: &str, script: &str) -> String {
+    let refs = vec![talker.to_string(), listener.to_string(), script.to_string()];
+    build_shiori_request_extended("GET", "OnOtherGhostTalk", &refs, None)
+}
+
+/// OnBalloonBreak イベントリクエスト構築 (ukadoc-spec/list/shiori-event/balloon/OnBalloonBreak.md)
+pub fn build_on_balloon_break_request(scope_id: i32) -> String {
+    let refs = vec![scope_id.to_string()];
+    build_shiori_request_extended("GET", "OnBalloonBreak", &refs, None)
+}
+
+/// OnBalloonClose イベントリクエスト構築 (ukadoc-spec/list/shiori-event/balloon/OnBalloonClose.md)
+pub fn build_on_balloon_close_request(scope_id: i32) -> String {
+    let refs = vec![scope_id.to_string()];
+    build_shiori_request_extended("GET", "OnBalloonClose", &refs, None)
+}
+
+/// OnBalloonTimeout イベントリクエスト構築 (ukadoc-spec/list/shiori-event/balloon/OnBalloonTimeout.md)
+pub fn build_on_balloon_timeout_request(scope_id: i32) -> String {
+    let refs = vec![scope_id.to_string()];
+    build_shiori_request_extended("GET", "OnBalloonTimeout", &refs, None)
+}
+
+/// OnGamepadConnected イベントリクエスト構築 (ukadoc-spec/list/shiori-event/gamepad/OnGamepadConnected.md)
+pub fn build_on_gamepad_connected_request(pad_index: i32) -> String {
+    let refs = vec![pad_index.to_string()];
+    build_shiori_request_extended("GET", "OnGamepadConnected", &refs, None)
+}
+
+/// OnGamepadDisconnected イベントリクエスト構築 (ukadoc-spec/list/shiori-event/gamepad/OnGamepadDisconnected.md)
+pub fn build_on_gamepad_disconnected_request(pad_index: i32) -> String {
+    let refs = vec![pad_index.to_string()];
+    build_shiori_request_extended("GET", "OnGamepadDisconnected", &refs, None)
+}
+
+/// OnGamepadButtonDown イベントリクエスト構築 (ukadoc-spec/list/shiori-event/gamepad/OnGamepadButtonDown.md)
+pub fn build_on_gamepad_button_down_request(pad_index: i32, button_id: i32) -> String {
+    let refs = vec![pad_index.to_string(), button_id.to_string()];
+    build_shiori_request_extended("GET", "OnGamepadButtonDown", &refs, None)
+}
+
+/// OnGamepadButtonUp イベントリクエスト構築 (ukadoc-spec/list/shiori-event/gamepad/OnGamepadButtonUp.md)
+pub fn build_on_gamepad_button_up_request(pad_index: i32, button_id: i32) -> String {
+    let refs = vec![pad_index.to_string(), button_id.to_string()];
+    build_shiori_request_extended("GET", "OnGamepadButtonUp", &refs, None)
+}
+
+/// OnGamepadAxisMove イベントリクエスト構築 (ukadoc-spec/list/shiori-event/gamepad/OnGamepadAxisMove.md)
+pub fn build_on_gamepad_axis_move_request(pad_index: i32, axis_id: i32, value: f64) -> String {
+    let refs = vec![pad_index.to_string(), axis_id.to_string(), value.to_string()];
+    build_shiori_request_extended("GET", "OnGamepadAxisMove", &refs, None)
+}
+
 #[wasm_bindgen]
 pub fn wasm_build_shiori_request(method: &str, headers_js: JsValue) -> Result<String, JsValue> {
     let headers: BTreeMap<String, String> = if headers_js.is_null() || headers_js.is_undefined() {
@@ -371,5 +431,44 @@ mod tests {
 
         let headline_begin = build_on_headlinesense_begin_request("RSS Feed");
         assert!(headline_begin.contains("ID: OnHeadlinesenseBegin"));
+
+        let info_update = build_on_ghost_info_update_request("Emily");
+        assert!(info_update.contains("ID: OnGhostInfoUpdate"));
+        assert!(info_update.contains("Reference0: Emily"));
+
+        let other_talk = build_on_other_ghost_talk_request("Emily", "Sakura", "Hello");
+        assert!(other_talk.contains("ID: OnOtherGhostTalk"));
+        assert!(other_talk.contains("Reference0: Emily"));
+        assert!(other_talk.contains("Reference1: Sakura"));
+        assert!(other_talk.contains("Reference2: Hello"));
+
+        let balloon_break = build_on_balloon_break_request(0);
+        assert!(balloon_break.contains("ID: OnBalloonBreak"));
+        assert!(balloon_break.contains("Reference0: 0"));
+
+        let balloon_close = build_on_balloon_close_request(1);
+        assert!(balloon_close.contains("ID: OnBalloonClose"));
+        assert!(balloon_close.contains("Reference0: 1"));
+
+        let balloon_timeout = build_on_balloon_timeout_request(0);
+        assert!(balloon_timeout.contains("ID: OnBalloonTimeout"));
+
+        let gp_conn = build_on_gamepad_connected_request(0);
+        assert!(gp_conn.contains("ID: OnGamepadConnected"));
+        assert!(gp_conn.contains("Reference0: 0"));
+
+        let gp_disconn = build_on_gamepad_disconnected_request(0);
+        assert!(gp_disconn.contains("ID: OnGamepadDisconnected"));
+
+        let gp_btn_down = build_on_gamepad_button_down_request(0, 1);
+        assert!(gp_btn_down.contains("ID: OnGamepadButtonDown"));
+        assert!(gp_btn_down.contains("Reference1: 1"));
+
+        let gp_btn_up = build_on_gamepad_button_up_request(0, 1);
+        assert!(gp_btn_up.contains("ID: OnGamepadButtonUp"));
+
+        let gp_axis = build_on_gamepad_axis_move_request(0, 2, 0.75);
+        assert!(gp_axis.contains("ID: OnGamepadAxisMove"));
+        assert!(gp_axis.contains("Reference2: 0.75"));
     }
 }

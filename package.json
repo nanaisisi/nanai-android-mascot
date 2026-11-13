@@ -9,6 +9,8 @@
 		"test": "npm run build:wasm && vitest run",
 		"test:ui": "vitest",
 		"verify": "node --experimental-strip-types scripts/verify-implementation.ts",
+		"verify:spec": "python scripts/verify_spec_compliance.py --dry-run --check-layers",
+		"verify:ui": "vitest run tests/verification-suite.test.ts tests/test-menu.test.ts",
 		"tauri": "tauri"
 	},
 	"devDependencies": {

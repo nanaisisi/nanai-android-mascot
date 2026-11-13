@@ -44,6 +44,48 @@ impl DescriptManifest {
     pub fn charset(&self) -> Option<&str> {
         self.get("charset")
     }
+
+    /// 表示名 (`title`)
+    pub fn title(&self) -> Option<&str> {
+        self.get("title")
+    }
+
+    /// 桜側キャラクター名 (`sakura.name`)
+    pub fn sakura_name(&self) -> Option<&str> {
+        self.get("sakura.name")
+    }
+
+    /// ケロ側キャラクター名 (`kero.name`)
+    pub fn kero_name(&self) -> Option<&str> {
+        self.get("kero.name")
+    }
+
+    /// SHIORI バージョン (`shiori.version`)
+    pub fn shiori_version(&self) -> Option<&str> {
+        self.get("shiori.version")
+    }
+
+    /// アイコンファイル名 (`icon`)
+    pub fn icon(&self) -> Option<&str> {
+        self.get("icon")
+    }
+
+    /// リードミーファイル名 (`readme`)
+    pub fn readme(&self) -> Option<&str> {
+        self.get("readme")
+    }
+
+    /// インストール受け入れゴースト名一覧 (`install.accept`)
+    pub fn accept_list(&self) -> Vec<String> {
+        if let Some(val) = self.get("install.accept") {
+            val.split(',')
+                .map(|s| s.trim().to_string())
+                .filter(|s| !s.is_empty())
+                .collect()
+        } else {
+            Vec::new()
+        }
+    }
 }
 
 /// descript.txt テキスト文字列を構造化辞書へパース
@@ -107,5 +149,22 @@ mod tests {
 
         assert_eq!(manifest.get("charset"), Some("UTF-8"));
         assert_eq!(manifest.get("menu.background.bitmap"), Some("menu_bg.png"));
+    }
+
+    #[test]
+    fn test_parse_descript_ukadoc_official_properties() {
+        let content = "title,Emily Ghost\nsakura.name,Sakura\nkero.name,Kero\nshiori.version,3.0\nicon,icon.ico\nreadme,readme.txt\ninstall.accept,GhostA, GhostB ,GhostC\n";
+        let manifest = parse_descript_text(content);
+
+        assert_eq!(manifest.title(), Some("Emily Ghost"));
+        assert_eq!(manifest.sakura_name(), Some("Sakura"));
+        assert_eq!(manifest.kero_name(), Some("Kero"));
+        assert_eq!(manifest.shiori_version(), Some("3.0"));
+        assert_eq!(manifest.icon(), Some("icon.ico"));
+        assert_eq!(manifest.readme(), Some("readme.txt"));
+        assert_eq!(
+            manifest.accept_list(),
+            vec!["GhostA".to_string(), "GhostB".to_string(), "GhostC".to_string()]
+        );
     }
 }

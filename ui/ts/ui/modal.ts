@@ -106,6 +106,10 @@ export class ModalManager {
 			this.settingsHandlers.setupPluginListeners();
 		} else if (contentId === "debug-modal-content") {
 			this.settingsHandlers.setupDebugListeners();
+		} else if (contentId === "test-modal-content") {
+			this.settingsHandlers.setupTestListeners();
+		} else if (contentId === "scan-modal-content") {
+			this.settingsHandlers.setupScanListeners();
 		}
 	}
 

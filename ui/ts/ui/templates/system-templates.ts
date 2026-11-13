@@ -58,6 +58,14 @@ export const systemTemplates = {
       </div>
     </div>
     <div class="form-section">
+      <span class="form-label">📋 仕様適合・全使用部〜UI半自動検証:</span>
+      <div class="test-controls">
+        <button type="button" id="run-spec-compliance-btn" class="primary">
+          全使用部〜UI一括検証を実行
+        </button>
+      </div>
+    </div>
+    <div class="form-section">
       <span class="form-label">テスト結果:</span>
       <div class="test-results" id="test-results">
         <div class="info">テストボタンを押して結果を確認してください。</div>

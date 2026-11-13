@@ -1,5 +1,11 @@
 import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 import type { AppModalTarget, ModalManager } from "./modal.js";
+import {
+	escapeHtml,
+	renderComplianceReportHtml,
+	runAllUiComplianceProbes,
+	wireManualCheckProgress,
+} from "./spec-compliance-runner.js";
 
 /**
  * 設定・プラグイン・デバッグ用のモーダルハンドラ
@@ -160,5 +166,137 @@ export class ModalSettingsHandlers {
 			a.click();
 			URL.revokeObjectURL(url);
 		});
+	}
+
+	setupScanListeners() {
+		const scanBtn = document.getElementById("start-scan-btn");
+		const pathInput = document.getElementById(
+			"scan-path",
+		) as HTMLInputElement | null;
+		const resultsEl = document.getElementById("scan-results");
+		const debugEl = document.getElementById("scan-debug-info");
+
+		scanBtn?.addEventListener("click", async () => {
+			const scanPath = pathInput?.value?.trim() || "assets/";
+			if (resultsEl) {
+				resultsEl.innerHTML = `<div class="info">⏳ スキャン実行中: ${escapeHtml(scanPath)}</div>`;
+			}
+			try {
+				const ghosts = await this.app?.ghostController?.scanGhosts?.();
+				const count = Array.isArray(ghosts) ? ghosts.length : 0;
+				if (resultsEl) {
+					resultsEl.innerHTML = `<div class="info">✅ スキャン完了 (${escapeHtml(scanPath)}): ${count} 件検出</div>`;
+				}
+				if (debugEl) {
+					debugEl.innerHTML = `<div class="info">scanGhosts(${escapeHtml(scanPath)}) -> ${count} items</div>`;
+				}
+			} catch (err) {
+				const msg = err instanceof Error ? err.message : String(err);
+				if (resultsEl) {
+					resultsEl.innerHTML = `<div class="error">❌ スキャンエラー: ${escapeHtml(msg)}</div>`;
+				}
+			}
+		});
+	}
+
+	setupTestListeners() {
+		const resultsEl = document.getElementById("test-results");
+		const complianceBtn = document.getElementById("run-spec-compliance-btn");
+
+		complianceBtn?.addEventListener("click", async () => {
+			if (resultsEl) {
+				resultsEl.innerHTML =
+					'<div class="info">⏳ 全使用部〜UI一括検証を実行中...</div>';
+			}
+			try {
+				const report = await runAllUiComplianceProbes();
+				if (resultsEl) {
+					resultsEl.innerHTML = renderComplianceReportHtml(report);
+					wireManualCheckProgress(resultsEl, report.total);
+				}
+			} catch (err) {
+				const msg = err instanceof Error ? err.message : String(err);
+				if (resultsEl) {
+					resultsEl.innerHTML = `<div class="error">❌ 仕様適合検証エラー: ${escapeHtml(msg)}</div>`;
+				}
+			}
+		});
+
+		const bindShioriTestButton = (
+			buttonId: string,
+			eventName: string,
+			label: string,
+		) => {
+			document
+				.getElementById(buttonId)
+				?.addEventListener("click", async () => {
+					const sendShiori = this.app?.ghostController?.sendShioriEvent;
+					if (!sendShiori) {
+						if (resultsEl) {
+							resultsEl.innerHTML = `<div class="info">ℹ️ ${escapeHtml(label)} (${escapeHtml(eventName)}): SHIORIコントローラ未接続（プレビューモード）</div>`;
+						}
+						return;
+					}
+					try {
+						const res = await sendShiori(eventName, []);
+						if (resultsEl) {
+							resultsEl.innerHTML = `<div class="info">✅ ${escapeHtml(label)} (${escapeHtml(eventName)}) 応答: <code>${escapeHtml(JSON.stringify(res ?? null))}</code></div>`;
+						}
+					} catch (err) {
+						const msg = err instanceof Error ? err.message : String(err);
+						if (resultsEl) {
+							resultsEl.innerHTML = `<div class="error">❌ ${escapeHtml(label)} エラー: ${escapeHtml(msg)}</div>`;
+						}
+					}
+				});
+		};
+
+		bindShioriTestButton("test-shiori-init", "OnBoot", "SHIORI初期化");
+		bindShioriTestButton(
+			"test-shiori-request",
+			"OnSecondChange",
+			"SHIORIリクエスト送信",
+		);
+		bindShioriTestButton("test-shiori-finalize", "OnClose", "SHIORI終了");
+
+		document
+			.getElementById("send-test-message")
+			?.addEventListener("click", async () => {
+				const input = document.getElementById(
+					"test-message",
+				) as HTMLInputElement | null;
+				const msg = input?.value?.trim() || "hello";
+				this.app?.showBalloon?.(msg);
+				await this.app?.ghostController?.sendShioriEvent?.("OnCommunicate", [
+					"user",
+					msg,
+				]);
+				if (resultsEl) {
+					resultsEl.innerHTML = `<div class="info">✅ テストメッセージ送信: <code>${escapeHtml(msg)}</code></div>`;
+				}
+			});
+
+		document
+			.getElementById("test-path-resolve")
+			?.addEventListener("click", () => {
+				const input = document.getElementById(
+					"path-test-input",
+				) as HTMLInputElement | null;
+				const rawPath = input?.value?.trim() || "../assets/ghost";
+				const segments = rawPath.replace(/\\/g, "/").split("/");
+				const normalized: string[] = [];
+				for (const seg of segments) {
+					if (!seg || seg === ".") continue;
+					if (seg === ".." && normalized.length > 0 && normalized.at(-1) !== "..") {
+						normalized.pop();
+					} else {
+						normalized.push(seg);
+					}
+				}
+				const resolved = normalized.join("/") || ".";
+				if (resultsEl) {
+					resultsEl.innerHTML = `<div class="info">✅ パス解決結果: <code>${escapeHtml(rawPath)}</code> ➔ <code>${escapeHtml(resolved)}</code></div>`;
+				}
+			});
 	}
 }

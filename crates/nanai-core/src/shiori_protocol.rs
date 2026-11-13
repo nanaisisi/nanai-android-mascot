@@ -297,6 +297,30 @@ pub fn build_on_gamepad_axis_move_request(pad_index: i32, axis_id: i32, value: f
     build_shiori_request_extended("GET", "OnGamepadAxisMove", &refs, None)
 }
 
+/// OnTeach イベントリクエスト構築 (ukadoc-spec/list/shiori-event/inputbox/OnTeach.md)
+pub fn build_on_teach_request(taught_str: &str) -> String {
+    let refs = vec![taught_str.to_string()];
+    build_shiori_request_extended("GET", "OnTeach", &refs, None)
+}
+
+/// OnCommunicate イベントリクエスト構築 (ukadoc-spec/list/shiori-event/inputbox/OnCommunicate.md)
+pub fn build_on_communicate_request(sender_name: &str, message: &str) -> String {
+    let refs = vec![sender_name.to_string(), message.to_string()];
+    build_shiori_request_extended("GET", "OnCommunicate", &refs, None)
+}
+
+/// OnUserInput イベントリクエスト構築 (ukadoc-spec/list/shiori-event/inputbox/OnUserInput.md)
+pub fn build_on_user_input_request(input_id: &str, input_value: &str) -> String {
+    let refs = vec![input_id.to_string(), input_value.to_string()];
+    build_shiori_request_extended("GET", "OnUserInput", &refs, None)
+}
+
+/// OnTextAreaInput イベントリクエスト構築 (ukadoc-spec/list/shiori-event/inputbox/OnTextAreaInput.md)
+pub fn build_on_text_area_input_request(input_id: &str, text_value: &str) -> String {
+    let refs = vec![input_id.to_string(), text_value.to_string()];
+    build_shiori_request_extended("GET", "OnTextAreaInput", &refs, None)
+}
+
 #[wasm_bindgen]
 pub fn wasm_build_shiori_request(method: &str, headers_js: JsValue) -> Result<String, JsValue> {
     let headers: BTreeMap<String, String> = if headers_js.is_null() || headers_js.is_undefined() {
@@ -470,5 +494,24 @@ mod tests {
         let gp_axis = build_on_gamepad_axis_move_request(0, 2, 0.75);
         assert!(gp_axis.contains("ID: OnGamepadAxisMove"));
         assert!(gp_axis.contains("Reference2: 0.75"));
+
+        let teach_req = build_on_teach_request("apple is a fruit");
+        assert!(teach_req.contains("ID: OnTeach"));
+        assert!(teach_req.contains("Reference0: apple is a fruit"));
+
+        let comm_req = build_on_communicate_request("Sakura", "Hi Emily");
+        assert!(comm_req.contains("ID: OnCommunicate"));
+        assert!(comm_req.contains("Reference0: Sakura"));
+        assert!(comm_req.contains("Reference1: Hi Emily"));
+
+        let input_req = build_on_user_input_request("input_name", "Nanai");
+        assert!(input_req.contains("ID: OnUserInput"));
+        assert!(input_req.contains("Reference0: input_name"));
+        assert!(input_req.contains("Reference1: Nanai"));
+
+        let textarea_req = build_on_text_area_input_request("memo_area", "Hello world");
+        assert!(textarea_req.contains("ID: OnTextAreaInput"));
+        assert!(textarea_req.contains("Reference0: memo_area"));
+        assert!(textarea_req.contains("Reference1: Hello world"));
     }
 }

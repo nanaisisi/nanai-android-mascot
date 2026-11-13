@@ -171,6 +171,30 @@ pub fn build_on_biff_request() -> String {
     build_shiori_request_extended("GET", "OnBIFFBegin", &[], None)
 }
 
+/// OnFileDrop イベントリクエスト構築 (ukadoc-spec/list/shiori-event/file-drop/OnFileDrop.md)
+pub fn build_on_file_drop_request(file_path: &str) -> String {
+    let refs = vec![file_path.to_string()];
+    build_shiori_request_extended("GET", "OnFileDrop", &refs, None)
+}
+
+/// OnFileDropEx イベントリクエスト構築 (ukadoc-spec/list/shiori-event/file-drop/OnFileDropEx.md)
+pub fn build_on_file_drop_ex_request(file_path: &str, scope_id: i32) -> String {
+    let refs = vec![file_path.to_string(), scope_id.to_string()];
+    build_shiori_request_extended("GET", "OnFileDropEx", &refs, None)
+}
+
+/// OnNarCreating イベントリクエスト構築 (ukadoc-spec/list/shiori-event/file-drop/OnNarCreating.md)
+pub fn build_on_nar_creating_request(nar_path: &str) -> String {
+    let refs = vec![nar_path.to_string()];
+    build_shiori_request_extended("GET", "OnNarCreating", &refs, None)
+}
+
+/// OnWallpaperChange イベントリクエスト構築 (ukadoc-spec/list/shiori-event/file-drop/OnWallpaperChange.md)
+pub fn build_on_wallpaper_change_request(wallpaper_path: &str) -> String {
+    let refs = vec![wallpaper_path.to_string()];
+    build_shiori_request_extended("GET", "OnWallpaperChange", &refs, None)
+}
+
 #[wasm_bindgen]
 pub fn wasm_build_shiori_request(method: &str, headers_js: JsValue) -> Result<String, JsValue> {
     let headers: BTreeMap<String, String> = if headers_js.is_null() || headers_js.is_undefined() {
@@ -265,5 +289,19 @@ mod tests {
 
         let biff_req = build_on_biff_request();
         assert!(biff_req.contains("ID: OnBIFFBegin"));
+
+        let drop_req = build_on_file_drop_request("/path/to/nar.nar");
+        assert!(drop_req.contains("ID: OnFileDrop"));
+        assert!(drop_req.contains("Reference0: /path/to/nar.nar"));
+
+        let drop_ex_req = build_on_file_drop_ex_request("/path/to/nar.nar", 1);
+        assert!(drop_ex_req.contains("ID: OnFileDropEx"));
+        assert!(drop_ex_req.contains("Reference1: 1"));
+
+        let nar_req = build_on_nar_creating_request("ghost.nar");
+        assert!(nar_req.contains("ID: OnNarCreating"));
+
+        let wall_req = build_on_wallpaper_change_request("wallpaper.png");
+        assert!(wall_req.contains("ID: OnWallpaperChange"));
     }
 }

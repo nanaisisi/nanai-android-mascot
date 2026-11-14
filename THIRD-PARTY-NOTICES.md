@@ -9486,10 +9486,10 @@ prior to termination shall survive termination.
 
 ---
 
--     *
+--
 -  6. Disclaimer of Warranty *
--  ------------------------- *
--     *
+-  ## ------------------------- *
+
 -  Covered Software is provided under this License on an &quot;as is&quot; *
 -  basis, without warranty of any kind, either expressed, implied, or *
 -  statutory, including, without limitation, warranties that the *
@@ -9500,17 +9500,16 @@ prior to termination shall survive termination.
 -  (not any Contributor) assume the cost of any necessary servicing, *
 -  repair, or correction. This disclaimer of warranty constitutes an *
 -  essential part of this License. No use of any Covered Software is *
--  authorized under this License except under this disclaimer. *
--     *
+-  ## authorized under this License except under this disclaimer. *
 
 ---
 
 ---
 
--     *
+--
 -  7. Limitation of Liability *
--  -------------------------- *
--     *
+-  ## -------------------------- *
+
 -  Under no circumstances and under no legal theory, whether tort *
 -  (including negligence), contract, or otherwise, shall any *
 -  Contributor, or anyone who distributes Covered Software as *
@@ -9525,8 +9524,7 @@ prior to termination shall survive termination.
 -  extent applicable law prohibits such limitation. Some *
 -  jurisdictions do not allow the exclusion or limitation of *
 -  incidental or consequential damages, so this exclusion and *
--  limitation may not apply to You. *
--     *
+-  ## limitation may not apply to You. *
 
 ---
 
@@ -9879,10 +9877,10 @@ prior to termination shall survive termination.
 
 ---
 
--     *
+--
 -  6. Disclaimer of Warranty *
--  ------------------------- *
--     *
+-  ## ------------------------- *
+
 -  Covered Software is provided under this License on an &quot;as is&quot; *
 -  basis, without warranty of any kind, either expressed, implied, or *
 -  statutory, including, without limitation, warranties that the *
@@ -9893,17 +9891,16 @@ prior to termination shall survive termination.
 -  (not any Contributor) assume the cost of any necessary servicing, *
 -  repair, or correction. This disclaimer of warranty constitutes an *
 -  essential part of this License. No use of any Covered Software is *
--  authorized under this License except under this disclaimer. *
--     *
+-  ## authorized under this License except under this disclaimer. *
 
 ---
 
 ---
 
--     *
+--
 -  7. Limitation of Liability *
--  -------------------------- *
--     *
+-  ## -------------------------- *
+
 -  Under no circumstances and under no legal theory, whether tort *
 -  (including negligence), contract, or otherwise, shall any *
 -  Contributor, or anyone who distributes Covered Software as *
@@ -9918,8 +9915,7 @@ prior to termination shall survive termination.
 -  extent applicable law prohibits such limitation. Some *
 -  jurisdictions do not allow the exclusion or limitation of *
 -  incidental or consequential damages, so this exclusion and *
--  limitation may not apply to You. *
--     *
+-  ## limitation may not apply to You. *
 
 ---
 
@@ -10272,10 +10268,10 @@ prior to termination shall survive termination.
 
 ---
 
--     *
+--
 -  6. Disclaimer of Warranty *
--  ------------------------- *
--     *
+-  ## ------------------------- *
+
 -  Covered Software is provided under this License on an &quot;as is&quot; *
 -  basis, without warranty of any kind, either expressed, implied, or *
 -  statutory, including, without limitation, warranties that the *
@@ -10286,17 +10282,16 @@ prior to termination shall survive termination.
 -  (not any Contributor) assume the cost of any necessary servicing, *
 -  repair, or correction. This disclaimer of warranty constitutes an *
 -  essential part of this License. No use of any Covered Software is *
--  authorized under this License except under this disclaimer. *
--     *
+-  ## authorized under this License except under this disclaimer. *
 
 ---
 
 ---
 
--     *
+--
 -  7. Limitation of Liability *
--  -------------------------- *
--     *
+-  ## -------------------------- *
+
 -  Under no circumstances and under no legal theory, whether tort *
 -  (including negligence), contract, or otherwise, shall any *
 -  Contributor, or anyone who distributes Covered Software as *
@@ -10311,8 +10306,7 @@ prior to termination shall survive termination.
 -  extent applicable law prohibits such limitation. Some *
 -  jurisdictions do not allow the exclusion or limitation of *
 -  incidental or consequential damages, so this exclusion and *
--  limitation may not apply to You. *
--     *
+-  ## limitation may not apply to You. *
 
 ---
 

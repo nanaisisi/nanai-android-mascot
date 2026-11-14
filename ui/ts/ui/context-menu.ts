@@ -176,7 +176,8 @@ globalThis.addEventListener("blur", () => {
 async function adjustMenuWindowSize() {
 	if (!isTauriAvailable()) return;
 	try {
-		const { getCurrentWindow } = await import("@tauri-apps/api/window");
+		const modName = "@tauri-apps/api/window";
+		const { getCurrentWindow } = await import(/* @vite-ignore */ modName);
 		const win = getCurrentWindow();
 		const container = document.querySelector(".menu-container");
 		const containerHeight = container

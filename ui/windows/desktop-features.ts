@@ -14,7 +14,8 @@ interface DesktopTauriWindow {
 async function getTauriWindow(): Promise<DesktopTauriWindow | null> {
 	if (globalThis.__TAURI__ || globalThis.__TAURI_INTERNALS__) {
 		try {
-			const { getCurrentWindow } = await import("@tauri-apps/api/window");
+			const modName = "@tauri-apps/api/window";
+			const { getCurrentWindow } = await import(/* @vite-ignore */ modName);
 			return getCurrentWindow() as unknown as DesktopTauriWindow;
 		} catch (_err) {}
 	}

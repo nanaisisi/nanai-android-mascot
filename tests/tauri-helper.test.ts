@@ -9,7 +9,9 @@ import {
 	getCurrentWindowPosition,
 	invoke,
 	ipcQueueStats,
+	isAndroidMobile,
 	isTauriAvailable,
+	isWindowsDesktop,
 	listen,
 	moveCurrentWindowBy,
 	startDraggingWindow,
@@ -59,6 +61,15 @@ test("convertFileSrc covers empty path, Tauri available, protocol startsWith bra
 
 	// 6. startDraggingWindow when Tauri unavailable
 	await startDraggingWindow();
+
+	// 6b. isWindowsDesktop and isAndroidMobile helpers
+	assert.equal(typeof isWindowsDesktop(), "boolean");
+	assert.equal(typeof isAndroidMobile(), "boolean");
+
+	// 6c. isTauriAvailable detects __TAURI_POST_MESSAGE__ and __TAURI_IPC__
+	(globalThis as unknown as Record<string, unknown>).__TAURI_POST_MESSAGE__ = () => {};
+	assert.equal(isTauriAvailable(), true);
+	delete (globalThis as unknown as Record<string, unknown>).__TAURI_POST_MESSAGE__;
 
 	// 7. startDraggingWindow when Tauri available (success and catch error)
 	let dragCalled = false;

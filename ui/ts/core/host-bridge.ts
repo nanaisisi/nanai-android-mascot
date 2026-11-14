@@ -3,7 +3,11 @@
  * Tauri 環境と WASM / Web ブラウザ環境を透過的に扱うための抽象化アダプター
  */
 
-import { isAndroidMobile, isTauriAvailable } from "./tauri-helper.js";
+import {
+	isAndroidMobile,
+	isTauriAvailable,
+	isWindowsDesktop,
+} from "./tauri-helper.js";
 
 export interface HostBridge {
 	/**
@@ -33,17 +37,28 @@ export class TauriHostBridge implements HostBridge {
 		cmd: string,
 		args: Record<string, unknown> = {},
 	): Promise<T> {
-		const { invoke } = await import("@tauri-apps/api/core");
+		const modName = "@tauri-apps/api/core";
+		const { invoke } = await import(/* @vite-ignore */ modName);
 		return await invoke<T>(cmd, args);
 	}
 
 	async readFile(path: string): Promise<Uint8Array> {
-		const { readFile } = await import("@tauri-apps/plugin-fs");
-		return await readFile(path);
+		try {
+			const modName = "@tauri-apps/plugin-fs";
+			const fsPlugin = (await import(/* @vite-ignore */ modName)) as {
+				readFile?: (p: string) => Promise<Uint8Array>;
+			};
+			if (typeof fsPlugin?.readFile === "function") {
+				return await fsPlugin.readFile(path);
+			}
+		} catch (_e) {}
+		return new Uint8Array();
 	}
 
 	getPlatformName(): string {
-		return isAndroidMobile() ? "tauri-android" : "tauri-desktop";
+		if (isAndroidMobile()) return "tauri-android";
+		if (isWindowsDesktop()) return "tauri-windows";
+		return "tauri-desktop";
 	}
 }
 
@@ -59,10 +74,8 @@ export class WasmHostBridge implements HostBridge {
 	async initWasm(): Promise<void> {
 		if (!this.wasmModule) {
 			try {
-				// パスや生成された Wasm パッケージに合わせてロード
-				this.wasmModule = await import(
-					/* @vite-ignore */ "./wasm/pkg/nanai_core.js" as string
-				);
+				const wasmPkgPath = "./wasm/pkg/nanai_core.js";
+				this.wasmModule = await import(/* @vite-ignore */ wasmPkgPath);
 			} catch (e) {
 				console.warn(
 					"WASM モジュールのロードをスキップしました (スタブ動作)",
@@ -98,7 +111,9 @@ export class WasmHostBridge implements HostBridge {
 	}
 
 	getPlatformName(): string {
-		return isAndroidMobile() ? "wasm-android" : "wasm-web";
+		if (isAndroidMobile()) return "wasm-android";
+		if (isWindowsDesktop()) return "wasm-windows";
+		return "wasm-web";
 	}
 }
 

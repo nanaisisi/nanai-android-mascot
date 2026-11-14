@@ -21,12 +21,18 @@ export function isTauriAvailable(): boolean {
 	const win =
 		typeof window !== "undefined"
 			? window
-			: (g.window as Window & { location?: Location });
+			: (g.window as Window & { location?: Location; navigator?: Navigator });
 	const loc = win?.location;
+	const nav = win?.navigator;
+
 	return (
 		!!g.__TAURI__ ||
 		!!g.__TAURI_INTERNALS__ ||
 		!!g.__TAURI_IPC__ ||
+		!!g.__TAURI_POST_MESSAGE__ ||
+		typeof g.ipc === "function" ||
+		typeof (g as any).rpc === "function" ||
+		!!(nav?.userAgent && /Tauri/i.test(nav.userAgent)) ||
 		!!(
 			loc &&
 			(loc.protocol?.startsWith("tauri") ||
@@ -42,6 +48,16 @@ export function isTauriAvailable(): boolean {
 export function isAndroidMobile(): boolean {
 	if (typeof navigator === "undefined") return false;
 	return /Android|Mobile|Tablet/i.test(navigator.userAgent);
+}
+
+/**
+ * Windows / デスクトップ環境かどうかを判定
+ */
+export function isWindowsDesktop(): boolean {
+	if (typeof navigator === "undefined") {
+		return typeof process !== "undefined" && process.platform === "win32";
+	}
+	return /Windows|Win32|Win64/i.test(navigator.userAgent);
 }
 
 /**

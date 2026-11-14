@@ -8,7 +8,8 @@ import { invoke, isTauriAvailable } from "../ts/core/tauri-helper.js";
 async function findWindow(label: string) {
 	if (!globalThis.__TAURI__ && !globalThis.__TAURI_INTERNALS__) return null;
 	try {
-		const { getAllWindows } = await import("@tauri-apps/api/window");
+		const modName = "@tauri-apps/api/window";
+		const { getAllWindows } = await import(/* @vite-ignore */ modName);
 		const windows = await getAllWindows();
 		return windows.find((window) => window.label === label) ?? null;
 	} catch (_err) {

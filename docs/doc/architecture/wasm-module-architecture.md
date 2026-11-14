@@ -2,6 +2,15 @@
 
 本文書では、TypeScript フロントエンドと Rust WASM コアエンジン (`nanai-core`) 間におけるモジュール分割構造と接続ファサード設計について規定します。
 
+## ⚠️ 次期開発AIエージェントへの引き継ぎ事項 (Context For Lightweight LLMs)
+本プロジェクトは、過去に存在した複雑なTypeScript製のパーサーや状態マシンをすべてRust (WASM) へ完全移行し終えています。
+**以下のディレクトリやファイルは既に完全に削除・廃止済みであり、検索や編集を試みないでください。**
+- `ui/ts/ghost/parser/` (TS製さくらスクリプト/タグパーサー)
+- `tests/sakura-ast.test.ts`, `tests/tag-tokenizer.test.ts`, `tests/parser-fuzzing/` 等の関連レガシーテスト
+- TS側の古い型定義 (`wasm-types.ts` 内の手書き定義など)
+
+今後のパースロジック、再生エンジン、SERIKOアニメーションの追加・修正は**すべて Rust 側の `crates/nanai-core/src/` 配下 (`sakura_script.rs`, `sakura_player.rs`, `surfaces_parser.rs` など)** で行ってください。TypeScript側はUI描画とWASMの呼び出しブリッジのみを担当します。
+
 ---
 
 ## 1. モジュール分割構造 (`ui/ts/core/wasm/`)
@@ -26,9 +35,9 @@ ui/ts/core/
 
 | モジュール名           | 役割・責務                                | エクスポート API / メソッド                                                          |
 | :--------------------- | :---------------------------------------- | :----------------------------------------------------------------------------------- |
-| **`wasm-types.ts`**    | WASM C-ABI 共通型定義                     | `SakuraToken`, `SstpRequest`, `BalloonLayoutResult`, `SurfaceCompositionPlan` など   |
-| **`wasm-memory.ts`**   | メモリ領域 & 寿命管理                     | `wasmMemory.init()`, `encodeString()`, `decodeString()`, `alloc()`, `free()`         |
-| **`wasm-sakura.ts`**   | さくらスクリプト処理                      | `parseSakuraScriptWasm(script)`                                                      |
+| **`wasm-types.ts`**    | WASM C-ABI 共通型定義 (再エクスポート)    | `nanai_core.d.ts` の型をそのまま再エクスポート (手動定義なし)                        |
+| **`wasm-memory.ts`**   | メモリ領域 & 寿命管理                     | `wasmMemory.init()`, `getWasmCore()`                                                 |
+| **`wasm-sakura.ts`**   | さくらスクリプト処理                      | `parseSakuraScriptWasm(script)`, `createSakuraPlayerWasm(script)` 等                 |
 | **`wasm-protocol.ts`** | 各種プロトコルパース                      | `parseSstpRequestWasm()`, `parseDescriptTextWasm()`, `calculateUpdateProgressWasm()` |
 | **`wasm-layout.ts`**   | レイアウト領域の計算                      | `computeBalloonTextLayoutWasm(text, maxWidth, ...)`                                  |
 | **`wasm-surface.ts`**  | サーフィス画像レイヤー合成 & ヒットテスト | `findHitCollisionNameWasm()`, `computeSurfaceCompositionPlanWasm()`                  |

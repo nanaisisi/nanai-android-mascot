@@ -64,7 +64,7 @@ pub fn animation_timeline(patterns: Vec<TimelinePattern>) -> Result<AnimationTim
         frames: timeline
             .frames()
             .iter()
-            .map(|f| TimelineFrame { at_ms: f.at_ms })
+            .map(|f| TimelineFrame { at_ms: f.at_ms() })
             .collect(),
         total_ms: timeline.total_ms(),
     })

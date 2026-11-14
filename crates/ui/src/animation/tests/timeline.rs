@@ -4,25 +4,25 @@ use super::*;
 fn test_build_timeline() {
     let patterns = vec![super::pattern(0, 6, 0), super::pattern(1, -1, 85)];
     let timeline = build_timeline(&patterns);
-    assert_eq!(timeline[0].at_ms, 0);
-    assert_eq!(timeline[1].at_ms, 85);
+    assert_eq!(timeline[0].at_ms(), 0);
+    assert_eq!(timeline[1].at_ms(), 85);
 
     assert_eq!(cycle_len_ms(&patterns), 170);
 
     let shuffled = vec![super::pattern(1, -1, 85), super::pattern(0, 6, 0)];
     let timeline = build_timeline(&shuffled);
-    assert_eq!(timeline[0].pattern.surface, 6);
-    assert_eq!(timeline[1].at_ms, 85);
+    assert_eq!(timeline[0].pattern().surface, 6);
+    assert_eq!(timeline[1].at_ms(), 85);
 }
 
 #[test]
 fn test_frame_at() {
     let patterns = vec![super::pattern(0, 6, 0), super::pattern(1, -1, 85)];
     let tl = Timeline::new(&patterns);
-    assert_eq!(tl.frame_at(0).unwrap().pattern.surface, 6);
-    assert_eq!(tl.frame_at(84).unwrap().pattern.surface, 6);
-    assert_eq!(tl.frame_at(85).unwrap().pattern.surface, -1);
-    assert_eq!(tl.frame_at(10_000).unwrap().pattern.surface, -1);
+    assert_eq!(tl.frame_at(0).unwrap().pattern().surface, 6);
+    assert_eq!(tl.frame_at(84).unwrap().pattern().surface, 6);
+    assert_eq!(tl.frame_at(85).unwrap().pattern().surface, -1);
+    assert_eq!(tl.frame_at(10_000).unwrap().pattern().surface, -1);
     assert_eq!(tl.total_ms(), 170);
 
     assert!(Timeline::new(&[]).frame_at(500).is_none());
@@ -39,7 +39,7 @@ fn test_multi_frame_timeline() {
     ];
     let timeline = build_timeline(&patterns);
     assert_eq!(
-        [timeline[0].at_ms, timeline[1].at_ms, timeline[2].at_ms],
+        [timeline[0].at_ms(), timeline[1].at_ms(), timeline[2].at_ms()],
         [150, 300, 300]
     );
     assert_eq!(cycle_len_ms(&patterns), 300);
@@ -82,8 +82,8 @@ fn test_mock_nanai_animation() {
     let anim0 = &def0.animations[&0];
     assert_eq!(anim0.interval, Some(Interval::Random(3)));
     let timeline = build_timeline(&anim0.patterns);
-    assert_eq!(timeline[0].pattern.surface, 6);
-    assert_eq!(timeline[0].at_ms, 0);
-    assert_eq!(timeline[1].pattern.surface, -1);
-    assert_eq!(timeline[1].at_ms, 85);
+    assert_eq!(timeline[0].pattern().surface, 6);
+    assert_eq!(timeline[0].at_ms(), 0);
+    assert_eq!(timeline[1].pattern().surface, -1);
+    assert_eq!(timeline[1].at_ms(), 85);
 }

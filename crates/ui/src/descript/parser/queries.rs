@@ -130,7 +130,7 @@ impl Descript {
     pub fn bind_groups(&self, target: &str) -> Vec<BindGroup> {
         let prefix = format!("{target}.bindgroup");
         let mut groups: BTreeMap<u32, BindGroup> = BTreeMap::new();
-        for (key, value) in &self.properties {
+        for (key, value) in self.properties() {
             let Some(rest) = key.strip_prefix(&prefix) else {
                 continue;
             };

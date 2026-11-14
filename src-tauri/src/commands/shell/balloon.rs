@@ -257,7 +257,8 @@ pub fn balloon_descript_map(dir: &std::path::Path) -> std::collections::BTreeMap
     let content = open_text_file(std::path::Path::new(&clean_path)).unwrap_or_default();
     let parsed = Descript::parse(&content);
     parsed
-        .properties
+        .properties()
+        .clone()
         .into_iter()
         .collect::<std::collections::BTreeMap<_, _>>()
 }

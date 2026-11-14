@@ -6,9 +6,21 @@ use serde::{Deserialize, Serialize};
 /// 時刻 `at_ms` に適用される1フレーム
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ScheduledFrame {
-    pub pattern: AnimationPattern,
+    pub(crate) pattern: AnimationPattern,
     /// 開始時刻（ミリ秒）。`pattern.wait` の累積値
-    pub at_ms: u32,
+    pub(crate) at_ms: u32,
+}
+
+#[allow(dead_code)]
+impl ScheduledFrame {
+    // Add getter methods
+    pub fn pattern(&self) -> &AnimationPattern {
+        &self.pattern
+    }
+
+    pub fn at_ms(&self) -> u32 {
+        self.at_ms
+    }
 }
 
 /// pattern 列を実行スケジュールへ変換する（pattern index 列に累積待ち時間を計算）
@@ -31,7 +43,7 @@ pub fn build_timeline(patterns: &[AnimationPattern]) -> Vec<ScheduledFrame> {
 pub fn cycle_len_ms(patterns: &[AnimationPattern]) -> u32 {
     let timeline = build_timeline(patterns);
     match timeline.last() {
-        Some(last) => last.at_ms.saturating_add(last.pattern.wait),
+        Some(last) => last.at_ms().saturating_add(last.pattern().wait),
         None => 0,
     }
 }
@@ -49,7 +61,7 @@ impl Timeline {
         let frames = build_timeline(patterns);
         let total_ms = frames
             .last()
-            .map(|f| f.at_ms.saturating_add(f.pattern.wait))
+            .map(|f| f.at_ms().saturating_add(f.pattern().wait))
             .unwrap_or(0);
         Self { frames, total_ms }
     }
@@ -66,6 +78,6 @@ impl Timeline {
 
     /// 指定時刻に表示すべきフレーム（`at_ms <= elapsed` の最後のもの）
     pub fn frame_at(&self, elapsed_ms: u32) -> Option<&ScheduledFrame> {
-        self.frames.iter().rev().find(|f| f.at_ms <= elapsed_ms)
+        self.frames.iter().rev().find(|f| f.at_ms() <= elapsed_ms)
     }
 }

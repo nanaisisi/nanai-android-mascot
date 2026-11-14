@@ -12,10 +12,15 @@ pub(crate) use helpers::expand_ids;
 /// `descript.txt` のパース結果を保持する構造体
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct Descript {
-    pub properties: HashMap<String, String>,
+    pub(crate) properties: HashMap<String, String>,
 }
 
 impl Descript {
+    // Add getter methods
+    pub fn properties(&self) -> &HashMap<String, String> {
+        &self.properties
+    }
+
     /// テキスト内容から `descript.txt` をパース
     pub fn parse(content: &str) -> Self {
         let mut properties = HashMap::new();
@@ -33,6 +38,6 @@ impl Descript {
 
     /// キーに対応する値を取得（大文字小文字無視）
     pub fn get(&self, key: &str) -> Option<&String> {
-        self.properties.get(&key.to_lowercase())
+        self.properties().get(&key.to_lowercase())
     }
 }

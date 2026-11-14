@@ -72,7 +72,7 @@ export const settingsMethods = {
 		}
 		if (isTauriAvailable()) {
 			invoke("show_balloon_window", {
-				scopeId,
+				scope_id: scopeId,
 				theme: app.currentBalloonTheme,
 			})
 				.then(() => {
@@ -96,7 +96,7 @@ export const settingsMethods = {
 			balloonDisplay.style.display = "none";
 		}
 		if (isTauriAvailable()) {
-			invoke("hide_balloon_window", { scopeId }).catch(() => {});
+			invoke("hide_balloon_window", { scope_id: scopeId }).catch(() => {});
 		}
 		if (reason === "close") {
 			const lastScript = app.sakuraPlayer?.lastScript || "";

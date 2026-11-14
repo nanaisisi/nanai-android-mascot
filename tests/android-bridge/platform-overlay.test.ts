@@ -245,4 +245,22 @@ describe("AndroidBridge - Platform & Overlay", () => {
 		});
 		expect(isAndroidPlatform()).toBe(false);
 	});
+
+	it("overrides isAndroidPlatform using URL search parameters ?platform=desktop|android", () => {
+		Object.defineProperty(globalThis, "location", {
+			value: { search: "?platform=desktop" },
+			configurable: true,
+			writable: true,
+		});
+		expect(isAndroidPlatform()).toBe(false);
+
+		Object.defineProperty(globalThis, "location", {
+			value: { search: "?platform=android" },
+			configurable: true,
+			writable: true,
+		});
+		expect(isAndroidPlatform()).toBe(true);
+
+		delete (globalThis as any).location;
+	});
 });

@@ -46,6 +46,8 @@ export function applyPlatformUiClasses(targetElement?: unknown): PlatformMode {
 
 	target.classList.toggle("is-android-device", isAndroid);
 	target.classList.toggle("is-desktop-device", !isAndroid);
+	target.classList.toggle("platform-android", isAndroid);
+	target.classList.toggle("platform-windows", !isAndroid);
 	target.classList.toggle("is-native-android", mode === "android-native");
 	target.classList.toggle("is-web-android", mode === "android-web");
 	target.classList.toggle("is-native-runtime", isNative);

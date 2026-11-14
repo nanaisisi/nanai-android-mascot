@@ -68,11 +68,13 @@ pub async fn show_balloon_window(
                         let base_x = pos.x as f64 / scale;
                         let base_y = pos.y as f64 / scale;
 
-                        if scope_id == 0 {
-                            (base_x + 180.0, base_y - 180.0) // メインは右上に配置
+                        let raw_x = if scope_id == 0 {
+                            base_x + 180.0
                         } else {
-                            (base_x - 260.0, base_y - 180.0) // サブは左上に配置
-                        }
+                            base_x - 260.0
+                        };
+                        let raw_y = base_y - 60.0;
+                        (raw_x.max(10.0), raw_y.max(10.0))
                     } else {
                         (200.0 + (scope_id as f64 * 220.0), 100.0)
                     }
@@ -83,20 +85,16 @@ pub async fn show_balloon_window(
         };
 
         if let Some(balloon_win) = app_handle.get_webview_window(&label) {
-            let is_vis = balloon_win
-                .is_visible()
-                .map_err(|e| format!("Failed to check balloon window visibility: {e}"))?;
-
-            // 可視・不可視に関わらず位置を必ず同期する
             let (target_x, target_y) = get_pos();
             let _ = balloon_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
                 x: target_x,
                 y: target_y,
             }));
 
-            if !is_vis {
-                let _ = balloon_win.show();
-            }
+            let _ = balloon_win.unminimize();
+            let _ = balloon_win.set_always_on_top(true);
+            let _ = balloon_win.show();
+
             if let Some(theme) = theme.filter(|value| !value.is_empty()) {
                 let _ = app_handle.emit_to(
                     &label,
@@ -132,6 +130,8 @@ pub async fn show_balloon_window(
             .build()
             .map_err(|e| e.to_string())?;
 
+            let _ = balloon_win.unminimize();
+            let _ = balloon_win.set_always_on_top(true);
             let _ = balloon_win.show();
             if let Some(theme) = theme.filter(|value| !value.is_empty()) {
                 let _ = app_handle.emit_to(

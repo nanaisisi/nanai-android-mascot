@@ -33,6 +33,18 @@ export default defineConfig({
 	},
 	// Env variables starting with the item of `envPrefix` will be exposed in tauri's source code through `import.meta.env`.
 	envPrefix: ["VITE_", "TAURI_ENV_*"],
+	define: {
+		"import.meta.env.TAURI_ENV_PLATFORM": JSON.stringify(
+			process.env.TAURI_ENV_PLATFORM ||
+				(process.platform === "win32" ? "windows" : "web"),
+		),
+		"import.meta.env.IS_ANDROID_BUILD": JSON.stringify(
+			process.env.TAURI_ENV_PLATFORM === "android",
+		),
+		"import.meta.env.IS_WINDOWS_BUILD": JSON.stringify(
+			process.env.TAURI_ENV_PLATFORM === "windows" || process.platform === "win32",
+		),
+	},
 	build: {
 		outDir: "../dist",
 		emptyOutDir: true,

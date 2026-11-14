@@ -4,18 +4,31 @@
  * Contract: OverlayManager, isAndroidPlatform, isNativeAndroidPlatform
  */
 
-import { invoke, isTauriAvailable } from "../../../core/tauri-helper.js";
+import { invoke, isAndroidMobile, isTauriAvailable } from "../../../core/tauri-helper.js";
 import { ANDROID_EVENTS } from "./constants.js";
 
 /**
- * Android環境かどうかを判定
+ * Android環境かどうかを判定 (URLクエリ ?platform=android|desktop による指定を最優先評価)
  * @returns {boolean}
  */
-export function isAndroidPlatform() {
-	if (typeof navigator === "undefined" || !navigator.userAgent) {
+export function isAndroidPlatform(): boolean {
+	if (
+		import.meta.env?.IS_ANDROID_BUILD === false &&
+		!globalThis.location?.search?.includes("platform=android")
+	) {
 		return false;
 	}
-	return /android/i.test(navigator.userAgent);
+	if (typeof globalThis.location !== "undefined" && globalThis.location?.search) {
+		const search = globalThis.location.search;
+		const params = new URLSearchParams(search);
+		const plat = params.get("platform") || params.get("mode");
+		if (plat) {
+			const lower = plat.toLowerCase();
+			if (lower === "android" || lower === "mobile") return true;
+			if (lower === "desktop" || lower === "windows") return false;
+		}
+	}
+	return isAndroidMobile();
 }
 
 /**

@@ -43,21 +43,28 @@ export function isTauriAvailable(): boolean {
 }
 
 /**
- * Android / モバイル環境かどうかを判定
- */
-export function isAndroidMobile(): boolean {
-	if (typeof navigator === "undefined") return false;
-	return /Android|Mobile|Tablet/i.test(navigator.userAgent);
-}
-
-/**
  * Windows / デスクトップ環境かどうかを判定
  */
 export function isWindowsDesktop(): boolean {
+	if (
+		import.meta.env?.TAURI_ENV_PLATFORM === "windows" ||
+		import.meta.env?.IS_WINDOWS_BUILD === true
+	) {
+		return true;
+	}
 	if (typeof navigator === "undefined") {
 		return typeof process !== "undefined" && process.platform === "win32";
 	}
 	return /Windows|Win32|Win64/i.test(navigator.userAgent);
+}
+
+/**
+ * Android / モバイル環境かどうかを判定
+ */
+export function isAndroidMobile(): boolean {
+	if (isWindowsDesktop()) return false;
+	if (typeof navigator === "undefined") return false;
+	return /Android|Mobile|Tablet/i.test(navigator.userAgent);
 }
 
 /**

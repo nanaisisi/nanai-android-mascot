@@ -1,7 +1,3 @@
-import { GhostController } from "../../ghost/ghost.js";
-import { SakuraScriptPlayer } from "../../ghost/sakura-script.js";
-import { InteractionManager } from "../../surface/interaction.js";
-import { SurfaceManager } from "../../surface/surface-manager.js";
 import { menuMethods } from "../../ui/app-menu.js";
 import { ModalManager } from "../../ui/modal.js";
 import { DictationManager } from "../actions/dictation.js";
@@ -15,6 +11,28 @@ import { invoke, isTauriAvailable } from "../tauri-helper.js";
 import { wasmBridge } from "../wasm-bridge.js";
 import { initUIEnvironment, scanBalloons, scanPlugins } from "./environment.js";
 import type { AppSettings } from "./types.js";
+
+class WasmGhostController {
+	constructor(public app: any) {}
+	async autoLoadGhost() {}
+	async selectGhost() {}
+	stopSecondChangeTimer() {}
+	sendShioriEvent() {}
+}
+
+class WasmSurfaceManager {
+	constructor(public app: any) {}
+	detectCollision() { return { name: "", canvasX: 0, canvasY: 0 }; }
+}
+
+class WasmInteractionManager {
+	constructor(public app: any) {}
+	setupDragging() {}
+}
+
+class WasmSakuraPlayer {
+	constructor(public app: any) {}
+}
 
 export class NanaiAndroidMascotApp {
 	declare loadSettings: () => void;
@@ -140,11 +158,11 @@ export class NanaiAndroidMascotApp {
 			urlParams.get("ghost_name") ||
 			(search ? AppConfig.paths.fallbackGhostName : null);
 
-		this.ghostController = new GhostController(this);
+		this.ghostController = new WasmGhostController(this) as any;
 		this.dictationManager = new DictationManager(this);
-		this.interactionManager = new InteractionManager(this);
-		this.surfaceManager = new SurfaceManager(this);
-		this.sakuraPlayer = new SakuraScriptPlayer(this);
+		this.interactionManager = new WasmInteractionManager(this) as any;
+		this.surfaceManager = new WasmSurfaceManager(this) as any;
+		this.sakuraPlayer = new WasmSakuraPlayer(this) as any;
 		this.internalWindowManager = new InternalWindowManager();
 		this.modalManager = null;
 		this.elements = {};

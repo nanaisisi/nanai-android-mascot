@@ -8,7 +8,6 @@ import {
 	invoke,
 	isAndroidMobile,
 	isTauriAvailable,
-	isWindowsDesktop,
 } from "../../../core/tauri-helper.js";
 import { ANDROID_EVENTS } from "./constants.js";
 
@@ -17,7 +16,10 @@ import { ANDROID_EVENTS } from "./constants.js";
  * @returns {boolean}
  */
 export function isAndroidPlatform(): boolean {
-	if (typeof globalThis.location !== "undefined" && globalThis.location?.search) {
+	if (
+		typeof globalThis.location !== "undefined" &&
+		globalThis.location?.search
+	) {
 		const search = globalThis.location.search;
 		const params = new URLSearchParams(search);
 		const plat = params.get("platform") || params.get("mode");

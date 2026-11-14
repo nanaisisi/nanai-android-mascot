@@ -106,29 +106,33 @@ pub unsafe extern "C" fn wasm_parse_sstp_request_json(ptr: *const u8, len: usize
 // ビルド時 (Cargo Feature) によるプラットフォーム/OS 向け機能分岐スタブ
 // =========================================================================
 
-/// Android 組み込み最適化ビルド時の初期化スタブ
-#[cfg(feature = "target-android")]
+/// プラットフォームランタイム初期化スタブ
 #[wasm_bindgen::prelude::wasm_bindgen]
 pub fn init_platform_runtime() -> String {
-    "Initialized nanai-core runtime for [Android WASM]".to_string()
-}
-
-/// Desktop (PC) ビルド時の初期化スタブ
-#[cfg(feature = "target-desktop")]
-#[wasm_bindgen::prelude::wasm_bindgen]
-pub fn init_platform_runtime() -> String {
-    "Initialized nanai-core runtime for [Desktop WASM]".to_string()
-}
-
-/// 汎用 Web ビルド時の初期化スタブ
-#[cfg(all(
-    feature = "target-web",
-    not(feature = "target-android"),
-    not(feature = "target-desktop")
-))]
-#[wasm_bindgen::prelude::wasm_bindgen]
-pub fn init_platform_runtime() -> String {
-    "Initialized nanai-core runtime for [Generic Web WASM]".to_string()
+    #[cfg(feature = "target-android")]
+    {
+        return "Initialized nanai-core runtime for [Android WASM]".to_string();
+    }
+    #[cfg(feature = "target-desktop")]
+    {
+        return "Initialized nanai-core runtime for [Desktop WASM]".to_string();
+    }
+    #[cfg(all(
+        feature = "target-web",
+        not(feature = "target-android"),
+        not(feature = "target-desktop")
+    ))]
+    {
+        "Initialized nanai-core runtime for [Generic Web WASM]".to_string()
+    }
+    #[cfg(not(any(
+        feature = "target-android",
+        feature = "target-desktop",
+        feature = "target-web"
+    )))]
+    {
+        return "Initialized nanai-core runtime for [Default WASM]".to_string();
+    }
 }
 
 // =========================================================================
@@ -187,3 +191,8 @@ impl MascotEngine {
     }
 }
 
+impl Default for MascotEngine {
+    fn default() -> Self {
+        Self::new()
+    }
+}

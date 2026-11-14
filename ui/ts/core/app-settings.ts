@@ -70,15 +70,16 @@ export const settingsMethods = {
 			this as unknown as import("../../main.js").NanaiAndroidMascotApp;
 		const isKero = scopeId === 1;
 		const getDocEl = (id: string) =>
-			typeof document !== "undefined" && typeof document.getElementById === "function"
+			typeof document !== "undefined" &&
+			typeof document.getElementById === "function"
 				? document.getElementById(id)
 				: null;
 		const balloonText = isKero
-			? (app.elements?.keroBalloonText || getDocEl("kero-balloon-text"))
-			: (app.elements?.balloonText || getDocEl("balloon-text"));
+			? app.elements?.keroBalloonText || getDocEl("kero-balloon-text")
+			: app.elements?.balloonText || getDocEl("balloon-text");
 		const balloonDisplay = isKero
-			? (app.elements?.keroBalloonDisplay || getDocEl("kero-balloon-display"))
-			: (app.elements?.balloonDisplay || getDocEl("balloon-display"));
+			? app.elements?.keroBalloonDisplay || getDocEl("kero-balloon-display")
+			: app.elements?.balloonDisplay || getDocEl("balloon-display");
 		if (balloonText) {
 			balloonText.textContent = text;
 		}
@@ -111,12 +112,13 @@ export const settingsMethods = {
 			this as unknown as import("../../main.js").NanaiAndroidMascotApp;
 		const isKero = scopeId === 1;
 		const getDocEl = (id: string) =>
-			typeof document !== "undefined" && typeof document.getElementById === "function"
+			typeof document !== "undefined" &&
+			typeof document.getElementById === "function"
 				? document.getElementById(id)
 				: null;
 		const balloonDisplay = isKero
-			? (app.elements?.keroBalloonDisplay || getDocEl("kero-balloon-display"))
-			: (app.elements?.balloonDisplay || getDocEl("balloon-display"));
+			? app.elements?.keroBalloonDisplay || getDocEl("kero-balloon-display")
+			: app.elements?.balloonDisplay || getDocEl("balloon-display");
 		if (balloonDisplay && isSinglePageUi()) {
 			balloonDisplay.style.display = "none";
 		}

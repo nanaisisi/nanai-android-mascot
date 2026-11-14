@@ -15,9 +15,21 @@ describe("SakuraScriptPlayer Balloon Display Integration", () => {
 	});
 
 	it("updates balloon display element when processing StepOutput", () => {
-		const balloonText = { textContent: "", innerHTML: "", appendChild(node: any) { this.textContent += node.textContent || ""; } };
+		const balloonText = {
+			textContent: "",
+			innerHTML: "",
+			appendChild(node: any) {
+				this.textContent += node.textContent || "";
+			},
+		};
 		const balloonDisplay = { style: { display: "none" } };
-		const keroBalloonText = { textContent: "", innerHTML: "", appendChild(node: any) { this.textContent += node.textContent || ""; } };
+		const keroBalloonText = {
+			textContent: "",
+			innerHTML: "",
+			appendChild(node: any) {
+				this.textContent += node.textContent || "";
+			},
+		};
 		const keroBalloonDisplay = { style: { display: "none" } };
 		const keroSlot = { style: { display: "none" } };
 
@@ -31,7 +43,7 @@ describe("SakuraScriptPlayer Balloon Display Integration", () => {
 			},
 			currentBalloonTheme: "default",
 			ghostController: {
-				updateSurface(id: number, scope: number) {},
+				updateSurface(_id: number, _scope: number) {},
 			},
 		};
 

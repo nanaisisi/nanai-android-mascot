@@ -152,10 +152,11 @@ pub fn load_surface_image(
                 .unwrap_or("png")
                 .to_lowercase();
 
-            if ext != "svg" && ext != "pna" {
-                if let Some(data_url) = process_chromakey_image_bytes(&bytes) {
-                    return Ok(data_url);
-                }
+            if ext != "svg"
+                && ext != "pna"
+                && let Some(data_url) = process_chromakey_image_bytes(&bytes)
+            {
+                return Ok(data_url);
             }
 
             let mime = match ext.as_str() {

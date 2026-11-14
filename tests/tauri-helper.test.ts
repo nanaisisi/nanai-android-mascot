@@ -67,9 +67,11 @@ test("convertFileSrc covers empty path, Tauri available, protocol startsWith bra
 	assert.equal(typeof isAndroidMobile(), "boolean");
 
 	// 6c. isTauriAvailable detects __TAURI_POST_MESSAGE__ and __TAURI_IPC__
-	(globalThis as unknown as Record<string, unknown>).__TAURI_POST_MESSAGE__ = () => {};
+	(globalThis as unknown as Record<string, unknown>).__TAURI_POST_MESSAGE__ =
+		() => {};
 	assert.equal(isTauriAvailable(), true);
-	delete (globalThis as unknown as Record<string, unknown>).__TAURI_POST_MESSAGE__;
+	delete (globalThis as unknown as Record<string, unknown>)
+		.__TAURI_POST_MESSAGE__;
 
 	// 7. startDraggingWindow when Tauri available (success and catch error)
 	let dragCalled = false;

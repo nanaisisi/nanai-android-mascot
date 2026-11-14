@@ -90,10 +90,13 @@ export class SakuraScriptPlayer {
 		if (this.timerId) {
 			clearTimeout(this.timerId);
 		}
-		this.timerId = setTimeout(() => {
-			this.timerId = null;
-			this.processStep();
-		}, Math.max(delayMs, 10));
+		this.timerId = setTimeout(
+			() => {
+				this.timerId = null;
+				this.processStep();
+			},
+			Math.max(delayMs, 10),
+		);
 	}
 
 	public processStep(): void {
@@ -102,8 +105,14 @@ export class SakuraScriptPlayer {
 			return;
 		}
 
-		const stepRes = stepSakuraPlayerWasm(this.playerInstance) as StepOutputData | null;
-		if (!stepRes || !stepRes.action || stepRes.action === "Halt" || stepRes.action === "None") {
+		const stepRes = stepSakuraPlayerWasm(
+			this.playerInstance,
+		) as StepOutputData | null;
+		if (
+			!stepRes?.action ||
+			stepRes.action === "Halt" ||
+			stepRes.action === "None"
+		) {
 			this.stop();
 			return;
 		}
@@ -169,7 +178,10 @@ export class SakuraScriptPlayer {
 	}
 
 	private getDocElement(id: string): HTMLElement | null {
-		if (typeof document !== "undefined" && typeof document.getElementById === "function") {
+		if (
+			typeof document !== "undefined" &&
+			typeof document.getElementById === "function"
+		) {
 			return document.getElementById(id);
 		}
 		return null;
@@ -178,22 +190,28 @@ export class SakuraScriptPlayer {
 	private appendTextToBalloon(app: any, scope: number, text: string): void {
 		const isKero = scope === 1;
 		const textEl = isKero
-			? (app?.elements?.keroBalloonText || this.getDocElement("kero-balloon-text"))
-			: (app?.elements?.balloonText || this.getDocElement("balloon-text"));
+			? app?.elements?.keroBalloonText ||
+				this.getDocElement("kero-balloon-text")
+			: app?.elements?.balloonText || this.getDocElement("balloon-text");
 		const dispEl = isKero
-			? (app?.elements?.keroBalloonDisplay || this.getDocElement("kero-balloon-display"))
-			: (app?.elements?.balloonDisplay || this.getDocElement("balloon-display"));
+			? app?.elements?.keroBalloonDisplay ||
+				this.getDocElement("kero-balloon-display")
+			: app?.elements?.balloonDisplay || this.getDocElement("balloon-display");
 		const slotEl = isKero
-			? (app?.elements?.keroSlot || this.getDocElement("kero-slot"))
-			: (app?.elements?.sakuraSlot || this.getDocElement("sakura-slot"));
+			? app?.elements?.keroSlot || this.getDocElement("kero-slot")
+			: app?.elements?.sakuraSlot || this.getDocElement("sakura-slot");
 
-		if (slotEl && slotEl.style && slotEl.style.display === "none") {
+		if (slotEl?.style && slotEl.style.display === "none") {
 			slotEl.style.display = "block";
 		}
 
 		if (textEl) {
 			if (textEl.appendChild) {
-				const textNode = typeof document !== "undefined" && typeof document.createTextNode === "function" ? document.createTextNode(text) : null;
+				const textNode =
+					typeof document !== "undefined" &&
+					typeof document.createTextNode === "function"
+						? document.createTextNode(text)
+						: null;
 				if (textNode) {
 					textEl.appendChild(textNode);
 				} else {
@@ -204,13 +222,15 @@ export class SakuraScriptPlayer {
 			}
 		}
 
-		if (dispEl && dispEl.style && isSinglePageUi()) {
+		if (dispEl?.style && isSinglePageUi()) {
 			dispEl.style.display = "block";
 		}
 
 		if (isNativeMultiWindow()) {
 			const theme = app?.currentBalloonTheme || "default";
-			void invoke("show_balloon_window", { scope_id: scope, theme }).catch(() => {});
+			void invoke("show_balloon_window", { scope_id: scope, theme }).catch(
+				() => {},
+			);
 			void emit(`update-balloon-content-${scope}`, {
 				html: textEl ? textEl.innerHTML : text,
 				theme,
@@ -221,17 +241,19 @@ export class SakuraScriptPlayer {
 	private clearBalloon(app: any, scope: number): void {
 		const isKero = scope === 1;
 		const textEl = isKero
-			? (app?.elements?.keroBalloonText || this.getDocElement("kero-balloon-text"))
-			: (app?.elements?.balloonText || this.getDocElement("balloon-text"));
+			? app?.elements?.keroBalloonText ||
+				this.getDocElement("kero-balloon-text")
+			: app?.elements?.balloonText || this.getDocElement("balloon-text");
 		const dispEl = isKero
-			? (app?.elements?.keroBalloonDisplay || this.getDocElement("kero-balloon-display"))
-			: (app?.elements?.balloonDisplay || this.getDocElement("balloon-display"));
+			? app?.elements?.keroBalloonDisplay ||
+				this.getDocElement("kero-balloon-display")
+			: app?.elements?.balloonDisplay || this.getDocElement("balloon-display");
 
 		if (textEl) {
 			textEl.innerHTML = "";
 			textEl.textContent = "";
 		}
-		if (dispEl && dispEl.style && isSinglePageUi()) {
+		if (dispEl?.style && isSinglePageUi()) {
 			dispEl.style.display = "none";
 		}
 		if (isNativeMultiWindow()) {
@@ -242,16 +264,27 @@ export class SakuraScriptPlayer {
 		}
 	}
 
-	private addChoiceToBalloon(app: any, scope: number, title: string, id: string): void {
+	private addChoiceToBalloon(
+		app: any,
+		scope: number,
+		title: string,
+		id: string,
+	): void {
 		const isKero = scope === 1;
 		const textEl = isKero
-			? (app?.elements?.keroBalloonText || this.getDocElement("kero-balloon-text"))
-			: (app?.elements?.balloonText || this.getDocElement("balloon-text"));
+			? app?.elements?.keroBalloonText ||
+				this.getDocElement("kero-balloon-text")
+			: app?.elements?.balloonText || this.getDocElement("balloon-text");
 		const dispEl = isKero
-			? (app?.elements?.keroBalloonDisplay || this.getDocElement("kero-balloon-display"))
-			: (app?.elements?.balloonDisplay || this.getDocElement("balloon-display"));
+			? app?.elements?.keroBalloonDisplay ||
+				this.getDocElement("kero-balloon-display")
+			: app?.elements?.balloonDisplay || this.getDocElement("balloon-display");
 
-		if (textEl && typeof document !== "undefined" && typeof document.createElement === "function") {
+		if (
+			textEl &&
+			typeof document !== "undefined" &&
+			typeof document.createElement === "function"
+		) {
 			const btn = document.createElement("button");
 			btn.type = "button";
 			btn.className = "balloon-choice-btn";
@@ -259,27 +292,41 @@ export class SakuraScriptPlayer {
 			btn.textContent = title;
 			btn.addEventListener("click", () => {
 				if (app?.ghostController?.sendShioriEvent) {
-					void app.ghostController.sendShioriEvent("OnChoiceSelect", [id, title]);
+					void app.ghostController.sendShioriEvent("OnChoiceSelect", [
+						id,
+						title,
+					]);
 				}
 			});
 			textEl.appendChild(btn);
 		}
 
-		if (dispEl && dispEl.style && isSinglePageUi()) {
+		if (dispEl?.style && isSinglePageUi()) {
 			dispEl.style.display = "block";
 		}
 	}
 
-	private addAnchorToBalloon(app: any, scope: number, title: string, id: string): void {
+	private addAnchorToBalloon(
+		app: any,
+		scope: number,
+		title: string,
+		id: string,
+	): void {
 		const isKero = scope === 1;
 		const textEl = isKero
-			? (app?.elements?.keroBalloonText || this.getDocElement("kero-balloon-text"))
-			: (app?.elements?.balloonText || this.getDocElement("balloon-text"));
+			? app?.elements?.keroBalloonText ||
+				this.getDocElement("kero-balloon-text")
+			: app?.elements?.balloonText || this.getDocElement("balloon-text");
 		const dispEl = isKero
-			? (app?.elements?.keroBalloonDisplay || this.getDocElement("kero-balloon-display"))
-			: (app?.elements?.balloonDisplay || this.getDocElement("balloon-display"));
+			? app?.elements?.keroBalloonDisplay ||
+				this.getDocElement("kero-balloon-display")
+			: app?.elements?.balloonDisplay || this.getDocElement("balloon-display");
 
-		if (textEl && typeof document !== "undefined" && typeof document.createElement === "function") {
+		if (
+			textEl &&
+			typeof document !== "undefined" &&
+			typeof document.createElement === "function"
+		) {
 			const a = document.createElement("a");
 			a.className = "balloon-anchor";
 			a.dataset.id = id;
@@ -287,13 +334,16 @@ export class SakuraScriptPlayer {
 			a.addEventListener("click", (e) => {
 				e.preventDefault();
 				if (app?.ghostController?.sendShioriEvent) {
-					void app.ghostController.sendShioriEvent("OnAnchorSelect", [id, title]);
+					void app.ghostController.sendShioriEvent("OnAnchorSelect", [
+						id,
+						title,
+					]);
 				}
 			});
 			textEl.appendChild(a);
 		}
 
-		if (dispEl && dispEl.style && isSinglePageUi()) {
+		if (dispEl?.style && isSinglePageUi()) {
 			dispEl.style.display = "block";
 		}
 	}
@@ -305,8 +355,14 @@ export class SakuraScriptPlayer {
 
 	public skip(): void {
 		while (this.isLoopRunning && this.playerInstance) {
-			const stepRes = stepSakuraPlayerWasm(this.playerInstance) as StepOutputData | null;
-			if (!stepRes || !stepRes.action || stepRes.action === "Halt" || stepRes.action === "None") {
+			const stepRes = stepSakuraPlayerWasm(
+				this.playerInstance,
+			) as StepOutputData | null;
+			if (
+				!stepRes?.action ||
+				stepRes.action === "Halt" ||
+				stepRes.action === "None"
+			) {
 				break;
 			}
 			const scope = stepRes.data?.scope ?? this.currentScope;
@@ -319,12 +375,25 @@ export class SakuraScriptPlayer {
 				this.clearBalloon(app, scope);
 			} else if (stepRes.action === "SurfaceChange") {
 				if (app?.ghostController?.updateSurface) {
-					void app.ghostController.updateSurface(stepRes.data?.surface_id ?? 0, scope);
+					void app.ghostController.updateSurface(
+						stepRes.data?.surface_id ?? 0,
+						scope,
+					);
 				}
 			} else if (stepRes.action === "Choice") {
-				this.addChoiceToBalloon(app, scope, stepRes.data?.title || "", stepRes.data?.id || "");
+				this.addChoiceToBalloon(
+					app,
+					scope,
+					stepRes.data?.title || "",
+					stepRes.data?.id || "",
+				);
 			} else if (stepRes.action === "Anchor") {
-				this.addAnchorToBalloon(app, scope, stepRes.data?.text || "", stepRes.data?.id || "");
+				this.addAnchorToBalloon(
+					app,
+					scope,
+					stepRes.data?.text || "",
+					stepRes.data?.id || "",
+				);
 			}
 		}
 		this.stop();
@@ -363,4 +432,3 @@ export class SakuraScriptPlayer {
 		}
 	}
 }
-

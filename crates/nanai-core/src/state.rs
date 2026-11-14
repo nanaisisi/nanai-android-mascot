@@ -1,9 +1,9 @@
 //! Pure WASM Core State Machine (Single Source of Truth)
 
-use std::collections::{HashMap, VecDeque};
 use serde::{Deserialize, Serialize};
+use std::collections::{HashMap, VecDeque};
 
-use crate::sakura_script::{parse_sakura_script, SakuraToken};
+use crate::sakura_script::{SakuraToken, parse_sakura_script};
 
 /// 毎フレームの WASM Engine Tick 実行結果
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -31,8 +31,8 @@ pub struct MascotEngineState {
 impl Default for MascotEngineState {
     fn default() -> Self {
         let mut surfaces = HashMap::new();
-        surfaces.insert(0, 0);   // Scope 0 (Sakura) default surface 0
-        surfaces.insert(1, 10);  // Scope 1 (Kero) default surface 10
+        surfaces.insert(0, 0); // Scope 0 (Sakura) default surface 0
+        surfaces.insert(1, 10); // Scope 1 (Kero) default surface 10
 
         Self {
             current_ghost: "default".to_string(),
@@ -126,12 +126,10 @@ impl MascotEngineState {
                 SakuraToken::Scope(sc) => {
                     self.active_scope = *sc;
                 }
-                SakuraToken::Surface(sid) => {
-                    if *sid >= 0 {
-                        let sc = self.active_scope;
-                        self.set_surface(sc, *sid as u32);
-                        updated_scopes.push(sc);
-                    }
+                SakuraToken::Surface(sid) if *sid >= 0 => {
+                    let sc = self.active_scope;
+                    self.set_surface(sc, *sid as u32);
+                    updated_scopes.push(sc);
                 }
                 _ => {}
             }

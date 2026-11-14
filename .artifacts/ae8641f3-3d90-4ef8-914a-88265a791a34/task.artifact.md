@@ -1,0 +1,4 @@
+- `[x]` Implement `InternalWindowManager` for virtual in-app floating windows
+- `[x]` Update `index.html` and CSS styles for virtual window panels
+- `[x]` Update `GhostController` / `updateSurface` to render into virtual window panels
+- `[/]` Verify implementation with automated tests (`npm run test`)

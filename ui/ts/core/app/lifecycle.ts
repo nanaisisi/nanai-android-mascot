@@ -22,7 +22,9 @@ class WasmGhostController {
 
 class WasmSurfaceManager {
 	constructor(public app: any) {}
-	detectCollision() { return { name: "", canvasX: 0, canvasY: 0 }; }
+	detectCollision() {
+		return { name: "", canvasX: 0, canvasY: 0 };
+	}
 }
 
 class WasmInteractionManager {

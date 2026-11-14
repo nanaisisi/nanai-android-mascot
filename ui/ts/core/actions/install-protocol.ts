@@ -166,9 +166,7 @@ export function buildInstallRerouteArgs(
  * @returns {string} - "unsupported" | "extraction" | "unlha32 error" | "artificial" | "write error" | "invalid path"
  */
 export function parseErrorReason(err: unknown): string {
-	const msg = String(
-		(err as { message?: string })?.message || err || "",
-	);
+	const msg = String((err as { message?: string })?.message || err || "");
 
 	if (wasmBridge.isReady()) {
 		try {

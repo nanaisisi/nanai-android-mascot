@@ -71,4 +71,27 @@ describe("nanai-core WASM module parity and fallback", () => {
 			isNoUpdatePath("file.txt", []),
 		);
 	});
+
+	it("creates and updates MascotEngine WASM single source of truth state", async () => {
+		await wasmBridge.init();
+		if (!wasmBridge.isReady()) return;
+
+		const engine = wasmBridge.createMascotEngine();
+		if (!engine) return;
+
+		expect(engine).not.toBeNull();
+
+		engine.select_ghost("Emily");
+		engine.select_shell("master");
+		engine.set_surface(0, 5);
+		engine.enqueue_script("\\0\\s[5]Hello WASM Engine!\\e");
+		engine.tick(16.6);
+
+		const stateJson = engine.get_state_json();
+		expect(typeof stateJson).toBe("string");
+		expect(stateJson).toContain("Emily");
+		expect(stateJson).toContain("master");
+
+		expect(engine.get_surface(0)).toBe(5);
+	});
 });

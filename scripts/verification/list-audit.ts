@@ -163,10 +163,13 @@ export function runListAndComparisonAudit(): void {
 
 	const migratedPaths: Record<string, string> = {
 		"ui/ts/ghost/sakura-play.ts": "crates/nanai-core/src/sakura_player.rs",
-		"ui/ts/ghost/sakura-play/handlers.ts": "crates/nanai-core/src/sakura_script.rs",
+		"ui/ts/ghost/sakura-play/handlers.ts":
+			"crates/nanai-core/src/sakura_script.rs",
 		"ui/ts/surface/surface-load.ts": "ui/ts/surface/ghost-surface-loader.ts",
-		"ui/ts/surface/surface-dressup.ts": "crates/nanai-surface/src/types/txt/surfaces_txt/alias.rs",
-		"ui/ts/surface/compositor/chromakey.ts": "crates/nanai-surface/src/compositor/blend/chromakey.rs",
+		"ui/ts/surface/surface-dressup.ts":
+			"crates/nanai-surface/src/types/txt/surfaces_txt/alias.rs",
+		"ui/ts/surface/compositor/chromakey.ts":
+			"crates/nanai-surface/src/compositor/blend/chromakey.rs",
 		"tests/ghost.test.ts": "tests/ghost-actions.test.ts",
 	};
 

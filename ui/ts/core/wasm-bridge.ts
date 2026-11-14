@@ -8,11 +8,11 @@ import { wasmMemory } from "./wasm/wasm-memory.js";
 import {
 	calculateUpdateProgressWasm,
 	isNoUpdatePathWasm,
+	parseBalloonOptionsWasm,
 	parseDescriptTextWasm,
 	parseInstallErrorReasonWasm,
 	parseSstpRequestWasm,
 	validateBalloonDescriptWasm,
-	parseBalloonOptionsWasm,
 } from "./wasm/wasm-protocol.js";
 import { parseSakuraScriptWasm } from "./wasm/wasm-sakura.js";
 import {
@@ -135,6 +135,17 @@ class WasmBridgeFacade {
 
 	public freeBuffer(ptr: number, size: number): void {
 		wasmMemory.free(ptr, size);
+	}
+
+	public createMascotEngine(): any | null {
+		const core = wasmMemory.getWasmCore();
+		if (!core?.MascotEngine) return null;
+		try {
+			return new core.MascotEngine();
+		} catch (err) {
+			console.warn("⚠️ [WASM Bridge] MascotEngine 作成エラー:", err);
+			return null;
+		}
 	}
 }
 

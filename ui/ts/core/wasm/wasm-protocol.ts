@@ -147,7 +147,11 @@ export function validateBalloonDescriptWasm(
 	if (!core?.wasm_validate_balloon_descript) return null;
 
 	try {
-		return core.wasm_validate_balloon_descript(props, ghostName, ghostPath) as any;
+		return core.wasm_validate_balloon_descript(
+			props,
+			ghostName,
+			ghostPath,
+		) as any;
 	} catch (err) {
 		console.warn("⚠️ [WASM Protocol] validateBalloonDescript エラー:", err);
 		return null;
@@ -165,4 +169,3 @@ export function parseBalloonOptionsWasm(content: string): any {
 		return null;
 	}
 }
-

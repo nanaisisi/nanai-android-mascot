@@ -3,7 +3,11 @@
  */
 import { wasmBridge } from "../core/wasm-bridge.js";
 
-export function findHitCollisionName(collisions: unknown[], x: number, y: number): string | null {
+export function findHitCollisionName(
+	collisions: unknown[],
+	x: number,
+	y: number,
+): string | null {
 	return wasmBridge.findHitCollisionName(collisions, x, y);
 }
 

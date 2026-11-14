@@ -9,6 +9,7 @@ pub mod sakura_script;
 pub mod seriko_animation;
 pub mod shiori_protocol;
 pub mod sstp_fmo;
+pub mod state;
 pub mod surface_collision;
 pub mod surface_compositor;
 pub mod surfaces_parser;
@@ -23,6 +24,7 @@ pub use sakura_script::*;
 pub use seriko_animation::*;
 pub use shiori_protocol::*;
 pub use sstp_fmo::*;
+pub use state::*;
 pub use surface_collision::*;
 pub use surface_compositor::*;
 pub use surfaces_parser::*;
@@ -127,5 +129,61 @@ pub fn init_platform_runtime() -> String {
 #[wasm_bindgen::prelude::wasm_bindgen]
 pub fn init_platform_runtime() -> String {
     "Initialized nanai-core runtime for [Generic Web WASM]".to_string()
+}
+
+// =========================================================================
+// MascotEngineState (WASM Single Source of Truth Engine FFI)
+// =========================================================================
+
+#[wasm_bindgen::prelude::wasm_bindgen]
+pub struct MascotEngine {
+    inner: MascotEngineState,
+}
+
+#[wasm_bindgen::prelude::wasm_bindgen]
+impl MascotEngine {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: MascotEngineState::new(),
+        }
+    }
+
+    pub fn select_ghost(&mut self, ghost_name: &str) {
+        self.inner.select_ghost(ghost_name);
+    }
+
+    pub fn select_shell(&mut self, shell_name: &str) {
+        self.inner.select_shell(shell_name);
+    }
+
+    pub fn set_surface(&mut self, scope: u32, surface_id: u32) {
+        self.inner.set_surface(scope, surface_id);
+    }
+
+    pub fn get_surface(&self, scope: u32) -> u32 {
+        self.inner.get_surface(scope)
+    }
+
+    pub fn enqueue_script(&mut self, script: &str) {
+        self.inner.enqueue_script(script);
+    }
+
+    pub fn tick(&mut self, delta_ms: f64) {
+        self.inner.tick(delta_ms);
+    }
+
+    pub fn tick_json(&mut self, delta_ms: f64) -> String {
+        let res = self.inner.tick(delta_ms);
+        serde_json::to_string(&res).unwrap_or_else(|_| "{}".to_string())
+    }
+
+    pub fn is_playing(&self) -> bool {
+        self.inner.is_playing_script
+    }
+
+    pub fn get_state_json(&self) -> String {
+        serde_json::to_string(&self.inner).unwrap_or_else(|_| "{}".to_string())
+    }
 }
 

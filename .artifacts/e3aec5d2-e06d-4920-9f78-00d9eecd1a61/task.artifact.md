@@ -1,0 +1,13 @@
+- [x] Create `scripts/compliance/config.py`
+- [x] Create `scripts/compliance/loader.py`
+- [x] Create `scripts/compliance/search.py`
+- [x] Create `scripts/compliance/report.py`
+- [x] Create `scripts/compliance/verify.py`
+- [x] Create `scripts/compliance/audit_helpers.py`
+- [x] Create `scripts/compliance/audit_processor.py`
+- [x] Create `scripts/compliance/summary.py`
+- [x] Create `scripts/compliance/git_safety.py`
+- [x] Create `scripts/compliance/sync_readmes.py`
+- [x] Create `scripts/compliance/cli.py`
+- [x] Update `scripts/verify_spec_compliance.py` to orchestrate modules
+- [x] Verify execution (`--dry-run`, `--check-lists`, `--check-layers`) and file sizes (<9KB)

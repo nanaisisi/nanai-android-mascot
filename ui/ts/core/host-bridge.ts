@@ -64,7 +64,10 @@ export class WasmHostBridge implements HostBridge {
 					/* @vite-ignore */ "./wasm/pkg/nanai_core.js" as string
 				);
 			} catch (e) {
-				console.warn("WASM モジュールのロードをスキップしました (スタブ動作)", e);
+				console.warn(
+					"WASM モジュールのロードをスキップしました (スタブ動作)",
+					e,
+				);
 			}
 		}
 	}

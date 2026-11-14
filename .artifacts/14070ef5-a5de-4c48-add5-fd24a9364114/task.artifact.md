@@ -1,0 +1,3 @@
+- `[x]` Task 1: Create `crates/nanai-core/src/balloon_descript.rs` with balloon descript validation & recommended ghost matching logic.
+- `[x]` Task 2: Register `balloon_descript` module in `crates/nanai-core/src/lib.rs`.
+- `[x]` Task 3: Connect balloon descript WASM bindings in TypeScript and verify with `cargo test` and `npm test`.

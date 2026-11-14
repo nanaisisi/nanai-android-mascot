@@ -2,7 +2,6 @@
  * SurfaceManager compatibility stub
  */
 export class SurfaceManager {
-	constructor(...args: any[]) {}
 	load() {}
 	render() {}
 	detectCollision() {

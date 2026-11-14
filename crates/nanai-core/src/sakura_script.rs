@@ -34,6 +34,8 @@ pub enum SakuraToken {
     Sync(bool),
     /// クイックモード (\_q)
     Quick(bool),
+    /// 拡張コマンド (\![...])
+    Command { command: String, args: Vec<String> },
     /// スクリプト終了 (\e)
     Halt,
 }
@@ -151,6 +153,15 @@ pub fn parse_sakura_script(script: &str) -> Vec<SakuraToken> {
                                 property: "default".to_string(),
                                 args: vec![],
                             });
+                        }
+                    }
+                    '!' => {
+                        chars.next();
+                        if let Some(arg) = parse_bracket_arg(&mut chars) {
+                            let args: Vec<String> =
+                                arg.split(',').map(|s| s.trim().to_string()).collect();
+                            let command = args.first().cloned().unwrap_or_default();
+                            tokens.push(SakuraToken::Command { command, args });
                         }
                     }
                     '_' => {

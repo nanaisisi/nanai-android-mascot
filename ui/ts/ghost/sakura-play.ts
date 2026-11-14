@@ -169,6 +169,9 @@ async function handleWasmStep(
 		case "Anchor":
 			pseudoToken = { type: "anchor_begin", value: { id: data.id, text: data.text } };
 			break;
+		case "Command":
+			pseudoToken = { type: "command", command: data.command, args: data.args, value: data.args?.join(",") };
+			break;
 		case "Wait":
 			pseudoToken = { type: "wait", value: data.duration_ms };
 			break;

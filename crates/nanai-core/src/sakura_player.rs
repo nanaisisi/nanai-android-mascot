@@ -35,6 +35,12 @@ pub enum StepOutput {
     },
     /// ウェイト実行 (\w5, \_w[500])
     Wait { duration_ms: u32 },
+    /// 拡張コマンド (\![...])
+    Command {
+        scope: u32,
+        command: String,
+        args: Vec<String>,
+    },
     /// スクリプト再生終了 (\e)
     Halt,
     /// 終了/無効ステップ
@@ -145,6 +151,11 @@ impl SakuraPlayerEngine {
                 scope: self.current_scope,
                 id,
                 text,
+            },
+            SakuraToken::Command { command, args } => StepOutput::Command {
+                scope: self.current_scope,
+                command,
+                args,
             },
             SakuraToken::Font { .. } | SakuraToken::Sync(_) | SakuraToken::Quick(_) => {
                 self.step_internal()

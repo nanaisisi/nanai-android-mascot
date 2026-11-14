@@ -13,16 +13,34 @@ use tauri::{Emitter, Manager};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ScheduleItem {
-    pub id: String,
-    pub date: String,
-    pub time: String,
-    pub title: String,
-    pub memo: String,
-    pub notified: bool,
+    id: String,
+    date: String,
+    time: String,
+    title: String,
+    memo: String,
+    notified: bool,
 }
 
 #[allow(dead_code)]
 impl ScheduleItem {
+    pub fn new(
+        id: String,
+        date: String,
+        time: String,
+        title: String,
+        memo: String,
+        notified: bool,
+    ) -> Self {
+        Self {
+            id,
+            date,
+            time,
+            title,
+            memo,
+            notified,
+        }
+    }
+
     pub fn id(&self) -> &str { &self.id }
     pub fn date(&self) -> &str { &self.date }
     pub fn time(&self) -> &str { &self.time }

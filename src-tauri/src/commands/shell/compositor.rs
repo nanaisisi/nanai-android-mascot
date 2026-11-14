@@ -7,11 +7,35 @@ pub fn create_surface_frame_buffer(width: u32, height: u32) -> Result<SurfaceFra
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ClearFrameBufferRectParams {
-    pub fb: SurfaceFrameBuffer,
-    pub x: u32,
-    pub y: u32,
-    pub w: u32,
-    pub h: u32,
+    fb: SurfaceFrameBuffer,
+    x: u32,
+    y: u32,
+    w: u32,
+    h: u32,
+}
+
+#[allow(dead_code)]
+impl ClearFrameBufferRectParams {
+    // Add getter methods
+    pub fn fb(&self) -> &SurfaceFrameBuffer {
+        &self.fb
+    }
+
+    pub fn x(&self) -> u32 {
+        self.x
+    }
+
+    pub fn y(&self) -> u32 {
+        self.y
+    }
+
+    pub fn w(&self) -> u32 {
+        self.w
+    }
+
+    pub fn h(&self) -> u32 {
+        self.h
+    }
 }
 
 #[tauri::command]
@@ -25,10 +49,30 @@ pub fn clear_frame_buffer_rect(
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ApplyChromakeyToBufferParams {
-    pub fb: SurfaceFrameBuffer,
-    pub r: u8,
-    pub g: u8,
-    pub b: u8,
+    fb: SurfaceFrameBuffer,
+    r: u8,
+    g: u8,
+    b: u8,
+}
+
+#[allow(dead_code)]
+impl ApplyChromakeyToBufferParams {
+    // Add getter methods
+    pub fn fb(&self) -> &SurfaceFrameBuffer {
+        &self.fb
+    }
+
+    pub fn r(&self) -> u8 {
+        self.r
+    }
+
+    pub fn g(&self) -> u8 {
+        self.g
+    }
+
+    pub fn b(&self) -> u8 {
+        self.b
+    }
 }
 
 #[tauri::command]
@@ -42,7 +86,15 @@ pub fn apply_chromakey_to_buffer(
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ApplyCornerChromakeyToBufferParams {
-    pub fb: SurfaceFrameBuffer,
+    fb: SurfaceFrameBuffer,
+}
+
+#[allow(dead_code)]
+impl ApplyCornerChromakeyToBufferParams {
+    // Add getter methods
+    pub fn fb(&self) -> &SurfaceFrameBuffer {
+        &self.fb
+    }
 }
 
 #[tauri::command]

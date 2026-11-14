@@ -130,10 +130,30 @@ fn method_string(method: &DrawMethod) -> String {
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct SurfaceCompositionPlanParams {
-    pub ghost_name: String,
-    pub shell_name: String,
-    pub surface_id: u32,
-    pub binds: Option<Vec<u32>>,
+    ghost_name: String,
+    shell_name: String,
+    surface_id: u32,
+    binds: Option<Vec<u32>>,
+}
+
+#[allow(dead_code)]
+impl SurfaceCompositionPlanParams {
+    // Add getter methods
+    pub fn ghost_name(&self) -> &str {
+        &self.ghost_name
+    }
+
+    pub fn shell_name(&self) -> &str {
+        &self.shell_name
+    }
+
+    pub fn surface_id(&self) -> u32 {
+        self.surface_id
+    }
+
+    pub fn binds(&self) -> Option<&[u32]> {
+        self.binds.as_deref()
+    }
 }
 
 #[tauri::command]

@@ -90,9 +90,25 @@ pub async fn send_shiori_request(
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct SendShioriEventParams {
-    pub event: String,
-    pub references: Option<Vec<String>>,
-    pub ghost_id: Option<String>,
+    event: String,
+    references: Option<Vec<String>>,
+    ghost_id: Option<String>,
+}
+
+#[allow(dead_code)]
+impl SendShioriEventParams {
+    // Add getter methods
+    pub fn event(&self) -> &str {
+        &self.event
+    }
+
+    pub fn references(&self) -> Option<&[String]> {
+        self.references.as_deref()
+    }
+
+    pub fn ghost_id(&self) -> Option<&str> {
+        self.ghost_id.as_deref()
+    }
 }
 
 /// SHIORIにイベントを送信（簡易版・パラメータ指定対応）
@@ -230,9 +246,25 @@ pub async fn send_on_translate(
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct SendGhostCallEventParams {
-    pub event: String,
-    pub target_ghost_name: String,
-    pub ghost_id: Option<String>,
+    event: String,
+    target_ghost_name: String,
+    ghost_id: Option<String>,
+}
+
+#[allow(dead_code)]
+impl SendGhostCallEventParams {
+    // Add getter methods
+    pub fn event(&self) -> &str {
+        &self.event
+    }
+
+    pub fn target_ghost_name(&self) -> &str {
+        &self.target_ghost_name
+    }
+
+    pub fn ghost_id(&self) -> Option<&str> {
+        self.ghost_id.as_deref()
+    }
 }
 
 /// ゴースト間呼び出し/切り替え関連のイベントを送信する (UKADOC 規格準拠)

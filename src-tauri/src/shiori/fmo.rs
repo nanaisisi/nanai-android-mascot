@@ -23,33 +23,15 @@ pub struct FmoRecord {
 #[allow(dead_code)]
 impl FmoRecord {
     // Add getter methods
-    pub fn id(&self) -> &str {
-        &self.id
-    }
-    pub fn path(&self) -> &str {
-        &self.path
-    }
-    pub fn hwnd(&self) -> u64 {
-        self.hwnd
-    }
-    pub fn name(&self) -> &str {
-        &self.name
-    }
-    pub fn keroname(&self) -> &str {
-        &self.keroname
-    }
-    pub fn sakura_surface(&self) -> i32 {
-        self.sakura_surface
-    }
-    pub fn kero_surface(&self) -> i32 {
-        self.kero_surface
-    }
-    pub fn ghost_path(&self) -> &str {
-        &self.ghost_path
-    }
-    pub fn module_state(&self) -> &str {
-        &self.module_state
-    }
+    pub fn id(&self) -> &str { &self.id }
+    pub fn path(&self) -> &str { &self.path }
+    pub fn hwnd(&self) -> u64 { self.hwnd }
+    pub fn name(&self) -> &str { &self.name }
+    pub fn keroname(&self) -> &str { &self.keroname }
+    pub fn sakura_surface(&self) -> i32 { self.sakura_surface }
+    pub fn kero_surface(&self) -> i32 { self.kero_surface }
+    pub fn ghost_path(&self) -> &str { &self.ghost_path }
+    pub fn module_state(&self) -> &str { &self.module_state }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -61,12 +43,8 @@ pub struct FmoStatus {
 #[allow(dead_code)]
 impl FmoStatus {
     // Add getter methods
-    pub fn active_ghosts(&self) -> &[FmoRecord] {
-        &self.active_ghosts
-    }
-    pub fn base_ware_detected(&self) -> &str {
-        &self.base_ware_detected
-    }
+    pub fn active_ghosts(&self) -> &[FmoRecord] { &self.active_ghosts }
+    pub fn base_ware_detected(&self) -> &str { &self.base_ware_detected }
 }
 
 #[cfg(target_os = "windows")]
@@ -165,19 +143,21 @@ pub fn set_fallback_mutex(name: &str, active: bool) {
 pub fn generate_fmo_buffer(records: &[FmoRecord]) -> Vec<u8> {
     let core_records: Vec<nanai_android_mascot_ui::fmo::FmoRecord> = records
         .iter()
-        .map(|rec| nanai_android_mascot_ui::fmo::FmoRecord {
-            id: rec.id().to_string(),
-            path: rec.path().to_string(),
-            hwnd: rec.hwnd(),
-            name: rec.name().to_string(),
-            keroname: rec.keroname().to_string(),
-            sakura_surface: rec.sakura_surface(),
-            kero_surface: rec.kero_surface(),
-            ghostpath: rec.ghost_path().to_string(),
-            kerohwnd: None,
-            hwndlist: Vec::new(),
-            fullname: None,
-            modulestate: Some(rec.module_state().to_string()),
+        .map(|rec| {
+            nanai_android_mascot_ui::fmo::FmoRecord::from_parts(
+                rec.id().to_string(),
+                rec.path().to_string(),
+                rec.hwnd(),
+                rec.name().to_string(),
+                rec.keroname().to_string(),
+                rec.sakura_surface(),
+                rec.kero_surface(),
+                rec.ghost_path().to_string(),
+                None,
+                Vec::new(),
+                None,
+                Some(rec.module_state().to_string()),
+            )
         })
         .collect();
 

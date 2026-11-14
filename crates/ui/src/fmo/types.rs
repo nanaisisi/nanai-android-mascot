@@ -9,21 +9,83 @@ pub const MUTEX_SAKURA_UNICODE_FMO: &str = "SakuraUnicodeFMO";
 /// FMO レコード
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct FmoRecord {
-    pub id: String,
-    pub path: String,
-    pub hwnd: u64,
-    pub name: String,
-    pub keroname: String,
-    pub sakura_surface: i32,
-    pub kero_surface: i32,
-    pub ghostpath: String,
-    pub kerohwnd: Option<u64>,
-    pub hwndlist: Vec<u64>,
-    pub fullname: Option<String>,
-    pub modulestate: Option<String>,
+    pub(crate) id: String,
+    pub(crate) path: String,
+    pub(crate) hwnd: u64,
+    pub(crate) name: String,
+    pub(crate) keroname: String,
+    pub(crate) sakura_surface: i32,
+    pub(crate) kero_surface: i32,
+    pub(crate) ghostpath: String,
+    pub(crate) kerohwnd: Option<u64>,
+    pub(crate) hwndlist: Vec<u64>,
+    pub(crate) fullname: Option<String>,
+    pub(crate) modulestate: Option<String>,
 }
 
+#[allow(dead_code)]
 impl FmoRecord {
+    // Add getter methods
+    pub fn id(&self) -> &str { &self.id }
+    pub fn path(&self) -> &str { &self.path }
+    pub fn hwnd(&self) -> u64 { self.hwnd }
+    pub fn name(&self) -> &str { &self.name }
+    pub fn keroname(&self) -> &str { &self.keroname }
+    pub fn sakura_surface(&self) -> i32 { self.sakura_surface }
+    pub fn kero_surface(&self) -> i32 { self.kero_surface }
+    pub fn ghostpath(&self) -> &str { &self.ghostpath }
+    pub fn kerohwnd(&self) -> Option<u64> { self.kerohwnd }
+    pub fn hwndlist(&self) -> &[u64] { &self.hwndlist }
+    pub fn fullname(&self) -> Option<&str> { self.fullname.as_deref() }
+    pub fn modulestate(&self) -> Option<&str> { self.modulestate.as_deref() }
+
+    pub fn to_core_record(&self) -> FmoRecord {
+        FmoRecord {
+            id: self.id.clone(),
+            path: self.path.clone(),
+            hwnd: self.hwnd,
+            name: self.name.clone(),
+            keroname: self.keroname.clone(),
+            sakura_surface: self.sakura_surface,
+            kero_surface: self.kero_surface,
+            ghostpath: self.ghostpath.clone(),
+            kerohwnd: self.kerohwnd,
+            hwndlist: self.hwndlist.clone(),
+            fullname: self.fullname.clone(),
+            modulestate: self.modulestate.clone(),
+        }
+    }
+
+    pub fn from_parts(
+        id: String,
+        path: String,
+        hwnd: u64,
+        name: String,
+        keroname: String,
+        sakura_surface: i32,
+        kero_surface: i32,
+        ghostpath: String,
+        kerohwnd: Option<u64>,
+        hwndlist: Vec<u64>,
+        fullname: Option<String>,
+        modulestate: Option<String>,
+    ) -> Self {
+        Self {
+            id,
+            path,
+            hwnd,
+            name,
+            keroname,
+            sakura_surface,
+            kero_surface,
+            ghostpath,
+            kerohwnd,
+            hwndlist,
+            fullname,
+            modulestate,
+        }
+    }
+
     pub fn new(id: impl Into<String>, name: impl Into<String>) -> Self {
         Self {
             id: id.into(),
@@ -79,36 +141,44 @@ impl FmoRecord {
 /// Slot-01 Contract: FmoEntry 構造体 (FMO共有メモリ同期エントリ)
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct FmoEntry {
-    pub id: String,
-    pub name: String,
-    pub keroname: String,
-    pub hwnd: u64,
-    pub sakura_surface: i32,
-    pub kero_surface: i32,
-    pub ghostpath: String,
-    pub balloon0: String,
-    pub balloon1: String,
+    pub(crate) id: String,
+    pub(crate) name: String,
+    pub(crate) keroname: String,
+    pub(crate) hwnd: u64,
+    pub(crate) sakura_surface: i32,
+    pub(crate) kero_surface: i32,
+    pub(crate) ghostpath: String,
+    pub(crate) balloon0: String,
+    pub(crate) balloon1: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub kerohwnd: Option<u64>,
+    pub(crate) kerohwnd: Option<u64>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub modulestate: Option<String>,
+    pub(crate) modulestate: Option<String>,
     /// モバイル/ライフサイクル状態: 表示中 (true) / 最小化・バックグラウンド非表示 (false)
     #[serde(default = "default_visible")]
-    pub is_visible: bool,
+    pub(crate) is_visible: bool,
     /// ライフサイクルステートタグ ("active", "paused", "stopped")
     #[serde(default = "default_lifecycle_state")]
-    pub lifecycle_state: String,
+    pub(crate) lifecycle_state: String,
 }
 
-fn default_visible() -> bool {
-    true
-}
-
-fn default_lifecycle_state() -> String {
-    "active".to_string()
-}
-
+#[allow(dead_code)]
 impl FmoEntry {
+    // Add getter methods
+    pub fn id(&self) -> &str { &self.id }
+    pub fn name(&self) -> &str { &self.name }
+    pub fn keroname(&self) -> &str { &self.keroname }
+    pub fn hwnd(&self) -> u64 { self.hwnd }
+    pub fn sakura_surface(&self) -> i32 { self.sakura_surface }
+    pub fn kero_surface(&self) -> i32 { self.kero_surface }
+    pub fn ghostpath(&self) -> &str { &self.ghostpath }
+    pub fn balloon0(&self) -> &str { &self.balloon0 }
+    pub fn balloon1(&self) -> &str { &self.balloon1 }
+    pub fn kerohwnd(&self) -> Option<u64> { self.kerohwnd }
+    pub fn modulestate(&self) -> Option<&str> { self.modulestate.as_deref() }
+    pub fn is_visible(&self) -> bool { self.is_visible }
+    pub fn lifecycle_state(&self) -> &str { &self.lifecycle_state }
+
     pub fn new(id: impl Into<String>, name: impl Into<String>) -> Self {
         Self {
             id: id.into(),
@@ -125,6 +195,11 @@ impl FmoEntry {
             is_visible: true,
             lifecycle_state: "active".to_string(),
         }
+    }
+
+    pub fn with_keroname(mut self, keroname: impl Into<String>) -> Self {
+        self.keroname = keroname.into();
+        self
     }
 
     pub fn with_surfaces(mut self, sakura: i32, kero: i32) -> Self {
@@ -195,25 +270,25 @@ impl FmoEntry {
 
         // 非表示時のサーフィスは不可視扱い（-1）へフォールバック可能だが
         // FMOレコードでは現在サーフィス値を保持しつつ modulestate で補完
-        FmoRecord {
-            id: self.id.clone(),
-            path: String::new(),
-            hwnd: self.hwnd,
-            name: self.name.clone(),
-            keroname: self.keroname.clone(),
-            sakura_surface: self.sakura_surface,
-            kero_surface: self.kero_surface,
-            ghostpath: self.ghostpath.clone(),
-            kerohwnd: self.kerohwnd,
+        FmoRecord::from_parts(
+            self.id.clone(),
+            String::new(),
+            self.hwnd,
+            self.name.clone(),
+            self.keroname.clone(),
+            self.sakura_surface,
+            self.kero_surface,
+            self.ghostpath.clone(),
+            self.kerohwnd,
             hwndlist,
-            fullname: Some(self.name.clone()),
-            modulestate: self.modulestate.clone(),
-        }
+            Some(self.name.clone()),
+            self.modulestate.clone(),
+        )
     }
 
     /// FmoRecord から FmoEntry を生成する
     pub fn from_record(rec: &FmoRecord) -> Self {
-        let (lifecycle_state, is_visible) = if let Some(ref ms) = rec.modulestate {
+        let (lifecycle_state, is_visible) = if let Some(ref ms) = rec.modulestate() {
             let mut state = "active".to_string();
             let mut visible = true;
             for part in ms.split(',') {
@@ -230,19 +305,27 @@ impl FmoEntry {
         };
 
         Self {
-            id: rec.id.clone(),
-            name: rec.name.clone(),
-            keroname: rec.keroname.clone(),
-            hwnd: rec.hwnd,
-            sakura_surface: rec.sakura_surface,
-            kero_surface: rec.kero_surface,
-            ghostpath: rec.ghostpath.clone(),
+            id: rec.id().to_string(),
+            name: rec.name().to_string(),
+            keroname: rec.keroname().to_string(),
+            hwnd: rec.hwnd(),
+            sakura_surface: rec.sakura_surface(),
+            kero_surface: rec.kero_surface(),
+            ghostpath: rec.ghostpath().to_string(),
             balloon0: String::new(),
             balloon1: String::new(),
-            kerohwnd: rec.kerohwnd,
-            modulestate: rec.modulestate.clone(),
+            kerohwnd: rec.kerohwnd(),
+            modulestate: rec.modulestate().map(ToString::to_string),
             is_visible,
             lifecycle_state,
         }
     }
+}
+
+fn default_visible() -> bool {
+    true
+}
+
+fn default_lifecycle_state() -> String {
+    "active".to_string()
 }

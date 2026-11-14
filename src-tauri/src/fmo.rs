@@ -103,26 +103,26 @@ pub async fn get_fmo_status(state: tauri::State<'_, AppState>) -> Result<String,
         .clone()
         .unwrap_or_else(|| "Nanai".to_string());
 
-    let mut entry = FmoEntry::new("0", current_name);
-    entry.keroname = "Kero".to_string();
-    entry.modulestate = Some("shiori:running".to_string());
+    let mut entry = FmoEntry::new("0", current_name)
+        .with_keroname("Kero")
+        .with_modulestate("shiori:running");
     entry.update_lifecycle("active", true);
 
     let mut ghosts = HashMap::new();
     ghosts.insert(
-        entry.id.clone(),
+        entry.id().to_string(),
         FmoGhostStatus {
-            name: entry.name,
-            keroname: entry.keroname,
-            surface0: entry.sakura_surface as u32,
-            surface1: entry.kero_surface as u32,
-            balloon0: entry.balloon0,
-            balloon1: entry.balloon1,
-            kerohwnd: entry.kerohwnd,
-            modulestate: entry.modulestate,
-            path: entry.ghostpath,
-            is_visible: entry.is_visible,
-            lifecycle_state: entry.lifecycle_state,
+            name: entry.name().to_string(),
+            keroname: entry.keroname().to_string(),
+            surface0: entry.sakura_surface() as u32,
+            surface1: entry.kero_surface() as u32,
+            balloon0: entry.balloon0().to_string(),
+            balloon1: entry.balloon1().to_string(),
+            kerohwnd: entry.kerohwnd(),
+            modulestate: entry.modulestate().map(ToString::to_string),
+            path: entry.ghostpath().to_string(),
+            is_visible: entry.is_visible(),
+            lifecycle_state: entry.lifecycle_state().to_string(),
         },
     );
 
@@ -148,28 +148,27 @@ pub async fn update_fmo_balloon_text(
         .clone()
         .unwrap_or_else(|| "Nanai".to_string());
 
-    let mut entry = FmoEntry::new("0", current_name);
-    entry.keroname = "Kero".to_string();
-    entry.balloon0 = balloon0;
-    entry.balloon1 = balloon1;
-    entry.modulestate = Some("shiori:running".to_string());
+    let mut entry = FmoEntry::new("0", current_name)
+        .with_keroname("Kero")
+        .with_balloons(balloon0, balloon1)
+        .with_modulestate("shiori:running");
     entry.update_lifecycle("active", true);
 
     let mut ghosts = HashMap::new();
     ghosts.insert(
-        entry.id.clone(),
+        entry.id().to_string(),
         FmoGhostStatus {
-            name: entry.name,
-            keroname: entry.keroname,
-            surface0: entry.sakura_surface as u32,
-            surface1: entry.kero_surface as u32,
-            balloon0: entry.balloon0,
-            balloon1: entry.balloon1,
-            kerohwnd: entry.kerohwnd,
-            modulestate: entry.modulestate,
-            path: entry.ghostpath,
-            is_visible: entry.is_visible,
-            lifecycle_state: entry.lifecycle_state,
+            name: entry.name().to_string(),
+            keroname: entry.keroname().to_string(),
+            surface0: entry.sakura_surface() as u32,
+            surface1: entry.kero_surface() as u32,
+            balloon0: entry.balloon0().to_string(),
+            balloon1: entry.balloon1().to_string(),
+            kerohwnd: entry.kerohwnd(),
+            modulestate: entry.modulestate().map(ToString::to_string),
+            path: entry.ghostpath().to_string(),
+            is_visible: entry.is_visible(),
+            lifecycle_state: entry.lifecycle_state().to_string(),
         },
     );
 
@@ -195,28 +194,27 @@ pub async fn update_fmo_surfaces(
         .clone()
         .unwrap_or_else(|| "Nanai".to_string());
 
-    let mut entry = FmoEntry::new("0", current_name);
-    entry.keroname = "Kero".to_string();
-    entry.sakura_surface = surface0 as i32;
-    entry.kero_surface = surface1 as i32;
-    entry.modulestate = Some("shiori:running".to_string());
+    let mut entry = FmoEntry::new("0", current_name)
+        .with_keroname("Kero")
+        .with_surfaces(surface0 as i32, surface1 as i32)
+        .with_modulestate("shiori:running");
     entry.update_lifecycle("active", true);
 
     let mut ghosts = HashMap::new();
     ghosts.insert(
-        entry.id.clone(),
+        entry.id().to_string(),
         FmoGhostStatus {
-            name: entry.name,
-            keroname: entry.keroname,
-            surface0: entry.sakura_surface as u32,
-            surface1: entry.kero_surface as u32,
-            balloon0: entry.balloon0,
-            balloon1: entry.balloon1,
-            kerohwnd: entry.kerohwnd,
-            modulestate: entry.modulestate,
-            path: entry.ghostpath,
-            is_visible: entry.is_visible,
-            lifecycle_state: entry.lifecycle_state,
+            name: entry.name().to_string(),
+            keroname: entry.keroname().to_string(),
+            surface0: entry.sakura_surface() as u32,
+            surface1: entry.kero_surface() as u32,
+            balloon0: entry.balloon0().to_string(),
+            balloon1: entry.balloon1().to_string(),
+            kerohwnd: entry.kerohwnd(),
+            modulestate: entry.modulestate().map(ToString::to_string),
+            path: entry.ghostpath().to_string(),
+            is_visible: entry.is_visible(),
+            lifecycle_state: entry.lifecycle_state().to_string(),
         },
     );
 
@@ -242,26 +240,26 @@ pub async fn update_fmo_lifecycle_state(
         .clone()
         .unwrap_or_else(|| "Nanai".to_string());
 
-    let mut entry = FmoEntry::new("0", current_name);
-    entry.keroname = "Kero".to_string();
-    entry.modulestate = Some("shiori:running".to_string());
+    let mut entry = FmoEntry::new("0", current_name)
+        .with_keroname("Kero")
+        .with_modulestate("shiori:running");
     entry.update_lifecycle(&lifecycle_state, is_visible);
 
     let mut ghosts = HashMap::new();
     ghosts.insert(
-        entry.id.clone(),
+        entry.id().to_string(),
         FmoGhostStatus {
-            name: entry.name,
-            keroname: entry.keroname,
-            surface0: entry.sakura_surface as u32,
-            surface1: entry.kero_surface as u32,
-            balloon0: entry.balloon0,
-            balloon1: entry.balloon1,
-            kerohwnd: entry.kerohwnd,
-            modulestate: entry.modulestate,
-            path: entry.ghostpath,
-            is_visible: entry.is_visible,
-            lifecycle_state: entry.lifecycle_state,
+            name: entry.name().to_string(),
+            keroname: entry.keroname().to_string(),
+            surface0: entry.sakura_surface() as u32,
+            surface1: entry.kero_surface() as u32,
+            balloon0: entry.balloon0().to_string(),
+            balloon1: entry.balloon1().to_string(),
+            kerohwnd: entry.kerohwnd(),
+            modulestate: entry.modulestate().map(ToString::to_string),
+            path: entry.ghostpath().to_string(),
+            is_visible: entry.is_visible(),
+            lifecycle_state: entry.lifecycle_state().to_string(),
         },
     );
 
@@ -304,14 +302,12 @@ mod tests {
         let app_state = AppState::new();
         *app_state.current_ghost_name.lock() = Some("TestGhost".to_string());
         // Test entry state creation
-        let mut entry = FmoEntry::new("0", "TestGhost");
-        entry.balloon0 = "Hello".to_string();
-        entry.balloon1 = "Hi".to_string();
-        entry.sakura_surface = 5;
-        entry.kero_surface = 15;
-        assert_eq!(entry.balloon0, "Hello");
-        assert_eq!(entry.balloon1, "Hi");
-        assert_eq!(entry.sakura_surface, 5);
-        assert_eq!(entry.kero_surface, 15);
+        let entry = FmoEntry::new("0", "TestGhost")
+            .with_balloons("Hello", "Hi")
+            .with_surfaces(5, 15);
+        assert_eq!(entry.balloon0(), "Hello");
+        assert_eq!(entry.balloon1(), "Hi");
+        assert_eq!(entry.sakura_surface(), 5);
+        assert_eq!(entry.kero_surface(), 15);
     }
 }

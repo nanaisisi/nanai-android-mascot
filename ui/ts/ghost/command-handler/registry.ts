@@ -12,13 +12,19 @@ export type CommandHandlerFn = (
 
 export const CommandHandlerMap = new Map<string, CommandHandlerFn>();
 
-export function normalizeCommandKey(cmd: SakuraCommandName | string, subCmd: string = ""): string {
+export function normalizeCommandKey(
+	cmd: SakuraCommandName | string,
+	subCmd: string = "",
+): string {
 	const c = (cmd ?? "").toLowerCase().trim();
 	const s = (subCmd ?? "").toLowerCase().trim();
 	return s ? `${c}:${s}` : c;
 }
 
-export function registerCommandHandler(cmd: SakuraCommandName | string, fn: CommandHandlerFn) {
+export function registerCommandHandler(
+	cmd: SakuraCommandName | string,
+	fn: CommandHandlerFn,
+) {
 	if (typeof fn !== "function") {
 		throw new TypeError(`Handler for command "${cmd}" must be a function`);
 	}

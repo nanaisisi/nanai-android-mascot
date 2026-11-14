@@ -1,4 +1,4 @@
-import { wasmBridge, type ValidRectLayoutResult } from "../wasm-bridge.js";
+import { type ValidRectLayoutResult, wasmBridge } from "../wasm-bridge.js";
 import { BALLOON_CSS_VARS } from "./balloon-theme-constants.js";
 
 export type { ValidRectLayoutResult };

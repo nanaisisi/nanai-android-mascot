@@ -3,7 +3,10 @@
  * @brief WASM モジュールバインディングの統合ファサード (モジュール構成: ui/ts/core/wasm/)
  */
 
-import { computeBalloonTextLayoutWasm, computeValidRectLayoutWasm } from "./wasm/wasm-layout.js";
+import {
+	computeBalloonTextLayoutWasm,
+	computeValidRectLayoutWasm,
+} from "./wasm/wasm-layout.js";
 import { wasmMemory } from "./wasm/wasm-memory.js";
 import {
 	buildSaoriRequestWasm,
@@ -40,13 +43,13 @@ export type {
 	AnimationPattern,
 	AnimationState,
 	BalloonLayoutResult,
-	ValidRectLayoutResult,
 	DescriptManifest,
 	SakuraToken,
 	SstpRequest,
 	SurfaceCompositionPlan,
 	SurfaceElement,
 	TextLayoutLine,
+	ValidRectLayoutResult,
 } from "./wasm/wasm-types.js";
 
 class WasmBridgeFacade {

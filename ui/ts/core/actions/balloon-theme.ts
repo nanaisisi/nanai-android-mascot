@@ -3,12 +3,12 @@
  * @file balloon-theme.js
  * @brief バルーンスキンテーマ切替およびスキャン・リセット処理 (BalloonThemeManager)
  */
-import { emit, invoke, isTauriAvailable, listen } from "../tauri-helper.js";
+import { invoke, isTauriAvailable, listen } from "../tauri-helper.js";
 import {
 	applyBalloonScale,
 	setBalloonThemeImpl,
 } from "./balloon-theme-apply.js";
-import { BALLOON_THEMES, THEME_LABELS } from "./balloon-theme-constants.js";
+import { BALLOON_THEMES } from "./balloon-theme-constants.js";
 import {
 	computeValidRectLayout,
 	resetBalloonDescriptDom,

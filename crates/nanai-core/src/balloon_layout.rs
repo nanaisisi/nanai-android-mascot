@@ -46,14 +46,19 @@ pub fn compute_validrect_layout(
 ) -> ValidRectLayoutResult {
     let t = validrect_top.filter(|&v| v >= 0).map_or(16, |v| v.max(8));
     let r = validrect_right.filter(|&v| v >= 0).map_or(16, |v| v.max(8));
-    let b = validrect_bottom.filter(|&v| v >= 0).map_or(16, |v| v.max(8));
+    let b = validrect_bottom
+        .filter(|&v| v >= 0)
+        .map_or(16, |v| v.max(8));
     let l = validrect_left.filter(|&v| v >= 0).map_or(16, |v| v.max(8));
 
     let repeat = border_repeat.unwrap_or("repeat");
     let source = bg_image_url.or(balloon_image).unwrap_or("");
 
     let cache_key = if scope_id > 0 {
-        format!("scope{}_{}_{}_{}_{}_{}_{}", scope_id, t, r, b, l, repeat, source)
+        format!(
+            "scope{}_{}_{}_{}_{}_{}_{}",
+            scope_id, t, r, b, l, repeat, source
+        )
     } else {
         format!("{}_{}_{}_{}_{}_{}", t, r, b, l, repeat, source)
     };
@@ -62,7 +67,10 @@ pub fn compute_validrect_layout(
     let width = format!("{}px {}px {}px {}px", t, r, b, l);
 
     let css_border_image = if !source.is_empty() {
-        format!("url(\"{}\") {} {} {} {} fill / {} {}", source, t, r, b, l, width, repeat)
+        format!(
+            "url(\"{}\") {} {} {} {} fill / {} {}",
+            source, t, r, b, l, width, repeat
+        )
     } else {
         String::new()
     };

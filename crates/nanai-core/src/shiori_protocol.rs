@@ -189,7 +189,6 @@ pub enum GhostLifecycleEvent {
     OnCacheRestore,
 }
 
-
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 pub struct ShioriRequest {
     pub method: String,  // GET または NOTIFY

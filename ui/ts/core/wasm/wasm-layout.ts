@@ -4,7 +4,10 @@
  */
 
 import { wasmMemory } from "./wasm-memory.js";
-import type { BalloonLayoutResult, ValidRectLayoutResult } from "./wasm-types.js";
+import type {
+	BalloonLayoutResult,
+	ValidRectLayoutResult,
+} from "./wasm-types.js";
 
 export function computeValidRectLayoutWasm(
 	validrectLeft?: number,

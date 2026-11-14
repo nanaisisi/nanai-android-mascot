@@ -8,13 +8,13 @@ export type {
 	AnimationPattern,
 	AnimationState,
 	BalloonLayoutResult,
-	ValidRectLayoutResult,
 	DescriptManifest,
 	SakuraToken,
 	SstpRequest,
 	SurfaceCompositionPlan,
 	SurfaceElement,
 	TextLayoutLine,
+	ValidRectLayoutResult,
 } from "./pkg/nanai_core.js";
 
 export type NanaiCoreWasmExports = import("./pkg/nanai_core.js").InitOutput;

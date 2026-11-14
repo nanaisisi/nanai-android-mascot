@@ -26,12 +26,22 @@ pub struct SurfaceManifest {
 
 impl SurfaceManifest {
     // Add getter methods
-    pub fn number(&self) -> u32 { self.number }
-    pub fn name(&self) -> Option<&str> { self.name.as_deref() }
-    pub fn definition(&self) -> &SurfaceDefinition { &self.definition }
+    pub fn number(&self) -> u32 {
+        self.number
+    }
+    pub fn name(&self) -> Option<&str> {
+        self.name.as_deref()
+    }
+    pub fn definition(&self) -> &SurfaceDefinition {
+        &self.definition
+    }
 
     pub fn new(number: u32, name: Option<String>, definition: SurfaceDefinition) -> Self {
-        Self { number, name, definition }
+        Self {
+            number,
+            name,
+            definition,
+        }
     }
 }
 
@@ -75,20 +85,48 @@ pub struct ShellManifest {
 #[allow(dead_code)]
 impl ShellManifest {
     // Add getter methods
-    pub fn name(&self) -> &str { &self.name }
-    pub fn craftman(&self) -> Option<&str> { self.craftman.as_deref() }
-    pub fn directory(&self) -> &str { &self.directory }
-    pub fn descript(&self) -> &Descript { &self.descript }
-    pub fn surfaces(&self) -> &[SurfaceManifest] { &self.surfaces }
-    pub fn aliases(&self) -> &BTreeMap<String, Vec<u32>> { &self.aliases }
-    pub fn kero_aliases(&self) -> &BTreeMap<String, Vec<u32>> { &self.kero_aliases }
-    pub fn surface_table(&self) -> Option<&SurfaceTable> { self.surface_table.as_ref() }
-    pub fn sakura_bind_groups(&self) -> &[BindGroup] { &self.sakura_bind_groups }
-    pub fn kero_bind_groups(&self) -> &[BindGroup] { &self.kero_bind_groups }
-    pub fn collision_sort(&self) -> Option<&SortKind> { self.collision_sort.as_ref() }
-    pub fn animation_sort(&self) -> Option<&SortKind> { self.animation_sort.as_ref() }
-    pub fn cursors(&self) -> &BTreeMap<String, Vec<CursorDefinition>> { &self.cursors }
-    pub fn tooltips(&self) -> &BTreeMap<String, BTreeMap<String, String>> { &self.tooltips }
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+    pub fn craftman(&self) -> Option<&str> {
+        self.craftman.as_deref()
+    }
+    pub fn directory(&self) -> &str {
+        &self.directory
+    }
+    pub fn descript(&self) -> &Descript {
+        &self.descript
+    }
+    pub fn surfaces(&self) -> &[SurfaceManifest] {
+        &self.surfaces
+    }
+    pub fn aliases(&self) -> &BTreeMap<String, Vec<u32>> {
+        &self.aliases
+    }
+    pub fn kero_aliases(&self) -> &BTreeMap<String, Vec<u32>> {
+        &self.kero_aliases
+    }
+    pub fn surface_table(&self) -> Option<&SurfaceTable> {
+        self.surface_table.as_ref()
+    }
+    pub fn sakura_bind_groups(&self) -> &[BindGroup] {
+        &self.sakura_bind_groups
+    }
+    pub fn kero_bind_groups(&self) -> &[BindGroup] {
+        &self.kero_bind_groups
+    }
+    pub fn collision_sort(&self) -> Option<&SortKind> {
+        self.collision_sort.as_ref()
+    }
+    pub fn animation_sort(&self) -> Option<&SortKind> {
+        self.animation_sort.as_ref()
+    }
+    pub fn cursors(&self) -> &BTreeMap<String, Vec<CursorDefinition>> {
+        &self.cursors
+    }
+    pub fn tooltips(&self) -> &BTreeMap<String, BTreeMap<String, String>> {
+        &self.tooltips
+    }
 }
 
 impl Shell {
@@ -160,7 +198,10 @@ mod tests {
 
         assert_eq!(manifest.name(), "manifest_test");
         assert_eq!(manifest.craftman().as_deref(), Some("Tester"));
-        assert_eq!(manifest.descript().type_().map(|s| s.as_str()), Some("shell"));
+        assert_eq!(
+            manifest.descript().type_().map(|s| s.as_str()),
+            Some("shell")
+        );
         assert_eq!(manifest.surfaces().len(), 1);
         assert_eq!(manifest.surfaces()[0].number(), 0);
         assert_eq!(
@@ -184,7 +225,11 @@ mod tests {
 
         // 構造確認
         assert_eq!(manifest.name(), "master");
-        let s0 = manifest.surfaces().iter().find(|s| s.number() == 0).unwrap();
+        let s0 = manifest
+            .surfaces()
+            .iter()
+            .find(|s| s.number() == 0)
+            .unwrap();
         assert!(s0.definition().collisions.iter().any(|c| c.name == "head"));
         assert!(s0.definition().animations.contains_key(&0));
         assert!(!manifest.sakura_bind_groups().is_empty());

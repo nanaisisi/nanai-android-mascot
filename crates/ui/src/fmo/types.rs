@@ -26,18 +26,42 @@ pub struct FmoRecord {
 #[allow(dead_code)]
 impl FmoRecord {
     // Add getter methods
-    pub fn id(&self) -> &str { &self.id }
-    pub fn path(&self) -> &str { &self.path }
-    pub fn hwnd(&self) -> u64 { self.hwnd }
-    pub fn name(&self) -> &str { &self.name }
-    pub fn keroname(&self) -> &str { &self.keroname }
-    pub fn sakura_surface(&self) -> i32 { self.sakura_surface }
-    pub fn kero_surface(&self) -> i32 { self.kero_surface }
-    pub fn ghostpath(&self) -> &str { &self.ghostpath }
-    pub fn kerohwnd(&self) -> Option<u64> { self.kerohwnd }
-    pub fn hwndlist(&self) -> &[u64] { &self.hwndlist }
-    pub fn fullname(&self) -> Option<&str> { self.fullname.as_deref() }
-    pub fn modulestate(&self) -> Option<&str> { self.modulestate.as_deref() }
+    pub fn id(&self) -> &str {
+        &self.id
+    }
+    pub fn path(&self) -> &str {
+        &self.path
+    }
+    pub fn hwnd(&self) -> u64 {
+        self.hwnd
+    }
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+    pub fn keroname(&self) -> &str {
+        &self.keroname
+    }
+    pub fn sakura_surface(&self) -> i32 {
+        self.sakura_surface
+    }
+    pub fn kero_surface(&self) -> i32 {
+        self.kero_surface
+    }
+    pub fn ghostpath(&self) -> &str {
+        &self.ghostpath
+    }
+    pub fn kerohwnd(&self) -> Option<u64> {
+        self.kerohwnd
+    }
+    pub fn hwndlist(&self) -> &[u64] {
+        &self.hwndlist
+    }
+    pub fn fullname(&self) -> Option<&str> {
+        self.fullname.as_deref()
+    }
+    pub fn modulestate(&self) -> Option<&str> {
+        self.modulestate.as_deref()
+    }
 
     pub fn to_core_record(&self) -> FmoRecord {
         FmoRecord {
@@ -165,19 +189,45 @@ pub struct FmoEntry {
 #[allow(dead_code)]
 impl FmoEntry {
     // Add getter methods
-    pub fn id(&self) -> &str { &self.id }
-    pub fn name(&self) -> &str { &self.name }
-    pub fn keroname(&self) -> &str { &self.keroname }
-    pub fn hwnd(&self) -> u64 { self.hwnd }
-    pub fn sakura_surface(&self) -> i32 { self.sakura_surface }
-    pub fn kero_surface(&self) -> i32 { self.kero_surface }
-    pub fn ghostpath(&self) -> &str { &self.ghostpath }
-    pub fn balloon0(&self) -> &str { &self.balloon0 }
-    pub fn balloon1(&self) -> &str { &self.balloon1 }
-    pub fn kerohwnd(&self) -> Option<u64> { self.kerohwnd }
-    pub fn modulestate(&self) -> Option<&str> { self.modulestate.as_deref() }
-    pub fn is_visible(&self) -> bool { self.is_visible }
-    pub fn lifecycle_state(&self) -> &str { &self.lifecycle_state }
+    pub fn id(&self) -> &str {
+        &self.id
+    }
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+    pub fn keroname(&self) -> &str {
+        &self.keroname
+    }
+    pub fn hwnd(&self) -> u64 {
+        self.hwnd
+    }
+    pub fn sakura_surface(&self) -> i32 {
+        self.sakura_surface
+    }
+    pub fn kero_surface(&self) -> i32 {
+        self.kero_surface
+    }
+    pub fn ghostpath(&self) -> &str {
+        &self.ghostpath
+    }
+    pub fn balloon0(&self) -> &str {
+        &self.balloon0
+    }
+    pub fn balloon1(&self) -> &str {
+        &self.balloon1
+    }
+    pub fn kerohwnd(&self) -> Option<u64> {
+        self.kerohwnd
+    }
+    pub fn modulestate(&self) -> Option<&str> {
+        self.modulestate.as_deref()
+    }
+    pub fn is_visible(&self) -> bool {
+        self.is_visible
+    }
+    pub fn lifecycle_state(&self) -> &str {
+        &self.lifecycle_state
+    }
 
     pub fn new(id: impl Into<String>, name: impl Into<String>) -> Self {
         Self {
@@ -288,7 +338,7 @@ impl FmoEntry {
 
     /// FmoRecord から FmoEntry を生成する
     pub fn from_record(rec: &FmoRecord) -> Self {
-        let (lifecycle_state, is_visible) = if let Some(ref ms) = rec.modulestate() {
+        let (lifecycle_state, is_visible) = if let Some(ms) = rec.modulestate() {
             let mut state = "active".to_string();
             let mut visible = true;
             for part in ms.split(',') {

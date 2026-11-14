@@ -23,15 +23,33 @@ pub struct FmoRecord {
 #[allow(dead_code)]
 impl FmoRecord {
     // Add getter methods
-    pub fn id(&self) -> &str { &self.id }
-    pub fn path(&self) -> &str { &self.path }
-    pub fn hwnd(&self) -> u64 { self.hwnd }
-    pub fn name(&self) -> &str { &self.name }
-    pub fn keroname(&self) -> &str { &self.keroname }
-    pub fn sakura_surface(&self) -> i32 { self.sakura_surface }
-    pub fn kero_surface(&self) -> i32 { self.kero_surface }
-    pub fn ghost_path(&self) -> &str { &self.ghost_path }
-    pub fn module_state(&self) -> &str { &self.module_state }
+    pub fn id(&self) -> &str {
+        &self.id
+    }
+    pub fn path(&self) -> &str {
+        &self.path
+    }
+    pub fn hwnd(&self) -> u64 {
+        self.hwnd
+    }
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+    pub fn keroname(&self) -> &str {
+        &self.keroname
+    }
+    pub fn sakura_surface(&self) -> i32 {
+        self.sakura_surface
+    }
+    pub fn kero_surface(&self) -> i32 {
+        self.kero_surface
+    }
+    pub fn ghost_path(&self) -> &str {
+        &self.ghost_path
+    }
+    pub fn module_state(&self) -> &str {
+        &self.module_state
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -43,8 +61,12 @@ pub struct FmoStatus {
 #[allow(dead_code)]
 impl FmoStatus {
     // Add getter methods
-    pub fn active_ghosts(&self) -> &[FmoRecord] { &self.active_ghosts }
-    pub fn base_ware_detected(&self) -> &str { &self.base_ware_detected }
+    pub fn active_ghosts(&self) -> &[FmoRecord] {
+        &self.active_ghosts
+    }
+    pub fn base_ware_detected(&self) -> &str {
+        &self.base_ware_detected
+    }
 }
 
 #[cfg(target_os = "windows")]

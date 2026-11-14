@@ -21,8 +21,25 @@ pub enum CandidateKind {
 /// ロード試行ログ（フェイルオーバーテレメトリ）
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LoadAttempt {
-    pub kind: CandidateKind,
-    pub path: Option<PathBuf>,
-    pub success: bool,
-    pub error: Option<String>,
+    pub(crate) kind: CandidateKind,
+    pub(crate) path: Option<PathBuf>,
+    pub(crate) success: bool,
+    pub(crate) error: Option<String>,
+}
+
+#[allow(dead_code)]
+impl LoadAttempt {
+    // Add getter methods
+    pub fn kind(&self) -> CandidateKind {
+        self.kind
+    }
+    pub fn path(&self) -> Option<&PathBuf> {
+        self.path.as_ref()
+    }
+    pub fn success(&self) -> bool {
+        self.success
+    }
+    pub fn error(&self) -> Option<&str> {
+        self.error.as_deref()
+    }
 }

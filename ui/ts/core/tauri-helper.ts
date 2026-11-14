@@ -43,28 +43,42 @@ export function isTauriAvailable(): boolean {
 }
 
 /**
- * Windows / デスクトップ環境かどうかを判定
+ * 静的コンパイル時確定: Windows / デスクトップ環境かどうかを判定
  */
 export function isWindowsDesktop(): boolean {
-	if (
-		import.meta.env?.TAURI_ENV_PLATFORM === "windows" ||
-		import.meta.env?.IS_WINDOWS_BUILD === true
-	) {
-		return true;
+	if (typeof __IS_WINDOWS__ !== "undefined") {
+		return __IS_WINDOWS__;
 	}
-	if (typeof navigator === "undefined") {
-		return typeof process !== "undefined" && process.platform === "win32";
+	if (typeof navigator !== "undefined" && navigator.userAgent) {
+		return /Windows|Win32|Win64|x86_64|WOW64/i.test(navigator.userAgent);
 	}
-	return /Windows|Win32|Win64/i.test(navigator.userAgent);
+	return typeof process !== "undefined" && process.platform === "win32";
 }
 
 /**
- * Android / モバイル環境かどうかを判定
+ * 静的コンパイル時確定: Android / モバイル環境かどうかを判定
  */
 export function isAndroidMobile(): boolean {
+	if (typeof __IS_ANDROID__ !== "undefined") {
+		return __IS_ANDROID__;
+	}
 	if (isWindowsDesktop()) return false;
-	if (typeof navigator === "undefined") return false;
-	return /Android|Mobile|Tablet/i.test(navigator.userAgent);
+	if (typeof navigator === "undefined" || !navigator.userAgent) return false;
+	return /Android/i.test(navigator.userAgent);
+}
+
+/**
+ * Windows ネイティブ透過マルチウィンドウ環境かどうかを判定
+ */
+export function isNativeMultiWindow(): boolean {
+	return isTauriAvailable() && isWindowsDesktop();
+}
+
+/**
+ * Android / Web ブラウザ仮想 Single Page UI 環境かどうかを判定
+ */
+export function isSinglePageUi(): boolean {
+	return !isTauriAvailable() || isAndroidMobile();
 }
 
 /**

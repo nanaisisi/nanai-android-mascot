@@ -16,8 +16,8 @@ export default defineConfig({
 		port: 1420,
 		// Tauri expects a fixed port, fail if that port is not available
 		strictPort: true,
-		// Windows等の環境で EACCES ポートアクセス拒否を防ぐため 127.0.0.1 (IPv4) を明示指定
-		host: host || "127.0.0.1",
+		// TauriのdevUrl (http://localhost:1420) とホスト名を100%合致させる
+		host: host || "localhost",
 		hmr: host
 			? {
 					protocol: "ws",
@@ -34,15 +34,16 @@ export default defineConfig({
 	// Env variables starting with the item of `envPrefix` will be exposed in tauri's source code through `import.meta.env`.
 	envPrefix: ["VITE_", "TAURI_ENV_*"],
 	define: {
-		"import.meta.env.TAURI_ENV_PLATFORM": JSON.stringify(
+		__TARGET_PLATFORM__: JSON.stringify(
 			process.env.TAURI_ENV_PLATFORM ||
-				(process.platform === "win32" ? "windows" : "web"),
+				(process.platform === "win32" ? "windows" : "android"),
 		),
-		"import.meta.env.IS_ANDROID_BUILD": JSON.stringify(
+		__IS_WINDOWS__: JSON.stringify(
+			(process.env.TAURI_ENV_PLATFORM ||
+				(process.platform === "win32" ? "windows" : "android")) === "windows",
+		),
+		__IS_ANDROID__: JSON.stringify(
 			process.env.TAURI_ENV_PLATFORM === "android",
-		),
-		"import.meta.env.IS_WINDOWS_BUILD": JSON.stringify(
-			process.env.TAURI_ENV_PLATFORM === "windows" || process.platform === "win32",
 		),
 	},
 	build: {

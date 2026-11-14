@@ -4,7 +4,12 @@
  */
 
 import type { NanaiAndroidMascotApp } from "../../main.js";
-import { emit, invoke, isTauriAvailable } from "../core/tauri-helper.js";
+import {
+	emit,
+	invoke,
+	isNativeMultiWindow,
+	isTauriAvailable,
+} from "../core/tauri-helper.js";
 import type { SakuraPlaybackController } from "./sakura-play/controller.js";
 import type { SakuraScriptPlayer } from "./sakura-script.js";
 
@@ -24,7 +29,7 @@ export function createBalloonSyncManager(
 		if (syncPendingScopes.size > 0 && isTauriAvailable()) {
 			for (const sc of syncPendingScopes) {
 				const htmlContent = (sc === 1 ? keroText : sakuraText)?.innerHTML || "";
-				if (htmlContent.trim().length > 0) {
+				if (isNativeMultiWindow() && htmlContent.trim().length > 0) {
 					void invoke("show_balloon_window", {
 						scope_id: sc,
 						theme: app.currentBalloonTheme || "default",

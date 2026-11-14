@@ -1,4 +1,10 @@
-import { emit, invoke, isTauriAvailable } from "./tauri-helper.js";
+import {
+	emit,
+	invoke,
+	isNativeMultiWindow,
+	isSinglePageUi,
+	isTauriAvailable,
+} from "./tauri-helper.js";
 
 export const settingsMethods = {
 	loadSettings() {
@@ -64,13 +70,13 @@ export const settingsMethods = {
 			this as unknown as import("../../main.js").NanaiAndroidMascotApp;
 		const balloonText = app.elements?.balloonText;
 		const balloonDisplay = app.elements?.balloonDisplay;
-		if (balloonText && balloonDisplay) {
+		if (balloonText) {
 			balloonText.textContent = text;
-			if (!isTauriAvailable()) {
-				balloonDisplay.style.display = "block";
-			}
 		}
-		if (isTauriAvailable()) {
+		if (balloonDisplay && isSinglePageUi()) {
+			balloonDisplay.style.display = "block";
+		}
+		if (isNativeMultiWindow()) {
 			invoke("show_balloon_window", {
 				scope_id: scopeId,
 				theme: app.currentBalloonTheme,
@@ -92,10 +98,10 @@ export const settingsMethods = {
 		const app =
 			this as unknown as import("../../main.js").NanaiAndroidMascotApp;
 		const balloonDisplay = app.elements?.balloonDisplay;
-		if (balloonDisplay) {
+		if (balloonDisplay && isSinglePageUi()) {
 			balloonDisplay.style.display = "none";
 		}
-		if (isTauriAvailable()) {
+		if (isNativeMultiWindow()) {
 			invoke("hide_balloon_window", { scope_id: scopeId }).catch(() => {});
 		}
 		if (reason === "close") {

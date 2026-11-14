@@ -49,6 +49,27 @@ export class WasmMemoryManager {
 	public getWasmCore(): typeof wasmCore | null {
 		return this.initialized ? wasmCore : null;
 	}
+
+	public alloc(size: number): number | null {
+		const core = this.getWasmCore();
+		if (!core?.wasm_alloc) return null;
+		try {
+			return core.wasm_alloc(size);
+		} catch (err) {
+			console.warn("⚠️ [WASM Memory] alloc エラー:", err);
+			return null;
+		}
+	}
+
+	public free(ptr: number, size: number): void {
+		const core = this.getWasmCore();
+		if (!core?.wasm_free || !ptr) return;
+		try {
+			core.wasm_free(ptr, size);
+		} catch (err) {
+			console.warn("⚠️ [WASM Memory] free エラー:", err);
+		}
+	}
 }
 
 export const wasmMemory = new WasmMemoryManager();

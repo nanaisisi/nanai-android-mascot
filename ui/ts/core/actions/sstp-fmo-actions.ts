@@ -5,6 +5,7 @@
  */
 
 import { invoke } from "../tauri-helper.js";
+import { wasmBridge } from "../wasm-bridge.js";
 
 export interface SstpRequestPayload {
 	method?: string;
@@ -394,4 +395,18 @@ export function filterVisibleGhosts(
 		}
 	}
 	return result;
+}
+
+/**
+ * Parse raw SSTP request string locally using WASM core if available
+ */
+export function parseRawSstpRequestLocal(rawSstp: string): unknown | null {
+	if (wasmBridge.isReady()) {
+		try {
+			return wasmBridge.parseSstpRequest(rawSstp);
+		} catch {
+			// fallback
+		}
+	}
+	return null;
 }

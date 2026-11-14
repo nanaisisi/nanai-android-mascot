@@ -128,6 +128,14 @@ class WasmBridgeFacade {
 	public parseBalloonOptions(content: string) {
 		return parseBalloonOptionsWasm(content);
 	}
+
+	public allocBuffer(size: number): number | null {
+		return wasmMemory.alloc(size);
+	}
+
+	public freeBuffer(ptr: number, size: number): void {
+		wasmMemory.free(ptr, size);
+	}
 }
 
 export const wasmBridge = new WasmBridgeFacade();

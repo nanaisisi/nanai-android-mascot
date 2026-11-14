@@ -73,6 +73,12 @@ debug = true
 inherits = "dev"
 opt-level = 1
 
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+panic = "abort"
+
 [profile.server-dev]
 inherits = "dev"
 

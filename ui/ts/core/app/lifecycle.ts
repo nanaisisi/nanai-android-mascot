@@ -35,7 +35,6 @@ export class NanaiAndroidMascotApp {
 	declare toggleQuickActionsPanel: () => void;
 	declare setBalloonTheme: (theme: string) => Promise<void>;
 	declare recordRecentGhost: (ghostName: string) => void;
-	declare scanBalloons: () => Promise<unknown[]>;
 	declare onGhostClick: (
 		x?: number,
 		y?: number,
@@ -189,7 +188,7 @@ export class NanaiAndroidMascotApp {
 
 		initUIEnvironment(this);
 
-		this.modalManager = new ModalManager(this);
+		this.modalManager = new ModalManager(this as any);
 		try {
 			this.loadSettings?.();
 		} catch (_e) {}

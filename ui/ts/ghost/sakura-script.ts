@@ -10,6 +10,11 @@ import {
 export class SakuraScriptPlayer {
 	private playerInstance: unknown = null;
 	private currentScript = "";
+	public timeCritical = false;
+
+	public get isPlaying(): boolean {
+		return this.playerInstance !== null;
+	}
 
 	constructor(script = "") {
 		if (script) {

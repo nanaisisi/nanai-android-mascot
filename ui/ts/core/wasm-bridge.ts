@@ -173,7 +173,7 @@ class WasmBridgeFacade {
 	}
 
 	public createMascotEngine(): any | null {
-		const core = wasmMemory.getWasmCore();
+		const core = wasmMemory.getWasmCore() as any;
 		if (!core?.MascotEngine) return null;
 		try {
 			return new core.MascotEngine();

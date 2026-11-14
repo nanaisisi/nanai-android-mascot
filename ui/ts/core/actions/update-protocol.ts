@@ -64,6 +64,8 @@ export function normalizeUpdateReason(
 	return "manual";
 }
 
+import { wasmBridge } from "../wasm-bridge.js";
+
 /**
  * developer_options.txt の noupdate ディレクティブ除外判定
  * @param {string} path - 検証対象のファイル相対パス
@@ -72,6 +74,13 @@ export function normalizeUpdateReason(
  */
 export function isNoUpdatePath(path: string, patterns: string[] = []): boolean {
 	if (!path || !Array.isArray(patterns) || patterns.length === 0) return false;
+	if (wasmBridge.isReady()) {
+		try {
+			return wasmBridge.isNoUpdatePath(path, patterns);
+		} catch {
+			// fallback
+		}
+	}
 	const norm = path.replace(/\\/g, "/").toLowerCase();
 	return patterns.some((pattern) => {
 		const patNorm = pattern.replace(/\\/g, "/").toLowerCase();
@@ -103,6 +112,13 @@ export function calculateUpdateProgress(
 	current: number,
 	total: number,
 ): { percent: number; isComplete: boolean } {
+	if (wasmBridge.isReady()) {
+		try {
+			return wasmBridge.calculateUpdateProgress(current, total);
+		} catch {
+			// fallback
+		}
+	}
 	if (total <= 0 || !Number.isFinite(total)) {
 		return { percent: 100, isComplete: true };
 	}

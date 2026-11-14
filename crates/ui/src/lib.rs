@@ -9,6 +9,8 @@ pub mod shell;
 pub mod shiori;
 pub mod sstp;
 pub mod surfaces_core;
+pub mod surfaces_core_core;
+pub mod surfaces_core_integration;
 pub mod surfaces_integration;
 pub mod surfaces {
     pub use super::surfaces_core::*;
@@ -16,7 +18,12 @@ pub mod surfaces {
 }
 pub mod surfacetable;
 pub mod update;
-pub mod vfs;
+pub mod vfs_core;
+pub mod vfs_integration;
+pub mod vfs {
+    pub use super::vfs_core::*;
+    pub use super::vfs_integration::*;
+}
 
 pub use interface::{NanaiAndroidMascotUiInterface, NanaiUiFacade};
 
@@ -63,12 +70,14 @@ pub use update::{
     InstallManifest, InstallResourceConfig, InstallerEngine, StandardInstallerEngine, UpdateEntry,
     UpdatePackage, parse_install_manifest, parse_update_definition, validate_archive_entry_path,
 };
-pub use vfs::{
-    DecodeResult, MockVfs, OverlayVfs, VfsResolver, VirtualFileSystem, denormalize_newlines,
-    detect_and_decode, detect_and_decode_ext, detect_mime_type, encode_to_charset,
-    is_safe_vfs_path, is_windows_reserved_name, normalize_charset_name, normalize_newlines,
-    normalize_vfs_path, open_shift_jis_file, open_text_file, resolve_vfs_path, sanitize_vfs_path,
-    wildcard_match,
+pub use vfs_core::{
+    MockVfs, OverlayVfs, VfsResolver, VirtualFileSystem, is_safe_vfs_path, is_windows_reserved_name,
+    normalize_charset_name, normalize_newlines, normalize_vfs_path, resolve_vfs_path,
+    sanitize_vfs_path, wildcard_match,
+};
+pub use vfs_integration::{
+    DecodeResult, denormalize_newlines, detect_and_decode, detect_and_decode_ext, detect_mime_type,
+    encode_to_charset, open_shift_jis_file, open_text_file,
 };
 
 #[cfg(test)]

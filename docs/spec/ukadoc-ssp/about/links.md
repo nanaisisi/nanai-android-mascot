@@ -1,7 +1,7 @@
 # リンク集
 
 - **規格**: [about/links.md](https://ukatech.shillest.net/ukadoc-ssp/about/links/) (ukadoc-ssp/about/links.md)
-- **対応状況**: ❌ 未実装
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-実装コード内に「links」は検出されませんでした。
+- `tests/verification-suite.test.ts:509` ``Broken relative .md links in category tables:\n${brokenLinks.join("\n")}`,`

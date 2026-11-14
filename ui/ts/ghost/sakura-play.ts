@@ -5,6 +5,11 @@
 
 import type { NanaiAndroidMascotApp } from "../../main.js";
 import { isTauriAvailable } from "../core/tauri-helper.js";
+import {
+	createSakuraPlayerWasm,
+	freeSakuraPlayerWasm,
+	stepSakuraPlayerWasm,
+} from "../core/wasm/wasm-sakura.js";
 import type { SakuraAstNode } from "./parser/ast-types.js";
 import type { SakuraPlaybackController } from "./sakura-play/controller.js";
 import { handleToken } from "./sakura-play/handlers.js";
@@ -128,12 +133,76 @@ export async function playScript(player: SakuraScriptPlayer, script: string) {
 		currentChoiceScope,
 	};
 
-	for (let j = 0; j < tokens.length; j++) {
-		if (player.playbackId !== currentId) break;
-		if (context.ended) break;
+async function handleWasmStep(
+	player: SakuraScriptPlayer | SakuraPlaybackController,
+	app: NanaiAndroidMascotApp,
+	step: any,
+	context: any,
+) {
+	if (!step || !step.action) return;
+	const { action, data } = step;
+	let pseudoToken: any = null;
+	switch (action) {
+		case "TextAppend":
+			for (const ch of String(data.text || "")) {
+				await handleToken(player, app, { type: "char", value: ch }, context);
+			}
+			return;
+		case "SurfaceChange":
+			pseudoToken = { type: "surface", value: data.surface_id };
+			break;
+		case "BalloonChange":
+			pseudoToken = { type: "balloon", value: data.balloon_id };
+			break;
+		case "AnimationTrigger":
+			pseudoToken = { type: "animation", value: data.animation_id };
+			break;
+		case "Clear":
+			pseudoToken = { type: "clear" };
+			break;
+		case "ScopeChange":
+			pseudoToken = { type: "scope", value: data.scope };
+			break;
+		case "Choice":
+			pseudoToken = { type: "choice", value: { title: data.title, id: data.id } };
+			break;
+		case "Anchor":
+			pseudoToken = { type: "anchor_begin", value: { id: data.id, text: data.text } };
+			break;
+		case "Wait":
+			pseudoToken = { type: "wait", value: data.duration_ms };
+			break;
+		case "Halt":
+			context.ended = true;
+			return;
+		default:
+			return;
+	}
+	if (pseudoToken) {
+		await handleToken(player, app, pseudoToken, context);
+	}
+}
 
-		player.currentProgressIndex = j;
-		await handleToken(player, app, tokens[j] as SakuraAstNode, context);
+	const wasmEngine = createSakuraPlayerWasm(finalScript);
+	if (wasmEngine) {
+		let stepCount = 0;
+		let stepRes = stepSakuraPlayerWasm(wasmEngine) as any;
+		while (stepRes && stepRes.action !== "Halt") {
+			if (player.playbackId !== currentId) break;
+			if (context.ended) break;
+			player.currentProgressIndex = stepCount++;
+			await handleWasmStep(player, app, stepRes, context);
+			stepRes = stepSakuraPlayerWasm(wasmEngine) as any;
+		}
+		freeSakuraPlayerWasm(wasmEngine);
+	} else {
+		for (let j = 0; j < tokens.length; j++) {
+			if (player.playbackId !== currentId) break;
+			if (context.ended) break;
+
+			player.currentProgressIndex = j;
+			await handleToken(player, app, tokens[j] as SakuraAstNode, context);
+		}
 	}
 
 	context.flushDesktopBalloon();

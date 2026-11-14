@@ -2,7 +2,7 @@
 
 - **規格**: [point.basepos.y.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/point.basepos.y/) (ukadoc-spec/descript/shell-surfaces/surface-brace/point.basepos.y.md)
 - **検索語**: point.basepos.y
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,4 +11,4 @@
 
 ## 実装箇所
 
-- `ui/js/surface/surface-load.js:137` `// [point.basepos.y]`
+- `ui/ts/surface/surface-load-ukadoc.ts:132` `// [point.basepos.y]`

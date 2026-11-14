@@ -137,3 +137,32 @@ export function isNoUpdatePathWasm(path: string, patterns: string[]): boolean {
 	}
 	return isNoUpdatePathFallback(path, patterns);
 }
+
+export function validateBalloonDescriptWasm(
+	props: Record<string, string>,
+	ghostName: string,
+	ghostPath: string,
+): { isRecommended: boolean; warningMessage: string | null } | null {
+	const core = wasmMemory.getWasmCore();
+	if (!core?.wasm_validate_balloon_descript) return null;
+
+	try {
+		return core.wasm_validate_balloon_descript(props, ghostName, ghostPath) as any;
+	} catch (err) {
+		console.warn("⚠️ [WASM Protocol] validateBalloonDescript エラー:", err);
+		return null;
+	}
+}
+
+export function parseBalloonOptionsWasm(content: string): any {
+	const core = wasmMemory.getWasmCore();
+	if (!core?.wasm_parse_balloon_options) return null;
+
+	try {
+		return core.wasm_parse_balloon_options(content);
+	} catch (err) {
+		console.warn("⚠️ [WASM Protocol] parseBalloonOptions エラー:", err);
+		return null;
+	}
+}
+

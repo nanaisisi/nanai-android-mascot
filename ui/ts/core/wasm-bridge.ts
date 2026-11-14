@@ -11,6 +11,8 @@ import {
 	parseDescriptTextWasm,
 	parseInstallErrorReasonWasm,
 	parseSstpRequestWasm,
+	validateBalloonDescriptWasm,
+	parseBalloonOptionsWasm,
 } from "./wasm/wasm-protocol.js";
 import { parseSakuraScriptWasm } from "./wasm/wasm-sakura.js";
 import {
@@ -113,6 +115,18 @@ class WasmBridgeFacade {
 		deltaMs: number,
 	): [unknown, unknown] | null {
 		return advanceAnimationFrameWasm(def, state, deltaMs);
+	}
+
+	public validateBalloonDescript(
+		props: Record<string, string>,
+		ghostName: string,
+		ghostPath: string,
+	) {
+		return validateBalloonDescriptWasm(props, ghostName, ghostPath);
+	}
+
+	public parseBalloonOptions(content: string) {
+		return parseBalloonOptionsWasm(content);
 	}
 }
 

@@ -88,6 +88,13 @@ pub async fn send_shiori_request(
     result
 }
 
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct SendShioriEventParams {
+    pub event: String,
+    pub references: Option<Vec<String>>,
+    pub ghost_id: Option<String>,
+}
+
 /// SHIORIにイベントを送信（簡易版・パラメータ指定対応）
 ///
 /// リクエスト構築は `nanai_android_mascot_ui` の ukadoc-spec 準拠
@@ -95,13 +102,19 @@ pub async fn send_shiori_request(
 #[tauri::command]
 pub async fn send_shiori_event(
     state: tauri::State<'_, AppState>,
-    event: String,
-    references: Option<Vec<String>>,
-    ghost_id: Option<String>,
+    params: SendShioriEventParams,
 ) -> Result<String, String> {
+    let SendShioriEventParams { event, references, ghost_id } = params;
     let mut req = ShioriRequest::get(&event, &references.unwrap_or_default());
     req.sender = "NanaiMascot".to_string();
     send_shiori_request(state, req.build(), ghost_id).await
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct SendShioriNotifyParams {
+    pub event: String,
+    pub references: Option<Vec<String>>,
+    pub ghost_id: Option<String>,
 }
 
 /// SHIORIへ NOTIFY コマンドで情報を通知（UKADOC notify イベント群）
@@ -113,10 +126,9 @@ pub async fn send_shiori_event(
 #[tauri::command]
 pub async fn send_shiori_notify(
     state: tauri::State<'_, AppState>,
-    event: String,
-    references: Option<Vec<String>>,
-    ghost_id: Option<String>,
+    params: SendShioriNotifyParams,
 ) -> Result<String, String> {
+    let SendShioriNotifyParams { event, references, ghost_id } = params;
     let mut req = ShioriRequest::notify(&event, &references.unwrap_or_default());
     req.sender = "NanaiMascot".to_string();
     send_shiori_request(state, req.build(), ghost_id).await
@@ -135,6 +147,13 @@ pub async fn send_shiori_capability(
     send_shiori_request(state, req.build(), ghost_id).await
 }
 
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct SendShioriEventTypedParams {
+    pub event: String,
+    pub args: Option<Vec<String>>,
+    pub ghost_id: Option<String>,
+}
+
 /// SHIORI イベントを送信し、解析済み `ShioriResponse` オブジェクトで返す
 ///
 /// JS 側は生テキストパース（`ShioriProtocol.parseResponse`）を介さずに
@@ -142,10 +161,9 @@ pub async fn send_shiori_capability(
 #[tauri::command]
 pub async fn send_shiori_event_typed(
     state: tauri::State<'_, AppState>,
-    event: String,
-    args: Option<Vec<String>>,
-    ghost_id: Option<String>,
+    params: SendShioriEventTypedParams,
 ) -> Result<ShioriResponse, String> {
+    let SendShioriEventTypedParams { event, args, ghost_id } = params;
     let mut req = ShioriRequest::get(&event, &args.unwrap_or_default());
     req.sender = "NanaiMascot".to_string();
 
@@ -210,14 +228,20 @@ pub async fn send_on_translate(
     }
 }
 
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct SendGhostCallEventParams {
+    pub event: String,
+    pub target_ghost_name: String,
+    pub ghost_id: Option<String>,
+}
+
 /// ゴースト間呼び出し/切り替え関連のイベントを送信する (UKADOC 規格準拠)
 #[tauri::command]
 pub async fn send_ghost_call_event(
     state: tauri::State<'_, AppState>,
-    event: String,
-    target_ghost_name: String,
-    ghost_id: Option<String>,
+    params: SendGhostCallEventParams,
 ) -> Result<String, String> {
+    let SendGhostCallEventParams { event, target_ghost_name, ghost_id } = params;
     let mut req = ShioriRequest::get(&event, &[target_ghost_name]);
     req.sender = "NanaiMascot".to_string();
     let gid = ghost_id.unwrap_or_else(|| "main".to_string());

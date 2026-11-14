@@ -2,6 +2,7 @@ pub mod animation;
 pub mod app;
 pub mod descript;
 pub mod fmo;
+pub mod interface;
 pub mod manifest;
 pub mod script;
 pub mod shell;
@@ -11,6 +12,8 @@ pub mod surfaces;
 pub mod surfacetable;
 pub mod update;
 pub mod vfs;
+
+pub use interface::{NanaiAndroidMascotUiInterface, NanaiUiFacade};
 
 // モジュールクレートの参照 (Phase D ワークスペース再編)
 pub use nanai_core;

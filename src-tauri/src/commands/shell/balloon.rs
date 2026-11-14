@@ -98,13 +98,19 @@ pub fn get_balloon_readme(
     Ok(None)
 }
 
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct BalloonManifestParams {
+    pub name: String,
+    pub scope_id: Option<i32>,
+    pub surface_id: Option<i32>,
+}
+
 #[tauri::command]
 pub fn balloon_manifest(
-    name: String,
-    scope_id: Option<i32>,
-    surface_id: Option<i32>,
+    params: BalloonManifestParams,
     app_handle: tauri::AppHandle,
 ) -> Result<std::collections::BTreeMap<String, String>, String> {
+    let BalloonManifestParams { name, scope_id, surface_id } = params;
     let dir = resolve_balloon_dir(&name, &app_handle)?;
     let mut map = balloon_descript_map(&dir);
 

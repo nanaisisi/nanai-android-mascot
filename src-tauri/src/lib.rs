@@ -86,20 +86,24 @@ pub fn run() {
                         .await;
                     let _ = commands::window::show_character_window(
                         app_handle_preload.clone(),
-                        0,
-                        None,
-                        None,
-                        None,
-                        None,
+                        commands::window::character_window::ShowCharacterWindowParams {
+                            scope_id: 0,
+                            x: None,
+                            y: None,
+                            width: None,
+                            height: None,
+                        },
                     )
                     .await;
                     let _ = commands::window::show_character_window(
                         app_handle_preload.clone(),
-                        1,
-                        None,
-                        None,
-                        None,
-                        None,
+                        commands::window::character_window::ShowCharacterWindowParams {
+                            scope_id: 1,
+                            x: None,
+                            y: None,
+                            width: None,
+                            height: None,
+                        },
                     )
                     .await;
                 });

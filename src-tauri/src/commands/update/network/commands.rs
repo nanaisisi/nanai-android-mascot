@@ -1,6 +1,6 @@
 //! ゴーストネットワーク更新（チェック・ダウンロード・書き込み実行）コマンドモジュール
 
-use super::helpers::{report_progress, resolve_update_ghost_dir, validate_update_path};
+use super::helpers::{report_progress, resolve_update_ghost_dir, validate_update_path, ReportProgressParams};
 use crate::commands::update::dau::*;
 use md5::{Digest, Md5};
 use std::fs;
@@ -167,13 +167,13 @@ pub async fn execute_ghost_update(
         validate_update_path(&entry.path)?;
         let file_url = format!("{}{}", check_result.homeurl, entry.path.replace('\\', "/"));
         println!("⬇️ Downloading update file: {}", file_url);
-        report_progress(&app_handle, "download-begin", &entry.path, None);
+        report_progress(&app_handle, ReportProgressParams { phase: "download-begin", path: &entry.path, detail: None });
 
         let resp = match client.get(&file_url).send().await {
             Ok(r) => {
                 if !r.status().is_success() {
                     let status = r.status().as_u16().to_string();
-                    report_progress(&app_handle, "download-failed", &entry.path, Some(&status));
+                    report_progress(&app_handle, ReportProgressParams { phase: "download-failed", path: &entry.path, detail: Some(&status) });
                     return Ok(UpdateExecutionResult {
                         success: false,
                         reason: status,
@@ -185,7 +185,7 @@ pub async fn execute_ghost_update(
             }
             Err(e) => {
                 let reason = if e.is_timeout() { "timeout" } else { "404" };
-                report_progress(&app_handle, "download-failed", &entry.path, Some(reason));
+                report_progress(&app_handle, ReportProgressParams { phase: "download-failed", path: &entry.path, detail: Some(reason) });
                 return Ok(UpdateExecutionResult {
                     success: false,
                     reason: reason.to_string(),
@@ -199,7 +199,7 @@ pub async fn execute_ghost_update(
 
         // MD5 チェック
         if !entry.md5.is_empty() {
-            report_progress(&app_handle, "md5-begin", &entry.path, None);
+            report_progress(&app_handle, ReportProgressParams { phase: "md5-begin", path: &entry.path, detail: None });
             let mut hasher = Md5::new();
             hasher.update(&bytes);
             let downloaded_md5: String = hasher
@@ -212,7 +212,7 @@ pub async fn execute_ghost_update(
                     "❌ MD5 mismatch for {}: expected {}, got {}",
                     entry.path, entry.md5, downloaded_md5
                 );
-                report_progress(&app_handle, "md5-failed", &entry.path, Some("md5 miss"));
+                report_progress(&app_handle, ReportProgressParams { phase: "md5-failed", path: &entry.path, detail: Some("md5 miss") });
                 return Ok(UpdateExecutionResult {
                     success: false,
                     reason: "md5 miss".to_string(),
@@ -220,7 +220,7 @@ pub async fn execute_ghost_update(
                     ghost_name: check_result.ghost_name,
                 });
             }
-            report_progress(&app_handle, "md5-complete", &entry.path, None);
+            report_progress(&app_handle, ReportProgressParams { phase: "md5-complete", path: &entry.path, detail: None });
         }
 
         // 保存
@@ -231,7 +231,7 @@ pub async fn execute_ghost_update(
 
         if let Err(e) = fs::write(&local_path, &bytes) {
             println!("❌ File write error: {}", e);
-            report_progress(&app_handle, "fileio-failed", &entry.path, None);
+            report_progress(&app_handle, ReportProgressParams { phase: "fileio-failed", path: &entry.path, detail: None });
             return Ok(UpdateExecutionResult {
                 success: false,
                 reason: "fileio".to_string(),
@@ -240,7 +240,7 @@ pub async fn execute_ghost_update(
             });
         }
 
-        report_progress(&app_handle, "saved", &entry.path, None);
+        report_progress(&app_handle, ReportProgressParams { phase: "saved", path: &entry.path, detail: None });
         updated_files.push(entry.path);
     }
 

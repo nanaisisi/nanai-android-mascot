@@ -129,14 +129,20 @@ fn method_string(method: &DrawMethod) -> String {
     }
 }
 
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct SurfaceCompositionPlanParams {
+    pub ghost_name: String,
+    pub shell_name: String,
+    pub surface_id: u32,
+    pub binds: Option<Vec<u32>>,
+}
+
 #[tauri::command]
 pub fn surface_composition_plan(
-    ghost_name: String,
-    shell_name: String,
-    surface_id: u32,
-    binds: Option<Vec<u32>>,
+    params: SurfaceCompositionPlanParams,
     app_handle: tauri::AppHandle,
 ) -> Result<Option<CompositionPlanSnapshot>, String> {
+    let SurfaceCompositionPlanParams { ghost_name, shell_name, surface_id, binds } = params;
     let shell_dir = resolve_shell_dir(&ghost_name, &shell_name, &app_handle)?;
     let shell = Shell::load(&shell_dir).map_err(|e| e.to_string())?;
     let plan = shell.composition_plan(surface_id, &binds.unwrap_or_default());

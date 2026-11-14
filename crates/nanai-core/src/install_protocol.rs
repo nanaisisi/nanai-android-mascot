@@ -1,5 +1,39 @@
-//! UKADOC (SSP仕様) 準拠 インストールイベント・引数生成およびエラーハンドリングモジュール
-//! TypeScript版 `ui/ts/core/actions/install-protocol.ts` から移植されたRust/WASMコア実装。
+use serde::{Deserialize, Serialize};
+use tsify::Tsify;
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
+#[serde(rename_all = "lowercase")]
+pub enum InstallIdentifier {
+    Ghost,
+    Shell,
+    Balloon,
+    Plugin,
+    Headline,
+    Package,
+    Supplement,
+    #[serde(rename = "calendar.skin")]
+    CalendarSkin,
+    #[serde(rename = "calendar.plugin")]
+    CalendarPlugin,
+    Profile,
+    Taromime,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
+#[serde(rename_all = "lowercase")]
+pub enum InstallFailureReason {
+    Unsupported,
+    Extraction,
+    #[serde(rename = "unlha32 error")]
+    Unlha32Error,
+    Artificial,
+    #[serde(rename = "write error")]
+    WriteError,
+    #[serde(rename = "invalid path")]
+    InvalidPath,
+    #[serde(rename = "format error")]
+    FormatError,
+}
 
 /// UKADOC仕様: インストールの識別子 (Install Identifiers)
 pub const INSTALL_IDENTIFIERS: &[&str] = &[

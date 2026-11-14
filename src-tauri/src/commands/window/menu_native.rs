@@ -2,22 +2,24 @@ use tauri::Manager;
 #[cfg(desktop)]
 use tauri::menu::{MenuBuilder, SubmenuBuilder};
 
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct ShowContextMenuParams {
+    pub ghosts: Vec<String>,
+    pub current_ghost: Option<String>,
+    pub shells: Vec<String>,
+    pub current_shell: Option<String>,
+}
+
 /// OSネイティブのコンテキストメニュー表示コマンド (SSP / ukadoc 仕様準拠のメニュー再編)
 #[tauri::command]
 pub async fn show_context_menu(
     _app_handle: tauri::AppHandle,
-    _ghosts: Vec<String>,
-    _current_ghost: Option<String>,
-    _shells: Vec<String>,
-    _current_shell: Option<String>,
+    params: ShowContextMenuParams,
 ) -> Result<(), String> {
     #[cfg(desktop)]
     {
         let app_handle = _app_handle;
-        let ghosts = _ghosts;
-        let current_ghost = _current_ghost;
-        let shells = _shells;
-        let current_shell = _current_shell;
+        let ShowContextMenuParams { ghosts, current_ghost, shells, current_shell } = params;
         let window = app_handle
             .get_webview_window("main")
             .ok_or("main window not found")?;

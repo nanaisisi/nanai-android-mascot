@@ -1,4 +1,10 @@
+import type {
+	InstallFailureReason,
+	InstallIdentifier,
+} from "../wasm/pkg/nanai_core.js";
 import { wasmBridge } from "../wasm-bridge.js";
+
+export type { InstallFailureReason, InstallIdentifier };
 
 /**
  * @file install-protocol.ts
@@ -42,7 +48,7 @@ export const INSTALL_FAILURE_REASONS = Object.freeze([
  * @param {string} type
  * @returns {string}
  */
-export function normalizeInstallType(type: string | null | undefined): string {
+export function normalizeInstallType(type: InstallIdentifier | string | null | undefined): string {
 	if (!type || typeof type !== "string") return "unknown";
 	const lower = type.trim().toLowerCase();
 	if (INSTALL_IDENTIFIERS.includes(lower)) {

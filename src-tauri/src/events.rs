@@ -32,7 +32,15 @@ pub fn handle_menu_event(app_handle: &tauri::AppHandle, event: tauri::menu::Menu
             } else {
                 (100.0, 100.0)
             };
-            let _ = crate::commands::window::show_menu_window(app_h, x, y, Some(0)).await;
+            let _ = crate::commands::window::show_menu_window(
+                app_h,
+                crate::commands::window::menu_window::ShowMenuWindowParams {
+                    x,
+                    y,
+                    scope: Some(0),
+                },
+            )
+            .await;
         });
     } else if id == "close" || id == "exit" {
         crate::commands::window::lifecycle::shutdown_application(app_handle);

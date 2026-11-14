@@ -1,19 +1,22 @@
 use tauri::Emitter;
 
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct ShowMenuWindowParams {
+    pub x: f64,
+    pub y: f64,
+    pub scope: Option<i32>,
+}
+
 /// バルーンスキン連動の独立ポップアップメニューウィンドウ表示コマンド (ウィンドウ枠外にはみ出して表示可能)
 #[tauri::command]
 pub async fn show_menu_window(
     _app_handle: tauri::AppHandle,
-    _x: f64,
-    _y: f64,
-    _scope: Option<i32>,
+    params: ShowMenuWindowParams,
 ) -> Result<(), String> {
     #[cfg(desktop)]
     {
         let app_handle = _app_handle;
-        let x = _x;
-        let y = _y;
-        let scope = _scope;
+        let ShowMenuWindowParams { x, y, scope } = params;
         println!(
             "👉 show_menu_window called: x={}, y={}, scope={:?}",
             x, y, scope

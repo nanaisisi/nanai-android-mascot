@@ -1,21 +1,22 @@
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct ShowCharacterWindowParams {
+    pub scope_id: i32,
+    pub x: Option<f64>,
+    pub y: Option<f64>,
+    pub width: Option<f64>,
+    pub height: Option<f64>,
+}
+
 /// キャラクター（スコープ N）ウィンドウ表示コマンド (0=メイン, 1=サブ/うにゅ, 2以降=追加キャラ)
 #[tauri::command]
 pub async fn show_character_window(
     _app_handle: tauri::AppHandle,
-    _scope_id: i32,
-    _x: Option<f64>,
-    _y: Option<f64>,
-    _width: Option<f64>,
-    _height: Option<f64>,
+    params: ShowCharacterWindowParams,
 ) -> Result<(), String> {
     #[cfg(desktop)]
     {
         let app_handle = _app_handle;
-        let scope_id = _scope_id;
-        let x = _x;
-        let y = _y;
-        let width = _width;
-        let height = _height;
+        let ShowCharacterWindowParams { scope_id, x, y, width, height } = params;
         println!(
             "🪟 [Rust Window] show_character_window 呼び出し: scope={}, width={:?}, height={:?}",
             scope_id, width, height
@@ -160,23 +161,24 @@ pub async fn hide_character_window(
     Ok(())
 }
 
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct ShowSubcharWindowParams {
+    pub scope_id: i32,
+    pub x: Option<f64>,
+    pub y: Option<f64>,
+    pub width: Option<f64>,
+    pub height: Option<f64>,
+}
+
 /// 互換用: サブキャラクターウィンドウ表示コマンド
 #[tauri::command]
 pub async fn show_subchar_window(
     _app_handle: tauri::AppHandle,
-    _scope_id: i32,
-    _x: Option<f64>,
-    _y: Option<f64>,
-    _width: Option<f64>,
-    _height: Option<f64>,
+    params: ShowSubcharWindowParams,
 ) -> Result<(), String> {
     let app_handle = _app_handle;
-    let scope_id = _scope_id;
-    let x = _x;
-    let y = _y;
-    let width = _width;
-    let height = _height;
-    show_character_window(app_handle, scope_id, x, y, width, height).await
+    let ShowSubcharWindowParams { scope_id, x, y, width, height } = params;
+    show_character_window(app_handle, ShowCharacterWindowParams { scope_id, x, y, width, height }).await
 }
 
 #[tauri::command]

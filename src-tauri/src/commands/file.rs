@@ -79,14 +79,20 @@ pub fn open_file(path: String, app_handle: tauri::AppHandle<tauri::Wry>) -> Resu
     }
 }
 
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct LoadSurfaceImageParams {
+    pub ghost_path: String,
+    pub shell_name: String,
+    pub surface_id: String,
+}
+
 // サーフィス画像を読み込んでData URL (Base64) として返すコマンド
 #[tauri::command]
 pub fn load_surface_image(
-    ghost_path: String,
-    shell_name: String,
-    surface_id: String,
+    params: LoadSurfaceImageParams,
     app_handle: tauri::AppHandle<tauri::Wry>,
 ) -> Result<String, String> {
+    let LoadSurfaceImageParams { ghost_path, shell_name, surface_id } = params;
     use std::fs;
     let clean_gp = clean_verbatim_path(&ghost_path);
     let base_ghost_path =
@@ -215,14 +221,20 @@ pub fn load_surface_image(
     ))
 }
 
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct LoadSurfacePnaParams {
+    pub ghost_path: String,
+    pub shell_name: String,
+    pub surface_id: String,
+}
+
 // サーフィスに対応する PNA (アルファマスク) 画像を読み込んで返すコマンド
 #[tauri::command]
 pub fn load_surface_pna(
-    ghost_path: String,
-    shell_name: String,
-    surface_id: String,
+    params: LoadSurfacePnaParams,
     app_handle: tauri::AppHandle<tauri::Wry>,
 ) -> Result<String, String> {
+    let LoadSurfacePnaParams { ghost_path, shell_name, surface_id } = params;
     use std::fs;
     let clean_gp = clean_verbatim_path(&ghost_path);
     let base_ghost_path =

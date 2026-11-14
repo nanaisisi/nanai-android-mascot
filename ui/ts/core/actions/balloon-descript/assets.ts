@@ -1,4 +1,5 @@
 import { invoke } from "../../tauri-helper.js";
+import { wasmBridge } from "../../wasm-bridge.js";
 
 /**
  * @file assets.js
@@ -6,13 +7,27 @@ import { invoke } from "../../tauri-helper.js";
  * // [descript.txt（Balloonの）]: Balloon descript.txt アセット・画像属性バインディング
  */
 /**
- * [推奨の意味] [recommended.ghost,ゴースト名] [recommended.ghost.path,パス] の検証関数 (UKADOC準拠)
+ * [推奨の意味] [recommended.ghost,ゴースト名] [recommended.ghost.path,パス] の検証関数 (WASM駆動)
  */
 export function verifyRecommendedGhost(
 	props: Record<string, string>,
-	currentGhostName?: string,
-	currentGhostPath?: string,
+	currentGhostName = "",
+	currentGhostPath = "",
 ): { isRecommended: boolean; warning?: string } {
+	if (wasmBridge.isReady()) {
+		const res = wasmBridge.validateBalloonDescript(
+			props,
+			currentGhostName,
+			currentGhostPath,
+		);
+		if (res) {
+			if (!res.isRecommended && res.warningMessage) {
+				console.warn(res.warningMessage);
+			}
+			return { isRecommended: res.isRecommended, warning: res.warningMessage };
+		}
+	}
+
 	const recGhost = props["recommended.ghost"];
 	const recPath = props["recommended.ghost.path"];
 

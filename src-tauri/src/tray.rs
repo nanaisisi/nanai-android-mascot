@@ -56,8 +56,28 @@ pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error
                             }
                         } else {
                             log_tray("📈 トレイダブルクリック: ディスプレイを復元 (Restore)");
-                            let _ = crate::commands::window::show_character_window(app_handle.clone(), 0, None, None, None, None).await;
-                            let _ = crate::commands::window::show_character_window(app_handle.clone(), 1, None, None, None, None).await;
+                            let _ = crate::commands::window::show_character_window(
+                                app_handle.clone(),
+                                crate::commands::window::character_window::ShowCharacterWindowParams {
+                                    scope_id: 0,
+                                    x: None,
+                                    y: None,
+                                    width: None,
+                                    height: None,
+                                },
+                            )
+                            .await;
+                            let _ = crate::commands::window::show_character_window(
+                                app_handle.clone(),
+                                crate::commands::window::character_window::ShowCharacterWindowParams {
+                                    scope_id: 1,
+                                    x: None,
+                                    y: None,
+                                    width: None,
+                                    height: None,
+                                },
+                            )
+                            .await;
                         }
                     });
                 }
@@ -84,8 +104,15 @@ pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error
                                     // システムトレイアイコンの左下を起点とする (Left: px, Bottom: py + ph)
                                     let x = px;
                                     let y = py + ph;
-                                    let _ =
-                                        crate::commands::window::show_menu_window(app_handle, x, y, Some(0)).await;
+                                    let _ = crate::commands::window::show_menu_window(
+                                        app_handle,
+                                        crate::commands::window::menu_window::ShowMenuWindowParams {
+                                            x,
+                                            y,
+                                            scope: Some(0),
+                                        },
+                                    )
+                                    .await;
                                 });
                             }
                             MouseButton::Left => {

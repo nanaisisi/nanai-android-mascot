@@ -142,7 +142,7 @@ impl SakuraPlayerEngine {
                 }
             }
             SakuraToken::Wait(ms) => StepOutput::Wait { duration_ms: ms },
-            SakuraToken::Choice { title, id } => StepOutput::Choice {
+            SakuraToken::Choice { title, id, .. } => StepOutput::Choice {
                 scope: self.current_scope,
                 title,
                 id,
@@ -157,9 +157,13 @@ impl SakuraPlayerEngine {
                 command,
                 args,
             },
-            SakuraToken::Font { .. } | SakuraToken::Sync(_) | SakuraToken::Quick(_) | SakuraToken::ChoiceScopeBegin { .. } | SakuraToken::ChoiceScopeEnd | SakuraToken::NoAutoWrap | SakuraToken::RawToggle { .. } => {
-                self.step_internal()
-            }
+            SakuraToken::Font { .. }
+            | SakuraToken::Sync(_)
+            | SakuraToken::Quick(_)
+            | SakuraToken::ChoiceScopeBegin { .. }
+            | SakuraToken::ChoiceScopeEnd
+            | SakuraToken::NoAutoWrap
+            | SakuraToken::RawToggle { .. } => self.step_internal(),
             SakuraToken::Halt => {
                 self.is_halted = true;
                 StepOutput::Halt

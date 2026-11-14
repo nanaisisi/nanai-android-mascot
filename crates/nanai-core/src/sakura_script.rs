@@ -25,7 +25,11 @@ pub enum SakuraToken {
     /// ウエイト (\w1 ~ \w9, \_w[ms])
     Wait(u32),
     /// 選択肢 (\q[title,id])
-    Choice { title: String, id: String },
+    Choice {
+        title: String,
+        id: String,
+        args: Vec<String>,
+    },
     /// アンカー (\_a[id]title\_a)
     Anchor { id: String, text: String },
     /// フォント設定 (\f[bold,true], \f[color,r,g,b], \f[height,12] 等 - UKADOC仕様準拠)
@@ -182,17 +186,28 @@ pub fn parse_sakura_script(script: &str) -> Vec<SakuraToken> {
                     'q' => {
                         chars.next();
                         if let Some(arg) = parse_bracket_arg(&mut chars) {
-                            let parts: Vec<&str> = arg.split(',').collect();
-                            let title = parts.first().copied().unwrap_or("").to_string();
-                            let id = parts.get(1).copied().unwrap_or("").to_string();
-                            tokens.push(SakuraToken::Choice { title, id });
+                            let parts = split_bracket_args(&arg);
+                            if parts.first().map(|s| s.as_str()) == Some("temp") {
+                                let title = parts.get(1).cloned().unwrap_or_default();
+                                let id = parts.get(2).cloned().unwrap_or_default();
+                                let args = if parts.len() > 3 {
+                                    parts[3..].to_vec()
+                                } else {
+                                    vec![]
+                                };
+                                tokens.push(SakuraToken::Choice { title, id, args });
+                            } else {
+                                let title = parts.first().cloned().unwrap_or_default();
+                                let id = parts.get(1).cloned().unwrap_or_default();
+                                let args = parts.into_iter().skip(2).collect();
+                                tokens.push(SakuraToken::Choice { title, id, args });
+                            }
                         }
                     }
                     'f' => {
                         chars.next();
                         if let Some(arg) = parse_bracket_arg(&mut chars) {
-                            let parts: Vec<String> =
-                                arg.split(',').map(|s| s.trim().to_string()).collect();
+                            let parts = split_bracket_args(&arg);
                             let property = parts.first().cloned().unwrap_or_default();
                             let args = parts.into_iter().skip(1).collect();
                             tokens.push(SakuraToken::Font { property, args });
@@ -206,8 +221,7 @@ pub fn parse_sakura_script(script: &str) -> Vec<SakuraToken> {
                     '!' => {
                         chars.next();
                         if let Some(arg) = parse_bracket_arg(&mut chars) {
-                            let args: Vec<String> =
-                                arg.split(',').map(|s| s.trim().to_string()).collect();
+                            let args = split_bracket_args(&arg);
                             let command = args.first().cloned().unwrap_or_default();
                             tokens.push(SakuraToken::Command { command, args });
                         }
@@ -221,7 +235,8 @@ pub fn parse_sakura_script(script: &str) -> Vec<SakuraToken> {
                                     && let Ok(ms) = arg.parse::<u32>()
                                 {
                                     if !text_buf.is_empty() {
-                                        tokens.push(SakuraToken::Text(std::mem::take(&mut text_buf)));
+                                        tokens
+                                            .push(SakuraToken::Text(std::mem::take(&mut text_buf)));
                                     }
                                     tokens.push(SakuraToken::Wait(ms));
                                 }
@@ -230,10 +245,12 @@ pub fn parse_sakura_script(script: &str) -> Vec<SakuraToken> {
                                 if chars.peek() == Some(&'q') {
                                     chars.next();
                                     if !text_buf.is_empty() {
-                                        tokens.push(SakuraToken::Text(std::mem::take(&mut text_buf)));
+                                        tokens
+                                            .push(SakuraToken::Text(std::mem::take(&mut text_buf)));
                                     }
                                     if let Some(arg) = parse_bracket_arg(&mut chars) {
-                                        let args: Vec<String> = arg.split(',').map(|s| s.trim().to_string()).collect();
+                                        let args: Vec<String> =
+                                            arg.split(',').map(|s| s.trim().to_string()).collect();
                                         let id = args.first().cloned().unwrap_or_default();
                                         tokens.push(SakuraToken::ChoiceScopeBegin { id, args });
                                     } else {
@@ -253,10 +270,10 @@ pub fn parse_sakura_script(script: &str) -> Vec<SakuraToken> {
                                     } else {
                                         raw.parse::<u32>()
                                     };
-                                    if let Ok(c) = code {
-                                        if let Some(ch) = char::from_u32(c) {
-                                            text_buf.push(ch);
-                                        }
+                                    if let Ok(c) = code
+                                        && let Some(ch) = char::from_u32(c)
+                                    {
+                                        text_buf.push(ch);
                                     }
                                 }
                             } else if tag_ch == 'm' {
@@ -268,12 +285,11 @@ pub fn parse_sakura_script(script: &str) -> Vec<SakuraToken> {
                                     } else {
                                         raw.parse::<u32>()
                                     };
-                                    if let Ok(c) = code {
-                                        if c <= 0xff {
-                                            if let Some(ch) = char::from_u32(c) {
-                                                text_buf.push(ch);
-                                            }
-                                        }
+                                    if let Ok(c) = code
+                                        && c <= 0xff
+                                        && let Some(ch) = char::from_u32(c)
+                                    {
+                                        text_buf.push(ch);
                                     }
                                 }
                             } else if tag_ch == 's' {
@@ -288,7 +304,10 @@ pub fn parse_sakura_script(script: &str) -> Vec<SakuraToken> {
                             } else if tag_ch == '?' || tag_ch == '!' {
                                 chars.next();
                                 let delim = format!("_{}", tag_ch);
-                                tokens.push(SakuraToken::RawToggle { active: true, delimiter: delim.clone() });
+                                tokens.push(SakuraToken::RawToggle {
+                                    active: true,
+                                    delimiter: delim.clone(),
+                                });
                                 raw_mode_delimiter = Some(delim);
                             } else if tag_ch == 'a' {
                                 chars.next(); // consume 'a'
@@ -342,18 +361,58 @@ pub fn parse_sakura_script(script: &str) -> Vec<SakuraToken> {
     tokens
 }
 
+fn split_bracket_args(arg: &str) -> Vec<String> {
+    let mut args = Vec::new();
+    let mut current = String::new();
+    let mut in_quote = false;
+    let mut chars = arg.chars().peekable();
+
+    while let Some(c) = chars.next() {
+        if c == '"' {
+            if in_quote && chars.peek() == Some(&'"') {
+                current.push('"');
+                chars.next();
+            } else {
+                in_quote = !in_quote;
+            }
+        } else if c == ',' && !in_quote {
+            args.push(current.trim().to_string());
+            current.clear();
+        } else {
+            current.push(c);
+        }
+    }
+    args.push(current.trim().to_string());
+    args
+}
+
 fn parse_bracket_arg<I: Iterator<Item = char>>(
     chars: &mut std::iter::Peekable<I>,
 ) -> Option<String> {
     if chars.peek() == Some(&'[') {
         chars.next(); // consume '['
         let mut arg = String::new();
+        let mut in_quote = false;
+
         while let Some(&ch) = chars.peek() {
-            if ch == ']' {
+            if ch == '\\' {
+                chars.next(); // consume '\'
+                if let Some(&escaped) = chars.peek() {
+                    if escaped == ']' || escaped == '\\' {
+                        arg.push(chars.next().unwrap());
+                    } else {
+                        arg.push('\\');
+                    }
+                }
+            } else if ch == '"' {
+                in_quote = !in_quote;
+                arg.push(chars.next().unwrap());
+            } else if ch == ']' && !in_quote {
                 chars.next(); // consume ']'
                 return Some(arg);
+            } else {
+                arg.push(chars.next().unwrap());
             }
-            arg.push(chars.next().unwrap());
         }
         Some(arg)
     } else {
@@ -449,7 +508,8 @@ mod tests {
             tokens[0],
             SakuraToken::Choice {
                 title: "選択肢".to_string(),
-                id: "id1".to_string()
+                id: "id1".to_string(),
+                args: vec![]
             }
         );
         assert_eq!(

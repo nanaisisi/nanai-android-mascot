@@ -15,8 +15,13 @@ export class WasmMemoryManager {
 
 		this.initPromise = (async () => {
 			try {
-				if (bufferOrUrl instanceof ArrayBuffer) {
-					await init(bufferOrUrl);
+				if (
+					bufferOrUrl instanceof ArrayBuffer ||
+					(bufferOrUrl &&
+						(bufferOrUrl as any).byteLength !== undefined &&
+						typeof bufferOrUrl !== "string")
+				) {
+					await init(bufferOrUrl as InitInput);
 				} else if (typeof bufferOrUrl === "string") {
 					await init(bufferOrUrl);
 				} else {

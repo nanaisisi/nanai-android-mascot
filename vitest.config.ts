@@ -40,5 +40,6 @@ export default defineConfig({
 			reporter: ["text", "json", "html"],
 			include: ["ui/ts/**/*.ts", "ui/js/**/*.js", "ui/windows/*.ts"],
 		},
+		setupFiles: ["./tests/setup.ts"],
 	},
 });

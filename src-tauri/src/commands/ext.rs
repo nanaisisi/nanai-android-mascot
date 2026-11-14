@@ -145,11 +145,25 @@ pub struct PluginEventRequest {
     pub references: Vec<String>,
 }
 
+#[allow(dead_code)]
+impl PluginEventRequest {
+    pub fn plugin_name(&self) -> &str { &self.plugin_name }
+    pub fn event_id(&self) -> &str { &self.event_id }
+    pub fn references(&self) -> &[String] { &self.references }
+}
+
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct PluginEventResponse {
     pub status: i32,
     pub value: String,
     pub script: Option<String>,
+}
+
+#[allow(dead_code)]
+impl PluginEventResponse {
+    pub fn status(&self) -> i32 { self.status }
+    pub fn value(&self) -> &str { &self.value }
+    pub fn script(&self) -> Option<&str> { self.script.as_deref() }
 }
 
 /// [PLUGIN/2.0]: プラグインへイベントを送信・実行しレスポンス/デフォルトスクリプトを取得

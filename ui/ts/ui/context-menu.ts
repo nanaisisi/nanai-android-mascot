@@ -39,11 +39,13 @@ function _triggerSubmenuWindow(menuType: string, buttonEl: Element) {
 		const posX = sX + 260 + 2;
 		const posY = sY + rect.top;
 		invoke("show_submenu_window", {
-			menuType: menuType,
-			x: posX,
-			y: posY,
-			width: 220,
-			height: 300,
+			params: {
+				menuType: menuType,
+				x: posX,
+				y: posY,
+				width: 220,
+				height: 300,
+			},
 		}).catch((e) => {
 			console.error("Failed to show submenu window:", e);
 			const wrapper = buttonEl.closest(".menu-item-wrapper");

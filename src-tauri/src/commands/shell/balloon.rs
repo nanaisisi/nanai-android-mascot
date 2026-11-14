@@ -11,6 +11,15 @@ pub struct BalloonInfo {
     pub readme: Option<String>,
 }
 
+#[allow(dead_code)]
+impl BalloonInfo {
+    pub fn dir_name(&self) -> &str { &self.dir_name }
+    pub fn name(&self) -> &str { &self.name }
+    pub fn descript(&self) -> &std::collections::BTreeMap<String, String> { &self.descript }
+    pub fn thumbnail(&self) -> Option<&str> { self.thumbnail.as_deref() }
+    pub fn readme(&self) -> Option<&str> { self.readme.as_deref() }
+}
+
 #[tauri::command]
 pub fn scan_balloons(app_handle: tauri::AppHandle) -> Result<Vec<BalloonInfo>, String> {
     let mut balloons = Vec::new();

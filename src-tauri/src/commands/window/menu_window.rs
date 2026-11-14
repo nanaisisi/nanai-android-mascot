@@ -132,24 +132,25 @@ pub async fn hide_menu_window(_app_handle: tauri::AppHandle) -> Result<(), Strin
     Ok(())
 }
 
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct ShowSubmenuWindowParams {
+    pub menu_type: String,
+    pub x: f64,
+    pub y: f64,
+    pub width: Option<f64>,
+    pub height: Option<f64>,
+}
+
 /// 独立サブメニューウィンドウ表示コマンド
 #[tauri::command]
 pub async fn show_submenu_window(
     _app_handle: tauri::AppHandle,
-    _menu_type: String,
-    _x: f64,
-    _y: f64,
-    _width: Option<f64>,
-    _height: Option<f64>,
+    params: ShowSubmenuWindowParams,
 ) -> Result<(), String> {
     #[cfg(desktop)]
     {
         let app_handle = _app_handle;
-        let menu_type = _menu_type;
-        let x = _x;
-        let y = _y;
-        let width = _width;
-        let height = _height;
+        let ShowSubmenuWindowParams { menu_type, x, y, width, height } = params;
         use tauri::Manager;
         let win_width = width.unwrap_or(220.0);
         let win_height = height.unwrap_or(320.0);

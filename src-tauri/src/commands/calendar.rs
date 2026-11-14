@@ -21,6 +21,16 @@ pub struct ScheduleItem {
     pub notified: bool,
 }
 
+#[allow(dead_code)]
+impl ScheduleItem {
+    pub fn id(&self) -> &str { &self.id }
+    pub fn date(&self) -> &str { &self.date }
+    pub fn time(&self) -> &str { &self.time }
+    pub fn title(&self) -> &str { &self.title }
+    pub fn memo(&self) -> &str { &self.memo }
+    pub fn notified(&self) -> bool { self.notified }
+}
+
 fn get_schedules_file_path(app_handle: &tauri::AppHandle) -> Result<PathBuf, String> {
     let app_data_dir = app_handle
         .path()

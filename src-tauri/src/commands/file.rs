@@ -86,6 +86,13 @@ pub struct LoadSurfaceImageParams {
     pub surface_id: String,
 }
 
+#[allow(dead_code)]
+impl LoadSurfaceImageParams {
+    pub fn ghost_path(&self) -> &str { &self.ghost_path }
+    pub fn shell_name(&self) -> &str { &self.shell_name }
+    pub fn surface_id(&self) -> &str { &self.surface_id }
+}
+
 // サーフィス画像を読み込んでData URL (Base64) として返すコマンド
 #[tauri::command]
 pub fn load_surface_image(
@@ -226,6 +233,13 @@ pub struct LoadSurfacePnaParams {
     pub ghost_path: String,
     pub shell_name: String,
     pub surface_id: String,
+}
+
+#[allow(dead_code)]
+impl LoadSurfacePnaParams {
+    pub fn ghost_path(&self) -> &str { &self.ghost_path }
+    pub fn shell_name(&self) -> &str { &self.shell_name }
+    pub fn surface_id(&self) -> &str { &self.surface_id }
 }
 
 // サーフィスに対応する PNA (アルファマスク) 画像を読み込んで返すコマンド

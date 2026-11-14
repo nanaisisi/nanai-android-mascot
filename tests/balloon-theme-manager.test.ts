@@ -96,9 +96,9 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 		assert.equal(mgrCustom.availableBalloons.length, 1);
 	});
 
-	it("computes 9-slice border-image tokens correctly based on validrect", () => {
+	it("computes validrect border-image tokens correctly based on validrect", () => {
 		const mgr = new BalloonThemeManager();
-		const nineSlice = mgr.computeNineSlice(
+		const layout = mgr.computeValidRect(
 			{
 				"validrect.left": "20",
 				"validrect.top": "24",
@@ -108,19 +108,19 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 			"assets/balloon/test.png",
 		);
 
-		assert.equal(nineSlice.source, "assets/balloon/test.png");
-		assert.equal(nineSlice.slice, "24 20 28 20 fill");
-		assert.equal(nineSlice.width, "24px 20px 28px 20px");
-		assert.equal(nineSlice.repeat, "repeat");
-		assert.ok(nineSlice.cssBorderImage.includes("url("));
+		assert.equal(layout.source, "assets/balloon/test.png");
+		assert.equal(layout.slice, "24 20 28 20 fill");
+		assert.equal(layout.width, "24px 20px 28px 20px");
+		assert.equal(layout.repeat, "repeat");
+		assert.ok(layout.cssBorderImage.includes("url("));
 
 		// Fallback when values are missing or NaN
-		const fallback = mgr.computeNineSlice({});
+		const fallback = mgr.computeValidRect({});
 		assert.equal(fallback.slice, "16 16 16 16 fill");
 		assert.equal(fallback.width, "16px 16px 16px 16px");
 
 		// Test cache hit and cache clearing
-		const cached = mgr.computeNineSlice(
+		const cached = mgr.computeValidRect(
 			{
 				"validrect.left": "20",
 				"validrect.top": "24",
@@ -129,12 +129,12 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 			},
 			"assets/balloon/test.png",
 		);
-		assert.strictEqual(cached, nineSlice);
+		assert.strictEqual(cached, layout);
 
-		mgr.clearNineSliceCache();
-		assert.strictEqual(mgr._nineSliceCache.size, 0);
+		mgr.clearValidRectCache();
+		assert.strictEqual(mgr._validRectCache.size, 0);
 
-		const afterClear = mgr.computeNineSlice(
+		const afterClear = mgr.computeValidRect(
 			{
 				"validrect.left": "20",
 				"validrect.top": "24",
@@ -143,8 +143,8 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 			},
 			"assets/balloon/test.png",
 		);
-		assert.notStrictEqual(afterClear, nineSlice);
-		assert.deepStrictEqual(afterClear, nineSlice);
+		assert.notStrictEqual(afterClear, layout);
+		assert.deepStrictEqual(afterClear, layout);
 	});
 
 	it("cycles balloon themes correctly with default and custom lists", () => {

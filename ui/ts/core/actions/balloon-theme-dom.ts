@@ -1,16 +1,7 @@
-// @ts-nocheck
-import { wasmBridge } from "../wasm-bridge.js";
+import { wasmBridge, type ValidRectLayoutResult } from "../wasm-bridge.js";
 import { BALLOON_CSS_VARS } from "./balloon-theme-constants.js";
 
-export interface NineSliceLayoutResult {
-	source: string;
-	slice: string;
-	width: string;
-	repeat: string;
-	cssBorderImage: string;
-	scopeId: number;
-	cacheKey: string;
-}
+export type { ValidRectLayoutResult };
 
 export interface BalloonAppInterface {
 	balloonUserScale?: number;
@@ -22,14 +13,14 @@ export interface BalloonAppInterface {
 }
 
 /**
- * 9スライス分割設定 (border-image) を有効矩形 (validrect) 等から算出 (キャッシュ対応)
+ * 有効テキスト表示領域 (validrect) 設定からスタイルを算出 (キャッシュ対応・WASM駆動)
  */
-export function computeNineSliceLayout(
-	cache: Map<string, NineSliceLayoutResult>,
+export function computeValidRectLayout(
+	cache: Map<string, ValidRectLayoutResult>,
 	props: Record<string, string> = {},
 	bgImageUrl: string | null = null,
 	scopeId: number = 0,
-): NineSliceLayoutResult {
+): ValidRectLayoutResult {
 	const vl = parseInt(props["validrect.left"], 10);
 	const vt = parseInt(props["validrect.top"], 10);
 	const vr = parseInt(props["validrect.right"], 10);
@@ -42,14 +33,13 @@ export function computeNineSliceLayout(
 
 	const repeat = props["border.repeat"] || "repeat";
 	const source = bgImageUrl || props["balloon.image"] || "";
-	// scopeId > 0 の場合はスコープ別プレフィックス、scopeId === 0 の場合は既存互換キー
 	const cacheKey =
 		scopeId > 0
 			? `scope${scopeId}_${t}_${r}_${b}_${l}_${repeat}_${source}`
 			: `${t}_${r}_${b}_${l}_${repeat}_${source}`;
 
 	if (cache.has(cacheKey)) {
-		return cache.get(cacheKey) as NineSliceLayoutResult;
+		return cache.get(cacheKey) as ValidRectLayoutResult;
 	}
 
 	const slice = `${t} ${r} ${b} ${l} fill`;
@@ -59,7 +49,7 @@ export function computeNineSliceLayout(
 		? `url("${source}") ${t} ${r} ${b} ${l} fill / ${width} ${repeat}`
 		: "";
 
-	const result: NineSliceLayoutResult = {
+	const result: ValidRectLayoutResult = {
 		source,
 		slice,
 		width,

@@ -8,6 +8,7 @@ export type {
 	AnimationPattern,
 	AnimationState,
 	BalloonLayoutResult,
+	ValidRectLayoutResult,
 	DescriptManifest,
 	SakuraToken,
 	SstpRequest,

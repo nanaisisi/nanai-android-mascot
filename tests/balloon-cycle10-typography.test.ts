@@ -3,11 +3,11 @@ import { describe, it } from "vitest";
 import { applyGroupProperties } from "../ui/ts/core/actions/balloon-descript/font/group.js";
 import {
 	BalloonThemeManager,
-	computeNineSliceLayout,
+	computeValidRectLayout,
 } from "../ui/ts/core/actions/balloon-theme.js";
 
 describe("Balloon Skin & Typography Cycle 10 Enhancements (Slot-10)", () => {
-	describe("Scope-aware 9-slice caching and management", () => {
+	describe("Scope-aware validrect caching and management", () => {
 		it("computes distinct cache keys for different scopeId values", () => {
 			const cache = new Map();
 			const props = {
@@ -18,9 +18,9 @@ describe("Balloon Skin & Typography Cycle 10 Enhancements (Slot-10)", () => {
 				"border.repeat": "stretch",
 			};
 
-			const scope0 = computeNineSliceLayout(cache, props, "balloons0.png", 0);
-			const scope1 = computeNineSliceLayout(cache, props, "balloonk0.png", 1);
-			const scope2 = computeNineSliceLayout(cache, props, "balloonp2.png", 2);
+			const scope0 = computeValidRectLayout(cache, props, "balloons0.png", 0);
+			const scope1 = computeValidRectLayout(cache, props, "balloonk0.png", 1);
+			const scope2 = computeValidRectLayout(cache, props, "balloonp2.png", 2);
 
 			assert.ok(scope0);
 			assert.ok(scope1);
@@ -29,18 +29,16 @@ describe("Balloon Skin & Typography Cycle 10 Enhancements (Slot-10)", () => {
 			assert.equal(scope1.scopeId, 1);
 			assert.equal(scope2.scopeId, 2);
 
-			// scope 0 uses backward-compatible key
 			assert.equal(scope0.cacheKey, "14_10_14_10_stretch_balloons0.png");
-			// scope 1 and 2 use scope-prefixed keys
 			assert.equal(scope1.cacheKey, "scope1_14_10_14_10_stretch_balloonk0.png");
 			assert.equal(scope2.cacheKey, "scope2_14_10_14_10_stretch_balloonp2.png");
 
 			assert.equal(cache.size, 3);
 		});
 
-		it("allows selective clearing of 9-slice cache by scopeId", () => {
+		it("allows selective clearing of validrect cache by scopeId", () => {
 			const mgr = new BalloonThemeManager();
-			mgr.computeNineSlice(
+			mgr.computeValidRect(
 				{
 					"validrect.left": "8",
 					"validrect.top": "8",
@@ -50,7 +48,7 @@ describe("Balloon Skin & Typography Cycle 10 Enhancements (Slot-10)", () => {
 				"balloons0.png",
 				0,
 			);
-			mgr.computeNineSlice(
+			mgr.computeValidRect(
 				{
 					"validrect.left": "12",
 					"validrect.top": "12",
@@ -60,7 +58,7 @@ describe("Balloon Skin & Typography Cycle 10 Enhancements (Slot-10)", () => {
 				"balloonk0.png",
 				1,
 			);
-			mgr.computeNineSlice(
+			mgr.computeValidRect(
 				{
 					"validrect.left": "16",
 					"validrect.top": "16",
@@ -71,23 +69,21 @@ describe("Balloon Skin & Typography Cycle 10 Enhancements (Slot-10)", () => {
 				2,
 			);
 
-			assert.equal(mgr.nineSliceCacheSize, 3);
+			assert.equal(mgr.validRectCacheSize, 3);
 
-			// Clear only scope 1 entries
-			mgr.clearNineSliceCache(1);
-			assert.equal(mgr.nineSliceCacheSize, 2);
+			mgr.clearValidRectCache(1);
+			assert.equal(mgr.validRectCacheSize, 2);
 			assert.equal(
-				mgr.hasNineSliceCache("scope1_12_12_12_12_repeat_balloonk0.png"),
+				mgr.hasValidRectCache("scope1_12_12_12_12_repeat_balloonk0.png"),
 				false,
 			);
-			assert.ok(mgr.getNineSliceCache("8_8_8_8_repeat_balloons0.png"));
+			assert.ok(mgr.getValidRectCache("8_8_8_8_repeat_balloons0.png"));
 			assert.ok(
-				mgr.getNineSliceCache("scope2_16_16_16_16_repeat_balloonp2.png"),
+				mgr.getValidRectCache("scope2_16_16_16_16_repeat_balloonp2.png"),
 			);
 
-			// Clear all
-			mgr.clearNineSliceCache();
-			assert.equal(mgr.nineSliceCacheSize, 0);
+			mgr.clearValidRectCache();
+			assert.equal(mgr.validRectCacheSize, 0);
 		});
 	});
 

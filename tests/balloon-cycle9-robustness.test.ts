@@ -195,11 +195,11 @@ describe("Balloon Skin & Typography Cycle 9 Robustness (Slot-10)", () => {
 			assert.equal(invalid.scale, 1.0);
 		});
 
-		it("tracks nineSliceCacheSize and hasNineSliceCache properly", () => {
+		it("tracks validRectCacheSize and hasValidRectCache properly", () => {
 			const mgr = new BalloonThemeManager();
-			assert.equal(mgr.nineSliceCacheSize, 0);
+			assert.equal(mgr.validRectCacheSize, 0);
 
-			mgr.computeNineSlice({
+			mgr.computeValidRect({
 				"validrect.left": "10",
 				"validrect.top": "12",
 				"validrect.right": "10",
@@ -208,12 +208,12 @@ describe("Balloon Skin & Typography Cycle 9 Robustness (Slot-10)", () => {
 				"balloon.image": "test.png",
 			});
 
-			assert.equal(mgr.nineSliceCacheSize, 1);
-			assert.equal(mgr.hasNineSliceCache("12_10_12_10_stretch_test.png"), true);
-			assert.equal(mgr.hasNineSliceCache("non_existent"), false);
+			assert.equal(mgr.validRectCacheSize, 1);
+			assert.equal(mgr.hasValidRectCache("12_10_12_10_stretch_test.png"), true);
+			assert.equal(mgr.hasValidRectCache("non_existent"), false);
 
-			mgr.clearNineSliceCache();
-			assert.equal(mgr.nineSliceCacheSize, 0);
+			mgr.clearValidRectCache();
+			assert.equal(mgr.validRectCacheSize, 0);
 		});
 	});
 });

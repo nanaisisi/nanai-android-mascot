@@ -10,7 +10,7 @@ import {
 } from "./balloon-theme-apply.js";
 import { BALLOON_THEMES, THEME_LABELS } from "./balloon-theme-constants.js";
 import {
-	computeNineSliceLayout,
+	computeValidRectLayout,
 	resetBalloonDescriptDom,
 } from "./balloon-theme-dom.js";
 
@@ -26,12 +26,12 @@ export {
 	THEME_LABELS,
 } from "./balloon-theme-constants.js";
 export {
-	computeNineSliceLayout,
+	computeValidRectLayout,
 	resetBalloonDescriptDom,
 } from "./balloon-theme-dom.js";
 
 /**
- * バルーンスキン・テーマ・9スライスおよびタイポグラフィ統合マネージャー
+ * バルーンスキン・テーマ・有効テキスト領域(validrect)およびタイポグラフィ統合マネージャー
  */
 export class BalloonThemeManager {
 	/**
@@ -43,8 +43,8 @@ export class BalloonThemeManager {
 		this.userScale = app?.balloonUserScale || 1;
 		this.dpiScale = app?.balloonDpiScale || 1;
 		this.availableBalloons = app?.availableBalloons || [];
-		/** @type {Map<string, { source: string, slice: string, width: string, repeat: string, cssBorderImage: string }>} */
-		this._nineSliceCache = new Map();
+		/** @type {Map<string, import("./balloon-theme-dom.js").ValidRectLayoutResult>} */
+		this._validRectCache = new Map();
 
 		if (isTauriAvailable()) {
 			void listen("request-balloon-scale-change", (event) => {
@@ -57,15 +57,11 @@ export class BalloonThemeManager {
 	}
 
 	/**
-	 * 9スライス分割設定 (border-image) を有効矩形 (validrect) 等から算出 (キャッシュ対応)
-	 * @param {Record<string, string>} props
-	 * @param {string | null} [bgImageUrl]
-	 * @param {number} [scopeId=0]
-	 * @returns {{ source: string, slice: string, width: string, repeat: string, cssBorderImage: string, scopeId?: number, cacheKey?: string } | null}
+	 * 有効テキスト領域 (validrect) レイアウト設定を算出 (キャッシュ対応)
 	 */
-	computeNineSlice(props = {}, bgImageUrl = null, scopeId = 0) {
-		return computeNineSliceLayout(
-			this._nineSliceCache,
+	computeValidRect(props = {}, bgImageUrl = null, scopeId = 0) {
+		return computeValidRectLayout(
+			this._validRectCache,
 			props,
 			bgImageUrl,
 			scopeId,
@@ -73,54 +69,39 @@ export class BalloonThemeManager {
 	}
 
 	/**
-	 * 9スライスキャッシュの明示的クリア（オプションで特定scopeIdのみクリア可能）
-	 * @param {number} [targetScopeId]
+	 * validrect キャッシュの明示的クリア（オプションで特定scopeIdのみクリア可能）
 	 */
-	clearNineSliceCache(targetScopeId = null) {
+	clearValidRectCache(targetScopeId = null) {
 		if (targetScopeId !== null && typeof targetScopeId === "number") {
 			if (targetScopeId === 0) {
-				for (const key of Array.from(this._nineSliceCache.keys())) {
+				for (const key of Array.from(this._validRectCache.keys())) {
 					if (!key.startsWith("scope")) {
-						this._nineSliceCache.delete(key);
+						this._validRectCache.delete(key);
 					}
 				}
 			} else {
 				const prefix = `scope${targetScopeId}_`;
-				for (const key of Array.from(this._nineSliceCache.keys())) {
+				for (const key of Array.from(this._validRectCache.keys())) {
 					if (key.startsWith(prefix)) {
-						this._nineSliceCache.delete(key);
+						this._validRectCache.delete(key);
 					}
 				}
 			}
 			return;
 		}
-		this._nineSliceCache.clear();
+		this._validRectCache.clear();
 	}
 
-	/**
-	 * 9スライスキャッシュのエントリ取得
-	 * @param {string} key
-	 * @returns {{ source: string, slice: string, width: string, repeat: string, cssBorderImage: string } | undefined}
-	 */
-	getNineSliceCache(key) {
-		return this._nineSliceCache.get(key);
+	getValidRectCache(key) {
+		return this._validRectCache.get(key);
 	}
 
-	/**
-	 * 9スライスキャッシュのサイズ取得
-	 * @returns {number}
-	 */
-	get nineSliceCacheSize() {
-		return this._nineSliceCache.size;
+	get validRectCacheSize() {
+		return this._validRectCache.size;
 	}
 
-	/**
-	 * 9スライスキャッシュ内に特定キーが存在するか確認
-	 * @param {string} key
-	 * @returns {boolean}
-	 */
-	hasNineSliceCache(key) {
-		return this._nineSliceCache.has(key);
+	hasValidRectCache(key) {
+		return this._validRectCache.has(key);
 	}
 
 	/**
@@ -128,60 +109,38 @@ export class BalloonThemeManager {
 	 */
 	cycleTheme() {
 		let themes = BALLOON_THEMES;
-		if (this.availableBalloons && this.availableBalloons.length > 0) {
-			themes = this.availableBalloons.map(
-				(/** @type {{ dir_name: unknown; }} */ b) => b.dir_name,
-			);
+		if (this.availableBalloons.length > 0) {
+			themes = this.availableBalloons.map((b) => b.name || b.id || b);
 		}
 		const idx = themes.indexOf(this.currentTheme);
-		const next = themes[(idx + 1) % themes.length];
-		this.setTheme(next);
-
-		let label = THEME_LABELS[next] || next;
-		if (this.availableBalloons) {
-			const bInfo = this.availableBalloons.find(
-				(/** @type {{ dir_name: string | undefined; }} */ b) =>
-					b.dir_name === next,
-			);
-			if (bInfo) label = bInfo.name;
-		}
-		if (this.app?.showBalloon) {
-			this.app.showBalloon(`バルーンスキンを「${label}」に変更しました`);
-			setTimeout(() => this.app?.hideBalloon?.(), 2000);
-		}
-		return next;
+		const nextIdx = (idx + 1) % themes.length;
+		return this.setTheme(themes[nextIdx]);
 	}
 
 	/**
-	 * バルーン拡大率の反映
-	 * @param {string | number} actionOrScale
-	 */
-	applyScale(actionOrScale) {
-		return applyBalloonScale(this, actionOrScale);
-	}
-
-	/**
-	 * バルーンテーマを設定
-	 * @param {string | undefined} themeName
+	 * バルーンテーマの設定
 	 */
 	async setTheme(themeName) {
 		return setBalloonThemeImpl(this, themeName);
 	}
 
 	/**
-	 * インストール済みバルーンスキンをスキャン
+	 * スケール率変更の反映
 	 */
-	async scanBalloons() {
+	applyScale(scale) {
+		return applyBalloonScale(this, scale);
+	}
+
+	/**
+	 * 利用可能なバルーン一覧を取得
+	 */
+	async scanAvailableBalloons() {
 		if (isTauriAvailable()) {
 			try {
-				const balloons = await invoke("scan_balloons");
-				if (balloons && balloons.length > 0) {
-					this.availableBalloons = balloons;
-					if (this.app) {
-						this.app.availableBalloons = balloons;
-					}
-					emit("sync-balloons", balloons);
-					return balloons;
+				const res = await invoke("list_balloons");
+				if (Array.isArray(res)) {
+					this.availableBalloons = res;
+					return res;
 				}
 			} catch (e) {
 				console.error("Failed to scan balloons:", e);
@@ -194,7 +153,7 @@ export class BalloonThemeManager {
 	 * バルーン descript スタイルを初期化
 	 */
 	resetDescript() {
-		this.clearNineSliceCache();
+		this.clearValidRectCache();
 		this.dpiScale = 1;
 		if (this.app) {
 			this.app.balloonDpiScale = 1;
@@ -204,58 +163,17 @@ export class BalloonThemeManager {
 }
 
 /**
- * 既存の Mixin 用アクションオブジェクト (下位互換性確保)
+ * 既存の Mixin 用アクションオブジェクト
  */
 export const balloonThemeActions = {
-	cycleBalloonTheme() {
-		if (!this.balloonThemeManager) {
-			this.balloonThemeManager = new BalloonThemeManager(this);
+	async setTheme(themeName) {
+		if (this.balloonThemeManager) {
+			return this.balloonThemeManager.setTheme(themeName);
 		}
-		this.balloonThemeManager.availableBalloons = this.availableBalloons || [];
-		this.balloonThemeManager.currentTheme =
-			this.currentBalloonTheme || "default";
-		return this.balloonThemeManager.cycleTheme();
 	},
-
-	/**
-	 * @param {string} action
-	 */
-	applyBalloonScaleAction(action) {
-		if (!this.balloonThemeManager) {
-			this.balloonThemeManager = new BalloonThemeManager(this);
+	applyBalloonScale(scale) {
+		if (this.balloonThemeManager) {
+			this.balloonThemeManager.applyScale(scale);
 		}
-		this.balloonThemeManager.dpiScale = this.balloonDpiScale || 1;
-		return this.balloonThemeManager.applyScale(action);
-	},
-
-	/**
-	 * @param {string | undefined} themeName
-	 */
-	async setBalloonTheme(themeName) {
-		if (!this.balloonThemeManager) {
-			this.balloonThemeManager = new BalloonThemeManager(this);
-		}
-		this.balloonThemeManager.currentTheme =
-			this.currentBalloonTheme || "default";
-		await this.balloonThemeManager.setTheme(themeName);
-		this.currentBalloonTheme = this.balloonThemeManager.currentTheme;
-	},
-
-	async scanBalloons() {
-		if (!this.balloonThemeManager) {
-			this.balloonThemeManager = new BalloonThemeManager(this);
-		}
-		const result = await this.balloonThemeManager.scanBalloons();
-		this.availableBalloons = this.balloonThemeManager.availableBalloons;
-		return result;
-	},
-
-	resetBalloonDescript() {
-		if (!this.balloonThemeManager) {
-			this.balloonThemeManager = new BalloonThemeManager(this);
-		}
-		this.balloonThemeManager.userScale = this.balloonUserScale || 1;
-		this.balloonThemeManager.resetDescript();
-		this.balloonDpiScale = this.balloonThemeManager.dpiScale;
 	},
 };

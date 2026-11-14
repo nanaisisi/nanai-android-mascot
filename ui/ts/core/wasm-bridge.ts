@@ -3,7 +3,7 @@
  * @brief WASM モジュールバインディングの統合ファサード (モジュール構成: ui/ts/core/wasm/)
  */
 
-import { computeBalloonTextLayoutWasm } from "./wasm/wasm-layout.js";
+import { computeBalloonTextLayoutWasm, computeValidRectLayoutWasm } from "./wasm/wasm-layout.js";
 import { wasmMemory } from "./wasm/wasm-memory.js";
 import {
 	buildSaoriRequestWasm,
@@ -40,6 +40,7 @@ export type {
 	AnimationPattern,
 	AnimationState,
 	BalloonLayoutResult,
+	ValidRectLayoutResult,
 	DescriptManifest,
 	SakuraToken,
 	SstpRequest,
@@ -97,6 +98,28 @@ class WasmBridgeFacade {
 			fontSize,
 			lineHeight,
 			paddingX,
+		);
+	}
+
+	public computeValidRectLayout(
+		validrectLeft?: number,
+		validrectTop?: number,
+		validrectRight?: number,
+		validrectBottom?: number,
+		borderRepeat?: string,
+		balloonImage?: string,
+		bgImageUrl?: string,
+		scopeId = 0,
+	) {
+		return computeValidRectLayoutWasm(
+			validrectLeft,
+			validrectTop,
+			validrectRight,
+			validrectBottom,
+			borderRepeat,
+			balloonImage,
+			bgImageUrl,
+			scopeId,
 		);
 	}
 

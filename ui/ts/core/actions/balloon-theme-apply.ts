@@ -33,7 +33,7 @@ export interface BalloonThemeManagerInterface {
 		applyBalloonDescript?: (props: unknown) => unknown;
 		[key: string]: unknown;
 	};
-	clearNineSliceCache: () => void;
+	clearValidRectCache: () => void;
 	resetDescript: () => void;
 	[key: string]: unknown;
 }
@@ -170,7 +170,7 @@ export async function setBalloonThemeImpl(
 		}
 	}
 
-	manager.clearNineSliceCache();
+	manager.clearValidRectCache();
 	manager.resetDescript();
 	if (isTauriAvailable()) {
 		try {

@@ -19,6 +19,89 @@ pub struct BalloonLayoutResult {
     pub line_count: u32,
 }
 
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
+pub struct ValidRectLayoutResult {
+    pub source: String,
+    pub slice: String,
+    pub width: String,
+    pub repeat: String,
+    #[serde(rename = "cssBorderImage")]
+    pub css_border_image: String,
+    #[serde(rename = "scopeId")]
+    pub scope_id: u32,
+    #[serde(rename = "cacheKey")]
+    pub cache_key: String,
+}
+
+/// 有効テキスト表示領域 (validrect) および背景画像設定からレイアウトを算出
+pub fn compute_validrect_layout(
+    validrect_left: Option<i32>,
+    validrect_top: Option<i32>,
+    validrect_right: Option<i32>,
+    validrect_bottom: Option<i32>,
+    border_repeat: Option<&str>,
+    balloon_image: Option<&str>,
+    bg_image_url: Option<&str>,
+    scope_id: u32,
+) -> ValidRectLayoutResult {
+    let t = validrect_top.filter(|&v| v >= 0).map_or(16, |v| v.max(8));
+    let r = validrect_right.filter(|&v| v >= 0).map_or(16, |v| v.max(8));
+    let b = validrect_bottom.filter(|&v| v >= 0).map_or(16, |v| v.max(8));
+    let l = validrect_left.filter(|&v| v >= 0).map_or(16, |v| v.max(8));
+
+    let repeat = border_repeat.unwrap_or("repeat");
+    let source = bg_image_url.or(balloon_image).unwrap_or("");
+
+    let cache_key = if scope_id > 0 {
+        format!("scope{}_{}_{}_{}_{}_{}_{}", scope_id, t, r, b, l, repeat, source)
+    } else {
+        format!("{}_{}_{}_{}_{}_{}", t, r, b, l, repeat, source)
+    };
+
+    let slice = format!("{} {} {} {} fill", t, r, b, l);
+    let width = format!("{}px {}px {}px {}px", t, r, b, l);
+
+    let css_border_image = if !source.is_empty() {
+        format!("url(\"{}\") {} {} {} {} fill / {} {}", source, t, r, b, l, width, repeat)
+    } else {
+        String::new()
+    };
+
+    ValidRectLayoutResult {
+        source: source.to_string(),
+        slice,
+        width,
+        repeat: repeat.to_string(),
+        css_border_image,
+        scope_id,
+        cache_key,
+    }
+}
+
+#[wasm_bindgen]
+pub fn wasm_compute_validrect_layout(
+    validrect_left: Option<i32>,
+    validrect_top: Option<i32>,
+    validrect_right: Option<i32>,
+    validrect_bottom: Option<i32>,
+    border_repeat: Option<String>,
+    balloon_image: Option<String>,
+    bg_image_url: Option<String>,
+    scope_id: u32,
+) -> Result<JsValue, JsValue> {
+    let res = compute_validrect_layout(
+        validrect_left,
+        validrect_top,
+        validrect_right,
+        validrect_bottom,
+        border_repeat.as_deref(),
+        balloon_image.as_deref(),
+        bg_image_url.as_deref(),
+        scope_id,
+    );
+    Ok(serde_wasm_bindgen::to_value(&res)?)
+}
+
 /// バルーン内テキストの自動改行・レイアウトサイズ計算
 pub fn compute_balloon_text_layout(
     text: &str,

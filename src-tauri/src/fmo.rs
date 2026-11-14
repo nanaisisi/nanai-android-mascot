@@ -9,22 +9,60 @@ use std::collections::HashMap;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FmoGhostStatus {
-    pub name: String,
+    name: String,
     #[serde(default)]
-    pub keroname: String,
-    pub surface0: u32,
-    pub surface1: u32,
-    pub balloon0: String,
-    pub balloon1: String,
+    keroname: String,
+    surface0: u32,
+    surface1: u32,
+    balloon0: String,
+    balloon1: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub kerohwnd: Option<u64>,
+    kerohwnd: Option<u64>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub modulestate: Option<String>,
-    pub path: String,
+    modulestate: Option<String>,
+    path: String,
     #[serde(default = "default_true")]
-    pub is_visible: bool,
+    is_visible: bool,
     #[serde(default = "default_active")]
-    pub lifecycle_state: String,
+    lifecycle_state: String,
+}
+
+#[allow(dead_code)]
+impl FmoGhostStatus {
+    // Add getter methods
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+    pub fn keroname(&self) -> &str {
+        &self.keroname
+    }
+    pub fn surface0(&self) -> u32 {
+        self.surface0
+    }
+    pub fn surface1(&self) -> u32 {
+        self.surface1
+    }
+    pub fn balloon0(&self) -> &str {
+        &self.balloon0
+    }
+    pub fn balloon1(&self) -> &str {
+        &self.balloon1
+    }
+    pub fn kerohwnd(&self) -> Option<u64> {
+        self.kerohwnd
+    }
+    pub fn modulestate(&self) -> Option<&str> {
+        self.modulestate.as_deref()
+    }
+    pub fn path(&self) -> &str {
+        &self.path
+    }
+    pub fn is_visible(&self) -> bool {
+        self.is_visible
+    }
+    pub fn lifecycle_state(&self) -> &str {
+        &self.lifecycle_state
+    }
 }
 
 fn default_true() -> bool {
@@ -37,9 +75,23 @@ fn default_active() -> String {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FmoSystemStatus {
-    pub ghosts: HashMap<String, FmoGhostStatus>,
-    pub hwnd: u64,
-    pub craftman: String,
+    ghosts: HashMap<String, FmoGhostStatus>,
+    hwnd: u64,
+    craftman: String,
+}
+
+#[allow(dead_code)]
+impl FmoSystemStatus {
+    // Add getter methods
+    pub fn ghosts(&self) -> &HashMap<String, FmoGhostStatus> {
+        &self.ghosts
+    }
+    pub fn hwnd(&self) -> u64 {
+        self.hwnd
+    }
+    pub fn craftman(&self) -> &str {
+        &self.craftman
+    }
 }
 
 /// 現在の FMO 状態を取得する Tauri コマンド (UKADOC FMO 規格準拠)

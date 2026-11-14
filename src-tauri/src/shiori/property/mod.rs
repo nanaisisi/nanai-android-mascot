@@ -12,7 +12,18 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PropertyQueryRequest {
-    pub query: String,
+    query: String,
+}
+
+impl PropertyQueryRequest {
+    pub fn new(query: String) -> Self {
+        Self { query }
+    }
+
+    // Add getter methods
+    pub fn query(&self) -> &str {
+        &self.query
+    }
 }
 
 #[tauri::command]

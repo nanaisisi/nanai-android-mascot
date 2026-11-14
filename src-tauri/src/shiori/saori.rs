@@ -9,16 +9,56 @@ use std::path::Path;
 /// SAORI 1.0 リクエスト
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SaoriRequest {
-    pub dll_path: String,
-    pub args: Vec<String>,
+    dll_path: String,
+    args: Vec<String>,
+}
+
+#[allow(dead_code)]
+impl SaoriRequest {
+    pub fn new(dll_path: String, args: Vec<String>) -> Self {
+        Self { dll_path, args }
+    }
+
+    // Add getter methods
+    pub fn dll_path(&self) -> &str {
+        &self.dll_path
+    }
+
+    pub fn args(&self) -> &[String] {
+        &self.args
+    }
 }
 
 /// SAORI 1.0 レスポンス
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SaoriResponse {
-    pub status: String,
-    pub value: String,
-    pub headers: HashMap<String, String>,
+    status: String,
+    value: String,
+    headers: HashMap<String, String>,
+}
+
+#[allow(dead_code)]
+impl SaoriResponse {
+    pub fn new(status: String, value: String, headers: HashMap<String, String>) -> Self {
+        Self {
+            status,
+            value,
+            headers,
+        }
+    }
+
+    // Add getter methods
+    pub fn status(&self) -> &str {
+        &self.status
+    }
+
+    pub fn value(&self) -> &str {
+        &self.value
+    }
+
+    pub fn headers(&self) -> &HashMap<String, String> {
+        &self.headers
+    }
 }
 
 struct ExecuteSaoriExInternalParams<'a> {
@@ -88,23 +128,24 @@ fn execute_saori_ex_internal(params: ExecuteSaoriExInternalParams<'_>) -> Option
 pub async fn execute_saori(request: SaoriRequest) -> Result<SaoriResponse, String> {
     println!(
         "🔌 EXECUTE SAORI/1.0: dll={:?}, args={:?}",
-        request.dll_path, request.args
+        request.dll_path(),
+        request.args()
     );
 
     let mut value = None;
 
-    let parts: Vec<&str> = request.dll_path.split(['.', '/']).collect();
+    let parts: Vec<&str> = request.dll_path().split(['.', '/']).collect();
     if let Some(module) = parts.first() {
         let function = parts.get(1).unwrap_or(&"");
         value = execute_saori_ex_internal(ExecuteSaoriExInternalParams {
             module,
             function,
-            args: &request.args,
+            args: request.args(),
         });
     }
 
     if value.is_none() {
-        let path = Path::new(&request.dll_path);
+        let path = Path::new(request.dll_path());
         // ローカル DLL ファイルが存在する場合、サイドルート設定と共にネイティブロードを試行
         #[cfg(not(target_os = "android"))]
         if path.is_file()
@@ -120,7 +161,7 @@ pub async fn execute_saori(request: SaoriRequest) -> Result<SaoriResponse, Strin
                 let parent = path.parent().unwrap_or(path);
                 if engine.load_engine(parent).is_ok() {
                     let mut req_text = String::from("EXECUTE SAORI/1.0\r\nCharset: UTF-8\r\n");
-                    for (i, arg) in request.args.iter().enumerate() {
+                    for (i, arg) in request.args().iter().enumerate() {
                         req_text.push_str(&format!("Argument{}: {}\r\n", i, arg));
                     }
                     req_text.push_str("\r\n");
@@ -143,9 +184,9 @@ pub async fn execute_saori(request: SaoriRequest) -> Result<SaoriResponse, Strin
         }
 
         if value.is_none() {
-            let lower_path = request.dll_path.to_lowercase();
+            let lower_path = request.dll_path().to_lowercase();
             value = Some(if lower_path.contains("calc") {
-                if let Some(expr) = request.args.first() {
+                if let Some(expr) = request.args().first() {
                     format!("Result: {}", expr.len() * 2)
                 } else {
                     "0".to_string()
@@ -160,7 +201,7 @@ pub async fn execute_saori(request: SaoriRequest) -> Result<SaoriResponse, Strin
             } else {
                 format!(
                     "Nanai SAORI Stub: executed successfully with {} args",
-                    request.args.len()
+                    request.args().len()
                 )
             });
         }
@@ -169,11 +210,11 @@ pub async fn execute_saori(request: SaoriRequest) -> Result<SaoriResponse, Strin
     let mut headers = HashMap::new();
     headers.insert("Sender".to_string(), "Nanai-SAORI-Host".to_string());
 
-    Ok(SaoriResponse {
-        status: "200 OK".to_string(),
-        value: value.unwrap_or_default(),
+    Ok(SaoriResponse::new(
+        "200 OK".to_string(),
+        value.unwrap_or_default(),
         headers,
-    })
+    ))
 }
 
 #[cfg(test)]
@@ -182,23 +223,17 @@ mod tests {
 
     #[tokio::test]
     async fn test_execute_saori_internal() {
-        let req = SaoriRequest {
-            dll_path: "internal_random.Number".to_string(),
-            args: vec!["10".to_string()],
-        };
+        let req = SaoriRequest::new("internal_random.Number".to_string(), vec!["10".to_string()]);
         let res = execute_saori(req).await.unwrap();
-        assert_eq!(res.status, "200 OK");
-        assert!(!res.value.is_empty());
+        assert_eq!(res.status(), "200 OK");
+        assert!(!res.value().is_empty());
     }
 
     #[tokio::test]
     async fn test_execute_saori_calc_fallback() {
-        let req = SaoriRequest {
-            dll_path: "saori/calc.dll".to_string(),
-            args: vec!["1+1".to_string()],
-        };
+        let req = SaoriRequest::new("saori/calc.dll".to_string(), vec!["1+1".to_string()]);
         let res = execute_saori(req).await.unwrap();
-        assert_eq!(res.status, "200 OK");
-        assert_eq!(res.value, "Result: 6");
+        assert_eq!(res.status(), "200 OK");
+        assert_eq!(res.value(), "Result: 6");
     }
 }

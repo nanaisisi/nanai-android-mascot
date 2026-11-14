@@ -5,15 +5,16 @@ use std::path::PathBuf;
 
 #[derive(serde::Serialize, Clone)]
 pub struct BalloonInfo {
-    pub dir_name: String,
-    pub name: String,
-    pub descript: std::collections::BTreeMap<String, String>,
-    pub thumbnail: Option<String>,
-    pub readme: Option<String>,
+    dir_name: String,
+    name: String,
+    descript: std::collections::BTreeMap<String, String>,
+    thumbnail: Option<String>,
+    readme: Option<String>,
 }
 
 #[allow(dead_code)]
 impl BalloonInfo {
+    // Add getter methods
     pub fn dir_name(&self) -> &str {
         &self.dir_name
     }
@@ -120,9 +121,22 @@ pub fn get_balloon_readme(
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct BalloonManifestParams {
-    pub name: String,
-    pub scope_id: Option<i32>,
-    pub surface_id: Option<i32>,
+    name: String,
+    scope_id: Option<i32>,
+    surface_id: Option<i32>,
+}
+
+impl BalloonManifestParams {
+    // Add getter methods
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+    pub fn scope_id(&self) -> Option<i32> {
+        self.scope_id
+    }
+    pub fn surface_id(&self) -> Option<i32> {
+        self.surface_id
+    }
 }
 
 #[tauri::command]
@@ -130,12 +144,10 @@ pub fn balloon_manifest(
     params: BalloonManifestParams,
     app_handle: tauri::AppHandle,
 ) -> Result<std::collections::BTreeMap<String, String>, String> {
-    let BalloonManifestParams {
-        name,
-        scope_id,
-        surface_id,
-    } = params;
-    let dir = resolve_balloon_dir(&name, &app_handle)?;
+    let name = params.name();
+    let scope_id = params.scope_id();
+    let surface_id = params.surface_id();
+    let dir = resolve_balloon_dir(name, &app_handle)?;
     let mut map = balloon_descript_map(&dir);
 
     if let Some(sid) = scope_id {

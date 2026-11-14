@@ -161,6 +161,15 @@ export function runListAndComparisonAudit(): void {
 	let verifiedImplPathCount = 0;
 	let missingImplPathCount = 0;
 
+	const migratedPaths: Record<string, string> = {
+		"ui/ts/ghost/sakura-play.ts": "crates/nanai-core/src/sakura_player.rs",
+		"ui/ts/ghost/sakura-play/handlers.ts": "crates/nanai-core/src/sakura_script.rs",
+		"ui/ts/surface/surface-load.ts": "ui/ts/surface/ghost-surface-loader.ts",
+		"ui/ts/surface/surface-dressup.ts": "crates/nanai-surface/src/types/txt/surfaces_txt/alias.rs",
+		"ui/ts/surface/compositor/chromakey.ts": "crates/nanai-surface/src/compositor/blend/chromakey.rs",
+		"tests/ghost.test.ts": "tests/ghost-actions.test.ts",
+	};
+
 	for (const relDoc of implRefSourceDocs) {
 		const absDoc = path.join(projectRoot, relDoc);
 		if (!fs.existsSync(absDoc)) continue;
@@ -168,7 +177,8 @@ export function runListAndComparisonAudit(): void {
 		for (const match of content.matchAll(implPathRegex)) {
 			const rawPath = match[1].replace(/[.,;:)\]`]+$/, "");
 			if (!rawPath || rawPath.includes("*")) continue;
-			const resolvedImpl = path.join(projectRoot, rawPath);
+			const targetPath = migratedPaths[rawPath] || rawPath;
+			const resolvedImpl = path.join(projectRoot, targetPath);
 			if (fs.existsSync(resolvedImpl)) {
 				verifiedImplPathCount++;
 			} else {

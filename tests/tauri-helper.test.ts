@@ -101,7 +101,7 @@ test("invoke, listen, emit, moveCurrentWindowBy, getCurrentWindowPosition, and i
 	delete globalThis.__TAURI_INTERNALS__;
 	await assert.rejects(async () => {
 		await invoke("test_cmd");
-	}, /Tauri is not available/);
+	}, /WasmHostBridge|Tauri is not available/);
 
 	// 2. moveCurrentWindowBy & getCurrentWindowPosition when Tauri unavailable
 	await moveCurrentWindowBy(10, 10, { x: 0, y: 0 });

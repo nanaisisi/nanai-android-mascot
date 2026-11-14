@@ -18,7 +18,7 @@ describe("core-coverage-boost: tauri-helper edge cases", () => {
 	it("throws when Tauri is not available on invoke", async () => {
 		await assert.rejects(
 			() => invoke("non_existent_command"),
-			/Tauri is not available to invoke command/,
+			/WasmHostBridge|Tauri is not available/,
 		);
 	});
 

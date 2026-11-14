@@ -48,9 +48,28 @@ pub(super) fn validate_update_path(path: &str) -> Result<(), String> {
 }
 
 pub struct ReportProgressParams<'a> {
-    pub phase: &'a str,
-    pub path: &'a str,
-    pub detail: Option<&'a str>,
+    phase: &'a str,
+    path: &'a str,
+    detail: Option<&'a str>,
+}
+
+impl<'a> ReportProgressParams<'a> {
+    pub fn new(phase: &'a str, path: &'a str, detail: Option<&'a str>) -> Self {
+        Self { phase, path, detail }
+    }
+
+    // Add getter methods
+    pub fn phase(&self) -> &'a str {
+        self.phase
+    }
+
+    pub fn path(&self) -> &'a str {
+        self.path
+    }
+
+    pub fn detail(&self) -> Option<&'a str> {
+        self.detail
+    }
 }
 
 /// 1ファイルごとの更新進捗をフロントエンドへ通知
@@ -59,7 +78,10 @@ pub(super) fn report_progress(
     app_handle: &tauri::AppHandle,
     params: ReportProgressParams<'_>,
 ) {
-    let ReportProgressParams { phase, path, detail } = params;
-    let payload = serde_json::json!({ "phase": phase, "path": path, "detail": detail });
+    let payload = serde_json::json!({
+        "phase": params.phase(),
+        "path": params.path(),
+        "detail": params.detail()
+    });
     let _ = app_handle.emit("update-progress", payload);
 }

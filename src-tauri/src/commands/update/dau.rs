@@ -7,20 +7,80 @@ use std::path::Path;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct UpdateCheckResult {
-    pub has_update: bool,
-    pub homeurl: String,
-    pub ghost_name: String,
-    pub update_files: Vec<UpdateEntry>,
-    pub total_count: usize,
-    pub message: String,
+    has_update: bool,
+    homeurl: String,
+    ghost_name: String,
+    update_files: Vec<UpdateEntry>,
+    total_count: usize,
+    message: String,
+}
+
+impl UpdateCheckResult {
+    pub fn new(
+        has_update: bool,
+        homeurl: String,
+        ghost_name: String,
+        update_files: Vec<UpdateEntry>,
+        total_count: usize,
+        message: String,
+    ) -> Self {
+        Self {
+            has_update,
+            homeurl,
+            ghost_name,
+            update_files,
+            total_count,
+            message,
+        }
+    }
+
+    // Add getter methods
+    pub fn has_update(&self) -> bool {
+        self.has_update
+    }
+
+    pub fn homeurl(&self) -> &str {
+        &self.homeurl
+    }
+
+    pub fn ghost_name(&self) -> &str {
+        &self.ghost_name
+    }
+
+    pub fn update_files(&self) -> &[UpdateEntry] {
+        &self.update_files
+    }
+
+    #[allow(dead_code)]
+    pub fn total_count(&self) -> usize {
+        self.total_count
+    }
+
+    #[allow(dead_code)]
+    pub fn message(&self) -> &str {
+        &self.message
+    }
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct UpdateExecutionResult {
-    pub success: bool,
-    pub reason: String, // "changed", "none", "timeout", "md5 miss", "404", "fileio", etc.
-    pub updated_files: Vec<String>,
-    pub ghost_name: String,
+    success: bool,
+    reason: String, // "changed", "none", "timeout", "md5 miss", "404", "fileio", etc.
+    updated_files: Vec<String>,
+    ghost_name: String,
+}
+
+#[allow(dead_code)]
+impl UpdateExecutionResult {
+    pub fn new(success: bool, reason: String, updated_files: Vec<String>, ghost_name: String) -> Self {
+        Self { success, reason, updated_files, ghost_name }
+    }
+
+    // Add getter methods
+    pub fn success(&self) -> bool { self.success }
+    pub fn reason(&self) -> &str { &self.reason }
+    pub fn updated_files(&self) -> &[String] { &self.updated_files }
+    pub fn ghost_name(&self) -> &str { &self.ghost_name }
 }
 
 /// ローカルファイルの MD5 ハッシュを計算

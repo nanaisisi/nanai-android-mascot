@@ -81,13 +81,13 @@ pub fn open_file(path: String, app_handle: tauri::AppHandle<tauri::Wry>) -> Resu
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct LoadSurfaceImageParams {
-    pub ghost_path: String,
-    pub shell_name: String,
-    pub surface_id: String,
+    ghost_path: String,
+    shell_name: String,
+    surface_id: String,
 }
 
-#[allow(dead_code)]
 impl LoadSurfaceImageParams {
+    // Add getter methods
     pub fn ghost_path(&self) -> &str { &self.ghost_path }
     pub fn shell_name(&self) -> &str { &self.shell_name }
     pub fn surface_id(&self) -> &str { &self.surface_id }
@@ -99,7 +99,9 @@ pub fn load_surface_image(
     params: LoadSurfaceImageParams,
     app_handle: tauri::AppHandle<tauri::Wry>,
 ) -> Result<String, String> {
-    let LoadSurfaceImageParams { ghost_path, shell_name, surface_id } = params;
+    let ghost_path = params.ghost_path();
+    let shell_name = params.shell_name();
+    let surface_id = params.surface_id();
     use std::fs;
     let clean_gp = clean_verbatim_path(&ghost_path);
     let base_ghost_path =
@@ -230,13 +232,13 @@ pub fn load_surface_image(
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct LoadSurfacePnaParams {
-    pub ghost_path: String,
-    pub shell_name: String,
-    pub surface_id: String,
+    ghost_path: String,
+    shell_name: String,
+    surface_id: String,
 }
 
-#[allow(dead_code)]
 impl LoadSurfacePnaParams {
+    // Add getter methods
     pub fn ghost_path(&self) -> &str { &self.ghost_path }
     pub fn shell_name(&self) -> &str { &self.shell_name }
     pub fn surface_id(&self) -> &str { &self.surface_id }
@@ -248,7 +250,9 @@ pub fn load_surface_pna(
     params: LoadSurfacePnaParams,
     app_handle: tauri::AppHandle<tauri::Wry>,
 ) -> Result<String, String> {
-    let LoadSurfacePnaParams { ghost_path, shell_name, surface_id } = params;
+    let ghost_path = params.ghost_path();
+    let shell_name = params.shell_name();
+    let surface_id = params.surface_id();
     use std::fs;
     let clean_gp = clean_verbatim_path(&ghost_path);
     let base_ghost_path =

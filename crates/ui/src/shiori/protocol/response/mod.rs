@@ -106,7 +106,15 @@ pub(super) fn is_header_key(key: &str) -> bool {
             .all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_')
 }
 
-pub(super) fn write_multiline_header(out: &mut String, name: &str, value: &str) {
+#[allow(non_camel_case_types)]
+pub(super) struct Write_multiline_headerParams<'a> {
+    pub out: &'a mut String,
+    pub name: &'a str,
+    pub value: &'a str,
+}
+
+pub(super) fn write_multiline_header(params: Write_multiline_headerParams<'_>) {
+    let Write_multiline_headerParams { out, name, value } = params;
     let mut lines = value.split('\n');
     let first = lines.next().unwrap_or("");
     out.push_str(&format!("{}: {}\r\n", name, first));
@@ -168,7 +176,11 @@ mod tests {
         push_continuation(&mut res_none, Some("value_notify"), "Ignored");
 
         let mut out = String::new();
-        write_multiline_header(&mut out, "Header", "Line1\nLine2");
+        write_multiline_header(Write_multiline_headerParams {
+            out: &mut out,
+            name: "Header",
+            value: "Line1\nLine2",
+        });
         assert!(out.contains("Header: Line1"));
         assert!(out.contains("Line2"));
     }

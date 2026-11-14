@@ -1,6 +1,6 @@
 //! SHIORI/3.0 レスポンスのテキスト生成実装
 
-use super::ShioriResponse;
+use super::{ShioriResponse, Write_multiline_headerParams};
 use super::write_multiline_header;
 use crate::shiori::types::*;
 
@@ -23,10 +23,18 @@ impl ShioriResponse {
             out.push_str(&format!("Sender: {}\r\n", sender));
         }
         if let Some(value) = &self.value {
-            write_multiline_header(&mut out, "Value", value);
+            write_multiline_header(Write_multiline_headerParams {
+                out: &mut out,
+                name: "Value",
+                value,
+            });
         }
         if let Some(value) = &self.value_notify {
-            write_multiline_header(&mut out, "ValueNotify", value);
+            write_multiline_header(Write_multiline_headerParams {
+                out: &mut out,
+                name: "ValueNotify",
+                value,
+            });
         }
         if let Some(level) = &self.security_level {
             out.push_str(&format!("SecurityLevel: {}\r\n", level.as_str()));

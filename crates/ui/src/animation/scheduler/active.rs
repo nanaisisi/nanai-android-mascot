@@ -7,20 +7,39 @@ use std::collections::HashSet;
 /// 実行中の単一アニメーションインスタンス状態
 #[derive(Debug, Clone)]
 pub struct ActiveAnimation {
-    pub animation_id: u32,
-    pub base_surface_id: i32,
-    pub patterns: Vec<AnimationPattern>,
-    pub current_pattern_index: usize,
-    pub elapsed_ms: u32,
-    pub next_step_at_ms: u32,
-    pub is_paused: bool,
-    pub is_finished: bool,
-    pub is_background: bool,
-    pub is_exclusive: bool,
-    pub exclusive_targets: Option<HashSet<u32>>,
-    pub is_shared_index: bool,
-    pub offset_x: i32,
-    pub offset_y: i32,
+    pub(crate) animation_id: u32,
+    pub(crate) base_surface_id: i32,
+    pub(crate) patterns: Vec<AnimationPattern>,
+    pub(crate) current_pattern_index: usize,
+    pub(crate) elapsed_ms: u32,
+    pub(crate) next_step_at_ms: u32,
+    pub(crate) is_paused: bool,
+    pub(crate) is_finished: bool,
+    pub(crate) is_background: bool,
+    pub(crate) is_exclusive: bool,
+    pub(crate) exclusive_targets: Option<HashSet<u32>>,
+    pub(crate) is_shared_index: bool,
+    pub(crate) offset_x: i32,
+    pub(crate) offset_y: i32,
+}
+
+#[allow(dead_code)]
+impl ActiveAnimation {
+    // Add getter methods
+    pub fn animation_id(&self) -> u32 { self.animation_id }
+    pub fn base_surface_id(&self) -> i32 { self.base_surface_id }
+    pub fn patterns(&self) -> &[AnimationPattern] { &self.patterns }
+    pub fn current_pattern_index(&self) -> usize { self.current_pattern_index }
+    pub fn elapsed_ms(&self) -> u32 { self.elapsed_ms }
+    pub fn next_step_at_ms(&self) -> u32 { self.next_step_at_ms }
+    pub fn is_paused(&self) -> bool { self.is_paused }
+    pub fn is_finished(&self) -> bool { self.is_finished }
+    pub fn is_background(&self) -> bool { self.is_background }
+    pub fn is_exclusive(&self) -> bool { self.is_exclusive }
+    pub fn exclusive_targets(&self) -> Option<&HashSet<u32>> { self.exclusive_targets.as_ref() }
+    pub fn is_shared_index(&self) -> bool { self.is_shared_index }
+    pub fn offset_x(&self) -> i32 { self.offset_x }
+    pub fn offset_y(&self) -> i32 { self.offset_y }
 }
 
 impl ActiveAnimation {

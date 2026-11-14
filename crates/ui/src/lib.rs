@@ -8,7 +8,12 @@ pub mod script;
 pub mod shell;
 pub mod shiori;
 pub mod sstp;
-pub mod surfaces;
+pub mod surfaces_core;
+pub mod surfaces_integration;
+pub mod surfaces {
+    pub use super::surfaces_core::*;
+    pub use super::surfaces_integration::*;
+}
 pub mod surfacetable;
 pub mod update;
 pub mod vfs;
@@ -44,9 +49,11 @@ pub use shiori::{
     build_standard_capability_references, parse_sender_types,
 };
 pub use sstp::{IfGhostEntry, SstpMessage, SstpMethod, SstpRequest, SstpResponse, SstpStatusCode};
-pub use surfaces::{
+pub use surfaces_core::{
     BalloonOffset, CollisionArea, CollisionShape, CompositionLayer, CompositionPlan, DrawMethod,
     ElementDef, HitTestResult, Interval, SerikoAnimation, SortKind, SurfacesTxt,
+};
+pub use surfaces_integration::{
     parse_surfaces_txt,
 };
 pub use surfacetable::{

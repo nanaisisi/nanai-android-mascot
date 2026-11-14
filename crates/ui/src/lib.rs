@@ -25,7 +25,7 @@ pub use nanai_shiori_vm;
 pub use nanai_surface;
 pub use nanai_vfs;
 
-// 外部公開・後方互換のための再エクスポート
+// 外部公開 API の再エクスポート
 pub use animation::{
     ActiveAnimation, AnimationScheduler, FrameStepEvent, ScheduledFrame, Timeline, build_timeline,
     cycle_len_ms,

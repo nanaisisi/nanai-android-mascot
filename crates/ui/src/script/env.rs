@@ -1,12 +1,20 @@
 //! SakuraScript Environment Variable Interpolation
 //! [environmentvariable.md], [notes_environmentvariable.md]
 
-pub fn expand_sakura_script_env(
-    text: &str,
-    username: &str,
-    selfname: &str,
-    keroname: &str,
-) -> String {
+#[allow(non_camel_case_types)]
+pub struct Expand_sakura_script_envParams<'a> {
+    pub text: &'a str,
+    pub username: &'a str,
+    pub selfname: &'a str,
+    pub keroname: &'a str,
+}
+
+pub fn expand_sakura_script_env(params: Expand_sakura_script_envParams<'_>) -> String {
+    let text = params.text;
+    let username = params.username;
+    let selfname = params.selfname;
+    let keroname = params.keroname;
+
     let mut result = text.to_string();
 
     // Replace %property[...] queries
@@ -71,7 +79,12 @@ mod tests {
     #[test]
     fn test_expand_env() {
         let script = "%username, hello! Property: %property[username] %property[currentghost.name] %property[unknown_prop] %property[unclosed %m? %* \\%";
-        let expanded = expand_sakura_script_env(script, "TestUser", "Nanai", "Kero");
+        let expanded = expand_sakura_script_env(Expand_sakura_script_envParams {
+            text: script,
+            username: "TestUser",
+            selfname: "Nanai",
+            keroname: "Kero",
+        });
         assert!(expanded.contains("TestUser"));
         assert!(expanded.contains("Nanai"));
         assert!(expanded.contains("%property[unclosed"));

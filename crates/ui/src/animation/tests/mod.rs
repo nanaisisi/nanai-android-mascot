@@ -9,12 +9,29 @@ use super::*;
 use crate::surfaces_core_core::{DrawMethod, Interval};
 use crate::surfaces_core_integration::{AnimationPattern, SurfacesTxt};
 
-pub(crate) fn pattern(index: u32, surface: i32, wait: u32) -> AnimationPattern {
+pub(crate) struct PatternParams {
+    pub index: u32,
+    pub surface: i32,
+    pub wait: u32,
+}
+
+impl From<(u32, i32, u32)> for PatternParams {
+    fn from(t: (u32, i32, u32)) -> Self {
+        Self {
+            index: t.0,
+            surface: t.1,
+            wait: t.2,
+        }
+    }
+}
+
+pub(crate) fn pattern(params: impl Into<PatternParams>) -> AnimationPattern {
+    let p = params.into();
     AnimationPattern {
-        index,
+        index: p.index,
         method: DrawMethod::Overlay,
-        surface,
-        wait,
+        surface: p.surface,
+        wait: p.wait,
         wait_max: None,
         x: 0,
         y: 0,

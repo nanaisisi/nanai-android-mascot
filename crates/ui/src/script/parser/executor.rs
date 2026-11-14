@@ -1,13 +1,18 @@
 //! さくらスクリプト文字列の展開および逐次解釈（実行）ループ実装モジュール
 
 use crate::script::command::SakuraCommand;
-use crate::script::env::expand_sakura_script_env;
+use crate::script::env::{Expand_sakura_script_envParams, expand_sakura_script_env};
 use crate::script::parser::brackets;
 use crate::script::parser::brackets::handlers::handle_wait_short;
 
 /// さくらスクリプトのパーサと実行（内部コマンド）
 pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraCommand)) {
-    let expanded = expand_sakura_script_env(script, "User", "Nanai", "Kero");
+    let expanded = expand_sakura_script_env(Expand_sakura_script_envParams {
+        text: script,
+        username: "User",
+        selfname: "Nanai",
+        keroname: "Kero",
+    });
     let mut chars = expanded.chars().peekable();
     let mut buffer = String::new();
     while let Some(c) = chars.next() {

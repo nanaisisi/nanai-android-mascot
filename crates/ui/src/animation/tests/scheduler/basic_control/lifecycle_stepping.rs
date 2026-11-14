@@ -18,9 +18,9 @@ fn test_animation_scheduler_basic() {
         interval: Some(Interval::RunOnce),
         name: None,
         patterns: vec![
-            super::pattern(0, 101, 50),
-            super::pattern(1, 102, 50),
-            super::pattern(2, -1, 0),
+            super::pattern(PatternParams::new(0, 101, 50)),
+            super::pattern(PatternParams::new(1, 102, 50)),
+            super::pattern(PatternParams::new(2, -1, 0)),
         ],
         collisions: vec![],
         options: vec![],
@@ -62,7 +62,7 @@ fn test_animation_scheduler_pause_resume() {
         id: 5,
         interval: Some(Interval::Always),
         name: None,
-        patterns: vec![super::pattern(0, 10, 100)],
+        patterns: vec![super::pattern(PatternParams::new(0, 10, 100))],
         collisions: vec![],
         options: vec![],
     };
@@ -96,7 +96,10 @@ fn test_animation_scheduler_stop_and_offset() {
         id: 10,
         interval: Some(Interval::Always),
         name: Some("test_anim".to_string()),
-        patterns: vec![super::pattern(0, 100, 50), super::pattern(1, 101, 50)],
+        patterns: vec![
+            super::pattern(PatternParams::new(0, 100, 50)),
+            super::pattern(PatternParams::new(1, 101, 50)),
+        ],
         collisions: vec![],
         options: vec![],
     };
@@ -104,7 +107,7 @@ fn test_animation_scheduler_stop_and_offset() {
         id: 20,
         interval: Some(Interval::Always),
         name: Some("other_anim".to_string()),
-        patterns: vec![super::pattern(0, 200, 50)],
+        patterns: vec![super::pattern(PatternParams::new(0, 200, 50))],
         collisions: vec![],
         options: vec![],
     };

@@ -9,7 +9,7 @@ fn test_animation_scheduler_talk_and_bind() {
         id: 1,
         interval: Some(Interval::Custom("talk,2".into())),
         name: None,
-        patterns: vec![super::pattern(0, 20, 0)],
+        patterns: vec![super::pattern(PatternParams::new(0, 20, 0))],
         collisions: vec![],
         options: vec![],
     };
@@ -17,7 +17,7 @@ fn test_animation_scheduler_talk_and_bind() {
         id: 2,
         interval: Some(Interval::StartTalk),
         name: None,
-        patterns: vec![super::pattern(0, 21, 0)],
+        patterns: vec![super::pattern(PatternParams::new(0, 21, 0))],
         collisions: vec![],
         options: vec![],
     };
@@ -25,7 +25,7 @@ fn test_animation_scheduler_talk_and_bind() {
         id: 3,
         interval: Some(Interval::EndTalk),
         name: None,
-        patterns: vec![super::pattern(0, 22, 0)],
+        patterns: vec![super::pattern(PatternParams::new(0, 22, 0))],
         collisions: vec![],
         options: vec![],
     };
@@ -33,7 +33,7 @@ fn test_animation_scheduler_talk_and_bind() {
         id: 4,
         interval: Some(Interval::Bind),
         name: None,
-        patterns: vec![super::pattern(0, 23, 0)],
+        patterns: vec![super::pattern(PatternParams::new(0, 23, 0))],
         collisions: vec![],
         options: vec![],
     };
@@ -72,7 +72,7 @@ fn test_animation_scheduler_talk_and_bind() {
         id: 9,
         interval: Some(Interval::YenE),
         name: None,
-        patterns: vec![super::pattern(0, 99, 0)],
+        patterns: vec![super::pattern(PatternParams::new(0, 99, 0))],
         collisions: vec![],
         options: vec![],
     };
@@ -85,7 +85,7 @@ fn test_animation_scheduler_talk_and_bind() {
         id: 5,
         interval: Some(Interval::Bind),
         name: None,
-        patterns: vec![super::pattern(0, 50, 0)],
+        patterns: vec![super::pattern(PatternParams::new(0, 50, 0))],
         collisions: vec![],
         options: vec![],
     };
@@ -110,7 +110,10 @@ fn test_animation_scheduler_exclusive_and_background() {
         id: 1,
         interval: Some(Interval::Always),
         name: None,
-        patterns: vec![super::pattern(0, 101, 100), super::pattern(1, -1, 0)],
+        patterns: vec![
+            super::pattern(PatternParams::new(0, 101, 100)),
+            super::pattern(PatternParams::new(1, -1, 0)),
+        ],
         collisions: vec![],
         options: vec![],
     };
@@ -120,7 +123,10 @@ fn test_animation_scheduler_exclusive_and_background() {
         id: 2,
         interval: Some(Interval::Always),
         name: None,
-        patterns: vec![super::pattern(0, 102, 100), super::pattern(1, -1, 0)],
+        patterns: vec![
+            super::pattern(PatternParams::new(0, 102, 100)),
+            super::pattern(PatternParams::new(1, -1, 0)),
+        ],
         collisions: vec![],
         options: vec![vec!["background".into()]],
     };
@@ -130,7 +136,10 @@ fn test_animation_scheduler_exclusive_and_background() {
         id: 3,
         interval: Some(Interval::RunOnce),
         name: None,
-        patterns: vec![super::pattern(0, 103, 100), super::pattern(1, -1, 0)],
+        patterns: vec![
+            super::pattern(PatternParams::new(0, 103, 100)),
+            super::pattern(PatternParams::new(1, -1, 0)),
+        ],
         collisions: vec![],
         options: vec![vec!["exclusive".into()]],
     };
@@ -175,7 +184,7 @@ fn test_animation_scheduler_exclusive_selective_targets() {
         id: 1,
         interval: Some(Interval::Always),
         name: None,
-        patterns: vec![super::pattern(0, 101, 100)],
+        patterns: vec![super::pattern(PatternParams::new(0, 101, 100))],
         collisions: vec![],
         options: vec![],
     };
@@ -183,7 +192,7 @@ fn test_animation_scheduler_exclusive_selective_targets() {
         id: 2,
         interval: Some(Interval::Always),
         name: None,
-        patterns: vec![super::pattern(0, 102, 100)],
+        patterns: vec![super::pattern(PatternParams::new(0, 102, 100))],
         collisions: vec![],
         options: vec![],
     };
@@ -193,7 +202,7 @@ fn test_animation_scheduler_exclusive_selective_targets() {
         id: 3,
         interval: Some(Interval::RunOnce),
         name: None,
-        patterns: vec![super::pattern(0, 103, 100)],
+        patterns: vec![super::pattern(PatternParams::new(0, 103, 100))],
         collisions: vec![],
         options: vec![vec!["exclusive,(1)".into()]],
     };
@@ -220,9 +229,9 @@ fn test_animation_scheduler_shared_index() {
         interval: Some(Interval::RunOnce),
         name: None,
         patterns: vec![
-            super::pattern(0, 200, 50),
-            super::pattern(1, 201, 50),
-            super::pattern(2, 202, 50),
+            super::pattern(PatternParams::new(0, 200, 50)),
+            super::pattern(PatternParams::new(1, 201, 50)),
+            super::pattern(PatternParams::new(2, 202, 50)),
         ],
         collisions: vec![],
         options: vec![vec!["shared-index".into()]],
@@ -234,9 +243,9 @@ fn test_animation_scheduler_shared_index() {
         interval: Some(Interval::RunOnce),
         name: None,
         patterns: vec![
-            super::pattern(0, 300, 50),
-            super::pattern(1, 301, 50),
-            super::pattern(2, 302, 50),
+            super::pattern(PatternParams::new(0, 300, 50)),
+            super::pattern(PatternParams::new(1, 301, 50)),
+            super::pattern(PatternParams::new(2, 302, 50)),
         ],
         collisions: vec![],
         options: vec![vec!["shared-index".into()]],

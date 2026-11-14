@@ -32,15 +32,33 @@ pub struct FrameStepEvent {
 #[allow(dead_code)]
 impl FrameStepEvent {
     // Add getter methods
-    pub fn scope_id(&self) -> u32 { self.scope_id }
-    pub fn base_surface_id(&self) -> i32 { self.base_surface_id }
-    pub fn animation_id(&self) -> u32 { self.animation_id }
-    pub fn pattern(&self) -> &AnimationPattern { &self.pattern }
-    pub fn elapsed_ms(&self) -> u32 { self.elapsed_ms }
-    pub fn is_finished(&self) -> bool { self.is_finished }
-    pub fn is_background(&self) -> bool { self.is_background }
-    pub fn offset_x(&self) -> i32 { self.offset_x }
-    pub fn offset_y(&self) -> i32 { self.offset_y }
+    pub fn scope_id(&self) -> u32 {
+        self.scope_id
+    }
+    pub fn base_surface_id(&self) -> i32 {
+        self.base_surface_id
+    }
+    pub fn animation_id(&self) -> u32 {
+        self.animation_id
+    }
+    pub fn pattern(&self) -> &AnimationPattern {
+        &self.pattern
+    }
+    pub fn elapsed_ms(&self) -> u32 {
+        self.elapsed_ms
+    }
+    pub fn is_finished(&self) -> bool {
+        self.is_finished
+    }
+    pub fn is_background(&self) -> bool {
+        self.is_background
+    }
+    pub fn offset_x(&self) -> i32 {
+        self.offset_x
+    }
+    pub fn offset_y(&self) -> i32 {
+        self.offset_y
+    }
 }
 
 /// アニメーションオプション解析結果
@@ -59,10 +77,18 @@ pub struct ParsedAnimationOptions {
 #[allow(dead_code)]
 impl ParsedAnimationOptions {
     // Add getter methods
-    pub fn is_exclusive(&self) -> bool { self.is_exclusive }
-    pub fn exclusive_targets(&self) -> Option<&HashSet<u32>> { self.exclusive_targets.as_ref() }
-    pub fn is_background(&self) -> bool { self.is_background }
-    pub fn is_shared_index(&self) -> bool { self.is_shared_index }
+    pub fn is_exclusive(&self) -> bool {
+        self.is_exclusive
+    }
+    pub fn exclusive_targets(&self) -> Option<&HashSet<u32>> {
+        self.exclusive_targets.as_ref()
+    }
+    pub fn is_background(&self) -> bool {
+        self.is_background
+    }
+    pub fn is_shared_index(&self) -> bool {
+        self.is_shared_index
+    }
 }
 
 impl ParsedAnimationOptions {

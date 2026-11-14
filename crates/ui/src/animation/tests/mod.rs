@@ -15,6 +15,16 @@ pub(crate) struct PatternParams {
     pub wait: u32,
 }
 
+impl PatternParams {
+    pub const fn new(index: u32, surface: i32, wait: u32) -> Self {
+        Self {
+            index,
+            surface,
+            wait,
+        }
+    }
+}
+
 impl From<(u32, i32, u32)> for PatternParams {
     fn from(t: (u32, i32, u32)) -> Self {
         Self {
@@ -25,13 +35,12 @@ impl From<(u32, i32, u32)> for PatternParams {
     }
 }
 
-pub(crate) fn pattern(params: impl Into<PatternParams>) -> AnimationPattern {
-    let p = params.into();
+pub(crate) fn pattern(params: PatternParams) -> AnimationPattern {
     AnimationPattern {
-        index: p.index,
+        index: params.index,
         method: DrawMethod::Overlay,
-        surface: p.surface,
-        wait: p.wait,
+        surface: params.surface,
+        wait: params.wait,
         wait_max: None,
         x: 0,
         y: 0,

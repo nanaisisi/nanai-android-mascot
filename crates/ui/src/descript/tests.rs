@@ -17,26 +17,26 @@ fn test_descript_shell_extensions() {
         Some("https://example.ukagaka")
     );
     let defaults = desc.char_defaults("sakura");
-    assert_eq!(defaults.x, Some(120));
-    assert_eq!(defaults.y, Some(240));
+    assert_eq!(defaults.x(), Some(120));
+    assert_eq!(defaults.y(), Some(240));
 
     let option = desc.bindoption_group("sakura").unwrap();
-    assert_eq!(option.category, "服");
-    assert_eq!(option.options, vec!["multiple".to_string()]);
+    assert_eq!(option.category(), "服");
+    assert_eq!(option.options(), vec!["multiple".to_string()]);
 
     let sakura_groups = desc.bind_groups("sakura");
     assert_eq!(sakura_groups.len(), 1);
     let g = &sakura_groups[0];
-    assert_eq!(g.number, 100);
-    assert_eq!(g.category, "服");
-    assert_eq!(g.part, "和服");
-    assert_eq!(g.thumbnail.as_deref(), Some("thumb.png"));
-    assert!(g.default);
-    assert_eq!(g.add_ids, [101u32, 102]);
+    assert_eq!(g.number(), 100);
+    assert_eq!(g.category(), "服");
+    assert_eq!(g.part(), "和服");
+    assert_eq!(g.thumbnail(), Some("thumb.png"));
+    assert!(g.is_default());
+    assert_eq!(g.add_ids(), [101u32, 102]);
 
     let kero_groups = desc.bind_groups("kero");
     assert_eq!(kero_groups.len(), 1);
-    assert_eq!(kero_groups[0].part, "ヘッドドレス");
+    assert_eq!(kero_groups[0].part(), "ヘッドドレス");
 }
 
 #[test]
@@ -105,8 +105,8 @@ fn test_descript_parser_edge_cases() {
     let groups = desc.bind_groups("sakura");
     assert_eq!(groups.len(), 1);
     let defaults = desc.char_defaults("sakura");
-    assert_eq!(defaults.left, Some(10));
-    assert_eq!(defaults.top, Some(20));
+    assert_eq!(defaults.left(), Some(10));
+    assert_eq!(defaults.top(), Some(20));
 }
 
 #[test]

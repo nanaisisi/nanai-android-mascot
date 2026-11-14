@@ -2,14 +2,20 @@ use super::*;
 
 #[test]
 fn test_build_timeline() {
-    let patterns = vec![super::pattern(0, 6, 0), super::pattern(1, -1, 85)];
+    let patterns = vec![
+        super::pattern(PatternParams::new(0, 6, 0)),
+        super::pattern(PatternParams::new(1, -1, 85)),
+    ];
     let timeline = build_timeline(&patterns);
     assert_eq!(timeline[0].at_ms(), 0);
     assert_eq!(timeline[1].at_ms(), 85);
 
     assert_eq!(cycle_len_ms(&patterns), 170);
 
-    let shuffled = vec![super::pattern(1, -1, 85), super::pattern(0, 6, 0)];
+    let shuffled = vec![
+        super::pattern(PatternParams::new(1, -1, 85)),
+        super::pattern(PatternParams::new(0, 6, 0)),
+    ];
     let timeline = build_timeline(&shuffled);
     assert_eq!(timeline[0].pattern().surface, 6);
     assert_eq!(timeline[1].at_ms(), 85);
@@ -17,7 +23,10 @@ fn test_build_timeline() {
 
 #[test]
 fn test_frame_at() {
-    let patterns = vec![super::pattern(0, 6, 0), super::pattern(1, -1, 85)];
+    let patterns = vec![
+        super::pattern(PatternParams::new(0, 6, 0)),
+        super::pattern(PatternParams::new(1, -1, 85)),
+    ];
     let tl = Timeline::new(&patterns);
     assert_eq!(tl.frame_at(0).unwrap().pattern().surface, 6);
     assert_eq!(tl.frame_at(84).unwrap().pattern().surface, 6);
@@ -33,13 +42,17 @@ fn test_frame_at() {
 #[test]
 fn test_multi_frame_timeline() {
     let patterns = vec![
-        super::pattern(0, 9, 150),
-        super::pattern(1, 10, 150),
-        super::pattern(2, -1, 0),
+        super::pattern(PatternParams::new(0, 9, 150)),
+        super::pattern(PatternParams::new(1, 10, 150)),
+        super::pattern(PatternParams::new(2, -1, 0)),
     ];
     let timeline = build_timeline(&patterns);
     assert_eq!(
-        [timeline[0].at_ms(), timeline[1].at_ms(), timeline[2].at_ms()],
+        [
+            timeline[0].at_ms(),
+            timeline[1].at_ms(),
+            timeline[2].at_ms()
+        ],
         [150, 300, 300]
     );
     assert_eq!(cycle_len_ms(&patterns), 300);

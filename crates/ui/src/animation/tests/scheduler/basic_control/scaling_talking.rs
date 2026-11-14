@@ -76,7 +76,7 @@ fn test_animation_scheduler_scaling_and_talk_toggle() {
         id: 99,
         interval: Some(Interval::Talk),
         name: None,
-        patterns: vec![super::pattern(0, 10, 50)],
+        patterns: vec![super::pattern(PatternParams::new(0, 10, 50))],
         collisions: vec![],
         options: vec![],
     };

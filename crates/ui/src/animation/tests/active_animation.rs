@@ -8,7 +8,7 @@ use crate::animation::scheduler::ActiveAnimation;
 #[test]
 fn test_animation_extra_coverage() {
     assert_eq!(Interval::parse("random,0").fire_per_second(), Some(1.0));
-    let patterns = vec![super::pattern(0, 6, 100)];
+    let patterns = vec![super::pattern(PatternParams::new(0, 6, 100))];
     let tl = Timeline::new(&patterns);
     assert_eq!(tl.frames().len(), 1);
     assert_eq!(tl.total_ms(), 200);

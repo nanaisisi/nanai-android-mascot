@@ -135,8 +135,8 @@ impl Shell {
         self.descript
             .bind_groups(target)
             .into_iter()
-            .filter(|g| g.default)
-            .map(|g| g.number)
+            .filter(|g| g.is_default())
+            .map(|g| g.number())
             .collect()
     }
 

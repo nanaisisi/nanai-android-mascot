@@ -15,9 +15,9 @@ fn test_animation_scheduler_pattern_control_methods() {
         interval: Some(Interval::Never),
         name: None,
         patterns: vec![
-            super::pattern(0, 501, 100),
-            super::pattern(1, 502, 100),
-            super::pattern(2, -1, 100),
+            super::pattern(PatternParams::new(0, 501, 100)),
+            super::pattern(PatternParams::new(1, 502, 100)),
+            super::pattern(PatternParams::new(2, -1, 100)),
         ],
         collisions: vec![],
         options: vec![],

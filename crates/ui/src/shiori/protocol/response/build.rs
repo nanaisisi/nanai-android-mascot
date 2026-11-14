@@ -1,7 +1,7 @@
 //! SHIORI/3.0 レスポンスのテキスト生成実装
 
-use super::{ShioriResponse, Write_multiline_headerParams};
 use super::write_multiline_header;
+use super::{ShioriResponse, Write_multiline_headerParams};
 use crate::shiori::types::*;
 
 impl ShioriResponse {

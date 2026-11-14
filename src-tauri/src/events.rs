@@ -34,11 +34,7 @@ pub fn handle_menu_event(app_handle: &tauri::AppHandle, event: tauri::menu::Menu
             };
             let _ = crate::commands::window::show_menu_window(
                 app_h,
-                crate::commands::window::menu_window::ShowMenuWindowParams {
-                    x,
-                    y,
-                    scope: Some(0),
-                },
+                crate::commands::window::menu_window::ShowMenuWindowParams::new(x, y, Some(0)),
             )
             .await;
         });

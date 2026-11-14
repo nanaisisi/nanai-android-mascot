@@ -2,9 +2,28 @@ use tauri::Emitter;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ShowMenuWindowParams {
-    pub x: f64,
-    pub y: f64,
-    pub scope: Option<i32>,
+    x: f64,
+    y: f64,
+    scope: Option<i32>,
+}
+
+impl ShowMenuWindowParams {
+    pub fn new(x: f64, y: f64, scope: Option<i32>) -> Self {
+        Self { x, y, scope }
+    }
+
+    // Add getter methods
+    pub fn x(&self) -> f64 {
+        self.x
+    }
+
+    pub fn y(&self) -> f64 {
+        self.y
+    }
+
+    pub fn scope(&self) -> Option<i32> {
+        self.scope
+    }
 }
 
 /// バルーンスキン連動の独立ポップアップメニューウィンドウ表示コマンド (ウィンドウ枠外にはみ出して表示可能)
@@ -16,7 +35,10 @@ pub async fn show_menu_window(
     #[cfg(desktop)]
     {
         let app_handle = _app_handle;
-        let ShowMenuWindowParams { x, y, scope } = params;
+        let x = params.x();
+        let y = params.y();
+        let scope = params.scope();
+
         println!(
             "👉 show_menu_window called: x={}, y={}, scope={:?}",
             x, y, scope
@@ -134,11 +156,34 @@ pub async fn hide_menu_window(_app_handle: tauri::AppHandle) -> Result<(), Strin
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ShowSubmenuWindowParams {
-    pub menu_type: String,
-    pub x: f64,
-    pub y: f64,
-    pub width: Option<f64>,
-    pub height: Option<f64>,
+    menu_type: String,
+    x: f64,
+    y: f64,
+    width: Option<f64>,
+    height: Option<f64>,
+}
+
+impl ShowSubmenuWindowParams {
+    // Add getter methods
+    pub fn menu_type(&self) -> &str {
+        &self.menu_type
+    }
+
+    pub fn x(&self) -> f64 {
+        self.x
+    }
+
+    pub fn y(&self) -> f64 {
+        self.y
+    }
+
+    pub fn width(&self) -> Option<f64> {
+        self.width
+    }
+
+    pub fn height(&self) -> Option<f64> {
+        self.height
+    }
 }
 
 /// 独立サブメニューウィンドウ表示コマンド
@@ -150,13 +195,12 @@ pub async fn show_submenu_window(
     #[cfg(desktop)]
     {
         let app_handle = _app_handle;
-        let ShowSubmenuWindowParams {
-            menu_type,
-            x,
-            y,
-            width,
-            height,
-        } = params;
+        let menu_type = params.menu_type().to_string();
+        let x = params.x();
+        let y = params.y();
+        let width = params.width();
+        let height = params.height();
+
         use tauri::Manager;
         let win_width = width.unwrap_or(220.0);
         let win_height = height.unwrap_or(320.0);

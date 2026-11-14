@@ -1,10 +1,49 @@
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ShowCharacterWindowParams {
-    pub scope_id: i32,
-    pub x: Option<f64>,
-    pub y: Option<f64>,
-    pub width: Option<f64>,
-    pub height: Option<f64>,
+    scope_id: i32,
+    x: Option<f64>,
+    y: Option<f64>,
+    width: Option<f64>,
+    height: Option<f64>,
+}
+
+impl ShowCharacterWindowParams {
+    pub fn new(
+        scope_id: i32,
+        x: Option<f64>,
+        y: Option<f64>,
+        width: Option<f64>,
+        height: Option<f64>,
+    ) -> Self {
+        Self {
+            scope_id,
+            x,
+            y,
+            width,
+            height,
+        }
+    }
+
+    // Add getter methods
+    pub fn scope_id(&self) -> i32 {
+        self.scope_id
+    }
+
+    pub fn x(&self) -> Option<f64> {
+        self.x
+    }
+
+    pub fn y(&self) -> Option<f64> {
+        self.y
+    }
+
+    pub fn width(&self) -> Option<f64> {
+        self.width
+    }
+
+    pub fn height(&self) -> Option<f64> {
+        self.height
+    }
 }
 
 /// キャラクター（スコープ N）ウィンドウ表示コマンド (0=メイン, 1=サブ/うにゅ, 2以降=追加キャラ)
@@ -16,13 +55,12 @@ pub async fn show_character_window(
     #[cfg(desktop)]
     {
         let app_handle = _app_handle;
-        let ShowCharacterWindowParams {
-            scope_id,
-            x,
-            y,
-            width,
-            height,
-        } = params;
+        let scope_id = params.scope_id();
+        let x = params.x();
+        let y = params.y();
+        let width = params.width();
+        let height = params.height();
+
         println!(
             "🪟 [Rust Window] show_character_window 呼び出し: scope={}, width={:?}, height={:?}",
             scope_id, width, height
@@ -108,42 +146,24 @@ pub async fn show_character_window(
                 let screen_h = (size.height as f64) / scale;
 
                 // スコープ0 (メイン): 右下 (タスクバー上)
-                // スコープ1 (サブ/うにゅう): メインの左隣
-                target_x = if scope_id == 0 {
-                    screen_w - win_width - 260.0
+                if scope_id == 0 {
+                    target_x = screen_w - win_width - 80.0;
+                    target_y = screen_h - win_height - 120.0;
                 } else {
-                    screen_w - win_width - 40.0
-                };
-                target_y = (screen_h - win_height - 60.0).max(40.0);
+                    // スコープ1以降 (サブ): メインの左側等に並べる
+                    target_x = (screen_w - win_width - 320.0 - (scope_id as f64 * 220.0)).max(50.0);
+                    target_y = screen_h - win_height - 120.0;
+                }
             }
 
-            // スコープ0が既に存在する場合はそれを基準に横に並べる (スコープNに応じたオフセット)
-            if scope_id > 0
-                && let Some(char0_win) = app_handle.get_webview_window("subchar_window_0")
-                && let Ok(pos) = char0_win.outer_position()
-            {
-                let scale = char0_win
-                    .current_monitor()
-                    .unwrap_or(None)
-                    .map(|m| m.scale_factor())
-                    .unwrap_or(1.0);
-                target_x = (pos.x as f64 / scale) - (220.0 * scope_id as f64);
-                target_y = pos.y as f64 / scale;
-            }
-
-            let _ = sub_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
-                x: target_x,
-                y: target_y,
+            let _ = sub_win.set_position(tauri::Position::Physical(tauri::PhysicalPosition {
+                x: target_x as i32,
+                y: target_y as i32,
             }));
         }
 
-        let _ = sub_win.set_skip_taskbar(false);
-        let _ = sub_win.unminimize();
         let _ = sub_win.show();
-        println!(
-            "🪟 [Rust Window] character ウィンドウを表示完了: label={}",
-            label
-        );
+        let _ = sub_win.set_focus();
     }
     Ok(())
 }
@@ -169,11 +189,51 @@ pub async fn hide_character_window(
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ShowSubcharWindowParams {
-    pub scope_id: i32,
-    pub x: Option<f64>,
-    pub y: Option<f64>,
-    pub width: Option<f64>,
-    pub height: Option<f64>,
+    scope_id: i32,
+    x: Option<f64>,
+    y: Option<f64>,
+    width: Option<f64>,
+    height: Option<f64>,
+}
+
+impl ShowSubcharWindowParams {
+    #[allow(dead_code)]
+    pub fn new(
+        scope_id: i32,
+        x: Option<f64>,
+        y: Option<f64>,
+        width: Option<f64>,
+        height: Option<f64>,
+    ) -> Self {
+        Self {
+            scope_id,
+            x,
+            y,
+            width,
+            height,
+        }
+    }
+
+    // Add getter methods
+    pub fn scope_id(&self) -> i32 {
+        self.scope_id
+    }
+
+    pub fn x(&self) -> Option<f64> {
+        self.x
+    }
+
+    pub fn y(&self) -> Option<f64> {
+        self.y
+    }
+
+    pub fn width(&self) -> Option<f64> {
+        self.width
+    }
+
+    pub fn height(&self) -> Option<f64> {
+        self.height
+    }
 }
 
 /// 互換用: サブキャラクターウィンドウ表示コマンド
@@ -183,22 +243,15 @@ pub async fn show_subchar_window(
     params: ShowSubcharWindowParams,
 ) -> Result<(), String> {
     let app_handle = _app_handle;
-    let ShowSubcharWindowParams {
-        scope_id,
-        x,
-        y,
-        width,
-        height,
-    } = params;
     show_character_window(
         app_handle,
-        ShowCharacterWindowParams {
-            scope_id,
-            x,
-            y,
-            width,
-            height,
-        },
+        ShowCharacterWindowParams::new(
+            params.scope_id(),
+            params.x(),
+            params.y(),
+            params.width(),
+            params.height(),
+        ),
     )
     .await
 }

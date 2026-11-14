@@ -58,24 +58,16 @@ pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error
                             log_tray("📈 トレイダブルクリック: ディスプレイを復元 (Restore)");
                             let _ = crate::commands::window::show_character_window(
                                 app_handle.clone(),
-                                crate::commands::window::character_window::ShowCharacterWindowParams {
-                                    scope_id: 0,
-                                    x: None,
-                                    y: None,
-                                    width: None,
-                                    height: None,
-                                },
+                                crate::commands::window::character_window::ShowCharacterWindowParams::new(
+                                    0, None, None, None, None,
+                                ),
                             )
                             .await;
                             let _ = crate::commands::window::show_character_window(
                                 app_handle.clone(),
-                                crate::commands::window::character_window::ShowCharacterWindowParams {
-                                    scope_id: 1,
-                                    x: None,
-                                    y: None,
-                                    width: None,
-                                    height: None,
-                                },
+                                crate::commands::window::character_window::ShowCharacterWindowParams::new(
+                                    1, None, None, None, None,
+                                ),
                             )
                             .await;
                         }
@@ -106,11 +98,11 @@ pub fn setup_tray(app: &tauri::App) -> Result<TrayIcon<tauri::Wry>, tauri::Error
                                     let y = py + ph;
                                     let _ = crate::commands::window::show_menu_window(
                                         app_handle,
-                                        crate::commands::window::menu_window::ShowMenuWindowParams {
+                                        crate::commands::window::menu_window::ShowMenuWindowParams::new(
                                             x,
                                             y,
-                                            scope: Some(0),
-                                        },
+                                            Some(0),
+                                        ),
                                     )
                                     .await;
                                 });

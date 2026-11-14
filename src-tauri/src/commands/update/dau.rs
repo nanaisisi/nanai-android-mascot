@@ -1,6 +1,6 @@
+use crate::commands::update::open_text_file;
 use md5::{Digest, Md5};
 use nanai_android_mascot_ui::Descript;
-use crate::commands::update::open_text_file;
 pub use nanai_android_mascot_ui::{UpdateEntry, parse_update_definition};
 use std::fs;
 use std::path::Path;
@@ -72,15 +72,33 @@ pub struct UpdateExecutionResult {
 
 #[allow(dead_code)]
 impl UpdateExecutionResult {
-    pub fn new(success: bool, reason: String, updated_files: Vec<String>, ghost_name: String) -> Self {
-        Self { success, reason, updated_files, ghost_name }
+    pub fn new(
+        success: bool,
+        reason: String,
+        updated_files: Vec<String>,
+        ghost_name: String,
+    ) -> Self {
+        Self {
+            success,
+            reason,
+            updated_files,
+            ghost_name,
+        }
     }
 
     // Add getter methods
-    pub fn success(&self) -> bool { self.success }
-    pub fn reason(&self) -> &str { &self.reason }
-    pub fn updated_files(&self) -> &[String] { &self.updated_files }
-    pub fn ghost_name(&self) -> &str { &self.ghost_name }
+    pub fn success(&self) -> bool {
+        self.success
+    }
+    pub fn reason(&self) -> &str {
+        &self.reason
+    }
+    pub fn updated_files(&self) -> &[String] {
+        &self.updated_files
+    }
+    pub fn ghost_name(&self) -> &str {
+        &self.ghost_name
+    }
 }
 
 /// ローカルファイルの MD5 ハッシュを計算

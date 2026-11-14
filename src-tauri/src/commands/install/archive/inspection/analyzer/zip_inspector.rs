@@ -1,7 +1,7 @@
 use super::super::types::{BundledResourceTarget, InstallInspectionResult};
 use super::resource_resolver::resolve_bundled_resources_config;
-use crate::commands::install::utils::*;
 use crate::commands::install::resolve_asset_path;
+use crate::commands::install::utils::*;
 use nanai_android_mascot_ui::InstallResourceConfig;
 
 pub fn inspect_zip_archive<R: std::io::Read + std::io::Seek>(
@@ -157,22 +157,22 @@ pub fn inspect_zip_archive<R: std::io::Read + std::io::Seek>(
                 if let Some(base) = base_path {
                     let dest = base.join(&dest_name);
                     std::fs::create_dir_all(&dest).ok();
-                    bundled_resources.push(BundledResourceTarget {
-                        source_prefix: format!("{src_dir}/"),
-                        destination_dir: dest,
-                        refresh: res_config.refresh,
-                        refresh_undelete_mask: res_config.refresh_undelete_mask,
-                    });
+                    bundled_resources.push(BundledResourceTarget::new(
+                        format!("{src_dir}/"),
+                        dest,
+                        res_config.refresh,
+                        res_config.refresh_undelete_mask,
+                    ));
                 }
             }
         }
     }
 
-    Ok(InstallInspectionResult {
+    Ok(InstallInspectionResult::new(
         ghost_name,
         root_prefix,
         kind,
-        target_base_path: target_base_str.to_string(),
+        target_base_str.to_string(),
         safe_dir_name,
         alt_safe_name,
         bundled_resources,
@@ -180,5 +180,5 @@ pub fn inspect_zip_archive<R: std::io::Read + std::io::Seek>(
         bootghost,
         refresh,
         refresh_undelete_mask,
-    })
+    ))
 }

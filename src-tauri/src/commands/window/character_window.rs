@@ -16,7 +16,13 @@ pub async fn show_character_window(
     #[cfg(desktop)]
     {
         let app_handle = _app_handle;
-        let ShowCharacterWindowParams { scope_id, x, y, width, height } = params;
+        let ShowCharacterWindowParams {
+            scope_id,
+            x,
+            y,
+            width,
+            height,
+        } = params;
         println!(
             "🪟 [Rust Window] show_character_window 呼び出し: scope={}, width={:?}, height={:?}",
             scope_id, width, height
@@ -177,8 +183,24 @@ pub async fn show_subchar_window(
     params: ShowSubcharWindowParams,
 ) -> Result<(), String> {
     let app_handle = _app_handle;
-    let ShowSubcharWindowParams { scope_id, x, y, width, height } = params;
-    show_character_window(app_handle, ShowCharacterWindowParams { scope_id, x, y, width, height }).await
+    let ShowSubcharWindowParams {
+        scope_id,
+        x,
+        y,
+        width,
+        height,
+    } = params;
+    show_character_window(
+        app_handle,
+        ShowCharacterWindowParams {
+            scope_id,
+            x,
+            y,
+            width,
+            height,
+        },
+    )
+    .await
 }
 
 #[tauri::command]

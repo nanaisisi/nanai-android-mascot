@@ -55,7 +55,11 @@ pub struct ReportProgressParams<'a> {
 
 impl<'a> ReportProgressParams<'a> {
     pub fn new(phase: &'a str, path: &'a str, detail: Option<&'a str>) -> Self {
-        Self { phase, path, detail }
+        Self {
+            phase,
+            path,
+            detail,
+        }
     }
 
     // Add getter methods
@@ -74,10 +78,7 @@ impl<'a> ReportProgressParams<'a> {
 
 /// 1ファイルごとの更新進捗をフロントエンドへ通知
 /// (フロント側で OnUpdate.OnDownloadBegin / OnUpdate.OnMD5Compare* として SHIORI に中継する)
-pub(super) fn report_progress(
-    app_handle: &tauri::AppHandle,
-    params: ReportProgressParams<'_>,
-) {
+pub(super) fn report_progress(app_handle: &tauri::AppHandle, params: ReportProgressParams<'_>) {
     let payload = serde_json::json!({
         "phase": params.phase(),
         "path": params.path(),

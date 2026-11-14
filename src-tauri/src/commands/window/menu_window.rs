@@ -150,7 +150,13 @@ pub async fn show_submenu_window(
     #[cfg(desktop)]
     {
         let app_handle = _app_handle;
-        let ShowSubmenuWindowParams { menu_type, x, y, width, height } = params;
+        let ShowSubmenuWindowParams {
+            menu_type,
+            x,
+            y,
+            width,
+            height,
+        } = params;
         use tauri::Manager;
         let win_width = width.unwrap_or(220.0);
         let win_height = height.unwrap_or(320.0);

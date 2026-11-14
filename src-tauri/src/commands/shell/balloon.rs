@@ -1,7 +1,7 @@
 use super::{open_text_file, resolve_asset_path, resolve_vfs_path};
 use base64::Engine;
-use std::path::PathBuf;
 use nanai_android_mascot_ui::Descript;
+use std::path::PathBuf;
 
 #[derive(serde::Serialize, Clone)]
 pub struct BalloonInfo {
@@ -14,11 +14,21 @@ pub struct BalloonInfo {
 
 #[allow(dead_code)]
 impl BalloonInfo {
-    pub fn dir_name(&self) -> &str { &self.dir_name }
-    pub fn name(&self) -> &str { &self.name }
-    pub fn descript(&self) -> &std::collections::BTreeMap<String, String> { &self.descript }
-    pub fn thumbnail(&self) -> Option<&str> { self.thumbnail.as_deref() }
-    pub fn readme(&self) -> Option<&str> { self.readme.as_deref() }
+    pub fn dir_name(&self) -> &str {
+        &self.dir_name
+    }
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+    pub fn descript(&self) -> &std::collections::BTreeMap<String, String> {
+        &self.descript
+    }
+    pub fn thumbnail(&self) -> Option<&str> {
+        self.thumbnail.as_deref()
+    }
+    pub fn readme(&self) -> Option<&str> {
+        self.readme.as_deref()
+    }
 }
 
 #[tauri::command]
@@ -120,7 +130,11 @@ pub fn balloon_manifest(
     params: BalloonManifestParams,
     app_handle: tauri::AppHandle,
 ) -> Result<std::collections::BTreeMap<String, String>, String> {
-    let BalloonManifestParams { name, scope_id, surface_id } = params;
+    let BalloonManifestParams {
+        name,
+        scope_id,
+        surface_id,
+    } = params;
     let dir = resolve_balloon_dir(&name, &app_handle)?;
     let mut map = balloon_descript_map(&dir);
 
@@ -228,8 +242,7 @@ pub fn balloon_descript_map(dir: &std::path::Path) -> std::collections::BTreeMap
     let descript = dir.join("descript.txt");
     let path_str = descript.to_string_lossy();
     let clean_path = crate::common::paths::clean_verbatim_path(&path_str);
-    let content = open_text_file(std::path::Path::new(&clean_path))
-        .unwrap_or_default();
+    let content = open_text_file(std::path::Path::new(&clean_path)).unwrap_or_default();
     let parsed = Descript::parse(&content);
     parsed
         .properties

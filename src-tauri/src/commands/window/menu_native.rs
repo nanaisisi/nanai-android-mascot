@@ -4,10 +4,29 @@ use tauri::menu::{MenuBuilder, SubmenuBuilder};
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ShowContextMenuParams {
-    pub ghosts: Vec<String>,
-    pub current_ghost: Option<String>,
-    pub shells: Vec<String>,
-    pub current_shell: Option<String>,
+    ghosts: Vec<String>,
+    current_ghost: Option<String>,
+    shells: Vec<String>,
+    current_shell: Option<String>,
+}
+
+impl ShowContextMenuParams {
+    // Add getter methods
+    pub fn ghosts(&self) -> &[String] {
+        &self.ghosts
+    }
+
+    pub fn current_ghost(&self) -> Option<&str> {
+        self.current_ghost.as_deref()
+    }
+
+    pub fn shells(&self) -> &[String] {
+        &self.shells
+    }
+
+    pub fn current_shell(&self) -> Option<&str> {
+        self.current_shell.as_deref()
+    }
 }
 
 /// OSネイティブのコンテキストメニュー表示コマンド (SSP / ukadoc 仕様準拠のメニュー再編)
@@ -19,15 +38,19 @@ pub async fn show_context_menu(
     #[cfg(desktop)]
     {
         let app_handle = _app_handle;
-        let ShowContextMenuParams { ghosts, current_ghost, shells, current_shell } = params;
+        let ghosts = params.ghosts();
+        let current_ghost = params.current_ghost();
+        let shells = params.shells();
+        let current_shell = params.current_shell();
+
         let window = app_handle
             .get_webview_window("main")
             .ok_or("main window not found")?;
 
         // 1. ゴースト切り替えサブメニュー
         let mut ghost_submenu_builder = SubmenuBuilder::new(&app_handle, "👻 ゴースト切り替え (G)");
-        for g in &ghosts {
-            let label = if current_ghost.as_ref() == Some(g) {
+        for g in ghosts {
+            let label = if current_ghost == Some(g) {
                 format!("✓ {}", g)
             } else {
                 format!("   {}", g)
@@ -42,8 +65,8 @@ pub async fn show_context_menu(
 
         // 2. 着せ替え・シェル切り替えサブメニュー
         let mut shell_submenu_builder = SubmenuBuilder::new(&app_handle, "👗 着せ替え・シェル (C)");
-        let active_shell = current_shell.as_deref().unwrap_or("master");
-        for s in &shells {
+        let active_shell = current_shell.unwrap_or("master");
+        for s in shells {
             let label = if s == active_shell {
                 format!("✓ {}", s)
             } else {

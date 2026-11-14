@@ -29,7 +29,11 @@ struct ExecuteSaoriExInternalParams<'a> {
 
 /// SAORI-Ex 内蔵モジュール実行エンジン (UKADOC spec saori-ex internal)
 fn execute_saori_ex_internal(params: ExecuteSaoriExInternalParams<'_>) -> Option<String> {
-    let ExecuteSaoriExInternalParams { module, function, args } = params;
+    let ExecuteSaoriExInternalParams {
+        module,
+        function,
+        args,
+    } = params;
     match module.to_lowercase().as_str() {
         "internal_time" => match function.to_lowercase().as_str() {
             "format" | "now" => {
@@ -92,7 +96,11 @@ pub async fn execute_saori(request: SaoriRequest) -> Result<SaoriResponse, Strin
     let parts: Vec<&str> = request.dll_path.split(['.', '/']).collect();
     if let Some(module) = parts.first() {
         let function = parts.get(1).unwrap_or(&"");
-        value = execute_saori_ex_internal(ExecuteSaoriExInternalParams { module, function, args: &request.args });
+        value = execute_saori_ex_internal(ExecuteSaoriExInternalParams {
+            module,
+            function,
+            args: &request.args,
+        });
     }
 
     if value.is_none() {

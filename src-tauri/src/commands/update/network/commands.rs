@@ -1,6 +1,8 @@
 //! ゴーストネットワーク更新（チェック・ダウンロード・書き込み実行）コマンドモジュール
 
-use super::helpers::{report_progress, resolve_update_ghost_dir, validate_update_path, ReportProgressParams};
+use super::helpers::{
+    ReportProgressParams, report_progress, resolve_update_ghost_dir, validate_update_path,
+};
 use crate::commands::update::dau::*;
 use md5::{Digest, Md5};
 use std::fs;
@@ -152,8 +154,11 @@ pub async fn execute_ghost_update(
         ));
     }
 
-    let ghost_dir =
-        resolve_update_ghost_dir(check_result.ghost_name(), ghost_path.as_deref(), &app_handle);
+    let ghost_dir = resolve_update_ghost_dir(
+        check_result.ghost_name(),
+        ghost_path.as_deref(),
+        &app_handle,
+    );
 
     let client = reqwest::Client::builder()
         .user_agent("NanaiAndroidMascot/1.0 (SSP Compatible)")
@@ -165,15 +170,25 @@ pub async fn execute_ghost_update(
 
     for entry in check_result.update_files() {
         validate_update_path(&entry.path)?;
-        let file_url = format!("{}{}", check_result.homeurl(), entry.path.replace('\\', "/"));
+        let file_url = format!(
+            "{}{}",
+            check_result.homeurl(),
+            entry.path.replace('\\', "/")
+        );
         println!("⬇️ Downloading update file: {}", file_url);
-        report_progress(&app_handle, ReportProgressParams::new("download-begin", &entry.path, None));
+        report_progress(
+            &app_handle,
+            ReportProgressParams::new("download-begin", &entry.path, None),
+        );
 
         let resp = match client.get(&file_url).send().await {
             Ok(r) => {
                 if !r.status().is_success() {
                     let status = r.status().as_u16().to_string();
-                    report_progress(&app_handle, ReportProgressParams::new("download-failed", &entry.path, Some(&status)));
+                    report_progress(
+                        &app_handle,
+                        ReportProgressParams::new("download-failed", &entry.path, Some(&status)),
+                    );
                     return Ok(UpdateExecutionResult::new(
                         false,
                         status,
@@ -185,7 +200,10 @@ pub async fn execute_ghost_update(
             }
             Err(e) => {
                 let reason = if e.is_timeout() { "timeout" } else { "404" };
-                report_progress(&app_handle, ReportProgressParams::new("download-failed", &entry.path, Some(reason)));
+                report_progress(
+                    &app_handle,
+                    ReportProgressParams::new("download-failed", &entry.path, Some(reason)),
+                );
                 return Ok(UpdateExecutionResult::new(
                     false,
                     reason.to_string(),
@@ -199,7 +217,10 @@ pub async fn execute_ghost_update(
 
         // MD5 チェック
         if !entry.md5.is_empty() {
-            report_progress(&app_handle, ReportProgressParams::new("md5-begin", &entry.path, None));
+            report_progress(
+                &app_handle,
+                ReportProgressParams::new("md5-begin", &entry.path, None),
+            );
             let mut hasher = Md5::new();
             hasher.update(&bytes);
             let downloaded_md5: String = hasher
@@ -212,7 +233,10 @@ pub async fn execute_ghost_update(
                     "❌ MD5 mismatch for {}: expected {}, got {}",
                     entry.path, entry.md5, downloaded_md5
                 );
-                report_progress(&app_handle, ReportProgressParams::new("md5-failed", &entry.path, Some("md5 miss")));
+                report_progress(
+                    &app_handle,
+                    ReportProgressParams::new("md5-failed", &entry.path, Some("md5 miss")),
+                );
                 return Ok(UpdateExecutionResult::new(
                     false,
                     "md5 miss".to_string(),
@@ -220,7 +244,10 @@ pub async fn execute_ghost_update(
                     check_result.ghost_name().to_string(),
                 ));
             }
-            report_progress(&app_handle, ReportProgressParams::new("md5-complete", &entry.path, None));
+            report_progress(
+                &app_handle,
+                ReportProgressParams::new("md5-complete", &entry.path, None),
+            );
         }
 
         // 保存
@@ -231,7 +258,10 @@ pub async fn execute_ghost_update(
 
         if let Err(e) = fs::write(&local_path, &bytes) {
             println!("❌ File write error: {}", e);
-            report_progress(&app_handle, ReportProgressParams::new("fileio-failed", &entry.path, None));
+            report_progress(
+                &app_handle,
+                ReportProgressParams::new("fileio-failed", &entry.path, None),
+            );
             return Ok(UpdateExecutionResult::new(
                 false,
                 "fileio".to_string(),
@@ -240,7 +270,10 @@ pub async fn execute_ghost_update(
             ));
         }
 
-        report_progress(&app_handle, ReportProgressParams::new("saved", &entry.path, None));
+        report_progress(
+            &app_handle,
+            ReportProgressParams::new("saved", &entry.path, None),
+        );
         updated_files.push(entry.path.clone());
     }
 

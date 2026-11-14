@@ -15,12 +15,39 @@ impl Drop for BalloonLockGuard {
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ShowBalloonWindowParams {
-    pub scope_id: i32,
-    pub theme: Option<String>,
-    pub x: Option<f64>,
-    pub y: Option<f64>,
-    pub width: Option<f64>,
-    pub height: Option<f64>,
+    scope_id: i32,
+    theme: Option<String>,
+    x: Option<f64>,
+    y: Option<f64>,
+    width: Option<f64>,
+    height: Option<f64>,
+}
+
+impl ShowBalloonWindowParams {
+    // Add getter methods
+    pub fn scope_id(&self) -> i32 {
+        self.scope_id
+    }
+
+    pub fn theme(&self) -> Option<&str> {
+        self.theme.as_deref()
+    }
+
+    pub fn x(&self) -> Option<f64> {
+        self.x
+    }
+
+    pub fn y(&self) -> Option<f64> {
+        self.y
+    }
+
+    pub fn width(&self) -> Option<f64> {
+        self.width
+    }
+
+    pub fn height(&self) -> Option<f64> {
+        self.height
+    }
 }
 
 /// 独立バルーン（スコープ N）ウィンドウ表示コマンド
@@ -32,7 +59,13 @@ pub async fn show_balloon_window(
     #[cfg(desktop)]
     {
         let app_handle = _app_handle;
-        let ShowBalloonWindowParams { scope_id, theme, x, y, width, height } = params;
+        let scope_id = params.scope_id();
+        let theme = params.theme().map(ToString::to_string);
+        let x = params.x();
+        let y = params.y();
+        let width = params.width();
+        let height = params.height();
+
         println!("💬 show_balloon_window called: scope_id={}", scope_id);
         use tauri::Manager;
         let label = format!("balloon_window_{}", scope_id);
@@ -95,7 +128,7 @@ pub async fn show_balloon_window(
             let _ = balloon_win.set_always_on_top(true);
             let _ = balloon_win.show();
 
-            if let Some(theme) = theme.filter(|value| !value.is_empty()) {
+            if let Some(theme) = theme.as_ref().filter(|value| !value.is_empty()) {
                 let _ = app_handle.emit_to(
                     &label,
                     "balloon-theme-changed",
@@ -133,7 +166,7 @@ pub async fn show_balloon_window(
             let _ = balloon_win.unminimize();
             let _ = balloon_win.set_always_on_top(true);
             let _ = balloon_win.show();
-            if let Some(theme) = theme.filter(|value| !value.is_empty()) {
+            if let Some(theme) = theme.as_ref().filter(|value| !value.is_empty()) {
                 let _ = app_handle.emit_to(
                     &label,
                     "balloon-theme-changed",
@@ -147,9 +180,24 @@ pub async fn show_balloon_window(
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ResizeBalloonWindowParams {
-    pub scope_id: i32,
-    pub width: f64,
-    pub height: f64,
+    scope_id: i32,
+    width: f64,
+    height: f64,
+}
+
+impl ResizeBalloonWindowParams {
+    // Add getter methods
+    pub fn scope_id(&self) -> i32 {
+        self.scope_id
+    }
+
+    pub fn width(&self) -> f64 {
+        self.width
+    }
+
+    pub fn height(&self) -> f64 {
+        self.height
+    }
 }
 
 /// バルーンウィンドウのサイズを画像実寸法に合せてリサイズするコマンド
@@ -160,7 +208,9 @@ pub async fn resize_balloon_window(
 ) -> Result<(), String> {
     #[cfg(desktop)]
     {
-        let ResizeBalloonWindowParams { scope_id, width, height } = params;
+        let scope_id = params.scope_id();
+        let width = params.width();
+        let height = params.height();
         use tauri::Manager;
         let label = format!("balloon_window_{}", scope_id);
         if let Some(balloon_win) = app_handle.get_webview_window(&label) {

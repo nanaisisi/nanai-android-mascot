@@ -1,5 +1,5 @@
-use std::path::Path;
 use std::collections::BTreeMap;
+use std::path::Path;
 
 /// Stable public API interface for nanai-android-mascot-ui to decouple dependent components
 pub trait NanaiAndroidMascotUiInterface: Send + Sync {
@@ -29,8 +29,8 @@ impl NanaiAndroidMascotUiInterface for NanaiUiFacade {
         let descript_path = balloon_dir.join("descript.txt");
         let content = self.open_text_file(&descript_path).unwrap_or_default();
         let _descript = crate::Descript::parse(&content);
-        let map = BTreeMap::new();
-        map
+
+        BTreeMap::new()
     }
 
     fn build_standard_capability_references(&self) -> Vec<String> {

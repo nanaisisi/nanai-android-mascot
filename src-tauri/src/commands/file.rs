@@ -1,8 +1,8 @@
 #![allow(unused_imports)]
 use crate::common::paths::clean_verbatim_path;
 use crate::common::paths::resolve_asset_path;
-use crate::common::state::AppState;
 use crate::common::paths::{open_shift_jis_file, resolve_vfs_path};
+use crate::common::state::AppState;
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 #[cfg(desktop)]
@@ -88,9 +88,15 @@ pub struct LoadSurfaceImageParams {
 
 impl LoadSurfaceImageParams {
     // Add getter methods
-    pub fn ghost_path(&self) -> &str { &self.ghost_path }
-    pub fn shell_name(&self) -> &str { &self.shell_name }
-    pub fn surface_id(&self) -> &str { &self.surface_id }
+    pub fn ghost_path(&self) -> &str {
+        &self.ghost_path
+    }
+    pub fn shell_name(&self) -> &str {
+        &self.shell_name
+    }
+    pub fn surface_id(&self) -> &str {
+        &self.surface_id
+    }
 }
 
 // サーフィス画像を読み込んでData URL (Base64) として返すコマンド
@@ -103,7 +109,7 @@ pub fn load_surface_image(
     let shell_name = params.shell_name();
     let surface_id = params.surface_id();
     use std::fs;
-    let clean_gp = clean_verbatim_path(&ghost_path);
+    let clean_gp = clean_verbatim_path(ghost_path);
     let base_ghost_path =
         resolve_asset_path(&clean_gp, &app_handle).unwrap_or_else(|_| PathBuf::from(&clean_gp));
 
@@ -112,7 +118,7 @@ pub fn load_surface_image(
         ghost_path, shell_name, surface_id, base_ghost_path
     );
 
-    let shell_dir = base_ghost_path.join("shell").join(&shell_name);
+    let shell_dir = base_ghost_path.join("shell").join(shell_name);
     let master_dir = base_ghost_path.join("shell").join("master");
 
     let surface_id_num = surface_id.parse::<u32>().unwrap_or(0);
@@ -239,9 +245,15 @@ pub struct LoadSurfacePnaParams {
 
 impl LoadSurfacePnaParams {
     // Add getter methods
-    pub fn ghost_path(&self) -> &str { &self.ghost_path }
-    pub fn shell_name(&self) -> &str { &self.shell_name }
-    pub fn surface_id(&self) -> &str { &self.surface_id }
+    pub fn ghost_path(&self) -> &str {
+        &self.ghost_path
+    }
+    pub fn shell_name(&self) -> &str {
+        &self.shell_name
+    }
+    pub fn surface_id(&self) -> &str {
+        &self.surface_id
+    }
 }
 
 // サーフィスに対応する PNA (アルファマスク) 画像を読み込んで返すコマンド
@@ -254,11 +266,11 @@ pub fn load_surface_pna(
     let shell_name = params.shell_name();
     let surface_id = params.surface_id();
     use std::fs;
-    let clean_gp = clean_verbatim_path(&ghost_path);
+    let clean_gp = clean_verbatim_path(ghost_path);
     let base_ghost_path =
         resolve_asset_path(&clean_gp, &app_handle).unwrap_or_else(|_| PathBuf::from(&clean_gp));
 
-    let shell_dir = base_ghost_path.join("shell").join(&shell_name);
+    let shell_dir = base_ghost_path.join("shell").join(shell_name);
     let master_dir = base_ghost_path.join("shell").join("master");
     let surface_id_num = surface_id.parse::<u32>().unwrap_or(0);
 

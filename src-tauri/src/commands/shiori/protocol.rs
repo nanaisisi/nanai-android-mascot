@@ -1,5 +1,7 @@
 use crate::common::state::AppState;
-use nanai_android_mascot_ui::{ShioriRequest, ShioriResponse, build_standard_capability_references};
+use nanai_android_mascot_ui::{
+    ShioriRequest, ShioriResponse, build_standard_capability_references,
+};
 
 #[derive(PartialEq, PartialOrd, Clone, Copy)]
 enum LogLevel {
@@ -119,9 +121,17 @@ pub async fn send_shiori_event(
     state: tauri::State<'_, AppState>,
     params: SendShioriEventParams,
 ) -> Result<String, String> {
-    let mut req = ShioriRequest::get(params.event(), &params.references().cloned().unwrap_or_default());
+    let mut req = ShioriRequest::get(
+        params.event(),
+        &params.references().cloned().unwrap_or_default(),
+    );
     req.sender = "NanaiMascot".to_string();
-    send_shiori_request(state, req.build(), params.ghost_id().map(ToString::to_string)).await
+    send_shiori_request(
+        state,
+        req.build(),
+        params.ghost_id().map(ToString::to_string),
+    )
+    .await
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -157,9 +167,17 @@ pub async fn send_shiori_notify(
     state: tauri::State<'_, AppState>,
     params: SendShioriNotifyParams,
 ) -> Result<String, String> {
-    let mut req = ShioriRequest::notify(params.event(), &params.references().cloned().unwrap_or_default());
+    let mut req = ShioriRequest::notify(
+        params.event(),
+        &params.references().cloned().unwrap_or_default(),
+    );
     req.sender = "NanaiMascot".to_string();
-    send_shiori_request(state, req.build(), params.ghost_id().map(ToString::to_string)).await
+    send_shiori_request(
+        state,
+        req.build(),
+        params.ghost_id().map(ToString::to_string),
+    )
+    .await
 }
 
 /// SHIORI へ UKADOC 準拠の capability Notify イベントを送信

@@ -7,8 +7,8 @@ pub use packaging::create_nar_from_directory;
 pub use postprocess::{perform_refresh_cleanup, process_delete_txt};
 
 use super::utils::flatten_balloon_directory;
-use crate::common::models::GhostInfo;
 use crate::commands::install::resolve_asset_path;
+use crate::common::models::GhostInfo;
 use extraction::extract_zip_entries;
 use inspection::inspect_zip_archive;
 use postprocess::build_extracted_ghost_info;
@@ -20,11 +20,11 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
 ) -> Result<GhostInfo, String> {
     let inspection = inspect_zip_archive(&mut zip, fallback_name, app_handle)?;
 
-    let target_base = resolve_asset_path(&inspection.target_base_path, app_handle)?;
-    let target_dir = if target_base.join(&inspection.alt_safe_name).exists() {
-        target_base.join(&inspection.alt_safe_name)
+    let target_base = resolve_asset_path(inspection.target_base_path(), app_handle)?;
+    let target_dir = if target_base.join(inspection.alt_safe_name()).exists() {
+        target_base.join(inspection.alt_safe_name())
     } else {
-        target_base.join(&inspection.safe_dir_name)
+        target_base.join(inspection.safe_dir_name())
     };
 
     if !target_dir.exists() {
@@ -33,36 +33,38 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
     }
 
     // refresh 指定時のディレクトリクリーンアップ（メインターゲット）
-    if inspection.refresh {
+    if inspection.refresh() {
         println!(
             "🧹 Performing refresh cleanup on target_dir: {:?} (masks: {:?})",
-            target_dir, inspection.refresh_undelete_mask
+            target_dir,
+            inspection.refresh_undelete_mask()
         );
-        perform_refresh_cleanup(&target_dir, &inspection.refresh_undelete_mask);
+        perform_refresh_cleanup(&target_dir, inspection.refresh_undelete_mask());
     }
 
     // 同梱リソース側の refresh クリーンアップ
-    for res_target in &inspection.bundled_resources {
-        if res_target.refresh && res_target.destination_dir.exists() {
+    for res_target in inspection.bundled_resources() {
+        if res_target.refresh() && res_target.destination_dir().exists() {
             println!(
                 "🧹 Performing refresh cleanup on bundled resource dir: {:?} (masks: {:?})",
-                res_target.destination_dir, res_target.refresh_undelete_mask
+                res_target.destination_dir(),
+                res_target.refresh_undelete_mask()
             );
             perform_refresh_cleanup(
-                &res_target.destination_dir,
-                &res_target.refresh_undelete_mask,
+                res_target.destination_dir(),
+                res_target.refresh_undelete_mask(),
             );
         }
     }
 
     extract_zip_entries(
         &mut zip,
-        &inspection.root_prefix,
+        inspection.root_prefix(),
         &target_dir,
-        &inspection.bundled_resources,
+        inspection.bundled_resources(),
     )?;
 
-    if inspection.kind == "balloon" {
+    if inspection.kind() == "balloon" {
         flatten_balloon_directory(&target_dir)?;
     }
 
@@ -70,6 +72,6 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
 
     process_delete_txt(&target_dir);
 
-    let info = build_extracted_ghost_info(&target_dir, &inspection.safe_dir_name);
+    let info = build_extracted_ghost_info(&target_dir, inspection.safe_dir_name());
     Ok(info)
 }

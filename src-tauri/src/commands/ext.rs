@@ -147,10 +147,16 @@ pub struct PluginEventRequest {
 
 impl PluginEventRequest {
     // Add getter methods
-    pub fn plugin_name(&self) -> &str { &self.plugin_name }
-    pub fn event_id(&self) -> &str { &self.event_id }
+    pub fn plugin_name(&self) -> &str {
+        &self.plugin_name
+    }
+    pub fn event_id(&self) -> &str {
+        &self.event_id
+    }
     #[allow(dead_code)]
-    pub fn references(&self) -> &[String] { &self.references }
+    pub fn references(&self) -> &[String] {
+        &self.references
+    }
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -162,16 +168,26 @@ pub struct PluginEventResponse {
 
 impl PluginEventResponse {
     pub fn new(status: i32, value: String, script: Option<String>) -> Self {
-        Self { status, value, script }
+        Self {
+            status,
+            value,
+            script,
+        }
     }
 
     // Add getter methods
     #[allow(dead_code)]
-    pub fn status(&self) -> i32 { self.status }
+    pub fn status(&self) -> i32 {
+        self.status
+    }
     #[allow(dead_code)]
-    pub fn value(&self) -> &str { &self.value }
+    pub fn value(&self) -> &str {
+        &self.value
+    }
     #[allow(dead_code)]
-    pub fn script(&self) -> Option<&str> { self.script.as_deref() }
+    pub fn script(&self) -> Option<&str> {
+        self.script.as_deref()
+    }
 }
 
 /// [PLUGIN/2.0]: プラグインへイベントを送信・実行しレスポンス/デフォルトスクリプトを取得
@@ -182,7 +198,8 @@ pub async fn execute_plugin_event(
 ) -> Result<PluginEventResponse, String> {
     println!(
         "🔌 [Plugin/2.0] Executing event for plugin {}: ID={}",
-        request.plugin_name(), request.event_id()
+        request.plugin_name(),
+        request.event_id()
     );
     let script = match request.event_id() {
         "OnMenuExec" => Some(format!(
@@ -194,9 +211,5 @@ pub async fn execute_plugin_event(
         _ => None,
     };
 
-    Ok(PluginEventResponse::new(
-        200,
-        "OK".to_string(),
-        script,
-    ))
+    Ok(PluginEventResponse::new(200, "OK".to_string(), script))
 }

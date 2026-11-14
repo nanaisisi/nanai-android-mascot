@@ -25,7 +25,9 @@ mod shiori;
 mod sstp;
 mod tray;
 
-pub use common::paths::{clean_verbatim_path, normalize_path, resolve_asset_path, resolve_ghost_directory};
+pub use common::paths::{
+    clean_verbatim_path, normalize_path, resolve_asset_path, resolve_ghost_directory,
+};
 
 use common::*;
 

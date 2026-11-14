@@ -37,11 +37,11 @@ pub fn extract_zip_entries<R: std::io::Read + std::io::Seek>(
         let mut active_rel_path = relative_path;
 
         for res_target in bundled_resources {
-            let src_prefix = &res_target.source_prefix;
+            let src_prefix = res_target.source_prefix();
             if relative_path.len() >= src_prefix.len()
                 && relative_path[..src_prefix.len()].eq_ignore_ascii_case(src_prefix)
             {
-                active_target_dir = &res_target.destination_dir;
+                active_target_dir = res_target.destination_dir();
                 active_rel_path = &relative_path[src_prefix.len()..];
                 break;
             }

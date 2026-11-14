@@ -15,8 +15,7 @@ pub fn resolve_shell_dir(
         if dir.is_dir() {
             return Ok(dir);
         }
-        if let Some(resolved_shell) =
-            resolve_vfs_path(&ghost_dir.join("shell"), shell_name)
+        if let Some(resolved_shell) = resolve_vfs_path(&ghost_dir.join("shell"), shell_name)
             && resolved_shell.is_dir()
         {
             return Ok(resolved_shell);

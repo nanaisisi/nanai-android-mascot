@@ -1,8 +1,23 @@
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct SetBalloonOffsetParams {
-    pub scope_id: i32,
-    pub x: i32,
-    pub y: i32,
+    scope_id: i32,
+    x: i32,
+    y: i32,
+}
+
+impl SetBalloonOffsetParams {
+    // Add getter methods
+    pub fn scope_id(&self) -> i32 {
+        self.scope_id
+    }
+
+    pub fn x(&self) -> i32 {
+        self.x
+    }
+
+    pub fn y(&self) -> i32 {
+        self.y
+    }
 }
 
 #[tauri::command]
@@ -11,8 +26,11 @@ pub async fn set_balloon_offset(
     state: tauri::State<'_, crate::common::state::AppState>,
     params: SetBalloonOffsetParams,
 ) -> Result<(), String> {
-    let SetBalloonOffsetParams { scope_id, x, y } = params;
-    state.balloon_offsets.lock().insert(scope_id, (x, y));
+    let scope_id = params.scope_id();
+    state
+        .balloon_offsets
+        .lock()
+        .insert(scope_id, (params.x(), params.y()));
     sync_balloon_position_impl(&app_handle, &state, scope_id).await
 }
 

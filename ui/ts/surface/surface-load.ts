@@ -3,13 +3,13 @@
  * @brief surfaces.txt 読み込み・パース (UKADOC準拠)
  */
 import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
+import { parseSurfacesTxtWasm } from "../core/wasm/wasm-surface.js";
 import { seedDressupDefaults } from "./bind-menu.js";
 import {
 	getShellManifest,
 	manifestToSurfaceData,
 	parseSurfacesTextWithRust,
 } from "./shell-manifest.js";
-import { expandSurfaceRange, parseSurfacesTxt } from "./surface-parser.js";
 
 export { UKADOC_SURFACE_ANNOTATIONS } from "./surface-load-ukadoc.js";
 
@@ -137,19 +137,21 @@ export const surfaceLoadMethods = {
 			}
 		}
 
-		const parsed = parseSurfacesTxt(text);
-		this.collisions = parsed.collisions;
-		this.elements = parsed.elements;
-		this.animations = parsed.animations;
-		this.points = parsed.points ?? {};
-		this.balloonOffsets = parsed.balloonOffsets ?? {};
-		this.cursors = parsed.cursors ?? {};
-		this.tooltips = parsed.tooltips ?? {};
-		this.collisionSort = parsed.collisionSort ?? "none";
-		this.animationSort = parsed.animationSort ?? "none";
+		const parsed = parseSurfacesTxtWasm(text) as any;
+		if (parsed) {
+			this.collisions = parsed.collisions ?? {};
+			this.elements = parsed.elements ?? {};
+			this.animations = parsed.animations ?? {};
+			this.points = parsed.points ?? {};
+			this.balloonOffsets = parsed.balloonOffsets ?? {};
+			this.cursors = parsed.cursors ?? {};
+			this.tooltips = parsed.tooltips ?? {};
+			this.collisionSort = parsed.collision_sort ?? "none";
+			this.animationSort = parsed.animation_sort ?? "none";
+		}
 
 		console.log(
-			`🎯 当たり判定・合成要素登録完了 (JS fallback): ${Object.keys(this.collisions).length} サーフィス登録済み`,
+			`🎯 当たり判定・合成要素登録完了 (WASM fallback): ${Object.keys(this.collisions).length} サーフィス登録済み`,
 		);
 	},
 
@@ -158,6 +160,22 @@ export const surfaceLoadMethods = {
 	 * @this {import('./surface-manager.js').SurfaceManager}
 	 */
 	expandSurfaceRange(rangeStr: string) {
-		return expandSurfaceRange(rangeStr);
+		const included: string[] = [];
+		rangeStr.split(",").forEach((rawPart) => {
+			const part = rawPart.trim().replace(/^\[/, "").replace(/\]$/, "");
+			if (!part) return;
+			if (part.includes("-")) {
+				const [sStr, eStr] = part.split("-");
+				const start = Number.parseInt(sStr, 10);
+				const end = Number.parseInt(eStr, 10);
+				if (!Number.isNaN(start) && !Number.isNaN(end) && start <= end) {
+					for (let i = start; i <= end; i++) included.push(String(i));
+				}
+			} else {
+				const num = Number.parseInt(part, 10);
+				if (!Number.isNaN(num)) included.push(String(num));
+			}
+		});
+		return included;
 	},
 };

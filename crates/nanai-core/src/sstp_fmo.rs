@@ -324,6 +324,6 @@ mod tests {
         let res = parse_saori_response(raw_res).unwrap();
         assert_eq!(res.status, 200);
         assert_eq!(res.result.as_deref(), Some("success"));
-        assert_eq!(res.values.get(0).map(String::as_str), Some("val0"));
+        assert_eq!(res.values.first().map(String::as_str), Some("val0"));
     }
 }

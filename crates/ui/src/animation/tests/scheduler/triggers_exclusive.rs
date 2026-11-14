@@ -89,7 +89,7 @@ fn test_animation_scheduler_talk_and_bind() {
         collisions: vec![],
         options: vec![],
     };
-    scheduler.on_bind_changed(0, 5, true, &[bind_anim_dynamic.clone()]);
+    scheduler.on_bind_changed(0, 5, true, std::slice::from_ref(&bind_anim_dynamic));
     assert!(scheduler.is_bind_active(0, 5));
     assert!(scheduler.is_animation_running(0, 5));
 

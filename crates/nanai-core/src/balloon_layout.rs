@@ -34,6 +34,7 @@ pub struct ValidRectLayoutResult {
 }
 
 /// 有効テキスト表示領域 (validrect) および背景画像設定からレイアウトを算出
+#[allow(clippy::too_many_arguments)]
 pub fn compute_validrect_layout(
     validrect_left: Option<i32>,
     validrect_top: Option<i32>,
@@ -87,6 +88,7 @@ pub fn compute_validrect_layout(
 }
 
 #[wasm_bindgen]
+#[allow(clippy::too_many_arguments)]
 pub fn wasm_compute_validrect_layout(
     validrect_left: Option<i32>,
     validrect_top: Option<i32>,

@@ -43,7 +43,7 @@ fn test_shiori_request_builder_fluent_api() {
     assert_eq!(parsed.security_level, Some(SecurityLevel::Local));
     assert_eq!(parsed.base_id.as_deref(), Some("base_event_1"));
     assert_eq!(
-        parsed.references.get(0).map(String::as_str),
+        parsed.references.first().map(String::as_str),
         Some("ref0_val")
     );
     assert_eq!(
@@ -123,7 +123,7 @@ fn test_shiori_response_multiline_and_extended_headers() {
     assert_eq!(parsed.age, Some(42));
     assert_eq!(parsed.reference0.as_deref(), Some("TargetGhost"));
     assert_eq!(
-        parsed.references.get(0).map(String::as_str),
+        parsed.references.first().map(String::as_str),
         Some("custom_ref_1")
     );
     assert_eq!(

@@ -109,29 +109,14 @@ pub unsafe extern "C" fn wasm_parse_sstp_request_json(ptr: *const u8, len: usize
 /// プラットフォームランタイム初期化スタブ
 #[wasm_bindgen::prelude::wasm_bindgen]
 pub fn init_platform_runtime() -> String {
-    #[cfg(feature = "target-android")]
-    {
-        return "Initialized nanai-core runtime for [Android WASM]".to_string();
-    }
-    #[cfg(feature = "target-desktop")]
-    {
-        return "Initialized nanai-core runtime for [Desktop WASM]".to_string();
-    }
-    #[cfg(all(
-        feature = "target-web",
-        not(feature = "target-android"),
-        not(feature = "target-desktop")
-    ))]
-    {
+    if cfg!(feature = "target-android") {
+        "Initialized nanai-core runtime for [Android WASM]".to_string()
+    } else if cfg!(feature = "target-desktop") {
+        "Initialized nanai-core runtime for [Desktop WASM]".to_string()
+    } else if cfg!(feature = "target-web") {
         "Initialized nanai-core runtime for [Generic Web WASM]".to_string()
-    }
-    #[cfg(not(any(
-        feature = "target-android",
-        feature = "target-desktop",
-        feature = "target-web"
-    )))]
-    {
-        return "Initialized nanai-core runtime for [Default WASM]".to_string();
+    } else {
+        "Initialized nanai-core runtime for [Default WASM]".to_string()
     }
 }
 

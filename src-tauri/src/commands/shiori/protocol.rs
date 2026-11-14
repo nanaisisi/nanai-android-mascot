@@ -1,5 +1,5 @@
 use crate::common::state::AppState;
-use nanai_android_mascot_ui::{ShioriRequest, ShioriResponse};
+use nanai_android_mascot_ui::{ShioriRequest, ShioriResponse, build_standard_capability_references};
 
 #[derive(PartialEq, PartialOrd, Clone, Copy)]
 enum LogLevel {
@@ -141,7 +141,7 @@ pub async fn send_shiori_capability(
     state: tauri::State<'_, AppState>,
     ghost_id: Option<String>,
 ) -> Result<String, String> {
-    let refs = nanai_android_mascot_ui::build_standard_capability_references();
+    let refs = build_standard_capability_references();
     let mut req = ShioriRequest::capability(&refs);
     req.sender = "NanaiMascot".to_string();
     send_shiori_request(state, req.build(), ghost_id).await

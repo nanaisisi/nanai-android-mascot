@@ -1,4 +1,4 @@
-use nanai_android_mascot_ui::surfaces::SurfaceFrameBuffer;
+use nanai_surface::SurfaceFrameBuffer;
 
 #[tauri::command]
 pub fn create_surface_frame_buffer(width: u32, height: u32) -> Result<SurfaceFrameBuffer, String> {

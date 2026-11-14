@@ -1,6 +1,7 @@
-use crate::common::paths::resolve_asset_path;
+use super::{open_text_file, resolve_asset_path, resolve_vfs_path};
 use base64::Engine;
 use std::path::PathBuf;
+use nanai_android_mascot_ui::Descript;
 
 #[derive(serde::Serialize, Clone)]
 pub struct BalloonInfo {
@@ -63,7 +64,7 @@ pub fn scan_balloons(app_handle: tauri::AppHandle) -> Result<Vec<BalloonInfo>, S
                                 .find_map(|f| {
                                     let p = path.join(f);
                                     if p.is_file() {
-                                        nanai_android_mascot_ui::open_text_file(&p).ok()
+                                        open_text_file(&p).ok()
                                     } else {
                                         None
                                     }
@@ -101,7 +102,7 @@ pub fn get_balloon_readme(
     for f in ["readme.txt", "Readme.txt", "README.TXT"] {
         let p = dir.join(f);
         if p.is_file() {
-            return Ok(nanai_android_mascot_ui::open_text_file(&p).ok());
+            return Ok(open_text_file(&p).ok());
         }
     }
     Ok(None)
@@ -137,7 +138,7 @@ pub fn balloon_manifest(
         for cand in candidates {
             let p = dir.join(&cand);
             if p.is_file()
-                && let Some(sub_map) = nanai_android_mascot_ui::resolve_vfs_path(&dir, &cand)
+                && let Some(sub_map) = resolve_vfs_path(&dir, &cand)
                     .and_then(|fp| crate::ghost::scan::read_descript_file(&fp))
             {
                 for (k, v) in sub_map {
@@ -159,7 +160,7 @@ pub fn load_balloon_image(
 ) -> Result<Option<String>, String> {
     let dir = resolve_balloon_dir(&name, &app_handle)?;
 
-    let found_path = nanai_android_mascot_ui::resolve_vfs_path(&dir, &file).or_else(|| {
+    let found_path = resolve_vfs_path(&dir, &file).or_else(|| {
         let stem = std::path::Path::new(&file)
             .file_stem()
             .and_then(|s| s.to_str())?;
@@ -167,7 +168,7 @@ pub fn load_balloon_image(
         let extensions = ["png", "bmp", "jpg", "jpeg", "pna", "gif"];
         for ext in &extensions {
             let alt_file = format!("{}.{}", stem, ext);
-            if let Some(p) = nanai_android_mascot_ui::resolve_vfs_path(&dir, &alt_file) {
+            if let Some(p) = resolve_vfs_path(&dir, &alt_file) {
                 return Some(p);
             }
         }
@@ -175,7 +176,7 @@ pub fn load_balloon_image(
         if let Some(stripped_stem) = stem.strip_suffix('0') {
             for ext in &extensions {
                 let alt_file = format!("{}.{}", stripped_stem, ext);
-                if let Some(p) = nanai_android_mascot_ui::resolve_vfs_path(&dir, &alt_file) {
+                if let Some(p) = resolve_vfs_path(&dir, &alt_file) {
                     return Some(p);
                 }
             }
@@ -227,9 +228,9 @@ pub fn balloon_descript_map(dir: &std::path::Path) -> std::collections::BTreeMap
     let descript = dir.join("descript.txt");
     let path_str = descript.to_string_lossy();
     let clean_path = crate::common::paths::clean_verbatim_path(&path_str);
-    let content = nanai_android_mascot_ui::open_text_file(std::path::Path::new(&clean_path))
+    let content = open_text_file(std::path::Path::new(&clean_path))
         .unwrap_or_default();
-    let parsed = nanai_android_mascot_ui::Descript::parse(&content);
+    let parsed = Descript::parse(&content);
     parsed
         .properties
         .into_iter()

@@ -6,7 +6,7 @@
 #[cfg(test)]
 mod tests {
 
-    use nanai_android_mascot_ui::{
+    use nanai_vfs::{
         MockVfs, OverlayVfs, VirtualFileSystem, denormalize_newlines, detect_and_decode_ext,
         detect_mime_type, is_safe_vfs_path, is_windows_reserved_name, normalize_charset_name,
         normalize_vfs_path, sanitize_vfs_path, wildcard_match,

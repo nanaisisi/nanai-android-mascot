@@ -25,7 +25,7 @@ pub fn load_menu_bitmap_data_url(
         let resolved = if direct.is_file() {
             Some(direct)
         } else {
-            nanai_android_mascot_ui::resolve_vfs_path(base, &normalized)
+            nanai_vfs::resolve_vfs_path(base, &normalized)
         };
         if let Some(target) = resolved
             && target.is_file()

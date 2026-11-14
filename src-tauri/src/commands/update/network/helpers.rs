@@ -20,7 +20,7 @@ pub(super) fn resolve_update_ghost_dir(
         format!("ghost/{}", ghost_name),
     ];
     for relative in candidates {
-        if let Ok(resolved) = crate::common::paths::resolve_asset_path(&relative, app_handle)
+        if let Ok(resolved) = crate::commands::update::resolve_asset_path(&relative, app_handle)
             && resolved.is_dir()
         {
             return resolved;

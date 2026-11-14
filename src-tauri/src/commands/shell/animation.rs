@@ -1,14 +1,15 @@
-use nanai_android_mascot_ui::{SakuraCommand, SurfaceManifest};
+use nanai_android_mascot_ui::{SakuraCommand, SurfaceManifest, Timeline, parse_sakura_script as ui_parse_sakura_script};
+use nanai_surface::{AnimationPattern, DrawMethod, parse_surfaces_txt};
 use std::collections::BTreeMap;
 
 #[tauri::command]
 pub fn parse_sakura_script(script: String) -> Result<Vec<SakuraCommand>, String> {
-    Ok(nanai_android_mascot_ui::parse_sakura_script(&script))
+    Ok(ui_parse_sakura_script(&script))
 }
 
 #[tauri::command]
 pub fn parse_surfaces_text(content: String) -> Result<BTreeMap<u32, SurfaceManifest>, String> {
-    let surfaces_txt = nanai_android_mascot_ui::parse_surfaces_txt(&content);
+    let surfaces_txt = parse_surfaces_txt(&content);
     let mut map = BTreeMap::new();
     for (id, def) in surfaces_txt.surfaces.iter() {
         map.insert(
@@ -43,9 +44,6 @@ pub struct AnimationTimeline {
 
 #[tauri::command]
 pub fn animation_timeline(patterns: Vec<TimelinePattern>) -> Result<AnimationTimeline, String> {
-    use nanai_android_mascot_ui::Timeline;
-    use nanai_android_mascot_ui::surfaces::{AnimationPattern, DrawMethod};
-
     let anims: Vec<AnimationPattern> = patterns
         .iter()
         .map(|p| AnimationPattern {

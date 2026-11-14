@@ -1,5 +1,6 @@
 use md5::{Digest, Md5};
-use nanai_android_mascot_ui::{Descript, open_text_file};
+use nanai_android_mascot_ui::Descript;
+use crate::commands::update::open_text_file;
 pub use nanai_android_mascot_ui::{UpdateEntry, parse_update_definition};
 use std::fs;
 use std::path::Path;

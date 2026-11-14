@@ -4,7 +4,7 @@
 //! YAYAとSATORIYAのC++コードとのFFI（Foreign Function Interface）定義およびShioriInterfaceラッパー
 
 use libc::{c_int, c_long, c_void};
-use nanai_android_mascot_ui::ShioriEngine;
+use nanai_android_mascot_ui::{ShioriEngine, ShioriLifecycleState};
 use std::ffi::CString;
 use std::path::Path;
 
@@ -136,11 +136,11 @@ impl ShioriEngine for ShioriInterface {
         Ok(())
     }
 
-    fn lifecycle_state(&self) -> nanai_android_mascot_ui::ShioriLifecycleState {
+    fn lifecycle_state(&self) -> ShioriLifecycleState {
         if self.is_loaded {
-            nanai_android_mascot_ui::ShioriLifecycleState::Active
+            ShioriLifecycleState::Active
         } else {
-            nanai_android_mascot_ui::ShioriLifecycleState::Unloaded
+            ShioriLifecycleState::Unloaded
         }
     }
 }

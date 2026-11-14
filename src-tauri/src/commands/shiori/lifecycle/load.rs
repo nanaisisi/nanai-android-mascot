@@ -1,7 +1,7 @@
-use crate::common::paths::resolve_ghost_directory;
+use crate::commands::shiori::{resolve_ghost_directory, resolve_vfs_path};
 use crate::common::state::AppState;
 use crate::shiori::dynamic::ShioriDynamicEngine;
-use nanai_android_mascot_ui::{ShioriEngine, resolve_vfs_path};
+use nanai_android_mascot_ui::ShioriEngine;
 use std::path::PathBuf;
 
 /// ゴーストを読み込み（動的SHIORIローダー対応）

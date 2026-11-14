@@ -21,5 +21,8 @@ pub use path::{
 pub use resolver::VfsResolver;
 pub use traits::{VirtualFileSystem, wildcard_match};
 
+#[allow(non_camel_case_types)]
+pub type Nanai_vfsInterface = dyn VirtualFileSystem;
+
 #[cfg(test)]
 mod tests;

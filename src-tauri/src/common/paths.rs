@@ -1,6 +1,55 @@
-use nanai_android_mascot_ui::resolve_vfs_path;
+pub use nanai_vfs::{open_shift_jis_file, open_text_file, resolve_vfs_path};
 use std::path::{Path, PathBuf};
 use tauri::Manager;
+
+/// Trait interface for path resolution utilities to define a stable public API
+#[allow(dead_code)]
+pub trait PathsInterface: Send + Sync {
+    fn resolve_asset_path(
+        &self,
+        relative_path: &str,
+        app_handle: &tauri::AppHandle,
+    ) -> Result<PathBuf, String>;
+
+    fn resolve_ghost_directory(
+        &self,
+        ghost_name: &str,
+        app_handle: &tauri::AppHandle,
+    ) -> Result<PathBuf, String>;
+
+    fn clean_verbatim_path(&self, path_str: &str) -> String;
+
+    fn normalize_path(&self, path: &Path) -> PathBuf;
+}
+
+#[allow(dead_code)]
+pub struct AppPathResolver;
+
+impl PathsInterface for AppPathResolver {
+    fn resolve_asset_path(
+        &self,
+        relative_path: &str,
+        app_handle: &tauri::AppHandle,
+    ) -> Result<PathBuf, String> {
+        resolve_asset_path(relative_path, app_handle)
+    }
+
+    fn resolve_ghost_directory(
+        &self,
+        ghost_name: &str,
+        app_handle: &tauri::AppHandle,
+    ) -> Result<PathBuf, String> {
+        resolve_ghost_directory(ghost_name, app_handle)
+    }
+
+    fn clean_verbatim_path(&self, path_str: &str) -> String {
+        clean_verbatim_path(path_str)
+    }
+
+    fn normalize_path(&self, path: &Path) -> PathBuf {
+        normalize_path(path)
+    }
+}
 
 pub fn resolve_asset_path(
     relative_path: &str,

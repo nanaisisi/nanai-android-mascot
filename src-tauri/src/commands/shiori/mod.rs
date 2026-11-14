@@ -1,3 +1,5 @@
+pub use crate::common::paths::{resolve_ghost_directory, resolve_vfs_path};
+
 pub mod lifecycle;
 pub mod protocol;
 pub mod status;

@@ -8,7 +8,7 @@ pub use postprocess::{perform_refresh_cleanup, process_delete_txt};
 
 use super::utils::flatten_balloon_directory;
 use crate::common::models::GhostInfo;
-use crate::common::paths::resolve_asset_path;
+use crate::commands::install::resolve_asset_path;
 use extraction::extract_zip_entries;
 use inspection::inspect_zip_archive;
 use postprocess::build_extracted_ghost_info;

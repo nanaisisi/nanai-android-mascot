@@ -1,4 +1,4 @@
-use crate::common::paths::clean_verbatim_path;
+pub use crate::common::paths::{clean_verbatim_path, normalize_path, resolve_asset_path};
 pub mod archive;
 pub mod utils;
 

@@ -1,7 +1,6 @@
-use crate::common::paths::resolve_ghost_directory;
-
-use nanai_android_mascot_ui::surfaces::{CompositionLayer, DrawMethod};
+use super::{resolve_ghost_directory, resolve_vfs_path};
 use nanai_android_mascot_ui::{Shell, ShellManifest};
+use nanai_surface::{CompositionLayer, CompositionPlan, DrawMethod};
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 use std::path::PathBuf;
@@ -17,7 +16,7 @@ pub fn resolve_shell_dir(
             return Ok(dir);
         }
         if let Some(resolved_shell) =
-            nanai_android_mascot_ui::resolve_vfs_path(&ghost_dir.join("shell"), shell_name)
+            resolve_vfs_path(&ghost_dir.join("shell"), shell_name)
             && resolved_shell.is_dir()
         {
             return Ok(resolved_shell);
@@ -60,7 +59,7 @@ pub struct PlanLayer {
 }
 
 impl CompositionPlanSnapshot {
-    fn snapshot(plan: nanai_android_mascot_ui::surfaces::CompositionPlan) -> Self {
+    fn snapshot(plan: CompositionPlan) -> Self {
         let layers = plan
             .layers
             .iter()

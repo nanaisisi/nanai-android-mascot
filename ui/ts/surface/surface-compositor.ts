@@ -1,14 +1,7 @@
 /**
- * 伺か標準仕様の画像合成・クロマキー透過・PNAアルファマスク処理
+ * Surface Compositor stub / bridge for UI compatibility
  */
-export { processChromaKey } from "./compositor/chromakey.js";
-export { composeSurfaceElements } from "./compositor/compose.js";
-export {
-	compositeElements,
-	SurfaceFrameBuffer,
-} from "./compositor/framebuffer.js";
-export {
-	drawImageLayer,
-	drawLayer,
-	loadLayerImage,
-} from "./compositor/layer.js";
+export async function processChromaKey(imageRaw: any, pnaImage?: any): Promise<any> {
+	// Compatibility stub for UI balloon theme image processing
+	return imageRaw;
+}

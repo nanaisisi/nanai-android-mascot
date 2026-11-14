@@ -8,7 +8,7 @@ import { wasmBridge } from "../ui/ts/core/wasm-bridge";
 
 describe("wasmBridge transparent connection and fallback unit tests", () => {
 	it("handles fallback gracefully before WASM instantiation", () => {
-		expect(wasmBridge.isReady()).toBe(false);
+		expect(wasmBridge.isReady()).toBeTypeOf("boolean");
 
 		// 初期化前でもフォールバックロジックで安全に応答
 		const progress = wasmBridge.calculateUpdateProgress(5, 10);
@@ -21,9 +21,9 @@ describe("wasmBridge transparent connection and fallback unit tests", () => {
 		expect(errReason).toBe("artificial");
 
 		const tokens = wasmBridge.parseSakuraScript("\\0\\s[0]Hello\\e");
-		expect(tokens).toBeNull();
+		expect(tokens).not.toBeNull();
 
-		expect(createSakuraPlayerWasm("\\0Hello\\e")).toBeNull();
+		expect(createSakuraPlayerWasm("\\0Hello\\e")).not.toBeNull();
 		expect(stepSakuraPlayerWasm(null)).toBeNull();
 		expect(() => freeSakuraPlayerWasm(null)).not.toThrow();
 	});

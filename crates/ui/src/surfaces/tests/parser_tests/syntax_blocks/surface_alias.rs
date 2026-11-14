@@ -302,7 +302,7 @@ fn test_parse_mock_nanai_file() {
     if !path.exists() {
         return;
     }
-    let content = crate::vfs::open_text_file(&path).unwrap();
+    let content = crate::vfs_integration::open_text_file(&path).unwrap();
     let txt = SurfacesTxt::parse(&content);
 
     assert_eq!(txt.version, 1);

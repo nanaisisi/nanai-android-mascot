@@ -1,7 +1,7 @@
 //! 実行中の単一アニメーションインスタンス状態
 
 use super::events::{FrameStepEvent, ParsedAnimationOptions};
-use crate::surfaces::AnimationPattern;
+use crate::surfaces_core_integration::AnimationPattern;
 use std::collections::HashSet;
 
 /// 実行中の単一アニメーションインスタンス状態

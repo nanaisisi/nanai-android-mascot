@@ -4,4 +4,4 @@ mod exclusive_talk;
 mod intervals;
 
 use super::*;
-use crate::surfaces::SerikoAnimation;
+use crate::surfaces_core_integration::SerikoAnimation;

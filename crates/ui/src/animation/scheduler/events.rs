@@ -1,6 +1,6 @@
 //! フレーム更新イベントおよびアニメーションオプション解析
 
-use crate::surfaces::AnimationPattern;
+use crate::surfaces_core_integration::AnimationPattern;
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 

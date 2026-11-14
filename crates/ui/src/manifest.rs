@@ -9,7 +9,8 @@ use std::collections::BTreeMap;
 
 use crate::descript::{BindGroup, Descript};
 use crate::shell::Shell;
-use crate::surfaces::{CursorDefinition, SortKind, SurfaceDefinition};
+use crate::surfaces_core_core::SortKind;
+use crate::surfaces_core_integration::{CursorDefinition, SurfaceDefinition};
 use crate::surfacetable::SurfaceTable;
 
 /// 1サーフィス分のマニフェスト（番号 + 定義 + 表示名）

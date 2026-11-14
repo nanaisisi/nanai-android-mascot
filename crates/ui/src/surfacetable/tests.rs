@@ -98,7 +98,7 @@ fn test_parse_unclosed_groups_and_invalid_numbers() {
 fn test_parse_mock_nanai_file() {
     let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../../assets/ghost/mock_nanai/shell/master/surfacetable.txt");
-    let content = crate::vfs::open_text_file(&path).unwrap();
+    let content = crate::vfs_integration::open_text_file(&path).unwrap();
     let table = SurfaceTable::parse(&content);
 
     assert_eq!(table.charset.as_deref(), Some("Shift_JIS"));

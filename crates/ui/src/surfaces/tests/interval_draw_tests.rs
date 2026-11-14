@@ -1,4 +1,6 @@
-use crate::surfaces::*;
+use crate::surfaces_core_core::*;
+use crate::surfaces_core_integration::*;
+use crate::surfaces_integration::*;
 
 #[test]
 fn test_expand_range() {

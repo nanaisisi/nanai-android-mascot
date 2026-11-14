@@ -12,18 +12,10 @@ pub mod surfaces_core;
 pub mod surfaces_core_core;
 pub mod surfaces_core_integration;
 pub mod surfaces_integration;
-pub mod surfaces {
-    pub use super::surfaces_core::*;
-    pub use super::surfaces_integration::*;
-}
 pub mod surfacetable;
 pub mod update;
 pub mod vfs_core;
 pub mod vfs_integration;
-pub mod vfs {
-    pub use super::vfs_core::*;
-    pub use super::vfs_integration::*;
-}
 
 pub use interface::{NanaiAndroidMascotUiInterface, NanaiUiFacade};
 
@@ -60,9 +52,7 @@ pub use surfaces_core::{
     BalloonOffset, CollisionArea, CollisionShape, CompositionLayer, CompositionPlan, DrawMethod,
     ElementDef, HitTestResult, Interval, SerikoAnimation, SortKind, SurfacesTxt,
 };
-pub use surfaces_integration::{
-    parse_surfaces_txt,
-};
+pub use surfaces_integration::parse_surfaces_txt;
 pub use surfacetable::{
     SurfTableEntry, SurfTableGroup, SurfaceTable, is_parts_name, parse_surface_table,
 };
@@ -71,9 +61,9 @@ pub use update::{
     UpdatePackage, parse_install_manifest, parse_update_definition, validate_archive_entry_path,
 };
 pub use vfs_core::{
-    MockVfs, OverlayVfs, VfsResolver, VirtualFileSystem, is_safe_vfs_path, is_windows_reserved_name,
-    normalize_charset_name, normalize_newlines, normalize_vfs_path, resolve_vfs_path,
-    sanitize_vfs_path, wildcard_match,
+    MockVfs, OverlayVfs, VfsResolver, VirtualFileSystem, is_safe_vfs_path,
+    is_windows_reserved_name, normalize_charset_name, normalize_newlines, normalize_vfs_path,
+    resolve_vfs_path, sanitize_vfs_path, wildcard_match,
 };
 pub use vfs_integration::{
     DecodeResult, denormalize_newlines, detect_and_decode, detect_and_decode_ext, detect_mime_type,

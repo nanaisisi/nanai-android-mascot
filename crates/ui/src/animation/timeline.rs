@@ -1,6 +1,6 @@
 //! SERIKO アニメーション実行器（ukadoc-spec / descript / shell-surfaces 準拠）
 
-use crate::surfaces::AnimationPattern;
+use crate::surfaces_core_integration::AnimationPattern;
 use serde::{Deserialize, Serialize};
 
 /// 時刻 `at_ms` に適用される1フレーム

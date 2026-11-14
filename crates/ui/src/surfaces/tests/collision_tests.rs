@@ -1,4 +1,6 @@
-use crate::surfaces::*;
+use crate::surfaces_core_core::*;
+use crate::surfaces_core_integration::*;
+use crate::surfaces_integration::*;
 
 #[test]
 fn test_collision_sort_and_hit_test() {
@@ -74,7 +76,7 @@ animation100.collisionex0,ArmorBust,rect,10,10,60,60
     assert!(txt.hit_test_with_binds(999, 20, 20, &[100]).is_none());
 
     // CollisionShape::bounding_box tests for circle, ellipse, and empty/negative edge cases
-    use crate::surfaces::types::CollisionShape;
+    use crate::surfaces_core_core::CollisionShape;
     let circle = CollisionShape::Circle {
         cx: 50,
         cy: 50,

@@ -4,4 +4,4 @@ mod pattern_control;
 mod state_coverage;
 
 use super::*;
-use crate::surfaces::SerikoAnimation;
+use crate::surfaces_core_integration::SerikoAnimation;

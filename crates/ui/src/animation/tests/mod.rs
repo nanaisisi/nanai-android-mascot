@@ -6,7 +6,8 @@ mod timeline;
 mod triggers_events;
 
 use super::*;
-use crate::surfaces::{AnimationPattern, DrawMethod, Interval, SurfacesTxt};
+use crate::surfaces_core_core::{DrawMethod, Interval};
+use crate::surfaces_core_integration::{AnimationPattern, SurfacesTxt};
 
 pub(crate) fn pattern(index: u32, surface: i32, wait: u32) -> AnimationPattern {
     AnimationPattern {

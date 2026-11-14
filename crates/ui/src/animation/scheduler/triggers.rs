@@ -1,7 +1,8 @@
 use super::super::active::ActiveAnimation;
 use super::super::events::ParsedAnimationOptions;
 use super::AnimationScheduler;
-use crate::surfaces::{Interval, SerikoAnimation};
+use crate::surfaces_core_core::Interval;
+use crate::surfaces_core_integration::SerikoAnimation;
 
 impl AnimationScheduler {
     /// 指定アニメーションが現在排他ロックにより開始をブロックされているか

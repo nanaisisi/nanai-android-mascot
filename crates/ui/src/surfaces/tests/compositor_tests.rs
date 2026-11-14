@@ -1,5 +1,5 @@
-use crate::surfaces::compositor::{SurfaceFrameBuffer, composite_elements};
-use crate::surfaces::types::DrawMethod;
+use crate::surfaces_core_core::DrawMethod;
+use crate::surfaces_integration::compositor::{SurfaceFrameBuffer, composite_elements};
 
 #[test]
 fn test_surface_frame_buffer_creation() {

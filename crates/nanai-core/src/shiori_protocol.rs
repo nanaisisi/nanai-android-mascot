@@ -131,10 +131,37 @@ pub fn build_on_mouse_click_request(
     build_shiori_request_extended("GET", "OnMouseClick", &refs, None)
 }
 
+/// OnMouseClickEx イベントリクエスト構築 (ukadoc-spec/list/shiori-event/mouse/OnMouseClickEx.md)
+pub fn build_on_mouse_click_ex_request(
+    x: i32,
+    y: i32,
+    scope_id: i32,
+    collision_name: &str,
+    button: i32,
+    key_state: i32,
+) -> String {
+    let refs = vec![
+        x.to_string(),
+        y.to_string(),
+        "0".to_string(),
+        scope_id.to_string(),
+        collision_name.to_string(),
+        button.to_string(),
+        key_state.to_string(),
+    ];
+    build_shiori_request_extended("GET", "OnMouseClickEx", &refs, None)
+}
+
 /// OnChoiceSelect イベントリクエスト構築
 pub fn build_on_choice_select_request(choice_id: &str) -> String {
     let refs = vec![choice_id.to_string()];
     build_shiori_request_extended("GET", "OnChoiceSelect", &refs, None)
+}
+
+/// OnChoiceSelectEx イベントリクエスト構築 (ukadoc-spec/list/shiori-event/choice/OnChoiceSelectEx.md)
+pub fn build_on_choice_select_ex_request(choice_id: &str, text: &str, extra_data: &str) -> String {
+    let refs = vec![choice_id.to_string(), text.to_string(), extra_data.to_string()];
+    build_shiori_request_extended("GET", "OnChoiceSelectEx", &refs, None)
 }
 
 /// OnChoiceTimeout イベントリクエスト構築 (ukadoc-spec/list/shiori-event/choice/OnChoiceTimeout.md)
@@ -839,5 +866,15 @@ mod tests {
 
         let saver_end = build_on_screen_saver_end_request();
         assert!(saver_end.contains("ID: OnScreenSaverEnd"));
+
+        let mouse_ex = build_on_mouse_click_ex_request(10, 20, 0, "head", 0, 1);
+        assert!(mouse_ex.contains("ID: OnMouseClickEx"));
+        assert!(mouse_ex.contains("Reference5: 0"));
+        assert!(mouse_ex.contains("Reference6: 1"));
+
+        let choice_ex = build_on_choice_select_ex_request("opt1", "Choice Text", "extra");
+        assert!(choice_ex.contains("ID: OnChoiceSelectEx"));
+        assert!(choice_ex.contains("Reference1: Choice Text"));
+        assert!(choice_ex.contains("Reference2: extra"));
     }
 }

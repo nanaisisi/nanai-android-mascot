@@ -1,15 +1,8 @@
+import { wasmBridge } from "../wasm-bridge.js";
+
 /**
  * @file install-protocol.ts
  * @brief UKADOC (SSP仕様) 準拠 インストールイベント・引数生成およびエラーハンドリングモジュール
- *
- * 参考仕様:
- * - OnInstallBegin: Reference0=識別子 ("install" 等)
- * - OnInstallComplete: Reference0=種別 ("ghost", "shell", "balloon", "plugin", "headline", "package" 等), Reference1=名前
- * - OnInstallCompleteEx: Reference0=種別, Reference1=名前, Reference2=パス/追加情報, Reference3=実行スクリプト(任意)
- * - OnInstallCompleteAll: Reference0=インストール数, Reference1=インストール済みリソース一覧 (Byte1 区切りまたはカンマ区切り)
- * - OnInstallFailure: Reference0=失敗理由 ("unsupported", "extraction", "unlha32 error", "artificial", "write error", "invalid path" 等)
- * - OnInstallRefuse: Reference0=拒否理由 ("invalid name", "unsupported", "accept failed" 等), Reference1=拒否対象リソース
- * - OnInstallReroute: Reference0=転送先ゴースト名, Reference1=種別, Reference2=名前
  */
 
 /**
@@ -175,44 +168,53 @@ export function buildInstallRerouteArgs(
 export function parseErrorReason(err: unknown): string {
 	const msg = String(
 		(err as { message?: string })?.message || err || "",
-	).toLowerCase();
+	);
 
+	if (wasmBridge.isReady()) {
+		try {
+			return wasmBridge.parseInstallErrorReason(msg);
+		} catch {
+			// fallback
+		}
+	}
+
+	const lower = msg.toLowerCase();
 	if (
-		msg.includes("unsupported") ||
-		msg.includes("invalid type") ||
-		msg.includes("サポートされていない")
+		lower.includes("unsupported") ||
+		lower.includes("invalid type") ||
+		lower.includes("サポートされていない")
 	) {
 		return "unsupported";
 	}
 	if (
-		msg.includes("artificial") ||
-		msg.includes("cancel") ||
-		msg.includes("abort") ||
-		msg.includes("キャンセル")
+		lower.includes("artificial") ||
+		lower.includes("cancel") ||
+		lower.includes("abort") ||
+		lower.includes("キャンセル")
 	) {
 		return "artificial";
 	}
 	if (
-		msg.includes("zip-slip") ||
-		msg.includes("illegal path") ||
-		msg.includes("traversal") ||
-		msg.includes("absolute path")
+		lower.includes("zip-slip") ||
+		lower.includes("illegal path") ||
+		lower.includes("traversal") ||
+		lower.includes("absolute path")
 	) {
 		return "invalid path";
 	}
 	if (
-		msg.includes("unlha32") ||
-		msg.includes("lha") ||
-		msg.includes("corrupt") ||
-		msg.includes("crc")
+		lower.includes("unlha32") ||
+		lower.includes("lha") ||
+		lower.includes("corrupt") ||
+		lower.includes("crc")
 	) {
 		return "unlha32 error";
 	}
 	if (
-		msg.includes("write error") ||
-		msg.includes("fileio") ||
-		msg.includes("permission denied") ||
-		msg.includes("io error")
+		lower.includes("write error") ||
+		lower.includes("fileio") ||
+		lower.includes("permission denied") ||
+		lower.includes("io error")
 	) {
 		return "write error";
 	}

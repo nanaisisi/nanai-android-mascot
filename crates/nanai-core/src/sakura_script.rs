@@ -6,6 +6,176 @@ use tsify::Tsify;
 use wasm_bindgen::prelude::*;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
+pub enum SakuraCommandName {
+    #[serde(rename = "open:inputbox")]
+    OpenInputbox,
+    #[serde(rename = "open:passwordinput")]
+    OpenPasswordinput,
+    #[serde(rename = "open:textarea")]
+    OpenTextarea,
+    #[serde(rename = "open:slider")]
+    OpenSlider,
+    #[serde(rename = "open:ipinput")]
+    OpenIpinput,
+    #[serde(rename = "open:date")]
+    OpenDate,
+    #[serde(rename = "open:time")]
+    OpenTime,
+    #[serde(rename = "open:teachbox")]
+    OpenTeachbox,
+    #[serde(rename = "open:communicatebox")]
+    OpenCommunicatebox,
+    #[serde(rename = "close:inputbox")]
+    CloseInputbox,
+    #[serde(rename = "close:textarea")]
+    CloseTextarea,
+    #[serde(rename = "close:dialog")]
+    CloseDialog,
+    #[serde(rename = "close:teachbox")]
+    CloseTeachbox,
+    #[serde(rename = "close:communicatebox")]
+    CloseCommunicatebox,
+    #[serde(rename = "jump")]
+    Jump,
+    #[serde(rename = "raise")]
+    Raise,
+    #[serde(rename = "raiseother")]
+    Raiseother,
+    #[serde(rename = "notifyother")]
+    Notifyother,
+    #[serde(rename = "embed")]
+    Embed,
+    #[serde(rename = "change")]
+    Change,
+    #[serde(rename = "call")]
+    Call,
+    #[serde(rename = "vanishbymyself")]
+    Vanishbymyself,
+    #[serde(rename = "bind")]
+    Bind,
+    #[serde(rename = "open:dressupexplorer")]
+    OpenDressupexplorer,
+    #[serde(rename = "anim")]
+    Anim,
+    #[serde(rename = "setchoicetimeout")]
+    SetChoicetimeout,
+    #[serde(rename = "setballoontimeout")]
+    SetBalloontimeout,
+    #[serde(rename = "setballoonwait")]
+    SetBalloonwait,
+    #[serde(rename = "setsyncobject")]
+    SetSyncobject,
+    #[serde(rename = "resetsyncobject")]
+    ResetSyncobject,
+    #[serde(rename = "waitsyncobject")]
+    WaitSyncobject,
+    #[serde(rename = "quicksection")]
+    Quicksection,
+    #[serde(rename = "update")]
+    Update,
+    #[serde(rename = "updatebymyself")]
+    Updatebymyself,
+    #[serde(rename = "updateother")]
+    Updateother,
+    #[serde(rename = "mail")]
+    Mail,
+    #[serde(rename = "mailcheck")]
+    Mailcheck,
+    #[serde(rename = "file")]
+    File,
+    #[serde(rename = "download")]
+    Download,
+    #[serde(rename = "upload")]
+    Upload,
+    #[serde(rename = "archive")]
+    Archive,
+    #[serde(rename = "setproxy")]
+    Setproxy,
+    #[serde(rename = "sethttptimeout")]
+    Sethttptimeout,
+    #[serde(rename = "setwallpaper")]
+    Setwallpaper,
+    #[serde(rename = "cancelnetworkservice")]
+    Cancelnetworkservice,
+    #[serde(rename = "closenetworkservice")]
+    Closenetworkservice,
+    #[serde(rename = "execute")]
+    Execute,
+    #[serde(rename = "execute:emptyrecyclebin")]
+    ExecuteEmptyrecyclebin,
+    #[serde(rename = "execute:filewatch")]
+    ExecuteFilewatch,
+    #[serde(rename = "cancel:filewatch")]
+    CancelFilewatch,
+    #[serde(rename = "execute:ping")]
+    ExecutePing,
+    #[serde(rename = "execute:nslookup")]
+    ExecuteNslookup,
+    #[serde(rename = "execute:schedule-add")]
+    ExecuteScheduleAdd,
+    #[serde(rename = "set:alignmentondesktop")]
+    SetAlignmentondesktop,
+    #[serde(rename = "set:tasktrayicon")]
+    SetTasktrayicon,
+    #[serde(rename = "set:trayballoon")]
+    SetTrayballoon,
+    #[serde(rename = "plugin")]
+    Plugin,
+    #[serde(rename = "entermode")]
+    Entermode,
+    #[serde(rename = "leavemode")]
+    Leavemode,
+    #[serde(rename = "setposition")]
+    Setposition,
+    #[serde(rename = "setsensing")]
+    Setsensing,
+    #[serde(rename = "setalpha")]
+    Setalpha,
+    #[serde(rename = "setproperty")]
+    Setproperty,
+    #[serde(rename = "getproperty")]
+    Getproperty,
+    #[serde(rename = "setserikotalk")]
+    Setserikotalk,
+    #[serde(rename = "setothersurfacechange")]
+    Setothersurfacechange,
+    #[serde(rename = "opensystemtarget")]
+    Opensystemtarget,
+    #[serde(rename = "reloadghost")]
+    Reloadghost,
+    #[serde(rename = "reloadshell")]
+    Reloadshell,
+    #[serde(rename = "reloadballoon")]
+    Reloadballoon,
+    #[serde(rename = "reloaddescript")]
+    Reloaddescript,
+    #[serde(rename = "reloadsurface")]
+    Reloadsurface,
+    #[serde(rename = "reloadshiori")]
+    Reloadshiori,
+    #[serde(rename = "executesntp")]
+    Executesntp,
+    #[serde(rename = "executeresetwindowpos")]
+    Executeresetwindowpos,
+    #[serde(rename = "executeresetballoonpos")]
+    Executeresetballoonpos,
+    #[serde(rename = "biff")]
+    Biff,
+    #[serde(rename = "notify")]
+    Notify,
+    #[serde(rename = "timerraise")]
+    Timerraise,
+    #[serde(rename = "timernotify")]
+    Timernotify,
+    #[serde(rename = "notifyplugin")]
+    Notifyplugin,
+    #[serde(rename = "raiseplugin")]
+    Raiseplugin,
+    #[serde(rename = "setshioridebugmode")]
+    Setshioridebugmode,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 #[serde(tag = "type", content = "value")]
 pub enum SakuraToken {
     /// テキスト文字列

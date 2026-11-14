@@ -3,6 +3,7 @@
  * @brief OS・シェル・ユーザー等の環境情報通知
  */
 
+import type { OsEnvironmentEvent } from "../../../core/wasm/pkg/nanai_core.js";
 import type { LifecycleContext } from "./ghost-lifecycle/lifecycle-events.js";
 
 export const shioriNotifyEnvironment = {
@@ -156,26 +157,7 @@ export const shioriNotifyEnvironment = {
 	 */
 	async notifyOsEnvironment(
 		this: LifecycleContext,
-		event:
-			| "OnDisplayChange"
-			| "OnDisplayChangeEx"
-			| "OnDisplayHandover"
-			| "OnDisplayPowerStatus"
-			| "OnDarkTheme"
-			| "OnTabletMode"
-			| "OnWindowModeChange"
-			| "OnNetworkStatusChange"
-			| "OnNetworkHeavy"
-			| "OnCPULoadHigh"
-			| "OnCPULoadLow"
-			| "OnMemoryLoadHigh"
-			| "OnMemoryLoadLow"
-			| "OnRecycleBinEmpty"
-			| "OnRecycleBinEmptyFromOther"
-			| "OnRecycleBinStatusUpdate"
-			| "OnOSUpdateInfo"
-			| "OnDesktopWallpaperChange"
-			| string,
+		event: OsEnvironmentEvent | string,
 		references: Array<string | number> = [],
 	) {
 		return await this.sendShioriNotify(event, references);

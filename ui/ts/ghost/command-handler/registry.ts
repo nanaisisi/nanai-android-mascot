@@ -3,6 +3,8 @@
  * @brief さくらスクリプト拡張コマンド (\![...], \j[...]) のハンドラ登録・管理 (CommandHandlerMap)
  */
 
+import type { SakuraCommandName } from "../../core/wasm/pkg/nanai_core.js";
+
 export type CommandHandlerFn = (
 	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
@@ -10,13 +12,13 @@ export type CommandHandlerFn = (
 
 export const CommandHandlerMap = new Map<string, CommandHandlerFn>();
 
-export function normalizeCommandKey(cmd: string, subCmd: string = ""): string {
+export function normalizeCommandKey(cmd: SakuraCommandName | string, subCmd: string = ""): string {
 	const c = (cmd ?? "").toLowerCase().trim();
 	const s = (subCmd ?? "").toLowerCase().trim();
 	return s ? `${c}:${s}` : c;
 }
 
-export function registerCommandHandler(cmd: string, fn: CommandHandlerFn) {
+export function registerCommandHandler(cmd: SakuraCommandName | string, fn: CommandHandlerFn) {
 	if (typeof fn !== "function") {
 		throw new TypeError(`Handler for command "${cmd}" must be a function`);
 	}
@@ -24,7 +26,7 @@ export function registerCommandHandler(cmd: string, fn: CommandHandlerFn) {
 }
 
 export function getCommandHandler(
-	cmd: string,
+	cmd: SakuraCommandName | string,
 	subCmd: string = "",
 ): CommandHandlerFn | undefined {
 	const combinedKey = normalizeCommandKey(cmd, subCmd);
@@ -36,7 +38,7 @@ export function getCommandHandler(
 }
 
 export function unregisterCommandHandler(
-	cmd: string,
+	cmd: SakuraCommandName | string,
 	subCmd: string = "",
 ): boolean {
 	const key = normalizeCommandKey(cmd, subCmd);

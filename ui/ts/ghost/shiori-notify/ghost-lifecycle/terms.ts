@@ -3,6 +3,7 @@
  * @brief 利用規約ダイアログ関連通知
  */
 
+import type { TermsDialogEvent } from "../../../../core/wasm/pkg/nanai_core.js";
 import type { LifecycleContext } from "./lifecycle-events.js";
 
 export const shioriNotifyTerms = {
@@ -11,7 +12,7 @@ export const shioriNotifyTerms = {
 	 */
 	async notifyTermsDialogEvent(
 		this: LifecycleContext,
-		event: "OnGhostTermsAccept" | "OnGhostTermsDecline" | string,
+		event: TermsDialogEvent | string,
 		references: Array<string | number> = [],
 	) {
 		return await this.sendShioriNotify(event, references);

@@ -95,15 +95,14 @@ pub struct SendShioriEventParams {
     ghost_id: Option<String>,
 }
 
-#[allow(dead_code)]
 impl SendShioriEventParams {
     // Add getter methods
     pub fn event(&self) -> &str {
         &self.event
     }
 
-    pub fn references(&self) -> Option<&[String]> {
-        self.references.as_deref()
+    pub fn references(&self) -> Option<&Vec<String>> {
+        self.references.as_ref()
     }
 
     pub fn ghost_id(&self) -> Option<&str> {
@@ -120,17 +119,31 @@ pub async fn send_shiori_event(
     state: tauri::State<'_, AppState>,
     params: SendShioriEventParams,
 ) -> Result<String, String> {
-    let SendShioriEventParams { event, references, ghost_id } = params;
-    let mut req = ShioriRequest::get(&event, &references.unwrap_or_default());
+    let mut req = ShioriRequest::get(params.event(), &params.references().cloned().unwrap_or_default());
     req.sender = "NanaiMascot".to_string();
-    send_shiori_request(state, req.build(), ghost_id).await
+    send_shiori_request(state, req.build(), params.ghost_id().map(ToString::to_string)).await
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct SendShioriNotifyParams {
-    pub event: String,
-    pub references: Option<Vec<String>>,
-    pub ghost_id: Option<String>,
+    event: String,
+    references: Option<Vec<String>>,
+    ghost_id: Option<String>,
+}
+
+impl SendShioriNotifyParams {
+    // Add getter methods
+    pub fn event(&self) -> &str {
+        &self.event
+    }
+
+    pub fn references(&self) -> Option<&Vec<String>> {
+        self.references.as_ref()
+    }
+
+    pub fn ghost_id(&self) -> Option<&str> {
+        self.ghost_id.as_deref()
+    }
 }
 
 /// SHIORIへ NOTIFY コマンドで情報を通知（UKADOC notify イベント群）
@@ -144,10 +157,9 @@ pub async fn send_shiori_notify(
     state: tauri::State<'_, AppState>,
     params: SendShioriNotifyParams,
 ) -> Result<String, String> {
-    let SendShioriNotifyParams { event, references, ghost_id } = params;
-    let mut req = ShioriRequest::notify(&event, &references.unwrap_or_default());
+    let mut req = ShioriRequest::notify(params.event(), &params.references().cloned().unwrap_or_default());
     req.sender = "NanaiMascot".to_string();
-    send_shiori_request(state, req.build(), ghost_id).await
+    send_shiori_request(state, req.build(), params.ghost_id().map(ToString::to_string)).await
 }
 
 /// SHIORI へ UKADOC 準拠の capability Notify イベントを送信
@@ -165,9 +177,24 @@ pub async fn send_shiori_capability(
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct SendShioriEventTypedParams {
-    pub event: String,
-    pub args: Option<Vec<String>>,
-    pub ghost_id: Option<String>,
+    event: String,
+    args: Option<Vec<String>>,
+    ghost_id: Option<String>,
+}
+
+impl SendShioriEventTypedParams {
+    // Add getter methods
+    pub fn event(&self) -> &str {
+        &self.event
+    }
+
+    pub fn args(&self) -> Option<&Vec<String>> {
+        self.args.as_ref()
+    }
+
+    pub fn ghost_id(&self) -> Option<&str> {
+        self.ghost_id.as_deref()
+    }
 }
 
 /// SHIORI イベントを送信し、解析済み `ShioriResponse` オブジェクトで返す
@@ -179,11 +206,11 @@ pub async fn send_shiori_event_typed(
     state: tauri::State<'_, AppState>,
     params: SendShioriEventTypedParams,
 ) -> Result<ShioriResponse, String> {
-    let SendShioriEventTypedParams { event, args, ghost_id } = params;
-    let mut req = ShioriRequest::get(&event, &args.unwrap_or_default());
+    let event = params.event().to_string();
+    let mut req = ShioriRequest::get(&event, &params.args().cloned().unwrap_or_default());
     req.sender = "NanaiMascot".to_string();
 
-    let gid = ghost_id.unwrap_or_else(|| "main".to_string());
+    let gid = params.ghost_id().unwrap_or("main").to_string();
     let text = req.build();
     let raw = dispatch_request(&state, &text, &gid)?;
     let parsed = ShioriResponse::parse(&raw);
@@ -251,7 +278,6 @@ pub struct SendGhostCallEventParams {
     ghost_id: Option<String>,
 }
 
-#[allow(dead_code)]
 impl SendGhostCallEventParams {
     // Add getter methods
     pub fn event(&self) -> &str {
@@ -273,9 +299,8 @@ pub async fn send_ghost_call_event(
     state: tauri::State<'_, AppState>,
     params: SendGhostCallEventParams,
 ) -> Result<String, String> {
-    let SendGhostCallEventParams { event, target_ghost_name, ghost_id } = params;
-    let mut req = ShioriRequest::get(&event, &[target_ghost_name]);
+    let mut req = ShioriRequest::get(params.event(), &[params.target_ghost_name().to_string()]);
     req.sender = "NanaiMascot".to_string();
-    let gid = ghost_id.unwrap_or_else(|| "main".to_string());
-    dispatch_request(&state, &req.build(), &gid)
+    let gid = params.ghost_id().unwrap_or("main");
+    dispatch_request(&state, &req.build(), gid)
 }

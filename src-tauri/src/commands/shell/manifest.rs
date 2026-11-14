@@ -136,7 +136,6 @@ pub struct SurfaceCompositionPlanParams {
     binds: Option<Vec<u32>>,
 }
 
-#[allow(dead_code)]
 impl SurfaceCompositionPlanParams {
     // Add getter methods
     pub fn ghost_name(&self) -> &str {
@@ -161,9 +160,8 @@ pub fn surface_composition_plan(
     params: SurfaceCompositionPlanParams,
     app_handle: tauri::AppHandle,
 ) -> Result<Option<CompositionPlanSnapshot>, String> {
-    let SurfaceCompositionPlanParams { ghost_name, shell_name, surface_id, binds } = params;
-    let shell_dir = resolve_shell_dir(&ghost_name, &shell_name, &app_handle)?;
+    let shell_dir = resolve_shell_dir(params.ghost_name(), params.shell_name(), &app_handle)?;
     let shell = Shell::load(&shell_dir).map_err(|e| e.to_string())?;
-    let plan = shell.composition_plan(surface_id, &binds.unwrap_or_default());
+    let plan = shell.composition_plan(params.surface_id(), params.binds().unwrap_or(&[]));
     Ok(plan.map(CompositionPlanSnapshot::snapshot))
 }

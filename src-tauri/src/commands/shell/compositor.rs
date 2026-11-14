@@ -14,7 +14,6 @@ pub struct ClearFrameBufferRectParams {
     h: u32,
 }
 
-#[allow(dead_code)]
 impl ClearFrameBufferRectParams {
     // Add getter methods
     pub fn fb(&self) -> &SurfaceFrameBuffer {
@@ -42,8 +41,8 @@ impl ClearFrameBufferRectParams {
 pub fn clear_frame_buffer_rect(
     params: ClearFrameBufferRectParams,
 ) -> Result<SurfaceFrameBuffer, String> {
-    let ClearFrameBufferRectParams { mut fb, x, y, w, h } = params;
-    fb.clear_rect(x, y, w, h);
+    let mut fb = params.fb().clone();
+    fb.clear_rect(params.x(), params.y(), params.w(), params.h());
     Ok(fb)
 }
 
@@ -55,7 +54,6 @@ pub struct ApplyChromakeyToBufferParams {
     b: u8,
 }
 
-#[allow(dead_code)]
 impl ApplyChromakeyToBufferParams {
     // Add getter methods
     pub fn fb(&self) -> &SurfaceFrameBuffer {
@@ -79,8 +77,8 @@ impl ApplyChromakeyToBufferParams {
 pub fn apply_chromakey_to_buffer(
     params: ApplyChromakeyToBufferParams,
 ) -> Result<SurfaceFrameBuffer, String> {
-    let ApplyChromakeyToBufferParams { mut fb, r, g, b } = params;
-    fb.apply_chromakey(r, g, b);
+    let mut fb = params.fb().clone();
+    fb.apply_chromakey(params.r(), params.g(), params.b());
     Ok(fb)
 }
 
@@ -89,7 +87,6 @@ pub struct ApplyCornerChromakeyToBufferParams {
     fb: SurfaceFrameBuffer,
 }
 
-#[allow(dead_code)]
 impl ApplyCornerChromakeyToBufferParams {
     // Add getter methods
     pub fn fb(&self) -> &SurfaceFrameBuffer {
@@ -101,7 +98,7 @@ impl ApplyCornerChromakeyToBufferParams {
 pub fn apply_corner_chromakey_to_buffer(
     params: ApplyCornerChromakeyToBufferParams,
 ) -> Result<SurfaceFrameBuffer, String> {
-    let mut fb = params.fb;
+    let mut fb = params.fb().clone();
     fb.apply_corner_chromakey();
     Ok(fb)
 }

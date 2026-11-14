@@ -68,13 +68,25 @@ export const settingsMethods = {
 	showBalloon(text: string, scopeId: number = 0) {
 		const app =
 			this as unknown as import("../../main.js").NanaiAndroidMascotApp;
-		const balloonText = app.elements?.balloonText;
-		const balloonDisplay = app.elements?.balloonDisplay;
+		const isKero = scopeId === 1;
+		const getDocEl = (id: string) =>
+			typeof document !== "undefined" && typeof document.getElementById === "function"
+				? document.getElementById(id)
+				: null;
+		const balloonText = isKero
+			? (app.elements?.keroBalloonText || getDocEl("kero-balloon-text"))
+			: (app.elements?.balloonText || getDocEl("balloon-text"));
+		const balloonDisplay = isKero
+			? (app.elements?.keroBalloonDisplay || getDocEl("kero-balloon-display"))
+			: (app.elements?.balloonDisplay || getDocEl("balloon-display"));
 		if (balloonText) {
 			balloonText.textContent = text;
 		}
 		if (balloonDisplay && isSinglePageUi()) {
 			balloonDisplay.style.display = "block";
+		}
+		if (isKero && app.elements?.keroSlot) {
+			app.elements.keroSlot.style.display = "block";
 		}
 		if (isNativeMultiWindow()) {
 			invoke("show_balloon_window", {
@@ -83,7 +95,7 @@ export const settingsMethods = {
 			})
 				.then(() => {
 					emit(`update-balloon-content-${scopeId}`, {
-						html: app.elements?.balloonText?.innerHTML || text,
+						html: balloonText?.innerHTML || text,
 						theme: app.currentBalloonTheme || "default",
 					});
 				})
@@ -97,7 +109,14 @@ export const settingsMethods = {
 	) {
 		const app =
 			this as unknown as import("../../main.js").NanaiAndroidMascotApp;
-		const balloonDisplay = app.elements?.balloonDisplay;
+		const isKero = scopeId === 1;
+		const getDocEl = (id: string) =>
+			typeof document !== "undefined" && typeof document.getElementById === "function"
+				? document.getElementById(id)
+				: null;
+		const balloonDisplay = isKero
+			? (app.elements?.keroBalloonDisplay || getDocEl("kero-balloon-display"))
+			: (app.elements?.balloonDisplay || getDocEl("balloon-display"));
 		if (balloonDisplay && isSinglePageUi()) {
 			balloonDisplay.style.display = "none";
 		}

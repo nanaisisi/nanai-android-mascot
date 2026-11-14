@@ -95,31 +95,6 @@ pub fn parse_surfaces_txt(text: &str) -> ParsedSurfacesManifest {
 
     let mut current_surfaces: Vec<String> = vec!["default".to_string()];
 
-    // ヘルパー: アニメーションIDに対応する構造体を取得または作成
-    fn get_or_create_animation(
-        animations_map: &mut BTreeMap<String, Vec<AnimationOutput>>,
-        surfaces: &[String],
-        anim_id: u32,
-    ) -> Vec<usize> {
-        let mut indices = Vec::new();
-        for s in surfaces {
-            let list = animations_map.entry(s.clone()).or_default();
-            if let Some(pos) = list.iter().position(|a| a.id == anim_id) {
-                indices.push(pos);
-            } else {
-                list.push(AnimationOutput {
-                    id: anim_id,
-                    interval: "never".to_string(),
-                    name: None,
-                    options: None,
-                    patterns: Vec::new(),
-                });
-                indices.push(list.len() - 1);
-            }
-        }
-        indices
-    }
-
     for line in text.lines() {
         let trimmed = line.trim();
         if trimmed.is_empty() || trimmed.starts_with("//") || trimmed == "{" || trimmed == "}" {

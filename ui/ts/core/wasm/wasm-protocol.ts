@@ -169,3 +169,77 @@ export function parseBalloonOptionsWasm(content: string): any {
 		return null;
 	}
 }
+
+export function buildSaoriRequestWasm(
+	modulePath: string,
+	args: string[] = [],
+): string | null {
+	const core = wasmMemory.getWasmCore();
+	if (!core?.wasm_build_saori_request) return null;
+
+	try {
+		return core.wasm_build_saori_request(modulePath, args) as string;
+	} catch (err) {
+		console.warn("⚠️ [WASM Protocol] buildSaoriRequest エラー:", err);
+		return null;
+	}
+}
+
+export function parseSaoriResponseWasm(raw: string): any {
+	const core = wasmMemory.getWasmCore();
+	if (!core?.wasm_parse_saori_response) return null;
+
+	try {
+		return core.wasm_parse_saori_response(raw);
+	} catch (err) {
+		console.warn("⚠️ [WASM Protocol] parseSaoriResponse エラー:", err);
+		return null;
+	}
+}
+
+export function parseFmoStringWasm(rawFmo: string): any {
+	const core = wasmMemory.getWasmCore();
+	if (!core?.wasm_parse_fmo_string) return null;
+
+	try {
+		return core.wasm_parse_fmo_string(rawFmo);
+	} catch (err) {
+		console.warn("⚠️ [WASM Protocol] parseFmoString エラー:", err);
+		return null;
+	}
+}
+
+export function parseDeleteTxtWasm(content: string): any {
+	const core = wasmMemory.getWasmCore();
+	if (!core?.wasm_parse_delete_txt) return null;
+
+	try {
+		return core.wasm_parse_delete_txt(content);
+	} catch (err) {
+		console.warn("⚠️ [WASM Protocol] parseDeleteTxt エラー:", err);
+		return null;
+	}
+}
+
+export function parseDeveloperOptionsTxtWasm(content: string): any {
+	const core = wasmMemory.getWasmCore();
+	if (!core?.wasm_parse_developer_options_txt) return null;
+
+	try {
+		return core.wasm_parse_developer_options_txt(content);
+	} catch (err) {
+		console.warn("⚠️ [WASM Protocol] parseDeveloperOptionsTxt エラー:", err);
+		return null;
+	}
+}
+
+export function normalizeUpdateReasonWasm(reason?: string): number {
+	const core = wasmMemory.getWasmCore();
+	if (!core?.wasm_normalize_update_reason) return 0;
+
+	try {
+		return core.wasm_normalize_update_reason(reason);
+	} catch (_err) {
+		return 0;
+	}
+}

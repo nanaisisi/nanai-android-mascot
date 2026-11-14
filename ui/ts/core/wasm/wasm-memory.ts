@@ -21,9 +21,14 @@ export class WasmMemoryManager {
 						(bufferOrUrl as any).byteLength !== undefined &&
 						typeof bufferOrUrl !== "string")
 				) {
-					await init(bufferOrUrl as InitInput);
-				} else if (typeof bufferOrUrl === "string") {
-					await init(bufferOrUrl);
+					await init(bufferOrUrl as any);
+				} else if (typeof bufferOrUrl === "string" && bufferOrUrl.trim().length > 0) {
+					try {
+						await init(bufferOrUrl);
+					} catch (_e) {
+						// 引数文字列でのロード失敗時は引数なし init をフォールバック試行
+						await init();
+					}
 				} else {
 					await init();
 				}

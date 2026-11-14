@@ -24,10 +24,13 @@ export function findHitCollisionNameWasm(
 	y: number,
 ): string | null {
 	const core = wasmMemory.getWasmCore();
-	if (!core?.wasm_find_hit_collision_name) return null;
+	if (!core?.wasm_find_hit_collision_name || !Array.isArray(collisions)) return null;
+
+	const safeX = Math.floor(Math.max(0, Number.isFinite(x) ? x : 0));
+	const safeY = Math.floor(Math.max(0, Number.isFinite(y) ? y : 0));
 
 	try {
-		const res = core.wasm_find_hit_collision_name(collisions, x, y);
+		const res = core.wasm_find_hit_collision_name(collisions, safeX, safeY);
 		return (res as string) || null;
 	} catch (err) {
 		console.warn("⚠️ [WASM Surface] findHitCollisionName エラー:", err);

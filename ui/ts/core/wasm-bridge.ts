@@ -6,11 +6,17 @@
 import { computeBalloonTextLayoutWasm } from "./wasm/wasm-layout.js";
 import { wasmMemory } from "./wasm/wasm-memory.js";
 import {
+	buildSaoriRequestWasm,
 	calculateUpdateProgressWasm,
 	isNoUpdatePathWasm,
+	normalizeUpdateReasonWasm,
 	parseBalloonOptionsWasm,
+	parseDeleteTxtWasm,
 	parseDescriptTextWasm,
+	parseDeveloperOptionsTxtWasm,
+	parseFmoStringWasm,
 	parseInstallErrorReasonWasm,
+	parseSaoriResponseWasm,
 	parseSstpRequestWasm,
 	validateBalloonDescriptWasm,
 } from "./wasm/wasm-protocol.js";
@@ -19,6 +25,7 @@ import {
 	advanceAnimationFrameWasm,
 	computeSurfaceCompositionPlanWasm,
 	findHitCollisionNameWasm,
+	parseSurfacesTxtWasm,
 } from "./wasm/wasm-surface.js";
 import type {
 	BalloonLayoutResult,
@@ -127,6 +134,34 @@ class WasmBridgeFacade {
 
 	public parseBalloonOptions(content: string) {
 		return parseBalloonOptionsWasm(content);
+	}
+
+	public parseSurfacesTxt(text: string) {
+		return parseSurfacesTxtWasm(text);
+	}
+
+	public buildSaoriRequest(modulePath: string, args: string[] = []) {
+		return buildSaoriRequestWasm(modulePath, args);
+	}
+
+	public parseSaoriResponse(raw: string) {
+		return parseSaoriResponseWasm(raw);
+	}
+
+	public parseFmoString(rawFmo: string) {
+		return parseFmoStringWasm(rawFmo);
+	}
+
+	public parseDeleteTxt(content: string) {
+		return parseDeleteTxtWasm(content);
+	}
+
+	public parseDeveloperOptionsTxt(content: string) {
+		return parseDeveloperOptionsTxtWasm(content);
+	}
+
+	public normalizeUpdateReason(reason?: string) {
+		return normalizeUpdateReasonWasm(reason);
 	}
 
 	public allocBuffer(size: number): number | null {

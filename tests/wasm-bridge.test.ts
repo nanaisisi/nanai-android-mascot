@@ -39,4 +39,13 @@ describe("wasmBridge transparent connection and fallback unit tests", () => {
 			isComplete: false,
 		});
 	});
+
+	it("supports newly exposed WASM protocol and surface APIs safely", () => {
+		expect(wasmBridge.normalizeUpdateReason("manual")).toBeTypeOf("number");
+		expect(wasmBridge.buildSaoriRequest("test.dll", ["arg1"])).toBeDefined();
+		expect(wasmBridge.parseFmoString("ghost.name\x01test")).toBeDefined();
+		expect(wasmBridge.parseDeleteTxt("delete,file1.txt")).toBeDefined();
+		expect(wasmBridge.parseDeveloperOptionsTxt("noupdate,*.log")).toBeDefined();
+		expect(wasmBridge.parseSurfacesTxt("surface0\n{\n}\n")).toBeDefined();
+	});
 });

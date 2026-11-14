@@ -66,7 +66,8 @@ export async function invoke<T = unknown>(
 	args: Record<string, unknown> = {},
 ): Promise<T> {
 	if (!isTauriAvailable()) {
-		throw new Error(`Tauri is not available to invoke command: ${cmd}`);
+		const { getHostBridge } = await import("./host-bridge.js");
+		return await getHostBridge().invokeCommand<T>(cmd, args);
 	}
 
 	ipcQueueStats.totalCalls++;

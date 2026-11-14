@@ -8,6 +8,11 @@ import datetime
 import os
 import sys
 
+# Add project root to sys.path when script is run directly
+_root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _root_dir not in sys.path:
+    sys.path.insert(0, _root_dir)
+
 from scripts.compliance.config import KNOWN_LAYERS
 from scripts.compliance.loader import load_codebase
 from scripts.compliance.audit_processor import process_audit_files

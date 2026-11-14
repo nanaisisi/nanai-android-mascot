@@ -79,37 +79,39 @@ pub async fn scan_ghost_directory(
             let shells = scan_shells_from_ghost(&path);
 
             Some(GhostInfo {
-                name: manifest.display_name,
-                version: manifest.version,
+                name: manifest.display_name().to_string(),
+                version: manifest.version().map(ToString::to_string),
                 path: path.to_string_lossy().to_string(),
-                sakura_name: manifest.sakura_name,
-                kero_name: manifest.kero_name,
-                num_characters: manifest.num_characters,
-                shiori: manifest.shiori,
-                makoto: manifest.makoto,
-                craftman: manifest.craftman,
-                craftman_url: manifest.craftman_url,
+                sakura_name: manifest.sakura_name().map(ToString::to_string),
+                kero_name: manifest.kero_name().map(ToString::to_string),
+                num_characters: manifest.num_characters(),
+                shiori: manifest.shiori().map(ToString::to_string),
+                makoto: manifest.makoto().map(ToString::to_string),
+                craftman: manifest.craftman().map(ToString::to_string),
+                craftman_url: manifest.craftman_url().map(ToString::to_string),
                 shells,
-                group: manifest.group,
+                group: manifest.group().map(ToString::to_string),
                 install_date,
                 update_date,
                 update_result,
-                recommended_balloon: manifest.recommended_balloon,
-                recommended_balloon_path: manifest.recommended_balloon_path,
-                default_balloon_path: manifest.default_balloon_path,
-                balloon_defaultsurface: manifest.balloon_defaultsurface,
-                sakura_balloon_defaultsurface: manifest.sakura_balloon_defaultsurface,
-                kero_balloon_defaultsurface: manifest.kero_balloon_defaultsurface,
-                char_balloon_defaultsurfaces: manifest.char_balloon_defaultsurfaces,
-                shiori_version: manifest.shiori_version,
-                shiori_cache: manifest.shiori_cache,
-                shiori_encoding: manifest.shiori_encoding,
-                shiori_forceencoding: manifest.shiori_forceencoding,
-                shiori_escape_unknown: manifest.shiori_escape_unknown,
-                shiori_logo_file: manifest.shiori_logo_file,
-                shiori_logo_align: manifest.shiori_logo_align,
-                shiori_logo_x: manifest.shiori_logo_x,
-                shiori_logo_y: manifest.shiori_logo_y,
+                recommended_balloon: manifest.recommended_balloon().map(ToString::to_string),
+                recommended_balloon_path: manifest
+                    .recommended_balloon_path()
+                    .map(ToString::to_string),
+                default_balloon_path: manifest.default_balloon_path().map(ToString::to_string),
+                balloon_defaultsurface: manifest.balloon_defaultsurface(),
+                sakura_balloon_defaultsurface: manifest.sakura_balloon_defaultsurface(),
+                kero_balloon_defaultsurface: manifest.kero_balloon_defaultsurface(),
+                char_balloon_defaultsurfaces: manifest.char_balloon_defaultsurfaces().clone(),
+                shiori_version: manifest.shiori_version().map(ToString::to_string),
+                shiori_cache: manifest.shiori_cache().map(ToString::to_string),
+                shiori_encoding: manifest.shiori_encoding().map(ToString::to_string),
+                shiori_forceencoding: manifest.shiori_forceencoding().map(ToString::to_string),
+                shiori_escape_unknown: manifest.shiori_escape_unknown().map(ToString::to_string),
+                shiori_logo_file: manifest.shiori_logo_file().map(ToString::to_string),
+                shiori_logo_align: manifest.shiori_logo_align().map(ToString::to_string),
+                shiori_logo_x: manifest.shiori_logo_x(),
+                shiori_logo_y: manifest.shiori_logo_y(),
             })
         });
     }
@@ -177,13 +179,9 @@ pub async fn scan_ghost_directory(
         }
     }
 
-    let result = ScanResult {
-        ghosts,
-        resolved_path: ghost_path.to_string_lossy().to_string(),
-        input_path: ghost_dir,
-    };
+    let result = ScanResult::new(ghosts, ghost_path.to_string_lossy().to_string(), ghost_dir);
 
-    println!("📊 Scan completed: {} ghosts found", result.ghosts.len());
+    println!("📊 Scan completed: {} ghosts found", result.ghosts().len());
 
     Ok(result)
 }
@@ -230,7 +228,7 @@ mod tests {
         for (path, dir_name) in candidate_dirs {
             join_set.spawn_blocking(move || {
                 let manifest = parse_ghost_manifest(&path, &dir_name);
-                manifest.display_name
+                manifest.display_name().to_string()
             });
         }
 

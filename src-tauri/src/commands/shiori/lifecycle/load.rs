@@ -28,7 +28,7 @@ pub async fn load_ghost(
 
     let manifest =
         crate::ghost::scan::directory::manifest::parse_ghost_manifest(&ghost_dir, &ghost_name);
-    *state.num_characters.lock() = manifest.num_characters;
+    *state.num_characters.lock() = manifest.num_characters();
 
     let ghost_master_dir = ghost_dir.join("ghost").join("master");
 

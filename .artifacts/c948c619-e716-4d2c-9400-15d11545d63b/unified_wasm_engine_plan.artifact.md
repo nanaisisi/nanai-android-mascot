@@ -7,9 +7,11 @@
 ## 1. 一元化の背景と基本設計思想 (Core Principles)
 
 ### 🔴 現状と課題
+
 これまでで各パース・合成・レイアウトロジックの Pure Rust 化と WASM ブリッジ連携は完了していますが、状態（現在のゴースト、サーフェスID、アニメーションタイマー、バルーン表示テキストなど）が TypeScript (TS) 側と WASM 側で一部分散しています。これにより、境界越えのシリアライズ (JSON/Object) オーバーヘッドや状態同期の複雑さが生じています。
 
 ### 🟢 究極目標: Thin Client Design (WASM-Centric Model)
+
 - **Single Source of Truth (WASM Core)**:
   すべての状態、タイマー、アニメーション状態機械、さくらスクリプト再生キュー、SHIORIイベントルーティングを WASM (`nanai-core` / `nanai-surface`) 内の単一ステートマシンに集約。
 - **Thin UI Shell (DOM / Event Listener)**:
@@ -43,6 +45,7 @@ graph TD
 ## 2. 領域別 一元化仕様 (Detailed Domain Architecture)
 
 ### 2.1 状態管理の一元化 (`MascotEngineState`)
+
 Rust 側に全体状態を一元管理する `MascotEngineState` を構築します。
 
 - **管理データ**:
@@ -54,6 +57,7 @@ Rust 側に全体状態を一元管理する `MascotEngineState` を構築しま
   - TS 側からの状態変更はすべて WASM FFI メソッド (`engine_select_ghost`, `engine_update_surface`, `engine_tick` 等) に一本化。
 
 ### 2.2 Zero-Copy Pixel Buffer 描画パイプライン
+
 WASM ヒープ上のフレームバッファを、中間変換なしで Canvas2D に描画するパイプラインを確立します。
 
 - **メモリ構造**:
@@ -63,6 +67,7 @@ WASM ヒープ上のフレームバッファを、中間変換なしで Canvas2D
   - `ctx.putImageData(imageData, 0, 0)` のみで Canvas へダイレクト描画。
 
 ### 2.3 さくらスクリプト & SERIKO アニメーション完全同期ループレジスタ
+
 タイマー管理とフレーム進行を JS の `setTimeout` / `setInterval` から分離し、WASM 内のハイリフレッシュタイマーで統一管理します。
 
 - **`engine_tick(delta_ms: f64)` API**:
@@ -70,6 +75,7 @@ WASM ヒープ上のフレームバッファを、中間変換なしで Canvas2D
   - WASM 内で SERIKO アニメーションのコマ進行、スクリプトの `\w[ms]` ウェイト減少、タイピング表示を一括更新し、更新された領域のみを返却。
 
 ### 2.4 Web Worker + WASM SHIORI 内包型アーキテクチャ
+
 SHIORI 3.0 エンジン（Kawari, Yaya, Satoriya 等）の仮想実行環境を Web Worker 内の Pure WASM インスタンスへ完全移管。
 
 - **WebWorker 役割**:
@@ -102,14 +108,14 @@ SHIORI 3.0 エンジン（Kawari, Yaya, Satoriya 等）の仮想実行環境を 
 
 ## 4. 領域別コード整理・役割一覧 (Final File Distribution)
 
-| コンポーネント / ファイル | 一元化後の役割 | 旧処理からの変更点 |
-| :--- | :--- | :--- |
-| **`crates/nanai-core/src/state.rs`** [NEW] | **Single Source of Truth** (全体状態マシン) | TS側のゴースト・サーフェス・再生状態をPure Rustへ集約 |
-| **`crates/nanai-surface/src/framebuffer.rs`** | **Zero-Copy FrameBuffer** | `Uint8ClampedArray` 適合バッファを直接提供 |
-| **`ui/ts/core/wasm-bridge.ts`** | **WASM Fast Bridge** | FFI 呼び出しの最小ラッパー |
-| **`ui/ts/surface/surface-render.ts`** | **Thin Canvas Renderer** | WASM メモリの `ImageData` 直描きのみ担当 |
-| **`ui/ts/ghost/ghost.ts` / `GhostController`** | **DOM Event Delegate** | DOMイベント受取・WASM FFI呼出への委譲 |
-| **`ui/ts/ui/*`** | **Pure View (DOM/CSS)** | メニュー・モーダル・ダイアログのHTML生成のみ担当 |
+| コンポーネント / ファイル                      | 一元化後の役割                              | 旧処理からの変更点                                    |
+| :--------------------------------------------- | :------------------------------------------ | :---------------------------------------------------- |
+| **`crates/nanai-core/src/state.rs`** [NEW]     | **Single Source of Truth** (全体状態マシン) | TS側のゴースト・サーフェス・再生状態をPure Rustへ集約 |
+| **`crates/nanai-surface/src/framebuffer.rs`**  | **Zero-Copy FrameBuffer**                   | `Uint8ClampedArray` 適合バッファを直接提供            |
+| **`ui/ts/core/wasm-bridge.ts`**                | **WASM Fast Bridge**                        | FFI 呼び出しの最小ラッパー                            |
+| **`ui/ts/surface/surface-render.ts`**          | **Thin Canvas Renderer**                    | WASM メモリの `ImageData` 直描きのみ担当              |
+| **`ui/ts/ghost/ghost.ts` / `GhostController`** | **DOM Event Delegate**                      | DOMイベント受取・WASM FFI呼出への委譲                 |
+| **`ui/ts/ui/*`**                               | **Pure View (DOM/CSS)**                     | メニュー・モーダル・ダイアログのHTML生成のみ担当      |
 
 ---
 

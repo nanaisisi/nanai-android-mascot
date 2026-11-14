@@ -26,17 +26,17 @@
 
 ### 領域別詳細状況
 
-| 領域 / 機能 | WASM (Rust) 実装状況 | TS ブリッジ / WASM 呼び出し | レガシー TS コードの状況 | 現在の状態 |
-| :--- | :--- | :--- | :--- | :--- |
-| **さくらスクリプト解析 & 再生** | Pure Rust (`sakura_script.rs`, `sakura_player.rs`) 完了 | `parseSakuraScriptWasm`, `SakuraPlayerEngine` 連携 | WASMラッパー化完了 ([sakura-script.ts](ui/ts/ghost/sakura-script.ts)) | **WASM一元化完了** |
-| **SSTP / SHIORI プロトコル** | Pure Rust (`sstp_fmo.rs`, `shiori_protocol.rs`) 完了 | `parseSstpRequestWasm`, `buildShioriRequestWasm` 連携 | `parseRawSstpRequestLocal` 追加完了 ([sstp-fmo-actions.ts](ui/ts/core/actions/sstp-fmo-actions.ts)) | **WASM優先処理完了** |
-| **descript.txt / バルーン解析** | Pure Rust (`descript_parser.rs`, `balloon_layout.rs`) 完了 | `parseDescriptTextWasm`, `computeBalloonTextLayoutWasm` 連携 | WASMファサード経由で解析・検証 | **WASMメイン化完了** |
-| **サーフェス合成 & 当たり判定** | Pure Rust (`surface_compositor.rs`, `surface_collision.rs`) 完了 | `findHitCollisionNameWasm`, `computeSurfaceCompositionPlanWasm` 連携 | WASMファサード化完了 ([surface-compositor.ts](ui/ts/surface/surface-compositor.ts)) | **WASMファサード化完了** |
-| **SERIKO アニメーション制御** | Pure Rust (`seriko_animation.rs`) 完了 | `advanceAnimationFrameWasm` 連携 | WASMフレーム制御と完全同期 | **WASM進行制御完了** |
-| **インストール / 更新プロトコル** | Pure Rust (`install_protocol.rs`, `update_protocol.rs`) 完了 | `calculateUpdateProgressWasm`, `isNoUpdatePathWasm` 連携 | WASM優先処理への完全切り替え完了 ([update-protocol.ts](ui/ts/core/actions/update-protocol.ts)) | **WASM完全切替完了** |
-| **WASM メモリ動的確保/解放** | Pure Rust (`wasm_alloc`, `wasm_free`) 完了 | `allocBuffer`, `freeBuffer` 連携 ([wasm-memory.ts](ui/ts/core/wasm/wasm-memory.ts)) | ヒープメモリ直アクセスの基盤完了 | **Zero-Copy準備完了** |
-| **WASM リリースビルド & 最適化** | LTO + `opt-level = "s"` + `panic = "abort"` 完了 | `npm run build:wasm:release` 動作検証完了 | リリースビルド自動化完了 | **最適化リリースビルド完了** |
-| **DOM UI / モーダル / タッチイベント** | 対象外 (TS責務) | TSが標準DOM操作を担当 | TSコードとして維持 (`ui/app-menu.ts`, `ui/modal.ts` 等) | 継続維持・DOMイベント受取とWASM伝達 |
+| 領域 / 機能                            | WASM (Rust) 実装状況                                             | TS ブリッジ / WASM 呼び出し                                                         | レガシー TS コードの状況                                                                            | 現在の状態                          |
+| :------------------------------------- | :--------------------------------------------------------------- | :---------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- | :---------------------------------- |
+| **さくらスクリプト解析 & 再生**        | Pure Rust (`sakura_script.rs`, `sakura_player.rs`) 完了          | `parseSakuraScriptWasm`, `SakuraPlayerEngine` 連携                                  | WASMラッパー化完了 ([sakura-script.ts](ui/ts/ghost/sakura-script.ts))                               | **WASM一元化完了**                  |
+| **SSTP / SHIORI プロトコル**           | Pure Rust (`sstp_fmo.rs`, `shiori_protocol.rs`) 完了             | `parseSstpRequestWasm`, `buildShioriRequestWasm` 連携                               | `parseRawSstpRequestLocal` 追加完了 ([sstp-fmo-actions.ts](ui/ts/core/actions/sstp-fmo-actions.ts)) | **WASM優先処理完了**                |
+| **descript.txt / バルーン解析**        | Pure Rust (`descript_parser.rs`, `balloon_layout.rs`) 完了       | `parseDescriptTextWasm`, `computeBalloonTextLayoutWasm` 連携                        | WASMファサード経由で解析・検証                                                                      | **WASMメイン化完了**                |
+| **サーフェス合成 & 当たり判定**        | Pure Rust (`surface_compositor.rs`, `surface_collision.rs`) 完了 | `findHitCollisionNameWasm`, `computeSurfaceCompositionPlanWasm` 連携                | WASMファサード化完了 ([surface-compositor.ts](ui/ts/surface/surface-compositor.ts))                 | **WASMファサード化完了**            |
+| **SERIKO アニメーション制御**          | Pure Rust (`seriko_animation.rs`) 完了                           | `advanceAnimationFrameWasm` 連携                                                    | WASMフレーム制御と完全同期                                                                          | **WASM進行制御完了**                |
+| **インストール / 更新プロトコル**      | Pure Rust (`install_protocol.rs`, `update_protocol.rs`) 完了     | `calculateUpdateProgressWasm`, `isNoUpdatePathWasm` 連携                            | WASM優先処理への完全切り替え完了 ([update-protocol.ts](ui/ts/core/actions/update-protocol.ts))      | **WASM完全切替完了**                |
+| **WASM メモリ動的確保/解放**           | Pure Rust (`wasm_alloc`, `wasm_free`) 完了                       | `allocBuffer`, `freeBuffer` 連携 ([wasm-memory.ts](ui/ts/core/wasm/wasm-memory.ts)) | ヒープメモリ直アクセスの基盤完了                                                                    | **Zero-Copy準備完了**               |
+| **WASM リリースビルド & 最適化**       | LTO + `opt-level = "s"` + `panic = "abort"` 完了                 | `npm run build:wasm:release` 動作検証完了                                           | リリースビルド自動化完了                                                                            | **最適化リリースビルド完了**        |
+| **DOM UI / モーダル / タッチイベント** | 対象外 (TS責務)                                                  | TSが標準DOM操作を担当                                                               | TSコードとして維持 (`ui/app-menu.ts`, `ui/modal.ts` 等)                                             | 継続維持・DOMイベント受取とWASM伝達 |
 
 ---
 

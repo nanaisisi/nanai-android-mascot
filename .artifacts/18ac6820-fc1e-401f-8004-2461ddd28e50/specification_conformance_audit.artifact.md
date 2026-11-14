@@ -3,6 +3,7 @@
 This audit report re-examines our implementation claims against the canonical UKADOC specifications (`docs/ukadoc-spec/`), categorizing features into **Full Conformance (完全準拠)**, **Partial Conformance (部分準拠 / 基本機能実装)**, and **Known Gaps / Future Work (未対応・拡張予定)**.
 
 ## 1. Sakura Script (さくらスクリプト)
+
 - **Status:** **Full Conformance (Core & Extended)**
 - **Implemented:**
   - Scope targets (`\0`, `\1`, `\p[N]`, `\h`, `\u`)
@@ -15,6 +16,7 @@ This audit report re-examines our implementation claims against the canonical UK
   - Advanced property system interpolation (`%property[...]`) within scripts is treated as raw text or delegated to SHIORI rather than fully evaluated locally.
 
 ## 2. SHIORI / 3.0 Protocol & Events
+
 - **Status:** **Partial Conformance (Core Lifecycle & Events)**
 - **Implemented:**
   - SHIORI/3.0 Request/Response parsing and building (`GET`, `NOTIFY`, headers, multiline values, pass-thru).
@@ -24,6 +26,7 @@ This audit report re-examines our implementation claims against the canonical UK
   - The hundreds of niche extension events for specific plugins or historical games (`list/shiori-event-ex/`) are not hardcoded in the Rust dispatcher; they rely on generic event routing to the loaded SHIORI DLL (`yaya.dll` / `satori.dll`).
 
 ## 3. Surfaces & SERIKO Animation (`surfaces.txt`)
+
 - **Status:** **High Conformance**
 - **Implemented:**
   - Surface blocks (`surface[N]`, `surface.append[N]`, aliases).
@@ -35,6 +38,7 @@ This audit report re-examines our implementation claims against the canonical UK
   - Complex raster operations (`blendmethod`) in advanced collision or custom drawing filters have simplified approximations in frontend CSS/Canvas rendering.
 
 ## 4. Descript Properties (`descript.txt` for Ghost, Shell, Balloon)
+
 - **Status:** **Hybrid Conformance (Essential Properties Implemented)**
 - **Implemented:**
   - Ghost & Shell meta: `name`, `type`, `craftman`, `homeurl`, `sakura.name`, `kero.name`.

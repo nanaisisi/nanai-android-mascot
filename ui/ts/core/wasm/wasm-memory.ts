@@ -22,7 +22,10 @@ export class WasmMemoryManager {
 						typeof bufferOrUrl !== "string")
 				) {
 					await init(bufferOrUrl as any);
-				} else if (typeof bufferOrUrl === "string" && bufferOrUrl.trim().length > 0) {
+				} else if (
+					typeof bufferOrUrl === "string" &&
+					bufferOrUrl.trim().length > 0
+				) {
 					try {
 						await init(bufferOrUrl);
 					} catch (_e) {

@@ -39,7 +39,10 @@ export async function processChromaKey(
 		return cache.get(cacheKey)!;
 	}
 
-	if (typeof document === "undefined" || typeof document.createElement !== "function") {
+	if (
+		typeof document === "undefined" ||
+		typeof document.createElement !== "function"
+	) {
 		return imageSrc;
 	}
 

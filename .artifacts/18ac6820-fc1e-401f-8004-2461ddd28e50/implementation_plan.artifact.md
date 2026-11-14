@@ -10,6 +10,7 @@
 ## 対象ファイルと分割方針
 
 ### 1. `ui/js/core/app-actions.js` (約 28.6 kB)
+
 - **役割**: メニューアクション処理、バルーン設定、ネットワーク更新、ゴースト切り替え等の総合ディスパッチャ。
 - **分割案**:
   - `ui/js/core/actions/balloon-actions.js`: バルーンテーマ、DPI、スケール、位置リセット関連
@@ -18,6 +19,7 @@
   - `ui/js/core/app-actions.js`: 上記を統合してディスパッチするメインエントリ
 
 ### 2. `ui/js/surface/surface-animation-manager.js` (約 17.6 kB) & `surface-render.js` (約 15.3 kB) & `ghost-surface.js` (約 10.9 kB)
+
 - **役割**: サーフィスアニメーション制御、描画、サーフィス状態管理。
 - **分割案**:
   - `ui/js/surface/surface-types.js`: 定数・データ構造定義
@@ -26,6 +28,7 @@
   - `ui/js/surface/ghost-surface.js`: サーフィス状態とレイヤー管理
 
 ### 3. `ui/js/ui/submenu.js` (約 14.5 kB), `modal-ghost-handlers.js` (約 13.7 kB), `menu-submenu-renderer.js` (約 13.4 kB)
+
 - **役割**: メニュー、サブメニュー、モーダルダイアログの表示・ハンドリング。
 - **分割案**:
   - `ui/js/ui/submenu.js`: サブメニュー制御
@@ -33,6 +36,7 @@
   - `ui/js/ui/modal-ghost-handlers.js`: モーダルおよびゴースト関連ダイアログハンドラ
 
 ### 4. `ui/js/ghost/sakura-play.js` (約 11.7 kB)
+
 - **役割**: さくらスクリプトの再生・文字送り制御。
 - **分割案**:
   - `ui/js/ghost/sakura-parser.js`: トークン解析・エスケープ処理

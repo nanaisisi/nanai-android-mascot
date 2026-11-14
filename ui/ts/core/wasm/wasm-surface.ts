@@ -24,7 +24,8 @@ export function findHitCollisionNameWasm(
 	y: number,
 ): string | null {
 	const core = wasmMemory.getWasmCore();
-	if (!core?.wasm_find_hit_collision_name || !Array.isArray(collisions)) return null;
+	if (!core?.wasm_find_hit_collision_name || !Array.isArray(collisions))
+		return null;
 
 	const safeX = Math.floor(Math.max(0, Number.isFinite(x) ? x : 0));
 	const safeY = Math.floor(Math.max(0, Number.isFinite(y) ? y : 0));

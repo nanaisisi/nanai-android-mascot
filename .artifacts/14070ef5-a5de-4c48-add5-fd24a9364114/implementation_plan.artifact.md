@@ -7,6 +7,7 @@
 ## 提案する変更内容 (Proposed Changes)
 
 ### 1. `crates/nanai-core/src/balloon_descript.rs` の新規作成
+
 - **BalloonDescriptValidator 構造体**:
   - `recommended_ghost`: Option<String>
   - `recommended_ghost_path`: Option<String>
@@ -17,6 +18,7 @@
   - `wasm_validate_balloon_descript` を公開。
 
 ### 2. TypeScript 側バインディングの追加
+
 - `ui/ts/core/wasm/wasm-layout.ts`（または `wasm-protocol.ts`）に `validateBalloonDescriptWasm` を追加。
 
 ---
@@ -24,5 +26,6 @@
 ## 検証計画 (Verification Plan)
 
 ### 自動テスト
+
 - `cargo test -p nanai-core` によるバルーンdescript検証の単体テスト実行。
 - `npm test`（Vitest）によるフロントエンドテストの実行。

@@ -5,8 +5,23 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct HeadlineItem {
-    pub title: String,
-    pub url: String,
+    pub(crate) title: String,
+    pub(crate) url: String,
+}
+
+impl HeadlineItem {
+    pub fn new(title: String, url: String) -> Self {
+        Self { title, url }
+    }
+
+    // Add getter methods
+    pub fn title(&self) -> &str {
+        &self.title
+    }
+
+    pub fn url(&self) -> &str {
+        &self.url
+    }
 }
 
 /// Parse RSS or Atom XML content into headline items
@@ -26,7 +41,7 @@ pub fn parse_feed_xml(xml: &str) -> Vec<HeadlineItem> {
             let title = extract_tag_content(block, "title");
             let link = extract_link_content(block);
             if !title.is_empty() && !link.is_empty() {
-                items.push(HeadlineItem { title, url: link });
+                items.push(HeadlineItem::new(title, link));
             }
             remaining = &remaining[end_idx + end_tag.len()..];
         } else {
@@ -112,7 +127,7 @@ pub async fn fetch_headline_feed(url: String) -> Result<String, String> {
     let items = parse_feed_xml(mock_xml);
     let mut script = String::from("\\0ヘッドライン取得結果:\n\n");
     for item in items {
-        script.push_str(&format!("\\q[{},{}]\n", item.title, item.url));
+        script.push_str(&format!("\\q[{},{}]\n", item.title(), item.url()));
     }
     script.push_str("\\e");
 
@@ -135,7 +150,7 @@ mod tests {
         "#;
         let items = parse_feed_xml(xml);
         assert_eq!(items.len(), 1);
-        assert_eq!(items[0].title, "Atom Feed Item");
-        assert_eq!(items[0].url, "https://atom.example.com/item1");
+        assert_eq!(items[0].title(), "Atom Feed Item");
+        assert_eq!(items[0].url(), "https://atom.example.com/item1");
     }
 }

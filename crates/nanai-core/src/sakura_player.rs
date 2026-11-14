@@ -157,7 +157,7 @@ impl SakuraPlayerEngine {
                 command,
                 args,
             },
-            SakuraToken::Font { .. } | SakuraToken::Sync(_) | SakuraToken::Quick(_) | SakuraToken::ChoiceScopeBegin { .. } | SakuraToken::ChoiceScopeEnd => {
+            SakuraToken::Font { .. } | SakuraToken::Sync(_) | SakuraToken::Quick(_) | SakuraToken::ChoiceScopeBegin { .. } | SakuraToken::ChoiceScopeEnd | SakuraToken::NoAutoWrap | SakuraToken::RawToggle { .. } => {
                 self.step_internal()
             }
             SakuraToken::Halt => {

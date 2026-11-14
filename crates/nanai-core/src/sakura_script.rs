@@ -38,6 +38,10 @@ pub enum SakuraToken {
     ChoiceScopeBegin { id: String, args: Vec<String> },
     /// 選択肢スコープ終了 (\__q)
     ChoiceScopeEnd,
+    /// オートラップ無効化 (\_n)
+    NoAutoWrap,
+    /// Rawモード切替 (\_?, \_!)
+    RawToggle { active: bool, delimiter: String },
     /// 拡張コマンド (\![...])
     Command { command: String, args: Vec<String> },
     /// スクリプト終了 (\e)
@@ -49,8 +53,30 @@ pub fn parse_sakura_script(script: &str) -> Vec<SakuraToken> {
     let mut tokens = Vec::new();
     let mut chars = script.chars().peekable();
     let mut text_buf = String::new();
+    let mut raw_mode_delimiter: Option<String> = None;
 
     while let Some(&ch) = chars.peek() {
+        if let Some(ref delim) = raw_mode_delimiter {
+            let delim_str = format!("\\{}", delim);
+            let remaining: String = chars.clone().collect();
+            if remaining.starts_with(&delim_str) {
+                if !text_buf.is_empty() {
+                    tokens.push(SakuraToken::Text(std::mem::take(&mut text_buf)));
+                }
+                for _ in 0..delim_str.chars().count() {
+                    chars.next();
+                }
+                tokens.push(SakuraToken::RawToggle {
+                    active: false,
+                    delimiter: delim.clone(),
+                });
+                raw_mode_delimiter = None;
+            } else {
+                text_buf.push(chars.next().unwrap());
+            }
+            continue;
+        }
+
         if ch == '\\' {
             chars.next(); // consume '\'
             if !text_buf.is_empty() {
@@ -256,6 +282,14 @@ pub fn parse_sakura_script(script: &str) -> Vec<SakuraToken> {
                             } else if tag_ch == 'q' {
                                 chars.next();
                                 tokens.push(SakuraToken::Quick(true));
+                            } else if tag_ch == 'n' {
+                                chars.next();
+                                tokens.push(SakuraToken::NoAutoWrap);
+                            } else if tag_ch == '?' || tag_ch == '!' {
+                                chars.next();
+                                let delim = format!("_{}", tag_ch);
+                                tokens.push(SakuraToken::RawToggle { active: true, delimiter: delim.clone() });
+                                raw_mode_delimiter = Some(delim);
                             } else if tag_ch == 'a' {
                                 chars.next(); // consume 'a'
                                 if let Some(arg) = parse_bracket_arg(&mut chars) {
@@ -467,5 +501,28 @@ mod tests {
                 args: vec![]
             }
         );
+    }
+
+    #[test]
+    fn test_parse_sakura_script_cycle6_extensions() {
+        // \_u[0x41] -> A, \_m[66] -> B, \&[amp] -> &
+        let script = "\\_u[0x41]\\_m[66]\\&[amp]";
+        let tokens = parse_sakura_script(script);
+        assert_eq!(tokens[0], SakuraToken::Text("A".to_string()));
+        assert_eq!(tokens[1], SakuraToken::Text("B".to_string()));
+        assert_eq!(tokens[2], SakuraToken::Text("&".to_string()));
+
+        // \__q
+        let script_q = "\\__q[OnChoice,arg1]Choice text\\__q";
+        let tokens_q = parse_sakura_script(script_q);
+        assert_eq!(
+            tokens_q[0],
+            SakuraToken::ChoiceScopeBegin {
+                id: "OnChoice".to_string(),
+                args: vec!["OnChoice".to_string(), "arg1".to_string()]
+            }
+        );
+        assert_eq!(tokens_q[1], SakuraToken::Text("Choice text".to_string()));
+        assert_eq!(tokens_q[2], SakuraToken::ChoiceScopeEnd);
     }
 }

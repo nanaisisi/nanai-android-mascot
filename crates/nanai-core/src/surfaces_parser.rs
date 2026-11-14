@@ -17,7 +17,7 @@ pub struct AnimationPatternOutput {
     pub x: i32,
     pub y: i32,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub targetParam: Option<String>,
+    pub target_param: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
@@ -147,7 +147,16 @@ pub fn parse_surfaces_txt(text: &str) -> ParsedSurfacesManifest {
 
         // アニメーション行のパース
         let lower_trimmed = trimmed.to_ascii_lowercase();
-        if lower_trimmed.starts_with("animation") || (lower_trimmed.chars().next().map_or(false, |c| c.is_ascii_digit()) && (lower_trimmed.contains("interval") || lower_trimmed.contains("pattern") || lower_trimmed.contains("name") || lower_trimmed.contains("option"))) {
+        if lower_trimmed.starts_with("animation")
+            || (lower_trimmed
+                .chars()
+                .next()
+                .is_some_and(|c| c.is_ascii_digit())
+                && (lower_trimmed.contains("interval")
+                    || lower_trimmed.contains("pattern")
+                    || lower_trimmed.contains("name")
+                    || lower_trimmed.contains("option")))
+        {
             let parts: Vec<&str> = trimmed.split(',').map(|s| s.trim()).collect();
             if parts.is_empty() {
                 continue;
@@ -232,12 +241,19 @@ pub fn parse_surfaces_txt(text: &str) -> ParsedSurfacesManifest {
                     let mut target_param: Option<String> = None;
 
                     if parts.len() >= 6 {
-                        if parts[1].parse::<i32>().is_ok() || parts[1].parse::<u32>().is_ok() || parts[1].starts_with('-') {
+                        if parts[1].parse::<i32>().is_ok()
+                            || parts[1].parse::<u32>().is_ok()
+                            || parts[1].starts_with('-')
+                        {
                             // SERIKO/1 style: surface, wait, type, x, y
                             surface = parts[1].to_string();
                             // SERIKO/1 legacy 10ms unit for wait if small or standard
                             let raw_wait = parts[2].parse::<u32>().unwrap_or(0);
-                            wait = if raw_wait < 100 && raw_wait > 0 { raw_wait * 10 } else { raw_wait };
+                            wait = if raw_wait < 100 && raw_wait > 0 {
+                                raw_wait * 10
+                            } else {
+                                raw_wait
+                            };
                             pattern_type = parts[3].to_ascii_lowercase();
                             x = parts[4].parse::<i32>().unwrap_or(0);
                             y = parts[5].parse::<i32>().unwrap_or(0);
@@ -250,8 +266,12 @@ pub fn parse_surfaces_txt(text: &str) -> ParsedSurfacesManifest {
                             y = parts[5].parse::<i32>().unwrap_or(0);
                         }
 
-                        // control methods with targetParam (start, stop, etc.)
-                        if matches!(pattern_type.as_str(), "start" | "stop" | "alternativestart" | "parallelstart") && parts.len() >= 3 {
+                        // control methods with target_param (start, stop, etc.)
+                        if matches!(
+                            pattern_type.as_str(),
+                            "start" | "stop" | "alternativestart" | "parallelstart"
+                        ) && parts.len() >= 3
+                        {
                             target_param = Some(parts[2].to_string());
                         }
 
@@ -261,7 +281,7 @@ pub fn parse_surfaces_txt(text: &str) -> ParsedSurfacesManifest {
                             pattern_type,
                             x,
                             y,
-                            targetParam: target_param,
+                            target_param,
                         };
 
                         for s in &current_surfaces {

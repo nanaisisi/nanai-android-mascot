@@ -2,7 +2,7 @@
 
 実装コードの文字列検索による一次調査です。
 
-| 項目 | 検索語 | 対応状況 |
-| :--- | :----- | :------: |
+| 項目                                                | 検索語                 | 対応状況  |
+| :-------------------------------------------------- | :--------------------- | :-------: |
 | [OnCrystalDiskInfoClear](OnCrystalDiskInfoClear.md) | OnCrystalDiskInfoClear | ❌ 未実装 |
 | [OnCrystalDiskInfoEvent](OnCrystalDiskInfoEvent.md) | OnCrystalDiskInfoEvent | ❌ 未実装 |

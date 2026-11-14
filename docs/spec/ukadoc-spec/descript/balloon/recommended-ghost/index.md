@@ -4,6 +4,6 @@
 
 | 項目                                                     | 検索語                 |              対応状況              |
 | :------------------------------------------------------- | :--------------------- | :--------------------------------: |
-| [推奨の意味](caption_recommended.md) | 推奨の意味 | ✅ 対応済 (assets.ts / balloon.rs) |
-| [recommended.ghost,ゴースト名](recommended.ghost.md) | recommended.ghost | ✅ 実装済 (assets.ts / balloon.rs) |
+| [推奨の意味](caption_recommended.md)                     | 推奨の意味             | ✅ 対応済 (assets.ts / balloon.rs) |
+| [recommended.ghost,ゴースト名](recommended.ghost.md)     | recommended.ghost      | ✅ 実装済 (assets.ts / balloon.rs) |
 | [recommended.ghost.path,パス](recommended.ghost.path.md) | recommended.ghost.path | ✅ 実装済 (assets.ts / balloon.rs) |

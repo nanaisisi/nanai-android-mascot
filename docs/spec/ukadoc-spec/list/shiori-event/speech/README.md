@@ -2,9 +2,9 @@
 
 実装コードの文字列検索による一次調査です。
 
-| 項目 | 検索語 | 対応状況 |
-| :--- | :----- | :------: |
-| [音声認識・合成機能について](about_voicetag.md) | 音声認識・合成機能について | ❌ 未実装 |
-| [OnSpeechSynthesisStatus](OnSpeechSynthesisStatus.md) | OnSpeechSynthesisStatus | ✅ 実装済 |
-| [OnVoiceRecognitionStatus](OnVoiceRecognitionStatus.md) | OnVoiceRecognitionStatus | ⚠️ 一部対応 |
-| [OnVoiceRecognitionWord](OnVoiceRecognitionWord.md) | OnVoiceRecognitionWord | ⚠️ 一部対応 |
+| 項目                                                    | 検索語                     |  対応状況   |
+| :------------------------------------------------------ | :------------------------- | :---------: |
+| [音声認識・合成機能について](about_voicetag.md)         | 音声認識・合成機能について |  ❌ 未実装  |
+| [OnSpeechSynthesisStatus](OnSpeechSynthesisStatus.md)   | OnSpeechSynthesisStatus    |  ✅ 実装済  |
+| [OnVoiceRecognitionStatus](OnVoiceRecognitionStatus.md) | OnVoiceRecognitionStatus   | ⚠️ 一部対応 |
+| [OnVoiceRecognitionWord](OnVoiceRecognitionWord.md)     | OnVoiceRecognitionWord     | ⚠️ 一部対応 |

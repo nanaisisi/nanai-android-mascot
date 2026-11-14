@@ -3,6 +3,7 @@
  * @brief Nanai Android Mascot メインアプリケーションエントリーポイント (UKADOC / SSP仕様準拠)
  */
 import { NanaiAndroidMascotApp } from "./ts/core/app/lifecycle.js";
+
 export * from "./ts/core/app/types.js";
 export { NanaiAndroidMascotApp };
 

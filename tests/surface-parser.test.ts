@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { test, beforeAll } from "vitest";
+import { beforeAll, test } from "vitest";
 import { wasmBridge } from "../ui/ts/core/wasm-bridge.js";
 import { parseSurfacesTxt } from "../ui/ts/surface/surface-parser.js";
 

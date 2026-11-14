@@ -8,7 +8,12 @@ export default defineConfig({
 			name: "alias-ui-js-to-ts",
 			enforce: "pre",
 			resolveId(source, importer) {
-				if (source.includes("ui/js/") || source.includes("ui\\js\\")) {
+				if (
+					source.includes("ui/js/") ||
+					source.includes("ui\\js\\") ||
+					source.includes("ui/ts/") ||
+					source.includes("ui\\ts\\")
+				) {
 					const tsRel = source
 						.replace(/ui\/js\//g, "ui/ts/")
 						.replace(/ui\\js\\/g, "ui\\ts\\");

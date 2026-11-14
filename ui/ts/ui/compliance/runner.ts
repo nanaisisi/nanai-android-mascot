@@ -1,6 +1,18 @@
-import { runBalloonLayoutProbe, runBalloonFontAssetsProbe, runSakuraScriptTokensProbe, runSurfaceScopeCollisionProbe } from "./balloon-probes.js";
-import { runMouseShioriEventProbe, runSystemDialogUiProbe } from "./interactive-probes.js";
-import { escapeHtml, type UiComplianceProbeResult, type UiComplianceSuiteReport } from "./types.js";
+import {
+	runBalloonFontAssetsProbe,
+	runBalloonLayoutProbe,
+	runSakuraScriptTokensProbe,
+	runSurfaceScopeCollisionProbe,
+} from "./balloon-probes.js";
+import {
+	runMouseShioriEventProbe,
+	runSystemDialogUiProbe,
+} from "./interactive-probes.js";
+import {
+	escapeHtml,
+	type UiComplianceProbeResult,
+	type UiComplianceSuiteReport,
+} from "./types.js";
 
 export async function runAllUiComplianceProbes(
 	rootElement?: HTMLElement,

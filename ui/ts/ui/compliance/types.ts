@@ -222,7 +222,9 @@ export function isCapableDomDocument(doc: Document | undefined): boolean {
 	}
 }
 
-export async function withCapableDomDocument<T>(fn: () => Promise<T>): Promise<T> {
+export async function withCapableDomDocument<T>(
+	fn: () => Promise<T>,
+): Promise<T> {
 	const g = globalThis as unknown as { document?: Document };
 	const hadDocument = "document" in g && g.document !== undefined;
 	const origDocument = g.document;

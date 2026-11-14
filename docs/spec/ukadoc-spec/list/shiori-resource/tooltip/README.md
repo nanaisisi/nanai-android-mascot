@@ -2,7 +2,7 @@
 
 実装コードの文字列検索による一次調査です。
 
-| 項目 | 検索語 | 対応状況 |
-| :--- | :----- | :------: |
+| 項目                                  | 検索語          |  対応状況   |
+| :------------------------------------ | :-------------- | :---------: |
 | [balloon_tooltip](balloon_tooltip.md) | balloon_tooltip | ⚠️ 一部対応 |
-| [tooltip](tooltip.md) | tooltip | ✅ 実装済 |
+| [tooltip](tooltip.md)                 | tooltip         |  ✅ 実装済  |

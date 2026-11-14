@@ -133,58 +133,69 @@ export async function playScript(player: SakuraScriptPlayer, script: string) {
 		currentChoiceScope,
 	};
 
-async function handleWasmStep(
-	player: SakuraScriptPlayer | SakuraPlaybackController,
-	app: NanaiAndroidMascotApp,
-	step: any,
-	context: any,
-) {
-	if (!step || !step.action) return;
-	const { action, data } = step;
-	let pseudoToken: any = null;
-	switch (action) {
-		case "TextAppend":
-			for (const ch of String(data.text || "")) {
-				await handleToken(player, app, { type: "char", value: ch }, context);
-			}
-			return;
-		case "SurfaceChange":
-			pseudoToken = { type: "surface", value: data.surface_id };
-			break;
-		case "BalloonChange":
-			pseudoToken = { type: "balloon", value: data.balloon_id };
-			break;
-		case "AnimationTrigger":
-			pseudoToken = { type: "animation", value: data.animation_id };
-			break;
-		case "Clear":
-			pseudoToken = { type: "clear" };
-			break;
-		case "ScopeChange":
-			pseudoToken = { type: "scope", value: data.scope };
-			break;
-		case "Choice":
-			pseudoToken = { type: "choice", value: { title: data.title, id: data.id } };
-			break;
-		case "Anchor":
-			pseudoToken = { type: "anchor_begin", value: { id: data.id, text: data.text } };
-			break;
-		case "Command":
-			pseudoToken = { type: "command", command: data.command, args: data.args, value: data.args?.join(",") };
-			break;
-		case "Wait":
-			pseudoToken = { type: "wait", value: data.duration_ms };
-			break;
-		case "Halt":
-			context.ended = true;
-			return;
-		default:
-			return;
+	async function handleWasmStep(
+		player: SakuraScriptPlayer | SakuraPlaybackController,
+		app: NanaiAndroidMascotApp,
+		step: any,
+		context: any,
+	) {
+		if (!step?.action) return;
+		const { action, data } = step;
+		let pseudoToken: any = null;
+		switch (action) {
+			case "TextAppend":
+				for (const ch of String(data.text || "")) {
+					await handleToken(player, app, { type: "char", value: ch }, context);
+				}
+				return;
+			case "SurfaceChange":
+				pseudoToken = { type: "surface", value: data.surface_id };
+				break;
+			case "BalloonChange":
+				pseudoToken = { type: "balloon", value: data.balloon_id };
+				break;
+			case "AnimationTrigger":
+				pseudoToken = { type: "animation", value: data.animation_id };
+				break;
+			case "Clear":
+				pseudoToken = { type: "clear" };
+				break;
+			case "ScopeChange":
+				pseudoToken = { type: "scope", value: data.scope };
+				break;
+			case "Choice":
+				pseudoToken = {
+					type: "choice",
+					value: { title: data.title, id: data.id },
+				};
+				break;
+			case "Anchor":
+				pseudoToken = {
+					type: "anchor_begin",
+					value: { id: data.id, text: data.text },
+				};
+				break;
+			case "Command":
+				pseudoToken = {
+					type: "command",
+					command: data.command,
+					args: data.args,
+					value: data.args?.join(","),
+				};
+				break;
+			case "Wait":
+				pseudoToken = { type: "wait", value: data.duration_ms };
+				break;
+			case "Halt":
+				context.ended = true;
+				return;
+			default:
+				return;
+		}
+		if (pseudoToken) {
+			await handleToken(player, app, pseudoToken, context);
+		}
 	}
-	if (pseudoToken) {
-		await handleToken(player, app, pseudoToken, context);
-	}
-}
 
 	const wasmEngine = createSakuraPlayerWasm(finalScript);
 	if (wasmEngine) {

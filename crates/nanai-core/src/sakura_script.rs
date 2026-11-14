@@ -34,6 +34,10 @@ pub enum SakuraToken {
     Sync(bool),
     /// クイックモード (\_q)
     Quick(bool),
+    /// 選択肢スコープ開始 (\__q[id,args...])
+    ChoiceScopeBegin { id: String, args: Vec<String> },
+    /// 選択肢スコープ終了 (\__q)
+    ChoiceScopeEnd,
     /// 拡張コマンド (\![...])
     Command { command: String, args: Vec<String> },
     /// スクリプト終了 (\e)
@@ -58,6 +62,24 @@ pub fn parse_sakura_script(script: &str) -> Vec<SakuraToken> {
                     '\\' | '%' => {
                         let escaped = chars.next().unwrap();
                         text_buf.push(escaped);
+                    }
+                    '&' => {
+                        chars.next();
+                        if let Some(arg) = parse_bracket_arg(&mut chars) {
+                            match arg.trim().to_lowercase().as_str() {
+                                "amp" => text_buf.push('&'),
+                                "lt" => text_buf.push('<'),
+                                "gt" => text_buf.push('>'),
+                                "quot" => text_buf.push('"'),
+                                "apos" => text_buf.push('\''),
+                                "nbsp" => text_buf.push(' '),
+                                _ => {
+                                    text_buf.push_str("&[");
+                                    text_buf.push_str(&arg);
+                                    text_buf.push(']');
+                                }
+                            }
+                        }
                     }
                     '0' => {
                         chars.next();
@@ -172,7 +194,61 @@ pub fn parse_sakura_script(script: &str) -> Vec<SakuraToken> {
                                 if let Some(arg) = parse_bracket_arg(&mut chars)
                                     && let Ok(ms) = arg.parse::<u32>()
                                 {
+                                    if !text_buf.is_empty() {
+                                        tokens.push(SakuraToken::Text(std::mem::take(&mut text_buf)));
+                                    }
                                     tokens.push(SakuraToken::Wait(ms));
+                                }
+                            } else if tag_ch == '_' {
+                                chars.next();
+                                if chars.peek() == Some(&'q') {
+                                    chars.next();
+                                    if !text_buf.is_empty() {
+                                        tokens.push(SakuraToken::Text(std::mem::take(&mut text_buf)));
+                                    }
+                                    if let Some(arg) = parse_bracket_arg(&mut chars) {
+                                        let args: Vec<String> = arg.split(',').map(|s| s.trim().to_string()).collect();
+                                        let id = args.first().cloned().unwrap_or_default();
+                                        tokens.push(SakuraToken::ChoiceScopeBegin { id, args });
+                                    } else {
+                                        tokens.push(SakuraToken::ChoiceScopeEnd);
+                                    }
+                                } else {
+                                    text_buf.push('\\');
+                                    text_buf.push('_');
+                                    text_buf.push('_');
+                                }
+                            } else if tag_ch == 'u' {
+                                chars.next();
+                                if let Some(arg) = parse_bracket_arg(&mut chars) {
+                                    let raw = arg.trim();
+                                    let code = if raw.starts_with("0x") || raw.starts_with("0X") {
+                                        u32::from_str_radix(&raw[2..], 16)
+                                    } else {
+                                        raw.parse::<u32>()
+                                    };
+                                    if let Ok(c) = code {
+                                        if let Some(ch) = char::from_u32(c) {
+                                            text_buf.push(ch);
+                                        }
+                                    }
+                                }
+                            } else if tag_ch == 'm' {
+                                chars.next();
+                                if let Some(arg) = parse_bracket_arg(&mut chars) {
+                                    let raw = arg.trim();
+                                    let code = if raw.starts_with("0x") || raw.starts_with("0X") {
+                                        u32::from_str_radix(&raw[2..], 16)
+                                    } else {
+                                        raw.parse::<u32>()
+                                    };
+                                    if let Ok(c) = code {
+                                        if c <= 0xff {
+                                            if let Some(ch) = char::from_u32(c) {
+                                                text_buf.push(ch);
+                                            }
+                                        }
+                                    }
                                 }
                             } else if tag_ch == 's' {
                                 chars.next();

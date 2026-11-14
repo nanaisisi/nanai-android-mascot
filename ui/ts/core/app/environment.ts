@@ -1,7 +1,9 @@
 import { actionMethods } from "../app-actions.js";
 import { invoke, isTauriAvailable } from "../tauri-helper.js";
 
-export async function scanBalloons(appContext: { scanBalloons?: () => Promise<unknown[]> }): Promise<unknown[]> {
+export async function scanBalloons(appContext: {
+	scanBalloons?: () => Promise<unknown[]>;
+}): Promise<unknown[]> {
 	return (
 		(
 			actionMethods as unknown as Record<string, () => Promise<unknown[]>>
@@ -9,7 +11,9 @@ export async function scanBalloons(appContext: { scanBalloons?: () => Promise<un
 	);
 }
 
-export async function scanPlugins(appContext: { availablePlugins?: unknown[] }): Promise<void> {
+export async function scanPlugins(appContext: {
+	availablePlugins?: unknown[];
+}): Promise<void> {
 	if (!isTauriAvailable()) return;
 	try {
 		const plugins = await invoke<string[]>("scan_plugins");
@@ -22,7 +26,9 @@ export async function scanPlugins(appContext: { availablePlugins?: unknown[] }):
 	}
 }
 
-export function initUIEnvironment(appContext: { elements: Record<string, HTMLElement | null> }): void {
+export function initUIEnvironment(appContext: {
+	elements: Record<string, HTMLElement | null>;
+}): void {
 	if (isTauriAvailable()) {
 		const menuBtn = document.getElementById("menu-btn");
 		if (menuBtn) menuBtn.style.display = "none";
@@ -44,9 +50,6 @@ export function initUIEnvironment(appContext: { elements: Record<string, HTMLEle
 		quickActionsPanel: "quick-actions-panel",
 	};
 	appContext.elements = Object.fromEntries(
-		Object.entries(ids).map(([key, id]) => [
-			key,
-			document.getElementById(id),
-		]),
+		Object.entries(ids).map(([key, id]) => [key, document.getElementById(id)]),
 	);
 }

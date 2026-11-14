@@ -1,3 +1,9 @@
+import { GhostController } from "../../ghost/ghost.js";
+import { SakuraScriptPlayer } from "../../ghost/sakura-script.js";
+import { InteractionManager } from "../../surface/interaction.js";
+import { SurfaceManager } from "../../surface/surface-manager.js";
+import { menuMethods } from "../../ui/app-menu.js";
+import { ModalManager } from "../../ui/modal.js";
 import { DictationManager } from "../actions/dictation.js";
 import { actionMethods } from "../app-actions.js";
 import { eventMethods } from "../app-events.js";
@@ -7,14 +13,8 @@ import { AppConfig, loadAppConfig } from "../config.js";
 import { InternalWindowManager } from "../internal-window-manager.js";
 import { invoke, isTauriAvailable } from "../tauri-helper.js";
 import { wasmBridge } from "../wasm-bridge.js";
-import { GhostController } from "../../ghost/ghost.js";
-import { SakuraScriptPlayer } from "../../ghost/sakura-script.js";
-import { InteractionManager } from "../../surface/interaction.js";
-import { SurfaceManager } from "../../surface/surface-manager.js";
-import { menuMethods } from "../../ui/app-menu.js";
-import { ModalManager } from "../../ui/modal.js";
-import type { AppSettings } from "./types.js";
 import { initUIEnvironment, scanBalloons, scanPlugins } from "./environment.js";
+import type { AppSettings } from "./types.js";
 
 export class NanaiAndroidMascotApp {
 	declare loadSettings: () => void;

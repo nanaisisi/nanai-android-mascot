@@ -10,12 +10,12 @@
 
 ## 1. サブカテゴリ一覧・対応状況
 
-| カテゴリ / 規格ファイル                                              | 概要・対象領域                                |     対応状況     | 関連実装コード                                                           |
-| :------------------------------------------------------------------- | :-------------------------------------------- | :--------------: | :----------------------------------------------------------------------- |
+| カテゴリ / 規格ファイル                                              | 概要・対象領域                                |     対応状況     | 関連実装コード                                                              |
+| :------------------------------------------------------------------- | :-------------------------------------------- | :--------------: | :-------------------------------------------------------------------------- |
 | **[surfaces.txt 概要](introduction_surfaces.txt.md)**                | `surfaces.txt` 全般概要・定義仕様             |    ✅ 実装済     | `crates/nanai-core/src/surfaces_parser.rs`, `ui/ts/surface/surface-load.ts` |
-| **[surfaces.txt または surfaces\*\*.txt(SSPのみ)](file/index.md)**   | `surfaces.txt` ファイル・エンコーディング仕様 | ✅ 対応済 (100%) | `ui/ts/surface/surface-load.ts`                                          |
-| **[descriptブレス](descript-brace/index.md)**                        | `version`, `maxsurface` 等サーフィス全般定義  | ✅ 対応済 (100%) | `src-tauri/src/ghost/scan/shell/mod.rs`, `ui/ts/surface/surface-load.ts` |
-| **[surface-alias-brace 仕様項目一覧](surface-alias-brace/index.md)** | サーフィスエイリアス定義 (`surface.alias`)    | ✅ 対応済 (100%) | `ui/ts/surface/surface-load.ts`                                          |
-| **[surface-brace 仕様項目一覧](surface-brace/index.md)**             | アニメーションインターバル・描画メソッド定義  | ✅ 対応済 (100%) | `ui/ts/surface/surface-load.ts`                                          |
-| **[cursorブレス](cursor-brace/index.md)**                            | カーソルイベントブレース定義                  | ✅ 対応済 (100%) | `ui/ts/surface/surface-load.ts`                                          |
-| **[tooltip-brace 仕様項目一覧](tooltip-brace/index.md)**             | サーフィスツールチップ定義                    | ✅ 対応済 (100%) | `ui/ts/surface/surface-load.ts`                                          |
+| **[surfaces.txt または surfaces\*\*.txt(SSPのみ)](file/index.md)**   | `surfaces.txt` ファイル・エンコーディング仕様 | ✅ 対応済 (100%) | `ui/ts/surface/surface-load.ts`                                             |
+| **[descriptブレス](descript-brace/index.md)**                        | `version`, `maxsurface` 等サーフィス全般定義  | ✅ 対応済 (100%) | `src-tauri/src/ghost/scan/shell/mod.rs`, `ui/ts/surface/surface-load.ts`    |
+| **[surface-alias-brace 仕様項目一覧](surface-alias-brace/index.md)** | サーフィスエイリアス定義 (`surface.alias`)    | ✅ 対応済 (100%) | `ui/ts/surface/surface-load.ts`                                             |
+| **[surface-brace 仕様項目一覧](surface-brace/index.md)**             | アニメーションインターバル・描画メソッド定義  | ✅ 対応済 (100%) | `ui/ts/surface/surface-load.ts`                                             |
+| **[cursorブレス](cursor-brace/index.md)**                            | カーソルイベントブレース定義                  | ✅ 対応済 (100%) | `ui/ts/surface/surface-load.ts`                                             |
+| **[tooltip-brace 仕様項目一覧](tooltip-brace/index.md)**             | サーフィスツールチップ定義                    | ✅ 対応済 (100%) | `ui/ts/surface/surface-load.ts`                                             |

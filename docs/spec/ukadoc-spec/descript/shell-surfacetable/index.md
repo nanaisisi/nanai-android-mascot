@@ -10,7 +10,7 @@
 
 ## 1. サブカテゴリ一覧・対応状況
 
-| カテゴリ / 規格ファイル                                         | 概要・対象領域                       |     対応状況     | 関連実装コード                                                              |
-| :-------------------------------------------------------------- | :----------------------------------- | :--------------: | :-------------------------------------------------------------------------- |
-| **[surfacetable.txt 概要](introduction_surfacetable.txt.md)**   | `surfacetable.txt` 概要・記述仕様    |    ⚠️ 一部対応    | `crates/nanai-core/src/surfaces_parser.rs`, `ui/ts/surface/surface-load.ts` |
-| **[surfacetable.txt 仕様項目一覧](surfacetable-txt/index.md)** | バージョン、オプション定義           | ✅ 対応済 (100%) | `crates/nanai-core/src/surfaces_parser.rs`, `ui/ts/surface/surface-load.ts` |
+| カテゴリ / 規格ファイル                                        | 概要・対象領域                    |     対応状況     | 関連実装コード                                                              |
+| :------------------------------------------------------------- | :-------------------------------- | :--------------: | :-------------------------------------------------------------------------- |
+| **[surfacetable.txt 概要](introduction_surfacetable.txt.md)**  | `surfacetable.txt` 概要・記述仕様 |   ⚠️ 一部対応    | `crates/nanai-core/src/surfaces_parser.rs`, `ui/ts/surface/surface-load.ts` |
+| **[surfacetable.txt 仕様項目一覧](surfacetable-txt/index.md)** | バージョン、オプション定義        | ✅ 対応済 (100%) | `crates/nanai-core/src/surfaces_parser.rs`, `ui/ts/surface/surface-load.ts` |

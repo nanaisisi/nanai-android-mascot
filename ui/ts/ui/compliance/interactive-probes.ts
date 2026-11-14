@@ -1,20 +1,21 @@
 import { mouseMethods } from "../../core/events/mouse.js";
 import { surfaceCollisionMethods } from "../../surface/surface-collision.js";
 import {
-	collectNodes,
-	withCapableDomDocument,
-	type UiComplianceProbeResult,
-} from "./types.js";
-import {
 	createColorDialogForm,
 	createTermsDialogForm,
 	type ModalDialogContext,
 } from "../renderers/modal-dialog-ui.js";
+import {
+	collectNodes,
+	type UiComplianceProbeResult,
+	withCapableDomDocument,
+} from "./types.js";
 
 export async function runMouseShioriEventProbe(): Promise<UiComplianceProbeResult> {
 	const specName = "OnMouseClick / OnMouseDoubleClick / OnMouseWheel";
 	const usagePath = "mouseMethods.onGhostClick / onGhostWheel ➔ SHIORI Events";
-	const manualCheckHint = "キャラクターの部位クリック・ホイールでSHIORI反応が返るか確認";
+	const manualCheckHint =
+		"キャラクターの部位クリック・ホイールでSHIORI反応が返るか確認";
 
 	try {
 		const calls: Array<{ event: string; args: unknown[] }> = [];
@@ -26,12 +27,31 @@ export async function runMouseShioriEventProbe(): Promise<UiComplianceProbeResul
 
 		const surfaceManager = {
 			...surfaceCollisionMethods,
-			baseWidth: 300, baseHeight: 400,
+			baseWidth: 300,
+			baseHeight: 400,
 			currentSurfaceIdFor: () => 0,
 			collisions: {
-				"0": [{ id: 1, name: "Head", shape: "rect", x1: 50, y1: 100, x2: 150, y2: 200, minX: 50, minY: 100, maxX: 150, maxY: 200 }],
+				"0": [
+					{
+						id: 1,
+						name: "Head",
+						shape: "rect",
+						x1: 50,
+						y1: 100,
+						x2: 150,
+						y2: 200,
+						minX: 50,
+						minY: 100,
+						maxX: 150,
+						maxY: 200,
+					},
+				],
 			},
-			aliases: {}, names: {}, cursors: {}, tooltips: {}, collisionSort: "none",
+			aliases: {},
+			names: {},
+			cursors: {},
+			tooltips: {},
+			collisionSort: "none",
 		};
 
 		const mockApp = {
@@ -41,7 +61,8 @@ export async function runMouseShioriEventProbe(): Promise<UiComplianceProbeResul
 				sendShioriEvent: async (event: string, args: unknown[] = []) => {
 					calls.push({ event, args });
 					if (event === "OnMouseDoubleClick") return { status: 204 };
-					if (event === "OnMouseClick") return { status: 200, value: "\\0HeadClicked\\e" };
+					if (event === "OnMouseClick")
+						return { status: 200, value: "\\0HeadClicked\\e" };
 					return { status: 200, value: "" };
 				},
 			},
@@ -72,15 +93,22 @@ export async function runMouseShioriEventProbe(): Promise<UiComplianceProbeResul
 		const wheelCall = calls.find((c) => c.event === "OnMouseWheel");
 
 		const passed =
-			Boolean(dblClickCall) && Boolean(clickCall) &&
-			clickCall?.args[0] === 100 && clickCall?.args[1] === 150 &&
-			clickCall?.args[4] === "Head" && playedScripts.includes("\\0HeadClicked\\e") &&
-			Boolean(wheelCall) && wheelCall?.args[2] === -120 && wheelCall?.args[4] === "Head";
+			Boolean(dblClickCall) &&
+			Boolean(clickCall) &&
+			clickCall?.args[0] === 100 &&
+			clickCall?.args[1] === 150 &&
+			clickCall?.args[4] === "Head" &&
+			playedScripts.includes("\\0HeadClicked\\e") &&
+			Boolean(wheelCall) &&
+			wheelCall?.args[2] === -120 &&
+			wheelCall?.args[4] === "Head";
 
 		return {
 			id: "mouse-shiori-event-ui",
 			category: "Mouse & SHIORI",
-			specName, usagePath, passed,
+			specName,
+			usagePath,
+			passed,
 			actualSummary: `events=[${calls.map((c) => c.event).join(", ")}], ref4=${clickCall?.args[4]}`,
 			manualCheckHint,
 		};
@@ -88,7 +116,9 @@ export async function runMouseShioriEventProbe(): Promise<UiComplianceProbeResul
 		return {
 			id: "mouse-shiori-event-ui",
 			category: "Mouse & SHIORI",
-			specName, usagePath, passed: false,
+			specName,
+			usagePath,
+			passed: false,
 			actualSummary: `Error: ${err instanceof Error ? err.message : String(err)}`,
 			manualCheckHint,
 		};
@@ -97,7 +127,8 @@ export async function runMouseShioriEventProbe(): Promise<UiComplianceProbeResul
 
 export async function runSystemDialogUiProbe(): Promise<UiComplianceProbeResult> {
 	const specName = "\\![open,dialog,color] / terms UIフォーム & コールバック";
-	const usagePath = "createColorDialogForm / createTermsDialogForm ➔ DOM Form & SHIORI Callback";
+	const usagePath =
+		"createColorDialogForm / createTermsDialogForm ➔ DOM Form & SHIORI Callback";
 	const manualCheckHint = "カラーピッカーと利用規約フォームの表示・応答を確認";
 
 	try {
@@ -117,49 +148,85 @@ export async function runSystemDialogUiProbe(): Promise<UiComplianceProbeResult>
 			};
 
 			let colorSuccessValue = "";
-			let colorCancelCount = 0;
+			let _colorCancelCount = 0;
 
 			const colorMount = document.createElement("div");
 			const colorDialog = createColorDialogForm(
-				context, "色を選択", "#ff8040", "color-probe",
-				async (rgbStr) => { colorSuccessValue = rgbStr; },
-				async () => { colorCancelCount++; },
+				context,
+				"色を選択",
+				"#ff8040",
+				"color-probe",
+				async (rgbStr) => {
+					colorSuccessValue = rgbStr;
+				},
+				async () => {
+					_colorCancelCount++;
+				},
 			);
 			colorMount.appendChild(colorDialog.form as unknown as Node);
 			activeBoxes.set(colorDialog.boxKey, colorDialog);
 
 			const colorNodes = collectNodes(colorDialog.form);
-			const colorInput = colorNodes.find((n) => String(n.tagName ?? "").toLowerCase() === "input");
-			const okBtn = colorNodes.find((n) => String(n.tagName ?? "").toLowerCase() === "button" && String(n.textContent ?? "").trim() === "OK");
-			const hasColorClass = String(colorDialog.form.className ?? "").includes("balloon-color-dialog");
-			const hasInitialColor = String(colorInput?.value ?? "").toLowerCase() === "#ff8040";
+			const colorInput = colorNodes.find(
+				(n) => String(n.tagName ?? "").toLowerCase() === "input",
+			);
+			const okBtn = colorNodes.find(
+				(n) =>
+					String(n.tagName ?? "").toLowerCase() === "button" &&
+					String(n.textContent ?? "").trim() === "OK",
+			);
+			const hasColorClass = String(colorDialog.form.className ?? "").includes(
+				"balloon-color-dialog",
+			);
+			const hasInitialColor =
+				String(colorInput?.value ?? "").toLowerCase() === "#ff8040";
 
 			(okBtn as { click?: () => void } | undefined)?.click?.();
 			await Promise.resolve();
 			const colorCleanedAfterOk = !activeBoxes.has(colorDialog.boxKey);
 
 			const termsMount = document.createElement("div");
-			const termsDialog = createTermsDialogForm(context, "利用規約", "terms-1", "terms-probe");
+			const termsDialog = createTermsDialogForm(
+				context,
+				"利用規約",
+				"terms-1",
+				"terms-probe",
+			);
 			termsMount.appendChild(termsDialog.form as unknown as Node);
 			activeBoxes.set(termsDialog.boxKey, termsDialog);
 
 			const termsNodes = collectNodes(termsDialog.form);
-			const acceptBtn = termsNodes.find((n) => String(n.tagName ?? "").toLowerCase() === "button" && String(n.textContent ?? "").trim() === "同意する");
-			const hasTermsClass = String(termsDialog.form.className ?? "").includes("balloon-terms-dialog");
+			const acceptBtn = termsNodes.find(
+				(n) =>
+					String(n.tagName ?? "").toLowerCase() === "button" &&
+					String(n.textContent ?? "").trim() === "同意する",
+			);
+			const hasTermsClass = String(termsDialog.form.className ?? "").includes(
+				"balloon-terms-dialog",
+			);
 			(acceptBtn as { click?: () => void } | undefined)?.click?.();
 			await Promise.resolve();
 			const termsCleaned = !activeBoxes.has(termsDialog.boxKey);
 
-			const acceptCall = shioriCalls.find((c) => c.event === "OnGhostTermsAccept");
+			const acceptCall = shioriCalls.find(
+				(c) => c.event === "OnGhostTermsAccept",
+			);
 
 			const passed =
-				hasColorClass && hasInitialColor && colorSuccessValue === "255,128,64" &&
-				colorCleanedAfterOk && hasTermsClass && termsCleaned && acceptCall?.args?.[0] === "terms-1";
+				hasColorClass &&
+				hasInitialColor &&
+				colorSuccessValue === "255,128,64" &&
+				colorCleanedAfterOk &&
+				hasTermsClass &&
+				termsCleaned &&
+				acceptCall?.args?.[0] === "terms-1";
 
 			return {
 				id: "system-dialog-ui",
 				category: "System Dialog UI",
-				specName, usagePath, passed,
+				specName,
+				usagePath,
+				passed,
 				actualSummary: `colorRGB=${colorSuccessValue}, terms=${shioriCalls.map((c) => c.event).join(",")}`,
 				manualCheckHint,
 			};
@@ -168,7 +235,9 @@ export async function runSystemDialogUiProbe(): Promise<UiComplianceProbeResult>
 		return {
 			id: "system-dialog-ui",
 			category: "System Dialog UI",
-			specName, usagePath, passed: false,
+			specName,
+			usagePath,
+			passed: false,
 			actualSummary: `Error: ${err instanceof Error ? err.message : String(err)}`,
 			manualCheckHint,
 		};

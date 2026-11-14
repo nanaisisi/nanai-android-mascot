@@ -160,7 +160,11 @@ pub fn build_on_choice_select_request(choice_id: &str) -> String {
 
 /// OnChoiceSelectEx イベントリクエスト構築 (ukadoc-spec/list/shiori-event/choice/OnChoiceSelectEx.md)
 pub fn build_on_choice_select_ex_request(choice_id: &str, text: &str, extra_data: &str) -> String {
-    let refs = vec![choice_id.to_string(), text.to_string(), extra_data.to_string()];
+    let refs = vec![
+        choice_id.to_string(),
+        text.to_string(),
+        extra_data.to_string(),
+    ];
     build_shiori_request_extended("GET", "OnChoiceSelectEx", &refs, None)
 }
 

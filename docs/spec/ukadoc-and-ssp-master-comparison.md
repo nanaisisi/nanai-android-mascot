@@ -12,15 +12,15 @@
 
 ## 1. コア仕様・プロトコル対照 (`ukadoc-spec` vs `ukadoc-ssp`)
 
-| 分類領域                     | ukadoc-spec 対応モジュール                         | ukadoc-ssp 関連項目                                          | Nanai 実装・対応状況                                                                                  |
-| :--------------------------- | :------------------------------------------------- | :----------------------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
-| **SHIORI プロトコル**        | `list/shiori-event/`, `spec/`                      | 設定・接続関連                                               | **✅ 100% 対応済** (SHIORI 3.0 / 2.x リクエスト・レスポンス・イベント発火)                            |
-| **SSTP 通信**                | `list/sakura-script/event/`                        | SSPメッセンジャ (`sspim/`)                                   | **✅ 完全対応済** (`SEND`, `EXECUTE`, `GIVE`, `COMMUNICATE`, `NOTIFY`, Keep-Alive)                    |
+| 分類領域                     | ukadoc-spec 対応モジュール                         | ukadoc-ssp 関連項目                                          | Nanai 実装・対応状況                                                                                   |
+| :--------------------------- | :------------------------------------------------- | :----------------------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
+| **SHIORI プロトコル**        | `list/shiori-event/`, `spec/`                      | 設定・接続関連                                               | **✅ 100% 対応済** (SHIORI 3.0 / 2.x リクエスト・レスポンス・イベント発火)                             |
+| **SSTP 通信**                | `list/sakura-script/event/`                        | SSPメッセンジャ (`sspim/`)                                   | **✅ 完全対応済** (`SEND`, `EXECUTE`, `GIVE`, `COMMUNICATE`, `NOTIFY`, Keep-Alive)                     |
 | **さくらスクリプト**         | `list/sakura-script/` (balloon-text, choice, etc.) | 各種コマンドタグ                                             | **✅ 96% 対応済** (Rust 統一パーサー `crates/nanai-core/src/sakura_script.rs`, `crates/ui/src/script`) |
-| **サーフィス・シェル**       | `descript/shell/`, `spec/surfaces/`                | 設定：表示 (`config/disp.md`)                                | **✅ 完全対応済** (Seriko アニメーション、CollisionEx、メニュービットマップ)           |
-| **ネットワーク更新**         | `descript/install/`, `list/sakura-script/misc/`    | 接続設定 (`config/conn2.md`), ハウツー (`howto/headline.md`) | **✅ 完全対応済** (`updates.txt`, `updates2.dau`, RSS/Atom ヘッドラインフィードパーサ) |
-| **カレンダー・スケジュール** | `list/shiori-event/calendar/`                      | 機能：カレンダー (`functions/calendar/`)                     | **✅ 完全対応済** (永続スケジュール管理 `schedules.json`, イベント通知)                |
-| **音声機能 (TTS/音声認識)**  | -                                                  | 機能：音声認識・合成 (`functions/speech-*.md`)               | **✅ 対応済** (`DictationManager` による Web Speech API 連携)                          |
+| **サーフィス・シェル**       | `descript/shell/`, `spec/surfaces/`                | 設定：表示 (`config/disp.md`)                                | **✅ 完全対応済** (Seriko アニメーション、CollisionEx、メニュービットマップ)                           |
+| **ネットワーク更新**         | `descript/install/`, `list/sakura-script/misc/`    | 接続設定 (`config/conn2.md`), ハウツー (`howto/headline.md`) | **✅ 完全対応済** (`updates.txt`, `updates2.dau`, RSS/Atom ヘッドラインフィードパーサ)                 |
+| **カレンダー・スケジュール** | `list/shiori-event/calendar/`                      | 機能：カレンダー (`functions/calendar/`)                     | **✅ 完全対応済** (永続スケジュール管理 `schedules.json`, イベント通知)                                |
+| **音声機能 (TTS/音声認識)**  | -                                                  | 機能：音声認識・合成 (`functions/speech-*.md`)               | **✅ 対応済** (`DictationManager` による Web Speech API 連携)                                          |
 
 ---
 

@@ -2,9 +2,9 @@
 
 実装コードの文字列検索による一次調査です。
 
-| 項目 | 検索語 | 対応状況 |
-| :--- | :----- | :------: |
-| [OnTourabuConquestEnd](OnTourabuConquestEnd.md) | OnTourabuConquestEnd | ❌ 未実装 |
+| 項目                                                | 検索語                 | 対応状況  |
+| :-------------------------------------------------- | :--------------------- | :-------: |
+| [OnTourabuConquestEnd](OnTourabuConquestEnd.md)     | OnTourabuConquestEnd   | ❌ 未実装 |
 | [OnTourabuConquestStart](OnTourabuConquestStart.md) | OnTourabuConquestStart | ❌ 未実装 |
-| [OnTourabuDutyEnd](OnTourabuDutyEnd.md) | OnTourabuDutyEnd | ❌ 未実装 |
-| [OnTourabuDutyStart](OnTourabuDutyStart.md) | OnTourabuDutyStart | ❌ 未実装 |
+| [OnTourabuDutyEnd](OnTourabuDutyEnd.md)             | OnTourabuDutyEnd       | ❌ 未実装 |
+| [OnTourabuDutyStart](OnTourabuDutyStart.md)         | OnTourabuDutyStart     | ❌ 未実装 |

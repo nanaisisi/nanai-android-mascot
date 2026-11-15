@@ -1,8 +1,8 @@
 //! 文字コード自動判定およびデコードのエントリポイント
 
+use super::super::names::DecodeResult;
 use super::bom::try_decode_bom;
 use super::header_decl::try_decode_header_decl;
-use super::super::names::DecodeResult;
 use encoding_rs::{EUC_JP, SHIFT_JIS};
 
 /// 詳細なデコード結果（エラー有無を含む）を返す拡張自動判定関数

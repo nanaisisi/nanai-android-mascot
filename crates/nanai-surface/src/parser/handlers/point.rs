@@ -3,7 +3,20 @@
 use super::utils::first_i32;
 use crate::types::*;
 
-pub(crate) fn apply_point(txt: &mut SurfacesTxt, ids: &[u32], field: &str, value: &str) {
+#[allow(non_camel_case_types)]
+pub struct Apply_pointParams<'a> {
+    pub txt: &'a mut SurfacesTxt,
+    pub ids: &'a [u32],
+    pub field: &'a str,
+    pub value: &'a str,
+}
+
+pub(crate) fn apply_point(params: Apply_pointParams<'_>) {
+    let txt = params.txt;
+    let ids = params.ids;
+    let field = params.field;
+    let value = params.value;
+
     let parsed = first_i32(value);
     let field_lower = field.to_lowercase();
     let f = field_lower.strip_prefix("point.").unwrap_or(&field_lower);

@@ -1,10 +1,21 @@
 //! アニメーション (`animation`) ハンドラー
 
-use super::collision::{parse_collision_area, parse_collisionex_area};
-use super::utils::split_id_suffix;
 use crate::types::*;
 
-pub(crate) fn apply_animation_line(txt: &mut SurfacesTxt, ids: &[u32], rest: &str, value: &str) {
+#[allow(non_camel_case_types)]
+pub struct Apply_animation_lineParams<'a> {
+    pub txt: &'a mut SurfacesTxt,
+    pub ids: &'a [u32],
+    pub rest: &'a str,
+    pub value: &'a str,
+}
+
+pub(crate) fn apply_animation_line(params: Apply_animation_lineParams<'_>) {
+    let txt = params.txt;
+    let ids = params.ids;
+    let rest = params.rest;
+    let value = params.value;
+
     let Some((id_part, field)) = rest.split_once('.') else {
         return;
     };
@@ -24,103 +35,68 @@ pub(crate) fn apply_animation_line(txt: &mut SurfacesTxt, ids: &[u32], rest: &st
         } else if field_lower.starts_with("name") {
             anim.name = Some(value.trim().to_string());
         } else if field_lower.starts_with("option") {
-            anim.options
-                .push(value.split(',').map(|t| t.trim().to_string()).collect());
-        } else if let Some(collision_part) = field_lower.strip_prefix("collisionex") {
-            if let Some(area) = parse_collisionex_area(collision_part, value) {
-                anim.collisions.push(area);
-            }
-        } else if let Some(collision_part) = field_lower.strip_prefix("collision") {
-            if let Some(area) = parse_collision_area(collision_part, value) {
-                anim.collisions.push(area);
+            let tokens: Vec<String> = value
+                .split(',')
+                .map(|s| s.trim().to_string())
+                .filter(|s| !s.is_empty())
+                .collect();
+            if !tokens.is_empty() {
+                anim.options.push(tokens);
             }
         } else if field_lower.starts_with("pattern") {
-            let index = if field_lower == "pattern" {
+            let pat_str = &field_lower["pattern".len()..];
+            let pat_index = if pat_str.is_empty() {
                 anim.patterns.len() as u32
             } else {
-                split_id_suffix(&field["pattern".len()..]).1.unwrap_or(0)
+                pat_str.parse::<u32>().unwrap_or(0)
             };
-            let mut tokens: Vec<String> = Vec::new();
-            let mut current = String::new();
-            let mut depth_paren = 0;
-            let mut depth_bracket = 0;
-            for ch in value.chars() {
-                match ch {
-                    '(' => {
-                        depth_paren += 1;
-                        current.push(ch);
-                    }
-                    ')' => {
-                        if depth_paren > 0 {
-                            depth_paren -= 1;
-                        }
-                        current.push(ch);
-                    }
-                    '[' => {
-                        depth_bracket += 1;
-                        current.push(ch);
-                    }
-                    ']' => {
-                        if depth_bracket > 0 {
-                            depth_bracket -= 1;
-                        }
-                        current.push(ch);
-                    }
-                    ',' if depth_paren == 0 && depth_bracket == 0 => {
-                        tokens.push(current.trim().to_string());
-                        current.clear();
-                    }
-                    _ => {
-                        current.push(ch);
-                    }
+
+            let parts: Vec<&str> = value.split(',').map(|s| s.trim()).collect();
+            if parts.is_empty() {
+                continue;
+            }
+
+            let method = DrawMethod::parse(parts[0]);
+            let surface = parts.get(1).and_then(|s| s.parse::<i32>().ok()).unwrap_or(0);
+            let (wait, wait_max) = parts
+                .get(2)
+                .map(|s| parse_wait(s))
+                .unwrap_or((0, None));
+
+            let x = parts.get(3).and_then(|s| s.parse::<i32>().ok()).unwrap_or(0);
+            let y = parts.get(4).and_then(|s| s.parse::<i32>().ok()).unwrap_or(0);
+
+            let mut options = Vec::new();
+            for opt_part in parts.iter().skip(5) {
+                if !opt_part.is_empty() {
+                    options.push(opt_part.to_string());
                 }
             }
-            if !current.trim().is_empty() {
-                tokens.push(current.trim().to_string());
-            }
 
-            let first = tokens.first().map(|s| s.as_str()).unwrap_or("");
-            let second = tokens.get(1).map(|s| s.as_str()).unwrap_or("");
-            let method = if tokens.len() >= 2
-                && (first == "start"
-                    || first == "stop"
-                    || first == "alternativestart"
-                    || first == "alternativestop"
-                    || first == "parallelstart"
-                    || first == "parallelstop")
-            {
-                DrawMethod::parse(&format!("{first},{second}"))
-            } else {
-                DrawMethod::parse(first)
-            };
-
-            let (wait, wait_max) = tokens
-                .get(2)
-                .and_then(|t| {
-                    let (low, high) = match t.split_once('-') {
-                        Some((low, high)) => (low, high),
-                        None => (t.as_str(), ""),
-                    };
-                    let low = low.parse::<u32>().ok()?;
-                    let high = high.parse::<u32>().ok();
-                    match high {
-                        Some(h) if h >= low => Some((low, Some(h))),
-                        Some(_) => Some((low, Some(low))),
-                        None => Some((low, None)),
-                    }
-                })
-                .unwrap_or((0, None));
             let pattern = AnimationPattern {
-                index,
+                index: pat_index,
                 method,
-                surface: tokens.get(1).and_then(|t| t.parse().ok()).unwrap_or(0),
+                surface,
                 wait,
                 wait_max,
-                x: tokens.get(3).and_then(|t| t.parse().ok()).unwrap_or(0),
-                y: tokens.get(4).and_then(|t| t.parse().ok()).unwrap_or(0),
-                options: tokens.iter().skip(5).map(|t| t.to_string()).collect(),
+                x,
+                y,
+                options,
             };
+
             anim.patterns.push(pattern);
+            anim.patterns.sort_by_key(|p| p.index);
         }
+    }
+}
+
+fn parse_wait(s: &str) -> (u32, Option<u32>) {
+    if let Some((min_s, max_s)) = s.split_once('-') {
+        let min = min_s.trim().parse::<u32>().unwrap_or(0);
+        let max = max_s.trim().parse::<u32>().unwrap_or(min);
+        (min, Some(max))
+    } else {
+        let val = s.trim().parse::<u32>().unwrap_or(0);
+        (val, None)
     }
 }

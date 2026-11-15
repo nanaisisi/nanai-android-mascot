@@ -3,7 +3,20 @@
 use super::utils::split_id_suffix;
 use crate::types::*;
 
-pub(crate) fn apply_element(txt: &mut SurfacesTxt, ids: &[u32], id_part: &str, value: &str) {
+#[allow(non_camel_case_types)]
+pub struct Apply_elementParams<'a> {
+    pub txt: &'a mut SurfacesTxt,
+    pub ids: &'a [u32],
+    pub id_part: &'a str,
+    pub value: &'a str,
+}
+
+pub(crate) fn apply_element(params: Apply_elementParams<'_>) {
+    let txt = params.txt;
+    let ids = params.ids;
+    let id_part = params.id_part;
+    let value = params.value;
+
     let (_word, id) = split_id_suffix(id_part);
     let tokens: Vec<String> = value.split(',').map(|t| t.trim().to_string()).collect();
     if tokens.len() < 3 {

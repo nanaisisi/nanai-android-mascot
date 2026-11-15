@@ -1,47 +1,13 @@
-//! `surfaces.txt` (UKADOC / SSP 仕様準拠) 高速パーサーモジュール
-//! サーフィス定義、要素レイヤー、アニメーション、衝突判定領域を一括パース
+//! `surfaces.txt` テキストパーサーおよび WASM バインディング
 
+use super::types::{AnimationOutput, AnimationPatternOutput, ParsedSurfacesManifest};
 use crate::surface_collision::{CollisionArea, CollisionShape};
 use crate::surface_compositor::SurfaceElement;
-use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
-use tsify::Tsify;
 use wasm_bindgen::prelude::*;
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
-pub struct AnimationPatternOutput {
-    pub surface: String,
-    pub wait: u32,
-    #[serde(rename = "type")]
-    pub pattern_type: String,
-    pub x: i32,
-    pub y: i32,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub target_param: Option<String>,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
-pub struct AnimationOutput {
-    pub id: u32,
-    pub interval: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub name: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub options: Option<Vec<String>>,
-    pub patterns: Vec<AnimationPatternOutput>,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
-pub struct ParsedSurfacesManifest {
-    pub elements: BTreeMap<String, Vec<SurfaceElement>>,
-    pub collisions: BTreeMap<String, Vec<CollisionArea>>,
-    pub animations: BTreeMap<String, Vec<AnimationOutput>>,
-    pub collision_sort: String,
-    pub animation_sort: String,
-}
-
 /// surfaceN,surface.appendN 等のヘッダー行からサーフィスID一覧を展開
-fn parse_surface_header(trimmed: &str) -> Option<Vec<String>> {
+pub fn parse_surface_header(trimmed: &str) -> Option<Vec<String>> {
     let lower = trimmed.to_ascii_lowercase();
     if !lower.starts_with("surface") {
         return None;
@@ -426,46 +392,4 @@ pub fn parse_surfaces_txt(text: &str) -> ParsedSurfacesManifest {
 pub fn wasm_parse_surfaces_txt(text: &str) -> Result<JsValue, JsValue> {
     let manifest = parse_surfaces_txt(text);
     Ok(serde_wasm_bindgen::to_value(&manifest)?)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_parse_surfaces_txt_basic() {
-        let input = r#"
-surface0,1
-element0,base,surface0.png,0,0
-element1,overlay,eye.png,10,20
-collision0,10,10,50,50,head
-"#;
-        let manifest = parse_surfaces_txt(input);
-        assert_eq!(manifest.elements.len(), 2);
-        assert!(manifest.elements.contains_key("0"));
-        assert!(manifest.elements.contains_key("1"));
-        assert_eq!(manifest.elements["0"].len(), 2);
-        assert_eq!(manifest.collisions["0"][0].name, "head");
-    }
-
-    #[test]
-    fn test_parse_surface_header_range() {
-        let targets = parse_surface_header("surface0,1,3-5").unwrap();
-        assert_eq!(targets, vec!["0", "1", "3", "4", "5"]);
-    }
-
-    #[test]
-    fn test_parse_collisionex() {
-        let input = r#"
-surface0
-collisionex0,head,rect,10,10,50,50
-collisionex1,bust,circle,100,100,25
-collisionex2,leg,polygon,0,0,10,0,10,20
-"#;
-        let manifest = parse_surfaces_txt(input);
-        assert_eq!(manifest.collisions["0"].len(), 3);
-        assert_eq!(manifest.collisions["0"][0].name, "head");
-        assert_eq!(manifest.collisions["0"][1].name, "bust");
-        assert_eq!(manifest.collisions["0"][2].name, "leg");
-    }
 }

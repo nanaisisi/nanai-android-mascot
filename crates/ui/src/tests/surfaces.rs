@@ -16,11 +16,11 @@ collisionex1,halo,ellipse,100,100,60,30
     let def2 = txt.surface(2).unwrap();
 
     let face = def2.hit_test(140, 100).expect("円の内側は face");
-    assert_eq!(face.name, "face");
+    assert_eq!(face.name(), "face");
     assert!(def2.hit_test(190, 100).is_none());
 
     let halo = def2.hit_test(160, 100).expect("楕円の内側は halo");
-    assert_eq!(halo.name, "halo");
+    assert_eq!(halo.name(), "halo");
     assert!(def2.hit_test(150, 40).is_none());
 }
 

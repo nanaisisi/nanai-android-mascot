@@ -2,7 +2,7 @@
 
 use serde::{Deserialize, Serialize};
 
-/// collision の形状（`rect` 固定5点 / `polygon` 多角形 / `circle` / `ellipse`）
+/// collision の形状（ जलन `rect` 固定5点 / `polygon` 多角形 / `circle` / `ellipse`）
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum CollisionShape {
     /// 矩形（始点X, 始点Y, 終点X, 終点Y）
@@ -112,13 +112,19 @@ impl CollisionShape {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CollisionArea {
     /// `collision[N]` 形式時の通しID（collisionex では省略され得る）
-    pub id: Option<u32>,
+    pub(crate) id: Option<u32>,
     /// 部位名（head, bust, skirt...）
-    pub name: String,
-    pub shape: CollisionShape,
+    pub(crate) name: String,
+    pub(crate) shape: CollisionShape,
 }
 
+#[allow(dead_code)]
 impl CollisionArea {
+    // Add getter methods
+    pub fn id(&self) -> Option<u32> { self.id }
+    pub fn name(&self) -> &str { &self.name }
+    pub fn shape(&self) -> &CollisionShape { &self.shape }
+
     /// 座標が当たり判定領域内にあるか
     pub fn contains(&self, x: i32, y: i32) -> bool {
         self.shape.contains(x, y)
@@ -129,20 +135,27 @@ impl CollisionArea {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct HitTestResult {
     /// 当たり判定ID（定義されている場合）
-    pub id: Option<u32>,
+    pub(crate) id: Option<u32>,
     /// 部位名（head, bust, skirt...）
-    pub name: String,
+    pub(crate) name: String,
     /// クリックされたサーフィス内相対X座標
-    pub x: i32,
+    pub(crate) x: i32,
     /// クリックされたサーフィス内相対Y座標
-    pub y: i32,
+    pub(crate) y: i32,
 }
 
+#[allow(dead_code)]
 impl HitTestResult {
+    // Add getter methods
+    pub fn id(&self) -> Option<u32> { self.id }
+    pub fn name(&self) -> &str { &self.name }
+    pub fn x(&self) -> i32 { self.x }
+    pub fn y(&self) -> i32 { self.y }
+
     pub fn new(area: &CollisionArea, x: i32, y: i32) -> Self {
         Self {
-            id: area.id,
-            name: area.name.clone(),
+            id: area.id(),
+            name: area.name().to_string(),
             x,
             y,
         }

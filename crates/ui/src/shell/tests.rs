@@ -20,11 +20,11 @@ fn test_load_mock_shell() {
     // surfaces.txt の基本定義
     let def0 = shell.surface(0).unwrap();
     assert!(def0.element(0).is_some());
-    assert!(def0.collisions.iter().any(|c| c.name == "head"));
+    assert!(def0.collisions.iter().any(|c| c.name() == "head"));
 
     // hit_test
     assert_eq!(
-        shell.hit_test(0, 90, 40).map(|c| c.name.as_str()),
+        shell.hit_test(0, 90, 40).map(|c| c.name()),
         Some("head")
     );
     assert_eq!(shell.hit_test(0, -99, -99), None);

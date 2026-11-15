@@ -230,7 +230,7 @@ mod tests {
             .iter()
             .find(|s| s.number() == 0)
             .unwrap();
-        assert!(s0.definition().collisions.iter().any(|c| c.name == "head"));
+        assert!(s0.definition().collisions.iter().any(|c| c.name() == "head"));
         assert!(s0.definition().animations.contains_key(&0));
         assert!(!manifest.sakura_bind_groups().is_empty());
         assert!(!manifest.kero_bind_groups().is_empty());

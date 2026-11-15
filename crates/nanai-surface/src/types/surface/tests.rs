@@ -82,15 +82,15 @@ fn test_surface_definition_effective_icon_rect_and_sorting() {
     let res_asc = def
         .hit_test_sorted(25, 25, Some(&SortKind::Ascend))
         .unwrap();
-    assert_eq!(res_asc.name, "head"); // ID 1
+    assert_eq!(res_asc.name(), "head"); // ID 1
 
     let res_desc = def
         .hit_test_sorted(25, 25, Some(&SortKind::Descend))
         .unwrap();
-    assert_eq!(res_desc.name, "face"); // ID 2
+    assert_eq!(res_desc.name(), "face"); // ID 2
 
     let res_id = def.hit_test_sorted(25, 25, Some(&SortKind::Id)).unwrap();
-    assert_eq!(res_id.name, "head"); // ID 1
+    assert_eq!(res_id.name(), "head"); // ID 1
 }
 
 #[test]

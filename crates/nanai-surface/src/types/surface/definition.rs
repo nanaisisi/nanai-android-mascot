@@ -41,14 +41,14 @@ impl SurfaceDefinition {
         let area = self
             .collisions
             .iter()
-            .find(|c| c.name.eq_ignore_ascii_case("face") || c.name.eq_ignore_ascii_case("顔"))
+            .find(|c| c.name().eq_ignore_ascii_case("face") || c.name().eq_ignore_ascii_case("顔"))
             .or_else(|| {
                 self.collisions.iter().find(|c| {
-                    c.name.eq_ignore_ascii_case("head") || c.name.eq_ignore_ascii_case("頭")
+                    c.name().eq_ignore_ascii_case("head") || c.name().eq_ignore_ascii_case("頭")
                 })
             })?;
 
-        let (x1, y1, x2, y2) = area.shape.bounding_box()?;
+        let (x1, y1, x2, y2) = area.shape().bounding_box()?;
         Some(make_square_rect(Make_square_rectParams { x1, y1, x2, y2 }))
     }
 

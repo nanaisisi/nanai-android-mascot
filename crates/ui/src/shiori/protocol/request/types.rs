@@ -31,8 +31,6 @@ pub struct ShioriRequest {
     pub(crate) passthru: BTreeMap<String, String>,
 }
 
-
-
 impl ShioriRequest {
     pub fn with_sender(mut self, sender: impl Into<String>) -> Self {
         self.sender = sender.into();

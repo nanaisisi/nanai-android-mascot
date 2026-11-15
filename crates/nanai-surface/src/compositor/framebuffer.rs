@@ -14,7 +14,9 @@ pub struct SurfaceFrameBuffer {
 #[allow(dead_code)]
 impl SurfaceFrameBuffer {
     // Add getter methods
-    pub fn data(&self) -> &[u8] { &self.data }
+    pub fn data(&self) -> &[u8] {
+        &self.data
+    }
 }
 
 impl SurfaceFrameBuffer {

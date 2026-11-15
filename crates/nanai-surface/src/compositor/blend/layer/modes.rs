@@ -1,8 +1,8 @@
 //! 各種ブレンドモード（分離可能・非分離可能ブレンドモード）の画素演算モジュール
 
 use super::w3c_hsl::{
-    Blend_colorParams, Blend_hueParams, Blend_luminosityParams, Blend_saturationParams, blend_color,
-    blend_hue, blend_luminosity, blend_saturation,
+    Blend_colorParams, Blend_hueParams, Blend_luminosityParams, Blend_saturationParams,
+    blend_color, blend_hue, blend_luminosity, blend_saturation,
 };
 
 #[allow(non_camel_case_types)]
@@ -19,13 +19,27 @@ pub struct Evaluate_blend_modeParams<'a> {
 #[allow(dead_code)]
 impl<'a> Evaluate_blend_modeParams<'a> {
     // Add getter methods
-    pub fn mode(&self) -> &'a str { self.mode }
-    pub fn dr(&self) -> u8 { self.dr }
-    pub fn dg(&self) -> u8 { self.dg }
-    pub fn db(&self) -> u8 { self.db }
-    pub fn sr(&self) -> u8 { self.sr }
-    pub fn sg(&self) -> u8 { self.sg }
-    pub fn sb(&self) -> u8 { self.sb }
+    pub fn mode(&self) -> &'a str {
+        self.mode
+    }
+    pub fn dr(&self) -> u8 {
+        self.dr
+    }
+    pub fn dg(&self) -> u8 {
+        self.dg
+    }
+    pub fn db(&self) -> u8 {
+        self.db
+    }
+    pub fn sr(&self) -> u8 {
+        self.sr
+    }
+    pub fn sg(&self) -> u8 {
+        self.sg
+    }
+    pub fn sb(&self) -> u8 {
+        self.sb
+    }
 }
 
 /// 各種ブレンドモード（mode）に従い、(dr, dg, db) と (sr, sg, sb) を合成計算する
@@ -66,49 +80,48 @@ pub(crate) fn evaluate_blend_mode(params: Evaluate_blend_modeParams<'_>) -> (u8,
                 (255 - (2 * (255 - sb as u16) * (255 - db as u16) / 255)) as u8
             },
         ),
-        "darken" => (std::cmp::min(sr, dr), std::cmp::min(sg, dg), std::cmp::min(sb, db)),
-        "lighten" => (std::cmp::max(sr, dr), std::cmp::max(sg, dg), std::cmp::max(sb, db)),
+        "darken" => (
+            std::cmp::min(sr, dr),
+            std::cmp::min(sg, dg),
+            std::cmp::min(sb, db),
+        ),
+        "lighten" => (
+            std::cmp::max(sr, dr),
+            std::cmp::max(sg, dg),
+            std::cmp::max(sb, db),
+        ),
         "colordodge" => (
             if sr == 255 {
                 255
             } else {
-                std::cmp::min(255, ((dr as u32 * 255) / (255 - sr as u32) as u32) as u8)
+                std::cmp::min(255, ((dr as u32 * 255) / (255 - sr as u32)) as u8)
             },
             if sg == 255 {
                 255
             } else {
-                std::cmp::min(255, ((dg as u32 * 255) / (255 - sg as u32) as u32) as u8)
+                std::cmp::min(255, ((dg as u32 * 255) / (255 - sg as u32)) as u8)
             },
             if sb == 255 {
                 255
             } else {
-                std::cmp::min(255, ((db as u32 * 255) / (255 - sb as u32) as u32) as u8)
+                std::cmp::min(255, ((db as u32 * 255) / (255 - sb as u32)) as u8)
             },
         ),
         "colorburn" => (
             if sr == 0 {
                 0
             } else {
-                255 - std::cmp::min(
-                    255,
-                    (((255 - dr as u32) * 255) / sr as u32) as u8,
-                )
+                255 - std::cmp::min(255, (((255 - dr as u32) * 255) / sr as u32) as u8)
             },
             if sg == 0 {
                 0
             } else {
-                255 - std::cmp::min(
-                    255,
-                    (((255 - dg as u32) * 255) / sg as u32) as u8,
-                )
+                255 - std::cmp::min(255, (((255 - dg as u32) * 255) / sg as u32) as u8)
             },
             if sb == 0 {
                 0
             } else {
-                255 - std::cmp::min(
-                    255,
-                    (((255 - db as u32) * 255) / sb as u32) as u8,
-                )
+                255 - std::cmp::min(255, (((255 - db as u32) * 255) / sb as u32) as u8)
             },
         ),
         "hardlight" => (
@@ -157,10 +170,38 @@ pub(crate) fn evaluate_blend_mode(params: Evaluate_blend_modeParams<'_>) -> (u8,
             (dg as u16 + sg as u16 - (2 * dg as u16 * sg as u16) / 255) as u8,
             (db as u16 + sb as u16 - (2 * db as u16 * sb as u16) / 255) as u8,
         ),
-        "hue" => blend_hue(Blend_hueParams { dr, dg, db, sr, sg, sb }),
-        "saturation" => blend_saturation(Blend_saturationParams { dr, dg, db, sr, sg, sb }),
-        "color" => blend_color(Blend_colorParams { dr, dg, db, sr, sg, sb }),
-        "luminosity" => blend_luminosity(Blend_luminosityParams { dr, dg, db, sr, sg, sb }),
+        "hue" => blend_hue(Blend_hueParams {
+            dr,
+            dg,
+            db,
+            sr,
+            sg,
+            sb,
+        }),
+        "saturation" => blend_saturation(Blend_saturationParams {
+            dr,
+            dg,
+            db,
+            sr,
+            sg,
+            sb,
+        }),
+        "color" => blend_color(Blend_colorParams {
+            dr,
+            dg,
+            db,
+            sr,
+            sg,
+            sb,
+        }),
+        "luminosity" => blend_luminosity(Blend_luminosityParams {
+            dr,
+            dg,
+            db,
+            sr,
+            sg,
+            sb,
+        }),
         _ => (sr, sg, sb), // fallback to normal/source
     }
 }

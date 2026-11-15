@@ -61,36 +61,96 @@ pub struct SstpRequest {
 #[allow(dead_code)]
 impl SstpRequest {
     // Add getter methods
-    pub fn method(&self) -> SstpMethod { self.method }
-    pub fn version(&self) -> &str { &self.version }
-    pub fn charset(&self) -> Option<&str> { self.charset.as_deref() }
-    pub fn sender(&self) -> &str { &self.sender }
-    pub fn script(&self) -> Option<&str> { self.script.as_deref() }
-    pub fn event(&self) -> Option<&str> { self.event.as_deref() }
-    pub fn sentence(&self) -> Option<&str> { self.sentence.as_deref() }
-    pub fn command(&self) -> Option<&str> { self.command.as_deref() }
-    pub fn hwnd(&self) -> Option<u64> { self.hwnd }
-    pub fn receiver_ghost_hwnd(&self) -> Option<u64> { self.receiver_ghost_hwnd }
-    pub fn receiver_ghost_name(&self) -> Option<&str> { self.receiver_ghost_name.as_deref() }
-    pub fn security_level(&self) -> Option<&str> { self.security_level.as_deref() }
-    pub fn security_origin(&self) -> Option<&str> { self.security_origin.as_deref() }
-    pub fn id(&self) -> Option<&str> { self.id.as_deref() }
-    pub fn options(&self) -> &[String] { &self.options }
-    pub fn entry(&self) -> Option<&str> { self.entry.as_deref() }
-    pub fn if_ghosts(&self) -> &[IfGhostEntry] { &self.if_ghosts }
-    pub fn references(&self) -> &HashMap<String, String> { &self.references }
-    pub fn pass_thru(&self) -> &HashMap<String, String> { &self.pass_thru }
-    pub fn keep_alive(&self) -> bool { self.keep_alive }
-    pub fn connection(&self) -> Option<&str> { self.connection.as_deref() }
-    pub fn surface(&self) -> Option<&str> { self.surface.as_deref() }
-    pub fn document(&self) -> Option<&str> { self.document.as_deref() }
-    pub fn song(&self) -> Option<&str> { self.song.as_deref() }
-    pub fn ghost(&self) -> Option<&str> { self.ghost.as_deref() }
-    pub fn module(&self) -> Option<&str> { self.module.as_deref() }
-    pub fn is_direct(&self) -> bool { self.is_direct }
-    pub fn content_type(&self) -> Option<&str> { self.content_type.as_deref() }
-    pub fn user_agent(&self) -> Option<&str> { self.user_agent.as_deref() }
-    pub fn host(&self) -> Option<&str> { self.host.as_deref() }
+    pub fn method(&self) -> SstpMethod {
+        self.method
+    }
+    pub fn version(&self) -> &str {
+        &self.version
+    }
+    pub fn charset(&self) -> Option<&str> {
+        self.charset.as_deref()
+    }
+    pub fn sender(&self) -> &str {
+        &self.sender
+    }
+    pub fn script(&self) -> Option<&str> {
+        self.script.as_deref()
+    }
+    pub fn event(&self) -> Option<&str> {
+        self.event.as_deref()
+    }
+    pub fn sentence(&self) -> Option<&str> {
+        self.sentence.as_deref()
+    }
+    pub fn command(&self) -> Option<&str> {
+        self.command.as_deref()
+    }
+    pub fn hwnd(&self) -> Option<u64> {
+        self.hwnd
+    }
+    pub fn receiver_ghost_hwnd(&self) -> Option<u64> {
+        self.receiver_ghost_hwnd
+    }
+    pub fn receiver_ghost_name(&self) -> Option<&str> {
+        self.receiver_ghost_name.as_deref()
+    }
+    pub fn security_level(&self) -> Option<&str> {
+        self.security_level.as_deref()
+    }
+    pub fn security_origin(&self) -> Option<&str> {
+        self.security_origin.as_deref()
+    }
+    pub fn id(&self) -> Option<&str> {
+        self.id.as_deref()
+    }
+    pub fn options(&self) -> &[String] {
+        &self.options
+    }
+    pub fn entry(&self) -> Option<&str> {
+        self.entry.as_deref()
+    }
+    pub fn if_ghosts(&self) -> &[IfGhostEntry] {
+        &self.if_ghosts
+    }
+    pub fn references(&self) -> &HashMap<String, String> {
+        &self.references
+    }
+    pub fn pass_thru(&self) -> &HashMap<String, String> {
+        &self.pass_thru
+    }
+    pub fn keep_alive(&self) -> bool {
+        self.keep_alive
+    }
+    pub fn connection(&self) -> Option<&str> {
+        self.connection.as_deref()
+    }
+    pub fn surface(&self) -> Option<&str> {
+        self.surface.as_deref()
+    }
+    pub fn document(&self) -> Option<&str> {
+        self.document.as_deref()
+    }
+    pub fn song(&self) -> Option<&str> {
+        self.song.as_deref()
+    }
+    pub fn ghost(&self) -> Option<&str> {
+        self.ghost.as_deref()
+    }
+    pub fn module(&self) -> Option<&str> {
+        self.module.as_deref()
+    }
+    pub fn is_direct(&self) -> bool {
+        self.is_direct
+    }
+    pub fn content_type(&self) -> Option<&str> {
+        self.content_type.as_deref()
+    }
+    pub fn user_agent(&self) -> Option<&str> {
+        self.user_agent.as_deref()
+    }
+    pub fn host(&self) -> Option<&str> {
+        self.host.as_deref()
+    }
 }
 
 impl SstpRequest {

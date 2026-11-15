@@ -34,26 +34,26 @@ fn test_resolve_bundled_resources_config_sequential() {
     let res = resolve_bundled_resources_config(&map);
     assert_eq!(res.len(), 5);
 
-    assert_eq!(res[0].resource_type, "balloon");
-    assert_eq!(res[0].target_directory, "balloon_main");
-    assert_eq!(res[0].source_directory, "balloon_main");
-    assert!(res[0].refresh);
-    assert_eq!(res[0].refresh_undelete_mask, vec!["keep.txt", "save.dat"]);
+    assert_eq!(res[0].resource_type(), "balloon");
+    assert_eq!(res[0].target_directory(), "balloon_main");
+    assert_eq!(res[0].source_directory(), "balloon_main");
+    assert!(res[0].refresh());
+    assert_eq!(res[0].refresh_undelete_mask(), vec!["keep.txt", "save.dat"]);
 
-    assert_eq!(res[1].resource_type, "balloon");
-    assert_eq!(res[1].target_directory, "balloon_zero");
-    assert_eq!(res[1].source_directory, "custom_b0");
-    assert!(!res[1].refresh);
+    assert_eq!(res[1].resource_type(), "balloon");
+    assert_eq!(res[1].target_directory(), "balloon_zero");
+    assert_eq!(res[1].source_directory(), "custom_b0");
+    assert!(!res[1].refresh());
 
-    assert_eq!(res[2].resource_type, "balloon");
-    assert_eq!(res[2].target_directory, "balloon_one");
-    assert_eq!(res[2].source_directory, "balloon_one");
+    assert_eq!(res[2].resource_type(), "balloon");
+    assert_eq!(res[2].target_directory(), "balloon_one");
+    assert_eq!(res[2].source_directory(), "balloon_one");
 
-    assert_eq!(res[3].resource_type, "calendar.skin");
-    assert_eq!(res[3].target_directory, "cal_skin");
+    assert_eq!(res[3].resource_type(), "calendar.skin");
+    assert_eq!(res[3].target_directory(), "cal_skin");
 
-    assert_eq!(res[4].resource_type, "calendar.plugin");
-    assert_eq!(res[4].target_directory, "cal_plugin");
+    assert_eq!(res[4].resource_type(), "calendar.plugin");
+    assert_eq!(res[4].target_directory(), "cal_plugin");
 }
 
 #[test]

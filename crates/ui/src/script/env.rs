@@ -12,13 +12,26 @@ pub struct Expand_sakura_script_envParams<'a> {
 #[allow(dead_code)]
 impl<'a> Expand_sakura_script_envParams<'a> {
     // Add getter methods
-    pub fn text(&self) -> &'a str { self.text }
-    pub fn username(&self) -> &'a str { self.username }
-    pub fn selfname(&self) -> &'a str { self.selfname }
-    pub fn keroname(&self) -> &'a str { self.keroname }
+    pub fn text(&self) -> &'a str {
+        self.text
+    }
+    pub fn username(&self) -> &'a str {
+        self.username
+    }
+    pub fn selfname(&self) -> &'a str {
+        self.selfname
+    }
+    pub fn keroname(&self) -> &'a str {
+        self.keroname
+    }
 
     pub fn new(text: &'a str, username: &'a str, selfname: &'a str, keroname: &'a str) -> Self {
-        Self { text, username, selfname, keroname }
+        Self {
+            text,
+            username,
+            selfname,
+            keroname,
+        }
     }
 }
 
@@ -93,10 +106,7 @@ mod tests {
     fn test_expand_env() {
         let script = "%username, hello! Property: %property[username] %property[currentghost.name] %property[unknown_prop] %property[unclosed %m? %* \\%";
         let expanded = expand_sakura_script_env(Expand_sakura_script_envParams::new(
-            script,
-            "TestUser",
-            "Nanai",
-            "Kero",
+            script, "TestUser", "Nanai", "Kero",
         ));
         assert!(expanded.contains("TestUser"));
         assert!(expanded.contains("Nanai"));

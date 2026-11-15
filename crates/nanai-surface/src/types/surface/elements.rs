@@ -32,21 +32,16 @@ pub struct BalloonOffset {
 }
 
 /// 当たり判定・アニメーションのソート順序
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub enum SortKind {
     None,
+    #[default]
     Ascend,
     Descend,
     Id,
     UniqueJunk,
     UScoped,
     Custom(String),
-}
-
-impl Default for SortKind {
-    fn default() -> Self {
-        Self::Ascend
-    }
 }
 
 impl SortKind {

@@ -26,11 +26,11 @@ impl ScheduledFrame {
 /// pattern 列を実行スケジュールへ変換する（pattern index 列に累積待ち時間を計算）
 pub fn build_timeline(patterns: &[AnimationPattern]) -> Vec<ScheduledFrame> {
     let mut sorted: Vec<&AnimationPattern> = patterns.iter().collect();
-    sorted.sort_by_key(|p| p.index);
+    sorted.sort_by_key(|p| p.index());
     let mut out = Vec::with_capacity(sorted.len());
     let mut elapsed = 0u32;
     for pattern in sorted {
-        elapsed = elapsed.saturating_add(pattern.wait);
+        elapsed = elapsed.saturating_add(pattern.wait());
         out.push(ScheduledFrame {
             pattern: pattern.clone(),
             at_ms: elapsed,
@@ -43,7 +43,7 @@ pub fn build_timeline(patterns: &[AnimationPattern]) -> Vec<ScheduledFrame> {
 pub fn cycle_len_ms(patterns: &[AnimationPattern]) -> u32 {
     let timeline = build_timeline(patterns);
     match timeline.last() {
-        Some(last) => last.at_ms().saturating_add(last.pattern().wait),
+        Some(last) => last.at_ms().saturating_add(last.pattern().wait()),
         None => 0,
     }
 }
@@ -61,7 +61,7 @@ impl Timeline {
         let frames = build_timeline(patterns);
         let total_ms = frames
             .last()
-            .map(|f| f.at_ms().saturating_add(f.pattern().wait))
+            .map(|f| f.at_ms().saturating_add(f.pattern().wait()))
             .unwrap_or(0);
         Self { frames, total_ms }
     }

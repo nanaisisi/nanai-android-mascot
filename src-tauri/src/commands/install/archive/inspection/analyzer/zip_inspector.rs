@@ -140,7 +140,7 @@ pub fn inspect_zip_archive<R: std::io::Read + std::io::Seek>(
     if kind == "ghost" || kind == "package" || kind == "shell" {
         for res_config in bundled_resources_config {
             let src_dir = res_config.source_directory().trim_matches('/').to_string();
-            let dest_name = sanitize_dir_name(&res_config.target_directory());
+            let dest_name = sanitize_dir_name(res_config.target_directory());
             if !src_dir.is_empty() && !dest_name.is_empty() {
                 let base_path = match res_config.resource_type() {
                     "balloon" => resolve_asset_path("assets/balloon", app_handle).ok(),

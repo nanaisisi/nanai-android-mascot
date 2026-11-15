@@ -3,7 +3,9 @@
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
-use super::elements::{BalloonOffset, ElementDef, Make_square_rectParams, Points, SortKind, make_square_rect};
+use super::elements::{
+    BalloonOffset, ElementDef, Make_square_rectParams, Points, SortKind, make_square_rect,
+};
 use crate::types::animation::SerikoAnimation;
 use crate::types::collision::{CollisionArea, HitTestResult};
 

@@ -8,10 +8,7 @@ use crate::script::parser::brackets::handlers::handle_wait_short;
 /// さくらスクリプトのパーサと実行（内部コマンド）
 pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraCommand)) {
     let expanded = expand_sakura_script_env(Expand_sakura_script_envParams::new(
-        script,
-        "User",
-        "Nanai",
-        "Kero",
+        script, "User", "Nanai", "Kero",
     ));
     let mut chars = expanded.chars().peekable();
     let mut buffer = String::new();

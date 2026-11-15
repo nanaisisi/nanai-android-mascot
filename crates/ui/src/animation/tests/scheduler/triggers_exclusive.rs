@@ -254,7 +254,7 @@ fn test_animation_scheduler_shared_index() {
     scheduler.start_animation(0, 0, &anim_s0);
     // 1フレーム進める (index 0 -> index 1)
     let events = scheduler.step(50);
-    assert_eq!(events[0].pattern.surface, 200);
+    assert_eq!(events[0].pattern.surface(), 200);
 
     // サーフィス切替 (0 -> 1)
     scheduler.set_surface_with_shared_index(0, 1, &[anim_s1]);
@@ -264,5 +264,5 @@ fn test_animation_scheduler_shared_index() {
     // 次のフレーム進行で、新サーフィス1側の index 1 (surface 301) が再生されることを検証
     let events = scheduler.step(50);
     assert_eq!(events.len(), 1);
-    assert_eq!(events[0].pattern.surface, 301);
+    assert_eq!(events[0].pattern.surface(), 301);
 }

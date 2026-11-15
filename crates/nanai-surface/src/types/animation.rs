@@ -23,6 +23,57 @@ pub struct AnimationPattern {
     pub options: Vec<String>,
 }
 
+#[allow(dead_code)]
+impl AnimationPattern {
+    pub fn new(
+        index: u32,
+        method: DrawMethod,
+        surface: i32,
+        wait: u32,
+        wait_max: Option<u32>,
+        x: i32,
+        y: i32,
+        options: Vec<String>,
+    ) -> Self {
+        Self {
+            index,
+            method,
+            surface,
+            wait,
+            wait_max,
+            x,
+            y,
+            options,
+        }
+    }
+
+    // Add getter methods
+    pub fn index(&self) -> u32 {
+        self.index
+    }
+    pub fn method(&self) -> &DrawMethod {
+        &self.method
+    }
+    pub fn surface(&self) -> i32 {
+        self.surface
+    }
+    pub fn wait(&self) -> u32 {
+        self.wait
+    }
+    pub fn wait_max(&self) -> Option<u32> {
+        self.wait_max
+    }
+    pub fn x(&self) -> i32 {
+        self.x
+    }
+    pub fn y(&self) -> i32 {
+        self.y
+    }
+    pub fn options(&self) -> &[String] {
+        &self.options
+    }
+}
+
 /// 一つの SERIKO アニメーション定義
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct SerikoAnimation {
@@ -36,4 +87,45 @@ pub struct SerikoAnimation {
     pub collisions: Vec<CollisionArea>,
     /// `animation[N].option` 系に指定された内容（元のトークン列）
     pub options: Vec<Vec<String>>,
+}
+
+#[allow(dead_code)]
+impl SerikoAnimation {
+    pub fn new(
+        id: u32,
+        interval: Option<Interval>,
+        name: Option<String>,
+        patterns: Vec<AnimationPattern>,
+        collisions: Vec<CollisionArea>,
+        options: Vec<Vec<String>>,
+    ) -> Self {
+        Self {
+            id,
+            interval,
+            name,
+            patterns,
+            collisions,
+            options,
+        }
+    }
+
+    // Add getter methods
+    pub fn id(&self) -> u32 {
+        self.id
+    }
+    pub fn interval(&self) -> Option<&Interval> {
+        self.interval.as_ref()
+    }
+    pub fn name(&self) -> Option<&str> {
+        self.name.as_deref()
+    }
+    pub fn patterns(&self) -> &[AnimationPattern] {
+        &self.patterns
+    }
+    pub fn collisions(&self) -> &[CollisionArea] {
+        &self.collisions
+    }
+    pub fn options(&self) -> &[Vec<String>] {
+        &self.options
+    }
 }

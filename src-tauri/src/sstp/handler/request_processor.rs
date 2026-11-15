@@ -108,7 +108,10 @@ pub async fn send_sstp_request_with_config(
                 let resp = handle_execute_command(cmd, &ctx);
                 return Ok(SstpResponse {
                     status: format!("{} {}", resp.status().code(), resp.status().reason_phrase()),
-                    value: resp.additional_data().map(ToString::to_string).unwrap_or_default(),
+                    value: resp
+                        .additional_data()
+                        .map(ToString::to_string)
+                        .unwrap_or_default(),
                     id: request.event,
                     reference0: request.references.get("Reference0").cloned(),
                     additional_data: resp.additional_data().map(ToString::to_string),

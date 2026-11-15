@@ -134,7 +134,7 @@ fn test_animation_scheduler_move_draw_method() {
     // pattern 0: move x=15, y=-20
     let events = scheduler.step(30);
     assert_eq!(events.len(), 1);
-    assert_eq!(events[0].pattern.method, DrawMethod::Move);
+    assert_eq!(events[0].pattern.method(), &DrawMethod::Move);
     assert_eq!(scheduler.get_base_move_offset(0), (15, -20));
 
     // pattern 1: move x=0, y=0 (位置復帰)

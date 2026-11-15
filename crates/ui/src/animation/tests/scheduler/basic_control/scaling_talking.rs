@@ -59,7 +59,7 @@ fn test_animation_scheduler_scaling_and_talk_toggle() {
     // pattern 0: scaling x=120, y=130
     let events = scheduler.step(25);
     assert_eq!(events.len(), 1);
-    assert_eq!(events[0].pattern.method, DrawMethod::Scaling);
+    assert_eq!(events[0].pattern.method(), &DrawMethod::Scaling);
     assert_eq!(scheduler.get_base_scaling_offset(0), (120.0, 130.0));
 
     // pattern 1: scaling x=100, y=100 (元に戻す)

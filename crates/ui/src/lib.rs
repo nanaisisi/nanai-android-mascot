@@ -17,7 +17,7 @@ pub mod update;
 pub mod vfs_core;
 pub mod vfs_integration;
 
-pub use interface::{NanaiUiFacade, Nanai_android_mascot_uiInterface};
+pub use interface::{Nanai_android_mascot_uiInterface, NanaiUiFacade};
 
 // モジュールクレートの参照 (Phase D ワークスペース再編)
 pub use nanai_core;

@@ -14,10 +14,18 @@ pub struct Apply_elementParams<'a> {
 #[allow(dead_code)]
 impl<'a> Apply_elementParams<'a> {
     // Add getter methods
-    pub fn txt(&mut self) -> &mut SurfacesTxt { self.txt }
-    pub fn ids(&self) -> &'a [u32] { self.ids }
-    pub fn id_part(&self) -> &'a str { self.id_part }
-    pub fn value(&self) -> &'a str { self.value }
+    pub fn txt(&mut self) -> &mut SurfacesTxt {
+        self.txt
+    }
+    pub fn ids(&self) -> &'a [u32] {
+        self.ids
+    }
+    pub fn id_part(&self) -> &'a str {
+        self.id_part
+    }
+    pub fn value(&self) -> &'a str {
+        self.value
+    }
 }
 
 pub(crate) fn apply_element(mut params: Apply_elementParams<'_>) {

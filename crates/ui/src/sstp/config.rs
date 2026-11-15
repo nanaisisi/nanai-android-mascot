@@ -21,9 +21,15 @@ pub struct SstpGhostConfig {
 #[allow(dead_code)]
 impl SstpGhostConfig {
     // Add getter methods
-    pub fn allow_communicate(&self) -> bool { self.allow_communicate }
-    pub fn allow_unspecified_send(&self) -> bool { self.allow_unspecified_send }
-    pub fn always_translate(&self) -> bool { self.always_translate }
+    pub fn allow_communicate(&self) -> bool {
+        self.allow_communicate
+    }
+    pub fn allow_unspecified_send(&self) -> bool {
+        self.allow_unspecified_send
+    }
+    pub fn always_translate(&self) -> bool {
+        self.always_translate
+    }
 }
 
 fn default_allow_communicate() -> bool {
@@ -137,26 +143,66 @@ pub struct SstpGhostContext {
 #[allow(dead_code)]
 impl SstpGhostContext {
     // Add getter methods
-    pub fn name(&self) -> &str { &self.name }
-    pub fn sakura_name(&self) -> &str { &self.sakura_name }
-    pub fn kero_name(&self) -> &str { &self.kero_name }
-    pub fn shell_name(&self) -> &str { &self.shell_name }
-    pub fn balloon_name(&self) -> &str { &self.balloon_name }
-    pub fn version(&self) -> &str { &self.version }
-    pub fn short_version(&self) -> &str { &self.short_version }
-    pub fn status(&self) -> &str { &self.status }
-    pub fn fmo_text(&self) -> &str { &self.fmo_text }
-    pub fn installed_ghosts(&self) -> &[String] { &self.installed_ghosts }
-    pub fn installed_shells(&self) -> &[String] { &self.installed_shells }
-    pub fn installed_balloons(&self) -> &[String] { &self.installed_balloons }
-    pub fn installed_headlines(&self) -> &[String] { &self.installed_headlines }
-    pub fn installed_plugins(&self) -> &[String] { &self.installed_plugins }
-    pub fn properties(&self) -> &HashMap<String, String> { &self.properties }
-    pub fn cookies(&self) -> &HashMap<String, HashMap<String, String>> { &self.cookies }
-    pub fn sender(&self) -> &str { &self.sender }
-    pub fn sstp_config(&self) -> &SstpGhostConfig { &self.sstp_config }
-    pub fn security_level(&self) -> Option<&str> { self.security_level.as_deref() }
-    pub fn references(&self) -> &HashMap<String, String> { &self.references }
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+    pub fn sakura_name(&self) -> &str {
+        &self.sakura_name
+    }
+    pub fn kero_name(&self) -> &str {
+        &self.kero_name
+    }
+    pub fn shell_name(&self) -> &str {
+        &self.shell_name
+    }
+    pub fn balloon_name(&self) -> &str {
+        &self.balloon_name
+    }
+    pub fn version(&self) -> &str {
+        &self.version
+    }
+    pub fn short_version(&self) -> &str {
+        &self.short_version
+    }
+    pub fn status(&self) -> &str {
+        &self.status
+    }
+    pub fn fmo_text(&self) -> &str {
+        &self.fmo_text
+    }
+    pub fn installed_ghosts(&self) -> &[String] {
+        &self.installed_ghosts
+    }
+    pub fn installed_shells(&self) -> &[String] {
+        &self.installed_shells
+    }
+    pub fn installed_balloons(&self) -> &[String] {
+        &self.installed_balloons
+    }
+    pub fn installed_headlines(&self) -> &[String] {
+        &self.installed_headlines
+    }
+    pub fn installed_plugins(&self) -> &[String] {
+        &self.installed_plugins
+    }
+    pub fn properties(&self) -> &HashMap<String, String> {
+        &self.properties
+    }
+    pub fn cookies(&self) -> &HashMap<String, HashMap<String, String>> {
+        &self.cookies
+    }
+    pub fn sender(&self) -> &str {
+        &self.sender
+    }
+    pub fn sstp_config(&self) -> &SstpGhostConfig {
+        &self.sstp_config
+    }
+    pub fn security_level(&self) -> Option<&str> {
+        self.security_level.as_deref()
+    }
+    pub fn references(&self) -> &HashMap<String, String> {
+        &self.references
+    }
 
     pub fn set_security_level(&mut self, level: Option<String>) {
         self.security_level = level;
@@ -165,12 +211,19 @@ impl SstpGhostContext {
         self.fmo_text = text.into();
     }
 
-    pub fn new(name: impl Into<String>, sender: impl Into<String>, config: SstpGhostConfig) -> Self {
+    pub fn new(
+        name: impl Into<String>,
+        sender: impl Into<String>,
+        config: SstpGhostConfig,
+    ) -> Self {
         let n = name.into();
         let mut properties = HashMap::new();
         properties.insert("ghostlist.count".to_string(), "1".to_string());
         properties.insert("currentghost.name".to_string(), n.clone());
-        properties.insert("baseware.name".to_string(), "Nanai Android Mascot".to_string());
+        properties.insert(
+            "baseware.name".to_string(),
+            "Nanai Android Mascot".to_string(),
+        );
         properties.insert("baseware.version".to_string(), "1.0.0".to_string());
 
         Self {
@@ -197,7 +250,12 @@ impl SstpGhostContext {
         }
     }
 
-    pub fn with_names(mut self, name: impl Into<String>, sakura: impl Into<String>, kero: impl Into<String>) -> Self {
+    pub fn with_names(
+        mut self,
+        name: impl Into<String>,
+        sakura: impl Into<String>,
+        kero: impl Into<String>,
+    ) -> Self {
         self.name = name.into();
         self.sakura_name = sakura.into();
         self.kero_name = kero.into();

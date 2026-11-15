@@ -41,19 +41,45 @@ fn default_keep_alive_timeout() -> u32 {
 #[allow(dead_code)]
 impl SstpResponse {
     // Add getter methods
-    pub fn version(&self) -> &str { &self.version }
-    pub fn status(&self) -> SstpStatusCode { self.status }
-    pub fn charset(&self) -> &str { &self.charset }
-    pub fn script(&self) -> Option<&str> { self.script.as_deref() }
-    pub fn references(&self) -> &HashMap<String, String> { &self.references }
-    pub fn references_mut(&mut self) -> &mut HashMap<String, String> { &mut self.references }
-    pub fn pass_thru(&self) -> &HashMap<String, String> { &self.pass_thru }
-    pub fn additional_data(&self) -> Option<&str> { self.additional_data.as_deref() }
-    pub fn error_description(&self) -> Option<&str> { self.error_description.as_deref() }
-    pub fn keep_alive(&self) -> bool { self.keep_alive }
-    pub fn keep_alive_timeout(&self) -> u32 { self.keep_alive_timeout }
-    pub fn connection_header(&self) -> Option<&str> { self.connection_header.as_deref() }
-    pub fn content_type(&self) -> Option<&str> { self.content_type.as_deref() }
+    pub fn version(&self) -> &str {
+        &self.version
+    }
+    pub fn status(&self) -> SstpStatusCode {
+        self.status
+    }
+    pub fn charset(&self) -> &str {
+        &self.charset
+    }
+    pub fn script(&self) -> Option<&str> {
+        self.script.as_deref()
+    }
+    pub fn references(&self) -> &HashMap<String, String> {
+        &self.references
+    }
+    pub fn references_mut(&mut self) -> &mut HashMap<String, String> {
+        &mut self.references
+    }
+    pub fn pass_thru(&self) -> &HashMap<String, String> {
+        &self.pass_thru
+    }
+    pub fn additional_data(&self) -> Option<&str> {
+        self.additional_data.as_deref()
+    }
+    pub fn error_description(&self) -> Option<&str> {
+        self.error_description.as_deref()
+    }
+    pub fn keep_alive(&self) -> bool {
+        self.keep_alive
+    }
+    pub fn keep_alive_timeout(&self) -> u32 {
+        self.keep_alive_timeout
+    }
+    pub fn connection_header(&self) -> Option<&str> {
+        self.connection_header.as_deref()
+    }
+    pub fn content_type(&self) -> Option<&str> {
+        self.content_type.as_deref()
+    }
 }
 
 impl SstpResponse {

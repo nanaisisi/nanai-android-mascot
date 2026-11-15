@@ -11,8 +11,12 @@ pub struct SurfTableEntry {
 #[allow(dead_code)]
 impl SurfTableEntry {
     // Add getter methods
-    pub fn surface_id(&self) -> u32 { self.surface_id }
-    pub fn name(&self) -> &str { &self.name }
+    pub fn surface_id(&self) -> u32 {
+        self.surface_id
+    }
+    pub fn name(&self) -> &str {
+        &self.name
+    }
 }
 
 /// `group,[グループ名] {}` の定義
@@ -26,8 +30,12 @@ pub struct SurfTableGroup {
 #[allow(dead_code)]
 impl SurfTableGroup {
     // Add getter methods
-    pub fn name(&self) -> &str { &self.name }
-    pub fn entries(&self) -> &[SurfTableEntry] { &self.entries }
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+    pub fn entries(&self) -> &[SurfTableEntry] {
+        &self.entries
+    }
 
     /// 非表示グループ（`__disabled`）か
     pub fn is_disabled(&self) -> bool {
@@ -55,12 +63,24 @@ pub struct SurfaceTable {
 #[allow(dead_code)]
 impl SurfaceTable {
     // Add getter methods
-    pub fn charset(&self) -> Option<&str> { self.charset.as_deref() }
-    pub fn version(&self) -> u32 { self.version }
-    pub fn scope(&self) -> Option<u32> { self.scope }
-    pub fn options(&self) -> &[Vec<String>] { &self.options }
-    pub fn groups(&self) -> &[SurfTableGroup] { &self.groups }
-    pub fn properties(&self) -> &BTreeMap<String, String> { &self.properties }
+    pub fn charset(&self) -> Option<&str> {
+        self.charset.as_deref()
+    }
+    pub fn version(&self) -> u32 {
+        self.version
+    }
+    pub fn scope(&self) -> Option<u32> {
+        self.scope
+    }
+    pub fn options(&self) -> &[Vec<String>] {
+        &self.options
+    }
+    pub fn groups(&self) -> &[SurfTableGroup] {
+        &self.groups
+    }
+    pub fn properties(&self) -> &BTreeMap<String, String> {
+        &self.properties
+    }
 
     /// グループ名で検索（大文字小文字・前後の空白は無視）
     pub fn group(&self, name: &str) -> Option<&SurfTableGroup> {

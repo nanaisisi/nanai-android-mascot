@@ -17,7 +17,7 @@ fn test_build_timeline() {
         super::pattern(PatternParams::new(0, 6, 0)),
     ];
     let timeline = build_timeline(&shuffled);
-    assert_eq!(timeline[0].pattern().surface, 6);
+    assert_eq!(timeline[0].pattern().surface(), 6);
     assert_eq!(timeline[1].at_ms(), 85);
 }
 
@@ -28,10 +28,10 @@ fn test_frame_at() {
         super::pattern(PatternParams::new(1, -1, 85)),
     ];
     let tl = Timeline::new(&patterns);
-    assert_eq!(tl.frame_at(0).unwrap().pattern().surface, 6);
-    assert_eq!(tl.frame_at(84).unwrap().pattern().surface, 6);
-    assert_eq!(tl.frame_at(85).unwrap().pattern().surface, -1);
-    assert_eq!(tl.frame_at(10_000).unwrap().pattern().surface, -1);
+    assert_eq!(tl.frame_at(0).unwrap().pattern().surface(), 6);
+    assert_eq!(tl.frame_at(84).unwrap().pattern().surface(), 6);
+    assert_eq!(tl.frame_at(85).unwrap().pattern().surface(), -1);
+    assert_eq!(tl.frame_at(10_000).unwrap().pattern().surface(), -1);
     assert_eq!(tl.total_ms(), 170);
 
     assert!(Timeline::new(&[]).frame_at(500).is_none());
@@ -93,10 +93,10 @@ fn test_mock_nanai_animation() {
     let txt = SurfacesTxt::parse(&content);
     let def0 = txt.surface(0).unwrap();
     let anim0 = &def0.animations[&0];
-    assert_eq!(anim0.interval, Some(Interval::Random(3)));
-    let timeline = build_timeline(&anim0.patterns);
-    assert_eq!(timeline[0].pattern().surface, 6);
+    assert_eq!(anim0.interval(), Some(&Interval::Random(3)));
+    let timeline = build_timeline(anim0.patterns());
+    assert_eq!(timeline[0].pattern().surface(), 6);
     assert_eq!(timeline[0].at_ms(), 0);
-    assert_eq!(timeline[1].pattern().surface, -1);
+    assert_eq!(timeline[1].pattern().surface(), -1);
     assert_eq!(timeline[1].at_ms(), 85);
 }

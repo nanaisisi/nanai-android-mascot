@@ -14,10 +14,18 @@ pub struct Apply_pointParams<'a> {
 #[allow(dead_code)]
 impl<'a> Apply_pointParams<'a> {
     // Add getter methods
-    pub fn txt(&mut self) -> &mut SurfacesTxt { self.txt }
-    pub fn ids(&self) -> &'a [u32] { self.ids }
-    pub fn field(&self) -> &'a str { self.field }
-    pub fn value(&self) -> &'a str { self.value }
+    pub fn txt(&mut self) -> &mut SurfacesTxt {
+        self.txt
+    }
+    pub fn ids(&self) -> &'a [u32] {
+        self.ids
+    }
+    pub fn field(&self) -> &'a str {
+        self.field
+    }
+    pub fn value(&self) -> &'a str {
+        self.value
+    }
 }
 
 pub(crate) fn apply_point(mut params: Apply_pointParams<'_>) {

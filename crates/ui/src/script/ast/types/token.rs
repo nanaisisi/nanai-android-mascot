@@ -13,8 +13,12 @@ pub struct SakuraToken {
 #[allow(dead_code)]
 impl SakuraToken {
     // Add getter methods
-    pub fn command(&self) -> &SakuraCommand { &self.command }
-    pub fn raw(&self) -> Option<&str> { self.raw.as_deref() }
+    pub fn command(&self) -> &SakuraCommand {
+        &self.command
+    }
+    pub fn raw(&self) -> Option<&str> {
+        self.raw.as_deref()
+    }
 }
 
 impl SakuraToken {

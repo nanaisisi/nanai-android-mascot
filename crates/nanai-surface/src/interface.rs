@@ -12,10 +12,15 @@ pub trait Nanai_surfaceInterface: Send + Sync {
     fn parse_surfaces_txt(&self, text: &str) -> SurfacesTxt;
 
     /// Resolves a surface definition by surface ID or alias name
-    fn resolve_surface(&self, txt: &SurfacesTxt, number_or_alias: &str) -> Option<SurfaceDefinition>;
+    fn resolve_surface(
+        &self,
+        txt: &SurfacesTxt,
+        number_or_alias: &str,
+    ) -> Option<SurfaceDefinition>;
 
     /// Performs hit test on a specific surface
-    fn hit_test(&self, txt: &SurfacesTxt, surface_id: u32, x: i32, y: i32) -> Option<HitTestResult>;
+    fn hit_test(&self, txt: &SurfacesTxt, surface_id: u32, x: i32, y: i32)
+    -> Option<HitTestResult>;
 
     /// Composites multiple layers over a base surface frame buffer
     fn composite_elements(
@@ -34,7 +39,11 @@ impl Nanai_surfaceInterface for NanaiSurfaceFacade {
         parse_surfaces_txt(text)
     }
 
-    fn resolve_surface(&self, txt: &SurfacesTxt, number_or_alias: &str) -> Option<SurfaceDefinition> {
+    fn resolve_surface(
+        &self,
+        txt: &SurfacesTxt,
+        number_or_alias: &str,
+    ) -> Option<SurfaceDefinition> {
         if let Ok(id) = number_or_alias.parse::<u32>() {
             txt.surface(id).cloned()
         } else {
@@ -42,7 +51,13 @@ impl Nanai_surfaceInterface for NanaiSurfaceFacade {
         }
     }
 
-    fn hit_test(&self, txt: &SurfacesTxt, surface_id: u32, x: i32, y: i32) -> Option<HitTestResult> {
+    fn hit_test(
+        &self,
+        txt: &SurfacesTxt,
+        surface_id: u32,
+        x: i32,
+        y: i32,
+    ) -> Option<HitTestResult> {
         txt.hit_test(surface_id, x, y)
     }
 

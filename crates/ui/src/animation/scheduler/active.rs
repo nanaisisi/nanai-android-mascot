@@ -72,7 +72,7 @@ impl ActiveAnimation {
 
 impl ActiveAnimation {
     pub fn new(animation_id: u32, base_surface_id: i32, patterns: Vec<AnimationPattern>) -> Self {
-        let first_wait = patterns.first().map(|p| p.wait).unwrap_or(0);
+        let first_wait = patterns.first().map(|p| p.wait()).unwrap_or(0);
         Self {
             animation_id,
             base_surface_id,
@@ -116,14 +116,14 @@ impl ActiveAnimation {
         // 次のステップのインデックスと待ち時間計算
         self.current_pattern_index += 1;
         let is_last = self.current_pattern_index >= self.patterns.len();
-        let is_surface_minus_one = pat.surface == -1;
+        let is_surface_minus_one = pat.surface() == -1;
 
         if is_last || is_surface_minus_one {
             self.is_finished = true;
         } else {
             self.next_step_at_ms = self
                 .next_step_at_ms
-                .saturating_add(self.patterns[self.current_pattern_index].wait);
+                .saturating_add(self.patterns[self.current_pattern_index].wait());
         }
 
         Some(FrameStepEvent {

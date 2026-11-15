@@ -133,13 +133,33 @@ pub(crate) fn handle_surface_line(txt: &mut SurfacesTxt, ids: &[u32], line: &str
     let key_lower = key.to_lowercase();
 
     if let Some(rest) = key_lower.strip_prefix("collisionex") {
-        apply_collisionex(Apply_collisionexParams { txt, ids, id_part: rest, value });
+        apply_collisionex(Apply_collisionexParams {
+            txt,
+            ids,
+            id_part: rest,
+            value,
+        });
     } else if let Some(rest) = key_lower.strip_prefix("collision") {
-        apply_collision(Apply_collisionParams { txt, ids, id_part: rest, value });
+        apply_collision(Apply_collisionParams {
+            txt,
+            ids,
+            id_part: rest,
+            value,
+        });
     } else if let Some(rest) = key_lower.strip_prefix("element") {
-        apply_element(Apply_elementParams { txt, ids, id_part: rest, value });
+        apply_element(Apply_elementParams {
+            txt,
+            ids,
+            id_part: rest,
+            value,
+        });
     } else if let Some(rest) = key_lower.strip_prefix("animation") {
-        apply_animation_line(Apply_animation_lineParams { txt, ids, rest, value });
+        apply_animation_line(Apply_animation_lineParams {
+            txt,
+            ids,
+            rest,
+            value,
+        });
     } else if key_lower == "name" {
         for id in ids {
             txt.surfaces.entry(*id).or_default().name = Some(value.trim().to_string());
@@ -156,7 +176,12 @@ pub(crate) fn handle_surface_line(txt: &mut SurfacesTxt, ids: &[u32], line: &str
             }
         }
     } else if let Some(rest) = key_lower.strip_prefix("point.") {
-        apply_point(Apply_pointParams { txt, ids, field: rest, value });
+        apply_point(Apply_pointParams {
+            txt,
+            ids,
+            field: rest,
+            value,
+        });
     } else if let Some(offset) = parse_balloon_offset_key(&key_lower) {
         for id in ids {
             let def = txt.surfaces.entry(*id).or_default();

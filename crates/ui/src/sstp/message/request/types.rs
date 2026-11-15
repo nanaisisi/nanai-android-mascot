@@ -13,6 +13,10 @@ pub struct IfGhostEntry {
 #[allow(dead_code)]
 impl IfGhostEntry {
     // Add getter methods
-    pub fn target(&self) -> &str { &self.target }
-    pub fn script(&self) -> &str { &self.script }
+    pub fn target(&self) -> &str {
+        &self.target
+    }
+    pub fn script(&self) -> &str {
+        &self.script
+    }
 }

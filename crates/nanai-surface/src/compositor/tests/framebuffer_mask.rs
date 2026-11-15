@@ -124,7 +124,7 @@ fn test_clear_and_clear_rect() {
 fn test_paint_transparent_region_black() {
     let mut fb = SurfaceFrameBuffer::new(2, 2);
     // (0, 0) is corner: green (0, 255, 0, 255)
-    fb.set_pixel(0, 0, 0, 0, 255, 0, 255);
+    fb.set_pixel(0, 0, 0, 255, 0, 255);
     // (1, 0) has same color as corner but semi-transparent (0, 255, 0, 128)
     fb.set_pixel(1, 0, 0, 255, 0, 128);
     // (0, 1) has same color as corner but is completely transparent (0, 255, 0, 0)

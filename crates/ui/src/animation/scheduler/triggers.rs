@@ -25,16 +25,16 @@ impl AnimationScheduler {
 
     /// アニメーションを手動またはトリガーによって開始登録する
     pub fn start_animation(&mut self, scope_id: u32, base_surface_id: i32, anim: &SerikoAnimation) {
-        if anim.patterns.is_empty() {
+        if anim.patterns().is_empty() {
             return;
         }
 
         // 実行中の exclusive によるブロック判定
-        if self.is_blocked_by_exclusive(scope_id, anim.id) {
+        if self.is_blocked_by_exclusive(scope_id, anim.id()) {
             return;
         }
 
-        let options = ParsedAnimationOptions::from_raw_options(&anim.options);
+        let options = ParsedAnimationOptions::from_raw_options(anim.options());
 
         // 新規アニメーションが exclusive の場合、既存のアニメーションを停止
         if options.is_exclusive
@@ -45,24 +45,24 @@ impl AnimationScheduler {
                     if targets.contains(&a.animation_id) {
                         a.is_finished = true;
                     }
-                } else if a.animation_id != anim.id {
+                } else if a.animation_id != anim.id() {
                     a.is_finished = true;
                 }
             }
         }
 
-        let mut active = ActiveAnimation::new(anim.id, base_surface_id, anim.patterns.clone())
+        let mut active = ActiveAnimation::new(anim.id(), base_surface_id, anim.patterns().to_vec())
             .with_options(&options);
-        let (ox, oy) = self.get_animation_offset(scope_id, anim.id);
+        let (ox, oy) = self.get_animation_offset(scope_id, anim.id());
         active.offset_x = ox;
         active.offset_y = oy;
-        if self.is_animation_paused(scope_id, anim.id) {
+        if self.is_animation_paused(scope_id, anim.id()) {
             active.is_paused = true;
         }
 
         let anims = self.active_animations.entry(scope_id).or_default();
         // 同一IDのアニメーションが既に再生中の場合は差し替えるか重複防止
-        anims.retain(|a| a.animation_id != anim.id || a.is_finished);
+        anims.retain(|a| a.animation_id != anim.id() || a.is_finished);
         anims.push(active);
     }
 
@@ -75,11 +75,11 @@ impl AnimationScheduler {
         rng01: f64,
     ) {
         for anim in animations {
-            if let Some(ref interval) = anim.interval {
+            if let Some(ref interval) = anim.interval() {
                 match interval {
                     Interval::Never => continue,
                     Interval::Bind => {
-                        if !self.is_bind_active(scope_id, anim.id) {
+                        if !self.is_bind_active(scope_id, anim.id()) {
                             continue;
                         }
                     }
@@ -112,7 +112,7 @@ impl AnimationScheduler {
         self.talking_flags.insert(scope_id, true);
         let base_surface = self.current_surface(scope_id);
         for anim in animations {
-            if let Some(Interval::StartTalk) = anim.interval {
+            if let Some(Interval::StartTalk) = anim.interval() {
                 self.start_animation(scope_id, base_surface, anim);
             }
         }
@@ -133,11 +133,11 @@ impl AnimationScheduler {
         }
 
         for anim in animations {
-            if let Some(Interval::Talk) = anim.interval {
+            if let Some(Interval::Talk) = anim.interval() {
                 self.start_animation(scope_id, base_surface, anim);
             }
             // talk,N パターン等の処理
-            if let Some(Interval::Custom(ref s)) = anim.interval
+            if let Some(Interval::Custom(s)) = anim.interval()
                 && s.starts_with("talk,")
             {
                 let n: u32 = s.trim_start_matches("talk,").parse().unwrap_or(1);
@@ -153,7 +153,7 @@ impl AnimationScheduler {
         if self.talking_flags.get(&scope_id).copied().unwrap_or(false) {
             let base_surface = self.current_surface(scope_id);
             for anim in animations {
-                if let Some(Interval::EndTalk) = anim.interval {
+                if let Some(Interval::EndTalk) = anim.interval() {
                     self.start_animation(scope_id, base_surface, anim);
                 }
             }
@@ -165,7 +165,7 @@ impl AnimationScheduler {
     pub fn on_script_end(&mut self, scope_id: u32, animations: &[SerikoAnimation]) {
         let base_surface = self.current_surface(scope_id);
         for anim in animations {
-            if let Some(Interval::YenE) = anim.interval {
+            if let Some(Interval::YenE) = anim.interval() {
                 self.start_animation(scope_id, base_surface, anim);
             }
         }
@@ -186,8 +186,8 @@ impl AnimationScheduler {
         if active {
             let base_surface = self.current_surface(scope_id);
             for anim in animations {
-                if anim.id == bind_id {
-                    match anim.interval {
+                if anim.id() == bind_id {
+                    match anim.interval() {
                         Some(Interval::Bind) => {
                             self.start_animation(scope_id, base_surface, anim);
                         }

@@ -14,10 +14,18 @@ pub struct Apply_collisionParams<'a> {
 #[allow(dead_code)]
 impl<'a> Apply_collisionParams<'a> {
     // Add getter methods
-    pub fn txt(&mut self) -> &mut SurfacesTxt { self.txt }
-    pub fn ids(&self) -> &'a [u32] { self.ids }
-    pub fn id_part(&self) -> &'a str { self.id_part }
-    pub fn value(&self) -> &'a str { self.value }
+    pub fn txt(&mut self) -> &mut SurfacesTxt {
+        self.txt
+    }
+    pub fn ids(&self) -> &'a [u32] {
+        self.ids
+    }
+    pub fn id_part(&self) -> &'a str {
+        self.id_part
+    }
+    pub fn value(&self) -> &'a str {
+        self.value
+    }
 }
 
 #[allow(non_camel_case_types)]
@@ -31,10 +39,18 @@ pub struct Apply_collisionexParams<'a> {
 #[allow(dead_code)]
 impl<'a> Apply_collisionexParams<'a> {
     // Add getter methods
-    pub fn txt(&mut self) -> &mut SurfacesTxt { self.txt }
-    pub fn ids(&self) -> &'a [u32] { self.ids }
-    pub fn id_part(&self) -> &'a str { self.id_part }
-    pub fn value(&self) -> &'a str { self.value }
+    pub fn txt(&mut self) -> &mut SurfacesTxt {
+        self.txt
+    }
+    pub fn ids(&self) -> &'a [u32] {
+        self.ids
+    }
+    pub fn id_part(&self) -> &'a str {
+        self.id_part
+    }
+    pub fn value(&self) -> &'a str {
+        self.value
+    }
 }
 
 pub(crate) fn parse_collisionex_area(id_part: &str, value: &str) -> Option<CollisionArea> {

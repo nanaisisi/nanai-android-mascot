@@ -136,7 +136,12 @@ fn test_surface_definition_more_edge_cases() {
     });
     assert!(def4.effective_icon_rect().is_none());
 
-    let square = make_square_rect(Make_square_rectParams { x1: 0, y1: 0, x2: 50, y2: 50 });
+    let square = make_square_rect(Make_square_rectParams {
+        x1: 0,
+        y1: 0,
+        x2: 50,
+        y2: 50,
+    });
     assert_eq!(square, [0, 0, 50, 50]);
 
     let hit = def2.hit_test_sorted(25, 25, Some(&SortKind::None));

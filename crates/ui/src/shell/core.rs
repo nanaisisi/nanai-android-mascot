@@ -24,10 +24,18 @@ pub struct Shell {
 #[allow(dead_code)]
 impl Shell {
     // Add getter methods
-    pub fn directory(&self) -> &Path { &self.directory }
-    pub fn descript(&self) -> &Descript { &self.descript }
-    pub fn surfaces_txt(&self) -> &SurfacesTxt { &self.surfaces_txt }
-    pub fn surface_table(&self) -> Option<&SurfaceTable> { self.surface_table.as_ref() }
+    pub fn directory(&self) -> &Path {
+        &self.directory
+    }
+    pub fn descript(&self) -> &Descript {
+        &self.descript
+    }
+    pub fn surfaces_txt(&self) -> &SurfacesTxt {
+        &self.surfaces_txt
+    }
+    pub fn surface_table(&self) -> Option<&SurfaceTable> {
+        self.surface_table.as_ref()
+    }
 }
 
 impl Shell {

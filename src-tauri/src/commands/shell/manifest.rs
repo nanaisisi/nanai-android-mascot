@@ -74,10 +74,10 @@ impl CompositionPlanSnapshot {
                 CompositionLayer::Pattern(p) => PlanLayer {
                     kind: "pattern",
                     file: String::new(),
-                    surface: p.surface,
-                    x: p.x,
-                    y: p.y,
-                    method: method_string(&p.method),
+                    surface: p.surface(),
+                    x: p.x(),
+                    y: p.y(),
+                    method: method_string(p.method()),
                 },
             })
             .collect();
@@ -94,10 +94,10 @@ impl CompositionPlanSnapshot {
                 }
                 CompositionLayer::Pattern(p) => {
                     "pattern".hash(&mut hasher);
-                    p.surface.hash(&mut hasher);
-                    p.x.hash(&mut hasher);
-                    p.y.hash(&mut hasher);
-                    method_string(&p.method).hash(&mut hasher);
+                    p.surface().hash(&mut hasher);
+                    p.x().hash(&mut hasher);
+                    p.y().hash(&mut hasher);
+                    method_string(p.method()).hash(&mut hasher);
                 }
             }
         }

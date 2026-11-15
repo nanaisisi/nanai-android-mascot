@@ -13,10 +13,18 @@ pub struct Apply_animation_lineParams<'a> {
 #[allow(dead_code)]
 impl<'a> Apply_animation_lineParams<'a> {
     // Add getter methods
-    pub fn txt(&mut self) -> &mut SurfacesTxt { self.txt }
-    pub fn ids(&self) -> &'a [u32] { self.ids }
-    pub fn rest(&self) -> &'a str { self.rest }
-    pub fn value(&self) -> &'a str { self.value }
+    pub fn txt(&mut self) -> &mut SurfacesTxt {
+        self.txt
+    }
+    pub fn ids(&self) -> &'a [u32] {
+        self.ids
+    }
+    pub fn rest(&self) -> &'a str {
+        self.rest
+    }
+    pub fn value(&self) -> &'a str {
+        self.value
+    }
 }
 
 pub(crate) fn apply_animation_line(mut params: Apply_animation_lineParams<'_>) {
@@ -53,8 +61,7 @@ pub(crate) fn apply_animation_line(mut params: Apply_animation_lineParams<'_>) {
             if !tokens.is_empty() {
                 anim.options.push(tokens);
             }
-        } else if field_lower.starts_with("pattern") {
-            let pat_str = &field_lower["pattern".len()..];
+        } else if let Some(pat_str) = field_lower.strip_prefix("pattern") {
             let pat_index = if pat_str.is_empty() {
                 anim.patterns.len() as u32
             } else {
@@ -67,14 +74,20 @@ pub(crate) fn apply_animation_line(mut params: Apply_animation_lineParams<'_>) {
             }
 
             let method = DrawMethod::parse(parts[0]);
-            let surface = parts.get(1).and_then(|s| s.parse::<i32>().ok()).unwrap_or(0);
-            let (wait, wait_max) = parts
-                .get(2)
-                .map(|s| parse_wait(s))
-                .unwrap_or((0, None));
+            let surface = parts
+                .get(1)
+                .and_then(|s| s.parse::<i32>().ok())
+                .unwrap_or(0);
+            let (wait, wait_max) = parts.get(2).map(|s| parse_wait(s)).unwrap_or((0, None));
 
-            let x = parts.get(3).and_then(|s| s.parse::<i32>().ok()).unwrap_or(0);
-            let y = parts.get(4).and_then(|s| s.parse::<i32>().ok()).unwrap_or(0);
+            let x = parts
+                .get(3)
+                .and_then(|s| s.parse::<i32>().ok())
+                .unwrap_or(0);
+            let y = parts
+                .get(4)
+                .and_then(|s| s.parse::<i32>().ok())
+                .unwrap_or(0);
 
             let mut options = Vec::new();
             for opt_part in parts.iter().skip(5) {

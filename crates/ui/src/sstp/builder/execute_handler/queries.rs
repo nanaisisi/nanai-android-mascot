@@ -19,7 +19,9 @@ pub(super) fn handle_query_commands(
             Some(SstpResponse::ok(None).with_additional_data(data))
         }
         "getghostname" => Some(SstpResponse::ok(None).with_additional_data(ctx.name().to_string())),
-        "getshellname" => Some(SstpResponse::ok(None).with_additional_data(ctx.shell_name().to_string())),
+        "getshellname" => {
+            Some(SstpResponse::ok(None).with_additional_data(ctx.shell_name().to_string()))
+        }
         "getballoonname" => {
             Some(SstpResponse::ok(None).with_additional_data(ctx.balloon_name().to_string()))
         }
@@ -43,7 +45,9 @@ pub(super) fn handle_query_commands(
             let data = ctx.installed_plugins().join("\r\n");
             Some(SstpResponse::ok(None).with_additional_data(data))
         }
-        "getversion" => Some(SstpResponse::ok(None).with_additional_data(ctx.version().to_string())),
+        "getversion" => {
+            Some(SstpResponse::ok(None).with_additional_data(ctx.version().to_string()))
+        }
         "getshortversion" => {
             Some(SstpResponse::ok(None).with_additional_data(ctx.short_version().to_string()))
         }

@@ -27,21 +27,21 @@ impl AnimationScheduler {
 
             for anim in anims.iter_mut() {
                 if let Some(event) = anim.advance(delta_ms, scope_id) {
-                    if event.pattern.surface == -2 {
+                    if event.pattern.surface() == -2 {
                         // surface -2 はスコープ内の他のアニメーションを停止
                         stop_others = true;
                     }
 
                     // 描画メソッドに応じたアニメーション制御処理
-                    match &event.pattern.method {
+                    match &event.pattern.method() {
                         DrawMethod::Move => {
-                            to_move.push((scope_id, event.pattern.x, event.pattern.y));
+                            to_move.push((scope_id, event.pattern.x(), event.pattern.y()));
                         }
                         DrawMethod::Scaling => {
                             to_scale.push((
                                 scope_id,
-                                event.pattern.x as f64,
-                                event.pattern.y as f64,
+                                event.pattern.x() as f64,
+                                event.pattern.y() as f64,
                             ));
                         }
                         DrawMethod::Start(Some(target_id)) => {
@@ -76,7 +76,7 @@ impl AnimationScheduler {
             }
 
             if stop_others {
-                anims.retain(|a| a.is_finished || a.patterns.iter().any(|p| p.surface == -2));
+                anims.retain(|a| a.is_finished || a.patterns().iter().any(|p| p.surface() == -2));
             } else {
                 anims.retain(|a| !a.is_finished);
             }
@@ -100,7 +100,7 @@ impl AnimationScheduler {
         // 開始処理の反映
         if !catalog.is_empty() {
             for (scope_id, anim_id) in to_start {
-                if let Some(anim_def) = catalog.iter().find(|a| a.id == anim_id) {
+                if let Some(anim_def) = catalog.iter().find(|a| a.id() == anim_id) {
                     let base_surf = self.current_surface(scope_id);
                     self.start_animation(scope_id, base_surf, anim_def);
                 }

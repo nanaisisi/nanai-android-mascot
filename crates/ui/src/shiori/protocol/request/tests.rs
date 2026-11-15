@@ -233,4 +233,3 @@ fn test_shiori_request_getters() {
     assert_eq!(req.references(), &["ref0".to_string()]);
     assert_eq!(req.passthru().get("K").map(|s| s.as_str()), Some("V"));
 }
-

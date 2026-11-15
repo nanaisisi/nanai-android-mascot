@@ -39,13 +39,13 @@ impl AnimationScheduler {
 
         // 新サーフィス側にも shared-index 指定のアニメーションが存在すれば、保存した pattern index から復帰開始
         for anim in new_animations {
-            let opts = ParsedAnimationOptions::from_raw_options(&anim.options);
+            let opts = ParsedAnimationOptions::from_raw_options(anim.options());
             if opts.is_shared_index
-                && let Some(&saved_index) = preserved.get(&anim.id)
-                && saved_index < anim.patterns.len()
+                && let Some(&saved_index) = preserved.get(&anim.id())
+                && saved_index < anim.patterns().len()
             {
                 let mut active =
-                    ActiveAnimation::new(anim.id, new_surface_id, anim.patterns.clone())
+                    ActiveAnimation::new(anim.id(), new_surface_id, anim.patterns().to_vec())
                         .with_options(&opts);
                 active.current_pattern_index = saved_index;
                 let anims = self.active_animations.entry(scope_id).or_default();

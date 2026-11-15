@@ -55,7 +55,6 @@ pub struct ShioriResponse {
 #[allow(dead_code)]
 impl ShioriResponse {
     // Add getter methods
-
 }
 
 impl ShioriResponse {

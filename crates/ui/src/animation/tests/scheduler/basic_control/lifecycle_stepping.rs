@@ -36,19 +36,19 @@ fn test_animation_scheduler_basic() {
     // 50ms経過で1フレーム目
     let events = scheduler.step(50);
     assert_eq!(events.len(), 1);
-    assert_eq!(events[0].pattern.surface, 101);
+    assert_eq!(events[0].pattern.surface(), 101);
     assert!(!events[0].is_finished);
 
     // さらに50ms経過で2フレーム目
     let events = scheduler.step(50);
     assert_eq!(events.len(), 1);
-    assert_eq!(events[0].pattern.surface, 102);
+    assert_eq!(events[0].pattern.surface(), 102);
     assert!(!events[0].is_finished);
 
     // さらに0msで3フレーム目（surface -1 到達で終了）
     let events = scheduler.step(0);
     assert_eq!(events.len(), 1);
-    assert_eq!(events[0].pattern.surface, -1);
+    assert_eq!(events[0].pattern.surface(), -1);
     assert!(events[0].is_finished);
     assert_eq!(scheduler.active_count(0), 0);
 }
@@ -83,7 +83,7 @@ fn test_animation_scheduler_pause_resume() {
 
     let events = scheduler.step(100);
     assert_eq!(events.len(), 1);
-    assert_eq!(events[0].pattern.surface, 10);
+    assert_eq!(events[0].pattern.surface(), 10);
 }
 
 #[test]

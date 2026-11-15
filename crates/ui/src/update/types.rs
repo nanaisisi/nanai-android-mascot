@@ -20,14 +20,30 @@ pub struct UpdateEntry {
 #[allow(dead_code)]
 impl UpdateEntry {
     // Add getter methods
-    pub fn path(&self) -> &str { &self.path }
-    pub fn md5(&self) -> &str { &self.md5 }
-    pub fn size(&self) -> Option<u64> { self.size }
-    pub fn is_delete_flag(&self) -> bool { self.is_delete }
-    pub fn is_ignore_flag(&self) -> bool { self.is_ignore }
-    pub fn is_readonly_flag(&self) -> bool { self.is_readonly }
-    pub fn date(&self) -> Option<&str> { self.date.as_deref() }
-    pub fn flags(&self) -> &[String] { &self.flags }
+    pub fn path(&self) -> &str {
+        &self.path
+    }
+    pub fn md5(&self) -> &str {
+        &self.md5
+    }
+    pub fn size(&self) -> Option<u64> {
+        self.size
+    }
+    pub fn is_delete_flag(&self) -> bool {
+        self.is_delete
+    }
+    pub fn is_ignore_flag(&self) -> bool {
+        self.is_ignore
+    }
+    pub fn is_readonly_flag(&self) -> bool {
+        self.is_readonly
+    }
+    pub fn date(&self) -> Option<&str> {
+        self.date.as_deref()
+    }
+    pub fn flags(&self) -> &[String] {
+        &self.flags
+    }
 
     /// 削除対象 (`delete` フラグ指定) かどうか判定
     pub fn is_delete(&self) -> bool {
@@ -61,12 +77,24 @@ pub struct UpdateProgressSummary {
 #[allow(dead_code)]
 impl UpdateProgressSummary {
     // Add getter methods
-    pub fn total_entries(&self) -> usize { self.total_entries }
-    pub fn active_downloads(&self) -> usize { self.active_downloads }
-    pub fn completed_entries(&self) -> usize { self.completed_entries }
-    pub fn deletions(&self) -> usize { self.deletions }
-    pub fn total_bytes(&self) -> u64 { self.total_bytes }
-    pub fn is_finished(&self) -> bool { self.is_finished }
+    pub fn total_entries(&self) -> usize {
+        self.total_entries
+    }
+    pub fn active_downloads(&self) -> usize {
+        self.active_downloads
+    }
+    pub fn completed_entries(&self) -> usize {
+        self.completed_entries
+    }
+    pub fn deletions(&self) -> usize {
+        self.deletions
+    }
+    pub fn total_bytes(&self) -> u64 {
+        self.total_bytes
+    }
+    pub fn is_finished(&self) -> bool {
+        self.is_finished
+    }
 }
 
 /// ネットワーク更新計画 (差分分類結果)
@@ -81,10 +109,18 @@ pub struct UpdatePlan<'a> {
 #[allow(dead_code)]
 impl<'a> UpdatePlan<'a> {
     // Add getter methods
-    pub fn additions(&self) -> &[&'a UpdateEntry] { &self.additions }
-    pub fn modifications(&self) -> &[&'a UpdateEntry] { &self.modifications }
-    pub fn deletions(&self) -> &[&'a UpdateEntry] { &self.deletions }
-    pub fn unchanged(&self) -> &[&'a UpdateEntry] { &self.unchanged }
+    pub fn additions(&self) -> &[&'a UpdateEntry] {
+        &self.additions
+    }
+    pub fn modifications(&self) -> &[&'a UpdateEntry] {
+        &self.modifications
+    }
+    pub fn deletions(&self) -> &[&'a UpdateEntry] {
+        &self.deletions
+    }
+    pub fn unchanged(&self) -> &[&'a UpdateEntry] {
+        &self.unchanged
+    }
 
     pub fn total_changes(&self) -> usize {
         self.additions.len() + self.modifications.len() + self.deletions.len()
@@ -104,7 +140,9 @@ pub struct UpdatePackage {
 #[allow(dead_code)]
 impl UpdatePackage {
     // Add getter methods
-    pub fn entries(&self) -> &[UpdateEntry] { &self.entries }
+    pub fn entries(&self) -> &[UpdateEntry] {
+        &self.entries
+    }
 
     pub fn from_definition(content: &str) -> Self {
         Self {
@@ -270,11 +308,21 @@ pub struct InstallResourceConfig {
 #[allow(dead_code)]
 impl InstallResourceConfig {
     // Add getter methods
-    pub fn resource_type(&self) -> &str { &self.resource_type }
-    pub fn target_directory(&self) -> &str { &self.target_directory }
-    pub fn source_directory(&self) -> &str { &self.source_directory }
-    pub fn refresh(&self) -> bool { self.refresh }
-    pub fn refresh_undelete_mask(&self) -> &[String] { &self.refresh_undelete_mask }
+    pub fn resource_type(&self) -> &str {
+        &self.resource_type
+    }
+    pub fn target_directory(&self) -> &str {
+        &self.target_directory
+    }
+    pub fn source_directory(&self) -> &str {
+        &self.source_directory
+    }
+    pub fn refresh(&self) -> bool {
+        self.refresh
+    }
+    pub fn refresh_undelete_mask(&self) -> &[String] {
+        &self.refresh_undelete_mask
+    }
 
     pub fn new(
         resource_type: impl Into<String>,
@@ -315,20 +363,48 @@ pub struct InstallManifest {
 #[allow(dead_code)]
 impl InstallManifest {
     // Add getter methods
-    pub fn name(&self) -> &str { &self.name }
-    pub fn install_type(&self) -> &str { &self.install_type }
-    pub fn directory(&self) -> Option<&str> { self.directory.as_deref() }
-    pub fn charset(&self) -> Option<&str> { self.charset.as_deref() }
-    pub fn accept(&self) -> Option<&str> { self.accept.as_deref() }
-    pub fn bootghost(&self) -> Option<&str> { self.bootghost.as_deref() }
-    pub fn refresh(&self) -> bool { self.refresh }
-    pub fn refresh_undelete_mask(&self) -> &[String] { &self.refresh_undelete_mask }
-    pub fn notice(&self) -> Option<&str> { self.notice.as_deref() }
-    pub fn readme(&self) -> Option<&str> { self.readme.as_deref() }
-    pub fn execute(&self) -> Option<&str> { self.execute.as_deref() }
-    pub fn oninstall_script(&self) -> Option<&str> { self.oninstall_script.as_deref() }
-    pub fn onuninstall_script(&self) -> Option<&str> { self.onuninstall_script.as_deref() }
-    pub fn bundled_resources(&self) -> &[InstallResourceConfig] { &self.bundled_resources }
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+    pub fn install_type(&self) -> &str {
+        &self.install_type
+    }
+    pub fn directory(&self) -> Option<&str> {
+        self.directory.as_deref()
+    }
+    pub fn charset(&self) -> Option<&str> {
+        self.charset.as_deref()
+    }
+    pub fn accept(&self) -> Option<&str> {
+        self.accept.as_deref()
+    }
+    pub fn bootghost(&self) -> Option<&str> {
+        self.bootghost.as_deref()
+    }
+    pub fn refresh(&self) -> bool {
+        self.refresh
+    }
+    pub fn refresh_undelete_mask(&self) -> &[String] {
+        &self.refresh_undelete_mask
+    }
+    pub fn notice(&self) -> Option<&str> {
+        self.notice.as_deref()
+    }
+    pub fn readme(&self) -> Option<&str> {
+        self.readme.as_deref()
+    }
+    pub fn execute(&self) -> Option<&str> {
+        self.execute.as_deref()
+    }
+    pub fn oninstall_script(&self) -> Option<&str> {
+        self.oninstall_script.as_deref()
+    }
+    pub fn onuninstall_script(&self) -> Option<&str> {
+        self.onuninstall_script.as_deref()
+    }
+    pub fn bundled_resources(&self) -> &[InstallResourceConfig] {
+        &self.bundled_resources
+    }
 
     /// インストール対象種別の正規化 ("ghost", "shell", "balloon" など小文字化)
     pub fn normalized_install_type(&self) -> String {

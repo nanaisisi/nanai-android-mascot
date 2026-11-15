@@ -44,15 +44,17 @@ pub struct AnimationTimeline {
 pub fn animation_timeline(patterns: Vec<TimelinePattern>) -> Result<AnimationTimeline, String> {
     let anims: Vec<AnimationPattern> = patterns
         .iter()
-        .map(|p| AnimationPattern {
-            index: p.index,
-            method: DrawMethod::Overlay,
-            surface: 0,
-            wait: p.wait_ms,
-            wait_max: None,
-            x: 0,
-            y: 0,
-            options: vec![],
+        .map(|p| {
+            AnimationPattern::new(
+                p.index,
+                DrawMethod::Overlay,
+                0,
+                p.wait_ms,
+                None,
+                0,
+                0,
+                vec![],
+            )
         })
         .collect();
     let timeline = Timeline::new(&anims);

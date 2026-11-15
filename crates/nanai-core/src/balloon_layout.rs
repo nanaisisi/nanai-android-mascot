@@ -33,18 +33,31 @@ pub struct ValidRectLayoutResult {
     pub cache_key: String,
 }
 
+#[allow(non_camel_case_types)]
+pub struct Compute_validrect_layoutParams<'a> {
+    pub validrect_left: Option<i32>,
+    pub validrect_top: Option<i32>,
+    pub validrect_right: Option<i32>,
+    pub validrect_bottom: Option<i32>,
+    pub border_repeat: Option<&'a str>,
+    pub balloon_image: Option<&'a str>,
+    pub bg_image_url: Option<&'a str>,
+    pub scope_id: u32,
+}
+
 /// 有効テキスト表示領域 (validrect) および背景画像設定からレイアウトを算出
-#[allow(clippy::too_many_arguments)]
 pub fn compute_validrect_layout(
-    validrect_left: Option<i32>,
-    validrect_top: Option<i32>,
-    validrect_right: Option<i32>,
-    validrect_bottom: Option<i32>,
-    border_repeat: Option<&str>,
-    balloon_image: Option<&str>,
-    bg_image_url: Option<&str>,
-    scope_id: u32,
+    params: Compute_validrect_layoutParams<'_>,
 ) -> ValidRectLayoutResult {
+    let validrect_left = params.validrect_left;
+    let validrect_top = params.validrect_top;
+    let validrect_right = params.validrect_right;
+    let validrect_bottom = params.validrect_bottom;
+    let border_repeat = params.border_repeat;
+    let balloon_image = params.balloon_image;
+    let bg_image_url = params.bg_image_url;
+    let scope_id = params.scope_id;
+
     let t = validrect_top.filter(|&v| v >= 0).map_or(16, |v| v.max(8));
     let r = validrect_right.filter(|&v| v >= 0).map_or(16, |v| v.max(8));
     let b = validrect_bottom
@@ -88,8 +101,9 @@ pub fn compute_validrect_layout(
 }
 
 #[wasm_bindgen]
-#[allow(clippy::too_many_arguments)]
-pub fn wasm_compute_validrect_layout(
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[allow(non_camel_case_types)]
+pub struct Wasm_compute_validrect_layoutParams {
     validrect_left: Option<i32>,
     validrect_top: Option<i32>,
     validrect_right: Option<i32>,
@@ -98,28 +112,71 @@ pub fn wasm_compute_validrect_layout(
     balloon_image: Option<String>,
     bg_image_url: Option<String>,
     scope_id: u32,
+}
+
+#[wasm_bindgen]
+impl Wasm_compute_validrect_layoutParams {
+    #[wasm_bindgen(constructor)]
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        validrect_left: Option<i32>,
+        validrect_top: Option<i32>,
+        validrect_right: Option<i32>,
+        validrect_bottom: Option<i32>,
+        border_repeat: Option<String>,
+        balloon_image: Option<String>,
+        bg_image_url: Option<String>,
+        scope_id: u32,
+    ) -> Self {
+        Self {
+            validrect_left,
+            validrect_top,
+            validrect_right,
+            validrect_bottom,
+            border_repeat,
+            balloon_image,
+            bg_image_url,
+            scope_id,
+        }
+    }
+}
+
+#[wasm_bindgen]
+pub fn wasm_compute_validrect_layout(
+    params: &Wasm_compute_validrect_layoutParams,
 ) -> Result<JsValue, JsValue> {
-    let res = compute_validrect_layout(
-        validrect_left,
-        validrect_top,
-        validrect_right,
-        validrect_bottom,
-        border_repeat.as_deref(),
-        balloon_image.as_deref(),
-        bg_image_url.as_deref(),
-        scope_id,
-    );
+    let res = compute_validrect_layout(Compute_validrect_layoutParams {
+        validrect_left: params.validrect_left,
+        validrect_top: params.validrect_top,
+        validrect_right: params.validrect_right,
+        validrect_bottom: params.validrect_bottom,
+        border_repeat: params.border_repeat.as_deref(),
+        balloon_image: params.balloon_image.as_deref(),
+        bg_image_url: params.bg_image_url.as_deref(),
+        scope_id: params.scope_id,
+    });
     Ok(serde_wasm_bindgen::to_value(&res)?)
+}
+
+#[allow(non_camel_case_types)]
+pub struct Compute_balloon_text_layoutParams<'a> {
+    pub text: &'a str,
+    pub max_container_width: f32,
+    pub font_size_px: f32,
+    pub line_height_px: f32,
+    pub padding_x: f32,
 }
 
 /// バルーン内テキストの自動改行・レイアウトサイズ計算
 pub fn compute_balloon_text_layout(
-    text: &str,
-    max_container_width: f32,
-    font_size_px: f32,
-    line_height_px: f32,
-    padding_x: f32,
+    params: Compute_balloon_text_layoutParams<'_>,
 ) -> BalloonLayoutResult {
+    let text = params.text;
+    let max_container_width = params.max_container_width;
+    let font_size_px = params.font_size_px;
+    let line_height_px = params.line_height_px;
+    let padding_x = params.padding_x;
+
     let available_width = (max_container_width - padding_x * 2.0).max(10.0);
     let mut lines = Vec::new();
     let mut current_line = String::new();
@@ -182,14 +239,47 @@ pub fn compute_balloon_text_layout(
 }
 
 #[wasm_bindgen]
-pub fn wasm_compute_balloon_text_layout(
-    text: &str,
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[allow(non_camel_case_types)]
+pub struct Wasm_compute_balloon_text_layoutParams {
+    text: String,
     max_width: f32,
     font_size: f32,
     line_height: f32,
     padding_x: f32,
+}
+
+#[wasm_bindgen]
+impl Wasm_compute_balloon_text_layoutParams {
+    #[wasm_bindgen(constructor)]
+    pub fn new(
+        text: String,
+        max_width: f32,
+        font_size: f32,
+        line_height: f32,
+        padding_x: f32,
+    ) -> Self {
+        Self {
+            text,
+            max_width,
+            font_size,
+            line_height,
+            padding_x,
+        }
+    }
+}
+
+#[wasm_bindgen]
+pub fn wasm_compute_balloon_text_layout(
+    params: &Wasm_compute_balloon_text_layoutParams,
 ) -> Result<JsValue, JsValue> {
-    let res = compute_balloon_text_layout(text, max_width, font_size, line_height, padding_x);
+    let res = compute_balloon_text_layout(Compute_balloon_text_layoutParams {
+        text: &params.text,
+        max_container_width: params.max_width,
+        font_size_px: params.font_size,
+        line_height_px: params.line_height,
+        padding_x: params.padding_x,
+    });
     Ok(serde_wasm_bindgen::to_value(&res)?)
 }
 
@@ -200,7 +290,13 @@ mod tests {
     #[test]
     fn test_compute_balloon_text_layout_basic() {
         let text = "こんにちは\n世界";
-        let res = compute_balloon_text_layout(text, 200.0, 16.0, 20.0, 10.0);
+        let res = compute_balloon_text_layout(Compute_balloon_text_layoutParams {
+            text,
+            max_container_width: 200.0,
+            font_size_px: 16.0,
+            line_height_px: 20.0,
+            padding_x: 10.0,
+        });
 
         assert_eq!(res.line_count, 2);
         assert_eq!(res.lines[0].text, "こんにちは");
@@ -212,7 +308,13 @@ mod tests {
     fn test_compute_balloon_text_layout_word_wrap() {
         let text = "あいうえおかきくけこさしすせそ";
         // 180px - padding 20px = 160px. font 16px -> 1行10文字 -> 計2行に折れる
-        let res = compute_balloon_text_layout(text, 180.0, 16.0, 20.0, 10.0);
+        let res = compute_balloon_text_layout(Compute_balloon_text_layoutParams {
+            text,
+            max_container_width: 180.0,
+            font_size_px: 16.0,
+            line_height_px: 20.0,
+            padding_x: 10.0,
+        });
 
         assert_eq!(res.line_count, 2);
         assert_eq!(res.lines[0].text, "あいうえおかきくけこ");

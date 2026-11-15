@@ -21,22 +21,35 @@ pub fn build_shiori_request(method: &str, headers: BTreeMap<String, String>) -> 
 
 #[allow(non_camel_case_types)]
 pub struct Build_shiori_request_extendedParams<'a> {
-    pub method: &'a str,
-    pub event_id: &'a str,
-    pub references: &'a [String],
-    pub params: Option<ShioriExtendedParams>,
+    pub(crate) method: &'a str,
+    pub(crate) event_id: &'a str,
+    pub(crate) references: &'a [String],
+    pub(crate) params: Option<ShioriExtendedParams>,
+}
+
+#[allow(dead_code)]
+impl<'a> Build_shiori_request_extendedParams<'a> {
+    pub fn method(&self) -> &'a str {
+        self.method
+    }
+    pub fn event_id(&self) -> &'a str {
+        self.event_id
+    }
+    pub fn references(&self) -> &'a [String] {
+        self.references
+    }
+    pub fn params(&self) -> Option<&ShioriExtendedParams> {
+        self.params.as_ref()
+    }
 }
 
 /// UKADOC SHIORI/3.0 仕様に完全準拠した拡張リクエスト文字列構築 (GET / NOTIFY)
 pub fn build_shiori_request_extended(params: Build_shiori_request_extendedParams<'_>) -> String {
-    let Build_shiori_request_extendedParams {
-        method,
-        event_id,
-        references,
-        params,
-    } = params;
+    let method = params.method();
+    let event_id = params.event_id();
+    let references = params.references();
     let mut headers = BTreeMap::new();
-    let p = params.unwrap_or_default();
+    let p = params.params().cloned().unwrap_or_default();
 
     headers.insert(
         "Charset".to_string(),

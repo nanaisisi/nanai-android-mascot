@@ -17,18 +17,31 @@ pub fn build_on_choice_select_request(choice_id: &str) -> String {
 
 #[allow(non_camel_case_types)]
 pub struct Build_on_choice_select_ex_requestParams<'a> {
-    pub choice_id: &'a str,
-    pub text: &'a str,
-    pub extra_data: &'a str,
+    pub(crate) choice_id: &'a str,
+    pub(crate) text: &'a str,
+    pub(crate) extra_data: &'a str,
+}
+
+#[allow(dead_code)]
+impl<'a> Build_on_choice_select_ex_requestParams<'a> {
+    pub fn choice_id(&self) -> &'a str {
+        self.choice_id
+    }
+    pub fn text(&self) -> &'a str {
+        self.text
+    }
+    pub fn extra_data(&self) -> &'a str {
+        self.extra_data
+    }
 }
 
 /// OnChoiceSelectEx イベントリクエスト構築 (ukadoc-spec/list/shiori-event/choice/OnChoiceSelectEx.md)
 pub fn build_on_choice_select_ex_request(
     params: Build_on_choice_select_ex_requestParams<'_>,
 ) -> String {
-    let choice_id = params.choice_id;
-    let text = params.text;
-    let extra_data = params.extra_data;
+    let choice_id = params.choice_id();
+    let text = params.text();
+    let extra_data = params.extra_data();
     let refs = vec![
         choice_id.to_string(),
         text.to_string(),

@@ -1,7 +1,7 @@
 //! ShioriEngine Trait Implementation for ShioriDynamicEngine
 
 use super::engine::ShioriDynamicEngine;
-use nanai_android_mascot_ui::{ShioriEngine, ShioriLifecycleState};
+use nanai_android_mascot_ui::shiori::{ShioriEngine, ShioriLifecycleState};
 use std::path::Path;
 
 impl ShioriEngine for ShioriDynamicEngine {

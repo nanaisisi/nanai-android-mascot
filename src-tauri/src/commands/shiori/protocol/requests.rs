@@ -2,7 +2,7 @@
 
 use super::dispatch::{LogLevel, dispatch_request, log_level};
 use crate::common::state::AppState;
-use nanai_android_mascot_ui::{
+use nanai_android_mascot_ui::shiori::{
     ShioriRequest, ShioriResponse, build_standard_capability_references,
 };
 

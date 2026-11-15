@@ -1,5 +1,6 @@
 use super::{resolve_ghost_directory, resolve_vfs_path};
-use nanai_android_mascot_ui::{Shell, ShellManifest};
+use nanai_android_mascot_ui::manifest::ShellManifest;
+use nanai_android_mascot_ui::shell::Shell;
 use nanai_surface::{CompositionLayer, CompositionPlan, DrawMethod};
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};

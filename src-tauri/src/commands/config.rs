@@ -1,6 +1,6 @@
 #![allow(unused_imports)]
 use crate::common::paths::resolve_asset_path;
-use crate::common::paths::{open_shift_jis_file, resolve_vfs_path};
+use nanai_vfs::{open_shift_jis_file, resolve_vfs_path};
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 #[cfg(desktop)]

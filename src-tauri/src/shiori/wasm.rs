@@ -4,7 +4,7 @@
 
 #![allow(dead_code)]
 
-use nanai_android_mascot_ui::{ShioriEngine, ShioriLifecycleState};
+use nanai_android_mascot_ui::shiori::{ShioriEngine, ShioriLifecycleState};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicUsize, Ordering};

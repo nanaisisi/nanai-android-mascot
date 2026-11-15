@@ -1,5 +1,7 @@
-use nanai_android_mascot_ui::{
-    SakuraCommand, SurfaceManifest, Timeline, parse_sakura_script as ui_parse_sakura_script,
+use nanai_android_mascot_ui::animation::Timeline;
+use nanai_android_mascot_ui::manifest::SurfaceManifest;
+use nanai_android_mascot_ui::script::{
+    SakuraCommand, parse_sakura_script as ui_parse_sakura_script,
 };
 use nanai_surface::{AnimationPattern, DrawMethod, parse_surfaces_txt};
 use std::collections::BTreeMap;

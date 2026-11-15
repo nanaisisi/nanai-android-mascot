@@ -1,6 +1,6 @@
 //! ファイル探索・画像クロマキー加工用ヘルパー
 
-use crate::common::paths::resolve_vfs_path;
+use nanai_vfs::resolve_vfs_path;
 use base64::Engine;
 use image::GenericImageView;
 use std::path::{Path, PathBuf};

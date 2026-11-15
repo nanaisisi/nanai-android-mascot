@@ -1,4 +1,4 @@
-use nanai_android_mascot_ui::ShioriEngine;
+use nanai_android_mascot_ui::shiori::ShioriEngine;
 use tauri::Manager;
 
 /// デバッグ用のテストコマンド

@@ -1,7 +1,7 @@
 use super::super::utils::*;
 use crate::commands::install::normalize_path;
 
-use nanai_android_mascot_ui::validate_archive_entry_path;
+use nanai_android_mascot_ui::update::validate_archive_entry_path;
 use std::path::Path;
 
 use super::inspection::BundledResourceTarget;

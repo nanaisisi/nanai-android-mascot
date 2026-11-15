@@ -60,7 +60,7 @@ pub struct PlanLayer {
 impl CompositionPlanSnapshot {
     fn snapshot(plan: CompositionPlan) -> Self {
         let layers = plan
-            .layers
+            .layers()
             .iter()
             .map(|layer| match layer {
                 CompositionLayer::Element(e) => PlanLayer {
@@ -82,8 +82,8 @@ impl CompositionPlanSnapshot {
             })
             .collect();
         let mut hasher = DefaultHasher::new();
-        plan.surface.hash(&mut hasher);
-        for layer in &plan.layers {
+        plan.surface().hash(&mut hasher);
+        for layer in plan.layers() {
             match layer {
                 CompositionLayer::Element(e) => {
                     "element".hash(&mut hasher);
@@ -102,7 +102,7 @@ impl CompositionPlanSnapshot {
             }
         }
         Self {
-            surface: plan.surface,
+            surface: plan.surface(),
             layers,
             plan_hash: format!("{:016x}", hasher.finish()),
         }

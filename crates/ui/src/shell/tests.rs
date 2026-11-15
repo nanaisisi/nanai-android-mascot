@@ -23,10 +23,7 @@ fn test_load_mock_shell() {
     assert!(def0.collisions.iter().any(|c| c.name() == "head"));
 
     // hit_test
-    assert_eq!(
-        shell.hit_test(0, 90, 40).map(|c| c.name()),
-        Some("head")
-    );
+    assert_eq!(shell.hit_test(0, 90, 40).map(|c| c.name()), Some("head"));
     assert_eq!(shell.hit_test(0, -99, -99), None);
 
     // 着せ替え定義（mock_nanai は sakura / kero とも bindgroup を持つ）

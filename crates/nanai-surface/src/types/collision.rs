@@ -121,9 +121,15 @@ pub struct CollisionArea {
 #[allow(dead_code)]
 impl CollisionArea {
     // Add getter methods
-    pub fn id(&self) -> Option<u32> { self.id }
-    pub fn name(&self) -> &str { &self.name }
-    pub fn shape(&self) -> &CollisionShape { &self.shape }
+    pub fn id(&self) -> Option<u32> {
+        self.id
+    }
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+    pub fn shape(&self) -> &CollisionShape {
+        &self.shape
+    }
 
     /// 座標が当たり判定領域内にあるか
     pub fn contains(&self, x: i32, y: i32) -> bool {
@@ -147,10 +153,18 @@ pub struct HitTestResult {
 #[allow(dead_code)]
 impl HitTestResult {
     // Add getter methods
-    pub fn id(&self) -> Option<u32> { self.id }
-    pub fn name(&self) -> &str { &self.name }
-    pub fn x(&self) -> i32 { self.x }
-    pub fn y(&self) -> i32 { self.y }
+    pub fn id(&self) -> Option<u32> {
+        self.id
+    }
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+    pub fn x(&self) -> i32 {
+        self.x
+    }
+    pub fn y(&self) -> i32 {
+        self.y
+    }
 
     pub fn new(area: &CollisionArea, x: i32, y: i32) -> Self {
         Self {

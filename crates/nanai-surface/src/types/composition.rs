@@ -17,12 +17,21 @@ pub enum CompositionLayer {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct CompositionPlan {
     /// 対象サーフィス番号
-    pub surface: u32,
+    pub(crate) surface: u32,
     /// 描画順に並んだレイヤー列
-    pub layers: Vec<CompositionLayer>,
+    pub(crate) layers: Vec<CompositionLayer>,
 }
 
+#[allow(dead_code)]
 impl CompositionPlan {
+    // Add getter methods
+    pub fn surface(&self) -> u32 {
+        self.surface
+    }
+    pub fn layers(&self) -> &[CompositionLayer] {
+        &self.layers
+    }
+
     /// レイヤーの参照列（表示ファイル名と描画地点の確認用）
     pub fn layer_files(&self) -> Vec<String> {
         self.layers

@@ -1,5 +1,5 @@
 use super::types::SakuraAstNode;
-use crate::script::command::SakuraCommand;
+use super::super::command::SakuraCommand;
 
 /// フラットな SakuraCommand 列から階層的な AST を構築する
 pub fn build_sakura_ast(commands: &[SakuraCommand]) -> SakuraAstNode {

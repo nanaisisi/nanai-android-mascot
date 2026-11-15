@@ -1,6 +1,6 @@
 //! SSTP アクション・操作・アーカイブ圧縮展開コマンド処理モジュール
 
-use crate::sstp::message::SstpResponse;
+use super::super::super::message::SstpResponse;
 
 /// アクション・操作・アーカイブ関連コマンドをハンドリングする
 pub(super) fn handle_action_commands(

@@ -1,6 +1,6 @@
 //! FMO テキストフォーマット生成、64KB 共有メモリバッファの作成およびパース処理
 
-use crate::fmo::types::FmoRecord;
+use super::super::types::FmoRecord;
 use std::collections::HashMap;
 
 /// FMO レコード群から UKADOC 規格準拠のテキスト表現を生成する (GetFMO / FMO/1.0 準拠)

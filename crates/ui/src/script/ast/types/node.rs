@@ -1,6 +1,6 @@
 //! さくらスクリプト AST ノード定義および深さ優先走査モジュール
 
-use crate::script::command::SakuraCommand;
+use super::super::super::command::SakuraCommand;
 use serde::{Deserialize, Serialize};
 
 /// さくらスクリプトの AST ノード

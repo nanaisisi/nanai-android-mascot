@@ -1,7 +1,7 @@
 //! ネットワーク更新パッケージ、進捗サマリー、差分更新計画モデル
 
 use super::entry::UpdateEntry;
-use crate::update::parser::parse_update_definition;
+use super::super::parser::parse_update_definition;
 
 /// ネットワーク更新進捗サマリー (Slot-15 Contract)
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Eq)]

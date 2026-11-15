@@ -1,6 +1,6 @@
 //! updates2.dau / updates.txt アップデート定義パース処理モジュール
 
-use crate::update::types::UpdateEntry;
+use super::super::types::UpdateEntry;
 
 /// updates2.dau (updates2dau) または updates.txt (updatestxt) の内容をパース
 pub fn parse_update_definition(content: &str) -> Vec<UpdateEntry> {

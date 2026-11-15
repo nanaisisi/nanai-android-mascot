@@ -1,7 +1,7 @@
 //! SSTP 名前・バージョン・ステータス・FMO 情報取得コマンド処理モジュール
 
-use crate::sstp::config::SstpGhostContext;
-use crate::sstp::message::SstpResponse;
+use super::super::super::config::SstpGhostContext;
+use super::super::super::message::SstpResponse;
 
 /// 名前・バージョン・ステータス・FMO などの情報取得コマンドをハンドリングする
 pub(super) fn handle_query_commands(

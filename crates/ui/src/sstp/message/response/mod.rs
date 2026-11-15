@@ -3,7 +3,7 @@
 pub mod build;
 pub mod parse;
 
-use crate::sstp::types::SstpStatusCode;
+use super::super::types::SstpStatusCode;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 

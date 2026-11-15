@@ -1,6 +1,6 @@
 //! FMO レコード一覧に対する名前・HWND 検索およびフィルタリングクエリ
 
-use crate::fmo::types::FmoRecord;
+use super::super::types::FmoRecord;
 
 /// 名前による FMO レコード検索 (大文字小文字無視)
 pub fn find_record_by_name<'a>(records: &'a [FmoRecord], name: &str) -> Option<&'a FmoRecord> {

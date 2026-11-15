@@ -3,8 +3,8 @@ use std::path::{Path, PathBuf};
 
 use super::state::ShioriLifecycleState;
 use super::trait_def::ShioriEngine;
-use crate::shiori::protocol::{ShioriRequest, ShioriResponse};
-use crate::shiori::types::ShioriMethod;
+use super::super::protocol::{ShioriRequest, ShioriResponse};
+use super::super::types::ShioriMethod;
 
 /// テスト・スタンドアロン実行用のモック SHIORI エンジン
 pub struct MockShioriEngine {

@@ -2,7 +2,7 @@
 
 use super::super::ShioriResponse;
 use super::super::{is_header_key, key_str_prefix, push_continuation};
-use crate::shiori::types::*;
+use super::super::super::super::types::*;
 
 impl ShioriResponse {
     /// テキストから SHIORI/3.0 レスポンスをパースする（LF / CRLF 両対応）

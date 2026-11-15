@@ -2,8 +2,8 @@
 //!
 //! リクエスト解析、レスポンス構築・パース、エラーレベル、SSPヘッダの振る舞いを網羅検証する。
 
-use crate::shiori::protocol::{ShioriRequest, ShioriResponse};
-use crate::shiori::types::{
+use super::super::protocol::{ShioriRequest, ShioriResponse};
+use super::super::types::{
     ErrorLevel, GhostStatusToken, SecurityLevel, SenderTypeTag, StatusCode,
 };
 

@@ -1,5 +1,5 @@
 use super::super::*;
-use crate::shiori::types::*;
+use super::super::super::super::types::*;
 
 #[test]
 fn test_shiori_request_get_and_notify() {

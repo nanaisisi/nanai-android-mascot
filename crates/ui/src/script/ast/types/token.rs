@@ -1,6 +1,6 @@
 //! さくらスクリプト単一トークンデータ構造モジュール
 
-use crate::script::command::SakuraCommand;
+use super::super::super::command::SakuraCommand;
 use serde::{Deserialize, Serialize};
 
 /// さくらスクリプトの単一トークン表現

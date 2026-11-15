@@ -1,5 +1,5 @@
 use super::super::*;
-use crate::shiori::types::*;
+use super::super::super::super::types::*;
 
 #[test]
 fn test_shiori_request_parse_security_origin_variations() {

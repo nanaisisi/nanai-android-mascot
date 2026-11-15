@@ -1,6 +1,6 @@
 //! SHIORI/3.0 レスポンス構造体およびアクセサメソッド
 
-use crate::shiori::types::*;
+use super::super::super::types::*;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 

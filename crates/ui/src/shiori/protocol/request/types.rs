@@ -1,6 +1,6 @@
 //! SHIORI/3.0 リクエスト型定義
 
-use crate::shiori::types::*;
+use super::super::super::types::*;
 
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;

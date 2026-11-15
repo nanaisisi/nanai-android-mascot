@@ -1,7 +1,7 @@
 //! ゴースト側 descript.txt 由来の SSTP 制御設定 (`SstpGhostConfig`)
 
-use crate::sstp::message::{SstpRequest, SstpResponse};
-use crate::sstp::types::SstpMethod;
+use super::super::message::{SstpRequest, SstpResponse};
+use super::super::types::SstpMethod;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 

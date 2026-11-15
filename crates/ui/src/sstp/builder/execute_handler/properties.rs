@@ -1,7 +1,7 @@
 //! SSTP プロパティ・Cookie・パス取得コマンド処理モジュール
 
-use crate::sstp::config::SstpGhostContext;
-use crate::sstp::message::SstpResponse;
+use super::super::super::config::SstpGhostContext;
+use super::super::super::message::SstpResponse;
 
 /// プロパティ・Cookie・パス関連コマンドをハンドリングする
 pub(super) fn handle_property_cookie_commands(

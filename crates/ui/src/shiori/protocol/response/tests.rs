@@ -1,5 +1,5 @@
 use super::*;
-use crate::shiori::types::*;
+use super::super::super::types::*;
 
 #[test]
 fn test_shiori_response_constructors() {

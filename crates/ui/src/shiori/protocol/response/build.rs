@@ -2,7 +2,7 @@
 
 use super::write_multiline_header;
 use super::{ShioriResponse, Write_multiline_headerParams};
-use crate::shiori::types::*;
+use super::super::super::types::*;
 
 impl ShioriResponse {
     /// CR+LF 終端のレスポンステキストを生成する（末尾は空行 CRLF×2）

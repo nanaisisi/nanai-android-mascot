@@ -1,7 +1,7 @@
 //! SHIORI/3.0 リクエストパース処理
 
 use super::types::ShioriRequest;
-use crate::shiori::types::*;
+use super::super::super::types::*;
 
 impl ShioriRequest {
     /// テキストから SHIORI/3.0 リクエストをパースする（LF / CRLF 両対応）

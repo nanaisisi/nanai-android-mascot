@@ -8,8 +8,8 @@ use actions::handle_action_commands;
 use properties::handle_property_cookie_commands;
 use queries::handle_query_commands;
 
-use crate::sstp::config::SstpGhostContext;
-use crate::sstp::message::SstpResponse;
+use super::super::config::SstpGhostContext;
+use super::super::message::SstpResponse;
 
 /// EXECUTE コマンドを処理して適切な SstpResponse を生成する
 pub fn handle_execute_command(command_str: &str, ctx: &SstpGhostContext) -> SstpResponse {

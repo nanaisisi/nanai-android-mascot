@@ -2,7 +2,7 @@
 
 use super::Descript;
 use super::helpers::expand_ids;
-use crate::descript::types::{BindGroup, BindOptionGroup, CharDefaults};
+use super::super::types::{BindGroup, BindOptionGroup, CharDefaults};
 use std::collections::BTreeMap;
 
 impl Descript {

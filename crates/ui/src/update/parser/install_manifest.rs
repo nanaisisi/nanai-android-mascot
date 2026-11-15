@@ -1,6 +1,6 @@
 //! install.txt マニフェストパース処理モジュール
 
-use crate::update::types::{InstallManifest, InstallResourceConfig};
+use super::super::types::{InstallManifest, InstallResourceConfig};
 use std::collections::HashMap;
 
 /// install.txt の内容をパースして InstallManifest を構築

@@ -1,40 +1,5 @@
-use super::*;
+use super::super::*;
 use crate::types::SurfacesTxt;
-
-#[test]
-fn test_expand_range() {
-    assert_eq!(expand_range("0-2, ,5"), vec![0, 1, 2, 5]);
-    assert_eq!(expand_range("[10-12]"), vec![10, 11, 12]);
-    assert_eq!(expand_range("invalid"), Vec::<u32>::new());
-}
-
-#[test]
-fn test_split_id_suffix() {
-    assert_eq!(utils::split_id_suffix("test100"), ("test", Some(100)));
-    assert_eq!(utils::split_id_suffix("noint"), ("noint", None));
-}
-
-#[test]
-fn test_first_i32() {
-    assert_eq!(first_i32(" 42 , 100 "), Some(42));
-    assert_eq!(first_i32("abc"), None);
-}
-
-#[test]
-fn test_parse_balloon_offset_key() {
-    assert_eq!(
-        parse_balloon_offset_key("balloon.offset.x"),
-        Some(("*".to_string(), 'x'))
-    );
-    assert_eq!(
-        parse_balloon_offset_key("sakura.balloon.offset.y"),
-        Some(("sakura".to_string(), 'y'))
-    );
-    assert_eq!(parse_balloon_offset_key("balloon.offset"), None);
-    assert_eq!(parse_balloon_offset_key("sakura.balloon.offset"), None);
-    assert_eq!(parse_balloon_offset_key(".balloon.offset.x"), None);
-    assert_eq!(parse_balloon_offset_key("invalid"), None);
-}
 
 #[test]
 fn test_apply_handlers() {
@@ -305,32 +270,4 @@ fn test_apply_animation_fields() {
         value: "overlay,-1,85-120,0,0",
     });
     assert!(txt.surfaces.get(&0).unwrap().animations.contains_key(&0));
-}
-
-#[test]
-fn test_apply_point_all_fields() {
-    let mut txt = SurfacesTxt::default();
-    for field in [
-        "centerx",
-        "centery",
-        "basepos.x",
-        "basepos.y",
-        "kinoko.centerx",
-        "kinoko.centery",
-        "unknown",
-    ] {
-        apply_point(Apply_pointParams {
-            txt: &mut txt,
-            ids: &[0],
-            field,
-            value: "100",
-        });
-    }
-    let points = &txt.surfaces.get(&0).unwrap().points;
-    assert_eq!(points.center_x, Some(100));
-    assert_eq!(points.center_y, Some(100));
-    assert_eq!(points.basepos_x, Some(100));
-    assert_eq!(points.basepos_y, Some(100));
-    assert_eq!(points.kinoko_center_x, Some(100));
-    assert_eq!(points.kinoko_center_y, Some(100));
 }

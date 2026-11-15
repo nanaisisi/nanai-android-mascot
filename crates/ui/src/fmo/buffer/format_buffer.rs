@@ -1,3 +1,5 @@
+//! FMO テキストフォーマット生成、64KB 共有メモリバッファの作成およびパース処理
+
 use crate::fmo::types::FmoRecord;
 use std::collections::HashMap;
 
@@ -72,7 +74,6 @@ pub fn generate_fmo_buffer(records: &[FmoRecord]) -> Vec<u8> {
     buf[0..4].copy_from_slice(&size_bytes);
 
     let bytes = content.as_bytes();
-    // 最大データ部サイズ: 65531バイト (65536 - 4バイトヘッダ - 1バイト終端NULL)
     let write_len = std::cmp::min(bytes.len(), 65531);
     buf[4..4 + write_len].copy_from_slice(&bytes[0..write_len]);
     buf[4 + write_len] = 0;
@@ -86,10 +87,8 @@ pub fn parse_fmo_buffer(buf: &[u8]) -> Result<Vec<FmoRecord>, String> {
         return Err("FMO buffer too small".to_string());
     }
 
-    // 0~3バイト目: バッファサイズ (Little Endian)
     let _total_size = u32::from_le_bytes([buf[0], buf[1], buf[2], buf[3]]);
 
-    // 4バイト目以降のNULL終端または末尾まで
     let data_slice = &buf[4..];
     let null_pos = data_slice
         .iter()
@@ -97,7 +96,6 @@ pub fn parse_fmo_buffer(buf: &[u8]) -> Result<Vec<FmoRecord>, String> {
         .unwrap_or(data_slice.len());
     let text = String::from_utf8_lossy(&data_slice[..null_pos]);
 
-    // prefix -> Map<key, value>
     let mut entries: HashMap<String, HashMap<String, String>> = HashMap::new();
     let mut order = Vec::new();
 
@@ -108,8 +106,6 @@ pub fn parse_fmo_buffer(buf: &[u8]) -> Result<Vec<FmoRecord>, String> {
         }
 
         if let Some((field, val)) = line.split_once('\x01') {
-            // 例: "ssp_fmo_header_00004468_000f0dea.sakura.surface"
-            // prefix は識別ID部分（ssp_fmo_header_<id> または <id>）
             let (prefix, key) = if let Some(stripped) = field.strip_prefix("ssp_fmo_header_") {
                 if let Some((id_part, sub_key)) = stripped.split_once('.') {
                     (format!("ssp_fmo_header_{}", id_part), sub_key)
@@ -141,7 +137,7 @@ pub fn parse_fmo_buffer(buf: &[u8]) -> Result<Vec<FmoRecord>, String> {
                 .unwrap_or(&prefix)
                 .to_string();
             if !seen_ids.insert(id.clone()) {
-                continue; // Prevent duplicate records if prefix appeared multiple times or clashes
+                continue;
             }
             let path = map.get("path").cloned().unwrap_or_default();
             let hwnd = map.get("hwnd").and_then(|h| h.parse().ok()).unwrap_or(0);
@@ -186,76 +182,4 @@ pub fn parse_fmo_buffer(buf: &[u8]) -> Result<Vec<FmoRecord>, String> {
     }
 
     Ok(records)
-}
-
-/// 名前による FMO レコード検索 (大文字小文字無視)
-pub fn find_record_by_name<'a>(records: &'a [FmoRecord], name: &str) -> Option<&'a FmoRecord> {
-    records.iter().find(|r| {
-        r.name.eq_ignore_ascii_case(name)
-            || r.keroname.eq_ignore_ascii_case(name)
-            || r.fullname
-                .as_deref()
-                .map(|f| f.eq_ignore_ascii_case(name))
-                .unwrap_or(false)
-    })
-}
-
-/// HWND による FMO レコード検索
-pub fn find_record_by_hwnd(records: &[FmoRecord], hwnd: u64) -> Option<&FmoRecord> {
-    if hwnd == 0 {
-        return None;
-    }
-    records
-        .iter()
-        .find(|r| r.hwnd == hwnd || r.kerohwnd == Some(hwnd) || r.hwndlist.contains(&hwnd))
-}
-
-/// ゴーストが存在するかを大文字小文字無視で判定
-pub fn has_ghost(records: &[FmoRecord], name: &str) -> bool {
-    find_record_by_name(records, name).is_some()
-}
-
-/// アクティブ（一時停止・停止状態でない）ゴーストレコードのみを抽出
-pub fn filter_active_records(records: &[FmoRecord]) -> Vec<&FmoRecord> {
-    records
-        .iter()
-        .filter(|r| {
-            if let Some(ref ms) = r.modulestate {
-                !ms.split(',')
-                    .any(|part| part == "lifecycle:paused" || part == "lifecycle:stopped")
-            } else {
-                true
-            }
-        })
-        .collect()
-}
-
-/// 可視（不可視・最小化状態でない）ゴーストレコードのみを抽出
-pub fn filter_visible_records(records: &[FmoRecord]) -> Vec<&FmoRecord> {
-    records
-        .iter()
-        .filter(|r| {
-            if let Some(ref ms) = r.modulestate {
-                !ms.split(',').any(|part| {
-                    part == "lifecycle:invisible"
-                        || part == "lifecycle:paused"
-                        || part == "lifecycle:stopped"
-                })
-            } else {
-                true
-            }
-        })
-        .collect()
-}
-
-/// 全てのゴースト名（重複なし・昇順）を抽出
-pub fn extract_ghost_names(records: &[FmoRecord]) -> Vec<String> {
-    let mut names = Vec::new();
-    for r in records {
-        if !r.name.is_empty() && !names.contains(&r.name) {
-            names.push(r.name.clone());
-        }
-    }
-    names.sort();
-    names
 }

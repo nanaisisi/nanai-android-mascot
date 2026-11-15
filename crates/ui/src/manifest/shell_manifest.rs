@@ -1,49 +1,13 @@
-//! シェルマニフェスト（Rust パース結果を JSON 化して JS / Canvas 側へ共有する層）
-//!
-//! `Shell::manifest()` が `ShellManifest` を生成し、Tauri コマンド経由で
-//! フロントエンドへ渡す。JS 側は JSON をそのまま消費して
-//! element 合成・SERIKO 再生・当たり判定・着せ替え描画を行う。
+//! シェル全体のマニフェスト (`ShellManifest`) および `Shell::manifest` メソッド
 
-use serde::{Deserialize, Serialize};
-use std::collections::BTreeMap;
-
+use super::surface_manifest::SurfaceManifest;
 use crate::descript::{BindGroup, Descript};
 use crate::shell::Shell;
 use crate::surfaces_core_core::SortKind;
-use crate::surfaces_core_integration::{CursorDefinition, SurfaceDefinition};
+use crate::surfaces_core_integration::CursorDefinition;
 use crate::surfacetable::SurfaceTable;
-
-/// 1サーフィス分のマニフェスト（番号 + 定義 + 表示名）
-#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
-pub struct SurfaceManifest {
-    /// サーフィス番号
-    pub(crate) number: u32,
-    /// `surfaces.txt` の `name,` / surfacetable の表示名（無ければ None）
-    pub(crate) name: Option<String>,
-    /// element / animation / collision / point 定義
-    pub(crate) definition: SurfaceDefinition,
-}
-
-impl SurfaceManifest {
-    // Add getter methods
-    pub fn number(&self) -> u32 {
-        self.number
-    }
-    pub fn name(&self) -> Option<&str> {
-        self.name.as_deref()
-    }
-    pub fn definition(&self) -> &SurfaceDefinition {
-        &self.definition
-    }
-
-    pub fn new(number: u32, name: Option<String>, definition: SurfaceDefinition) -> Self {
-        Self {
-            number,
-            name,
-            definition,
-        }
-    }
-}
+use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
 
 /// シェル全体のマニフェスト（`Shell::manifest()` の出力）
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
@@ -84,7 +48,6 @@ pub struct ShellManifest {
 
 #[allow(dead_code)]
 impl ShellManifest {
-    // Add getter methods
     pub fn name(&self) -> &str {
         &self.name
     }
@@ -163,94 +126,5 @@ impl Shell {
             cursors: self.surfaces_txt.cursors().clone(),
             tooltips: self.surfaces_txt.tooltips().clone(),
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    /// 実プロジェクトのサンプルシェル
-    fn mock_shell_dir() -> std::path::PathBuf {
-        std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("../../assets/ghost/mock_nanai/shell/master")
-    }
-
-    #[test]
-    fn test_manifest_from_synthetic() {
-        // 最小シェルからのマニフェスト生成
-        let dir = std::env::temp_dir().join("nanai_manifest_test_shell");
-        let _ = std::fs::remove_dir_all(&dir);
-        std::fs::create_dir_all(&dir).unwrap();
-        std::fs::write(
-            dir.join("surfaces.txt"),
-            "charset,Shift_JIS\nsurface0\n{\nelement0,base,surface0.png,0,0\ncollisionex0,head,rect,0,0,10,10\nanimation100.interval,bind\nanimation100.pattern0,add,100,0,0,0\n}\n",
-        )
-        .unwrap();
-        std::fs::write(
-            dir.join("descript.txt"),
-            "type,shell\nname,manifest_test\ncraftmanw,Tester\n",
-        )
-        .unwrap();
-
-        let shell = Shell::load(&dir).unwrap();
-        let manifest = shell.manifest();
-
-        assert_eq!(manifest.name(), "manifest_test");
-        assert_eq!(manifest.craftman(), Some("Tester"));
-        assert_eq!(
-            manifest.descript().type_().map(|s| s.as_str()),
-            Some("shell")
-        );
-        assert_eq!(manifest.surfaces().len(), 1);
-        assert_eq!(manifest.surfaces()[0].number(), 0);
-        assert_eq!(
-            manifest.surfaces()[0]
-                .definition()
-                .element(0)
-                .unwrap()
-                .file(),
-            "surface0.png"
-        );
-        assert_eq!(manifest.sakura_bind_groups().len(), 0);
-
-        // JSON 化できる
-        let json = serde_json::to_string(&manifest).unwrap();
-        assert!(json.contains("\"surfaces\""));
-        assert!(json.contains("surface0.png"));
-        std::fs::remove_dir_all(&dir).ok();
-    }
-
-    #[test]
-    fn test_manifest_json_roundtrip_mock_nanai() {
-        let dir = mock_shell_dir();
-        let shell = Shell::load(&dir).unwrap();
-        let manifest = shell.manifest();
-
-        // 構造確認
-        assert_eq!(manifest.name(), "master");
-        let s0 = manifest
-            .surfaces()
-            .iter()
-            .find(|s| s.number() == 0)
-            .unwrap();
-        assert!(
-            s0.definition()
-                .collisions()
-                .iter()
-                .any(|c| c.name() == "head")
-        );
-        assert!(s0.definition().animations().contains_key(&0));
-        assert!(!manifest.sakura_bind_groups().is_empty());
-        assert!(!manifest.kero_bind_groups().is_empty());
-        assert!(manifest.surface_table().is_some());
-
-        // JSON → 構造体 ラウンドトリップ
-        let json = serde_json::to_string(&manifest).unwrap();
-        let back: ShellManifest = serde_json::from_str(&json).unwrap();
-        assert_eq!(back, manifest);
-
-        // 画像ファイル参照が残っている
-        assert!(json.contains("surface0.png"));
     }
 }

@@ -3,8 +3,8 @@
 pub mod events;
 pub mod tests;
 
-pub use events::*;
 pub use crate::shiori_protocol_core::*;
+pub use events::*;
 use std::collections::BTreeMap;
 use wasm_bindgen::prelude::*;
 

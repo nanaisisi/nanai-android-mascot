@@ -1,4 +1,4 @@
-pub use nanai_vfs::{open_shift_jis_file, open_text_file, resolve_vfs_path};
+pub use nanai_vfs::{open_text_file, resolve_vfs_path};
 use std::path::{Path, PathBuf};
 use tauri::Manager;
 

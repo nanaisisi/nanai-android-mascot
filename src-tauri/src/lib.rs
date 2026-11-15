@@ -27,11 +27,26 @@ mod shiori;
 mod sstp;
 mod tray;
 
+
+
 pub use common::paths::{
     clean_verbatim_path, normalize_path, resolve_asset_path, resolve_ghost_directory,
 };
 
 use common::*;
+
+#[allow(non_camel_case_types)]
+pub trait Nanai_android_mascot_uiInterface {
+    fn run(&self);
+}
+
+pub struct NanaiAndroidMascotUiApp;
+
+impl Nanai_android_mascot_uiInterface for NanaiAndroidMascotUiApp {
+    fn run(&self) {
+        run();
+    }
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {

@@ -34,7 +34,12 @@ fn test_build_shiori_request_extended() {
         base_id: Some("OnBoot".into()),
     };
     let refs = vec!["1".into()];
-    let req = build_shiori_request_extended("GET", "OnFirstBoot", &refs, Some(params));
+    let req = build_shiori_request_extended(Build_shiori_request_extendedParams {
+        method: "GET",
+        event_id: "OnFirstBoot",
+        references: &refs,
+        params: Some(params),
+    });
     assert!(req.contains("GET SHIORI/3.0"));
     assert!(req.contains("Sender: SSP"));
     assert!(req.contains("SenderType: internal,raise"));

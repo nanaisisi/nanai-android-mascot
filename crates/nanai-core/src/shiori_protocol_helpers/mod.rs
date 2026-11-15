@@ -18,13 +18,24 @@ pub fn build_shiori_request(method: &str, headers: BTreeMap<String, String>) -> 
     resp
 }
 
+#[allow(non_camel_case_types)]
+pub struct Build_shiori_request_extendedParams<'a> {
+    pub method: &'a str,
+    pub event_id: &'a str,
+    pub references: &'a [String],
+    pub params: Option<ShioriExtendedParams>,
+}
+
 /// UKADOC SHIORI/3.0 仕様に完全準拠した拡張リクエスト文字列構築 (GET / NOTIFY)
 pub fn build_shiori_request_extended(
-    method: &str,
-    event_id: &str,
-    references: &[String],
-    params: Option<ShioriExtendedParams>,
+    params: Build_shiori_request_extendedParams<'_>,
 ) -> String {
+    let Build_shiori_request_extendedParams {
+        method,
+        event_id,
+        references,
+        params,
+    } = params;
     let mut headers = BTreeMap::new();
     let p = params.unwrap_or_default();
 
@@ -59,7 +70,12 @@ pub fn build_shiori_request_extended(
 
 /// SHIORI/3.0 イベント通知（NOTIFY）文字列を構築 (Reference0〜N 対応)
 pub fn build_shiori_notify(event_name: &str, references: &[String]) -> String {
-    build_shiori_request_extended("NOTIFY", event_name, references, None)
+    build_shiori_request_extended(Build_shiori_request_extendedParams {
+        method: "NOTIFY",
+        event_id: event_name,
+        references,
+        params: None,
+    })
 }
 
 #[wasm_bindgen]

@@ -1,6 +1,6 @@
 //! UKADOC公式仕様に準拠した標準SHIORIイベントリクエストビルダー群 (マウス操作・ジェスチャ等)
 
-use crate::shiori_protocol_helpers::build_shiori_request_extended;
+use crate::shiori_protocol_helpers::{build_shiori_request_extended, Build_shiori_request_extendedParams};
 
 /// OnMouseClick イベントリクエスト構築
 pub fn build_on_mouse_click_request(
@@ -18,7 +18,12 @@ pub fn build_on_mouse_click_request(
         collision_name.to_string(),
         button.to_string(),
     ];
-    build_shiori_request_extended("GET", "OnMouseClick", &refs, None)
+    build_shiori_request_extended(Build_shiori_request_extendedParams {
+        method: "GET",
+        event_id: "OnMouseClick",
+        references: &refs,
+        params: None,
+    })
 }
 
 /// OnMouseClickEx イベントリクエスト構築 (ukadoc-spec/list/shiori-event/mouse/OnMouseClickEx.md)
@@ -39,13 +44,23 @@ pub fn build_on_mouse_click_ex_request(
         button.to_string(),
         key_state.to_string(),
     ];
-    build_shiori_request_extended("GET", "OnMouseClickEx", &refs, None)
+    build_shiori_request_extended(Build_shiori_request_extendedParams {
+        method: "GET",
+        event_id: "OnMouseClickEx",
+        references: &refs,
+        params: None,
+    })
 }
 
 /// OnMouseGesture イベントリクエスト構築 (ukadoc-spec/list/shiori-event/mouse/OnMouseGesture.md)
 pub fn build_on_mouse_gesture_request(gesture: &str, scope_id: i32) -> String {
     let refs = vec![gesture.to_string(), scope_id.to_string()];
-    build_shiori_request_extended("GET", "OnMouseGesture", &refs, None)
+    build_shiori_request_extended(Build_shiori_request_extendedParams {
+        method: "GET",
+        event_id: "OnMouseGesture",
+        references: &refs,
+        params: None,
+    })
 }
 
 /// OnMouseWheel イベントリクエスト構築 (ukadoc-spec/list/shiori-event/mouse/OnMouseWheel.md)
@@ -63,17 +78,32 @@ pub fn build_on_mouse_wheel_request(
         collision.to_string(),
         scope_id.to_string(),
     ];
-    build_shiori_request_extended("GET", "OnMouseWheel", &refs, None)
+    build_shiori_request_extended(Build_shiori_request_extendedParams {
+        method: "GET",
+        event_id: "OnMouseWheel",
+        references: &refs,
+        params: None,
+    })
 }
 
 /// OnMouseDragStart イベントリクエスト構築 (ukadoc-spec/list/shiori-event/mouse/OnMouseDragStart.md)
 pub fn build_on_mouse_drag_start_request(x: i32, y: i32, scope_id: i32) -> String {
     let refs = vec![x.to_string(), y.to_string(), scope_id.to_string()];
-    build_shiori_request_extended("GET", "OnMouseDragStart", &refs, None)
+    build_shiori_request_extended(Build_shiori_request_extendedParams {
+        method: "GET",
+        event_id: "OnMouseDragStart",
+        references: &refs,
+        params: None,
+    })
 }
 
 /// OnMouseDragEnd イベントリクエスト構築 (ukadoc-spec/list/shiori-event/mouse/OnMouseDragEnd.md)
 pub fn build_on_mouse_drag_end_request(x: i32, y: i32, scope_id: i32) -> String {
     let refs = vec![x.to_string(), y.to_string(), scope_id.to_string()];
-    build_shiori_request_extended("GET", "OnMouseDragEnd", &refs, None)
+    build_shiori_request_extended(Build_shiori_request_extendedParams {
+        method: "GET",
+        event_id: "OnMouseDragEnd",
+        references: &refs,
+        params: None,
+    })
 }

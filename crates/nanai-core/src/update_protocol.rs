@@ -1,7 +1,7 @@
 //! UKADOC (SSP仕様) 準拠 ネットワーク更新プロトコルのメッセージ・イベント引数構築モジュール
 //! TypeScript版 `ui/ts/core/actions/update-protocol.ts` から移植されたRust/WASMコア実装。
 
-use crate::shiori_protocol::build_shiori_request_extended;
+use crate::shiori_protocol::{build_shiori_request_extended, Build_shiori_request_extendedParams};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use tsify::Tsify;
@@ -290,7 +290,12 @@ pub fn build_on_update_begin_request(
 ) -> String {
     let args = build_update_args("", "", update_target, update_mode);
     let refs = args.to_vec();
-    build_shiori_request_extended("GET", "OnUpdateBegin", &refs, None)
+    build_shiori_request_extended(Build_shiori_request_extendedParams {
+        method: "GET",
+        event_id: "OnUpdateBegin",
+        references: &refs,
+        params: None,
+    })
 }
 
 /// OnUpdateReady イベントリクエスト構築 (ukadoc-spec/list/shiori-event/network-update/OnUpdateReady.md)
@@ -301,7 +306,12 @@ pub fn build_on_update_ready_request(
 ) -> String {
     let args = build_update_args(&file_count.to_string(), "", update_target, update_mode);
     let refs = args.to_vec();
-    build_shiori_request_extended("GET", "OnUpdateReady", &refs, None)
+    build_shiori_request_extended(Build_shiori_request_extendedParams {
+        method: "GET",
+        event_id: "OnUpdateReady",
+        references: &refs,
+        params: None,
+    })
 }
 
 /// OnUpdateComplete イベントリクエスト構築 (ukadoc-spec/list/shiori-event/network-update/OnUpdateComplete.md)
@@ -313,7 +323,12 @@ pub fn build_on_update_complete_request(
 ) -> String {
     let args = build_update_complete_args(result, updated_files_count, update_target, update_mode);
     let refs = args.to_vec();
-    build_shiori_request_extended("GET", "OnUpdateComplete", &refs, None)
+    build_shiori_request_extended(Build_shiori_request_extendedParams {
+        method: "GET",
+        event_id: "OnUpdateComplete",
+        references: &refs,
+        params: None,
+    })
 }
 
 /// OnUpdateFailure イベントリクエスト構築 (ukadoc-spec/list/shiori-event/network-update/OnUpdateFailure.md)
@@ -325,7 +340,12 @@ pub fn build_on_update_failure_request(
 ) -> String {
     let args = build_update_failure_args(err, file_name, update_target, update_mode);
     let refs = args.to_vec();
-    build_shiori_request_extended("GET", "OnUpdateFailure", &refs, None)
+    build_shiori_request_extended(Build_shiori_request_extendedParams {
+        method: "GET",
+        event_id: "OnUpdateFailure",
+        references: &refs,
+        params: None,
+    })
 }
 
 #[cfg(test)]

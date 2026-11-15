@@ -1,7 +1,7 @@
 //! UKADOC公式仕様に準拠した標準SHIORIイベントリクエストビルダー群 (ライフサイクル・起動・終了・ゴースト切替等)
 
 use crate::shiori_protocol_core::ShioriExtendedParams;
-use crate::shiori_protocol_helpers::build_shiori_request_extended;
+use crate::shiori_protocol_helpers::{build_shiori_request_extended, Build_shiori_request_extendedParams};
 
 /// OnBoot / OnFirstBoot イベントリクエスト構築
 pub fn build_on_boot_request(is_first_boot: bool, kero_name: &str, ghost_dir: &str) -> String {
@@ -28,19 +28,34 @@ pub fn build_on_boot_request(is_first_boot: bool, kero_name: &str, ghost_dir: &s
         base_id,
         ..Default::default()
     };
-    build_shiori_request_extended("GET", event_id, &refs, Some(params))
+    build_shiori_request_extended(Build_shiori_request_extendedParams {
+        method: "GET",
+        event_id,
+        references: &refs,
+        params: Some(params),
+    })
 }
 
 /// OnClose イベントリクエスト構築
 pub fn build_on_close_request(reason: u32) -> String {
     let refs = vec![reason.to_string()];
-    build_shiori_request_extended("GET", "OnClose", &refs, None)
+    build_shiori_request_extended(Build_shiori_request_extendedParams {
+        method: "GET",
+        event_id: "OnClose",
+        references: &refs,
+        params: None,
+    })
 }
 
 /// OnShellChanged イベントリクエスト構築
 pub fn build_on_shell_changed_request(shell_name: &str) -> String {
     let refs = vec![shell_name.to_string()];
-    build_shiori_request_extended("GET", "OnShellChanged", &refs, None)
+    build_shiori_request_extended(Build_shiori_request_extendedParams {
+        method: "GET",
+        event_id: "OnShellChanged",
+        references: &refs,
+        params: None,
+    })
 }
 
 /// OnDressupChanged イベントリクエスト構築
@@ -60,55 +75,105 @@ pub fn build_on_dressup_changed_request(
             "0".to_string()
         },
     ];
-    build_shiori_request_extended("GET", "OnDressupChanged", &refs, None)
+    build_shiori_request_extended(Build_shiori_request_extendedParams {
+        method: "GET",
+        event_id: "OnDressupChanged",
+        references: &refs,
+        params: None,
+    })
 }
 
 /// OnGhostChanging イベントリクエスト構築 (ukadoc-spec/list/shiori-event/boot-close-change/OnGhostChanging.md)
 pub fn build_on_ghost_changing_request(target_ghost: &str) -> String {
     let refs = vec![target_ghost.to_string()];
-    build_shiori_request_extended("GET", "OnGhostChanging", &refs, None)
+    build_shiori_request_extended(Build_shiori_request_extendedParams {
+        method: "GET",
+        event_id: "OnGhostChanging",
+        references: &refs,
+        params: None,
+    })
 }
 
 /// OnGhostChanged イベントリクエスト構築 (ukadoc-spec/list/shiori-event/boot-close-change/OnGhostChanged.md)
 pub fn build_on_ghost_changed_request(target_ghost: &str) -> String {
     let refs = vec![target_ghost.to_string()];
-    build_shiori_request_extended("GET", "OnGhostChanged", &refs, None)
+    build_shiori_request_extended(Build_shiori_request_extendedParams {
+        method: "GET",
+        event_id: "OnGhostChanged",
+        references: &refs,
+        params: None,
+    })
 }
 
 /// OnGhostBoot プラグインイベントリクエスト構築 (ukadoc-spec/list/plugin-event/plugin-event/OnGhostBoot.md)
 pub fn build_on_ghost_boot_event_request(ghost_name: &str) -> String {
     let refs = vec![ghost_name.to_string()];
-    build_shiori_request_extended("GET", "OnGhostBoot", &refs, None)
+    build_shiori_request_extended(Build_shiori_request_extendedParams {
+        method: "GET",
+        event_id: "OnGhostBoot",
+        references: &refs,
+        params: None,
+    })
 }
 
 /// OnGhostExit プラグインイベントリクエスト構築 (ukadoc-spec/list/plugin-event/plugin-event/OnGhostExit.md)
 pub fn build_on_ghost_exit_event_request(ghost_name: &str) -> String {
     let refs = vec![ghost_name.to_string()];
-    build_shiori_request_extended("GET", "OnGhostExit", &refs, None)
+    build_shiori_request_extended(Build_shiori_request_extendedParams {
+        method: "GET",
+        event_id: "OnGhostExit",
+        references: &refs,
+        params: None,
+    })
 }
 
 /// OnGhostInfoUpdate プラグインイベントリクエスト構築 (ukadoc-spec/list/plugin-event/plugin-event/OnGhostInfoUpdate.md)
 pub fn build_on_ghost_info_update_request(ghost_name: &str) -> String {
     let refs = vec![ghost_name.to_string()];
-    build_shiori_request_extended("GET", "OnGhostInfoUpdate", &refs, None)
+    build_shiori_request_extended(Build_shiori_request_extendedParams {
+        method: "GET",
+        event_id: "OnGhostInfoUpdate",
+        references: &refs,
+        params: None,
+    })
 }
 
 /// OnInitialize イベントリクエスト構築 (ukadoc-spec/list/shiori-event/boot-close-change/OnInitialize.md)
 pub fn build_on_initialize_request() -> String {
-    build_shiori_request_extended("GET", "OnInitialize", &[], None)
+    build_shiori_request_extended(Build_shiori_request_extendedParams {
+        method: "GET",
+        event_id: "OnInitialize",
+        references: &[],
+        params: None,
+    })
 }
 
 /// OnDestroy イベントリクエスト構築 (ukadoc-spec/list/shiori-event/boot-close-change/OnDestroy.md)
 pub fn build_on_destroy_request() -> String {
-    build_shiori_request_extended("GET", "OnDestroy", &[], None)
+    build_shiori_request_extended(Build_shiori_request_extendedParams {
+        method: "GET",
+        event_id: "OnDestroy",
+        references: &[],
+        params: None,
+    })
 }
 
 /// OnSysSuspend イベントリクエスト構築 (ukadoc-spec/list/shiori-event/boot-close-change/OnSysSuspend.md)
 pub fn build_on_sys_suspend_request() -> String {
-    build_shiori_request_extended("GET", "OnSysSuspend", &[], None)
+    build_shiori_request_extended(Build_shiori_request_extendedParams {
+        method: "GET",
+        event_id: "OnSysSuspend",
+        references: &[],
+        params: None,
+    })
 }
 
 /// OnSysResume イベントリクエスト構築 (ukadoc-spec/list/shiori-event/boot-close-change/OnSysResume.md)
 pub fn build_on_sys_resume_request() -> String {
-    build_shiori_request_extended("GET", "OnSysResume", &[], None)
+    build_shiori_request_extended(Build_shiori_request_extendedParams {
+        method: "GET",
+        event_id: "OnSysResume",
+        references: &[],
+        params: None,
+    })
 }

@@ -50,7 +50,7 @@ mod tests {
         assert_eq!(detect_mime_type("surface0000.png"), "image/png");
 
         let dec = detect_and_decode_ext(b"charset=Shift_JIS\r\ntext");
-        assert_eq!(dec.encoding, "Shift_JIS");
+        assert_eq!(dec.encoding(), "Shift_JIS");
 
         let mut overlay = OverlayVfs::new();
         overlay.push_base(Arc::new(mock.clone()));

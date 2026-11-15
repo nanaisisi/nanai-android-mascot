@@ -44,13 +44,13 @@ fn test_encoding_edge_cases() {
     // Cycle 6: detect_and_decode_ext & headers with '=' and ':'
     let eq_header = b"charset=Shift_JIS\r\nname=EquTest";
     let res_eq = detect_and_decode_ext(eq_header);
-    assert_eq!(res_eq.encoding, "Shift_JIS");
-    assert!(!res_eq.had_errors);
+    assert_eq!(res_eq.encoding(), "Shift_JIS");
+    assert!(!res_eq.had_errors());
 
     let colon_header = b"charset:utf-8\r\nname:ColonTest";
     let res_colon = detect_and_decode_ext(colon_header);
-    assert_eq!(res_colon.encoding, "UTF-8");
-    assert!(!res_colon.had_errors);
+    assert_eq!(res_colon.encoding(), "UTF-8");
+    assert!(!res_colon.had_errors());
 
     // detect_mime_type
     assert_eq!(detect_mime_type("surface0.png"), "image/png");

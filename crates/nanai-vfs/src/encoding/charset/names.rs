@@ -4,11 +4,33 @@
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DecodeResult {
     /// デコードされた文字列
-    pub text: String,
+    pub(crate) text: String,
     /// 判定された文字コード名（"UTF-8", "UTF-8 (BOM)", "Shift_JIS", "EUC-JP", "ISO-2022-JP", "UTF-16LE", "UTF-16BE"）
-    pub encoding: &'static str,
+    pub(crate) encoding: &'static str,
     /// 不正な文字シーケンスや置換文字が発生したか
-    pub had_errors: bool,
+    pub(crate) had_errors: bool,
+}
+
+#[allow(dead_code)]
+impl DecodeResult {
+    // Add getter methods
+    pub fn text(&self) -> &str {
+        &self.text
+    }
+    pub fn encoding(&self) -> &'static str {
+        self.encoding
+    }
+    pub fn had_errors(&self) -> bool {
+        self.had_errors
+    }
+
+    pub fn new(text: impl Into<String>, encoding: &'static str, had_errors: bool) -> Self {
+        Self {
+            text: text.into(),
+            encoding,
+            had_errors,
+        }
+    }
 }
 
 /// 文字コード名を標準的なキー表現に正規化（例: "cp932", "sjis", "windows-31j" -> "Shift_JIS"）

@@ -73,13 +73,22 @@ impl VfsResolver {
         }
 
         let mut collected = Vec::new();
-        fn recurse(
-            dir: &Path,
-            _base: &Path,
-            rel_prefix: &str,
+        #[allow(non_camel_case_types)]
+        struct RecurseParams<'a> {
+            dir: &'a Path,
+            _base: &'a Path,
+            rel_prefix: &'a str,
             depth: usize,
-            out: &mut Vec<String>,
-        ) -> io::Result<()> {
+            out: &'a mut Vec<String>,
+        }
+
+        fn recurse(params: RecurseParams<'_>) -> io::Result<()> {
+            let dir = params.dir;
+            let _base = params._base;
+            let rel_prefix = params.rel_prefix;
+            let depth = params.depth;
+            let out = params.out;
+
             if depth > 32 || !dir.is_dir() {
                 return Ok(());
             }
@@ -97,7 +106,13 @@ impl VfsResolver {
                 };
 
                 if file_type.is_dir() {
-                    recurse(&entry.path(), _base, &sub_rel, depth + 1, out)?;
+                    recurse(RecurseParams {
+                        dir: &entry.path(),
+                        _base,
+                        rel_prefix: &sub_rel,
+                        depth: depth + 1,
+                        out,
+                    })?;
                 } else if file_type.is_file() {
                     out.push(sub_rel);
                 }
@@ -105,7 +120,13 @@ impl VfsResolver {
             Ok(())
         }
 
-        recurse(&base, &base, "", 0, &mut collected)?;
+        recurse(RecurseParams {
+            dir: &base,
+            _base: &base,
+            rel_prefix: "",
+            depth: 0,
+            out: &mut collected,
+        })?;
         collected.sort();
         Ok(collected)
     }

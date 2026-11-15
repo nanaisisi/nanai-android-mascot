@@ -113,9 +113,9 @@ fn test_vfs_traits_cycle10_streaming_and_utf32() {
         0xFF, 0xFE, 0x00, 0x00, 0x41, 0x00, 0x00, 0x00, 0x42, 0x00, 0x00, 0x00,
     ];
     let res_le = crate::encoding::detect_and_decode_ext(&utf32le_bytes);
-    assert_eq!(res_le.encoding, "UTF-32LE");
-    assert_eq!(res_le.text, "AB");
-    assert!(!res_le.had_errors);
+    assert_eq!(res_le.encoding(), "UTF-32LE");
+    assert_eq!(res_le.text(), "AB");
+    assert!(!res_le.had_errors());
 
     // UTF-32BE BOM detection & decode
     // "AB" in UTF-32BE: BOM(00 00 FE FF) + 'A'(00 00 00 41) + 'B'(00 00 00 42)
@@ -123,7 +123,7 @@ fn test_vfs_traits_cycle10_streaming_and_utf32() {
         0x00, 0x00, 0xFE, 0xFF, 0x00, 0x00, 0x00, 0x41, 0x00, 0x00, 0x00, 0x42,
     ];
     let res_be = crate::encoding::detect_and_decode_ext(&utf32be_bytes);
-    assert_eq!(res_be.encoding, "UTF-32BE");
-    assert_eq!(res_be.text, "AB");
-    assert!(!res_be.had_errors);
+    assert_eq!(res_be.encoding(), "UTF-32BE");
+    assert_eq!(res_be.text(), "AB");
+    assert!(!res_be.had_errors());
 }

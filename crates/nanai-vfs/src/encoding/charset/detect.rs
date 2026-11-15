@@ -265,5 +265,5 @@ pub fn detect_and_decode_ext(buffer: &[u8]) -> DecodeResult {
 /// バイト列から文字コードを自動判定してデコードし、(文字列, 文字コード名) を返す
 pub fn detect_and_decode(buffer: &[u8]) -> (String, &'static str) {
     let res = detect_and_decode_ext(buffer);
-    (res.text, res.encoding)
+    (res.text().to_string(), res.encoding())
 }

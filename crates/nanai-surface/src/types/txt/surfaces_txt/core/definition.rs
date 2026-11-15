@@ -40,18 +40,42 @@ pub struct SurfacesTxt {
 #[allow(dead_code)]
 impl SurfacesTxt {
     // Add getter methods
-    pub fn charset(&self) -> Option<&str> { self.charset.as_deref() }
-    pub fn version(&self) -> u32 { self.version }
-    pub fn maxwidth(&self) -> Option<i32> { self.maxwidth }
-    pub fn animation_sort(&self) -> Option<&SortKind> { self.animation_sort.as_ref() }
-    pub fn collision_sort(&self) -> Option<&SortKind> { self.collision_sort.as_ref() }
-    pub fn surfaces(&self) -> &BTreeMap<u32, SurfaceDefinition> { &self.surfaces }
-    pub fn aliases(&self) -> &BTreeMap<String, Vec<u32>> { &self.aliases }
-    pub fn kero_aliases(&self) -> &BTreeMap<String, Vec<u32>> { &self.kero_aliases }
-    pub fn char_aliases(&self) -> &BTreeMap<u32, BTreeMap<String, Vec<u32>>> { &self.char_aliases }
-    pub fn cursors(&self) -> &BTreeMap<String, Vec<CursorDefinition>> { &self.cursors }
-    pub fn tooltips(&self) -> &BTreeMap<String, BTreeMap<String, String>> { &self.tooltips }
-    pub fn properties(&self) -> &BTreeMap<String, String> { &self.properties }
+    pub fn charset(&self) -> Option<&str> {
+        self.charset.as_deref()
+    }
+    pub fn version(&self) -> u32 {
+        self.version
+    }
+    pub fn maxwidth(&self) -> Option<i32> {
+        self.maxwidth
+    }
+    pub fn animation_sort(&self) -> Option<&SortKind> {
+        self.animation_sort.as_ref()
+    }
+    pub fn collision_sort(&self) -> Option<&SortKind> {
+        self.collision_sort.as_ref()
+    }
+    pub fn surfaces(&self) -> &BTreeMap<u32, SurfaceDefinition> {
+        &self.surfaces
+    }
+    pub fn aliases(&self) -> &BTreeMap<String, Vec<u32>> {
+        &self.aliases
+    }
+    pub fn kero_aliases(&self) -> &BTreeMap<String, Vec<u32>> {
+        &self.kero_aliases
+    }
+    pub fn char_aliases(&self) -> &BTreeMap<u32, BTreeMap<String, Vec<u32>>> {
+        &self.char_aliases
+    }
+    pub fn cursors(&self) -> &BTreeMap<String, Vec<CursorDefinition>> {
+        &self.cursors
+    }
+    pub fn tooltips(&self) -> &BTreeMap<String, BTreeMap<String, String>> {
+        &self.tooltips
+    }
+    pub fn properties(&self) -> &BTreeMap<String, String> {
+        &self.properties
+    }
 
     /// テキスト内容から `surfaces.txt` をパースする
     pub fn parse(text: &str) -> Self {

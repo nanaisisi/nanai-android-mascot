@@ -11,9 +11,15 @@ pub struct CursorDefinition {
 #[allow(dead_code)]
 impl CursorDefinition {
     // Add getter methods
-    pub fn event(&self) -> &str { &self.event }
-    pub fn collision(&self) -> &str { &self.collision }
-    pub fn cursor(&self) -> &str { &self.cursor }
+    pub fn event(&self) -> &str {
+        &self.event
+    }
+    pub fn collision(&self) -> &str {
+        &self.collision
+    }
+    pub fn cursor(&self) -> &str {
+        &self.cursor
+    }
 
     pub fn new(
         event: impl Into<String>,

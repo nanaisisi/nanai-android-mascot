@@ -65,11 +65,11 @@ impl CompositionPlanSnapshot {
             .map(|layer| match layer {
                 CompositionLayer::Element(e) => PlanLayer {
                     kind: "element",
-                    file: e.file.clone(),
+                    file: e.file().to_string(),
                     surface: 0,
-                    x: e.x,
-                    y: e.y,
-                    method: method_string(&e.method),
+                    x: e.x(),
+                    y: e.y(),
+                    method: method_string(e.method()),
                 },
                 CompositionLayer::Pattern(p) => PlanLayer {
                     kind: "pattern",
@@ -87,10 +87,10 @@ impl CompositionPlanSnapshot {
             match layer {
                 CompositionLayer::Element(e) => {
                     "element".hash(&mut hasher);
-                    e.file.hash(&mut hasher);
-                    e.x.hash(&mut hasher);
-                    e.y.hash(&mut hasher);
-                    method_string(&e.method).hash(&mut hasher);
+                    e.file().hash(&mut hasher);
+                    e.x().hash(&mut hasher);
+                    e.y().hash(&mut hasher);
+                    method_string(e.method()).hash(&mut hasher);
                 }
                 CompositionLayer::Pattern(p) => {
                     "pattern".hash(&mut hasher);

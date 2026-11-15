@@ -5,30 +5,105 @@ use serde::{Deserialize, Serialize};
 /// サーフィスレイヤー（ elementN ）定義
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ElementDef {
-    pub id: u32,
-    pub method: crate::types::DrawMethod,
-    pub file: String,
-    pub x: i32,
-    pub y: i32,
-    pub options: Vec<String>,
+    pub(crate) id: u32,
+    pub(crate) method: crate::types::DrawMethod,
+    pub(crate) file: String,
+    pub(crate) x: i32,
+    pub(crate) y: i32,
+    pub(crate) options: Vec<String>,
+}
+
+#[allow(dead_code)]
+impl ElementDef {
+    // Add getter methods
+    pub fn id(&self) -> u32 {
+        self.id
+    }
+    pub fn method(&self) -> &crate::types::DrawMethod {
+        &self.method
+    }
+    pub fn file(&self) -> &str {
+        &self.file
+    }
+    pub fn x(&self) -> i32 {
+        self.x
+    }
+    pub fn y(&self) -> i32 {
+        self.y
+    }
+    pub fn options(&self) -> &[String] {
+        &self.options
+    }
+
+    pub fn new(
+        id: u32,
+        method: crate::types::DrawMethod,
+        file: impl Into<String>,
+        x: i32,
+        y: i32,
+        options: Vec<String>,
+    ) -> Self {
+        Self {
+            id,
+            method,
+            file: file.into(),
+            x,
+            y,
+            options,
+        }
+    }
 }
 
 /// 基準点（ centerx, centery, basepos, kinoko 等）定義
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Points {
-    pub center_x: Option<i32>,
-    pub center_y: Option<i32>,
-    pub basepos_x: Option<i32>,
-    pub basepos_y: Option<i32>,
-    pub kinoko_center_x: Option<i32>,
-    pub kinoko_center_y: Option<i32>,
+    pub(crate) center_x: Option<i32>,
+    pub(crate) center_y: Option<i32>,
+    pub(crate) basepos_x: Option<i32>,
+    pub(crate) basepos_y: Option<i32>,
+    pub(crate) kinoko_center_x: Option<i32>,
+    pub(crate) kinoko_center_y: Option<i32>,
+}
+
+#[allow(dead_code)]
+impl Points {
+    // Add getter methods
+    pub fn center_x(&self) -> Option<i32> {
+        self.center_x
+    }
+    pub fn center_y(&self) -> Option<i32> {
+        self.center_y
+    }
+    pub fn basepos_x(&self) -> Option<i32> {
+        self.basepos_x
+    }
+    pub fn basepos_y(&self) -> Option<i32> {
+        self.basepos_y
+    }
+    pub fn kinoko_center_x(&self) -> Option<i32> {
+        self.kinoko_center_x
+    }
+    pub fn kinoko_center_y(&self) -> Option<i32> {
+        self.kinoko_center_y
+    }
 }
 
 /// バルーンオフセット定義
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct BalloonOffset {
-    pub x: Option<i32>,
-    pub y: Option<i32>,
+    pub(crate) x: Option<i32>,
+    pub(crate) y: Option<i32>,
+}
+
+#[allow(dead_code)]
+impl BalloonOffset {
+    // Add getter methods
+    pub fn x(&self) -> Option<i32> {
+        self.x
+    }
+    pub fn y(&self) -> Option<i32> {
+        self.y
+    }
 }
 
 /// 当たり判定・アニメーションのソート順序
@@ -60,18 +135,35 @@ impl SortKind {
 
 #[allow(non_camel_case_types)]
 pub struct Make_square_rectParams {
-    pub x1: i32,
-    pub y1: i32,
-    pub x2: i32,
-    pub y2: i32,
+    pub(crate) x1: i32,
+    pub(crate) y1: i32,
+    pub(crate) x2: i32,
+    pub(crate) y2: i32,
+}
+
+#[allow(dead_code)]
+impl Make_square_rectParams {
+    // Add getter methods
+    pub fn x1(&self) -> i32 {
+        self.x1
+    }
+    pub fn y1(&self) -> i32 {
+        self.y1
+    }
+    pub fn x2(&self) -> i32 {
+        self.x2
+    }
+    pub fn y2(&self) -> i32 {
+        self.y2
+    }
 }
 
 /// 指定矩形を、中心を維持したまま長辺基準の正方形に整形する
 pub fn make_square_rect(params: Make_square_rectParams) -> [i32; 4] {
-    let x1 = params.x1;
-    let y1 = params.y1;
-    let x2 = params.x2;
-    let y2 = params.y2;
+    let x1 = params.x1();
+    let y1 = params.y1();
+    let x2 = params.x2();
+    let y2 = params.y2();
 
     let min_x = x1.min(x2);
     let max_x = x1.max(x2);

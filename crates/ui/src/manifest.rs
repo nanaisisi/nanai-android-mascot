@@ -205,7 +205,11 @@ mod tests {
         assert_eq!(manifest.surfaces().len(), 1);
         assert_eq!(manifest.surfaces()[0].number(), 0);
         assert_eq!(
-            manifest.surfaces()[0].definition().element(0).unwrap().file,
+            manifest.surfaces()[0]
+                .definition()
+                .element(0)
+                .unwrap()
+                .file(),
             "surface0.png"
         );
         assert_eq!(manifest.sakura_bind_groups().len(), 0);

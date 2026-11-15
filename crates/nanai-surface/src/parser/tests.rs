@@ -24,10 +24,10 @@ fn test_parse_surfaces_txt_blocks() {
     assert!(parsed.kero_aliases.contains_key("kmain"));
     assert!(parsed.surfaces.contains_key(&0));
     let def = parsed.surfaces.get(&0).unwrap();
-    assert_eq!(def.name.as_deref(), Some("SurfaceZero"));
-    assert_eq!(def.elements.len(), 2);
-    assert_eq!(def.points.center_x, Some(100));
-    assert_eq!(def.balloon_offsets.get("*").unwrap().x, Some(10));
-    assert_eq!(def.balloon_offsets.get("*").unwrap().y, Some(20));
-    assert_eq!(def.properties.get("otherkey").unwrap(), "value");
+    assert_eq!(def.name(), Some("SurfaceZero"));
+    assert_eq!(def.elements().len(), 2);
+    assert_eq!(def.points().center_x(), Some(100));
+    assert_eq!(def.balloon_offsets().get("*").unwrap().x(), Some(10));
+    assert_eq!(def.balloon_offsets().get("*").unwrap().y(), Some(20));
+    assert_eq!(def.properties().get("otherkey").unwrap(), "value");
 }

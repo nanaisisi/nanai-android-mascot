@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use tsify::Tsify;
+use wasm_bindgen::prelude::*;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 #[serde(rename_all = "lowercase")]
@@ -82,13 +83,19 @@ pub fn build_install_begin_args(identifier: Option<&str>) -> [String; 1] {
     [identifier.unwrap_or("install").to_string()]
 }
 
+#[allow(non_camel_case_types)]
+pub struct Build_install_complete_argsParams<'a> {
+    pub install_type: &'a str,
+    pub name: &'a str,
+    pub extra: Option<&'a str>,
+}
+
 /// OnInstallComplete SHIORI 引数生成
 /// [Ref0=種別, Ref1=名前, Ref2=追加情報(任意)]
-pub fn build_install_complete_args(
-    install_type: &str,
-    name: &str,
-    extra: Option<&str>,
-) -> [String; 3] {
+pub fn build_install_complete_args(params: Build_install_complete_argsParams<'_>) -> [String; 3] {
+    let install_type = params.install_type;
+    let name = params.name;
+    let extra = params.extra;
     [
         normalize_install_type(Some(install_type)),
         name.to_string(),
@@ -96,14 +103,23 @@ pub fn build_install_complete_args(
     ]
 }
 
+#[allow(non_camel_case_types)]
+pub struct Build_install_complete_ex_argsParams<'a> {
+    pub install_type: &'a str,
+    pub name: &'a str,
+    pub path_or_extra: Option<&'a str>,
+    pub on_install_script: Option<&'a str>,
+}
+
 /// OnInstallCompleteEx SHIORI 引数生成 (UKADOC拡張)
 /// [Ref0=種別, Ref1=名前, Ref2=インストール先パス/情報, Ref3=実行スクリプト]
 pub fn build_install_complete_ex_args(
-    install_type: &str,
-    name: &str,
-    path_or_extra: Option<&str>,
-    on_install_script: Option<&str>,
+    params: Build_install_complete_ex_argsParams<'_>,
 ) -> [String; 4] {
+    let install_type = params.install_type;
+    let name = params.name;
+    let path_or_extra = params.path_or_extra;
+    let on_install_script = params.on_install_script;
     [
         normalize_install_type(Some(install_type)),
         name.to_string(),
@@ -135,13 +151,19 @@ pub fn build_install_refuse_args(reason: Option<&str>, target: Option<&str>) -> 
     [safe_reason.to_string(), target.unwrap_or("").to_string()]
 }
 
+#[allow(non_camel_case_types)]
+pub struct Build_install_reroute_argsParams<'a> {
+    pub target_ghost: &'a str,
+    pub install_type: &'a str,
+    pub name: &'a str,
+}
+
 /// OnInstallReroute SHIORI 引数生成 (別ゴーストへの転送指定時)
 /// [Ref0=転送先ゴースト名, Ref1=種別, Ref2=名前]
-pub fn build_install_reroute_args(
-    target_ghost: &str,
-    install_type: &str,
-    name: &str,
-) -> [String; 3] {
+pub fn build_install_reroute_args(params: Build_install_reroute_argsParams<'_>) -> [String; 3] {
+    let target_ghost = params.target_ghost;
+    let install_type = params.install_type;
+    let name = params.name;
     [
         target_ghost.to_string(),
         normalize_install_type(Some(install_type)),
@@ -175,60 +197,48 @@ pub fn parse_install_error_reason(err: &str) -> &'static str {
         || lower.contains("crc")
     {
         "unlha32 error"
-    } else if lower.contains("write error")
-        || lower.contains("fileio")
-        || lower.contains("permission denied")
-        || lower.contains("io error")
+    } else if lower.contains("permission")
+        || lower.contains("access denied")
+        || lower.contains("write")
+        || lower.contains("書き込み")
     {
         "write error"
+    } else if lower.contains("format") || lower.contains("invalid") || lower.contains("形式") {
+        "format error"
     } else {
         "extraction"
     }
 }
 
-/// OnInstallFailure SHIORI 引数生成
-/// [Ref0=失敗理由]
-pub fn build_install_failure_args(error_or_reason: &str) -> [String; 1] {
-    [parse_install_error_reason(error_or_reason).to_string()]
-}
-
-/// 複数リソース同時展開（同時インストール）の判定
-pub fn is_multi_resource_install(resources: &[(String, String)]) -> bool {
-    resources.len() > 1
-}
-
-/// 同時インストール時のSHIORI引数構築 (OnInstallCompleteAll 連携)
-pub struct MultiInstallResult {
+/// 複数リソース一括インストール（複数リソース展開）判定モデル
+#[derive(Debug, Clone, Serialize, Deserialize, Tsify)]
+pub struct MultiResourceInstallResult {
     pub count: String,
-    pub list_text: String,
     pub is_multi: bool,
 }
 
-pub fn build_install_multi_args(resources: &[(String, String)]) -> MultiInstallResult {
-    let [count, list_text] = build_install_complete_all_args(resources);
-    let is_multi = is_multi_resource_install(resources);
-    MultiInstallResult {
-        count,
-        list_text,
-        is_multi,
-    }
+pub fn is_multi_resource_install(installed_list: &[(String, String)]) -> bool {
+    installed_list.len() > 1
 }
 
-// -----------------------------------------------------------------------------
-// WASM C-ABI Functions (No runtime dependency, directly callable from JS / WASM)
-// -----------------------------------------------------------------------------
-
-use wasm_bindgen::prelude::*;
+pub fn build_install_multi_args(installed_list: &[(String, String)]) -> MultiResourceInstallResult {
+    let count = installed_list.len().to_string();
+    let is_multi = is_multi_resource_install(installed_list);
+    MultiResourceInstallResult { count, is_multi }
+}
 
 #[wasm_bindgen]
-pub fn wasm_parse_install_error_reason(err_message: &str) -> u32 {
-    match parse_install_error_reason(err_message) {
-        "unsupported" => 1,
-        "artificial" => 2,
-        "invalid path" => 3,
-        "unlha32 error" => 4,
-        "write error" => 5,
-        _ => 0, // extraction
+pub fn wasm_parse_install_error_reason(err: &str) -> i32 {
+    let reason = parse_install_error_reason(err);
+    match reason {
+        "unsupported" => 0,
+        "extraction" => 1,
+        "unlha32 error" => 2,
+        "artificial" => 3,
+        "write error" => 4,
+        "invalid path" => 5,
+        "format error" => 6,
+        _ => 1,
     }
 }
 
@@ -254,21 +264,29 @@ mod tests {
 
     #[test]
     fn test_build_install_complete_args() {
-        let args = build_install_complete_args("ghost", "Emily", Some("extra_path"));
+        let args = build_install_complete_args(Build_install_complete_argsParams {
+            install_type: "ghost",
+            name: "Emily",
+            extra: Some("extra_path"),
+        });
         assert_eq!(args, ["ghost", "Emily", "extra_path"]);
 
-        let def_args = build_install_complete_args("shell", "Master", None);
+        let def_args = build_install_complete_args(Build_install_complete_argsParams {
+            install_type: "shell",
+            name: "Master",
+            extra: None,
+        });
         assert_eq!(def_args, ["shell", "Master", ""]);
     }
 
     #[test]
     fn test_build_install_complete_ex_args() {
-        let args = build_install_complete_ex_args(
-            "balloon",
-            "Simple",
-            Some("path/to/balloon"),
-            Some("\\0\\s0Installed!\\e"),
-        );
+        let args = build_install_complete_ex_args(Build_install_complete_ex_argsParams {
+            install_type: "balloon",
+            name: "Simple",
+            path_or_extra: Some("path/to/balloon"),
+            on_install_script: Some("\\0\\s0Installed!\\e"),
+        });
         assert_eq!(
             args,
             [
@@ -302,7 +320,11 @@ mod tests {
 
     #[test]
     fn test_build_install_reroute_args() {
-        let args = build_install_reroute_args("Emily", "shell", "Master");
+        let args = build_install_reroute_args(Build_install_reroute_argsParams {
+            target_ghost: "Emily",
+            install_type: "shell",
+            name: "Master",
+        });
         assert_eq!(args, ["Emily", "shell", "Master"]);
     }
 

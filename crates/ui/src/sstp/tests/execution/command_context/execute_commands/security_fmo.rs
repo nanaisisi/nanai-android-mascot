@@ -10,7 +10,7 @@ fn test_execute_security_remote_refusal_and_fmo_sanitization() {
 
     // リモート呼び出し時の拒否判定 (UKADOC [リモート不可] 規格準拠)
     let mut ctx_remote = ctx.clone();
-    ctx_remote.security_level = Some("external".to_string());
+    ctx_remote.set_security_level(Some("external".to_string()));
     assert_eq!(
         handle_execute_command("Quiet", &ctx_remote).status,
         SstpStatusCode::Refuse
@@ -50,8 +50,8 @@ fn test_execute_security_remote_refusal_and_fmo_sanitization() {
 
     // GetFMO リモート時のパス情報除去 & ダミーHWND化
     let mut ctx_fmo_remote = ctx;
-    ctx_fmo_remote.security_level = Some("external".to_string());
-    ctx_fmo_remote.fmo_text = "ssp_fmo_header_001.path\x01/secret/path\r\nssp_fmo_header_001.hwnd\x011234\r\nssp_fmo_header_001.name\x01Nanai\r\nssp_fmo_header_001.ghostpath\x01/secret/ghost\r\n".to_string();
+    ctx_fmo_remote.set_security_level(Some("external".to_string()));
+    ctx_fmo_remote.set_fmo_text("ssp_fmo_header_001.path\x01/secret/path\r\nssp_fmo_header_001.hwnd\x011234\r\nssp_fmo_header_001.name\x01Nanai\r\nssp_fmo_header_001.ghostpath\x01/secret/ghost\r\n");
     let res_fmo_remote = handle_execute_command("GetFMO", &ctx_fmo_remote);
     assert_eq!(res_fmo_remote.status, SstpStatusCode::Ok);
     let fmo_out = res_fmo_remote.additional_data.unwrap();

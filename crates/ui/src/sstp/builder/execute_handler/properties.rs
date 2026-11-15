@@ -17,9 +17,9 @@ pub(super) fn handle_property_cookie_commands(
                 Some(SstpResponse::bad_request().with_error_description("missing property name"))
             } else {
                 let val = ctx
-                    .properties
+                    .properties()
                     .get(prop_name)
-                    .or_else(|| ctx.properties.get(&prop_name.to_lowercase()))
+                    .or_else(|| ctx.properties().get(&prop_name.to_lowercase()))
                     .cloned()
                     .unwrap_or_default();
                 Some(SstpResponse::ok(None).with_additional_data(val))
@@ -41,8 +41,8 @@ pub(super) fn handle_property_cookie_commands(
                 Some(SstpResponse::bad_request().with_error_description("missing cookie name"))
             } else {
                 let val = ctx
-                    .cookies
-                    .get(&ctx.sender)
+                    .cookies()
+                    .get(ctx.sender())
                     .and_then(|m| m.get(cookie_name))
                     .cloned()
                     .unwrap_or_default();
@@ -60,11 +60,11 @@ pub(super) fn handle_property_cookie_commands(
             if let Err(err_resp) = check_remote_prohibited() {
                 return Some(*err_resp);
             }
-            let ghost_target = args.first().map(|s| s.as_str()).unwrap_or(&ctx.name);
+            let ghost_target = args.first().map(|s| s.as_str()).unwrap_or(ctx.name());
             let path = ctx
-                .properties
+                .properties()
                 .get(&format!("ghost.{}.path", ghost_target.to_lowercase()))
-                .or_else(|| ctx.properties.get("ghostpath"))
+                .or_else(|| ctx.properties().get("ghostpath"))
                 .cloned()
                 .unwrap_or_default();
             Some(SstpResponse::ok(None).with_additional_data(path))
@@ -73,11 +73,11 @@ pub(super) fn handle_property_cookie_commands(
             if let Err(err_resp) = check_remote_prohibited() {
                 return Some(*err_resp);
             }
-            let shell_target = args.first().map(|s| s.as_str()).unwrap_or(&ctx.shell_name);
+            let shell_target = args.first().map(|s| s.as_str()).unwrap_or(ctx.shell_name());
             let path = ctx
-                .properties
+                .properties()
                 .get(&format!("shell.{}.path", shell_target.to_lowercase()))
-                .or_else(|| ctx.properties.get("shellpath"))
+                .or_else(|| ctx.properties().get("shellpath"))
                 .cloned()
                 .unwrap_or_default();
             Some(SstpResponse::ok(None).with_additional_data(path))
@@ -89,11 +89,11 @@ pub(super) fn handle_property_cookie_commands(
             let balloon_target = args
                 .first()
                 .map(|s| s.as_str())
-                .unwrap_or(&ctx.balloon_name);
+                .unwrap_or(ctx.balloon_name());
             let path = ctx
-                .properties
+                .properties()
                 .get(&format!("balloon.{}.path", balloon_target.to_lowercase()))
-                .or_else(|| ctx.properties.get("balloonpath"))
+                .or_else(|| ctx.properties().get("balloonpath"))
                 .cloned()
                 .unwrap_or_default();
             Some(SstpResponse::ok(None).with_additional_data(path))

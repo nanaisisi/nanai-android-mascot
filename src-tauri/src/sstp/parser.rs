@@ -81,22 +81,9 @@ pub fn parse_and_build_sstp_raw_response_with_config(
     }
 
     if core_req.method == SstpMethod::Execute {
-        let ctx = SstpGhostContext {
-            name: "Nanai".to_string(),
-            sakura_name: "Nanai".to_string(),
-            kero_name: "Kero".to_string(),
-            shell_name: "master".to_string(),
-            balloon_name: "standard".to_string(),
-            version: "Nanai 0.1.0".to_string(),
-            short_version: "0.1.0".to_string(),
-            status: String::new(),
-            fmo_text: String::new(),
-            installed_ghosts: vec!["Nanai".to_string()],
-            sstp_config: config.clone(),
-            security_level: core_req.security_level.clone(),
-            references: core_req.references.clone(),
-            ..Default::default()
-        };
+        let ctx = SstpGhostContext::new("Nanai", "", config.clone())
+            .with_security_level(core_req.security_level.clone())
+            .with_references(core_req.references.clone());
         let cmd = core_req.command.as_deref().unwrap_or("");
         let mut resp = handle_execute_command(cmd, &ctx);
         if let Some(ref conn) = core_req.connection {

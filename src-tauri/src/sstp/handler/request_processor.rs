@@ -101,28 +101,10 @@ pub async fn send_sstp_request_with_config(
                 );
                 properties.insert("baseware.version".to_string(), "1.0.0".to_string());
 
-                let ctx = SstpGhostContext {
-                    name: "Nanai".to_string(),
-                    sakura_name: "Nanai".to_string(),
-                    kero_name: "Kero".to_string(),
-                    shell_name: "master".to_string(),
-                    balloon_name: "standard".to_string(),
-                    version: "Nanai 0.1.0".to_string(),
-                    short_version: "0.1.0".to_string(),
-                    status: String::new(),
-                    fmo_text: String::new(),
-                    installed_ghosts: vec!["Nanai".to_string()],
-                    installed_shells: vec!["master".to_string()],
-                    installed_balloons: vec!["standard".to_string()],
-                    installed_headlines: Vec::new(),
-                    installed_plugins: Vec::new(),
-                    properties,
-                    cookies: HashMap::new(),
-                    sender: request.sender.clone(),
-                    sstp_config: config.clone(),
-                    security_level: request.security_level.clone(),
-                    references: request.references.clone(),
-                };
+                let ctx = SstpGhostContext::new("Nanai", request.sender.clone(), config.clone())
+                    .with_properties(properties)
+                    .with_security_level(request.security_level.clone())
+                    .with_references(request.references.clone());
                 let resp = handle_execute_command(cmd, &ctx);
                 return Ok(SstpResponse {
                     status: format!("{} {}", resp.status.code(), resp.status.reason_phrase()),

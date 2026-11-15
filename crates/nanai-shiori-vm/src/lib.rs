@@ -8,10 +8,19 @@ use std::sync::{LazyLock, Mutex};
 /// Global in-memory SHIORI state for WASM target (guest mode)
 #[derive(Default)]
 pub struct ShioriGuestState {
-    pub is_loaded: bool,
-    pub dir_path: String,
-    pub virtual_fs: HashMap<String, Vec<u8>>,
-    pub request_count: usize,
+    pub(crate) is_loaded: bool,
+    pub(crate) dir_path: String,
+    pub(crate) virtual_fs: HashMap<String, Vec<u8>>,
+    pub(crate) request_count: usize,
+}
+
+#[allow(dead_code)]
+impl ShioriGuestState {
+    // Add getter methods
+    pub fn is_loaded(&self) -> bool { self.is_loaded }
+    pub fn dir_path(&self) -> &str { &self.dir_path }
+    pub fn virtual_fs(&self) -> &HashMap<String, Vec<u8>> { &self.virtual_fs }
+    pub fn request_count(&self) -> usize { self.request_count }
 }
 
 static GUEST_STATE: LazyLock<Mutex<ShioriGuestState>> =

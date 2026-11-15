@@ -5,7 +5,7 @@ pub mod w3c_hsl;
 
 use crate::compositor::framebuffer::SurfaceFrameBuffer;
 use crate::types::DrawMethod;
-use modes::evaluate_blend_mode;
+use modes::{Evaluate_blend_modeParams, evaluate_blend_mode};
 
 // 4x4 Bayer Dither Matrix (values 0..15 normalized to 0..255)
 const BAYER_MATRIX_4X4: [u8; 16] = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
@@ -112,7 +112,15 @@ impl SurfaceFrameBuffer {
                         let is_fast = b_lower.ends_with("-fast");
                         let mode = b_lower.trim_end_matches("-fast");
 
-                        let (br, bg, bb) = evaluate_blend_mode(mode, dr, dg, db, sr, sg, sb);
+                        let (br, bg, bb) = evaluate_blend_mode(Evaluate_blend_modeParams {
+                            mode,
+                            dr,
+                            dg,
+                            db,
+                            sr,
+                            sg,
+                            sb,
+                        });
 
                         if mode == "dither" {
                             // 4x4 オーダーディザマトリクスによるアルファディザリング

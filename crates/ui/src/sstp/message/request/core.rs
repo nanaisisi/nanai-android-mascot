@@ -6,56 +6,91 @@ use std::collections::HashMap;
 /// SSTP リクエスト構造体
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SstpRequest {
-    pub method: SstpMethod,
-    pub version: String,
-    pub charset: Option<String>,
-    pub sender: String,
-    pub script: Option<String>,
-    pub event: Option<String>,
-    pub sentence: Option<String>,
-    pub command: Option<String>,
-    pub hwnd: Option<u64>,
-    pub receiver_ghost_hwnd: Option<u64>,
-    pub receiver_ghost_name: Option<String>,
-    pub security_level: Option<String>,
-    pub security_origin: Option<String>,
-    pub id: Option<String>,
-    pub options: Vec<String>,
-    pub entry: Option<String>,
-    pub if_ghosts: Vec<IfGhostEntry>,
-    pub references: HashMap<String, String>,
-    pub pass_thru: HashMap<String, String>,
-    pub keep_alive: bool,
+    pub(crate) method: SstpMethod,
+    pub(crate) version: String,
+    pub(crate) charset: Option<String>,
+    pub(crate) sender: String,
+    pub(crate) script: Option<String>,
+    pub(crate) event: Option<String>,
+    pub(crate) sentence: Option<String>,
+    pub(crate) command: Option<String>,
+    pub(crate) hwnd: Option<u64>,
+    pub(crate) receiver_ghost_hwnd: Option<u64>,
+    pub(crate) receiver_ghost_name: Option<String>,
+    pub(crate) security_level: Option<String>,
+    pub(crate) security_origin: Option<String>,
+    pub(crate) id: Option<String>,
+    pub(crate) options: Vec<String>,
+    pub(crate) entry: Option<String>,
+    pub(crate) if_ghosts: Vec<IfGhostEntry>,
+    pub(crate) references: HashMap<String, String>,
+    pub(crate) pass_thru: HashMap<String, String>,
+    pub(crate) keep_alive: bool,
     /// HTTP 互換 Connection ヘッダ ("keep-alive" / "close")
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub connection: Option<String>,
+    pub(crate) connection: Option<String>,
     /// COMMUNICATE / GIVE 拡張ヘッダ: 送信元サーフィス番号 (例: "0,10")
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub surface: Option<String>,
+    pub(crate) surface: Option<String>,
     /// GIVE/旧仕様 拡張ヘッダ: 文書
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub document: Option<String>,
+    pub(crate) document: Option<String>,
     /// GIVE/旧仕様 拡張ヘッダ: 楽曲名
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub song: Option<String>,
+    pub(crate) song: Option<String>,
     /// 対象ゴースト名 (descript.txt の name)
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub ghost: Option<String>,
+    pub(crate) ghost: Option<String>,
     /// SAORI over DirectSSTP: Module ヘッダ
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub module: Option<String>,
+    pub(crate) module: Option<String>,
     /// DirectSSTP フラグ
     #[serde(default)]
-    pub is_direct: bool,
+    pub(crate) is_direct: bool,
     /// HTTP トンネリング / 互換ヘッダ: Content-Type (例: "text/plain", "application/x-sstp")
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub content_type: Option<String>,
+    pub(crate) content_type: Option<String>,
     /// HTTP トンネリング / 互換ヘッダ: User-Agent
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub user_agent: Option<String>,
+    pub(crate) user_agent: Option<String>,
     /// HTTP トンネリング / 互換ヘッダ: Host (例: "127.0.0.1:9801")
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub host: Option<String>,
+    pub(crate) host: Option<String>,
+}
+
+#[allow(dead_code)]
+impl SstpRequest {
+    // Add getter methods
+    pub fn method(&self) -> SstpMethod { self.method }
+    pub fn version(&self) -> &str { &self.version }
+    pub fn charset(&self) -> Option<&str> { self.charset.as_deref() }
+    pub fn sender(&self) -> &str { &self.sender }
+    pub fn script(&self) -> Option<&str> { self.script.as_deref() }
+    pub fn event(&self) -> Option<&str> { self.event.as_deref() }
+    pub fn sentence(&self) -> Option<&str> { self.sentence.as_deref() }
+    pub fn command(&self) -> Option<&str> { self.command.as_deref() }
+    pub fn hwnd(&self) -> Option<u64> { self.hwnd }
+    pub fn receiver_ghost_hwnd(&self) -> Option<u64> { self.receiver_ghost_hwnd }
+    pub fn receiver_ghost_name(&self) -> Option<&str> { self.receiver_ghost_name.as_deref() }
+    pub fn security_level(&self) -> Option<&str> { self.security_level.as_deref() }
+    pub fn security_origin(&self) -> Option<&str> { self.security_origin.as_deref() }
+    pub fn id(&self) -> Option<&str> { self.id.as_deref() }
+    pub fn options(&self) -> &[String] { &self.options }
+    pub fn entry(&self) -> Option<&str> { self.entry.as_deref() }
+    pub fn if_ghosts(&self) -> &[IfGhostEntry] { &self.if_ghosts }
+    pub fn references(&self) -> &HashMap<String, String> { &self.references }
+    pub fn pass_thru(&self) -> &HashMap<String, String> { &self.pass_thru }
+    pub fn keep_alive(&self) -> bool { self.keep_alive }
+    pub fn connection(&self) -> Option<&str> { self.connection.as_deref() }
+    pub fn surface(&self) -> Option<&str> { self.surface.as_deref() }
+    pub fn document(&self) -> Option<&str> { self.document.as_deref() }
+    pub fn song(&self) -> Option<&str> { self.song.as_deref() }
+    pub fn ghost(&self) -> Option<&str> { self.ghost.as_deref() }
+    pub fn module(&self) -> Option<&str> { self.module.as_deref() }
+    pub fn is_direct(&self) -> bool { self.is_direct }
+    pub fn content_type(&self) -> Option<&str> { self.content_type.as_deref() }
+    pub fn user_agent(&self) -> Option<&str> { self.user_agent.as_deref() }
+    pub fn host(&self) -> Option<&str> { self.host.as_deref() }
 }
 
 impl SstpRequest {

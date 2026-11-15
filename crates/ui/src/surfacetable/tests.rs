@@ -27,14 +27,14 @@ group,__disabled
 ";
     let table = SurfaceTable::parse(sample);
 
-    assert_eq!(table.charset.as_deref(), Some("Shift_JIS"));
-    assert_eq!(table.version, 1);
-    assert_eq!(table.groups.len(), 3);
+    assert_eq!(table.charset().as_deref(), Some("Shift_JIS"));
+    assert_eq!(table.version(), 1);
+    assert_eq!(table.groups().len(), 3);
 
     let normal = table.group("本体通常").unwrap();
-    assert_eq!(normal.entries.len(), 3);
-    assert_eq!(normal.entries[0].surface_id, 0);
-    assert_eq!(normal.entries[0].name, "デフォルト");
+    assert_eq!(normal.entries().len(), 3);
+    assert_eq!(normal.entries()[0].surface_id(), 0);
+    assert_eq!(normal.entries()[0].name(), "デフォルト");
 
     let disabled = table.group("__disabled").unwrap();
     assert!(disabled.is_disabled());
@@ -69,27 +69,27 @@ group,g1
 }
 ";
     let table = SurfaceTable::parse(sample);
-    assert_eq!(table.scope, Some(2));
+    assert_eq!(table.scope(), Some(2));
     assert_eq!(
-        table.options[0],
+        table.options()[0],
         vec!["あ行".to_string(), "か行".to_string()]
     );
-    assert_eq!(table.group("G1").unwrap().entries[0].name, "テスト");
+    assert_eq!(table.group("G1").unwrap().entries()[0].name(), "テスト");
 }
 
 #[test]
 fn test_parse_unclosed_groups_and_invalid_numbers() {
     let sample = "}\r\ninvalid_line_without_comma\r\ntop_prop,top_val\r\nversion,invalid\r\nscope,invalid\r\ngroup,g1\r\nnon_numeric_in_group,val\r\n10,name1\r\ngroup,g2\r\n20,name2";
     let table = SurfaceTable::parse(sample);
-    assert_eq!(table.version, 0);
-    assert_eq!(table.scope, None);
-    assert_eq!(table.groups.len(), 2);
-    assert_eq!(table.groups[0].name, "g1");
-    assert_eq!(table.groups[0].entries[0].surface_id, 10);
-    assert_eq!(table.groups[1].name, "g2");
-    assert_eq!(table.groups[1].entries[0].surface_id, 20);
+    assert_eq!(table.version(), 0);
+    assert_eq!(table.scope(), None);
+    assert_eq!(table.groups().len(), 2);
+    assert_eq!(table.groups()[0].name(), "g1");
+    assert_eq!(table.groups()[0].entries()[0].surface_id(), 10);
+    assert_eq!(table.groups()[1].name(), "g2");
+    assert_eq!(table.groups()[1].entries()[0].surface_id(), 20);
     assert_eq!(
-        table.properties.get("top_prop").map(String::as_str),
+        table.properties().get("top_prop").map(String::as_str),
         Some("top_val")
     );
 }
@@ -101,15 +101,15 @@ fn test_parse_mock_nanai_file() {
     let content = crate::vfs_integration::open_text_file(&path).unwrap();
     let table = SurfaceTable::parse(&content);
 
-    assert_eq!(table.charset.as_deref(), Some("Shift_JIS"));
-    assert_eq!(table.version, 1);
+    assert_eq!(table.charset().as_deref(), Some("Shift_JIS"));
+    assert_eq!(table.version(), 1);
     // 本体通常 / 本体腕組み / 本体正面向け / 下半身_* 各グループが存在する
-    assert!(table.group("本体通常").is_some() || !table.groups.is_empty());
+    assert!(table.group("本体通常").is_some() || !table.groups().is_empty());
     // 可視サーフィスの一覧に 0 / 30 / 10 / 14 が含まれる
     let mut ids: Vec<u32> = table
         .visible_entries()
         .iter()
-        .map(|e| e.surface_id)
+        .map(|e| e.surface_id())
         .collect();
     ids.sort_unstable();
     for probe in [0u32, 10, 14, 30] {
@@ -120,5 +120,5 @@ fn test_parse_mock_nanai_file() {
     }
     // __disabled は 19 / 100 / 101
     let disabled = table.group("__disabled").unwrap();
-    assert_eq!(disabled.entries.len(), 3);
+    assert_eq!(disabled.entries().len(), 3);
 }

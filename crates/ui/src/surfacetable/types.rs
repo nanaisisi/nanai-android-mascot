@@ -4,19 +4,31 @@ use std::collections::BTreeMap;
 /// グループ内の1登録（`[サーフィス番号],[名前]`）
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SurfTableEntry {
-    pub surface_id: u32,
-    pub name: String,
+    pub(crate) surface_id: u32,
+    pub(crate) name: String,
+}
+
+#[allow(dead_code)]
+impl SurfTableEntry {
+    // Add getter methods
+    pub fn surface_id(&self) -> u32 { self.surface_id }
+    pub fn name(&self) -> &str { &self.name }
 }
 
 /// `group,[グループ名] {}` の定義
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SurfTableGroup {
     /// グループ名（`__disabled` は非表示グループ）
-    pub name: String,
-    pub entries: Vec<SurfTableEntry>,
+    pub(crate) name: String,
+    pub(crate) entries: Vec<SurfTableEntry>,
 }
 
+#[allow(dead_code)]
 impl SurfTableGroup {
+    // Add getter methods
+    pub fn name(&self) -> &str { &self.name }
+    pub fn entries(&self) -> &[SurfTableEntry] { &self.entries }
+
     /// 非表示グループ（`__disabled`）か
     pub fn is_disabled(&self) -> bool {
         self.name == "__disabled"
@@ -27,20 +39,29 @@ impl SurfTableGroup {
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct SurfaceTable {
     /// 1行目に記述が必須の `charset,` 指定
-    pub charset: Option<String>,
+    pub(crate) charset: Option<String>,
     /// `version,` 指定（2014年規格では 1 のみ）
-    pub version: u32,
+    pub(crate) version: u32,
     /// `scope,` 指定（サーフィスの登録スコープ）
-    pub scope: Option<u32>,
+    pub(crate) scope: Option<u32>,
     /// `option,` の内容（任意個）
-    pub options: Vec<Vec<String>>,
+    pub(crate) options: Vec<Vec<String>>,
     /// グループ定義（記述順）
-    pub groups: Vec<SurfTableGroup>,
+    pub(crate) groups: Vec<SurfTableGroup>,
     /// 未分類のキー・バリュー
-    pub properties: BTreeMap<String, String>,
+    pub(crate) properties: BTreeMap<String, String>,
 }
 
+#[allow(dead_code)]
 impl SurfaceTable {
+    // Add getter methods
+    pub fn charset(&self) -> Option<&str> { self.charset.as_deref() }
+    pub fn version(&self) -> u32 { self.version }
+    pub fn scope(&self) -> Option<u32> { self.scope }
+    pub fn options(&self) -> &[Vec<String>] { &self.options }
+    pub fn groups(&self) -> &[SurfTableGroup] { &self.groups }
+    pub fn properties(&self) -> &BTreeMap<String, String> { &self.properties }
+
     /// グループ名で検索（大文字小文字・前後の空白は無視）
     pub fn group(&self, name: &str) -> Option<&SurfTableGroup> {
         self.groups

@@ -1,4 +1,4 @@
-//! システムトレイ制御モジュール
+#![allow(unused_imports)]
 
 mod logging;
 mod setup;

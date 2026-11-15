@@ -1,98 +1,9 @@
-//! FMO (File Mapping Object) 共有状態管理 (UKADOC 規格準拠)
-//! 起動中ゴーストの状態（サーフィス、名前、バルーンテキスト等）を外部ツールや他プロセスへ公開するインターフェース
-//! モバイルライフサイクル（バックグラウンド/フォアグラウンド）状態の同期に対応
+//! FMO 状態取得・同期更新用 Tauri コマンド
 
+use super::types::{FmoGhostStatus, FmoSystemStatus};
 use crate::common::state::AppState;
 pub use nanai_android_mascot_ui::fmo::FmoEntry;
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct FmoGhostStatus {
-    name: String,
-    #[serde(default)]
-    keroname: String,
-    surface0: u32,
-    surface1: u32,
-    balloon0: String,
-    balloon1: String,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    kerohwnd: Option<u64>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    modulestate: Option<String>,
-    path: String,
-    #[serde(default = "default_true")]
-    is_visible: bool,
-    #[serde(default = "default_active")]
-    lifecycle_state: String,
-}
-
-#[allow(dead_code)]
-impl FmoGhostStatus {
-    // Add getter methods
-    pub fn name(&self) -> &str {
-        &self.name
-    }
-    pub fn keroname(&self) -> &str {
-        &self.keroname
-    }
-    pub fn surface0(&self) -> u32 {
-        self.surface0
-    }
-    pub fn surface1(&self) -> u32 {
-        self.surface1
-    }
-    pub fn balloon0(&self) -> &str {
-        &self.balloon0
-    }
-    pub fn balloon1(&self) -> &str {
-        &self.balloon1
-    }
-    pub fn kerohwnd(&self) -> Option<u64> {
-        self.kerohwnd
-    }
-    pub fn modulestate(&self) -> Option<&str> {
-        self.modulestate.as_deref()
-    }
-    pub fn path(&self) -> &str {
-        &self.path
-    }
-    pub fn is_visible(&self) -> bool {
-        self.is_visible
-    }
-    pub fn lifecycle_state(&self) -> &str {
-        &self.lifecycle_state
-    }
-}
-
-fn default_true() -> bool {
-    true
-}
-
-fn default_active() -> String {
-    "active".to_string()
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct FmoSystemStatus {
-    ghosts: HashMap<String, FmoGhostStatus>,
-    hwnd: u64,
-    craftman: String,
-}
-
-#[allow(dead_code)]
-impl FmoSystemStatus {
-    // Add getter methods
-    pub fn ghosts(&self) -> &HashMap<String, FmoGhostStatus> {
-        &self.ghosts
-    }
-    pub fn hwnd(&self) -> u64 {
-        self.hwnd
-    }
-    pub fn craftman(&self) -> &str {
-        &self.craftman
-    }
-}
 
 /// 現在の FMO 状態を取得する Tauri コマンド (UKADOC FMO 規格準拠)
 #[tauri::command]
@@ -270,44 +181,4 @@ pub async fn update_fmo_lifecycle_state(
     };
 
     serde_json::to_string(&fmo).map_err(|e| e.to_string())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_fmo_ghost_status_serialization() {
-        let status = FmoGhostStatus {
-            name: "Nanai".to_string(),
-            keroname: "Kero".to_string(),
-            surface0: 0,
-            surface1: 10,
-            balloon0: "".to_string(),
-            balloon1: "".to_string(),
-            kerohwnd: None,
-            modulestate: Some("shiori:running,lifecycle:active".to_string()),
-            path: "".to_string(),
-            is_visible: true,
-            lifecycle_state: "active".to_string(),
-        };
-
-        let json = serde_json::to_string(&status).unwrap();
-        assert!(json.contains("\"lifecycle_state\":\"active\""));
-        assert!(json.contains("\"is_visible\":true"));
-    }
-
-    #[tokio::test]
-    async fn test_fmo_update_balloon_and_surfaces() {
-        let app_state = AppState::new();
-        *app_state.current_ghost_name.lock() = Some("TestGhost".to_string());
-        // Test entry state creation
-        let entry = FmoEntry::new("0", "TestGhost")
-            .with_balloons("Hello", "Hi")
-            .with_surfaces(5, 15);
-        assert_eq!(entry.balloon0(), "Hello");
-        assert_eq!(entry.balloon1(), "Hi");
-        assert_eq!(entry.sakura_surface(), 5);
-        assert_eq!(entry.kero_surface(), 15);
-    }
 }

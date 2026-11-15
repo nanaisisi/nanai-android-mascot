@@ -1,83 +1,10 @@
-#![allow(unused_imports)]
-use crate::common::paths::clean_verbatim_path;
-use crate::common::paths::resolve_asset_path;
-use crate::common::paths::{open_shift_jis_file, resolve_vfs_path};
-use crate::common::state::AppState;
-use std::path::{Path, PathBuf};
-use std::sync::Mutex;
-#[cfg(desktop)]
-use tauri::menu::{MenuBuilder, SubmenuBuilder};
-use tauri::{Emitter, Manager};
-/// 大文字・小文字の差異を吸収して実在するファイルを探索するヘルパー
-fn find_file_case_insensitive(path: &Path) -> Option<PathBuf> {
-    if path.exists() && path.is_file() {
-        return Some(path.to_path_buf());
-    }
-    let parent = path.parent()?;
-    let file_name = path.file_name()?.to_str()?;
-    resolve_vfs_path(parent, file_name)
-}
+//! サーフィス画像および PNA マスク読み込みコマンド
 
-/// 画像バイト列を読み込み、左上ピクセル色および緑色背景領域をクロマキー透過(A=0)に変換して
-/// PNGのDataURL (data:image/png;base64,...) として返却するヘルパー
-fn process_chromakey_image_bytes(bytes: &[u8]) -> Option<String> {
-    use base64::Engine;
-    use image::GenericImageView;
-
-    if let Ok(img) = image::load_from_memory(bytes) {
-        let (width, height) = img.dimensions();
-        if width == 0 || height == 0 {
-            return None;
-        }
-
-        let mut rgba = img.to_rgba8();
-        let top_left = rgba.get_pixel(0, 0);
-        let target_r = top_left[0];
-        let target_g = top_left[1];
-        let target_b = top_left[2];
-
-        for pixel in rgba.pixels_mut() {
-            let r = pixel[0];
-            let g = pixel[1];
-            let b = pixel[2];
-
-            let is_target_exact = r == target_r && g == target_g && b == target_b;
-            let is_green_bg = g > 130
-                && (g as u32) > ((r as u32) * 115 / 100)
-                && (g as u32) > ((b as u32) * 115 / 100);
-
-            if is_target_exact || is_green_bg {
-                pixel[0] = 0;
-                pixel[1] = 0;
-                pixel[2] = 0;
-                pixel[3] = 0;
-            }
-        }
-
-        let mut png_bytes: Vec<u8> = Vec::new();
-        let mut cursor = std::io::Cursor::new(&mut png_bytes);
-        if rgba.write_to(&mut cursor, image::ImageFormat::Png).is_ok() {
-            let b64 = base64::engine::general_purpose::STANDARD.encode(&png_bytes);
-            return Some(format!("data:image/png;base64,{b64}"));
-        }
-    }
-    None
-}
-
-// ファイルを開くコマンド
-#[tauri::command]
-pub fn open_file(path: String, app_handle: tauri::AppHandle<tauri::Wry>) -> Result<String, String> {
-    let clean_path = clean_verbatim_path(&path);
-    let resolved_path =
-        resolve_asset_path(&clean_path, &app_handle).unwrap_or_else(|_| PathBuf::from(&clean_path));
-
-    let final_path = find_file_case_insensitive(&resolved_path).unwrap_or(resolved_path);
-
-    match open_shift_jis_file(&final_path.to_string_lossy()) {
-        Ok(content) => Ok(content),
-        Err(e) => Err(format!("ファイルの読み込みに失敗しました: {e}")),
-    }
-}
+use super::helpers::{find_file_case_insensitive, process_chromakey_image_bytes};
+use crate::common::paths::{clean_verbatim_path, resolve_asset_path};
+use base64::Engine;
+use std::fs;
+use std::path::PathBuf;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct LoadSurfaceImageParams {
@@ -87,7 +14,6 @@ pub struct LoadSurfaceImageParams {
 }
 
 impl LoadSurfaceImageParams {
-    // Add getter methods
     pub fn ghost_path(&self) -> &str {
         &self.ghost_path
     }
@@ -108,7 +34,6 @@ pub fn load_surface_image(
     let ghost_path = params.ghost_path();
     let shell_name = params.shell_name();
     let surface_id = params.surface_id();
-    use std::fs;
     let clean_gp = clean_verbatim_path(ghost_path);
     let base_ghost_path =
         resolve_asset_path(&clean_gp, &app_handle).unwrap_or_else(|_| PathBuf::from(&clean_gp));
@@ -140,7 +65,6 @@ pub fn load_surface_image(
         master_dir.join(format!("surface{surface_id}.svg")),
     ];
 
-    // surface_id が 0 または 10 の場合のみ、基本フォールバック (surface0.png / surface10.png) を候補末尾に追加
     if surface_id_num == 0 {
         candidates.push(shell_dir.join("surface0.png"));
         candidates.push(shell_dir.join("surface0000.png"));
@@ -186,7 +110,6 @@ pub fn load_surface_image(
                 "pna" => "image/png",
                 _ => "image/png",
             };
-            use base64::Engine;
             let b64 = base64::engine::general_purpose::STANDARD.encode(&bytes);
             return Ok(format!("data:{mime};base64,{b64}"));
         }
@@ -221,7 +144,6 @@ pub fn load_surface_image(
             if let Some(data_url) = process_chromakey_image_bytes(&bytes) {
                 return Ok(data_url);
             }
-            use base64::Engine;
             let b64 = base64::engine::general_purpose::STANDARD.encode(&bytes);
             return Ok(format!("data:image/png;base64,{b64}"));
         }
@@ -244,7 +166,6 @@ pub struct LoadSurfacePnaParams {
 }
 
 impl LoadSurfacePnaParams {
-    // Add getter methods
     pub fn ghost_path(&self) -> &str {
         &self.ghost_path
     }
@@ -265,7 +186,6 @@ pub fn load_surface_pna(
     let ghost_path = params.ghost_path();
     let shell_name = params.shell_name();
     let surface_id = params.surface_id();
-    use std::fs;
     let clean_gp = clean_verbatim_path(ghost_path);
     let base_ghost_path =
         resolve_asset_path(&clean_gp, &app_handle).unwrap_or_else(|_| PathBuf::from(&clean_gp));
@@ -289,52 +209,10 @@ pub fn load_surface_pna(
             && target.is_file()
             && let Ok(bytes) = fs::read(&target)
         {
-            use base64::Engine;
             let b64 = base64::engine::general_purpose::STANDARD.encode(&bytes);
             return Ok(format!("data:image/png;base64,{b64}"));
         }
     }
 
     Err(format!("PNA file not found for surface_id: {surface_id}"))
-}
-
-// 最近開いたファイル履歴を管理するための関数
-#[tauri::command]
-pub fn add_to_recent_files(
-    path: String,
-    app_handle: tauri::AppHandle<tauri::Wry>,
-) -> Result<(), String> {
-    let app_state = app_handle.state::<tauri::State<AppState>>();
-    let mut recent_files = app_state.recent_files.lock();
-
-    // 既に存在する場合は削除して先頭に追加（LRU方式）
-    if let Some(index) = recent_files.iter().position(|x| *x == path) {
-        recent_files.remove(index);
-    }
-
-    // 先頭に追加
-    recent_files.insert(0, path);
-
-    // 最大10件まで保持
-    if recent_files.len() > 10 {
-        recent_files.truncate(10);
-    }
-
-    Ok(())
-}
-
-#[tauri::command]
-pub fn get_recent_files(app_handle: tauri::AppHandle<tauri::Wry>) -> Result<Vec<String>, String> {
-    let app_state = app_handle.state::<tauri::State<AppState>>();
-    let recent_files = app_state.recent_files.lock();
-    Ok(recent_files.clone())
-}
-
-#[tauri::command]
-pub fn open_ghost_directory(app_handle: tauri::AppHandle<tauri::Wry>) -> Result<(), String> {
-    let base = resolve_asset_path("assets/ghost", &app_handle)
-        .unwrap_or_else(|_| std::path::PathBuf::from("assets/ghost"));
-
-    tauri_plugin_opener::reveal_item_in_dir(base)
-        .map_err(|e| format!("Failed to open directory: {}", e))
 }

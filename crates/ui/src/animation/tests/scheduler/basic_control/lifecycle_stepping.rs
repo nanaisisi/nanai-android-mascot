@@ -13,18 +13,18 @@ fn test_animation_scheduler_basic() {
     assert_eq!(scheduler.current_surface(0), 0);
     assert_eq!(scheduler.current_surface(1), 10);
 
-    let anim = SerikoAnimation {
-        id: 1,
-        interval: Some(Interval::RunOnce),
-        name: None,
-        patterns: vec![
+    let anim = SerikoAnimation::new(
+        1,
+        Some(Interval::RunOnce),
+        None,
+        vec![
             super::pattern(PatternParams::new(0, 101, 50)),
             super::pattern(PatternParams::new(1, 102, 50)),
             super::pattern(PatternParams::new(2, -1, 0)),
         ],
-        collisions: vec![],
-        options: vec![],
-    };
+        vec![],
+        vec![],
+    );
 
     scheduler.schedule_surface_animations(0, 0, std::slice::from_ref(&anim), 0.0);
     assert_eq!(scheduler.active_count(0), 1);
@@ -58,14 +58,14 @@ fn test_animation_scheduler_pause_resume() {
     use crate::surfaces_core_integration::SerikoAnimation;
 
     let mut scheduler = AnimationScheduler::new();
-    let anim = SerikoAnimation {
-        id: 5,
-        interval: Some(Interval::Always),
-        name: None,
-        patterns: vec![super::pattern(PatternParams::new(0, 10, 100))],
-        collisions: vec![],
-        options: vec![],
-    };
+    let anim = SerikoAnimation::new(
+        5,
+        Some(Interval::Always),
+        None,
+        vec![super::pattern(PatternParams::new(0, 10, 100))],
+        vec![],
+        vec![],
+    );
 
     scheduler.start_animation(0, 0, &anim);
     assert_eq!(scheduler.active_count(0), 1);
@@ -92,25 +92,25 @@ fn test_animation_scheduler_stop_and_offset() {
 
     let mut scheduler = AnimationScheduler::new();
 
-    let anim1 = SerikoAnimation {
-        id: 10,
-        interval: Some(Interval::Always),
-        name: Some("test_anim".to_string()),
-        patterns: vec![
+    let anim1 = SerikoAnimation::new(
+        10,
+        Some(Interval::Always),
+        Some("test_anim".to_string()),
+        vec![
             super::pattern(PatternParams::new(0, 100, 50)),
             super::pattern(PatternParams::new(1, 101, 50)),
         ],
-        collisions: vec![],
-        options: vec![],
-    };
-    let anim2 = SerikoAnimation {
-        id: 20,
-        interval: Some(Interval::Always),
-        name: Some("other_anim".to_string()),
-        patterns: vec![super::pattern(PatternParams::new(0, 200, 50))],
-        collisions: vec![],
-        options: vec![],
-    };
+        vec![],
+        vec![],
+    );
+    let anim2 = SerikoAnimation::new(
+        20,
+        Some(Interval::Always),
+        Some("other_anim".to_string()),
+        vec![super::pattern(PatternParams::new(0, 200, 50))],
+        vec![],
+        vec![],
+    );
 
     scheduler.start_animation(0, 0, &anim1);
     scheduler.start_animation(0, 0, &anim2);

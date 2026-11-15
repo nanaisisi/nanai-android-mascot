@@ -58,16 +58,16 @@ mod tests {
             y: 0,
             options: vec![],
         };
-        let pat = AnimationPattern {
-            index: 0,
-            method: DrawMethod::Overlay,
-            surface: 10,
-            wait: 85,
-            wait_max: None,
-            x: 0,
-            y: 0,
-            options: vec![],
-        };
+        let pat = AnimationPattern::new(
+            0,
+            DrawMethod::Overlay,
+            10,
+            85,
+            None,
+            0,
+            0,
+            vec![],
+        );
 
         let plan = CompositionPlan {
             surface: 0,

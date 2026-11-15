@@ -10,58 +10,58 @@ fn test_animation_scheduler_pattern_control_methods() {
 
     let mut scheduler = AnimationScheduler::new();
 
-    let target_anim = SerikoAnimation {
-        id: 10,
-        interval: Some(Interval::Never),
-        name: None,
-        patterns: vec![
+    let target_anim = SerikoAnimation::new(
+        10,
+        Some(Interval::Never),
+        None,
+        vec![
             super::pattern(PatternParams::new(0, 501, 100)),
             super::pattern(PatternParams::new(1, 502, 100)),
             super::pattern(PatternParams::new(2, -1, 100)),
         ],
-        collisions: vec![],
-        options: vec![],
-    };
+        vec![],
+        vec![],
+    );
 
-    let controller_anim = SerikoAnimation {
-        id: 1,
-        interval: Some(Interval::RunOnce),
-        name: None,
-        patterns: vec![
-            AnimationPattern {
-                index: 0,
-                method: DrawMethod::Start(Some(10)),
-                surface: 10,
-                wait: 10,
-                wait_max: None,
-                x: 0,
-                y: 0,
-                options: vec![],
-            },
-            AnimationPattern {
-                index: 1,
-                method: DrawMethod::Stop(Some(10)),
-                surface: 10,
-                wait: 50,
-                wait_max: None,
-                x: 0,
-                y: 0,
-                options: vec![],
-            },
-            AnimationPattern {
-                index: 2,
-                method: DrawMethod::Overlay,
-                surface: -1,
-                wait: 100,
-                wait_max: None,
-                x: 0,
-                y: 0,
-                options: vec![],
-            },
+    let controller_anim = SerikoAnimation::new(
+        1,
+        Some(Interval::RunOnce),
+        None,
+        vec![
+            AnimationPattern::new(
+                0,
+                DrawMethod::Start(Some(10)),
+                10,
+                10,
+                None,
+                0,
+                0,
+                vec![],
+            ),
+            AnimationPattern::new(
+                1,
+                DrawMethod::Stop(Some(10)),
+                10,
+                50,
+                None,
+                0,
+                0,
+                vec![],
+            ),
+            AnimationPattern::new(
+                2,
+                DrawMethod::Overlay,
+                -1,
+                100,
+                None,
+                0,
+                0,
+                vec![],
+            ),
         ],
-        collisions: vec![],
-        options: vec![],
-    };
+        vec![],
+        vec![],
+    );
 
     let catalog = vec![target_anim, controller_anim.clone()];
 
@@ -86,45 +86,45 @@ fn test_animation_scheduler_move_draw_method() {
 
     let mut scheduler = AnimationScheduler::new();
 
-    let move_anim = SerikoAnimation {
-        id: 7,
-        interval: Some(Interval::RunOnce),
-        name: None,
-        patterns: vec![
-            AnimationPattern {
-                index: 0,
-                method: DrawMethod::Move,
-                surface: 0,
-                wait: 30,
-                wait_max: None,
-                x: 15,
-                y: -20,
-                options: vec![],
-            },
-            AnimationPattern {
-                index: 1,
-                method: DrawMethod::Move,
-                surface: 0,
-                wait: 40,
-                wait_max: None,
-                x: 0,
-                y: 0,
-                options: vec![],
-            },
-            AnimationPattern {
-                index: 2,
-                method: DrawMethod::Overlay,
-                surface: -1,
-                wait: 0,
-                wait_max: None,
-                x: 0,
-                y: 0,
-                options: vec![],
-            },
+    let move_anim = SerikoAnimation::new(
+        7,
+        Some(Interval::RunOnce),
+        None,
+        vec![
+            AnimationPattern::new(
+                0,
+                DrawMethod::Move,
+                0,
+                30,
+                None,
+                15,
+                -20,
+                vec![],
+            ),
+            AnimationPattern::new(
+                1,
+                DrawMethod::Move,
+                0,
+                40,
+                None,
+                0,
+                0,
+                vec![],
+            ),
+            AnimationPattern::new(
+                2,
+                DrawMethod::Overlay,
+                -1,
+                0,
+                None,
+                0,
+                0,
+                vec![],
+            ),
         ],
-        collisions: vec![],
-        options: vec![],
-    };
+        vec![],
+        vec![],
+    );
 
     assert_eq!(scheduler.get_base_move_offset(0), (0, 0));
 

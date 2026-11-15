@@ -118,57 +118,57 @@ mod tests {
         let mut txt = SurfacesTxt::default();
         let mut def = SurfaceDefinition::default();
 
-        let anim1 = SerikoAnimation {
-            id: 1,
-            name: None,
-            interval: Some(Interval::Bind),
-            options: vec![],
-            collisions: vec![],
-            patterns: vec![AnimationPattern {
-                index: 0,
-                method: DrawMethod::Insert,
-                surface: 2,
-                wait: 0,
-                wait_max: None,
-                x: 0,
-                y: 0,
-                options: vec![],
-            }],
-        };
-        let anim2 = SerikoAnimation {
-            id: 2,
-            name: None,
-            interval: Some(Interval::Bind),
-            options: vec![],
-            collisions: vec![],
-            patterns: vec![AnimationPattern {
-                index: 0,
-                method: DrawMethod::Overlay,
-                surface: 10,
-                wait: 0,
-                wait_max: None,
-                x: 0,
-                y: 0,
-                options: vec![],
-            }],
-        };
-        let anim_non_bind = SerikoAnimation {
-            id: 3,
-            name: None,
-            interval: Some(Interval::Always),
-            options: vec![],
-            collisions: vec![],
-            patterns: vec![AnimationPattern {
-                index: 0,
-                method: DrawMethod::Overlay,
-                surface: 11,
-                wait: 0,
-                wait_max: None,
-                x: 0,
-                y: 0,
-                options: vec![],
-            }],
-        };
+        let anim1 = SerikoAnimation::new(
+            1,
+            Some(Interval::Bind),
+            None,
+            vec![AnimationPattern::new(
+                0,
+                DrawMethod::Insert,
+                2,
+                0,
+                None,
+                0,
+                0,
+                vec![],
+            )],
+            vec![],
+            vec![],
+        );
+        let anim2 = SerikoAnimation::new(
+            2,
+            Some(Interval::Bind),
+            None,
+            vec![AnimationPattern::new(
+                0,
+                DrawMethod::Overlay,
+                10,
+                0,
+                None,
+                0,
+                0,
+                vec![],
+            )],
+            vec![],
+            vec![],
+        );
+        let anim_non_bind = SerikoAnimation::new(
+            3,
+            Some(Interval::Always),
+            None,
+            vec![AnimationPattern::new(
+                0,
+                DrawMethod::Overlay,
+                11,
+                0,
+                None,
+                0,
+                0,
+                vec![],
+            )],
+            vec![],
+            vec![],
+        );
 
         def.animations.insert(1, anim1);
         def.animations.insert(2, anim2);

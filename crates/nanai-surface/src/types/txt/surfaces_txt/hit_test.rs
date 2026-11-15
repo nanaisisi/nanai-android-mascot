@@ -63,12 +63,12 @@ mod tests {
             },
         });
 
-        let anim = SerikoAnimation {
-            id: 10,
-            name: None,
-            interval: Some(crate::types::Interval::Bind),
-            options: vec![],
-            collisions: vec![CollisionArea {
+        let anim = SerikoAnimation::new(
+            10,
+            Some(crate::types::Interval::Bind),
+            None,
+            vec![],
+            vec![CollisionArea {
                 id: Some(1),
                 name: "BindArea".into(),
                 shape: CollisionShape::Rect {
@@ -78,8 +78,8 @@ mod tests {
                     y2: 30,
                 },
             }],
-            patterns: vec![],
-        };
+            vec![],
+        );
         def.animations.insert(10, anim);
         txt.surfaces.insert(0, def);
 

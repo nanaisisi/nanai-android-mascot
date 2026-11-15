@@ -30,40 +30,40 @@ fn test_animation_scheduler_state_coverage_boost() {
     assert!(!scheduler.is_animation_paused(99, 999));
 
     // 2. pause_animation, resume_animation, is_animation_paused on active animation
-    let anim1 = SerikoAnimation {
-        id: 77,
-        name: None,
-        interval: Some(Interval::Always),
-        options: vec![],
-        collisions: vec![],
-        patterns: vec![AnimationPattern {
-            index: 0,
-            surface: 100,
-            wait: 100,
-            wait_max: None,
-            method: DrawMethod::Overlay,
-            x: 0,
-            y: 0,
-            options: vec![],
-        }],
-    };
-    let anim2 = SerikoAnimation {
-        id: 78,
-        name: None,
-        interval: Some(Interval::Always),
-        options: vec![],
-        collisions: vec![],
-        patterns: vec![AnimationPattern {
-            index: 0,
-            surface: 101,
-            wait: 100,
-            wait_max: None,
-            method: DrawMethod::Overlay,
-            x: 0,
-            y: 0,
-            options: vec![],
-        }],
-    };
+    let anim1 = SerikoAnimation::new(
+        77,
+        Some(Interval::Always),
+        None,
+        vec![AnimationPattern::new(
+            0,
+            DrawMethod::Overlay,
+            100,
+            100,
+            None,
+            0,
+            0,
+            vec![],
+        )],
+        vec![],
+        vec![],
+    );
+    let anim2 = SerikoAnimation::new(
+        78,
+        Some(Interval::Always),
+        None,
+        vec![AnimationPattern::new(
+            0,
+            DrawMethod::Overlay,
+            101,
+            100,
+            None,
+            0,
+            0,
+            vec![],
+        )],
+        vec![],
+        vec![],
+    );
     scheduler.start_animation(0, 0, &anim1);
     scheduler.start_animation(0, 0, &anim2);
     assert_eq!(scheduler.active_count(0), 2);
@@ -89,40 +89,40 @@ fn test_animation_scheduler_state_coverage_boost() {
     assert_eq!(scheduler.active_count(0), 1);
 
     // 5. set_surface_with_shared_index
-    let shared_anim1 = SerikoAnimation {
-        id: 88,
-        name: None,
-        interval: Some(Interval::Always),
-        options: vec![vec!["shared-index".to_string()]],
-        collisions: vec![],
-        patterns: vec![AnimationPattern {
-            index: 0,
-            method: DrawMethod::Overlay,
-            surface: 100,
-            wait: 50,
-            wait_max: None,
-            x: 0,
-            y: 0,
-            options: vec![],
-        }],
-    };
-    let shared_anim2 = SerikoAnimation {
-        id: 89,
-        name: None,
-        interval: Some(Interval::Always),
-        options: vec![vec!["shared-index".to_string()]],
-        collisions: vec![],
-        patterns: vec![AnimationPattern {
-            index: 0,
-            method: DrawMethod::Overlay,
-            surface: 100,
-            wait: 50,
-            wait_max: None,
-            x: 0,
-            y: 0,
-            options: vec![],
-        }],
-    };
+    let shared_anim1 = SerikoAnimation::new(
+        88,
+        Some(Interval::Always),
+        None,
+        vec![AnimationPattern::new(
+            0,
+            DrawMethod::Overlay,
+            100,
+            50,
+            None,
+            0,
+            0,
+            vec![],
+        )],
+        vec![],
+        vec![vec!["shared-index".to_string()]],
+    );
+    let shared_anim2 = SerikoAnimation::new(
+        89,
+        Some(Interval::Always),
+        None,
+        vec![AnimationPattern::new(
+            0,
+            DrawMethod::Overlay,
+            100,
+            50,
+            None,
+            0,
+            0,
+            vec![],
+        )],
+        vec![],
+        vec![vec!["shared-index".to_string()]],
+    );
     scheduler.start_animation(0, 0, &shared_anim1);
     scheduler.start_animation(0, 0, &shared_anim2);
     if let Some(anims) = scheduler.active_animations.get_mut(&0) {
@@ -136,52 +136,52 @@ fn test_animation_scheduler_state_coverage_boost() {
     assert!(!scheduler.is_bind_active(99, 5));
 
     // Shared index with out of bounds saved index
-    let long_shared = SerikoAnimation {
-        id: 90,
-        name: None,
-        interval: Some(Interval::Always),
-        options: vec![vec!["shared-index".to_string()]],
-        collisions: vec![],
-        patterns: vec![
-            AnimationPattern {
-                index: 0,
-                method: DrawMethod::Overlay,
-                surface: 100,
-                wait: 50,
-                wait_max: None,
-                x: 0,
-                y: 0,
-                options: vec![],
-            },
-            AnimationPattern {
-                index: 1,
-                method: DrawMethod::Overlay,
-                surface: 101,
-                wait: 50,
-                wait_max: None,
-                x: 0,
-                y: 0,
-                options: vec![],
-            },
+    let long_shared = SerikoAnimation::new(
+        90,
+        Some(Interval::Always),
+        None,
+        vec![
+            AnimationPattern::new(
+                0,
+                DrawMethod::Overlay,
+                100,
+                50,
+                None,
+                0,
+                0,
+                vec![],
+            ),
+            AnimationPattern::new(
+                1,
+                DrawMethod::Overlay,
+                101,
+                50,
+                None,
+                0,
+                0,
+                vec![],
+            ),
         ],
-    };
-    let short_shared = SerikoAnimation {
-        id: 90,
-        name: None,
-        interval: Some(Interval::Always),
-        options: vec![vec!["shared-index".to_string()]],
-        collisions: vec![],
-        patterns: vec![AnimationPattern {
-            index: 0,
-            method: DrawMethod::Overlay,
-            surface: 100,
-            wait: 50,
-            wait_max: None,
-            x: 0,
-            y: 0,
-            options: vec![],
-        }],
-    };
+        vec![],
+        vec![vec!["shared-index".to_string()]],
+    );
+    let short_shared = SerikoAnimation::new(
+        90,
+        Some(Interval::Always),
+        None,
+        vec![AnimationPattern::new(
+            0,
+            DrawMethod::Overlay,
+            100,
+            50,
+            None,
+            0,
+            0,
+            vec![],
+        )],
+        vec![],
+        vec![vec!["shared-index".to_string()]],
+    );
     scheduler.start_animation(0, 0, &long_shared);
     let _ = scheduler.step(60);
     scheduler.set_surface_with_shared_index(0, 1, &[short_shared]);
@@ -189,23 +189,23 @@ fn test_animation_scheduler_state_coverage_boost() {
     // Additional state edge cases
     scheduler.set_surface_with_shared_index(5, 10, &[]);
     scheduler.resume_animation(0, 9999);
-    let anim_active = SerikoAnimation {
-        id: 79,
-        name: None,
-        interval: Some(Interval::Always),
-        options: vec![],
-        collisions: vec![],
-        patterns: vec![AnimationPattern {
-            index: 0,
-            method: DrawMethod::Overlay,
-            surface: 100,
-            wait: 50,
-            wait_max: None,
-            x: 0,
-            y: 0,
-            options: vec![],
-        }],
-    };
+    let anim_active = SerikoAnimation::new(
+        79,
+        Some(Interval::Always),
+        None,
+        vec![AnimationPattern::new(
+            0,
+            DrawMethod::Overlay,
+            100,
+            50,
+            None,
+            0,
+            0,
+            vec![],
+        )],
+        vec![],
+        vec![],
+    );
     scheduler.start_animation(0, 0, &anim_active);
     assert!(!scheduler.is_animation_paused(0, 79));
 }

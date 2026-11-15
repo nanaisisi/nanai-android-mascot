@@ -13,45 +13,45 @@ fn test_animation_scheduler_scaling_and_talk_toggle() {
     // scaling の初期値は (100.0, 100.0)
     assert_eq!(scheduler.get_base_scaling_offset(0), (100.0, 100.0));
 
-    let scaling_anim = SerikoAnimation {
-        id: 8,
-        interval: Some(Interval::RunOnce),
-        name: None,
-        patterns: vec![
-            AnimationPattern {
-                index: 0,
-                method: DrawMethod::Scaling,
-                surface: 0,
-                wait: 25,
-                wait_max: None,
-                x: 120,
-                y: 130,
-                options: vec![],
-            },
-            AnimationPattern {
-                index: 1,
-                method: DrawMethod::Scaling,
-                surface: 0,
-                wait: 25,
-                wait_max: None,
-                x: 100,
-                y: 100,
-                options: vec![],
-            },
-            AnimationPattern {
-                index: 2,
-                method: DrawMethod::Overlay,
-                surface: -1,
-                wait: 0,
-                wait_max: None,
-                x: 0,
-                y: 0,
-                options: vec![],
-            },
+    let scaling_anim = SerikoAnimation::new(
+        8,
+        Some(Interval::RunOnce),
+        None,
+        vec![
+            AnimationPattern::new(
+                0,
+                DrawMethod::Scaling,
+                0,
+                25,
+                None,
+                120,
+                130,
+                vec![],
+            ),
+            AnimationPattern::new(
+                1,
+                DrawMethod::Scaling,
+                0,
+                25,
+                None,
+                100,
+                100,
+                vec![],
+            ),
+            AnimationPattern::new(
+                2,
+                DrawMethod::Overlay,
+                -1,
+                0,
+                None,
+                0,
+                0,
+                vec![],
+            ),
         ],
-        collisions: vec![],
-        options: vec![],
-    };
+        vec![],
+        vec![],
+    );
 
     scheduler.start_animation(0, 0, &scaling_anim);
     assert_eq!(scheduler.active_count(0), 1);
@@ -72,14 +72,14 @@ fn test_animation_scheduler_scaling_and_talk_toggle() {
     scheduler.set_seriko_talk_enabled(0, false);
     assert!(!scheduler.is_seriko_talk_enabled(0));
 
-    let talk_anim = SerikoAnimation {
-        id: 99,
-        interval: Some(Interval::Talk),
-        name: None,
-        patterns: vec![super::pattern(PatternParams::new(0, 10, 50))],
-        collisions: vec![],
-        options: vec![],
-    };
+    let talk_anim = SerikoAnimation::new(
+        99,
+        Some(Interval::Talk),
+        None,
+        vec![super::pattern(PatternParams::new(0, 10, 50))],
+        vec![],
+        vec![],
+    );
 
     // seriko_talk_enabled が false の場合、on_char_spoken によるアニメーション開始が抑止される
     scheduler.on_char_spoken(0, std::slice::from_ref(&talk_anim));

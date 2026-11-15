@@ -36,14 +36,14 @@ impl From<(u32, i32, u32)> for PatternParams {
 }
 
 pub(crate) fn pattern(params: PatternParams) -> AnimationPattern {
-    AnimationPattern {
-        index: params.index,
-        method: DrawMethod::Overlay,
-        surface: params.surface,
-        wait: params.wait,
-        wait_max: None,
-        x: 0,
-        y: 0,
-        options: vec![],
-    }
+    AnimationPattern::new(
+        params.index,
+        DrawMethod::Overlay,
+        params.surface,
+        params.wait,
+        None,
+        0,
+        0,
+        vec![],
+    )
 }

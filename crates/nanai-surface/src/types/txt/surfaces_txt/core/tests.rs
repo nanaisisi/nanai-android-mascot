@@ -31,14 +31,14 @@ fn test_surfaces_txt_merge_comprehensive() {
     other_def.points.kinoko_center_x = Some(50);
     other_def.points.kinoko_center_y = Some(60);
 
-    let anim = SerikoAnimation {
-        id: 0,
-        name: Some("Anim0".into()),
-        interval: Some(Interval::Always),
-        options: vec![],
-        collisions: vec![],
-        patterns: vec![],
-    };
+    let anim = SerikoAnimation::new(
+        0,
+        Some(Interval::Always),
+        Some("Anim0".into()),
+        vec![],
+        vec![],
+        vec![],
+    );
     other_def.animations.insert(0, anim.clone());
     other.surfaces.insert(0, other_def);
 

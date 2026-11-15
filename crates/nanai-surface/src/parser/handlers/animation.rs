@@ -96,8 +96,8 @@ pub(crate) fn apply_animation_line(mut params: Apply_animation_lineParams<'_>) {
                 }
             }
 
-            let pattern = AnimationPattern {
-                index: pat_index,
+            let pattern = AnimationPattern::new(
+                pat_index,
                 method,
                 surface,
                 wait,
@@ -105,7 +105,7 @@ pub(crate) fn apply_animation_line(mut params: Apply_animation_lineParams<'_>) {
                 x,
                 y,
                 options,
-            };
+            );
 
             anim.patterns.push(pattern);
             anim.patterns.sort_by_key(|p| p.index);

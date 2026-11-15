@@ -25,16 +25,16 @@ fn test_active_animation_edge_cases() {
     let mut anim1 = ActiveAnimation::new(
         1,
         0,
-        vec![AnimationPattern {
-            index: 0,
-            method: DrawMethod::Overlay,
-            surface: 100,
-            wait: 10,
-            wait_max: None,
-            x: 0,
-            y: 0,
-            options: vec![],
-        }],
+        vec![AnimationPattern::new(
+            0,
+            DrawMethod::Overlay,
+            100,
+            10,
+            None,
+            0,
+            0,
+            vec![],
+        )],
     );
     assert!(anim1.advance(15, 0).is_some());
     assert!(anim1.advance(15, 0).is_none());
@@ -44,16 +44,16 @@ fn test_active_animation_edge_cases() {
     let mut anim_paused = ActiveAnimation::new(
         1,
         0,
-        vec![AnimationPattern {
-            index: 0,
-            method: DrawMethod::Overlay,
-            surface: 100,
-            wait: 10,
-            wait_max: None,
-            x: 0,
-            y: 0,
-            options: vec![],
-        }],
+        vec![AnimationPattern::new(
+            0,
+            DrawMethod::Overlay,
+            100,
+            10,
+            None,
+            0,
+            0,
+            vec![],
+        )],
     );
     anim_paused.is_paused = true;
     assert!(anim_paused.advance(100, 0).is_none());
@@ -62,16 +62,16 @@ fn test_active_animation_edge_cases() {
     let mut anim_minus_one = ActiveAnimation::new(
         1,
         0,
-        vec![AnimationPattern {
-            index: 0,
-            method: DrawMethod::Overlay,
-            surface: -1,
-            wait: 10,
-            wait_max: None,
-            x: 0,
-            y: 0,
-            options: vec![],
-        }],
+        vec![AnimationPattern::new(
+            0,
+            DrawMethod::Overlay,
+            -1,
+            10,
+            None,
+            0,
+            0,
+            vec![],
+        )],
     );
     assert!(anim_minus_one.advance(15, 0).is_some());
     assert!(anim_minus_one.is_finished);
@@ -81,26 +81,26 @@ fn test_active_animation_edge_cases() {
         3,
         0,
         vec![
-            AnimationPattern {
-                index: 0,
-                method: DrawMethod::Overlay,
-                surface: -1,
-                wait: 10,
-                wait_max: None,
-                x: 0,
-                y: 0,
-                options: vec![],
-            },
-            AnimationPattern {
-                index: 1,
-                method: DrawMethod::Overlay,
-                surface: 102,
-                wait: 10,
-                wait_max: None,
-                x: 0,
-                y: 0,
-                options: vec![],
-            },
+            AnimationPattern::new(
+                0,
+                DrawMethod::Overlay,
+                -1,
+                10,
+                None,
+                0,
+                0,
+                vec![],
+            ),
+            AnimationPattern::new(
+                1,
+                DrawMethod::Overlay,
+                102,
+                10,
+                None,
+                0,
+                0,
+                vec![],
+            ),
         ],
     );
     assert!(anim_mid_minus_one.advance(15, 0).is_some());
@@ -111,26 +111,26 @@ fn test_active_animation_edge_cases() {
         2,
         0,
         vec![
-            AnimationPattern {
-                index: 0,
-                method: DrawMethod::Overlay,
-                surface: 100,
-                wait: 10,
-                wait_max: None,
-                x: 0,
-                y: 0,
-                options: vec![],
-            },
-            AnimationPattern {
-                index: 1,
-                method: DrawMethod::Overlay,
-                surface: 101,
-                wait: 20,
-                wait_max: None,
-                x: 0,
-                y: 0,
-                options: vec![],
-            },
+            AnimationPattern::new(
+                0,
+                DrawMethod::Overlay,
+                100,
+                10,
+                None,
+                0,
+                0,
+                vec![],
+            ),
+            AnimationPattern::new(
+                1,
+                DrawMethod::Overlay,
+                101,
+                20,
+                None,
+                0,
+                0,
+                vec![],
+            ),
         ],
     );
     assert_eq!(anim2.next_step_at_ms, 10);

@@ -5,38 +5,38 @@ fn test_animation_scheduler_talk_and_bind() {
     use crate::surfaces_core_integration::SerikoAnimation;
 
     let mut scheduler = AnimationScheduler::new();
-    let talk_anim = SerikoAnimation {
-        id: 1,
-        interval: Some(Interval::Custom("talk,2".into())),
-        name: None,
-        patterns: vec![super::pattern(PatternParams::new(0, 20, 0))],
-        collisions: vec![],
-        options: vec![],
-    };
-    let start_anim = SerikoAnimation {
-        id: 2,
-        interval: Some(Interval::StartTalk),
-        name: None,
-        patterns: vec![super::pattern(PatternParams::new(0, 21, 0))],
-        collisions: vec![],
-        options: vec![],
-    };
-    let end_anim = SerikoAnimation {
-        id: 3,
-        interval: Some(Interval::EndTalk),
-        name: None,
-        patterns: vec![super::pattern(PatternParams::new(0, 22, 0))],
-        collisions: vec![],
-        options: vec![],
-    };
-    let bind_anim = SerikoAnimation {
-        id: 4,
-        interval: Some(Interval::Bind),
-        name: None,
-        patterns: vec![super::pattern(PatternParams::new(0, 23, 0))],
-        collisions: vec![],
-        options: vec![],
-    };
+    let talk_anim = SerikoAnimation::new(
+        1,
+        Some(Interval::Custom("talk,2".into())),
+        None,
+        vec![super::pattern(PatternParams::new(0, 20, 0))],
+        vec![],
+        vec![],
+    );
+    let start_anim = SerikoAnimation::new(
+        2,
+        Some(Interval::StartTalk),
+        None,
+        vec![super::pattern(PatternParams::new(0, 21, 0))],
+        vec![],
+        vec![],
+    );
+    let end_anim = SerikoAnimation::new(
+        3,
+        Some(Interval::EndTalk),
+        None,
+        vec![super::pattern(PatternParams::new(0, 22, 0))],
+        vec![],
+        vec![],
+    );
+    let bind_anim = SerikoAnimation::new(
+        4,
+        Some(Interval::Bind),
+        None,
+        vec![super::pattern(PatternParams::new(0, 23, 0))],
+        vec![],
+        vec![],
+    );
 
     let anims = vec![
         talk_anim.clone(),
@@ -68,27 +68,27 @@ fn test_animation_scheduler_talk_and_bind() {
     assert!(events.iter().any(|e| e.animation_id == 3));
 
     // yen-e
-    let yene_anim = SerikoAnimation {
-        id: 9,
-        interval: Some(Interval::YenE),
-        name: None,
-        patterns: vec![super::pattern(PatternParams::new(0, 99, 0))],
-        collisions: vec![],
-        options: vec![],
-    };
+    let yene_anim = SerikoAnimation::new(
+        9,
+        Some(Interval::YenE),
+        None,
+        vec![super::pattern(PatternParams::new(0, 99, 0))],
+        vec![],
+        vec![],
+    );
     scheduler.on_script_end(0, &[yene_anim]);
     let events = scheduler.step(0);
     assert!(events.iter().any(|e| e.animation_id == 9));
 
     // on_bind_changed: 有効化で即座に開始
-    let bind_anim_dynamic = SerikoAnimation {
-        id: 5,
-        interval: Some(Interval::Bind),
-        name: None,
-        patterns: vec![super::pattern(PatternParams::new(0, 50, 0))],
-        collisions: vec![],
-        options: vec![],
-    };
+    let bind_anim_dynamic = SerikoAnimation::new(
+        5,
+        Some(Interval::Bind),
+        None,
+        vec![super::pattern(PatternParams::new(0, 50, 0))],
+        vec![],
+        vec![],
+    );
     scheduler.on_bind_changed(0, 5, true, std::slice::from_ref(&bind_anim_dynamic));
     assert!(scheduler.is_bind_active(0, 5));
     assert!(scheduler.is_animation_running(0, 5));
@@ -106,43 +106,43 @@ fn test_animation_scheduler_exclusive_and_background() {
     let mut scheduler = AnimationScheduler::new();
 
     // 通常アニメーション 1
-    let normal_anim = SerikoAnimation {
-        id: 1,
-        interval: Some(Interval::Always),
-        name: None,
-        patterns: vec![
+    let normal_anim = SerikoAnimation::new(
+        1,
+        Some(Interval::Always),
+        None,
+        vec![
             super::pattern(PatternParams::new(0, 101, 100)),
             super::pattern(PatternParams::new(1, -1, 0)),
         ],
-        collisions: vec![],
-        options: vec![],
-    };
+        vec![],
+        vec![],
+    );
 
     // background アニメーション 2
-    let bg_anim = SerikoAnimation {
-        id: 2,
-        interval: Some(Interval::Always),
-        name: None,
-        patterns: vec![
+    let bg_anim = SerikoAnimation::new(
+        2,
+        Some(Interval::Always),
+        None,
+        vec![
             super::pattern(PatternParams::new(0, 102, 100)),
             super::pattern(PatternParams::new(1, -1, 0)),
         ],
-        collisions: vec![],
-        options: vec![vec!["background".into()]],
-    };
+        vec![],
+        vec![vec!["background".into()]],
+    );
 
     // exclusive (全対象) アニメーション 3
-    let exclusive_anim = SerikoAnimation {
-        id: 3,
-        interval: Some(Interval::RunOnce),
-        name: None,
-        patterns: vec![
+    let exclusive_anim = SerikoAnimation::new(
+        3,
+        Some(Interval::RunOnce),
+        None,
+        vec![
             super::pattern(PatternParams::new(0, 103, 100)),
             super::pattern(PatternParams::new(1, -1, 0)),
         ],
-        collisions: vec![],
-        options: vec![vec!["exclusive".into()]],
-    };
+        vec![],
+        vec![vec!["exclusive".into()]],
+    );
 
     scheduler.start_animation(0, 0, &normal_anim);
     scheduler.start_animation(0, 0, &bg_anim);
@@ -180,32 +180,32 @@ fn test_animation_scheduler_exclusive_selective_targets() {
 
     let mut scheduler = AnimationScheduler::new();
 
-    let anim1 = SerikoAnimation {
-        id: 1,
-        interval: Some(Interval::Always),
-        name: None,
-        patterns: vec![super::pattern(PatternParams::new(0, 101, 100))],
-        collisions: vec![],
-        options: vec![],
-    };
-    let anim2 = SerikoAnimation {
-        id: 2,
-        interval: Some(Interval::Always),
-        name: None,
-        patterns: vec![super::pattern(PatternParams::new(0, 102, 100))],
-        collisions: vec![],
-        options: vec![],
-    };
+    let anim1 = SerikoAnimation::new(
+        1,
+        Some(Interval::Always),
+        None,
+        vec![super::pattern(PatternParams::new(0, 101, 100))],
+        vec![],
+        vec![],
+    );
+    let anim2 = SerikoAnimation::new(
+        2,
+        Some(Interval::Always),
+        None,
+        vec![super::pattern(PatternParams::new(0, 102, 100))],
+        vec![],
+        vec![],
+    );
 
     // ID=1 のみを対象とする exclusive アニメーション
-    let anim3 = SerikoAnimation {
-        id: 3,
-        interval: Some(Interval::RunOnce),
-        name: None,
-        patterns: vec![super::pattern(PatternParams::new(0, 103, 100))],
-        collisions: vec![],
-        options: vec![vec!["exclusive,(1)".into()]],
-    };
+    let anim3 = SerikoAnimation::new(
+        3,
+        Some(Interval::RunOnce),
+        None,
+        vec![super::pattern(PatternParams::new(0, 103, 100))],
+        vec![],
+        vec![vec!["exclusive,(1)".into()]],
+    );
 
     scheduler.start_animation(0, 0, &anim1);
     scheduler.start_animation(0, 0, &anim2);
@@ -224,32 +224,32 @@ fn test_animation_scheduler_shared_index() {
     let mut scheduler = AnimationScheduler::new();
 
     // サーフィス0側のアニメーション
-    let anim_s0 = SerikoAnimation {
-        id: 10,
-        interval: Some(Interval::RunOnce),
-        name: None,
-        patterns: vec![
+    let anim_s0 = SerikoAnimation::new(
+        10,
+        Some(Interval::RunOnce),
+        None,
+        vec![
             super::pattern(PatternParams::new(0, 200, 50)),
             super::pattern(PatternParams::new(1, 201, 50)),
             super::pattern(PatternParams::new(2, 202, 50)),
         ],
-        collisions: vec![],
-        options: vec![vec!["shared-index".into()]],
-    };
+        vec![],
+        vec![vec!["shared-index".into()]],
+    );
 
     // サーフィス1側のアニメーション
-    let anim_s1 = SerikoAnimation {
-        id: 10,
-        interval: Some(Interval::RunOnce),
-        name: None,
-        patterns: vec![
+    let anim_s1 = SerikoAnimation::new(
+        10,
+        Some(Interval::RunOnce),
+        None,
+        vec![
             super::pattern(PatternParams::new(0, 300, 50)),
             super::pattern(PatternParams::new(1, 301, 50)),
             super::pattern(PatternParams::new(2, 302, 50)),
         ],
-        collisions: vec![],
-        options: vec![vec!["shared-index".into()]],
-    };
+        vec![],
+        vec![vec!["shared-index".into()]],
+    );
 
     scheduler.start_animation(0, 0, &anim_s0);
     // 1フレーム進める (index 0 -> index 1)

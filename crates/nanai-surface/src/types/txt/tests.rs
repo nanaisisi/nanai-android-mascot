@@ -56,27 +56,32 @@ fn test_plan_composition_bind_and_unmapped() {
     let mut txt = SurfacesTxt::default();
     let mut def = SurfaceDefinition::default();
 
-    let bind_anim = SerikoAnimation {
-        id: 100,
-        interval: Some(Interval::Bind),
-        patterns: vec![AnimationPattern {
-            index: 0,
-            method: DrawMethod::Overlay,
-            surface: 20,
-            wait: 85,
-            wait_max: None,
-            x: 0,
-            y: 0,
-            options: vec![],
-        }],
-        ..Default::default()
-    };
+    let bind_anim = SerikoAnimation::new(
+        100,
+        Some(Interval::Bind),
+        None,
+        vec![AnimationPattern::new(
+            0,
+            DrawMethod::Overlay,
+            20,
+            85,
+            None,
+            0,
+            0,
+            vec![],
+        )],
+        vec![],
+        vec![],
+    );
 
-    let always_anim = SerikoAnimation {
-        id: 101,
-        interval: Some(Interval::Always),
-        ..Default::default()
-    };
+    let always_anim = SerikoAnimation::new(
+        101,
+        Some(Interval::Always),
+        None,
+        vec![],
+        vec![],
+        vec![],
+    );
 
     def.animations.insert(100, bind_anim);
     def.animations.insert(101, always_anim);

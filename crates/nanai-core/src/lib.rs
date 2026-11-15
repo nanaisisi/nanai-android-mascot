@@ -7,6 +7,8 @@ pub mod install_protocol;
 pub mod sakura_player;
 pub mod sakura_script;
 pub mod seriko_animation;
+pub mod shiori_protocol_core;
+pub mod shiori_protocol_helpers;
 pub mod shiori_protocol;
 pub mod sstp_fmo;
 pub mod state;

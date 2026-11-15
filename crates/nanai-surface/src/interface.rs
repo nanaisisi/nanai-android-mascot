@@ -4,8 +4,10 @@ use crate::compositor::{SurfaceFrameBuffer, composite_elements};
 use crate::parser::parse_surfaces_txt;
 use crate::types::{DrawMethod, HitTestResult, SurfaceDefinition, SurfacesTxt};
 
-/// Stable public API interface for `nanai-surface`
-pub trait NanaiSurfaceInterface: Send + Sync {
+#[allow(non_camel_case_types)]
+pub trait Nanai_surfaceInterface: Send + Sync {
+    // Define stable public API
+
     /// Parses a `surfaces.txt` formatted text into a `SurfacesTxt` struct
     fn parse_surfaces_txt(&self, text: &str) -> SurfacesTxt;
 
@@ -23,16 +25,11 @@ pub trait NanaiSurfaceInterface: Send + Sync {
     ) -> SurfaceFrameBuffer;
 }
 
-/// Type alias for snake_case compatibility if referenced
-#[allow(non_camel_case_types)]
-pub trait Nanai_surfaceInterface: NanaiSurfaceInterface {}
-impl<T: NanaiSurfaceInterface> Nanai_surfaceInterface for T {}
-
-/// Default implementation facade for `NanaiSurfaceInterface`
+/// Default implementation facade for `Nanai_surfaceInterface`
 #[derive(Debug, Clone, Copy, Default)]
 pub struct NanaiSurfaceFacade;
 
-impl NanaiSurfaceInterface for NanaiSurfaceFacade {
+impl Nanai_surfaceInterface for NanaiSurfaceFacade {
     fn parse_surfaces_txt(&self, text: &str) -> SurfacesTxt {
         parse_surfaces_txt(text)
     }

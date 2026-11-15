@@ -8,7 +8,7 @@ pub mod types;
 pub use compositor::{
     GLOBAL_SURFACE_CACHE, SurfaceFrameBuffer, SurfaceLruCache, composite_elements,
 };
-pub use interface::{NanaiSurfaceFacade, NanaiSurfaceInterface, Nanai_surfaceInterface};
+pub use interface::{NanaiSurfaceFacade, Nanai_surfaceInterface};
 pub use parser::{expand_range, parse_surfaces_txt};
 pub use types::{
     AnimationPattern, BalloonOffset, CollisionArea, CollisionShape, CompositionLayer,

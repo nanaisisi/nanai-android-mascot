@@ -6,8 +6,15 @@ use serde::{Deserialize, Serialize};
 /// さくらスクリプトの単一トークン表現
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SakuraToken {
-    pub command: SakuraCommand,
-    pub raw: Option<String>,
+    pub(crate) command: SakuraCommand,
+    pub(crate) raw: Option<String>,
+}
+
+#[allow(dead_code)]
+impl SakuraToken {
+    // Add getter methods
+    pub fn command(&self) -> &SakuraCommand { &self.command }
+    pub fn raw(&self) -> Option<&str> { self.raw.as_deref() }
 }
 
 impl SakuraToken {

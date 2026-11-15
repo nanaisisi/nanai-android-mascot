@@ -76,6 +76,68 @@ impl ShioriResponse {
     pub fn is_teach_pending(&self) -> bool {
         matches!(self.status, StatusCode::NotEnough | StatusCode::Advice)
     }
+
+    // --- Getter Methods ---
+
+    pub fn status(&self) -> StatusCode {
+        self.status
+    }
+
+    pub fn charset(&self) -> &str {
+        &self.charset
+    }
+
+    pub fn sender(&self) -> Option<&str> {
+        self.sender.as_deref()
+    }
+
+    pub fn value(&self) -> Option<&str> {
+        self.value.as_deref()
+    }
+
+    pub fn value_notify(&self) -> Option<&str> {
+        self.value_notify.as_deref()
+    }
+
+    pub fn security_level(&self) -> Option<SecurityLevel> {
+        self.security_level
+    }
+
+    pub fn marker(&self) -> Option<&str> {
+        self.marker.as_deref()
+    }
+
+    pub fn error_level(&self) -> &[ErrorLevel] {
+        &self.error_level
+    }
+
+    pub fn error_description(&self) -> &[String] {
+        &self.error_description
+    }
+
+    pub fn balloon_offset(&self) -> Option<(i32, i32)> {
+        self.balloon_offset
+    }
+
+    pub fn reference0(&self) -> Option<&str> {
+        self.reference0.as_deref()
+    }
+
+    pub fn references(&self) -> &[String] {
+        &self.references
+    }
+
+    pub fn age(&self) -> Option<u32> {
+        self.age
+    }
+
+    pub fn marker_send(&self) -> Option<&str> {
+        self.marker_send.as_deref()
+    }
+
+    pub fn passthru(&self) -> &BTreeMap<String, String> {
+        &self.passthru
+    }
 }
 
 pub(super) fn key_str_prefix(key: &str) -> Option<String> {
@@ -183,5 +245,39 @@ mod tests {
         });
         assert!(out.contains("Header: Line1"));
         assert!(out.contains("Line2"));
+    }
+
+    #[test]
+    fn test_shiori_response_getters() {
+        let mut res = ShioriResponse::ok("Hello");
+        res.charset = "UTF-8".into();
+        res.sender = Some("Shiori".into());
+        res.value_notify = Some("Notify".into());
+        res.security_level = Some(SecurityLevel::Local);
+        res.marker = Some("marker".into());
+        res.error_level = vec![ErrorLevel::Warning];
+        res.error_description = vec!["warn\u{1}desc".into()];
+        res.balloon_offset = Some((10, 20));
+        res.reference0 = Some("ref0".into());
+        res.references = vec!["ref1".into()];
+        res.age = Some(1);
+        res.marker_send = Some("msend".into());
+        res.passthru.insert("PK".into(), "PV".into());
+
+        assert_eq!(res.status(), StatusCode::Ok);
+        assert_eq!(res.charset(), "UTF-8");
+        assert_eq!(res.sender(), Some("Shiori"));
+        assert_eq!(res.value(), Some("Hello"));
+        assert_eq!(res.value_notify(), Some("Notify"));
+        assert_eq!(res.security_level(), Some(SecurityLevel::Local));
+        assert_eq!(res.marker(), Some("marker"));
+        assert_eq!(res.error_level(), &[ErrorLevel::Warning]);
+        assert_eq!(res.error_description(), &["warn\u{1}desc".to_string()]);
+        assert_eq!(res.balloon_offset(), Some((10, 20)));
+        assert_eq!(res.reference0(), Some("ref0"));
+        assert_eq!(res.references(), &["ref1".to_string()]);
+        assert_eq!(res.age(), Some(1));
+        assert_eq!(res.marker_send(), Some("msend"));
+        assert_eq!(res.passthru().get("PK").map(|s| s.as_str()), Some("PV"));
     }
 }

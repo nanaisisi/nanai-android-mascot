@@ -57,4 +57,50 @@ impl ShioriRequest {
         req.method = ShioriMethod::Notify;
         req
     }
+
+    // --- Getter Methods ---
+
+    pub fn method(&self) -> ShioriMethod {
+        self.method
+    }
+
+    pub fn charset(&self) -> &str {
+        &self.charset
+    }
+
+    pub fn sender(&self) -> &str {
+        &self.sender
+    }
+
+    pub fn sender_type(&self) -> &[SenderTypeTag] {
+        &self.sender_type
+    }
+
+    pub fn security_level(&self) -> Option<SecurityLevel> {
+        self.security_level
+    }
+
+    pub fn security_origin(&self) -> Option<Option<&str>> {
+        self.security_origin.as_ref().map(|o| o.as_deref())
+    }
+
+    pub fn status(&self) -> &[GhostStatusToken] {
+        &self.status
+    }
+
+    pub fn id(&self) -> &str {
+        &self.id
+    }
+
+    pub fn base_id(&self) -> Option<&str> {
+        self.base_id.as_deref()
+    }
+
+    pub fn references(&self) -> &[String] {
+        &self.references
+    }
+
+    pub fn passthru(&self) -> &BTreeMap<String, String> {
+        &self.passthru
+    }
 }

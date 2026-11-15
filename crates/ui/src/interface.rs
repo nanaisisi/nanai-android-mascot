@@ -15,7 +15,8 @@ pub trait NanaiAndroidMascotUiInterface: Send + Sync {
 
 /// Type alias for snake_case compatibility if referenced
 #[allow(non_camel_case_types)]
-pub type Nanai_android_mascot_uiInterface = dyn NanaiAndroidMascotUiInterface;
+pub trait Nanai_android_mascot_uiInterface: NanaiAndroidMascotUiInterface {}
+impl<T: NanaiAndroidMascotUiInterface> Nanai_android_mascot_uiInterface for T {}
 
 /// Default implementation of NanaiAndroidMascotUiInterface
 pub struct NanaiUiFacade;
@@ -28,9 +29,13 @@ impl NanaiAndroidMascotUiInterface for NanaiUiFacade {
     fn balloon_descript_map(&self, balloon_dir: &Path) -> BTreeMap<String, String> {
         let descript_path = balloon_dir.join("descript.txt");
         let content = self.open_text_file(&descript_path).unwrap_or_default();
-        let _descript = crate::Descript::parse(&content);
+        let descript = crate::Descript::parse(&content);
 
-        BTreeMap::new()
+        descript
+            .properties()
+            .clone()
+            .into_iter()
+            .collect::<std::collections::BTreeMap<_, _>>()
     }
 
     fn build_standard_capability_references(&self) -> Vec<String> {

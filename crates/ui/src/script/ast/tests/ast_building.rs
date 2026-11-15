@@ -81,12 +81,12 @@ fn test_build_sakura_ast_choice_node() {
 #[test]
 fn test_sakura_token_constructors() {
     let tok1 = SakuraToken::new(SakuraCommand::Clear);
-    assert_eq!(tok1.command, SakuraCommand::Clear);
-    assert_eq!(tok1.raw, None);
+    assert_eq!(tok1.command(), &SakuraCommand::Clear);
+    assert_eq!(tok1.raw(), None);
 
     let tok2 = SakuraToken::with_raw(SakuraCommand::Clear, "\\c");
-    assert_eq!(tok2.command, SakuraCommand::Clear);
-    assert_eq!(tok2.raw, Some("\\c".to_string()));
+    assert_eq!(tok2.command(), &SakuraCommand::Clear);
+    assert_eq!(tok2.raw(), Some("\\c"));
 }
 
 #[test]

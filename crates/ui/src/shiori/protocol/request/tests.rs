@@ -208,3 +208,29 @@ fn test_shiori_request_build_all_headers() {
     req.security_origin = Some(None);
     assert!(req.build().contains("SecurityOrigin: null"));
 }
+
+#[test]
+fn test_shiori_request_getters() {
+    let mut req = ShioriRequest::get("OnBoot", &["ref0".into()]);
+    req.charset = "UTF-8".into();
+    req.sender = "Tester".into();
+    req.sender_type = vec![SenderTypeTag::Internal];
+    req.security_level = Some(SecurityLevel::Local);
+    req.security_origin = Some(Some("origin".into()));
+    req.status = vec![GhostStatusToken::Talking];
+    req.base_id = Some("OnFirstBoot".into());
+    req.passthru.insert("K".into(), "V".into());
+
+    assert_eq!(req.method(), ShioriMethod::Get);
+    assert_eq!(req.charset(), "UTF-8");
+    assert_eq!(req.sender(), "Tester");
+    assert_eq!(req.sender_type(), &[SenderTypeTag::Internal]);
+    assert_eq!(req.security_level(), Some(SecurityLevel::Local));
+    assert_eq!(req.security_origin(), Some(Some("origin")));
+    assert_eq!(req.status(), &[GhostStatusToken::Talking]);
+    assert_eq!(req.id(), "OnBoot");
+    assert_eq!(req.base_id(), Some("OnFirstBoot"));
+    assert_eq!(req.references(), &["ref0".to_string()]);
+    assert_eq!(req.passthru().get("K").map(|s| s.as_str()), Some("V"));
+}
+

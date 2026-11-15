@@ -20,10 +20,10 @@ impl SurfacesTxt {
         list.iter()
             .rev()
             .find(|c| {
-                c.event.eq_ignore_ascii_case(event)
-                    && c.collision.eq_ignore_ascii_case(collision_name)
+                c.event().eq_ignore_ascii_case(event)
+                    && c.collision().eq_ignore_ascii_case(collision_name)
             })
-            .map(|c| c.cursor.as_str())
+            .map(|c| c.cursor())
     }
 
     /// スコープおよび当たり判定名に応じたツールチップ本文を検索

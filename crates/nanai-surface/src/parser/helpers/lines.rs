@@ -100,11 +100,7 @@ pub(crate) fn handle_cursor_line(txt: &mut SurfacesTxt, scope: &str, line: &str)
     txt.cursors
         .entry(scope.to_string())
         .or_default()
-        .push(CursorDefinition {
-            event: event.to_string(),
-            collision,
-            cursor,
-        });
+        .push(CursorDefinition::new(event.to_string(), collision, cursor));
 }
 
 /// `*.tooltips {}` ブロック内の行を処理する (例: `Bust,怒ります。`)

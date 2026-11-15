@@ -96,11 +96,7 @@ fn test_surfaces_txt_cursor_tooltip_and_merge() {
     let mut txt = SurfacesTxt::default();
     txt.cursors.insert(
         "sakura".into(),
-        vec![CursorDefinition {
-            event: "Enter".into(),
-            collision: "Head".into(),
-            cursor: "pointer".into(),
-        }],
+        vec![CursorDefinition::new("Enter", "Head", "pointer")],
     );
     txt.tooltips.insert("kero".into(), {
         let mut m = BTreeMap::new();

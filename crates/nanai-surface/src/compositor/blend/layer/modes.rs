@@ -7,24 +7,36 @@ use super::w3c_hsl::{
 
 #[allow(non_camel_case_types)]
 pub struct Evaluate_blend_modeParams<'a> {
-    pub mode: &'a str,
-    pub dr: u8,
-    pub dg: u8,
-    pub db: u8,
-    pub sr: u8,
-    pub sg: u8,
-    pub sb: u8,
+    pub(crate) mode: &'a str,
+    pub(crate) dr: u8,
+    pub(crate) dg: u8,
+    pub(crate) db: u8,
+    pub(crate) sr: u8,
+    pub(crate) sg: u8,
+    pub(crate) sb: u8,
+}
+
+#[allow(dead_code)]
+impl<'a> Evaluate_blend_modeParams<'a> {
+    // Add getter methods
+    pub fn mode(&self) -> &'a str { self.mode }
+    pub fn dr(&self) -> u8 { self.dr }
+    pub fn dg(&self) -> u8 { self.dg }
+    pub fn db(&self) -> u8 { self.db }
+    pub fn sr(&self) -> u8 { self.sr }
+    pub fn sg(&self) -> u8 { self.sg }
+    pub fn sb(&self) -> u8 { self.sb }
 }
 
 /// 各種ブレンドモード（mode）に従い、(dr, dg, db) と (sr, sg, sb) を合成計算する
 pub(crate) fn evaluate_blend_mode(params: Evaluate_blend_modeParams<'_>) -> (u8, u8, u8) {
-    let mode = params.mode;
-    let dr = params.dr;
-    let dg = params.dg;
-    let db = params.db;
-    let sr = params.sr;
-    let sg = params.sg;
-    let sb = params.sb;
+    let mode = params.mode();
+    let dr = params.dr();
+    let dg = params.dg();
+    let db = params.db();
+    let sr = params.sr();
+    let sg = params.sg();
+    let sb = params.sb();
 
     match mode {
         "multiply" => (

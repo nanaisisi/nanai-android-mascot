@@ -6,7 +6,7 @@ use super::*;
 
 #[test]
 fn test_animation_scheduler_scaling_and_talk_toggle() {
-    use crate::surfaces_core_integration::SerikoAnimation;
+    use nanai_surface::SerikoAnimation;
 
     let mut scheduler = AnimationScheduler::new();
 

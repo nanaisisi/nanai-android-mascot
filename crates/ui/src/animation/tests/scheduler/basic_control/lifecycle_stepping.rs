@@ -6,7 +6,7 @@ use super::*;
 
 #[test]
 fn test_animation_scheduler_basic() {
-    use crate::surfaces_core_integration::SerikoAnimation;
+    use nanai_surface::SerikoAnimation;
 
     let mut scheduler = AnimationScheduler::new();
     scheduler.set_surface(0, 0);
@@ -55,7 +55,7 @@ fn test_animation_scheduler_basic() {
 
 #[test]
 fn test_animation_scheduler_pause_resume() {
-    use crate::surfaces_core_integration::SerikoAnimation;
+    use nanai_surface::SerikoAnimation;
 
     let mut scheduler = AnimationScheduler::new();
     let anim = SerikoAnimation::new(
@@ -88,7 +88,7 @@ fn test_animation_scheduler_pause_resume() {
 
 #[test]
 fn test_animation_scheduler_stop_and_offset() {
-    use crate::surfaces_core_integration::SerikoAnimation;
+    use nanai_surface::SerikoAnimation;
 
     let mut scheduler = AnimationScheduler::new();
 

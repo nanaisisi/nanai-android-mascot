@@ -6,8 +6,7 @@ mod timeline;
 mod triggers_events;
 
 use super::*;
-use crate::surfaces_core_core::{DrawMethod, Interval};
-use crate::surfaces_core_integration::{AnimationPattern, SurfacesTxt};
+use nanai_surface::{AnimationPattern, DrawMethod, Interval, SurfacesTxt};
 
 pub(crate) struct PatternParams {
     pub index: u32,

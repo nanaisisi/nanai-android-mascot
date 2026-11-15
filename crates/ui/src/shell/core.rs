@@ -1,9 +1,7 @@
 use crate::descript::{BindGroup, Descript};
-use crate::surfaces_core_core::CollisionArea;
-use crate::surfaces_core_integration::{HitTestResult, SurfaceDefinition, SurfacesTxt};
 use crate::surfacetable::SurfaceTable;
-use crate::vfs_core::resolve_vfs_path;
-use crate::vfs_integration::open_text_file;
+use nanai_surface::{CollisionArea, HitTestResult, SurfaceDefinition, SurfacesTxt};
+use nanai_vfs::{open_text_file, resolve_vfs_path};
 use std::path::{Path, PathBuf};
 
 use super::loader::read_descript;
@@ -162,7 +160,7 @@ impl Shell {
         &self,
         surface: u32,
         binds: &[u32],
-    ) -> Option<crate::surfaces_core_integration::CompositionPlan> {
+    ) -> Option<nanai_surface::CompositionPlan> {
         self.surfaces_txt.plan_composition(surface, binds)
     }
 

@@ -6,7 +6,7 @@ use super::*;
 
 #[test]
 fn test_animation_scheduler_pattern_control_methods() {
-    use crate::surfaces_core_integration::SerikoAnimation;
+    use nanai_surface::SerikoAnimation;
 
     let mut scheduler = AnimationScheduler::new();
 
@@ -55,7 +55,7 @@ fn test_animation_scheduler_pattern_control_methods() {
 
 #[test]
 fn test_animation_scheduler_move_draw_method() {
-    use crate::surfaces_core_integration::SerikoAnimation;
+    use nanai_surface::SerikoAnimation;
 
     let mut scheduler = AnimationScheduler::new();
 

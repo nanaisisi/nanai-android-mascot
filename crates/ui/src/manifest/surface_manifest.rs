@@ -1,6 +1,6 @@
 //! 1サーフィス分のマニフェスト (`SurfaceManifest`)
 
-use crate::surfaces_core_integration::SurfaceDefinition;
+use nanai_surface::SurfaceDefinition;
 use serde::{Deserialize, Serialize};
 
 /// 1サーフィス分のマニフェスト（番号 + 定義 + 表示名）

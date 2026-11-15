@@ -1,7 +1,7 @@
 use super::super::active::ActiveAnimation;
 use super::super::events::ParsedAnimationOptions;
 use super::AnimationScheduler;
-use crate::surfaces_core_integration::SerikoAnimation;
+use nanai_surface::SerikoAnimation;
 use std::collections::HashMap;
 
 impl AnimationScheduler {

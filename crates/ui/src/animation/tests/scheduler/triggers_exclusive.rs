@@ -2,7 +2,7 @@ use super::*;
 
 #[test]
 fn test_animation_scheduler_talk_and_bind() {
-    use crate::surfaces_core_integration::SerikoAnimation;
+    use nanai_surface::SerikoAnimation;
 
     let mut scheduler = AnimationScheduler::new();
     let talk_anim = SerikoAnimation::new(
@@ -101,7 +101,7 @@ fn test_animation_scheduler_talk_and_bind() {
 
 #[test]
 fn test_animation_scheduler_exclusive_and_background() {
-    use crate::surfaces_core_integration::SerikoAnimation;
+    use nanai_surface::SerikoAnimation;
 
     let mut scheduler = AnimationScheduler::new();
 
@@ -176,7 +176,7 @@ fn test_animation_scheduler_exclusive_and_background() {
 
 #[test]
 fn test_animation_scheduler_exclusive_selective_targets() {
-    use crate::surfaces_core_integration::SerikoAnimation;
+    use nanai_surface::SerikoAnimation;
 
     let mut scheduler = AnimationScheduler::new();
 
@@ -219,7 +219,7 @@ fn test_animation_scheduler_exclusive_selective_targets() {
 
 #[test]
 fn test_animation_scheduler_shared_index() {
-    use crate::surfaces_core_integration::SerikoAnimation;
+    use nanai_surface::SerikoAnimation;
 
     let mut scheduler = AnimationScheduler::new();
 

@@ -1,7 +1,6 @@
 use super::super::events::FrameStepEvent;
 use super::AnimationScheduler;
-use crate::surfaces_core_core::DrawMethod;
-use crate::surfaces_core_integration::SerikoAnimation;
+use nanai_surface::{DrawMethod, SerikoAnimation};
 
 impl AnimationScheduler {
     /// 時間を経過させ、発生した全フレーム更新イベント（`FrameStepEvent`）を収集して返す

@@ -3,9 +3,8 @@
 use super::surface_manifest::SurfaceManifest;
 use crate::descript::{BindGroup, Descript};
 use crate::shell::Shell;
-use crate::surfaces_core_core::SortKind;
-use crate::surfaces_core_integration::CursorDefinition;
 use crate::surfacetable::SurfaceTable;
+use nanai_surface::{CursorDefinition, SortKind};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 

@@ -1,6 +1,5 @@
 use crate::descript::Descript;
-use crate::vfs_core::resolve_vfs_path;
-use crate::vfs_integration::open_text_file;
+use nanai_vfs::{open_text_file, resolve_vfs_path};
 use std::path::Path;
 
 /// `descript.txt` を読み込む（無い場合や読込失敗時は空 descript）

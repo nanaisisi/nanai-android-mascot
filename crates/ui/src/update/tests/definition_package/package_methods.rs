@@ -41,19 +41,15 @@ fn test_update_package_noupdate_filter_and_integrity() {
     assert_eq!(filtered.len(), 1);
     assert_eq!(filtered[0].path(), "ghost/master/aya.dll");
 
-    let bad_hash_pkg = UpdatePackage::from_definition(
-        "file,foo.txt,short_hash\r\n"
-    );
+    let bad_hash_pkg = UpdatePackage::from_definition("file,foo.txt,short_hash\r\n");
     assert!(bad_hash_pkg.validate_entries_integrity().is_err());
 
-    let non_hex_pkg = UpdatePackage::from_definition(
-        "file,foo.txt,11223344556677889900aabbccddeefz\r\n"
-    );
+    let non_hex_pkg =
+        UpdatePackage::from_definition("file,foo.txt,11223344556677889900aabbccddeefz\r\n");
     assert!(non_hex_pkg.validate_entries_integrity().is_err());
 
-    let empty_path_pkg = UpdatePackage::from_definition(
-        "file,,11223344556677889900aabbccddeeff\r\n"
-    );
+    let empty_path_pkg =
+        UpdatePackage::from_definition("file,,11223344556677889900aabbccddeeff\r\n");
     assert!(empty_path_pkg.validate_entries_integrity().is_ok());
 }
 

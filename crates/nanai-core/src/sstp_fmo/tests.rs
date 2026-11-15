@@ -3,8 +3,7 @@ use std::collections::BTreeMap;
 
 #[test]
 fn test_parse_sstp_request() {
-    let raw =
-        "NOTIFY SSTP/1.1\r\nSender: TestSender\r\nEvent: OnTest\r\nOption: nobreak\r\n\r\n";
+    let raw = "NOTIFY SSTP/1.1\r\nSender: TestSender\r\nEvent: OnTest\r\nOption: nobreak\r\n\r\n";
     let req = parse_sstp_request(raw).unwrap();
 
     assert_eq!(req.command, "NOTIFY");
@@ -55,8 +54,7 @@ fn test_saori_protocol() {
     assert!(req.contains("Module: saori.dll"));
     assert!(req.contains("Argument0: param1"));
 
-    let raw_res =
-        "SAORI/1.0 200 OK\r\nCharset: UTF-8\r\nResult: success\r\nValue0: val0\r\n\r\n";
+    let raw_res = "SAORI/1.0 200 OK\r\nCharset: UTF-8\r\nResult: success\r\nValue0: val0\r\n\r\n";
     let res = parse_saori_response(raw_res).unwrap();
     assert_eq!(res.status, 200);
     assert_eq!(res.result.as_deref(), Some("success"));

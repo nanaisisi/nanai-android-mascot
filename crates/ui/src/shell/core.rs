@@ -12,13 +12,22 @@ use super::loader::read_descript;
 #[derive(Debug, Clone, Default)]
 pub struct Shell {
     /// シェルディレクトリ（ghost/<ghost>/shell/<shell>/）
-    pub directory: PathBuf,
+    pub(crate) directory: PathBuf,
     /// `descript.txt`（type / name / craftmanw / bindgroup 等）
-    pub descript: Descript,
+    pub(crate) descript: Descript,
     /// `surfaces.txt`（Element / SERIKO / Collision）
-    pub surfaces_txt: SurfacesTxt,
+    pub(crate) surfaces_txt: SurfacesTxt,
     /// `surfacetable.txt`（任意・サーフィスグループ一覧）
-    pub surface_table: Option<SurfaceTable>,
+    pub(crate) surface_table: Option<SurfaceTable>,
+}
+
+#[allow(dead_code)]
+impl Shell {
+    // Add getter methods
+    pub fn directory(&self) -> &Path { &self.directory }
+    pub fn descript(&self) -> &Descript { &self.descript }
+    pub fn surfaces_txt(&self) -> &SurfacesTxt { &self.surfaces_txt }
+    pub fn surface_table(&self) -> Option<&SurfaceTable> { self.surface_table.as_ref() }
 }
 
 impl Shell {

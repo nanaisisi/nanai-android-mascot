@@ -125,7 +125,7 @@ pub async fn send_shiori_event(
         params.event(),
         &params.references().cloned().unwrap_or_default(),
     );
-    req.sender = "NanaiMascot".to_string();
+    req = req.with_sender("NanaiMascot");
     send_shiori_request(
         state,
         req.build(),
@@ -171,7 +171,7 @@ pub async fn send_shiori_notify(
         params.event(),
         &params.references().cloned().unwrap_or_default(),
     );
-    req.sender = "NanaiMascot".to_string();
+    req = req.with_sender("NanaiMascot");
     send_shiori_request(
         state,
         req.build(),
@@ -189,7 +189,7 @@ pub async fn send_shiori_capability(
 ) -> Result<String, String> {
     let refs = build_standard_capability_references();
     let mut req = ShioriRequest::capability(&refs);
-    req.sender = "NanaiMascot".to_string();
+    req = req.with_sender("NanaiMascot");
     send_shiori_request(state, req.build(), ghost_id).await
 }
 
@@ -226,7 +226,7 @@ pub async fn send_shiori_event_typed(
 ) -> Result<ShioriResponse, String> {
     let event = params.event().to_string();
     let mut req = ShioriRequest::get(&event, &params.args().cloned().unwrap_or_default());
-    req.sender = "NanaiMascot".to_string();
+    req = req.with_sender("NanaiMascot");
 
     let gid = params.ghost_id().unwrap_or("main").to_string();
     let text = req.build();
@@ -238,8 +238,8 @@ pub async fn send_shiori_event_typed(
         println!(
             "✨ SHIORI Event '{}' -> status={:?}, value='{}'",
             event,
-            res.status,
-            res.value.as_deref().unwrap_or("")
+            res.status(),
+            res.value().unwrap_or("")
         );
     }
     parsed
@@ -269,14 +269,14 @@ pub async fn send_on_translate(
     ghost_id: Option<String>,
 ) -> Result<String, String> {
     let mut req = ShioriRequest::get("OnTranslate", std::slice::from_ref(&script));
-    req.sender = "NanaiMascot".to_string();
+    req = req.with_sender("NanaiMascot");
     let gid = ghost_id.unwrap_or_else(|| "main".to_string());
 
     match dispatch_request(&state, &req.build(), &gid) {
         Ok(raw) => {
             let parsed = ShioriResponse::parse(&raw);
             if let Ok(res) = parsed
-                && let Some(val) = res.value
+                && let Some(val) = res.value()
             {
                 let trimmed = val.trim();
                 if !trimmed.is_empty() {
@@ -318,7 +318,7 @@ pub async fn send_ghost_call_event(
     params: SendGhostCallEventParams,
 ) -> Result<String, String> {
     let mut req = ShioriRequest::get(params.event(), &[params.target_ghost_name().to_string()]);
-    req.sender = "NanaiMascot".to_string();
+    req = req.with_sender("NanaiMascot");
     let gid = params.ghost_id().unwrap_or("main");
     dispatch_request(&state, &req.build(), gid)
 }

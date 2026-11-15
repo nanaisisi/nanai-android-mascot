@@ -8,30 +8,60 @@ use std::collections::BTreeMap;
 /// SHIORI/3.0 リクエスト
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct ShioriRequest {
-    pub method: ShioriMethod,
-    pub charset: String,
-    pub sender: String,
+    pub(crate) method: ShioriMethod,
+    pub(crate) charset: String,
+    pub(crate) sender: String,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub sender_type: Vec<SenderTypeTag>,
+    pub(crate) sender_type: Vec<SenderTypeTag>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub security_level: Option<SecurityLevel>,
+    pub(crate) security_level: Option<SecurityLevel>,
     /// `SecurityOrigin: null`（情報なし）とヘッダ省略を区別するため `Some(None)` で表現
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub security_origin: Option<Option<String>>,
+    pub(crate) security_origin: Option<Option<String>>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub status: Vec<GhostStatusToken>,
-    pub id: String,
+    pub(crate) status: Vec<GhostStatusToken>,
+    pub(crate) id: String,
     /// 互換可能な基本イベント名（SSP拡張。`OnFirstBoot` → `OnBoot` など）
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub base_id: Option<String>,
+    pub(crate) base_id: Option<String>,
     /// Reference0..N
-    pub references: Vec<String>,
+    pub(crate) references: Vec<String>,
     /// `X-SSTP-PassThru-(後続)` → 値
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
-    pub passthru: BTreeMap<String, String>,
+    pub(crate) passthru: BTreeMap<String, String>,
 }
 
+
+
 impl ShioriRequest {
+    pub fn with_sender(mut self, sender: impl Into<String>) -> Self {
+        self.sender = sender.into();
+        self
+    }
+
+    pub fn with_charset(mut self, charset: impl Into<String>) -> Self {
+        self.charset = charset.into();
+        self
+    }
+
+    pub fn with_method(mut self, method: ShioriMethod) -> Self {
+        self.method = method;
+        self
+    }
+
+    pub fn with_id(mut self, id: impl Into<String>) -> Self {
+        self.id = id.into();
+        self
+    }
+
+    pub fn with_reference(mut self, index: usize, value: impl Into<String>) -> Self {
+        if self.references.len() <= index {
+            self.references.resize(index + 1, String::new());
+        }
+        self.references[index] = value.into();
+        self
+    }
+
     /// GET（返値前提）リクエストを作る
     pub fn get(id: &str, references: &[String]) -> Self {
         Self {

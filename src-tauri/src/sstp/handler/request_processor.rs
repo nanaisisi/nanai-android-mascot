@@ -27,7 +27,7 @@ pub async fn send_sstp_request_with_config(
     );
 
     // [sstp.allowcommunicate]: COMMUNICATE メソッド拒否判定
-    if method == "COMMUNICATE" && !config.allow_communicate {
+    if method == "COMMUNICATE" && !config.allow_communicate() {
         return Ok(SstpResponse {
             status: "420 Refuse".to_string(),
             value: "COMMUNICATE disabled by ghost".to_string(),
@@ -67,7 +67,7 @@ pub async fn send_sstp_request_with_config(
     }
 
     // [sstp.allowunspecifiedsend]: 無指定 SEND 拒否判定
-    if method == "SEND" && !config.allow_unspecified_send {
+    if method == "SEND" && !config.allow_unspecified_send() {
         let is_specified =
             request.receiver_ghost_name.is_some() || request.receiver_ghost_hwnd.is_some();
         if !is_specified {

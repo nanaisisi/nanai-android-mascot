@@ -3,17 +3,30 @@
 
 #[allow(non_camel_case_types)]
 pub struct Expand_sakura_script_envParams<'a> {
-    pub text: &'a str,
-    pub username: &'a str,
-    pub selfname: &'a str,
-    pub keroname: &'a str,
+    pub(crate) text: &'a str,
+    pub(crate) username: &'a str,
+    pub(crate) selfname: &'a str,
+    pub(crate) keroname: &'a str,
+}
+
+#[allow(dead_code)]
+impl<'a> Expand_sakura_script_envParams<'a> {
+    // Add getter methods
+    pub fn text(&self) -> &'a str { self.text }
+    pub fn username(&self) -> &'a str { self.username }
+    pub fn selfname(&self) -> &'a str { self.selfname }
+    pub fn keroname(&self) -> &'a str { self.keroname }
+
+    pub fn new(text: &'a str, username: &'a str, selfname: &'a str, keroname: &'a str) -> Self {
+        Self { text, username, selfname, keroname }
+    }
 }
 
 pub fn expand_sakura_script_env(params: Expand_sakura_script_envParams<'_>) -> String {
-    let text = params.text;
-    let username = params.username;
-    let selfname = params.selfname;
-    let keroname = params.keroname;
+    let text = params.text();
+    let username = params.username();
+    let selfname = params.selfname();
+    let keroname = params.keroname();
 
     let mut result = text.to_string();
 
@@ -79,12 +92,12 @@ mod tests {
     #[test]
     fn test_expand_env() {
         let script = "%username, hello! Property: %property[username] %property[currentghost.name] %property[unknown_prop] %property[unclosed %m? %* \\%";
-        let expanded = expand_sakura_script_env(Expand_sakura_script_envParams {
-            text: script,
-            username: "TestUser",
-            selfname: "Nanai",
-            keroname: "Kero",
-        });
+        let expanded = expand_sakura_script_env(Expand_sakura_script_envParams::new(
+            script,
+            "TestUser",
+            "Nanai",
+            "Kero",
+        ));
         assert!(expanded.contains("TestUser"));
         assert!(expanded.contains("Nanai"));
         assert!(expanded.contains("%property[unclosed"));

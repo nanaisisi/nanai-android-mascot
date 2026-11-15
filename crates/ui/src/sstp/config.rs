@@ -9,13 +9,21 @@ use std::collections::HashMap;
 pub struct SstpGhostConfig {
     /// sstp.allowcommunicate: 0 で COMMUNICATE を受けない。デフォルトは 1
     #[serde(default = "default_allow_communicate")]
-    pub allow_communicate: bool,
+    pub(crate) allow_communicate: bool,
     /// sstp.allowunspecifiedsend: 0 でゴーストを指名しない SSTP を受けない。デフォルトは 1
     #[serde(default = "default_allow_unspecified_send")]
-    pub allow_unspecified_send: bool,
+    pub(crate) allow_unspecified_send: bool,
     /// sstp.alwaystranslate: 1 で SSTP オプションにかかわらず常時 OnTranslate を実行。デフォルトは 0
     #[serde(default = "default_always_translate")]
-    pub always_translate: bool,
+    pub(crate) always_translate: bool,
+}
+
+#[allow(dead_code)]
+impl SstpGhostConfig {
+    // Add getter methods
+    pub fn allow_communicate(&self) -> bool { self.allow_communicate }
+    pub fn allow_unspecified_send(&self) -> bool { self.allow_unspecified_send }
+    pub fn always_translate(&self) -> bool { self.always_translate }
 }
 
 fn default_allow_communicate() -> bool {

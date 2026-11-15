@@ -17,11 +17,12 @@ impl ShioriRequestBuilder {
     }
 
     pub fn method(mut self, method: &str) -> Self {
-        if method.eq_ignore_ascii_case("NOTIFY") {
-            self.request.method = ShioriMethod::Notify;
+        let m = if method.eq_ignore_ascii_case("NOTIFY") {
+            ShioriMethod::Notify
         } else {
-            self.request.method = ShioriMethod::Get;
-        }
+            ShioriMethod::Get
+        };
+        self.request = self.request.with_method(m);
         self
     }
 
@@ -30,35 +31,32 @@ impl ShioriRequestBuilder {
     }
 
     pub fn sender(mut self, sender: &str) -> Self {
-        self.request.sender = sender.to_string();
+        self.request = self.request.with_sender(sender);
         self
     }
 
     pub fn charset(mut self, charset: &str) -> Self {
-        self.request.charset = charset.to_string();
+        self.request = self.request.with_charset(charset);
         self
     }
 
     pub fn event(mut self, event: &str) -> Self {
-        self.request.id = event.to_string();
+        self.request = self.request.with_id(event);
         self
     }
 
     pub fn reference(mut self, index: usize, value: &str) -> Self {
-        if self.request.references.len() <= index {
-            self.request.references.resize(index + 1, String::new());
-        }
-        self.request.references[index] = value.to_string();
+        self.request = self.request.with_reference(index, value);
         self
     }
 
     pub fn build(self) -> String {
         let mut req = self.request;
-        if req.sender.is_empty() {
-            req.sender = "NanaiMascot".to_string();
+        if req.sender().is_empty() {
+            req = req.with_sender("NanaiMascot");
         }
-        if req.charset.is_empty() {
-            req.charset = "UTF-8".to_string();
+        if req.charset().is_empty() {
+            req = req.with_charset("UTF-8");
         }
         req.build()
     }

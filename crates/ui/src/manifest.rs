@@ -134,7 +134,7 @@ impl Shell {
     pub fn manifest(&self) -> ShellManifest {
         let mut surfaces: Vec<SurfaceManifest> = self
             .surfaces_txt
-            .surfaces
+            .surfaces()
             .iter()
             .map(|(number, definition)| SurfaceManifest {
                 number: *number,
@@ -153,15 +153,15 @@ impl Shell {
             directory: self.directory.to_string_lossy().into_owned(),
             descript: self.descript.clone(),
             surfaces,
-            aliases: self.surfaces_txt.aliases.clone(),
-            kero_aliases: self.surfaces_txt.kero_aliases.clone(),
+            aliases: self.surfaces_txt.aliases().clone(),
+            kero_aliases: self.surfaces_txt.kero_aliases().clone(),
             surface_table: self.surface_table.clone(),
             sakura_bind_groups: self.sakura_bind_groups(),
             kero_bind_groups: self.kero_bind_groups(),
-            collision_sort: self.surfaces_txt.collision_sort.clone(),
-            animation_sort: self.surfaces_txt.animation_sort.clone(),
-            cursors: self.surfaces_txt.cursors.clone(),
-            tooltips: self.surfaces_txt.tooltips.clone(),
+            collision_sort: self.surfaces_txt.collision_sort().cloned(),
+            animation_sort: self.surfaces_txt.animation_sort().cloned(),
+            cursors: self.surfaces_txt.cursors().clone(),
+            tooltips: self.surfaces_txt.tooltips().clone(),
         }
     }
 }

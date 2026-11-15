@@ -13,7 +13,7 @@ pub fn parse_sakura_script(script: String) -> Result<Vec<SakuraCommand>, String>
 pub fn parse_surfaces_text(content: String) -> Result<BTreeMap<u32, SurfaceManifest>, String> {
     let surfaces_txt = parse_surfaces_txt(&content);
     let mut map = BTreeMap::new();
-    for (id, def) in surfaces_txt.surfaces.iter() {
+    for (id, def) in surfaces_txt.surfaces().iter() {
         map.insert(
             *id,
             SurfaceManifest::new(*id, def.name().map(str::to_string), def.clone()),

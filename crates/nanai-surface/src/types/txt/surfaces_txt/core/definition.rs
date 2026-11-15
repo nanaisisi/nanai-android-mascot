@@ -10,34 +10,49 @@ use crate::types::surface::{SortKind, SurfaceDefinition};
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct SurfacesTxt {
     /// `charset,` 指定（例: Shift_JIS）
-    pub charset: Option<String>,
+    pub(crate) charset: Option<String>,
     /// `descript` ブロック内の `version,` 指定（0: 旧形式 / 1: 新形式・推奨）
-    pub version: u32,
+    pub(crate) version: u32,
     /// `descript` ブロック内の `maxwidth,`
-    pub maxwidth: Option<i32>,
-    pub animation_sort: Option<SortKind>,
-    pub collision_sort: Option<SortKind>,
+    pub(crate) maxwidth: Option<i32>,
+    pub(crate) animation_sort: Option<SortKind>,
+    pub(crate) collision_sort: Option<SortKind>,
     /// サーフィス番号 → 定義
-    pub surfaces: BTreeMap<u32, SurfaceDefinition>,
+    pub(crate) surfaces: BTreeMap<u32, SurfaceDefinition>,
     /// `surface.alias` ブロックの エイリアス名 → サーフィス番号列
-    pub aliases: BTreeMap<String, Vec<u32>>,
+    pub(crate) aliases: BTreeMap<String, Vec<u32>>,
     /// `kero.surface.alias` / `char1.surface.alias` ブロックのエイリアス名 → 番号列
     #[serde(default)]
-    pub kero_aliases: BTreeMap<String, Vec<u32>>,
+    pub(crate) kero_aliases: BTreeMap<String, Vec<u32>>,
     /// `char<N>.surface.alias` ブロック定義（キャラクタID -> (エイリアス名 -> 番号列)）
     #[serde(default)]
-    pub char_aliases: BTreeMap<u32, BTreeMap<String, Vec<u32>>>,
+    pub(crate) char_aliases: BTreeMap<u32, BTreeMap<String, Vec<u32>>>,
     /// `*.cursor` ブロック定義（スコープ名 -> カーソル定義列）
     #[serde(default)]
-    pub cursors: BTreeMap<String, Vec<CursorDefinition>>,
+    pub(crate) cursors: BTreeMap<String, Vec<CursorDefinition>>,
     /// `*.tooltips` ブロック定義（スコープ名 -> (当たり判定名 -> ツールチップ本文)）
     #[serde(default)]
-    pub tooltips: BTreeMap<String, BTreeMap<String, String>>,
+    pub(crate) tooltips: BTreeMap<String, BTreeMap<String, String>>,
     /// ルート（ブロック外）の未分類キー・バリュー
-    pub properties: BTreeMap<String, String>,
+    pub(crate) properties: BTreeMap<String, String>,
 }
 
+#[allow(dead_code)]
 impl SurfacesTxt {
+    // Add getter methods
+    pub fn charset(&self) -> Option<&str> { self.charset.as_deref() }
+    pub fn version(&self) -> u32 { self.version }
+    pub fn maxwidth(&self) -> Option<i32> { self.maxwidth }
+    pub fn animation_sort(&self) -> Option<&SortKind> { self.animation_sort.as_ref() }
+    pub fn collision_sort(&self) -> Option<&SortKind> { self.collision_sort.as_ref() }
+    pub fn surfaces(&self) -> &BTreeMap<u32, SurfaceDefinition> { &self.surfaces }
+    pub fn aliases(&self) -> &BTreeMap<String, Vec<u32>> { &self.aliases }
+    pub fn kero_aliases(&self) -> &BTreeMap<String, Vec<u32>> { &self.kero_aliases }
+    pub fn char_aliases(&self) -> &BTreeMap<u32, BTreeMap<String, Vec<u32>>> { &self.char_aliases }
+    pub fn cursors(&self) -> &BTreeMap<String, Vec<CursorDefinition>> { &self.cursors }
+    pub fn tooltips(&self) -> &BTreeMap<String, BTreeMap<String, String>> { &self.tooltips }
+    pub fn properties(&self) -> &BTreeMap<String, String> { &self.properties }
+
     /// テキスト内容から `surfaces.txt` をパースする
     pub fn parse(text: &str) -> Self {
         crate::parser::parse_surfaces_txt(text)

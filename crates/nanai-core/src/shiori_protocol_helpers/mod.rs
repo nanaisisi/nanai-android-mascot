@@ -9,6 +9,16 @@ pub use events::*;
 use std::collections::BTreeMap;
 use wasm_bindgen::prelude::*;
 
+#[allow(non_camel_case_types)]
+pub trait Shiori_protocol_helpersInterface {
+    fn build_shiori_request(&self, method: &str, headers: BTreeMap<String, String>) -> String;
+    fn build_shiori_request_extended(
+        &self,
+        params: Build_shiori_request_extendedParams<'_>,
+    ) -> String;
+    fn build_shiori_notify(&self, event_name: &str, references: &[String]) -> String;
+}
+
 /// SHIORI/3.0 リクエスト文字列を構築
 pub fn build_shiori_request(method: &str, headers: BTreeMap<String, String>) -> String {
     let mut resp = format!("{} SHIORI/3.0\r\n", method.to_uppercase());

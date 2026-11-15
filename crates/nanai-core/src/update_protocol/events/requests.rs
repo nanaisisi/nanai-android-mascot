@@ -47,9 +47,7 @@ impl<'a> Build_on_update_ready_requestParams<'a> {
 }
 
 /// OnUpdateReady イベントリクエスト構築 (ukadoc-spec/list/shiori-event/network-update/OnUpdateReady.md)
-pub fn build_on_update_ready_request(
-    params: Build_on_update_ready_requestParams<'_>,
-) -> String {
+pub fn build_on_update_ready_request(params: Build_on_update_ready_requestParams<'_>) -> String {
     let file_count = params.file_count();
     let update_target = params.update_target();
     let update_mode = params.update_mode();

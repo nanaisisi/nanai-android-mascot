@@ -1,8 +1,6 @@
 //! UKADOC公式仕様に準拠した標準SHIORIイベントリクエストビルダー群 (マウス操作・ジェスチャ等)
 
-use crate::shiori_protocol_helpers::{
-    Build_shiori_request_extendedParams, build_shiori_request_extended,
-};
+use super::super::{Build_shiori_request_extendedParams, build_shiori_request_extended};
 
 #[allow(non_camel_case_types)]
 pub struct Build_on_mouse_click_requestParams<'a> {

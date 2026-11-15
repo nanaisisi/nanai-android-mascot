@@ -1,8 +1,10 @@
 use std::collections::BTreeMap;
 use std::path::Path;
 
-/// Stable public API interface for nanai-android-mascot-ui to decouple dependent components
-pub trait NanaiAndroidMascotUiInterface: Send + Sync {
+#[allow(non_camel_case_types)]
+pub trait Nanai_android_mascot_uiInterface {
+    // Define stable public API
+
     /// Opens and reads a text file using VFS encoding detection
     fn open_text_file(&self, path: &Path) -> Option<String>;
 
@@ -13,15 +15,10 @@ pub trait NanaiAndroidMascotUiInterface: Send + Sync {
     fn build_standard_capability_references(&self) -> Vec<String>;
 }
 
-/// Type alias for snake_case compatibility if referenced
-#[allow(non_camel_case_types)]
-pub trait Nanai_android_mascot_uiInterface: NanaiAndroidMascotUiInterface {}
-impl<T: NanaiAndroidMascotUiInterface> Nanai_android_mascot_uiInterface for T {}
-
-/// Default implementation of NanaiAndroidMascotUiInterface
+/// Default implementation of Nanai_android_mascot_uiInterface
 pub struct NanaiUiFacade;
 
-impl NanaiAndroidMascotUiInterface for NanaiUiFacade {
+impl Nanai_android_mascot_uiInterface for NanaiUiFacade {
     fn open_text_file(&self, path: &Path) -> Option<String> {
         crate::open_text_file(path).ok()
     }

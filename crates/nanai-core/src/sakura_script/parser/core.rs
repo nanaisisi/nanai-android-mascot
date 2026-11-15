@@ -1,7 +1,7 @@
-//! さくらスクリプト パース処理および WASM バインディング
+//! さくらスクリプト メインパース処理
 
-use super::types::SakuraToken;
-use wasm_bindgen::prelude::*;
+use super::helpers::{parse_bracket_arg, split_bracket_args};
+use crate::sakura_script::types::SakuraToken;
 
 /// さくらスクリプト文字列をトークン配列へ高速パース
 pub fn parse_sakura_script(script: &str) -> Vec<SakuraToken> {
@@ -310,69 +310,4 @@ pub fn parse_sakura_script(script: &str) -> Vec<SakuraToken> {
     }
 
     tokens
-}
-
-fn split_bracket_args(arg: &str) -> Vec<String> {
-    let mut args = Vec::new();
-    let mut current = String::new();
-    let mut in_quote = false;
-    let mut chars = arg.chars().peekable();
-
-    while let Some(c) = chars.next() {
-        if c == '"' {
-            if in_quote && chars.peek() == Some(&'"') {
-                current.push('"');
-                chars.next();
-            } else {
-                in_quote = !in_quote;
-            }
-        } else if c == ',' && !in_quote {
-            args.push(current.trim().to_string());
-            current.clear();
-        } else {
-            current.push(c);
-        }
-    }
-    args.push(current.trim().to_string());
-    args
-}
-
-fn parse_bracket_arg<I: Iterator<Item = char>>(
-    chars: &mut std::iter::Peekable<I>,
-) -> Option<String> {
-    if chars.peek() == Some(&'[') {
-        chars.next(); // consume '['
-        let mut arg = String::new();
-        let mut in_quote = false;
-
-        while let Some(&ch) = chars.peek() {
-            if ch == '\\' {
-                chars.next(); // consume '\'
-                if let Some(&escaped) = chars.peek() {
-                    if escaped == ']' || escaped == '\\' {
-                        arg.push(chars.next().unwrap());
-                    } else {
-                        arg.push('\\');
-                    }
-                }
-            } else if ch == '"' {
-                in_quote = !in_quote;
-                arg.push(chars.next().unwrap());
-            } else if ch == ']' && !in_quote {
-                chars.next(); // consume ']'
-                return Some(arg);
-            } else {
-                arg.push(chars.next().unwrap());
-            }
-        }
-        Some(arg)
-    } else {
-        None
-    }
-}
-
-#[wasm_bindgen]
-pub fn wasm_parse_sakura_script(script: &str) -> Result<JsValue, JsValue> {
-    let tokens = parse_sakura_script(script);
-    Ok(serde_wasm_bindgen::to_value(&tokens)?)
 }

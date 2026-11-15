@@ -1,8 +1,8 @@
 //! SHIORI/3.0 レスポンスのテキスト生成実装
 
+use super::super::super::types::*;
 use super::write_multiline_header;
 use super::{ShioriResponse, Write_multiline_headerParams};
-use super::super::super::types::*;
 
 impl ShioriResponse {
     /// CR+LF 終端のレスポンステキストを生成する（末尾は空行 CRLF×2）

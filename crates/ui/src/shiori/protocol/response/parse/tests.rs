@@ -1,7 +1,7 @@
 //! SHIORI/3.0 レスポンスのパース単体テスト
 
-use super::super::ShioriResponse;
 use super::super::super::super::types::*;
+use super::super::ShioriResponse;
 
 #[test]
 fn test_parse_protocol_versions_and_case() {

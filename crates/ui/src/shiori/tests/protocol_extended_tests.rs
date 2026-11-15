@@ -3,9 +3,7 @@
 //! リクエスト解析、レスポンス構築・パース、エラーレベル、SSPヘッダの振る舞いを網羅検証する。
 
 use super::super::protocol::{ShioriRequest, ShioriResponse};
-use super::super::types::{
-    ErrorLevel, GhostStatusToken, SecurityLevel, SenderTypeTag, StatusCode,
-};
+use super::super::types::{ErrorLevel, GhostStatusToken, SecurityLevel, SenderTypeTag, StatusCode};
 
 #[test]
 fn test_shiori_request_builder_fluent_api() {

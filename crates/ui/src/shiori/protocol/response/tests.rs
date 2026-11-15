@@ -1,5 +1,5 @@
-use super::*;
 use super::super::super::types::*;
+use super::*;
 
 #[test]
 fn test_shiori_response_constructors() {

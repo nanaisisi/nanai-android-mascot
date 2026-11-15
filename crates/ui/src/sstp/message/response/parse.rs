@@ -1,7 +1,7 @@
 //! SSTP レスポンス文字列パースモジュール
 
-use super::SstpResponse;
 use super::super::super::types::SstpStatusCode;
+use super::SstpResponse;
 use std::collections::HashMap;
 
 impl SstpResponse {

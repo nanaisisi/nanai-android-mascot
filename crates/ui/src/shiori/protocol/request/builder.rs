@@ -1,7 +1,7 @@
 //! SHIORI/3.0 リクエスト構築処理
 
-use super::types::ShioriRequest;
 use super::super::super::types::*;
+use super::types::ShioriRequest;
 
 impl ShioriRequest {
     /// CR+LF 終端のリクエストテキストを生成する（末尾は空行 CRLF×2）

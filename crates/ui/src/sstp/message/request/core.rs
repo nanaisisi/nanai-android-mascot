@@ -1,5 +1,5 @@
-use super::types::IfGhostEntry;
 use super::super::super::types::SstpMethod;
+use super::types::IfGhostEntry;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 

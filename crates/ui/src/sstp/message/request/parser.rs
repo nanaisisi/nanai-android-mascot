@@ -1,6 +1,6 @@
+use super::super::super::types::SstpMethod;
 use super::core::SstpRequest;
 use super::types::IfGhostEntry;
-use super::super::super::types::SstpMethod;
 use std::collections::HashMap;
 
 impl SstpRequest {

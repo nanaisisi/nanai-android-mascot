@@ -1,8 +1,8 @@
 //! Descript 各種プロパティ取得クエリメソッドモジュール
 
+use super::super::types::{BindGroup, BindOptionGroup, CharDefaults};
 use super::Descript;
 use super::helpers::expand_ids;
-use super::super::types::{BindGroup, BindOptionGroup, CharDefaults};
 use std::collections::BTreeMap;
 
 impl Descript {

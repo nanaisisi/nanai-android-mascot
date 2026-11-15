@@ -1,10 +1,10 @@
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
-use super::state::ShioriLifecycleState;
-use super::trait_def::ShioriEngine;
 use super::super::protocol::{ShioriRequest, ShioriResponse};
 use super::super::types::ShioriMethod;
+use super::state::ShioriLifecycleState;
+use super::trait_def::ShioriEngine;
 
 /// テスト・スタンドアロン実行用のモック SHIORI エンジン
 pub struct MockShioriEngine {

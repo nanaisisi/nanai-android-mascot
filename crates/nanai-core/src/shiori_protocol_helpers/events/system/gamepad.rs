@@ -50,18 +50,33 @@ pub fn build_on_gamepad_button_up_request(pad_index: i32, button_id: i32) -> Str
 
 #[allow(non_camel_case_types)]
 pub struct Build_on_gamepad_axis_move_requestParams {
-    pub pad_index: i32,
-    pub axis_id: i32,
-    pub value: f64,
+    pub(crate) pad_index: i32,
+    pub(crate) axis_id: i32,
+    pub(crate) value: f64,
+}
+
+#[allow(dead_code)]
+impl Build_on_gamepad_axis_move_requestParams {
+    pub fn pad_index(&self) -> i32 {
+        self.pad_index
+    }
+
+    pub fn axis_id(&self) -> i32 {
+        self.axis_id
+    }
+
+    pub fn value(&self) -> f64 {
+        self.value
+    }
 }
 
 /// OnGamepadAxisMove イベントリクエスト構築 (ukadoc-spec/list/shiori-event/gamepad/OnGamepadAxisMove.md)
 pub fn build_on_gamepad_axis_move_request(
     params: Build_on_gamepad_axis_move_requestParams,
 ) -> String {
-    let pad_index = params.pad_index;
-    let axis_id = params.axis_id;
-    let value = params.value;
+    let pad_index = params.pad_index();
+    let axis_id = params.axis_id();
+    let value = params.value();
     let refs = vec![
         pad_index.to_string(),
         axis_id.to_string(),

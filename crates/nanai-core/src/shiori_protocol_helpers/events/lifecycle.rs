@@ -7,16 +7,31 @@ use crate::shiori_protocol_helpers::{
 
 #[allow(non_camel_case_types)]
 pub struct Build_on_boot_requestParams<'a> {
-    pub is_first_boot: bool,
-    pub kero_name: &'a str,
-    pub ghost_dir: &'a str,
+    pub(crate) is_first_boot: bool,
+    pub(crate) kero_name: &'a str,
+    pub(crate) ghost_dir: &'a str,
+}
+
+#[allow(dead_code)]
+impl<'a> Build_on_boot_requestParams<'a> {
+    pub fn is_first_boot(&self) -> bool {
+        self.is_first_boot
+    }
+
+    pub fn kero_name(&self) -> &'a str {
+        self.kero_name
+    }
+
+    pub fn ghost_dir(&self) -> &'a str {
+        self.ghost_dir
+    }
 }
 
 /// OnBoot / OnFirstBoot イベントリクエスト構築
 pub fn build_on_boot_request(params: Build_on_boot_requestParams<'_>) -> String {
-    let is_first_boot = params.is_first_boot;
-    let kero_name = params.kero_name;
-    let ghost_dir = params.ghost_dir;
+    let is_first_boot = params.is_first_boot();
+    let kero_name = params.kero_name();
+    let ghost_dir = params.ghost_dir();
     let event_id = if is_first_boot {
         "OnFirstBoot"
     } else {
@@ -72,20 +87,39 @@ pub fn build_on_shell_changed_request(shell_name: &str) -> String {
 
 #[allow(non_camel_case_types)]
 pub struct Build_on_dressup_changed_requestParams<'a> {
-    pub scope_id: i32,
-    pub category: &'a str,
-    pub part: &'a str,
-    pub enabled: bool,
+    pub(crate) scope_id: i32,
+    pub(crate) category: &'a str,
+    pub(crate) part: &'a str,
+    pub(crate) enabled: bool,
+}
+
+#[allow(dead_code)]
+impl<'a> Build_on_dressup_changed_requestParams<'a> {
+    pub fn scope_id(&self) -> i32 {
+        self.scope_id
+    }
+
+    pub fn category(&self) -> &'a str {
+        self.category
+    }
+
+    pub fn part(&self) -> &'a str {
+        self.part
+    }
+
+    pub fn enabled(&self) -> bool {
+        self.enabled
+    }
 }
 
 /// OnDressupChanged イベントリクエスト構築
 pub fn build_on_dressup_changed_request(
     params: Build_on_dressup_changed_requestParams<'_>,
 ) -> String {
-    let scope_id = params.scope_id;
-    let category = params.category;
-    let part = params.part;
-    let enabled = params.enabled;
+    let scope_id = params.scope_id();
+    let category = params.category();
+    let part = params.part();
+    let enabled = params.enabled();
     let refs = vec![
         scope_id.to_string(),
         category.to_string(),

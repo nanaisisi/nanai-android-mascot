@@ -57,16 +57,31 @@ pub fn build_on_battery_notify_request(level: u8, ac_online: bool) -> String {
 
 #[allow(non_camel_case_types)]
 pub struct Build_on_display_change_requestParams {
-    pub width: i32,
-    pub height: i32,
-    pub bpp: i32,
+    pub(crate) width: i32,
+    pub(crate) height: i32,
+    pub(crate) bpp: i32,
+}
+
+#[allow(dead_code)]
+impl Build_on_display_change_requestParams {
+    pub fn width(&self) -> i32 {
+        self.width
+    }
+
+    pub fn height(&self) -> i32 {
+        self.height
+    }
+
+    pub fn bpp(&self) -> i32 {
+        self.bpp
+    }
 }
 
 /// OnDisplayChange イベントリクエスト構築 (ukadoc-spec/list/shiori-event/os-state/OnDisplayChange.md)
 pub fn build_on_display_change_request(params: Build_on_display_change_requestParams) -> String {
-    let width = params.width;
-    let height = params.height;
-    let bpp = params.bpp;
+    let width = params.width();
+    let height = params.height();
+    let bpp = params.bpp();
     let refs = vec![width.to_string(), height.to_string(), bpp.to_string()];
     build_shiori_request_extended(Build_shiori_request_extendedParams {
         method: "GET",

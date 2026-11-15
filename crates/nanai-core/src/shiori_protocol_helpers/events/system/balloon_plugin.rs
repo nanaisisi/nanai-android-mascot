@@ -6,18 +6,31 @@ use crate::shiori_protocol_helpers::{
 
 #[allow(non_camel_case_types)]
 pub struct Build_on_other_ghost_talk_requestParams<'a> {
-    pub talker: &'a str,
-    pub listener: &'a str,
-    pub script: &'a str,
+    pub(crate) talker: &'a str,
+    pub(crate) listener: &'a str,
+    pub(crate) script: &'a str,
+}
+
+#[allow(dead_code)]
+impl<'a> Build_on_other_ghost_talk_requestParams<'a> {
+    pub fn talker(&self) -> &'a str {
+        self.talker
+    }
+    pub fn listener(&self) -> &'a str {
+        self.listener
+    }
+    pub fn script(&self) -> &'a str {
+        self.script
+    }
 }
 
 /// OnOtherGhostTalk プラグインイベントリクエスト構築 (ukadoc-spec/list/plugin-event/plugin-event/OnOtherGhostTalk.md)
 pub fn build_on_other_ghost_talk_request(
     params: Build_on_other_ghost_talk_requestParams<'_>,
 ) -> String {
-    let talker = params.talker;
-    let listener = params.listener;
-    let script = params.script;
+    let talker = params.talker();
+    let listener = params.listener();
+    let script = params.script();
     let refs = vec![talker.to_string(), listener.to_string(), script.to_string()];
     build_shiori_request_extended(Build_shiori_request_extendedParams {
         method: "GET",

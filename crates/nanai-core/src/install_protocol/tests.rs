@@ -122,8 +122,8 @@ fn test_multi_resource_install() {
     assert!(is_multi_resource_install(&multi));
 
     let res = build_install_multi_args(&multi);
-    assert_eq!(res.count, "2");
-    assert!(res.is_multi);
+    assert_eq!(res.count(), "2");
+    assert!(res.is_multi());
 }
 
 #[test]

@@ -10,17 +10,30 @@ pub fn build_install_begin_args(identifier: Option<&str>) -> [String; 1] {
 
 #[allow(non_camel_case_types)]
 pub struct Build_install_complete_argsParams<'a> {
-    pub install_type: &'a str,
-    pub name: &'a str,
-    pub extra: Option<&'a str>,
+    pub(crate) install_type: &'a str,
+    pub(crate) name: &'a str,
+    pub(crate) extra: Option<&'a str>,
+}
+
+#[allow(dead_code)]
+impl<'a> Build_install_complete_argsParams<'a> {
+    pub fn install_type(&self) -> &'a str {
+        self.install_type
+    }
+    pub fn name(&self) -> &'a str {
+        self.name
+    }
+    pub fn extra(&self) -> Option<&'a str> {
+        self.extra
+    }
 }
 
 /// OnInstallComplete SHIORI 引数生成
 /// [Ref0=種別, Ref1=名前, Ref2=追加情報(任意)]
 pub fn build_install_complete_args(params: Build_install_complete_argsParams<'_>) -> [String; 3] {
-    let install_type = params.install_type;
-    let name = params.name;
-    let extra = params.extra;
+    let install_type = params.install_type();
+    let name = params.name();
+    let extra = params.extra();
     [
         normalize_install_type(Some(install_type)),
         name.to_string(),
@@ -30,10 +43,26 @@ pub fn build_install_complete_args(params: Build_install_complete_argsParams<'_>
 
 #[allow(non_camel_case_types)]
 pub struct Build_install_complete_ex_argsParams<'a> {
-    pub install_type: &'a str,
-    pub name: &'a str,
-    pub path_or_extra: Option<&'a str>,
-    pub on_install_script: Option<&'a str>,
+    pub(crate) install_type: &'a str,
+    pub(crate) name: &'a str,
+    pub(crate) path_or_extra: Option<&'a str>,
+    pub(crate) on_install_script: Option<&'a str>,
+}
+
+#[allow(dead_code)]
+impl<'a> Build_install_complete_ex_argsParams<'a> {
+    pub fn install_type(&self) -> &'a str {
+        self.install_type
+    }
+    pub fn name(&self) -> &'a str {
+        self.name
+    }
+    pub fn path_or_extra(&self) -> Option<&'a str> {
+        self.path_or_extra
+    }
+    pub fn on_install_script(&self) -> Option<&'a str> {
+        self.on_install_script
+    }
 }
 
 /// OnInstallCompleteEx SHIORI 引数生成 (UKADOC拡張)
@@ -41,10 +70,10 @@ pub struct Build_install_complete_ex_argsParams<'a> {
 pub fn build_install_complete_ex_args(
     params: Build_install_complete_ex_argsParams<'_>,
 ) -> [String; 4] {
-    let install_type = params.install_type;
-    let name = params.name;
-    let path_or_extra = params.path_or_extra;
-    let on_install_script = params.on_install_script;
+    let install_type = params.install_type();
+    let name = params.name();
+    let path_or_extra = params.path_or_extra();
+    let on_install_script = params.on_install_script();
     [
         normalize_install_type(Some(install_type)),
         name.to_string(),
@@ -78,17 +107,30 @@ pub fn build_install_refuse_args(reason: Option<&str>, target: Option<&str>) -> 
 
 #[allow(non_camel_case_types)]
 pub struct Build_install_reroute_argsParams<'a> {
-    pub target_ghost: &'a str,
-    pub install_type: &'a str,
-    pub name: &'a str,
+    pub(crate) target_ghost: &'a str,
+    pub(crate) install_type: &'a str,
+    pub(crate) name: &'a str,
+}
+
+#[allow(dead_code)]
+impl<'a> Build_install_reroute_argsParams<'a> {
+    pub fn target_ghost(&self) -> &'a str {
+        self.target_ghost
+    }
+    pub fn install_type(&self) -> &'a str {
+        self.install_type
+    }
+    pub fn name(&self) -> &'a str {
+        self.name
+    }
 }
 
 /// OnInstallReroute SHIORI 引数生成 (別ゴーストへの転送指定時)
 /// [Ref0=転送先ゴースト名, Ref1=種別, Ref2=名前]
 pub fn build_install_reroute_args(params: Build_install_reroute_argsParams<'_>) -> [String; 3] {
-    let target_ghost = params.target_ghost;
-    let install_type = params.install_type;
-    let name = params.name;
+    let target_ghost = params.target_ghost();
+    let install_type = params.install_type();
+    let name = params.name();
     [
         target_ghost.to_string(),
         normalize_install_type(Some(install_type)),

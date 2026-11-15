@@ -6,10 +6,14 @@ use tsify::Tsify;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 pub struct DescriptManifest {
-    pub properties: BTreeMap<String, String>,
+    pub(crate) properties: BTreeMap<String, String>,
 }
 
 impl DescriptManifest {
+    pub fn properties(&self) -> &BTreeMap<String, String> {
+        &self.properties
+    }
+
     pub fn get(&self, key: &str) -> Option<&str> {
         self.properties.get(&key.to_lowercase()).map(|s| s.as_str())
     }

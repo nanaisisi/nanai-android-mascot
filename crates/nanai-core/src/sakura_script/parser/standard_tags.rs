@@ -7,19 +7,48 @@ use std::iter::Peekable;
 
 #[allow(non_camel_case_types)]
 pub struct Parse_backslash_sequenceParams<'a, 'b, I: Iterator<Item = char>> {
-    pub chars: &'a mut Peekable<I>,
-    pub text_buf: &'b mut String,
-    pub tokens: &'b mut Vec<SakuraToken>,
-    pub raw_mode_delimiter: &'b mut Option<String>,
+    pub(crate) chars: &'a mut Peekable<I>,
+    pub(crate) text_buf: &'b mut String,
+    pub(crate) tokens: &'b mut Vec<SakuraToken>,
+    pub(crate) raw_mode_delimiter: &'b mut Option<String>,
+}
+
+impl<'a, 'b, I: Iterator<Item = char>> Parse_backslash_sequenceParams<'a, 'b, I> {
+    pub fn new(
+        chars: &'a mut Peekable<I>,
+        text_buf: &'b mut String,
+        tokens: &'b mut Vec<SakuraToken>,
+        raw_mode_delimiter: &'b mut Option<String>,
+    ) -> Self {
+        Self {
+            chars,
+            text_buf,
+            tokens,
+            raw_mode_delimiter,
+        }
+    }
+
+    pub fn into_parts(
+        self,
+    ) -> (
+        &'a mut Peekable<I>,
+        &'b mut String,
+        &'b mut Vec<SakuraToken>,
+        &'b mut Option<String>,
+    ) {
+        (
+            self.chars,
+            self.text_buf,
+            self.tokens,
+            self.raw_mode_delimiter,
+        )
+    }
 }
 
 pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
     params: Parse_backslash_sequenceParams<'_, '_, I>,
 ) {
-    let chars = params.chars;
-    let text_buf = params.text_buf;
-    let tokens = params.tokens;
-    let raw_mode_delimiter = params.raw_mode_delimiter;
+    let (chars, text_buf, tokens, raw_mode_delimiter) = params.into_parts();
     if let Some(&next_ch) = chars.peek() {
         match next_ch {
             '\\' | '%' => {
@@ -161,12 +190,12 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
             }
             '_' => {
                 chars.next(); // consume '_'
-                parse_extended_tag(Parse_extended_tagParams {
+                parse_extended_tag(Parse_extended_tagParams::new(
                     chars,
                     text_buf,
                     tokens,
                     raw_mode_delimiter,
-                });
+                ));
             }
             _ => {
                 text_buf.push('\\');

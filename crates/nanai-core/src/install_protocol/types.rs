@@ -66,6 +66,16 @@ pub const INSTALL_FAILURE_REASONS: &[&str] = &[
 /// 複数リソース一括インストール（複数リソース展開）判定モデル
 #[derive(Debug, Clone, Serialize, Deserialize, Tsify)]
 pub struct MultiResourceInstallResult {
-    pub count: String,
-    pub is_multi: bool,
+    pub(crate) count: String,
+    pub(crate) is_multi: bool,
+}
+
+impl MultiResourceInstallResult {
+    pub fn count(&self) -> &str {
+        &self.count
+    }
+
+    pub fn is_multi(&self) -> bool {
+        self.is_multi
+    }
 }

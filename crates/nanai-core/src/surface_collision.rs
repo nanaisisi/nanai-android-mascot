@@ -16,14 +16,28 @@ pub enum CollisionShape {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 pub struct CollisionArea {
     #[serde(default)]
-    pub id: Option<i32>,
-    pub name: String,
-    pub shape: CollisionShape,
+    pub(crate) id: Option<i32>,
+    pub(crate) name: String,
+    pub(crate) shape: CollisionShape,
+}
+
+impl CollisionArea {
+    pub fn id(&self) -> Option<i32> {
+        self.id
+    }
+
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
+    pub fn shape(&self) -> &CollisionShape {
+        &self.shape
+    }
 }
 
 /// 単一衝突領域に対して指定座標 (x, y) がヒットしているか判定
 pub fn is_point_inside_collision(collision: &CollisionArea, x: i32, y: i32) -> bool {
-    match &collision.shape {
+    match collision.shape() {
         CollisionShape::Rect { x1, y1, x2, y2 } => {
             let min_x = (*x1).min(*x2);
             let max_x = (*x1).max(*x2);
@@ -75,7 +89,7 @@ pub fn is_point_inside_collision(collision: &CollisionArea, x: i32, y: i32) -> b
 pub fn find_hit_collision_name(collisions: &[CollisionArea], x: i32, y: i32) -> Option<String> {
     for col in collisions {
         if is_point_inside_collision(col, x, y) {
-            return Some(col.name.clone());
+            return Some(col.name().to_string());
         }
     }
     None

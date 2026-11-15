@@ -7,10 +7,28 @@ use wasm_bindgen::prelude::*;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 pub struct FmoEntry {
-    pub name: String,
-    pub ghost_name: String,
-    pub hwnd: String,
-    pub properties: BTreeMap<String, String>,
+    pub(crate) name: String,
+    pub(crate) ghost_name: String,
+    pub(crate) hwnd: String,
+    pub(crate) properties: BTreeMap<String, String>,
+}
+
+impl FmoEntry {
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
+    pub fn ghost_name(&self) -> &str {
+        &self.ghost_name
+    }
+
+    pub fn hwnd(&self) -> &str {
+        &self.hwnd
+    }
+
+    pub fn properties(&self) -> &BTreeMap<String, String> {
+        &self.properties
+    }
 }
 
 /// FMO プロトコルデータ文字列をパース

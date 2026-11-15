@@ -41,18 +41,18 @@ fn test_parse_delete_and_developer_options() {
     let delete_content = "# comment\ntemp/*.tmp\nold_file.dat\n";
     let del_manifest = parse_delete_txt(delete_content);
     assert_eq!(
-        del_manifest.patterns,
-        vec!["temp/*.tmp".to_string(), "old_file.dat".to_string()]
+        del_manifest.patterns(),
+        &["temp/*.tmp".to_string(), "old_file.dat".to_string()]
     );
 
     let dev_content = "noupdate: assets/private\ndebug=true\n";
     let dev_manifest = parse_developer_options_txt(dev_content);
     assert_eq!(
-        dev_manifest.noupdate_patterns,
-        vec!["assets/private".to_string()]
+        dev_manifest.noupdate_patterns(),
+        &["assets/private".to_string()]
     );
     assert_eq!(
-        dev_manifest.properties.get("debug"),
+        dev_manifest.properties().get("debug"),
         Some(&"true".to_string())
     );
 }
@@ -80,24 +80,24 @@ fn test_is_no_update_path() {
 #[test]
 fn test_calculate_update_progress() {
     let p1 = calculate_update_progress(0, 10);
-    assert_eq!(p1.percent, 0);
-    assert!(!p1.is_complete);
+    assert_eq!(p1.percent(), 0);
+    assert!(!p1.is_complete());
 
     let p2 = calculate_update_progress(5, 10);
-    assert_eq!(p2.percent, 50);
-    assert!(!p2.is_complete);
+    assert_eq!(p2.percent(), 50);
+    assert!(!p2.is_complete());
 
     let p3 = calculate_update_progress(10, 10);
-    assert_eq!(p3.percent, 100);
-    assert!(p3.is_complete);
+    assert_eq!(p3.percent(), 100);
+    assert!(p3.is_complete());
 
     let p4 = calculate_update_progress(15, 10);
-    assert_eq!(p4.percent, 100);
-    assert!(p4.is_complete);
+    assert_eq!(p4.percent(), 100);
+    assert!(p4.is_complete());
 
     let p5 = calculate_update_progress(0, 0);
-    assert_eq!(p5.percent, 100);
-    assert!(p5.is_complete);
+    assert_eq!(p5.percent(), 100);
+    assert!(p5.is_complete());
 }
 
 #[test]

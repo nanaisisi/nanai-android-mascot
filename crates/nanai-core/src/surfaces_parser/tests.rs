@@ -9,11 +9,11 @@ element1,overlay,eye.png,10,20
 collision0,10,10,50,50,head
 "#;
     let manifest = parse_surfaces_txt(input);
-    assert_eq!(manifest.elements.len(), 2);
-    assert!(manifest.elements.contains_key("0"));
-    assert!(manifest.elements.contains_key("1"));
-    assert_eq!(manifest.elements["0"].len(), 2);
-    assert_eq!(manifest.collisions["0"][0].name, "head");
+    assert_eq!(manifest.elements().len(), 2);
+    assert!(manifest.elements().contains_key("0"));
+    assert!(manifest.elements().contains_key("1"));
+    assert_eq!(manifest.elements()["0"].len(), 2);
+    assert_eq!(manifest.collisions()["0"][0].name(), "head");
 }
 
 #[test]
@@ -31,8 +31,8 @@ collisionex1,bust,circle,100,100,25
 collisionex2,leg,polygon,0,0,10,0,10,20
 "#;
     let manifest = parse_surfaces_txt(input);
-    assert_eq!(manifest.collisions["0"].len(), 3);
-    assert_eq!(manifest.collisions["0"][0].name, "head");
-    assert_eq!(manifest.collisions["0"][1].name, "bust");
-    assert_eq!(manifest.collisions["0"][2].name, "leg");
+    assert_eq!(manifest.collisions()["0"].len(), 3);
+    assert_eq!(manifest.collisions()["0"][0].name(), "head");
+    assert_eq!(manifest.collisions()["0"][1].name(), "bust");
+    assert_eq!(manifest.collisions()["0"][2].name(), "leg");
 }

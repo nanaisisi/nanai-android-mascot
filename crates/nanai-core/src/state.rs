@@ -8,24 +8,80 @@ use crate::sakura_script::{SakuraToken, parse_sakura_script};
 /// 毎フレームの WASM Engine Tick 実行結果
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MascotTickResult {
-    pub current_token: Option<SakuraToken>,
-    pub updated_scopes: Vec<u32>,
-    pub is_playing: bool,
-    pub uptime_ms: f64,
+    pub(crate) current_token: Option<SakuraToken>,
+    pub(crate) updated_scopes: Vec<u32>,
+    pub(crate) is_playing: bool,
+    pub(crate) uptime_ms: f64,
+}
+
+impl MascotTickResult {
+    pub fn current_token(&self) -> Option<&SakuraToken> {
+        self.current_token.as_ref()
+    }
+
+    pub fn updated_scopes(&self) -> &[u32] {
+        &self.updated_scopes
+    }
+
+    pub fn is_playing(&self) -> bool {
+        self.is_playing
+    }
+
+    pub fn uptime_ms(&self) -> f64 {
+        self.uptime_ms
+    }
 }
 
 /// アプリケーション全体の統合エンジン状態
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MascotEngineState {
-    pub current_ghost: String,
-    pub current_shell: String,
-    pub balloon_theme: String,
-    pub active_scope: u32,
-    pub current_surfaces: HashMap<u32, u32>,
-    pub active_binds: Vec<u32>,
-    pub script_queue: VecDeque<SakuraToken>,
-    pub is_playing_script: bool,
-    pub uptime_ms: f64,
+    pub(crate) current_ghost: String,
+    pub(crate) current_shell: String,
+    pub(crate) balloon_theme: String,
+    pub(crate) active_scope: u32,
+    pub(crate) current_surfaces: HashMap<u32, u32>,
+    pub(crate) active_binds: Vec<u32>,
+    pub(crate) script_queue: VecDeque<SakuraToken>,
+    pub(crate) is_playing_script: bool,
+    pub(crate) uptime_ms: f64,
+}
+
+impl MascotEngineState {
+    pub fn current_ghost(&self) -> &str {
+        &self.current_ghost
+    }
+
+    pub fn current_shell(&self) -> &str {
+        &self.current_shell
+    }
+
+    pub fn balloon_theme(&self) -> &str {
+        &self.balloon_theme
+    }
+
+    pub fn active_scope(&self) -> u32 {
+        self.active_scope
+    }
+
+    pub fn current_surfaces(&self) -> &HashMap<u32, u32> {
+        &self.current_surfaces
+    }
+
+    pub fn active_binds(&self) -> &[u32] {
+        &self.active_binds
+    }
+
+    pub fn script_queue(&self) -> &VecDeque<SakuraToken> {
+        &self.script_queue
+    }
+
+    pub fn is_playing_script(&self) -> bool {
+        self.is_playing_script
+    }
+
+    pub fn uptime_ms(&self) -> f64 {
+        self.uptime_ms
+    }
 }
 
 impl Default for MascotEngineState {

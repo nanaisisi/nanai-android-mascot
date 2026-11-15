@@ -6,10 +6,10 @@ fn test_parse_sstp_request() {
     let raw = "NOTIFY SSTP/1.1\r\nSender: TestSender\r\nEvent: OnTest\r\nOption: nobreak\r\n\r\n";
     let req = parse_sstp_request(raw).unwrap();
 
-    assert_eq!(req.command, "NOTIFY");
-    assert_eq!(req.version, "SSTP/1.1");
-    assert_eq!(req.headers.get("Sender").unwrap(), "TestSender");
-    assert_eq!(req.headers.get("Event").unwrap(), "OnTest");
+    assert_eq!(req.command(), "NOTIFY");
+    assert_eq!(req.version(), "SSTP/1.1");
+    assert_eq!(req.headers().get("Sender").unwrap(), "TestSender");
+    assert_eq!(req.headers().get("Event").unwrap(), "OnTest");
 }
 
 #[test]
@@ -27,8 +27,8 @@ fn test_parse_fmo_string() {
     let raw = "s0.name\u{0001}Emily\ns0.hwnd\u{0001}12345\n";
     let entries = parse_fmo_string(raw);
 
-    assert_eq!(entries.get("s0").unwrap().ghost_name, "Emily");
-    assert_eq!(entries.get("s0").unwrap().hwnd, "12345");
+    assert_eq!(entries.get("s0").unwrap().ghost_name(), "Emily");
+    assert_eq!(entries.get("s0").unwrap().hwnd(), "12345");
 }
 
 #[test]
@@ -60,7 +60,7 @@ fn test_saori_protocol() {
 
     let raw_res = "SAORI/1.0 200 OK\r\nCharset: UTF-8\r\nResult: success\r\nValue0: val0\r\n\r\n";
     let res = parse_saori_response(raw_res).unwrap();
-    assert_eq!(res.status, 200);
-    assert_eq!(res.result.as_deref(), Some("success"));
-    assert_eq!(res.values.first().map(String::as_str), Some("val0"));
+    assert_eq!(res.status(), 200);
+    assert_eq!(res.result(), Some("success"));
+    assert_eq!(res.values().first().map(String::as_str), Some("val0"));
 }

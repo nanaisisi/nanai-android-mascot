@@ -37,19 +37,45 @@ pub const UPDATE_EVENT_ORDER: &[&str] = &[
 /// ネットワーク更新進捗計算結果
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct UpdateProgressResult {
-    pub percent: u32,
-    pub is_complete: bool,
+    pub(crate) percent: u32,
+    pub(crate) is_complete: bool,
+}
+
+impl UpdateProgressResult {
+    pub fn percent(&self) -> u32 {
+        self.percent
+    }
+
+    pub fn is_complete(&self) -> bool {
+        self.is_complete
+    }
 }
 
 /// delete.txt のパース結果（削除対象ファイルパターン一覧）
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 pub struct DeleteTxtManifest {
-    pub patterns: Vec<String>,
+    pub(crate) patterns: Vec<String>,
+}
+
+impl DeleteTxtManifest {
+    pub fn patterns(&self) -> &[String] {
+        &self.patterns
+    }
 }
 
 /// developer_options.txt のパース結果（開発者オプション・除外設定）
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 pub struct DeveloperOptionsManifest {
-    pub noupdate_patterns: Vec<String>,
-    pub properties: BTreeMap<String, String>,
+    pub(crate) noupdate_patterns: Vec<String>,
+    pub(crate) properties: BTreeMap<String, String>,
+}
+
+impl DeveloperOptionsManifest {
+    pub fn noupdate_patterns(&self) -> &[String] {
+        &self.noupdate_patterns
+    }
+
+    pub fn properties(&self) -> &BTreeMap<String, String> {
+        &self.properties
+    }
 }

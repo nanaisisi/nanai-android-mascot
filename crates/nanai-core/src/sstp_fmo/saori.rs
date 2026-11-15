@@ -20,10 +20,28 @@ pub fn build_saori_request(module_path: &str, arguments: &[String]) -> String {
 /// SAORI/1.0 レスポンスパース結果
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 pub struct SaoriResponse {
-    pub status: u16,
-    pub charset: String,
-    pub result: Option<String>,
-    pub values: Vec<String>,
+    pub(crate) status: u16,
+    pub(crate) charset: String,
+    pub(crate) result: Option<String>,
+    pub(crate) values: Vec<String>,
+}
+
+impl SaoriResponse {
+    pub fn status(&self) -> u16 {
+        self.status
+    }
+
+    pub fn charset(&self) -> &str {
+        &self.charset
+    }
+
+    pub fn result(&self) -> Option<&str> {
+        self.result.as_deref()
+    }
+
+    pub fn values(&self) -> &[String] {
+        &self.values
+    }
 }
 
 /// SAORI/1.0 レスポンス文字列をパース

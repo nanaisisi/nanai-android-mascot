@@ -6,18 +6,54 @@ use wasm_bindgen::prelude::*;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 pub struct SurfaceElement {
-    pub id: u32,
-    pub file: String,
-    pub method: String, // overlay, base, add, replace, move
-    pub x: i32,
-    pub y: i32,
+    pub(crate) id: u32,
+    pub(crate) file: String,
+    pub(crate) method: String, // overlay, base, add, replace, move
+    pub(crate) x: i32,
+    pub(crate) y: i32,
+}
+
+impl SurfaceElement {
+    pub fn id(&self) -> u32 {
+        self.id
+    }
+
+    pub fn file(&self) -> &str {
+        &self.file
+    }
+
+    pub fn method(&self) -> &str {
+        &self.method
+    }
+
+    pub fn x(&self) -> i32 {
+        self.x
+    }
+
+    pub fn y(&self) -> i32 {
+        self.y
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 pub struct SurfaceCompositionPlan {
-    pub surface_id: u32,
-    pub base_file: String,
-    pub layers: Vec<SurfaceElement>,
+    pub(crate) surface_id: u32,
+    pub(crate) base_file: String,
+    pub(crate) layers: Vec<SurfaceElement>,
+}
+
+impl SurfaceCompositionPlan {
+    pub fn surface_id(&self) -> u32 {
+        self.surface_id
+    }
+
+    pub fn base_file(&self) -> &str {
+        &self.base_file
+    }
+
+    pub fn layers(&self) -> &[SurfaceElement] {
+        &self.layers
+    }
 }
 
 /// 指定サーフィス番号および有効バインド情報から最適な描画レイヤー順序パッチを計算
@@ -92,10 +128,10 @@ mod tests {
         ];
 
         let plan = compute_surface_composition_plan(0, &elements, &[]);
-        assert_eq!(plan.surface_id, 0);
-        assert_eq!(plan.base_file, "surface0.png");
-        assert_eq!(plan.layers.len(), 1);
-        assert_eq!(plan.layers[0].file, "eye.png");
+        assert_eq!(plan.surface_id(), 0);
+        assert_eq!(plan.base_file(), "surface0.png");
+        assert_eq!(plan.layers().len(), 1);
+        assert_eq!(plan.layers()[0].file(), "eye.png");
     }
 
     #[test]
@@ -118,7 +154,7 @@ mod tests {
         ];
 
         let plan = compute_surface_composition_plan(0, &elements, &[2]);
-        assert_eq!(plan.layers.len(), 1);
-        assert_eq!(plan.layers[0].file, "ribbon.png");
+        assert_eq!(plan.layers().len(), 1);
+        assert_eq!(plan.layers()[0].file(), "ribbon.png");
     }
 }

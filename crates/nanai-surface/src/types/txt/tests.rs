@@ -74,14 +74,8 @@ fn test_plan_composition_bind_and_unmapped() {
         vec![],
     );
 
-    let always_anim = SerikoAnimation::new(
-        101,
-        Some(Interval::Always),
-        None,
-        vec![],
-        vec![],
-        vec![],
-    );
+    let always_anim =
+        SerikoAnimation::new(101, Some(Interval::Always), None, vec![], vec![], vec![]);
 
     def.animations.insert(100, bind_anim);
     def.animations.insert(101, always_anim);

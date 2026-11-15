@@ -58,16 +58,7 @@ mod tests {
             y: 0,
             options: vec![],
         };
-        let pat = AnimationPattern::new(
-            0,
-            DrawMethod::Overlay,
-            10,
-            85,
-            None,
-            0,
-            0,
-            vec![],
-        );
+        let pat = AnimationPattern::new(0, DrawMethod::Overlay, 10, 85, None, 0, 0, vec![]);
 
         let plan = CompositionPlan {
             surface: 0,

@@ -9,14 +9,7 @@ fn test_exclusive_blocking_and_stopping() {
     let mut scheduler = AnimationScheduler::new();
 
     // 1. 空パターンのアニメーション開始 (即座にリターン)
-    let empty_anim = SerikoAnimation::new(
-        1,
-        Some(Interval::Always),
-        None,
-        vec![],
-        vec![],
-        vec![],
-    );
+    let empty_anim = SerikoAnimation::new(1, Some(Interval::Always), None, vec![], vec![], vec![]);
     scheduler.start_animation(0, 0, &empty_anim);
     assert_eq!(scheduler.active_count(0), 0);
 

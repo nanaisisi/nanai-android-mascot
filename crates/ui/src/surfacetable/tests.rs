@@ -27,7 +27,7 @@ group,__disabled
 ";
     let table = SurfaceTable::parse(sample);
 
-    assert_eq!(table.charset().as_deref(), Some("Shift_JIS"));
+    assert_eq!(table.charset(), Some("Shift_JIS"));
     assert_eq!(table.version(), 1);
     assert_eq!(table.groups().len(), 3);
 
@@ -101,7 +101,7 @@ fn test_parse_mock_nanai_file() {
     let content = crate::vfs_integration::open_text_file(&path).unwrap();
     let table = SurfaceTable::parse(&content);
 
-    assert_eq!(table.charset().as_deref(), Some("Shift_JIS"));
+    assert_eq!(table.charset(), Some("Shift_JIS"));
     assert_eq!(table.version(), 1);
     // 本体通常 / 本体腕組み / 本体正面向け / 下半身_* 各グループが存在する
     assert!(table.group("本体通常").is_some() || !table.groups().is_empty());

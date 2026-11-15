@@ -81,26 +81,8 @@ fn test_active_animation_edge_cases() {
         3,
         0,
         vec![
-            AnimationPattern::new(
-                0,
-                DrawMethod::Overlay,
-                -1,
-                10,
-                None,
-                0,
-                0,
-                vec![],
-            ),
-            AnimationPattern::new(
-                1,
-                DrawMethod::Overlay,
-                102,
-                10,
-                None,
-                0,
-                0,
-                vec![],
-            ),
+            AnimationPattern::new(0, DrawMethod::Overlay, -1, 10, None, 0, 0, vec![]),
+            AnimationPattern::new(1, DrawMethod::Overlay, 102, 10, None, 0, 0, vec![]),
         ],
     );
     assert!(anim_mid_minus_one.advance(15, 0).is_some());
@@ -111,26 +93,8 @@ fn test_active_animation_edge_cases() {
         2,
         0,
         vec![
-            AnimationPattern::new(
-                0,
-                DrawMethod::Overlay,
-                100,
-                10,
-                None,
-                0,
-                0,
-                vec![],
-            ),
-            AnimationPattern::new(
-                1,
-                DrawMethod::Overlay,
-                101,
-                20,
-                None,
-                0,
-                0,
-                vec![],
-            ),
+            AnimationPattern::new(0, DrawMethod::Overlay, 100, 10, None, 0, 0, vec![]),
+            AnimationPattern::new(1, DrawMethod::Overlay, 101, 20, None, 0, 0, vec![]),
         ],
     );
     assert_eq!(anim2.next_step_at_ms, 10);

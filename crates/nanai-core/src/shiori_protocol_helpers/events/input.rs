@@ -1,6 +1,8 @@
 //! UKADOC公式仕様に準拠した標準SHIORIイベントリクエストビルダー群 (選択肢・アンカー・ユーザー入力・教え・通信等)
 
-use crate::shiori_protocol_helpers::{build_shiori_request_extended, Build_shiori_request_extendedParams};
+use crate::shiori_protocol_helpers::{
+    Build_shiori_request_extendedParams, build_shiori_request_extended,
+};
 
 /// OnChoiceSelect イベントリクエスト構築
 pub fn build_on_choice_select_request(choice_id: &str) -> String {

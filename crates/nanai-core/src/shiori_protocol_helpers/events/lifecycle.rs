@@ -1,7 +1,9 @@
 //! UKADOC公式仕様に準拠した標準SHIORIイベントリクエストビルダー群 (ライフサイクル・起動・終了・ゴースト切替等)
 
 use crate::shiori_protocol_core::ShioriExtendedParams;
-use crate::shiori_protocol_helpers::{build_shiori_request_extended, Build_shiori_request_extendedParams};
+use crate::shiori_protocol_helpers::{
+    Build_shiori_request_extendedParams, build_shiori_request_extended,
+};
 
 /// OnBoot / OnFirstBoot イベントリクエスト構築
 pub fn build_on_boot_request(is_first_boot: bool, kero_name: &str, ghost_dir: &str) -> String {

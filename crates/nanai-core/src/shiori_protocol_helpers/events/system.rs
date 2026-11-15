@@ -1,6 +1,8 @@
 //! UKADOC公式仕様に準拠した標準SHIORIイベントリクエストビルダー群 (ファイルドロップ・バルーン・スケジュール・ゲームパッド・OS状態等)
 
-use crate::shiori_protocol_helpers::{build_shiori_request_extended, Build_shiori_request_extendedParams};
+use crate::shiori_protocol_helpers::{
+    Build_shiori_request_extendedParams, build_shiori_request_extended,
+};
 
 /// OnBalloonChange イベントリクエスト構築 (ukadoc-spec/list/shiori-event/balloon/OnBalloonChange.md)
 pub fn build_on_balloon_change_request(balloon_name: &str) -> String {

@@ -49,7 +49,8 @@ fn test_expand_sakura_environment_variables() {
         system_version: "1.0.0".to_string(),
         ..Default::default()
     };
-    let script = "こんにちは %username さん。私は %selfname です。OSは %system.os (%system.version) です。";
+    let script =
+        "こんにちは %username さん。私は %selfname です。OSは %system.os (%system.version) です。";
     let expanded = expand_sakura_environment_variables(script, &ctx);
     assert_eq!(
         expanded,

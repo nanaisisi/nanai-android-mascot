@@ -55,7 +55,9 @@ pub fn parse_extended_tag<I: Iterator<Item = char>>(
                     };
                     if let Ok(c) = code {
                         let is_m = tag_ch == 'm';
-                        if (!is_m || c <= 0xff) && let Some(ch) = char::from_u32(c) {
+                        if (!is_m || c <= 0xff)
+                            && let Some(ch) = char::from_u32(c)
+                        {
                             text_buf.push(ch);
                         }
                     }

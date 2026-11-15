@@ -1,7 +1,7 @@
 //! ネットワーク更新 SHIORI イベント・引数構築処理
 
 use super::helpers::parse_error_reason;
-use crate::shiori_protocol::{build_shiori_request_extended, Build_shiori_request_extendedParams};
+use crate::shiori_protocol::{Build_shiori_request_extendedParams, build_shiori_request_extended};
 
 /// ネットワーク更新標準 SHIORI 引数生成ヘルパー (UKADOC準拠)
 /// [Ref0, Ref1, Ref2, Ref3, Ref4] -> [ref0, ref1, "", "ghost", "manual"]

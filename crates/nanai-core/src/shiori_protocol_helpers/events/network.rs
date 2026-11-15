@@ -1,6 +1,8 @@
 //! UKADOC公式仕様に準拠した標準SHIORIイベントリクエストビルダー群 (BIFF・ヘッドライン等)
 
-use crate::shiori_protocol_helpers::{build_shiori_request_extended, Build_shiori_request_extendedParams};
+use crate::shiori_protocol_helpers::{
+    Build_shiori_request_extendedParams, build_shiori_request_extended,
+};
 
 /// OnBIFFBegin イベントリクエスト構築 (ukadoc-spec/list/shiori-event/biff/OnBIFFBegin.md)
 pub fn build_on_biff_request() -> String {

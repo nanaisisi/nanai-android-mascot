@@ -1,6 +1,8 @@
 //! UKADOC公式仕様に準拠した標準SHIORIイベントリクエストビルダー群 (マウス操作・ジェスチャ等)
 
-use crate::shiori_protocol_helpers::{build_shiori_request_extended, Build_shiori_request_extendedParams};
+use crate::shiori_protocol_helpers::{
+    Build_shiori_request_extendedParams, build_shiori_request_extended,
+};
 
 /// OnMouseClick イベントリクエスト構築
 pub fn build_on_mouse_click_request(

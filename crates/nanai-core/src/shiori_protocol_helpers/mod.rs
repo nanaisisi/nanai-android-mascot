@@ -27,9 +27,7 @@ pub struct Build_shiori_request_extendedParams<'a> {
 }
 
 /// UKADOC SHIORI/3.0 仕様に完全準拠した拡張リクエスト文字列構築 (GET / NOTIFY)
-pub fn build_shiori_request_extended(
-    params: Build_shiori_request_extendedParams<'_>,
-) -> String {
+pub fn build_shiori_request_extended(params: Build_shiori_request_extendedParams<'_>) -> String {
     let Build_shiori_request_extendedParams {
         method,
         event_id,

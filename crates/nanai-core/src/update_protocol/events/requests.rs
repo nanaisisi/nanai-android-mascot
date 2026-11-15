@@ -4,7 +4,7 @@ use super::args::{
     Build_update_argsParams, Build_update_complete_argsParams, Build_update_failure_argsParams,
     build_update_args, build_update_complete_args, build_update_failure_args,
 };
-use crate::shiori_protocol::{Build_shiori_request_extendedParams, build_shiori_request_extended};
+use crate::shiori_protocol_helpers::{Build_shiori_request_extendedParams, build_shiori_request_extended};
 
 /// OnUpdateBegin イベントリクエスト構築 (ukadoc-spec/list/shiori-event/network-update/OnUpdateBegin.md)
 pub fn build_on_update_begin_request(

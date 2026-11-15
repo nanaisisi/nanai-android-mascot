@@ -80,35 +80,19 @@ impl FmoRecord {
         }
     }
 
-    #[allow(clippy::too_many_arguments)]
-    pub fn from_parts(
-        id: String,
-        path: String,
-        hwnd: u64,
-        name: String,
-        keroname: String,
-        sakura_surface: i32,
-        kero_surface: i32,
-        ghostpath: String,
-        kerohwnd: Option<u64>,
-        hwndlist: Vec<u64>,
-        fullname: Option<String>,
-        modulestate: Option<String>,
-    ) -> Self {
-        Self {
-            id,
-            path,
-            hwnd,
-            name,
-            keroname,
-            sakura_surface,
-            kero_surface,
-            ghostpath,
-            kerohwnd,
-            hwndlist,
-            fullname,
-            modulestate,
-        }
+    pub fn with_keroname(mut self, keroname: impl Into<String>) -> Self {
+        self.keroname = keroname.into();
+        self
+    }
+
+    pub fn with_fullname(mut self, fullname: Option<String>) -> Self {
+        self.fullname = fullname;
+        self
+    }
+
+    pub fn with_modulestate_opt(mut self, modulestate: Option<String>) -> Self {
+        self.modulestate = modulestate;
+        self
     }
 
     pub fn new(id: impl Into<String>, name: impl Into<String>) -> Self {
@@ -308,33 +292,15 @@ impl FmoEntry {
 
     /// FmoRecord へ変換する
     pub fn to_record(&self) -> FmoRecord {
-        let mut hwndlist = Vec::new();
-        if self.hwnd != 0 {
-            hwndlist.push(self.hwnd);
-        }
-        if let Some(khwnd) = self.kerohwnd
-            && khwnd != 0
-            && !hwndlist.contains(&khwnd)
-        {
-            hwndlist.push(khwnd);
-        }
-
         // 非表示時のサーフィスは不可視扱い（-1）へフォールバック可能だが
         // FMOレコードでは現在サーフィス値を保持しつつ modulestate で補完
-        FmoRecord::from_parts(
-            self.id.clone(),
-            String::new(),
-            self.hwnd,
-            self.name.clone(),
-            self.keroname.clone(),
-            self.sakura_surface,
-            self.kero_surface,
-            self.ghostpath.clone(),
-            self.kerohwnd,
-            hwndlist,
-            Some(self.name.clone()),
-            self.modulestate.clone(),
-        )
+        FmoRecord::new(self.id.clone(), self.name.clone())
+            .with_keroname(self.keroname.clone())
+            .with_surfaces(self.sakura_surface, self.kero_surface)
+            .with_paths("", self.ghostpath.clone())
+            .with_hwnd(self.hwnd, self.kerohwnd)
+            .with_fullname(Some(self.name.clone()))
+            .with_modulestate_opt(self.modulestate.clone())
     }
 
     /// FmoRecord から FmoEntry を生成する

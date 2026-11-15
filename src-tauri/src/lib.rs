@@ -1,7 +1,6 @@
 #[cfg_attr(not(debug_assertions), allow(unused_imports))]
-use specta_typescript::Typescript;
+#[allow(unused_imports)]
 use tauri::Manager;
-use tauri_specta::{Builder as SpectaBuilder, collect_commands};
 
 macro_rules! println {
     ($($arg:tt)*) => {
@@ -15,12 +14,15 @@ macro_rules! eprintln {
     };
 }
 
+mod bindings;
 mod commands;
 mod common;
 mod events;
 mod fmo;
 mod ghost;
+mod invoke;
 mod jumplist;
+mod setup;
 mod shiori;
 mod sstp;
 mod tray;
@@ -31,81 +33,15 @@ pub use common::paths::{
 
 use common::*;
 
-// =====
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     common::initialize_logging_from_args();
 
-    let specta_builder = SpectaBuilder::<tauri::Wry>::new().commands(collect_commands![
-        commands::window::test_command,
-        commands::shiori::on_mouse_click,
-        commands::shiori::on_second_change,
-        commands::shiori::get_shiori_status,
-        commands::window::request_overlay_permission,
-        commands::window::setup_foreground_service,
-        commands::window::set_overlay_transparency,
-        commands::window::set_click_through,
-        commands::window::trim_memory_command,
-    ]);
-    let _ = specta_builder;
-
-    #[cfg(debug_assertions)]
-    {
-        specta_builder
-            .export(Typescript::default(), "../ui/bindings.ts")
-            .expect("Failed to export TypeScript bindings");
-        if let Ok(content) = std::fs::read_to_string("../ui/bindings.ts") {
-            let patched = content
-                .replace("error: e  as any", "error: e as E")
-                .replace("error: e as any", "error: e as E");
-            let _ = std::fs::write("../ui/bindings.ts", patched);
-        }
-    }
+    bindings::export_typescript_bindings();
 
     let builder = tauri::Builder::default()
         .manage(AppState::new())
-        .setup(|app| {
-            std::println!(
-                "🟢 Tauri .setup() 呼び出し開始！ OS: {}",
-                std::env::consts::OS
-            );
-            shiori::fmo::acquire_base_ware_mutexes();
-            let _ = jumplist::setup_taskbar_jumplist(app);
-            #[cfg(not(target_os = "android"))]
-            {
-                std::println!("🟢 not(target_os = \"android\") ブロック突入");
-                let tray = tray::setup_tray(app)?;
-                let state = app.state::<AppState>();
-                *state.tray_icon.lock() = Some(tray.clone());
-                app.manage(tray);
-                std::println!("🟢 システムトレイのセットアップが完了しました");
-
-                // バルーン・メニュー等の補助ウィンドウを先行キャッシュ（起動時のもたつき解消）およびキャラクターウィンドウの自動表示
-                let app_handle_preload = app.handle().clone();
-                tauri::async_runtime::block_on(async move {
-                    let _ = commands::window::preload_auxiliary_windows(app_handle_preload.clone())
-                        .await;
-                    let _ = commands::window::show_character_window(
-                        app_handle_preload.clone(),
-                        commands::window::character_window::ShowCharacterWindowParams::new(
-                            0, None, None, None, None,
-                        ),
-                    )
-                    .await;
-                    let _ = commands::window::show_character_window(
-                        app_handle_preload.clone(),
-                        commands::window::character_window::ShowCharacterWindowParams::new(
-                            1, None, None, None, None,
-                        ),
-                    )
-                    .await;
-                });
-            }
-            #[cfg(target_os = "android")]
-            let _ = app;
-            Ok(())
-        });
+        .setup(|app| setup::setup_app(app));
 
     #[cfg(desktop)]
     let builder = builder.on_menu_event(move |app_handle, event| {
@@ -118,107 +54,7 @@ pub fn run() {
         })
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
-        .invoke_handler(tauri::generate_handler![
-            commands::file::open_file,
-            commands::config::get_app_config,
-            commands::config::record_ghost_loaded,
-            commands::file::add_to_recent_files,
-            commands::file::get_recent_files,
-            commands::file::open_ghost_directory,
-            commands::shell::shell_manifest,
-            commands::shell::parse_sakura_script,
-            commands::shell::parse_surfaces_text,
-            commands::shell::animation_timeline,
-            commands::shell::scan_balloons,
-            commands::shell::balloon_manifest,
-            commands::shell::load_balloon_image,
-            commands::shell::get_balloon_readme,
-            commands::shell::uninstall_ghost,
-            commands::shell::get_ghost_info,
-            commands::shell::surface_composition_plan,
-            commands::shell::create_surface_frame_buffer,
-            commands::shell::clear_frame_buffer_rect,
-            commands::shell::apply_chromakey_to_buffer,
-            commands::shell::apply_corner_chromakey_to_buffer,
-            ghost::scan::directory::scan_ghost_directory,
-            commands::shiori::scan_ghosts,
-            commands::shiori::lifecycle::load::load_ghost,
-            commands::shiori::send_shiori_request,
-            commands::shiori::send_shiori_event,
-            commands::shiori::send_shiori_notify,
-            commands::shiori::send_shiori_event_typed,
-            commands::shiori::on_mouse_click,
-            commands::shiori::on_second_change,
-            commands::shiori::get_current_ghost,
-            commands::shiori::get_all_ghosts,
-            commands::shiori::get_shiori_status,
-            commands::shiori::lifecycle::close::unload_current_ghost,
-            commands::shiori::lifecycle::spawn::spawn_ghost,
-            commands::shiori::lifecycle::load::reload_current_ghost_shiori,
-            commands::shiori::lifecycle::close::close_ghost,
-            commands::window::request_overlay_permission,
-            commands::window::setup_foreground_service,
-            commands::window::set_overlay_transparency,
-            commands::window::set_click_through,
-            commands::window::trim_memory_command,
-            commands::window::test_command,
-            commands::window::minimize_app,
-            commands::window::exit_app,
-            commands::window::show_modal_window,
-            commands::window::hide_modal_window,
-            commands::window::show_context_menu,
-            commands::window::show_menu_window,
-            commands::window::hide_menu_window,
-            commands::window::show_submenu_window,
-            commands::window::hide_submenu_window,
-            commands::window::show_subchar_window,
-            commands::window::hide_subchar_window,
-            commands::window::set_character_scale,
-            commands::window::set_surface_image,
-            commands::window::get_surface_image,
-            commands::window::show_balloon_window,
-            commands::window::resize_balloon_window,
-            commands::window::set_balloon_offset,
-            commands::window::reset_balloon_positions,
-            commands::window::sync_balloon_position,
-            commands::window::save_balloon_offset_from_position,
-            commands::window::sync_character_balloon,
-            commands::window::hide_balloon_window,
-            commands::window::preload_auxiliary_windows,
-            commands::window::show_loading_banner_window,
-            commands::window::hide_loading_banner_window,
-            commands::install::pick_and_install_ghost_archive,
-            commands::install::install_ghost_archive,
-            commands::install::install_ghost_archive_bytes,
-            commands::install::create_nar_archive,
-            commands::file::load_surface_image,
-            commands::file::load_surface_pna,
-            commands::update::network::commands::check_ghost_update,
-            commands::update::network::commands::execute_ghost_update,
-            commands::update::generate_updates2_dau,
-            commands::ext::scan_plugins,
-            commands::ext::scan_headlines,
-            commands::ext::execute_plugin_event,
-            shiori::saori::execute_saori,
-            shiori::headline::fetch_headline_feed,
-            shiori::property::get_system_property,
-            fmo::get_fmo_status,
-            fmo::update_fmo_lifecycle_state,
-            fmo::update_fmo_balloon_text,
-            fmo::update_fmo_surfaces,
-            shiori::fmo::check_base_ware_mutex,
-            sstp::handler::request_processor::send_sstp_request,
-            sstp::handler::request_processor::parse_and_send_sstp_raw,
-            sstp::handler::notifications::notify_sstp_break,
-            sstp::handler::notifications::notify_sstp_blacklisting,
-            commands::web::handle_ukagaka_uri,
-            commands::calendar::get_schedules,
-            commands::calendar::add_schedule,
-            commands::calendar::delete_schedule,
-            commands::calendar::trigger_calendar_event,
-            commands::shiori::send_on_translate,
-            commands::shiori::send_ghost_call_event
-        ])
+        .invoke_handler(invoke::get_invoke_handler())
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

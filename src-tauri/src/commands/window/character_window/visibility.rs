@@ -1,3 +1,5 @@
+//! キャラクター（メイン / サブキャラ）ウィンドウ表示・非表示コマンド
+
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ShowCharacterWindowParams {
     scope_id: i32,
@@ -24,7 +26,6 @@ impl ShowCharacterWindowParams {
         }
     }
 
-    // Add getter methods
     pub fn scope_id(&self) -> i32 {
         self.scope_id
     }
@@ -214,7 +215,6 @@ impl ShowSubcharWindowParams {
         }
     }
 
-    // Add getter methods
     pub fn scope_id(&self) -> i32 {
         self.scope_id
     }
@@ -256,41 +256,6 @@ pub async fn show_subchar_window(
     .await
 }
 
-#[tauri::command]
-pub async fn sync_character_balloon(
-    app_handle: tauri::AppHandle,
-    state: tauri::State<'_, crate::common::state::AppState>,
-    scope_id: i32,
-) -> Result<(), String> {
-    super::balloon_window::sync_balloon_position_impl(&app_handle, &state, scope_id).await
-}
-
-/// キャラクター（スコープ N）ウィンドウのサイズ変更コマンド（シェル倍率変更用）
-#[tauri::command]
-pub async fn set_character_scale(
-    _app_handle: tauri::AppHandle,
-    _scale_percent: u32,
-) -> Result<(), String> {
-    #[cfg(desktop)]
-    {
-        let app_handle = _app_handle;
-        let scale_percent = _scale_percent;
-        use tauri::Manager;
-        let factor = (scale_percent as f64) / 100.0;
-        let win_width = (200.0 * factor).round().max(80.0);
-        let win_height = (360.0 * factor).round().max(140.0);
-        for (label, win) in app_handle.webview_windows() {
-            if label.starts_with("subchar_window_") {
-                let _ = win.set_size(tauri::Size::Physical(tauri::PhysicalSize {
-                    width: win_width as u32,
-                    height: win_height as u32,
-                }));
-            }
-        }
-    }
-    Ok(())
-}
-
 /// 互換用: サブキャラクターウィンドウ非表示コマンド
 #[tauri::command]
 pub async fn hide_subchar_window(
@@ -300,26 +265,4 @@ pub async fn hide_subchar_window(
     let app_handle = _app_handle;
     let scope_id = _scope_id;
     hide_character_window(app_handle, scope_id).await
-}
-
-#[tauri::command]
-pub async fn set_surface_image(
-    state: tauri::State<'_, crate::common::state::AppState>,
-    scope_id: i32,
-    image_src: String,
-) -> Result<(), String> {
-    state.surface_images.lock().insert(scope_id, image_src);
-    Ok(())
-}
-
-#[tauri::command]
-pub async fn get_surface_image(
-    state: tauri::State<'_, crate::common::state::AppState>,
-    scope_id: i32,
-) -> Result<String, String> {
-    let images = state.surface_images.lock();
-    images
-        .get(&scope_id)
-        .cloned()
-        .ok_or_else(|| format!("Surface image not found for scope {}", scope_id))
 }

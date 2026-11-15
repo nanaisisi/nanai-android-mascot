@@ -6,9 +6,9 @@ use std::path::Path;
 #[cfg(not(target_os = "android"))]
 use crate::common::state::AppState;
 #[cfg(not(target_os = "android"))]
-use tauri::image::Image;
-#[cfg(not(target_os = "android"))]
 use tauri::Manager;
+#[cfg(not(target_os = "android"))]
+use tauri::image::Image;
 
 #[cfg(not(target_os = "android"))]
 pub fn update_tray_for_ghost(

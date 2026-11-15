@@ -6,28 +6,56 @@ use wasm_bindgen::prelude::*;
 
 #[allow(non_camel_case_types)]
 pub struct Compute_validrect_layoutParams<'a> {
-    pub validrect_left: Option<i32>,
-    pub validrect_top: Option<i32>,
-    pub validrect_right: Option<i32>,
-    pub validrect_bottom: Option<i32>,
-    pub border_repeat: Option<&'a str>,
-    pub balloon_image: Option<&'a str>,
-    pub bg_image_url: Option<&'a str>,
-    pub scope_id: u32,
+    pub(crate) validrect_left: Option<i32>,
+    pub(crate) validrect_top: Option<i32>,
+    pub(crate) validrect_right: Option<i32>,
+    pub(crate) validrect_bottom: Option<i32>,
+    pub(crate) border_repeat: Option<&'a str>,
+    pub(crate) balloon_image: Option<&'a str>,
+    pub(crate) bg_image_url: Option<&'a str>,
+    pub(crate) scope_id: u32,
+}
+
+#[allow(dead_code)]
+impl<'a> Compute_validrect_layoutParams<'a> {
+    pub fn validrect_left(&self) -> Option<i32> {
+        self.validrect_left
+    }
+    pub fn validrect_top(&self) -> Option<i32> {
+        self.validrect_top
+    }
+    pub fn validrect_right(&self) -> Option<i32> {
+        self.validrect_right
+    }
+    pub fn validrect_bottom(&self) -> Option<i32> {
+        self.validrect_bottom
+    }
+    pub fn border_repeat(&self) -> Option<&'a str> {
+        self.border_repeat
+    }
+    pub fn balloon_image(&self) -> Option<&'a str> {
+        self.balloon_image
+    }
+    pub fn bg_image_url(&self) -> Option<&'a str> {
+        self.bg_image_url
+    }
+    pub fn scope_id(&self) -> u32 {
+        self.scope_id
+    }
 }
 
 /// 有効テキスト表示領域 (validrect) および背景画像設定からレイアウトを算出
 pub fn compute_validrect_layout(
     params: Compute_validrect_layoutParams<'_>,
 ) -> ValidRectLayoutResult {
-    let validrect_left = params.validrect_left;
-    let validrect_top = params.validrect_top;
-    let validrect_right = params.validrect_right;
-    let validrect_bottom = params.validrect_bottom;
-    let border_repeat = params.border_repeat;
-    let balloon_image = params.balloon_image;
-    let bg_image_url = params.bg_image_url;
-    let scope_id = params.scope_id;
+    let validrect_left = params.validrect_left();
+    let validrect_top = params.validrect_top();
+    let validrect_right = params.validrect_right();
+    let validrect_bottom = params.validrect_bottom();
+    let border_repeat = params.border_repeat();
+    let balloon_image = params.balloon_image();
+    let bg_image_url = params.bg_image_url();
+    let scope_id = params.scope_id();
 
     let t = validrect_top.filter(|&v| v >= 0).map_or(16, |v| v.max(8));
     let r = validrect_right.filter(|&v| v >= 0).map_or(16, |v| v.max(8));

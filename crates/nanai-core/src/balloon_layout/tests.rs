@@ -11,10 +11,10 @@ fn test_compute_balloon_text_layout_basic() {
         padding_x: 10.0,
     });
 
-    assert_eq!(res.line_count, 2);
-    assert_eq!(res.lines[0].text, "こんにちは");
-    assert_eq!(res.lines[1].text, "世界");
-    assert_eq!(res.total_height_px, 40.0);
+    assert_eq!(res.line_count(), 2);
+    assert_eq!(res.lines()[0].text(), "こんにちは");
+    assert_eq!(res.lines()[1].text(), "世界");
+    assert_eq!(res.total_height_px(), 40.0);
 }
 
 #[test]
@@ -29,7 +29,7 @@ fn test_compute_balloon_text_layout_word_wrap() {
         padding_x: 10.0,
     });
 
-    assert_eq!(res.line_count, 2);
-    assert_eq!(res.lines[0].text, "あいうえおかきくけこ");
-    assert_eq!(res.lines[1].text, "さしすせそ");
+    assert_eq!(res.line_count(), 2);
+    assert_eq!(res.lines()[0].text(), "あいうえおかきくけこ");
+    assert_eq!(res.lines()[1].text(), "さしすせそ");
 }

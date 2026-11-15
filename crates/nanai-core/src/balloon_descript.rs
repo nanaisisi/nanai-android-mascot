@@ -7,8 +7,18 @@ use wasm_bindgen::prelude::*;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 pub struct BalloonDescriptValidationResult {
-    pub is_recommended: bool,
-    pub warning_message: Option<String>,
+    pub(crate) is_recommended: bool,
+    pub(crate) warning_message: Option<String>,
+}
+
+impl BalloonDescriptValidationResult {
+    pub fn is_recommended(&self) -> bool {
+        self.is_recommended
+    }
+
+    pub fn warning_message(&self) -> Option<&str> {
+        self.warning_message.as_deref()
+    }
 }
 
 /// バルーンの descript プロパティを検証し、推薦ゴースト/パスの一致を判定
@@ -85,10 +95,14 @@ pub fn wasm_validate_balloon_descript(
 /// バルーンオプションファイル (`balloons*s.txt` / `balloonk*s.txt`) 構造化マニフェスト (UKADOC 準拠)
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
 pub struct BalloonOptionsManifest {
-    pub properties: BTreeMap<String, String>,
+    pub(crate) properties: BTreeMap<String, String>,
 }
 
 impl BalloonOptionsManifest {
+    pub fn properties(&self) -> &BTreeMap<String, String> {
+        &self.properties
+    }
+
     pub fn get(&self, key: &str) -> Option<&str> {
         self.properties.get(&key.to_lowercase()).map(|s| s.as_str())
     }
@@ -152,12 +166,12 @@ mod tests {
         props.insert("recommended.ghost".to_string(), "Emily".to_string());
 
         let res_match = validate_balloon_descript(&props, "Emily", "ghost/emily");
-        assert!(res_match.is_recommended);
-        assert!(res_match.warning_message.is_none());
+        assert!(res_match.is_recommended());
+        assert!(res_match.warning_message().is_none());
 
         let res_mismatch = validate_balloon_descript(&props, "Sakura", "ghost/sakura");
-        assert!(!res_mismatch.is_recommended);
-        assert!(res_mismatch.warning_message.is_some());
+        assert!(!res_mismatch.is_recommended());
+        assert!(res_mismatch.warning_message().is_some());
     }
 
     #[test]

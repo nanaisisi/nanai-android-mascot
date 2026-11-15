@@ -7,22 +7,30 @@ fn test_network_update_event_builders() {
     assert!(begin_req.contains("Reference3: ghost"));
     assert!(begin_req.contains("Reference4: manual"));
 
-    let ready_req = build_on_update_ready_request(3, Some("shell"), Some("auto"));
+    let ready_req = build_on_update_ready_request(Build_on_update_ready_requestParams {
+        file_count: 3,
+        update_target: Some("shell"),
+        update_mode: Some("auto"),
+    });
     assert!(ready_req.contains("ID: OnUpdateReady"));
     assert!(ready_req.contains("Reference0: 3"));
 
-    let comp_req =
-        build_on_update_complete_request(Some("changed"), 2, Some("ghost"), Some("manual"));
+    let comp_req = build_on_update_complete_request(Build_on_update_complete_requestParams {
+        result: Some("changed"),
+        updated_files_count: 2,
+        update_target: Some("ghost"),
+        update_mode: Some("manual"),
+    });
     assert!(comp_req.contains("ID: OnUpdateComplete"));
     assert!(comp_req.contains("Reference0: changed"));
     assert!(comp_req.contains("Reference1: 2"));
 
-    let fail_req = build_on_update_failure_request(
-        "404 Not Found",
-        Some("surfaces.png"),
-        Some("ghost"),
-        Some("manual"),
-    );
+    let fail_req = build_on_update_failure_request(Build_on_update_failure_requestParams {
+        err: "404 Not Found",
+        file_name: Some("surfaces.png"),
+        update_target: Some("ghost"),
+        update_mode: Some("manual"),
+    });
     assert!(fail_req.contains("ID: OnUpdateFailure"));
     assert!(fail_req.contains("Reference0: 404"));
     assert!(fail_req.contains("Reference1: surfaces.png"));
@@ -94,40 +102,85 @@ fn test_calculate_update_progress() {
 
 #[test]
 fn test_build_update_args() {
-    let args = build_update_args("f1", "f2", Some("shell"), Some("auto"));
+    let args = build_update_args(Build_update_argsParams {
+        ref0: "f1",
+        ref1: "f2",
+        update_target: Some("shell"),
+        update_mode: Some("auto"),
+    });
     assert_eq!(args, ["f1", "f2", "", "shell", "auto"]);
 
-    let def_args = build_update_args("f1", "f2", None, None);
+    let def_args = build_update_args(Build_update_argsParams {
+        ref0: "f1",
+        ref1: "f2",
+        update_target: None,
+        update_mode: None,
+    });
     assert_eq!(def_args, ["f1", "f2", "", "ghost", "manual"]);
 }
 
 #[test]
 fn test_build_update_complete_args() {
-    let args = build_update_complete_args(Some("changed"), 5, None, None);
+    let args = build_update_complete_args(Build_update_complete_argsParams {
+        result: Some("changed"),
+        updated_files_count: 5,
+        update_target: None,
+        update_mode: None,
+    });
     assert_eq!(args, ["changed", "5", "", "ghost", "manual"]);
 
-    let def = build_update_complete_args(None, 0, None, None);
+    let def = build_update_complete_args(Build_update_complete_argsParams {
+        result: None,
+        updated_files_count: 0,
+        update_target: None,
+        update_mode: None,
+    });
     assert_eq!(def, ["none", "0", "", "ghost", "manual"]);
 }
 
 #[test]
 fn test_build_update_failure_args() {
-    let args = build_update_failure_args("HTTP 404 Not Found", Some("file.txt"), None, None);
+    let args = build_update_failure_args(Build_update_failure_argsParams {
+        error_or_reason: "HTTP 404 Not Found",
+        failed_path: Some("file.txt"),
+        update_target: None,
+        update_mode: None,
+    });
     assert_eq!(args, ["404", "file.txt", "", "ghost", "manual"]);
 
-    let args_timeout = build_update_failure_args("connection timeout", None, None, None);
+    let args_timeout = build_update_failure_args(Build_update_failure_argsParams {
+        error_or_reason: "connection timeout",
+        failed_path: None,
+        update_target: None,
+        update_mode: None,
+    });
     assert_eq!(args_timeout, ["timeout", "", "", "ghost", "manual"]);
 
-    let args_md5 = build_update_failure_args("md5 miss match", None, None, None);
+    let args_md5 = build_update_failure_args(Build_update_failure_argsParams {
+        error_or_reason: "md5 miss match",
+        failed_path: None,
+        update_target: None,
+        update_mode: None,
+    });
     assert_eq!(args_md5, ["md5 miss", "", "", "ghost", "manual"]);
 
-    let args_io = build_update_failure_args("permission denied", None, None, None);
+    let args_io = build_update_failure_args(Build_update_failure_argsParams {
+        error_or_reason: "permission denied",
+        failed_path: None,
+        update_target: None,
+        update_mode: None,
+    });
     assert_eq!(args_io, ["fileio", "", "", "ghost", "manual"]);
 }
 
 #[test]
 fn test_build_update_other_args() {
-    let args = build_update_other_args("master", Some("shell"), Some("v1.0"), Some("script"));
+    let args = build_update_other_args(Build_update_other_argsParams {
+        target_name: "master",
+        target_type: Some("shell"),
+        detail: Some("v1.0"),
+        mode: Some("script"),
+    });
     assert_eq!(args, ["master", "shell", "v1.0", "script"]);
 }
 

@@ -6,22 +6,41 @@ use wasm_bindgen::prelude::*;
 
 #[allow(non_camel_case_types)]
 pub struct Compute_balloon_text_layoutParams<'a> {
-    pub text: &'a str,
-    pub max_container_width: f32,
-    pub font_size_px: f32,
-    pub line_height_px: f32,
-    pub padding_x: f32,
+    pub(crate) text: &'a str,
+    pub(crate) max_container_width: f32,
+    pub(crate) font_size_px: f32,
+    pub(crate) line_height_px: f32,
+    pub(crate) padding_x: f32,
+}
+
+#[allow(dead_code)]
+impl<'a> Compute_balloon_text_layoutParams<'a> {
+    pub fn text(&self) -> &'a str {
+        self.text
+    }
+    pub fn max_container_width(&self) -> f32 {
+        self.max_container_width
+    }
+    pub fn font_size_px(&self) -> f32 {
+        self.font_size_px
+    }
+    pub fn line_height_px(&self) -> f32 {
+        self.line_height_px
+    }
+    pub fn padding_x(&self) -> f32 {
+        self.padding_x
+    }
 }
 
 /// バルーン内テキストの自動改行・レイアウトサイズ計算
 pub fn compute_balloon_text_layout(
     params: Compute_balloon_text_layoutParams<'_>,
 ) -> BalloonLayoutResult {
-    let text = params.text;
-    let max_container_width = params.max_container_width;
-    let font_size_px = params.font_size_px;
-    let line_height_px = params.line_height_px;
-    let padding_x = params.padding_x;
+    let text = params.text();
+    let max_container_width = params.max_container_width();
+    let font_size_px = params.font_size_px();
+    let line_height_px = params.line_height_px();
+    let padding_x = params.padding_x();
 
     let available_width = (max_container_width - padding_x * 2.0).max(10.0);
     let mut lines = Vec::new();

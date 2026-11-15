@@ -107,12 +107,12 @@ pub async fn send_sstp_request_with_config(
                     .with_references(request.references.clone());
                 let resp = handle_execute_command(cmd, &ctx);
                 return Ok(SstpResponse {
-                    status: format!("{} {}", resp.status.code(), resp.status.reason_phrase()),
-                    value: resp.additional_data.clone().unwrap_or_default(),
+                    status: format!("{} {}", resp.status().code(), resp.status().reason_phrase()),
+                    value: resp.additional_data().map(ToString::to_string).unwrap_or_default(),
                     id: request.event,
                     reference0: request.references.get("Reference0").cloned(),
-                    additional_data: resp.additional_data,
-                    error_description: resp.error_description,
+                    additional_data: resp.additional_data().map(ToString::to_string),
+                    error_description: resp.error_description().map(ToString::to_string),
                 });
             } else if let Some(ref event) = request.event {
                 app_handle

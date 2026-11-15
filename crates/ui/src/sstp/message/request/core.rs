@@ -97,14 +97,14 @@ impl SstpRequest {
     /// 対象のゴースト名（sakura名, kero名）に応じたスクリプトを解決する
     pub fn resolve_script(&self, sakura_name: &str, kero_name: &str) -> Option<&str> {
         for entry in &self.if_ghosts {
-            if let Some((target_sakura, target_kero)) = entry.target.split_once(',') {
+            if let Some((target_sakura, target_kero)) = entry.target().split_once(',') {
                 if target_sakura.trim().eq_ignore_ascii_case(sakura_name)
                     && target_kero.trim().eq_ignore_ascii_case(kero_name)
                 {
-                    return Some(&entry.script);
+                    return Some(entry.script());
                 }
-            } else if entry.target.trim().eq_ignore_ascii_case(sakura_name) {
-                return Some(&entry.script);
+            } else if entry.target().trim().eq_ignore_ascii_case(sakura_name) {
+                return Some(entry.script());
             }
         }
         self.script.as_deref()

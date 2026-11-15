@@ -6,6 +6,13 @@ pub const DIRECT_SSTP_DWDATA: usize = 9801;
 /// IfGhost によるスクリプト振り分けエントリ
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct IfGhostEntry {
-    pub target: String,
-    pub script: String,
+    pub(crate) target: String,
+    pub(crate) script: String,
+}
+
+#[allow(dead_code)]
+impl IfGhostEntry {
+    // Add getter methods
+    pub fn target(&self) -> &str { &self.target }
+    pub fn script(&self) -> &str { &self.script }
 }

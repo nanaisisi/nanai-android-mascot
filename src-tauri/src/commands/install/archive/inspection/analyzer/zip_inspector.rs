@@ -139,10 +139,10 @@ pub fn inspect_zip_archive<R: std::io::Read + std::io::Seek>(
     let mut bundled_resources = Vec::new();
     if kind == "ghost" || kind == "package" || kind == "shell" {
         for res_config in bundled_resources_config {
-            let src_dir = res_config.source_directory.trim_matches('/').to_string();
-            let dest_name = sanitize_dir_name(&res_config.target_directory);
+            let src_dir = res_config.source_directory().trim_matches('/').to_string();
+            let dest_name = sanitize_dir_name(&res_config.target_directory());
             if !src_dir.is_empty() && !dest_name.is_empty() {
-                let base_path = match res_config.resource_type.as_str() {
+                let base_path = match res_config.resource_type() {
                     "balloon" => resolve_asset_path("assets/balloon", app_handle).ok(),
                     "headline" => resolve_asset_path("assets/headline", app_handle).ok(),
                     "plugin" => resolve_asset_path("assets/plugin", app_handle).ok(),
@@ -160,8 +160,8 @@ pub fn inspect_zip_archive<R: std::io::Read + std::io::Seek>(
                     bundled_resources.push(BundledResourceTarget::new(
                         format!("{src_dir}/"),
                         dest,
-                        res_config.refresh,
-                        res_config.refresh_undelete_mask,
+                        res_config.refresh(),
+                        res_config.refresh_undelete_mask().to_vec(),
                     ));
                 }
             }

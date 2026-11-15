@@ -71,7 +71,7 @@ pub async fn check_ghost_update(
 
     let entries = parse_update_definition(&content);
     for entry in &entries {
-        validate_update_path(&entry.path)?;
+        validate_update_path(&entry.path())?;
     }
 
     // 候補ファイルの存在確認およびMD5ハッシュ計算を tokio::task::JoinSet により非同期並列実行
@@ -79,14 +79,14 @@ pub async fn check_ghost_update(
     for (index, entry) in entries.into_iter().enumerate() {
         let ghost_dir = ghost_dir.clone();
         join_set.spawn_blocking(move || {
-            let local_file_path = ghost_dir.join(&entry.path);
+            let local_file_path = ghost_dir.join(&entry.path());
             let mut needs_update = false;
 
             if !local_file_path.exists() {
                 needs_update = true;
-            } else if !entry.md5.is_empty() {
+            } else if !entry.md5().is_empty() {
                 if let Some(local_md5) = calculate_file_md5(&local_file_path) {
-                    if local_md5 != entry.md5 {
+                    if local_md5 != entry.md5() {
                         needs_update = true;
                     }
                 } else {
@@ -169,16 +169,16 @@ pub async fn execute_ghost_update(
     let mut updated_files = Vec::new();
 
     for entry in check_result.update_files() {
-        validate_update_path(&entry.path)?;
+        validate_update_path(&entry.path())?;
         let file_url = format!(
             "{}{}",
             check_result.homeurl(),
-            entry.path.replace('\\', "/")
+            entry.path().replace('\\', "/")
         );
         println!("⬇️ Downloading update file: {}", file_url);
         report_progress(
             &app_handle,
-            ReportProgressParams::new("download-begin", &entry.path, None),
+            ReportProgressParams::new("download-begin", &entry.path(), None),
         );
 
         let resp = match client.get(&file_url).send().await {
@@ -187,7 +187,7 @@ pub async fn execute_ghost_update(
                     let status = r.status().as_u16().to_string();
                     report_progress(
                         &app_handle,
-                        ReportProgressParams::new("download-failed", &entry.path, Some(&status)),
+                        ReportProgressParams::new("download-failed", &entry.path(), Some(&status)),
                     );
                     return Ok(UpdateExecutionResult::new(
                         false,
@@ -202,7 +202,7 @@ pub async fn execute_ghost_update(
                 let reason = if e.is_timeout() { "timeout" } else { "404" };
                 report_progress(
                     &app_handle,
-                    ReportProgressParams::new("download-failed", &entry.path, Some(reason)),
+                    ReportProgressParams::new("download-failed", &entry.path(), Some(reason)),
                 );
                 return Ok(UpdateExecutionResult::new(
                     false,
@@ -216,10 +216,10 @@ pub async fn execute_ghost_update(
         let bytes = resp.bytes().await.map_err(|e| e.to_string())?;
 
         // MD5 チェック
-        if !entry.md5.is_empty() {
+        if !entry.md5().is_empty() {
             report_progress(
                 &app_handle,
-                ReportProgressParams::new("md5-begin", &entry.path, None),
+                ReportProgressParams::new("md5-begin", &entry.path(), None),
             );
             let mut hasher = Md5::new();
             hasher.update(&bytes);
@@ -228,14 +228,14 @@ pub async fn execute_ghost_update(
                 .iter()
                 .map(|b| format!("{:02x}", b))
                 .collect();
-            if downloaded_md5 != entry.md5 {
+            if downloaded_md5 != entry.md5() {
                 println!(
                     "❌ MD5 mismatch for {}: expected {}, got {}",
-                    entry.path, entry.md5, downloaded_md5
+                    entry.path(), entry.md5(), downloaded_md5
                 );
                 report_progress(
                     &app_handle,
-                    ReportProgressParams::new("md5-failed", &entry.path, Some("md5 miss")),
+                    ReportProgressParams::new("md5-failed", &entry.path(), Some("md5 miss")),
                 );
                 return Ok(UpdateExecutionResult::new(
                     false,
@@ -246,12 +246,12 @@ pub async fn execute_ghost_update(
             }
             report_progress(
                 &app_handle,
-                ReportProgressParams::new("md5-complete", &entry.path, None),
+                ReportProgressParams::new("md5-complete", &entry.path(), None),
             );
         }
 
         // 保存
-        let local_path = ghost_dir.join(&entry.path);
+        let local_path = ghost_dir.join(&entry.path());
         if let Some(parent) = local_path.parent() {
             let _ = fs::create_dir_all(parent);
         }
@@ -260,7 +260,7 @@ pub async fn execute_ghost_update(
             println!("❌ File write error: {}", e);
             report_progress(
                 &app_handle,
-                ReportProgressParams::new("fileio-failed", &entry.path, None),
+                ReportProgressParams::new("fileio-failed", &entry.path(), None),
             );
             return Ok(UpdateExecutionResult::new(
                 false,
@@ -272,9 +272,9 @@ pub async fn execute_ghost_update(
 
         report_progress(
             &app_handle,
-            ReportProgressParams::new("saved", &entry.path, None),
+            ReportProgressParams::new("saved", &entry.path(), None),
         );
-        updated_files.push(entry.path.clone());
+        updated_files.push(entry.path().to_string());
     }
 
     // 更新後に delete.txt が存在する場合、旧ファイルのクリーンアップ処理を実行

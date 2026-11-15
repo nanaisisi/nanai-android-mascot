@@ -96,7 +96,7 @@ pub fn parse_and_build_sstp_raw_response_with_config(
 
     let mut resp = CoreSstpResponse::ok(core_req.script().map(ToString::to_string));
     if let Some(ref_val) = core_req.references().get("Reference0") {
-        resp.references
+        resp.references_mut()
             .insert("Reference0".to_string(), ref_val.clone());
     }
     if let Some(conn) = core_req.connection() {

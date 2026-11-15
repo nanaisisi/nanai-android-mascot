@@ -36,13 +36,13 @@ pub fn resolve_bundled_resources_config(
                 })
                 .unwrap_or_default();
 
-            result.push(InstallResourceConfig {
-                resource_type: r_type.to_string(),
-                target_directory: target_dir.clone(),
-                source_directory: src_dir,
-                refresh: r_refresh,
-                refresh_undelete_mask: r_mask,
-            });
+            result.push(InstallResourceConfig::new(
+                r_type.to_string(),
+                target_dir.clone(),
+                src_dir,
+                r_refresh,
+                r_mask,
+            ));
         }
 
         // 2. 0, 1, 2... の連番探索（欠番が出た時点で打ち切り）
@@ -65,13 +65,13 @@ pub fn resolve_bundled_resources_config(
                     })
                     .unwrap_or_default();
 
-                result.push(InstallResourceConfig {
-                    resource_type: r_type.to_string(),
-                    target_directory: target_dir.clone(),
-                    source_directory: src_dir,
-                    refresh: r_refresh,
-                    refresh_undelete_mask: r_mask,
-                });
+                result.push(InstallResourceConfig::new(
+                    r_type.to_string(),
+                    target_dir.clone(),
+                    src_dir,
+                    r_refresh,
+                    r_mask,
+                ));
                 idx += 1;
             } else {
                 break;

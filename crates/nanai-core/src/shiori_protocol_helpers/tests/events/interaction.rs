@@ -2,7 +2,13 @@ use crate::shiori_protocol_helpers::*;
 
 #[test]
 fn test_mouse_choice_input_events() {
-    let click_req = build_on_mouse_click_request(50, 60, 0, "head", 0);
+    let click_req = build_on_mouse_click_request(Build_on_mouse_click_requestParams {
+        x: 50,
+        y: 60,
+        scope_id: 0,
+        collision_name: "head",
+        button: 0,
+    });
     assert!(click_req.contains("ID: OnMouseClick"));
     assert!(click_req.contains("Reference4: head"));
 
@@ -64,16 +70,37 @@ fn test_mouse_choice_input_events() {
     let gesture_req = build_on_mouse_gesture_request("circle_cw", 0);
     assert!(gesture_req.contains("ID: OnMouseGesture"));
 
-    let wheel_req = build_on_mouse_wheel_request(100, 100, 120, "head", 0);
+    let wheel_req = build_on_mouse_wheel_request(Build_on_mouse_wheel_requestParams {
+        x: 100,
+        y: 100,
+        wheel_delta: 120,
+        collision: "head",
+        scope_id: 0,
+    });
     assert!(wheel_req.contains("ID: OnMouseWheel"));
 
-    let drag_start = build_on_mouse_drag_start_request(10, 20, 0);
+    let drag_start = build_on_mouse_drag_start_request(Build_on_mouse_drag_start_requestParams {
+        x: 10,
+        y: 20,
+        scope_id: 0,
+    });
     assert!(drag_start.contains("ID: OnMouseDragStart"));
 
-    let drag_end = build_on_mouse_drag_end_request(50, 50, 0);
+    let drag_end = build_on_mouse_drag_end_request(Build_on_mouse_drag_end_requestParams {
+        x: 50,
+        y: 50,
+        scope_id: 0,
+    });
     assert!(drag_end.contains("ID: OnMouseDragEnd"));
 
-    let mouse_ex = build_on_mouse_click_ex_request(10, 20, 0, "head", 0, 1);
+    let mouse_ex = build_on_mouse_click_ex_request(Build_on_mouse_click_ex_requestParams {
+        x: 10,
+        y: 20,
+        scope_id: 0,
+        collision_name: "head",
+        button: 0,
+        key_state: 1,
+    });
     assert!(mouse_ex.contains("ID: OnMouseClickEx"));
 
     let choice_ex = build_on_choice_select_ex_request(Build_on_choice_select_ex_requestParams {

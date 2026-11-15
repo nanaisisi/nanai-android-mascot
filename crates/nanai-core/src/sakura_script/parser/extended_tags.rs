@@ -12,9 +12,7 @@ pub struct Parse_extended_tagParams<'a, 'b, I: Iterator<Item = char>> {
     pub raw_mode_delimiter: &'b mut Option<String>,
 }
 
-pub fn parse_extended_tag<I: Iterator<Item = char>>(
-    params: Parse_extended_tagParams<'_, '_, I>,
-) {
+pub fn parse_extended_tag<I: Iterator<Item = char>>(params: Parse_extended_tagParams<'_, '_, I>) {
     let chars = params.chars;
     let text_buf = params.text_buf;
     let tokens = params.tokens;

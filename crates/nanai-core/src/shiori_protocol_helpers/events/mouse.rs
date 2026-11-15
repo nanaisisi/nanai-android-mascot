@@ -4,14 +4,22 @@ use crate::shiori_protocol_helpers::{
     Build_shiori_request_extendedParams, build_shiori_request_extended,
 };
 
+#[allow(non_camel_case_types)]
+pub struct Build_on_mouse_click_requestParams<'a> {
+    pub x: i32,
+    pub y: i32,
+    pub scope_id: i32,
+    pub collision_name: &'a str,
+    pub button: i32,
+}
+
 /// OnMouseClick イベントリクエスト構築
-pub fn build_on_mouse_click_request(
-    x: i32,
-    y: i32,
-    scope_id: i32,
-    collision_name: &str,
-    button: i32,
-) -> String {
+pub fn build_on_mouse_click_request(params: Build_on_mouse_click_requestParams<'_>) -> String {
+    let x = params.x;
+    let y = params.y;
+    let scope_id = params.scope_id;
+    let collision_name = params.collision_name;
+    let button = params.button;
     let refs = vec![
         x.to_string(),
         y.to_string(),
@@ -28,15 +36,26 @@ pub fn build_on_mouse_click_request(
     })
 }
 
+#[allow(non_camel_case_types)]
+pub struct Build_on_mouse_click_ex_requestParams<'a> {
+    pub x: i32,
+    pub y: i32,
+    pub scope_id: i32,
+    pub collision_name: &'a str,
+    pub button: i32,
+    pub key_state: i32,
+}
+
 /// OnMouseClickEx イベントリクエスト構築 (ukadoc-spec/list/shiori-event/mouse/OnMouseClickEx.md)
 pub fn build_on_mouse_click_ex_request(
-    x: i32,
-    y: i32,
-    scope_id: i32,
-    collision_name: &str,
-    button: i32,
-    key_state: i32,
+    params: Build_on_mouse_click_ex_requestParams<'_>,
 ) -> String {
+    let x = params.x;
+    let y = params.y;
+    let scope_id = params.scope_id;
+    let collision_name = params.collision_name;
+    let button = params.button;
+    let key_state = params.key_state;
     let refs = vec![
         x.to_string(),
         y.to_string(),
@@ -65,14 +84,22 @@ pub fn build_on_mouse_gesture_request(gesture: &str, scope_id: i32) -> String {
     })
 }
 
+#[allow(non_camel_case_types)]
+pub struct Build_on_mouse_wheel_requestParams<'a> {
+    pub x: i32,
+    pub y: i32,
+    pub wheel_delta: i32,
+    pub collision: &'a str,
+    pub scope_id: i32,
+}
+
 /// OnMouseWheel イベントリクエスト構築 (ukadoc-spec/list/shiori-event/mouse/OnMouseWheel.md)
-pub fn build_on_mouse_wheel_request(
-    x: i32,
-    y: i32,
-    wheel_delta: i32,
-    collision: &str,
-    scope_id: i32,
-) -> String {
+pub fn build_on_mouse_wheel_request(params: Build_on_mouse_wheel_requestParams<'_>) -> String {
+    let x = params.x;
+    let y = params.y;
+    let wheel_delta = params.wheel_delta;
+    let collision = params.collision;
+    let scope_id = params.scope_id;
     let refs = vec![
         x.to_string(),
         y.to_string(),
@@ -88,8 +115,20 @@ pub fn build_on_mouse_wheel_request(
     })
 }
 
+#[allow(non_camel_case_types)]
+pub struct Build_on_mouse_drag_start_requestParams {
+    pub x: i32,
+    pub y: i32,
+    pub scope_id: i32,
+}
+
 /// OnMouseDragStart イベントリクエスト構築 (ukadoc-spec/list/shiori-event/mouse/OnMouseDragStart.md)
-pub fn build_on_mouse_drag_start_request(x: i32, y: i32, scope_id: i32) -> String {
+pub fn build_on_mouse_drag_start_request(
+    params: Build_on_mouse_drag_start_requestParams,
+) -> String {
+    let x = params.x;
+    let y = params.y;
+    let scope_id = params.scope_id;
     let refs = vec![x.to_string(), y.to_string(), scope_id.to_string()];
     build_shiori_request_extended(Build_shiori_request_extendedParams {
         method: "GET",
@@ -99,8 +138,18 @@ pub fn build_on_mouse_drag_start_request(x: i32, y: i32, scope_id: i32) -> Strin
     })
 }
 
+#[allow(non_camel_case_types)]
+pub struct Build_on_mouse_drag_end_requestParams {
+    pub x: i32,
+    pub y: i32,
+    pub scope_id: i32,
+}
+
 /// OnMouseDragEnd イベントリクエスト構築 (ukadoc-spec/list/shiori-event/mouse/OnMouseDragEnd.md)
-pub fn build_on_mouse_drag_end_request(x: i32, y: i32, scope_id: i32) -> String {
+pub fn build_on_mouse_drag_end_request(params: Build_on_mouse_drag_end_requestParams) -> String {
+    let x = params.x;
+    let y = params.y;
+    let scope_id = params.scope_id;
     let refs = vec![x.to_string(), y.to_string(), scope_id.to_string()];
     build_shiori_request_extended(Build_shiori_request_extendedParams {
         method: "GET",

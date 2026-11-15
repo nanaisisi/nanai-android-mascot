@@ -33,7 +33,11 @@ fn test_parse_fmo_string() {
 
 #[test]
 fn test_build_sstp_requests() {
-    let notify = build_sstp_notify_request("TestApp", "OnCustomEvent", &["arg0".to_string()]);
+    let notify = build_sstp_notify_request(Build_sstp_notify_requestParams {
+        sender: "TestApp",
+        event_name: "OnCustomEvent",
+        references: &["arg0".to_string()],
+    });
     assert!(notify.contains("NOTIFY SSTP/1.1"));
     assert!(notify.contains("Event: OnCustomEvent"));
     assert!(notify.contains("Reference0: arg0"));

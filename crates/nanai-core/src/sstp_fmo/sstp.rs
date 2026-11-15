@@ -70,8 +70,18 @@ pub fn build_sstp_response(status: u16, script: &str, headers: BTreeMap<String, 
     resp
 }
 
+#[allow(non_camel_case_types)]
+pub struct Build_sstp_notify_requestParams<'a> {
+    pub sender: &'a str,
+    pub event_name: &'a str,
+    pub references: &'a [String],
+}
+
 /// SSTP NOTIFY リクエスト文字列構築 (ukadoc-spec/spec/sstp/method_notify.md)
-pub fn build_sstp_notify_request(sender: &str, event_name: &str, references: &[String]) -> String {
+pub fn build_sstp_notify_request(params: Build_sstp_notify_requestParams<'_>) -> String {
+    let sender = params.sender;
+    let event_name = params.event_name;
+    let references = params.references;
     let mut resp = format!(
         "NOTIFY SSTP/1.1\r\nSender: {}\r\nEvent: {}\r\n",
         sender, event_name

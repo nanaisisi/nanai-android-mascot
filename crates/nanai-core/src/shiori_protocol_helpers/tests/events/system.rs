@@ -17,7 +17,11 @@ fn test_system_and_hardware_events() {
     let menu_exec = build_on_menu_exec_event_request("Main Menu");
     assert!(menu_exec.contains("ID: OnMenuExec"));
 
-    let other_talk = build_on_other_ghost_talk_request("Emily", "Sakura", "Hello");
+    let other_talk = build_on_other_ghost_talk_request(Build_on_other_ghost_talk_requestParams {
+        talker: "Emily",
+        listener: "Sakura",
+        script: "Hello",
+    });
     assert!(other_talk.contains("ID: OnOtherGhostTalk"));
 
     let balloon_break = build_on_balloon_break_request(0);
@@ -41,7 +45,11 @@ fn test_system_and_hardware_events() {
     let gp_btn_up = build_on_gamepad_button_up_request(0, 1);
     assert!(gp_btn_up.contains("ID: OnGamepadButtonUp"));
 
-    let gp_axis = build_on_gamepad_axis_move_request(0, 2, 0.75);
+    let gp_axis = build_on_gamepad_axis_move_request(Build_on_gamepad_axis_move_requestParams {
+        pad_index: 0,
+        axis_id: 2,
+        value: 0.75,
+    });
     assert!(gp_axis.contains("ID: OnGamepadAxisMove"));
 
     let win_min = build_on_window_state_minimize_request(0);
@@ -56,7 +64,11 @@ fn test_system_and_hardware_events() {
     let battery_req = build_on_battery_notify_request(85, true);
     assert!(battery_req.contains("ID: OnBatteryNotify"));
 
-    let disp_req = build_on_display_change_request(1920, 1080, 32);
+    let disp_req = build_on_display_change_request(Build_on_display_change_requestParams {
+        width: 1920,
+        height: 1080,
+        bpp: 32,
+    });
     assert!(disp_req.contains("ID: OnDisplayChange"));
 
     let dark_req = build_on_dark_theme_request(true);

@@ -2,7 +2,11 @@ use crate::shiori_protocol_helpers::*;
 
 #[test]
 fn test_lifecycle_and_boot_events() {
-    let boot_req = build_on_boot_request(true, "Kero", "EmilyDir");
+    let boot_req = build_on_boot_request(Build_on_boot_requestParams {
+        is_first_boot: true,
+        kero_name: "Kero",
+        ghost_dir: "EmilyDir",
+    });
     assert!(boot_req.contains("ID: OnFirstBoot"));
     assert!(boot_req.contains("BaseID: OnBoot"));
     assert!(boot_req.contains("Reference0: 1"));

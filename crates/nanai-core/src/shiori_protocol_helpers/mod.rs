@@ -1,7 +1,8 @@
 //! SHIORI/3.0 プロトコルリクエスト・イベント通知構築ヘルパー関数群 (UKADOC / SSP 準拠)
 
 pub mod events;
-pub mod tests;
+#[cfg(test)]
+mod tests;
 
 pub use crate::shiori_protocol_core::*;
 pub use events::*;

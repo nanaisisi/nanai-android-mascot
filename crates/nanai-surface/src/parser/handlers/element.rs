@@ -5,19 +5,27 @@ use crate::types::*;
 
 #[allow(non_camel_case_types)]
 pub struct Apply_elementParams<'a> {
-    pub txt: &'a mut SurfacesTxt,
-    pub ids: &'a [u32],
-    pub id_part: &'a str,
-    pub value: &'a str,
+    pub(crate) txt: &'a mut SurfacesTxt,
+    pub(crate) ids: &'a [u32],
+    pub(crate) id_part: &'a str,
+    pub(crate) value: &'a str,
 }
 
-pub(crate) fn apply_element(params: Apply_elementParams<'_>) {
-    let txt = params.txt;
-    let ids = params.ids;
-    let id_part = params.id_part;
-    let value = params.value;
+#[allow(dead_code)]
+impl<'a> Apply_elementParams<'a> {
+    // Add getter methods
+    pub fn txt(&mut self) -> &mut SurfacesTxt { self.txt }
+    pub fn ids(&self) -> &'a [u32] { self.ids }
+    pub fn id_part(&self) -> &'a str { self.id_part }
+    pub fn value(&self) -> &'a str { self.value }
+}
 
-    let (_word, id) = split_id_suffix(id_part);
+pub(crate) fn apply_element(mut params: Apply_elementParams<'_>) {
+    let id_part = params.id_part().to_string();
+    let value = params.value().to_string();
+    let ids = params.ids().to_vec();
+
+    let (_word, id) = split_id_suffix(&id_part);
     let tokens: Vec<String> = value.split(',').map(|t| t.trim().to_string()).collect();
     if tokens.len() < 3 {
         return;
@@ -30,7 +38,8 @@ pub(crate) fn apply_element(params: Apply_elementParams<'_>) {
         y: tokens.get(3).and_then(|t| t.parse().ok()).unwrap_or(0),
         options: tokens.iter().skip(4).cloned().collect(),
     };
-    for num in ids {
+    let txt = params.txt();
+    for num in &ids {
         txt.surfaces
             .entry(*num)
             .or_default()

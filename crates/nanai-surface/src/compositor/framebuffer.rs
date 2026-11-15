@@ -5,10 +5,16 @@ use serde::{Deserialize, Serialize};
 /// 32bit RGBA ピクセル配列を保持するサーフィスフレームバッファ
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SurfaceFrameBuffer {
-    pub width: u32,
-    pub height: u32,
+    pub(crate) width: u32,
+    pub(crate) height: u32,
     /// RGBA 各チャンネル 8bit の連続バイト列（サイズは width * height * 4）
-    pub data: Vec<u8>,
+    pub(crate) data: Vec<u8>,
+}
+
+#[allow(dead_code)]
+impl SurfaceFrameBuffer {
+    // Add getter methods
+    pub fn data(&self) -> &[u8] { &self.data }
 }
 
 impl SurfaceFrameBuffer {

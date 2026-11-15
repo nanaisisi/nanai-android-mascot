@@ -7,9 +7,9 @@ use super::*;
 #[test]
 fn test_surface_frame_buffer_creation() {
     let fb = SurfaceFrameBuffer::new(10, 20);
-    assert_eq!(fb.width, 10);
-    assert_eq!(fb.height, 20);
-    assert_eq!(fb.data.len(), 10 * 20 * 4);
+    assert_eq!(fb.width(), 10);
+    assert_eq!(fb.height(), 20);
+    assert_eq!(fb.data().len(), 10 * 20 * 4);
     assert_eq!(fb.get_pixel(0, 0), Some((0, 0, 0, 0)));
     assert_eq!(fb.get_pixel(9, 19), Some((0, 0, 0, 0)));
     assert_eq!(fb.get_pixel(10, 20), None);
@@ -124,7 +124,7 @@ fn test_clear_and_clear_rect() {
 fn test_paint_transparent_region_black() {
     let mut fb = SurfaceFrameBuffer::new(2, 2);
     // (0, 0) is corner: green (0, 255, 0, 255)
-    fb.set_pixel(0, 0, 0, 255, 0, 255);
+    fb.set_pixel(0, 0, 0, 0, 255, 0, 255);
     // (1, 0) has same color as corner but semi-transparent (0, 255, 0, 128)
     fb.set_pixel(1, 0, 0, 255, 0, 128);
     // (0, 1) has same color as corner but is completely transparent (0, 255, 0, 0)
@@ -176,8 +176,8 @@ fn test_copy_rect_and_composite_buffer() {
 
     // 部分矩形切り出し
     let sub = fb.copy_rect(2, 2, 2, 2).expect("copy_rect should succeed");
-    assert_eq!(sub.width, 2);
-    assert_eq!(sub.height, 2);
+    assert_eq!(sub.width(), 2);
+    assert_eq!(sub.height(), 2);
     assert_eq!(sub.get_pixel(0, 0), Some((200, 100, 50, 255)));
     assert_eq!(sub.get_pixel(1, 1), Some((200, 100, 50, 255)));
 
@@ -188,8 +188,8 @@ fn test_copy_rect_and_composite_buffer() {
 
     // 境界をはみ出す矩形の切り出し（クリッピング）
     let sub_clip = fb.copy_rect(4, 4, 10, 10).expect("clipping copy");
-    assert_eq!(sub_clip.width, 2);
-    assert_eq!(sub_clip.height, 2);
+    assert_eq!(sub_clip.width(), 2);
+    assert_eq!(sub_clip.height(), 2);
 
     // composite_buffer による合成確認
     let mut dst = SurfaceFrameBuffer::new(4, 4);

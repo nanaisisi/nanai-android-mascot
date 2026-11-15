@@ -2,28 +2,44 @@
 
 #[allow(non_camel_case_types)]
 pub struct LumParams {
-    pub r: f32,
-    pub g: f32,
-    pub b: f32,
+    pub(crate) r: f32,
+    pub(crate) g: f32,
+    pub(crate) b: f32,
+}
+
+#[allow(dead_code)]
+impl LumParams {
+    // Add getter methods
+    pub fn r(&self) -> f32 { self.r }
+    pub fn g(&self) -> f32 { self.g }
+    pub fn b(&self) -> f32 { self.b }
 }
 
 #[inline]
 pub(crate) fn lum(params: LumParams) -> f32 {
-    0.3 * params.r + 0.59 * params.g + 0.11 * params.b
+    0.3 * params.r() + 0.59 * params.g() + 0.11 * params.b()
 }
 
 #[allow(non_camel_case_types)]
 pub struct Clip_colorParams {
-    pub r: f32,
-    pub g: f32,
-    pub b: f32,
+    pub(crate) r: f32,
+    pub(crate) g: f32,
+    pub(crate) b: f32,
+}
+
+#[allow(dead_code)]
+impl Clip_colorParams {
+    // Add getter methods
+    pub fn r(&self) -> f32 { self.r }
+    pub fn g(&self) -> f32 { self.g }
+    pub fn b(&self) -> f32 { self.b }
 }
 
 #[inline]
 pub(crate) fn clip_color(params: Clip_colorParams) -> (f32, f32, f32) {
-    let mut r = params.r;
-    let mut g = params.g;
-    let mut b = params.b;
+    let mut r = params.r();
+    let mut g = params.g();
+    let mut b = params.b();
     let l = lum(LumParams { r, g, b });
     let n = r.min(g).min(b);
     let x = r.max(g).max(b);
@@ -43,43 +59,69 @@ pub(crate) fn clip_color(params: Clip_colorParams) -> (f32, f32, f32) {
 
 #[allow(non_camel_case_types)]
 pub struct Set_lumParams {
-    pub r: f32,
-    pub g: f32,
-    pub b: f32,
-    pub l: f32,
+    pub(crate) r: f32,
+    pub(crate) g: f32,
+    pub(crate) b: f32,
+    pub(crate) l: f32,
+}
+
+#[allow(dead_code)]
+impl Set_lumParams {
+    // Add getter methods
+    pub fn r(&self) -> f32 { self.r }
+    pub fn g(&self) -> f32 { self.g }
+    pub fn b(&self) -> f32 { self.b }
+    pub fn l(&self) -> f32 { self.l }
 }
 
 #[inline]
 pub(crate) fn set_lum(params: Set_lumParams) -> (f32, f32, f32) {
-    let d = params.l - lum(LumParams { r: params.r, g: params.g, b: params.b });
-    clip_color(Clip_colorParams { r: params.r + d, g: params.g + d, b: params.b + d })
+    let d = params.l() - lum(LumParams { r: params.r(), g: params.g(), b: params.b() });
+    clip_color(Clip_colorParams { r: params.r() + d, g: params.g() + d, b: params.b() + d })
 }
 
 #[allow(non_camel_case_types)]
 pub struct SatParams {
-    pub r: f32,
-    pub g: f32,
-    pub b: f32,
+    pub(crate) r: f32,
+    pub(crate) g: f32,
+    pub(crate) b: f32,
+}
+
+#[allow(dead_code)]
+impl SatParams {
+    // Add getter methods
+    pub fn r(&self) -> f32 { self.r }
+    pub fn g(&self) -> f32 { self.g }
+    pub fn b(&self) -> f32 { self.b }
 }
 
 #[inline]
 pub(crate) fn sat(params: SatParams) -> f32 {
-    params.r.max(params.g).max(params.b) - params.r.min(params.g).min(params.b)
+    params.r().max(params.g()).max(params.b()) - params.r().min(params.g()).min(params.b())
 }
 
 #[allow(non_camel_case_types)]
 pub struct Set_satParams {
-    pub r: f32,
-    pub g: f32,
-    pub b: f32,
-    pub s: f32,
+    pub(crate) r: f32,
+    pub(crate) g: f32,
+    pub(crate) b: f32,
+    pub(crate) s: f32,
+}
+
+#[allow(dead_code)]
+impl Set_satParams {
+    // Add getter methods
+    pub fn r(&self) -> f32 { self.r }
+    pub fn g(&self) -> f32 { self.g }
+    pub fn b(&self) -> f32 { self.b }
+    pub fn s(&self) -> f32 { self.s }
 }
 
 pub(crate) fn set_sat(params: Set_satParams) -> (f32, f32, f32) {
-    let r = params.r;
-    let g = params.g;
-    let b = params.b;
-    let s = params.s;
+    let r = params.r();
+    let g = params.g();
+    let b = params.b();
+    let s = params.s();
     let mut colors = [(r, 0usize), (g, 1usize), (b, 2usize)];
     colors.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
 
@@ -104,21 +146,32 @@ pub(crate) fn set_sat(params: Set_satParams) -> (f32, f32, f32) {
 
 #[allow(non_camel_case_types)]
 pub struct Blend_hueParams {
-    pub dr: u8,
-    pub dg: u8,
-    pub db: u8,
-    pub sr: u8,
-    pub sg: u8,
-    pub sb: u8,
+    pub(crate) dr: u8,
+    pub(crate) dg: u8,
+    pub(crate) db: u8,
+    pub(crate) sr: u8,
+    pub(crate) sg: u8,
+    pub(crate) sb: u8,
+}
+
+#[allow(dead_code)]
+impl Blend_hueParams {
+    // Add getter methods
+    pub fn dr(&self) -> u8 { self.dr }
+    pub fn dg(&self) -> u8 { self.dg }
+    pub fn db(&self) -> u8 { self.db }
+    pub fn sr(&self) -> u8 { self.sr }
+    pub fn sg(&self) -> u8 { self.sg }
+    pub fn sb(&self) -> u8 { self.sb }
 }
 
 pub(crate) fn blend_hue(params: Blend_hueParams) -> (u8, u8, u8) {
-    let dr = params.dr;
-    let dg = params.dg;
-    let db = params.db;
-    let sr = params.sr;
-    let sg = params.sg;
-    let sb = params.sb;
+    let dr = params.dr();
+    let dg = params.dg();
+    let db = params.db();
+    let sr = params.sr();
+    let sg = params.sg();
+    let sb = params.sb();
     let (d_r, d_g, d_b) = (dr as f32 / 255.0, dg as f32 / 255.0, db as f32 / 255.0);
     let (s_r, s_g, s_b) = (sr as f32 / 255.0, sg as f32 / 255.0, sb as f32 / 255.0);
     let (r1, g1, b1) = set_sat(Set_satParams { r: s_r, g: s_g, b: s_b, s: sat(SatParams { r: d_r, g: d_g, b: d_b }) });
@@ -132,21 +185,32 @@ pub(crate) fn blend_hue(params: Blend_hueParams) -> (u8, u8, u8) {
 
 #[allow(non_camel_case_types)]
 pub struct Blend_saturationParams {
-    pub dr: u8,
-    pub dg: u8,
-    pub db: u8,
-    pub sr: u8,
-    pub sg: u8,
-    pub sb: u8,
+    pub(crate) dr: u8,
+    pub(crate) dg: u8,
+    pub(crate) db: u8,
+    pub(crate) sr: u8,
+    pub(crate) sg: u8,
+    pub(crate) sb: u8,
+}
+
+#[allow(dead_code)]
+impl Blend_saturationParams {
+    // Add getter methods
+    pub fn dr(&self) -> u8 { self.dr }
+    pub fn dg(&self) -> u8 { self.dg }
+    pub fn db(&self) -> u8 { self.db }
+    pub fn sr(&self) -> u8 { self.sr }
+    pub fn sg(&self) -> u8 { self.sg }
+    pub fn sb(&self) -> u8 { self.sb }
 }
 
 pub(crate) fn blend_saturation(params: Blend_saturationParams) -> (u8, u8, u8) {
-    let dr = params.dr;
-    let dg = params.dg;
-    let db = params.db;
-    let sr = params.sr;
-    let sg = params.sg;
-    let sb = params.sb;
+    let dr = params.dr();
+    let dg = params.dg();
+    let db = params.db();
+    let sr = params.sr();
+    let sg = params.sg();
+    let sb = params.sb();
     let (d_r, d_g, d_b) = (dr as f32 / 255.0, dg as f32 / 255.0, db as f32 / 255.0);
     let (s_r, s_g, s_b) = (sr as f32 / 255.0, sg as f32 / 255.0, sb as f32 / 255.0);
     let (r1, g1, b1) = set_sat(Set_satParams { r: d_r, g: d_g, b: d_b, s: sat(SatParams { r: s_r, g: s_g, b: s_b }) });
@@ -160,21 +224,32 @@ pub(crate) fn blend_saturation(params: Blend_saturationParams) -> (u8, u8, u8) {
 
 #[allow(non_camel_case_types)]
 pub struct Blend_colorParams {
-    pub dr: u8,
-    pub dg: u8,
-    pub db: u8,
-    pub sr: u8,
-    pub sg: u8,
-    pub sb: u8,
+    pub(crate) dr: u8,
+    pub(crate) dg: u8,
+    pub(crate) db: u8,
+    pub(crate) sr: u8,
+    pub(crate) sg: u8,
+    pub(crate) sb: u8,
+}
+
+#[allow(dead_code)]
+impl Blend_colorParams {
+    // Add getter methods
+    pub fn dr(&self) -> u8 { self.dr }
+    pub fn dg(&self) -> u8 { self.dg }
+    pub fn db(&self) -> u8 { self.db }
+    pub fn sr(&self) -> u8 { self.sr }
+    pub fn sg(&self) -> u8 { self.sg }
+    pub fn sb(&self) -> u8 { self.sb }
 }
 
 pub(crate) fn blend_color(params: Blend_colorParams) -> (u8, u8, u8) {
-    let dr = params.dr;
-    let dg = params.dg;
-    let db = params.db;
-    let sr = params.sr;
-    let sg = params.sg;
-    let sb = params.sb;
+    let dr = params.dr();
+    let dg = params.dg();
+    let db = params.db();
+    let sr = params.sr();
+    let sg = params.sg();
+    let sb = params.sb();
     let (d_r, d_g, d_b) = (dr as f32 / 255.0, dg as f32 / 255.0, db as f32 / 255.0);
     let (s_r, s_g, s_b) = (sr as f32 / 255.0, sg as f32 / 255.0, sb as f32 / 255.0);
     let (r, g, b) = set_lum(Set_lumParams { r: s_r, g: s_g, b: s_b, l: lum(LumParams { r: d_r, g: d_g, b: d_b }) });
@@ -187,21 +262,32 @@ pub(crate) fn blend_color(params: Blend_colorParams) -> (u8, u8, u8) {
 
 #[allow(non_camel_case_types)]
 pub struct Blend_luminosityParams {
-    pub dr: u8,
-    pub dg: u8,
-    pub db: u8,
-    pub sr: u8,
-    pub sg: u8,
-    pub sb: u8,
+    pub(crate) dr: u8,
+    pub(crate) dg: u8,
+    pub(crate) db: u8,
+    pub(crate) sr: u8,
+    pub(crate) sg: u8,
+    pub(crate) sb: u8,
+}
+
+#[allow(dead_code)]
+impl Blend_luminosityParams {
+    // Add getter methods
+    pub fn dr(&self) -> u8 { self.dr }
+    pub fn dg(&self) -> u8 { self.dg }
+    pub fn db(&self) -> u8 { self.db }
+    pub fn sr(&self) -> u8 { self.sr }
+    pub fn sg(&self) -> u8 { self.sg }
+    pub fn sb(&self) -> u8 { self.sb }
 }
 
 pub(crate) fn blend_luminosity(params: Blend_luminosityParams) -> (u8, u8, u8) {
-    let dr = params.dr;
-    let dg = params.dg;
-    let db = params.db;
-    let sr = params.sr;
-    let sg = params.sg;
-    let sb = params.sb;
+    let dr = params.dr();
+    let dg = params.dg();
+    let db = params.db();
+    let sr = params.sr();
+    let sg = params.sg();
+    let sb = params.sb();
     let (d_r, d_g, d_b) = (dr as f32 / 255.0, dg as f32 / 255.0, db as f32 / 255.0);
     let (s_r, s_g, s_b) = (sr as f32 / 255.0, sg as f32 / 255.0, sb as f32 / 255.0);
     let (r, g, b) = set_lum(Set_lumParams { r: d_r, g: d_g, b: d_b, l: lum(LumParams { r: s_r, g: s_g, b: s_b }) });

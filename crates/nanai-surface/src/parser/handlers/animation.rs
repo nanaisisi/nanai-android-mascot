@@ -4,17 +4,25 @@ use crate::types::*;
 
 #[allow(non_camel_case_types)]
 pub struct Apply_animation_lineParams<'a> {
-    pub txt: &'a mut SurfacesTxt,
-    pub ids: &'a [u32],
-    pub rest: &'a str,
-    pub value: &'a str,
+    pub(crate) txt: &'a mut SurfacesTxt,
+    pub(crate) ids: &'a [u32],
+    pub(crate) rest: &'a str,
+    pub(crate) value: &'a str,
 }
 
-pub(crate) fn apply_animation_line(params: Apply_animation_lineParams<'_>) {
-    let txt = params.txt;
-    let ids = params.ids;
-    let rest = params.rest;
-    let value = params.value;
+#[allow(dead_code)]
+impl<'a> Apply_animation_lineParams<'a> {
+    // Add getter methods
+    pub fn txt(&mut self) -> &mut SurfacesTxt { self.txt }
+    pub fn ids(&self) -> &'a [u32] { self.ids }
+    pub fn rest(&self) -> &'a str { self.rest }
+    pub fn value(&self) -> &'a str { self.value }
+}
+
+pub(crate) fn apply_animation_line(mut params: Apply_animation_lineParams<'_>) {
+    let rest = params.rest().to_string();
+    let value = params.value().to_string();
+    let ids = params.ids().to_vec();
 
     let Some((id_part, field)) = rest.split_once('.') else {
         return;
@@ -22,16 +30,18 @@ pub(crate) fn apply_animation_line(params: Apply_animation_lineParams<'_>) {
     let Ok(id) = id_part.trim().parse::<u32>() else {
         return;
     };
-    let field = field.trim();
+    let field = field.trim().to_string();
     let field_lower = field.to_lowercase();
 
-    for num in ids {
+    let txt = params.txt();
+
+    for num in &ids {
         let def = txt.surfaces.entry(*num).or_default();
         let anim = def.animations.entry(id).or_default();
         anim.id = id;
 
         if field_lower == "interval" {
-            anim.interval = Some(Interval::parse(value));
+            anim.interval = Some(Interval::parse(&value));
         } else if field_lower.starts_with("name") {
             anim.name = Some(value.trim().to_string());
         } else if field_lower.starts_with("option") {

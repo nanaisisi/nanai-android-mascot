@@ -5,18 +5,36 @@ use crate::types::*;
 
 #[allow(non_camel_case_types)]
 pub struct Apply_collisionParams<'a> {
-    pub txt: &'a mut SurfacesTxt,
-    pub ids: &'a [u32],
-    pub id_part: &'a str,
-    pub value: &'a str,
+    pub(crate) txt: &'a mut SurfacesTxt,
+    pub(crate) ids: &'a [u32],
+    pub(crate) id_part: &'a str,
+    pub(crate) value: &'a str,
+}
+
+#[allow(dead_code)]
+impl<'a> Apply_collisionParams<'a> {
+    // Add getter methods
+    pub fn txt(&mut self) -> &mut SurfacesTxt { self.txt }
+    pub fn ids(&self) -> &'a [u32] { self.ids }
+    pub fn id_part(&self) -> &'a str { self.id_part }
+    pub fn value(&self) -> &'a str { self.value }
 }
 
 #[allow(non_camel_case_types)]
 pub struct Apply_collisionexParams<'a> {
-    pub txt: &'a mut SurfacesTxt,
-    pub ids: &'a [u32],
-    pub id_part: &'a str,
-    pub value: &'a str,
+    pub(crate) txt: &'a mut SurfacesTxt,
+    pub(crate) ids: &'a [u32],
+    pub(crate) id_part: &'a str,
+    pub(crate) value: &'a str,
+}
+
+#[allow(dead_code)]
+impl<'a> Apply_collisionexParams<'a> {
+    // Add getter methods
+    pub fn txt(&mut self) -> &mut SurfacesTxt { self.txt }
+    pub fn ids(&self) -> &'a [u32] { self.ids }
+    pub fn id_part(&self) -> &'a str { self.id_part }
+    pub fn value(&self) -> &'a str { self.value }
 }
 
 pub(crate) fn parse_collisionex_area(id_part: &str, value: &str) -> Option<CollisionArea> {
@@ -115,15 +133,15 @@ pub(crate) fn parse_collision_area_body(id: Option<u32>, tokens: &[&str]) -> Opt
     })
 }
 
-pub(crate) fn apply_collisionex(params: Apply_collisionexParams<'_>) {
-    let txt = params.txt;
-    let ids = params.ids;
-    let id_part = params.id_part;
-    let value = params.value;
+pub(crate) fn apply_collisionex(mut params: Apply_collisionexParams<'_>) {
+    let id_part = params.id_part();
+    let value = params.value();
     if let Some(area) = parse_collisionex_area(id_part, value) {
+        let ids = params.ids().to_vec();
+        let txt = params.txt();
         for num in ids {
             txt.surfaces
-                .entry(*num)
+                .entry(num)
                 .or_default()
                 .collisions
                 .push(area.clone());
@@ -131,15 +149,15 @@ pub(crate) fn apply_collisionex(params: Apply_collisionexParams<'_>) {
     }
 }
 
-pub(crate) fn apply_collision(params: Apply_collisionParams<'_>) {
-    let txt = params.txt;
-    let ids = params.ids;
-    let id_part = params.id_part;
-    let value = params.value;
+pub(crate) fn apply_collision(mut params: Apply_collisionParams<'_>) {
+    let id_part = params.id_part();
+    let value = params.value();
     if let Some(area) = parse_collision_area(id_part, value) {
+        let ids = params.ids().to_vec();
+        let txt = params.txt();
         for num in ids {
             txt.surfaces
-                .entry(*num)
+                .entry(num)
                 .or_default()
                 .collisions
                 .push(area.clone());

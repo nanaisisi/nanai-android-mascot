@@ -92,7 +92,7 @@ fn test_mock_nanai_animation() {
     let content = crate::vfs_integration::open_text_file(&path).unwrap();
     let txt = SurfacesTxt::parse(&content);
     let def0 = txt.surface(0).unwrap();
-    let anim0 = &def0.animations[&0];
+    let anim0 = &def0.animations()[&0];
     assert_eq!(anim0.interval(), Some(&Interval::Random(3)));
     let timeline = build_timeline(anim0.patterns());
     assert_eq!(timeline[0].pattern().surface(), 6);

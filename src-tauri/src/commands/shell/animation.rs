@@ -16,7 +16,7 @@ pub fn parse_surfaces_text(content: String) -> Result<BTreeMap<u32, SurfaceManif
     for (id, def) in surfaces_txt.surfaces.iter() {
         map.insert(
             *id,
-            SurfaceManifest::new(*id, def.name.clone(), def.clone()),
+            SurfaceManifest::new(*id, def.name().map(str::to_string), def.clone()),
         );
     }
     Ok(map)

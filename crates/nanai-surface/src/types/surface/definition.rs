@@ -12,23 +12,50 @@ use crate::types::collision::{CollisionArea, HitTestResult};
 /// `surface[N]` / `surface.append[N]` の1サーフィス分の定義
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct SurfaceDefinition {
-    pub elements: Vec<ElementDef>,
-    pub collisions: Vec<CollisionArea>,
+    pub(crate) elements: Vec<ElementDef>,
+    pub(crate) collisions: Vec<CollisionArea>,
     /// アニメーション定義（ID 順）
-    pub animations: BTreeMap<u32, SerikoAnimation>,
-    pub points: Points,
+    pub(crate) animations: BTreeMap<u32, SerikoAnimation>,
+    pub(crate) points: Points,
     /// キーは `sakura` / `kero` / `*`（共通指定）
-    pub balloon_offsets: BTreeMap<String, BalloonOffset>,
+    pub(crate) balloon_offsets: BTreeMap<String, BalloonOffset>,
     /// サーフィス表示名（`name,`）
-    pub name: Option<String>,
+    pub(crate) name: Option<String>,
     /// 顔サムネイル切り出し矩形（`icon.rect,始点X,始点Y,終点X,終点Y`）
     #[serde(default)]
-    pub icon_rect: Option<[i32; 4]>,
+    pub(crate) icon_rect: Option<[i32; 4]>,
     /// 未分類のキー・バリュー（拡張記載の退避先）
-    pub properties: BTreeMap<String, String>,
+    pub(crate) properties: BTreeMap<String, String>,
 }
 
+#[allow(dead_code)]
 impl SurfaceDefinition {
+    // Add getter methods
+    pub fn elements(&self) -> &[ElementDef] {
+        &self.elements
+    }
+    pub fn collisions(&self) -> &[CollisionArea] {
+        &self.collisions
+    }
+    pub fn animations(&self) -> &BTreeMap<u32, SerikoAnimation> {
+        &self.animations
+    }
+    pub fn points(&self) -> &Points {
+        &self.points
+    }
+    pub fn balloon_offsets(&self) -> &BTreeMap<String, BalloonOffset> {
+        &self.balloon_offsets
+    }
+    pub fn name(&self) -> Option<&str> {
+        self.name.as_deref()
+    }
+    pub fn icon_rect(&self) -> Option<[i32; 4]> {
+        self.icon_rect
+    }
+    pub fn properties(&self) -> &BTreeMap<String, String> {
+        &self.properties
+    }
+
     /// 顔サムネイル矩形を取得する。
     /// 明示指定（`icon.rect`）があればそれを長辺基準で正方形に整形して採用する。
     /// 未指定の場合は `face` または `head` の当たり判定（collision）から自動検出する。
@@ -71,7 +98,7 @@ impl SurfaceDefinition {
                     .iter()
                     .filter(|c| c.contains(x, y))
                     .collect();
-                candidates.sort_by_key(|c| c.id.unwrap_or(u32::MAX));
+                candidates.sort_by_key(|c| c.id().unwrap_or(u32::MAX));
                 candidates.first().map(|c| HitTestResult::new(c, x, y))
             }
             Some(SortKind::Descend) => {
@@ -80,7 +107,7 @@ impl SurfaceDefinition {
                     .iter()
                     .filter(|c| c.contains(x, y))
                     .collect();
-                candidates.sort_by_key(|c| std::cmp::Reverse(c.id.unwrap_or(0)));
+                candidates.sort_by_key(|c| std::cmp::Reverse(c.id().unwrap_or(0)));
                 candidates.first().map(|c| HitTestResult::new(c, x, y))
             }
             Some(SortKind::Id) => {
@@ -89,7 +116,7 @@ impl SurfaceDefinition {
                     .iter()
                     .filter(|c| c.contains(x, y))
                     .collect();
-                candidates.sort_by_key(|c| c.id.unwrap_or(u32::MAX));
+                candidates.sort_by_key(|c| c.id().unwrap_or(u32::MAX));
                 candidates.first().map(|c| HitTestResult::new(c, x, y))
             }
             _ => self.hit_test(x, y).map(|c| HitTestResult::new(c, x, y)),

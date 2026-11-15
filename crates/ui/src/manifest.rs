@@ -139,8 +139,8 @@ impl Shell {
             .map(|(number, definition)| SurfaceManifest {
                 number: *number,
                 name: definition
-                    .name
-                    .clone()
+                    .name()
+                    .map(str::to_string)
                     .or_else(|| self.surface_display_name(*number).map(str::to_string)),
                 definition: definition.clone(),
             })
@@ -232,11 +232,11 @@ mod tests {
             .unwrap();
         assert!(
             s0.definition()
-                .collisions
+                .collisions()
                 .iter()
                 .any(|c| c.name() == "head")
         );
-        assert!(s0.definition().animations.contains_key(&0));
+        assert!(s0.definition().animations().contains_key(&0));
         assert!(!manifest.sakura_bind_groups().is_empty());
         assert!(!manifest.kero_bind_groups().is_empty());
         assert!(manifest.surface_table().is_some());

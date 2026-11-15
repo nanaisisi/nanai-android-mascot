@@ -1,6 +1,4 @@
-use crate::ui_adapter::shell::{
-    SakuraCommand, SurfaceManifest, Timeline, ui_parse_sakura_script,
-};
+use crate::ui_adapter::shell::{SakuraCommand, SurfaceManifest, Timeline, ui_parse_sakura_script};
 use nanai_surface::{AnimationPattern, DrawMethod, parse_surfaces_txt};
 use std::collections::BTreeMap;
 

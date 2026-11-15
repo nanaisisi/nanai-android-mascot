@@ -2,8 +2,8 @@
 
 use super::helpers::find_file_case_insensitive;
 use crate::common::paths::{clean_verbatim_path, resolve_asset_path};
-use nanai_vfs::open_shift_jis_file;
 use crate::common::state::AppState;
+use nanai_vfs::open_shift_jis_file;
 use std::path::PathBuf;
 use tauri::Manager;
 

@@ -28,7 +28,6 @@ encoding_rs = { workspace = true, features = ["simd-accel", "std"] }
 nanai-android-mascot-ui = { workspace = true }
 nanai-vfs = { workspace = true }
 nanai-surface = { workspace = true }
-nanai-core = { workspace = true }
 # SHIORI連携用 - C++統合
 libc = { workspace = true }
 walkdir = { workspace = true }

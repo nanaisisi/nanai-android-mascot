@@ -28,8 +28,6 @@ mod sstp;
 mod tray;
 pub mod ui_adapter;
 
-
-
 pub use common::paths::{
     clean_verbatim_path, normalize_path, resolve_asset_path, resolve_ghost_directory,
 };

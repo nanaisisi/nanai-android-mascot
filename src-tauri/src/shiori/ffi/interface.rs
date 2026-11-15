@@ -3,8 +3,8 @@
 //!
 //! YAYAとSATORIYAのC++コードとのFFI（Foreign Function Interface）定義およびShioriInterfaceラッパー
 
-use libc::{c_int, c_long, c_void};
 use crate::ui_adapter::shiori::{ShioriEngine, ShioriLifecycleState};
+use libc::{c_int, c_long, c_void};
 use std::ffi::CString;
 use std::path::Path;
 

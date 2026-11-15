@@ -56,7 +56,6 @@ tsify = "0.5.8"
 wasm-bindgen = "0.2.130"
 
 # Internal Workspace Crates
-nanai-core = { path = "crates/nanai-core" }
 nanai-surface = { path = "crates/nanai-surface" }
 nanai-shiori-vm = { path = "crates/nanai-shiori-vm" }
 nanai-vfs = { path = "crates/nanai-vfs" }

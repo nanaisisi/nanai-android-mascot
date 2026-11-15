@@ -4,8 +4,6 @@
 //! を `nanai_android_mascot_ui::Shell` でパースし、
 //! `ShellManifest`（serde JSON）としてフロントエンドへ返す。
 
-
-
 pub use crate::common::paths::{
     open_text_file, resolve_asset_path, resolve_ghost_directory, resolve_vfs_path,
 };

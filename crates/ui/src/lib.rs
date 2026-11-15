@@ -19,12 +19,6 @@ pub mod vfs_integration;
 
 pub use interface::{Nanai_android_mascot_uiInterface, NanaiUiFacade};
 
-// モジュールクレートの参照 (Phase D ワークスペース再編)
-pub use nanai_core;
-pub use nanai_shiori_vm;
-pub use nanai_surface;
-pub use nanai_vfs;
-
 // 外部公開 API の再エクスポート
 pub use animation::{
     ActiveAnimation, AnimationScheduler, FrameStepEvent, ScheduledFrame, Timeline, build_timeline,

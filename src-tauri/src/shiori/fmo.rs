@@ -166,15 +166,12 @@ pub fn generate_fmo_buffer(records: &[FmoRecord]) -> Vec<u8> {
     let core_records: Vec<crate::ui_adapter::fmo::FmoRecord> = records
         .iter()
         .map(|rec| {
-            crate::ui_adapter::fmo::FmoRecord::new(
-                rec.id().to_string(),
-                rec.name().to_string(),
-            )
-            .with_keroname(rec.keroname().to_string())
-            .with_surfaces(rec.sakura_surface(), rec.kero_surface())
-            .with_paths(rec.path().to_string(), rec.ghost_path().to_string())
-            .with_hwnd(rec.hwnd(), None)
-            .with_modulestate_opt(Some(rec.module_state().to_string()))
+            crate::ui_adapter::fmo::FmoRecord::new(rec.id().to_string(), rec.name().to_string())
+                .with_keroname(rec.keroname().to_string())
+                .with_surfaces(rec.sakura_surface(), rec.kero_surface())
+                .with_paths(rec.path().to_string(), rec.ghost_path().to_string())
+                .with_hwnd(rec.hwnd(), None)
+                .with_modulestate_opt(Some(rec.module_state().to_string()))
         })
         .collect();
 

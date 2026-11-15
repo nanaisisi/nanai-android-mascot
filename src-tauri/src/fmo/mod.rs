@@ -6,8 +6,8 @@
 mod commands;
 mod types;
 
-pub use commands::*;
 pub use crate::ui_adapter::fmo::FmoEntry;
+pub use commands::*;
 pub use types::*;
 
 #[cfg(test)]

@@ -1,8 +1,8 @@
 //! ファイル探索・画像クロマキー加工用ヘルパー
 
-use nanai_vfs::resolve_vfs_path;
 use base64::Engine;
 use image::GenericImageView;
+use nanai_vfs::resolve_vfs_path;
 use std::path::{Path, PathBuf};
 
 /// 大文字・小文字の差異を吸収して実在するファイルを探索するヘルパー

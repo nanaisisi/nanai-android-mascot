@@ -4,11 +4,12 @@ use super::interval::parse_id_list_inner;
 use serde::{Deserialize, Serialize};
 
 /// `element[N]` / `animation[N].pattern[K]` の第1パラメータ（描画メソッド）
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub enum DrawMethod {
     /// `base`：下地として描画する
     Base,
     /// `overlay`：現在の絵の上に重ねる
+    #[default]
     Overlay,
     /// `overlayfast`（`fast`）: 下の同一領域を消して重ねる
     OverlayFast,

@@ -3,7 +3,7 @@
  * @brief SurfaceDefinition ヒットテスト・有効アイコン矩形・ソート単体テスト
  */
 use super::definition::SurfaceDefinition;
-use super::elements::{ElementDef, SortKind, make_square_rect};
+use super::elements::{ElementDef, Make_square_rectParams, SortKind, make_square_rect};
 use crate::types::collision::{CollisionArea, CollisionShape};
 use crate::types::draw::DrawMethod;
 
@@ -136,7 +136,7 @@ fn test_surface_definition_more_edge_cases() {
     });
     assert!(def4.effective_icon_rect().is_none());
 
-    let square = make_square_rect(0, 0, 50, 50);
+    let square = make_square_rect(Make_square_rectParams { x1: 0, y1: 0, x2: 50, y2: 50 });
     assert_eq!(square, [0, 0, 50, 50]);
 
     let hit = def2.hit_test_sorted(25, 25, Some(&SortKind::None));

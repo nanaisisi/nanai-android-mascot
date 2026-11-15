@@ -3,7 +3,7 @@
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
-use super::elements::{BalloonOffset, ElementDef, Points, SortKind, make_square_rect};
+use super::elements::{BalloonOffset, ElementDef, Make_square_rectParams, Points, SortKind, make_square_rect};
 use crate::types::animation::SerikoAnimation;
 use crate::types::collision::{CollisionArea, HitTestResult};
 
@@ -32,7 +32,7 @@ impl SurfaceDefinition {
     /// 未指定の場合は `face` または `head` の当たり判定（collision）から自動検出する。
     pub fn effective_icon_rect(&self) -> Option<[i32; 4]> {
         if let Some([x1, y1, x2, y2]) = self.icon_rect {
-            return Some(make_square_rect(x1, y1, x2, y2));
+            return Some(make_square_rect(Make_square_rectParams { x1, y1, x2, y2 }));
         }
 
         // face または head の collision を検索
@@ -47,7 +47,7 @@ impl SurfaceDefinition {
             })?;
 
         let (x1, y1, x2, y2) = area.shape.bounding_box()?;
-        Some(make_square_rect(x1, y1, x2, y2))
+        Some(make_square_rect(Make_square_rectParams { x1, y1, x2, y2 }))
     }
 
     /// 座標に該当する当たり判定（先に定義されたものを優先）を返す

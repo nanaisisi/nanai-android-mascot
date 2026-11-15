@@ -1,22 +1,19 @@
 //! ElementDef, Points, BalloonOffset, SortKind データ構造および make_square_rect ヘルパーモジュール
 
-use crate::types::draw::DrawMethod;
 use serde::{Deserialize, Serialize};
 
-/// `element[N]` の1行分の定義
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+/// サーフィスレイヤー（ elementN ）定義
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ElementDef {
     pub id: u32,
-    pub method: DrawMethod,
-    /// 描画する画像ファイル（シェル相対パス）
+    pub method: crate::types::DrawMethod,
     pub file: String,
     pub x: i32,
     pub y: i32,
-    /// 追加オプション（トリミング等）
     pub options: Vec<String>,
 }
 
-/// サーフィスの基準点情報（`point.*`）
+/// 基準点（ centerx, centery, basepos, kinoko 等）定義
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Points {
     pub center_x: Option<i32>,
@@ -27,36 +24,34 @@ pub struct Points {
     pub kinoko_center_y: Option<i32>,
 }
 
-/// バルーン位置オフセット（`<char>.balloon.offsetx/y` / `balloon.offsetx/y`）
+/// バルーンオフセット定義
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct BalloonOffset {
     pub x: Option<i32>,
     pub y: Option<i32>,
 }
 
-/// `descript` ブロックの `animation.sort` / `collision.sort` 値
+/// 当たり判定・アニメーションのソート順序
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum SortKind {
-    /// `none`：記述順
     None,
-    /// `ascend`：ID昇順 (1, 2, 3...)
     Ascend,
-    /// `descend`：ID降順 (10, 9, 8...)
     Descend,
-    /// `id`：アニメーションID順（ collision は当たり判定ID順）
     Id,
-    /// `unique-junk`：ジャンクな重複を弾く
     UniqueJunk,
-    /// `u-scoped`：U スコープ順
     UScoped,
-    /// その他の拡張値
     Custom(String),
 }
 
+impl Default for SortKind {
+    fn default() -> Self {
+        Self::Ascend
+    }
+}
+
 impl SortKind {
-    pub fn parse(value: &str) -> Self {
-        let v = value.trim().to_lowercase();
-        match v.as_str() {
+    pub fn parse(s: &str) -> Self {
+        match s.trim().to_lowercase().as_str() {
             "none" => Self::None,
             "ascend" => Self::Ascend,
             "descend" => Self::Descend,
@@ -68,8 +63,21 @@ impl SortKind {
     }
 }
 
+#[allow(non_camel_case_types)]
+pub struct Make_square_rectParams {
+    pub x1: i32,
+    pub y1: i32,
+    pub x2: i32,
+    pub y2: i32,
+}
+
 /// 指定矩形を、中心を維持したまま長辺基準の正方形に整形する
-pub fn make_square_rect(x1: i32, y1: i32, x2: i32, y2: i32) -> [i32; 4] {
+pub fn make_square_rect(params: Make_square_rectParams) -> [i32; 4] {
+    let x1 = params.x1;
+    let y1 = params.y1;
+    let x2 = params.x2;
+    let y2 = params.y2;
+
     let min_x = x1.min(x2);
     let max_x = x1.max(x2);
     let min_y = y1.min(y2);

@@ -80,6 +80,7 @@ impl FmoRecord {
         }
     }
 
+    #[allow(clippy::too_many_arguments)]
     pub fn from_parts(
         id: String,
         path: String,

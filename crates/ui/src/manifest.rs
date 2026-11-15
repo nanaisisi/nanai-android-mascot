@@ -197,7 +197,7 @@ mod tests {
         let manifest = shell.manifest();
 
         assert_eq!(manifest.name(), "manifest_test");
-        assert_eq!(manifest.craftman().as_deref(), Some("Tester"));
+        assert_eq!(manifest.craftman(), Some("Tester"));
         assert_eq!(
             manifest.descript().type_().map(|s| s.as_str()),
             Some("shell")

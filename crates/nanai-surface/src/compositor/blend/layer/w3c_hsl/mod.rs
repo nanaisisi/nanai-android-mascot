@@ -7,3 +7,6 @@ mod modes;
 
 pub use helpers::*;
 pub use modes::*;
+
+#[cfg(test)]
+mod tests;

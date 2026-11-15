@@ -1,6 +1,6 @@
 use super::{open_text_file, resolve_asset_path, resolve_vfs_path};
 use base64::Engine;
-use nanai_android_mascot_ui::descript::Descript;
+use crate::ui_adapter::shell::Descript;
 use std::path::PathBuf;
 
 #[derive(serde::Serialize, Clone)]

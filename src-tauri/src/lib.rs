@@ -26,6 +26,7 @@ mod setup;
 mod shiori;
 mod sstp;
 mod tray;
+pub mod ui_adapter;
 
 
 

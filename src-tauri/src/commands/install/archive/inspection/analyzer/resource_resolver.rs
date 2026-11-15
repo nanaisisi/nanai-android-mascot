@@ -1,4 +1,4 @@
-use nanai_android_mascot_ui::update::InstallResourceConfig;
+use crate::ui_adapter::update::InstallResourceConfig;
 use std::collections::HashMap;
 
 /// install.txt の規約に従い、同梱リソース (balloon, headline, plugin, shell, calendar.skin, calendar.plugin) を

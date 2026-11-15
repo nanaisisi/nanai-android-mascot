@@ -7,7 +7,7 @@ mod commands;
 mod types;
 
 pub use commands::*;
-pub use nanai_android_mascot_ui::fmo::FmoEntry;
+pub use crate::ui_adapter::fmo::FmoEntry;
 pub use types::*;
 
 #[cfg(test)]

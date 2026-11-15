@@ -2,7 +2,7 @@
 
 use super::types::{FmoGhostStatus, FmoSystemStatus};
 use crate::common::state::AppState;
-pub use nanai_android_mascot_ui::fmo::FmoEntry;
+pub use crate::ui_adapter::fmo::FmoEntry;
 use std::collections::HashMap;
 
 /// 現在の FMO 状態を取得する Tauri コマンド (UKADOC FMO 規格準拠)

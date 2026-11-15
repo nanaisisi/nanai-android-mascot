@@ -3,7 +3,7 @@
 #![allow(dead_code)]
 
 use super::types::SstpRequest;
-use nanai_android_mascot_ui::sstp::{
+use crate::ui_adapter::sstp::{
     SstpGhostConfig, SstpGhostContext, SstpMethod, SstpRequest as CoreSstpRequest,
     SstpResponse as CoreSstpResponse, handle_execute_command,
 };

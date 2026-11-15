@@ -2,7 +2,7 @@
 
 use super::dispatch::dispatch_request;
 use crate::common::state::AppState;
-use nanai_android_mascot_ui::shiori::{ShioriRequest, ShioriResponse};
+use crate::ui_adapter::shiori::{ShioriRequest, ShioriResponse};
 
 /// マウスクリックイベントを送信（簡易版）
 #[tauri::command]

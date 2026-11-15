@@ -1,7 +1,7 @@
 use crate::commands::shiori::resolve_ghost_directory;
 use crate::common::state::AppState;
 use crate::shiori::dynamic::ShioriDynamicEngine;
-use nanai_android_mascot_ui::shiori::ShioriEngine;
+use crate::ui_adapter::shiori::ShioriEngine;
 use std::path::PathBuf;
 
 /// ゴーストを新規インスタンスとして追加起動 (マルチゴースト)

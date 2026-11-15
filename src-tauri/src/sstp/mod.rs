@@ -19,7 +19,7 @@ pub use parser::{
 pub use types::{SstpBlacklistingEvent, SstpBreakEvent, SstpRequest, SstpResponse};
 
 #[allow(unused_imports)]
-pub use nanai_android_mascot_ui::sstp::{
+pub use crate::ui_adapter::sstp::{
     SstpEventBuilder, SstpGhostConfig, SstpGhostContext, SstpRequest as CoreSstpRequest,
     SstpResponse as CoreSstpResponse, handle_execute_command,
 };

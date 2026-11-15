@@ -163,10 +163,10 @@ pub fn set_fallback_mutex(name: &str, active: bool) {
 
 /// Generate FMO 64KB shared memory byte buffer conforming to UKADOC fmo spec
 pub fn generate_fmo_buffer(records: &[FmoRecord]) -> Vec<u8> {
-    let core_records: Vec<nanai_android_mascot_ui::fmo::FmoRecord> = records
+    let core_records: Vec<crate::ui_adapter::fmo::FmoRecord> = records
         .iter()
         .map(|rec| {
-            nanai_android_mascot_ui::fmo::FmoRecord::new(
+            crate::ui_adapter::fmo::FmoRecord::new(
                 rec.id().to_string(),
                 rec.name().to_string(),
             )
@@ -178,7 +178,7 @@ pub fn generate_fmo_buffer(records: &[FmoRecord]) -> Vec<u8> {
         })
         .collect();
 
-    nanai_android_mascot_ui::fmo::generate_fmo_buffer(&core_records)
+    crate::ui_adapter::fmo::generate_fmo_buffer(&core_records)
 }
 
 pub async fn get_fmo_status() -> Result<FmoStatus, String> {

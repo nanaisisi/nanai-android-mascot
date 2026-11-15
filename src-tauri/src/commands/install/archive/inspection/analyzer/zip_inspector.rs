@@ -2,7 +2,7 @@ use super::super::types::{BundledResourceTarget, InstallInspectionResult};
 use super::resource_resolver::resolve_bundled_resources_config;
 use crate::commands::install::resolve_asset_path;
 use crate::commands::install::utils::*;
-use nanai_android_mascot_ui::update::InstallResourceConfig;
+use crate::ui_adapter::update::InstallResourceConfig;
 
 pub fn inspect_zip_archive<R: std::io::Read + std::io::Seek>(
     zip: &mut zip::ZipArchive<R>,

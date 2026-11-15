@@ -1,7 +1,7 @@
 //! SSTP 中断 (Break) およびブラックリスト登録イベント通知モジュール
 
 use crate::sstp::types::{SstpBlacklistingEvent, SstpBreakEvent};
-use nanai_android_mascot_ui::sstp::SstpEventBuilder;
+use crate::ui_adapter::sstp::SstpEventBuilder;
 use std::collections::HashMap;
 use tauri::Emitter;
 

@@ -3,7 +3,7 @@
 //!
 //! ukadoc-spec 準拠モデルのSHIORIリクエスト構築ヘルパー
 
-use nanai_android_mascot_ui::shiori::{ShioriMethod, ShioriRequest};
+use crate::ui_adapter::shiori::{ShioriMethod, ShioriRequest};
 
 pub struct ShioriRequestBuilder {
     request: ShioriRequest,

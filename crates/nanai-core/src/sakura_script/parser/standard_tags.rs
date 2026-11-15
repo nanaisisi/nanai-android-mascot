@@ -1,16 +1,25 @@
 //! 標準さくらスクリプトタグ (\0, \1, \s, \b, \i, \w, \p, \q, \f, \!, \&) パース処理
 
-use super::extended_tags::parse_extended_tag;
+use super::extended_tags::{Parse_extended_tagParams, parse_extended_tag};
 use super::helpers::{parse_bracket_arg, split_bracket_args};
 use crate::sakura_script::types::SakuraToken;
 use std::iter::Peekable;
 
+#[allow(non_camel_case_types)]
+pub struct Parse_backslash_sequenceParams<'a, 'b, I: Iterator<Item = char>> {
+    pub chars: &'a mut Peekable<I>,
+    pub text_buf: &'b mut String,
+    pub tokens: &'b mut Vec<SakuraToken>,
+    pub raw_mode_delimiter: &'b mut Option<String>,
+}
+
 pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
-    chars: &mut Peekable<I>,
-    text_buf: &mut String,
-    tokens: &mut Vec<SakuraToken>,
-    raw_mode_delimiter: &mut Option<String>,
+    params: Parse_backslash_sequenceParams<'_, '_, I>,
 ) {
+    let chars = params.chars;
+    let text_buf = params.text_buf;
+    let tokens = params.tokens;
+    let raw_mode_delimiter = params.raw_mode_delimiter;
     if let Some(&next_ch) = chars.peek() {
         match next_ch {
             '\\' | '%' => {
@@ -152,7 +161,12 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
             }
             '_' => {
                 chars.next(); // consume '_'
-                parse_extended_tag(chars, text_buf, tokens, raw_mode_delimiter);
+                parse_extended_tag(Parse_extended_tagParams {
+                    chars,
+                    text_buf,
+                    tokens,
+                    raw_mode_delimiter,
+                });
             }
             _ => {
                 text_buf.push('\\');

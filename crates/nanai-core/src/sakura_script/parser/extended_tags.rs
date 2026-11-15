@@ -4,12 +4,21 @@ use super::helpers::parse_bracket_arg;
 use crate::sakura_script::types::SakuraToken;
 use std::iter::Peekable;
 
+#[allow(non_camel_case_types)]
+pub struct Parse_extended_tagParams<'a, 'b, I: Iterator<Item = char>> {
+    pub chars: &'a mut Peekable<I>,
+    pub text_buf: &'b mut String,
+    pub tokens: &'b mut Vec<SakuraToken>,
+    pub raw_mode_delimiter: &'b mut Option<String>,
+}
+
 pub fn parse_extended_tag<I: Iterator<Item = char>>(
-    chars: &mut Peekable<I>,
-    text_buf: &mut String,
-    tokens: &mut Vec<SakuraToken>,
-    raw_mode_delimiter: &mut Option<String>,
+    params: Parse_extended_tagParams<'_, '_, I>,
 ) {
+    let chars = params.chars;
+    let text_buf = params.text_buf;
+    let tokens = params.tokens;
+    let raw_mode_delimiter = params.raw_mode_delimiter;
     if let Some(&tag_ch) = chars.peek() {
         match tag_ch {
             'w' => {

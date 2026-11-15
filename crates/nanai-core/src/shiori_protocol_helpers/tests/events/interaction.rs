@@ -76,6 +76,10 @@ fn test_mouse_choice_input_events() {
     let mouse_ex = build_on_mouse_click_ex_request(10, 20, 0, "head", 0, 1);
     assert!(mouse_ex.contains("ID: OnMouseClickEx"));
 
-    let choice_ex = build_on_choice_select_ex_request("opt1", "Choice Text", "extra");
+    let choice_ex = build_on_choice_select_ex_request(Build_on_choice_select_ex_requestParams {
+        choice_id: "opt1",
+        text: "Choice Text",
+        extra_data: "extra",
+    });
     assert!(choice_ex.contains("ID: OnChoiceSelectEx"));
 }

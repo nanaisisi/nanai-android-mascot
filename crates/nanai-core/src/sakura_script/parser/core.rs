@@ -1,6 +1,6 @@
 //! さくらスクリプト メインパース処理
 
-use super::standard_tags::parse_backslash_sequence;
+use super::standard_tags::{Parse_backslash_sequenceParams, parse_backslash_sequence};
 use crate::sakura_script::types::SakuraToken;
 
 /// さくらスクリプト文字列をトークン配列へ高速パース
@@ -37,12 +37,12 @@ pub fn parse_sakura_script(script: &str) -> Vec<SakuraToken> {
             if !text_buf.is_empty() {
                 tokens.push(SakuraToken::Text(std::mem::take(&mut text_buf)));
             }
-            parse_backslash_sequence(
-                &mut chars,
-                &mut text_buf,
-                &mut tokens,
-                &mut raw_mode_delimiter,
-            );
+            parse_backslash_sequence(Parse_backslash_sequenceParams {
+                chars: &mut chars,
+                text_buf: &mut text_buf,
+                tokens: &mut tokens,
+                raw_mode_delimiter: &mut raw_mode_delimiter,
+            });
         } else {
             text_buf.push(chars.next().unwrap());
         }

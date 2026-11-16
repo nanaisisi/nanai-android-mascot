@@ -188,8 +188,10 @@ pub enum SakuraToken {
     Animation(i32),
     /// 改行 (\n, \n[half])
     Newline,
-    /// 画面クリア (\c)
-    Clear,
+    /// 画面クリア (\c: reset, \C: keep settings)
+    Clear { keep_settings: bool },
+    /// 音声再生指定 (\__v[path])
+    Voice { path: String },
     /// ウエイト (\w1 ~ \w9, \_w[ms])
     Wait(u32),
     /// 選択肢 (\q[title,id])

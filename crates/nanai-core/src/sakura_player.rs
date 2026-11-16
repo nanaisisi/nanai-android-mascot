@@ -17,8 +17,10 @@ pub enum StepOutput {
     BalloonChange { scope: u32, balloon_id: i32 },
     /// アニメーション再生 (\i[10])
     AnimationTrigger { scope: u32, animation_id: i32 },
-    /// バルーンクリア (\c)
-    Clear { scope: u32 },
+    /// バルーンクリア (\c / \C)
+    Clear { scope: u32, keep_settings: bool },
+    /// 音声再生 (\__v[path])
+    Voice { scope: u32, path: String },
     /// スコープ変更 (\0, \1, \p[N])
     ScopeChange { scope: u32 },
     /// 選択肢 (\q[title,id])
@@ -135,12 +137,17 @@ impl SakuraPlayerEngine {
                     text: "\n".to_string(),
                 }
             }
-            SakuraToken::Clear => {
+            SakuraToken::Clear { keep_settings } => {
                 self.display_texts.insert(self.current_scope, String::new());
                 StepOutput::Clear {
                     scope: self.current_scope,
+                    keep_settings,
                 }
             }
+            SakuraToken::Voice { path } => StepOutput::Voice {
+                scope: self.current_scope,
+                path,
+            },
             SakuraToken::Wait(ms) => StepOutput::Wait { duration_ms: ms },
             SakuraToken::Choice { title, id, .. } => StepOutput::Choice {
                 scope: self.current_scope,
@@ -243,5 +250,34 @@ mod tests {
         );
         assert_eq!(engine.step_internal(), StepOutput::Halt);
         assert!(engine.is_halted());
+    }
+
+    #[test]
+    fn test_sakura_player_engine_voice_and_clear() {
+        let script = "\\__v[speech.wav]\\c\\C\\e";
+        let mut engine = SakuraPlayerEngine::new(script);
+
+        assert_eq!(
+            engine.step_internal(),
+            StepOutput::Voice {
+                scope: 0,
+                path: "speech.wav".to_string()
+            }
+        );
+        assert_eq!(
+            engine.step_internal(),
+            StepOutput::Clear {
+                scope: 0,
+                keep_settings: false
+            }
+        );
+        assert_eq!(
+            engine.step_internal(),
+            StepOutput::Clear {
+                scope: 0,
+                keep_settings: true
+            }
+        );
+        assert_eq!(engine.step_internal(), StepOutput::Halt);
     }
 }

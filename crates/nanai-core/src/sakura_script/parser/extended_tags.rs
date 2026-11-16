@@ -74,6 +74,13 @@ pub fn parse_extended_tag<I: Iterator<Item = char>>(params: Parse_extended_tagPa
                     } else {
                         tokens.push(SakuraToken::ChoiceScopeEnd);
                     }
+                } else if chars.peek() == Some(&'v') {
+                    chars.next();
+                    if !text_buf.is_empty() {
+                        tokens.push(SakuraToken::Text(std::mem::take(text_buf)));
+                    }
+                    let path = parse_bracket_arg(chars).unwrap_or_default();
+                    tokens.push(SakuraToken::Voice { path });
                 } else {
                     text_buf.push('\\');
                     text_buf.push('_');

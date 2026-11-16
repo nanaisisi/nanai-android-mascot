@@ -95,7 +95,11 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
             }
             'c' => {
                 chars.next();
-                tokens.push(SakuraToken::Clear);
+                tokens.push(SakuraToken::Clear { keep_settings: false });
+            }
+            'C' => {
+                chars.next();
+                tokens.push(SakuraToken::Clear { keep_settings: true });
             }
             'e' => {
                 chars.next();

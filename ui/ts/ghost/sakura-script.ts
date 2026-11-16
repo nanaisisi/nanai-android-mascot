@@ -133,7 +133,15 @@ export class SakuraScriptPlayer {
 				break;
 			}
 			case "Clear": {
-				this.clearBalloon(app, scope);
+				const keepSettings = stepRes.data?.keep_settings ?? false;
+				this.clearBalloon(app, scope, keepSettings);
+				break;
+			}
+			case "Voice": {
+				const path = stepRes.data?.path || "";
+				if (path && app?.sakuraCommandHandler?.runCommand) {
+					void app.sakuraCommandHandler.runCommand(["voice", path]);
+				}
 				break;
 			}
 			case "SurfaceChange": {
@@ -253,7 +261,7 @@ export class SakuraScriptPlayer {
 		});
 	}
 
-	private clearBalloon(app: any, scope: number): void {
+	private clearBalloon(app: any, scope: number, keepSettings = false): void {
 		const isKero = scope === 1;
 		const textEl = isKero
 			? app?.elements?.keroBalloonText ||

@@ -6,7 +6,7 @@
 | :---------------------------------------------------------------------- | :----- | :---------: |
 | [\_!](_-bang.md)                                                        | \_!    |  ✅ 実装済  |
 | [\_?](_-q.md)                                                           | \_?    |  ✅ 実装済  |
-| [\__v[オプション]](__v.md)                                              | \__v   | ⚠️ 一部対応 |
+| [\__v[オプション]](__v.md)                                              | \__v   |  ✅ 実装済  |
 | [\_b[ファイルパス,inline,オプション...]](_b-inline-2.md)                | \_b    |  ✅ 実装済  |
 | [\_b[ファイルパス,inline,opaque]](_b-inline-opaque.md)                  | \_b    |  ✅ 実装済  |
 | [\_b[ファイルパス,inline]](_b-inline.md)                                | \_b    |  ✅ 実装済  |
@@ -36,7 +36,7 @@
 | [\![unlock,balloonmove]](bang-unlock-balloonmove.md)                    | \!     |  ✅ 実装済  |
 | [\![unlock,balloonrepaint]](bang-unlock-balloonrepaint.md)              | \!     |  ✅ 実装済  |
 | [\bID番号](bID.md)                                                      | \b     |  ✅ 実装済  |
-| [\C](C-2.md)                                                            | \C     | ⚠️ 一部対応 |
+| [\C](C-2.md)                                                            | \C     |  ✅ 実装済  |
 | [\c[char,数値,開始位置]](c-char-2.md)                                   | \c     |  ✅ 実装済  |
 | [\c[char,数値]](c-char.md)                                              | \c     |  ✅ 実装済  |
 | [\c[line,数値,開始位置]](c-line-2.md)                                   | \c     |  ✅ 実装済  |

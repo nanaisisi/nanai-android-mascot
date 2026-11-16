@@ -316,6 +316,19 @@ fn get_os_ver_and_build() -> (String, u32) {
 
 #[cfg(not(target_os = "windows"))]
 fn get_os_ver_and_build() -> (String, u32) {
+    use std::ffi::CStr;
+    let mut uts: libc::utsname = unsafe { std::mem::zeroed() };
+    if unsafe { libc::uname(&mut uts) } == 0 {
+        let release = unsafe { CStr::from_ptr(uts.release.as_ptr()) }
+            .to_string_lossy()
+            .to_string();
+        let build = release
+            .split(&['.', '-'][..])
+            .filter_map(|s| s.parse::<u32>().ok())
+            .last()
+            .unwrap_or(0);
+        return (release, build);
+    }
     ("1.0".to_string(), 0)
 }
 

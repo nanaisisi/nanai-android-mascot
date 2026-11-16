@@ -7,45 +7,45 @@ use std::collections::BTreeMap;
 /// SHIORI/3.0 レスポンス
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct ShioriResponse {
-    pub(crate) status: StatusCode,
-    pub(crate) charset: String,
+    pub status: StatusCode,
+    pub charset: String,
     /// `Sender:`（通常は SHIORI 実装名）
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub(crate) sender: Option<String>,
+    pub sender: Option<String>,
     /// `Value:`（喋りたい さくらスクリプト・複数行は \n 連結）
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub(crate) value: Option<String>,
+    pub value: Option<String>,
     /// `ValueNotify:`（SSP拡張・NOTIFY でも即時実行される実験的機能）
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub(crate) value_notify: Option<String>,
+    pub value_notify: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub(crate) security_level: Option<SecurityLevel>,
+    pub security_level: Option<SecurityLevel>,
     /// バルーンマーカー表示文字列（SSP拡張）
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub(crate) marker: Option<String>,
+    pub marker: Option<String>,
     /// `\u{1}` 区切り複数（ErrorDescription と要素数一致が規格要求）
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub(crate) error_level: Vec<ErrorLevel>,
+    pub error_level: Vec<ErrorLevel>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub(crate) error_description: Vec<String>,
+    pub error_description: Vec<String>,
     /// バルーンオフセット（X, Y）（SSP拡張）
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub(crate) balloon_offset: Option<(i32, i32)>,
+    pub balloon_offset: Option<(i32, i32)>,
     /// Reference0（コミュニケート送り先 = ゴースト\0側の名前）
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub(crate) reference0: Option<String>,
+    pub reference0: Option<String>,
     /// Reference1..N（互換性のため Reference1 = 通信先 OnCommunicate の Reference2）
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub(crate) references: Vec<String>,
+    pub references: Vec<String>,
     /// コミュニケート世代数（SSP拡張・SHIORI/2.x 互換）
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub(crate) age: Option<u32>,
+    pub age: Option<u32>,
     /// 相手側に表示するバルーンマーカー（SSTP Marker として送信される）
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub(crate) marker_send: Option<String>,
+    pub marker_send: Option<String>,
     /// `X-SSTP-PassThru-(後続)` → 値（複数指定可能）
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
-    pub(crate) passthru: BTreeMap<String, String>,
+    pub passthru: BTreeMap<String, String>,
 }
 
 impl ShioriResponse {

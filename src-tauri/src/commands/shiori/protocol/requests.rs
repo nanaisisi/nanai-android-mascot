@@ -50,7 +50,9 @@ pub async fn send_shiori_request(
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct SendShioriEventParams {
     event: String,
+    #[serde(alias = "args")]
     references: Option<Vec<String>>,
+    #[serde(alias = "ghostName", alias = "ghost_id")]
     ghost_id: Option<String>,
 }
 
@@ -140,50 +142,31 @@ pub async fn send_shiori_capability(
     send_shiori_request(state, req.build(), ghost_id).await
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct SendShioriEventTypedParams {
-    event: String,
-    args: Option<Vec<String>>,
-    ghost_id: Option<String>,
-}
-
-impl SendShioriEventTypedParams {
-    pub fn event(&self) -> &str {
-        &self.event
-    }
-
-    pub fn args(&self) -> Option<&Vec<String>> {
-        self.args.as_ref()
-    }
-
-    pub fn ghost_id(&self) -> Option<&str> {
-        self.ghost_id.as_deref()
-    }
-}
-
 /// SHIORI イベントを送信し、解析済み `ShioriResponse` オブジェクトで返す
 #[tauri::command]
 pub async fn send_shiori_event_typed(
     state: tauri::State<'_, AppState>,
-    params: SendShioriEventTypedParams,
+    event: String,
+    references: Option<Vec<String>>,
+    ghost_name: Option<String>,
+    ghost_id: Option<String>,
 ) -> Result<ShioriResponse, String> {
-    let event = params.event().to_string();
-    let mut req = ShioriRequest::get(&event, &params.args().cloned().unwrap_or_default());
+    let gid = ghost_id.or(ghost_name).unwrap_or_else(|| "main".to_string());
+    let refs = references.unwrap_or_default();
+    let mut req = ShioriRequest::get(&event, &refs);
     req = req.with_sender("NanaiMascot");
 
-    let gid = params.ghost_id().unwrap_or("main").to_string();
     let text = req.build();
+    println!("🔍 [Rust] dispatch_request for event '{}' with gid '{}'", event, gid);
     let raw = dispatch_request(&state, &text, &gid)?;
-    let parsed = ShioriResponse::parse(&raw);
-    if event != "OnSecondChange"
-        && let Ok(ref res) = parsed
-    {
+    let parsed = ShioriResponse::parse(&raw)?;
+    if event != "OnSecondChange" {
         println!(
             "✨ SHIORI Event '{}' -> status={:?}, value='{}'",
             event,
-            res.status(),
-            res.value().unwrap_or("")
+            parsed.status(),
+            parsed.value().unwrap_or("")
         );
     }
-    parsed
+    Ok(parsed)
 }

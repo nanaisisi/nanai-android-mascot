@@ -165,9 +165,11 @@ export const ghostShioriMethods = {
 			let rawRes: unknown = null;
 			try {
 				rawRes = await invoke("send_shiori_event_typed", {
-					event: eventId,
-					references: references.map(String),
-					ghostName,
+					params: {
+						event: eventId,
+						references: references.map(String),
+						ghostName,
+					},
 				});
 			} catch (_e) {
 				rawRes = await invoke("request_shiori", {

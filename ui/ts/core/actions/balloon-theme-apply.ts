@@ -123,7 +123,11 @@ export async function setBalloonThemeImpl(
 	manager: BalloonThemeManagerInterface,
 	themeName: string | undefined,
 ) {
-	if (!themeName || themeName === manager.currentTheme) {
+	console.log(
+		`💬 [BalloonTheme] setBalloonThemeImpl called with theme: ${themeName}, current: ${manager.currentTheme}`,
+	);
+	if (!themeName) {
+		console.warn("⚠️ [BalloonTheme] themeName is empty or undefined");
 		return;
 	}
 	manager.currentTheme = themeName;

@@ -29,11 +29,17 @@ pub(super) fn evaluate_dynamic_property(q: &str, raw_query: &str) -> String {
             _ => std::env::consts::ARCH.to_string(),
         };
     }
-    if q.starts_with("system.memory.") {
-        return "1024".to_string();
+    if let Some(sub) = q.strip_prefix("system.memory.") {
+        let (free_mb, total_mb) = get_memory_info_mb();
+        return match sub {
+            "free" | "available" => free_mb.to_string(),
+            "total" => total_mb.to_string(),
+            "used" => total_mb.saturating_sub(free_mb).to_string(),
+            _ => total_mb.to_string(),
+        };
     }
     if q.starts_with("system.power.") {
-        return "ac".to_string();
+        return get_power_status();
     }
     if q.starts_with("system.network.") {
         return "online".to_string();
@@ -41,8 +47,9 @@ pub(super) fn evaluate_dynamic_property(q: &str, raw_query: &str) -> String {
     if q.starts_with("system.monitor.index") {
         return "0,0,1920,1080".to_string();
     }
-    if q.starts_with("system.disk.index") {
-        return "100000".to_string();
+    if q.starts_with("system.disk.") {
+        let (free_mb, _total_mb) = get_disk_space_info(".");
+        return free_mb.to_string();
     }
     if let Some(scope_prop) = q.strip_prefix("currentghost.scope(")
         && let Some(idx) = scope_prop.find(").")
@@ -96,4 +103,117 @@ pub(super) fn evaluate_dynamic_property(q: &str, raw_query: &str) -> String {
         return "1".to_string();
     }
     format!("(unknown property: {})", raw_query)
+}
+
+#[cfg(target_os = "windows")]
+fn get_memory_info_mb() -> (u64, u64) {
+    use windows_sys::Win32::System::SystemInformation::{GlobalMemoryStatusEx, MEMORYSTATUSEX};
+    let mut status: MEMORYSTATUSEX = unsafe { std::mem::zeroed() };
+    status.dwLength = std::mem::size_of::<MEMORYSTATUSEX>() as u32;
+    if unsafe { GlobalMemoryStatusEx(&mut status) } != 0 {
+        let total_mb = status.ullTotalPhys / (1024 * 1024);
+        let free_mb = status.ullAvailPhys / (1024 * 1024);
+        return (free_mb, total_mb);
+    }
+    (1024, 4096)
+}
+
+#[cfg(not(target_os = "windows"))]
+fn get_memory_info_mb() -> (u64, u64) {
+    if let Ok(content) = std::fs::read_to_string("/proc/meminfo") {
+        let mut total_kb = 0u64;
+        let mut free_kb = 0u64;
+        for line in content.lines() {
+            if line.starts_with("MemTotal:") {
+                if let Some(val) = line
+                    .split_whitespace()
+                    .nth(1)
+                    .and_then(|s| s.parse::<u64>().ok())
+                {
+                    total_kb = val;
+                }
+            } else if line.starts_with("MemAvailable:") || line.starts_with("MemFree:") {
+                if let Some(val) = line
+                    .split_whitespace()
+                    .nth(1)
+                    .and_then(|s| s.parse::<u64>().ok())
+                {
+                    free_kb = val;
+                }
+            }
+        }
+        if total_kb > 0 {
+            return (free_kb / 1024, total_kb / 1024);
+        }
+    }
+    (1024, 4096)
+}
+
+#[cfg(target_os = "windows")]
+fn get_disk_space_info(path: &str) -> (u64, u64) {
+    use std::ffi::OsStr;
+    use std::os::windows::ffi::OsStrExt;
+    let path_wide: Vec<u16> = OsStr::new(path)
+        .encode_wide()
+        .chain(std::iter::once(0))
+        .collect();
+    let mut free_bytes = 0u64;
+    let mut total_bytes = 0u64;
+    let mut total_free = 0u64;
+    unsafe {
+        if windows_sys::Win32::Storage::FileSystem::GetDiskFreeSpaceExW(
+            path_wide.as_ptr(),
+            &mut free_bytes,
+            &mut total_bytes,
+            &mut total_free,
+        ) != 0
+        {
+            return (free_bytes / (1024 * 1024), total_bytes / (1024 * 1024));
+        }
+    }
+    (100000, 500000)
+}
+
+#[cfg(not(target_os = "windows"))]
+fn get_disk_space_info(path: &str) -> (u64, u64) {
+    use std::ffi::CString;
+    let target = if path.is_empty() { "/" } else { path };
+    if let Ok(c_path) = CString::new(target) {
+        let mut stat: libc::statvfs = unsafe { std::mem::zeroed() };
+        if unsafe { libc::statvfs(c_path.as_ptr(), &mut stat) } == 0 {
+            let free_mb = (stat.f_bavail as u64 * stat.f_frsize as u64) / (1024 * 1024);
+            let total_mb = (stat.f_blocks as u64 * stat.f_frsize as u64) / (1024 * 1024);
+            return (free_mb, total_mb);
+        }
+    }
+    (100000, 500000)
+}
+
+#[cfg(target_os = "windows")]
+fn get_power_status() -> String {
+    use windows_sys::Win32::System::Power::{GetSystemPowerStatus, SYSTEM_POWER_STATUS};
+    let mut status: SYSTEM_POWER_STATUS = unsafe { std::mem::zeroed() };
+    if unsafe { GetSystemPowerStatus(&mut status) } != 0 {
+        if status.ACLineStatus == 1 {
+            return "ac".to_string();
+        } else if status.ACLineStatus == 0 {
+            return format!("battery,{}", status.BatteryLifePercent);
+        }
+    }
+    "ac".to_string()
+}
+
+#[cfg(not(target_os = "windows"))]
+fn get_power_status() -> String {
+    if let Ok(ac) = std::fs::read_to_string("/sys/class/power_supply/AC/online") {
+        if ac.trim() == "1" {
+            return "ac".to_string();
+        }
+    }
+    if let Ok(ac) = std::fs::read_to_string("/sys/class/power_supply/ACAD/online") {
+        if ac.trim() == "1" {
+            return "ac".to_string();
+        }
+    }
+    "ac".to_string()
 }

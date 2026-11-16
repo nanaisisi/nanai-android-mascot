@@ -112,6 +112,7 @@ pub async fn show_balloon_window(
             let _ = balloon_win.unminimize();
             let _ = balloon_win.set_always_on_top(true);
             let _ = balloon_win.show();
+            println!("✅ [Rust Window] 既存の balloon_window_{} を表示: x={}, y={}", s_id, target_x, target_y);
 
             if let Some(theme) = t_val.as_ref().filter(|value| !value.is_empty()) {
                 let _ = app_handle.emit_to(
@@ -146,11 +147,16 @@ pub async fn show_balloon_window(
             .resizable(true)
             .position(target_x, target_y)
             .build()
-            .map_err(|e| e.to_string())?;
+            .map_err(|e| {
+                println!("❌ [Rust Window] balloon_window_{} 構築エラー: {}", s_id, e);
+                e.to_string()
+            })?;
 
             let _ = balloon_win.unminimize();
             let _ = balloon_win.set_always_on_top(true);
             let _ = balloon_win.show();
+            println!("🎉 [Rust Window] 新規 balloon_window_{} を構築・表示: x={}, y={}", s_id, target_x, target_y);
+
             if let Some(theme) = t_val.as_ref().filter(|value| !value.is_empty()) {
                 let _ = app_handle.emit_to(
                     &label,

@@ -119,40 +119,25 @@ pub fn get_balloon_readme(
     Ok(None)
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct BalloonManifestParams {
-    name: String,
-    scope_id: Option<i32>,
-    surface_id: Option<i32>,
-}
-
-impl BalloonManifestParams {
-    // Add getter methods
-    pub fn name(&self) -> &str {
-        &self.name
-    }
-    pub fn scope_id(&self) -> Option<i32> {
-        self.scope_id
-    }
-    pub fn surface_id(&self) -> Option<i32> {
-        self.surface_id
-    }
-}
-
 #[tauri::command]
 pub fn balloon_manifest(
-    params: BalloonManifestParams,
+    name: String,
+    scope_id: Option<i32>,
+    #[allow(non_snake_case)]
+    scopeId: Option<i32>,
+    surface_id: Option<i32>,
+    #[allow(non_snake_case)]
+    surfaceId: Option<i32>,
     app_handle: tauri::AppHandle,
 ) -> Result<std::collections::BTreeMap<String, String>, String> {
-    let name = params.name();
-    let scope_id = params.scope_id();
-    let surface_id = params.surface_id();
-    let dir = resolve_balloon_dir(name, &app_handle)?;
+    let s_id = scope_id.or(scopeId);
+    let surf_id = surface_id.or(surfaceId);
+    let dir = resolve_balloon_dir(&name, &app_handle)?;
     let mut map = balloon_descript_map(&dir);
 
-    if let Some(sid) = scope_id {
+    if let Some(sid) = s_id {
         let prefix = if sid == 1 { "balloonk" } else { "balloons" };
-        let candidates = if let Some(surf) = surface_id {
+        let candidates = if let Some(surf) = surf_id {
             vec![
                 format!("{}{}{}s.txt", prefix, surf, sid),
                 format!("{}0s.txt", prefix),
@@ -191,7 +176,7 @@ pub fn load_balloon_image(
             .file_stem()
             .and_then(|s| s.to_str())?;
 
-        let extensions = ["png", "bmp", "jpg", "jpeg", "pna", "gif"];
+        let extensions = ["png", "bmp", "jpg", "jpeg", "pna", "gif", "svg"];
         for ext in &extensions {
             let alt_file = format!("{}.{}", stem, ext);
             if let Some(p) = resolve_vfs_path(&dir, &alt_file) {
@@ -235,10 +220,33 @@ pub fn load_balloon_image(
 }
 
 pub fn resolve_balloon_dir(name: &str, app_handle: &tauri::AppHandle) -> Result<PathBuf, String> {
-    for base in [
+    let mut search_bases = vec![
         format!("assets/balloon/{}", name),
         format!("balloon/{}", name),
-    ] {
+    ];
+    if let Ok(ghosts) = std::fs::read_dir("assets/ghost") {
+        for entry in ghosts.flatten() {
+            let path = entry.path();
+            if path.is_dir() {
+                search_bases.push(
+                    path.join("balloon")
+                        .join(name)
+                        .to_string_lossy()
+                        .into_owned(),
+                );
+                search_bases.push(
+                    path.join("ghost")
+                        .join("master")
+                        .join("balloon")
+                        .join(name)
+                        .to_string_lossy()
+                        .into_owned(),
+                );
+            }
+        }
+    }
+
+    for base in search_bases {
         if let Ok(resolved) = resolve_asset_path(&base, app_handle)
             && resolved.is_dir()
         {

@@ -118,7 +118,16 @@ pub fn process_chroma_key_data(
         return;
     }
 
-    if !use_self_alpha {
+    // もしすでに画像自身に透明ピクセル（alpha < 255）が存在する、または use_self_alpha の場合は、無条件の背景色クロマキーをスキップ
+    let mut has_transparent_pixels = false;
+    for i in (3..data.len()).step_by(4) {
+        if data[i] < 255 {
+            has_transparent_pixels = true;
+            break;
+        }
+    }
+
+    if !use_self_alpha && !has_transparent_pixels {
         let target_r = data[0];
         let target_g = data[1];
         let target_b = data[2];

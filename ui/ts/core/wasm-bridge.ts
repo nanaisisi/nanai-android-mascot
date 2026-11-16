@@ -29,6 +29,7 @@ import {
 	computeSurfaceCompositionPlanWasm,
 	findHitCollisionNameWasm,
 	parseSurfacesTxtWasm,
+	processChromaKeyWasm,
 } from "./wasm/wasm-surface.js";
 import type {
 	BalloonLayoutResult,
@@ -140,6 +141,24 @@ class WasmBridgeFacade {
 		activeBinds: number[] = [],
 	): SurfaceCompositionPlan | null {
 		return computeSurfaceCompositionPlanWasm(surfaceId, elements, activeBinds);
+	}
+
+	public processChromaKey(
+		data: Uint8Array,
+		width: number,
+		height: number,
+		pnaData: Uint8Array | null,
+		useSelfAlpha: boolean,
+		paintBlack: boolean,
+	): boolean {
+		return processChromaKeyWasm(
+			data,
+			width,
+			height,
+			pnaData,
+			useSelfAlpha,
+			paintBlack,
+		);
 	}
 
 	public advanceAnimationFrame(

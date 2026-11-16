@@ -82,44 +82,58 @@ export async function processChromaKey(
 			}
 		}
 
-		if (!useSelfAlpha) {
-			// 左上 (0,0) ピクセルの背景色を取得
-			const targetR = data[0];
-			const targetG = data[1];
-			const targetB = data[2];
+		// WASMによる高速クロマキー & PNA合成
+		const pnaBytes = pnaData ? new Uint8Array(pnaData.buffer) : null;
+		const bytes = new Uint8Array(data.buffer);
+		const wasmSuccess = wasmBridge.processChromaKey(
+			bytes,
+			width,
+			height,
+			pnaBytes,
+			useSelfAlpha,
+			paintBlack,
+		);
 
-			// 右上 (width-1, 0) ピクセルの背景色を取得
-			const trIdx = (width - 1) * 4;
-			const trR = data[trIdx];
-			const trG = data[trIdx + 1];
-			const trB = data[trIdx + 2];
+		if (!wasmSuccess) {
+			if (!useSelfAlpha) {
+				// 左上 (0,0) ピクセルの背景色を取得
+				const targetR = data[0];
+				const targetG = data[1];
+				const targetB = data[2];
 
-			for (let i = 0; i < data.length; i += 4) {
-				const r = data[i];
-				const g = data[i + 1];
-				const b = data[i + 2];
+				// 右上 (width-1, 0) ピクセルの背景色を取得
+				const trIdx = (width - 1) * 4;
+				const trR = data[trIdx];
+				const trG = data[trIdx + 1];
+				const trB = data[trIdx + 2];
 
-				const isMatchTopLeft = r === targetR && g === targetG && b === targetB;
-				const isMatchTopRight = r === trR && g === trG && b === trB;
-				const isGreenBg = g > 130 && g > r * 1.15 && g > b * 1.15;
+				for (let i = 0; i < data.length; i += 4) {
+					const r = data[i];
+					const g = data[i + 1];
+					const b = data[i + 2];
 
-				if (isMatchTopLeft || isMatchTopRight || isGreenBg) {
-					if (paintBlack) {
-						data[i] = 0;
-						data[i + 1] = 0;
-						data[i + 2] = 0;
-					} else {
-						data[i + 3] = 0;
+					const isMatchTopLeft = r === targetR && g === targetG && b === targetB;
+					const isMatchTopRight = r === trR && g === trG && b === trB;
+					const isGreenBg = g > 130 && g > r * 1.15 && g > b * 1.15;
+
+					if (isMatchTopLeft || isMatchTopRight || isGreenBg) {
+						if (paintBlack) {
+							data[i] = 0;
+							data[i + 1] = 0;
+							data[i + 2] = 0;
+						} else {
+							data[i + 3] = 0;
+						}
 					}
 				}
 			}
-		}
 
-		// PNA アルファチャネルの合成
-		if (pnaData) {
-			for (let i = 0; i < data.length; i += 4) {
-				const alpha = pnaData[i];
-				data[i + 3] = alpha;
+			// PNA アルファチャネルの合成
+			if (pnaData) {
+				for (let i = 0; i < data.length; i += 4) {
+					const alpha = pnaData[i];
+					data[i + 3] = alpha;
+				}
 			}
 		}
 
@@ -129,8 +143,6 @@ export async function processChromaKey(
 		if (cache) {
 			cache.set(cacheKey, processedUrl);
 		}
-
-		return processedUrl;
 
 		return processedUrl;
 	} catch (err) {

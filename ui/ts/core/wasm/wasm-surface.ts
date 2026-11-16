@@ -76,3 +76,31 @@ export function advanceAnimationFrameWasm(
 		return null;
 	}
 }
+
+export function processChromaKeyWasm(
+	data: Uint8Array,
+	width: number,
+	height: number,
+	pnaData: Uint8Array | null,
+	useSelfAlpha: boolean,
+	paintBlack: boolean,
+): boolean {
+	const core = wasmMemory.getWasmCore();
+	if (!core?.wasm_process_chroma_key) return false;
+
+	try {
+		core.wasm_process_chroma_key(
+			data,
+			width,
+			height,
+			pnaData || undefined,
+			useSelfAlpha,
+			paintBlack,
+		);
+		return true;
+	} catch (err) {
+		console.warn("⚠️ [WASM Surface] processChromaKey エラー:", err);
+		return false;
+	}
+}
+

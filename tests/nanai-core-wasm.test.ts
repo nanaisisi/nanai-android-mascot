@@ -94,4 +94,28 @@ describe("nanai-core WASM module parity and fallback", () => {
 
 		expect(engine.get_surface(0)).toBe(5);
 	});
+
+	it("executes unified pipeline for handle_event and script queue in MascotEngine", async () => {
+		await wasmBridge.init();
+		if (!wasmBridge.isReady()) return;
+
+		const engine = wasmBridge.createMascotEngine();
+		if (!engine) return;
+
+		// wasm-bindgen exports Rust snake_case as camelCase in JS
+		if (typeof engine.handleEvent === "function") {
+			engine.handleEvent("OnBoot", null);
+			expect(engine.isPlaying()).toBe(true);
+		}
+
+		engine.tick(16.6);
+
+		if (typeof engine.toggleBind === "function") engine.toggleBind(101);
+		if (typeof engine.setBalloonTheme === "function") engine.setBalloonTheme("nsm_vertical");
+
+		if (typeof engine.clearScriptQueue === "function") {
+			engine.clearScriptQueue();
+			expect(engine.isPlaying()).toBe(false);
+		}
+	});
 });

@@ -148,6 +148,10 @@ impl MascotEngine {
         self.inner.select_shell(shell_name);
     }
 
+    pub fn set_balloon_theme(&mut self, theme: &str) {
+        self.inner.set_balloon_theme(theme);
+    }
+
     pub fn set_surface(&mut self, scope: u32, surface_id: u32) {
         self.inner.set_surface(scope, surface_id);
     }
@@ -156,8 +160,30 @@ impl MascotEngine {
         self.inner.get_surface(scope)
     }
 
+    pub fn toggle_bind(&mut self, bind_id: u32) {
+        self.inner.toggle_bind(bind_id);
+    }
+
     pub fn enqueue_script(&mut self, script: &str) {
         self.inner.enqueue_script(script);
+    }
+
+    pub fn clear_script_queue(&mut self) {
+        self.inner.clear_script_queue();
+    }
+
+    pub fn handle_event(&mut self, event_name: &str, _args: wasm_bindgen::JsValue) {
+        match event_name {
+            "OnBoot" | "OnFirstBoot" => {
+                let default_script = r"\0\s[0]こんにちは！\1\s[10]よろしくね。\e";
+                self.inner.enqueue_script(default_script);
+            }
+            "OnClose" => {
+                let close_script = r"\0\s[0]またね！\e";
+                self.inner.enqueue_script(close_script);
+            }
+            _ => {}
+        }
     }
 
     pub fn tick(&mut self, delta_ms: f64) {

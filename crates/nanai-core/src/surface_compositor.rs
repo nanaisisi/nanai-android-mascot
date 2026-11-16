@@ -104,9 +104,95 @@ pub fn wasm_compute_surface_composition_plan(
     Ok(serde_wasm_bindgen::to_value(&plan)?)
 }
 
+/// RGBAピクセルバッファに対する高速クロマキー消去およびPNAアルファチャネル合成処理
+pub fn process_chroma_key_data(
+    data: &mut [u8],
+    width: u32,
+    _height: u32,
+    pna_data: Option<&[u8]>,
+    use_self_alpha: bool,
+    paint_black: bool,
+) {
+    if data.len() < 4 {
+        return;
+    }
+
+    if !use_self_alpha {
+        let target_r = data[0];
+        let target_g = data[1];
+        let target_b = data[2];
+
+        let tr_idx = ((width as usize).saturating_sub(1)) * 4;
+        let (tr_r, tr_g, tr_b) = if tr_idx + 2 < data.len() {
+            (data[tr_idx], data[tr_idx + 1], data[tr_idx + 2])
+        } else {
+            (target_r, target_g, target_b)
+        };
+
+        let chunk_count = data.len() / 4;
+        for i in 0..chunk_count {
+            let idx = i * 4;
+            let r = data[idx];
+            let g = data[idx + 1];
+            let b = data[idx + 2];
+
+            let is_match_top_left = r == target_r && g == target_g && b == target_b;
+            let is_match_top_right = r == tr_r && g == tr_g && b == tr_b;
+            let is_green_bg = g > 130 && (g as f32) > (r as f32) * 1.15 && (g as f32) > (b as f32) * 1.15;
+
+            if is_match_top_left || is_match_top_right || is_green_bg {
+                if paint_black {
+                    data[idx] = 0;
+                    data[idx + 1] = 0;
+                    data[idx + 2] = 0;
+                } else {
+                    data[idx + 3] = 0;
+                }
+            }
+        }
+    }
+
+    if let Some(pna) = pna_data {
+        let len = data.len().min(pna.len());
+        let chunk_count = len / 4;
+        for i in 0..chunk_count {
+            let idx = i * 4;
+            data[idx + 3] = pna[idx];
+        }
+    }
+}
+
+#[wasm_bindgen]
+pub fn wasm_process_chroma_key(
+    data: &mut [u8],
+    width: u32,
+    height: u32,
+    pna_data: Option<Vec<u8>>,
+    use_self_alpha: bool,
+    paint_black: bool,
+) {
+    process_chroma_key_data(
+        data,
+        width,
+        height,
+        pna_data.as_deref(),
+        use_self_alpha,
+        paint_black,
+    );
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_process_chroma_key_top_left() {
+        // 2x1 pixels: [255, 0, 0, 255], [0, 255, 0, 255]
+        let mut data = vec![255, 0, 0, 255, 0, 255, 0, 255];
+        process_chroma_key_data(&mut data, 2, 1, None, false, false);
+        // Top-left is (255, 0, 0), so pixel 0 alpha becomes 0
+        assert_eq!(data[3], 0);
+    }
 
     #[test]
     fn test_compute_surface_composition_plan_basic() {

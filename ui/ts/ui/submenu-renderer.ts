@@ -1,7 +1,4 @@
-/**
- * @file submenu-renderer.js
- * @brief 独立サブメニューウィンドウ内のコンテンツ（ゴースト、シェル、着せ替え、バルーン、履歴）描画処理
- */
+import { invoke } from "../core/tauri-helper.js";
 
 /**
  * サブメニューの内容を描画するレンダラ
@@ -148,18 +145,14 @@ export function renderSubmenuContent({
 
 		if (!cachedBalloons || cachedBalloons.length === 0) {
 			container.innerHTML = `<div class="menu-item is-disabled"><span class="menu-item-indicator"></span><span class="menu-item-label">読み込み中...</span></div>`;
-			import("@tauri-apps/api/core")
-				.then(({ invoke }) => {
-					invoke("scan_balloons")
-						.catch(() => invoke("list_balloons"))
-						.then((res) => {
-							if (Array.isArray(res) && res.length > 0) {
-								renderBalloons(res);
-							} else {
-								renderBalloons([]);
-							}
-						})
-						.catch(() => renderBalloons([]));
+			invoke("scan_balloons")
+				.catch(() => invoke("list_balloons"))
+				.then((res) => {
+					if (Array.isArray(res) && res.length > 0) {
+						renderBalloons(res);
+					} else {
+						renderBalloons([]);
+					}
 				})
 				.catch(() => renderBalloons([]));
 		} else {

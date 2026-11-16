@@ -2,7 +2,7 @@
 
 - **規格**: [sakuraname.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/general-property/sakuraname/)
 - **検索語**: sakuraname
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

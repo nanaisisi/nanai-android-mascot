@@ -2,7 +2,7 @@
 
 - **規格**: [kero.bind.menu.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/general-property/kero.bind.menu/)
 - **検索語**: kero.bind.menu
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

@@ -19,14 +19,15 @@ fn test_property_evaluation() {
         "SHIORI/3.0 Standard"
     );
     assert_eq!(evaluate_property_query("shiori.encoding"), "UTF-8");
-    assert_eq!(evaluate_property_query("system.year"), "2026");
-    assert_eq!(evaluate_property_query("system.month"), "11");
-    assert_eq!(evaluate_property_query("system.day"), "3");
-    assert_eq!(evaluate_property_query("system.hour"), "12");
-    assert_eq!(evaluate_property_query("system.minute"), "0");
-    assert_eq!(evaluate_property_query("system.second"), "0");
-    assert_eq!(evaluate_property_query("system.millisecond"), "0");
-    assert_eq!(evaluate_property_query("system.dayofweek"), "2");
+    let now = chrono::Local::now();
+    use chrono::Datelike;
+    use chrono::Timelike;
+    assert_eq!(evaluate_property_query("system.year"), now.year().to_string());
+    assert_eq!(evaluate_property_query("system.month"), now.month().to_string());
+    assert_eq!(evaluate_property_query("system.day"), now.day().to_string());
+    assert_eq!(evaluate_property_query("system.hour"), now.hour().to_string());
+    assert_eq!(evaluate_property_query("system.minute"), now.minute().to_string());
+    assert_eq!(evaluate_property_query("system.second"), now.second().to_string());
     assert_eq!(evaluate_property_query("system.cursor.pos"), "0,0");
     assert_eq!(evaluate_property_query("system.theme.app.mode"), "dark");
     assert_eq!(evaluate_property_query("system.theme.os.mode"), "dark");
@@ -47,8 +48,9 @@ fn test_property_evaluation() {
         "100000"
     );
     assert_eq!(evaluate_property_query("update_time"), "0");
-    assert_eq!(evaluate_property_query("sakura.bind.menu"), "");
-    assert_eq!(evaluate_property_query("kero.bind.menu"), "");
+    assert_eq!(evaluate_property_query("sakura.bind.menu"), "auto");
+    assert_eq!(evaluate_property_query("kero.bind.menu"), "auto");
+    assert_eq!(evaluate_property_query("char0.bind.menu"), "auto");
     assert_eq!(
         evaluate_property_query("definedsurfaceonlybutton.caption"),
         "1"

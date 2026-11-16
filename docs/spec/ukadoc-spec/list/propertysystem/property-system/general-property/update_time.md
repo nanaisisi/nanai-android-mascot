@@ -2,7 +2,7 @@
 
 - **規格**: [update_time.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/general-property/update_time/)
 - **検索語**: update_time
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

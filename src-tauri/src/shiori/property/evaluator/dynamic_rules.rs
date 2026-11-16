@@ -59,6 +59,11 @@ pub(super) fn evaluate_dynamic_property(q: &str, raw_query: &str) -> String {
     if q.starts_with("currentghost.balloon.") {
         return "1".to_string();
     }
+    if (q.starts_with("char") || q.starts_with("sakura") || q.starts_with("kero"))
+        && (q.ends_with(".bind.menu") || q.ends_with(".menu"))
+    {
+        return "auto".to_string();
+    }
     if q.starts_with("history.balloon.index(")
         || q.starts_with("history.balloon(")
         || q.starts_with("history.balloon")

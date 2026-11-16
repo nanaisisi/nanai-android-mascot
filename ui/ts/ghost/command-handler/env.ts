@@ -176,8 +176,11 @@ export function expandSakuraScriptEnv(script, options = {}) {
 				return "0";
 			case "sakura.bind.menu":
 			case "kero.bind.menu":
-				return "";
+			case "sakura.menu":
+			case "kero.menu":
+				return "auto";
 			default:
+				if (key.endsWith(".bind.menu") || key.endsWith(".menu")) return "auto";
 				if (key.startsWith("system.os.")) return "Linux";
 				if (key.startsWith("system.cpu.")) return "x86_64";
 				if (key.startsWith("system.memory.")) return "1024";

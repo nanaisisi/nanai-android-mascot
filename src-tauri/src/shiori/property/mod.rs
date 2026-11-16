@@ -7,7 +7,8 @@ pub mod evaluator;
 #[cfg(test)]
 mod tests;
 
-pub use evaluator::evaluate_property_query;
+use crate::common::state::AppState;
+pub use evaluator::{evaluate_property_query, evaluate_property_query_with_context};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -27,6 +28,18 @@ impl PropertyQueryRequest {
 }
 
 #[tauri::command]
-pub async fn get_system_property(query: String) -> Result<String, String> {
-    Ok(evaluate_property_query(&query))
+pub async fn get_system_property(
+    state: tauri::State<'_, AppState>,
+    query: String,
+) -> Result<String, String> {
+    let ghost_guard = state.current_ghost_name.lock();
+    let current_ghost = ghost_guard.as_deref();
+    let active_ghosts_guard = state.active_ghosts.lock();
+    let active_count = active_ghosts_guard.len();
+
+    Ok(evaluate_property_query_with_context(
+        &query,
+        current_ghost,
+        Some(active_count),
+    ))
 }

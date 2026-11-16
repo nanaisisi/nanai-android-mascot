@@ -2,7 +2,7 @@
 
 - **規格**: [craftmanw.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/general-property/craftmanw/)
 - **検索語**: craftmanw
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

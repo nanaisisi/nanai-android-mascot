@@ -31,9 +31,12 @@ pub(super) fn evaluate_static_property(q: &str) -> Option<String> {
         "other_homeurl_override" | "other_homeurl" => "https://example.com/ghost/",
         "balloon_tooltip" | "tooltip" => "",
         "name" => "Mock Ghost",
+        "sakuraname" | "sakura.name" => "Sakura",
         "version" => "1.0.0",
         "craftman" => "Ukagaka Creator",
         "craftmanw" => "Ukagaka Creator",
+        "thumbnail" => "thumbnail.png",
+        "update_result" => "none",
         "log_path" => "",
         "sakura.defaultleft" | "sakura.defaulttop" | "sakura.defaultx" | "sakura.defaulty" => "0",
         "sakura.popupmenu.applybindtoself"
@@ -54,14 +57,46 @@ pub(super) fn evaluate_static_property(q: &str) -> Option<String> {
         "readmebuttoncaption" | "updatebuttoncaption" | "vanishbuttoncaption" => "1",
         "currentghost.seriko.surfacelist.defined" => "0,1,10",
         "currentghost.seriko.surfacelist.all" => "0,1,10",
-        "system.year" => "2026",
-        "system.month" => "11",
-        "system.day" => "3",
-        "system.hour" => "12",
-        "system.minute" => "0",
-        "system.second" => "0",
-        "system.millisecond" => "0",
-        "system.dayofweek" => "2",
+        "system.year" => {
+            let now = chrono::Local::now();
+            use chrono::Datelike;
+            return Some(now.year().to_string());
+        }
+        "system.month" => {
+            let now = chrono::Local::now();
+            use chrono::Datelike;
+            return Some(now.month().to_string());
+        }
+        "system.day" => {
+            let now = chrono::Local::now();
+            use chrono::Datelike;
+            return Some(now.day().to_string());
+        }
+        "system.hour" => {
+            let now = chrono::Local::now();
+            use chrono::Timelike;
+            return Some(now.hour().to_string());
+        }
+        "system.minute" => {
+            let now = chrono::Local::now();
+            use chrono::Timelike;
+            return Some(now.minute().to_string());
+        }
+        "system.second" => {
+            let now = chrono::Local::now();
+            use chrono::Timelike;
+            return Some(now.second().to_string());
+        }
+        "system.millisecond" => {
+            let now = chrono::Local::now();
+            use chrono::Timelike;
+            return Some(now.timestamp_subsec_millis().to_string());
+        }
+        "system.dayofweek" => {
+            let now = chrono::Local::now();
+            use chrono::Datelike;
+            return Some((now.weekday().num_days_from_sunday()).to_string());
+        }
         "system.cursor.pos" => "0,0",
         "system.theme.app.mode" => "dark",
         "system.theme.os.mode" => "dark",
@@ -69,9 +104,7 @@ pub(super) fn evaluate_static_property(q: &str) -> Option<String> {
         "system.monitor.count" => "1",
         "system.disk.count" => "1",
         "update_time" => "0",
-        "sakura.bind.menu" => "",
-        "kero.bind.menu" => "",
-        "sakura.menu" | "kero.menu" => "auto",
+        "sakura.bind.menu" | "kero.bind.menu" | "sakura.menu" | "kero.menu" => "auto",
         "menu.font.name" => "sans-serif",
         "menu.font.height" => "12",
         "menu.frame.color.r" => "0",

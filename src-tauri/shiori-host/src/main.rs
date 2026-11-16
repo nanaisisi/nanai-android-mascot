@@ -12,12 +12,28 @@ mod protocol;
 #[cfg(not(test))]
 use host::load_and_run;
 
+pub fn log_debug(msg: &str) {
+    use std::io::Write;
+    eprintln!("🔍 [shiori-host32]: {msg}");
+    if let Ok(mut file) = std::fs::OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open("shiori_debug.log")
+    {
+        let _ = writeln!(file, "{}", msg);
+        let _ = file.flush();
+    }
+}
+
 #[cfg(not(test))]
 fn main() {
+    log_debug("shiori-host32 started");
     let dll = std::env::args().nth(1).expect("usage: shiori-host32 <dll>");
+    log_debug(&format!("DLL path argument: {}", dll));
     let mut stdin = std::io::stdin().lock();
     let mut stdout = std::io::stdout().lock();
     if let Err(code) = load_and_run(&dll, &mut stdin, &mut stdout) {
+        log_debug(&format!("load_and_run failed with code {}", code));
         std::process::exit(code);
     }
 }

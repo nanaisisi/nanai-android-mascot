@@ -18,15 +18,23 @@ pub fn process_single_command(
 ) -> bool {
     match cmd {
         1 => unsafe {
+            crate::log_debug("processing command 1 (load)...");
             let h = to_hglobal(payload);
+            crate::log_debug("calling f_load...");
             let r = f_load(h, payload.len() as i32);
+            crate::log_debug(&format!("f_load finished with code: {r}"));
             reply(stdout, r, &[]);
             true
         },
         2 => unsafe {
+            crate::log_debug("processing command 2 (request)...");
+            let req_str = String::from_utf8_lossy(payload);
+            crate::log_debug(&format!("request payload snippet: {}", &req_str[..req_str.len().min(100)]));
             let h = to_hglobal(payload);
             let mut n = payload.len() as i32;
+            crate::log_debug("calling f_req...");
             let res = f_req(h, &mut n);
+            crate::log_debug(&format!("f_req finished, res ptr: {:p}, len: {n}", res));
             if res.is_null() || n <= 0 {
                 reply(stdout, 0, &[]);
             } else {

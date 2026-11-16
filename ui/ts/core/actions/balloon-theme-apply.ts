@@ -154,6 +154,7 @@ export async function setBalloonThemeImpl(
 
 	if (isTauriAvailable()) {
 		emit("sync-theme", themeName);
+		emit("balloon-theme-changed", { theme: themeName });
 		if (themeName === "nsm_vertical") {
 			void invoke("set_balloon_offset", {
 				scopeId: 0,

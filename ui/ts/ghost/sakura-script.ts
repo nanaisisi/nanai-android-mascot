@@ -6,6 +6,7 @@ import {
 	invoke,
 	isNativeMultiWindow,
 	isSinglePageUi,
+	frontendLog,
 } from "../core/tauri-helper.js";
 import {
 	createSakuraPlayerWasm,
@@ -126,7 +127,7 @@ export class SakuraScriptPlayer {
 		switch (stepRes.action) {
 			case "TextAppend": {
 				const text = stepRes.data?.text || "";
-				console.log(
+				frontendLog(
 					`💬 [SakuraScript Player] TextAppend: scope=${scope}, text=${text}`,
 				);
 				this.appendTextToBalloon(app, scope, text);

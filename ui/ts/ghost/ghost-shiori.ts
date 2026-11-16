@@ -86,12 +86,11 @@ export const ghostShioriMethods = {
 					bootRes?.headers?.value ||
 					(typeof bootRes === "string" ? bootRes : "");
 				frontendLog(
-					`👻 [Init step 5] boot response received, status: ${statusCode}, script length: ${scriptText?.length}`,
+					`👻 [Init step 5 DEBUG] bootRes: ${JSON.stringify(bootRes)}, status: ${statusCode}, textLength: ${scriptText?.length}`,
 				);
-				if ((statusCode === 200 || statusCode === 204) && scriptText) {
-					console.log(
-						"👻 [Init step 5.5] attempting to play SakuraScript, length:",
-						scriptText.length,
+				if ((statusCode === 200 || statusCode === 204 || scriptText.length > 0) && scriptText) {
+					frontendLog(
+						`👻 [Init step 5.5] attempting to play SakuraScript, length: ${scriptText.length}`,
 					);
 					const appInst =
 						this.app ||
@@ -106,13 +105,13 @@ export const ghostShioriMethods = {
 							const player = new SakuraScriptPlayer(scriptText, appInst);
 							player.play();
 							appInst.sakuraPlayer = player;
-							console.log(
+							frontendLog(
 								"✨ [GhostShiori] SakuraScriptPlayer fallback successfully played script",
 							);
 						} catch (e) {
-							console.error(
-								"❌ [GhostShiori] Failed to play SakuraScript via fallback:",
-								e,
+							frontendLog(
+								`❌ [GhostShiori] Failed to play SakuraScript via fallback: ${e}`,
+								"error",
 							);
 						}
 					}

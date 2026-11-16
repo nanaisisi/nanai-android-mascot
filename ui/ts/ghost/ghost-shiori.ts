@@ -165,22 +165,25 @@ export const ghostShioriMethods = {
 			let rawRes: unknown = null;
 			try {
 				rawRes = await invoke("send_shiori_event_typed", {
-					params: {
-						event: eventId,
-						references: references.map(String),
-						ghostName,
-					},
+					event: eventId,
+					references: references.map(String),
+					ghost_name: ghostName,
 				});
-			} catch (_e) {
-				rawRes = await invoke("request_shiori", {
-					request: {
-						id: eventId,
-						sender: "NanaiAndroidMascot",
-						references: references.map(String),
-						securityOrigin: "Local",
-						ghostName,
-					},
-				});
+			} catch (e1) {
+				console.warn("⚠️ send_shiori_event_typed failed, trying request_shiori:", e1);
+				try {
+					rawRes = await invoke("request_shiori", {
+						request: {
+							id: eventId,
+							sender: "NanaiAndroidMascot",
+							references: references.map(String),
+							securityOrigin: "Local",
+							ghostName,
+						},
+					});
+				} catch (e2) {
+					console.error("❌ request_shiori also failed:", e2);
+				}
 			}
 			return fromRustResponse(rawRes as Record<string, unknown>);
 		} catch (err) {

@@ -7,11 +7,14 @@ pub struct Expand_sakura_script_envParams<'a> {
     pub(crate) username: &'a str,
     pub(crate) selfname: &'a str,
     pub(crate) keroname: &'a str,
+    pub(crate) lastghostname: &'a str,
+    pub(crate) lastobjectname: &'a str,
+    pub(crate) screen_width: u32,
+    pub(crate) screen_height: u32,
 }
 
 #[allow(dead_code)]
 impl<'a> Expand_sakura_script_envParams<'a> {
-    // Add getter methods
     pub fn text(&self) -> &'a str {
         self.text
     }
@@ -24,6 +27,18 @@ impl<'a> Expand_sakura_script_envParams<'a> {
     pub fn keroname(&self) -> &'a str {
         self.keroname
     }
+    pub fn lastghostname(&self) -> &'a str {
+        self.lastghostname
+    }
+    pub fn lastobjectname(&self) -> &'a str {
+        self.lastobjectname
+    }
+    pub fn screen_width(&self) -> u32 {
+        self.screen_width
+    }
+    pub fn screen_height(&self) -> u32 {
+        self.screen_height
+    }
 
     pub fn new(text: &'a str, username: &'a str, selfname: &'a str, keroname: &'a str) -> Self {
         Self {
@@ -31,7 +46,23 @@ impl<'a> Expand_sakura_script_envParams<'a> {
             username,
             selfname,
             keroname,
+            lastghostname: "",
+            lastobjectname: "",
+            screen_width: 1024,
+            screen_height: 768,
         }
+    }
+
+    pub fn with_screen(mut self, width: u32, height: u32) -> Self {
+        self.screen_width = width;
+        self.screen_height = height;
+        self
+    }
+
+    pub fn with_last_ghost(mut self, last_ghost: &'a str, last_object: &'a str) -> Self {
+        self.lastghostname = last_ghost;
+        self.lastobjectname = last_object;
+        self
     }
 }
 
@@ -83,14 +114,39 @@ pub fn expand_sakura_script_env(params: Expand_sakura_script_envParams<'_>) -> S
     result = result.replace("%hour", &now.hour().to_string());
     result = result.replace("%minute", &format!("{:02}", now.minute()));
     result = result.replace("%second", &format!("{:02}", now.second()));
-    result = result.replace("%dms", "0");
-    result = result.replace("%et", "0");
-    result = result.replace("%exh", "0");
-    result = result.replace("%wronghour", "0");
-    result = result.replace("%lastghostname", "");
-    result = result.replace("%lastobjectname", "");
-    result = result.replace("%screenwidth", "1024");
-    result = result.replace("%screenheight", "768");
+    let pick_static = |words: &[&str]| -> String {
+        let nanos = std::time::SystemTime::now()
+            .duration_since(std::time::SystemTime::UNIX_EPOCH)
+            .map(|d| d.subsec_nanos() as usize)
+            .unwrap_or(0);
+        words[nanos % words.len()].to_string()
+    };
+
+    while result.contains("%me") {
+        result = result.replacen("%me", &pick_static(&["カレーライス", "ケーキ", "ポッキー", "おでん", "りんご", "ラーメン"]), 1);
+    }
+    while result.contains("%mp") {
+        result = result.replacen("%mp", &pick_static(&["秋葉原", "モスクワ", "公園", "海", "新宿"]), 1);
+    }
+    while result.contains("%mh") {
+        result = result.replacen("%mh", &pick_static(&["コンビニ", "八百屋", "喫茶店", "松屋", "東急ハンズ"]), 1);
+    }
+    while result.contains("%mc") {
+        result = result.replacen("%mc", &pick_static(&["マイクロソフト", "ソニー", "富士通", "シャープ"]), 1);
+    }
+    while result.contains("%mt") {
+        result = result.replacen("%mt", &pick_static(&["ビンタ", "キン肉バスター", "蹴り", "真空竜巻旋風脚"]), 1);
+    }
+    while result.contains("%mz") {
+        result = result.replacen("%mz", &pick_static(&["パソコン", "タブレット", "湯呑み", "ディスプレイ"]), 1);
+    }
+    while result.contains("%ml") {
+        result = result.replacen("%ml", &pick_static(&["仲間", "人類"]), 1);
+    }
+    while result.contains("%dms") {
+        result = result.replacen("%dms", &pick_static(&["意外と近くにいた宇宙人", "食べられない大根"]), 1);
+    }
+
     result = result.replace("%ms", selfname);
     result = result.replace("%mp", "0");
     result = result.replace("%mh", "0");
@@ -100,7 +156,17 @@ pub fn expand_sakura_script_env(params: Expand_sakura_script_envParams<'_>) -> S
     result = result.replace("%ml", "0");
     result = result.replace("%mz", "0");
     // %m? 単語-非限定環境変数クエリ [pct-m-q.md]
-    result = result.replace("%m?", "");
+    if result.contains("%m?") {
+        let words = ["なない", "さくら", "うにゅう", "まゆら", "せりこ"];
+        while result.contains("%m?") {
+            let nanos = std::time::SystemTime::now()
+                .duration_since(std::time::SystemTime::UNIX_EPOCH)
+                .map(|d| d.subsec_nanos() as usize)
+                .unwrap_or(0);
+            let word = words[nanos % words.len()];
+            result = result.replacen("%m?", word, 1);
+        }
+    }
     // %* (%\*) 環境変数展開 [pct-star.md]
     result = result.replace("%*", "");
 

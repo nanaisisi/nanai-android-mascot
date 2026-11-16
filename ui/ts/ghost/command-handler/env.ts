@@ -198,7 +198,35 @@ export function expandSakuraScriptEnv(script, options = {}) {
 		return randomWords[idx];
 	});
 
-	// 5. 日時・システム環境変数マップの構築
+	const categoryWordsMap: Record<string, string[]> = {
+		"%me": ["カレーライス", "ケーキ", "ポッキー", "おでん", "りんご", "ラーメン", "和菓子"],
+		"%mp": ["秋葉原", "モスクワ", "公園", "海", "新宿", "例の場所"],
+		"%mh": ["コンビニ", "八百屋", "喫茶店", "松屋", "東急ハンズ", "本屋"],
+		"%mc": ["マイクロソフト", "ソニー", "富士通", "シャープ", "任天堂"],
+		"%mt": ["ビンタ", "キン肉バスター", "蹴り", "真空竜巻旋風脚", "言葉責め"],
+		"%mz": ["パソコン", "タブレット", "湯呑み", "ディスプレイ", "チョロQ"],
+		"%ml": ["仲間", "人類", "仲間たち"],
+		"%dms": ["意外と近くにいた宇宙人", "食べられない大根"],
+	};
+
+	const pickCategoryWord = (tag: string, fallback: string) => {
+		const custom = options.wordMap?.[tag];
+		const pool = custom && custom.length > 0 ? custom : categoryWordsMap[tag];
+		if (!pool || pool.length === 0) return fallback;
+		return pool[Math.floor(Math.random() * pool.length)];
+	};
+
+	// 5. カテゴリ別「単語-」環境変数の動的抽選展開
+	result = result.replace(/%me/g, () => pickCategoryWord("%me", "カレーライス"));
+	result = result.replace(/%mp/g, () => pickCategoryWord("%mp", "秋葉原"));
+	result = result.replace(/%mh/g, () => pickCategoryWord("%mh", "コンビニ"));
+	result = result.replace(/%mc/g, () => pickCategoryWord("%mc", "ソニー"));
+	result = result.replace(/%mt/g, () => pickCategoryWord("%mt", "ビンタ"));
+	result = result.replace(/%mz/g, () => pickCategoryWord("%mz", "パソコン"));
+	result = result.replace(/%ml/g, () => pickCategoryWord("%ml", "仲間"));
+	result = result.replace(/%dms/g, () => pickCategoryWord("%dms", "意外と近くにいた宇宙人"));
+
+	// 6. 日時・システム環境変数マップの構築
 	const envMap = {
 		"%username": username,
 		"%selfname2": selfname,
@@ -212,20 +240,12 @@ export function expandSakuraScriptEnv(script, options = {}) {
 		"%hour": String(now.getHours()),
 		"%minute": String(now.getMinutes()).padStart(2, "0"),
 		"%second": String(now.getSeconds()).padStart(2, "0"),
-		"%dms": "0",
 		"%et": "0",
 		"%exh": "0",
 		"%wronghour": "0",
 		"%lastghostname": lastghostname,
 		"%lastobjectname": lastobjectname,
 		"%ms": selfname,
-		"%mp": "0",
-		"%mh": "0",
-		"%me": "0",
-		"%mt": "0",
-		"%mc": "0",
-		"%ml": "0",
-		"%mz": "0",
 	};
 
 	// 6. 単一パス正規表現による既定環境変数の一括置換（最長一致プレフィックス順）

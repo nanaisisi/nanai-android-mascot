@@ -4,8 +4,8 @@
 
 | 項目                                                                                                               | 検索語                   |  対応状況   |
 | :----------------------------------------------------------------------------------------------------------------- | :----------------------- | :---------: |
-| [\__c](__c.md)                                                                                                     | \__c                     | ⚠️ 一部対応 |
-| [\__t](__t.md)                                                                                                     | \__t                     | ⚠️ 一部対応 |
+| [\__c](__c.md)                                                                                                     | \__c                     |  ✅ 実装済  |
+| [\__t](__t.md)                                                                                                     | \__t                     |  ✅ 実装済  |
 | [\![close,communicatebox]](bang-close-communicatebox.md)                                                           | Close                    |  ✅ 実装済  |
 | [\![close,dialog,ID]](bang-close-dialog-ID.md)                                                                     | Close                    |  ✅ 実装済  |
 | [\![close,inputbox,ID]](bang-close-inputbox-ID.md)                                                                 | Close                    |  ✅ 実装済  |

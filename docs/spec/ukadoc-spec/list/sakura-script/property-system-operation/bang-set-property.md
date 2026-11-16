@@ -2,7 +2,7 @@
 
 - **規格**: [bang-set-property.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/property-system-operation/bang-set-property/) (ukadoc-spec/list/sakura-script/property-system-operation/bang-set-property.md)
 - **検索語**: evaluate_property_query
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

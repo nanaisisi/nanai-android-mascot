@@ -2,7 +2,7 @@
 
 - **規格**: [bang-create-shortcut.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/misc/bang-create-shortcut/) (ukadoc-spec/list/sakura-script/misc/bang-create-shortcut.md)
 - **検索語**: CreateShortcut
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

@@ -24,8 +24,8 @@ fn test_property_evaluation() {
         evaluate_property_query("system.baseware.version"),
         env!("CARGO_PKG_VERSION")
     );
-    assert_eq!(evaluate_property_query("currentghost.name"), "Mock Ghost");
-    assert_eq!(evaluate_property_query("username"), "User");
+    assert_eq!(evaluate_property_query("currentghost.name"), "");
+    assert_eq!(evaluate_property_query("username"), "");
     assert_eq!(evaluate_property_query("shiori.version"), "3.0");
     assert_eq!(
         evaluate_property_query("shiori.name"),
@@ -47,8 +47,8 @@ fn test_property_evaluation() {
     assert_eq!(evaluate_property_query("system.dnd.mode"), "none");
     assert_eq!(evaluate_property_query("system.monitor.count"), "1");
     assert_eq!(evaluate_property_query("system.disk.count"), "1");
-    assert_eq!(evaluate_property_query("system.os.name"), "Linux");
-    assert_eq!(evaluate_property_query("system.cpu.name"), "x86_64");
+    assert_eq!(evaluate_property_query("system.os.name"), std::env::consts::OS);
+    assert_eq!(evaluate_property_query("system.cpu.name"), std::env::consts::ARCH);
     assert_eq!(evaluate_property_query("system.memory.total"), "1024");
     assert_eq!(evaluate_property_query("system.power.state"), "ac");
     assert_eq!(evaluate_property_query("system.network.state"), "online");

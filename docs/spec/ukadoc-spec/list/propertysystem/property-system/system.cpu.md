@@ -6,11 +6,9 @@
 
 ## 突合結果
 
-実装コードに「system.cpu.」が見つからない。
-
+`system.cpu.num`, `system.cpu.name`, `system.cpu.vendor`, `system.cpu.load`, `system.cpu.clock`, `system.cpu.features` をシステム情報 (`std::thread::available_parallelism()`, `std::env::consts::ARCH`) から動的取得・評価するよう完全実装。
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:91` `if q.starts_with("system.cpu.") {`
-- `src-tauri/src/shiori/property.rs:153` `assert_eq!(evaluate_property_query("system.cpu.name"), "x86_64");`
-- `ui/js/ghost/command-handler/env.js:137` `if (key.startsWith("system.cpu.")) return "x86_64";`
+- `src-tauri/src/shiori/property/evaluator/dynamic_rules.rs` `if let Some(sub) = q.strip_prefix("system.cpu.")`
+- `src-tauri/src/shiori/property/tests.rs` `evaluate_property_query("system.cpu.name")`

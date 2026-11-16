@@ -11,11 +11,23 @@ pub(super) fn evaluate_dynamic_property(q: &str, raw_query: &str) -> String {
             _ => format!("(unknown shiori property: {})", shiori_var),
         };
     }
-    if q.starts_with("system.os.") {
-        return "Linux".to_string();
+    if let Some(sub) = q.strip_prefix("system.os.") {
+        return match sub {
+            "name" | "version" => std::env::consts::OS.to_string(),
+            _ => std::env::consts::OS.to_string(),
+        };
     }
-    if q.starts_with("system.cpu.") {
-        return "x86_64".to_string();
+    if let Some(sub) = q.strip_prefix("system.cpu.") {
+        return match sub {
+            "num" => std::thread::available_parallelism()
+                .map(|n| n.get().to_string())
+                .unwrap_or_else(|_| "1".to_string()),
+            "vendor" | "name" => std::env::consts::ARCH.to_string(),
+            "load" => "0".to_string(),
+            "clock" => "0".to_string(),
+            "features" => std::env::consts::ARCH.to_string(),
+            _ => std::env::consts::ARCH.to_string(),
+        };
     }
     if q.starts_with("system.memory.") {
         return "1024".to_string();
@@ -32,11 +44,24 @@ pub(super) fn evaluate_dynamic_property(q: &str, raw_query: &str) -> String {
     if q.starts_with("system.disk.index") {
         return "100000".to_string();
     }
-    if q.starts_with("currentghost.scope(") {
-        if q.contains(".name") {
-            return "Sakura".to_string();
-        }
-        return "0".to_string();
+    if let Some(scope_prop) = q.strip_prefix("currentghost.scope(")
+        && let Some(idx) = scope_prop.find(").")
+    {
+        let scope_id = scope_prop[..idx].parse::<u32>().unwrap_or(0);
+        let subprop = &scope_prop[idx + 2..];
+        return match subprop {
+            "name" => match scope_id {
+                0 => "Sakura".to_string(),
+                1 => "Kero".to_string(),
+                n => format!("Char{}", n),
+            },
+            "rect" => "0,0,280,300".to_string(),
+            "x" | "y" => "0".to_string(),
+            "scaling" => "100".to_string(),
+            "surface.num" => "0".to_string(),
+            "seriko.defaultsurface" => "0".to_string(),
+            _ => "0".to_string(),
+        };
     }
     if let Some(scope_prop) = q.strip_prefix("currentghost.balloon.scope(")
         && let Some(idx) = scope_prop.find(").")

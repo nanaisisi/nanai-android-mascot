@@ -78,7 +78,7 @@ pub(super) fn evaluate_dynamic_property(
                     }
                 }
                 "dpi" => format!("{:.0}", mon.scale_factor * 96.0),
-                "bpp" => "32".to_string(),
+                "bpp" => mon.bpp.to_string(),
                 "primary" => {
                     if mon.is_primary {
                         "1".to_string()
@@ -90,11 +90,12 @@ pub(super) fn evaluate_dynamic_property(
             };
         } else if mon_id == 0 {
             let work = get_primary_work_area_rect();
+            let bpp = get_display_bpp();
             return match subkey {
                 "rect" => "0,0,1920,1080".to_string(),
                 "work" => format!("{},{},{},{}", work.0, work.1, work.2, work.3),
                 "dpi" => "96".to_string(),
-                "bpp" => "32".to_string(),
+                "bpp" => bpp.to_string(),
                 "primary" => "1".to_string(),
                 _ => "0".to_string(),
             };
@@ -192,6 +193,27 @@ pub(super) fn evaluate_dynamic_property(
         return "1".to_string();
     }
     format!("(unknown property: {})", raw_query)
+}
+
+#[cfg(target_os = "windows")]
+pub(super) fn get_display_bpp() -> u32 {
+    use windows_sys::Win32::Graphics::Gdi::{GetDC, GetDeviceCaps, ReleaseDC, BITSPIXEL};
+    unsafe {
+        let hdc = GetDC(std::ptr::null_mut());
+        if !hdc.is_null() {
+            let bpp = GetDeviceCaps(hdc, BITSPIXEL);
+            ReleaseDC(std::ptr::null_mut(), hdc);
+            if bpp > 0 {
+                return bpp as u32;
+            }
+        }
+    }
+    32
+}
+
+#[cfg(not(target_os = "windows"))]
+pub(super) fn get_display_bpp() -> u32 {
+    32
 }
 
 #[cfg(target_os = "windows")]

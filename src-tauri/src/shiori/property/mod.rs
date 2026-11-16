@@ -47,6 +47,8 @@ pub async fn get_system_property(
         .flatten()
         .and_then(|m| m.name().map(|s| s.to_string()));
 
+    let bpp = evaluator::dynamic_rules::get_display_bpp();
+
     let monitors: Vec<SystemMonitorInfo> = if let Ok(mon_list) = app.available_monitors() {
         mon_list
             .into_iter()
@@ -60,6 +62,7 @@ pub async fn get_system_property(
                     right: pos.x + size.width as i32,
                     bottom: pos.y + size.height as i32,
                     scale_factor: m.scale_factor(),
+                    bpp,
                     is_primary,
                 }
             })

@@ -23,12 +23,13 @@ pub struct SystemMonitorInfo {
     pub is_primary: bool,
 }
 
-/// Evaluate property system queries with optional active GhostInfo, app context, and monitors
+/// Evaluate property system queries with optional active GhostInfo, app context, monitors, and window_mode
 pub fn evaluate_property_query_full(
     query: &str,
     ghost: Option<&GhostInfo>,
     active_ghost_count: Option<usize>,
     monitors: &[SystemMonitorInfo],
+    window_mode: Option<&str>,
 ) -> String {
     let q = query.trim().to_lowercase();
 
@@ -144,7 +145,7 @@ pub fn evaluate_property_query_full(
     if let Some(val) = evaluate_static_property(&q) {
         val
     } else {
-        evaluate_dynamic_property(&q, query, monitors)
+        evaluate_dynamic_property(&q, query, monitors, window_mode)
     }
 }
 
@@ -153,7 +154,7 @@ pub fn evaluate_property_query_with_ghost_info(
     ghost: Option<&GhostInfo>,
     active_ghost_count: Option<usize>,
 ) -> String {
-    evaluate_property_query_full(query, ghost, active_ghost_count, &[])
+    evaluate_property_query_full(query, ghost, active_ghost_count, &[], None)
 }
 
 pub fn evaluate_property_query_with_context(

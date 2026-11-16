@@ -4,6 +4,7 @@ use parking_lot::Mutex;
 pub struct AppState {
     pub(crate) recent_files: Mutex<Vec<String>>,
     pub(crate) current_ghost_name: Mutex<Option<String>>,
+    pub(crate) window_mode: Mutex<String>,
     pub(crate) num_characters: Mutex<i32>,
     pub(crate) shiori_engine: Mutex<Option<ShioriDynamicEngine>>,
     pub(crate) ghost_engines: Mutex<std::collections::HashMap<String, ShioriDynamicEngine>>,
@@ -21,6 +22,7 @@ impl AppState {
         AppState {
             recent_files: Mutex::new(Vec::new()),
             current_ghost_name: Mutex::new(None),
+            window_mode: Mutex::new("normal".to_string()),
             num_characters: Mutex::new(3),
             shiori_engine: Mutex::new(None),
             ghost_engines: Mutex::new(std::collections::HashMap::new()),
@@ -39,6 +41,9 @@ impl AppState {
     }
     pub fn current_ghost_name(&self) -> &Mutex<Option<String>> {
         &self.current_ghost_name
+    }
+    pub fn window_mode(&self) -> &Mutex<String> {
+        &self.window_mode
     }
     pub fn num_characters(&self) -> &Mutex<i32> {
         &self.num_characters

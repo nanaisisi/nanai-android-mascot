@@ -88,6 +88,8 @@ pub async fn get_system_property(
     let current_ghost = ghost_guard.as_deref();
     let active_ghosts_guard = state.active_ghosts.lock();
     let active_count = active_ghosts_guard.len();
+    let win_mode_guard = state.window_mode.lock();
+    let window_mode = win_mode_guard.as_str();
 
     #[cfg(target_os = "windows")]
     let monitors = query_win32_monitors();
@@ -130,5 +132,6 @@ pub async fn get_system_property(
         None,
         Some(active_count),
         &monitors,
+        Some(window_mode),
     ))
 }

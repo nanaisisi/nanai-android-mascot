@@ -1,6 +1,9 @@
 //! 接頭辞・パターン一致型動的プロパティ評価モジュール
 
-use super::rules::{ghost_scope::evaluate_ghost_scope, system::evaluate_system_subsystem};
+use super::rules::{
+    baseware::evaluate_baseware_property, ghost_scope::evaluate_ghost_scope,
+    system::evaluate_system_subsystem,
+};
 use super::SystemMonitorInfo;
 
 pub(super) fn evaluate_dynamic_property(
@@ -17,6 +20,10 @@ pub(super) fn evaluate_dynamic_property(
             "encoding" => "UTF-8".to_string(),
             _ => format!("(unknown shiori property: {})", shiori_var),
         };
+    }
+
+    if let Some(bw_sub) = q.strip_prefix("baseware.") {
+        return evaluate_baseware_property(bw_sub);
     }
 
     if let Some(sys_sub) = q.strip_prefix("system.") {

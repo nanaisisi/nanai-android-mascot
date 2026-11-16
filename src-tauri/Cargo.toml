@@ -41,6 +41,7 @@ md-5 = { workspace = true }
 chrono = { workspace = true }
 tokio = { workspace = true }
 parking_lot = { workspace = true }
+sys-locale = { workspace = true }
 thiserror = { workspace = true }
 anyhow = { workspace = true }
 tauri-plugin-dialog = { workspace = true }

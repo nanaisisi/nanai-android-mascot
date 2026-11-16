@@ -245,7 +245,7 @@ pub fn get_display_bpp() -> u32 {
     unsafe {
         let hdc = GetDC(std::ptr::null_mut());
         if !hdc.is_null() {
-            let bpp = GetDeviceCaps(hdc, BITSPIXEL);
+            let bpp = GetDeviceCaps(hdc, BITSPIXEL as i32);
             ReleaseDC(std::ptr::null_mut(), hdc);
             if bpp > 0 {
                 return bpp as u32;

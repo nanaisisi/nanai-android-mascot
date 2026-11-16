@@ -119,7 +119,7 @@ pub fn evaluate_property_query_full(
                 return match prop {
                     "name" => s.name.clone(),
                     "path" => s.path.clone(),
-                    "craftman" => s.craftman.clone().unwrap_or_default(),
+                    "display_name" => s.display_name.clone().unwrap_or_default(),
                     _ => String::new(),
                 };
             }
@@ -145,7 +145,7 @@ pub fn evaluate_property_query_full(
     if let Some(val) = evaluate_static_property(&q) {
         val
     } else {
-        evaluate_dynamic_property(&q, query, monitors, window_mode)
+        evaluate_dynamic_property(&q, query, monitors)
     }
 }
 

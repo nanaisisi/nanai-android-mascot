@@ -32,22 +32,22 @@ impl PropertyQueryRequest {
 
 #[cfg(target_os = "windows")]
 fn query_win32_monitors() -> Vec<SystemMonitorInfo> {
+    use windows_sys::Win32::Foundation::RECT;
     use windows_sys::Win32::Graphics::Gdi::{
-        EnumDisplayMonitors, GetMonitorInfoW, HDC, HMONITOR, LPRECT, MONITORINFO,
-        MONITORINFOF_PRIMARY,
+        EnumDisplayMonitors, GetMonitorInfoW, HDC, HMONITOR, MONITORINFO,
     };
 
     unsafe extern "system" fn monitor_enum_proc(
         hmonitor: HMONITOR,
         _hdc: HDC,
-        _rect: LPRECT,
+        _rect: *mut RECT,
         lparam: isize,
     ) -> i32 {
         let list = &mut *(lparam as *mut Vec<SystemMonitorInfo>);
         let mut info: MONITORINFO = std::mem::zeroed();
         info.cbSize = std::mem::size_of::<MONITORINFO>() as u32;
         if GetMonitorInfoW(hmonitor, &mut info) != 0 {
-            let is_primary = (info.dwFlags & MONITORINFOF_PRIMARY) != 0;
+            let is_primary = (info.dwFlags & 1) != 0;
             let bpp = evaluator::dynamic_rules::get_display_bpp();
             list.push(SystemMonitorInfo {
                 left: info.rcMonitor.left,
@@ -69,7 +69,7 @@ fn query_win32_monitors() -> Vec<SystemMonitorInfo> {
     let mut list = Vec::new();
     unsafe {
         EnumDisplayMonitors(
-            0 as _,
+            std::ptr::null_mut(),
             std::ptr::null_mut(),
             Some(monitor_enum_proc),
             &mut list as *mut _ as isize,
@@ -84,8 +84,6 @@ pub async fn get_system_property(
     state: tauri::State<'_, AppState>,
     query: String,
 ) -> Result<String, String> {
-    let ghost_guard = state.current_ghost_name.lock();
-    let current_ghost = ghost_guard.as_deref();
     let active_ghosts_guard = state.active_ghosts.lock();
     let active_count = active_ghosts_guard.len();
     let win_mode_guard = state.window_mode.lock();

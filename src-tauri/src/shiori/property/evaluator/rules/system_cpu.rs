@@ -57,7 +57,7 @@ fn get_cpu_clock_mhz() -> u32 {
     use std::ffi::OsStr;
     use std::os::windows::ffi::OsStrExt;
     use windows_sys::Win32::System::Registry::{
-        HKEY_LOCAL_MACHINE, KEY_READ, RegOpenKeyExW, RegQueryValueExW,
+        HKEY, HKEY_LOCAL_MACHINE, KEY_READ, RegOpenKeyExW, RegQueryValueExW,
     };
     let subkey: Vec<u16> = OsStr::new("HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0")
         .encode_wide()
@@ -67,7 +67,7 @@ fn get_cpu_clock_mhz() -> u32 {
         .encode_wide()
         .chain(std::iter::once(0))
         .collect();
-    let mut hkey = 0isize;
+    let mut hkey: HKEY = std::ptr::null_mut();
     if unsafe { RegOpenKeyExW(HKEY_LOCAL_MACHINE, subkey.as_ptr(), 0, KEY_READ, &mut hkey) } == 0 {
         let mut mhz = 0u32;
         let mut mhz_bytes = std::mem::size_of::<u32>() as u32;

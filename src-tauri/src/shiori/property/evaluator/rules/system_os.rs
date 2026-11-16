@@ -146,7 +146,7 @@ fn get_os_ver_and_build() -> (String, u32, u32, u32) {
     unsafe {
         let ntdll =
             windows_sys::Win32::System::LibraryLoader::GetModuleHandleA(b"ntdll.dll\0".as_ptr());
-        if ntdll != 0 {
+        if !ntdll.is_null() {
             let proc = windows_sys::Win32::System::LibraryLoader::GetProcAddress(
                 ntdll,
                 b"RtlGetVersion\0".as_ptr(),
@@ -203,7 +203,7 @@ fn check_wine_parent() -> (String, String) {
     unsafe {
         let ntdll =
             windows_sys::Win32::System::LibraryLoader::GetModuleHandleA(b"ntdll.dll\0".as_ptr());
-        if ntdll != 0 {
+        if !ntdll.is_null() {
             let proc = windows_sys::Win32::System::LibraryLoader::GetProcAddress(
                 ntdll,
                 b"wine_get_version\0".as_ptr(),
@@ -223,7 +223,7 @@ fn check_wine_parent() -> (String, String) {
 
 #[cfg(target_os = "windows")]
 fn get_user_idle_time_secs() -> u64 {
-    use windows_sys::Win32::UI::WindowsAndMessaging::{GetLastInputInfo, LASTINPUTINFO};
+    use windows_sys::Win32::UI::Input::KeyboardAndMouse::{GetLastInputInfo, LASTINPUTINFO};
     unsafe {
         let mut info: LASTINPUTINFO = std::mem::zeroed();
         info.cbSize = std::mem::size_of::<LASTINPUTINFO>() as u32;
@@ -267,7 +267,7 @@ fn check_reactos() -> bool {
         use std::ffi::OsStr;
         use std::os::windows::ffi::OsStrExt;
         use windows_sys::Win32::System::Registry::{
-            HKEY_LOCAL_MACHINE, KEY_READ, RegOpenKeyExW, RegQueryValueExW,
+            HKEY, HKEY_LOCAL_MACHINE, KEY_READ, RegOpenKeyExW, RegQueryValueExW,
         };
         let subkey: Vec<u16> = OsStr::new("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion")
             .encode_wide()
@@ -277,7 +277,7 @@ fn check_reactos() -> bool {
             .encode_wide()
             .chain(std::iter::once(0))
             .collect();
-        let mut hkey = 0isize;
+        let mut hkey: HKEY = std::ptr::null_mut();
         if unsafe { RegOpenKeyExW(HKEY_LOCAL_MACHINE, subkey.as_ptr(), 0, KEY_READ, &mut hkey) }
             == 0
         {
@@ -309,7 +309,7 @@ fn get_windows_display_version() -> String {
     use std::ffi::OsStr;
     use std::os::windows::ffi::OsStrExt;
     use windows_sys::Win32::System::Registry::{
-        HKEY_LOCAL_MACHINE, KEY_READ, RegOpenKeyExW, RegQueryValueExW,
+        HKEY, HKEY_LOCAL_MACHINE, KEY_READ, RegOpenKeyExW, RegQueryValueExW,
     };
     let subkey: Vec<u16> = OsStr::new("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion")
         .encode_wide()
@@ -319,7 +319,7 @@ fn get_windows_display_version() -> String {
         .encode_wide()
         .chain(std::iter::once(0))
         .collect();
-    let mut hkey = 0isize;
+    let mut hkey: HKEY = std::ptr::null_mut();
     if unsafe { RegOpenKeyExW(HKEY_LOCAL_MACHINE, subkey.as_ptr(), 0, KEY_READ, &mut hkey) } == 0 {
         let mut buf = [0u16; 128];
         let mut buf_bytes = (buf.len() * 2) as u32;
@@ -374,7 +374,7 @@ fn get_theme_mode(is_os_mode: bool) -> String {
     use std::ffi::OsStr;
     use std::os::windows::ffi::OsStrExt;
     use windows_sys::Win32::System::Registry::{
-        HKEY_CURRENT_USER, KEY_READ, RegOpenKeyExW, RegQueryValueExW,
+        HKEY, HKEY_CURRENT_USER, KEY_READ, RegOpenKeyExW, RegQueryValueExW,
     };
     let subkey: Vec<u16> =
         OsStr::new("Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize")
@@ -390,7 +390,7 @@ fn get_theme_mode(is_os_mode: bool) -> String {
         .encode_wide()
         .chain(std::iter::once(0))
         .collect();
-    let mut hkey = 0isize;
+    let mut hkey: HKEY = std::ptr::null_mut();
     if unsafe { RegOpenKeyExW(HKEY_CURRENT_USER, subkey.as_ptr(), 0, KEY_READ, &mut hkey) } == 0 {
         let mut light = 0u32;
         let mut light_bytes = std::mem::size_of::<u32>() as u32;
@@ -425,7 +425,7 @@ pub fn get_system_dnd_mode() -> String {
     use std::ffi::OsStr;
     use std::os::windows::ffi::OsStrExt;
     use windows_sys::Win32::System::Registry::{
-        HKEY_CURRENT_USER, KEY_READ, RegOpenKeyExW, RegQueryValueExW,
+        HKEY, HKEY_CURRENT_USER, KEY_READ, RegOpenKeyExW, RegQueryValueExW,
     };
     let subkey: Vec<u16> =
         OsStr::new("Software\\Microsoft\\Windows\\CurrentVersion\\FocusAssist")
@@ -436,7 +436,7 @@ pub fn get_system_dnd_mode() -> String {
         .encode_wide()
         .chain(std::iter::once(0))
         .collect();
-    let mut hkey = 0isize;
+    let mut hkey: HKEY = std::ptr::null_mut();
     if unsafe { RegOpenKeyExW(HKEY_CURRENT_USER, subkey.as_ptr(), 0, KEY_READ, &mut hkey) } == 0 {
         let mut fa_value = 0u32;
         let mut fa_bytes = std::mem::size_of::<u32>() as u32;

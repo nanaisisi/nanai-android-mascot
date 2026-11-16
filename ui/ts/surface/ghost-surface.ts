@@ -98,9 +98,7 @@ export const ghostSurfaceMethods = {
 			if (surfaceId === -1 || surfaceId === "-1") {
 				if (slot) slot.style.display = "none";
 				if (container) container.style.visibility = "hidden";
-				if (isTauriAvailable()) {
-					invoke("hide_subchar_window", { scopeId }).catch(() => {});
-				}
+				// ウィンドウ自体は隠さず、画像要素のみ非表示にする
 				return;
 			}
 

@@ -6,63 +6,53 @@ use base64::Engine;
 use std::fs;
 use std::path::PathBuf;
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct LoadSurfaceImageParams {
-    ghost_path: String,
-    shell_name: String,
-    surface_id: String,
-}
-
-impl LoadSurfaceImageParams {
-    pub fn ghost_path(&self) -> &str {
-        &self.ghost_path
-    }
-    pub fn shell_name(&self) -> &str {
-        &self.shell_name
-    }
-    pub fn surface_id(&self) -> &str {
-        &self.surface_id
-    }
-}
-
 // サーフィス画像を読み込んでData URL (Base64) として返すコマンド
 #[tauri::command]
 pub fn load_surface_image(
-    params: LoadSurfaceImageParams,
+    ghost_path: Option<String>,
+    #[allow(non_snake_case)]
+    ghostPath: Option<String>,
+    shell_name: Option<String>,
+    #[allow(non_snake_case)]
+    shellName: Option<String>,
+    surface_id: Option<String>,
+    #[allow(non_snake_case)]
+    surfaceId: Option<String>,
     app_handle: tauri::AppHandle<tauri::Wry>,
 ) -> Result<String, String> {
-    let ghost_path = params.ghost_path();
-    let shell_name = params.shell_name();
-    let surface_id = params.surface_id();
-    let clean_gp = clean_verbatim_path(ghost_path);
+    let gp = ghost_path.or(ghostPath).unwrap_or_default();
+    let sn = shell_name.or(shellName).unwrap_or_default();
+    let sid = surface_id.or(surfaceId).unwrap_or_else(|| "0".to_string());
+
+    let clean_gp = clean_verbatim_path(&gp);
     let base_ghost_path =
         resolve_asset_path(&clean_gp, &app_handle).unwrap_or_else(|_| PathBuf::from(&clean_gp));
 
     println!(
         "🖼️ [Rust File] load_surface_image: ghost_path={}, shell={}, surface={}, base_path={:?}",
-        ghost_path, shell_name, surface_id, base_ghost_path
+        gp, sn, sid, base_ghost_path
     );
 
-    let shell_dir = base_ghost_path.join("shell").join(shell_name);
+    let shell_dir = base_ghost_path.join("shell").join(&sn);
     let master_dir = base_ghost_path.join("shell").join("master");
 
-    let surface_id_num = surface_id.parse::<u32>().unwrap_or(0);
+    let surface_id_num = sid.parse::<u32>().unwrap_or(0);
     let mut candidates = vec![
-        shell_dir.join(format!("surface{surface_id}.png")),
+        shell_dir.join(format!("surface{sid}.png")),
         shell_dir.join(format!("surface{surface_id_num:04}.png")),
         shell_dir.join(format!("surface{surface_id_num:02}.png")),
-        shell_dir.join(format!("surface{surface_id}.bmp")),
+        shell_dir.join(format!("surface{sid}.bmp")),
         shell_dir.join(format!("surface{surface_id_num:04}.bmp")),
-        shell_dir.join(format!("surface{surface_id}.svg")),
-        shell_dir.join(format!("surface{surface_id}.pna")),
-        shell_dir.join(format!("Surface{surface_id}.png")),
+        shell_dir.join(format!("surface{sid}.svg")),
+        shell_dir.join(format!("surface{sid}.pna")),
+        shell_dir.join(format!("Surface{sid}.png")),
         shell_dir.join(format!("Surface{surface_id_num:04}.png")),
-        master_dir.join(format!("surface{surface_id}.png")),
+        master_dir.join(format!("surface{sid}.png")),
         master_dir.join(format!("surface{surface_id_num:04}.png")),
         master_dir.join(format!("surface{surface_id_num:02}.png")),
-        master_dir.join(format!("surface{surface_id}.bmp")),
+        master_dir.join(format!("surface{sid}.bmp")),
         master_dir.join(format!("surface{surface_id_num:04}.bmp")),
-        master_dir.join(format!("surface{surface_id}.svg")),
+        master_dir.join(format!("surface{sid}.svg")),
     ];
 
     if surface_id_num == 0 {
@@ -97,17 +87,15 @@ pub fn load_surface_image(
                 .unwrap_or("png")
                 .to_lowercase();
 
-            if ext != "svg"
-                && ext != "pna"
-                && let Some(data_url) = process_chromakey_image_bytes(&bytes)
-            {
-                return Ok(data_url);
+            if ext != "svg" && ext != "pna" {
+                if let Some(data_url) = process_chromakey_image_bytes(&bytes) {
+                    return Ok(data_url);
+                }
             }
 
             let mime = match ext.as_str() {
                 "svg" => "image/svg+xml",
                 "bmp" => "image/bmp",
-                "pna" => "image/png",
                 _ => "image/png",
             };
             let b64 = base64::engine::general_purpose::STANDARD.encode(&bytes);
@@ -115,7 +103,7 @@ pub fn load_surface_image(
         }
     }
 
-    let fallback_candidates = if (10..20).contains(&surface_id_num) {
+    let fallback_candidates = if surface_id_num >= 10 && surface_id_num < 20 {
         vec![
             shell_dir.join("surface0010.png"),
             shell_dir.join("surface10.png"),
@@ -139,7 +127,7 @@ pub fn load_surface_image(
         {
             println!(
                 "🔄 [Rust File] load_surface_image: surface{} 個別ファイル未検出のため適切なスコープフォールバックを利用します: {:?}",
-                surface_id, target
+                sid, target
             );
             if let Some(data_url) = process_chromakey_image_bytes(&bytes) {
                 return Ok(data_url);
@@ -151,55 +139,45 @@ pub fn load_surface_image(
 
     println!(
         "⚠️ [Rust File] load_surface_image: 指定されたサーフィス画像が見つかりません (surface_id={}, shell={}).",
-        surface_id, shell_name
+        sid, sn
     );
     Err(format!(
-        "Surface image not found for surface_id: {surface_id} in shell: {shell_name}"
+        "Surface image not found for surface_id: {sid} in shell: {sn}"
     ))
-}
-
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct LoadSurfacePnaParams {
-    ghost_path: String,
-    shell_name: String,
-    surface_id: String,
-}
-
-impl LoadSurfacePnaParams {
-    pub fn ghost_path(&self) -> &str {
-        &self.ghost_path
-    }
-    pub fn shell_name(&self) -> &str {
-        &self.shell_name
-    }
-    pub fn surface_id(&self) -> &str {
-        &self.surface_id
-    }
 }
 
 // サーフィスに対応する PNA (アルファマスク) 画像を読み込んで返すコマンド
 #[tauri::command]
 pub fn load_surface_pna(
-    params: LoadSurfacePnaParams,
+    ghost_path: Option<String>,
+    #[allow(non_snake_case)]
+    ghostPath: Option<String>,
+    shell_name: Option<String>,
+    #[allow(non_snake_case)]
+    shellName: Option<String>,
+    surface_id: Option<String>,
+    #[allow(non_snake_case)]
+    surfaceId: Option<String>,
     app_handle: tauri::AppHandle<tauri::Wry>,
 ) -> Result<String, String> {
-    let ghost_path = params.ghost_path();
-    let shell_name = params.shell_name();
-    let surface_id = params.surface_id();
-    let clean_gp = clean_verbatim_path(ghost_path);
+    let gp = ghost_path.or(ghostPath).unwrap_or_default();
+    let sn = shell_name.or(shellName).unwrap_or_default();
+    let sid = surface_id.or(surfaceId).unwrap_or_else(|| "0".to_string());
+
+    let clean_gp = clean_verbatim_path(&gp);
     let base_ghost_path =
         resolve_asset_path(&clean_gp, &app_handle).unwrap_or_else(|_| PathBuf::from(&clean_gp));
 
-    let shell_dir = base_ghost_path.join("shell").join(shell_name);
+    let shell_dir = base_ghost_path.join("shell").join(&sn);
     let master_dir = base_ghost_path.join("shell").join("master");
-    let surface_id_num = surface_id.parse::<u32>().unwrap_or(0);
+    let surface_id_num = sid.parse::<u32>().unwrap_or(0);
 
     let candidates = vec![
-        shell_dir.join(format!("surface{surface_id}.pna")),
+        shell_dir.join(format!("surface{sid}.pna")),
         shell_dir.join(format!("surface{surface_id_num:04}.pna")),
         shell_dir.join(format!("surface{surface_id_num:02}.pna")),
-        shell_dir.join(format!("Surface{surface_id}.pna")),
-        master_dir.join(format!("surface{surface_id}.pna")),
+        shell_dir.join(format!("Surface{sid}.pna")),
+        master_dir.join(format!("surface{sid}.pna")),
         master_dir.join(format!("surface{surface_id_num:04}.pna")),
         master_dir.join(format!("surface{surface_id_num:02}.pna")),
     ];
@@ -214,5 +192,5 @@ pub fn load_surface_pna(
         }
     }
 
-    Err(format!("PNA file not found for surface_id: {surface_id}"))
+    Err(format!("PNA file not found for surface_id: {sid}"))
 }

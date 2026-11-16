@@ -81,6 +81,14 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
                 chars.next();
                 tokens.push(SakuraToken::Scope(1));
             }
+            'h' | 'H' => {
+                chars.next();
+                tokens.push(SakuraToken::Scope(0));
+            }
+            'u' | 'U' => {
+                chars.next();
+                tokens.push(SakuraToken::Scope(1));
+            }
             'n' => {
                 chars.next();
                 tokens.push(SakuraToken::Newline);

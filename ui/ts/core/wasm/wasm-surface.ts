@@ -104,3 +104,16 @@ export function processChromaKeyWasm(
 	}
 }
 
+export function resolveScopeForSurfaceWasm(surfaceId: number): number {
+	const core = wasmMemory.getWasmCore();
+	if (!core?.wasm_resolve_scope_for_surface) {
+		return surfaceId < 100 ? 0 : Math.floor(surfaceId / 100);
+	}
+	try {
+		return Number(core.wasm_resolve_scope_for_surface(surfaceId)) || 0;
+	} catch (err) {
+		console.warn("⚠️ [WASM Surface] resolveScopeForSurface エラー:", err);
+		return surfaceId < 100 ? 0 : Math.floor(surfaceId / 100);
+	}
+}
+

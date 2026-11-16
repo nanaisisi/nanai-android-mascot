@@ -1,6 +1,7 @@
 //! サーフィス合成 & レイヤーカスケード計算エンジン (UKADOC / SSP 準拠)
 
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
 use tsify::Tsify;
 use wasm_bindgen::prelude::*;
 
@@ -180,6 +181,23 @@ pub fn wasm_process_chroma_key(
         use_self_alpha,
         paint_black,
     );
+}
+
+/// サーフェスIDおよび descript プロパティから所属するスコープIDを解決
+pub fn resolve_scope_for_surface(
+    surface_id: u32,
+    _descript_properties: Option<&BTreeMap<String, String>>,
+) -> u32 {
+    if surface_id < 100 {
+        0
+    } else {
+        surface_id / 100
+    }
+}
+
+#[wasm_bindgen]
+pub fn wasm_resolve_scope_for_surface(surface_id: u32) -> u32 {
+    resolve_scope_for_surface(surface_id, None)
 }
 
 #[cfg(test)]

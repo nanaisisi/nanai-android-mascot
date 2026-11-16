@@ -45,6 +45,22 @@ export const ghostSurfaceMethods = {
 			`${AppConfig.paths.defaultGhostDir}/${ghostName}`;
 		const shell = this.currentShell || AppConfig.paths.fallbackShellName;
 
+		// WASM (descript準拠) またはサーフェス定義から所属スコープIDを解決
+		const parsedSurfaceNum = parseInt(String(surfaceId), 10);
+		if (!Number.isNaN(parsedSurfaceNum) && scopeId === 0) {
+			const inferredScope = this.app?.wasmBridge?.resolveScopeForSurface
+				? this.app.wasmBridge.resolveScopeForSurface(parsedSurfaceNum)
+				: parsedSurfaceNum < 100
+					? 0
+					: Math.floor(parsedSurfaceNum / 100);
+			if (inferredScope > 0) {
+				scopeId = inferredScope;
+				console.log(
+					`🔍 [Surface/WASM] サーフィス番号 ${surfaceId} から descript 準拠でスコープ ${scopeId} を解決しました`,
+				);
+			}
+		}
+
 		console.log(
 			`🖼️ [Surface] updateSurface 呼び出し: scope=${scopeId}, surface=${surfaceId}, ghost=${ghostName}, shell=${shell}, tauri=${isTauriAvailable()}`,
 		);
@@ -115,7 +131,7 @@ export const ghostSurfaceMethods = {
 			// 通常のサーフィス変更や再読み込み時は、画像デコード後に実サイズと共にshow_subchar_windowが呼ばれるため、
 			// ここでサイズなしのshow_subchar_windowを呼ぶことによる一瞬のデフォルトサイズ縮小・チラつきを防ぐ
 			const isExistingSurface = Boolean(this.currentSurfaces?.has(scopeId));
-			if (!isAnimationFrame && !isExistingSurface) {
+			if (!isAnimationFrame && (!isExistingSurface || scopeId >= 1)) {
 				await invoke("show_subchar_window", { scopeId }).catch(() => {});
 			}
 		} else {

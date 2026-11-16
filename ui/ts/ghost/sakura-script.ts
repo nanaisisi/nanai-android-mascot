@@ -232,16 +232,17 @@ export class SakuraScriptPlayer {
 
 		if (isNativeMultiWindow()) {
 			const theme = app?.currentBalloonTheme || "default";
-			console.log(
-				`💬 [SakuraScript] ネイティブマルチウィンドウ向けバルーン表示要求: scope=${scope}, text=${text}`,
+			const targetScope = 0;
+			frontendLog(
+				`💬 [SakuraScript] メインバルーン表示要求集約: scope=${scope} -> ${targetScope}`,
 			);
-			void invoke("show_balloon_window", { scope_id: scope, theme }).catch(
+			void invoke("show_balloon_window", { scope_id: targetScope, theme }).catch(
 				(err) => {
 					console.error("❌ show_balloon_window failed:", err);
 				},
 			);
 			const htmlContent = textEl ? textEl.innerHTML : text;
-			void emit(`update-balloon-content-${scope}`, {
+			void emit(`update-balloon-content-${targetScope}`, {
 				html: htmlContent,
 				theme,
 			});
@@ -267,7 +268,8 @@ export class SakuraScriptPlayer {
 			dispEl.style.display = "none";
 		}
 		if (isNativeMultiWindow()) {
-			void emit(`update-balloon-content-${scope}`, {
+			const targetScope = 0;
+			void emit(`update-balloon-content-${targetScope}`, {
 				html: "",
 				theme: app?.currentBalloonTheme || "default",
 			});
@@ -313,6 +315,15 @@ export class SakuraScriptPlayer {
 
 		if (dispEl?.style && isSinglePageUi()) {
 			dispEl.style.display = "block";
+		}
+
+		if (isNativeMultiWindow()) {
+			const theme = app?.currentBalloonTheme || "default";
+			const targetScope = 0;
+			void emit(`update-balloon-content-${targetScope}`, {
+				html: textEl ? textEl.innerHTML : "",
+				theme,
+			});
 		}
 	}
 

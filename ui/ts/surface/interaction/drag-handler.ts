@@ -176,12 +176,15 @@ export function setupGhostDragging(
 			onGhostMouseDown(clientX, clientY, rect, button, device);
 		}
 
-		longPress.start(
-			() =>
-				dragInternalState.isInteracting &&
-				!dragInternalState.hasMoved &&
-				!strokeTracker.isTriggered(),
-		);
+		const isTouch = Boolean(e.touches || (e.pointerType && e.pointerType !== "mouse"));
+		if (isTouch) {
+			longPress.start(
+				() =>
+					dragInternalState.isInteracting &&
+					!dragInternalState.hasMoved &&
+					!strokeTracker.isTriggered(),
+			);
+		}
 	};
 
 	const onPointerMove = (evt: Event) => {

@@ -15,7 +15,13 @@ export const menuMethods = {
 			const posX = screenX !== null ? screenX : sX + 200;
 			const posY = screenY !== null ? screenY : sY + 100;
 
-			invoke("show_menu_window", { x: posX, y: posY, scope })
+			invoke("show_menu_window", {
+				params: {
+					x: posX,
+					y: posY,
+					scope,
+				},
+			})
 				.then(() =>
 					(
 						this as unknown as import("../../main.js").NanaiAndroidMascotApp

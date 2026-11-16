@@ -82,9 +82,11 @@ function openCharacterMenu(
 	if (Number.isNaN(posY)) posY = winY + 100;
 
 	void invoke("show_menu_window", {
-		x: posX,
-		y: posY,
-		scope: scopeId,
+		params: {
+			x: posX,
+			y: posY,
+			scope: scopeId,
+		},
 	}).catch((err) => {
 		console.warn("Failed to open character menu:", err);
 	});

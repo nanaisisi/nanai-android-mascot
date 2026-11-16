@@ -183,11 +183,13 @@ export class GhostController {
 	}
 
 	async selectGhost(ghostName: string) {
+		console.log("👻 [selectGhost called for]:", ghostName);
 		const prevGhostName = this.currentGhost?.name || "";
 		const ghost = this.ghosts.find((g) => g.name === ghostName) || {
 			name: ghostName,
 			path: `${AppConfig.paths.defaultGhostDir}/${ghostName}`,
 		};
+		console.log("👻 [selectGhost resolved ghost path]:", ghost.path);
 
 		if (prevGhostName && prevGhostName !== ghost.name && this.sendShioriEvent) {
 			try {
@@ -204,8 +206,11 @@ export class GhostController {
 		// 【フェーズ 1: プリロードバナー表示 (完全待機)】
 		if (isTauriAvailable()) {
 			try {
+				console.log("👻 [selectGhost] invoking show_loading_banner_window");
 				await invoke("show_loading_banner_window", { ghostName: ghost.name });
-			} catch (_e) {}
+			} catch (e) {
+				console.warn("⚠️ show_loading_banner_window warning:", e);
+			}
 		}
 
 		// バックグラウンドアセット先行プリロード
@@ -249,18 +254,21 @@ export class GhostController {
 		}
 
 		this.currentShell = this.shells[0] || AppConfig.paths.fallbackShellName;
+		console.log("👻 [selectGhost] currentShell selected:", this.currentShell);
 
 		// 【フェーズ 2: シェル表示 & SHIORI 初期化のパラレル実行 (Atomic Reveal)】
 		const loadId = {};
 		this._currentLoadToken = loadId;
 		const isCurrentLoad = () => this._currentLoadToken === loadId;
 
+		console.log("👻 [selectGhost] starting Promise.all for selectShell and initializeGhostSHIORI");
 		await Promise.all([
 			Promise.resolve(preloadSurfacesPromise)
 				.catch(() => {})
 				.then(() => this.selectShell(this.currentShell)),
 			this.initializeGhostSHIORI(ghost, preloadSurfacesPromise, isCurrentLoad),
 		]);
+		console.log("👻 [selectGhost] Promise.all completed successfully");
 
 		// レンダリングフレーム完了の待機 (トリプル rAF による GPU 描画・コンポジット完全確定。テスト環境フォールバック付)
 		if (typeof globalThis.requestAnimationFrame === "function") {

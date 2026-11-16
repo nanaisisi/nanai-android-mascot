@@ -137,7 +137,10 @@ export class BalloonThemeManager {
 	async scanAvailableBalloons() {
 		if (isTauriAvailable()) {
 			try {
-				const res = await invoke("list_balloons");
+				let res = await invoke("list_balloons").catch(() => null);
+				if (!res) {
+					res = await invoke("scan_balloons").catch(() => null);
+				}
 				if (Array.isArray(res)) {
 					this.availableBalloons = res;
 					return res;

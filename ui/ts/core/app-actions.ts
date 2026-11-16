@@ -12,6 +12,7 @@ import { balloonActions } from "./actions/balloon-actions.js";
 import { ghostActions } from "./actions/ghost-actions.js";
 import { handleMenuActionImpl } from "./actions/menu-action-dispatcher.js";
 import { networkActions } from "./actions/network-actions.js";
+import { invoke, isTauriAvailable } from "./tauri-helper.js";
 
 export * from "./actions/sstp-fmo-actions.js";
 export * from "./async-parallel.js";
@@ -20,6 +21,27 @@ export const actionMethods = {
 	...balloonActions,
 	...ghostActions,
 	...networkActions,
+
+	async scanBalloons(this: any) {
+		if (isTauriAvailable()) {
+			try {
+				let res = await invoke("scan_balloons").catch(() => null);
+				if (!res) {
+					res = await invoke("list_balloons").catch(() => null);
+				}
+				if (Array.isArray(res)) {
+					this.availableBalloons = res;
+					if (this.balloonThemeManager) {
+						this.balloonThemeManager.availableBalloons = res;
+					}
+					return res;
+				}
+			} catch (e) {
+				console.error("Failed to scan balloons:", e);
+			}
+		}
+		return [];
+	},
 
 	handleMenuAction(action: string, payload: unknown = null) {
 		return handleMenuActionImpl(

@@ -19,6 +19,7 @@ pub fn get_invoke_handler() -> impl Fn(tauri::ipc::Invoke) -> bool {
         commands::shell::parse_surfaces_text,
         commands::shell::animation_timeline,
         commands::shell::scan_balloons,
+        commands::shell::list_balloons,
         commands::shell::balloon_manifest,
         commands::shell::load_balloon_image,
         commands::shell::get_balloon_readme,

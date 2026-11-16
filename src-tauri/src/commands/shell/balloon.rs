@@ -35,62 +35,124 @@ impl BalloonInfo {
 #[tauri::command]
 pub fn scan_balloons(app_handle: tauri::AppHandle) -> Result<Vec<BalloonInfo>, String> {
     let mut balloons = Vec::new();
-    for base_dir in ["assets/balloon", "balloon"] {
-        if let Ok(resolved) = resolve_asset_path(base_dir, &app_handle)
-            && resolved.exists()
-            && resolved.is_dir()
-            && let Ok(entries) = std::fs::read_dir(&resolved)
-        {
-            for entry in entries.flatten() {
-                let path = entry.path();
-                if path.is_dir() {
-                    let dir_name = entry.file_name().to_string_lossy().to_string();
-                    if !dir_name.starts_with('.') {
-                        let descript = balloon_descript_map(&path);
-                        // [name,バルーン名]: descript.get("name")
-                        let name = descript
-                            .get("name")
-                            .cloned()
-                            .unwrap_or_else(|| dir_name.clone());
+    let mut search_paths = vec![
+        "assets/balloon".to_string(),
+        "balloon".to_string(),
+    ];
 
-                        let thumbnail = ["thumbnail.png", "thumbnail.jpg", "thumbnail.bmp"]
-                            .iter()
-                            .find_map(|f| {
-                                let p = path.join(f);
-                                if p.is_file() {
-                                    std::fs::read(&p).ok().map(|bytes| {
-                                        format!(
-                                            "data:image/png;base64,{}",
-                                            base64::engine::general_purpose::STANDARD.encode(bytes)
-                                        )
-                                    })
-                                } else {
-                                    None
-                                }
-                            });
+    if let Ok(app_dir) = app_handle.path().app_data_dir() {
+        search_paths.push(
+            app_dir
+                .join("assets/balloon")
+                .to_string_lossy()
+                .into_owned(),
+        );
+        search_paths.push(app_dir.join("balloon").to_string_lossy().into_owned());
+    }
 
-                        let readme =
-                            ["readme.txt", "Readme.txt", "README.TXT"]
+    if let Ok(res_dir) = app_handle.path().resource_dir() {
+        search_paths.push(
+            res_dir
+                .join("assets/balloon")
+                .to_string_lossy()
+                .into_owned(),
+        );
+        search_paths.push(res_dir.join("balloon").to_string_lossy().into_owned());
+    }
+
+    if let Ok(ghosts) = std::fs::read_dir("assets/ghost") {
+        for entry in ghosts.flatten() {
+            let path = entry.path();
+            if path.is_dir() {
+                search_paths.push(
+                    path.join("balloon").to_string_lossy().into_owned(),
+                );
+                search_paths.push(
+                    path.join("ghost")
+                        .join("master")
+                        .join("balloon")
+                        .to_string_lossy()
+                        .into_owned(),
+                );
+            }
+        }
+    }
+
+    use tauri::Manager;
+    let mut scanned_dirs = std::collections::HashSet::new();
+
+    for base_dir in search_paths {
+        println!("🔍 [Balloon Scan] 探索ベースディレクトリ: {}", base_dir);
+        if let Ok(resolved) = resolve_asset_path(&base_dir, &app_handle) {
+            println!(
+                "🔍 [Balloon Scan] 解決済みパス: {:?}, exists={}, is_dir={}",
+                resolved,
+                resolved.exists(),
+                resolved.is_dir()
+            );
+            if resolved.exists()
+                && resolved.is_dir()
+                && let Ok(entries) = std::fs::read_dir(&resolved)
+            {
+                for entry in entries.flatten() {
+                    let path = entry.path();
+                    println!("📁 [Balloon Scan] エントリ発見: {:?}", path);
+                    if path.is_dir() {
+                        let dir_name = entry.file_name().to_string_lossy().to_string();
+                        println!("📂 [Balloon Scan] ディレクトリ名: {}", dir_name);
+                        if !dir_name.starts_with('.') && scanned_dirs.insert(dir_name.clone()) {
+                            let descript = balloon_descript_map(&path);
+                            println!(
+                                "📝 [Balloon Scan] descript プロパティ数: {}, path={:?}",
+                                descript.len(),
+                                path
+                            );
+                            let name = descript
+                                .get("name")
+                                .cloned()
+                                .unwrap_or_else(|| dir_name.clone());
+
+                            let thumbnail = ["thumbnail.png", "thumbnail.jpg", "thumbnail.bmp"]
                                 .iter()
                                 .find_map(|f| {
                                     let p = path.join(f);
                                     if p.is_file() {
-                                        open_text_file(&p).ok()
+                                        std::fs::read(&p).ok().map(|bytes| {
+                                            format!(
+                                                "data:image/png;base64,{}",
+                                                base64::engine::general_purpose::STANDARD.encode(bytes)
+                                            )
+                                        })
                                     } else {
                                         None
                                     }
                                 });
 
-                        balloons.push(BalloonInfo {
-                            dir_name,
-                            name,
-                            descript,
-                            thumbnail,
-                            readme,
-                        });
+                            let readme =
+                                ["readme.txt", "Readme.txt", "README.TXT"]
+                                    .iter()
+                                    .find_map(|f| {
+                                        let p = path.join(f);
+                                        if p.is_file() {
+                                            open_text_file(&p).ok()
+                                        } else {
+                                            None
+                                        }
+                                    });
+
+                            balloons.push(BalloonInfo {
+                                dir_name,
+                                name,
+                                descript,
+                                thumbnail,
+                                readme,
+                            });
+                        }
                     }
                 }
             }
+        } else {
+            println!("⚠️ [Balloon Scan] 解決失敗: {}", base_dir);
         }
     }
 
@@ -101,6 +163,7 @@ pub fn scan_balloons(app_handle: tauri::AppHandle) -> Result<Vec<BalloonInfo>, S
     let mut result: Vec<_> = unique.into_values().collect();
     result.sort_by(|a, b| a.name.cmp(&b.name));
 
+    println!("🎉 [Balloon Scan] スキャン完了: 総数={}個", result.len());
     Ok(result)
 }
 
@@ -323,4 +386,9 @@ pub fn balloon_descript_map(dir: &std::path::Path) -> std::collections::BTreeMap
         .clone()
         .into_iter()
         .collect::<std::collections::BTreeMap<_, _>>()
+}
+
+#[tauri::command]
+pub fn list_balloons(app_handle: tauri::AppHandle) -> Result<Vec<BalloonInfo>, String> {
+    scan_balloons(app_handle)
 }

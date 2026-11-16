@@ -3,10 +3,9 @@
  */
 import {
 	emit,
-	invoke,
-	isNativeMultiWindow,
-	isSinglePageUi,
 	frontendLog,
+	invoke,
+	isSinglePageUi,
 } from "../core/tauri-helper.js";
 import {
 	createSakuraPlayerWasm,
@@ -237,7 +236,10 @@ export class SakuraScriptPlayer {
 		);
 		void invoke("show_balloon_window", { scopeId: targetScope, theme }).catch(
 			(err) => {
-				frontendLog(`❌ show_balloon_window failed for scope ${targetScope}: ${err}`, "error");
+				frontendLog(
+					`❌ show_balloon_window failed for scope ${targetScope}: ${err}`,
+					"error",
+				);
 			},
 		);
 		const htmlContent = textEl ? textEl.innerHTML : text;

@@ -3,7 +3,7 @@
  * @brief Timeout helper for promises and async tasks
  */
 
-import { AsyncTask } from "./types.js";
+import type { AsyncTask } from "./types.js";
 
 /**
  * Promise または非同期関数にタイムアウト制限を付与する

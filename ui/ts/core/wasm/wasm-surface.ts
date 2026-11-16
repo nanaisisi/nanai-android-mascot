@@ -116,4 +116,3 @@ export function resolveScopeForSurfaceWasm(surfaceId: number): number {
 		return surfaceId < 100 ? 0 : Math.floor(surfaceId / 100);
 	}
 }
-

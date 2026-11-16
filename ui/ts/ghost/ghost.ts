@@ -261,7 +261,9 @@ export class GhostController {
 		this._currentLoadToken = loadId;
 		const isCurrentLoad = () => this._currentLoadToken === loadId;
 
-		console.log("👻 [selectGhost] starting Promise.all for selectShell and initializeGhostSHIORI");
+		console.log(
+			"👻 [selectGhost] starting Promise.all for selectShell and initializeGhostSHIORI",
+		);
 		await Promise.all([
 			Promise.resolve(preloadSurfacesPromise)
 				.catch(() => {})

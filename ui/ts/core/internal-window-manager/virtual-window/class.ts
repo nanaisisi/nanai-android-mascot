@@ -3,22 +3,30 @@
  * @brief VirtualWindow class orchestration delegating to builders, interactions, and lifecycle modules
  */
 
+import type {
+	VirtualWindowOptions,
+	VirtualWindowResizeDirection,
+	WindowGeometry,
+} from "../types.js";
 import type { InternalWindowManager } from "../window-manager.js";
-import { VirtualWindowOptions, VirtualWindowResizeDirection, WindowGeometry } from "../types.js";
-import { buildTitleBar, buildResizeHandles } from "./builders.js";
-import { setupFocusHandling, setupDragging, setupResizing } from "./interactions.js";
+import { buildResizeHandles, buildTitleBar } from "./builders.js";
 import {
-	setTitle,
-	toggleMinimize,
+	setupDragging,
+	setupFocusHandling,
+	setupResizing,
+} from "./interactions.js";
+import {
+	clampToViewport,
+	close,
+	hide,
+	maximize,
 	minimize,
 	restore,
-	toggleMaximize,
-	maximize,
-	togglePin,
-	clampToViewport,
+	setTitle,
 	show,
-	hide,
-	close,
+	toggleMaximize,
+	toggleMinimize,
+	togglePin,
 } from "./lifecycle.js";
 
 export class VirtualWindow {

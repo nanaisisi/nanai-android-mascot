@@ -10,14 +10,11 @@ use std::path::PathBuf;
 #[tauri::command]
 pub fn load_surface_image(
     ghost_path: Option<String>,
-    #[allow(non_snake_case)]
-    ghostPath: Option<String>,
+    #[allow(non_snake_case)] ghostPath: Option<String>,
     shell_name: Option<String>,
-    #[allow(non_snake_case)]
-    shellName: Option<String>,
+    #[allow(non_snake_case)] shellName: Option<String>,
     surface_id: Option<String>,
-    #[allow(non_snake_case)]
-    surfaceId: Option<String>,
+    #[allow(non_snake_case)] surfaceId: Option<String>,
     app_handle: tauri::AppHandle<tauri::Wry>,
 ) -> Result<String, String> {
     let gp = ghost_path.or(ghostPath).unwrap_or_default();
@@ -87,10 +84,11 @@ pub fn load_surface_image(
                 .unwrap_or("png")
                 .to_lowercase();
 
-            if ext != "svg" && ext != "pna" {
-                if let Some(data_url) = process_chromakey_image_bytes(&bytes) {
-                    return Ok(data_url);
-                }
+            if ext != "svg"
+                && ext != "pna"
+                && let Some(data_url) = process_chromakey_image_bytes(&bytes)
+            {
+                return Ok(data_url);
             }
 
             let mime = match ext.as_str() {
@@ -103,7 +101,7 @@ pub fn load_surface_image(
         }
     }
 
-    let fallback_candidates = if surface_id_num >= 10 && surface_id_num < 20 {
+    let fallback_candidates = if (10..20).contains(&surface_id_num) {
         vec![
             shell_dir.join("surface0010.png"),
             shell_dir.join("surface10.png"),
@@ -150,14 +148,11 @@ pub fn load_surface_image(
 #[tauri::command]
 pub fn load_surface_pna(
     ghost_path: Option<String>,
-    #[allow(non_snake_case)]
-    ghostPath: Option<String>,
+    #[allow(non_snake_case)] ghostPath: Option<String>,
     shell_name: Option<String>,
-    #[allow(non_snake_case)]
-    shellName: Option<String>,
+    #[allow(non_snake_case)] shellName: Option<String>,
     surface_id: Option<String>,
-    #[allow(non_snake_case)]
-    surfaceId: Option<String>,
+    #[allow(non_snake_case)] surfaceId: Option<String>,
     app_handle: tauri::AppHandle<tauri::Wry>,
 ) -> Result<String, String> {
     let gp = ghost_path.or(ghostPath).unwrap_or_default();

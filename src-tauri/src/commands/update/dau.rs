@@ -116,29 +116,28 @@ pub fn calculate_file_md5(path: &Path) -> Option<String> {
 
 /// ゴーストの homeurl を取得
 pub fn get_ghost_homeurl(ghost_dir: &Path) -> Option<String> {
-    // 1. ghost/master/descript.txt
-    let master_desc = ghost_dir.join("ghost").join("master").join("descript.txt");
-    if let Ok(content) = open_text_file(&master_desc) {
-        let desc = Descript::parse(&content);
-        if let Some(url) = desc.homeurl() {
-            let mut u = url.trim().to_string();
-            if !u.ends_with('/') {
-                u.push('/');
-            }
-            return Some(u);
-        }
-    }
+    for desc_path in [
+        ghost_dir.join("ghost").join("master").join("descript.txt"),
+        ghost_dir.join("descript.txt"),
+    ] {
+        if let Ok(content) = open_text_file(&desc_path) {
+            let desc = Descript::parse(&content);
+            let url_opt = desc
+                .homeurl()
+                .map(ToString::to_string)
+                .or_else(|| desc.properties().get("updateurl").cloned())
+                .or_else(|| desc.properties().get("update.url").cloned())
+                .or_else(|| desc.properties().get("home.url").cloned());
 
-    // 2. ルートの descript.txt
-    let root_desc = ghost_dir.join("descript.txt");
-    if let Ok(content) = open_text_file(&root_desc) {
-        let desc = Descript::parse(&content);
-        if let Some(url) = desc.homeurl() {
-            let mut u = url.trim().to_string();
-            if !u.ends_with('/') {
-                u.push('/');
+            if let Some(url) = url_opt {
+                let mut u = url.trim().to_string();
+                if !u.is_empty() {
+                    if !u.ends_with('/') {
+                        u.push('/');
+                    }
+                    return Some(u);
+                }
             }
-            return Some(u);
         }
     }
 

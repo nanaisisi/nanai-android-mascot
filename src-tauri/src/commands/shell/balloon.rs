@@ -35,10 +35,7 @@ impl BalloonInfo {
 #[tauri::command]
 pub fn scan_balloons(app_handle: tauri::AppHandle) -> Result<Vec<BalloonInfo>, String> {
     let mut balloons = Vec::new();
-    let mut search_paths = vec![
-        "assets/balloon".to_string(),
-        "balloon".to_string(),
-    ];
+    let mut search_paths = vec!["assets/balloon".to_string(), "balloon".to_string()];
 
     if let Ok(app_dir) = app_handle.path().app_data_dir() {
         search_paths.push(
@@ -64,9 +61,7 @@ pub fn scan_balloons(app_handle: tauri::AppHandle) -> Result<Vec<BalloonInfo>, S
         for entry in ghosts.flatten() {
             let path = entry.path();
             if path.is_dir() {
-                search_paths.push(
-                    path.join("balloon").to_string_lossy().into_owned(),
-                );
+                search_paths.push(path.join("balloon").to_string_lossy().into_owned());
                 search_paths.push(
                     path.join("ghost")
                         .join("master")
@@ -120,7 +115,8 @@ pub fn scan_balloons(app_handle: tauri::AppHandle) -> Result<Vec<BalloonInfo>, S
                                         std::fs::read(&p).ok().map(|bytes| {
                                             format!(
                                                 "data:image/png;base64,{}",
-                                                base64::engine::general_purpose::STANDARD.encode(bytes)
+                                                base64::engine::general_purpose::STANDARD
+                                                    .encode(bytes)
                                             )
                                         })
                                     } else {
@@ -128,17 +124,16 @@ pub fn scan_balloons(app_handle: tauri::AppHandle) -> Result<Vec<BalloonInfo>, S
                                     }
                                 });
 
-                            let readme =
-                                ["readme.txt", "Readme.txt", "README.TXT"]
-                                    .iter()
-                                    .find_map(|f| {
-                                        let p = path.join(f);
-                                        if p.is_file() {
-                                            open_text_file(&p).ok()
-                                        } else {
-                                            None
-                                        }
-                                    });
+                            let readme = ["readme.txt", "Readme.txt", "README.TXT"]
+                                .iter()
+                                .find_map(|f| {
+                                    let p = path.join(f);
+                                    if p.is_file() {
+                                        open_text_file(&p).ok()
+                                    } else {
+                                        None
+                                    }
+                                });
 
                             balloons.push(BalloonInfo {
                                 dir_name,
@@ -186,11 +181,9 @@ pub fn get_balloon_readme(
 pub fn balloon_manifest(
     name: String,
     scope_id: Option<i32>,
-    #[allow(non_snake_case)]
-    scopeId: Option<i32>,
+    #[allow(non_snake_case)] scopeId: Option<i32>,
     surface_id: Option<i32>,
-    #[allow(non_snake_case)]
-    surfaceId: Option<i32>,
+    #[allow(non_snake_case)] surfaceId: Option<i32>,
     app_handle: tauri::AppHandle,
 ) -> Result<std::collections::BTreeMap<String, String>, String> {
     let s_id = scope_id.or(scopeId);
@@ -251,8 +244,7 @@ pub fn load_balloon_image(
         .and_then(|s| s.to_str())
     {
         let extensions = [
-            "png", "bmp", "jpg", "jpeg", "pna", "gif", "svg", "PNG", "BMP",
-            "JPG", "JPEG", "SVG",
+            "png", "bmp", "jpg", "jpeg", "pna", "gif", "svg", "PNG", "BMP", "JPG", "JPEG", "SVG",
         ];
         let mut matched = None;
         for ext in &extensions {
@@ -263,15 +255,15 @@ pub fn load_balloon_image(
                 break;
             }
         }
-        if matched.is_none() {
-            if let Some(stripped_stem) = stem.strip_suffix('0') {
-                for ext in &extensions {
-                    let alt_file = format!("{}.{}", stripped_stem, ext);
-                    let p = dir.join(&alt_file);
-                    if p.is_file() {
-                        matched = Some(p);
-                        break;
-                    }
+        if matched.is_none()
+            && let Some(stripped_stem) = stem.strip_suffix('0')
+        {
+            for ext in &extensions {
+                let alt_file = format!("{}.{}", stripped_stem, ext);
+                let p = dir.join(&alt_file);
+                if p.is_file() {
+                    matched = Some(p);
+                    break;
                 }
             }
         }
@@ -310,10 +302,7 @@ pub fn load_balloon_image(
     )))
 }
 
-pub fn resolve_balloon_dir(
-    name: &str,
-    app_handle: &tauri::AppHandle,
-) -> Result<PathBuf, String> {
+pub fn resolve_balloon_dir(name: &str, app_handle: &tauri::AppHandle) -> Result<PathBuf, String> {
     println!("🔍 [Balloon] resolve_balloon_dir 呼び出し: name='{}'", name);
     let effective_name = if name.is_empty() { "default" } else { name };
 

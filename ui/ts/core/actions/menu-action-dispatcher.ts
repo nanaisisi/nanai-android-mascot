@@ -1,6 +1,5 @@
 import { AppConfig } from "../config.js";
 import { invoke, isTauriAvailable } from "../tauri-helper.js";
-import { THEME_LABELS } from "./balloon-theme-constants.js";
 import { handleSystemMenuAction } from "./menu-action-system.js";
 
 /** SHIORIイベントへ単純転送するアクション */

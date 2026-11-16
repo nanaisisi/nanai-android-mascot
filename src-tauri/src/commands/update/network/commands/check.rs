@@ -23,12 +23,22 @@ pub async fn check_ghost_update(
 
     let ghost_dir = resolve_update_ghost_dir(&target_ghost, ghost_path.as_deref(), &app_handle);
 
-    let homeurl = get_ghost_homeurl(&ghost_dir).ok_or_else(|| {
-        format!(
-            "ゴースト「{}」に homeurl が設定されていません",
-            target_ghost
-        )
-    })?;
+    let homeurl = match get_ghost_homeurl(&ghost_dir) {
+        Some(url) => url,
+        None => {
+            return Ok(UpdateCheckResult::new(
+                false,
+                "".to_string(),
+                target_ghost.clone(),
+                vec![],
+                0,
+                format!(
+                    "ゴースト「{}」に homeurl が設定されていません",
+                    target_ghost
+                ),
+            ));
+        }
+    };
 
     let client = reqwest::Client::builder()
         .user_agent("NanaiAndroidMascot/1.0 (SSP Compatible)")

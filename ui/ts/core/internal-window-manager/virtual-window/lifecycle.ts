@@ -92,9 +92,7 @@ export function clampToViewport(
 	viewportHeight?: number,
 ) {
 	const vw =
-		viewportWidth ??
-		win.manager.container.clientWidth ??
-		globalThis.innerWidth;
+		viewportWidth ?? win.manager.container.clientWidth ?? globalThis.innerWidth;
 	const vh =
 		viewportHeight ??
 		win.manager.container.clientHeight ??

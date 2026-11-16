@@ -124,10 +124,7 @@ export function setupContextMenuSync(
 				localStorage.getItem("nanai_balloon_theme") ||
 				"nsm";
 			if (globalThis._lastBalloons) {
-				renderer.renderBalloonSubmenu(
-					globalThis._lastBalloons,
-					theme,
-				);
+				renderer.renderBalloonSubmenu(globalThis._lastBalloons, theme);
 			}
 		} else if (event.data?.type === "sync-balloons") {
 			globalThis._lastBalloons = event.data.balloons;
@@ -135,10 +132,7 @@ export function setupContextMenuSync(
 				document.documentElement.getAttribute("data-balloon-theme") ||
 				localStorage.getItem("nanai_balloon_theme") ||
 				"nsm";
-			renderer.renderBalloonSubmenu(
-				event.data.balloons,
-				theme,
-			);
+			renderer.renderBalloonSubmenu(event.data.balloons, theme);
 		}
 	});
 }

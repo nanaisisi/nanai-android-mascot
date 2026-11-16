@@ -23,7 +23,8 @@ export const menuBalloonDressupRenderer = {
 
 		container.innerHTML = `
 			<button type="button" class="menu-item" id="balloon-cycle-btn">
-				<span>🔄 次のスキンへ切り替え</span>
+				<span class="menu-item-indicator">🔄</span>
+				<span class="menu-item-label">次のスキンへ切り替え</span>
 			</button>
 			<div class="menu-separator"></div>
 		`;
@@ -50,12 +51,10 @@ export const menuBalloonDressupRenderer = {
 					currentNorm === balloonDir || currentNorm === balloonName;
 
 				const btn = document.createElement("button");
-				btn.className = `menu-item ${isCurrent ? "is-current" : ""}`;
+				btn.type = "button";
+				btn.className = `menu-item${isCurrent ? " is-current" : ""}`;
 				btn.dataset.action = `balloon-theme-${balloon.dir_name}`;
-
-				const span = document.createElement("span");
-				span.textContent = `${isCurrent ? "✓ " : "　"}${balloon.name}`;
-				btn.appendChild(span);
+				btn.innerHTML = `<span class="menu-item-indicator">${isCurrent ? "✓" : ""}</span><span class="menu-item-label">${balloon.name}</span>`;
 
 				btn.addEventListener("click", () => {
 					this.dispatcher.dispatchAction(`balloon-theme-${balloon.dir_name}`);
@@ -76,12 +75,10 @@ export const menuBalloonDressupRenderer = {
 					currentNorm === t.label.toLowerCase();
 
 				const btn = document.createElement("button");
-				btn.className = `menu-item ${isCurrent ? "is-current" : ""}`;
+				btn.type = "button";
+				btn.className = `menu-item${isCurrent ? " is-current" : ""}`;
 				btn.dataset.action = `balloon-theme-${t.id}`;
-
-				const span = document.createElement("span");
-				span.textContent = `${isCurrent ? "✓ " : "　"}${t.label}`;
-				btn.appendChild(span);
+				btn.innerHTML = `<span class="menu-item-indicator">${isCurrent ? "✓" : ""}</span><span class="menu-item-label">${t.label}</span>`;
 
 				btn.addEventListener("click", () => {
 					this.dispatcher.dispatchAction(`balloon-theme-${t.id}`);
@@ -111,7 +108,7 @@ export const menuBalloonDressupRenderer = {
 		if (categories.length === 0) {
 			const empty = document.createElement("div");
 			empty.className = "menu-item is-disabled";
-			empty.innerHTML = `<span>(着せ替えパーツなし)</span>`;
+			empty.innerHTML = `<span class="menu-item-indicator"></span><span class="menu-item-label">(着せ替えパーツなし)</span>`;
 			container.appendChild(empty);
 			return;
 		}
@@ -119,16 +116,16 @@ export const menuBalloonDressupRenderer = {
 		for (const cat of categories) {
 			const label = document.createElement("div");
 			label.className = "menu-item is-disabled";
-			label.innerHTML = `<span>${cat.category}</span>`;
+			label.innerHTML = `<span class="menu-item-indicator"></span><span class="menu-item-label"><b>${cat.category}</b></span>`;
 			container.appendChild(label);
 
 			for (const part of cat.parts) {
 				const btn = document.createElement("button");
 				btn.type = "button";
-				btn.className = `menu-item ${part.on ? "is-current" : ""}`;
+				btn.className = `menu-item${part.on ? " is-current" : ""}`;
 				btn.dataset.category = cat.category;
 				btn.dataset.part = part.part;
-				btn.innerHTML = `<span>${part.on ? "✓ " : "　"}${part.part}</span>`;
+				btn.innerHTML = `<span class="menu-item-indicator">${part.on ? "✓" : ""}</span><span class="menu-item-label">${part.part}</span>`;
 				btn.addEventListener("click", () => {
 					this.dispatcher.dispatchAction("dressup-toggle", {
 						category: cat.category,
@@ -153,7 +150,7 @@ export const menuBalloonDressupRenderer = {
 		if (!recentGhosts || recentGhosts.length === 0) {
 			const empty = document.createElement("div");
 			empty.className = "menu-item is-disabled";
-			empty.innerHTML = `<span>(履歴はありません)</span>`;
+			empty.innerHTML = `<span class="menu-item-indicator"></span><span class="menu-item-label">(履歴はありません)</span>`;
 			container.appendChild(empty);
 			return;
 		}
@@ -168,12 +165,13 @@ export const menuBalloonDressupRenderer = {
 					(item.shells && item.shells.length > 0));
 
 			const btn = document.createElement("button");
+			btn.type = "button";
 			btn.className = `menu-item${hasSub ? " has-submenu" : ""}`;
 			if (hasSub) {
 				btn.setAttribute("aria-haspopup", "true");
 			}
 			btn.dataset.ghostName = ghostName;
-			btn.innerHTML = `<span>🕘 ${ghostName}</span>`;
+			btn.innerHTML = `<span class="menu-item-indicator">🕘</span><span class="menu-item-label">${ghostName}</span>`;
 
 			btn.addEventListener("click", () => {
 				const action =

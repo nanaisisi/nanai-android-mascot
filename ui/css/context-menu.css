@@ -138,6 +138,7 @@ body.subchar-mode .menu-sidebar {
 	color: var(--menu-text-color, #111111);
 	display: flex;
 	align-items: center;
+	justify-content: flex-start;
 	transition:
 		background-color 0.15s ease,
 		color 0.15s ease;

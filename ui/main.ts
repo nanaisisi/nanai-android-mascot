@@ -15,9 +15,13 @@ if (typeof window !== "undefined") {
 	try {
 		const appInstance = new NanaiAndroidMascotApp();
 		(window as unknown as { app: NanaiAndroidMascotApp }).app = appInstance;
-		(globalThis as unknown as { mascotApp: NanaiAndroidMascotApp }).mascotApp = appInstance;
+		(globalThis as unknown as { mascotApp: NanaiAndroidMascotApp }).mascotApp =
+			appInstance;
 		console.log("✨ [main.ts] NanaiAndroidMascotApp successfully instantiated");
 	} catch (err) {
-		console.error("💥 [main.ts] Failed to instantiate NanaiAndroidMascotApp:", err);
+		console.error(
+			"💥 [main.ts] Failed to instantiate NanaiAndroidMascotApp:",
+			err,
+		);
 	}
 }

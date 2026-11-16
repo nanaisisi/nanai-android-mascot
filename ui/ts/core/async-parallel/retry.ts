@@ -3,8 +3,8 @@
  * @brief Exponential backoff async retry helper
  */
 
-import { RetryOptions } from "./types.js";
 import { delay } from "./deferred.js";
+import type { RetryOptions } from "./types.js";
 
 /**
  * 指数バックオフ付き非同期タスク自動リトライ

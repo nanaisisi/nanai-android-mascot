@@ -3,7 +3,7 @@
  * @brief Focus, dragging, and resizing interactions for VirtualWindow
  */
 
-import { VirtualWindowResizeDirection } from "../types.js";
+import type { VirtualWindowResizeDirection } from "../types.js";
 import type { VirtualWindow } from "./class.js";
 
 export function setupFocusHandling(win: VirtualWindow) {

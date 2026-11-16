@@ -3,8 +3,8 @@
  * @brief Parallel collection operators (mapParallel, allSettledParallel, filterParallel, batchParallel)
  */
 
-import { ParallelOptions } from "./types.js";
 import { withTimeout } from "./timeout.js";
+import type { ParallelOptions } from "./types.js";
 
 /**
  * 配列の各要素に対して並列度制限付きで非同期マッピング関数を実行する

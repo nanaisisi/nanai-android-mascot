@@ -3,8 +3,8 @@
  * @brief InternalWindowManager class for managing multiple VirtualWindows
  */
 
+import type { VirtualWindowOptions } from "./types.js";
 import { VirtualWindow } from "./virtual-window.js";
-import { VirtualWindowOptions } from "./types.js";
 
 export class InternalWindowManager {
 	container: HTMLElement;

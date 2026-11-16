@@ -13,28 +13,36 @@ impl Drop for BalloonLockGuard {
     }
 }
 
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ShowBalloonWindowParams {
+    pub scope_id: Option<i32>,
+    #[serde(default)]
+    pub theme: Option<String>,
+    #[serde(default)]
+    pub x: Option<f64>,
+    #[serde(default)]
+    pub y: Option<f64>,
+    #[serde(default)]
+    pub width: Option<f64>,
+    #[serde(default)]
+    pub height: Option<f64>,
+}
+
 /// 独立バルーン（スコープ N）ウィンドウ表示コマンド
 #[tauri::command]
 pub async fn show_balloon_window(
-    _app_handle: tauri::AppHandle,
-    scope_id: Option<i32>,
-    #[allow(non_snake_case)]
-    scopeId: Option<i32>,
-    theme: Option<String>,
-    x: Option<f64>,
-    y: Option<f64>,
-    width: Option<f64>,
-    height: Option<f64>,
+    app_handle: tauri::AppHandle,
+    params: ShowBalloonWindowParams,
 ) -> Result<(), String> {
     #[cfg(desktop)]
     {
-        let app_handle = _app_handle;
-        let s_id = scope_id.or(scopeId).unwrap_or(0);
-        let t_val = theme;
-        let p_x = x;
-        let p_y = y;
-        let w_val = width;
-        let h_val = height;
+        let s_id = params.scope_id.unwrap_or(0);
+        let t_val = params.theme;
+        let p_x = params.x;
+        let p_y = params.y;
+        let w_val = params.width;
+        let h_val = params.height;
 
         println!("💬 show_balloon_window called: scope_id={}", s_id);
         use tauri::Manager;
@@ -70,12 +78,10 @@ pub async fn show_balloon_window(
                             .unwrap_or(1.0);
                         let base_x = pos.x as f64 / scale;
                         let base_y = pos.y as f64 / scale;
-                        let char_size = char_win
-                            .outer_size()
-                            .unwrap_or(tauri::PhysicalSize {
-                                width: 200,
-                                height: 360,
-                            });
+                        let char_size = char_win.outer_size().unwrap_or(tauri::PhysicalSize {
+                            width: 200,
+                            height: 360,
+                        });
                         let char_width = char_size.width as f64 / scale;
 
                         let monitor_width = char_win
@@ -112,7 +118,10 @@ pub async fn show_balloon_window(
             let _ = balloon_win.unminimize();
             let _ = balloon_win.set_always_on_top(true);
             let _ = balloon_win.show();
-            println!("✅ [Rust Window] 既存の balloon_window_{} を表示: x={}, y={}", s_id, target_x, target_y);
+            println!(
+                "✅ [Rust Window] 既存の balloon_window_{} を表示: x={}, y={}",
+                s_id, target_x, target_y
+            );
 
             if let Some(theme) = t_val.as_ref().filter(|value| !value.is_empty()) {
                 let _ = app_handle.emit_to(
@@ -133,9 +142,7 @@ pub async fn show_balloon_window(
             let balloon_win = tauri::WebviewWindowBuilder::new(
                 &app_handle,
                 &label,
-                tauri::WebviewUrl::App(
-                    format!("balloon.html?scope={s_id}{theme_query}").into(),
-                ),
+                tauri::WebviewUrl::App(format!("balloon.html?scope={s_id}{theme_query}").into()),
             )
             .title(title)
             .inner_size(win_width, win_height)
@@ -155,7 +162,10 @@ pub async fn show_balloon_window(
             let _ = balloon_win.unminimize();
             let _ = balloon_win.set_always_on_top(true);
             let _ = balloon_win.show();
-            println!("🎉 [Rust Window] 新規 balloon_window_{} を構築・表示: x={}, y={}", s_id, target_x, target_y);
+            println!(
+                "🎉 [Rust Window] 新規 balloon_window_{} を構築・表示: x={}, y={}",
+                s_id, target_x, target_y
+            );
 
             if let Some(theme) = t_val.as_ref().filter(|value| !value.is_empty()) {
                 let _ = app_handle.emit_to(

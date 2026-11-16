@@ -3,8 +3,13 @@
  * @brief AsyncPool task execution pool with concurrency and priority control
  */
 
-import { AsyncTask, AsyncPoolStats, QueuedTask, Deferred } from "./types.js";
 import { createDeferred } from "./deferred.js";
+import type {
+	AsyncPoolStats,
+	AsyncTask,
+	Deferred,
+	QueuedTask,
+} from "./types.js";
 
 /**
  * 同時実行数制限・優先度キュー・一時停止/再開を備えた非同期タスクプール

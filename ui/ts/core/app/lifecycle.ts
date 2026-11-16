@@ -178,7 +178,9 @@ export class NanaiAndroidMascotApp {
 		this._isBooted = true;
 		this.isInitialized = true;
 
-		console.log("🚀 [App boot started] Nanai Android Mascot 初期化開始 (DOMContentLoaded/init)");
+		console.log(
+			"🚀 [App boot started] Nanai Android Mascot 初期化開始 (DOMContentLoaded/init)",
+		);
 
 		void wasmBridge.init();
 

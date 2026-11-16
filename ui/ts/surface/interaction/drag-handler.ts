@@ -176,7 +176,9 @@ export function setupGhostDragging(
 			onGhostMouseDown(clientX, clientY, rect, button, device);
 		}
 
-		const isTouch = Boolean(e.touches || (e.pointerType && e.pointerType !== "mouse"));
+		const isTouch = Boolean(
+			e.touches || (e.pointerType && e.pointerType !== "mouse"),
+		);
 		if (isTouch) {
 			longPress.start(
 				() =>

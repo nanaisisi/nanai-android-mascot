@@ -3,7 +3,7 @@
  * @brief Deferred promise and abortable delay utilities
  */
 
-import { Deferred } from "./types.js";
+import type { Deferred } from "./types.js";
 
 /**
  * 手動で resolve/reject 可能な Deferred オブジェクトを生成する

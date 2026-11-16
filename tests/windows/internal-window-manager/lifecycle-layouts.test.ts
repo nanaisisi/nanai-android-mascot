@@ -4,9 +4,9 @@
  */
 
 import assert from "node:assert/strict";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, it } from "vitest";
 import { InternalWindowManager } from "../../../ui/ts/core/internal-window-manager.js";
-import { MockDomElement, createMockDomElement } from "./mock-dom.js";
+import { createMockDomElement, type MockDomElement } from "./mock-dom.js";
 
 describe("InternalWindowManager & VirtualWindow - Lifecycle & Layouts", () => {
 	let container: MockDomElement;

@@ -111,7 +111,9 @@ export function renderSubmenuContent({
 					: null) ||
 				"nsm";
 
-			const currentNorm = String(activeTheme || "").trim().toLowerCase();
+			const currentNorm = String(activeTheme || "")
+				.trim()
+				.toLowerCase();
 
 			(balloonsList.length > 0
 				? balloonsList
@@ -130,7 +132,10 @@ export function renderSubmenuContent({
 				const balloonNorm = dirName.toLowerCase();
 				const isCurrent =
 					currentNorm === balloonNorm ||
-					currentNorm === String(balloonItem.name || "").trim().toLowerCase();
+					currentNorm ===
+						String(balloonItem.name || "")
+							.trim()
+							.toLowerCase();
 
 				const btn = document.createElement("button");
 				btn.type = "button";

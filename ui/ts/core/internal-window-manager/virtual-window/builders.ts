@@ -3,7 +3,7 @@
  * @brief DOM builders for VirtualWindow title bar and resize handles
  */
 
-import { VirtualWindowResizeDirection } from "../types.js";
+import type { VirtualWindowResizeDirection } from "../types.js";
 import type { VirtualWindow } from "./class.js";
 
 export function buildTitleBar(win: VirtualWindow) {

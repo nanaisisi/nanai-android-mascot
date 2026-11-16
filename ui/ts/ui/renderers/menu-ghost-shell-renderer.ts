@@ -22,9 +22,10 @@ export const menuGhostShellRenderer = {
 					: shellName;
 			const isCurrent = currentShell === shellName;
 			const btn = document.createElement("button");
-			btn.className = `menu-item ${isCurrent ? "is-current" : ""}`;
+			btn.type = "button";
+			btn.className = `menu-item${isCurrent ? " is-current" : ""}`;
 			btn.dataset.shellName = shellName;
-			btn.innerHTML = `<span>${isCurrent ? "✓ " : "　"}${displayName}</span>`;
+			btn.innerHTML = `<span class="menu-item-indicator">${isCurrent ? "✓" : ""}</span><span class="menu-item-label">${displayName}</span>`;
 			btn.addEventListener("click", () => {
 				this.dispatcher.dispatchAction("switch-to-shell", shellName);
 			});
@@ -45,9 +46,10 @@ export const menuGhostShellRenderer = {
 		ghosts.forEach((ghost: { name: string | undefined }) => {
 			const isCurrent = currentGhost && currentGhost.name === ghost.name;
 			const btn = document.createElement("button");
-			btn.className = `menu-item ${isCurrent ? "is-current" : ""}`;
+			btn.type = "button";
+			btn.className = `menu-item${isCurrent ? " is-current" : ""}`;
 			btn.dataset.ghostName = ghost.name;
-			btn.innerHTML = `<span>${isCurrent ? "✓ " : "　"}${ghost.name}</span>`;
+			btn.innerHTML = `<span class="menu-item-indicator">${isCurrent ? "✓" : ""}</span><span class="menu-item-label">${ghost.name}</span>`;
 			btn.addEventListener("click", () => {
 				this.dispatcher.dispatchAction("switch-to-ghost", ghost.name);
 			});
@@ -66,9 +68,10 @@ export const menuGhostShellRenderer = {
 
 		ghosts.forEach((ghost: { name: string | undefined }) => {
 			const btn = document.createElement("button");
+			btn.type = "button";
 			btn.className = "menu-item";
 			btn.dataset.ghostName = ghost.name;
-			btn.innerHTML = `<span>➕ ${ghost.name}</span>`;
+			btn.innerHTML = `<span class="menu-item-indicator">➕</span><span class="menu-item-label">${ghost.name}</span>`;
 			btn.addEventListener("click", () => {
 				this.dispatcher.dispatchAction("call-ghost", ghost.name);
 			});
@@ -78,7 +81,7 @@ export const menuGhostShellRenderer = {
 		if (ghosts.length === 0) {
 			const emptySpan = document.createElement("div");
 			emptySpan.className = "menu-item is-disabled";
-			emptySpan.innerHTML = `<span>(ゴーストがありません)</span>`;
+			emptySpan.innerHTML = `<span class="menu-item-indicator"></span><span class="menu-item-label">(ゴーストがありません)</span>`;
 			container.appendChild(emptySpan);
 		}
 	},

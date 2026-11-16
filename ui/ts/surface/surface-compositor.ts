@@ -112,7 +112,8 @@ export async function processChromaKey(
 					const g = data[i + 1];
 					const b = data[i + 2];
 
-					const isMatchTopLeft = r === targetR && g === targetG && b === targetB;
+					const isMatchTopLeft =
+						r === targetR && g === targetG && b === targetB;
 					const isMatchTopRight = r === trR && g === trG && b === trB;
 					const isGreenBg = g > 130 && g > r * 1.15 && g > b * 1.15;
 

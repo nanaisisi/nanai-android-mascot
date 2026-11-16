@@ -3,7 +3,7 @@
  * @brief GhostController 向け SHIORI 初期化・イベント送受信・タイマー管理ロジック
  */
 
-import { invoke, isTauriAvailable, frontendLog } from "../core/tauri-helper.js";
+import { frontendLog, invoke, isTauriAvailable } from "../core/tauri-helper.js";
 import { fromRustResponse } from "./shiori-protocol.js";
 
 export interface GhostShioriContext {
@@ -39,7 +39,9 @@ export const ghostShioriMethods = {
 				ghostPath: ghost?.path,
 			});
 			if (!isCurrentLoad()) return;
-			frontendLog(`👻 [Init step 2] load_ghost completed, hiding loading banner`);
+			frontendLog(
+				`👻 [Init step 2] load_ghost completed, hiding loading banner`,
+			);
 
 			try {
 				await invoke("hide_loading_banner_window");
@@ -53,7 +55,9 @@ export const ghostShioriMethods = {
 				await readinessGatePromise;
 			}
 			if (!isCurrentLoad()) return;
-			frontendLog(`👻 [Init step 4] readinessGatePromise passed, sending OnBoot/OnGhostChanged`);
+			frontendLog(
+				`👻 [Init step 4] readinessGatePromise passed, sending OnBoot/OnGhostChanged`,
+			);
 
 			try {
 				type ShioriResponse = {
@@ -88,7 +92,10 @@ export const ghostShioriMethods = {
 				frontendLog(
 					`👻 [Init step 5 DEBUG] bootRes: ${JSON.stringify(bootRes)}, status: ${statusCode}, textLength: ${scriptText?.length}`,
 				);
-				if ((statusCode === 200 || statusCode === 204 || scriptText.length > 0) && scriptText) {
+				if (
+					(statusCode === 200 || statusCode === 204 || scriptText.length > 0) &&
+					scriptText
+				) {
 					frontendLog(
 						`👻 [Init step 5.5] attempting to play SakuraScript, length: ${scriptText.length}`,
 					);
@@ -136,13 +143,21 @@ export const ghostShioriMethods = {
 					}
 				}
 			} catch (error) {
-				frontendLog(`❌ [Init step 4/5 error] SHIORI event/script error: ${error}`, "error");
+				frontendLog(
+					`❌ [Init step 4/5 error] SHIORI event/script error: ${error}`,
+					"error",
+				);
 			}
 
 			this.startSecondChangeTimer();
-			frontendLog(`✅ [Init step 6] initializeGhostSHIORI finished successfully`);
+			frontendLog(
+				`✅ [Init step 6] initializeGhostSHIORI finished successfully`,
+			);
 		} catch (error) {
-			frontendLog(`❌ [Init outer error] SHIORI初期化エラー: ${error}`, "error");
+			frontendLog(
+				`❌ [Init outer error] SHIORI初期化エラー: ${error}`,
+				"error",
+			);
 			if (isCurrentLoad()) {
 				invoke("hide_loading_banner_window").catch(() => {});
 			}
@@ -211,7 +226,10 @@ export const ghostShioriMethods = {
 					ghost_name: ghostName,
 				});
 			} catch (e1) {
-				console.warn("⚠️ send_shiori_event_typed failed, trying request_shiori:", e1);
+				console.warn(
+					"⚠️ send_shiori_event_typed failed, trying request_shiori:",
+					e1,
+				);
 				try {
 					rawRes = await invoke("request_shiori", {
 						request: {

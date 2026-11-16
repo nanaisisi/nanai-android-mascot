@@ -48,7 +48,9 @@ export const INSTALL_FAILURE_REASONS = Object.freeze([
  * @param {string} type
  * @returns {string}
  */
-export function normalizeInstallType(type: InstallIdentifier | string | null | undefined): string {
+export function normalizeInstallType(
+	type: InstallIdentifier | string | null | undefined,
+): string {
 	if (!type || typeof type !== "string") return "unknown";
 	const lower = type.trim().toLowerCase();
 	if (INSTALL_IDENTIFIERS.includes(lower)) {

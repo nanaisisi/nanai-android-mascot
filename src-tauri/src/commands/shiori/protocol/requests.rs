@@ -151,13 +151,18 @@ pub async fn send_shiori_event_typed(
     ghost_name: Option<String>,
     ghost_id: Option<String>,
 ) -> Result<ShioriResponse, String> {
-    let gid = ghost_id.or(ghost_name).unwrap_or_else(|| "main".to_string());
+    let gid = ghost_id
+        .or(ghost_name)
+        .unwrap_or_else(|| "main".to_string());
     let refs = references.unwrap_or_default();
     let mut req = ShioriRequest::get(&event, &refs);
     req = req.with_sender("NanaiMascot");
 
     let text = req.build();
-    println!("🔍 [Rust] dispatch_request for event '{}' with gid '{}'", event, gid);
+    println!(
+        "🔍 [Rust] dispatch_request for event '{}' with gid '{}'",
+        event, gid
+    );
     let raw = dispatch_request(&state, &text, &gid)?;
     let parsed = ShioriResponse::parse(&raw)?;
     if event != "OnSecondChange" {

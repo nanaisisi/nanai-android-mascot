@@ -63,13 +63,20 @@ pub(super) fn evaluate_dynamic_property(
         if let Some(mon) = monitors.get(mon_id) {
             return match subkey {
                 "rect" => format!("{},{},{},{}", mon.left, mon.top, mon.right, mon.bottom),
-                "work" => format!(
-                    "{},{},{},{}",
-                    mon.left,
-                    mon.top,
-                    mon.right,
-                    (mon.bottom - 40).max(mon.top)
-                ),
+                "work" => {
+                    if mon.is_primary {
+                        let work = get_primary_work_area_rect();
+                        format!("{},{},{},{}", work.0, work.1, work.2, work.3)
+                    } else {
+                        format!(
+                            "{},{},{},{}",
+                            mon.left,
+                            mon.top,
+                            mon.right,
+                            (mon.bottom - 40).max(mon.top)
+                        )
+                    }
+                }
                 "dpi" => format!("{:.0}", mon.scale_factor * 96.0),
                 "bpp" => "32".to_string(),
                 "primary" => {
@@ -82,9 +89,10 @@ pub(super) fn evaluate_dynamic_property(
                 _ => "0".to_string(),
             };
         } else if mon_id == 0 {
+            let work = get_primary_work_area_rect();
             return match subkey {
                 "rect" => "0,0,1920,1080".to_string(),
-                "work" => "0,0,1920,1040".to_string(),
+                "work" => format!("{},{},{},{}", work.0, work.1, work.2, work.3),
                 "dpi" => "96".to_string(),
                 "bpp" => "32".to_string(),
                 "primary" => "1".to_string(),
@@ -184,6 +192,30 @@ pub(super) fn evaluate_dynamic_property(
         return "1".to_string();
     }
     format!("(unknown property: {})", raw_query)
+}
+
+#[cfg(target_os = "windows")]
+fn get_primary_work_area_rect() -> (i32, i32, i32, i32) {
+    use windows_sys::Win32::Foundation::RECT;
+    use windows_sys::Win32::UI::WindowsAndMessaging::{SystemParametersInfoW, SPI_GETWORKAREA};
+    let mut rect: RECT = unsafe { std::mem::zeroed() };
+    if unsafe {
+        SystemParametersInfoW(
+            SPI_GETWORKAREA,
+            0,
+            &mut rect as *mut _ as *mut _,
+            0,
+        )
+    } != 0
+    {
+        return (rect.left, rect.top, rect.right, rect.bottom);
+    }
+    (0, 0, 1920, 1040)
+}
+
+#[cfg(not(target_os = "windows"))]
+fn get_primary_work_area_rect() -> (i32, i32, i32, i32) {
+    (0, 0, 1920, 1040)
 }
 
 #[cfg(target_os = "windows")]

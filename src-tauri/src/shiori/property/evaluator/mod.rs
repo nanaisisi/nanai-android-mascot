@@ -1,6 +1,7 @@
 //! UKADOC Property System 仕様に準拠したプロパティ評価エンジンモジュール
 
 pub mod dynamic_rules;
+pub mod rules;
 pub mod static_rules;
 
 use crate::common::models::GhostInfo;

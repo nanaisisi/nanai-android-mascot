@@ -28,20 +28,10 @@ pub fn evaluate_system_monitor(q: &str, monitors: &[SystemMonitorInfo]) -> Optio
         if let Some(mon) = monitors.get(mon_id) {
             return Some(match subkey {
                 "rect" => format!("{},{},{},{}", mon.left, mon.top, mon.right, mon.bottom),
-                "work" => {
-                    if mon.is_primary {
-                        let work = get_primary_work_area_rect();
-                        format!("{},{},{},{}", work.0, work.1, work.2, work.3)
-                    } else {
-                        format!(
-                            "{},{},{},{}",
-                            mon.left,
-                            mon.top,
-                            mon.right,
-                            (mon.bottom - 40).max(mon.top)
-                        )
-                    }
-                }
+                "work" => format!(
+                    "{},{},{},{}",
+                    mon.work_left, mon.work_top, mon.work_right, mon.work_bottom
+                ),
                 "dpi" => format!("{:.0}", mon.scale_factor * 96.0),
                 "bpp" => mon.bpp.to_string(),
                 "primary" => {

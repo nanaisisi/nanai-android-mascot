@@ -14,7 +14,12 @@ pub struct SystemMonitorInfo {
     pub top: i32,
     pub right: i32,
     pub bottom: i32,
+    pub work_left: i32,
+    pub work_top: i32,
+    pub work_right: i32,
+    pub work_bottom: i32,
     pub scale_factor: f64,
+    pub bpp: u32,
     pub is_primary: bool,
 }
 

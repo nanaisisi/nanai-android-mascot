@@ -1,15 +1,28 @@
-/**
- * @file tests.rs
- * @brief UKADOC Property System クエリ評価エンジンの単体テスト
- */
-use super::evaluator::evaluate_property_query;
+use super::evaluator::{evaluate_property_query, evaluate_property_query_with_context};
 
 #[test]
 fn test_property_evaluation() {
-    assert_eq!(evaluate_property_query("ghostlist.count"), "1");
+    assert_eq!(
+        evaluate_property_query_with_context("currentghost.name", Some("Emily"), Some(1)),
+        "Emily"
+    );
+    assert_eq!(
+        evaluate_property_query_with_context("ghostlist.count", Some("Emily"), Some(1)),
+        "1"
+    );
+    assert_eq!(evaluate_property_query("currentghost.name"), "");
+    assert_eq!(evaluate_property_query("ghostlist.count"), "0");
     assert_eq!(
         evaluate_property_query("baseware.name"),
         "Nanai Android Mascot"
+    );
+    assert_eq!(
+        evaluate_property_query("baseware.version"),
+        env!("CARGO_PKG_VERSION")
+    );
+    assert_eq!(
+        evaluate_property_query("system.baseware.version"),
+        env!("CARGO_PKG_VERSION")
     );
     assert_eq!(evaluate_property_query("currentghost.name"), "Mock Ghost");
     assert_eq!(evaluate_property_query("username"), "User");
@@ -59,19 +72,13 @@ fn test_property_evaluation() {
         evaluate_property_query("collisionvisiblebutton.caption"),
         "1"
     );
-    assert_eq!(evaluate_property_query("balloonlist.count"), "1");
-    assert_eq!(
-        evaluate_property_query("balloonlist.index(0).name"),
-        "Default Balloon"
-    );
-    assert_eq!(evaluate_property_query("currentghost.balloon.count"), "1");
-    assert_eq!(
-        evaluate_property_query("currentghost.balloon.name"),
-        "Default Balloon"
-    );
+    assert_eq!(evaluate_property_query("balloonlist.count"), "0");
+    assert_eq!(evaluate_property_query("balloonlist.index(0).name"), "");
+    assert_eq!(evaluate_property_query("currentghost.balloon.count"), "0");
+    assert_eq!(evaluate_property_query("currentghost.balloon.name"), "");
     assert_eq!(
         evaluate_property_query("currentghost.balloon.mousecursor.arrow"),
-        "arrow.cur"
+        ""
     );
     assert_eq!(
         evaluate_property_query("currentghost.balloon.scope(0).rect"),
@@ -93,11 +100,8 @@ fn test_property_evaluation() {
         evaluate_property_query("currentghost.balloon.scope(0).vertical"),
         "0"
     );
-    assert_eq!(evaluate_property_query("history.balloon.count"), "1");
-    assert_eq!(
-        evaluate_property_query("history.balloon.index(0).name"),
-        "Default Balloon"
-    );
+    assert_eq!(evaluate_property_query("history.balloon.count"), "0");
+    assert_eq!(evaluate_property_query("history.balloon.index(0).name"), "");
     assert_eq!(
         evaluate_property_query("currentghost.seriko.surfacelist.defined"),
         "0,1,10"
